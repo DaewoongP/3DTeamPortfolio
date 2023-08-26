@@ -22,6 +22,8 @@ public:
 	// SwapChain's Present Function
 	HRESULT Present();
 
+	HRESULT Bind_BackBuffer();
+
 private:
 	ID3D11Device*				m_pDevice = { nullptr };
 	ID3D11DeviceContext*		m_pDeviceContext = { nullptr };

@@ -31,8 +31,7 @@ public: /* For. Graphic_Device */
 	HRESULT Clear_DepthStencil_View();
 	HRESULT Present();
 
-	HRESULT ResetRenderTargets();
-	HRESULT Resize_Buffer(_uint& ResizeWidth, _uint& ResizeHeight);
+	HRESULT Bind_BackBuffer();
 
 public: /* For.Timer_Manager */
 	HRESULT		Add_Timer(const _tchar * pTimerTag);

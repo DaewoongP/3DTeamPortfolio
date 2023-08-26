@@ -3,9 +3,11 @@
 #include "Level_Tool.h"
 
 CMainTool::CMainTool()
-	: m_pGameInstance{ CGameInstance::GetInstance() }
+	: m_pGameInstance(CGameInstance::GetInstance())
+	, m_pWindow_Manager(CWindow_Manager::GetInstance())
 {
 	Safe_AddRef(m_pGameInstance);
+	Safe_AddRef(m_pWindow_Manager);
 
 #ifdef _DEBUG
 	ZeroMemory(m_szFPS, sizeof(_tchar) * MAX_STR);
@@ -35,6 +37,9 @@ HRESULT CMainTool::Initialize()
 	if (FAILED(Ready_Fonts()))
 		return E_FAIL;
 
+	if (FAILED(Add_Windows()))
+		return E_FAIL;
+
 	if (FAILED(Open_Level(LEVEL_TOOL)))
 	{
 		MSG_BOX("Failed Open LEVEL_TOOL");
@@ -51,8 +56,12 @@ void CMainTool::Tick(_float fTimeDelta)
 	
 	Tick_ImGui();
 
+	ImGui::ShowDemoWindow();
+
 	// 엔진의 Tick 호출
 	m_pGameInstance->Tick_Engine(fTimeDelta);
+
+	m_pWindow_Manager->Tick(fTimeDelta);
 
 #ifdef _DEBUG
 	Tick_FPS(fTimeDelta);
@@ -72,21 +81,19 @@ HRESULT CMainTool::Render()
 	if (FAILED(m_pRenderer->Draw_RenderGroup()))
 		return E_FAIL;
 
+	if (FAILED(m_pWindow_Manager->Render()))
+		return E_FAIL;
+
 	if (FAILED(m_pGameInstance->Render_Level()))
 		return E_FAIL;
 #ifdef _DEBUG
 	if (FAILED(m_pGameInstance->Render_Font(TEXT("Font_135"), m_szFPS, _float2(0.f, 680.f))))
 		return E_FAIL;
 #endif // _DEBUG
-	if (FAILED(m_pGameInstance->Present()))
+
+	if (FAILED(Render_ImGui()))
 		return E_FAIL;
 
-	ImGui::EndFrame();
-	ImGui::Render();
-	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
-	ImGui::UpdatePlatformWindows();
-	ImGui::RenderPlatformWindowsDefault();
-	
 	if (FAILED(m_pGameInstance->Present()))
 		return E_FAIL;
 
@@ -118,13 +125,65 @@ HRESULT CMainTool::Initialize_ImGui()
 
 	ImGui_ImplWin32_Init(g_hWnd);
 	ImGui_ImplDX11_Init(m_pDevice, m_pContext);
-	
+
+	D3D11_TEXTURE2D_DESC	TextureDesc;
+	ZeroMemory(&TextureDesc, sizeof(D3D11_TEXTURE2D_DESC));
+
+	TextureDesc.Width = g_iWinSizeX;
+	TextureDesc.Height = g_iWinSizeY;
+	TextureDesc.MipLevels = 1;
+	TextureDesc.ArraySize = 1;
+	TextureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+
+	TextureDesc.SampleDesc.Quality = 0;
+	TextureDesc.SampleDesc.Count = 1;
+
+	TextureDesc.Usage = D3D11_USAGE_DEFAULT;
+	TextureDesc.BindFlags = D3D11_BIND_RENDER_TARGET;
+	TextureDesc.CPUAccessFlags = 0;
+	TextureDesc.MiscFlags = 0;
+
+	if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &m_pTexture2D)))
+		return E_FAIL;
+
+	if (FAILED(m_pDevice->CreateRenderTargetView(m_pTexture2D, nullptr, &m_pImGuiRTV)))
+		return E_FAIL;
+
+	m_vImGuiClearColor = _float4(0.f, 0.f, 1.f, 1.f);
+
 	return S_OK;
 }
 
 HRESULT CMainTool::Render_ImGui()
 {
+	// 여기서 내 백버퍼를 빼고 무슨 작업을 쳐놓고 그렸는데,
+	// 내백버퍼를 다시 장치에 바인딩하기위해 렌더 
+	ImGui::EndFrame();
+	ImGui::Render();
+	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+	ImGui::UpdatePlatformWindows();
+	ImGui::RenderPlatformWindowsDefault();
 
+	// 원래의 백버퍼를 다시 장치에 바인딩 해준다.
+	if (FAILED(m_pGameInstance->Bind_BackBuffer()))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CMainTool::Add_Windows()
+{
+	if (nullptr == m_pWindow_Manager)
+		return E_FAIL;
+
+	RECT rc;
+	ZEROMEM(&rc);
+	GetWindowRect(g_hWnd, &rc);
+
+	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("Object_Window"), 
+		CObject_Window::Create(m_pDevice, m_pContext, 
+			ImVec2(_float(rc.right), _float(rc.top)), ImVec2(100.f, 100.f)))))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -182,7 +241,6 @@ void CMainTool::Tick_ImGui()
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
-	ImGui::ShowDemoWindow();
 }
 
 CMainTool* CMainTool::Create()
@@ -204,10 +262,16 @@ void CMainTool::Free()
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
 
+	Safe_Release(m_pTexture2D);
+	Safe_Release(m_pImGuiRTV);
+
 	Safe_Release(m_pRenderer);
 	Safe_Release(m_pContext);
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pGameInstance);
+	Safe_Release(m_pWindow_Manager);
+
+	CWindow_Manager::DestroyInstance();
 
 	CGameInstance::Release_Engine();
 }

@@ -1,4 +1,5 @@
 #include "Shader_Tool_Defines.hlsli"
+
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
 struct VS_IN

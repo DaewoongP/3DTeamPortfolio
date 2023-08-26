@@ -118,6 +118,13 @@ HRESULT CGameInstance::Present()
 	return m_pGraphic_Device->Present();
 }
 
+HRESULT CGameInstance::Bind_BackBuffer()
+{
+	NULL_CHECK_RETURN_MSG(m_pGraphic_Device, E_FAIL, TEXT("Graphic_Device NULL"));
+
+	return m_pGraphic_Device->Bind_BackBuffer();
+}
+
 HRESULT CGameInstance::Add_Timer(const _tchar* pTimerTag)
 {
 	NULL_CHECK_RETURN_MSG(m_pTimer_Manager, E_FAIL, TEXT("Timer_Manager NULL"));

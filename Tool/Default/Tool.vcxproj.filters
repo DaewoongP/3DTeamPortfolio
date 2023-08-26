@@ -19,6 +19,15 @@
     <Filter Include="98. Default\Imgui_Default">
       <UniqueIdentifier>{d9acc146-504a-4f40-a657-dd9994c84984}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Window">
+      <UniqueIdentifier>{614d6d8f-f960-4582-83e1-7190663eaefa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Window\Window">
+      <UniqueIdentifier>{cfdcd44e-6616-4d20-8c99-444fef3abce8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Window\Window\Object">
+      <UniqueIdentifier>{2bc6b588-e6c2-45a9-9a6a-54d36e172674}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tool.h">
@@ -78,6 +87,15 @@
     <ClInclude Include="stb\stb_image_resize.h">
       <Filter>98. Default\Imgui_Default</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Window_Manager.h">
+      <Filter>01. Window</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ImWindow.h">
+      <Filter>01. Window\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Object_Window.h">
+      <Filter>01. Window\Window\Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -125,6 +143,15 @@
     </ClCompile>
     <ClCompile Include="ImGuiFileDialog.cpp">
       <Filter>98. Default\Imgui_Default</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Window_Manager.cpp">
+      <Filter>01. Window</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ImWindow.cpp">
+      <Filter>01. Window\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Object_Window.cpp">
+      <Filter>01. Window\Window\Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

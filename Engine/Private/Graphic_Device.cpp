@@ -84,6 +84,17 @@ HRESULT CGraphic_Device::Present()
 	return m_pSwapChain->Present(0, 0);
 }
 
+HRESULT CGraphic_Device::Bind_BackBuffer()
+{
+	NULL_CHECK_RETURN_MSG(m_pDeviceContext, E_FAIL, TEXT("Device Context NULL"));
+	NULL_CHECK_RETURN_MSG(m_pBackBufferRTV, E_FAIL, TEXT("BackBufferRTV NULL"));
+	NULL_CHECK_RETURN_MSG(m_pDepthStencilView, E_FAIL, TEXT("DepthStencilView NULL"));
+
+	m_pDeviceContext->OMSetRenderTargets(1, &m_pBackBufferRTV, m_pDepthStencilView);
+
+	return S_OK;
+}
+
 HRESULT CGraphic_Device::Ready_SwapChain(HWND hWnd, GRAPHICDESC::WINMODE eWinMode, _uint iWinCX, _uint iWinCY)
 {
 	IDXGIDevice* pDevice = nullptr;

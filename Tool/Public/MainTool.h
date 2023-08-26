@@ -1,10 +1,7 @@
 #pragma once
 #include "Base.h"
 #include "Tool_Defines.h"
-
-#include "imgui.h"
-#include "imgui_impl_win32.h"
-#include "imgui_impl_dx11.h"
+#include "Window_Manager.h"
 
 BEGIN(Engine)
 class CRenderer;
@@ -25,6 +22,7 @@ public:
 public:
 	HRESULT Initialize_ImGui();
 	HRESULT Render_ImGui();
+	HRESULT Add_Windows();
 	// 게임 전체에서 사용하기 위한 스태틱 컴포넌트 생성 함수
 	HRESULT Ready_Prototype_Component_For_Static();
 	HRESULT Ready_Fonts();
@@ -43,8 +41,14 @@ private:
 	ID3D11DeviceContext*	m_pContext = { nullptr };
 
 private:
+	_float4					m_vImGuiClearColor;
+	ID3D11Texture2D*		m_pTexture2D = { nullptr };
+	ID3D11RenderTargetView* m_pImGuiRTV = { nullptr };
+
+private:
 	CGameInstance*			m_pGameInstance = { nullptr };
 	CRenderer*				m_pRenderer = { nullptr };
+	CWindow_Manager*		m_pWindow_Manager = { nullptr };
 
 #ifdef _DEBUG
 private: /* For. Frame Per Second*/
