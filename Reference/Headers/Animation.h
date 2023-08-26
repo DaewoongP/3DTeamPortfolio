@@ -39,7 +39,7 @@ public:
 	void Delete_Rotation();
 
 public:
-	HRESULT Initialize(Engine::ANIMATION* pAnimation, const CModel::BONES& Bones);
+	HRESULT Initialize(Engine::ANIMATION Animation, const CModel::BONES& Bones);
 	void Invalidate_TransformationMatrix(CModel::BONES& Bones, _float fTimeDelta);
 
 private:
@@ -65,7 +65,7 @@ private:
 	_uint						m_iAnimationFrames = { 0 };
 
 public:
-	static CAnimation* Create(Engine::ANIMATION* pAnimation, const CModel::BONES& Bones);
+	static CAnimation* Create(Engine::ANIMATION Animation, const CModel::BONES& Bones);
 	CAnimation* Clone();
 	virtual void Free() override;
 };

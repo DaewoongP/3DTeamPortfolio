@@ -150,11 +150,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\private\MainConverter.cpp" />
+    <ClCompile Include="..\private\Model_Converter.cpp" />
     <ClCompile Include="Assimp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Assimp_Defines.h" />
     <ClInclude Include="..\public\MainConverter.h" />
+    <ClInclude Include="..\public\Model_Converter.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
