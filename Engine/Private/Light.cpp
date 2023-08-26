@@ -11,14 +11,14 @@ HRESULT CLight::Initialize(const LIGHTDESC & LightDesc)
 
 HRESULT CLight::Render(CShader* pShader, CVIBuffer_Rect* pVIBuffer)
 {
-	_uint		iPassIndex = 0;
+	_char szPassName[MAX_STR] = "";
 
 	if (TYPE_DIRECTIONAL == m_LightDesc.eType)
 	{
 		if (FAILED(pShader->Bind_RawValue("g_vLightDir", &m_LightDesc.vDir, sizeof(_float4))))
 			return E_FAIL;
 
-		iPassIndex = 1;
+		strcpy_s(szPassName, sizeof(_char) * MAX_STR, "Light_Directional");
 	}
 	else if (TYPE_POINT == m_LightDesc.eType)
 	{
@@ -28,7 +28,7 @@ HRESULT CLight::Render(CShader* pShader, CVIBuffer_Rect* pVIBuffer)
 		if (FAILED(pShader->Bind_RawValue("g_fLightRange", &m_LightDesc.fRange, sizeof(_float))))
 			return E_FAIL;
 
-		iPassIndex = 2;
+		strcpy_s(szPassName, sizeof(_char) * MAX_STR, "Light_Point");
 	}
 	else if (TYPE_SPOTLIGHT == m_LightDesc.eType)
 	{
@@ -41,7 +41,7 @@ HRESULT CLight::Render(CShader* pShader, CVIBuffer_Rect* pVIBuffer)
 		if (FAILED(pShader->Bind_RawValue("g_fSpotPower", &m_LightDesc.fSpotPower, sizeof(_float))))
 			return E_FAIL;
 
-		iPassIndex = 3;
+		strcpy_s(szPassName, sizeof(_char) * MAX_STR, "Light_Spotlight");
 	}
 
 	if (FAILED(pShader->Bind_RawValue("g_vLightDiffuse", &m_LightDesc.vDiffuse, sizeof(_float4))))
@@ -51,9 +51,11 @@ HRESULT CLight::Render(CShader* pShader, CVIBuffer_Rect* pVIBuffer)
 	if (FAILED(pShader->Bind_RawValue("g_vLightSpecular", &m_LightDesc.vSpecular, sizeof(_float4))))
 		return E_FAIL;
 
-	pShader->Begin(iPassIndex);
+	if (FAILED(pShader->Begin(szPassName)))
+		return E_FAIL;
 
-	pVIBuffer->Render();
+	if (FAILED(pVIBuffer->Render()))
+		return E_FAIL;
 
 	return S_OK;
 }

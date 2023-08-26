@@ -245,7 +245,7 @@ HRESULT CRenderer::Render_Deferred()
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Depth"), m_pDeferredShader, "g_DepthTexture")))
 		return E_FAIL;
 
-	if (FAILED(m_pDeferredShader->Begin(4)))
+	if (FAILED(m_pDeferredShader->Begin("Deferred")))
 		return E_FAIL;
 
 	if (FAILED(m_pDeferredBuffer->Render()))

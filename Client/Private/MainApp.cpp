@@ -170,6 +170,7 @@ CMainApp* CMainApp::Create()
 		MSG_BOX("Failed to Created CMainApp");
 		Safe_Release(pInstance);
 	}
+
 	return pInstance;
 }
 

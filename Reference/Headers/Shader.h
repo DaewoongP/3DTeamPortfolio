@@ -15,7 +15,7 @@ public:
 	virtual HRESULT Initialize(void* pArg) override;
 
 public:
-	HRESULT Begin(_uint iPassIndex);
+	HRESULT Begin(const _char* pPassName);
 
 public:
 	// 텍스처에서 만든 SRV를 던져 처리
@@ -29,15 +29,14 @@ public:
 	HRESULT Bind_Matrices(const _char * pConstantName, const _float4x4 * pMatrix, _uint iNumMatrices);
 	// 쉐이더파일에 바인딩 할 일반 변수
 	HRESULT Bind_RawValue(const _char * pConstantName, const void* pData, _uint iSize);
-	HRESULT	Bind_Rasterizer(const _char * pConstantName, const D3D11_RASTERIZER_DESC * pRasterizer);
 
 private:
 	ID3DX11Effect*				m_pEffect = { nullptr };
 	_uint						m_iNumPasses = { 0 };
-	vector<ID3D11InputLayout*>	m_InputLayouts;
+	unordered_map<const _char*, ID3D11InputLayout*>	m_InputLayouts;
 
 private:
-	ID3DX11EffectRasterizerVariable*	m_pRasterizer = { nullptr };
+	ID3D11InputLayout* Find_InputLayout(const _char * pPassName);
 
 public:
 	static CShader* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar * pShaderFilePath, const D3D11_INPUT_ELEMENT_DESC * pElements, _uint iNumElements);

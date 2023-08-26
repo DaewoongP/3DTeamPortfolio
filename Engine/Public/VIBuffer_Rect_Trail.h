@@ -28,9 +28,9 @@ public:
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick();
 	// 쉐이더 컬러 변수이름, 컬러값, 쉐이더 변수, 패스 인덱스
-	virtual HRESULT Render(const _char* pConstantName, _float4 vColor, class CShader* pShader, _uint iPassIndex);
+	virtual HRESULT Render(const _char* pConstantName, _float4 vColor, class CShader* pShader, const _char* pPassName);
 	// 쉐이더 텍스처 변수이름, 텍스처 변수, 쉐이더 변수, 패스 인덱스
-	virtual HRESULT Render(const _char* pConstantName, class CTexture* pTexture, class CShader* pShader, _uint iPassIndex);
+	virtual HRESULT Render(const _char* pConstantName, class CTexture* pTexture, class CShader* pShader, const _char* pPassName);
 
 private:
 	TRAILDESC			m_TrailDesc;

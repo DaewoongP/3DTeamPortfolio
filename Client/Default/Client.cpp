@@ -72,9 +72,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	SetConsoleWindowPosition(0, 0);
 #endif
 
-    // Main App
-    CMainApp* pMainApp = { nullptr };
-
     // 전역 문자열을 초기화합니다.
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
     LoadStringW(hInstance, IDC_CLIENT, szWindowClass, MAX_LOADSTRING);
@@ -88,7 +85,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_CLIENT));
 
-	pMainApp = CMainApp::Create();
+	CMainApp* pMainApp = CMainApp::Create();
 	NULL_CHECK_RETURN_MSG(pMainApp, FALSE, L"Failed Create MainApp");
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();

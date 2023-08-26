@@ -12,8 +12,8 @@ CShader::CShader(const CShader& rhs)
 	, m_iNumPasses(rhs.m_iNumPasses)
 	, m_InputLayouts(rhs.m_InputLayouts)
 {
-	for (auto& InputLayout : m_InputLayouts)
-		Safe_AddRef(InputLayout);
+	for (auto& pair : m_InputLayouts)
+		Safe_AddRef(pair.second);
 	Safe_AddRef(m_pEffect);
 }
 
@@ -57,7 +57,7 @@ HRESULT CShader::Initialize_Prototype(const _tchar* pShaderFilePath, const D3D11
 		if (nullptr == pInputLayout)
 			return E_FAIL;
 
-		m_InputLayouts.emplace_back(pInputLayout);
+		m_InputLayouts.insert({ PassDesc.Name, pInputLayout });
 	}
 
 
@@ -69,18 +69,26 @@ HRESULT CShader::Initialize(void* pArg)
 	return S_OK;
 }
 
-HRESULT CShader::Begin(_uint iPassIndex)
+HRESULT CShader::Begin(const _char* pPassName)
 {
-	if (iPassIndex >= m_iNumPasses)
+	if (nullptr == pPassName)
 		return E_FAIL;
 
 	ID3DX11EffectTechnique* pTechnique = m_pEffect->GetTechniqueByIndex(0);
 	if (nullptr == pTechnique)
 		return E_FAIL;
 
-	pTechnique->GetPassByIndex(iPassIndex)->Apply(0, m_pContext);
+	ID3DX11EffectPass* pPass = pTechnique->GetPassByName(pPassName);
+	if (nullptr == pPass)
+		return E_FAIL;
+		
+	pPass->Apply(0, m_pContext);
 
-	m_pContext->IASetInputLayout(m_InputLayouts[iPassIndex]);
+	ID3D11InputLayout* pInputLayout = Find_InputLayout(pPassName);
+	if (nullptr == pInputLayout)
+		return E_FAIL;
+
+	m_pContext->IASetInputLayout(pInputLayout);
 
 	return S_OK;
 }
@@ -161,23 +169,26 @@ HRESULT CShader::Bind_RawValue(const _char* pConstantName, const void* pData, _u
 	return pVariable->SetRawValue(pData, 0, iSize);
 }
 
-HRESULT CShader::Bind_Rasterizer(const _char* pConstantName, const D3D11_RASTERIZER_DESC* pRasterizer)
+ID3D11InputLayout* CShader::Find_InputLayout(const _char* pPassName)
 {
-	ID3D11RasterizerState* pState = { nullptr };
-	m_pDevice->CreateRasterizerState(pRasterizer, &pState);
+	ID3D11InputLayout* pInputLayout = { nullptr };
 
-	if (nullptr == pState)
-		return E_FAIL;
+	auto iter = find_if(m_InputLayouts.begin(), m_InputLayouts.end(), [&](auto& pair) {
+		if (!strcmp(pair.first, pPassName))
+		{
+			pInputLayout = pair.second;
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	});
 
-	m_pContext->RSSetState(pState);
-	m_pRasterizer = m_pEffect->GetVariableByName(pConstantName)->AsRasterizer();
+	if (m_InputLayouts.end() == iter)
+		return nullptr;
 
-	if (FAILED(m_pRasterizer->SetRasterizerState(0, pState)))
-		return E_FAIL;
-
-	Safe_Release(pState);
-
-	return S_OK;
+	return pInputLayout;
 }
 
 CShader* CShader::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pShaderFilePath, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements)
@@ -211,8 +222,8 @@ void CShader::Free()
 {
 	__super::Free();
 
-	for (auto& InputLayout : m_InputLayouts)
-		Safe_Release(InputLayout);
+	for (auto& pair : m_InputLayouts)
+		Safe_Release(pair.second);
 	m_InputLayouts.clear();
 
 	Safe_Release(m_pEffect);

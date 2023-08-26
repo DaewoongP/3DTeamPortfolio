@@ -29,7 +29,7 @@ public:
 
 #ifdef _DEBUG
 private:
-	void Tick_FPS(_float dTimeDelta);
+	void Tick_FPS(_float fTimeDelta);
 #endif // _DEBUG
 
 private:

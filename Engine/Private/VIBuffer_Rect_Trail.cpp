@@ -188,7 +188,7 @@ void CVIBuffer_Rect_Trail::Tick()
 	m_pContext->Unmap(m_pVB, 0);
 }
 
-HRESULT CVIBuffer_Rect_Trail::Render(const _char* pConstantName, _float4 vColor, CShader* pShader, _uint iPassIndex)
+HRESULT CVIBuffer_Rect_Trail::Render(const _char* pConstantName, _float4 vColor, CShader* pShader, const _char* pPassName)
 {
 	if (FAILED(Setup_ShaderResources(pShader)))
 		return E_FAIL;
@@ -196,13 +196,13 @@ HRESULT CVIBuffer_Rect_Trail::Render(const _char* pConstantName, _float4 vColor,
 	if (FAILED(pShader->Bind_RawValue(pConstantName, &vColor, sizeof(_float4))))
 		return E_FAIL;
 
-	if (FAILED(pShader->Begin(iPassIndex)))
+	if (FAILED(pShader->Begin(pPassName)))
 		return E_FAIL;
 
 	return __super::Render();
 }
 
-HRESULT CVIBuffer_Rect_Trail::Render(const _char* pConstantName, CTexture* pTexture, CShader* pShader, _uint iPassIndex)
+HRESULT CVIBuffer_Rect_Trail::Render(const _char* pConstantName, CTexture* pTexture, CShader* pShader, const _char* pPassName)
 {
 	if (FAILED(Setup_ShaderResources(pShader)))
 		return E_FAIL;
@@ -210,7 +210,7 @@ HRESULT CVIBuffer_Rect_Trail::Render(const _char* pConstantName, CTexture* pText
 	if (FAILED(pTexture->Bind_ShaderResource(pShader, "g_Texture")))
 		return E_FAIL;
 
-	if (FAILED(pShader->Begin(iPassIndex)))
+	if (FAILED(pShader->Begin(pPassName)))
 		return E_FAIL;
 
 	return __super::Render();

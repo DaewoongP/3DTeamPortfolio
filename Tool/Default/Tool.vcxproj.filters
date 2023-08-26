@@ -1,0 +1,148 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="00. MainTool">
+      <UniqueIdentifier>{3654671b-8662-4af0-abdd-65b50ce628f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99. Headers">
+      <UniqueIdentifier>{2a02e3f2-44f8-4aa9-a0e8-ecf763d9186f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98. Default">
+      <UniqueIdentifier>{b9b06cb4-abb6-4ad1-ba71-d0cc0804e001}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. ShaderFiles">
+      <UniqueIdentifier>{8a957de7-7378-40b7-874d-a7a07d96ca51}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00. MainTool\Level">
+      <UniqueIdentifier>{d8c8b302-88d9-4bc6-bd23-a738cf75870f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98. Default\Imgui_Default">
+      <UniqueIdentifier>{d9acc146-504a-4f40-a657-dd9994c84984}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Tool.h">
+      <Filter>98. Default</Filter>
+    </ClInclude>
+    <ClInclude Include="framework.h">
+      <Filter>98. Default</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>98. Default</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>98. Default</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MainTool.h">
+      <Filter>00. MainTool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Tool_Defines.h">
+      <Filter>99. Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Level_Tool.h">
+      <Filter>00. MainTool\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="backends\imgui_impl_win32.h">
+      <Filter>98. Default\Imgui_Default</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui.h">
+      <Filter>98. Default\Imgui_Default</Filter>
+    </ClInclude>
+    <ClInclude Include="backends\imgui_impl_dx11.h">
+      <Filter>98. Default\Imgui_Default</Filter>
+    </ClInclude>
+    <ClInclude Include="imconfig.h">
+      <Filter>98. Default\Imgui_Default</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_internal.h">
+      <Filter>98. Default\Imgui_Default</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGuiFileDialogConfig.h">
+      <Filter>98. Default\Imgui_Default</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGuiFileDialog.h">
+      <Filter>98. Default\Imgui_Default</Filter>
+    </ClInclude>
+    <ClInclude Include="imstb_rectpack.h">
+      <Filter>98. Default\Imgui_Default</Filter>
+    </ClInclude>
+    <ClInclude Include="imstb_textedit.h">
+      <Filter>98. Default\Imgui_Default</Filter>
+    </ClInclude>
+    <ClInclude Include="imstb_truetype.h">
+      <Filter>98. Default\Imgui_Default</Filter>
+    </ClInclude>
+    <ClInclude Include="stb\stb_image.h">
+      <Filter>98. Default\Imgui_Default</Filter>
+    </ClInclude>
+    <ClInclude Include="stb\stb_image_resize.h">
+      <Filter>98. Default\Imgui_Default</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="small.ico">
+      <Filter>98. Default</Filter>
+    </Image>
+    <Image Include="Tool.ico">
+      <Filter>98. Default</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Tool.rc">
+      <Filter>98. Default</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Tool.cpp">
+      <Filter>98. Default</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MainTool.cpp">
+      <Filter>00. MainTool</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Level_Tool.cpp">
+      <Filter>00. MainTool\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="backends\imgui_impl_dx11.cpp">
+      <Filter>98. Default\Imgui_Default</Filter>
+    </ClCompile>
+    <ClCompile Include="backends\imgui_impl_win32.cpp">
+      <Filter>98. Default\Imgui_Default</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui.cpp">
+      <Filter>98. Default\Imgui_Default</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_demo.cpp">
+      <Filter>98. Default\Imgui_Default</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_draw.cpp">
+      <Filter>98. Default\Imgui_Default</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_tables.cpp">
+      <Filter>98. Default\Imgui_Default</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_widgets.cpp">
+      <Filter>98. Default\Imgui_Default</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGuiFileDialog.cpp">
+      <Filter>98. Default\Imgui_Default</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Bin\ShaderFiles\Shader_Tool_Defines.hlsli">
+      <Filter>97. ShaderFiles</Filter>
+    </None>
+    <None Include="misc\debuggers\imgui.natstepfilter">
+      <Filter>98. Default\Imgui_Default</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Test.hlsl">
+      <Filter>97. ShaderFiles</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="misc\debuggers\imgui.natvis">
+      <Filter>98. Default\Imgui_Default</Filter>
+    </Natvis>
+  </ItemGroup>
+</Project>
