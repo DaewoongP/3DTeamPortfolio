@@ -27,6 +27,9 @@ public:
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;
 
+public:
+	void Move_Direction(_float3 vDirection, _float fTimeDelta, _float fSpeed = 1.f);
+
 private: // 공용적인 변수값
 	_float4x4		m_WorldMatrix;
 	_bool			m_isRigidBody = { false };
@@ -43,6 +46,7 @@ private: // 객체 변수값.
 	_float			m_fMass = { 0.f };
 	// 저항
 	_float			m_fResistance = { 0.f };
+	_float			m_fSpeed = { 0.f };
 
 public:
 	static CTransform* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);
