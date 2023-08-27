@@ -26,6 +26,8 @@
     <ClInclude Include="..\Public\Bounding_AABB.h" />
     <ClInclude Include="..\Public\Bounding_OBB.h" />
     <ClInclude Include="..\public\Bounding_Sphere.h" />
+    <ClInclude Include="..\public\Camera.h" />
+    <ClInclude Include="..\public\Camera_Manager.h" />
     <ClInclude Include="..\public\Cell.h" />
     <ClInclude Include="..\Public\Channel.h" />
     <ClInclude Include="..\public\Collider.h" />
@@ -92,6 +94,8 @@
     <ClCompile Include="..\Private\Bounding_AABB.cpp" />
     <ClCompile Include="..\Private\Bounding_OBB.cpp" />
     <ClCompile Include="..\private\Bounding_Sphere.cpp" />
+    <ClCompile Include="..\private\Camera.cpp" />
+    <ClCompile Include="..\private\Camera_Manager.cpp" />
     <ClCompile Include="..\private\Cell.cpp" />
     <ClCompile Include="..\Private\Channel.cpp" />
     <ClCompile Include="..\private\Collider.cpp" />

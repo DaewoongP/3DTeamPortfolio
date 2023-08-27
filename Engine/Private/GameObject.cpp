@@ -9,14 +9,14 @@ CGameObject::CGameObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 CGameObject::CGameObject(const CGameObject& rhs)
 	: CComposite(rhs)
 {
-	m_pTransformCom = static_cast<CTransform*>(rhs.m_pTransformCom->Clone(nullptr));
+	m_pTransform = static_cast<CTransform*>(rhs.m_pTransform->Clone(nullptr));
 }
 
 HRESULT CGameObject::Initialize_Prototype()
 {
-	m_pTransformCom = CTransform::Create(m_pDevice, m_pContext);
+	m_pTransform = CTransform::Create(m_pDevice, m_pContext);
 
-	if (nullptr == m_pTransformCom)
+	if (nullptr == m_pTransform)
 		return E_FAIL;
 
 	return S_OK;
@@ -24,11 +24,11 @@ HRESULT CGameObject::Initialize_Prototype()
 
 HRESULT CGameObject::Initialize(void* pArg)
 {
-	m_pTransformCom->Set_Owner(this);
+	m_pTransform->Set_Owner(this);
 
-	m_Components.emplace(TEXT("Com_Transform"), m_pTransformCom);
+	m_Components.emplace(TEXT("Com_Transform"), m_pTransform);
 
-	Safe_AddRef(m_pTransformCom);
+	Safe_AddRef(m_pTransform);
 
 	return S_OK;
 }
@@ -55,5 +55,5 @@ void CGameObject::Free()
 {
 	__super::Free();
 
-	Safe_Release(m_pTransformCom);
+	Safe_Release(m_pTransform);
 }

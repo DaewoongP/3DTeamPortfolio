@@ -24,7 +24,8 @@ public:
 	HRESULT Render_ImGui();
 	HRESULT Add_Windows();
 	// 게임 전체에서 사용하기 위한 스태틱 컴포넌트 생성 함수
-	HRESULT Ready_Prototype_Component_For_Static();
+	HRESULT Ready_Prototype_Component();
+	HRESULT Ready_Prototype_Object();
 	HRESULT Ready_Fonts();
 	HRESULT Open_Level(LEVELID eLevelIndex);
 

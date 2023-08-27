@@ -1,6 +1,8 @@
 #pragma once
 #include "Level.h"
 #include "Tool_Defines.h"
+#include "Terrain.h"
+
 
 BEGIN(Tool)
 
