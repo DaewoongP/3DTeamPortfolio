@@ -363,7 +363,7 @@
     <ClInclude Include="..\Public\Engine_Converter.h">
       <Filter>99. Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\matrix.h">
+    <ClInclude Include="..\Public\DirectXTK\matrix.h">
       <Filter>99. Headers</Filter>
     </ClInclude>
   </ItemGroup>
@@ -552,7 +552,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Private\matrix.inl">
+    <None Include="..\Public\DirectXTK\matrix.inl">
       <Filter>99. Headers</Filter>
     </None>
   </ItemGroup>

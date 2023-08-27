@@ -19,6 +19,8 @@ public:
 	_float3 Get_Up() const;
 	_float3 Get_Look() const;
 	_float3 Get_Translation() const;
+	_float4x4 Get_WorldMatrix() const;
+	_float4x4 Get_WorldMatrixPtr() const;
 
 public:
 	virtual HRESULT Initialize_Prototype() override;

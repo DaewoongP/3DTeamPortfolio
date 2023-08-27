@@ -1,3 +1,4 @@
+#include "SimpleMath.h"
 //-------------------------------------------------------------------------------------
 // SimpleMath.inl -- Simplified C++ Math wrapper for DirectXMath
 //
@@ -809,6 +810,24 @@ inline Vector3 Vector3::operator- () const noexcept
     return R;
 }
 
+inline Vector4 DirectX::SimpleMath::Vector3::TransCoord() const noexcept
+{
+	using namespace DirectX;
+    XMVECTOR v = XMVectorSet(this->x, this->y, this->z, 1.f);
+	Vector4 R;
+	XMStoreFloat4(&R, v);
+	return R;
+}
+
+inline Vector4 DirectX::SimpleMath::Vector3::TransNorm() const noexcept
+{
+	using namespace DirectX;
+	XMVECTOR v = XMVectorSet(this->x, this->y, this->z, 0.f);
+	Vector4 R;
+	XMStoreFloat4(&R, v);
+	return R;
+}
+
 //------------------------------------------------------------------------------
 // Binary operators
 //------------------------------------------------------------------------------
@@ -1396,6 +1415,12 @@ inline Vector4 Vector4::operator- () const noexcept
     Vector4 R;
     XMStoreFloat4(&R, X);
     return R;
+}
+
+inline Vector3 DirectX::SimpleMath::Vector4::xyz() const noexcept
+{
+    using namespace DirectX;
+    return Vector3(x, y, z);
 }
 
 //------------------------------------------------------------------------------

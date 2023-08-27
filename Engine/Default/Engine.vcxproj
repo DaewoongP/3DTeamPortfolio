@@ -35,6 +35,7 @@
     <ClInclude Include="..\public\Composite.h" />
     <ClInclude Include="..\public\CustomFont.h" />
     <ClInclude Include="..\Public\DebugDraw.h" />
+    <ClInclude Include="..\Public\DirectXTK\matrix.h" />
     <ClInclude Include="..\Public\Engine_Converter.h" />
     <ClInclude Include="..\public\Font_Manager.h" />
     <ClInclude Include="..\public\Frustum.h" />
@@ -53,7 +54,6 @@
     <ClInclude Include="..\Public\Level_Manager.h" />
     <ClInclude Include="..\Public\Light.h" />
     <ClInclude Include="..\Public\Light_Manager.h" />
-    <ClInclude Include="..\Public\matrix.h" />
     <ClInclude Include="..\Public\Mesh.h" />
     <ClInclude Include="..\Public\Model.h" />
     <ClInclude Include="..\public\Navigation.h" />
@@ -149,7 +149,7 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_PostProcessing.hlsl" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Private\matrix.inl" />
+    <None Include="..\Public\DirectXTK\matrix.inl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
