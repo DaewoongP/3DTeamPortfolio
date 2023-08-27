@@ -50,7 +50,7 @@ HRESULT CTerrain::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	//m_pShader->Begin();
+	m_pShader->Begin("Terrain");
 
 	if (FAILED(m_pBuffer->Render()))
 		return E_FAIL;
@@ -116,14 +116,36 @@ HRESULT CTerrain::SetUp_ShaderResources()
 
 CTerrain* CTerrain::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	return nullptr;
+	CTerrain* pInstance = New CTerrain(pDevice, pContext);
+
+	if (FAILED(pInstance->Initialize_Prototype()))
+	{
+		MSG_BOX("Failed to Created CTerrain");
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
 }
 
 CGameObject* CTerrain::Clone(void* pArg)
 {
-	return nullptr;
+	CTerrain* pInstance = New CTerrain(*this);
+
+	if (FAILED(pInstance->Initialize(pArg)))
+	{
+		MSG_BOX("Failed to Cloned CTerrain");
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
 }
 
 void CTerrain::Free()
 {
+	__super::Free();
+
+	Safe_Release(m_pTexture);
+	Safe_Release(m_pShader);
+	Safe_Release(m_pBuffer);
+	Safe_Release(m_pRenderer);
 }

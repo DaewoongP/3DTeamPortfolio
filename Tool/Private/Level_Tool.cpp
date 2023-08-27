@@ -46,7 +46,6 @@ HRESULT CLevel_Tool::Ready_For_Layer_Tool(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-
 	Safe_Release(pGameInstance);
 
 	return S_OK;

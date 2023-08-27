@@ -185,7 +185,7 @@ HRESULT CMainTool::Add_Windows()
 
 	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("Object_Window"), 
 		CObject_Window::Create(m_pDevice, m_pContext, 
-			ImVec2(_float(rc.right), _float(rc.top)), ImVec2(100.f, 100.f)))))
+			ImVec2(_float(0), _float(0)), ImVec2(200.f, 200.f)))))
 		return E_FAIL;
 
 	return S_OK;
@@ -218,7 +218,7 @@ HRESULT CMainTool::Ready_Prototype_Component()
 
 	/* Prototype_Component_Texture_Terrain */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Texture_Terrain"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Terrain/Tile%d.dds"), 2))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Terrain/Tile%d.dds"), 2))))
 		return E_FAIL;
 
 	return S_OK;
