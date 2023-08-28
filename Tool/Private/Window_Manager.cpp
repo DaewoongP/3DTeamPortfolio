@@ -1,5 +1,6 @@
 #include "..\Public\Window_Manager.h"
 #include "ImWindow.h"
+
 IMPLEMENT_SINGLETON(CWindow_Manager)
 
 HRESULT CWindow_Manager::Initialize()
@@ -28,7 +29,7 @@ HRESULT CWindow_Manager::Render()
 
 void CWindow_Manager::Menu(_float fTimeDelta)
 {
-	CMenu_WIndow* pMenuWindow = static_cast<CMenu_WIndow*>(Find_Window(L"Menu_Window"));
+	CMenu_Window* pMenuWindow = static_cast<CMenu_Window*>(Find_Window(L"Menu_Window"));
 	if(nullptr != pMenuWindow)
 		pMenuWindow->Tick(fTimeDelta);
 }

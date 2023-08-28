@@ -1,11 +1,11 @@
 #include "..\Public\Menu_Window.h"
 #include "Window_Manager.h"
-CMenu_WIndow::CMenu_WIndow(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CMenu_Window::CMenu_Window(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CImWindow(pDevice, pContext)
 {
 }
 
-HRESULT CMenu_WIndow::Initialize(ImVec2 vWindowPos, ImVec2 vWindowSize)
+HRESULT CMenu_Window::Initialize(ImVec2 vWindowPos, ImVec2 vWindowSize)
 {
 	if (FAILED(__super::Initialize(vWindowPos, vWindowSize)))
 		return E_FAIL;
@@ -15,7 +15,7 @@ HRESULT CMenu_WIndow::Initialize(ImVec2 vWindowPos, ImVec2 vWindowSize)
 	return S_OK;
 }
 
-void CMenu_WIndow::Tick(_float fTimeDelta)
+void CMenu_Window::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
@@ -49,12 +49,12 @@ void CMenu_WIndow::Tick(_float fTimeDelta)
 	ImGui::End();
 }
 
-HRESULT CMenu_WIndow::Render()
+HRESULT CMenu_Window::Render()
 {
 	return S_OK;
 }
 
-void CMenu_WIndow::Setup_Current_Window(const _tchar* pTag)
+void CMenu_Window::Setup_Current_Window(const _tchar* pTag)
 {
 	CWindow_Manager* pWindowMgr = CWindow_Manager::GetInstance();
 	Safe_AddRef(pWindowMgr);
@@ -64,13 +64,13 @@ void CMenu_WIndow::Setup_Current_Window(const _tchar* pTag)
 	Safe_Release(pWindowMgr);
 }
 
-CMenu_WIndow* CMenu_WIndow::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, ImVec2 vWindowPos, ImVec2 vWindowSize)
+CMenu_Window* CMenu_Window::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, ImVec2 vWindowPos, ImVec2 vWindowSize)
 {
-	CMenu_WIndow* pInstance = New CMenu_WIndow(pDevice, pContext);
+	CMenu_Window* pInstance = New CMenu_Window(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize(vWindowPos, vWindowSize)))
 	{
-		MSG_BOX("Failed Create CMenu_WIndow");
+		MSG_BOX("Failed Create CMenu_Window");
 		Safe_Release(pInstance);
 		return nullptr;
 	}
@@ -78,7 +78,7 @@ CMenu_WIndow* CMenu_WIndow::Create(ID3D11Device* pDevice, ID3D11DeviceContext* p
 	return pInstance;
 }
 
-void CMenu_WIndow::Free(void)
+void CMenu_Window::Free(void)
 {
 	__super::Free();
 }

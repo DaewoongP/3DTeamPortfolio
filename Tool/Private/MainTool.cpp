@@ -185,11 +185,11 @@ HRESULT CMainTool::Add_Windows()
 
 	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("Object_Window"), 
 		CObject_Window::Create(m_pDevice, m_pContext, 
-			ImVec2(_float(0), _float(0)), ImVec2(200.f, 200.f)))))
+			ImVec2(_float(rc.right), _float(rc.top)), ImVec2(100.f, 100.f)))))
 		return E_FAIL;
 
 	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("Menu_Window"),
-		CMenu_WIndow::Create(m_pDevice, m_pContext,
+		CMenu_Window::Create(m_pDevice, m_pContext,
 			ImVec2(_float(rc.left - 50.f), _float(rc.top)), ImVec2(200.f, 100.f)))))
 		return E_FAIL;
 

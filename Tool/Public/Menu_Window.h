@@ -3,15 +3,15 @@
 
 BEGIN(Tool)
 
-class CMenu_WIndow final : public CImWindow
+class CMenu_Window final : public CImWindow
 {
 private:
 	enum MENULIST { OBJECT_WINDOW, MESH_WINDOW, NAVIMESH_WINDOW, CAMERA_WINDOW, EFFECT_WINDOW
 	, ANIMATION_WINDOW, UI_WINDOW, LIGHT_WIDNOW, MENULIST_END };
 
 private:
-	explicit CMenu_WIndow(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual ~CMenu_WIndow() = default;
+	explicit CMenu_Window(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	virtual ~CMenu_Window() = default;
 
 public:
 	virtual HRESULT Initialize(ImVec2 vWindowPos, ImVec2 vWindowSize) override;
@@ -25,7 +25,7 @@ private:
 	MENULIST m_eCurMenuList = { MENULIST_END };
 
 public:
-	static CMenu_WIndow* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, ImVec2 vWindowPos, ImVec2 vWindowSize);
+	static CMenu_Window* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, ImVec2 vWindowPos, ImVec2 vWindowSize);
 	virtual void Free(void) override;
 };
 
