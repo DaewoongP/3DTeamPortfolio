@@ -1,6 +1,5 @@
 #include "..\Public\Window_Manager.h"
 #include "ImWindow.h"
-
 IMPLEMENT_SINGLETON(CWindow_Manager)
 
 HRESULT CWindow_Manager::Initialize()
@@ -10,19 +9,28 @@ HRESULT CWindow_Manager::Initialize()
 
 void CWindow_Manager::Tick(_float fTimeDelta)
 {
-	for (auto& pair : m_ImWindows)
-		pair.second->Tick(fTimeDelta);
+	Menu(fTimeDelta);
+
+	if (nullptr != m_pCurrrentWindow)
+		m_pCurrrentWindow->Tick(fTimeDelta);
 }
 
 HRESULT CWindow_Manager::Render()
 {
-	for (auto& pair : m_ImWindows)
+	if (nullptr != m_pCurrrentWindow)
 	{
-		if (FAILED(pair.second->Render()))
+		if (FAILED(m_pCurrrentWindow->Render()))
 			return E_FAIL;
 	}
-
+	
 	return S_OK;
+}
+
+void CWindow_Manager::Menu(_float fTimeDelta)
+{
+	CMenu_WIndow* pMenuWindow = static_cast<CMenu_WIndow*>(Find_Window(L"Menu_Window"));
+	if(nullptr != pMenuWindow)
+		pMenuWindow->Tick(fTimeDelta);
 }
 
 HRESULT CWindow_Manager::Add_Window(const _tchar* pWindowTag, CImWindow* pWindow)

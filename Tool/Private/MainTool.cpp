@@ -19,7 +19,7 @@ HRESULT CMainTool::Initialize()
 	// 그래픽 디바이스를 만들기 위한 구조체 할당
 	GRAPHICDESC		GraphicDesc;
 	ZEROMEM(&GraphicDesc);
-
+	
 	GraphicDesc.hWnd = g_hWnd;
 	GraphicDesc.iViewportSizeX = g_iWinSizeX;
 	GraphicDesc.iViewportSizeY = g_iWinSizeY;
@@ -27,7 +27,7 @@ HRESULT CMainTool::Initialize()
 
 	if (FAILED(m_pGameInstance->Initialize_Engine(g_hInst, LEVEL_END, GraphicDesc, &m_pDevice, &m_pContext)))
 		return E_FAIL;
-
+	
 	if (FAILED(Initialize_ImGui()))
 		return E_FAIL;
 
@@ -183,6 +183,11 @@ HRESULT CMainTool::Add_Windows()
 	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("Object_Window"), 
 		CObject_Window::Create(m_pDevice, m_pContext, 
 			ImVec2(_float(rc.right), _float(rc.top)), ImVec2(100.f, 100.f)))))
+		return E_FAIL;
+
+	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("Menu_Window"),
+		CMenu_WIndow::Create(m_pDevice, m_pContext,
+			ImVec2(_float(rc.left - 50.f), _float(rc.top)), ImVec2(200.f, 100.f)))))
 		return E_FAIL;
 
 	return S_OK;
