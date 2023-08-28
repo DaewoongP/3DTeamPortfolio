@@ -400,9 +400,6 @@ FodyWeavers.xsd
 *.exp
 *.exe
 
-# My data
-*.dat
-
 Engine.dll
 Engine_d.dll
 Engine.lib

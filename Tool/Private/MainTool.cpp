@@ -59,7 +59,7 @@ void CMainTool::Tick(_float fTimeDelta)
 	
 	Tick_ImGui();
 
-	ImGui::ShowDemoWindow();
+	//ImGui::ShowDemoWindow();
 
 	// 엔진의 Tick 호출
 	m_pGameInstance->Tick_Engine(fTimeDelta);
