@@ -35,7 +35,19 @@ HRESULT CLevel_Tool::Render()
 
 HRESULT CLevel_Tool::Ready_For_Layer_Tool(const _tchar* pLayerTag)
 {
-	
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	/* For.GameObject_Terrain */
+	if (FAILED(pGameInstance->Add_GameObject(LEVEL_TOOL,
+		TEXT("Prototype_GameObject_Terrain"), pLayerTag, TEXT("GameObject_Terrain"))))
+	{
+		MSG_BOX("Failed Add GameObject CTerrain");
+		return E_FAIL;
+	}
+
+	Safe_Release(pGameInstance);
+
 	return S_OK;
 }
 

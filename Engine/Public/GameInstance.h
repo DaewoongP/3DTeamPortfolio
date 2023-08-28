@@ -59,6 +59,14 @@ public: /* For.Input_Device*/
 	_long		Get_DIMouseMove(CInput_Device::MOUSEMOVESTATE eMouseMoveID);
 
 public: /* For.PipeLine*/
+	// 카메라에서 뷰, 투영 행렬 세팅
+	void Set_Transform(CPipeLine::D3DTRANSFORMSTATE eTransformState, _float4x4 TransformStateMatrix);
+	// 카메라에서 Far 값 세팅.
+	void Set_CameraFar(_float fCamFar);
+	const _float4x4* Get_TransformMatrix(CPipeLine::D3DTRANSFORMSTATE eTransformState);
+	const _float4x4* Get_TransformMatrix_Inverse(CPipeLine::D3DTRANSFORMSTATE eTransformState);
+	const _float4* Get_CamPosition();
+	const _float* Get_CamFar();
 
 public: /* For. Collision_Manager */
 	HRESULT Add_Collider(COLLISIONDESC::COLTYPE eCollisionType, class CCollider* pCollider);

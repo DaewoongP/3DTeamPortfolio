@@ -31,7 +31,10 @@ HRESULT CMainTool::Initialize()
 	if (FAILED(Initialize_ImGui()))
 		return E_FAIL;
 
-	if (FAILED(Ready_Prototype_Component_For_Static()))
+	if (FAILED(Ready_Prototype_Component()))
+		return E_FAIL;
+
+	if (FAILED(Ready_Prototype_Object()))
 		return E_FAIL;
 
 	if (FAILED(Ready_Fonts()))
@@ -182,7 +185,7 @@ HRESULT CMainTool::Add_Windows()
 
 	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("Object_Window"), 
 		CObject_Window::Create(m_pDevice, m_pContext, 
-			ImVec2(_float(rc.right), _float(rc.top)), ImVec2(100.f, 100.f)))))
+			ImVec2(_float(0), _float(0)), ImVec2(200.f, 200.f)))))
 		return E_FAIL;
 
 	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("Menu_Window"),
@@ -193,7 +196,7 @@ HRESULT CMainTool::Add_Windows()
 	return S_OK;
 }
 
-HRESULT CMainTool::Ready_Prototype_Component_For_Static()
+HRESULT CMainTool::Ready_Prototype_Component()
 {
 	if (nullptr == m_pGameInstance)
 		return E_FAIL;
@@ -206,6 +209,31 @@ HRESULT CMainTool::Ready_Prototype_Component_For_Static()
 		return E_FAIL;
 	}
 	Safe_AddRef(m_pRenderer);
+
+	/* Prototype_Component_Shader_Terrain */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Shader_Terrain"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Terrain.hlsl"),
+			VTXPOSNORTEX_DECL::Elements, VTXPOSNORTEX_DECL::iNumElements))))
+		return E_FAIL;
+
+	/* Prototype_Component_VIBuffer_Terrain */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_VIBuffer_Terrain"),
+		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, 500, 500))))
+		return E_FAIL;
+
+	/* Prototype_Component_Texture_Terrain */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Texture_Terrain"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Terrain/Tile%d.dds"), 2))))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CMainTool::Ready_Prototype_Object()
+{
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Terrain"),
+		CTerrain::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
 	return S_OK;
 }

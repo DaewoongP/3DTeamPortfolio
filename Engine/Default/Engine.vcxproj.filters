@@ -172,6 +172,12 @@
     <Filter Include="01. Utility\03. Components\01. Composite">
       <UniqueIdentifier>{53c2db70-b423-4c28-b85b-6fb6e33bc6d7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\05. Camera">
+      <UniqueIdentifier>{47cb3761-81e7-4e0d-ad60-98dfbc732f82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\05. Camera\Manager">
+      <UniqueIdentifier>{97f9a052-34b3-4b0e-b6bc-a338772e27c9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -366,6 +372,12 @@
     <ClInclude Include="..\Public\DirectXTK\matrix.h">
       <Filter>99. Headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Camera_Manager.h">
+      <Filter>01. Utility\05. Camera\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Camera.h">
+      <Filter>01. Utility\05. Camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -538,6 +550,12 @@
     </ClCompile>
     <ClCompile Include="..\private\VIBuffer_Color_Instance.cpp">
       <Filter>01. Utility\03. Components\07. VIBuffer\Instance</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Camera_Manager.cpp">
+      <Filter>01. Utility\05. Camera\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Camera.cpp">
+      <Filter>01. Utility\05. Camera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

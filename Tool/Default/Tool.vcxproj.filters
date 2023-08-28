@@ -30,6 +30,14 @@
     </Filter>
     <Filter Include="01. Window\Window\Menu">
       <UniqueIdentifier>{d2dddad3-80b1-45af-92f8-2df352e2f083}</UniqueIdentifier>
+    <Filter Include="02. ToolObjects">
+      <UniqueIdentifier>{b502ae6c-8fee-4ddd-97a3-10ad6e32360b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. ToolObjects\01. Dummy">
+      <UniqueIdentifier>{2a978e69-b607-4bbe-893c-3b5a6184f2b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. ToolObjects\00. Terrain">
+      <UniqueIdentifier>{4972e54d-e58c-4d7f-87fe-f634679e5a7d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -101,6 +109,8 @@
     </ClInclude>
     <ClInclude Include="..\public\Menu_WIndow.h">
       <Filter>01. Window\Window\Menu</Filter>
+    <ClInclude Include="..\public\Terrain.h">
+      <Filter>02. ToolObjects\00. Terrain</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -161,6 +171,8 @@
     </ClCompile>
     <ClCompile Include="..\private\Menu_WIndow.cpp">
       <Filter>01. Window\Window\Menu</Filter>
+    <ClCompile Include="..\private\Terrain.cpp">
+      <Filter>02. ToolObjects\00. Terrain</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -172,7 +184,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_Test.hlsl">
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Terrain.hlsl">
       <Filter>97. ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>

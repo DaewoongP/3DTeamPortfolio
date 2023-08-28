@@ -78,13 +78,20 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 	NULL_CHECK_RETURN_MSG(m_pObject_Manager, , TEXT("Object_Manager NULL"));
 	NULL_CHECK_RETURN_MSG(m_pPipeLine, , TEXT("PipeLine NULL"));
 	NULL_CHECK_RETURN_MSG(m_pInput_Device, , TEXT("Input_Device NULL"));
+	NULL_CHECK_RETURN_MSG(m_pCollision_Manager, , TEXT("Collsion_Manager NULL"));
 
 	m_pInput_Device->Tick();
+
 	m_pObject_Manager->Tick(fTimeDelta);
+
 	m_pPipeLine->Tick();
+
 	m_pFrustum->Tick();
+
 	m_pObject_Manager->Late_Tick(fTimeDelta);
+
 	m_pCollision_Manager->Tick();
+
 	m_pLevel_Manager->Tick(fTimeDelta);
 }
 
@@ -228,6 +235,48 @@ _long	CGameInstance::Get_DIMouseMove(CInput_Device::MOUSEMOVESTATE eMouseMoveID)
 	NULL_CHECK_RETURN_MSG(m_pInput_Device, 0, TEXT("Input_Device NULL"));
 
 	return m_pInput_Device->Get_DIMouseMove(eMouseMoveID);
+}
+
+void CGameInstance::Set_Transform(CPipeLine::D3DTRANSFORMSTATE eTransformState, _float4x4 TransformStateMatrix)
+{
+	NULL_CHECK_RETURN_MSG(m_pPipeLine, , TEXT("PipeLine NULL"));
+
+	return m_pPipeLine->Set_Transform(eTransformState, TransformStateMatrix);
+}
+
+void CGameInstance::Set_CameraFar(_float fCamFar)
+{
+	NULL_CHECK_RETURN_MSG(m_pPipeLine, , TEXT("PipeLine NULL"));
+
+	return m_pPipeLine->Set_CameraFar(fCamFar);
+}
+
+const _float4x4* CGameInstance::Get_TransformMatrix(CPipeLine::D3DTRANSFORMSTATE eTransformState)
+{
+	NULL_CHECK_RETURN_MSG(m_pPipeLine, nullptr, TEXT("PipeLine NULL"));
+
+	return m_pPipeLine->Get_TransformMatrix(eTransformState);
+}
+
+const _float4x4* CGameInstance::Get_TransformMatrix_Inverse(CPipeLine::D3DTRANSFORMSTATE eTransformState)
+{
+	NULL_CHECK_RETURN_MSG(m_pPipeLine, nullptr, TEXT("PipeLine NULL"));
+
+	return m_pPipeLine->Get_TransformMatrix_Inverse(eTransformState);
+}
+
+const _float4* CGameInstance::Get_CamPosition()
+{
+	NULL_CHECK_RETURN_MSG(m_pPipeLine, nullptr, TEXT("PipeLine NULL"));
+
+	return m_pPipeLine->Get_CamPosition();
+}
+
+const _float* CGameInstance::Get_CamFar()
+{
+	NULL_CHECK_RETURN_MSG(m_pPipeLine, nullptr, TEXT("PipeLine NULL"));
+
+	return m_pPipeLine->Get_CamFar();
 }
 
 HRESULT CGameInstance::Add_Collider(COLLISIONDESC::COLTYPE eCollisionType, CCollider* pCollider)

@@ -20,7 +20,8 @@ public:
 	_float3 Get_Look() const;
 	_float3 Get_Translation() const;
 	_float4x4 Get_WorldMatrix() const;
-	_float4x4 Get_WorldMatrixPtr() const;
+	const _float4x4* Get_WorldMatrixPtr() const;
+	_float4x4 Get_WorldMatrix_Inverse() const;
 
 public:
 	virtual HRESULT Initialize_Prototype() override;

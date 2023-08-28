@@ -166,6 +166,7 @@
     <ClInclude Include="..\public\MainTool.h" />
     <ClInclude Include="..\public\Menu_WIndow.h" />
     <ClInclude Include="..\public\Object_Window.h" />
+    <ClInclude Include="..\public\Terrain.h" />
     <ClInclude Include="..\Public\Tool_Defines.h" />
     <ClInclude Include="..\public\ImWindow.h" />
     <ClInclude Include="..\public\Window_Manager.h" />
@@ -192,6 +193,7 @@
     <ClCompile Include="..\private\ImWindow.cpp" />
     <ClCompile Include="..\private\Menu_WIndow.cpp" />
     <ClCompile Include="..\private\Object_Window.cpp" />
+    <ClCompile Include="..\private\Terrain.cpp" />
     <ClCompile Include="..\private\Window_Manager.cpp" />
     <ClCompile Include="backends\imgui_impl_dx11.cpp" />
     <ClCompile Include="backends\imgui_impl_win32.cpp" />
@@ -215,7 +217,7 @@
     <None Include="misc\debuggers\imgui.natstepfilter" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_Test.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Terrain.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="misc\debuggers\imgui.natvis" />

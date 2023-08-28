@@ -43,6 +43,21 @@ _float3 CTransform::Get_Translation() const
 	return m_WorldMatrix.Translation();
 }
 
+_float4x4 CTransform::Get_WorldMatrix() const
+{
+	return m_WorldMatrix;
+}
+
+const _float4x4* CTransform::Get_WorldMatrixPtr() const
+{
+	return &m_WorldMatrix;
+}
+
+_float4x4 CTransform::Get_WorldMatrix_Inverse() const
+{
+	return m_WorldMatrix.Inverse();
+}
+
 HRESULT CTransform::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
