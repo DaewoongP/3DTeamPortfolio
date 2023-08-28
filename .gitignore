@@ -402,3 +402,9 @@ FodyWeavers.xsd
 
 # My data
 *.dat
+
+Engine.dll
+Engine_d.dll
+Engine.lib
+Engine_d.lib
+*.cso
