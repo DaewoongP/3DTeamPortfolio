@@ -1,8 +1,8 @@
 #pragma once
 #include "Base.h"
 #include "Tool_Defines.h"
-
 #include "Object_Window.h"
+#include "Menu_WIndow.h"
 
 BEGIN(Tool)
 
@@ -14,10 +14,19 @@ private:
 	explicit CWindow_Manager() = default;
 	virtual ~CWindow_Manager() = default;
 
+public: // Setter
+	void Set_Cur_Window(CImWindow* pCurrrentWindow) {
+		if (nullptr == pCurrrentWindow)
+			return;
+
+		m_pCurrrentWindow = pCurrrentWindow;
+	}
+
 public:
 	HRESULT Initialize();
 	void Tick(_float fTimeDelta);
 	HRESULT Render();
+	void Menu(_float fTimeDelta);
 
 public:
 	HRESULT Add_Window(const _tchar* pWindowTag, class CImWindow* pWindow);
@@ -25,6 +34,7 @@ public:
 
 private:
 	unordered_map<const _tchar*, class CImWindow*>      m_ImWindows;
+	CImWindow*		m_pCurrrentWindow = { nullptr };
 
 public:
 	virtual void Free(void) override;

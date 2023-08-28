@@ -78,7 +78,6 @@ void CTransform::Tick(_float fTimeDelta)
 
 void CTransform::Move_Direction(_float3 vDirection, _float fTimeDelta, _float fSpeed)
 {
-	
 }
 
 CTransform* CTransform::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

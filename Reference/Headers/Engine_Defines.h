@@ -30,6 +30,8 @@
 #include "fmod\fmod.h"
 #include "fmod\fmod.hpp"
 
+#include "PhysX\PxPhysicsAPI.h"
+
 #include <iostream>
 #include <vector>
 #include <list>
