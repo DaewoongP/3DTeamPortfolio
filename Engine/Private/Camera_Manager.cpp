@@ -35,6 +35,8 @@ void CCamera_Manager::Late_Tick(_float _TimeDelta)
 HRESULT CCamera_Manager::Initialize_CameraManager()
 {
 	m_pPipeLine = CPipeLine::GetInstance();
+	Safe_AddRef(m_pPipeLine);
+
 	return S_OK;
 }
 
@@ -310,4 +312,5 @@ vector<OFFSETCAMERADESC>* CCamera_Manager::Find_OffSetCamera(const _tchar* _OffS
 
 void CCamera_Manager::Free()
 {
+	Safe_Release(m_pPipeLine);
 }
