@@ -193,6 +193,11 @@ HRESULT CMainTool::Add_Windows()
 			ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(446.f, 768.f)))))
 		return E_FAIL;
 
+	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("Animation_Window"),
+		CAnimation_Window::Create(m_pDevice, m_pContext,
+			ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(446.f, 768.f)))))
+		return E_FAIL;
+
 	return S_OK;
 }
 
