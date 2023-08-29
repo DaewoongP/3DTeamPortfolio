@@ -71,6 +71,10 @@ private: /* Post Processing */
 private: /* Shader_Type */
 	class CVIBuffer_Rect*			m_pShadeTypeBuffer = { nullptr };//각종 쉐이더처리 해줄때 쓸 것
 	class CShader*					m_pShadeTypeShader = { nullptr };
+
+private: /* Shader_Type */
+	class CVIBuffer_Rect*			m_pSSAOBuffer = { nullptr };//각종 쉐이더처리 해줄때 쓸 것
+	class CShader*					m_pSSAOShader = { nullptr };
 public:
 	static CRenderer* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);
 	virtual CComponent* Clone(void* pArg) override;
