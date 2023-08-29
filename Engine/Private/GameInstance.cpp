@@ -184,7 +184,7 @@ HRESULT CGameInstance::Render_Level()
 	return m_pLevel_Manager->Render();
 }
 
-HRESULT CGameInstance::Add_Prototype(const _tchar* pPrototypeTag, CGameObject* pPrototype)
+HRESULT CGameInstance::Add_Prototype_GameObject(const _tchar* pPrototypeTag, CGameObject* pPrototype)
 {
 	NULL_CHECK_RETURN_MSG(m_pObject_Manager, E_FAIL, TEXT("Object_Manager NULL"));
 	
@@ -198,7 +198,7 @@ HRESULT CGameInstance::Add_GameObject(_uint iLevelIndex, const _tchar* pPrototyp
 	return m_pObject_Manager->Add_GameObject(iLevelIndex, pPrototypeTag, pLayerTag, pGameObjectTag, pArg);
 }
 
-HRESULT CGameInstance::Add_Prototype(_uint iLevelIndex, const _tchar* pPrototypeTag, CComponent* pPrototype)
+HRESULT CGameInstance::Add_Prototype_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, CComponent* pPrototype)
 {
 	NULL_CHECK_RETURN_MSG(m_pComponent_Manager, E_FAIL, TEXT("Component_Manager NULL"));
 
@@ -460,14 +460,6 @@ HRESULT CGameInstance::ReadFileInDirectory(vector<wstring>& OutVector, const _tc
 	NULL_CHECK_RETURN_MSG(m_pCalculator, E_FAIL, TEXT("Calculator NULL"));
 
 	return m_pCalculator->ReadFileInDirectory(OutVector, pFilePath, pExt);
-}
-
-template<typename T>
-inline void CGameInstance::Clamp(T& _value, T _min, T _max)
-{
-	NULL_CHECK_RETURN_MSG(m_pCalculator, , TEXT("Calculator NULL"));
-
-	return m_pCalculator->Clamp(_value, _min, _max);
 }
 
 void CGameInstance::Release_Engine()

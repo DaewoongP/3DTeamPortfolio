@@ -281,17 +281,6 @@ HRESULT CCalculator::ReadFileInDirectory(_Inout_ vector<wstring>& OutVector, con
 	return S_OK;
 }
 
-template<typename T>
-inline void CCalculator::Clamp(T& _value, T _min, T _max)
-{
-	if (_min > _max)
-		std::swap(_min, _max);
-
-	_value = max(_value, _min);
-	_value = min(_value, _max);
-}
-
-
 void CCalculator::Free()
 {
 }

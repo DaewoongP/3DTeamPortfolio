@@ -24,8 +24,6 @@ public:
 	// 특정 시간마다 true 반환
 	_bool Timer(_float fAlarmTime, _float fTimeDelta);
 	_float4 Get_RandomVectorInSphere(_float fRadius);
-	template<typename T>
-	inline void Clamp(T& _value, T _min, T _max);
 	HRESULT ReadFileInDirectory(_Inout_ vector<wstring>& OutVector, const _tchar* pFilePath, const _tchar* pExt);
 
 private:
