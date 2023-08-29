@@ -54,6 +54,11 @@ HRESULT CGameObject::Render()
 	return S_OK;
 }
 
+HRESULT CGameObject::Render_Depth()
+{
+	return S_OK;
+}
+
 void CGameObject::Free()
 {
 	__super::Free();
