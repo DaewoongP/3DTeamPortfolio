@@ -143,7 +143,7 @@ HRESULT CLoader::Loading_For_MainGame()
 
 	/* For.Prototype_Component_VIBuffer_Terrain */
 	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Terrain"),
-		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, 500, 500))))
+		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, 531, 531))))
 	{
 		MSG_BOX("Failed Add_Prototype : (Prototype_Component_VIBuffer_Terrain)");
 		return E_FAIL;

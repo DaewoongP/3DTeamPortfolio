@@ -121,14 +121,14 @@ HRESULT CVIBuffer_Sprite::Render()
 	return S_OK;
 }
 
-void CVIBuffer_Sprite::Tick(const _double& TimeDelta)
+void CVIBuffer_Sprite::Tick(const _float& fTimeDelta)
 {
 	if (false == m_isPlay)
 		return;
 
 	/* 여기에 텍스처 uv의 좌표 4개를 만듦 */
 
-	m_fTimeAcc += TimeDelta;
+	m_fTimeAcc += fTimeDelta;
 	if (m_fFrameTick < m_fTimeAcc)
 	{
 		++m_iCurKeyFrame;

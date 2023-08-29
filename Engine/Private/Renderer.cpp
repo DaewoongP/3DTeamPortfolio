@@ -465,6 +465,7 @@ HRESULT CRenderer::Add_Components()
 
 	m_pShadeTypeBuffer = CVIBuffer_Rect::Create(m_pDevice, m_pContext);
 	if (nullptr == m_pShadeTypeBuffer)
+		return E_FAIL;
 
 	/*	m_pSSAOShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_SSAO.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements);
 	if (nullptr == m_pShadeTypeShader)

@@ -68,7 +68,7 @@ _bool CAlarm::Check_Timer(const wstring& wstrTimerTag)
 	if (m_Timers.end() == Timer)
 	{
 		MSG_BOX("[CAlarm] Tag is not in map");
-		return E_FAIL;
+		return false;
 	}
 
 	if (Timer->second.m_fDuration <= Timer->second.m_fTimeAcc)

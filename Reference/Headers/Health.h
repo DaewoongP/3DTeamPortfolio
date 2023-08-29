@@ -29,7 +29,7 @@ private:
 
 public:
 	/* 0.f ~ 1.f 사이의 퍼센트를 반환 */
-	const _float& Get_Current_HP_Percent() const {
+	_float Get_Current_HP_Percent() const {
 		return _float(m_iHP) / _float(m_iMaxHP);
 	}
 	const _int& Get_MaxHP() const {
@@ -41,7 +41,7 @@ public:
 	void Set_Max_Hp(const _int & iMaxHP) {
 		m_iMaxHP = iMaxHP;
 	}
-	const _bool& isDead() const {
+	_bool isDead() const {
 		return m_iHP <= 0 ? true : false;
 	}
 

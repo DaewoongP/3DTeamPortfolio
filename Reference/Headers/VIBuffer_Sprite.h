@@ -40,7 +40,7 @@ public:
 	virtual HRESULT Render() override;
 
 	/* Tick을 호출해야 스프라이트이미지가 변경됨. */
-	void Tick(const _double & TimeDelta);
+	void Tick(const _float & fTimeDelta);
 
 private:
 	_bool m_isRepeat = { true };
