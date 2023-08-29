@@ -17,6 +17,8 @@ public:
 private:
 	_float3 Find_PickingPos(class CVIBuffer* pVIBuffer); // 지형의 피킹 위치를 찾는 함수
 
+	_float m_fDist = { FLT_MAX }; // Find_PickingPos에서 사용하는 거리 변수
+
 public:
 	static CObject_Window* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, ImVec2 vWindowPos, ImVec2 vWindowSize);
 	virtual void Free(void) override;

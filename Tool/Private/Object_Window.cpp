@@ -50,18 +50,58 @@ _float3 CObject_Window::Find_PickingPos(CVIBuffer* pVIBuffer)
 
 	BEGININSTANCE; pGameInstance->Get_WorldMouseRay(m_pContext, g_hWnd, &vRayPos, &vRayDir); 
 
-	//vRayPos = *CPipeLine::GetInstance()->Get_CamPosition();
-
 	CVIBuffer_Terrain* pTerrain = static_cast<CVIBuffer_Terrain*>(
 		static_cast<CTerrain*>(pGameInstance->Find_GameObject_In_Layer(LEVEL_TOOL, TEXT("Layer_Tool"), 
-			TEXT("GameObject_Terrain")))->Get_Buffer());
+			TEXT("GameObject_Terrain")))->Get_Buffer()); ENDINSTANCE;
 
 	_float fDist = FLT_MAX;
+	m_fDist = FLT_MAX;
 
 	_uint ivtxcntX = pTerrain->Get_TerrainSizeX();
 	_uint ivtxcntZ = pTerrain->Get_TerrainSizeZ();
 
-	ENDINSTANCE;
+	const _float3* pTerrainVtxPos = pTerrain->Get_PosArray();
+
+	for (_ulong j = 0; j < ivtxcntZ - 1; ++j)
+	{
+		for (_ulong i = 0; i < ivtxcntX - 1; ++i)
+		{
+			_ulong dwIndex = i * ivtxcntX + j;
+
+			_ulong		iIndices[4] = {
+				dwIndex + ivtxcntX,
+				dwIndex + ivtxcntX + 1,
+				dwIndex + 1,
+				dwIndex
+			};
+
+			if (TriangleTests::Intersects(vRayPos, vRayDir,
+				pTerrainVtxPos[iIndices[0]], pTerrainVtxPos[iIndices[1]], pTerrainVtxPos[iIndices[2]],
+				fDist))
+			{
+				if (m_fDist > fDist)
+					m_fDist = fDist;
+			}
+
+			if (TriangleTests::Intersects(vRayPos, vRayDir,
+				pTerrainVtxPos[iIndices[0]], pTerrainVtxPos[iIndices[2]], pTerrainVtxPos[iIndices[3]],
+				fDist))
+			{
+				if (m_fDist > fDist)
+					m_fDist = fDist;
+			}
+		}
+	}
+
+	if (FLT_MAX > m_fDist)
+	{
+		_float4 vFinalPos;
+
+		vRayDir *= m_fDist;
+		vFinalPos = vRayPos + vRayDir;
+
+		return _float3(vFinalPos.x , vFinalPos.y, vFinalPos.z);
+	}
 
 	return _float3(-1.f, -1.f, -1.f);
 }

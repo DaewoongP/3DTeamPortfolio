@@ -9,6 +9,8 @@ CVIBuffer_Terrain::CVIBuffer_Terrain(const CVIBuffer_Terrain& rhs)
 	: CVIBuffer(rhs)
 	, m_pPos(rhs.m_pPos)
 	, m_pIndex(rhs.m_pIndex)
+	, m_iTerrainSizeX(rhs.m_iTerrainSizeX)
+	, m_iTerrainSizeZ(rhs.m_iTerrainSizeZ)
 {
 }
 
