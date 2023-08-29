@@ -22,6 +22,8 @@
     <ClInclude Include="..\private\MainModule.h" />
     <ClInclude Include="..\Public\Animation.h" />
     <ClInclude Include="..\Public\Base.h" />
+    <ClInclude Include="..\Public\Behavior.h" />
+    <ClInclude Include="..\Public\BlackBoard.h" />
     <ClInclude Include="..\Public\Bone.h" />
     <ClInclude Include="..\public\Bounding.h" />
     <ClInclude Include="..\Public\Bounding_AABB.h" />
@@ -39,6 +41,7 @@
     <ClInclude Include="..\public\Composite.h" />
     <ClInclude Include="..\public\CustomFont.h" />
     <ClInclude Include="..\Public\DebugDraw.h" />
+    <ClInclude Include="..\Public\Decorator.h" />
     <ClInclude Include="..\Public\DirectXTK\matrix.h" />
     <ClInclude Include="..\Public\Engine_Converter.h" />
     <ClInclude Include="..\public\Font_Manager.h" />
@@ -69,6 +72,9 @@
     <ClInclude Include="..\Public\Renderer.h" />
     <ClInclude Include="..\public\RenderTarget.h" />
     <ClInclude Include="..\public\RenderTarget_Manager.h" />
+    <ClInclude Include="..\Public\RootBehavior.h" />
+    <ClInclude Include="..\Public\Selector.h" />
+    <ClInclude Include="..\Public\Sequence.h" />
     <ClInclude Include="..\Public\Shader.h" />
     <ClInclude Include="..\Public\Sound_Manager.h" />
     <ClInclude Include="..\Public\Texture.h" />
@@ -93,6 +99,8 @@
   <ItemGroup>
     <ClCompile Include="..\Private\Animation.cpp" />
     <ClCompile Include="..\Private\Base.cpp" />
+    <ClCompile Include="..\Private\Behavior.cpp" />
+    <ClCompile Include="..\Private\BlackBoard.cpp" />
     <ClCompile Include="..\Private\Bone.cpp" />
     <ClCompile Include="..\private\Bounding.cpp" />
     <ClCompile Include="..\Private\Bounding_AABB.cpp" />
@@ -110,6 +118,7 @@
     <ClCompile Include="..\private\Composite.cpp" />
     <ClCompile Include="..\private\CustomFont.cpp" />
     <ClCompile Include="..\Private\DebugDraw.cpp" />
+    <ClCompile Include="..\Private\Decorator.cpp" />
     <ClCompile Include="..\private\Font_Manager.cpp" />
     <ClCompile Include="..\private\Frustum.cpp" />
     <ClCompile Include="..\Private\Input_Device.cpp" />
@@ -133,6 +142,9 @@
     <ClCompile Include="..\Private\Renderer.cpp" />
     <ClCompile Include="..\private\RenderTarget.cpp" />
     <ClCompile Include="..\private\RenderTarget_Manager.cpp" />
+    <ClCompile Include="..\Private\RootBehavior.cpp" />
+    <ClCompile Include="..\Private\Selector.cpp" />
+    <ClCompile Include="..\Private\Sequence.cpp" />
     <ClCompile Include="..\Private\Shader.cpp" />
     <ClCompile Include="..\Private\Sound_Manager.cpp" />
     <ClCompile Include="..\Private\Texture.cpp" />

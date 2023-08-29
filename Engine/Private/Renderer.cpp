@@ -124,6 +124,7 @@ HRESULT CRenderer::Draw_RenderGroup()
 
 	if (FAILED(Render_Priority()))
 		return E_FAIL;
+
 	if (FAILED(Render_NonBlend()))
 		return E_FAIL;
 	if (FAILED(Render_Lights()))

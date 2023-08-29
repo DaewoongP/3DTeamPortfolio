@@ -7,7 +7,7 @@ class CCamera_Manager final : public CBase
 {
 	DECLARE_SINGLETON(CCamera_Manager)
 private:
-	explicit CCamera_Manager();
+	explicit CCamera_Manager() = default;
 	virtual ~CCamera_Manager() = default;
 
 public:
