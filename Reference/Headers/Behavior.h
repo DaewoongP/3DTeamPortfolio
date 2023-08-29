@@ -2,6 +2,11 @@
 #include "Component.h"
 
 /*
+	CBehavior
+
+	정 : 주성환
+	부 : 
+
 	Behavior트리의 구성요소는 다음과 같다.
 	Root	-	ai 트리의 시작단계. 블랙보드를 가지고 있으며 모든 ai는
 				각자의 root를 가지고 있다.
@@ -9,7 +14,7 @@
 	Selector-	ai의 세부 분리자 역할1. 깊이우선 탐색의 역할을 가지고 있으며,
 				자식 노드가 false를 반환하면 다음 노드를 계속 탐색해서 true를 반환하는
 				노드를 만날 때 까지 순회를 한다. 만약 true를 반환하는 노드를 만날 경우
-				true를 반환하고 모든 노드를 순회했는데 다 false인경우 false를 반환한다.
+				true를 반환하고 모든 노드를 순회했는데, 전부 false인경우 false를 반환한다.
 
 	Sequence-	ai의 세부 분리자 역할2. 모든 노드를 순회하는 역할을 가지고 있으며,
 				자식노드가 하나이라도 False를 반환할 경우 False를 반환한다.
@@ -35,16 +40,10 @@ protected:
 	virtual ~CBehavior() = default;
 
 public:
-	const HRESULT& Get_Return_Data() const {
-		return m_ReturnData;
-	}
-	void Set_Return_Data(const HRESULT& iReturnData) {
-		m_ReturnData = iReturnData;
-	}
 
 public:
-	virtual HRESULT Initialize_Prototype() override = 0;
-	virtual HRESULT Initialize(void* pArg) override = 0;
+	virtual HRESULT Initialize_Prototype() = 0;
+	virtual HRESULT Initialize(void* pArg) = 0;
 	virtual HRESULT Tick(const _float & fTimeDelta) = 0;
 
 public:
@@ -71,6 +70,10 @@ protected:
 protected:
 	virtual CBehavior* Clone(void* pArg) = 0;
 	virtual void Free() override;
+
+#ifdef _DEBUG
+	void Find_Running_Behavior(_Inout_ stack<wstring> BehaviorTags);
+#endif // _DEBUG
 };
 
 END

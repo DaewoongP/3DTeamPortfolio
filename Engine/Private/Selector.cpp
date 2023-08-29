@@ -19,7 +19,6 @@ HRESULT CSelector::Tick(const _float& fTimeDelta)
 		return BEHAVIOR_FAIL;
 
 	HRESULT hr = (*m_iterCurBehavior)->Tick(fTimeDelta);
-	(*m_iterCurBehavior)->Set_Return_Data(hr);
 
 	switch (hr)
 	{

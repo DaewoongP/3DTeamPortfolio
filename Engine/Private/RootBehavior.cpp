@@ -1,6 +1,7 @@
 #include "RootBehavior.h"
 
 #include "BlackBoard.h"
+#include "GameInstance.h"
 
 CRootBehavior::CRootBehavior(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CBehavior(pDevice, pContext)
@@ -26,8 +27,16 @@ HRESULT CRootBehavior::Initialize(void* pArg)
 
 HRESULT CRootBehavior::Tick(const _float& fTimeDelta)
 {
+#ifdef _DEBUG
+	while (0 < m_DebugBehaviorTags.size())
+		m_DebugBehaviorTags.pop();
+#endif // _DEBUG
+
 	HRESULT hr = (*m_iterCurBehavior)->Tick(fTimeDelta);
-	(*m_iterCurBehavior)->Set_Return_Data(hr);
+
+#ifdef _DEBUG
+	Find_Running_Behavior(m_DebugBehaviorTags);
+#endif // _DEBUG
 
 	switch (hr)
 	{
@@ -84,3 +93,38 @@ void CRootBehavior::Free()
 {
 	__super::Free();
 }
+
+#ifdef _DEBUG
+
+HRESULT CRootBehavior::Render()
+{
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	_float2 vFontPosition = m_vFontPosition;
+
+	while (0 < m_DebugBehaviorTags.size())
+	{
+		wstring wstrBehaviorTag = m_DebugBehaviorTags.top();
+
+		if (FAILED(pGameInstance->Render_Font(L"Font_135", wstrBehaviorTag.c_str(), vFontPosition)))
+			return E_FAIL;
+
+		vFontPosition.y -= 2.f;
+
+		m_DebugBehaviorTags.pop();
+	}
+
+	Safe_Release(pGameInstance);
+
+	return S_OK;
+}
+
+HRESULT CRootBehavior::Add_Render_Debug_Group(const _float2& vFontPosition, CRenderer* pRenderer)
+{
+	m_vFontPosition = vFontPosition;
+
+	return pRenderer->Add_DebugGroup(this);
+}
+
+#endif // _DEBUG

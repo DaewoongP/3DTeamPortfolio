@@ -1,5 +1,11 @@
 #pragma once
 
+/*
+*	CSequence
+*	정 : 주성환
+*	부 :
+*/
+
 #include "Behavior.h"
 
 BEGIN(Engine)
