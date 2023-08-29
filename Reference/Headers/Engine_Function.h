@@ -74,19 +74,4 @@ namespace Engine
 	private:
 		const wchar_t* m_pTargetTag = nullptr;
 	};
-
-	// 값의 범위를 제한하는 함수
-	// ex)
-	// int value = 11;
-	// Clamp(value, 0, 10);
-	// 결과 : value = 10; 
-	template<typename T>
-	inline void Clamp(T& _value, T _min, T _max)
-	{
-		if (_min > _max)
-			std::swap(_min, _max);
-
-		_value = max(_value, _min);
-		_value = min(_value, _max);
-	}
 }
