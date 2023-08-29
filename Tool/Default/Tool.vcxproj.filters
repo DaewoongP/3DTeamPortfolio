@@ -37,6 +37,9 @@
     <Filter Include="02. ToolObjects\00. Terrain">
       <UniqueIdentifier>{4972e54d-e58c-4d7f-87fe-f634679e5a7d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Window\Window\Effect">
+      <UniqueIdentifier>{37ceec7f-c6e3-4d9c-821b-540ccead54ed}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. ToolObjects\02. Camera">
       <UniqueIdentifier>{29c98f31-784c-4063-929c-8e2c7599ba88}</UniqueIdentifier>
     </Filter>
@@ -114,6 +117,9 @@
     <ClInclude Include="..\public\Terrain.h">
       <Filter>02. ToolObjects\00. Terrain</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Effect_Window.h">
+      <Filter>01. Window\Window\Effect</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\Camera_Free.h">
       <Filter>02. ToolObjects\02. Camera</Filter>
     </ClInclude>
@@ -179,6 +185,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Terrain.cpp">
       <Filter>02. ToolObjects\00. Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Effect_Window.cpp">
+      <Filter>01. Window\Window\Effect</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Camera_Free.cpp">
       <Filter>02. ToolObjects\02. Camera</Filter>

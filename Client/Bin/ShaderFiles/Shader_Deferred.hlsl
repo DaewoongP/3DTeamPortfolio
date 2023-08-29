@@ -1,4 +1,6 @@
 
+
+
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix g_ViewMatrixInv, g_ProjMatrixInv;
 
@@ -173,7 +175,7 @@ struct PS_OUT
 PS_OUT PS_MAIN_DEBUG(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
-
+    
     Out.vColor = g_Texture.Sample(LinearSampler, In.vTexUV);
 
     return Out;
