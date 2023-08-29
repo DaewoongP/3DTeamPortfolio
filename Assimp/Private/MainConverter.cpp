@@ -1,4 +1,5 @@
 #include "..\Public\MainConverter.h"
+#include "GameInstance.h"
 
 HRESULT CMainConverter::Model_Convert(_uint iType, const _tchar* pFilePath)
 {

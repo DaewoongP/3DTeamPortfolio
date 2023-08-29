@@ -122,6 +122,8 @@ public: /* For. Calculator */
 	// 결과 : value = 10;
 	template<typename T>
 	inline void Clamp(T& _value, T _min, T _max);
+	// FilePath 내의 모든 파일을 순회하면서 Ext 확장자에 맞는 파일들을 OutVector에 넣어줍니다.
+	HRESULT ReadFileInDirectory(_Inout_ vector<wstring>& OutVector, const _tchar* pFilePath, const _tchar* pExt);
 
 private:
 	class CGraphic_Device*			m_pGraphic_Device = { nullptr };

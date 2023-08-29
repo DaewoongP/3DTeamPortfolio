@@ -41,8 +41,6 @@ void CEffect_Window::Tick(_float fTimeDelta)
 	}
 
 	ImGui::End();
-
-	//ImGui::ShowDemoWindow();
 }
 
 HRESULT CEffect_Window::Render()

@@ -455,6 +455,13 @@ _float4 CGameInstance::Get_RandomVectorInSphere(_float fRadius)
 	return m_pCalculator->Get_RandomVectorInSphere(fRadius);
 }
 
+HRESULT CGameInstance::ReadFileInDirectory(vector<wstring>& OutVector, const _tchar* pFilePath, const _tchar* pExt)
+{
+	NULL_CHECK_RETURN_MSG(m_pCalculator, E_FAIL, TEXT("Calculator NULL"));
+
+	return m_pCalculator->ReadFileInDirectory(OutVector, pFilePath, pExt);
+}
+
 template<typename T>
 inline void CGameInstance::Clamp(T& _value, T _min, T _max)
 {

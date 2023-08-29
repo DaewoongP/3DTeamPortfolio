@@ -26,6 +26,7 @@ public:
 	_float4 Get_RandomVectorInSphere(_float fRadius);
 	template<typename T>
 	inline void Clamp(T& _value, T _min, T _max);
+	HRESULT ReadFileInDirectory(_Inout_ vector<wstring>& OutVector, const _tchar* pFilePath, const _tchar* pExt);
 
 private:
 	_float	m_fAlarmTimeAcc = { 0.f };
