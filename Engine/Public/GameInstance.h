@@ -115,6 +115,13 @@ public: /* For. Calculator */
 	_bool Timer(_float fAlarmTime, _float fTimeDelta);
 	// 반지름 길이를 입력하면 그 반지름 내부에서 방향벡터를 랜덤하게 뽑아주는 함수입니다.
 	_float4 Get_RandomVectorInSphere(_float fRadius);
+	// 값의 범위를 제한하는 함수
+	// ex)
+	// int value = 11;
+	// Clamp(value, 0, 10);
+	// 결과 : value = 10;
+	template<typename T>
+	inline void Clamp(T& _value, T _min, T _max);
 
 private:
 	class CGraphic_Device*			m_pGraphic_Device = { nullptr };

@@ -24,6 +24,8 @@ public:
 	// 특정 시간마다 true 반환
 	_bool Timer(_float fAlarmTime, _float fTimeDelta);
 	_float4 Get_RandomVectorInSphere(_float fRadius);
+	template<typename T>
+	inline void Clamp(T& _value, T _min, T _max);
 
 private:
 	_float	m_fAlarmTimeAcc = { 0.f };

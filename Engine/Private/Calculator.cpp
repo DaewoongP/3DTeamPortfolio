@@ -248,6 +248,16 @@ _float4 CCalculator::Get_RandomVectorInSphere(_float fRadius)
 	return XMLoadFloat3(&vDir);
 }
 
+template<typename T>
+inline void CCalculator::Clamp(T& _value, T _min, T _max)
+{
+	if (_min > _max)
+		std::swap(_min, _max);
+
+	_value = max(_value, _min);
+	_value = min(_value, _max);
+}
+
 void CCalculator::Free()
 {
 }

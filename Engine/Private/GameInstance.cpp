@@ -455,6 +455,14 @@ _float4 CGameInstance::Get_RandomVectorInSphere(_float fRadius)
 	return m_pCalculator->Get_RandomVectorInSphere(fRadius);
 }
 
+template<typename T>
+inline void CGameInstance::Clamp(T& _value, T _min, T _max)
+{
+	NULL_CHECK_RETURN_MSG(m_pCalculator, , TEXT("Calculator NULL"));
+
+	return m_pCalculator->Clamp(_value, _min, _max);
+}
+
 void CGameInstance::Release_Engine()
 {
 	CGameInstance::GetInstance()->DestroyInstance();
