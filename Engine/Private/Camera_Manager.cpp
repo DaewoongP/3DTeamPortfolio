@@ -36,7 +36,7 @@ void CCamera_Manager::Late_Tick(_float _TimeDelta)
 
 HRESULT CCamera_Manager::Initialize_CameraManager()
 {
-	m_pPipeLine = CPipeLine::GetInstance();
+	m_pPipeLine = CPipeLine::GetInstance(); 
 	return S_OK;
 }
 
