@@ -22,6 +22,7 @@ public:
 	virtual HRESULT Initialize(void* pArg) override;
 
 public:
+	void Culling(_Matrix WorldMatrix);
 	HRESULT RemakeTerrain(const _tchar * pHeightMap);
 	HRESULT RemakeTerrain(_uint iTerrainSizeX, _uint iTerrainSizeY);
 
@@ -31,6 +32,8 @@ private:
 
 	_uint				m_iTerrainSizeX = { 0 };
 	_uint				m_iTerrainSizeZ = { 0 };
+
+	class CQuadTree* m_pQuadTree = { nullptr };
 
 public:
 	static CVIBuffer_Terrain* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar * pHeightMap);

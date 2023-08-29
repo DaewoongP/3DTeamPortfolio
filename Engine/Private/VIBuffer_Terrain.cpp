@@ -1,4 +1,6 @@
 #include "..\Public\VIBuffer_Terrain.h"
+#include "Frustum.h"
+#include "QuadTree.h"
 
 CVIBuffer_Terrain::CVIBuffer_Terrain(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CVIBuffer(pDevice, pContext)
@@ -9,9 +11,11 @@ CVIBuffer_Terrain::CVIBuffer_Terrain(const CVIBuffer_Terrain& rhs)
 	: CVIBuffer(rhs)
 	, m_pPos(rhs.m_pPos)
 	, m_pIndex(rhs.m_pIndex)
+	, m_pQuadTree(rhs.m_pQuadTree)
 	, m_iTerrainSizeX(rhs.m_iTerrainSizeX)
 	, m_iTerrainSizeZ(rhs.m_iTerrainSizeZ)
 {
+	Safe_AddRef(m_pQuadTree);
 }
 
 HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMap)
@@ -175,6 +179,11 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMap)
 
 #pragma endregion
 
+	m_pQuadTree = CQuadTree::Create(iNumVerticesX * iNumVerticesZ - iNumVerticesX,
+		iNumVerticesX * iNumVerticesZ - 1,
+		iNumVerticesX - 1,
+		0);
+
 	return S_OK;
 }
 
@@ -278,6 +287,11 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(_uint iTerrainSizeX, _uint iTerr
 
 	Safe_Delete_Array(pVertices);
 	Safe_Delete_Array(pIndices);
+
+	m_pQuadTree = CQuadTree::Create(iTerrainSizeX * iTerrainSizeY - iTerrainSizeY,
+		iTerrainSizeX * iTerrainSizeY - 1,
+		iTerrainSizeX - 1,
+		0);
 	
 	return S_OK;
 }
@@ -287,12 +301,37 @@ HRESULT CVIBuffer_Terrain::Initialize(void* pArg)
 	return S_OK;
 }
 
+void CVIBuffer_Terrain::Culling(_Matrix WorldMatrix)
+{
+	CFrustum* pFrustum = CFrustum::GetInstance();
+	Safe_AddRef(pFrustum);
+
+	pFrustum->Transform_ToLocalSpace(WorldMatrix);
+
+	_uint		iNumIndices = { 0 };
+
+	m_pQuadTree->Culling(pFrustum, m_pPos, m_pIndex, &iNumIndices);
+
+	D3D11_MAPPED_SUBRESOURCE		SubResource;
+
+	m_pContext->Map(m_pIB, 0, D3D11_MAP_WRITE_DISCARD, 0, &SubResource);
+
+	memcpy(SubResource.pData, m_pIndex, sizeof(_uint) * iNumIndices);
+
+	m_pContext->Unmap(m_pIB, 0);
+
+	m_iNumIndices = iNumIndices;
+
+	Safe_Release(pFrustum);
+}
+
 HRESULT CVIBuffer_Terrain::RemakeTerrain(const _tchar* pHeightMap)
 {
 	Safe_Delete_Array(m_pPos);
 	Safe_Delete_Array(m_pIndex);
 	Safe_Release(m_pVB);
 	Safe_Release(m_pIB);
+	Safe_Release(m_pQuadTree);
 	if (FAILED(Initialize_Prototype(pHeightMap)))
 		return E_FAIL;
 	return S_OK;
@@ -304,6 +343,7 @@ HRESULT CVIBuffer_Terrain::RemakeTerrain(_uint iTerrainSizeX, _uint iTerrainSize
 	Safe_Delete_Array(m_pIndex);
 	Safe_Release(m_pVB);
 	Safe_Release(m_pIB);
+	Safe_Release(m_pQuadTree);
 	if (FAILED(Initialize_Prototype(iTerrainSizeX, iTerrainSizeY)))
 		return E_FAIL;
 	return S_OK;
@@ -353,4 +393,6 @@ void CVIBuffer_Terrain::Free()
 		Safe_Delete_Array(m_pPos);
 		Safe_Delete_Array(m_pIndex);
 	}
+
+	Safe_Release(m_pQuadTree);
 }

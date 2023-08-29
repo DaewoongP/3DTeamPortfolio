@@ -84,7 +84,7 @@ HRESULT CQuadTree::Make_Neighbors()
 	return S_OK;
 }
 
-void CQuadTree::Culling(CFrustum * pFrustum, const _float3 * pVerticesPos, _ulong * pIndices, _uint * pNumIndices)
+void CQuadTree::Culling(CFrustum * pFrustum, const _float3 * pVerticesPos, _uint * pIndices, _uint * pNumIndices)
 {
 	/* 가장 작은 쿼드트리만 들어와. || 
 	내가 잡아놓은 조건을 만족하면 바로 들어와서 그려. */
@@ -285,4 +285,3 @@ void CQuadTree::Free()
 	}
 
 }
-
