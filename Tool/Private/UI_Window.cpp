@@ -23,7 +23,7 @@ HRESULT CUI_Window::Initialize(ImVec2 vWindowPos, ImVec2 vWindowSize)
 
 	m_TreeDesc.m_wstrName = TEXT("../../Resources/UI/");
 	m_TreeDesc.m_isFolder = true;
-	Read_File_In_Directory_Tree(m_TreeDesc, TEXT("../../Resources/UI/"), TEXT(".png"));
+	//Read_File_In_Directory_Tree(m_TreeDesc, TEXT("../../Resources/UI/"), TEXT(".png"));
 
 	return S_OK;
 }
@@ -71,14 +71,14 @@ void CUI_Window::Open_File_Path_Tree(UI_Tree* pTree)
 {
 	if (pTree->m_isFolder)
 	{
-		char szChar[MAX_STR];
-		memset(szChar, 0, sizeof(char));
+		_char szChar[MAX_STR];
+		memset(szChar, 0, sizeof(_char));
 		WCharToChar(pTree->m_wstrName.c_str(), szChar);
 
-		int iIndex = 0;
+		_int iIndex = 0;
 		if (pTree->m_wstrName.find(TEXT("Resources")) != string::npos)
 		{
-			iIndex = pTree->m_wstrName.find(TEXT("Resources"));   //해당 문자의 시작 인덱스 반환
+			iIndex = _int(pTree->m_wstrName.find(TEXT("Resources")));   //해당 문자의 시작 인덱스 반환
 		}
 
 		wstring wstrPath = pTree->m_wstrName.substr(iIndex, pTree->m_wstrName.length());
@@ -95,15 +95,15 @@ void CUI_Window::Open_File_Path_Tree(UI_Tree* pTree)
 	}
 	else
 	{
-		char szChar[MAX_STR];
-		memset(szChar, 0, sizeof(char));
+		_char szChar[MAX_STR];
+		memset(szChar, 0, sizeof(_char));
 		WCharToChar(pTree->m_wstrName.c_str(), szChar);
 
-		char szFileName[MAX_PATH] = "";
-		char szExt[MAX_PATH] = "";
+		_char szFileName[MAX_PATH] = "";
+		_char szExt[MAX_PATH] = "";
 		_splitpath_s(szChar, nullptr, 0, nullptr, 0, szFileName, MAX_PATH, szExt, MAX_PATH);
 
-		char szFullPath[MAX_PATH] = "";
+		_char szFullPath[MAX_PATH] = "";
 		strcat_s(szFullPath, szFileName);
 		strcat_s(szFullPath, szExt);
 
@@ -116,7 +116,7 @@ void CUI_Window::Open_File_Path_Tree(UI_Tree* pTree)
 	}
 }
 
-HRESULT CUI_Window::Read_File_In_Directory_Tree(UI_Tree& Root, const _tchar* pFilePath, const _tchar* pExt)
+HRESULT CUI_Window::Read_File_In_Directory_Tree(_Inout_ UI_Tree& Root, const _tchar* pFilePath, const _tchar* pExt)
 {
 	// 디렉토리 경로를 순회할 iterator
 	fs::directory_iterator iter(fs::absolute(pFilePath));

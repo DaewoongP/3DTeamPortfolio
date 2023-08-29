@@ -19,7 +19,7 @@ texture2D g_ShadowTexture;
 texture2D g_vLightDepthTexture;
 
 
-float3 g_Diffuse = (1.f, 1.f, 1.f);
+float3 g_Diffuse = float3(1.f, 1.f, 1.f);
 
 float g_Metallic = 0.5f;
 float g_Roughness = 0.5f;
