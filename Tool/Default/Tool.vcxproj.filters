@@ -37,6 +37,9 @@
     <Filter Include="02. ToolObjects\00. Terrain">
       <UniqueIdentifier>{4972e54d-e58c-4d7f-87fe-f634679e5a7d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Window\Window\UI">
+      <UniqueIdentifier>{05d913c5-58e8-4c63-8c76-3241b4090d81}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tool.h">
@@ -108,6 +111,9 @@
     <ClInclude Include="..\public\Terrain.h">
       <Filter>02. ToolObjects\00. Terrain</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_Window.h">
+      <Filter>01. Window\Window\UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -167,6 +173,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Terrain.cpp">
       <Filter>02. ToolObjects\00. Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Window.cpp">
+      <Filter>01. Window\Window\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
