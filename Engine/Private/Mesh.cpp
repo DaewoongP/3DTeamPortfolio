@@ -27,14 +27,14 @@ void CMesh::Get_Matrices(CModel::BONES Bones, _float4x4* pMatrices, _float4x4 Pi
 	}
 }
 
-HRESULT CMesh::Initialize_Prototype(CModel::TYPE eType, const CModel::BONES& Bones, const Engine::MESH Mesh, _float4x4 PivotMatrix)
+HRESULT CMesh::Initialize_Prototype(CModel::TYPE eType, const CModel::BONES& Bones, const Engine::MESH* pMesh, _float4x4 PivotMatrix)
 {
-	m_iMaterialIndex = Mesh.iMaterialIndex;
-	lstrcpy(m_szName, Mesh.szName);
+	m_iMaterialIndex = pMesh->iMaterialIndex;
+	lstrcpy(m_szName, pMesh->szName);
 	m_iNumVertexBuffers = { 1 };
-	m_iNumVertices = { Mesh.iNumVertices };
+	m_iNumVertices = { pMesh->iNumVertices };
 	m_iIndexStride = { sizeof(_ulong) };
-	m_iNumIndices = { Mesh.iNumFaces * 3 };
+	m_iNumIndices = { pMesh->iNumFaces * 3 };
 	m_eFormat = DXGI_FORMAT_R32_UINT;
 	m_eTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	
@@ -42,11 +42,11 @@ HRESULT CMesh::Initialize_Prototype(CModel::TYPE eType, const CModel::BONES& Bon
 
 	if (CModel::TYPE_NONANIM == eType)
 	{
-		hr = Ready_VertexBuffer_NonAnim(Mesh, PivotMatrix);
+		hr = Ready_VertexBuffer_NonAnim(pMesh, PivotMatrix);
 	}
 	else
 	{
-		hr = Ready_VertexBuffer_Anim(Mesh, Bones);
+		hr = Ready_VertexBuffer_Anim(pMesh, Bones);
 	}
 	
 	FAILED_CHECK_RETURN(hr, E_FAIL);
@@ -67,11 +67,11 @@ HRESULT CMesh::Initialize_Prototype(CModel::TYPE eType, const CModel::BONES& Bon
 
 	_uint		iNumFaces = { 0 };
 
-	for (_uint i = 0; i < Mesh.iNumFaces; ++i)
+	for (_uint i = 0; i < pMesh->iNumFaces; ++i)
 	{
-		pIndices[iNumFaces++] = Mesh.Faces[i].iIndices[0];
-		pIndices[iNumFaces++] = Mesh.Faces[i].iIndices[1];
-		pIndices[iNumFaces++] = Mesh.Faces[i].iIndices[2];
+		pIndices[iNumFaces++] = pMesh->Faces[i].iIndices[0];
+		pIndices[iNumFaces++] = pMesh->Faces[i].iIndices[1];
+		pIndices[iNumFaces++] = pMesh->Faces[i].iIndices[2];
 	}
 
 	ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
@@ -90,7 +90,7 @@ HRESULT CMesh::Initialize(void* pArg)
 	return S_OK;
 }
 
-HRESULT CMesh::Ready_VertexBuffer_NonAnim(const Engine::MESH Mesh, _float4x4 PivotMatrix)
+HRESULT CMesh::Ready_VertexBuffer_NonAnim(const Engine::MESH* pMesh, _float4x4 PivotMatrix)
 {
 	m_iStride = { sizeof(VTXMESH) };
 
@@ -108,16 +108,16 @@ HRESULT CMesh::Ready_VertexBuffer_NonAnim(const Engine::MESH Mesh, _float4x4 Piv
 
 	for (size_t i = 0; i < m_iNumVertices; i++)
 	{
-		memcpy(&pVertices[i].vPosition, &Mesh.vPositions[i], sizeof(_float3));
+		memcpy(&pVertices[i].vPosition, &pMesh->vPositions[i], sizeof(_float3));
 		XMStoreFloat3(&pVertices[i].vPosition,
 			XMVector3TransformCoord(XMLoadFloat3(&pVertices[i].vPosition), PivotMatrix));
 
-		memcpy(&pVertices[i].vNormal, &Mesh.vNormals[i], sizeof(_float3));
+		memcpy(&pVertices[i].vNormal, &pMesh->vNormals[i], sizeof(_float3));
 		XMStoreFloat3(&pVertices[i].vNormal,
 			XMVector3TransformNormal(XMLoadFloat3(&pVertices[i].vNormal), PivotMatrix));
 
-		memcpy(&pVertices[i].vTexCoord, &Mesh.vTexCoords[i], sizeof(_float2));
-		memcpy(&pVertices[i].vTangent, &Mesh.vTangents[i], sizeof(_float3));
+		memcpy(&pVertices[i].vTexCoord, &pMesh->vTexCoords[i], sizeof(_float2));
+		memcpy(&pVertices[i].vTangent, &pMesh->vTangents[i], sizeof(_float3));
 		XMStoreFloat3(&pVertices[i].vTangent,
 			XMVector3TransformNormal(XMLoadFloat3(&pVertices[i].vTangent), PivotMatrix));
 	}
@@ -132,7 +132,7 @@ HRESULT CMesh::Ready_VertexBuffer_NonAnim(const Engine::MESH Mesh, _float4x4 Piv
 	return S_OK;
 }
 
-HRESULT CMesh::Ready_VertexBuffer_Anim(const Engine::MESH Mesh, const CModel::BONES& Bones)
+HRESULT CMesh::Ready_VertexBuffer_Anim(const Engine::MESH* pMesh, const CModel::BONES& Bones)
 {
 	m_iStride = { sizeof(VTXANIMMESH) };
 
@@ -151,17 +151,17 @@ HRESULT CMesh::Ready_VertexBuffer_Anim(const Engine::MESH Mesh, const CModel::BO
 
 	for (size_t i = 0; i < m_iNumVertices; i++)
 	{
-		memcpy(&pVertices[i].vPosition, &Mesh.vPositions[i], sizeof(_float3));
-		memcpy(&pVertices[i].vNormal, &Mesh.vNormals[i], sizeof(_float3));
-		memcpy(&pVertices[i].vTexCoord, &Mesh.vTexCoords[i], sizeof(_float2));
-		memcpy(&pVertices[i].vTangent, &Mesh.vTangents[i], sizeof(_float3));
+		memcpy(&pVertices[i].vPosition, &pMesh->vPositions[i], sizeof(_float3));
+		memcpy(&pVertices[i].vNormal, &pMesh->vNormals[i], sizeof(_float3));
+		memcpy(&pVertices[i].vTexCoord, &pMesh->vTexCoords[i], sizeof(_float2));
+		memcpy(&pVertices[i].vTangent, &pMesh->vTangents[i], sizeof(_float3));
 	}
 
-	m_iNumBones = Mesh.iNumBones;
+	m_iNumBones = pMesh->iNumBones;
 
-	for (_uint i = 0; i < Mesh.iNumBones; ++i)
+	for (_uint i = 0; i < pMesh->iNumBones; ++i)
 	{
-		Engine::BONE Bone = Mesh.Bones[i];
+		Engine::BONE Bone = pMesh->Bones[i];
 
 		_uint iIndex = { 0 };
 
@@ -184,7 +184,7 @@ HRESULT CMesh::Ready_VertexBuffer_Anim(const Engine::MESH Mesh, const CModel::BO
 
 		for (_uint j = 0; j < Bone.iNumWeights; ++j)
 		{
-			Engine::WEIGHT VertexWeight = Bone.Weights[j];
+			Engine::WEIGHT VertexWeight = Bone.iWeights[j];
 			
 			if (0.f == pVertices[VertexWeight.iVertexId].vBlendWeights.x)
 			{
@@ -240,11 +240,11 @@ HRESULT CMesh::Ready_VertexBuffer_Anim(const Engine::MESH Mesh, const CModel::BO
 	return S_OK;
 }
 
-CMesh* CMesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CModel::TYPE eType, const CModel::BONES& Bones, const Engine::MESH Mesh, _float4x4 PivotMatrix)
+CMesh* CMesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CModel::TYPE eType, const CModel::BONES& Bones, const Engine::MESH* pMesh, _float4x4 PivotMatrix)
 {
 	CMesh* pInstance = new CMesh(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize_Prototype(eType, Bones, Mesh, PivotMatrix)))
+	if (FAILED(pInstance->Initialize_Prototype(eType, Bones, pMesh, PivotMatrix)))
 	{
 		MSG_BOX("Failed to Created CMesh");
 		Safe_Release(pInstance);

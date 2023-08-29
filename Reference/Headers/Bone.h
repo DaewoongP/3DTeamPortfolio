@@ -21,7 +21,7 @@ public:
 	void				Set_TransformationMatrix(_float4x4 TransformationMatrix) { m_TransformationMatrix = TransformationMatrix; }
 
 public:
-	HRESULT Initialize(Engine::NODE Node);
+	HRESULT Initialize(Engine::NODE* pNode);
 	void	Invalidate_CombinedTransformationMatrix(const CModel::BONES& Bones);
 
 private:
@@ -34,7 +34,7 @@ private:
 	_uint			m_iIndex = { 0 };
 
 public:
-	static CBone* Create(Engine::NODE Node);
+	static CBone* Create(Engine::NODE* pNode);
 	CBone* Clone();
 	virtual void Free() override;
 };

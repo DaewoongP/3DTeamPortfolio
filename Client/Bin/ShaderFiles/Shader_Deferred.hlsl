@@ -1,6 +1,4 @@
 
-
-
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix g_ViewMatrixInv, g_ProjMatrixInv;
 
@@ -175,7 +173,7 @@ struct PS_OUT
 PS_OUT PS_MAIN_DEBUG(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
-    
+
     Out.vColor = g_Texture.Sample(LinearSampler, In.vTexUV);
 
     return Out;
@@ -317,12 +315,11 @@ PS_OUT PS_MAIN_DEFERRED(PS_IN In)
     PS_OUT Out = (PS_OUT) 0;
 
     vector vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
-    
-    if (0.f == vDiffuse.a)
-        discard;
-    
-    Out.vColor = vDiffuse;
-    
+    vector vShade = g_ShadeTexture.Sample(LinearSampler, In.vTexUV);
+    vector vSpecular = g_SpecularTexture.Sample(LinearSampler, In.vTexUV);
+
+    Out.vColor = vDiffuse * vShade + vSpecular;
+
     return Out;
 }
 

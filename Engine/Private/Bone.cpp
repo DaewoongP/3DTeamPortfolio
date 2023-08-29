@@ -14,16 +14,16 @@ CBone::CBone(const CBone& rhs)
 	lstrcpy(m_szName, rhs.m_szName);
 }
 
-HRESULT CBone::Initialize(Engine::NODE Node)
+HRESULT CBone::Initialize(Engine::NODE* pNode)
 {
-	lstrcpy(m_szName, Node.szName);
-	memcpy(&m_TransformationMatrix, &Node.TransformationMatrix, sizeof _float4x4);
+	lstrcpy(m_szName, pNode->szName);
+	memcpy(&m_TransformationMatrix, &pNode->TransformationMatrix, sizeof _float4x4);
 	m_TransformationMatrix = m_TransformationMatrix;
 	m_CombinedTransformationMatrix = XMMatrixIdentity();
 	m_OffsetMatrix = XMMatrixIdentity();
 
-	m_iParentIndex = Node.iParent;
-	m_iIndex = Node.iNodeIndex;
+	m_iParentIndex = pNode->iParent;
+	m_iIndex = pNode->iNodeIndex;
 	
 	return S_OK;
 }
@@ -43,16 +43,14 @@ void CBone::Invalidate_CombinedTransformationMatrix(const CModel::BONES& Bones)
 	}
 }
 
-CBone* CBone::Create(Engine::NODE Node)
+CBone* CBone::Create(Engine::NODE* pNode)
 {
 	CBone* pInstance = new CBone();
-
-	if (FAILED(pInstance->Initialize(Node)))
+	if (FAILED(pInstance->Initialize(pNode)))
 	{
 		MSG_BOX("Failed to Created CBone");
 		Safe_Release(pInstance);
 	}
-
 	return pInstance;
 }
 

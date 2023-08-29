@@ -12,7 +12,7 @@ protected:
 	virtual ~CGameObject() = default;
 
 public:
-	const CTransform* Get_Transform() const { return m_pTransform; }
+	const CTransform* Get_Transform() const { return m_pTransformCom; }
 
 public:
 	virtual HRESULT Initialize_Prototype();
@@ -25,7 +25,7 @@ public:
 	virtual HRESULT Render() override;
 
 protected:
-	CTransform*		m_pTransform = { nullptr };
+	CTransform*		m_pTransformCom = { nullptr };
 
 protected:
 	_tchar			m_pTag[MAX_STR] = TEXT("");

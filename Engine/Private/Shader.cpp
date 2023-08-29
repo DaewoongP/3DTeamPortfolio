@@ -60,6 +60,7 @@ HRESULT CShader::Initialize_Prototype(const _tchar* pShaderFilePath, const D3D11
 		m_InputLayouts.insert({ PassDesc.Name, pInputLayout });
 	}
 
+
 	return S_OK;
 }
 

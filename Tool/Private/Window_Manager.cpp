@@ -10,53 +10,18 @@ HRESULT CWindow_Manager::Initialize()
 
 void CWindow_Manager::Tick(_float fTimeDelta)
 {
-	RECT rc;
-	GetWindowRect(g_hWnd, &rc);
-
-	ImGui::SetNextWindowPos(ImVec2(0.f, 0.f));
-	ImGui::SetNextWindowSize(ImVec2(200.f, 200.f));
-
-	ImGui::Begin("Menu", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
-
-	_int* iCurMenuList = reinterpret_cast<_int*>(&m_eCurMenuList);
-	if (ImGui::RadioButton("Object", iCurMenuList, OBJECT_WINDOW))
-		Setup_Current_Window(TEXT("Object_Window"));
-
-	if (ImGui::RadioButton("Mesh", iCurMenuList, MESH_WINDOW))
-		Setup_Current_Window(TEXT("Mesh_Window"));
-
-	if (ImGui::RadioButton("NaviMesh", iCurMenuList, NAVIGATION_WINDOW))
-		Setup_Current_Window(TEXT("NaviMesh_Window"));
-
-	if (ImGui::RadioButton("Camera", iCurMenuList, CAMERA_WINDOW))
-		Setup_Current_Window(TEXT("Camera_Window"));
-
-	if (ImGui::RadioButton("Effect", iCurMenuList, EFFECT_WINDOW))
-		Setup_Current_Window(TEXT("Effect_Window"));
-
-	if (ImGui::RadioButton("Animation", iCurMenuList, ANIMATION_WINDOW))
-		Setup_Current_Window(TEXT("Animation_Window"));
-
-	if (ImGui::RadioButton("UI", iCurMenuList, UI_WINDOW))
-		Setup_Current_Window(TEXT("UI_Window"));
-
-	if (ImGui::RadioButton("Light", iCurMenuList, LIGHT_WIDNOW))
-		Setup_Current_Window(TEXT("Light_Window"));
-
-	ImGui::End();
-
-	if (nullptr != m_pCurrrentWindow)
-		m_pCurrrentWindow->Tick(fTimeDelta);
+	for (auto& pair : m_ImWindows)
+		pair.second->Tick(fTimeDelta);
 }
 
 HRESULT CWindow_Manager::Render()
 {
-	if (nullptr != m_pCurrrentWindow)
+	for (auto& pair : m_ImWindows)
 	{
-		if (FAILED(m_pCurrrentWindow->Render()))
+		if (FAILED(pair.second->Render()))
 			return E_FAIL;
 	}
-	
+
 	return S_OK;
 }
 
@@ -78,16 +43,6 @@ CImWindow* CWindow_Manager::Find_Window(const _tchar* pWindowTag)
 		return nullptr;
 
 	return pair->second;
-}
-
-HRESULT CWindow_Manager::Setup_Current_Window(const _tchar* pTag)
-{
-	m_pCurrrentWindow = Find_Window(pTag);
-	
-	if (nullptr == m_pCurrrentWindow)
-		return E_FAIL;
-
-	return S_OK;
 }
 
 void CWindow_Manager::Free(void)

@@ -28,7 +28,7 @@ namespace Engine
 
 		// Weight
 		unsigned int		iNumWeights;
-		WEIGHT*				Weights; // array
+		WEIGHT*				iWeights; // array
 	}BONE;
 
 	typedef struct tagFace

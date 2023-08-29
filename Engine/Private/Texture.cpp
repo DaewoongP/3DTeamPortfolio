@@ -97,7 +97,7 @@ HRESULT CTexture::Initialize_Prototype(const _tchar* pTextureFilePath, _uint iNu
 		
 		if (FAILED(hr))
 		{
-			MSG_BOX("Failed Create Texture");
+			//MSG_BOX("Failed Create Texture");
 			return E_FAIL;
 		}
 

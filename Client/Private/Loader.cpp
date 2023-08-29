@@ -1,6 +1,5 @@
 #include "..\Public\Loader.h"
 #include "GameInstance.h"
-#include "Client_Includes.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice(pDevice)

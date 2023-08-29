@@ -134,7 +134,6 @@ void CObject_Manager::Free()
 		}
 		m_pLayers[i].clear();
 	}
-
 	Safe_Delete_Array(m_pLayers);
 
 	for (auto& Pair : m_Prototypes)

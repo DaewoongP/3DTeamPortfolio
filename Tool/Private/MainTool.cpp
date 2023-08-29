@@ -19,7 +19,7 @@ HRESULT CMainTool::Initialize()
 	// 그래픽 디바이스를 만들기 위한 구조체 할당
 	GRAPHICDESC		GraphicDesc;
 	ZEROMEM(&GraphicDesc);
-	
+
 	GraphicDesc.hWnd = g_hWnd;
 	GraphicDesc.iViewportSizeX = g_iWinSizeX;
 	GraphicDesc.iViewportSizeY = g_iWinSizeY;
@@ -27,14 +27,11 @@ HRESULT CMainTool::Initialize()
 
 	if (FAILED(m_pGameInstance->Initialize_Engine(g_hInst, LEVEL_END, GraphicDesc, &m_pDevice, &m_pContext)))
 		return E_FAIL;
-	
+
 	if (FAILED(Initialize_ImGui()))
 		return E_FAIL;
 
-	if (FAILED(Ready_Prototype_Component()))
-		return E_FAIL;
-
-	if (FAILED(Ready_Prototype_Object()))
+	if (FAILED(Ready_Prototype_Component_For_Static()))
 		return E_FAIL;
 
 	if (FAILED(Ready_Fonts()))
@@ -183,20 +180,15 @@ HRESULT CMainTool::Add_Windows()
 	ZEROMEM(&rc);
 	GetWindowRect(g_hWnd, &rc);
 
-	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("Object_Window"),
-		CObject_Window::Create(m_pDevice, m_pContext,
+	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("Object_Window"), 
+		CObject_Window::Create(m_pDevice, m_pContext, 
 			ImVec2(_float(rc.right), _float(rc.top)), ImVec2(100.f, 100.f)))))
-		return E_FAIL;
-	
-	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("Effect_Window"),
-		CEffect_Window::Create(m_pDevice, m_pContext,
-			ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(446.f, 768.f)))))
 		return E_FAIL;
 
 	return S_OK;
 }
 
-HRESULT CMainTool::Ready_Prototype_Component()
+HRESULT CMainTool::Ready_Prototype_Component_For_Static()
 {
 	if (nullptr == m_pGameInstance)
 		return E_FAIL;
@@ -209,71 +201,6 @@ HRESULT CMainTool::Ready_Prototype_Component()
 		return E_FAIL;
 	}
 	Safe_AddRef(m_pRenderer);
-
-	/* Prototype_Component_Shader_Terrain */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Shader_Terrain"),
-		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Terrain.hlsl"),
-			VTXPOSNORTEX_DECL::Elements, VTXPOSNORTEX_DECL::iNumElements))))
-		return E_FAIL;
-
-	/* Prototype_Component_Shader_VtxTex */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Shader_VtxTex"),
-		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxTex.hlsl"),
-			VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements))))
-		return E_FAIL;
-
-	/* For.Prototype_Component_Shader_VtxCube*/
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Shader_VtxCube"),
-		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Sky.hlsl"), 
-			VTXPOSCUBE_DECL::Elements, VTXPOSCUBE_DECL::iNumElements))))
-		return E_FAIL;
-
-	/* Prototype_Component_VIBuffer_Rect */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_VIBuffer_Rect"),
-		CVIBuffer_Rect::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	/* Prototype_Component_VIBuffer_Terrain */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_VIBuffer_Terrain"),
-		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, 500, 500))))
-		return E_FAIL;
-
-	/* Prototype_Component_VIBuffer_Cube */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_VIBuffer_Cube"),
-		CVIBuffer_Cube::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	/* Prototype_Component_Texture_Terrain */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Texture_Terrain"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Terrain/Tile%d.dds"), 2))))
-		return E_FAIL;
-
-	/* Prototype_Component_Texture_Burger_Sky */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Texture_Burger_Sky"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/SkyBox/Sky_%d.dds"), 4))))
-		return E_FAIL;
-
-	/* Prototype_Component_Texture_Default */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Texture_Default"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Default0.jpg")))))
-		return E_FAIL;
-
-	return S_OK;
-}
-
-HRESULT CMainTool::Ready_Prototype_Object()
-{
-	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Terrain"),
-		CTerrain::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Camera_Free"),
-		CCamera_Free::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Sky"),
-		CSky::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
 
 	return S_OK;
 }

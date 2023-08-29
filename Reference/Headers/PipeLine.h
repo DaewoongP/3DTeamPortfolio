@@ -15,15 +15,13 @@ public:
 	virtual ~CPipeLine() = default;
 
 public:
-	// 카메라에서 뷰, 투영 행렬 세팅
 	void Set_Transform(D3DTRANSFORMSTATE eTransformState, _float4x4 TransformStateMatrix);
-	// 카메라에서 Far 값 세팅.
 	void Set_CameraFar(_float fCamFar) { m_fCameraFar = fCamFar; }
 
-	const _float4x4* Get_TransformMatrix(D3DTRANSFORMSTATE eTransformState);
-	const _float4x4* Get_TransformMatrix_Inverse(D3DTRANSFORMSTATE eTransformState);
-	const _float4* Get_CamPosition();
-	const _float* Get_CamFar();
+	_float4x4* Get_TransformMatrix(D3DTRANSFORMSTATE eTransformState);
+	_float4x4* Get_TransformMatrix_Inverse(D3DTRANSFORMSTATE eTransformState);
+	_float4* Get_CamPosition();
+	_float* Get_CamFar();
 
 public:
 	void Tick();
