@@ -75,6 +75,9 @@
     <ClInclude Include="..\public\ParticleModule.h" />
     <ClInclude Include="..\Public\ParticleSystem.h" />
     <ClInclude Include="..\Public\PipeLine.h" />
+    <ClInclude Include="..\public\PX.h" />
+    <ClInclude Include="..\public\PXAllocator.h" />
+    <ClInclude Include="..\Public\PXErrorCallBack.h" />
     <ClInclude Include="..\Public\QuadTree.h" />
     <ClInclude Include="..\Public\Renderer.h" />
     <ClInclude Include="..\public\RenderTarget.h" />
@@ -153,6 +156,7 @@
     <ClCompile Include="..\private\ParticleModule.cpp" />
     <ClCompile Include="..\Private\ParticleSystem.cpp" />
     <ClCompile Include="..\Private\PipeLine.cpp" />
+    <ClCompile Include="..\private\PX.cpp" />
     <ClCompile Include="..\Private\QuadTree.cpp" />
     <ClCompile Include="..\Private\Renderer.cpp" />
     <ClCompile Include="..\private\RenderTarget.cpp" />
@@ -298,7 +302,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;ENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../Public/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Public/;../Public/PhysX/</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <DisableSpecificWarnings>4828;4204;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
@@ -328,7 +332,7 @@ call Copy.bat</Command>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;ENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../Public/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Public/;../Public/PhysX/</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <DisableSpecificWarnings>4828;4204;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>

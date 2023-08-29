@@ -211,6 +211,9 @@
     <Filter Include="01. Utility\03. Components\12. Status">
       <UniqueIdentifier>{0d097a3d-8ef4-4813-afef-ca81cc0a63bc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\03. Components\11. ParticleSystem">
+      <UniqueIdentifier>{aaf18f8e-a9cf-4dba-9828-95d190790622}</UniqueIdentifier>
+    </Filter>
     <Filter Include="01. Utility\03. Components\12. Status\00. Health">
       <UniqueIdentifier>{2c307619-8c41-4f09-8c44-3e7e1dd9bf83}</UniqueIdentifier>
     </Filter>
@@ -237,6 +240,15 @@
     </Filter>
     <Filter Include="01. Utility\03. Components\04. Model\Animation\Notify">
       <UniqueIdentifier>{99ae6d76-4b41-4979-a852-21410c894c2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\12. PhysX">
+      <UniqueIdentifier>{a0e4e0fe-93f6-4a35-9aef-87da3b2f96b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\12. PhysX\Allocator">
+      <UniqueIdentifier>{d2a1bc2d-eb72-4022-ab0b-2d4358e602e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\12. PhysX\ErrorCallBack">
+      <UniqueIdentifier>{9faf9a61-c854-4028-95e1-f2c591f3abcc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -456,6 +468,9 @@
     <ClInclude Include="..\Public\Sequence.h">
       <Filter>01. Utility\03. Components\10. Behavior\02. Sequence</Filter>
     </ClInclude>
+    <ClInclude Include="..\private\MainModule.h">
+      <Filter>01. Utility\03. Components\11. ParticleSystem\ParticleModule\MainModule</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\ParticleSystem.h">
       <Filter>01. Utility\03. Components\11. ParticleSystem</Filter>
     </ClInclude>
@@ -464,6 +479,15 @@
     </ClInclude>
     <ClInclude Include="..\public\Calculator.h">
       <Filter>01. Utility\10. Calculator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PX.h">
+      <Filter>01. Utility\03. Components\12. PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PXAllocator.h">
+      <Filter>01. Utility\03. Components\12. PhysX\Allocator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PXErrorCallBack.h">
+      <Filter>01. Utility\03. Components\12. PhysX\ErrorCallBack</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Health.h">
       <Filter>01. Utility\03. Components\12. Status\00. Health</Filter>
@@ -686,6 +710,9 @@
     <ClCompile Include="..\Private\Sequence.cpp">
       <Filter>01. Utility\03. Components\10. Behavior\02. Sequence</Filter>
     </ClCompile>
+    <ClCompile Include="..\public\MainModule.cpp">
+      <Filter>01. Utility\03. Components\11. ParticleSystem\ParticleModule\MainModule</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\ParticleSystem.cpp">
       <Filter>01. Utility\03. Components\11. ParticleSystem</Filter>
     </ClCompile>
@@ -694,6 +721,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Calculator.cpp">
       <Filter>01. Utility\10. Calculator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PX.cpp">
+      <Filter>01. Utility\03. Components\12. PhysX</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Health.cpp">
       <Filter>01. Utility\03. Components\12. Status\00. Health</Filter>

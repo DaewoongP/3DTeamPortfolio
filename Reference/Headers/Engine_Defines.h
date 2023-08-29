@@ -30,7 +30,12 @@
 #include "fmod\fmod.h"
 #include "fmod\fmod.hpp"
 
-#include "PhysX\PxPhysicsAPI.h"
+#pragma comment(lib, "PhysX_64.lib")
+#pragma comment(lib, "PhysXCommon_64.lib")
+#pragma comment(lib, "PhysXCooking_64.lib")
+#pragma comment(lib, "PhysXFoundation_64.lib")
+#include "PxPhysics.h"
+#include "PxPhysicsAPI.h"
 
 #include <iostream>
 #include <vector>
@@ -51,6 +56,7 @@ namespace fs = std::filesystem;
 
 using namespace std;
 using namespace DirectX;
+using namespace physx;
 
 #include "DirectXTK\matrix.h"
 
