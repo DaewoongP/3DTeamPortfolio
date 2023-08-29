@@ -21,13 +21,8 @@ public:
 	// 벡터사이즈와 값이 다를경우 임의로 벡터에 남은 퍼센트를 분배해서 넣어줌.
 	// 루프를 돌아야하므로 효율성을 높이려면 사이즈를 맞춰주면 좋음.
 	_int RandomChoose(vector<_float> Weights, _uint iChooseSize);
-	// 특정 시간마다 true 반환
-	_bool Timer(_float fAlarmTime, _float fTimeDelta);
 	_float4 Get_RandomVectorInSphere(_float fRadius);
 	HRESULT ReadFileInDirectory(_Inout_ vector<wstring>& OutVector, const _tchar* pFilePath, const _tchar* pExt);
-
-private:
-	_float	m_fAlarmTimeAcc = { 0.f };
 
 public:
 	virtual void Free() override;

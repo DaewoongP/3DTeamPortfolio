@@ -182,19 +182,6 @@ _int CCalculator::RandomChoose(vector<_float> Weights, _uint iChooseSize)
 	return -1;
 }
 
-_bool CCalculator::Timer(_float fAlarmTime, _float fTimeDelta)
-{
-	m_fAlarmTimeAcc += fTimeDelta;
-
-	if (m_fAlarmTimeAcc > fAlarmTime)
-	{
-		m_fAlarmTimeAcc = 0.0;
-		return true;
-	}
-
-	return false;
-}
-
 _float4 CCalculator::Get_RandomVectorInSphere(_float fRadius)
 {
 	_float fRandX = (rand() % 1001) * 0.001f;
