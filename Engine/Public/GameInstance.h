@@ -111,8 +111,6 @@ public: /* For. Calculator */
 	// 벡터사이즈와 값이 다를경우 임의로 벡터에 남은 퍼센트를 분배해서 넣어줌.
 	// 루프를 돌아야하므로 효율성을 높이려면 사이즈를 맞춰주면 좋음.
 	_uint RandomChoose(vector<_float> Weights, _uint iChooseSize);
-	// true가 불릴 시간 설정
-	_bool Timer(_float fAlarmTime, _float fTimeDelta);
 	// 반지름 길이를 입력하면 그 반지름 내부에서 방향벡터를 랜덤하게 뽑아주는 함수입니다.
 	_float4 Get_RandomVectorInSphere(_float fRadius);
 	// FilePath 내의 모든 파일을 순회하면서 Ext 확장자에 맞는 파일들을 OutVector에 넣어줍니다.

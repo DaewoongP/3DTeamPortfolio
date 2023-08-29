@@ -441,13 +441,6 @@ _uint CGameInstance::RandomChoose(vector<_float> Weights, _uint iChooseSize)
 	return m_pCalculator->RandomChoose(Weights, iChooseSize);
 }
 
-_bool CGameInstance::Timer(_float dAlarmTime, _float dTimeDelta)
-{
-	NULL_CHECK_RETURN_MSG(m_pCalculator, false, TEXT("Calculator NULL"));
-
-	return m_pCalculator->Timer(dAlarmTime, dTimeDelta);
-}
-
 _float4 CGameInstance::Get_RandomVectorInSphere(_float fRadius)
 {
 	NULL_CHECK_RETURN_MSG(m_pCalculator, XMVectorZero(), TEXT("Calculator NULL"));
