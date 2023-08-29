@@ -26,6 +26,9 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMap)
 	_uint iNumVerticesX = { (_uint)ih.biWidth };
 	_uint iNumVerticesZ = { (_uint)ih.biHeight };
 
+	m_iTerrainSizeX = iNumVerticesX;
+	m_iTerrainSizeZ = iNumVerticesZ;
+
 	_ulong* pPixel = new _ulong[iNumVerticesX * iNumVerticesZ];
 	ZeroMemory(pPixel, sizeof(_ulong) * iNumVerticesX * iNumVerticesZ);
 
@@ -182,6 +185,9 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(_uint iTerrainSizeX, _uint iTerr
 	m_iNumIndices = { iTerrainSizeX * iTerrainSizeY * 6 };
 	m_eFormat = DXGI_FORMAT_R32_UINT;
 	m_eTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+
+	m_iTerrainSizeX = iTerrainSizeX;
+	m_iTerrainSizeZ = iTerrainSizeY;
 
 	// VertexBuffer
 	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);

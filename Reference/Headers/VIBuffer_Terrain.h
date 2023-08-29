@@ -13,6 +13,8 @@ private:
 public:
 	const _float3* Get_PosArray() const { return m_pPos; }
 	const _uint* Get_Index() const { return m_pIndex; }
+	const _uint Get_TerrainSizeX() const { return m_iTerrainSizeX; }
+	const _uint Get_TerrainSizeZ() const { return m_iTerrainSizeZ; }
 
 public:
 	virtual HRESULT Initialize_Prototype(const _tchar * pHeightMap);
@@ -26,6 +28,9 @@ public:
 private:
 	_float3*			m_pPos = { nullptr };
 	_uint*				m_pIndex = { nullptr };
+
+	_uint				m_iTerrainSizeX = { 0 };
+	_uint				m_iTerrainSizeZ = { 0 };
 
 public:
 	static CVIBuffer_Terrain* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar * pHeightMap);
