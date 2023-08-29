@@ -46,6 +46,9 @@
     <Filter Include="02. ToolObjects\03. Sky">
       <UniqueIdentifier>{4461d7fd-a6a1-45bd-9424-3d9bfaf2e36f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Window\Window\Animation">
+      <UniqueIdentifier>{f24db859-61c1-45a9-96e6-80c730ace989}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tool.h">
@@ -126,6 +129,12 @@
     <ClInclude Include="..\public\Sky.h">
       <Filter>02. ToolObjects\03. Sky</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Animation_Window.h">
+      <Filter>01. Window\Window\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CDummy.h">
+      <Filter>02. ToolObjects\01. Dummy</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -194,6 +203,12 @@
     </ClCompile>
     <ClCompile Include="..\private\Sky.cpp">
       <Filter>02. ToolObjects\03. Sky</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Animation_Window.cpp">
+      <Filter>01. Window\Window\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CDummy.cpp">
+      <Filter>02. ToolObjects\01. Dummy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

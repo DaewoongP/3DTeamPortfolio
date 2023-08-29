@@ -7,17 +7,17 @@ CChannel::CChannel()
 
 void CChannel::Delete_Translation()
 {
-	_float3 vInitPos = m_KeyFrames[0].vTranslation;
+	_float3 vInitPos = m_MatrixKeyFrames[0].vTranslation;
 
-	for (auto& KeyFrame : m_KeyFrames)
+	for (auto& KeyFrame : m_MatrixKeyFrames)
 		KeyFrame.vTranslation = vInitPos;
 }
 
 void CChannel::Delete_Rotation()
 {
-	_float4 vInitRotation = m_KeyFrames[0].vRotation;
-	
-	for (auto& KeyFrame : m_KeyFrames)
+	_float4 vInitRotation = m_MatrixKeyFrames[0].vRotation;
+
+	for (auto& KeyFrame : m_MatrixKeyFrames)
 		KeyFrame.vRotation = vInitRotation;
 }
 
@@ -33,8 +33,8 @@ HRESULT CChannel::Initialize(const Engine::CHANNEL& Channel, const CModel::BONES
 			++m_iBoneIndex;
 			return false;
 		}
-	});
-	
+		});
+
 	// SRT 중 가장 많은프레임을 가진 키프레임을 찾아 저장.
 	// 상대적으로 적은수의 프레임을 가진 변수는 어차피 마지막값을 기준으로 프레임이 끝날때까지 그값을 유지하면 되므로. 가장 큰 값만 저장한다.
 	m_iNumKeyFrames = max(Channel.iNumScalingKeys, Channel.iNumRotationKeys);
@@ -51,7 +51,7 @@ HRESULT CChannel::Initialize(const Engine::CHANNEL& Channel, const CModel::BONES
 	// 만약 해당 프레임에서 값이 없을 경우 마지막으로 처리한 값으로 저장.
 	for (_uint i = 0; i < m_iNumKeyFrames; ++i)
 	{
-		KEYFRAME				Keyframe;
+		MATRIXFRAME				Keyframe;
 
 		if (Channel.iNumScalingKeys > i)
 		{
@@ -75,7 +75,7 @@ HRESULT CChannel::Initialize(const Engine::CHANNEL& Channel, const CModel::BONES
 		Keyframe.vRotation = vRotation;
 		Keyframe.vTranslation = vTranslation;
 
-		m_KeyFrames.push_back(Keyframe);
+		m_MatrixKeyFrames.push_back(Keyframe);
 	}
 
 	return S_OK;
@@ -86,7 +86,7 @@ void CChannel::Invalidate_TransformationMatrix(CModel::BONES& Bones, _float fTim
 	if (0.f == fTimeAcc)
 		*pCurrentKeyFrameIndex = 0;
 
-	KEYFRAME LastKeyFrame = m_KeyFrames.back();
+	MATRIXFRAME LastKeyFrame = m_MatrixKeyFrames.back();
 
 	_float3	vScale;
 	ZEROMEM(&vScale);
@@ -107,21 +107,21 @@ void CChannel::Invalidate_TransformationMatrix(CModel::BONES& Bones, _float fTim
 	{
 		// 현재 TimeAcc 값이 (Index ~ Index + 1) 안에 존재하는지 검사.
 		// 만약 안에 존재하지 않을경우 증가시켜 다음 프레임 검사.
-		while (fTimeAcc >= m_KeyFrames[(*pCurrentKeyFrameIndex) + 1].fTime)
+		while (fTimeAcc >= m_MatrixKeyFrames[(*pCurrentKeyFrameIndex) + 1].fTime)
 			++(*pCurrentKeyFrameIndex);
 
 		// TimeAcc - Index.Time / (Index.Time ~ Index.Time + 1)
-		_float		fRatio = (fTimeAcc - m_KeyFrames[(*pCurrentKeyFrameIndex)].fTime) /
-			(m_KeyFrames[(*pCurrentKeyFrameIndex) + 1].fTime - m_KeyFrames[(*pCurrentKeyFrameIndex)].fTime);
+		_float		fRatio = (fTimeAcc - m_MatrixKeyFrames[(*pCurrentKeyFrameIndex)].fTime) /
+			(m_MatrixKeyFrames[(*pCurrentKeyFrameIndex) + 1].fTime - m_MatrixKeyFrames[(*pCurrentKeyFrameIndex)].fTime);
 
 		// 현재 인덱스와 다음 인덱스 까지 상태변환들을 선형보간하기 위한 값 저장.
-		_float3		vSourScale = m_KeyFrames[(*pCurrentKeyFrameIndex)].vScale;
-		_float4		vSourRotation = m_KeyFrames[(*pCurrentKeyFrameIndex)].vRotation;
-		_float3		vSourTranslation = m_KeyFrames[(*pCurrentKeyFrameIndex)].vTranslation;
+		_float3		vSourScale = m_MatrixKeyFrames[(*pCurrentKeyFrameIndex)].vScale;
+		_float4		vSourRotation = m_MatrixKeyFrames[(*pCurrentKeyFrameIndex)].vRotation;
+		_float3		vSourTranslation = m_MatrixKeyFrames[(*pCurrentKeyFrameIndex)].vTranslation;
 
-		_float3		vDestScale = m_KeyFrames[(*pCurrentKeyFrameIndex) + 1].vScale;
-		_float4		vDestRotation = m_KeyFrames[(*pCurrentKeyFrameIndex) + 1].vRotation;
-		_float3		vDestTranslation = m_KeyFrames[(*pCurrentKeyFrameIndex) + 1].vTranslation;
+		_float3		vDestScale = m_MatrixKeyFrames[(*pCurrentKeyFrameIndex) + 1].vScale;
+		_float4		vDestRotation = m_MatrixKeyFrames[(*pCurrentKeyFrameIndex) + 1].vRotation;
+		_float3		vDestTranslation = m_MatrixKeyFrames[(*pCurrentKeyFrameIndex) + 1].vTranslation;
 
 		// 선형보간 함수. Rotation의 경우 Quaternion 형태여서 Slerp 함수 사용.
 		vScale.Lerp(vSourScale, vDestScale, fRatio);
@@ -148,13 +148,13 @@ void CChannel::Lerp_TransformationMatrix(CModel::BONES& Bones, CChannel* pCurren
 
 	_float		fRatio = fTimeAcc / fDuration;
 
-	_float3		vSourScale = m_KeyFrames[iCurrentKeyFrameIndex].vScale;
-	_float4		vSourRotation = m_KeyFrames[iCurrentKeyFrameIndex].vRotation;
-	_float3		vSourTranslation = m_KeyFrames[iCurrentKeyFrameIndex].vTranslation;
+	_float3		vSourScale = m_MatrixKeyFrames[iCurrentKeyFrameIndex].vScale;
+	_float4		vSourRotation = m_MatrixKeyFrames[iCurrentKeyFrameIndex].vRotation;
+	_float3		vSourTranslation = m_MatrixKeyFrames[iCurrentKeyFrameIndex].vTranslation;
 
-	_float3		vDestScale = pCurrentChannel->m_KeyFrames[0].vScale;
-	_float4		vDestRotation = pCurrentChannel->m_KeyFrames[0].vRotation;
-	_float3		vDestTranslation = pCurrentChannel->m_KeyFrames[0].vTranslation;
+	_float3		vDestScale = pCurrentChannel->m_MatrixKeyFrames[0].vScale;
+	_float4		vDestRotation = pCurrentChannel->m_MatrixKeyFrames[0].vRotation;
+	_float3		vDestTranslation = pCurrentChannel->m_MatrixKeyFrames[0].vTranslation;
 
 	// 선형보간 함수. Rotation의 경우 Quaternion 형태여서 Slerp 함수 사용.
 	vScale.Lerp(vSourScale, vDestScale, fRatio);
