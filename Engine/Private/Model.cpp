@@ -123,7 +123,7 @@ void CModel::Reset_Animation(_uint iAnimIndex)
 
 void CModel::Play_Animation(_float fTimeDelta)
 {
-	m_Animations[m_iCurrentAnimIndex]->Invalidate_Frame(fTimeDelta);
+	//m_Animations[m_iCurrentAnimIndex]->Invalidate_Frame(fTimeDelta);
 	m_Animations[m_iCurrentAnimIndex]->Invalidate_TransformationMatrix(m_Bones, fTimeDelta);
 
 	/* 모델에 표현되어있는 모든 뼈들의 CombinedTransformationMatrix */

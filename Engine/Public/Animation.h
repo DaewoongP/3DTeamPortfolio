@@ -39,8 +39,8 @@ public:
 	void Delete_Rotation();
 	
 	//주로 겜오브제 이니셜라이즈에서 사용할 키프레임 찾아서 가져오는 함수.
-	NOTIFYFRAME* Find_NotifyFrame(const wchar_t* wszNotifyTag);
-	SOUNDFRAME* Find_SoundFrame(const wchar_t* wszSoundTag);
+	NOTIFYFRAME* Find_NotifyFrame(const _tchar* wszNotifyTag);
+	SOUNDFRAME* Find_SoundFrame(const _tchar* wszSoundTag);
 
 
 public:

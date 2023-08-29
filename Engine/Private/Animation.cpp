@@ -61,12 +61,12 @@ void CAnimation::Delete_Rotation()
 	}
 }
 
-NOTIFYFRAME* CAnimation::Find_NotifyFrame(const wchar_t* wszNotifyTag)
+NOTIFYFRAME* CAnimation::Find_NotifyFrame(const _tchar* wszNotifyTag)
 {
 	return nullptr;
 }
 
-SOUNDFRAME* CAnimation::Find_SoundFrame(const wchar_t* wszSoundTag)
+SOUNDFRAME* CAnimation::Find_SoundFrame(const _tchar* wszSoundTag)
 {
 	return nullptr;
 }
@@ -171,8 +171,7 @@ void CAnimation::Free()
 {
 	for (auto& pChannel : m_Channels)
 		Safe_Release(pChannel);
-	Safe_Release(m_Notify);
+	//Safe_Release(m_Notify);
 
 	m_Channels.clear();
-
 }

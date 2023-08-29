@@ -229,7 +229,7 @@ PS_OUT PS_MAIN_PBR(PS_IN In)
     vector vShade = g_ShadeTexture.Sample(LinearSampler, In.vTexUV);
     vector vSpecular = g_SpecularTexture.Sample(LinearSampler, In.vTexUV);
 
-    vector Normalied_Normal = normalize((In.vNormal, 0.f));
+    vector Normalied_Normal = normalize(vector(In.vNormal, 0.f));
     vector LookAt = normalize(g_vCamPosition - In.vPosition);
     vector LightLook = normalize(g_vLightPos- In.vPosition);
     vector MiddleVector = normalize(LightLook + LookAt);
