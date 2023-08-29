@@ -19,9 +19,6 @@ HRESULT CGameObject::Initialize_Prototype()
 	if (nullptr == m_pTransform)
 		return E_FAIL;
 
-	//5°³ ·»´õÅ¸°Ù¿¡
-	// Player
-
 	return S_OK;
 }
 
