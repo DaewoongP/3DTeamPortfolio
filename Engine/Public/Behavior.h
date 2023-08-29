@@ -40,16 +40,10 @@ protected:
 	virtual ~CBehavior() = default;
 
 public:
-	const HRESULT& Get_Return_Data() const {
-		return m_ReturnData;
-	}
-	void Set_Return_Data(const HRESULT& iReturnData) {
-		m_ReturnData = iReturnData;
-	}
 
 public:
-	virtual HRESULT Initialize_Prototype() override = 0;
-	virtual HRESULT Initialize(void* pArg) override = 0;
+	virtual HRESULT Initialize_Prototype() = 0;
+	virtual HRESULT Initialize(void* pArg) = 0;
 	virtual HRESULT Tick(const _float & fTimeDelta) = 0;
 
 public:
@@ -76,6 +70,10 @@ protected:
 protected:
 	virtual CBehavior* Clone(void* pArg) = 0;
 	virtual void Free() override;
+
+#ifdef _DEBUG
+	void Find_Running_Behavior(_Inout_ stack<wstring> BehaviorTags);
+#endif // _DEBUG
 };
 
 END
