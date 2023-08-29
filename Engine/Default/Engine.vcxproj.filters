@@ -208,6 +208,9 @@
     <Filter Include="01. Utility\10. Calculator">
       <UniqueIdentifier>{cdd21f25-4dbd-40f7-9fbb-cd3a276139a6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\03. Components\04. Model\Animation\Notify">
+      <UniqueIdentifier>{99ae6d76-4b41-4979-a852-21410c894c2c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -438,6 +441,9 @@
     <ClInclude Include="..\public\Calculator.h">
       <Filter>01. Utility\10. Calculator</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Notify.h">
+      <Filter>01. Utility\03. Components\04. Model\Animation\Notify</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -646,6 +652,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Calculator.cpp">
       <Filter>01. Utility\10. Calculator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Notify.cpp">
+      <Filter>01. Utility\03. Components\04. Model\Animation\Notify</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

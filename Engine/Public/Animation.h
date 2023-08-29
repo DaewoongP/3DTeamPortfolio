@@ -19,7 +19,7 @@ public:
 	_uint Get_CurrentAnimationFrame() { return m_ChannelCurrentKeyFrames[m_iMaxFrameChannelIndex]; }
 	void Set_CurrentKeyFrameIndex(CModel::BONES& Bones, _uint iKeyFrameIndex);
 	void Set_Pause(_bool isPause) { m_isPaused = isPause; }
-	void Set_TickPerSecond(_float fMultiply) 
+	void Set_TickPerSecond(_float fMultiply)
 	{
 		if (0 >= fMultiply)
 			return;
@@ -28,8 +28,8 @@ public:
 	}
 	void Set_Loop(_bool isLoop) { m_isLoop = isLoop; }
 	// 애니메이션을 초기화 하는 함수
-	void Reset() 
-	{ 
+	void Reset()
+	{
 		for (auto& iCurrentKeyFrame : m_ChannelCurrentKeyFrames)
 			iCurrentKeyFrame = 0;
 		m_fTimeAcc = 0.0;
@@ -37,17 +37,26 @@ public:
 	void TimeAccReset() { m_fTimeAcc = 0.0; }
 	void Delete_Translation();
 	void Delete_Rotation();
+	
+	//주로 겜오브제 이니셜라이즈에서 사용할 키프레임 찾아서 가져오는 함수.
+	NOTIFYFRAME* Find_NotifyFrame(const wchar_t* wszNotifyTag);
+	SOUNDFRAME* Find_SoundFrame(const wchar_t* wszSoundTag);
+
 
 public:
 	HRESULT Initialize(Engine::ANIMATION Animation, const CModel::BONES& Bones);
 	void Invalidate_TransformationMatrix(CModel::BONES& Bones, _float fTimeDelta);
-
+	void Invalidate_Speed(_float fTimeDelta);
+	void Invalidate_Notify(_float fTimeDelta);
+	void Invalidate_Frame(_float fTimeDelta);
 private:
 	_tchar						m_szName[MAX_STR] = TEXT("");
 	// 애니메이션이 사용하는 채널(뼈)의 개수
 	_uint						m_iNumChannels = { 0 };
 	// 채널을 담고있는 벡터 컨테이너
 	vector<class CChannel*>		m_Channels;
+	// 노티파이(알람,사운드,충돌체,파티클,속도 재생용 채널 컨테이너)
+	class CNotify*				m_Notify;
 	// 각 채널의 현재 키프레임 인덱스
 	vector<_uint>				m_ChannelCurrentKeyFrames;
 

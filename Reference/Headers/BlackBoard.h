@@ -1,5 +1,11 @@
 #pragma once
 
+/*	
+*	CBlackBoard
+*	정 : 주성환
+*	부 :
+*/
+
 #include "Base.h"
 
 BEGIN(Engine)

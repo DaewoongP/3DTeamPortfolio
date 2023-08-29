@@ -12,7 +12,7 @@ private:
 public:
 	_uint Get_BoneIndex() const { return m_iBoneIndex; }
 	// 존재하는 키프레임 중 인덱스에 해당하는 키프레임의 시간값 반환
-	_float Get_CurrentKeyFrameTime(_uint iCurrentIndex) const { return m_KeyFrames[iCurrentIndex].fTime; }
+	_float Get_CurrentKeyFrameTime(_uint iCurrentIndex) const { return m_MatrixKeyFrames[iCurrentIndex].fTime; }
 	// 채널 키프레임 중 가장 큰값 반환
 	_uint	Get_NumKeyFrames() const { return m_iNumKeyFrames; }
 	void Delete_Translation();
@@ -28,9 +28,8 @@ private:
 	_tchar				m_szName[MAX_STR] = TEXT("");
 	// 스케일, 로테이션, 포지션 중 가장 프레임이 많은 값을 저장.
 	_uint				m_iNumKeyFrames = { 0 };
-	// 인덱스에 해당하는 키프레임에서의 상태값들 (SRT)을 벡터컨테이너에 저장
-	// 배열 인덱스로 바로 접근하여 인덱스에 해당하는 키프레임 반환 가능.
-	vector<KEYFRAME>	m_KeyFrames;
+	vector<MATRIXFRAME>	m_MatrixKeyFrames;
+
 	// 현재 채널과 이름이 같은 뼈의 인덱스 값
 	_uint				m_iBoneIndex = { 0 };
 

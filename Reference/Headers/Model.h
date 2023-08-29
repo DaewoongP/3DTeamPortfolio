@@ -67,6 +67,7 @@ private: /* For.Animations */
 	_uint							m_iPreviousAnimIndex = { 0 };
 	_uint							m_iCurrentAnimIndex = { 0 };
 	_uint							m_iNumAnimations = { 0 };
+
 	vector<class CAnimation*>		m_Animations;
 
 private:
