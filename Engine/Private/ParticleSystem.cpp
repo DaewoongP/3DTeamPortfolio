@@ -1,5 +1,5 @@
 #include "ParticleSystem.h"
-#include "MainModule.h"
+
 
 CParticleSystem::CParticleSystem(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
 	: CComponent(_pDevice, _pContext)
@@ -13,20 +13,28 @@ CParticleSystem::CParticleSystem(const CParticleSystem& _rhs)
 
 }
 
+MAIN_MODULE CParticleSystem::Get_MainModule_Desc() const
+{
+	if (nullptr == m_pMainModule)
+		return MAIN_MODULE();
+
+	return m_pMainModule->m_MainModuleDesc;
+}
+
 HRESULT CParticleSystem::Initialize_Prototype(const _tchar* _pPariticleSystemFilePath)
 {	
-
-
 	// 메인모듈 생성
 	m_pMainModule->Create(_pPariticleSystemFilePath);
-
-	
-	CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Particles/Fire"));
 
 	return S_OK;
 }
 
 HRESULT CParticleSystem::Initialize(void* _pArg)
+{
+	return S_OK;
+}
+
+HRESULT CParticleSystem::Render()
 {
 	return S_OK;
 }
@@ -37,7 +45,7 @@ CParticleSystem* CParticleSystem::Create(ID3D11Device* _pDevice, ID3D11DeviceCon
 
 	if (FAILED(pInstance->Initialize_Prototype(_pPariticleSystemFilePath)))
 	{
-		//MSG_BOX("Failed to Created CParticleSystem");
+		MSG_BOX("Failed to Created CParticleSystem");
 		Safe_Release(pInstance);
 	}
 
@@ -60,4 +68,5 @@ CComponent* CParticleSystem::Clone(void* _pArg)
 void CParticleSystem::Free()
 {
 	__super::Free();
+	Safe_Release(m_pMainModule);
 }

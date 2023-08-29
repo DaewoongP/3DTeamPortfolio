@@ -182,19 +182,6 @@ _int CCalculator::RandomChoose(vector<_float> Weights, _uint iChooseSize)
 	return -1;
 }
 
-_bool CCalculator::Timer(_float fAlarmTime, _float fTimeDelta)
-{
-	m_fAlarmTimeAcc += fTimeDelta;
-
-	if (m_fAlarmTimeAcc > fAlarmTime)
-	{
-		m_fAlarmTimeAcc = 0.0;
-		return true;
-	}
-
-	return false;
-}
-
 _float4 CCalculator::Get_RandomVectorInSphere(_float fRadius)
 {
 	_float fRandX = (rand() % 1001) * 0.001f;
@@ -280,17 +267,6 @@ HRESULT CCalculator::ReadFileInDirectory(_Inout_ vector<wstring>& OutVector, con
 
 	return S_OK;
 }
-
-template<typename T>
-inline void CCalculator::Clamp(T& _value, T _min, T _max)
-{
-	if (_min > _max)
-		std::swap(_min, _max);
-
-	_value = max(_value, _min);
-	_value = min(_value, _max);
-}
-
 
 void CCalculator::Free()
 {

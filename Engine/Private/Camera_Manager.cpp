@@ -1,5 +1,4 @@
 #include "Camera_Manager.h"
-
 #include "PipeLine.h"
 
 IMPLEMENT_SINGLETON(CCamera_Manager);
@@ -10,20 +9,18 @@ void CCamera_Manager::Tick(_float _TimeDelta)
 
 	m_pMainCamera->Tick(_TimeDelta);
 
-
-
-	//ÄÆ¾À¿¡ Àç»ý ÇÒ °Í ÀÌ ÀÖ´Ù¸é.
+	//ï¿½Æ¾ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö´Ù¸ï¿½.
 	if (false == m_CutSceneCameraDescs.empty())
 	{
-		//Àç»ý ÇÑ´Ù.
+		//ï¿½ï¿½ï¿½ ï¿½Ñ´ï¿½.
 		Play_CutScene(_TimeDelta);
 	}
-	//ÄÆ¾À ´ÙÀ½ ¿ì¼± ¼øÀ§ -> ¿ÀÇÁ¼Â
+	//ï¿½Æ¾ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ì¼± ï¿½ï¿½ï¿½ï¿½ -> ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	else if (false == m_OffSetCameraDescs.empty())
 	{
 		Play_OffSetCamera(_TimeDelta);
 	}
-	//¿ÀÇÁ¼Â ´ÙÀ½ ¿ì¼± ¼øÀ§ -> ¾×¼Ç
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ì¼± ï¿½ï¿½ï¿½ï¿½ -> ï¿½×¼ï¿½
 	else if (true)
 	{
 
@@ -44,7 +41,7 @@ HRESULT CCamera_Manager::Add_MainCamera(CCamera* _pMainCamera)
 {
 	NULL_CHECK_RETURN(_pMainCamera, E_FAIL);
 
-	//È¤½ÃÀÖ´Ù¸é º¯°æÀÌ¹Ç·Î ·¹ÆÛ·±½º Ä«¿îÆ® ¿©±â¼­ Á¦°Å
+	//È¤ï¿½ï¿½ï¿½Ö´Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì¹Ç·ï¿½ ï¿½ï¿½ï¿½Û·ï¿½ï¿½ï¿½ Ä«ï¿½ï¿½Æ® ï¿½ï¿½ï¿½â¼­ ï¿½ï¿½ï¿½ï¿½
 	if (nullptr != m_pMainCamera)
 	{
 		Safe_Release(m_pMainCamera);
@@ -66,18 +63,18 @@ HRESULT CCamera_Manager::Read_CutSceneCamera(const _tchar* _CutSceneTag, const _
 	if (0 == hFile)
 		return E_FAIL;
 
-	//¸î°³ ¹ÞÀ»°ÍÀÎÁö
+	//ï¿½î°³ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	_uint iDescSize{};
 
-	//¹Þ¾Æ¿À°í
+	//ï¿½Þ¾Æ¿ï¿½ï¿½ï¿½
 	ReadFile(hFile, &iDescSize, sizeof(_uint), &dwByte, nullptr);
 
 	vector<CUTSCENECAMERADESC> vecCutSceneCameraDesc;
 
-	//¸®»çÀÌÁî(µ¿Àû ÇÒ´ç ÃÖ¼ÒÈ­ÇÏ±â À§ÇØ)
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½ ï¿½Ò´ï¿½ ï¿½Ö¼ï¿½È­ï¿½Ï±ï¿½ ï¿½ï¿½ï¿½ï¿½)
 	vecCutSceneCameraDesc.resize(iDescSize);
 
-	//Ä«¸Þ¶ó Á¤º¸ ÀÐ±â
+	//Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ð±ï¿½
 	for (size_t vecIndex = 0; vecIndex < iDescSize; vecIndex++)
 	{
 		ReadFile(hFile, &vecCutSceneCameraDesc[vecIndex], sizeof(CUTSCENECAMERADESC), &dwByte, nullptr);
@@ -85,7 +82,7 @@ HRESULT CCamera_Manager::Read_CutSceneCamera(const _tchar* _CutSceneTag, const _
 
 	CloseHandle(hFile);
 
-	//µ¥ÀÌÅÍ ÀúÀå
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	m_CutSceneCameraInfos.emplace(_CutSceneTag, vecCutSceneCameraDesc);
 
 	return S_OK;
@@ -115,18 +112,18 @@ HRESULT CCamera_Manager::Read_OffSetCamera(const _tchar* _OffSetTag, const _tcha
 	if (0 == hFile)
 		return E_FAIL;
 
-	//¸î°³ ¹ÞÀ»°ÍÀÎÁö
+	//ï¿½î°³ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	_uint iDescSize{};
 
-	//¹Þ¾Æ¿À°í
+	//ï¿½Þ¾Æ¿ï¿½ï¿½ï¿½
 	ReadFile(hFile, &iDescSize, sizeof(_uint), &dwByte, nullptr);
 
 	vector<OFFSETCAMERADESC> vecOffSetCameraDesc;
 
-	//¸®»çÀÌÁî(µ¿Àû ÇÒ´ç ÃÖ¼ÒÈ­ÇÏ±â À§ÇØ)
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½ ï¿½Ò´ï¿½ ï¿½Ö¼ï¿½È­ï¿½Ï±ï¿½ ï¿½ï¿½ï¿½ï¿½)
 	vecOffSetCameraDesc.resize(iDescSize);
 
-	//Ä«¸Þ¶ó Á¤º¸ ÀÐ±â
+	//Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ð±ï¿½
 	for (size_t vecIndex = 0; vecIndex < iDescSize; vecIndex++)
 	{
 		ReadFile(hFile, &vecOffSetCameraDesc[vecIndex], sizeof(OFFSETCAMERADESC), &dwByte, nullptr);
@@ -134,7 +131,7 @@ HRESULT CCamera_Manager::Read_OffSetCamera(const _tchar* _OffSetTag, const _tcha
 
 	CloseHandle(hFile);
 
-	//µ¥ÀÌÅÍ ÀúÀå
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	m_OffSetCameraInfos.emplace(_OffSetTag, vecOffSetCameraDesc);
 
 	return S_OK;
@@ -156,13 +153,13 @@ HRESULT CCamera_Manager::Add_OffSetCamera(const _tchar* _OffSetTag)
 
 void CCamera_Manager::Play_CutScene(_float _TimeDelta)
 {
-	//½Ã°£ ´©Àû
+	//ï¿½Ã°ï¿½ ï¿½ï¿½ï¿½ï¿½
 	m_fCutSceneTimeAcc += _TimeDelta;
 
-	//·¯ÇÁ
+	//ï¿½ï¿½ï¿½ï¿½
 	if (true == m_CutSceneCameraDescs.front().isLerp)
 	{
-		//·¯ÇÁ ºñÀ²
+		//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		_float fRatio =
 			m_fCutSceneTimeAcc /
 			(m_CutSceneCameraDescs.front().fDuration -
@@ -186,7 +183,7 @@ void CCamera_Manager::Play_CutScene(_float _TimeDelta)
 
 		_float4 vUp = _float4(0.0f, 1.0f, 0.0f, 0.0f);
 
-		//Ä«¸Þ¶óÀÇ ¿ªÇà·Ä
+		//Ä«ï¿½Þ¶ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½
 		m_ViewMatrix = XMMatrixInverse(nullptr, XMMatrixLookAtLH(vEye, vAt, vUp));	
 	}
 	else if (false == m_CutSceneCameraDescs.front().isLerp)
@@ -197,38 +194,38 @@ void CCamera_Manager::Play_CutScene(_float _TimeDelta)
 
 		_float4 vUp = _float4(0.0f, 1.0f, 0.0f, 0.0f);
 
-		//Ä«¸Þ¶óÀÇ ¿ªÇà·Ä
+		//Ä«ï¿½Þ¶ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½
 		m_ViewMatrix = XMMatrixInverse(nullptr, XMMatrixLookAtLH(vEye, vAt, vUp));
 	}
 
-	//ÆÄÀÌÇÁ ¶óÀÎ °ª º¯°æ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	m_pPipeLine->Set_Transform(CPipeLine::D3DTS_VIEW, m_ViewMatrix);
 
-	//Å¥ÀÇ ¾Õ ¿ø¼ÒÀÇ µà·¹ÀÌ¼ÇÀÌ ½Ã°£ ´©ÀûÄ¡ º¸´Ù ÀÛ´Ù¸é
+	//Å¥ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½à·¹ï¿½Ì¼ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ ï¿½ï¿½ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½ ï¿½Û´Ù¸ï¿½
 	if ((m_PreviousCutSceneCameraDesc.fDuration + m_fCutSceneTimeAcc)
 		<=
 		(m_CutSceneCameraDescs.front().fDuration))
 	{
-		//´©ÀûÄ¡ ÃÊ±âÈ­
+		//ï¿½ï¿½ï¿½ï¿½Ä¡ ï¿½Ê±ï¿½È­
 		m_fCutSceneTimeAcc = 0.0f;
 
-		//ÀÌÀü °ª º¯°æ
+		//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		m_PreviousCutSceneCameraDesc = m_CutSceneCameraDescs.front();
 
-		//¸Ç ¾Õ ¿ø¼Ò »èÁ¦
+		//ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		m_CutSceneCameraDescs.pop();
 	}
 }
 
 void CCamera_Manager::Play_OffSetCamera(_float _TimeDelta)
 {
-	////½Ã°£ ´©Àû
+	////ï¿½Ã°ï¿½ ï¿½ï¿½ï¿½ï¿½
 	//m_fOffSetTimeAcc += _TimeDelta;
 
-	////·¯ÇÁ
+	////ï¿½ï¿½ï¿½ï¿½
 	//if (true == m_OffSetCameraDescs.front().isLerp)
 	//{
-	//	//·¯ÇÁ ºñÀ²
+	//	//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	//	_float fRatio =
 	//		m_fCutSceneTimeAcc /
 	//		(m_OffSetCameraDescs.front().fDuration -
@@ -252,7 +249,7 @@ void CCamera_Manager::Play_OffSetCamera(_float _TimeDelta)
 
 	//	_float4 vUp = _float4(0.0f, 1.0f, 0.0f, 0.0f);
 
-	//	//Ä«¸Þ¶óÀÇ ¿ªÇà·Ä
+	//	//Ä«ï¿½Þ¶ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½
 	//	m_ViewMatrix = XMMatrixInverse(nullptr, XMMatrixLookAtLH(vEye, vAt, vUp));
 	//}
 	//else if (false == m_OffSetCameraDescs.front().isLerp)
@@ -263,25 +260,25 @@ void CCamera_Manager::Play_OffSetCamera(_float _TimeDelta)
 
 	//	_float4 vUp = _float4(0.0f, 1.0f, 0.0f, 0.0f);
 
-	//	//Ä«¸Þ¶óÀÇ ¿ªÇà·Ä
+	//	//Ä«ï¿½Þ¶ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½
 	//	m_ViewMatrix = XMMatrixInverse(nullptr, XMMatrixLookAtLH(vEye, vAt, vUp));
 	//}
 
-	////ÆÄÀÌÇÁ ¶óÀÎ °ª º¯°æ
+	////ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	//m_pPipeLine->Set_Transform(CPipeLine::D3DTS_VIEW, m_ViewMatrix);
 
-	////Å¥ÀÇ ¾Õ ¿ø¼ÒÀÇ µà·¹ÀÌ¼ÇÀÌ ½Ã°£ ´©ÀûÄ¡ º¸´Ù ÀÛ´Ù¸é
+	////Å¥ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½à·¹ï¿½Ì¼ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ ï¿½ï¿½ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½ ï¿½Û´Ù¸ï¿½
 	//if ((m_PreviousOffSetCameraDesc.fDuration + m_fCutSceneTimeAcc)
 	//	<=
 	//	(m_OffSetCameraDescs.front().fDuration))
 	//{
-	//	//´©ÀûÄ¡ ÃÊ±âÈ­
+	//	//ï¿½ï¿½ï¿½ï¿½Ä¡ ï¿½Ê±ï¿½È­
 	//	m_fCutSceneTimeAcc = 0.0f;
 
-	//	//ÀÌÀü °ª º¯°æ
+	//	//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	//	m_PreviousOffSetCameraDesc = m_OffSetCameraDescs.front();
 
-	//	//¸Ç ¾Õ ¿ø¼Ò »èÁ¦
+	//	//ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	//	m_OffSetCameraDescs.pop();
 	//}
 }
@@ -290,7 +287,7 @@ vector<CUTSCENECAMERADESC>* CCamera_Manager::Find_CutScene(const _tchar* _CutSce
 {
 	NULL_CHECK_RETURN(_CutSceneTag, nullptr);
 
-	//ÅÂ±× °ªÀ¸·Î °Ë»ö
+	//ï¿½Â±ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ë»ï¿½
 	auto CutSceneInfo = find_if(m_CutSceneCameraInfos.begin(), m_CutSceneCameraInfos.end(), CTag_Finder(_CutSceneTag));
 
 	NULL_CHECK_RETURN(&(*CutSceneInfo).second, nullptr);
@@ -303,7 +300,7 @@ vector<OFFSETCAMERADESC>* CCamera_Manager::Find_OffSetCamera(const _tchar* _OffS
 {
 	NULL_CHECK_RETURN(_OffSetTag, nullptr);
 
-	//ÅÂ±× °ªÀ¸·Î °Ë»ö
+	//ï¿½Â±ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ë»ï¿½
 	auto OffSetInfo = find_if(m_OffSetCameraInfos.begin(), m_OffSetCameraInfos.end(), CTag_Finder(_OffSetTag));
 
 	NULL_CHECK_RETURN(&(*OffSetInfo).second, nullptr);

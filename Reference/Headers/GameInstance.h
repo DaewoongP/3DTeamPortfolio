@@ -45,11 +45,12 @@ public: /* For.Level_Manager */
 	HRESULT Render_Level();
 
 public: /* For.Object_Manager */
-	HRESULT Add_Prototype(const _tchar * pPrototypeTag, class CGameObject* pPrototype);
+	HRESULT Add_Prototype_GameObject(const _tchar * pPrototypeTag, class CGameObject* pPrototype);
 	HRESULT Add_GameObject(_uint iLevelIndex, const _tchar * pPrototypeTag, const _tchar * pLayerTag, const _tchar * pGameObjectTag, void* pArg = nullptr);
+	class CGameObject* Find_GameObject_In_Layer(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pGameObjectTag);
 
 public: /* For.Component_Manager*/
-	HRESULT Add_Prototype(_uint iLevelIndex, const _tchar * pPrototypeTag, class CComponent* pPrototype);
+	HRESULT Add_Prototype_Component(_uint iLevelIndex, const _tchar * pPrototypeTag, class CComponent* pPrototype);
 	class CComponent* Clone_Component(_uint iLevelIndex, const _tchar * pPrototypeTag, void* pArg = nullptr);
 	HRESULT	Delete_Prototype(_uint iLevelIndex, const _tchar * pPrototypeTag);
 
@@ -111,17 +112,8 @@ public: /* For. Calculator */
 	// 벡터사이즈와 값이 다를경우 임의로 벡터에 남은 퍼센트를 분배해서 넣어줌.
 	// 루프를 돌아야하므로 효율성을 높이려면 사이즈를 맞춰주면 좋음.
 	_uint RandomChoose(vector<_float> Weights, _uint iChooseSize);
-	// true가 불릴 시간 설정
-	_bool Timer(_float fAlarmTime, _float fTimeDelta);
 	// 반지름 길이를 입력하면 그 반지름 내부에서 방향벡터를 랜덤하게 뽑아주는 함수입니다.
 	_float4 Get_RandomVectorInSphere(_float fRadius);
-	// 값의 범위를 제한하는 함수
-	// ex)
-	// int value = 11;
-	// Clamp(value, 0, 10);
-	// 결과 : value = 10;
-	template<typename T>
-	inline void Clamp(T& _value, T _min, T _max);
 	// FilePath 내의 모든 파일을 순회하면서 Ext 확장자에 맞는 파일들을 OutVector에 넣어줍니다.
 	HRESULT ReadFileInDirectory(_Inout_ vector<wstring>& OutVector, const _tchar* pFilePath, const _tchar* pExt);
 

@@ -23,6 +23,7 @@ public:
 	virtual void OnCollisionStay(COLLISIONDESC CollisionDesc) {}
 	virtual void OnCollisionExit(COLLISIONDESC CollisionDesc) {}
 	virtual HRESULT Render() override;
+	virtual HRESULT Render_Depth();
 
 protected:
 	CTransform*		m_pTransform = { nullptr };

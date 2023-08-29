@@ -1,5 +1,6 @@
 #include "..\Public\Animation.h"
 #include "Channel.h"
+#include "Notify.h"
 
 CAnimation::CAnimation()
 {
@@ -35,8 +36,8 @@ void CAnimation::Set_CurrentKeyFrameIndex(CModel::BONES& Bones, _uint iKeyFrameI
 		if (nullptr == pChannel)
 			return;
 		m_ChannelCurrentKeyFrames[iChannelIndex] = iKeyFrameIndex;
-		
-		pChannel->Invalidate_TransformationMatrix(Bones, 
+
+		pChannel->Invalidate_TransformationMatrix(Bones,
 			pChannel->Get_CurrentKeyFrameTime(iKeyFrameIndex),
 			&m_ChannelCurrentKeyFrames[iChannelIndex]);
 
@@ -60,6 +61,16 @@ void CAnimation::Delete_Rotation()
 	}
 }
 
+NOTIFYFRAME* CAnimation::Find_NotifyFrame(const _tchar* wszNotifyTag)
+{
+	return nullptr;
+}
+
+SOUNDFRAME* CAnimation::Find_SoundFrame(const _tchar* wszSoundTag)
+{
+	return nullptr;
+}
+
 HRESULT CAnimation::Initialize(Engine::ANIMATION Animation, const CModel::BONES& Bones)
 {
 	m_isLoop = true;
@@ -70,7 +81,7 @@ HRESULT CAnimation::Initialize(Engine::ANIMATION Animation, const CModel::BONES&
 
 	m_fOriginTickPerSecond = Animation.fTickPerSecond;
 	m_fTickPerSecond = Animation.fTickPerSecond;
-	
+
 	m_iNumChannels = Animation.iNumChannels;
 
 	for (_uint i = 0; i < m_iNumChannels; ++i)
@@ -105,8 +116,6 @@ HRESULT CAnimation::Initialize(Engine::ANIMATION Animation, const CModel::BONES&
 
 void CAnimation::Invalidate_TransformationMatrix(CModel::BONES& Bones, _float fTimeDelta)
 {
-	m_fTimeAcc += m_fTickPerSecond * fTimeDelta;
-
 	if (m_fTimeAcc >= m_fDuration)
 	{
 		if (true == m_isLoop)
@@ -124,6 +133,21 @@ void CAnimation::Invalidate_TransformationMatrix(CModel::BONES& Bones, _float fT
 
 		pChannel->Invalidate_TransformationMatrix(Bones, m_fTimeAcc, &m_ChannelCurrentKeyFrames[iChannelIndex++]);
 	}
+}
+
+void CAnimation::Invalidate_Frame(_float fTimeDelta)
+{
+	m_fTimeAcc += m_fTickPerSecond * fTimeDelta;
+	if (m_fTimeAcc >= m_fDuration)
+	{
+		if (true == m_isLoop)
+		{
+			m_fTimeAcc = 0.f;
+		}
+	}
+	//첫번째 채널에만 사운드용 데이터를 추가해줄거임.
+	_uint		iChannelIndex = 0;
+	m_Notify->Invalidate_Frame(m_fTimeAcc, &m_ChannelCurrentKeyFrames[iChannelIndex++], &m_fTickPerSecond);
 }
 
 CAnimation* CAnimation::Create(Engine::ANIMATION Animation, const CModel::BONES& Bones)
@@ -147,7 +171,7 @@ void CAnimation::Free()
 {
 	for (auto& pChannel : m_Channels)
 		Safe_Release(pChannel);
+	//Safe_Release(m_Notify);
 
 	m_Channels.clear();
-
 }

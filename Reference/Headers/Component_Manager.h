@@ -1,4 +1,5 @@
 #pragma once
+#include "PX.h"
 #include "Bone.h"
 #include "Mesh.h"
 #include "Model.h"
@@ -15,6 +16,7 @@
 #include "VIBuffer_Line.h"
 #include "VIBuffer_Cube.h"
 #include "VIBuffer_Cell.h"
+#include "ParticleSystem.h"
 #include "Bounding_Sphere.h"
 #include "VIBuffer_Terrain.h"
 #include "VIBuffer_Instance.h"

@@ -62,6 +62,13 @@ HRESULT CLevel_Tool::Ready_For_Layer_Tool(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
+	if (FAILED(pGameInstance->Add_GameObject(LEVEL_TOOL,
+		TEXT("Prototype_GameObject_DummyParticle"), pLayerTag, TEXT("GameObject_DummyParticle"))))
+	{
+		MSG_BOX("Failed Add GameObject GameObject_DummyParticle");
+		return E_FAIL;
+	}
+
 	Safe_Release(pGameInstance);
 
 	return S_OK;

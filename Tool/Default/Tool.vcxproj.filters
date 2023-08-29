@@ -37,6 +37,9 @@
     <Filter Include="02. ToolObjects\00. Terrain">
       <UniqueIdentifier>{4972e54d-e58c-4d7f-87fe-f634679e5a7d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Window\Window\UI">
+      <UniqueIdentifier>{05d913c5-58e8-4c63-8c76-3241b4090d81}</UniqueIdentifier>
+    </Filter>
     <Filter Include="01. Window\Window\Effect">
       <UniqueIdentifier>{37ceec7f-c6e3-4d9c-821b-540ccead54ed}</UniqueIdentifier>
     </Filter>
@@ -45,6 +48,12 @@
     </Filter>
     <Filter Include="02. ToolObjects\03. Sky">
       <UniqueIdentifier>{4461d7fd-a6a1-45bd-9424-3d9bfaf2e36f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. ToolObjects\01. Dummy\DummyParticle">
+      <UniqueIdentifier>{7edb6c26-6338-4754-9239-502063c38924}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Window\Window\Animation">
+      <UniqueIdentifier>{f24db859-61c1-45a9-96e6-80c730ace989}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -117,6 +126,9 @@
     <ClInclude Include="..\public\Terrain.h">
       <Filter>02. ToolObjects\00. Terrain</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_Window.h">
+      <Filter>01. Window\Window\UI</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\Effect_Window.h">
       <Filter>01. Window\Window\Effect</Filter>
     </ClInclude>
@@ -125,6 +137,15 @@
     </ClInclude>
     <ClInclude Include="..\public\Sky.h">
       <Filter>02. ToolObjects\03. Sky</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\DummyParticle.h">
+      <Filter>02. ToolObjects\01. Dummy\DummyParticle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Animation_Window.h">
+      <Filter>01. Window\Window\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CDummy.h">
+      <Filter>02. ToolObjects\01. Dummy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -186,6 +207,9 @@
     <ClCompile Include="..\private\Terrain.cpp">
       <Filter>02. ToolObjects\00. Terrain</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\UI_Window.cpp">
+      <Filter>01. Window\Window\UI</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\Effect_Window.cpp">
       <Filter>01. Window\Window\Effect</Filter>
     </ClCompile>
@@ -194,6 +218,15 @@
     </ClCompile>
     <ClCompile Include="..\private\Sky.cpp">
       <Filter>02. ToolObjects\03. Sky</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DummyParticle.cpp">
+      <Filter>02. ToolObjects\01. Dummy\DummyParticle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Animation_Window.cpp">
+      <Filter>01. Window\Window\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CDummy.cpp">
+      <Filter>02. ToolObjects\01. Dummy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
