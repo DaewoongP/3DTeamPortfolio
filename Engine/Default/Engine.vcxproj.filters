@@ -178,6 +178,9 @@
     <Filter Include="01. Utility\05. Camera\Manager">
       <UniqueIdentifier>{97f9a052-34b3-4b0e-b6bc-a338772e27c9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\10. Calculator">
+      <UniqueIdentifier>{cdd21f25-4dbd-40f7-9fbb-cd3a276139a6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -378,6 +381,9 @@
     <ClInclude Include="..\public\Camera.h">
       <Filter>01. Utility\05. Camera</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Calculator.h">
+      <Filter>01. Utility\10. Calculator</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -556,6 +562,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Camera.cpp">
       <Filter>01. Utility\05. Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Calculator.cpp">
+      <Filter>01. Utility\10. Calculator</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

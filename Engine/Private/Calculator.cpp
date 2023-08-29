@@ -33,11 +33,11 @@ HRESULT CCalculator::Get_MouseRay(ID3D11DeviceContext* pContext, HWND hWnd, _flo
 	Safe_AddRef(pPipeLine);
 	
 	_float4x4		ProjMatrix_Inverse;
-	ProjMatrix_Inverse = pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_PROJ);
+	ProjMatrix_Inverse = *pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_PROJ);
 	vMouse = XMVector3TransformCoord(vMouse, ProjMatrix_Inverse);
 
 	_float4x4		ViewMatrix_Inverse;
-	ViewMatrix_Inverse = pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_VIEW);
+	ViewMatrix_Inverse = *pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_VIEW);
 
 	Safe_Release(pPipeLine);
 
@@ -84,11 +84,11 @@ HRESULT CCalculator::Get_WorldMouseRay(ID3D11DeviceContext* pContext, HWND hWnd,
 	Safe_AddRef(pPipeLine);
 
 	_float4x4		ProjMatrix_Inverse;
-	ProjMatrix_Inverse = pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_PROJ);
+	ProjMatrix_Inverse = *pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_PROJ);
 	vMouse = XMVector3TransformCoord(vMouse, ProjMatrix_Inverse);
 
 	_float4x4		ViewMatrix_Inverse;
-	ViewMatrix_Inverse = pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_VIEW);
+	ViewMatrix_Inverse = *pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_VIEW);
 
 	Safe_Release(pPipeLine);
 
