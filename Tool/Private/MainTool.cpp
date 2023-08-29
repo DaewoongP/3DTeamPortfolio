@@ -264,11 +264,6 @@ HRESULT CMainTool::Ready_Prototype_Component()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Default0.jpg")))))
 		return E_FAIL;
 
-	/* Prototype_GameObject_Dummy*/
-	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Dummy"),
-		CDummy::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
 	return S_OK;
 }
 
@@ -284,6 +279,11 @@ HRESULT CMainTool::Ready_Prototype_Object()
 
 	if (FAILED(m_pGameInstance->Add_Prototype_GameObject(TEXT("Prototype_GameObject_Sky"),
 		CSky::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* Prototype_GameObject_Dummy*/
+	if (FAILED(m_pGameInstance->Add_Prototype_GameObject(TEXT("Prototype_GameObject_Dummy"),
+		CDummy::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	return S_OK;

@@ -60,7 +60,7 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 			PivotMatrix = XMMatrixIdentity();
 			CGameInstance* pGameInstance = CGameInstance::GetInstance();
 			Safe_AddRef(pGameInstance);
-			if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, wszModelTag,
+			if (FAILED(pGameInstance->Add_Prototype_Component(LEVEL_TOOL, wszModelTag,
 				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, wszfilePath, PivotMatrix))))
 				return;
 			Safe_Release(pGameInstance);
