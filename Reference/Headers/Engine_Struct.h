@@ -77,6 +77,32 @@ namespace Engine
 		float			fTime;
 	}NOTIFY;
 
+	//장현우
+	//서브카메라 구조체
+	typedef struct ENGINE_DLL tagCutSceneCameraDesc
+	{
+		_bool isLerp;
+		_float fDuration;
+		_float4 vAt;
+		_float4 vEye;
+	}CUTSCENECAMERADESC;
+
+	typedef struct ENGINE_DLL tagOffSetCameraDesc
+	{
+		_bool isLerp;
+		_float fDuration;
+		_float4x4 OffsetMatrix;
+		_float4x4* pTargetMatrix;
+	}OFFSETCAMERADESC;
+
+	typedef struct ENGINE_DLL tagActionCameraDesc
+	{
+		_float fDuration;
+		_float4 vAt;
+		_float4 vEye;
+	}ACTIONCAMERADESC;
+
+
 	typedef struct tagCollisionDesc
 	{
 		enum COLTYPE
@@ -213,4 +239,5 @@ namespace Engine
 		static const unsigned int				iNumElements = { 7 };
 		static const D3D11_INPUT_ELEMENT_DESC	Elements[iNumElements];
 	}VTXPOINTCOLORINSTANCE_DECL;
+
 }
