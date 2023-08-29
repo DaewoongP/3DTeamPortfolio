@@ -67,7 +67,7 @@ void CCollider::Tick(_float4x4 TransformMatrix)
 
 	m_pBounding->Tick(TransformMatrix);
 
-	DeadCollision();
+	IsExitCollision();
 }
 
 #ifdef _DEBUG
@@ -110,8 +110,7 @@ void CCollider::OnCollision(COLLISIONDESC::COLTYPE eCollisionType, CCollider* pO
 		
 		CollisionDesc.pOtherTransform = CollisionDesc.pOtherOwner->Get_Transform();
 
-		m_isDead.push_back(false);
-		m_Collisions.push_back(CollisionDesc);
+		m_Collisions.push_back({ false, CollisionDesc });
 
  		static_cast<CGameObject*>(m_pOwner)->OnCollisionEnter(CollisionDesc);
 	}
@@ -120,14 +119,16 @@ void CCollider::OnCollision(COLLISIONDESC::COLTYPE eCollisionType, CCollider* pO
 _bool CCollider::IsCollision(CCollider* pOtherCollider)
 {
 	_uint iIndex = { 0 };
-	auto iter = find_if(m_Collisions.begin(), m_Collisions.end(), [&](COLLISIONDESC CollDesc)
+	auto iter = find_if(m_Collisions.begin(), m_Collisions.end(), [&](pair<_bool, COLLISIONDESC>& pair)
 		{
-			if (CollDesc.pOtherCollider == pOtherCollider)
+			if (pair.second.pOtherCollider == pOtherCollider)
 			{
-				m_isDead[iIndex] = false;
+				pair.first = false;
 				return true;
 			}
-			++iIndex;
+			else
+				++iIndex;
+
 			return false;
 		});
 
@@ -137,53 +138,25 @@ _bool CCollider::IsCollision(CCollider* pOtherCollider)
 	// 이미 맵안에 들어가있었기때문에 Stay인게 확정.
 	// 나머지는 갱신할 필요 없음.
 	if (nullptr != m_pOwner)
-		static_cast<CGameObject*>(m_pOwner)->OnCollisionStay(*iter);
+		static_cast<CGameObject*>(m_pOwner)->OnCollisionStay(iter->second);
 
 	return true;
 }
 
-void CCollider::ExitCollision(CCollider* pOtherCollider)
-{
-	// 충돌을 안했는데 안에 있었다면 Exit상태 처리.
-	if (nullptr == pOtherCollider &&
-		nullptr == m_pOwner)
-		return;
-
-	_uint iIndex = { 0 };
-	auto iter = find_if(m_Collisions.begin(), m_Collisions.end(), [&](COLLISIONDESC CollDesc) 
-		{
-			if (CollDesc.pOtherCollider == pOtherCollider)
-			{
-				m_isDead[iIndex] = false;
-				return true;
-			}
-			return false;
-		});
-
-	if (iter == m_Collisions.end())
-		return;
-	
-	static_cast<CGameObject*>(m_pOwner)->OnCollisionExit(*iter);
-
-	m_Collisions.erase(iter);
-}
-
-void CCollider::DeadCollision()
+void CCollider::IsExitCollision()
 {
 	if (0 == m_Collisions.size())
 		return;
 
 	auto iter = m_Collisions.begin();
-	auto iter2 = m_isDead.begin();
 
 	for (_uint i = 0; i < m_Collisions.size(); ++i)
 	{
-		if (true == m_isDead[i])
+		if (true == m_Collisions[i].first)
 		{
-			static_cast<CGameObject*>(m_pOwner)->OnCollisionExit(m_Collisions[i]);
+			static_cast<CGameObject*>(m_pOwner)->OnCollisionExit(m_Collisions[i].second);
 			
 			m_Collisions.erase(iter + i);
-			m_isDead.erase(iter2 + i);
 
 			if (0 == i)
 				break;
@@ -191,9 +164,9 @@ void CCollider::DeadCollision()
 		}	
 	}
 
-	for (auto isDead : m_isDead)
+	for (auto pair : m_Collisions)
 	{
-		isDead = true;
+		pair.first = true;
 	}
 }
 

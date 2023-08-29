@@ -44,11 +44,11 @@ public:
 	HRESULT Bind_BoneMatrices(class CShader* pShader, const char* pConstantName, _uint iMeshIndex);
 
 private: // Files
-	MODEL					m_Model;
-	vector<NODE>			m_NodeDatas;
-	vector<MESH>			m_MeshDatas;
-	vector<MATERIAL>		m_MaterialDatas;
-	vector<ANIMATION>		m_AnimationDatas;
+	MODEL							m_Model;
+	vector<NODE>					m_NodeDatas;
+	vector<MESH>					m_MeshDatas;
+	vector<MATERIAL>				m_MaterialDatas;
+	vector<ANIMATION>				m_AnimationDatas;
 
 private: /* For.Bones */
 	vector<class CBone*>			m_Bones;
@@ -74,7 +74,7 @@ private:
 
 private:
 	HRESULT Ready_File(TYPE eType, const _tchar* pModelFilePath);
-	HRESULT Ready_Bones(Engine::NODE* pNode);
+	HRESULT Ready_Bones(Engine::NODE Node);
 	HRESULT Ready_Meshes(TYPE eType, _float4x4 PivotMatrix);
 	HRESULT Ready_Materials(const _tchar* pModelFilePath);
 	HRESULT Ready_Animations();

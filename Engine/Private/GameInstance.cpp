@@ -1,5 +1,6 @@
 #include "..\Public\GameInstance.h"
 #include "Frustum.h"
+#include "Calculator.h"
 #include "Font_Manager.h"
 #include "Level_Manager.h"
 #include "Timer_Manager.h"
@@ -23,6 +24,7 @@ CGameInstance::CGameInstance()
 	, m_pRenderTarget_Manager{ CRenderTarget_Manager::GetInstance() }
 	, m_pLight_Manager{ CLight_Manager::GetInstance() }
 	, m_pSound_Manager{ CSound_Manager::GetInstance() }
+	, m_pCalculator{ CCalculator::GetInstance() }
 {
 	Safe_AddRef(m_pFrustum);
 	Safe_AddRef(m_pFont_Manager);
@@ -37,6 +39,7 @@ CGameInstance::CGameInstance()
 	Safe_AddRef(m_pRenderTarget_Manager);
 	Safe_AddRef(m_pLight_Manager);
 	Safe_AddRef(m_pSound_Manager);
+	Safe_AddRef(m_pCalculator);
 }
 
 HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInst, _uint iNumLevels, const GRAPHICDESC& GraphicDesc, _Inout_ ID3D11Device** ppDevice, _Inout_ ID3D11DeviceContext** ppContext)
@@ -78,13 +81,20 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 	NULL_CHECK_RETURN_MSG(m_pObject_Manager, , TEXT("Object_Manager NULL"));
 	NULL_CHECK_RETURN_MSG(m_pPipeLine, , TEXT("PipeLine NULL"));
 	NULL_CHECK_RETURN_MSG(m_pInput_Device, , TEXT("Input_Device NULL"));
+	NULL_CHECK_RETURN_MSG(m_pCollision_Manager, , TEXT("Collsion_Manager NULL"));
 
 	m_pInput_Device->Tick();
+
 	m_pObject_Manager->Tick(fTimeDelta);
+
 	m_pPipeLine->Tick();
+
 	m_pFrustum->Tick();
+
 	m_pObject_Manager->Late_Tick(fTimeDelta);
+
 	m_pCollision_Manager->Tick();
+
 	m_pLevel_Manager->Tick(fTimeDelta);
 }
 
@@ -230,6 +240,48 @@ _long	CGameInstance::Get_DIMouseMove(CInput_Device::MOUSEMOVESTATE eMouseMoveID)
 	return m_pInput_Device->Get_DIMouseMove(eMouseMoveID);
 }
 
+void CGameInstance::Set_Transform(CPipeLine::D3DTRANSFORMSTATE eTransformState, _float4x4 TransformStateMatrix)
+{
+	NULL_CHECK_RETURN_MSG(m_pPipeLine, , TEXT("PipeLine NULL"));
+
+	return m_pPipeLine->Set_Transform(eTransformState, TransformStateMatrix);
+}
+
+void CGameInstance::Set_CameraFar(_float fCamFar)
+{
+	NULL_CHECK_RETURN_MSG(m_pPipeLine, , TEXT("PipeLine NULL"));
+
+	return m_pPipeLine->Set_CameraFar(fCamFar);
+}
+
+const _float4x4* CGameInstance::Get_TransformMatrix(CPipeLine::D3DTRANSFORMSTATE eTransformState)
+{
+	NULL_CHECK_RETURN_MSG(m_pPipeLine, nullptr, TEXT("PipeLine NULL"));
+
+	return m_pPipeLine->Get_TransformMatrix(eTransformState);
+}
+
+const _float4x4* CGameInstance::Get_TransformMatrix_Inverse(CPipeLine::D3DTRANSFORMSTATE eTransformState)
+{
+	NULL_CHECK_RETURN_MSG(m_pPipeLine, nullptr, TEXT("PipeLine NULL"));
+
+	return m_pPipeLine->Get_TransformMatrix_Inverse(eTransformState);
+}
+
+const _float4* CGameInstance::Get_CamPosition()
+{
+	NULL_CHECK_RETURN_MSG(m_pPipeLine, nullptr, TEXT("PipeLine NULL"));
+
+	return m_pPipeLine->Get_CamPosition();
+}
+
+const _float* CGameInstance::Get_CamFar()
+{
+	NULL_CHECK_RETURN_MSG(m_pPipeLine, nullptr, TEXT("PipeLine NULL"));
+
+	return m_pPipeLine->Get_CamFar();
+}
+
 HRESULT CGameInstance::Add_Collider(COLLISIONDESC::COLTYPE eCollisionType, CCollider* pCollider)
 {
 	NULL_CHECK_RETURN_MSG(m_pCollision_Manager, E_FAIL, TEXT("Collision NULL"));
@@ -361,6 +413,63 @@ HRESULT CGameInstance::Set_ChannelVolume(CSound_Manager::SOUNDCHANNEL eChannel, 
 	return m_pSound_Manager->Set_ChannelVolume(eChannel, fVolume);
 }
 
+HRESULT CGameInstance::Get_MouseRay(ID3D11DeviceContext* pContext, HWND hWnd, _float4x4 PickingWorldMatrix_Inverse, _Inout_ _float4* vRayPos, _Inout_ _float4* vRayDir)
+{
+	NULL_CHECK_RETURN_MSG(m_pCalculator, E_FAIL, TEXT("Calculator NULL"));
+
+	return m_pCalculator->Get_MouseRay(pContext, hWnd, PickingWorldMatrix_Inverse, vRayPos, vRayDir);
+}
+
+HRESULT CGameInstance::Get_WorldMouseRay(ID3D11DeviceContext* pContext, HWND hWnd, _Inout_ _float4* vRayPos, _Inout_ _float4* vRayDir)
+{
+	NULL_CHECK_RETURN_MSG(m_pCalculator, E_FAIL, TEXT("Calculator NULL"));
+
+	return m_pCalculator->Get_WorldMouseRay(pContext, hWnd, vRayPos, vRayDir);
+}
+
+_bool CGameInstance::IsMouseInClient(ID3D11DeviceContext* pContext, HWND hWnd)
+{
+	NULL_CHECK_RETURN_MSG(m_pCalculator, false, TEXT("Calculator NULL"));
+
+	return m_pCalculator->IsMouseInClient(pContext, hWnd);
+}
+
+_uint CGameInstance::RandomChoose(vector<_float> Weights, _uint iChooseSize)
+{
+	NULL_CHECK_RETURN_MSG(m_pCalculator, 0, TEXT("Calculator NULL"));
+
+	return m_pCalculator->RandomChoose(Weights, iChooseSize);
+}
+
+_bool CGameInstance::Timer(_float dAlarmTime, _float dTimeDelta)
+{
+	NULL_CHECK_RETURN_MSG(m_pCalculator, false, TEXT("Calculator NULL"));
+
+	return m_pCalculator->Timer(dAlarmTime, dTimeDelta);
+}
+
+_float4 CGameInstance::Get_RandomVectorInSphere(_float fRadius)
+{
+	NULL_CHECK_RETURN_MSG(m_pCalculator, XMVectorZero(), TEXT("Calculator NULL"));
+
+	return m_pCalculator->Get_RandomVectorInSphere(fRadius);
+}
+
+HRESULT CGameInstance::ReadFileInDirectory(vector<wstring>& OutVector, const _tchar* pFilePath, const _tchar* pExt)
+{
+	NULL_CHECK_RETURN_MSG(m_pCalculator, E_FAIL, TEXT("Calculator NULL"));
+
+	return m_pCalculator->ReadFileInDirectory(OutVector, pFilePath, pExt);
+}
+
+template<typename T>
+inline void CGameInstance::Clamp(T& _value, T _min, T _max)
+{
+	NULL_CHECK_RETURN_MSG(m_pCalculator, , TEXT("Calculator NULL"));
+
+	return m_pCalculator->Clamp(_value, _min, _max);
+}
+
 void CGameInstance::Release_Engine()
 {
 	CGameInstance::GetInstance()->DestroyInstance();
@@ -385,6 +494,8 @@ void CGameInstance::Release_Engine()
 
 	CSound_Manager::GetInstance()->DestroyInstance();
 
+	CCalculator::GetInstance()->DestroyInstance();
+
 	CLight_Manager::GetInstance()->DestroyInstance();
 
 	CInput_Device::GetInstance()->DestroyInstance();
@@ -394,6 +505,7 @@ void CGameInstance::Release_Engine()
 
 void CGameInstance::Free()
 {
+	Safe_Release(m_pCalculator);
 	Safe_Release(m_pSound_Manager);
 	Safe_Release(m_pLight_Manager);
 	Safe_Release(m_pRenderTarget_Manager);

@@ -21,7 +21,7 @@ HRESULT CCollision_Manager::Add_Collider(COLLISIONDESC::COLTYPE eCollisionType, 
 
 void CCollision_Manager::Tick()
 {
-	Collision(COLLISIONDESC::COLTYPE_PLAYER, COLLISIONDESC::COLTYPE_STATIC);
+	Collision(COLLISIONDESC::COLTYPE_PLAYER, COLLISIONDESC::COLTYPE_MONSTER);
 
 	ClearColliders();
 }

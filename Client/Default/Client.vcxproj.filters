@@ -57,6 +57,9 @@
     <ClInclude Include="..\Public\Loader.h">
       <Filter>01. Levels\99. Loading</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Client_Includes.h">
+      <Filter>99. Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -89,13 +92,13 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTex.hlsl">
-      <Filter>97. ShaderFiles</Filter>
-    </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="..\Bin\ShaderFiles\Shader_Client_Defines.hlsli">
       <Filter>97. ShaderFiles</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTex.hlsl">
+      <Filter>97. ShaderFiles\Textures</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

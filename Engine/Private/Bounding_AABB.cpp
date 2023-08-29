@@ -49,9 +49,9 @@ void CBounding_AABB::Tick(_float4x4 WorldMatrix)
 	m_pAABB_Original->Transform(*m_pAABB, Remove_Rotation(WorldMatrix));
 }
 
-_bool CBounding_AABB::RayIntersects(_float4 vOrigin, _float4 vDirection, _float& fDist)
+_bool CBounding_AABB::RayIntersects(_float4 vOrigin, _float4 vDirection, _Inout_ _float& fDist)
 {
-	return _bool();
+	return m_pAABB->Intersects(vOrigin, XMVector3Normalize(vDirection), fDist);
 }
 
 _bool CBounding_AABB::Intersects(CCollider::TYPE eColliderType, CBounding* pOtherBounding, _float3* pCollisionBox)

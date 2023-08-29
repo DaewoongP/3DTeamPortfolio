@@ -18,22 +18,22 @@ void CPipeLine::Set_Transform(D3DTRANSFORMSTATE eTransformState, _float4x4 Trans
 	m_TransformMatrix[eTransformState] = TransformStateMatrix;
 }
 
-_float4x4* CPipeLine::Get_TransformMatrix(D3DTRANSFORMSTATE eTransformState)
+const _float4x4* CPipeLine::Get_TransformMatrix(D3DTRANSFORMSTATE eTransformState)
 {	
 	return &m_TransformMatrix[eTransformState];
 }
 
-_float4x4* CPipeLine::Get_TransformMatrix_Inverse(D3DTRANSFORMSTATE eTransformState)
+const _float4x4* CPipeLine::Get_TransformMatrix_Inverse(D3DTRANSFORMSTATE eTransformState)
 {
 	return &m_TransformMatrix_Inverse[eTransformState];
 }
 
-_float4* CPipeLine::Get_CamPosition()
+const _float4* CPipeLine::Get_CamPosition()
 {
 	return &m_vCameraPos;
 }
 
-_float* CPipeLine::Get_CamFar()
+const _float* CPipeLine::Get_CamFar()
 {
 	return &m_fCameraFar;
 }

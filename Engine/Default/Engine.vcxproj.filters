@@ -16,12 +16,6 @@
     <Filter Include="01. Utility\00. GameInstance">
       <UniqueIdentifier>{8d9af0e6-13b6-4a21-8a73-4bd490b369a3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\01. Levels">
-      <UniqueIdentifier>{2c2cbf1d-cdd5-4810-b3dd-cc3ffc5bd683}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\01. Levels\Level">
-      <UniqueIdentifier>{a0203e81-1264-4e30-bae9-e487753415b3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Utility\02. GameObjects">
       <UniqueIdentifier>{6b248299-bad3-40d6-a6f3-88236cc8c0ec}</UniqueIdentifier>
     </Filter>
@@ -171,6 +165,30 @@
     </Filter>
     <Filter Include="01. Utility\03. Components\01. Composite">
       <UniqueIdentifier>{53c2db70-b423-4c28-b85b-6fb6e33bc6d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\05. Camera">
+      <UniqueIdentifier>{47cb3761-81e7-4e0d-ad60-98dfbc732f82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\05. Camera\Manager">
+      <UniqueIdentifier>{97f9a052-34b3-4b0e-b6bc-a338772e27c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\10. ParticleSystem">
+      <UniqueIdentifier>{aaf18f8e-a9cf-4dba-9828-95d190790622}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\10. ParticleSystem\ParticleModule">
+      <UniqueIdentifier>{355d4a38-f001-42b9-8247-e9d447d141c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\10. ParticleSystem\ParticleModule\MainModule">
+      <UniqueIdentifier>{1802bf4a-ebe4-4b8c-a680-c609c88f336e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\10. Calculator">
+      <UniqueIdentifier>{cdd21f25-4dbd-40f7-9fbb-cd3a276139a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\01. Levels">
+      <UniqueIdentifier>{2c2cbf1d-cdd5-4810-b3dd-cc3ffc5bd683}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\01. Levels\Level">
+      <UniqueIdentifier>{a0203e81-1264-4e30-bae9-e487753415b3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -363,8 +381,26 @@
     <ClInclude Include="..\Public\Engine_Converter.h">
       <Filter>99. Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\matrix.h">
+    <ClInclude Include="..\Public\DirectXTK\matrix.h">
       <Filter>99. Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Camera_Manager.h">
+      <Filter>01. Utility\05. Camera\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Camera.h">
+      <Filter>01. Utility\05. Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\private\MainModule.h">
+      <Filter>01. Utility\03. Components\10. ParticleSystem\ParticleModule\MainModule</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ParticleSystem.h">
+      <Filter>01. Utility\03. Components\10. ParticleSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ParticleModule.h">
+      <Filter>01. Utility\03. Components\10. ParticleSystem\ParticleModule</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Calculator.h">
+      <Filter>01. Utility\10. Calculator</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -539,6 +575,24 @@
     <ClCompile Include="..\private\VIBuffer_Color_Instance.cpp">
       <Filter>01. Utility\03. Components\07. VIBuffer\Instance</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Camera_Manager.cpp">
+      <Filter>01. Utility\05. Camera\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Camera.cpp">
+      <Filter>01. Utility\05. Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\public\MainModule.cpp">
+      <Filter>01. Utility\03. Components\10. ParticleSystem\ParticleModule\MainModule</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ParticleSystem.cpp">
+      <Filter>01. Utility\03. Components\10. ParticleSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ParticleModule.cpp">
+      <Filter>01. Utility\03. Components\10. ParticleSystem\ParticleModule</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Calculator.cpp">
+      <Filter>01. Utility\10. Calculator</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Navigation.hlsl">
@@ -552,7 +606,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Private\matrix.inl">
+    <None Include="..\Public\DirectXTK\matrix.inl">
       <Filter>99. Headers</Filter>
     </None>
   </ItemGroup>

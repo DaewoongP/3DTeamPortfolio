@@ -60,22 +60,22 @@ void CAnimation::Delete_Rotation()
 	}
 }
 
-HRESULT CAnimation::Initialize(Engine::ANIMATION* pAnimation, const CModel::BONES& Bones)
+HRESULT CAnimation::Initialize(Engine::ANIMATION Animation, const CModel::BONES& Bones)
 {
 	m_isLoop = true;
 
 	// 애니메이션 정보 저장
-	lstrcpy(m_szName, pAnimation->szName);
-	m_fDuration = pAnimation->fDuration;
+	lstrcpy(m_szName, Animation.szName);
+	m_fDuration = Animation.fDuration;
 
-	m_fOriginTickPerSecond = pAnimation->fTickPerSecond;
-	m_fTickPerSecond = pAnimation->fTickPerSecond;
+	m_fOriginTickPerSecond = Animation.fTickPerSecond;
+	m_fTickPerSecond = Animation.fTickPerSecond;
 	
-	m_iNumChannels = pAnimation->iNumChannels;
+	m_iNumChannels = Animation.iNumChannels;
 
 	for (_uint i = 0; i < m_iNumChannels; ++i)
 	{
-		CChannel* pChannel = CChannel::Create(pAnimation->Channels[i], Bones);
+		CChannel* pChannel = CChannel::Create(Animation.Channels[i], Bones);
 
 		if (nullptr == pChannel)
 			return E_FAIL;
@@ -126,11 +126,11 @@ void CAnimation::Invalidate_TransformationMatrix(CModel::BONES& Bones, _float fT
 	}
 }
 
-CAnimation* CAnimation::Create(Engine::ANIMATION* pAnimation, const CModel::BONES& Bones)
+CAnimation* CAnimation::Create(Engine::ANIMATION Animation, const CModel::BONES& Bones)
 {
 	CAnimation* pInstance = new CAnimation();
 
-	if (FAILED(pInstance->Initialize(pAnimation, Bones)))
+	if (FAILED(pInstance->Initialize(Animation, Bones)))
 	{
 		MSG_BOX("Failed to Created CAnimation");
 		Safe_Release(pInstance);

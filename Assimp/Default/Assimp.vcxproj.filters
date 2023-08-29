@@ -7,6 +7,9 @@
     <ClCompile Include="Assimp.cpp">
       <Filter>98. Default</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Model_Converter.cpp">
+      <Filter>01. ModelConverter</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00. MainConveter">
@@ -18,6 +21,9 @@
     <Filter Include="99. Headers">
       <UniqueIdentifier>{164278d2-4f7d-4591-b6e1-bb7f41c0e63f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. ModelConverter">
+      <UniqueIdentifier>{bf45bada-1740-491b-8c02-e282fc30bc7f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\MainConverter.h">
@@ -25,6 +31,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\Assimp_Defines.h">
       <Filter>99. Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Model_Converter.h">
+      <Filter>01. ModelConverter</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

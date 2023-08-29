@@ -257,6 +257,9 @@ namespace DirectX
             Vector3 operator+ () const noexcept { return *this; }
             Vector3 operator- () const noexcept;
 
+            Vector4 TransCoord() const noexcept;
+            Vector4 TransNorm() const noexcept;
+
             // Vector operations
             bool InBounds(const Vector3& Bounds) const noexcept;
 
@@ -376,6 +379,8 @@ namespace DirectX
             // Unary operators
             Vector4 operator+ () const noexcept { return *this; }
             Vector4 operator- () const noexcept;
+
+            Vector3 xyz() const noexcept;
 
             // Vector operations
             bool InBounds(const Vector4& Bounds) const noexcept;
