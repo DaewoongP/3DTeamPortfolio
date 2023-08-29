@@ -15,6 +15,7 @@ public:
 	HRESULT Reserve_Containers(_uint iNumLevels);
 	HRESULT Add_Prototype(const _tchar* pPrototypeTag, class CGameObject* pPrototype);
 	HRESULT Add_GameObject(_uint iLevelIndex, const _tchar* pPrototypeTag, const _tchar* pLayerTag, const _tchar* pObjectTag, void* pArg);
+	class CGameObject* Find_GameObject_In_Layer(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pGameObjectTag);
 	void	Clear_LevelResources(_uint iLevelIndex);
 	
 public:

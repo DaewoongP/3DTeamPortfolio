@@ -47,6 +47,7 @@ public: /* For.Level_Manager */
 public: /* For.Object_Manager */
 	HRESULT Add_Prototype_GameObject(const _tchar * pPrototypeTag, class CGameObject* pPrototype);
 	HRESULT Add_GameObject(_uint iLevelIndex, const _tchar * pPrototypeTag, const _tchar * pLayerTag, const _tchar * pGameObjectTag, void* pArg = nullptr);
+	class CGameObject* Find_GameObject_In_Layer(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pGameObjectTag);
 
 public: /* For.Component_Manager*/
 	HRESULT Add_Prototype_Component(_uint iLevelIndex, const _tchar * pPrototypeTag, class CComponent* pPrototype);
