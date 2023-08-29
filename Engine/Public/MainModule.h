@@ -4,6 +4,16 @@
 
 BEGIN(Engine)
 
+struct ENGINE_DLL MAIN_MODULE
+{
+	_float fDuration = { 5.0f };
+	_bool isLooping = { false };
+	_bool isPrewarm = { false };
+	_float fStartDelay = { 0.f };
+	_float fStartLifeTime = { 5.f };
+	_float fStartSpeed = { 5.f };
+};
+
 class CMainModule : public CParticleModule
 {
 private:
@@ -15,12 +25,7 @@ public:
 	virtual HRESULT Initialize_Prototype(const _tchar* _pFilePath);
 
 private:
-	_float m_fDuration = { 5.0f };
-	_bool m_isLooping = { false };
-	_bool m_isPrewarm = { false };
-	_float m_fStartDelay = { 0.f };
-	_float m_fStartLifeTime = { 5.f };
-	_float m_fStartSpeed = { 5.f };
+	MAIN_MODULE m_MainModuleDesc;
 
 public:
 	static CMainModule* Create(const _tchar* _pFilePath);

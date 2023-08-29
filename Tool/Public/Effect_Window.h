@@ -1,5 +1,6 @@
 #pragma once
 #include "ImWindow.h"
+#include "MainModule.h"
 
 BEGIN(Tool)
 
@@ -14,13 +15,11 @@ public:
 	virtual void Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
+
+
 private:
-	_float m_fDuration;
-	_bool m_isLooping;
-	_bool m_isPrewarm;
-	_float m_fStartDelay;
-	_float m_fStartLifeTime;
-	_float m_fStartSpeed;
+	_bool		m_bMainCheckBox;
+	MAIN_MODULE m_MainModuleDesc;
 
 public:
 	static CEffect_Window* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, ImVec2 vWindowPos, ImVec2 vWindowSize);
