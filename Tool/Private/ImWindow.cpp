@@ -11,7 +11,7 @@ HRESULT CImWindow::Initialize(ImVec2 vWindowPos, ImVec2 vWindowSize)
 {
 	m_vWindowPos = vWindowPos;
 	m_vWindowSize = vWindowSize;
-
+	
 	return S_OK;
 }
 
