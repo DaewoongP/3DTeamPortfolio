@@ -132,6 +132,9 @@
     <ClInclude Include="..\Public\Animation_Window.h">
       <Filter>01. Window\Window\Animation</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\CDummy.h">
+      <Filter>02. ToolObjects\01. Dummy</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -203,6 +206,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Animation_Window.cpp">
       <Filter>01. Window\Window\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CDummy.cpp">
+      <Filter>02. ToolObjects\01. Dummy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
