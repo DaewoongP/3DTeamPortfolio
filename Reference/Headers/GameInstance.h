@@ -98,6 +98,14 @@ public: /* For.Sound_Manager */
 	HRESULT Stop_AllSound();
 	HRESULT Set_ChannelVolume(CSound_Manager::SOUNDCHANNEL eChannel, _float fVolume);
 
+public: /* For. Calculator */
+	HRESULT Get_MouseRay(ID3D11DeviceContext * pContext, HWND hWnd, _float4x4 PickingWorldMatrix_Inverse, _Inout_ _float4 * vRayPos, _Inout_ _float4 * vRayDir);
+	HRESULT Get_WorldMouseRay(ID3D11DeviceContext * pContext, HWND hWnd, _Inout_ _float4 * vRayPos, _Inout_ _float4 * vRayDir);
+	_bool IsMouseInClient(ID3D11DeviceContext * pContext, HWND hWnd);
+	_uint RandomChoose(vector<_float> Weights, _uint iChooseSize);
+	_bool Timer(_double dAlarmTime, _double dTimeDelta);
+	_float4 Get_RandomVectorInSphere(_float fRadius);
+
 private:
 	class CGraphic_Device*			m_pGraphic_Device = { nullptr };
 	class CInput_Device*			m_pInput_Device = { nullptr };
@@ -112,6 +120,7 @@ private:
 	class CRenderTarget_Manager*	m_pRenderTarget_Manager = { nullptr };
 	class CLight_Manager*			m_pLight_Manager = { nullptr };
 	class CSound_Manager*			m_pSound_Manager = { nullptr };
+	class CCalculator*				m_pCalculator = { nullptr };
 
 public:
 	static void Release_Engine();

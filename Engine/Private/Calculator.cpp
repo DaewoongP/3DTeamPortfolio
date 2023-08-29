@@ -182,13 +182,13 @@ _int CCalculator::RandomChoose(vector<_float> Weights, _uint iChooseSize)
 	return -1;
 }
 
-_bool CCalculator::Timer(_double dAlarmTime, _double dTimeDelta)
+_bool CCalculator::Timer(_float fAlarmTime, _float fTimeDelta)
 {
-	m_dAlarmTimeAcc += dTimeDelta;
+	m_fAlarmTimeAcc += fTimeDelta;
 
-	if (m_dAlarmTimeAcc > dAlarmTime)
+	if (m_fAlarmTimeAcc > fAlarmTime)
 	{
-		m_dAlarmTimeAcc = 0.0;
+		m_fAlarmTimeAcc = 0.0;
 		return true;
 	}
 
