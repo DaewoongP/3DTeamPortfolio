@@ -28,6 +28,12 @@ RasterizerState RS_Cull_CW
 	FrontCounterClockwise = false;
 };
 
+RasterizerState RS_Cull_None
+{
+    FillMode = Solid;
+    CullMode = None;
+};
+
 RasterizerState RS_WireFrame
 {
 	FillMode = WireFrame;

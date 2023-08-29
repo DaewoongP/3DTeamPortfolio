@@ -40,6 +40,12 @@
     <Filter Include="01. Window\Window\Effect">
       <UniqueIdentifier>{37ceec7f-c6e3-4d9c-821b-540ccead54ed}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. ToolObjects\02. Camera">
+      <UniqueIdentifier>{29c98f31-784c-4063-929c-8e2c7599ba88}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. ToolObjects\03. Sky">
+      <UniqueIdentifier>{4461d7fd-a6a1-45bd-9424-3d9bfaf2e36f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tool.h">
@@ -114,6 +120,12 @@
     <ClInclude Include="..\public\Effect_Window.h">
       <Filter>01. Window\Window\Effect</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Camera_Free.h">
+      <Filter>02. ToolObjects\02. Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Sky.h">
+      <Filter>02. ToolObjects\03. Sky</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -177,6 +189,12 @@
     <ClCompile Include="..\private\Effect_Window.cpp">
       <Filter>01. Window\Window\Effect</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Camera_Free.cpp">
+      <Filter>02. ToolObjects\02. Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Sky.cpp">
+      <Filter>02. ToolObjects\03. Sky</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Bin\ShaderFiles\Shader_Tool_Defines.hlsli">
@@ -188,6 +206,12 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Terrain.hlsl">
+      <Filter>97. ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Sky.hlsl">
+      <Filter>97. ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTex.hlsl">
       <Filter>97. ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>

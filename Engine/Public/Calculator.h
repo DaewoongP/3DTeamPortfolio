@@ -22,11 +22,13 @@ public:
 	// 루프를 돌아야하므로 효율성을 높이려면 사이즈를 맞춰주면 좋음.
 	_int RandomChoose(vector<_float> Weights, _uint iChooseSize);
 	// 특정 시간마다 true 반환
-	_bool Timer(_double dAlarmTime, _double dTimeDelta);
+	_bool Timer(_float fAlarmTime, _float fTimeDelta);
 	_float4 Get_RandomVectorInSphere(_float fRadius);
+	template<typename T>
+	inline void Clamp(T& _value, T _min, T _max);
 
 private:
-	_double			m_dAlarmTimeAcc = { 0.0 };
+	_float	m_fAlarmTimeAcc = { 0.f };
 
 public:
 	virtual void Free() override;

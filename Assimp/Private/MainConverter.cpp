@@ -12,7 +12,7 @@ HRESULT CMainConverter::ReadFileInDirectory(_uint iType, const _tchar* pFilePath
 {
 	// 디렉토리 경로를 순회할 iterator
 	fs::directory_iterator iter(fs::absolute(pFilePath));
-
+	
 	while (iter != fs::end(iter))
 	{
 		// 실제 디렉토리 경로를 담고있는 변수 (iterator의 원본)

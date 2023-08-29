@@ -49,7 +49,7 @@ namespace Engine
 		enum COLTYPE
 		{
 			COLTYPE_PLAYER,
-			COLTYPE_STATIC,
+			COLTYPE_MONSTER,
 			COLTYPE_END
 		};
 

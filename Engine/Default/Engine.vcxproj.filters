@@ -187,6 +187,9 @@
     <Filter Include="01. Utility\03. Components\10. ParticleSystem\ParticleModule\MainModule">
       <UniqueIdentifier>{1802bf4a-ebe4-4b8c-a680-c609c88f336e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\10. Calculator">
+      <UniqueIdentifier>{cdd21f25-4dbd-40f7-9fbb-cd3a276139a6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -396,6 +399,9 @@
     <ClInclude Include="..\public\ParticleModule.h">
       <Filter>01. Utility\03. Components\10. ParticleSystem\ParticleModule</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Calculator.h">
+      <Filter>01. Utility\10. Calculator</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -583,6 +589,9 @@
     </ClCompile>
     <ClCompile Include="..\private\ParticleModule.cpp">
       <Filter>01. Utility\03. Components\10. ParticleSystem\ParticleModule</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Calculator.cpp">
+      <Filter>01. Utility\10. Calculator</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

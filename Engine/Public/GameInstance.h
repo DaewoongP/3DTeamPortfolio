@@ -98,6 +98,31 @@ public: /* For.Sound_Manager */
 	HRESULT Stop_AllSound();
 	HRESULT Set_ChannelVolume(CSound_Manager::SOUNDCHANNEL eChannel, _float fVolume);
 
+public: /* For. Calculator */
+	// 현재 마우스의 레이를 반환받는 함수입니다(피킹대상의 월드 역행렬 필요). (로컬)
+	HRESULT Get_MouseRay(ID3D11DeviceContext * pContext, HWND hWnd, _float4x4 PickingWorldMatrix_Inverse, _Inout_ _float4 * vRayPos, _Inout_ _float4 * vRayDir);
+	// 현재 마우스의 레이를 반환받는 함수입니다 (월드)
+	HRESULT Get_WorldMouseRay(ID3D11DeviceContext * pContext, HWND hWnd, _Inout_ _float4 * vRayPos, _Inout_ _float4 * vRayDir);
+	// 마우스가 클라이언트 내부에 있는지 체크하는 함수입니다.
+	_bool IsMouseInClient(ID3D11DeviceContext * pContext, HWND hWnd);
+	// 1번 인자 : 가중치를 벡터에 대입 (전체 사이즈보다 작아야함)
+	// 2번 인자 : 랜덤으로 뽑을 사이즈 대입
+	// 반환 : 사이즈보다 작은값중 하나를 반환
+	// 벡터사이즈와 값이 다를경우 임의로 벡터에 남은 퍼센트를 분배해서 넣어줌.
+	// 루프를 돌아야하므로 효율성을 높이려면 사이즈를 맞춰주면 좋음.
+	_uint RandomChoose(vector<_float> Weights, _uint iChooseSize);
+	// true가 불릴 시간 설정
+	_bool Timer(_float fAlarmTime, _float fTimeDelta);
+	// 반지름 길이를 입력하면 그 반지름 내부에서 방향벡터를 랜덤하게 뽑아주는 함수입니다.
+	_float4 Get_RandomVectorInSphere(_float fRadius);
+	// 값의 범위를 제한하는 함수
+	// ex)
+	// int value = 11;
+	// Clamp(value, 0, 10);
+	// 결과 : value = 10;
+	template<typename T>
+	inline void Clamp(T& _value, T _min, T _max);
+
 private:
 	class CGraphic_Device*			m_pGraphic_Device = { nullptr };
 	class CInput_Device*			m_pInput_Device = { nullptr };
@@ -112,6 +137,7 @@ private:
 	class CRenderTarget_Manager*	m_pRenderTarget_Manager = { nullptr };
 	class CLight_Manager*			m_pLight_Manager = { nullptr };
 	class CSound_Manager*			m_pSound_Manager = { nullptr };
+	class CCalculator*				m_pCalculator = { nullptr };
 
 public:
 	static void Release_Engine();

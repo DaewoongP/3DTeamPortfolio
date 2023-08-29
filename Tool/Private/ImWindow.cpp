@@ -20,7 +20,7 @@ void CImWindow::Tick(_float fTimeDelta)
 	RECT rc;
 	GetWindowRect(g_hWnd, &rc);
 	
-	ImGui::SetNextWindowPos(ImVec2(rc.left, rc.top) + m_vWindowPos);
+	ImGui::SetNextWindowPos(ImVec2(_float(rc.left), _float(rc.top)) + m_vWindowPos);
 	ImGui::SetNextWindowSize(m_vWindowSize);
 }
 
