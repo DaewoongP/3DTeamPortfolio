@@ -104,7 +104,6 @@ _bool CNavigation::is_Move(_float3 vPosition)
 	return false;
 }
 
-
 #ifdef _DEBUG
 HRESULT CNavigation::Render()
 {
@@ -153,8 +152,7 @@ HRESULT CNavigation::Render()
 
 	return S_OK;
 }
-
-#endif
+#endif // _DEBUG
 
 HRESULT CNavigation::SetUp_Neighbors()
 {

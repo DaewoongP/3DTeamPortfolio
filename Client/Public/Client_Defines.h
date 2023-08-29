@@ -14,3 +14,10 @@ extern HINSTANCE g_hInst;
 extern HWND g_hWnd;
 
 using namespace Client;
+
+
+
+//--------------------------------------------------Macro
+#define			BEGININSTANCE					CGameInstance* pGameInstance = CGameInstance::GetInstance();		\
+												Safe_AddRef(pGameInstance);
+#define			ENDINSTANCE						Safe_Release(pGameInstance);
