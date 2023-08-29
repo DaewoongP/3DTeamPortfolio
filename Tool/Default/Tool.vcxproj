@@ -165,6 +165,9 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\public\DummyParticle.h" />
+    <ClInclude Include="..\Public\Animation_Window.h" />
+    <ClInclude Include="..\Public\CDummy.h" />
     <ClInclude Include="..\public\Effect_Window.h" />
     <ClInclude Include="..\public\Camera_Free.h" />
     <ClInclude Include="..\public\Level_Tool.h" />
@@ -193,6 +196,9 @@
     <ClInclude Include="Tool.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\private\DummyParticle.cpp" />
+    <ClCompile Include="..\Private\Animation_Window.cpp" />
+    <ClCompile Include="..\Private\CDummy.cpp" />
     <ClCompile Include="..\private\Effect_Window.cpp" />
     <ClCompile Include="..\private\Camera_Free.cpp" />
     <ClCompile Include="..\private\Level_Tool.cpp" />

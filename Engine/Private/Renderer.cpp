@@ -50,6 +50,13 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_PostProcessing"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 0.f))))
 		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
+		TEXT("Target_Shadow_Depth"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f))))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
+		TEXT("Target_Shadow"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 1.f))))
+		return E_FAIL;
+
 
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Diffuse"))))
 		return E_FAIL;
@@ -62,6 +69,10 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Lights"), TEXT("Target_Specular"))))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_PostProcessing"), TEXT("Target_PostProcessing"))))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Shadow"), TEXT("Target_Shadow"))))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Shadow_Depth"), TEXT("Target_Shadow_Depth"))))
 		return E_FAIL;
 
 	if (FAILED(Add_Components()))
@@ -84,8 +95,11 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Specular"), 240.f, 240.f, 160.f, 160.f)))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_PostProcessing"), 240.f, 400.f, 160.f, 160.f)))
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Shadow"), 240.f, 400.f, 160.f, 160.f)))
 		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_PostProcessing"), 240.f, 560.f, 160.f, 160.f)))
+		return E_FAIL;
+
 #endif // _DEBUG
 
 	return S_OK;
@@ -128,6 +142,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 	if (FAILED(Render_NonBlend()))
 		return E_FAIL;
 	if (FAILED(Render_Lights()))
+		return E_FAIL;
+	if (FAILED(Render_Shadow()))
 		return E_FAIL;
 	if (FAILED(Render_Deferred()))
 		return E_FAIL;
@@ -251,6 +267,49 @@ HRESULT CRenderer::Render_Lights()
 	return S_OK;
 }
 
+HRESULT CRenderer::Render_Shadow()
+{
+	if (nullptr == m_pRenderTarget_Manager)
+		return E_FAIL;
+
+	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Shadow"))))
+		return E_FAIL;
+
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Depth"), m_pShadeTypeShader, "g_DepthTexture")))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Shadow_Depth"), m_pShadeTypeShader, "g_vLightDepthTexture")))
+		return E_FAIL;
+
+	CPipeLine* pPipeLine = CPipeLine::GetInstance();
+	Safe_AddRef(pPipeLine);
+
+	if (FAILED(m_pShadeTypeShader->Bind_Matrix("g_ViewMatrixInv",pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_VIEW))))
+		return E_FAIL;
+
+	if (FAILED(m_pShadeTypeShader->Bind_Matrix("g_ProjMatrixInv",pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+	//빛의값을 던져주기
+	/*if (FAILED(m_pShadeTypeShader->Bind_Matrix("g_vLightView", &m_pLight_Mgr->Get_LightView())))
+		return E_FAIL;
+	if (FAILED(m_pShadeTypeShader->Bind_Matrix("g_vLightProj", &m_pLight_Mgr->Get_LightProj())))
+		return E_FAIL;*/
+
+	Safe_Release(pPipeLine);
+
+
+	m_pShadeTypeShader->Begin("Shadow");
+
+	m_pShadeTypeBuffer->Render();
+
+
+
+	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext)))
+		return E_FAIL;
+
+	// 객체를 받아오고 빛과 연산을 해야하지않을지>?
+	return S_OK;
+}
+
 HRESULT CRenderer::Render_Deferred()
 {
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Diffuse"), m_pDeferredShader, "g_DiffuseTexture")))
@@ -306,6 +365,10 @@ HRESULT CRenderer::Render_PostProcessing()
 {
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_PostProcessing"), m_pPostProcessingShader, "g_PostProcessingTexture")))
 		return E_FAIL;
+	/*if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Depth"), m_pSSAOShader, "g_DepthTexture")))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Normal"), m_pSSAOShader, "g_NormalTexture")))
+		return E_FAIL;*/
 
 	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
@@ -396,6 +459,23 @@ HRESULT CRenderer::Add_Components()
 	if (nullptr == m_pPostProcessingBuffer)
 		return E_FAIL;
 
+	m_pShadeTypeShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Type.hlsl"), VTXPOSNORTEX_DECL::Elements, VTXPOSNORTEX_DECL::iNumElements);
+	if (nullptr == m_pShadeTypeShader)
+		return E_FAIL;
+
+	m_pShadeTypeBuffer = CVIBuffer_Rect::Create(m_pDevice, m_pContext);
+	if (nullptr == m_pShadeTypeBuffer)
+		return E_FAIL;
+
+	/*	m_pSSAOShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_SSAO.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements);
+	if (nullptr == m_pShadeTypeShader)
+		return E_FAIL;
+
+	m_pSSAOBuffer = CVIBuffer_Rect::Create(m_pDevice, m_pContext);
+	if (nullptr == m_pShadeTypeBuffer)
+		return E_FAIL;*/
+
+
 	return S_OK;
 }
 
@@ -473,6 +553,8 @@ void CRenderer::Free()
 	Safe_Release(m_pRenderTarget_Manager);
 	Safe_Release(m_pLight_Manager);
 
+	Safe_Release(m_pShadeTypeShader);
+	Safe_Release(m_pShadeTypeBuffer);
 	Safe_Release(m_pDeferredShader);
 	Safe_Release(m_pDeferredBuffer);
 	Safe_Release(m_pPostProcessingShader);

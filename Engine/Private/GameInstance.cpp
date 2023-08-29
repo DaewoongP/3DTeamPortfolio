@@ -198,6 +198,13 @@ HRESULT CGameInstance::Add_GameObject(_uint iLevelIndex, const _tchar* pPrototyp
 	return m_pObject_Manager->Add_GameObject(iLevelIndex, pPrototypeTag, pLayerTag, pGameObjectTag, pArg);
 }
 
+CGameObject* CGameInstance::Find_GameObject_In_Layer(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pGameObjectTag)
+{
+	NULL_CHECK_RETURN_MSG(m_pObject_Manager, nullptr, TEXT("Object_Manager NULL"));
+
+	return m_pObject_Manager->Find_GameObject_In_Layer(iLevelIndex, pLayerTag, pGameObjectTag);
+}
+
 HRESULT CGameInstance::Add_Prototype_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, CComponent* pPrototype)
 {
 	NULL_CHECK_RETURN_MSG(m_pComponent_Manager, E_FAIL, TEXT("Component_Manager NULL"));
@@ -439,13 +446,6 @@ _uint CGameInstance::RandomChoose(vector<_float> Weights, _uint iChooseSize)
 	NULL_CHECK_RETURN_MSG(m_pCalculator, 0, TEXT("Calculator NULL"));
 
 	return m_pCalculator->RandomChoose(Weights, iChooseSize);
-}
-
-_bool CGameInstance::Timer(_float dAlarmTime, _float dTimeDelta)
-{
-	NULL_CHECK_RETURN_MSG(m_pCalculator, false, TEXT("Calculator NULL"));
-
-	return m_pCalculator->Timer(dAlarmTime, dTimeDelta);
 }
 
 _float4 CGameInstance::Get_RandomVectorInSphere(_float fRadius)

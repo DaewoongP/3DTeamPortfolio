@@ -1,6 +1,7 @@
 #include "..\Public\MainTool.h"
 #include "GameInstance.h"
 #include "Level_Tool.h"
+#include "CDummy.h"
 
 CMainTool::CMainTool()
 	: m_pGameInstance(CGameInstance::GetInstance())
@@ -16,7 +17,7 @@ CMainTool::CMainTool()
 
 HRESULT CMainTool::Initialize()
 {
-	// ±×·¡ÇÈ µð¹ÙÀÌ½º¸¦ ¸¸µé±â À§ÇÑ ±¸Á¶Ã¼ ÇÒ´ç
+	// ê·¸ëž˜í”½ ë””ë°”ì´ìŠ¤ë¥¼ ë§Œë“¤ê¸° ìœ„í•œ êµ¬ì¡°ì²´ í• ë‹¹
 	GRAPHICDESC		GraphicDesc;
 	ZEROMEM(&GraphicDesc);
 	
@@ -59,9 +60,9 @@ void CMainTool::Tick(_float fTimeDelta)
 	
 	Tick_ImGui();
 
-	ImGui::ShowDemoWindow();
+	//ImGui::ShowDemoWindow();
 
-	// ¿£ÁøÀÇ Tick È£Ãâ
+	// ì—”ì§„ì˜ Tick í˜¸ì¶œ
 	m_pGameInstance->Tick_Engine(fTimeDelta);
 
 	m_pWindow_Manager->Tick(fTimeDelta);
@@ -159,15 +160,15 @@ HRESULT CMainTool::Initialize_ImGui()
 
 HRESULT CMainTool::Render_ImGui()
 {
-	// ¿©±â¼­ ³» ¹é¹öÆÛ¸¦ »©°í ¹«½¼ ÀÛ¾÷À» ÃÄ³õ°í ±×·È´Âµ¥,
-	// ³»¹é¹öÆÛ¸¦ ´Ù½Ã ÀåÄ¡¿¡ ¹ÙÀÎµùÇÏ±âÀ§ÇØ ·»´õ 
+	// ì—¬ê¸°ì„œ ë‚´ ë°±ë²„í¼ë¥¼ ë¹¼ê³  ë¬´ìŠ¨ ìž‘ì—…ì„ ì³ë†“ê³  ê·¸ë ¸ëŠ”ë°,
+	// ë‚´ë°±ë²„í¼ë¥¼ ë‹¤ì‹œ ìž¥ì¹˜ì— ë°”ì¸ë”©í•˜ê¸°ìœ„í•´ ë Œë” 
 	ImGui::EndFrame();
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 	ImGui::UpdatePlatformWindows();
 	ImGui::RenderPlatformWindowsDefault();
 
-	// ¿ø·¡ÀÇ ¹é¹öÆÛ¸¦ ´Ù½Ã ÀåÄ¡¿¡ ¹ÙÀÎµù ÇØÁØ´Ù.
+	// ì›ëž˜ì˜ ë°±ë²„í¼ë¥¼ ë‹¤ì‹œ ìž¥ì¹˜ì— ë°”ì¸ë”© í•´ì¤€ë‹¤.
 	if (FAILED(m_pGameInstance->Bind_BackBuffer()))
 		return E_FAIL;
 
@@ -185,11 +186,16 @@ HRESULT CMainTool::Add_Windows()
 
 	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("Object_Window"),
 		CObject_Window::Create(m_pDevice, m_pContext,
-			ImVec2(_float(rc.right), _float(rc.top)), ImVec2(100.f, 100.f)))))
+			ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(300.f, 500.f)))))
 		return E_FAIL;
 	
 	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("Effect_Window"),
 		CEffect_Window::Create(m_pDevice, m_pContext,
+			ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(446.f, 768.f)))))
+		return E_FAIL;
+
+	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("Animation_Window"),
+		CAnimation_Window::Create(m_pDevice, m_pContext,
 			ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(446.f, 768.f)))))
 		return E_FAIL;
 
@@ -235,7 +241,7 @@ HRESULT CMainTool::Ready_Prototype_Component()
 
 	/* Prototype_Component_VIBuffer_Terrain */
 	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_TOOL, TEXT("Prototype_Component_VIBuffer_Terrain"),
-		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, 500, 500))))
+		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, 513, 513))))
 		return E_FAIL;
 
 	/* Prototype_Component_VIBuffer_Cube */
@@ -258,6 +264,11 @@ HRESULT CMainTool::Ready_Prototype_Component()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Default0.jpg")))))
 		return E_FAIL;
 
+	/* Prototype_Component_ParticleSystem_Fire*/
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_TOOL, TEXT("Prototype_Component_Fire_Particle"),
+		CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Particles/Fire/")))))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -273,6 +284,15 @@ HRESULT CMainTool::Ready_Prototype_Object()
 
 	if (FAILED(m_pGameInstance->Add_Prototype_GameObject(TEXT("Prototype_GameObject_Sky"),
 		CSky::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype_GameObject(TEXT("Prototype_GameObject_DummyParticle"),
+		DummyParticle::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* Prototype_GameObject_Dummy*/
+	if (FAILED(m_pGameInstance->Add_Prototype_GameObject(TEXT("Prototype_GameObject_Dummy"),
+		CDummy::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	return S_OK;

@@ -178,6 +178,18 @@
     <Filter Include="01. Utility\05. Camera\Manager">
       <UniqueIdentifier>{97f9a052-34b3-4b0e-b6bc-a338772e27c9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\10. Calculator">
+      <UniqueIdentifier>{cdd21f25-4dbd-40f7-9fbb-cd3a276139a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\11. ParticleSystem">
+      <UniqueIdentifier>{aaf18f8e-a9cf-4dba-9828-95d190790622}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\11. ParticleSystem\ParticleModule">
+      <UniqueIdentifier>{355d4a38-f001-42b9-8247-e9d447d141c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\11. ParticleSystem\ParticleModule\MainModule">
+      <UniqueIdentifier>{1802bf4a-ebe4-4b8c-a680-c609c88f336e}</UniqueIdentifier>
+    </Filter>
     <Filter Include="01. Utility\03. Components\10. Behavior">
       <UniqueIdentifier>{74671ea1-680f-4109-b558-9a41898e3288}</UniqueIdentifier>
     </Filter>
@@ -196,17 +208,38 @@
     <Filter Include="01. Utility\03. Components\10. Behavior\04. BlackBoard">
       <UniqueIdentifier>{86ff92e6-3ab7-4155-8d44-dfded6920f9e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\10. Calculator">
-      <UniqueIdentifier>{cdd21f25-4dbd-40f7-9fbb-cd3a276139a6}</UniqueIdentifier>
+    <Filter Include="01. Utility\03. Components\12. Status">
+      <UniqueIdentifier>{0d097a3d-8ef4-4813-afef-ca81cc0a63bc}</UniqueIdentifier>
     </Filter>
     <Filter Include="01. Utility\03. Components\11. ParticleSystem">
       <UniqueIdentifier>{aaf18f8e-a9cf-4dba-9828-95d190790622}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\03. Components\11. ParticleSystem\ParticleModule">
-      <UniqueIdentifier>{355d4a38-f001-42b9-8247-e9d447d141c5}</UniqueIdentifier>
+    <Filter Include="01. Utility\03. Components\12. Status\00. Health">
+      <UniqueIdentifier>{2c307619-8c41-4f09-8c44-3e7e1dd9bf83}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\03. Components\11. ParticleSystem\ParticleModule\MainModule">
-      <UniqueIdentifier>{1802bf4a-ebe4-4b8c-a680-c609c88f336e}</UniqueIdentifier>
+    <Filter Include="01. Utility\03. Components\12. Status\01. Attack">
+      <UniqueIdentifier>{8a7bc604-a1b2-4301-9e99-b36444fc8db5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\12. Status\02. Defence">
+      <UniqueIdentifier>{6b004c01-c864-470b-b278-e400cb119e26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\12. Status\03. Status">
+      <UniqueIdentifier>{1dcb84f8-a0f6-4430-9b80-31ac64bf15ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\07. VIBuffer\Sprite">
+      <UniqueIdentifier>{b63693e6-fa8a-4ecb-900e-d6e966643d70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\12. Status\03. Status\00. Ignite">
+      <UniqueIdentifier>{1181c3a3-d95e-4eab-b1e6-b175481b2152}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\13. Alarm">
+      <UniqueIdentifier>{9cbb7d45-1355-4391-a17a-ab9735b11f73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\10. Calculator">
+      <UniqueIdentifier>{cdd21f25-4dbd-40f7-9fbb-cd3a276139a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\04. Model\Animation\Notify">
+      <UniqueIdentifier>{99ae6d76-4b41-4979-a852-21410c894c2c}</UniqueIdentifier>
     </Filter>
     <Filter Include="01. Utility\03. Components\12. PhysX">
       <UniqueIdentifier>{a0e4e0fe-93f6-4a35-9aef-87da3b2f96b2}</UniqueIdentifier>
@@ -456,6 +489,30 @@
     <ClInclude Include="..\Public\PXErrorCallBack.h">
       <Filter>01. Utility\03. Components\12. PhysX\ErrorCallBack</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Health.h">
+      <Filter>01. Utility\03. Components\12. Status\00. Health</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Attack.h">
+      <Filter>01. Utility\03. Components\12. Status\01. Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Defence.h">
+      <Filter>01. Utility\03. Components\12. Status\02. Defence</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\VIBuffer_Sprite.h">
+      <Filter>01. Utility\03. Components\07. VIBuffer\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Status_Ignite.h">
+      <Filter>01. Utility\03. Components\12. Status\03. Status\00. Ignite</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Alarm.h">
+      <Filter>01. Utility\03. Components\13. Alarm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Notify.h">
+      <Filter>01. Utility\03. Components\04. Model\Animation\Notify</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MainModule.h">
+      <Filter>01. Utility\03. Components\11. ParticleSystem\ParticleModule\MainModule</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -668,6 +725,30 @@
     <ClCompile Include="..\private\PX.cpp">
       <Filter>01. Utility\03. Components\12. PhysX</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Health.cpp">
+      <Filter>01. Utility\03. Components\12. Status\00. Health</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Attack.cpp">
+      <Filter>01. Utility\03. Components\12. Status\01. Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Defence.cpp">
+      <Filter>01. Utility\03. Components\12. Status\02. Defence</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\VIBuffer_Sprite.cpp">
+      <Filter>01. Utility\03. Components\07. VIBuffer\Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Status_Ignite.cpp">
+      <Filter>01. Utility\03. Components\12. Status\03. Status\00. Ignite</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Alarm.cpp">
+      <Filter>01. Utility\03. Components\13. Alarm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Notify.cpp">
+      <Filter>01. Utility\03. Components\04. Model\Animation\Notify</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MainModule.cpp">
+      <Filter>01. Utility\03. Components\11. ParticleSystem\ParticleModule\MainModule</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Navigation.hlsl">
@@ -677,6 +758,12 @@
       <Filter>01. Utility\03. Components\02. Renderer\Shader</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_PostProcessing.hlsl">
+      <Filter>01. Utility\03. Components\02. Renderer\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Type.hlsl">
+      <Filter>01. Utility\03. Components\02. Renderer\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_SSAO.hlsl">
       <Filter>01. Utility\03. Components\02. Renderer\Shader</Filter>
     </FxCompile>
   </ItemGroup>
