@@ -2,6 +2,12 @@
 #include "GameInstance.h"
 #include "Client_Includes.h"
 
+#include "Sky.h"
+#include "Terrain.h"
+#include "Camera_Debug.h"
+#include "VIBuffer_Cube.h"
+#include "Logo_BackGround.h"
+
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice(pDevice)
 	, m_pContext(pContext)
@@ -56,8 +62,14 @@ HRESULT CLoader::Loading()
 
 	switch (m_eNextLevelID)
 	{
-	case LEVELID::LEVEL_LOGO:
+	case LEVEL_LOGO:
 		hr = Loading_For_Logo();
+		break;
+	case LEVEL_MAINGAME:
+		hr = Loading_For_MainGame();
+		break;
+	default:
+		MSG_BOX("Failed Load Next Level");
 		break;
 	}
 
@@ -76,6 +88,13 @@ HRESULT CLoader::Loading_For_Logo()
 
 	lstrcpy(m_szLoading, TEXT("텍스쳐 로딩 중."));
 
+	/* For.Prototype_Component_Texture_Logo */
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_LOGO, TEXT("Prototype_Component_Texture_Logo"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Default0.jpg")))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_Component_Texture_Logo)");
+		return E_FAIL;
+	}
 
 	lstrcpy(m_szLoading, TEXT("모델 로딩 중."));
 	
@@ -84,6 +103,99 @@ HRESULT CLoader::Loading_For_Logo()
 
 
 	lstrcpy(m_szLoading, TEXT("객체 로딩 중."));
+	/* For.Prototype_GameObject_Logo_BackGround */
+	if (FAILED(m_pGameInstance->Add_Prototype_GameObject(TEXT("Prototype_GameObject_Logo_BackGround"),
+		CLogo_BackGround::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_GameObject_Logo_BackGround)");
+		return E_FAIL;
+	}
+
+	lstrcpy(m_szLoading, TEXT("로딩 완료."));
+
+	m_isFinished = true;
+
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_For_MainGame()
+{
+	if (nullptr == m_pGameInstance)
+		return E_FAIL;
+
+	lstrcpy(m_szLoading, TEXT("텍스쳐 로딩 중."));
+	/* For.Prototype_Component_Texture_SkyBox*/
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Texture_SkyBox"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/SkyBox/Sky_%d.dds"), 4))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_Component_Texture_SkyBox)");
+		return E_FAIL;
+	}
+
+	lstrcpy(m_szLoading, TEXT("모델 로딩 중."));
+	/* For.Prototype_Component_VIBuffer_Cube */
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Cube"),
+		CVIBuffer_Cube::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_Component_VIBuffer_Cube)");
+		return E_FAIL;
+	}
+
+	/* For.Prototype_Component_VIBuffer_Terrain */
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Terrain"),
+		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, 531, 531))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_Component_VIBuffer_Terrain)");
+		return E_FAIL;
+	}
+
+	lstrcpy(m_szLoading, TEXT("셰이더 로딩 중."));
+	/* For.Prototype_Component_Shader_VtxCube */
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxCube"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxCube.hlsl"), VTXPOSCUBE_DECL::Elements, VTXPOSCUBE_DECL::iNumElements))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_Component_Texture_SkyBox)");
+		return E_FAIL;
+	}
+
+	/* For.Prototype_Component_Shader_Terrain */
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_Terrain"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Terrain.hlsl"), VTXPOSNORTEX_DECL::Elements, VTXPOSNORTEX_DECL::iNumElements))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_Component_Shader_Terrain)");
+		return E_FAIL;
+	}
+
+	lstrcpy(m_szLoading, TEXT("AI 로딩 중."));
+
+
+	lstrcpy(m_szLoading, TEXT("객체 로딩 중."));
+	/* For.Prototype_GameObject_Sky */
+	if (FAILED(m_pGameInstance->Add_Prototype_GameObject(TEXT("Prototype_GameObject_Sky"),
+		CSky::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_GameObject_Sky)");
+		return E_FAIL;
+	}
+
+	/* For.Prototype_GameObject_Sky */
+	if (FAILED(m_pGameInstance->Add_Prototype_GameObject(TEXT("Prototype_GameObject_Terrain"),
+		CTerrain::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_GameObject_Terrain)");
+		return E_FAIL;
+	}
+
+
+#ifdef _DEBUG
+	/* For.Prototype_GameObject_Camera_Debug*/
+	if (FAILED(m_pGameInstance->Add_Prototype_GameObject(TEXT("Prototype_GameObject_Camera_Debug"),
+		CCamera_Debug::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_GameObject_Camera_Debug)");
+		return E_FAIL;
+	}
+#endif // _DEBUG
 
 
 	lstrcpy(m_szLoading, TEXT("로딩 완료."));

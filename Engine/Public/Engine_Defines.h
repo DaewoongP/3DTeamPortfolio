@@ -42,6 +42,8 @@
 #include <string>
 #include <algorithm>
 #include <functional>
+#include <any>
+#include <stack>
 
 // file system - c++ 17
 #include <filesystem>

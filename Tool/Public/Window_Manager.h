@@ -3,6 +3,7 @@
 #include "Tool_Defines.h"
 #include "Object_Window.h"
 #include "Effect_Window.h"
+#include "Animation_Window.h"
 
 BEGIN(Tool)
 

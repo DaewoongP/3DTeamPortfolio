@@ -49,6 +49,9 @@
     <Filter Include="02. ToolObjects\01. Dummy\DummyParticle">
       <UniqueIdentifier>{7edb6c26-6338-4754-9239-502063c38924}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Window\Window\Animation">
+      <UniqueIdentifier>{f24db859-61c1-45a9-96e6-80c730ace989}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tool.h">
@@ -132,6 +135,12 @@
     <ClInclude Include="..\public\DummyParticle.h">
       <Filter>02. ToolObjects\01. Dummy\DummyParticle</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Animation_Window.h">
+      <Filter>01. Window\Window\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CDummy.h">
+      <Filter>02. ToolObjects\01. Dummy</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -203,6 +212,12 @@
     </ClCompile>
     <ClCompile Include="..\private\DummyParticle.cpp">
       <Filter>02. ToolObjects\01. Dummy\DummyParticle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Animation_Window.cpp">
+      <Filter>01. Window\Window\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CDummy.cpp">
+      <Filter>02. ToolObjects\01. Dummy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

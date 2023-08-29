@@ -1,0 +1,103 @@
+#include "..\Public\Level_MainGame.h"
+#include "GameInstance.h"
+
+CLevel_MainGame::CLevel_MainGame(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+	: CLevel(pDevice, pContext)
+{
+}
+
+HRESULT CLevel_MainGame::Initialize()
+{
+	if (FAILED(__super::Initialize()))
+		return E_FAIL;
+
+	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
+		return E_FAIL;
+
+
+#ifdef _DEBUG
+	if (FAILED(Ready_Layer_Debug(TEXT("Layer_Debug"))))
+		return E_FAIL;
+#endif // _DEBUG
+
+
+	return S_OK;
+}
+
+void CLevel_MainGame::Tick(_float fTimeDelta)
+{
+	__super::Tick(fTimeDelta);
+
+#ifdef _DEBUG
+	SetWindowText(g_hWnd, TEXT("메인게임레벨입니다."));
+#endif //_DEBUG
+}
+
+HRESULT CLevel_MainGame::Render()
+{
+	if (FAILED(__super::Render()))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CLevel_MainGame::Ready_Layer_BackGround(const _tchar* pLayerTag)
+{
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	if (FAILED(pGameInstance->Add_GameObject(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Sky"), pLayerTag, TEXT("GameObject_Sky"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Sky)");
+		return E_FAIL;
+	}
+
+	if (FAILED(pGameInstance->Add_GameObject(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Terrain"), pLayerTag, TEXT("GameObject_Terrain"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Terrain)");
+		return E_FAIL;
+	}
+
+	Safe_Release(pGameInstance);
+
+	return S_OK;
+}
+
+HRESULT CLevel_MainGame::Ready_Layer_Player(const _tchar* pLayerTag)
+{
+	return S_OK;
+}
+
+HRESULT CLevel_MainGame::Ready_Layer_Debug(const _tchar* pLayerTag)
+{
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	if (FAILED(pGameInstance->Add_GameObject(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Camera_Debug"), pLayerTag, TEXT("GameObject_Camera_Debug"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Camera_Debug)");
+		return E_FAIL;
+	}
+
+	Safe_Release(pGameInstance);
+
+	return S_OK;
+}
+
+CLevel_MainGame* CLevel_MainGame::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+{
+	CLevel_MainGame* pInstance = new CLevel_MainGame(pDevice, pContext);
+
+	if (FAILED(pInstance->Initialize()))
+	{
+		MSG_BOX("Failed to Created CLevel_MainGame");
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
+}
+
+void CLevel_MainGame::Free()
+{
+	__super::Free();
+}
