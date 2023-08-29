@@ -18,44 +18,31 @@ CTransform::CTransform(const CTransform& rhs)
 {
 }
 
-_float3 CTransform::Get_Scale() const
+void CTransform::Set_Scale(_float3 _vScale)
 {
-	return _float3(Get_Right().Length(), Get_Up().Length(), Get_Look().Length());
+	Set_Right(Get_Right() * _vScale.x);
+	Set_Up(Get_Up() * _vScale.y);
+	Set_Look(Get_Look() * _vScale.z);
 }
 
-_float3 CTransform::Get_Right() const
+void CTransform::Set_Right(_float3 _vRight)
 {
-	return m_WorldMatrix.Right();
+	memcpy(&m_WorldMatrix.m[0][0], &_vRight, sizeof(_float3));
 }
 
-_float3 CTransform::Get_Up() const
+void CTransform::Set_Up(_float3 _vUp)
 {
-	return m_WorldMatrix.Up();
+	memcpy(&m_WorldMatrix.m[1][0], &_vUp, sizeof(_float3));
 }
 
-_float3 CTransform::Get_Look() const
+void CTransform::Set_Look(_float3 _vLook)
 {
-	return m_WorldMatrix.Look();
+	memcpy(&m_WorldMatrix.m[2][0], &_vLook, sizeof(_float3));
 }
 
-_float3 CTransform::Get_Translation() const
+void CTransform::Set_Position(_float3 _vPosition)
 {
-	return m_WorldMatrix.Translation();
-}
-
-_float4x4 CTransform::Get_WorldMatrix() const
-{
-	return m_WorldMatrix;
-}
-
-const _float4x4* CTransform::Get_WorldMatrixPtr() const
-{
-	return &m_WorldMatrix;
-}
-
-_float4x4 CTransform::Get_WorldMatrix_Inverse() const
-{
-	return m_WorldMatrix.Inverse();
+	memcpy(&m_WorldMatrix.m[3][0], &_vPosition, sizeof(_float3));
 }
 
 HRESULT CTransform::Initialize_Prototype()
@@ -76,8 +63,56 @@ void CTransform::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 }
 
-void CTransform::Move_Direction(_float3 vDirection, _float fTimeDelta, _float fSpeed)
+void CTransform::Move_Direction(_float3 vDirection, _float fTimeDelta)
 {
+	_float3 vPosition = Get_Translation();
+	
+	vDirection.Normalize();
+	
+	vPosition += vDirection * m_fSpeed * fTimeDelta;
+
+	Set_Position(vPosition);
+}
+
+void CTransform::Go_Straight(_float fTimeDelta)
+{
+	_float3 vLook = Get_Look();
+	vLook.Normalize();
+	Move_Direction(vLook, fTimeDelta);
+}
+
+void CTransform::Go_Backward(_float fTimeDelta)
+{
+	_float3 vLook = Get_Look();
+	vLook.Normalize();
+	Move_Direction(-vLook, fTimeDelta);
+}
+
+void CTransform::Go_Left(_float fTimeDelta)
+{
+	_float3 vRight = Get_Right();
+	vRight.Normalize();
+	Move_Direction(-vRight, fTimeDelta);
+}
+
+void CTransform::Go_Right(_float fTimeDelta)
+{
+	_float3 vRight = Get_Right();
+	vRight.Normalize();
+	Move_Direction(vRight, fTimeDelta);
+}
+
+void CTransform::Turn(_float3 vAxis, _float fTimeDelta)
+{
+	_float3 vRight = Get_Right();
+	_float3 vUp = Get_Up();
+	_float3 vLook = Get_Look();
+
+	_float4x4 RotationMatrix = XMMatrixRotationAxis(XMVector3Normalize(vAxis), m_fRotationSpeed * fTimeDelta);
+
+	Set_Right(XMVector3TransformNormal(vRight, RotationMatrix));
+	Set_Up(XMVector3TransformNormal(vUp, RotationMatrix));
+	Set_Look(XMVector3TransformNormal(vLook, RotationMatrix));
 }
 
 CTransform* CTransform::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

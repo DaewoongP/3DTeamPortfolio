@@ -36,7 +36,7 @@ HRESULT CMainApp::Initialize()
 
 	if (FAILED(Ready_Fonts()))
 		return E_FAIL;
-
+	
 	if (FAILED(Open_Level(LEVEL_LOGO)))
 	{
 		MSG_BOX("Failed Open LEVEL_LOGO");

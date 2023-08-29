@@ -33,11 +33,11 @@ HRESULT CCalculator::Get_MouseRay(ID3D11DeviceContext* pContext, HWND hWnd, _flo
 	Safe_AddRef(pPipeLine);
 	
 	_float4x4		ProjMatrix_Inverse;
-	ProjMatrix_Inverse = pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_PROJ);
+	ProjMatrix_Inverse = *pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_PROJ);
 	vMouse = XMVector3TransformCoord(vMouse, ProjMatrix_Inverse);
 
 	_float4x4		ViewMatrix_Inverse;
-	ViewMatrix_Inverse = pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_VIEW);
+	ViewMatrix_Inverse = *pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_VIEW);
 
 	Safe_Release(pPipeLine);
 
@@ -84,11 +84,11 @@ HRESULT CCalculator::Get_WorldMouseRay(ID3D11DeviceContext* pContext, HWND hWnd,
 	Safe_AddRef(pPipeLine);
 
 	_float4x4		ProjMatrix_Inverse;
-	ProjMatrix_Inverse = pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_PROJ);
+	ProjMatrix_Inverse = *pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_PROJ);
 	vMouse = XMVector3TransformCoord(vMouse, ProjMatrix_Inverse);
 
 	_float4x4		ViewMatrix_Inverse;
-	ViewMatrix_Inverse = pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_VIEW);
+	ViewMatrix_Inverse = *pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_VIEW);
 
 	Safe_Release(pPipeLine);
 
@@ -182,13 +182,13 @@ _int CCalculator::RandomChoose(vector<_float> Weights, _uint iChooseSize)
 	return -1;
 }
 
-_bool CCalculator::Timer(_double dAlarmTime, _double dTimeDelta)
+_bool CCalculator::Timer(_float fAlarmTime, _float fTimeDelta)
 {
-	m_dAlarmTimeAcc += dTimeDelta;
+	m_fAlarmTimeAcc += fTimeDelta;
 
-	if (m_dAlarmTimeAcc > dAlarmTime)
+	if (m_fAlarmTimeAcc > fAlarmTime)
 	{
-		m_dAlarmTimeAcc = 0.0;
+		m_fAlarmTimeAcc = 0.0;
 		return true;
 	}
 
@@ -247,6 +247,50 @@ _float4 CCalculator::Get_RandomVectorInSphere(_float fRadius)
 
 	return XMLoadFloat3(&vDir);
 }
+
+HRESULT CCalculator::ReadFileInDirectory(_Inout_ vector<wstring>& OutVector, const _tchar* pFilePath, const _tchar* pExt)
+{
+	// 디렉토리 경로를 순회할 iterator
+	fs::directory_iterator iter(fs::absolute(pFilePath));
+
+	while (iter != fs::end(iter))
+	{
+		// 실제 디렉토리 경로를 담고있는 변수 (iterator의 원본)
+		const fs::directory_entry& entry = *iter;
+
+		// 현재 entry 변수가 디렉토리인지 확인 후 디렉토리이면 재귀
+		if (fs::is_directory(entry.path()))
+		{
+			if (FAILED(ReadFileInDirectory(OutVector, entry.path().c_str(), pExt)))
+				return E_FAIL;
+		}
+		else
+		{
+			// 파일 확장자 체크
+			if (!_wcsicmp(entry.path().extension().c_str(), pExt))
+			{
+				cout << entry.path() << endl;
+
+				OutVector.push_back(entry.path().wstring());
+			}
+		}
+
+		iter++;
+	}
+
+	return S_OK;
+}
+
+template<typename T>
+inline void CCalculator::Clamp(T& _value, T _min, T _max)
+{
+	if (_min > _max)
+		std::swap(_min, _max);
+
+	_value = max(_value, _min);
+	_value = min(_value, _max);
+}
+
 
 void CCalculator::Free()
 {

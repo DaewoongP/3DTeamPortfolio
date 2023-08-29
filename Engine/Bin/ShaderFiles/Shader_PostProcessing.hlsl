@@ -1,7 +1,7 @@
 
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
-float g_fCamFar;
+texture2D g_PostProcessingTexture;
 
 // 가우시안 필터 1차원 배열형태
 float BlurWeights[23] =
@@ -121,7 +121,7 @@ PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
 
-    
+    Out.vColor = g_PostProcessingTexture.Sample(LinearSampler, In.vTexUV);
     
     return Out;
 }
