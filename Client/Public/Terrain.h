@@ -1,6 +1,6 @@
 #pragma once
 #include "GameObject.h"
-#include "Tool_Defines.h"
+#include "Client_Defines.h"
 
 BEGIN(Engine)
 class CShader;
@@ -9,7 +9,7 @@ class CRenderer;
 class CVIBuffer_Terrain;
 END
 
-BEGIN(Tool)
+BEGIN(Client)
 
 class CTerrain final : public CGameObject
 {
@@ -19,9 +19,6 @@ private:
 	virtual ~CTerrain() = default;
 
 public:
-	CVIBuffer_Terrain* Get_Buffer() const { return m_pBuffer; }
-
-public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;
@@ -29,13 +26,10 @@ public:
 	virtual HRESULT Render() override;
 
 private:
-	_bool				m_isRendering = { false };
-
-private:
-	CShader*			m_pShader = { nullptr };
-	CTexture*			m_pTexture = { nullptr };
-	CRenderer*			m_pRenderer = { nullptr };
-	CVIBuffer_Terrain*	m_pBuffer = { nullptr };
+	CShader*				m_pShader = { nullptr };
+	CTexture*				m_pTexture = { nullptr };
+	CRenderer*				m_pRenderer = { nullptr };
+	CVIBuffer_Terrain*		m_pBuffer = { nullptr };
 
 private:
 	HRESULT Add_Components();

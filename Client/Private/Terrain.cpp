@@ -27,8 +27,6 @@ HRESULT CTerrain::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-	m_isRendering = true;
-
 	return S_OK;
 }
 
@@ -40,8 +38,6 @@ void CTerrain::Tick(_float fTimeDelta)
 void CTerrain::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
-
-	//m_pBuffer->Culling(m_pTransform->Get_WorldMatrix());
 
 	if (nullptr != m_pRenderer)
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONLIGHT, this);
@@ -63,7 +59,7 @@ HRESULT CTerrain::Render()
 HRESULT CTerrain::Add_Components()
 {
 	/* Com_Renderer */
-	if (FAILED(CComposite::Add_Component(LEVEL_TOOL, TEXT("Prototype_Component_Renderer"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"),
 		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
 	{
 		MSG_BOX("Failed CTerrain Add_Component : (Com_Renderer)");
@@ -71,7 +67,7 @@ HRESULT CTerrain::Add_Components()
 	}
 
 	/* Com_Shader */
-	if (FAILED(CComposite::Add_Component(LEVEL_TOOL, TEXT("Prototype_Component_Shader_Terrain"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_Terrain"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
 	{
 		MSG_BOX("Failed CTerrain Add_Component : (Com_Shader)");
@@ -79,7 +75,7 @@ HRESULT CTerrain::Add_Components()
 	}
 
 	/* Com_Buffer */
-	if (FAILED(CComposite::Add_Component(LEVEL_TOOL, TEXT("Prototype_Component_VIBuffer_Terrain"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Terrain"),
 		TEXT("Com_Buffer"), reinterpret_cast<CComponent**>(&m_pBuffer))))
 	{
 		MSG_BOX("Failed CTerrain Add_Component : (Com_Buffer)");
@@ -87,12 +83,12 @@ HRESULT CTerrain::Add_Components()
 	}
 
 	/* Com_Texture */
-	if (FAILED(CComposite::Add_Component(LEVEL_TOOL, TEXT("Prototype_Component_Texture_Terrain"),
+	/*if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Texture_Terrain"),
 		TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTexture))))
 	{
 		MSG_BOX("Failed CTerrain Add_Component : (Com_Texture)");
 		return E_FAIL;
-	}
+	}*/
 
 	return S_OK;
 }
@@ -118,7 +114,7 @@ HRESULT CTerrain::SetUp_ShaderResources()
 
 CTerrain* CTerrain::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CTerrain* pInstance = New CTerrain(pDevice, pContext);
+	CTerrain* pInstance = new CTerrain(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -131,7 +127,7 @@ CTerrain* CTerrain::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 CGameObject* CTerrain::Clone(void* pArg)
 {
-	CTerrain* pInstance = New CTerrain(*this);
+	CTerrain* pInstance = new CTerrain(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

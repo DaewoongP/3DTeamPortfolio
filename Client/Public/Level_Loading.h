@@ -26,7 +26,7 @@ private:
 
 private:
 	HRESULT Loading_Logo(const _tchar* pLayerTag);
-	HRESULT Loading_Stage1(const _tchar* pLayerTag);
+	HRESULT Loading_MainGame(const _tchar* pLayerTag);
 
 public:
 	static CLevel_Loading* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVELID eNextLevelID);

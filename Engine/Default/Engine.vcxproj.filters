@@ -178,6 +178,15 @@
     <Filter Include="01. Utility\05. Camera\Manager">
       <UniqueIdentifier>{97f9a052-34b3-4b0e-b6bc-a338772e27c9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\03. Components\10. ParticleSystem">
+      <UniqueIdentifier>{aaf18f8e-a9cf-4dba-9828-95d190790622}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\10. ParticleSystem\ParticleModule">
+      <UniqueIdentifier>{355d4a38-f001-42b9-8247-e9d447d141c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\10. ParticleSystem\ParticleModule\MainModule">
+      <UniqueIdentifier>{1802bf4a-ebe4-4b8c-a680-c609c88f336e}</UniqueIdentifier>
+    </Filter>
     <Filter Include="01. Utility\03. Components\10. Behavior">
       <UniqueIdentifier>{74671ea1-680f-4109-b558-9a41898e3288}</UniqueIdentifier>
     </Filter>
@@ -196,13 +205,34 @@
     <Filter Include="01. Utility\03. Components\10. Behavior\04. BlackBoard">
       <UniqueIdentifier>{86ff92e6-3ab7-4155-8d44-dfded6920f9e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\03. Components\10. ParticleSystem">
+    <Filter Include="01. Utility\10. Calculator">
+      <UniqueIdentifier>{cdd21f25-4dbd-40f7-9fbb-cd3a276139a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\11. Behavior">
+      <UniqueIdentifier>{74671ea1-680f-4109-b558-9a41898e3288}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\11. Behavior\00. RootBehavior">
+      <UniqueIdentifier>{81205c2a-2776-4b44-a839-dcd59687b808}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\11. Behavior\01. Selector">
+      <UniqueIdentifier>{6141fb65-e15e-4020-bb1a-196ef2aed9cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\11. Behavior\02. Sequence">
+      <UniqueIdentifier>{28d93839-6dd5-4dfd-bb47-431f3575b049}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\11. Behavior\03. Decorator">
+      <UniqueIdentifier>{35652164-6429-459d-a17e-9e2026d1a961}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\11. Behavior\04. BlackBoard">
+      <UniqueIdentifier>{86ff92e6-3ab7-4155-8d44-dfded6920f9e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\11. ParticleSystem">
       <UniqueIdentifier>{aaf18f8e-a9cf-4dba-9828-95d190790622}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\03. Components\10. ParticleSystem\ParticleModule">
+    <Filter Include="01. Utility\03. Components\11. ParticleSystem\ParticleModule">
       <UniqueIdentifier>{355d4a38-f001-42b9-8247-e9d447d141c5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\03. Components\10. ParticleSystem\ParticleModule\MainModule">
+    <Filter Include="01. Utility\03. Components\11. ParticleSystem\ParticleModule\MainModule">
       <UniqueIdentifier>{1802bf4a-ebe4-4b8c-a680-c609c88f336e}</UniqueIdentifier>
     </Filter>
     <Filter Include="01. Utility\10. Calculator">
@@ -412,31 +442,31 @@
       <Filter>01. Utility\05. Camera</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Behavior.h">
-      <Filter>01. Utility\03. Components\10. Behavior</Filter>
+      <Filter>01. Utility\03. Components\11. Behavior</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\BlackBoard.h">
-      <Filter>01. Utility\03. Components\10. Behavior\04. BlackBoard</Filter>
+      <Filter>01. Utility\03. Components\11. Behavior\04. BlackBoard</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Decorator.h">
-      <Filter>01. Utility\03. Components\10. Behavior\03. Decorator</Filter>
+      <Filter>01. Utility\03. Components\11. Behavior\03. Decorator</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\RootBehavior.h">
-      <Filter>01. Utility\03. Components\10. Behavior\00. RootBehavior</Filter>
+      <Filter>01. Utility\03. Components\11. Behavior\00. RootBehavior</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Selector.h">
-      <Filter>01. Utility\03. Components\10. Behavior\01. Selector</Filter>
+      <Filter>01. Utility\03. Components\11. Behavior\01. Selector</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Sequence.h">
-      <Filter>01. Utility\03. Components\10. Behavior\02. Sequence</Filter>
+      <Filter>01. Utility\03. Components\11. Behavior\02. Sequence</Filter>
     </ClInclude>
     <ClInclude Include="..\private\MainModule.h">
-      <Filter>01. Utility\03. Components\10. ParticleSystem\ParticleModule\MainModule</Filter>
+      <Filter>01. Utility\03. Components\11. ParticleSystem\ParticleModule\MainModule</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ParticleSystem.h">
-      <Filter>01. Utility\03. Components\10. ParticleSystem</Filter>
+      <Filter>01. Utility\03. Components\11. ParticleSystem</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ParticleModule.h">
-      <Filter>01. Utility\03. Components\10. ParticleSystem\ParticleModule</Filter>
+      <Filter>01. Utility\03. Components\11. ParticleSystem\ParticleModule</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Calculator.h">
       <Filter>01. Utility\10. Calculator</Filter>
@@ -624,31 +654,31 @@
       <Filter>01. Utility\05. Camera</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Behavior.cpp">
-      <Filter>01. Utility\03. Components\10. Behavior</Filter>
+      <Filter>01. Utility\03. Components\11. Behavior</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\BlackBoard.cpp">
-      <Filter>01. Utility\03. Components\10. Behavior\04. BlackBoard</Filter>
+      <Filter>01. Utility\03. Components\11. Behavior\04. BlackBoard</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Decorator.cpp">
-      <Filter>01. Utility\03. Components\10. Behavior\03. Decorator</Filter>
+      <Filter>01. Utility\03. Components\11. Behavior\03. Decorator</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\RootBehavior.cpp">
-      <Filter>01. Utility\03. Components\10. Behavior\00. RootBehavior</Filter>
+      <Filter>01. Utility\03. Components\11. Behavior\00. RootBehavior</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Selector.cpp">
-      <Filter>01. Utility\03. Components\10. Behavior\01. Selector</Filter>
+      <Filter>01. Utility\03. Components\11. Behavior\01. Selector</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Sequence.cpp">
-      <Filter>01. Utility\03. Components\10. Behavior\02. Sequence</Filter>
+      <Filter>01. Utility\03. Components\11. Behavior\02. Sequence</Filter>
     </ClCompile>
     <ClCompile Include="..\public\MainModule.cpp">
-      <Filter>01. Utility\03. Components\10. ParticleSystem\ParticleModule\MainModule</Filter>
+      <Filter>01. Utility\03. Components\11. ParticleSystem\ParticleModule\MainModule</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\ParticleSystem.cpp">
-      <Filter>01. Utility\03. Components\10. ParticleSystem</Filter>
+      <Filter>01. Utility\03. Components\11. ParticleSystem</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ParticleModule.cpp">
-      <Filter>01. Utility\03. Components\10. ParticleSystem\ParticleModule</Filter>
+      <Filter>01. Utility\03. Components\11. ParticleSystem\ParticleModule</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Calculator.cpp">
       <Filter>01. Utility\10. Calculator</Filter>
