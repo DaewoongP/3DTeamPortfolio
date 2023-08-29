@@ -45,8 +45,8 @@ HRESULT CBehavior::Assemble_Behavior(const wstring& _BehaviorTag, CBehavior* _pB
 	}
 
 	_pBehavior->m_wstrBehaviorTag = _BehaviorTag;
-	_pBehavior->m_pParentBehavior = this;
-	_pBehavior->m_pOwner = m_pOwner;
+	_pBehavior->m_pParentBehavior = this; /* 상호참조 때문에 AddRef는 하지 않는다. */
+	_pBehavior->m_pOwner = m_pOwner; /* 상호참조 때문에 AddRef는 하지 않는다. */
 	_pBehavior->m_pBlackBoard = m_pBlackBoard;
 	Safe_AddRef(m_pBlackBoard);
 
@@ -97,3 +97,22 @@ void CBehavior::Free()
 
 	__super::Free();
 }
+
+#ifdef _DEBUG
+
+void CBehavior::Find_Running_Behavior(_Inout_ stack<wstring> BehaviorTags)
+{
+	if (0 == m_Behaviors.size())
+		return;
+
+	for (auto& pBehavior : m_Behaviors)
+	{
+		if (BEHAVIOR_RUNNING == pBehavior->m_ReturnData)
+		{
+			BehaviorTags.push(pBehavior->m_wstrBehaviorTag);
+			Find_Running_Behavior(BehaviorTags);
+		}
+	}
+}
+
+#endif // _DEBUG
