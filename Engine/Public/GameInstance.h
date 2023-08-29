@@ -45,11 +45,12 @@ public: /* For.Level_Manager */
 	HRESULT Render_Level();
 
 public: /* For.Object_Manager */
-	HRESULT Add_Prototype(const _tchar * pPrototypeTag, class CGameObject* pPrototype);
+	HRESULT Add_Prototype_GameObject(const _tchar * pPrototypeTag, class CGameObject* pPrototype);
 	HRESULT Add_GameObject(_uint iLevelIndex, const _tchar * pPrototypeTag, const _tchar * pLayerTag, const _tchar * pGameObjectTag, void* pArg = nullptr);
+	class CGameObject* Find_GameObject_In_Layer(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pGameObjectTag);
 
 public: /* For.Component_Manager*/
-	HRESULT Add_Prototype(_uint iLevelIndex, const _tchar * pPrototypeTag, class CComponent* pPrototype);
+	HRESULT Add_Prototype_Component(_uint iLevelIndex, const _tchar * pPrototypeTag, class CComponent* pPrototype);
 	class CComponent* Clone_Component(_uint iLevelIndex, const _tchar * pPrototypeTag, void* pArg = nullptr);
 	HRESULT	Delete_Prototype(_uint iLevelIndex, const _tchar * pPrototypeTag);
 
@@ -98,6 +99,24 @@ public: /* For.Sound_Manager */
 	HRESULT Stop_AllSound();
 	HRESULT Set_ChannelVolume(CSound_Manager::SOUNDCHANNEL eChannel, _float fVolume);
 
+public: /* For. Calculator */
+	// 현재 마우스의 레이를 반환받는 함수입니다(피킹대상의 월드 역행렬 필요). (로컬)
+	HRESULT Get_MouseRay(ID3D11DeviceContext * pContext, HWND hWnd, _float4x4 PickingWorldMatrix_Inverse, _Inout_ _float4 * vRayPos, _Inout_ _float4 * vRayDir);
+	// 현재 마우스의 레이를 반환받는 함수입니다 (월드)
+	HRESULT Get_WorldMouseRay(ID3D11DeviceContext * pContext, HWND hWnd, _Inout_ _float4 * vRayPos, _Inout_ _float4 * vRayDir);
+	// 마우스가 클라이언트 내부에 있는지 체크하는 함수입니다.
+	_bool IsMouseInClient(ID3D11DeviceContext * pContext, HWND hWnd);
+	// 1번 인자 : 가중치를 벡터에 대입 (전체 사이즈보다 작아야함)
+	// 2번 인자 : 랜덤으로 뽑을 사이즈 대입
+	// 반환 : 사이즈보다 작은값중 하나를 반환
+	// 벡터사이즈와 값이 다를경우 임의로 벡터에 남은 퍼센트를 분배해서 넣어줌.
+	// 루프를 돌아야하므로 효율성을 높이려면 사이즈를 맞춰주면 좋음.
+	_uint RandomChoose(vector<_float> Weights, _uint iChooseSize);
+	// 반지름 길이를 입력하면 그 반지름 내부에서 방향벡터를 랜덤하게 뽑아주는 함수입니다.
+	_float4 Get_RandomVectorInSphere(_float fRadius);
+	// FilePath 내의 모든 파일을 순회하면서 Ext 확장자에 맞는 파일들을 OutVector에 넣어줍니다.
+	HRESULT ReadFileInDirectory(_Inout_ vector<wstring>& OutVector, const _tchar* pFilePath, const _tchar* pExt);
+
 private:
 	class CGraphic_Device*			m_pGraphic_Device = { nullptr };
 	class CInput_Device*			m_pInput_Device = { nullptr };
@@ -112,6 +131,7 @@ private:
 	class CRenderTarget_Manager*	m_pRenderTarget_Manager = { nullptr };
 	class CLight_Manager*			m_pLight_Manager = { nullptr };
 	class CSound_Manager*			m_pSound_Manager = { nullptr };
+	class CCalculator*				m_pCalculator = { nullptr };
 
 public:
 	static void Release_Engine();

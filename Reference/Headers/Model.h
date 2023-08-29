@@ -7,6 +7,7 @@ class ENGINE_DLL CModel : public CComponent
 {
 public:
 	enum TYPE { TYPE_NONANIM, TYPE_ANIM, TYPE_END };
+	enum ANIMTYPE { HEAD,UPPERBODY,UNDERBODY,ARM,ANIM_END};
 
 private:
 	explicit CModel(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -67,7 +68,8 @@ private: /* For.Animations */
 	_uint							m_iPreviousAnimIndex = { 0 };
 	_uint							m_iCurrentAnimIndex = { 0 };
 	_uint							m_iNumAnimations = { 0 };
-	vector<class CAnimation*>		m_Animations;
+
+	vector<class CAnimation*>		m_Animations;//[ANIM_END]
 
 private:
 	_float4x4						m_PivotMatrix;

@@ -40,6 +40,21 @@
     <Filter Include="01. Window\Window\UI">
       <UniqueIdentifier>{05d913c5-58e8-4c63-8c76-3241b4090d81}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Window\Window\Effect">
+      <UniqueIdentifier>{37ceec7f-c6e3-4d9c-821b-540ccead54ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. ToolObjects\02. Camera">
+      <UniqueIdentifier>{29c98f31-784c-4063-929c-8e2c7599ba88}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. ToolObjects\03. Sky">
+      <UniqueIdentifier>{4461d7fd-a6a1-45bd-9424-3d9bfaf2e36f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. ToolObjects\01. Dummy\DummyParticle">
+      <UniqueIdentifier>{7edb6c26-6338-4754-9239-502063c38924}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Window\Window\Animation">
+      <UniqueIdentifier>{f24db859-61c1-45a9-96e6-80c730ace989}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tool.h">
@@ -114,6 +129,24 @@
     <ClInclude Include="..\Public\UI_Window.h">
       <Filter>01. Window\Window\UI</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Effect_Window.h">
+      <Filter>01. Window\Window\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Camera_Free.h">
+      <Filter>02. ToolObjects\02. Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Sky.h">
+      <Filter>02. ToolObjects\03. Sky</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\DummyParticle.h">
+      <Filter>02. ToolObjects\01. Dummy\DummyParticle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Animation_Window.h">
+      <Filter>01. Window\Window\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CDummy.h">
+      <Filter>02. ToolObjects\01. Dummy</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -177,6 +210,24 @@
     <ClCompile Include="..\Private\UI_Window.cpp">
       <Filter>01. Window\Window\UI</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Effect_Window.cpp">
+      <Filter>01. Window\Window\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Camera_Free.cpp">
+      <Filter>02. ToolObjects\02. Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Sky.cpp">
+      <Filter>02. ToolObjects\03. Sky</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DummyParticle.cpp">
+      <Filter>02. ToolObjects\01. Dummy\DummyParticle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Animation_Window.cpp">
+      <Filter>01. Window\Window\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CDummy.cpp">
+      <Filter>02. ToolObjects\01. Dummy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Bin\ShaderFiles\Shader_Tool_Defines.hlsli">
@@ -188,6 +239,12 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Terrain.hlsl">
+      <Filter>97. ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Sky.hlsl">
+      <Filter>97. ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTex.hlsl">
       <Filter>97. ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>

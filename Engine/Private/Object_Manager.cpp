@@ -74,6 +74,21 @@ HRESULT CObject_Manager::Add_GameObject(_uint iLevelIndex, const _tchar* pProtot
 	return S_OK;
 }
 
+CGameObject* CObject_Manager::Find_GameObject_In_Layer(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pGameObjectTag)
+{
+	CLayer* pLayer = Find_Layer(iLevelIndex, pLayerTag);
+
+	if (nullptr == pLayer)
+		return nullptr;
+
+	CGameObject* pGameObject = pLayer->Find_GameObject(pGameObjectTag);
+
+	if (nullptr == pGameObject)
+		return nullptr;
+
+	return pGameObject;
+}
+
 void CObject_Manager::Clear_LevelResources(_uint iLevelIndex)
 {
 	for (auto& Pair : m_pLayers[iLevelIndex])
@@ -134,6 +149,7 @@ void CObject_Manager::Free()
 		}
 		m_pLayers[i].clear();
 	}
+
 	Safe_Delete_Array(m_pLayers);
 
 	for (auto& Pair : m_Prototypes)

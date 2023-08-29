@@ -46,6 +46,29 @@ HRESULT CLevel_Tool::Ready_For_Layer_Tool(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
+	/* For.GameObject_Camera_Free */
+	if (FAILED(pGameInstance->Add_GameObject(LEVEL_TOOL,
+		TEXT("Prototype_GameObject_Camera_Free"), pLayerTag, TEXT("GameObject_Camera_Free"))))
+	{
+		MSG_BOX("Failed Add GameObject GameObject_Camera_Free");
+		return E_FAIL;
+	}
+
+	/* For.GameObject_Sky */
+	if (FAILED(pGameInstance->Add_GameObject(LEVEL_TOOL,
+		TEXT("Prototype_GameObject_Sky"), pLayerTag, TEXT("GameObject_Sky"))))
+	{
+		MSG_BOX("Failed Add GameObject GameObject_Sky");
+		return E_FAIL;
+	}
+
+	if (FAILED(pGameInstance->Add_GameObject(LEVEL_TOOL,
+		TEXT("Prototype_GameObject_DummyParticle"), pLayerTag, TEXT("GameObject_DummyParticle"))))
+	{
+		MSG_BOX("Failed Add GameObject GameObject_DummyParticle");
+		return E_FAIL;
+	}
+
 	Safe_Release(pGameInstance);
 
 	return S_OK;

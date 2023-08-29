@@ -1,8 +1,10 @@
 #pragma once
 #include "Level.h"
 #include "Tool_Defines.h"
+#include "Sky.h"
 #include "Terrain.h"
-
+#include "Camera_Free.h"
+#include "DummyParticle.h"
 
 BEGIN(Tool)
 

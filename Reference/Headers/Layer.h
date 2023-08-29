@@ -17,11 +17,11 @@ public:
 	void Tick(_float fTimeDelta);
 	void Late_Tick(_float fTimeDelta);
 
-private:
-	unordered_map<const _tchar*, class CGameObject*>	m_GameObjects;
+public:
+	class CGameObject* Find_GameObject(const _tchar* pGameObjectTag);
 
 private:
-	class CGameObject* Find_GameObject(const _tchar* pGameObjectTag);
+	unordered_map<const _tchar*, class CGameObject*>	m_GameObjects;
 
 public:
 	static CLayer* Create();

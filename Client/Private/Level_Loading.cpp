@@ -2,6 +2,7 @@
 #include "Loader.h"
 #include "Level_Logo.h"
 #include "GameInstance.h"
+#include "Level_MainGame.h"
 
 CLevel_Loading::CLevel_Loading(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CLevel(pDevice, pContext)
@@ -23,6 +24,16 @@ HRESULT CLevel_Loading::Initialize(LEVELID eNextLevelID)
 			MSG_BOX("Failed Loading Logo Object");
 			return E_FAIL;
 		}
+		break;
+	case LEVEL_MAINGAME:
+		if (FAILED(Loading_MainGame(TEXT("Layer_MainGame"))))
+		{
+			MSG_BOX("Failed Loading MainGame Object");
+			return E_FAIL;
+		}
+		break;
+	default:
+		MSG_BOX("Failed Loading Objects");
 		break;
 	}
 
@@ -50,6 +61,12 @@ void CLevel_Loading::Tick(_float fTimeDelta)
 		{
 		case LEVEL_LOGO:
 			pLevel = CLevel_Logo::Create(m_pDevice, m_pContext);
+			break;
+		case LEVEL_MAINGAME:
+			pLevel = CLevel_MainGame::Create(m_pDevice, m_pContext);
+			break;
+		default:
+			MSG_BOX("Failed Create Next Level");
 			break;
 		}
 
@@ -91,7 +108,7 @@ HRESULT CLevel_Loading::Loading_Logo(const _tchar* pLayerTag)
 	return S_OK;
 }
 
-HRESULT CLevel_Loading::Loading_Stage1(const _tchar* pLayerTag)
+HRESULT CLevel_Loading::Loading_MainGame(const _tchar* pLayerTag)
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
@@ -110,6 +127,7 @@ CLevel_Loading* CLevel_Loading::Create(ID3D11Device* pDevice, ID3D11DeviceContex
 		MSG_BOX("Failed to Created CLevel_Loading");
 		Safe_Release(pInstance);
 	}
+
 	return pInstance;
 }
 

@@ -28,6 +28,45 @@
     <Filter Include="97. ShaderFiles\Meshes">
       <UniqueIdentifier>{458c26bc-3075-44f0-8181-8bf9f722fa27}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject">
+      <UniqueIdentifier>{b74fe5a7-7424-471b-8a3d-0dfab0107bd2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\00. Sky">
+      <UniqueIdentifier>{6c37d6c6-263b-4d41-a46d-4ece2e70908a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player">
+      <UniqueIdentifier>{5eb96d63-79e7-4753-bd1d-cc3a3d3f177d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy">
+      <UniqueIdentifier>{e612562d-8c4c-44b1-a050-fefc2e43feb3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI">
+      <UniqueIdentifier>{66149634-b2ec-4e71-ba47-a1cf371175b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. Effect">
+      <UniqueIdentifier>{b30da159-0cae-438f-a468-3cc4137f82aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\04. MapObject">
+      <UniqueIdentifier>{0671651e-f669-4b5e-82f4-dfb1f4480ca3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\Logo">
+      <UniqueIdentifier>{0126ba42-5a20-40d6-a1fb-a9781cbccd8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Levels\01. MainGame">
+      <UniqueIdentifier>{1bc6cbc7-4c2b-4ad9-9e0c-6724a4c369f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\99. Debug">
+      <UniqueIdentifier>{286ee9a6-b9ef-449f-9303-ba3e8913d1f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\06. Terrain">
+      <UniqueIdentifier>{2308a2fe-dbf8-40e5-a674-b8a9988760c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\99. Debug\Camera">
+      <UniqueIdentifier>{135ca45c-2c5b-460d-a30c-d6f6b96b6d78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\99. Debug\Player">
+      <UniqueIdentifier>{a7856930-1055-4fbe-9f00-de43c99e8340}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -60,6 +99,27 @@
     <ClInclude Include="..\Public\Client_Includes.h">
       <Filter>99. Headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Sky.h">
+      <Filter>02. GameObject\00. Sky</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Logo_BackGround.h">
+      <Filter>02. GameObject\05. UI\Logo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI.h">
+      <Filter>02. GameObject\05. UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Level_MainGame.h">
+      <Filter>01. Levels\01. MainGame</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Terrain.h">
+      <Filter>02. GameObject\06. Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Camera_Debug.h">
+      <Filter>02. GameObject\99. Debug\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Test_Player.h">
+      <Filter>02. GameObject\99. Debug\Player</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -77,6 +137,27 @@
     <ClCompile Include="..\Private\Loader.cpp">
       <Filter>01. Levels\99. Loading</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Sky.cpp">
+      <Filter>02. GameObject\00. Sky</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Logo_BackGround.cpp">
+      <Filter>02. GameObject\05. UI\Logo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI.cpp">
+      <Filter>02. GameObject\05. UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Level_MainGame.cpp">
+      <Filter>01. Levels\01. MainGame</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Terrain.cpp">
+      <Filter>02. GameObject\06. Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Camera_Debug.cpp">
+      <Filter>02. GameObject\99. Debug\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Test_Player.cpp">
+      <Filter>02. GameObject\99. Debug\Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -92,13 +173,22 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTex.hlsl">
-      <Filter>97. ShaderFiles</Filter>
-    </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="..\Bin\ShaderFiles\Shader_Client_Defines.hlsli">
       <Filter>97. ShaderFiles</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTex.hlsl">
+      <Filter>97. ShaderFiles\Textures</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxCube.hlsl">
+      <Filter>97. ShaderFiles\Textures</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Terrain.hlsl">
+      <Filter>97. ShaderFiles\Textures</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMesh.hlsl">
+      <Filter>97. ShaderFiles\Meshes</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

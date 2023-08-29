@@ -28,9 +28,11 @@ private:
 	HRESULT Render_Priority();
 	HRESULT Render_NonBlend();
 	HRESULT Render_Lights();
+	HRESULT Render_Shadow();
 	HRESULT Render_Deferred();
 	HRESULT Render_NonLight();
 	HRESULT Render_Blend();
+	HRESULT Render_PostProcessing();
 	HRESULT Render_UI();
 
 private:
@@ -66,6 +68,13 @@ private: /* Post Processing */
 	class CVIBuffer_Rect*			m_pPostProcessingBuffer = { nullptr };
 	class CShader*					m_pPostProcessingShader = { nullptr };
 
+private: /* Shader_Type */
+	class CVIBuffer_Rect*			m_pShadeTypeBuffer = { nullptr };//각종 쉐이더처리 해줄때 쓸 것
+	class CShader*					m_pShadeTypeShader = { nullptr };
+
+private: /* Shader_Type */
+	class CVIBuffer_Rect*			m_pSSAOBuffer = { nullptr };//각종 쉐이더처리 해줄때 쓸 것
+	class CShader*					m_pSSAOShader = { nullptr };
 public:
 	static CRenderer* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);
 	virtual CComponent* Clone(void* pArg) override;

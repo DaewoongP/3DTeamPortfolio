@@ -19,6 +19,9 @@ private:
 	virtual ~CTerrain() = default;
 
 public:
+	CVIBuffer_Terrain* Get_Buffer() const { return m_pBuffer; }
+
+public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;

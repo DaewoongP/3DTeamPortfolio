@@ -15,16 +15,49 @@ namespace Engine
 		class CTexture* pMtrlTexture[20];
 	}MESHMATERIAL;
 
-	typedef struct tagKeyFrame
+	//행렬 변환용 키프레임 입니다.
+	typedef struct tagMatrixFrame
 	{
-		// 상태값
 		XMFLOAT3		vScale;
 		XMFLOAT4		vRotation;
 		XMFLOAT3		vTranslation;
 
-		// 프레임 실행 시간
 		float			fTime;
+	}MATRIXFRAME;
+
+	typedef struct tagFrame
+	{
+		enum KEYFRAMETYPE {KF_SPEED,KF_NOTIFY,KF_SOUND,KF_END};
+		KEYFRAMETYPE    eKeyFrameType;
+		float			fTime;
+		bool			isEnable = { true };
 	}KEYFRAME;
+
+	typedef struct tagSpeedFrame : KEYFRAME
+	{
+		float			fSpeed;
+	}SPEEDFRAME;
+
+	typedef struct tagNotifyFrame :KEYFRAME
+	{
+		function<void()> Action;
+	}NOTIFYFRAME;
+
+	typedef struct tagSoundFrame : KEYFRAME
+	{
+		wchar_t wszSoundTag[MAX_PATH] = {};
+	}SOUNDFRAME;
+
+	/*typedef struct tagColliderFrame
+	{
+		Collider* pCollider = { nullptr	};
+		float			fTime;
+	}COLLIDERFRAME;
+	typedef struct tagParticleFrame
+	{
+		float			fTime;
+		float			fTime;
+	}PARTICLEFRAME;*/
 
 	typedef struct tagNotify
 	{
@@ -49,7 +82,7 @@ namespace Engine
 		enum COLTYPE
 		{
 			COLTYPE_PLAYER,
-			COLTYPE_STATIC,
+			COLTYPE_MONSTER,
 			COLTYPE_END
 		};
 

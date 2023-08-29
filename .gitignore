@@ -404,4 +404,9 @@ Engine.dll
 Engine_d.dll
 Engine.lib
 Engine_d.lib
+Tool.lib
 *.cso
+
+
+# PhysX
+PhysXGpu_64.dll
