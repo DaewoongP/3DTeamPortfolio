@@ -160,15 +160,15 @@ BlendState BS_AlphaBlend
 struct VS_IN
 {
     float3 vNormal : NORMAL;
-    float fDepth;
-    float fViewZ;
-    float2 vTexUV : TEXCOORD0;
+    float fDepth : TEXCOORD0;
+    float fViewZ : TEXCOORD1;
+    float2 vTexUV : TEXCOORD2;
   
 };
 
 struct VS_OUT
 {
-    float4 vAmbient : SV_TARGET0;
+    float4 vAmbient : TEXCOORD0;
   
 };
 float3 RandomNormal(float2 tex)
@@ -179,41 +179,42 @@ float3 RandomNormal(float2 tex)
     return normalize(float3(noiseX, noiseY, noiseZ));
     
 }
+
 VS_OUT VS_MAIN(VS_IN In)
 {
     VS_OUT Out = (VS_OUT) 0;
- 
-    float3 vRay;
-    float3 vReflect;
-    float2 vRandomUV;
-    float fOccNorm;
     
-    int iColor = 0;
-    for (int i = 0; i < 16;++i)
-    {
-        vRay = reflect(RandomNormal(In.vTexUV), g_vRandom);
-        vReflect = normalize(reflect(vRay, In.vNormal)) * g_fRadius;
-        vReflect.x *= -1.f;
-        vRandomUV = In.vTexUV + vReflect.xy;
-        fOccNorm = Sample(g_DepthTexture, vRandomUV).g * g_fFar *In.fViewZ;
+    //float3 vRay;
+    //float3 vReflect;
+    //float2 vRandomUV;
+    //float fOccNorm;
+    
+    //int iColor = 0;
+    //for (int i = 0; i < 16;++i)
+    //{
+    //    vRay = reflect(RandomNormal(In.vTexUV), g_vRandom);
+    //    vReflect = normalize(reflect(vRay, In.vNormal)) * g_fRadius;
+    //    vReflect.x *= -1.f;
+    //    vRandomUV = In.vTexUV + vReflect.xy;
+    //    fOccNorm = Sample(g_DepthTexture, vRandomUV).g * g_fFar *In.fViewZ;
         
-        if(fOccNorm<=In.fDepth+0.0003f)
-        {
-            ++iColor;
-        }
+    //    if(fOccNorm<=In.fDepth+0.0003f)
+    //    {
+    //        ++iColor;
+    //    }
         
-    }
+    //}
        
-    Out.vAmbient = abs((iColor / 16.f) - 1);
+    //Out.vAmbient = abs((iColor / 16.f) - 1);
     return Out;
 }
 struct PS_IN
 {
-    float4 vAmbient : SV_TARGET0;
+    float4 vAmbient : TEXCOORD0;
 };
 struct PS_OUT
 {
-    float4 vColor;
+    float4 vColor : SV_TARGET0;
 };
 
 
@@ -221,9 +222,9 @@ PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out= (PS_OUT) 0;
     
-    float4 vDepth = Sample(g_DepthTexture,In.v)
+    //float4 vDepth = Sample(g_DepthTexture,In.v)
     
-    
+    return Out;
 }
 
 

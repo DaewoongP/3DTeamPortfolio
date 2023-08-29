@@ -1,5 +1,4 @@
 #pragma once
-
 #include "ParticleModule.h"
 
 BEGIN(Engine)

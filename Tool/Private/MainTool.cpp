@@ -265,7 +265,7 @@ HRESULT CMainTool::Ready_Prototype_Component()
 		return E_FAIL;
 
 	/* Prototype_Component_ParticleSystem_Fire*/
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Fire_Particle"),
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_TOOL, TEXT("Prototype_Component_Fire_Particle"),
 		CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Particles/Fire/")))))
 		return E_FAIL;
 
