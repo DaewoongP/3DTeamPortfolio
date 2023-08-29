@@ -46,6 +46,9 @@
     <Filter Include="02. ToolObjects\03. Sky">
       <UniqueIdentifier>{4461d7fd-a6a1-45bd-9424-3d9bfaf2e36f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. ToolObjects\01. Dummy\DummyParticle">
+      <UniqueIdentifier>{7edb6c26-6338-4754-9239-502063c38924}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tool.h">
@@ -126,6 +129,9 @@
     <ClInclude Include="..\public\Sky.h">
       <Filter>02. ToolObjects\03. Sky</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\DummyParticle.h">
+      <Filter>02. ToolObjects\01. Dummy\DummyParticle</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -194,6 +200,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Sky.cpp">
       <Filter>02. ToolObjects\03. Sky</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DummyParticle.cpp">
+      <Filter>02. ToolObjects\01. Dummy\DummyParticle</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -258,6 +258,11 @@ HRESULT CMainTool::Ready_Prototype_Component()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Default0.jpg")))))
 		return E_FAIL;
 
+	/* Prototype_Component_ParticleSystem_Fire*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Fire_Particle"),
+		CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Particles/Fire/")))))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -273,6 +278,10 @@ HRESULT CMainTool::Ready_Prototype_Object()
 
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Sky"),
 		CSky::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DummyParticle"),
+		DummyParticle::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	return S_OK;

@@ -42,7 +42,7 @@ CMainModule* CMainModule::Create(const _tchar* _pFilePath)
 
 	if (FAILED(pInstance->Initialize_Prototype(_pFilePath)))
 	{
-		MSG_BOX("Failed to Created CMainModule");
+		// 일부러 안넣었음.
 		Safe_Release(pInstance);
 	}
 

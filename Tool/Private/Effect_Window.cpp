@@ -1,14 +1,14 @@
 #include "..\Public\Effect_Window.h"
 #include "GameInstance.h"
 #include "ImGuiFileDialog.h"
-CEffect_Window::CEffect_Window(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CImWindow(pDevice, pContext)
+CEffect_Window::CEffect_Window(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
+	: CImWindow(_pDevice, _pContext)
 {
 }
 
-HRESULT CEffect_Window::Initialize(ImVec2 vWindowPos, ImVec2 vWindowSize)
+HRESULT CEffect_Window::Initialize(ImVec2 _vWindowPos, ImVec2 _vWindowSize)
 {
-	if (FAILED(__super::Initialize(vWindowPos, vWindowSize)))
+	if (FAILED(__super::Initialize(_vWindowPos, _vWindowSize)))
 		return E_FAIL;
 
 	m_WindowFlag = ImGuiWindowFlags_NoResize;
@@ -16,9 +16,9 @@ HRESULT CEffect_Window::Initialize(ImVec2 vWindowPos, ImVec2 vWindowSize)
 	return S_OK;
 }
 
-void CEffect_Window::Tick(_float fTimeDelta)
+void CEffect_Window::Tick(_float _fTimeDelta)
 {
-	__super::Tick(fTimeDelta);
+	__super::Tick(_fTimeDelta);
 	ImGui::Begin("Effect", nullptr, m_WindowFlag);
 	BEGININSTANCE;
 
@@ -40,27 +40,17 @@ void CEffect_Window::Tick(_float fTimeDelta)
 		ImGui::TreePop(); // SubNodeÀÇ ³¡
 	}
 
-	// open Dialog Simple
-	if (ImGui::Button("Open File Dialog"))
-		ImGuiFileDialog::Instance()->OpenDialog("CooseFilePtcKey", "Save File", ".ptc", "../../Resources/Effects/Particles/");
-
-	// display
-	if (ImGuiFileDialog::Instance()->Display("CooseFilePtcKey"))
-	{
-		// action if OK
-		if (ImGuiFileDialog::Instance()->IsOk())
-		{
-			std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
-			std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
-			// action
-		}
-
-		// close
-		ImGuiFileDialog::Instance()->Close();
-	}
-
+	SaveFileDialog();
+	LoadFileDialog();
+	
 	ENDINSTANCE;
 	ImGui::End();
+
+	if (nullptr != m_pDummyParticle)
+	{
+		m_pDummyParticle->Tick(_fTimeDelta);
+		m_pDummyParticle->Late_Tick(_fTimeDelta);
+	}
 }
 
 HRESULT CEffect_Window::Render()
@@ -68,11 +58,137 @@ HRESULT CEffect_Window::Render()
 	return S_OK;
 }
 
-CEffect_Window* CEffect_Window::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, ImVec2 vWindowPos, ImVec2 vWindowSize)
+void CEffect_Window::SaveFileDialog()
 {
-	CEffect_Window* pInstance = New CEffect_Window(pDevice, pContext);
+	if (ImGui::Button("Save Particle File Dialog"))
+		ImGuiFileDialog::Instance()->OpenDialog("CooseSaveFilePtcKey", "Save File", ".ptc", "../../Resources/Effects/Particles/");
 
-	if (FAILED(pInstance->Initialize(vWindowPos, vWindowSize)))
+	// display
+	if (ImGuiFileDialog::Instance()->Display("CooseSaveFilePtcKey"))
+	{
+		// action if OK
+		if (ImGuiFileDialog::Instance()->IsOk())
+		{
+			std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+			std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
+
+			_tchar wszFilePath[MAX_PATH];
+			ZeroMemory(wszFilePath, sizeof(_tchar) * MAX_PATH);
+			CharToWChar(filePathName.c_str(), wszFilePath);
+
+			HANDLE hFile = CreateFile(wszFilePath,
+				GENERIC_WRITE,
+				0,
+				0,
+				CREATE_ALWAYS,
+				FILE_ATTRIBUTE_NORMAL, 0
+			);
+
+			if (INVALID_HANDLE_VALUE == hFile)
+			{
+				MSG_BOX("The file open has been failed");
+				return;
+			}
+
+			_ulong dwByte = 0;
+
+			WriteFile(hFile, &m_MainModuleDesc, sizeof(MAIN_MODULE), &dwByte, nullptr);
+
+			MSG_BOX("The file has been saved successfully");
+
+			CloseHandle(hFile);
+		}
+
+		// close
+		ImGuiFileDialog::Instance()->Close();
+	}
+}
+
+void CEffect_Window::LoadFileDialog()
+{
+	if (ImGui::Button("Load Particle File Dialog"))
+		ImGuiFileDialog::Instance()->OpenDialog("CooseLoadFilePtcKey", "Load File", ".ptc", "../../Resources/Effects/Particles/");
+
+	// display
+	if (ImGuiFileDialog::Instance()->Display("CooseLoadFilePtcKey"))
+	{
+		// action if OK
+		if (ImGuiFileDialog::Instance()->IsOk())
+		{
+			std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+			std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
+
+			_tchar wszFilePath[MAX_PATH];
+			ZeroMemory(wszFilePath, sizeof(_tchar) * MAX_PATH);
+			CharToWChar(filePathName.c_str(), wszFilePath);
+
+			HANDLE hFile = CreateFile(wszFilePath,
+				GENERIC_READ,
+				0,
+				0,
+				OPEN_EXISTING,
+				FILE_ATTRIBUTE_NORMAL, 0
+			);
+
+			if (INVALID_HANDLE_VALUE == hFile)
+			{
+				MSG_BOX("The file open has been failed");
+				return;
+			}
+
+			_ulong dwByte = 0;
+			
+			ZEROMEM(&m_MainModuleDesc);
+			ReadFile(hFile, &m_MainModuleDesc, sizeof(MAIN_MODULE), &dwByte, nullptr);
+			
+			MSG_BOX("The file has been loaded successfully");
+
+			CloseHandle(hFile);
+		}
+
+		// close
+		ImGuiFileDialog::Instance()->Close();
+	}
+}
+
+void CEffect_Window::CreateFileDialog()
+{
+	if (ImGui::Button("Create"))
+		ImGuiFileDialog::Instance()->OpenDialog("ChooseCreateFilePtcKey", "Create File", ".ptc", "../../Resources/Effects/Particles/");
+
+	// display
+	if (ImGuiFileDialog::Instance()->Display("ChooseCreateFilePtcKey"))
+	{
+		// action if OK
+		if (ImGuiFileDialog::Instance()->IsOk())
+		{
+			std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+			std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
+
+			_tchar wszFilePath[MAX_PATH];
+			ZeroMemory(wszFilePath, sizeof(_tchar) * MAX_PATH);
+			CharToWChar(filePathName.c_str(), wszFilePath);
+
+			_ulong dwByte = 0;
+			MAIN_MODULE test;
+			ZEROMEM(&test);
+
+			Safe_Release(m_pDummyParticle);
+			//m_pDummyParticle = CParticleSystem::Create(m_pDevice, m_pContext, wszFilePath);
+			
+			MSG_BOX("Created Successfully");
+		}
+
+		// close
+		ImGuiFileDialog::Instance()->Close();
+	}
+}
+
+CEffect_Window* CEffect_Window::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, ImVec2 _vWindowPos, ImVec2 _vWindowSize)
+{
+	CEffect_Window* pInstance = New CEffect_Window(_pDevice, _pContext);
+
+	if (FAILED(pInstance->Initialize(_vWindowPos, _vWindowSize)))
 	{
 		MSG_BOX("Failed Create CEffect_Window");
 		Safe_Release(pInstance);
@@ -85,4 +201,6 @@ CEffect_Window* CEffect_Window::Create(ID3D11Device* pDevice, ID3D11DeviceContex
 void CEffect_Window::Free(void)
 {
 	__super::Free();
+
+	Safe_Release(m_pDummyParticle);
 }

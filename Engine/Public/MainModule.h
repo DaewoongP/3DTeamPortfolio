@@ -16,6 +16,9 @@ struct ENGINE_DLL MAIN_MODULE
 
 class CMainModule : public CParticleModule
 {
+protected:
+	friend class CParticleSystem;
+
 private:
 	explicit CMainModule();
 	explicit CMainModule(const CMainModule& _rhs);
