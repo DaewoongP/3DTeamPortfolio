@@ -21,6 +21,15 @@ void CObject_Window::Tick(_float fTimeDelta)
 
 	ImGui::Begin("Object", nullptr, m_WindowFlag);
 
+	// 현재 피킹 위치 표시
+	ImGui::Text("Picking Position");
+	ImGui::Text("%.1f /", 0.f);
+	ImGui::SameLine();
+	ImGui::Text("%.1f /", 0.f);
+	ImGui::SameLine();
+	ImGui::Text("%.1f", 0.f);
+	ImGui::Text("----------------------------------------");
+
 	ImGui::End();
 }
 
