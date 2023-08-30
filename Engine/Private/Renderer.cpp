@@ -349,7 +349,7 @@ HRESULT CRenderer::Render_SSAO()
 		return E_FAIL;
 
 
-	_float3 g_vRandom[10] =
+	_float3 g_vRandom[13] =
 	{
 		_float3(0.2024537f, 0.841204f, -0.9060241f),
 		_float3(-0.221324f, 0.324325f, -0.8234234f),
@@ -359,7 +359,10 @@ HRESULT CRenderer::Render_SSAO()
 		_float3(0.20348342f, 0.234832f, 0.23682923f),
 		_float3(-0.0012315f, 0.8234823f, 0.23483244f),
 		_float3(-0.2342863f, 0.234982f, -0.00001524f),
-		_float3(-0.3426888f, 0.780742f, -0.8349823f)
+		_float3(-0.3426888f, 0.780742f, -0.8349823f),
+		_float3(-0.5234832f,0.8291234f,0.23941929f),
+		_float3(0.90889192f,0.8123121f,-0.12812992f),
+		_float3(0.4520239f,0.1201011f,-0.82943914f)
 	};
 	
 	if (FAILED(m_pSSAOShader->Bind_RawValue("g_vRandom", &g_vRandom, sizeof(_float3))))

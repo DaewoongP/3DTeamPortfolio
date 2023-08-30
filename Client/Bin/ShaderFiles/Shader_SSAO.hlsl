@@ -3,8 +3,8 @@ matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
 texture2D g_PostProcessingTexture;
 //SSAO
-float g_fRadius = 0.001f;
-float g_fFar = 1000.f;
+float g_fRadius = 0.00001f;
+float g_fFar = 5000.f;
 float g_fFalloff = 0.000002f;
 float g_fStrength = 0.0007f;
 float g_fTotStrength = 1.38f;
@@ -14,7 +14,7 @@ float g_fInSamples = 1.f / 16.f;
 texture2D g_DepthTexture;
 texture2D g_NormalTexture;
 //ray를 뻗어나가면서 무작위로판단하기위해 rand값이 필요함 같이던져줘야할듯
-float3 g_vRandom[10];
+float3 g_vRandom[13];
 // float3 g_vRandom[10] =
 //{
 //    float3(0.2024537f, 0.841204f, -0.9060241f),
@@ -177,19 +177,19 @@ PS_OUT PS_MAIN(PS_IN In)
     
         int iColor = 0;
     
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 13; i++)
         {
             vRay = reflect(RandNormal(In.vTexUV), g_vRandom[i]);
-        vReflect = normalize(reflect(normalize(vRay), normalize(vNormalDesc.rgb))) * g_fRadius;
+            vReflect = normalize(reflect(normalize(vRay), normalize(vNormalDesc.rgb))) * g_fRadius;
             vReflect.x *= -1.f;
             vRandomUV = In.vTexUV + vReflect.xy;
              fOccNorm = g_DepthTexture.Sample(LinearSampler, vRandomUV).g * g_fFar * fViewZ;
-            if (fOccNorm <= vDepth + 0.0003f)
+            if (fOccNorm <= vDepth + 0.0005f)
                 ++iColor;
                   
         }
     
-        float4 vAmbient = abs((iColor / 10.f) - 1);
+        float4 vAmbient = abs((iColor / 13.f) - 1);
    
         Out.vColor = 1.f - vAmbient;
     
