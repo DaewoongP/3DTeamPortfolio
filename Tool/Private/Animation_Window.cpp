@@ -52,8 +52,6 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 
 			_tchar wszfilePath[MAX_PATH] = {};
 			CharToWChar(strFilePathName.c_str(), wszfilePath);
-			//여기서 생성된 모델 태그는 기록돼야한다.
-			//위 데이터를 기반으로 모델 프로토 생성
 			_float4x4 PivotMatrix = XMMatrixIdentity();
 			PivotMatrix = XMMatrixIdentity();
 			CGameInstance* pGameInstance = CGameInstance::GetInstance();
@@ -82,7 +80,10 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 		if (pDummyModel != nullptr)
 		{
 			static _char szCurrentItem[MAX_PATH];
-			
+			static _float fNotifyActionTime;
+			static _char  szNotifyName[MAX_PATH];
+			static KEYFRAME::KEYFRAMETYPE eNotifyKeyFrameType;
+
 			if (ImGui::BeginCombo("AnimComboBox", szCurrentItem))
 			{
 				_char szAnimationName[MAX_PATH] = "";
@@ -111,15 +112,12 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 			if (pDummyModel->Get_Animation()->Get_Paused_State() ? ImGui::Button("Stop") : ImGui::Button("Play"))
 			{
 				pDummyModel->Get_Animation()->Set_Pause(!pDummyModel->Get_Animation()->Get_Paused_State());
+				fNotifyActionTime = pDummyModel->Get_Animation()->Get_Accmulation();
 			}
 
-			_float AnimPlaygague = pDummyModel->Get_Animation()->Get_Ratio_Accumulation_Duration();
-			ImGui::ProgressBar(AnimPlaygague, ImVec2(-1, 0));
-			
-
-			static _float fNotifyActionTime;
-			static _char  szNotifyName[MAX_PATH];
-			static KEYFRAME::KEYFRAMETYPE eNotifyKeyFrameType;
+			//_float AnimPlaygague = pDummyModel->Get_Animation()->Get_Ratio_Accumulation_Duration();
+			//ImGui::ProgressBar(AnimPlaygague, ImVec2(-1, 0));
+			ImGui::SliderFloat("Animation", pDummyModel->Get_Animation()->Get_Accmulation_Pointer(), 0, pDummyModel->Get_Animation()->Get_Duration());
 
 			//노티파이 이름 설정하는 텍박
 			ImGui::InputText("NotifyName", szNotifyName, 32);
@@ -176,7 +174,22 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 				{
 
 				}
+				ImGui::SameLine();
+				ImGui::Text((eNotifyType == KEYFRAME::KF_NOTIFY) ? ("Notify") :
+					((eNotifyType == KEYFRAME::KF_SOUND) ? (("Sound")) :
+						(("Speed"))));
+				
+				_char  szTimeMessage[MAX_PATH] = "Action Time : ";
+				sprintf_s(szTimeMessage, "%s%f", szTimeMessage, pNotify->Find_Frame(iNotifyCount)->fTime);
+				ImGui::SameLine();  ImGui::Text(szTimeMessage);
 
+				if (eNotifyType == KEYFRAME::KF_SPEED)
+				{
+					_char  szSpeedMessage[MAX_PATH] = "Speed : ";
+					SPEEDFRAME* frame = static_cast<SPEEDFRAME*>(pNotify->Find_Frame(iNotifyCount));
+					sprintf_s(szSpeedMessage, "%s%f", szSpeedMessage, frame->fSpeed);
+					ImGui::SameLine();  ImGui::Text(szSpeedMessage);
+				}
 			}
 		}
 	}
@@ -195,7 +208,8 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 	// 노티파이용 키프레임 만큼 반복하며 버튼을 생성 << 완 
 	// 버튼을 누르면 버튼의 정보(시간, 타입, 뭐) 보여줌
 	// 버튼의 색상을 이넘 타입에 따라 변경 << 완
-	// 노티파이 만들기 기능 추가
+	// 노티파이 만들기 기능 추가 << 완
+	// 애니메이션 시간 float으로 바꿔서 드래그도 가능하게
 	// 애니메이션 재생 보여주고 그 애니메이션 재생 시간에 노티파이 추가 가능하게
 	// 콜라이더도 애님 툴에서 생성하고 보여줄수있어야함.
 	// 파티클도 생성ㅇ하고 보여줄 수 있어야함.

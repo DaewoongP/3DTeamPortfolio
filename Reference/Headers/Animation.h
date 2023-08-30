@@ -20,6 +20,8 @@ public:
 	_bool Get_Paused_State() { return m_isPaused; }
 	_float Get_Ratio_Accumulation_Duration() { return(m_fTimeAcc /m_fDuration); }
 	_float Get_Accmulation() { return m_fTimeAcc; }
+	_float Get_Duration() { return m_fDuration; }
+	_float* Get_Accmulation_Pointer() { return &m_fTimeAcc; }
 	class CNotify* Get_Notify_Point() { return m_pNotify; }
 
 	void Set_CurrentKeyFrameIndex(CModel::BONES& Bones, _uint iKeyFrameIndex);

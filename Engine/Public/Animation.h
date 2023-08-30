@@ -20,6 +20,8 @@ public:
 	_bool Get_Paused_State() { return m_isPaused; }
 	_float Get_Ratio_Accumulation_Duration() { return(m_fTimeAcc /m_fDuration); }
 	_float Get_Accmulation() { return m_fTimeAcc; }
+	_float Get_Duration() { return m_fDuration; }
+	_float* Get_Accmulation_Pointer() { return &m_fTimeAcc; }
 	class CNotify* Get_Notify_Point() { return m_pNotify; }
 
 	void Set_CurrentKeyFrameIndex(CModel::BONES& Bones, _uint iKeyFrameIndex);
@@ -62,6 +64,8 @@ private:
 	class CNotify*				m_pNotify = {nullptr};
 	// 각 채널의 현재 키프레임 인덱스
 	vector<_uint>				m_ChannelCurrentKeyFrames;
+	// 노티파이의 현재 키프레임 인덱스
+	_uint						m_iNotifyCurrentKeyFrame;
 
 	_float						m_fDuration = { 0.f };
 	_float						m_fOriginTickPerSecond = { 0.f };
