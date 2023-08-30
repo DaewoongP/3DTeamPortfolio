@@ -55,6 +55,12 @@
     <Filter Include="01. Window\Window\Animation">
       <UniqueIdentifier>{f24db859-61c1-45a9-96e6-80c730ace989}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Window\Window\Camera">
+      <UniqueIdentifier>{f32468df-1843-449e-b24d-9013f22a9513}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. ToolObjects\02. Camera\MainCamera">
+      <UniqueIdentifier>{e3607828-83c0-4f82-982c-0cd009bdbfef}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tool.h">
@@ -147,6 +153,9 @@
     <ClInclude Include="..\Public\CDummy.h">
       <Filter>02. ToolObjects\01. Dummy</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Camera_Window.h">
+      <Filter>01. Window\Window\Camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -227,6 +236,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\CDummy.cpp">
       <Filter>02. ToolObjects\01. Dummy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Camera_Window.cpp">
+      <Filter>01. Window\Window\Camera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
