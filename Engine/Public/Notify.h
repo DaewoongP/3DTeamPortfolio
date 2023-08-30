@@ -26,7 +26,7 @@ public:
 	HRESULT AddFrame(KEYFRAME::KEYFRAMETYPE eFrameType, wchar_t* wszNotifyTag, _float fActionTime, _float fSpeed);
 
 private:
-	unordered_multimap<wstring, KEYFRAME>	m_KeyFrames;
+	vector<pair<wstring, KEYFRAME>>	m_KeyFrames;
 	_uint				m_iNumKeyFrames = { 0 };
 
 public:

@@ -126,11 +126,11 @@ HRESULT CNotify::AddFrame(KEYFRAME::KEYFRAMETYPE eFrameType, wchar_t* wszNotifyT
 	}
 	//순서대로 fTime순서대로 정렬함 해줍시다.
 	wstring str = wszNotifyTag;
-	m_KeyFrames.emplace(str, keyFrameDesc);
+	m_KeyFrames.push_back(pair(str, keyFrameDesc));
 	m_iNumKeyFrames++;
 
-	std::sort(m_KeyFrames.begin(), m_KeyFrames.end(), [](std::pair<wstring, KEYFRAME>& frame1, std::pair<wstring, KEYFRAME>& frame2) ->  bool {
-			return (frame1.second.fTime > frame2.second.fTime);
+	sort(m_KeyFrames.begin(), m_KeyFrames.end(), [&](std::pair<wstring, KEYFRAME>& frame1, std::pair<wstring, KEYFRAME>& frame2) ->  bool {
+		return (frame1.second.fTime > frame2.second.fTime);
 		});
 	return S_OK;
 }

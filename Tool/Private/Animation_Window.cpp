@@ -105,7 +105,9 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 				}
 				ImGui::EndCombo();
 			}
-
+			_uint iAnimCnt = pDummyModel->Get_NumAnimations();
+			if (iAnimCnt == 0)
+				return;
 			if (pDummyModel->Get_Animation()->Get_Paused_State() ? ImGui::Button("Stop") : ImGui::Button("Play"))
 			{
 				pDummyModel->Get_Animation()->Set_Pause(!pDummyModel->Get_Animation()->Get_Paused_State());
@@ -153,15 +155,28 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 			_uint iMaxNotifyCount = pDummyModel->Get_Animation()->Get_Notify_Point()->Get_NotifyFrameCount();
 			for (_uint iNotifyCount = 0; iNotifyCount < iMaxNotifyCount; iNotifyCount++)
 			{
+				CNotify* pNotify = pDummyModel->Get_Animation()->Get_Notify_Point();
 				_char  szNotifyButtonName[MAX_PATH];
 				ZEROMEM(szNotifyButtonName);
-				WCharToChar(pDummyModel->Get_Animation()->Get_Notify_Point()->Find_Frame_Key(iNotifyCount), szNotifyButtonName);
+				
+				WCharToChar(pNotify->Find_Frame_Key(iNotifyCount), szNotifyButtonName);
 				sprintf_s(szNotifyButtonName,"%s_%d", szNotifyButtonName, iNotifyCount);
 				//똑같은 이름의 버튼이 둗개면 에러남
+				KEYFRAME::KEYFRAMETYPE eNotifyType =  pNotify->Find_Frame(iNotifyCount)->eKeyFrameType;
+				;
+				if (ImGui::ColorButton(szNotifyButtonName, 
+					(eNotifyType==KEYFRAME::KF_NOTIFY) ? (ImVec4(0.7f,0.f,0.f,1)):
+					((eNotifyType == KEYFRAME::KF_SOUND) ? (ImVec4(0.0f, 0.7f, 0.f, 1)) : 
+						(ImVec4(0.0f, 0.f, 0.7f, 1)))))
+				{
+
+				}
+				ImGui::SameLine();
 				if (ImGui::Button(szNotifyButtonName))
 				{
 
 				}
+
 			}
 		}
 	}
@@ -176,9 +191,10 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 	// 노티파이가 들어있도록 만들어줘야함. << 완
 	// 노티파이를 생성하기위한 데이터 인풋 창이 있어야함 << 완
 	// 추가 버튼을 눌러서 노티파이를 애니메이션에 추가 << 완
-	// 추가 후 정렬해줘야함.
-	// 노티파이용 키프레임 만큼 반복하며 버튼을 생성 
+	// 추가 후 정렬해줘야함. << 완
+	// 노티파이용 키프레임 만큼 반복하며 버튼을 생성 << 완 
 	// 버튼을 누르면 버튼의 정보(시간, 타입, 뭐) 보여줌
+	// 버튼의 색상을 이넘 타입에 따라 변경 << 완
 	// 노티파이 만들기 기능 추가
 	// 애니메이션 재생 보여주고 그 애니메이션 재생 시간에 노티파이 추가 가능하게
 	// 콜라이더도 애님 툴에서 생성하고 보여줄수있어야함.

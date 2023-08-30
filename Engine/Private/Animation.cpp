@@ -187,7 +187,7 @@ void CAnimation::Free()
 {
 	for (auto& pChannel : m_Channels)
 		Safe_Release(pChannel);
-	//Safe_Release(m_pNotify);
+	Safe_Release(m_pNotify);
 
 	m_Channels.clear();
 }
