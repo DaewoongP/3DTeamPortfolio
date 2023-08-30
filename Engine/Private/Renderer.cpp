@@ -57,8 +57,11 @@ HRESULT CRenderer::Initialize_Prototype()
 		TEXT("Target_Shadow"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 1.f))))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
-		TEXT("Target_SSAO"), (_uint)ViewportDesc.Width*12, (_uint)ViewportDesc.Height*12, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f))))
+		TEXT("Target_SSAO"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
+	/*if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
+		TEXT("Target_Blur"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
+		return E_FAIL;*/
 
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Diffuse"))))
 		return E_FAIL;
@@ -78,7 +81,9 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_SSAO"), TEXT("Target_SSAO"))))
 		return E_FAIL;
-	
+	/*if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Blur"), TEXT("Target_Blur"))))
+		return E_FAIL;*/
+
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
@@ -102,10 +107,12 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Shadow"), 240.f, 400.f, 160.f, 160.f)))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_SSAO"), 800.f, 300.f, 800.f, 400.f)))
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_SSAO"), 80.f, 560.f, 160.f, 160.f)))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_PostProcessing"), 240.f, 560.f, 160.f, 160.f)))
-		return E_FAIL;
+	/*if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Blur"), 240.f, 560.f, 160.f, 160.f)))
+		return E_FAIL;*/
+	/*if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_PostProcessing"), 240.f, 560.f, 160.f, 160.f)))
+		return E_FAIL;*/
 	
 #endif // _DEBUG
 
@@ -164,7 +171,9 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 	if (FAILED(Render_SSAO()))
 		return E_FAIL;
-	if (FAILED(Render_PostProcessing()))
+	/*if (FAILED(RendeR_Blur()))
+		return E_FAIL;*/
+		if (FAILED(Render_PostProcessing()))
 		return E_FAIL;
 	
 	if (FAILED(Render_UI()))
@@ -331,7 +340,7 @@ HRESULT CRenderer::Render_SSAO()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Normal"), m_pSSAOShader, "g_NormalTexture")))
 		return E_FAIL;
-
+	
 	if (FAILED(m_pSSAOShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
 	if (FAILED(m_pSSAOShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
@@ -372,7 +381,8 @@ HRESULT CRenderer::Render_Deferred()
 {
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Diffuse"), m_pDeferredShader, "g_DiffuseTexture")))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Diffuse"), m_pDeferredShader, "g_DiffuseTexture")))
+	
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_SSAO"), m_pDeferredShader, "g_SSAOTexture")))
 		return E_FAIL;
 
 
@@ -418,6 +428,35 @@ HRESULT CRenderer::Render_Blend()
 	}
 
 	m_RenderObjects[RENDER_BLEND].clear();
+
+	return S_OK;
+}
+
+HRESULT CRenderer::RendeR_Blur()
+{
+	if (nullptr == m_pRenderTarget_Manager)
+		return E_FAIL;
+
+	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_SSAO"))))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_SSAO"), m_pShadeTypeShader, "g_SSAOTexture")))
+		return E_FAIL;
+
+	if (FAILED(m_pShadeTypeShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pShadeTypeShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pShadeTypeShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
+		return E_FAIL;
+
+	if (FAILED(m_pShadeTypeShader->Begin("Blur")))
+		return E_FAIL;
+
+	if (FAILED(m_pShadeTypeBuffer->Render()))
+		return E_FAIL;
+
+	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext)))
+		return E_FAIL;
 
 	return S_OK;
 }

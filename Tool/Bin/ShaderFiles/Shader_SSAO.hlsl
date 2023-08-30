@@ -162,7 +162,7 @@ PS_OUT PS_MAIN(PS_IN In)
     
     if (vNormalDesc.a != 0.f)
     {
-        Out.vColor = (0.f, 0.f, 0.f, 0.5f);
+        Out.vColor = (1.f, 1.f, 1.f, 1.f);
         return Out;
     }
        vNormalDesc = normalize(vNormalDesc * 2.f - 1.f);
