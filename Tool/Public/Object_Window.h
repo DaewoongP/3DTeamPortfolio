@@ -3,7 +3,7 @@
 
 BEGIN(Tool)
 
-class CDummy;
+class CMapDummy;
 
 class CObject_Window final : public CImWindow
 {
@@ -40,7 +40,7 @@ private:
 	QUADTERRAIN m_TerrainXDesc;
 	QUADTERRAIN m_TerrainZDesc;
 
-	CDummy* m_pDummy = { nullptr }; // 积己秦敌 Dummy狼 林家
+	CMapDummy* m_pDummy = { nullptr }; // 积己秦敌 Dummy狼 林家
 
 public:
 	static CObject_Window* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, ImVec2 vWindowPos, ImVec2 vWindowSize);

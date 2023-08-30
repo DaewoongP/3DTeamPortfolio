@@ -2,7 +2,7 @@
 
 #include "Terrain.h"
 #include "VIBuffer_Terrain.h"
-#include "CDummy.h"
+#include "MapDummy.h"
 
 CObject_Window::CObject_Window(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CImWindow(pDevice, pContext)
@@ -48,6 +48,11 @@ void CObject_Window::Tick(_float fTimeDelta)
 	ImGui::Text("----------------------------------------");
 
 	ImGui::End();
+
+	BEGININSTANCE; if (true == pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN))
+	{
+		m_pDummy->Set_Pos(vPos);
+	} ENDINSTANCE;
 }
 
 HRESULT CObject_Window::Render()
@@ -229,7 +234,7 @@ HRESULT CObject_Window::Create_Dummy()
 		return E_FAIL;
 	}
 
-	m_pDummy = static_cast<CDummy*>(pGameInstance->Find_GameObject_In_Layer(LEVEL_TOOL, TEXT("Layer_Tool"), TEXT("Map_Dummy")));
+	m_pDummy = static_cast<CMapDummy*>(pGameInstance->Find_GameObject_In_Layer(LEVEL_TOOL, TEXT("Layer_Tool"), TEXT("Map_Dummy")));
 
 	_float4x4 PivotMatrix = XMMatrixIdentity();
 
