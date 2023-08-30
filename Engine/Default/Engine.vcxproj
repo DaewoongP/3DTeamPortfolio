@@ -190,7 +190,7 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Navigation.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_PostProcessing.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_SSAO.hlsl">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Type.hlsl" />
   </ItemGroup>

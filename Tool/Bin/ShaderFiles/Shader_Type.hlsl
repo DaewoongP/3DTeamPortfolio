@@ -17,6 +17,7 @@ texture2D g_DepthTexture;
 texture2D g_SpecularTexture;
 texture2D g_ShadowTexture;
 texture2D g_vLightDepthTexture;
+texture2D g_BlurTexture;
 
 
 float3 g_Diffuse = float3(1.f, 1.f, 1.f);
@@ -325,6 +326,16 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_SHADOW();
     }
 
-
+    //pass Blur
+    //{
+    //    SetRasterizerState(RS_Default);
+    //    SetDepthStencilState(DSS_Depth_Disable, 0);
+    //    SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+    //    VertexShader = compile vs_5_0 VS_MAIN();
+    //    GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
+    //    HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
+    //    DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
+    //    PixelShader = compile ps_5_0 PS_MAIN_BLUR();
+    //}
 
 }
