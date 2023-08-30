@@ -70,6 +70,14 @@ HRESULT CLevel_Tool::Ready_For_Layer_Tool(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
+	/* For.GameObject_MapDummy */
+	if (FAILED(pGameInstance->Add_GameObject(LEVEL_TOOL,
+		TEXT("Prototype_GameObject_MapDummy"), pLayerTag, TEXT("GameObject_MapDummy"))))
+	{
+		MSG_BOX("Failed Add GameObject GameObject_MapDummy");
+		return E_FAIL;
+	}
+
 	Safe_Release(pGameInstance);
 
 	return S_OK;

@@ -1,17 +1,17 @@
-#include "CDummy.h"
+#include "MapDummy.h"
 #include "GameInstance.h"
 
-CDummy::CDummy(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CGameObject(pDevice,pContext)
+CMapDummy::CMapDummy(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+	: CGameObject(pDevice, pContext)
 {
 }
 
-CDummy::CDummy(const CDummy& rhs)
+CMapDummy::CMapDummy(const CMapDummy& rhs)
 	: CGameObject(rhs)
 {
 }
 
-HRESULT CDummy::Initialize_Prototype()
+HRESULT CMapDummy::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
@@ -19,28 +19,29 @@ HRESULT CDummy::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CDummy::Initialize(void* pArg)
+HRESULT CMapDummy::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
 	if (FAILED(Add_Components()))
-		return E_FAIL;	
+		return E_FAIL;
+
+	if (nullptr != pArg)
+	{
+		_float3* vPos = (_float3*)pArg;
+		m_pTransform->Set_Position(*vPos);
+	}
 
 	return S_OK;
 }
 
-void CDummy::Tick(_float fTimeDelta)
+void CMapDummy::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-	
-	if (nullptr != m_pModel)
-	{
-		m_pModel->Play_Animation(fTimeDelta);
-	}
 }
 
-void CDummy::Late_Tick(_float fTimeDelta)
+void CMapDummy::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
@@ -50,7 +51,7 @@ void CDummy::Late_Tick(_float fTimeDelta)
 	}
 }
 
-HRESULT CDummy::Render()
+HRESULT CMapDummy::Render()
 {
 	if (FAILED(__super::Render()))
 		return E_FAIL;
@@ -61,55 +62,57 @@ HRESULT CDummy::Render()
 
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
-	
+
 	_uint		iNumMeshes = m_pModel->Get_NumMeshes();
-	
-	m_pShader->Begin("Default");
+
 	for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; iMeshCount++)
 	{
 		m_pModel->Bind_BoneMatrices(m_pShader, "g_BoneMatrices", iMeshCount);
 		m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", iMeshCount, DIFFUSE);
+
+		m_pShader->Begin("Default");
+
 		if (FAILED(m_pModel->Render(iMeshCount)))
 			return E_FAIL;
 	}
 	return S_OK;
 }
 
-HRESULT CDummy::Add_Model_Component(const wchar_t* wszModelTag)
+HRESULT CMapDummy::Add_Model_Component(const wchar_t* wszModelTag)
 {
 	if (FAILED(CComposite::Add_Component(LEVEL_TOOL, wszModelTag,
 		TEXT("Com_Buffer"), reinterpret_cast<CComponent**>(&m_pModel))))
 	{
-		MSG_BOX("Failed CDummy Add_Component : (Com_Buffer)");
+		MSG_BOX("Failed CMapDummy Add_Component : (Com_Buffer)");
 		return E_FAIL;
 	}
 	return S_OK;
 }
 
-HRESULT CDummy::Add_Shader_Component(const wchar_t* wszShaderTag)
+HRESULT CMapDummy::Add_Shader_Component(const wchar_t* wszShaderTag)
 {
 	if (FAILED(CComposite::Add_Component(LEVEL_TOOL, wszShaderTag,
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
 	{
-		MSG_BOX("Failed CDummy Add_Component : (Com_Shader)");
+		MSG_BOX("Failed CMapDummy Add_Component : (Com_Shader)");
 		return E_FAIL;
 	}
 	return S_OK;
 }
 
-HRESULT CDummy::Add_Components()
+HRESULT CMapDummy::Add_Components()
 {
 	/* Com_Renderer */
 	if (FAILED(CComposite::Add_Component(LEVEL_TOOL, TEXT("Prototype_Component_Renderer"),
 		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
 	{
-		MSG_BOX("Failed CDummy Add_Component : (Com_Renderer)");
+		MSG_BOX("Failed CMapDummy Add_Component : (Com_Renderer)");
 		return E_FAIL;
 	}
 	return S_OK;
 }
 
-HRESULT CDummy::SetUp_ShaderResources()
+HRESULT CMapDummy::SetUp_ShaderResources()
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
@@ -128,32 +131,32 @@ HRESULT CDummy::SetUp_ShaderResources()
 	return S_OK;
 }
 
-CDummy* CDummy::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CMapDummy* CMapDummy::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CDummy* pInstance = New CDummy(pDevice, pContext);
+	CMapDummy* pInstance = New CMapDummy(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Created CDummy");
+		MSG_BOX("Failed to Created CMapDummy");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject* CDummy::Clone(void* pArg)
+CGameObject* CMapDummy::Clone(void* pArg)
 {
-	CDummy* pInstance = New CDummy(*this);
+	CMapDummy* pInstance = New CMapDummy(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned CDummys");
+		MSG_BOX("Failed to Cloned CMapDummy");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-void CDummy::Free()
+void CMapDummy::Free()
 {
 	__super::Free();
 	Safe_Release(m_pTransform);

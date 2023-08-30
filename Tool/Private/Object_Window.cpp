@@ -35,8 +35,8 @@ void CObject_Window::Tick(_float fTimeDelta)
 
 	ImGui::Begin("Object", nullptr, m_WindowFlag);
 
-	//_float3 vPos = Find_PickingPos();
-	_float3 vPos = Find_PickingPosTest();
+	_float3 vPos = Find_PickingPos();
+	//_float3 vPos = Find_PickingPosTest();
 
 	// 현재 피킹 위치 표시
 	ImGui::Text("Picking Position");
@@ -222,7 +222,7 @@ HRESULT CObject_Window::Create_Dummy()
 {
 	_float3 vPos = { 5.f, 0.f, 5.f };
 
-	BEGININSTANCE; if (FAILED(pGameInstance->Add_GameObject(LEVEL_TOOL, TEXT("Prototype_GameObject_Dummy"), 
+	BEGININSTANCE; if (FAILED(pGameInstance->Add_GameObject(LEVEL_TOOL, TEXT("Prototype_GameObject_MapDummy"), 
 		TEXT("Layer_Tool"), TEXT("Map_Dummy"), &vPos)))
 	{
 		MSG_BOX("Failed to GameObject Map_Dummy");

@@ -2,6 +2,7 @@
 #include "GameInstance.h"
 #include "Level_Tool.h"
 #include "CDummy.h"
+#include "MapDummy.h"
 
 CMainTool::CMainTool()
 	: m_pGameInstance(CGameInstance::GetInstance())
@@ -247,7 +248,7 @@ HRESULT CMainTool::Ready_Prototype_Component()
 
 	/* Prototype_Component_VIBuffer_Terrain */
 	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_TOOL, TEXT("Prototype_Component_VIBuffer_Terrain"),
-		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, 513, 513))))
+		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, 257, 257))))
 		return E_FAIL;
 
 	/* Prototype_Component_VIBuffer_Cube */
@@ -290,6 +291,11 @@ HRESULT CMainTool::Ready_Prototype_Object()
 	/* Prototype_GameObject_Dummy*/
 	if (FAILED(m_pGameInstance->Add_Prototype_GameObject(TEXT("Prototype_GameObject_Dummy"),
 		CDummy::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* Prototype_GameObject_MapDummy*/
+	if (FAILED(m_pGameInstance->Add_Prototype_GameObject(TEXT("Prototype_GameObject_MapDummy"),
+		CMapDummy::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	return S_OK;
