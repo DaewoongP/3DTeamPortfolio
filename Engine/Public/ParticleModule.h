@@ -12,7 +12,11 @@ protected:
 	virtual ~CParticleModule() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype(const _tchar* _pFilePath);
+	virtual HRESULT Initialize_Prototype();
+
+public:
+	virtual HRESULT SaveModule(const _tchar* _pDirectoyPath) PURE;
+	virtual HRESULT LoadModule(const _tchar* _pDirectoyPath) PURE;
 
 protected:
 	_bool m_isCloned = { false };
@@ -22,3 +26,5 @@ public:
 };
 
 END
+
+

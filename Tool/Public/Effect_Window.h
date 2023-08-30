@@ -17,13 +17,16 @@ public:
 
 	void SaveFileDialog();
 	void LoadFileDialog();
-	void CreateFileDialog();
+
+	// 새로운 더미 파티클 생성.
+	void CreateButton();
 
 private:
 	_bool		m_bMainCheckBox;
-	MAIN_MODULE m_MainModuleDesc;
 
-	CParticleSystem* m_pDummyParticle = { nullptr };
+private:
+	class CDummyParticle* m_pDummyParticle = { nullptr };
+
 public:
 	static CEffect_Window* Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, ImVec2 _vWindowPos, ImVec2 _vWindowSize);
 	virtual void Free(void) override;

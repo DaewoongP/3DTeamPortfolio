@@ -22,21 +22,3 @@ xcopy				/y			.\Engine\Bin\ShaderFiles\*.hlsli	.\Tool\Bin\ShaderFiles\
 xcopy				/y			.\Engine\Bin\fmod.dll				.\Client\Bin\
 xcopy				/y			.\Engine\Bin\fmod.dll				.\Tool\Bin\
 xcopy				/y			.\Engine\Bin\fmod.dll				.\Assimp\Bin\
-
-xcopy				/y			.\Engine\Bin\PhysX_64.dll			.\Client\Bin\
-xcopy				/y			.\Engine\Bin\PhysXCommon_64.dll		.\Client\Bin\
-xcopy				/y			.\Engine\Bin\PhysXCooking_64.dll	.\Client\Bin\
-xcopy				/y			.\Engine\Bin\PhysXFoundation_64.dll	.\Client\Bin\
-xcopy				/y			.\Engine\Bin\PhysXGpu_64.dll		.\Client\Bin\
-
-xcopy				/y			.\Engine\Bin\PhysX_64.dll			.\Tool\Bin\
-xcopy				/y			.\Engine\Bin\PhysXCommon_64.dll		.\Tool\Bin\
-xcopy				/y			.\Engine\Bin\PhysXCooking_64.dll	.\Tool\Bin\
-xcopy				/y			.\Engine\Bin\PhysXFoundation_64.dll	.\Tool\Bin\
-xcopy				/y			.\Engine\Bin\PhysXGpu_64.dll		.\Tool\Bin\
-
-xcopy				/y			.\Engine\Bin\PhysX_64.dll			.\Assimp\Bin\
-xcopy				/y			.\Engine\Bin\PhysXCommon_64.dll		.\Assimp\Bin\
-xcopy				/y			.\Engine\Bin\PhysXCooking_64.dll	.\Assimp\Bin\
-xcopy				/y			.\Engine\Bin\PhysXFoundation_64.dll	.\Assimp\Bin\
-xcopy				/y			.\Engine\Bin\PhysXGpu_64.dll		.\Assimp\Bin\

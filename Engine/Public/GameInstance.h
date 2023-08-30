@@ -116,6 +116,7 @@ public: /* For. Calculator */
 	_float4 Get_RandomVectorInSphere(_float fRadius);
 	// FilePath 내의 모든 파일을 순회하면서 Ext 확장자에 맞는 파일들을 OutVector에 넣어줍니다.
 	HRESULT ReadFileInDirectory(_Inout_ vector<wstring>& OutVector, const _tchar* pFilePath, const _tchar* pExt);
+	_float Random_Float(_float _fLowBound, _float _fHighBound);
 
 private:
 	class CGraphic_Device*			m_pGraphic_Device = { nullptr };

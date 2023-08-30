@@ -268,6 +268,16 @@ HRESULT CCalculator::ReadFileInDirectory(_Inout_ vector<wstring>& OutVector, con
 	return S_OK;
 }
 
+_float CCalculator::Random_Float(_float _lowBound, _float _highBound)
+{
+	if (_lowBound >= _highBound)
+		return _lowBound;
+
+	_float fTemp = (rand() % 10000) * 0.0001f;
+
+	return (fTemp * (_highBound - _lowBound)) + _highBound;
+}
+
 void CCalculator::Free()
 {
 }

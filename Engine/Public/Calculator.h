@@ -24,6 +24,9 @@ public:
 	_float4 Get_RandomVectorInSphere(_float fRadius);
 	HRESULT ReadFileInDirectory(_Inout_ vector<wstring>& OutVector, const _tchar* pFilePath, const _tchar* pExt);
 
+	// ex) _float fResult = Random_Float(-5.f, 10.f)
+	// 결과 : [-5.f, 10.f]의 랜덤한 실수가 들어감.
+	_float Random_Float(_float _fLowBound, _float _fHighBound);
 public:
 	virtual void Free() override;
 };

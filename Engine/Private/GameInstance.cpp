@@ -462,6 +462,13 @@ HRESULT CGameInstance::ReadFileInDirectory(vector<wstring>& OutVector, const _tc
 	return m_pCalculator->ReadFileInDirectory(OutVector, pFilePath, pExt);
 }
 
+_float CGameInstance::Random_Float(_float _fLowBound, _float _fHighBound)
+{
+	NULL_CHECK_RETURN_MSG(m_pCalculator, E_FAIL, TEXT("Calculator NULL"));
+
+	return m_pCalculator->Random_Float(_fLowBound, _fHighBound);
+}
+
 void CGameInstance::Release_Engine()
 {
 	CGameInstance::GetInstance()->DestroyInstance();

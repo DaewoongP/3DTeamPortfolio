@@ -1,6 +1,8 @@
 #include "..\Public\Effect_Window.h"
 #include "GameInstance.h"
 #include "ImGuiFileDialog.h"
+#include "DummyParticle.h"
+
 CEffect_Window::CEffect_Window(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
 	: CImWindow(_pDevice, _pContext)
 {
@@ -13,6 +15,11 @@ HRESULT CEffect_Window::Initialize(ImVec2 _vWindowPos, ImVec2 _vWindowSize)
 
 	m_WindowFlag = ImGuiWindowFlags_NoResize;
 
+	BEGININSTANCE;
+	
+	m_pDummyParticle = CDummyParticle::Create(m_pDevice, m_pContext);
+
+	ENDINSTANCE
 	return S_OK;
 }
 
@@ -31,18 +38,26 @@ void CEffect_Window::Tick(_float _fTimeDelta)
 	ImGui::SameLine();
 	if (ImGui::TreeNode("MainModule"))
 	{
-		ImGui::DragFloat("Duration", &m_MainModuleDesc.fDuration, 0.01f, 0.f, FLT_MAX);
-		ImGui::Checkbox("Looping", &m_MainModuleDesc.isLooping);
-		ImGui::Checkbox("Prewarm", &m_MainModuleDesc.isPrewarm);
-		ImGui::DragFloat("StartDelay", &m_MainModuleDesc.fStartDelay, 0.01f, 0.f, FLT_MAX);
-		ImGui::DragFloat("StartLifeTime", &m_MainModuleDesc.fStartLifeTime, 0.01f, 0.f, FLT_MAX);
-		ImGui::DragFloat("StartSpeed", &m_MainModuleDesc.fStartSpeed, 0.01f, 0.f, FLT_MAX);
+		MAIN_MODULE* pMainModuleDesc = { nullptr };
+		if (nullptr != m_pDummyParticle)
+		{
+			CMainModule* pMainModule = static_cast<CMainModule*>(m_pDummyParticle->Get_ParticleSystem()->Get_Module(CParticleSystem::MAIN));
+			pMainModuleDesc = pMainModule->Get_DescPtr();
+		}
+
+		ImGui::DragFloat("Duration", &(*pMainModuleDesc).fDuration, 0.01f, 0.f, FLT_MAX);
+		ImGui::Checkbox("Looping", &(*pMainModuleDesc).isLooping);
+		ImGui::Checkbox("Prewarm", &(*pMainModuleDesc).isPrewarm);
+		ImGui::DragFloat("StartDelay", &(*pMainModuleDesc).fStartDelay, 0.01f, 0.f, FLT_MAX);
+		ImGui::DragFloat("StartLifeTime", &(*pMainModuleDesc).fStartLifeTime, 0.01f, 0.f, FLT_MAX);
+		ImGui::DragFloat("StartSpeed", &(*pMainModuleDesc).fStartSpeed, 0.01f, 0.f, FLT_MAX);
 		ImGui::TreePop(); // SubNodeÀÇ ³¡
 	}
 
 	SaveFileDialog();
 	LoadFileDialog();
-	
+	CreateButton();
+
 	ENDINSTANCE;
 	ImGui::End();
 
@@ -69,6 +84,12 @@ void CEffect_Window::SaveFileDialog()
 		// action if OK
 		if (ImGuiFileDialog::Instance()->IsOk())
 		{
+			if (nullptr == m_pDummyParticle)
+			{
+				MSG_BOX("DummyParticle is a Null-Object. Please create any object.");
+				return;
+			}
+
 			std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
 			std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
 
@@ -76,27 +97,9 @@ void CEffect_Window::SaveFileDialog()
 			ZeroMemory(wszFilePath, sizeof(_tchar) * MAX_PATH);
 			CharToWChar(filePathName.c_str(), wszFilePath);
 
-			HANDLE hFile = CreateFile(wszFilePath,
-				GENERIC_WRITE,
-				0,
-				0,
-				CREATE_ALWAYS,
-				FILE_ATTRIBUTE_NORMAL, 0
-			);
-
-			if (INVALID_HANDLE_VALUE == hFile)
-			{
-				MSG_BOX("The file open has been failed");
-				return;
-			}
-
-			_ulong dwByte = 0;
-
-			WriteFile(hFile, &m_MainModuleDesc, sizeof(MAIN_MODULE), &dwByte, nullptr);
-
+			m_pDummyParticle->Get_ParticleSystem()->Save(wszFilePath);
+			
 			MSG_BOX("The file has been saved successfully");
-
-			CloseHandle(hFile);
 		}
 
 		// close
@@ -115,6 +118,12 @@ void CEffect_Window::LoadFileDialog()
 		// action if OK
 		if (ImGuiFileDialog::Instance()->IsOk())
 		{
+			if (nullptr == m_pDummyParticle)
+			{
+				MSG_BOX("DummyParticle is a Null-Object. Please create any object.");
+				return;
+			}
+
 			std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
 			std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
 
@@ -122,28 +131,12 @@ void CEffect_Window::LoadFileDialog()
 			ZeroMemory(wszFilePath, sizeof(_tchar) * MAX_PATH);
 			CharToWChar(filePathName.c_str(), wszFilePath);
 
-			HANDLE hFile = CreateFile(wszFilePath,
-				GENERIC_READ,
-				0,
-				0,
-				OPEN_EXISTING,
-				FILE_ATTRIBUTE_NORMAL, 0
-			);
-
-			if (INVALID_HANDLE_VALUE == hFile)
-			{
-				MSG_BOX("The file open has been failed");
-				return;
-			}
-
 			_ulong dwByte = 0;
 			
-			ZEROMEM(&m_MainModuleDesc);
-			ReadFile(hFile, &m_MainModuleDesc, sizeof(MAIN_MODULE), &dwByte, nullptr);
-			
+			m_pDummyParticle->LoadParticle(wszFilePath);
+
 			MSG_BOX("The file has been loaded successfully");
 
-			CloseHandle(hFile);
 		}
 
 		// close
@@ -151,36 +144,12 @@ void CEffect_Window::LoadFileDialog()
 	}
 }
 
-void CEffect_Window::CreateFileDialog()
+void CEffect_Window::CreateButton()
 {
-	if (ImGui::Button("Create"))
-		ImGuiFileDialog::Instance()->OpenDialog("ChooseCreateFilePtcKey", "Create File", ".ptc", "../../Resources/Effects/Particles/");
-
-	// display
-	if (ImGuiFileDialog::Instance()->Display("ChooseCreateFilePtcKey"))
+	if (ImGui::Button("New Particle"))
 	{
-		// action if OK
-		if (ImGuiFileDialog::Instance()->IsOk())
-		{
-			std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
-			std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
-
-			_tchar wszFilePath[MAX_PATH];
-			ZeroMemory(wszFilePath, sizeof(_tchar) * MAX_PATH);
-			CharToWChar(filePathName.c_str(), wszFilePath);
-
-			_ulong dwByte = 0;
-			MAIN_MODULE test;
-			ZEROMEM(&test);
-
-			Safe_Release(m_pDummyParticle);
-			//m_pDummyParticle = CParticleSystem::Create(m_pDevice, m_pContext, wszFilePath);
-			
-			MSG_BOX("Created Successfully");
-		}
-
-		// close
-		ImGuiFileDialog::Instance()->Close();
+		Safe_Release(m_pDummyParticle);
+		m_pDummyParticle = CDummyParticle::Create(m_pDevice, m_pContext);
 	}
 }
 
