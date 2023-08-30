@@ -29,6 +29,7 @@ public:
 	const _float4x4* Get_BoneCombinedTransformationMatrixPtr(_uint iIndex);
 	_float4x4 Get_BoneCombinedTransformationMatrix(_uint iIndex);
 
+	void Set_CurrentAnimIndex(_uint iIndex) { m_iCurrentAnimIndex = iIndex; }
 public:
 	virtual HRESULT Initialize_Prototype(TYPE eType, const _tchar* pModelFilePath, _float4x4 PivotMatrix);
 	virtual HRESULT Initialize(void* pArg) override;
@@ -78,7 +79,7 @@ private:
 	HRESULT Ready_File(TYPE eType, const _tchar* pModelFilePath);
 	HRESULT Ready_Bones(Engine::NODE Node);
 	HRESULT Ready_Meshes(TYPE eType, _float4x4 PivotMatrix);
-	HRESULT Ready_Materials(const _tchar* pModelFilePath);
+	HRESULT Ready_Materials();
 	HRESULT Ready_Animations();
 
 private:

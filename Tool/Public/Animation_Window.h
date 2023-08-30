@@ -15,6 +15,7 @@ public:
 	virtual HRESULT Render() override;
 
 private:
+	// 현재 수정중인 더미 오브젝트
 	class CDummy* m_pDummyObject = { nullptr };
 
 public:

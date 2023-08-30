@@ -3,26 +3,30 @@
 
 BEGIN(Engine)
 
-class CNotify final : public CBase
+class ENGINE_DLL CNotify final : public CBase
 {
 private:
 	explicit CNotify();
 	virtual ~CNotify() = default;
 
 public:
+	_uint	Get_NotifyFrameCount() { return m_iNumKeyFrames; }
+
+public:
 	HRESULT Initialize();
 
+public:
 	void	Invalidate_Frame(_float fTimeAcc, _Inout_ _uint* pCurrentKeyFrameIndex, _Inout_ _float* fSpeed);
-
 	//인덱스를 이용한 검색
 	KEYFRAME* Find_Frame(_uint iFindFrame);
+	const _tchar* Find_Frame_Key(_uint iFindFrame);
 	//태그를 이용한 검색
 	KEYFRAME* Find_Frame(const wchar_t* wszKeyFrameTag);
 	//추가(툴용)
-	HRESULT AddFrame(KEYFRAME::KEYFRAMETYPE eFrameType,wchar_t* wszSoundFrameTag,_float fSpeed = 0);
+	HRESULT AddFrame(KEYFRAME::KEYFRAMETYPE eFrameType, wchar_t* wszNotifyTag, _float fActionTime, _float fSpeed);
 
 private:
-	unordered_map<const wchar_t*, KEYFRAME>	m_KeyFrames;
+	unordered_multimap<wstring, KEYFRAME>	m_KeyFrames;
 	_uint				m_iNumKeyFrames = { 0 };
 
 public:

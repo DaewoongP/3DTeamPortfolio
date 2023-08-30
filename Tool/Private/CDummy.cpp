@@ -32,12 +32,12 @@ HRESULT CDummy::Initialize(void* pArg)
 
 void CDummy::Tick(_float fTimeDelta)
 {
-	__super::Tick(fTimeDelta);
-	
 	if (nullptr != m_pModel)
 	{
 		m_pModel->Play_Animation(fTimeDelta);
 	}
+
+	__super::Tick(fTimeDelta);
 }
 
 void CDummy::Late_Tick(_float fTimeDelta)
@@ -64,29 +64,31 @@ HRESULT CDummy::Render()
 
 	_uint		iNumMeshes = m_pModel->Get_NumMeshes();
 
-	m_pShader->Begin("Terrain");
-	for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; iMeshCount++)
+	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
-		m_pModel->Bind_BoneMatrices(m_pShader, "g_BoneMatrices", iMeshCount);
-		m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", iMeshCount, DIFFUSE);
-		if (FAILED(m_pModel->Render(iMeshCount)))
-			return E_FAIL;
+		m_pModel->Bind_BoneMatrices(m_pShader, "g_BoneMatrices", i);
+
+		m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", i, DIFFUSE);
+
+		m_pShader->Begin("AnimMesh");
+
+		m_pModel->Render(i);
 	}
 	return S_OK;
 }
 
-HRESULT CDummy::Add_Model_Component(wchar_t* wszModelTag)
+HRESULT CDummy::Add_Model_Component(const wchar_t* wszModelTag)
 {
 	if (FAILED(CComposite::Add_Component(LEVEL_TOOL, wszModelTag,
-		TEXT("Com_Buffer"), reinterpret_cast<CComponent**>(&m_pModel))))
+		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModel))))
 	{
-		MSG_BOX("Failed CDummy Add_Component : (Com_Buffer)");
+		MSG_BOX("Failed CDummy Add_Component : (Com_Model)");
 		return E_FAIL;
 	}
 	return S_OK;
 }
 
-HRESULT CDummy::Add_Shader_Component(wchar_t* wszShaderTag)
+HRESULT CDummy::Add_Shader_Component(const wchar_t* wszShaderTag)
 {
 	if (FAILED(CComposite::Add_Component(LEVEL_TOOL, wszShaderTag,
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
@@ -116,11 +118,11 @@ HRESULT CDummy::SetUp_ShaderResources()
 
 	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
 		return E_FAIL;
-
 	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
-
 	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+	if (FAILED(m_pShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
 		return E_FAIL;
 
 	Safe_Release(pGameInstance);
