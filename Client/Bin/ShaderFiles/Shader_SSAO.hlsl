@@ -4,7 +4,7 @@ matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 texture2D g_PostProcessingTexture;
 //SSAO
 float g_fRadius = 0.001f;
-float g_fFar = 300.f;
+float g_fFar = 1000.f;
 float g_fFalloff = 0.000002f;
 float g_fStrength = 0.0007f;
 float g_fTotStrength = 1.38f;
@@ -14,7 +14,20 @@ float g_fInSamples = 1.f / 16.f;
 texture2D g_DepthTexture;
 texture2D g_NormalTexture;
 //ray를 뻗어나가면서 무작위로판단하기위해 rand값이 필요함 같이던져줘야할듯
-float3 g_vRandom;
+float3 g_vRandom[10];
+// float3 g_vRandom[10] =
+//{
+//    float3(0.2024537f, 0.841204f, -0.9060241f),
+//    float3(-0.221324f, 0.324325f, -0.8234234f),
+//    float3(0.8724724f, 0.8547973f, -0.43252611f),
+//    float3(0.2698734f, 0.5684943f, -0.12515022f),
+//    float3(0.26482924f, 0.236820f, 0.72384287f),
+//    float3(0.20348342f, 0.234832f, 0.23682923f),
+//    float3(-0.0012315f, 0.8234823f, 0.23483244f),
+//    float3(-0.2342863f, 0.234982f, -0.00001524f),
+//    float3(-0.3426888f, 0.780742f, -0.8349823f)
+//};
+
 
 // 가우시안 필터 1차원 배열형태
 float BlurWeights[23] =
@@ -95,8 +108,7 @@ BlendState BS_AlphaBlend
 struct VS_IN
 {
     float3 vPosition : POSITION;
-    float2 vTexUV : TEXCOORD0;
-    
+    float2 vTexUV : TEXCOORD0;    
 };
 
 struct VS_OUT
@@ -146,22 +158,17 @@ PS_OUT PS_MAIN(PS_IN In)
     PS_OUT Out = (PS_OUT) 0;
    
     vector vDepthDesc = g_DepthTexture.Sample(LinearSampler, In.vTexUV);
-    vector vNormal = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+    vector vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
     
-    if(vNormal.a != 0.f)
+    if (vNormalDesc.a != 0.f)
     {
-        Out.vColor = (1.f, 1.f, 1.f, 1.f);
+        Out.vColor = (0.f, 0.f, 0.f, 0.5f);
         return Out;
     }
-        vNormal = normalize(vNormal * 2.f - 1.f);
-    
-        float fViewZ = vDepthDesc.y * g_fFar; //(카메라 far 넣어주면댐)
+       vNormalDesc = normalize(vNormalDesc * 2.f - 1.f);
+    //vector vNormal = vector(vNormalDesc.xyz * 2.f - 1.f, 0.f);
+        float fViewZ = vDepthDesc.r * g_fFar; //(카메라 far 넣어주면댐)
         float vDepth = vDepthDesc.g * g_fFar * fViewZ; // Retrieve the depth value and convert to world space
-
-        vector vPosition;
-    
-        if (fViewZ == 0)
-            discard;
     
         float3 vRay;
         float3 vReflect;
@@ -170,22 +177,22 @@ PS_OUT PS_MAIN(PS_IN In)
     
         int iColor = 0;
     
-        for (int i = 0; i < 32; i++)
+        for (int i = 0; i < 10; i++)
         {
-            vRay = reflect(RandNormal(In.vTexUV), g_vRandom);
-            vReflect = normalize(reflect(vRay, vNormal.rgb)) * g_fRadius;
+            vRay = reflect(RandNormal(In.vTexUV), g_vRandom[i]);
+        vReflect = normalize(reflect(normalize(vRay), normalize(vNormalDesc.rgb))) * g_fRadius;
             vReflect.x *= -1.f;
             vRandomUV = In.vTexUV + vReflect.xy;
-            fOccNorm = vDepthDesc.g * g_fFar * fViewZ;
+             fOccNorm = g_DepthTexture.Sample(LinearSampler, vRandomUV).g * g_fFar * fViewZ;
             if (fOccNorm <= vDepth + 0.0003f)
                 ++iColor;
                   
         }
     
-        float4 vAmbient = abs((iColor / 32.f) - 1);
+        float4 vAmbient = abs((iColor / 10.f) - 1);
    
         Out.vColor = 1.f - vAmbient;
-   
+    
         return Out;
     }
 
@@ -199,8 +206,8 @@ technique11 DefaultTechnique
     pass SSAO
     {
         SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_Depth_Disable, 0);
-        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 1.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
         HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
