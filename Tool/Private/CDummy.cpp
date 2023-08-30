@@ -27,6 +27,12 @@ HRESULT CDummy::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
+	if (nullptr != pArg)
+	{
+		_float3* vPos = (_float3*)pArg;
+		m_pTransform->Set_Position(*vPos);
+	}		
+
 	return S_OK;
 }
 
@@ -34,10 +40,10 @@ void CDummy::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 	
-	if (nullptr != m_pModel)
-	{
-		m_pModel->Play_Animation(fTimeDelta);
-	}
+	//if (nullptr != m_pModel)
+	//{
+	//	m_pModel->Play_Animation(fTimeDelta);
+	//}
 }
 
 void CDummy::Late_Tick(_float fTimeDelta)
@@ -64,7 +70,7 @@ HRESULT CDummy::Render()
 
 	_uint		iNumMeshes = m_pModel->Get_NumMeshes();
 
-	m_pShader->Begin("Terrain");
+	m_pShader->Begin("Default");
 	for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; iMeshCount++)
 	{
 		m_pModel->Bind_BoneMatrices(m_pShader, "g_BoneMatrices", iMeshCount);
@@ -75,7 +81,7 @@ HRESULT CDummy::Render()
 	return S_OK;
 }
 
-HRESULT CDummy::Add_Model_Component(wchar_t* wszModelTag)
+HRESULT CDummy::Add_Model_Component(const wchar_t* wszModelTag)
 {
 	if (FAILED(CComposite::Add_Component(LEVEL_TOOL, wszModelTag,
 		TEXT("Com_Buffer"), reinterpret_cast<CComponent**>(&m_pModel))))
@@ -86,7 +92,7 @@ HRESULT CDummy::Add_Model_Component(wchar_t* wszModelTag)
 	return S_OK;
 }
 
-HRESULT CDummy::Add_Shader_Component(wchar_t* wszShaderTag)
+HRESULT CDummy::Add_Shader_Component(const wchar_t* wszShaderTag)
 {
 	if (FAILED(CComposite::Add_Component(LEVEL_TOOL, wszShaderTag,
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))

@@ -234,6 +234,12 @@ HRESULT CMainTool::Ready_Prototype_Component()
 			VTXPOSCUBE_DECL::Elements, VTXPOSCUBE_DECL::iNumElements))))
 		return E_FAIL;
 
+	/* For.Prototype_Component_Shader_VtxMesh*/
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_TOOL, TEXT("Prototype_Component_Shader_VtxMesh"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxMesh.hlsl"),
+			VTXMESH_DECL::Elements, VTXMESH_DECL::iNumElements))))
+		return E_FAIL;
+
 	/* Prototype_Component_VIBuffer_Rect */
 	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_TOOL, TEXT("Prototype_Component_VIBuffer_Rect"),
 		CVIBuffer_Rect::Create(m_pDevice, m_pContext))))
