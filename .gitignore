@@ -407,6 +407,15 @@ Engine_d.lib
 Tool.lib
 *.cso
 
+# Resource
+*.dds
+*.png
+*.jpg
+*.fbx
+*.tga
+*.mat
+*.bmp
+*.spritefont
 
 # PhysX
 PhysXGpu_64.dll
