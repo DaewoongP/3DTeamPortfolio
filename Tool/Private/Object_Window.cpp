@@ -27,6 +27,7 @@ HRESULT CObject_Window::Initialize(ImVec2 vWindowPos, ImVec2 vWindowSize)
 	// 나중에 적당한 모델 찾아서 대체해야 한다.
 	m_vecModelList.push_back(m_strCurrentModel);
 	Deep_Copy_Name();
+	m_vecModelPath_t.push_back(TEXT("../../Resources/Models/NonAnims/Tree/Tree.dat"));
 
 	return S_OK;
 }
@@ -337,14 +338,17 @@ void CObject_Window::Free(void)
 	{
 		delete[] iter;
 	}
+	m_vecModelList_t.clear();
+
+	for (size_t i = 1; i < m_vecModelPath_t.size(); ++i)
+	{
+		delete[] m_vecModelPath_t[i];
+	}
+	m_vecModelPath_t.clear();
 
 	for (auto& iter : m_vecMapObjectTag_t)
 	{
 		delete[] iter;
 	}
-
-	for (auto& iter : m_vecModelPath_t)
-	{
-		delete[] iter;
-	}
+	m_vecMapObjectTag_t.clear();
 }
