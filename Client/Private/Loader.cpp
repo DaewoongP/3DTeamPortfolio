@@ -166,7 +166,7 @@ HRESULT CLoader::Loading_For_MainGame()
 
 	/* For.Prototype_Component_Model_CustomModel */
 	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_CustomModel"),
-		CCustomModel::Create(m_pDevice, m_pContext))))
+		CCustomModel::Create(m_pDevice, m_pContext, L"../../Resources/Models/Anims/test/test.dat"))))
 	{
 		MSG_BOX("Failed Add_Prototype : (Prototype_Component_Model_CustomModel)");
 		return E_FAIL;
@@ -174,7 +174,7 @@ HRESULT CLoader::Loading_For_MainGame()
 
 	/* For.Prototype_Component_Model_TestModel */
 	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_TestModel"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/test/test.dat")))))
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/Biped_Skeleton/Biped_Skeleton.dat")))))
 	{
 		MSG_BOX("Failed Add_Prototype : (Prototype_Component_Model_TestModel)");
 		return E_FAIL;

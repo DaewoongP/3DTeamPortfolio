@@ -11,20 +11,12 @@ CMeshParts::CMeshParts(const CMeshParts& rhs)
 	, m_MeshDatas(rhs.m_MeshDatas)
 	, m_MaterialDatas(rhs.m_MaterialDatas)
 	, m_AnimationDatas(rhs.m_AnimationDatas)
-	, m_Bones(rhs.m_Bones)
 	, m_iNumMeshes(rhs.m_iNumMeshes)
 	, m_Meshes(rhs.m_Meshes)
 	, m_iNumMaterials(rhs.m_iNumMaterials)
 	, m_Materials(rhs.m_Materials)
-	, m_iCurrentAnimIndex(rhs.m_iCurrentAnimIndex)
-	, m_iNumAnimations(rhs.m_iNumAnimations)
 	, m_isCloned(true)
 {
-	for (auto& pOriginalBone : rhs.m_Bones)
-	{
-		m_Bones.push_back(pOriginalBone->Clone());
-	}
-
 	for (auto& pMesh : m_Meshes)
 	{
 		Safe_AddRef(pMesh);
@@ -35,11 +27,6 @@ CMeshParts::CMeshParts(const CMeshParts& rhs)
 		for (auto& pTexture : Material.pMtrlTexture)
 			Safe_AddRef(pTexture);
 	}
-
-	for (auto& pOriginalAnimation : rhs.m_Animations)
-	{
-		m_Animations.push_back(pOriginalAnimation->Clone());
-	}
 }
 
 void CMeshParts::Get_Matrices(const _uint& _iMeshIndex, CModel::BONES _Bones, _Inout_ _float4x4* _pMatrices, _float4x4 _PivotMatrix)
@@ -47,21 +34,16 @@ void CMeshParts::Get_Matrices(const _uint& _iMeshIndex, CModel::BONES _Bones, _I
 	m_Meshes[_iMeshIndex]->Get_Matrices(_Bones, _pMatrices, _PivotMatrix);
 }
 
-HRESULT CMeshParts::Initialize(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, const wstring& _wstrMeshPartsFilePath)
+HRESULT CMeshParts::Initialize(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, 
+	const wstring& _wstrMeshPartsFilePath, const CModel::BONES& _Bones)
 {
 	if (FAILED(Ready_File(_wstrMeshPartsFilePath.c_str())))
 		return E_FAIL;
 
-	if (FAILED(Ready_Bones(m_NodeDatas.front())))
-		return E_FAIL;
-
-	if (FAILED(Ready_Mesh(_pDevice, _pContext)))
+	if (FAILED(Ready_Mesh(_pDevice, _pContext, _Bones)))
 		return E_FAIL;
 
 	if (FAILED(Ready_Material(_pDevice, _pContext)))
-		return E_FAIL;
-
-	if (FAILED(Ready_Animations()))
 		return E_FAIL;
 
 	return S_OK;
@@ -73,29 +55,6 @@ HRESULT CMeshParts::Render(const _uint& _iMeshIndex)
 		return E_FAIL;
 
 	return S_OK;
-}
-
-void CMeshParts::Reset_Animation(_uint iAnimIndex)
-{
-	m_iCurrentAnimIndex = iAnimIndex;
-	m_iPreviousAnimIndex = m_iCurrentAnimIndex;
-	m_Animations[m_iCurrentAnimIndex]->Reset();
-
-	for (auto& pBone : m_Bones)
-	{
-		pBone->Invalidate_CombinedTransformationMatrix(m_Bones);
-	}
-}
-
-void CMeshParts::Play_Animation(_float fTimeDelta)
-{
-	m_Animations[m_iCurrentAnimIndex]->Invalidate_TransformationMatrix(m_Bones, fTimeDelta);
-
-	/* 모델에 표현되어있는 모든 뼈들의 CombinedTransformationMatrix */
-	for (auto& pBone : m_Bones)
-	{
-		pBone->Invalidate_CombinedTransformationMatrix(m_Bones);
-	}
 }
 
 HRESULT CMeshParts::Bind_Material(CShader* _pShader, const char* _pConstantName, const _uint& _iMeshIndex, Engine::TextureType _MaterialType)
@@ -379,30 +338,13 @@ HRESULT CMeshParts::Ready_File(const _tchar* _pMeshPartsFilePath)
 	return S_OK;
 }
 
-HRESULT CMeshParts::Ready_Bones(Engine::NODE Node)
-{
-	CBone* pBone = CBone::Create(Node);
-
-	if (nullptr == pBone)
-		return E_FAIL;
-
-	m_Bones.push_back(pBone);
-
-	for (_uint i = 0; i < Node.iNumChildren; ++i)
-	{
-		Ready_Bones(m_NodeDatas[Node.iChildrens[i]]);
-	}
-
-	return S_OK;
-}
-
-HRESULT CMeshParts::Ready_Mesh(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
+HRESULT CMeshParts::Ready_Mesh(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, const CModel::BONES& _Bones)
 {
 	m_iNumMeshes = m_Model.iNumMeshes;
 
 	for (_uint i = 0; i < m_iNumMeshes; ++i)
 	{
-		CMesh* pMesh = CMesh::Create(_pDevice, _pContext, CModel::TYPE_ANIM, m_Bones, m_MeshDatas[i], _float4x4());
+		CMesh* pMesh = CMesh::Create(_pDevice, _pContext, CModel::TYPE_ANIM, _Bones, m_MeshDatas[i], _float4x4());
 		if (nullptr == pMesh)
 			return E_FAIL;
 
@@ -444,22 +386,6 @@ HRESULT CMeshParts::Ready_Material(ID3D11Device* _pDevice, ID3D11DeviceContext* 
 		}
 
 		m_Materials.push_back(MeshMaterial);
-	}
-
-	return S_OK;
-}
-
-HRESULT CMeshParts::Ready_Animations()
-{
-	m_iNumAnimations = m_Model.iNumAnimations;
-
-	for (_uint i = 0; i < m_Model.iNumAnimations; ++i)
-	{
-		CAnimation* pAnimation = CAnimation::Create(m_AnimationDatas[i], m_Bones);
-		if (nullptr == pAnimation)
-			return E_FAIL;
-
-		m_Animations.push_back(pAnimation);
 	}
 
 	return S_OK;
@@ -515,11 +441,12 @@ void CMeshParts::Release_FileDatas()
 	m_AnimationDatas.clear();
 }
 
-CMeshParts* CMeshParts::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, const wstring& _wstrMeshPartsFilePath)
+CMeshParts* CMeshParts::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, 
+	const wstring& _wstrMeshPartsFilePath, const CModel::BONES& _Bones)
 {
 	CMeshParts* pInstance = new CMeshParts();
 
-	if (FAILED(pInstance->Initialize(_pDevice, _pContext, _wstrMeshPartsFilePath)))
+	if (FAILED(pInstance->Initialize(_pDevice, _pContext, _wstrMeshPartsFilePath, _Bones)))
 	{
 		MSG_BOX("Failed to Created CMeshParts");
 		Safe_Release(pInstance);
@@ -534,12 +461,6 @@ void CMeshParts::Free()
 		Release_FileDatas();
 	}
 
-	for (auto& pBone : m_Bones)
-	{
-		Safe_Release(pBone);
-	}
-	m_Bones.clear();
-
 	for (auto& pMesh : m_Meshes)
 	{
 		Safe_Release(pMesh);
@@ -552,10 +473,4 @@ void CMeshParts::Free()
 			Safe_Release(pTexture);
 	}
 	m_Materials.clear();
-
-	for (auto& pAnimation : m_Animations)
-	{
-		Safe_Release(pAnimation);
-	}
-	m_Animations.clear();
 }
