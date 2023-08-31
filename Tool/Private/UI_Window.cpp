@@ -363,18 +363,25 @@ void CUI_Window::Interaction_UI()
 
 	for (auto& pGameObject : pGameObejctVector)
 	{
-		if (dynamic_cast<CDummy_UI*>(pGameObject)->Is_In_Rect() && GetKeyState(VK_LBUTTON) & 0x8000)
+		CGameInstance* pGameInstance = CGameInstance::GetInstance();
+		Safe_AddRef(pGameInstance);
+		if (dynamic_cast<CDummy_UI*>(pGameObject)->Is_In_Rect() && 
+			pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN))
 		{
 			m_pDummy_UI = dynamic_cast<CDummy_UI*>(pGameObject);
 			break;
 		}
-		else
+		else if (pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_UP))
 		{
 			m_pDummy_UI = nullptr;
 		}
+
+		Safe_Release(pGameInstance);
 	}
 
+#ifdef _DEBUG
 	cout << m_pDummy_UI << endl;
+#endif // _DEBUG
 }
 
 void CUI_Window::Move_UI()
