@@ -27,8 +27,6 @@ HRESULT CTest_Player::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-	m_pTransform->Set_Scale(_float3(100.f, 100.f, 100.f));
-
 	return S_OK;
 }
 
@@ -74,11 +72,12 @@ HRESULT CTest_Player::Render()
 		m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", i);
 
 		m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", i, DIFFUSE);
-		
+
 		m_pShaderCom->Begin("AnimMesh");
 
 		m_pModelCom->Render(i);
 	}
+
 
 	return S_OK;
 }
@@ -94,7 +93,13 @@ HRESULT CTest_Player::Add_Components()
 	}
 
 	/* For.Com_Model */
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Fiona"),
+	/*if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_CustomModel"),
+		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
+	{
+		MSG_BOX("Failed CTest_Player Add_Component : (Com_Model)");
+		return E_FAIL;
+	}*/
+	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_TestModel"),
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 	{
 		MSG_BOX("Failed CTest_Player Add_Component : (Com_Model)");

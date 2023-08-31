@@ -92,7 +92,6 @@ HRESULT CLoader::Loading_For_Logo()
 		return E_FAIL;
 
 	lstrcpy(m_szLoading, TEXT("텍스쳐 로딩 중."));
-
 	/* For.Prototype_Component_Texture_Logo */
 	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_LOGO, TEXT("Prototype_Component_Texture_Logo"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Default0.jpg")))))
@@ -157,13 +156,30 @@ HRESULT CLoader::Loading_For_MainGame()
 	lstrcpy(m_szLoading, TEXT("모델 로딩 중."));
 
 #ifdef _DEBUG
-	/* For.Prototype_Component_Model_Fiona*/
+	/* For.Prototype_Component_Model_Fiona */
 	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Fiona"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/Fiona/Fiona.dat")))))
 	{
 		MSG_BOX("Failed Add_Prototype : (Prototype_Component_Model_Fiona)");
 		return E_FAIL;
 	}
+
+	/* For.Prototype_Component_Model_CustomModel */
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_CustomModel"),
+		CCustomModel::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_Component_Model_CustomModel)");
+		return E_FAIL;
+	}
+
+	/* For.Prototype_Component_Model_TestModel */
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_TestModel"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/test/test.dat")))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_Component_Model_TestModel)");
+		return E_FAIL;
+	}
+
 #endif // _DEBUG
 
 

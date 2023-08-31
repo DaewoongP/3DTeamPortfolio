@@ -4,6 +4,7 @@
 
 BEGIN(Engine)
 class CModel;
+class CCustomModel;
 class CShader;
 class CRenderer;
 END
