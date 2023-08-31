@@ -55,6 +55,21 @@
     <Filter Include="01. Window\Window\Animation">
       <UniqueIdentifier>{f24db859-61c1-45a9-96e6-80c730ace989}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Window\Window\Camera">
+      <UniqueIdentifier>{f32468df-1843-449e-b24d-9013f22a9513}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. ToolObjects\02. Camera\MainCamera">
+      <UniqueIdentifier>{e3607828-83c0-4f82-982c-0cd009bdbfef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. ToolObjects\02. Camera\Point">
+      <UniqueIdentifier>{7a033ea7-4f83-4cb2-8315-2a2d2969d849}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. ToolObjects\02. Camera\CutScece_Camera_Tool">
+      <UniqueIdentifier>{efbdc30c-fe98-48c6-8a3c-5cd9b074b7b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. ToolObjects\02. Camera\OffSet_Camera_Tool">
+      <UniqueIdentifier>{0df86fb0-2477-40ae-ae99-76e3b1229111}</UniqueIdentifier>
+    </Filter>
     <Filter Include="98. Default\Std_Image">
       <UniqueIdentifier>{fd6cb91a-0121-492c-b29f-3622ec8c0c61}</UniqueIdentifier>
     </Filter>
@@ -159,6 +174,18 @@
     <ClInclude Include="..\Public\CDummy.h">
       <Filter>02. ToolObjects\01. Dummy</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Camera_Window.h">
+      <Filter>01. Window\Window\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CMain_Camera.h">
+      <Filter>02. ToolObjects\02. Camera\MainCamera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CCamera_Point.h">
+      <Filter>02. ToolObjects\02. Camera\Point</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CCutScene_Camera_Tool.h">
+      <Filter>02. ToolObjects\02. Camera\CutScece_Camera_Tool</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\stb_image.h">
       <Filter>98. Default\Std_Image</Filter>
     </ClInclude>
@@ -251,6 +278,18 @@
     </ClCompile>
     <ClCompile Include="..\Private\CDummy.cpp">
       <Filter>02. ToolObjects\01. Dummy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Camera_Window.cpp">
+      <Filter>01. Window\Window\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CMain_Camera.cpp">
+      <Filter>02. ToolObjects\02. Camera\MainCamera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CCamera_Point.cpp">
+      <Filter>02. ToolObjects\02. Camera\Point</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CCutScene_Camera_Tool.cpp">
+      <Filter>02. ToolObjects\02. Camera\CutScece_Camera_Tool</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Dummy_UI.cpp">
       <Filter>02. ToolObjects\01. Dummy\Dummy_UI</Filter>

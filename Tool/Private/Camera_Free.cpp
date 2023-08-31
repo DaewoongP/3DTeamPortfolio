@@ -78,6 +78,15 @@ void CCamera_Free::Key_Input(const _float& fTimeDelta)
 		m_pTransform->Go_Right(fTimeDelta);
 	}
 
+	if (pGameInstance->Get_DIKeyState(DIK_Q, CInput_Device::KEY_PRESSING))
+	{
+		m_pTransform->Move_Direction(m_pTransform->Get_Up(), fTimeDelta);
+	}
+	if (pGameInstance->Get_DIKeyState(DIK_E, CInput_Device::KEY_PRESSING))
+	{
+		m_pTransform->Move_Direction(-m_pTransform->Get_Up(), fTimeDelta);
+	}
+
 	if (pGameInstance->Get_DIKeyState(DIK_GRAVE, CInput_Device::KEY_DOWN))
 	{
 		if (true == m_isFixMouse)

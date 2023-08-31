@@ -4,6 +4,24 @@
 
 IMPLEMENT_SINGLETON(CCamera_Manager);
 
+const _float4 CCamera_Manager::Get_OffSetEye(OFFSETCAMERADESC& _OffSetCameraDesc)
+{
+	//포지션에
+	_float4 vEye = _OffSetCameraDesc.pTargetMatrix->Translation().TransNorm();
+	//타겟의 룩을 기준으로
+	_float4 vTargetLook = _OffSetCameraDesc.pTargetMatrix->Look().TransNorm();
+
+	vTargetLook.Normalize();
+
+	//오프셋한 벡터를
+	_float4 vOffSet = XMVector4Transform(vTargetLook, _OffSetCameraDesc.OffsetMatrix);
+
+	//더한다.(카메라의 이전 위치)
+	vEye += vOffSet;
+
+	return vEye;
+}
+
 void CCamera_Manager::Tick(_float _TimeDelta)
 {
 	NULL_CHECK_RETURN(m_pMainCamera, );
@@ -15,11 +33,14 @@ void CCamera_Manager::Tick(_float _TimeDelta)
 	{
 		//재생 한다.
 		Play_CutScene(_TimeDelta);
+		Clear_Queue(m_OffSetCameraDescs);
+		MainCameraOff();
 	}
 	//컷씬 다음 우선 순위 -> 오프셋
 	else if (false == m_OffSetCameraDescs.empty())
 	{
 		Play_OffSetCamera(_TimeDelta);
+		MainCameraOff();
 	}
 	//오프셋 다음 우선 순위 -> 액션
 	else if (true)
@@ -30,6 +51,9 @@ void CCamera_Manager::Tick(_float _TimeDelta)
 
 void CCamera_Manager::Late_Tick(_float _TimeDelta)
 {
+	NULL_CHECK_RETURN(m_pMainCamera, );
+
+
 }
 
 HRESULT CCamera_Manager::Initialize_CameraManager()
@@ -165,8 +189,7 @@ void CCamera_Manager::Play_CutScene(_float _TimeDelta)
 		//러프 비율
 		_float fRatio =
 			m_fCutSceneTimeAcc /
-			(m_CutSceneCameraDescs.front().fDuration -
-				m_PreviousCutSceneCameraDesc.fDuration);
+			m_CutSceneCameraDescs.front().fDuration;
 
 		_float4 vEye =
 			XMVectorLerp
@@ -205,9 +228,9 @@ void CCamera_Manager::Play_CutScene(_float _TimeDelta)
 	m_pPipeLine->Set_Transform(CPipeLine::D3DTS_VIEW, m_ViewMatrix);
 
 	//큐의 앞 원소의 듀레이션이 시간 누적치 보다 작다면
-	if ((m_PreviousCutSceneCameraDesc.fDuration + m_fCutSceneTimeAcc)
+	if (m_fCutSceneTimeAcc
 		<=
-		(m_CutSceneCameraDescs.front().fDuration))
+		m_CutSceneCameraDescs.front().fDuration)
 	{
 		//누적치 초기화
 		m_fCutSceneTimeAcc = 0.0f;
@@ -222,68 +245,67 @@ void CCamera_Manager::Play_CutScene(_float _TimeDelta)
 
 void CCamera_Manager::Play_OffSetCamera(_float _TimeDelta)
 {
-	////시간 누적
-	//m_fOffSetTimeAcc += _TimeDelta;
+	//시간 누적
+	m_fOffSetTimeAcc += _TimeDelta;
 
-	////러프
-	//if (true == m_OffSetCameraDescs.front().isLerp)
-	//{
-	//	//러프 비율
-	//	_float fRatio =
-	//		m_fCutSceneTimeAcc /
-	//		(m_OffSetCameraDescs.front().fDuration -
-	//			m_PreviousOffSetCameraDesc.fDuration);
+	//러프
+	if (true == m_OffSetCameraDescs.front().isLerp)
+	{
+		//이전 프레임 위치
+		_float4 vPriviousEye = Get_OffSetEye(m_PreviousOffSetCameraDesc);
 
-	//	_float4 vEye =
-	//		XMVectorLerp
-	//		(
-	//			m_PreviousOffSetCameraDesc.vEye,
-	//			m_OffSetCameraDescs.front().vEye,
-	//			fRatio
-	//		);
+		//가야하는 프레임 위치
+		_float4 vCurrentEye = Get_OffSetEye(m_OffSetCameraDescs.front());
 
-	//	_float4 vAt =
-	//		XMVectorLerp
-	//		(
-	//			m_PreviousOffSetCameraDesc.vAt,
-	//			m_OffSetCameraDescs.front().vAt,
-	//			fRatio
-	//		);
+		//러프 비율
+		_float fRatio =
+			m_fCutSceneTimeAcc /
+			m_OffSetCameraDescs.front().fDuration;
 
-	//	_float4 vUp = _float4(0.0f, 1.0f, 0.0f, 0.0f);
+		_float4 vEye =
+			XMVectorLerp
+			(
+				vPriviousEye,
+				vCurrentEye,
+				fRatio
+			);
 
-	//	//카메라의 역행렬
-	//	m_ViewMatrix = XMMatrixInverse(nullptr, XMMatrixLookAtLH(vEye, vAt, vUp));
-	//}
-	//else if (false == m_OffSetCameraDescs.front().isLerp)
-	//{
-	//	_float4 vEye = m_OffSetCameraDescs.front().vEye;
+		_float4 vAt = m_OffSetCameraDescs.front().pTargetMatrix->Translation().TransNorm();
+				
+		_float4 vUp = _float4(0.0f, 1.0f, 0.0f, 0.0f);
 
-	//	_float4 vAt = m_OffSetCameraDescs.front().vAt;
+		//카메라의 역행렬
+		m_ViewMatrix = XMMatrixInverse(nullptr, XMMatrixLookAtLH(vEye, vAt, vUp));
+	}
+	else if (false == m_OffSetCameraDescs.front().isLerp)
+	{
+		_float4 vEye = Get_OffSetEye(m_OffSetCameraDescs.front());
 
-	//	_float4 vUp = _float4(0.0f, 1.0f, 0.0f, 0.0f);
+		_float4 vAt = m_OffSetCameraDescs.front().pTargetMatrix->Translation().TransNorm();
 
-	//	//카메라의 역행렬
-	//	m_ViewMatrix = XMMatrixInverse(nullptr, XMMatrixLookAtLH(vEye, vAt, vUp));
-	//}
+		_float4 vUp = _float4(0.0f, 1.0f, 0.0f, 0.0f);
 
-	////파이프 라인 값 변경
-	//m_pPipeLine->Set_Transform(CPipeLine::D3DTS_VIEW, m_ViewMatrix);
+		//카메라의 역행렬
+		m_ViewMatrix = XMMatrixInverse(nullptr, XMMatrixLookAtLH(vEye, vAt, vUp));
+	}
 
-	////큐의 앞 원소의 듀레이션이 시간 누적치 보다 작다면
-	//if ((m_PreviousOffSetCameraDesc.fDuration + m_fCutSceneTimeAcc)
-	//	<=
-	//	(m_OffSetCameraDescs.front().fDuration))
-	//{
-	//	//누적치 초기화
-	//	m_fCutSceneTimeAcc = 0.0f;
+	//파이프 라인 값 변경
+	m_pPipeLine->Set_Transform(CPipeLine::D3DTS_VIEW, m_ViewMatrix);
 
-	//	//이전 값 변경
-	//	m_PreviousOffSetCameraDesc = m_OffSetCameraDescs.front();
+	//큐의 앞 원소의 듀레이션이 시간 누적치 보다 작다면
+	if (m_fOffSetTimeAcc
+		<=
+		m_OffSetCameraDescs.front().fDuration)
+	{
+		//누적치 초기화
+		m_fOffSetTimeAcc = 0.0f;
 
-	//	//맨 앞 원소 삭제
-	//	m_OffSetCameraDescs.pop();
-	//}
+		//이전 값 변경
+		m_PreviousOffSetCameraDesc = m_OffSetCameraDescs.front();
+
+		//맨 앞 원소 삭제
+		m_OffSetCameraDescs.pop();
+	}
 }
 
 vector<CUTSCENECAMERADESC>* CCamera_Manager::Find_CutScene(const _tchar* _CutSceneTag)
