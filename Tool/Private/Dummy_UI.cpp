@@ -140,7 +140,7 @@ _bool CDummy_UI::Is_In_Rect()
 
 	RECT		rcUI;
 
-	SetRect(&rcUI, m_fX - m_fSizeX * 0.5f, m_fY - m_fSizeY * 0.5f, m_fX + m_fSizeX * 0.5f, m_fY + m_fSizeY * 0.5f);
+	SetRect(&rcUI, _int(m_fX - m_fSizeX * 0.5f), _int(m_fY - m_fSizeY * 0.5f), _int(m_fX + m_fSizeX * 0.5f), _int(m_fY + m_fSizeY * 0.5f));
 	
 	isIn = PtInRect(&rcUI, ptMouse);
 

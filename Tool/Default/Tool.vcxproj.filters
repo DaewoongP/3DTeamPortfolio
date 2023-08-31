@@ -58,14 +58,14 @@
     <Filter Include="98. Default\Std_Image">
       <UniqueIdentifier>{fd6cb91a-0121-492c-b29f-3622ec8c0c61}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. ToolObjects\Dummy_UI">
-      <UniqueIdentifier>{c00841da-60c8-4a06-8085-e61201453246}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. ToolObjects\01. Dummy\MapDummy">
       <UniqueIdentifier>{a4baf458-dc0d-43c6-8d7d-f8bbed6e8418}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. ToolObjects\04. MapObject">
       <UniqueIdentifier>{acfec862-2a8b-4247-b8d7-d1fb72b2b96b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. ToolObjects\01. Dummy\Dummy_UI">
+      <UniqueIdentifier>{c00841da-60c8-4a06-8085-e61201453246}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -163,7 +163,7 @@
       <Filter>98. Default\Std_Image</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Dummy_UI.h">
-      <Filter>02. ToolObjects\Dummy_UI</Filter>
+      <Filter>02. ToolObjects\01. Dummy\Dummy_UI</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MapDummy.h">
       <Filter>02. ToolObjects\01. Dummy\MapDummy</Filter>
@@ -253,7 +253,7 @@
       <Filter>02. ToolObjects\01. Dummy</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Dummy_UI.cpp">
-      <Filter>02. ToolObjects\Dummy_UI</Filter>
+      <Filter>02. ToolObjects\01. Dummy\Dummy_UI</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MapDummy.cpp">
       <Filter>02. ToolObjects\01. Dummy\MapDummy</Filter>

@@ -208,7 +208,7 @@ void CUI_Window::Open_File_Path_Tree(UI_Tree* pTree)
 
 			ImGui::Begin(szFullPath);
 			ImGui::Text("size = %d x %d", pTree->m_iWidth, pTree->m_iHeight);
-			ImGui::Image((void*)pTree->m_SRV, ImVec2(pTree->m_iWidth, pTree->m_iHeight));
+			ImGui::Image((void*)pTree->m_SRV, ImVec2(_float(pTree->m_iWidth), _float(pTree->m_iHeight)));
 			ImGui::End();
 		}
 
@@ -318,11 +318,11 @@ void CUI_Window::Create_UI(UI_Tree* pTree)
 	CLayer* pLayer = pGameInstance->Find_Layer(LEVEL_TOOL, TEXT("Layer_Tool_UI"));
 	_int iSize = 0;
 	if (nullptr != pLayer)
-		iSize = pLayer->Get_GameObjects().size();
+		iSize = _int(pLayer->Get_GameObjects().size());
 	
 	string strFimeName = szFileName;
 	string GameObjectTag = "UI_" + strFimeName + to_string(iSize);
-	_tchar wszGameObjectTag[MAX_PATH] = {};
+	_tchar wszGameObjectTag[MAX_PATH] = TEXT("");
 
 	CharToWChar(GameObjectTag.c_str(), wszGameObjectTag);
 	
