@@ -25,7 +25,7 @@ HRESULT CDummy::Initialize(void* pArg)
 		return E_FAIL;
 
 	if (FAILED(Add_Components()))
-		return E_FAIL;
+		return E_FAIL;	
 
 	return S_OK;
 }
@@ -61,7 +61,7 @@ HRESULT CDummy::Render()
 
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
-
+	
 	_uint		iNumMeshes = m_pModel->Get_NumMeshes();
 
 	for (_uint i = 0; i < iNumMeshes; ++i)

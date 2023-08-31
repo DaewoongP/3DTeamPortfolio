@@ -2,6 +2,8 @@
 #include "GameInstance.h"
 #include "Level_Tool.h"
 #include "CDummy.h"
+#include "MapDummy.h"
+#include "MapObject.h"
 
 CMainTool::CMainTool()
 	: m_pGameInstance(CGameInstance::GetInstance())
@@ -186,7 +188,7 @@ HRESULT CMainTool::Add_Windows()
 
 	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("Object_Window"),
 		CObject_Window::Create(m_pDevice, m_pContext,
-			ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(300.f, 500.f)))))
+			ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(400.f, 700.f)))))
 		return E_FAIL;
 	
 	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("Effect_Window"),
@@ -239,19 +241,20 @@ HRESULT CMainTool::Ready_Prototype_Component()
 			VTXPOSCUBE_DECL::Elements, VTXPOSCUBE_DECL::iNumElements))))
 		return E_FAIL;
 
-	/* For.Prototype_Component_Shader_VtxCube*/
-	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_TOOL, TEXT("Prototype_Component_Shader_VtxAnimMesh"),
-		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxAnimMesh.hlsl"),
-			VTXANIMMESH_DECL::Elements, VTXANIMMESH_DECL::iNumElements))))
+	/* For.Prototype_Component_Shader_VtxMesh*/
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_TOOL, TEXT("Prototype_Component_Shader_VtxMesh"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxMesh.hlsl"),
+			VTXMESH_DECL::Elements, VTXMESH_DECL::iNumElements))))
 		return E_FAIL;
 
-	///* For.Prototype_Component_Shader_VtxAnimMesh */
-	//if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimMesh"),
-	//	CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxAnimMesh.hlsl"), VTXANIMMESH_DECL::Elements, VTXANIMMESH_DECL::iNumElements))))
-	//{
-	//	MSG_BOX("Failed Add_Prototype : (Prototype_Component_Shader_VtxAnimMesh)");
-	//	return E_FAIL;
-	//}
+	/* For.Prototype_Component_Shader_VtxAnimMesh */
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimMesh"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxAnimMesh.hlsl"), 
+			VTXANIMMESH_DECL::Elements, VTXANIMMESH_DECL::iNumElements))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_Component_Shader_VtxAnimMesh)");
+		return E_FAIL;
+	}
 
 	/* Prototype_Component_VIBuffer_Rect */
 	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_TOOL, TEXT("Prototype_Component_VIBuffer_Rect"),
@@ -312,6 +315,16 @@ HRESULT CMainTool::Ready_Prototype_Object()
 	/* Prototype_GameObject_Dummy*/
 	if (FAILED(m_pGameInstance->Add_Prototype_GameObject(TEXT("Prototype_GameObject_Dummy"),
 		CDummy::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* Prototype_GameObject_MapDummy*/
+	if (FAILED(m_pGameInstance->Add_Prototype_GameObject(TEXT("Prototype_GameObject_MapDummy"),
+		CMapDummy::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* Prototype_GameObject_MapObject*/
+	if (FAILED(m_pGameInstance->Add_Prototype_GameObject(TEXT("Prototype_GameObject_MapObject"),
+		CMapObject::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	return S_OK;
