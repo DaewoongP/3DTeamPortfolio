@@ -49,6 +49,7 @@
 #include <functional>
 #include <any>
 #include <stack>
+#include <tchar.h>
 
 // file system - c++ 17
 #include <filesystem>

@@ -202,29 +202,11 @@
     <Filter Include="01. Utility\03. Components\10. Behavior\04. BlackBoard">
       <UniqueIdentifier>{86ff92e6-3ab7-4155-8d44-dfded6920f9e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\03. Components\12. Status">
-      <UniqueIdentifier>{0d097a3d-8ef4-4813-afef-ca81cc0a63bc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Utility\03. Components\11. ParticleSystem">
       <UniqueIdentifier>{aaf18f8e-a9cf-4dba-9828-95d190790622}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\03. Components\12. Status\00. Health">
-      <UniqueIdentifier>{2c307619-8c41-4f09-8c44-3e7e1dd9bf83}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\03. Components\12. Status\01. Attack">
-      <UniqueIdentifier>{8a7bc604-a1b2-4301-9e99-b36444fc8db5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\03. Components\12. Status\02. Defence">
-      <UniqueIdentifier>{6b004c01-c864-470b-b278-e400cb119e26}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\03. Components\12. Status\03. Status">
-      <UniqueIdentifier>{1dcb84f8-a0f6-4430-9b80-31ac64bf15ab}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Utility\03. Components\07. VIBuffer\Sprite">
       <UniqueIdentifier>{b63693e6-fa8a-4ecb-900e-d6e966643d70}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\03. Components\12. Status\03. Status\00. Ignite">
-      <UniqueIdentifier>{1181c3a3-d95e-4eab-b1e6-b175481b2152}</UniqueIdentifier>
     </Filter>
     <Filter Include="01. Utility\03. Components\13. Alarm">
       <UniqueIdentifier>{9cbb7d45-1355-4391-a17a-ab9735b11f73}</UniqueIdentifier>
@@ -249,6 +231,27 @@
     </Filter>
     <Filter Include="01. Utility\03. Components\12. PhysX\ErrorCallBack">
       <UniqueIdentifier>{9faf9a61-c854-4028-95e1-f2c591f3abcc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\14. Status">
+      <UniqueIdentifier>{0d097a3d-8ef4-4813-afef-ca81cc0a63bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\14. Status\00. Health">
+      <UniqueIdentifier>{2c307619-8c41-4f09-8c44-3e7e1dd9bf83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\14. Status\01. Attack">
+      <UniqueIdentifier>{8a7bc604-a1b2-4301-9e99-b36444fc8db5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\14. Status\02. Defence">
+      <UniqueIdentifier>{6b004c01-c864-470b-b278-e400cb119e26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\14. Status\03. Ignite">
+      <UniqueIdentifier>{1181c3a3-d95e-4eab-b1e6-b175481b2152}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\15. CustomModel">
+      <UniqueIdentifier>{123c13cc-5f31-459d-8cbc-5a6c0f6df715}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\15. CustomModel\MeshParts">
+      <UniqueIdentifier>{03be6e6b-609c-44dc-921c-7f8675822f53}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -487,19 +490,19 @@
       <Filter>01. Utility\03. Components\12. PhysX\ErrorCallBack</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Health.h">
-      <Filter>01. Utility\03. Components\12. Status\00. Health</Filter>
+      <Filter>01. Utility\03. Components\14. Status\00. Health</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Attack.h">
-      <Filter>01. Utility\03. Components\12. Status\01. Attack</Filter>
+      <Filter>01. Utility\03. Components\14. Status\01. Attack</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Defence.h">
-      <Filter>01. Utility\03. Components\12. Status\02. Defence</Filter>
+      <Filter>01. Utility\03. Components\14. Status\02. Defence</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\VIBuffer_Sprite.h">
       <Filter>01. Utility\03. Components\07. VIBuffer\Sprite</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Status_Ignite.h">
-      <Filter>01. Utility\03. Components\12. Status\03. Status\00. Ignite</Filter>
+    <ClInclude Include="..\Public\Ignite.h">
+      <Filter>01. Utility\03. Components\14. Status\03. Ignite</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Alarm.h">
       <Filter>01. Utility\03. Components\13. Alarm</Filter>
@@ -509,6 +512,15 @@
     </ClInclude>
     <ClInclude Include="..\Public\MainModule.h">
       <Filter>01. Utility\03. Components\11. ParticleSystem\ParticleModule\MainModule</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Status.h">
+      <Filter>01. Utility\03. Components\14. Status</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CustomModel.h">
+      <Filter>01. Utility\03. Components\15. CustomModel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MeshParts.h">
+      <Filter>01. Utility\03. Components\15. CustomModel\MeshParts</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -720,19 +732,19 @@
       <Filter>01. Utility\03. Components\12. PhysX</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Health.cpp">
-      <Filter>01. Utility\03. Components\12. Status\00. Health</Filter>
+      <Filter>01. Utility\03. Components\14. Status\00. Health</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Attack.cpp">
-      <Filter>01. Utility\03. Components\12. Status\01. Attack</Filter>
+      <Filter>01. Utility\03. Components\14. Status\01. Attack</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Defence.cpp">
-      <Filter>01. Utility\03. Components\12. Status\02. Defence</Filter>
+      <Filter>01. Utility\03. Components\14. Status\02. Defence</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\VIBuffer_Sprite.cpp">
       <Filter>01. Utility\03. Components\07. VIBuffer\Sprite</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Status_Ignite.cpp">
-      <Filter>01. Utility\03. Components\12. Status\03. Status\00. Ignite</Filter>
+    <ClCompile Include="..\Private\Ignite.cpp">
+      <Filter>01. Utility\03. Components\14. Status\03. Ignite</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Alarm.cpp">
       <Filter>01. Utility\03. Components\13. Alarm</Filter>
@@ -742,6 +754,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\MainModule.cpp">
       <Filter>01. Utility\03. Components\11. ParticleSystem\ParticleModule\MainModule</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Status.cpp">
+      <Filter>01. Utility\03. Components\14. Status</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CustomModel.cpp">
+      <Filter>01. Utility\03. Components\15. CustomModel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MeshParts.cpp">
+      <Filter>01. Utility\03. Components\15. CustomModel\MeshParts</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

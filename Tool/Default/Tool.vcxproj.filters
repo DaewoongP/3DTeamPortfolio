@@ -55,6 +55,12 @@
     <Filter Include="01. Window\Window\Animation">
       <UniqueIdentifier>{f24db859-61c1-45a9-96e6-80c730ace989}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. ToolObjects\01. Dummy\MapDummy">
+      <UniqueIdentifier>{a4baf458-dc0d-43c6-8d7d-f8bbed6e8418}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. ToolObjects\04. MapObject">
+      <UniqueIdentifier>{acfec862-2a8b-4247-b8d7-d1fb72b2b96b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tool.h">
@@ -147,6 +153,12 @@
     <ClInclude Include="..\Public\CDummy.h">
       <Filter>02. ToolObjects\01. Dummy</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\MapDummy.h">
+      <Filter>02. ToolObjects\01. Dummy\MapDummy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MapObject.h">
+      <Filter>02. ToolObjects\04. MapObject</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -228,6 +240,12 @@
     <ClCompile Include="..\Private\CDummy.cpp">
       <Filter>02. ToolObjects\01. Dummy</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\MapDummy.cpp">
+      <Filter>02. ToolObjects\01. Dummy\MapDummy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MapObject.cpp">
+      <Filter>02. ToolObjects\04. MapObject</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Bin\ShaderFiles\Shader_Tool_Defines.hlsli">
@@ -245,6 +263,12 @@
       <Filter>97. ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTex.hlsl">
+      <Filter>97. ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMesh.hlsl">
+      <Filter>97. ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxMesh.hlsl">
       <Filter>97. ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>

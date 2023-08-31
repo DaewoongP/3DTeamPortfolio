@@ -173,6 +173,8 @@
     <ClInclude Include="..\public\Camera_Free.h" />
     <ClInclude Include="..\public\Level_Tool.h" />
     <ClInclude Include="..\public\MainTool.h" />
+    <ClInclude Include="..\Public\MapDummy.h" />
+    <ClInclude Include="..\Public\MapObject.h" />
     <ClInclude Include="..\public\Object_Window.h" />
     <ClInclude Include="..\public\Sky.h" />
     <ClInclude Include="..\public\Terrain.h" />
@@ -206,6 +208,8 @@
     <ClCompile Include="..\private\Level_Tool.cpp" />
     <ClCompile Include="..\private\MainTool.cpp" />
     <ClCompile Include="..\private\ImWindow.cpp" />
+    <ClCompile Include="..\Private\MapDummy.cpp" />
+    <ClCompile Include="..\Private\MapObject.cpp" />
     <ClCompile Include="..\private\Object_Window.cpp" />
     <ClCompile Include="..\private\Sky.cpp" />
     <ClCompile Include="..\private\Terrain.cpp" />
@@ -258,6 +262,8 @@
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Sky.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Terrain.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxMesh.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMesh.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTex.hlsl" />
   </ItemGroup>
   <ItemGroup>

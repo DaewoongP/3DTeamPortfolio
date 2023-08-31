@@ -4,6 +4,7 @@
 
 BEGIN(Engine)
 class CModel;
+class CCustomModel;
 class CShader;
 class CRenderer;
 END
@@ -29,7 +30,7 @@ public:
 	virtual HRESULT Render_Depth() override;
 
 private:
-	CModel*			m_pModelCom = { nullptr };
+	CModel*	m_pModelCom = { nullptr };
 	CShader*		m_pShaderCom = { nullptr };
 	CRenderer*		m_pRenderer = { nullptr };
 
