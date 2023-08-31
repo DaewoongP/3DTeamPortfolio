@@ -90,16 +90,8 @@ namespace Engine
 		_value = min(_value, _max);
 	}
 
-	// ex) _float fResult = Random_Generator(-5.f, 10.f)
-	// 결과 : [-5.f, 10.f]의 랜덤한 실수가 들어감.
-	template<typename T>
-	T Random_Generator(T _lowBound, T _highBound)
+	float Lerp(float fFrom, float fTo, float Alpha)
 	{
-		// static을 사용하여 같은 엔진이 반복적으로 초기화되지 않도록 합니다.
-		static std::default_random_engine RandGenerator(std::chrono::system_clock::now().time_since_epoch().count());
-
-		std::uniform_real_distribution<T> distribution(_lowBound, _highBound);
-
-		return distribution(RandGenerator);
+		return fFrom * (1 - Alpha) + fTo * Alpha;
 	}
 }

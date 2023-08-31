@@ -79,6 +79,11 @@ HRESULT CDummy::Render()
 
 HRESULT CDummy::Add_Model_Component(const wchar_t* wszModelTag)
 {
+	if (m_pModel != nullptr)
+	{
+		MSG_BOX("Model is Already Exist");
+		return E_FAIL;
+	}
 	if (FAILED(CComposite::Add_Component(LEVEL_TOOL, wszModelTag,
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModel))))
 	{
@@ -90,6 +95,11 @@ HRESULT CDummy::Add_Model_Component(const wchar_t* wszModelTag)
 
 HRESULT CDummy::Add_Shader_Component(const wchar_t* wszShaderTag)
 {
+	if (m_pShader != nullptr)
+	{
+		MSG_BOX("Shader is Already Exist");
+		return E_FAIL;
+	}
 	if (FAILED(CComposite::Add_Component(LEVEL_TOOL, wszShaderTag,
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
 	{

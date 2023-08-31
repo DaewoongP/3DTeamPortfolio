@@ -21,44 +21,63 @@ void CNotify::Invalidate_Frame(_float fTimeAcc, _Inout_ _uint* pCurrentKeyFrameI
 			(frame.second)->isEnable = true;
 		}
 	}
-	
+
 	//걸러져야할 때를 명시해줍시다.
 	//내 키프레임이 0이 아니라면?
-	if (m_iNumKeyFrames == 0)
+	if (m_iNumKeyFrames == 0|| (*pCurrentKeyFrameIndex)+1> m_iNumKeyFrames)
 		return;
-	//현재 시간값이 내 키프레임보다 오래 가있다면?
-	while (fTimeAcc >= Find_Frame((*pCurrentKeyFrameIndex))->fTime)
+	KEYFRAME* pKeyFrame = Find_Frame((*pCurrentKeyFrameIndex));
+
+	if (pKeyFrame->eKeyFrameType == KEYFRAME::KF_SPEED)
 	{
-		if (m_iNumKeyFrames < (*pCurrentKeyFrameIndex)+1)
-			break;
-
-		//이제 마지막꺼가 안불리는듯.
-		KEYFRAME* pKeyFrame = Find_Frame((*pCurrentKeyFrameIndex));
-		if ((*pCurrentKeyFrameIndex) < m_iNumKeyFrames &&
-			pKeyFrame != nullptr && pKeyFrame->isEnable)
+		while (fTimeAcc >= Find_Frame((*pCurrentKeyFrameIndex))->fTime)
 		{
-			pKeyFrame->isEnable = false;
-			switch (pKeyFrame->eKeyFrameType)
-			{
-			case KEYFRAME::KF_NOTIFY:
-				break;
-			case KEYFRAME::KF_SOUND:
-				break;
-			case KEYFRAME::KF_SPEED:
-				*fSpeed = static_cast<SPEEDFRAME*>(pKeyFrame)->fSpeed;
-				break;
-			}
+			if (m_iNumKeyFrames <= (*pCurrentKeyFrameIndex) + 1)
+				return;
+			++(*pCurrentKeyFrameIndex);
 		}
-		if (m_iNumKeyFrames == (*pCurrentKeyFrameIndex) + 1)
-			break;
-		(*pCurrentKeyFrameIndex)++;
-	}
-	//이게 없으면 이전때부터 이게 실행되더라고?
-	//if (fTimeAcc <= Find_Frame((*pCurrentKeyFrameIndex))->fTime)
-	//	return;
 
-	
+		_float		fRatio = 0;
+		if ((*pCurrentKeyFrameIndex) == 0)
+		{
+			fRatio = (fTimeAcc - 0) /
+				(Find_Frame((*pCurrentKeyFrameIndex))->fTime - 0);
+		}
+		else
+		{
+			fRatio = (fTimeAcc - Find_Frame((*pCurrentKeyFrameIndex-1))->fTime) /
+				(Find_Frame((*pCurrentKeyFrameIndex))->fTime - Find_Frame((*pCurrentKeyFrameIndex-1))->fTime);
+		}
+
+		*fSpeed = Lerp(*fSpeed, static_cast<SPEEDFRAME*>(pKeyFrame)->fSpeed, fRatio);
+	}
+	else
+	{
+		while (fTimeAcc >= Find_Frame((*pCurrentKeyFrameIndex))->fTime)
+		{
+			if (m_iNumKeyFrames < (*pCurrentKeyFrameIndex) + 1)
+				break;
+
+			KEYFRAME* pKeyFrame = Find_Frame((*pCurrentKeyFrameIndex));
+			if ((*pCurrentKeyFrameIndex) < m_iNumKeyFrames &&
+				pKeyFrame != nullptr && pKeyFrame->isEnable)
+			{
+				pKeyFrame->isEnable = false;
+				switch (pKeyFrame->eKeyFrameType)
+				{
+				case KEYFRAME::KF_NOTIFY:
+					break;
+				case KEYFRAME::KF_SOUND:
+					break;
+				}
+			}
+			if (m_iNumKeyFrames == (*pCurrentKeyFrameIndex) + 1)
+				break;
+			(*pCurrentKeyFrameIndex)++;
+		}
+	}
 }
+
 
 KEYFRAME* CNotify::Find_Frame(_uint iFindFrame)
 {
@@ -71,8 +90,6 @@ KEYFRAME* CNotify::Find_Frame(_uint iFindFrame)
 		return nullptr;
 	}
 	return (iter->second);
-
-	return nullptr;
 }
 
 const _tchar* CNotify::Find_Frame_Key(_uint iFindFrame)
@@ -86,6 +103,34 @@ const _tchar* CNotify::Find_Frame_Key(_uint iFindFrame)
 		return nullptr;
 	}
 	return (iter)->first.c_str();
+}
+
+void CNotify::Delete_Frame(_uint iFindFrame)
+{
+	_uint iCurrentIndex = 0;
+	auto iter = find_if(m_KeyFrames.begin(), m_KeyFrames.end(), [&](auto pValue) {
+		return ((iCurrentIndex++) == iFindFrame);
+		});
+	if (iter == m_KeyFrames.end())
+	{
+		return;
+	}
+	Safe_Delete(iter->second);
+	m_KeyFrames.erase(iter);
+	//키프레임이 중간에 삭제되면 애니메이션의 키프레임도 초기화해줘야함.
+	m_iNumKeyFrames--;
+}
+
+void CNotify::Edit_Frame(_uint iFindFrame, KEYFRAME::KEYFRAMETYPE eFrameType, _float fActionTime, _float fSpeed)
+{
+	KEYFRAME* pKeyFrame = Find_Frame(iFindFrame);
+
+	pKeyFrame->eKeyFrameType = eFrameType;
+	pKeyFrame->fTime = fActionTime;
+	if (eFrameType == KEYFRAME::KF_SPEED)
+	{
+		static_cast<SPEEDFRAME*>(pKeyFrame)->fSpeed = fSpeed;
+	}
 }
 
 KEYFRAME* CNotify::Find_Frame(const wchar_t* wszKeyFrameTag)
