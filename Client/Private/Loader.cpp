@@ -12,7 +12,6 @@
 #include "Camera_Debug.h"
 #endif // _DEBUG
 
-
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice(pDevice)
 	, m_pContext(pContext)
@@ -157,12 +156,12 @@ HRESULT CLoader::Loading_For_MainGame()
 
 #ifdef _DEBUG
 	/* For.Prototype_Component_Model_Fiona */
-	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Fiona"),
+	/*if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Fiona"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/Fiona/Fiona.dat")))))
 	{
 		MSG_BOX("Failed Add_Prototype : (Prototype_Component_Model_Fiona)");
 		return E_FAIL;
-	}
+	}*/
 
 	/* For.Prototype_Component_Model_CustomModel */
 	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_CustomModel"),
@@ -180,8 +179,65 @@ HRESULT CLoader::Loading_For_MainGame()
 		return E_FAIL;
 	}
 
-#endif // _DEBUG
+	/* MeshParts (테스트용) */
+	/* For.Prototype_Component_MeshParts_Head */
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Head"),
+		CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/head/head.dat"), TEXT("HEAD_Default")))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_Component_MeshParts_Head)");
+		return E_FAIL;
+	}
+	/* For.Prototype_Component_MeshParts_Arm */
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Arm"),
+		CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Arm/Arm.dat"), TEXT("ARM_Default")))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_Component_MeshParts_Arm)");
+		return E_FAIL;
+	}
+	/* For.Prototype_Component_MeshParts_Up */
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Up"),
+		CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Up/Up.dat"), TEXT("UPPERBODY_Default")))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_Component_MeshParts_Up)");
+		return E_FAIL;
+	}
+	/* For.Prototype_Component_MeshParts_Low */
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Low"),
+		CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Low/Low.dat"), TEXT("UNDERBODY_Default")))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_Component_MeshParts_Low)");
+		return E_FAIL;
+	}
+	/* For.Prototype_Component_MeshParts_Robe */
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Robe"),
+		CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Robe/Robe.dat"), TEXT("ROBE_Default")))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_Component_MeshParts_Robe)");
+		return E_FAIL;
+	}
+	/* For.Prototype_Component_MeshParts_Socks */
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Socks"),
+		CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Socks/Socks.dat"), TEXT("SOCKS_Default")))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_Component_MeshParts_Socks)");
+		return E_FAIL;
+	}
+	/* For.Prototype_Component_MeshParts_Socks1 */
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Socks1"),
+		CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Socks1/Socks1.dat"), TEXT("SOCKS_Default")))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_Component_MeshParts_Socks1)");
+		return E_FAIL;
+	}
+	/* For.Prototype_Component_MeshParts_Shoes */
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Shoes"),
+		CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Shoes/Shoes.dat"), TEXT("SHOES_Default")))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_Component_MeshParts_Shoes)");
+		return E_FAIL;
+	}
 
+#endif // _DEBUG
 
 	lstrcpy(m_szLoading, TEXT("셰이더 로딩 중."));
 	/* For.Prototype_Component_Shader_VtxCube */

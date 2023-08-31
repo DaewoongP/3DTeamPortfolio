@@ -5,6 +5,8 @@
 #include "Shader.h"
 #include "Texture.h"
 #include "Animation.h"
+#include "MeshParts.h"
+#include "GameInstance.h"
 
 CCustomModel::CCustomModel(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CComponent(pDevice, pContext)
@@ -33,6 +35,20 @@ CCustomModel::CCustomModel(const CCustomModel& rhs)
 	}
 }
 
+_uint CCustomModel::Get_NumMeshes(const _uint& _iMeshPartsIndex) const
+{
+	if (0 > _iMeshPartsIndex || MESH_END <= _iMeshPartsIndex)
+	{
+		MSG_BOX("[CCustomModel] Range Of Out Array");
+		return E_FAIL;
+	}
+
+	if (nullptr == m_MeshParts[_iMeshPartsIndex])
+		return 0;
+
+	return m_MeshParts[_iMeshPartsIndex]->Get_NumMeshes();
+}
+
 const CBone* CCustomModel::Get_Bone(const _tchar* pBoneName)
 {
 	auto	iter = find_if(m_Bones.begin(), m_Bones.end(), [&](CBone* pBone)
@@ -59,19 +75,35 @@ _float4x4 CCustomModel::Get_BoneCombinedTransformationMatrix(_uint iIndex)
 	return m_Bones[iIndex]->Get_CombinedTransformationMatrix();
 }
 
-HRESULT CCustomModel::Add_MeshParts(const _uint& _iMeshPartsIndex, const wstring& _wstrMeshPartsFilePath)
+HRESULT CCustomModel::Add_MeshParts(const _uint& _iLevelIndex, const wstring& _wstrPrototypeTag, MESHTYPE _eMeshPartsType)
 {
-	if (nullptr != m_MeshParts[_iMeshPartsIndex])
-		Safe_Release(m_MeshParts[_iMeshPartsIndex]);
+	if (0 > _eMeshPartsType || MESH_END <= _eMeshPartsType)
+	{
+		MSG_BOX("[CCustomModel] Range Of Out Array");
+		return E_FAIL;
+	}
 
-	CMeshParts* pMeshParts = CMeshParts::Create(m_pDevice, m_pContext, _wstrMeshPartsFilePath, m_Bones);
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	CMeshParts::MESHPARTSDESC MeshPartsDesc;
+	MeshPartsDesc.m_pBones = &m_Bones;
+	CMeshParts* pMeshParts = static_cast<CMeshParts*>(pGameInstance->Clone_Component(_iLevelIndex, _wstrPrototypeTag.c_str(), &MeshPartsDesc));
+
+	Safe_Release(pGameInstance);
+
 	if (nullptr == pMeshParts)
 	{
 		MSG_BOX("[CCustomModel] pMeshParts is nullptr");
 		return E_FAIL;
 	}
 
-	m_MeshParts[_iMeshPartsIndex] = pMeshParts;
+	if (nullptr != m_MeshParts[_eMeshPartsType])
+		Safe_Release(m_MeshParts[_eMeshPartsType]);
+
+	m_MeshParts[_eMeshPartsType] = pMeshParts;
+	pMeshParts->Set_MeshType(_eMeshPartsType);
+
 	return S_OK;
 }
 
@@ -98,6 +130,12 @@ HRESULT CCustomModel::Initialize(void* pArg)
 
 HRESULT CCustomModel::Render(const _uint& _iMeshPartsIndex, const _uint& _iMeshIndex)
 {
+	if (0 > _iMeshPartsIndex || MESH_END <= _iMeshPartsIndex)
+	{
+		MSG_BOX("[CCustomModel] Range Of Out Array");
+		return E_FAIL;
+	}
+
 	if (nullptr == m_MeshParts[_iMeshPartsIndex])
 		return S_OK;
 
@@ -118,6 +156,7 @@ void CCustomModel::Reset_Animation(const _uint& _iAnimIndex)
 
 void CCustomModel::Play_Animation(const _float& _fTimeDelta)
 {
+	m_Animations[m_iCurrentAnimIndex]->Invalidate_Frame(_fTimeDelta);
 	m_Animations[m_iCurrentAnimIndex]->Invalidate_TransformationMatrix(m_Bones, _fTimeDelta);
 
 	/* 모델에 표현되어있는 모든 뼈들의 CombinedTransformationMatrix */

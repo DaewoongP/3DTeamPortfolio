@@ -5,17 +5,22 @@
 #include "Texture.h"
 #include "Animation.h"
 
-CMeshParts::CMeshParts(const CMeshParts& rhs)
-	: m_Model(rhs.m_Model)
-	, m_NodeDatas(rhs.m_NodeDatas)
-	, m_MeshDatas(rhs.m_MeshDatas)
-	, m_MaterialDatas(rhs.m_MaterialDatas)
-	, m_AnimationDatas(rhs.m_AnimationDatas)
-	, m_iNumMeshes(rhs.m_iNumMeshes)
-	, m_Meshes(rhs.m_Meshes)
-	, m_iNumMaterials(rhs.m_iNumMaterials)
-	, m_Materials(rhs.m_Materials)
-	, m_isCloned(true)
+CMeshParts::CMeshParts(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
+	: CComponent(_pDevice, _pContext)
+{
+}
+
+CMeshParts::CMeshParts(const CMeshParts& _rhs)
+	: CComponent(_rhs)
+	, m_Model(_rhs.m_Model)
+	, m_NodeDatas(_rhs.m_NodeDatas)
+	, m_MeshDatas(_rhs.m_MeshDatas)
+	, m_MaterialDatas(_rhs.m_MaterialDatas)
+	, m_AnimationDatas(_rhs.m_AnimationDatas)
+	, m_iNumMeshes(_rhs.m_iNumMeshes)
+	, m_Meshes(_rhs.m_Meshes)
+	, m_iNumMaterials(_rhs.m_iNumMaterials)
+	, m_Materials(_rhs.m_Materials)
 {
 	for (auto& pMesh : m_Meshes)
 	{
@@ -34,16 +39,36 @@ void CMeshParts::Get_Matrices(const _uint& _iMeshIndex, CModel::BONES _Bones, _I
 	m_Meshes[_iMeshIndex]->Get_Matrices(_Bones, _pMatrices, _PivotMatrix);
 }
 
-HRESULT CMeshParts::Initialize(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, 
 	const wstring& _wstrMeshPartsFilePath, const CModel::BONES& _Bones)
+HRESULT CMeshParts::Initialize_Prototype(const wstring& _wstrMeshPartsFilePath, const wstring& _wstrMeshPartsTag)
 {
 	if (FAILED(Ready_File(_wstrMeshPartsFilePath.c_str())))
 		return E_FAIL;
 
-	if (FAILED(Ready_Mesh(_pDevice, _pContext, _Bones)))
+	if (FAILED(Ready_Material()))
 		return E_FAIL;
 
-	if (FAILED(Ready_Material(_pDevice, _pContext)))
+	m_wstrMeshPartsTag = _wstrMeshPartsTag;
+
+	return S_OK;
+}
+
+HRESULT CMeshParts::Initialize(void* _pArg)
+{
+	if (nullptr == _pArg)
+	{
+		MSG_BOX("[CMeshParts] _pArg is nullptr");
+		return E_FAIL;
+	}
+
+	MESHPARTSDESC* pMeshPartsDesc = static_cast<MESHPARTSDESC*>(_pArg);
+	if (nullptr == pMeshPartsDesc->m_pBones)
+	{
+		MSG_BOX("[CMeshParts] pMeshPartsDesc's m_pBones is nullptr");
+		return E_FAIL;
+	}
+
+	if (FAILED(Ready_Mesh(*pMeshPartsDesc->m_pBones)))
 		return E_FAIL;
 
 	return S_OK;
@@ -338,13 +363,13 @@ HRESULT CMeshParts::Ready_File(const _tchar* _pMeshPartsFilePath)
 	return S_OK;
 }
 
-HRESULT CMeshParts::Ready_Mesh(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, const CModel::BONES& _Bones)
+HRESULT CMeshParts::Ready_Mesh(const CModel::BONES& _Bones)
 {
 	m_iNumMeshes = m_Model.iNumMeshes;
 
 	for (_uint i = 0; i < m_iNumMeshes; ++i)
 	{
-		CMesh* pMesh = CMesh::Create(_pDevice, _pContext, CModel::TYPE_ANIM, _Bones, m_MeshDatas[i], _float4x4());
+		CMesh* pMesh = CMesh::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, _Bones, m_MeshDatas[i], _float4x4());
 		if (nullptr == pMesh)
 			return E_FAIL;
 
@@ -354,7 +379,7 @@ HRESULT CMeshParts::Ready_Mesh(ID3D11Device* _pDevice, ID3D11DeviceContext* _pCo
 	return S_OK;
 }
 
-HRESULT CMeshParts::Ready_Material(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
+HRESULT CMeshParts::Ready_Material()
 {
 	m_iNumMaterials = m_Model.iNumMaterials;
 
@@ -375,7 +400,7 @@ HRESULT CMeshParts::Ready_Material(ID3D11Device* _pDevice, ID3D11DeviceContext* 
 					continue;
 			}
 
-			MeshMaterial.pMtrlTexture[j] = CTexture::Create(_pDevice, _pContext,
+			MeshMaterial.pMtrlTexture[j] = CTexture::Create(m_pDevice, m_pContext,
 				m_MaterialDatas[i].MaterialTexture[j].szTexPath, 1);
 
 			if (nullptr == MeshMaterial.pMtrlTexture[j])
@@ -442,11 +467,11 @@ void CMeshParts::Release_FileDatas()
 }
 
 CMeshParts* CMeshParts::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, 
-	const wstring& _wstrMeshPartsFilePath, const CModel::BONES& _Bones)
+	const wstring& _wstrMeshPartsFilePath, const wstring& _wstrMeshPartsTag)
 {
-	CMeshParts* pInstance = new CMeshParts();
+	CMeshParts* pInstance = new CMeshParts(_pDevice, _pContext);
 
-	if (FAILED(pInstance->Initialize(_pDevice, _pContext, _wstrMeshPartsFilePath, _Bones)))
+	if (FAILED(pInstance->Initialize_Prototype(_wstrMeshPartsFilePath, _wstrMeshPartsTag)))
 	{
 		MSG_BOX("Failed to Created CMeshParts");
 		Safe_Release(pInstance);
@@ -454,8 +479,23 @@ CMeshParts* CMeshParts::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pCo
 	return pInstance;
 }
 
+CMeshParts* CMeshParts::Clone(void* _pArg)
+{
+	CMeshParts* pInstance = new CMeshParts(*this);
+
+	if (FAILED(pInstance->Initialize(_pArg)))
+	{
+		MSG_BOX("Failed to Cloned CMeshParts");
+		Safe_Release(pInstance);
+	}
+	return pInstance;
+	return nullptr;
+}
+
 void CMeshParts::Free()
 {
+	__super::Free();
+
 	if (false == m_isCloned)
 	{
 		Release_FileDatas();
