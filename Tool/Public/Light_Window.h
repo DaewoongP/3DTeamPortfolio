@@ -17,7 +17,7 @@ public:
 
 
 
-private:
+public:
 	static CLight_Window* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, ImVec2 vWindowPos, ImVec2 vWindowSize);
 	virtual void Free() override;
 };
