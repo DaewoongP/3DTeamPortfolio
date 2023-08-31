@@ -14,8 +14,10 @@ HRESULT CLayer::Add_GameObjects(const _tchar* pGameObjectTag, CGameObject* pGame
 		MSG_BOX("GameObject Tag is Already Used");
 		return E_FAIL;
 	}
+
+	pGameObject->Set_Tag(pGameObjectTag);
 	
-	m_GameObjects.emplace(pGameObjectTag, pGameObject);
+	m_GameObjects.emplace(pGameObject->Get_Tag(), pGameObject);
 
 	return S_OK;
 }

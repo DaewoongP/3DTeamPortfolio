@@ -32,7 +32,9 @@ HRESULT CObject_Manager::Add_Prototype(const _tchar* pPrototypeTag, CGameObject*
 		return E_FAIL;
 	}
 
-	m_Prototypes.emplace(pPrototypeTag, pPrototype);
+	pPrototype->Set_PrototypeTag(pPrototypeTag);
+
+	m_Prototypes.emplace(pPrototype->Get_PrototypeTag(), pPrototype);
 	
 	return S_OK;
 }

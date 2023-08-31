@@ -12,7 +12,11 @@ protected:
 	virtual ~CGameObject() = default;
 
 public:
-	const CTransform* Get_Transform() const { return m_pTransform; }
+	void Set_Tag(const _tchar * pTag) { lstrcpy(m_pTag, pTag); }
+	void Set_PrototypeTag(const _tchar * pPrototypeTag) { lstrcpy(m_pPrototypeTag, pPrototypeTag); }
+	const _tchar* Get_PrototypeTag() const { return m_pPrototypeTag; }
+	const _tchar* Get_Tag() const { return m_pTag; }
+	CTransform* Get_Transform() const { return m_pTransform; }
 
 public:
 	virtual HRESULT Initialize_Prototype();
@@ -29,6 +33,7 @@ protected:
 	CTransform*		m_pTransform = { nullptr };
 
 protected:
+	_tchar			m_pPrototypeTag[MAX_STR] = TEXT("");
 	_tchar			m_pTag[MAX_STR] = TEXT("");
 
 public:

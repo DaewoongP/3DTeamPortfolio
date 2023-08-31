@@ -18,6 +18,9 @@ using namespace Tool;
 #include "imgui_impl_win32.h"
 #include "imgui_impl_dx11.h"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 //--------------------------------------------------Macro
 #define            BEGININSTANCE                    CGameInstance* pGameInstance = CGameInstance::GetInstance();        \
 													Safe_AddRef(pGameInstance);
