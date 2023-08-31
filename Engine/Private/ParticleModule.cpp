@@ -9,7 +9,7 @@ CParticleModule::CParticleModule(const CParticleModule& _rhs)
 {
 }
 
-HRESULT CParticleModule::Initialize_Prototype(const _tchar* _pFilePath)
+HRESULT CParticleModule::Initialize_Prototype()
 {
 	return S_OK;
 }

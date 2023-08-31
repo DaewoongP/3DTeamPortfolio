@@ -95,6 +95,7 @@ namespace Engine
 		_float4x4* pTargetMatrix;
 	}OFFSETCAMERADESC;
 
+	//º¸·ù
 	typedef struct ENGINE_DLL tagActionCameraDesc
 	{
 		_float fDuration;

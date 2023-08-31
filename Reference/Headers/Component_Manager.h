@@ -19,6 +19,7 @@
 #include "Animation.h"
 #include "Transform.h"
 #include "Decorator.h"
+#include "MeshParts.h"
 #include "Navigation.h"
 #include "BlackBoard.h"
 #include "CustomModel.h"
