@@ -103,9 +103,6 @@
     <Filter Include="01. Utility\03. Components\09. Collider\Bounding\AABB">
       <UniqueIdentifier>{60d15ea4-4262-47dc-bcc0-e01f89e5afa0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\03. Components\09. Collider\Bounding\Sphere">
-      <UniqueIdentifier>{9ef1f8a7-57da-450b-8888-f477bbda2889}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Utility\03. Components\09. Collider\Bounding\OBB">
       <UniqueIdentifier>{2f3f1b59-0574-44a6-b67d-a8a43c3321fc}</UniqueIdentifier>
     </Filter>
@@ -250,6 +247,9 @@
     <Filter Include="01. Utility\03. Components\15. CustomModel\MeshParts">
       <UniqueIdentifier>{03be6e6b-609c-44dc-921c-7f8675822f53}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\03. Components\09. Collider\Bounding\OBB\Sphere">
+      <UniqueIdentifier>{9ef1f8a7-57da-450b-8888-f477bbda2889}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -373,7 +373,7 @@
       <Filter>01. Utility\03. Components\09. Collider\Bounding</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Bounding_Sphere.h">
-      <Filter>01. Utility\03. Components\09. Collider\Bounding\Sphere</Filter>
+      <Filter>01. Utility\03. Components\09. Collider\Bounding\OBB\Sphere</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\DebugDraw.h">
       <Filter>01. Utility\03. Components\09. Collider\Bounding\DebugDraw</Filter>
@@ -624,7 +624,7 @@
       <Filter>01. Utility\03. Components\09. Collider\Bounding</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Bounding_Sphere.cpp">
-      <Filter>01. Utility\03. Components\09. Collider\Bounding\Sphere</Filter>
+      <Filter>01. Utility\03. Components\09. Collider\Bounding\OBB\Sphere</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\DebugDraw.cpp">
       <Filter>01. Utility\03. Components\09. Collider\Bounding\DebugDraw</Filter>

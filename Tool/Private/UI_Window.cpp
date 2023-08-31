@@ -219,7 +219,6 @@ void CUI_Window::Open_File_Path_Tree(UI_Tree* pTree)
 		{
 			Create_UI(pTree);
 		}
-
 	}
 }
 

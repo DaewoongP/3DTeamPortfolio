@@ -1,5 +1,12 @@
 #pragma once
 
+/* =============================================== */
+// 
+//	정 : 전대인
+//	부 :
+//
+/* =============================================== */
+
 #include "Component.h"
 #include "VIBuffer_Point_Color_Instance.h"
 BEGIN(Engine)

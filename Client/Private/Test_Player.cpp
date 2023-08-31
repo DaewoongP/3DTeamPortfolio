@@ -163,11 +163,11 @@ HRESULT CTest_Player::Add_Components()
 		return E_FAIL;
 	}
 	/* For.Prototype_Component_MeshParts_Arm */
-	if (FAILED(m_pModelCom->Add_MeshParts(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Arm"), CCustomModel::ARM)))
+	/*if (FAILED(m_pModelCom->Add_MeshParts(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Arm"), CCustomModel::ARM)))
 	{
 		MSG_BOX("[CTest_Player] Failed Add_MeshParts");
 		return E_FAIL;
-	}
+	}*/
 	/* For.Prototype_Component_MeshParts_Up */
 	if (FAILED(m_pModelCom->Add_MeshParts(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Up"), CCustomModel::UPPERBODY)))
 	{
