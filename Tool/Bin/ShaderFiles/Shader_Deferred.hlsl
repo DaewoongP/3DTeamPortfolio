@@ -13,6 +13,8 @@ texture2D g_DiffuseTexture;
 texture2D g_ShadeTexture;
 texture2D g_DepthTexture;
 texture2D g_SpecularTexture;
+texture2D g_SSAOTexture;
+texture2D g_BlurTexture;
 
 vector g_vLightDir;
 vector g_vLightPos;
@@ -317,11 +319,15 @@ PS_OUT PS_MAIN_DEFERRED(PS_IN In)
     PS_OUT Out = (PS_OUT) 0;
 
     vector vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+   
+    vector vBlur = g_BlurTexture.Sample(LinearSampler, In.vTexUV);
     
     if (0.f == vDiffuse.a)
         discard;
     
-    Out.vColor = vDiffuse;
+   
+    
+    Out.vColor = vDiffuse * vBlur;
     
     return Out;
 }

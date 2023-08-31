@@ -96,6 +96,34 @@ HRESULT CTest_Player::Render()
 	return S_OK;
 }
 
+HRESULT CTest_Player::Render_Depth()
+{
+	/*if (FAILED(__super::Render_Depth()))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
+		return E_FAIL;
+
+
+	
+
+	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+	for (_uint i = 0; i < iNumMeshes; ++i)
+	{
+		m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", i);
+
+		m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", i, DIFFUSE);
+		m_pModelCom->Bind_Material(m_pShaderCom, "g_NormalTexture", i, NORMALS);
+
+		m_pShaderCom->Begin("AnimMesh");
+
+		m_pModelCom->Render(i);
+	}*/
+
+	return S_OK;
+}
+
 HRESULT CTest_Player::Add_Components()
 {
 	/* Com_Renderer */
