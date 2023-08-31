@@ -71,8 +71,6 @@ KEYFRAME* CNotify::Find_Frame(_uint iFindFrame)
 		return nullptr;
 	}
 	return (iter->second);
-
-	return nullptr;
 }
 
 const _tchar* CNotify::Find_Frame_Key(_uint iFindFrame)
@@ -86,6 +84,31 @@ const _tchar* CNotify::Find_Frame_Key(_uint iFindFrame)
 		return nullptr;
 	}
 	return (iter)->first.c_str();
+}
+
+void CNotify::Delete_Frame(_uint iFindFrame)
+{
+	_uint iCurrentIndex = 0;
+	auto iter = find_if(m_KeyFrames.begin(), m_KeyFrames.end(), [&](auto pValue) {
+		return ((iCurrentIndex++) == iFindFrame);
+		});
+	if (iter == m_KeyFrames.end())
+	{
+		return;
+	}
+	m_KeyFrames.erase(iter);
+}
+
+void CNotify::Edit_Frame(_uint iFindFrame, KEYFRAME::KEYFRAMETYPE eFrameType, _float fActionTime, _float fSpeed)
+{
+	KEYFRAME* pKeyFrame = Find_Frame(iFindFrame);
+
+	pKeyFrame->eKeyFrameType = eFrameType;
+	pKeyFrame->fTime = fActionTime;
+	if (eFrameType == KEYFRAME::KF_SPEED)
+	{
+		static_cast<SPEEDFRAME*>(pKeyFrame)->fSpeed = fSpeed;
+	}
 }
 
 KEYFRAME* CNotify::Find_Frame(const wchar_t* wszKeyFrameTag)

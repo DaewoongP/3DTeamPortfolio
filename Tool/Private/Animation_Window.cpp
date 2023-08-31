@@ -26,6 +26,7 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 
 	Create_Dummy_Button();
 	OpenFile_Button();
+	Select_Model();
 	AddModel_Button();
 
 	if (m_pDummyObject == nullptr)
@@ -53,6 +54,13 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 	Notify_InputFileds(szNotifyName,&eNotifyKeyFrameType,&fNotifyActionTime,&fNotifySpeed);
 	Add_Notify_Button(szNotifyName, pDummyModel, &eNotifyKeyFrameType, &fNotifyActionTime, &fNotifySpeed);
 	
+	if (ImGui::Button("Edit##Notify"))
+	{
+		//현재 선택된 노티파이 수정 만들어줘야함.
+		CNotify* pNotify = pDummyModel->Get_Animation()->Get_Notify_Point();
+		pNotify->Edit_Frame(m_iSelectedNotifyIndex, eNotifyKeyFrameType, fNotifyActionTime, fNotifySpeed);
+	}
+
 	_uint iMaxNotifyCount = pDummyModel->Get_Animation()->Get_Notify_Point()->Get_NotifyFrameCount();
 	for (_uint iNotifyCount = 0; iNotifyCount < iMaxNotifyCount; iNotifyCount++)
 	{
@@ -101,9 +109,12 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 			ImGui::SameLine();  ImGui::Text(szSpeedMessage);
 		}
 		//ImGui::SameLine();
-		if (ImGui::Button("Delete"))
+		_char szDeleteButtonName[MAX_PATH] = "Delete##";
+		sprintf_s(szDeleteButtonName, "%s,%d", szDeleteButtonName, iNotifyCount);
+		if (ImGui::Button(szDeleteButtonName))
 		{
-			_int a = 0;
+			//노티파이 삭제 만들어줘야함.
+			pNotify->Delete_Frame(iNotifyCount);
 		}
 	}
 	// 모든 오브젝트 tick render latetick 꺼주기
@@ -170,18 +181,30 @@ void CAnimation_Window::OpenFile_Button()
 			_splitpath_s(strFilePathName.c_str(), nullptr, 0, nullptr, 0, fileName, MAX_PATH, nullptr, 0);
 
 			_tchar wszfilePath[MAX_PATH] = {};
+			_tchar wszfileName[MAX_PATH] = {};
 			CharToWChar(strFilePathName.c_str(), wszfilePath);
+			CharToWChar(fileName, wszfileName);
+			_tchar wszModelTag[MAX_PATH] = TEXT("Prototype_Component_Model_");
+			char szModelTag[MAX_PATH] = {};
+			lstrcat(wszModelTag, wszfileName);
+			WCharToChar(wszModelTag, szModelTag);
+
+			//모델이름 저장
+			m_vecModelList_t.push_back(wszModelTag);
+			m_vecModelList.push_back(szModelTag);
+
 			_float4x4 PivotMatrix = XMMatrixIdentity();
 			PivotMatrix = XMMatrixIdentity();
 			CGameInstance* pGameInstance = CGameInstance::GetInstance();
 			Safe_AddRef(pGameInstance);
-			if (FAILED(pGameInstance->Add_Prototype_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_Dummy01"),
+			if (FAILED(pGameInstance->Add_Prototype_Component(LEVEL_TOOL, m_vecModelList_t[m_iMaxModelIndex].c_str(),
 				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, wszfilePath, PivotMatrix))))
 				//return;
 			{
 
 			}
 			Safe_Release(pGameInstance);
+			m_iMaxModelIndex++;
 		}
 		ImGuiFileDialog::Instance()->Close();
 	}
@@ -192,7 +215,7 @@ void CAnimation_Window::AddModel_Button()
 	if (ImGui::Button("AddModelToDummy"))
 	{
 		//선택된 모델을 읽어오도록 만들어줘야함.
-		m_pDummyObject->Add_Model_Component(TEXT("Prototype_Component_Model_Dummy01"));
+		m_pDummyObject->Add_Model_Component(m_vecModelList_t[m_iModelIndex].c_str());
 		m_pDummyObject->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxAnimMesh"));
 	}
 }
@@ -271,6 +294,15 @@ void CAnimation_Window::Add_Notify_Button(_char* szNotifyName, CModel* pDummyMod
 		{
 		}
 	}
+}
+
+void CAnimation_Window::Edit_Notify_Button()
+{
+}
+
+void CAnimation_Window::Select_Model()
+{
+	ImGui::ListBox("AnimModelList", &m_iModelIndex, VectorGetter, static_cast<void*>(&m_vecModelList), (_int)m_vecModelList.size(), 15);
 }
 
 CAnimation_Window* CAnimation_Window::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, ImVec2 vWindowPos, ImVec2 vWindowSize)
