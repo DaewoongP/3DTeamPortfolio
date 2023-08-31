@@ -189,8 +189,7 @@ void CCamera_Manager::Play_CutScene(_float _TimeDelta)
 		//러프 비율
 		_float fRatio =
 			m_fCutSceneTimeAcc /
-			(m_CutSceneCameraDescs.front().fDuration -
-				m_PreviousCutSceneCameraDesc.fDuration);
+			m_CutSceneCameraDescs.front().fDuration;
 
 		_float4 vEye =
 			XMVectorLerp
@@ -229,9 +228,9 @@ void CCamera_Manager::Play_CutScene(_float _TimeDelta)
 	m_pPipeLine->Set_Transform(CPipeLine::D3DTS_VIEW, m_ViewMatrix);
 
 	//큐의 앞 원소의 듀레이션이 시간 누적치 보다 작다면
-	if ((m_PreviousCutSceneCameraDesc.fDuration + m_fCutSceneTimeAcc)
+	if (m_fCutSceneTimeAcc
 		<=
-		(m_CutSceneCameraDescs.front().fDuration))
+		m_CutSceneCameraDescs.front().fDuration)
 	{
 		//누적치 초기화
 		m_fCutSceneTimeAcc = 0.0f;
@@ -261,8 +260,7 @@ void CCamera_Manager::Play_OffSetCamera(_float _TimeDelta)
 		//러프 비율
 		_float fRatio =
 			m_fCutSceneTimeAcc /
-			(m_OffSetCameraDescs.front().fDuration -
-				m_PreviousOffSetCameraDesc.fDuration);
+			m_OffSetCameraDescs.front().fDuration;
 
 		_float4 vEye =
 			XMVectorLerp
@@ -295,9 +293,9 @@ void CCamera_Manager::Play_OffSetCamera(_float _TimeDelta)
 	m_pPipeLine->Set_Transform(CPipeLine::D3DTS_VIEW, m_ViewMatrix);
 
 	//큐의 앞 원소의 듀레이션이 시간 누적치 보다 작다면
-	if ((m_PreviousOffSetCameraDesc.fDuration + m_fOffSetTimeAcc)
+	if (m_fOffSetTimeAcc
 		<=
-		(m_OffSetCameraDescs.front().fDuration))
+		m_OffSetCameraDescs.front().fDuration)
 	{
 		//누적치 초기화
 		m_fOffSetTimeAcc = 0.0f;

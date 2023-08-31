@@ -1,6 +1,6 @@
 #pragma once
 #include "ImWindow.h"
-#include "MainModule.h"
+#include "CCutScene_Camera_Tool.h"
 
 BEGIN(Tool)
 
@@ -14,6 +14,20 @@ public:
 	virtual HRESULT Initialize(ImVec2 _vWindowPos, ImVec2 _vWindowSize) override;
 	virtual void Tick(_float _fTimeDelta) override;
 	virtual HRESULT Render() override;
+
+
+
+
+
+
+
+
+private:
+	CCutScene_Camera_Tool* m_pCutSceneCameraTool;
+
+private:
+
+
 
 private:
 public:

@@ -13,16 +13,18 @@ HRESULT CCamera_Window::Initialize(ImVec2 _vWindowPos, ImVec2 _vWindowSize)
 
 	m_WindowFlag = ImGuiWindowFlags_NoResize;
 
+	m_pCutSceneCameraTool = CCutScene_Camera_Tool::Create(m_pDevice, m_pContext);
+
 	return S_OK;
 }
 
 void CCamera_Window::Tick(_float _fTimeDelta)
 {
 	__super::Tick(_fTimeDelta);
-	ImGui::Begin("Effect", nullptr, m_WindowFlag);
+	ImGui::Begin("Camera", nullptr, m_WindowFlag);
 	BEGININSTANCE;
 
-	
+	m_pCutSceneCameraTool->Tick(_fTimeDelta);
 	
 	ENDINSTANCE;
 	ImGui::End();
@@ -50,5 +52,8 @@ CCamera_Window* CCamera_Window::Create(ID3D11Device* _pDevice, ID3D11DeviceConte
 void CCamera_Window::Free(void)
 {
 	__super::Free();
+
+	Safe_Release(m_pCutSceneCameraTool);
+	
 
 }

@@ -27,7 +27,7 @@ protected:
 	ID3D11DeviceContext*	m_pContext = { nullptr };
 
 public:
-	virtual void Free(void) override;
+	virtual void Free(void);
 };
 
 END

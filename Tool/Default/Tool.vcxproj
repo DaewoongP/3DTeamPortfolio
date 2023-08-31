@@ -166,6 +166,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Camera_Window.h" />
+    <ClInclude Include="..\Public\CCamera_Point.h" />
+    <ClInclude Include="..\public\CCutScene_Camera_Tool.h" />
+    <ClInclude Include="..\public\CMain_Camera.h" />
     <ClInclude Include="..\Public\UI_Window.h" />
     <ClInclude Include="..\public\DummyParticle.h" />
     <ClInclude Include="..\Public\Animation_Window.h" />
@@ -199,6 +202,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Camera_Window.cpp" />
+    <ClCompile Include="..\Private\CCamera_Point.cpp" />
+    <ClCompile Include="..\private\CCutScene_Camera_Tool.cpp" />
+    <ClCompile Include="..\private\CMain_Camera.cpp" />
     <ClCompile Include="..\Private\UI_Window.cpp" />
     <ClCompile Include="..\private\DummyParticle.cpp" />
     <ClCompile Include="..\Private\Animation_Window.cpp" />
