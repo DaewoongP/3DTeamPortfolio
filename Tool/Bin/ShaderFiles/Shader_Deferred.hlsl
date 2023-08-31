@@ -320,12 +320,12 @@ PS_OUT PS_MAIN_DEFERRED(PS_IN In)
 
     vector vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
     vector vSSAO = g_SSAOTexture.Sample(LinearSampler, In.vTexUV);
-    
+   // vector vBlur = g_BlurTexture.Sample(LinearSampler, In.vTexUV);
     
     if (0.f == vDiffuse.a)
         discard;
     
-    Out.vColor = vDiffuse*vSSAO;
+    Out.vColor = vDiffuse * vSSAO;// * vBlur;
     
     return Out;
 }

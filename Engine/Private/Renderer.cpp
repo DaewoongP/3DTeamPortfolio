@@ -59,9 +59,9 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_SSAO"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
-	/*if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
+	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_Blur"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
-		return E_FAIL;*/
+		return E_FAIL;
 
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Diffuse"))))
 		return E_FAIL;
@@ -81,8 +81,8 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_SSAO"), TEXT("Target_SSAO"))))
 		return E_FAIL;
-	/*if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Blur"), TEXT("Target_Blur"))))
-		return E_FAIL;*/
+	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Blur"), TEXT("Target_Blur"))))
+		return E_FAIL;
 
 
 	if (FAILED(Add_Components()))
@@ -109,8 +109,8 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_SSAO"), 80.f, 560.f, 160.f, 160.f)))
 		return E_FAIL;
-	/*if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Blur"), 240.f, 560.f, 160.f, 160.f)))
-		return E_FAIL;*/
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Blur"), 240.f, 560.f, 160.f, 160.f)))
+		return E_FAIL;
 	/*if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_PostProcessing"), 240.f, 560.f, 160.f, 160.f)))
 		return E_FAIL;*/
 	
@@ -159,9 +159,13 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 	if (FAILED(Render_Shadow()))
 		return E_FAIL;
-	
+	if (FAILED(Render_SSAO()))
+		return E_FAIL;
+	if (FAILED(Render_Blur()))
+		return E_FAIL;
 	if (FAILED(Render_Deferred()))
 		return E_FAIL;
+	
 	if (FAILED(Render_NonLight()))
 		return E_FAIL;
 	if (FAILED(Render_Blend()))
@@ -169,11 +173,9 @@ HRESULT CRenderer::Draw_RenderGroup()
 
 	if (FAILED(m_pRenderTarget_Manager->End_PostProcessingRenderTarget(m_pContext)))
 		return E_FAIL;
-	if (FAILED(Render_SSAO()))
-		return E_FAIL;
-	/*if (FAILED(RendeR_Blur()))
-		return E_FAIL;*/
-		if (FAILED(Render_PostProcessing()))
+	
+	
+	if (FAILED(Render_PostProcessing()))
 		return E_FAIL;
 	
 	if (FAILED(Render_UI()))
@@ -222,6 +224,21 @@ HRESULT CRenderer::Render_NonBlend()
 {
 	if (nullptr == m_pRenderTarget_Manager)
 		return E_FAIL;
+
+	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Shadow_Depth"))))
+		return E_FAIL;
+
+	for (auto& pGameObject : m_RenderObjects[RENDER_NONBLEND])
+	{
+
+		if (nullptr != pGameObject)
+			pGameObject->Render_Depth();
+	}
+
+
+	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext)))
+		return E_FAIL;
+
 
 	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_GameObjects"))))
 		return E_FAIL;
@@ -435,14 +452,16 @@ HRESULT CRenderer::Render_Blend()
 	return S_OK;
 }
 
-HRESULT CRenderer::RendeR_Blur()
+HRESULT CRenderer::Render_Blur()
 {
 	if (nullptr == m_pRenderTarget_Manager)
 		return E_FAIL;
 
-	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_SSAO"))))
+	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Blur"))))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_SSAO"), m_pShadeTypeShader, "g_SSAOTexture")))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Blur"), m_pShadeTypeShader, "g_BlurTexture")))
 		return E_FAIL;
 
 	if (FAILED(m_pShadeTypeShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
@@ -558,13 +577,7 @@ HRESULT CRenderer::Add_Components()
 	if (nullptr == m_pPostProcessingBuffer)
 		return E_FAIL;
 
-	m_pShadeTypeShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Type.hlsl"), VTXPOSNORTEX_DECL::Elements, VTXPOSNORTEX_DECL::iNumElements);
-	if (nullptr == m_pShadeTypeShader)
-		return E_FAIL;
-
-	m_pShadeTypeBuffer = CVIBuffer_Rect::Create(m_pDevice, m_pContext);
-	if (nullptr == m_pShadeTypeBuffer)
-		return E_FAIL;
+	
 
 	m_pSSAOShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_SSAO.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements);
 	if (nullptr == m_pSSAOShader)
@@ -574,6 +587,13 @@ HRESULT CRenderer::Add_Components()
 	if (nullptr == m_pSSAOBuffer)
 		return E_FAIL;
 
+	m_pShadeTypeShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Type.hlsl"), VTXPOSNORTEX_DECL::Elements, VTXPOSNORTEX_DECL::iNumElements);
+	if (nullptr == m_pShadeTypeShader)
+		return E_FAIL;
+
+	m_pShadeTypeBuffer = CVIBuffer_Rect::Create(m_pDevice, m_pContext);
+	if (nullptr == m_pShadeTypeBuffer)
+		return E_FAIL;
 
 	return S_OK;
 }

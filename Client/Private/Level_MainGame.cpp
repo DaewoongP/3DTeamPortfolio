@@ -11,7 +11,7 @@ HRESULT CLevel_MainGame::Initialize()
 	if (FAILED(__super::Initialize()))
 		return E_FAIL;
 
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	/*CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
 	CLight::LIGHTDESC		LightDesc;
@@ -26,7 +26,7 @@ HRESULT CLevel_MainGame::Initialize()
 
 	if (FAILED(pGameInstance->Add_Lights(LightDesc)))
 		return E_FAIL;
-	ENDINSTANCE
+	ENDINSTANCE*/
 
 
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))

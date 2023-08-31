@@ -33,7 +33,7 @@ private:
 	HRESULT Render_Deferred();
 	HRESULT Render_NonLight();
 	HRESULT Render_Blend();
-	HRESULT RendeR_Blur();
+	HRESULT Render_Blur();
 	HRESULT Render_PostProcessing();
 	HRESULT Render_UI();
 

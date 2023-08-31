@@ -4,7 +4,7 @@ matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 texture2D g_PostProcessingTexture;
 //SSAO
 float g_fRadius = 0.00001f;
-float g_fFar = 5000.f;
+float g_fFar = 100.f;
 float g_fFalloff = 0.000002f;
 float g_fStrength = 0.0007f;
 float g_fTotStrength = 1.38f;
@@ -29,12 +29,7 @@ float3 g_vRandom[13];
 //};
 
 
-// 가우시안 필터 1차원 배열형태
-float BlurWeights[23] =
-{
-    0.0011, 0.0123, 0.0561, 0.1353, 0.278, 0.3001, 0.4868, 0.6666, 0.7261, 0.8712, 0.9231,
-    0.9986, 0.9231, 0.8712, 0.7261, 0.6666, 0.4868, 0.3001, 0.278, 0.1353, 0.0561, 0.0123, 0.0011
-};
+
 
 
 /* Sampler State */
@@ -167,8 +162,8 @@ PS_OUT PS_MAIN(PS_IN In)
     }
        vNormalDesc = normalize(vNormalDesc * 2.f - 1.f);
     //vector vNormal = vector(vNormalDesc.xyz * 2.f - 1.f, 0.f);
-        float fViewZ = vDepthDesc.r * g_fFar; //(카메라 far 넣어주면댐)
-        float vDepth = vDepthDesc.g * g_fFar * fViewZ; // Retrieve the depth value and convert to world space
+        float fViewZ = vDepthDesc.r * g_fFar; //뷰포트에서의 깊이
+        float vDepth = vDepthDesc.g * g_fFar * fViewZ; // 월드에서의 실제깊이
     
         float3 vRay;
         float3 vReflect;
