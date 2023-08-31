@@ -15,7 +15,7 @@ CMesh::CMesh(const CMesh& rhs)
 	lstrcpy(m_szName, rhs.m_szName);
 }
 
-void CMesh::Get_Matrices(CModel::BONES Bones, _float4x4* pMatrices, _float4x4 PivotMatrix)
+void CMesh::Get_Matrices(CModel::BONES Bones, _Inout_ _float4x4* pMatrices, _float4x4 PivotMatrix)
 {
 	_uint		iIndex = 0;
 

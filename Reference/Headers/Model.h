@@ -38,7 +38,7 @@ public:
 	// Lerp를 진행하지 않고 해당 애니메이션 초기상태로 바로 세팅한다.
 	void	Reset_Animation(_uint iAnimIndex);
 	void	Play_Animation(_float fTimeDelta);
-	HRESULT Find_BoneIndex(const _tchar* pBoneName, _uint* iIndex);
+	HRESULT Find_BoneIndex(const _tchar* pBoneName, _Inout_ _uint* iIndex);
 
 public:
 	HRESULT Bind_Material(class CShader* pShader, const char* pConstantName, _uint iMeshIndex, Engine::TextureType MaterialType);
