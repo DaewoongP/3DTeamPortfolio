@@ -97,8 +97,7 @@ void CQuadTree::Culling(CFrustum * pFrustum, const _float3 * pVerticesPos, _uint
 		{
 			if (nullptr != m_pNeighbors[i])
 				isDraw[i] = m_pNeighbors[i]->isDraw(pVerticesPos);
-		}
-		
+		}		
 		
 		_uint		iIndices[4] = {
 			m_iCorners[CORNER_LT],

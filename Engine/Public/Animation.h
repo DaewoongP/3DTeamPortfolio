@@ -3,7 +3,7 @@
 
 BEGIN(Engine)
 
-class CAnimation final : public CBase
+class ENGINE_DLL CAnimation final : public CBase
 {
 private:
 	explicit CAnimation();
@@ -17,6 +17,13 @@ public:
 	_uint Get_AnimationFrames() { return m_iAnimationFrames; }
 	// 채널 중 키프레임 최대치 기준, **현재 애니메이션의 프레임 반환**
 	_uint Get_CurrentAnimationFrame() { return m_ChannelCurrentKeyFrames[m_iMaxFrameChannelIndex]; }
+	_bool Get_Paused_State() { return m_isPaused; }
+	_float Get_Ratio_Accumulation_Duration() { return(m_fTimeAcc /m_fDuration); }
+	_float Get_Accmulation() { return m_fTimeAcc; }
+	_float Get_Duration() { return m_fDuration; }
+	_float* Get_Accmulation_Pointer() { return &m_fTimeAcc; }
+	class CNotify* Get_Notify_Point() { return m_pNotify; }
+
 	void Set_CurrentKeyFrameIndex(CModel::BONES& Bones, _uint iKeyFrameIndex);
 	void Set_Pause(_bool isPause) { m_isPaused = isPause; }
 	void Set_TickPerSecond(_float fMultiply)
@@ -40,14 +47,12 @@ public:
 	
 	//주로 겜오브제 이니셜라이즈에서 사용할 키프레임 찾아서 가져오는 함수.
 	NOTIFYFRAME* Find_NotifyFrame(const _tchar* wszNotifyTag);
-	SOUNDFRAME* Find_SoundFrame(const _tchar* wszSoundTag);
-
+	SOUNDFRAME*  Find_SoundFrame(const _tchar* wszSoundTag);
+	HRESULT		 Add_NotifyFrame(KEYFRAME::KEYFRAMETYPE eFrameType, wchar_t* wszNotifyTag, _float fActionTime, _float fSpeed = 0);
 
 public:
 	HRESULT Initialize(Engine::ANIMATION Animation, const CModel::BONES& Bones);
 	void Invalidate_TransformationMatrix(CModel::BONES& Bones, _float fTimeDelta);
-	void Invalidate_Speed(_float fTimeDelta);
-	void Invalidate_Notify(_float fTimeDelta);
 	void Invalidate_Frame(_float fTimeDelta);
 private:
 	_tchar						m_szName[MAX_STR] = TEXT("");
@@ -56,9 +61,11 @@ private:
 	// 채널을 담고있는 벡터 컨테이너
 	vector<class CChannel*>		m_Channels;
 	// 노티파이(알람,사운드,충돌체,파티클,속도 재생용 채널 컨테이너)
-	class CNotify*				m_Notify;
+	class CNotify*				m_pNotify = {nullptr};
 	// 각 채널의 현재 키프레임 인덱스
 	vector<_uint>				m_ChannelCurrentKeyFrames;
+	// 노티파이의 현재 키프레임 인덱스
+	_uint						m_iNotifyCurrentKeyFrame;
 
 	_float						m_fDuration = { 0.f };
 	_float						m_fOriginTickPerSecond = { 0.f };

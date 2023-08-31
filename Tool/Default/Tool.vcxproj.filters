@@ -61,6 +61,12 @@
     <Filter Include="02. ToolObjects\Dummy_UI">
       <UniqueIdentifier>{c00841da-60c8-4a06-8085-e61201453246}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. ToolObjects\01. Dummy\MapDummy">
+      <UniqueIdentifier>{a4baf458-dc0d-43c6-8d7d-f8bbed6e8418}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. ToolObjects\04. MapObject">
+      <UniqueIdentifier>{acfec862-2a8b-4247-b8d7-d1fb72b2b96b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tool.h">
@@ -159,6 +165,12 @@
     <ClInclude Include="..\Public\Dummy_UI.h">
       <Filter>02. ToolObjects\Dummy_UI</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\MapDummy.h">
+      <Filter>02. ToolObjects\01. Dummy\MapDummy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MapObject.h">
+      <Filter>02. ToolObjects\04. MapObject</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -243,6 +255,12 @@
     <ClCompile Include="..\Private\Dummy_UI.cpp">
       <Filter>02. ToolObjects\Dummy_UI</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\MapDummy.cpp">
+      <Filter>02. ToolObjects\01. Dummy\MapDummy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MapObject.cpp">
+      <Filter>02. ToolObjects\04. MapObject</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Bin\ShaderFiles\Shader_Tool_Defines.hlsli">
@@ -260,6 +278,15 @@
       <Filter>97. ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTex.hlsl">
+      <Filter>97. ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMesh.hlsl">
+      <Filter>97. ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxMesh.hlsl">
+      <Filter>97. ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointColInstance.hlsl">
       <Filter>97. ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>
