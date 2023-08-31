@@ -122,7 +122,6 @@ HRESULT CAnimation::Initialize(Engine::ANIMATION Animation, const CModel::BONES&
 
 	//노티파이를 생성해줍니다.
 	m_pNotify = CNotify::Create();
-
 	return S_OK;
 }
 

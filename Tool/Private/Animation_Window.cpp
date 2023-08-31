@@ -61,8 +61,7 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 		pNotify->Edit_Frame(m_iSelectedNotifyIndex, eNotifyKeyFrameType, fNotifyActionTime, fNotifySpeed);
 	}
 
-	_uint iMaxNotifyCount = pDummyModel->Get_Animation()->Get_Notify_Point()->Get_NotifyFrameCount();
-	for (_uint iNotifyCount = 0; iNotifyCount < iMaxNotifyCount; iNotifyCount++)
+	for (_uint iNotifyCount = 0; iNotifyCount < pDummyModel->Get_Animation()->Get_Notify_Point()->Get_NotifyFrameCount(); iNotifyCount++)
 	{
 		CNotify* pNotify = pDummyModel->Get_Animation()->Get_Notify_Point();
 		_char  szNotifyButtonName[MAX_PATH];
@@ -131,12 +130,13 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 	// 추가 후 정렬해줘야함. << 완
 	// 노티파이용 키프레임 만큼 반복하며 버튼을 생성 << 완 
 	// 버튼을 누르면 버튼의 정보(시간, 타입, 뭐) 보여줌 << 완
-	// 이미 생성된 노티파이를 수정할 수 있어야함.
-	// 키프레임 삭제 넣어줘야함.
+	// 이미 생성된 노티파이를 수정할 수 있어야함. << 완
+	// 키프레임 삭제 넣어줘야함. << 완
 	// 버튼의 색상을 이넘 타입에 따라 변경 << 완
 	// 노티파이 만들기 기능 추가 << 완
 	// 애니메이션 시간 float으로 바꿔서 드래그도 가능하게 << 완
 	// 애니메이션 재생 보여주고 그 애니메이션 재생 시간에 노티파이 추가 가능하게 << 완
+	// 스피드 lerp 써줘서 자연스러운 선형보간을 만들어줘야함.
 	// 콜라이더도 애님 툴에서 생성하고 보여줄수있어야함.
 	// 파티클도 생성ㅇ하고 보여줄 수 있어야함.
 	// 그걸 저장할 수 있어야함.

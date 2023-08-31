@@ -89,4 +89,9 @@ namespace Engine
 		_value = max(_value, _min);
 		_value = min(_value, _max);
 	}
+
+	float Lerp(float fFrom, float fTo, float Alpha)
+	{
+		return fFrom * (1 - Alpha) + fTo * Alpha;
+	}
 }
