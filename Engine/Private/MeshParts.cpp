@@ -39,7 +39,6 @@ void CMeshParts::Get_Matrices(const _uint& _iMeshIndex, CModel::BONES _Bones, _I
 	m_Meshes[_iMeshIndex]->Get_Matrices(_Bones, _pMatrices, _PivotMatrix);
 }
 
-	const wstring& _wstrMeshPartsFilePath, const CModel::BONES& _Bones)
 HRESULT CMeshParts::Initialize_Prototype(const wstring& _wstrMeshPartsFilePath, const wstring& _wstrMeshPartsTag)
 {
 	if (FAILED(Ready_File(_wstrMeshPartsFilePath.c_str())))
