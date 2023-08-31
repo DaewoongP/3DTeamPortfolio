@@ -119,14 +119,6 @@ HRESULT CMainApp::Ready_Prototype_Component_For_Static()
 		return E_FAIL;
 	}
 
-	/* Prototype_Component_PX */
-	/*if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_STATIC, TEXT("Prototype_Component_PX"),
-		CPX::Create(m_pDevice, m_pContext))))
-	{
-		MSG_BOX("Failed Add_Prototype  : (Prototype_Component_PX)");
-		return E_FAIL;
-	}*/
-
 	return S_OK;
 }
 

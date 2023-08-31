@@ -17,9 +17,7 @@ HRESULT CVIBuffer_Line::Initialize_Prototype()
 
 HRESULT CVIBuffer_Line::Initialize(void* pArg)
 {
-	Line_Desc* lines;
-	ZeroMemory(&lines, sizeof lines);
-	lines = reinterpret_cast<Line_Desc*>(pArg);
+	LINEDESC* lines = reinterpret_cast<LINEDESC*>(pArg);
 	if (0 == lines->iNum)
 	{
 		MSG_BOX("Wrong Line Argument");
@@ -27,29 +25,28 @@ HRESULT CVIBuffer_Line::Initialize(void* pArg)
 	}
 
 	m_iNumVertexBuffers = { 1 };
-	m_iStride = { sizeof(VTXPOSTEX) };
+	m_iStride = { sizeof(VTXPOS) };
 	m_iNumVertices = { lines->iNum * 2 };
-	m_iIndexStride = { sizeof(_ushort) };
+	m_iIndexStride = { sizeof(_ulong) };
 	m_iNumIndices = { lines->iNum * 2 };
-	m_eFormat = DXGI_FORMAT_R16_UINT;
+	m_eFormat = DXGI_FORMAT_R32_UINT;
 	m_eTopology = D3D_PRIMITIVE_TOPOLOGY_LINELIST;
 
 	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
 
 	m_BufferDesc.ByteWidth = { m_iStride * m_iNumVertices };
-	m_BufferDesc.Usage = { D3D11_USAGE_DEFAULT };
+	m_BufferDesc.Usage = { D3D11_USAGE_DYNAMIC };
 	m_BufferDesc.BindFlags = { D3D11_BIND_VERTEX_BUFFER };
 	m_BufferDesc.StructureByteStride = { m_iStride };
-	m_BufferDesc.CPUAccessFlags = { 0 };
+	m_BufferDesc.CPUAccessFlags = { D3D11_CPU_ACCESS_WRITE };
 	m_BufferDesc.MiscFlags = { 0 };
 
-	VTXPOSTEX* pVertices = new VTXPOSTEX[m_iNumVertices];
-	ZeroMemory(pVertices, sizeof(VTXPOSTEX) * m_iNumVertices);
+	VTXPOS* pVertices = new VTXPOS[m_iNumVertices];
+	ZeroMemory(pVertices, sizeof(VTXPOS) * m_iNumVertices);
 
 	for (_uint i = 0; i < m_iNumVertices; ++i)
 	{
 		pVertices[i].vPosition = lines->pLines[i];
-		pVertices[i].vTexCoord = _float2(0.f, 0.f);
 	}
 
 	ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
@@ -63,14 +60,14 @@ HRESULT CVIBuffer_Line::Initialize(void* pArg)
 	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
 
 	m_BufferDesc.ByteWidth = { m_iIndexStride * m_iNumIndices };
-	m_BufferDesc.Usage = { D3D11_USAGE_DEFAULT };
+	m_BufferDesc.Usage = { D3D11_USAGE_DYNAMIC };
 	m_BufferDesc.BindFlags = { D3D11_BIND_INDEX_BUFFER };
 	m_BufferDesc.StructureByteStride = { 0 };
-	m_BufferDesc.CPUAccessFlags = { 0 };
+	m_BufferDesc.CPUAccessFlags = { D3D11_CPU_ACCESS_WRITE };
 	m_BufferDesc.MiscFlags = { 0 };
 
-	_ushort* pIndices = new _ushort[m_iNumIndices];
-	ZeroMemory(pIndices, sizeof(_ushort) * m_iNumIndices);
+	_ulong* pIndices = new _ulong[m_iNumIndices];
+	ZeroMemory(pIndices, sizeof(_ulong) * m_iNumIndices);
 
 	for (_uint i = 0; i < m_iNumIndices; ++i)
 	{
@@ -86,6 +83,30 @@ HRESULT CVIBuffer_Line::Initialize(void* pArg)
 	Safe_Delete_Array(pIndices);
 
 	return S_OK;
+}
+
+void CVIBuffer_Line::Tick(LINEDESC LineDesc)
+{
+	D3D11_MAPPED_SUBRESOURCE	MappedSubResource;
+
+	m_pContext->Map(m_pVB, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &MappedSubResource);
+
+	VTXPOS* pVertices = static_cast<VTXPOS*>(MappedSubResource.pData);
+
+	memcpy(pVertices, LineDesc.pLines, sizeof(VTXPOS) * m_iNumVertices);
+
+	m_pContext->Unmap(m_pVB, 0);
+
+	/*m_pContext->Map(m_pIB, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &MappedSubResource);
+
+	_ulong* pIndices = static_cast<_ulong*>(MappedSubResource.pData);
+
+	for (_uint i = 0; i < LineDesc.iNum; ++i)
+	{
+		pIndices[i] = i;
+	}
+
+	m_pContext->Unmap(m_pIB, 0);*/
 }
 
 CVIBuffer_Line* CVIBuffer_Line::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

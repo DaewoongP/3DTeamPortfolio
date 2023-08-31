@@ -241,14 +241,26 @@
     <Filter Include="01. Utility\03. Components\04. Model\Animation\Notify">
       <UniqueIdentifier>{99ae6d76-4b41-4979-a852-21410c894c2c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\03. Components\12. PhysX">
+    <Filter Include="01. Utility\11. Physics">
       <UniqueIdentifier>{a0e4e0fe-93f6-4a35-9aef-87da3b2f96b2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\03. Components\12. PhysX\Allocator">
+    <Filter Include="01. Utility\11. Physics\Allocator">
       <UniqueIdentifier>{d2a1bc2d-eb72-4022-ab0b-2d4358e602e6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\03. Components\12. PhysX\ErrorCallBack">
+    <Filter Include="01. Utility\11. Physics\ErrorCallBack">
       <UniqueIdentifier>{9faf9a61-c854-4028-95e1-f2c591f3abcc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\11. Physics\Manager">
+      <UniqueIdentifier>{c42835f8-4df6-46da-8c82-aa28c770e87f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\14. RigidBody">
+      <UniqueIdentifier>{34a36dc9-7fff-4175-b4ed-7b026eba34fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\15. CharacterController">
+      <UniqueIdentifier>{34e887bf-9249-4cc8-bdf0-670c9df56fa7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\07. VIBuffer\Triangle">
+      <UniqueIdentifier>{a5f8428d-9252-403e-821d-0690fa879d0b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -468,9 +480,6 @@
     <ClInclude Include="..\Public\Sequence.h">
       <Filter>01. Utility\03. Components\10. Behavior\02. Sequence</Filter>
     </ClInclude>
-    <ClInclude Include="..\private\MainModule.h">
-      <Filter>01. Utility\03. Components\11. ParticleSystem\ParticleModule\MainModule</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\ParticleSystem.h">
       <Filter>01. Utility\03. Components\11. ParticleSystem</Filter>
     </ClInclude>
@@ -480,14 +489,11 @@
     <ClInclude Include="..\public\Calculator.h">
       <Filter>01. Utility\10. Calculator</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\PX.h">
-      <Filter>01. Utility\03. Components\12. PhysX</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\PXAllocator.h">
-      <Filter>01. Utility\03. Components\12. PhysX\Allocator</Filter>
+      <Filter>01. Utility\11. Physics\Allocator</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\PXErrorCallBack.h">
-      <Filter>01. Utility\03. Components\12. PhysX\ErrorCallBack</Filter>
+      <Filter>01. Utility\11. Physics\ErrorCallBack</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Health.h">
       <Filter>01. Utility\03. Components\12. Status\00. Health</Filter>
@@ -512,6 +518,27 @@
     </ClInclude>
     <ClInclude Include="..\Public\MainModule.h">
       <Filter>01. Utility\03. Components\11. ParticleSystem\ParticleModule\MainModule</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PhysXConverter.h">
+      <Filter>99. Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PhysX_Manager.h">
+      <Filter>01. Utility\11. Physics\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Physics.h">
+      <Filter>01. Utility\11. Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\RigidBody.h">
+      <Filter>01. Utility\03. Components\14. RigidBody</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ColliderCom.h">
+      <Filter>01. Utility\03. Components\14. RigidBody</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CharacterController.h">
+      <Filter>01. Utility\03. Components\15. CharacterController</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\VIBuffer_Triangle.h">
+      <Filter>01. Utility\03. Components\07. VIBuffer\Triangle</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -710,9 +737,6 @@
     <ClCompile Include="..\Private\Sequence.cpp">
       <Filter>01. Utility\03. Components\10. Behavior\02. Sequence</Filter>
     </ClCompile>
-    <ClCompile Include="..\public\MainModule.cpp">
-      <Filter>01. Utility\03. Components\11. ParticleSystem\ParticleModule\MainModule</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\ParticleSystem.cpp">
       <Filter>01. Utility\03. Components\11. ParticleSystem</Filter>
     </ClCompile>
@@ -721,9 +745,6 @@
     </ClCompile>
     <ClCompile Include="..\private\Calculator.cpp">
       <Filter>01. Utility\10. Calculator</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\PX.cpp">
-      <Filter>01. Utility\03. Components\12. PhysX</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Health.cpp">
       <Filter>01. Utility\03. Components\12. Status\00. Health</Filter>
@@ -748,6 +769,24 @@
     </ClCompile>
     <ClCompile Include="..\Private\MainModule.cpp">
       <Filter>01. Utility\03. Components\11. ParticleSystem\ParticleModule\MainModule</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PhysX_Manager.cpp">
+      <Filter>01. Utility\11. Physics\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Physics.cpp">
+      <Filter>01. Utility\11. Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\RigidBody.cpp">
+      <Filter>01. Utility\03. Components\14. RigidBody</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ColliderCom.cpp">
+      <Filter>01. Utility\03. Components\14. RigidBody</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CharacterController.cpp">
+      <Filter>01. Utility\03. Components\15. CharacterController</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\VIBuffer_Triangle.cpp">
+      <Filter>01. Utility\03. Components\07. VIBuffer\Triangle</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

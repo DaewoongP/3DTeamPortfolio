@@ -8,13 +8,6 @@ CTransform::CTransform(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 CTransform::CTransform(const CTransform& rhs)
 	: CComponent(rhs)
 	, m_WorldMatrix(rhs.m_WorldMatrix)
-	, m_isRigidBody(rhs.m_isRigidBody)
-	, m_vGravity(rhs.m_vGravity)
-	, m_vVelocity(rhs.m_vVelocity)
-	, m_vForce(rhs.m_vForce)
-	, m_vAccel(rhs.m_vAccel)
-	, m_fMass(rhs.m_fMass)
-	, m_fResistance(rhs.m_fResistance)
 {
 }
 

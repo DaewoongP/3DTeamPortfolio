@@ -1,5 +1,5 @@
 #pragma once
-#include "PX.h"
+
 #include "Bone.h"
 #include "Mesh.h"
 #include "Model.h"
@@ -9,6 +9,7 @@
 #include "Renderer.h"
 #include "Animation.h"
 #include "Transform.h"
+#include "RigidBody.h"
 #include "Navigation.h"
 #include "Bounding_OBB.h"
 #include "Bounding_AABB.h"
@@ -19,6 +20,7 @@
 #include "ParticleSystem.h"
 #include "Bounding_Sphere.h"
 #include "VIBuffer_Terrain.h"
+#include "VIBuffer_Triangle.h"
 #include "VIBuffer_Instance.h"
 #include "VIBuffer_Rect_Trail.h"
 #include "VIBuffer_Rect_Dynamic.h"
