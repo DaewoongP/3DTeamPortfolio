@@ -55,6 +55,12 @@
     <Filter Include="01. Window\Window\Animation">
       <UniqueIdentifier>{f24db859-61c1-45a9-96e6-80c730ace989}</UniqueIdentifier>
     </Filter>
+    <Filter Include="98. Default\Std_Image">
+      <UniqueIdentifier>{fd6cb91a-0121-492c-b29f-3622ec8c0c61}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. ToolObjects\Dummy_UI">
+      <UniqueIdentifier>{c00841da-60c8-4a06-8085-e61201453246}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. ToolObjects\01. Dummy\MapDummy">
       <UniqueIdentifier>{a4baf458-dc0d-43c6-8d7d-f8bbed6e8418}</UniqueIdentifier>
     </Filter>
@@ -153,6 +159,12 @@
     <ClInclude Include="..\Public\CDummy.h">
       <Filter>02. ToolObjects\01. Dummy</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\stb_image.h">
+      <Filter>98. Default\Std_Image</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Dummy_UI.h">
+      <Filter>02. ToolObjects\Dummy_UI</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\MapDummy.h">
       <Filter>02. ToolObjects\01. Dummy\MapDummy</Filter>
     </ClInclude>
@@ -239,6 +251,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\CDummy.cpp">
       <Filter>02. ToolObjects\01. Dummy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Dummy_UI.cpp">
+      <Filter>02. ToolObjects\Dummy_UI</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MapDummy.cpp">
       <Filter>02. ToolObjects\01. Dummy\MapDummy</Filter>

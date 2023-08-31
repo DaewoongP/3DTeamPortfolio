@@ -165,6 +165,8 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Public\stb_image.h" />
+    <ClInclude Include="..\Public\Dummy_UI.h" />
     <ClInclude Include="..\Public\UI_Window.h" />
     <ClInclude Include="..\public\DummyParticle.h" />
     <ClInclude Include="..\Public\Animation_Window.h" />
@@ -199,6 +201,7 @@
     <ClInclude Include="Tool.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Private\Dummy_UI.cpp" />
     <ClCompile Include="..\Private\UI_Window.cpp" />
     <ClCompile Include="..\private\DummyParticle.cpp" />
     <ClCompile Include="..\Private\Animation_Window.cpp" />
