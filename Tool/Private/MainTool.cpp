@@ -248,7 +248,7 @@ HRESULT CMainTool::Ready_Prototype_Component()
 		return E_FAIL;
 
 	/* For.Prototype_Component_Shader_VtxAnimMesh */
-	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimMesh"),
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_TOOL, TEXT("Prototype_Component_Shader_VtxAnimMesh"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxAnimMesh.hlsl"), 
 			VTXANIMMESH_DECL::Elements, VTXANIMMESH_DECL::iNumElements))))
 	{
