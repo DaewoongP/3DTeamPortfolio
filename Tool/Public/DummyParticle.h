@@ -23,7 +23,7 @@ private:
 	virtual ~CDummyParticle() = default;
 
 public:
-	CParticleSystem* Get_ParticleSystem() { return m_pParticle; }
+	CParticleSystem* Get_ParticleSystem() { return m_pParticleSystem; }
 
 public:
 	// 툴에서만 프로토타입에서 파티클 경로를 받아줌.
@@ -34,14 +34,13 @@ public:
 	virtual void Late_Tick(_float _fTimeDelta) override;
 	virtual HRESULT Render() override;
 
-
 public:
 	void SaveParticle(const _tchar* _pDirectoryPath) {
-		m_pParticle->Save(_pDirectoryPath);
+		m_pParticleSystem->Save(_pDirectoryPath);
 	}
 
 	void LoadParticle(const _tchar* _pDirectoryPath) {
-		m_pParticle->Load(_pDirectoryPath);
+		m_pParticleSystem->Load(_pDirectoryPath);
 	}
 
 private:
@@ -53,9 +52,11 @@ private:
 	CTexture* m_pTexture = { nullptr };
 	CRenderer* m_pRenderer = { nullptr };
 	CVIBuffer_Point_Color_Instance* m_pBuffer = { nullptr };
-	CParticleSystem* m_pParticle = { nullptr };
+	CParticleSystem* m_pParticleSystem = { nullptr };
 
 private:
+	vector<PARTICLE_DESC>   m_ParticleDescs;
+	vector<COL_INSTANCE>  m_ParticleMatrices;
 	_uint				  m_iNumInstance;
 
 public:

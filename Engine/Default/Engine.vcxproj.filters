@@ -181,9 +181,6 @@
     <Filter Include="01. Utility\03. Components\11. ParticleSystem\ParticleModule">
       <UniqueIdentifier>{355d4a38-f001-42b9-8247-e9d447d141c5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\03. Components\11. ParticleSystem\ParticleModule\MainModule">
-      <UniqueIdentifier>{1802bf4a-ebe4-4b8c-a680-c609c88f336e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Utility\03. Components\10. Behavior">
       <UniqueIdentifier>{74671ea1-680f-4109-b558-9a41898e3288}</UniqueIdentifier>
     </Filter>
@@ -468,9 +465,6 @@
     <ClInclude Include="..\Public\Sequence.h">
       <Filter>01. Utility\03. Components\10. Behavior\02. Sequence</Filter>
     </ClInclude>
-    <ClInclude Include="..\private\MainModule.h">
-      <Filter>01. Utility\03. Components\11. ParticleSystem\ParticleModule\MainModule</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\ParticleSystem.h">
       <Filter>01. Utility\03. Components\11. ParticleSystem</Filter>
     </ClInclude>
@@ -509,9 +503,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\Notify.h">
       <Filter>01. Utility\03. Components\04. Model\Animation\Notify</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\MainModule.h">
-      <Filter>01. Utility\03. Components\11. ParticleSystem\ParticleModule\MainModule</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -710,9 +701,6 @@
     <ClCompile Include="..\Private\Sequence.cpp">
       <Filter>01. Utility\03. Components\10. Behavior\02. Sequence</Filter>
     </ClCompile>
-    <ClCompile Include="..\public\MainModule.cpp">
-      <Filter>01. Utility\03. Components\11. ParticleSystem\ParticleModule\MainModule</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\ParticleSystem.cpp">
       <Filter>01. Utility\03. Components\11. ParticleSystem</Filter>
     </ClCompile>
@@ -745,9 +733,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\Notify.cpp">
       <Filter>01. Utility\03. Components\04. Model\Animation\Notify</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\MainModule.cpp">
-      <Filter>01. Utility\03. Components\11. ParticleSystem\ParticleModule\MainModule</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

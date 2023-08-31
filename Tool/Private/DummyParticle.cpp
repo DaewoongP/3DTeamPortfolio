@@ -15,17 +15,13 @@ HRESULT CDummyParticle::Initialize_Prototype()
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
 
-	// Add_Components 위에 해줘야하는 서순 중요
 	m_iNumInstance = 30;
-	m_ParticleMatrices.reserve(m_iNumInstance);
-	m_ParticleDescs.resize(m_iNumInstance);
 
 	// 툴이라 여기에다 해놓음
 	if (FAILED(Add_Components()))
 		return E_FAIL;
-	
 	m_pTransform->Set_Position(_float3(0.f, 0.f, 0.f));
-	ResetAllParticle();
+
 	return S_OK;
 }
 
@@ -41,9 +37,7 @@ void CDummyParticle::Tick(_float _fTimeDelta)
 {
 	m_ParticleMatrices.clear();
 	vector<COL_INSTANCE> ColInsts;
-	m_pParticle->Tick(fTimeDelta, ColInsts);
-
-	m_pBuffer->Tick(m_ParticleMatrices.data(), _fTimeDelta);
+	m_pParticleSystem->Tick(_fTimeDelta, m_pBuffer);
 }
 
 void CDummyParticle::Late_Tick(_float _fTimeDelta)
@@ -57,33 +51,11 @@ HRESULT CDummyParticle::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	HRESULT hr=m_pShader->Begin("Default");
+	m_pShader->Begin("Default");
 
 	m_pBuffer->Render();
 
 	return S_OK;
-}
-
-void CDummyParticle::ResetParticle(PARTICLE_DESC& particleDesc)
-{
-	BEGININSTANCE;
-	particleDesc.fAge = 0.f;
-	particleDesc.fLifeTime = pGameInstance->Random_Float(0.f, 1.f);
-	particleDesc.vAccel = _float4();
-	particleDesc.WorldMatrix.Translation(_float3(0.f, 0.f, 0.f));
-
-
-	particleDesc.vVelocity = pGameInstance->Get_RandomVectorInSphere(3.f);
-
-	ENDINSTANCE;
-}
-
-void CDummyParticle::ResetAllParticle()
-{
-	for (auto& ParticleDesc : m_ParticleDescs)
-	{
-		ResetParticle(ParticleDesc);
-	}
 }
 
 HRESULT CDummyParticle::Add_Components()
@@ -122,7 +94,7 @@ HRESULT CDummyParticle::Add_Components()
 
 	/* Com_Particle */
 	if (FAILED(__super::Add_Component(LEVEL_TOOL, TEXT("Prototype_Component_Default_ParticleSystem")
-		, TEXT("Com_Particle"), (CComponent**)&m_pParticle)))
+		, TEXT("Com_Particle"), (CComponent**)&m_pParticleSystem)))
 	{
 		MSG_BOX("Failed CDummyParticle Add_Component : (Com_Particle)");
 		return E_FAIL;
@@ -187,7 +159,7 @@ void CDummyParticle::Free(void)
 {
 	__super::Free();
 	Safe_Release(m_pRenderer);
-	Safe_Release(m_pParticle);
+	Safe_Release(m_pParticleSystem);
 	Safe_Release(m_pTexture);
 	Safe_Release(m_pShader);
 	Safe_Release(m_pBuffer);

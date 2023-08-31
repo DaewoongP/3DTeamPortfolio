@@ -287,7 +287,7 @@ HRESULT CMainTool::Ready_Prototype_Component()
 
 	/* Prototype_Component_Default_ParticleSystem*/
 	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_TOOL, TEXT("Prototype_Component_Default_ParticleSystem"),
-		CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Particles/Fire/")))))
+		CParticleSystem::Create(m_pDevice, m_pContext, 30))))
 		return E_FAIL;
 
 	return S_OK;

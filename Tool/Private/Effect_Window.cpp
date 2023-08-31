@@ -1,6 +1,7 @@
 #include "..\Public\Effect_Window.h"
 #include "GameInstance.h"
 #include "ImGuiFileDialog.h"
+#include "ParticleSystem.h"
 #include "DummyParticle.h"
 
 CEffect_Window::CEffect_Window(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
@@ -26,37 +27,17 @@ HRESULT CEffect_Window::Initialize(ImVec2 _vWindowPos, ImVec2 _vWindowSize)
 void CEffect_Window::Tick(_float _fTimeDelta)
 {
 	__super::Tick(_fTimeDelta);
+
 	ImGui::Begin("Effect", nullptr, m_WindowFlag);
 	BEGININSTANCE;
 
-	if (ImGui::Checkbox("##MainModule_CB", &m_bMainCheckBox))
-	{
-		// 항상 true로 고정.
-		m_bMainCheckBox = true;
-	}
-
-	ImGui::SameLine();
-	if (ImGui::TreeNode("MainModule"))
-	{
-		MAIN_MODULE* pMainModuleDesc = { nullptr };
-		if (nullptr != m_pDummyParticle)
-		{
-			CMainModule* pMainModule = static_cast<CMainModule*>(m_pDummyParticle->Get_ParticleSystem()->Get_Module(CParticleSystem::MAIN));
-			pMainModuleDesc = pMainModule->Get_DescPtr();
-		}
-
-		ImGui::DragFloat("Duration", &(*pMainModuleDesc).fDuration, 0.01f, 0.f, FLT_MAX);
-		ImGui::Checkbox("Looping", &(*pMainModuleDesc).isLooping);
-		ImGui::Checkbox("Prewarm", &(*pMainModuleDesc).isPrewarm);
-		ImGui::DragFloat("StartDelay", &(*pMainModuleDesc).fStartDelay, 0.01f, 0.f, FLT_MAX);
-		ImGui::DragFloat("StartLifeTime", &(*pMainModuleDesc).fStartLifeTime, 0.01f, 0.f, FLT_MAX);
-		ImGui::DragFloat("StartSpeed", &(*pMainModuleDesc).fStartSpeed, 0.01f, 0.f, FLT_MAX);
-		ImGui::TreePop(); // SubNode의 끝
-	}
-
-	SaveFileDialog();
-	LoadFileDialog();
-	CreateButton();
+	MainMoudle_TreeNode();
+	//EmissionModule_TreeNode();
+	
+	ImGui::Separator();
+	Save_FileDialog();
+	Load_FileDialog();
+	Create_Button();
 
 	ENDINSTANCE;
 	ImGui::End();
@@ -66,18 +47,16 @@ void CEffect_Window::Tick(_float _fTimeDelta)
 		m_pDummyParticle->Tick(_fTimeDelta);
 		m_pDummyParticle->Late_Tick(_fTimeDelta);
 	}
+	_float4x4 pMatrix = m_pDummyParticle->Get_Transform()->Get_WorldMatrix();
+	__super::MatrixNode(&pMatrix, "Effect_Transform", "Effect_Position", "Effect_Rotation", "Effect_Scale");
+	m_pDummyParticle->Get_Transform()->Set_WorldMatrix(pMatrix);
 }
 
-HRESULT CEffect_Window::Render()
+void CEffect_Window::Save_FileDialog()
 {
-	return S_OK;
-}
-
-void CEffect_Window::SaveFileDialog()
-{
-	if (ImGui::Button("Save Particle File Dialog"))
+	if (ImGui::Button("Save Particle"))
 		ImGuiFileDialog::Instance()->OpenDialog("CooseSaveFilePtcKey", "Save File", ".ptc", "../../Resources/Effects/Particles/");
-
+	
 	// display
 	if (ImGuiFileDialog::Instance()->Display("CooseSaveFilePtcKey"))
 	{
@@ -92,14 +71,6 @@ void CEffect_Window::SaveFileDialog()
 
 			std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
 			std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
-
-			_tchar wszFilePath[MAX_PATH];
-			ZeroMemory(wszFilePath, sizeof(_tchar) * MAX_PATH);
-			CharToWChar(filePathName.c_str(), wszFilePath);
-
-			m_pDummyParticle->Get_ParticleSystem()->Save(wszFilePath);
-			
-			MSG_BOX("The file has been saved successfully");
 		}
 
 		// close
@@ -107,9 +78,9 @@ void CEffect_Window::SaveFileDialog()
 	}
 }
 
-void CEffect_Window::LoadFileDialog()
+void CEffect_Window::Load_FileDialog()
 {
-	if (ImGui::Button("Load Particle File Dialog"))
+	if (ImGui::Button("Load Particle"))
 		ImGuiFileDialog::Instance()->OpenDialog("CooseLoadFilePtcKey", "Load File", ".ptc", "../../Resources/Effects/Particles/");
 
 	// display
@@ -129,14 +100,13 @@ void CEffect_Window::LoadFileDialog()
 
 			_tchar wszFilePath[MAX_PATH];
 			ZeroMemory(wszFilePath, sizeof(_tchar) * MAX_PATH);
-			CharToWChar(filePathName.c_str(), wszFilePath);
+			CharToWChar(filePath.c_str(), wszFilePath);
 
 			_ulong dwByte = 0;
 			
 			m_pDummyParticle->LoadParticle(wszFilePath);
 
 			MSG_BOX("The file has been loaded successfully");
-
 		}
 
 		// close
@@ -144,12 +114,120 @@ void CEffect_Window::LoadFileDialog()
 	}
 }
 
-void CEffect_Window::CreateButton()
+void CEffect_Window::Create_Button()
 {
 	if (ImGui::Button("New Particle"))
 	{
 		Safe_Release(m_pDummyParticle);
 		m_pDummyParticle = CDummyParticle::Create(m_pDevice, m_pContext);
+	}
+}
+
+void CEffect_Window::MainMoudle_TreeNode()
+{
+	if (ImGui::Checkbox("##MainModule_CheckBox", &m_bMainCheckBox))
+	{
+		m_bMainCheckBox = true;
+	}
+
+	ImGui::SameLine();
+	if (ImGui::TreeNode("MainModule"))
+	{
+		if (ImGui::BeginTable("MainModuleTable", 2))
+		{
+			MAIN_MODULE* pMainModuleDesc = { nullptr };
+			if (nullptr != m_pDummyParticle)
+			{
+				pMainModuleDesc = m_pDummyParticle->Get_ParticleSystem()->Get_MainModulePtr();
+			}
+			ImGui::TableNextRow();
+
+			ImGui::TableSetColumnIndex(0);
+			ImGui::Text("Duration"); ImGui::TableSetColumnIndex(1);
+			ImGui::DragFloat("##Duration", &(*pMainModuleDesc).fDuration, 0.01f, 0.f, FLT_MAX); ImGui::TableNextRow();
+
+			ImGui::TableSetColumnIndex(0);
+			ImGui::Text("Looping"); ImGui::TableSetColumnIndex(1);
+			ImGui::Checkbox("##Looping", &(*pMainModuleDesc).isLooping); ImGui::TableNextRow();
+
+			ImGui::TableSetColumnIndex(0);
+			ImGui::Text("Prewarm"); ImGui::TableSetColumnIndex(1);
+			ImGui::Checkbox("##Prewarm", &(*pMainModuleDesc).isPrewarm); ImGui::TableNextRow();
+
+			ImGui::PushItemWidth(200.0f);
+
+			ImGui::TableSetColumnIndex(0);
+			ImGui::Text("StartDelay"); ImGui::TableSetColumnIndex(1);
+			ImGui::DragFloatRange2("##StartDelayRange", &(*pMainModuleDesc).fStartDelay.x, &(*pMainModuleDesc).fStartDelay.y, 0.01f, 0.f, FLT_MAX); ImGui::TableNextRow();
+
+			ImGui::TableSetColumnIndex(0);
+			ImGui::Text("StartLifeTime"); ImGui::TableSetColumnIndex(1);
+			ImGui::DragFloatRange2("##StartLifeTimeRange", &(*pMainModuleDesc).fStartLifeTime.x, &(*pMainModuleDesc).fStartLifeTime.y, 0.01f, 0.f, FLT_MAX); ImGui::TableNextRow();
+
+			ImGui::TableSetColumnIndex(0);
+			ImGui::Text("StartSpeed"); ImGui::TableSetColumnIndex(1);
+			ImGui::DragFloatRange2("##StartSpeedRange", &(*pMainModuleDesc).fStartSpeed.x, &(*pMainModuleDesc).fStartSpeed.y, 0.01f, 0.f, FLT_MAX); ImGui::TableNextRow();
+
+			ImGui::PopItemWidth();
+
+			ImGui::EndTable();
+		}
+
+		ImGui::TreePop(); // SubNode의 끝
+	}
+}
+
+void CEffect_Window::EmissionModule_TreeNode()
+{
+	if (ImGui::Checkbox("##EmissionModule_CheckBox", &m_bMainCheckBox))
+	{
+		m_bMainCheckBox = true;
+	}
+
+	ImGui::SameLine();
+	if (ImGui::TreeNode("EmissionModule"))
+	{
+		if (ImGui::BeginTable("EmissionModuleTable", 2))
+		{
+			MAIN_MODULE* pMainModuleDesc = { nullptr };
+			if (nullptr != m_pDummyParticle)
+			{
+				pMainModuleDesc = m_pDummyParticle->Get_ParticleSystem()->Get_MainModulePtr();
+			}
+			ImGui::TableNextRow();
+			
+			ImGui::TableSetColumnIndex(0);
+			ImGui::Text("Duration"); ImGui::TableSetColumnIndex(1);
+			ImGui::DragFloat("##Duration", &(*pMainModuleDesc).fDuration, 0.01f, 0.f, FLT_MAX); ImGui::TableNextRow();
+
+			ImGui::TableSetColumnIndex(0);
+			ImGui::Text("Looping"); ImGui::TableSetColumnIndex(1);
+			ImGui::Checkbox("##Looping", &(*pMainModuleDesc).isLooping); ImGui::TableNextRow();
+
+			ImGui::TableSetColumnIndex(0);
+			ImGui::Text("Prewarm"); ImGui::TableSetColumnIndex(1);
+			ImGui::Checkbox("##Prewarm", &(*pMainModuleDesc).isPrewarm); ImGui::TableNextRow();
+
+			ImGui::PushItemWidth(200.0f);
+
+			ImGui::TableSetColumnIndex(0);
+			ImGui::Text("StartDelay"); ImGui::TableSetColumnIndex(1);
+			ImGui::DragFloatRange2("##StartDelayRange", &(*pMainModuleDesc).fStartDelay.x, &(*pMainModuleDesc).fStartDelay.y, 0.01f, 0.f, FLT_MAX); ImGui::TableNextRow();
+
+			ImGui::TableSetColumnIndex(0);
+			ImGui::Text("StartLifeTime"); ImGui::TableSetColumnIndex(1);
+			ImGui::DragFloatRange2("##StartLifeTimeRange", &(*pMainModuleDesc).fStartLifeTime.x, &(*pMainModuleDesc).fStartLifeTime.y, 0.01f, 0.f, FLT_MAX); ImGui::TableNextRow();
+
+			ImGui::TableSetColumnIndex(0);
+			ImGui::Text("StartSpeed"); ImGui::TableSetColumnIndex(1);
+			ImGui::DragFloatRange2("##StartSpeedRange", &(*pMainModuleDesc).fStartSpeed.x, &(*pMainModuleDesc).fStartSpeed.y, 0.01f, 0.f, FLT_MAX); ImGui::TableNextRow();
+
+			ImGui::PopItemWidth();
+
+			ImGui::EndTable();
+		}
+
+		ImGui::TreePop(); // SubNode의 끝
 	}
 }
 

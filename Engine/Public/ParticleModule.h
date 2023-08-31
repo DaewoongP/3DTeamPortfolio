@@ -23,6 +23,7 @@ protected:
 
 public:
 	virtual void Free();
+	virtual CParticleModule* Clone() PURE;
 };
 
 END

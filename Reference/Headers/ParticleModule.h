@@ -4,7 +4,6 @@
 
 BEGIN(Engine)
 
-
 class CParticleModule abstract : public CBase
 {
 protected:
@@ -24,6 +23,7 @@ protected:
 
 public:
 	virtual void Free();
+	virtual CParticleModule* Clone() PURE;
 };
 
 END

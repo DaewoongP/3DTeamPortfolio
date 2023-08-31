@@ -1,6 +1,5 @@
 #pragma once
 #include "ImWindow.h"
-#include "MainModule.h"
 
 BEGIN(Tool)
 
@@ -13,16 +12,20 @@ private:
 public:
 	virtual HRESULT Initialize(ImVec2 _vWindowPos, ImVec2 _vWindowSize) override;
 	virtual void Tick(_float _fTimeDelta) override;
-	virtual HRESULT Render() override;
 
-	void SaveFileDialog();
-	void LoadFileDialog();
+	void Save_FileDialog();
+	void Load_FileDialog();
 
 	// 새로운 더미 파티클 생성.
-	void CreateButton();
+	void Create_Button();
+
+	void MainMoudle_TreeNode();
+	void EmissionModule_TreeNode();
 
 private:
-	_bool		m_bMainCheckBox;
+	_bool		m_bMainCheckBox = { true };
+	_bool		m_bEmmissionCheckBox = { true };
+	//_bool		m_bEmmissionCheckBox = { true };
 
 private:
 	class CDummyParticle* m_pDummyParticle = { nullptr };
