@@ -47,7 +47,7 @@ void CMapDummy::Late_Tick(_float fTimeDelta)
 
 	if (nullptr != m_pRenderer)
 	{
-		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONLIGHT, this);
+		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 	}
 }
 

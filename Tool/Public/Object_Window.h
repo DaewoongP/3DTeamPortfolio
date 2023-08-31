@@ -12,7 +12,8 @@ class CObject_Window final : public CImWindow
 	{
 		//_float4x4 matTransform; // 상태 행렬
 		_float3 vPos; // 위치 값
-		_tchar wszTag[MAX_PATH]; // 오브젝트 종류
+		_uint iTagLen; // 문자열 길이
+		_tchar wszTag[MAX_PATH]; // 오브젝트 종류(모델 컴포넌트 이름)
 	}SAVEOBJECTDESC;
 
 private:
@@ -35,6 +36,7 @@ private:
 	void Deep_Copy_Name(); // 모델 이름 문자열 깊은 복사
 	void Deep_Copy_Path(const _tchar* wszPath); // 모델 경로 문자열 깊은 복사
 	void Deep_Copy_Tag(const _tchar* wszTag); // 맵 오브젝트 태그 문자열 깊은 복사
+	const _tchar* Deep_Copy(const _tchar* wszString); // 들어오는 문자열을 깊은 복사하는 함수
 
 	_float3 Find_PickingPos(); // 지형의 피킹 위치를 찾는 함수
 	HRESULT Create_Dummy(); // 최초 1번 Dummy 생성
@@ -48,9 +50,10 @@ private:
 
 	_int m_iModelIndex = { 0 }; // 선택된 모델 인덱스
 	vector<string> m_vecModelList; // 현재 추가해둔 모델 이름 리스트
-	vector<const _tchar*> m_vecModelList_t; // 모델 이름 리스트를 _tchar로 저장해둠
-	vector<const _tchar*> m_vecModelPath_t; // 그 모델의 경로를 _tchar로 저장해둠
-	vector<const _tchar*> m_vecMapObjectTag_t; // 맵에 추가한 오브젝트들의 정보
+	vector<const _tchar*> m_vecModelList_t; // 모델 이름을 _tchar로 저장해둠
+	vector<const _tchar*> m_vecModelPath_t; // 모델 경로를 _tchar로 저장해둠
+	vector<const _tchar*> m_vecMapObjectTag_t; // 맵에 추가한 오브젝트들의 넘버링 태그를 저장
+	vector<SAVEOBJECTDESC> m_vecSaveObject; // 저장할 맵 오브젝트에 대한 정보
 
 public:
 	static CObject_Window* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, ImVec2 vWindowPos, ImVec2 vWindowSize);

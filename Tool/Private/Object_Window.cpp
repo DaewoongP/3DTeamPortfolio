@@ -138,6 +138,15 @@ void CObject_Window::Install_Object(_float3 vPos)
 		m_pObject->Add_Model_Component(m_vecModelList_t.at(m_iModelIndex));
 		m_pObject->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMesh"));
 
+		// 저장용 벡터에 넣어준다.
+		SAVEOBJECTDESC SaveDesc;
+
+		SaveDesc.vPos = vPos;
+		lstrcpy(SaveDesc.wszTag, m_vecModelList_t.at(m_iModelIndex));
+		SaveDesc.iTagLen = lstrlen(SaveDesc.wszTag) * 2;
+
+		m_vecSaveObject.push_back(SaveDesc);
+
 		++m_iMapObjectIndex;
 
 	} ENDINSTANCE;
@@ -146,10 +155,10 @@ void CObject_Window::Install_Object(_float3 vPos)
 void CObject_Window::Select_Model()
 {
 	// 현재 선택된 모델이 무엇인지 표시
-	ImGui::Text("Current Model");
-	ImGui::Text(":");
+	ImGui::TextColored(ImVec4(1, 0, 0, 1), "Current Model");
+	ImGui::TextColored(ImVec4(1, 0, 0, 1), ":");
 	ImGui::SameLine();
-	ImGui::Text(m_strCurrentModel.c_str());
+	ImGui::TextColored(ImVec4(1, 0, 0, 1), m_strCurrentModel.c_str());
 
 	// 모델 선택
 	ImGui::ListBox("ModelList", &m_iModelIndex, VectorGetter, static_cast<void*>(&m_vecModelList), (_int)m_vecModelList.size(), 15);
@@ -234,14 +243,120 @@ void CObject_Window::Save_Load_Menu()
 
 HRESULT CObject_Window::Save_MapObject()
 {
+	_tchar dataFile[MAX_PATH] = TEXT("../../Resources/MapData/MapObject.dat");
 
+	HANDLE hFile = CreateFile(dataFile, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+	if (INVALID_HANDLE_VALUE == hFile)
+	{
+		MSG_BOX("Failed to Create MapObject File for Save MapObject");
+	}
+
+	DWORD	dwByte = 0;
+
+	for (auto& iter : m_vecSaveObject)
+	{
+		if (!WriteFile(hFile, &iter.vPos, sizeof(_float3), &dwByte, nullptr))
+			MSG_BOX("Failed to Write m_vecSaveObject.vPos");
+
+		if (!WriteFile(hFile, &iter.iTagLen, sizeof(_uint), &dwByte, nullptr))
+			MSG_BOX("Failed to Write m_vecSaveObject.iTagLen");
+
+		if (!WriteFile(hFile, &iter.wszTag, iter.iTagLen, &dwByte, nullptr))
+			MSG_BOX("Failed to Write m_vecSaveObject.wszTag");
+	}
+
+	MSG_BOX("Save Success");
+
+	CloseHandle(hFile);
 
 	return S_OK;
 }
 
 HRESULT CObject_Window::Load_MapObject()
 {
+	m_vecSaveObject.clear();
 
+	_tchar dataFile[MAX_PATH] = TEXT("../../Resources/MapData/MapObject.dat");
+
+	HANDLE hFile = CreateFile(dataFile, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+	{
+		MSG_BOX("Failed to Create MapObject File for Load MapObject");
+	}
+
+	DWORD	dwByte = 0;
+	SAVEOBJECTDESC SaveDesc;
+	ZEROMEM(&SaveDesc);
+
+	while (true)
+	{
+		if (!ReadFile(hFile, &SaveDesc.vPos, sizeof(_float3), &dwByte, nullptr))
+			MSG_BOX("Failed to Read m_vecSaveObject.vPos");
+
+		if (!ReadFile(hFile, &SaveDesc.iTagLen, sizeof(_uint), &dwByte, nullptr))
+			MSG_BOX("Failed to Read m_vecSaveObject.iTagLen");
+
+		if (!ReadFile(hFile, &SaveDesc.wszTag, SaveDesc.iTagLen, &dwByte, nullptr))
+			MSG_BOX("Failed to Read m_vecSaveObject.wszTag");
+
+		if (dwByte == 0)
+		{
+			break;
+		}
+
+		m_vecSaveObject.push_back(SaveDesc);
+	}
+
+	MSG_BOX("Load Successed");
+
+	CloseHandle(hFile);
+
+	// 로드한 데이터를 적용시켜 주는 부분
+	//객체 생성
+	//m_vecSaveObject 초기화
+	for (size_t i = 0; i < m_vecSaveObject.size(); i++)
+	{
+		_uint iCount = 0;
+
+		// m_vecModelList_t를 순회하며 중복되는 문자열이 있는지 체크
+		for (auto& iter : m_vecModelList_t)
+		{
+			if (0 == lstrcmp(iter, m_vecSaveObject[i].wszTag))
+			{
+				++iCount;
+			}
+		}
+
+		// 중복되는 문자열이 없다면 m_vecModelList_t에 모델 이름 삽입
+		if (0 == iCount) 
+		{
+			m_vecModelList_t.push_back(Deep_Copy(m_vecSaveObject[i].wszTag));
+		}
+
+		// 맵 오브젝트에 번호 붙여줌
+		_tchar wszobjName[MAX_PATH] = { 0 };
+		_stprintf_s(wszobjName, TEXT("GameObject_MapObject_%d"), (m_iMapObjectIndex));
+		Deep_Copy_Tag(wszobjName);
+
+		BEGININSTANCE if (FAILED(pGameInstance->Add_GameObject(LEVEL_TOOL,
+			TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_MapObject"),
+			m_vecMapObjectTag_t.at(m_iMapObjectIndex), &m_vecSaveObject[i].vPos)))
+		{
+			MSG_BOX("Failed to Install MapObject");
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+
+		// 마지막에 설치한 맵 오브젝트 주소 가져옴
+		m_pObject = static_cast<CMapObject*>(pGameInstance->Find_GameObject_In_Layer(LEVEL_TOOL,
+			TEXT("Layer_MapObject"), wszobjName));
+
+		m_pObject->Add_Model_Component(m_vecSaveObject[i].wszTag);
+		m_pObject->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMesh"));
+
+		++m_iMapObjectIndex;
+	}	
 
 	return S_OK;
 }
@@ -298,6 +413,24 @@ void CObject_Window::Deep_Copy_Tag(const _tchar* wszTag)
 	}
 
 	m_vecMapObjectTag_t.push_back(wszNew);
+}
+
+const _tchar* CObject_Window::Deep_Copy(const _tchar* wszString)
+{
+	// 맵 오브젝트 경로를 const _tchar* 형태로 깊은 복사
+	size_t length = wcslen(wszString);
+
+	wstring ws(wszString);
+
+	_tchar* wszNew = new _tchar[length + 1];
+
+	if (0 != wcscpy_s(wszNew, length + 1, ws.c_str()))
+	{
+		MSG_BOX("Falied to Deep Copy(String)");
+		return nullptr;
+	}
+
+	return wszNew;
 }
 
 _float3 CObject_Window::Find_PickingPos()
