@@ -100,6 +100,20 @@ HRESULT CMapDummy::Add_Shader_Component(const wchar_t* wszShaderTag)
 	return S_OK;
 }
 
+HRESULT CMapDummy::Change_Model_Component(const _tchar* pPrototypeTag)
+{
+	Safe_Release(m_pModel);
+
+	if (FAILED(CComposite::Add_Component(LEVEL_TOOL, pPrototypeTag,
+		TEXT("Com_Buffer"), reinterpret_cast<CComponent**>(&m_pModel))))
+	{
+		MSG_BOX("Failed CMapDummy Change_Component : (Com_Buffer)");
+		return E_FAIL;
+	}
+
+	return S_OK;
+}
+
 HRESULT CMapDummy::Add_Components()
 {
 	/* Com_Renderer */

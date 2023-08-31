@@ -33,6 +33,7 @@ public:
 public:
 	HRESULT Add_Model_Component(const wchar_t* wszShaderTag);
 	HRESULT Add_Shader_Component(const wchar_t* wszShaderTag);
+	HRESULT Change_Model_Component(const _tchar* pPrototypeTag);
 
 private:
 	CShader* m_pShader = { nullptr };

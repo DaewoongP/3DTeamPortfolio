@@ -21,6 +21,11 @@ HRESULT CObject_Window::Initialize(ImVec2 vWindowPos, ImVec2 vWindowSize)
 
 	m_WindowFlag = ImGuiWindowFlags_NoResize;
 
+	// 가장 처음 요소 하나(더미) 넣어줌
+	Deep_Copy_Name();
+	m_vecModelList.push_back(m_strCurrentModel);
+	m_vecModelPath_t.push_back(TEXT("C:/Users/micro/3DTeamPortfolio/Resources/Models/NonAnims/Tree/Tree.dat"));
+
 	return S_OK;
 }
 
@@ -79,7 +84,17 @@ void CObject_Window::PickingMenu()
 
 void CObject_Window::SelectModel()
 {
+	// 현재 선택된 모델이 무엇인지 표시
+	ImGui::Text("Current Model");
+	ImGui::Text(":");
+	ImGui::SameLine();
+	ImGui::Text(m_strCurrentModel.c_str());
+
+	// 모델 선택
+	ImGui::ListBox("ModelList", &m_iModelIndex, VectorGetter, static_cast<void*>(&m_vecModelList), (_int)m_vecModelList.size(), 15);
+
 	// open Dialog Simple
+	// 모델을 골라 프로토타입 만들어주는 부분
 	if (ImGui::Button("Open File Dialog"))
 		ImGuiFileDialog::Instance()->OpenDialog("ChooseModel", "Choose File", ".dat", "../../Resources/Models/");
 
@@ -101,17 +116,73 @@ void CObject_Window::SelectModel()
 			_tchar wszModelTag[MAX_PATH] = TEXT("Prototype_Component_Model_");
 			lstrcat(wszModelTag, wszfileName);
 
-			//위 데이터를 기반으로 모델 프로토 생성
-			_float4x4 PivotMatrix = XMMatrixIdentity();
-			BEGININSTANCE; if (FAILED(pGameInstance->Add_Prototype_Component(LEVEL_TOOL, wszModelTag,
-				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, wszfilePath, PivotMatrix))))
-				return; ENDINSTANCE;
+			wstring ws(wszModelTag);
+			m_strCurrentModel.assign(ws.begin(), ws.end());
+			m_vecModelList.push_back(m_strCurrentModel);
+			Deep_Copy_Name();
+			Deep_Copy_Path(wszfilePath);
 		}
 
 		// close
 		ImGuiFileDialog::Instance()->Close();
 	}
+
+	// 선택된 모델을 적용
+	static _bool bCheckModel = { false };
+	if (ImGui::Button("SelectModel"))
+	{
+		// 기존에 깊은 복사로 저장해뒀던 문자열들을 가지고 프로토 생성
+		_float4x4 PivotMatrix = XMMatrixIdentity();
+		BEGININSTANCE; if (FAILED(pGameInstance->Add_Prototype_Component(LEVEL_TOOL, m_vecModelList_t.at(m_iModelIndex),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, m_vecModelPath_t.at(m_iModelIndex), PivotMatrix))))
+		{
+			MSG_BOX("Failed to Create New Model Prototype");
+		} ENDINSTANCE;
+
+		if (FAILED(m_pDummy->Change_Model_Component(m_vecModelList_t.at(m_iModelIndex))))
+		{
+			MSG_BOX("Failed to Change Model");
+			return;
+		}
+	}
+
 	ImGui::Text("----------------------------------------");
+}
+
+void CObject_Window::Deep_Copy_Name()
+{
+	// 모델 이름을 const _tchar* 형태로 깊은 복사
+	size_t length = m_strCurrentModel.size();
+
+	wstring ws (m_strCurrentModel.begin(), m_strCurrentModel.end());
+
+	_tchar* wszNew = new _tchar[length + 1];
+
+	if (0 != wcscpy_s(wszNew, length + 1, ws.c_str()))
+	{
+		MSG_BOX("Falied to Deep Copy(Name)");
+		return;
+	}
+
+	m_vecModelList_t.push_back(wszNew);
+}
+
+void CObject_Window::Deep_Copy_Path(const _tchar* wszPath)
+{
+	// 모델 경로를 const _tchar* 형태로 깊은 복사
+	size_t length = wcslen(wszPath);
+
+	wstring ws(wszPath);
+
+	_tchar* wszNew = new _tchar[length + 1];
+
+	if (0 != wcscpy_s(wszNew, length + 1, ws.c_str()))
+	{
+		MSG_BOX("Falied to Deep Copy(Path)");
+		return;
+	}
+
+	m_vecModelPath_t.push_back(wszNew);
 }
 
 _float3 CObject_Window::Find_PickingPos()
@@ -189,4 +260,10 @@ CObject_Window* CObject_Window::Create(ID3D11Device* pDevice, ID3D11DeviceContex
 void CObject_Window::Free(void)
 {
 	__super::Free();
+
+	// 동적 할당 해줬던 문자열 해제
+	for (auto& iter : m_vecModelList_t)
+	{
+		delete[] iter;
+	}
 }
