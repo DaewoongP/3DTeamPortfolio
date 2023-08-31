@@ -133,7 +133,7 @@ void CModel::Play_Animation(_float fTimeDelta)
 	}
 }
 
-HRESULT CModel::Find_BoneIndex(const _tchar* pBoneName, _uint* iIndex)
+HRESULT CModel::Find_BoneIndex(const _tchar* pBoneName, _Inout_ _uint* iIndex)
 {
 	*iIndex = 0;
 	auto iter = find_if(m_Bones.begin(), m_Bones.end(), [&](CBone* pValue) {
@@ -144,7 +144,7 @@ HRESULT CModel::Find_BoneIndex(const _tchar* pBoneName, _uint* iIndex)
 			++(*iIndex);
 			return false;
 		}
-		});
+	});
 
 	if (m_Bones.end() == iter)
 	{
