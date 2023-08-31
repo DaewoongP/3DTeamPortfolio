@@ -116,8 +116,13 @@ void CObject_Window::SelectModel()
 			_tchar wszModelTag[MAX_PATH] = TEXT("Prototype_Component_Model_");
 			lstrcat(wszModelTag, wszfileName);
 
-			wstring ws(wszModelTag);
-			m_strCurrentModel.assign(ws.begin(), ws.end());
+			//wstring ws(wszModelTag);
+			//m_strCurrentModel.assign(ws.begin(), ws.end());
+			_char szTag[MAX_PATH] = "";
+			WCharToChar(wszModelTag, szTag);
+			m_strCurrentModel.clear();
+			m_strCurrentModel.append(szTag);
+
 			m_vecModelList.push_back(m_strCurrentModel);
 			Deep_Copy_Name();
 			Deep_Copy_Path(wszfilePath);
@@ -131,7 +136,7 @@ void CObject_Window::SelectModel()
 	static _bool bCheckModel = { false };
 	if (ImGui::Button("SelectModel"))
 	{
-		// 기존에 깊은 복사로 저장해뒀던 문자열들을 가지고 프로토 생성
+		// 기존에 깊은 복사로 저장해뒀던 문자열들을 가지고 프로토타입 생성
 		_float4x4 PivotMatrix = XMMatrixIdentity();
 		BEGININSTANCE; if (FAILED(pGameInstance->Add_Prototype_Component(LEVEL_TOOL, m_vecModelList_t.at(m_iModelIndex),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, m_vecModelPath_t.at(m_iModelIndex), PivotMatrix))))
