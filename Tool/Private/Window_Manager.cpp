@@ -19,6 +19,7 @@ void CWindow_Manager::Tick(_float fTimeDelta)
 	ImGui::Begin("Menu", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
 
 	_int* iCurMenuList = reinterpret_cast<_int*>(&m_eCurMenuList);
+
 	if (ImGui::RadioButton("Object", iCurMenuList, OBJECT_WINDOW))
 		Setup_Current_Window(TEXT("Object_Window"));
 
