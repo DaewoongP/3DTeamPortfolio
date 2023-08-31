@@ -204,6 +204,8 @@ HRESULT CParticleSystem::Save_MainModule(const _tchar* pDirectoyPath)
 	WriteFile(hFile, &m_MainModuleDesc.eStopAction, sizeof m_MainModuleDesc.eStopAction, &dwByte, nullptr);
 
 	CloseHandle(hFile);
+
+	return S_OK;
 }
 
 HRESULT CParticleSystem::Load_MainModule(const _tchar* _pDirectoyPath)
@@ -245,6 +247,8 @@ HRESULT CParticleSystem::Load_MainModule(const _tchar* _pDirectoyPath)
 	ReadFile(hFile, &m_MainModuleDesc.eStopAction, sizeof m_MainModuleDesc.eStopAction, &dwByte, nullptr);
 
 	CloseHandle(hFile);
+
+	return S_OK;
 }
 
 CParticleModule* CParticleSystem::Module_Factory(MODULE _eModule)

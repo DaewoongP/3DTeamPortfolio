@@ -507,9 +507,6 @@
     <ClInclude Include="..\Public\Notify.h">
       <Filter>01. Utility\03. Components\04. Model\Animation\Notify</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\MainModule.h">
-      <Filter>01. Utility\03. Components\11. ParticleSystem\ParticleModule\MainModule</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Status.h">
       <Filter>01. Utility\03. Components\14. Status</Filter>
     </ClInclude>
@@ -748,9 +745,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\Notify.cpp">
       <Filter>01. Utility\03. Components\04. Model\Animation\Notify</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\MainModule.cpp">
-      <Filter>01. Utility\03. Components\11. ParticleSystem\ParticleModule\MainModule</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Status.cpp">
       <Filter>01. Utility\03. Components\14. Status</Filter>

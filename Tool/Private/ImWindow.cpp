@@ -48,11 +48,6 @@ void CImWindow::MatrixNode(_float4x4* pMatrix, const _char* pNodeName, const _ch
 	_float3 vTranslations = pMatrix->Translation();	
 	_float3 vAngles = pMatrix->ToEuler();
 	_float3 vScales = _float3(pMatrix->Right().Length(), pMatrix->Up().Length(), pMatrix->Look().Length());
-	
-	_float3 testTrans = vTranslations;
-	Quaternion vQuat;
-	_float3 testScale;
-	cout << testTrans.x << "\t" << testTrans.y << "\t" << testTrans.z << endl;
 
 	vAngles.x = XMConvertToDegrees(vAngles.x);
 	vAngles.y = XMConvertToDegrees(vAngles.y);

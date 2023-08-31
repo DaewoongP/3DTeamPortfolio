@@ -126,7 +126,6 @@
     <ClCompile Include="..\Private\MeshParts.cpp" />
     <ClCompile Include="..\Private\CustomModel.cpp" />
     <ClCompile Include="..\Private\Status.cpp" />
-    <ClCompile Include="..\Private\MainModule.cpp" />
     <ClCompile Include="..\Private\VIBuffer_Sprite.cpp" />
     <ClCompile Include="..\Private\Ignite.cpp" />
     <ClCompile Include="..\Private\Defence.cpp" />
