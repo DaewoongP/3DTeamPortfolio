@@ -9,7 +9,9 @@ CAnimation::CAnimation()
 CAnimation::CAnimation(const CAnimation& rhs)
 	: m_iNumChannels(rhs.m_iNumChannels)
 	, m_Channels(rhs.m_Channels)
+	, m_pNotify(rhs.m_pNotify)
 	, m_ChannelCurrentKeyFrames(rhs.m_ChannelCurrentKeyFrames)
+	, m_iNotifyCurrentKeyFrame(rhs.m_iNotifyCurrentKeyFrame)
 	, m_fDuration(rhs.m_fDuration)
 	, m_fOriginTickPerSecond(rhs.m_fOriginTickPerSecond)
 	, m_fTickPerSecond(rhs.m_fTickPerSecond)
@@ -61,14 +63,21 @@ void CAnimation::Delete_Rotation()
 	}
 }
 
-NOTIFYFRAME* CAnimation::Find_NotifyFrame(const wchar_t* wszNotifyTag)
+NOTIFYFRAME* CAnimation::Find_NotifyFrame(const _tchar* wszNotifyTag)
 {
 	return nullptr;
 }
 
-SOUNDFRAME* CAnimation::Find_SoundFrame(const wchar_t* wszSoundTag)
+SOUNDFRAME* CAnimation::Find_SoundFrame(const _tchar* wszSoundTag)
 {
 	return nullptr;
+}
+
+HRESULT CAnimation::Add_NotifyFrame(KEYFRAME::KEYFRAMETYPE eFrameType, wchar_t* wszNotifyTag, _float fActionTime, _float fSpeed)
+{
+	if (m_pNotify == nullptr)
+		return E_FAIL;
+	return m_pNotify->AddFrame(eFrameType, wszNotifyTag, fActionTime, fSpeed);
 }
 
 HRESULT CAnimation::Initialize(Engine::ANIMATION Animation, const CModel::BONES& Bones)
@@ -111,6 +120,9 @@ HRESULT CAnimation::Initialize(Engine::ANIMATION Animation, const CModel::BONES&
 	}
 	m_iAnimationFrames = iNumKeyFrame;
 
+	//노티파이를 생성해줍니다.
+	m_pNotify = CNotify::Create();
+
 	return S_OK;
 }
 
@@ -137,6 +149,8 @@ void CAnimation::Invalidate_TransformationMatrix(CModel::BONES& Bones, _float fT
 
 void CAnimation::Invalidate_Frame(_float fTimeDelta)
 {
+	if (m_isPaused)
+		return;
 	m_fTimeAcc += m_fTickPerSecond * fTimeDelta;
 	if (m_fTimeAcc >= m_fDuration)
 	{
@@ -147,7 +161,10 @@ void CAnimation::Invalidate_Frame(_float fTimeDelta)
 	}
 	//첫번째 채널에만 사운드용 데이터를 추가해줄거임.
 	_uint		iChannelIndex = 0;
-	m_Notify->Invalidate_Frame(m_fTimeAcc, &m_ChannelCurrentKeyFrames[iChannelIndex++], &m_fTickPerSecond);
+	if (m_pNotify != nullptr)
+	{
+		m_pNotify->Invalidate_Frame(m_fTimeAcc, &m_iNotifyCurrentKeyFrame, &m_fTickPerSecond);
+	}
 }
 
 CAnimation* CAnimation::Create(Engine::ANIMATION Animation, const CModel::BONES& Bones)
@@ -171,8 +188,7 @@ void CAnimation::Free()
 {
 	for (auto& pChannel : m_Channels)
 		Safe_Release(pChannel);
-	Safe_Release(m_Notify);
+	Safe_Release(m_pNotify);
 
 	m_Channels.clear();
-
 }

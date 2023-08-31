@@ -67,7 +67,7 @@ HRESULT CLevel_MainGame::Ready_Layer_Player(const _tchar* pLayerTag)
 {
 	return S_OK;
 }
-
+#ifdef _DEBUG
 HRESULT CLevel_MainGame::Ready_Layer_Debug(const _tchar* pLayerTag)
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
@@ -79,11 +79,17 @@ HRESULT CLevel_MainGame::Ready_Layer_Debug(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
+	if (FAILED(pGameInstance->Add_GameObject(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Test_Player"), pLayerTag, TEXT("GameObject_Test_Player"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Player)");
+		return E_FAIL;
+	}
+
 	Safe_Release(pGameInstance);
 
 	return S_OK;
 }
-
+#endif // _DEBUG
 CLevel_MainGame* CLevel_MainGame::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CLevel_MainGame* pInstance = new CLevel_MainGame(pDevice, pContext);

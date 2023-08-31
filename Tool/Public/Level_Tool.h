@@ -4,6 +4,7 @@
 #include "Sky.h"
 #include "Terrain.h"
 #include "Camera_Free.h"
+#include "DummyParticle.h"
 
 BEGIN(Tool)
 

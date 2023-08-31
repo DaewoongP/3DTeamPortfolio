@@ -4,9 +4,14 @@
 
 #include "Sky.h"
 #include "Terrain.h"
-#include "Camera_Debug.h"
 #include "VIBuffer_Cube.h"
 #include "Logo_BackGround.h"
+
+#ifdef _DEBUG
+#include "Test_Player.h"
+#include "Camera_Debug.h"
+#endif // _DEBUG
+
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice(pDevice)
@@ -87,7 +92,6 @@ HRESULT CLoader::Loading_For_Logo()
 		return E_FAIL;
 
 	lstrcpy(m_szLoading, TEXT("텍스쳐 로딩 중."));
-
 	/* For.Prototype_Component_Texture_Logo */
 	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_LOGO, TEXT("Prototype_Component_Texture_Logo"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Default0.jpg")))))
@@ -132,7 +136,7 @@ HRESULT CLoader::Loading_For_MainGame()
 		return E_FAIL;
 	}
 
-	lstrcpy(m_szLoading, TEXT("모델 로딩 중."));
+	lstrcpy(m_szLoading, TEXT("버퍼 로딩 중."));
 	/* For.Prototype_Component_VIBuffer_Cube */
 	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Cube"),
 		CVIBuffer_Cube::Create(m_pDevice, m_pContext))))
@@ -143,11 +147,41 @@ HRESULT CLoader::Loading_For_MainGame()
 
 	/* For.Prototype_Component_VIBuffer_Terrain */
 	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Terrain"),
-		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, 500, 500))))
+		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, 531, 531))))
 	{
 		MSG_BOX("Failed Add_Prototype : (Prototype_Component_VIBuffer_Terrain)");
 		return E_FAIL;
 	}
+
+	lstrcpy(m_szLoading, TEXT("모델 로딩 중."));
+
+#ifdef _DEBUG
+	/* For.Prototype_Component_Model_Fiona */
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Fiona"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/Fiona/Fiona.dat")))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_Component_Model_Fiona)");
+		return E_FAIL;
+	}
+
+	/* For.Prototype_Component_Model_CustomModel */
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_CustomModel"),
+		CCustomModel::Create(m_pDevice, m_pContext, L"../../Resources/Models/Anims/test/test.dat"))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_Component_Model_CustomModel)");
+		return E_FAIL;
+	}
+
+	/* For.Prototype_Component_Model_TestModel */
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_TestModel"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/Biped_Skeleton/Biped_Skeleton.dat")))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_Component_Model_TestModel)");
+		return E_FAIL;
+	}
+
+#endif // _DEBUG
+
 
 	lstrcpy(m_szLoading, TEXT("셰이더 로딩 중."));
 	/* For.Prototype_Component_Shader_VtxCube */
@@ -155,6 +189,14 @@ HRESULT CLoader::Loading_For_MainGame()
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxCube.hlsl"), VTXPOSCUBE_DECL::Elements, VTXPOSCUBE_DECL::iNumElements))))
 	{
 		MSG_BOX("Failed Add_Prototype : (Prototype_Component_Texture_SkyBox)");
+		return E_FAIL;
+	}
+
+	/* For.Prototype_Component_Shader_VtxAnimMesh */
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimMesh"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxAnimMesh.hlsl"), VTXANIMMESH_DECL::Elements, VTXANIMMESH_DECL::iNumElements))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_Component_Shader_VtxAnimMesh)");
 		return E_FAIL;
 	}
 
@@ -178,7 +220,7 @@ HRESULT CLoader::Loading_For_MainGame()
 		return E_FAIL;
 	}
 
-	/* For.Prototype_GameObject_Sky */
+	/* For.Prototype_GameObject_Terrain */
 	if (FAILED(m_pGameInstance->Add_Prototype_GameObject(TEXT("Prototype_GameObject_Terrain"),
 		CTerrain::Create(m_pDevice, m_pContext))))
 	{
@@ -193,6 +235,14 @@ HRESULT CLoader::Loading_For_MainGame()
 		CCamera_Debug::Create(m_pDevice, m_pContext))))
 	{
 		MSG_BOX("Failed Add_Prototype : (Prototype_GameObject_Camera_Debug)");
+		return E_FAIL;
+	}
+
+	/* For.Prototype_GameObject_Test_Player*/
+	if (FAILED(m_pGameInstance->Add_Prototype_GameObject(TEXT("Prototype_GameObject_Test_Player"),
+		CTest_Player::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_GameObject_Test_Player)");
 		return E_FAIL;
 	}
 #endif // _DEBUG

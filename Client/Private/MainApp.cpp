@@ -6,7 +6,6 @@ CMainApp::CMainApp()
 	: m_pGameInstance{ CGameInstance::GetInstance() }
 {
 	Safe_AddRef(m_pGameInstance);
-	
 #ifdef _DEBUG
 	ZeroMemory(m_szFPS, sizeof(_tchar) * MAX_STR);
 #endif // _DEBUG
@@ -119,6 +118,14 @@ HRESULT CMainApp::Ready_Prototype_Component_For_Static()
 		MSG_BOX("Failed Add_Prototype  : (Prototype_Component_VIBuffer_Rect_Dynamic)");
 		return E_FAIL;
 	}
+
+	/* Prototype_Component_PX */
+	/*if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_STATIC, TEXT("Prototype_Component_PX"),
+		CPX::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Failed Add_Prototype  : (Prototype_Component_PX)");
+		return E_FAIL;
+	}*/
 
 	return S_OK;
 }

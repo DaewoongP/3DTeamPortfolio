@@ -124,9 +124,9 @@ void CChannel::Invalidate_TransformationMatrix(CModel::BONES& Bones, _float fTim
 		_float3		vDestTranslation = m_MatrixKeyFrames[(*pCurrentKeyFrameIndex) + 1].vTranslation;
 
 		// 선형보간 함수. Rotation의 경우 Quaternion 형태여서 Slerp 함수 사용.
-		vScale.Lerp(vSourScale, vDestScale, fRatio);
+		vScale = vScale.Lerp(vSourScale, vDestScale, fRatio);
 		vRotation = XMQuaternionSlerp(vSourRotation, vDestRotation, fRatio);
-		vTranslation.Lerp(vSourTranslation, vDestTranslation, fRatio);
+		vTranslation = vTranslation.Lerp(vSourTranslation, vDestTranslation, fRatio);
 	}
 
 	// 선형보간되어 제작된 벡터를 행렬에 담아 채널의 이름과 같은 뼈의 인덱스에 값 전달.
@@ -157,9 +157,9 @@ void CChannel::Lerp_TransformationMatrix(CModel::BONES& Bones, CChannel* pCurren
 	_float3		vDestTranslation = pCurrentChannel->m_MatrixKeyFrames[0].vTranslation;
 
 	// 선형보간 함수. Rotation의 경우 Quaternion 형태여서 Slerp 함수 사용.
-	vScale.Lerp(vSourScale, vDestScale, fRatio);
+	vScale = vScale.Lerp(vSourScale, vDestScale, fRatio);
 	vRotation = XMQuaternionSlerp(vSourRotation, vDestRotation, fRatio);
-	vTranslation.Lerp(vSourTranslation, vDestTranslation, fRatio);
+	vTranslation = vTranslation.Lerp(vSourTranslation, vDestTranslation, fRatio);
 
 	// 선형보간되어 제작된 벡터를 행렬에 담아 채널의 이름과 같은 뼈의 인덱스에 값 전달.
 	_float4x4	TransformationMatrix = XMMatrixAffineTransformation(vScale, _float4(0.f, 0.f, 0.f, 1.f), vRotation, vTranslation);

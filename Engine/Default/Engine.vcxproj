@@ -19,7 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\private\MainModule.h" />
     <ClInclude Include="..\Public\Animation.h" />
     <ClInclude Include="..\Public\Base.h" />
     <ClInclude Include="..\Public\Behavior.h" />
@@ -29,11 +28,20 @@
     <ClInclude Include="..\Public\Bounding_AABB.h" />
     <ClInclude Include="..\Public\Bounding_OBB.h" />
     <ClInclude Include="..\public\Bounding_Sphere.h" />
+    <ClInclude Include="..\Public\Alarm.h" />
     <ClInclude Include="..\public\Calculator.h" />
     <ClInclude Include="..\public\Camera.h" />
     <ClInclude Include="..\public\Camera_Manager.h" />
+    <ClInclude Include="..\Public\Attack.h" />
+    <ClInclude Include="..\Public\MeshParts.h" />
+    <ClInclude Include="..\Public\CustomModel.h" />
+    <ClInclude Include="..\Public\Status.h" />
+    <ClInclude Include="..\Public\VIBuffer_Sprite.h" />
+    <ClInclude Include="..\Public\Ignite.h" />
+    <ClInclude Include="..\Public\Defence.h" />
     <ClInclude Include="..\public\Cell.h" />
     <ClInclude Include="..\Public\Channel.h" />
+    <ClInclude Include="..\Public\Health.h" />
     <ClInclude Include="..\public\Collider.h" />
     <ClInclude Include="..\Public\Collision_Manager.h" />
     <ClInclude Include="..\Public\Component.h" />
@@ -61,6 +69,7 @@
     <ClInclude Include="..\Public\Level_Manager.h" />
     <ClInclude Include="..\Public\Light.h" />
     <ClInclude Include="..\Public\Light_Manager.h" />
+    <ClInclude Include="..\Public\MainModule.h" />
     <ClInclude Include="..\Public\Mesh.h" />
     <ClInclude Include="..\Public\Model.h" />
     <ClInclude Include="..\public\Navigation.h" />
@@ -69,6 +78,9 @@
     <ClInclude Include="..\public\ParticleModule.h" />
     <ClInclude Include="..\Public\ParticleSystem.h" />
     <ClInclude Include="..\Public\PipeLine.h" />
+    <ClInclude Include="..\public\PX.h" />
+    <ClInclude Include="..\public\PXAllocator.h" />
+    <ClInclude Include="..\Public\PXErrorCallBack.h" />
     <ClInclude Include="..\Public\QuadTree.h" />
     <ClInclude Include="..\Public\Renderer.h" />
     <ClInclude Include="..\public\RenderTarget.h" />
@@ -107,11 +119,21 @@
     <ClCompile Include="..\Private\Bounding_AABB.cpp" />
     <ClCompile Include="..\Private\Bounding_OBB.cpp" />
     <ClCompile Include="..\private\Bounding_Sphere.cpp" />
+    <ClCompile Include="..\Private\Alarm.cpp" />
     <ClCompile Include="..\private\Calculator.cpp" />
     <ClCompile Include="..\private\Camera.cpp" />
     <ClCompile Include="..\private\Camera_Manager.cpp" />
+    <ClCompile Include="..\Private\Attack.cpp" />
+    <ClCompile Include="..\Private\MeshParts.cpp" />
+    <ClCompile Include="..\Private\CustomModel.cpp" />
+    <ClCompile Include="..\Private\Status.cpp" />
+    <ClCompile Include="..\Private\MainModule.cpp" />
+    <ClCompile Include="..\Private\VIBuffer_Sprite.cpp" />
+    <ClCompile Include="..\Private\Ignite.cpp" />
+    <ClCompile Include="..\Private\Defence.cpp" />
     <ClCompile Include="..\private\Cell.cpp" />
     <ClCompile Include="..\Private\Channel.cpp" />
+    <ClCompile Include="..\Private\Health.cpp" />
     <ClCompile Include="..\private\Collider.cpp" />
     <ClCompile Include="..\Private\Collision_Manager.cpp" />
     <ClCompile Include="..\Private\Component.cpp" />
@@ -140,6 +162,7 @@
     <ClCompile Include="..\private\ParticleModule.cpp" />
     <ClCompile Include="..\Private\ParticleSystem.cpp" />
     <ClCompile Include="..\Private\PipeLine.cpp" />
+    <ClCompile Include="..\private\PX.cpp" />
     <ClCompile Include="..\Private\QuadTree.cpp" />
     <ClCompile Include="..\Private\Renderer.cpp" />
     <ClCompile Include="..\private\RenderTarget.cpp" />
@@ -167,12 +190,15 @@
     <ClCompile Include="..\Private\Timer_Manager.cpp" />
     <ClCompile Include="..\Private\VIBuffer.cpp" />
     <ClCompile Include="..\Private\VIBuffer_Rect.cpp" />
-    <ClCompile Include="..\public\MainModule.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Navigation.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_PostProcessing.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_SSAO.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Type.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Public\DirectXTK\matrix.inl" />
@@ -282,7 +308,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;ENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../Public/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Public/;../Public/PhysX/</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <DisableSpecificWarnings>4828;4204;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
@@ -312,7 +338,7 @@ call Copy.bat</Command>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;ENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../Public/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Public/;../Public/PhysX/</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <DisableSpecificWarnings>4828;4204;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>

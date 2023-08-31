@@ -61,6 +61,18 @@
     <Filter Include="98. Default">
       <UniqueIdentifier>{cc18812b-2268-4f02-b60b-17a85252121a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\99. Debug\Camera">
+      <UniqueIdentifier>{135ca45c-2c5b-460d-a30c-d6f6b96b6d78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\99. Debug\Player">
+      <UniqueIdentifier>{a7856930-1055-4fbe-9f00-de43c99e8340}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\00. Test_Enemy">
+      <UniqueIdentifier>{99ca5248-58e8-4f7a-8de2-8132590cec88}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\07. NPC">
+      <UniqueIdentifier>{1048769e-752f-4d43-a082-e0d3163efe97}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -105,11 +117,20 @@
     <ClInclude Include="..\public\Level_MainGame.h">
       <Filter>01. Levels\01. MainGame</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Camera_Debug.h">
-      <Filter>02. GameObject\99. Debug</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Terrain.h">
       <Filter>02. GameObject\06. Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Camera_Debug.h">
+      <Filter>02. GameObject\99. Debug\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Test_Player.h">
+      <Filter>02. GameObject\99. Debug\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Test_Enemy.h">
+      <Filter>02. GameObject\02. Enemy\00. Test_Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Test_NPC.h">
+      <Filter>02. GameObject\07. NPC</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -140,11 +161,20 @@
     <ClCompile Include="..\private\Level_MainGame.cpp">
       <Filter>01. Levels\01. MainGame</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Camera_Debug.cpp">
-      <Filter>02. GameObject\99. Debug</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Terrain.cpp">
       <Filter>02. GameObject\06. Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Camera_Debug.cpp">
+      <Filter>02. GameObject\99. Debug\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Test_Player.cpp">
+      <Filter>02. GameObject\99. Debug\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Test_Enemy.cpp">
+      <Filter>02. GameObject\02. Enemy\00. Test_Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Test_NPC.cpp">
+      <Filter>02. GameObject\07. NPC</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -174,6 +204,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Terrain.hlsl">
       <Filter>97. ShaderFiles\Textures</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMesh.hlsl">
+      <Filter>97. ShaderFiles\Meshes</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

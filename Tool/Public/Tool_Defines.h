@@ -19,6 +19,6 @@ using namespace Tool;
 #include "imgui_impl_dx11.h"
 
 //--------------------------------------------------Macro
-#define			BEGININSTANCE					CGameInstance* pGameInstance = CGameInstance::GetInstance();		\
-												Safe_AddRef(pGameInstance);
-#define			ENDINSTANCE						Safe_Release(pGameInstance);
+#define            BEGININSTANCE                    CGameInstance* pGameInstance = CGameInstance::GetInstance();        \
+													Safe_AddRef(pGameInstance);
+#define            ENDINSTANCE                      Safe_Release(pGameInstance);

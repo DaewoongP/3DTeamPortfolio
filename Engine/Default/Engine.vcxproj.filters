@@ -16,12 +16,6 @@
     <Filter Include="01. Utility\00. GameInstance">
       <UniqueIdentifier>{8d9af0e6-13b6-4a21-8a73-4bd490b369a3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\01. Levels">
-      <UniqueIdentifier>{2c2cbf1d-cdd5-4810-b3dd-cc3ffc5bd683}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\01. Levels\Level">
-      <UniqueIdentifier>{a0203e81-1264-4e30-bae9-e487753415b3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Utility\02. GameObjects">
       <UniqueIdentifier>{6b248299-bad3-40d6-a6f3-88236cc8c0ec}</UniqueIdentifier>
     </Filter>
@@ -178,13 +172,16 @@
     <Filter Include="01. Utility\05. Camera\Manager">
       <UniqueIdentifier>{97f9a052-34b3-4b0e-b6bc-a338772e27c9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\03. Components\10. ParticleSystem">
+    <Filter Include="01. Utility\10. Calculator">
+      <UniqueIdentifier>{cdd21f25-4dbd-40f7-9fbb-cd3a276139a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\11. ParticleSystem">
       <UniqueIdentifier>{aaf18f8e-a9cf-4dba-9828-95d190790622}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\03. Components\10. ParticleSystem\ParticleModule">
+    <Filter Include="01. Utility\03. Components\11. ParticleSystem\ParticleModule">
       <UniqueIdentifier>{355d4a38-f001-42b9-8247-e9d447d141c5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\03. Components\10. ParticleSystem\ParticleModule\MainModule">
+    <Filter Include="01. Utility\03. Components\11. ParticleSystem\ParticleModule\MainModule">
       <UniqueIdentifier>{1802bf4a-ebe4-4b8c-a680-c609c88f336e}</UniqueIdentifier>
     </Filter>
     <Filter Include="01. Utility\03. Components\10. Behavior">
@@ -205,41 +202,56 @@
     <Filter Include="01. Utility\03. Components\10. Behavior\04. BlackBoard">
       <UniqueIdentifier>{86ff92e6-3ab7-4155-8d44-dfded6920f9e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\10. Calculator">
-      <UniqueIdentifier>{cdd21f25-4dbd-40f7-9fbb-cd3a276139a6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\03. Components\11. Behavior">
-      <UniqueIdentifier>{74671ea1-680f-4109-b558-9a41898e3288}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\03. Components\11. Behavior\00. RootBehavior">
-      <UniqueIdentifier>{81205c2a-2776-4b44-a839-dcd59687b808}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\03. Components\11. Behavior\01. Selector">
-      <UniqueIdentifier>{6141fb65-e15e-4020-bb1a-196ef2aed9cf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\03. Components\11. Behavior\02. Sequence">
-      <UniqueIdentifier>{28d93839-6dd5-4dfd-bb47-431f3575b049}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\03. Components\11. Behavior\03. Decorator">
-      <UniqueIdentifier>{35652164-6429-459d-a17e-9e2026d1a961}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\03. Components\11. Behavior\04. BlackBoard">
-      <UniqueIdentifier>{86ff92e6-3ab7-4155-8d44-dfded6920f9e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Utility\03. Components\11. ParticleSystem">
       <UniqueIdentifier>{aaf18f8e-a9cf-4dba-9828-95d190790622}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\03. Components\11. ParticleSystem\ParticleModule">
-      <UniqueIdentifier>{355d4a38-f001-42b9-8247-e9d447d141c5}</UniqueIdentifier>
+    <Filter Include="01. Utility\03. Components\07. VIBuffer\Sprite">
+      <UniqueIdentifier>{b63693e6-fa8a-4ecb-900e-d6e966643d70}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\03. Components\11. ParticleSystem\ParticleModule\MainModule">
-      <UniqueIdentifier>{1802bf4a-ebe4-4b8c-a680-c609c88f336e}</UniqueIdentifier>
+    <Filter Include="01. Utility\03. Components\13. Alarm">
+      <UniqueIdentifier>{9cbb7d45-1355-4391-a17a-ab9735b11f73}</UniqueIdentifier>
     </Filter>
     <Filter Include="01. Utility\10. Calculator">
       <UniqueIdentifier>{cdd21f25-4dbd-40f7-9fbb-cd3a276139a6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\01. Levels">
+      <UniqueIdentifier>{2c2cbf1d-cdd5-4810-b3dd-cc3ffc5bd683}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\01. Levels\Level">
+      <UniqueIdentifier>{a0203e81-1264-4e30-bae9-e487753415b3}</UniqueIdentifier>
+    </Filter>
     <Filter Include="01. Utility\03. Components\04. Model\Animation\Notify">
       <UniqueIdentifier>{99ae6d76-4b41-4979-a852-21410c894c2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\12. PhysX">
+      <UniqueIdentifier>{a0e4e0fe-93f6-4a35-9aef-87da3b2f96b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\12. PhysX\Allocator">
+      <UniqueIdentifier>{d2a1bc2d-eb72-4022-ab0b-2d4358e602e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\12. PhysX\ErrorCallBack">
+      <UniqueIdentifier>{9faf9a61-c854-4028-95e1-f2c591f3abcc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\14. Status">
+      <UniqueIdentifier>{0d097a3d-8ef4-4813-afef-ca81cc0a63bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\14. Status\00. Health">
+      <UniqueIdentifier>{2c307619-8c41-4f09-8c44-3e7e1dd9bf83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\14. Status\01. Attack">
+      <UniqueIdentifier>{8a7bc604-a1b2-4301-9e99-b36444fc8db5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\14. Status\02. Defence">
+      <UniqueIdentifier>{6b004c01-c864-470b-b278-e400cb119e26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\14. Status\03. Ignite">
+      <UniqueIdentifier>{1181c3a3-d95e-4eab-b1e6-b175481b2152}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\15. CustomModel">
+      <UniqueIdentifier>{123c13cc-5f31-459d-8cbc-5a6c0f6df715}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\15. CustomModel\MeshParts">
+      <UniqueIdentifier>{03be6e6b-609c-44dc-921c-7f8675822f53}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -442,25 +454,22 @@
       <Filter>01. Utility\05. Camera</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Behavior.h">
-      <Filter>01. Utility\03. Components\11. Behavior</Filter>
+      <Filter>01. Utility\03. Components\10. Behavior</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\BlackBoard.h">
-      <Filter>01. Utility\03. Components\11. Behavior\04. BlackBoard</Filter>
+      <Filter>01. Utility\03. Components\10. Behavior\04. BlackBoard</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Decorator.h">
-      <Filter>01. Utility\03. Components\11. Behavior\03. Decorator</Filter>
+      <Filter>01. Utility\03. Components\10. Behavior\03. Decorator</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\RootBehavior.h">
-      <Filter>01. Utility\03. Components\11. Behavior\00. RootBehavior</Filter>
+      <Filter>01. Utility\03. Components\10. Behavior\00. RootBehavior</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Selector.h">
-      <Filter>01. Utility\03. Components\11. Behavior\01. Selector</Filter>
+      <Filter>01. Utility\03. Components\10. Behavior\01. Selector</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Sequence.h">
-      <Filter>01. Utility\03. Components\11. Behavior\02. Sequence</Filter>
-    </ClInclude>
-    <ClInclude Include="..\private\MainModule.h">
-      <Filter>01. Utility\03. Components\11. ParticleSystem\ParticleModule\MainModule</Filter>
+      <Filter>01. Utility\03. Components\10. Behavior\02. Sequence</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ParticleSystem.h">
       <Filter>01. Utility\03. Components\11. ParticleSystem</Filter>
@@ -471,8 +480,47 @@
     <ClInclude Include="..\public\Calculator.h">
       <Filter>01. Utility\10. Calculator</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\PX.h">
+      <Filter>01. Utility\03. Components\12. PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PXAllocator.h">
+      <Filter>01. Utility\03. Components\12. PhysX\Allocator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PXErrorCallBack.h">
+      <Filter>01. Utility\03. Components\12. PhysX\ErrorCallBack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Health.h">
+      <Filter>01. Utility\03. Components\14. Status\00. Health</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Attack.h">
+      <Filter>01. Utility\03. Components\14. Status\01. Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Defence.h">
+      <Filter>01. Utility\03. Components\14. Status\02. Defence</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\VIBuffer_Sprite.h">
+      <Filter>01. Utility\03. Components\07. VIBuffer\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Ignite.h">
+      <Filter>01. Utility\03. Components\14. Status\03. Ignite</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Alarm.h">
+      <Filter>01. Utility\03. Components\13. Alarm</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\Notify.h">
       <Filter>01. Utility\03. Components\04. Model\Animation\Notify</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MainModule.h">
+      <Filter>01. Utility\03. Components\11. ParticleSystem\ParticleModule\MainModule</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Status.h">
+      <Filter>01. Utility\03. Components\14. Status</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CustomModel.h">
+      <Filter>01. Utility\03. Components\15. CustomModel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MeshParts.h">
+      <Filter>01. Utility\03. Components\15. CustomModel\MeshParts</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -654,25 +702,22 @@
       <Filter>01. Utility\05. Camera</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Behavior.cpp">
-      <Filter>01. Utility\03. Components\11. Behavior</Filter>
+      <Filter>01. Utility\03. Components\10. Behavior</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\BlackBoard.cpp">
-      <Filter>01. Utility\03. Components\11. Behavior\04. BlackBoard</Filter>
+      <Filter>01. Utility\03. Components\10. Behavior\04. BlackBoard</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Decorator.cpp">
-      <Filter>01. Utility\03. Components\11. Behavior\03. Decorator</Filter>
+      <Filter>01. Utility\03. Components\10. Behavior\03. Decorator</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\RootBehavior.cpp">
-      <Filter>01. Utility\03. Components\11. Behavior\00. RootBehavior</Filter>
+      <Filter>01. Utility\03. Components\10. Behavior\00. RootBehavior</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Selector.cpp">
-      <Filter>01. Utility\03. Components\11. Behavior\01. Selector</Filter>
+      <Filter>01. Utility\03. Components\10. Behavior\01. Selector</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Sequence.cpp">
-      <Filter>01. Utility\03. Components\11. Behavior\02. Sequence</Filter>
-    </ClCompile>
-    <ClCompile Include="..\public\MainModule.cpp">
-      <Filter>01. Utility\03. Components\11. ParticleSystem\ParticleModule\MainModule</Filter>
+      <Filter>01. Utility\03. Components\10. Behavior\02. Sequence</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\ParticleSystem.cpp">
       <Filter>01. Utility\03. Components\11. ParticleSystem</Filter>
@@ -683,8 +728,41 @@
     <ClCompile Include="..\private\Calculator.cpp">
       <Filter>01. Utility\10. Calculator</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\PX.cpp">
+      <Filter>01. Utility\03. Components\12. PhysX</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Health.cpp">
+      <Filter>01. Utility\03. Components\14. Status\00. Health</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Attack.cpp">
+      <Filter>01. Utility\03. Components\14. Status\01. Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Defence.cpp">
+      <Filter>01. Utility\03. Components\14. Status\02. Defence</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\VIBuffer_Sprite.cpp">
+      <Filter>01. Utility\03. Components\07. VIBuffer\Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Ignite.cpp">
+      <Filter>01. Utility\03. Components\14. Status\03. Ignite</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Alarm.cpp">
+      <Filter>01. Utility\03. Components\13. Alarm</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\Notify.cpp">
       <Filter>01. Utility\03. Components\04. Model\Animation\Notify</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MainModule.cpp">
+      <Filter>01. Utility\03. Components\11. ParticleSystem\ParticleModule\MainModule</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Status.cpp">
+      <Filter>01. Utility\03. Components\14. Status</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CustomModel.cpp">
+      <Filter>01. Utility\03. Components\15. CustomModel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MeshParts.cpp">
+      <Filter>01. Utility\03. Components\15. CustomModel\MeshParts</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -695,6 +773,12 @@
       <Filter>01. Utility\03. Components\02. Renderer\Shader</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_PostProcessing.hlsl">
+      <Filter>01. Utility\03. Components\02. Renderer\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Type.hlsl">
+      <Filter>01. Utility\03. Components\02. Renderer\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_SSAO.hlsl">
       <Filter>01. Utility\03. Components\02. Renderer\Shader</Filter>
     </FxCompile>
   </ItemGroup>

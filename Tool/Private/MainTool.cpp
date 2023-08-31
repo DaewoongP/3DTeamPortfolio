@@ -201,6 +201,11 @@ HRESULT CMainTool::Add_Windows()
 			ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(446.f, 768.f)))))
 		return E_FAIL;
 
+	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("UI_Window"),
+		CUI_Window::Create(m_pDevice, m_pContext,
+			ImVec2(_float(rc.right), _float(rc.top)), ImVec2(500.f, 500.f)))))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -242,6 +247,15 @@ HRESULT CMainTool::Ready_Prototype_Component()
 			VTXMESH_DECL::Elements, VTXMESH_DECL::iNumElements))))
 		return E_FAIL;
 
+	/* For.Prototype_Component_Shader_VtxAnimMesh */
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimMesh"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxAnimMesh.hlsl"), 
+			VTXANIMMESH_DECL::Elements, VTXANIMMESH_DECL::iNumElements))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_Component_Shader_VtxAnimMesh)");
+		return E_FAIL;
+	}
+
 	/* Prototype_Component_VIBuffer_Rect */
 	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_TOOL, TEXT("Prototype_Component_VIBuffer_Rect"),
 		CVIBuffer_Rect::Create(m_pDevice, m_pContext))))
@@ -272,6 +286,11 @@ HRESULT CMainTool::Ready_Prototype_Component()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Default0.jpg")))))
 		return E_FAIL;
 
+	/* Prototype_Component_ParticleSystem_Fire*/
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_TOOL, TEXT("Prototype_Component_Fire_Particle"),
+		CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Particles/Fire/")))))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -287,6 +306,10 @@ HRESULT CMainTool::Ready_Prototype_Object()
 
 	if (FAILED(m_pGameInstance->Add_Prototype_GameObject(TEXT("Prototype_GameObject_Sky"),
 		CSky::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype_GameObject(TEXT("Prototype_GameObject_DummyParticle"),
+		DummyParticle::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* Prototype_GameObject_Dummy*/
