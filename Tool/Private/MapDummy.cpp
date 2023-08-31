@@ -176,5 +176,6 @@ void CMapDummy::Free()
 	Safe_Release(m_pTransform);
 	Safe_Release(m_pShader);
 	Safe_Release(m_pModel);
+	Safe_Release(m_pModel);
 	Safe_Release(m_pRenderer);
 }

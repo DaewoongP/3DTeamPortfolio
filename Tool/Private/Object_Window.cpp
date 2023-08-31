@@ -41,6 +41,7 @@ void CObject_Window::Tick(_float fTimeDelta)
 	// 메뉴 On Off static _bool 변수 모음
 	static _bool bCheckPicking = { false };
 	static _bool bSelectModel = { false };
+	static _bool bSaveLoad = { false };
 
 	// Picking 창 On / Off
 	ImGui::Checkbox("Picking", &bCheckPicking);
@@ -49,12 +50,25 @@ void CObject_Window::Tick(_float fTimeDelta)
 		Picking_Menu();
 	}
 
+	ImGui::Text("----------------------------------------");
+
 	// Model 선택 창 On / Off
 	ImGui::Checkbox("Model Select", &bSelectModel);
 	if (true == bSelectModel)
 	{
 		Select_Model();
 	}
+
+	ImGui::Text("----------------------------------------");
+
+	// Save Load 선택 창 On / Off
+	ImGui::Checkbox("Save Load", &bSaveLoad);
+	if (true == bSaveLoad)
+	{
+		Save_Load_Menu();
+	}
+
+	ImGui::Text("----------------------------------------");
 
 	ImGui::End();
 }
@@ -127,8 +141,6 @@ void CObject_Window::Install_Object(_float3 vPos)
 		++m_iMapObjectIndex;
 
 	} ENDINSTANCE;
-
-	ImGui::Text("----------------------------------------");
 }
 
 void CObject_Window::Select_Model()
@@ -199,8 +211,39 @@ void CObject_Window::Select_Model()
 			return;
 		}
 	}
+}
 
-	ImGui::Text("----------------------------------------");
+void CObject_Window::Save_Load_Menu()
+{
+	// 세이브 버튼 처리
+	if (ImGui::Button("Save"))
+	{
+		if (FAILED(Save_MapObject()))
+			MSG_BOX("Failed to Save MapObject on Menu");
+	}
+
+	ImGui::SameLine();
+
+	// 로드 버튼 처리
+	if (ImGui::Button("Load"))
+	{
+		if (FAILED(Load_MapObject()))
+			MSG_BOX("Failed to Load MapObject on Menu");
+	}
+}
+
+HRESULT CObject_Window::Save_MapObject()
+{
+
+
+	return S_OK;
+}
+
+HRESULT CObject_Window::Load_MapObject()
+{
+
+
+	return S_OK;
 }
 
 void CObject_Window::Deep_Copy_Name()
