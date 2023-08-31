@@ -87,7 +87,7 @@ HRESULT CModel::Initialize_Prototype(TYPE eType, const _tchar* pModelFilePath, _
 	if (FAILED(Ready_Meshes(eType, PivotMatrix)))
 		return E_FAIL;
 
-	if (FAILED(Ready_Materials(pModelFilePath)))
+	if (FAILED(Ready_Materials()))
 		return E_FAIL;
 
 	if (FAILED(Ready_Animations()))
@@ -123,7 +123,7 @@ void CModel::Reset_Animation(_uint iAnimIndex)
 
 void CModel::Play_Animation(_float fTimeDelta)
 {
-	//m_Animations[m_iCurrentAnimIndex]->Invalidate_Frame(fTimeDelta);
+	m_Animations[m_iCurrentAnimIndex]->Invalidate_Frame(fTimeDelta);
 	m_Animations[m_iCurrentAnimIndex]->Invalidate_TransformationMatrix(m_Bones, fTimeDelta);
 
 	/* 모델에 표현되어있는 모든 뼈들의 CombinedTransformationMatrix */
@@ -486,7 +486,7 @@ HRESULT CModel::Ready_Meshes(TYPE eType, _float4x4 PivotMatrix)
 	return S_OK;
 }
 
-HRESULT CModel::Ready_Materials(const _tchar* pModelFilePath)
+HRESULT CModel::Ready_Materials()
 {
 	m_iNumMaterials = m_Model.iNumMaterials;
 
