@@ -11,7 +11,6 @@
 /* =============================================== */
 
 #include "Component.h"
-#include "MeshParts.h"
 
 BEGIN(Engine)
 
@@ -36,12 +35,8 @@ public:
 		return m_iCurrentAnimIndex;
 	}
 	// 모델의 메쉬 개수 반환
-	_uint Get_NumMeshes(const _uint& _iMeshPartsIndex) const {
-		if (nullptr == m_MeshParts[_iMeshPartsIndex])
-			return 0;
-
-		return m_MeshParts[_iMeshPartsIndex]->Get_NumMeshes();
-	}
+	_uint Get_NumMeshes(const _uint& _iMeshPartsIndex) const;
+	
 	// 모델의 애니메이션 개수 반환
 	_uint Get_NumAnimations() const {
 		return m_iNumAnimations;
@@ -56,7 +51,7 @@ public:
 	}
 	const _float4x4* Get_BoneCombinedTransformationMatrixPtr(_uint iIndex);
 	_float4x4 Get_BoneCombinedTransformationMatrix(_uint iIndex);
-	HRESULT Add_MeshParts(const _uint& _iMeshPartsIndex, const wstring& _wstrMeshPartsFilePath);
+	HRESULT Add_MeshParts(const _uint& _iLevelIndex, const wstring& _wstrPrototypeTag, MESHTYPE _eMeshPartsType);
 
 public:
 	virtual HRESULT Initialize_Prototype(const wstring& _wstrModelFilePath, _float4x4 _PivotMatrix);
@@ -85,7 +80,7 @@ private: /* For.MeshParts */
 	array<class CMeshParts*, MESH_END>	m_MeshParts = { nullptr };
 
 private: /* For.Bones */
-	CModel::BONES			m_Bones;
+	CModel::BONES		m_Bones;
 
 private: /* For.Animations */
 	_uint							m_iPreviousAnimIndex = { 0 };

@@ -30,7 +30,7 @@ public:
 	virtual HRESULT Render_Depth() override;
 
 private:
-	CModel*	m_pModelCom = { nullptr };
+	CCustomModel*	m_pModelCom = { nullptr };
 	CShader*		m_pShaderCom = { nullptr };
 	CRenderer*		m_pRenderer = { nullptr };
 
