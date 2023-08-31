@@ -75,6 +75,44 @@ namespace Engine
 		const wchar_t* m_pTargetTag = nullptr;
 	};
 
+	//Queue.Clear() 없어서 만듬
+	template <typename T>
+	void Clear_Queue(queue<T>& _Queue)
+	{
+		//비었다면 탈출
+		if (_Queue.empty())
+		{
+			return;
+		}
+
+		//모든 원소지우기
+		size_t QueueSize = _Queue.size();
+
+		for (size_t i = 0; i < QueueSize; i++)
+		{
+			_Queue.pop();
+		}
+	}
+
+	template <typename T>
+	void Clear_Queue_Pointer(queue<T>& _Queue)
+	{
+		//비었다면 탈출
+		if (_Queue.empty())
+		{
+			return;
+		}
+
+		//모든 원소지우기
+		size_t QueueSize = _Queue.size();
+
+		for (size_t i = 0; i < QueueSize; i++)
+		{
+			Safe_Delete(_Queue.front());
+			_Queue.pop();
+		}
+	}
+
 	// 값의 범위를 제한하는 함수
 	// ex)
 	// int value = 11;

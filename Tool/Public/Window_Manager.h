@@ -5,6 +5,7 @@
 #include "UI_Window.h"
 #include "Effect_Window.h"
 #include "Animation_Window.h"
+#include "Camera_Window.h"
 
 BEGIN(Tool)
 
