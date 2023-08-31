@@ -69,7 +69,6 @@
     <ClInclude Include="..\Public\Level_Manager.h" />
     <ClInclude Include="..\Public\Light.h" />
     <ClInclude Include="..\Public\Light_Manager.h" />
-    <ClInclude Include="..\Public\MainModule.h" />
     <ClInclude Include="..\Public\Mesh.h" />
     <ClInclude Include="..\Public\Model.h" />
     <ClInclude Include="..\public\Navigation.h" />
@@ -127,7 +126,6 @@
     <ClCompile Include="..\Private\MeshParts.cpp" />
     <ClCompile Include="..\Private\CustomModel.cpp" />
     <ClCompile Include="..\Private\Status.cpp" />
-    <ClCompile Include="..\Private\MainModule.cpp" />
     <ClCompile Include="..\Private\VIBuffer_Sprite.cpp" />
     <ClCompile Include="..\Private\Ignite.cpp" />
     <ClCompile Include="..\Private\Defence.cpp" />
@@ -196,7 +194,7 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Navigation.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_PostProcessing.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_SSAO.hlsl">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Type.hlsl" />
   </ItemGroup>

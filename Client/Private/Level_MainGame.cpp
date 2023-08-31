@@ -11,9 +11,27 @@ HRESULT CLevel_MainGame::Initialize()
 	if (FAILED(__super::Initialize()))
 		return E_FAIL;
 
+	/*CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	CLight::LIGHTDESC		LightDesc;
+	ZeroMemory(&LightDesc, sizeof LightDesc);
+
+	LightDesc.eType = CLight::TYPE_DIRECTIONAL;
+	LightDesc.vDir = _float4(0.99f, -1.f, 0.99f, 0.f);
+
+	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+	LightDesc.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
+	LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
+
+	if (FAILED(pGameInstance->Add_Lights(LightDesc)))
+		return E_FAIL;
+	ENDINSTANCE*/
+
+
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 		return E_FAIL;
-
+	
 
 #ifdef _DEBUG
 	if (FAILED(Ready_Layer_Debug(TEXT("Layer_Debug"))))
@@ -84,6 +102,7 @@ HRESULT CLevel_MainGame::Ready_Layer_Debug(const _tchar* pLayerTag)
 		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Player)");
 		return E_FAIL;
 	}
+	
 
 	Safe_Release(pGameInstance);
 

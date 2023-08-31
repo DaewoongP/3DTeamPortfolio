@@ -1,4 +1,4 @@
-#include "..\Public\MainTool.h"
+#include "MainTool.h"
 #include "GameInstance.h"
 #include "Level_Tool.h"
 #include "CDummy.h"
@@ -206,6 +206,11 @@ HRESULT CMainTool::Add_Windows()
 			ImVec2(_float(rc.right), _float(rc.top)), ImVec2(500.f, 500.f)))))
 		return E_FAIL;
 
+	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("Camera_Window"),
+		CCamera_Window::Create(m_pDevice, m_pContext,
+			ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(446.f, 768.f)))))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -235,10 +240,16 @@ HRESULT CMainTool::Ready_Prototype_Component()
 			VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements))))
 		return E_FAIL;
 
-	/* For.Prototype_Component_Shader_VtxCube*/
+	/* For.Prototype_Component_Shader_VtxCube */
 	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_TOOL, TEXT("Prototype_Component_Shader_VtxCube"),
-		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Sky.hlsl"), 
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Sky.hlsl"),
 			VTXPOSCUBE_DECL::Elements, VTXPOSCUBE_DECL::iNumElements))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Shader_VtxPointColInstance */
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_TOOL, TEXT("Prototype_Component_Shader_VtxPointColInstance"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxPointColInstance.hlsl"),
+			VTXPOINTCOLORINSTANCE_DECL::Elements, VTXPOINTCOLORINSTANCE_DECL::iNumElements))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Shader_VtxMesh*/
@@ -271,6 +282,11 @@ HRESULT CMainTool::Ready_Prototype_Component()
 		CVIBuffer_Cube::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	/* Prototype_Component_VIBuffer_Point_Color_Instance*/
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_TOOL, TEXT("Prototype_Component_VIBuffer_Point_Color_Instance"),
+		CVIBuffer_Point_Color_Instance::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	/* Prototype_Component_Texture_Terrain */
 	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_TOOL, TEXT("Prototype_Component_Texture_Terrain"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Terrain/Tile%d.dds"), 2))))
@@ -286,9 +302,14 @@ HRESULT CMainTool::Ready_Prototype_Component()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Default0.jpg")))))
 		return E_FAIL;
 
-	/* Prototype_Component_ParticleSystem_Fire*/
-	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_TOOL, TEXT("Prototype_Component_Fire_Particle"),
-		CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Particles/Fire/")))))
+	/* Prototype_Component_Texture_Default_Particle*/
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_TOOL, TEXT("Prototype_Component_Texture_Default_Particle"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Particles/Default_Particle.png")))))
+		return E_FAIL;
+
+	/* Prototype_Component_Default_ParticleSystem*/
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_TOOL, TEXT("Prototype_Component_Default_ParticleSystem"),
+		CParticleSystem::Create(m_pDevice, m_pContext, 30))))
 		return E_FAIL;
 
 	return S_OK;
@@ -309,7 +330,7 @@ HRESULT CMainTool::Ready_Prototype_Object()
 		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Add_Prototype_GameObject(TEXT("Prototype_GameObject_DummyParticle"),
-		DummyParticle::Create(m_pDevice, m_pContext))))
+		CDummyParticle::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* Prototype_GameObject_Dummy*/
