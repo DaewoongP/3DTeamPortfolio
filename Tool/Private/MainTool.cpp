@@ -3,6 +3,7 @@
 #include "Level_Tool.h"
 #include "CDummy.h"
 #include "MapDummy.h"
+#include "MapObject.h"
 
 CMainTool::CMainTool()
 	: m_pGameInstance(CGameInstance::GetInstance())
@@ -187,7 +188,7 @@ HRESULT CMainTool::Add_Windows()
 
 	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("Object_Window"),
 		CObject_Window::Create(m_pDevice, m_pContext,
-			ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(400.f, 500.f)))))
+			ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(400.f, 700.f)))))
 		return E_FAIL;
 	
 	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("Effect_Window"),
@@ -296,6 +297,11 @@ HRESULT CMainTool::Ready_Prototype_Object()
 	/* Prototype_GameObject_MapDummy*/
 	if (FAILED(m_pGameInstance->Add_Prototype_GameObject(TEXT("Prototype_GameObject_MapDummy"),
 		CMapDummy::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* Prototype_GameObject_MapObject*/
+	if (FAILED(m_pGameInstance->Add_Prototype_GameObject(TEXT("Prototype_GameObject_MapObject"),
+		CMapObject::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	return S_OK;

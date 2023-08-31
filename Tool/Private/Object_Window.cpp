@@ -4,6 +4,7 @@
 #include "VIBuffer_Terrain.h"
 
 #include "MapDummy.h"
+#include "MapObject.h"
 #include "Terrain.h"
 
 CObject_Window::CObject_Window(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -22,9 +23,10 @@ HRESULT CObject_Window::Initialize(ImVec2 vWindowPos, ImVec2 vWindowSize)
 	m_WindowFlag = ImGuiWindowFlags_NoResize;
 
 	// 가장 처음 요소 하나(더미) 넣어줌
-	Deep_Copy_Name();
+	// 지금은 더미 모델을 Tree로 해뒀지만 
+	// 나중에 적당한 모델 찾아서 대체해야 한다.
 	m_vecModelList.push_back(m_strCurrentModel);
-	m_vecModelPath_t.push_back(TEXT("C:/Users/micro/3DTeamPortfolio/Resources/Models/NonAnims/Tree/Tree.dat"));
+	Deep_Copy_Name();
 
 	return S_OK;
 }
@@ -43,15 +45,15 @@ void CObject_Window::Tick(_float fTimeDelta)
 	ImGui::Checkbox("Picking", &bCheckPicking);
 	if(true == bCheckPicking)
 	{
-		PickingMenu();
+		Picking_Menu();
 	}
 
 	// Model 선택 창 On / Off
 	ImGui::Checkbox("Model Select", &bSelectModel);
 	if (true == bSelectModel)
 	{
-		SelectModel();
-	}	
+		Select_Model();
+	}
 
 	ImGui::End();
 }
@@ -61,7 +63,7 @@ HRESULT CObject_Window::Render()
 	return S_OK;
 }
 
-void CObject_Window::PickingMenu()
+void CObject_Window::Picking_Menu()
 {
 	_float3 vPos = Find_PickingPos();
 
@@ -80,9 +82,55 @@ void CObject_Window::PickingMenu()
 	{
 		m_pDummy->Set_Pos(vPos);
 	} ENDINSTANCE;
+
+	// 메뉴 On Off static _bool 변수 모음
+	static _bool bInstallObject = { false };
+
+	// Object Install 선택 창 On / Off
+	ImGui::Checkbox("Object Install", &bInstallObject);
+	if (true == bInstallObject)
+	{
+		Install_Object(m_pDummy->Get_Transform()->Get_Translation());
+	}
 }
 
-void CObject_Window::SelectModel()
+void CObject_Window::Install_Object(_float3 vPos)
+{
+	ImGui::Text("Press H to install");
+
+	// 범위 안에 있을 경우 H키를 눌러 설치
+	BEGININSTANCE; if (true == pGameInstance->Get_DIKeyState(DIK_H, CInput_Device::KEY_DOWN) &&
+		-1.f != vPos.x)
+	{
+		// 맵 오브젝트에 번호 붙여줌
+		_tchar wszobjName[MAX_PATH] = { 0 };
+		_stprintf_s(wszobjName, TEXT("GameObject_MapObject_%d"), (m_iMapObjectIndex));
+		Deep_Copy_Tag(wszobjName);
+
+		if (FAILED(pGameInstance->Add_GameObject(LEVEL_TOOL,
+			TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_MapObject"), 
+			m_vecMapObjectTag_t.at(m_iMapObjectIndex), &vPos)))
+		{
+			MSG_BOX("Failed to Install MapObject");
+			ENDINSTANCE;
+			return;
+		}
+
+		// 마지막에 설치한 맵 오브젝트 주소 가져옴
+		m_pObject = static_cast<CMapObject*>(pGameInstance->Find_GameObject_In_Layer(LEVEL_TOOL, 
+			TEXT("Layer_MapObject"), wszobjName));
+
+		m_pObject->Add_Model_Component(m_vecModelList_t.at(m_iModelIndex));
+		m_pObject->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMesh"));
+
+		++m_iMapObjectIndex;
+
+	} ENDINSTANCE;
+
+	ImGui::Text("----------------------------------------");
+}
+
+void CObject_Window::Select_Model()
 {
 	// 현재 선택된 모델이 무엇인지 표시
 	ImGui::Text("Current Model");
@@ -105,6 +153,7 @@ void CObject_Window::SelectModel()
 		if (ImGuiFileDialog::Instance()->IsOk())
 		{
 			// action
+			// 주소 가공
 			std::string strFilePathName = ImGuiFileDialog::Instance()->GetFilePathName();
 			_char fileName[MAX_PATH] = "";
 			_splitpath_s(strFilePathName.c_str(), nullptr, 0, nullptr, 0, fileName, MAX_PATH, nullptr, 0);
@@ -116,8 +165,7 @@ void CObject_Window::SelectModel()
 			_tchar wszModelTag[MAX_PATH] = TEXT("Prototype_Component_Model_");
 			lstrcat(wszModelTag, wszfileName);
 
-			//wstring ws(wszModelTag);
-			//m_strCurrentModel.assign(ws.begin(), ws.end());
+			// _tchar형태의 문자열을 string으로 변환
 			_char szTag[MAX_PATH] = "";
 			WCharToChar(wszModelTag, szTag);
 			m_strCurrentModel.clear();
@@ -190,6 +238,24 @@ void CObject_Window::Deep_Copy_Path(const _tchar* wszPath)
 	m_vecModelPath_t.push_back(wszNew);
 }
 
+void CObject_Window::Deep_Copy_Tag(const _tchar* wszTag)
+{
+	// 맵 오브젝트 경로를 const _tchar* 형태로 깊은 복사
+	size_t length = wcslen(wszTag);
+
+	wstring ws(wszTag);
+
+	_tchar* wszNew = new _tchar[length + 1];
+
+	if (0 != wcscpy_s(wszNew, length + 1, ws.c_str()))
+	{
+		MSG_BOX("Falied to Deep Copy(Tag)");
+		return;
+	}
+
+	m_vecMapObjectTag_t.push_back(wszNew);
+}
+
 _float3 CObject_Window::Find_PickingPos()
 {
 	_float4 vRayPos = { 0.f, 0.f, 0.f, 1.f };
@@ -227,13 +293,13 @@ HRESULT CObject_Window::Create_Dummy()
 	_float3 vPos = { 5.f, 0.f, 5.f };
 
 	BEGININSTANCE; if (FAILED(pGameInstance->Add_GameObject(LEVEL_TOOL, TEXT("Prototype_GameObject_MapDummy"), 
-		TEXT("Layer_Tool"), TEXT("Map_Dummy"), &vPos)))
+		TEXT("Layer_MapObject"), TEXT("Map_Dummy"), &vPos)))
 	{
 		MSG_BOX("Failed to GameObject Map_Dummy");
 		return E_FAIL;
 	}
 
-	m_pDummy = static_cast<CMapDummy*>(pGameInstance->Find_GameObject_In_Layer(LEVEL_TOOL, TEXT("Layer_Tool"), TEXT("Map_Dummy")));
+	m_pDummy = static_cast<CMapDummy*>(pGameInstance->Find_GameObject_In_Layer(LEVEL_TOOL, TEXT("Layer_MapObject"), TEXT("Map_Dummy")));
 
 	_float4x4 PivotMatrix = XMMatrixIdentity();
 
@@ -268,6 +334,16 @@ void CObject_Window::Free(void)
 
 	// 동적 할당 해줬던 문자열 해제
 	for (auto& iter : m_vecModelList_t)
+	{
+		delete[] iter;
+	}
+
+	for (auto& iter : m_vecMapObjectTag_t)
+	{
+		delete[] iter;
+	}
+
+	for (auto& iter : m_vecModelPath_t)
 	{
 		delete[] iter;
 	}
