@@ -30,8 +30,8 @@ private:
 	void Install_Object(_float3 vPos); // 오브젝트 설치 메뉴
 	void Select_Model(); // 모델 선택 메뉴
 	void Save_Load_Menu(); // 세이브 로드 메뉴
-	HRESULT Save_MapObject();
-	HRESULT Load_MapObject();
+	HRESULT Save_MapObject(); // MapObject 저장
+	HRESULT Load_MapObject(); // MapObject 로드
 
 	void Deep_Copy_Name(); // 모델 이름 문자열 깊은 복사
 	void Deep_Copy_Path(const _tchar* wszPath); // 모델 경로 문자열 깊은 복사
@@ -40,6 +40,8 @@ private:
 
 	_float3 Find_PickingPos(); // 지형의 피킹 위치를 찾는 함수
 	HRESULT Create_Dummy(); // 최초 1번 Dummy 생성
+	HRESULT Save_Model_Path(); // 프로그램이 종료될 때 호출시켜서 모델의 경로들을 저장함
+	HRESULT Load_Model_Path(); // 저장해둔 모든 모델 경로들을 불러오는 함수
 
 private:
 	CMapDummy* m_pDummy = { nullptr }; // 생성해둔 Dummy의 주소
@@ -54,6 +56,7 @@ private:
 	vector<const _tchar*> m_vecModelPath_t; // 모델 경로를 _tchar로 저장해둠
 	vector<const _tchar*> m_vecMapObjectTag_t; // 맵에 추가한 오브젝트들의 넘버링 태그를 저장
 	vector<SAVEOBJECTDESC> m_vecSaveObject; // 저장할 맵 오브젝트에 대한 정보
+	vector<const _tchar*> m_vecLoadModelPath; // 모델 경로들을 영구적으로 저장해둘 벡터
 
 public:
 	static CObject_Window* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, ImVec2 vWindowPos, ImVec2 vWindowSize);

@@ -122,6 +122,7 @@ void CObject_Window::Install_Object(_float3 vPos)
 		_stprintf_s(wszobjName, TEXT("GameObject_MapObject_%d"), (m_iMapObjectIndex));
 		Deep_Copy_Tag(wszobjName);
 
+		// 번호를 붙인 태그로 MapObject 등록
 		if (FAILED(pGameInstance->Add_GameObject(LEVEL_TOOL,
 			TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_MapObject"), 
 			m_vecMapObjectTag_t.at(m_iMapObjectIndex), &vPos)))
@@ -313,8 +314,6 @@ HRESULT CObject_Window::Load_MapObject()
 	CloseHandle(hFile);
 
 	// 로드한 데이터를 적용시켜 주는 부분
-	//객체 생성
-	//m_vecSaveObject 초기화
 	for (size_t i = 0; i < m_vecSaveObject.size(); i++)
 	{
 		_uint iCount = 0;
@@ -329,9 +328,18 @@ HRESULT CObject_Window::Load_MapObject()
 		}
 
 		// 중복되는 문자열이 없다면 m_vecModelList_t에 모델 이름 삽입
+		// 그리고 프로토타입 생성
 		if (0 == iCount) 
 		{
 			m_vecModelList_t.push_back(Deep_Copy(m_vecSaveObject[i].wszTag));
+
+			//// 기존에 깊은 복사로 저장해뒀던 문자열들을 가지고 프로토타입 생성
+			//_float4x4 PivotMatrix = XMMatrixIdentity();
+			//BEGININSTANCE; if (FAILED(pGameInstance->Add_Prototype_Component(LEVEL_TOOL, m_vecSaveObject[i].wszTag,
+			//	CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, /*여기에 모델 주소 삽입*/, PivotMatrix))))
+			//{
+			//	MSG_BOX("Failed to Create New Model Prototype");
+			//} ENDINSTANCE;
 		}
 
 		// 맵 오브젝트에 번호 붙여줌
@@ -339,6 +347,7 @@ HRESULT CObject_Window::Load_MapObject()
 		_stprintf_s(wszobjName, TEXT("GameObject_MapObject_%d"), (m_iMapObjectIndex));
 		Deep_Copy_Tag(wszobjName);
 
+		// 번호를 붙인 태그로 MapObject 등록
 		BEGININSTANCE if (FAILED(pGameInstance->Add_GameObject(LEVEL_TOOL,
 			TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_MapObject"),
 			m_vecMapObjectTag_t.at(m_iMapObjectIndex), &m_vecSaveObject[i].vPos)))
@@ -346,7 +355,7 @@ HRESULT CObject_Window::Load_MapObject()
 			MSG_BOX("Failed to Install MapObject");
 			ENDINSTANCE;
 			return E_FAIL;
-		}
+		} ENDINSTANCE;
 
 		// 마지막에 설치한 맵 오브젝트 주소 가져옴
 		m_pObject = static_cast<CMapObject*>(pGameInstance->Find_GameObject_In_Layer(LEVEL_TOOL,
@@ -394,7 +403,27 @@ void CObject_Window::Deep_Copy_Path(const _tchar* wszPath)
 		return;
 	}
 
-	m_vecModelPath_t.push_back(wszNew);
+	_uint iCount = 0;
+
+	for (auto& iter : m_vecModelPath_t)
+	{
+		// 중복되는 문자열이 있을 경우 증가
+		if (0 == lstrcmp(wszNew, iter))
+		{
+			++iCount;
+		}
+	}
+	
+	// 중복이라면 저장하지 않는다.
+	if (0 == iCount)
+	{
+		m_vecModelPath_t.push_back(wszNew);
+	}
+
+	else
+	{
+		delete[] wszNew;
+	}		
 }
 
 void CObject_Window::Deep_Copy_Tag(const _tchar* wszTag)
@@ -488,6 +517,16 @@ HRESULT CObject_Window::Create_Dummy()
 	m_pDummy->Add_Model_Component(TEXT("Prototype_Component_Model_Tree"));
 	m_pDummy->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMesh")); ENDINSTANCE;
 
+	return S_OK;
+}
+
+HRESULT CObject_Window::Save_Model_Path()
+{
+	return S_OK;
+}
+
+HRESULT CObject_Window::Load_Model_Path()
+{
 	return S_OK;
 }
 
