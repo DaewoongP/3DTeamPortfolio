@@ -1,154 +1,169 @@
 #include "..\Public\DummyParticle.h"
 #include "GameInstance.h"
-DummyParticle::DummyParticle(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
+CDummyParticle::CDummyParticle(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
 	: CGameObject(_pDevice, _pContext)
 {
 }
 
-DummyParticle::DummyParticle(const DummyParticle& _rhs)
+CDummyParticle::CDummyParticle(const CDummyParticle& _rhs)
 	: CGameObject(_rhs)
-	, m_pParticle(_rhs.m_pParticle)
 {
 }
 
-HRESULT DummyParticle::Initialize_Prototype()
+HRESULT CDummyParticle::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
 
+	m_iNumInstance = 30;
+
 	// 툴이라 여기에다 해놓음
 	if (FAILED(Add_Components()))
 		return E_FAIL;
+	m_pTransform->Set_Position(_float3(0.f, 0.f, 0.f));
 
 	return S_OK;
 }
 
-HRESULT DummyParticle::Initialize(void* _pArg)
+HRESULT CDummyParticle::Initialize(void* _pArg)
 {
 	if (FAILED(__super::Initialize(_pArg)))
 		return E_FAIL;
-	
-	//if (FAILED(Add_Components()))
-	//	return E_FAIL;
 
 	return S_OK;
 }
 
-void DummyParticle::Tick(_float _fTimeDelta)
+void CDummyParticle::Tick(_float _fTimeDelta)
 {
-	vector<_float4x4>		ParticleMatrices;
-	for (auto& Particle : m_Particles)
-	{
-		Particle.dAge += _fTimeDelta;
-		_float4 vPos;
-		_float4 vVelocity;
-
-		if (Particle.dAge > Particle.dLifeTime)
-		{
-			;
-		}
-		// 이전프레임의 위치값을 가져옴.
-		vPos = Particle.WorldMatrix.Translation().TransCoord();
-
-		// 가속도를 이용해 최종 속도를 정함.
-		vVelocity = Particle.vVelocity;
-		vVelocity += Particle.vAccel * _fTimeDelta;
-
-		// 위치에 속도를 더해서 최종 위치를 정함.
-		vPos = vPos + vVelocity * _fTimeDelta;
-
-		// SRT 연산
-		_Matrix ScaleMatrix = _Matrix::MatrixScale(0.1f);
-		//_Matrix RotMatrix = _Matrix::MatrixScale(0.1f);
-		_Matrix TransMatrix = _Matrix::MatrixScale(0.1f);
-		Particle.WorldMatrix = ScaleMatrix * TransMatrix;
-
-		ParticleMatrices.push_back(Particle.WorldMatrix);
-	}
-
-	//m_pBuffer->Tick(&ParticleMatrices[0], _fTimeDelta);
+	m_ParticleMatrices.clear();
+	vector<COL_INSTANCE> ColInsts;
+	m_pParticleSystem->Tick(_fTimeDelta, m_pBuffer);
 }
 
-void DummyParticle::Late_Tick(_float _fTimeDelta)
+void CDummyParticle::Late_Tick(_float _fTimeDelta)
 {
 	if (nullptr != m_pRenderer)
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONLIGHT, this);
 }
 
-HRESULT DummyParticle::Render()
+HRESULT CDummyParticle::Render()
 {
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	m_pShader->Begin(0);
+	m_pShader->Begin("Default");
 
 	m_pBuffer->Render();
 
 	return S_OK;
 }
 
-HRESULT DummyParticle::Add_Components()
+HRESULT CDummyParticle::Add_Components()
+{
+	/* Com_Shader */
+	if (FAILED(CComposite::Add_Component(LEVEL_TOOL, TEXT("Prototype_Component_Shader_VtxPointColInstance"),
+		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
+	{
+		MSG_BOX("Failed CDummyParticle Add_Component : (Com_Shader)");
+		return E_FAIL;
+	}
+
+	/* Com_Texture */
+	if (FAILED(__super::Add_Component(LEVEL_TOOL, TEXT("Prototype_Component_Texture_Default_Particle")
+		, TEXT("Com_Texture"), (CComponent**)&m_pTexture)))
+	{
+		MSG_BOX("Failed CDummyParticle Add_Component : (Com_Texture)");
+		return E_FAIL;
+	}
+
+	/* Com_Buffer */
+	if (FAILED(CComposite::Add_Component(LEVEL_TOOL, TEXT("Prototype_Component_VIBuffer_Point_Color_Instance"),
+		TEXT("Com_Buffer"), reinterpret_cast<CComponent**>(&m_pBuffer), &m_iNumInstance)))
+	{
+		MSG_BOX("Failed CDummyParticle Add_Component : (Com_Buffer)");
+		return E_FAIL;
+	}
+
+	/* Com_Renderer */
+	if (FAILED(__super::Add_Component(LEVEL_TOOL, TEXT("Prototype_Component_Renderer")
+		, TEXT("Com_Renderer"), (CComponent**)&m_pRenderer)))
+	{
+		MSG_BOX("Failed Renderer Add_Component : (Com_Renderer)");
+		return E_FAIL;
+	}
+
+	/* Com_Particle */
+	if (FAILED(__super::Add_Component(LEVEL_TOOL, TEXT("Prototype_Component_Default_ParticleSystem")
+		, TEXT("Com_Particle"), (CComponent**)&m_pParticleSystem)))
+	{
+		MSG_BOX("Failed CDummyParticle Add_Component : (Com_Particle)");
+		return E_FAIL;
+	}
+
+
+	return S_OK;
+}
+
+HRESULT CDummyParticle::SetUp_ShaderResources()
 {
 	BEGININSTANCE;
 
-	if (FAILED(__super::Add_Component(LEVEL_TOOL, TEXT("Prototype_Component_Fire_Particle")
-		, TEXT("Com_Particle"), (CComponent**)&m_pParticle)))
-	{
+	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
 		return E_FAIL;
-		ENDINSTANCE;
-	}
+
+	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW))))
+		return E_FAIL;
+
+	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+
+	if (FAILED(m_pShader->Bind_RawValue("g_vCamPosition", pGameInstance->Get_CamPosition(), sizeof(_float4))))
+		return E_FAIL;
+
+	_float4 vColor = { 1.f, 1.f, 1.f, 1.f };
+	if (FAILED(m_pShader->Bind_RawValue("g_vColor", &vColor, sizeof(_float4))))
+		return E_FAIL;
+
+	if (FAILED(m_pTexture->Bind_ShaderResource(m_pShader, "g_Texture")))
+		return E_FAIL;
 
 	ENDINSTANCE;
 	return S_OK;
 }
 
-HRESULT DummyParticle::SetUp_ShaderResources()
+CDummyParticle* CDummyParticle::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
 {
-	//_float4x4 MyMatrix = m_pTransform->Get_WorldMatrix();
-	//FAILED_CHECK_RETURN(m_pShader->Bind_Matrix("g_WorldMatrix", &MyMatrix), E_FAIL);
-
-	//CPipeLine* pPipeLineInstance = CPipeLine::GetInstance();
-	//Safe_AddRef(pPipeLineInstance);
-	//
-	//FAILED_CHECK_RETURN(m_pShader->Bind_Matrix("g_ViewMatrix", pPipeLineInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW)), E_FAIL);
-	//FAILED_CHECK_RETURN(m_pShader->Bind_Matrix("g_ProjMatrix", pPipeLineInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ)), E_FAIL);
-	//FAILED_CHECK_RETURN(m_pShader->Bind_RawValue("g_vCamPosition", pPipeLineInstance->Get_CamPosition(), sizeof(_float4)), E_FAIL);
-	//FAILED_CHECK_RETURN(m_pTexture->Bind_ShaderResources(m_pShader, "g_Texture"), E_FAIL);
-
-	//Safe_Release(pPipeLineInstance);
-	return S_OK;
-}
-
-DummyParticle* DummyParticle::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
-{
-	DummyParticle* pInstance = New DummyParticle(_pDevice, _pContext);
+	CDummyParticle* pInstance = New CDummyParticle(_pDevice, _pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Faild to Created DummyParticle");
+		MSG_BOX("Faild to Created CDummyParticle");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-CGameObject* DummyParticle::Clone(void* _pArg)
+CGameObject* CDummyParticle::Clone(void* _pArg)
 {
-	DummyParticle* pInstance = New DummyParticle(*this);
+	CDummyParticle* pInstance = New CDummyParticle(*this);
 
 	if (FAILED(pInstance->Initialize(_pArg)))
 	{
-		MSG_BOX("Faild to Created DummyParticle");
+		MSG_BOX("Faild to Created CDummyParticle");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-void DummyParticle::Free(void)
+void CDummyParticle::Free(void)
 {
 	__super::Free();
 	Safe_Release(m_pRenderer);
-	Safe_Release(m_pParticle);
+	Safe_Release(m_pParticleSystem);
 	Safe_Release(m_pTexture);
 	Safe_Release(m_pShader);
 	Safe_Release(m_pBuffer);
+
+	m_ParticleDescs.clear();
+	m_ParticleMatrices.clear();
 }

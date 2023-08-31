@@ -198,6 +198,13 @@ HRESULT CGameInstance::Add_GameObject(_uint iLevelIndex, const _tchar* pPrototyp
 	return m_pObject_Manager->Add_GameObject(iLevelIndex, pPrototypeTag, pLayerTag, pGameObjectTag, pArg);
 }
 
+CLayer* CGameInstance::Find_Layer(_uint iLevelIndex, const _tchar* pLayerTag)
+{
+	NULL_CHECK_RETURN_MSG(m_pObject_Manager, nullptr, TEXT("Object_Manager NULL"));
+
+	return m_pObject_Manager->Find_Layer(iLevelIndex, pLayerTag);
+}
+
 CGameObject* CGameInstance::Find_GameObject_In_Layer(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pGameObjectTag)
 {
 	NULL_CHECK_RETURN_MSG(m_pObject_Manager, nullptr, TEXT("Object_Manager NULL"));

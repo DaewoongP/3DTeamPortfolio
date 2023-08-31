@@ -32,10 +32,10 @@ private:
 	_bool				m_isRendering = { false };
 
 private:
-	CShader*			m_pShader = { nullptr };
-	CTexture*			m_pTexture = { nullptr };
-	CRenderer*			m_pRenderer = { nullptr };
-	CVIBuffer_Terrain*	m_pBuffer = { nullptr };
+	CShader* m_pShader = { nullptr };
+	CTexture* m_pTexture = { nullptr };
+	CRenderer* m_pRenderer = { nullptr };
+	CVIBuffer_Terrain* m_pBuffer = { nullptr };
 
 private:
 	HRESULT Add_Components();

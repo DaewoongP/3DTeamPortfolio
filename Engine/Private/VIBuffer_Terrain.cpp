@@ -241,10 +241,10 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(_uint iTerrainSizeX, _uint iTerr
 	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
 
 	m_BufferDesc.ByteWidth = { m_iIndexStride * m_iNumIndices };
-	m_BufferDesc.Usage = { D3D11_USAGE_DEFAULT };
+	m_BufferDesc.Usage = { D3D11_USAGE_DYNAMIC };
 	m_BufferDesc.BindFlags = { D3D11_BIND_INDEX_BUFFER };
 	m_BufferDesc.StructureByteStride = { 0 };
-	m_BufferDesc.CPUAccessFlags = { 0 };
+	m_BufferDesc.CPUAccessFlags = { D3D11_CPU_ACCESS_WRITE };
 	m_BufferDesc.MiscFlags = { 0 };
 
 	_uint* pIndices = new _uint[m_iNumIndices];
@@ -347,6 +347,110 @@ HRESULT CVIBuffer_Terrain::RemakeTerrain(_uint iTerrainSizeX, _uint iTerrainSize
 	if (FAILED(Initialize_Prototype(iTerrainSizeX, iTerrainSizeY)))
 		return E_FAIL;
 	return S_OK;
+}
+
+_bool CVIBuffer_Terrain::IsPicked(_float4 vRayOrigin, _float4 vRayDir, _float& fMinDist)
+{
+	_float3 vPoint[POINT_END];
+	_float3 vCenter;
+	vPoint[LT] = _float3(0.f, 0.f, (_float)(m_iTerrainSizeZ - 1));
+	vPoint[RT] = _float3((_float)(m_iTerrainSizeX - 1), 0.f, (_float)(m_iTerrainSizeZ - 1));
+	vPoint[RB] = _float3((_float)(m_iTerrainSizeX - 1), 0.f, 0.f);
+	vPoint[LB] = _float3(0.f, 0.f, 0.f);
+
+	if (false == isInFourPoint(vPoint[LT], vPoint[RT]
+		, vPoint[RB], vPoint[LB], vRayOrigin, vRayDir, fMinDist))
+	{
+		return false;
+	}
+
+	IntersectPoint(vPoint, vRayOrigin, vRayDir, fMinDist);
+
+	return true;
+}
+
+void CVIBuffer_Terrain::IntersectPoint(_float3 vPoints[POINT_END], _float4 RayOrigin, _float4 RayDir, _float& fDist)
+{
+	// 모서리 길이가 1.f
+	if ((vPoints[RT].x - vPoints[LT].x) == 1.f)
+	{
+		return;
+	}
+
+	enum POINT_SUB { SUB_LT, SUB_TC, SUB_RT, SUB_LC, SUB_C, SUB_RC, SUB_LB, SUB_BC, SUB_RB, SUB_END };
+
+	_float3 vPoint[SUB_END];
+	vPoint[SUB_LT] = (vPoints[LT]);
+	vPoint[SUB_TC] = ((vPoints[LT]) + (vPoints[RT])) / 2;
+	vPoint[SUB_RT] = (vPoints[RT]);
+	vPoint[SUB_LC] = ((vPoints[LT]) + (vPoints[LB])) / 2;
+	vPoint[SUB_C] = ((vPoints[LT]) + (vPoints[RB])) / 2;
+	vPoint[SUB_RC] = ((vPoints[RT]) + (vPoints[RB])) / 2;
+	vPoint[SUB_LB] = (vPoints[LB]);
+	vPoint[SUB_BC] = ((vPoints[LB]) + (vPoints[RB])) / 2;
+	vPoint[SUB_RB] = (vPoints[RB]);
+
+	if (isInFourPoint(vPoint[SUB_LT], vPoint[SUB_TC], vPoint[SUB_LC], vPoint[SUB_C], RayOrigin, RayDir, fDist))
+	{
+		_float3 vSubPoints[POINT_END];
+		vSubPoints[LT] = vPoint[SUB_LT];
+		vSubPoints[RT] = vPoint[SUB_TC];
+		vSubPoints[LB] = vPoint[SUB_LC];
+		vSubPoints[RB] = vPoint[SUB_C];
+		IntersectPoint(vSubPoints, RayOrigin, RayDir, fDist);
+		return;
+	}
+
+	if (isInFourPoint(vPoint[SUB_TC], vPoint[SUB_RT], vPoint[SUB_C], vPoint[SUB_RC], RayOrigin, RayDir, fDist))
+	{
+		_float3 vSubPoints[POINT_END];
+		vSubPoints[LT] = vPoint[SUB_TC];
+		vSubPoints[RT] = vPoint[SUB_RT];
+		vSubPoints[LB] = vPoint[SUB_C];
+		vSubPoints[RB] = vPoint[SUB_RC];
+		IntersectPoint(vSubPoints, RayOrigin, RayDir, fDist);
+		return;
+	}
+
+	if (isInFourPoint(vPoint[SUB_LC], vPoint[SUB_C], vPoint[SUB_LB], vPoint[SUB_BC], RayOrigin, RayDir, fDist))
+	{
+		_float3 vSubPoints[POINT_END];
+		vSubPoints[LT] = vPoint[SUB_LC];
+		vSubPoints[RT] = vPoint[SUB_C];
+		vSubPoints[LB] = vPoint[SUB_LB];
+		vSubPoints[RB] = vPoint[SUB_BC];
+		IntersectPoint(vSubPoints, RayOrigin, RayDir, fDist);
+		return;
+	}
+
+	if (isInFourPoint(vPoint[SUB_C], vPoint[SUB_RC], vPoint[SUB_BC], vPoint[SUB_RB], RayOrigin, RayDir, fDist))
+	{
+		_float3 vSubPoints[POINT_END];
+		vSubPoints[LT] = vPoint[SUB_C];
+		vSubPoints[RT] = vPoint[SUB_RC];
+		vSubPoints[LB] = vPoint[SUB_BC];
+		vSubPoints[RB] = vPoint[SUB_RB];
+		IntersectPoint(vSubPoints, RayOrigin, RayDir, fDist);
+		return;
+	}
+}
+
+_bool CVIBuffer_Terrain::isInFourPoint(_float3 LT, _float3 RT, _float3 RB, _float3 LB, _float4 RayOrigin, _float4 RayDir, _float& fDist)
+{
+	_float fTemp;
+	if (TriangleTests::Intersects(RayOrigin, RayDir, LT, RT, RB, fTemp))
+	{
+		fDist = fTemp;
+		return true;
+	}
+
+	if (TriangleTests::Intersects(RayOrigin, RayDir, LT, RB, LB, fTemp))
+	{
+		fDist = fTemp;
+		return true;
+	}
+
+	return false;
 }
 
 CVIBuffer_Terrain* CVIBuffer_Terrain::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pHeightMap)

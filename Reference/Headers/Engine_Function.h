@@ -90,41 +90,16 @@ namespace Engine
 		_value = min(_value, _max);
 	}
 
-	//Queue.Clear() 없어서 만듬
-	template <typename T>
-	void Clear_Queue(queue<T>& _Queue)
+	// ex) _float fResult = Random_Generator(-5.f, 10.f)
+	// 결과 : [-5.f, 10.f]의 랜덤한 실수가 들어감.
+	template<typename T>
+	T Random_Generator(T _lowBound, T _highBound)
 	{
-		//비었다면 탈출
-		if (_Queue.empty())
-		{
-			return;
-		}
+		// static을 사용하여 같은 엔진이 반복적으로 초기화되지 않도록 합니다.
+		static std::default_random_engine RandGenerator(std::chrono::system_clock::now().time_since_epoch().count());
 
-		//모든 원소지우기
-		size_t QueueSize = _Queue.size();
+		std::uniform_real_distribution<T> distribution(_lowBound, _highBound);
 
-		for (size_t i = 0; i < QueueSize; i++)
-		{
-			_Queue.pop();
-		}
-	}
-
-	template <typename T>
-	void Clear_Queue_Pointer(queue<T>& _Queue)
-	{
-		//비었다면 탈출
-		if (_Queue.empty())
-		{
-			return;
-		}
-
-		//모든 원소지우기
-		size_t QueueSize = _Queue.size();
-
-		for (size_t i = 0; i < QueueSize; i++)
-		{
-			Safe_Delete(_Queue.front());
-			_Queue.pop();
-		}
+		return distribution(RandGenerator);
 	}
 }

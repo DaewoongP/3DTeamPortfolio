@@ -75,21 +75,6 @@ namespace Engine
 		const wchar_t* m_pTargetTag = nullptr;
 	};
 
-	// 값의 범위를 제한하는 함수
-	// ex)
-	// int value = 11;
-	// Clamp(value, 0, 10);
-	// 결과 : value = 10; 
-	template<typename T>
-	inline void Clamp(T& _value, T _min, T _max)
-	{
-		if (_min > _max)
-			std::swap(_min, _max);
-
-		_value = max(_value, _min);
-		_value = min(_value, _max);
-	}
-
 	//Queue.Clear() 없어서 만듬
 	template <typename T>
 	void Clear_Queue(queue<T>& _Queue)
@@ -126,5 +111,33 @@ namespace Engine
 			Safe_Delete(_Queue.front());
 			_Queue.pop();
 		}
+	}
+
+	// 값의 범위를 제한하는 함수
+	// ex)
+	// int value = 11;
+	// Clamp(value, 0, 10);
+	// 결과 : value = 10; 
+	template<typename T>
+	inline void Clamp(T& _value, T _min, T _max)
+	{
+		if (_min > _max)
+			std::swap(_min, _max);
+
+		_value = max(_value, _min);
+		_value = min(_value, _max);
+	}
+
+	// ex) _float fResult = Random_Generator(-5.f, 10.f)
+	// 결과 : [-5.f, 10.f]의 랜덤한 실수가 들어감.
+	template<typename T>
+	T Random_Generator(T _lowBound, T _highBound)
+	{
+		// static을 사용하여 같은 엔진이 반복적으로 초기화되지 않도록 합니다.
+		static std::default_random_engine RandGenerator(std::chrono::system_clock::now().time_since_epoch().count());
+
+		std::uniform_real_distribution<T> distribution(_lowBound, _highBound);
+
+		return distribution(RandGenerator);
 	}
 }

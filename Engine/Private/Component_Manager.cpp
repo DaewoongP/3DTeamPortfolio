@@ -33,7 +33,9 @@ HRESULT CComponent_Manager::Add_Prototype(_uint iLevelIndex, const _tchar* pProt
 
 	NULL_CHECK_RETURN_MSG(pPrototype, E_FAIL, TEXT("Prototype Component NULL"));
 
-	m_pPrototypes[iLevelIndex].emplace(pPrototypeTag, pPrototype);
+	pPrototype->Set_PrototypeTag(pPrototypeTag);
+
+	m_pPrototypes[iLevelIndex].emplace(pPrototype->Get_PrototypeTag(), pPrototype);
 
 	return S_OK;
 }

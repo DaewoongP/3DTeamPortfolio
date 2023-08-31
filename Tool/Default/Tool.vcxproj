@@ -169,6 +169,8 @@
     <ClInclude Include="..\Public\CCamera_Point.h" />
     <ClInclude Include="..\public\CCutScene_Camera_Tool.h" />
     <ClInclude Include="..\public\CMain_Camera.h" />
+    <ClInclude Include="..\Public\stb_image.h" />
+    <ClInclude Include="..\Public\Dummy_UI.h" />
     <ClInclude Include="..\Public\UI_Window.h" />
     <ClInclude Include="..\public\DummyParticle.h" />
     <ClInclude Include="..\Public\Animation_Window.h" />
@@ -177,6 +179,8 @@
     <ClInclude Include="..\public\Camera_Free.h" />
     <ClInclude Include="..\public\Level_Tool.h" />
     <ClInclude Include="..\public\MainTool.h" />
+    <ClInclude Include="..\Public\MapDummy.h" />
+    <ClInclude Include="..\Public\MapObject.h" />
     <ClInclude Include="..\public\Object_Window.h" />
     <ClInclude Include="..\public\Sky.h" />
     <ClInclude Include="..\public\Terrain.h" />
@@ -205,6 +209,7 @@
     <ClCompile Include="..\Private\CCamera_Point.cpp" />
     <ClCompile Include="..\private\CCutScene_Camera_Tool.cpp" />
     <ClCompile Include="..\private\CMain_Camera.cpp" />
+    <ClCompile Include="..\Private\Dummy_UI.cpp" />
     <ClCompile Include="..\Private\UI_Window.cpp" />
     <ClCompile Include="..\private\DummyParticle.cpp" />
     <ClCompile Include="..\Private\Animation_Window.cpp" />
@@ -214,6 +219,8 @@
     <ClCompile Include="..\private\Level_Tool.cpp" />
     <ClCompile Include="..\private\MainTool.cpp" />
     <ClCompile Include="..\private\ImWindow.cpp" />
+    <ClCompile Include="..\Private\MapDummy.cpp" />
+    <ClCompile Include="..\Private\MapObject.cpp" />
     <ClCompile Include="..\private\Object_Window.cpp" />
     <ClCompile Include="..\private\Sky.cpp" />
     <ClCompile Include="..\private\Terrain.cpp" />
@@ -266,6 +273,9 @@
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Sky.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Terrain.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointColInstance.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxMesh.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMesh.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTex.hlsl" />
   </ItemGroup>
   <ItemGroup>

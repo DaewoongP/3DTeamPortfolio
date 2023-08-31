@@ -18,6 +18,8 @@ texture2D g_SpecularTexture;
 texture2D g_ShadowTexture;
 texture2D g_vLightDepthTexture;
 
+texture2D g_SSAOTexture;
+texture2D g_BlurTexture;
 
 float3 g_Diffuse = float3(1.f, 1.f, 1.f);
 
@@ -37,6 +39,15 @@ vector g_vLightSpecular;
 vector g_vMtrlAmbient = vector(0.5f, 0.5f, 0.5f, 1.f);
 vector g_vMtrlSpecular = vector(1.f, 1.f, 1.f, 1.f);
 
+
+
+float BlurWeights[23] =
+{
+    0.0011, 0.0123, 0.0561, 0.1353, 0.278, 0.3001, 0.4868, 0.6666, 0.7261, 0.8712, 0.9231,
+    0.9986, 0.9231, 0.8712, 0.7261, 0.6666, 0.4868, 0.3001, 0.278, 0.1353, 0.0561, 0.0123, 0.0011
+};
+float total = 11.4776f;
+
 /* Sampler State */
 sampler LinearSampler = sampler_state
 {
@@ -52,6 +63,12 @@ sampler PointSampler = sampler_state
     AddressV = WRAP;
 };
 
+sampler BlurSampler = sampler_state
+{
+    Filter = MIN_MAG_MIP_LINEAR;
+    AddressU = clamp;
+    AddressV = clamp;
+};
 /* Raterizer State */
 RasterizerState RS_Default
 {
@@ -143,34 +160,34 @@ matrix MyMatrixLookAtLH(float4 vEye, float4 vAt)
     return TransposeViewMatrix;
 }
 
-struct VS_IN
+struct VS_IN_PBR
 {
     float4 vPosition : POSITION;
     float2 vTexUV : TEXCOORD0;
     float3 vNormal : NORMAL;
 };
 
-struct VS_OUT
+struct VS_OUT_PBR
 {
     float4 vPosition : SV_POSITION;
     float2 vTexUV : TEXCOORD0;
     float3 vNormal : NORMAL;
 };
 
-struct VS_IN_SHADOW
+struct VS_IN
 {
     float3 vPosition : POSITION;
     float2 vTexUV : TEXCOORD0;
 };
 
-struct VS_OUT_SHADOW
+struct VS_OUT
 {
     float4 vPosition : SV_POSITION;
     float2 vTexUV : TEXCOORD0;
 };
-VS_OUT VS_MAIN(VS_IN In)
+VS_OUT_PBR VS_MAIN_PBR(VS_IN_PBR In)
 {
-    VS_OUT Out = (VS_OUT) 0;
+    VS_OUT_PBR Out = (VS_OUT_PBR) 0;
 
     matrix matWV, matWVP;
 
@@ -182,16 +199,16 @@ VS_OUT VS_MAIN(VS_IN In)
     return Out;
 }
 
-VS_OUT_SHADOW VS_MAIN_SHADOW(VS_IN_SHADOW In)
+VS_OUT_PBR VS_MAIN_SHADOW(VS_IN_PBR In)
 {
-    VS_OUT_SHADOW Out = (VS_OUT_SHADOW) 0;
+    VS_OUT_PBR Out = (VS_OUT_PBR) 0;
 
     matrix matWV, matWVP;
 
     matWV = mul(g_WorldMatrix, g_ViewMatrix);
     matWVP = mul(matWV, g_ProjMatrix);
 
-    Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);
+    Out.vPosition = mul(In.vPosition, matWVP);
     Out.vTexUV = In.vTexUV;
 
     return Out;
@@ -231,7 +248,7 @@ PS_OUT PS_MAIN_PBR(PS_IN In)
 
     vector Normalied_Normal = normalize(vector(In.vNormal, 0.f));
     vector LookAt = normalize(g_vCamPosition - In.vPosition);
-    vector LightLook = normalize(g_vLightPos- In.vPosition);
+    vector LightLook = normalize(g_vLightPos - In.vPosition);
     vector MiddleVector = normalize(LightLook + LookAt);
     
     float NdotL = max(dot(Normalied_Normal, LightLook), 0.0);
@@ -241,12 +258,12 @@ PS_OUT PS_MAIN_PBR(PS_IN In)
     vector specularTerm = pow(NdotM, g_Roughness) * g_vLightSpecular;
 
     
-    Out.vColor = vDiffuse * (diffuseTerm*g_vLightAmbient)* vShade + vSpecular*specularTerm;
+    Out.vColor = vDiffuse * (diffuseTerm * g_vLightAmbient) * vShade + vSpecular * specularTerm;
 
     return Out;
 }
 
-PS_OUT PS_MAIN_SHADOW(PS_IN In)
+PS_OUT PS_MAIN_SHADOW(PS_IN_SHADOW In)
 {
     PS_OUT Out = (PS_OUT) 0;
 
@@ -299,6 +316,9 @@ PS_OUT PS_MAIN_SHADOW(PS_IN In)
 
 
 }
+
+
+
 technique11 DefaultTechnique
 {
     pass PBS
@@ -306,7 +326,7 @@ technique11 DefaultTechnique
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Depth_Disable, 0);
         SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN();
+        VertexShader = compile vs_5_0 VS_MAIN_PBR();
         GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
         HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
         DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
@@ -318,13 +338,11 @@ technique11 DefaultTechnique
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Depth_Disable, 0);
         SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN();
+        VertexShader = compile vs_5_0 VS_MAIN_SHADOW();
         GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
         HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
         DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
         PixelShader = compile ps_5_0 PS_MAIN_SHADOW();
     }
-
-
 
 }
