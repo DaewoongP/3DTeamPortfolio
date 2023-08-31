@@ -64,6 +64,8 @@ private:
 	class CNotify*				m_pNotify = {nullptr};
 	// 각 채널의 현재 키프레임 인덱스
 	vector<_uint>				m_ChannelCurrentKeyFrames;
+	// 노티파이의 현재 키프레임 인덱스
+	_uint						m_iNotifyCurrentKeyFrame;
 
 	_float						m_fDuration = { 0.f };
 	_float						m_fOriginTickPerSecond = { 0.f };

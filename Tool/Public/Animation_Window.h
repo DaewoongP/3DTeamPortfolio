@@ -18,6 +18,15 @@ private:
 	// 현재 수정중인 더미 오브젝트
 	class CDummy* m_pDummyObject = { nullptr };
 
+private:
+	void Create_Dummy_Button();
+	void OpenFile_Button();
+	void AddModel_Button();
+	void Animation_ComboBox(_char* szCurrentItem,CModel* pDummyModel);
+	void Animation_Action_Button(CModel* pDummyModel, _float* fNotifyActionTime);
+	void Notify_InputFileds(_char*  szNotifyName, KEYFRAME::KEYFRAMETYPE* eNotifyKeyFrameType, _float* fNotifyActionTime, _float* fNotifySpeed);
+	void Add_Notify_Button(_char* szNotifyName, CModel* pDummyModel, KEYFRAME::KEYFRAMETYPE* eNotifyKeyFrameType, _float* fNotifyActionTime, _float* fNotifySpeed);
+
 public:
 	static CAnimation_Window* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, ImVec2 vWindowPos, ImVec2 vWindowSize);
 	virtual void Free(void) override;

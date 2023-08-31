@@ -22,27 +22,42 @@ void CNotify::Invalidate_Frame(_float fTimeAcc, _Inout_ _uint* pCurrentKeyFrameI
 		}
 	}
 	
-	//마지막 키프레임인 경우 실행 X
-	if (m_iNumKeyFrames ==0|| fTimeAcc >= Find_Frame(m_iNumKeyFrames - 1)->fTime|| Find_Frame((*pCurrentKeyFrameIndex) + 1)==nullptr)
+	//걸러져야할 때를 명시해줍시다.
+	//내 키프레임이 0이 아니라면?
+	if (m_iNumKeyFrames == 0)
 		return;
-	while (fTimeAcc >= Find_Frame((*pCurrentKeyFrameIndex) + 1)->fTime)
-		++(*pCurrentKeyFrameIndex);
-	KEYFRAME* pKeyFrame = Find_Frame((*pCurrentKeyFrameIndex));
-	if ((*pCurrentKeyFrameIndex) < m_iNumKeyFrames &&
-		pKeyFrame != nullptr &&	pKeyFrame->isEnable)
+	//현재 시간값이 내 키프레임보다 오래 가있다면?
+	while (fTimeAcc >= Find_Frame((*pCurrentKeyFrameIndex))->fTime)
 	{
-		pKeyFrame->isEnable = false;
-		switch (pKeyFrame->eKeyFrameType)
+		if (m_iNumKeyFrames < (*pCurrentKeyFrameIndex)+1)
+			break;
+
+		//이제 마지막꺼가 안불리는듯.
+		KEYFRAME* pKeyFrame = Find_Frame((*pCurrentKeyFrameIndex));
+		if ((*pCurrentKeyFrameIndex) < m_iNumKeyFrames &&
+			pKeyFrame != nullptr && pKeyFrame->isEnable)
 		{
-		case KEYFRAME::KF_NOTIFY:
-			break;
-		case KEYFRAME::KF_SOUND:
-			break;
-		case KEYFRAME::KF_SPEED:
-			*fSpeed = static_cast<SPEEDFRAME*>(pKeyFrame)->fSpeed;
-			break;
+			pKeyFrame->isEnable = false;
+			switch (pKeyFrame->eKeyFrameType)
+			{
+			case KEYFRAME::KF_NOTIFY:
+				break;
+			case KEYFRAME::KF_SOUND:
+				break;
+			case KEYFRAME::KF_SPEED:
+				*fSpeed = static_cast<SPEEDFRAME*>(pKeyFrame)->fSpeed;
+				break;
+			}
 		}
+		if (m_iNumKeyFrames == (*pCurrentKeyFrameIndex) + 1)
+			break;
+		(*pCurrentKeyFrameIndex)++;
 	}
+	//이게 없으면 이전때부터 이게 실행되더라고?
+	//if (fTimeAcc <= Find_Frame((*pCurrentKeyFrameIndex))->fTime)
+	//	return;
+
+	
 }
 
 KEYFRAME* CNotify::Find_Frame(_uint iFindFrame)
@@ -137,7 +152,7 @@ HRESULT CNotify::AddFrame(KEYFRAME::KEYFRAMETYPE eFrameType, wchar_t* wszNotifyT
 	m_iNumKeyFrames++;
 
 	sort(m_KeyFrames.begin(), m_KeyFrames.end(), [&](std::pair<wstring, KEYFRAME*>& frame1, std::pair<wstring, KEYFRAME*>& frame2) ->  bool {
-		return (frame1.second->fTime > frame2.second->fTime);
+		return (frame1.second->fTime < frame2.second->fTime);
 		});
 	return S_OK;
 }

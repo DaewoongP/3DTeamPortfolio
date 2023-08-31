@@ -163,7 +163,7 @@ void CAnimation::Invalidate_Frame(_float fTimeDelta)
 	_uint		iChannelIndex = 0;
 	if (m_pNotify != nullptr)
 	{
-		m_pNotify->Invalidate_Frame(m_fTimeAcc, &m_ChannelCurrentKeyFrames[iChannelIndex++], &m_fTickPerSecond);
+		m_pNotify->Invalidate_Frame(m_fTimeAcc, &m_iNotifyCurrentKeyFrame, &m_fTickPerSecond);
 	}
 }
 
