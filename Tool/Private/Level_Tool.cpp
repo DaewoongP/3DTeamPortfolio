@@ -13,6 +13,9 @@ HRESULT CLevel_Tool::Initialize()
 
 	if (FAILED(Ready_For_Layer_Tool(TEXT("Layer_Tool"))))
 		return E_FAIL;
+	
+	if (FAILED(Ready_For_Layer_MapObject(TEXT("Layer_MapObject"))))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -62,7 +65,30 @@ HRESULT CLevel_Tool::Ready_For_Layer_Tool(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
+	/* For.GameObject_Dummy */
+	if (FAILED(pGameInstance->Add_GameObject(LEVEL_TOOL,
+		TEXT("Prototype_GameObject_Dummy"), pLayerTag, TEXT("GameObject_Dummy"))))
+	{
+		MSG_BOX("Failed Add GameObject GameObject_Dummy");
+		return E_FAIL;
+	}
+
+	/* For.GameObject_DummyParticle */
+	if (FAILED(pGameInstance->Add_GameObject(LEVEL_TOOL,
+		TEXT("Prototype_GameObject_DummyParticle"), pLayerTag, TEXT("GameObject_DummyParticle"))))
+	{
+		MSG_BOX("Failed Add GameObject GameObject_DummyParticle");
+		return E_FAIL;
+	}
+
 	Safe_Release(pGameInstance);
+
+	return S_OK;
+}
+
+HRESULT CLevel_Tool::Ready_For_Layer_MapObject(const _tchar* pLayerTag)
+{
+	BEGININSTANCE; ENDINSTANCE;
 
 	return S_OK;
 }

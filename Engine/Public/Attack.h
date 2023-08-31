@@ -13,7 +13,7 @@
 
 BEGIN(Engine)
 
-class ENGINE_DLL CAttack final : public CComponent
+class ENGINE_DLL CAttack : public CComponent
 {
 public:
 	typedef struct tagAttackDesc

@@ -50,6 +50,7 @@
 #include <any>
 #include <stack>
 #include <random>
+#include <tchar.h>
 
 // file system - c++ 17
 #include <filesystem>
