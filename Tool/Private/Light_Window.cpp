@@ -27,14 +27,12 @@ void CLight_Window::Tick(_float fTimeDelta)
 
 	const char* Types[] = { "Directional","Point","Spot"};
 
-	char pInput[128];//= StrInput.data();
+	static char pInput[128];//= StrInput.data();
 	ImGui::Combo("LightType", &m_iLightType, Types, IM_ARRAYSIZE(Types));
 	if (ImGui::InputTextWithHint("input Name", "enter LightName", pInput, IM_ARRAYSIZE(pInput)))
 	{
 		StrInput = pInput;
 	}
-
-	
 
 	Light_ComboBox();
 
@@ -176,6 +174,9 @@ void CLight_Window::Clear_Light()
 		m_isSetting = false;
 		if (pGameInstance != nullptr)
 			pGameInstance->Clear_Lights();
+		m_vecLightDesc.clear();
+		m_vecLightList.clear();
+		m_iLightIndex = 0;
 	}
 	ENDINSTANCE
 	
@@ -205,7 +206,7 @@ void CLight_Window::Free()
 	__super::Free();
 	
 	m_vecLightDesc.clear();
-	
+	m_vecLightList.clear();
 
 
 }
