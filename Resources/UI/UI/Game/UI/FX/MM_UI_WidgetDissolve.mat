@@ -1,7 +1,0 @@
-Diffuse=UI_T_WarpedRing_D
-Normal=VFX_T_RibbonOffset_N
-Other[0]=DefaultTexture
-Other[1]=UI_T_WarpedRippleCenter
-Other[2]=UI_T_WarpedRippleGlow
-Other[3]=VFX_T_WispyNoise_D
-Other[4]=VFX_T_Wavy_N

@@ -1,8 +1,0 @@
-Diffuse=VFX_T_GradientBeamHorizontal_D
-Normal=VFX_T_RibbonOffset_N
-Opacity=T_Blank_A
-Other[0]=UI_T_FinalizedBackGround
-Other[1]=UI_T_GoldLeaf
-Other[2]=UI_T_CloudSmokeMask
-Other[3]=VFX_T_WispyNoise_D
-Other[4]=VFX_T_Wavy_N

@@ -1,6 +1,0 @@
-Diffuse=VFX_T_WhispyCaustic_D
-Normal=VFX_T_Wavy_N
-Opacity=T_Blank_A
-Other[0]=UI_T_Goldleaf_Select
-Other[1]=UI_T_GoldLeafFresnelRunesMask
-Other[2]=VFX_T_noise140_D
