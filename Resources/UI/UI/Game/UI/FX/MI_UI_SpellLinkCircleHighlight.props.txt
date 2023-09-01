@@ -1,0 +1,172 @@
+Parent = MaterialInstanceConstant'/Game/UI/FX/MI_UI_CloudRipple.MI_UI_CloudRipple'
+ScalarParameterValues[10] =
+{
+    ScalarParameterValues[0] =
+    {
+        ParameterInfo = { Name=DistortionStrength }
+        ParameterValue = -0.025238
+        ParameterName = None
+    }
+    ScalarParameterValues[1] =
+    {
+        ParameterInfo = { Name=GlowDistortionStrength }
+        ParameterValue = 0.059524
+        ParameterName = None
+    }
+    ScalarParameterValues[2] =
+    {
+        ParameterInfo = { Name=GlowIntensity }
+        ParameterValue = 2.35031
+        ParameterName = None
+    }
+    ScalarParameterValues[3] =
+    {
+        ParameterInfo = { Name=GlowSpeed }
+        ParameterValue = -0.1
+        ParameterName = None
+    }
+    ScalarParameterValues[4] =
+    {
+        ParameterInfo = { Name=Gradient Rotate }
+        ParameterValue = 0
+        ParameterName = None
+    }
+    ScalarParameterValues[5] =
+    {
+        ParameterInfo = { Name=RingSpeed }
+        ParameterValue = 0.05
+        ParameterName = None
+    }
+    ScalarParameterValues[6] =
+    {
+        ParameterInfo = { Name=SecondaryScale }
+        ParameterValue = 0.523809
+        ParameterName = None
+    }
+    ScalarParameterValues[7] =
+    {
+        ParameterInfo = { Name=Top Blend 1 }
+        ParameterValue = 0.25
+        ParameterName = None
+    }
+    ScalarParameterValues[8] =
+    {
+        ParameterInfo = { Name=Top Blend 2 }
+        ParameterValue = 0.25
+        ParameterName = None
+    }
+    ScalarParameterValues[9] =
+    {
+        ParameterInfo = { Name=RefractionDepthBias }
+        ParameterValue = 0
+        ParameterName = None
+    }
+}
+TextureParameterValues[3] =
+{
+    TextureParameterValues[0] =
+    {
+        ParameterInfo = { Name=Glow }
+        ParameterValue = Texture2D'/Game/UI/FX/Textures/UI_T_SpellLinkGlowRay.UI_T_SpellLinkGlowRay'
+        ParameterName = None
+    }
+    TextureParameterValues[1] =
+    {
+        ParameterInfo = { Name=Secondary Texture }
+        ParameterValue = Texture2D'/Game/UI/FX/Textures/UI_T_SpellLinkGlowRay.UI_T_SpellLinkGlowRay'
+        ParameterName = None
+    }
+    TextureParameterValues[2] =
+    {
+        ParameterInfo = { Name=Texture }
+        ParameterValue = Texture2D'/Game/UI/FX/Textures/UI_T_SpellLinkGlowRay.UI_T_SpellLinkGlowRay'
+        ParameterName = None
+    }
+}
+VectorParameterValues[2] =
+{
+    VectorParameterValues[0] =
+    {
+        ParameterInfo = { Name=Gradient 1 }
+        ParameterValue = { R=1, G=0, B=0, A=1 }
+        ParameterName = None
+    }
+    VectorParameterValues[1] =
+    {
+        ParameterInfo = { Name=Gradient 2 }
+        ParameterValue = { R=0, G=1, B=0.296383, A=1 }
+        ParameterName = None
+    }
+}
+BasePropertyOverrides =
+{
+    bOverride_BlendMode = false
+    BlendMode = BLEND_Translucent (2)
+    bOverride_TwoSided = false
+    TwoSided = false
+    bOverride_OpacityMaskClipValue = false
+    OpacityMaskClipValue = 0.3333
+}
+StaticParameters =
+{
+    StaticSwitchParameters[2] =
+    {
+        StaticSwitchParameters[0] =
+        {
+            Value = true
+            ParameterInfo = { Name=Use Gradient }
+            bOverride = true
+        }
+        StaticSwitchParameters[1] =
+        {
+            Value = true
+            ParameterInfo = { Name=UseSecondaryTexture }
+            bOverride = true
+        }
+    }
+    StaticComponentMaskParameters[0] = {}
+    TerrainLayerWeightParameters[0] = {}
+    MaterialLayersParameters[0] = {}
+}
+RuntimeVirtualTextureParameterValues[0] = {}
+FontParameterValues[0] = {}
+FlattenedTexture = None
+MobileBaseTexture = None
+MobileNormalTexture = None
+bUseMobileSpecular = false
+MobileSpecularPower = 16
+MobileSpecularMask = MSM_Constant (0)
+MobileMaskTexture = None
+TextureStreamingData[5] =
+{
+    TextureStreamingData[0] =
+    {
+        SamplingScale = 1
+        UVChannelIndex = 0
+        TextureName = T_Blank_A
+    }
+    TextureStreamingData[1] =
+    {
+        SamplingScale = 1
+        UVChannelIndex = 0
+        TextureName = UI_T_SpellLinkDivide
+    }
+    TextureStreamingData[2] =
+    {
+        SamplingScale = 0.941345
+        UVChannelIndex = 0
+        TextureName = UI_T_SpellLinkGlowRay
+    }
+    TextureStreamingData[3] =
+    {
+        SamplingScale = 0.625
+        UVChannelIndex = 0
+        TextureName = VFX_T_RibbonOffset_N
+    }
+    TextureStreamingData[4] =
+    {
+        SamplingScale = 0.5
+        UVChannelIndex = 1
+        TextureName = VFX_T_Wavy_N
+    }
+}

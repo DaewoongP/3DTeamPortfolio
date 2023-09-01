@@ -1,0 +1,90 @@
+Parent = Material3'/Game/UI/FX/MM_UI_detailsSmoke.MM_UI_detailsSmoke'
+ScalarParameterValues[6] =
+{
+    ScalarParameterValues[0] =
+    {
+        ParameterInfo = { Name=Alpha }
+        ParameterValue = 0.1
+        ParameterName = None
+    }
+    ScalarParameterValues[1] =
+    {
+        ParameterInfo = { Name=Speed }
+        ParameterValue = 0.025
+        ParameterName = None
+    }
+    ScalarParameterValues[2] =
+    {
+        ParameterInfo = { Name=Speed U (S)_1 }
+        ParameterValue = 0.05
+        ParameterName = None
+    }
+    ScalarParameterValues[3] =
+    {
+        ParameterInfo = { Name=Speed V (S)_1 }
+        ParameterValue = 0.025
+        ParameterName = None
+    }
+    ScalarParameterValues[4] =
+    {
+        ParameterInfo = { Name=UVMultiplier }
+        ParameterValue = 0.065
+        ParameterName = None
+    }
+    ScalarParameterValues[5] =
+    {
+        ParameterInfo = { Name=RefractionDepthBias }
+        ParameterValue = 0
+        ParameterName = None
+    }
+}
+TextureParameterValues[1] =
+{
+    TextureParameterValues[0] =
+    {
+        ParameterInfo = { Name=Texture }
+        ParameterValue = Texture2D'/Game/VFX/Textures/VFX_T_smokeWater_D.VFX_T_smokeWater_D'
+        ParameterName = None
+    }
+}
+VectorParameterValues[2] =
+{
+    VectorParameterValues[0] =
+    {
+        ParameterInfo = { Name=Smoke Bright Color }
+        ParameterValue = { R=0.014444, G=0.045186, B=0.057805, A=1 }
+        ParameterName = None
+    }
+    VectorParameterValues[1] =
+    {
+        ParameterInfo = { Name=Smoke Dark Color }
+        ParameterValue = { R=0.00367651, G=0.00518152, B=0.00699541, A=1 }
+        ParameterName = None
+    }
+}
+BasePropertyOverrides =
+{
+    bOverride_BlendMode = false
+    BlendMode = BLEND_Translucent (2)
+    bOverride_TwoSided = false
+    TwoSided = false
+    bOverride_OpacityMaskClipValue = false
+    OpacityMaskClipValue = 0.3333
+}
+StaticParameters =
+{
+    StaticSwitchParameters[0] = {}
+    StaticComponentMaskParameters[0] = {}
+    TerrainLayerWeightParameters[0] = {}
+    MaterialLayersParameters[0] = {}
+}
+RuntimeVirtualTextureParameterValues[0] = {}
+FontParameterValues[0] = {}
+FlattenedTexture = None
+MobileBaseTexture = None
+MobileNormalTexture = None
+bUseMobileSpecular = false
+MobileSpecularPower = 16
+MobileSpecularMask = MSM_Constant (0)
+MobileMaskTexture = None
+TextureStreamingData[0] = {}

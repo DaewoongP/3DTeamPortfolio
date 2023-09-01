@@ -1,0 +1,12 @@
+Diffuse=VFX_T_White_RingAdd_D
+Normal=VFX_T_RibbonOffset_N
+SpecPower=UI_T_SPIRAL_DUSTMask
+Other[0]=UI_T_BaCkShadowCloudMask
+Other[1]=UI_T_SmokesNoiseMask
+Other[2]=UI_T_SmokesRevealMask
+Other[3]=UI_T_BluredGlitterMask
+Other[4]=UI_T_SharpGlitterMask
+Other[5]=UI_T_SmokeDustMask
+Other[6]=UI_T_SmokeGlitterMask
+Other[7]=UI_T_MiniMapSmoke
+Other[8]=UI_T_CloudDistortion

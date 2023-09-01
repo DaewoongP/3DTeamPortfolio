@@ -1,0 +1,135 @@
+TwoSided = false
+bDisableDepthTest = false
+bIsMasked = false
+ReferencedTextures[3] =
+{
+    ReferencedTextures[0] = Texture2D'/Game/UI/HUD/DuelTechniques/UI_T_DuelCheck_Gradient.UI_T_DuelCheck_Gradient'
+    ReferencedTextures[1] = Texture2D'/Game/UI/HUD/DuelTechniques/UI_T_DuelCheck_Success.UI_T_DuelCheck_Success'
+    ReferencedTextures[2] = Texture2D'/Game/UI/HUD/MiniMap/UI_T_MiniMapSmoke.UI_T_MiniMapSmoke'
+}
+Expressions[0] = {}
+CachedExpressionData =
+{
+    Parameters =
+    {
+        Entries[5] =
+        {
+            Entries[0] =
+            {
+                ParameterInfos[5] =
+                {
+                    ParameterInfos[0] = { Name=TextureRotate }
+                    ParameterInfos[1] = { Name=DrawPosition }
+                    ParameterInfos[2] = { Name=DistortionYSpeed }
+                    ParameterInfos[3] = { Name=Effect Speed }
+                    ParameterInfos[4] = { Name=DistortionXSpeed }
+                }
+            }
+            Entries[1] =
+            {
+                ParameterInfos[1] =
+                {
+                    ParameterInfos[0] = { Name=GlowColor }
+                }
+            }
+            Entries[2] =
+            {
+                ParameterInfos[4] =
+                {
+                    ParameterInfos[0] = { Name=Diffuse }
+                    ParameterInfos[1] = { Name=Distortion Masks }
+                    ParameterInfos[2] = { Name=Texture }
+                    ParameterInfos[3] = { Name=Gradient }
+                }
+            }
+            Entries[3] = { ParameterInfos[0]={} }
+            Entries[4] = { ParameterInfos[0]={} }
+        }
+        ScalarValues[5] = { 0.25, 0.5, 0.25, 1, 0 }
+        VectorValues[1] =
+        {
+            VectorValues[0] = { R=0.511106, G=0.950169, B=1, A=1 }
+        }
+        TextureValues[4] =
+        {
+            TextureValues[0] = Texture2D'/Game/UI/HUD/MiniMap/UI_T_MiniMapSmoke.UI_T_MiniMapSmoke'
+            TextureValues[1] = Texture2D'/Game/UI/HUD/MiniMap/UI_T_MiniMapSmoke.UI_T_MiniMapSmoke'
+            TextureValues[2] = Texture2D'/Game/UI/HUD/DuelTechniques/UI_T_DuelCheck_Success.UI_T_DuelCheck_Success'
+            TextureValues[3] = Texture2D'/Game/UI/HUD/DuelTechniques/UI_T_DuelCheck_Gradient.UI_T_DuelCheck_Gradient'
+        }
+    }
+    ReferencedTextures[3] =
+    {
+        ReferencedTextures[0] = Texture2D'/Game/UI/HUD/DuelTechniques/UI_T_DuelCheck_Success.UI_T_DuelCheck_Success'
+        ReferencedTextures[1] = Texture2D'/Game/UI/HUD/DuelTechniques/UI_T_DuelCheck_Gradient.UI_T_DuelCheck_Gradient'
+        ReferencedTextures[2] = Texture2D'/Game/UI/HUD/MiniMap/UI_T_MiniMapSmoke.UI_T_MiniMapSmoke'
+    }
+}
+BlendMode = BLEND_Translucent (2)
+OpacityMaskClipValue = 0.333
+CollectedTextureParameters[4] =
+{
+    CollectedTextureParameters[0] =
+    {
+        Texture = Texture2D'/Game/UI/HUD/MiniMap/UI_T_MiniMapSmoke.UI_T_MiniMapSmoke'
+        Name = Diffuse
+        Group = None
+    }
+    CollectedTextureParameters[1] =
+    {
+        Texture = Texture2D'/Game/UI/HUD/MiniMap/UI_T_MiniMapSmoke.UI_T_MiniMapSmoke'
+        Name = Distortion Masks
+        Group = None
+    }
+    CollectedTextureParameters[2] =
+    {
+        Texture = Texture2D'/Game/UI/HUD/DuelTechniques/UI_T_DuelCheck_Success.UI_T_DuelCheck_Success'
+        Name = Texture
+        Group = None
+    }
+    CollectedTextureParameters[3] =
+    {
+        Texture = Texture2D'/Game/UI/HUD/DuelTechniques/UI_T_DuelCheck_Gradient.UI_T_DuelCheck_Gradient'
+        Name = Gradient
+        Group = None
+    }
+}
+CollectedScalarParameters[5] =
+{
+    CollectedScalarParameters[0] = { Value=0.25, Name=TextureRotate, Group=None }
+    CollectedScalarParameters[1] = { Value=0.5, Name=DrawPosition, Group=None }
+    CollectedScalarParameters[2] = { Value=0.25, Name=DistortionYSpeed, Group=None }
+    CollectedScalarParameters[3] = { Value=1, Name=Effect Speed, Group=None }
+    CollectedScalarParameters[4] = { Value=0, Name=DistortionXSpeed, Group=None }
+}
+CollectedVectorParameters[1] =
+{
+    CollectedVectorParameters[0] =
+    {
+        Value = { R=0.511106, G=0.950169, B=1, A=1 }
+        Name = GlowColor
+        Group = None
+    }
+}
+FlattenedTexture = None
+MobileBaseTexture = None
+MobileNormalTexture = None
+bUseMobileSpecular = false
+MobileSpecularPower = 16
+MobileSpecularMask = MSM_Constant (0)
+MobileMaskTexture = None
+TextureStreamingData[2] =
+{
+    TextureStreamingData[0] =
+    {
+        SamplingScale = 1
+        UVChannelIndex = 0
+        TextureName = UI_T_DuelCheck_Gradient
+    }
+    TextureStreamingData[1] =
+    {
+        SamplingScale = 1
+        UVChannelIndex = 0
+        TextureName = UI_T_DuelCheck_Success
+    }
+}

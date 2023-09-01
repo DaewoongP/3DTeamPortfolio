@@ -1,0 +1,11 @@
+Diffuse=UI_T_WarpedRing_D
+Normal=VFX_T_RibbonOffset_N
+SpecPower=UI_T_SpellLinkDivide
+Other[0]=UI_T_SpellLinkCircleGlow
+Other[1]=UI_T_WandLinkMaskBottom
+Other[2]=UI_T_SpellLinkCircleRipple
+Other[3]=T_Blank_A
+Other[4]=UI_T_WarpedRippleGlow
+Other[5]=VFX_T_Circle_Sphere_D
+Other[6]=VFX_T_WispyNoise_D
+Other[7]=VFX_T_Wavy_N

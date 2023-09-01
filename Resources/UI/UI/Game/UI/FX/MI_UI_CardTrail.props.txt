@@ -1,0 +1,162 @@
+Parent = Material3'/Game/UI/FX/MM_UI_CardTrail.MM_UI_CardTrail'
+ScalarParameterValues[18] =
+{
+    ScalarParameterValues[0] =
+    {
+        ParameterInfo = { Name=ColorChange }
+        ParameterValue = 0.15
+        ParameterName = None
+    }
+    ScalarParameterValues[1] =
+    {
+        ParameterInfo = { Name=ColorSide }
+        ParameterValue = 0.6
+        ParameterName = None
+    }
+    ScalarParameterValues[2] =
+    {
+        ParameterInfo = { Name=Spk1 }
+        ParameterValue = 5
+        ParameterName = None
+    }
+    ScalarParameterValues[3] =
+    {
+        ParameterInfo = { Name=Spk2 }
+        ParameterValue = 10
+        ParameterName = None
+    }
+    ScalarParameterValues[4] =
+    {
+        ParameterInfo = { Name=Spk3 }
+        ParameterValue = 7.5
+        ParameterName = None
+    }
+    ScalarParameterValues[5] =
+    {
+        ParameterInfo = { Name=Angle }
+        ParameterValue = 0.125
+        ParameterName = None
+    }
+    ScalarParameterValues[6] =
+    {
+        ParameterInfo = { Name=Contrast }
+        ParameterValue = 2
+        ParameterName = None
+    }
+    ScalarParameterValues[7] =
+    {
+        ParameterInfo = { Name=Falloff }
+        ParameterValue = 1
+        ParameterName = None
+    }
+    ScalarParameterValues[8] =
+    {
+        ParameterInfo = { Name=Mask Multi }
+        ParameterValue = 2
+        ParameterName = None
+    }
+    ScalarParameterValues[9] =
+    {
+        ParameterInfo = { Name=XmoveMask }
+        ParameterValue = -0.272109
+        ParameterName = None
+    }
+    ScalarParameterValues[10] =
+    {
+        ParameterInfo = { Name=YmoveMask }
+        ParameterValue = 0
+        ParameterName = None
+    }
+    ScalarParameterValues[11] =
+    {
+        ParameterInfo = { Name=UVMultiplier Smoke }
+        ParameterValue = 0.05
+        ParameterName = None
+    }
+    ScalarParameterValues[12] =
+    {
+        ParameterInfo = { Name=Move Mask X }
+        ParameterValue = 0
+        ParameterName = None
+    }
+    ScalarParameterValues[13] =
+    {
+        ParameterInfo = { Name=Move Mask Y }
+        ParameterValue = 0
+        ParameterName = None
+    }
+    ScalarParameterValues[14] =
+    {
+        ParameterInfo = { Name=Scale Mask Glitter }
+        ParameterValue = 1.5
+        ParameterName = None
+    }
+    ScalarParameterValues[15] =
+    {
+        ParameterInfo = { Name=Tile U }
+        ParameterValue = 1
+        ParameterName = None
+    }
+    ScalarParameterValues[16] =
+    {
+        ParameterInfo = { Name=Tile V }
+        ParameterValue = 1
+        ParameterName = None
+    }
+    ScalarParameterValues[17] =
+    {
+        ParameterInfo = { Name=RefractionDepthBias }
+        ParameterValue = 0
+        ParameterName = None
+    }
+}
+TextureParameterValues[0] = {}
+VectorParameterValues[2] =
+{
+    VectorParameterValues[0] =
+    {
+        ParameterInfo = { Name=Glitter Color Light }
+        ParameterValue = { R=0.182844, G=0.784472, B=0.887923, A=1 }
+        ParameterName = None
+    }
+    VectorParameterValues[1] =
+    {
+        ParameterInfo = { Name=Glitter Color Light2 }
+        ParameterValue = { R=0.887923, G=0.844635, B=0.237191, A=1 }
+        ParameterName = None
+    }
+}
+BasePropertyOverrides =
+{
+    bOverride_BlendMode = false
+    BlendMode = BLEND_Translucent (2)
+    bOverride_TwoSided = false
+    TwoSided = false
+    bOverride_OpacityMaskClipValue = false
+    OpacityMaskClipValue = 0.3333
+}
+StaticParameters =
+{
+    StaticSwitchParameters[0] = {}
+    StaticComponentMaskParameters[0] = {}
+    TerrainLayerWeightParameters[0] = {}
+    MaterialLayersParameters[0] = {}
+}
+RuntimeVirtualTextureParameterValues[0] = {}
+FontParameterValues[0] = {}
+FlattenedTexture = None
+MobileBaseTexture = None
+MobileNormalTexture = None
+bUseMobileSpecular = false
+MobileSpecularPower = 16
+MobileSpecularMask = MSM_Constant (0)
+MobileMaskTexture = None
+TextureStreamingData[1] =
+{
+    TextureStreamingData[0] =
+    {
+        SamplingScale = 1
+        UVChannelIndex = 0
+        TextureName = UI_T_BaCkShadowCloudMask
+    }
+}

@@ -1,0 +1,102 @@
+Parent = Material3'/Game/UI/FX/MM_UI_ButtonBg.MM_UI_ButtonBg'
+ScalarParameterValues[7] =
+{
+    ScalarParameterValues[0] =
+    {
+        ParameterInfo = { Name=Density }
+        ParameterValue = 3
+        ParameterName = None
+    }
+    ScalarParameterValues[1] =
+    {
+        ParameterInfo = { Name=ExtraDark }
+        ParameterValue = 1
+        ParameterName = None
+    }
+    ScalarParameterValues[2] =
+    {
+        ParameterInfo = { Name=Radious }
+        ParameterValue = 1.36892
+        ParameterName = None
+    }
+    ScalarParameterValues[3] =
+    {
+        ParameterInfo = { Name=Speed }
+        ParameterValue = 0
+        ParameterName = None
+    }
+    ScalarParameterValues[4] =
+    {
+        ParameterInfo = { Name=SquashCenterX }
+        ParameterValue = 77.2791
+        ParameterName = None
+    }
+    ScalarParameterValues[5] =
+    {
+        ParameterInfo = { Name=SquashCenterY }
+        ParameterValue = 1.07868
+        ParameterName = None
+    }
+    ScalarParameterValues[6] =
+    {
+        ParameterInfo = { Name=RefractionDepthBias }
+        ParameterValue = 0
+        ParameterName = None
+    }
+}
+TextureParameterValues[0] = {}
+VectorParameterValues[3] =
+{
+    VectorParameterValues[0] =
+    {
+        ParameterInfo = { Name=Color1 }
+        ParameterValue = { R=0, G=0.854029, B=1, A=1 }
+        ParameterName = None
+    }
+    VectorParameterValues[1] =
+    {
+        ParameterInfo = { Name=Color2 }
+        ParameterValue = { R=0, G=0.00014, B=0.005208, A=1 }
+        ParameterName = None
+    }
+    VectorParameterValues[2] =
+    {
+        ParameterInfo = { Name=Move&Scale }
+        ParameterValue = { R=0, G=0, B=1.14926, A=1.4343 }
+        ParameterName = None
+    }
+}
+BasePropertyOverrides =
+{
+    bOverride_BlendMode = false
+    BlendMode = BLEND_Translucent (2)
+    bOverride_TwoSided = false
+    TwoSided = false
+    bOverride_OpacityMaskClipValue = false
+    OpacityMaskClipValue = 0.3333
+}
+StaticParameters =
+{
+    StaticSwitchParameters[0] = {}
+    StaticComponentMaskParameters[0] = {}
+    TerrainLayerWeightParameters[0] = {}
+    MaterialLayersParameters[0] = {}
+}
+RuntimeVirtualTextureParameterValues[0] = {}
+FontParameterValues[0] = {}
+FlattenedTexture = None
+MobileBaseTexture = None
+MobileNormalTexture = None
+bUseMobileSpecular = false
+MobileSpecularPower = 16
+MobileSpecularMask = MSM_Constant (0)
+MobileMaskTexture = None
+TextureStreamingData[1] =
+{
+    TextureStreamingData[0] =
+    {
+        SamplingScale = 1
+        UVChannelIndex = 0
+        TextureName = UI_T_CloudDistortion
+    }
+}

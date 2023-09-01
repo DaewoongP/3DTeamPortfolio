@@ -1,0 +1,96 @@
+Parent = Material3'/Game/UI/FX/MM_UI_GlitterRise.MM_UI_GlitterRise'
+ScalarParameterValues[5] =
+{
+    ScalarParameterValues[0] =
+    {
+        ParameterInfo = { Name=BackLight }
+        ParameterValue = 0.025
+        ParameterName = None
+    }
+    ScalarParameterValues[1] =
+    {
+        ParameterInfo = { Name=OpacityPower }
+        ParameterValue = 0.5
+        ParameterName = None
+    }
+    ScalarParameterValues[2] =
+    {
+        ParameterInfo = { Name=TilingU }
+        ParameterValue = 1
+        ParameterName = None
+    }
+    ScalarParameterValues[3] =
+    {
+        ParameterInfo = { Name=TilingV }
+        ParameterValue = 1
+        ParameterName = None
+    }
+    ScalarParameterValues[4] =
+    {
+        ParameterInfo = { Name=RefractionDepthBias }
+        ParameterValue = 0
+        ParameterName = None
+    }
+}
+TextureParameterValues[0] = {}
+VectorParameterValues[2] =
+{
+    VectorParameterValues[0] =
+    {
+        ParameterInfo = { Name=Smoke Bright Color }
+        ParameterValue = { R=1, G=0.913099, B=0.520996, A=1 }
+        ParameterName = None
+    }
+    VectorParameterValues[1] =
+    {
+        ParameterInfo = { Name=Smoke Dark Color }
+        ParameterValue = { R=2, G=1.5941, B=0.59628, A=1 }
+        ParameterName = None
+    }
+}
+BasePropertyOverrides =
+{
+    bOverride_BlendMode = false
+    BlendMode = BLEND_Additive (3)
+    bOverride_TwoSided = false
+    TwoSided = false
+    bOverride_OpacityMaskClipValue = false
+    OpacityMaskClipValue = 0.3333
+}
+StaticParameters =
+{
+    StaticSwitchParameters[0] = {}
+    StaticComponentMaskParameters[0] = {}
+    TerrainLayerWeightParameters[0] = {}
+    MaterialLayersParameters[0] = {}
+}
+RuntimeVirtualTextureParameterValues[0] = {}
+FontParameterValues[0] = {}
+FlattenedTexture = None
+MobileBaseTexture = None
+MobileNormalTexture = None
+bUseMobileSpecular = false
+MobileSpecularPower = 16
+MobileSpecularMask = MSM_Constant (0)
+MobileMaskTexture = None
+TextureStreamingData[3] =
+{
+    TextureStreamingData[0] =
+    {
+        SamplingScale = 0.5
+        UVChannelIndex = 0
+        TextureName = UI_T_BaCkShadowCloudMask
+    }
+    TextureStreamingData[1] =
+    {
+        SamplingScale = 1
+        UVChannelIndex = 1
+        TextureName = UI_T_CloudDistortion
+    }
+    TextureStreamingData[2] =
+    {
+        SamplingScale = 1
+        UVChannelIndex = 0
+        TextureName = UI_T_SparkelsRise
+    }
+}

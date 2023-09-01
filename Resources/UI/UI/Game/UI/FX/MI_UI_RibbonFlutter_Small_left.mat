@@ -1,0 +1,5 @@
+Diffuse=UI_T_Ribbon_FullNoColor
+Normal=VFX_T_RibbonOffset_N
+Other[0]=UI_T_SmallRibbon_Mask_Left
+Other[1]=UI_T_SmallRibbon_Left
+Other[2]=UI_T_Ribbon_Mask

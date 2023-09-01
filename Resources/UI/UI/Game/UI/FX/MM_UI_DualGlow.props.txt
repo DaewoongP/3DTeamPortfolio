@@ -1,0 +1,153 @@
+TwoSided = false
+bDisableDepthTest = false
+bIsMasked = false
+ReferencedTextures[2] =
+{
+    ReferencedTextures[0] = Texture2D'/Game/UI/FX/Textures/UI_T_SortingGlow_Hufflepuff.UI_T_SortingGlow_Hufflepuff'
+    ReferencedTextures[1] = Texture2D'/Game/VFX/Textures/Noises/VFX_T_RibbonOffset_N.VFX_T_RibbonOffset_N'
+}
+Expressions[0] = {}
+CachedExpressionData =
+{
+    Parameters =
+    {
+        Entries[5] =
+        {
+            Entries[0] =
+            {
+                ParameterInfos[13] =
+                {
+                    ParameterInfos[0] = { Name=Ring Tiling V (S) }
+                    ParameterInfos[1] = { Name=Glow Offest V (S) }
+                    ParameterInfos[2] = { Name=DistortionStrength }
+                    ParameterInfos[3] = { Name=GlowDistortionStrength }
+                    ParameterInfos[4] = { Name=Glow Tiling U (S) }
+                    ParameterInfos[5] = { Name=OuterSpeed }
+                    ParameterInfos[6] = { Name=Ring Offest V (S) }
+                    ParameterInfos[7] = { Name=Glow Tiling V (S) }
+                    ParameterInfos[8] = { Name=GlowSpeed }
+                    ParameterInfos[9] = { Name=Ring Tiling U (S) }
+                    ParameterInfos[10] = { Name=Glow Offset U (S) }
+                    ParameterInfos[11] = { Name=Ring Offset U (S) }
+                    ParameterInfos[12] = { Name=GlowIntensity }
+                }
+            }
+            Entries[1] =
+            {
+                ParameterInfos[2] =
+                {
+                    ParameterInfos[0] = { Name=Glow Color }
+                    ParameterInfos[1] = { Name=Colour }
+                }
+            }
+            Entries[2] =
+            {
+                ParameterInfos[1] =
+                {
+                    ParameterInfos[0] = { Name=Glow }
+                }
+            }
+            Entries[3] = { ParameterInfos[0]={} }
+            Entries[4] = { ParameterInfos[0]={} }
+        }
+        ScalarValues[13] =
+        {
+            ScalarValues[0] = 1
+            ScalarValues[1] = 0
+            ScalarValues[2] = 0.025
+            ScalarValues[3] = 0.01
+            ScalarValues[4] = 1
+            ScalarValues[5] = 0.1
+            ScalarValues[6] = 0
+            ScalarValues[7] = 1
+            ScalarValues[8] = 0.1
+            ScalarValues[9] = 1
+            ScalarValues[10] = 0
+            ScalarValues[11] = 0
+            ScalarValues[12] = 2
+        }
+        VectorValues[2] =
+        {
+            VectorValues[0] = { R=0, G=0.464752, B=1, A=1 }
+            VectorValues[1] = { R=1, G=1, B=1, A=1 }
+        }
+        TextureValues[1] =
+        {
+            TextureValues[0] = Texture2D'/Game/UI/FX/Textures/UI_T_SortingGlow_Hufflepuff.UI_T_SortingGlow_Hufflepuff'
+        }
+    }
+    ReferencedTextures[2] =
+    {
+        ReferencedTextures[0] = Texture2D'/Game/VFX/Textures/Noises/VFX_T_RibbonOffset_N.VFX_T_RibbonOffset_N'
+        ReferencedTextures[1] = Texture2D'/Game/UI/FX/Textures/UI_T_SortingGlow_Hufflepuff.UI_T_SortingGlow_Hufflepuff'
+    }
+}
+BlendMode = BLEND_Translucent (2)
+OpacityMaskClipValue = 0.333
+CollectedTextureParameters[1] =
+{
+    CollectedTextureParameters[0] =
+    {
+        Texture = Texture2D'/Game/UI/FX/Textures/UI_T_SortingGlow_Hufflepuff.UI_T_SortingGlow_Hufflepuff'
+        Name = Glow
+        Group = None
+    }
+}
+CollectedScalarParameters[13] =
+{
+    CollectedScalarParameters[0] = { Value=1, Name=Ring Tiling V (S), Group=None }
+    CollectedScalarParameters[1] = { Value=0, Name=Glow Offest V (S), Group=None }
+    CollectedScalarParameters[2] = { Value=0.025, Name=DistortionStrength, Group=None }
+    CollectedScalarParameters[3] =
+    {
+        Value = 0.01
+        Name = GlowDistortionStrength
+        Group = None
+    }
+    CollectedScalarParameters[4] = { Value=1, Name=Glow Tiling U (S), Group=None }
+    CollectedScalarParameters[5] = { Value=0.1, Name=OuterSpeed, Group=None }
+    CollectedScalarParameters[6] = { Value=0, Name=Ring Offest V (S), Group=None }
+    CollectedScalarParameters[7] = { Value=1, Name=Glow Tiling V (S), Group=None }
+    CollectedScalarParameters[8] = { Value=0.1, Name=GlowSpeed, Group=None }
+    CollectedScalarParameters[9] = { Value=1, Name=Ring Tiling U (S), Group=None }
+    CollectedScalarParameters[10] = { Value=0, Name=Glow Offset U (S), Group=None }
+    CollectedScalarParameters[11] = { Value=0, Name=Ring Offset U (S), Group=None }
+    CollectedScalarParameters[12] = { Value=2, Name=GlowIntensity, Group=None }
+}
+CollectedVectorParameters[2] =
+{
+    CollectedVectorParameters[0] =
+    {
+        Value = { R=0, G=0.464752, B=1, A=1 }
+        Name = Glow Color
+        Group = None
+    }
+    CollectedVectorParameters[1] =
+    {
+        Value = { R=1, G=1, B=1, A=1 }
+        Name = Colour
+        Group = None
+    }
+}
+FlattenedTexture = None
+MobileBaseTexture = None
+MobileNormalTexture = None
+bUseMobileSpecular = false
+MobileSpecularPower = 16
+MobileSpecularMask = MSM_Constant (0)
+MobileMaskTexture = None
+TextureStreamingData[2] =
+{
+    TextureStreamingData[0] =
+    {
+        SamplingScale = 0.947021
+        UVChannelIndex = 0
+        TextureName = UI_T_SortingGlow_Hufflepuff
+    }
+    TextureStreamingData[1] =
+    {
+        SamplingScale = 0.671875
+        UVChannelIndex = 0
+        TextureName = VFX_T_RibbonOffset_N
+    }
+}

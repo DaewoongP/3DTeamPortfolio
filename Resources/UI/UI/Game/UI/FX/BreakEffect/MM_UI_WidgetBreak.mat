@@ -1,0 +1,5 @@
+Diffuse=VFX_T_Crucio_Decal_Diff_D
+Other[0]=UI_T_TextureSplit
+Other[1]=UI_T_TextureSplit_D
+Other[2]=UI_T_cbi_button_Y
+Other[3]=VFX_T_Circle_LerpMask_D
