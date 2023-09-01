@@ -136,7 +136,7 @@ void CUI_Window::Show_Object_List()
 				lstrcpy(wszGameObjectName, pGameObejctVector[n]->Get_Tag());
 
 				string DragFloatTag = "Speed##";
-				_float3 vPos = pGameObejctVector[n]->Get_Transform()->Get_Translation();
+				_float3 vPos = pGameObejctVector[n]->Get_Transform()->Get_Position();
 				ImGui::DragFloat3(DragFloatTag.c_str(), reinterpret_cast<_float*>(&vPos), 0.01f);
 				pGameObejctVector[n]->Get_Transform()->Set_Position(vPos);
 			}
@@ -399,7 +399,7 @@ void CUI_Window::Move_UI()
 	_int iMoveX = CurrentMousePos.x - m_MousePos.x;
 	_int iMoveY = CurrentMousePos.y - m_MousePos.y;
 
-	_float3 vPos = m_pDummy_UI->Get_Transform()->Get_Translation();
+	_float3 vPos = m_pDummy_UI->Get_Transform()->Get_Position();
 	_float2 fXY = m_pDummy_UI->Get_fXY();
 
 	m_pDummy_UI->Set_fXY(fXY.x + iMoveX, fXY.y + iMoveY);

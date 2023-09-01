@@ -76,6 +76,9 @@
     <Filter Include="98. Default\ImGui_Defaults">
       <UniqueIdentifier>{628cd336-ebfe-4860-bfac-014e7bec45d3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\99. Debug\ImGuiManager">
+      <UniqueIdentifier>{77d924b4-bb9f-4db8-a57a-1f889f2a0493}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -138,9 +141,6 @@
     <ClInclude Include="ImGui\imconfig.h">
       <Filter>98. Default\ImGui_Defaults</Filter>
     </ClInclude>
-    <ClInclude Include="ImGui\imgui.h">
-      <Filter>98. Default\ImGui_Defaults</Filter>
-    </ClInclude>
     <ClInclude Include="ImGui\imgui_internal.h">
       <Filter>98. Default\ImGui_Defaults</Filter>
     </ClInclude>
@@ -170,6 +170,12 @@
     </ClInclude>
     <ClInclude Include="ImGui\backends\imgui_impl_win32.h">
       <Filter>98. Default\ImGui_Defaults</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imgui.h">
+      <Filter>98. Default\ImGui_Defaults</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ImGui_Manager.h">
+      <Filter>02. GameObject\99. Debug\ImGuiManager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -238,6 +244,9 @@
     </ClCompile>
     <ClCompile Include="ImGui\backends\imgui_impl_win32.cpp">
       <Filter>98. Default\ImGui_Defaults</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ImGui_Manager.cpp">
+      <Filter>02. GameObject\99. Debug\ImGuiManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

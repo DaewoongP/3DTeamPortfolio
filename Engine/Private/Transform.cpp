@@ -62,7 +62,7 @@ void CTransform::Tick(_float fTimeDelta)
 
 void CTransform::Move_Direction(_float3 vDirection, _float fTimeDelta)
 {
-	_float3 vPosition = Get_Translation();
+	_float3 vPosition = Get_Position();
 	
 	vDirection.Normalize();
 	
@@ -110,6 +110,24 @@ void CTransform::Turn(_float3 vAxis, _float fTimeDelta)
 	Set_Right(XMVector3TransformNormal(vRight, RotationMatrix));
 	Set_Up(XMVector3TransformNormal(vUp, RotationMatrix));
 	Set_Look(XMVector3TransformNormal(vLook, RotationMatrix));
+}
+
+void CTransform::LookAt(_float3 _vTarget, _bool _isDeleteY)
+{
+	_float3 vPosition = Get_Position();
+
+	_float3 vLook = _vTarget - vPosition;
+	if (true == _isDeleteY)
+		vLook.y = 0.f;
+
+	_float3 vRight = XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook);
+	_float3 vUp = XMVector3Cross(vLook, vRight);
+
+	_float3 vScale = Get_Scale();
+
+	Set_Right(XMVector3Normalize(vRight) * vScale.x);
+	Set_Up(XMVector3Normalize(vUp) * vScale.y);
+	Set_Look(XMVector3Normalize(vLook) * vScale.z);
 }
 
 CTransform* CTransform::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

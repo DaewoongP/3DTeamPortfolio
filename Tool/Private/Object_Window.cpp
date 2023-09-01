@@ -91,7 +91,7 @@ void CObject_Window::Picking_Menu()
 	ImGui::Checkbox("Object Install", &bInstallObject);
 	if (true == bInstallObject)
 	{
-		Install_Object(m_pDummy->Get_Transform()->Get_Translation());
+		Install_Object(m_pDummy->Get_Transform()->Get_Position());
 	}
 }
 

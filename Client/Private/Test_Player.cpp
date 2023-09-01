@@ -77,6 +77,9 @@ void CTest_Player::Tick(_float fTimeDelta)
 	m_pLine->Tick(LineDesc);
 
 	__super::Tick(fTimeDelta);
+#ifdef _DEBUG
+	Tick_ImGui();
+#endif // _DEBUG
 }
 
 void CTest_Player::Late_Tick(_float fTimeDelta)
@@ -381,10 +384,19 @@ void CTest_Player::Key_Input(_float fTimeDelta)
 
 	ENDINSTANCE;
 }
+#ifdef _DEBUG
+void CTest_Player::Tick_ImGui()
+{
+	ImGui::Begin("Test");
+	_bool bis;
+	ImGui::Checkbox("Test", &bis);
 
+	ImGui::End();
+}
+#endif // _DEBUG
 CTest_Player* CTest_Player::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CTest_Player* pInstance = new CTest_Player(pDevice, pContext);
+	CTest_Player* pInstance = New CTest_Player(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -397,7 +409,7 @@ CTest_Player* CTest_Player::Create(ID3D11Device* pDevice, ID3D11DeviceContext* p
 
 CGameObject* CTest_Player::Clone(void* pArg)
 {
-	CTest_Player* pInstance = new CTest_Player(*this);
+	CTest_Player* pInstance = New CTest_Player(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

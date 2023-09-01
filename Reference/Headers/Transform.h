@@ -25,10 +25,11 @@ public:
 	_float3 Get_Right() const { return m_WorldMatrix.Right(); }
 	_float3 Get_Up() const { return m_WorldMatrix.Up(); }
 	_float3 Get_Look() const { return m_WorldMatrix.Look(); }
-	_float3 Get_Translation() const { return m_WorldMatrix.Translation(); }
+	_float3 Get_Position() const { return m_WorldMatrix.Translation(); }
 	_float4x4 Get_WorldMatrix() const { return m_WorldMatrix; }
 	const _float4x4* Get_WorldMatrixPtr() const { return &m_WorldMatrix; }
 	_float4x4 Get_WorldMatrix_Inverse() const { return m_WorldMatrix.Inverse(); }
+	_float Get_Speed() const { return m_fSpeed; }
 
 	void Set_Scale(_float3 _vScale);
 	void Set_Right(_float3 _vRight);
@@ -52,6 +53,7 @@ public:
 	void Go_Left(_float fTimeDelta);
 	void Go_Right(_float fTimeDelta);
 	void Turn(_float3 vAxis, _float fTimeDelta);
+	void LookAt(_float3 _vTarget, _bool _isDeleteY = false);
 
 private:
 	_float4x4		m_WorldMatrix;

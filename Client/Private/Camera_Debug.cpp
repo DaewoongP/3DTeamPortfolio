@@ -134,7 +134,7 @@ void CCamera_Debug::Fix_Mouse(void)
 
 CCamera_Debug* CCamera_Debug::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CCamera_Debug* pInstance = new CCamera_Debug(pDevice, pContext);
+	CCamera_Debug* pInstance = New CCamera_Debug(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -147,7 +147,7 @@ CCamera_Debug* CCamera_Debug::Create(ID3D11Device* pDevice, ID3D11DeviceContext*
 
 CGameObject* CCamera_Debug::Clone(void* pArg)
 {
-	CCamera_Debug* pInstance = new CCamera_Debug(*this);
+	CCamera_Debug* pInstance = New CCamera_Debug(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

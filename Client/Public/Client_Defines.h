@@ -17,12 +17,12 @@ using namespace Client;
 
 #ifdef _DEBUG
 
-#include "ImGui\imgui.h"
-#include "ImGui\backends\imgui_impl_win32.h"
-#include "ImGui\backends\imgui_impl_dx11.h"
+#include "imgui.h"
+#include "backends\imgui_impl_win32.h"
+#include "backends\imgui_impl_dx11.h"
 
 #define STB_IMAGE_IMPLEMENTATION
-#include "ImGui\stb\stb_image.h"
+#include "stb\stb_image.h"
 #endif // _DEBUG
 
 //--------------------------------------------------Macro

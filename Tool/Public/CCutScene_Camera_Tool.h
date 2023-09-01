@@ -11,7 +11,7 @@ class CCutScene_Camera_Tool :
     public CBase
 {
 public:
-	typedef enum CUTSCENEPOINT
+	enum CUTSCENEPOINT
 	{
 		CUTSCENEPOINT_NONE,
 		CUTSCENEPOINT_CREATE,

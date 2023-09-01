@@ -49,6 +49,10 @@ private:
 	HRESULT SetUp_ShaderResources();
 	void Key_Input(_float fTimeDelta);
 
+#ifdef _DEBUG
+	void Tick_ImGui();
+#endif // _DEBUG
+
 public:
 	static CTest_Player* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;

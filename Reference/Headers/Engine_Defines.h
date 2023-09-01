@@ -95,11 +95,7 @@ using namespace physx;
 
 #define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ ) 
 
-#ifndef _USE_IMGUI
-#define new DBG_NEW 
-#else
 #define New DBG_NEW
-#endif // _USE_IMGUI
 
 #endif // DBG_NEW
 #endif // _DEBUG

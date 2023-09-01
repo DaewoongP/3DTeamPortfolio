@@ -25,7 +25,7 @@ private:
 
 
 public:
-	const _float4& Get_Position();
+	const _float4 Get_Position();
 
 
 public:

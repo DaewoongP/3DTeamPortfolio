@@ -1,6 +1,10 @@
 #include "..\Public\Level_MainGame.h"
 #include "GameInstance.h"
 
+#ifdef _DEBUG
+#include "ImGui_Manager.h"
+#endif // _DEBUG
+
 CLevel_MainGame::CLevel_MainGame(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CLevel(pDevice, pContext)
 {
@@ -45,6 +49,13 @@ HRESULT CLevel_MainGame::Initialize()
 void CLevel_MainGame::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	CImGui_Manager* pImGui_Manager = CImGui_Manager::GetInstance();
+	Safe_AddRef(pImGui_Manager);
+
+	pImGui_Manager->Tick(fTimeDelta);
+
+	Safe_Release(pImGui_Manager);
 
 #ifdef _DEBUG
 	SetWindowText(g_hWnd, TEXT("메인게임레벨입니다."));

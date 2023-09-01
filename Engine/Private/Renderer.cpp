@@ -555,8 +555,8 @@ HRESULT CRenderer::Sort_Blend()
 	Safe_Release(pPipeLine);
 
 	m_RenderObjects[RENDER_BLEND].sort([vCamPos](const CGameObject* pSour, const CGameObject* pDest) {
-		_float3 vSourPos = pSour->Get_Transform()->Get_Translation();
-		_float3 vDestPos = pDest->Get_Transform()->Get_Translation();
+		_float3 vSourPos = pSour->Get_Transform()->Get_Position();
+		_float3 vDestPos = pDest->Get_Transform()->Get_Position();
 
 		_float4 vSour = vSourPos - vCamPos;
 		_float4 vDest = vDestPos - vCamPos;
@@ -573,8 +573,8 @@ HRESULT CRenderer::Sort_Blend()
 HRESULT CRenderer::Sort_UI()
 {
 	m_RenderObjects[RENDER_UI].sort([](const CGameObject* pSour, const CGameObject* pDest) {
-		_float fSourZ = XMVectorGetZ(pSour->Get_Transform()->Get_Translation());
-		_float fDestZ = XMVectorGetZ(pDest->Get_Transform()->Get_Translation());
+		_float fSourZ = XMVectorGetZ(pSour->Get_Transform()->Get_Position());
+		_float fDestZ = XMVectorGetZ(pDest->Get_Transform()->Get_Position());
 		// 내림차순 (멀리있는거부터 그림.)
 		if (fSourZ > fDestZ)
 			return true;

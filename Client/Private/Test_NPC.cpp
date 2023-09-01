@@ -141,7 +141,7 @@ HRESULT CTest_NPC::SetUp_ShaderResources()
 
 CTest_NPC* CTest_NPC::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CTest_NPC* pInstance = new CTest_NPC(pDevice, pContext);
+	CTest_NPC* pInstance = New CTest_NPC(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -154,7 +154,7 @@ CTest_NPC* CTest_NPC::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 
 CTest_NPC* CTest_NPC::Clone(void* pArg)
 {
-	CTest_NPC* pInstance = new CTest_NPC(*this);
+	CTest_NPC* pInstance = New CTest_NPC(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
