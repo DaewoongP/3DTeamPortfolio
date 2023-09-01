@@ -152,14 +152,14 @@ void CAnimation::Invalidate_TransformationMatrix(CModel::BONES& Bones, _float fT
 	}
 }
 
-void CAnimation::Invalidate_TransformationMatrix_Lerp(CModel::BONES& Bones, _float fTimeDelta, _double LerpTimeAcc)
+void CAnimation::Invalidate_TransformationMatrix_Lerp(CModel::BONES& Bones, _float fTimeDelta, _double LerpTimeAcc, _uint iRootIndex)
 {
 	_uint		iChannelIndex = 0;
 	for (auto& pChannel : m_Channels)
 	{
 		if (nullptr == pChannel)
 			return;
-		if (pChannel->Get_BoneIndex() <5)
+		if (pChannel->Get_BoneIndex() < iRootIndex)
 			pChannel->Invalidate_TransformationMatrix(Bones, m_fTimeAcc, &m_ChannelCurrentKeyFrames[iChannelIndex++]);
 		else
 			pChannel->Invalidate_TransformationMatrix_Lerp(Bones, m_fTimeAcc, &m_ChannelCurrentKeyFrames[iChannelIndex++], LerpTimeAcc);

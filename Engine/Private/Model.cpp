@@ -143,7 +143,7 @@ void CModel::Play_Animation(_float fTimeDelta, CTransform* pTransform)
 	}
 	else if(m_fAnimChangeTimer >= 0.0)
 	{
-		m_Animations[m_iCurrentAnimIndex]->Invalidate_TransformationMatrix_Lerp(m_Bones, fTimeDelta, ANIMATIONLERPTIME - m_fAnimChangeTimer);
+		m_Animations[m_iCurrentAnimIndex]->Invalidate_TransformationMatrix_Lerp(m_Bones, fTimeDelta, ANIMATIONLERPTIME - m_fAnimChangeTimer,m_iRootBoneIndex);
 		m_fAnimChangeTimer -= fTimeDelta;
 	}
 	else
@@ -200,35 +200,34 @@ void CModel::Do_Root_Animation(CTransform* pTransform)
 {
 	if (pTransform != nullptr)
 	{
-		//-5인데 아래는 0임
-	
 		_float4x4 current_Matrix = m_Bones[m_iRootBoneIndex]->Get_CombinedTransformationMatrix();
 		_float4x4 post_Matirx = m_PostRootMatrix;
 
 		_float3 current_Look = current_Matrix.Look();
 		_float3 post_Look = post_Matirx.Look();
 
+		_float4x4 player_Matrix_Override = current_Matrix;
+
 		current_Look.Normalize();
 		post_Look.Normalize();
-		
-		_float dot = XMVectorGetX(XMVector3Dot(post_Look, current_Look));
-		_float radian = acosf(dot);
-		//if (current_Look.y < post_Look.y)
-		//	radian = 2 * XMVectorGetX(g_XMPi) - radian;
 
-		if (dot > 1)
+		if (current_Look!=post_Look && fabsf(current_Look.x- post_Look.x)>0.0001f)
+		{
+			_float dot = XMVectorGetX(XMVector3Dot(post_Look, current_Look));
+			_float radian = acosf(dot);
+			
+			if (XMVectorGetY(XMVector3Cross(current_Look, post_Look)) > 0)
+				radian = 2 * XMVectorGetX(g_XMPi) - radian;
+		
+			player_Matrix_Override = XMMatrixRotationY(radian);		
+		}
+		else
 			return;
-		_float4x4 player_Matrix_Override = XMMatrixRotationY(radian);
 
 		_float3 current_Position = current_Matrix.Translation();
 		_float3 post_Position = post_Matirx.Translation();
 		_float3 Calculated_Position = (current_Position - post_Position);
 		memcpy(player_Matrix_Override.m[3], &Calculated_Position, sizeof _float3);
-
-		if (post_Position.z==0)
-			int a = 0;
-
-		cout << current_Position.z  << "//  " << post_Position.z << "//  "  << Calculated_Position.z << endl;
 
 		pTransform->Set_WorldMatrix(player_Matrix_Override * pTransform->Get_WorldMatrix());
 		m_PostRootMatrix = m_Bones[m_iRootBoneIndex]->Get_CombinedTransformationMatrix();
