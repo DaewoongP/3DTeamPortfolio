@@ -2,6 +2,7 @@
 #include "GameInstance.h"
 #include "Level_Tool.h"
 #include "CDummy.h"
+#include "Camera_Point.h"
 
 CMainTool::CMainTool()
 	: m_pGameInstance(CGameInstance::GetInstance())
@@ -279,6 +280,11 @@ HRESULT CMainTool::Ready_Prototype_Component()
 		CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Particles/Fire/")))))
 		return E_FAIL;
 
+	/* Prototype_Component_Sphere_Collider*/
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_TOOL, TEXT("Prototype_Component_Sphere_Collider"),
+		CCollider::Create(m_pDevice, m_pContext,CCollider::TYPE_SPHERE))))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -303,6 +309,11 @@ HRESULT CMainTool::Ready_Prototype_Object()
 	/* Prototype_GameObject_Dummy*/
 	if (FAILED(m_pGameInstance->Add_Prototype_GameObject(TEXT("Prototype_GameObject_Dummy"),
 		CDummy::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* Prototype_GameObject_Camera_Point*/
+	if (FAILED(m_pGameInstance->Add_Prototype_GameObject(TEXT("Prototype_GameObject_Camera_Point"),
+		CCamera_Point::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	return S_OK;
