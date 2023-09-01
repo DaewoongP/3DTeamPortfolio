@@ -13,11 +13,11 @@ BEGIN(Engine)
 class ENGINE_DLL CVIBuffer_Line final : public CVIBuffer
 {
 public:
-	struct Line_Desc
+	typedef struct tagLineDesc
 	{
 		_uint iNum = { 0 };
 		const _float3* pLines = { nullptr };
-	};
+	}LINEDESC;
 
 private:
 	explicit CVIBuffer_Line(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);
@@ -27,6 +27,7 @@ private:
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
+	void Tick(LINEDESC LineDesc);
 
 public:
 	static CVIBuffer_Line* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);

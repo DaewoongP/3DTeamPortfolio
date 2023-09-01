@@ -1,14 +1,13 @@
 #pragma once
 /* =============================================== */
 // 
-//	Á¤ : ¹Ú´ë¿õ
-//	ºÎ :
+//	ì • : ë°•ëŒ€ì›…
+//	ë¶€ :
 //
 //
-// Çì´õÃß°¡´Â ÆíÇÏ°Ô ½ºÀ¹ Ã³¸®ÇÏ½Ê¼î
+// í—¤ë”ì¶”ê°€ëŠ” í¸í•˜ê²Œ ìŠ¤ìœ½ ì²˜ë¦¬í•˜ì‹­ì‡¼
 /* =============================================== */
 
-#include "PX.h"
 #include "Bone.h"
 #include "Mesh.h"
 #include "Model.h"
@@ -27,6 +26,7 @@
 #include "Sequence.h"
 #include "Animation.h"
 #include "Transform.h"
+#include "RigidBody.h"
 #include "Decorator.h"
 #include "MeshParts.h"
 #include "Navigation.h"
@@ -42,8 +42,10 @@
 #include "ParticleSystem.h"
 #include "Bounding_Sphere.h"
 #include "VIBuffer_Terrain.h"
+#include "VIBuffer_Triangle.h"
 #include "VIBuffer_Instance.h"
 #include "VIBuffer_Rect_Trail.h"
+#include "CharacterController.h"
 #include "VIBuffer_Rect_Dynamic.h"
 #include "VIBuffer_Rect_Instance.h"
 #include "VIBuffer_Point_Instance.h"
