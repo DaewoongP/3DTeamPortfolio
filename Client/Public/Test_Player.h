@@ -4,6 +4,7 @@
 
 BEGIN(Engine)
 class CModel;
+class CCustomModel;
 class CShader;
 class CRenderer;
 class CRigidBody;
@@ -30,9 +31,10 @@ public:
 	virtual void OnCollisionStay(COLLISIONDESC CollisionDesc) override;
 	virtual void OnCollisionExit(COLLISIONDESC CollisionDesc) override;
 	virtual HRESULT Render() override;
+	virtual HRESULT Render_Depth() override;
 
 private:
-	CModel*			m_pModelCom = { nullptr };
+	CCustomModel*	m_pModelCom = { nullptr };
 	CShader*		m_pShaderCom = { nullptr };
 	CRenderer*		m_pRenderer = { nullptr };
 	CRigidBody*		m_pRigidBody = { nullptr };

@@ -1,4 +1,11 @@
 #pragma once
+/* =============================================== */
+// 
+//	Á¤ : ¹Ú´ë¿õ
+//	ºÎ :
+//
+/* =============================================== */
+
 #include "Component.h"
 
 BEGIN(Engine)
@@ -28,6 +35,7 @@ public:
 	void Set_Up(_float3 _vUp);
 	void Set_Look(_float3 _vLook);
 	void Set_Position(_float3 _vPosition);
+	void Set_WorldMatrix(_float4x4 _WorldMatrix);
 
 	void Set_Speed(_float _fSpeed) { m_fSpeed = _fSpeed; }
 	void Set_RotationSpeed(_float _fRotationSpeed) { m_fRotationSpeed = _fRotationSpeed; }

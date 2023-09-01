@@ -46,7 +46,7 @@ void CCamera_Free::Tick(_float fTimeDelta)
 
 	pGameInstance->Set_CameraFar(1000.f);
 	pGameInstance->Set_Transform(CPipeLine::D3DTS_VIEW, m_pTransform->Get_WorldMatrix_Inverse());
-	pGameInstance->Set_Transform(CPipeLine::D3DTS_PROJ, XMMatrixPerspectiveFovLH(XMConvertToRadians(90.f), _float(g_iWinSizeX) / g_iWinSizeY, 1.f, 1000.f));
+	pGameInstance->Set_Transform(CPipeLine::D3DTS_PROJ, XMMatrixPerspectiveFovLH(XMConvertToRadians(90.f), _float(g_iWinSizeX) / g_iWinSizeY, 0.1f, 1000.f));
 
 	Safe_Release(pGameInstance);
 
@@ -76,6 +76,15 @@ void CCamera_Free::Key_Input(const _float& fTimeDelta)
 	if (pGameInstance->Get_DIKeyState(DIK_D, CInput_Device::KEY_PRESSING))
 	{
 		m_pTransform->Go_Right(fTimeDelta);
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_Q, CInput_Device::KEY_PRESSING))
+	{
+		m_pTransform->Move_Direction(m_pTransform->Get_Up(), fTimeDelta);
+	}
+	if (pGameInstance->Get_DIKeyState(DIK_E, CInput_Device::KEY_PRESSING))
+	{
+		m_pTransform->Move_Direction(-m_pTransform->Get_Up(), fTimeDelta);
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_GRAVE, CInput_Device::KEY_DOWN))

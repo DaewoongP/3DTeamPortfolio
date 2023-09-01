@@ -1,17 +1,41 @@
 #pragma once
 
+/* =============================================== */
+// 
+//	정 : 박대웅
+//	부 :
+//
+//
+// 헤더추가는 편하게 스윽 처리하십쇼
+/* =============================================== */
+
+#include "PX.h"
 #include "Bone.h"
 #include "Mesh.h"
 #include "Model.h"
+#include "Alarm.h"
 #include "Shader.h"
+#include "Status.h"
+#include "Attack.h"
+#include "Ignite.h"
+#include "Health.h"
+#include "Defence.h"
 #include "Texture.h"
 #include "Collider.h"
 #include "Renderer.h"
+#include "Behavior.h"
+#include "Selector.h"
+#include "Sequence.h"
 #include "Animation.h"
 #include "Transform.h"
 #include "RigidBody.h"
+#include "Decorator.h"
+#include "MeshParts.h"
 #include "Navigation.h"
+#include "BlackBoard.h"
+#include "CustomModel.h"
 #include "Bounding_OBB.h"
+#include "RootBehavior.h"
 #include "Bounding_AABB.h"
 #include "VIBuffer_Rect.h"
 #include "VIBuffer_Line.h"

@@ -31,8 +31,8 @@ public:
 	virtual HRESULT Render() override;
 
 public:
-	HRESULT Add_Model_Component(wchar_t* wszShaderTag);
-	HRESULT Add_Shader_Component(wchar_t* wszShaderTag);
+	HRESULT Add_Model_Component(const wchar_t* wszShaderTag);
+	HRESULT Add_Shader_Component(const wchar_t* wszShaderTag);
 
 private:
 	CShader* m_pShader = { nullptr };

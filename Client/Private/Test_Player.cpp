@@ -128,6 +128,48 @@ HRESULT CTest_Player::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
+	for (_uint iPartsIndex = 0; iPartsIndex < CCustomModel::MESH_END; ++iPartsIndex)
+	{
+		_uint		iNumMeshes = m_pModelCom->Get_NumMeshes(iPartsIndex);
+
+		for (_uint i = 0; i < iNumMeshes; ++i)
+		{
+			m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", iPartsIndex, i);
+
+			m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", iPartsIndex, i, DIFFUSE);
+
+			m_pShaderCom->Begin("AnimMesh");
+
+			m_pModelCom->Render(iPartsIndex, i);
+		}
+	}
+
+	/*_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+	for (_uint i = 0; i < iNumMeshes; ++i)
+	{
+		m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", i);
+
+		m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", i, DIFFUSE);
+
+		m_pShaderCom->Begin("AnimMesh");
+
+		m_pModelCom->Render(i);
+	}*/
+	return S_OK;
+}
+
+HRESULT CTest_Player::Render_Depth()
+{
+	/*if (FAILED(__super::Render_Depth()))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
+		return E_FAIL;
+
+
+	
+
 	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
@@ -135,11 +177,12 @@ HRESULT CTest_Player::Render()
 		m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", i);
 
 		m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", i, DIFFUSE);
-		
+		m_pModelCom->Bind_Material(m_pShaderCom, "g_NormalTexture", i, NORMALS);
+
 		m_pShaderCom->Begin("AnimMesh");
 
 		m_pModelCom->Render(i);
-	}
+	}*/
 
 	return S_OK;
 }
@@ -171,12 +214,18 @@ HRESULT CTest_Player::Add_Components()
 	}
 
 	/* For.Com_Model */
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Fiona"),
+	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_CustomModel"),
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 	{
 		MSG_BOX("Failed CTest_Player Add_Component : (Com_Model)");
 		return E_FAIL;
 	}
+	/*if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_TestModel"),
+		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
+	{
+		MSG_BOX("Failed CTest_Player Add_Component : (Com_Model)");
+		return E_FAIL;
+	}*/
 
 	/* For.Com_Shader */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimMesh"),
@@ -243,7 +292,50 @@ HRESULT CTest_Player::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_Debug"),
 		TEXT("Com_DebugShader"), reinterpret_cast<CComponent**>(&m_pDebugShader))))
 	{
-		MSG_BOX("Failed CTerrain Add_Component : (Com_DebugShader)");
+		MSG_BOX("Failed CTest_Player Add_Component : (Com_DebugShader)");
+		return E_FAIL;
+	}
+
+	/* For.Prototype_Component_MeshParts_Head */
+	if (FAILED(m_pModelCom->Add_MeshParts(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Head"), CCustomModel::HEAD)))
+	{
+		MSG_BOX("[CTest_Player] Failed Add_MeshParts");
+		return E_FAIL;
+	}
+	/* For.Prototype_Component_MeshParts_Arm */
+	/*if (FAILED(m_pModelCom->Add_MeshParts(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Arm"), CCustomModel::ARM)))
+	{
+		MSG_BOX("[CTest_Player] Failed Add_MeshParts");
+		return E_FAIL;
+	}*/
+	/* For.Prototype_Component_MeshParts_Up */
+	if (FAILED(m_pModelCom->Add_MeshParts(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Up"), CCustomModel::UPPERBODY)))
+	{
+		MSG_BOX("[CTest_Player] Failed Add_MeshParts");
+		return E_FAIL;
+	}
+	/* For.Prototype_Component_MeshParts_Low */
+	if (FAILED(m_pModelCom->Add_MeshParts(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Low"), CCustomModel::UNDERBODY)))
+	{
+		MSG_BOX("[CTest_Player] Failed Add_MeshParts");
+		return E_FAIL;
+	}
+	/* For.Prototype_Component_MeshParts_Robe */
+	if (FAILED(m_pModelCom->Add_MeshParts(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Robe"), CCustomModel::ROBE)))
+	{
+		MSG_BOX("[CTest_Player] Failed Add_MeshParts");
+		return E_FAIL;
+	}
+	/* For.Prototype_Component_MeshParts_Socks */
+	if (FAILED(m_pModelCom->Add_MeshParts(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Socks"), CCustomModel::SOCKS)))
+	{
+		MSG_BOX("[CTest_Player] Failed Add_MeshParts");
+		return E_FAIL;
+	}
+	/* For.Prototype_Component_MeshParts_Shoes */
+	if (FAILED(m_pModelCom->Add_MeshParts(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Shoes"), CCustomModel::SHOES)))
+	{
+		MSG_BOX("[CTest_Player] Failed Add_MeshParts");
 		return E_FAIL;
 	}
 

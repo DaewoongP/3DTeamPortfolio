@@ -45,11 +45,21 @@ HRESULT CVIBuffer_Point_Color_Instance::Initialize(void* pArg)
 	return S_OK;
 }
 
-void CVIBuffer_Point_Color_Instance::Tick(COLORINSTANCE* pInstances, _bool isAlphaBlend, _float4x4 AlphaBlendObjectWorldMatrixInverse)
+void CVIBuffer_Point_Color_Instance::Tick(COLORINSTANCE* pInstances, _int iRenderedParticleNum, _bool isAlphaBlend, _float4x4 AlphaBlendObjectWorldMatrixInverse)
 {
+	if (nullptr == pInstances)
+		return;
+
 	if (true == isAlphaBlend)
 	{
 		Sort_AlphaBlend(pInstances, AlphaBlendObjectWorldMatrixInverse);
+	}
+
+	// iRenderedParticleNum에 -1을 넣으면 인스턴스 숫자만큼 렌더링
+	// iRenderedParticleNum의 숫자가 더 크면 오류이므로 예외처리.
+	if (-1 == iRenderedParticleNum && iRenderedParticleNum > m_iNumInstance)
+	{
+		iRenderedParticleNum = m_iNumInstance;
 	}
 
 	D3D11_MAPPED_SUBRESOURCE	MappedSubResource;
@@ -58,7 +68,7 @@ void CVIBuffer_Point_Color_Instance::Tick(COLORINSTANCE* pInstances, _bool isAlp
 
 	VTXCOLINSTANCE* pVtxInstance = static_cast<VTXCOLINSTANCE*>(MappedSubResource.pData);
 
-	for (_uint i = 0; i < m_iNumInstance; ++i)
+	for (_uint i = 0; i < iRenderedParticleNum; ++i)
 	{
 		memcpy(&pVtxInstance[i].vRight, &pInstances[i].InstanceLocalMatrix.m[0], sizeof(_float4));
 		memcpy(&pVtxInstance[i].vUp, &pInstances[i].InstanceLocalMatrix.m[1], sizeof(_float4));

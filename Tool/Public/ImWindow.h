@@ -5,6 +5,14 @@
 
 BEGIN(Tool)
 
+static bool VectorGetter(void* data, int idx, const char** out_str)
+{
+	auto& vector = *static_cast<std::vector<std::string>*>(data);
+	if (idx < 0 || idx >= static_cast<int>(vector.size())) { return false; }
+	*out_str = vector.at(idx).c_str();
+	return true;
+}
+
 class CImWindow abstract : public CBase
 {
 protected:
@@ -15,6 +23,8 @@ public:
 	virtual HRESULT Initialize(ImVec2 vWindowPos, ImVec2 vWindowSize);
 	virtual void Tick(_float fTimeDelta);
 	virtual HRESULT Render();
+
+	void MatrixNode(_float4x4* pMatrix, const _char* pNodeName, const _char* pPosTag, const _char* pRotTag, const _char* pScaleTag, _float fSpeed = 0.01f);
 
 protected:
 	CGameInstance*			m_pGameInstance = { nullptr };
@@ -27,7 +37,7 @@ protected:
 	ID3D11DeviceContext*	m_pContext = { nullptr };
 
 public:
-	virtual void Free(void) override;
+	virtual void Free(void);
 };
 
 END

@@ -1,4 +1,11 @@
 #pragma once
+/* =============================================== */
+// 
+//	Á¤ : ¹Ú´ë¿õ
+//	ºÎ :
+//
+/* =============================================== */
+
 #include "Base.h"
 
 BEGIN(Engine)
@@ -11,8 +18,10 @@ protected:
 	virtual ~CComponent() = default;
 
 public:
-	void Set_Owner(class CComposite* pOwner) { m_pOwner = pOwner; }
 	class CComposite* Get_Owner() const { return m_pOwner; }
+	const _tchar* Get_PrototypeTag() { return m_pPrototypeTag; }
+	void Set_PrototypeTag(const _tchar* pPrototypeTag) { lstrcpy(m_pPrototypeTag, pPrototypeTag); }
+	void Set_Owner(class CComposite* pOwner) { m_pOwner = pOwner; }
 
 public:
 	virtual HRESULT Initialize_Prototype();
@@ -28,6 +37,9 @@ protected:
 protected:
 	class CComposite*			m_pOwner = { nullptr };
 	_bool						m_isCloned = { false };
+
+private:
+	_tchar						m_pPrototypeTag[MAX_PATH] = TEXT("");
 
 public:
 	virtual CComponent* Clone(void* pArg) PURE;

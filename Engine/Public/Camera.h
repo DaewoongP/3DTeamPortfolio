@@ -1,9 +1,16 @@
 #pragma once
+/* =============================================== */
+// 
+//	정 : 장현우
+//	부 :
+//
+/* =============================================== */
+
 #include "Base.h"
 
 BEGIN(Engine)
 
-class CCamera : public CBase
+class ENGINE_DLL CCamera : public CBase
 {
 public:
 	enum TYPE { TYPE_MAIN, TYPE_CUTSCENE, TYPE_END };
@@ -15,15 +22,17 @@ public:
 		_float m_fFar = { 0.f };
 	}CAMERADESC;
 
-private:
+protected:
 	explicit CCamera() = default;
 	virtual ~CCamera() = default;
 
 public:
-	HRESULT Initialize(const CAMERADESC& CameraDesc);
-	void Tick(const _float& fTimeDelta);
+	virtual HRESULT Initialize(const CAMERADESC& CameraDesc);
+	//트렌스폼을 사용하여 파이프라인 뷰행렬 적용
+	//투영정보는 안 바꾸겠음
+	virtual void Tick(const _float& fTimeDelta);
 
-private:
+protected:
 	class CTransform*	m_pTransform = { nullptr };
 	class CPipeLine*	m_pPipeLine = { nullptr };
 
