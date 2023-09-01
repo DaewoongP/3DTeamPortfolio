@@ -78,9 +78,10 @@ private: /* For.Materials */
 
 private: /* For.Animations */
 	_uint							m_iPreviousAnimIndex = { 0 };
-	_uint							m_iCurrentAnimIndex = { 29 };
+	_uint							m_iCurrentAnimIndex = { 29};
 	_uint							m_iNumAnimations = { 0 };
 	vector<class CAnimation*>		m_Animations;//[ANIM_END]
+	_bool							m_isResetAnimTrigger = { false };
 
 private: /* For.Animation_Lerp*/
 	_bool							m_isAnimChangeLerp = { false };
@@ -88,6 +89,7 @@ private: /* For.Animation_Lerp*/
 
 private: /* For.RootAnimation*/
 	_uint							m_iRootBoneIndex = { 5 };
+	_float4x4						m_PostRootMatrix;
 
 private:
 	_float4x4						m_PivotMatrix;

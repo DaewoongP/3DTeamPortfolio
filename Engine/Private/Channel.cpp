@@ -136,17 +136,9 @@ void CChannel::Invalidate_TransformationMatrix(CModel::BONES& Bones, _float fTim
 
 void CChannel::Invalidate_TransformationMatrix_Lerp(CModel::BONES& Bones, _float fTimeAcc, _uint* pCurrentKeyFrameIndex, _double LerpTimeAcc)
 {
-	//현재 플레이어의 위치와
-	//다음 프레임의 애니메이션과 러프를 시켜줌.
-	
-	//근데 루트 애니메이션을 적용시키면
-	//플레이어의 위치가 2배로 적용되는거임. 
-	//루프 종료시 1 이전 플레이어의 이동상태 1 
-	//따라서 루트 애니메이션을 적용 시키면,
-	//루트의 이동값을 죽여줘야할 필요가 있음.
-
 	if (0.f == fTimeAcc)
 		*pCurrentKeyFrameIndex = 0;
+
 	MATRIXFRAME LastKeyFrame = m_MatrixKeyFrames.back();
 
 	_float3	vScale;

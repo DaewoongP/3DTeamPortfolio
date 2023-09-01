@@ -30,12 +30,15 @@ public:
 			XMVectorGetX(XMVector3Length(XMLoadFloat4x4(&m_TransformationMatrix).r[1])),
 			XMVectorGetX(XMVector3Length(XMLoadFloat4x4(&m_TransformationMatrix).r[2])));
 	}
+	_uint			Get_ParentNodeIndex() { return m_iParentIndex; }
+
 	void				Set_OffsetMatrix(const _float4x4& OffsetMatrix) { m_OffsetMatrix = OffsetMatrix; }
 	void				Set_TransformationMatrix(_float4x4 TransformationMatrix) { m_TransformationMatrix = TransformationMatrix; }
 
 public:
 	HRESULT Initialize(Engine::NODE Node);
 	void	Invalidate_CombinedTransformationMatrix(const CModel::BONES& Bones);
+	void	Invalidate_CombinedTransformationMatrix_Basic(const CModel::BONES& Bones);
 	void	Reset_CombinedTransformationMatrix();
 
 private:

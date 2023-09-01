@@ -5,7 +5,6 @@
 #include "Texture.h"
 #include "Animation.h"
 #include "Transform.h"
-
 CModel::CModel(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CComponent(pDevice, pContext)
 {
@@ -99,6 +98,7 @@ HRESULT CModel::Initialize_Prototype(TYPE eType, const _tchar* pModelFilePath, _
 
 HRESULT CModel::Initialize(void* pArg)
 {
+	m_PostRootMatrix = XMMatrixIdentity();
 
 	return S_OK;
 }
@@ -112,30 +112,24 @@ HRESULT CModel::Render(_uint iMeshIndex)
 
 void CModel::Reset_Animation(_uint iAnimIndex, CTransform* pTransform)
 {
-	Do_Root_Animation(pTransform);
-
 	m_iCurrentAnimIndex = iAnimIndex;
 	m_iPreviousAnimIndex = m_iCurrentAnimIndex;
-	m_Animations[m_iCurrentAnimIndex]->Reset();
-	m_isAnimChangeLerp = true;
-	m_fAnimChangeTimer = ANIMATIONLERPTIME;
-
-	for (auto& pBone : m_Bones)
-	{
-		pBone->Invalidate_CombinedTransformationMatrix(m_Bones);
-	}
+	m_isResetAnimTrigger = true;
 }
 
 void CModel::Play_Animation(_float fTimeDelta, CTransform* pTransform)
 {
-	//시간증가 if
-	if (m_Animations[m_iCurrentAnimIndex]->Invalidate_AccTime(fTimeDelta)&&
-		pTransform!=nullptr)
+	if (m_Animations[m_iCurrentAnimIndex]->Invalidate_AccTime(fTimeDelta) || m_isResetAnimTrigger )
 	{
+		//애니메이션 재생이 다 되면 여기가 실행되는거임.
 		m_Animations[m_iCurrentAnimIndex]->Reset();
 		m_isAnimChangeLerp = true;
-		m_fAnimChangeTimer = ANIMATIONLERPTIME;
-		//루트애니메이션 적용
+		m_fAnimChangeTimer = ANIMATIONLERPTIME; 
+		m_PostRootMatrix = XMMatrixIdentity();
+		m_isResetAnimTrigger = false;
+	}
+	else if (pTransform != nullptr)
+	{
 		Do_Root_Animation(pTransform);
 	}
 
@@ -154,12 +148,23 @@ void CModel::Play_Animation(_float fTimeDelta, CTransform* pTransform)
 	}
 	else
 		m_isAnimChangeLerp = false;
-
+	
 	/* 모델에 표현되어있는 모든 뼈들의 CombinedTransformationMatrix */
+	_int iBoneIndex = 0;
+	
 	for (auto& pBone : m_Bones)
 	{
-		pBone->Invalidate_CombinedTransformationMatrix(m_Bones);
+		if (m_iRootBoneIndex == pBone->Get_ParentNodeIndex())
+		{
+			pBone->Invalidate_CombinedTransformationMatrix_Basic(m_Bones);
+		}
+		else 
+		{
+			pBone->Invalidate_CombinedTransformationMatrix(m_Bones);
+		}
+		iBoneIndex++;
 	}
+	
 }
 
 HRESULT CModel::Find_BoneIndex(const _tchar* pBoneName, _Inout_ _uint* iIndex)
@@ -195,10 +200,38 @@ void CModel::Do_Root_Animation(CTransform* pTransform)
 {
 	if (pTransform != nullptr)
 	{
-		//위치를 먹이고
-		pTransform->Set_WorldMatrix(m_Bones[m_iRootBoneIndex]->Get_CombinedTransformationMatrix() * pTransform->Get_WorldMatrix());
-		//사용된 루트뼈는 한프레임 업데이트 정지상태에 들어갑니다.
-		m_Bones[m_iRootBoneIndex]->Reset_CombinedTransformationMatrix();
+		//-5인데 아래는 0임
+	
+		_float4x4 current_Matrix = m_Bones[m_iRootBoneIndex]->Get_CombinedTransformationMatrix();
+		_float4x4 post_Matirx = m_PostRootMatrix;
+
+		_float3 current_Look = current_Matrix.Look();
+		_float3 post_Look = post_Matirx.Look();
+
+		current_Look.Normalize();
+		post_Look.Normalize();
+		
+		_float dot = XMVectorGetX(XMVector3Dot(post_Look, current_Look));
+		_float radian = acosf(dot);
+		//if (current_Look.y < post_Look.y)
+		//	radian = 2 * XMVectorGetX(g_XMPi) - radian;
+
+		if (dot > 1)
+			return;
+		_float4x4 player_Matrix_Override = XMMatrixRotationY(radian);
+
+		_float3 current_Position = current_Matrix.Translation();
+		_float3 post_Position = post_Matirx.Translation();
+		_float3 Calculated_Position = (current_Position - post_Position);
+		memcpy(player_Matrix_Override.m[3], &Calculated_Position, sizeof _float3);
+
+		if (post_Position.z==0)
+			int a = 0;
+
+		cout << current_Position.z  << "//  " << post_Position.z << "//  "  << Calculated_Position.z << endl;
+
+		pTransform->Set_WorldMatrix(player_Matrix_Override * pTransform->Get_WorldMatrix());
+		m_PostRootMatrix = m_Bones[m_iRootBoneIndex]->Get_CombinedTransformationMatrix();
 	}
 }
 

@@ -43,6 +43,11 @@ void CBone::Invalidate_CombinedTransformationMatrix(const CModel::BONES& Bones)
 	}
 }
 
+void CBone::Invalidate_CombinedTransformationMatrix_Basic(const CModel::BONES& Bones)
+{
+	m_CombinedTransformationMatrix = m_TransformationMatrix;
+}
+
 void CBone::Reset_CombinedTransformationMatrix()
 {
 	XMStoreFloat4x4(&m_CombinedTransformationMatrix,
