@@ -88,7 +88,6 @@ public: /* For. Font_Manager */
 
 public: /* For. Frustum */
 	_bool isIn_WorldFrustum(_float4 vWorldPos, _float fRange = 0.f);
-	vector<_float4> Get_CulledPositions() const;
 
 public: /* For.Light_Manager */
 	const CLight::LIGHTDESC* Get_Light(_uint iIndex);
@@ -126,6 +125,11 @@ public: /* For. Calculator */
 	// FilePath 내의 모든 파일을 순회하면서 Ext 확장자에 맞는 파일들을 OutVector에 넣어줍니다.
 	HRESULT ReadFileInDirectory(_Inout_ vector<wstring>& OutVector, const _tchar* pFilePath, const _tchar* pExt);
 
+public: /* For.PhysX_Manager */
+	PxPhysics* Get_Physics() const;
+	PxScene* Get_PhysxScene() const;
+	PxControllerManager* Get_ControllerManager() const;
+
 private:
 	class CGraphic_Device*			m_pGraphic_Device = { nullptr };
 	class CInput_Device*			m_pInput_Device = { nullptr };
@@ -141,6 +145,7 @@ private:
 	class CLight_Manager*			m_pLight_Manager = { nullptr };
 	class CSound_Manager*			m_pSound_Manager = { nullptr };
 	class CCalculator*				m_pCalculator = { nullptr };
+	class CPhysX_Manager*			m_pPhysX_Manager = { nullptr };
 
 public:
 	static void Release_Engine();

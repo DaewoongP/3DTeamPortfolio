@@ -1,5 +1,12 @@
 #pragma once
 
+/* =============================================== */
+// 
+//	Á¤ : ¹Ú´ë¿õ
+//	ºÎ :
+//
+/* =============================================== */
+
 #include "Base.h"
 
 BEGIN(Engine)
@@ -10,9 +17,6 @@ class CFrustum final : public CBase
 private:
 	explicit CFrustum();
 	virtual ~CFrustum() = default;
-
-public:
-	vector<_float4> Get_CulledPositions() const { return m_CulledPositions; }
 
 public:
 	HRESULT Initialize();
@@ -27,9 +31,6 @@ private:
 	_float3				m_vOriginal_Points[8];
 	_Plane				m_vWorldPlanes[6];
 	_Plane				m_vLocalPlanes[6];
-
-private:
-	vector<_float4>		m_CulledPositions;
 
 public:
 	virtual void Free() override;

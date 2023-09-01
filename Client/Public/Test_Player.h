@@ -7,6 +7,10 @@ class CModel;
 class CCustomModel;
 class CShader;
 class CRenderer;
+class CRigidBody;
+class CVIBuffer_Line;
+class CVIBuffer_Triangle;
+class CCharacterController;
 END
 
 BEGIN(Client)
@@ -33,10 +37,23 @@ private:
 	CCustomModel*	m_pModelCom = { nullptr };
 	CShader*		m_pShaderCom = { nullptr };
 	CRenderer*		m_pRenderer = { nullptr };
+	CRigidBody*		m_pRigidBody = { nullptr };
+	CVIBuffer_Line* m_pLine = { nullptr };
+	CShader*		m_pDebugShader = { nullptr };
+	CVIBuffer_Triangle*		m_pTriangle = { nullptr };
+
+	CCharacterController* m_pController = { nullptr };
+
+
+	_float4x4		m_ConvMatrix;
+
+private:
+	PxScene*		m_pScene = { nullptr };
 
 private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
+	void Key_Input(_float fTimeDelta);
 
 public:
 	static CTest_Player* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

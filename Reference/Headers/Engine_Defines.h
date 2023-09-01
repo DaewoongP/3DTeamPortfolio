@@ -30,12 +30,26 @@
 #include "fmod\fmod.h"
 #include "fmod\fmod.hpp"
 
-#pragma comment(lib, "PhysX_64.lib")
-#pragma comment(lib, "PhysXCommon_64.lib")
-#pragma comment(lib, "PhysXCooking_64.lib")
-#pragma comment(lib, "PhysXFoundation_64.lib")
-#include "PxPhysics.h"
-#include "PxPhysicsAPI.h"
+#ifdef _DEBUG
+
+#pragma comment(lib, "PhysXd/PhysX_64.lib")
+#pragma comment(lib, "PhysXd/PhysXCommon_64.lib")
+#pragma comment(lib, "PhysXd/PhysXCooking_64.lib")
+#pragma comment(lib, "PhysXd/PhysXFoundation_64.lib")
+#pragma comment(lib, "PhysXd/PhysXExtensions_static_64.lib")
+#pragma comment(lib, "PhysXd/PhysXCharacterKinematic_static_64.lib")
+
+#else // Release
+
+#pragma comment(lib, "PhysX/PhysX_64.lib")
+#pragma comment(lib, "PhysX/PhysXCommon_64.lib")
+#pragma comment(lib, "PhysX/PhysXFoundation_64.lib")
+#pragma comment(lib, "PhysX/PhysXExtensions_static_64.lib")
+#pragma comment(lib, "PhysX/PhysXCharacterKinematic_static_64.lib")
+
+#endif // _DEBUG
+
+#include <PxPhysicsAPI.h>
 
 #include <iostream>
 #include <vector>

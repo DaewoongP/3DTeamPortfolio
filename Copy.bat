@@ -22,3 +22,12 @@ xcopy				/y			.\Engine\Bin\ShaderFiles\*.hlsli	.\Tool\Bin\ShaderFiles\
 xcopy				/y			.\Engine\Bin\fmod.dll				.\Client\Bin\
 xcopy				/y			.\Engine\Bin\fmod.dll				.\Tool\Bin\
 xcopy				/y			.\Engine\Bin\fmod.dll				.\Assimp\Bin\
+
+xcopy				/y			.\Engine\Bin\Debug\*.dll			.\Client\Bin\
+
+
+xcopy				/y			.\Engine\Bin\Debug\*.dll			.\Tool\Bin\
+
+
+xcopy				/y			.\Engine\Bin\Debug\*.dll			.\Assimp\Bin\
+
