@@ -20,14 +20,11 @@ HRESULT CObject_Window::Initialize(ImVec2 vWindowPos, ImVec2 vWindowSize)
 	if (FAILED(Create_Dummy()))
 		return E_FAIL;
 
-	m_WindowFlag = ImGuiWindowFlags_NoResize;
+	// 0이 Non_Anim이다.
+	if (FAILED(Save_Model_Path(0, TEXT("../../Resources/Models/NonAnims/"))))
+		return E_FAIL;
 
-	// 가장 처음 요소 하나(더미) 넣어줌
-	// 지금은 더미 모델을 Tree로 해뒀지만 
-	// 나중에 적당한 모델 찾아서 대체해야 한다.
-	m_vecModelList.push_back(m_strCurrentModel);
-	Deep_Copy_Name();
-	m_vecModelPath_t.push_back(TEXT("../../Resources/Models/NonAnims/Tree/Tree.dat"));
+	m_WindowFlag = ImGuiWindowFlags_NoResize;
 
 	return S_OK;
 }
@@ -167,7 +164,8 @@ void CObject_Window::Select_Model()
 	// open Dialog Simple
 	// 모델을 골라 프로토타입 만들어주는 부분
 	if (ImGui::Button("Open File Dialog"))
-		ImGuiFileDialog::Instance()->OpenDialog("ChooseModel", "Choose File", ".dat", "../../Resources/Models/");
+		ImGuiFileDialog::Instance()->OpenDialog("ChooseModel", "Choose File", ".dat",
+			"../../Resources/Models/NonAnims/");
 
 	// display
 	if (ImGuiFileDialog::Instance()->Display("ChooseModel"))
@@ -196,7 +194,6 @@ void CObject_Window::Select_Model()
 
 			m_vecModelList.push_back(m_strCurrentModel);
 			Deep_Copy_Name();
-			Deep_Copy_Path(wszfilePath);
 		}
 
 		// close
@@ -370,12 +367,23 @@ HRESULT CObject_Window::Load_MapObject()
 	return S_OK;
 }
 
-void CObject_Window::Deep_Copy_Name()
+void CObject_Window::Deep_Copy_Name(const _tchar* wszName)
 {
-	// 모델 이름을 const _tchar* 형태로 깊은 복사
-	size_t length = m_strCurrentModel.size();
+	size_t length = 0;
+	wstring ws;
 
-	wstring ws (m_strCurrentModel.begin(), m_strCurrentModel.end());
+	// 모델 이름을 const _tchar* 형태로 깊은 복사
+	if (nullptr != wszName)
+	{
+		length = wcslen(wszName);
+		ws.append(wszName);
+	}
+
+	else
+	{
+		length = m_strCurrentModel.size();
+		ws.append(m_strCurrentModel.begin(), m_strCurrentModel.end());
+	}
 
 	_tchar* wszNew = new _tchar[length + 1];
 
@@ -520,13 +528,58 @@ HRESULT CObject_Window::Create_Dummy()
 	return S_OK;
 }
 
-HRESULT CObject_Window::Save_Model_Path()
+HRESULT CObject_Window::Save_Model_Path(_uint iType, const _tchar* pFilePath)
 {
-	return S_OK;
-}
+	// 디렉토리 경로를 순회할 iterator
+	fs::directory_iterator iter(fs::absolute(pFilePath));
 
-HRESULT CObject_Window::Load_Model_Path()
-{
+	while (iter != fs::end(iter))
+	{
+		// 실제 디렉토리 경로를 담고있는 변수 (iterator의 원본)
+		const fs::directory_entry& entry = *iter;
+
+		// 현재 entry 변수가 디렉토리인지 확인 후 디렉토리이면 재귀
+		if (fs::is_directory(entry.path()))
+		{
+			Save_Model_Path(0, entry.path().c_str());
+		}
+		else
+		{
+			// fbx파일 체크
+			if (!lstrcmp(entry.path().extension().c_str(), TEXT(".fbx")) ||
+				!lstrcmp(entry.path().extension().c_str(), TEXT(".FBX")))
+			{
+				Deep_Copy_Path(entry.path().wstring().c_str());
+
+				// C:\Users\micro\3DTeamPortfolio\Resources\Models\NonAnims\Tree\Tree.FBX
+				// 경로에서 모델 이름 부분만 잘라내는 부분
+				string path = ("C:/Users/micro/3DTeamPortfolio/Resources/Models/NonAnims/");
+				string s = entry.path().string();
+
+				size_t path_length = path.length();
+				size_t current = s.find("\\", path_length);
+
+				// 1차 분리
+				string result = s.substr(path_length, current);
+
+				size_t current1 = result.find("\\");
+
+				// 2차 분리 (최종)
+				string result1 = result.substr(0, current1);
+
+				// 이제 컴포넌트 모델 이름으로 결합
+				string modelname = ("Prototype_Component_Model_");
+				modelname += result1;
+				m_vecModelList.push_back(modelname);
+
+				wstring ws(modelname.begin(), modelname.end());
+				Deep_Copy_Name(ws.c_str());
+			}
+		}
+
+		iter++;
+	}
+
 	return S_OK;
 }
 
