@@ -1,6 +1,7 @@
 #include "..\Public\PhysX_Manager.h"
 #include "Component_Manager.h"
 #include "PhysXConverter.h"
+#include "Input_Device.h"
 
 IMPLEMENT_SINGLETON(CPhysX_Manager)
 
@@ -34,7 +35,6 @@ HRESULT CPhysX_Manager::Initialize()
 	m_pPhysxScene->setVisualizationParameter(PxVisualizationParameter::eACTOR_AXES, 0.5f);
 	m_pPhysxScene->setVisualizationParameter(PxVisualizationParameter::eSCALE, 1.0f);
 	m_pPhysxScene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_SHAPES, 1.f);
-	
 #endif // _DEBUG
 
 	m_pControllerManager = PxCreateControllerManager(*m_pPhysxScene);
@@ -47,27 +47,19 @@ HRESULT CPhysX_Manager::Initialize()
 	PxRigidStatic* groundPlane = PxCreatePlane(*m_pPhysics, PxPlane(0, 1, 0, 0), *m_pPhysics->createMaterial(0.5f, 0.5f, 0.5f));
 	m_pPhysxScene->addActor(*groundPlane);
 
-	/*PxRigidDynamic* aCapsuleActor = m_pPhysics->createRigidDynamic(PxTransform());
-	PxTransform relativePose(PxQuat(PxHalfPi, PxVec3(0, 0, 0)));
-	PxShape* aCapsuleShape = PxRigidActorExt::createExclusiveShape(*aCapsuleActor,
-		PxCapsuleGeometry(10.f, 10.f), *m_pPhysics->createMaterial(0.5f, 0.5f, 0.5f), PxShapeFlag::eVISUALIZATION);
-	aCapsuleShape->setLocalPose(relativePose);
+	PxShape* shape = m_pPhysics->createShape(PxCapsuleGeometry(1.f, 1.f), *m_pPhysics->createMaterial(0.f, 0.f, 0.f), false, PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSIMULATION_SHAPE);
 
-	m_pPhysxScene->addActor(*aCapsuleActor);*/
-	
-	PxShape* shape = m_pPhysics->createShape(PxCapsuleGeometry(1.f, 1.f), *m_pPhysics->createMaterial(0.5f, 0.5f, 0.f), false, PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSIMULATION_SHAPE | PxShapeFlag::eSCENE_QUERY_SHAPE);
-	
-	PxVec3 tr = PxVec3(0.f, 10.f, 0.f);
+	PxVec3 tr = PxVec3(5.f, 50.f, 5.f);
 	PxTransform localTm(tr);
 	Actor = m_pPhysics->createRigidDynamic(localTm);
 	shape->setLocalPose(PxTransformFromSegment(PxVec3(0.f, 1.f, 0.f), PxVec3(0.f, -1.f, 0.f)));
-	
+
 	Actor->attachShape(*shape);
 
 	PxRigidBodyExt::updateMassAndInertia(*Actor, 10.0f);
 	m_pPhysxScene->addActor(*Actor);
 	shape->release();
-
+	
 	return S_OK;
 }
 
@@ -76,6 +68,7 @@ void CPhysX_Manager::Tick(_float fTimeDelta)
 	// fixed time 처리 필요할수도 있음.
 	m_pPhysxScene->simulate(fTimeDelta);
 	m_pPhysxScene->fetchResults(true);
+	
 }
 
 HRESULT CPhysX_Manager::Render()

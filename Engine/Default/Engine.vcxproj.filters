@@ -525,9 +525,6 @@
     <ClInclude Include="..\public\PhysX_Manager.h">
       <Filter>01. Utility\11. Physics\Manager</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Physics.h">
-      <Filter>01. Utility\11. Physics</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\RigidBody.h">
       <Filter>01. Utility\03. Components\14. RigidBody</Filter>
     </ClInclude>
@@ -772,9 +769,6 @@
     </ClCompile>
     <ClCompile Include="..\private\PhysX_Manager.cpp">
       <Filter>01. Utility\11. Physics\Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Physics.cpp">
-      <Filter>01. Utility\11. Physics</Filter>
     </ClCompile>
     <ClCompile Include="..\private\RigidBody.cpp">
       <Filter>01. Utility\03. Components\14. RigidBody</Filter>

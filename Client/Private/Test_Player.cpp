@@ -35,6 +35,10 @@ HRESULT CTest_Player::Initialize(void* pArg)
 
 void CTest_Player::Tick(_float fTimeDelta)
 {
+	m_pTransform->Set_Position(m_pRigidBody->Get_Position());
+
+	Key_Input(fTimeDelta);
+	__super::Tick(fTimeDelta);
 	m_pModelCom->Play_Animation(fTimeDelta);
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
@@ -72,14 +76,12 @@ void CTest_Player::Tick(_float fTimeDelta)
 
 	m_pLine->Tick(LineDesc);
 
-	__super::Tick(fTimeDelta);
+	
 }
 
 void CTest_Player::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
-	m_ConvMatrix = XMMatrixTranspose(XMMatrixInverse(0, m_pTransform->Get_WorldMatrix()));
-	
 
 	if (nullptr != m_pRenderer)
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
@@ -99,6 +101,27 @@ void CTest_Player::OnCollisionExit(COLLISIONDESC CollisionDesc)
 
 HRESULT CTest_Player::Render()
 {
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	_float4x4 WorldMatrix = XMMatrixIdentity();
+	if (FAILED(m_pDebugShader->Bind_Matrix("g_WorldMatrix", &WorldMatrix)))
+		return E_FAIL;
+
+	if (FAILED(m_pDebugShader->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW))))
+		return E_FAIL;
+
+	if (FAILED(m_pDebugShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+
+	Safe_Release(pGameInstance);
+
+	m_pDebugShader->Begin("Debug");
+
+	m_pLine->Render();
+
+	m_pTriangle->Render();
+
 	if (FAILED(__super::Render()))
 		return E_FAIL;
 
@@ -118,27 +141,6 @@ HRESULT CTest_Player::Render()
 		m_pModelCom->Render(i);
 	}
 
-
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
-
-	if (FAILED(m_pDebugShader->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
-		return E_FAIL;
-
-	if (FAILED(m_pDebugShader->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW))))
-		return E_FAIL;
-
-	if (FAILED(m_pDebugShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
-
-	Safe_Release(pGameInstance);
-
-	m_pDebugShader->Begin("Debug");
-
-	m_pLine->Render();
-
-	m_pTriangle->Render();
-
 	return S_OK;
 }
 
@@ -149,6 +151,22 @@ HRESULT CTest_Player::Add_Components()
 		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
 	{
 		MSG_BOX("Failed CTest_Player Add_Component : (Com_Renderer)");
+		return E_FAIL;
+	}
+
+	/* Com_Controller */
+	/*if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_CharacterController"),
+		TEXT("Com_Controller"), reinterpret_cast<CComponent**>(&m_pController))))
+	{
+		MSG_BOX("Failed CTest_Player Add_Component : (Com_Controller)");
+		return E_FAIL;
+	}*/
+
+	/* Com_RigidBody */
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
+		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody))))
+	{
+		MSG_BOX("Failed CTest_Player Add_Component : (Com_RigidBody)");
 		return E_FAIL;
 	}
 
@@ -251,17 +269,36 @@ HRESULT CTest_Player::SetUp_ShaderResources()
 	return S_OK;
 }
 
-XMMATRIX CTest_Player::ConvertLHtoRH(const XMMATRIX& lhMatrix)
+void CTest_Player::Key_Input(_float fTimeDelta)
 {
-	XMMATRIX rhMatrix = lhMatrix;
+	BEGININSTANCE;
 
-	// Negate the Z-axis (third row/column)
-	rhMatrix.r[2] = XMVectorNegate(rhMatrix.r[2]);
+	if (pGameInstance->Get_DIKeyState(DIK_UP))
+	{
+		m_pRigidBody->Add_Force(m_pTransform->Get_Look() * 10.f, PxForceMode::eACCELERATION);
+	}
 
-	// You may need to adjust the W-axis if necessary
-	// rhMatrix.r[3] = XMVectorNegate(rhMatrix.r[3]);
+	if (pGameInstance->Get_DIKeyState(DIK_DOWN))
+	{
+		m_pRigidBody->Add_Force(m_pTransform->Get_Look() * -10.f, PxForceMode::eACCELERATION);
+	}
 
-	return rhMatrix;
+	if (pGameInstance->Get_DIKeyState(DIK_LEFT))
+	{
+		m_pRigidBody->Add_Force(m_pTransform->Get_Right() * -10.f, PxForceMode::eACCELERATION);
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_RIGHT))
+	{
+		m_pRigidBody->Add_Force(m_pTransform->Get_Right() * 10.f, PxForceMode::eACCELERATION);
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
+	{
+		m_pRigidBody->Add_Force(m_pTransform->Get_Up() * 200.f, PxForceMode::eIMPULSE);
+	}
+
+	ENDINSTANCE;
 }
 
 CTest_Player* CTest_Player::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -300,4 +337,6 @@ void CTest_Player::Free()
 	Safe_Release(m_pDebugShader);
 	Safe_Release(m_pTriangle);
 	Safe_Release(m_pLine);
+	Safe_Release(m_pController);
+	Safe_Release(m_pRigidBody);
 }

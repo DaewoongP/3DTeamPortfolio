@@ -53,7 +53,6 @@ HRESULT CTransform::Initialize(void* pArg)
 
 void CTransform::Tick(_float fTimeDelta)
 {
-	__super::Tick(fTimeDelta);
 }
 
 void CTransform::Move_Direction(_float3 vDirection, _float fTimeDelta)

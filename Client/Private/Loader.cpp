@@ -219,6 +219,22 @@ HRESULT CLoader::Loading_For_MainGame()
 	}
 #endif // _DEBUG
 
+	lstrcpy(m_szLoading, TEXT("피직스 로딩 중."));
+	/* For.Prototype_Component_CharacterController*/
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_STATIC, TEXT("Prototype_Component_CharacterController"),
+		CCharacterController::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_Component_CharacterController)");
+		return E_FAIL;
+	}
+
+	/* For.Prototype_Component_RigidBody */
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
+		CRigidBody::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_Component_RigidBody)");
+		return E_FAIL;
+	}
 
 	lstrcpy(m_szLoading, TEXT("AI 로딩 중."));
 

@@ -13,10 +13,7 @@ public:
 	PxPhysics* Get_Physics() const { return m_pPhysics; }
 	PxScene* Get_PhysxScene() const { return m_pPhysxScene; }
 	PxControllerManager* Get_ControllerManager() const { return m_pControllerManager; }
-	_float3 Get_PxPos() { 
-		PxTransform Pose = Actor->getGlobalPose();
-		return _float3(Pose.p.x, Pose.p.y, Pose.p.z); }
-	
+
 private:
 	explicit CPhysX_Manager() = default;
 	virtual ~CPhysX_Manager() = default;
@@ -41,7 +38,6 @@ private:
 private:
 	PxScene*					m_pPhysxScene = { nullptr };
 	PxControllerManager*		m_pControllerManager = { nullptr };
-
 	PxRigidDynamic* Actor;
 
 public:

@@ -9,6 +9,7 @@ class CRenderer;
 class CRigidBody;
 class CVIBuffer_Line;
 class CVIBuffer_Triangle;
+class CCharacterController;
 END
 
 BEGIN(Client)
@@ -39,6 +40,9 @@ private:
 	CShader*		m_pDebugShader = { nullptr };
 	CVIBuffer_Triangle*		m_pTriangle = { nullptr };
 
+	CCharacterController* m_pController = { nullptr };
+
+
 	_float4x4		m_ConvMatrix;
 
 private:
@@ -47,7 +51,7 @@ private:
 private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
-	XMMATRIX ConvertLHtoRH(const XMMATRIX& lhMatrix);
+	void Key_Input(_float fTimeDelta);
 
 public:
 	static CTest_Player* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

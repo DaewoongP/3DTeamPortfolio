@@ -35,7 +35,6 @@
     <ClInclude Include="..\Public\Attack.h" />
     <ClInclude Include="..\public\CharacterController.h" />
     <ClInclude Include="..\public\ColliderCom.h" />
-    <ClInclude Include="..\public\Physics.h" />
     <ClInclude Include="..\Public\PhysXConverter.h" />
     <ClInclude Include="..\public\PhysX_Manager.h" />
     <ClInclude Include="..\public\RigidBody.h" />
@@ -130,7 +129,6 @@
     <ClCompile Include="..\private\CharacterController.cpp" />
     <ClCompile Include="..\private\ColliderCom.cpp" />
     <ClCompile Include="..\Private\MainModule.cpp" />
-    <ClCompile Include="..\private\Physics.cpp" />
     <ClCompile Include="..\private\PhysX_Manager.cpp" />
     <ClCompile Include="..\private\RigidBody.cpp" />
     <ClCompile Include="..\Private\VIBuffer_Sprite.cpp" />

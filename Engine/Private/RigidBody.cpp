@@ -21,7 +21,7 @@ _float3 CRigidBody::Get_Position() const
 {
 	PxTransform vPose;
 	if (false == m_isKinematic ||
-		false == reinterpret_cast<physx::PxRigidDynamic*>(m_pActor)->getKinematicTarget(vPose))
+		false == reinterpret_cast<PxRigidDynamic*>(m_pActor)->getKinematicTarget(vPose))
 	{
 		vPose = m_pActor->getGlobalPose();
 	}
@@ -33,12 +33,19 @@ _float4 CRigidBody::Get_Rotation() const
 {
 	PxTransform vPose;
 	if (false == m_isKinematic ||
-		false == reinterpret_cast<physx::PxRigidDynamic*>(m_pActor)->getKinematicTarget(vPose))
+		false == reinterpret_cast<PxRigidDynamic*>(m_pActor)->getKinematicTarget(vPose))
 	{
 		vPose = m_pActor->getGlobalPose();
 	}
 	
 	return _float4(vPose.q.x, vPose.q.y, vPose.q.z, vPose.q.w);
+}
+
+void CRigidBody::Set_Constraint(RigidBodyConstraint eConstraintFlag, _bool _isEnable)
+{
+	PxRigidDynamic* pRigidBody = m_pActor->is<PxRigidDynamic>();
+
+	//pRigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, !_isEnable);
 }
 
 void CRigidBody::Set_Kinematic(_bool isKinematic)
@@ -100,25 +107,25 @@ HRESULT CRigidBody::Create_Actor()
 	Safe_AddRef(pPhysX_Manager);
 	PxPhysics* pPhysX = pPhysX_Manager->Get_Physics();
 	PxScene* pPhysxScene = pPhysX_Manager->Get_PhysxScene();
-	
-	//const auto pTransform = GetTransform();
 
 	Safe_Release(pPhysX_Manager);
 
-	/*if (true)
-		m_pActor = pPhysX->createRigidStatic(PxTransform(PhysXConverter::ToPxVec3(pTransform->GetPosition()), PhysXConverter::ToPxQuat(pTransform->GetRotation())));*/
-	PxMaterial* pMaterial = pPhysX->createMaterial(0.5f, 0.5f, 0.5f);
-	m_pActor = pPhysX->createRigidDynamic(PxTransform(PhysXConverter::ToPxVec3(_float3(0.f, 0.f, 0.f)), PhysXConverter::ToPxQuat(_float4(0.f, 0.f, 0.f, 0.f))));
-	m_pActor->is<PxRigidDynamic>()->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
-	PxShapeFlags shapeFlags = PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSCENE_QUERY_SHAPE | PxShapeFlag::eSIMULATION_SHAPE;
-	PxShape* pShape = pPhysX->createShape(PxBoxGeometry(2.f, 2.f, 2.f), &pMaterial, 1, true, shapeFlags);
-	m_pActor->attachShape(*pShape);
-	pShape->release();
+	PxShape* shape = pPhysX->createShape(PxCapsuleGeometry(1.f, 1.f), *pPhysX->createMaterial(0.5f, 0.5f, 0.5f), false, PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSIMULATION_SHAPE);
 
+	PxVec3 tr = PxVec3(-2.f, 30.f, 5.f);
+	PxTransform localTm(tr);
+	m_pActor = pPhysX->createRigidDynamic(localTm);
+	shape->setLocalPose(PxTransformFromSegment(PxVec3(0.f, 1.f, 0.f), PxVec3(0.f, -1.f, 0.f)));
+	m_pActor->attachShape(*shape);
+	m_pActor->setMass(50.f);
 	pPhysxScene->addActor(*m_pActor);
+	shape->release();
 
-	//pPhysxScene->getRenderBuffer();
-	m_pActor->userData = this;
+	PxRigidDynamic* pRigidBody = m_pActor->is<PxRigidDynamic>();
+
+	pRigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, true);
+	pRigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, true);
+	pRigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, true);
 
 	return S_OK;
 }
@@ -136,13 +143,13 @@ void CRigidBody::Put_To_Sleep() const
 	}
 }
 
-void CRigidBody::Add_Force(const PxVec3& _vForce, PxForceMode::Enum _eMode, _bool _bAutowake) const
+void CRigidBody::Add_Force(const _float3& _vForce, PxForceMode::Enum _eMode, _bool _bAutowake) const
 {
 	if (m_pActor != nullptr &&
 		false == m_isStatic &&
 		false == m_isKinematic)
 	{
-		reinterpret_cast<PxRigidDynamic*>(m_pActor)->addForce(_vForce, _eMode, _bAutowake);
+		reinterpret_cast<PxRigidDynamic*>(m_pActor)->addForce(PhysXConverter::ToPxVec3(_vForce), _eMode, _bAutowake);
 	}
 }
 
@@ -162,7 +169,7 @@ void CRigidBody::Clear_Force(PxForceMode::Enum _eMode) const
 		false == m_isStatic &&
 		false == m_isKinematic)
 	{
-		reinterpret_cast<physx::PxRigidDynamic*>(m_pActor)->clearForce(_eMode);
+		reinterpret_cast<PxRigidDynamic*>(m_pActor)->clearForce(_eMode);
 	}		
 }
 
@@ -172,7 +179,7 @@ void CRigidBody::Clear_Torque(PxForceMode::Enum _eMode) const
 		false == m_isStatic &&
 		false == m_isKinematic)
 	{
-		reinterpret_cast<physx::PxRigidDynamic*>(m_pActor)->clearTorque(_eMode);
+		reinterpret_cast<PxRigidDynamic*>(m_pActor)->clearTorque(_eMode);
 	}
 }
 
@@ -210,7 +217,7 @@ void CRigidBody::Rotate(_float4 _vRotation) const
 	}
 	else
 	{
-		reinterpret_cast<physx::PxRigidDynamic*>(m_pActor)->setKinematicTarget(
+		reinterpret_cast<PxRigidDynamic*>(m_pActor)->setKinematicTarget(
 			PxTransform(PhysXConverter::ToPxVec3(Get_Position()), 
 				PhysXConverter::ToPxQuat(_vRotation)));
 	}

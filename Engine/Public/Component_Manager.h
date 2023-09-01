@@ -23,6 +23,7 @@
 #include "VIBuffer_Triangle.h"
 #include "VIBuffer_Instance.h"
 #include "VIBuffer_Rect_Trail.h"
+#include "CharacterController.h"
 #include "VIBuffer_Rect_Dynamic.h"
 #include "VIBuffer_Rect_Instance.h"
 #include "VIBuffer_Point_Instance.h"
