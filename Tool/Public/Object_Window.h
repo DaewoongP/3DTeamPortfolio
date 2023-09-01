@@ -48,15 +48,16 @@ private:
 	CMapObject* m_pObject = { nullptr }; // 설치할 MapObject의 주소
 	_uint m_iMapObjectIndex = { 0 }; // 현재 맵에 설치된 맵 오브젝트의 개수
 
-	string m_strCurrentModel = { "Prototype_Component_Model_Tree" }; // 현재 활성화된 모델 이름, 초기값은 더미
+	string m_strCurrentModel = { "Dummy" }; // 현재 활성화된 모델 이름, 초기값은 더미
 
 	_int m_iModelIndex = { 0 }; // 선택된 모델 인덱스
 	_int m_iTagIndex = { 0 }; // 선택된 맵 오브젝트 태그 인덱스
 	vector<string> m_vecModelList; // 현재 추가해둔 모델 이름 리스트
 	vector<const _tchar*> m_vecModelList_t; // 모델 이름을 _tchar로 저장해둠
 	vector<const _tchar*> m_vecModelPath_t; // 모델 경로를 _tchar로 저장해둠
-	vector<const _tchar*> m_vecMapObjectTag_t; // 맵에 추가한 오브젝트들의 넘버링 태그를 저장
-	vector<SAVEOBJECTDESC> m_vecSaveObject; // 저장할 맵 오브젝트에 대한 정보
+	vector<wstring> m_vecMapObjectTag; // 맵에 추가한 오브젝트들의 넘버링 태그를 저장
+	vector<string> m_vecObjectTag_s; // 넘버링 태그를 _char로 저장함
+ 	vector<SAVEOBJECTDESC> m_vecSaveObject; // 저장할 맵 오브젝트에 대한 정보
 
 public:
 	static CObject_Window* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, ImVec2 vWindowPos, ImVec2 vWindowSize);

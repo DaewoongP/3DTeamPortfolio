@@ -134,7 +134,7 @@ void CObject_Window::Install_Object(_float3 vPos)
 		// 번호를 붙인 태그로 MapObject 등록
 		if (FAILED(pGameInstance->Add_GameObject(LEVEL_TOOL,
 			TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_MapObject"), 
-			m_vecMapObjectTag_t.at(m_iMapObjectIndex), &vPos)))
+			m_vecMapObjectTag.at(m_iMapObjectIndex).c_str(), &vPos)))
 		{
 			MSG_BOX("Failed to Install MapObject");
 			ENDINSTANCE;
@@ -171,7 +171,8 @@ void CObject_Window::Select_Model()
 	ImGui::TextColored(ImVec4(1, 0, 0, 1), m_strCurrentModel.c_str());
 
 	// 모델 선택
-	ImGui::ListBox("ModelList", &m_iModelIndex, VectorGetter, static_cast<void*>(&m_vecModelList), (_int)m_vecModelList.size(), 15);
+	ImGui::ListBox("ModelList", &m_iModelIndex, VectorGetter, 
+		static_cast<void*>(&m_vecModelList), (_int)m_vecModelList.size(), 15);
 
 	// open Dialog Simple
 	// 모델을 골라 프로토타입 만들어주는 부분
@@ -235,8 +236,8 @@ void CObject_Window::Select_Model()
 void CObject_Window::Current_MapObject()
 {
 	// 설치되어 있는 오브젝트 리스트
-	ImGui::ListBox("ModelList", &m_iTagIndex, VectorGetter,
-		static_cast<void*>(&m_vecModelList), (_int)m_vecModelList.size(), 15);
+	ImGui::ListBox("Map Object List", &m_iTagIndex, VectorGetter,
+		static_cast<void*>(&m_vecObjectTag_s), (_int)m_vecObjectTag_s.size(), 20);
 }
 
 void CObject_Window::Save_Load_Menu()
@@ -344,18 +345,9 @@ HRESULT CObject_Window::Load_MapObject()
 		}
 
 		// 중복되는 문자열이 없다면 m_vecModelList_t에 모델 이름 삽입
-		// 그리고 프로토타입 생성
 		if (0 == iCount) 
 		{
 			m_vecModelList_t.push_back(Deep_Copy(m_vecSaveObject[i].wszTag));
-
-			//// 기존에 깊은 복사로 저장해뒀던 문자열들을 가지고 프로토타입 생성
-			//_float4x4 PivotMatrix = XMMatrixIdentity();
-			//BEGININSTANCE; if (FAILED(pGameInstance->Add_Prototype_Component(LEVEL_TOOL, m_vecSaveObject[i].wszTag,
-			//	CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, /*여기에 모델 주소 삽입*/, PivotMatrix))))
-			//{
-			//	MSG_BOX("Failed to Create New Model Prototype");
-			//} ENDINSTANCE;
 		}
 
 		// 맵 오브젝트에 번호 붙여줌
@@ -366,7 +358,7 @@ HRESULT CObject_Window::Load_MapObject()
 		// 번호를 붙인 태그로 MapObject 등록
 		BEGININSTANCE if (FAILED(pGameInstance->Add_GameObject(LEVEL_TOOL,
 			TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_MapObject"),
-			m_vecMapObjectTag_t.at(m_iMapObjectIndex), &m_vecSaveObject[i].vPos)))
+			m_vecMapObjectTag.at(m_iMapObjectIndex).c_str(), &m_vecSaveObject[i].vPos)))
 		{
 			MSG_BOX("Failed to Install MapObject");
 			ENDINSTANCE;
@@ -455,20 +447,27 @@ void CObject_Window::Deep_Copy_Path(const _tchar* wszPath)
 
 void CObject_Window::Deep_Copy_Tag(const _tchar* wszTag)
 {
+	m_vecMapObjectTag.push_back(wszTag);
+
 	// 맵 오브젝트 경로를 const _tchar* 형태로 깊은 복사
 	size_t length = wcslen(wszTag);
 
-	wstring ws(wszTag);
+	char c[MAX_PATH] = "";;
+	WCharToChar(wszTag, c);
 
-	_tchar* wszNew = new _tchar[length + 1];
+	string s(c);
 
-	if (0 != wcscpy_s(wszNew, length + 1, ws.c_str()))
+	m_vecObjectTag_s.push_back(s);
+
+	/*_char* wszNew = new _char[length + 1];
+
+	if (0 != strcpy_s(wszNew, length + 1, s.c_str()))
 	{
 		MSG_BOX("Falied to Deep Copy(Tag)");
 		return;
 	}
 
-	m_vecMapObjectTag_t.push_back(wszNew);
+	m_vecObjectTag_s.push_back(wszNew);*/
 }
 
 const _tchar* CObject_Window::Deep_Copy(const _tchar* wszString)
@@ -639,9 +638,6 @@ void CObject_Window::Free(void)
 	}
 	m_vecModelPath_t.clear();
 
-	for (auto& iter : m_vecMapObjectTag_t)
-	{
-		delete[] iter;
-	}
-	m_vecMapObjectTag_t.clear();
+	m_vecObjectTag_s.clear();
+	m_vecMapObjectTag.clear();
 }
