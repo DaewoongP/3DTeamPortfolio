@@ -17,11 +17,11 @@ HRESULT CObject_Window::Initialize(ImVec2 vWindowPos, ImVec2 vWindowSize)
 	if (FAILED(__super::Initialize(vWindowPos, vWindowSize)))
 		return E_FAIL;
 
-	if (FAILED(Create_Dummy()))
-		return E_FAIL;
-
 	// 0이 Non_Anim이다.
 	if (FAILED(Save_Model_Path(0, TEXT("../../Resources/Models/NonAnims/"))))
+		return E_FAIL;
+
+	if (FAILED(Create_Dummy()))
 		return E_FAIL;
 
 	m_WindowFlag = ImGuiWindowFlags_NoResize;
@@ -204,14 +204,6 @@ void CObject_Window::Select_Model()
 	static _bool bCheckModel = { false };
 	if (ImGui::Button("SelectModel"))
 	{
-		// 기존에 깊은 복사로 저장해뒀던 문자열들을 가지고 프로토타입 생성
-		_float4x4 PivotMatrix = XMMatrixIdentity();
-		BEGININSTANCE; if (FAILED(pGameInstance->Add_Prototype_Component(LEVEL_TOOL, m_vecModelList_t.at(m_iModelIndex),
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, m_vecModelPath_t.at(m_iModelIndex), PivotMatrix))))
-		{
-			MSG_BOX("Failed to Create New Model Prototype");
-		} ENDINSTANCE;
-
 		if (FAILED(m_pDummy->Change_Model_Component(m_vecModelList_t.at(m_iModelIndex))))
 		{
 			MSG_BOX("Failed to Change Model");
@@ -515,12 +507,11 @@ HRESULT CObject_Window::Create_Dummy()
 
 	m_pDummy = static_cast<CMapDummy*>(pGameInstance->Find_GameObject_In_Layer(LEVEL_TOOL, TEXT("Layer_MapObject"), TEXT("Map_Dummy")));
 
-	_float4x4 PivotMatrix = XMMatrixIdentity();
-
+	/*_float4x4 PivotMatrix = XMMatrixIdentity();
 	if (FAILED(pGameInstance->Add_Prototype_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_Tree"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, 
 			TEXT("../../Resources/Models/NonAnims/Tree/Tree.dat"), PivotMatrix))))
-		return E_FAIL;
+		return E_FAIL;*/
 
 	m_pDummy->Add_Model_Component(TEXT("Prototype_Component_Model_Tree"));
 	m_pDummy->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMesh")); ENDINSTANCE;
@@ -549,7 +540,13 @@ HRESULT CObject_Window::Save_Model_Path(_uint iType, const _tchar* pFilePath)
 			if (!lstrcmp(entry.path().extension().c_str(), TEXT(".fbx")) ||
 				!lstrcmp(entry.path().extension().c_str(), TEXT(".FBX")))
 			{
-				Deep_Copy_Path(entry.path().wstring().c_str());
+				// .fbx를 .dat로 변경
+				size_t _dat = entry.path().string().find(".");
+				wstring pathresult = entry.path().wstring().substr(0, _dat);
+				wstring datext = TEXT(".dat");
+				pathresult += datext;
+
+				Deep_Copy_Path(pathresult.c_str());
 
 				// C:\Users\micro\3DTeamPortfolio\Resources\Models\NonAnims\Tree\Tree.FBX
 				// 경로에서 모델 이름 부분만 잘라내는 부분
@@ -572,8 +569,16 @@ HRESULT CObject_Window::Save_Model_Path(_uint iType, const _tchar* pFilePath)
 				modelname += result1;
 				m_vecModelList.push_back(modelname);
 
-				wstring ws(modelname.begin(), modelname.end());
-				Deep_Copy_Name(ws.c_str());
+				wstring wmodelname(modelname.begin(), modelname.end());
+				Deep_Copy_Name(wmodelname.c_str());
+
+				// 프로토타입 생성
+				_float4x4 PivotMatrix = XMMatrixIdentity();
+				BEGININSTANCE; if (FAILED(pGameInstance->Add_Prototype_Component(LEVEL_TOOL, m_vecModelList_t.back(),
+					CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, m_vecModelPath_t.back(), PivotMatrix))))
+				{
+					MSG_BOX("Failed to Create New Model Prototype");
+				} ENDINSTANCE;
 			}
 		}
 
