@@ -75,8 +75,6 @@ void CTest_Player::Tick(_float fTimeDelta)
 	LineDesc.pLines = Lines.data();
 
 	m_pLine->Tick(LineDesc);
-
-	
 }
 
 void CTest_Player::Late_Tick(_float fTimeDelta)
@@ -84,19 +82,7 @@ void CTest_Player::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 	if (nullptr != m_pRenderer)
-		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
-}
-
-void CTest_Player::OnCollisionEnter(COLLISIONDESC CollisionDesc)
-{
-}
-
-void CTest_Player::OnCollisionStay(COLLISIONDESC CollisionDesc)
-{
-}
-
-void CTest_Player::OnCollisionExit(COLLISIONDESC CollisionDesc)
-{
+		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONLIGHT, this);
 }
 
 HRESULT CTest_Player::Render()
@@ -105,6 +91,7 @@ HRESULT CTest_Player::Render()
 	Safe_AddRef(pGameInstance);
 
 	_float4x4 WorldMatrix = XMMatrixIdentity();
+
 	if (FAILED(m_pDebugShader->Bind_Matrix("g_WorldMatrix", &WorldMatrix)))
 		return E_FAIL;
 

@@ -27,25 +27,19 @@ public:
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
-	virtual void OnCollisionEnter(COLLISIONDESC CollisionDesc) override;
-	virtual void OnCollisionStay(COLLISIONDESC CollisionDesc) override;
-	virtual void OnCollisionExit(COLLISIONDESC CollisionDesc) override;
 	virtual HRESULT Render() override;
 	virtual HRESULT Render_Depth() override;
 
 private:
-	CCustomModel*	m_pModelCom = { nullptr };
-	CShader*		m_pShaderCom = { nullptr };
-	CRenderer*		m_pRenderer = { nullptr };
-	CRigidBody*		m_pRigidBody = { nullptr };
-	CVIBuffer_Line* m_pLine = { nullptr };
-	CShader*		m_pDebugShader = { nullptr };
+	CCustomModel*			m_pModelCom = { nullptr };
+	CShader*				m_pShaderCom = { nullptr };
+	CRenderer*				m_pRenderer = { nullptr };
+	CRigidBody*				m_pRigidBody = { nullptr };
+	CVIBuffer_Line*			m_pLine = { nullptr };
+	CShader*				m_pDebugShader = { nullptr };
 	CVIBuffer_Triangle*		m_pTriangle = { nullptr };
 
-	CCharacterController* m_pController = { nullptr };
-
-
-	_float4x4		m_ConvMatrix;
+	CCharacterController*	m_pController = { nullptr };
 
 private:
 	PxScene*		m_pScene = { nullptr };
