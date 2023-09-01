@@ -130,7 +130,6 @@
     <ClCompile Include="..\Private\Attack.cpp" />
     <ClCompile Include="..\private\CharacterController.cpp" />
     <ClCompile Include="..\private\ColliderCom.cpp" />
-    <ClCompile Include="..\Private\MainModule.cpp" />
     <ClCompile Include="..\private\PhysX_Manager.cpp" />
     <ClCompile Include="..\private\RigidBody.cpp" />
     <ClCompile Include="..\Private\MeshParts.cpp" />

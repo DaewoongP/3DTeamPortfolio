@@ -24,10 +24,10 @@ xcopy				/y			.\Engine\Bin\fmod.dll				.\Tool\Bin\
 xcopy				/y			.\Engine\Bin\fmod.dll				.\Assimp\Bin\
 
 xcopy				/y			.\Engine\Bin\Debug\*.dll			.\Client\Bin\
-xcopy				/y			.\Engine\Bin\Release\*.dll			.\Client\Bin\
+
 
 xcopy				/y			.\Engine\Bin\Debug\*.dll			.\Tool\Bin\
-xcopy				/y			.\Engine\Bin\Release\*.dll			.\Tool\Bin\
+
 
 xcopy				/y			.\Engine\Bin\Debug\*.dll			.\Assimp\Bin\
-xcopy				/y			.\Engine\Bin\Release\*.dll			.\Assimp\Bin\
+
