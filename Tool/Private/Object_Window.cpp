@@ -38,6 +38,7 @@ void CObject_Window::Tick(_float fTimeDelta)
 	// 메뉴 On Off static _bool 변수 모음
 	static _bool bCheckPicking = { false };
 	static _bool bSelectModel = { false };
+	static _bool bCurrentMapObject = { false };
 	static _bool bSaveLoad = { false };
 
 	// Picking 창 On / Off
@@ -54,6 +55,17 @@ void CObject_Window::Tick(_float fTimeDelta)
 	if (true == bSelectModel)
 	{
 		Select_Model();
+	}
+
+	ImGui::Text("----------------------------------------");
+
+	// 현재 설치되어 있는 맵 오브젝트 창 On / Off
+	ImGui::Checkbox("Current MapObject", &bCurrentMapObject);
+	if (true == bCurrentMapObject)
+	{
+		ImGui::Begin("Current MapObject", nullptr);
+		Current_MapObject();
+		ImGui::End();
 	}
 
 	ImGui::Text("----------------------------------------");
@@ -218,6 +230,13 @@ void CObject_Window::Select_Model()
 		m_strCurrentModel.clear();
 		m_strCurrentModel.append(szName);
 	}
+}
+
+void CObject_Window::Current_MapObject()
+{
+	// 설치되어 있는 오브젝트 리스트
+	ImGui::ListBox("ModelList", &m_iTagIndex, VectorGetter,
+		static_cast<void*>(&m_vecModelList), (_int)m_vecModelList.size(), 15);
 }
 
 void CObject_Window::Save_Load_Menu()

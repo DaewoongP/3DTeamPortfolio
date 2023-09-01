@@ -29,6 +29,7 @@ private:
 	void Picking_Menu(); // 피킹 메뉴
 	void Install_Object(_float3 vPos); // 오브젝트 설치 메뉴
 	void Select_Model(); // 모델 선택 메뉴
+	void Current_MapObject(); // 현재 설치되어 있는 맵 오브젝트 확인
 	void Save_Load_Menu(); // 세이브 로드 메뉴
 	HRESULT Save_MapObject(); // MapObject 저장
 	HRESULT Load_MapObject(); // MapObject 로드
@@ -50,6 +51,7 @@ private:
 	string m_strCurrentModel = { "Prototype_Component_Model_Tree" }; // 현재 활성화된 모델 이름, 초기값은 더미
 
 	_int m_iModelIndex = { 0 }; // 선택된 모델 인덱스
+	_int m_iTagIndex = { 0 }; // 선택된 맵 오브젝트 태그 인덱스
 	vector<string> m_vecModelList; // 현재 추가해둔 모델 이름 리스트
 	vector<const _tchar*> m_vecModelList_t; // 모델 이름을 _tchar로 저장해둠
 	vector<const _tchar*> m_vecModelPath_t; // 모델 경로를 _tchar로 저장해둠
