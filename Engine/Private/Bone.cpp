@@ -43,6 +43,12 @@ void CBone::Invalidate_CombinedTransformationMatrix(const CModel::BONES& Bones)
 	}
 }
 
+void CBone::Reset_CombinedTransformationMatrix()
+{
+	XMStoreFloat4x4(&m_CombinedTransformationMatrix,
+		XMMatrixIdentity());
+}
+
 CBone* CBone::Create(Engine::NODE Node)
 {
 	CBone* pInstance = new CBone();

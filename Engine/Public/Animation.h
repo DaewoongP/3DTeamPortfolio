@@ -59,7 +59,9 @@ public:
 
 public:
 	HRESULT Initialize(Engine::ANIMATION Animation, const CModel::BONES& Bones);
+	_bool Invalidate_AccTime(_float fTimeDelta); 
 	void Invalidate_TransformationMatrix(CModel::BONES& Bones, _float fTimeDelta);
+	void Invalidate_TransformationMatrix_Lerp(CModel::BONES& Bones, _float fTimeDelta, _double LerpTimeAcc);
 	void Invalidate_Frame(_float fTimeDelta);
 private:
 	_tchar						m_szName[MAX_STR] = TEXT("");

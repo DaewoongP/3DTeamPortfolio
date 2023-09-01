@@ -125,18 +125,24 @@ HRESULT CAnimation::Initialize(Engine::ANIMATION Animation, const CModel::BONES&
 	return S_OK;
 }
 
-void CAnimation::Invalidate_TransformationMatrix(CModel::BONES& Bones, _float fTimeDelta)
+_bool CAnimation::Invalidate_AccTime(_float fTimeDelta)
 {
+	_bool isEnd = false;
+	m_fTimeAcc += m_fTickPerSecond * fTimeDelta;
 	if (m_fTimeAcc >= m_fDuration)
 	{
 		if (true == m_isLoop)
 		{
+			isEnd = true;
 			m_fTimeAcc = 0.f;
 		}
 	}
+	return isEnd;
+}
 
+void CAnimation::Invalidate_TransformationMatrix(CModel::BONES& Bones, _float fTimeDelta)
+{
 	_uint		iChannelIndex = 0;
-
 	for (auto& pChannel : m_Channels)
 	{
 		if (nullptr == pChannel)
@@ -146,18 +152,23 @@ void CAnimation::Invalidate_TransformationMatrix(CModel::BONES& Bones, _float fT
 	}
 }
 
+void CAnimation::Invalidate_TransformationMatrix_Lerp(CModel::BONES& Bones, _float fTimeDelta, _double LerpTimeAcc)
+{
+	_uint		iChannelIndex = 0;
+	for (auto& pChannel : m_Channels)
+	{
+		if (nullptr == pChannel)
+			return;
+
+		pChannel->Invalidate_TransformationMatrix_Lerp(Bones, m_fTimeAcc, &m_ChannelCurrentKeyFrames[iChannelIndex++], LerpTimeAcc);
+	}
+}
+
 void CAnimation::Invalidate_Frame(_float fTimeDelta)
 {
 	if (m_isPaused)
 		return;
-	m_fTimeAcc += m_fTickPerSecond * fTimeDelta;
-	if (m_fTimeAcc >= m_fDuration)
-	{
-		if (true == m_isLoop)
-		{
-			m_fTimeAcc = 0.f;
-		}
-	}
+	
 	//첫번째 채널에만 사운드용 데이터를 추가해줄거임.
 	_uint		iChannelIndex = 0;
 	if (m_pNotify != nullptr)

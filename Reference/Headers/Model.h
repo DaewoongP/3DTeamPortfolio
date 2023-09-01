@@ -1,10 +1,19 @@
 #pragma once
+
+/* =============================================== */
+// 
+//	정 : 안철민
+//	부 :
+//
+/* =============================================== */
+
 #include "Component.h"
 
 BEGIN(Engine)
-
+#define ANIMATIONLERPTIME 0.3f
 class ENGINE_DLL CModel : public CComponent
 {
+
 public:
 	enum TYPE { TYPE_NONANIM, TYPE_ANIM, TYPE_END };
 	enum ANIMTYPE { HEAD,UPPERBODY,UNDERBODY,ARM,ANIM_END};
@@ -29,7 +38,6 @@ public:
 	const _float4x4* Get_BoneCombinedTransformationMatrixPtr(_uint iIndex);
 	_float4x4 Get_BoneCombinedTransformationMatrix(_uint iIndex);
 
-	void Set_CurrentAnimIndex(_uint iIndex) { m_iCurrentAnimIndex = iIndex; }
 public:
 	virtual HRESULT Initialize_Prototype(TYPE eType, const _tchar* pModelFilePath, _float4x4 PivotMatrix);
 	virtual HRESULT Initialize(void* pArg) override;
@@ -37,9 +45,12 @@ public:
 
 public:
 	// Lerp를 진행하지 않고 해당 애니메이션 초기상태로 바로 세팅한다.
-	void	Reset_Animation(_uint iAnimIndex);
-	void	Play_Animation(_float fTimeDelta);
+	void	Reset_Animation(_uint iAnimIndex, CTransform* pTransform = nullptr);
+	void	Play_Animation(_float fTimeDelta,class CTransform* pTransform = nullptr);
 	HRESULT Find_BoneIndex(const _tchar* pBoneName, _Inout_ _uint* iIndex);
+	void	Set_CurrentAnimIndex(_uint iIndex);
+	void	Set_RootBone(_uint iIndex) { m_iRootBoneIndex = iIndex; }
+	void	Do_Root_Animation(CTransform* pTransform);
 
 public:
 	HRESULT Bind_Material(class CShader* pShader, const char* pConstantName, _uint iMeshIndex, Engine::TextureType MaterialType);
@@ -67,10 +78,16 @@ private: /* For.Materials */
 
 private: /* For.Animations */
 	_uint							m_iPreviousAnimIndex = { 0 };
-	_uint							m_iCurrentAnimIndex = { 0 };
+	_uint							m_iCurrentAnimIndex = { 29 };
 	_uint							m_iNumAnimations = { 0 };
-
 	vector<class CAnimation*>		m_Animations;//[ANIM_END]
+
+private: /* For.Animation_Lerp*/
+	_bool							m_isAnimChangeLerp = { false };
+	_float							m_fAnimChangeTimer = { 0.f };
+
+private: /* For.RootAnimation*/
+	_uint							m_iRootBoneIndex = { 5 };
 
 private:
 	_float4x4						m_PivotMatrix;

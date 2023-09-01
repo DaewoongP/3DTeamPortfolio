@@ -1,4 +1,11 @@
 #pragma once
+/* =============================================== */
+// 
+//	Á¤ : ¹Ú´ë¿õ
+//	ºÎ :
+//
+/* =============================================== */
+
 #include "Engine_Defines.h"
 
 class CPXErrorCallBack : public PxErrorCallback

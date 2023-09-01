@@ -4,6 +4,7 @@
 #include "Shader.h"
 #include "Texture.h"
 #include "Animation.h"
+#include "Transform.h"
 
 CModel::CModel(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CComponent(pDevice, pContext)
@@ -109,11 +110,15 @@ HRESULT CModel::Render(_uint iMeshIndex)
 	return S_OK;
 }
 
-void CModel::Reset_Animation(_uint iAnimIndex)
+void CModel::Reset_Animation(_uint iAnimIndex, CTransform* pTransform)
 {
+	Do_Root_Animation(pTransform);
+
 	m_iCurrentAnimIndex = iAnimIndex;
 	m_iPreviousAnimIndex = m_iCurrentAnimIndex;
 	m_Animations[m_iCurrentAnimIndex]->Reset();
+	m_isAnimChangeLerp = true;
+	m_fAnimChangeTimer = ANIMATIONLERPTIME;
 
 	for (auto& pBone : m_Bones)
 	{
@@ -121,10 +126,34 @@ void CModel::Reset_Animation(_uint iAnimIndex)
 	}
 }
 
-void CModel::Play_Animation(_float fTimeDelta)
+void CModel::Play_Animation(_float fTimeDelta, CTransform* pTransform)
 {
+	//시간증가 if
+	if (m_Animations[m_iCurrentAnimIndex]->Invalidate_AccTime(fTimeDelta)&&
+		pTransform!=nullptr)
+	{
+		m_Animations[m_iCurrentAnimIndex]->Reset();
+		m_isAnimChangeLerp = true;
+		m_fAnimChangeTimer = ANIMATIONLERPTIME;
+		//루트애니메이션 적용
+		Do_Root_Animation(pTransform);
+	}
+
+	//노티파이용
 	m_Animations[m_iCurrentAnimIndex]->Invalidate_Frame(fTimeDelta);
-	m_Animations[m_iCurrentAnimIndex]->Invalidate_TransformationMatrix(m_Bones, fTimeDelta);
+
+	//뼈 이동용
+	if (!m_isAnimChangeLerp)
+	{
+		m_Animations[m_iCurrentAnimIndex]->Invalidate_TransformationMatrix(m_Bones, fTimeDelta);
+	}
+	else if(m_fAnimChangeTimer >= 0.0)
+	{
+		m_Animations[m_iCurrentAnimIndex]->Invalidate_TransformationMatrix_Lerp(m_Bones, fTimeDelta, ANIMATIONLERPTIME - m_fAnimChangeTimer);
+		m_fAnimChangeTimer -= fTimeDelta;
+	}
+	else
+		m_isAnimChangeLerp = false;
 
 	/* 모델에 표현되어있는 모든 뼈들의 CombinedTransformationMatrix */
 	for (auto& pBone : m_Bones)
@@ -153,6 +182,24 @@ HRESULT CModel::Find_BoneIndex(const _tchar* pBoneName, _Inout_ _uint* iIndex)
 	}
 
 	return S_OK;
+}
+
+void CModel::Set_CurrentAnimIndex(_uint iIndex)
+{ 
+	m_iCurrentAnimIndex = iIndex;
+	m_isAnimChangeLerp = true;
+	m_fAnimChangeTimer = ANIMATIONLERPTIME;
+}
+
+void CModel::Do_Root_Animation(CTransform* pTransform)
+{
+	if (pTransform != nullptr)
+	{
+		//위치를 먹이고
+		pTransform->Set_WorldMatrix(m_Bones[m_iRootBoneIndex]->Get_CombinedTransformationMatrix() * pTransform->Get_WorldMatrix());
+		//사용된 루트뼈는 한프레임 업데이트 정지상태에 들어갑니다.
+		m_Bones[m_iRootBoneIndex]->Reset_CombinedTransformationMatrix();
+	}
 }
 
 HRESULT CModel::Bind_Material(CShader* pShader, const char* pConstantName, _uint iMeshIndex, Engine::TextureType MaterialType)
