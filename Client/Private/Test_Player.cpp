@@ -38,7 +38,7 @@ void CTest_Player::Tick(_float fTimeDelta)
 	m_pTransform->Set_Position(m_pRigidBody->Get_Position());
 
 	Key_Input(fTimeDelta);
-	__super::Tick(fTimeDelta);
+	
 	m_pModelCom->Play_Animation(fTimeDelta);
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
@@ -75,6 +75,8 @@ void CTest_Player::Tick(_float fTimeDelta)
 	LineDesc.pLines = Lines.data();
 
 	m_pLine->Tick(LineDesc);
+
+	__super::Tick(fTimeDelta);
 }
 
 void CTest_Player::Late_Tick(_float fTimeDelta)

@@ -121,7 +121,7 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>../../Reference/Headers/;../Public/;../../Reference/Headers/PhysX/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../Reference/Headers/;../Public/;../../Reference/Headers/PhysX/;ImGui/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -180,6 +180,18 @@
     <ClInclude Include="..\public\UI.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="ImGui\backends\imgui_impl_dx11.h" />
+    <ClInclude Include="ImGui\backends\imgui_impl_win32.h" />
+    <ClInclude Include="ImGui\imconfig.h" />
+    <ClInclude Include="ImGui\imgui.h" />
+    <ClInclude Include="ImGui\ImGuiFileDialog.h" />
+    <ClInclude Include="ImGui\ImGuiFileDialogConfig.h" />
+    <ClInclude Include="ImGui\imgui_internal.h" />
+    <ClInclude Include="ImGui\imstb_rectpack.h" />
+    <ClInclude Include="ImGui\imstb_textedit.h" />
+    <ClInclude Include="ImGui\imstb_truetype.h" />
+    <ClInclude Include="ImGui\stb\stb_image.h" />
+    <ClInclude Include="ImGui\stb\stb_image_resize.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -198,6 +210,14 @@
     <ClCompile Include="..\private\Test_Player.cpp" />
     <ClCompile Include="..\private\UI.cpp" />
     <ClCompile Include="Client.cpp" />
+    <ClCompile Include="ImGui\backends\imgui_impl_dx11.cpp" />
+    <ClCompile Include="ImGui\backends\imgui_impl_win32.cpp" />
+    <ClCompile Include="ImGui\imgui.cpp" />
+    <ClCompile Include="ImGui\ImGuiFileDialog.cpp" />
+    <ClCompile Include="ImGui\imgui_demo.cpp" />
+    <ClCompile Include="ImGui\imgui_draw.cpp" />
+    <ClCompile Include="ImGui\imgui_tables.cpp" />
+    <ClCompile Include="ImGui\imgui_widgets.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico" />
@@ -215,6 +235,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Bin\ShaderFiles\Shader_Client_Defines.hlsli" />
+    <None Include="ImGui\misc\debuggers\imgui.natstepfilter" />
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="ImGui\misc\debuggers\imgui.natvis" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

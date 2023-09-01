@@ -207,7 +207,7 @@
     <ClInclude Include="..\public\CustomWidget.h">
       <Filter>01. Window\CustomWidget</Filter>
     </ClInclude>
-    <ClInclude Include="ComboBox.h">
+    <ClInclude Include="..\Public\ComboBox.h">
       <Filter>01. Window\CustomWidget\ComboBox</Filter>
     </ClInclude>
   </ItemGroup>
@@ -315,7 +315,7 @@
     <ClCompile Include="..\private\CustomWidget.cpp">
       <Filter>01. Window\CustomWidget</Filter>
     </ClCompile>
-    <ClCompile Include="ComboBox.cpp">
+    <ClCompile Include="..\Private\ComboBox.cpp">
       <Filter>01. Window\CustomWidget\ComboBox</Filter>
     </ClCompile>
   </ItemGroup>
