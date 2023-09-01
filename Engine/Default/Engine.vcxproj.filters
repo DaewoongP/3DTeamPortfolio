@@ -175,9 +175,6 @@
     <Filter Include="01. Utility\03. Components\11. ParticleSystem">
       <UniqueIdentifier>{aaf18f8e-a9cf-4dba-9828-95d190790622}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\03. Components\11. ParticleSystem\ParticleModule">
-      <UniqueIdentifier>{355d4a38-f001-42b9-8247-e9d447d141c5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Utility\03. Components\10. Behavior">
       <UniqueIdentifier>{74671ea1-680f-4109-b558-9a41898e3288}</UniqueIdentifier>
     </Filter>
@@ -483,9 +480,6 @@
     <ClInclude Include="..\Public\ParticleSystem.h">
       <Filter>01. Utility\03. Components\11. ParticleSystem</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\ParticleModule.h">
-      <Filter>01. Utility\03. Components\11. ParticleSystem\ParticleModule</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Calculator.h">
       <Filter>01. Utility\10. Calculator</Filter>
     </ClInclude>
@@ -524,6 +518,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\MeshParts.h">
       <Filter>01. Utility\03. Components\15. CustomModel\MeshParts</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Modules.h">
+      <Filter>01. Utility\03. Components\11. ParticleSystem</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\PhysXConverter.h">
       <Filter>99. Headers</Filter>
@@ -743,9 +740,6 @@
     <ClCompile Include="..\Private\ParticleSystem.cpp">
       <Filter>01. Utility\03. Components\11. ParticleSystem</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\ParticleModule.cpp">
-      <Filter>01. Utility\03. Components\11. ParticleSystem\ParticleModule</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Calculator.cpp">
       <Filter>01. Utility\10. Calculator</Filter>
     </ClCompile>
@@ -778,6 +772,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\MeshParts.cpp">
       <Filter>01. Utility\03. Components\15. CustomModel\MeshParts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Modules.cpp">
+      <Filter>01. Utility\03. Components\11. ParticleSystem</Filter>
     </ClCompile>
     <ClCompile Include="..\private\PhysX_Manager.cpp">
       <Filter>01. Utility\11. Physics\Manager</Filter>

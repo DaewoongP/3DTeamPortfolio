@@ -40,6 +40,7 @@
     <ClInclude Include="..\public\RigidBody.h" />
     <ClInclude Include="..\Public\MeshParts.h" />
     <ClInclude Include="..\Public\CustomModel.h" />
+    <ClInclude Include="..\Public\Modules.h" />
     <ClInclude Include="..\Public\Status.h" />
     <ClInclude Include="..\Public\VIBuffer_Sprite.h" />
     <ClInclude Include="..\Public\Ignite.h" />
@@ -79,7 +80,6 @@
     <ClInclude Include="..\public\Navigation.h" />
     <ClInclude Include="..\Public\Notify.h" />
     <ClInclude Include="..\Public\Object_Manager.h" />
-    <ClInclude Include="..\public\ParticleModule.h" />
     <ClInclude Include="..\Public\ParticleSystem.h" />
     <ClInclude Include="..\Public\PipeLine.h" />
     <ClInclude Include="..\public\PXAllocator.h" />
@@ -134,6 +134,7 @@
     <ClCompile Include="..\private\RigidBody.cpp" />
     <ClCompile Include="..\Private\MeshParts.cpp" />
     <ClCompile Include="..\Private\CustomModel.cpp" />
+    <ClCompile Include="..\Private\Modules.cpp" />
     <ClCompile Include="..\Private\Status.cpp" />
     <ClCompile Include="..\Private\VIBuffer_Sprite.cpp" />
     <ClCompile Include="..\Private\Ignite.cpp" />
@@ -166,7 +167,6 @@
     <ClCompile Include="..\private\Navigation.cpp" />
     <ClCompile Include="..\Private\Notify.cpp" />
     <ClCompile Include="..\Private\Object_Manager.cpp" />
-    <ClCompile Include="..\private\ParticleModule.cpp" />
     <ClCompile Include="..\Private\ParticleSystem.cpp" />
     <ClCompile Include="..\Private\PipeLine.cpp" />
     <ClCompile Include="..\Private\QuadTree.cpp" />
