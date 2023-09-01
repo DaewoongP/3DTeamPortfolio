@@ -15,16 +15,6 @@ extern HWND g_hWnd;
 
 using namespace Client;
 
-#ifdef _DEBUG
-
-#include "ImGui\imgui.h"
-#include "ImGui\backends\imgui_impl_win32.h"
-#include "ImGui\backends\imgui_impl_dx11.h"
-
-#define STB_IMAGE_IMPLEMENTATION
-#include "ImGui\stb\stb_image.h"
-#endif // _DEBUG
-
 //--------------------------------------------------Macro
 #define			BEGININSTANCE					CGameInstance* pGameInstance = CGameInstance::GetInstance();		\
 												Safe_AddRef(pGameInstance);

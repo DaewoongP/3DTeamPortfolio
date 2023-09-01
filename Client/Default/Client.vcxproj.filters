@@ -73,9 +73,6 @@
     <Filter Include="02. GameObject\07. NPC">
       <UniqueIdentifier>{1048769e-752f-4d43-a082-e0d3163efe97}</UniqueIdentifier>
     </Filter>
-    <Filter Include="98. Default\ImGui_Defaults">
-      <UniqueIdentifier>{628cd336-ebfe-4860-bfac-014e7bec45d3}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -135,42 +132,6 @@
     <ClInclude Include="..\Public\Test_NPC.h">
       <Filter>02. GameObject\07. NPC</Filter>
     </ClInclude>
-    <ClInclude Include="ImGui\imconfig.h">
-      <Filter>98. Default\ImGui_Defaults</Filter>
-    </ClInclude>
-    <ClInclude Include="ImGui\imgui.h">
-      <Filter>98. Default\ImGui_Defaults</Filter>
-    </ClInclude>
-    <ClInclude Include="ImGui\imgui_internal.h">
-      <Filter>98. Default\ImGui_Defaults</Filter>
-    </ClInclude>
-    <ClInclude Include="ImGui\ImGuiFileDialog.h">
-      <Filter>98. Default\ImGui_Defaults</Filter>
-    </ClInclude>
-    <ClInclude Include="ImGui\ImGuiFileDialogConfig.h">
-      <Filter>98. Default\ImGui_Defaults</Filter>
-    </ClInclude>
-    <ClInclude Include="ImGui\imstb_rectpack.h">
-      <Filter>98. Default\ImGui_Defaults</Filter>
-    </ClInclude>
-    <ClInclude Include="ImGui\imstb_textedit.h">
-      <Filter>98. Default\ImGui_Defaults</Filter>
-    </ClInclude>
-    <ClInclude Include="ImGui\imstb_truetype.h">
-      <Filter>98. Default\ImGui_Defaults</Filter>
-    </ClInclude>
-    <ClInclude Include="ImGui\stb\stb_image.h">
-      <Filter>98. Default\ImGui_Defaults</Filter>
-    </ClInclude>
-    <ClInclude Include="ImGui\stb\stb_image_resize.h">
-      <Filter>98. Default\ImGui_Defaults</Filter>
-    </ClInclude>
-    <ClInclude Include="ImGui\backends\imgui_impl_dx11.h">
-      <Filter>98. Default\ImGui_Defaults</Filter>
-    </ClInclude>
-    <ClInclude Include="ImGui\backends\imgui_impl_win32.h">
-      <Filter>98. Default\ImGui_Defaults</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -215,30 +176,6 @@
     <ClCompile Include="..\Private\Test_NPC.cpp">
       <Filter>02. GameObject\07. NPC</Filter>
     </ClCompile>
-    <ClCompile Include="ImGui\imgui.cpp">
-      <Filter>98. Default\ImGui_Defaults</Filter>
-    </ClCompile>
-    <ClCompile Include="ImGui\imgui_draw.cpp">
-      <Filter>98. Default\ImGui_Defaults</Filter>
-    </ClCompile>
-    <ClCompile Include="ImGui\imgui_demo.cpp">
-      <Filter>98. Default\ImGui_Defaults</Filter>
-    </ClCompile>
-    <ClCompile Include="ImGui\imgui_tables.cpp">
-      <Filter>98. Default\ImGui_Defaults</Filter>
-    </ClCompile>
-    <ClCompile Include="ImGui\imgui_widgets.cpp">
-      <Filter>98. Default\ImGui_Defaults</Filter>
-    </ClCompile>
-    <ClCompile Include="ImGui\ImGuiFileDialog.cpp">
-      <Filter>98. Default\ImGui_Defaults</Filter>
-    </ClCompile>
-    <ClCompile Include="ImGui\backends\imgui_impl_dx11.cpp">
-      <Filter>98. Default\ImGui_Defaults</Filter>
-    </ClCompile>
-    <ClCompile Include="ImGui\backends\imgui_impl_win32.cpp">
-      <Filter>98. Default\ImGui_Defaults</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -257,9 +194,6 @@
     <None Include="..\Bin\ShaderFiles\Shader_Client_Defines.hlsli">
       <Filter>97. ShaderFiles</Filter>
     </None>
-    <None Include="ImGui\misc\debuggers\imgui.natstepfilter">
-      <Filter>98. Default\ImGui_Defaults</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTex.hlsl">
@@ -277,10 +211,5 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Debug.hlsl">
       <Filter>97. ShaderFiles</Filter>
     </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Natvis Include="ImGui\misc\debuggers\imgui.natvis">
-      <Filter>98. Default\ImGui_Defaults</Filter>
-    </Natvis>
   </ItemGroup>
 </Project>
