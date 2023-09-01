@@ -96,7 +96,7 @@ void CObject_Window::Picking_Menu()
 	} ENDINSTANCE;
 
 	// 메뉴 On Off static _bool 변수 모음
-	static _bool bInstallObject = { false };
+	static _bool bInstallObject = { true };
 
 	// Object Install 선택 창 On / Off
 	ImGui::Checkbox("Object Install", &bInstallObject);
@@ -209,6 +209,14 @@ void CObject_Window::Select_Model()
 			MSG_BOX("Failed to Change Model");
 			return;
 		}
+
+		CModel* pDummyModel = static_cast<CModel*>(m_pDummy->Find_Component(TEXT("Com_Buffer")));
+
+		// 현재 선택된 모델 이름 갱신
+		_char szName[MAX_PATH];
+		WCharToChar(m_vecModelList_t.at(m_iModelIndex), szName);
+		m_strCurrentModel.clear();
+		m_strCurrentModel.append(szName);
 	}
 }
 
@@ -506,13 +514,6 @@ HRESULT CObject_Window::Create_Dummy()
 	}
 
 	m_pDummy = static_cast<CMapDummy*>(pGameInstance->Find_GameObject_In_Layer(LEVEL_TOOL, TEXT("Layer_MapObject"), TEXT("Map_Dummy")));
-
-	/*_float4x4 PivotMatrix = XMMatrixIdentity();
-	if (FAILED(pGameInstance->Add_Prototype_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_Tree"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, 
-			TEXT("../../Resources/Models/NonAnims/Tree/Tree.dat"), PivotMatrix))))
-		return E_FAIL;*/
-
 	m_pDummy->Add_Model_Component(TEXT("Prototype_Component_Model_Tree"));
 	m_pDummy->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMesh")); ENDINSTANCE;
 
@@ -613,9 +614,9 @@ void CObject_Window::Free(void)
 	}
 	m_vecModelList_t.clear();
 
-	for (size_t i = 1; i < m_vecModelPath_t.size(); ++i)
+	for (auto& iter : m_vecModelPath_t)
 	{
-		delete[] m_vecModelPath_t[i];
+		delete[] iter;
 	}
 	m_vecModelPath_t.clear();
 

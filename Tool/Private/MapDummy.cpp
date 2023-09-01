@@ -111,6 +111,8 @@ HRESULT CMapDummy::Change_Model_Component(const _tchar* pPrototypeTag)
 		return E_FAIL;
 	}
 
+	Safe_Release(m_pModel);
+
 	return S_OK;
 }
 
@@ -175,7 +177,6 @@ void CMapDummy::Free()
 	__super::Free();
 	Safe_Release(m_pTransform);
 	Safe_Release(m_pShader);
-	Safe_Release(m_pModel);
 	Safe_Release(m_pModel);
 	Safe_Release(m_pRenderer);
 }
