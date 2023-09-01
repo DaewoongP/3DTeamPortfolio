@@ -169,6 +169,9 @@
     <ClInclude Include="..\Public\CCamera_Point.h" />
     <ClInclude Include="..\public\CCutScene_Camera_Tool.h" />
     <ClInclude Include="..\public\CMain_Camera.h" />
+    <ClInclude Include="..\Public\Dummy_Light.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="..\Public\Light_Window.h" />
     <ClInclude Include="..\Public\stb_image.h" />
     <ClInclude Include="..\Public\Dummy_UI.h" />
@@ -210,6 +213,9 @@
     <ClCompile Include="..\Private\CCamera_Point.cpp" />
     <ClCompile Include="..\private\CCutScene_Camera_Tool.cpp" />
     <ClCompile Include="..\private\CMain_Camera.cpp" />
+    <ClCompile Include="..\Private\Dummy_Light.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\Private\Dummy_UI.cpp" />
     <ClCompile Include="..\Private\Light_Window.cpp" />
     <ClCompile Include="..\Private\UI_Window.cpp" />

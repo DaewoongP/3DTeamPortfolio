@@ -85,6 +85,9 @@
     <Filter Include="01. Window\Window\Light">
       <UniqueIdentifier>{1a991a8d-af21-4d4f-8ec1-97cdc81216c0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. ToolObjects\01. Dummy\Dummy_Light">
+      <UniqueIdentifier>{503ad47d-bb67-4cd6-8503-1b4ce004749c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tool.h">
@@ -204,6 +207,9 @@
     <ClInclude Include="..\Public\Light_Window.h">
       <Filter>01. Window\Window\Light</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Dummy_Light.h">
+      <Filter>02. ToolObjects\01. Dummy\Dummy_Light</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -308,6 +314,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Light_Window.cpp">
       <Filter>01. Window\Window\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Dummy_Light.cpp">
+      <Filter>02. ToolObjects\01. Dummy\Dummy_Light</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

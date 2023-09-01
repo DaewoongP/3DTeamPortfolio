@@ -44,7 +44,7 @@ void CTerrain::Late_Tick(_float fTimeDelta)
 	//m_pBuffer->Culling(m_pTransform->Get_WorldMatrix());
 
 	if (nullptr != m_pRenderer)
-		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONLIGHT, this);
+		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 }
 
 HRESULT CTerrain::Render()
