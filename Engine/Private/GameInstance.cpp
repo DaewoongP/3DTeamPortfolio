@@ -99,13 +99,13 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 
 	m_pObject_Manager->Tick(fTimeDelta);
 
+	m_pPhysX_Manager->Tick(fTimeDelta);
+
 	m_pCamera_Manager->Tick(fTimeDelta);
 
 	m_pPipeLine->Tick();
 
 	m_pFrustum->Tick();
-
-	m_pPhysX_Manager->Tick(fTimeDelta);
 
 	m_pObject_Manager->Late_Tick(fTimeDelta);
 

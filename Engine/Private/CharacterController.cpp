@@ -45,7 +45,7 @@ HRESULT CCharacterController::Initialize(void* pArg)
 	CapsuleControllerDesc.material = pPhysX_Manager->Get_Physics()->createMaterial(0.f, 0.f, 0.f);
 	CapsuleControllerDesc.density = 30.f;
 	CapsuleControllerDesc.isValid();
-	
+
 	m_pController = pControllerManager->createController(CapsuleControllerDesc);
 	
 	Safe_Release(pPhysX_Manager);

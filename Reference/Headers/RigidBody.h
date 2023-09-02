@@ -3,6 +3,7 @@
 
 BEGIN(Engine)
 class CColliderCom;
+class CCharacterController;
 
 class ENGINE_DLL CRigidBody final : public CComponent
 {
@@ -35,6 +36,15 @@ public:
 	void Set_Density(_float _fDensity) const;
 	void Set_CollisionGroup(COLLISIONDESC::COLTYPE eColType);
 	void Set_CollisionIgnoreGroups(COLLISIONDESC::COLTYPE eIgnoreColType);
+	void Set_TransformComponent(CTransform* pTransform) {
+		m_pTransform = pTransform;
+		Safe_AddRef(m_pTransform);
+	}
+	void Set_ControllerComponent(CCharacterController* pController) {
+		m_pController = pController;
+		Safe_AddRef(m_pController);
+	}
+
 	_bool Is_Static()  const { return m_isStatic; }
 	_bool Is_Dynamic()  const { return !m_isStatic; }
 	_bool Is_Kinematic() const { return m_isKinematic; }
@@ -49,7 +59,7 @@ public:
 
 	void Put_To_Sleep() const;
 	void Add_Force(const _float3 & _vForce, PxForceMode::Enum _eMode = PxForceMode::eFORCE, _bool _bAutowake = true) const;
-	void Add_Torque(const PxVec3 & _vTorque, PxForceMode::Enum _eMode = PxForceMode::eFORCE, _bool _bAutowake = true) const;
+	void Add_Torque(const _float3& _vTorque, PxForceMode::Enum _eMode = PxForceMode::eFORCE, _bool _bAutowake = true) const;
 	void Clear_Force(PxForceMode::Enum _eMode = PxForceMode::eFORCE) const;
 	void Clear_Torque(PxForceMode::Enum _eMode = PxForceMode::eFORCE) const;
 
@@ -66,6 +76,8 @@ private:
 	vector<CColliderCom*>	m_Colliders;
 
 private:
+	CTransform*				m_pTransform = { nullptr };
+	CCharacterController*	m_pController = { nullptr };
 	_bool					m_isStatic = { false };
 	_bool					m_isKinematic = { false };
 

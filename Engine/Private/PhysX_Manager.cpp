@@ -58,6 +58,7 @@ HRESULT CPhysX_Manager::Initialize()
 
 	PxRigidBodyExt::updateMassAndInertia(*Actor, 10.0f);
 	m_pPhysxScene->addActor(*Actor);
+
 	shape->release();
 	
 	return S_OK;
@@ -68,12 +69,6 @@ void CPhysX_Manager::Tick(_float fTimeDelta)
 	// fixed time 처리 필요할수도 있음.
 	m_pPhysxScene->simulate(1 / 60.f);
 	m_pPhysxScene->fetchResults(true);
-	
-}
-
-HRESULT CPhysX_Manager::Render()
-{
-	return S_OK;
 }
 
 PxScene* CPhysX_Manager::Create_Scene()

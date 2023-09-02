@@ -1,6 +1,7 @@
 #include "..\Public\RigidBody.h"
 #include "PhysX_Manager.h"
 #include "PhysXConverter.h"
+#include "CharacterController.h"
 
 CRigidBody::CRigidBody(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CComponent(pDevice, pContext)
@@ -99,6 +100,16 @@ HRESULT CRigidBody::Initialize(void* pArg)
 
 void CRigidBody::Tick(_float fTimeDelta)
 {
+	if (nullptr != m_pController)
+	{
+		m_pTransform->Set_Position(m_pController->Get_Position());
+		m_pController->Move(PhysXConverter::ToXMFLOAT3(m_pActor->getLinearVelocity()), fTimeDelta);
+	}
+	else
+	{
+		if (nullptr != m_pTransform)
+			m_pTransform->Set_Position(Get_Position());
+	}
 }
 
 HRESULT CRigidBody::Create_Actor()
@@ -158,13 +169,13 @@ void CRigidBody::Add_Force(const _float3& _vForce, PxForceMode::Enum _eMode, _bo
 	}
 }
 
-void CRigidBody::Add_Torque(const PxVec3& _vTorque, PxForceMode::Enum _eMode, _bool _bAutowake) const
+void CRigidBody::Add_Torque(const _float3& _vTorque, PxForceMode::Enum _eMode, _bool _bAutowake) const
 {
 	if (m_pActor != nullptr &&
 		false == m_isStatic &&
 		false == m_isKinematic)
 	{
-		reinterpret_cast<PxRigidDynamic*>(m_pActor)->addTorque(_vTorque, _eMode, _bAutowake);
+		reinterpret_cast<PxRigidDynamic*>(m_pActor)->addTorque(PhysXConverter::ToPxVec3(_vTorque), _eMode, _bAutowake);
 	}
 }
 
@@ -257,4 +268,7 @@ CComponent* CRigidBody::Clone(void* pArg)
 void CRigidBody::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_pTransform);
+	Safe_Release(m_pController);
 }

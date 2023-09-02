@@ -21,7 +21,6 @@ private:
 public:
 	HRESULT Initialize();
 	void Tick(_float fTimeDelta);
-	HRESULT Render();
 
 private:
 	PxScene* Create_Scene();

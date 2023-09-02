@@ -8,6 +8,7 @@
 #include "Logo_BackGround.h"
 
 #ifdef _DEBUG
+#include "PhysXRender.h"
 #include "Test_Player.h"
 #include "Camera_Debug.h"
 #endif // _DEBUG
@@ -141,22 +142,6 @@ HRESULT CLoader::Loading_For_MainGame()
 		CVIBuffer_Cube::Create(m_pDevice, m_pContext))))
 	{
 		MSG_BOX("Failed Add_Prototype : (Prototype_Component_VIBuffer_Cube)");
-		return E_FAIL;
-	}
-
-	/* For.Prototype_Component_VIBuffer_Line */
-	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Line"),
-		CVIBuffer_Line::Create(m_pDevice, m_pContext))))
-	{
-		MSG_BOX("Failed Add_Prototype : (Prototype_Component_VIBuffer_Line)");
-		return E_FAIL;
-	}
-	
-	/* For.Prototype_Component_VIBuffer_Triangle */
-	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Triangle"),
-		CVIBuffer_Triangle::Create(m_pDevice, m_pContext))))
-	{
-		MSG_BOX("Failed Add_Prototype : (Prototype_Component_VIBuffer_Triangle)");
 		return E_FAIL;
 	}
 
@@ -343,6 +328,14 @@ HRESULT CLoader::Loading_For_MainGame()
 		CTest_Player::Create(m_pDevice, m_pContext))))
 	{
 		MSG_BOX("Failed Add_Prototype : (Prototype_GameObject_Test_Player)");
+		return E_FAIL;
+	}
+
+	/* For.Prototype_GameObject_PhysXRender*/
+	if (FAILED(m_pGameInstance->Add_Prototype_GameObject(TEXT("Prototype_GameObject_PhysXRender"),
+		CPhysXRender::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_GameObject_PhysXRender)");
 		return E_FAIL;
 	}
 #endif // _DEBUG
