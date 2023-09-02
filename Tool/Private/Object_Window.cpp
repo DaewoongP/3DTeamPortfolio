@@ -562,18 +562,17 @@ HRESULT CObject_Window::Save_Model_Path(_uint iType, const _tchar* pFilePath)
 				Deep_Copy_Path(pathresult.c_str());
 
 				// 경로에서 모델 이름 부분만 잘라내는 부분
-				string path = ("../../Resources/Models/NonAnims/");
 				string s = entry.path().string();
 
 				size_t path_length = pathresult.length();
 				size_t current = s.find("NonAnim") + 9;
 
-				// 1차 분리
+				// 1차 분리, 여기서 모델 이름 파일 경로가 나와야 함.
 				string result = s.substr(current, path_length);
 
 				size_t current1 = result.find("\\");
 
-				// 2차 분리 (최종)
+				// 2차 분리, 여기서 모델 이름이 나와야 함
 				string result1 = result.substr(0, current1);
 
 				// 이제 컴포넌트 모델 이름으로 결합
