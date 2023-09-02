@@ -22,10 +22,17 @@ CModel::CModel(const CModel& rhs)
 	, m_Meshes(rhs.m_Meshes)
 	, m_iNumMaterials(rhs.m_iNumMaterials)
 	, m_Materials(rhs.m_Materials)
-	, m_iCurrentAnimIndex(rhs.m_iCurrentAnimIndex)
-	, m_iNumAnimations(rhs.m_iNumAnimations)
 	, m_PivotMatrix(rhs.m_PivotMatrix)
 {
+	for (_uint AnimTypeIndex = 0; AnimTypeIndex < ANIM_END; ++AnimTypeIndex)
+	{
+		m_tAnimationDesc[AnimTypeIndex] = ANIMATIONDESC(rhs.m_tAnimationDesc[AnimTypeIndex]);
+		for (auto& pOriginalAnimation : rhs.m_tAnimationDesc[AnimTypeIndex].Animations)
+		{
+			m_tAnimationDesc[AnimTypeIndex].Animations.push_back(pOriginalAnimation->Clone());
+		}
+	}
+
 	for (auto& pOriginalBone : rhs.m_Bones)
 	{
 		m_Bones.push_back(pOriginalBone->Clone());
@@ -40,11 +47,6 @@ CModel::CModel(const CModel& rhs)
 	{
 		for (auto& pTexture : Material.pMtrlTexture)
 			Safe_AddRef(pTexture);
-	}
-
-	for (auto& pOriginalAnimation : rhs.m_Animations)
-	{
-		m_Animations.push_back(pOriginalAnimation->Clone());
 	}
 }
 
@@ -110,45 +112,45 @@ HRESULT CModel::Render(_uint iMeshIndex)
 	return S_OK;
 }
 
-void CModel::Reset_Animation(_uint iAnimIndex, CTransform* pTransform)
+void CModel::Reset_Animation(_uint iAnimIndex, ANIMTYPE eType, CTransform* pTransform)
 {
-	m_iCurrentAnimIndex = iAnimIndex;
-	m_iPreviousAnimIndex = m_iCurrentAnimIndex;
-	m_isResetAnimTrigger = true;
+	m_tAnimationDesc[eType].iCurrentAnimIndex = iAnimIndex;
+	m_tAnimationDesc[eType].iPreviousAnimIndex = m_tAnimationDesc[eType].iCurrentAnimIndex;
+	m_tAnimationDesc[eType].isResetAnimTrigger = true;
 }
 
-void CModel::Play_Animation(_float fTimeDelta, CTransform* pTransform)
+void CModel::Play_Animation(_float fTimeDelta, ANIMTYPE eType, CTransform* pTransform)
 {
-	if (m_Animations[m_iCurrentAnimIndex]->Invalidate_AccTime(fTimeDelta) || m_isResetAnimTrigger )
+	if (m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Invalidate_AccTime(fTimeDelta) || m_tAnimationDesc[eType].isResetAnimTrigger )
 	{
 		//애니메이션 재생이 다 되면 여기가 실행되는거임.
-		m_Animations[m_iCurrentAnimIndex]->Reset();
-		m_isAnimChangeLerp = true;
-		m_fAnimChangeTimer = ANIMATIONLERPTIME; 
+		m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Reset();
+		m_tAnimationDesc[eType].isAnimChangeLerp = true;
+		m_tAnimationDesc[eType].fAnimChangeTimer = ANIMATIONLERPTIME;
 		m_PostRootMatrix = XMMatrixIdentity();
-		m_isResetAnimTrigger = false;
+		m_tAnimationDesc[eType].isResetAnimTrigger = false;
 	}
 	else if (pTransform != nullptr)
 	{
-		if(m_Animations[m_iCurrentAnimIndex]->Get_RootAnim_State())
+		if(m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Get_RootAnim_State())
 			Do_Root_Animation(pTransform);
 	}
 
 	//노티파이용
-	m_Animations[m_iCurrentAnimIndex]->Invalidate_Frame(fTimeDelta);
+	m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Invalidate_Frame(fTimeDelta);
 
 	//뼈 이동용
-	if (!m_isAnimChangeLerp)
+	if (!m_tAnimationDesc[eType].isAnimChangeLerp)
 	{
-		m_Animations[m_iCurrentAnimIndex]->Invalidate_TransformationMatrix(m_Bones, fTimeDelta);
+		m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Invalidate_TransformationMatrix(m_Bones, fTimeDelta);
 	}
-	else if(m_fAnimChangeTimer >= 0.0)
+	else if(m_tAnimationDesc[eType].fAnimChangeTimer >= 0.0)
 	{
-		m_Animations[m_iCurrentAnimIndex]->Invalidate_TransformationMatrix_Lerp(m_Bones, fTimeDelta, ANIMATIONLERPTIME - m_fAnimChangeTimer,m_iRootBoneIndex);
-		m_fAnimChangeTimer -= fTimeDelta;
+		m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Invalidate_TransformationMatrix_Lerp(m_Bones, fTimeDelta, ANIMATIONLERPTIME - m_tAnimationDesc[eType].fAnimChangeTimer,m_iRootBoneIndex);
+		m_tAnimationDesc[eType].fAnimChangeTimer -= fTimeDelta;
 	}
 	else
-		m_isAnimChangeLerp = false;
+		m_tAnimationDesc[eType].isAnimChangeLerp = false;
 	
 	
 	/* 모델에 표현되어있는 모든 뼈들의 CombinedTransformationMatrix */
@@ -156,7 +158,7 @@ void CModel::Play_Animation(_float fTimeDelta, CTransform* pTransform)
 	
 	for (auto& pBone : m_Bones)
 	{
-		if (m_iRootBoneIndex == pBone->Get_ParentNodeIndex()&& m_Animations[m_iCurrentAnimIndex]->Get_RootAnim_State())
+		if (m_iRootBoneIndex == pBone->Get_ParentNodeIndex()&& m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Get_RootAnim_State())
 		{
 			pBone->Invalidate_CombinedTransformationMatrix_Basic(m_Bones);
 		}
@@ -191,11 +193,11 @@ HRESULT CModel::Find_BoneIndex(const _tchar* pBoneName, _Inout_ _uint* iIndex)
 	return S_OK;
 }
 
-void CModel::Set_CurrentAnimIndex(_uint iIndex)
+void CModel::Set_CurrentAnimIndex(_uint iIndex, ANIMTYPE eType)
 { 
-	m_iCurrentAnimIndex = iIndex;
-	m_isAnimChangeLerp = true;
-	m_fAnimChangeTimer = ANIMATIONLERPTIME;
+	m_tAnimationDesc[eType].iCurrentAnimIndex = iIndex;
+	m_tAnimationDesc[eType].isAnimChangeLerp = true;
+	m_tAnimationDesc[eType].fAnimChangeTimer = ANIMATIONLERPTIME;
 }
 
 void CModel::Do_Root_Animation(CTransform* pTransform)
@@ -605,17 +607,18 @@ HRESULT CModel::Ready_Materials()
 
 HRESULT CModel::Ready_Animations()
 {
-	m_iNumAnimations = m_Model.iNumAnimations;
-
-	for (_uint i = 0; i < m_Model.iNumAnimations; ++i)
+	for (_uint iAnimTypeIndex = 0; iAnimTypeIndex < ANIM_END; iAnimTypeIndex++)
 	{
-		CAnimation* pAnimation = CAnimation::Create(m_AnimationDatas[i], m_Bones);
-		if (nullptr == pAnimation)
-			return E_FAIL;
+		m_tAnimationDesc[iAnimTypeIndex].iNumAnimations = m_Model.iNumAnimations;
+		for (_uint i = 0; i < m_Model.iNumAnimations; ++i)
+		{
+			CAnimation* pAnimation = CAnimation::Create(m_AnimationDatas[i], m_Bones);
+			if (nullptr == pAnimation)
+				return E_FAIL;
 
-		m_Animations.push_back(pAnimation);
+			m_tAnimationDesc[iAnimTypeIndex].Animations.push_back(pAnimation);
+		}
 	}
-
 	return S_OK;
 }
 
@@ -725,10 +728,14 @@ void CModel::Free()
 
 	m_Materials.clear();
 
-	for (auto& pAnimation : m_Animations)
+	for (int i = 0; i < ANIM_END; i++)
 	{
-		Safe_Release(pAnimation);
+		if (m_tAnimationDesc[i].Animations.size() == 0)
+			continue;
+		for (auto& pAnimation : m_tAnimationDesc[i].Animations)
+		{
+			Safe_Release(pAnimation);
+		}
+		m_tAnimationDesc[i].Animations.clear();
 	}
-
-	m_Animations.clear();
 }

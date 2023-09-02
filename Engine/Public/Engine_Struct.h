@@ -48,6 +48,32 @@ namespace Engine
 		wchar_t wszSoundTag[MAX_PATH] = {};
 	}SOUNDFRAME;
 
+	typedef struct tagAnimationDesc 
+	{
+		explicit tagAnimationDesc() {};
+		explicit tagAnimationDesc(const tagAnimationDesc& rhs)
+		{
+			iPreviousAnimIndex = rhs.iPreviousAnimIndex;
+			iCurrentAnimIndex = rhs.iCurrentAnimIndex;
+			iNumAnimations = rhs.iNumAnimations;
+			isResetAnimTrigger = rhs.isResetAnimTrigger;
+			isAnimChangeLerp = rhs.isAnimChangeLerp;
+			fAnimChangeTimer = rhs.fAnimChangeTimer;
+		}
+
+		/* Basic Action*/
+		_uint							iPreviousAnimIndex = { 0 };
+		_uint							iCurrentAnimIndex = { 0 };
+		_uint							iNumAnimations = { 0 };
+		vector<class CAnimation*>		Animations;
+		_bool							isResetAnimTrigger = { false };
+
+		/* For Lerp*/
+		_bool							isAnimChangeLerp = { false };
+		_float							fAnimChangeTimer = { 0.f };
+
+	}ANIMATIONDESC;
+
 	/*typedef struct tagColliderFrame
 	{
 		Collider* pCollider = { nullptr	};
