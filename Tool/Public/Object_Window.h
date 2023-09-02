@@ -8,9 +8,9 @@ class CMapObject;
 
 class CObject_Window final : public CImWindow
 {
+		//_float4x4 matTransform; // 상태 행렬
 	typedef struct SaveObjectDesc
 	{
-		//_float4x4 matTransform; // 상태 행렬
 		_float3 vPos; // 위치 값
 		_uint iTagLen; // 문자열 길이
 		_tchar wszTag[MAX_PATH]; // 오브젝트 종류(모델 컴포넌트 이름)
@@ -26,6 +26,7 @@ public:
 	virtual HRESULT Render() override;
 
 private:
+	// 메뉴 모음
 	void Picking_Menu(); // 피킹 메뉴
 	void Install_Object(_float3 vPos); // 오브젝트 설치 메뉴
 	void Select_Model(); // 모델 선택 메뉴
@@ -49,7 +50,7 @@ private:
 	_bool m_isSelectModel = { false };
 	_bool m_isCurrentMapObject = { false };
 	_bool m_isSaveLoad = { false };
-	_bool m_isInstallObject = { false };
+	_bool m_isInstallObject = { true };
 
 	CMapDummy* m_pDummy = { nullptr }; // 생성해둔 Dummy의 주소
 	CMapObject* m_pObject = { nullptr }; // 설치할 MapObject의 주소

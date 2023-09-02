@@ -42,7 +42,7 @@ void CObject_Window::Tick(_float fTimeDelta)
 		Picking_Menu();
 	}
 
-	ImGui::Text("----------------------------------------");
+	ImGui::Separator();
 
 	// Model 선택 창 On / Off
 	ImGui::Checkbox("Model Select", &m_isSelectModel);
@@ -51,7 +51,7 @@ void CObject_Window::Tick(_float fTimeDelta)
 		Select_Model();
 	}
 
-	ImGui::Text("----------------------------------------");
+	ImGui::Separator();
 
 	// 현재 설치되어 있는 맵 오브젝트 창 On / Off
 	ImGui::Checkbox("Current MapObject", &m_isCurrentMapObject);
@@ -62,7 +62,7 @@ void CObject_Window::Tick(_float fTimeDelta)
 		ImGui::End();
 	}
 
-	ImGui::Text("----------------------------------------");
+	ImGui::Separator();
 
 	// Save Load 선택 창 On / Off
 	ImGui::Checkbox("Save Load", &m_isSaveLoad);
@@ -71,7 +71,7 @@ void CObject_Window::Tick(_float fTimeDelta)
 		Save_Load_Menu();
 	}
 
-	ImGui::Text("----------------------------------------");
+	ImGui::Separator();
 
 	ImGui::End();
 }
@@ -93,7 +93,7 @@ void CObject_Window::Picking_Menu()
 	ImGui::Text("%.1f /", vPos.y);
 	ImGui::SameLine();
 	ImGui::Text("%.1f", vPos.z);
-	ImGui::Text("----------------------------------------");
+	ImGui::Separator();
 
 	// 마우스 좌클릭을 하면 해당 위치로 더미 이동
 	BEGININSTANCE; if (true == pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN) &&
@@ -219,7 +219,6 @@ void CObject_Window::Select_Model()
 	}
 
 	// 선택된 모델을 적용
-	static _bool bCheckModel = { false };
 	if (ImGui::Button("SelectModel"))
 	{
 		if (FAILED(m_pDummy->Change_Model_Component(m_vecModelList_t.at(m_iModelIndex))))
@@ -266,7 +265,7 @@ void CObject_Window::Save_Load_Menu()
 
 HRESULT CObject_Window::Save_MapObject()
 {
-	_tchar dataFile[MAX_PATH] = TEXT("../../Resources/MapData/MapObject.dat");
+	_tchar dataFile[MAX_PATH] = TEXT("../../Resources/MapData/MapObject.ddd");
 
 	HANDLE hFile = CreateFile(dataFile, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
 	if (INVALID_HANDLE_VALUE == hFile)
@@ -299,7 +298,7 @@ HRESULT CObject_Window::Load_MapObject()
 {
 	m_vecSaveObject.clear();
 
-	_tchar dataFile[MAX_PATH] = TEXT("../../Resources/MapData/MapObject.dat");
+	_tchar dataFile[MAX_PATH] = TEXT("../../Resources/MapData/MapObject.ddd");
 
 	HANDLE hFile = CreateFile(dataFile, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
