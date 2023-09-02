@@ -17,17 +17,14 @@ HRESULT CObject_Window::Initialize(ImVec2 vWindowPos, ImVec2 vWindowSize)
 	if (FAILED(__super::Initialize(vWindowPos, vWindowSize)))
 		return E_FAIL;
 
+	// 0이 Non_Anim이다.
+	if (FAILED(Save_Model_Path(0, TEXT("../../Resources/Models/NonAnims/"))))
+		return E_FAIL;
+
 	if (FAILED(Create_Dummy()))
 		return E_FAIL;
 
 	m_WindowFlag = ImGuiWindowFlags_NoResize;
-
-	// 가장 처음 요소 하나(더미) 넣어줌
-	// 지금은 더미 모델을 Tree로 해뒀지만 
-	// 나중에 적당한 모델 찾아서 대체해야 한다.
-	m_vecModelList.push_back(m_strCurrentModel);
-	Deep_Copy_Name();
-	m_vecModelPath_t.push_back(TEXT("../../Resources/Models/NonAnims/Tree/Tree.dat"));
 
 	return S_OK;
 }
@@ -41,6 +38,8 @@ void CObject_Window::Tick(_float fTimeDelta)
 	// 메뉴 On Off static _bool 변수 모음
 	static _bool bCheckPicking = { false };
 	static _bool bSelectModel = { false };
+	static _bool bCurrentMapObject = { false };
+	static _bool bSaveLoad = { false };
 
 	// Picking 창 On / Off
 	ImGui::Checkbox("Picking", &bCheckPicking);
@@ -49,12 +48,36 @@ void CObject_Window::Tick(_float fTimeDelta)
 		Picking_Menu();
 	}
 
+	ImGui::Text("----------------------------------------");
+
 	// Model 선택 창 On / Off
 	ImGui::Checkbox("Model Select", &bSelectModel);
 	if (true == bSelectModel)
 	{
 		Select_Model();
 	}
+
+	ImGui::Text("----------------------------------------");
+
+	// 현재 설치되어 있는 맵 오브젝트 창 On / Off
+	ImGui::Checkbox("Current MapObject", &bCurrentMapObject);
+	if (true == bCurrentMapObject)
+	{
+		ImGui::Begin("Current MapObject", nullptr);
+		Current_MapObject();
+		ImGui::End();
+	}
+
+	ImGui::Text("----------------------------------------");
+
+	// Save Load 선택 창 On / Off
+	ImGui::Checkbox("Save Load", &bSaveLoad);
+	if (true == bSaveLoad)
+	{
+		Save_Load_Menu();
+	}
+
+	ImGui::Text("----------------------------------------");
 
 	ImGui::End();
 }
@@ -70,6 +93,7 @@ void CObject_Window::Picking_Menu()
 
 	// 현재 피킹 위치 표시
 	ImGui::Text("Picking Position");
+	ImGui::Text("Pressing LShift : Rounding the value");
 	ImGui::Text("%.1f /", vPos.x);
 	ImGui::SameLine();
 	ImGui::Text("%.1f /", vPos.y);
@@ -81,11 +105,24 @@ void CObject_Window::Picking_Menu()
 	BEGININSTANCE; if (true == pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN) &&
 		-1.f != vPos.x)
 	{
-		m_pDummy->Set_Pos(vPos);
+		// shift키를 누르고 있으면 격자에 딱 맞게 위치가 반올림됨
+		if (true == pGameInstance->Get_DIKeyState(DIK_LSHIFT, CInput_Device::KEY_PRESSING))
+		{
+			vPos.x = round(vPos.x);
+			vPos.y = round(vPos.y);
+			vPos.z = round(vPos.z);
+
+			m_pDummy->Set_Pos(vPos);
+		}
+
+		else
+		{
+			m_pDummy->Set_Pos(vPos);
+		}		
 	} ENDINSTANCE;
 
 	// 메뉴 On Off static _bool 변수 모음
-	static _bool bInstallObject = { false };
+	static _bool bInstallObject = { true };
 
 	// Object Install 선택 창 On / Off
 	ImGui::Checkbox("Object Install", &bInstallObject);
@@ -108,9 +145,10 @@ void CObject_Window::Install_Object(_float3 vPos)
 		_stprintf_s(wszobjName, TEXT("GameObject_MapObject_%d"), (m_iMapObjectIndex));
 		Deep_Copy_Tag(wszobjName);
 
+		// 번호를 붙인 태그로 MapObject 등록
 		if (FAILED(pGameInstance->Add_GameObject(LEVEL_TOOL,
 			TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_MapObject"), 
-			m_vecMapObjectTag_t.at(m_iMapObjectIndex), &vPos)))
+			m_vecMapObjectTag.at(m_iMapObjectIndex).c_str(), &vPos)))
 		{
 			MSG_BOX("Failed to Install MapObject");
 			ENDINSTANCE;
@@ -124,28 +162,37 @@ void CObject_Window::Install_Object(_float3 vPos)
 		m_pObject->Add_Model_Component(m_vecModelList_t.at(m_iModelIndex));
 		m_pObject->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMesh"));
 
+		// 저장용 벡터에 넣어준다.
+		SAVEOBJECTDESC SaveDesc;
+
+		SaveDesc.vPos = vPos;
+		lstrcpy(SaveDesc.wszTag, m_vecModelList_t.at(m_iModelIndex));
+		SaveDesc.iTagLen = lstrlen(SaveDesc.wszTag) * 2;
+
+		m_vecSaveObject.push_back(SaveDesc);
+
 		++m_iMapObjectIndex;
 
 	} ENDINSTANCE;
-
-	ImGui::Text("----------------------------------------");
 }
 
 void CObject_Window::Select_Model()
 {
 	// 현재 선택된 모델이 무엇인지 표시
-	ImGui::Text("Current Model");
-	ImGui::Text(":");
+	ImGui::TextColored(ImVec4(1, 0, 0, 1), "Current Model");
+	ImGui::TextColored(ImVec4(1, 0, 0, 1), ":");
 	ImGui::SameLine();
-	ImGui::Text(m_strCurrentModel.c_str());
+	ImGui::TextColored(ImVec4(1, 0, 0, 1), m_strCurrentModel.c_str());
 
 	// 모델 선택
-	ImGui::ListBox("ModelList", &m_iModelIndex, VectorGetter, static_cast<void*>(&m_vecModelList), (_int)m_vecModelList.size(), 15);
+	ImGui::ListBox("ModelList", &m_iModelIndex, VectorGetter, 
+		static_cast<void*>(&m_vecModelList), (_int)m_vecModelList.size(), 15);
 
 	// open Dialog Simple
 	// 모델을 골라 프로토타입 만들어주는 부분
 	if (ImGui::Button("Open File Dialog"))
-		ImGuiFileDialog::Instance()->OpenDialog("ChooseModel", "Choose File", ".dat", "../../Resources/Models/");
+		ImGuiFileDialog::Instance()->OpenDialog("ChooseModel", "Choose File", ".dat",
+			"../../Resources/Models/NonAnims/");
 
 	// display
 	if (ImGuiFileDialog::Instance()->Display("ChooseModel"))
@@ -174,7 +221,6 @@ void CObject_Window::Select_Model()
 
 			m_vecModelList.push_back(m_strCurrentModel);
 			Deep_Copy_Name();
-			Deep_Copy_Path(wszfilePath);
 		}
 
 		// close
@@ -185,30 +231,184 @@ void CObject_Window::Select_Model()
 	static _bool bCheckModel = { false };
 	if (ImGui::Button("SelectModel"))
 	{
-		// 기존에 깊은 복사로 저장해뒀던 문자열들을 가지고 프로토타입 생성
-		_float4x4 PivotMatrix = XMMatrixIdentity();
-		BEGININSTANCE; if (FAILED(pGameInstance->Add_Prototype_Component(LEVEL_TOOL, m_vecModelList_t.at(m_iModelIndex),
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, m_vecModelPath_t.at(m_iModelIndex), PivotMatrix))))
-		{
-			MSG_BOX("Failed to Create New Model Prototype");
-		} ENDINSTANCE;
-
 		if (FAILED(m_pDummy->Change_Model_Component(m_vecModelList_t.at(m_iModelIndex))))
 		{
 			MSG_BOX("Failed to Change Model");
 			return;
 		}
-	}
 
-	ImGui::Text("----------------------------------------");
+		CModel* pDummyModel = static_cast<CModel*>(m_pDummy->Find_Component(TEXT("Com_Buffer")));
+
+		// 현재 선택된 모델 이름 갱신
+		_char szName[MAX_PATH];
+		WCharToChar(m_vecModelList_t.at(m_iModelIndex), szName);
+		m_strCurrentModel.clear();
+		m_strCurrentModel.append(szName);
+	}
 }
 
-void CObject_Window::Deep_Copy_Name()
+void CObject_Window::Current_MapObject()
 {
-	// 모델 이름을 const _tchar* 형태로 깊은 복사
-	size_t length = m_strCurrentModel.size();
+	// 설치되어 있는 오브젝트 리스트
+	ImGui::ListBox("Map Object List", &m_iTagIndex, VectorGetter,
+		static_cast<void*>(&m_vecObjectTag_s), (_int)m_vecObjectTag_s.size(), 20);
+}
 
-	wstring ws (m_strCurrentModel.begin(), m_strCurrentModel.end());
+void CObject_Window::Save_Load_Menu()
+{
+	// 세이브 버튼 처리
+	if (ImGui::Button("Save"))
+	{
+		if (FAILED(Save_MapObject()))
+			MSG_BOX("Failed to Save MapObject on Menu");
+	}
+
+	ImGui::SameLine();
+
+	// 로드 버튼 처리
+	if (ImGui::Button("Load"))
+	{
+		if (FAILED(Load_MapObject()))
+			MSG_BOX("Failed to Load MapObject on Menu");
+	}
+}
+
+HRESULT CObject_Window::Save_MapObject()
+{
+	_tchar dataFile[MAX_PATH] = TEXT("../../Resources/MapData/MapObject.dat");
+
+	HANDLE hFile = CreateFile(dataFile, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+	if (INVALID_HANDLE_VALUE == hFile)
+	{
+		MSG_BOX("Failed to Create MapObject File for Save MapObject");
+	}
+
+	DWORD	dwByte = 0;
+
+	for (auto& iter : m_vecSaveObject)
+	{
+		if (!WriteFile(hFile, &iter.vPos, sizeof(_float3), &dwByte, nullptr))
+			MSG_BOX("Failed to Write m_vecSaveObject.vPos");
+
+		if (!WriteFile(hFile, &iter.iTagLen, sizeof(_uint), &dwByte, nullptr))
+			MSG_BOX("Failed to Write m_vecSaveObject.iTagLen");
+
+		if (!WriteFile(hFile, &iter.wszTag, iter.iTagLen, &dwByte, nullptr))
+			MSG_BOX("Failed to Write m_vecSaveObject.wszTag");
+	}
+
+	MSG_BOX("Save Success");
+
+	CloseHandle(hFile);
+
+	return S_OK;
+}
+
+HRESULT CObject_Window::Load_MapObject()
+{
+	m_vecSaveObject.clear();
+
+	_tchar dataFile[MAX_PATH] = TEXT("../../Resources/MapData/MapObject.dat");
+
+	HANDLE hFile = CreateFile(dataFile, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+	{
+		MSG_BOX("Failed to Create MapObject File for Load MapObject");
+	}
+
+	DWORD	dwByte = 0;
+	SAVEOBJECTDESC SaveDesc;
+	ZEROMEM(&SaveDesc);
+
+	while (true)
+	{
+		if (!ReadFile(hFile, &SaveDesc.vPos, sizeof(_float3), &dwByte, nullptr))
+			MSG_BOX("Failed to Read m_vecSaveObject.vPos");
+
+		if (!ReadFile(hFile, &SaveDesc.iTagLen, sizeof(_uint), &dwByte, nullptr))
+			MSG_BOX("Failed to Read m_vecSaveObject.iTagLen");
+
+		if (!ReadFile(hFile, &SaveDesc.wszTag, SaveDesc.iTagLen, &dwByte, nullptr))
+			MSG_BOX("Failed to Read m_vecSaveObject.wszTag");
+
+		if (dwByte == 0)
+		{
+			break;
+		}
+
+		m_vecSaveObject.push_back(SaveDesc);
+	}
+
+	MSG_BOX("Load Successed");
+
+	CloseHandle(hFile);
+
+	// 로드한 데이터를 적용시켜 주는 부분
+	for (size_t i = 0; i < m_vecSaveObject.size(); i++)
+	{
+		_uint iCount = 0;
+
+		// m_vecModelList_t를 순회하며 중복되는 문자열이 있는지 체크
+		for (auto& iter : m_vecModelList_t)
+		{
+			if (0 == lstrcmp(iter, m_vecSaveObject[i].wszTag))
+			{
+				++iCount;
+			}
+		}
+
+		// 중복되는 문자열이 없다면 m_vecModelList_t에 모델 이름 삽입
+		if (0 == iCount) 
+		{
+			m_vecModelList_t.push_back(Deep_Copy(m_vecSaveObject[i].wszTag));
+		}
+
+		// 맵 오브젝트에 번호 붙여줌
+		_tchar wszobjName[MAX_PATH] = { 0 };
+		_stprintf_s(wszobjName, TEXT("GameObject_MapObject_%d"), (m_iMapObjectIndex));
+		Deep_Copy_Tag(wszobjName);
+
+		// 번호를 붙인 태그로 MapObject 등록
+		BEGININSTANCE if (FAILED(pGameInstance->Add_GameObject(LEVEL_TOOL,
+			TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_MapObject"),
+			m_vecMapObjectTag.at(m_iMapObjectIndex).c_str(), &m_vecSaveObject[i].vPos)))
+		{
+			MSG_BOX("Failed to Install MapObject");
+			ENDINSTANCE;
+			return E_FAIL;
+		} ENDINSTANCE;
+
+		// 마지막에 설치한 맵 오브젝트 주소 가져옴
+		m_pObject = static_cast<CMapObject*>(pGameInstance->Find_GameObject_In_Layer(LEVEL_TOOL,
+			TEXT("Layer_MapObject"), wszobjName));
+
+		m_pObject->Add_Model_Component(m_vecSaveObject[i].wszTag);
+		m_pObject->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMesh"));
+
+		++m_iMapObjectIndex;
+	}	
+
+	return S_OK;
+}
+
+void CObject_Window::Deep_Copy_Name(const _tchar* wszName)
+{
+	size_t length = 0;
+	wstring ws;
+
+	// 모델 이름을 const _tchar* 형태로 깊은 복사
+	if (nullptr != wszName)
+	{
+		length = wcslen(wszName);
+		ws.append(wszName);
+	}
+
+	else
+	{
+		length = m_strCurrentModel.size();
+		ws.append(m_strCurrentModel.begin(), m_strCurrentModel.end());
+	}
 
 	_tchar* wszNew = new _tchar[length + 1];
 
@@ -236,25 +436,70 @@ void CObject_Window::Deep_Copy_Path(const _tchar* wszPath)
 		return;
 	}
 
-	m_vecModelPath_t.push_back(wszNew);
+	_uint iCount = 0;
+
+	for (auto& iter : m_vecModelPath_t)
+	{
+		// 중복되는 문자열이 있을 경우 증가
+		if (0 == lstrcmp(wszNew, iter))
+		{
+			++iCount;
+		}
+	}
+	
+	// 중복이라면 저장하지 않는다.
+	if (0 == iCount)
+	{
+		m_vecModelPath_t.push_back(wszNew);
+	}
+
+	else
+	{
+		delete[] wszNew;
+	}		
 }
 
 void CObject_Window::Deep_Copy_Tag(const _tchar* wszTag)
 {
+	m_vecMapObjectTag.push_back(wszTag);
+
 	// 맵 오브젝트 경로를 const _tchar* 형태로 깊은 복사
 	size_t length = wcslen(wszTag);
 
-	wstring ws(wszTag);
+	char c[MAX_PATH] = "";;
+	WCharToChar(wszTag, c);
 
-	_tchar* wszNew = new _tchar[length + 1];
+	string s(c);
 
-	if (0 != wcscpy_s(wszNew, length + 1, ws.c_str()))
+	m_vecObjectTag_s.push_back(s);
+
+	/*_char* wszNew = new _char[length + 1];
+
+	if (0 != strcpy_s(wszNew, length + 1, s.c_str()))
 	{
 		MSG_BOX("Falied to Deep Copy(Tag)");
 		return;
 	}
 
-	m_vecMapObjectTag_t.push_back(wszNew);
+	m_vecObjectTag_s.push_back(wszNew);*/
+}
+
+const _tchar* CObject_Window::Deep_Copy(const _tchar* wszString)
+{
+	// 맵 오브젝트 경로를 const _tchar* 형태로 깊은 복사
+	size_t length = wcslen(wszString);
+
+	wstring ws(wszString);
+
+	_tchar* wszNew = new _tchar[length + 1];
+
+	if (0 != wcscpy_s(wszNew, length + 1, ws.c_str()))
+	{
+		MSG_BOX("Falied to Deep Copy(String)");
+		return nullptr;
+	}
+
+	return wszNew;
 }
 
 _float3 CObject_Window::Find_PickingPos()
@@ -301,16 +546,77 @@ HRESULT CObject_Window::Create_Dummy()
 	}
 
 	m_pDummy = static_cast<CMapDummy*>(pGameInstance->Find_GameObject_In_Layer(LEVEL_TOOL, TEXT("Layer_MapObject"), TEXT("Map_Dummy")));
-
-	_float4x4 PivotMatrix = XMMatrixIdentity();
-
-	if (FAILED(pGameInstance->Add_Prototype_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_Tree"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, 
-			TEXT("../../Resources/Models/NonAnims/Tree/Tree.dat"), PivotMatrix))))
-		return E_FAIL;
-
 	m_pDummy->Add_Model_Component(TEXT("Prototype_Component_Model_Tree"));
 	m_pDummy->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMesh")); ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CObject_Window::Save_Model_Path(_uint iType, const _tchar* pFilePath)
+{
+	// 디렉토리 경로를 순회할 iterator
+	fs::directory_iterator iter(fs::absolute(pFilePath));
+
+	while (iter != fs::end(iter))
+	{
+		// 실제 디렉토리 경로를 담고있는 변수 (iterator의 원본)
+		const fs::directory_entry& entry = *iter;
+
+		// 현재 entry 변수가 디렉토리인지 확인 후 디렉토리이면 재귀
+		if (fs::is_directory(entry.path()))
+		{
+			Save_Model_Path(0, entry.path().c_str());
+		}
+		else
+		{
+			// fbx파일 체크
+			if (!lstrcmp(entry.path().extension().c_str(), TEXT(".fbx")) ||
+				!lstrcmp(entry.path().extension().c_str(), TEXT(".FBX")))
+			{
+				// .fbx를 .dat로 변경
+				size_t _dat = entry.path().string().find(".");
+				wstring pathresult = entry.path().wstring().substr(0, _dat);
+				wstring datext = TEXT(".dat");
+				pathresult += datext;
+
+				Deep_Copy_Path(pathresult.c_str());
+
+				// C:\Users\micro\3DTeamPortfolio\Resources\Models\NonAnims\Tree\Tree.FBX
+				// 경로에서 모델 이름 부분만 잘라내는 부분
+				string path = ("C:/Users/micro/3DTeamPortfolio/Resources/Models/NonAnims/");
+				string s = entry.path().string();
+
+				size_t path_length = path.length();
+				size_t current = s.find("\\", path_length);
+
+				// 1차 분리
+				string result = s.substr(path_length, current);
+
+				size_t current1 = result.find("\\");
+
+				// 2차 분리 (최종)
+				string result1 = result.substr(0, current1);
+
+				// 이제 컴포넌트 모델 이름으로 결합
+				string modelname = ("Prototype_Component_Model_");
+				modelname += result1;
+				m_vecModelList.push_back(modelname);
+
+				wstring wmodelname(modelname.begin(), modelname.end());
+				Deep_Copy_Name(wmodelname.c_str());
+
+				// 프로토타입 생성
+				_float4x4 PivotMatrix = XMMatrixIdentity();
+				BEGININSTANCE; if (FAILED(pGameInstance->Add_Prototype_Component(LEVEL_TOOL, m_vecModelList_t.back(),
+					CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, m_vecModelPath_t.back(), PivotMatrix))))
+				{
+					MSG_BOX("Failed to Create New Model Prototype");
+				} ENDINSTANCE;
+			}
+		}
+
+		iter++;
+	}
 
 	return S_OK;
 }
@@ -340,15 +646,12 @@ void CObject_Window::Free(void)
 	}
 	m_vecModelList_t.clear();
 
-	for (size_t i = 1; i < m_vecModelPath_t.size(); ++i)
-	{
-		delete[] m_vecModelPath_t[i];
-	}
-	m_vecModelPath_t.clear();
-
-	for (auto& iter : m_vecMapObjectTag_t)
+	for (auto& iter : m_vecModelPath_t)
 	{
 		delete[] iter;
 	}
-	m_vecMapObjectTag_t.clear();
+	m_vecModelPath_t.clear();
+
+	m_vecObjectTag_s.clear();
+	m_vecMapObjectTag.clear();
 }
