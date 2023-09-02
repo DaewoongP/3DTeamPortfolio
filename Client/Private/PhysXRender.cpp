@@ -96,6 +96,7 @@ HRESULT CPhysXRender::Add_Components()
 	CVIBuffer_Line::LINEDESC LineDesc;
 	ZEROMEM(&LineDesc);
 	LineDesc.iNum = pBuffer->getNbLines();
+
 	const PxDebugLine* pLines = pBuffer->getLines();
 	vector<_float3> Lines;
 	for (_uint i = 0; i < LineDesc.iNum; ++i)

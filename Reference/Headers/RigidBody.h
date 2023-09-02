@@ -1,11 +1,17 @@
 #pragma once
-#include "Component.h"
+#include "Composite.h"
 
 BEGIN(Engine)
 class CColliderCom;
 class CCharacterController;
 
-class ENGINE_DLL CRigidBody final : public CComponent
+#ifdef _DEBUG
+class CShader;
+class CVIBuffer_Line;
+class CVIBuffer_Triangle;
+#endif // _DEBUG
+
+class ENGINE_DLL CRigidBody final : public CComposite
 {
 public:
 	enum RigidBodyConstraint
@@ -22,15 +28,26 @@ public:
 		AllTrans = TransX | TransY | TransZ,
 		All = AllRot | AllTrans
 	};
+
+	enum SHAPE { SHAPE_SPHERE, SHAPE_CAPSULE, SHAPE_BOX, SHAPE_END };
+
+	typedef struct tagRigidBodyDesc
+	{
+		SHAPE	eShape;
+
+	}RIGIDBODYDESC;
+
 private:
 	explicit CRigidBody(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CRigidBody(const CRigidBody& rhs);
 	virtual ~CRigidBody() = default;
 
 public:
+	const PxMaterial* Get_Material() const { return m_pMaterial; }
 	PxRigidBody* Get_RigidBodyActor() const;
 	_float3 Get_Position() const;
 	_float4 Get_Rotation() const;
+	void Set_Material(_float3 vMaterial);
 	void Set_Constraint(RigidBodyConstraint eConstraintFlag, _bool _isEnable);
 	void Set_Kinematic(_bool _isKinematic);
 	void Set_Density(_float _fDensity) const;
@@ -52,6 +69,11 @@ public:
 public:
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;
+	virtual void Late_Tick(_float fTimeDelta) override;
+
+#ifdef _DEBUG
+	virtual HRESULT Render() override;
+#endif // _DEBUG
 
 public:
 	HRESULT Create_Actor();
@@ -71,6 +93,8 @@ private:
 	PxD6Joint*				m_pConstraintJoint = { nullptr };
 	PxFilterData			m_CollisionGroups;
 	_uint					m_InitialConstraints = { 0 };
+	PxMaterial*				m_pMaterial = { nullptr };
+	PxScene*				m_pScene = { nullptr };
 
 private:
 	vector<CColliderCom*>	m_Colliders;
@@ -80,6 +104,25 @@ private:
 	CCharacterController*	m_pController = { nullptr };
 	_bool					m_isStatic = { false };
 	_bool					m_isKinematic = { false };
+
+#ifdef _DEBUG
+private:
+	CShader*				m_pShader = { nullptr };
+	CVIBuffer_Line*			m_pLine = { nullptr };
+	CVIBuffer_Triangle*		m_pTriangle = { nullptr };
+
+private:
+	_uint					m_iNumLineBuffer = { 0 };
+	_uint					m_iNumTriangleBuffer = { 0 };
+#endif // _DEBUG
+
+
+#ifdef _DEBUG
+private:
+	HRESULT Add_Components();
+	HRESULT SetUp_ShaderResources();
+	void Make_Buffers();
+#endif // _DEBUG
 
 public:
 	static CRigidBody* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);

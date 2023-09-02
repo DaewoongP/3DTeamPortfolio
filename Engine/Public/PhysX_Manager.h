@@ -13,6 +13,9 @@ public:
 	PxPhysics* Get_Physics() const { return m_pPhysics; }
 	PxScene* Get_PhysxScene() const { return m_pPhysxScene; }
 	PxControllerManager* Get_ControllerManager() const { return m_pControllerManager; }
+	const PxRenderBuffer* Get_RenderBuffer();
+	_uint Get_LastLineBufferIndex();
+	_uint Get_LastTriangleBufferIndex();
 
 private:
 	explicit CPhysX_Manager() = default;
@@ -37,7 +40,11 @@ private:
 private:
 	PxScene*					m_pPhysxScene = { nullptr };
 	PxControllerManager*		m_pControllerManager = { nullptr };
-	PxRigidDynamic* Actor;
+	PxRigidDynamic*				Actor;
+
+private:
+	_uint						m_iLastLineBufferIndex = { 0 };
+	_uint						m_iLastTriangleBufferIndex = { 0 };
 
 public:
 	virtual void Free() override;

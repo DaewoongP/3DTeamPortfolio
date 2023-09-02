@@ -1,15 +1,16 @@
 #include "..\Public\RigidBody.h"
+#include "PipeLine.h"
 #include "PhysX_Manager.h"
 #include "PhysXConverter.h"
 #include "CharacterController.h"
 
 CRigidBody::CRigidBody(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CComponent(pDevice, pContext)
+	: CComposite(pDevice, pContext)
 {
 }
 
 CRigidBody::CRigidBody(const CRigidBody& rhs)
-	: CComponent(rhs)
+	: CComposite(rhs)
 {
 }
 
@@ -40,6 +41,17 @@ _float4 CRigidBody::Get_Rotation() const
 	}
 	
 	return _float4(vPose.q.x, vPose.q.y, vPose.q.z, vPose.q.w);
+}
+
+void CRigidBody::Set_Material(_float3 vMaterial)
+{
+	m_pMaterial->release();
+	CPhysX_Manager* pPhysX_Manager = CPhysX_Manager::GetInstance();
+	Safe_AddRef(pPhysX_Manager);
+
+	PxPhysics* pPhysX = pPhysX_Manager->Get_Physics();
+	m_pMaterial = pPhysX->createMaterial(vMaterial.x, vMaterial.y, vMaterial.z);
+	Safe_Release(pPhysX_Manager);
 }
 
 void CRigidBody::Set_Constraint(RigidBodyConstraint eConstraintFlag, _bool _isEnable)
@@ -94,6 +106,10 @@ HRESULT CRigidBody::Initialize(void* pArg)
 	if (FAILED(Create_Actor()))
 		return E_FAIL;
 
+#ifdef _DEBUG
+	if (FAILED(Add_Components()))
+		return E_FAIL;
+#endif // _DEBUG
 
 	return S_OK;
 }
@@ -112,30 +128,55 @@ void CRigidBody::Tick(_float fTimeDelta)
 	}
 }
 
+void CRigidBody::Late_Tick(_float fTimeDelta)
+{
+	Make_Buffers();
+}
+
+#ifdef _DEBUG
+HRESULT CRigidBody::Render()
+{
+	if (FAILED(SetUp_ShaderResources()))
+		return E_FAIL;
+
+	if (FAILED(m_pShader->Begin("Debug")))
+		return E_FAIL;
+
+	if (FAILED(m_pLine->Render()))
+		return E_FAIL;
+
+	if (FAILED(m_pTriangle->Render()))
+		return E_FAIL;
+
+	return S_OK;
+}
+#endif // _DEBUG
+
 HRESULT CRigidBody::Create_Actor()
 {
 	CPhysX_Manager* pPhysX_Manager = CPhysX_Manager::GetInstance();
 	Safe_AddRef(pPhysX_Manager);
 	PxPhysics* pPhysX = pPhysX_Manager->Get_Physics();
-	PxScene* pPhysxScene = pPhysX_Manager->Get_PhysxScene();
-
+	m_pScene = pPhysX_Manager->Get_PhysxScene();
+	m_pScene->simulate(1 / 60.f);
+	m_pScene->fetchResults(true);
 	Safe_Release(pPhysX_Manager);
-
-	PxShape* shape = pPhysX->createShape(PxCapsuleGeometry(1.f, 1.f), *pPhysX->createMaterial(0.5f, 0.5f, 0.5f), false, PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSIMULATION_SHAPE);
 
 	PxVec3 tr = PxVec3(-2.f, 20.f, 5.f);
 	PxTransform localTm(tr);
 	m_pActor = pPhysX->createRigidDynamic(localTm);
-	shape->setLocalPose(PxTransformFromSegment(PxVec3(0.f, 1.f, 0.f), PxVec3(0.f, -1.f, 0.f)));
-	m_pActor->attachShape(*shape);
-	
-	PxShape* boxshape = pPhysX->createShape(PxBoxGeometry(1.f, 1.f, 1.f), *pPhysX->createMaterial(1.f, 0.5f, 0.f), false, PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSIMULATION_SHAPE);
 
+	m_pMaterial = pPhysX->createMaterial(0.f, 0.f, 0.f);
+	PxShape* boxshape = pPhysX->createShape(PxCapsuleGeometry(1.f, 1.f), *m_pMaterial, false, PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSIMULATION_SHAPE);
+
+	PxTransform relativePose(PxQuat(PxHalfPi, PxVec3(0, 0, 1)));
+	boxshape->setLocalPose(relativePose);
+
+	m_pActor->setMaxLinearVelocity(10.f);
 	m_pActor->attachShape(*boxshape);
-	m_pActor->setMass(50.f);
-	pPhysxScene->addActor(*m_pActor);
-	shape->release();
-	
+	m_pActor->setMass(10.f);
+	m_pScene->addActor(*m_pActor);
+
 	PxRigidDynamic* pRigidBody = m_pActor->is<PxRigidDynamic>();
 
 	// 회전을 " 하고 싶은 " 부분만 true로 처리해주면 된다.
@@ -239,6 +280,159 @@ void CRigidBody::Rotate(_float4 _vRotation) const
 	}
 }
 
+#ifdef _DEBUG
+HRESULT CRigidBody::Add_Components()
+{
+	/* Com_Shader */
+	if (FAILED(CComposite::Add_Component(0, TEXT("Prototype_Component_Shader_Debug"),
+		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
+	{
+		MSG_BOX("Failed CRigidBody Add_Component : (Com_Shader)");
+		return E_FAIL;
+	}
+
+	CPhysX_Manager* pPhysX_Manager = CPhysX_Manager::GetInstance();
+	Safe_AddRef(pPhysX_Manager);
+
+	// 시작 지점은 갱신 전에 가져와야함.
+	_uint iNumPrevLineBuffer = pPhysX_Manager->Get_LastLineBufferIndex();
+	_uint iNumPrevTriangleBuffer = pPhysX_Manager->Get_LastTriangleBufferIndex();
+
+	// 렌더버퍼 가져오기전 갱신
+	m_pScene->simulate(1 / 60.f);
+	m_pScene->fetchResults(true);
+	const PxRenderBuffer* pBuffer = pPhysX_Manager->Get_RenderBuffer();
+
+	CVIBuffer_Line::LINEDESC LineDesc;
+	ZEROMEM(&LineDesc);
+
+	LineDesc.iNum = pBuffer->getNbLines() - iNumPrevLineBuffer;
+	const PxDebugLine* pLines = pBuffer->getLines();
+
+	// 갯수 저장
+	m_iNumLineBuffer = LineDesc.iNum;
+	
+	vector<_float3> Lines;
+	for (_uint i = 0; 
+		i < m_iNumLineBuffer; ++i)
+	{
+		Lines.push_back(PhysXConverter::ToXMFLOAT3(pLines[i].pos0));
+		Lines.push_back(PhysXConverter::ToXMFLOAT3(pLines[i].pos1));
+	}
+	LineDesc.pLines = Lines.data();
+
+	if (0 < LineDesc.iNum &&
+		nullptr != LineDesc.pLines)
+	{
+		/* For.Com_Line */
+		if (FAILED(CComposite::Add_Component(0, TEXT("Prototype_Component_VIBuffer_Line"),
+			TEXT("Com_Line"), reinterpret_cast<CComponent**>(&m_pLine), &LineDesc)))
+		{
+			MSG_BOX("Failed CRigidBody Add_Component : (Com_Line)");
+			return E_FAIL;
+		}
+	}
+
+	CVIBuffer_Triangle::TRIANGLEDESC TriangleDesc;
+	ZEROMEM(&TriangleDesc);
+
+	TriangleDesc.iNum = pBuffer->getNbTriangles() - iNumPrevTriangleBuffer;
+	const PxDebugTriangle* pDebugTriangles = pBuffer->getTriangles();
+	// 삼각형 개수 저장.
+	m_iNumTriangleBuffer = TriangleDesc.iNum;
+
+	vector<_float3> Triangles;
+	for (_uint i = 0; 
+		i < m_iNumTriangleBuffer; ++i)
+	{
+		Triangles.push_back(PhysXConverter::ToXMFLOAT3(pDebugTriangles[i].pos0));
+		Triangles.push_back(PhysXConverter::ToXMFLOAT3(pDebugTriangles[i].pos1));
+		Triangles.push_back(PhysXConverter::ToXMFLOAT3(pDebugTriangles[i].pos2));
+	}
+	TriangleDesc.pTriangles = Triangles.data();
+
+	if (0 < TriangleDesc.iNum &&
+		nullptr != TriangleDesc.pTriangles)
+	{
+		/* For.Com_Triangle */
+		if (FAILED(CComposite::Add_Component(0, TEXT("Prototype_Component_VIBuffer_Triangle"),
+			TEXT("Com_Triangle"), reinterpret_cast<CComponent**>(&m_pTriangle), &TriangleDesc)))
+		{
+			MSG_BOX("Failed CRigidBody Add_Component : (Com_Triangle)");
+			return E_FAIL;
+		}
+	}
+
+	Safe_Release(pPhysX_Manager);
+
+	return S_OK;
+}
+
+HRESULT CRigidBody::SetUp_ShaderResources()
+{
+	CPipeLine* pPipeLine = CPipeLine::GetInstance();
+	Safe_AddRef(pPipeLine);
+
+	_float4x4 WorldMatrix = XMMatrixIdentity();
+
+	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", &WorldMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", pPipeLine->Get_TransformMatrix(CPipeLine::D3DTS_VIEW))))
+		return E_FAIL;
+	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", pPipeLine->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+
+	Safe_Release(pPipeLine);
+	return S_OK;
+}
+
+void CRigidBody::Make_Buffers()
+{
+	CVIBuffer_Line::LINEDESC LineDesc;
+	ZEROMEM(&LineDesc);
+
+	CPhysX_Manager* pPhysX_Manager = CPhysX_Manager::GetInstance();
+	Safe_AddRef(pPhysX_Manager);
+
+	const PxRenderBuffer* pBuffer = pPhysX_Manager->Get_RenderBuffer();
+
+	Safe_Release(pPhysX_Manager);
+
+	const PxDebugLine* pDebugLines = pBuffer->getLines();
+
+	vector<_float3> Lines;
+	for (_uint i = 0; 
+		i < m_iNumLineBuffer; ++i)
+	{
+		Lines.push_back(PhysXConverter::ToXMFLOAT3(pDebugLines[i].pos0));
+		Lines.push_back(PhysXConverter::ToXMFLOAT3(pDebugLines[i].pos1));
+	}
+
+	LineDesc.iNum = m_iNumLineBuffer;
+	LineDesc.pLines = Lines.data();
+
+	m_pLine->Tick(LineDesc);
+
+	CVIBuffer_Triangle::TRIANGLEDESC TriangleDesc;
+	ZEROMEM(&TriangleDesc);
+
+	const PxDebugTriangle* pDebugTriangles = pBuffer->getTriangles();
+
+	vector<_float3> Triangles;
+	for (_uint i = 0; 
+		i < m_iNumTriangleBuffer; ++i)
+	{
+		Triangles.push_back(PhysXConverter::ToXMFLOAT3(pDebugTriangles[i].pos0));
+		Triangles.push_back(PhysXConverter::ToXMFLOAT3(pDebugTriangles[i].pos1));
+		Triangles.push_back(PhysXConverter::ToXMFLOAT3(pDebugTriangles[i].pos2));
+	}
+	TriangleDesc.iNum = m_iNumTriangleBuffer;
+	TriangleDesc.pTriangles = Triangles.data();
+
+	m_pTriangle->Tick(TriangleDesc);
+}
+#endif // _DEBUG
+
 CRigidBody* CRigidBody::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CRigidBody* pInstance = new CRigidBody(pDevice, pContext);
@@ -271,4 +465,10 @@ void CRigidBody::Free()
 
 	Safe_Release(m_pTransform);
 	Safe_Release(m_pController);
+
+#ifdef _DEBUG
+	Safe_Release(m_pTriangle);
+	Safe_Release(m_pShader);
+	Safe_Release(m_pLine);
+#endif // _DEBUG
 }

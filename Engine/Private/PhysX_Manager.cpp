@@ -5,6 +5,30 @@
 
 IMPLEMENT_SINGLETON(CPhysX_Manager)
 
+const PxRenderBuffer* CPhysX_Manager::Get_RenderBuffer()
+{
+	if (nullptr == m_pPhysxScene)
+		return nullptr;
+
+	const PxRenderBuffer* RenderBuf = &m_pPhysxScene->getRenderBuffer();
+
+	return RenderBuf;
+}
+
+_uint CPhysX_Manager::Get_LastLineBufferIndex()
+{
+	m_iLastLineBufferIndex = m_pPhysxScene->getRenderBuffer().getNbLines();
+
+	return m_iLastLineBufferIndex;
+}
+
+_uint CPhysX_Manager::Get_LastTriangleBufferIndex()
+{
+	m_iLastTriangleBufferIndex = m_pPhysxScene->getRenderBuffer().getNbTriangles();
+
+	return m_iLastTriangleBufferIndex;
+}
+
 HRESULT CPhysX_Manager::Initialize()
 {
 	m_pFoundation = PxCreateFoundation(PX_PHYSICS_VERSION, m_PXAllocator, m_PXErrorCallback);
@@ -46,20 +70,10 @@ HRESULT CPhysX_Manager::Initialize()
 
 	PxRigidStatic* groundPlane = PxCreatePlane(*m_pPhysics, PxPlane(0, 1, 0, 0), *m_pPhysics->createMaterial(0.5f, 0.5f, 0.5f));
 	m_pPhysxScene->addActor(*groundPlane);
-
-	PxShape* shape = m_pPhysics->createShape(PxCapsuleGeometry(1.f, 1.f), *m_pPhysics->createMaterial(0.f, 0.f, 0.f), false, PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSIMULATION_SHAPE);
-
-	PxVec3 tr = PxVec3(5.f, 50.f, 5.f);
-	PxTransform localTm(tr);
-	Actor = m_pPhysics->createRigidDynamic(localTm);
-	shape->setLocalPose(PxTransformFromSegment(PxVec3(0.f, 1.f, 0.f), PxVec3(0.f, -1.f, 0.f)));
-
-	Actor->attachShape(*shape);
-
-	PxRigidBodyExt::updateMassAndInertia(*Actor, 10.0f);
-	m_pPhysxScene->addActor(*Actor);
-
-	shape->release();
+	m_pPhysxScene->simulate(1 / 60.f);
+	m_pPhysxScene->fetchResults(true);
+	m_iLastLineBufferIndex = m_pPhysxScene->getRenderBuffer().getNbLines();
+	m_iLastTriangleBufferIndex = m_pPhysxScene->getRenderBuffer().getNbTriangles();
 	
 	return S_OK;
 }

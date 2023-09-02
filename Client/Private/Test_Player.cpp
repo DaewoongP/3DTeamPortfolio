@@ -51,7 +51,12 @@ void CTest_Player::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 	if (nullptr != m_pRenderer)
+	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+#ifdef _DEBUG
+		m_pRenderer->Add_DebugGroup(m_pRigidBody);
+#endif // _DEBUG
+	}
 }
 
 HRESULT CTest_Player::Render()
@@ -226,7 +231,7 @@ void CTest_Player::Key_Input(_float fTimeDelta)
 
 	if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
 	{
-		m_pRigidBody->Add_Force(m_pTransform->Get_Up() * 200.f, PxForceMode::eIMPULSE);
+		m_pRigidBody->Add_Force(m_pTransform->Get_Up() * 30.f, PxForceMode::eIMPULSE);
 	}
 
 	ENDINSTANCE;
@@ -238,12 +243,29 @@ void CTest_Player::Tick_ImGui()
 {
 	ImGui::Begin("Test Player");
 
-	_float3 vPos = m_pTransform->Get_Position();
-	ImGui::InputFloat3("Pos", (_float*)(&vPos));
+	const PxMaterial* pMaterial = m_pRigidBody->Get_Material();
+	_float3 vMaterial;
+	vMaterial.x = pMaterial->getStaticFriction();
+	vMaterial.y = pMaterial->getDynamicFriction();
+	vMaterial.z = pMaterial->getRestitution();
+	if (ImGui::InputFloat3("static, dynamic, restitution", (_float*)(&vMaterial)))
+	{
+		m_pRigidBody->Set_Material(vMaterial);
+	}
+	ImGui::SetNextItemWidth(100.f);
+	_float fSpeed = m_pTransform->Get_Speed();
+	if (ImGui::InputFloat("Speed", &fSpeed))
+	{
+		m_pTransform->Set_Speed(fSpeed);
+	}
 
-	_float3 vConPos =  m_pRigidBody->Get_Position();
-	ImGui::InputFloat3("CPos", (_float*)(&vConPos));
-
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(100.f);
+	_float fMaxLinearVelocity = m_pRigidBody->Get_RigidBodyActor()->getMaxLinearVelocity();
+	if (ImGui::InputFloat("MaxLinearVelocity", &fMaxLinearVelocity))
+	{
+		m_pRigidBody->Get_RigidBodyActor()->setMaxLinearVelocity(fMaxLinearVelocity);
+	}
 	ImGui::End();
 }
 #endif // _DEBUG

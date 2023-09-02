@@ -33,7 +33,7 @@ CCharacterController::CCharacterController(const CCharacterController& rhs)
 
 HRESULT CCharacterController::Initialize(void* pArg)
 {
-	CPhysX_Manager* pPhysX_Manager = CPhysX_Manager::GetInstance();
+	/*CPhysX_Manager* pPhysX_Manager = CPhysX_Manager::GetInstance();
 	Safe_AddRef(pPhysX_Manager);
 
 	PxControllerManager* pControllerManager = pPhysX_Manager->Get_ControllerManager();
@@ -48,7 +48,7 @@ HRESULT CCharacterController::Initialize(void* pArg)
 
 	m_pController = pControllerManager->createController(CapsuleControllerDesc);
 	
-	Safe_Release(pPhysX_Manager);
+	Safe_Release(pPhysX_Manager);*/
 
 	return S_OK;
 }

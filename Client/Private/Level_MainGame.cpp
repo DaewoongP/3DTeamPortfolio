@@ -106,13 +106,6 @@ HRESULT CLevel_MainGame::Ready_Layer_Debug(const _tchar* pLayerTag)
 		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Player)");
 		return E_FAIL;
 	}
-	
-	// 가장 마지막에 불려야합니다 (피직스 객체 전부 생성 후 버퍼 생성을 위함)
-	if (FAILED(pGameInstance->Add_GameObject(LEVEL_MAINGAME, TEXT("Prototype_GameObject_PhysXRender"), pLayerTag, TEXT("GameObject_PhysXRender"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_PhysXRender)");
-		return E_FAIL;
-	}
 
 	Safe_Release(pGameInstance);
 
