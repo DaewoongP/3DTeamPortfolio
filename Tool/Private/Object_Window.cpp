@@ -606,12 +606,12 @@ HRESULT CObject_Window::Save_Model_Path(_uint iType, const _tchar* pFilePath)
 				Deep_Copy_Name(wmodelname.c_str());
 
 				// 프로토타입 생성
-				_float4x4 PivotMatrix = XMMatrixIdentity();
+				/*_float4x4 PivotMatrix = XMMatrixIdentity();
 				BEGININSTANCE; if (FAILED(pGameInstance->Add_Prototype_Component(LEVEL_TOOL, m_vecModelList_t.back(),
 					CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, m_vecModelPath_t.back(), PivotMatrix))))
 				{
 					MSG_BOX("Failed to Create New Model Prototype");
-				} ENDINSTANCE;
+				} ENDINSTANCE;*/
 			}
 		}
 

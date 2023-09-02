@@ -85,9 +85,6 @@
     <Filter Include="01. Window\Window\Light">
       <UniqueIdentifier>{1a991a8d-af21-4d4f-8ec1-97cdc81216c0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. ToolObjects\01. Dummy\Dummy_Light">
-      <UniqueIdentifier>{503ad47d-bb67-4cd6-8503-1b4ce004749c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Window\CustomWidget">
       <UniqueIdentifier>{5829ef33-95f1-4ef6-9d84-dfbc9937f3db}</UniqueIdentifier>
     </Filter>
@@ -186,7 +183,7 @@
     <ClInclude Include="..\Public\Animation_Window.h">
       <Filter>01. Window\Window\Animation</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\CDummy.h">
+    <ClInclude Include="..\Public\Dummy.h">
       <Filter>02. ToolObjects\01. Dummy</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Camera_Window.h">
@@ -216,9 +213,6 @@
     <ClInclude Include="..\Public\Light_Window.h">
       <Filter>01. Window\Window\Light</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Dummy_Light.h">
-      <Filter>02. ToolObjects\01. Dummy\Dummy_Light</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\CustomWidget.h">
       <Filter>01. Window\CustomWidget</Filter>
     </ClInclude>
@@ -227,6 +221,9 @@
     </ClInclude>
     <ClInclude Include="ImageFileDialog.h">
       <Filter>01. Window\CustomWidget\ImageFileDialog</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Tool_Functions.h">
+      <Filter>99. Headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -306,7 +303,7 @@
     <ClCompile Include="..\Private\Animation_Window.cpp">
       <Filter>01. Window\Window\Animation</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\CDummy.cpp">
+    <ClCompile Include="..\Private\Dummy.cpp">
       <Filter>02. ToolObjects\01. Dummy</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Camera_Window.cpp">
@@ -332,9 +329,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\Light_Window.cpp">
       <Filter>01. Window\Window\Light</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Dummy_Light.cpp">
-      <Filter>02. ToolObjects\01. Dummy\Dummy_Light</Filter>
     </ClCompile>
     <ClCompile Include="..\private\CustomWidget.cpp">
       <Filter>01. Window\CustomWidget</Filter>

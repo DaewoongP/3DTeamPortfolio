@@ -1,9 +1,6 @@
 #pragma once
 #include "ImWindow.h"
-
-BEGIN(Engine)
-class CLight;
-END
+#include "Light.h"
 
 BEGIN(Tool)
 

@@ -56,7 +56,7 @@ HRESULT CLevel_MainGame::Ready_Lights()
 	LightDesc.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
 	LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
 
-	if (FAILED(pGameInstance->Add_Lights(LightDesc)))
+	if (nullptr == pGameInstance->Add_Lights(LightDesc))
 		return E_FAIL;
 	ENDINSTANCE
 

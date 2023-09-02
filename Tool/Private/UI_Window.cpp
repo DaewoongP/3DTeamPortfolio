@@ -25,9 +25,9 @@ HRESULT CUI_Window::Initialize(ImVec2 vWindowPos, ImVec2 vWindowSize)
 
 	//Safe_Release(pGameInstance);
 
-	/*m_TreeDesc.m_wstrName = TEXT("../../Resources/UI/");
+	m_TreeDesc.m_wstrName = TEXT("../../Resources/UI/");
 	m_TreeDesc.m_isFolder = true;
-	Read_File_In_Directory_Tree(m_TreeDesc, TEXT("../../Resources/UI/"), TEXT(".png"));*/
+	Read_File_In_Directory_Tree(m_TreeDesc, TEXT("../../Resources/UI/"), TEXT(".png"));
 
 	return S_OK;
 }
@@ -361,7 +361,7 @@ void CUI_Window::Create_UI(UI_Tree* pTree)
 
 	CharToWChar(GameObjectTag.c_str(), wszGameObjectTag);
 	
-	_float2 fSize = _float2(pTree->m_iWidth, pTree->m_iHeight);
+	_float2 fSize = _float2(_float(pTree->m_iWidth), _float(pTree->m_iHeight));
 
 	// Dummy UI Object 생성.
 	if (FAILED(pGameInstance->Add_GameObject(LEVEL_TOOL, wszGaemObject,
@@ -403,8 +403,8 @@ void CUI_Window::Interaction_UI()
 	}
 
 	std::sort(pGameObejctVector.begin(), pGameObejctVector.end(), [](const CGameObject* pSour, const CGameObject* pDest) {
-		_float fSourZ = XMVectorGetZ(pSour->Get_Transform()->Get_Translation());
-		_float fDestZ = XMVectorGetZ(pDest->Get_Transform()->Get_Translation());
+		_float fSourZ = XMVectorGetZ(pSour->Get_Transform()->Get_Position());
+		_float fDestZ = XMVectorGetZ(pDest->Get_Transform()->Get_Position());
 		// 내림차순 (멀리있는거부터 그림.)
 		if (fSourZ < fDestZ)
 			return true;
@@ -466,8 +466,8 @@ void CUI_Window::Move_UI()
 
 
 	// 마우스 이동 거리 계산
-	_float iMoveX = CurrentMousePos.x - m_MousePos.x;
-	_float iMoveY = CurrentMousePos.y - m_MousePos.y;
+	_float iMoveX = _float(CurrentMousePos.x - m_MousePos.x);
+	_float iMoveY = _float(CurrentMousePos.y - m_MousePos.y);
 
 	if (iMoveX == 0 && iMoveY == 0)
 	{

@@ -93,31 +93,4 @@ public:
 
 };
 
-#define LIST_INDEX_ACCESS(_list, _iIndex, _OutData)				\
-		if (false == _list.empty())								\
-		{														\
-			auto Iter = _list.begin();							\
-																\
-			for(size_t Index = 0; Index < _iIndex; Index++)		\
-			{													\
-				++Iter;											\
-			}													\
-																\
-			_OutData = &(*Iter);								\
-		}														
-
-#define LIST_INDEX_ACCESS_POINTER(_list, _iIndex, _OutDataPointer)	\
-		if (false == _list.empty())									\
-		{															\
-			auto Iter = _list.begin();								\
-																	\
-			for(size_t Index = 0; Index < _iIndex; Index++)			\
-			{														\
-				++Iter;												\
-			}														\
-																	\
-			_OutDataPointer = (*Iter);								\
-		}														
-
-
 END

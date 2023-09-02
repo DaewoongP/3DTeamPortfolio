@@ -37,7 +37,6 @@ void CEffect_Window::Tick(_float _fTimeDelta)
 	__super::Tick(_fTimeDelta);
 
 	ImGui::Begin("Effect", nullptr, m_WindowFlag);
-	BEGININSTANCE;
 
 	MainMoudle_TreeNode();
 	ImGui::Separator();
@@ -50,7 +49,6 @@ void CEffect_Window::Tick(_float _fTimeDelta)
 	Load_FileDialog();
 	Create_Button();
 
-	ENDINSTANCE;
 	ImGui::End();
 
 	if (nullptr != m_pDummyParticle)

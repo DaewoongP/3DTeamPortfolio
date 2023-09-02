@@ -1,7 +1,7 @@
 #include "MainTool.h"
 #include "GameInstance.h"
 #include "Level_Tool.h"
-#include "CDummy.h"
+#include "Dummy.h"
 #include "MapDummy.h"
 #include "MapObject.h"
 #include "Camera_Point.h"

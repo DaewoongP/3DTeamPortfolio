@@ -26,10 +26,7 @@ private:
 
 public:
 	_float4 Get_Position();
-
-public:
 	void Set_Position(_float4 _vPosition);
-
 
 public:
 	virtual HRESULT Initialize_Prototype() override;

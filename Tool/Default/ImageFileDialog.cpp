@@ -29,7 +29,7 @@ void CImageFileDialog::Tick()
 {
     if (nullptr == m_pTexture)
     {
-        if (ImGui::ImageButton(m_pDefaultTexture, ImVec2(m_iImageButtonWidth, m_iImageButtonHeight)))
+        if (ImGui::ImageButton(m_pDefaultTexture, ImVec2(_float(m_iImageButtonWidth), _float(m_iImageButtonHeight))))
         {
             ImGuiFileDialog::Instance()->OpenDialog(m_strFileDialogTag.data(), m_strFileDialogName.data(), m_strHeaderFilter.data(), m_strStartPath.data());
             m_isShow = true;
@@ -37,7 +37,7 @@ void CImageFileDialog::Tick()
     }
     else
     {
-        if (ImGui::ImageButton(m_pTexture, ImVec2(m_iImageButtonWidth, m_iImageButtonHeight)))
+        if (ImGui::ImageButton(m_pTexture, ImVec2(_float(m_iImageButtonWidth), _float(m_iImageButtonHeight))))
         {
             ImGuiFileDialog::Instance()->OpenDialog(m_strFileDialogTag.data(), m_strFileDialogName.data(), m_strHeaderFilter.data(), m_strStartPath.data());
             m_isShow = true;
@@ -50,7 +50,7 @@ void CImageFileDialog::Tick()
         ImGui::Begin(strImageTag.data());
         Safe_Release(m_pTexture);
         LoadTextureFromFile(m_strFilePathName.data(), &m_pTexture, &m_iImageWidth, &m_iImageHeight);
-        ImGui::Image((void*)m_pTexture, ImVec2(m_iImageWidth, m_iImageHeight));
+        ImGui::Image((void*)m_pTexture, ImVec2(_float(m_iImageWidth), _float(m_iImageHeight)));
         ImGui::End();
     }
 

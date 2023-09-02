@@ -130,8 +130,8 @@ public: /* For.PhysX_Manager */
 	PxPhysics* Get_Physics() const;
 	PxScene* Get_PhysxScene() const;
 	PxControllerManager* Get_ControllerManager() const;
-	
-public: /* For.Camera_Manager */
+
+public:	/* For.Camera_Manager */
 	//매인 카메라를 넣어준다.
 	HRESULT Add_MainCamera(class CCamera* _pMainCamera);
 	//컷씬 카메라 데이터를 담는다.

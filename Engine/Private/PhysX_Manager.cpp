@@ -66,7 +66,7 @@ HRESULT CPhysX_Manager::Initialize()
 void CPhysX_Manager::Tick(_float fTimeDelta)
 {
 	// fixed time 처리 필요할수도 있음.
-	m_pPhysxScene->simulate(fTimeDelta);
+	m_pPhysxScene->simulate(1 / 60.f);
 	m_pPhysxScene->fetchResults(true);
 	
 }

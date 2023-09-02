@@ -22,11 +22,9 @@ void CCamera_Window::Tick(_float _fTimeDelta)
 {
 	__super::Tick(_fTimeDelta);
 	ImGui::Begin("Camera", nullptr, m_WindowFlag);
-	BEGININSTANCE;
 
 	m_pCutSceneCameraTool->Tick(_fTimeDelta);
-	
-	ENDINSTANCE;
+
 	ImGui::End();
 }
 

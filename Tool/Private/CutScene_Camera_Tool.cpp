@@ -45,7 +45,7 @@ void CCutScene_Camera_Tool::Tick(_float _fTimeDelta)
 		else if (true == m_isEye)
 		{
 			//오브젝트만 바꿔준다. 
-			LIST_INDEX_ACCESS_POINTER(m_EyeList, m_iCurrentIndex, m_pCurrentPoint);
+			LIST_INDEX_ACCESS_POINTER(m_EyeList, m_iCurrentIndex, m_pCurrentPoint)
 		}
 	}
 
@@ -75,7 +75,7 @@ void CCutScene_Camera_Tool::Tick(_float _fTimeDelta)
 
 	_float* fDuration{};
 
-	LIST_INDEX_ACCESS(m_DurationList, m_iCurrentIndex, fDuration)
+	LIST_INDEX_ACCESS(m_DurationList, m_iCurrentIndex, fDuration);
 	
 	if (nullptr != fDuration)
 	{
@@ -84,7 +84,7 @@ void CCutScene_Camera_Tool::Tick(_float _fTimeDelta)
 
 	_bool* isLerp{};
 
-	LIST_INDEX_ACCESS(m_Lerplist, m_iCurrentIndex, isLerp)
+	LIST_INDEX_ACCESS(m_Lerplist, m_iCurrentIndex, isLerp);
 	
 	if (nullptr != isLerp)
 	{
@@ -492,18 +492,18 @@ void CCutScene_Camera_Tool::Fix_Point()
 		//x축 이동
 		if (abs(iMouseMoveX) > abs(iMouseMoveY))
 		{
-			vFixPosition += vCameraRight.TransNorm() * iMouseMoveX * fSpeed;
+			vFixPosition += vCameraRight.TransNorm() * _float(iMouseMoveX) * fSpeed;
 		}
 		//y축 이동
 		else
 		{
-			vFixPosition += -vCameraUp.TransNorm() * iMouseMoveY * fSpeed;
+			vFixPosition += -vCameraUp.TransNorm() * _float(iMouseMoveY) * fSpeed;
 		}
 	}
 	//z축 이동이 있다면
 	if (0 != iMouseMoveZ)
 	{
-		vFixPosition += vCameraLook.TransNorm() * iMouseMoveZ * fSpeed * fWheelSpeed;
+		vFixPosition += vCameraLook.TransNorm() * _float(iMouseMoveZ) * fSpeed * fWheelSpeed;
 	}
 
 	m_pCurrentPoint->Set_Position(vFixPosition);

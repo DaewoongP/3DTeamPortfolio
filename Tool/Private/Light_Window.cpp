@@ -206,7 +206,7 @@ void CLight_Window::Clear_Light()
 }
 
 void CLight_Window::ResetValue()
-{	static float vPos[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+{	static float vPos[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	ImGui::DragFloat3("Position", vPos, 0.1f);
 
 	static float vDir[4] = { 1.f, -1.f, 1.f, 0.0f };

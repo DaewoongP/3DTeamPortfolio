@@ -9,7 +9,7 @@ void CMain_Camera::Set_MoveSpeed(const _float& _fMoveSpeed)
 
 HRESULT CMain_Camera::Initialize(void* pArg)
 {
-	return E_NOTIMPL;
+	return S_OK;
 }
 
 void CMain_Camera::Tick(_float _TimeDelta)
@@ -46,8 +46,6 @@ void CMain_Camera::Key_Input(_float _TimeDelta)
 	{
 		m_pTransform->Move_Direction(-m_pTransform->Get_Up(), _TimeDelta);
 	}
-
-
 
 	ENDINSTANCE
 }

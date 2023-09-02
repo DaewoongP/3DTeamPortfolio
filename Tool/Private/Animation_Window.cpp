@@ -1,7 +1,7 @@
 #include "..\Public\Animation_Window.h"
 #include "ImGuiFileDialog.h"
 #include "GameInstance.h"
-#include "CDummy.h"
+#include "Dummy.h"
 #include "Notify.h"
 
 CAnimation_Window::CAnimation_Window(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

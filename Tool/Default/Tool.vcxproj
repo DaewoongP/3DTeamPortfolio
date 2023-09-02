@@ -166,9 +166,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Camera_Window.h" />
-    <ClInclude Include="..\Public\Dummy_Light.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="..\Public\Light_Window.h" />
     <ClInclude Include="..\Public\ComboBox.h" />
     <ClInclude Include="..\public\CustomWidget.h" />
@@ -177,10 +174,11 @@
     <ClInclude Include="..\Public\Camera_Point.h" />
     <ClInclude Include="..\public\CutScene_Camera_Tool.h" />
     <ClInclude Include="..\public\Main_Camera.h" />
+    <ClInclude Include="..\Public\Tool_Functions.h" />
     <ClInclude Include="..\Public\UI_Window.h" />
     <ClInclude Include="..\public\DummyParticle.h" />
     <ClInclude Include="..\Public\Animation_Window.h" />
-    <ClInclude Include="..\Public\CDummy.h" />
+    <ClInclude Include="..\Public\Dummy.h" />
     <ClInclude Include="..\public\Effect_Window.h" />
     <ClInclude Include="..\public\Camera_Free.h" />
     <ClInclude Include="..\public\Level_Tool.h" />
@@ -213,9 +211,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Camera_Window.cpp" />
-    <ClCompile Include="..\Private\Dummy_Light.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="..\Private\ComboBox.cpp" />
     <ClCompile Include="..\private\CustomWidget.cpp" />
     <ClCompile Include="..\Private\Dummy_UI.cpp" />
@@ -226,13 +221,13 @@
     <ClCompile Include="..\Private\UI_Window.cpp" />
     <ClCompile Include="..\private\DummyParticle.cpp" />
     <ClCompile Include="..\Private\Animation_Window.cpp" />
-    <ClCompile Include="..\Private\CDummy.cpp" />
+    <ClCompile Include="..\Private\Dummy.cpp" />
     <ClCompile Include="..\private\Effect_Window.cpp" />
     <ClCompile Include="..\private\Camera_Free.cpp" />
     <ClCompile Include="..\private\Level_Tool.cpp" />
     <ClCompile Include="..\private\MainTool.cpp" />
     <ClCompile Include="..\private\ImWindow.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\Private\MapDummy.cpp" />
     <ClCompile Include="..\Private\MapObject.cpp" />

@@ -362,22 +362,22 @@ void CTest_Player::Key_Input(_float fTimeDelta)
 
 	if (pGameInstance->Get_DIKeyState(DIK_UP))
 	{
-		m_pRigidBody->Add_Force(m_pTransform->Get_Look() * 10.f, PxForceMode::eACCELERATION);
+		m_pRigidBody->Add_Force(m_pTransform->Get_Look() * 10.f, PxForceMode::eFORCE);
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_DOWN))
 	{
-		m_pRigidBody->Add_Force(m_pTransform->Get_Look() * -10.f, PxForceMode::eACCELERATION);
+		m_pRigidBody->Add_Force(m_pTransform->Get_Look() * -10.f, PxForceMode::eFORCE);
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_LEFT))
 	{
-		m_pRigidBody->Add_Force(m_pTransform->Get_Right() * -10.f, PxForceMode::eACCELERATION);
+		m_pRigidBody->Add_Force(m_pTransform->Get_Right() * -10.f, PxForceMode::eFORCE);
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_RIGHT))
 	{
-		m_pRigidBody->Add_Force(m_pTransform->Get_Right() * 10.f, PxForceMode::eACCELERATION);
+		m_pRigidBody->Add_Force(m_pTransform->Get_Right() * 10.f, PxForceMode::eFORCE);
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))

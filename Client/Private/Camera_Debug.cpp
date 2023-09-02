@@ -142,7 +142,7 @@ void CCamera_Debug::Fix_Mouse(void)
 	ClientToScreen(g_hWnd, &ptMouse);
 	SetCursorPos(ptMouse.x, ptMouse.y);
 }
-
+#ifdef _DEBUG
 void CCamera_Debug::Debug_ImGui(_float fTimeDelta)
 {
 	ImGui::Begin("Camera Debug");
@@ -191,7 +191,7 @@ void CCamera_Debug::Debug_ImGui(_float fTimeDelta)
 
 	ImGui::End();
 }
-
+#endif //_DEBUG
 CCamera_Debug* CCamera_Debug::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CCamera_Debug* pInstance = New CCamera_Debug(pDevice, pContext);

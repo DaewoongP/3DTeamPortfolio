@@ -415,4 +415,5 @@ Tool.lib
 *.tga
 *.mat
 *.bmp
+*.txt
 *.spritefont
