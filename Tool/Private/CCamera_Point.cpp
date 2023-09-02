@@ -6,9 +6,9 @@ CCamera_Point::CCamera_Point(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 {
 }
 
-const _float4& CCamera_Point::Get_Position()
+const _float4 CCamera_Point::Get_Position()
 {
-	return m_pTransform->Get_Translation().TransCoord();
+	return m_pTransform->Get_Position().TransCoord();
 }
 
 void CCamera_Point::Set_Position(_float4 _vPosition)

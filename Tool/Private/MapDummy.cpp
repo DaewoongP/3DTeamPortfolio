@@ -47,7 +47,7 @@ void CMapDummy::Late_Tick(_float fTimeDelta)
 
 	if (nullptr != m_pRenderer)
 	{
-		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONLIGHT, this);
+		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 	}
 }
 
@@ -110,6 +110,8 @@ HRESULT CMapDummy::Change_Model_Component(const _tchar* pPrototypeTag)
 		MSG_BOX("Failed CMapDummy Change_Component : (Com_Buffer)");
 		return E_FAIL;
 	}
+
+	Safe_Release(m_pModel);
 
 	return S_OK;
 }

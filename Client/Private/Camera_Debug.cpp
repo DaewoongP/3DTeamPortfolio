@@ -1,6 +1,11 @@
 #include "..\Public\Camera_Debug.h"
 #include "GameInstance.h"
 
+#ifdef _DEBUG
+#include "Test_Player.h"
+#endif // _DEBUG
+
+
 CCamera_Debug::CCamera_Debug(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
@@ -51,6 +56,12 @@ void CCamera_Debug::Tick(_float fTimeDelta)
 	Safe_Release(pGameInstance);
 
 	__super::Tick(fTimeDelta);
+
+#ifdef _DEBUG
+	Debug_ImGui(fTimeDelta);
+#endif // _DEBUG
+
+
 }
 
 void CCamera_Debug::Key_Input(const _float& fTimeDelta)
@@ -132,9 +143,58 @@ void CCamera_Debug::Fix_Mouse(void)
 	SetCursorPos(ptMouse.x, ptMouse.y);
 }
 
+void CCamera_Debug::Debug_ImGui(_float fTimeDelta)
+{
+	ImGui::Begin("Camera Debug");
+
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	CCamera_Debug* pCam = static_cast<CCamera_Debug*>(pGameInstance->Find_GameObject_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Debug"), TEXT("GameObject_Camera_Debug")));
+
+	_float fSpeed = pCam->Get_Speed();
+
+	ImGui::Checkbox("Fix Mouse : ~ ", pCam->Get_FixMouse());
+
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(200.f);
+	if (ImGui::SliderFloat("Camera Speed", &fSpeed, 0.f, 250.f, "%.1f"))
+	{
+		pCam->Set_Speed(fSpeed);
+	}
+
+	CTest_Player* pTest_Player = static_cast<CTest_Player*>(pGameInstance->Find_GameObject_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Debug"), TEXT("GameObject_Test_Player")));
+
+	if (ImGui::Checkbox("3rd Camera", &m_is3rdCam))
+	{
+		CTransform* pTransform = pTest_Player->Get_Transform();
+		m_v3rdCamOffset -= pTransform->Get_Look() * 5.f;
+		m_v3rdCamOffset += pTransform->Get_Up() * 5.f;
+	}
+	if (true == m_is3rdCam)
+	{
+		ImGui::SameLine();
+		ImGui::Checkbox("Fix Camera Move", &m_isFix3rdCam);
+		_float3 vPlayerPos = pTest_Player->Get_Transform()->Get_Position();
+		if (true == m_isFix3rdCam)
+		{
+			pCam->LookAt(vPlayerPos);
+		}
+
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(150.f);
+		ImGui::InputFloat3("3rd Cam Offset", reinterpret_cast<_float*>(&m_v3rdCamOffset), "%.1f");
+		pCam->Set_Position(vPlayerPos + m_v3rdCamOffset);
+	}
+
+	Safe_Release(pGameInstance);
+
+	ImGui::End();
+}
+
 CCamera_Debug* CCamera_Debug::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CCamera_Debug* pInstance = new CCamera_Debug(pDevice, pContext);
+	CCamera_Debug* pInstance = New CCamera_Debug(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -147,7 +207,7 @@ CCamera_Debug* CCamera_Debug::Create(ID3D11Device* pDevice, ID3D11DeviceContext*
 
 CGameObject* CCamera_Debug::Clone(void* pArg)
 {
-	CCamera_Debug* pInstance = new CCamera_Debug(*this);
+	CCamera_Debug* pInstance = New CCamera_Debug(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
