@@ -27,6 +27,11 @@ void CLight_Manager::Set_Light(_uint iIndex, CLight::LIGHTDESC LightDesc)
 	(*iter)->Set_LightDesc(LightDesc);
 }
 
+const CLight::LIGHTDESC* CLight_Manager::Get_Light_Name(string Name)
+{
+	return nullptr;
+}
+
 CLight* CLight_Manager::Add_Lights(const CLight::LIGHTDESC & LightDesc)
 {
 	CLight*		pLight = CLight::Create(LightDesc);
@@ -55,6 +60,8 @@ HRESULT CLight_Manager::Render_Lights(CShader* pShader, CVIBuffer_Rect* pVIBuffe
 	{
 		if (nullptr != pLight)
 			pLight->Render(pShader, pVIBuffer);
+
+		
 	}
 
 	return S_OK;

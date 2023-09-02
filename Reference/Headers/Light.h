@@ -24,6 +24,8 @@ public:
 		_float	fRange;
 		_float	fSpotPower;
 
+		_tchar szName;
+		_uint iLightType;
 		_float4	vDiffuse;
 		_float4	vAmbient;
 		_float4	vSpecular;

@@ -6,6 +6,17 @@ BEGIN(Tool)
 
 class CLight_Window final : public CImWindow
 {
+	typedef struct Lightinfo 
+	{
+		_float vPos[4]		;
+		_float vDir[4] 		;
+		_float fRange[1] 	;
+		_float fSpotPower[1];
+		_float vDiffuse[4] 	;
+		_float vAmbient[4] 	;
+		_float vSpecular[4] ;
+	}LIGHTINFO;
+
 private:
 	CLight_Window(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual ~CLight_Window() = default;
@@ -17,8 +28,8 @@ public:
 	virtual HRESULT Render() override;
 
 public:
-	void Save_Light();
-	void Load_Light();
+	HRESULT Save_Light();
+	HRESULT Load_Light();
 
 	HRESULT Create_Light();
 	void Clear_Light();
@@ -27,11 +38,17 @@ public:
 	void FloatToFloat4(_float* Input, _float4 Out); // float 배열에서 float4로변환
 private:
 	int m_iLightType = 0;
-	_int m_iLightIndex = { 0 };
+	_int m_iLightIndex;
+	_int m_iCurrent_LightIndex;
 
 	_bool m_isSetting = false;
 	string m_szName;
 	string StrInput;
+	_uint m_iCurrent_Idx = 0;
+
+	_bool m_isCurrent_Idx;
+	_bool m_isRender = true;
+	char AddLightName[128] = {};
 
 private:
 	vector<CLight::LIGHTDESC> m_vecLightDesc;
@@ -43,7 +60,6 @@ private:
 	_float vDiffuse[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	_float vAmbient[4] = { 1.f, 1.f, 1.f, 1.0f };
 	_float vSpecular[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-
 	CLight::LIGHTDESC LightDesc;
 
 public:

@@ -20,6 +20,8 @@ private:
 public:
 	const CLight::LIGHTDESC* Get_Light(_uint iIndex);
 	void Set_Light(_uint iIndex, CLight::LIGHTDESC LightDesc);
+	const CLight::LIGHTDESC* Get_Light_Name(string Name);
+
 
 public:
 	CLight* Add_Lights(const CLight::LIGHTDESC& LightDesc);

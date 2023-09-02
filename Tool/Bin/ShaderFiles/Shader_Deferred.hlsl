@@ -331,7 +331,8 @@ PS_OUT PS_MAIN_DEFERRED(PS_IN In)
     
    
     
-    Out.vColor = vDiffuse * vShade * vBlur + vSpecular;
+    Out.vColor = vDiffuse * vShade * vBlur;//
+    +vSpecular;
     
     return Out;
 }
