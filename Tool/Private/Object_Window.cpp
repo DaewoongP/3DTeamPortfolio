@@ -389,11 +389,12 @@ HRESULT CObject_Window::Load_MapObject()
 	}
 
 	DWORD	dwByte = 0;
-	SAVEOBJECTDESC SaveDesc;
-	ZEROMEM(&SaveDesc);
 
 	while (true)
 	{
+		SAVEOBJECTDESC SaveDesc;
+		ZEROMEM(&SaveDesc);
+
 		if (!ReadFile(hFile, &SaveDesc.vPos, sizeof(_float3), &dwByte, nullptr))
 			MSG_BOX("Failed to Read m_vecSaveObject.vPos");
 
