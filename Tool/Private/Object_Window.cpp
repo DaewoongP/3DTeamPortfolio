@@ -463,16 +463,6 @@ void CObject_Window::Deep_Copy_Tag(const _tchar* wszTag)
 	string s(c);
 
 	m_vecObjectTag_s.push_back(s);
-
-	/*_char* wszNew = new _char[length + 1];
-
-	if (0 != strcpy_s(wszNew, length + 1, s.c_str()))
-	{
-		MSG_BOX("Falied to Deep Copy(Tag)");
-		return;
-	}
-
-	m_vecObjectTag_s.push_back(wszNew);*/
 }
 
 const _tchar* CObject_Window::Deep_Copy(const _tchar* wszString)
@@ -576,7 +566,6 @@ HRESULT CObject_Window::Save_Model_Path(_uint iType, const _tchar* pFilePath)
 				string path = ("../../Resources/Models/NonAnims/");
 				string s = entry.path().string();
 
-				//size_t path_length = path.length();
 				size_t path_length = pathresult.length();
 				size_t current = s.find("NonAnim") + 9;
 
