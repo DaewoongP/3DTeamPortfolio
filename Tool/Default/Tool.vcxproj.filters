@@ -82,6 +82,12 @@
     <Filter Include="02. ToolObjects\01. Dummy\Dummy_UI">
       <UniqueIdentifier>{c00841da-60c8-4a06-8085-e61201453246}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Window\Window\Light">
+      <UniqueIdentifier>{1a991a8d-af21-4d4f-8ec1-97cdc81216c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. ToolObjects\01. Dummy\Dummy_Light">
+      <UniqueIdentifier>{503ad47d-bb67-4cd6-8503-1b4ce004749c}</UniqueIdentifier>
+    </Filter>
     <Filter Include="01. Window\CustomWidget">
       <UniqueIdentifier>{5829ef33-95f1-4ef6-9d84-dfbc9937f3db}</UniqueIdentifier>
     </Filter>
@@ -204,6 +210,12 @@
     <ClInclude Include="..\Public\MapObject.h">
       <Filter>02. ToolObjects\04. MapObject</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Light_Window.h">
+      <Filter>01. Window\Window\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Dummy_Light.h">
+      <Filter>02. ToolObjects\01. Dummy\Dummy_Light</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\CustomWidget.h">
       <Filter>01. Window\CustomWidget</Filter>
     </ClInclude>
@@ -311,6 +323,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\MapObject.cpp">
       <Filter>02. ToolObjects\04. MapObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Light_Window.cpp">
+      <Filter>01. Window\Window\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Dummy_Light.cpp">
+      <Filter>02. ToolObjects\01. Dummy\Dummy_Light</Filter>
     </ClCompile>
     <ClCompile Include="..\private\CustomWidget.cpp">
       <Filter>01. Window\CustomWidget</Filter>

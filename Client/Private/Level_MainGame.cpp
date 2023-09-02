@@ -10,25 +10,8 @@ HRESULT CLevel_MainGame::Initialize()
 {
 	if (FAILED(__super::Initialize()))
 		return E_FAIL;
-
-	/*CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
-
-	CLight::LIGHTDESC		LightDesc;
-	ZeroMemory(&LightDesc, sizeof LightDesc);
-
-	LightDesc.eType = CLight::TYPE_DIRECTIONAL;
-	LightDesc.vDir = _float4(0.99f, -1.f, 0.99f, 0.f);
-
-	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
-	LightDesc.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
-	LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
-
-	if (FAILED(pGameInstance->Add_Lights(LightDesc)))
+	if (FAILED(Ready_Lights()))
 		return E_FAIL;
-	ENDINSTANCE*/
-
-
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 		return E_FAIL;
 	
@@ -55,6 +38,27 @@ HRESULT CLevel_MainGame::Render()
 {
 	if (FAILED(__super::Render()))
 		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CLevel_MainGame::Ready_Lights()
+{
+	BEGININSTANCE
+
+		CLight::LIGHTDESC		LightDesc;
+	ZeroMemory(&LightDesc, sizeof LightDesc);
+
+	LightDesc.eType = CLight::TYPE_DIRECTIONAL;
+	LightDesc.vDir = _float4(0.33f, -0.99f, 0.33f, 0.f);
+
+	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+	LightDesc.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
+	LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
+
+	if (FAILED(pGameInstance->Add_Lights(LightDesc)))
+		return E_FAIL;
+	ENDINSTANCE
 
 	return S_OK;
 }
