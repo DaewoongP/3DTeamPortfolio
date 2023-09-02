@@ -30,6 +30,7 @@ public:
 			XMVectorGetX(XMVector3Length(XMLoadFloat4x4(&m_TransformationMatrix).r[1])),
 			XMVectorGetX(XMVector3Length(XMLoadFloat4x4(&m_TransformationMatrix).r[2])));
 	}
+	_float4x4			Get_TransformationMatrix() { return m_TransformationMatrix; }
 	_uint			Get_ParentNodeIndex() { return m_iParentIndex; }
 
 	void				Set_OffsetMatrix(const _float4x4& OffsetMatrix) { m_OffsetMatrix = OffsetMatrix; }

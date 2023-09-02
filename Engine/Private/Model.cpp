@@ -149,6 +149,7 @@ void CModel::Play_Animation(_float fTimeDelta, CTransform* pTransform)
 	else
 		m_isAnimChangeLerp = false;
 	
+	
 	/* 모델에 표현되어있는 모든 뼈들의 CombinedTransformationMatrix */
 	_int iBoneIndex = 0;
 	
@@ -206,12 +207,12 @@ void CModel::Do_Root_Animation(CTransform* pTransform)
 		_float3 current_Look = current_Matrix.Look();
 		_float3 post_Look = post_Matirx.Look();
 
-		_float4x4 player_Matrix_Override = current_Matrix;
+		_float4x4 player_Matrix_Override = XMMatrixIdentity();
 
 		current_Look.Normalize();
 		post_Look.Normalize();
 
-		if (current_Look!=post_Look && fabsf(current_Look.x- post_Look.x)>0.0001f)
+		if (current_Look!=post_Look && fabsf(current_Look.x- post_Look.x)>0.0001f&& fabsf(current_Look.z - post_Look.z) > 0.0001f)
 		{
 			_float dot = XMVectorGetX(XMVector3Dot(post_Look, current_Look));
 			_float radian = acosf(dot);
@@ -221,8 +222,6 @@ void CModel::Do_Root_Animation(CTransform* pTransform)
 		
 			player_Matrix_Override = XMMatrixRotationY(radian);		
 		}
-		else
-			return;
 
 		_float3 current_Position = current_Matrix.Translation();
 		_float3 post_Position = post_Matirx.Translation();

@@ -128,6 +128,9 @@ HRESULT CAnimation::Initialize(Engine::ANIMATION Animation, const CModel::BONES&
 _bool CAnimation::Invalidate_AccTime(_float fTimeDelta)
 {
 	_bool isEnd = false;
+	if (m_isPaused)
+		return isEnd;
+	
 	m_fTimeAcc += m_fTickPerSecond * fTimeDelta;
 	if (m_fTimeAcc >= m_fDuration)
 	{
@@ -152,7 +155,7 @@ void CAnimation::Invalidate_TransformationMatrix(CModel::BONES& Bones, _float fT
 	}
 }
 
-void CAnimation::Invalidate_TransformationMatrix_Lerp(CModel::BONES& Bones, _float fTimeDelta, _double LerpTimeAcc, _uint iRootIndex)
+void CAnimation::Invalidate_TransformationMatrix_Lerp(CModel::BONES& Bones, _float fTimeDelta, _float LerpTimeAcc, _uint iRootIndex)
 {
 	_uint		iChannelIndex = 0;
 	for (auto& pChannel : m_Channels)
@@ -168,9 +171,6 @@ void CAnimation::Invalidate_TransformationMatrix_Lerp(CModel::BONES& Bones, _flo
 
 void CAnimation::Invalidate_Frame(_float fTimeDelta)
 {
-	if (m_isPaused)
-		return;
-	
 	//첫번째 채널에만 사운드용 데이터를 추가해줄거임.
 	_uint		iChannelIndex = 0;
 	if (m_pNotify != nullptr)
