@@ -4,8 +4,10 @@
 #include "Font_Manager.h"
 #include "Level_Manager.h"
 #include "Timer_Manager.h"
+#include "PhysX_Manager.h"
 #include "Graphic_Device.h"
 #include "Object_Manager.h"
+#include "Camera_Manager.h"
 #include "RenderTarget_Manager.h"
 
 IMPLEMENT_SINGLETON(CGameInstance)
@@ -25,6 +27,8 @@ CGameInstance::CGameInstance()
 	, m_pLight_Manager{ CLight_Manager::GetInstance() }
 	, m_pSound_Manager{ CSound_Manager::GetInstance() }
 	, m_pCalculator{ CCalculator::GetInstance() }
+	, m_pPhysX_Manager{ CPhysX_Manager::GetInstance() }
+	, m_pCamera_Manager{ CCamera_Manager::GetInstance() }
 {
 	Safe_AddRef(m_pFrustum);
 	Safe_AddRef(m_pFont_Manager);
@@ -40,6 +44,8 @@ CGameInstance::CGameInstance()
 	Safe_AddRef(m_pLight_Manager);
 	Safe_AddRef(m_pSound_Manager);
 	Safe_AddRef(m_pCalculator);
+	Safe_AddRef(m_pPhysX_Manager);
+	Safe_AddRef(m_pCamera_Manager);
 }
 
 HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInst, _uint iNumLevels, const GRAPHICDESC& GraphicDesc, _Inout_ ID3D11Device** ppDevice, _Inout_ ID3D11DeviceContext** ppContext)
@@ -59,6 +65,12 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInst, _uint iNumLevels, cons
 		return E_FAIL;
 
 	if (FAILED(m_pSound_Manager->Initialize()))
+		return E_FAIL;
+
+	if (FAILED(m_pPhysX_Manager->Initialize()))
+		return E_FAIL;
+
+	if (FAILED(m_pCamera_Manager->Initialize_CameraManager()))
 		return E_FAIL;
 
 	return S_OK;
@@ -87,11 +99,17 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 
 	m_pObject_Manager->Tick(fTimeDelta);
 
+	m_pCamera_Manager->Tick(fTimeDelta);
+
 	m_pPipeLine->Tick();
 
 	m_pFrustum->Tick();
 
+	m_pPhysX_Manager->Tick(fTimeDelta);
+
 	m_pObject_Manager->Late_Tick(fTimeDelta);
+
+	m_pCamera_Manager->Late_Tick(fTimeDelta);
 
 	m_pCollision_Manager->Tick();
 
@@ -210,6 +228,13 @@ CGameObject* CGameInstance::Find_GameObject_In_Layer(_uint iLevelIndex, const _t
 	NULL_CHECK_RETURN_MSG(m_pObject_Manager, nullptr, TEXT("Object_Manager NULL"));
 
 	return m_pObject_Manager->Find_GameObject_In_Layer(iLevelIndex, pLayerTag, pGameObjectTag);
+}
+
+CGameObject* CGameInstance::Clone_GameObject(const _tchar* pPrototypeTag, void* pArg)
+{
+	NULL_CHECK_RETURN_MSG(m_pObject_Manager, nullptr, TEXT("Object_Manager NULL"));
+
+	return m_pObject_Manager->Clone_GameObject(pPrototypeTag, pArg);
 }
 
 HRESULT CGameInstance::Add_Prototype_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, CComponent* pPrototype)
@@ -464,6 +489,61 @@ HRESULT CGameInstance::ReadFileInDirectory(vector<wstring>& OutVector, const _tc
 	return m_pCalculator->ReadFileInDirectory(OutVector, pFilePath, pExt);
 }
 
+PxPhysics* CGameInstance::Get_Physics() const
+{
+	NULL_CHECK_RETURN_MSG(m_pPhysX_Manager, nullptr, TEXT("PhysX_Manager NULL"));
+
+	return m_pPhysX_Manager->Get_Physics();
+}
+
+PxScene* CGameInstance::Get_PhysxScene() const
+{
+	NULL_CHECK_RETURN_MSG(m_pPhysX_Manager, nullptr, TEXT("PhysX_Manager NULL"));
+
+	return m_pPhysX_Manager->Get_PhysxScene();
+}
+
+PxControllerManager* CGameInstance::Get_ControllerManager() const
+{
+	NULL_CHECK_RETURN_MSG(m_pPhysX_Manager, nullptr, TEXT("PhysX_Manager NULL"));
+
+	return m_pPhysX_Manager->Get_ControllerManager();
+}
+HRESULT CGameInstance::Add_MainCamera(CCamera* _pMainCamera)
+{
+	NULL_CHECK_RETURN_MSG(m_pCamera_Manager, E_FAIL, TEXT("Camera NULL"));
+
+	return m_pCamera_Manager->Add_MainCamera(_pMainCamera);
+}
+
+HRESULT CGameInstance::Read_CutSceneCamera(const _tchar* _CutSceneTag, const _tchar* _CutScenePath)
+{
+	NULL_CHECK_RETURN_MSG(m_pCamera_Manager, E_FAIL, TEXT("Camera NULL"));
+
+	return Read_CutSceneCamera(_CutSceneTag, _CutScenePath);
+}
+
+HRESULT CGameInstance::Add_CutScene(const _tchar* _CutSceneTag)
+{
+	NULL_CHECK_RETURN_MSG(m_pCamera_Manager, E_FAIL, TEXT("Camera NULL"));
+
+	return Add_CutScene(_CutSceneTag);
+}
+
+HRESULT CGameInstance::Read_OffSetCamera(const _tchar* _OffSetTag, const _tchar* _OffSetPath)
+{
+	NULL_CHECK_RETURN_MSG(m_pCamera_Manager, E_FAIL, TEXT("Camera NULL"));
+
+	return Read_OffSetCamera(_OffSetTag, _OffSetPath);
+}
+
+HRESULT CGameInstance::Add_OffSetCamera(const _tchar* _OffSetTag)
+{
+	NULL_CHECK_RETURN_MSG(m_pCamera_Manager, E_FAIL, TEXT("Camera NULL"));
+
+	return Add_OffSetCamera(_OffSetTag);
+}
+
 void CGameInstance::Release_Engine()
 {
 	CGameInstance::GetInstance()->DestroyInstance();
@@ -474,7 +554,11 @@ void CGameInstance::Release_Engine()
 
 	CComponent_Manager::GetInstance()->DestroyInstance();
 
+	CCamera_Manager::GetInstance()->DestroyInstance();
+
 	CLevel_Manager::GetInstance()->DestroyInstance();
+
+	CPhysX_Manager::GetInstance()->DestroyInstance();
 
 	CTimer_Manager::GetInstance()->DestroyInstance();
 
@@ -499,6 +583,7 @@ void CGameInstance::Release_Engine()
 
 void CGameInstance::Free()
 {
+	Safe_Release(m_pPhysX_Manager);
 	Safe_Release(m_pCalculator);
 	Safe_Release(m_pSound_Manager);
 	Safe_Release(m_pLight_Manager);
@@ -511,6 +596,7 @@ void CGameInstance::Free()
 	Safe_Release(m_pComponent_Manager);
 	Safe_Release(m_pTimer_Manager);
 	Safe_Release(m_pObject_Manager);
+	Safe_Release(m_pCamera_Manager);
 	Safe_Release(m_pLevel_Manager);
 	Safe_Release(m_pGraphic_Device);
 }

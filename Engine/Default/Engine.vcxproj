@@ -33,8 +33,14 @@
     <ClInclude Include="..\public\Camera.h" />
     <ClInclude Include="..\public\Camera_Manager.h" />
     <ClInclude Include="..\Public\Attack.h" />
+    <ClInclude Include="..\public\CharacterController.h" />
+    <ClInclude Include="..\public\ColliderCom.h" />
+    <ClInclude Include="..\Public\PhysXConverter.h" />
+    <ClInclude Include="..\public\PhysX_Manager.h" />
+    <ClInclude Include="..\public\RigidBody.h" />
     <ClInclude Include="..\Public\MeshParts.h" />
     <ClInclude Include="..\Public\CustomModel.h" />
+    <ClInclude Include="..\Public\Modules.h" />
     <ClInclude Include="..\Public\Status.h" />
     <ClInclude Include="..\Public\VIBuffer_Sprite.h" />
     <ClInclude Include="..\Public\Ignite.h" />
@@ -74,10 +80,8 @@
     <ClInclude Include="..\public\Navigation.h" />
     <ClInclude Include="..\Public\Notify.h" />
     <ClInclude Include="..\Public\Object_Manager.h" />
-    <ClInclude Include="..\public\ParticleModule.h" />
     <ClInclude Include="..\Public\ParticleSystem.h" />
     <ClInclude Include="..\Public\PipeLine.h" />
-    <ClInclude Include="..\public\PX.h" />
     <ClInclude Include="..\public\PXAllocator.h" />
     <ClInclude Include="..\Public\PXErrorCallBack.h" />
     <ClInclude Include="..\Public\QuadTree.h" />
@@ -107,6 +111,7 @@
     <ClInclude Include="..\Public\Timer_Manager.h" />
     <ClInclude Include="..\Public\VIBuffer.h" />
     <ClInclude Include="..\Public\VIBuffer_Rect.h" />
+    <ClInclude Include="..\public\VIBuffer_Triangle.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Animation.cpp" />
@@ -123,8 +128,13 @@
     <ClCompile Include="..\private\Camera.cpp" />
     <ClCompile Include="..\private\Camera_Manager.cpp" />
     <ClCompile Include="..\Private\Attack.cpp" />
+    <ClCompile Include="..\private\CharacterController.cpp" />
+    <ClCompile Include="..\private\ColliderCom.cpp" />
+    <ClCompile Include="..\private\PhysX_Manager.cpp" />
+    <ClCompile Include="..\private\RigidBody.cpp" />
     <ClCompile Include="..\Private\MeshParts.cpp" />
     <ClCompile Include="..\Private\CustomModel.cpp" />
+    <ClCompile Include="..\Private\Modules.cpp" />
     <ClCompile Include="..\Private\Status.cpp" />
     <ClCompile Include="..\Private\VIBuffer_Sprite.cpp" />
     <ClCompile Include="..\Private\Ignite.cpp" />
@@ -157,10 +167,8 @@
     <ClCompile Include="..\private\Navigation.cpp" />
     <ClCompile Include="..\Private\Notify.cpp" />
     <ClCompile Include="..\Private\Object_Manager.cpp" />
-    <ClCompile Include="..\private\ParticleModule.cpp" />
     <ClCompile Include="..\Private\ParticleSystem.cpp" />
     <ClCompile Include="..\Private\PipeLine.cpp" />
-    <ClCompile Include="..\private\PX.cpp" />
     <ClCompile Include="..\Private\QuadTree.cpp" />
     <ClCompile Include="..\Private\Renderer.cpp" />
     <ClCompile Include="..\private\RenderTarget.cpp" />
@@ -188,6 +196,7 @@
     <ClCompile Include="..\Private\Timer_Manager.cpp" />
     <ClCompile Include="..\Private\VIBuffer.cpp" />
     <ClCompile Include="..\Private\VIBuffer_Rect.cpp" />
+    <ClCompile Include="..\private\VIBuffer_Triangle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred.hlsl" />
@@ -309,6 +318,7 @@
       <AdditionalIncludeDirectories>../Public/;../Public/PhysX/</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <DisableSpecificWarnings>4828;4204;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -339,6 +349,7 @@ call Copy.bat</Command>
       <AdditionalIncludeDirectories>../Public/;../Public/PhysX/</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <DisableSpecificWarnings>4828;4204;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

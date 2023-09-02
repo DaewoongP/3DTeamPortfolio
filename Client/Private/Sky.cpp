@@ -130,7 +130,7 @@ HRESULT CSky::SetUp_ShaderResources()
 
 CSky* CSky::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CSky* pInstance = new CSky(pDevice, pContext);
+	CSky* pInstance = New CSky(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -143,7 +143,7 @@ CSky* CSky::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 CGameObject* CSky::Clone(void* pArg)
 {
-	CSky* pInstance = new CSky(*this);
+	CSky* pInstance = New CSky(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

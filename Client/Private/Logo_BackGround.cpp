@@ -122,7 +122,7 @@ HRESULT CLogo_BackGround::SetUp_ShaderResources()
 
 CLogo_BackGround* CLogo_BackGround::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CLogo_BackGround* pInstance = new CLogo_BackGround(pDevice, pContext);
+	CLogo_BackGround* pInstance = New CLogo_BackGround(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -135,7 +135,7 @@ CLogo_BackGround* CLogo_BackGround::Create(ID3D11Device* pDevice, ID3D11DeviceCo
 
 CGameObject* CLogo_BackGround::Clone(void* pArg)
 {
-	CLogo_BackGround* pInstance = new CLogo_BackGround(*this);
+	CLogo_BackGround* pInstance = New CLogo_BackGround(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

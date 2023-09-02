@@ -1,6 +1,6 @@
 #pragma once
 #include "ImWindow.h"
-#include "CCutScene_Camera_Tool.h"
+#include "CutScene_Camera_Tool.h"
 
 BEGIN(Tool)
 

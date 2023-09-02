@@ -4,7 +4,7 @@
 #include "Shader.h"
 #include "Texture.h"
 #include "Animation.h"
-
+#include "Transform.h"
 CModel::CModel(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CComponent(pDevice, pContext)
 {
@@ -98,6 +98,7 @@ HRESULT CModel::Initialize_Prototype(TYPE eType, const _tchar* pModelFilePath, _
 
 HRESULT CModel::Initialize(void* pArg)
 {
+	m_PostRootMatrix = XMMatrixIdentity();
 
 	return S_OK;
 }
@@ -109,28 +110,62 @@ HRESULT CModel::Render(_uint iMeshIndex)
 	return S_OK;
 }
 
-void CModel::Reset_Animation(_uint iAnimIndex)
+void CModel::Reset_Animation(_uint iAnimIndex, CTransform* pTransform)
 {
 	m_iCurrentAnimIndex = iAnimIndex;
 	m_iPreviousAnimIndex = m_iCurrentAnimIndex;
-	m_Animations[m_iCurrentAnimIndex]->Reset();
-
-	for (auto& pBone : m_Bones)
-	{
-		pBone->Invalidate_CombinedTransformationMatrix(m_Bones);
-	}
+	m_isResetAnimTrigger = true;
 }
 
-void CModel::Play_Animation(_float fTimeDelta)
+void CModel::Play_Animation(_float fTimeDelta, CTransform* pTransform)
 {
-	m_Animations[m_iCurrentAnimIndex]->Invalidate_Frame(fTimeDelta);
-	m_Animations[m_iCurrentAnimIndex]->Invalidate_TransformationMatrix(m_Bones, fTimeDelta);
+	if (m_Animations[m_iCurrentAnimIndex]->Invalidate_AccTime(fTimeDelta) || m_isResetAnimTrigger )
+	{
+		//애니메이션 재생이 다 되면 여기가 실행되는거임.
+		m_Animations[m_iCurrentAnimIndex]->Reset();
+		m_isAnimChangeLerp = true;
+		m_fAnimChangeTimer = ANIMATIONLERPTIME; 
+		m_PostRootMatrix = XMMatrixIdentity();
+		m_isResetAnimTrigger = false;
+	}
+	else if (pTransform != nullptr)
+	{
+		Do_Root_Animation(pTransform);
+	}
 
+	//노티파이용
+	m_Animations[m_iCurrentAnimIndex]->Invalidate_Frame(fTimeDelta);
+
+	//뼈 이동용
+	if (!m_isAnimChangeLerp)
+	{
+		m_Animations[m_iCurrentAnimIndex]->Invalidate_TransformationMatrix(m_Bones, fTimeDelta);
+	}
+	else if(m_fAnimChangeTimer >= 0.0)
+	{
+		m_Animations[m_iCurrentAnimIndex]->Invalidate_TransformationMatrix_Lerp(m_Bones, fTimeDelta, ANIMATIONLERPTIME - m_fAnimChangeTimer,m_iRootBoneIndex);
+		m_fAnimChangeTimer -= fTimeDelta;
+	}
+	else
+		m_isAnimChangeLerp = false;
+	
+	
 	/* 모델에 표현되어있는 모든 뼈들의 CombinedTransformationMatrix */
+	_int iBoneIndex = 0;
+	
 	for (auto& pBone : m_Bones)
 	{
-		pBone->Invalidate_CombinedTransformationMatrix(m_Bones);
+		if (m_iRootBoneIndex == pBone->Get_ParentNodeIndex())
+		{
+			pBone->Invalidate_CombinedTransformationMatrix_Basic(m_Bones);
+		}
+		else 
+		{
+			pBone->Invalidate_CombinedTransformationMatrix(m_Bones);
+		}
+		iBoneIndex++;
 	}
+	
 }
 
 HRESULT CModel::Find_BoneIndex(const _tchar* pBoneName, _Inout_ _uint* iIndex)
@@ -153,6 +188,49 @@ HRESULT CModel::Find_BoneIndex(const _tchar* pBoneName, _Inout_ _uint* iIndex)
 	}
 
 	return S_OK;
+}
+
+void CModel::Set_CurrentAnimIndex(_uint iIndex)
+{ 
+	m_iCurrentAnimIndex = iIndex;
+	m_isAnimChangeLerp = true;
+	m_fAnimChangeTimer = ANIMATIONLERPTIME;
+}
+
+void CModel::Do_Root_Animation(CTransform* pTransform)
+{
+	if (pTransform != nullptr)
+	{
+		_float4x4 current_Matrix = m_Bones[m_iRootBoneIndex]->Get_CombinedTransformationMatrix();
+		_float4x4 post_Matirx = m_PostRootMatrix;
+
+		_float3 current_Look = current_Matrix.Look();
+		_float3 post_Look = post_Matirx.Look();
+
+		_float4x4 player_Matrix_Override = XMMatrixIdentity();
+
+		current_Look.Normalize();
+		post_Look.Normalize();
+
+		if (current_Look!=post_Look && fabsf(current_Look.x- post_Look.x)>0.0001f&& fabsf(current_Look.z - post_Look.z) > 0.0001f)
+		{
+			_float dot = XMVectorGetX(XMVector3Dot(post_Look, current_Look));
+			_float radian = acosf(dot);
+			
+			if (XMVectorGetY(XMVector3Cross(current_Look, post_Look)) > 0)
+				radian = 2 * XMVectorGetX(g_XMPi) - radian;
+		
+			player_Matrix_Override = XMMatrixRotationY(radian);		
+		}
+
+		_float3 current_Position = current_Matrix.Translation();
+		_float3 post_Position = post_Matirx.Translation();
+		_float3 Calculated_Position = (current_Position - post_Position);
+		memcpy(player_Matrix_Override.m[3], &Calculated_Position, sizeof _float3);
+
+		pTransform->Set_WorldMatrix(player_Matrix_Override * pTransform->Get_WorldMatrix());
+		m_PostRootMatrix = m_Bones[m_iRootBoneIndex]->Get_CombinedTransformationMatrix();
+	}
 }
 
 HRESULT CModel::Bind_Material(CShader* pShader, const char* pConstantName, _uint iMeshIndex, Engine::TextureType MaterialType)

@@ -25,9 +25,9 @@ HRESULT CUI_Window::Initialize(ImVec2 vWindowPos, ImVec2 vWindowSize)
 
 	//Safe_Release(pGameInstance);
 
-	m_TreeDesc.m_wstrName = TEXT("../../Resources/UI/");
+	/*m_TreeDesc.m_wstrName = TEXT("../../Resources/UI/");
 	m_TreeDesc.m_isFolder = true;
-	Read_File_In_Directory_Tree(m_TreeDesc, TEXT("../../Resources/UI/"), TEXT(".png"));
+	Read_File_In_Directory_Tree(m_TreeDesc, TEXT("../../Resources/UI/"), TEXT(".png"));*/
 
 	return S_OK;
 }
@@ -475,9 +475,7 @@ void CUI_Window::Move_UI()
 		return;
 	}
 
-	//_float3 vPos = m_pDummy_UI->Get_Transform()->Get_Translation();
 	_float2 fXY = m_pDummy_UI->Get_fXY();
-
 
 	if (pGameInstance->Get_DIKeyState(DIK_LSHIFT, CInput_Device::KEY_PRESSING))
 	{

@@ -26,11 +26,26 @@ public:
 	_float3 Get_Right() const { return m_WorldMatrix.Right(); }
 	_float3 Get_Up() const { return m_WorldMatrix.Up(); }
 	_float3 Get_Look() const { return m_WorldMatrix.Look(); }
-	_float3 Get_Translation() const { return m_WorldMatrix.Translation(); }
+	_float3 Get_Position() const { return m_WorldMatrix.Translation(); }
 	_float2 Get_Trnaslation_To_UI_fXY() const;
 	_float4x4 Get_WorldMatrix() const { return m_WorldMatrix; }
 	const _float4x4* Get_WorldMatrixPtr() const { return &m_WorldMatrix; }
 	_float4x4 Get_WorldMatrix_Inverse() const { return m_WorldMatrix.Inverse(); }
+	_float Get_Speed() const { return m_fSpeed; }
+	// 원하는 축을 기준으로 회전시킨 쿼터니언 벡터를 반환합니다.
+	_float4 Get_QuaternionVector_From_Axis(_float3 vAxis, _float _fRadian);
+	// Roll : X축기준 회전 
+	// Pitch : Y축기준 회전
+	// Yaw : Z축 기준 회전
+	// 값은 회전할 값을 넣어주시면 됩니다!! 
+	// ex) vRotation.x = XMConvertToRadian(90.f);
+	_float4 Get_QuaternionVector_RollPitchYaw(_float3 vRotation);
+	// X 축 기준 회전
+	_float4 Get_QuaternionVector_Roll(_float fRadian);
+	// Y 축 기준 회전
+	_float4 Get_QuaternionVector_Pitch(_float fRadian);
+	// Z 축 기준 회전
+	_float4 Get_QuaternionVector_Yaw(_float fRadian);
 
 	void Set_Scale(_float3 _vScale);
 	void Set_Right(_float3 _vRight);
@@ -54,23 +69,10 @@ public:
 	void Go_Left(_float fTimeDelta);
 	void Go_Right(_float fTimeDelta);
 	void Turn(_float3 vAxis, _float fTimeDelta);
+	void LookAt(_float3 _vTarget, _bool _isDeleteY = false);
 
-private: // 공용적인 변수값
+private:
 	_float4x4		m_WorldMatrix;
-	_bool			m_isRigidBody = { false };
-	_float3			m_vGravity = _float3(0.f, -5.f, 0.f);
-	// 속도
-	_float3			m_vVelocity;
-	// 힘
-	_float3			m_vForce;
-	// 가속도
-	_float3			m_vAccel;
-
-private: // 객체 변수값.
-	// 질량
-	_float			m_fMass = { 0.f };
-	// 저항
-	_float			m_fResistance = { 0.f };
 	_float			m_fSpeed = { 0.f };
 	_float			m_fRotationSpeed = { 0.f };
 
@@ -81,17 +83,3 @@ public:
 };
 
 END
-
-/*_float3 vPos1, vPos2;
-	_float3 vResult = vPos1 + vPos2;
-	_float3 vRe = vPos1 * vPos2;
-
-	_float fDot = vPos1.Dot(vPos2);
-	_float3 vNorm;
-	vPos1.Normalize(vNorm);
-
-	_float4 vTrans = vPos1.TransCoord();
-	_float4 vTran = vPos1.TransNorm();
-	_float3 vRes = vTrans.xyz();
-
-	_float4 vRight = m_WorldMatrix.Right().TransNorm();*/

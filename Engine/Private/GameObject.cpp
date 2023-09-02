@@ -9,7 +9,7 @@ CGameObject::CGameObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 CGameObject::CGameObject(const CGameObject& rhs)
 	: CComposite(rhs)
 {
-	m_pTransform = static_cast<CTransform*>(rhs.m_pTransform->Clone(nullptr));
+	m_pTransform = static_cast<CTransform*>(rhs.m_pTransform->Clone(rhs.m_pTransform));
 }
 
 HRESULT CGameObject::Initialize_Prototype()

@@ -30,6 +30,11 @@ public:
 #ifdef _DEBUG
 private:
 	void Tick_FPS(_float fTimeDelta);
+
+private: /* ImGui */
+	HRESULT Initialize_ImGui();
+	void Tick_ImGui();
+	HRESULT Render_ImGui();
 #endif // _DEBUG
 
 private:
@@ -45,6 +50,11 @@ private: /* For. Frame Per Second*/
 	_tchar					m_szFPS[MAX_STR];
 	_int					m_iFps = { 0 };
 	_float					m_fFpsTime = { 0.f };
+
+private: /* ImGui */
+	_float4					m_vImGuiClearColor;
+	ID3D11Texture2D*		m_pTexture2D = { nullptr };
+	ID3D11RenderTargetView* m_pImGuiRTV = { nullptr };
 #endif // _DEBUG
 
 public:

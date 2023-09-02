@@ -8,13 +8,6 @@ CTransform::CTransform(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 CTransform::CTransform(const CTransform& rhs)
 	: CComponent(rhs)
 	, m_WorldMatrix(rhs.m_WorldMatrix)
-	, m_isRigidBody(rhs.m_isRigidBody)
-	, m_vGravity(rhs.m_vGravity)
-	, m_vVelocity(rhs.m_vVelocity)
-	, m_vForce(rhs.m_vForce)
-	, m_vAccel(rhs.m_vAccel)
-	, m_fMass(rhs.m_fMass)
-	, m_fResistance(rhs.m_fResistance)
 {
 }
 
@@ -28,6 +21,31 @@ _float2 CTransform::Get_Trnaslation_To_UI_fXY() const
 	fTransflation.y = -(m_WorldMatrix.Translation().y - g_iWinSizeY * 0.5f);
 
 	return fTransflation;
+}
+
+_float4 CTransform::Get_QuaternionVector_From_Axis(_float3 vAxis, _float _fRadian)
+{
+	return XMQuaternionRotationAxis(XMVector3Normalize(vAxis), _fRadian);
+}
+
+_float4 CTransform::Get_QuaternionVector_RollPitchYaw(_float3 vRotation)
+{
+	return XMQuaternionRotationRollPitchYawFromVector(vRotation);
+}
+
+_float4 CTransform::Get_QuaternionVector_Roll(_float fRadian)
+{
+	return XMQuaternionRotationRollPitchYaw(fRadian, 0.f, 0.f);
+}
+
+_float4 CTransform::Get_QuaternionVector_Pitch(_float fRadian)
+{
+	return XMQuaternionRotationRollPitchYaw(0.f, fRadian, 0.f);
+}
+
+_float4 CTransform::Get_QuaternionVector_Yaw(_float fRadian)
+{
+	return XMQuaternionRotationRollPitchYaw(0.f, 0.f, fRadian);
 }
 
 void CTransform::Set_Scale(_float3 _vScale)
@@ -81,12 +99,11 @@ HRESULT CTransform::Initialize(void* pArg)
 
 void CTransform::Tick(_float fTimeDelta)
 {
-	__super::Tick(fTimeDelta);
 }
 
 void CTransform::Move_Direction(_float3 vDirection, _float fTimeDelta)
 {
-	_float3 vPosition = Get_Translation();
+	_float3 vPosition = Get_Position();
 	
 	vDirection.Normalize();
 	
@@ -129,11 +146,33 @@ void CTransform::Turn(_float3 vAxis, _float fTimeDelta)
 	_float3 vUp = Get_Up();
 	_float3 vLook = Get_Look();
 
-	_float4x4 RotationMatrix = XMMatrixRotationAxis(XMVector3Normalize(vAxis), m_fRotationSpeed * fTimeDelta);
+	
+	_float4x4 RotationMatrix = XMMatrixRotationQuaternion(
+		Get_QuaternionVector_From_Axis(vAxis, m_fRotationSpeed * fTimeDelta));
+	
+//	_float4x4 RotationMatrix = XMMatrixRotationAxis(XMVector3Normalize(vAxis), m_fRotationSpeed * fTimeDelta);
 
 	Set_Right(XMVector3TransformNormal(vRight, RotationMatrix));
 	Set_Up(XMVector3TransformNormal(vUp, RotationMatrix));
 	Set_Look(XMVector3TransformNormal(vLook, RotationMatrix));
+}
+
+void CTransform::LookAt(_float3 _vTarget, _bool _isDeleteY)
+{
+	_float3 vPosition = Get_Position();
+
+	_float3 vLook = _vTarget - vPosition;
+	if (true == _isDeleteY)
+		vLook.y = 0.f;
+
+	_float3 vRight = XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook);
+	_float3 vUp = XMVector3Cross(vLook, vRight);
+
+	_float3 vScale = Get_Scale();
+
+	Set_Right(XMVector3Normalize(vRight) * vScale.x);
+	Set_Up(XMVector3Normalize(vUp) * vScale.y);
+	Set_Look(XMVector3Normalize(vLook) * vScale.z);
 }
 
 CTransform* CTransform::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

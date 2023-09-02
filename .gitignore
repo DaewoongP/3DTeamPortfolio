@@ -416,6 +416,3 @@ Tool.lib
 *.mat
 *.bmp
 *.spritefont
-
-# PhysX
-PhysXGpu_64.dll

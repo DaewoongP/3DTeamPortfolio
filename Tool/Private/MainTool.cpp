@@ -4,6 +4,7 @@
 #include "CDummy.h"
 #include "MapDummy.h"
 #include "MapObject.h"
+#include "Camera_Point.h"
 
 CMainTool::CMainTool()
 	: m_pGameInstance(CGameInstance::GetInstance())
@@ -211,6 +212,12 @@ HRESULT CMainTool::Add_Windows()
 			ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(446.f, 768.f)))))
 		return E_FAIL;
 
+	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("Light_Window"),
+		CLight_Window::Create(m_pDevice, m_pContext,
+			ImVec2(_float(g_iWinSizeX+8), _float(0.f)), ImVec2(446.f, 768.f)))))
+		return E_FAIL;
+
+
 	return S_OK;
 }
 
@@ -312,6 +319,11 @@ HRESULT CMainTool::Ready_Prototype_Component()
 		CParticleSystem::Create(m_pDevice, m_pContext, 30))))
 		return E_FAIL;
 
+	/* Prototype_Component_Sphere_Collider*/
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_TOOL, TEXT("Prototype_Component_Sphere_Collider"),
+		CCollider::Create(m_pDevice, m_pContext,CCollider::TYPE_SPHERE))))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -346,6 +358,11 @@ HRESULT CMainTool::Ready_Prototype_Object()
 	/* Prototype_GameObject_MapObject*/
 	if (FAILED(m_pGameInstance->Add_Prototype_GameObject(TEXT("Prototype_GameObject_MapObject"),
 		CMapObject::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+		
+	/* Prototype_GameObject_Camera_Point*/
+	if (FAILED(m_pGameInstance->Add_Prototype_GameObject(TEXT("Prototype_GameObject_Camera_Point"),
+		CCamera_Point::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	return S_OK;

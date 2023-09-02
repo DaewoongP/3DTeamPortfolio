@@ -26,8 +26,8 @@ public:
 	class CGameObject* Find_GameObject_In_Layer(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pGameObjectTag);
 	void	Clear_LevelResources(_uint iLevelIndex);
 	class CLayer* Find_Layer(_uint iLevelIndex, const _tchar* pLayerTag);
+	CGameObject* Clone_GameObject(const _tchar* pPrototypeTag, void* pArg);
 
-	
 public:
 	void	Tick(_float fTimeDelta);
 	void	Late_Tick(_float fTimeDelta);
