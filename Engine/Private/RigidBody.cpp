@@ -112,19 +112,24 @@ HRESULT CRigidBody::Create_Actor()
 
 	PxShape* shape = pPhysX->createShape(PxCapsuleGeometry(1.f, 1.f), *pPhysX->createMaterial(0.5f, 0.5f, 0.5f), false, PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSIMULATION_SHAPE);
 
-	PxVec3 tr = PxVec3(-2.f, 30.f, 5.f);
+	PxVec3 tr = PxVec3(-2.f, 20.f, 5.f);
 	PxTransform localTm(tr);
 	m_pActor = pPhysX->createRigidDynamic(localTm);
 	shape->setLocalPose(PxTransformFromSegment(PxVec3(0.f, 1.f, 0.f), PxVec3(0.f, -1.f, 0.f)));
 	m_pActor->attachShape(*shape);
+	
+	PxShape* boxshape = pPhysX->createShape(PxBoxGeometry(1.f, 1.f, 1.f), *pPhysX->createMaterial(1.f, 0.5f, 0.f), false, PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSIMULATION_SHAPE);
+
+	m_pActor->attachShape(*boxshape);
 	m_pActor->setMass(50.f);
 	pPhysxScene->addActor(*m_pActor);
 	shape->release();
-
+	
 	PxRigidDynamic* pRigidBody = m_pActor->is<PxRigidDynamic>();
 
+	// 회전을 " 하고 싶은 " 부분만 true로 처리해주면 된다.
 	pRigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, true);
-	pRigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, true);
+	//pRigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, true);
 	pRigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, true);
 
 	return S_OK;

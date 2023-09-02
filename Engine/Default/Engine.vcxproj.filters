@@ -226,12 +226,6 @@
     <Filter Include="01. Utility\11. Physics\Manager">
       <UniqueIdentifier>{c42835f8-4df6-46da-8c82-aa28c770e87f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\03. Components\14. RigidBody">
-      <UniqueIdentifier>{34a36dc9-7fff-4175-b4ed-7b026eba34fc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\03. Components\15. CharacterController">
-      <UniqueIdentifier>{34e887bf-9249-4cc8-bdf0-670c9df56fa7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Utility\03. Components\07. VIBuffer\Triangle">
       <UniqueIdentifier>{a5f8428d-9252-403e-821d-0690fa879d0b}</UniqueIdentifier>
     </Filter>
@@ -258,6 +252,12 @@
     </Filter>
     <Filter Include="01. Utility\03. Components\09. Collider\Bounding\OBB\Sphere">
       <UniqueIdentifier>{9ef1f8a7-57da-450b-8888-f477bbda2889}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\16. CharacterController">
+      <UniqueIdentifier>{34e887bf-9249-4cc8-bdf0-670c9df56fa7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\17. RigidBody">
+      <UniqueIdentifier>{34a36dc9-7fff-4175-b4ed-7b026eba34fc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -529,13 +529,13 @@
       <Filter>01. Utility\11. Physics\Manager</Filter>
     </ClInclude>
     <ClInclude Include="..\public\RigidBody.h">
-      <Filter>01. Utility\03. Components\14. RigidBody</Filter>
+      <Filter>01. Utility\03. Components\17. RigidBody</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ColliderCom.h">
-      <Filter>01. Utility\03. Components\14. RigidBody</Filter>
+      <Filter>01. Utility\03. Components\17. RigidBody</Filter>
     </ClInclude>
     <ClInclude Include="..\public\CharacterController.h">
-      <Filter>01. Utility\03. Components\15. CharacterController</Filter>
+      <Filter>01. Utility\03. Components\16. CharacterController</Filter>
     </ClInclude>
     <ClInclude Include="..\public\VIBuffer_Triangle.h">
       <Filter>01. Utility\03. Components\07. VIBuffer\Triangle</Filter>
@@ -780,13 +780,13 @@
       <Filter>01. Utility\11. Physics\Manager</Filter>
     </ClCompile>
     <ClCompile Include="..\private\RigidBody.cpp">
-      <Filter>01. Utility\03. Components\14. RigidBody</Filter>
+      <Filter>01. Utility\03. Components\17. RigidBody</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ColliderCom.cpp">
-      <Filter>01. Utility\03. Components\14. RigidBody</Filter>
+      <Filter>01. Utility\03. Components\17. RigidBody</Filter>
     </ClCompile>
     <ClCompile Include="..\private\CharacterController.cpp">
-      <Filter>01. Utility\03. Components\15. CharacterController</Filter>
+      <Filter>01. Utility\03. Components\16. CharacterController</Filter>
     </ClCompile>
     <ClCompile Include="..\private\VIBuffer_Triangle.cpp">
       <Filter>01. Utility\03. Components\07. VIBuffer\Triangle</Filter>

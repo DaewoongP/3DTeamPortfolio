@@ -11,6 +11,31 @@ CTransform::CTransform(const CTransform& rhs)
 {
 }
 
+_float4 CTransform::Get_QuaternionVector_From_Axis(_float3 vAxis, _float _fRadian)
+{
+	return XMQuaternionRotationAxis(XMVector3Normalize(vAxis), _fRadian);
+}
+
+_float4 CTransform::Get_QuaternionVector_RollPitchYaw(_float3 vRotation)
+{
+	return XMQuaternionRotationRollPitchYawFromVector(vRotation);
+}
+
+_float4 CTransform::Get_QuaternionVector_Roll(_float fRadian)
+{
+	return XMQuaternionRotationRollPitchYaw(fRadian, 0.f, 0.f);
+}
+
+_float4 CTransform::Get_QuaternionVector_Pitch(_float fRadian)
+{
+	return XMQuaternionRotationRollPitchYaw(0.f, fRadian, 0.f);
+}
+
+_float4 CTransform::Get_QuaternionVector_Yaw(_float fRadian)
+{
+	return XMQuaternionRotationRollPitchYaw(0.f, 0.f, fRadian);
+}
+
 void CTransform::Set_Scale(_float3 _vScale)
 {
 	Set_Right(Get_Right() * _vScale.x);
@@ -105,7 +130,11 @@ void CTransform::Turn(_float3 vAxis, _float fTimeDelta)
 	_float3 vUp = Get_Up();
 	_float3 vLook = Get_Look();
 
-	_float4x4 RotationMatrix = XMMatrixRotationAxis(XMVector3Normalize(vAxis), m_fRotationSpeed * fTimeDelta);
+	
+	_float4x4 RotationMatrix = XMMatrixRotationQuaternion(
+		Get_QuaternionVector_From_Axis(vAxis, m_fRotationSpeed * fTimeDelta));
+	
+//	_float4x4 RotationMatrix = XMMatrixRotationAxis(XMVector3Normalize(vAxis), m_fRotationSpeed * fTimeDelta);
 
 	Set_Right(XMVector3TransformNormal(vRight, RotationMatrix));
 	Set_Up(XMVector3TransformNormal(vUp, RotationMatrix));

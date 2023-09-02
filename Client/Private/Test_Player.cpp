@@ -29,6 +29,7 @@ HRESULT CTest_Player::Initialize(void* pArg)
 		return E_FAIL;
 
 	m_pTransform->Set_Speed(10.f);
+	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
 
 	return S_OK;
 }
@@ -148,6 +149,8 @@ HRESULT CTest_Player::Render()
 
 		m_pModelCom->Render(i);
 	}*/
+
+	
 	return S_OK;
 }
 
@@ -387,7 +390,7 @@ void CTest_Player::Key_Input(_float fTimeDelta)
 #ifdef _DEBUG
 void CTest_Player::Tick_ImGui()
 {
-	ImGui::Begin("Test");
+	ImGui::Begin("Test Player");
 	_bool bis;
 	ImGui::Checkbox("Test", &bis);
 

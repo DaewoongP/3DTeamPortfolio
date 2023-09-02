@@ -30,6 +30,20 @@ public:
 	const _float4x4* Get_WorldMatrixPtr() const { return &m_WorldMatrix; }
 	_float4x4 Get_WorldMatrix_Inverse() const { return m_WorldMatrix.Inverse(); }
 	_float Get_Speed() const { return m_fSpeed; }
+	// 원하는 축을 기준으로 회전시킨 쿼터니언 벡터를 반환합니다.
+	_float4 Get_QuaternionVector_From_Axis(_float3 vAxis, _float _fRadian);
+	// Roll : X축기준 회전 
+	// Pitch : Y축기준 회전
+	// Yaw : Z축 기준 회전
+	// 값은 회전할 값을 넣어주시면 됩니다!! 
+	// ex) vRotation.x = XMConvertToRadian(90.f);
+	_float4 Get_QuaternionVector_RollPitchYaw(_float3 vRotation);
+	// X 축 기준 회전
+	_float4 Get_QuaternionVector_Roll(_float fRadian);
+	// Y 축 기준 회전
+	_float4 Get_QuaternionVector_Pitch(_float fRadian);
+	// Z 축 기준 회전
+	_float4 Get_QuaternionVector_Yaw(_float fRadian);
 
 	void Set_Scale(_float3 _vScale);
 	void Set_Right(_float3 _vRight);
