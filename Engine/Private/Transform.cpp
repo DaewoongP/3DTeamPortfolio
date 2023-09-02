@@ -11,6 +11,18 @@ CTransform::CTransform(const CTransform& rhs)
 {
 }
 
+_float2 CTransform::Get_Trnaslation_To_UI_fXY() const
+{
+	_float2 fTransflation;
+	_uint g_iWinSizeX = 1280;
+	_uint g_iWinSizeY = 720;
+
+	fTransflation.x = m_WorldMatrix.Translation().x + g_iWinSizeX * 0.5f;
+	fTransflation.y = -(m_WorldMatrix.Translation().y - g_iWinSizeY * 0.5f);
+
+	return fTransflation;
+}
+
 _float4 CTransform::Get_QuaternionVector_From_Axis(_float3 vAxis, _float _fRadian)
 {
 	return XMQuaternionRotationAxis(XMVector3Normalize(vAxis), _fRadian);
@@ -38,9 +50,13 @@ _float4 CTransform::Get_QuaternionVector_Yaw(_float fRadian)
 
 void CTransform::Set_Scale(_float3 _vScale)
 {
-	Set_Right(Get_Right() * _vScale.x);
-	Set_Up(Get_Up() * _vScale.y);
-	Set_Look(Get_Look() * _vScale.z);
+	_float3 vRight = Get_Right();
+	_float3 vUp = Get_Up();
+	_float3 vLook = Get_Look();
+	
+	Set_Right(XMVector3Normalize(vRight) * _vScale.x);
+	Set_Up(XMVector3Normalize(vUp) * _vScale.y);
+	Set_Look(XMVector3Normalize(vLook) * _vScale.z);
 }
 
 void CTransform::Set_Right(_float3 _vRight)

@@ -20,12 +20,14 @@ private:
 	explicit CTransform(const CTransform& rhs);
 	virtual ~CTransform() = default;
 
+	
 public:
 	_float3 Get_Scale() const { return _float3(Get_Right().Length(), Get_Up().Length(), Get_Look().Length()); }
 	_float3 Get_Right() const { return m_WorldMatrix.Right(); }
 	_float3 Get_Up() const { return m_WorldMatrix.Up(); }
 	_float3 Get_Look() const { return m_WorldMatrix.Look(); }
 	_float3 Get_Position() const { return m_WorldMatrix.Translation(); }
+	_float2 Get_Trnaslation_To_UI_fXY() const;
 	_float4x4 Get_WorldMatrix() const { return m_WorldMatrix; }
 	const _float4x4* Get_WorldMatrixPtr() const { return &m_WorldMatrix; }
 	_float4x4 Get_WorldMatrix_Inverse() const { return m_WorldMatrix.Inverse(); }
