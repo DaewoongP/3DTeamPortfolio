@@ -27,6 +27,7 @@ public:
 	void	Clear_LevelResources(_uint iLevelIndex);
 	class CLayer* Find_Layer(_uint iLevelIndex, const _tchar* pLayerTag);
 	HRESULT	Clear_Layer(_uint iLevelIndex, const _tchar* pLayerTag);
+	HRESULT Delete_Object(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pGameObjectTag);
 	CGameObject* Clone_GameObject(const _tchar* pPrototypeTag, void* pArg);
 
 public:

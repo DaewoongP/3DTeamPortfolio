@@ -68,7 +68,7 @@ private:
 	vector<const _tchar*> m_vecModelList_t; // 모델 이름을 _tchar로 저장해둠
 	vector<const _tchar*> m_vecModelPath_t; // 모델 경로를 _tchar로 저장해둠
 	vector<wstring> m_vecMapObjectTag; // 맵에 추가한 오브젝트들의 넘버링 태그를 저장
-	vector<string> m_vecObjectTag_s; // 넘버링 태그를 _char로 저장함
+	vector<string> m_vecObjectTag_s; // 넘버링 태그를 string으로 저장함
  	vector<SAVEOBJECTDESC> m_vecSaveObject; // 저장할 맵 오브젝트에 대한 정보
 
 public:

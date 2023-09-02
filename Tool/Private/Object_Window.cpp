@@ -271,21 +271,45 @@ void CObject_Window::Save_Load_Menu()
 void CObject_Window::Delete_Object_Menu()
 {
 	// 마지막에 설치한 오브젝트를 제거
+	// 단, 오브젝트가 하나라도 설치가 되어있어야 한다.
 	if (ImGui::Button("Undo"))
 	{
+		if (0 != m_vecObjectTag_s.size())
+		{
+			BEGININSTANCE;
+			if (FAILED(pGameInstance->Delete_Object((_uint)LEVEL_TOOL, 
+				TEXT("Layer_MapObject"), m_vecMapObjectTag.back().c_str())))
+			{
+				MSG_BOX("Failed to delete last MapObject");
+			} ENDINSTANCE;
 
+			if (0 < m_iTagIndex)
+			{
+				--m_iTagIndex;
+			}
+
+			if (0 < m_iMapObjectIndex)
+			{
+				--m_iMapObjectIndex;
+			}
+
+			m_vecMapObjectTag.pop_back();
+			m_vecObjectTag_s.pop_back();
+			m_vecSaveObject.pop_back();
+		}
 	}
 
 	ImGui::SameLine();
 
-	// 설치된 전체 오브젝트 제거
+	// 설치된 전체 오브젝트 제거 기능 활성화
 	if (ImGui::Button("Delete All"))
 	{
 		m_isDeleteObject = !m_isDeleteObject;
 	}
 
 	// 위에 버튼을 눌러 경고창을 활성화한다.
-	if (true == m_isDeleteObject)
+	// 단, 오브젝트가 하나라도 설치가 되어있어야 한다.
+	if (true == m_isDeleteObject && 0 != m_vecObjectTag_s.size())
 	{
 		ImGui::Text("Are you sure?");
 

@@ -42,6 +42,25 @@ HRESULT CLayer::Clear_Layer()
 	return S_OK;
 }
 
+HRESULT CLayer::Delete_Object(const _tchar* pGameObjectTag)
+{
+	for (auto iter = m_GameObjects.begin(); iter != m_GameObjects.end();)
+	{
+		if (!lstrcmp(pGameObjectTag, iter->first))
+		{
+			Safe_Release(iter->second);
+			iter = m_GameObjects.erase(iter);
+		}
+
+		else
+		{
+			++iter;
+		}
+	}
+
+	return S_OK;
+}
+
 void CLayer::Tick(_float fTimeDelta)
 {
 	for (auto& pGameObject : m_GameObjects)
