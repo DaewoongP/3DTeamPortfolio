@@ -133,7 +133,7 @@ HRESULT CTest_Enemy::SetUp_ShaderResources()
 
 CTest_Enemy* CTest_Enemy::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CTest_Enemy* pInstance = new CTest_Enemy(pDevice, pContext);
+	CTest_Enemy* pInstance = New CTest_Enemy(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -146,7 +146,7 @@ CTest_Enemy* CTest_Enemy::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
 
 CTest_Enemy* CTest_Enemy::Clone(void* pArg)
 {
-	CTest_Enemy* pInstance = new CTest_Enemy(*this);
+	CTest_Enemy* pInstance = New CTest_Enemy(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

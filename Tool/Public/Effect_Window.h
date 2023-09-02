@@ -3,6 +3,11 @@
 
 BEGIN(Tool)
 
+class CComboBox;
+
+END
+BEGIN(Tool)
+
 class CEffect_Window final : public CImWindow
 {
 private:
@@ -21,14 +26,22 @@ public:
 
 	void MainMoudle_TreeNode();
 	void EmissionModule_TreeNode();
+	void ShapeModule_TreeNode();
+
+private: // À§Á¬ °ü·Ã
+	void TableDragFloat(string _strTag, _float* _pValue, _float _fDragSpeed = 0.01f, _float _fMin = 0.f, _float _fMax = FLT_MAX);
+	void TableDragFloat2Range(string _strTag, _float2* _pValue, _float _fDragSpeed = 0.01f, _float _fMin = 0.f, _float _fMax = FLT_MAX);
+	void TableDragXYZ(string _strTag, _float3* pValue, _float _fDragSpeed = 0.01f, _float _fMin = 0.f, _float _fMax = FLT_MAX);
+	void TableCheckBox(string _strTag, _bool* _pValue);
+	void TableColorEdit4(string _strTag, _float4* pValue);
 
 private:
-	_bool		m_bMainCheckBox = { true };
-	_bool		m_bEmmissionCheckBox = { true };
-	//_bool		m_bEmmissionCheckBox = { true };
-
+	_float		m_fWidgetSize = { 200.f };
+	CComboBox* m_pEmitterVelocity_ComboBox = { nullptr };
+	
 private:
 	class CDummyParticle* m_pDummyParticle = { nullptr };
+	CParticleSystem* m_pParticleSystem = { nullptr };
 
 public:
 	static CEffect_Window* Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, ImVec2 _vWindowPos, ImVec2 _vWindowSize);

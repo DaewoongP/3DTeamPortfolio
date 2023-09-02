@@ -88,6 +88,12 @@
     <Filter Include="02. ToolObjects\01. Dummy\Dummy_Light">
       <UniqueIdentifier>{503ad47d-bb67-4cd6-8503-1b4ce004749c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Window\CustomWidget">
+      <UniqueIdentifier>{5829ef33-95f1-4ef6-9d84-dfbc9937f3db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Window\CustomWidget\ComboBox">
+      <UniqueIdentifier>{f9534f91-957f-4cb3-b18a-f0c81e29a299}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tool.h">
@@ -210,6 +216,12 @@
     <ClInclude Include="..\Public\Dummy_Light.h">
       <Filter>02. ToolObjects\01. Dummy\Dummy_Light</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\CustomWidget.h">
+      <Filter>01. Window\CustomWidget</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ComboBox.h">
+      <Filter>01. Window\CustomWidget\ComboBox</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -317,6 +329,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Dummy_Light.cpp">
       <Filter>02. ToolObjects\01. Dummy\Dummy_Light</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CustomWidget.cpp">
+      <Filter>01. Window\CustomWidget</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ComboBox.cpp">
+      <Filter>01. Window\CustomWidget\ComboBox</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

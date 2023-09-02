@@ -173,6 +173,8 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="..\Public\Light_Window.h" />
+    <ClInclude Include="..\Public\ComboBox.h" />
+    <ClInclude Include="..\public\CustomWidget.h" />
     <ClInclude Include="..\Public\stb_image.h" />
     <ClInclude Include="..\Public\Dummy_UI.h" />
     <ClInclude Include="..\Public\UI_Window.h" />
@@ -216,6 +218,8 @@
     <ClCompile Include="..\Private\Dummy_Light.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\Private\ComboBox.cpp" />
+    <ClCompile Include="..\private\CustomWidget.cpp" />
     <ClCompile Include="..\Private\Dummy_UI.cpp" />
     <ClCompile Include="..\Private\Light_Window.cpp" />
     <ClCompile Include="..\Private\UI_Window.cpp" />
@@ -226,7 +230,9 @@
     <ClCompile Include="..\private\Camera_Free.cpp" />
     <ClCompile Include="..\private\Level_Tool.cpp" />
     <ClCompile Include="..\private\MainTool.cpp" />
-    <ClCompile Include="..\private\ImWindow.cpp" />
+    <ClCompile Include="..\private\ImWindow.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\Private\MapDummy.cpp" />
     <ClCompile Include="..\Private\MapObject.cpp" />
     <ClCompile Include="..\private\Object_Window.cpp" />

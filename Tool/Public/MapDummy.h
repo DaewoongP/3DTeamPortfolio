@@ -37,7 +37,6 @@ public:
 
 private:
 	CShader* m_pShader = { nullptr };
-	CTexture* m_pTexture = { nullptr };
 	CRenderer* m_pRenderer = { nullptr };
 	CModel* m_pModel = { nullptr };
 

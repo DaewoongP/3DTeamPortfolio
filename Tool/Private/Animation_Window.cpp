@@ -239,7 +239,8 @@ void CAnimation_Window::Animation_ComboBox(_char* szCurrentItem, CModel* pDummyM
 			{
 				strcpy_s(szCurrentItem, sizeof(szAnimationName), szAnimationName);
 				ImGui::SetItemDefaultFocus();
-				pDummyModel->Set_CurrentAnimIndex(i);
+				
+				pDummyModel->Reset_Animation(i, dynamic_cast<CTransform*>(m_pDummyObject->Find_Component(TEXT("Com_Transform"))));
 			}
 		}
 		ImGui::EndCombo();
