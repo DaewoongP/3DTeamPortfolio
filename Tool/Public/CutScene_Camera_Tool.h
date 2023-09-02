@@ -79,9 +79,12 @@ private:
 	void Delete_Point();
 
 	//저장 기능
-	HRESULT Save_CutScene(const _tchar* _wszFileName);
+	HRESULT Save_CutScene(const _tchar* _wszFilePath);
 
-	//위치 수정 기능
+	//불러오기 기능
+	HRESULT Load_CutScene(const _tchar* _wszFilePath);
+
+	//마우스로 위치 수정 기능
 	void Fix_Point();
 
 public:

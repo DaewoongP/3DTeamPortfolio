@@ -24,7 +24,10 @@ const _float4 CCamera_Manager::Get_OffSetEye(OFFSETCAMERADESC& _OffSetCameraDesc
 
 void CCamera_Manager::Tick(_float _TimeDelta)
 {
-	NULL_CHECK_RETURN(m_pMainCamera, );
+	if (nullptr == m_pMainCamera)
+	{
+		return;
+	}
 
 	m_pMainCamera->Tick(_TimeDelta);
 
@@ -51,9 +54,10 @@ void CCamera_Manager::Tick(_float _TimeDelta)
 
 void CCamera_Manager::Late_Tick(_float _TimeDelta)
 {
-	NULL_CHECK_RETURN(m_pMainCamera, );
-
-
+	if (nullptr == m_pMainCamera)
+	{
+		return;
+	}
 }
 
 HRESULT CCamera_Manager::Initialize_CameraManager()

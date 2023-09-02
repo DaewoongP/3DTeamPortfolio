@@ -94,6 +94,66 @@ void CCutScene_Camera_Tool::Tick(_float _fTimeDelta)
 	//생성 삭제
 	Point_Select_Create_Delete();
 	
+	//화면 띄우기
+	if (ImGui::Button("Save CutScene"))
+		ImGuiFileDialog::Instance()->
+		//			이 창의 고유 키값	  창 이름	  기본 형식자	기본 경로
+		OpenDialog("CutSceneSaveDialog", "Save File", ".cut",		"../../Resources/GameData/CutScene/");
+
+	// 화면 띄워지면
+	if (ImGuiFileDialog::Instance()->Display("CutSceneSaveDialog"))
+	{
+		// OK누르면
+		if (ImGuiFileDialog::Instance()->IsOk())
+		{
+			//세트 사이즈가 0이 아니라면
+			if (0 != m_iSetSize)
+			{
+				//파일 경로
+				std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+
+				//_tchar로 가공
+				_tchar wszFilePath[MAX_PATH]{};
+				CharToWChar(filePathName.c_str(), wszFilePath);
+
+				//저장 함수 실행
+				Save_CutScene(wszFilePath);
+			}
+		}
+		// 닫는다.
+		ImGuiFileDialog::Instance()->Close();
+	}
+
+	//화면 띄우기
+	if (ImGui::Button("Load CutScene"))
+		ImGuiFileDialog::Instance()->
+		//			이 창의 고유 키값	  창 이름	  기본 형식자	기본 경로
+		OpenDialog("CutSceneLoadDialog", "Load File", ".cut", "../../Resources/GameData/CutScene/");
+
+	// 화면 띄워지면
+	if (ImGuiFileDialog::Instance()->Display("CutSceneLoadDialog"))
+	{
+		// OK누르면
+		if (ImGuiFileDialog::Instance()->IsOk())
+		{
+			//세트 사이즈가 0이 아니라면
+			if (0 != m_iSetSize)
+			{
+				//파일 경로
+				std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+
+				//_tchar로 가공
+				_tchar wszFilePath[MAX_PATH]{};
+				CharToWChar(filePathName.c_str(), wszFilePath);
+
+				//불로오기 함수 실행
+				Load_CutScene(wszFilePath);
+			}
+		}
+		// 닫는다.
+		ImGuiFileDialog::Instance()->Close();
+	}
+
 	for (auto& iter : m_EyeList)
 	{
 		iter->Tick(_fTimeDelta);
@@ -103,7 +163,6 @@ void CCutScene_Camera_Tool::Tick(_float _fTimeDelta)
 	{
 		iter->Tick(_fTimeDelta);
 	}
-
 }
 
 HRESULT CCutScene_Camera_Tool::Render()
@@ -146,13 +205,17 @@ void CCutScene_Camera_Tool::Create_Point(const _float4& _vPosition)
 		//EyeList에 추가
 		if (true == m_isEye)
 		{
+#ifdef _DEBUG
 			pCameraPoint->Set_Collider_Color(_float4(0.0f, 0.0f, 1.0f, 1.0f));
+#endif
 			m_EyeList.push_back(pCameraPoint);
 		}
 		//AtList에 추가
 		else if (false == m_isEye)
 		{
+#ifdef _DEBUG
 			pCameraPoint->Set_Collider_Color(_float4(1.0f, 0.0f, 0.0f, 1.0f));
+#endif
 			m_AtList.push_back(pCameraPoint);
 		}
 
@@ -341,11 +404,6 @@ void CCutScene_Camera_Tool::Delete_Point()
 
 HRESULT CCutScene_Camera_Tool::Save_CutScene(const _tchar* _wszFileName)
 {
-	const _tchar wszFilePath[MAX_PATH]{TEXT("../../Resources/GameData/CutScene/")};
-
-	lstrcmp(wszFilePath, _wszFileName);
-	lstrcmp(wszFilePath, TEXT(".dat"));
-
 	HANDLE hFile = CreateFile(_wszFileName, GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
 	if (0 == hFile)
 	{
@@ -387,6 +445,11 @@ HRESULT CCutScene_Camera_Tool::Save_CutScene(const _tchar* _wszFileName)
 	CloseHandle(hFile);
 
 	return S_OK;
+}
+
+HRESULT CCutScene_Camera_Tool::Load_CutScene(const _tchar* _wszFilePath)
+{
+	return E_NOTIMPL;
 }
 
 void CCutScene_Camera_Tool::Fix_Point()

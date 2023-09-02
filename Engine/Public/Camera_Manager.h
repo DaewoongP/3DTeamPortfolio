@@ -58,10 +58,10 @@ private:
 	//queue<class CCamera*>	m_Cameras;
 
 	//파이프라인
-	class CPipeLine* m_pPipeLine;
+	class CPipeLine* m_pPipeLine = { nullptr };
 
 	//매인 카메라
-	class CCamera* m_pMainCamera;
+	class CCamera* m_pMainCamera = { nullptr };
 	
 	//for. CutScene
 	//컷씬 카메라 구조체 (이전 값을 담기 위함)

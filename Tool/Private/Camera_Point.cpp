@@ -85,12 +85,14 @@ HRESULT CCamera_Point::Add_Components()
 	return S_OK;
 }
 
+#ifdef _DEBUG
 void CCamera_Point::Set_Collider_Color(_float4 _vColor)
 {
 	NULL_CHECK(m_pCollider);
 
 	m_pCollider->Set_Color(_vColor);
 }
+#endif // _DEBUG
 
 CCamera_Point* CCamera_Point::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {

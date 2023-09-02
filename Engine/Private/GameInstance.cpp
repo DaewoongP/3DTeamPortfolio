@@ -524,6 +524,8 @@ void CGameInstance::Release_Engine()
 
 	CComponent_Manager::GetInstance()->DestroyInstance();
 
+	CCamera_Manager::GetInstance()->DestroyInstance();
+
 	CLevel_Manager::GetInstance()->DestroyInstance();
 
 	CTimer_Manager::GetInstance()->DestroyInstance();
@@ -561,6 +563,7 @@ void CGameInstance::Free()
 	Safe_Release(m_pComponent_Manager);
 	Safe_Release(m_pTimer_Manager);
 	Safe_Release(m_pObject_Manager);
+	Safe_Release(m_pCamera_Manager);
 	Safe_Release(m_pLevel_Manager);
 	Safe_Release(m_pGraphic_Device);
 }

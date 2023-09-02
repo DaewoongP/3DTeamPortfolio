@@ -17,7 +17,7 @@ using namespace Tool;
 #include "imgui.h"
 #include "imgui_impl_win32.h"
 #include "imgui_impl_dx11.h"
-
+#include "ImGuiFileDialog.h"
 //--------------------------------------------------Macro
 #define            BEGININSTANCE                    CGameInstance* pGameInstance = CGameInstance::GetInstance();        \
 													Safe_AddRef(pGameInstance);
