@@ -57,6 +57,7 @@ public: /* For.Object_Manager */
 	HRESULT Add_GameObject(_uint iLevelIndex, const _tchar * pPrototypeTag, const _tchar * pLayerTag, const _tchar * pGameObjectTag, void* pArg = nullptr);
 	class CLayer* Find_Layer(_uint iLevelIndex, const _tchar * pLayerTag);
 	class CGameObject* Find_GameObject_In_Layer(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pGameObjectTag);
+	CGameObject* Clone_GameObject(const _tchar * pPrototypeTag, void* pArg);
 
 public: /* For.Component_Manager*/
 	HRESULT Add_Prototype_Component(_uint iLevelIndex, const _tchar * pPrototypeTag, class CComponent* pPrototype);
@@ -129,6 +130,18 @@ public: /* For.PhysX_Manager */
 	PxPhysics* Get_Physics() const;
 	PxScene* Get_PhysxScene() const;
 	PxControllerManager* Get_ControllerManager() const;
+	
+public: /* For.Camera_Manager */
+	//매인 카메라를 넣어준다.
+	HRESULT Add_MainCamera(class CCamera* _pMainCamera);
+	//컷씬 카메라 데이터를 담는다.
+	HRESULT Read_CutSceneCamera(const _tchar* _CutSceneTag, const _tchar* _CutScenePath);
+	//컷씬 재생을 위한 큐 추가
+	HRESULT Add_CutScene(const _tchar* _CutSceneTag);
+	//오프셋 카메라 데이터를 담는다.
+	HRESULT Read_OffSetCamera(const _tchar* _OffSetTag, const _tchar* _OffSetPath);
+	//오프셋 재생을 위한 큐 추가
+	HRESULT Add_OffSetCamera(const _tchar* _OffSetTag);
 
 private:
 	class CGraphic_Device*			m_pGraphic_Device = { nullptr };
@@ -146,6 +159,7 @@ private:
 	class CSound_Manager*			m_pSound_Manager = { nullptr };
 	class CCalculator*				m_pCalculator = { nullptr };
 	class CPhysX_Manager*			m_pPhysX_Manager = { nullptr };
+	class CCamera_Manager*			m_pCamera_Manager = { nullptr };
 
 public:
 	static void Release_Engine();

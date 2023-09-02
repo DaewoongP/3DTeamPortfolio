@@ -21,6 +21,7 @@ using namespace Tool;
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+#include "ImGuiFileDialog.h"
 //--------------------------------------------------Macro
 #define            BEGININSTANCE                    CGameInstance* pGameInstance = CGameInstance::GetInstance();        \
 													Safe_AddRef(pGameInstance);

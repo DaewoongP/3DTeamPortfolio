@@ -1,4 +1,4 @@
-#include "CMain_Camera.h"
+#include "Main_Camera.h"
 #include "GameInstance.h"
 
 void CMain_Camera::Set_MoveSpeed(const _float& _fMoveSpeed)

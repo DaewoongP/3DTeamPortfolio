@@ -25,8 +25,7 @@ private:
 
 
 public:
-	const _float4 Get_Position();
-
+	_float4 Get_Position();
 
 public:
 	void Set_Position(_float4 _vPosition);
@@ -37,6 +36,16 @@ public:
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
+
+public:
+	_bool RayIntersects(_float4 vOrigin, _float4 vDirection, _Inout_ _float& fDist);
+
+
+
+#ifdef _DEBUG
+	//µð¹ö±ë ·»´õ »ö º¯°æ
+	void Set_Collider_Color(_float4 _vColor);
+#endif // _DEBUG
 
 
 private:
@@ -50,10 +59,8 @@ private:
 	HRESULT Add_Components();
 
 
-
-
 public:
-	static CCamera_Point* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, void* pArg);
+	static CCamera_Point* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);
 
 	virtual CGameObject* Clone(void* pArg) override;
 
