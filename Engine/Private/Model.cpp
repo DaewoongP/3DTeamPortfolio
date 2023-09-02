@@ -156,9 +156,6 @@ void CModel::Play_Animation(_float fTimeDelta, CTransform* pTransform)
 	
 	for (auto& pBone : m_Bones)
 	{
-		//부모가 루트인 뼈는 자기 자신이 곧 basic이 됨.
-		//따라서 root matrix의 영향을 안받는건데
-		//새로 생긴 문제가 root의 scale영향도 안받아서 이상해짐.
 		if (m_iRootBoneIndex == pBone->Get_ParentNodeIndex()&& m_Animations[m_iCurrentAnimIndex]->Get_RootAnim_State())
 		{
 			pBone->Invalidate_CombinedTransformationMatrix_Basic(m_Bones);
@@ -216,6 +213,7 @@ void CModel::Do_Root_Animation(CTransform* pTransform)
 		vCurrent_Look.Normalize();
 		vPost_Look.Normalize();
 
+		
 		if (vCurrent_Look!=vPost_Look && fabsf(vCurrent_Look.x- vPost_Look.x)>0.0001f&& fabsf(vCurrent_Look.z - vPost_Look.z) > 0.0001f)
 		{
 			_float dot = XMVectorGetX(XMVector3Dot(vPost_Look, vCurrent_Look));

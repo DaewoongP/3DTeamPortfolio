@@ -92,7 +92,7 @@ void CAnimation::Update_KeyFrame_By_Time()
 
 HRESULT CAnimation::Initialize(Engine::ANIMATION Animation, const CModel::BONES& Bones)
 {
-	m_isLoop = false;
+	m_isLoop = true;
 
 	// 애니메이션 정보 저장
 	lstrcpy(m_szName, Animation.szName);
@@ -177,8 +177,10 @@ void CAnimation::Invalidate_TransformationMatrix_Lerp(CModel::BONES& Bones, _flo
 	{
 		if (nullptr == pChannel)
 			return;
-		if (pChannel->Get_BoneIndex() < iRootIndex&& m_isRootAnim)
+		if (pChannel->Get_BoneIndex() < iRootIndex+1 && m_isRootAnim)
+		{
 			pChannel->Invalidate_TransformationMatrix(Bones, m_fTimeAcc, &m_ChannelCurrentKeyFrames[iChannelIndex++]);
+		}
 		else
 			pChannel->Invalidate_TransformationMatrix_Lerp(Bones, m_fTimeAcc, &m_ChannelCurrentKeyFrames[iChannelIndex++], LerpTimeAcc);
 	}
@@ -186,8 +188,6 @@ void CAnimation::Invalidate_TransformationMatrix_Lerp(CModel::BONES& Bones, _flo
 
 void CAnimation::Invalidate_Frame(_float fTimeDelta)
 {
-	//첫번째 채널에만 사운드용 데이터를 추가해줄거임.
-	_uint		iChannelIndex = 0;
 	if (m_pNotify != nullptr)
 	{
 		m_pNotify->Invalidate_Frame(m_fTimeAcc, &m_iNotifyCurrentKeyFrame, &m_fTickPerSecond);

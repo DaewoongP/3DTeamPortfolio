@@ -117,7 +117,7 @@ namespace Engine
 	{
 		return fFrom * (1 - Alpha) + fTo * Alpha;
 	}
-	
+
 	// 값의 범위를 제한하는 함수
 	// ex)
 	// int value = 11;

@@ -87,7 +87,7 @@ private:
 
 	_bool						m_isLoop = { false };
 	_bool						m_isPaused = { false };
-	_bool						m_isRootAnim = { false };
+	_bool						m_isRootAnim = { true };
 
 	// 현재 애니메이션에 해당하는 채널의 프레임 중 가장 프레임이 많은 채널의 인덱스
 	_uint						m_iMaxFrameChannelIndex = { 0 };

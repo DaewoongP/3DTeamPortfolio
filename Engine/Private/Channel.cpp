@@ -181,22 +181,13 @@ void CChannel::Invalidate_TransformationMatrix_Lerp(CModel::BONES& Bones, _float
 		}
 	}
 	//러프시킬 뼈 움직임 코드
-	
 	if (LerpTimeAcc > ANIMATIONLERPTIME)
 		LerpTimeAcc = ANIMATIONLERPTIME;
 	
 	_float fRatio = LerpTimeAcc / ANIMATIONLERPTIME;
 	_float3		vSourScale = Bones[m_iBoneIndex]->Get_TransformationMatrix_Scale();
-	_float4		vSourRotation = m_MatrixKeyFrames[(*pCurrentKeyFrameIndex)].vRotation;
+	_float4		vSourRotation = XMQuaternionRotationMatrix(Bones[m_iBoneIndex]->Get_TransformationMatrix());
 	_float3		vSourTranslation = Bones[m_iBoneIndex]->Get_TransformationMatrix_Position();
-
-	/*XMVectorSet(Bones[m_iBoneIndex]->Get_TransformationMatrix().ToEuler().x, Bones[m_iBoneIndex]->Get_TransformationMatrix().ToEuler().y, Bones[m_iBoneIndex]->Get_TransformationMatrix().ToEuler().z, 0);
-	_float3		vSourScale = Bones[m_iBoneIndex]->Get_Scale();
-	_float4		vSourRotation = _float4(0.f, 0.f, 0.f, 0.f);
-	_float3		vSourTranslation = Bones[m_iBoneIndex]->Get_Position();
-	XMStoreFloat4(&vSourRotation, XMQuaternionRotationMatrix(XMLoadFloat4x4(&Bones[m_iBoneIndex]->Get_TransformationMatrix())));*/
-
-
 
 	vScale = vScale.Lerp(vSourScale, vScale, fRatio);
 	vRotation = XMQuaternionSlerp(vSourRotation, vRotation, fRatio);
