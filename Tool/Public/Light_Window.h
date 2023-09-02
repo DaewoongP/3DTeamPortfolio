@@ -6,22 +6,6 @@ BEGIN(Tool)
 
 class CLight_Window final : public CImWindow
 {
-public:
-	enum TYPE { TYPE_DIRECTIONAL, TYPE_POINT, TYPE_SPOTLIGHT, TYPE_END };
-
-	typedef struct Value
-	{
-		CLight::TYPE	eType;
-		_float4	vDir;
-		_float4	vPos;
-		_float	fRange;
-		_float	fSpotPower;
-
-		_float4	vDiffuse;
-		_float4	vAmbient;
-		_float4	vSpecular;
-	}VALUE;
-
 private:
 	CLight_Window(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual ~CLight_Window() = default;
@@ -48,13 +32,20 @@ private:
 	_bool m_isSetting = false;
 	string m_szName;
 	string StrInput;
-	//char* pInput;
 
 private:
 	vector<CLight::LIGHTDESC> m_vecLightDesc;
 	vector<string> m_vecLightList;
-	//list<string, CLight::LIGHTDESC> m_ListLight;
-	VALUE LightInfo;
+	_float vPos[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	_float vDir[4] = { 1.f, -1.f, 1.f, 0.0f };
+	_float fRange[1] = { 0.f };
+	_float fSpotPower[1] = { 0.f };
+	_float vDiffuse[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	_float vAmbient[4] = { 1.f, 1.f, 1.f, 1.0f };
+	_float vSpecular[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+
+	CLight::LIGHTDESC LightDesc;
+
 public:
 	static CLight_Window* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, ImVec2 vWindowPos, ImVec2 vWindowSize);
 	virtual void Free() override;

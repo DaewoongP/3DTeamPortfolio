@@ -13,8 +13,19 @@ HRESULT CLight_Window::Initialize(ImVec2 vWindowPos, ImVec2 vWindowSize)
 
 
 	m_WindowFlag = ImGuiWindowFlags_NoResize;
-	
+	StrInput = "Default_Dir_Light";
+	BEGININSTANCE
+		ZEROMEM(&LightDesc);
+	LightDesc.vDir = _float4(1.f,-1.f,1.f,0.f);
 
+	LightDesc.vDiffuse = _float4(1.f,1.f,1.f,1.f);
+	LightDesc.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
+	LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
+	LightDesc.eType = CLight::TYPE_DIRECTIONAL;
+	pGameInstance->Add_Lights(LightDesc);
+	m_vecLightDesc.push_back(LightDesc);
+	m_vecLightList.push_back(StrInput);
+	ENDINSTANCE
 
 	return S_OK;
 }
@@ -61,38 +72,23 @@ void CLight_Window::Load_Light()
 
 HRESULT CLight_Window::Create_Light()
 {
-	static float vPos[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 	ImGui::DragFloat3("Position", vPos, 0.1f);
 
-	static float vDir[4] = { 1.f, -1.f, 1.f, 0.0f };
 	ImGui::DragFloat3("Direction", vDir, 0.01f, -1.f, 1.f);
 
-	static float fRange[1] = { 0.f };
 	ImGui::DragFloat("Range", fRange, 0.1f);
 
-	static float fSpotPower[1] = { 0.f };
 	ImGui::DragFloat("SpotPower", fSpotPower, 0.1f);
 
-	static float vDiffuse[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	ImGui::DragFloat4("vDiffuse", vDiffuse, 0.01f, 0.f, 1.f);
 
-	static float vAmbient[4] = { 1.f, 1.f, 1.f, 1.0f };
 	ImGui::DragFloat4("Ambient", vAmbient, 0.01f, 0.f, 1.f);
 
-	static float vSpecular[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	ImGui::DragFloat4("vSpecular", vSpecular, 0.01f, 0.f, 1.f);
-	
-	FloatToFloat4(vPos, LightInfo.vPos);
-	FloatToFloat4(vDir, LightInfo.vDir);
-	LightInfo.fRange = *fRange;
-	LightInfo.fSpotPower = *fSpotPower;
-	FloatToFloat4(vDiffuse, LightInfo.vDiffuse);
-	FloatToFloat4(vAmbient, LightInfo.vAmbient);
-	FloatToFloat4(vSpecular, LightInfo.vSpecular);
+
 
 		BEGININSTANCE
-		CLight::LIGHTDESC LightDesc;
-		ZEROMEM(&LightDesc);
+		
 		if (ImGui::Button("Create"))
 		{
 			/*if (m_iLightIndex > 0)
@@ -100,13 +96,16 @@ HRESULT CLight_Window::Create_Light()
 				m_vecLightDesc.push_back(LightDesc);
 				m_vecLightList.push_back(StrInput);
 			}*/
-			
+			ResetValue();
+
 
 			if (nullptr==pGameInstance->Add_Lights(LightDesc))
 			{
 				MSG_BOX("Failed to create Light");
 				return E_FAIL;
 			}
+			m_vecLightDesc.push_back(LightDesc);
+			m_vecLightList.push_back(StrInput);
 		}
 
 		switch (m_iLightType + 1)
@@ -120,7 +119,7 @@ HRESULT CLight_Window::Create_Light()
 			LightDesc.vDiffuse = _float4(vDiffuse);
 			LightDesc.vAmbient = _float4(vAmbient);
 			LightDesc.vSpecular = _float4(vSpecular);
-			LightInfo.eType = CLight::TYPE_DIRECTIONAL;
+			LightDesc.eType = CLight::TYPE_DIRECTIONAL;
 			//memcpy(&LightDesc, &LightInfo, sizeof(VALUE));
 
 			break;
@@ -206,26 +205,21 @@ void CLight_Window::Clear_Light()
 }
 
 void CLight_Window::ResetValue()
-{	static float vPos[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-	ImGui::DragFloat3("Position", vPos, 0.1f);
+{
+	vPos[0] = { 0.0f }; vPos[1] = { 0.0f }; vPos[2] = { 0.0f }; vPos[3] = { 1.0f };
 
-	static float vDir[4] = { 1.f, -1.f, 1.f, 0.0f };
-	ImGui::DragFloat3("Direction", vDir, 0.01f, -1.f, 1.f);
+	vDir[0] = { 1.0f }; vDir[1] = { -1.0f }; vDir[2] = { 1.0f }; vDir[3] = { 0.0f };
 
-	static float fRange[1] = { 0.f };
-	ImGui::DragFloat("Range", &LightInfo.fRange, 0.1f);
+	fRange[0] = { 0.f };
 
-	static float fSpotPower[1] = { 0.f };
-	ImGui::DragFloat("SpotPower", &LightInfo.fSpotPower, 0.1f);
+	fSpotPower[0] = { 0.f };
 
-	static float vDiffuse[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-	ImGui::DragFloat4("vDiffuse", vDiffuse, 0.01f, 0.f, 1.f);
+	vDiffuse[0] = { 0.f }; vDiffuse[1] = { -0.f }; vDiffuse[2] = { 0.f }; vDiffuse[3] = { 1.f };
 
-	static float vAmbient[4] = { 1.f, 1.f, 1.f, 1.0f };
-	ImGui::DragFloat4("Ambient", vAmbient, 0.01f, 0.f, 1.f);
+	vAmbient[0] = { 1.f }; vAmbient[1] = { 1.f }; vAmbient[2] = { 1.f }; vAmbient[3] = { 1.0f };
 
-	static float vSpecular[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-	ImGui::DragFloat4("vSpecular", vSpecular, 0.01f, 0.f, 1.f);
+	vSpecular[0] = { 0.f }; vSpecular[1] = { 0.f }; vSpecular[2] = { 0.f }; vSpecular[3] = { 1.0f };
+
 }
 
 void CLight_Window::Light_ComboBox()
