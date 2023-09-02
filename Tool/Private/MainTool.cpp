@@ -211,6 +211,12 @@ HRESULT CMainTool::Add_Windows()
 			ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(446.f, 768.f)))))
 		return E_FAIL;
 
+	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("Light_Window"),
+		CLight_Window::Create(m_pDevice, m_pContext,
+			ImVec2(_float(g_iWinSizeX+8), _float(0.f)), ImVec2(446.f, 768.f)))))
+		return E_FAIL;
+
+
 	return S_OK;
 }
 

@@ -4,6 +4,7 @@
 #include "Font_Manager.h"
 #include "Level_Manager.h"
 #include "Timer_Manager.h"
+#include "PhysX_Manager.h"
 #include "Graphic_Device.h"
 #include "Object_Manager.h"
 #include "RenderTarget_Manager.h"
@@ -25,6 +26,7 @@ CGameInstance::CGameInstance()
 	, m_pLight_Manager{ CLight_Manager::GetInstance() }
 	, m_pSound_Manager{ CSound_Manager::GetInstance() }
 	, m_pCalculator{ CCalculator::GetInstance() }
+	, m_pPhysX_Manager{ CPhysX_Manager::GetInstance() }
 {
 	Safe_AddRef(m_pFrustum);
 	Safe_AddRef(m_pFont_Manager);
@@ -40,6 +42,7 @@ CGameInstance::CGameInstance()
 	Safe_AddRef(m_pLight_Manager);
 	Safe_AddRef(m_pSound_Manager);
 	Safe_AddRef(m_pCalculator);
+	Safe_AddRef(m_pPhysX_Manager);
 }
 
 HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInst, _uint iNumLevels, const GRAPHICDESC& GraphicDesc, _Inout_ ID3D11Device** ppDevice, _Inout_ ID3D11DeviceContext** ppContext)
@@ -59,6 +62,9 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInst, _uint iNumLevels, cons
 		return E_FAIL;
 
 	if (FAILED(m_pSound_Manager->Initialize()))
+		return E_FAIL;
+
+	if (FAILED(m_pPhysX_Manager->Initialize()))
 		return E_FAIL;
 
 	return S_OK;
@@ -90,6 +96,8 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 	m_pPipeLine->Tick();
 
 	m_pFrustum->Tick();
+
+	m_pPhysX_Manager->Tick(fTimeDelta);
 
 	m_pObject_Manager->Late_Tick(fTimeDelta);
 
@@ -331,11 +339,6 @@ _bool CGameInstance::isIn_WorldFrustum(_float4 vWorldPos, _float fRange)
 	return m_pFrustum->isIn_WorldFrustum(vWorldPos, fRange);
 }
 
-vector<_float4> CGameInstance::Get_CulledPositions() const
-{
-	return m_pFrustum->Get_CulledPositions();
-}
-
 const CLight::LIGHTDESC* CGameInstance::Get_Light(_uint iIndex)
 {
 	NULL_CHECK_RETURN_MSG(m_pLight_Manager, nullptr, TEXT("Light NULL"));
@@ -469,6 +472,27 @@ HRESULT CGameInstance::ReadFileInDirectory(vector<wstring>& OutVector, const _tc
 	return m_pCalculator->ReadFileInDirectory(OutVector, pFilePath, pExt);
 }
 
+PxPhysics* CGameInstance::Get_Physics() const
+{
+	NULL_CHECK_RETURN_MSG(m_pPhysX_Manager, nullptr, TEXT("PhysX_Manager NULL"));
+
+	return m_pPhysX_Manager->Get_Physics();
+}
+
+PxScene* CGameInstance::Get_PhysxScene() const
+{
+	NULL_CHECK_RETURN_MSG(m_pPhysX_Manager, nullptr, TEXT("PhysX_Manager NULL"));
+
+	return m_pPhysX_Manager->Get_PhysxScene();
+}
+
+PxControllerManager* CGameInstance::Get_ControllerManager() const
+{
+	NULL_CHECK_RETURN_MSG(m_pPhysX_Manager, nullptr, TEXT("PhysX_Manager NULL"));
+
+	return m_pPhysX_Manager->Get_ControllerManager();
+}
+
 void CGameInstance::Release_Engine()
 {
 	CGameInstance::GetInstance()->DestroyInstance();
@@ -480,6 +504,8 @@ void CGameInstance::Release_Engine()
 	CComponent_Manager::GetInstance()->DestroyInstance();
 
 	CLevel_Manager::GetInstance()->DestroyInstance();
+
+	CPhysX_Manager::GetInstance()->DestroyInstance();
 
 	CTimer_Manager::GetInstance()->DestroyInstance();
 
@@ -504,6 +530,7 @@ void CGameInstance::Release_Engine()
 
 void CGameInstance::Free()
 {
+	Safe_Release(m_pPhysX_Manager);
 	Safe_Release(m_pCalculator);
 	Safe_Release(m_pSound_Manager);
 	Safe_Release(m_pLight_Manager);

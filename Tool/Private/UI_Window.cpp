@@ -25,9 +25,9 @@ HRESULT CUI_Window::Initialize(ImVec2 vWindowPos, ImVec2 vWindowSize)
 
 	//Safe_Release(pGameInstance);
 
-	m_TreeDesc.m_wstrName = TEXT("../../Resources/UI/");
+	/*m_TreeDesc.m_wstrName = TEXT("../../Resources/UI/");
 	m_TreeDesc.m_isFolder = true;
-	Read_File_In_Directory_Tree(m_TreeDesc, TEXT("../../Resources/UI/"), TEXT(".png"));
+	Read_File_In_Directory_Tree(m_TreeDesc, TEXT("../../Resources/UI/"), TEXT(".png"));*/
 
 	return S_OK;
 }
@@ -136,7 +136,7 @@ void CUI_Window::Show_Object_List()
 				lstrcpy(wszGameObjectName, pGameObejctVector[n]->Get_Tag());
 
 				string DragFloatTag = "Speed##";
-				_float3 vPos = pGameObejctVector[n]->Get_Transform()->Get_Translation();
+				_float3 vPos = pGameObejctVector[n]->Get_Transform()->Get_Position();
 				ImGui::DragFloat3(DragFloatTag.c_str(), reinterpret_cast<_float*>(&vPos), 0.01f);
 				pGameObejctVector[n]->Get_Transform()->Set_Position(vPos);
 			}
@@ -219,7 +219,6 @@ void CUI_Window::Open_File_Path_Tree(UI_Tree* pTree)
 		{
 			Create_UI(pTree);
 		}
-
 	}
 }
 
@@ -363,18 +362,25 @@ void CUI_Window::Interaction_UI()
 
 	for (auto& pGameObject : pGameObejctVector)
 	{
-		if (dynamic_cast<CDummy_UI*>(pGameObject)->Is_In_Rect() && GetKeyState(VK_LBUTTON) & 0x8000)
+		CGameInstance* pGameInstance = CGameInstance::GetInstance();
+		Safe_AddRef(pGameInstance);
+		if (dynamic_cast<CDummy_UI*>(pGameObject)->Is_In_Rect() && 
+			pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN))
 		{
 			m_pDummy_UI = dynamic_cast<CDummy_UI*>(pGameObject);
 			break;
 		}
-		else
+		else if (pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_UP))
 		{
 			m_pDummy_UI = nullptr;
 		}
+
+		Safe_Release(pGameInstance);
 	}
 
+#ifdef _DEBUG
 	cout << m_pDummy_UI << endl;
+#endif // _DEBUG
 }
 
 void CUI_Window::Move_UI()
@@ -393,7 +399,7 @@ void CUI_Window::Move_UI()
 	_int iMoveX = CurrentMousePos.x - m_MousePos.x;
 	_int iMoveY = CurrentMousePos.y - m_MousePos.y;
 
-	_float3 vPos = m_pDummy_UI->Get_Transform()->Get_Translation();
+	_float3 vPos = m_pDummy_UI->Get_Transform()->Get_Position();
 	_float2 fXY = m_pDummy_UI->Get_fXY();
 
 	m_pDummy_UI->Set_fXY(fXY.x + iMoveX, fXY.y + iMoveY);

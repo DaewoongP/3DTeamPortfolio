@@ -107,15 +107,15 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Shadow"), 240.f, 400.f, 160.f, 160.f)))
 		return E_FAIL;
-	/*if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_SSAO"), 80.f, 560.f, 160.f, 160.f)))
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_SSAO"), 80.f, 560.f, 160.f, 160.f)))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Blur"), 240.f, 560.f, 160.f, 160.f)))
-		return E_FAIL;*/
+		return E_FAIL;
 
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_SSAO"), 300.f, 300.f, 600.f, 600.f)))
+	/*if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_SSAO"), 300.f, 300.f, 600.f, 600.f)))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Blur"), 900.f, 300.f, 600.f, 600.f)))
-		return E_FAIL;
+		return E_FAIL;*/
 
 
 	/*if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_PostProcessing"), 240.f, 560.f, 160.f, 160.f)))
@@ -188,6 +188,7 @@ HRESULT CRenderer::Draw_RenderGroup()
 	
 	if (FAILED(Render_UI()))
 		return E_FAIL;
+
 
 #ifdef _DEBUG
 	CInput_Device* pInput_Device = CInput_Device::GetInstance();
@@ -409,10 +410,12 @@ HRESULT CRenderer::Render_Deferred()
 {
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Diffuse"), m_pDeferredShader, "g_DiffuseTexture")))
 		return E_FAIL;
-	
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Shade"), m_pDeferredShader, "g_ShadeTexture")))
+		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Blur"), m_pDeferredShader, "g_BlurTexture")))
 		return E_FAIL;
-
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Specular"), m_pDeferredShader, "g_SpecularTexture")))
+		return E_FAIL;
 
 	if (FAILED(m_pDeferredShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
@@ -555,8 +558,8 @@ HRESULT CRenderer::Sort_Blend()
 	Safe_Release(pPipeLine);
 
 	m_RenderObjects[RENDER_BLEND].sort([vCamPos](const CGameObject* pSour, const CGameObject* pDest) {
-		_float3 vSourPos = pSour->Get_Transform()->Get_Translation();
-		_float3 vDestPos = pDest->Get_Transform()->Get_Translation();
+		_float3 vSourPos = pSour->Get_Transform()->Get_Position();
+		_float3 vDestPos = pDest->Get_Transform()->Get_Position();
 
 		_float4 vSour = vSourPos - vCamPos;
 		_float4 vDest = vDestPos - vCamPos;
@@ -573,8 +576,8 @@ HRESULT CRenderer::Sort_Blend()
 HRESULT CRenderer::Sort_UI()
 {
 	m_RenderObjects[RENDER_UI].sort([](const CGameObject* pSour, const CGameObject* pDest) {
-		_float fSourZ = XMVectorGetZ(pSour->Get_Transform()->Get_Translation());
-		_float fDestZ = XMVectorGetZ(pDest->Get_Transform()->Get_Translation());
+		_float fSourZ = XMVectorGetZ(pSour->Get_Transform()->Get_Position());
+		_float fDestZ = XMVectorGetZ(pDest->Get_Transform()->Get_Position());
 		// 내림차순 (멀리있는거부터 그림.)
 		if (fSourZ > fDestZ)
 			return true;

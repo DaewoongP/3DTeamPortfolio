@@ -1,4 +1,11 @@
 #pragma once
+/* =============================================== */
+// 
+//	정 : 개철민
+//	부 :
+//
+/* =============================================== */
+
 #include "Model.h"
 
 BEGIN(Engine)
@@ -52,7 +59,9 @@ public:
 
 public:
 	HRESULT Initialize(Engine::ANIMATION Animation, const CModel::BONES& Bones);
+	_bool Invalidate_AccTime(_float fTimeDelta); 
 	void Invalidate_TransformationMatrix(CModel::BONES& Bones, _float fTimeDelta);
+	void Invalidate_TransformationMatrix_Lerp(CModel::BONES& Bones, _float fTimeDelta, _float LerpTimeAcc, _uint iRootIndex);
 	void Invalidate_Frame(_float fTimeDelta);
 private:
 	_tchar						m_szName[MAX_STR] = TEXT("");
@@ -65,7 +74,7 @@ private:
 	// 각 채널의 현재 키프레임 인덱스
 	vector<_uint>				m_ChannelCurrentKeyFrames;
 	// 노티파이의 현재 키프레임 인덱스
-	_uint						m_iNotifyCurrentKeyFrame;
+	_uint						m_iNotifyCurrentKeyFrame = { 0 };
 
 	_float						m_fDuration = { 0.f };
 	_float						m_fOriginTickPerSecond = { 0.f };

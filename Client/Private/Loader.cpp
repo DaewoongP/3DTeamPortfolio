@@ -12,7 +12,6 @@
 #include "Camera_Debug.h"
 #endif // _DEBUG
 
-
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice(pDevice)
 	, m_pContext(pContext)
@@ -145,6 +144,22 @@ HRESULT CLoader::Loading_For_MainGame()
 		return E_FAIL;
 	}
 
+	/* For.Prototype_Component_VIBuffer_Line */
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Line"),
+		CVIBuffer_Line::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_Component_VIBuffer_Line)");
+		return E_FAIL;
+	}
+	
+	/* For.Prototype_Component_VIBuffer_Triangle */
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Triangle"),
+		CVIBuffer_Triangle::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_Component_VIBuffer_Triangle)");
+		return E_FAIL;
+	}
+
 	/* For.Prototype_Component_VIBuffer_Terrain */
 	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Terrain"),
 		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, 531, 531))))
@@ -156,9 +171,10 @@ HRESULT CLoader::Loading_For_MainGame()
 	lstrcpy(m_szLoading, TEXT("모델 로딩 중."));
 
 #ifdef _DEBUG
-	/* For.Prototype_Component_Model_Fiona */
+	_float4x4 PivotMatrix = XMMatrixScaling(100.f, 100.f, 100.f) * XMMatrixRotationY(XMConvertToRadians(180.f));
+	/* For.Prototype_Component_Model_Fiona*/
 	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Fiona"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/Fiona/Fiona.dat")))))
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/Fiona/Fiona.dat"), PivotMatrix))))
 	{
 		MSG_BOX("Failed Add_Prototype : (Prototype_Component_Model_Fiona)");
 		return E_FAIL;
@@ -180,8 +196,65 @@ HRESULT CLoader::Loading_For_MainGame()
 		return E_FAIL;
 	}
 
-#endif // _DEBUG
+	/* MeshParts (테스트용) */
+	/* For.Prototype_Component_MeshParts_Head */
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Head"),
+		CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/head/head.dat"), TEXT("HEAD_Default")))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_Component_MeshParts_Head)");
+		return E_FAIL;
+	}
+	/* For.Prototype_Component_MeshParts_Arm */
+	/*if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Arm"),
+		CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Arm/Arm.dat"), TEXT("ARM_Default")))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_Component_MeshParts_Arm)");
+		return E_FAIL;
+	}*/
+	/* For.Prototype_Component_MeshParts_Up */
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Up"),
+		CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Up/Up.dat"), TEXT("UPPERBODY_Default")))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_Component_MeshParts_Up)");
+		return E_FAIL;
+	}
+	/* For.Prototype_Component_MeshParts_Low */
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Low"),
+		CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Low/Low.dat"), TEXT("UNDERBODY_Default")))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_Component_MeshParts_Low)");
+		return E_FAIL;
+	}
+	/* For.Prototype_Component_MeshParts_Robe */
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Robe"),
+		CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Robe/Robe.dat"), TEXT("ROBE_Default")))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_Component_MeshParts_Robe)");
+		return E_FAIL;
+	}
+	/* For.Prototype_Component_MeshParts_Socks */
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Socks"),
+		CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Socks/Socks.dat"), TEXT("SOCKS_Default")))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_Component_MeshParts_Socks)");
+		return E_FAIL;
+	}
+	/* For.Prototype_Component_MeshParts_Socks1 */
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Socks1"),
+		CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Socks1/Socks1.dat"), TEXT("SOCKS_Default")))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_Component_MeshParts_Socks1)");
+		return E_FAIL;
+	}
+	/* For.Prototype_Component_MeshParts_Shoes */
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Shoes"),
+		CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Shoes/Shoes.dat"), TEXT("SHOES_Default")))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_Component_MeshParts_Shoes)");
+		return E_FAIL;
+	}
 
+#endif // _DEBUG
 
 	lstrcpy(m_szLoading, TEXT("셰이더 로딩 중."));
 	/* For.Prototype_Component_Shader_VtxCube */
@@ -205,6 +278,33 @@ HRESULT CLoader::Loading_For_MainGame()
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Terrain.hlsl"), VTXPOSNORTEX_DECL::Elements, VTXPOSNORTEX_DECL::iNumElements))))
 	{
 		MSG_BOX("Failed Add_Prototype : (Prototype_Component_Shader_Terrain)");
+		return E_FAIL;
+	}
+
+#ifdef _DEBUG
+	/* For.Prototype_Component_Shader_Debug */
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_Debug"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Debug.hlsl"), VTXPOS_DECL::Elements, VTXPOS_DECL::iNumElements))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_Component_Shader_Debug)");
+		return E_FAIL;
+	}
+#endif // _DEBUG
+
+	lstrcpy(m_szLoading, TEXT("피직스 로딩 중."));
+	/* For.Prototype_Component_CharacterController*/
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_STATIC, TEXT("Prototype_Component_CharacterController"),
+		CCharacterController::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_Component_CharacterController)");
+		return E_FAIL;
+	}
+
+	/* For.Prototype_Component_RigidBody */
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
+		CRigidBody::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_Component_RigidBody)");
 		return E_FAIL;
 	}
 

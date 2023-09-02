@@ -1,5 +1,14 @@
 #pragma once
-#include "PX.h"
+
+/* =============================================== */
+// 
+//	정 : 박대웅
+//	부 :
+//
+//
+// 헤더추가는 편하게 스윽 처리하십쇼
+/* =============================================== */
+
 #include "Bone.h"
 #include "Mesh.h"
 #include "Model.h"
@@ -18,7 +27,9 @@
 #include "Sequence.h"
 #include "Animation.h"
 #include "Transform.h"
+#include "RigidBody.h"
 #include "Decorator.h"
+#include "MeshParts.h"
 #include "Navigation.h"
 #include "BlackBoard.h"
 #include "CustomModel.h"
@@ -32,8 +43,10 @@
 #include "ParticleSystem.h"
 #include "Bounding_Sphere.h"
 #include "VIBuffer_Terrain.h"
+#include "VIBuffer_Triangle.h"
 #include "VIBuffer_Instance.h"
 #include "VIBuffer_Rect_Trail.h"
+#include "CharacterController.h"
 #include "VIBuffer_Rect_Dynamic.h"
 #include "VIBuffer_Rect_Instance.h"
 #include "VIBuffer_Point_Instance.h"

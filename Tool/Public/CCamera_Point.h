@@ -25,8 +25,7 @@ private:
 
 
 public:
-	const _float4& Get_Position();
-
+	_float4 Get_Position();
 
 public:
 	void Set_Position(_float4 _vPosition);
