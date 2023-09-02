@@ -19,7 +19,16 @@ HRESULT CEffect_Window::Initialize(ImVec2 _vWindowPos, ImVec2 _vWindowSize)
 	m_pDummyParticle = CDummyParticle::Create(m_pDevice, m_pContext);
 	m_pParticleSystem = m_pDummyParticle->Get_ParticleSystem();
 
-	m_pEmitterVelocity_ComboBox = CComboBox::Create("Emission Velocity", { "RigidBody", "Transform" });
+	m_pEmitterVelocity_ComboBox = CComboBox::Create("Com_Emission Velocity", "Emission Velocity", { "RigidBody", "Transform" });
+	m_pShapeCombo = CComboBox::Create("##Com_Shape", "Shape", { "Sphere", "HemiSphere", "Cone", "Mesh", "Circle", "Edge" });
+	m_pModeCombo = CComboBox::Create("##Com_BurstMode", "Mode", { "Random", "Loop", "Ping-Pong", "Burst_Spread" });
+	m_pBurstTypeCombo = CComboBox::Create("##Com_MeshType", "Type", { "Vertex", "Edge", "Triangle" });
+	m_pArcModeCombo = CComboBox::Create("##Com_ArcMode", "Mode", { "Random", "Loop", "Ping-Pong" });
+	m_pMeshCombo = CComboBox::Create("##Com_Mesh", "Mesh", { "Cube", "Capsule", "Capsule", "Cylinder", "Plane", "Sphere", "Quad" });
+	m_pEmitFromCombo = CComboBox::Create("##Com_EmitFrom", "Emit From", { "Base", "Volume" });
+	m_pMeshTypeCombo = CComboBox::Create("##Com_MeshType", "Type", { "Vertex", "Edgd", "Triangle"});
+
+
 	return S_OK;
 }
 
@@ -49,7 +58,10 @@ void CEffect_Window::Tick(_float _fTimeDelta)
 		m_pDummyParticle->Tick(_fTimeDelta);
 		m_pDummyParticle->Late_Tick(_fTimeDelta);
 	}
-
+	// 버튼 누르면 트리노드가 팝업된다.
+	// 버튼의 이미지는 현재 이미지 버튼
+	// 누르면 파일 경로가 나온다.
+	// 
 	_float4x4 pMatrix = m_pDummyParticle->Get_Transform()->Get_WorldMatrix();
 	__super::MatrixNode(&pMatrix, "Effect_Transform", "Effect_Position", "Effect_Rotation", "Effect_Scale");
 	m_pDummyParticle->Get_Transform()->Set_WorldMatrix(pMatrix);
@@ -140,44 +152,44 @@ void CEffect_Window::MainMoudle_TreeNode()
 		{
 			ImGui::TableNextRow();
 
-			TableDragFloat("Duration", &pMainModuleDesc->fDuration);
-			TableCheckBox("Looping", &pMainModuleDesc->isLooping);
+			Table_DragFloat("Duration", &pMainModuleDesc->fDuration);
+			Table_CheckBox("Looping", &pMainModuleDesc->isLooping);
 
 			if (true == pMainModuleDesc->isLooping)
 			{
-				TableCheckBox("Prewarm", &pMainModuleDesc->isLooping);
+				Table_CheckBox("Prewarm", &pMainModuleDesc->isLooping);
 			}
 
 			if (false == pMainModuleDesc->isPrewarm)
 			{
-				TableDragFloat2Range("Start Delay", &pMainModuleDesc->fStartDelay);
+				Table_DragFloat2Range("Start Delay", &pMainModuleDesc->fStartDelay);
 			}
-			TableDragFloat2Range("Start Lifetime", &pMainModuleDesc->fStartLifeTime);
-			TableDragFloat2Range("Start Speed", &pMainModuleDesc->fStartSpeed);
-			TableCheckBox("3D Start Size", &pMainModuleDesc->is3DStartSize);
+			Table_DragFloat2Range("Start Lifetime", &pMainModuleDesc->fStartLifeTime);
+			Table_DragFloat2Range("Start Speed", &pMainModuleDesc->fStartSpeed);
+			Table_CheckBox("3D Start Size", &pMainModuleDesc->is3DStartSize);
 			if (true == pMainModuleDesc->is3DStartSize)
 			{
-				TableDragXYZ("3D Size", &pMainModuleDesc->f3DSizeXYZ);
+				Table_DragXYZ("3D Size", &pMainModuleDesc->f3DSizeXYZ);
 			}
 			else
 			{
-				TableDragFloat2Range("Start Size", &pMainModuleDesc->fStartSize);
+				Table_DragFloat2Range("Start Size", &pMainModuleDesc->fStartSize);
 			}
-			TableCheckBox("3D Start Rotation", &pMainModuleDesc->is3DStartRotation);
+			Table_CheckBox("3D Start Rotation", &pMainModuleDesc->is3DStartRotation);
 			if (true == pMainModuleDesc->is3DStartRotation)
 			{
-				TableDragXYZ("3D Rotation", &pMainModuleDesc->f3DRotationXYZ);
+				Table_DragXYZ("3D Rotation", &pMainModuleDesc->f3DRotationXYZ);
 			}
 			else
 			{
-				TableDragFloat2Range("Start Rotation", &pMainModuleDesc->fStartRotation);
+				Table_DragFloat2Range("Start Rotation", &pMainModuleDesc->fStartRotation);
 			}
 
-			TableDragFloat("Flip Rotation", &pMainModuleDesc->fFlipRotation);
-			TableColorEdit4("Start Color", &pMainModuleDesc->vStartColor);
-			TableDragFloat("GravityModifier", &pMainModuleDesc->fGravityModifier);
-			TableDragFloat("SimulationSpeed", &pMainModuleDesc->fSimulationSpeed);
-			TableCheckBox("Play On Awake*", &pMainModuleDesc->isPlayOnAwake);
+			Table_DragFloat("Flip Rotation", &pMainModuleDesc->fFlipRotation);
+			Table_ColorEdit4("Start Color", &pMainModuleDesc->vStartColor);
+			Table_DragFloat("GravityModifier", &pMainModuleDesc->fGravityModifier);
+			Table_DragFloat("SimulationSpeed", &pMainModuleDesc->fSimulationSpeed);
+			Table_CheckBox("Play On Awake*", &pMainModuleDesc->isPlayOnAwake);
 
 			m_pEmitterVelocity_ComboBox->Show();
 			m_pEmitterVelocity_ComboBox->Bind_From_Current_Index(reinterpret_cast<_uint*>(&pMainModuleDesc->eEmmiterVelocity));
@@ -204,8 +216,8 @@ void CEffect_Window::EmissionModule_TreeNode()
 		{
 			ImGui::TableNextRow();
 
-			TableDragFloat2Range("RateOverTime", &pEmissionModuleDesc->fRateOverTime);
-			TableDragFloat2Range("RateOverDistance", &pEmissionModuleDesc->fRateOverDistance);
+			Table_DragFloat2Range("RateOverTime", &pEmissionModuleDesc->fRateOverTime);
+			Table_DragFloat2Range("RateOverDistance", &pEmissionModuleDesc->fRateOverDistance);
 			ImGui::EndTable();
 		}
 
@@ -294,48 +306,71 @@ void CEffect_Window::ShapeModule_TreeNode()
 		{
 			ImGui::TableNextRow();
 
+			m_pShapeCombo->Show(CComboBox::FLAG::TABLE);
+			m_pModeCombo->Show(CComboBox::FLAG::TABLE);
+			m_pBurstTypeCombo->Show(CComboBox::FLAG::TABLE);
+			m_pMeshCombo->Show(CComboBox::FLAG::TABLE);
+			m_pMeshTypeCombo->Show(CComboBox::FLAG::TABLE);
+
+			Table_CheckBox("SingleMaterial", &pShapeModule->isSingleMaterial);
+			Table_DragInt("MaterialNum", reinterpret_cast<_int*>(&pShapeModule->iMaterialNum));
+			Table_CheckBox("UseMeshColors", &pShapeModule->isUseMeshColors);
+			Table_DragFloat("NormalOffset", &pShapeModule->fNormalOffset);
+
+			m_pEmitFromCombo->Show(CComboBox::FLAG::TABLE);
+			Table_DragFloat("Angle", &pShapeModule->fAngle);
+			Table_DragFloat("Radius", &pShapeModule->fRadius);
+			Table_DragFloat("DonutRadius", &pShapeModule->fDonutRadius);
+			Table_DragFloat("RadiusThickness", &pShapeModule->fRadiusThickness, 0.01f, 0.f, 1.f);
+
+			Table_DragFloat("Arc", &pShapeModule->fArc);
+			m_pArcModeCombo->Show(CComboBox::FLAG::TABLE);
+			Table_DragFloat("Spread", &pShapeModule->fSpread, 0.01f, 0.f, 1.f);
+			
 			ImGui::EndTable();
 		}
+
+		ImGui::TreePop(); // SubNode의 끝
 	}
 }
 
-void CEffect_Window::TableDragFloat(string _strTag, _float* _pValue, _float _fDragSpeed, _float _fMin, _float _fMax)
+void CEffect_Window::Table_DragFloat(string _strTag, _float* _pValue, _float _fDragSpeed, _float _fMin, _float _fMax)
 {
 	ImGui::PushItemWidth(m_fWidgetSize);
 
 	ImGui::TableSetColumnIndex(0);
 	ImGui::Text(_strTag.data()); ImGui::TableSetColumnIndex(1);
 	string strTag = "##" + _strTag;
-	ImGui::DragFloat(strTag.data(), _pValue, 0.01f, 0.f, FLT_MAX); ImGui::TableNextRow();
+	ImGui::DragFloat(strTag.data(), _pValue, _fDragSpeed, _fMin, _fMax); ImGui::TableNextRow();
 
 	ImGui::PopItemWidth();
 }
-void CEffect_Window::TableDragFloat2Range(string _strTag, _float2* _pValue, _float _fDragSpeed, _float _fMin, _float _fMax)
+void CEffect_Window::Table_DragFloat2Range(string _strTag, _float2* _pValue, _float _fDragSpeed, _float _fMin, _float _fMax)
 {
 	ImGui::PushItemWidth(m_fWidgetSize);
 
 	ImGui::TableSetColumnIndex(0);
 	ImGui::Text(_strTag.data()); ImGui::TableSetColumnIndex(1);
 	string strTag = "##" + _strTag + "Range";
-	ImGui::DragFloatRange2(strTag.data(), &_pValue->x, &_pValue->y, 0.01f, 0.f, FLT_MAX); ImGui::TableNextRow();
+	ImGui::DragFloatRange2(strTag.data(), &_pValue->x, &_pValue->y, _fDragSpeed, _fMin, _fMax); ImGui::TableNextRow();
 
 	ImGui::PopItemWidth();
 }
-void CEffect_Window::TableCheckBox(string _strTag, _bool* _pValue)
+void CEffect_Window::Table_CheckBox(string _strTag, _bool* _pValue)
 {
 	ImGui::TableSetColumnIndex(0);
 	ImGui::Text(_strTag.data()); ImGui::TableSetColumnIndex(1);
 	string strTag = "##" + _strTag;
 	ImGui::Checkbox(strTag.data(), _pValue); ImGui::TableNextRow();
 }
-void CEffect_Window::TableColorEdit4(string _strTag, _float4* pValue)
+void CEffect_Window::Table_ColorEdit4(string _strTag, _float4* pValue)
 {
 	ImGui::TableSetColumnIndex(0);
 	ImGui::Text(_strTag.data()); ImGui::TableSetColumnIndex(1);
 	string strTag = "##" + _strTag;
 	ImGui::ColorEdit4(strTag.data(), reinterpret_cast<_float*>(pValue)); ImGui::TableNextRow();
 }
-void CEffect_Window::TableDragXYZ(string _strTag, _float3* pValue, _float _fDragSpeed, _float _fMin, _float _fMax)
+void CEffect_Window::Table_DragXYZ(string _strTag, _float3* pValue, _float _fDragSpeed, _float _fMin, _float _fMax)
 {
 	string strTagX = "##" + _strTag + "X";
 	string strTagY = "##" + _strTag + "Y";
@@ -362,6 +397,17 @@ void CEffect_Window::TableDragXYZ(string _strTag, _float3* pValue, _float _fDrag
 
 	ImGui::TableNextRow();
 }
+void CEffect_Window::Table_DragInt(string _strTag, _int* _pValue, _float _fDragSpeed, _int _iMin, _int _iMax)
+{
+	ImGui::PushItemWidth(m_fWidgetSize);
+
+	ImGui::TableSetColumnIndex(0);
+	ImGui::Text(_strTag.data()); ImGui::TableSetColumnIndex(1);
+	string strTag = "##" + _strTag;
+	ImGui::DragInt(strTag.data(), _pValue, _fDragSpeed, _iMin, _iMax); ImGui::TableNextRow();
+
+	ImGui::PopItemWidth();
+}
 CEffect_Window* CEffect_Window::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, ImVec2 _vWindowPos, ImVec2 _vWindowSize)
 {
 	CEffect_Window* pInstance = New CEffect_Window(_pDevice, _pContext);
@@ -381,4 +427,11 @@ void CEffect_Window::Free(void)
 
 	Safe_Release(m_pDummyParticle);
 	Safe_Release(m_pEmitterVelocity_ComboBox);
+	Safe_Release(m_pShapeCombo);
+	Safe_Release(m_pModeCombo);
+	Safe_Release(m_pBurstTypeCombo);
+	Safe_Release(m_pArcModeCombo);
+	Safe_Release(m_pMeshCombo);
+	Safe_Release(m_pEmitFromCombo);
+	Safe_Release(m_pMeshTypeCombo);
 }
