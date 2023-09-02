@@ -42,23 +42,18 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 		return;
 	}
 
-	static _char szCurrentItem[MAX_PATH];
-	static _float fNotifyActionTime;
-	static _float fNotifySpeed;
-	static _char  szNotifyName[MAX_PATH];
-	static KEYFRAME::KEYFRAMETYPE eNotifyKeyFrameType;
-
-	Animation_ComboBox(szCurrentItem, pDummyModel);
-	Animation_Action_Button(pDummyModel, &fNotifyActionTime);
+	Animation_ComboBox(m_szCurrentItem, pDummyModel);
+	Animation_Action_Button(pDummyModel, &m_fNotifyActionTime);
 	ImGui::SliderFloat("Animation", pDummyModel->Get_Animation()->Get_Accmulation_Pointer(), 0, pDummyModel->Get_Animation()->Get_Duration());
-	Notify_InputFileds(szNotifyName,&eNotifyKeyFrameType,&fNotifyActionTime,&fNotifySpeed);
-	Add_Notify_Button(szNotifyName, pDummyModel, &eNotifyKeyFrameType, &fNotifyActionTime, &fNotifySpeed);
-	
+	pDummyModel->Get_Animation()->Update_KeyFrame_By_Time();
+	Notify_InputFileds(m_szNotifyName, &m_eNotifyKeyFrameType, &m_fNotifyActionTime, &m_fNotifySpeed);
+	Add_Notify_Button(m_szNotifyName, pDummyModel, &m_eNotifyKeyFrameType, &m_fNotifyActionTime, &m_fNotifySpeed);
+
 	if (ImGui::Button("Edit##Notify"))
 	{
 		//현재 선택된 노티파이 수정 만들어줘야함.
 		CNotify* pNotify = pDummyModel->Get_Animation()->Get_Notify_Point();
-		pNotify->Edit_Frame(m_iSelectedNotifyIndex, eNotifyKeyFrameType, fNotifyActionTime, fNotifySpeed);
+		pNotify->Edit_Frame(m_iSelectedNotifyIndex, m_eNotifyKeyFrameType, m_fNotifyActionTime, m_fNotifySpeed);
 	}
 
 	for (_uint iNotifyCount = 0; iNotifyCount < pDummyModel->Get_Animation()->Get_Notify_Point()->Get_NotifyFrameCount(); iNotifyCount++)
@@ -66,15 +61,15 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 		CNotify* pNotify = pDummyModel->Get_Animation()->Get_Notify_Point();
 		_char  szNotifyButtonName[MAX_PATH];
 		ZEROMEM(szNotifyButtonName);
-				
+
 		WCharToChar(pNotify->Find_Frame_Key(iNotifyCount), szNotifyButtonName);
-		sprintf_s(szNotifyButtonName,"%s_%d", szNotifyButtonName, iNotifyCount);
+		sprintf_s(szNotifyButtonName, "%s_%d", szNotifyButtonName, iNotifyCount);
 		//똑같은 이름의 버튼이 둗개면 에러남
-		KEYFRAME::KEYFRAMETYPE eNotifyType =  pNotify->Find_Frame(iNotifyCount)->eKeyFrameType;
-		
-		if (ImGui::ColorButton("Type", 
-			(eNotifyType==KEYFRAME::KF_NOTIFY) ? (ImVec4(0.7f,0.f,0.f,1)):
-			((eNotifyType == KEYFRAME::KF_SOUND) ? (ImVec4(0.0f, 0.7f, 0.f, 1)) : 
+		KEYFRAME::KEYFRAMETYPE eNotifyType = pNotify->Find_Frame(iNotifyCount)->eKeyFrameType;
+
+		if (ImGui::ColorButton("Type",
+			(eNotifyType == KEYFRAME::KF_NOTIFY) ? (ImVec4(0.7f, 0.f, 0.f, 1)) :
+			((eNotifyType == KEYFRAME::KF_SOUND) ? (ImVec4(0.0f, 0.7f, 0.f, 1)) :
 				(ImVec4(0.0f, 0.f, 0.7f, 1)))))
 		{
 		}
@@ -83,19 +78,19 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 		if (ImGui::Button(szNotifyButtonName))
 		{
 			//정보갱신
-			fNotifyActionTime = pNotify->Find_Frame(iNotifyCount)->fTime;
-			WCharToChar(pNotify->Find_Frame_Key(iNotifyCount), szNotifyName);
-			eNotifyKeyFrameType = pNotify->Find_Frame(iNotifyCount)->eKeyFrameType;
-			if (eNotifyKeyFrameType == KEYFRAME::KF_SPEED)
+			m_fNotifyActionTime = pNotify->Find_Frame(iNotifyCount)->fTime;
+			WCharToChar(pNotify->Find_Frame_Key(iNotifyCount), m_szNotifyName);
+			m_eNotifyKeyFrameType = pNotify->Find_Frame(iNotifyCount)->eKeyFrameType;
+			if (m_eNotifyKeyFrameType == KEYFRAME::KF_SPEED)
 			{
-				fNotifySpeed = static_cast<SPEEDFRAME*>(pNotify->Find_Frame(iNotifyCount))->fSpeed;
+				m_fNotifySpeed = static_cast<SPEEDFRAME*>(pNotify->Find_Frame(iNotifyCount))->fSpeed;
 			}
 		}
 		ImGui::SameLine();
 		ImGui::Text((eNotifyType == KEYFRAME::KF_NOTIFY) ? ("Notify") :
 			((eNotifyType == KEYFRAME::KF_SOUND) ? (("Sound")) :
 				(("Speed"))));
-				
+
 		_char  szTimeMessage[MAX_PATH] = "Action Time : ";
 		sprintf_s(szTimeMessage, "%s%f", szTimeMessage, pNotify->Find_Frame(iNotifyCount)->fTime);
 		ImGui::SameLine();  ImGui::Text(szTimeMessage);
@@ -217,6 +212,14 @@ void CAnimation_Window::AddModel_Button()
 		//선택된 모델을 읽어오도록 만들어줘야함.
 		m_pDummyObject->Add_Model_Component(m_vecModelList_t[m_iModelIndex].c_str());
 		m_pDummyObject->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxAnimMesh"));
+		CModel* pCurrentModel = dynamic_cast<CModel*>(m_pDummyObject->Find_Component(TEXT("Com_Model")));
+		_tchar wszAnimationName[MAX_PATH] = {};
+		_tchar wszTypeComboName[MAX_PATH] = {};
+		lstrcpy(wszAnimationName, pCurrentModel->Get_Animation(0)->Get_AnimationName());
+		lstrcpy(wszTypeComboName, TEXT("Speed"));
+
+		WCharToChar(wszAnimationName, m_szCurrentItem);
+		WCharToChar(wszTypeComboName, m_szCurrentItemType);
 	}
 }
 
@@ -239,7 +242,7 @@ void CAnimation_Window::Animation_ComboBox(_char* szCurrentItem, CModel* pDummyM
 			{
 				strcpy_s(szCurrentItem, sizeof(szAnimationName), szAnimationName);
 				ImGui::SetItemDefaultFocus();
-				
+
 				pDummyModel->Reset_Animation(i, dynamic_cast<CTransform*>(m_pDummyObject->Find_Component(TEXT("Com_Transform"))));
 			}
 		}
@@ -263,15 +266,16 @@ void CAnimation_Window::Notify_InputFileds(_char* szNotifyName, KEYFRAME::KEYFRA
 {
 	ImGui::InputText("NotifyName", szNotifyName, 32);
 	const char* items[] = { "Speed","Notify","Sound" };
-	static const char* szCurrentItemType;
-	if (ImGui::BeginCombo("KeyFrameType", szCurrentItemType))
+
+	if (ImGui::BeginCombo("KeyFrameType", m_szCurrentItemType))
 	{
 		for (int i = 0; i < IM_ARRAYSIZE(items); i++)
 		{
-			bool is_selected = (items[i] == szCurrentItemType);
+			bool is_selected = (items[i] == m_szCurrentItemType);
 			if (ImGui::Selectable(items[i], is_selected))
 			{
 				*eNotifyKeyFrameType = static_cast<KEYFRAME::KEYFRAMETYPE>(i);
+				strcpy_s(m_szCurrentItemType, sizeof(m_szCurrentItemType), items[i]);
 				ImGui::SetItemDefaultFocus();
 			}
 		}

@@ -88,7 +88,7 @@ private: /* For.Animation_Lerp*/
 	_float							m_fAnimChangeTimer = { 0.f };
 
 private: /* For.RootAnimation*/
-	_uint							m_iRootBoneIndex = { 5 };
+	_uint							m_iRootBoneIndex = { 4 };
 	_float4x4						m_PostRootMatrix;
 
 private:

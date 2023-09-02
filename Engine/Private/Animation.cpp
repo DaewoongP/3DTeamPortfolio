@@ -80,9 +80,19 @@ HRESULT CAnimation::Add_NotifyFrame(KEYFRAME::KEYFRAMETYPE eFrameType, wchar_t* 
 	return m_pNotify->AddFrame(eFrameType, wszNotifyTag, fActionTime, fSpeed);
 }
 
+void CAnimation::Update_KeyFrame_By_Time()
+{
+	_uint iChannelIndex = { 0 };
+	for (auto pChannel : m_Channels)
+	{
+		m_ChannelCurrentKeyFrames[iChannelIndex] = 0;
+		++iChannelIndex;
+	}
+}
+
 HRESULT CAnimation::Initialize(Engine::ANIMATION Animation, const CModel::BONES& Bones)
 {
-	m_isLoop = true;
+	m_isLoop = false;
 
 	// 애니메이션 정보 저장
 	lstrcpy(m_szName, Animation.szName);
@@ -132,12 +142,17 @@ _bool CAnimation::Invalidate_AccTime(_float fTimeDelta)
 		return isEnd;
 	
 	m_fTimeAcc += m_fTickPerSecond * fTimeDelta;
+	
 	if (m_fTimeAcc >= m_fDuration)
 	{
 		if (true == m_isLoop)
 		{
 			isEnd = true;
 			m_fTimeAcc = 0.f;
+		}
+		else 
+		{
+			m_fTimeAcc = m_fDuration;
 		}
 	}
 	return isEnd;
@@ -162,7 +177,7 @@ void CAnimation::Invalidate_TransformationMatrix_Lerp(CModel::BONES& Bones, _flo
 	{
 		if (nullptr == pChannel)
 			return;
-		if (pChannel->Get_BoneIndex() < iRootIndex)
+		if (pChannel->Get_BoneIndex() < iRootIndex&& m_isRootAnim)
 			pChannel->Invalidate_TransformationMatrix(Bones, m_fTimeAcc, &m_ChannelCurrentKeyFrames[iChannelIndex++]);
 		else
 			pChannel->Invalidate_TransformationMatrix_Lerp(Bones, m_fTimeAcc, &m_ChannelCurrentKeyFrames[iChannelIndex++], LerpTimeAcc);

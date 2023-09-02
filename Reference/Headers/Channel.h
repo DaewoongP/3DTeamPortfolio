@@ -22,6 +22,8 @@ public:
 	_float Get_CurrentKeyFrameTime(_uint iCurrentIndex) const { return m_MatrixKeyFrames[iCurrentIndex].fTime; }
 	// 채널 키프레임 중 가장 큰값 반환
 	_uint	Get_NumKeyFrames() const { return m_iNumKeyFrames; }
+
+	void	Set_CurrentKeyFrame_Zero() {}
 	void Delete_Translation();
 	void Delete_Rotation();
 

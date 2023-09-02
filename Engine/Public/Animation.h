@@ -25,6 +25,7 @@ public:
 	// 채널 중 키프레임 최대치 기준, **현재 애니메이션의 프레임 반환**
 	_uint Get_CurrentAnimationFrame() { return m_ChannelCurrentKeyFrames[m_iMaxFrameChannelIndex]; }
 	_bool Get_Paused_State() { return m_isPaused; }
+	_bool Get_RootAnim_State() { return m_isRootAnim; }
 	_float Get_Ratio_Accumulation_Duration() { return(m_fTimeAcc /m_fDuration); }
 	_float Get_Accmulation() { return m_fTimeAcc; }
 	_float Get_Duration() { return m_fDuration; }
@@ -33,6 +34,7 @@ public:
 
 	void Set_CurrentKeyFrameIndex(CModel::BONES& Bones, _uint iKeyFrameIndex);
 	void Set_Pause(_bool isPause) { m_isPaused = isPause; }
+	void Set_RootAnim(_bool isRootAnim) { m_isRootAnim = isRootAnim; }
 	void Set_TickPerSecond(_float fMultiply)
 	{
 		if (0 >= fMultiply)
@@ -56,6 +58,7 @@ public:
 	NOTIFYFRAME* Find_NotifyFrame(const _tchar* wszNotifyTag);
 	SOUNDFRAME*  Find_SoundFrame(const _tchar* wszSoundTag);
 	HRESULT		 Add_NotifyFrame(KEYFRAME::KEYFRAMETYPE eFrameType, wchar_t* wszNotifyTag, _float fActionTime, _float fSpeed = 0);
+	void		 Update_KeyFrame_By_Time();
 
 public:
 	HRESULT Initialize(Engine::ANIMATION Animation, const CModel::BONES& Bones);
@@ -63,6 +66,7 @@ public:
 	void Invalidate_TransformationMatrix(CModel::BONES& Bones, _float fTimeDelta);
 	void Invalidate_TransformationMatrix_Lerp(CModel::BONES& Bones, _float fTimeDelta, _float LerpTimeAcc, _uint iRootIndex);
 	void Invalidate_Frame(_float fTimeDelta);
+
 private:
 	_tchar						m_szName[MAX_STR] = TEXT("");
 	// 애니메이션이 사용하는 채널(뼈)의 개수
@@ -83,6 +87,7 @@ private:
 
 	_bool						m_isLoop = { false };
 	_bool						m_isPaused = { false };
+	_bool						m_isRootAnim = { false };
 
 	// 현재 애니메이션에 해당하는 채널의 프레임 중 가장 프레임이 많은 채널의 인덱스
 	_uint						m_iMaxFrameChannelIndex = { 0 };

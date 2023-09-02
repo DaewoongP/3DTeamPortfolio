@@ -130,7 +130,8 @@ void CModel::Play_Animation(_float fTimeDelta, CTransform* pTransform)
 	}
 	else if (pTransform != nullptr)
 	{
-		Do_Root_Animation(pTransform);
+		if(m_Animations[m_iCurrentAnimIndex]->Get_RootAnim_State())
+			Do_Root_Animation(pTransform);
 	}
 
 	//노티파이용
@@ -155,7 +156,10 @@ void CModel::Play_Animation(_float fTimeDelta, CTransform* pTransform)
 	
 	for (auto& pBone : m_Bones)
 	{
-		if (m_iRootBoneIndex == pBone->Get_ParentNodeIndex())
+		//부모가 루트인 뼈는 자기 자신이 곧 basic이 됨.
+		//따라서 root matrix의 영향을 안받는건데
+		//새로 생긴 문제가 root의 scale영향도 안받아서 이상해짐.
+		if (m_iRootBoneIndex == pBone->Get_ParentNodeIndex()&& m_Animations[m_iCurrentAnimIndex]->Get_RootAnim_State())
 		{
 			pBone->Invalidate_CombinedTransformationMatrix_Basic(m_Bones);
 		}
@@ -204,28 +208,28 @@ void CModel::Do_Root_Animation(CTransform* pTransform)
 		_float4x4 current_Matrix = m_Bones[m_iRootBoneIndex]->Get_CombinedTransformationMatrix();
 		_float4x4 post_Matirx = m_PostRootMatrix;
 
-		_float3 current_Look = current_Matrix.Look();
-		_float3 post_Look = post_Matirx.Look();
+		_float3 vCurrent_Look = current_Matrix.Look();
+		_float3 vPost_Look = post_Matirx.Look();
 
 		_float4x4 player_Matrix_Override = XMMatrixIdentity();
 
-		current_Look.Normalize();
-		post_Look.Normalize();
+		vCurrent_Look.Normalize();
+		vPost_Look.Normalize();
 
-		if (current_Look!=post_Look && fabsf(current_Look.x- post_Look.x)>0.0001f&& fabsf(current_Look.z - post_Look.z) > 0.0001f)
+		if (vCurrent_Look!=vPost_Look && fabsf(vCurrent_Look.x- vPost_Look.x)>0.0001f&& fabsf(vCurrent_Look.z - vPost_Look.z) > 0.0001f)
 		{
-			_float dot = XMVectorGetX(XMVector3Dot(post_Look, current_Look));
+			_float dot = XMVectorGetX(XMVector3Dot(vPost_Look, vCurrent_Look));
 			_float radian = acosf(dot);
 			
-			if (XMVectorGetY(XMVector3Cross(current_Look, post_Look)) > 0)
+			if (XMVectorGetY(XMVector3Cross(vCurrent_Look, vPost_Look)) > 0)
 				radian = 2 * XMVectorGetX(g_XMPi) - radian;
 		
 			player_Matrix_Override = XMMatrixRotationY(radian);		
 		}
 
-		_float3 current_Position = current_Matrix.Translation();
-		_float3 post_Position = post_Matirx.Translation();
-		_float3 Calculated_Position = (current_Position - post_Position);
+		_float3 vCurrent_Position = current_Matrix.Translation();
+		_float3 vPost_Position = post_Matirx.Translation();
+		_float3 Calculated_Position = (vCurrent_Position - vPost_Position);
 		memcpy(player_Matrix_Override.m[3], &Calculated_Position, sizeof _float3);
 
 		pTransform->Set_WorldMatrix(player_Matrix_Override * pTransform->Get_WorldMatrix());
