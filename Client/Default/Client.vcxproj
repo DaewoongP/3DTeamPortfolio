@@ -166,9 +166,6 @@
     <ClInclude Include="..\public\Camera_Debug.h" />
     <ClInclude Include="..\Public\Client_Defines.h" />
     <ClInclude Include="..\Public\Client_Includes.h" />
-    <ClInclude Include="..\public\ImGui_Manager.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="..\Public\Test_NPC.h" />
     <ClInclude Include="..\Public\Test_Enemy.h" />
     <ClInclude Include="..\Public\Level_Loading.h" />
@@ -224,9 +221,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\Camera_Debug.cpp" />
-    <ClCompile Include="..\private\ImGui_Manager.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="..\Private\Test_NPC.cpp" />
     <ClCompile Include="..\Private\Test_Enemy.cpp" />
     <ClCompile Include="..\Private\Level_Loading.cpp" />

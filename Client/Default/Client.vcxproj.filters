@@ -67,17 +67,14 @@
     <Filter Include="02. GameObject\99. Debug\Player">
       <UniqueIdentifier>{a7856930-1055-4fbe-9f00-de43c99e8340}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\02. Enemy\00. Test_Enemy">
-      <UniqueIdentifier>{99ca5248-58e8-4f7a-8de2-8132590cec88}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\07. NPC">
       <UniqueIdentifier>{1048769e-752f-4d43-a082-e0d3163efe97}</UniqueIdentifier>
     </Filter>
     <Filter Include="98. Default\ImGui_Defaults">
       <UniqueIdentifier>{628cd336-ebfe-4860-bfac-014e7bec45d3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\99. Debug\ImGuiManager">
-      <UniqueIdentifier>{77d924b4-bb9f-4db8-a57a-1f889f2a0493}</UniqueIdentifier>
+    <Filter Include="02. GameObject\99. Debug\Enemy">
+      <UniqueIdentifier>{99ca5248-58e8-4f7a-8de2-8132590cec88}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -133,7 +130,7 @@
       <Filter>02. GameObject\99. Debug\Player</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Test_Enemy.h">
-      <Filter>02. GameObject\02. Enemy\00. Test_Enemy</Filter>
+      <Filter>02. GameObject\99. Debug\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Test_NPC.h">
       <Filter>02. GameObject\07. NPC</Filter>
@@ -174,9 +171,6 @@
     <ClInclude Include="ImGui\imgui.h">
       <Filter>98. Default\ImGui_Defaults</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\ImGui_Manager.h">
-      <Filter>02. GameObject\99. Debug\ImGuiManager</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -216,7 +210,7 @@
       <Filter>02. GameObject\99. Debug\Player</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Test_Enemy.cpp">
-      <Filter>02. GameObject\02. Enemy\00. Test_Enemy</Filter>
+      <Filter>02. GameObject\99. Debug\Enemy</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Test_NPC.cpp">
       <Filter>02. GameObject\07. NPC</Filter>
@@ -244,9 +238,6 @@
     </ClCompile>
     <ClCompile Include="ImGui\backends\imgui_impl_win32.cpp">
       <Filter>98. Default\ImGui_Defaults</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\ImGui_Manager.cpp">
-      <Filter>02. GameObject\99. Debug\ImGuiManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

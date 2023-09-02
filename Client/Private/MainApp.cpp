@@ -2,10 +2,6 @@
 #include "GameInstance.h"
 #include "Level_Loading.h"
 
-#ifdef _DEBUG
-#include "ImGui_Manager.h"
-#endif // _DEBUG
-
 CMainApp::CMainApp()
 	: m_pGameInstance{ CGameInstance::GetInstance() }
 {
@@ -267,8 +263,6 @@ CMainApp* CMainApp::Create()
 void CMainApp::Free()
 {
 #ifdef _DEBUG
-	CImGui_Manager::DestroyInstance();
-
 	ImGui_ImplDX11_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();

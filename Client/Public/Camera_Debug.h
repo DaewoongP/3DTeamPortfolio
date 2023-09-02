@@ -28,6 +28,17 @@ private:
 	void		Mouse_Move(_float fTimeDelta);
 	void		Fix_Mouse(void);
 
+#ifdef _DEBUG
+private:
+	_bool			m_is3rdCam = { false };
+	_bool			m_isFix3rdCam = { false };
+	_float3			m_v3rdCamOffset;
+	
+private:
+	void		Debug_ImGui(_float fTimeDelta);
+#endif // _DEBUG
+
+
 private:
 	_bool		m_isFixMouse = { 0 };
 	_float		m_fSpeed = { 0.f };
