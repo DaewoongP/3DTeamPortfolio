@@ -68,7 +68,13 @@ public:
 	void Go_Backward(_float fTimeDelta);
 	void Go_Left(_float fTimeDelta);
 	void Go_Right(_float fTimeDelta);
-	void Turn(_float3 vAxis, _float fTimeDelta);
+	void Turn(_float3 vAxis, _float fTimeDelta); 
+	// 각도값 고정
+	// 축을 기반으로 한 로테이션
+	void Rotation(_float3 vAxis, _float fRadian);
+	// 각도값 고정
+	// 각각의 X,Y,Z 의 각도 값을 받아 처리.
+	void Rotation(_float3 vRadians);
 	void LookAt(_float3 _vTarget, _bool _isDeleteY = false);
 
 private:
