@@ -93,6 +93,7 @@ void CObject_Window::Picking_Menu()
 
 	// 현재 피킹 위치 표시
 	ImGui::Text("Picking Position");
+	ImGui::Text("Pressing LShift : Rounding the value");
 	ImGui::Text("%.1f /", vPos.x);
 	ImGui::SameLine();
 	ImGui::Text("%.1f /", vPos.y);
@@ -104,7 +105,20 @@ void CObject_Window::Picking_Menu()
 	BEGININSTANCE; if (true == pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN) &&
 		-1.f != vPos.x)
 	{
-		m_pDummy->Set_Pos(vPos);
+		// shift키를 누르고 있으면 격자에 딱 맞게 위치가 반올림됨
+		if (true == pGameInstance->Get_DIKeyState(DIK_LSHIFT, CInput_Device::KEY_PRESSING))
+		{
+			vPos.x = round(vPos.x);
+			vPos.y = round(vPos.y);
+			vPos.z = round(vPos.z);
+
+			m_pDummy->Set_Pos(vPos);
+		}
+
+		else
+		{
+			m_pDummy->Set_Pos(vPos);
+		}		
 	} ENDINSTANCE;
 
 	// 메뉴 On Off static _bool 변수 모음
