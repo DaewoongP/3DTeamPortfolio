@@ -281,18 +281,42 @@ void CObject_Window::Delete_Object_Menu()
 	// 설치된 전체 오브젝트 제거
 	if (ImGui::Button("Delete All"))
 	{
-		BEGININSTANCE;
-		if (FAILED(pGameInstance->Clear_Layer((_uint)LEVEL_TOOL, TEXT("Layer_MapObject"))))
+		m_isDeleteObject = !m_isDeleteObject;
+	}
+
+	// 위에 버튼을 눌러 경고창을 활성화한다.
+	if (true == m_isDeleteObject)
+	{
+		ImGui::Text("Are you sure?");
+
+		ImGui::SameLine();
+
+		 // yes를 누르면 MapObject 전부 삭제
+		if (ImGui::Button("Yes"))
 		{
-			MSG_BOX("Failed to clear MapObject");
-		} ENDINSTANCE;
+			BEGININSTANCE;
+			if (FAILED(pGameInstance->Clear_Layer((_uint)LEVEL_TOOL, TEXT("Layer_MapObject"))))
+			{
+				MSG_BOX("Failed to clear MapObject");
+			} ENDINSTANCE;
 
-		// 값 초기화
-		m_iMapObjectIndex = 0;
+			// 값 초기화
+			m_iMapObjectIndex = 0;
 
-		m_vecSaveObject.clear();
-		m_vecObjectTag_s.clear();
-		m_vecMapObjectTag.clear();
+			m_vecSaveObject.clear();
+			m_vecObjectTag_s.clear();
+			m_vecMapObjectTag.clear();
+
+			m_isDeleteObject = false;
+		}
+
+		ImGui::SameLine();
+
+		// no를 누르면 아무일도 일어나지 않음
+		if (ImGui::Button("No"))
+		{
+			m_isDeleteObject = false;
+		}
 	}
 }
 

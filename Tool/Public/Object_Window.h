@@ -53,6 +53,9 @@ private:
 	_bool m_isSaveLoad = { false };
 	_bool m_isInstallObject = { true };
 
+	// 버튼 On Off _bool 변수 모음
+	_bool m_isDeleteObject = { false };
+
 	CMapDummy* m_pDummy = { nullptr }; // 생성해둔 Dummy의 주소
 	CMapObject* m_pObject = { nullptr }; // 설치할 MapObject의 주소
 	_uint m_iMapObjectIndex = { 0 }; // 현재 맵에 설치된 맵 오브젝트의 개수
