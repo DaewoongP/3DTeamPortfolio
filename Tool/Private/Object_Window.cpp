@@ -3,6 +3,8 @@
 
 #include "VIBuffer_Terrain.h"
 
+#include "Layer.h"
+
 #include "MapDummy.h"
 #include "MapObject.h"
 #include "Terrain.h"
@@ -165,6 +167,9 @@ void CObject_Window::Install_Object(_float3 vPos)
 		++m_iMapObjectIndex;
 
 	} ENDINSTANCE;
+
+	// 오브젝트 삭제 관련 메뉴
+	Delete_Object_Menu();
 }
 
 void CObject_Window::Select_Model()
@@ -260,6 +265,34 @@ void CObject_Window::Save_Load_Menu()
 	{
 		if (FAILED(Load_MapObject()))
 			MSG_BOX("Failed to Load MapObject on Menu");
+	}
+}
+
+void CObject_Window::Delete_Object_Menu()
+{
+	// 마지막에 설치한 오브젝트를 제거
+	if (ImGui::Button("Undo"))
+	{
+
+	}
+
+	ImGui::SameLine();
+
+	// 설치된 전체 오브젝트 제거
+	if (ImGui::Button("Delete All"))
+	{
+		BEGININSTANCE;
+		if (FAILED(pGameInstance->Clear_Layer((_uint)LEVEL_TOOL, TEXT("Layer_MapObject"))))
+		{
+			MSG_BOX("Failed to clear MapObject");
+		} ENDINSTANCE;
+
+		// 값 초기화
+		m_iMapObjectIndex = 0;
+
+		m_vecSaveObject.clear();
+		m_vecObjectTag_s.clear();
+		m_vecMapObjectTag.clear();
 	}
 }
 
@@ -400,7 +433,7 @@ void CObject_Window::Deep_Copy_Name(const _tchar* wszName)
 		ws.append(m_strCurrentModel.begin(), m_strCurrentModel.end());
 	}
 
-	_tchar* wszNew = new _tchar[length + 1];
+	_tchar* wszNew = New _tchar[length + 1];
 
 	if (0 != wcscpy_s(wszNew, length + 1, ws.c_str()))
 	{
@@ -418,7 +451,7 @@ void CObject_Window::Deep_Copy_Path(const _tchar* wszPath)
 
 	wstring ws(wszPath);
 
-	_tchar* wszNew = new _tchar[length + 1];
+	_tchar* wszNew = New _tchar[length + 1];
 
 	if (0 != wcscpy_s(wszNew, length + 1, ws.c_str()))
 	{
@@ -453,7 +486,7 @@ void CObject_Window::Deep_Copy_Tag(const _tchar* wszTag)
 {
 	m_vecMapObjectTag.push_back(wszTag);
 
-	// 맵 오브젝트 경로를 const _tchar* 형태로 깊은 복사
+	// 깊은 복사는 안하고 변환만 해줌
 	size_t length = wcslen(wszTag);
 
 	char c[MAX_PATH] = "";;
@@ -471,7 +504,7 @@ const _tchar* CObject_Window::Deep_Copy(const _tchar* wszString)
 
 	wstring ws(wszString);
 
-	_tchar* wszNew = new _tchar[length + 1];
+	_tchar* wszNew = New _tchar[length + 1];
 
 	if (0 != wcscpy_s(wszNew, length + 1, ws.c_str()))
 	{
@@ -519,13 +552,13 @@ HRESULT CObject_Window::Create_Dummy()
 	_float3 vPos = { 5.f, 0.f, 5.f };
 
 	BEGININSTANCE; if (FAILED(pGameInstance->Add_GameObject(LEVEL_TOOL, TEXT("Prototype_GameObject_MapDummy"), 
-		TEXT("Layer_MapObject"), TEXT("Map_Dummy"), &vPos)))
+		TEXT("Layer_Tool"), TEXT("Map_Dummy"), &vPos)))
 	{
 		MSG_BOX("Failed to GameObject Map_Dummy");
 		return E_FAIL;
 	}
 
-	m_pDummy = static_cast<CMapDummy*>(pGameInstance->Find_GameObject_In_Layer(LEVEL_TOOL, TEXT("Layer_MapObject"), TEXT("Map_Dummy")));
+	m_pDummy = static_cast<CMapDummy*>(pGameInstance->Find_GameObject_In_Layer(LEVEL_TOOL, TEXT("Layer_Tool"), TEXT("Map_Dummy")));
 	m_pDummy->Add_Model_Component(TEXT("Prototype_Component_Model_Tree"));
 	m_pDummy->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMesh")); ENDINSTANCE;
 
