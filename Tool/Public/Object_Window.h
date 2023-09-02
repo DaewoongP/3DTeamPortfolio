@@ -44,6 +44,13 @@ private:
 	HRESULT Save_Model_Path(_uint iType, const _tchar* pFilePath); // 프로그램이 종료될 때 호출시켜서 모델의 경로들을 저장함
 
 private:
+	// 메뉴 On Off _bool 변수 모음
+	_bool m_isCheckPicking = { false };
+	_bool m_isSelectModel = { false };
+	_bool m_isCurrentMapObject = { false };
+	_bool m_isSaveLoad = { false };
+	_bool m_isInstallObject = { false };
+
 	CMapDummy* m_pDummy = { nullptr }; // 생성해둔 Dummy의 주소
 	CMapObject* m_pObject = { nullptr }; // 설치할 MapObject의 주소
 	_uint m_iMapObjectIndex = { 0 }; // 현재 맵에 설치된 맵 오브젝트의 개수

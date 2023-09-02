@@ -35,15 +35,9 @@ void CObject_Window::Tick(_float fTimeDelta)
 
 	ImGui::Begin("Object", nullptr, m_WindowFlag);
 
-	// 메뉴 On Off static _bool 변수 모음
-	static _bool bCheckPicking = { false };
-	static _bool bSelectModel = { false };
-	static _bool bCurrentMapObject = { false };
-	static _bool bSaveLoad = { false };
-
 	// Picking 창 On / Off
-	ImGui::Checkbox("Picking", &bCheckPicking);
-	if(true == bCheckPicking)
+	ImGui::Checkbox("Picking", &m_isCheckPicking);
+	if(true == m_isCheckPicking)
 	{
 		Picking_Menu();
 	}
@@ -51,8 +45,8 @@ void CObject_Window::Tick(_float fTimeDelta)
 	ImGui::Text("----------------------------------------");
 
 	// Model 선택 창 On / Off
-	ImGui::Checkbox("Model Select", &bSelectModel);
-	if (true == bSelectModel)
+	ImGui::Checkbox("Model Select", &m_isSelectModel);
+	if (true == m_isSelectModel)
 	{
 		Select_Model();
 	}
@@ -60,8 +54,8 @@ void CObject_Window::Tick(_float fTimeDelta)
 	ImGui::Text("----------------------------------------");
 
 	// 현재 설치되어 있는 맵 오브젝트 창 On / Off
-	ImGui::Checkbox("Current MapObject", &bCurrentMapObject);
-	if (true == bCurrentMapObject)
+	ImGui::Checkbox("Current MapObject", &m_isCurrentMapObject);
+	if (true == m_isCurrentMapObject)
 	{
 		ImGui::Begin("Current MapObject", nullptr);
 		Current_MapObject();
@@ -71,8 +65,8 @@ void CObject_Window::Tick(_float fTimeDelta)
 	ImGui::Text("----------------------------------------");
 
 	// Save Load 선택 창 On / Off
-	ImGui::Checkbox("Save Load", &bSaveLoad);
-	if (true == bSaveLoad)
+	ImGui::Checkbox("Save Load", &m_isSaveLoad);
+	if (true == m_isSaveLoad)
 	{
 		Save_Load_Menu();
 	}
@@ -121,12 +115,9 @@ void CObject_Window::Picking_Menu()
 		}		
 	} ENDINSTANCE;
 
-	// 메뉴 On Off static _bool 변수 모음
-	static _bool bInstallObject = { true };
-
 	// Object Install 선택 창 On / Off
-	ImGui::Checkbox("Object Install", &bInstallObject);
-	if (true == bInstallObject)
+	ImGui::Checkbox("Object Install", &m_isInstallObject);
+	if (true == m_isInstallObject)
 	{
 		Install_Object(m_pDummy->Get_Transform()->Get_Position());
 	}
@@ -581,16 +572,16 @@ HRESULT CObject_Window::Save_Model_Path(_uint iType, const _tchar* pFilePath)
 
 				Deep_Copy_Path(pathresult.c_str());
 
-				// C:\Users\micro\3DTeamPortfolio\Resources\Models\NonAnims\Tree\Tree.FBX
 				// 경로에서 모델 이름 부분만 잘라내는 부분
-				string path = ("C:/Users/micro/3DTeamPortfolio/Resources/Models/NonAnims/");
+				string path = ("../../Resources/Models/NonAnims/");
 				string s = entry.path().string();
 
-				size_t path_length = path.length();
-				size_t current = s.find("\\", path_length);
+				//size_t path_length = path.length();
+				size_t path_length = pathresult.length();
+				size_t current = s.find("NonAnim") + 9;
 
 				// 1차 분리
-				string result = s.substr(path_length, current);
+				string result = s.substr(current, path_length);
 
 				size_t current1 = result.find("\\");
 
@@ -606,12 +597,12 @@ HRESULT CObject_Window::Save_Model_Path(_uint iType, const _tchar* pFilePath)
 				Deep_Copy_Name(wmodelname.c_str());
 
 				// 프로토타입 생성
-				/*_float4x4 PivotMatrix = XMMatrixIdentity();
+				_float4x4 PivotMatrix = XMMatrixIdentity();
 				BEGININSTANCE; if (FAILED(pGameInstance->Add_Prototype_Component(LEVEL_TOOL, m_vecModelList_t.back(),
 					CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, m_vecModelPath_t.back(), PivotMatrix))))
 				{
 					MSG_BOX("Failed to Create New Model Prototype");
-				} ENDINSTANCE;*/
+				} ENDINSTANCE;
 			}
 		}
 
