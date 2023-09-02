@@ -30,10 +30,18 @@ public:
 	virtual HRESULT Render() override;
 
 public:
-	void Set_fXY(_float fX, _float fY) 
+	void Set_fXY(_float fX, _float fY, _float fZ = 0) 
 	{ 
 		m_fX = fX;
 		m_fY = fY;
+		if (fZ != 0)
+			m_fZ = fZ;
+	}
+
+	void Set_Size(_float fX, _float fY)
+	{
+		m_fSizeX = fX;
+		m_fSizeY = fY;
 	}
 
 protected:
@@ -51,6 +59,8 @@ protected:
 	_float			m_fX = { 650.f };
 	// 윈도우창의 실제 y좌표
 	_float			m_fY = { 360.f };
+	// UI 거리 체크용 z값
+	_float			m_fZ = { 0.f };
 	// 텍스처 x사이즈 설정
 	_float			m_fSizeX = { 100.f };
 	// 텍스처 y사이즈 설정
@@ -61,12 +71,17 @@ protected:
 
 private:
 	_tchar	m_wszTextureName[MAX_STR] = {};
-	
+
 public:
 	_bool	Is_In_Rect();
 
+public:
+	_float2	UIPos_To_WorldPos(_float fX, _float fY);
+	_float2 WorldPos_To_UIPos(_float fX, _float fY);
+
 protected:
 	HRESULT Change_Position(_float fX, _float fY);
+	HRESULT Change_Scale(_float fX, _float fY);
 
 public:
 	static CDummy_UI* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _tchar* TextureComTag);
@@ -75,3 +90,5 @@ public:
 };
 
 END
+
+

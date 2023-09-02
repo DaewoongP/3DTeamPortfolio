@@ -203,7 +203,7 @@ HRESULT CMainTool::Add_Windows()
 
 	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("UI_Window"),
 		CUI_Window::Create(m_pDevice, m_pContext,
-			ImVec2(_float(rc.right), _float(rc.top)), ImVec2(500.f, 500.f)))))
+			ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(446.f, 768.f)))))
 		return E_FAIL;
 
 	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("Camera_Window"),

@@ -35,10 +35,16 @@ HRESULT CDummy_UI::Initialize(void* pArg)
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
+	
+	if (nullptr != pArg)
+	{
+		_float2* fSize = (_float2*)pArg;
+		Set_Size(fSize->x, fSize->y);
+	}
 
 	m_pTransform->Set_Scale(_float3(m_fSizeX, m_fSizeY, 1.f));
-	m_pTransform->Set_Position(_float3(m_fX - g_iWinSizeX * 0.5f, -m_fY + g_iWinSizeY * 0.5f, 0.f));
-
+	m_pTransform->Set_Position(_float3(m_fX - g_iWinSizeX * 0.5f, -m_fY + g_iWinSizeY * 0.5f, m_fZ));
+	
 	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(g_iWinSizeX, g_iWinSizeY, 0.f, 1.f));
 
@@ -49,15 +55,19 @@ void CDummy_UI::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-
 }
 
 void CDummy_UI::Late_Tick(_float fTimeDelta)
 {
 	if (nullptr != m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this);
+	
+	Change_Scale(m_fSizeX, m_fSizeY);
+	Change_Position(m_fX, m_fY);
 
 	return __super::Late_Tick(fTimeDelta);
+
+
 }
 
 HRESULT CDummy_UI::Render()
@@ -147,13 +157,37 @@ _bool CDummy_UI::Is_In_Rect()
 	return isIn;
 }
 
+_float2 CDummy_UI::UIPos_To_WorldPos(_float fX, _float fY)
+{
+	_float2 fXY = _float2(fX - g_iWinSizeX * 0.5f, -fY + g_iWinSizeY * 0.5f);
+
+	return fXY;
+}
+
+_float2 CDummy_UI::WorldPos_To_UIPos(_float fX, _float fY)
+{
+	 _float2 fXY = _float2(fX + g_iWinSizeX * 0.5f, -(fY - g_iWinSizeY * 0.5f));
+
+	return fXY;
+}
+
 HRESULT CDummy_UI::Change_Position(_float fX, _float fY)
 {
 	m_fX = fX;
 	m_fY = fY;
 
 	m_pTransform->Set_Position(
-		XMVectorSet(m_fX - g_iWinSizeX * 0.5f, -m_fY + g_iWinSizeY * 0.5f, 0.f, 1.f));
+		XMVectorSet(m_fX - g_iWinSizeX * 0.5f, -m_fY + g_iWinSizeY * 0.5f, m_fZ, 1.f));
+
+	return S_OK;
+}
+
+HRESULT CDummy_UI::Change_Scale(_float fX, _float fY)
+{
+	m_fSizeX = fX;
+	m_fSizeY = fY;
+
+	m_pTransform->Set_Scale(_float3(m_fSizeX, m_fSizeY, 1.f));
 
 	return S_OK;
 }

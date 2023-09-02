@@ -77,6 +77,10 @@ private:
 
 
 private:
+	_bool m_isSelected = { false };
+	_bool m_isListMouseInteraction = { false };
+
+private:
 	_bool				m_isShowImageList;
 
 private:

@@ -51,7 +51,10 @@ void CUI_Window::Tick(_float fTimeDelta)
 	{
 		Show_Object_List();
 	}
-
+	else
+	{
+		m_isSelected = false;
+	}
 
 	Interaction_UI();
 	Move_UI();
@@ -105,44 +108,77 @@ void CUI_Window::Show_Object_List()
 
 	vector <CGameObject*> pGameObejctVector;
 
+	pGameObejctVector.clear();
+
 	for (const auto& pair : GameObjects)
 	{
 		pGameObejctVector.push_back(pair.second);
 	}
 
 	_tchar	wszName[MAX_STR] = {};
-	lstrcpy(wszName, pGameObejctVector[0]->Get_Tag());
+	if (pGameObejctVector.size() > 0)
+	{
+		lstrcpy(wszName, pGameObejctVector[0]->Get_Tag());
+	}
 
 	Safe_Release(pGameInstance);
 
-	static int iItem = 0;
+	static _int iItem = 0;
 	if (ImGui::BeginListBox("Layer_Tool_UI"))
 	{
-		for (int n = 0; n < pGameObejctVector.size(); n++)
+		for (_int i = 0; i < pGameObejctVector.size(); i++)
 		{
-			const bool is_selected = (iItem == n);
+			m_isSelected = (iItem == i);
 
 			_char szGameObjectName[MAX_PATH];
 			memset(szGameObjectName, 0, sizeof(_char) * MAX_PATH);
 
-			WCharToChar(pGameObejctVector[n]->Get_Tag(), szGameObjectName);
-			if (ImGui::Selectable(szGameObjectName, is_selected))
-				iItem = n;		
+			WCharToChar(pGameObejctVector[i]->Get_Tag(), szGameObjectName);
+			if (ImGui::Selectable(szGameObjectName, m_isSelected))
+				iItem = i;
 
-			if (is_selected)
+			if (m_isSelected)
 			{
 				ImGui::SetItemDefaultFocus();
 				_tchar wszGameObjectName[MAX_PATH];
-				lstrcpy(wszGameObjectName, pGameObejctVector[n]->Get_Tag());
-
+				lstrcpy(wszGameObjectName, pGameObejctVector[i]->Get_Tag());
+				m_pDummy_UI = dynamic_cast<CDummy_UI*>(pGameObejctVector[i]);
 				string DragFloatTag = "Speed##";
-				_float3 vPos = pGameObejctVector[n]->Get_Transform()->Get_Translation();
-				ImGui::DragFloat3(DragFloatTag.c_str(), reinterpret_cast<_float*>(&vPos), 0.01f);
-				pGameObejctVector[n]->Get_Transform()->Set_Position(vPos);
+				_float4x4 pMatrix = pGameObejctVector[i]->Get_Transform()->Get_WorldMatrix();
+				__super::MatrixNode(&pMatrix, "UI_Transform##", "UI_Position##", "UI_Rotation##", "UI_Scale##");
+				//	pGameObejctVector[i]->Get_Transform()->Set_WorldMatrix(pMatrix);
+				_float2 fScale = _float2(pMatrix.Right().x, pMatrix.Up().y);
+
+				_float2 fXY = dynamic_cast<CDummy_UI*>(pGameObejctVector[i])->WorldPos_To_UIPos(pMatrix.Translation().x, pMatrix.Translation().y);
+				_float fZ = pMatrix.Translation().z;
+			
+				dynamic_cast<CDummy_UI*>(pGameObejctVector[i])->Set_fXY(fXY.x, fXY.y, fZ);
+				dynamic_cast<CDummy_UI*>(pGameObejctVector[i])->Set_Size(fScale.x, fScale.y);
+
+
+				if (ImGui::Button("Delete"))
+				{
+					pGameObejctVector[i]->Set_ObjEvent(CGameObject::OBJ_EVENT::OBJ_DEAD);
+				}
+
+				if (ImGui::Checkbox("MouseInteraction", &m_isListMouseInteraction))
+				{
+				}
+			}
+
+
+		}
+		if (ImGui::Button("Clear"))
+		{
+			for (auto& iter : pGameObejctVector)
+			{
+				iter->Set_ObjEvent(CGameObject::OBJ_EVENT::OBJ_DEAD);
 			}
 		}
+
 		ImGui::EndListBox();
 	}
+
 }
 
 void CUI_Window::Open_File_Path_Tree(UI_Tree* pTree)
@@ -325,9 +361,11 @@ void CUI_Window::Create_UI(UI_Tree* pTree)
 
 	CharToWChar(GameObjectTag.c_str(), wszGameObjectTag);
 	
+	_float2 fSize = _float2(pTree->m_iWidth, pTree->m_iHeight);
+
 	// Dummy UI Object 생성.
 	if (FAILED(pGameInstance->Add_GameObject(LEVEL_TOOL, wszGaemObject,
-		TEXT("Layer_Tool_UI"), wszGameObjectTag, nullptr)))
+		TEXT("Layer_Tool_UI"), wszGameObjectTag, &fSize)))
 	{
 		MSG_BOX("Failed to Created CDummy_UI Clone");
 	}
@@ -335,8 +373,13 @@ void CUI_Window::Create_UI(UI_Tree* pTree)
 	Safe_Release(pGameInstance);
 }
 
+
 void CUI_Window::Interaction_UI()
 {
+	if (m_isSelected)
+		return;
+	
+
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
@@ -359,6 +402,14 @@ void CUI_Window::Interaction_UI()
 		pGameObejctVector.push_back(pair.second);
 	}
 
+	std::sort(pGameObejctVector.begin(), pGameObejctVector.end(), [](const CGameObject* pSour, const CGameObject* pDest) {
+		_float fSourZ = XMVectorGetZ(pSour->Get_Transform()->Get_Translation());
+		_float fDestZ = XMVectorGetZ(pDest->Get_Transform()->Get_Translation());
+		// 내림차순 (멀리있는거부터 그림.)
+		if (fSourZ < fDestZ)
+			return true;
+		return false;
+		}); 
 
 	for (auto& pGameObject : pGameObejctVector)
 	{
@@ -368,6 +419,7 @@ void CUI_Window::Interaction_UI()
 			pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN))
 		{
 			m_pDummy_UI = dynamic_cast<CDummy_UI*>(pGameObject);
+			Safe_Release(pGameInstance);
 			break;
 		}
 		else if (pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_UP))
@@ -379,7 +431,7 @@ void CUI_Window::Interaction_UI()
 	}
 
 #ifdef _DEBUG
-	cout << m_pDummy_UI << endl;
+//	cout << m_pDummy_UI << endl;
 #endif // _DEBUG
 }
 
@@ -389,27 +441,62 @@ void CUI_Window::Move_UI()
 	POINT CurrentMousePos;
 	GetCursorPos(&CurrentMousePos);
 
-	if (nullptr == m_pDummy_UI)
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+
+	if (m_isSelected)
+	{
+		if (!m_isListMouseInteraction)
+		{
+			m_MousePos = CurrentMousePos; // 현재 위치를 이전 위치로 저장
+			Safe_Release(pGameInstance);
+			return;
+		}
+	}
+
+
+	if (nullptr == m_pDummy_UI || 
+		!(pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_PRESSING)))
 	{
 		m_MousePos = CurrentMousePos; // 현재 위치를 이전 위치로 저장
+		Safe_Release(pGameInstance);
 		return;
 	}
 
-	// 마우스 이동 거리 계산
-	_int iMoveX = CurrentMousePos.x - m_MousePos.x;
-	_int iMoveY = CurrentMousePos.y - m_MousePos.y;
 
-	_float3 vPos = m_pDummy_UI->Get_Transform()->Get_Translation();
+	// 마우스 이동 거리 계산
+	_float iMoveX = CurrentMousePos.x - m_MousePos.x;
+	_float iMoveY = CurrentMousePos.y - m_MousePos.y;
+
+	if (iMoveX == 0 && iMoveY == 0)
+	{
+		Safe_Release(pGameInstance);
+		return;
+	}
+
+	//_float3 vPos = m_pDummy_UI->Get_Transform()->Get_Translation();
 	_float2 fXY = m_pDummy_UI->Get_fXY();
 
-	m_pDummy_UI->Set_fXY(fXY.x + iMoveX, fXY.y + iMoveY);
 
-	m_pDummy_UI->Get_Transform()->Set_Position(
-		XMVectorSet((fXY.x + iMoveX)- g_iWinSizeX * 0.5f,
-			(-fXY.y + iMoveY) + g_iWinSizeY * 0.5f, 0.f, 1.f));
+	if (pGameInstance->Get_DIKeyState(DIK_LSHIFT, CInput_Device::KEY_PRESSING))
+	{
+		// 마우스 이동 거리를 10의 배수로 조정
+		iMoveX = (iMoveX / 10) * 100;
+		iMoveY = (iMoveY / 10) * 100;
+		m_pDummy_UI->Set_fXY(fXY.x + iMoveX, fXY.y + iMoveY);
+		m_MousePos = CurrentMousePos; // 현재 위치를 이전 위치로 저장
 
-	
-	m_MousePos = CurrentMousePos; // 현재 위치를 이전 위치로 저장
+		cout << iMoveX << "      " << iMoveY << endl;
+	}
+	else
+	{
+		m_pDummy_UI->Set_fXY(fXY.x + iMoveX, fXY.y + iMoveY);
+		m_MousePos = CurrentMousePos; // 현재 위치를 이전 위치로 저장
+	}
+
+	Safe_Release(pGameInstance);
+
 }
 
 _bool CUI_Window::Load_ImTexture(const _char* pFilePath, ID3D11ShaderResourceView** out_srv, _int* out_width, _int* out_height)
