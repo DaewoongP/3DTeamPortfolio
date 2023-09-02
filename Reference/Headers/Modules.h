@@ -75,6 +75,8 @@ struct ENGINE_DLL EMMISION_MODULE : public MODULE
 
 struct ENGINE_DLL SHAPE_MODULE : public MODULE
 {
+	SHAPE_MODULE() : MODULE() { __super::isActivate = true; };
+
 	enum SHAPE { S_SPHERE, S_HEMISPHERE, S_CONE, S_MESH, S_CIRCLE, S_EDGE, S_RECTANGLE, SHAPE_END };
 	enum MODE { RANDOM, LOOP, PING_PONG, BURST_SPREAD, MODE_END };
 
@@ -93,7 +95,7 @@ struct ENGINE_DLL SHAPE_MODULE : public MODULE
 	_uint iMaterialNum = { 0 }; // 사용할 서브메쉬 수.
 	_bool isUseMeshColors = { true }; // 버퍼의 꼭지점이 가진 색상을 입자와 섞는다.
 	_float fNormalOffset = { 0.f }; // 0인 경우 메쉬의 노말벡터의 꼬리에서 시작, 오프셋 값 만큼 시작위치는 노말 벡터 방향으로 이동한다.
-
+	
 	EMIT_FROM eEmitFrom = { BASE };
 	_float fAngle = { 25.f };
 	_float fRadius = { 1.f };
@@ -104,7 +106,7 @@ struct ENGINE_DLL SHAPE_MODULE : public MODULE
 	  MODE eArcMode = { RANDOM };
 	 _float fSpread = { 0.f }; // [0, 1]
 
-	string strTexture = ""; // 방출 모양을 결정할 텍스처 경로
+	_char strTexture[MAX_PATH] = { "" }; // 방출 모양을 결정할 텍스처 경로
 	CLIP_CHANNEL eClipChannel; // 클립 채널(클립 : 알파테스트로 discard)
 	_float fClipThreshold = { 0.f }; // [0, 1], 이것보다 작은 값들은 알파테스트 실패함.
 	_bool isColorAffectsParticles = { true };

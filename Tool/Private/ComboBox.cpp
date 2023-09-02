@@ -5,9 +5,11 @@ CComboBox::CComboBox()
 {
 }
 
-HRESULT CComboBox::Initialize(const _char* _szTag, initializer_list<string> _Items)
+HRESULT CComboBox::Initialize(const _char* _szTag, const _char* _szName, initializer_list<string> _Items)
 {
     Set_Tag(_szTag);
+    Set_Name(_szName);
+
     Push_Back(_Items);
 
     if (false == m_Items.empty())
@@ -21,12 +23,17 @@ void CComboBox::Set_Tag(string _strTag)
     m_strTag = _strTag;
 }
 
+void CComboBox::Set_Name(string _strName)
+{
+    m_strName = _strName;
+}
+
 void CComboBox::Show(FLAG eFlag)
 {
     if (TABLE == eFlag)
     {
         ImGui::TableSetColumnIndex(0);
-        ImGui::Text(m_strTag.data()); ImGui::TableSetColumnIndex(1);
+        ImGui::Text(m_strName.data()); ImGui::TableSetColumnIndex(1);
     }
         
     if (ImGui::BeginCombo(m_strTag.data(), m_strCurrentItem.data())) // The second parameter is the label previewed before opening the combo.
@@ -42,8 +49,13 @@ void CComboBox::Show(FLAG eFlag)
 
             if (is_selected)
                 ImGui::SetItemDefaultFocus(); // You may set the initial focus when opening the combo (scrolling + for keyboard navigation support)
-        }
+        }    
+
         ImGui::EndCombo();
+    }
+    if (TABLE == eFlag)
+    {
+        ImGui::TableNextRow();
     }
 }
 
@@ -92,11 +104,11 @@ void CComboBox::Update_Current_Tag(string _strCurrentTag)
     m_strCurrentItem = _strCurrentTag;
 }
 
-CComboBox* CComboBox::Create(const _char* _szTag, initializer_list<string> _Items)
+CComboBox* CComboBox::Create(const _char* _szTag, const _char* _szName, initializer_list<string> _Items)
 {
     CComboBox* pInstance = new CComboBox;
 
-    if (FAILED(pInstance->Initialize(_szTag, _Items)))
+    if (FAILED(pInstance->Initialize(_szTag, _szName, _Items)))
     {
         MSG_BOX("Failed to Created ComboBox");
         Safe_Release(pInstance);

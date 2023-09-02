@@ -94,6 +94,9 @@
     <Filter Include="01. Window\CustomWidget\ComboBox">
       <UniqueIdentifier>{f9534f91-957f-4cb3-b18a-f0c81e29a299}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Window\CustomWidget\ImageFileDialog">
+      <UniqueIdentifier>{81507f5c-9829-4bd2-aef0-11d9fe9c488b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tool.h">
@@ -222,6 +225,9 @@
     <ClInclude Include="..\Public\ComboBox.h">
       <Filter>01. Window\CustomWidget\ComboBox</Filter>
     </ClInclude>
+    <ClInclude Include="ImageFileDialog.h">
+      <Filter>01. Window\CustomWidget\ImageFileDialog</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -335,6 +341,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\ComboBox.cpp">
       <Filter>01. Window\CustomWidget\ComboBox</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageFileDialog.cpp">
+      <Filter>01. Window\CustomWidget\ImageFileDialog</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

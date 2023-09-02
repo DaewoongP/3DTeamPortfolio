@@ -29,16 +29,23 @@ public:
 	void ShapeModule_TreeNode();
 
 private: // À§Á¬ °ü·Ã
-	void TableDragFloat(string _strTag, _float* _pValue, _float _fDragSpeed = 0.01f, _float _fMin = 0.f, _float _fMax = FLT_MAX);
-	void TableDragFloat2Range(string _strTag, _float2* _pValue, _float _fDragSpeed = 0.01f, _float _fMin = 0.f, _float _fMax = FLT_MAX);
-	void TableDragXYZ(string _strTag, _float3* pValue, _float _fDragSpeed = 0.01f, _float _fMin = 0.f, _float _fMax = FLT_MAX);
-	void TableCheckBox(string _strTag, _bool* _pValue);
-	void TableColorEdit4(string _strTag, _float4* pValue);
+	void Table_DragFloat(string _strTag, _float* _pValue, _float _fDragSpeed = 0.01f, _float _fMin = 0.f, _float _fMax = FLT_MAX);
+	void Table_DragFloat2Range(string _strTag, _float2* _pValue, _float _fDragSpeed = 0.01f, _float _fMin = 0.f, _float _fMax = FLT_MAX);
+	void Table_DragXYZ(string _strTag, _float3* pValue, _float _fDragSpeed = 0.01f, _float _fMin = 0.f, _float _fMax = FLT_MAX);
+	void Table_DragInt(string _strTag, _int* _pValue, _float _fDragSpeed = 0.1f, _int _iMin = 0.f, _int _iMax = INT_MAX);
+	void Table_CheckBox(string _strTag, _bool* _pValue);
+	void Table_ColorEdit4(string _strTag, _float4* pValue);
 
 private:
-	_float		m_fWidgetSize = { 200.f };
+	_float	   m_fWidgetSize = { 200.f };
 	CComboBox* m_pEmitterVelocity_ComboBox = { nullptr };
-	
+	CComboBox* m_pShapeCombo = { nullptr };
+	CComboBox* m_pModeCombo = { nullptr };
+	CComboBox* m_pBurstTypeCombo = { nullptr };
+	CComboBox* m_pArcModeCombo = { nullptr };
+	CComboBox* m_pMeshCombo = { nullptr };
+	CComboBox* m_pEmitFromCombo = { nullptr };
+	CComboBox* m_pMeshTypeCombo = { nullptr };
 private:
 	class CDummyParticle* m_pDummyParticle = { nullptr };
 	CParticleSystem* m_pParticleSystem = { nullptr };
