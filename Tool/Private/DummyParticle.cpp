@@ -15,8 +15,6 @@ HRESULT CDummyParticle::Initialize_Prototype()
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
 
-	m_iNumInstance = 30;
-
 	// 툴이라 여기에다 해놓음
 	if (FAILED(Add_Components()))
 		return E_FAIL;
@@ -35,8 +33,6 @@ HRESULT CDummyParticle::Initialize(void* _pArg)
 
 void CDummyParticle::Tick(_float _fTimeDelta)
 {
-	m_ParticleMatrices.clear();
-	vector<COL_INSTANCE> ColInsts;
 	m_pParticleSystem->Tick(_fTimeDelta, m_pBuffer);
 }
 
@@ -61,24 +57,17 @@ HRESULT CDummyParticle::Render()
 HRESULT CDummyParticle::Add_Components()
 {
 	/* Com_Shader */
-	if (FAILED(CComposite::Add_Component(LEVEL_TOOL, TEXT("Prototype_Component_Shader_VtxPointColInstance"),
+	if (FAILED(CComposite::Add_Component(LEVEL_TOOL, TEXT("Prototype_Component_Shader_VtxRectColInstance"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
 	{
 		MSG_BOX("Failed CDummyParticle Add_Component : (Com_Shader)");
 		return E_FAIL;
 	}
 
-	/* Com_Texture */
-	if (FAILED(__super::Add_Component(LEVEL_TOOL, TEXT("Prototype_Component_Texture_Default_Particle")
-		, TEXT("Com_Texture"), (CComponent**)&m_pTexture)))
-	{
-		MSG_BOX("Failed CDummyParticle Add_Component : (Com_Texture)");
-		return E_FAIL;
-	}
-
 	/* Com_Buffer */
-	if (FAILED(CComposite::Add_Component(LEVEL_TOOL, TEXT("Prototype_Component_VIBuffer_Point_Color_Instance"),
-		TEXT("Com_Buffer"), reinterpret_cast<CComponent**>(&m_pBuffer), &m_iNumInstance)))
+	_int iNumInstance = 30;
+	if (FAILED(CComposite::Add_Component(LEVEL_TOOL, TEXT("Prototype_Component_VIBuffer_Rect_Color_Instance"),
+		TEXT("Com_Buffer"), reinterpret_cast<CComponent**>(&m_pBuffer), &iNumInstance)))
 	{
 		MSG_BOX("Failed CDummyParticle Add_Component : (Com_Buffer)");
 		return E_FAIL;
@@ -99,7 +88,6 @@ HRESULT CDummyParticle::Add_Components()
 		MSG_BOX("Failed CDummyParticle Add_Component : (Com_Particle)");
 		return E_FAIL;
 	}
-
 
 	return S_OK;
 }
@@ -124,7 +112,7 @@ HRESULT CDummyParticle::SetUp_ShaderResources()
 	if (FAILED(m_pShader->Bind_RawValue("g_vColor", &vColor, sizeof(_float4))))
 		return E_FAIL;
 
-	if (FAILED(m_pTexture->Bind_ShaderResource(m_pShader, "g_Texture")))
+	if (FAILED(m_pParticleSystem->Bind_ParticleValue(m_pShader)))
 		return E_FAIL;
 
 	ENDINSTANCE;
@@ -160,10 +148,6 @@ void CDummyParticle::Free(void)
 	__super::Free();
 	Safe_Release(m_pRenderer);
 	Safe_Release(m_pParticleSystem);
-	Safe_Release(m_pTexture);
 	Safe_Release(m_pShader);
 	Safe_Release(m_pBuffer);
-
-	m_ParticleDescs.clear();
-	m_ParticleMatrices.clear();
 }

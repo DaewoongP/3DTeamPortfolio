@@ -145,4 +145,75 @@ namespace Engine
 
 		return distribution(RandGenerator);
 	}
+
+	// 매개변수(_fPercent) 확률로 true를 발생한다.
+	// ex) bool isResult = RandomBool(0.66f); // 66% 확률로 true발생
+	bool RandomBool(float _fPercent)
+	{
+		float fRandomFloat = Random_Generator(0.f, 1.f);
+		Clamp(_fPercent, 0.f, 1.f); // 인자를 [0, 1]로 값 제한
+		return _fPercent > fRandomFloat;
+	}
+
+	// 길이 10짜리 문자열을 랜덤으로 만들어주는 함수
+	string Generate_Hashtag(bool _isSpSp = false, int _iLength = 15)
+	{
+		const std::string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+		std::random_device rd;
+		std::mt19937 generator(rd());
+
+		std::string result = "";
+		if (true == _isSpSp)
+		{
+			result = "##";
+		}
+
+		for (int i = 0; i < _iLength; ++i) {
+			result += chars[generator() % chars.size()];
+		}
+
+		return result;
+	}
+
+	std::wstring ToRelativePath(const wchar_t* pAbsolutePath)
+	{
+		wstring absolutePath = pAbsolutePath;
+		// 상대 경로로 변경할 기준 문자열
+		const wstring target = L"3DTeamPortfolio";
+
+		// 상대 경로의 시작 부분
+		const wstring relativeStart = L"..\\..\\";
+
+		// "3DTeamPortfolio"의 위치를 찾습니다.
+		size_t found = absolutePath.find(target);
+		if (found != wstring::npos)
+		{
+			// 상대 경로로 변환
+			return relativeStart + absolutePath.substr(found + target.size() + 1);
+		}
+
+		// 변환할 대상 문자열이 없는 경우 원래의 절대 경로를 반환합니다.
+		return absolutePath;
+	}
+
+	std::string ToRelativePath(const char* pAbsolutePath)
+	{
+		string absolutePath = pAbsolutePath;
+		// 상대 경로로 변경할 기준 문자열
+		const string target = "3DTeamPortfolio";
+
+		// 상대 경로의 시작 부분
+		const string relativeStart = "..\\..\\";
+
+		// "3DTeamPortfolio"의 위치를 찾습니다.
+		size_t found = absolutePath.find(target);
+		if (found != string::npos)
+		{
+			// 상대 경로로 변환
+			return relativeStart + absolutePath.substr(found + target.size() + 1);
+		}
+
+		// 변환할 대상 문자열이 없는 경우 원래의 절대 경로를 반환합니다.
+		return absolutePath;
+	}
 }
