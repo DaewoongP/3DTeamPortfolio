@@ -295,6 +295,7 @@ PS_OUT_LIGHT PS_MAIN_SPOTLIGHT(PS_IN In)
 
     float fDistance = length(vLightDir);
 
+
     // spotlight factor
     float fSpot = pow(max(dot(normalize(vLightDir), g_vLightDir), 0.0f), g_fSpotPower);
 
@@ -330,6 +331,7 @@ PS_OUT PS_MAIN_DEFERRED(PS_IN In)
         discard;
     
    
+    vShade = ceil(vShade * 4) / 4;
     
     Out.vColor = vDiffuse * vShade * vBlur//
     +vSpecular;

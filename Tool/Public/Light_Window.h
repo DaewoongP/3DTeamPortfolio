@@ -1,6 +1,14 @@
 #pragma once
 #include "ImWindow.h"
 #include "Light.h"
+#include"Collider.h"
+
+BEGIN(Engine)
+class CRenderer;
+class CCollider;
+class CTransform;
+END
+
 
 BEGIN(Tool)
 
@@ -39,6 +47,10 @@ public:
 	void ResetValue();
 	void Light_ComboBox();
 	void FloatToFloat4(_float* Input, _float4 Out); // float 배열에서 float4로변환
+	HRESULT Add_Component();
+
+	/*void Picking();
+	_float3 Find_PickingPos();*/
 private:
 	int m_iLightType = 0;
 	_int m_iLightIndex;
@@ -66,6 +78,15 @@ private:
 	CLight::LIGHTDESC LightDesc;
 	LIGHTINFO m_SaveDesc;
 	
+
+private:
+	CTransform* m_pTrnasform = { nullptr };
+	CRenderer* m_pRenderer = { nullptr };
+	CCollider* m_pCollider = { nullptr };
+
+
+	
+
 
 public:
 	static CLight_Window* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, ImVec2 vWindowPos, ImVec2 vWindowSize);

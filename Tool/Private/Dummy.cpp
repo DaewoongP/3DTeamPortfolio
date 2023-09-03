@@ -77,6 +77,38 @@ HRESULT CDummy::Render()
 	return S_OK;
 }
 
+HRESULT CDummy::Render_Depth()
+{
+	/*if (FAILED(__super::Render_Depth()))
+		return E_FAIL;
+
+	if (nullptr == m_pShader ||
+		nullptr == m_pModel)
+		return S_OK;
+
+	if (FAILED(SetUp_ShaderResources()))
+		return E_FAIL;
+	
+	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
+		return E_FAIL;
+
+
+
+
+	_uint		iNumMeshes = m_pModel->Get_NumMeshes();
+	for (_uint i = 0; i < iNumMeshes; ++i)
+	{
+		m_pModel->Bind_BoneMatrices(m_pShader, "g_BoneMatrices", i);
+
+		m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", i, DIFFUSE);
+
+		m_pShader->Begin("AnimMesh");
+
+		m_pModel->Render(i);
+	}*/
+	return S_OK;
+}
+
 HRESULT CDummy::Add_Model_Component(const wchar_t* wszModelTag)
 {
 	if (m_pModel != nullptr)

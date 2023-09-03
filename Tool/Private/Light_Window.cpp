@@ -12,6 +12,8 @@ HRESULT CLight_Window::Initialize(ImVec2 vWindowPos, ImVec2 vWindowSize)
 		return E_FAIL;
 
 
+	
+
 	m_WindowFlag = ImGuiWindowFlags_NoResize;
 	//StrInput = "Default_Dir_Light";
 	BEGININSTANCE
@@ -22,7 +24,7 @@ HRESULT CLight_Window::Initialize(ImVec2 vWindowPos, ImVec2 vWindowSize)
 	LightDesc.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
 	LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
 	LightDesc.eType = CLight::TYPE_DIRECTIONAL;
-	pGameInstance->Add_Lights(LightDesc);
+	pGameInstance->Add_Lights(m_pDevice, m_pContext, LightDesc);
 	//m_vecLightDesc.push_back(LightDesc);
 	//m_vecLightList.push_back(StrInput);
 	ENDINSTANCE
@@ -43,17 +45,14 @@ void CLight_Window::Tick(_float fTimeDelta)
 	{
 		StrInput = AddLightName;
 	}
-
 	
-	BEGININSTANCE
-	
-	
-	ENDINSTANCE
-	m_iCurrent_LightIndex = m_iLightIndex;
+	m_iCurrent_LightIndex = m_iLightIndex;//list 박스에서 다른 빛으로변경할때 변경된것판단.
 
 	Light_ComboBox();
+	
 	if (m_iLightIndex != m_iCurrent_LightIndex)
 	{
+		BEGININSTANCE
 		LightDesc = *pGameInstance->Get_Light(m_iLightIndex);
 
 		FloatToFloat4(vPos, LightDesc.vPos);
@@ -64,6 +63,7 @@ void CLight_Window::Tick(_float fTimeDelta)
 		FloatToFloat4(vAmbient, LightDesc.vAmbient);
 		FloatToFloat4(vSpecular, LightDesc.vSpecular);
 		m_iLightType = LightDesc.iLightType;
+		ENDINSTANCE
 	}
 	ImGui::DragFloat3("Position", vPos, 0.1f);
 
@@ -167,7 +167,7 @@ HRESULT CLight_Window::Create_Light()
 	if (ImGui::Button("Create"))
 	{
 		m_isSetting = false;
-		if (nullptr == pGameInstance->Add_Lights(LightDesc))
+		if (nullptr == pGameInstance->Add_Lights(m_pDevice, m_pContext, LightDesc))
 		{
 			MSG_BOX("Failed to create Light");
 			return E_FAIL;
@@ -347,13 +347,13 @@ HRESULT CLight_Window::Load_Light()
 		MSG_BOX("Load Successed");
 
 		CloseHandle(hFile);
-
+	
 
 		BEGININSTANCE
 			for (size_t i = 0; i < m_vecLightDesc.size(); ++i)
 			{
 				LightDesc = m_vecLightDesc[i];
-				pGameInstance->Add_Lights(LightDesc);
+				pGameInstance->Add_Lights( m_pDevice,m_pContext, LightDesc);
 
 			}
 
@@ -477,6 +477,81 @@ void CLight_Window::FloatToFloat4(_float* Input, _float4 Out)
 	  Input[3] = Out.w;
 }
 
+HRESULT CLight_Window::Add_Component()
+{
+
+
+	return S_OK;
+
+	//void CLight_Window::Picking()
+	//{
+	//	_float3 vPos = Find_PickingPos();
+	//
+	//	// 현재 피킹 위치 표시
+	//	ImGui::Text("Picking Position");
+	//	ImGui::Text("Pressing LShift : Rounding the value");
+	//	ImGui::Text("%.1f /", vPos.x);
+	//	ImGui::SameLine();
+	//	ImGui::Text("%.1f /", vPos.y);
+	//	ImGui::SameLine();
+	//	ImGui::Text("%.1f", vPos.z);
+	//	ImGui::Text("----------------------------------------");
+	//
+	//	// 마우스 좌클릭을 하면 해당 위치로 더미 이동
+	//	BEGININSTANCE; if (true == pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN) &&
+	//		-1.f != vPos.x)
+	//	{
+	//		// shift키를 누르고 있으면 격자에 딱 맞게 위치가 반올림됨
+	//		if (true == pGameInstance->Get_DIKeyState(DIK_LSHIFT, CInput_Device::KEY_PRESSING))
+	//		{
+	//			vPos.x = round(vPos.x);
+	//			vPos.y = round(vPos.y);
+	//			vPos.z = round(vPos.z);
+	//
+	//			m_pDummy->Set_Pos(vPos);
+	//		}
+	//
+	//		else
+	//		{
+	//			m_pDummy->Set_Pos(vPos);
+	//		}
+	//	} ENDINSTANCE;
+	//}
+	//
+	//_float3 CLight_Window::Find_PickingPos()
+	//{
+	//	
+	//		_float4 vRayPos = { 0.f, 0.f, 0.f, 1.f };
+	//		_float4 vRayDir = { 0.f, 0.f, 0.f, 0.f };
+	//
+	//		BEGININSTANCE; pGameInstance->Get_WorldMouseRay(m_pContext, g_hWnd, &vRayPos, &vRayDir);
+	//
+	//		CVIBuffer_Terrain* pTerrain = static_cast<CVIBuffer_Terrain*>(
+	//			static_cast<CTerrain*>(pGameInstance->Find_GameObject_In_Layer(LEVEL_TOOL, TEXT("Layer_Tool"),
+	//				TEXT("GameObject_Terrain")))->Get_Buffer()); ENDINSTANCE;
+	//
+	//		float fDist = FLT_MAX; // 피킹 연산 후 최종 거리값
+	//
+	//		_bool bResult = pTerrain->IsPicked(vRayPos, vRayDir, fDist);
+	//
+	//		// 결과가 나올 경우 RayDir에 거리값을 곱해 최종 위치 산출
+	//		if (true == bResult)
+	//		{
+	//			if (FLT_MAX > fDist)
+	//			{
+	//				_float4 vFinalPos;
+	//
+	//				vRayDir *= fDist;
+	//				vFinalPos = vRayPos + vRayDir;
+	//
+	//				return _float3(vFinalPos.x, vFinalPos.y, vFinalPos.z);
+	//			}
+	//		}
+	//
+	//		return _float3(-1.f, -1.f, -1.f);
+	//	
+	//}
+}
 CLight_Window* CLight_Window::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, ImVec2 vWindowPos, ImVec2 vWindowSize)
 {
 	CLight_Window* pInstance = New CLight_Window(pDevice, pContext);

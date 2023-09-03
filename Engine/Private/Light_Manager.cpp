@@ -1,5 +1,6 @@
 #include "..\Public\Light_Manager.h"
-
+#include"Transform.h"
+#include"PipeLine.h"
 IMPLEMENT_SINGLETON(CLight_Manager)
 
 CLight_Manager::CLight_Manager()
@@ -32,11 +33,25 @@ const CLight::LIGHTDESC* CLight_Manager::Get_Light_Name(string Name)
 	return nullptr;
 }
 
-CLight* CLight_Manager::Add_Lights(const CLight::LIGHTDESC & LightDesc)
+CLight* CLight_Manager::Add_Lights(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const CLight::LIGHTDESC & LightDesc)
 {
 	CLight*		pLight = CLight::Create(LightDesc);
 
-	if (nullptr == pLight)
+	
+	/*CTransform* pTransform = CTransform::Create(pDevice, pContext);
+	pTransform->Set_Position(_float3(LightDesc.vPos.x, LightDesc.vPos.y, LightDesc.vPos.z));
+	pTransform->Set_Look(_float3(LightDesc.vDir.x, LightDesc.vDir.y, LightDesc.vDir.z));
+	m_ViewLight = pTransform->Get_WorldMatrix_Inverse();
+	Safe_Release(pTransform);
+	CPipeLine* pPipeLine = CPipeLine::GetInstance();
+	Safe_AddRef(pPipeLine);
+	if(0.f<*pPipeLine->Get_CamFar())
+	XMStoreFloat4x4(&m_ProjLight, XMMatrixPerspectiveFovLH(XMConvertToRadians(60.f), 1280.f / 720.f, 0.2f, *pPipeLine->Get_CamFar()));
+	Safe_Release(pPipeLine);*/
+
+
+
+		if (nullptr == pLight)
 		return nullptr;
 
 	m_Lights.push_back(pLight);

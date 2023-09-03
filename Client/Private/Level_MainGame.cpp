@@ -44,7 +44,7 @@ HRESULT CLevel_MainGame::Render()
 
 HRESULT CLevel_MainGame::Ready_Lights()
 {
-	BEGININSTANCE
+	/*BEGININSTANCE
 
 		CLight::LIGHTDESC		LightDesc;
 	ZeroMemory(&LightDesc, sizeof LightDesc);
@@ -58,7 +58,7 @@ HRESULT CLevel_MainGame::Ready_Lights()
 
 	if (nullptr == pGameInstance->Add_Lights(LightDesc))
 		return E_FAIL;
-	ENDINSTANCE
+	ENDINSTANCE*/
 
 	return S_OK;
 }

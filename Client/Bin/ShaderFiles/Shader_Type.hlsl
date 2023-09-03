@@ -270,7 +270,7 @@ PS_OUT PS_MAIN_SHADOW(PS_IN_SHADOW In)
     vector vDepthDesc = g_DepthTexture.Sample(LinearSampler, In.vTexUV);
 
 	//depthdesc y 는 rgba값이라고 생각하면된다.
-    float fViewZ = vDepthDesc.y * 300.f;
+    float fViewZ = vDepthDesc.y * g_fCamFar;
     vector vPosition;
     if (fViewZ == 0)
         discard;
@@ -300,9 +300,9 @@ PS_OUT PS_MAIN_SHADOW(PS_IN_SHADOW In)
     vector vLightDepth = g_vLightDepthTexture.Sample(LinearSampler, LightUV);
 
 	
-    float LightDepth_W = vLightDepth.y * 300.f;
+    float LightDepth_W = vLightDepth.y * g_fCamFar;
     float LightDepth_Z = vLightDepth.x * LightDepth_W;
-    float CamDepth = vPosition.z - 0.001f / 300.f;
+    float CamDepth = vPosition.z - 0.001f / g_fCamFar;
 
     if (CamDepth > vLightDepth.x)
     {
