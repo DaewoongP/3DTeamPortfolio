@@ -78,7 +78,7 @@ HRESULT CPhysX_Manager::Initialize()
 	// 기본적인 터레인을 생성합니다.
 
 	PxRigidStatic* rigidStatic = m_pPhysics->createRigidStatic(PxTransformFromPlaneEquation(PxPlane(PxVec3(0.f, 1.f, 0.f), 0.f)));
-	PxShape* planeShape = m_pPhysics->createShape(PxPlaneGeometry(), *m_pPhysics->createMaterial(0.5f, 0.5f, 0.5f), false, PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSIMULATION_SHAPE);
+	PxShape* planeShape = m_pPhysics->createShape(PxPlaneGeometry(), *m_pPhysics->createMaterial(1.f, 0.1f, 0.1f), false, PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSIMULATION_SHAPE);
 	//PxRigidActorExt::createExclusiveShape(*rigidStatic, PxPlaneGeometry(), *m_pPhysics->createMaterial(0.5f, 0.5f, 0.5f));
 	rigidStatic->attachShape(*planeShape);
 	m_pPhysxScene->addActor(*rigidStatic);
@@ -92,8 +92,7 @@ HRESULT CPhysX_Manager::Initialize()
 	PxTransform relativePose(PxQuat(PxHalfPi, PxVec3(0, 0, 1)));
 	boxshape->setLocalPose(relativePose);
 	PxFilterData data;
-	data.word0 = 1;
-	data.word1 = 1;
+	data.word0 = 0x1000;
 	boxshape->setSimulationFilterData(data);
 	pActor->attachShape(*boxshape);
 	pActor->setMaxLinearVelocity(1.f);
@@ -122,7 +121,7 @@ PxScene* CPhysX_Manager::Create_Scene()
 	SceneDesc.setToDefault(m_pPhysics->getTolerancesScale());
 	SceneDesc.gravity = PxVec3(0.0f, -9.81f, 0.0f);
 	SceneDesc.cpuDispatcher = m_pDefaultCpuDispatcher;
-	SceneDesc.filterShader = PxDefaultSimulationFilterShader;
+	SceneDesc.filterShader = CollisionFilterShader;
 	SceneDesc.userData = nullptr; // 데이터를 여기에 넣어두는것도 가능.
 
 	PxScene* pScene = m_pPhysics->createScene(SceneDesc);

@@ -226,9 +226,6 @@
     <Filter Include="01. Utility\03. Components\07. VIBuffer\Triangle">
       <UniqueIdentifier>{a5f8428d-9252-403e-821d-0690fa879d0b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\03. Components\09. Collider\Bounding\OBB\Sphere">
-      <UniqueIdentifier>{9ef1f8a7-57da-450b-8888-f477bbda2889}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Utility\03. Components\12. Alarm">
       <UniqueIdentifier>{9cbb7d45-1355-4391-a17a-ab9735b11f73}</UniqueIdentifier>
     </Filter>
@@ -261,6 +258,9 @@
     </Filter>
     <Filter Include="01. Utility\11. Physics\EventCallBack">
       <UniqueIdentifier>{2ebd81df-468e-430d-aa58-2375576ccb78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\09. Collider\Bounding\Sphere">
+      <UniqueIdentifier>{9ef1f8a7-57da-450b-8888-f477bbda2889}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -382,7 +382,7 @@
       <Filter>01. Utility\03. Components\09. Collider\Bounding</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Bounding_Sphere.h">
-      <Filter>01. Utility\03. Components\09. Collider\Bounding\OBB\Sphere</Filter>
+      <Filter>01. Utility\03. Components\09. Collider\Bounding\Sphere</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\DebugDraw.h">
       <Filter>01. Utility\03. Components\09. Collider\Bounding\DebugDraw</Filter>
@@ -654,7 +654,7 @@
       <Filter>01. Utility\03. Components\09. Collider\Bounding</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Bounding_Sphere.cpp">
-      <Filter>01. Utility\03. Components\09. Collider\Bounding\OBB\Sphere</Filter>
+      <Filter>01. Utility\03. Components\09. Collider\Bounding\Sphere</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\DebugDraw.cpp">
       <Filter>01. Utility\03. Components\09. Collider\Bounding\DebugDraw</Filter>

@@ -8,7 +8,6 @@
 #include "Composite.h"
 
 BEGIN(Engine)
-class CCharacterController;
 
 #ifdef _DEBUG
 class CShader;
@@ -45,18 +44,11 @@ public:
 	_float3 Get_Position() const;
 	_float4 Get_Rotation() const;
 	void Set_Position(_float3 vPosition);
+	void Set_Rotation(_float4 vRotation);
 	void Set_Material(_float3 vMaterial);
 	void Set_Constraint(RigidBodyConstraint eConstraintFlag, _bool _isEnable);
 	void Set_Kinematic(_bool _isKinematic);
 	void Set_Density(_float _fDensity) const;
-	void Set_TransformComponent(CTransform* pTransform) {
-		m_pTransform = pTransform;
-		Safe_AddRef(m_pTransform);
-	}
-	void Set_ControllerComponent(CCharacterController* pController) {
-		m_pController = pController;
-		Safe_AddRef(m_pController);
-	}
 
 	_bool Is_Static()  const { return m_isStatic; }
 	_bool Is_Dynamic()  const { return !m_isStatic; }
@@ -64,7 +56,6 @@ public:
 
 public:
 	virtual HRESULT Initialize(void* pArg) override;
-	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 
 #ifdef _DEBUG
@@ -90,8 +81,6 @@ private:
 	PxScene*				m_pScene = { nullptr };
 
 private:
-	CTransform*				m_pTransform = { nullptr };
-	CCharacterController*	m_pController = { nullptr };
 	_bool					m_isStatic = { false };
 	_bool					m_isKinematic = { false };
 
