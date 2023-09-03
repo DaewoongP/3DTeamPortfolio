@@ -35,6 +35,28 @@ void CLight_Window::Tick(_float fTimeDelta)
 
 	ImGui::Begin("Light", nullptr, m_WindowFlag);
 
+	ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
+	if (ImGui::BeginTabBar("MyTabBar", tab_bar_flags))
+	{
+		if (ImGui::BeginTabItem("Directional"))
+		{
+			ImGui::Text("This is the Avocado tab!\nblah blah blah blah blah");
+			ImGui::EndTabItem();
+		}
+		if (ImGui::BeginTabItem("Point"))
+		{
+			ImGui::Text("This is the Broccoli tab!\nblah blah blah blah blah");
+			ImGui::EndTabItem();
+		}
+		if (ImGui::BeginTabItem("Spot"))
+		{
+			ImGui::Text("This is the Cucumber tab!\nblah blah blah blah blah");
+			ImGui::EndTabItem();
+		}
+		ImGui::EndTabBar();
+	}
+
+
 	const char* Types[] = { "Directional","Point","Spot"};
 
 	ImGui::Combo("LightType", &m_iLightType, Types, IM_ARRAYSIZE(Types));
@@ -45,6 +67,7 @@ void CLight_Window::Tick(_float fTimeDelta)
 
 	
 	m_iCurrent_LightIndex = m_iLightIndex;
+
 	Light_ComboBox();
 	ImGui::Separator();
 
@@ -63,7 +86,147 @@ HRESULT CLight_Window::Render()
 {
 	return S_OK;
 }
+HRESULT CLight_Window::Create_Light()
+{
+	//m_iLightType = LightDesc.iLightType;
 
+	ImGui::DragFloat3("Position", vPos, 0.1f);
+
+	ImGui::DragFloat3("Direction", vDir, 0.01f, -1.f, 1.f);
+
+	ImGui::DragFloat("Range", fRange, 0.1f);
+
+	ImGui::DragFloat("SpotPower", fSpotPower, 0.1f);
+
+	ImGui::DragFloat4("vDiffuse", vDiffuse, 0.01f, 0.f, 1.f);
+
+	ImGui::DragFloat4("Ambient", vAmbient, 0.01f, 0.f, 1.f);
+
+	ImGui::DragFloat4("vSpecular", vSpecular, 0.01f, 0.f, 1.f);
+
+	if (ImGui::Button("Same as Diffuse"))
+	{
+		for (_uint i = 0; i < 4; ++i)
+		{
+			vAmbient[i] = vDiffuse[i];
+			vSpecular[i] = vDiffuse[i];
+		}
+
+	}
+	ImGui::Separator();
+	BEGININSTANCE
+
+
+
+		switch (m_iLightType + 1)
+		{
+		case 1:
+			ZEROMEM(&LightDesc);
+
+			m_szName = "DirectionLight";
+			LightDesc.vDir = _float4(vDir);
+
+			LightDesc.vDiffuse = _float4(vDiffuse);
+			LightDesc.vAmbient = _float4(vAmbient);
+			LightDesc.vSpecular = _float4(vSpecular);
+			LightDesc.eType = CLight::TYPE_DIRECTIONAL;
+			LightDesc.iLightType = (_uint)CLight::TYPE_DIRECTIONAL;
+			strcpy_s(LightDesc.szName,StrInput.c_str());
+			break;
+		case 2:
+			ZEROMEM(&LightDesc);
+			m_szName = "PointLight";
+
+			LightDesc.vPos = _float4(vPos);
+			LightDesc.fRange = fRange[0];
+
+			LightDesc.vDiffuse = _float4(vDiffuse);
+			LightDesc.vAmbient = _float4(vAmbient);
+			LightDesc.vSpecular = _float4(vSpecular);
+			LightDesc.eType = CLight::TYPE_POINT;
+			LightDesc.iLightType = (_uint)CLight::TYPE_POINT;
+			strcpy_s(LightDesc.szName, StrInput.c_str());
+
+			break;
+		case 3:
+			ZEROMEM(&LightDesc);
+			m_szName = "SpotLight";
+			LightDesc.vPos = _float4(vPos);
+			LightDesc.vDir = _float4(vDir);
+			LightDesc.fSpotPower = fSpotPower[0];
+
+			LightDesc.vDiffuse = _float4(vDiffuse);
+			LightDesc.vAmbient = _float4(vAmbient);
+			LightDesc.vSpecular = _float4(vSpecular);
+			LightDesc.eType = CLight::TYPE_SPOTLIGHT;
+			LightDesc.iLightType = (_uint)CLight::TYPE_SPOTLIGHT;
+			strcpy_s(LightDesc.szName, StrInput.c_str());
+			break;
+
+		default:
+			break;
+		}
+
+	if (ImGui::Button("Create"))
+	{
+		m_isSetting = false;
+		if (nullptr == pGameInstance->Add_Lights(LightDesc))
+		{
+			MSG_BOX("Failed to create Light");
+			return E_FAIL;
+		}
+		m_vecLightDesc.push_back(LightDesc);
+		m_vecLightList.push_back(StrInput);
+		m_iLightIndex++;
+		ResetValue();
+	}
+
+
+	if (m_iLightIndex >= 0)
+		ImGui::Checkbox("Setting", &m_isSetting);
+
+	if (m_isSetting == true)
+	{
+
+		if (m_vecLightDesc.empty())
+		{
+			MSG_BOX("Please Create Light first.");
+			m_isSetting = false;
+		}
+		else if (m_iLightIndex != m_iCurrent_LightIndex)
+		{
+			LightDesc = *pGameInstance->Get_Light(m_iLightIndex);
+
+			FloatToFloat4(vPos, LightDesc.vPos);
+			*fRange = LightDesc.fRange;
+			*fSpotPower = LightDesc.fSpotPower;
+			FloatToFloat4(vDir, LightDesc.vDir);
+			FloatToFloat4(vDiffuse, LightDesc.vDiffuse);
+			FloatToFloat4(vAmbient, LightDesc.vAmbient);
+			FloatToFloat4(vSpecular, LightDesc.vSpecular);
+		}
+		else
+		{
+			pGameInstance->Set_Light(m_iLightIndex, LightDesc);
+		}
+
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Input List"))
+	{
+		m_isSetting = false;
+		if (m_iLightIndex >= 0)
+		{
+			pGameInstance->Set_Light(m_iLightIndex, LightDesc);
+			Set_Tool_Light(m_iLightIndex,LightDesc);
+		}
+
+	}
+	
+	ENDINSTANCE
+
+		return S_OK;
+}
 HRESULT CLight_Window::Save_Light()
 {
 	if(ImGui::Button("Save"))
@@ -80,6 +243,9 @@ HRESULT CLight_Window::Save_Light()
 
 		for (auto& iter : m_vecLightDesc)
 		{
+			if (!WriteFile(hFile, &iter.eType, sizeof(CLight::LIGHTDESC), &dwByte, nullptr))
+				MSG_BOX("Failed to Write eType");
+
 			if (!WriteFile(hFile, &iter.vPos, sizeof(_float4), &dwByte, nullptr))
 				MSG_BOX("Failed to Write vPos");
 
@@ -100,6 +266,9 @@ HRESULT CLight_Window::Save_Light()
 
 			if (!WriteFile(hFile, &iter.vSpecular, sizeof(_float4), &dwByte, nullptr))
 				MSG_BOX("Failed to Write vSpecular");
+
+			if (!WriteFile(hFile, &iter.szName, sizeof(_tchar), &dwByte, nullptr))
+				MSG_BOX("Failed to Write Name");
 		}
 
 		MSG_BOX("Save Success");
@@ -109,6 +278,8 @@ HRESULT CLight_Window::Save_Light()
 	return S_OK;
 
 }
+
+
 
 HRESULT CLight_Window::Load_Light()
 {
@@ -132,6 +303,9 @@ HRESULT CLight_Window::Load_Light()
 
 		while (true)
 		{
+			if (!ReadFile(hFile, &SaveDesc.eType, sizeof(CLight::LIGHTDESC), &dwByte, nullptr))
+				MSG_BOX("Failed to Load eType");
+
 			if (!ReadFile(hFile, &SaveDesc.vPos, sizeof(_float4), &dwByte, nullptr))
 				MSG_BOX("Failed to Load vPos");
 
@@ -153,6 +327,9 @@ HRESULT CLight_Window::Load_Light()
 			if (!ReadFile(hFile, &SaveDesc.vSpecular, sizeof(_float4), &dwByte, nullptr))
 				MSG_BOX("Failed to Load vSpecular");
 
+			if (!ReadFile(hFile, &SaveDesc.szName, sizeof(_tchar), &dwByte, nullptr))
+				MSG_BOX("Failed to Load Name");
+
 			if (dwByte == 0)
 			{
 				break;
@@ -170,7 +347,7 @@ HRESULT CLight_Window::Load_Light()
 			for (size_t i = 0; i < m_vecLightDesc.size(); ++i)
 			{
 				LightDesc = m_vecLightDesc[i];
-				
+				m_vecLightList.push_back(StrInput);
 				pGameInstance->Add_Lights(LightDesc);
 
 			}
@@ -183,142 +360,16 @@ HRESULT CLight_Window::Load_Light()
 	return S_OK;
 }
 
-HRESULT CLight_Window::Create_Light()
+void CLight_Window::Set_Tool_Light(_uint iIndex, CLight::LIGHTDESC LightDesc)
 {
-	//m_iLightType = LightDesc.iLightType;
+	auto iter = m_vecLightDesc.begin();
+	for (size_t i = 0; i < iIndex; ++i)
+		++iter;
 
-	ImGui::DragFloat3("Position", vPos, 0.1f);
+	*iter = LightDesc;
 
-	ImGui::DragFloat3("Direction", vDir, 0.01f, -1.f, 1.f);
-
-	ImGui::DragFloat("Range", fRange, 0.1f);
-
-	ImGui::DragFloat("SpotPower", fSpotPower, 0.1f);
-
-	ImGui::DragFloat4("vDiffuse", vDiffuse, 0.01f, 0.f, 1.f);
-
-	ImGui::DragFloat4("Ambient", vAmbient, 0.01f, 0.f, 1.f);
-
-	ImGui::DragFloat4("vSpecular", vSpecular, 0.01f, 0.f, 1.f);
-
-	if(ImGui::Button("Same as Diffuse"))
-	{
-		for (_uint i = 0; i < 4; ++i)
-		{
-			vAmbient[i] = vDiffuse[i];
-			vSpecular[i] = vDiffuse[i];
-		}
-		
-	}
-	ImGui::Separator();
-		BEGININSTANCE
-		
-		
-		
-		switch (m_iLightType + 1)
-		{
-		case 1:
-			ZEROMEM(&LightDesc);
-
-			m_szName = "DirectionLight";
-			LightDesc.vDir = _float4(vDir);
-
-			LightDesc.vDiffuse = _float4(vDiffuse);
-			LightDesc.vAmbient = _float4(vAmbient);
-			LightDesc.vSpecular = _float4(vSpecular);
-			LightDesc.eType = CLight::TYPE_DIRECTIONAL;
-			LightDesc.iLightType = (_uint)CLight::TYPE_DIRECTIONAL;
-			break;
-		case 2:
-			ZEROMEM(&LightDesc);	
-			m_szName = "PointLight";
-
-			LightDesc.vPos = _float4(vPos);
-			LightDesc.fRange = fRange[0];
-
-			LightDesc.vDiffuse = _float4(vDiffuse);
-			LightDesc.vAmbient = _float4(vAmbient);
-			LightDesc.vSpecular = _float4(vSpecular);
-			LightDesc.eType = CLight::TYPE_POINT;
-			LightDesc.iLightType = (_uint)CLight::TYPE_POINT;
-
-			break;
-		case 3:
-			ZEROMEM(&LightDesc);
-			m_szName = "SpotLight";
-
-			LightDesc.vPos = _float4(vPos);
-			LightDesc.vDir = _float4(vDir);
-			LightDesc.fSpotPower = fSpotPower[0];
-
-			LightDesc.vDiffuse = _float4(vDiffuse);
-			LightDesc.vAmbient = _float4(vAmbient);
-			LightDesc.vSpecular = _float4(vSpecular);
-			LightDesc.eType = CLight::TYPE_SPOTLIGHT;
-			LightDesc.iLightType = (_uint)CLight::TYPE_SPOTLIGHT;
-
-			break;
-
-		default :
-			break;
-		}
-
-		if (ImGui::Button("Create"))
-		{
-			if (nullptr == pGameInstance->Add_Lights(LightDesc))
-			{
-				MSG_BOX("Failed to create Light");
-				return E_FAIL;
-			}
-			m_vecLightDesc.push_back(LightDesc);
-			m_vecLightList.push_back(StrInput);
-			//ResetValue();
-		}
-
-		
-
-		if (m_isSetting == true)
-		{
-		
-			if (m_vecLightDesc.empty())
-			{
-				MSG_BOX("Please Create Light first.");
-				m_isSetting = false;
-			}
-			else if (m_iLightIndex != m_iCurrent_LightIndex)
-			{
-				LightDesc = *pGameInstance->Get_Light(m_iLightIndex);
-				
-				FloatToFloat4(vPos, LightDesc.vPos);
-				*fRange = LightDesc.fRange;
-				*fSpotPower = LightDesc.fSpotPower;
-				FloatToFloat4(vDir, LightDesc.vDir);
-				FloatToFloat4(vDiffuse, LightDesc.vDiffuse);
-				FloatToFloat4(vAmbient, LightDesc.vAmbient);
-				FloatToFloat4(vSpecular, LightDesc.vSpecular);
-			}
-			else
-			{
-				pGameInstance->Set_Light(m_iLightIndex, LightDesc);
-			}
-			
-		}
-		ImGui::SameLine();
-		if (ImGui::Button("Input List"))
-		{
-			if (m_iLightIndex >= 0)
-			{
-				pGameInstance->Set_Light(m_iLightIndex, LightDesc);
-				m_vecLightDesc.push_back(LightDesc);
-			}
-
-		}
-		if (m_iLightIndex >= 0)
-			ImGui::Checkbox("Setting", &m_isSetting);
-		ENDINSTANCE
-	
-		return S_OK;
 }
+
 
 void CLight_Window::Clear_Light()
 {

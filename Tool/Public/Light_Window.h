@@ -28,10 +28,13 @@ public:
 	virtual HRESULT Render() override;
 
 public:
-	HRESULT Save_Light();
-	HRESULT Load_Light();
+	
 
 	HRESULT Create_Light();
+	HRESULT Save_Light();
+	HRESULT Load_Light();
+	void Set_Tool_Light(_uint iIndex, CLight::LIGHTDESC LightDesc);
+
 	void Clear_Light();
 	void ResetValue();
 	void Light_ComboBox();
@@ -48,7 +51,7 @@ private:
 
 	_bool m_isCurrent_Idx;
 	_bool m_isRender = true;
-	char AddLightName[128] = {};
+	_char AddLightName[MAX_PATH] = {};
 
 private:
 	vector<CLight::LIGHTDESC> m_vecLightDesc;
@@ -61,6 +64,7 @@ private:
 	_float vAmbient[4] = { 1.f, 1.f, 1.f, 1.0f };
 	_float vSpecular[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	CLight::LIGHTDESC LightDesc;
+	LIGHTINFO m_SaveDesc;
 
 public:
 	static CLight_Window* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, ImVec2 vWindowPos, ImVec2 vWindowSize);

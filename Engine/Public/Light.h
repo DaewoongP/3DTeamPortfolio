@@ -24,7 +24,7 @@ public:
 		_float	fRange;
 		_float	fSpotPower;
 
-		_tchar szName;
+		_char szName[MAX_PATH];
 		_uint iLightType;
 		_float4	vDiffuse;
 		_float4	vAmbient;
