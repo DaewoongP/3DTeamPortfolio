@@ -23,6 +23,7 @@ CModel::CModel(const CModel& rhs)
 	, m_iNumMaterials(rhs.m_iNumMaterials)
 	, m_Materials(rhs.m_Materials)
 	, m_PivotMatrix(rhs.m_PivotMatrix)
+	, m_iAnimationPartCount(rhs.m_iAnimationPartCount)
 {
 	for (_uint AnimTypeIndex = 0; AnimTypeIndex < ANIM_END; ++AnimTypeIndex)
 	{
@@ -55,6 +56,22 @@ const CBone* CModel::Get_Bone(const _tchar* pBoneName)
 	auto	iter = find_if(m_Bones.begin(), m_Bones.end(), [&](CBone* pBone)
 		{
 			if (!lstrcmp(pBoneName, pBone->Get_Name()))
+				return true;
+			else
+				return false;
+		});
+
+	if (iter == m_Bones.end())
+		return nullptr;
+
+	return *iter;
+}
+
+CBone* CModel::Get_Bone_Index(_uint iIndex)
+{
+	auto	iter = find_if(m_Bones.begin(), m_Bones.end(), [&](CBone* pBone)
+		{
+			if (iIndex==pBone->Get_Index())
 				return true;
 			else
 				return false;
@@ -121,6 +138,8 @@ void CModel::Reset_Animation(_uint iAnimIndex, ANIMTYPE eType, CTransform* pTran
 
 void CModel::Play_Animation(_float fTimeDelta, ANIMTYPE eType, CTransform* pTransform)
 {
+	if (m_tAnimationDesc[eType].iNumAnimations == 0)
+		return;
 	if (m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Invalidate_AccTime(fTimeDelta) || m_tAnimationDesc[eType].isResetAnimTrigger )
 	{
 		//애니메이션 재생이 다 되면 여기가 실행되는거임.
@@ -235,6 +254,27 @@ void CModel::Do_Root_Animation(CTransform* pTransform)
 		pTransform->Set_WorldMatrix(player_Matrix_Override * pTransform->Get_WorldMatrix());
 		m_PostRootMatrix = m_Bones[m_iRootBoneIndex]->Get_CombinedTransformationMatrix();
 	}
+}
+
+HRESULT CModel::Separate_Animation()
+{
+	m_tAnimationDesc[m_iAnimationPartCount].iNumAnimations = m_Model.iNumAnimations;
+	for (_uint i = 0; i < m_Model.iNumAnimations; ++i)
+	{
+		CAnimation* pAnimation = CAnimation::Create(m_AnimationDatas[i], m_Bones);
+		if (nullptr == pAnimation)
+			return E_FAIL;
+
+		m_tAnimationDesc[m_iAnimationPartCount].Animations.push_back(pAnimation);
+	}
+	m_iAnimationPartCount++;
+}
+
+void CModel::Delete_Animation(_uint iAnimIndex, ANIMTYPE eType)
+{
+	Safe_Release(*(m_tAnimationDesc[eType].Animations.begin() + iAnimIndex));
+	m_tAnimationDesc[eType].Animations.erase(m_tAnimationDesc[eType].Animations.begin() + iAnimIndex);
+	m_tAnimationDesc[eType].iNumAnimations--;
 }
 
 HRESULT CModel::Bind_Material(CShader* pShader, const char* pConstantName, _uint iMeshIndex, Engine::TextureType MaterialType)
@@ -607,18 +647,19 @@ HRESULT CModel::Ready_Materials()
 
 HRESULT CModel::Ready_Animations()
 {
-	for (_uint iAnimTypeIndex = 0; iAnimTypeIndex < ANIM_END; iAnimTypeIndex++)
+	//for (_uint iAnimTypeIndex = 0; iAnimTypeIndex < ANIM_END; iAnimTypeIndex++)
+	//{
+	m_iAnimationPartCount++;
+	m_tAnimationDesc[0].iNumAnimations = m_Model.iNumAnimations;
+	for (_uint i = 0; i < m_Model.iNumAnimations; ++i)
 	{
-		m_tAnimationDesc[iAnimTypeIndex].iNumAnimations = m_Model.iNumAnimations;
-		for (_uint i = 0; i < m_Model.iNumAnimations; ++i)
-		{
-			CAnimation* pAnimation = CAnimation::Create(m_AnimationDatas[i], m_Bones);
-			if (nullptr == pAnimation)
-				return E_FAIL;
+		CAnimation* pAnimation = CAnimation::Create(m_AnimationDatas[i], m_Bones);
+		if (nullptr == pAnimation)
+			return E_FAIL;
 
-			m_tAnimationDesc[iAnimTypeIndex].Animations.push_back(pAnimation);
-		}
+		m_tAnimationDesc[0].Animations.push_back(pAnimation);
 	}
+	//}
 	return S_OK;
 }
 

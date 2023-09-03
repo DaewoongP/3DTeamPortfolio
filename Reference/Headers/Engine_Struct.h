@@ -59,6 +59,8 @@ namespace Engine
 			isResetAnimTrigger = rhs.isResetAnimTrigger;
 			isAnimChangeLerp = rhs.isAnimChangeLerp;
 			fAnimChangeTimer = rhs.fAnimChangeTimer;
+			iRootBoneIndex = rhs.iRootBoneIndex;
+			AffectBoneVec = rhs.AffectBoneVec;
 		}
 
 		/* Basic Action*/
@@ -72,6 +74,10 @@ namespace Engine
 		_bool							isAnimChangeLerp = { false };
 		_float							fAnimChangeTimer = { 0.f };
 
+		/* For Setting Bone*/
+		_uint							iRootBoneIndex = { 0 };
+		vector<_uint>					AffectBoneVec;
+	
 	}ANIMATIONDESC;
 
 	/*typedef struct tagColliderFrame

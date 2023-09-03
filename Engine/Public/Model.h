@@ -32,12 +32,14 @@ public:
 	// 모델의 애니메이션 개수 반환
 	_uint Get_NumAnimations(ANIMTYPE eType = UPPERBODY) const { return m_tAnimationDesc[eType].iNumAnimations; }
 	const class CBone* Get_Bone(const _tchar* pBoneName);
+	class CBone* Get_Bone_Index(_uint iIndex);
 	// 현재 실행중인 애니메이션
 	class CAnimation* Get_Animation(ANIMTYPE eType = UPPERBODY) const { return m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]; }
 	class CAnimation* Get_Animation(_uint iAnimationIndex, ANIMTYPE eType = UPPERBODY) const { return  m_tAnimationDesc[eType].Animations[iAnimationIndex]; }
 	const _float4x4* Get_BoneCombinedTransformationMatrixPtr(_uint iIndex);
 	_float4x4 Get_BoneCombinedTransformationMatrix(_uint iIndex);
-
+	vector<class CBone*>* Get_Bone_Vector_Point() { return &m_Bones; }
+	_uint					Get_AnimationPartCount() { return m_iAnimationPartCount; }
 public:
 	virtual HRESULT Initialize_Prototype(TYPE eType, const _tchar* pModelFilePath, _float4x4 PivotMatrix);
 	virtual HRESULT Initialize(void* pArg) override;
@@ -51,6 +53,8 @@ public:
 	void	Set_CurrentAnimIndex(_uint iIndex, ANIMTYPE eType = UPPERBODY);
 	void	Set_RootBone(_uint iIndex) { m_iRootBoneIndex = iIndex; }
 	void	Do_Root_Animation(CTransform* pTransform = nullptr);
+	HRESULT Separate_Animation();
+	void	Delete_Animation(_uint iAnimIndex, ANIMTYPE eType = UPPERBODY);
 
 public:
 	HRESULT Bind_Material(class CShader* pShader, const char* pConstantName, _uint iMeshIndex, Engine::TextureType MaterialType);
@@ -77,10 +81,11 @@ private: /* For.Materials */
 	vector<MESHMATERIAL>			m_Materials;
 
 private: /* For.Animations */
+	_uint							m_iAnimationPartCount = { 0 };
 	ANIMATIONDESC					m_tAnimationDesc[ANIM_END];
 
 private: /* For.RootAnimation*/
-	_uint							m_iRootBoneIndex = { 4 };
+	_uint							m_iRootBoneIndex = { 0 };
 	_float4x4						m_PostRootMatrix;
 
 private:
