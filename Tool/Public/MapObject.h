@@ -16,21 +16,20 @@ class CMapObject final : public CGameObject
 	// ÀÏ¹Ý ·»´õÀÎÁö ÇÇÅ·¿ë ·»´õÀÎÁö Á¤ÇØÁÜ
 	enum eRenderType { RT_NORMAL, RT_PICKING, RT_END };
 
-public:
-	void Set_Color(int iColor) {
-		m_vColor.x = ((iColor >> 16) & 0xff) * 1.f; // r
-		m_vColor.y = ((iColor >> 8) & 0xff) * 1.f;  // g
-		m_vColor.z = ((iColor) & 0xff) * 1.f;		// b
-		m_vColor.w = 1.f;							// a
-	}
-
 private:
 	explicit CMapObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CMapObject(const CMapObject& rhs);
 	virtual ~CMapObject() = default;
 
 public:
+	_float4 Get_Color() { return m_vColor; }
 	void	Set_Pos(_float3 vPos) { m_pTransform->Set_Position(vPos); }
+	void	Set_Color(int iColor) {
+		m_vColor.x = ((iColor >> 16) & 0xff) * 1.f; // r
+		m_vColor.y = ((iColor >> 8) & 0xff) * 1.f;  // g
+		m_vColor.z = ((iColor) & 0xff) * 1.f;		// b
+		m_vColor.w = 1.f;							// a
+	}
 
 public:
 	virtual HRESULT Initialize_Prototype();

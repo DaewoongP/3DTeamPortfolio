@@ -3,6 +3,9 @@
 
 #include "VIBuffer_Terrain.h"
 
+#include "RenderTarget_Manager.h"
+#include "RenderTarget.h"
+
 #include "Layer.h"
 
 #include "MapDummy.h"
@@ -41,6 +44,8 @@ void CObject_Window::Tick(_float fTimeDelta)
 	ImGui::Checkbox("Picking", &m_isCheckPicking);
 	if(true == m_isCheckPicking)
 	{
+		// 메쉬 피킹 메뉴 Off
+		m_isPickingObject = false;
 		Picking_Menu();
 	}
 
@@ -248,6 +253,14 @@ void CObject_Window::Current_MapObject()
 	// 설치되어 있는 오브젝트 리스트
 	ImGui::ListBox("Map Object List", &m_iTagIndex, VectorGetter,
 		static_cast<void*>(&m_vecObjectTag_s), (_int)m_vecObjectTag_s.size(), 20);
+
+	// 메쉬 피킹 메뉴 On / Off
+	if (ImGui::Checkbox("Object Picking", &m_isPickingObject))
+	{
+		// 지형 피킹 메뉴 Off
+		m_isCheckPicking = false;
+		//Mesh_Picking_Menu();
+	}
 }
 
 void CObject_Window::Save_Load_Menu()
@@ -343,6 +356,60 @@ void CObject_Window::Delete_Object_Menu()
 			m_isDeleteObject = false;
 		}
 	}
+}
+
+void CObject_Window::Mesh_Picking_Menu()
+{
+	BEGININSTANCE; //if (true == pGameInstance->Get_DIMouseState(CInput_Device::DIMK_RBUTTON, CInput_Device::KEY_DOWN))
+	{
+		//Target_Picking의 ID3D11Texture2D를 가져옴
+		ID3D11Texture2D* pTexture = pGameInstance->Find_RenderTarget(TEXT("Target_Picking"))->Get_Texture2D();
+
+		D3D11_MAPPED_SUBRESOURCE MappedDesc;
+		HRESULT hr = m_pContext->Map(pTexture, 0, D3D11_MAP_READ, 0, &MappedDesc);
+
+		if (FAILED(hr))
+			return;
+
+		_byte* texData = static_cast<_byte*>(MappedDesc.pData);
+
+		// 텍스처의 너비와 높이
+		D3D11_TEXTURE2D_DESC  TextureDesc;
+		pTexture->GetDesc(&TextureDesc);
+
+		_uint iWidth = TextureDesc.Width;
+		_uint iHeight = TextureDesc.Height;
+
+			// 마우스 위치
+		D3D11_VIEWPORT ViewPort;
+		_uint iNumViewPorts = 1;
+
+		ZEROMEM(&ViewPort);
+		if (nullptr == m_pContext)
+			return;
+		m_pContext->RSGetViewports(&iNumViewPorts, &ViewPort);
+
+		POINT	pt{};
+		GetCursorPos(&pt);
+		ScreenToClient(g_hWnd, &pt);
+
+		_float2		vMouse;
+		vMouse.x = pt.x / (ViewPort.Width * 0.5f) - 1.f;
+		vMouse.y = pt.y / -(ViewPort.Height * 0.5f) + 1.f;
+
+		// 픽셀의 인덱스 계산
+		_uint iPixelIndex = (vMouse.y * iWidth + vMouse.x) * 4;
+
+		_float4 vPickingPixelColor;
+		vPickingPixelColor.x = texData[iPixelIndex];
+		vPickingPixelColor.y = texData[iPixelIndex + 1];
+		vPickingPixelColor.z = texData[iPixelIndex + 2];
+		vPickingPixelColor.w = 1.f;
+
+		m_pContext->Unmap(pTexture, 0);
+
+		ImGui::Text("dd");
+	}ENDINSTANCE;
 }
 
 HRESULT CObject_Window::Save_MapObject()

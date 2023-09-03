@@ -558,6 +558,13 @@ HRESULT CGameInstance::Add_OffSetCamera(const _tchar* _OffSetTag)
 	return Add_OffSetCamera(_OffSetTag);
 }
 
+CRenderTarget* CGameInstance::Find_RenderTarget(const _tchar* pTargetTag)
+{
+	NULL_CHECK_RETURN_MSG(m_pRenderTarget_Manager, nullptr, TEXT("RenderTarget_Manager NULL"));
+
+	return m_pRenderTarget_Manager->Find_RenderTarget(pTargetTag);
+}
+
 void CGameInstance::Release_Engine()
 {
 	CGameInstance::GetInstance()->DestroyInstance();

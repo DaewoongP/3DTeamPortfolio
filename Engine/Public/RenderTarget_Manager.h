@@ -32,6 +32,8 @@ public:
 
 	HRESULT Bind_ShaderResourceView(const _tchar* pTargetTag, class CShader* pShader, const _char* pConstantName);
 
+	class CRenderTarget* Find_RenderTarget(const _tchar* pTargetTag);
+
 #ifdef _DEBUG
 public:
 	HRESULT Ready_Debug(const _tchar* pTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY);
@@ -51,7 +53,6 @@ private:
 	ID3D11DepthStencilView* m_pDepthStencilView = { nullptr };
 
 private:
-	class CRenderTarget* Find_RenderTarget(const _tchar* pTargetTag);
 	list<class CRenderTarget*>* Find_MRT(const _tchar* pMRTTag);
 
 public:

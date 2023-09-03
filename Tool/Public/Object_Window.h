@@ -33,6 +33,7 @@ private:
 	void Current_MapObject(); // 현재 설치되어 있는 맵 오브젝트 확인
 	void Save_Load_Menu(); // 세이브 로드 메뉴
 	void Delete_Object_Menu(); // 오브젝트 삭제 관련 메뉴
+	void Mesh_Picking_Menu(); // 메쉬 피킹 메뉴
 	HRESULT Save_MapObject(); // MapObject 저장
 	HRESULT Load_MapObject(); // MapObject 로드
 
@@ -52,6 +53,7 @@ private:
 	_bool m_isCurrentMapObject = { false };
 	_bool m_isSaveLoad = { false };
 	_bool m_isInstallObject = { true };
+	_bool m_isPickingObject = { false };
 
 	// 버튼 On Off _bool 변수 모음
 	_bool m_isDeleteObject = { false };

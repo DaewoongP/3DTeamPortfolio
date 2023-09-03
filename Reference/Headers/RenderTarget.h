@@ -18,6 +18,7 @@ private:
 
 public:
 	ID3D11RenderTargetView* Get_RTV() { return m_pRTV; }
+	ID3D11Texture2D*		Get_Texture2D() { return m_pTexture2D; }
 
 public:
 	HRESULT Initialize(_uint iSizeX, _uint iSizeY, DXGI_FORMAT eFormat, const _float4& vClearColor);	

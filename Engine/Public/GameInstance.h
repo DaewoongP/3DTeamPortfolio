@@ -145,6 +145,9 @@ public:	/* For.Camera_Manager */
 	//오프셋 재생을 위한 큐 추가
 	HRESULT Add_OffSetCamera(const _tchar* _OffSetTag);
 
+public: /* For.RenderTaget_Manager*/
+	class CRenderTarget* Find_RenderTarget(const _tchar* pTargetTag);
+
 private:
 	class CGraphic_Device*			m_pGraphic_Device = { nullptr };
 	class CInput_Device*			m_pInput_Device = { nullptr };
