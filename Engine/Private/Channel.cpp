@@ -186,8 +186,18 @@ void CChannel::Invalidate_TransformationMatrix_Lerp(CModel::BONES& Bones, _float
 	
 	_float fRatio = LerpTimeAcc / ANIMATIONLERPTIME;
 	_float3		vSourScale = Bones[m_iBoneIndex]->Get_TransformationMatrix_Scale();
-	_float4		vSourRotation = XMQuaternionRotationMatrix(Bones[m_iBoneIndex]->Get_TransformationMatrix());
+	_float4		vSourRotation = vSourRotation = XMQuaternionRotationMatrix(Bones[m_iBoneIndex]->Get_TransformationMatrix());
 	_float3		vSourTranslation = Bones[m_iBoneIndex]->Get_TransformationMatrix_Position();
+
+	/*if (m_iBoneIndex == 3)
+	{
+		return;
+		cout << vSourRotation.x << " " << vSourRotation.y << " " << vSourRotation.z << " " << vSourRotation.w << endl;
+		cout << vRotation.x << " " << vRotation.y << " " << vRotation.z << " " << vRotation.w << endl;
+	}*/
+		
+	vSourRotation = XMQuaternionNormalize(vSourRotation);
+	vRotation = XMQuaternionNormalize(vRotation);
 
 	vScale = vScale.Lerp(vSourScale, vScale, fRatio);
 	vRotation = XMQuaternionSlerp(vSourRotation, vRotation, fRatio);

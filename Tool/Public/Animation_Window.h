@@ -39,8 +39,6 @@ private:
 	_char			m_szCurrentItemType[MAX_PATH] = "";			
 	KEYFRAME::KEYFRAMETYPE m_eNotifyKeyFrameType = { KEYFRAME::KF_SPEED };
 
-	
-
 private:
 	void Create_Dummy_Button();
 	void OpenFile_Button();

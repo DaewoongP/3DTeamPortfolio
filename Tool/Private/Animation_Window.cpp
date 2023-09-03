@@ -34,7 +34,6 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 		ImGui::End();
 		return;
 	}
-
 	CModel* pDummyModel = dynamic_cast<CModel*>(m_pDummyObject->Find_Component(TEXT("Com_Model")));
 	if (pDummyModel == nullptr)
 	{
@@ -96,14 +95,9 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 			sprintf_s(szUIName, "Seprate##%d", ePartCnt);
 			if (ImGui::Button(szUIName))
 			{
-				//내가 선택한 뼈들을 리스트에 담음
-				//내가 선택한 뼈가 eparcnt에 있으면 없애줌.
-				//내가 선택한 루트를 담아줌.
 				pDummyModel->Separate_Animation(m_iFromBone[ePartCnt], m_iToBone[ePartCnt],ePartCnt);
 			}
 		}
-		
-		
 	}
 	ImGui::End();
 }
@@ -163,9 +157,8 @@ void CAnimation_Window::OpenFile_Button()
 			Safe_AddRef(pGameInstance);
 			if (FAILED(pGameInstance->Add_Prototype_Component(LEVEL_TOOL, m_vecModelList_t[m_iMaxModelIndex].c_str(),
 				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, wszfilePath, PivotMatrix))))
-				//return;
 			{
-
+				MSG_BOX("Failed to Create Model");
 			}
 			Safe_Release(pGameInstance);
 			m_iMaxModelIndex++;
@@ -178,7 +171,6 @@ void CAnimation_Window::AddModel_Button()
 {
 	if (ImGui::Button("AddModelToDummy"))
 	{
-		//선택된 모델을 읽어오도록 만들어줘야함.
 		m_pDummyObject->Add_Model_Component(m_vecModelList_t[m_iModelIndex].c_str());
 		m_pDummyObject->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxAnimMesh"));
 		CModel* pCurrentModel = dynamic_cast<CModel*>(m_pDummyObject->Find_Component(TEXT("Com_Model")));
@@ -217,7 +209,7 @@ void CAnimation_Window::Animation_ComboBox(CModel::ANIMTYPE ePartCnt, _char* szC
 			{
 				strcpy_s(szCurrentItem, sizeof(szAnimationName), szAnimationName);
 				ImGui::SetItemDefaultFocus();
-				pDummyModel->Reset_Animation(i, ePartCnt, dynamic_cast<CTransform*>(m_pDummyObject->Find_Component(TEXT("Com_Transform"))));
+				pDummyModel->Reset_Animation(i, ePartCnt);
 			}
 
 			ImGui::SameLine();
@@ -225,7 +217,6 @@ void CAnimation_Window::Animation_ComboBox(CModel::ANIMTYPE ePartCnt, _char* szC
 			if (ImGui::SmallButton(szUIName))
 			{
 				pDummyModel->Delete_Animation(i, ePartCnt);
-				//애니메이션 삭제
 			}
 		}
 		ImGui::EndCombo();
@@ -286,11 +277,11 @@ void CAnimation_Window::Add_Notify_Button(CModel::ANIMTYPE ePartCnt, _char* szNo
 	sprintf_s(szUIName, "%s%d", szUIName, ePartCnt);
 	if (ImGui::Button(szUIName))
 	{
-		//모델에서 애니메이션에 접근한 뒤 수정해달라해야함.
 		_tchar  wszNotifyName[MAX_PATH] = {};
 		CharToWChar(szNotifyName, wszNotifyName);
 		if (FAILED(pDummyModel->Get_Animation(ePartCnt)->Add_NotifyFrame(*eNotifyKeyFrameType, wszNotifyName, *fNotifyActionTime, *fNotifySpeed)))
 		{
+			MSG_BOX("Failed To Add Notify");
 		}
 	}
 }
@@ -302,7 +293,6 @@ void CAnimation_Window::Edit_Notify_Button(CModel::ANIMTYPE ePartCnt, CModel* pD
 	sprintf_s(szUIName, "%s%d", szUIName, ePartCnt);
 	if (ImGui::Button(szUIName))
 	{
-		//현재 선택된 노티파이 수정 만들어줘야함.
 		CNotify* pNotify = pDummyModel->Get_Animation(ePartCnt)->Get_Notify_Point();
 		pNotify->Edit_Frame(m_iSelectedNotifyIndex, m_eNotifyKeyFrameType, m_fNotifyActionTime, m_fNotifySpeed);
 	}
@@ -323,7 +313,6 @@ void CAnimation_Window::Create_Notify_View(CModel::ANIMTYPE ePartCnt, CModel* pD
 
 		WCharToChar(pNotify->Find_Frame_Key(iNotifyCount), szNotifyButtonName);
 		sprintf_s(szNotifyButtonName, "%s_%d", szNotifyButtonName, iNotifyCount);
-		//똑같은 이름의 버튼이 둗개면 에러남
 		KEYFRAME::KEYFRAMETYPE eNotifyType = pNotify->Find_Frame(iNotifyCount)->eKeyFrameType;
 
 		if (ImGui::ColorButton("Type",
@@ -361,12 +350,10 @@ void CAnimation_Window::Create_Notify_View(CModel::ANIMTYPE ePartCnt, CModel* pD
 			sprintf_s(szSpeedMessage, "%s%f", szSpeedMessage, frame->fSpeed);
 			ImGui::SameLine();  ImGui::Text(szSpeedMessage);
 		}
-		//ImGui::SameLine();
 		_char szDeleteButtonName[MAX_PATH] = "Delete##";
 		sprintf_s(szDeleteButtonName, "%s%d", szDeleteButtonName, iNotifyCount);
 		if (ImGui::Button(szDeleteButtonName))
 		{
-			//노티파이 삭제 만들어줘야함.
 			pNotify->Delete_Frame(iNotifyCount);
 		}
 	}

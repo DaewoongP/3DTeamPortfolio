@@ -24,30 +24,27 @@ private:
 	virtual ~CModel() = default;
 
 public:
-	const _float4x4* Get_PivotFloat4x4Ptr() const { return &m_PivotMatrix; }
-	_float4x4 Get_PivotFloat4x4() const { return m_PivotMatrix; }
-	_uint Get_CurrentAnimIndex(ANIMTYPE eType = UPPERBODY) const { return m_tAnimationDesc[eType].iCurrentAnimIndex; }
-	// 모델의 메쉬 개수 반환
-	_uint Get_NumMeshes() const { return m_iNumMeshes; }
-	// 모델의 애니메이션 개수 반환
-	_uint Get_NumAnimations(ANIMTYPE eType = UPPERBODY) const { return m_tAnimationDesc[eType].iNumAnimations; }
-	const class CBone* Get_Bone(const _tchar* pBoneName);
-	class CBone* Get_Bone_Index(_uint iIndex);
-	// 현재 실행중인 애니메이션
-	class CAnimation* Get_Animation(ANIMTYPE eType = UPPERBODY) const { return m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]; }
-	class CAnimation* Get_Animation(_uint iAnimationIndex, ANIMTYPE eType = UPPERBODY) const { return  m_tAnimationDesc[eType].Animations[iAnimationIndex]; }
-	const _float4x4* Get_BoneCombinedTransformationMatrixPtr(_uint iIndex);
-	_float4x4 Get_BoneCombinedTransformationMatrix(_uint iIndex);
-	vector<class CBone*>* Get_Bone_Vector_Point() { return &m_Bones; }
-	_uint					Get_AnimationPartCount() { return m_iAnimationPartCount; }
+	const _float4x4*			Get_PivotFloat4x4Ptr() const { return &m_PivotMatrix; }
+	_float4x4					Get_PivotFloat4x4() const { return m_PivotMatrix; }
+	_uint						Get_CurrentAnimIndex(ANIMTYPE eType = UPPERBODY) const { return m_tAnimationDesc[eType].iCurrentAnimIndex; }
+	_uint						Get_NumMeshes() const { return m_iNumMeshes; }
+	_uint						Get_NumAnimations(ANIMTYPE eType = UPPERBODY) const { return m_tAnimationDesc[eType].iNumAnimations; }
+	const class CBone*			Get_Bone(const _tchar* pBoneName);
+	class CBone*				Get_Bone_Index(_uint iIndex);
+	class CAnimation*			Get_Animation(ANIMTYPE eType = UPPERBODY) const { return m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]; }
+	class CAnimation*			Get_Animation(_uint iAnimationIndex, ANIMTYPE eType = UPPERBODY) const { return  m_tAnimationDesc[eType].Animations[iAnimationIndex]; }
+	const _float4x4*			Get_BoneCombinedTransformationMatrixPtr(_uint iIndex);
+	_float4x4					Get_BoneCombinedTransformationMatrix(_uint iIndex);
+	vector<class CBone*>*		Get_Bone_Vector_Point() { return &m_Bones; }
+	_uint						Get_AnimationPartCount() { return m_iAnimationPartCount; }
 public:
 	virtual HRESULT Initialize_Prototype(TYPE eType, const _tchar* pModelFilePath, _float4x4 PivotMatrix);
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual HRESULT Render(_uint iMeshIndex);
 
 public:
-	// Lerp를 진행하지 않고 해당 애니메이션 초기상태로 바로 세팅한다.
-	void	Reset_Animation(_uint iAnimIndex, ANIMTYPE eType = UPPERBODY, CTransform* pTransform = nullptr);
+	void	Reset_Animation(_uint iAnimIndex, ANIMTYPE eType = UPPERBODY);
+	//루트애니메이션을 사용할경우 ctransform을 넣어준다.
 	void	Play_Animation(_float fTimeDelta, ANIMTYPE eType = UPPERBODY, CTransform* pTransform = nullptr);
 	HRESULT Find_BoneIndex(const _tchar* pBoneName, _Inout_ _uint* iIndex);
 	void	Set_CurrentAnimIndex(_uint iIndex, ANIMTYPE eType = UPPERBODY);

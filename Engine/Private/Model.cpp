@@ -129,7 +129,7 @@ HRESULT CModel::Render(_uint iMeshIndex)
 	return S_OK;
 }
 
-void CModel::Reset_Animation(_uint iAnimIndex, ANIMTYPE eType, CTransform* pTransform)
+void CModel::Reset_Animation(_uint iAnimIndex, ANIMTYPE eType)
 {
 	m_tAnimationDesc[eType].iCurrentAnimIndex = iAnimIndex;
 	m_tAnimationDesc[eType].iPreviousAnimIndex = m_tAnimationDesc[eType].iCurrentAnimIndex;
@@ -161,11 +161,14 @@ void CModel::Play_Animation(_float fTimeDelta, ANIMTYPE eType, CTransform* pTran
 	//뼈 이동용
 	if (!m_tAnimationDesc[eType].isAnimChangeLerp)
 	{
-		m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Invalidate_TransformationMatrix(m_Bones, fTimeDelta,&m_tAnimationDesc[eType].AffectBoneVec);
+		//0번 인발리데이트가 1번에도 영향을 준다?
+		//if (eType == 0)
+		//	return;
+		m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Invalidate_TransformationMatrix(m_Bones, fTimeDelta);
 	}
-	else if(m_tAnimationDesc[eType].fAnimChangeTimer >= 0.0)
+	else if (m_tAnimationDesc[eType].fAnimChangeTimer >= 0.0)
 	{
-		m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Invalidate_TransformationMatrix_Lerp(m_Bones,fTimeDelta, ANIMATIONLERPTIME - m_tAnimationDesc[eType].fAnimChangeTimer,m_iRootBoneIndex ,&m_tAnimationDesc[eType].AffectBoneVec);
+		m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Invalidate_TransformationMatrix_Lerp(m_Bones, fTimeDelta, ANIMATIONLERPTIME - m_tAnimationDesc[eType].fAnimChangeTimer, m_iRootBoneIndex);
 		m_tAnimationDesc[eType].fAnimChangeTimer -= fTimeDelta;
 	}
 	else
@@ -173,10 +176,20 @@ void CModel::Play_Animation(_float fTimeDelta, ANIMTYPE eType, CTransform* pTran
 	
 	
 	/* 모델에 표현되어있는 모든 뼈들의 CombinedTransformationMatrix */
-	_int iBoneIndex = 0;
-	
 	for (auto& pBone : m_Bones)
 	{
+		_int iFindIndex = pBone->Get_Index();
+		auto iter = find_if(m_tAnimationDesc[eType].AffectBoneVec.begin(), m_tAnimationDesc[eType].AffectBoneVec.end(), [&](auto data) {
+			if (data == iFindIndex)
+				return true;
+			return false;
+			});
+
+		if (iter == m_tAnimationDesc[eType].AffectBoneVec.end())
+		{
+			continue;
+		}
+			
 		if (m_iRootBoneIndex == pBone->Get_ParentNodeIndex()&& m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Get_RootAnim_State())
 		{
 			pBone->Invalidate_CombinedTransformationMatrix_Basic(m_Bones);
@@ -185,9 +198,7 @@ void CModel::Play_Animation(_float fTimeDelta, ANIMTYPE eType, CTransform* pTran
 		{
 			pBone->Invalidate_CombinedTransformationMatrix(m_Bones);
 		}
-		iBoneIndex++;
 	}
-	
 }
 
 HRESULT CModel::Find_BoneIndex(const _tchar* pBoneName, _Inout_ _uint* iIndex)
