@@ -158,11 +158,24 @@ _bool CAnimation::Invalidate_AccTime(_float fTimeDelta)
 	return isEnd;
 }
 
-void CAnimation::Invalidate_TransformationMatrix(CModel::BONES& Bones, _float fTimeDelta)
+void CAnimation::Invalidate_TransformationMatrix(CModel::BONES& Bones, _float fTimeDelta, vector<_uint>* UseBoneIndex)
 {
 	_uint		iChannelIndex = 0;
 	for (auto& pChannel : m_Channels)
 	{
+		if (UseBoneIndex != nullptr)
+		{
+			_int iFindIndex = pChannel->Get_BoneIndex();
+			auto iter = find_if((*UseBoneIndex).begin(), (*UseBoneIndex).end(), [&](auto data) {
+				if (data == iFindIndex)
+					return true;
+				return false;
+				});
+
+			if (iter == (*UseBoneIndex).end())
+				continue;
+		}
+
 		if (nullptr == pChannel)
 			return;
 
@@ -170,13 +183,27 @@ void CAnimation::Invalidate_TransformationMatrix(CModel::BONES& Bones, _float fT
 	}
 }
 
-void CAnimation::Invalidate_TransformationMatrix_Lerp(CModel::BONES& Bones, _float fTimeDelta, _float LerpTimeAcc, _uint iRootIndex)
+void CAnimation::Invalidate_TransformationMatrix_Lerp(CModel::BONES& Bones, _float fTimeDelta, _float LerpTimeAcc, _uint iRootIndex, vector<_uint>* UseBoneIndex)
 {
 	_uint		iChannelIndex = 0;
 	for (auto& pChannel : m_Channels)
 	{
+		if (UseBoneIndex != nullptr)
+		{
+			_int iFindIndex = pChannel->Get_BoneIndex();
+			auto iter = find_if((*UseBoneIndex).begin(), (*UseBoneIndex).end(), [&](auto data) {
+				if (data == iFindIndex)
+					return true;
+				return false;
+				});
+
+			if (iter == (*UseBoneIndex).end())
+				continue;
+		}
+
 		if (nullptr == pChannel)
 			return;
+
 		if (pChannel->Get_BoneIndex() < iRootIndex+1 && m_isRootAnim)
 		{
 			pChannel->Invalidate_TransformationMatrix(Bones, m_fTimeAcc, &m_ChannelCurrentKeyFrames[iChannelIndex++]);

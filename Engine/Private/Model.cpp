@@ -161,11 +161,11 @@ void CModel::Play_Animation(_float fTimeDelta, ANIMTYPE eType, CTransform* pTran
 	//뼈 이동용
 	if (!m_tAnimationDesc[eType].isAnimChangeLerp)
 	{
-		m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Invalidate_TransformationMatrix(m_Bones, fTimeDelta);
+		m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Invalidate_TransformationMatrix(m_Bones, fTimeDelta,&m_tAnimationDesc[eType].AffectBoneVec);
 	}
 	else if(m_tAnimationDesc[eType].fAnimChangeTimer >= 0.0)
 	{
-		m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Invalidate_TransformationMatrix_Lerp(m_Bones, fTimeDelta, ANIMATIONLERPTIME - m_tAnimationDesc[eType].fAnimChangeTimer,m_iRootBoneIndex);
+		m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Invalidate_TransformationMatrix_Lerp(m_Bones,fTimeDelta, ANIMATIONLERPTIME - m_tAnimationDesc[eType].fAnimChangeTimer,m_iRootBoneIndex ,&m_tAnimationDesc[eType].AffectBoneVec);
 		m_tAnimationDesc[eType].fAnimChangeTimer -= fTimeDelta;
 	}
 	else
@@ -256,8 +256,27 @@ void CModel::Do_Root_Animation(CTransform* pTransform)
 	}
 }
 
-HRESULT CModel::Separate_Animation()
+HRESULT CModel::Separate_Animation(_int iFromIndex, _int iToIndex, ANIMTYPE eType)
 {
+	//원래 뼈 보관소에서 삭제합니다.
+	for (auto iter = m_tAnimationDesc[eType].AffectBoneVec.begin(); iter < m_tAnimationDesc[eType].AffectBoneVec.end();)
+	{
+		if ((*iter) > iFromIndex && (*iter) < iToIndex)
+		{
+			iter = m_tAnimationDesc[eType].AffectBoneVec.erase(iter);
+		}
+		else
+			iter++;
+	}
+
+	//새로운 뼈 보관소에 그 친구들을 넣어줍니다.
+	_int max = iToIndex - iFromIndex;
+	for (int i = 0; i < max; i++)
+	{
+		m_tAnimationDesc[m_iAnimationPartCount].AffectBoneVec.push_back(i + iFromIndex);
+	}
+	
+	//애니메이션을 복사해줍니다.
 	m_tAnimationDesc[m_iAnimationPartCount].iNumAnimations = m_Model.iNumAnimations;
 	for (_uint i = 0; i < m_Model.iNumAnimations; ++i)
 	{
@@ -649,6 +668,11 @@ HRESULT CModel::Ready_Animations()
 {
 	//for (_uint iAnimTypeIndex = 0; iAnimTypeIndex < ANIM_END; iAnimTypeIndex++)
 	//{
+	for (int i = 0; i < m_Model.iNumNodes; i++)
+	{
+		m_tAnimationDesc[0].AffectBoneVec.push_back(i);
+	}
+	
 	m_iAnimationPartCount++;
 	m_tAnimationDesc[0].iNumAnimations = m_Model.iNumAnimations;
 	for (_uint i = 0; i < m_Model.iNumAnimations; ++i)

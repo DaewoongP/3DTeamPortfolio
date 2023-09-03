@@ -27,13 +27,19 @@ private:
 	_int			m_iSelectedNotifyIndex = { 0 };
 	//애니메이션용도임.
 	_char			m_szCurrentItem[CModel::ANIM_END][MAX_PATH] = {};
+	_int			m_iRootIndex[CModel::ANIM_END] = { 0 };
+	_bool			m_isRootAnimation[CModel::ANIM_END] = { false };
+	_int			m_iFromBone[CModel::ANIM_END] = { 0 };
+	_int			m_iToBone[CModel::ANIM_END] = { 0 };
+
+	//노티파이
 	_float			m_fNotifyActionTime = { 0 };
 	_float			m_fNotifySpeed = { 0 };
 	_char			m_szNotifyName[MAX_PATH] = "";
-	_char			m_szCurrentItemType[MAX_PATH] = "";
+	_char			m_szCurrentItemType[MAX_PATH] = "";			
 	KEYFRAME::KEYFRAMETYPE m_eNotifyKeyFrameType = { KEYFRAME::KF_SPEED };
 
-	_int			m_iRootIndex[CModel::ANIM_END] = { 0 };
+	
 
 private:
 	void Create_Dummy_Button();

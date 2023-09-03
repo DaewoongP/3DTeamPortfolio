@@ -58,6 +58,12 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 		_char szUIName[MAX_PATH] = "Animation##";
 		if (pDummyModel->Get_NumAnimations(ePartCnt) != 0)
 		{
+			sprintf_s(szUIName, "%s%d", "SetRootAnim##", ePartCnt);
+			if (ImGui::Checkbox(szUIName, &m_isRootAnimation[ePartCnt]))
+			{
+				pDummyModel->Get_Animation(ePartCnt)->Set_RootAnim(m_isRootAnimation[ePartCnt]);
+			}
+
 			sprintf_s(szUIName, "%s%d", szUIName, ePartCnt);
 			ImGui::SliderFloat(szUIName, pDummyModel->Get_Animation(ePartCnt)->Get_Accmulation_Pointer(), 0, pDummyModel->Get_Animation(ePartCnt)->Get_Duration());
 			pDummyModel->Get_Animation(ePartCnt)->Update_KeyFrame_By_Time();
@@ -65,8 +71,11 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 
 			Edit_Notify_Button(ePartCnt, pDummyModel);
 			Create_Notify_View(ePartCnt, pDummyModel);
-			Bone_Tree(ePartCnt, pDummyModel->Get_Bone_Index(0), pDummyModel);
 
+			ImGui::Text("");
+			ImGui::Separator();
+
+			Bone_Tree(ePartCnt, pDummyModel->Get_Bone_Index(0), pDummyModel);
 			sprintf_s(szUIName, "RootBone##%d", ePartCnt);
 			ImGui::InputInt(szUIName, &m_iRootIndex[ePartCnt]);
 
@@ -75,19 +84,26 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 			{
 				pDummyModel->Set_RootBone(m_iRootIndex[ePartCnt]);
 			}
+			sprintf_s(szUIName, "Separate##%d", ePartCnt);
 
+			/*sprintf_s(szUIName, "RootBone##%d", ePartCnt);
+			ImGui::InputInt(szUIName, &m_iRootIndex[ePartCnt]);*/
+			sprintf_s(szUIName, "Bone_From##%d", ePartCnt);
+			ImGui::InputInt(szUIName, &m_iFromBone[ePartCnt]);
+			sprintf_s(szUIName, "Bone_To##%d", ePartCnt);
+			ImGui::InputInt(szUIName, &m_iToBone[ePartCnt]);
+
+			sprintf_s(szUIName, "Seprate##%d", ePartCnt);
+			if (ImGui::Button(szUIName))
+			{
+				//내가 선택한 뼈들을 리스트에 담음
+				//내가 선택한 뼈가 eparcnt에 있으면 없애줌.
+				//내가 선택한 루트를 담아줌.
+				pDummyModel->Separate_Animation(m_iFromBone[ePartCnt], m_iToBone[ePartCnt],ePartCnt);
+			}
 		}
 		
 		
-	}
-	ImGui::Text("");
-	ImGui::Separator();
-	if (pDummyModel->Get_NumAnimations() != 0)
-	{
-		if (ImGui::Button("Separate"))
-		{
-			pDummyModel->Separate_Animation();
-		}
 	}
 	ImGui::End();
 }
@@ -266,7 +282,7 @@ void CAnimation_Window::Notify_InputFileds(_char* szNotifyName, KEYFRAME::KEYFRA
 
 void CAnimation_Window::Add_Notify_Button(CModel::ANIMTYPE ePartCnt, _char* szNotifyName, CModel* pDummyModel, KEYFRAME::KEYFRAMETYPE* eNotifyKeyFrameType, _float* fNotifyActionTime, _float* fNotifySpeed)
 {
-	_char szUIName[MAX_PATH] = "Notify##";
+	_char szUIName[MAX_PATH] = "Add_Notify##";
 	sprintf_s(szUIName, "%s%d", szUIName, ePartCnt);
 	if (ImGui::Button(szUIName))
 	{
@@ -281,7 +297,8 @@ void CAnimation_Window::Add_Notify_Button(CModel::ANIMTYPE ePartCnt, _char* szNo
 
 void CAnimation_Window::Edit_Notify_Button(CModel::ANIMTYPE ePartCnt, CModel* pDummyModel)
 {
-	_char szUIName[MAX_PATH] = "Edit##Notify##";
+	ImGui::SameLine();
+	_char szUIName[MAX_PATH] = "Edit_Notify##Notify##";
 	sprintf_s(szUIName, "%s%d", szUIName, ePartCnt);
 	if (ImGui::Button(szUIName))
 	{
@@ -357,9 +374,12 @@ void CAnimation_Window::Create_Notify_View(CModel::ANIMTYPE ePartCnt, CModel* pD
 
 void CAnimation_Window::Bone_Tree(_uint partCnt, CBone* bone, CModel* pDummyModel)
 {
-	char szBone_Name[MAX_PATH] = "";
-	WCharToChar(bone->Get_Name(), szBone_Name)
-	if (ImGui::TreeNode(szBone_Name))
+	_char szUIName[MAX_PATH] = "";
+	_char szBone_Name[MAX_PATH] = "";
+	WCharToChar(bone->Get_Name(), szBone_Name);
+
+	sprintf_s(szUIName, "%s##%d", szBone_Name,partCnt);
+	if (ImGui::TreeNode(szUIName))
 	{
 		for (auto child : *pDummyModel->Get_Bone_Vector_Point())
 		{
@@ -373,8 +393,7 @@ void CAnimation_Window::Bone_Tree(_uint partCnt, CBone* bone, CModel* pDummyMode
 	else 
 	{
 		ImGui::SameLine();
-		_char szUIName[MAX_PATH] = "Set_Root##";
-		sprintf_s(szUIName, "%s%d##%s", szUIName, partCnt, szBone_Name);
+		sprintf_s(szUIName, "Set_Root##%d##%s", partCnt, szBone_Name);
 		if (ImGui::SmallButton(szUIName))
 		{
 			m_iRootIndex[partCnt] = bone->Get_Index();
