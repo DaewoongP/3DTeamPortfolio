@@ -47,6 +47,8 @@ void CMapObject::Late_Tick(_float fTimeDelta)
 
 	if (nullptr != m_pRenderer)
 	{
+		m_eRenderCount = RT_NORMAL;
+
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_PICKING, this);
 	}
@@ -64,18 +66,45 @@ HRESULT CMapObject::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	_uint		iNumMeshes = m_pModel->Get_NumMeshes();
-
-	for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; iMeshCount++)
+	// 일반 그리기
+	if (RT_NORMAL == m_eRenderCount)
 	{
-		m_pModel->Bind_BoneMatrices(m_pShader, "g_BoneMatrices", iMeshCount);
-		m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", iMeshCount, DIFFUSE);
+		_uint		iNumMeshes = m_pModel->Get_NumMeshes();
 
-		m_pShader->Begin("Default");
+		for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; iMeshCount++)
+		{
+			m_pModel->Bind_BoneMatrices(m_pShader, "g_BoneMatrices", iMeshCount);
+			m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", iMeshCount, DIFFUSE);
 
-		if (FAILED(m_pModel->Render(iMeshCount)))
-			return E_FAIL;
+			m_pShader->Begin("Default");
+
+			if (FAILED(m_pModel->Render(iMeshCount)))
+				return E_FAIL;
+		}
+
+		m_eRenderCount = RT_PICKING;
 	}
+
+	// 피킹용 그리기
+	else if (RT_PICKING == m_eRenderCount)
+	{
+		m_pShader->Bind_RawValue("g_vColor", &m_vColor, sizeof(_float4));
+
+		_uint		iNumMeshes = m_pModel->Get_NumMeshes();
+
+		for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; iMeshCount++)
+		{
+			m_pModel->Bind_BoneMatrices(m_pShader, "g_BoneMatrices", iMeshCount);
+
+			m_pShader->Begin("Picking");
+
+			if (FAILED(m_pModel->Render(iMeshCount)))
+				return E_FAIL;
+		}
+
+		m_eRenderCount = RT_END;
+	}
+
 	return S_OK;
 }
 

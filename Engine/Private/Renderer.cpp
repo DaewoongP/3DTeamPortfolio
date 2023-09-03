@@ -64,7 +64,7 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
-		TEXT("Target_Picking"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 0.f))))
+		TEXT("Target_Picking"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL; // ¸Ê ¿ÀºêÁ§ÅÍ Fast PickingÀ» À§ÇÑ ·»´õ Å¸°Ù
 
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Diffuse"))))
@@ -73,8 +73,8 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Depth"))))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Picking"), TEXT("Target_Picking"))))
-		return E_FAIL; // ¸Ê ¿ÀºêÁ§ÅÍ Fast PickingÀ» À§ÇÑ ·»´õ Å¸°Ù
+	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Picking"), TEXT("Target_Picking"))))  // ¸Ê ¿ÀºêÁ§ÅÍ Fast PickingÀ» À§ÇÑ ·»´õ Å¸°Ù
+		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Lights"), TEXT("Target_Shade"))))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Lights"), TEXT("Target_Specular"))))
@@ -167,11 +167,12 @@ HRESULT CRenderer::Draw_RenderGroup()
 
 	if (FAILED(Render_Priority()))
 		return E_FAIL;
-
 	if (FAILED(Render_NonBlend()))
 		return E_FAIL;
+#ifdef _DEBUG
 	if (FAILED(Render_Picking())) 	// ¸Ê ¿ÀºêÁ§ÅÍ Fast PickingÀ» À§ÇÑ ·»´õ Å¸°Ù
 		return E_FAIL;
+#endif // _DEBUG
 	if (FAILED(Render_Lights()))
 		return E_FAIL;
 	if (FAILED(Render_Shadow()))
@@ -183,7 +184,7 @@ HRESULT CRenderer::Draw_RenderGroup()
 	
 	if (FAILED(Render_Deferred()))
 		return E_FAIL;
-	
+
 	if (FAILED(Render_NonLight()))
 		return E_FAIL;
 	if (FAILED(Render_Blend()))
@@ -192,10 +193,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 	if (FAILED(m_pRenderTarget_Manager->End_PostProcessingRenderTarget(m_pContext)))
 		return E_FAIL;
 	
-	
 	if (FAILED(Render_PostProcessing()))
-		return E_FAIL;
-	
+		return E_FAIL;	
 	if (FAILED(Render_UI()))
 		return E_FAIL;
 
@@ -295,7 +294,7 @@ HRESULT CRenderer::Render_Picking()
 
 	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext)))
 		return E_FAIL;
-
+		
 	return S_OK;
 }
 
@@ -654,6 +653,16 @@ HRESULT CRenderer::Add_Components()
 	if (nullptr == m_pShadeTypeBuffer)
 		return E_FAIL;
 
+
+	// ÇÇÅ·À» À§ÇÑ ¹öÆÛ¿Í ½¦ÀÌ´õ
+	m_pPickingShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Picking.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements);
+	if (nullptr == m_pPickingShader)
+		return E_FAIL;
+
+	m_pPickingBuffer = CVIBuffer_Rect::Create(m_pDevice, m_pContext);
+	if (nullptr == m_pPickingBuffer)
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -682,8 +691,6 @@ HRESULT CRenderer::Render_Debug()
 	if (FAILED(m_pRenderTarget_Manager->Render_Debug(TEXT("MRT_GameObjects"), m_pDeferredShader, m_pDeferredBuffer)))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Render_Debug(TEXT("MRT_Lights"), m_pDeferredShader, m_pDeferredBuffer)))
-		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Render_Debug(TEXT("MRT_Picking"), m_pDeferredShader, m_pDeferredBuffer)))
 		return E_FAIL;
 
 	return S_OK;
@@ -741,4 +748,6 @@ void CRenderer::Free()
 	Safe_Release(m_pDeferredBuffer);
 	Safe_Release(m_pPostProcessingShader);
 	Safe_Release(m_pPostProcessingBuffer);
+	Safe_Release(m_pPickingShader);
+	Safe_Release(m_pPickingBuffer);
 }

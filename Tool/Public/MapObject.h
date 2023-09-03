@@ -13,17 +13,15 @@ BEGIN(Tool)
 
 class CMapObject final : public CGameObject
 {
+	// 일반 렌더인지 피킹용 렌더인지 정해줌
+	enum eRenderType { RT_NORMAL, RT_PICKING, RT_END };
+
 public:
 	void Set_Color(int iColor) {
-		//m_vColor.x = ((iColor >> 24) & 0xff) * 1.f; // r
-		//m_vColor.y = ((iColor >> 16) & 0xff) * 1.f; // g
-		//m_vColor.z = ((iColor >> 8) & 0xff) * 1.f;  // b
-		//m_vColor.w = (iColor & 0xff) * 1.f;			// a
-
-		m_vColor.x = 125.f; // r
-		m_vColor.y = 125.f; // g
-		m_vColor.z = 125.f;  // b
-		m_vColor.w = 1.f;			// a
+		m_vColor.x = ((iColor >> 16) & 0xff) * 1.f; // r
+		m_vColor.y = ((iColor >> 8) & 0xff) * 1.f;  // g
+		m_vColor.z = ((iColor) & 0xff) * 1.f;		// b
+		m_vColor.w = 1.f;							// a
 	}
 
 private:
@@ -52,6 +50,7 @@ private:
 	CModel* m_pModel = { nullptr };
 
 	_float4 m_vColor = { 0.f, 0.f, 0.f, 0.f }; // Fast Picking에 사용할 객체마다 고유한 색상 값, rgba 순이다.
+	eRenderType	m_eRenderCount = { RT_END }; // 랜더 순서를 정해주는 변수
 
 private:
 	HRESULT Add_Components();
