@@ -653,16 +653,6 @@ HRESULT CRenderer::Add_Components()
 	if (nullptr == m_pShadeTypeBuffer)
 		return E_FAIL;
 
-
-	// 피킹을 위한 버퍼와 쉐이더
-	m_pPickingShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Picking.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements);
-	if (nullptr == m_pPickingShader)
-		return E_FAIL;
-
-	m_pPickingBuffer = CVIBuffer_Rect::Create(m_pDevice, m_pContext);
-	if (nullptr == m_pPickingBuffer)
-		return E_FAIL;
-
 	return S_OK;
 }
 
@@ -748,6 +738,4 @@ void CRenderer::Free()
 	Safe_Release(m_pDeferredBuffer);
 	Safe_Release(m_pPostProcessingShader);
 	Safe_Release(m_pPostProcessingBuffer);
-	Safe_Release(m_pPickingShader);
-	Safe_Release(m_pPickingBuffer);
 }

@@ -76,7 +76,10 @@ PS_OUT	PS_MAIN_PICKING(PS_IN In)
 {
 	PS_OUT		Out = (PS_OUT)0;
 
-	Out.vColor = g_vColor;
+	Out.vColor.x = g_vColor.x / 255.f;
+	Out.vColor.y = g_vColor.y / 255.f;
+	Out.vColor.z = g_vColor.z / 255.f;
+	Out.vColor.w = 1.f;
 
 	return Out;
 }

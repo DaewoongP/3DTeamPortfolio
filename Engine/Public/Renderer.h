@@ -87,10 +87,6 @@ private: /* Shader_Type */
 	class CVIBuffer_Rect*			m_pSSAOBuffer = { nullptr };//각종 쉐이더처리 해줄때 쓸 것
 	class CShader*					m_pSSAOShader = { nullptr };
 
-private: /* Picking */
-	class CVIBuffer_Rect*			m_pPickingBuffer = { nullptr }; // 피킹을 위한 변수들
-	class CShader*					m_pPickingShader = { nullptr };
-
 public:
 	static CRenderer* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);
 	virtual CComponent* Clone(void* pArg) override;
