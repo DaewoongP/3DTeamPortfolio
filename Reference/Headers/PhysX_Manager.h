@@ -1,6 +1,7 @@
 #pragma once
 #include "PXAllocator.h"
 #include "PXErrorCallBack.h"
+#include "PXEventCallBack.h"
 #include "Base.h"
 
 BEGIN(Engine)
@@ -29,8 +30,9 @@ public:
 	void Tick(_float fTimeDelta);
 
 private: /* 에러 메세지 등 cout 처리 */
-	CPXErrorCallBack			m_PXErrorCallback;
+	CPXErrorCallBack			m_PXErrorCallBack;
 	CPXAllocator				m_PXAllocator;
+	CPXEventCallBack*			m_pPXEventCallBack;
 
 private: /* 피직스 기본 변수들 */
 	// 인스턴스 느낌.

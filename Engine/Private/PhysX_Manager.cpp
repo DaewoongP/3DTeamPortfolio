@@ -32,7 +32,7 @@ _uint CPhysX_Manager::Get_LastTriangleBufferIndex()
 HRESULT CPhysX_Manager::Initialize()
 {
 	// 파운데이션 생성
-	m_pFoundation = PxCreateFoundation(PX_PHYSICS_VERSION, m_PXAllocator, m_PXErrorCallback);
+	m_pFoundation = PxCreateFoundation(PX_PHYSICS_VERSION, m_PXAllocator, m_PXErrorCallBack);
 
 	if (nullptr == m_pFoundation)
 	{
@@ -62,6 +62,11 @@ HRESULT CPhysX_Manager::Initialize()
 	m_pPhysxScene->setVisualizationParameter(PxVisualizationParameter::eSCALE, 1.0f);
 	m_pPhysxScene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_SHAPES, 1.f);
 #endif // _DEBUG
+
+	// 충돌처리 이벤트 활성화
+	m_pPXEventCallBack = CPXEventCallBack::Create();
+	m_pPhysxScene->setSimulationEventCallback(m_pPXEventCallBack);
+
 	// 컨트롤러 생성에 필요한 매니저 클래스 생성.
 	m_pControllerManager = PxCreateControllerManager(*m_pPhysxScene);
 	if (nullptr == m_pControllerManager)
@@ -71,8 +76,29 @@ HRESULT CPhysX_Manager::Initialize()
 	}
 
 	// 기본적인 터레인을 생성합니다.
-	PxRigidStatic* groundPlane = PxCreatePlane(*m_pPhysics, PxPlane(0, 1, 0, 0), *m_pPhysics->createMaterial(0.5f, 0.5f, 0.5f));
-	m_pPhysxScene->addActor(*groundPlane);
+
+	PxRigidStatic* rigidStatic = m_pPhysics->createRigidStatic(PxTransformFromPlaneEquation(PxPlane(PxVec3(0.f, 1.f, 0.f), 0.f)));
+	PxShape* planeShape = m_pPhysics->createShape(PxPlaneGeometry(), *m_pPhysics->createMaterial(0.5f, 0.5f, 0.5f), false, PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSIMULATION_SHAPE);
+	//PxRigidActorExt::createExclusiveShape(*rigidStatic, PxPlaneGeometry(), *m_pPhysics->createMaterial(0.5f, 0.5f, 0.5f));
+	rigidStatic->attachShape(*planeShape);
+	m_pPhysxScene->addActor(*rigidStatic);
+
+	PxVec3 vLocal = PxVec3(0.f, 10.f, 10.f);
+	PxTransform localTm(vLocal);
+	PxRigidDynamic* pActor = m_pPhysics->createRigidDynamic(localTm);
+	PxShape* boxshape = m_pPhysics->createShape(PxBoxGeometry(10.f, 10.f, 10.f), *m_pPhysics->createMaterial(0.5f, 0.5f, 0.5f), false, PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSIMULATION_SHAPE);
+
+	// OffsetPosition 처리
+	PxTransform relativePose(PxQuat(PxHalfPi, PxVec3(0, 0, 1)));
+	boxshape->setLocalPose(relativePose);
+	PxFilterData data;
+	data.word0 = 1;
+	data.word1 = 1;
+	boxshape->setSimulationFilterData(data);
+	pActor->attachShape(*boxshape);
+	pActor->setMaxLinearVelocity(1.f);
+	m_pPhysxScene->addActor(*pActor);
+
 	m_pPhysxScene->simulate(1 / 60.f);
 	m_pPhysxScene->fetchResults(true);
 	m_iNumPlaneLineBuffer = m_pPhysxScene->getRenderBuffer().getNbLines();
@@ -119,6 +145,12 @@ void CPhysX_Manager::Free()
 		m_pControllerManager->release();
 	}
 
+	if (nullptr != m_pPXEventCallBack)
+	{
+		m_pPXEventCallBack->Release();
+		m_pPXEventCallBack = nullptr;
+	}
+
 	if (nullptr != m_pPhysxScene)
 	{
 		m_pPhysxScene->release();
@@ -137,5 +169,5 @@ void CPhysX_Manager::Free()
 	if (nullptr != m_pFoundation)
 	{
 		m_pFoundation->release();
-	}
+	}	
 }

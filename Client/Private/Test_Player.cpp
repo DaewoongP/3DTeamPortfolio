@@ -105,6 +105,7 @@ HRESULT CTest_Player::Add_Components()
 		MSG_BOX("Failed CTest_Player Add_Component : (Com_Renderer)");
 		return E_FAIL;
 	}
+
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
@@ -254,6 +255,8 @@ void CTest_Player::Key_Input(_float fTimeDelta)
 void CTest_Player::Tick_ImGui()
 {
 	ImGui::Begin("Test Player");
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
 
 	const PxMaterial* pMaterial = m_pRigidBody->Get_Material();
 	_float3 vMaterial;
@@ -278,6 +281,30 @@ void CTest_Player::Tick_ImGui()
 	{
 		m_pRigidBody->Get_RigidBodyActor()->setMaxLinearVelocity(fMaxLinearVelocity);
 	}
+
+	
+	_float3 vPlayerPos;
+	ImGui::SetNextItemWidth(20.f);
+	ImGui::Text("%.1f /", vPlayerPos.x); ImGui::SameLine();
+	ImGui::SetNextItemWidth(20.f);
+	ImGui::Text("%.1f /", vPlayerPos.x); ImGui::SameLine();
+	ImGui::SetNextItemWidth(20.f);
+	ImGui::Text("%.1f /", vPlayerPos.x);
+	ImGui::SetNextItemWidth(100.f);
+	if (ImGui::InputFloat3("Set Position", (_float*)(&vPlayerPos)))
+	{
+		m_pTransform->Set_Position(vPlayerPos);
+	}
+
+	if (ImGui::Button("Set Position to Cam"))
+	{
+		_float4x4 ViewMatrixInv = *pGameInstance->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_VIEW);
+		_float3 vCamPos = ViewMatrixInv.Translation();
+		_float3 vCamDir = ViewMatrixInv.Look();
+		m_pRigidBody->Set_Position(vCamPos + vCamDir * 5.f);
+	}
+
+	Safe_Release(pGameInstance);
 	ImGui::End();
 }
 #endif // _DEBUG

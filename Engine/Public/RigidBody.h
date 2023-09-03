@@ -1,4 +1,10 @@
 #pragma once
+/* =============================================== */
+// 
+//	Á¤ : ¹Ú´ë¿õ
+//	ºÎ :
+//
+/* =============================================== */
 #include "Composite.h"
 
 BEGIN(Engine)
@@ -38,6 +44,7 @@ public:
 	PxRigidBody* Get_RigidBodyActor() const;
 	_float3 Get_Position() const;
 	_float4 Get_Rotation() const;
+	void Set_Position(_float3 vPosition);
 	void Set_Material(_float3 vMaterial);
 	void Set_Constraint(RigidBodyConstraint eConstraintFlag, _bool _isEnable);
 	void Set_Kinematic(_bool _isKinematic);

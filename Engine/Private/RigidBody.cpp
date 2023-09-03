@@ -51,6 +51,17 @@ _float4 CRigidBody::Get_Rotation() const
 	return _float4(vPose.q.x, vPose.q.y, vPose.q.z, vPose.q.w);
 }
 
+void CRigidBody::Set_Position(_float3 vPosition)
+{
+	PxTransform vPose;
+	if (false == m_isKinematic ||
+		false == reinterpret_cast<PxRigidDynamic*>(m_pActor)->getKinematicTarget(vPose))
+	{
+		vPose = PxTransform(PhysXConverter::ToPxVec3(vPosition), PhysXConverter::ToPxQuat(Get_Rotation()));
+		m_pActor->setGlobalPose(vPose);
+	}
+}
+
 void CRigidBody::Set_Material(_float3 vMaterial)
 {
 	m_pMaterial->release();
@@ -151,8 +162,8 @@ HRESULT CRigidBody::Create_Actor()
 	m_pScene->fetchResults(true);
 
 	// 시작 지점은 갱신 전에 가져와야함.
-	m_iStartLineBufferIndex = pPhysX_Manager->Get_LastLineBufferIndex();
-	m_iStartTriangleBufferIndex = pPhysX_Manager->Get_LastTriangleBufferIndex();
+	m_iStartLineBufferIndex = 0;// pPhysX_Manager->Get_LastLineBufferIndex();
+	m_iStartTriangleBufferIndex = 0;// pPhysX_Manager->Get_LastTriangleBufferIndex();
 
 	Safe_Release(pPhysX_Manager);
 
@@ -162,11 +173,13 @@ HRESULT CRigidBody::Create_Actor()
 
 	m_pMaterial = pPhysX->createMaterial(0.5f, 0.5f, 0.5f);
 	PxShape* boxshape = pPhysX->createShape(PxCapsuleGeometry(1.f, 1.f), *m_pMaterial, false, PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSIMULATION_SHAPE);
-
+	PxFilterData data;
+	data.word0 = 1;
+	data.word1 = 1;
+	boxshape->setSimulationFilterData(data);
 	// OffsetPosition 처리
 	PxTransform relativePose(PxQuat(PxHalfPi, PxVec3(0, 0, 1)));
 	boxshape->setLocalPose(relativePose);
-
 	m_pActor->setMaxLinearVelocity(10.f);
 	m_pActor->attachShape(*boxshape);
 	m_pActor->setMass(10.f);

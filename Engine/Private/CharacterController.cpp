@@ -15,7 +15,7 @@ void CCharacterController::Set_Position(_float3 _vPosition)
 {
 	if (nullptr == m_pController)
 		return;
-
+	
 	m_pController->setPosition(PhysXConverter::ToPxExtendedVec3(_vPosition));
 }
 
