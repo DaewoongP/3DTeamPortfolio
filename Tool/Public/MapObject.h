@@ -15,10 +15,15 @@ class CMapObject final : public CGameObject
 {
 public:
 	void Set_Color(int iColor) {
-		m_vColor.x = ((iColor >> 24) & 0xff) * 1.f; // r
-		m_vColor.y = ((iColor >> 16) & 0xff) * 1.f; // g
-		m_vColor.z = ((iColor >> 8) & 0xff) * 1.f;  // b
-		m_vColor.w = (iColor & 0xff) * 1.f;			// a
+		//m_vColor.x = ((iColor >> 24) & 0xff) * 1.f; // r
+		//m_vColor.y = ((iColor >> 16) & 0xff) * 1.f; // g
+		//m_vColor.z = ((iColor >> 8) & 0xff) * 1.f;  // b
+		//m_vColor.w = (iColor & 0xff) * 1.f;			// a
+
+		m_vColor.x = 125.f; // r
+		m_vColor.y = 125.f; // g
+		m_vColor.z = 125.f;  // b
+		m_vColor.w = 1.f;			// a
 	}
 
 private:
@@ -27,8 +32,6 @@ private:
 	virtual ~CMapObject() = default;
 
 public:
-	_tchar* Get_GameObject_Tag() { return m_pTag; }
-	void	Set_GameObject_Tag(_tchar* wszTag) { lstrcpy(m_pTag, wszTag); }
 	void	Set_Pos(_float3 vPos) { m_pTransform->Set_Position(vPos); }
 
 public:

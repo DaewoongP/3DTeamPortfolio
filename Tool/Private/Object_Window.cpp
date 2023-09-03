@@ -154,6 +154,7 @@ void CObject_Window::Install_Object(_float3 vPos)
 
 		m_pObject->Add_Model_Component(m_vecModelList_t.at(m_iModelIndex));
 		m_pObject->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMesh"));
+		m_pObject->Set_Color(m_iModelIndex); // 고유한 색깔 값을 넣어줌
 
 		// 저장용 벡터에 넣어준다.
 		SAVEOBJECTDESC SaveDesc;
