@@ -94,6 +94,7 @@ public: /* For.Light_Manager */
 	const CLight::LIGHTDESC* Get_Light(_uint iIndex);
 	void Set_Light(_uint iIndex, CLight::LIGHTDESC LightDesc);
 	class CLight* Add_Lights(const CLight::LIGHTDESC & LightDesc);
+	HRESULT Delete_Lights(_uint iIndex,const _char* Name);
 	HRESULT Clear_Lights();
 
 public: /* For.Sound_Manager */

@@ -377,6 +377,13 @@ CLight* CGameInstance::Add_Lights(const CLight::LIGHTDESC& LightDesc)
 	return m_pLight_Manager->Add_Lights(LightDesc);
 }
 
+HRESULT CGameInstance::Delete_Lights(_uint iIndex,const _char* Name)
+{
+	NULL_CHECK_RETURN_MSG(m_pLight_Manager, E_FAIL, TEXT("Light NULL"));
+
+	return m_pLight_Manager->Delete_Lights(iIndex,Name);
+}
+
 HRESULT CGameInstance::Clear_Lights()
 {
 	NULL_CHECK_RETURN_MSG(m_pLight_Manager, E_FAIL, TEXT("Light NULL"));

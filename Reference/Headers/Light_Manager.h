@@ -25,6 +25,7 @@ public:
 
 public:
 	CLight* Add_Lights(const CLight::LIGHTDESC& LightDesc);
+	HRESULT Delete_Lights(_uint iIndex,const _char* Name);
 	HRESULT Clear_Lights();
 	HRESULT Render_Lights(class CShader* pShader, class CVIBuffer_Rect* pVIBuffer);
 

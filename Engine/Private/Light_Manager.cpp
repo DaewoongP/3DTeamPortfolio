@@ -44,13 +44,24 @@ CLight* CLight_Manager::Add_Lights(const CLight::LIGHTDESC & LightDesc)
 	return pLight;
 }
 
+HRESULT CLight_Manager::Delete_Lights(_uint iIndex,const _char* Name)
+{
+	auto iter = m_Lights.begin();
+	for (size_t i = 0; i < iIndex; ++i)
+		++iter;
+	Safe_Release(*iter);
+	m_Lights.erase(iter);
+
+	return S_OK;
+}
+
 HRESULT CLight_Manager::Clear_Lights()
 {
 	for (auto& pLight : m_Lights)
 		Safe_Release(pLight);
 
 	m_Lights.clear();
-
+	
 	return S_OK;
 }
 

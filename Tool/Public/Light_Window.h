@@ -34,7 +34,7 @@ public:
 	HRESULT Save_Light();
 	HRESULT Load_Light();
 	void Set_Tool_Light(_uint iIndex, CLight::LIGHTDESC LightDesc);
-
+	void Delete_Light(_uint iIndex,const _char* pName);
 	void Clear_Light();
 	void ResetValue();
 	void Light_ComboBox();
@@ -52,7 +52,7 @@ private:
 	_bool m_isCurrent_Idx;
 	_bool m_isRender = true;
 	_char AddLightName[MAX_PATH] = {};
-
+	_bool m_isCheck = false;
 private:
 	vector<CLight::LIGHTDESC> m_vecLightDesc;
 	vector<string> m_vecLightList;
@@ -65,6 +65,7 @@ private:
 	_float vSpecular[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	CLight::LIGHTDESC LightDesc;
 	LIGHTINFO m_SaveDesc;
+	
 
 public:
 	static CLight_Window* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, ImVec2 vWindowPos, ImVec2 vWindowSize);
