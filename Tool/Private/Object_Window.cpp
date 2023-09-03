@@ -114,7 +114,7 @@ void CObject_Window::Picking_Menu()
 		else
 		{
 			m_pDummy->Set_Pos(vPos);
-		}		
+		}
 	} ENDINSTANCE;
 
 	// Object Install º±≈√ √¢ On / Off
@@ -591,7 +591,7 @@ _float3 CObject_Window::Find_PickingPos()
 
 			return _float3(vFinalPos.x, vFinalPos.y, vFinalPos.z);
 		}
-	}	
+	}
 
 	return _float3(-1.f, -1.f, -1.f);
 }
