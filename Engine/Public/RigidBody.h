@@ -2,7 +2,6 @@
 #include "Composite.h"
 
 BEGIN(Engine)
-class CColliderCom;
 class CCharacterController;
 
 #ifdef _DEBUG
@@ -29,14 +28,6 @@ public:
 		All = AllRot | AllTrans
 	};
 
-	enum SHAPE { SHAPE_SPHERE, SHAPE_CAPSULE, SHAPE_BOX, SHAPE_END };
-
-	typedef struct tagRigidBodyDesc
-	{
-		SHAPE	eShape;
-
-	}RIGIDBODYDESC;
-
 private:
 	explicit CRigidBody(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CRigidBody(const CRigidBody& rhs);
@@ -51,8 +42,6 @@ public:
 	void Set_Constraint(RigidBodyConstraint eConstraintFlag, _bool _isEnable);
 	void Set_Kinematic(_bool _isKinematic);
 	void Set_Density(_float _fDensity) const;
-	void Set_CollisionGroup(COLLISIONDESC::COLTYPE eColType);
-	void Set_CollisionIgnoreGroups(COLLISIONDESC::COLTYPE eIgnoreColType);
 	void Set_TransformComponent(CTransform* pTransform) {
 		m_pTransform = pTransform;
 		Safe_AddRef(m_pTransform);
@@ -77,7 +66,7 @@ public:
 
 public:
 	HRESULT Create_Actor();
-	void Add_Collider(CColliderCom* collider);
+	//void Add_Collider(CColliderCom* collider);
 
 	void Put_To_Sleep() const;
 	void Add_Force(const _float3 & _vForce, PxForceMode::Enum _eMode = PxForceMode::eFORCE, _bool _bAutowake = true) const;
@@ -90,14 +79,8 @@ public:
 
 private:
 	PxRigidDynamic*			m_pActor = { nullptr };
-	PxD6Joint*				m_pConstraintJoint = { nullptr };
-	PxFilterData			m_CollisionGroups;
-	_uint					m_InitialConstraints = { 0 };
 	PxMaterial*				m_pMaterial = { nullptr };
 	PxScene*				m_pScene = { nullptr };
-
-private:
-	vector<CColliderCom*>	m_Colliders;
 
 private:
 	CTransform*				m_pTransform = { nullptr };
@@ -113,7 +96,10 @@ private:
 
 private:
 	_uint					m_iNumLineBuffer = { 0 };
+	_uint					m_iStartLineBufferIndex = { 0 };
+
 	_uint					m_iNumTriangleBuffer = { 0 };
+	_uint					m_iStartTriangleBufferIndex = { 0 };
 #endif // _DEBUG
 
 

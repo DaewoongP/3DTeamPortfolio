@@ -1,8 +1,16 @@
 #include "..\Public\RigidBody.h"
 #include "PipeLine.h"
+#include "Transform.h"
 #include "PhysX_Manager.h"
 #include "PhysXConverter.h"
 #include "CharacterController.h"
+
+#ifdef _DEBUG
+#include "Shader.h"
+#include "VIBuffer_Line.h"
+#include "VIBuffer_Triangle.h"
+#endif // _DEBUG
+
 
 CRigidBody::CRigidBody(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CComposite(pDevice, pContext)
@@ -80,29 +88,8 @@ void CRigidBody::Set_Density(_float _fDensity) const
 	}
 }
 
-void CRigidBody::Set_CollisionGroup(COLLISIONDESC::COLTYPE eColType)
-{
-	m_CollisionGroups.word0 = eColType;
-	/*for (auto& Collier : m_Colliders)
-	{
-		shape->GetShape()->setSimulationFilterData(m_CollisionGroups);
-		shape->GetShape()->setQueryFilterData(m_CollisionGroups);
-	}*/
-}
-
-void CRigidBody::Set_CollisionIgnoreGroups(COLLISIONDESC::COLTYPE eIgnoreColType)
-{
-	m_CollisionGroups.word1 = eIgnoreColType;
-	/*for each (auto shape in m_Colliders)
-	{
-		shape->GetShape()->setSimulationFilterData(m_CollisionGroups);
-	}*/
-}
-
 HRESULT CRigidBody::Initialize(void* pArg)
 {
-	m_CollisionGroups = PxFilterData(COLLISIONDESC::COLTYPE_PLAYER, 0, 0, 0);
-
 	if (FAILED(Create_Actor()))
 		return E_FAIL;
 
@@ -156,27 +143,35 @@ HRESULT CRigidBody::Create_Actor()
 {
 	CPhysX_Manager* pPhysX_Manager = CPhysX_Manager::GetInstance();
 	Safe_AddRef(pPhysX_Manager);
+
 	PxPhysics* pPhysX = pPhysX_Manager->Get_Physics();
 	m_pScene = pPhysX_Manager->Get_PhysxScene();
+
 	m_pScene->simulate(1 / 60.f);
 	m_pScene->fetchResults(true);
+
+	// 시작 지점은 갱신 전에 가져와야함.
+	m_iStartLineBufferIndex = pPhysX_Manager->Get_LastLineBufferIndex();
+	m_iStartTriangleBufferIndex = pPhysX_Manager->Get_LastTriangleBufferIndex();
+
 	Safe_Release(pPhysX_Manager);
 
-	PxVec3 tr = PxVec3(-2.f, 20.f, 5.f);
-	PxTransform localTm(tr);
+	PxVec3 vLocal = PxVec3(0.f, 10.f, 5.f);
+	PxTransform localTm(vLocal);
 	m_pActor = pPhysX->createRigidDynamic(localTm);
 
-	m_pMaterial = pPhysX->createMaterial(0.f, 0.f, 0.f);
+	m_pMaterial = pPhysX->createMaterial(0.5f, 0.5f, 0.5f);
 	PxShape* boxshape = pPhysX->createShape(PxCapsuleGeometry(1.f, 1.f), *m_pMaterial, false, PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSIMULATION_SHAPE);
 
+	// OffsetPosition 처리
 	PxTransform relativePose(PxQuat(PxHalfPi, PxVec3(0, 0, 1)));
 	boxshape->setLocalPose(relativePose);
 
 	m_pActor->setMaxLinearVelocity(10.f);
 	m_pActor->attachShape(*boxshape);
 	m_pActor->setMass(10.f);
+	_uint iTest = boxshape->getInternalShapeIndex();
 	m_pScene->addActor(*m_pActor);
-
 	PxRigidDynamic* pRigidBody = m_pActor->is<PxRigidDynamic>();
 
 	// 회전을 " 하고 싶은 " 부분만 true로 처리해주면 된다.
@@ -185,10 +180,6 @@ HRESULT CRigidBody::Create_Actor()
 	pRigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, true);
 
 	return S_OK;
-}
-
-void CRigidBody::Add_Collider(CColliderCom* collider)
-{
 }
 
 void CRigidBody::Put_To_Sleep() const
@@ -294,27 +285,23 @@ HRESULT CRigidBody::Add_Components()
 	CPhysX_Manager* pPhysX_Manager = CPhysX_Manager::GetInstance();
 	Safe_AddRef(pPhysX_Manager);
 
-	// 시작 지점은 갱신 전에 가져와야함.
-	_uint iNumPrevLineBuffer = pPhysX_Manager->Get_LastLineBufferIndex();
-	_uint iNumPrevTriangleBuffer = pPhysX_Manager->Get_LastTriangleBufferIndex();
-
-	// 렌더버퍼 가져오기전 갱신
+	// 리지드바디 클래스에서 생성한 모든 피직스 객체의 Shape를 렌더링
 	m_pScene->simulate(1 / 60.f);
 	m_pScene->fetchResults(true);
 	const PxRenderBuffer* pBuffer = pPhysX_Manager->Get_RenderBuffer();
 
+	m_iNumLineBuffer = pPhysX_Manager->Get_LastLineBufferIndex() - m_iStartLineBufferIndex;
+	m_iNumTriangleBuffer = pPhysX_Manager->Get_LastTriangleBufferIndex() - m_iStartTriangleBufferIndex;
+
 	CVIBuffer_Line::LINEDESC LineDesc;
 	ZEROMEM(&LineDesc);
 
-	LineDesc.iNum = pBuffer->getNbLines() - iNumPrevLineBuffer;
+	LineDesc.iNum = m_iNumLineBuffer;
 	const PxDebugLine* pLines = pBuffer->getLines();
 
-	// 갯수 저장
-	m_iNumLineBuffer = LineDesc.iNum;
-	
 	vector<_float3> Lines;
-	for (_uint i = 0; 
-		i < m_iNumLineBuffer; ++i)
+	for (_uint i = m_iStartLineBufferIndex;
+		i < m_iStartLineBufferIndex + m_iNumLineBuffer; ++i)
 	{
 		Lines.push_back(PhysXConverter::ToXMFLOAT3(pLines[i].pos0));
 		Lines.push_back(PhysXConverter::ToXMFLOAT3(pLines[i].pos1));
@@ -336,14 +323,12 @@ HRESULT CRigidBody::Add_Components()
 	CVIBuffer_Triangle::TRIANGLEDESC TriangleDesc;
 	ZEROMEM(&TriangleDesc);
 
-	TriangleDesc.iNum = pBuffer->getNbTriangles() - iNumPrevTriangleBuffer;
+	TriangleDesc.iNum = m_iNumTriangleBuffer;
 	const PxDebugTriangle* pDebugTriangles = pBuffer->getTriangles();
-	// 삼각형 개수 저장.
-	m_iNumTriangleBuffer = TriangleDesc.iNum;
 
 	vector<_float3> Triangles;
-	for (_uint i = 0; 
-		i < m_iNumTriangleBuffer; ++i)
+	for (_uint i = m_iStartTriangleBufferIndex;
+		i < m_iStartTriangleBufferIndex + m_iNumTriangleBuffer; ++i)
 	{
 		Triangles.push_back(PhysXConverter::ToXMFLOAT3(pDebugTriangles[i].pos0));
 		Triangles.push_back(PhysXConverter::ToXMFLOAT3(pDebugTriangles[i].pos1));
@@ -401,8 +386,8 @@ void CRigidBody::Make_Buffers()
 	const PxDebugLine* pDebugLines = pBuffer->getLines();
 
 	vector<_float3> Lines;
-	for (_uint i = 0; 
-		i < m_iNumLineBuffer; ++i)
+	for (_uint i = m_iStartLineBufferIndex;
+		i < m_iStartLineBufferIndex + m_iNumLineBuffer; ++i)
 	{
 		Lines.push_back(PhysXConverter::ToXMFLOAT3(pDebugLines[i].pos0));
 		Lines.push_back(PhysXConverter::ToXMFLOAT3(pDebugLines[i].pos1));
@@ -419,8 +404,8 @@ void CRigidBody::Make_Buffers()
 	const PxDebugTriangle* pDebugTriangles = pBuffer->getTriangles();
 
 	vector<_float3> Triangles;
-	for (_uint i = 0; 
-		i < m_iNumTriangleBuffer; ++i)
+	for (_uint i = m_iStartTriangleBufferIndex;
+		i < m_iStartTriangleBufferIndex + m_iNumTriangleBuffer; ++i)
 	{
 		Triangles.push_back(PhysXConverter::ToXMFLOAT3(pDebugTriangles[i].pos0));
 		Triangles.push_back(PhysXConverter::ToXMFLOAT3(pDebugTriangles[i].pos1));

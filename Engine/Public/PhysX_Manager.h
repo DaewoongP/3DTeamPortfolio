@@ -10,7 +10,10 @@ class CPhysX_Manager final : public CBase
 	DECLARE_SINGLETON(CPhysX_Manager)
 
 public:
+	// **피직스의 디바이스를 리턴합니다**
+	// create와 관련한 형태의 처리는 거의 이 변수가 관리합니다.
 	PxPhysics* Get_Physics() const { return m_pPhysics; }
+	// **피직스의 씬을 리턴합니다**
 	PxScene* Get_PhysxScene() const { return m_pPhysxScene; }
 	PxControllerManager* Get_ControllerManager() const { return m_pControllerManager; }
 	const PxRenderBuffer* Get_RenderBuffer();
@@ -25,26 +28,36 @@ public:
 	HRESULT Initialize();
 	void Tick(_float fTimeDelta);
 
-private:
-	PxScene* Create_Scene();
-	
-private:
+private: /* 에러 메세지 등 cout 처리 */
 	CPXErrorCallBack			m_PXErrorCallback;
 	CPXAllocator				m_PXAllocator;
 
-private:
+private: /* 피직스 기본 변수들 */
+	// 인스턴스 느낌.
 	PxFoundation*				m_pFoundation = { nullptr };
+	// 피직스의 기본 디바이스 같은 변수
+	// ID3D11Device와 느낌 비슷.
 	PxPhysics*					m_pPhysics = { nullptr };
+	// 씬 생성에 필요한 변수
 	PxDefaultCpuDispatcher*		m_pDefaultCpuDispatcher = { nullptr };
+	// 피직스의 시공간을 처리하는 하나의 씬
+	PxScene*					m_pPhysxScene = { nullptr };
+	// 모든 컨트롤러를 제어하는 매니저
+	PxControllerManager*		m_pControllerManager = { nullptr };
 	
 private:
-	PxScene*					m_pPhysxScene = { nullptr };
-	PxControllerManager*		m_pControllerManager = { nullptr };
-	PxRigidDynamic*				Actor;
+	// 디버그 렌더링에 필요한 인덱스값
+	// 마지막 인덱스를 저장해두고 렌더링 처리함.
+	_uint						m_iLastLineBufferIndex = { 0 };
+	// 디버그 렌더링에 필요한 인덱스값
+	// 마지막 인덱스를 저장해두고 렌더링 처리함.
+	_uint						m_iLastTriangleBufferIndex = { 0 };
+
+	_uint						m_iNumPlaneLineBuffer = { 0 };
+	_uint						m_iNumPlaneTriangleBuffer = { 0 };
 
 private:
-	_uint						m_iLastLineBufferIndex = { 0 };
-	_uint						m_iLastTriangleBufferIndex = { 0 };
+	PxScene* Create_Scene();
 
 public:
 	virtual void Free() override;

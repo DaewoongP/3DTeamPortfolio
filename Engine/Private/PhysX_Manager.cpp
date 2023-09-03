@@ -17,20 +17,21 @@ const PxRenderBuffer* CPhysX_Manager::Get_RenderBuffer()
 
 _uint CPhysX_Manager::Get_LastLineBufferIndex()
 {
-	m_iLastLineBufferIndex = m_pPhysxScene->getRenderBuffer().getNbLines();
+	m_iLastLineBufferIndex = m_pPhysxScene->getRenderBuffer().getNbLines() - m_iNumPlaneLineBuffer;
 
 	return m_iLastLineBufferIndex;
 }
 
 _uint CPhysX_Manager::Get_LastTriangleBufferIndex()
 {
-	m_iLastTriangleBufferIndex = m_pPhysxScene->getRenderBuffer().getNbTriangles();
+	m_iLastTriangleBufferIndex = m_pPhysxScene->getRenderBuffer().getNbTriangles() - m_iNumPlaneTriangleBuffer;
 
 	return m_iLastTriangleBufferIndex;
 }
 
 HRESULT CPhysX_Manager::Initialize()
 {
+	// 파운데이션 생성
 	m_pFoundation = PxCreateFoundation(PX_PHYSICS_VERSION, m_PXAllocator, m_PXErrorCallback);
 
 	if (nullptr == m_pFoundation)
@@ -38,16 +39,17 @@ HRESULT CPhysX_Manager::Initialize()
 		MSG_BOX("PxCreateFoundation failed!");
 		return E_FAIL;
 	}
-
+	// 피직스객체 생성
 	m_pPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_pFoundation, PxTolerancesScale(), true, nullptr);
 	if (nullptr == m_pPhysics)
 	{
 		MSG_BOX("PxCreatePhysics failed!");
 		return E_FAIL;
 	}
-
+	// 씬생성에 필요한 디스패쳐 생성
 	m_pDefaultCpuDispatcher = PxDefaultCpuDispatcherCreate(2);
 
+	// 시공간을 생성할 하나의 씬을 생성
 	m_pPhysxScene = Create_Scene();
 	if (nullptr == m_pPhysxScene)
 	{
@@ -60,7 +62,7 @@ HRESULT CPhysX_Manager::Initialize()
 	m_pPhysxScene->setVisualizationParameter(PxVisualizationParameter::eSCALE, 1.0f);
 	m_pPhysxScene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_SHAPES, 1.f);
 #endif // _DEBUG
-
+	// 컨트롤러 생성에 필요한 매니저 클래스 생성.
 	m_pControllerManager = PxCreateControllerManager(*m_pPhysxScene);
 	if (nullptr == m_pControllerManager)
 	{
@@ -68,19 +70,22 @@ HRESULT CPhysX_Manager::Initialize()
 		return E_FAIL;
 	}
 
+	// 기본적인 터레인을 생성합니다.
 	PxRigidStatic* groundPlane = PxCreatePlane(*m_pPhysics, PxPlane(0, 1, 0, 0), *m_pPhysics->createMaterial(0.5f, 0.5f, 0.5f));
 	m_pPhysxScene->addActor(*groundPlane);
 	m_pPhysxScene->simulate(1 / 60.f);
 	m_pPhysxScene->fetchResults(true);
-	m_iLastLineBufferIndex = m_pPhysxScene->getRenderBuffer().getNbLines();
-	m_iLastTriangleBufferIndex = m_pPhysxScene->getRenderBuffer().getNbTriangles();
-	
+	m_iNumPlaneLineBuffer = m_pPhysxScene->getRenderBuffer().getNbLines();
+	m_iNumPlaneTriangleBuffer = m_pPhysxScene->getRenderBuffer().getNbTriangles();
+
 	return S_OK;
 }
 
 void CPhysX_Manager::Tick(_float fTimeDelta)
 {
-	// fixed time 처리 필요할수도 있음.
+	// 피직스의 처리를 위한 함수들.
+	// 1/60으로 고정해두는 형태가 필요함.
+	// fTimeDelta를 사용할 경우 프레임에 따라 처리가 달라질 수 있음.
 	m_pPhysxScene->simulate(1 / 60.f);
 	m_pPhysxScene->fetchResults(true);
 }
@@ -108,6 +113,7 @@ PxScene* CPhysX_Manager::Create_Scene()
 void CPhysX_Manager::Free()
 {
 	// 순서 주의
+	// 릴리즈 순서는 거의 이걸로 고정합니다.
 	if (nullptr != m_pControllerManager)
 	{
 		m_pControllerManager->release();
