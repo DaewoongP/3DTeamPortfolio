@@ -24,10 +24,9 @@ protected:
 
 public:
 	const _tchar* Get_PrototypeTag() const { return m_pPrototypeTag; }
-	const _tchar* Get_Tag() const { return m_pTag; }
 	CTransform* Get_Transform() const { return m_pTransform; }
 	const OBJ_EVENT   Get_ObjEvent() const { return m_eObjEvent; }
-	void Set_Tag(const _tchar * pTag) { lstrcpy(m_pTag, pTag); }
+	
 	void Set_PrototypeTag(const _tchar * pPrototypeTag) { lstrcpy(m_pPrototypeTag, pPrototypeTag); }
 	void Set_ObjEvent(OBJ_EVENT eObjEvent) { m_eObjEvent = eObjEvent; }
 
@@ -48,7 +47,7 @@ protected:
 
 protected:
 	_tchar			m_pPrototypeTag[MAX_STR] = TEXT("");
-	_tchar			m_pTag[MAX_STR] = TEXT("");
+
 
 public:
 	virtual CGameObject* Clone(void* pArg) PURE;

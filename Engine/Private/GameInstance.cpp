@@ -6,7 +6,6 @@
 #include "Timer_Manager.h"
 #include "PhysX_Manager.h"
 #include "Graphic_Device.h"
-#include "Object_Manager.h"
 #include "Camera_Manager.h"
 #include "RenderTarget_Manager.h"
 
@@ -15,7 +14,6 @@ IMPLEMENT_SINGLETON(CGameInstance)
 CGameInstance::CGameInstance()
 	: m_pGraphic_Device{ CGraphic_Device::GetInstance() }
 	, m_pLevel_Manager{ CLevel_Manager::GetInstance() }
-	, m_pObject_Manager{ CObject_Manager::GetInstance() }
 	, m_pTimer_Manager{ CTimer_Manager::GetInstance() }
 	, m_pComponent_Manager{ CComponent_Manager::GetInstance() }
 	, m_pInput_Device{ CInput_Device::GetInstance() }
@@ -35,7 +33,6 @@ CGameInstance::CGameInstance()
 	Safe_AddRef(m_pPipeLine);
 	Safe_AddRef(m_pGraphic_Device);
 	Safe_AddRef(m_pLevel_Manager);
-	Safe_AddRef(m_pObject_Manager);
 	Safe_AddRef(m_pTimer_Manager);
 	Safe_AddRef(m_pComponent_Manager);
 	Safe_AddRef(m_pInput_Device);
@@ -78,9 +75,6 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInst, _uint iNumLevels, cons
 
 HRESULT CGameInstance::Reserve_Engine(_uint iNumLevels)
 {
-	if (FAILED(m_pObject_Manager->Reserve_Containers(iNumLevels)))
-		return E_FAIL;
-
 	if (FAILED(m_pComponent_Manager->Reserve_Containers(iNumLevels)))
 		return E_FAIL;
 
@@ -90,14 +84,13 @@ HRESULT CGameInstance::Reserve_Engine(_uint iNumLevels)
 void CGameInstance::Tick_Engine(_float fTimeDelta)
 {
 	NULL_CHECK_RETURN_MSG(m_pLevel_Manager, , TEXT("Level_Manager NULL"));
-	NULL_CHECK_RETURN_MSG(m_pObject_Manager, , TEXT("Object_Manager NULL"));
 	NULL_CHECK_RETURN_MSG(m_pPipeLine, , TEXT("PipeLine NULL"));
 	NULL_CHECK_RETURN_MSG(m_pInput_Device, , TEXT("Input_Device NULL"));
 	NULL_CHECK_RETURN_MSG(m_pCollision_Manager, , TEXT("Collsion_Manager NULL"));
 
 	m_pInput_Device->Tick();
 
-	m_pObject_Manager->Tick(fTimeDelta);
+	m_pComponent_Manager->Tick(fTimeDelta);
 
 	m_pPhysX_Manager->Tick(fTimeDelta);
 
@@ -107,7 +100,7 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 
 	m_pFrustum->Tick();
 
-	m_pObject_Manager->Late_Tick(fTimeDelta);
+	m_pComponent_Manager->Late_Tick(fTimeDelta);
 
 	m_pCamera_Manager->Late_Tick(fTimeDelta);
 
@@ -118,10 +111,8 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 
 void CGameInstance::Clear_LevelResources(_uint iLevelIndex)
 {
-	NULL_CHECK_RETURN_MSG(m_pObject_Manager, , TEXT("Object_Manager NULL"));
 	NULL_CHECK_RETURN_MSG(m_pComponent_Manager, , TEXT("Component_Manager NULL"));
 
-	m_pObject_Manager->Clear_LevelResources(iLevelIndex);
 	m_pComponent_Manager->Clear_LevelResources(iLevelIndex);
 }
 
@@ -202,46 +193,18 @@ HRESULT CGameInstance::Render_Level()
 	return m_pLevel_Manager->Render();
 }
 
-HRESULT CGameInstance::Add_Prototype_GameObject(const _tchar* pPrototypeTag, CGameObject* pPrototype)
-{
-	NULL_CHECK_RETURN_MSG(m_pObject_Manager, E_FAIL, TEXT("Object_Manager NULL"));
-	
-	return m_pObject_Manager->Add_Prototype(pPrototypeTag, pPrototype);
-}
-
-HRESULT CGameInstance::Add_GameObject(_uint iLevelIndex, const _tchar* pPrototypeTag, const _tchar* pLayerTag, const _tchar* pGameObjectTag, void* pArg)
-{
-	NULL_CHECK_RETURN_MSG(m_pObject_Manager, E_FAIL, TEXT("Object_Manager NULL"));
-
-	return m_pObject_Manager->Add_GameObject(iLevelIndex, pPrototypeTag, pLayerTag, pGameObjectTag, pArg);
-}
-
-CLayer* CGameInstance::Find_Layer(_uint iLevelIndex, const _tchar* pLayerTag)
-{
-	NULL_CHECK_RETURN_MSG(m_pObject_Manager, nullptr, TEXT("Object_Manager NULL"));
-
-	return m_pObject_Manager->Find_Layer(iLevelIndex, pLayerTag);
-}
-
-CGameObject* CGameInstance::Find_GameObject_In_Layer(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pGameObjectTag)
-{
-	NULL_CHECK_RETURN_MSG(m_pObject_Manager, nullptr, TEXT("Object_Manager NULL"));
-
-	return m_pObject_Manager->Find_GameObject_In_Layer(iLevelIndex, pLayerTag, pGameObjectTag);
-}
-
-CGameObject* CGameInstance::Clone_GameObject(const _tchar* pPrototypeTag, void* pArg)
-{
-	NULL_CHECK_RETURN_MSG(m_pObject_Manager, nullptr, TEXT("Object_Manager NULL"));
-
-	return m_pObject_Manager->Clone_GameObject(pPrototypeTag, pArg);
-}
-
-HRESULT CGameInstance::Add_Prototype_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, CComponent* pPrototype)
+HRESULT CGameInstance::Add_Prototype(_uint iLevelIndex, const _tchar* pPrototypeTag, CComponent* pPrototype)
 {
 	NULL_CHECK_RETURN_MSG(m_pComponent_Manager, E_FAIL, TEXT("Component_Manager NULL"));
 
 	return m_pComponent_Manager->Add_Prototype(iLevelIndex, pPrototypeTag, pPrototype);
+}
+
+HRESULT CGameInstance::Add_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, const _tchar* pLayerTag, const _tchar* pComponentTag, void* pArg)
+{
+	NULL_CHECK_RETURN_MSG(m_pComponent_Manager, E_FAIL, TEXT("Component_Manager NULL"));
+
+	return m_pComponent_Manager->Add_Component(iLevelIndex, pPrototypeTag, pLayerTag, pComponentTag, pArg);
 }
 
 CComponent* CGameInstance::Clone_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, void* pArg)
@@ -251,11 +214,18 @@ CComponent* CGameInstance::Clone_Component(_uint iLevelIndex, const _tchar* pPro
 	return m_pComponent_Manager->Clone_Component(iLevelIndex, pPrototypeTag, pArg);
 }
 
-HRESULT CGameInstance::Delete_Prototype(_uint iLevelIndex, const _tchar* pPrototypeTag)
+CComponent* CGameInstance::Find_Component_In_Layer(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pComponentTag)
 {
-	NULL_CHECK_RETURN_MSG(m_pComponent_Manager, E_FAIL, TEXT("Component_Manager NULL"));
+	NULL_CHECK_RETURN_MSG(m_pComponent_Manager, nullptr, TEXT("Component_Manager NULL"));
 
-	return m_pComponent_Manager->Delete_Prototype(iLevelIndex, pPrototypeTag);
+	return m_pComponent_Manager->Find_Component_In_Layer(iLevelIndex, pLayerTag, pComponentTag);
+}
+
+CLayer* CGameInstance::Find_Layer(_uint iLevelIndex, const _tchar* pLayerTag)
+{
+	NULL_CHECK_RETURN_MSG(m_pComponent_Manager, nullptr, TEXT("Component_Manager NULL"));
+
+	return m_pComponent_Manager->Find_Layer(iLevelIndex, pLayerTag);
 }
 
 _bool	CGameInstance::Get_DIKeyState(_ubyte ubyKeyID, CInput_Device::KEYSTATE eState)
@@ -550,8 +520,6 @@ void CGameInstance::Release_Engine()
 
 	CPipeLine::GetInstance()->DestroyInstance();
 
-	CObject_Manager::GetInstance()->DestroyInstance();
-
 	CComponent_Manager::GetInstance()->DestroyInstance();
 
 	CCamera_Manager::GetInstance()->DestroyInstance();
@@ -595,7 +563,6 @@ void CGameInstance::Free()
 	Safe_Release(m_pInput_Device);
 	Safe_Release(m_pComponent_Manager);
 	Safe_Release(m_pTimer_Manager);
-	Safe_Release(m_pObject_Manager);
 	Safe_Release(m_pCamera_Manager);
 	Safe_Release(m_pLevel_Manager);
 	Safe_Release(m_pGraphic_Device);
