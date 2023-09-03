@@ -92,8 +92,8 @@ public: /* For. Frustum */
 
 public: /* For.Light_Manager */
 	const CLight::LIGHTDESC* Get_Light(_uint iIndex);
-	const _float4x4 Get_LightView();
-	const _float4x4 Get_LightProj();
+	const _float4x4* Get_LightView();
+	const _float4x4* Get_LightProj();
 
 
 	void Set_Light(_uint iIndex, CLight::LIGHTDESC LightDesc);

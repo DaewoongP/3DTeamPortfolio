@@ -363,26 +363,26 @@ const CLight::LIGHTDESC* CGameInstance::Get_Light(_uint iIndex)
 	return m_pLight_Manager->Get_Light(iIndex);
 }
 
-const _float4x4 CGameInstance::Get_LightView()
+const _float4x4* CGameInstance::Get_LightView()
 {
 	//NULL_CHECK_RETURN_MSG(m_pLight_Manager, nullptr, TEXT("Light NULL"));
 
 	if(nullptr==m_pLight_Manager)
 	{
 		MSG_BOX("LightNULL");
-		return _float4x4();
+		return nullptr;
 	}
 
 	return m_pLight_Manager->Get_LightView();
 }
 
-const _float4x4 CGameInstance::Get_LightProj()
+const _float4x4* CGameInstance::Get_LightProj()
 {
 	//NULL_CHECK_RETURN_MSG(m_pLight_Manager, nullptr, TEXT("Light NULL"));
 	if (nullptr == m_pLight_Manager)
 	{
 		MSG_BOX("LightNULL");
-		return _float4x4();
+		return nullptr;
 	}
 	return m_pLight_Manager->Get_LightProj();
 }

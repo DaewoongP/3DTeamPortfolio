@@ -20,8 +20,8 @@ private:
 public:
 	const CLight::LIGHTDESC* Get_Light(_uint iIndex);
 	const CLight::LIGHTDESC* Get_Light_Name(string Name);
-	_float4x4 Get_LightProj() { return m_ProjLight; }
-	_float4x4 Get_LightView() { return m_ViewLight; }
+	_float4x4* Get_LightProj() { return &m_ProjLight; }
+	_float4x4* Get_LightView() { return &m_ViewLight; }
 
 	void Set_Light(_uint iIndex, CLight::LIGHTDESC LightDesc);
 	void Set_LightProj(_float4x4 ProjLight) { m_ProjLight = ProjLight; }
