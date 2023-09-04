@@ -60,10 +60,10 @@ HRESULT CVIBuffer_Triangle::Initialize(void* pArg)
 	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
 
 	m_BufferDesc.ByteWidth = { m_iIndexStride * m_iNumIndices };
-	m_BufferDesc.Usage = { D3D11_USAGE_DYNAMIC };
+	m_BufferDesc.Usage = { D3D11_USAGE_DEFAULT };
 	m_BufferDesc.BindFlags = { D3D11_BIND_INDEX_BUFFER };
 	m_BufferDesc.StructureByteStride = { 0 };
-	m_BufferDesc.CPUAccessFlags = { D3D11_CPU_ACCESS_WRITE };
+	m_BufferDesc.CPUAccessFlags = { 0 };
 	m_BufferDesc.MiscFlags = { 0 };
 
 	_ulong* pIndices = new _ulong[m_iNumIndices];
@@ -96,17 +96,6 @@ void CVIBuffer_Triangle::Tick(TRIANGLEDESC TriangleDesc)
 	memcpy(pVertices, TriangleDesc.pTriangles, sizeof(VTXPOS) * m_iNumVertices);
 
 	m_pContext->Unmap(m_pVB, 0);
-
-	/*m_pContext->Map(m_pIB, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &MappedSubResource);
-
-	_ulong* pIndices = static_cast<_ulong*>(MappedSubResource.pData);
-
-	for (_ulong i = 0; i < m_iNumIndices; ++i)
-	{
-		pIndices[i] = i;
-	}
-
-	m_pContext->Unmap(m_pIB, 0);*/
 }
 
 CVIBuffer_Triangle* CVIBuffer_Triangle::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

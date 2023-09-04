@@ -24,6 +24,7 @@ public:
 
 protected:
 	explicit CCamera() = default;
+	explicit CCamera(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual ~CCamera() = default;
 
 public:
@@ -39,8 +40,11 @@ protected:
 private:
 	CAMERADESC m_CameraDesc;
 
+	ID3D11Device* m_pDevice = { nullptr };
+	ID3D11DeviceContext* m_pContext = { nullptr };
+
 public:
-	static CCamera* Create(const CAMERADESC& CameraDesc);
+	static CCamera* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const CAMERADESC& CameraDesc);
 	virtual void Free() override;
 };
 

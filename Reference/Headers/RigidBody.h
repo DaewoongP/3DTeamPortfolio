@@ -1,10 +1,21 @@
 #pragma once
-#include "Component.h"
+/* =============================================== */
+// 
+//	Á¤ : ¹Ú´ë¿õ
+//	ºÎ :
+//
+/* =============================================== */
+#include "Composite.h"
 
 BEGIN(Engine)
-class CColliderCom;
 
-class ENGINE_DLL CRigidBody final : public CComponent
+#ifdef _DEBUG
+class CShader;
+class CVIBuffer_Line;
+class CVIBuffer_Triangle;
+#endif // _DEBUG
+
+class ENGINE_DLL CRigidBody final : public CComposite
 {
 public:
 	enum RigidBodyConstraint
@@ -21,35 +32,45 @@ public:
 		AllTrans = TransX | TransY | TransZ,
 		All = AllRot | AllTrans
 	};
+
 private:
 	explicit CRigidBody(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CRigidBody(const CRigidBody& rhs);
 	virtual ~CRigidBody() = default;
 
 public:
+	const PxMaterial* Get_Material() const { return m_pMaterial; }
 	PxRigidBody* Get_RigidBodyActor() const;
 	_float3 Get_Position() const;
 	_float4 Get_Rotation() const;
+	void Set_Position(_float3 vPosition);
+	void Set_Rotation(_float4 vRotation);
+	void Set_Material(_float3 vMaterial);
 	void Set_Constraint(RigidBodyConstraint eConstraintFlag, _bool _isEnable);
 	void Set_Kinematic(_bool _isKinematic);
 	void Set_Density(_float _fDensity) const;
-	void Set_CollisionGroup(COLLISIONDESC::COLTYPE eColType);
-	void Set_CollisionIgnoreGroups(COLLISIONDESC::COLTYPE eIgnoreColType);
+
 	_bool Is_Static()  const { return m_isStatic; }
 	_bool Is_Dynamic()  const { return !m_isStatic; }
 	_bool Is_Kinematic() const { return m_isKinematic; }
 
 public:
 	virtual HRESULT Initialize(void* pArg) override;
-	virtual void Tick(_float fTimeDelta) override;
+	virtual void Late_Tick(_float fTimeDelta) override;
+
+#ifdef _DEBUG
+	virtual HRESULT Render() override;
+#endif // _DEBUG
 
 public:
 	HRESULT Create_Actor();
-	void Add_Collider(CColliderCom* collider);
+	HRESULT SetUp_Actor(_float3 _vInitPos, 	PxGeometry _ShapeType, _bool _isTrigger, 
+		RigidBodyConstraint eConstraintFlag, _float3 _vResistance, PxFilterData FilterData);
+	//void Add_Collider(CColliderCom* collider);
 
 	void Put_To_Sleep() const;
 	void Add_Force(const _float3 & _vForce, PxForceMode::Enum _eMode = PxForceMode::eFORCE, _bool _bAutowake = true) const;
-	void Add_Torque(const PxVec3 & _vTorque, PxForceMode::Enum _eMode = PxForceMode::eFORCE, _bool _bAutowake = true) const;
+	void Add_Torque(const _float3& _vTorque, PxForceMode::Enum _eMode = PxForceMode::eFORCE, _bool _bAutowake = true) const;
 	void Clear_Force(PxForceMode::Enum _eMode = PxForceMode::eFORCE) const;
 	void Clear_Torque(PxForceMode::Enum _eMode = PxForceMode::eFORCE) const;
 
@@ -58,16 +79,37 @@ public:
 
 private:
 	PxRigidDynamic*			m_pActor = { nullptr };
-	PxD6Joint*				m_pConstraintJoint = { nullptr };
-	PxFilterData			m_CollisionGroups;
-	_uint					m_InitialConstraints = { 0 };
-
-private:
-	vector<CColliderCom*>	m_Colliders;
+	PxMaterial*				m_pMaterial = { nullptr };
+	PxScene*				m_pScene = { nullptr };
 
 private:
 	_bool					m_isStatic = { false };
 	_bool					m_isKinematic = { false };
+
+private:
+	_float					m_fAirDrag = { 0.f };
+
+#ifdef _DEBUG
+private:
+	CShader*				m_pShader = { nullptr };
+	CVIBuffer_Line*			m_pLine = { nullptr };
+	CVIBuffer_Triangle*		m_pTriangle = { nullptr };
+
+private:
+	_uint					m_iNumLineBuffer = { 0 };
+	_uint					m_iStartLineBufferIndex = { 0 };
+
+	_uint					m_iNumTriangleBuffer = { 0 };
+	_uint					m_iStartTriangleBufferIndex = { 0 };
+#endif // _DEBUG
+
+
+#ifdef _DEBUG
+private:
+	HRESULT Add_Components();
+	HRESULT SetUp_ShaderResources();
+	void Make_Buffers();
+#endif // _DEBUG
 
 public:
 	static CRigidBody* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);

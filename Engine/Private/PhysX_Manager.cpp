@@ -5,25 +5,59 @@
 
 IMPLEMENT_SINGLETON(CPhysX_Manager)
 
+#ifdef _DEBUG
+const PxRenderBuffer* CPhysX_Manager::Get_RenderBuffer()
+{
+	if (nullptr == m_pPhysxScene)
+		return nullptr;
+
+	const PxRenderBuffer* RenderBuf = &m_pPhysxScene->getRenderBuffer();
+
+	return RenderBuf;
+}
+
+_uint CPhysX_Manager::Get_LastLineBufferIndex()
+{
+	return m_iLastLineBufferIndex;
+}
+
+_uint CPhysX_Manager::Get_LastTriangleBufferIndex()
+{
+	return m_iLastTriangleBufferIndex;
+}
+
+void CPhysX_Manager::Add_LastLineBufferIndex(_uint iNumLines)
+{
+	m_iLastLineBufferIndex += iNumLines;
+}
+
+void CPhysX_Manager::Add_LastTriangleBufferIndex(_uint iNumTriangles)
+{
+	m_iLastTriangleBufferIndex += iNumTriangles;
+}
+#endif // _DEBUG
+
 HRESULT CPhysX_Manager::Initialize()
 {
-	m_pFoundation = PxCreateFoundation(PX_PHYSICS_VERSION, m_PXAllocator, m_PXErrorCallback);
+	// 파운데이션 생성
+	m_pFoundation = PxCreateFoundation(PX_PHYSICS_VERSION, m_PXAllocator, m_PXErrorCallBack);
 
 	if (nullptr == m_pFoundation)
 	{
 		MSG_BOX("PxCreateFoundation failed!");
 		return E_FAIL;
 	}
-
+	// 피직스객체 생성
 	m_pPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_pFoundation, PxTolerancesScale(), true, nullptr);
 	if (nullptr == m_pPhysics)
 	{
 		MSG_BOX("PxCreatePhysics failed!");
 		return E_FAIL;
 	}
-
+	// 씬생성에 필요한 디스패쳐 생성
 	m_pDefaultCpuDispatcher = PxDefaultCpuDispatcherCreate(2);
 
+	// 시공간을 생성할 하나의 씬을 생성
 	m_pPhysxScene = Create_Scene();
 	if (nullptr == m_pPhysxScene)
 	{
@@ -37,6 +71,11 @@ HRESULT CPhysX_Manager::Initialize()
 	m_pPhysxScene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_SHAPES, 1.f);
 #endif // _DEBUG
 
+	// 충돌처리 이벤트 활성화
+	m_pPXEventCallBack = CPXEventCallBack::Create();
+	m_pPhysxScene->setSimulationEventCallback(m_pPXEventCallBack);
+
+	// 컨트롤러 생성에 필요한 매니저 클래스 생성.
 	m_pControllerManager = PxCreateControllerManager(*m_pPhysxScene);
 	if (nullptr == m_pControllerManager)
 	{
@@ -44,36 +83,22 @@ HRESULT CPhysX_Manager::Initialize()
 		return E_FAIL;
 	}
 
-	PxRigidStatic* groundPlane = PxCreatePlane(*m_pPhysics, PxPlane(0, 1, 0, 0), *m_pPhysics->createMaterial(0.5f, 0.5f, 0.5f));
-	m_pPhysxScene->addActor(*groundPlane);
-
-	PxShape* shape = m_pPhysics->createShape(PxCapsuleGeometry(1.f, 1.f), *m_pPhysics->createMaterial(0.f, 0.f, 0.f), false, PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSIMULATION_SHAPE);
-
-	PxVec3 tr = PxVec3(5.f, 50.f, 5.f);
-	PxTransform localTm(tr);
-	Actor = m_pPhysics->createRigidDynamic(localTm);
-	shape->setLocalPose(PxTransformFromSegment(PxVec3(0.f, 1.f, 0.f), PxVec3(0.f, -1.f, 0.f)));
-
-	Actor->attachShape(*shape);
-
-	PxRigidBodyExt::updateMassAndInertia(*Actor, 10.0f);
-	m_pPhysxScene->addActor(*Actor);
-	shape->release();
-	
 	return S_OK;
 }
 
 void CPhysX_Manager::Tick(_float fTimeDelta)
 {
-	// fixed time 처리 필요할수도 있음.
+	// 피직스의 처리를 위한 함수들.
+	// 1/60으로 고정해두는 형태가 필요함.
+	// fTimeDelta를 사용할 경우 프레임에 따라 처리가 달라질 수 있음.
 	m_pPhysxScene->simulate(1 / 60.f);
 	m_pPhysxScene->fetchResults(true);
-	
 }
 
-HRESULT CPhysX_Manager::Render()
+void CPhysX_Manager::Clear_BufferIndex()
 {
-	return S_OK;
+	m_iLastLineBufferIndex = 0;
+	m_iLastTriangleBufferIndex = 0;
 }
 
 PxScene* CPhysX_Manager::Create_Scene()
@@ -82,7 +107,7 @@ PxScene* CPhysX_Manager::Create_Scene()
 	SceneDesc.setToDefault(m_pPhysics->getTolerancesScale());
 	SceneDesc.gravity = PxVec3(0.0f, -9.81f, 0.0f);
 	SceneDesc.cpuDispatcher = m_pDefaultCpuDispatcher;
-	SceneDesc.filterShader = PxDefaultSimulationFilterShader;
+	SceneDesc.filterShader = CollisionFilterShader;
 	SceneDesc.userData = nullptr; // 데이터를 여기에 넣어두는것도 가능.
 
 	PxScene* pScene = m_pPhysics->createScene(SceneDesc);
@@ -99,9 +124,16 @@ PxScene* CPhysX_Manager::Create_Scene()
 void CPhysX_Manager::Free()
 {
 	// 순서 주의
+	// 릴리즈 순서는 거의 이걸로 고정합니다.
 	if (nullptr != m_pControllerManager)
 	{
 		m_pControllerManager->release();
+	}
+
+	if (nullptr != m_pPXEventCallBack)
+	{
+		m_pPXEventCallBack->Release();
+		m_pPXEventCallBack = nullptr;
 	}
 
 	if (nullptr != m_pPhysxScene)
@@ -122,5 +154,5 @@ void CPhysX_Manager::Free()
 	if (nullptr != m_pFoundation)
 	{
 		m_pFoundation->release();
-	}
+	}	
 }

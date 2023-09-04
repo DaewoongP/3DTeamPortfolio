@@ -34,7 +34,8 @@ void CDummy::Tick(_float fTimeDelta)
 {
 	if (nullptr != m_pModel)
 	{
-		m_pModel->Play_Animation(fTimeDelta,m_pTransform);
+		m_pModel->Play_Animation(fTimeDelta,CModel::UPPERBODY,m_pTransform);
+		m_pModel->Play_Animation(fTimeDelta, CModel::UNDERBODY, m_pTransform);
 	}
 
 	__super::Tick(fTimeDelta);
@@ -46,6 +47,7 @@ void CDummy::Late_Tick(_float fTimeDelta)
 
 	if (nullptr != m_pRenderer)
 	{
+		//
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 	}
 }
@@ -71,6 +73,42 @@ HRESULT CDummy::Render()
 		m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", i, DIFFUSE);
 
 		m_pShader->Begin("AnimMesh");
+
+		m_pModel->Render(i);
+	}
+	return S_OK;
+}
+
+HRESULT CDummy::Render_Depth()
+{
+	if (FAILED(__super::Render_Depth()))
+		return E_FAIL;
+
+	if (nullptr == m_pShader ||
+		nullptr == m_pModel)
+		return S_OK;
+
+	/*if (FAILED(SetUp_ShaderResources()))
+		return E_FAIL;*/
+
+	BEGININSTANCE
+	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
+		return E_FAIL;
+	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_LightView())))
+		return E_FAIL;
+	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix",pGameInstance->Get_LightProj())))
+		return E_FAIL;
+	if (FAILED(m_pShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
+		return E_FAIL;
+	ENDINSTANCE
+
+	_uint		iNumMeshes = m_pModel->Get_NumMeshes();
+	for (_uint i = 0; i < iNumMeshes; ++i)
+	{
+		m_pModel->Bind_BoneMatrices(m_pShader, "g_BoneMatrices", i);
+		m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", i, DIFFUSE);
+
+		m_pShader->Begin("Shadow");
 
 		m_pModel->Render(i);
 	}

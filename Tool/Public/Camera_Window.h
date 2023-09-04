@@ -4,6 +4,8 @@
 
 BEGIN(Tool)
 
+class CMain_Camera;
+
 class CCamera_Window final : public CImWindow
 {
 private:
@@ -26,10 +28,13 @@ private:
 	CCutScene_Camera_Tool* m_pCutSceneCameraTool;
 
 private:
-
+	CMain_Camera* m_pMainCamera = { nullptr };
 
 
 private:
+	void Camera_Speed();
+
+
 public:
 	static CCamera_Window* Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, ImVec2 _vWindowPos, ImVec2 _vWindowSize);
 	virtual void Free(void) override;

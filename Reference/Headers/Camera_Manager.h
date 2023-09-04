@@ -50,12 +50,15 @@ public:
 	//컷씬 재생을 위한 큐 추가
 	HRESULT Add_CutScene(const _tchar* _CutSceneTag);
 
+	//컷씬 한컷씩 추가
+	HRESULT Add_CutScene(CUTSCENECAMERADESC & _CutSceneCameraDesc);
+
 	//오프셋 카메라 데이터를 담는다.
 	HRESULT Read_OffSetCamera(const _tchar* _OffSetTag, const _tchar* _OffSetPath);
 	
 	//오프셋 재생을 위한 큐 추가
 	HRESULT Add_OffSetCamera(const _tchar* _OffSetTag);
-	
+
 	//for.protected
 
 protected:

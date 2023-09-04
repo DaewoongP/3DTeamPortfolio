@@ -80,6 +80,16 @@ HRESULT CAnimation::Add_NotifyFrame(KEYFRAME::KEYFRAMETYPE eFrameType, wchar_t* 
 	return m_pNotify->AddFrame(eFrameType, wszNotifyTag, fActionTime, fSpeed);
 }
 
+void CAnimation::Update_KeyFrame_By_Time()
+{
+	_uint iChannelIndex = { 0 };
+	for (auto pChannel : m_Channels)
+	{
+		m_ChannelCurrentKeyFrames[iChannelIndex] = 0;
+		++iChannelIndex;
+	}
+}
+
 HRESULT CAnimation::Initialize(Engine::ANIMATION Animation, const CModel::BONES& Bones)
 {
 	m_isLoop = true;
@@ -132,6 +142,7 @@ _bool CAnimation::Invalidate_AccTime(_float fTimeDelta)
 		return isEnd;
 	
 	m_fTimeAcc += m_fTickPerSecond * fTimeDelta;
+	
 	if (m_fTimeAcc >= m_fDuration)
 	{
 		if (true == m_isLoop)
@@ -139,31 +150,71 @@ _bool CAnimation::Invalidate_AccTime(_float fTimeDelta)
 			isEnd = true;
 			m_fTimeAcc = 0.f;
 		}
+		else 
+		{
+			m_fTimeAcc = m_fDuration;
+		}
 	}
 	return isEnd;
 }
 
-void CAnimation::Invalidate_TransformationMatrix(CModel::BONES& Bones, _float fTimeDelta)
+void CAnimation::Invalidate_TransformationMatrix(CModel::BONES& Bones, _float fTimeDelta, vector<_uint>* boneVec)
 {
 	_uint		iChannelIndex = 0;
 	for (auto& pChannel : m_Channels)
 	{
 		if (nullptr == pChannel)
 			return;
+
+		if (boneVec != nullptr)
+		{
+			_int iFindIndex = pChannel->Get_BoneIndex();
+			auto iter = find_if((*boneVec).begin(), (*boneVec).end(), [&](auto data) {
+				if (data == iFindIndex)
+					return true;
+				return false;
+				});
+
+			if (iter == (*boneVec).end())
+			{
+				continue;
+			}
+			else {
+				int a = 0;
+			}
+		}
 
 		pChannel->Invalidate_TransformationMatrix(Bones, m_fTimeAcc, &m_ChannelCurrentKeyFrames[iChannelIndex++]);
 	}
 }
 
-void CAnimation::Invalidate_TransformationMatrix_Lerp(CModel::BONES& Bones, _float fTimeDelta, _float LerpTimeAcc, _uint iRootIndex)
+void CAnimation::Invalidate_TransformationMatrix_Lerp(CModel::BONES& Bones, _float fTimeDelta, _float LerpTimeAcc, _uint iRootIndex, vector<_uint>* boneVec)
 {
 	_uint		iChannelIndex = 0;
 	for (auto& pChannel : m_Channels)
 	{
 		if (nullptr == pChannel)
 			return;
-		if (pChannel->Get_BoneIndex() < iRootIndex)
+
+		if (boneVec != nullptr)
+		{
+			_int iFindIndex = pChannel->Get_BoneIndex();
+			auto iter = find_if((*boneVec).begin(), (*boneVec).end(), [&](auto data) {
+				if (data == iFindIndex)
+					return true;
+				return false;
+				});
+
+			if (iter == (*boneVec).end())
+			{
+				continue;
+			}
+		}
+
+		if (pChannel->Get_BoneIndex() < iRootIndex+1 && m_isRootAnim)
+		{
 			pChannel->Invalidate_TransformationMatrix(Bones, m_fTimeAcc, &m_ChannelCurrentKeyFrames[iChannelIndex++]);
+		}
 		else
 			pChannel->Invalidate_TransformationMatrix_Lerp(Bones, m_fTimeAcc, &m_ChannelCurrentKeyFrames[iChannelIndex++], LerpTimeAcc);
 	}
@@ -171,8 +222,6 @@ void CAnimation::Invalidate_TransformationMatrix_Lerp(CModel::BONES& Bones, _flo
 
 void CAnimation::Invalidate_Frame(_float fTimeDelta)
 {
-	//첫번째 채널에만 사운드용 데이터를 추가해줄거임.
-	_uint		iChannelIndex = 0;
 	if (m_pNotify != nullptr)
 	{
 		m_pNotify->Invalidate_Frame(m_fTimeAcc, &m_iNotifyCurrentKeyFrame, &m_fTickPerSecond);

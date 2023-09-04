@@ -94,8 +94,13 @@ public: /* For. Frustum */
 
 public: /* For.Light_Manager */
 	const CLight::LIGHTDESC* Get_Light(_uint iIndex);
+	const _float4x4* Get_LightView();
+	const _float4x4* Get_LightProj();
+
+
 	void Set_Light(_uint iIndex, CLight::LIGHTDESC LightDesc);
-	class CLight* Add_Lights(const CLight::LIGHTDESC & LightDesc);
+	class CLight* Add_Lights(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const CLight::LIGHTDESC & LightDesc);
+	HRESULT Delete_Lights(_uint iIndex,const _char* Name);
 	HRESULT Clear_Lights();
 
 public: /* For.Sound_Manager */
@@ -140,6 +145,8 @@ public:	/* For.Camera_Manager */
 	HRESULT Read_CutSceneCamera(const _tchar* _CutSceneTag, const _tchar* _CutScenePath);
 	//컷씬 재생을 위한 큐 추가
 	HRESULT Add_CutScene(const _tchar* _CutSceneTag);
+	//컷씬 재생을 위한 큐 추가
+	HRESULT Add_CutScene(CUTSCENECAMERADESC& _CutSceneCameraDesc);
 	//오프셋 카메라 데이터를 담는다.
 	HRESULT Read_OffSetCamera(const _tchar* _OffSetTag, const _tchar* _OffSetPath);
 	//오프셋 재생을 위한 큐 추가
