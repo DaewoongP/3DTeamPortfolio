@@ -15,9 +15,6 @@ CParticleSystem::CParticleSystem(const CParticleSystem& _rhs)
 	, m_RendererModuleDesc(_rhs.m_RendererModuleDesc)
 	, m_pTexture(static_cast<CTexture*>(_rhs.m_pTexture->Clone(nullptr)))
 	, m_ParticleMatrices(_rhs.m_ParticleMatrices)
-	, m_iActivatedParticleNum(_rhs.m_iActivatedParticleNum)
-	, m_fParticleSystemAge(_rhs.m_fParticleSystemAge)
-	, m_isEnable(_rhs.m_isEnable)
 	, m_StopAction(_rhs.m_StopAction)
 {
 	for (int i = 0; i < STATE_END; ++i)
@@ -32,7 +29,7 @@ HRESULT CParticleSystem::Initialize_Prototype(const _tchar* _pDirectoryPath)
 	
 	// 메인모듈 생성
 	Resize_Container(m_MainModuleDesc.iMaxParticles);
-	Reset_AllParticles();
+	//Reset_AllParticles();
 	Play_On_Awake();
 
 	m_pTexture = CTexture::Create(m_pDevice, m_pContext, m_RendererModuleDesc.wstrMaterial.data());
@@ -42,38 +39,40 @@ HRESULT CParticleSystem::Initialize_Prototype(const _tchar* _pDirectoryPath)
 
 HRESULT CParticleSystem::Initialize(void* _pArg)
 {
+
 	return S_OK;
 }
-void CParticleSystem::Tick(_float _fTimeDelta, CVIBuffer_Rect_Color_Instance* pBuffer)
+void CParticleSystem::Tick(_float _fTimeDelta, CVIBuffer_Rect_Color_Instance* pBuffer, CTransform* pTransform)
 {
 	if (false == IsEnable())
 		return;
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
+	m_EmissionModuleDesc.vCurPos = pTransform->Get_Position();
 	m_ParticleMatrices.clear();
-	TimeDelta_Calculate(_fTimeDelta);
+	// 재생속도에 따른 TimeDelta 연산
+	Simulation_Speed(_fTimeDelta);
 
-	// 객체 수명처리
-	m_fParticleSystemAge += _fTimeDelta;
+	// 모듈에 필요한 TimeDelta 처리.
+	Sum_TimeDelta(_fTimeDelta);
+	
+	// 객체 수명 처리
 	Action_By_Duration();
 
-	// 파티클 수명 처리.
-	for (auto& Particle : m_Particles[ALIVE])
-		Particle.fAge += _fTimeDelta;
-	for (auto& Particle : m_Particles[WAIT])
-		Particle.fAge += _fTimeDelta;
-	Action_By_LifteTime();
-	
-	// MAX_PARTICLE_NUM 만들고(상수 보이면 수정하기), 이미션 모듈 작업중.
-	m_EmissionModuleDesc.fRateOverTimeAcc += _fTimeDelta;
-	Wating_One_Particle();
-	if (m_EmissionModuleDesc.fRateOverTimeAcc >= 1.f)
-	{
-		m_EmissionModuleDesc.fRateOverTimeAcc = 0.f;
-	}
+	// 파티클 나이 처리
+	Action_By_Age();
 
-	_float4 vCamPosition = *pGameInstance->Get_CamPosition();
+	// 파티클 초당 생성
+	Action_By_RateOverTime();
+
+	// 파티클 이동 거리에 따른 생성
+	Action_By_Distance();
+
+	// Burst옵션에 따른 파티클 생성
+	Action_By_Bursts();
+
+	_float4 vCamPosition = XMVector3TransformCoord(*pGameInstance->Get_CamPosition(), pTransform->Get_WorldMatrix_Inverse());
 	_float3 vCamUp = *pGameInstance->Get_CamUp();
 
 	// 파티클 연산 시작
@@ -94,8 +93,6 @@ void CParticleSystem::Tick(_float _fTimeDelta, CVIBuffer_Rect_Color_Instance* pB
 
 		// 위치 갱신
 		iter->WorldMatrix.Translation(vPos.xyz());
-
-		iter->vScale = m_MainModuleDesc.f3DSizeXYZ;
 		
 		// SRT 연산
 		_float4x4 ScaleMatrix = _float4x4::MatrixScale(iter->vScale);
@@ -112,7 +109,7 @@ void CParticleSystem::Tick(_float _fTimeDelta, CVIBuffer_Rect_Color_Instance* pB
 
 	pBuffer->Set_DrawNum(_uint(m_Particles[ALIVE].size()));
 	pBuffer->Tick(m_ParticleMatrices.data(), pBuffer->Get_DrawNum());
-	
+	m_EmissionModuleDesc.vPrevPos = m_EmissionModuleDesc.vCurPos;
 	Safe_Release(pGameInstance);
 }
 
@@ -120,7 +117,7 @@ HRESULT CParticleSystem::Render()
 {
 	return S_OK;
 }
-void CParticleSystem::Play_Particle()
+void CParticleSystem::Play()
 {
 	Enable();
 	
@@ -129,7 +126,7 @@ void CParticleSystem::Play_Particle()
 		Reset_AllParticles();
 	}
 }
-void CParticleSystem::Stop_Particle()
+void CParticleSystem::Stop()
 {
 	Disable();
 }
@@ -142,11 +139,11 @@ HRESULT CParticleSystem::Bind_ParticleValue(CShader* pShader)
 }
 void CParticleSystem::Enable()
 {
-	m_isEnable = true;
+	m_MainModuleDesc.isEnable = true;
 }
 void CParticleSystem::Disable()
 {
-	m_isEnable = false;
+	m_MainModuleDesc.isEnable = false;
 }
 void CParticleSystem::Save(const _tchar* _pDirectoryPath)
 {
@@ -156,19 +153,19 @@ void CParticleSystem::Load(const _tchar* _pDirectoryPath)
 {
 	m_MainModuleDesc.Load(_pDirectoryPath);
 }
-void CParticleSystem::TimeDelta_Calculate(_float& fTimeDelta)
+void CParticleSystem::Simulation_Speed(_float& fTimeDelta)
 {
 	// 재생 속도에 따른 타임델타 값 변경.
 	fTimeDelta *= m_MainModuleDesc.fSimulationSpeed;
 }
-void CParticleSystem::Action_By_LifteTime()
+void CParticleSystem::Action_By_Age()
 {
-	// Gen시간 완료된 애들은 Alive로 이동
-	for (auto iter = m_Particles[WAIT].begin(); iter != m_Particles[WAIT].end();)
+	// DELAY시간 완료된 애들은 ALIVE로 이동
+	for (auto iter = m_Particles[DELAY].begin(); iter != m_Particles[DELAY].end();)
 	{
 		if (iter->fAge > iter->fGenTime)
 		{
-			iter = TransitionTo(iter, m_Particles[WAIT], m_Particles[ALIVE]);
+			iter = TransitionTo(iter, m_Particles[DELAY], m_Particles[ALIVE]);
 		}
 		else
 			++iter;
@@ -200,50 +197,120 @@ void CParticleSystem::Action_By_LifteTime()
 void CParticleSystem::Action_By_Duration()
 {
 	// 수명이 아직 안됐으면 리턴
-	if (m_fParticleSystemAge <= m_MainModuleDesc.fDuration)
+	if (m_MainModuleDesc.fParticleSystemAge <= m_MainModuleDesc.fDuration)
 		return;
 
-	// 수명이 되었으면 객체 삭제.
-	CGameObject* pOwner = dynamic_cast<CGameObject*>(m_pOwner);
-	if (nullptr != pOwner)
-	{
-		pOwner->Set_ObjEvent(CGameObject::OBJ_DEAD);
-	}
+	// 수명이 되었으면 객체 정지처리.
+	Action_By_StopOption();
 }
 void CParticleSystem::Action_By_StopOption()
 {
-	if (m_MainModuleDesc.strStopAction == "None")
-	{
-
-	}
-	else if (m_MainModuleDesc.strStopAction == "Disable")
+	if (m_MainModuleDesc.strStopAction == "Disable")
 	{
 		Disable();
 	}
 	else if (m_MainModuleDesc.strStopAction == "Destroy")
 	{
-
+		CGameObject* pOwner = dynamic_cast<CGameObject*>(m_pOwner);
+		if (nullptr != pOwner)
+		{
+			pOwner->Set_ObjEvent(CGameObject::OBJ_DEAD);
+		}
 	}
 	else if (m_MainModuleDesc.strStopAction == "Callback")
 	{
 
 	}
 }
+void CParticleSystem::Action_By_RateOverTime()
+{
+	if (m_EmissionModuleDesc.fRateOverTime <= 0.001f)
+		return;
+
+	// 초당 N개씩 생성하는 코드
+	_float fTimePerParticle = 1.f / m_EmissionModuleDesc.fRateOverTime;
+	while (m_EmissionModuleDesc.fRateOverTimeAcc >= fTimePerParticle)
+	{
+		Wating_One_Particle();
+		m_EmissionModuleDesc.fRateOverTimeAcc -= fTimePerParticle;
+	}
+}
+void CParticleSystem::Action_By_Distance()
+{
+	_float fPositionDelta = { _float3(m_EmissionModuleDesc.vCurPos - m_EmissionModuleDesc.vPrevPos).Length() };
+	if (fPositionDelta <= 0.001f)
+		return;
+
+	for (_uint i = 0; i < _uint(fPositionDelta * m_EmissionModuleDesc.fRateOverDistance); ++i)
+	{
+		Wating_One_Particle();
+	}
+}
+void CParticleSystem::Action_By_Bursts()
+{
+	for (auto& Burst : m_EmissionModuleDesc.Bursts)
+	{
+		if (false == Burst.isTrigger && Burst.fTriggerTimeAcc >= Burst.fTime)
+		{
+			if (RandomBool(Burst.fProbability))
+			{
+				Burst.isTrigger = true;
+				Burst.iCycleCount = 0;
+			}
+		}
+
+		if (true == Burst.isTrigger)
+		{
+			// 일정한 간격으로 파티클을 발생시키는 코드.
+			if (Burst.fIntervalTimeAcc >= Burst.fInterval)
+			{
+				for (_uint i = 0; i < Burst.iCount.x; ++i)
+				{
+					Wating_One_Particle();
+				}
+				Burst.fIntervalTimeAcc = 0.f;
+				++Burst.iCycleCount;
+			}
+
+			// 모든 사이클을 돌면 Trigger을 비활성화
+			if (Burst.iCycleCount >= Burst.iCycles)
+			{
+				Burst.isTrigger = false;
+				Burst.fTriggerTimeAcc = 0.f;
+			}
+		}
+	}
+}
 void CParticleSystem::Play_On_Awake()
 {
 	if (false == m_MainModuleDesc.isPlayOnAwake)
 	{
-		for (auto iter = m_Particles[WAIT].begin(); iter != m_Particles[WAIT].end();)
-		{
-			iter = TransitionTo(iter, m_Particles[WAIT], m_Particles[WAIT]);
-		}
+		Enable();
 	}
 }
 void CParticleSystem::Resize_Container(_uint iNumMaxParticle)
 {	
 	m_ParticleMatrices.reserve(iNumMaxParticle);
 	m_Particles[WAIT].resize(iNumMaxParticle);
-	m_Particles[ALIVE];
+}
+void CParticleSystem::Sum_TimeDelta(const _float& _fTimeDelta)
+{
+	// 수명처리
+	m_MainModuleDesc.fParticleSystemAge += _fTimeDelta;
+	for (auto& Particle : m_Particles[ALIVE])
+		Particle.fAge += _fTimeDelta;
+	for (auto& Particle : m_Particles[DELAY])
+		Particle.fAge += _fTimeDelta;
+	for (auto& Burst : m_EmissionModuleDesc.Bursts)
+	{
+		if (true == Burst.isTrigger)
+		{
+			Burst.fIntervalTimeAcc += _fTimeDelta;
+		}
+
+		Burst.fTriggerTimeAcc += _fTimeDelta;
+	}
+	m_EmissionModuleDesc.fRateOverTimeAcc += _fTimeDelta;
 }
 void CParticleSystem::Reset_Particle(PARTICLE_IT& _particle_iter)
 {
@@ -251,37 +318,66 @@ void CParticleSystem::Reset_Particle(PARTICLE_IT& _particle_iter)
 	Safe_AddRef(pGameInstance);
 
 	_particle_iter->fAge = 0.f;
-	_particle_iter->fGenTime = Random_Generator(m_MainModuleDesc.fStartDelay.x, m_MainModuleDesc.fStartDelay.y);
-	_particle_iter->fLifeTime = Random_Generator(m_MainModuleDesc.fStartLifeTime.x, m_MainModuleDesc.fStartLifeTime.y);
-	_particle_iter->fLifeTime += _particle_iter->fGenTime; // 늦게 나온만큼 수명 추가.
+
+	// Delay 결정
+	if (true == m_MainModuleDesc.isStartDelayRange)
+		_particle_iter->fGenTime = Random_Generator(m_MainModuleDesc.vStartDelayRange.x, m_MainModuleDesc.vStartDelayRange.y);
+	else
+		_particle_iter->fGenTime = m_MainModuleDesc.fStartDelay;
+
+	// LifeTime 결정
+	if (true == m_MainModuleDesc.isStartLifeTimeRange)
+		_particle_iter->fLifeTime = Random_Generator(m_MainModuleDesc.vStartLifeTimeRange.x, m_MainModuleDesc.vStartLifeTimeRange.y);
+	else
+		_particle_iter->fLifeTime = m_MainModuleDesc.fStartLifeTime;
+
+	// Speed 결정
+	_float fSpeed;
+	if (true == m_MainModuleDesc.isStartSpeedRange)
+		fSpeed = Random_Generator(m_MainModuleDesc.vStartSpeedRange.x, m_MainModuleDesc.vStartSpeedRange.y);
+	else
+		fSpeed = m_MainModuleDesc.fStartSpeed;
+
+	// Speed에 의한 Velocity 결정
+	_particle_iter->vVelocity = pGameInstance->Get_RandomVectorInSphere(fSpeed);
+
+	// 늦게 나온만큼 수명 추가.
+	_particle_iter->fLifeTime += _particle_iter->fGenTime; 
+
 	_particle_iter->vAccel = _float4();
 
 	if (false == m_MainModuleDesc.is3DStartRotation)
 	{
-		_particle_iter->fAngle = Random_Generator(m_MainModuleDesc.fStartRotation.x, m_MainModuleDesc.fStartRotation.y);
+		if (true == m_MainModuleDesc.isStartRotationRange)
+			_particle_iter->fAngle = Random_Generator(m_MainModuleDesc.vStartRotationRange.x, m_MainModuleDesc.vStartRotationRange.y);
+		else
+			_particle_iter->fAngle = m_MainModuleDesc.fStartRotation;
 	}
+	if (true == RandomBool(m_MainModuleDesc.fFlipRotation))
+		_particle_iter->fAngle *= -1.f;
 
-	if (false == m_MainModuleDesc.is3DStartSize)
-	{
-		_float fScale = Random_Generator(m_MainModuleDesc.fStartSize.x, m_MainModuleDesc.fStartSize.y);
-		_particle_iter->vScale = _float3(fScale, fScale, fScale);
+	// Size 결정
+	if (true == m_MainModuleDesc.is3DStartSize)
+	{	
+		_particle_iter->vScale = _float3(m_MainModuleDesc.f3DSizeXYZ.x, m_MainModuleDesc.f3DSizeXYZ.y, m_MainModuleDesc.f3DSizeXYZ.z);
 	}
 	else
 	{
-		_particle_iter->vScale = _float3(
-			m_MainModuleDesc.f3DRotationXYZ.x ,
-			m_MainModuleDesc.f3DRotationXYZ.y ,
-			m_MainModuleDesc.f3DRotationXYZ.z);
+		_float fScale;
+
+		if (true == m_MainModuleDesc.isStartSizeRange)
+			fScale = Random_Generator(m_MainModuleDesc.vStartSizeRange.x, m_MainModuleDesc.vStartSizeRange.y);
+		else
+			fScale = m_MainModuleDesc.fStartSize;
+
+		_particle_iter->vScale = _float3(fScale, fScale, fScale);
 	}
-		
-	if (true == RandomBool(m_MainModuleDesc.fFlipRotation))
-		_particle_iter->fAngle *= -1.f;
 
 	_particle_iter->vColor = m_MainModuleDesc.vStartColor;
 	//_particle_iter->fAngle = m_MainModuleDesc.f
 	_particle_iter->WorldMatrix.Translation(_float3(0.f, 0.f, 0.f));
-	_float fSpeed = Random_Generator(m_MainModuleDesc.fStartSpeed.x, m_MainModuleDesc.fStartSpeed.y);
-	_particle_iter->vVelocity = pGameInstance->Get_RandomVectorInSphere(fSpeed);
+	
+	
 	_particle_iter->fGravityAccel = { 0.f };
 	Safe_Release(pGameInstance);
 }
@@ -304,20 +400,27 @@ void CParticleSystem::Reset_AllParticles()
 }
 _bool CParticleSystem::Wating_One_Particle()
 {
-	if (m_Particles[DEAD].empty())
+	if (m_Particles[WAIT].empty())
 	{
 		return false;
 	}
-	PARTICLE_IT particle_iter = m_Particles[DEAD].begin();
+
+	if (m_Particles[ALIVE].size() >= m_MainModuleDesc.iMaxParticles)
+	{
+		return false;
+	}
+
+	PARTICLE_IT particle_iter = m_Particles[WAIT].begin();
 	Reset_Particle(particle_iter);
-	TransitionTo(particle_iter, m_Particles[DEAD], m_Particles[WAIT]);
+	TransitionTo(particle_iter, m_Particles[WAIT], m_Particles[DELAY]);
 	return true;
 }
 CParticleSystem::PARTICLE_IT CParticleSystem::TransitionTo(PARTICLE_IT& _particle_iter, list<PARTICLE>& _source, list<PARTICLE>& _dest)
 {
+	
 	PARTICLE_IT next_it = std::next(_particle_iter);
 	_dest.splice(_dest.end(), _source, _particle_iter); // 리스트 원소 이동 함수.
-	return next_it;
+	return next_it; // for문 순회를 위해 다음 iter를 반환.(erase할 때 next반환하는 원리)
 }
 _float4x4 CParticleSystem::LookAt(_float3 vPos, _float3 _vTarget, _bool _isDeleteY)
 {
@@ -339,12 +442,13 @@ _float4x4 CParticleSystem::LookAt(_float3 vPos, _float3 _vTarget, _bool _isDelet
 
 	return BiliboardMatrix;
 }
-void CParticleSystem::ReviveAll()
+void CParticleSystem::Restart()
 {
 	for (auto iter = m_Particles[DEAD].begin(); iter != m_Particles[DEAD].end();)
 	{
 		Reset_Particle(iter);
 		iter = TransitionTo(iter, m_Particles[DEAD], m_Particles[WAIT]);
+		m_MainModuleDesc.fParticleSystemAge = 0.f;
 	}
 }
 void CParticleSystem::ChangeMainTexture(const _tchar* pTexturePath)
@@ -390,6 +494,7 @@ void CParticleSystem::Free()
 {
 	__super::Free();
 	Safe_Release(m_pTexture);
+	Safe_Release(m_pClipTexture);
 	m_Particles[ALIVE].clear();
-	m_Particles[DEAD].clear();
+	m_Particles[WAIT].clear();
 }

@@ -12,6 +12,11 @@
 #include "Modules.h"
 
 BEGIN(Engine)
+class CTransform;
+class CTexture;
+END
+
+BEGIN(Engine)
 
 class ENGINE_DLL CParticleSystem final : public CComponent
 {
@@ -20,7 +25,7 @@ public:
 	typedef list<PARTICLE>::iterator PARTICLE_IT;
 
 public:
-	enum STATE { ALIVE, WAIT, DEAD, STATE_END };
+	enum STATE { ALIVE, DELAY, WAIT, DEAD, STATE_END };
 
 private:
 	explicit CParticleSystem(ID3D11Device * _pDevice, ID3D11DeviceContext * _pContext);
@@ -35,12 +40,13 @@ public:
 public:
 	virtual HRESULT Initialize_Prototype(const _tchar* _pDirectoryPath);
 	virtual HRESULT Initialize(void* _pArg) override;
-	void Tick(_float _fTimeDelta, CVIBuffer_Rect_Color_Instance* pBuffer);
+	void Tick(_float _fTimeDelta, CVIBuffer_Rect_Color_Instance* pBuffer, CTransform* pTransform);
 	HRESULT Render();
 
 public:
-	void Play_Particle();
-	void Stop_Particle();
+	void Play();
+	void Stop();
+	void Restart();
 	HRESULT Bind_ParticleValue(class CShader* pShader);
 
 public:
@@ -48,7 +54,7 @@ public:
 	void Disable();
 
 public:
-	_bool IsEnable() { return m_isEnable; }
+	_bool IsEnable() { return m_MainModuleDesc.isEnable; }
 	_bool IsAllDead() { return m_Particles[ALIVE].empty(); }
 
 public:
@@ -61,44 +67,56 @@ public:
 	void Reset_AllParticles();
 	
 public: // For. Imgui
-	void ReviveAll();
+	// 파티클 텍스처 변경.
 	void ChangeMainTexture(const _tchar* pTexturePath);
+
+	// 인스턴스 수를 변경
 	void RemakeBuffer(_uint iNumInstance);
 
 private:
+	// WAIT->DELAY로 이동.
 	_bool Wating_One_Particle();
-	PARTICLE_IT TransitionTo(PARTICLE_IT& _particle_iter, list<PARTICLE>& _source, list<PARTICLE>& _dest);
-	PARTICLE_IT Alive_Particle(PARTICLE_IT& _particle_iter);
 
+	// 리스트 간에 원소를 주고받는 함수.
+	PARTICLE_IT TransitionTo(PARTICLE_IT& _particle_iter, list<PARTICLE>& _source, list<PARTICLE>& _dest);
+
+	// 빌보드
 	_float4x4 LookAt(_float3 vPos, _float3 _vTarget, _bool _isDeleteY = false);
 
 private:
+	// 시작할 때 자동재생 할건지 결정함.
 	void Play_On_Awake();
-	void TimeDelta_Calculate(_float& fTimeDelta);
+
+	// 파티클 시뮬레이션 속도계산
+	void Simulation_Speed(_float& fTimeDelta);
+
+	// 인스턴스 수에 따라 resize, reserve함수로 메모리 할당.
 	void Resize_Container(_uint iNumInstance);
 
+	// 나이 및 시간 누적값 처리.
+	void Sum_TimeDelta(const _float& _fTimeDelta);
+
 private:
-	void Action_By_LifteTime();
+	void Action_By_Age();
 	void Action_By_Duration();
 	void Action_By_StopOption();
-	
+	void Action_By_RateOverTime();
+	void Action_By_Distance();
+	void Action_By_Bursts();
+
 public:
 	MAIN_MODULE m_MainModuleDesc;
 	EMMISION_MODULE m_EmissionModuleDesc;
 	SHAPE_MODULE	m_ShapeModuleDesc;
 	RENDERER_MODULE m_RendererModuleDesc;
 
-private: // 출력에 사용 될 텍스처
-	CTexture* m_pTexture = { nullptr };
-	CTexture* m_pClipTexture = { nullptr };
-
+private: 
+	CTexture* m_pTexture = { nullptr }; // 출력에 사용 될 텍스처
+	CTexture* m_pClipTexture = { nullptr }; // 알파테스트에 사용될 텍스처
+	
 private:
 	list<PARTICLE> m_Particles[STATE_END];
-
 	vector<COL_INSTANCE>  m_ParticleMatrices;
-	_uint m_iActivatedParticleNum = { 0 };
-	_float m_fParticleSystemAge = { 0.f };
-	_bool m_isEnable = { true };
 	function<void()> m_StopAction;
 
 public:
@@ -108,9 +126,6 @@ public:
 };
 
 END
-
-
-
 
 
 //enum MODULE {

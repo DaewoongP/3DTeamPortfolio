@@ -71,6 +71,17 @@ void CEffect_Window::Tick(_float _fTimeDelta)
 		m_pDummyParticle->Late_Tick(_fTimeDelta);
 	}
 
+	// 왼쪽 아래로 고정
+	RECT clientRect;
+	GetClientRect(g_hWnd, &clientRect);
+	POINT leftTop = { clientRect.left, clientRect.top };
+	POINT rightBottom = { clientRect.right, clientRect.bottom };
+	ClientToScreen(g_hWnd, &leftTop);
+	ClientToScreen(g_hWnd, &rightBottom);
+	int Left = leftTop.x;
+	int Top = rightBottom.y;
+	ImVec2 vWinpos = { _float(Left + 0.f), _float(Top) };
+	ImGui::SetNextWindowPos(vWinpos);
 	_float4x4 pMatrix = m_pDummyParticle->Get_Transform()->Get_WorldMatrix();
 	__super::MatrixNode(&pMatrix, "Effect_Transform", "Effect_Position", "Effect_Rotation", "Effect_Scale");
 	m_pDummyParticle->Get_Transform()->Set_WorldMatrix(pMatrix);
@@ -172,7 +183,7 @@ void CEffect_Window::MainMoudle_TreeNode()
 			if (m_isPrevLooping != pMainModuleDesc->isLooping)
 			{
 				m_pParticleSystem->Reset_AllParticles();
-				m_pParticleSystem->ReviveAll();
+				m_pParticleSystem->Restart();
 				m_isPrevLooping = pMainModuleDesc->isLooping;
 			}	
 
@@ -183,10 +194,11 @@ void CEffect_Window::MainMoudle_TreeNode()
 			
 			if (false == pMainModuleDesc->isPrewarm)
 			{
-				Table_DragFloat2Range("Start Delay", "dfkjxvije9ae33v", &pMainModuleDesc->fStartDelay);
+				Table_DragFloatWithOption("Start Delay", "xclvijowiejfc", &pMainModuleDesc->fStartDelay, &pMainModuleDesc->vStartDelayRange, &pMainModuleDesc->isStartDelayRange);
 			}
-			Table_DragFloat2Range("Start Lifetime", "ciitg004289f", &pMainModuleDesc->fStartLifeTime);
-			Table_DragFloat2Range("Start Speed", "cvi93u7yfvrub", &pMainModuleDesc->fStartSpeed);
+			Table_DragFloatWithOption("Start Lifetime", "xcklvjiej", &pMainModuleDesc->fStartLifeTime, &pMainModuleDesc->vStartLifeTimeRange, &pMainModuleDesc->isStartLifeTimeRange);
+			Table_DragFloatWithOption("Start Speed", "cvi93u7yfvrub", &pMainModuleDesc->fStartSpeed, &pMainModuleDesc->vStartSpeedRange, &pMainModuleDesc->isStartSpeedRange);
+			//Table_DragFloat2Range("Start Speed", "cvi93u7yfvrub", );
 			Table_CheckBox("3D Start Size", "sdfvu89ywr978h", &pMainModuleDesc->is3DStartSize);
 			if (true == pMainModuleDesc->is3DStartSize)
 			{
@@ -194,7 +206,7 @@ void CEffect_Window::MainMoudle_TreeNode()
 			}
 			else
 			{
-				Table_DragFloat2Range("Start Size", "XCV89024890R0WRFOU", &pMainModuleDesc->fStartSize);
+				Table_DragFloatWithOption("Start Size", "XCV89024890R0WRFOU", &pMainModuleDesc->fStartSize, &pMainModuleDesc->vStartSizeRange, &pMainModuleDesc->isStartSizeRange);
 			}
 			Table_CheckBox("3D Start Rotation", "vbe088030j45", &pMainModuleDesc->is3DStartRotation);
 			if (true == pMainModuleDesc->is3DStartRotation)
@@ -203,7 +215,7 @@ void CEffect_Window::MainMoudle_TreeNode()
 			}
 			else
 			{
-				Table_DragFloat2Range("Start Rotation", "dfvnko89h712enuo", &pMainModuleDesc->fStartRotation);
+				Table_DragFloatWithOption("Start Rotation", "dfvnko89h712enuo", &pMainModuleDesc->fStartRotation, &pMainModuleDesc->vStartRotationRange, &pMainModuleDesc->isStartRotationRange, 0.1f, 0.f, 360.f);
 			}
 
 			Table_DragFloat("Flip Rotation", "xcv ioiw", &pMainModuleDesc->fFlipRotation, 0.01f, 0.f, 1.f);
@@ -239,8 +251,8 @@ void CEffect_Window::EmissionModule_TreeNode()
 		{
 			ImGui::TableNextRow();
 
-			Table_DragFloat2Range("RateOverTime", "v09u0u6oij4io", &pEmissionModuleDesc->fRateOverTime);
-			Table_DragFloat2Range("RateOverDistance", "cio7 7v7e4i", &pEmissionModuleDesc->fRateOverDistance);
+			Table_DragFloat("RateOverTime", "v09u0u6oij4io", &pEmissionModuleDesc->fRateOverTime);
+			Table_DragFloat("RateOverDistance", "cio7 7v7e4i", &pEmissionModuleDesc->fRateOverDistance);
 			ImGui::EndTable();
 		}
 
@@ -509,6 +521,30 @@ _bool CEffect_Window::Table_Void()
 	ImGui::TableSetColumnIndex(1);
 	ImGui::Text(" "); ImGui::TableNextRow();
 	return true;
+}
+_bool CEffect_Window::Table_DragFloatWithOption(string _strName, string _strTag, _float* _pValue, _float2* _pRangeValue, _bool* _pCheckBox, _float _fDragSpeed, _float _fMin, _float _fMax)
+{
+	_bool isResult = false;
+	string strTag = "##" + _strTag;
+	string strCheckBoxTag = strTag + "CheckBox";
+	ImGui::PushItemWidth(m_fWidgetSize);
+	ImGui::TableSetColumnIndex(0);
+	ImGui::Text(_strName.data()); ImGui::TableSetColumnIndex(1);
+	if (true == *_pCheckBox)
+	{
+		string strRangeTag = strTag + "Range";
+		isResult = ImGui::DragFloatRange2(strTag.data(), &_pRangeValue->x, &_pRangeValue->y, _fDragSpeed, _fMin, _fMax);
+	}
+	else
+	{
+		string strFloatTag = strTag + "Float";
+		isResult = ImGui::DragFloat(strTag.data(), _pValue, _fDragSpeed, _fMin, _fMax);
+	}
+		
+	ImGui::SameLine(); ImGui::Checkbox(strCheckBoxTag.data(), _pCheckBox);
+	ImGui::PopItemWidth();
+	ImGui::TableNextRow();
+	return isResult;
 }
 _bool CEffect_Window::Table_DragXYZ(string _strName, string _strTag, _float3* pValue, _float _fDragSpeed, _float _fMin, _float _fMax, _bool isImplement)
 {

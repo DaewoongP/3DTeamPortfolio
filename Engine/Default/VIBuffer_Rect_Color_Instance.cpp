@@ -26,8 +26,9 @@ HRESULT CVIBuffer_Rect_Color_Instance::Initialize(void* pArg)
 	}
 
 	// 버퍼 파괴하고 재생성하려고 넣은 코드.
-	Safe_Release(m_pIB);
+	Safe_Release(m_pVBInstance);
 	Safe_Release(m_pVB);
+	Safe_Release(m_pIB);
 
 	m_iNumInstance = *reinterpret_cast<_uint*>(pArg);
 

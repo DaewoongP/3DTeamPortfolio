@@ -33,7 +33,7 @@ HRESULT CDummyParticle::Initialize(void* _pArg)
 
 void CDummyParticle::Tick(_float _fTimeDelta)
 {
-	m_pParticleSystem->Tick(_fTimeDelta, m_pBuffer);
+	m_pParticleSystem->Tick(_fTimeDelta, m_pBuffer, m_pTransform);
 }
 
 void CDummyParticle::Late_Tick(_float _fTimeDelta)
@@ -65,7 +65,7 @@ HRESULT CDummyParticle::Add_Components()
 	}
 
 	/* Com_Buffer */
-	_int iNumInstance = 30;
+	_int iNumInstance = MAX_PARTICLE_NUM;
 	if (FAILED(CComposite::Add_Component(LEVEL_TOOL, TEXT("Prototype_Component_VIBuffer_Rect_Color_Instance"),
 		TEXT("Com_Buffer"), reinterpret_cast<CComponent**>(&m_pBuffer), &iNumInstance)))
 	{

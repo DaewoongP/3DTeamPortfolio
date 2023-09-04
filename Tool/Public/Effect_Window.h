@@ -28,7 +28,7 @@ public:
 	void EmissionModule_TreeNode();
 	void ShapeModule_TreeNode();
 	void RendererModule_TreeNode();
-
+	
 private: // 困连 包访
 	_bool Table_DragFloat(string _strName, string _strTag, _float* _pValue, _float _fDragSpeed = 0.01f, _float _fMin = 0.f, _float _fMax = FLT_MAX);
 	_bool Table_DragFloat2Range(string _strName, string _strTag, _float2* _pValue, _float _fDragSpeed = 0.01f, _float _fMin = 0.f, _float _fMax = FLT_MAX);
@@ -38,7 +38,7 @@ private: // 困连 包访
 	_bool Table_ColorEdit4(string _strName, string _strTag, _float4* pValue);
 	_bool Table_ImageButton(string _strName, string _strTag, CImageFileDialog* _pImageFileDialog);
 	_bool Table_Void();
-
+	_bool Table_DragFloatWithOption(string _strName, string _strTag, _float* _pValue, _float2* _pRangeValue, _bool* _pCheckBox, _float _fDragSpeed = 0.01f, _float _fMin = 0.f, _float _fMax = FLT_MAX);
 private:
 	_float	   m_fWidgetSize = { 200.f };
 	CComboBox* m_pEmitterVelocity_ComboBox = { nullptr };

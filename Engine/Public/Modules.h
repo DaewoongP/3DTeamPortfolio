@@ -21,17 +21,29 @@ struct ENGINE_DLL MAIN_MODULE : public MODULE
 	HRESULT Save(const _tchar* _pDirectoyPath);
 	HRESULT Load(const _tchar* _pDirectoyPath);
 
-	_float fDuration = { 5.0f }; // 객체의 수명
+	_bool isEnable = { true };
+	_float fParticleSystemAge = { 0.f };
+	_float fDuration = { 30.0f }; // 객체의 수명
 	_bool isLooping = { false }; // 파티클의 반복
 	_bool isPrewarm = { false }; // Loop활성화 시 사용 가능, Stop <-> Play 전환 시 파티클이 초기화 되지 않음.
-	_float2 fStartDelay = { 0.f, 0.f }; // 초기화 시 파티클 시작 시간을 정함
-	_float2 fStartLifeTime = { 5.f, 5.f }; // 초기화 시 정해지는 파티클의 수명을 정함
-	_float2 fStartSpeed = { 5.f, 5.f }; // 초기화 시 정해지는 파티클의 속도
+	_bool isStartDelayRange = { false };
+	_float2 vStartDelayRange = { 0.f, 0.f };
+	_float fStartDelay = { 0.f }; // 초기화 시 파티클 시작 시간을 정함
+	_bool isStartLifeTimeRange = { false };
+	_float2 vStartLifeTimeRange = { 5.f, 5.f };
+	_float fStartLifeTime = { 5.f }; // 초기화 시 정해지는 파티클의 수명을 정함
+	_bool isStartSpeedRange = { false };
+	_float2 vStartSpeedRange = { 5.f, 5.f };
+	_float fStartSpeed = { 5.f }; // 초기화 시 정해지는 파티클의 속도
+	_bool isStartSizeRange = { false };
+	_float2 vStartSizeRange = { 1.f, 1.f };
+	_float fStartSize = { 1.f }; // 초기화 시 정해지는 파티클 크기.
 	_bool is3DStartSize = { false }; // x,y,z축 회전을 활성화하려면 true.
-	_float2 fStartSize = { 1.f, 1.f }; // 초기화 시 정해지는 파티클 크기.
 	_float3 f3DSizeXYZ = { 1.f, 1.f, 1.f }; // 파티클의 3D 스케일을 정해줍니다
 	_bool is3DStartRotation = { false }; // 초기화 시 정해지는 파티클 3차원 회전값(월드 x,y,z축 기준)
-	_float2 fStartRotation = { 0.f, 0.f }; // 초기화 시 정해지는 파티클 오일러각(빌보드 행렬의 x,y축 기준)
+	_bool isStartRotationRange = { false };
+	_float2 vStartRotationRange = { 0.f, 0.f }; // 초기화 시 정해지는 파티클 오일러각(빌보드 행렬의 x,y축 기준)
+	_float fStartRotation = { 0.f };
 	_float3 f3DRotationXYZ = { 0.f, 0.f, 0.f }; // 파티클의 3D 스케일을 정해줍니다
 	_float fFlipRotation = { 0.f }; // [0, 1]값으로 예를들어, 0.5의 값인 경우 파티클 초기화 시 50%확률로 반대방향으로 회전한다.
 	_float4 vStartColor = { 1.f, 1.f, 1.f, 1.f }; // 초기화 시 정해지는 파티클의 컬러
@@ -48,24 +60,36 @@ struct ENGINE_DLL EMMISION_MODULE : public MODULE
 	EMMISION_MODULE() : MODULE() { __super::isActivate = true; };
 	~EMMISION_MODULE() { Bursts.clear(); }
 
+	HRESULT Save(const _tchar* _pDirectoyPath);
+	HRESULT Load(const _tchar* _pDirectoyPath);
+
 	typedef struct tagBurst
 	{
 		_float fTime = { 0.f }; // Time초 마다 트리거 발동.
 		_int2 iCount = { 30, 30 }; // 1번의 Interval에 방출할 파티클 수
+		_uint iCycleCount = { 0 }; // Cycle에 사용할 누적값.
 		_int iCycles = { 1 }; // Time초 마다 Interval번 만큼 Cycle번 반복
+		_float fIntervalTimeAcc = { 0.f }; // Interval에 사용할 시간 누적값.
 		_float fInterval = { 0.010f }; // Time초 마다 Interval간격으로 방출
 		_float fProbability = { 1.f }; // 트리거가 발생할 확률 [0 ,1]
+		_float fTriggerTimeAcc = { 0.f }; // 트리거 발생 조건에 사용할 시간 누적값
+		_bool isTrigger = { false }; // true이면 로직 발동
 	}BURST;
 
-	_float2	fRateOverTime = { 10.f, 10.f }; // 1초 동안 몇 개의 파티클을 뿜어낼지 정함.
+	_float3	vPrevPos = { _float3() };
+	_float3	vCurPos = { _float3() };
+	_float	fRateOverTime = { 10.f }; // 1초 동안 몇 개의 파티클을 뿜어낼지 정함.
 	_float	fRateOverTimeAcc = { 0.f };
-	_float2	fRateOverDistance = { 0.f, 0.f }; // 움직인 거리에 따라 몇 개의 파티클을 뿜어낼지 정함.
+	_float	fRateOverDistance = { 0.f }; // 움직인 거리에 따라 몇 개의 파티클을 뿜어낼지 정함.
 	vector<BURST> Bursts;
 };
 
 struct ENGINE_DLL SHAPE_MODULE : public MODULE
 {
 	SHAPE_MODULE() : MODULE() { __super::isActivate = true; };
+
+	HRESULT Save(const _tchar* _pDirectoyPath);
+	HRESULT Load(const _tchar* _pDirectoyPath);
 
 	string strShape = { "Sphere" }; // Shpere, HemiSphere, Cone, Dount, Box, Mesh, Sprite, Circle, Rectangle
 	string strBoxEmitFrom = { "Volume" }; // Volume, Sheel, Edge
@@ -112,6 +136,7 @@ struct ENGINE_DLL RENDERER_MODULE : public MODULE
 	RENDERER_MODULE() : MODULE() { __super::isActivate = true; };
 
 	wstring wstrMaterial = { TEXT("../../Resources/Effects/Textures/Default_Particle.png") };
+	CTexture* pTexture = { nullptr }; // 출력에 사용 될 텍스처
 };
 
 typedef struct tagParticle
