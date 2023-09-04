@@ -34,7 +34,8 @@ void CDummy::Tick(_float fTimeDelta)
 {
 	if (nullptr != m_pModel)
 	{
-		m_pModel->Play_Animation(fTimeDelta,m_pTransform);
+		m_pModel->Play_Animation(fTimeDelta,CModel::UPPERBODY,m_pTransform);
+		m_pModel->Play_Animation(fTimeDelta, CModel::UNDERBODY, m_pTransform);
 	}
 
 	__super::Tick(fTimeDelta);
@@ -46,6 +47,7 @@ void CDummy::Late_Tick(_float fTimeDelta)
 
 	if (nullptr != m_pRenderer)
 	{
+		//
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 	}
 }

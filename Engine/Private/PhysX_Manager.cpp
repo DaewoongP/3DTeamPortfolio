@@ -5,6 +5,7 @@
 
 IMPLEMENT_SINGLETON(CPhysX_Manager)
 
+#ifdef _DEBUG
 const PxRenderBuffer* CPhysX_Manager::Get_RenderBuffer()
 {
 	if (nullptr == m_pPhysxScene)
@@ -17,22 +18,29 @@ const PxRenderBuffer* CPhysX_Manager::Get_RenderBuffer()
 
 _uint CPhysX_Manager::Get_LastLineBufferIndex()
 {
-	m_iLastLineBufferIndex = m_pPhysxScene->getRenderBuffer().getNbLines() - m_iNumPlaneLineBuffer;
-
 	return m_iLastLineBufferIndex;
 }
 
 _uint CPhysX_Manager::Get_LastTriangleBufferIndex()
 {
-	m_iLastTriangleBufferIndex = m_pPhysxScene->getRenderBuffer().getNbTriangles() - m_iNumPlaneTriangleBuffer;
-
 	return m_iLastTriangleBufferIndex;
 }
+
+void CPhysX_Manager::Add_LastLineBufferIndex(_uint iNumLines)
+{
+	m_iLastLineBufferIndex += iNumLines;
+}
+
+void CPhysX_Manager::Add_LastTriangleBufferIndex(_uint iNumTriangles)
+{
+	m_iLastTriangleBufferIndex += iNumTriangles;
+}
+#endif // _DEBUG
 
 HRESULT CPhysX_Manager::Initialize()
 {
 	// 파운데이션 생성
-	m_pFoundation = PxCreateFoundation(PX_PHYSICS_VERSION, m_PXAllocator, m_PXErrorCallback);
+	m_pFoundation = PxCreateFoundation(PX_PHYSICS_VERSION, m_PXAllocator, m_PXErrorCallBack);
 
 	if (nullptr == m_pFoundation)
 	{
@@ -62,6 +70,11 @@ HRESULT CPhysX_Manager::Initialize()
 	m_pPhysxScene->setVisualizationParameter(PxVisualizationParameter::eSCALE, 1.0f);
 	m_pPhysxScene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_SHAPES, 1.f);
 #endif // _DEBUG
+
+	// 충돌처리 이벤트 활성화
+	m_pPXEventCallBack = CPXEventCallBack::Create();
+	m_pPhysxScene->setSimulationEventCallback(m_pPXEventCallBack);
+
 	// 컨트롤러 생성에 필요한 매니저 클래스 생성.
 	m_pControllerManager = PxCreateControllerManager(*m_pPhysxScene);
 	if (nullptr == m_pControllerManager)
@@ -69,14 +82,6 @@ HRESULT CPhysX_Manager::Initialize()
 		MSG_BOX("Failed Create ControllerManager");
 		return E_FAIL;
 	}
-
-	// 기본적인 터레인을 생성합니다.
-	PxRigidStatic* groundPlane = PxCreatePlane(*m_pPhysics, PxPlane(0, 1, 0, 0), *m_pPhysics->createMaterial(0.5f, 0.5f, 0.5f));
-	m_pPhysxScene->addActor(*groundPlane);
-	m_pPhysxScene->simulate(1 / 60.f);
-	m_pPhysxScene->fetchResults(true);
-	m_iNumPlaneLineBuffer = m_pPhysxScene->getRenderBuffer().getNbLines();
-	m_iNumPlaneTriangleBuffer = m_pPhysxScene->getRenderBuffer().getNbTriangles();
 
 	return S_OK;
 }
@@ -90,13 +95,19 @@ void CPhysX_Manager::Tick(_float fTimeDelta)
 	m_pPhysxScene->fetchResults(true);
 }
 
+void CPhysX_Manager::Clear_BufferIndex()
+{
+	m_iLastLineBufferIndex = 0;
+	m_iLastTriangleBufferIndex = 0;
+}
+
 PxScene* CPhysX_Manager::Create_Scene()
 {
 	PxSceneDesc SceneDesc(m_pPhysics->getTolerancesScale());
 	SceneDesc.setToDefault(m_pPhysics->getTolerancesScale());
 	SceneDesc.gravity = PxVec3(0.0f, -9.81f, 0.0f);
 	SceneDesc.cpuDispatcher = m_pDefaultCpuDispatcher;
-	SceneDesc.filterShader = PxDefaultSimulationFilterShader;
+	SceneDesc.filterShader = CollisionFilterShader;
 	SceneDesc.userData = nullptr; // 데이터를 여기에 넣어두는것도 가능.
 
 	PxScene* pScene = m_pPhysics->createScene(SceneDesc);
@@ -119,6 +130,12 @@ void CPhysX_Manager::Free()
 		m_pControllerManager->release();
 	}
 
+	if (nullptr != m_pPXEventCallBack)
+	{
+		m_pPXEventCallBack->Release();
+		m_pPXEventCallBack = nullptr;
+	}
+
 	if (nullptr != m_pPhysxScene)
 	{
 		m_pPhysxScene->release();
@@ -137,5 +154,5 @@ void CPhysX_Manager::Free()
 	if (nullptr != m_pFoundation)
 	{
 		m_pFoundation->release();
-	}
+	}	
 }

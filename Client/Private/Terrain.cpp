@@ -40,7 +40,13 @@ void CTerrain::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 	if (nullptr != m_pRenderer)
+	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONLIGHT, this);
+#ifdef _DEBUG
+		m_pRenderer->Add_DebugGroup(m_pPlane);
+#endif // _DEBUG
+	}
+		
 }
 
 HRESULT CTerrain::Render()
@@ -77,6 +83,14 @@ HRESULT CTerrain::Add_Components()
 	/* Com_Buffer */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Terrain"),
 		TEXT("Com_Buffer"), reinterpret_cast<CComponent**>(&m_pBuffer))))
+	{
+		MSG_BOX("Failed CTerrain Add_Component : (Com_Buffer)");
+		return E_FAIL;
+	}
+	
+	/* Com_Plane */
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Plane"),
+		TEXT("Com_Plane"), reinterpret_cast<CComponent**>(&m_pPlane))))
 	{
 		MSG_BOX("Failed CTerrain Add_Component : (Com_Buffer)");
 		return E_FAIL;
@@ -142,6 +156,7 @@ void CTerrain::Free()
 {
 	__super::Free();
 
+	Safe_Release(m_pPlane);
 	Safe_Release(m_pTexture);
 	Safe_Release(m_pShader);
 	Safe_Release(m_pBuffer);

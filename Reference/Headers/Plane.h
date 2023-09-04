@@ -8,34 +8,35 @@
 #include "Composite.h"
 
 BEGIN(Engine)
+
+#ifdef _DEBUG
 class CShader;
 class CVIBuffer_Line;
 class CVIBuffer_Triangle;
+#endif // _DEBUG
 
-class ENGINE_DLL CCharacterController final : public CComposite
+class ENGINE_DLL CPlane final : public CComposite
 {
-public:
-	_float3 Get_Position();
-	void Set_Position(_float3 _vPosition);
-	void Move(_float3 _vVelocity, _float _fTimeDelta, _float _fMinDist = 0.f);
-
 private:
-	explicit CCharacterController(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	explicit CCharacterController(const CCharacterController& rhs);
-	virtual ~CCharacterController() = default;
+	explicit CPlane(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	explicit CPlane(const CPlane& rhs);
+	virtual ~CPlane() = default;
 
 public:
+	virtual HRESULT Initialize_Prototype(const _tchar* szHeightMapPath);
 	virtual HRESULT Initialize(void* pArg) override;
+	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
-
 
 #ifdef _DEBUG
 	virtual HRESULT Render() override;
 #endif // _DEBUG
 
 private:
-	PxController*			m_pController = { nullptr };
-
+	PxRigidStatic*			m_pActor = { nullptr };
+	PxMaterial*				m_pMaterial = { nullptr };
+	PxScene*				m_pScene = { nullptr };
+	
 #ifdef _DEBUG
 private:
 	CShader*				m_pShader = { nullptr };
@@ -50,6 +51,10 @@ private:
 	_uint					m_iStartTriangleBufferIndex = { 0 };
 #endif // _DEBUG
 
+private:
+	HRESULT Create_HeightMap(const _tchar* szHeightMapPath);
+	HRESULT Create_PlaneActor();
+
 #ifdef _DEBUG
 private:
 	HRESULT Add_Components();
@@ -58,7 +63,7 @@ private:
 #endif // _DEBUG
 
 public:
-	static CCharacterController* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);
+	static CPlane* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* szHeightMapPath);
 	virtual CComponent* Clone(void* pArg) override;
 	virtual void Free() override;
 };

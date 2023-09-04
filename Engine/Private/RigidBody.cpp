@@ -51,6 +51,28 @@ _float4 CRigidBody::Get_Rotation() const
 	return _float4(vPose.q.x, vPose.q.y, vPose.q.z, vPose.q.w);
 }
 
+void CRigidBody::Set_Position(_float3 vPosition)
+{
+	PxTransform vPose;
+	if (false == m_isKinematic ||
+		false == reinterpret_cast<PxRigidDynamic*>(m_pActor)->getKinematicTarget(vPose))
+	{
+		vPose = PxTransform(PhysXConverter::ToPxVec3(vPosition), PhysXConverter::ToPxQuat(Get_Rotation()));
+		m_pActor->setGlobalPose(vPose);
+	}
+}
+
+void CRigidBody::Set_Rotation(_float4 vRotation)
+{
+	PxTransform vPose;
+	if (false == m_isKinematic ||
+		false == reinterpret_cast<PxRigidDynamic*>(m_pActor)->getKinematicTarget(vPose))
+	{
+		vPose = PxTransform(PhysXConverter::ToPxVec3(Get_Position()), PhysXConverter::ToPxQuat(vRotation));
+		m_pActor->setGlobalPose(vPose);
+	}
+}
+
 void CRigidBody::Set_Material(_float3 vMaterial)
 {
 	m_pMaterial->release();
@@ -64,9 +86,36 @@ void CRigidBody::Set_Material(_float3 vMaterial)
 
 void CRigidBody::Set_Constraint(RigidBodyConstraint eConstraintFlag, _bool _isEnable)
 {
+	if (nullptr == m_pActor)
+		return;
+
 	PxRigidDynamic* pRigidBody = m_pActor->is<PxRigidDynamic>();
 
-	//pRigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, !_isEnable);
+	if (eConstraintFlag & TransX)
+	{
+		pRigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_X, !_isEnable);
+	}
+	if (eConstraintFlag & TransY)
+	{
+		pRigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, !_isEnable);
+	}
+	if (eConstraintFlag & TransZ)
+	{
+		pRigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_Z, !_isEnable);
+	}
+
+	if (eConstraintFlag & RotX)
+	{
+		pRigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, !_isEnable);
+	}
+	if (eConstraintFlag & RotY)
+	{
+		pRigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, !_isEnable);
+	}
+	if (eConstraintFlag & RotZ)
+	{
+		pRigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, !_isEnable);
+	}
 }
 
 void CRigidBody::Set_Kinematic(_bool isKinematic)
@@ -101,23 +150,14 @@ HRESULT CRigidBody::Initialize(void* pArg)
 	return S_OK;
 }
 
-void CRigidBody::Tick(_float fTimeDelta)
-{
-	if (nullptr != m_pController)
-	{
-		m_pTransform->Set_Position(m_pController->Get_Position());
-		m_pController->Move(PhysXConverter::ToXMFLOAT3(m_pActor->getLinearVelocity()), fTimeDelta);
-	}
-	else
-	{
-		if (nullptr != m_pTransform)
-			m_pTransform->Set_Position(Get_Position());
-	}
-}
-
 void CRigidBody::Late_Tick(_float fTimeDelta)
 {
-	//Make_Buffers();
+	m_pActor->addForce(m_pActor->getLinearVelocity() * -m_fAirDrag);
+	m_pActor->addTorque(m_pActor->getAngularVelocity() * -m_fAirDrag);
+
+#ifdef _DEBUG
+	Make_Buffers();
+#endif // _DEBUG
 }
 
 #ifdef _DEBUG
@@ -147,39 +187,60 @@ HRESULT CRigidBody::Create_Actor()
 	PxPhysics* pPhysX = pPhysX_Manager->Get_Physics();
 	m_pScene = pPhysX_Manager->Get_PhysxScene();
 
+#ifdef _DEBUG
 	m_pScene->simulate(1 / 60.f);
 	m_pScene->fetchResults(true);
+	_uint iPrevLines = m_pScene->getRenderBuffer().getNbLines();
+	_uint iPrevTriangles = m_pScene->getRenderBuffer().getNbTriangles();
 
-	// 시작 지점은 갱신 전에 가져와야함.
-	//m_iStartLineBufferIndex = pPhysX_Manager->Get_LastLineBufferIndex();
-	//m_iStartTriangleBufferIndex = pPhysX_Manager->Get_LastTriangleBufferIndex();
-
-	Safe_Release(pPhysX_Manager);
+	m_iStartLineBufferIndex = pPhysX_Manager->Get_LastLineBufferIndex();
+	m_iStartTriangleBufferIndex = pPhysX_Manager->Get_LastTriangleBufferIndex();
+#endif // _DEBUG
 
 	PxVec3 vLocal = PxVec3(0.f, 10.f, 5.f);
 	PxTransform localTm(vLocal);
 	m_pActor = pPhysX->createRigidDynamic(localTm);
 
-	m_pMaterial = pPhysX->createMaterial(0.5f, 0.5f, 0.5f);
+	m_pMaterial = pPhysX->createMaterial(0.1f, 0.1f, 0.1f);
 	PxShape* boxshape = pPhysX->createShape(PxCapsuleGeometry(1.f, 1.f), *m_pMaterial, false, PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSIMULATION_SHAPE);
-
+	PxFilterData data;
+	data.word0 = 0x1111;
+	boxshape->setSimulationFilterData(data);
 	// OffsetPosition 처리
-	PxTransform relativePose(PxQuat(PxHalfPi, PxVec3(0, 0, 1)));
+	_float4 vQuaternion = XMQuaternionRotationRollPitchYaw(0.f, XMConvertToRadians(180.f), XMConvertToRadians(90.f));
+	PxTransform relativePose(PxQuat(PhysXConverter::ToPxQuat(vQuaternion)));
 	boxshape->setLocalPose(relativePose);
-
-	m_pActor->setMaxLinearVelocity(10.f);
 	m_pActor->attachShape(*boxshape);
-	m_pActor->setMass(10.f);
-	_uint iTest = boxshape->getInternalShapeIndex();
 	m_pScene->addActor(*m_pActor);
+
 	PxRigidDynamic* pRigidBody = m_pActor->is<PxRigidDynamic>();
 
-	// 회전을 " 하고 싶은 " 부분만 true로 처리해주면 된다.
+	// 회전을 " 하기 싫은 " 부분만 true로 처리해주면 된다.
 	pRigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, true);
-	//pRigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, true);
+	pRigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, false);
 	pRigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, true);
 
+#ifdef _DEBUG
+	// 다음 렌더링을 위한 갱신 처리
+	m_pScene->simulate(1 / 60.f);
+	m_pScene->fetchResults(true);
+	_uint iNewLines = m_pScene->getRenderBuffer().getNbLines();
+	_uint iNewTriangles = m_pScene->getRenderBuffer().getNbTriangles();
+
+	m_iNumLineBuffer = iNewLines - iPrevLines;
+	m_iNumTriangleBuffer = iNewTriangles - iPrevTriangles;
+	pPhysX_Manager->Add_LastLineBufferIndex(iNewLines - iPrevLines);
+	pPhysX_Manager->Add_LastTriangleBufferIndex(iNewTriangles - iPrevTriangles);
+#endif // _DEBUG
+
+	Safe_Release(pPhysX_Manager);
+
 	return S_OK;
+}
+
+HRESULT CRigidBody::SetUp_Actor(_float3 _vInitPos, PxGeometry _ShapeType, _bool _isTrigger, RigidBodyConstraint eConstraintFlag, _float3 _vResistance, PxFilterData FilterData)
+{
+	return E_NOTIMPL;
 }
 
 void CRigidBody::Put_To_Sleep() const
@@ -285,13 +346,7 @@ HRESULT CRigidBody::Add_Components()
 	CPhysX_Manager* pPhysX_Manager = CPhysX_Manager::GetInstance();
 	Safe_AddRef(pPhysX_Manager);
 
-	// 리지드바디 클래스에서 생성한 모든 피직스 객체의 Shape를 렌더링
-	m_pScene->simulate(1 / 60.f);
-	m_pScene->fetchResults(true);
 	const PxRenderBuffer* pBuffer = pPhysX_Manager->Get_RenderBuffer();
-
-	m_iNumLineBuffer = pPhysX_Manager->Get_LastLineBufferIndex() - m_iStartLineBufferIndex;
-	m_iNumTriangleBuffer = pPhysX_Manager->Get_LastTriangleBufferIndex() - m_iStartTriangleBufferIndex;
 
 	CVIBuffer_Line::LINEDESC LineDesc;
 	ZEROMEM(&LineDesc);
@@ -447,9 +502,6 @@ CComponent* CRigidBody::Clone(void* pArg)
 void CRigidBody::Free()
 {
 	__super::Free();
-
-	Safe_Release(m_pTransform);
-	Safe_Release(m_pController);
 
 #ifdef _DEBUG
 	Safe_Release(m_pTriangle);

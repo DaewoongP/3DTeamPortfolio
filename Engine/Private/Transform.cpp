@@ -1,4 +1,5 @@
 #include "..\Public\Transform.h"
+#include "RigidBody.h"
 
 CTransform::CTransform(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CComponent(pDevice, pContext)
@@ -9,6 +10,15 @@ CTransform::CTransform(const CTransform& rhs)
 	: CComponent(rhs)
 	, m_WorldMatrix(rhs.m_WorldMatrix)
 {
+}
+
+_float4 CTransform::Get_Quaternion()
+{
+	_float4x4 RotationMatrix = m_WorldMatrix;
+	_float4 vTrans = _float4(0.f, 0.f, 0.f, 1.f);
+	memcpy(RotationMatrix.m[3], &vTrans, sizeof(_float4));
+
+	return XMQuaternionRotationMatrix(RotationMatrix);
 }
 
 _float2 CTransform::Get_Trnaslation_To_UI_fXY() const
@@ -99,6 +109,7 @@ HRESULT CTransform::Initialize(void* pArg)
 
 void CTransform::Tick(_float fTimeDelta)
 {
+	Update_Components(fTimeDelta);
 }
 
 void CTransform::Move_Direction(_float3 vDirection, _float fTimeDelta)
@@ -110,6 +121,8 @@ void CTransform::Move_Direction(_float3 vDirection, _float fTimeDelta)
 	vPosition += vDirection * m_fSpeed * fTimeDelta;
 
 	Set_Position(vPosition);
+
+	m_ubTransformChanged |= CHANGEFLAG::TRANSLATION;
 }
 
 void CTransform::Go_Straight(_float fTimeDelta)
@@ -146,7 +159,6 @@ void CTransform::Turn(_float3 vAxis, _float fTimeDelta)
 	_float3 vUp = Get_Up();
 	_float3 vLook = Get_Look();
 
-	
 	_float4x4 RotationMatrix = XMMatrixRotationQuaternion(
 		Get_QuaternionVector_From_Axis(vAxis, m_fRotationSpeed * fTimeDelta));
 	
@@ -155,6 +167,8 @@ void CTransform::Turn(_float3 vAxis, _float fTimeDelta)
 	Set_Right(XMVector3TransformNormal(vRight, RotationMatrix));
 	Set_Up(XMVector3TransformNormal(vUp, RotationMatrix));
 	Set_Look(XMVector3TransformNormal(vLook, RotationMatrix));
+
+	m_ubTransformChanged |= CHANGEFLAG::ROTATION;
 }
 
 void CTransform::Rotation(_float3 vAxis, _float fRadian)
@@ -173,6 +187,8 @@ void CTransform::Rotation(_float3 vAxis, _float fRadian)
 	Set_Right(XMVector3TransformNormal(vRight, RotationMatrix));
 	Set_Up(XMVector3TransformNormal(vUp, RotationMatrix));
 	Set_Look(XMVector3TransformNormal(vLook, RotationMatrix));
+
+	m_ubTransformChanged |= CHANGEFLAG::ROTATION;
 }
 
 void CTransform::Rotation(_float3 vRadians)
@@ -184,13 +200,34 @@ void CTransform::Rotation(_float3 vRadians)
 	vRight = XMVectorSet(1.f, 0.f, 0.f, 0.f) * vScale.x;
 	vUp = XMVectorSet(0.f, 1.f, 0.f, 0.f) * vScale.y;
 	vLook = XMVectorSet(0.f, 0.f, 1.f, 0.f) * vScale.z;
-
+	
 	_float4x4 RotationMatrix = XMMatrixRotationQuaternion(
 		Get_QuaternionVector_RollPitchYaw(vRadians));
 
 	Set_Right(XMVector3TransformNormal(vRight, RotationMatrix));
 	Set_Up(XMVector3TransformNormal(vUp, RotationMatrix));
 	Set_Look(XMVector3TransformNormal(vLook, RotationMatrix));
+
+	m_ubTransformChanged |= CHANGEFLAG::ROTATION;
+}
+
+void CTransform::Set_Quaternion(_float4 vQuaternion)
+{
+	_float3 vScale = Get_Scale();
+
+	_float3 vRight, vUp, vLook;
+
+	vRight = XMVectorSet(1.f, 0.f, 0.f, 0.f) * vScale.x;
+	vUp = XMVectorSet(0.f, 1.f, 0.f, 0.f) * vScale.y;
+	vLook = XMVectorSet(0.f, 0.f, 1.f, 0.f) * vScale.z;
+
+	_float4x4 RotationMatrix = XMMatrixRotationQuaternion(vQuaternion);
+
+	Set_Right(XMVector3TransformNormal(vRight, RotationMatrix));
+	Set_Up(XMVector3TransformNormal(vUp, RotationMatrix));
+	Set_Look(XMVector3TransformNormal(vLook, RotationMatrix));
+
+	m_ubTransformChanged |= CHANGEFLAG::ROTATION;
 }
 
 void CTransform::LookAt(_float3 _vTarget, _bool _isDeleteY)
@@ -209,6 +246,41 @@ void CTransform::LookAt(_float3 _vTarget, _bool _isDeleteY)
 	Set_Right(XMVector3Normalize(vRight) * vScale.x);
 	Set_Up(XMVector3Normalize(vUp) * vScale.y);
 	Set_Look(XMVector3Normalize(vLook) * vScale.z);
+
+	m_ubTransformChanged |= CHANGEFLAG::ROTATION;
+}
+
+void CTransform::Update_Components(_float fTimeDelta)
+{
+	if (nullptr == m_pRigidBody)
+		return;
+
+	if (m_ubTransformChanged & CHANGEFLAG::TRANSLATION)
+	{
+		m_pRigidBody->Set_Position(Get_Position());
+	}
+	else
+	{
+		Set_Position(m_pRigidBody->Get_Position());
+	}
+	
+	if (m_ubTransformChanged & CHANGEFLAG::ROTATION)
+	{
+		m_pRigidBody->Set_Rotation(Get_Quaternion());
+	}	
+	else
+	{
+		Set_Quaternion(m_pRigidBody->Get_Rotation());
+	}
+	
+	// Controller
+	/*if (m_ubTransformChanged & CHANGEFLAG::TRANSLATION)
+		controller->Translate(Get_Position());
+	else
+		m_Position = controller->GetPosition();*/
+
+
+	m_ubTransformChanged = CHANGEFLAG::NONE;
 }
 
 CTransform* CTransform::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -240,4 +312,6 @@ CComponent* CTransform::Clone(void* pArg)
 void CTransform::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_pRigidBody);
 }

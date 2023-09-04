@@ -1,8 +1,13 @@
 #pragma once
+/* =============================================== */
+// 
+//	Á¤ : ¹Ú´ë¿õ
+//	ºÎ :
+//
+/* =============================================== */
 #include "Composite.h"
 
 BEGIN(Engine)
-class CCharacterController;
 
 #ifdef _DEBUG
 class CShader;
@@ -38,18 +43,12 @@ public:
 	PxRigidBody* Get_RigidBodyActor() const;
 	_float3 Get_Position() const;
 	_float4 Get_Rotation() const;
+	void Set_Position(_float3 vPosition);
+	void Set_Rotation(_float4 vRotation);
 	void Set_Material(_float3 vMaterial);
 	void Set_Constraint(RigidBodyConstraint eConstraintFlag, _bool _isEnable);
 	void Set_Kinematic(_bool _isKinematic);
 	void Set_Density(_float _fDensity) const;
-	void Set_TransformComponent(CTransform* pTransform) {
-		m_pTransform = pTransform;
-		Safe_AddRef(m_pTransform);
-	}
-	void Set_ControllerComponent(CCharacterController* pController) {
-		m_pController = pController;
-		Safe_AddRef(m_pController);
-	}
 
 	_bool Is_Static()  const { return m_isStatic; }
 	_bool Is_Dynamic()  const { return !m_isStatic; }
@@ -57,7 +56,6 @@ public:
 
 public:
 	virtual HRESULT Initialize(void* pArg) override;
-	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 
 #ifdef _DEBUG
@@ -66,6 +64,8 @@ public:
 
 public:
 	HRESULT Create_Actor();
+	HRESULT SetUp_Actor(_float3 _vInitPos, 	PxGeometry _ShapeType, _bool _isTrigger, 
+		RigidBodyConstraint eConstraintFlag, _float3 _vResistance, PxFilterData FilterData);
 	//void Add_Collider(CColliderCom* collider);
 
 	void Put_To_Sleep() const;
@@ -83,10 +83,11 @@ private:
 	PxScene*				m_pScene = { nullptr };
 
 private:
-	CTransform*				m_pTransform = { nullptr };
-	CCharacterController*	m_pController = { nullptr };
 	_bool					m_isStatic = { false };
 	_bool					m_isKinematic = { false };
+
+private:
+	_float					m_fAirDrag = { 0.f };
 
 #ifdef _DEBUG
 private:

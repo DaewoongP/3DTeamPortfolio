@@ -4,7 +4,6 @@
 
 #include "Sky.h"
 #include "Terrain.h"
-#include "VIBuffer_Cube.h"
 #include "Logo_BackGround.h"
 #include "Armored_Troll.h"
 #include "Forest_Troll.h"
@@ -269,6 +268,11 @@ HRESULT CLoader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
 			CRigidBody::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_RigidBody");
+
+		/* For.Prototype_Component_Plane */
+		if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_STATIC, TEXT("Prototype_Component_Plane"),
+			CPlane::Create(m_pDevice, m_pContext, nullptr))))
+			throw TEXT("Prototype_Component_Plane");
 
 		lstrcpy(m_szLoading, TEXT("AI ·Îµù Áß."));
 		/* For.Prototype_Component_RootBehavior */

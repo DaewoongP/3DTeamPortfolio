@@ -1,8 +1,7 @@
-#include "..\Public\CharacterController.h"
+#include "..\Public\Plane.h"
 #include "PipeLine.h"
 #include "PhysX_Manager.h"
 #include "PhysXConverter.h"
-#include <characterkinematic/PxController.h>
 
 #ifdef _DEBUG
 #include "Shader.h"
@@ -10,104 +9,45 @@
 #include "VIBuffer_Triangle.h"
 #endif // _DEBUG
 
-_float3 CCharacterController::Get_Position()
-{
-	if (nullptr == m_pController)
-		return _float3();
-
-	return PhysXConverter::ToXMFLOAT3(m_pController->getPosition());
-}
-
-void CCharacterController::Set_Position(_float3 _vPosition)
-{
-	if (nullptr == m_pController)
-		return;
-	
-	m_pController->setPosition(PhysXConverter::ToPxExtendedVec3(_vPosition));
-}
-
-void CCharacterController::Move(_float3 _vVelocity, _float _fTimeDelta, _float _fMinDist)
-{
-	if (nullptr == m_pController)
-		return;
-
-	m_pController->move(PhysXConverter::ToPxVec3(_vVelocity * _fTimeDelta), _fMinDist, 0, nullptr, nullptr);
-}
-
-CCharacterController::CCharacterController(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CPlane::CPlane(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CComposite(pDevice, pContext)
 {
 }
 
-CCharacterController::CCharacterController(const CCharacterController& rhs)
+CPlane::CPlane(const CPlane& rhs)
 	: CComposite(rhs)
 {
 }
 
-HRESULT CCharacterController::Initialize(void* pArg)
+HRESULT CPlane::Initialize_Prototype(const _tchar* szHeightMapPath)
 {
-	// 사용 예시입니다.
-	/*PxCapsuleControllerDesc CapsuleControllerDesc;
-	CapsuleControllerDesc.setToDefault();
-	CapsuleControllerDesc.radius = 1.f;
-	CapsuleControllerDesc.height = 1.f;
-	CapsuleControllerDesc.material = pPhysX_Manager->Get_Physics()->createMaterial(0.f, 0.f, 0.f);
-	CapsuleControllerDesc.density = 30.f;
-	CapsuleControllerDesc.isValid();*/
-
-	if (nullptr == pArg)
-	{
-		MSG_BOX("PxController not valid");
+	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
-	}
 
-	PxControllerDesc* ControllerDesc = reinterpret_cast<PxControllerDesc*>(pArg);
-
-	CPhysX_Manager* pPhysX_Manager = CPhysX_Manager::GetInstance();
-	Safe_AddRef(pPhysX_Manager);
-
-	PxScene* pScene = pPhysX_Manager->Get_PhysxScene();
-
-#ifdef _DEBUG
-	pScene->simulate(1 / 60.f);
-	pScene->fetchResults(true);
-	_uint iPrevLines = pScene->getRenderBuffer().getNbLines();
-	_uint iPrevTriangles = pScene->getRenderBuffer().getNbTriangles();
-
-	m_iStartLineBufferIndex = pPhysX_Manager->Get_LastLineBufferIndex();
-	m_iStartTriangleBufferIndex = pPhysX_Manager->Get_LastTriangleBufferIndex();
-#endif // _DEBUG
-
-	// 컨트롤러 매니저를 통해 컨트롤러를 생성합니다.
-	PxControllerManager* pControllerManager = pPhysX_Manager->Get_ControllerManager();
-
-	m_pController = pControllerManager->createController(*ControllerDesc);
-	
-#ifdef _DEBUG
-	// 다음 렌더링을 위한 갱신 처리
-	pScene->simulate(1 / 60.f);
-	pScene->fetchResults(true);
-	_uint iNewLines = pScene->getRenderBuffer().getNbLines();
-	_uint iNewTriangles = pScene->getRenderBuffer().getNbTriangles();
-
-	m_iNumLineBuffer = iNewLines - iPrevLines;
-	m_iNumTriangleBuffer = iNewTriangles - iPrevTriangles;
-	pPhysX_Manager->Add_LastLineBufferIndex(iNewLines - iPrevLines);
-	pPhysX_Manager->Add_LastTriangleBufferIndex(iNewTriangles - iPrevTriangles);
-#endif // _DEBUG
-
-	Safe_Release(pPhysX_Manager);
-
-
-#ifdef _DEBUG
-	if (FAILED(Add_Components()))
+	if (FAILED(Create_HeightMap(szHeightMapPath)))
 		return E_FAIL;
-#endif // _DEBUG
 
 	return S_OK;
 }
 
-void CCharacterController::Late_Tick(_float fTimeDelta)
+HRESULT CPlane::Initialize(void* pArg)
+{
+	if (FAILED(Create_PlaneActor()))
+		return E_FAIL;
+
+#ifdef _DEBUG
+	if (FAILED(Add_Components()))
+		return E_FAIL;
+#endif // DEBUG
+
+	return S_OK;
+}
+
+void CPlane::Tick(_float fTimeDelta)
+{
+}
+
+void CPlane::Late_Tick(_float fTimeDelta)
 {
 #ifdef _DEBUG
 	Make_Buffers();
@@ -115,7 +55,7 @@ void CCharacterController::Late_Tick(_float fTimeDelta)
 }
 
 #ifdef _DEBUG
-HRESULT CCharacterController::Render()
+HRESULT CPlane::Render()
 {
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
@@ -131,21 +71,61 @@ HRESULT CCharacterController::Render()
 
 	return S_OK;
 }
+#endif // _DEBUG
 
-HRESULT CCharacterController::Add_Components()
+HRESULT CPlane::Create_HeightMap(const _tchar* szHeightMapPath)
+{
+	return S_OK;
+}
+
+HRESULT CPlane::Create_PlaneActor()
+{
+	CPhysX_Manager* pPhysX_Manager = CPhysX_Manager::GetInstance();
+	Safe_AddRef(pPhysX_Manager);
+
+	PxPhysics* pPhysX = pPhysX_Manager->Get_Physics();
+	m_pScene = pPhysX_Manager->Get_PhysxScene();
+
+#ifdef _DEBUG
+	m_pScene->simulate(1 / 60.f);
+	m_pScene->fetchResults(true);
+
+	const PxRenderBuffer* pBuffer = pPhysX_Manager->Get_RenderBuffer();
+	m_iStartLineBufferIndex = pBuffer->getNbLines();
+	m_iStartTriangleBufferIndex = pBuffer->getNbTriangles();
+#endif // _DEBUG
+
+	Safe_Release(pPhysX_Manager);
+
+	m_pActor = pPhysX->createRigidStatic(PxTransformFromPlaneEquation(PxPlane(PxVec3(0.f, 1.f, 0.f), 0.f)));
+	m_pMaterial = pPhysX->createMaterial(1.f, 0.1f, 0.1f);
+	PxShape* pPlaneShape = pPhysX->createShape(PxPlaneGeometry(), *m_pMaterial, false, PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSIMULATION_SHAPE);
+	m_pActor->attachShape(*pPlaneShape);
+	m_pScene->addActor(*m_pActor);
+
+	return S_OK;
+}
+
+#ifdef _DEBUG
+HRESULT CPlane::Add_Components()
 {
 	/* Com_Shader */
 	if (FAILED(CComposite::Add_Component(0, TEXT("Prototype_Component_Shader_Debug"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
 	{
-		MSG_BOX("Failed CCharacterController Add_Component : (Com_Shader)");
+		MSG_BOX("Failed CRigidBody Add_Component : (Com_Shader)");
 		return E_FAIL;
 	}
 
 	CPhysX_Manager* pPhysX_Manager = CPhysX_Manager::GetInstance();
 	Safe_AddRef(pPhysX_Manager);
 
+	// Plane 생성이후 개수 확인
+	m_pScene->simulate(1 / 60.f);
+	m_pScene->fetchResults(true);
 	const PxRenderBuffer* pBuffer = pPhysX_Manager->Get_RenderBuffer();
+	m_iNumLineBuffer = pBuffer->getNbLines() - m_iStartLineBufferIndex;
+	m_iNumTriangleBuffer = pBuffer->getNbTriangles() - m_iStartTriangleBufferIndex;
 
 	CVIBuffer_Line::LINEDESC LineDesc;
 	ZEROMEM(&LineDesc);
@@ -154,8 +134,7 @@ HRESULT CCharacterController::Add_Components()
 	const PxDebugLine* pLines = pBuffer->getLines();
 
 	vector<_float3> Lines;
-	for (_uint i = m_iStartLineBufferIndex;
-		i < m_iStartLineBufferIndex + m_iNumLineBuffer; ++i)
+	for (_uint i = pBuffer->getNbLines() - m_iNumLineBuffer + 1; i < pBuffer->getNbLines(); ++i)
 	{
 		Lines.push_back(PhysXConverter::ToXMFLOAT3(pLines[i].pos0));
 		Lines.push_back(PhysXConverter::ToXMFLOAT3(pLines[i].pos1));
@@ -181,8 +160,7 @@ HRESULT CCharacterController::Add_Components()
 	const PxDebugTriangle* pDebugTriangles = pBuffer->getTriangles();
 
 	vector<_float3> Triangles;
-	for (_uint i = m_iStartTriangleBufferIndex;
-		i < m_iStartTriangleBufferIndex + m_iNumTriangleBuffer; ++i)
+	for (_uint i = pBuffer->getNbTriangles() - m_iNumTriangleBuffer + 1; i < pBuffer->getNbTriangles(); ++i)
 	{
 		Triangles.push_back(PhysXConverter::ToXMFLOAT3(pDebugTriangles[i].pos0));
 		Triangles.push_back(PhysXConverter::ToXMFLOAT3(pDebugTriangles[i].pos1));
@@ -202,12 +180,13 @@ HRESULT CCharacterController::Add_Components()
 		}
 	}
 
+	pPhysX_Manager->Clear_BufferIndex();
 	Safe_Release(pPhysX_Manager);
 
 	return S_OK;
 }
 
-HRESULT CCharacterController::SetUp_ShaderResources()
+HRESULT CPlane::SetUp_ShaderResources()
 {
 	CPipeLine* pPipeLine = CPipeLine::GetInstance();
 	Safe_AddRef(pPipeLine);
@@ -225,7 +204,7 @@ HRESULT CCharacterController::SetUp_ShaderResources()
 	return S_OK;
 }
 
-void CCharacterController::Make_Buffers()
+void CPlane::Make_Buffers()
 {
 	CVIBuffer_Line::LINEDESC LineDesc;
 	ZEROMEM(&LineDesc);
@@ -238,10 +217,9 @@ void CCharacterController::Make_Buffers()
 	Safe_Release(pPhysX_Manager);
 
 	const PxDebugLine* pDebugLines = pBuffer->getLines();
-
+	_uint iNumLines = pBuffer->getNbLines();
 	vector<_float3> Lines;
-	for (_uint i = m_iStartLineBufferIndex;
-		i < m_iStartLineBufferIndex + m_iNumLineBuffer; ++i)
+	for (_uint i = iNumLines - m_iNumLineBuffer; i < iNumLines; ++i)
 	{
 		Lines.push_back(PhysXConverter::ToXMFLOAT3(pDebugLines[i].pos0));
 		Lines.push_back(PhysXConverter::ToXMFLOAT3(pDebugLines[i].pos1));
@@ -256,10 +234,9 @@ void CCharacterController::Make_Buffers()
 	ZEROMEM(&TriangleDesc);
 
 	const PxDebugTriangle* pDebugTriangles = pBuffer->getTriangles();
-
+	_uint iNumTriangles = pBuffer->getNbTriangles();
 	vector<_float3> Triangles;
-	for (_uint i = m_iStartTriangleBufferIndex;
-		i < m_iStartTriangleBufferIndex + m_iNumTriangleBuffer; ++i)
+	for (_uint i = iNumTriangles - m_iNumTriangleBuffer; i < iNumTriangles; ++i)
 	{
 		Triangles.push_back(PhysXConverter::ToXMFLOAT3(pDebugTriangles[i].pos0));
 		Triangles.push_back(PhysXConverter::ToXMFLOAT3(pDebugTriangles[i].pos1));
@@ -272,44 +249,39 @@ void CCharacterController::Make_Buffers()
 }
 #endif // _DEBUG
 
-CCharacterController* CCharacterController::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CPlane* CPlane::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* szHeightMapPath)
 {
-	CCharacterController* pInstance = new CCharacterController(pDevice, pContext);
+	CPlane* pInstance = new CPlane(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize_Prototype()))
+	if (FAILED(pInstance->Initialize_Prototype(szHeightMapPath)))
 	{
-		MSG_BOX("Failed to Created CCharacterController");
+		MSG_BOX("Failed to Created CPlane");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CComponent* CCharacterController::Clone(void* pArg)
+CComponent* CPlane::Clone(void* pArg)
 {
-	CCharacterController* pInstance = new CCharacterController(*this);
+	CPlane* pInstance = new CPlane(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned CCharacterController");
+		MSG_BOX("Failed to Cloned CPlane");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CCharacterController::Free()
+void CPlane::Free()
 {
 	__super::Free();
 
-	if (nullptr != m_pController)
-	{
-		m_pController->release();
-	}
-
 #ifdef _DEBUG
+	Safe_Release(m_pTriangle);
 	Safe_Release(m_pShader);
 	Safe_Release(m_pLine);
-	Safe_Release(m_pTriangle);
 #endif // _DEBUG
 }
