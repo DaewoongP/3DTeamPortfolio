@@ -259,7 +259,7 @@ void CObject_Window::Current_MapObject()
 	{
 		// 지형 피킹 메뉴 Off
 		m_isCheckPicking = false;
-		//Mesh_Picking_Menu();
+		Mesh_Picking_Menu();
 	}
 }
 
