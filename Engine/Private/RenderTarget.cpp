@@ -46,6 +46,47 @@ HRESULT CRenderTarget::Initialize(_uint iSizeX, _uint iSizeY, DXGI_FORMAT eForma
 	return S_OK;
 }
 
+HRESULT CRenderTarget::Initialize(_uint iSizeX, _uint iSizeY, DXGI_FORMAT eFormat, const _float4& vClearColor, _bool isUsage)
+{
+	// Usage RenderTarget을 만드는 게 아니라면 그냥 일반 RenderTarget 만들도록 함
+	if (false == isUsage)
+	{
+		Initialize(iSizeX, iSizeY, eFormat, vClearColor);
+		return S_OK;
+	}
+
+	// Usage 버퍼 생성
+	D3D11_TEXTURE2D_DESC	TextureDesc;
+	ZeroMemory(&TextureDesc, sizeof(D3D11_TEXTURE2D_DESC));
+
+	TextureDesc.Width = 1;
+	TextureDesc.Height = 1;
+	TextureDesc.MipLevels = 1;
+	TextureDesc.ArraySize = 1;
+	TextureDesc.Format = eFormat;
+
+	TextureDesc.SampleDesc.Quality = 0;
+	TextureDesc.SampleDesc.Count = 1;
+
+	TextureDesc.Usage = D3D11_USAGE_STAGING;
+	TextureDesc.BindFlags = 0;
+	TextureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE | D3D11_CPU_ACCESS_READ;
+	TextureDesc.MiscFlags = 0;
+
+	if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &m_pTexture2D)))
+		return E_FAIL;
+
+	if (FAILED(m_pDevice->CreateRenderTargetView(m_pTexture2D, nullptr, &m_pRTV)))
+		return E_FAIL;
+
+	if (FAILED(m_pDevice->CreateShaderResourceView(m_pTexture2D, nullptr, &m_pSRV)))
+		return E_FAIL;
+
+	m_vClearColor = vClearColor;
+
+	return S_OK;
+}
+
 #ifdef _DEBUG
 HRESULT CRenderTarget::Ready_Debug(_float fX, _float fY, _float fSizeX, _float fSizeY)
 {
@@ -95,11 +136,11 @@ HRESULT CRenderTarget::Bind_ShaderResourceView(CShader* pShader, const _char* pC
 	return pShader->Bind_ShaderResource(pConstantName, m_pSRV);
 }
 
-CRenderTarget* CRenderTarget::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iSizeX, _uint iSizeY, DXGI_FORMAT eFormat, const _float4& vClearColor)
+CRenderTarget* CRenderTarget::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iSizeX, _uint iSizeY, DXGI_FORMAT eFormat, const _float4& vClearColor, _bool isUsage)
 {
 	CRenderTarget* pInstance = new CRenderTarget(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize(iSizeX, iSizeY, eFormat, vClearColor)))
+	if (FAILED(pInstance->Initialize(iSizeX, iSizeY, eFormat, vClearColor, isUsage)))
 	{
 		MSG_BOX("Failed to Created CRenderTarget");
 		Safe_Release(pInstance);
