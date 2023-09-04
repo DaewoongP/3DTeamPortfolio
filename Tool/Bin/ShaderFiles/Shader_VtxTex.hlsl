@@ -47,7 +47,7 @@ float4 PS_MAIN_UI(PS_IN In) : SV_TARGET0
 {
     float4 vColor = (float4) 0;
 	
-    vColor = g_Texture.Sample(PointSampler, In.vTexUV);
+    vColor = g_Texture.Sample(LinearSampler, In.vTexUV);
 	
     //if (0.1f >= vColor.a)
     //    discard;
@@ -72,7 +72,7 @@ technique11 DefaultTechnique
 
     pass UI
     {
-        SetRasterizerState(RS_Default);
+        SetRasterizerState(RS_Cull_None);
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
