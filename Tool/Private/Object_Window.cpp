@@ -24,7 +24,10 @@ HRESULT CObject_Window::Initialize(ImVec2 vWindowPos, ImVec2 vWindowSize)
 
 	// 0이 Non_Anim이다.
 	if (FAILED(Save_Model_Path(0, TEXT("../../Resources/Models/NonAnims/"))))
-		return E_FAIL;
+	{
+		MSG_BOX("Failed to Save_Model_Path function");
+		return S_OK;
+	}		
 
 	if (FAILED(Create_Dummy()))
 		return E_FAIL;
@@ -252,13 +255,13 @@ void CObject_Window::Current_MapObject()
 	ImGui::ListBox("Map Object List", &m_iTagIndex, VectorGetter,
 		static_cast<void*>(&m_vecObjectTag_s), (_int)m_vecObjectTag_s.size(), 20);
 
-	// 메쉬 피킹 메뉴 On / Off
-	ImGui::Checkbox("Object Picking", &m_isPickingObject);
-	if (true == m_isPickingObject)
-	{
-		// 지형 피킹 메뉴 Off
-		Mesh_Picking_Menu();
-	}	
+	//// 메쉬 피킹 메뉴 On / Off
+	//ImGui::Checkbox("Object Picking", &m_isPickingObject);
+	//if (true == m_isPickingObject)
+	//{
+	//	// 지형 피킹 메뉴 Off
+	//	Mesh_Picking_Menu();
+	//}	
 }
 
 void CObject_Window::Save_Load_Menu()
@@ -358,7 +361,6 @@ void CObject_Window::Delete_Object_Menu()
 
 void CObject_Window::Mesh_Picking_Menu()
 {
-	
 	BEGININSTANCE; if (true == pGameInstance->Get_DIKeyState(DIK_O, CInput_Device::KEY_DOWN))
 	{
 		//Target_Picking의 ID3D11Texture2D를 가져옴
@@ -387,6 +389,7 @@ void CObject_Window::Mesh_Picking_Menu()
 		D3D11_BOX findDesc;
 		ZEROMEM(&findDesc);
 
+		// 이 구조체의 정보를 토대로 단 하나의 픽셀을 가져온다
 		findDesc.left = pt.x;
 		findDesc.right = pt.x + 1;
 		findDesc.top = pt.y;
@@ -394,7 +397,7 @@ void CObject_Window::Mesh_Picking_Menu()
 		findDesc.front = 0;
 		findDesc.back = 1;
 
-		// Usage 버퍼 생성
+		// Usage 버퍼 생성, 읽기 전용이다.
 		ID3D11Texture2D* pCopyTexture2D = { nullptr };
 		D3D11_TEXTURE2D_DESC	TextureDescCopy;
 		ZEROMEM(&TextureDescCopy, sizeof(D3D11_TEXTURE2D_DESC));
@@ -416,6 +419,7 @@ void CObject_Window::Mesh_Picking_Menu()
 		if (FAILED(m_pDevice->CreateTexture2D(&TextureDescCopy, nullptr, &pCopyTexture2D)))
 			return;
 
+		// 새로 만든 1칸짜리 텍스처에 가져온 렌더 타겟 텍스처에서 원하는 1칸을 넣어준다.
 		m_pContext->CopySubresourceRegion(pCopyTexture2D, 0, 0, 0, 0, pTexture, 0, &findDesc);
 
 		D3D11_MAPPED_SUBRESOURCE MappedDesc;
@@ -449,12 +453,13 @@ void CObject_Window::Mesh_Picking_Menu()
 
 HRESULT CObject_Window::Save_MapObject()
 {
-	_tchar dataFile[MAX_PATH] = TEXT("../../Resources/MapData/MapObject.ddd");
+	_tchar dataFile[MAX_PATH] = TEXT("../../Resources/GameData/MapData/MapObject.ddd");
 
 	HANDLE hFile = CreateFile(dataFile, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
 	if (INVALID_HANDLE_VALUE == hFile)
 	{
 		MSG_BOX("Failed to Create MapObject File for Save MapObject");
+		return E_FAIL;
 	}
 
 	DWORD	dwByte = 0;
@@ -489,6 +494,7 @@ HRESULT CObject_Window::Load_MapObject()
 	if (INVALID_HANDLE_VALUE == hFile)
 	{
 		MSG_BOX("Failed to Create MapObject File for Load MapObject");
+		return E_FAIL;
 	}
 
 	DWORD	dwByte = 0;
@@ -739,6 +745,12 @@ HRESULT CObject_Window::Save_Model_Path(_uint iType, const _tchar* pFilePath)
 			if (!lstrcmp(entry.path().extension().c_str(), TEXT(".fbx")) ||
 				!lstrcmp(entry.path().extension().c_str(), TEXT(".FBX")))
 			{
+				if (false == fs::exists(entry.path()))
+				{
+					MSG_BOX("Failed to find FBX file");
+					return E_FAIL;
+				}
+
 				// .fbx를 .dat로 변경
 				size_t _dat = entry.path().string().find(".");
 				wstring pathresult = entry.path().wstring().substr(0, _dat);
