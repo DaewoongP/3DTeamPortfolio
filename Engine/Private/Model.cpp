@@ -109,9 +109,12 @@ HRESULT CModel::Initialize_Prototype(TYPE eType, const _tchar* pModelFilePath, _
 	if (FAILED(Ready_Materials()))
 		return E_FAIL;
 
-	if (FAILED(Ready_Animations()))
-		return E_FAIL;
-
+	if (eType == TYPE::TYPE_ANIM)
+	{
+		if (FAILED(Ready_Animations()))
+			return E_FAIL;
+	}
+	
 	return S_OK;
 }
 

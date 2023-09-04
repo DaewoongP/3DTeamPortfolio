@@ -27,6 +27,8 @@ HRESULT CParticleSystem::Initialize_Prototype(const _tchar* _pDirectoryPath)
 	//m_EmissionModuleDesc.Load(_pDirectoryPath);
 	//m_ShapeModuleDesc.Load(_pDirectoryPath);
 	
+	//static mesh -> 실린더, 구, 원뿔
+	// -> 모델이나 
 	// 메인모듈 생성
 	Resize_Container(m_MainModuleDesc.iMaxParticles);
 	//Reset_AllParticles();
