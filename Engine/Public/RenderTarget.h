@@ -18,7 +18,7 @@ private:
 
 public:
 	ID3D11RenderTargetView* Get_RTV() { return m_pRTV; }
-	ID3D11Texture2D*		Get_Texture2D() { return m_pTexture2D; }
+	ID3D11Texture2D*		Get_Texture2D() { return m_pCopyTexture2D; }
 
 public:
 	HRESULT Initialize(_uint iSizeX, _uint iSizeY, DXGI_FORMAT eFormat, const _float4& vClearColor);
@@ -38,6 +38,7 @@ private:
 
 private:
 	ID3D11Texture2D*			m_pTexture2D = { nullptr };
+	ID3D11Texture2D*			m_pCopyTexture2D = { nullptr };
 	ID3D11RenderTargetView*		m_pRTV = { nullptr };
 	ID3D11ShaderResourceView*	m_pSRV = { nullptr };
 	_float4						m_vClearColor;

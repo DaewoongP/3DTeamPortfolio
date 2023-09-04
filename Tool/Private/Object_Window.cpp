@@ -44,8 +44,6 @@ void CObject_Window::Tick(_float fTimeDelta)
 	ImGui::Checkbox("Picking", &m_isCheckPicking);
 	if(true == m_isCheckPicking)
 	{
-		// 메쉬 피킹 메뉴 Off
-		m_isPickingObject = false;
 		Picking_Menu();
 	}
 
@@ -255,12 +253,12 @@ void CObject_Window::Current_MapObject()
 		static_cast<void*>(&m_vecObjectTag_s), (_int)m_vecObjectTag_s.size(), 20);
 
 	// 메쉬 피킹 메뉴 On / Off
-	if (ImGui::Checkbox("Object Picking", &m_isPickingObject))
+	ImGui::Checkbox("Object Picking", &m_isPickingObject);
+	if (true == m_isPickingObject)
 	{
 		// 지형 피킹 메뉴 Off
-		m_isCheckPicking = false;
 		Mesh_Picking_Menu();
-	}
+	}	
 }
 
 void CObject_Window::Save_Load_Menu()
@@ -360,18 +358,11 @@ void CObject_Window::Delete_Object_Menu()
 
 void CObject_Window::Mesh_Picking_Menu()
 {
-	BEGININSTANCE; //if (true == pGameInstance->Get_DIMouseState(CInput_Device::DIMK_RBUTTON, CInput_Device::KEY_DOWN))
+	
+	BEGININSTANCE; if (true == pGameInstance->Get_DIKeyState(DIK_O, CInput_Device::KEY_DOWN))
 	{
 		//Target_Picking의 ID3D11Texture2D를 가져옴
 		ID3D11Texture2D* pTexture = pGameInstance->Find_RenderTarget(TEXT("Target_Picking"))->Get_Texture2D();
-
-		D3D11_MAPPED_SUBRESOURCE MappedDesc;
-		HRESULT hr = m_pContext->Map(pTexture, 0, D3D11_MAP_READ, 0, &MappedDesc);
-
-		if (FAILED(hr))
-			return;
-
-		_byte* texData = static_cast<_byte*>(MappedDesc.pData);
 
 		// 텍스처의 너비와 높이
 		D3D11_TEXTURE2D_DESC  TextureDesc;
@@ -380,7 +371,7 @@ void CObject_Window::Mesh_Picking_Menu()
 		_uint iWidth = TextureDesc.Width;
 		_uint iHeight = TextureDesc.Height;
 
-			// 마우스 위치
+		// 마우스 위치
 		D3D11_VIEWPORT ViewPort;
 		_uint iNumViewPorts = 1;
 
@@ -388,27 +379,69 @@ void CObject_Window::Mesh_Picking_Menu()
 		if (nullptr == m_pContext)
 			return;
 		m_pContext->RSGetViewports(&iNumViewPorts, &ViewPort);
-
+		
 		POINT	pt{};
 		GetCursorPos(&pt);
 		ScreenToClient(g_hWnd, &pt);
 
-		_float2		vMouse;
-		vMouse.x = pt.x / (ViewPort.Width * 0.5f) - 1.f;
-		vMouse.y = pt.y / -(ViewPort.Height * 0.5f) + 1.f;
+		D3D11_BOX findDesc;
+		ZEROMEM(&findDesc);
 
-		// 픽셀의 인덱스 계산
-		_uint iPixelIndex = (vMouse.y * iWidth + vMouse.x) * 4;
+		findDesc.left = pt.x;
+		findDesc.right = pt.x + 1;
+		findDesc.top = pt.y;
+		findDesc.bottom = pt.y + 1;
+		findDesc.front = 0;
+		findDesc.back = 1;
 
-		_float4 vPickingPixelColor;
-		vPickingPixelColor.x = texData[iPixelIndex];
-		vPickingPixelColor.y = texData[iPixelIndex + 1];
-		vPickingPixelColor.z = texData[iPixelIndex + 2];
-		vPickingPixelColor.w = 1.f;
+		// Usage 버퍼 생성
+		ID3D11Texture2D* pCopyTexture2D = { nullptr };
+		D3D11_TEXTURE2D_DESC	TextureDescCopy;
+		ZEROMEM(&TextureDescCopy, sizeof(D3D11_TEXTURE2D_DESC));
+
+		TextureDescCopy.Width = 1;
+		TextureDescCopy.Height = 1;
+		TextureDescCopy.MipLevels = 1;
+		TextureDescCopy.ArraySize = 1;
+		TextureDescCopy.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+
+		TextureDescCopy.SampleDesc.Quality = 0;
+		TextureDescCopy.SampleDesc.Count = 1;
+
+		TextureDescCopy.Usage = D3D11_USAGE_STAGING;
+		TextureDescCopy.BindFlags = 0;
+		TextureDescCopy.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE | D3D11_CPU_ACCESS_READ;
+		TextureDescCopy.MiscFlags = 0;
+
+		if (FAILED(m_pDevice->CreateTexture2D(&TextureDescCopy, nullptr, &pCopyTexture2D)))
+			return;
+
+		m_pContext->CopySubresourceRegion(pCopyTexture2D, 0, 0, 0, 0, pTexture, 0, &findDesc);
+
+		D3D11_MAPPED_SUBRESOURCE MappedDesc;
+		ZEROMEM(&MappedDesc);
+
+		if (FAILED(m_pContext->Map(pCopyTexture2D, 0, D3D11_MAP_READ, 0, &MappedDesc)))
+		{
+			MSG_BOX("Failed to Map Picking Texture");
+			return;
+		}			
+
+		// 해당 Pixel Copy가 잘못 되었을 경우..
+		if (MappedDesc.pData == nullptr)
+		{
+			MSG_BOX("Copy Data is nullptr");
+			return;
+		}
+
+		_uint pickID = { 0 };
+		pickID = ((_uint*)MappedDesc.pData)[0];
+
+		m_iTagIndex = pickID - 4278190080;
+
+		Safe_Release(pCopyTexture2D);
 
 		m_pContext->Unmap(pTexture, 0);
-
-		ImGui::Text("dd");
 	}ENDINSTANCE;
 }
 

@@ -56,11 +56,32 @@ HRESULT CRenderTarget::Initialize(_uint iSizeX, _uint iSizeY, DXGI_FORMAT eForma
 	}
 
 	// Usage 滚欺 积己
+	D3D11_TEXTURE2D_DESC	TextureDescCopy;
+	ZEROMEM(&TextureDescCopy, sizeof(D3D11_TEXTURE2D_DESC));
+	
+	TextureDescCopy.Width = 1;
+	TextureDescCopy.Height = 1;
+	TextureDescCopy.MipLevels = 1;
+	TextureDescCopy.ArraySize = 1;
+	TextureDescCopy.Format = eFormat;
+
+	TextureDescCopy.SampleDesc.Quality = 0;
+	TextureDescCopy.SampleDesc.Count = 1;
+	
+	TextureDescCopy.Usage = D3D11_USAGE_STAGING;
+	TextureDescCopy.BindFlags = 0;
+	TextureDescCopy.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE | D3D11_CPU_ACCESS_READ;
+	TextureDescCopy.MiscFlags = 0;
+
+	if (FAILED(m_pDevice->CreateTexture2D(&TextureDescCopy, nullptr, &m_pCopyTexture2D)))
+		return E_FAIL;
+
+	// 老馆 滚欺 积己
 	D3D11_TEXTURE2D_DESC	TextureDesc;
 	ZeroMemory(&TextureDesc, sizeof(D3D11_TEXTURE2D_DESC));
 
-	TextureDesc.Width = 1;
-	TextureDesc.Height = 1;
+	TextureDesc.Width = iSizeX;
+	TextureDesc.Height = iSizeY;
 	TextureDesc.MipLevels = 1;
 	TextureDesc.ArraySize = 1;
 	TextureDesc.Format = eFormat;
@@ -68,15 +89,22 @@ HRESULT CRenderTarget::Initialize(_uint iSizeX, _uint iSizeY, DXGI_FORMAT eForma
 	TextureDesc.SampleDesc.Quality = 0;
 	TextureDesc.SampleDesc.Count = 1;
 
-	TextureDesc.Usage = D3D11_USAGE_STAGING;
-	TextureDesc.BindFlags = 0;
-	TextureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE | D3D11_CPU_ACCESS_READ;
+	TextureDesc.Usage = D3D11_USAGE_DEFAULT;
+	TextureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+	TextureDesc.CPUAccessFlags = 0;
 	TextureDesc.MiscFlags = 0;
+
+	/// RenderTargetView 2D
+	D3D11_RENDER_TARGET_VIEW_DESC rtvDesc;
+	ZeroMemory(&rtvDesc, sizeof(rtvDesc));
+	rtvDesc.Format = TextureDesc.Format;
+	rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+	rtvDesc.Texture2D.MipSlice = 0;
 
 	if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &m_pTexture2D)))
 		return E_FAIL;
 
-	if (FAILED(m_pDevice->CreateRenderTargetView(m_pTexture2D, nullptr, &m_pRTV)))
+	if (FAILED(m_pDevice->CreateRenderTargetView(m_pTexture2D, &rtvDesc, &m_pRTV)))
 		return E_FAIL;
 
 	if (FAILED(m_pDevice->CreateShaderResourceView(m_pTexture2D, nullptr, &m_pSRV)))
@@ -153,6 +181,7 @@ void CRenderTarget::Free()
 	Safe_Release(m_pRTV);
 	Safe_Release(m_pSRV);
 	Safe_Release(m_pTexture2D);
+	Safe_Release(m_pCopyTexture2D);
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);
 }

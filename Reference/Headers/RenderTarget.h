@@ -38,6 +38,7 @@ private:
 
 private:
 	ID3D11Texture2D*			m_pTexture2D = { nullptr };
+	ID3D11Texture2D*			m_pCopyTexture2D = { nullptr };
 	ID3D11RenderTargetView*		m_pRTV = { nullptr };
 	ID3D11ShaderResourceView*	m_pSRV = { nullptr };
 	_float4						m_vClearColor;
