@@ -2,12 +2,25 @@
 #include "PipeLine.h"
 #include "Transform.h"
 
+CCamera::CCamera(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+	:
+	m_pDevice(pDevice),
+	m_pContext(pContext)
+	
+{
+	Safe_AddRef(m_pContext);
+	Safe_AddRef(m_pPipeLine);
+}
+
 HRESULT CCamera::Initialize(const CAMERADESC& CameraDesc)
 {
 	m_pPipeLine = CPipeLine::GetInstance();
-	Safe_AddRef(m_pPipeLine);
+
+	Safe_AddRef(m_pDevice);
 
 	m_CameraDesc = CameraDesc;
+
+	m_pTransform = CTransform::Create(m_pDevice, m_pContext);
 
 	return S_OK;
 }
@@ -19,9 +32,9 @@ void CCamera::Tick(const _float& fTimeDelta)
 	m_pPipeLine->Set_CameraFar(m_CameraDesc.m_fFar);
 }
 
-CCamera* CCamera::Create(const CAMERADESC& CameraDesc)
+CCamera* CCamera::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const CAMERADESC& CameraDesc)
 {
-	CCamera* pInstance = new CCamera();
+	CCamera* pInstance = new CCamera(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize(CameraDesc)))
 	{
@@ -34,5 +47,8 @@ CCamera* CCamera::Create(const CAMERADESC& CameraDesc)
 
 void CCamera::Free()
 {
+	Safe_Release(m_pTransform);
 	Safe_Release(m_pPipeLine);
+	Safe_Release(m_pContext);
+	Safe_Release(m_pDevice);
 }

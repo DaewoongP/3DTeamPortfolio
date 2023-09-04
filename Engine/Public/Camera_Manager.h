@@ -50,12 +50,15 @@ public:
 	//컷씬 재생을 위한 큐 추가
 	HRESULT Add_CutScene(const _tchar* _CutSceneTag);
 
+	//컷씬 한컷씩 추가
+	HRESULT Add_CutScene(CUTSCENECAMERADESC & _CutSceneCameraDesc);
+
 	//오프셋 카메라 데이터를 담는다.
 	HRESULT Read_OffSetCamera(const _tchar* _OffSetTag, const _tchar* _OffSetPath);
 	
 	//오프셋 재생을 위한 큐 추가
 	HRESULT Add_OffSetCamera(const _tchar* _OffSetTag);
-	
+
 	//for.protected
 
 protected:
@@ -90,6 +93,12 @@ private:
 
 	//오프셋 카메라 구조체 큐
 	queue<OFFSETCAMERADESC>	m_OffSetCameraDescs;
+
+	//구면 러프용으로 담아둘 리스트(추가 삭제에 용이)
+	list<OFFSETCAMERADESC> m_SplineData;
+
+	//구면 러프용으로 담아둘 백터(인덱스 접근에 용이)(사이즈를 정해 놓고 사용할 것)
+	vector<list<OFFSETCAMERADESC>::iterator> m_SplineDataIndexAccess;
 
 	//오프셋 시간 누적 값
 	_float m_fOffSetTimeAcc = { 0.0f };

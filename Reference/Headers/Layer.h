@@ -18,20 +18,21 @@ private:
 	virtual ~CLayer() = default;
 
 public:
-	HRESULT		Add_Component(const _tchar* pComponentTag, class CComponent* pComponent);
-	const unordered_map<const _tchar*, class CComponent*> Get_Components() const { return m_Components; }
+	HRESULT			Add_GameObjects(const _tchar* pGameObjectTag, class CGameObject* pGameObject);
+	const unordered_map<const _tchar*, class CGameObject*> Get_GameObjects() const { return m_GameObjects; }
 	// 레이어 클리어
-	HRESULT		Clear_Layer();
+	HRESULT			Clear_Layer();
+	HRESULT			Delete_Object(const _tchar* pGameObjectTag);
 
 public:
 	void Tick(_float fTimeDelta);
 	void Late_Tick(_float fTimeDelta);
 
 public:
-	class CComponent* Find_Component(const _tchar* pComponentTag);
+	class CGameObject* Find_GameObject(const _tchar* pGameObjectTag);
 
 private:
-	unordered_map<const _tchar*, class CComponent*>	m_Components;
+	unordered_map<const _tchar*, class CGameObject*>	m_GameObjects;
 
 public:
 	static CLayer* Create();

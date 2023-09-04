@@ -17,9 +17,14 @@ public:
 	// **피직스의 씬을 리턴합니다**
 	PxScene* Get_PhysxScene() const { return m_pPhysxScene; }
 	PxControllerManager* Get_ControllerManager() const { return m_pControllerManager; }
+
+#ifdef _DEBUG
 	const PxRenderBuffer* Get_RenderBuffer();
 	_uint Get_LastLineBufferIndex();
 	_uint Get_LastTriangleBufferIndex();
+	void Add_LastLineBufferIndex(_uint iNumLines);
+	void Add_LastTriangleBufferIndex(_uint iNumTriangles);
+#endif // _DEBUG
 
 private:
 	explicit CPhysX_Manager() = default;
@@ -28,6 +33,9 @@ private:
 public:
 	HRESULT Initialize();
 	void Tick(_float fTimeDelta);
+
+public:
+	void Clear_BufferIndex();
 
 private: /* 에러 메세지 등 cout 처리 */
 	CPXErrorCallBack			m_PXErrorCallBack;
@@ -54,9 +62,6 @@ private:
 	// 디버그 렌더링에 필요한 인덱스값
 	// 마지막 인덱스를 저장해두고 렌더링 처리함.
 	_uint						m_iLastTriangleBufferIndex = { 0 };
-
-	_uint						m_iNumPlaneLineBuffer = { 0 };
-	_uint						m_iNumPlaneTriangleBuffer = { 0 };
 
 private:
 	PxScene* Create_Scene();

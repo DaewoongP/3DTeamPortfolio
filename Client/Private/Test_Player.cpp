@@ -30,8 +30,7 @@ HRESULT CTest_Player::Initialize(void* pArg)
 
 	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
-	m_pRigidBody->Set_TransformComponent(m_pTransform);
-	//m_pRigidBody->Set_ControllerComponent(m_pController);
+	m_pTransform->Set_RigidBody(m_pRigidBody);
 
 	return S_OK;
 }
@@ -39,8 +38,7 @@ HRESULT CTest_Player::Initialize(void* pArg)
 void CTest_Player::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-	//m_pTransform->Set_Position(m_pController->Get_Position());
-	
+
 	Key_Input(fTimeDelta);
 
 	m_pModelCom->Play_Animation(fTimeDelta);
@@ -55,17 +53,17 @@ void CTest_Player::Late_Tick(_float fTimeDelta)
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 #ifdef _DEBUG
 		m_pRenderer->Add_DebugGroup(m_pRigidBody);
+		m_pRenderer->Add_DebugGroup(m_pController);
 #endif // _DEBUG
 	}
+
+#ifdef _DEBUG
+	Tick_ImGui();
+#endif // _DEBUG
 }
 
 HRESULT CTest_Player::Render()
 {
-#ifdef _DEBUG
-	Tick_ImGui();
-#endif // _DEBUG
-
-
 	if (FAILED(__super::Render()))
 		return E_FAIL;
 
@@ -134,6 +132,11 @@ HRESULT CTest_Player::Add_Components()
 		MSG_BOX("Failed CTest_Player Add_Component : (Com_RigidBody)");
 		return E_FAIL;
 	}
+	// 리지드바디 액터 설정
+	PxRigidBody* Rigid = m_pRigidBody->Get_RigidBodyActor();
+	Rigid->setMaxLinearVelocity(1000.f);
+	Rigid->setMass(10.f);
+	// ...
 
 	/* For.Com_Model */
 	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_CustomModel"),
@@ -222,24 +225,22 @@ void CTest_Player::Key_Input(_float fTimeDelta)
 
 	if (pGameInstance->Get_DIKeyState(DIK_UP))
 	{
-		//m_pController->Move(_float3(0.f, 0.f, 1.f), fTimeDelta * m_pTransform->Get_Speed());
 		m_pRigidBody->Add_Force(m_pTransform->Get_Look() * m_pTransform->Get_Speed(), PxForceMode::eACCELERATION);
 	}
 	
 	if (pGameInstance->Get_DIKeyState(DIK_DOWN))
 	{
-		//m_pController->Move(_float3(0.f, 0.f, 1.f), -1.f * fTimeDelta * m_pTransform->Get_Speed());
 		m_pRigidBody->Add_Force(m_pTransform->Get_Look() * -m_pTransform->Get_Speed(), PxForceMode::eACCELERATION);
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_LEFT))
 	{
-		m_pRigidBody->Add_Force(m_pTransform->Get_Right() * -m_pTransform->Get_Speed(), PxForceMode::eACCELERATION);
+		m_pTransform->Turn(_float3(0.f, -1.f, 0.f), fTimeDelta);
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_RIGHT))
 	{
-		m_pRigidBody->Add_Force(m_pTransform->Get_Right() * m_pTransform->Get_Speed(), PxForceMode::eACCELERATION);
+		m_pTransform->Turn(_float3(0.f, 1.f, 0.f), fTimeDelta);
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
@@ -248,7 +249,6 @@ void CTest_Player::Key_Input(_float fTimeDelta)
 	}
 
 	ENDINSTANCE;
-
 }
 
 #ifdef _DEBUG

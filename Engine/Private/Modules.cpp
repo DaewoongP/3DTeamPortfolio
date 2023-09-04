@@ -46,10 +46,10 @@ HRESULT MAIN_MODULE::Save(const _tchar* _pDirectoyPath)
 	WriteFile(hFile, &fGravityModifier, sizeof fGravityModifier, &dwByte, nullptr);
 	WriteFile(hFile, &fSimulationSpeed, sizeof fSimulationSpeed, &dwByte, nullptr);
 	WriteFile(hFile, &isPlayOnAwake, sizeof isPlayOnAwake, &dwByte, nullptr);
-	WriteFile(hFile, &eEmmiterVelocity, sizeof eEmmiterVelocity, &dwByte, nullptr);
+	WriteFile(hFile, &strEmmiterVelocity, sizeof strEmmiterVelocity, &dwByte, nullptr);
 	WriteFile(hFile, &iMaxParticles, sizeof iMaxParticles, &dwByte, nullptr);
 	WriteFile(hFile, &isAutoRandomSeed, sizeof isAutoRandomSeed, &dwByte, nullptr);
-	WriteFile(hFile, &eStopAction, sizeof eStopAction, &dwByte, nullptr);
+	WriteFile(hFile, &strStopAction, sizeof strStopAction, &dwByte, nullptr);
 
 	CloseHandle(hFile);
 
@@ -90,10 +90,10 @@ HRESULT MAIN_MODULE::Load(const _tchar* _pDirectoyPath)
 	ReadFile(hFile, &fGravityModifier, sizeof fGravityModifier, &dwByte, nullptr);
 	ReadFile(hFile, &fSimulationSpeed, sizeof fSimulationSpeed, &dwByte, nullptr);
 	ReadFile(hFile, &isPlayOnAwake, sizeof isPlayOnAwake, &dwByte, nullptr);
-	ReadFile(hFile, &eEmmiterVelocity, sizeof eEmmiterVelocity, &dwByte, nullptr);
+	ReadFile(hFile, &strEmmiterVelocity, sizeof strEmmiterVelocity, &dwByte, nullptr);
 	ReadFile(hFile, &iMaxParticles, sizeof iMaxParticles, &dwByte, nullptr);
 	ReadFile(hFile, &isAutoRandomSeed, sizeof isAutoRandomSeed, &dwByte, nullptr);
-	ReadFile(hFile, &eStopAction, sizeof eStopAction, &dwByte, nullptr);
+	ReadFile(hFile, &strStopAction, sizeof strStopAction, &dwByte, nullptr);
 
 	CloseHandle(hFile);
 

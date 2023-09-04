@@ -52,12 +52,19 @@ public: /* For.Level_Manager */
 	class CLevel* Get_CurrentLevel();
 	HRESULT Render_Level();
 
-public: /* For.Component_Manager*/
-	HRESULT Add_Prototype(_uint iLevelIndex, const _tchar * pPrototypeTag, class CComponent* pPrototype);
-	HRESULT Add_Component(_uint iLevelIndex, const _tchar * pPrototypeTag, const _tchar * pLayerTag, const _tchar * pComponentTag, void* pArg = nullptr);
-	class CComponent* Clone_Component(_uint iLevelIndex, const _tchar * pPrototypeTag, void* pArg = nullptr);
-	class CComponent* Find_Component_In_Layer(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pComponentTag);
+public: /* For.Object_Manager */
+	HRESULT Add_Prototype_GameObject(const _tchar * pPrototypeTag, class CGameObject* pPrototype);
+	HRESULT Add_GameObject(_uint iLevelIndex, const _tchar * pPrototypeTag, const _tchar * pLayerTag, const _tchar * pGameObjectTag, void* pArg = nullptr);
 	class CLayer* Find_Layer(_uint iLevelIndex, const _tchar * pLayerTag);
+	HRESULT	Clear_Layer(_uint iLevelIndex, const _tchar * pLayerTag);
+	HRESULT	Delete_Object(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pGameObjectTag);
+	class CGameObject* Find_GameObject_In_Layer(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pGameObjectTag);
+	CGameObject* Clone_GameObject(const _tchar * pPrototypeTag, void* pArg);
+
+public: /* For.Component_Manager*/
+	HRESULT Add_Prototype_Component(_uint iLevelIndex, const _tchar * pPrototypeTag, class CComponent* pPrototype);
+	class CComponent* Clone_Component(_uint iLevelIndex, const _tchar * pPrototypeTag, void* pArg = nullptr);
+	HRESULT	Delete_Prototype(_uint iLevelIndex, const _tchar * pPrototypeTag);
 
 public: /* For.Input_Device*/
 	_bool		Get_DIKeyState(_ubyte ubyKeyID, CInput_Device::KEYSTATE eState = CInput_Device::KEY_PRESSING);
@@ -72,6 +79,8 @@ public: /* For.PipeLine*/
 	const _float4x4* Get_TransformMatrix(CPipeLine::D3DTRANSFORMSTATE eTransformState);
 	const _float4x4* Get_TransformMatrix_Inverse(CPipeLine::D3DTRANSFORMSTATE eTransformState);
 	const _float4* Get_CamPosition();
+	const _float3* Get_CamUp();
+	const _float3* Get_CamLook();
 	const _float* Get_CamFar();
 
 public: /* For. Collision_Manager */
@@ -87,8 +96,13 @@ public: /* For. Frustum */
 
 public: /* For.Light_Manager */
 	const CLight::LIGHTDESC* Get_Light(_uint iIndex);
+	const _float4x4* Get_LightView();
+	const _float4x4* Get_LightProj();
+
+
 	void Set_Light(_uint iIndex, CLight::LIGHTDESC LightDesc);
-	class CLight* Add_Lights(const CLight::LIGHTDESC & LightDesc);
+	class CLight* Add_Lights(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const CLight::LIGHTDESC & LightDesc);
+	HRESULT Delete_Lights(_uint iIndex,const _char* Name);
 	HRESULT Clear_Lights();
 
 public: /* For.Sound_Manager */
@@ -133,15 +147,21 @@ public:	/* For.Camera_Manager */
 	HRESULT Read_CutSceneCamera(const _tchar* _CutSceneTag, const _tchar* _CutScenePath);
 	//컷씬 재생을 위한 큐 추가
 	HRESULT Add_CutScene(const _tchar* _CutSceneTag);
+	//컷씬 재생을 위한 큐 추가
+	HRESULT Add_CutScene(CUTSCENECAMERADESC& _CutSceneCameraDesc);
 	//오프셋 카메라 데이터를 담는다.
 	HRESULT Read_OffSetCamera(const _tchar* _OffSetTag, const _tchar* _OffSetPath);
 	//오프셋 재생을 위한 큐 추가
 	HRESULT Add_OffSetCamera(const _tchar* _OffSetTag);
 
+public: /* For.RenderTaget_Manager*/
+	class CRenderTarget* Find_RenderTarget(const _tchar* pTargetTag);
+
 private:
 	class CGraphic_Device*			m_pGraphic_Device = { nullptr };
 	class CInput_Device*			m_pInput_Device = { nullptr };
 	class CLevel_Manager*			m_pLevel_Manager = { nullptr };
+	class CObject_Manager*			m_pObject_Manager = { nullptr };
 	class CComponent_Manager*		m_pComponent_Manager = { nullptr };
 	class CTimer_Manager*			m_pTimer_Manager = { nullptr };
 	class CPipeLine*				m_pPipeLine = { nullptr };

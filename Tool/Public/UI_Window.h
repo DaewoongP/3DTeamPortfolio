@@ -20,7 +20,6 @@ public:
 		_bool			m_isFolder;
 		_bool			m_isShow; // Show 버튼 상호작용.
 		
-
 		// Create 버튼 눌렀을때 AddPortotype 은 한번만 하도록.
 		_bool			m_isAddPrototype;
 
@@ -45,18 +44,34 @@ public:
 private:
 	vector <const _tchar*> m_FilePath = { nullptr };
 
-public:
+private:
 	void	Open_Dialog();
 	HRESULT Read_File_In_Directory_Tree(_Inout_ UI_Tree& Root, const _tchar* pFilePath, const _tchar* pExt); // 폴더 경로 트리 알고리즘 통해 탐색.
 
-public:
+public: // Tree & Image
 	void	Open_File_Path_Tree(UI_Tree* pTree); // 트리 노드 생성.
 	void	Create_UI(UI_Tree* pTree); // Open_File_Path_Tree 함수 내 Create 버튼 상호작용.
-	void	Show_Object_List();
 
-public:
+public: // Object List
+	void	Object_List();
+	void	Open_Object_List();
+	void	Select_Obejct(CGameObject* pGameObject);
+	void	Object_List_Button();
+	void	Add_Group(CGameObject* pGameObject);
+
+public: // UI Gruop
+	void	Input_Text();
+	void	Create_UI_Gruop(string _pGroupName);
+	void	UI_Gruop_Combo();
+	void	UI_Group_Tree();
+	
+
+public: // Function
 	void	Interaction_UI();
 	void	Move_UI();
+	void	Correction_Pick();
+	void	Save_UI();
+	void	Load_UI();
 
 public:
 	_bool Load_ImTexture(const _char* pFilePath, ID3D11ShaderResourceView** out_srv, _int* out_width, _int* out_height);
@@ -65,7 +80,7 @@ public:
 private:
 	vector <wstring>					m_FilePaths;
 	
-	// for Tree
+	// For Tree
 	UI_Tree								m_TreeDesc;
 	// 아래는 동적할당한 객체들 모아두고 삭제하는 리스트.
 	list <UI_Tree*>						m_Trees;
@@ -76,17 +91,40 @@ private:
 	_uint				m_iTreeIndex = { 0 };
 
 
-private:
-	_bool m_isSelected = { false };
+private: // Tree & Image 변수
+	_bool				m_isShowImageList;
+
+private: // Object List 변수
+	_bool	m_isObjectSelected = { false };
+	_bool	m_isOpenList= { false };
+	_bool	m_isAddGruopSelected = { false };
+	_int	m_AddGroupIndex = { 0 };
+	_char	m_szObjectListInputText[256] = "";
+	_bool	m_isParent = { false };
+	_int	m_ParentChildComboIndex = { 0 }; // 선택된 항목의 인덱스
+
 	_bool m_isListMouseInteraction = { false };
 
 private:
-	_bool				m_isShowImageList;
+	class CLayer* m_pUILayer = { nullptr };
+	vector <class CGameObject*> m_pUIVector = { nullptr };
+
+	class CLayer* m_pUIGroupLayer = { nullptr };
+	vector <class CGameObject*> m_pGroupVector = { nullptr };
+	class CDummy_UI_Group* m_pDummy_UI_Group = { nullptr }; // 현재 마우스로 잡은 녀석 보관
+
 
 private:
 	class CDummy_UI* m_pDummy_UI = { nullptr }; // 현재 마우스로 잡은 녀석 보관
 	POINT			 m_MousePos = {}; // 이전 마우스 위치
 
+private:
+	_char				m_szInputText[256] = "";
+	_bool				m_isEnterGroupName = { false };
+	_int				m_GroupComboIndex = { 0 }; // 선택된 항목의 인덱스
+	//_int				m_isPreGroupComboIndex = { 0 };
+
+	//class CDummy_UI_Group* m_pDummy_UI_Group = { nullptr };
 
 public:
 	static CUI_Window* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, ImVec2 vWindowPos, ImVec2 vWindowSize);

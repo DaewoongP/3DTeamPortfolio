@@ -18,7 +18,7 @@ private:
 	virtual ~CRenderTarget_Manager() = default;
 
 public:
-	HRESULT Add_RenderTarget(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pTargetTag, _uint iSizeX, _uint iSizeY, DXGI_FORMAT eFormat, const _float4& vClearColor);
+	HRESULT Add_RenderTarget(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pTargetTag, _uint iSizeX, _uint iSizeY, DXGI_FORMAT eFormat, const _float4& vClearColor, _bool isUsage = false);
 	HRESULT Add_MRT(const _tchar* pMRTTag, const _tchar* pTargetTag);
 
 	/* pMRTTag에 추가되어있는 렌더타겟들을 장치에 바인딩한다. */
@@ -31,6 +31,8 @@ public:
 	HRESULT End_PostProcessingRenderTarget(ID3D11DeviceContext* pContext);
 
 	HRESULT Bind_ShaderResourceView(const _tchar* pTargetTag, class CShader* pShader, const _char* pConstantName);
+
+	class CRenderTarget* Find_RenderTarget(const _tchar* pTargetTag);
 
 #ifdef _DEBUG
 public:
@@ -51,7 +53,6 @@ private:
 	ID3D11DepthStencilView* m_pDepthStencilView = { nullptr };
 
 private:
-	class CRenderTarget* Find_RenderTarget(const _tchar* pTargetTag);
 	list<class CRenderTarget*>* Find_MRT(const _tchar* pMRTTag);
 
 public:

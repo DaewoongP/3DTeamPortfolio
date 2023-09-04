@@ -11,6 +11,7 @@
 
 #include "Bone.h"
 #include "Mesh.h"
+#include "Plane.h"
 #include "Model.h"
 #include "Alarm.h"
 #include "Shader.h"
@@ -50,6 +51,7 @@
 #include "VIBuffer_Rect_Dynamic.h"
 #include "VIBuffer_Rect_Instance.h"
 #include "VIBuffer_Point_Instance.h"
+#include "VIBuffer_Rect_Color_Instance.h"
 #include "VIBuffer_Point_Color_Instance.h"
 
 BEGIN(Engine)

@@ -70,6 +70,7 @@ HRESULT CMapDummy::Render()
 		m_pModel->Bind_BoneMatrices(m_pShader, "g_BoneMatrices", iMeshCount);
 		m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", iMeshCount, DIFFUSE);
 
+	
 		m_pShader->Begin("Default");
 
 		if (FAILED(m_pModel->Render(iMeshCount)))

@@ -94,6 +94,9 @@
     <Filter Include="01. Window\CustomWidget\ImageFileDialog">
       <UniqueIdentifier>{81507f5c-9829-4bd2-aef0-11d9fe9c488b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. ToolObjects\01. Dummy\Dummy_Font">
+      <UniqueIdentifier>{93814c9a-ebfe-4f49-93d2-c4b71a7a60fa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tool.h">
@@ -225,6 +228,12 @@
     <ClInclude Include="..\Public\Tool_Functions.h">
       <Filter>99. Headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Dummy_Font.h">
+      <Filter>02. ToolObjects\01. Dummy\Dummy_Font</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Dummy_UI_Group.h">
+      <Filter>02. ToolObjects\01. Dummy\Dummy_UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -339,6 +348,12 @@
     <ClCompile Include="ImageFileDialog.cpp">
       <Filter>01. Window\CustomWidget\ImageFileDialog</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Dummy_Font.cpp">
+      <Filter>02. ToolObjects\01. Dummy\Dummy_Font</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Dummy_UI_Group.cpp">
+      <Filter>02. ToolObjects\01. Dummy\Dummy_UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Bin\ShaderFiles\Shader_Tool_Defines.hlsli">
@@ -365,6 +380,9 @@
       <Filter>97. ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointColInstance.hlsl">
+      <Filter>97. ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxRectColInstance.hlsl">
       <Filter>97. ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>

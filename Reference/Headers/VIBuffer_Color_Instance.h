@@ -28,6 +28,9 @@ public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg) override;
 
+	void Set_DrawNum(_uint iDrawNum);
+	_uint Get_DrawNum();
+
 public:
 	virtual HRESULT Render();
 
@@ -35,6 +38,7 @@ protected:
 	ID3D11Buffer*	m_pVBInstance = { nullptr };
 	_uint			m_iInstanceStride = { 0 };
 	_uint			m_iIndexCountPerInstance = { 0 };
+	_uint			m_iDrawNum = { 0 };
 	_uint			m_iNumInstance = { 0 };
 
 public:
