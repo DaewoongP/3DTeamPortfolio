@@ -10,7 +10,7 @@ const PxRenderBuffer* CPhysX_Manager::Get_RenderBuffer()
 {
 	if (nullptr == m_pPhysxScene)
 		return nullptr;
-
+	
 	const PxRenderBuffer* RenderBuf = &m_pPhysxScene->getRenderBuffer();
 
 	return RenderBuf;

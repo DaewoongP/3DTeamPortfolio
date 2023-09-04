@@ -250,13 +250,6 @@ HRESULT CLoader::Loading_For_MainGame()
 			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Terrain.hlsl"), VTXPOSNORTEX_DECL::Elements, VTXPOSNORTEX_DECL::iNumElements))))
 			throw TEXT("Prototype_Component_Shader_Terrain");
 
-#ifdef _DEBUG
-		/* For.Prototype_Component_Shader_Debug */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_Debug"),
-			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Debug.hlsl"), VTXPOS_DECL::Elements, VTXPOS_DECL::iNumElements))))
-			throw TEXT("Prototype_Component_Shader_Debug");
-#endif // _DEBUG
-
 		lstrcpy(m_szLoading, TEXT("피직스 로딩 중."));
 		/* For.Prototype_Component_CharacterController*/
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_CharacterController"),

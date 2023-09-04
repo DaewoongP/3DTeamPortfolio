@@ -265,6 +265,9 @@
     <Filter Include="01. Utility\03. Components\17. Plane">
       <UniqueIdentifier>{33c81cf5-caa3-47e5-a3d4-5e94a0331092}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\11. Physics\Shader">
+      <UniqueIdentifier>{d6e48222-790a-42b5-a30b-71e187ad6d29}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -831,6 +834,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_SSAO.hlsl">
       <Filter>01. Utility\03. Components\02. Renderer\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Debug.hlsl">
+      <Filter>01. Utility\11. Physics\Shader</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

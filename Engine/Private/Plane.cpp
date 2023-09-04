@@ -16,6 +16,7 @@ CPlane::CPlane(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 CPlane::CPlane(const CPlane& rhs)
 	: CComposite(rhs)
+	, m_vColor(_float4(0.f, 1.f, 0.f, 1.f))
 {
 }
 
@@ -99,7 +100,12 @@ HRESULT CPlane::Create_PlaneActor()
 
 	m_pActor = pPhysX->createRigidStatic(PxTransformFromPlaneEquation(PxPlane(PxVec3(0.f, 1.f, 0.f), 0.f)));
 	m_pMaterial = pPhysX->createMaterial(1.f, 0.1f, 0.1f);
+#ifdef _DEBUG
 	PxShape* pPlaneShape = pPhysX->createShape(PxPlaneGeometry(), *m_pMaterial, false, PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSIMULATION_SHAPE);
+#else
+	PxShape* pPlaneShape = pPhysX->createShape(PxPlaneGeometry(), *m_pMaterial, false, PxShapeFlag::eSIMULATION_SHAPE);
+#endif // _DEBUG
+
 	m_pActor->attachShape(*pPlaneShape);
 	m_pScene->addActor(*m_pActor);
 
@@ -109,13 +115,11 @@ HRESULT CPlane::Create_PlaneActor()
 #ifdef _DEBUG
 HRESULT CPlane::Add_Components()
 {
-	/* Com_Shader */
-	if (FAILED(CComposite::Add_Component(0, TEXT("Prototype_Component_Shader_Debug"),
-		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
-	{
-		MSG_BOX("Failed CRigidBody Add_Component : (Com_Shader)");
+	m_pShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Debug.hlsl"), VTXPOS_DECL::Elements, VTXPOS_DECL::iNumElements);
+	if (nullptr == m_pShader)
 		return E_FAIL;
-	}
+	m_Components.emplace(TEXT("Com_Shader"), m_pShader);
+	Safe_AddRef(m_pShader);
 
 	CPhysX_Manager* pPhysX_Manager = CPhysX_Manager::GetInstance();
 	Safe_AddRef(pPhysX_Manager);
@@ -198,6 +202,8 @@ HRESULT CPlane::SetUp_ShaderResources()
 	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", pPipeLine->Get_TransformMatrix(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
 	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", pPipeLine->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+	if (FAILED(m_pShader->Bind_RawValue("g_vColor", &m_vColor, sizeof(m_vColor))))
 		return E_FAIL;
 
 	Safe_Release(pPipeLine);

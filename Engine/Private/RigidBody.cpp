@@ -19,6 +19,7 @@ CRigidBody::CRigidBody(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 CRigidBody::CRigidBody(const CRigidBody& rhs)
 	: CComposite(rhs)
+	, m_vColor(_float4(1.f, 0.f, 0.f, 1.f))
 {
 }
 
@@ -203,8 +204,12 @@ HRESULT CRigidBody::Create_Actor()
 #endif // _DEBUG
 
 	m_pMaterial = pPhysX->createMaterial(0.5f, 0.5f, 0.5f);
+#ifdef _DEBUG
 	PxShape* boxshape = pPhysX->createShape(PxCapsuleGeometry(1.f, 1.f), *m_pMaterial, false, PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSIMULATION_SHAPE);
-	
+#else
+	PxShape* boxshape = pPhysX->createShape(PxCapsuleGeometry(1.f, 1.f), *m_pMaterial, false, PxShapeFlag::eSIMULATION_SHAPE);
+#endif // _DEBUG
+
 	PxFilterData data;
 	data.word0 = 0x1111;
 	boxshape->setSimulationFilterData(data);
@@ -338,14 +343,12 @@ void CRigidBody::Rotate(_float4 _vRotation) const
 #ifdef _DEBUG
 HRESULT CRigidBody::Add_Components()
 {
-	/* Com_Shader */
-	if (FAILED(CComposite::Add_Component(0, TEXT("Prototype_Component_Shader_Debug"),
-		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
-	{
-		MSG_BOX("Failed CRigidBody Add_Component : (Com_Shader)");
+	m_pShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Debug.hlsl"), VTXPOS_DECL::Elements, VTXPOS_DECL::iNumElements);
+	if (nullptr == m_pShader)
 		return E_FAIL;
-	}
-
+	m_Components.emplace(TEXT("Com_Shader"), m_pShader);
+	Safe_AddRef(m_pShader);
+	
 	CPhysX_Manager* pPhysX_Manager = CPhysX_Manager::GetInstance();
 	Safe_AddRef(pPhysX_Manager);
 
@@ -423,6 +426,8 @@ HRESULT CRigidBody::SetUp_ShaderResources()
 	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", pPipeLine->Get_TransformMatrix(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
 	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", pPipeLine->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+	if (FAILED(m_pShader->Bind_RawValue("g_vColor", &m_vColor, sizeof(m_vColor))))
 		return E_FAIL;
 
 	Safe_Release(pPipeLine);

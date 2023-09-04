@@ -88,7 +88,8 @@ namespace Engine
 		PX_UNUSED(constantBlockSize);
 		PX_UNUSED(constantBlock);
 
-		if (PxFilterObjectType::eRIGID_STATIC == PxGetFilterObjectType(attribute0))
+		if (PxFilterObjectType::eRIGID_STATIC == PxGetFilterObjectType(attribute0) ||
+			PxFilterObjectType::eRIGID_STATIC == PxGetFilterObjectType(attribute1))
 		{
 			pairFlags = PxPairFlag::eSOLVE_CONTACT | PxPairFlag::eDETECT_DISCRETE_CONTACT;
 		}
