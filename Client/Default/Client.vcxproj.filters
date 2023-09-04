@@ -73,9 +73,6 @@
     <Filter Include="01. Levels\99. Loading">
       <UniqueIdentifier>{884f056e-8693-460c-8907-198be0f4c197}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\99. Debug\PhysXRender">
-      <UniqueIdentifier>{01bc84be-4b4c-42a9-840d-bcccd18a9408}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\02. Enemy\00. Troll">
       <UniqueIdentifier>{fe57efd1-c79a-4107-82a4-00502f3125f8}</UniqueIdentifier>
     </Filter>
@@ -195,9 +192,6 @@
     <ClInclude Include="ImGui\imgui.h">
       <Filter>98. Default\ImGui_Defaults</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\PhysXRender.h">
-      <Filter>02. GameObject\99. Debug\PhysXRender</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Armored_Troll.h">
       <Filter>02. GameObject\02. Enemy\00. Troll\00. Armored_Troll</Filter>
     </ClInclude>
@@ -280,9 +274,6 @@
     </ClCompile>
     <ClCompile Include="ImGui\backends\imgui_impl_win32.cpp">
       <Filter>98. Default\ImGui_Defaults</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\PhysXRender.cpp">
-      <Filter>02. GameObject\99. Debug\PhysXRender</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Armored_Troll.cpp">
       <Filter>02. GameObject\02. Enemy\00. Troll\00. Armored_Troll</Filter>

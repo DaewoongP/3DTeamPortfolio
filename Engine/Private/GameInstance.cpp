@@ -595,8 +595,6 @@ void CGameInstance::Release_Engine()
 
 	CComponent_Manager::GetInstance()->DestroyInstance();
 
-	CCamera_Manager::GetInstance()->DestroyInstance();
-
 	CLevel_Manager::GetInstance()->DestroyInstance();
 
 	CPhysX_Manager::GetInstance()->DestroyInstance();
@@ -614,6 +612,8 @@ void CGameInstance::Release_Engine()
 	CSound_Manager::GetInstance()->DestroyInstance();
 
 	CCalculator::GetInstance()->DestroyInstance();
+
+	CCamera_Manager::GetInstance()->DestroyInstance();
 
 	CLight_Manager::GetInstance()->DestroyInstance();
 

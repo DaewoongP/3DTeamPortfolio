@@ -1,6 +1,7 @@
 #include "..\Public\Light_Manager.h"
 #include"Transform.h"
 #include"PipeLine.h"
+
 IMPLEMENT_SINGLETON(CLight_Manager)
 
 CLight_Manager::CLight_Manager()

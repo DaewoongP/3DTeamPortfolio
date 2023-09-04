@@ -363,6 +363,7 @@ CLoader* CLoader::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, L
 		MSG_BOX("Failed to Created CLoader");
 		Safe_Release(pInstance);
 	}
+
 	return pInstance;
 }
 
