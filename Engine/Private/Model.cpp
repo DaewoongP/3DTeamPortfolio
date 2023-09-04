@@ -146,7 +146,8 @@ void CModel::Play_Animation(_float fTimeDelta, ANIMTYPE eType, CTransform* pTran
 		m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Reset();
 		m_tAnimationDesc[eType].isAnimChangeLerp = true;
 		m_tAnimationDesc[eType].fAnimChangeTimer = ANIMATIONLERPTIME;
-		m_PostRootMatrix = XMMatrixIdentity();
+		if(eType==0)
+			m_PostRootMatrix = XMMatrixIdentity();
 		m_tAnimationDesc[eType].isResetAnimTrigger = false;
 	}
 	else if (pTransform != nullptr)
@@ -164,11 +165,11 @@ void CModel::Play_Animation(_float fTimeDelta, ANIMTYPE eType, CTransform* pTran
 		//0번 인발리데이트가 1번에도 영향을 준다?
 		//if (eType == 0)
 		//	return;
-		m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Invalidate_TransformationMatrix(m_Bones, fTimeDelta);
+		m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Invalidate_TransformationMatrix(m_Bones, fTimeDelta, &m_tAnimationDesc[eType].AffectBoneVec);
 	}
 	else if (m_tAnimationDesc[eType].fAnimChangeTimer >= 0.0)
 	{
-		m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Invalidate_TransformationMatrix_Lerp(m_Bones, fTimeDelta, ANIMATIONLERPTIME - m_tAnimationDesc[eType].fAnimChangeTimer, m_iRootBoneIndex);
+		m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Invalidate_TransformationMatrix_Lerp(m_Bones, fTimeDelta, ANIMATIONLERPTIME - m_tAnimationDesc[eType].fAnimChangeTimer, m_iRootBoneIndex, &m_tAnimationDesc[eType].AffectBoneVec);
 		m_tAnimationDesc[eType].fAnimChangeTimer -= fTimeDelta;
 	}
 	else
@@ -272,7 +273,7 @@ HRESULT CModel::Separate_Animation(_int iFromIndex, _int iToIndex, ANIMTYPE eTyp
 	//원래 뼈 보관소에서 삭제합니다.
 	for (auto iter = m_tAnimationDesc[eType].AffectBoneVec.begin(); iter < m_tAnimationDesc[eType].AffectBoneVec.end();)
 	{
-		if ((*iter) > iFromIndex && (*iter) < iToIndex)
+		if ((*iter) >= iFromIndex && (*iter) <= iToIndex)
 		{
 			iter = m_tAnimationDesc[eType].AffectBoneVec.erase(iter);
 		}
@@ -281,7 +282,7 @@ HRESULT CModel::Separate_Animation(_int iFromIndex, _int iToIndex, ANIMTYPE eTyp
 	}
 
 	//새로운 뼈 보관소에 그 친구들을 넣어줍니다.
-	_int max = iToIndex - iFromIndex;
+	_int max = iToIndex - iFromIndex + 1;
 	for (int i = 0; i < max; i++)
 	{
 		m_tAnimationDesc[m_iAnimationPartCount].AffectBoneVec.push_back(i + iFromIndex);

@@ -186,15 +186,17 @@ void CChannel::Invalidate_TransformationMatrix_Lerp(CModel::BONES& Bones, _float
 	
 	_float fRatio = LerpTimeAcc / ANIMATIONLERPTIME;
 	_float3		vSourScale = Bones[m_iBoneIndex]->Get_TransformationMatrix_Scale();
-	_float4		vSourRotation = vSourRotation = XMQuaternionRotationMatrix(Bones[m_iBoneIndex]->Get_TransformationMatrix());
+	_float4		vSourRotation = XMQuaternionRotationMatrix(Bones[m_iBoneIndex]->Get_TransformationMatrix());
 	_float3		vSourTranslation = Bones[m_iBoneIndex]->Get_TransformationMatrix_Position();
 
-	/*if (m_iBoneIndex == 3)
+	if (m_iBoneIndex == 3)
 	{
-		return;
+		//얘가 진동함.
 		cout << vSourRotation.x << " " << vSourRotation.y << " " << vSourRotation.z << " " << vSourRotation.w << endl;
+		//얘는 항상 고정값임
 		cout << vRotation.x << " " << vRotation.y << " " << vRotation.z << " " << vRotation.w << endl;
-	}*/
+		//return;
+	}
 		
 	vSourRotation = XMQuaternionNormalize(vSourRotation);
 	vRotation = XMQuaternionNormalize(vRotation);
@@ -202,7 +204,6 @@ void CChannel::Invalidate_TransformationMatrix_Lerp(CModel::BONES& Bones, _float
 	vScale = vScale.Lerp(vSourScale, vScale, fRatio);
 	vRotation = XMQuaternionSlerp(vSourRotation, vRotation, fRatio);
 	vTranslation = vTranslation.Lerp(vSourTranslation, vTranslation, fRatio);
-
 	_float4x4	TransformationMatrix = XMMatrixAffineTransformation(vScale, _float4(0.f, 0.f, 0.f, 1.f), vRotation, vTranslation);
 	Bones[m_iBoneIndex]->Set_TransformationMatrix(TransformationMatrix);
 }

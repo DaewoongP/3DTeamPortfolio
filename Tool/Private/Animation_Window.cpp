@@ -40,14 +40,28 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 		ImGui::End();
 		return;
 	}
-	ImGui::Text("");
+	
 	ImGui::Separator();
+	ImGui::Text("Notify");
 	Notify_InputFileds(m_szNotifyName, &m_eNotifyKeyFrameType, &m_fNotifyActionTime, &m_fNotifySpeed);
+
+	
+	ImGui::Separator();
+	ImGui::Text("Root&BoneTree");
+
+	Bone_Tree(pDummyModel->Get_Bone_Index(0), pDummyModel);
+	ImGui::InputInt("RootBone", &m_iRootIndex);
+
+	if (ImGui::Button("Set_Root"))
+	{
+		pDummyModel->Set_RootBone(m_iRootIndex);
+	}
 
 	for (_uint partCnt = 0; partCnt < pDummyModel->Get_AnimationPartCount(); partCnt++)
 	{
-		ImGui::Text("");
+		
 		ImGui::Separator();
+		ImGui::Text("AnimationSetting");
 
 		CModel::ANIMTYPE ePartCnt = static_cast<CModel::ANIMTYPE>(partCnt);
 
@@ -71,18 +85,9 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 			Edit_Notify_Button(ePartCnt, pDummyModel);
 			Create_Notify_View(ePartCnt, pDummyModel);
 
-			ImGui::Text("");
+			
 			ImGui::Separator();
-
-			Bone_Tree(ePartCnt, pDummyModel->Get_Bone_Index(0), pDummyModel);
-			sprintf_s(szUIName, "RootBone##%d", ePartCnt);
-			ImGui::InputInt(szUIName, &m_iRootIndex[ePartCnt]);
-
-			sprintf_s(szUIName, "Set_Root##%d", ePartCnt);
-			if (ImGui::Button(szUIName))
-			{
-				pDummyModel->Set_RootBone(m_iRootIndex[ePartCnt]);
-			}
+			ImGui::Text("Separate_Parts");
 			sprintf_s(szUIName, "Separate##%d", ePartCnt);
 
 			/*sprintf_s(szUIName, "RootBone##%d", ePartCnt);
@@ -359,20 +364,20 @@ void CAnimation_Window::Create_Notify_View(CModel::ANIMTYPE ePartCnt, CModel* pD
 	}
 }
 
-void CAnimation_Window::Bone_Tree(_uint partCnt, CBone* bone, CModel* pDummyModel)
+void CAnimation_Window::Bone_Tree(CBone* bone, CModel* pDummyModel)
 {
 	_char szUIName[MAX_PATH] = "";
 	_char szBone_Name[MAX_PATH] = "";
 	WCharToChar(bone->Get_Name(), szBone_Name);
 
-	sprintf_s(szUIName, "%s##%d", szBone_Name,partCnt);
+	sprintf_s(szUIName, "%s##%d", szBone_Name,0);
 	if (ImGui::TreeNode(szUIName))
 	{
 		for (auto child : *pDummyModel->Get_Bone_Vector_Point())
 		{
 			if (bone->Get_Index() == child->Get_ParentNodeIndex())
 			{
-				Bone_Tree(partCnt,child, pDummyModel);
+				Bone_Tree(child, pDummyModel);
 			}
 		}
 		ImGui::TreePop();
@@ -380,10 +385,10 @@ void CAnimation_Window::Bone_Tree(_uint partCnt, CBone* bone, CModel* pDummyMode
 	else 
 	{
 		ImGui::SameLine();
-		sprintf_s(szUIName, "Set_Root##%d##%s", partCnt, szBone_Name);
+		sprintf_s(szUIName, "Set_Root##%d##%s", 0, szBone_Name);
 		if (ImGui::SmallButton(szUIName))
 		{
-			m_iRootIndex[partCnt] = bone->Get_Index();
+			m_iRootIndex = bone->Get_Index();
 		}
 	}
 }

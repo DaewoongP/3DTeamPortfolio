@@ -27,7 +27,7 @@ private:
 	_int			m_iSelectedNotifyIndex = { 0 };
 	//애니메이션용도임.
 	_char			m_szCurrentItem[CModel::ANIM_END][MAX_PATH] = {};
-	_int			m_iRootIndex[CModel::ANIM_END] = { 0 };
+	_int			m_iRootIndex = { 0 };
 	_bool			m_isRootAnimation[CModel::ANIM_END] = { false };
 	_int			m_iFromBone[CModel::ANIM_END] = { 0 };
 	_int			m_iToBone[CModel::ANIM_END] = { 0 };
@@ -53,7 +53,7 @@ private:
 	
 	void Create_Notify_View(CModel::ANIMTYPE ePartCnt, CModel* pDummyModel);
 
-	void Bone_Tree(_uint partCnt, CBone* bone, CModel* pDummyModel);
+	void Bone_Tree( CBone* bone, CModel* pDummyModel);
 public:
 	static CAnimation_Window* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, ImVec2 vWindowPos, ImVec2 vWindowSize);
 	virtual void Free(void) override;
