@@ -314,6 +314,20 @@ const _float4* CGameInstance::Get_CamPosition()
 	return m_pPipeLine->Get_CamPosition();
 }
 
+const _float3* CGameInstance::Get_CamUp()
+{
+	NULL_CHECK_RETURN_MSG(m_pPipeLine, nullptr, TEXT("PipeLine NULL"));
+
+	return m_pPipeLine->Get_CamUp();
+}
+
+const _float3* CGameInstance::Get_CamLook()
+{
+	NULL_CHECK_RETURN_MSG(m_pPipeLine, nullptr, TEXT("PipeLine NULL"));
+
+	return m_pPipeLine->Get_CamLook();
+}
+
 const _float* CGameInstance::Get_CamFar()
 {
 	NULL_CHECK_RETURN_MSG(m_pPipeLine, nullptr, TEXT("PipeLine NULL"));

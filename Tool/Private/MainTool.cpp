@@ -259,6 +259,12 @@ HRESULT CMainTool::Ready_Prototype_Component()
 			VTXPOINTCOLORINSTANCE_DECL::Elements, VTXPOINTCOLORINSTANCE_DECL::iNumElements))))
 		return E_FAIL;
 
+	/* For.Prototype_Component_Shader_VtxRectColInstance */
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_TOOL, TEXT("Prototype_Component_Shader_VtxRectColInstance"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxRectColInstance.hlsl"),
+			VTXRECTCOLORINSTANCE_DECL::Elements, VTXRECTCOLORINSTANCE_DECL::iNumElements))))
+		return E_FAIL;
+
 	/* For.Prototype_Component_Shader_VtxMesh*/
 	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_TOOL, TEXT("Prototype_Component_Shader_VtxMesh"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxMesh.hlsl"),
@@ -294,6 +300,11 @@ HRESULT CMainTool::Ready_Prototype_Component()
 		CVIBuffer_Point_Color_Instance::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	/* Prototype_Component_VIBuffer_Point_Color_Instance*/
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_TOOL, TEXT("Prototype_Component_VIBuffer_Rect_Color_Instance"),
+		CVIBuffer_Rect_Color_Instance::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	/* Prototype_Component_Texture_Terrain */
 	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_TOOL, TEXT("Prototype_Component_Texture_Terrain"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Terrain/Tile%d.dds"), 2))))
@@ -311,12 +322,12 @@ HRESULT CMainTool::Ready_Prototype_Component()
 
 	/* Prototype_Component_Texture_Default_Particle*/
 	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_TOOL, TEXT("Prototype_Component_Texture_Default_Particle"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Particles/Default_Particle.png")))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Textures/Default_Particle.png")))))
 		return E_FAIL;
 
 	/* Prototype_Component_Default_ParticleSystem*/
 	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_TOOL, TEXT("Prototype_Component_Default_ParticleSystem"),
-		CParticleSystem::Create(m_pDevice, m_pContext, 30))))
+		CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Particles/Fire/")))))
 		return E_FAIL;
 
 	/* Prototype_Component_Sphere_Collider*/

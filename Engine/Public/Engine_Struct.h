@@ -246,6 +246,12 @@ namespace Engine
 		static const D3D11_INPUT_ELEMENT_DESC	Elements[iNumElements];
 	}VTXRECTINSTANCE_DECL;
 
+	typedef struct ENGINE_DLL tagVertex_Rect_Color_Instance_Declaration
+	{
+		static const unsigned int				iNumElements = { 7 };
+		static const D3D11_INPUT_ELEMENT_DESC	Elements[iNumElements];
+	}VTXRECTCOLORINSTANCE_DECL;
+
 	typedef struct tagVertex_Position_Size
 	{
 		XMFLOAT3		vPosition;

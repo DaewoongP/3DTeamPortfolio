@@ -546,6 +546,9 @@
     <ClInclude Include="..\public\VIBuffer_Triangle.h">
       <Filter>01. Utility\03. Components\07. VIBuffer\Triangle</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\VIBuffer_Rect_Color_Instance.h">
+      <Filter>01. Utility\03. Components\07. VIBuffer\Instance\Rect_Instance</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\Parts.h">
       <Filter>01. Utility\02. GameObjects\02. Parts</Filter>
     </ClInclude>
@@ -808,6 +811,9 @@
     </ClCompile>
     <ClCompile Include="..\private\VIBuffer_Triangle.cpp">
       <Filter>01. Utility\03. Components\07. VIBuffer\Triangle</Filter>
+    </ClCompile>
+    <ClCompile Include="VIBuffer_Rect_Color_Instance.cpp">
+      <Filter>01. Utility\03. Components\07. VIBuffer\Instance\Rect_Instance</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Parts.cpp">
       <Filter>01. Utility\02. GameObjects\02. Parts</Filter>

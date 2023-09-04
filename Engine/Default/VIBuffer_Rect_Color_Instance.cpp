@@ -1,29 +1,34 @@
-#include "..\Public\VIBuffer_Point_Color_Instance.h"
+#include "..\Public\VIBuffer_Rect_Color_Instance.h"
 #include "Texture.h"
 #include "PipeLine.h"
 
-CVIBuffer_Point_Color_Instance::CVIBuffer_Point_Color_Instance(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CVIBuffer_Rect_Color_Instance::CVIBuffer_Rect_Color_Instance(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CVIBuffer_Color_Instance(pDevice, pContext)
 {
 }
 
-CVIBuffer_Point_Color_Instance::CVIBuffer_Point_Color_Instance(const CVIBuffer_Point_Color_Instance& rhs)
+CVIBuffer_Rect_Color_Instance::CVIBuffer_Rect_Color_Instance(const CVIBuffer_Rect_Color_Instance& rhs)
 	: CVIBuffer_Color_Instance(rhs)
 {
 }
 
-HRESULT CVIBuffer_Point_Color_Instance::Initialize_Prototype()
+HRESULT CVIBuffer_Rect_Color_Instance::Initialize_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CVIBuffer_Point_Color_Instance::Initialize(void* pArg)
+HRESULT CVIBuffer_Rect_Color_Instance::Initialize(void* pArg)
 {
 	if (nullptr == pArg)
 	{
 		MSG_BOX("Point Num Instance null");
 		return E_FAIL;
 	}
+
+	// 버퍼 파괴하고 재생성하려고 넣은 코드.
+	Safe_Release(m_pVBInstance);
+	Safe_Release(m_pVB);
+	Safe_Release(m_pIB);
 
 	m_iNumInstance = *reinterpret_cast<_uint*>(pArg);
 
@@ -45,7 +50,7 @@ HRESULT CVIBuffer_Point_Color_Instance::Initialize(void* pArg)
 	return S_OK;
 }
 
-void CVIBuffer_Point_Color_Instance::Tick(COLORINSTANCE* pInstances, _int iRenderedParticleNum, _bool isAlphaBlend, _float4x4 AlphaBlendObjectWorldMatrixInverse)
+void CVIBuffer_Rect_Color_Instance::Tick(COLORINSTANCE* pInstances, _int iRenderedParticleNum, _bool isAlphaBlend, _float4x4 AlphaBlendObjectWorldMatrixInverse)
 {
 	if (nullptr == pInstances)
 		return;
@@ -65,8 +70,6 @@ void CVIBuffer_Point_Color_Instance::Tick(COLORINSTANCE* pInstances, _int iRende
 		Sort_AlphaBlend(pInstances, AlphaBlendObjectWorldMatrixInverse);
 	}
 
-
-
 	D3D11_MAPPED_SUBRESOURCE	MappedSubResource;
 
 	m_pContext->Map(m_pVBInstance, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &MappedSubResource);
@@ -85,7 +88,7 @@ void CVIBuffer_Point_Color_Instance::Tick(COLORINSTANCE* pInstances, _int iRende
 	m_pContext->Unmap(m_pVBInstance, 0);
 }
 
-void CVIBuffer_Point_Color_Instance::Sort_AlphaBlend(COLORINSTANCE* pInstances, _float4x4 AlphaBlendObjectWorldMatrixInverse)
+void CVIBuffer_Rect_Color_Instance::Sort_AlphaBlend(COLORINSTANCE* pInstances, _float4x4 AlphaBlendObjectWorldMatrixInverse)
 {
 	CPipeLine* pPipeLine = CPipeLine::GetInstance();
 	Safe_AddRef(pPipeLine);
@@ -118,16 +121,16 @@ void CVIBuffer_Point_Color_Instance::Sort_AlphaBlend(COLORINSTANCE* pInstances, 
 	memcpy(pInstances, ColorInstances.data(), sizeof(COLORINSTANCE) * m_iNumInstance);
 }
 
-HRESULT CVIBuffer_Point_Color_Instance::Make_Buffers()
+HRESULT CVIBuffer_Rect_Color_Instance::Make_Buffers()
 {
-	m_iIndexCountPerInstance = 1;
+	m_iIndexCountPerInstance = 6;
 	m_iNumVertexBuffers = { 2 };
-	m_iStride = { sizeof(VTXPOINT) };
-	m_iNumVertices = { 1 };
+	m_iStride = { sizeof(VTXPOSTEX) };
+	m_iNumVertices = { 4 };
 	m_iIndexStride = { sizeof(_ushort) };
 	m_iNumIndices = { m_iIndexCountPerInstance * m_iNumInstance };
 	m_eFormat = DXGI_FORMAT_R16_UINT;
-	m_eTopology = D3D_PRIMITIVE_TOPOLOGY_POINTLIST;
+	m_eTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
 
 #pragma region VERTEX_BUFFER
@@ -140,11 +143,20 @@ HRESULT CVIBuffer_Point_Color_Instance::Make_Buffers()
 	m_BufferDesc.CPUAccessFlags = { 0 };
 	m_BufferDesc.MiscFlags = { 0 };
 
-	VTXPOINT* pVertices = new VTXPOINT;
-	ZeroMemory(pVertices, sizeof(VTXPOINT));
+	VTXPOSTEX* pVertices = new VTXPOSTEX[4];
+	ZeroMemory(pVertices, sizeof(VTXPOSTEX) * 4);
 
-	pVertices->vPosition = _float3(0.f, 0.f, 0.f);
-	pVertices->vPSize = _float2(1.f, 1.f);
+	pVertices[0].vPosition = _float3(-0.5f, 0.5f, 0.f);
+	pVertices[0].vTexCoord = _float2(0.f, 0.f);
+
+	pVertices[1].vPosition = _float3(0.5f, 0.5f, 0.f);
+	pVertices[1].vTexCoord = _float2(1.f, 0.f);
+
+	pVertices[2].vPosition = _float3(0.5f, -0.5f, 0.f);
+	pVertices[2].vTexCoord = _float2(1.f, 1.f);
+
+	pVertices[3].vPosition = _float3(-0.5f, -0.5f, 0.f);
+	pVertices[3].vTexCoord = _float2(0.f, 1.f);
 
 	ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
 	m_SubResourceData.pSysMem = pVertices;
@@ -169,6 +181,19 @@ HRESULT CVIBuffer_Point_Color_Instance::Make_Buffers()
 	_ushort* pIndices = new _ushort[m_iNumIndices];
 	ZeroMemory(pIndices, sizeof(_ushort) * m_iNumIndices);
 
+	_uint		iNumIndices = { 0 };
+
+	for (_uint i = 0; i < m_iNumInstance; ++i)
+	{
+		pIndices[iNumIndices++] = 0;
+		pIndices[iNumIndices++] = 1;
+		pIndices[iNumIndices++] = 2;
+
+		pIndices[iNumIndices++] = 0;
+		pIndices[iNumIndices++] = 2;
+		pIndices[iNumIndices++] = 3;
+	}
+
 	ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
 	m_SubResourceData.pSysMem = pIndices;
 
@@ -180,33 +205,33 @@ HRESULT CVIBuffer_Point_Color_Instance::Make_Buffers()
 	return S_OK;
 }
 
-CVIBuffer_Point_Color_Instance* CVIBuffer_Point_Color_Instance::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CVIBuffer_Rect_Color_Instance* CVIBuffer_Rect_Color_Instance::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CVIBuffer_Point_Color_Instance* pInstance = new CVIBuffer_Point_Color_Instance(pDevice, pContext);
+	CVIBuffer_Rect_Color_Instance* pInstance = new CVIBuffer_Rect_Color_Instance(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Created CVIBuffer_Point_Color_Instance");
+		MSG_BOX("Failed to Created CVIBuffer_Rect_Color_Instance");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CComponent* CVIBuffer_Point_Color_Instance::Clone(void* pArg)
+CComponent* CVIBuffer_Rect_Color_Instance::Clone(void* pArg)
 {
-	CVIBuffer_Point_Color_Instance* pInstance = new CVIBuffer_Point_Color_Instance(*this);
+	CVIBuffer_Rect_Color_Instance* pInstance = new CVIBuffer_Rect_Color_Instance(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned CVIBuffer_Point_Color_Instance");
+		MSG_BOX("Failed to Cloned CVIBuffer_Rect_Color_Instance");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CVIBuffer_Point_Color_Instance::Free()
+void CVIBuffer_Rect_Color_Instance::Free()
 {
 	__super::Free();
 
