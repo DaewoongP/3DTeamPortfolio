@@ -136,6 +136,13 @@ void CModel::Reset_Animation(_uint iAnimIndex, ANIMTYPE eType)
 	m_tAnimationDesc[eType].isResetAnimTrigger = true;
 }
 
+void CModel::Reset_Animation(const wstring& wstrAnimationTag, CTransform* pTransform)
+{
+	m_iCurrentAnimIndex = Find_Animation_Index(wstrAnimationTag);
+	m_iPreviousAnimIndex = m_iCurrentAnimIndex;
+	m_isResetAnimTrigger = true;
+}
+
 void CModel::Play_Animation(_float fTimeDelta, ANIMTYPE eType, CTransform* pTransform)
 {
 	if (m_tAnimationDesc[eType].iNumAnimations == 0)
@@ -195,7 +202,7 @@ void CModel::Play_Animation(_float fTimeDelta, ANIMTYPE eType, CTransform* pTran
 		{
 			pBone->Invalidate_CombinedTransformationMatrix_Basic(m_Bones);
 		}
-		else 
+		else
 		{
 			pBone->Invalidate_CombinedTransformationMatrix(m_Bones);
 		}
@@ -213,7 +220,7 @@ HRESULT CModel::Find_BoneIndex(const _tchar* pBoneName, _Inout_ _uint* iIndex)
 			++(*iIndex);
 			return false;
 		}
-	});
+		});
 
 	if (m_Bones.end() == iter)
 	{
@@ -247,15 +254,15 @@ void CModel::Do_Root_Animation(CTransform* pTransform)
 		vPost_Look.Normalize();
 
 		
-		if (vCurrent_Look!=vPost_Look && fabsf(vCurrent_Look.x- vPost_Look.x)>0.0001f&& fabsf(vCurrent_Look.z - vPost_Look.z) > 0.0001f)
+		if (vCurrent_Look != vPost_Look && fabsf(vCurrent_Look.x - vPost_Look.x) >0.0001f && fabsf(vCurrent_Look.z - vPost_Look.z) > 0.0001f)
 		{
 			_float dot = XMVectorGetX(XMVector3Dot(vPost_Look, vCurrent_Look));
 			_float radian = acosf(dot);
 			
 			if (XMVectorGetY(XMVector3Cross(vCurrent_Look, vPost_Look)) > 0)
 				radian = 2 * XMVectorGetX(g_XMPi) - radian;
-		
-			player_Matrix_Override = XMMatrixRotationY(radian);		
+
+			player_Matrix_Override = XMMatrixRotationY(radian);
 		}
 
 		_float3 vCurrent_Position = current_Matrix.Translation();
@@ -747,6 +754,23 @@ void CModel::Release_FileDatas()
 	}
 
 	m_AnimationDatas.clear();
+}
+
+_uint CModel::Find_Animation_Index(const wstring& strTag)
+{
+	_uint iAnimationIndex = { 0 };
+
+	for (auto pAnimation : m_Animations)
+	{
+		wstring wstrAnimationTag = pAnimation->Get_AnimationName();
+
+		if (wstring::npos != wstrAnimationTag.find(strTag))
+			break;
+
+		++iAnimationIndex;
+	}
+
+	return iAnimationIndex;
 }
 
 CModel* CModel::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, TYPE eType, const _tchar* pModelFilePath, _float4x4 PivotMatrix)

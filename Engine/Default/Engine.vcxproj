@@ -35,6 +35,7 @@
     <ClInclude Include="..\Public\Attack.h" />
     <ClInclude Include="..\public\CharacterController.h" />
     <ClInclude Include="..\public\ColliderCom.h" />
+    <ClInclude Include="..\Public\Parts.h" />
     <ClInclude Include="..\public\Plane.h" />
     <ClInclude Include="..\public\PXEventCallBack.h" />
     <ClInclude Include="..\Public\PhysXConverter.h" />
@@ -132,6 +133,7 @@
     <ClCompile Include="..\Private\Attack.cpp" />
     <ClCompile Include="..\private\CharacterController.cpp" />
     <ClCompile Include="..\private\ColliderCom.cpp" />
+    <ClCompile Include="..\Private\Parts.cpp" />
     <ClCompile Include="..\private\Plane.cpp" />
     <ClCompile Include="..\private\PXEventCallBack.cpp" />
     <ClCompile Include="..\private\PhysX_Manager.cpp" />

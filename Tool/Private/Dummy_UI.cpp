@@ -66,8 +66,6 @@ void CDummy_UI::Late_Tick(_float fTimeDelta)
 	Change_Position(m_fX, m_fY);
 
 	return __super::Late_Tick(fTimeDelta);
-
-
 }
 
 HRESULT CDummy_UI::Render()
@@ -176,8 +174,7 @@ HRESULT CDummy_UI::Change_Position(_float fX, _float fY)
 	m_fX = fX;
 	m_fY = fY;
 
-	m_pTransform->Set_Position(
-		XMVectorSet(m_fX - g_iWinSizeX * 0.5f, -m_fY + g_iWinSizeY * 0.5f, m_fZ, 1.f));
+	m_pTransform->Set_Position(XMVectorSet(m_fX - g_iWinSizeX * 0.5f, -m_fY + g_iWinSizeY * 0.5f, m_fZ, 1.f));
 
 	return S_OK;
 }

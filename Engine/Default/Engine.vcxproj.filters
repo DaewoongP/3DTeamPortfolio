@@ -256,6 +256,9 @@
     <Filter Include="01. Utility\03. Components\16. RigidBody">
       <UniqueIdentifier>{34a36dc9-7fff-4175-b4ed-7b026eba34fc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\02. GameObjects\02. Parts">
+      <UniqueIdentifier>{b2e63afa-998c-44d2-9cf7-ca44f0b814a6}</UniqueIdentifier>
+    </Filter>
     <Filter Include="01. Utility\11. Physics\EventCallBack">
       <UniqueIdentifier>{2ebd81df-468e-430d-aa58-2375576ccb78}</UniqueIdentifier>
     </Filter>
@@ -543,6 +546,9 @@
     <ClInclude Include="..\public\VIBuffer_Triangle.h">
       <Filter>01. Utility\03. Components\07. VIBuffer\Triangle</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Parts.h">
+      <Filter>01. Utility\02. GameObjects\02. Parts</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\PXEventCallBack.h">
       <Filter>01. Utility\11. Physics\EventCallBack</Filter>
     </ClInclude>
@@ -802,6 +808,9 @@
     </ClCompile>
     <ClCompile Include="..\private\VIBuffer_Triangle.cpp">
       <Filter>01. Utility\03. Components\07. VIBuffer\Triangle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Parts.cpp">
+      <Filter>01. Utility\02. GameObjects\02. Parts</Filter>
     </ClCompile>
     <ClCompile Include="..\private\PXEventCallBack.cpp">
       <Filter>01. Utility\11. Physics\EventCallBack</Filter>
