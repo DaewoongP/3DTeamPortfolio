@@ -30,6 +30,8 @@ void CMain_Camera::Tick(const _float& _TimeDelta)
 {
 	Key_Input(_TimeDelta);
 
+	IsLimitButton();
+
 	if (true == m_isLimit)
 	{
 		Mouse_Input(_TimeDelta);

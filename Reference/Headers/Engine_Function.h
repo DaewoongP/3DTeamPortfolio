@@ -145,4 +145,44 @@ namespace Engine
 
 		return distribution(RandGenerator);
 	}
+
+	/* 구면선형보간 - output, 시작점, 끝점, 점간의 업벡터, 선형보간 중점과 원의 중점간 거리 k, 원하는 보간 값 f*/
+	//_float3 GetVectorSlerp(_float3 v1, _float3 v2, _float3 vUp, _float k, _float f)
+	//{
+	//	_float3 v3, OV1, OV2, vCenter, vNormal1, vNormal2, vOut;
+	//	_float fRad;
+	//	_float4x4    RotationMatrix = XMMatrixIdentity();
+
+	//	//두 점의 중간값
+	//	v3 = (v1 + v2) / 2.f;
+	//	//중간에서 시작점 까지의 벡터, 정해둔 축의 외적
+	//	vCenter = XMVector3Cross(v1 - v3, vUp);
+	//	//노말라이즈
+	//	vCenter.Normalize();
+	//	//기준이 되는 중점거리(ex/Radius)를 곱하여 중점까지의 거리 벡터로 만듬
+	//	vCenter *= k;
+	//	//두 점의 중간값 + 중점까지의 거리 벡터 = 중점
+	//	vCenter = v3 + vCenter;
+
+	//	//중점에서 두 점을 향한 거리백터
+	//	OV1 = v1 - vCenter;
+	//	OV2 = v2 - vCenter;
+
+	//	//두 점을 향한 거리백터의 노말라이즈
+	//	vNormal1 = XMVector3Normalize(OV1);
+	//	vNormal2 = XMVector3Normalize(OV2);
+
+	//	//두 점의 거리벡터의 각을 구하고
+	//	fRad = acosf(vNormal1.Dot(vNormal2));
+	//	//보간 해줌
+	//	fRad *= f;
+	//	//보간된 각을 정해둔 축으로 돌리는 보간 행렬
+	//	RotationMatrix = XMMatrixRotationAxis(vUp, fRad);
+
+	//	//시작점의 거리 벡터를 보간 행렬로 돌려줌
+	//	vOut = XMVector3TransformCoord(OV1, RotationMatrix);
+
+	//	//중점 + 보간된 거리백터 = 보간 위치
+	//	return vCenter + vOut;
+	//}
 }

@@ -139,6 +139,11 @@ private:
 
 	void Add_CutScene(const CAMERAPOINTINFODESC& _CameraPointInfoDesc);
 
+
+	//구면 보간을 위한 제료
+	//축 Cross(((At - 중간 값)노말),(시작점 - 중간 값))
+	//특정값 ((시작점 + 도착점) * 0.5f - At포지션) 길이 
+
 public:
 	static CCutScene_Camera_Tool* Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, void * pArg = nullptr);
 	virtual void Free() override;

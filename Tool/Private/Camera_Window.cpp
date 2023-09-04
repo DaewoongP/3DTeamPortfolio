@@ -30,7 +30,7 @@ HRESULT CCamera_Window::Initialize(ImVec2 _vWindowPos, ImVec2 _vWindowSize)
 
 		m_pMainCamera = CMain_Camera::Create(m_pDevice, m_pContext, &CameraDesc);
 
-		m_pMainCamera->Set_MoveSpeed(1.0f);
+		m_pMainCamera->Set_MoveSpeed(5.0f);
 
 		pGameInstance->Add_MainCamera((CCamera*)m_pMainCamera);
 	}
@@ -44,7 +44,6 @@ void CCamera_Window::Tick(_float _fTimeDelta)
 	CImWindow::Tick(_fTimeDelta);
 	ImGui::Begin("Camera", nullptr, m_WindowFlag);
 	Camera_Speed();
-	m_pMainCamera->IsLimitButton();
 
 	m_pCutSceneCameraTool->Tick(_fTimeDelta);
 

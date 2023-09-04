@@ -22,7 +22,7 @@ HRESULT CCutScene_Camera_Tool::Initialize(void* pArg)
 
 	CMain_Camera* pMain_Camera = CMain_Camera::Create(m_pDevice, m_pContext, &CameraDesc);
 	
-	pMain_Camera->Set_MoveSpeed(1.0f);
+	pMain_Camera->Set_MoveSpeed(5.0f);
 
 	pGameInstance->Add_MainCamera((CCamera*)pMain_Camera);
 
