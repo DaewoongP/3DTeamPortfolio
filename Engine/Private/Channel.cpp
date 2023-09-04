@@ -181,61 +181,28 @@ void CChannel::Invalidate_TransformationMatrix_Lerp(CModel::BONES& Bones, _float
 		}
 	}
 	//러프시킬 뼈 움직임 코드
-	
 	if (LerpTimeAcc > ANIMATIONLERPTIME)
 		LerpTimeAcc = ANIMATIONLERPTIME;
 	
-	_float fRatio = LerpTimeAcc / ANIMATIONLERPTIME;
+	_float		fRatio = LerpTimeAcc / ANIMATIONLERPTIME;
 	_float3		vSourScale = Bones[m_iBoneIndex]->Get_TransformationMatrix_Scale();
-	_float4		vSourRotation = m_MatrixKeyFrames[(*pCurrentKeyFrameIndex)].vRotation;
+	_float4		vSourRotation = XMQuaternionRotationMatrix(Bones[m_iBoneIndex]->Get_TransformationMatrix());
 	_float3		vSourTranslation = Bones[m_iBoneIndex]->Get_TransformationMatrix_Position();
 
-	/*XMVectorSet(Bones[m_iBoneIndex]->Get_TransformationMatrix().ToEuler().x, Bones[m_iBoneIndex]->Get_TransformationMatrix().ToEuler().y, Bones[m_iBoneIndex]->Get_TransformationMatrix().ToEuler().z, 0);
-	_float3		vSourScale = Bones[m_iBoneIndex]->Get_Scale();
-	_float4		vSourRotation = _float4(0.f, 0.f, 0.f, 0.f);
-	_float3		vSourTranslation = Bones[m_iBoneIndex]->Get_Position();
-	XMStoreFloat4(&vSourRotation, XMQuaternionRotationMatrix(XMLoadFloat4x4(&Bones[m_iBoneIndex]->Get_TransformationMatrix())));*/
-
-
+	if (m_iBoneIndex == 3)
+	{
+		return;
+	}
+		
+	vSourRotation = XMQuaternionNormalize(vSourRotation);
+	vRotation = XMQuaternionNormalize(vRotation);
 
 	vScale = vScale.Lerp(vSourScale, vScale, fRatio);
 	vRotation = XMQuaternionSlerp(vSourRotation, vRotation, fRatio);
 	vTranslation = vTranslation.Lerp(vSourTranslation, vTranslation, fRatio);
 
 	_float4x4	TransformationMatrix = XMMatrixAffineTransformation(vScale, _float4(0.f, 0.f, 0.f, 1.f), vRotation, vTranslation);
-	Bones[m_iBoneIndex]->Set_TransformationMatrix(TransformationMatrix);
-}
-
-void CChannel::Lerp_TransformationMatrix(CModel::BONES& Bones, CChannel* pCurrentChannel, _float fDuration, _float fTimeAcc, _uint iCurrentKeyFrameIndex)
-{
-	_float3	vScale;
-	ZEROMEM(&vScale);
-	_float4	vRotation;
-	ZEROMEM(&vRotation);
-	_float3	vTranslation;
-	ZEROMEM(&vTranslation);
-
-	while (fTimeAcc >= fDuration)
-		return;
-
-	_float		fRatio = fTimeAcc / fDuration;
-
-	_float3		vSourScale = m_MatrixKeyFrames[iCurrentKeyFrameIndex].vScale;
-	_float4		vSourRotation = m_MatrixKeyFrames[iCurrentKeyFrameIndex].vRotation;
-	_float3		vSourTranslation = m_MatrixKeyFrames[iCurrentKeyFrameIndex].vTranslation;
-
-	_float3		vDestScale = pCurrentChannel->m_MatrixKeyFrames[0].vScale;
-	_float4		vDestRotation = pCurrentChannel->m_MatrixKeyFrames[0].vRotation;
-	_float3		vDestTranslation = pCurrentChannel->m_MatrixKeyFrames[0].vTranslation;
-
-	// 선형보간 함수. Rotation의 경우 Quaternion 형태여서 Slerp 함수 사용.
-	vScale = vScale.Lerp(vSourScale, vDestScale, fRatio);
-	vRotation = XMQuaternionSlerp(vSourRotation, vDestRotation, fRatio);
-	vTranslation = vTranslation.Lerp(vSourTranslation, vDestTranslation, fRatio);
-
-	// 선형보간되어 제작된 벡터를 행렬에 담아 채널의 이름과 같은 뼈의 인덱스에 값 전달.
-	_float4x4	TransformationMatrix = XMMatrixAffineTransformation(vScale, _float4(0.f, 0.f, 0.f, 1.f), vRotation, vTranslation);
-	Bones[m_iBoneIndex]->Set_TransformationMatrix(TransformationMatrix);
+	Bones[m_iBoneIndex]->Set_TransformationMatrix(TransformationMatrix);	
 }
 
 CChannel* CChannel::Create(const Engine::CHANNEL& Channel, const CModel::BONES& Bones)

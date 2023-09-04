@@ -102,7 +102,7 @@ HRESULT CLevel_Loading::Loading_Logo(const _tchar* pLayerTag)
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 	// 로고 이동전 로딩씬에 대한 객체 생성
-
+	
 	Safe_Release(pGameInstance);
 
 	return S_OK;

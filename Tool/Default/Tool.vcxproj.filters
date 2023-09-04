@@ -382,6 +382,9 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointColInstance.hlsl">
       <Filter>97. ShaderFiles</Filter>
     </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxRectColInstance.hlsl">
+      <Filter>97. ShaderFiles</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="misc\debuggers\imgui.natvis">

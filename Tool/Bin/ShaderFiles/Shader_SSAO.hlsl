@@ -1,5 +1,10 @@
 
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
+matrix g_ViewMatrixInv, g_ProjMatrixInv;
+matrix g_vLightView;
+matrix g_vLightProj;
+float g_fCamFar;
+
 
 texture2D g_PostProcessingTexture;
 //SSAO
@@ -15,6 +20,9 @@ texture2D g_DepthTexture;
 texture2D g_NormalTexture;
 texture2D g_SSAOTexture;
 texture2D g_BlurTexture;
+texture2D g_ShadeTexture;
+texture2D g_ShadowTexture;
+texture2D g_vLightDepthTexture;
 
 //ray를 뻗어나가면서 무작위로판단하기위해 rand값이 필요함 같이던져줘야할듯
 float3 g_vRandom[13];
@@ -282,7 +290,61 @@ PS_OUT PS_MAIN_BLURY(PS_IN In)
     return Out;
 }
 
+PS_OUT PS_MAIN_SHADOW(PS_IN In)
+{
+    PS_OUT Out = (PS_OUT) 0;
 
+    vector vDepthDesc = g_DepthTexture.Sample(BlurSampler, In.vTexUV);
+
+	//depthdesc y 는 rgba값이라고 생각하면된다.
+    float fViewZ = vDepthDesc.y * g_fCamFar;
+    vector vPosition;
+    if (fViewZ == 0)
+        discard;
+	/* 투영스페이스 상의 위치 */
+    vPosition.x = (In.vTexUV.x * 2.f - 1.f);
+    vPosition.y = In.vTexUV.y * -2.f + 1.f;
+    vPosition.z = vDepthDesc.x;
+    vPosition.w = 1.f;
+
+	/* 뷰스페이스 상의 위치. */
+    vPosition = vPosition * fViewZ;
+    
+    vPosition = mul(vPosition, g_ProjMatrixInv);
+
+	/* 월드스페이스 상의 위치. */
+    vPosition = mul(vPosition, g_ViewMatrixInv);
+
+
+
+    vPosition = mul(vPosition, g_vLightView);
+
+    vPosition = mul(vPosition, g_vLightProj);
+	//w 나누기.
+    vPosition = vPosition / vPosition.w;
+    
+	//광원으로의깊이값.
+    float2 LightUV = float2((vPosition.x + 1.f) / 2.f, (vPosition.y - 1.f) / -2.f);
+
+    vector vLightDepth = g_vLightDepthTexture.Sample(BlurSampler, LightUV);
+
+	
+    float LightDepth_W = vLightDepth.y * g_fCamFar;
+    float LightDepth_Z = vLightDepth.x * LightDepth_W;
+    float CamDepth = vPosition.z - 0.1f / g_fCamFar;
+
+    //if (CamDepth > vLightDepth.x)
+    //{
+    //    Out.vColor = float4(0.f, 0.f, 0.f, 1.f);
+    //}
+    //else
+    //    discard;
+
+    Out.vColor = float4(0.f, 0.f, 0.f, 1.f);
+    return Out;
+
+
+}
 
 technique11 DefaultTechnique
 {
@@ -320,6 +382,16 @@ technique11 DefaultTechnique
         DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
         PixelShader = compile ps_5_0 PS_MAIN_BLURY();
     }
-
+    pass Shadow
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Depth_Disable, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
+        HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
+        DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
+        PixelShader = compile ps_5_0 PS_MAIN_SHADOW();
+    }
 
 }

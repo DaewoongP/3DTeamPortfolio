@@ -22,6 +22,8 @@ public:
 	const unordered_map<const _tchar*, class CGameObject*> Get_GameObjects() const { return m_GameObjects; }
 	// 레이어 클리어
 	HRESULT			Clear_Layer();
+	HRESULT			Delete_Object(const _tchar* pGameObjectTag);
+
 public:
 	void Tick(_float fTimeDelta);
 	void Late_Tick(_float fTimeDelta);
