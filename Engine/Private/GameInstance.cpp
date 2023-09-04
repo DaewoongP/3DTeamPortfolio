@@ -99,13 +99,13 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 
 	m_pObject_Manager->Tick(fTimeDelta);
 
+	m_pPhysX_Manager->Tick(fTimeDelta);
+
 	m_pCamera_Manager->Tick(fTimeDelta);
 
 	m_pPipeLine->Tick();
 
 	m_pFrustum->Tick();
-
-	m_pPhysX_Manager->Tick(fTimeDelta);
 
 	m_pObject_Manager->Late_Tick(fTimeDelta);
 
@@ -551,28 +551,35 @@ HRESULT CGameInstance::Read_CutSceneCamera(const _tchar* _CutSceneTag, const _tc
 {
 	NULL_CHECK_RETURN_MSG(m_pCamera_Manager, E_FAIL, TEXT("Camera NULL"));
 
-	return Read_CutSceneCamera(_CutSceneTag, _CutScenePath);
+	return m_pCamera_Manager->Read_CutSceneCamera(_CutSceneTag, _CutScenePath);
 }
 
 HRESULT CGameInstance::Add_CutScene(const _tchar* _CutSceneTag)
 {
 	NULL_CHECK_RETURN_MSG(m_pCamera_Manager, E_FAIL, TEXT("Camera NULL"));
 
-	return Add_CutScene(_CutSceneTag);
+	return m_pCamera_Manager->Add_CutScene(_CutSceneTag);
+}
+
+HRESULT CGameInstance::Add_CutScene(CUTSCENECAMERADESC& _CutSceneCameraDesc)
+{
+	NULL_CHECK_RETURN_MSG(m_pCamera_Manager, E_FAIL, TEXT("Camera NULL"));
+
+	return m_pCamera_Manager->Add_CutScene(_CutSceneCameraDesc);
 }
 
 HRESULT CGameInstance::Read_OffSetCamera(const _tchar* _OffSetTag, const _tchar* _OffSetPath)
 {
 	NULL_CHECK_RETURN_MSG(m_pCamera_Manager, E_FAIL, TEXT("Camera NULL"));
 
-	return Read_OffSetCamera(_OffSetTag, _OffSetPath);
+	return m_pCamera_Manager->Read_OffSetCamera(_OffSetTag, _OffSetPath);
 }
 
 HRESULT CGameInstance::Add_OffSetCamera(const _tchar* _OffSetTag)
 {
 	NULL_CHECK_RETURN_MSG(m_pCamera_Manager, E_FAIL, TEXT("Camera NULL"));
 
-	return Add_OffSetCamera(_OffSetTag);
+	return m_pCamera_Manager->Add_OffSetCamera(_OffSetTag);
 }
 
 void CGameInstance::Release_Engine()

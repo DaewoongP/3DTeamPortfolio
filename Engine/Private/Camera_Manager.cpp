@@ -133,6 +133,13 @@ HRESULT CCamera_Manager::Add_CutScene(const _tchar* _CutSceneTag)
 	return S_OK;
 }
 
+HRESULT CCamera_Manager::Add_CutScene(CUTSCENECAMERADESC& _CutSceneCameraDesc)
+{
+	m_CutSceneCameraDescs.push(_CutSceneCameraDesc);
+
+	return S_OK;
+}
+
 HRESULT CCamera_Manager::Read_OffSetCamera(const _tchar* _OffSetTag, const _tchar* _OffSetPath)
 {
 	_ulong		dwByte = { 0 };
@@ -214,7 +221,7 @@ void CCamera_Manager::Play_CutScene(_float _TimeDelta)
 		_float4 vUp = _float4(0.0f, 1.0f, 0.0f, 0.0f);
 
 		//카메라의 역행렬
-		m_ViewMatrix = XMMatrixInverse(nullptr, XMMatrixLookAtLH(vEye, vAt, vUp));
+		m_ViewMatrix = XMMatrixLookAtLH(vEye, vAt, vUp);
 	}
 	else if (false == m_CutSceneCameraDescs.front().isLerp)
 	{
@@ -225,7 +232,7 @@ void CCamera_Manager::Play_CutScene(_float _TimeDelta)
 		_float4 vUp = _float4(0.0f, 1.0f, 0.0f, 0.0f);
 
 		//카메라의 역행렬
-		m_ViewMatrix = XMMatrixInverse(nullptr, XMMatrixLookAtLH(vEye, vAt, vUp));
+		m_ViewMatrix = XMMatrixLookAtLH(vEye, vAt, vUp);
 	}
 
 	//파이프 라인 값 변경
@@ -233,7 +240,7 @@ void CCamera_Manager::Play_CutScene(_float _TimeDelta)
 
 	//큐의 앞 원소의 듀레이션이 시간 누적치 보다 작다면
 	if (m_fCutSceneTimeAcc
-		<=
+		>=
 		m_CutSceneCameraDescs.front().fDuration)
 	{
 		//누적치 초기화
@@ -279,7 +286,7 @@ void CCamera_Manager::Play_OffSetCamera(_float _TimeDelta)
 		_float4 vUp = _float4(0.0f, 1.0f, 0.0f, 0.0f);
 
 		//카메라의 역행렬
-		m_ViewMatrix = XMMatrixInverse(nullptr, XMMatrixLookAtLH(vEye, vAt, vUp));
+		m_ViewMatrix = XMMatrixLookAtLH(vEye, vAt, vUp);
 	}
 	else if (false == m_OffSetCameraDescs.front().isLerp)
 	{
@@ -290,7 +297,7 @@ void CCamera_Manager::Play_OffSetCamera(_float _TimeDelta)
 		_float4 vUp = _float4(0.0f, 1.0f, 0.0f, 0.0f);
 
 		//카메라의 역행렬
-		m_ViewMatrix = XMMatrixInverse(nullptr, XMMatrixLookAtLH(vEye, vAt, vUp));
+		m_ViewMatrix = XMMatrixLookAtLH(vEye, vAt, vUp);
 	}
 
 	//파이프 라인 값 변경
@@ -339,4 +346,5 @@ vector<OFFSETCAMERADESC>* CCamera_Manager::Find_OffSetCamera(const _tchar* _OffS
 void CCamera_Manager::Free()
 {
 	Safe_Release(m_pPipeLine);
+	Safe_Release(m_pMainCamera);
 }
