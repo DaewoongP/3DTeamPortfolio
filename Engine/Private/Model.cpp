@@ -129,18 +129,18 @@ HRESULT CModel::Render(_uint iMeshIndex)
 	return S_OK;
 }
 
+void CModel::Reset_Animation(const wstring& wstrAnimationTag, ANIMTYPE eType)
+{
+	m_tAnimationDesc[eType].iCurrentAnimIndex = Find_Animation_Index(wstrAnimationTag);
+	m_tAnimationDesc[eType].iPreviousAnimIndex = m_tAnimationDesc[eType].iCurrentAnimIndex;
+	m_tAnimationDesc[eType].isResetAnimTrigger = true;
+}
+
 void CModel::Reset_Animation(_uint iAnimIndex, ANIMTYPE eType)
 {
 	m_tAnimationDesc[eType].iCurrentAnimIndex = iAnimIndex;
 	m_tAnimationDesc[eType].iPreviousAnimIndex = m_tAnimationDesc[eType].iCurrentAnimIndex;
 	m_tAnimationDesc[eType].isResetAnimTrigger = true;
-}
-
-void CModel::Reset_Animation(const wstring& wstrAnimationTag, CTransform* pTransform)
-{
-	m_iCurrentAnimIndex = Find_Animation_Index(wstrAnimationTag);
-	m_iPreviousAnimIndex = m_iCurrentAnimIndex;
-	m_isResetAnimTrigger = true;
 }
 
 void CModel::Play_Animation(_float fTimeDelta, ANIMTYPE eType, CTransform* pTransform)
@@ -306,6 +306,8 @@ HRESULT CModel::Separate_Animation(_int iFromIndex, _int iToIndex, ANIMTYPE eTyp
 		m_tAnimationDesc[m_iAnimationPartCount].Animations.push_back(pAnimation);
 	}
 	m_iAnimationPartCount++;
+
+	return S_OK;
 }
 
 void CModel::Delete_Animation(_uint iAnimIndex, ANIMTYPE eType)
@@ -756,11 +758,11 @@ void CModel::Release_FileDatas()
 	m_AnimationDatas.clear();
 }
 
-_uint CModel::Find_Animation_Index(const wstring& strTag)
+_uint CModel::Find_Animation_Index(const wstring& strTag, ANIMTYPE eType)
 {
 	_uint iAnimationIndex = { 0 };
 
-	for (auto pAnimation : m_Animations)
+	for (auto pAnimation : m_tAnimationDesc[eType].Animations)
 	{
 		wstring wstrAnimationTag = pAnimation->Get_AnimationName();
 

@@ -30,8 +30,7 @@ HRESULT CTest_NPC::Initialize(void* pArg)
 
 	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
-	m_pRigidBody->Set_TransformComponent(m_pTransform);
-	//m_pRigidBody->Set_ControllerComponent(m_pController);
+	m_pTransform->Set_RigidBody(m_pRigidBody);
 
 	return S_OK;
 }

@@ -31,7 +31,7 @@ HRESULT CForest_Troll::Initialize(void* pArg)
 
 	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
-	m_pRigidBody->Set_TransformComponent(m_pTransform);
+	m_pTransform->Set_RigidBody(m_pRigidBody);
 
 	return S_OK;
 }
@@ -188,7 +188,7 @@ void CForest_Troll::Tick_ImGui()
 	ImGui::Begin("Test Troll");
 
 	if (ImGui::InputInt("animIndex##Forest", &m_iIndex))
-		m_pModelCom->Reset_Animation(m_iIndex, m_pTransform);
+		m_pModelCom->Reset_Animation(m_iIndex);
 
 	ImGui::End();
 }

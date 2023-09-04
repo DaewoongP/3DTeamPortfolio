@@ -3,13 +3,14 @@
 /* =============================================== */
 // 
 //	정 : 안철민
-//	부 :
+//	부 : 주성환
 //
 /* =============================================== */
 
 #include "Component.h"
 
 BEGIN(Engine)
+class CTransform;
 #define ANIMATIONLERPTIME 0.3f
 class ENGINE_DLL CModel : public CComponent
 {
@@ -43,6 +44,7 @@ public:
 	virtual HRESULT Render(_uint iMeshIndex);
 
 public:
+	void	Reset_Animation(const wstring& wstrAnimationTag, ANIMTYPE eType = UPPERBODY);
 	void	Reset_Animation(_uint iAnimIndex, ANIMTYPE eType = UPPERBODY);
 	//루트애니메이션을 사용할경우 ctransform을 넣어준다.
 	void	Play_Animation(_float fTimeDelta, ANIMTYPE eType = UPPERBODY, CTransform* pTransform = nullptr);
@@ -97,6 +99,7 @@ private:
 
 private:
 	void Release_FileDatas();
+	_uint Find_Animation_Index(const wstring& strTag, ANIMTYPE eType = UPPERBODY);
 
 public:
 	static CModel* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, TYPE eType, const _tchar* pModelFilePath, _float4x4 PivotMatrix = XMMatrixIdentity());
