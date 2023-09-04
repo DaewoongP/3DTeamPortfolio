@@ -66,18 +66,29 @@ private:
 
 public:
 	HRESULT				Reserve_Containers(_uint iNumLevels);
+	// 프로토타입 생성
 	HRESULT				Add_Prototype(_uint iLevelIndex, const _tchar* pPrototypeTag, class CComponent* pPrototype);
+	// Tick에 컴포넌트가 돌아가게끔 clone 처리
+	HRESULT				Add_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, const _tchar* pLayerTag, const _tchar* pComponentTag, void* pArg);
 	class CComponent*	Clone_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, void* pArg);
 	void				Clear_LevelResources(_uint iLevelIndex);
-	HRESULT				Delete_Prototype(_uint iLevelIndex, const _tchar* pPrototypeTag);
+
+	class CComponent*	Find_Component_In_Layer(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pComponentTag);
+	class CLayer*		Find_Layer(_uint iLevelIndex, const _tchar* pLayerTag);
+
+public:
+	void	Tick(_float fTimeDelta);
+	void	Late_Tick(_float fTimeDelta);
 
 private:
-	_uint	m_iNumLevels = { 0 };
-
-private:
+	typedef unordered_map<const _tchar*, class CLayer*>		LAYERS;
 	typedef unordered_map<const _tchar*, class CComponent*>	PROTOTYPES;
-	PROTOTYPES* m_pPrototypes = { nullptr };
-	
+
+private:
+	PROTOTYPES*			m_pPrototypes = { nullptr };
+	LAYERS*				m_pLayers = { nullptr };
+	_uint				m_iNumLevels = { 0 };
+
 private:
 	class CComponent*	Find_Prototype(_uint iLevelIndex, const _tchar* pPrototypeTag);
 

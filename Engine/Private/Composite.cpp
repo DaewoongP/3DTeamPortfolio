@@ -1,6 +1,5 @@
 #include "..\Public\Composite.h"
 #include "Component_Manager.h"
-#include "Object_Manager.h"
 #include "GameObject.h"
 
 CComposite::CComposite(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -67,5 +66,6 @@ void CComposite::Free()
 	
 	for (auto& Pair : m_Components)
 		Safe_Release(Pair.second);
+
 	m_Components.clear();
 }

@@ -83,7 +83,6 @@
     <ClInclude Include="..\Public\Model.h" />
     <ClInclude Include="..\public\Navigation.h" />
     <ClInclude Include="..\Public\Notify.h" />
-    <ClInclude Include="..\Public\Object_Manager.h" />
     <ClInclude Include="..\Public\ParticleSystem.h" />
     <ClInclude Include="..\Public\PipeLine.h" />
     <ClInclude Include="..\public\PXAllocator.h" />
@@ -173,7 +172,6 @@
     <ClCompile Include="..\Private\Model.cpp" />
     <ClCompile Include="..\private\Navigation.cpp" />
     <ClCompile Include="..\Private\Notify.cpp" />
-    <ClCompile Include="..\Private\Object_Manager.cpp" />
     <ClCompile Include="..\Private\ParticleSystem.cpp" />
     <ClCompile Include="..\Private\PipeLine.cpp" />
     <ClCompile Include="..\Private\QuadTree.cpp" />
