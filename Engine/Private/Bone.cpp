@@ -45,24 +45,15 @@ void CBone::Invalidate_CombinedTransformationMatrix(const CModel::BONES& Bones)
 
 void CBone::Invalidate_CombinedTransformationMatrix_Basic(const CModel::BONES& Bones)
 {
-	XMStoreFloat4x4(&m_CombinedTransformationMatrix,
-		XMLoadFloat4x4(&m_TransformationMatrix) * XMLoadFloat4x4(&Bones[m_iParentIndex]->m_CombinedTransformationMatrix));
-
 	_float4x4 scaleAddMatrix = m_TransformationMatrix;
 
 	_float fXLength = Bones[m_iParentIndex]->m_CombinedTransformationMatrix.Right().Length();
 	_float fYLength = Bones[m_iParentIndex]->m_CombinedTransformationMatrix.Up().Length();
 	_float fZLength = Bones[m_iParentIndex]->m_CombinedTransformationMatrix.Look().Length();
 
-	_float3 vScaledRight = (scaleAddMatrix.Right() * fXLength);
-	_float3 vScaledUp = (scaleAddMatrix.Up() * fYLength);
-	_float3 vScaledLook = (scaleAddMatrix.Look() * fZLength);
+	_float4x4 scaleMatrix = XMMatrixScaling(fXLength, fYLength, fZLength);
 
-	memcpy(&scaleAddMatrix.m[0], &vScaledRight, sizeof(_float3));
-	memcpy(&scaleAddMatrix.m[1], &vScaledUp, sizeof(_float3));
-	memcpy(&scaleAddMatrix.m[2], &vScaledLook, sizeof(_float3));
-
-	m_CombinedTransformationMatrix = scaleAddMatrix;
+	m_CombinedTransformationMatrix = m_TransformationMatrix * scaleMatrix;
 }
 
 void CBone::Reset_CombinedTransformationMatrix()
