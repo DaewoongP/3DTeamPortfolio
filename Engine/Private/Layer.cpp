@@ -32,14 +32,14 @@ HRESULT CLayer::Clear_Layer()
 	return S_OK;
 }
 
-HRESULT CLayer::Delete_Object(const _tchar* pGameObjectTag)
+HRESULT CLayer::Delete_Component(const _tchar* pComponentTag)
 {
-	for (auto iter = m_GameObjects.begin(); iter != m_GameObjects.end();)
+	for (auto iter = m_Components.begin(); iter != m_Components.end();)
 	{
-		if (!lstrcmp(pGameObjectTag, iter->first))
+		if (!lstrcmp(pComponentTag, iter->first))
 		{
 			Safe_Release(iter->second);
-			iter = m_GameObjects.erase(iter);
+			iter = m_Components.erase(iter);
 		}
 
 		else

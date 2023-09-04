@@ -118,11 +118,12 @@ void CAnimation_Window::Create_Dummy_Button()
 	{
 		CGameInstance* pGameInstance = CGameInstance::GetInstance();
 		Safe_AddRef(pGameInstance);
-		if (FAILED(pGameInstance->Add_GameObject(LEVEL_TOOL, TEXT("Prototype_GameObject_Dummy"), TEXT("Layer_Tool"), TEXT("Dummy"), nullptr)))
+		if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_Dummy"), TEXT("Layer_Tool"), TEXT("Dummy"), nullptr)))
 		{
 			MSG_BOX("Failed to Created Dummy Clone");
 		}
-		m_pDummyObject = dynamic_cast<CDummy*>(pGameInstance->Find_GameObject_In_Layer(LEVEL_TOOL, TEXT("Layer_Tool"), TEXT("Dummy")));
+
+		m_pDummyObject = dynamic_cast<CDummy*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL, TEXT("Layer_Tool"), TEXT("Dummy")));
 		Safe_Release(pGameInstance);
 	}
 }
@@ -160,7 +161,7 @@ void CAnimation_Window::OpenFile_Button()
 			PivotMatrix = XMMatrixIdentity();
 			CGameInstance* pGameInstance = CGameInstance::GetInstance();
 			Safe_AddRef(pGameInstance);
-			if (FAILED(pGameInstance->Add_Prototype_Component(LEVEL_TOOL, m_vecModelList_t[m_iMaxModelIndex].c_str(),
+			if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, m_vecModelList_t[m_iMaxModelIndex].c_str(),
 				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, wszfilePath, PivotMatrix))))
 			{
 				MSG_BOX("Failed to Create Model");

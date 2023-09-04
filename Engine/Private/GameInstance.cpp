@@ -228,6 +228,20 @@ CLayer* CGameInstance::Find_Layer(_uint iLevelIndex, const _tchar* pLayerTag)
 	return m_pComponent_Manager->Find_Layer(iLevelIndex, pLayerTag);
 }
 
+HRESULT CGameInstance::Clear_Layer(_uint iLevelIndex, const _tchar* pLayerTag)
+{
+	NULL_CHECK_RETURN_MSG(m_pComponent_Manager, E_FAIL, TEXT("Component_Manager NULL"));
+
+	return m_pComponent_Manager->Clear_Layer(iLevelIndex, pLayerTag);
+}
+
+HRESULT CGameInstance::Delete_Component(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pComponentTag)
+{
+	NULL_CHECK_RETURN_MSG(m_pComponent_Manager, E_FAIL, TEXT("Component_Manager NULL"));
+
+	return m_pComponent_Manager->Delete_Component(iLevelIndex, pLayerTag, pComponentTag);
+}
+
 _bool	CGameInstance::Get_DIKeyState(_ubyte ubyKeyID, CInput_Device::KEYSTATE eState)
 {
 	NULL_CHECK_RETURN_MSG(m_pInput_Device, 0, TEXT("Input_Device NULL"));

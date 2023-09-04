@@ -72,9 +72,11 @@ public:
 	HRESULT				Add_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, const _tchar* pLayerTag, const _tchar* pComponentTag, void* pArg);
 	class CComponent*	Clone_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, void* pArg);
 	void				Clear_LevelResources(_uint iLevelIndex);
+	HRESULT				Delete_Component(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pComponentTag);
 
 	class CComponent*	Find_Component_In_Layer(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pComponentTag);
 	class CLayer*		Find_Layer(_uint iLevelIndex, const _tchar* pLayerTag);
+	HRESULT				Clear_Layer(_uint iLevelIndex, const _tchar* pLayerTag);
 
 public:
 	void	Tick(_float fTimeDelta);

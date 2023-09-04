@@ -36,9 +36,9 @@ public:
 	HRESULT Change_Model_Component(const _tchar* pPrototypeTag);
 
 private:
-	CShader* m_pShader = { nullptr };
-	CRenderer* m_pRenderer = { nullptr };
-	CModel* m_pModel = { nullptr };
+	CShader*			m_pShader = { nullptr };
+	CRenderer*			m_pRenderer = { nullptr };
+	CModel*				m_pModel = { nullptr };
 
 private:
 	HRESULT Add_Components();

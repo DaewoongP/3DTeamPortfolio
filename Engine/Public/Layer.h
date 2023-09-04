@@ -22,7 +22,7 @@ public:
 	const unordered_map<const _tchar*, class CComponent*> Get_Components() const { return m_Components; }
 	// 레이어 클리어
 	HRESULT			Clear_Layer();
-	HRESULT			Delete_Object(const _tchar* pComponentTag);
+	HRESULT			Delete_Component(const _tchar* pComponentTag);
 
 public:
 	void Tick(_float fTimeDelta);

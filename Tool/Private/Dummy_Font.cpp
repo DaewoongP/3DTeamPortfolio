@@ -1,4 +1,4 @@
-#include "Dummy_Font.h"
+#include "../Public/Dummy_Font.h"
 #include "GameInstance.h"
 
 CDummy_Font::CDummy_Font(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

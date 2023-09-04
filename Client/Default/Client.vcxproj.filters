@@ -91,9 +91,6 @@
     <Filter Include="02. GameObject\02. Enemy\00. Troll\00. Armored_Troll">
       <UniqueIdentifier>{f4df7d1d-7374-4385-81c0-dbc54a235570}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\02. Enemy\00. Troll\00. Armored_Troll\Weopon">
-      <UniqueIdentifier>{cc4def40-eb2b-4c6e-b1d0-03d0027e89bc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\02. Enemy\00. Troll\01. Forest_Troll">
       <UniqueIdentifier>{cb12878e-e2df-412e-9377-2c7c29c4cbe2}</UniqueIdentifier>
     </Filter>
@@ -102,6 +99,9 @@
     </Filter>
     <Filter Include="03. Tasks">
       <UniqueIdentifier>{68f60c2e-b68f-4392-b9de-da48723e2496}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\00. Troll\00. Armored_Troll\Weapon">
+      <UniqueIdentifier>{cc4def40-eb2b-4c6e-b1d0-03d0027e89bc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -202,7 +202,7 @@
       <Filter>02. GameObject\02. Enemy\00. Troll\00. Armored_Troll</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Weapon_Armored_Troll.h">
-      <Filter>02. GameObject\02. Enemy\00. Troll\00. Armored_Troll\Weopon</Filter>
+      <Filter>02. GameObject\02. Enemy\00. Troll\00. Armored_Troll\Weapon</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Assasin_Goblin.h">
       <Filter>02. GameObject\02. Enemy\01. Goblin\Assassin</Filter>
@@ -288,7 +288,7 @@
       <Filter>02. GameObject\02. Enemy\00. Troll\00. Armored_Troll</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Weapon_Armored_Troll.cpp">
-      <Filter>02. GameObject\02. Enemy\00. Troll\00. Armored_Troll\Weopon</Filter>
+      <Filter>02. GameObject\02. Enemy\00. Troll\00. Armored_Troll\Weapon</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Assasin_Goblin.cpp">
       <Filter>02. GameObject\02. Enemy\01. Goblin\Assassin</Filter>

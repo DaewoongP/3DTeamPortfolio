@@ -58,6 +58,8 @@ public: /* For.Component_Manager*/
 	class CComponent* Clone_Component(_uint iLevelIndex, const _tchar * pPrototypeTag, void* pArg = nullptr);
 	class CComponent* Find_Component_In_Layer(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pComponentTag);
 	class CLayer* Find_Layer(_uint iLevelIndex, const _tchar * pLayerTag);
+	HRESULT	Clear_Layer(_uint iLevelIndex, const _tchar * pLayerTag);
+	HRESULT	Delete_Component(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pComponentTag);
 
 public: /* For.Input_Device*/
 	_bool		Get_DIKeyState(_ubyte ubyKeyID, CInput_Device::KEYSTATE eState = CInput_Device::KEY_PRESSING);

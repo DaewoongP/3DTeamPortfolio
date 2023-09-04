@@ -16,6 +16,8 @@ HRESULT CComponent_Manager::Reserve_Containers(_uint iNumLevels)
 		return E_FAIL;
 	}
 
+	m_pPrototypes = new PROTOTYPES[iNumLevels];
+
 	m_pLayers = new LAYERS[iNumLevels];
 
 	m_iNumLevels = iNumLevels;
@@ -122,6 +124,16 @@ void CComponent_Manager::Clear_LevelResources(_uint iLevelIndex)
 	m_pPrototypes[iLevelIndex].clear();	
 }
 
+HRESULT CComponent_Manager::Delete_Component(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pComponentTag)
+{
+	CLayer* pLayer = Find_Layer(iLevelIndex, pLayerTag);
+
+	if (nullptr == pLayer)
+		return E_FAIL;
+
+	return pLayer->Delete_Component(pComponentTag);
+}
+
 CComponent* CComponent_Manager::Find_Prototype(_uint iLevelIndex, const _tchar* pPrototypeTag)
 {
 	auto	iter = find_if(m_pPrototypes[iLevelIndex].begin(), m_pPrototypes[iLevelIndex].end(), CTag_Finder(pPrototypeTag));
@@ -155,6 +167,16 @@ CLayer* CComponent_Manager::Find_Layer(_uint iLevelIndex, const _tchar* pLayerTa
 		return nullptr;
 
 	return iter->second;
+}
+
+HRESULT CComponent_Manager::Clear_Layer(_uint iLevelIndex, const _tchar* pLayerTag)
+{
+	CLayer* pLayer = Find_Layer(iLevelIndex, pLayerTag);
+
+	if (nullptr == pLayer)
+		return E_FAIL;
+
+	return pLayer->Clear_Layer();
 }
 
 void CComponent_Manager::Tick(_float fTimeDelta)

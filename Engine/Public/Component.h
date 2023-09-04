@@ -46,7 +46,7 @@ protected:
 	_bool						m_isCloned = { false };
 	OBJ_EVENT					m_eObjEvent = { OBJ_NONE };
 
-private:
+protected:
 	_tchar						m_pPrototypeTag[MAX_PATH] = TEXT("");
 	_tchar						m_pTag[MAX_STR] = TEXT("");
 

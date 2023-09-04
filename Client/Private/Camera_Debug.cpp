@@ -150,7 +150,7 @@ void CCamera_Debug::Debug_ImGui(_float fTimeDelta)
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	CCamera_Debug* pCam = static_cast<CCamera_Debug*>(pGameInstance->Find_GameObject_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Debug"), TEXT("GameObject_Camera_Debug")));
+	CCamera_Debug* pCam = static_cast<CCamera_Debug*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Debug"), TEXT("GameObject_Camera_Debug")));
 
 	_float fSpeed = pCam->Get_Speed();
 
@@ -163,7 +163,7 @@ void CCamera_Debug::Debug_ImGui(_float fTimeDelta)
 		pCam->Set_Speed(fSpeed);
 	}
 
-	CTest_Player* pTest_Player = static_cast<CTest_Player*>(pGameInstance->Find_GameObject_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Debug"), TEXT("GameObject_Test_Player")));
+	CTest_Player* pTest_Player = static_cast<CTest_Player*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Debug"), TEXT("GameObject_Test_Player")));
 
 	if (ImGui::Checkbox("3rd Camera", &m_is3rdCam))
 	{

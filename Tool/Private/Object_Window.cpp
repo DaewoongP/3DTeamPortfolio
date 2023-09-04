@@ -142,7 +142,7 @@ void CObject_Window::Install_Object(_float3 vPos)
 		Deep_Copy_Tag(wszobjName);
 
 		// 번호를 붙인 태그로 MapObject 등록
-		if (FAILED(pGameInstance->Add_GameObject(LEVEL_TOOL,
+		if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL,
 			TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_MapObject"), 
 			m_vecMapObjectTag.at(m_iMapObjectIndex).c_str(), &vPos)))
 		{
@@ -152,7 +152,7 @@ void CObject_Window::Install_Object(_float3 vPos)
 		}
 
 		// 마지막에 설치한 맵 오브젝트 주소 가져옴
-		m_pObject = static_cast<CMapObject*>(pGameInstance->Find_GameObject_In_Layer(LEVEL_TOOL, 
+		m_pObject = static_cast<CMapObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL, 
 			TEXT("Layer_MapObject"), wszobjName));
 
 		m_pObject->Add_Model_Component(m_vecModelList_t.at(m_iModelIndex));
@@ -289,7 +289,7 @@ void CObject_Window::Delete_Object_Menu()
 		if (0 != m_vecObjectTag_s.size())
 		{
 			BEGININSTANCE;
-			if (FAILED(pGameInstance->Delete_Object((_uint)LEVEL_TOOL, 
+			if (FAILED(pGameInstance->Delete_Component(LEVEL_TOOL, 
 				TEXT("Layer_MapObject"), m_vecMapObjectTag.back().c_str())))
 			{
 				MSG_BOX("Failed to delete last MapObject");
@@ -331,7 +331,7 @@ void CObject_Window::Delete_Object_Menu()
 		if (ImGui::Button("Yes"))
 		{
 			BEGININSTANCE;
-			if (FAILED(pGameInstance->Clear_Layer((_uint)LEVEL_TOOL, TEXT("Layer_MapObject"))))
+			if (FAILED(pGameInstance->Clear_Layer(LEVEL_TOOL, TEXT("Layer_MapObject"))))
 			{
 				MSG_BOX("Failed to clear MapObject");
 			} ENDINSTANCE;
@@ -549,7 +549,7 @@ HRESULT CObject_Window::Load_MapObject()
 		Deep_Copy_Tag(wszobjName);
 
 		// 번호를 붙인 태그로 MapObject 등록
-		BEGININSTANCE if (FAILED(pGameInstance->Add_GameObject(LEVEL_TOOL,
+		BEGININSTANCE if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL,
 			TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_MapObject"),
 			m_vecMapObjectTag.at(m_iMapObjectIndex).c_str(), &m_vecSaveObject[i].vPos)))
 		{
@@ -559,7 +559,7 @@ HRESULT CObject_Window::Load_MapObject()
 		} ENDINSTANCE;
 
 		// 마지막에 설치한 맵 오브젝트 주소 가져옴
-		m_pObject = static_cast<CMapObject*>(pGameInstance->Find_GameObject_In_Layer(LEVEL_TOOL,
+		m_pObject = static_cast<CMapObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL,
 			TEXT("Layer_MapObject"), wszobjName));
 
 		m_pObject->Add_Model_Component(m_vecSaveObject[i].wszTag);
@@ -680,7 +680,7 @@ _float3 CObject_Window::Find_PickingPos()
 	BEGININSTANCE; pGameInstance->Get_WorldMouseRay(m_pContext, g_hWnd, &vRayPos, &vRayDir);
 
 	CVIBuffer_Terrain* pTerrain = static_cast<CVIBuffer_Terrain*>(
-		static_cast<CTerrain*>(pGameInstance->Find_GameObject_In_Layer(LEVEL_TOOL, TEXT("Layer_Tool"),
+		static_cast<CTerrain*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL, TEXT("Layer_Tool"),
 			TEXT("GameObject_Terrain")))->Get_Buffer()); ENDINSTANCE;
 
 	float fDist = FLT_MAX; // 피킹 연산 후 최종 거리값
@@ -708,14 +708,14 @@ HRESULT CObject_Window::Create_Dummy()
 {
 	_float3 vPos = { 5.f, 0.f, 5.f };
 
-	BEGININSTANCE; if (FAILED(pGameInstance->Add_GameObject(LEVEL_TOOL, TEXT("Prototype_GameObject_MapDummy"), 
+	BEGININSTANCE; if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_MapDummy"),
 		TEXT("Layer_Tool"), TEXT("Map_Dummy"), &vPos)))
 	{
 		MSG_BOX("Failed to GameObject Map_Dummy");
 		return E_FAIL;
 	}
 
-	m_pDummy = static_cast<CMapDummy*>(pGameInstance->Find_GameObject_In_Layer(LEVEL_TOOL, TEXT("Layer_Tool"), TEXT("Map_Dummy")));
+	m_pDummy = static_cast<CMapDummy*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL, TEXT("Layer_Tool"), TEXT("Map_Dummy")));
 	m_pDummy->Add_Model_Component(TEXT("Prototype_Component_Model_Tree"));
 	m_pDummy->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMesh")); ENDINSTANCE;
 
@@ -775,7 +775,7 @@ HRESULT CObject_Window::Save_Model_Path(_uint iType, const _tchar* pFilePath)
 
 				// 프로토타입 생성
 				_float4x4 PivotMatrix = XMMatrixIdentity();
-				BEGININSTANCE; if (FAILED(pGameInstance->Add_Prototype_Component(LEVEL_TOOL, m_vecModelList_t.back(),
+				BEGININSTANCE; if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, m_vecModelList_t.back(),
 					CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, m_vecModelPath_t.back(), PivotMatrix))))
 				{
 					MSG_BOX("Failed to Create New Model Prototype");

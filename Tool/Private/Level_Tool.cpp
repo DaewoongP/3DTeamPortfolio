@@ -42,7 +42,7 @@ HRESULT CLevel_Tool::Ready_For_Layer_Tool(const _tchar* pLayerTag)
 	Safe_AddRef(pGameInstance);
 
 	/* For.GameObject_Terrain */
-	if (FAILED(pGameInstance->Add_GameObject(LEVEL_TOOL,
+	if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL,
 		TEXT("Prototype_GameObject_Terrain"), pLayerTag, TEXT("GameObject_Terrain"))))
 	{
 		MSG_BOX("Failed Add GameObject CTerrain");
@@ -50,7 +50,7 @@ HRESULT CLevel_Tool::Ready_For_Layer_Tool(const _tchar* pLayerTag)
 	}
 
 	/* For.GameObject_Camera_Free */
-	if (FAILED(pGameInstance->Add_GameObject(LEVEL_TOOL,
+	if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL,
 		TEXT("Prototype_GameObject_Camera_Free"), pLayerTag, TEXT("GameObject_Camera_Free"))))
 	{
 		MSG_BOX("Failed Add GameObject GameObject_Camera_Free");
@@ -58,7 +58,7 @@ HRESULT CLevel_Tool::Ready_For_Layer_Tool(const _tchar* pLayerTag)
 	}
 
 	/* For.GameObject_Sky */
-	if (FAILED(pGameInstance->Add_GameObject(LEVEL_TOOL,
+	if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL,
 		TEXT("Prototype_GameObject_Sky"), pLayerTag, TEXT("GameObject_Sky"))))
 	{
 		MSG_BOX("Failed Add GameObject GameObject_Sky");
@@ -66,7 +66,7 @@ HRESULT CLevel_Tool::Ready_For_Layer_Tool(const _tchar* pLayerTag)
 	}
 
 	/* For.GameObject_Dummy */
-	if (FAILED(pGameInstance->Add_GameObject(LEVEL_TOOL,
+	if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL,
 		TEXT("Prototype_GameObject_Dummy"), pLayerTag, TEXT("GameObject_Dummy"))))
 	{
 		MSG_BOX("Failed Add GameObject GameObject_Dummy");

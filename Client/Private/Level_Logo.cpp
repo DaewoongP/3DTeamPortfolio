@@ -56,7 +56,7 @@ HRESULT CLevel_Logo::Ready_Layer_BackGround(const _tchar* pLayerTag)
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	if (FAILED(pGameInstance->Add_GameObject(LEVEL_LOGO, TEXT("Prototype_GameObject_Logo_BackGround"), pLayerTag, TEXT("GameObject_Logo_BackGround"))))
+	if (FAILED(pGameInstance->Add_Component(LEVEL_LOGO, TEXT("Prototype_GameObject_Logo_BackGround"), pLayerTag, TEXT("GameObject_Logo_BackGround"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Logo_BackGround)");
 		return E_FAIL;

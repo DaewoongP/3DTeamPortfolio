@@ -233,7 +233,7 @@ void CCutScene_Camera_Tool::Create_CameraInfo(_float4 _vRayPos, _float4 _vRayDir
 
 		CCamera_Point* pCameraPoint =
 			dynamic_cast<CCamera_Point*>(
-				pGameInstance->Clone_GameObject(
+				pGameInstance->Clone_Component(LEVEL_TOOL,
 					TEXT("Prototype_GameObject_Camera_Point"),
 					&CameraPointDesc));
 
@@ -280,7 +280,7 @@ void CCutScene_Camera_Tool::Create_OriginAt(_float4 _vRayPos, _float4 _vRayDir)
 
 		CCamera_Point* pCameraPoint =
 			dynamic_cast<CCamera_Point*>(
-				pGameInstance->Clone_GameObject(
+				pGameInstance->Clone_Component(LEVEL_TOOL,
 					TEXT("Prototype_GameObject_Camera_Point"),
 					&CameraPointDesc));
 
@@ -593,7 +593,7 @@ HRESULT CCutScene_Camera_Tool::Load_CutSceneInfo(const _tchar* _wszFilePath)
 
 		CCamera_Point* pCameraPoint =
 			dynamic_cast<CCamera_Point*>(
-				pGameInstance->Clone_GameObject(
+				pGameInstance->Clone_Component(LEVEL_TOOL,
 					TEXT("Prototype_GameObject_Camera_Point"),
 					&CameraPointDesc));
 
@@ -621,7 +621,7 @@ HRESULT CCutScene_Camera_Tool::Load_CutSceneInfo(const _tchar* _wszFilePath)
 
 		pCameraPoint =
 			dynamic_cast<CCamera_Point*>(
-				pGameInstance->Clone_GameObject(
+				pGameInstance->Clone_Component(LEVEL_TOOL,
 					TEXT("Prototype_GameObject_Camera_Point"),
 					&CameraPointDesc));
 

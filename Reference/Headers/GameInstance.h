@@ -52,19 +52,14 @@ public: /* For.Level_Manager */
 	class CLevel* Get_CurrentLevel();
 	HRESULT Render_Level();
 
-public: /* For.Object_Manager */
-	HRESULT Add_Prototype_GameObject(const _tchar * pPrototypeTag, class CGameObject* pPrototype);
-	HRESULT Add_GameObject(_uint iLevelIndex, const _tchar * pPrototypeTag, const _tchar * pLayerTag, const _tchar * pGameObjectTag, void* pArg = nullptr);
+public: /* For.Component_Manager*/
+	HRESULT Add_Prototype(_uint iLevelIndex, const _tchar * pPrototypeTag, class CComponent* pPrototype);
+	HRESULT Add_Component(_uint iLevelIndex, const _tchar * pPrototypeTag, const _tchar * pLayerTag, const _tchar * pComponentTag, void* pArg = nullptr);
+	class CComponent* Clone_Component(_uint iLevelIndex, const _tchar * pPrototypeTag, void* pArg = nullptr);
+	class CComponent* Find_Component_In_Layer(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pComponentTag);
 	class CLayer* Find_Layer(_uint iLevelIndex, const _tchar * pLayerTag);
 	HRESULT	Clear_Layer(_uint iLevelIndex, const _tchar * pLayerTag);
-	HRESULT	Delete_Object(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pGameObjectTag);
-	class CGameObject* Find_GameObject_In_Layer(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pGameObjectTag);
-	CGameObject* Clone_GameObject(const _tchar * pPrototypeTag, void* pArg);
-
-public: /* For.Component_Manager*/
-	HRESULT Add_Prototype_Component(_uint iLevelIndex, const _tchar * pPrototypeTag, class CComponent* pPrototype);
-	class CComponent* Clone_Component(_uint iLevelIndex, const _tchar * pPrototypeTag, void* pArg = nullptr);
-	HRESULT	Delete_Prototype(_uint iLevelIndex, const _tchar * pPrototypeTag);
+	HRESULT	Delete_Component(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pComponentTag);
 
 public: /* For.Input_Device*/
 	_bool		Get_DIKeyState(_ubyte ubyKeyID, CInput_Device::KEYSTATE eState = CInput_Device::KEY_PRESSING);
@@ -161,7 +156,6 @@ private:
 	class CGraphic_Device*			m_pGraphic_Device = { nullptr };
 	class CInput_Device*			m_pInput_Device = { nullptr };
 	class CLevel_Manager*			m_pLevel_Manager = { nullptr };
-	class CObject_Manager*			m_pObject_Manager = { nullptr };
 	class CComponent_Manager*		m_pComponent_Manager = { nullptr };
 	class CTimer_Manager*			m_pTimer_Manager = { nullptr };
 	class CPipeLine*				m_pPipeLine = { nullptr };

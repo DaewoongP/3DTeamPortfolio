@@ -229,13 +229,13 @@ void CUI_Window::Object_List()
 		return;
 	}
 
-	const unordered_map<const _tchar*, CGameObject*> GameObjects = m_pUILayer->Get_GameObjects();
+	const unordered_map<const _tchar*, CComponent*> Components = m_pUILayer->Get_Components();
 
 	m_pUIVector.clear();
 
-	for (const auto& pair : GameObjects)
+	for (const auto& pair : Components)
 	{
-		m_pUIVector.push_back(pair.second);
+		m_pUIVector.push_back(static_cast<CGameObject*>(pair.second));
 	}
 
 	_tchar	wszName[MAX_STR] = {};
@@ -400,13 +400,13 @@ void CUI_Window::Create_UI(UI_Tree* pTree)
 	if (pTree->m_isAddPrototype == false)
 	{
 		// 텍스쳐 추가.
-		if (FAILED(pGameInstance->Add_Prototype_Component(LEVEL_TOOL, wszComponent,
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, wszComponent,
 			CTexture::Create(m_pDevice, m_pContext, pTree->m_wstrName.c_str()))))
 		{
 			MSG_BOX("Failed Create Texture Component");
 		}
 		
-		if (FAILED(pGameInstance->Add_Prototype_GameObject(wszGaemObject,
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, wszGaemObject,
 			CDummy_UI::Create(m_pDevice, m_pContext, wszComponent))))
 		{
 			MSG_BOX("Failed Create UI");
@@ -419,7 +419,7 @@ void CUI_Window::Create_UI(UI_Tree* pTree)
 	_int iSize = 0;
 	if (nullptr != m_pUILayer)
 	{
-		iSize = _int(m_pUILayer->Get_GameObjects().size());
+		iSize = _int(m_pUILayer->Get_Components().size());
 	}
 	
 	string strFimeName = szFileName;
@@ -431,7 +431,7 @@ void CUI_Window::Create_UI(UI_Tree* pTree)
 	_float2 fSize = _float2(_float(pTree->m_iWidth), _float(pTree->m_iHeight));
 
 	// Dummy UI Object 생성.
-	if (FAILED(pGameInstance->Add_GameObject(LEVEL_TOOL, wszGaemObject,
+	if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, wszGaemObject,
 		TEXT("Layer_Tool_UI"), wszGameObjectTag, &fSize)))
 	{
 		MSG_BOX("Failed to Created CDummy_UI Clone");
@@ -450,13 +450,13 @@ void CUI_Window::Interaction_UI()
 		return;
 	
 
-	const unordered_map<const _tchar*, CGameObject*> GameObjects = m_pUILayer->Get_GameObjects();
+	const unordered_map<const _tchar*, CComponent*> Components = m_pUILayer->Get_Components();
 
 	vector <CGameObject*> pGameObejctVector;
 
-	for (const auto& pair : GameObjects)
+	for (const auto& pair : Components)
 	{
-		pGameObejctVector.push_back(pair.second);
+		pGameObejctVector.push_back(static_cast<CGameObject*>(pair.second));
 	}
 
 	//std::sort(pGameObejctVector.begin(), pGameObejctVector.end(), [](const CGameObject* pSour, const CGameObject* pDest)
@@ -628,7 +628,7 @@ void CUI_Window::Create_UI_Gruop(string _strGroupName)
 	_tchar wszGroupName[MAX_PATH] = TEXT("");
 	CharToWChar(strGroupName.c_str(), wszGroupName);
 
-	if (FAILED(pGameInstance->Add_Prototype_GameObject(wszGroupName,
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, wszGroupName,
 		CDummy_UI_Group::Create(m_pDevice, m_pContext, wszGroupName))))
 	{
 		MSG_BOX("Failed Create UI");
@@ -637,7 +637,7 @@ void CUI_Window::Create_UI_Gruop(string _strGroupName)
 	_int iSize = 0;
 	if (nullptr != m_pUIGroupLayer)
 	{
-		iSize = _int(m_pUIGroupLayer->Get_GameObjects().size());
+		iSize = _int(m_pUIGroupLayer->Get_Components().size());
 	}
 
 	string strGameObjectTag = strGroupName;
@@ -645,7 +645,7 @@ void CUI_Window::Create_UI_Gruop(string _strGroupName)
 
 	CharToWChar(strGameObjectTag.c_str(), wszGameObjectTag);
 
-	if (FAILED(pGameInstance->Add_GameObject(LEVEL_TOOL, wszGroupName,
+	if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, wszGroupName,
 		TEXT("Layer_Tool_UI_Group"), wszGameObjectTag)))
 	{
 		MSG_BOX("Failed to Created CDummy_UI Clone");
@@ -686,13 +686,13 @@ void CUI_Window::UI_Gruop_Combo()
 	if (nullptr == m_pUIGroupLayer)
 		return;
 
-	const unordered_map<const _tchar*, CGameObject*> GameObjects = m_pUIGroupLayer->Get_GameObjects();
+	const unordered_map<const _tchar*, CComponent*> GameObjects = m_pUIGroupLayer->Get_Components();
 
 	m_pGroupVector.clear();
 
 	for (const auto& pair : GameObjects)
 	{
-		m_pGroupVector.push_back(pair.second);
+		m_pGroupVector.push_back(static_cast<CGameObject*>(pair.second));
 	}
 
 	if (m_pGroupVector.size() <= 0)
