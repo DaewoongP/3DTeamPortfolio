@@ -10,6 +10,7 @@ texture2D g_NormalTexture;
 texture2D g_DiffuseTexture;
 texture2D g_ShadeTexture;
 texture2D g_DepthTexture;
+texture2D g_ShadowTexture;
 texture2D g_SpecularTexture;
 texture2D g_SSAOTexture;
 texture2D g_BlurTexture;
@@ -318,7 +319,8 @@ PS_OUT PS_MAIN_DEFERRED(PS_IN In)
     PS_OUT Out = (PS_OUT) 0;
 
     vector vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
-   
+    if(vDiffuse.a==0.f)
+        discard;
     vector vShade = g_ShadeTexture.Sample(LinearSampler, In.vTexUV);
     
     vector vSpecular = g_SpecularTexture.Sample(LinearSampler, In.vTexUV);
@@ -326,14 +328,12 @@ PS_OUT PS_MAIN_DEFERRED(PS_IN In)
     
     vector vBlur = g_BlurTexture.Sample(LinearSampler, In.vTexUV);
     
-    
-    if (0.f == vDiffuse.a)
-        discard;
+    vector vShadow = g_ShadowTexture.Sample(LinearSampler, In.vTexUV);
     
    
-    vShade = ceil(vShade * 4) / 4;
     
-    Out.vColor = vDiffuse * vShade * vBlur//
+       
+    Out.vColor = vDiffuse * vShadow * vShade * vBlur + vSpecular;
     +vSpecular;
     
     return Out;

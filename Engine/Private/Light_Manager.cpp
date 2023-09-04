@@ -40,13 +40,14 @@ CLight* CLight_Manager::Add_Lights(ID3D11Device* pDevice, ID3D11DeviceContext* p
 	
 	CTransform* pTransform = CTransform::Create(pDevice, pContext);
 	pTransform->Set_Position(_float3(LightDesc.vPos.x, LightDesc.vPos.y, LightDesc.vPos.z));
-	pTransform->Set_Look(_float3(LightDesc.vDir.x, LightDesc.vDir.y, LightDesc.vDir.z));
+	pTransform->LookAt(_float3(LightDesc.vDir.x, LightDesc.vDir.y, LightDesc.vDir.z));
 	m_ViewLight = pTransform->Get_WorldMatrix_Inverse();
 	Safe_Release(pTransform);
+
 	CPipeLine* pPipeLine = CPipeLine::GetInstance();
 	Safe_AddRef(pPipeLine);
 	if(0.f<*pPipeLine->Get_CamFar())
-	XMStoreFloat4x4(&m_ProjLight, XMMatrixPerspectiveFovLH(XMConvertToRadians(60.f), 1280.f / 720.f, 0.2f, *pPipeLine->Get_CamFar()));
+	XMStoreFloat4x4(&m_ProjLight, XMMatrixPerspectiveFovLH(XMConvertToRadians(60.f), 1280.f / 720.f, 0.2f ,*pPipeLine->Get_CamFar()));
 	Safe_Release(pPipeLine);
 
 
