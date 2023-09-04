@@ -424,16 +424,14 @@ void CObject_Window::Mesh_Picking_Menu()
 		if (FAILED(m_pContext->Map(pCopyTexture2D, 0, D3D11_MAP_READ, 0, &MappedDesc)))
 		{
 			m_pContext->Unmap(pCopyTexture2D, 0);
-			m_pContext->Unmap(pTexture, 0);
 			MSG_BOX("Failed to Map Picking Texture");
 			return;
-		}			
+		}
 
 		// 해당 Pixel Copy가 잘못 되었을 경우..
 		if (MappedDesc.pData == nullptr)
 		{
 			m_pContext->Unmap(pCopyTexture2D, 0);
-			m_pContext->Unmap(pTexture, 0);
 			MSG_BOX("Copy Data is nullptr");
 			return;
 		}
@@ -446,8 +444,6 @@ void CObject_Window::Mesh_Picking_Menu()
 		m_pContext->Unmap(pCopyTexture2D, 0);
 
 		Safe_Release(pCopyTexture2D);
-
-		m_pContext->Unmap(pTexture, 0);
 	}ENDINSTANCE;
 }
 
