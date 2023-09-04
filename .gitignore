@@ -404,6 +404,7 @@ Engine.dll
 Engine_d.dll
 Engine.lib
 Engine_d.lib
+Client.lib
 Tool.lib
 *.cso
 
@@ -416,4 +417,6 @@ Tool.lib
 *.mat
 *.bmp
 *.txt
+*.dat
+*.zip
 *.spritefont

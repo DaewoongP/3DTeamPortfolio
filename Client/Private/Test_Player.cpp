@@ -30,57 +30,18 @@ HRESULT CTest_Player::Initialize(void* pArg)
 
 	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
+	m_pTransform->Set_RigidBody(m_pRigidBody);
 
 	return S_OK;
 }
 
 void CTest_Player::Tick(_float fTimeDelta)
 {
-	m_pTransform->Set_Position(m_pRigidBody->Get_Position());
+	__super::Tick(fTimeDelta);
 
 	Key_Input(fTimeDelta);
-	
+
 	m_pModelCom->Play_Animation(fTimeDelta);
-
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	m_pScene = pGameInstance->Get_PhysxScene();
-	const PxRenderBuffer* pBuffer = &m_pScene->getRenderBuffer();
-
-	CVIBuffer_Triangle::TRIANGLEDESC TriangleDesc;
-	ZEROMEM(&TriangleDesc);
-	TriangleDesc.iNum = pBuffer->getNbTriangles();
-	const PxDebugTriangle* pDebugTriangles = pBuffer->getTriangles();
-	vector<_float3> Triangles;
-	for (_uint i = 0; i < TriangleDesc.iNum; ++i)
-	{
-		Triangles.push_back(PhysXConverter::ToXMFLOAT3(pDebugTriangles[i].pos0));
-		Triangles.push_back(PhysXConverter::ToXMFLOAT3(pDebugTriangles[i].pos1));
-		Triangles.push_back(PhysXConverter::ToXMFLOAT3(pDebugTriangles[i].pos2));
-	}
-
-	TriangleDesc.pTriangles = Triangles.data();
-
-	m_pTriangle->Tick(TriangleDesc);
-
-	CVIBuffer_Line::LINEDESC LineDesc;
-	ZEROMEM(&LineDesc);
-	LineDesc.iNum = pBuffer->getNbLines();
-	const PxDebugLine* pDebugLines = pBuffer->getLines();
-	vector<_float3> Lines;
-	for (_uint i = 0; i < LineDesc.iNum; ++i)
-	{
-		Lines.push_back(PhysXConverter::ToXMFLOAT3(pDebugLines[i].pos0));
-		Lines.push_back(PhysXConverter::ToXMFLOAT3(pDebugLines[i].pos1));
-	}
-
-	LineDesc.pLines = Lines.data();
-
-	m_pLine->Tick(LineDesc);
-
-	__super::Tick(fTimeDelta);
-#ifdef _DEBUG
-	Tick_ImGui();
-#endif // _DEBUG
 }
 
 void CTest_Player::Late_Tick(_float fTimeDelta)
@@ -88,33 +49,21 @@ void CTest_Player::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 	if (nullptr != m_pRenderer)
-		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONLIGHT, this);
+	{
+		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+#ifdef _DEBUG
+		m_pRenderer->Add_DebugGroup(m_pRigidBody);
+		m_pRenderer->Add_DebugGroup(m_pController);
+#endif // _DEBUG
+	}
+
+#ifdef _DEBUG
+	Tick_ImGui();
+#endif // _DEBUG
 }
 
 HRESULT CTest_Player::Render()
 {
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
-
-	_float4x4 WorldMatrix = XMMatrixIdentity();
-
-	if (FAILED(m_pDebugShader->Bind_Matrix("g_WorldMatrix", &WorldMatrix)))
-		return E_FAIL;
-
-	if (FAILED(m_pDebugShader->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW))))
-		return E_FAIL;
-
-	if (FAILED(m_pDebugShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
-
-	Safe_Release(pGameInstance);
-
-	m_pDebugShader->Begin("Debug");
-
-	m_pLine->Render();
-
-	m_pTriangle->Render();
-
 	if (FAILED(__super::Render()))
 		return E_FAIL;
 
@@ -137,48 +86,11 @@ HRESULT CTest_Player::Render()
 		}
 	}
 
-	/*_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-	for (_uint i = 0; i < iNumMeshes; ++i)
-	{
-		m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", i);
-
-		m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", i, DIFFUSE);
-
-		m_pShaderCom->Begin("AnimMesh");
-
-		m_pModelCom->Render(i);
-	}*/
-
-	
 	return S_OK;
 }
 
 HRESULT CTest_Player::Render_Depth()
 {
-	/*if (FAILED(__super::Render_Depth()))
-		return E_FAIL;
-
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
-		return E_FAIL;
-
-
-	
-
-	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-	for (_uint i = 0; i < iNumMeshes; ++i)
-	{
-		m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", i);
-
-		m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", i, DIFFUSE);
-		m_pModelCom->Bind_Material(m_pShaderCom, "g_NormalTexture", i, NORMALS);
-
-		m_pShaderCom->Begin("AnimMesh");
-
-		m_pModelCom->Render(i);
-	}*/
-
 	return S_OK;
 }
 
@@ -192,13 +104,26 @@ HRESULT CTest_Player::Add_Components()
 		return E_FAIL;
 	}
 
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	PxCapsuleControllerDesc CapsuleControllerDesc;
+	CapsuleControllerDesc.setToDefault();
+	CapsuleControllerDesc.radius = 1.f;
+	CapsuleControllerDesc.height = 1.f;
+	CapsuleControllerDesc.material = pGameInstance->Get_Physics()->createMaterial(0.f, 0.f, 0.f);
+	CapsuleControllerDesc.density = 30.f;
+	CapsuleControllerDesc.isValid();
+
+	Safe_Release(pGameInstance);
+
 	/* Com_Controller */
-	/*if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_CharacterController"),
-		TEXT("Com_Controller"), reinterpret_cast<CComponent**>(&m_pController))))
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_CharacterController"),
+		TEXT("Com_Controller"), reinterpret_cast<CComponent**>(&m_pController), &CapsuleControllerDesc)))
 	{
 		MSG_BOX("Failed CTest_Player Add_Component : (Com_Controller)");
 		return E_FAIL;
-	}*/
+	}
 
 	/* Com_RigidBody */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
@@ -207,6 +132,11 @@ HRESULT CTest_Player::Add_Components()
 		MSG_BOX("Failed CTest_Player Add_Component : (Com_RigidBody)");
 		return E_FAIL;
 	}
+	// 리지드바디 액터 설정
+	PxRigidBody* Rigid = m_pRigidBody->Get_RigidBodyActor();
+	Rigid->setMaxLinearVelocity(1000.f);
+	Rigid->setMass(10.f);
+	// ...
 
 	/* For.Com_Model */
 	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_CustomModel"),
@@ -215,79 +145,12 @@ HRESULT CTest_Player::Add_Components()
 		MSG_BOX("Failed CTest_Player Add_Component : (Com_Model)");
 		return E_FAIL;
 	}
-	/*if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_TestModel"),
-		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
-	{
-		MSG_BOX("Failed CTest_Player Add_Component : (Com_Model)");
-		return E_FAIL;
-	}*/
 
 	/* For.Com_Shader */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 	{
 		MSG_BOX("Failed CTest_Player Add_Component : (Com_Shader)");
-		return E_FAIL;
-	}
-
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	m_pScene = pGameInstance->Get_PhysxScene();
-	const PxRenderBuffer* pBuffer = &m_pScene->getRenderBuffer();
-	
-	CVIBuffer_Line::LINEDESC LineDesc;
-	ZEROMEM(&LineDesc);
-	LineDesc.iNum = pBuffer->getNbLines();
-	const PxDebugLine* pLines = pBuffer->getLines();
-	vector<_float3> Lines;
-	for (_uint i = 0; i < LineDesc.iNum; ++i)
-	{
-		Lines.push_back(PhysXConverter::ToXMFLOAT3(pLines[i].pos0));
-		Lines.push_back(PhysXConverter::ToXMFLOAT3(pLines[i].pos1));
-	}
-	LineDesc.pLines = Lines.data();
-
-	if (0 < LineDesc.iNum &&
-		nullptr != LineDesc.pLines)
-	{
-		/* For.Com_Line */
-		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Line"),
-			TEXT("Com_Line"), reinterpret_cast<CComponent**>(&m_pLine), &LineDesc)))
-		{
-			MSG_BOX("Failed CTest_Player Add_Component : (Com_Line)");
-			return E_FAIL;
-		}
-	}
-
-	CVIBuffer_Triangle::TRIANGLEDESC TriangleDesc;
-	ZEROMEM(&TriangleDesc);
-	TriangleDesc.iNum = pBuffer->getNbTriangles();
-	const PxDebugTriangle* pDebugTriangles = pBuffer->getTriangles();
-	vector<_float3> Triangles;
-
-	for (_uint i = 0; i < TriangleDesc.iNum; ++i)
-	{
-		Triangles.push_back(PhysXConverter::ToXMFLOAT3(pDebugTriangles[i].pos0));
-		Triangles.push_back(PhysXConverter::ToXMFLOAT3(pDebugTriangles[i].pos1));
-		Triangles.push_back(PhysXConverter::ToXMFLOAT3(pDebugTriangles[i].pos2));
-	}
-	TriangleDesc.pTriangles = Triangles.data();
-	if (0 < TriangleDesc.iNum &&
-		nullptr != TriangleDesc.pTriangles)
-	{
-		/* For.Com_Triangle */
-		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Triangle"),
-			TEXT("Com_Triangle"), reinterpret_cast<CComponent**>(&m_pTriangle), &TriangleDesc)))
-		{
-			MSG_BOX("Failed CTest_Player Add_Component : (Com_Triangle)");
-			return E_FAIL;
-		}
-	}
-
-	/* Com_DebugShader */
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_Debug"),
-		TEXT("Com_DebugShader"), reinterpret_cast<CComponent**>(&m_pDebugShader))))
-	{
-		MSG_BOX("Failed CTest_Player Add_Component : (Com_DebugShader)");
 		return E_FAIL;
 	}
 
@@ -362,38 +225,86 @@ void CTest_Player::Key_Input(_float fTimeDelta)
 
 	if (pGameInstance->Get_DIKeyState(DIK_UP))
 	{
-		m_pRigidBody->Add_Force(m_pTransform->Get_Look() * 10.f, PxForceMode::eFORCE);
+		m_pRigidBody->Add_Force(m_pTransform->Get_Look() * m_pTransform->Get_Speed(), PxForceMode::eACCELERATION);
 	}
-
+	
 	if (pGameInstance->Get_DIKeyState(DIK_DOWN))
 	{
-		m_pRigidBody->Add_Force(m_pTransform->Get_Look() * -10.f, PxForceMode::eFORCE);
+		m_pRigidBody->Add_Force(m_pTransform->Get_Look() * -m_pTransform->Get_Speed(), PxForceMode::eACCELERATION);
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_LEFT))
 	{
-		m_pRigidBody->Add_Force(m_pTransform->Get_Right() * -10.f, PxForceMode::eFORCE);
+		m_pTransform->Turn(_float3(0.f, -1.f, 0.f), fTimeDelta);
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_RIGHT))
 	{
-		m_pRigidBody->Add_Force(m_pTransform->Get_Right() * 10.f, PxForceMode::eFORCE);
+		m_pTransform->Turn(_float3(0.f, 1.f, 0.f), fTimeDelta);
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
 	{
-		m_pRigidBody->Add_Force(m_pTransform->Get_Up() * 200.f, PxForceMode::eIMPULSE);
+		m_pRigidBody->Add_Force(m_pTransform->Get_Up() * 30.f, PxForceMode::eIMPULSE);
 	}
 
 	ENDINSTANCE;
 }
+
 #ifdef _DEBUG
 void CTest_Player::Tick_ImGui()
 {
 	ImGui::Begin("Test Player");
-	_bool bis;
-	ImGui::Checkbox("Test", &bis);
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
 
+	const PxMaterial* pMaterial = m_pRigidBody->Get_Material();
+	_float3 vMaterial;
+	vMaterial.x = pMaterial->getStaticFriction();
+	vMaterial.y = pMaterial->getDynamicFriction();
+	vMaterial.z = pMaterial->getRestitution();
+	if (ImGui::InputFloat3("static, dynamic, restitution", (_float*)(&vMaterial)))
+	{
+		m_pRigidBody->Set_Material(vMaterial);
+	}
+	ImGui::SetNextItemWidth(100.f);
+	_float fSpeed = m_pTransform->Get_Speed();
+	if (ImGui::InputFloat("Speed", &fSpeed))
+	{
+		m_pTransform->Set_Speed(fSpeed);
+	}
+
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(100.f);
+	_float fMaxLinearVelocity = m_pRigidBody->Get_RigidBodyActor()->getMaxLinearVelocity();
+	if (ImGui::InputFloat("MaxLinearVelocity", &fMaxLinearVelocity))
+	{
+		m_pRigidBody->Get_RigidBodyActor()->setMaxLinearVelocity(fMaxLinearVelocity);
+	}
+
+	
+	_float3 vPlayerPos;
+	ImGui::SetNextItemWidth(20.f);
+	ImGui::Text("%.1f /", vPlayerPos.x); ImGui::SameLine();
+	ImGui::SetNextItemWidth(20.f);
+	ImGui::Text("%.1f /", vPlayerPos.x); ImGui::SameLine();
+	ImGui::SetNextItemWidth(20.f);
+	ImGui::Text("%.1f /", vPlayerPos.x);
+	ImGui::SetNextItemWidth(100.f);
+	if (ImGui::InputFloat3("Set Position", (_float*)(&vPlayerPos)))
+	{
+		m_pTransform->Set_Position(vPlayerPos);
+	}
+
+	if (ImGui::Button("Set Position to Cam"))
+	{
+		_float4x4 ViewMatrixInv = *pGameInstance->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_VIEW);
+		_float3 vCamPos = ViewMatrixInv.Translation();
+		_float3 vCamDir = ViewMatrixInv.Look();
+		m_pRigidBody->Set_Position(vCamPos + vCamDir * 5.f);
+	}
+
+	Safe_Release(pGameInstance);
 	ImGui::End();
 }
 #endif // _DEBUG
@@ -430,9 +341,6 @@ void CTest_Player::Free()
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRenderer);
-	Safe_Release(m_pDebugShader);
-	Safe_Release(m_pTriangle);
-	Safe_Release(m_pLine);
 	Safe_Release(m_pController);
 	Safe_Release(m_pRigidBody);
 }

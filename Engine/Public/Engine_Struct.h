@@ -48,6 +48,38 @@ namespace Engine
 		wchar_t wszSoundTag[MAX_PATH] = {};
 	}SOUNDFRAME;
 
+	typedef struct tagAnimationDesc 
+	{
+		explicit tagAnimationDesc() {};
+		explicit tagAnimationDesc(const tagAnimationDesc& rhs)
+		{
+			iPreviousAnimIndex = rhs.iPreviousAnimIndex;
+			iCurrentAnimIndex = rhs.iCurrentAnimIndex;
+			iNumAnimations = rhs.iNumAnimations;
+			isResetAnimTrigger = rhs.isResetAnimTrigger;
+			isAnimChangeLerp = rhs.isAnimChangeLerp;
+			fAnimChangeTimer = rhs.fAnimChangeTimer;
+			iRootBoneIndex = rhs.iRootBoneIndex;
+			AffectBoneVec = rhs.AffectBoneVec;
+		}
+
+		/* Basic Action*/
+		_uint							iPreviousAnimIndex = { 0 };
+		_uint							iCurrentAnimIndex = { 0 };
+		_uint							iNumAnimations = { 0 };
+		vector<class CAnimation*>		Animations;
+		_bool							isResetAnimTrigger = { false };
+
+		/* For Lerp*/
+		_bool							isAnimChangeLerp = { false };
+		_float							fAnimChangeTimer = { 0.f };
+
+		/* For Setting Bone*/
+		_uint							iRootBoneIndex = { 0 };
+		vector<_uint>					AffectBoneVec;
+	
+	}ANIMATIONDESC;
+
 	/*typedef struct tagColliderFrame
 	{
 		Collider* pCollider = { nullptr	};
@@ -213,6 +245,12 @@ namespace Engine
 		static const unsigned int				iNumElements = { 6 };
 		static const D3D11_INPUT_ELEMENT_DESC	Elements[iNumElements];
 	}VTXRECTINSTANCE_DECL;
+
+	typedef struct ENGINE_DLL tagVertex_Rect_Color_Instance_Declaration
+	{
+		static const unsigned int				iNumElements = { 7 };
+		static const D3D11_INPUT_ELEMENT_DESC	Elements[iNumElements];
+	}VTXRECTCOLORINSTANCE_DECL;
 
 	typedef struct tagVertex_Position_Size
 	{

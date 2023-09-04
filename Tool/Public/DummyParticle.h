@@ -8,12 +8,11 @@ class CRenderer;
 class CShader;
 class CTexture;
 class CVIBuffer_Point_Color_Instance;
-class CVIBuffer_Color_Instance;
+class CVIBuffer_Rect_Color_Instance;
 class CParticleSystem;
 END
 
 BEGIN(Tool)
-typedef CVIBuffer_Color_Instance::COLORINSTANCE COL_INSTANCE;
 
 class CDummyParticle : public CGameObject
 {
@@ -49,14 +48,11 @@ private:
 
 private:
 	CShader* m_pShader = { nullptr };
-	CTexture* m_pTexture = { nullptr };
 	CRenderer* m_pRenderer = { nullptr };
-	CVIBuffer_Point_Color_Instance* m_pBuffer = { nullptr };
+	CVIBuffer_Rect_Color_Instance* m_pBuffer = { nullptr };
 	CParticleSystem* m_pParticleSystem = { nullptr };
 
 private:
-	vector<PARTICLE_DESC>   m_ParticleDescs;
-	vector<COL_INSTANCE>  m_ParticleMatrices;
 	_uint				  m_iNumInstance;
 
 public:

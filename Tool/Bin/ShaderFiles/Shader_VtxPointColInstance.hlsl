@@ -5,6 +5,7 @@ matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 vector			g_vCamPosition;
 vector			g_vColor = vector(1.f, 1.f, 1.f, 1.f);
 texture2D		g_Texture;
+float4x4		g_RotationMatrix;
 
 struct VS_IN
 {

@@ -1,6 +1,6 @@
-#include "Test_NPC.h"
-
+#include "..\Public\Test_NPC.h"
 #include "GameInstance.h"
+#include "PhysXConverter.h"
 
 CTest_NPC::CTest_NPC(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -28,11 +28,9 @@ HRESULT CTest_NPC::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-	if (FAILED(Make_AI()))
-		return E_FAIL;
-
-	m_pTransform->Set_Position(_float3(10.f, 0.f, 0.f));
-	m_pTransform->Set_Scale(_float3(100.f, 100.f, 100.f));
+	m_pTransform->Set_Speed(10.f);
+	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
+	m_pTransform->Set_RigidBody(m_pRigidBody);
 
 	return S_OK;
 }
@@ -40,6 +38,11 @@ HRESULT CTest_NPC::Initialize(void* pArg)
 void CTest_NPC::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+	//m_pTransform->Set_Position(m_pController->Get_Position());
+
+	Key_Input(fTimeDelta);
+
+	m_pModelCom->Play_Animation(fTimeDelta);
 }
 
 void CTest_NPC::Late_Tick(_float fTimeDelta)
@@ -47,13 +50,19 @@ void CTest_NPC::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 	if (nullptr != m_pRenderer)
+	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+#ifdef _DEBUG
+		m_pRenderer->Add_DebugGroup(m_pRigidBody);
+#endif // _DEBUG
+	}
 }
 
 HRESULT CTest_NPC::Render()
 {
-	if (FAILED(__super::Render()))
-		return E_FAIL;
+#ifdef _DEBUG
+	Tick_ImGui();
+#endif // _DEBUG
 
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
@@ -74,19 +83,7 @@ HRESULT CTest_NPC::Render()
 	return S_OK;
 }
 
-void CTest_NPC::OnCollisionEnter(COLLISIONDESC CollisionDesc)
-{
-}
-
-void CTest_NPC::OnCollisionStay(COLLISIONDESC CollisionDesc)
-{
-}
-
-void CTest_NPC::OnCollisionExit(COLLISIONDESC CollisionDesc)
-{
-}
-
-HRESULT CTest_NPC::Make_AI()
+HRESULT CTest_NPC::Render_Depth()
 {
 	return S_OK;
 }
@@ -97,15 +94,43 @@ HRESULT CTest_NPC::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"),
 		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
 	{
-		MSG_BOX("Failed CTest_Player Add_Component : (Com_Renderer)");
+		MSG_BOX("Failed CTest_NPC Add_Component : (Com_Renderer)");
+		return E_FAIL;
+	}
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	PxCapsuleControllerDesc CapsuleControllerDesc;
+	CapsuleControllerDesc.setToDefault();
+	CapsuleControllerDesc.radius = 1.f;
+	CapsuleControllerDesc.height = 1.f;
+	CapsuleControllerDesc.material = pGameInstance->Get_Physics()->createMaterial(0.f, 0.f, 0.f);
+	CapsuleControllerDesc.density = 30.f;
+	CapsuleControllerDesc.isValid();
+
+	Safe_Release(pGameInstance);
+
+	/* Com_Controller */
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_CharacterController"),
+		TEXT("Com_Controller"), reinterpret_cast<CComponent**>(&m_pController), &CapsuleControllerDesc)))
+	{
+		MSG_BOX("Failed CTest_NPC Add_Component : (Com_Controller)");
+		return E_FAIL;
+	}
+
+	/* Com_RigidBody */
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
+		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody))))
+	{
+		MSG_BOX("Failed CTest_NPC Add_Component : (Com_RigidBody)");
 		return E_FAIL;
 	}
 
 	/* For.Com_Model */
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Fiona"),
+	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_TestModel"),
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 	{
-		MSG_BOX("Failed CTest_Player Add_Component : (Com_Model)");
+		MSG_BOX("Failed CTest_NPC Add_Component : (Com_Model)");
 		return E_FAIL;
 	}
 
@@ -113,7 +138,7 @@ HRESULT CTest_NPC::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 	{
-		MSG_BOX("Failed CTest_Player Add_Component : (Com_Shader)");
+		MSG_BOX("Failed CTest_NPC Add_Component : (Com_Shader)");
 		return E_FAIL;
 	}
 
@@ -139,6 +164,47 @@ HRESULT CTest_NPC::SetUp_ShaderResources()
 	return S_OK;
 }
 
+void CTest_NPC::Key_Input(_float fTimeDelta)
+{
+	BEGININSTANCE;
+
+	if (pGameInstance->Get_DIKeyState(DIK_UP))
+	{
+		//m_pController->Move(_float3(0.f, 0.f, 1.f), fTimeDelta * m_pTransform->Get_Speed());
+		m_pRigidBody->Add_Force(m_pTransform->Get_Look() * m_pTransform->Get_Speed(), PxForceMode::eACCELERATION);
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_DOWN))
+	{
+		//m_pController->Move(_float3(0.f, 0.f, 1.f), -1.f * fTimeDelta * m_pTransform->Get_Speed());
+		m_pRigidBody->Add_Force(m_pTransform->Get_Look() * -m_pTransform->Get_Speed(), PxForceMode::eACCELERATION);
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_LEFT))
+	{
+		m_pRigidBody->Add_Force(m_pTransform->Get_Right() * -m_pTransform->Get_Speed(), PxForceMode::eACCELERATION);
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_RIGHT))
+	{
+		m_pRigidBody->Add_Force(m_pTransform->Get_Right() * m_pTransform->Get_Speed(), PxForceMode::eACCELERATION);
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
+	{
+		m_pRigidBody->Add_Force(m_pTransform->Get_Up() * 30.f, PxForceMode::eIMPULSE);
+	}
+
+	ENDINSTANCE;
+
+}
+
+#ifdef _DEBUG
+void CTest_NPC::Tick_ImGui()
+{
+}
+#endif // _DEBUG
+
 CTest_NPC* CTest_NPC::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CTest_NPC* pInstance = New CTest_NPC(pDevice, pContext);
@@ -152,7 +218,7 @@ CTest_NPC* CTest_NPC::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 	return pInstance;
 }
 
-CTest_NPC* CTest_NPC::Clone(void* pArg)
+CGameObject* CTest_NPC::Clone(void* pArg)
 {
 	CTest_NPC* pInstance = New CTest_NPC(*this);
 
@@ -170,8 +236,8 @@ void CTest_NPC::Free()
 	__super::Free();
 
 	Safe_Release(m_pModelCom);
-	Safe_Release(m_pRenderer);
 	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pStatusCom);
-	Safe_Release(m_pBehaviorTree);
+	Safe_Release(m_pRenderer);
+	Safe_Release(m_pController);
+	Safe_Release(m_pRigidBody);
 }

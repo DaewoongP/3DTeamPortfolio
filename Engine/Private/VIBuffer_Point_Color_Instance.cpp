@@ -50,10 +50,8 @@ void CVIBuffer_Point_Color_Instance::Tick(COLORINSTANCE* pInstances, _int iRende
 	if (nullptr == pInstances)
 		return;
 
-	if (true == isAlphaBlend)
-	{
-		Sort_AlphaBlend(pInstances, AlphaBlendObjectWorldMatrixInverse);
-	}
+	if (0 == iRenderedParticleNum)
+		return;
 
 	// iRenderedParticleNum에 -1을 넣으면 인스턴스 숫자만큼 렌더링
 	// iRenderedParticleNum의 숫자가 더 크면 오류이므로 예외처리.
@@ -61,6 +59,13 @@ void CVIBuffer_Point_Color_Instance::Tick(COLORINSTANCE* pInstances, _int iRende
 	{
 		iRenderedParticleNum = m_iNumInstance;
 	}
+
+	if (true == isAlphaBlend)
+	{
+		Sort_AlphaBlend(pInstances, AlphaBlendObjectWorldMatrixInverse);
+	}
+
+
 
 	D3D11_MAPPED_SUBRESOURCE	MappedSubResource;
 

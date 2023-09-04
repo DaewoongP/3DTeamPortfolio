@@ -10,6 +10,7 @@ CVIBuffer_Color_Instance::CVIBuffer_Color_Instance(const CVIBuffer_Color_Instanc
 	, m_iInstanceStride(rhs.m_iInstanceStride)
 	, m_iIndexCountPerInstance(rhs.m_iIndexCountPerInstance)
 	, m_iNumInstance(rhs.m_iNumInstance)
+	, m_iDrawNum(rhs.m_iDrawNum)
 {
 }
 
@@ -28,6 +29,7 @@ HRESULT CVIBuffer_Color_Instance::Initialize(void* pArg)
 
 	vector<_float4x4> InitializeMatrix;
 	InitializeMatrix.resize(m_iNumInstance);
+	Set_DrawNum(m_iNumInstance);
 	memcpy(InitializeMatrix.data(), pArg, sizeof(_float4x4) * m_iNumInstance);
 
 	D3D11_BUFFER_DESC BufferDesc;
@@ -65,6 +67,19 @@ HRESULT CVIBuffer_Color_Instance::Initialize(void* pArg)
 	return S_OK;
 }
 
+void CVIBuffer_Color_Instance::Set_DrawNum(_uint iDrawNum)
+{
+	if (iDrawNum > m_iNumInstance)
+		return;
+
+	m_iDrawNum = iDrawNum;
+}
+
+_uint CVIBuffer_Color_Instance::Get_DrawNum()
+{
+	return m_iDrawNum;
+}
+
 HRESULT CVIBuffer_Color_Instance::Render()
 {
 	if (nullptr == m_pContext)
@@ -88,7 +103,7 @@ HRESULT CVIBuffer_Color_Instance::Render()
 	m_pContext->IASetVertexBuffers(0, m_iNumVertexBuffers, pBuffers, iStrides, iOffset);
 	m_pContext->IASetIndexBuffer(m_pIB, m_eFormat, 0);
 	m_pContext->IASetPrimitiveTopology(m_eTopology);
-	m_pContext->DrawIndexedInstanced(m_iIndexCountPerInstance, m_iNumInstance, 0, 0, 0);
+	m_pContext->DrawIndexedInstanced(m_iIndexCountPerInstance, m_iDrawNum, 0, 0, 0);
 
 	return S_OK;
 }

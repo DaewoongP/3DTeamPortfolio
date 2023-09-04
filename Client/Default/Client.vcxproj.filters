@@ -13,9 +13,6 @@
     <Filter Include="01. Levels\00. Logo">
       <UniqueIdentifier>{741a9b99-aa71-4277-ba9c-505e87d4c3ad}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Levels\99. Loading">
-      <UniqueIdentifier>{884f056e-8693-460c-8907-198be0f4c197}</UniqueIdentifier>
-    </Filter>
     <Filter Include="97. ShaderFiles">
       <UniqueIdentifier>{776f72a6-a2da-4037-a3c4-4c09ed568945}</UniqueIdentifier>
     </Filter>
@@ -73,8 +70,38 @@
     <Filter Include="98. Default\ImGui_Defaults">
       <UniqueIdentifier>{628cd336-ebfe-4860-bfac-014e7bec45d3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\99. Debug\Enemy">
-      <UniqueIdentifier>{99ca5248-58e8-4f7a-8de2-8132590cec88}</UniqueIdentifier>
+    <Filter Include="01. Levels\99. Loading">
+      <UniqueIdentifier>{884f056e-8693-460c-8907-198be0f4c197}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\99. Debug\PhysXRender">
+      <UniqueIdentifier>{01bc84be-4b4c-42a9-840d-bcccd18a9408}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\00. Troll">
+      <UniqueIdentifier>{fe57efd1-c79a-4107-82a4-00502f3125f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\01. Goblin">
+      <UniqueIdentifier>{ebc6f3c1-09ed-45aa-a352-5ddbe82a7e16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\01. Goblin\Assassin">
+      <UniqueIdentifier>{358d6be2-a828-4004-90ac-318723c004be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\01. Goblin\Assassin\Weapon">
+      <UniqueIdentifier>{feebe3d3-b2c6-4159-9f49-bd9a0e8a405d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\00. Troll\00. Armored_Troll">
+      <UniqueIdentifier>{f4df7d1d-7374-4385-81c0-dbc54a235570}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\00. Troll\00. Armored_Troll\Weopon">
+      <UniqueIdentifier>{cc4def40-eb2b-4c6e-b1d0-03d0027e89bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\00. Troll\01. Forest_Troll">
+      <UniqueIdentifier>{cb12878e-e2df-412e-9377-2c7c29c4cbe2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\00. Troll\01. Forest_Troll\Weapon">
+      <UniqueIdentifier>{716e173e-d10b-4137-8676-391c2c340ccd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Tasks">
+      <UniqueIdentifier>{68f60c2e-b68f-4392-b9de-da48723e2496}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -129,9 +156,6 @@
     <ClInclude Include="..\public\Test_Player.h">
       <Filter>02. GameObject\99. Debug\Player</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Test_Enemy.h">
-      <Filter>02. GameObject\99. Debug\Enemy</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Test_NPC.h">
       <Filter>02. GameObject\07. NPC</Filter>
     </ClInclude>
@@ -171,6 +195,27 @@
     <ClInclude Include="ImGui\imgui.h">
       <Filter>98. Default\ImGui_Defaults</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\PhysXRender.h">
+      <Filter>02. GameObject\99. Debug\PhysXRender</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Armored_Troll.h">
+      <Filter>02. GameObject\02. Enemy\00. Troll\00. Armored_Troll</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Weapon_Armored_Troll.h">
+      <Filter>02. GameObject\02. Enemy\00. Troll\00. Armored_Troll\Weopon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Assasin_Goblin.h">
+      <Filter>02. GameObject\02. Enemy\01. Goblin\Assassin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Forest_Troll.h">
+      <Filter>02. GameObject\02. Enemy\00. Troll\01. Forest_Troll</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Weapon_Forest_Troll.h">
+      <Filter>02. GameObject\02. Enemy\00. Troll\01. Forest_Troll\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Action.h">
+      <Filter>03. Tasks</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -209,9 +254,6 @@
     <ClCompile Include="..\private\Test_Player.cpp">
       <Filter>02. GameObject\99. Debug\Player</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Test_Enemy.cpp">
-      <Filter>02. GameObject\99. Debug\Enemy</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Test_NPC.cpp">
       <Filter>02. GameObject\07. NPC</Filter>
     </ClCompile>
@@ -238,6 +280,27 @@
     </ClCompile>
     <ClCompile Include="ImGui\backends\imgui_impl_win32.cpp">
       <Filter>98. Default\ImGui_Defaults</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PhysXRender.cpp">
+      <Filter>02. GameObject\99. Debug\PhysXRender</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Armored_Troll.cpp">
+      <Filter>02. GameObject\02. Enemy\00. Troll\00. Armored_Troll</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Weapon_Armored_Troll.cpp">
+      <Filter>02. GameObject\02. Enemy\00. Troll\00. Armored_Troll\Weopon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Assasin_Goblin.cpp">
+      <Filter>02. GameObject\02. Enemy\01. Goblin\Assassin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Forest_Troll.cpp">
+      <Filter>02. GameObject\02. Enemy\00. Troll\01. Forest_Troll</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Weapon_Forest_Troll.cpp">
+      <Filter>02. GameObject\02. Enemy\00. Troll\01. Forest_Troll\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Action.cpp">
+      <Filter>03. Tasks</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -276,6 +339,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Debug.hlsl">
       <Filter>97. ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxMesh.hlsl">
+      <Filter>97. ShaderFiles\Meshes</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
