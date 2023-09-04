@@ -62,6 +62,21 @@ void CTest_Player::Late_Tick(_float fTimeDelta)
 #endif // _DEBUG
 }
 
+void CTest_Player::OnCollisionEnter(COLLISIONDESC CollisionDesc)
+{
+	cout << "Player Enter" << endl;
+}
+
+void CTest_Player::OnCollisionStay(COLLISIONDESC CollisionDesc)
+{
+	cout << "stay" << endl;
+}
+
+void CTest_Player::OnCollisionExit(COLLISIONDESC CollisionDesc)
+{
+	cout << "Exit" << endl;
+}
+
 HRESULT CTest_Player::Render()
 {
 	if (FAILED(__super::Render()))
@@ -118,12 +133,12 @@ HRESULT CTest_Player::Add_Components()
 	Safe_Release(pGameInstance);
 
 	/* Com_Controller */
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_CharacterController"),
+	/*if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_CharacterController"),
 		TEXT("Com_Controller"), reinterpret_cast<CComponent**>(&m_pController), &CapsuleControllerDesc)))
 	{
 		MSG_BOX("Failed CTest_Player Add_Component : (Com_Controller)");
 		return E_FAIL;
-	}
+	}*/
 
 	/* Com_RigidBody */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),

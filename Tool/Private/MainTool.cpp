@@ -190,33 +190,32 @@ HRESULT CMainTool::Add_Windows()
 	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("Object_Window"),
 		CObject_Window::Create(m_pDevice, m_pContext,
 			ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(400.f, 700.f)))))
-		return E_FAIL;
+		MSG_BOX("Failed Create Object_Window");
 	
 	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("Effect_Window"),
 		CEffect_Window::Create(m_pDevice, m_pContext,
 			ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(446.f, 768.f)))))
-		return E_FAIL;
+		MSG_BOX("Failed Create Object_Window");
 
 	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("Animation_Window"),
 		CAnimation_Window::Create(m_pDevice, m_pContext,
 			ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(446.f, 768.f)))))
-		return E_FAIL;
+		MSG_BOX("Failed Create Animation_Window");
 
 	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("UI_Window"),
 		CUI_Window::Create(m_pDevice, m_pContext,
 			ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(446.f, 768.f)))))
-		return E_FAIL;
+		MSG_BOX("Failed Create UI_Window");
 
 	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("Camera_Window"),
 		CCamera_Window::Create(m_pDevice, m_pContext,
 			ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(446.f, 768.f)))))
-		return E_FAIL;
+		MSG_BOX("Failed Create Camera_Window");
 
 	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("Light_Window"),
 		CLight_Window::Create(m_pDevice, m_pContext,
 			ImVec2(_float(g_iWinSizeX+8), _float(0.f)), ImVec2(446.f, 768.f)))))
-		return E_FAIL;
-
+		MSG_BOX("Failed Create Light_Window");
 
 	return S_OK;
 }

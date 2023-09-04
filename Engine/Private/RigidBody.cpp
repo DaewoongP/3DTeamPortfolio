@@ -187,6 +187,11 @@ HRESULT CRigidBody::Create_Actor()
 	PxPhysics* pPhysX = pPhysX_Manager->Get_Physics();
 	m_pScene = pPhysX_Manager->Get_PhysxScene();
 
+	PxVec3 vLocal = PxVec3(0.f, 10.f, 5.f);
+	PxTransform localTm(vLocal);
+	m_pActor = pPhysX->createRigidDynamic(localTm);
+	m_pActor->userData = this;
+
 #ifdef _DEBUG
 	m_pScene->simulate(1 / 60.f);
 	m_pScene->fetchResults(true);
@@ -197,12 +202,9 @@ HRESULT CRigidBody::Create_Actor()
 	m_iStartTriangleBufferIndex = pPhysX_Manager->Get_LastTriangleBufferIndex();
 #endif // _DEBUG
 
-	PxVec3 vLocal = PxVec3(0.f, 10.f, 5.f);
-	PxTransform localTm(vLocal);
-	m_pActor = pPhysX->createRigidDynamic(localTm);
-
-	m_pMaterial = pPhysX->createMaterial(0.1f, 0.1f, 0.1f);
+	m_pMaterial = pPhysX->createMaterial(0.5f, 0.5f, 0.5f);
 	PxShape* boxshape = pPhysX->createShape(PxCapsuleGeometry(1.f, 1.f), *m_pMaterial, false, PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSIMULATION_SHAPE);
+	
 	PxFilterData data;
 	data.word0 = 0x1111;
 	boxshape->setSimulationFilterData(data);
@@ -212,6 +214,7 @@ HRESULT CRigidBody::Create_Actor()
 	boxshape->setLocalPose(relativePose);
 	m_pActor->attachShape(*boxshape);
 	m_pScene->addActor(*m_pActor);
+	
 
 	PxRigidDynamic* pRigidBody = m_pActor->is<PxRigidDynamic>();
 

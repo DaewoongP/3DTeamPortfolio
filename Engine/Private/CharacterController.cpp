@@ -62,7 +62,7 @@ HRESULT CCharacterController::Initialize(void* pArg)
 	}
 
 	PxControllerDesc* ControllerDesc = reinterpret_cast<PxControllerDesc*>(pArg);
-
+	
 	CPhysX_Manager* pPhysX_Manager = CPhysX_Manager::GetInstance();
 	Safe_AddRef(pPhysX_Manager);
 
@@ -82,7 +82,7 @@ HRESULT CCharacterController::Initialize(void* pArg)
 	PxControllerManager* pControllerManager = pPhysX_Manager->Get_ControllerManager();
 
 	m_pController = pControllerManager->createController(*ControllerDesc);
-	
+	m_pController->setUserData(this);
 #ifdef _DEBUG
 	// 다음 렌더링을 위한 갱신 처리
 	pScene->simulate(1 / 60.f);

@@ -74,7 +74,7 @@ HRESULT CPhysX_Manager::Initialize()
 	// 충돌처리 이벤트 활성화
 	m_pPXEventCallBack = CPXEventCallBack::Create();
 	m_pPhysxScene->setSimulationEventCallback(m_pPXEventCallBack);
-
+	
 	// 컨트롤러 생성에 필요한 매니저 클래스 생성.
 	m_pControllerManager = PxCreateControllerManager(*m_pPhysxScene);
 	if (nullptr == m_pControllerManager)

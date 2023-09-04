@@ -79,20 +79,26 @@ namespace Engine
 	inline PxFilterFlags CollisionFilterShader(
 		PxFilterObjectAttributes attribute0, PxFilterData filterData0,
 		PxFilterObjectAttributes attribute1, PxFilterData filterData1,
-		PxPairFlags& pairFlags, const void*, PxU32)
+		PxPairFlags& pairFlags, const void* constantBlockSize, PxU32 constantBlock)
 	{
+		PX_UNUSED(attribute0);
+		PX_UNUSED(attribute1);
+		PX_UNUSED(filterData0);
+		PX_UNUSED(filterData1);
+		PX_UNUSED(constantBlockSize);
+		PX_UNUSED(constantBlock);
 
-		if (PxFilterObjectIsTrigger(attribute0) || PxFilterObjectIsTrigger(attribute1))
+		if (PxFilterObjectType::eRIGID_STATIC == PxGetFilterObjectType(attribute0))
 		{
-			pairFlags = PxPairFlag::eTRIGGER_DEFAULT;
-			return PxFilterFlag::eDEFAULT;
+			pairFlags = PxPairFlag::eSOLVE_CONTACT | PxPairFlag::eDETECT_DISCRETE_CONTACT;
 		}
-
-		pairFlags = PxPairFlag::eCONTACT_DEFAULT;
-
-		// 비트플래그가 And 연산을 통해 값이 남으면 충돌
-		if (0 != (filterData0.word0 & filterData1.word0))
-			pairFlags |= PxPairFlag::eNOTIFY_TOUCH_FOUND;
+		else
+		{
+			pairFlags = PxPairFlag::eSOLVE_CONTACT | PxPairFlag::eDETECT_DISCRETE_CONTACT
+				| PxPairFlag::eNOTIFY_TOUCH_FOUND
+				| PxPairFlag::eNOTIFY_TOUCH_PERSISTS
+				| PxPairFlag::eNOTIFY_TOUCH_LOST;
+		}
 
 		return PxFilterFlag::eDEFAULT;
 	}
