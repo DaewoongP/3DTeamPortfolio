@@ -14,6 +14,9 @@ BEGIN(Tool)
 
 class CDummy_UI final : public CGameObject
 {
+public:
+	enum UI_ID { NONE, BUTTON, PROGRESS, UI_ID_END };
+
 protected:
 	explicit CDummy_UI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CDummy_UI(const CDummy_UI& rhs);
@@ -30,18 +33,26 @@ public:
 	virtual HRESULT Render() override;
 
 public:
-	void Set_fXY(_float fX, _float fY, _float fZ = 0) 
+	void Set_fXY(_float fX, _float fY) 
 	{ 
 		m_fX = fX;
 		m_fY = fY;
-		if (fZ != 0)
-			m_fZ = fZ;
 	}
-
+	void Set_fZ(_float fZ) { m_fZ = fZ; }
 	void Set_Size(_float fX, _float fY)
 	{
 		m_fSizeX = fX;
 		m_fSizeY = fY;
+	}
+	
+	void Set_bParent() { m_isParent = true; }
+	void Set_Parent(CDummy_UI* pParent) 
+	{ 
+		if (nullptr == m_pParent)
+		{
+			m_pParent = pParent;
+			Set_fXY(0.f, 0.f);
+		}
 	}
 
 protected:
@@ -50,11 +61,13 @@ protected:
 	CRenderer* m_pRendererCom = { nullptr };
 	CVIBuffer_Rect* m_pVIBufferCom = { nullptr };
 
+
 private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
 
 protected:
+	_float2			m_Offset ={ 0.f, 0.f };
 	// 윈도우창의 실제 x좌표
 	_float			m_fX = { 650.f };
 	// 윈도우창의 실제 y좌표
@@ -71,6 +84,10 @@ protected:
 
 private:
 	_tchar	m_wszTextureName[MAX_STR] = {};
+	UI_ID	m_eUIType = { UI_ID_END };
+
+	_bool	m_isParent = { false };
+	CDummy_UI* m_pParent = { nullptr };
 
 public:
 	_bool	Is_In_Rect();

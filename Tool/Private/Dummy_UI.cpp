@@ -54,18 +54,17 @@ HRESULT CDummy_UI::Initialize(void* pArg)
 void CDummy_UI::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
 }
 
 void CDummy_UI::Late_Tick(_float fTimeDelta)
 {
-	if (nullptr != m_pRendererCom)
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this);
-	
 	Change_Scale(m_fSizeX, m_fSizeY);
 	Change_Position(m_fX, m_fY);
 
-	return __super::Late_Tick(fTimeDelta);
+	__super::Late_Tick(fTimeDelta);
+
+	if (nullptr != m_pRendererCom)
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this);
 }
 
 HRESULT CDummy_UI::Render()
@@ -171,18 +170,29 @@ _float2 CDummy_UI::WorldPos_To_UIPos(_float fX, _float fY)
 
 HRESULT CDummy_UI::Change_Position(_float fX, _float fY)
 {
-	m_fX = fX;
-	m_fY = fY;
+	if (nullptr == m_pParent)
+	{
+		m_pTransform->Set_Position(
+			XMVectorSet(m_fX - g_iWinSizeX * 0.5f, -m_fY + g_iWinSizeY * 0.5f, m_fZ, 1.f));
+	}
+	else
+	{
+		_float2 vParentPos = m_pParent->Get_fXY();
 
-	m_pTransform->Set_Position(XMVectorSet(m_fX - g_iWinSizeX * 0.5f, -m_fY + g_iWinSizeY * 0.5f, m_fZ, 1.f));
+		_float fIntervalX = vParentPos.x + m_fX;
+		_float fIntervalY = vParentPos.y + m_fY;
+
+		m_pTransform->Set_Position(
+			XMVectorSet(fIntervalX - g_iWinSizeX * 0.5f, -fIntervalY + g_iWinSizeY * 0.5f, m_fZ, 1.f));
+	}
 
 	return S_OK;
 }
 
 HRESULT CDummy_UI::Change_Scale(_float fX, _float fY)
 {
-	m_fSizeX = fX;
-	m_fSizeY = fY;
+//	m_fSizeX = fX;
+	//m_fSizeY = fY;
 
 	m_pTransform->Set_Scale(_float3(m_fSizeX, m_fSizeY, 1.f));
 
