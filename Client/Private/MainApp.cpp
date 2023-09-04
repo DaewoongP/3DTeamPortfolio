@@ -123,11 +123,28 @@ HRESULT CMainApp::Ready_Prototype_Component_For_Static()
 		MSG_BOX("Failed Add_Prototype  : (Prototype_Component_VIBuffer_Rect)");
 		return E_FAIL;
 	}
+
 	/* Prototype_Component_VIBuffer_Rect_Dynamic */
 	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Rect_Dynamic"),
 		CVIBuffer_Rect_Dynamic::Create(m_pDevice, m_pContext))))
 	{
 		MSG_BOX("Failed Add_Prototype  : (Prototype_Component_VIBuffer_Rect_Dynamic)");
+		return E_FAIL;
+	}
+
+	/* For.Prototype_Component_VIBuffer_Line */
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Line"),
+		CVIBuffer_Line::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_Component_VIBuffer_Line)");
+		return E_FAIL;
+	}
+
+	/* For.Prototype_Component_VIBuffer_Triangle */
+	if (FAILED(m_pGameInstance->Add_Prototype_Component(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Triangle"),
+		CVIBuffer_Triangle::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_Component_VIBuffer_Triangle)");
 		return E_FAIL;
 	}
 

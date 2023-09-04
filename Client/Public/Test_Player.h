@@ -8,8 +8,6 @@ class CCustomModel;
 class CShader;
 class CRenderer;
 class CRigidBody;
-class CVIBuffer_Line;
-class CVIBuffer_Triangle;
 class CCharacterController;
 END
 
@@ -35,9 +33,6 @@ private:
 	CShader*				m_pShaderCom = { nullptr };
 	CRenderer*				m_pRenderer = { nullptr };
 	CRigidBody*				m_pRigidBody = { nullptr };
-	CVIBuffer_Line*			m_pLine = { nullptr };
-	CShader*				m_pDebugShader = { nullptr };
-	CVIBuffer_Triangle*		m_pTriangle = { nullptr };
 
 	CCharacterController*	m_pController = { nullptr };
 

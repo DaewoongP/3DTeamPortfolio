@@ -166,6 +166,7 @@
     <ClInclude Include="..\public\Camera_Debug.h" />
     <ClInclude Include="..\Public\Client_Defines.h" />
     <ClInclude Include="..\Public\Client_Includes.h" />
+    <ClInclude Include="..\public\PhysXRender.h" />
     <ClInclude Include="..\Public\Test_NPC.h" />
     <ClInclude Include="..\Public\Test_Enemy.h" />
     <ClInclude Include="..\Public\Level_Loading.h" />
@@ -221,12 +222,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\Camera_Debug.cpp" />
+    <ClCompile Include="..\private\PhysXRender.cpp" />
     <ClCompile Include="..\Private\Test_NPC.cpp" />
     <ClCompile Include="..\Private\Test_Enemy.cpp" />
     <ClCompile Include="..\Private\Level_Loading.cpp" />
     <ClCompile Include="..\Private\Level_Logo.cpp" />
     <ClCompile Include="..\private\Level_MainGame.cpp" />
-    <ClCompile Include="..\Private\Loader.cpp" />
+    <ClCompile Include="..\Private\Loader.cpp">
+      <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</IncludeInUnityFile>
+    </ClCompile>
     <ClCompile Include="..\private\Logo_BackGround.cpp" />
     <ClCompile Include="..\private\MainApp.cpp" />
     <ClCompile Include="..\private\Sky.cpp" />

@@ -3,6 +3,7 @@
 #include "Client_Defines.h"
 
 BEGIN(Engine)
+class CPlane;
 class CShader;
 class CTexture;
 class CRenderer;
@@ -26,6 +27,7 @@ public:
 	virtual HRESULT Render() override;
 
 private:
+	CPlane*					m_pPlane = { nullptr };
 	CShader*				m_pShader = { nullptr };
 	CTexture*				m_pTexture = { nullptr };
 	CRenderer*				m_pRenderer = { nullptr };
