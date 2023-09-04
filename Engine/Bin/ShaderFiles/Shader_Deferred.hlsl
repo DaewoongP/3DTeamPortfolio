@@ -329,9 +329,7 @@ PS_OUT PS_MAIN_DEFERRED(PS_IN In)
     if (0.f == vDiffuse.a)
         discard;
     
-   
-    
-    Out.vColor = vDiffuse * vShade * vBlur + vSpecular;
+    Out.vColor = vDiffuse * vShade * vBlur;// + vSpecular;
     
     return Out;
 }

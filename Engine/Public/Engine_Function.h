@@ -75,6 +75,28 @@ namespace Engine
 		const wchar_t* m_pTargetTag = nullptr;
 	};
 
+	// Physx Filter Shader
+	inline PxFilterFlags CollisionFilterShader(
+		PxFilterObjectAttributes attribute0, PxFilterData filterData0,
+		PxFilterObjectAttributes attribute1, PxFilterData filterData1,
+		PxPairFlags& pairFlags, const void*, PxU32)
+	{
+
+		if (PxFilterObjectIsTrigger(attribute0) || PxFilterObjectIsTrigger(attribute1))
+		{
+			pairFlags = PxPairFlag::eTRIGGER_DEFAULT;
+			return PxFilterFlag::eDEFAULT;
+		}
+
+		pairFlags = PxPairFlag::eCONTACT_DEFAULT;
+
+		// 비트플래그가 And 연산을 통해 값이 남으면 충돌
+		if (0 != (filterData0.word0 & filterData1.word0))
+			pairFlags |= PxPairFlag::eNOTIFY_TOUCH_FOUND;
+
+		return PxFilterFlag::eDEFAULT;
+	}
+
 	//Queue.Clear() 없어서 만듬
 	template <typename T>
 	void Clear_Queue(queue<T>& _Queue)
@@ -117,7 +139,7 @@ namespace Engine
 	{
 		return fFrom * (1 - Alpha) + fTo * Alpha;
 	}
-	
+
 	// 값의 범위를 제한하는 함수
 	// ex)
 	// int value = 11;
