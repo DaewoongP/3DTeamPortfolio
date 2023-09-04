@@ -10,6 +10,7 @@ texture2D g_NormalTexture;
 texture2D g_DiffuseTexture;
 texture2D g_ShadeTexture;
 texture2D g_DepthTexture;
+texture2D g_ShadowTexture;
 texture2D g_SpecularTexture;
 texture2D g_SSAOTexture;
 texture2D g_BlurTexture;
@@ -295,6 +296,7 @@ PS_OUT_LIGHT PS_MAIN_SPOTLIGHT(PS_IN In)
 
     float fDistance = length(vLightDir);
 
+
     // spotlight factor
     float fSpot = pow(max(dot(normalize(vLightDir), g_vLightDir), 0.0f), g_fSpotPower);
 
@@ -317,7 +319,8 @@ PS_OUT PS_MAIN_DEFERRED(PS_IN In)
     PS_OUT Out = (PS_OUT) 0;
 
     vector vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
-   
+    if(vDiffuse.a==0.f)
+        discard;
     vector vShade = g_ShadeTexture.Sample(LinearSampler, In.vTexUV);
     
     vector vSpecular = g_SpecularTexture.Sample(LinearSampler, In.vTexUV);
@@ -325,11 +328,9 @@ PS_OUT PS_MAIN_DEFERRED(PS_IN In)
     
     vector vBlur = g_BlurTexture.Sample(LinearSampler, In.vTexUV);
     
-    
-    if (0.f == vDiffuse.a)
-        discard;
-    
-    Out.vColor = vDiffuse * vShade * vBlur;// + vSpecular;
+    vector vShadow = g_ShadowTexture.Sample(LinearSampler, In.vTexUV);
+
+    Out.vColor = vDiffuse * vShadow * vShade * vBlur + vSpecular;
     
     return Out;
 }

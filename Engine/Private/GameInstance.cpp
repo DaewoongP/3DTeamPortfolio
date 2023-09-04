@@ -363,6 +363,30 @@ const CLight::LIGHTDESC* CGameInstance::Get_Light(_uint iIndex)
 	return m_pLight_Manager->Get_Light(iIndex);
 }
 
+const _float4x4* CGameInstance::Get_LightView()
+{
+	//NULL_CHECK_RETURN_MSG(m_pLight_Manager, nullptr, TEXT("Light NULL"));
+
+	if(nullptr==m_pLight_Manager)
+	{
+		MSG_BOX("LightNULL");
+		return nullptr;
+	}
+
+	return m_pLight_Manager->Get_LightView();
+}
+
+const _float4x4* CGameInstance::Get_LightProj()
+{
+	//NULL_CHECK_RETURN_MSG(m_pLight_Manager, nullptr, TEXT("Light NULL"));
+	if (nullptr == m_pLight_Manager)
+	{
+		MSG_BOX("LightNULL");
+		return nullptr;
+	}
+	return m_pLight_Manager->Get_LightProj();
+}
+
 void CGameInstance::Set_Light(_uint iIndex, CLight::LIGHTDESC LightDesc)
 {
 	NULL_CHECK_RETURN_MSG(m_pLight_Manager, , TEXT("Light NULL"));
@@ -370,11 +394,18 @@ void CGameInstance::Set_Light(_uint iIndex, CLight::LIGHTDESC LightDesc)
 	return m_pLight_Manager->Set_Light(iIndex, LightDesc);
 }
 
-CLight* CGameInstance::Add_Lights(const CLight::LIGHTDESC& LightDesc)
+CLight* CGameInstance::Add_Lights(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const CLight::LIGHTDESC& LightDesc)
 {
 	NULL_CHECK_RETURN_MSG(m_pLight_Manager, nullptr, TEXT("Light NULL"));
 
-	return m_pLight_Manager->Add_Lights(LightDesc);
+	return m_pLight_Manager->Add_Lights(pDevice,pContext,LightDesc);
+}
+
+HRESULT CGameInstance::Delete_Lights(_uint iIndex,const _char* Name)
+{
+	NULL_CHECK_RETURN_MSG(m_pLight_Manager, E_FAIL, TEXT("Light NULL"));
+
+	return m_pLight_Manager->Delete_Lights(iIndex,Name);
 }
 
 HRESULT CGameInstance::Clear_Lights()

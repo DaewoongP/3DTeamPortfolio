@@ -2,8 +2,10 @@
 
 float4x4 g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 float4x4 g_BoneMatrices[256];
+
 texture2D g_DiffuseTexture;
 texture2D g_NormalTexture;
+
 
 float g_fCamFar;
 
@@ -78,6 +80,10 @@ struct PS_OUT
     float4 vEmissive : SV_TARGET3;
 };
 
+struct PS_OUT_DEPTH
+{
+    vector vDepth : SV_TARGET0;
+};
 PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
@@ -91,7 +97,9 @@ PS_OUT PS_MAIN(PS_IN In)
     float3x3 WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal.xyz, In.vNormal.xyz);
 
     vNormal = mul(vNormal, WorldMatrix);
-
+    //if(vDiffuse.a<0.1f)
+    //    discard;
+    
     Out.vDiffuse = vDiffuse;
 	
     // UNORM 4개 타입에 값을 넣으므로 여기서 0~1로 보정처리하고 나중에 받을때 -1~1로 보정처리를 다시한다.
@@ -102,7 +110,14 @@ PS_OUT PS_MAIN(PS_IN In)
     
     return Out;
 }
+PS_OUT_DEPTH PS_MAIN_DEPTH(PS_IN In)
+{
+    PS_OUT_DEPTH Out = (PS_OUT_DEPTH) 0;
 
+    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fCamFar, 0.f, 1.f);
+	
+    return Out;
+}
 technique11 DefaultTechnique
 {
 	pass AnimMesh
@@ -117,4 +132,17 @@ technique11 DefaultTechnique
 		DomainShader	= NULL /*compile ds_5_0 DS_MAIN()*/;
 		PixelShader		= compile ps_5_0 PS_MAIN();
 	}
+    pass Shadow
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Depth_Disable, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
+        HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
+        DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
+        PixelShader = compile ps_5_0 PS_MAIN_DEPTH();
+    }
+ 
 }
