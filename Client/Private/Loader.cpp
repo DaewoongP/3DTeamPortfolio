@@ -33,7 +33,7 @@ _uint WINAPI Thread_Main(void* pArg)
 	CLoader* pLoader = reinterpret_cast<CLoader*>(pArg);
 
 	if (FAILED(pLoader->Loading()))
-		return 0;
+		return -1;
 
 	return 0;
 }
