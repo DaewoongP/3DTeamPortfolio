@@ -1,6 +1,12 @@
 #include "Main_Camera.h"
 #include "GameInstance.h"
 
+CMain_Camera::CMain_Camera(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
+	:CCamera(_pDevice, _pContext)
+{
+
+}
+
 void CMain_Camera::Set_MoveSpeed(const _float& _fMoveSpeed)
 {
 	m_fMoveSpeed = _fMoveSpeed;
@@ -9,11 +15,27 @@ void CMain_Camera::Set_MoveSpeed(const _float& _fMoveSpeed)
 
 HRESULT CMain_Camera::Initialize(void* pArg)
 {
+	CCamera::CAMERADESC* pCameraDesc = (CCamera::CAMERADESC*)pArg;
+
+	CCamera::Initialize(*pCameraDesc);
+
+	m_pTransform->Set_Speed(10.f);
+	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
+	m_pTransform->Set_Position(_float3(0.f, 2.f, 0.f));
+
 	return S_OK;
 }
 
-void CMain_Camera::Tick(_float _TimeDelta)
+void CMain_Camera::Tick(const _float& _TimeDelta)
 {
+	Key_Input(_TimeDelta);
+
+	if (true == m_isLimit)
+	{
+		Mouse_Input(_TimeDelta);
+	}
+
+	CCamera::Tick(_TimeDelta);
 }
 
 void CMain_Camera::Key_Input(_float _TimeDelta)
@@ -81,13 +103,37 @@ void CMain_Camera::Mouse_Input(_float _TimeDelta)
 	ENDINSTANCE
 }
 
-
-
-CMain_Camera* CMain_Camera::Create()
+void CMain_Camera::IsLimitButton()
 {
-	return nullptr;
+	BEGININSTANCE;
+
+	if (pGameInstance->Get_DIKeyState(DIK_GRAVE, CInput_Device::KEY_DOWN))
+	{
+		if (true == m_isLimit)
+			m_isLimit = false;
+		else
+			m_isLimit = true;
+	}
+
+	ENDINSTANCE;
+}
+
+
+
+CMain_Camera* CMain_Camera::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, void* pArg)
+{
+	CMain_Camera* pInstance = New CMain_Camera(_pDevice, _pContext);
+
+	if (FAILED(pInstance->Initialize(pArg)))
+	{
+		MSG_BOX("Failed to Create CMain_Camera");
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
 }
 
 void CMain_Camera::Free()
 {
+	CCamera::Free();
 }
