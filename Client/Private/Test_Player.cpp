@@ -53,16 +53,17 @@ void CTest_Player::Late_Tick(_float fTimeDelta)
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 #ifdef _DEBUG
 		m_pRenderer->Add_DebugGroup(m_pRigidBody);
+		m_pRenderer->Add_DebugGroup(m_pController);
 #endif // _DEBUG
 	}
+
+#ifdef _DEBUG
+	Tick_ImGui();
+#endif // _DEBUG
 }
 
 HRESULT CTest_Player::Render()
 {
-#ifdef _DEBUG
-	Tick_ImGui();
-#endif // _DEBUG
-
 	if (FAILED(__super::Render()))
 		return E_FAIL;
 
@@ -131,6 +132,11 @@ HRESULT CTest_Player::Add_Components()
 		MSG_BOX("Failed CTest_Player Add_Component : (Com_RigidBody)");
 		return E_FAIL;
 	}
+	// 리지드바디 액터 설정
+	PxRigidBody* Rigid = m_pRigidBody->Get_RigidBodyActor();
+	Rigid->setMaxLinearVelocity(1000.f);
+	Rigid->setMass(10.f);
+	// ...
 
 	/* For.Com_Model */
 	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_CustomModel"),

@@ -26,7 +26,9 @@ private:
 
 public:
 	virtual HRESULT Initialize(void* pArg) override;
-	
+	virtual void Late_Tick(_float fTimeDelta) override;
+
+
 #ifdef _DEBUG
 	virtual HRESULT Render() override;
 #endif // _DEBUG
@@ -42,7 +44,10 @@ private:
 
 private:
 	_uint					m_iNumLineBuffer = { 0 };
+	_uint					m_iStartLineBufferIndex = { 0 };
+
 	_uint					m_iNumTriangleBuffer = { 0 };
+	_uint					m_iStartTriangleBufferIndex = { 0 };
 #endif // _DEBUG
 
 #ifdef _DEBUG

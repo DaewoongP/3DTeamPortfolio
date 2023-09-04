@@ -86,9 +86,36 @@ void CRigidBody::Set_Material(_float3 vMaterial)
 
 void CRigidBody::Set_Constraint(RigidBodyConstraint eConstraintFlag, _bool _isEnable)
 {
+	if (nullptr == m_pActor)
+		return;
+
 	PxRigidDynamic* pRigidBody = m_pActor->is<PxRigidDynamic>();
 
-	//pRigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, !_isEnable);
+	if (eConstraintFlag & TransX)
+	{
+		pRigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_X, !_isEnable);
+	}
+	if (eConstraintFlag & TransY)
+	{
+		pRigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, !_isEnable);
+	}
+	if (eConstraintFlag & TransZ)
+	{
+		pRigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_Z, !_isEnable);
+	}
+
+	if (eConstraintFlag & RotX)
+	{
+		pRigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, !_isEnable);
+	}
+	if (eConstraintFlag & RotY)
+	{
+		pRigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, !_isEnable);
+	}
+	if (eConstraintFlag & RotZ)
+	{
+		pRigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, !_isEnable);
+	}
 }
 
 void CRigidBody::Set_Kinematic(_bool isKinematic)
@@ -125,10 +152,12 @@ HRESULT CRigidBody::Initialize(void* pArg)
 
 void CRigidBody::Late_Tick(_float fTimeDelta)
 {
-	m_pActor->addForce(m_pActor->getLinearVelocity() * -0.45f);
-	m_pActor->addTorque(m_pActor->getAngularVelocity() * -0.5f);
+	m_pActor->addForce(m_pActor->getLinearVelocity() * -m_fAirDrag);
+	m_pActor->addTorque(m_pActor->getAngularVelocity() * -m_fAirDrag);
 
+#ifdef _DEBUG
 	Make_Buffers();
+#endif // _DEBUG
 }
 
 #ifdef _DEBUG
@@ -158,21 +187,21 @@ HRESULT CRigidBody::Create_Actor()
 	PxPhysics* pPhysX = pPhysX_Manager->Get_Physics();
 	m_pScene = pPhysX_Manager->Get_PhysxScene();
 
+#ifdef _DEBUG
 	m_pScene->simulate(1 / 60.f);
 	m_pScene->fetchResults(true);
+	_uint iPrevLines = m_pScene->getRenderBuffer().getNbLines();
+	_uint iPrevTriangles = m_pScene->getRenderBuffer().getNbTriangles();
 
-	// 시작 지점은 갱신 전에 가져와야함.
-	m_iStartLineBufferIndex = 0; //pPhysX_Manager->Get_LastLineBufferIndex();
-	m_iStartTriangleBufferIndex = 0; //pPhysX_Manager->Get_LastTriangleBufferIndex();
-
-	Safe_Release(pPhysX_Manager);
+	m_iStartLineBufferIndex = pPhysX_Manager->Get_LastLineBufferIndex();
+	m_iStartTriangleBufferIndex = pPhysX_Manager->Get_LastTriangleBufferIndex();
+#endif // _DEBUG
 
 	PxVec3 vLocal = PxVec3(0.f, 10.f, 5.f);
 	PxTransform localTm(vLocal);
 	m_pActor = pPhysX->createRigidDynamic(localTm);
 
-	m_pMaterial = pPhysX->createMaterial(1.f, 0.1f, 0.1f);
-	
+	m_pMaterial = pPhysX->createMaterial(0.1f, 0.1f, 0.1f);
 	PxShape* boxshape = pPhysX->createShape(PxCapsuleGeometry(1.f, 1.f), *m_pMaterial, false, PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSIMULATION_SHAPE);
 	PxFilterData data;
 	data.word0 = 0x1111;
@@ -181,11 +210,7 @@ HRESULT CRigidBody::Create_Actor()
 	_float4 vQuaternion = XMQuaternionRotationRollPitchYaw(0.f, XMConvertToRadians(180.f), XMConvertToRadians(90.f));
 	PxTransform relativePose(PxQuat(PhysXConverter::ToPxQuat(vQuaternion)));
 	boxshape->setLocalPose(relativePose);
-	m_pActor->setMaxLinearVelocity(10.f);
 	m_pActor->attachShape(*boxshape);
-	m_pActor->setMass(10.f);
-	
-	_uint iTest = boxshape->getInternalShapeIndex();
 	m_pScene->addActor(*m_pActor);
 
 	PxRigidDynamic* pRigidBody = m_pActor->is<PxRigidDynamic>();
@@ -195,7 +220,27 @@ HRESULT CRigidBody::Create_Actor()
 	pRigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, false);
 	pRigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, true);
 
+#ifdef _DEBUG
+	// 다음 렌더링을 위한 갱신 처리
+	m_pScene->simulate(1 / 60.f);
+	m_pScene->fetchResults(true);
+	_uint iNewLines = m_pScene->getRenderBuffer().getNbLines();
+	_uint iNewTriangles = m_pScene->getRenderBuffer().getNbTriangles();
+
+	m_iNumLineBuffer = iNewLines - iPrevLines;
+	m_iNumTriangleBuffer = iNewTriangles - iPrevTriangles;
+	pPhysX_Manager->Add_LastLineBufferIndex(iNewLines - iPrevLines);
+	pPhysX_Manager->Add_LastTriangleBufferIndex(iNewTriangles - iPrevTriangles);
+#endif // _DEBUG
+
+	Safe_Release(pPhysX_Manager);
+
 	return S_OK;
+}
+
+HRESULT CRigidBody::SetUp_Actor(_float3 _vInitPos, PxGeometry _ShapeType, _bool _isTrigger, RigidBodyConstraint eConstraintFlag, _float3 _vResistance, PxFilterData FilterData)
+{
+	return E_NOTIMPL;
 }
 
 void CRigidBody::Put_To_Sleep() const
@@ -301,13 +346,7 @@ HRESULT CRigidBody::Add_Components()
 	CPhysX_Manager* pPhysX_Manager = CPhysX_Manager::GetInstance();
 	Safe_AddRef(pPhysX_Manager);
 
-	// 리지드바디 클래스에서 생성한 모든 피직스 객체의 Shape를 렌더링
-	m_pScene->simulate(1 / 60.f);
-	m_pScene->fetchResults(true);
 	const PxRenderBuffer* pBuffer = pPhysX_Manager->Get_RenderBuffer();
-
-	m_iNumLineBuffer = pPhysX_Manager->Get_LastLineBufferIndex() - m_iStartLineBufferIndex;
-	m_iNumTriangleBuffer = pPhysX_Manager->Get_LastTriangleBufferIndex() - m_iStartTriangleBufferIndex;
 
 	CVIBuffer_Line::LINEDESC LineDesc;
 	ZEROMEM(&LineDesc);

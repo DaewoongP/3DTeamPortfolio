@@ -5,6 +5,7 @@
 
 IMPLEMENT_SINGLETON(CPhysX_Manager)
 
+#ifdef _DEBUG
 const PxRenderBuffer* CPhysX_Manager::Get_RenderBuffer()
 {
 	if (nullptr == m_pPhysxScene)
@@ -17,17 +18,24 @@ const PxRenderBuffer* CPhysX_Manager::Get_RenderBuffer()
 
 _uint CPhysX_Manager::Get_LastLineBufferIndex()
 {
-	m_iLastLineBufferIndex = m_pPhysxScene->getRenderBuffer().getNbLines() - m_iNumPlaneLineBuffer;
-
 	return m_iLastLineBufferIndex;
 }
 
 _uint CPhysX_Manager::Get_LastTriangleBufferIndex()
 {
-	m_iLastTriangleBufferIndex = m_pPhysxScene->getRenderBuffer().getNbTriangles() - m_iNumPlaneTriangleBuffer;
-
 	return m_iLastTriangleBufferIndex;
 }
+
+void CPhysX_Manager::Add_LastLineBufferIndex(_uint iNumLines)
+{
+	m_iLastLineBufferIndex += iNumLines;
+}
+
+void CPhysX_Manager::Add_LastTriangleBufferIndex(_uint iNumTriangles)
+{
+	m_iLastTriangleBufferIndex += iNumTriangles;
+}
+#endif // _DEBUG
 
 HRESULT CPhysX_Manager::Initialize()
 {
@@ -75,34 +83,6 @@ HRESULT CPhysX_Manager::Initialize()
 		return E_FAIL;
 	}
 
-	// 기본적인 터레인을 생성합니다.
-
-	PxRigidStatic* rigidStatic = m_pPhysics->createRigidStatic(PxTransformFromPlaneEquation(PxPlane(PxVec3(0.f, 1.f, 0.f), 0.f)));
-	PxShape* planeShape = m_pPhysics->createShape(PxPlaneGeometry(), *m_pPhysics->createMaterial(1.f, 0.1f, 0.1f), false, PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSIMULATION_SHAPE);
-	//PxRigidActorExt::createExclusiveShape(*rigidStatic, PxPlaneGeometry(), *m_pPhysics->createMaterial(0.5f, 0.5f, 0.5f));
-	rigidStatic->attachShape(*planeShape);
-	m_pPhysxScene->addActor(*rigidStatic);
-
-	PxVec3 vLocal = PxVec3(0.f, 10.f, 10.f);
-	PxTransform localTm(vLocal);
-	PxRigidDynamic* pActor = m_pPhysics->createRigidDynamic(localTm);
-	PxShape* boxshape = m_pPhysics->createShape(PxBoxGeometry(10.f, 10.f, 10.f), *m_pPhysics->createMaterial(0.5f, 0.5f, 0.5f), false, PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSIMULATION_SHAPE);
-
-	// OffsetPosition 처리
-	PxTransform relativePose(PxQuat(PxHalfPi, PxVec3(0, 0, 1)));
-	boxshape->setLocalPose(relativePose);
-	PxFilterData data;
-	data.word0 = 0x1000;
-	boxshape->setSimulationFilterData(data);
-	pActor->attachShape(*boxshape);
-	pActor->setMaxLinearVelocity(1.f);
-	m_pPhysxScene->addActor(*pActor);
-
-	m_pPhysxScene->simulate(1 / 60.f);
-	m_pPhysxScene->fetchResults(true);
-	m_iNumPlaneLineBuffer = m_pPhysxScene->getRenderBuffer().getNbLines();
-	m_iNumPlaneTriangleBuffer = m_pPhysxScene->getRenderBuffer().getNbTriangles();
-
 	return S_OK;
 }
 
@@ -113,6 +93,12 @@ void CPhysX_Manager::Tick(_float fTimeDelta)
 	// fTimeDelta를 사용할 경우 프레임에 따라 처리가 달라질 수 있음.
 	m_pPhysxScene->simulate(1 / 60.f);
 	m_pPhysxScene->fetchResults(true);
+}
+
+void CPhysX_Manager::Clear_BufferIndex()
+{
+	m_iLastLineBufferIndex = 0;
+	m_iLastTriangleBufferIndex = 0;
 }
 
 PxScene* CPhysX_Manager::Create_Scene()

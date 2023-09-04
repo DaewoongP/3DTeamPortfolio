@@ -262,6 +262,9 @@
     <Filter Include="01. Utility\03. Components\09. Collider\Bounding\Sphere">
       <UniqueIdentifier>{9ef1f8a7-57da-450b-8888-f477bbda2889}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\03. Components\17. Plane">
+      <UniqueIdentifier>{33c81cf5-caa3-47e5-a3d4-5e94a0331092}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -546,6 +549,9 @@
     <ClInclude Include="..\Public\Component_Manager.h">
       <Filter>01. Utility\03. Components\00. Manager</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Plane.h">
+      <Filter>01. Utility\03. Components\17. Plane</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -799,6 +805,9 @@
     </ClCompile>
     <ClCompile Include="..\private\PXEventCallBack.cpp">
       <Filter>01. Utility\11. Physics\EventCallBack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Plane.cpp">
+      <Filter>01. Utility\03. Components\17. Plane</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

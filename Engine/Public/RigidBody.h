@@ -64,6 +64,8 @@ public:
 
 public:
 	HRESULT Create_Actor();
+	HRESULT SetUp_Actor(_float3 _vInitPos, 	PxGeometry _ShapeType, _bool _isTrigger, 
+		RigidBodyConstraint eConstraintFlag, _float3 _vResistance, PxFilterData FilterData);
 	//void Add_Collider(CColliderCom* collider);
 
 	void Put_To_Sleep() const;
@@ -83,6 +85,9 @@ private:
 private:
 	_bool					m_isStatic = { false };
 	_bool					m_isKinematic = { false };
+
+private:
+	_float					m_fAirDrag = { 0.f };
 
 #ifdef _DEBUG
 private:
