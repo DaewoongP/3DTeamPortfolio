@@ -13,11 +13,27 @@ class CCutScene_Camera_Tool :
 public:
 	enum CUTSCENEPOINT
 	{
-		CUTSCENEPOINT_NONE,
+		CUTSCENEPOINT_SELECT,
 		CUTSCENEPOINT_CREATE,
 		CUTSCENEPOINT_DELETE,
 		CUTSCENEPOINT_END
 	};
+
+	enum CUTSCENE_EYE_OR_AT
+	{
+		CUTSCENE_AT,
+		CUTSCENE_EYE,
+		CUTSCENE_END
+	};
+
+	typedef struct tagCameraPointInfoDesc
+	{
+		CCamera_Point* pEyePoint{ nullptr };
+		CCamera_Point* pAtPoint{ nullptr };
+		_bool isLerp{ true };
+		_float fDuration{ 1.0f };
+		//축, 특정값 추가 예정(구면 보간)
+	}CAMERAPOINTINFODESC;
 
 private:
 	explicit CCutScene_Camera_Tool(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext);
@@ -32,60 +48,101 @@ public:
 
 
 private:
-	//포인트들을 담아 놓을 컨테이너 2개 필요(Eye, At)
-	list<CCamera_Point*> m_EyeList;
-	list<CCamera_Point*> m_AtList;
-	//짝이 맞는 경우 생성될 컨테이너
-	list<_bool> m_Lerplist;
-	list<_float> m_DurationList;
-
-
-	//현제 인덱스(수정할 객체의 인덱스)
-	_uint m_iCurrentIndex = { 0 };
-
-	//현제 선택된 오브젝트
-	CCamera_Point* m_pCurrentPoint = { nullptr };
 	
-	//세트가 완성된 사이즈 : 실제로 저장 될 사이즈
-	_uint m_iSetSize = { 0 };
-	//최대 사이즈 : eye와 at중 더 많은 list의 사이즈
-	_uint m_iMaxSize = { 0 };
-
-	//Eye,At 구분용
-	_bool m_isEye{ true };
-
-	//IMGUI 라디오 버튼용
-	_int m_iPointRadio = { 0 };
-
-	//포인트 생성 거리
-	_float m_fDistance = { 0 };
-
-
 	//포인트를 생성 하기 위함
 	ID3D11Device* m_pDevice;
 	ID3D11DeviceContext* m_pContext;
 
-private:
-	//클릭시 선택, 담기, 빼기
-	void Point_Select_Create_Delete();
+	//컷씬에 들어가는 데이터
+	list<CAMERAPOINTINFODESC> m_CameraInfoList;
+	//원본 At
+	list<CCamera_Point*> m_OriginAtList;
+
+	//검색된 반복자
+	list<CAMERAPOINTINFODESC>::iterator m_CurrentIterater = { m_CameraInfoList.end() };
+
+	//현제 선택된 오브젝트(수정하기 위함)
+	CCamera_Point* m_pCurrentPoint = { nullptr };
+
+	//현제 선택된 AtPoint(복사하기 위함)
+	CCamera_Point* m_pAtCurrentPoint = { nullptr };
 	
-	//선택 기능 : 선택 된 포인트가 있다면 true 반환, 인덱스도 변경 됌
-	_bool Select_Point();
+	//IMGUI 라디오 버튼용
+	_int m_iPointRadio = { 0 };
+	//Eye,At 구분용
+	_int m_iEyeOrAt = { 0 };
 
-	//담는 기능
-	void Create_Point(const _float4& _vPosition);
+	//포인트 생성 거리
+	_float m_fDistance = { 10.0f };
 
-	//빼는 기능
-	void Delete_Point();
+	//초기화 더블체크 용
+	_bool m_isClearDoubleCheck{ false };
 
-	//저장 기능
-	HRESULT Save_CutScene(const _tchar* _wszFilePath);
-
-	//불러오기 기능
-	HRESULT Load_CutScene(const _tchar* _wszFilePath);
-
+private:
 	//마우스로 위치 수정 기능
 	void Fix_Point();
+
+	//리스트 초기화 객체 초기화
+	void Clear_CutSceneList();
+
+	//AtPoint 바꾸기
+	void Change_AtPoint(CCamera_Point* _pAtPoint);
+
+private:
+	//클릭 시 RayPos, RayDir 반환
+	void Return_RayInfo(_Out_ _float4& _vRayPos, _Out_ _float4& _vRayDir);
+	
+	//생성 위치
+	_float4 Point_Create_Position(_In_ _float4 _vRayPos, _In_ _float4 _vRayDir);
+
+private:
+	//생성
+	void Create_CameraInfo(_In_ _float4 _vRayPos, _In_ _float4 _vRayDir);
+
+	void Create_OriginAt(_In_ _float4 _vRayPos, _In_ _float4 _vRayDir);
+
+private:
+	//전체 순회 선택
+	_bool Select_Eye_Point(_In_ _float4 _vRayPos, _In_ _float4 _vRayDir);
+	_bool Select_OriginAt_Point(_In_ _float4 _vRayPos, _In_ _float4 _vRayDir);
+
+private:
+	//삭제 (오브젝트 선택보다 늦게 돌려야 한다.)
+	void Delete_Eye_Point(_In_ _float4 _vRayPos, _In_ _float4 _vRayDir);
+	void Delete_OriginAt_Point(_In_ _float4 _vRayPos, _In_ _float4 _vRayDir);
+
+private:
+	//카메라 포인트 및 인포 수정
+	void Fix_CameraPointInfo(_In_ _float4 _vRayPos, _In_ _float4 _vRayDir);
+
+	//생성 관련 업데이트
+	void Create_Tick(_In_ _float4 _vRayPos, _In_ _float4 _vRayDir);
+
+	//선택 관련 업데이트
+	void Select_Tick(_In_ _float4 _vRayPos, _In_ _float4 _vRayDir);
+
+	//삭제 관련 업데이트
+	void Delete_Tick(_In_ _float4 _vRayPos, _In_ _float4 _vRayDir);
+
+	//리스트 업데이트
+	void List_Tick(_float _TimeDelta);
+	
+	void Clear_DoubleCheck();
+
+	HRESULT Save_CutSceneInfo(const _tchar* _wszFilePath);
+
+	HRESULT Load_CutSceneInfo(const _tchar* _wszFilePath);
+
+	void Save_And_Load();
+
+	void Play_CutScene();
+
+	void Add_CutScene(const CAMERAPOINTINFODESC& _CameraPointInfoDesc);
+
+
+	//구면 보간을 위한 제료
+	//축 Cross(((At - 중간 값)노말),(시작점 - 중간 값))
+	//특정값 ((시작점 + 도착점) * 0.5f - At포지션) 길이 
 
 public:
 	static CCutScene_Camera_Tool* Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, void * pArg = nullptr);

@@ -5,9 +5,11 @@ HRESULT CImageFileDialog::Initialize(ID3D11Device* _pDevice, const _char* _pTag)
 {
     m_pDevice = _pDevice;
     Safe_AddRef(m_pDevice);
-    m_strTag = _pTag;
+    m_strFileDialogTag = _pTag;
+    _int iTemp1;
+    _int iTemp2;
 
-    if(false == LoadTextureFromFile("../../Resoruces/Default/Textures/Default0.jpg", &m_pDefaultTexture, &m_iDefaultImageWidth, &m_iDefaultImageHeight))
+    if(false == LoadTextureFromFile("../../Resources/Default/Textures/Default0.jpg", &m_pDefaultTexture, &iTemp1, &iTemp2))
     {
         return E_FAIL;
     }
@@ -27,12 +29,16 @@ string CImageFileDialog::Get_CurretnPath()
 
 void CImageFileDialog::Tick()
 {
+    // 텍스처가 없으면 기본 텍스처 출력
+    m_isOk = false;
+    _int iTemp1;
+    _int iTemp2;
+
     if (nullptr == m_pTexture)
     {
         if (ImGui::ImageButton(m_pDefaultTexture, ImVec2(_float(m_iImageButtonWidth), _float(m_iImageButtonHeight))))
         {
             ImGuiFileDialog::Instance()->OpenDialog(m_strFileDialogTag.data(), m_strFileDialogName.data(), m_strHeaderFilter.data(), m_strStartPath.data());
-            m_isShow = true;
         }
     }
     else
@@ -40,18 +46,7 @@ void CImageFileDialog::Tick()
         if (ImGui::ImageButton(m_pTexture, ImVec2(_float(m_iImageButtonWidth), _float(m_iImageButtonHeight))))
         {
             ImGuiFileDialog::Instance()->OpenDialog(m_strFileDialogTag.data(), m_strFileDialogName.data(), m_strHeaderFilter.data(), m_strStartPath.data());
-            m_isShow = true;
         }
-    }
-
-    if (true == m_isShow)
-    {
-        string strImageTag = "Iamge##" + m_strTag;
-        ImGui::Begin(strImageTag.data());
-        Safe_Release(m_pTexture);
-        LoadTextureFromFile(m_strFilePathName.data(), &m_pTexture, &m_iImageWidth, &m_iImageHeight);
-        ImGui::Image((void*)m_pTexture, ImVec2(_float(m_iImageWidth), _float(m_iImageHeight)));
-        ImGui::End();
     }
 
     // display
@@ -62,15 +57,39 @@ void CImageFileDialog::Tick()
         {
             m_strFilePathName = ImGuiFileDialog::Instance()->GetFilePathName();
             m_strFilePath = ImGuiFileDialog::Instance()->GetCurrentPath();
-
+            m_isOk = true;
             Safe_Release(m_pTexture);
-            LoadTextureFromFile(m_strFilePathName.data(), &m_pTexture, &m_iImageWidth, &m_iImageHeight);
-            m_isShow = false;
+            LoadTextureFromFile(m_strFilePathName.data(), &m_pTexture, &iTemp1, &iTemp2);
         }
 
         // close
         ImGuiFileDialog::Instance()->Close();
     }
+
+    if (ImGuiFileDialog::Instance()->IsOpened())
+    {
+        if (m_strPrevFilePathName != ImGuiFileDialog::Instance()->GetFilePathName())
+        {
+            string strCurrentFilePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+            Safe_Release(m_pTexture);
+            LoadTextureFromFile(strCurrentFilePathName.data(), &m_pTexture, &iTemp1, &iTemp2);
+            m_strPrevFilePathName = strCurrentFilePathName;
+        }
+
+        if (nullptr == m_pTexture)
+        {
+            ImGui::Image((void*)m_pDefaultTexture, ImVec2(_float(m_iImageWidth), _float(m_iImageHeight)));
+        }
+        else
+        {
+            ImGui::Image((void*)m_pTexture, ImVec2(_float(m_iImageWidth), _float(m_iImageHeight)));
+        }
+    }
+}
+
+_bool CImageFileDialog::IsOk()
+{
+    return m_isOk;
 }
 
 bool CImageFileDialog::LoadTextureFromFile(const char* filename, ID3D11ShaderResourceView** out_srv, int* out_width, int* out_height)

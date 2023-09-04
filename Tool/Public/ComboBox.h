@@ -13,7 +13,7 @@ private:
     virtual ~CComboBox() = default;
     
 public:
-    HRESULT Initialize(const _char* _szTag, const _char* szName, initializer_list<string> _Items);
+    HRESULT Initialize(const _char* _szTag, const _char* szName, initializer_list<string> _Items, const _char* pStartName);
 
 public:
     string Get_Current_Item() { return m_strCurrentItem; };
@@ -21,9 +21,9 @@ public:
 
     void Set_Tag(string _strTag);
     void Set_Name(string _strName);
+    void Set_StartTag(string _strStartTag);
 public:
-    void Show(FLAG eFlag = NONE);
-    void Bind_From_Current_Index(_uint* pIndex);
+    string Tick(FLAG eFlag = NONE, _bool _isImplement = true);
 
 public:
     // »ç¿ë¹ý : Push_Back("AAAA");
@@ -39,7 +39,7 @@ public:
     void Erase(initializer_list<string> _Items);
 
 private:
-    void Update_Current_Tag(string _strCurrentTag);
+    void Update_Current_Item(_uint _iItemIndex);
 
 private:
     string m_strName = "";
@@ -49,7 +49,7 @@ private:
     vector<string> m_Items;
 
 public:
-    static CComboBox* Create(const _char* _szTag, const _char* szName, initializer_list<string> _Items);
+    static CComboBox* Create(const _char* _szTag, const _char* szName, initializer_list<string> _Items, const _char* pStartName = nullptr);
     virtual void Free(void) override;
 };
 END

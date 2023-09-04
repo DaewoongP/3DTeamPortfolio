@@ -34,113 +34,76 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 		ImGui::End();
 		return;
 	}
-
 	CModel* pDummyModel = dynamic_cast<CModel*>(m_pDummyObject->Find_Component(TEXT("Com_Model")));
 	if (pDummyModel == nullptr)
 	{
 		ImGui::End();
 		return;
 	}
-
-	static _char szCurrentItem[MAX_PATH];
-	static _float fNotifyActionTime;
-	static _float fNotifySpeed;
-	static _char  szNotifyName[MAX_PATH];
-	static KEYFRAME::KEYFRAMETYPE eNotifyKeyFrameType;
-
-	Animation_ComboBox(szCurrentItem, pDummyModel);
-	Animation_Action_Button(pDummyModel, &fNotifyActionTime);
-	ImGui::SliderFloat("Animation", pDummyModel->Get_Animation()->Get_Accmulation_Pointer(), 0, pDummyModel->Get_Animation()->Get_Duration());
-	Notify_InputFileds(szNotifyName,&eNotifyKeyFrameType,&fNotifyActionTime,&fNotifySpeed);
-	Add_Notify_Button(szNotifyName, pDummyModel, &eNotifyKeyFrameType, &fNotifyActionTime, &fNotifySpeed);
 	
-	if (ImGui::Button("Edit##Notify"))
+	ImGui::Separator();
+	ImGui::Text("Notify");
+	Notify_InputFileds(m_szNotifyName, &m_eNotifyKeyFrameType, &m_fNotifyActionTime, &m_fNotifySpeed);
+
+	
+	ImGui::Separator();
+	ImGui::Text("Root&BoneTree");
+
+	Bone_Tree(pDummyModel->Get_Bone_Index(0), pDummyModel);
+	ImGui::InputInt("RootBone", &m_iRootIndex);
+
+	if (ImGui::Button("Set_Root"))
 	{
-		//현재 선택된 노티파이 수정 만들어줘야함.
-		CNotify* pNotify = pDummyModel->Get_Animation()->Get_Notify_Point();
-		pNotify->Edit_Frame(m_iSelectedNotifyIndex, eNotifyKeyFrameType, fNotifyActionTime, fNotifySpeed);
+		pDummyModel->Set_RootBone(m_iRootIndex);
 	}
 
-	for (_uint iNotifyCount = 0; iNotifyCount < pDummyModel->Get_Animation()->Get_Notify_Point()->Get_NotifyFrameCount(); iNotifyCount++)
+	for (_uint partCnt = 0; partCnt < pDummyModel->Get_AnimationPartCount(); partCnt++)
 	{
-		CNotify* pNotify = pDummyModel->Get_Animation()->Get_Notify_Point();
-		_char  szNotifyButtonName[MAX_PATH];
-		ZEROMEM(szNotifyButtonName);
-				
-		WCharToChar(pNotify->Find_Frame_Key(iNotifyCount), szNotifyButtonName);
-		sprintf_s(szNotifyButtonName,"%s_%d", szNotifyButtonName, iNotifyCount);
-		//똑같은 이름의 버튼이 둗개면 에러남
-		KEYFRAME::KEYFRAMETYPE eNotifyType =  pNotify->Find_Frame(iNotifyCount)->eKeyFrameType;
 		
-		if (ImGui::ColorButton("Type", 
-			(eNotifyType==KEYFRAME::KF_NOTIFY) ? (ImVec4(0.7f,0.f,0.f,1)):
-			((eNotifyType == KEYFRAME::KF_SOUND) ? (ImVec4(0.0f, 0.7f, 0.f, 1)) : 
-				(ImVec4(0.0f, 0.f, 0.7f, 1)))))
-		{
-		}
-		ImGui::SameLine();
+		ImGui::Separator();
+		ImGui::Text("AnimationSetting");
 
-		if (ImGui::Button(szNotifyButtonName))
+		CModel::ANIMTYPE ePartCnt = static_cast<CModel::ANIMTYPE>(partCnt);
+
+		Animation_ComboBox(ePartCnt,m_szCurrentItem[ePartCnt], pDummyModel);
+		Animation_Action_Button(ePartCnt,pDummyModel, &m_fNotifyActionTime);
+
+		_char szUIName[MAX_PATH] = "Animation##";
+		if (pDummyModel->Get_NumAnimations(ePartCnt) != 0)
 		{
-			//정보갱신
-			fNotifyActionTime = pNotify->Find_Frame(iNotifyCount)->fTime;
-			WCharToChar(pNotify->Find_Frame_Key(iNotifyCount), szNotifyName);
-			eNotifyKeyFrameType = pNotify->Find_Frame(iNotifyCount)->eKeyFrameType;
-			if (eNotifyKeyFrameType == KEYFRAME::KF_SPEED)
+			sprintf_s(szUIName, "%s%d", "SetRootAnim##", ePartCnt);
+			if (ImGui::Checkbox(szUIName, &m_isRootAnimation[ePartCnt]))
 			{
-				fNotifySpeed = static_cast<SPEEDFRAME*>(pNotify->Find_Frame(iNotifyCount))->fSpeed;
+				pDummyModel->Get_Animation(ePartCnt)->Set_RootAnim(m_isRootAnimation[ePartCnt]);
+			}
+
+			sprintf_s(szUIName, "%s%d", szUIName, ePartCnt);
+			ImGui::SliderFloat(szUIName, pDummyModel->Get_Animation(ePartCnt)->Get_Accmulation_Pointer(), 0, pDummyModel->Get_Animation(ePartCnt)->Get_Duration());
+			pDummyModel->Get_Animation(ePartCnt)->Update_KeyFrame_By_Time();
+			Add_Notify_Button(ePartCnt, m_szNotifyName, pDummyModel, &m_eNotifyKeyFrameType, &m_fNotifyActionTime, &m_fNotifySpeed);
+
+			Edit_Notify_Button(ePartCnt, pDummyModel);
+			Create_Notify_View(ePartCnt, pDummyModel);
+
+			
+			ImGui::Separator();
+			ImGui::Text("Separate_Parts");
+			sprintf_s(szUIName, "Separate##%d", ePartCnt);
+
+			/*sprintf_s(szUIName, "RootBone##%d", ePartCnt);
+			ImGui::InputInt(szUIName, &m_iRootIndex[ePartCnt]);*/
+			sprintf_s(szUIName, "Bone_From##%d", ePartCnt);
+			ImGui::InputInt(szUIName, &m_iFromBone[ePartCnt]);
+			sprintf_s(szUIName, "Bone_To##%d", ePartCnt);
+			ImGui::InputInt(szUIName, &m_iToBone[ePartCnt]);
+
+			sprintf_s(szUIName, "Seprate##%d", ePartCnt);
+			if (ImGui::Button(szUIName))
+			{
+				pDummyModel->Separate_Animation(m_iFromBone[ePartCnt], m_iToBone[ePartCnt],ePartCnt);
 			}
 		}
-		ImGui::SameLine();
-		ImGui::Text((eNotifyType == KEYFRAME::KF_NOTIFY) ? ("Notify") :
-			((eNotifyType == KEYFRAME::KF_SOUND) ? (("Sound")) :
-				(("Speed"))));
-				
-		_char  szTimeMessage[MAX_PATH] = "Action Time : ";
-		sprintf_s(szTimeMessage, "%s%f", szTimeMessage, pNotify->Find_Frame(iNotifyCount)->fTime);
-		ImGui::SameLine();  ImGui::Text(szTimeMessage);
-		ImGui::SameLine();
-		if (eNotifyType == KEYFRAME::KF_SPEED)
-		{
-			_char  szSpeedMessage[MAX_PATH] = "Speed : ";
-			SPEEDFRAME* frame = static_cast<SPEEDFRAME*>(pNotify->Find_Frame(iNotifyCount));
-			sprintf_s(szSpeedMessage, "%s%f", szSpeedMessage, frame->fSpeed);
-			ImGui::SameLine();  ImGui::Text(szSpeedMessage);
-		}
-		//ImGui::SameLine();
-		_char szDeleteButtonName[MAX_PATH] = "Delete##";
-		sprintf_s(szDeleteButtonName, "%s,%d", szDeleteButtonName, iNotifyCount);
-		if (ImGui::Button(szDeleteButtonName))
-		{
-			//노티파이 삭제 만들어줘야함.
-			pNotify->Delete_Frame(iNotifyCount);
-		}
 	}
-	// 모든 오브젝트 tick render latetick 꺼주기
-	// 데이터 파일 기반으로 프로토 모델 만들어줌. << 완
-	// 버튼을 통해 임시 겜 오브젝트 생성  << 완
-	// 생성된 겜 오브제를 보관해야함. << 완
-	// 보관된 겜 오브제에 임시모델을 추가 << 완
-	// 더미에 오브제가 추가된 경우 애니메이션 목록을 볼 수 있어야함. << 완
-	// 콤보박스 클릭을 통해 애니메이션 변경이 가능해야함 << 완
-	// 애니메이션의 현재 진행도를 볼 수 있어야함. << 완
-	// 노티파이가 들어있도록 만들어줘야함. << 완
-	// 노티파이를 생성하기위한 데이터 인풋 창이 있어야함 << 완
-	// 추가 버튼을 눌러서 노티파이를 애니메이션에 추가 << 완
-	// 추가 후 정렬해줘야함. << 완
-	// 노티파이용 키프레임 만큼 반복하며 버튼을 생성 << 완 
-	// 버튼을 누르면 버튼의 정보(시간, 타입, 뭐) 보여줌 << 완
-	// 이미 생성된 노티파이를 수정할 수 있어야함. << 완
-	// 키프레임 삭제 넣어줘야함. << 완
-	// 버튼의 색상을 이넘 타입에 따라 변경 << 완
-	// 노티파이 만들기 기능 추가 << 완
-	// 애니메이션 시간 float으로 바꿔서 드래그도 가능하게 << 완
-	// 애니메이션 재생 보여주고 그 애니메이션 재생 시간에 노티파이 추가 가능하게 << 완
-	// 스피드 lerp 써줘서 자연스러운 선형보간을 만들어줘야함.
-	// 콜라이더도 애님 툴에서 생성하고 보여줄수있어야함.
-	// 파티클도 생성ㅇ하고 보여줄 수 있어야함.
-	// 그걸 저장할 수 있어야함.
-
 	ImGui::End();
 }
 
@@ -199,9 +162,8 @@ void CAnimation_Window::OpenFile_Button()
 			Safe_AddRef(pGameInstance);
 			if (FAILED(pGameInstance->Add_Prototype_Component(LEVEL_TOOL, m_vecModelList_t[m_iMaxModelIndex].c_str(),
 				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, wszfilePath, PivotMatrix))))
-				//return;
 			{
-
+				MSG_BOX("Failed to Create Model");
 			}
 			Safe_Release(pGameInstance);
 			m_iMaxModelIndex++;
@@ -214,96 +176,221 @@ void CAnimation_Window::AddModel_Button()
 {
 	if (ImGui::Button("AddModelToDummy"))
 	{
-		//선택된 모델을 읽어오도록 만들어줘야함.
 		m_pDummyObject->Add_Model_Component(m_vecModelList_t[m_iModelIndex].c_str());
 		m_pDummyObject->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxAnimMesh"));
+		CModel* pCurrentModel = dynamic_cast<CModel*>(m_pDummyObject->Find_Component(TEXT("Com_Model")));
+		_tchar wszAnimationName[MAX_PATH] = {};
+		_tchar wszTypeComboName[MAX_PATH] = {};
+		lstrcpy(wszAnimationName, pCurrentModel->Get_Animation(0)->Get_AnimationName());
+		lstrcpy(wszTypeComboName, TEXT("Speed"));
+
+		WCharToChar(wszAnimationName, m_szCurrentItem[0]);
+		WCharToChar(wszTypeComboName, m_szCurrentItemType);
 	}
 }
 
-void CAnimation_Window::Animation_ComboBox(_char* szCurrentItem, CModel* pDummyModel)
+void CAnimation_Window::Animation_ComboBox(CModel::ANIMTYPE ePartCnt, _char* szCurrentItem, CModel* pDummyModel)
 {
-	if (ImGui::BeginCombo("AnimComboBox", szCurrentItem))
+	_char szUIName[MAX_PATH] = "AnimComboBox##";
+	sprintf_s(szUIName, "%s%d", szUIName, ePartCnt);
+	if (ImGui::BeginCombo(szUIName, szCurrentItem))
 	{
 		_char szAnimationName[MAX_PATH] = "";
 		_tchar wszAnimationName[MAX_PATH] = {};
-		_uint iAnimCnt = pDummyModel->Get_NumAnimations();
-		for (_uint i = 0; i < iAnimCnt; i++)
+		for (_uint i = 0; i < pDummyModel->Get_NumAnimations(ePartCnt); i++)
 		{
 			ZEROMEM(szAnimationName);
 			ZEROMEM(wszAnimationName);
 
-			lstrcpy(wszAnimationName, pDummyModel->Get_Animation(i)->Get_AnimationName());
+			lstrcpy(wszAnimationName, pDummyModel->Get_Animation(i, ePartCnt)->Get_AnimationName());
 			WCharToChar(wszAnimationName, szAnimationName);
 			bool is_selected = (!strcmp(szCurrentItem, szAnimationName));
-			if (ImGui::Selectable(szAnimationName, is_selected))
+			ImGui::Text(szAnimationName);
+
+			ImGui::SameLine();
+			_char szUIName[MAX_PATH] = "Select##_Anim";
+			sprintf_s(szUIName, "%s%d##%s", szUIName, ePartCnt, szAnimationName);
+			if (ImGui::SmallButton(szUIName))
 			{
 				strcpy_s(szCurrentItem, sizeof(szAnimationName), szAnimationName);
 				ImGui::SetItemDefaultFocus();
-				
-				pDummyModel->Reset_Animation(i, dynamic_cast<CTransform*>(m_pDummyObject->Find_Component(TEXT("Com_Transform"))));
+				pDummyModel->Reset_Animation(i, ePartCnt);
+			}
+
+			ImGui::SameLine();
+			sprintf_s(szUIName, "Delete##_Anim%d%s" ,ePartCnt, szAnimationName);
+			if (ImGui::SmallButton(szUIName))
+			{
+				pDummyModel->Delete_Animation(i, ePartCnt);
 			}
 		}
 		ImGui::EndCombo();
 	}
 }
 
-void CAnimation_Window::Animation_Action_Button(CModel* pDummyModel, _float* fNotifyActionTime)
+void CAnimation_Window::Animation_Action_Button(CModel::ANIMTYPE ePartCnt, CModel* pDummyModel, _float* fNotifyActionTime)
 {
-	_uint iAnimCnt = pDummyModel->Get_NumAnimations();
+	_uint iAnimCnt = pDummyModel->Get_NumAnimations(ePartCnt);
 	if (iAnimCnt == 0)
 		return;
-	if (pDummyModel->Get_Animation()->Get_Paused_State() ? ImGui::Button("Stop") : ImGui::Button("Play"))
+	_char szUIName[MAX_PATH] = "";
+	if(pDummyModel->Get_Animation(ePartCnt)->Get_Paused_State())
+		sprintf_s(szUIName, "Stop##%d", ePartCnt);
+	else
+		sprintf_s(szUIName, "Play##%d", ePartCnt);
+
+	if (ImGui::Button(szUIName))
 	{
-		pDummyModel->Get_Animation()->Set_Pause(!pDummyModel->Get_Animation()->Get_Paused_State());
-		*fNotifyActionTime = pDummyModel->Get_Animation()->Get_Accmulation();
+		pDummyModel->Get_Animation(ePartCnt)->Set_Pause(!pDummyModel->Get_Animation(ePartCnt)->Get_Paused_State());
+		*fNotifyActionTime = pDummyModel->Get_Animation(ePartCnt)->Get_Accmulation();
 	}
 }
 
 void CAnimation_Window::Notify_InputFileds(_char* szNotifyName, KEYFRAME::KEYFRAMETYPE* eNotifyKeyFrameType, _float* fNotifyActionTime, _float* fNotifySpeed)
 {
-	ImGui::InputText("NotifyName", szNotifyName, 32);
+	_char szUIName[MAX_PATH] = "NotifyName##";
+	ImGui::InputText(szUIName, szNotifyName, 32);
 	const char* items[] = { "Speed","Notify","Sound" };
-	static const char* szCurrentItemType;
-	if (ImGui::BeginCombo("KeyFrameType", szCurrentItemType))
+
+	sprintf_s(szUIName, "%s", "KeyFrameType##");
+	if (ImGui::BeginCombo(szUIName, m_szCurrentItemType))
 	{
 		for (int i = 0; i < IM_ARRAYSIZE(items); i++)
 		{
-			bool is_selected = (items[i] == szCurrentItemType);
+			bool is_selected = (items[i] == m_szCurrentItemType);
 			if (ImGui::Selectable(items[i], is_selected))
 			{
 				*eNotifyKeyFrameType = static_cast<KEYFRAME::KEYFRAMETYPE>(i);
+				strcpy_s(m_szCurrentItemType, sizeof(m_szCurrentItemType), items[i]);
 				ImGui::SetItemDefaultFocus();
 			}
 		}
 		ImGui::EndCombo();
 	}
-	ImGui::InputFloat("ActionTime", fNotifyActionTime);
+	sprintf_s(szUIName, "%s", "ActionTime##");
+	ImGui::InputFloat(szUIName, fNotifyActionTime);
 	if (*eNotifyKeyFrameType == KEYFRAME::KEYFRAMETYPE::KF_SPEED)
 	{
-		ImGui::InputFloat("Speed", fNotifySpeed);
+		sprintf_s(szUIName, "%s", "Speed##");
+		ImGui::InputFloat(szUIName, fNotifySpeed);
 	}
 }
 
-void CAnimation_Window::Add_Notify_Button(_char* szNotifyName, CModel* pDummyModel, KEYFRAME::KEYFRAMETYPE* eNotifyKeyFrameType, _float* fNotifyActionTime, _float* fNotifySpeed)
+void CAnimation_Window::Add_Notify_Button(CModel::ANIMTYPE ePartCnt, _char* szNotifyName, CModel* pDummyModel, KEYFRAME::KEYFRAMETYPE* eNotifyKeyFrameType, _float* fNotifyActionTime, _float* fNotifySpeed)
 {
-	if (ImGui::Button("Add Notify"))
+	_char szUIName[MAX_PATH] = "Add_Notify##";
+	sprintf_s(szUIName, "%s%d", szUIName, ePartCnt);
+	if (ImGui::Button(szUIName))
 	{
-		//모델에서 애니메이션에 접근한 뒤 수정해달라해야함.
 		_tchar  wszNotifyName[MAX_PATH] = {};
 		CharToWChar(szNotifyName, wszNotifyName);
-		if (FAILED(pDummyModel->Get_Animation()->Add_NotifyFrame(*eNotifyKeyFrameType, wszNotifyName, *fNotifyActionTime, *fNotifySpeed)))
+		if (FAILED(pDummyModel->Get_Animation(ePartCnt)->Add_NotifyFrame(*eNotifyKeyFrameType, wszNotifyName, *fNotifyActionTime, *fNotifySpeed)))
 		{
+			MSG_BOX("Failed To Add Notify");
 		}
 	}
 }
 
-void CAnimation_Window::Edit_Notify_Button()
+void CAnimation_Window::Edit_Notify_Button(CModel::ANIMTYPE ePartCnt, CModel* pDummyModel)
 {
+	ImGui::SameLine();
+	_char szUIName[MAX_PATH] = "Edit_Notify##Notify##";
+	sprintf_s(szUIName, "%s%d", szUIName, ePartCnt);
+	if (ImGui::Button(szUIName))
+	{
+		CNotify* pNotify = pDummyModel->Get_Animation(ePartCnt)->Get_Notify_Point();
+		pNotify->Edit_Frame(m_iSelectedNotifyIndex, m_eNotifyKeyFrameType, m_fNotifyActionTime, m_fNotifySpeed);
+	}
 }
 
 void CAnimation_Window::Select_Model()
 {
 	ImGui::ListBox("AnimModelList", &m_iModelIndex, VectorGetter, static_cast<void*>(&m_vecModelList), (_int)m_vecModelList.size(), 15);
+}
+
+void CAnimation_Window::Create_Notify_View(CModel::ANIMTYPE ePartCnt, CModel* pDummyModel)
+{
+	for (_uint iNotifyCount = 0; iNotifyCount < pDummyModel->Get_Animation(ePartCnt)->Get_Notify_Point()->Get_NotifyFrameCount(); iNotifyCount++)
+	{
+		CNotify* pNotify = pDummyModel->Get_Animation(ePartCnt)->Get_Notify_Point();
+		_char  szNotifyButtonName[MAX_PATH];
+		ZEROMEM(szNotifyButtonName);
+
+		WCharToChar(pNotify->Find_Frame_Key(iNotifyCount), szNotifyButtonName);
+		sprintf_s(szNotifyButtonName, "%s_%d", szNotifyButtonName, iNotifyCount);
+		KEYFRAME::KEYFRAMETYPE eNotifyType = pNotify->Find_Frame(iNotifyCount)->eKeyFrameType;
+
+		if (ImGui::ColorButton("Type",
+			(eNotifyType == KEYFRAME::KF_NOTIFY) ? (ImVec4(0.7f, 0.f, 0.f, 1)) :
+			((eNotifyType == KEYFRAME::KF_SOUND) ? (ImVec4(0.0f, 0.7f, 0.f, 1)) :
+				(ImVec4(0.0f, 0.f, 0.7f, 1)))))
+		{
+		}
+		ImGui::SameLine();
+
+		if (ImGui::Button(szNotifyButtonName))
+		{
+			//정보갱신
+			m_fNotifyActionTime = pNotify->Find_Frame(iNotifyCount)->fTime;
+			WCharToChar(pNotify->Find_Frame_Key(iNotifyCount), m_szNotifyName);
+			m_eNotifyKeyFrameType = pNotify->Find_Frame(iNotifyCount)->eKeyFrameType;
+			if (m_eNotifyKeyFrameType == KEYFRAME::KF_SPEED)
+			{
+				m_fNotifySpeed = static_cast<SPEEDFRAME*>(pNotify->Find_Frame(iNotifyCount))->fSpeed;
+			}
+		}
+		ImGui::SameLine();
+		ImGui::Text((eNotifyType == KEYFRAME::KF_NOTIFY) ? ("Notify") :
+			((eNotifyType == KEYFRAME::KF_SOUND) ? (("Sound")) :
+				(("Speed"))));
+
+		_char  szTimeMessage[MAX_PATH] = "Action Time : ";
+		sprintf_s(szTimeMessage, "%s%f", szTimeMessage, pNotify->Find_Frame(iNotifyCount)->fTime);
+		ImGui::SameLine();  ImGui::Text(szTimeMessage);
+		ImGui::SameLine();
+		if (eNotifyType == KEYFRAME::KF_SPEED)
+		{
+			_char  szSpeedMessage[MAX_PATH] = "Speed : ";
+			SPEEDFRAME* frame = static_cast<SPEEDFRAME*>(pNotify->Find_Frame(iNotifyCount));
+			sprintf_s(szSpeedMessage, "%s%f", szSpeedMessage, frame->fSpeed);
+			ImGui::SameLine();  ImGui::Text(szSpeedMessage);
+		}
+		_char szDeleteButtonName[MAX_PATH] = "Delete##";
+		sprintf_s(szDeleteButtonName, "%s%d", szDeleteButtonName, iNotifyCount);
+		if (ImGui::Button(szDeleteButtonName))
+		{
+			pNotify->Delete_Frame(iNotifyCount);
+		}
+	}
+}
+
+void CAnimation_Window::Bone_Tree(CBone* bone, CModel* pDummyModel)
+{
+	_char szUIName[MAX_PATH] = "";
+	_char szBone_Name[MAX_PATH] = "";
+	WCharToChar(bone->Get_Name(), szBone_Name);
+
+	sprintf_s(szUIName, "%s##%d", szBone_Name,0);
+	if (ImGui::TreeNode(szUIName))
+	{
+		for (auto child : *pDummyModel->Get_Bone_Vector_Point())
+		{
+			if (bone->Get_Index() == child->Get_ParentNodeIndex())
+			{
+				Bone_Tree(child, pDummyModel);
+			}
+		}
+		ImGui::TreePop();
+	}
+	else 
+	{
+		ImGui::SameLine();
+		sprintf_s(szUIName, "Set_Root##%d##%s", 0, szBone_Name);
+		if (ImGui::SmallButton(szUIName))
+		{
+			m_iRootIndex = bone->Get_Index();
+		}
+	}
 }
 
 CAnimation_Window* CAnimation_Window::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, ImVec2 vWindowPos, ImVec2 vWindowSize)

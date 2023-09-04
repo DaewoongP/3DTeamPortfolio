@@ -5,7 +5,7 @@ CComboBox::CComboBox()
 {
 }
 
-HRESULT CComboBox::Initialize(const _char* _szTag, const _char* _szName, initializer_list<string> _Items)
+HRESULT CComboBox::Initialize(const _char* _szTag, const _char* _szName, initializer_list<string> _Items, const _char* _pStartItem)
 {
     Set_Tag(_szTag);
     Set_Name(_szName);
@@ -13,7 +13,10 @@ HRESULT CComboBox::Initialize(const _char* _szTag, const _char* _szName, initial
     Push_Back(_Items);
 
     if (false == m_Items.empty())
-        Update_Current_Tag(m_Items[0]);
+        Update_Current_Item(0);
+
+    if(nullptr != _pStartItem)
+        Set_StartTag(_pStartItem);
 
     return S_OK;
 }
@@ -28,7 +31,21 @@ void CComboBox::Set_Name(string _strName)
     m_strName = _strName;
 }
 
-void CComboBox::Show(FLAG eFlag)
+void CComboBox::Set_StartTag(string _strStartTag)
+{
+    _uint iIndex = 0;
+	for (auto Item : m_Items)
+	{
+		if (Item == _strStartTag)
+		{
+			Update_Current_Item(iIndex);
+			break;
+		}
+        ++iIndex;
+	}
+}
+
+string CComboBox::Tick(FLAG eFlag, _bool _isImplement)
 {
     if (TABLE == eFlag)
     {
@@ -43,8 +60,7 @@ void CComboBox::Show(FLAG eFlag)
             bool is_selected = (m_strCurrentItem.data() == m_Items[n]); // You can store your selection however you want, outside or inside your objects
             if (ImGui::Selectable(m_Items[n].data(), is_selected))
             {
-                m_strCurrentItem = m_Items[n].data();
-                m_iCurrent_Index = n;
+                Update_Current_Item(n);
             }
 
             if (is_selected)
@@ -53,15 +69,18 @@ void CComboBox::Show(FLAG eFlag)
 
         ImGui::EndCombo();
     }
+
+    if (false == _isImplement)
+    {
+        ImGui::SameLine(); ImGui::Text("Not Imple");
+    }
+
     if (TABLE == eFlag)
     {
         ImGui::TableNextRow();
     }
-}
 
-void CComboBox::Bind_From_Current_Index(_uint* pIndex)
-{
-    *pIndex = m_iCurrent_Index;
+    return Get_Current_Item();
 }
 
 void CComboBox::Push_Back(const _char* _szItem)
@@ -99,16 +118,19 @@ void CComboBox::Erase(initializer_list<string> _Items)
     }
 }
 
-void CComboBox::Update_Current_Tag(string _strCurrentTag)
+void CComboBox::Update_Current_Item(_uint _iItemIndex)
 {
-    m_strCurrentItem = _strCurrentTag;
+    if (_iItemIndex >= m_Items.size())
+        return;
+    m_iCurrent_Index = _iItemIndex;
+    m_strCurrentItem = m_Items[_iItemIndex];
 }
 
-CComboBox* CComboBox::Create(const _char* _szTag, const _char* _szName, initializer_list<string> _Items)
+CComboBox* CComboBox::Create(const _char* _szTag, const _char* _szName, initializer_list<string> _Items, const _char* pStartName)
 {
     CComboBox* pInstance = new CComboBox;
 
-    if (FAILED(pInstance->Initialize(_szTag, _szName, _Items)))
+    if (FAILED(pInstance->Initialize(_szTag, _szName, _Items, pStartName)))
     {
         MSG_BOX("Failed to Created ComboBox");
         Safe_Release(pInstance);

@@ -9,24 +9,33 @@
 #include "Component.h"
 
 BEGIN(Engine)
+class CRigidBody;
 
 class ENGINE_DLL CTransform final : public CComponent
 {
 public:
 	enum STATE { STATE_RIGHT, STATE_UP, STATE_LOOK, STATE_POSITION, STATE_END };
+	enum CHANGEFLAG
+	{
+		NONE = 1 << 0,
+		TRANSLATION = 1 << 1,
+		ROTATION = 1 << 2,
+		SCALE = 1 << 3,
+	};
 
 private:
 	explicit CTransform(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CTransform(const CTransform& rhs);
 	virtual ~CTransform() = default;
 
-	
 public:
 	_float3 Get_Scale() const { return _float3(Get_Right().Length(), Get_Up().Length(), Get_Look().Length()); }
 	_float3 Get_Right() const { return m_WorldMatrix.Right(); }
 	_float3 Get_Up() const { return m_WorldMatrix.Up(); }
 	_float3 Get_Look() const { return m_WorldMatrix.Look(); }
 	_float3 Get_Position() const { return m_WorldMatrix.Translation(); }
+	// 월드행렬에서 쿼터니언 벡터를 추출하는 함수입니다.
+	_float4 Get_Quaternion();
 	_float2 Get_Trnaslation_To_UI_fXY() const;
 	_float4x4 Get_WorldMatrix() const { return m_WorldMatrix; }
 	const _float4x4* Get_WorldMatrixPtr() const { return &m_WorldMatrix; }
@@ -52,10 +61,17 @@ public:
 	void Set_Up(_float3 _vUp);
 	void Set_Look(_float3 _vLook);
 	void Set_Position(_float3 _vPosition);
+	// 쿼터니언 벡터 로테이션
+	void Set_Quaternion(_float4 vQuaternion);
 	void Set_WorldMatrix(_float4x4 _WorldMatrix);
 
 	void Set_Speed(_float _fSpeed) { m_fSpeed = _fSpeed; }
 	void Set_RotationSpeed(_float _fRotationSpeed) { m_fRotationSpeed = _fRotationSpeed; }
+
+	void Set_RigidBody(CRigidBody* pRigidBody) {
+		m_pRigidBody = pRigidBody;
+		Safe_AddRef(m_pRigidBody);
+	}
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -81,6 +97,14 @@ private:
 	_float4x4		m_WorldMatrix;
 	_float			m_fSpeed = { 0.f };
 	_float			m_fRotationSpeed = { 0.f };
+
+	_ubyte			m_ubTransformChanged = { 0 };
+
+private:
+	CRigidBody*		m_pRigidBody = { nullptr };
+
+private:
+	void Update_Components(_float fTimeDelta);
 
 public:
 	static CTransform* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);

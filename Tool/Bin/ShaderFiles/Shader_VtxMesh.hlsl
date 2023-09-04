@@ -2,6 +2,7 @@
 
 matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 texture2D		g_DiffuseTexture;
+texture2D g_PickTexture;
 
 float4			g_vColor;
 
@@ -60,14 +61,13 @@ PS_OUT	PS_MAIN(PS_IN In)
 	PS_OUT		Out = (PS_OUT)0;
 
 	vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
-
 	//if (vDiffuse.r == 0.f && vDiffuse.g == 0.f && vDiffuse.b == 0.f)
 	//	vDiffuse.a = 0;
 
 	if (vDiffuse.a < 0.1f)
 		discard;
 
-	Out.vColor = vDiffuse;
+    Out.vColor = vDiffuse;
 
 	return Out;
 }

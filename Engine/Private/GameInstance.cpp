@@ -99,13 +99,13 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 
 	m_pObject_Manager->Tick(fTimeDelta);
 
+	m_pPhysX_Manager->Tick(fTimeDelta);
+
 	m_pCamera_Manager->Tick(fTimeDelta);
 
 	m_pPipeLine->Tick();
 
 	m_pFrustum->Tick();
-
-	m_pPhysX_Manager->Tick(fTimeDelta);
 
 	m_pObject_Manager->Late_Tick(fTimeDelta);
 
@@ -328,6 +328,20 @@ const _float4* CGameInstance::Get_CamPosition()
 	return m_pPipeLine->Get_CamPosition();
 }
 
+const _float3* CGameInstance::Get_CamUp()
+{
+	NULL_CHECK_RETURN_MSG(m_pPipeLine, nullptr, TEXT("PipeLine NULL"));
+
+	return m_pPipeLine->Get_CamUp();
+}
+
+const _float3* CGameInstance::Get_CamLook()
+{
+	NULL_CHECK_RETURN_MSG(m_pPipeLine, nullptr, TEXT("PipeLine NULL"));
+
+	return m_pPipeLine->Get_CamLook();
+}
+
 const _float* CGameInstance::Get_CamFar()
 {
 	NULL_CHECK_RETURN_MSG(m_pPipeLine, nullptr, TEXT("PipeLine NULL"));
@@ -377,6 +391,30 @@ const CLight::LIGHTDESC* CGameInstance::Get_Light(_uint iIndex)
 	return m_pLight_Manager->Get_Light(iIndex);
 }
 
+const _float4x4* CGameInstance::Get_LightView()
+{
+	//NULL_CHECK_RETURN_MSG(m_pLight_Manager, nullptr, TEXT("Light NULL"));
+
+	if(nullptr==m_pLight_Manager)
+	{
+		MSG_BOX("LightNULL");
+		return nullptr;
+	}
+
+	return m_pLight_Manager->Get_LightView();
+}
+
+const _float4x4* CGameInstance::Get_LightProj()
+{
+	//NULL_CHECK_RETURN_MSG(m_pLight_Manager, nullptr, TEXT("Light NULL"));
+	if (nullptr == m_pLight_Manager)
+	{
+		MSG_BOX("LightNULL");
+		return nullptr;
+	}
+	return m_pLight_Manager->Get_LightProj();
+}
+
 void CGameInstance::Set_Light(_uint iIndex, CLight::LIGHTDESC LightDesc)
 {
 	NULL_CHECK_RETURN_MSG(m_pLight_Manager, , TEXT("Light NULL"));
@@ -384,11 +422,18 @@ void CGameInstance::Set_Light(_uint iIndex, CLight::LIGHTDESC LightDesc)
 	return m_pLight_Manager->Set_Light(iIndex, LightDesc);
 }
 
-CLight* CGameInstance::Add_Lights(const CLight::LIGHTDESC& LightDesc)
+CLight* CGameInstance::Add_Lights(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const CLight::LIGHTDESC& LightDesc)
 {
 	NULL_CHECK_RETURN_MSG(m_pLight_Manager, nullptr, TEXT("Light NULL"));
 
-	return m_pLight_Manager->Add_Lights(LightDesc);
+	return m_pLight_Manager->Add_Lights(pDevice,pContext,LightDesc);
+}
+
+HRESULT CGameInstance::Delete_Lights(_uint iIndex,const _char* Name)
+{
+	NULL_CHECK_RETURN_MSG(m_pLight_Manager, E_FAIL, TEXT("Light NULL"));
+
+	return m_pLight_Manager->Delete_Lights(iIndex,Name);
 }
 
 HRESULT CGameInstance::Clear_Lights()
@@ -534,28 +579,35 @@ HRESULT CGameInstance::Read_CutSceneCamera(const _tchar* _CutSceneTag, const _tc
 {
 	NULL_CHECK_RETURN_MSG(m_pCamera_Manager, E_FAIL, TEXT("Camera NULL"));
 
-	return Read_CutSceneCamera(_CutSceneTag, _CutScenePath);
+	return m_pCamera_Manager->Read_CutSceneCamera(_CutSceneTag, _CutScenePath);
 }
 
 HRESULT CGameInstance::Add_CutScene(const _tchar* _CutSceneTag)
 {
 	NULL_CHECK_RETURN_MSG(m_pCamera_Manager, E_FAIL, TEXT("Camera NULL"));
 
-	return Add_CutScene(_CutSceneTag);
+	return m_pCamera_Manager->Add_CutScene(_CutSceneTag);
+}
+
+HRESULT CGameInstance::Add_CutScene(CUTSCENECAMERADESC& _CutSceneCameraDesc)
+{
+	NULL_CHECK_RETURN_MSG(m_pCamera_Manager, E_FAIL, TEXT("Camera NULL"));
+
+	return m_pCamera_Manager->Add_CutScene(_CutSceneCameraDesc);
 }
 
 HRESULT CGameInstance::Read_OffSetCamera(const _tchar* _OffSetTag, const _tchar* _OffSetPath)
 {
 	NULL_CHECK_RETURN_MSG(m_pCamera_Manager, E_FAIL, TEXT("Camera NULL"));
 
-	return Read_OffSetCamera(_OffSetTag, _OffSetPath);
+	return m_pCamera_Manager->Read_OffSetCamera(_OffSetTag, _OffSetPath);
 }
 
 HRESULT CGameInstance::Add_OffSetCamera(const _tchar* _OffSetTag)
 {
 	NULL_CHECK_RETURN_MSG(m_pCamera_Manager, E_FAIL, TEXT("Camera NULL"));
 
-	return Add_OffSetCamera(_OffSetTag);
+	return m_pCamera_Manager->Add_OffSetCamera(_OffSetTag);
 }
 
 CRenderTarget* CGameInstance::Find_RenderTarget(const _tchar* pTargetTag)

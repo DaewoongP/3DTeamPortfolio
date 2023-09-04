@@ -226,9 +226,6 @@
     <Filter Include="01. Utility\03. Components\07. VIBuffer\Triangle">
       <UniqueIdentifier>{a5f8428d-9252-403e-821d-0690fa879d0b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\03. Components\09. Collider\Bounding\OBB\Sphere">
-      <UniqueIdentifier>{9ef1f8a7-57da-450b-8888-f477bbda2889}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Utility\03. Components\12. Alarm">
       <UniqueIdentifier>{9cbb7d45-1355-4391-a17a-ab9735b11f73}</UniqueIdentifier>
     </Filter>
@@ -258,6 +255,18 @@
     </Filter>
     <Filter Include="01. Utility\03. Components\16. RigidBody">
       <UniqueIdentifier>{34a36dc9-7fff-4175-b4ed-7b026eba34fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\02. GameObjects\02. Parts">
+      <UniqueIdentifier>{b2e63afa-998c-44d2-9cf7-ca44f0b814a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\11. Physics\EventCallBack">
+      <UniqueIdentifier>{2ebd81df-468e-430d-aa58-2375576ccb78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\09. Collider\Bounding\Sphere">
+      <UniqueIdentifier>{9ef1f8a7-57da-450b-8888-f477bbda2889}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\17. Plane">
+      <UniqueIdentifier>{33c81cf5-caa3-47e5-a3d4-5e94a0331092}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -311,9 +320,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\Renderer.h">
       <Filter>01. Utility\03. Components\02. Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Component_Manager.h">
-      <Filter>01. Utility\03. Components\00. Manager</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\VIBuffer.h">
       <Filter>01. Utility\03. Components\07. VIBuffer</Filter>
@@ -382,7 +388,7 @@
       <Filter>01. Utility\03. Components\09. Collider\Bounding</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Bounding_Sphere.h">
-      <Filter>01. Utility\03. Components\09. Collider\Bounding\OBB\Sphere</Filter>
+      <Filter>01. Utility\03. Components\09. Collider\Bounding\Sphere</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\DebugDraw.h">
       <Filter>01. Utility\03. Components\09. Collider\Bounding\DebugDraw</Filter>
@@ -540,6 +546,21 @@
     <ClInclude Include="..\public\VIBuffer_Triangle.h">
       <Filter>01. Utility\03. Components\07. VIBuffer\Triangle</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\VIBuffer_Rect_Color_Instance.h">
+      <Filter>01. Utility\03. Components\07. VIBuffer\Instance\Rect_Instance</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Parts.h">
+      <Filter>01. Utility\02. GameObjects\02. Parts</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PXEventCallBack.h">
+      <Filter>01. Utility\11. Physics\EventCallBack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Component_Manager.h">
+      <Filter>01. Utility\03. Components\00. Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Plane.h">
+      <Filter>01. Utility\03. Components\17. Plane</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -648,7 +669,7 @@
       <Filter>01. Utility\03. Components\09. Collider\Bounding</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Bounding_Sphere.cpp">
-      <Filter>01. Utility\03. Components\09. Collider\Bounding\OBB\Sphere</Filter>
+      <Filter>01. Utility\03. Components\09. Collider\Bounding\Sphere</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\DebugDraw.cpp">
       <Filter>01. Utility\03. Components\09. Collider\Bounding\DebugDraw</Filter>
@@ -790,6 +811,18 @@
     </ClCompile>
     <ClCompile Include="..\private\VIBuffer_Triangle.cpp">
       <Filter>01. Utility\03. Components\07. VIBuffer\Triangle</Filter>
+    </ClCompile>
+    <ClCompile Include="VIBuffer_Rect_Color_Instance.cpp">
+      <Filter>01. Utility\03. Components\07. VIBuffer\Instance\Rect_Instance</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Parts.cpp">
+      <Filter>01. Utility\02. GameObjects\02. Parts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PXEventCallBack.cpp">
+      <Filter>01. Utility\11. Physics\EventCallBack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Plane.cpp">
+      <Filter>01. Utility\03. Components\17. Plane</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

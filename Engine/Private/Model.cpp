@@ -22,10 +22,18 @@ CModel::CModel(const CModel& rhs)
 	, m_Meshes(rhs.m_Meshes)
 	, m_iNumMaterials(rhs.m_iNumMaterials)
 	, m_Materials(rhs.m_Materials)
-	, m_iCurrentAnimIndex(rhs.m_iCurrentAnimIndex)
-	, m_iNumAnimations(rhs.m_iNumAnimations)
 	, m_PivotMatrix(rhs.m_PivotMatrix)
+	, m_iAnimationPartCount(rhs.m_iAnimationPartCount)
 {
+	for (_uint AnimTypeIndex = 0; AnimTypeIndex < ANIM_END; ++AnimTypeIndex)
+	{
+		m_tAnimationDesc[AnimTypeIndex] = ANIMATIONDESC(rhs.m_tAnimationDesc[AnimTypeIndex]);
+		for (auto& pOriginalAnimation : rhs.m_tAnimationDesc[AnimTypeIndex].Animations)
+		{
+			m_tAnimationDesc[AnimTypeIndex].Animations.push_back(pOriginalAnimation->Clone());
+		}
+	}
+
 	for (auto& pOriginalBone : rhs.m_Bones)
 	{
 		m_Bones.push_back(pOriginalBone->Clone());
@@ -41,11 +49,6 @@ CModel::CModel(const CModel& rhs)
 		for (auto& pTexture : Material.pMtrlTexture)
 			Safe_AddRef(pTexture);
 	}
-
-	for (auto& pOriginalAnimation : rhs.m_Animations)
-	{
-		m_Animations.push_back(pOriginalAnimation->Clone());
-	}
 }
 
 const CBone* CModel::Get_Bone(const _tchar* pBoneName)
@@ -53,6 +56,22 @@ const CBone* CModel::Get_Bone(const _tchar* pBoneName)
 	auto	iter = find_if(m_Bones.begin(), m_Bones.end(), [&](CBone* pBone)
 		{
 			if (!lstrcmp(pBoneName, pBone->Get_Name()))
+				return true;
+			else
+				return false;
+		});
+
+	if (iter == m_Bones.end())
+		return nullptr;
+
+	return *iter;
+}
+
+CBone* CModel::Get_Bone_Index(_uint iIndex)
+{
+	auto	iter = find_if(m_Bones.begin(), m_Bones.end(), [&](CBone* pBone)
+		{
+			if (iIndex==pBone->Get_Index())
 				return true;
 			else
 				return false;
@@ -110,62 +129,84 @@ HRESULT CModel::Render(_uint iMeshIndex)
 	return S_OK;
 }
 
-void CModel::Reset_Animation(_uint iAnimIndex, CTransform* pTransform)
+void CModel::Reset_Animation(const wstring& wstrAnimationTag, ANIMTYPE eType)
 {
-	m_iCurrentAnimIndex = iAnimIndex;
-	m_iPreviousAnimIndex = m_iCurrentAnimIndex;
-	m_isResetAnimTrigger = true;
+	m_tAnimationDesc[eType].iCurrentAnimIndex = Find_Animation_Index(wstrAnimationTag);
+	m_tAnimationDesc[eType].iPreviousAnimIndex = m_tAnimationDesc[eType].iCurrentAnimIndex;
+	m_tAnimationDesc[eType].isResetAnimTrigger = true;
 }
 
-void CModel::Play_Animation(_float fTimeDelta, CTransform* pTransform)
+void CModel::Reset_Animation(_uint iAnimIndex, ANIMTYPE eType)
 {
-	if (m_Animations[m_iCurrentAnimIndex]->Invalidate_AccTime(fTimeDelta) || m_isResetAnimTrigger )
+	m_tAnimationDesc[eType].iCurrentAnimIndex = iAnimIndex;
+	m_tAnimationDesc[eType].iPreviousAnimIndex = m_tAnimationDesc[eType].iCurrentAnimIndex;
+	m_tAnimationDesc[eType].isResetAnimTrigger = true;
+}
+
+void CModel::Play_Animation(_float fTimeDelta, ANIMTYPE eType, CTransform* pTransform)
+{
+	if (m_tAnimationDesc[eType].iNumAnimations == 0)
+		return;
+	if (m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Invalidate_AccTime(fTimeDelta) || m_tAnimationDesc[eType].isResetAnimTrigger )
 	{
 		//애니메이션 재생이 다 되면 여기가 실행되는거임.
-		m_Animations[m_iCurrentAnimIndex]->Reset();
-		m_isAnimChangeLerp = true;
-		m_fAnimChangeTimer = ANIMATIONLERPTIME; 
-		m_PostRootMatrix = XMMatrixIdentity();
-		m_isResetAnimTrigger = false;
+		m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Reset();
+		m_tAnimationDesc[eType].isAnimChangeLerp = true;
+		m_tAnimationDesc[eType].fAnimChangeTimer = ANIMATIONLERPTIME;
+		if(eType==0)
+			m_PostRootMatrix = XMMatrixIdentity();
+		m_tAnimationDesc[eType].isResetAnimTrigger = false;
 	}
 	else if (pTransform != nullptr)
 	{
-		Do_Root_Animation(pTransform);
+		if(m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Get_RootAnim_State())
+			Do_Root_Animation(pTransform);
 	}
 
 	//노티파이용
-	m_Animations[m_iCurrentAnimIndex]->Invalidate_Frame(fTimeDelta);
+	m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Invalidate_Frame(fTimeDelta);
 
 	//뼈 이동용
-	if (!m_isAnimChangeLerp)
+	if (!m_tAnimationDesc[eType].isAnimChangeLerp)
 	{
-		m_Animations[m_iCurrentAnimIndex]->Invalidate_TransformationMatrix(m_Bones, fTimeDelta);
+		//0번 인발리데이트가 1번에도 영향을 준다?
+		//if (eType == 0)
+		//	return;
+		m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Invalidate_TransformationMatrix(m_Bones, fTimeDelta, &m_tAnimationDesc[eType].AffectBoneVec);
 	}
-	else if(m_fAnimChangeTimer >= 0.0)
+	else if (m_tAnimationDesc[eType].fAnimChangeTimer >= 0.0)
 	{
-		m_Animations[m_iCurrentAnimIndex]->Invalidate_TransformationMatrix_Lerp(m_Bones, fTimeDelta, ANIMATIONLERPTIME - m_fAnimChangeTimer,m_iRootBoneIndex);
-		m_fAnimChangeTimer -= fTimeDelta;
+		m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Invalidate_TransformationMatrix_Lerp(m_Bones, fTimeDelta, ANIMATIONLERPTIME - m_tAnimationDesc[eType].fAnimChangeTimer, m_iRootBoneIndex, &m_tAnimationDesc[eType].AffectBoneVec);
+		m_tAnimationDesc[eType].fAnimChangeTimer -= fTimeDelta;
 	}
 	else
-		m_isAnimChangeLerp = false;
+		m_tAnimationDesc[eType].isAnimChangeLerp = false;
 	
 	
 	/* 모델에 표현되어있는 모든 뼈들의 CombinedTransformationMatrix */
-	_int iBoneIndex = 0;
-	
 	for (auto& pBone : m_Bones)
 	{
-		if (m_iRootBoneIndex == pBone->Get_ParentNodeIndex())
+		_int iFindIndex = pBone->Get_Index();
+		auto iter = find_if(m_tAnimationDesc[eType].AffectBoneVec.begin(), m_tAnimationDesc[eType].AffectBoneVec.end(), [&](auto data) {
+			if (data == iFindIndex)
+				return true;
+			return false;
+			});
+
+		if (iter == m_tAnimationDesc[eType].AffectBoneVec.end())
+		{
+			continue;
+		}
+			
+		if (m_iRootBoneIndex == pBone->Get_ParentNodeIndex()&& m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Get_RootAnim_State())
 		{
 			pBone->Invalidate_CombinedTransformationMatrix_Basic(m_Bones);
 		}
-		else 
+		else
 		{
 			pBone->Invalidate_CombinedTransformationMatrix(m_Bones);
 		}
-		iBoneIndex++;
 	}
-	
 }
 
 HRESULT CModel::Find_BoneIndex(const _tchar* pBoneName, _Inout_ _uint* iIndex)
@@ -179,7 +220,7 @@ HRESULT CModel::Find_BoneIndex(const _tchar* pBoneName, _Inout_ _uint* iIndex)
 			++(*iIndex);
 			return false;
 		}
-	});
+		});
 
 	if (m_Bones.end() == iter)
 	{
@@ -190,11 +231,11 @@ HRESULT CModel::Find_BoneIndex(const _tchar* pBoneName, _Inout_ _uint* iIndex)
 	return S_OK;
 }
 
-void CModel::Set_CurrentAnimIndex(_uint iIndex)
+void CModel::Set_CurrentAnimIndex(_uint iIndex, ANIMTYPE eType)
 { 
-	m_iCurrentAnimIndex = iIndex;
-	m_isAnimChangeLerp = true;
-	m_fAnimChangeTimer = ANIMATIONLERPTIME;
+	m_tAnimationDesc[eType].iCurrentAnimIndex = iIndex;
+	m_tAnimationDesc[eType].isAnimChangeLerp = true;
+	m_tAnimationDesc[eType].fAnimChangeTimer = ANIMATIONLERPTIME;
 }
 
 void CModel::Do_Root_Animation(CTransform* pTransform)
@@ -204,33 +245,76 @@ void CModel::Do_Root_Animation(CTransform* pTransform)
 		_float4x4 current_Matrix = m_Bones[m_iRootBoneIndex]->Get_CombinedTransformationMatrix();
 		_float4x4 post_Matirx = m_PostRootMatrix;
 
-		_float3 current_Look = current_Matrix.Look();
-		_float3 post_Look = post_Matirx.Look();
+		_float3 vCurrent_Look = current_Matrix.Look();
+		_float3 vPost_Look = post_Matirx.Look();
 
 		_float4x4 player_Matrix_Override = XMMatrixIdentity();
 
-		current_Look.Normalize();
-		post_Look.Normalize();
+		vCurrent_Look.Normalize();
+		vPost_Look.Normalize();
 
-		if (current_Look!=post_Look && fabsf(current_Look.x- post_Look.x)>0.0001f&& fabsf(current_Look.z - post_Look.z) > 0.0001f)
+		
+		if (vCurrent_Look != vPost_Look && fabsf(vCurrent_Look.x - vPost_Look.x) >0.0001f && fabsf(vCurrent_Look.z - vPost_Look.z) > 0.0001f)
 		{
-			_float dot = XMVectorGetX(XMVector3Dot(post_Look, current_Look));
+			_float dot = XMVectorGetX(XMVector3Dot(vPost_Look, vCurrent_Look));
 			_float radian = acosf(dot);
 			
-			if (XMVectorGetY(XMVector3Cross(current_Look, post_Look)) > 0)
+			if (XMVectorGetY(XMVector3Cross(vCurrent_Look, vPost_Look)) > 0)
 				radian = 2 * XMVectorGetX(g_XMPi) - radian;
-		
-			player_Matrix_Override = XMMatrixRotationY(radian);		
+
+			player_Matrix_Override = XMMatrixRotationY(radian);
 		}
 
-		_float3 current_Position = current_Matrix.Translation();
-		_float3 post_Position = post_Matirx.Translation();
-		_float3 Calculated_Position = (current_Position - post_Position);
+		_float3 vCurrent_Position = current_Matrix.Translation();
+		_float3 vPost_Position = post_Matirx.Translation();
+		_float3 Calculated_Position = (vCurrent_Position - vPost_Position);
 		memcpy(player_Matrix_Override.m[3], &Calculated_Position, sizeof _float3);
 
 		pTransform->Set_WorldMatrix(player_Matrix_Override * pTransform->Get_WorldMatrix());
 		m_PostRootMatrix = m_Bones[m_iRootBoneIndex]->Get_CombinedTransformationMatrix();
 	}
+}
+
+HRESULT CModel::Separate_Animation(_int iFromIndex, _int iToIndex, ANIMTYPE eType)
+{
+	//원래 뼈 보관소에서 삭제합니다.
+	for (auto iter = m_tAnimationDesc[eType].AffectBoneVec.begin(); iter < m_tAnimationDesc[eType].AffectBoneVec.end();)
+	{
+		if ((*iter) >= iFromIndex && (*iter) <= iToIndex)
+		{
+			iter = m_tAnimationDesc[eType].AffectBoneVec.erase(iter);
+		}
+		else
+			iter++;
+	}
+
+	//새로운 뼈 보관소에 그 친구들을 넣어줍니다.
+	_int max = iToIndex - iFromIndex + 1;
+	for (int i = 0; i < max; i++)
+	{
+		m_tAnimationDesc[m_iAnimationPartCount].AffectBoneVec.push_back(i + iFromIndex);
+	}
+	
+	//애니메이션을 복사해줍니다.
+	m_tAnimationDesc[m_iAnimationPartCount].iNumAnimations = m_Model.iNumAnimations;
+	for (_uint i = 0; i < m_Model.iNumAnimations; ++i)
+	{
+		CAnimation* pAnimation = CAnimation::Create(m_AnimationDatas[i], m_Bones);
+		if (nullptr == pAnimation)
+			return E_FAIL;
+
+		m_tAnimationDesc[m_iAnimationPartCount].Animations.push_back(pAnimation);
+	}
+	m_iAnimationPartCount++;
+
+	return S_OK;
+}
+
+void CModel::Delete_Animation(_uint iAnimIndex, ANIMTYPE eType)
+{
+	Safe_Release(*(m_tAnimationDesc[eType].Animations.begin() + iAnimIndex));
+	m_tAnimationDesc[eType].Animations.erase(m_tAnimationDesc[eType].Animations.begin() + iAnimIndex);
+	m_tAnimationDesc[eType].iNumAnimations--;
 }
 
 HRESULT CModel::Bind_Material(CShader* pShader, const char* pConstantName, _uint iMeshIndex, Engine::TextureType MaterialType)
@@ -603,17 +687,24 @@ HRESULT CModel::Ready_Materials()
 
 HRESULT CModel::Ready_Animations()
 {
-	m_iNumAnimations = m_Model.iNumAnimations;
-
+	//for (_uint iAnimTypeIndex = 0; iAnimTypeIndex < ANIM_END; iAnimTypeIndex++)
+	//{
+	for (int i = 0; i < m_Model.iNumNodes; i++)
+	{
+		m_tAnimationDesc[0].AffectBoneVec.push_back(i);
+	}
+	
+	m_iAnimationPartCount++;
+	m_tAnimationDesc[0].iNumAnimations = m_Model.iNumAnimations;
 	for (_uint i = 0; i < m_Model.iNumAnimations; ++i)
 	{
 		CAnimation* pAnimation = CAnimation::Create(m_AnimationDatas[i], m_Bones);
 		if (nullptr == pAnimation)
 			return E_FAIL;
 
-		m_Animations.push_back(pAnimation);
+		m_tAnimationDesc[0].Animations.push_back(pAnimation);
 	}
-
+	//}
 	return S_OK;
 }
 
@@ -665,6 +756,23 @@ void CModel::Release_FileDatas()
 	}
 
 	m_AnimationDatas.clear();
+}
+
+_uint CModel::Find_Animation_Index(const wstring& strTag, ANIMTYPE eType)
+{
+	_uint iAnimationIndex = { 0 };
+
+	for (auto pAnimation : m_tAnimationDesc[eType].Animations)
+	{
+		wstring wstrAnimationTag = pAnimation->Get_AnimationName();
+
+		if (wstring::npos != wstrAnimationTag.find(strTag))
+			break;
+
+		++iAnimationIndex;
+	}
+
+	return iAnimationIndex;
 }
 
 CModel* CModel::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, TYPE eType, const _tchar* pModelFilePath, _float4x4 PivotMatrix)
@@ -723,10 +831,14 @@ void CModel::Free()
 
 	m_Materials.clear();
 
-	for (auto& pAnimation : m_Animations)
+	for (int i = 0; i < ANIM_END; i++)
 	{
-		Safe_Release(pAnimation);
+		if (m_tAnimationDesc[i].Animations.size() == 0)
+			continue;
+		for (auto& pAnimation : m_tAnimationDesc[i].Animations)
+		{
+			Safe_Release(pAnimation);
+		}
+		m_tAnimationDesc[i].Animations.clear();
 	}
-
-	m_Animations.clear();
 }
