@@ -117,7 +117,7 @@ void CRigidBody::Tick(_float fTimeDelta)
 
 void CRigidBody::Late_Tick(_float fTimeDelta)
 {
-	Make_Buffers();
+	//Make_Buffers();
 }
 
 #ifdef _DEBUG
@@ -151,8 +151,8 @@ HRESULT CRigidBody::Create_Actor()
 	m_pScene->fetchResults(true);
 
 	// 시작 지점은 갱신 전에 가져와야함.
-	m_iStartLineBufferIndex = pPhysX_Manager->Get_LastLineBufferIndex();
-	m_iStartTriangleBufferIndex = pPhysX_Manager->Get_LastTriangleBufferIndex();
+	//m_iStartLineBufferIndex = pPhysX_Manager->Get_LastLineBufferIndex();
+	//m_iStartTriangleBufferIndex = pPhysX_Manager->Get_LastTriangleBufferIndex();
 
 	Safe_Release(pPhysX_Manager);
 

@@ -259,6 +259,9 @@
     <Filter Include="01. Utility\03. Components\16. RigidBody">
       <UniqueIdentifier>{34a36dc9-7fff-4175-b4ed-7b026eba34fc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\02. GameObjects\02. Parts">
+      <UniqueIdentifier>{b2e63afa-998c-44d2-9cf7-ca44f0b814a6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -540,6 +543,9 @@
     <ClInclude Include="..\public\VIBuffer_Triangle.h">
       <Filter>01. Utility\03. Components\07. VIBuffer\Triangle</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Parts.h">
+      <Filter>01. Utility\02. GameObjects\02. Parts</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -790,6 +796,9 @@
     </ClCompile>
     <ClCompile Include="..\private\VIBuffer_Triangle.cpp">
       <Filter>01. Utility\03. Components\07. VIBuffer\Triangle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Parts.cpp">
+      <Filter>01. Utility\02. GameObjects\02. Parts</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

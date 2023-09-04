@@ -44,6 +44,7 @@ protected:
 
 public:
 
+
 public:
 	virtual HRESULT Initialize_Prototype() = 0;
 	virtual HRESULT Initialize(void* pArg) = 0;

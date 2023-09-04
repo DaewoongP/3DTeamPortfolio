@@ -117,14 +117,21 @@ void CModel::Reset_Animation(_uint iAnimIndex, CTransform* pTransform)
 	m_isResetAnimTrigger = true;
 }
 
+void CModel::Reset_Animation(const wstring& wstrAnimationTag, CTransform* pTransform)
+{
+	m_iCurrentAnimIndex = Find_Animation_Index(wstrAnimationTag);
+	m_iPreviousAnimIndex = m_iCurrentAnimIndex;
+	m_isResetAnimTrigger = true;
+}
+
 void CModel::Play_Animation(_float fTimeDelta, CTransform* pTransform)
 {
-	if (m_Animations[m_iCurrentAnimIndex]->Invalidate_AccTime(fTimeDelta) || m_isResetAnimTrigger )
+	if (m_isResetAnimTrigger || m_Animations[m_iCurrentAnimIndex]->Invalidate_AccTime(fTimeDelta))
 	{
 		//애니메이션 재생이 다 되면 여기가 실행되는거임.
 		m_Animations[m_iCurrentAnimIndex]->Reset();
 		m_isAnimChangeLerp = true;
-		m_fAnimChangeTimer = ANIMATIONLERPTIME; 
+		m_fAnimChangeTimer = ANIMATIONLERPTIME;
 		m_PostRootMatrix = XMMatrixIdentity();
 		m_isResetAnimTrigger = false;
 	}
@@ -141,31 +148,29 @@ void CModel::Play_Animation(_float fTimeDelta, CTransform* pTransform)
 	{
 		m_Animations[m_iCurrentAnimIndex]->Invalidate_TransformationMatrix(m_Bones, fTimeDelta);
 	}
-	else if(m_fAnimChangeTimer >= 0.0)
+	else if (m_fAnimChangeTimer >= 0.0)
 	{
-		m_Animations[m_iCurrentAnimIndex]->Invalidate_TransformationMatrix_Lerp(m_Bones, fTimeDelta, ANIMATIONLERPTIME - m_fAnimChangeTimer,m_iRootBoneIndex);
+		m_Animations[m_iCurrentAnimIndex]->Invalidate_TransformationMatrix_Lerp(m_Bones, fTimeDelta, ANIMATIONLERPTIME - m_fAnimChangeTimer, m_iRootBoneIndex);
 		m_fAnimChangeTimer -= fTimeDelta;
 	}
 	else
 		m_isAnimChangeLerp = false;
-	
-	
+
 	/* 모델에 표현되어있는 모든 뼈들의 CombinedTransformationMatrix */
 	_int iBoneIndex = 0;
-	
+
 	for (auto& pBone : m_Bones)
 	{
 		if (m_iRootBoneIndex == pBone->Get_ParentNodeIndex())
 		{
 			pBone->Invalidate_CombinedTransformationMatrix_Basic(m_Bones);
 		}
-		else 
+		else
 		{
 			pBone->Invalidate_CombinedTransformationMatrix(m_Bones);
 		}
 		iBoneIndex++;
 	}
-	
 }
 
 HRESULT CModel::Find_BoneIndex(const _tchar* pBoneName, _Inout_ _uint* iIndex)
@@ -179,7 +184,7 @@ HRESULT CModel::Find_BoneIndex(const _tchar* pBoneName, _Inout_ _uint* iIndex)
 			++(*iIndex);
 			return false;
 		}
-	});
+		});
 
 	if (m_Bones.end() == iter)
 	{
@@ -191,7 +196,7 @@ HRESULT CModel::Find_BoneIndex(const _tchar* pBoneName, _Inout_ _uint* iIndex)
 }
 
 void CModel::Set_CurrentAnimIndex(_uint iIndex)
-{ 
+{
 	m_iCurrentAnimIndex = iIndex;
 	m_isAnimChangeLerp = true;
 	m_fAnimChangeTimer = ANIMATIONLERPTIME;
@@ -212,15 +217,15 @@ void CModel::Do_Root_Animation(CTransform* pTransform)
 		current_Look.Normalize();
 		post_Look.Normalize();
 
-		if (current_Look!=post_Look && fabsf(current_Look.x- post_Look.x)>0.0001f&& fabsf(current_Look.z - post_Look.z) > 0.0001f)
+		if (current_Look != post_Look && fabsf(current_Look.x - post_Look.x) > 0.0001f && fabsf(current_Look.z - post_Look.z) > 0.0001f)
 		{
 			_float dot = XMVectorGetX(XMVector3Dot(post_Look, current_Look));
 			_float radian = acosf(dot);
-			
+
 			if (XMVectorGetY(XMVector3Cross(current_Look, post_Look)) > 0)
 				radian = 2 * XMVectorGetX(g_XMPi) - radian;
-		
-			player_Matrix_Override = XMMatrixRotationY(radian);		
+
+			player_Matrix_Override = XMMatrixRotationY(radian);
 		}
 
 		_float3 current_Position = current_Matrix.Translation();
@@ -665,6 +670,23 @@ void CModel::Release_FileDatas()
 	}
 
 	m_AnimationDatas.clear();
+}
+
+_uint CModel::Find_Animation_Index(const wstring& strTag)
+{
+	_uint iAnimationIndex = { 0 };
+
+	for (auto pAnimation : m_Animations)
+	{
+		wstring wstrAnimationTag = pAnimation->Get_AnimationName();
+
+		if (wstring::npos != wstrAnimationTag.find(strTag))
+			break;
+
+		++iAnimationIndex;
+	}
+
+	return iAnimationIndex;
 }
 
 CModel* CModel::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, TYPE eType, const _tchar* pModelFilePath, _float4x4 PivotMatrix)

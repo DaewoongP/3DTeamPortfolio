@@ -3,7 +3,7 @@
 /* =============================================== */
 // 
 //	정 : 안철민
-//	부 :
+//	부 : 주성환
 //
 /* =============================================== */
 
@@ -46,6 +46,7 @@ public:
 public:
 	// Lerp를 진행하지 않고 해당 애니메이션 초기상태로 바로 세팅한다.
 	void	Reset_Animation(_uint iAnimIndex, CTransform* pTransform = nullptr);
+	void	Reset_Animation(const wstring& wstrAnimationTag, CTransform* pTransform = nullptr);
 	void	Play_Animation(_float fTimeDelta,class CTransform* pTransform = nullptr);
 	HRESULT Find_BoneIndex(const _tchar* pBoneName, _Inout_ _uint* iIndex);
 	void	Set_CurrentAnimIndex(_uint iIndex);
@@ -103,6 +104,7 @@ private:
 
 private:
 	void Release_FileDatas();
+	_uint Find_Animation_Index(const wstring& strTag);
 
 public:
 	static CModel* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, TYPE eType, const _tchar* pModelFilePath, _float4x4 PivotMatrix = XMMatrixIdentity());

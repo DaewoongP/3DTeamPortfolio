@@ -14,7 +14,7 @@ HRESULT CLevel_MainGame::Initialize()
 		return E_FAIL;
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 		return E_FAIL;
-	
+
 
 #ifdef _DEBUG
 	if (FAILED(Ready_Layer_Debug(TEXT("Layer_Debug"))))
@@ -60,7 +60,7 @@ HRESULT CLevel_MainGame::Ready_Lights()
 		return E_FAIL;
 	ENDINSTANCE
 
-	return S_OK;
+		return S_OK;
 }
 
 HRESULT CLevel_MainGame::Ready_Layer_BackGround(const _tchar* pLayerTag)
@@ -106,6 +106,18 @@ HRESULT CLevel_MainGame::Ready_Layer_Debug(const _tchar* pLayerTag)
 		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Player)");
 		return E_FAIL;
 	}
+
+	if (FAILED(pGameInstance->Add_GameObject(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Armored_Troll"), pLayerTag, TEXT("GameObject_Armored_Troll"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Armored_Troll)");
+		return E_FAIL;
+	}
+
+	/*if (FAILED(pGameInstance->Add_GameObject(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Forest_Troll"), pLayerTag, TEXT("GameObject_Forest_Troll"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Forest_Troll)");
+		return E_FAIL;
+	}*/
 
 	Safe_Release(pGameInstance);
 
