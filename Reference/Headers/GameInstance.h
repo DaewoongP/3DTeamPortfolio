@@ -56,6 +56,8 @@ public: /* For.Object_Manager */
 	HRESULT Add_Prototype_GameObject(const _tchar * pPrototypeTag, class CGameObject* pPrototype);
 	HRESULT Add_GameObject(_uint iLevelIndex, const _tchar * pPrototypeTag, const _tchar * pLayerTag, const _tchar * pGameObjectTag, void* pArg = nullptr);
 	class CLayer* Find_Layer(_uint iLevelIndex, const _tchar * pLayerTag);
+	HRESULT	Clear_Layer(_uint iLevelIndex, const _tchar * pLayerTag);
+	HRESULT	Delete_Object(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pGameObjectTag);
 	class CGameObject* Find_GameObject_In_Layer(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pGameObjectTag);
 	CGameObject* Clone_GameObject(const _tchar * pPrototypeTag, void* pArg);
 
@@ -151,6 +153,9 @@ public:	/* For.Camera_Manager */
 	HRESULT Read_OffSetCamera(const _tchar* _OffSetTag, const _tchar* _OffSetPath);
 	//오프셋 재생을 위한 큐 추가
 	HRESULT Add_OffSetCamera(const _tchar* _OffSetTag);
+
+public: /* For.RenderTaget_Manager*/
+	class CRenderTarget* Find_RenderTarget(const _tchar* pTargetTag);
 
 private:
 	class CGraphic_Device*			m_pGraphic_Device = { nullptr };

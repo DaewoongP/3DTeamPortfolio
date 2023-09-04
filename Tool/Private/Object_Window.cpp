@@ -3,6 +3,11 @@
 
 #include "VIBuffer_Terrain.h"
 
+#include "RenderTarget_Manager.h"
+#include "RenderTarget.h"
+
+#include "Layer.h"
+
 #include "MapDummy.h"
 #include "MapObject.h"
 #include "Terrain.h"
@@ -42,7 +47,7 @@ void CObject_Window::Tick(_float fTimeDelta)
 		Picking_Menu();
 	}
 
-	ImGui::Text("----------------------------------------");
+	ImGui::Separator();
 
 	// Model 선택 창 On / Off
 	ImGui::Checkbox("Model Select", &m_isSelectModel);
@@ -51,7 +56,7 @@ void CObject_Window::Tick(_float fTimeDelta)
 		Select_Model();
 	}
 
-	ImGui::Text("----------------------------------------");
+	ImGui::Separator();
 
 	// 현재 설치되어 있는 맵 오브젝트 창 On / Off
 	ImGui::Checkbox("Current MapObject", &m_isCurrentMapObject);
@@ -62,7 +67,7 @@ void CObject_Window::Tick(_float fTimeDelta)
 		ImGui::End();
 	}
 
-	ImGui::Text("----------------------------------------");
+	ImGui::Separator();
 
 	// Save Load 선택 창 On / Off
 	ImGui::Checkbox("Save Load", &m_isSaveLoad);
@@ -71,7 +76,7 @@ void CObject_Window::Tick(_float fTimeDelta)
 		Save_Load_Menu();
 	}
 
-	ImGui::Text("----------------------------------------");
+	ImGui::Separator();
 
 	ImGui::End();
 }
@@ -93,7 +98,7 @@ void CObject_Window::Picking_Menu()
 	ImGui::Text("%.1f /", vPos.y);
 	ImGui::SameLine();
 	ImGui::Text("%.1f", vPos.z);
-	ImGui::Text("----------------------------------------");
+	ImGui::Separator();
 
 	// 마우스 좌클릭을 하면 해당 위치로 더미 이동
 	BEGININSTANCE; if (true == pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN) &&
@@ -112,7 +117,7 @@ void CObject_Window::Picking_Menu()
 		else
 		{
 			m_pDummy->Set_Pos(vPos);
-		}		
+		}
 	} ENDINSTANCE;
 
 	// Object Install 선택 창 On / Off
@@ -152,6 +157,7 @@ void CObject_Window::Install_Object(_float3 vPos)
 
 		m_pObject->Add_Model_Component(m_vecModelList_t.at(m_iModelIndex));
 		m_pObject->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMesh"));
+		m_pObject->Set_Color(m_iMapObjectIndex); // 고유한 색깔 값을 넣어줌
 
 		// 저장용 벡터에 넣어준다.
 		SAVEOBJECTDESC SaveDesc;
@@ -165,6 +171,9 @@ void CObject_Window::Install_Object(_float3 vPos)
 		++m_iMapObjectIndex;
 
 	} ENDINSTANCE;
+
+	// 오브젝트 삭제 관련 메뉴
+	Delete_Object_Menu();
 }
 
 void CObject_Window::Select_Model()
@@ -219,7 +228,6 @@ void CObject_Window::Select_Model()
 	}
 
 	// 선택된 모델을 적용
-	static _bool bCheckModel = { false };
 	if (ImGui::Button("SelectModel"))
 	{
 		if (FAILED(m_pDummy->Change_Model_Component(m_vecModelList_t.at(m_iModelIndex))))
@@ -243,6 +251,14 @@ void CObject_Window::Current_MapObject()
 	// 설치되어 있는 오브젝트 리스트
 	ImGui::ListBox("Map Object List", &m_iTagIndex, VectorGetter,
 		static_cast<void*>(&m_vecObjectTag_s), (_int)m_vecObjectTag_s.size(), 20);
+
+	// 메쉬 피킹 메뉴 On / Off
+	ImGui::Checkbox("Object Picking", &m_isPickingObject);
+	if (true == m_isPickingObject)
+	{
+		// 지형 피킹 메뉴 Off
+		Mesh_Picking_Menu();
+	}	
 }
 
 void CObject_Window::Save_Load_Menu()
@@ -264,9 +280,174 @@ void CObject_Window::Save_Load_Menu()
 	}
 }
 
+void CObject_Window::Delete_Object_Menu()
+{
+	// 마지막에 설치한 오브젝트를 제거
+	// 단, 오브젝트가 하나라도 설치가 되어있어야 한다.
+	if (ImGui::Button("Undo"))
+	{
+		if (0 != m_vecObjectTag_s.size())
+		{
+			BEGININSTANCE;
+			if (FAILED(pGameInstance->Delete_Object((_uint)LEVEL_TOOL, 
+				TEXT("Layer_MapObject"), m_vecMapObjectTag.back().c_str())))
+			{
+				MSG_BOX("Failed to delete last MapObject");
+			} ENDINSTANCE;
+
+			if (0 < m_iTagIndex)
+			{
+				--m_iTagIndex;
+			}
+
+			if (0 < m_iMapObjectIndex)
+			{
+				--m_iMapObjectIndex;
+			}
+
+			m_vecMapObjectTag.pop_back();
+			m_vecObjectTag_s.pop_back();
+			m_vecSaveObject.pop_back();
+		}
+	}
+
+	ImGui::SameLine();
+
+	// 설치된 전체 오브젝트 제거 기능 활성화
+	if (ImGui::Button("Delete All"))
+	{
+		m_isDeleteObject = !m_isDeleteObject;
+	}
+
+	// 위에 버튼을 눌러 경고창을 활성화한다.
+	// 단, 오브젝트가 하나라도 설치가 되어있어야 한다.
+	if (true == m_isDeleteObject && 0 != m_vecObjectTag_s.size())
+	{
+		ImGui::Text("Are you sure?");
+
+		ImGui::SameLine();
+
+		 // yes를 누르면 MapObject 전부 삭제
+		if (ImGui::Button("Yes"))
+		{
+			BEGININSTANCE;
+			if (FAILED(pGameInstance->Clear_Layer((_uint)LEVEL_TOOL, TEXT("Layer_MapObject"))))
+			{
+				MSG_BOX("Failed to clear MapObject");
+			} ENDINSTANCE;
+
+			// 값 초기화
+			m_iMapObjectIndex = 0;
+
+			m_vecSaveObject.clear();
+			m_vecObjectTag_s.clear();
+			m_vecMapObjectTag.clear();
+
+			m_isDeleteObject = false;
+		}
+
+		ImGui::SameLine();
+
+		// no를 누르면 아무일도 일어나지 않음
+		if (ImGui::Button("No"))
+		{
+			m_isDeleteObject = false;
+		}
+	}
+}
+
+void CObject_Window::Mesh_Picking_Menu()
+{
+	
+	BEGININSTANCE; if (true == pGameInstance->Get_DIKeyState(DIK_O, CInput_Device::KEY_DOWN))
+	{
+		//Target_Picking의 ID3D11Texture2D를 가져옴
+		ID3D11Texture2D* pTexture = pGameInstance->Find_RenderTarget(TEXT("Target_Picking"))->Get_Texture2D();
+
+		// 텍스처의 너비와 높이
+		D3D11_TEXTURE2D_DESC  TextureDesc;
+		pTexture->GetDesc(&TextureDesc);
+
+		_uint iWidth = TextureDesc.Width;
+		_uint iHeight = TextureDesc.Height;
+
+		// 마우스 위치
+		D3D11_VIEWPORT ViewPort;
+		_uint iNumViewPorts = 1;
+
+		ZEROMEM(&ViewPort);
+		if (nullptr == m_pContext)
+			return;
+		m_pContext->RSGetViewports(&iNumViewPorts, &ViewPort);
+		
+		POINT	pt{};
+		GetCursorPos(&pt);
+		ScreenToClient(g_hWnd, &pt);
+
+		D3D11_BOX findDesc;
+		ZEROMEM(&findDesc);
+
+		findDesc.left = pt.x;
+		findDesc.right = pt.x + 1;
+		findDesc.top = pt.y;
+		findDesc.bottom = pt.y + 1;
+		findDesc.front = 0;
+		findDesc.back = 1;
+
+		// Usage 버퍼 생성
+		ID3D11Texture2D* pCopyTexture2D = { nullptr };
+		D3D11_TEXTURE2D_DESC	TextureDescCopy;
+		ZEROMEM(&TextureDescCopy, sizeof(D3D11_TEXTURE2D_DESC));
+
+		TextureDescCopy.Width = 1;
+		TextureDescCopy.Height = 1;
+		TextureDescCopy.MipLevels = 1;
+		TextureDescCopy.ArraySize = 1;
+		TextureDescCopy.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+
+		TextureDescCopy.SampleDesc.Quality = 0;
+		TextureDescCopy.SampleDesc.Count = 1;
+
+		TextureDescCopy.Usage = D3D11_USAGE_STAGING;
+		TextureDescCopy.BindFlags = 0;
+		TextureDescCopy.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE | D3D11_CPU_ACCESS_READ;
+		TextureDescCopy.MiscFlags = 0;
+
+		if (FAILED(m_pDevice->CreateTexture2D(&TextureDescCopy, nullptr, &pCopyTexture2D)))
+			return;
+
+		m_pContext->CopySubresourceRegion(pCopyTexture2D, 0, 0, 0, 0, pTexture, 0, &findDesc);
+
+		D3D11_MAPPED_SUBRESOURCE MappedDesc;
+		ZEROMEM(&MappedDesc);
+
+		if (FAILED(m_pContext->Map(pCopyTexture2D, 0, D3D11_MAP_READ, 0, &MappedDesc)))
+		{
+			MSG_BOX("Failed to Map Picking Texture");
+			return;
+		}			
+
+		// 해당 Pixel Copy가 잘못 되었을 경우..
+		if (MappedDesc.pData == nullptr)
+		{
+			MSG_BOX("Copy Data is nullptr");
+			return;
+		}
+
+		_uint pickID = { 0 };
+		pickID = ((_uint*)MappedDesc.pData)[0];
+
+		m_iTagIndex = pickID - 4278190080;
+
+		Safe_Release(pCopyTexture2D);
+
+		m_pContext->Unmap(pTexture, 0);
+	}ENDINSTANCE;
+}
+
 HRESULT CObject_Window::Save_MapObject()
 {
-	_tchar dataFile[MAX_PATH] = TEXT("../../Resources/MapData/MapObject.dat");
+	_tchar dataFile[MAX_PATH] = TEXT("../../Resources/MapData/MapObject.ddd");
 
 	HANDLE hFile = CreateFile(dataFile, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
 	if (INVALID_HANDLE_VALUE == hFile)
@@ -299,7 +480,7 @@ HRESULT CObject_Window::Load_MapObject()
 {
 	m_vecSaveObject.clear();
 
-	_tchar dataFile[MAX_PATH] = TEXT("../../Resources/MapData/MapObject.dat");
+	_tchar dataFile[MAX_PATH] = TEXT("../../Resources/MapData/MapObject.ddd");
 
 	HANDLE hFile = CreateFile(dataFile, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
@@ -309,11 +490,12 @@ HRESULT CObject_Window::Load_MapObject()
 	}
 
 	DWORD	dwByte = 0;
-	SAVEOBJECTDESC SaveDesc;
-	ZEROMEM(&SaveDesc);
 
 	while (true)
 	{
+		SAVEOBJECTDESC SaveDesc;
+		ZEROMEM(&SaveDesc);
+
 		if (!ReadFile(hFile, &SaveDesc.vPos, sizeof(_float3), &dwByte, nullptr))
 			MSG_BOX("Failed to Read m_vecSaveObject.vPos");
 
@@ -376,6 +558,7 @@ HRESULT CObject_Window::Load_MapObject()
 
 		m_pObject->Add_Model_Component(m_vecSaveObject[i].wszTag);
 		m_pObject->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMesh"));
+		m_pObject->Set_Color(m_iMapObjectIndex); // 고유한 색깔 값을 넣어줌
 
 		++m_iMapObjectIndex;
 	}	
@@ -401,7 +584,7 @@ void CObject_Window::Deep_Copy_Name(const _tchar* wszName)
 		ws.append(m_strCurrentModel.begin(), m_strCurrentModel.end());
 	}
 
-	_tchar* wszNew = new _tchar[length + 1];
+	_tchar* wszNew = New _tchar[length + 1];
 
 	if (0 != wcscpy_s(wszNew, length + 1, ws.c_str()))
 	{
@@ -419,7 +602,7 @@ void CObject_Window::Deep_Copy_Path(const _tchar* wszPath)
 
 	wstring ws(wszPath);
 
-	_tchar* wszNew = new _tchar[length + 1];
+	_tchar* wszNew = New _tchar[length + 1];
 
 	if (0 != wcscpy_s(wszNew, length + 1, ws.c_str()))
 	{
@@ -454,7 +637,7 @@ void CObject_Window::Deep_Copy_Tag(const _tchar* wszTag)
 {
 	m_vecMapObjectTag.push_back(wszTag);
 
-	// 맵 오브젝트 경로를 const _tchar* 형태로 깊은 복사
+	// 깊은 복사는 안하고 변환만 해줌
 	size_t length = wcslen(wszTag);
 
 	char c[MAX_PATH] = "";;
@@ -463,16 +646,6 @@ void CObject_Window::Deep_Copy_Tag(const _tchar* wszTag)
 	string s(c);
 
 	m_vecObjectTag_s.push_back(s);
-
-	/*_char* wszNew = new _char[length + 1];
-
-	if (0 != strcpy_s(wszNew, length + 1, s.c_str()))
-	{
-		MSG_BOX("Falied to Deep Copy(Tag)");
-		return;
-	}
-
-	m_vecObjectTag_s.push_back(wszNew);*/
 }
 
 const _tchar* CObject_Window::Deep_Copy(const _tchar* wszString)
@@ -482,7 +655,7 @@ const _tchar* CObject_Window::Deep_Copy(const _tchar* wszString)
 
 	wstring ws(wszString);
 
-	_tchar* wszNew = new _tchar[length + 1];
+	_tchar* wszNew = New _tchar[length + 1];
 
 	if (0 != wcscpy_s(wszNew, length + 1, ws.c_str()))
 	{
@@ -520,7 +693,7 @@ _float3 CObject_Window::Find_PickingPos()
 
 			return _float3(vFinalPos.x, vFinalPos.y, vFinalPos.z);
 		}
-	}	
+	}
 
 	return _float3(-1.f, -1.f, -1.f);
 }
@@ -530,13 +703,13 @@ HRESULT CObject_Window::Create_Dummy()
 	_float3 vPos = { 5.f, 0.f, 5.f };
 
 	BEGININSTANCE; if (FAILED(pGameInstance->Add_GameObject(LEVEL_TOOL, TEXT("Prototype_GameObject_MapDummy"), 
-		TEXT("Layer_MapObject"), TEXT("Map_Dummy"), &vPos)))
+		TEXT("Layer_Tool"), TEXT("Map_Dummy"), &vPos)))
 	{
 		MSG_BOX("Failed to GameObject Map_Dummy");
 		return E_FAIL;
 	}
 
-	m_pDummy = static_cast<CMapDummy*>(pGameInstance->Find_GameObject_In_Layer(LEVEL_TOOL, TEXT("Layer_MapObject"), TEXT("Map_Dummy")));
+	m_pDummy = static_cast<CMapDummy*>(pGameInstance->Find_GameObject_In_Layer(LEVEL_TOOL, TEXT("Layer_Tool"), TEXT("Map_Dummy")));
 	m_pDummy->Add_Model_Component(TEXT("Prototype_Component_Model_Tree"));
 	m_pDummy->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMesh")); ENDINSTANCE;
 
@@ -573,19 +746,17 @@ HRESULT CObject_Window::Save_Model_Path(_uint iType, const _tchar* pFilePath)
 				Deep_Copy_Path(pathresult.c_str());
 
 				// 경로에서 모델 이름 부분만 잘라내는 부분
-				string path = ("../../Resources/Models/NonAnims/");
 				string s = entry.path().string();
 
-				//size_t path_length = path.length();
 				size_t path_length = pathresult.length();
 				size_t current = s.find("NonAnim") + 9;
 
-				// 1차 분리
+				// 1차 분리, 여기서 모델 이름 파일 경로가 나와야 함.
 				string result = s.substr(current, path_length);
 
 				size_t current1 = result.find("\\");
 
-				// 2차 분리 (최종)
+				// 2차 분리, 여기서 모델 이름이 나와야 함
 				string result1 = result.substr(0, current1);
 
 				// 이제 컴포넌트 모델 이름으로 결합

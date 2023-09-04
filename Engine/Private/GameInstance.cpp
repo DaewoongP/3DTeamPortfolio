@@ -223,6 +223,20 @@ CLayer* CGameInstance::Find_Layer(_uint iLevelIndex, const _tchar* pLayerTag)
 	return m_pObject_Manager->Find_Layer(iLevelIndex, pLayerTag);
 }
 
+HRESULT CGameInstance::Clear_Layer(_uint iLevelIndex, const _tchar* pLayerTag)
+{
+	NULL_CHECK_RETURN_MSG(m_pObject_Manager, E_FAIL, TEXT("Object_Manager NULL"));
+
+	return m_pObject_Manager->Clear_Layer(iLevelIndex, pLayerTag);
+}
+
+HRESULT CGameInstance::Delete_Object(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pGameObjectTag)
+{
+	NULL_CHECK_RETURN_MSG(m_pObject_Manager, E_FAIL, TEXT("Object_Manager NULL"));
+
+	return m_pObject_Manager->Delete_Object(iLevelIndex, pLayerTag, pGameObjectTag);
+}
+
 CGameObject* CGameInstance::Find_GameObject_In_Layer(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pGameObjectTag)
 {
 	NULL_CHECK_RETURN_MSG(m_pObject_Manager, nullptr, TEXT("Object_Manager NULL"));
@@ -594,6 +608,13 @@ HRESULT CGameInstance::Add_OffSetCamera(const _tchar* _OffSetTag)
 	NULL_CHECK_RETURN_MSG(m_pCamera_Manager, E_FAIL, TEXT("Camera NULL"));
 
 	return m_pCamera_Manager->Add_OffSetCamera(_OffSetTag);
+}
+
+CRenderTarget* CGameInstance::Find_RenderTarget(const _tchar* pTargetTag)
+{
+	NULL_CHECK_RETURN_MSG(m_pRenderTarget_Manager, nullptr, TEXT("RenderTarget_Manager NULL"));
+
+	return m_pRenderTarget_Manager->Find_RenderTarget(pTargetTag);
 }
 
 void CGameInstance::Release_Engine()
