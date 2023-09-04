@@ -112,7 +112,7 @@ HRESULT CArmored_Troll::Make_AI()
 {
 	BEGININSTANCE;
 
-	try
+	/*try
 	{
 		wstring wstrThrowData = { TEXT("") };
 		CSelector* pTest = dynamic_cast<CSelector*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Selector")));
@@ -129,7 +129,7 @@ HRESULT CArmored_Troll::Make_AI()
 
 		return E_FAIL;
 	}
-	
+	*/
 	ENDINSTANCE;
 
 	return S_OK;

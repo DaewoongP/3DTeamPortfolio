@@ -410,7 +410,7 @@ void CObject_Window::Mesh_Picking_Menu()
 
 		TextureDescCopy.Usage = D3D11_USAGE_STAGING;
 		TextureDescCopy.BindFlags = 0;
-		TextureDescCopy.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE | D3D11_CPU_ACCESS_READ;
+		TextureDescCopy.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
 		TextureDescCopy.MiscFlags = 0;
 
 		if (FAILED(m_pDevice->CreateTexture2D(&TextureDescCopy, nullptr, &pCopyTexture2D)))
@@ -423,6 +423,8 @@ void CObject_Window::Mesh_Picking_Menu()
 
 		if (FAILED(m_pContext->Map(pCopyTexture2D, 0, D3D11_MAP_READ, 0, &MappedDesc)))
 		{
+			m_pContext->Unmap(pCopyTexture2D, 0);
+			m_pContext->Unmap(pTexture, 0);
 			MSG_BOX("Failed to Map Picking Texture");
 			return;
 		}			
@@ -430,6 +432,8 @@ void CObject_Window::Mesh_Picking_Menu()
 		// 해당 Pixel Copy가 잘못 되었을 경우..
 		if (MappedDesc.pData == nullptr)
 		{
+			m_pContext->Unmap(pCopyTexture2D, 0);
+			m_pContext->Unmap(pTexture, 0);
 			MSG_BOX("Copy Data is nullptr");
 			return;
 		}
@@ -438,6 +442,8 @@ void CObject_Window::Mesh_Picking_Menu()
 		pickID = ((_uint*)MappedDesc.pData)[0];
 
 		m_iTagIndex = pickID - 4278190080;
+
+		m_pContext->Unmap(pCopyTexture2D, 0);
 
 		Safe_Release(pCopyTexture2D);
 

@@ -17,7 +17,7 @@ HRESULT CLight_Window::Initialize(ImVec2 vWindowPos, ImVec2 vWindowSize)
 	m_WindowFlag = ImGuiWindowFlags_NoResize;
 	//StrInput = "Default_Dir_Light";
 	BEGININSTANCE
-		ZEROMEM(&LightDesc);
+	ZEROMEM(&LightDesc);
 	LightDesc.vPos = _float4(0.f, 2.f, 0.f, 1.f);
 	LightDesc.vDir = _float4(0.3f,-1.f,0.3f,0.f);
 
