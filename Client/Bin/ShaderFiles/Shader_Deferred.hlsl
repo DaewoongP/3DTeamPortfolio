@@ -329,9 +329,9 @@ PS_OUT PS_MAIN_DEFERRED(PS_IN In)
     vector vBlur = g_BlurTexture.Sample(LinearSampler, In.vTexUV);
     
     vector vShadow = g_ShadowTexture.Sample(LinearSampler, In.vTexUV);
-
-    Out.vColor = vDiffuse * vShadow * vShade * vBlur + vSpecular;
     
+    Out.vColor = vDiffuse * vShadow * vShade * vBlur + vSpecular;
+
     return Out;
 }
 
