@@ -417,4 +417,6 @@ Tool.lib
 *.mat
 *.bmp
 *.txt
+*.dat
+*.zip
 *.spritefont
