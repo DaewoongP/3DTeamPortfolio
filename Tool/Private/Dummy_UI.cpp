@@ -54,6 +54,21 @@ HRESULT CDummy_UI::Initialize(void* pArg)
 void CDummy_UI::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	// 
+	if (m_pParent == nullptr)
+	{
+		m_vCombinedXY.x = m_fX;
+		m_vCombinedXY.y = m_fY;
+	}
+	else
+	{
+		_float2 vParentPos = m_pParent->Get_fXY();
+
+		m_vCombinedXY.x = vParentPos.x + m_fX;
+		m_vCombinedXY.y = vParentPos.y + m_fY;
+	}
+	
 }
 
 void CDummy_UI::Late_Tick(_float fTimeDelta)
@@ -152,7 +167,7 @@ _bool CDummy_UI::Is_In_Rect()
 
 	RECT		rcUI;
 
-	SetRect(&rcUI, _int(m_fX - m_fSizeX * 0.5f), _int(m_fY - m_fSizeY * 0.5f), _int(m_fX + m_fSizeX * 0.5f), _int(m_fY + m_fSizeY * 0.5f));
+	SetRect(&rcUI, _int(m_vCombinedXY.x - m_fSizeX * 0.5f), _int(m_vCombinedXY.y - m_fSizeY * 0.5f), _int(m_vCombinedXY.x + m_fSizeX * 0.5f), _int(m_vCombinedXY.y + m_fSizeY * 0.5f));
 	
 	isIn = PtInRect(&rcUI, ptMouse);
 
@@ -175,21 +190,10 @@ _float2 CDummy_UI::WorldPos_To_UIPos(_float fX, _float fY)
 
 HRESULT CDummy_UI::Change_Position(_float fX, _float fY)
 {
-	if (nullptr == m_pParent)
-	{
-		m_pTransform->Set_Position(
-			XMVectorSet(m_fX - g_iWinSizeX * 0.5f, -m_fY + g_iWinSizeY * 0.5f, m_fZ, 1.f));
-	}
-	else
-	{
-		_float2 vParentPos = m_pParent->Get_fXY();
 
-		_float fIntervalX = vParentPos.x + m_fX;
-		_float fIntervalY = vParentPos.y + m_fY;
-
-		m_pTransform->Set_Position(
-			XMVectorSet(fIntervalX - g_iWinSizeX * 0.5f, -fIntervalY + g_iWinSizeY * 0.5f, m_fZ, 1.f));
-	}
+	m_pTransform->Set_Position(
+			XMVectorSet(m_vCombinedXY.x - g_iWinSizeX * 0.5f, -m_vCombinedXY.y + g_iWinSizeY * 0.5f, m_fZ, 1.f));
+	
 
 	return S_OK;
 }
