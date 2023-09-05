@@ -116,6 +116,12 @@ HRESULT CObject_Window::Render()
 
 void CObject_Window::Picking_Menu()
 {
+	if (nullptr == m_pDummy)
+	{
+		ImGui::Text("Dummy does not exist");
+		return;
+	}
+
 	_float3 vPos = Find_PickingPos();
 
 	// 현재 피킹 위치 표시
@@ -128,25 +134,11 @@ void CObject_Window::Picking_Menu()
 	ImGui::Text("%.1f", vPos.z);
 	ImGui::Separator();
 
-	// 마우스 좌클릭을 하면 해당 위치로 더미 이동
-	BEGININSTANCE; if (true == pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN) &&
-		-1.f != vPos.x)
-	{
-		// shift키를 누르고 있으면 격자에 딱 맞게 위치가 반올림됨
-		if (true == pGameInstance->Get_DIKeyState(DIK_LSHIFT, CInput_Device::KEY_PRESSING))
-		{
-			vPos.x = round(vPos.x);
-			vPos.y = round(vPos.y);
-			vPos.z = round(vPos.z);
+	ImGui::Text("Choice Install Method");
+	ImGui::RadioButton("1Click One_Install", &m_iInstallMethod, 0);
+	ImGui::RadioButton("1Pressing Multi_Install", &m_iInstallMethod, 1);
 
-			m_pDummy->Set_Pos(vPos);
-		}
-
-		else
-		{
-			m_pDummy->Set_Pos(vPos);
-		}
-	} ENDINSTANCE;
+	ImGui::Text("");
 
 	// imGui에서 값을 조정해서 변환 행렬을 만들어줌.
 	ImGui::DragFloat3("Scale", m_vDummyMatrix[DUMMY_SCALE], 0.1f, 0.1f, 10.f);
@@ -168,6 +160,8 @@ void CObject_Window::Picking_Menu()
 			m_vDummyMatrix[DUMMY_SCALE][i] = 1.f;
 	}
 
+	ImGui::Text("");
+
 	// 조정한 상태값을 Dummy에 적용시킴
 	if (nullptr != m_pDummy)
 	{
@@ -176,6 +170,16 @@ void CObject_Window::Picking_Menu()
 
 		_float3 vRotation;
 		memcpy(&vRotation, m_vDummyMatrix[DUMMY_ROT], sizeof _float3);
+
+		// shift키를 누르고 있으면 격자에 딱 맞게 위치가 반올림됨
+		BEGININSTANCE; if (true == pGameInstance->Get_DIKeyState(DIK_LSHIFT, CInput_Device::KEY_PRESSING))
+		{
+			vPos.x = round(vPos.x);
+			vPos.y = round(vPos.y);
+			vPos.z = round(vPos.z);
+
+			m_pDummy->Set_Pos(vPos);
+		} ENDINSTANCE;
 
 		_float3 vTranslation = 
 		{ vPos.x + m_vDummyMatrix[DUMMY_TRANS][0], vPos.y + m_vDummyMatrix[DUMMY_TRANS][1], vPos.z + m_vDummyMatrix[DUMMY_TRANS][2] };
@@ -189,7 +193,20 @@ void CObject_Window::Picking_Menu()
 	ImGui::Checkbox("Object Install", &m_isInstallObject);
 	if (true == m_isInstallObject && nullptr != m_pDummy)
 	{
-		Install_Object(m_pDummy->Get_Transform()->Get_Position());
+		switch (m_iInstallMethod)
+		{
+		case ONE_METHOD: // 클릭 당 한 번 설치
+			Install_Object(m_pDummy->Get_Transform()->Get_Position());
+			break;
+
+		case CONTINUOUS_METHOD: // 누르고 있으면 쭉 설치
+			Install_Continuous_Object(m_pDummy->Get_Transform()->Get_Position());
+			break;
+
+		case MULTI_METHOD: // 한번에 여러개 설치(인스턴싱)
+
+			break;
+		}
 	}
 }
 
@@ -241,6 +258,14 @@ void CObject_Window::Install_Object(_float3 vPos)
 
 	// 오브젝트 삭제 관련 메뉴
 	Delete_Object_Menu();
+}
+
+void CObject_Window::Install_Continuous_Object(_float3 vPos)
+{
+}
+
+void CObject_Window::Install_Multi_Object(_float3 vPos)
+{
 }
 
 void CObject_Window::Select_Model()
