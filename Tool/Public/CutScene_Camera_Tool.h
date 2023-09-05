@@ -6,6 +6,7 @@
 BEGIN(Tool)
 
 class CCamera_Point;
+class CCamera_Line;
 
 class CCutScene_Camera_Tool :
     public CBase
@@ -66,6 +67,9 @@ private:
 
 	//현제 선택된 AtPoint(복사하기 위함)
 	CCamera_Point* m_pAtCurrentPoint = { nullptr };
+
+	//생성 가이드 용
+	CCamera_Point* m_pCreateGuidePoint = { nullptr };
 	
 	//IMGUI 라디오 버튼용
 	_int m_iPointRadio = { 0 };
@@ -77,6 +81,18 @@ private:
 
 	//초기화 더블체크 용
 	_bool m_isClearDoubleCheck{ false };
+
+	//Eye 라인
+	CCamera_Line* m_pEyeLine = { nullptr };
+
+	//At 라인
+	CCamera_Line* m_pAtLine = { nullptr };
+
+	//Look 라인
+	CCamera_Line* m_pLookLine = { nullptr };
+	
+	//Line_Update용
+	_bool m_isLineUpdate{ false };
 
 private:
 	//마우스로 위치 수정 기능
@@ -139,10 +155,20 @@ private:
 
 	void Add_CutScene(const CAMERAPOINTINFODESC& _CameraPointInfoDesc);
 
+	//라인 준비
+	HRESULT Ready_Line();
 
-	//구면 보간을 위한 제료
-	//축 Cross(((At - 중간 값)노말),(시작점 - 중간 값))
-	//특정값 ((시작점 + 도착점) * 0.5f - At포지션) 길이 
+	//추가 및 수정 시에
+	HRESULT Line_Update();
+
+	//Eye라인 업데이트
+	HRESULT EyeLine_Update();
+
+	//At라인 업데이트
+	HRESULT AtLine_Update();
+
+	//Look라인 업데이트
+	HRESULT LookLine_Update();
 
 public:
 	static CCutScene_Camera_Tool* Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, void * pArg = nullptr);
