@@ -12,8 +12,7 @@ class CObject_Window final : public CImWindow
 
 	typedef struct SaveObjectDesc
 	{
-		//_float4x4 matTransform; // 상태 행렬
-		_float3 vPos; // 위치 값
+		_float4x4 matTransform; // 상태 행렬
 		_uint iTagLen; // 문자열 길이
 		_tchar wszTag[MAX_PATH]; // 오브젝트 종류(모델 컴포넌트 이름)
 	}SAVEOBJECTDESC;

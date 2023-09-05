@@ -18,6 +18,10 @@ CObject_Window::CObject_Window(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
 	: CImWindow(pDevice, pContext)
 {
 	ZeroMemory(&m_vDummyMatrix, sizeof m_vDummyMatrix);
+
+	// 스케일 값 1로 초기화
+	for (size_t i = 0; i < 3; i++)
+		m_vDummyMatrix[DUMMY_SCALE][i] = 1.f;
 }
 
 HRESULT CObject_Window::Initialize(ImVec2 vWindowPos, ImVec2 vWindowSize)
@@ -33,10 +37,6 @@ HRESULT CObject_Window::Initialize(ImVec2 vWindowPos, ImVec2 vWindowSize)
 	}		
 
 	m_WindowFlag = ImGuiWindowFlags_NoResize;
-
-	// 스케일 값 1로 초기화
-	for (size_t i = 0; i < 3; i++)
-		m_vDummyMatrix[DUMMY_SCALE][i] = 1.f;
 
 	return S_OK;
 }
@@ -158,6 +158,16 @@ void CObject_Window::Picking_Menu()
 	ImGui::DragFloat3("Translation", m_vDummyMatrix[DUMMY_TRANS], 1.f, -50.f, 50.f);
 	ImGui::SameLine(); CImGui_Function::HelpMarker("-50.f ~ 50.f");
 
+	// 상태 행렬 초기화
+	if (ImGui::Button("reset"))
+	{
+		ZeroMemory(&m_vDummyMatrix, sizeof m_vDummyMatrix);
+
+		// 스케일 값 1로 초기화
+		for (size_t i = 0; i < 3; i++)
+			m_vDummyMatrix[DUMMY_SCALE][i] = 1.f;
+	}
+
 	// 조정한 상태값을 Dummy에 적용시킴
 	if (nullptr != m_pDummy)
 	{
@@ -219,7 +229,7 @@ void CObject_Window::Install_Object(_float3 vPos)
 		// 저장용 벡터에 넣어준다.
 		SAVEOBJECTDESC SaveDesc;
 
-		SaveDesc.vPos = vPos;
+		SaveDesc.matTransform = vWorldMatrix;
 		lstrcpy(SaveDesc.wszTag, m_vecModelList_t.at(m_iModelIndex));
 		SaveDesc.iTagLen = lstrlen(SaveDesc.wszTag) * 2;
 
@@ -528,14 +538,24 @@ HRESULT CObject_Window::Save_MapObject()
 
 	for (auto& iter : m_vecSaveObject)
 	{
-		if (!WriteFile(hFile, &iter.vPos, sizeof(_float3), &dwByte, nullptr))
+		if (!WriteFile(hFile, &iter.matTransform, sizeof(_float4x4), &dwByte, nullptr))
+		{
 			MSG_BOX("Failed to Write m_vecSaveObject.vPos");
+			return E_FAIL;
+		}
+			
 
 		if (!WriteFile(hFile, &iter.iTagLen, sizeof(_uint), &dwByte, nullptr))
+		{ 
 			MSG_BOX("Failed to Write m_vecSaveObject.iTagLen");
+			return E_FAIL;
+		}
 
 		if (!WriteFile(hFile, &iter.wszTag, iter.iTagLen, &dwByte, nullptr))
+		{
 			MSG_BOX("Failed to Write m_vecSaveObject.wszTag");
+			return E_FAIL;
+		}
 	}
 
 	MSG_BOX("Save Success");
@@ -566,14 +586,22 @@ HRESULT CObject_Window::Load_MapObject()
 		SAVEOBJECTDESC SaveDesc;
 		ZEROMEM(&SaveDesc);
 
-		if (!ReadFile(hFile, &SaveDesc.vPos, sizeof(_float3), &dwByte, nullptr))
+		if (!ReadFile(hFile, &SaveDesc.matTransform, sizeof(_float4x4), &dwByte, nullptr))
+		{
 			MSG_BOX("Failed to Read m_vecSaveObject.vPos");
+			return E_FAIL;
+		}
 
 		if (!ReadFile(hFile, &SaveDesc.iTagLen, sizeof(_uint), &dwByte, nullptr))
+		{
 			MSG_BOX("Failed to Read m_vecSaveObject.iTagLen");
+		}
 
 		if (!ReadFile(hFile, &SaveDesc.wszTag, SaveDesc.iTagLen, &dwByte, nullptr))
+		{
 			MSG_BOX("Failed to Read m_vecSaveObject.wszTag");
+			return E_FAIL;
+		}
 
 		if (dwByte == 0)
 		{
@@ -615,7 +643,7 @@ HRESULT CObject_Window::Load_MapObject()
 		// 번호를 붙인 태그로 MapObject 등록
 		BEGININSTANCE if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL,
 			TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_MapObject"),
-			m_vecMapObjectTag.at(m_iMapObjectIndex).c_str(), &m_vecSaveObject[i].vPos)))
+			m_vecMapObjectTag.at(m_iMapObjectIndex).c_str(), &m_vecSaveObject[i].matTransform)))
 		{
 			MSG_BOX("Failed to Install MapObject");
 			ENDINSTANCE;
