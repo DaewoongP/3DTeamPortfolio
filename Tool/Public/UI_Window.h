@@ -76,7 +76,6 @@ public: // Function
 public:
 	_bool Load_ImTexture(const _char* pFilePath, ID3D11ShaderResourceView** out_srv, _int* out_width, _int* out_height);
 
-
 private:
 	vector <wstring>					m_FilePaths;
 	
@@ -96,6 +95,7 @@ private: // Tree & Image 변수
 
 private: // Object List 변수
 	_bool	m_isObjectSelected = { false };
+	_int	m_iObjectListIndex = { 0 };
 	_bool	m_isOpenList= { false };
 	_bool	m_isAddGruopSelected = { false };
 	_int	m_AddGroupIndex = { 0 };

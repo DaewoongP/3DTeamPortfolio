@@ -171,7 +171,6 @@
     <ClInclude Include="..\Public\Client_Includes.h" />
     <ClInclude Include="..\Public\Forest_Troll.h" />
     <ClInclude Include="..\Public\Weapon_Armored_Troll.h" />
-    <ClInclude Include="..\public\PhysXRender.h" />
     <ClInclude Include="..\Public\Test_NPC.h" />
     <ClInclude Include="..\Public\Level_Loading.h" />
     <ClInclude Include="..\Public\Level_Logo.h" />
@@ -232,7 +231,6 @@
     <ClCompile Include="..\private\Camera_Debug.cpp" />
     <ClCompile Include="..\Private\Forest_Troll.cpp" />
     <ClCompile Include="..\Private\Weapon_Armored_Troll.cpp" />
-    <ClCompile Include="..\private\PhysXRender.cpp" />
     <ClCompile Include="..\Private\Test_NPC.cpp" />
     <ClCompile Include="..\Private\Level_Loading.cpp" />
     <ClCompile Include="..\Private\Level_Logo.cpp" />

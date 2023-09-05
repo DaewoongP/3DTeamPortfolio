@@ -121,21 +121,22 @@ void CUI_Window::Open_Dialog()
 
 void CUI_Window::Object_List_Button()
 {
-	ImGui::Begin("List Interaction");
+	RECT rc;
+	GetWindowRect(g_hWnd, &rc);
+	ImGui::SetNextWindowPos(ImVec2(_float(rc.left), _float(rc.top + 600.f)) + m_vWindowPos);
 
+	ImGui::Begin("List Interaction");
 
 	if (ImGui::Button("Clear"))
 	{
 		for (auto& iter : m_pUIVector)
 		{
+			m_pDummy_UI_Group->Clear();
 			iter->Set_ObjEvent(CGameObject::OBJ_EVENT::OBJ_DEAD);
 		}
 	}
 
-
 	ImGui::Checkbox("MouseInteraction", &m_isListMouseInteraction);
-
-
 
 	if (ImGui::Button("Save_UI"))
 	{
@@ -156,13 +157,12 @@ void CUI_Window::Object_List_Button()
 
 void CUI_Window::Open_Object_List()
 {
-	static _int iItem = 0;
 	if (ImGui::BeginListBox("  "))
 	{
 		m_isOpenList = true;
 		for (_int i = 0; i < m_pUIVector.size(); i++)
 		{
-			m_isObjectSelected = (iItem == i);
+			m_isObjectSelected = (m_iObjectListIndex == i);
 
 			_char szGameObjectName[MAX_PATH];
 			memset(szGameObjectName, 0, sizeof(_char) * MAX_PATH);
@@ -170,7 +170,7 @@ void CUI_Window::Open_Object_List()
 			WCharToChar(m_pUIVector[i]->Get_Tag(), szGameObjectName);
 			if (ImGui::Selectable(szGameObjectName, m_isObjectSelected))
 			{
-				iItem = i;
+				m_iObjectListIndex = i;
 			}
 
 			if (m_isObjectSelected)
@@ -181,17 +181,25 @@ void CUI_Window::Open_Object_List()
 				m_pDummy_UI = dynamic_cast<CDummy_UI*>(m_pUIVector[i]);
 				string DragFloatTag = "Transform##";
 				_float4x4 pMatrix = m_pUIVector[i]->Get_Transform()->Get_WorldMatrix();
+
+
+				RECT rc;
+				GetWindowRect(g_hWnd, &rc);
+				ImGui::SetNextWindowPos(ImVec2(_float(rc.left), _float(rc.top + 750.f)) + m_vWindowPos);
+
 				__super::MatrixNode(&pMatrix, "UI_Transform##", "UI_Position##", "UI_Rotation##", "UI_Scale##");
 				//	pGameObejctVector[i]->Get_Transform()->Set_WorldMatrix(pMatrix);
 				_float2 fScale = _float2(pMatrix.Right().x, pMatrix.Up().y);
 
-				_float2 fXY = dynamic_cast<CDummy_UI*>(m_pUIVector[i])->WorldPos_To_UIPos(pMatrix.Translation().x, pMatrix.Translation().y);
+				// float2 fXY = dynamic_cast<CDummy_UI*>(m_pUIVector[i])->WorldPos_To_UIPos(pMatrix.Translation().x, pMatrix.Translation().y);
 				_float fZ = pMatrix.Translation().z;
 
 				//dynamic_cast<CDummy_UI*>(m_pUIVector[i])->Set_fXY(fXY.x, fXY.y);
 				dynamic_cast<CDummy_UI*>(m_pUIVector[i])->Set_fZ(fZ);
 				dynamic_cast<CDummy_UI*>(m_pUIVector[i])->Set_Size(fScale.x, fScale.y);
 
+				GetWindowRect(g_hWnd, &rc);
+				ImGui::SetNextWindowPos(ImVec2(_float(rc.left) + 200, _float(rc.top + 600.f)) + m_vWindowPos);
 				ImGui::Begin("Selected Object");
 				
 				Select_Obejct(m_pUIVector[i]);
@@ -210,6 +218,7 @@ void CUI_Window::Open_Object_List()
 
 void CUI_Window::Select_Obejct(CGameObject* pGameObject)
 {
+
 	if (nullptr == pGameObject)
 		return;
 
@@ -217,6 +226,7 @@ void CUI_Window::Select_Obejct(CGameObject* pGameObject)
 
 	if (ImGui::Button("Delete"))
 	{
+		m_pDummy_UI_Group->Delete(dynamic_cast<CDummy_UI*>(pGameObject));
 		pGameObject->Set_ObjEvent(CGameObject::OBJ_EVENT::OBJ_DEAD);
 	}
 }
@@ -518,7 +528,20 @@ void CUI_Window::Correction_Pick()
 			else
 				CurrentMousePos.y += (10 - iRoundY);
 
-			m_pDummy_UI->Set_fXY(CurrentMousePos.x, CurrentMousePos.y);
+			CDummy_UI* pParent = dynamic_cast<CDummy_UI*>(m_pDummy_UI)->Get_Parent();
+
+			if (nullptr != pParent)
+			{
+				_float2 vParentPos = pParent->Get_fXY();
+				_float2 vPickPos;
+				vPickPos.x = CurrentMousePos.x - vParentPos.x;
+				vPickPos.y = CurrentMousePos.y - vParentPos.y;
+				m_pDummy_UI->Set_fXY(vPickPos.x, vPickPos.y);
+			}
+			else
+			{
+				m_pDummy_UI->Set_fXY(CurrentMousePos.x, CurrentMousePos.y);
+			}
 		}
 
 	ENDINSTANCE
