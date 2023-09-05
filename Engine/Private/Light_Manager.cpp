@@ -27,6 +27,20 @@ void CLight_Manager::Set_Light(_uint iIndex, CLight::LIGHTDESC LightDesc)
 		++iter;
 
 	(*iter)->Set_LightDesc(LightDesc);
+
+	CTransform* pTransform = CTransform::Create(m_pDevice, m_pContext);
+	pTransform->Set_Position(_float3(LightDesc.vPos.x, LightDesc.vPos.y, LightDesc.vPos.z));
+	pTransform->LookAt(_float3(LightDesc.vDir.x, LightDesc.vDir.y, LightDesc.vDir.z));
+	m_ViewLight = pTransform->Get_WorldMatrix_Inverse();
+	Safe_Release(pTransform);
+
+	CPipeLine* pPipeLine = CPipeLine::GetInstance();
+	Safe_AddRef(pPipeLine);
+	if (0.f < *pPipeLine->Get_CamFar())
+		XMStoreFloat4x4(&m_ProjLight, XMMatrixPerspectiveFovLH(XMConvertToRadians(60.f), 1280.f / 720.f, 0.2f, *pPipeLine->Get_CamFar()));
+	Safe_Release(pPipeLine);
+
+
 }
 
 const CLight::LIGHTDESC* CLight_Manager::Get_Light_Name(string Name)
@@ -36,6 +50,8 @@ const CLight::LIGHTDESC* CLight_Manager::Get_Light_Name(string Name)
 
 CLight* CLight_Manager::Add_Lights(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const CLight::LIGHTDESC & LightDesc)
 {
+	m_pDevice = pDevice;
+	m_pContext = pContext;
 	CLight*		pLight = CLight::Create(LightDesc);
 
 	
