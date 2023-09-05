@@ -43,7 +43,8 @@ private:
 	const _tchar* Deep_Copy(const _tchar* wszString); // 들어오는 문자열을 깊은 복사하는 함수
 
 	_float3 Find_PickingPos(); // 지형의 피킹 위치를 찾는 함수
-	HRESULT Create_Dummy(); // 최초 1번 Dummy 생성
+	HRESULT Create_Dummy(); // Dummy 생성
+	HRESULT Delete_Dummy(); // Dummy 삭제
 	HRESULT Save_Model_Path(_uint iType, const _tchar* pFilePath); // 프로그램이 종료될 때 호출시켜서 모델의 경로들을 저장함
 
 private:

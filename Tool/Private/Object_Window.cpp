@@ -29,9 +29,6 @@ HRESULT CObject_Window::Initialize(ImVec2 vWindowPos, ImVec2 vWindowSize)
 		return S_OK;
 	}		
 
-	if (FAILED(Create_Dummy()))
-		return E_FAIL;
-
 	m_WindowFlag = ImGuiWindowFlags_NoResize;
 
 	return S_OK;
@@ -42,6 +39,26 @@ void CObject_Window::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	ImGui::Begin("Object", nullptr, m_WindowFlag);
+
+	// Create Dummy 버튼
+	if (ImGui::Button("Create Dummy"))
+	{
+		if (FAILED(Create_Dummy()))
+		{
+			MSG_BOX("Failed to Create Dummy");
+		}
+	}
+
+	ImGui::SameLine();
+
+	// Delete Dummy 버튼
+	if (ImGui::Button("Delete Dummy"))
+	{
+		if (FAILED(Delete_Dummy()))
+		{
+			MSG_BOX("Failed to Delete Dummy");
+		}
+	}
 
 	// Picking 창 On / Off
 	ImGui::Checkbox("Picking", &m_isCheckPicking);
@@ -126,7 +143,7 @@ void CObject_Window::Picking_Menu()
 
 	// Object Install 선택 창 On / Off
 	ImGui::Checkbox("Object Install", &m_isInstallObject);
-	if (true == m_isInstallObject)
+	if (true == m_isInstallObject && nullptr != m_pDummy)
 	{
 		Install_Object(m_pDummy->Get_Transform()->Get_Position());
 	}
@@ -255,26 +272,6 @@ void CObject_Window::Current_MapObject()
 	// 설치되어 있는 오브젝트 리스트
 	ImGui::ListBox("Map Object List", &m_iTagIndex, VectorGetter,
 		static_cast<void*>(&m_vecObjectTag_s), (_int)m_vecObjectTag_s.size(), 20);
-
-	/*if (ImGui::BeginListBox("Map Object List", ImVec2(0, 500)))
-	{
-		for (size_t i = 0; i < m_vecObjectTag_s.size(); i++)
-		{
-			_bool isSelected = (i == m_iTagIndex);
-
-			if (ImGui::Selectable(m_vecObjectTag_s.at(i).c_str(), isSelected))
-			{
-				m_iTagIndex = i;
-			}
-
-			if (true == isSelected)
-			{
-				ImGui::SetItemDefaultFocus();
-			}
-		}
-
-		ImGui::EndListBox();
-	}*/
 
 	// 메쉬 피킹 메뉴 On / Off
 	ImGui::Checkbox("Object Picking", &m_isPickingObject);
@@ -697,6 +694,12 @@ const _tchar* CObject_Window::Deep_Copy(const _tchar* wszString)
 
 _float3 CObject_Window::Find_PickingPos()
 {
+	if (nullptr == m_pDummy)
+	{
+		ImGui::Text("Dummy does not exist");
+		return _float3(-1.f, -1.f, -1.f);
+	}
+
 	_float4 vRayPos = { 0.f, 0.f, 0.f, 1.f };
 	_float4 vRayDir = { 0.f, 0.f, 0.f, 0.f };
 
@@ -729,6 +732,13 @@ _float3 CObject_Window::Find_PickingPos()
 
 HRESULT CObject_Window::Create_Dummy()
 {
+	// 이미 더미가 있다면 리턴
+	if (nullptr != m_pDummy)
+	{
+		MSG_BOX("Dummy Already exists");
+		return S_OK;
+	}
+
 	_float3 vPos = { 5.f, 0.f, 5.f };
 
 	BEGININSTANCE; if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_MapDummy"),
@@ -741,6 +751,28 @@ HRESULT CObject_Window::Create_Dummy()
 	m_pDummy = static_cast<CMapDummy*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL, TEXT("Layer_Tool"), TEXT("Map_Dummy")));
 	m_pDummy->Add_Model_Component(TEXT("Prototype_Component_Model_Tree"));
 	m_pDummy->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMesh")); ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CObject_Window::Delete_Dummy()
+{
+	// 이미 더미가 없다면 리턴
+	if (nullptr == m_pDummy)
+	{
+		MSG_BOX("Dummy Already deleted");
+		return S_OK;
+	}
+
+	BEGININSTANCE;
+	if (FAILED(pGameInstance->Delete_Component(LEVEL_TOOL,
+		TEXT("Layer_Tool"), TEXT("Map_Dummy"))))
+	{
+		MSG_BOX("Failed to delete MapDummy");
+		return E_FAIL;
+	} ENDINSTANCE;
+
+	m_pDummy = nullptr;
 
 	return S_OK;
 }
