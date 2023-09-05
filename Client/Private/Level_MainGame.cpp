@@ -44,9 +44,9 @@ HRESULT CLevel_MainGame::Render()
 
 HRESULT CLevel_MainGame::Ready_Lights()
 {
-	/*BEGININSTANCE
+	BEGININSTANCE
 
-		CLight::LIGHTDESC		LightDesc;
+	CLight::LIGHTDESC		LightDesc;
 	ZeroMemory(&LightDesc, sizeof LightDesc);
 
 	LightDesc.eType = CLight::TYPE_DIRECTIONAL;
@@ -56,11 +56,11 @@ HRESULT CLevel_MainGame::Ready_Lights()
 	LightDesc.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
 	LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
 
-	if (nullptr == pGameInstance->Add_Lights(LightDesc))
+	if (nullptr == pGameInstance->Add_Lights(m_pDevice, m_pContext, LightDesc))
 		return E_FAIL;
-	ENDINSTANCE*/
+	ENDINSTANCE
 
-		return S_OK;
+	return S_OK;
 }
 
 HRESULT CLevel_MainGame::Ready_Layer_BackGround(const _tchar* pLayerTag)

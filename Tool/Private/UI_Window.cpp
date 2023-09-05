@@ -772,20 +772,7 @@ void CUI_Window::Load_UI()
 
 void CUI_Window::Capture_UI(ID3D11Texture2D* pTexture, const _tchar* pFilePath)
 {
-	HANDLE hFile = CreateFile(pFilePath, GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
-	if (0 == hFile)
-	{
-		MSG_BOX("CutScene Save Fail");
-		CloseHandle(hFile);
-		return;
-	}
-
-	DWORD dwByte = { 0 };
-
-	WriteFile(hFile, &iListSize, sizeof(_uint), &dwByte, nullptr);
-
-	MSG_BOX("CutScene Save Success");
-	CloseHandle(hFile);
+	
 }
 
 void CUI_Window::Move_UI()

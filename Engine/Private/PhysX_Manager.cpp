@@ -83,6 +83,14 @@ HRESULT CPhysX_Manager::Initialize()
 		return E_FAIL;
 	}
 
+	cloth::InitializeNvCloth(&m_PXAllocator, &m_PXErrorCallBack, m_pAssertHandler, nullptr);
+	m_pClothFactory = NvClothCreateFactoryCPU();
+	if (nullptr == m_pClothFactory)
+	{
+		MSG_BOX("Failed Create ClothFactory");
+		return E_FAIL;
+	}
+
 	return S_OK;
 }
 
@@ -95,11 +103,13 @@ void CPhysX_Manager::Tick(_float fTimeDelta)
 	m_pPhysxScene->fetchResults(true);
 }
 
+#ifdef _DEBUG
 void CPhysX_Manager::Clear_BufferIndex()
 {
 	m_iLastLineBufferIndex = 0;
 	m_iLastTriangleBufferIndex = 0;
 }
+#endif // _DEBUG
 
 PxScene* CPhysX_Manager::Create_Scene()
 {
@@ -124,7 +134,9 @@ PxScene* CPhysX_Manager::Create_Scene()
 void CPhysX_Manager::Free()
 {
 	// 순서 주의
-	// 릴리즈 순서는 거의 이걸로 고정합니다.
+	// 삭제 순서는 거의 이걸로 고정합니다.
+	NvClothDestroyFactory(m_pClothFactory);
+	m_pClothFactory = nullptr;
 	if (nullptr != m_pControllerManager)
 	{
 		m_pControllerManager->release();
@@ -154,5 +166,5 @@ void CPhysX_Manager::Free()
 	if (nullptr != m_pFoundation)
 	{
 		m_pFoundation->release();
-	}	
+	}
 }

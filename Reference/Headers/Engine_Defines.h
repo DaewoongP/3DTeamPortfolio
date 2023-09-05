@@ -40,6 +40,8 @@
 #pragma comment(lib, "PhysXd/PhysXExtensions_static_64.lib")
 #pragma comment(lib, "PhysXd/PhysXCharacterKinematic_static_64.lib")
 
+#pragma comment(lib, "Clothd/NvClothDEBUG_x64.lib")
+
 #else // Release
 
 #pragma comment(lib, "PhysX/PhysX_64.lib")
@@ -48,9 +50,13 @@
 #pragma comment(lib, "PhysX/PhysXExtensions_static_64.lib")
 #pragma comment(lib, "PhysX/PhysXCharacterKinematic_static_64.lib")
 
+#pragma comment(lib, "Cloth/NvCloth_x64.lib")
+
 #endif // _DEBUG
 
 #include <PxPhysicsAPI.h>
+#include <Factory.h>
+#include <DxContextManagerCallback.h>
 
 #include <iostream>
 #include <vector>
@@ -74,7 +80,8 @@ namespace fs = std::filesystem;
 
 using namespace std;
 using namespace DirectX;
-using namespace physx;
+using namespace physx; // physx
+using namespace nv; // nvCloth
 
 #include "DirectXTK\matrix.h"
 

@@ -214,7 +214,7 @@ HRESULT CMainTool::Add_Windows()
 
 	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("Light_Window"),
 		CLight_Window::Create(m_pDevice, m_pContext,
-			ImVec2(_float(g_iWinSizeX+8), _float(0.f)), ImVec2(446.f, 768.f)))))
+			ImVec2(_float(g_iWinSizeX + 8), _float(0.f)), ImVec2(446.f, 768.f)))))
 		MSG_BOX("Failed Create Light_Window");
 
 	return S_OK;
