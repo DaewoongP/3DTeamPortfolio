@@ -6,7 +6,7 @@
 BEGIN(Tool)
 
 // ImGui에서 쓸만한 함수 모음집
-class CImGui_Function final
+class CHelpMaker final
 {
 public:
     // (?)에 커서를 가져가면 문구를 띄워주는 기능

@@ -150,13 +150,13 @@ void CObject_Window::Picking_Menu()
 
 	// imGui에서 값을 조정해서 변환 행렬을 만들어줌.
 	ImGui::DragFloat3("Scale", m_vDummyMatrix[DUMMY_SCALE], 0.1f, 0.1f, 10.f);
-	ImGui::SameLine(); CImGui_Function::HelpMarker("0.1f ~ 10.f");
+	ImGui::SameLine(); CHelpMaker::HelpMarker("0.1f ~ 10.f");
 
 	ImGui::DragFloat3("Rotation", m_vDummyMatrix[DUMMY_ROT], 5.f, 0.f, 360.f);
-	ImGui::SameLine(); CImGui_Function::HelpMarker("0.f ~ 360.f");
+	ImGui::SameLine(); CHelpMaker::HelpMarker("0.f ~ 360.f");
 
 	ImGui::DragFloat3("Translation", m_vDummyMatrix[DUMMY_TRANS], 1.f, -50.f, 50.f);
-	ImGui::SameLine(); CImGui_Function::HelpMarker("-50.f ~ 50.f");
+	ImGui::SameLine(); CHelpMaker::HelpMarker("-50.f ~ 50.f");
 
 	// 상태 행렬 초기화
 	if (ImGui::Button("reset"))
@@ -518,6 +518,7 @@ void CObject_Window::Mesh_Picking_Menu()
 		string s = ("GameObject_MapObject_");
 		s += std::to_string(pickID);
 
+		// 대상 인덱스를 찾는 과정
 		m_iTagIndex = 0;
 		for (auto& iter : m_vecObjectTag_s)
 		{
@@ -541,7 +542,7 @@ void CObject_Window::Mesh_Picking_Menu()
 
 void CObject_Window::Delete_Picking_Object()
 {
-	if (0 != m_vecObjectTag_s.size())
+	if (0 < m_vecObjectTag_s.size())
 	{
 		BEGININSTANCE;
 		if (FAILED(pGameInstance->Delete_Component(LEVEL_TOOL,
@@ -855,7 +856,7 @@ HRESULT CObject_Window::Create_Dummy()
 	}
 
 	m_pDummy = static_cast<CMapDummy*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL, TEXT("Layer_Tool"), TEXT("Map_Dummy")));
-	m_pDummy->Add_Model_Component(m_vecModelList_t.at(0));
+	m_pDummy->Add_Model_Component(TEXT("Prototype_Component_Model_Tree"));
 	m_pDummy->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMesh")); ENDINSTANCE;
 
 	return S_OK;
