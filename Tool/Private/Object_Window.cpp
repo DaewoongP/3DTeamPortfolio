@@ -511,7 +511,7 @@ void CObject_Window::Mesh_Picking_Menu()
 		}
 
 		_uint pickID = { 0 };
-		pickID = ((_uint*)MappedDesc.pData)[0];
+		pickID = ((_int*)MappedDesc.pData)[0];
 
 		m_iTagIndex = pickID - 4278190080;
 
@@ -519,8 +519,34 @@ void CObject_Window::Mesh_Picking_Menu()
 
 		Safe_Release(pCopyTexture2D);
 	}ENDINSTANCE;
+	
+	if(true)
+	{
+		ImGui::SameLine(); ImGui::Text("There is no Object");
+	}
 
-	ImGui::SameLine(); ImGui::Text("GameObject_MapObject_%d", m_iTagIndex);
+	// 메쉬 피킹한 오브젝트 삭제 메뉴
+	if (ImGui::Button("Delete Choice MapObject"))
+	{
+		Delete_Picking_Object();
+	}
+}
+
+void CObject_Window::Delete_Picking_Object()
+{
+	if (0 != m_vecObjectTag_s.size())
+	{
+		BEGININSTANCE;
+		if (FAILED(pGameInstance->Delete_Component(LEVEL_TOOL,
+			TEXT("Layer_MapObject"), m_vecMapObjectTag.at(m_iTagIndex).c_str())))
+		{
+			MSG_BOX("Failed to delete pick MapObject");
+		} ENDINSTANCE;
+
+		m_vecMapObjectTag.erase(m_vecMapObjectTag.begin() + m_iTagIndex);
+		m_vecObjectTag_s.erase(m_vecObjectTag_s.begin() + m_iTagIndex);
+		m_vecSaveObject.erase(m_vecSaveObject.begin() + m_iTagIndex);
+	}
 }
 
 HRESULT CObject_Window::Save_MapObject()
