@@ -12,9 +12,12 @@
 #include "MapObject.h"
 #include "Terrain.h"
 
+#include "HelpMaker.h"
+
 CObject_Window::CObject_Window(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CImWindow(pDevice, pContext)
 {
+	ZeroMemory(&m_vDummyMatrix, sizeof m_vDummyMatrix);
 }
 
 HRESULT CObject_Window::Initialize(ImVec2 vWindowPos, ImVec2 vWindowSize)
@@ -30,6 +33,10 @@ HRESULT CObject_Window::Initialize(ImVec2 vWindowPos, ImVec2 vWindowSize)
 	}		
 
 	m_WindowFlag = ImGuiWindowFlags_NoResize;
+
+	// 스케일 값 1로 초기화
+	for (size_t i = 0; i < 3; i++)
+		m_vDummyMatrix[DUMMY_SCALE][i] = 1.f;
 
 	return S_OK;
 }
@@ -141,6 +148,33 @@ void CObject_Window::Picking_Menu()
 		}
 	} ENDINSTANCE;
 
+	// imGui에서 값을 조정해서 변환 행렬을 만들어줌.
+	ImGui::DragFloat3("Scale", m_vDummyMatrix[DUMMY_SCALE], 0.1f, 0.1f, 10.f);
+	ImGui::SameLine(); CImGui_Function::HelpMarker("0.1f ~ 10.f");
+
+	ImGui::DragFloat3("Rotation", m_vDummyMatrix[DUMMY_ROT], 5.f, 0.f, 360.f);
+	ImGui::SameLine(); CImGui_Function::HelpMarker("0.f ~ 360.f");
+
+	ImGui::DragFloat3("Translation", m_vDummyMatrix[DUMMY_TRANS], 1.f, -50.f, 50.f);
+	ImGui::SameLine(); CImGui_Function::HelpMarker("-50.f ~ 50.f");
+
+	// 조정한 상태값을 Dummy에 적용시킴
+	if (nullptr != m_pDummy)
+	{
+		_float3 vScale;
+		memcpy(&vScale, m_vDummyMatrix[DUMMY_SCALE], sizeof _float3);
+
+		_float3 vRotation;
+		memcpy(&vRotation, m_vDummyMatrix[DUMMY_ROT], sizeof _float3);
+
+		_float3 vTranslation = 
+		{ vPos.x + m_vDummyMatrix[DUMMY_TRANS][0], vPos.y + m_vDummyMatrix[DUMMY_TRANS][1], vPos.z + m_vDummyMatrix[DUMMY_TRANS][2] };
+
+		m_pDummy->Get_Transform()->Set_Scale(vScale);
+		m_pDummy->Get_Transform()->Set_Quaternion(m_pDummy->Get_Transform()->Get_QuaternionVector_RollPitchYaw(vRotation));
+		m_pDummy->Get_Transform()->Set_Position(vTranslation);
+	}
+
 	// Object Install 선택 창 On / Off
 	ImGui::Checkbox("Object Install", &m_isInstallObject);
 	if (true == m_isInstallObject && nullptr != m_pDummy)
@@ -162,10 +196,12 @@ void CObject_Window::Install_Object(_float3 vPos)
 		_stprintf_s(wszobjName, TEXT("GameObject_MapObject_%d"), (m_iMapObjectIndex));
 		Deep_Copy_Tag(wszobjName);
 
+		_float4x4 vWorldMatrix = m_pDummy->Get_Transform()->Get_WorldMatrix();
+
 		// 번호를 붙인 태그로 MapObject 등록
 		if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL,
 			TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_MapObject"), 
-			m_vecMapObjectTag.at(m_iMapObjectIndex).c_str(), &vPos)))
+			m_vecMapObjectTag.at(m_iMapObjectIndex).c_str(), &vWorldMatrix)))
 		{
 			MSG_BOX("Failed to Install MapObject");
 			ENDINSTANCE;
@@ -199,6 +235,12 @@ void CObject_Window::Install_Object(_float3 vPos)
 
 void CObject_Window::Select_Model()
 {
+	if (nullptr == m_pDummy)
+	{
+		ImGui::Text("Dummy does not exist");
+		return;
+	}
+
 	// 현재 선택된 모델이 무엇인지 표시
 	ImGui::TextColored(ImVec4(1, 0, 0, 1), "Current Model");
 	ImGui::TextColored(ImVec4(1, 0, 0, 1), ":");
@@ -467,6 +509,8 @@ void CObject_Window::Mesh_Picking_Menu()
 
 		Safe_Release(pCopyTexture2D);
 	}ENDINSTANCE;
+
+	ImGui::SameLine(); ImGui::Text("GameObject_MapObject_%d", m_iTagIndex);
 }
 
 HRESULT CObject_Window::Save_MapObject()
@@ -749,7 +793,7 @@ HRESULT CObject_Window::Create_Dummy()
 	}
 
 	m_pDummy = static_cast<CMapDummy*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL, TEXT("Layer_Tool"), TEXT("Map_Dummy")));
-	m_pDummy->Add_Model_Component(TEXT("Prototype_Component_Model_Tree"));
+	m_pDummy->Add_Model_Component(m_vecModelList_t.at(0));
 	m_pDummy->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMesh")); ENDINSTANCE;
 
 	return S_OK;

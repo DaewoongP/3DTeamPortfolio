@@ -97,6 +97,9 @@
     <Filter Include="02. ToolObjects\01. Dummy\Dummy_Font">
       <UniqueIdentifier>{93814c9a-ebfe-4f49-93d2-c4b71a7a60fa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Window\CustomWidget\HelpMaker">
+      <UniqueIdentifier>{d6c45bec-d187-4db1-adf1-30da1bfb54cc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tool.h">
@@ -233,6 +236,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\Dummy_UI_Group.h">
       <Filter>02. ToolObjects\01. Dummy\Dummy_UI</Filter>
+    </ClInclude>
+    <ClInclude Include="HelpMaker.h">
+      <Filter>01. Window\CustomWidget\HelpMaker</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

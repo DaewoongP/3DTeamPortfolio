@@ -29,8 +29,8 @@ HRESULT CMapObject::Initialize(void* pArg)
 
 	if (nullptr != pArg)
 	{
-		_float3* vPos = (_float3*)pArg;
-		m_pTransform->Set_Position(*vPos);
+		_float4x4* vWorldMatrix = (_float4x4*)pArg;
+		m_pTransform->Set_WorldMatrix(*vWorldMatrix);
 	}
 
 	return S_OK;
