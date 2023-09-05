@@ -34,7 +34,7 @@ HRESULT CObject_Window::Initialize(ImVec2 vWindowPos, ImVec2 vWindowSize)
 	{
 		MSG_BOX("Failed to Save_Model_Path function");
 		return S_OK;
-	}		
+	}
 
 	m_WindowFlag = ImGuiWindowFlags_NoResize;
 
@@ -511,19 +511,26 @@ void CObject_Window::Mesh_Picking_Menu()
 		}
 
 		_uint pickID = { 0 };
-		pickID = ((_int*)MappedDesc.pData)[0];
+		pickID = ((_uint*)MappedDesc.pData)[0];
 
-		m_iTagIndex = pickID - 4278190080;
+		pickID -= 4278190080;
+
+		string s = ("GameObject_MapObject_");
+		s += std::to_string(pickID);
+
+		m_iTagIndex = 0;
+		for (auto& iter : m_vecObjectTag_s)
+		{
+			if (iter == s)
+				break;
+
+			++m_iTagIndex;
+		}
 
 		m_pContext->Unmap(pCopyTexture2D, 0);
 
 		Safe_Release(pCopyTexture2D);
 	}ENDINSTANCE;
-	
-	if(true)
-	{
-		ImGui::SameLine(); ImGui::Text("There is no Object");
-	}
 
 	// 메쉬 피킹한 오브젝트 삭제 메뉴
 	if (ImGui::Button("Delete Choice MapObject"))
@@ -540,7 +547,8 @@ void CObject_Window::Delete_Picking_Object()
 		if (FAILED(pGameInstance->Delete_Component(LEVEL_TOOL,
 			TEXT("Layer_MapObject"), m_vecMapObjectTag.at(m_iTagIndex).c_str())))
 		{
-			MSG_BOX("Failed to delete pick MapObject");
+			MSG_BOX("Failed to delete Picking MapObject");
+			return;
 		} ENDINSTANCE;
 
 		m_vecMapObjectTag.erase(m_vecMapObjectTag.begin() + m_iTagIndex);

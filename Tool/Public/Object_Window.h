@@ -66,7 +66,7 @@ private:
 	_uint m_iMapObjectIndex = { 0 }; // 현재 맵에 설치된 맵 오브젝트의 개수
 
 	string m_strCurrentModel = { "Dummy" }; // 현재 활성화된 모델 이름, 초기값은 더미
-	_float m_vDummyMatrix[DUMMY_END][3];	// 더미의 상태 행렬, 이 값을 저장함
+	_float m_vDummyMatrix[DUMMY_END][3];	// 더미의 상태 행렬, 이 값을 .ddd 파일에 저장함
 
 	_int m_iModelIndex = { 0 }; // 선택된 모델 인덱스
 	_int m_iTagIndex = { 0 }; // 선택된 맵 오브젝트 태그 인덱스
