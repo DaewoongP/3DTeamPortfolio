@@ -7,6 +7,9 @@
 #include "GameObject.h"
 #include "Dummy_UI_Group.h"
 
+#include "RenderTarget_Manager.h"
+#include "RenderTarget.h"
+
 CUI_Window::CUI_Window(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CImWindow(pDevice, pContext)
 {
@@ -88,6 +91,18 @@ void CUI_Window::Tick(_float fTimeDelta)
 	Correction_Pick();
 	Interaction_UI();
 	Move_UI();
+
+
+	if (ImGui::Button("Capture"))
+	{
+		CGameInstance* pGameInstance = CGameInstance::GetInstance();
+		Safe_AddRef(pGameInstance);
+		ID3D11Texture2D* pTexture = pGameInstance->Find_RenderTarget(TEXT("Target_Picking"))->Get_Texture2D();
+
+		Capture_UI(pTexture, TEXT("../../"));
+
+		Safe_Release(pGameInstance);
+	}
 
 	ImGui::End();
 }
@@ -730,6 +745,24 @@ void CUI_Window::UI_Gruop_Combo()
 void CUI_Window::Load_UI()
 {
 	Open_Dialog();
+}
+
+void CUI_Window::Capture_UI(ID3D11Texture2D* pTexture, const _tchar* pFilePath)
+{
+	HANDLE hFile = CreateFile(pFilePath, GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+	if (0 == hFile)
+	{
+		MSG_BOX("CutScene Save Fail");
+		CloseHandle(hFile);
+		return;
+	}
+
+	DWORD dwByte = { 0 };
+
+	WriteFile(hFile, &iListSize, sizeof(_uint), &dwByte, nullptr);
+
+	MSG_BOX("CutScene Save Success");
+	CloseHandle(hFile);
 }
 
 void CUI_Window::Move_UI()

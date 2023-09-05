@@ -72,6 +72,7 @@ public: // Function
 	void	Correction_Pick();
 	void	Save_UI();
 	void	Load_UI();
+	void	Capture_UI(ID3D11Texture2D* pTexture, const _tchar* pFilePath);
 
 public:
 	_bool Load_ImTexture(const _char* pFilePath, ID3D11ShaderResourceView** out_srv, _int* out_width, _int* out_height);

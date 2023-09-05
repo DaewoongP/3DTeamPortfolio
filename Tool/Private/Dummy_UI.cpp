@@ -64,7 +64,12 @@ void CDummy_UI::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 	if (nullptr != m_pRendererCom)
+	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this);
+#ifdef _DEBUG
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UITEXTURE, this);
+#endif // _DEBUG
+	}
 }
 
 HRESULT CDummy_UI::Render()
