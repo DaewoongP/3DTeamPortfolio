@@ -65,9 +65,10 @@ void CObject_Window::Tick(_float fTimeDelta)
 	ImGui::Checkbox("Current MapObject", &m_isCurrentMapObject);
 	if (true == m_isCurrentMapObject)
 	{
-		ImGui::Begin("Current MapObject", nullptr);
+		// 새창으로 띄우면 프레임 떨어져서 주석처리함
+		//ImGui::Begin("Current MapObject", nullptr);
 		Current_MapObject();
-		ImGui::End();
+		//ImGui::End();
 	}
 
 	ImGui::Separator();
@@ -255,13 +256,33 @@ void CObject_Window::Current_MapObject()
 	ImGui::ListBox("Map Object List", &m_iTagIndex, VectorGetter,
 		static_cast<void*>(&m_vecObjectTag_s), (_int)m_vecObjectTag_s.size(), 20);
 
-	//// 메쉬 피킹 메뉴 On / Off
-	//ImGui::Checkbox("Object Picking", &m_isPickingObject);
-	//if (true == m_isPickingObject)
-	//{
-	//	// 지형 피킹 메뉴 Off
-	//	Mesh_Picking_Menu();
-	//}	
+	/*if (ImGui::BeginListBox("Map Object List", ImVec2(0, 500)))
+	{
+		for (size_t i = 0; i < m_vecObjectTag_s.size(); i++)
+		{
+			_bool isSelected = (i == m_iTagIndex);
+
+			if (ImGui::Selectable(m_vecObjectTag_s.at(i).c_str(), isSelected))
+			{
+				m_iTagIndex = i;
+			}
+
+			if (true == isSelected)
+			{
+				ImGui::SetItemDefaultFocus();
+			}
+		}
+
+		ImGui::EndListBox();
+	}*/
+
+	// 메쉬 피킹 메뉴 On / Off
+	ImGui::Checkbox("Object Picking", &m_isPickingObject);
+	if (true == m_isPickingObject)
+	{
+		// 지형 피킹 메뉴 Off
+		Mesh_Picking_Menu();
+	}	
 }
 
 void CObject_Window::Save_Load_Menu()
