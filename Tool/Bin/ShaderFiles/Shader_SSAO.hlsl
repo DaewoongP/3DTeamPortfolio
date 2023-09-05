@@ -332,7 +332,7 @@ PS_OUT PS_MAIN_SHADOW(PS_IN In)
 
     if (CamDepth > vLightDepth.x)
     {
-        Out.vColor = float4(0.f, 0.f, 0.f, 1.f);
+        Out.vColor = float4(0.05f, 0.05f, 0.05f, 0.05f);
     }
     else
         discard;
