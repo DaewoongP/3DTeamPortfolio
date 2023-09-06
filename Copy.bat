@@ -23,9 +23,9 @@ xcopy				/y			.\Engine\Bin\fmod.dll				.\Client\Bin\
 xcopy				/y			.\Engine\Bin\fmod.dll				.\Tool\Bin\
 xcopy				/y			.\Engine\Bin\fmod.dll				.\Assimp\Bin\
 
-xcopy				/y			.\Engine\Bin\*.dll			.\Client\Bin\
-xcopy				/y			.\Engine\Bin\*.dll			.\Tool\Bin\
+xcopy				/y			.\Engine\Bin\*.dll					.\Client\Bin\
+xcopy				/y			.\Engine\Bin\*.dll					.\Tool\Bin\
 
 
-xcopy				/y			.\Engine\Bin\*.dll			.\Assimp\Bin\
+xcopy				/y			.\Engine\Bin\*.dll					.\Assimp\Bin\
 

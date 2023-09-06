@@ -100,6 +100,30 @@
     <Filter Include="02. GameObject\02. Enemy\00. Troll\00. Armored_Troll\Weapon">
       <UniqueIdentifier>{cc4def40-eb2b-4c6e-b1d0-03d0027e89bc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Tasks\Movement">
+      <UniqueIdentifier>{d95f3888-ed91-44de-bed2-7ee502737efa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\02. Dugbog">
+      <UniqueIdentifier>{ea8cf730-c75f-4ad8-a593-3de6f11919a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\03. Golem">
+      <UniqueIdentifier>{75e17a41-3815-4778-b3dd-847b9cc46d8b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\03. Golem\00. Combat">
+      <UniqueIdentifier>{9b9a0dfc-c373-4b0b-9c88-3e4ef1df5fc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\03. Golem\01. Grunt">
+      <UniqueIdentifier>{9ec5a2b7-17a7-4c20-8194-414fa8e6e734}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\03. Golem\02. Merlin">
+      <UniqueIdentifier>{10bbfeaa-2a97-4946-ab9f-befd32504fe9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\03. Golem\03. Pensive">
+      <UniqueIdentifier>{86967c1b-301e-4843-a160-8603ef017876}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\03. Golem\99. Weapons">
+      <UniqueIdentifier>{fde3512d-c9d7-4f98-baac-ed8650da6e1a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -210,6 +234,39 @@
     <ClInclude Include="..\Public\Action.h">
       <Filter>03. Tasks</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Behavior_Includes.h">
+      <Filter>99. Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Wait.h">
+      <Filter>03. Tasks\Movement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Dugbog.h">
+      <Filter>02. GameObject\02. Enemy\02. Dugbog</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Golem_Combat.h">
+      <Filter>02. GameObject\02. Enemy\03. Golem\00. Combat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Golem_Grunt.h">
+      <Filter>02. GameObject\02. Enemy\03. Golem\01. Grunt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Golem_Merlin.h">
+      <Filter>02. GameObject\02. Enemy\03. Golem\02. Merlin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Weapon_Golem_Merlin.h">
+      <Filter>02. GameObject\02. Enemy\03. Golem\99. Weapons</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Weapon_Golem_Combat.h">
+      <Filter>02. GameObject\02. Enemy\03. Golem\99. Weapons</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Weapon_Golem_Grunt.h">
+      <Filter>02. GameObject\02. Enemy\03. Golem\99. Weapons</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Pensive.h">
+      <Filter>02. GameObject\02. Enemy\03. Golem\03. Pensive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Weapon_Pensive.h">
+      <Filter>02. GameObject\02. Enemy\03. Golem\99. Weapons</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -293,6 +350,36 @@
     <ClCompile Include="..\Private\Action.cpp">
       <Filter>03. Tasks</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Wait.cpp">
+      <Filter>03. Tasks\Movement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Dugbog.cpp">
+      <Filter>02. GameObject\02. Enemy\02. Dugbog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Golem_Combat.cpp">
+      <Filter>02. GameObject\02. Enemy\03. Golem\00. Combat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Golem_Grunt.cpp">
+      <Filter>02. GameObject\02. Enemy\03. Golem\01. Grunt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Golem_Merlin.cpp">
+      <Filter>02. GameObject\02. Enemy\03. Golem\02. Merlin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Weapon_Golem_Merlin.cpp">
+      <Filter>02. GameObject\02. Enemy\03. Golem\99. Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Weapon_Golem_Combat.cpp">
+      <Filter>02. GameObject\02. Enemy\03. Golem\99. Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Weapon_Golem_Grunt.cpp">
+      <Filter>02. GameObject\02. Enemy\03. Golem\99. Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Pensive.cpp">
+      <Filter>02. GameObject\02. Enemy\03. Golem\03. Pensive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Weapon_Pensive.cpp">
+      <Filter>02. GameObject\02. Enemy\03. Golem\99. Weapons</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -327,9 +414,6 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMesh.hlsl">
       <Filter>97. ShaderFiles\Meshes</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_Debug.hlsl">
-      <Filter>97. ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxMesh.hlsl">
       <Filter>97. ShaderFiles\Meshes</Filter>

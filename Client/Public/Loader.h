@@ -15,6 +15,7 @@ private:
 	virtual ~CLoader() = default;
 
 public:
+	const HANDLE Get_Thread() const { return m_hThread; }
 	const _tchar* Get_LoadingText() const { return m_szLoading; }
 	_uint Get_LoadingPercent() const { return m_iLoadingPercent; }
 	_bool Get_Finished() const { return m_isFinished; }

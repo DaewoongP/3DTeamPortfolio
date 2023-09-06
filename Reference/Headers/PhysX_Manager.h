@@ -2,6 +2,8 @@
 #include "PXAllocator.h"
 #include "PXErrorCallBack.h"
 #include "PXEventCallBack.h"
+#include "NVContextCallBack.h"
+#include "PXAssertHandler.h"
 #include "Base.h"
 
 BEGIN(Engine)
@@ -24,6 +26,7 @@ public:
 	_uint Get_LastTriangleBufferIndex();
 	void Add_LastLineBufferIndex(_uint iNumLines);
 	void Add_LastTriangleBufferIndex(_uint iNumTriangles);
+	void Clear_BufferIndex();
 #endif // _DEBUG
 
 private:
@@ -31,11 +34,8 @@ private:
 	virtual ~CPhysX_Manager() = default;
 	
 public:
-	HRESULT Initialize();
+	HRESULT Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	void Tick(_float fTimeDelta);
-
-public:
-	void Clear_BufferIndex();
 
 private: /* 에러 메세지 등 cout 처리 */
 	CPXErrorCallBack			m_PXErrorCallBack;
@@ -54,14 +54,21 @@ private: /* 피직스 기본 변수들 */
 	PxScene*					m_pPhysxScene = { nullptr };
 	// 모든 컨트롤러를 제어하는 매니저
 	PxControllerManager*		m_pControllerManager = { nullptr };
-	
-private:
+
+private: /* NvCloth */
+	cloth::Factory*				m_pClothFactory = { nullptr };
+	CNVContextCallBack*			m_pContextManagerCallBack = { nullptr };
+	CPXAssertHandler*			m_pAssertHandler = { nullptr };
+
+#ifdef _DEBUG
+	private:
 	// 디버그 렌더링에 필요한 인덱스값
 	// 마지막 인덱스를 저장해두고 렌더링 처리함.
 	_uint						m_iLastLineBufferIndex = { 0 };
 	// 디버그 렌더링에 필요한 인덱스값
 	// 마지막 인덱스를 저장해두고 렌더링 처리함.
 	_uint						m_iLastTriangleBufferIndex = { 0 };
+#endif // _DEBUG
 
 private:
 	PxScene* Create_Scene();

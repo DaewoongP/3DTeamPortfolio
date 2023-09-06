@@ -1,7 +1,6 @@
 #include "Shader_Tool_Defines.hlsli"
 
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
-
 float4 g_vColor;
 
 struct VS_IN

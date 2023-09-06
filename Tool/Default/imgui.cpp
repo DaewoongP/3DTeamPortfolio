@@ -18983,6 +18983,33 @@ void ImGui::DebugTextEncoding(const char* str)
     EndTable();
 }
 
+IMGUI_API void ImGui::DebugTextEncoding(const char* text, wchar_t* pKorFont)
+{
+    for (const char* p = text; *p != 0; )
+    {
+        unsigned int c;
+        const int c_utf8_len = ImTextCharFromUtf8(&c, p, NULL);
+        TableNextColumn();
+        Text("%d", (int)(p - text));
+        TableNextColumn();
+        for (int byte_index = 0; byte_index < c_utf8_len; byte_index++)
+        {
+            if (byte_index > 0)
+                SameLine();
+            Text("0x%02X", (int)(unsigned char)p[byte_index]);
+        }
+        TableNextColumn();
+        if (GetFont()->FindGlyphNoFallback((ImWchar)c))
+            TextUnformatted(p, p + c_utf8_len);
+        else
+            TextUnformatted((c == IM_UNICODE_CODEPOINT_INVALID) ? "[invalid]" : "[missing]");
+        TableNextColumn();
+        Text("U+%04X", (int)c);
+        lstrcat(pKorFont, reinterpret_cast<wchar_t*>(&c));
+        p += c_utf8_len;
+    }
+}
+
 // Avoid naming collision with imgui_demo.cpp's HelpMarker() for unity builds.
 static void MetricsHelpMarker(const char* desc)
 {

@@ -36,6 +36,8 @@ public:
 	void	Set_Parent();
 	void	Set_Child(class CDummy_UI* pChild) { m_Childs.push_back(pChild); }
 //	void	Set_isSelected(_bool isSelected = true) { m_isSelected = isSelected; }
+	void	Delete(class CDummy_UI* pDeleteUI);
+	void	Clear();
 
 private: // For Imgui
 //	_bool	m_isSelected = { false };

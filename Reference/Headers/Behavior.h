@@ -43,9 +43,6 @@ protected:
 	virtual ~CBehavior() = default;
 
 public:
-
-
-public:
 	virtual HRESULT Initialize_Prototype() = 0;
 	virtual HRESULT Initialize(void* pArg) = 0;
 	virtual HRESULT Tick(const _float & fTimeDelta) = 0;
@@ -60,7 +57,6 @@ protected:
 	class CBlackBoard* m_pBlackBoard = { nullptr };
 	/* 비헤비어트리의 상위 노드 포인터 */
 	CBehavior* m_pParentBehavior = { nullptr };
-	HRESULT m_ReturnData = { 0 };
 
 protected:
 	list<class CDecorator*> m_Decorations;
@@ -76,7 +72,19 @@ protected:
 	virtual void Free() override;
 
 #ifdef _DEBUG
-	void Find_Running_Behavior(_Inout_ stack<wstring> BehaviorTags);
+public:
+	HRESULT Get_ReturnData() const {
+		return m_ReturnData;
+	}
+	void Set_ReturnData(HRESULT hr) {
+		m_ReturnData = hr;
+	}
+
+protected:
+	HRESULT m_ReturnData = { 0 };
+
+protected:
+	void Find_Running_Behavior(_Inout_ vector<wstring>& BehaviorTags);
 #endif // _DEBUG
 };
 

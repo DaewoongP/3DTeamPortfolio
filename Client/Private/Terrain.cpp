@@ -46,7 +46,6 @@ void CTerrain::Late_Tick(_float fTimeDelta)
 		m_pRenderer->Add_DebugGroup(m_pPlane);
 #endif // _DEBUG
 	}
-		
 }
 
 HRESULT CTerrain::Render()

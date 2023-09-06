@@ -53,21 +53,24 @@ HRESULT CWeapon_Armored_Troll::Render()
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
-		if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", i, DIFFUSE)))
+		try
 		{
-			MSG_BOX("[CWeapon_Armored_Troll] Failed Render : (Bind_Material)");
-			return E_FAIL;
-		}
+			if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", i, DIFFUSE)))
+				throw TEXT("Failed Bind_Material : g_DiffuseTexture");
 
-		if(FAILED(m_pShaderCom->Begin("Mesh")))
-		{
-			MSG_BOX("[CWeapon_Armored_Troll] Failed Render : (Begin)");
-			return E_FAIL;
-		}
+			if (FAILED(m_pShaderCom->Begin("Mesh")))
+				throw TEXT("Failed Begin : Mesh");
 
-		if(FAILED(m_pModelCom->Render(i)))
+			if (FAILED(m_pModelCom->Render(i)))
+				throw TEXT("Failed Render");
+		}
+		catch (const _tchar* pErrorTag)
 		{
-			MSG_BOX("[CWeapon_Armored_Troll] Failed Render : (Render)");
+			wstring wstrErrorMSG = TEXT("[CWeapon_Armored_Troll] Failed Render : \n");
+			wstrErrorMSG += pErrorTag;
+			MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+			__debugbreak();
+
 			return E_FAIL;
 		}
 	}
@@ -77,24 +80,26 @@ HRESULT CWeapon_Armored_Troll::Render()
 
 HRESULT CWeapon_Armored_Troll::Add_Components(void* pArg)
 {
-	if (FAILED(Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Weopon_Armored_Troll"), L"Com_Model",
-		(CComponent**)&m_pModelCom, this)))
+	try /* Check Add_Components */
 	{
-		MSG_BOX("[CWeapon_Armored_Troll] Failed Add_Component (Com_Model)");
-		return E_FAIL;
-	}
+		if (FAILED(Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Weopon_Armored_Troll"), L"Com_Model",
+			(CComponent**)&m_pModelCom, this)))
+			throw TEXT("Failed Add_Component : Com_Model");
 
-	if (FAILED(Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"),
-		(CComponent**)&m_pRendererCom, this)))
-	{
-		MSG_BOX("[CWeapon_Armored_Troll] Failed Add_Component (Com_Renderer)");
-		return E_FAIL;
-	}
+		if (FAILED(Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"),
+			(CComponent**)&m_pRendererCom, this)))
+			throw TEXT("Failed Add_Component : Com_Renderer");
 
-	if (FAILED(Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxMesh"), TEXT("Com_Shader_Mesh"),
-		(CComponent**)&m_pShaderCom, this)))
+		if (FAILED(Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxMesh"), TEXT("Com_Shader_Mesh"),
+			(CComponent**)&m_pShaderCom, this)))
+			throw TEXT("Failed Add_Component : Com_Shader_Mesh");
+	}
+	catch (const _tchar* pErrorTag)
 	{
-		MSG_BOX("[CWeapon_Armored_Troll] Failed Add_Component (Com_Shader_Mesh)");
+		wstring wstrErrorMSG = TEXT("[CWeapon_Armored_Troll] Failed Add_Components : \n");
+		wstrErrorMSG += pErrorTag;
+		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+
 		return E_FAIL;
 	}
 
@@ -103,19 +108,37 @@ HRESULT CWeapon_Armored_Troll::Add_Components(void* pArg)
 
 HRESULT CWeapon_Armored_Troll::Set_Shader_Resources()
 {
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
+	BEGININSTANCE;
 
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
-		return E_FAIL;
+	try /* Check SetUp_ShaderResources */
+	{
+		if (nullptr == m_pShaderCom)
+			throw TEXT("m_pShaderCom is nullptr");
 
-	Safe_Release(pGameInstance);
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
+			throw TEXT("Failed Bind_Matrix : g_WorldMatrix");
+
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW))))
+			throw TEXT("Failed Bind_Matrix : g_ViewMatrix");
+
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
+			throw TEXT("Failed Bind_Matrix : g_ProjMatrix");
+
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
+			throw TEXT("Failed Bind_RawValue : g_fCamFar");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed SetUp_ShaderResources : \n");
+		wstrErrorMSG += pErrorTag;
+		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+
+		ENDINSTANCE;
+
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
 
 	return S_OK;
 }

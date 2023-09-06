@@ -8,6 +8,8 @@ CDummy_Font::CDummy_Font(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 CDummy_Font::CDummy_Font(const CDummy_Font& rhs)
 	: CGameObject(rhs)
+	, m_pBatch(rhs.m_pBatch)
+	, m_pFont(rhs.m_pFont)
 	, m_vPos(rhs.m_vPos)
 	, m_vScale(rhs.m_vScale)
 {
@@ -32,8 +34,17 @@ HRESULT CDummy_Font::Initialize(void* pArg)
 
 	if (nullptr != pArg)
 	{
-		_float2* vSize = (_float2*)pArg;
-		Set_vScale(*vSize);
+		lstrcpy(m_pText, (_tchar*)pArg);
+	}
+
+	m_isClone = true;
+
+	/* Com_Renderer */
+	if (FAILED(CComposite::Add_Component(LEVEL_TOOL, TEXT("Prototype_Component_Renderer"),
+		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRendererCom))))
+	{
+		MSG_BOX("Failed CDummy_UI Add_Component : (Com_Renderer)");
+		return E_FAIL;
 	}
 
 	return S_OK;
@@ -47,10 +58,18 @@ void CDummy_Font::Tick(_float fTimeDelta)
 
 void CDummy_Font::Late_Tick(_float fTimeDelta)
 {
+	__super::Late_Tick(fTimeDelta);
+
 	Set_vPos(m_vPos);
 	Set_vScale(m_vScale);
 
-	return __super::Late_Tick(fTimeDelta);
+	if (nullptr != m_pRendererCom)
+	{
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this);
+#ifdef _DEBUG
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UITEXTURE, this);
+#endif // _DEBUG
+	}
 }
 
 HRESULT CDummy_Font::Render()
@@ -69,25 +88,6 @@ HRESULT CDummy_Font::Render()
 
 	return S_OK;
 }
-/*
-_bool CDummy_Font::Is_In_Rect()
-{
-	_bool		isIn = false;
-
-	POINT		ptMouse;
-	GetCursorPos(&ptMouse);
-
-	ScreenToClient(g_hWnd, &ptMouse);
-
-	RECT		rcUI;
-
-	SetRect(&rcUI, _int(m_fX - m_fSizeX * 0.5f), _int(m_fY - m_fSizeY * 0.5f), _int(m_fX + m_fSizeX * 0.5f), _int(m_fY + m_fSizeY * 0.5f));
-
-	isIn = PtInRect(&rcUI, ptMouse);
-
-	return isIn;
-}
-*/
 
 
 CDummy_Font* CDummy_Font::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFontFilePath)
@@ -120,6 +120,11 @@ void CDummy_Font::Free()
 {
 	__super::Free();
 
-	Safe_Delete(m_pBatch);
-	Safe_Delete(m_pFont);
+	if (!m_isClone)
+	{
+		Safe_Delete(m_pBatch);
+		Safe_Delete(m_pFont);
+	}
+
+	Safe_Release(m_pRendererCom);
 }

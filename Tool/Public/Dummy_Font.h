@@ -26,7 +26,7 @@ public:
 	void Set_vScale(_float2 vScale) { m_vScale = vScale;}
 
 protected:
-	const _tchar*	m_pText = { nullptr };
+	_tchar			m_pText[MAX_PATH] = TEXT("");
 	_float2			m_vPos = { 650.f, 360.f };
 	XMVECTOR		m_vColor = Colors::White;
 	_float			m_fRotation = { 0.f };
@@ -36,6 +36,11 @@ protected:
 private:
 	SpriteBatch*		m_pBatch = { nullptr };
 	SpriteFont*			m_pFont = { nullptr };
+
+private:
+	_bool			m_isClone = { false };
+	CRenderer*		m_pRendererCom = { nullptr };
+
 
 public:
 	static CDummy_Font* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFontFilePath);

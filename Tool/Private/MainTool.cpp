@@ -123,6 +123,7 @@ HRESULT CMainTool::Initialize_ImGui()
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
+	io.Fonts->AddFontFromFileTTF("../../Resources/Fonts/NEXONLv1GothicBold.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesKorean());
 
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
@@ -196,33 +197,32 @@ HRESULT CMainTool::Add_Windows()
 	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("Object_Window"),
 		CObject_Window::Create(m_pDevice, m_pContext,
 			ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(400.f, 700.f)))))
-		return E_FAIL;
+		MSG_BOX("Failed Create Object_Window");
 	
 	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("Effect_Window"),
 		CEffect_Window::Create(m_pDevice, m_pContext,
 			ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(446.f, 768.f)))))
-		return E_FAIL;
+		MSG_BOX("Failed Create Object_Window");
 
 	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("Animation_Window"),
 		CAnimation_Window::Create(m_pDevice, m_pContext,
-			ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(446.f, 768.f)))))
-		return E_FAIL;
+			ImVec2(_float(100.f), _float(0.f)), ImVec2(446.f, 768.f)))))
+		MSG_BOX("Failed Create Animation_Window");
 
 	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("UI_Window"),
 		CUI_Window::Create(m_pDevice, m_pContext,
 			ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(446.f, 768.f)))))
-		return E_FAIL;
+		MSG_BOX("Failed Create UI_Window");
 
 	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("Camera_Window"),
 		CCamera_Window::Create(m_pDevice, m_pContext,
 			ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(446.f, 768.f)))))
-		return E_FAIL;
+		MSG_BOX("Failed Create Camera_Window");
 
 	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("Light_Window"),
 		CLight_Window::Create(m_pDevice, m_pContext,
-			ImVec2(_float(g_iWinSizeX+8), _float(0.f)), ImVec2(446.f, 768.f)))))
-		return E_FAIL;
-
+			ImVec2(_float(g_iWinSizeX + 8), _float(0.f)), ImVec2(446.f, 768.f)))))
+		MSG_BOX("Failed Create Light_Window");
 
 	return S_OK;
 }

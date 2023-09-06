@@ -62,7 +62,7 @@ public:
 
 public:
 	HRESULT Initialize(Engine::ANIMATION Animation, const CModel::BONES& Bones);
-	_bool Invalidate_AccTime(_float fTimeDelta); 
+	_bool Invalidate_AccTime(_float fTimeDelta);
 	void Invalidate_TransformationMatrix(CModel::BONES& Bones, _float fTimeDelta, vector<_uint>* boneVec = nullptr);
 	void Invalidate_TransformationMatrix_Lerp(CModel::BONES& Bones, _float fTimeDelta, _float LerpTimeAcc, _uint iRootIndex, vector<_uint>* boneVec = nullptr);
 	void Invalidate_Frame(_float fTimeDelta);
@@ -74,7 +74,7 @@ private:
 	// 채널을 담고있는 벡터 컨테이너
 	vector<class CChannel*>		m_Channels;
 	// 노티파이(알람,사운드,충돌체,파티클,속도 재생용 채널 컨테이너)
-	class CNotify*				m_pNotify = {nullptr};
+	class CNotify*				m_pNotify = { nullptr };
 	// 각 채널의 현재 키프레임 인덱스
 	vector<_uint>				m_ChannelCurrentKeyFrames;
 	// 노티파이의 현재 키프레임 인덱스
