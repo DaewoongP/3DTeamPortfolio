@@ -121,7 +121,7 @@
       <PreprocessorDefinitions>_USE_IMGUI;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>backends/;../Public/;../../Reference/Headers/;misc/debuggers/;../Default/;../../Reference/Headers/PhysX/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>backends/;../Public/;../../Reference/Headers/;misc/debuggers/;../Default/;../../Reference/Headers/PhysX/;../../Reference/Headers/NvCloth/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4828;4204</DisableSpecificWarnings>
     </ClCompile>
     <Link>
@@ -146,7 +146,7 @@
       <PreprocessorDefinitions>_USE_IMGUI;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>backends/;../Public/;../../Reference/Headers/;misc/debuggers/;../Default/;../../Reference/Headers/PhysX/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>backends/;../Public/;../../Reference/Headers/;misc/debuggers/;../Default/;../../Reference/Headers/PhysX/;../../Reference/Headers/NvCloth/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4828;4204</DisableSpecificWarnings>
     </ClCompile>
     <Link>
@@ -165,6 +165,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Public\Camera_Line.h" />
     <ClInclude Include="..\Public\Camera_Window.h" />
     <ClInclude Include="..\Public\Dummy_Font.h" />
     <ClInclude Include="..\Public\Dummy_UI_Group.h" />
@@ -213,6 +214,7 @@
     <ClInclude Include="Tool.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Private\Camera_Line.cpp" />
     <ClCompile Include="..\Private\Camera_Window.cpp" />
     <ClCompile Include="..\Private\ComboBox.cpp" />
     <ClCompile Include="..\private\CustomWidget.cpp" />
@@ -287,6 +289,7 @@
     <None Include="misc\debuggers\imgui.natstepfilter" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Debug.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Sky.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Terrain.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointColInstance.hlsl" />

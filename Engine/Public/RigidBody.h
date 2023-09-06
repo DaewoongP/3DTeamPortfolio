@@ -50,6 +50,11 @@ public:
 	void Set_Kinematic(_bool _isKinematic);
 	void Set_Density(_float _fDensity) const;
 
+#ifdef _DEBUG
+	void Set_DebugColor(_float4 _vColor) { m_vColor = _vColor; }
+#endif // _DEBUG
+
+
 	_bool Is_Static()  const { return m_isStatic; }
 	_bool Is_Dynamic()  const { return !m_isStatic; }
 	_bool Is_Kinematic() const { return m_isKinematic; }
@@ -94,6 +99,7 @@ private:
 	CShader*				m_pShader = { nullptr };
 	CVIBuffer_Line*			m_pLine = { nullptr };
 	CVIBuffer_Triangle*		m_pTriangle = { nullptr };
+	_float4					m_vColor;
 
 private:
 	_uint					m_iNumLineBuffer = { 0 };

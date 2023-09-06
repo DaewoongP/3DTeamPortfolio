@@ -49,6 +49,22 @@ void CLevel_Loading::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
+	if (nullptr == m_pLoader)
+		return;
+
+	_ulong dwData = { 0 };
+
+	if (true == GetExitCodeThread(m_pLoader->Get_Thread(), &dwData))
+	{
+		if (-1 == dwData)
+		{
+			MSG_BOX("Loading Failed");
+			PostQuitMessage(0);
+			Safe_Release(m_pLoader);
+			return;
+		}
+	}
+
 	if (GetKeyState(VK_RETURN) & 0x8000)
 	{
 		// 로딩완료 체크

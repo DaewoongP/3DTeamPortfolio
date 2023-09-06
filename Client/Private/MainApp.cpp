@@ -98,53 +98,46 @@ HRESULT CMainApp::Ready_Prototype_Component_For_Static()
 	if (nullptr == m_pGameInstance)
 		return E_FAIL;
 
-	/* Prototype_Component_Renderer */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"),
-		m_pRenderer = CRenderer::Create(m_pDevice, m_pContext))))
+	try
 	{
-		MSG_BOX("Failed Add_Prototype  : (Prototype_Component_Renderer)");
-		return E_FAIL;
-	}
-	Safe_AddRef(m_pRenderer);
+		/* Prototype_Component_Renderer */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"),
+			m_pRenderer = CRenderer::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Renderer");
+		Safe_AddRef(m_pRenderer);
 
-	/* Prototype_Component_Shader_VtxTex */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxTex"),
-		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxTex.hlsl"),
-			VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements))))
-	{
-		MSG_BOX("Failed Add_Prototype  : (Prototype_Component_Shader_VtxTex)");
-		return E_FAIL;
-	}
+		/* Prototype_Component_Shader_VtxTex */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxTex"),
+			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxTex.hlsl"),
+				VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements))))
+			throw TEXT("Prototype_Component_Shader_VtxTex");
 
-	/* Prototype_Component_VIBuffer_Rect */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Rect"),
-		CVIBuffer_Rect::Create(m_pDevice, m_pContext))))
-	{
-		MSG_BOX("Failed Add_Prototype  : (Prototype_Component_VIBuffer_Rect)");
-		return E_FAIL;
-	}
+		/* Prototype_Component_VIBuffer_Rect */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Rect"),
+			CVIBuffer_Rect::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_VIBuffer_Rect");
 
-	/* Prototype_Component_VIBuffer_Rect_Dynamic */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Rect_Dynamic"),
-		CVIBuffer_Rect_Dynamic::Create(m_pDevice, m_pContext))))
-	{
-		MSG_BOX("Failed Add_Prototype  : (Prototype_Component_VIBuffer_Rect_Dynamic)");
-		return E_FAIL;
-	}
+		/* Prototype_Component_VIBuffer_Rect_Dynamic */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Rect_Dynamic"),
+			CVIBuffer_Rect_Dynamic::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_VIBuffer_Rect_Dynamic");
 
-	/* For.Prototype_Component_VIBuffer_Line */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Line"),
-		CVIBuffer_Line::Create(m_pDevice, m_pContext))))
-	{
-		MSG_BOX("Failed Add_Prototype : (Prototype_Component_VIBuffer_Line)");
-		return E_FAIL;
-	}
+		/* For.Prototype_Component_VIBuffer_Line */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Line"),
+			CVIBuffer_Line::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_VIBuffer_Line");
 
-	/* For.Prototype_Component_VIBuffer_Triangle */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Triangle"),
-		CVIBuffer_Triangle::Create(m_pDevice, m_pContext))))
+		/* For.Prototype_Component_VIBuffer_Triangle */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Triangle"),
+			CVIBuffer_Triangle::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_VIBuffer_Triangle");
+	}
+	catch (const _tchar* pErrorTag)
 	{
-		MSG_BOX("Failed Add_Prototype : (Prototype_Component_VIBuffer_Triangle)");
+		wstring wstrErrorMSG = TEXT("Failed Ready_Prototype_Component_For_Static : ");
+		wstrErrorMSG += pErrorTag;
+		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+
 		return E_FAIL;
 	}
 

@@ -22,6 +22,8 @@ public:
 
 public:
 	HRESULT Initialize(_uint iSizeX, _uint iSizeY, DXGI_FORMAT eFormat, const _float4& vClearColor);
+	HRESULT Initialize_Depth(_uint iSizeX, _uint iSizeY, DXGI_FORMAT eFormat, const _float4& vClearColor);
+
 	HRESULT Clear();
 	HRESULT Bind_ShaderResourceView(class CShader* pShader, const _char* pConstantName);
 
@@ -37,8 +39,12 @@ private:
 
 private:
 	ID3D11Texture2D*			m_pTexture2D = { nullptr };
+	//ID3D11Texture2D*			m_pDepthStencilTexture = nullptr;
+	
 	ID3D11RenderTargetView*		m_pRTV = { nullptr };
 	ID3D11ShaderResourceView*	m_pSRV = { nullptr };
+	ID3D11DepthStencilView*		m_pShadowView = { nullptr };
+
 	_float4						m_vClearColor;
 
 #ifdef _DEBUG

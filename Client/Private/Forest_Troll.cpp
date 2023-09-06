@@ -1,6 +1,5 @@
 #include "Forest_Troll.h"
 #include "GameInstance.h"
-#include "PhysXConverter.h"
 #include "Weapon_Forest_Troll.h"
 
 CForest_Troll::CForest_Troll(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -72,27 +71,26 @@ HRESULT CForest_Troll::Render()
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
-		if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", i)))
+		try /* Failed Render */
 		{
-			MSG_BOX("[CArmored_Troll] Failed Render : (Bind_BoneMatrices)");
-			return E_FAIL;
-		}
+			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", i)))
+				throw TEXT("Bind_BoneMatrices");
 
-		if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", i, DIFFUSE)))
-		{
-			MSG_BOX("[CArmored_Troll] Failed Render : (Bind_Material Diffuse)");
-			return E_FAIL;
-		}
+			if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", i, DIFFUSE)))
+				throw TEXT("Bind_Material Diffuse");
 
-		if (FAILED(m_pShaderCom->Begin("AnimMesh")))
-		{
-			MSG_BOX("[CArmored_Troll] Failed Render : (Shader Begin AnimMesh)");
-			return E_FAIL;
-		}
+			if (FAILED(m_pShaderCom->Begin("AnimMesh")))
+				throw TEXT("Shader Begin AnimMesh");
 
-		if (FAILED(m_pModelCom->Render(i)))
+			if (FAILED(m_pModelCom->Render(i)))
+				throw TEXT("Model Render");
+		}
+		catch (const _tchar* pErrorTag)
 		{
-			MSG_BOX("[CArmored_Troll] Failed Render : (Model Render)");
+			wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed Render : ");
+			wstrErrorMSG += pErrorTag;
+			MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+
 			return E_FAIL;
 		}
 	}
@@ -107,56 +105,48 @@ HRESULT CForest_Troll::Render_Depth()
 
 HRESULT CForest_Troll::Add_Components()
 {
-	/* Com_Renderer */
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"),
-		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
+	try /* Check Add_Components */
 	{
-		MSG_BOX("[CForest_Troll] Failed Add_Components : (Com_Renderer)");
-		return E_FAIL;
+		/* Com_Renderer */
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"),
+			TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
+			throw TEXT("Com_Renderer");
+
+		/* Com_RigidBody */
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
+			TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody))))
+			throw TEXT("Com_RigidBody");
+
+		/* For.Com_Model */
+		if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Forest_Troll"),
+			TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
+			throw TEXT("Com_Model");
+
+		/* For.Com_Shader */
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimMesh"),
+			TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
+			throw TEXT("Com_Shader");
+
+		const CBone* pBone = m_pModelCom->Get_Bone(TEXT("SKT_RightHand"));
+		if (nullptr == pBone)
+			throw TEXT("pBone is nullptr");
+
+		CWeapon_Forest_Troll::PARENTMATRIXDESC ParentMatrixDesc;
+		ParentMatrixDesc.OffsetMatrix = _float4x4();
+		ParentMatrixDesc.PivotMatrix = m_pModelCom->Get_PivotFloat4x4();
+		ParentMatrixDesc.pCombindTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
+		ParentMatrixDesc.pParentWorldMatrix = m_pTransform->Get_WorldMatrixPtr();
+
+		if (FAILED(Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Weapon_Forest_Troll"),
+			TEXT("Com_Weapon"), reinterpret_cast<CComponent**>(&m_pWeapon), &ParentMatrixDesc)))
+			throw TEXT("Com_Weapon");
 	}
-
-	/* Com_RigidBody */
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
-		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody))))
+	catch (const _tchar* pErrorTag)
 	{
-		MSG_BOX("[CForest_Troll] Failed Add_Components : (Com_RigidBody)");
-		return E_FAIL;
-	}
+		wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed Add_Components : ");
+		wstrErrorMSG += pErrorTag;
+		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
 
-	/* For.Com_Model */
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Forest_Troll"),
-		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
-	{
-		MSG_BOX("[CForest_Troll] Failed Add_Components : (Com_Model)");
-		return E_FAIL;
-	}
-
-	/* For.Com_Shader */
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimMesh"),
-		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
-	{
-		MSG_BOX("[CForest_Troll] Failed Add_Components : (Com_Shader)");
-		return E_FAIL;
-	}
-
-	CComponent* pOutComponent = { nullptr };
-	const CBone* pBone = m_pModelCom->Get_Bone(TEXT("RightHand"));
-	if (nullptr == pBone)
-	{
-		MSG_BOX("[CForest_Troll] Failed Add_Components : (pBone is nullptr)");
-		return E_FAIL;
-	}
-
-	CWeapon_Forest_Troll::PARENTMATRIXDESC ParentMatrixDesc;
-	ParentMatrixDesc.OffsetMatrix = _float4x4();
-	ParentMatrixDesc.PivotMatrix = m_pModelCom->Get_PivotFloat4x4();
-	ParentMatrixDesc.pCombindTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
-	ParentMatrixDesc.pParentWorldMatrix = m_pTransform->Get_WorldMatrixPtr();
-
-	if (FAILED(Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Weapon_Forest_Troll"),
-		TEXT("Com_Weapon"), reinterpret_cast<CComponent**>(&m_pWeapon), &ParentMatrixDesc)))
-	{
-		MSG_BOX("[CForest_Troll] Failed Add_Components : (Com_Weapon)");
 		return E_FAIL;
 	}
 
@@ -165,19 +155,37 @@ HRESULT CForest_Troll::Add_Components()
 
 HRESULT CForest_Troll::SetUp_ShaderResources()
 {
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
+	BEGININSTANCE;
 
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
-		return E_FAIL;
+	try /* Check SetUp_ShaderResources */
+	{
+		if (nullptr == m_pShaderCom)
+			throw TEXT("m_pShaderCom is nullptr");
 
-	Safe_Release(pGameInstance);
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
+			throw TEXT("Failed Bind_Matrix : g_WorldMatrix");
+
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW))))
+			throw TEXT("Failed Bind_Matrix : g_ViewMatrix");
+
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
+			throw TEXT("Failed Bind_Matrix : g_ProjMatrix");
+
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
+			throw TEXT("Failed Bind_RawValue : g_fCamFar");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed SetUp_ShaderResources : \n");
+		wstrErrorMSG += pErrorTag;
+		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+
+		ENDINSTANCE;
+
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
 
 	return S_OK;
 }

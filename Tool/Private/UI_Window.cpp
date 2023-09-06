@@ -6,6 +6,10 @@
 #include "Layer.h"
 #include "GameObject.h"
 #include "Dummy_UI_Group.h"
+#include "Dummy_Font.h"
+
+#include "RenderTarget_Manager.h"
+#include "RenderTarget.h"
 
 CUI_Window::CUI_Window(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CImWindow(pDevice, pContext)
@@ -28,9 +32,10 @@ HRESULT CUI_Window::Initialize(ImVec2 vWindowPos, ImVec2 vWindowSize)
 
 	m_TreeDesc.m_wstrName = TEXT("../../Resources/UI/");
 	m_TreeDesc.m_isFolder = true;
+
 	Read_File_In_Directory_Tree(m_TreeDesc, TEXT("../../Resources/UI/"), TEXT(".png"));
 
-	m_pGroupVector.clear();
+	Initialize_Font();
 
 	return S_OK;
 }
@@ -46,7 +51,7 @@ void CUI_Window::Tick(_float fTimeDelta)
 	{
 		BEGININSTANCE
 
-		m_pUILayer = pGameInstance->Find_Layer(LEVEL_TOOL, TEXT("Layer_Tool_UI"));
+			m_pUILayer = pGameInstance->Find_Layer(LEVEL_TOOL, TEXT("Layer_Tool_UI"));
 
 		ENDINSTANCE
 	}
@@ -55,10 +60,21 @@ void CUI_Window::Tick(_float fTimeDelta)
 	{
 		BEGININSTANCE
 
-			m_pUIGroupLayer = pGameInstance->Find_Layer(LEVEL_TOOL, TEXT("Layer_Tool_UI_Group"));
+		m_pUIGroupLayer = pGameInstance->Find_Layer(LEVEL_TOOL, TEXT("Layer_Tool_UI_Group"));
 
 		ENDINSTANCE
 	}
+
+	if (m_pUIGroupLayer == nullptr)
+	{
+		BEGININSTANCE
+
+		m_pFontLayer = pGameInstance->Find_Layer(LEVEL_TOOL, TEXT("Layer_Tool_Font"));
+
+		ENDINSTANCE
+	}
+
+
 
 	ImGui::Begin("UI", nullptr, m_WindowFlag);
 
@@ -85,9 +101,16 @@ void CUI_Window::Tick(_float fTimeDelta)
 		UI_Group_Tree();
 	}
 
+	if (ImGui::CollapsingHeader("Font"))
+	{
+		Create_Font();
+	}
+
+
 	Correction_Pick();
 	Interaction_UI();
 	Move_UI();
+	Capture();
 
 	ImGui::End();
 }
@@ -121,21 +144,22 @@ void CUI_Window::Open_Dialog()
 
 void CUI_Window::Object_List_Button()
 {
-	ImGui::Begin("List Interaction");
+	RECT rc;
+	GetWindowRect(g_hWnd, &rc);
+	ImGui::SetNextWindowPos(ImVec2(_float(rc.left), _float(rc.top + 600.f)) + m_vWindowPos);
 
+	ImGui::Begin("List Interaction");
 
 	if (ImGui::Button("Clear"))
 	{
 		for (auto& iter : m_pUIVector)
 		{
+			m_pDummy_UI_Group->Clear();
 			iter->Set_ObjEvent(CGameObject::OBJ_EVENT::OBJ_DEAD);
 		}
 	}
 
-
 	ImGui::Checkbox("MouseInteraction", &m_isListMouseInteraction);
-
-
 
 	if (ImGui::Button("Save_UI"))
 	{
@@ -156,21 +180,19 @@ void CUI_Window::Object_List_Button()
 
 void CUI_Window::Open_Object_List()
 {
-	static _int iItem = 0;
 	if (ImGui::BeginListBox("  "))
 	{
 		m_isOpenList = true;
 		for (_int i = 0; i < m_pUIVector.size(); i++)
 		{
-			m_isObjectSelected = (iItem == i);
+			m_isObjectSelected = (m_iObjectListIndex == i);
 
-			_char szGameObjectName[MAX_PATH];
-			memset(szGameObjectName, 0, sizeof(_char) * MAX_PATH);
+			_char szGameObjectName[MAX_PATH] = "";
 
 			WCharToChar(m_pUIVector[i]->Get_Tag(), szGameObjectName);
 			if (ImGui::Selectable(szGameObjectName, m_isObjectSelected))
 			{
-				iItem = i;
+				m_iObjectListIndex = i;
 			}
 
 			if (m_isObjectSelected)
@@ -181,19 +203,27 @@ void CUI_Window::Open_Object_List()
 				m_pDummy_UI = dynamic_cast<CDummy_UI*>(m_pUIVector[i]);
 				string DragFloatTag = "Transform##";
 				_float4x4 pMatrix = m_pUIVector[i]->Get_Transform()->Get_WorldMatrix();
+
+
+				RECT rc;
+				GetWindowRect(g_hWnd, &rc);
+				ImGui::SetNextWindowPos(ImVec2(_float(rc.left), _float(rc.top + 750.f)) + m_vWindowPos);
+
 				__super::MatrixNode(&pMatrix, "UI_Transform##", "UI_Position##", "UI_Rotation##", "UI_Scale##");
 				//	pGameObejctVector[i]->Get_Transform()->Set_WorldMatrix(pMatrix);
 				_float2 fScale = _float2(pMatrix.Right().x, pMatrix.Up().y);
 
-				_float2 fXY = dynamic_cast<CDummy_UI*>(m_pUIVector[i])->WorldPos_To_UIPos(pMatrix.Translation().x, pMatrix.Translation().y);
+				// float2 fXY = dynamic_cast<CDummy_UI*>(m_pUIVector[i])->WorldPos_To_UIPos(pMatrix.Translation().x, pMatrix.Translation().y);
 				_float fZ = pMatrix.Translation().z;
 
 				//dynamic_cast<CDummy_UI*>(m_pUIVector[i])->Set_fXY(fXY.x, fXY.y);
 				dynamic_cast<CDummy_UI*>(m_pUIVector[i])->Set_fZ(fZ);
 				dynamic_cast<CDummy_UI*>(m_pUIVector[i])->Set_Size(fScale.x, fScale.y);
 
+				GetWindowRect(g_hWnd, &rc);
+				ImGui::SetNextWindowPos(ImVec2(_float(rc.left) + 200, _float(rc.top + 600.f)) + m_vWindowPos);
 				ImGui::Begin("Selected Object");
-				
+
 				Select_Obejct(m_pUIVector[i]);
 
 				ImGui::End();
@@ -210,6 +240,7 @@ void CUI_Window::Open_Object_List()
 
 void CUI_Window::Select_Obejct(CGameObject* pGameObject)
 {
+
 	if (nullptr == pGameObject)
 		return;
 
@@ -217,13 +248,14 @@ void CUI_Window::Select_Obejct(CGameObject* pGameObject)
 
 	if (ImGui::Button("Delete"))
 	{
+		m_pDummy_UI_Group->Delete(dynamic_cast<CDummy_UI*>(pGameObject));
 		pGameObject->Set_ObjEvent(CGameObject::OBJ_EVENT::OBJ_DEAD);
 	}
 }
 
 
 void CUI_Window::Object_List()
-{	
+{
 	if (nullptr == m_pUILayer)
 	{
 		return;
@@ -253,8 +285,7 @@ void CUI_Window::Open_File_Path_Tree(UI_Tree* pTree)
 	{
 		m_iTreeIndex = m_iInitIndex;
 
-		_char szChar[MAX_PATH];
-		memset(szChar, 0, sizeof(_char) * MAX_PATH);
+		_char szChar[MAX_PATH] = "";
 		WCharToChar(pTree->m_wstrName.c_str(), szChar);
 
 		_int iIndex = 0;
@@ -278,8 +309,7 @@ void CUI_Window::Open_File_Path_Tree(UI_Tree* pTree)
 	}
 	else
 	{
-		_char szChar[MAX_PATH];
-		memset(szChar, 0, sizeof(_char));
+		_char szChar[MAX_PATH] = "";
 		WCharToChar(pTree->m_wstrName.c_str(), szChar);
 
 		_char szFileName[MAX_PATH] = "";
@@ -316,7 +346,7 @@ void CUI_Window::Open_File_Path_Tree(UI_Tree* pTree)
 
 		ImGui::SameLine();
 		string strFileName = szFileName;
-		string CreateIndex =  "Create_UI##" + strFileName + to_string(m_iTreeIndex);
+		string CreateIndex = "Create_UI##" + strFileName + to_string(m_iTreeIndex);
 		if (ImGui::SmallButton(CreateIndex.c_str()))
 		{
 			Create_UI(pTree);
@@ -370,8 +400,7 @@ void CUI_Window::Create_UI(UI_Tree* pTree)
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	_char szChar[MAX_PATH];
-	memset(szChar, 0, sizeof(_char) * MAX_PATH);
+	_char szChar[MAX_PATH] = "";
 	WCharToChar(pTree->m_wstrName.c_str(), szChar);
 
 	_char szFileName[MAX_PATH] = "";
@@ -405,7 +434,7 @@ void CUI_Window::Create_UI(UI_Tree* pTree)
 		{
 			MSG_BOX("Failed Create Texture Component");
 		}
-		
+
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, wszGaemObject,
 			CDummy_UI::Create(m_pDevice, m_pContext, wszComponent))))
 		{
@@ -421,13 +450,13 @@ void CUI_Window::Create_UI(UI_Tree* pTree)
 	{
 		iSize = _int(m_pUILayer->Get_Components().size());
 	}
-	
+
 	string strFimeName = szFileName;
 	string GameObjectTag = "UI_" + strFimeName + to_string(iSize);
 	_tchar wszGameObjectTag[MAX_PATH] = TEXT("");
 
 	CharToWChar(GameObjectTag.c_str(), wszGameObjectTag);
-	
+
 	_float2 fSize = _float2(_float(pTree->m_iWidth), _float(pTree->m_iHeight));
 
 	// Dummy UI Object 생성.
@@ -448,7 +477,7 @@ void CUI_Window::Interaction_UI()
 
 	if (nullptr == m_pUILayer)
 		return;
-	
+
 
 	const unordered_map<const _tchar*, CComponent*> Components = m_pUILayer->Get_Components();
 
@@ -473,7 +502,7 @@ void CUI_Window::Interaction_UI()
 	{
 		CGameInstance* pGameInstance = CGameInstance::GetInstance();
 		Safe_AddRef(pGameInstance);
-		if (dynamic_cast<CDummy_UI*>(pGameObject)->Is_In_Rect() && 
+		if (dynamic_cast<CDummy_UI*>(pGameObject)->Is_In_Rect() &&
 			pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN))
 		{
 			m_pDummy_UI = dynamic_cast<CDummy_UI*>(pGameObject);
@@ -489,7 +518,7 @@ void CUI_Window::Interaction_UI()
 	}
 
 #ifdef _DEBUG
-//	cout << m_pDummy_UI << endl;
+	//	cout << m_pDummy_UI << endl;
 #endif // _DEBUG
 }
 
@@ -518,7 +547,20 @@ void CUI_Window::Correction_Pick()
 			else
 				CurrentMousePos.y += (10 - iRoundY);
 
-			m_pDummy_UI->Set_fXY(CurrentMousePos.x, CurrentMousePos.y);
+			CDummy_UI* pParent = dynamic_cast<CDummy_UI*>(m_pDummy_UI)->Get_Parent();
+
+			if (nullptr != pParent)
+			{
+				_float2 vParentPos = pParent->Get_fXY();
+				_float2 vPickPos;
+				vPickPos.x = CurrentMousePos.x - vParentPos.x;
+				vPickPos.y = CurrentMousePos.y - vParentPos.y;
+				m_pDummy_UI->Set_fXY(vPickPos.x, vPickPos.y);
+			}
+			else
+			{
+				m_pDummy_UI->Set_fXY(CurrentMousePos.x, CurrentMousePos.y);
+			}
 		}
 
 	ENDINSTANCE
@@ -548,8 +590,7 @@ void CUI_Window::Add_Group(CGameObject* pGameObject)
 	}
 
 
-	_char szGroupName[MAX_PATH];
-	memset(szGroupName, 0, sizeof(_char) * MAX_PATH);
+	_char szGroupName[MAX_PATH] = "";
 	if (m_pGroupVector.size() > 0)
 	{
 		WCharToChar(m_pGroupVector[m_AddGroupIndex]->Get_Tag(), szGroupName);
@@ -566,8 +607,7 @@ void CUI_Window::Add_Group(CGameObject* pGameObject)
 		{
 			bool isSelected = (i == m_AddGroupIndex); // 현재 항목이 선택된 항목인지 확인합니다.
 
-			_char szGameObjectName[MAX_PATH];
-			memset(szGameObjectName, 0, sizeof(_char) * MAX_PATH);
+			_char szGameObjectName[MAX_PATH] = "";
 
 			WCharToChar(m_pGroupVector[i]->Get_Tag(), szGameObjectName);
 
@@ -604,7 +644,7 @@ void CUI_Window::Add_Group(CGameObject* pGameObject)
 			MSG_BOX("Group is null");
 			return;
 		}
-		
+
 		if (m_isParent)
 		{
 			dynamic_cast<CDummy_UI*>(pGameObject)->Set_bParent();
@@ -671,11 +711,9 @@ void CUI_Window::Input_Text()
 
 	if (m_isEnterGroupName)
 	{
-		string strText = m_szInputText;
-		Create_UI_Gruop(strText);
+		Create_UI_Gruop(m_szInputText);
 
-		// Enter 키를 누르면 입력된 텍스트를 객체에 설정합니다.
-		memset(m_szInputText, 0, sizeof(m_szInputText));
+		ZeroMemory(m_szInputText, MAX_PATH);
 		m_isEnterGroupName = false;
 	}
 
@@ -718,7 +756,7 @@ void CUI_Window::UI_Gruop_Combo()
 				m_pDummy_UI_Group = dynamic_cast<CDummy_UI_Group*>(m_pGroupVector[i]);
 			}
 
-			if (isSelected) 
+			if (isSelected)
 			{
 				//m_isPreGroupComboIndex = m_GroupComboIndex;
 			}
@@ -730,6 +768,73 @@ void CUI_Window::UI_Gruop_Combo()
 void CUI_Window::Load_UI()
 {
 	Open_Dialog();
+}
+
+void CUI_Window::Capture()
+{
+	if (ImGui::Button("Capture"))
+	{
+		m_isCapture = !m_isCapture;
+	}
+
+	if (m_isCapture)
+	{
+		ImGui::Begin("Capture");
+
+
+		if (ImGui::InputText("File Name", m_szCaptureText, IM_ARRAYSIZE(m_szCaptureText), ImGuiInputTextFlags_EnterReturnsTrue))
+		{
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Enter"))
+		{
+			m_isEnterGroupName = true;
+		}
+		else
+		{
+			m_isEnterGroupName = false;
+		}
+
+		if (m_isEnterGroupName)
+		{
+			_tchar wszFilePath[MAX_PATH] = {};
+
+			string strPath = "../../Resources/UIData/";
+			string strDDS = ".dds";
+
+			string strText = strPath + m_szCaptureText +strDDS;
+
+			CharToWChar(strText.c_str(), wszFilePath);
+
+
+			CGameInstance* pGameInstance = CGameInstance::GetInstance();
+			Safe_AddRef(pGameInstance);
+
+			ID3D11Texture2D* pTexture = pGameInstance->Find_RenderTarget(TEXT("Target_UI"))->Get_Texture2D();
+		
+			Safe_Release(pGameInstance);
+
+			if (nullptr == pTexture)
+			{
+				MSG_BOX("Capture Failed");
+
+				
+				ZeroMemory(m_szCaptureText, MAX_PATH);
+				m_isEnterGroupName = false;
+			}
+			else
+			{
+				MSG_BOX("Capture Success");
+				SaveDDSTextureToFile(m_pContext, pTexture, wszFilePath);
+
+				ZeroMemory(m_szCaptureText, MAX_PATH);
+				m_isEnterGroupName = false;
+			}
+		}
+
+		ImGui::End();
+	}
+
 }
 
 void CUI_Window::Move_UI()
@@ -752,7 +857,7 @@ void CUI_Window::Move_UI()
 		}
 	}
 
-	if (nullptr == m_pDummy_UI || 
+	if (nullptr == m_pDummy_UI ||
 		!(pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_PRESSING)))
 	{
 		m_MousePos = CurrentMousePos; // 현재 위치를 이전 위치로 저장
@@ -821,6 +926,23 @@ _bool CUI_Window::Load_ImTexture(const _char* pFilePath, ID3D11ShaderResourceVie
 	return true;
 }
 
+HRESULT CUI_Window::Initialize_Font()
+{
+	BEGININSTANCE
+
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("ProtoType_Component_NexonGothic"),
+		CDummy_Font::Create(m_pDevice, m_pContext, TEXT("../../Resources/Fonts/NexonGothic.spritefont")))))
+	{
+		MSG_BOX("Failed Create Font Component");
+		ENDINSTANCE
+		return E_FAIL;
+	}
+
+	ENDINSTANCE
+
+	return S_OK;
+}
+
 void CUI_Window::UI_Group_Tree()
 {
 	if (nullptr == m_pDummy_UI_Group)
@@ -837,8 +959,8 @@ void CUI_Window::UI_Group_Tree()
 		{
 			_bool selection = false;
 
-			_char szName[MAX_PATH];
-			memset(szName, 0, sizeof(_char) * MAX_PATH);
+			_char szName[MAX_PATH] = "";
+
 			WCharToChar(pParent->Get_Tag(), szName);
 			if (ImGui::Selectable(szName, selection))
 			{
@@ -863,8 +985,7 @@ void CUI_Window::UI_Group_Tree()
 		_uint iIndex = 0;
 		for (auto& iter : *pChilds)
 		{
-			_char szName[MAX_PATH];
-			memset(szName, 0, sizeof(_char) * MAX_PATH);
+			_char szName[MAX_PATH] = "";
 			WCharToChar(iter->Get_Tag(), szName);
 			if (ImGui::Selectable(szName, selection[iIndex]))
 			{
@@ -878,6 +999,86 @@ void CUI_Window::UI_Group_Tree()
 
 		ImGui::TreePop(); // 트리 노드 닫기
 	}
+}
+
+void CUI_Window::Create_Font()
+{
+	string strName = "NexonGothic";
+
+	if (ImGui::BeginCombo("Group List", strName.c_str()))
+	{
+		for (int i = 0; i < (_int)FONT_END; i++)
+		{
+			bool isSelected = (m_FontComboIndex == i);
+
+			if (ImGui::Selectable(strName.c_str(), isSelected))
+			{
+				ImGui::SetItemDefaultFocus(); // 선택한 항목을 기본으로 설정
+				m_FontComboIndex = i;
+				m_eFont = (FONT)i;
+			}
+
+			if (isSelected)
+			{
+				//m_isPreGroupComboIndex = m_GroupComboIndex;
+			}
+		}
+		ImGui::EndCombo();
+	}
+
+	
+	ImGui::InputText("Write Text", m_szFontText, MAX_PATH);
+	ImGui::SameLine();
+
+	if (ImGui::Button("Enter"))
+	{
+		m_isEnterTextName = true;
+		ImGui::DebugTextEncoding(m_szFontText, m_wszFontText);
+	}
+	else
+	{
+		m_isEnterTextName = false;
+	}
+
+	if (m_isEnterTextName)
+	{
+		switch (m_eFont)
+		{
+		case Tool::CUI_Window::GOTHIC:
+		{
+			_int iSize = 0;
+			if (nullptr != m_pUILayer)
+			{
+				iSize = _int(m_pUILayer->Get_Components().size());
+			}
+
+			string strFont = "Font_" + to_string(iSize);
+			_tchar wszFontTag[MAX_PATH] = TEXT("");
+			CharToWChar(strFont.c_str(), wszFontTag);
+
+			BEGININSTANCE
+			if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, TEXT("ProtoType_Component_NexonGothic"),
+				TEXT("Layer_Tool_Font"), wszFontTag, m_wszFontText)))
+			{
+				MSG_BOX("Failed to Created CDummy_Font Clone");
+			}
+			ENDINSTANCE
+
+			ZeroMemory(m_szFontText, MAX_PATH);
+			ZeroMemory(m_wszFontText, MAX_PATH);
+
+			m_isEnterTextName = false;
+		}
+			break;
+		case Tool::CUI_Window::FONT_END:
+			MSG_BOX("Failed Create Font");
+			break;
+		default:
+			MSG_BOX("Failed Create Font");
+			break;
+		}
+	}
+
 }
 
 CUI_Window* CUI_Window::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, ImVec2 vWindowPos, ImVec2 vWindowSize)

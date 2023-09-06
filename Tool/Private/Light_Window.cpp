@@ -18,9 +18,9 @@ HRESULT CLight_Window::Initialize(ImVec2 vWindowPos, ImVec2 vWindowSize)
 	//StrInput = "Default_Dir_Light";
 	BEGININSTANCE
 	ZEROMEM(&LightDesc);
-	LightDesc.vPos = _float4(0.f, 2.f, 0.f, 1.f);
-	LightDesc.vDir = _float4(0.3f,-1.f,0.3f,0.f);
-
+	LightDesc.vPos = _float4(5.f, 15.f, 5.f, 1.f);
+	//LightDesc.vDir = _float4(0.3f,-0.9f,0.3f,0.f);
+	LightDesc.vDir = _float4(0.34f, -0.98f, 0.34f, 0.f);
 	LightDesc.vDiffuse = _float4(1.f,1.f,1.f,1.f);
 	LightDesc.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
 	LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
@@ -122,7 +122,7 @@ HRESULT CLight_Window::Create_Light()
 			ZEROMEM(&LightDesc);
 
 			m_szName = "DirectionLight";
-			//LightDesc.vPos = _float4(vPos);
+			LightDesc.vPos = _float4(5.f,15.f,5.f,1.f);
 			LightDesc.vDir = _float4(vDir);
 
 			LightDesc.vDiffuse = _float4(vDiffuse);

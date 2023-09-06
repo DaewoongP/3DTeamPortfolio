@@ -22,6 +22,9 @@ public:
 
 public:
 	HRESULT Initialize(_uint iSizeX, _uint iSizeY, DXGI_FORMAT eFormat, const _float4& vClearColor);
+	HRESULT Initialize(_uint iSizeX, _uint iSizeY, DXGI_FORMAT eFormat, const _float4& vClearColor, _bool isUsage); // Usage·Î ¼³Á¤ÇÑ ·»´õ Å¸°Ù
+	HRESULT Initialize_Depth(_uint iSizeX, _uint iSizeY, DXGI_FORMAT eFormat, const _float4& vClearColor);
+
 	HRESULT Clear();
 	HRESULT Bind_ShaderResourceView(class CShader* pShader, const _char* pConstantName);
 
@@ -37,8 +40,12 @@ private:
 
 private:
 	ID3D11Texture2D*			m_pTexture2D = { nullptr };
+	ID3D11Texture2D*			m_pCopyTexture2D = { nullptr };
+	//ID3D11Texture2D*			m_pDepthStencilTexture = nullptr;
 	ID3D11RenderTargetView*		m_pRTV = { nullptr };
 	ID3D11ShaderResourceView*	m_pSRV = { nullptr };
+	ID3D11DepthStencilView*		m_pShadowView = { nullptr };
+
 	_float4						m_vClearColor;
 
 #ifdef _DEBUG
@@ -47,7 +54,8 @@ private:
 #endif
 
 public:
-	static CRenderTarget* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iSizeX, _uint iSizeY, DXGI_FORMAT eFormat, const _float4& vClearColor);
+	static CRenderTarget* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iSizeX, _uint iSizeY,
+		DXGI_FORMAT eFormat, const _float4& vClearColor, _bool isUsage = false);
 	virtual void Free() override;
 };
 
