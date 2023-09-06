@@ -54,9 +54,17 @@
 
 #endif // _DEBUG
 
+// physx
 #include <PxPhysicsAPI.h>
+
+// nvcloth
 #include <Factory.h>
+#include <PhaseConfig.h>
 #include <DxContextManagerCallback.h>
+#include <Fabric.h>
+#include <Cloth.h>
+#include <Range.h>
+#include <Solver.h>
 
 #include <iostream>
 #include <vector>
