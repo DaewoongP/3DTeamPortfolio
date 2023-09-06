@@ -34,7 +34,12 @@ HRESULT CComponent_Manager::Add_Prototype(_uint iLevelIndex, const _tchar* pProt
 		return E_FAIL;
 	}
 
-	NULL_CHECK_RETURN_MSG(pPrototype, E_FAIL, TEXT("Prototype Component NULL"));
+	if (nullptr == pPrototype)
+	{
+		Safe_Release(pPrototype);
+		MSG_BOX("Prototype Component NULL");
+		return E_FAIL;
+	}
 
 	pPrototype->Set_PrototypeTag(pPrototypeTag);
 

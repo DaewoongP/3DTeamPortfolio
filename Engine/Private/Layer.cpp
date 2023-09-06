@@ -41,7 +41,6 @@ HRESULT CLayer::Delete_Component(const _tchar* pComponentTag)
 			Safe_Release(iter->second);
 			iter = m_Components.erase(iter);
 		}
-
 		else
 		{
 			++iter;

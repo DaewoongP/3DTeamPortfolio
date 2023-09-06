@@ -22,6 +22,7 @@ public:
 	_tchar* Get_GameObject_Tag() { return m_pTag; }
 	void	Set_GameObject_Tag(_tchar* wszTag) { lstrcpy(m_pTag, wszTag); }
 	void	Set_Pos(_float3 vPos) { m_pTransform->Set_Position(vPos); }
+	void	Set_WorldMatrix(_float4x4 vWorldMatrix) { m_pTransform->Set_WorldMatrix(vWorldMatrix); }
 
 public:
 	virtual HRESULT Initialize_Prototype();

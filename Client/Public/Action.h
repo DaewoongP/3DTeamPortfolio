@@ -22,24 +22,26 @@ public:
 	virtual HRESULT Tick(const _float& fTimeDelta);
 
 public:
-	/*	1. 바인딩 할 애니메이션 태그
-		2. 쿨타임
-		3. 한번만 실행 할 행동인지
-		4. 애니메이션 러프 유무
+	/*	
+		매개변수
+		1. 바인딩 할 애니메이션 태그
+		2. 모델 포인터
+		3. 쿨타임
+		4. 한번만 실행 할 행동인지
+		5. 애니메이션 러프 유무
 	*/
 	void Set_Options(const wstring& _strAnimationTag, CModel* _pModel, const _float& _fCoolTime = 0.f,
 		_bool _isOneTimeAction = false, _bool _isLerp = true);
 
 private:
 	_float m_fLimit = { 0.f };
-	_float m_fTimeAcc = { 0.f };
-	_float m_fPreTimeAcc = { 0.f };
+	_float m_fPreWorldTimeAcc = { 0.f };
 
 	wstring m_wstrAnimationTag = { TEXT("") };
 
 	_bool m_isFinishBehaviors = { false };
 	_bool m_isOneTimeAction = { false };
-	_bool m_isFirstAction = { true };
+	_bool m_isPlayAction = { false };
 	_bool m_isFirst = { true };
 	_bool m_isLerp = { true };
 

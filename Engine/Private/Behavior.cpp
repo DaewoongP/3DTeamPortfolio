@@ -100,7 +100,7 @@ void CBehavior::Free()
 
 #ifdef _DEBUG
 
-void CBehavior::Find_Running_Behavior(_Inout_ stack<wstring> BehaviorTags)
+void CBehavior::Find_Running_Behavior(_Inout_ vector<wstring>& BehaviorTags)
 {
 	if (0 == m_Behaviors.size())
 		return;
@@ -109,8 +109,8 @@ void CBehavior::Find_Running_Behavior(_Inout_ stack<wstring> BehaviorTags)
 	{
 		if (BEHAVIOR_RUNNING == pBehavior->m_ReturnData)
 		{
-			BehaviorTags.push(pBehavior->m_wstrBehaviorTag);
-			Find_Running_Behavior(BehaviorTags);
+			BehaviorTags.push_back(pBehavior->m_wstrBehaviorTag);
+			pBehavior->Find_Running_Behavior(BehaviorTags);
 		}
 	}
 }

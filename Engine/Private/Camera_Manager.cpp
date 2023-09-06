@@ -32,10 +32,11 @@ void CCamera_Manager::Tick(_float _TimeDelta)
 	m_pMainCamera->Tick(_TimeDelta);
 
 	//컷씬에 재생 할 것 이 있다면.
-	if (false == m_CutSceneCameraDescs.empty())
+	if (false == m_SplineData.empty() || false == m_CutSceneCameraDescs.empty())
 	{
 		//재생 한다.
-		Play_CutScene(_TimeDelta);
+		//Play_CutScene(_TimeDelta);
+		Play_Spline_CutScene(_TimeDelta);
 		Clear_Queue(m_OffSetCameraDescs);
 		MainCameraOff();
 	}
@@ -64,6 +65,15 @@ HRESULT CCamera_Manager::Initialize_CameraManager()
 {
 	m_pPipeLine = CPipeLine::GetInstance();
 	Safe_AddRef(m_pPipeLine);
+
+	//구면 보간 준비 
+	//사용할 사이즈
+	m_SplineDataIndexAccess.resize(4);
+	//초기화
+	for (auto& iter : m_SplineDataIndexAccess)
+	{
+		iter = m_SplineData.end();
+	}
 
 	return S_OK;
 }
@@ -254,6 +264,180 @@ void CCamera_Manager::Play_CutScene(_float _TimeDelta)
 	}
 }
 
+void CCamera_Manager::Play_Spline_CutScene(_float _TimeDelta)
+{
+	//시간 누적
+	m_fCutSceneTimeAcc += _TimeDelta;
+
+	//list 크기 2보다 작은 경우(초입) 이전과 같다.
+	if (2 > m_SplineData.size())
+	{
+		//러프
+		if (true == m_CutSceneCameraDescs.front().isLerp)
+		{
+			CutScene_Lerp_Update(m_PreviousCutSceneCameraDesc, m_CutSceneCameraDescs.front());
+		}
+		else if (false == m_CutSceneCameraDescs.front().isLerp)
+		{
+			CutScene_Do_Not_Lerp_Update(m_CutSceneCameraDescs.front());
+		}
+
+		//큐의 앞 원소의 듀레이션이 시간 누적치 보다 작다면
+		if (m_fCutSceneTimeAcc
+			>=
+			m_CutSceneCameraDescs.front().fDuration)
+		{
+			//누적치 초기화
+			m_fCutSceneTimeAcc = 0.0f;
+
+			//이전 값 변경
+			m_PreviousCutSceneCameraDesc = m_CutSceneCameraDescs.front();
+
+			//list에 넣고
+			m_SplineData.push_back(m_CutSceneCameraDescs.front());
+
+			//맨 앞 원소 삭제
+			m_CutSceneCameraDescs.pop();
+
+			//만약 list 사이즈가 2라면
+			if (2 == m_SplineData.size())
+			{
+				//사이즈 4까지 채워준다.
+				while (4 > m_SplineData.size())
+				{
+					//list에 넣고
+					m_SplineData.push_back(m_CutSceneCameraDescs.front());
+
+					//맨 앞 원소 삭제
+					m_CutSceneCameraDescs.pop();
+				}
+			}
+
+			//벡터 초기화
+			Connect_List_To_Vector();
+		}
+	}
+
+	//list 크기 4인 경우 
+	else if (4 == m_SplineData.size())
+	{
+		//이전 값을 바꾼다.(마지막 보간을 위해)
+		//m_PreviousCutSceneCameraDesc = *m_SplineDataIndexAccess[1];
+		
+		//러프
+		if (true == (*m_SplineDataIndexAccess[2]).isLerp)
+		{
+			//러프 비율
+			_float fRatio =
+				m_fCutSceneTimeAcc /
+				(*m_SplineDataIndexAccess[3]).fDuration;
+
+			_float4 vEye = XMVectorCatmullRom(
+				(*m_SplineDataIndexAccess[0]).vEye,
+				(*m_SplineDataIndexAccess[1]).vEye,
+				(*m_SplineDataIndexAccess[2]).vEye,
+				(*m_SplineDataIndexAccess[3]).vEye,
+				fRatio);
+
+			_float4 vAt = XMVectorCatmullRom(
+				(*m_SplineDataIndexAccess[0]).vAt,
+				(*m_SplineDataIndexAccess[1]).vAt,
+				(*m_SplineDataIndexAccess[2]).vAt,
+				(*m_SplineDataIndexAccess[3]).vAt,
+				fRatio);
+
+			_float4 vUp = _float4(0.0f, 1.0f, 0.0f, 0.0f);
+
+			//카메라의 역행렬
+			m_ViewMatrix = XMMatrixLookAtLH(vEye, vAt, vUp);
+		}
+		//러프 안함
+		else if (false == (*m_SplineDataIndexAccess[2]).isLerp)
+		{
+			CutScene_Do_Not_Lerp_Update(*m_SplineDataIndexAccess[2]);
+		}
+
+		//시간 누적치가 목적지의 듀레이션보다 작다면
+		if (m_fCutSceneTimeAcc
+			>=
+			(*m_SplineDataIndexAccess[2]).fDuration)
+		{
+			//누적치 초기화
+			m_fCutSceneTimeAcc = 0.0f;
+
+			//이전 값 변경
+			m_PreviousCutSceneCameraDesc = *m_SplineDataIndexAccess[2];
+
+			//첫 원소 삭제 3
+			m_SplineData.erase(m_SplineData.begin());
+			
+			//큐가 있다면
+			if (false == m_CutSceneCameraDescs.empty())
+			{
+				//list에 넣고 4
+				m_SplineData.push_back(m_CutSceneCameraDescs.front());
+
+				//맨 앞 원소 삭제
+				m_CutSceneCameraDescs.pop();
+			}
+
+			Connect_List_To_Vector();
+		}
+	}
+
+	//list 크기 3인 경우
+	else if (3 == m_SplineData.size())
+	{
+		//러프
+		if (true == (*m_SplineDataIndexAccess[2]).isLerp)
+		{
+			CutScene_Lerp_Update(*m_SplineDataIndexAccess[1], *m_SplineDataIndexAccess[2]);
+		}
+		//러프 안함
+		else if (false == (*m_SplineDataIndexAccess[2]).isLerp)
+		{
+			CutScene_Do_Not_Lerp_Update(*m_SplineDataIndexAccess[2]);
+		}
+
+		//시간 누적치가 목적지의 듀레이션보다 작다면
+		if (m_fCutSceneTimeAcc
+			>=
+			(*m_SplineDataIndexAccess[2]).fDuration)
+		{
+			//누적치 초기화
+			m_fCutSceneTimeAcc = 0.0f;
+
+			//이전 값 변경
+			m_PreviousCutSceneCameraDesc = *m_SplineDataIndexAccess[2];
+
+			//첫 원소 삭제 2
+			m_SplineData.erase(m_SplineData.begin());
+			
+			//큐가 있고, 리스트의 사이즈가 4보다 작다면
+			while (false == m_CutSceneCameraDescs.empty() && 4 > m_SplineData.size())
+			{
+				//list에 넣고 4
+				m_SplineData.push_back(m_CutSceneCameraDescs.front());
+
+				//맨 앞 원소 삭제
+				m_CutSceneCameraDescs.pop();
+			}
+			
+			//큐가 없다면
+			if (true == m_CutSceneCameraDescs.empty())
+			{
+				//리스트 클리어
+				m_SplineData.clear();
+			}
+
+			Connect_List_To_Vector();
+		}
+	}
+	
+	//파이프 라인 값 변경
+	m_pPipeLine->Set_Transform(CPipeLine::D3DTS_VIEW, m_ViewMatrix);
+}
+
 void CCamera_Manager::Play_OffSetCamera(_float _TimeDelta)
 {
 	//시간 누적
@@ -341,6 +525,62 @@ vector<OFFSETCAMERADESC>* CCamera_Manager::Find_OffSetCamera(const _tchar* _OffS
 	NULL_CHECK_RETURN(&(*OffSetInfo).second, nullptr);
 
 	return &(*OffSetInfo).second;
+}
+
+void CCamera_Manager::Connect_List_To_Vector()
+{
+	list<CUTSCENECAMERADESC>::iterator iter = m_SplineData.begin();
+
+	for (size_t i = 0; i < 4; i++)
+	{
+		//end여도 들어가라
+		m_SplineDataIndexAccess[i] = iter;
+		//end가 아닐경우만 ++
+		if (m_SplineData.end() != iter)
+		{
+			++iter;
+		}
+	}
+}
+
+void CCamera_Manager::CutScene_Do_Not_Lerp_Update(CUTSCENECAMERADESC _CutSceneCameraDesc)
+{
+	_float4 vEye = _CutSceneCameraDesc.vEye;
+
+	_float4 vAt = _CutSceneCameraDesc.vAt;
+
+	_float4 vUp = _float4(0.0f, 1.0f, 0.0f, 0.0f);
+
+	//카메라의 역행렬
+	m_ViewMatrix = XMMatrixLookAtLH(vEye, vAt, vUp);
+}
+
+void CCamera_Manager::CutScene_Lerp_Update(CUTSCENECAMERADESC _CutSceneCameraDescStart, CUTSCENECAMERADESC _CutSceneCameraDescEnd)
+{
+	_float fRatio =
+		m_fCutSceneTimeAcc /
+		_CutSceneCameraDescEnd.fDuration;
+
+	_float4 vEye =
+		XMVectorLerp
+		(
+			_CutSceneCameraDescStart.vEye,
+			_CutSceneCameraDescEnd.vEye,
+			fRatio
+		);
+
+	_float4 vAt =
+		XMVectorLerp
+		(
+			_CutSceneCameraDescStart.vAt,
+			_CutSceneCameraDescEnd.vAt,
+			fRatio
+		);
+
+	_float4 vUp = _float4(0.0f, 1.0f, 0.0f, 0.0f);
+
+	//카메라의 역행렬
+	m_ViewMatrix = XMMatrixLookAtLH(vEye, vAt, vUp);
 }
 
 void CCamera_Manager::Free()

@@ -28,7 +28,7 @@
     <ClInclude Include="..\Public\Bounding_AABB.h" />
     <ClInclude Include="..\Public\Bounding_OBB.h" />
     <ClInclude Include="..\public\Bounding_Sphere.h" />
-    <ClInclude Include="..\Public\Alarm.h" />
+    <ClInclude Include="..\Public\Time_Manager.h" />
     <ClInclude Include="..\public\Calculator.h" />
     <ClInclude Include="..\public\Camera.h" />
     <ClInclude Include="..\public\Camera_Manager.h" />
@@ -36,8 +36,10 @@
     <ClInclude Include="..\public\CharacterController.h" />
     <ClInclude Include="..\public\ColliderCom.h" />
     <ClInclude Include="..\Public\MeshEffect.h" />
+    <ClInclude Include="..\public\NVContextCallBack.h" />
     <ClInclude Include="..\Public\Parts.h" />
     <ClInclude Include="..\public\Plane.h" />
+    <ClInclude Include="..\public\PXAssertHandler.h" />
     <ClInclude Include="..\public\PXEventCallBack.h" />
     <ClInclude Include="..\Public\PhysXConverter.h" />
     <ClInclude Include="..\public\PhysX_Manager.h" />
@@ -46,6 +48,7 @@
     <ClInclude Include="..\Public\CustomModel.h" />
     <ClInclude Include="..\Public\Modules.h" />
     <ClInclude Include="..\Public\Status.h" />
+    <ClInclude Include="..\Public\VIBuffer_Object_Instance.h" />
     <ClInclude Include="..\public\VIBuffer_Rect_Color_Instance.h" />
     <ClInclude Include="..\Public\VIBuffer_Sprite.h" />
     <ClInclude Include="..\Public\Ignite.h" />
@@ -127,7 +130,7 @@
     <ClCompile Include="..\Private\Bounding_AABB.cpp" />
     <ClCompile Include="..\Private\Bounding_OBB.cpp" />
     <ClCompile Include="..\private\Bounding_Sphere.cpp" />
-    <ClCompile Include="..\Private\Alarm.cpp" />
+    <ClCompile Include="..\Private\Time_Manager.cpp" />
     <ClCompile Include="..\private\Calculator.cpp" />
     <ClCompile Include="..\private\Camera.cpp" />
     <ClCompile Include="..\private\Camera_Manager.cpp" />
@@ -135,8 +138,10 @@
     <ClCompile Include="..\private\CharacterController.cpp" />
     <ClCompile Include="..\private\ColliderCom.cpp" />
     <ClCompile Include="..\private\MeshEffect.cpp" />
+    <ClCompile Include="..\private\NVContextCallBack.cpp" />
     <ClCompile Include="..\Private\Parts.cpp" />
     <ClCompile Include="..\private\Plane.cpp" />
+    <ClCompile Include="..\private\PXAssertHandler.cpp" />
     <ClCompile Include="..\private\PXEventCallBack.cpp" />
     <ClCompile Include="..\private\PhysX_Manager.cpp" />
     <ClCompile Include="..\private\RigidBody.cpp" />
@@ -145,6 +150,7 @@
     <ClCompile Include="..\Private\Modules.cpp" />
     <ClCompile Include="..\Private\Status.cpp" />
     <ClCompile Include="..\Private\VIBuffer_Rect_Color_Instance.cpp" />
+    <ClCompile Include="..\Private\VIBuffer_Object_Instance.cpp" />
     <ClCompile Include="..\Private\VIBuffer_Sprite.cpp" />
     <ClCompile Include="..\Private\Ignite.cpp" />
     <ClCompile Include="..\Private\Defence.cpp" />
@@ -327,7 +333,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;ENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../Public/;../Public/PhysX/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Public/;../Public/PhysX/;../Public/NvCloth/</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <DisableSpecificWarnings>4828;4204;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -358,7 +364,7 @@ call Copy.bat</Command>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;ENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../Public/;../Public/PhysX/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Public/;../Public/PhysX/;../Public/NvCloth/</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <DisableSpecificWarnings>4828;4204;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>

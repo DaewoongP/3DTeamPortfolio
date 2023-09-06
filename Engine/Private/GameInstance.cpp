@@ -27,6 +27,7 @@ CGameInstance::CGameInstance()
 	, m_pCalculator{ CCalculator::GetInstance() }
 	, m_pPhysX_Manager{ CPhysX_Manager::GetInstance() }
 	, m_pCamera_Manager{ CCamera_Manager::GetInstance() }
+	, m_pTime_Manager{ CTime_Manager::GetInstance() }
 {
 	Safe_AddRef(m_pFrustum);
 	Safe_AddRef(m_pFont_Manager);
@@ -43,6 +44,7 @@ CGameInstance::CGameInstance()
 	Safe_AddRef(m_pCalculator);
 	Safe_AddRef(m_pPhysX_Manager);
 	Safe_AddRef(m_pCamera_Manager);
+	Safe_AddRef(m_pTime_Manager);
 }
 
 HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInst, _uint iNumLevels, const GRAPHICDESC& GraphicDesc, _Inout_ ID3D11Device** ppDevice, _Inout_ ID3D11DeviceContext** ppContext)
@@ -64,7 +66,7 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInst, _uint iNumLevels, cons
 	if (FAILED(m_pSound_Manager->Initialize()))
 		return E_FAIL;
 
-	if (FAILED(m_pPhysX_Manager->Initialize()))
+	if (FAILED(m_pPhysX_Manager->Initialize(*ppDevice, *ppContext)))
 		return E_FAIL;
 
 	if (FAILED(m_pCamera_Manager->Initialize_CameraManager()))
@@ -87,6 +89,8 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 	NULL_CHECK_RETURN_MSG(m_pPipeLine, , TEXT("PipeLine NULL"));
 	NULL_CHECK_RETURN_MSG(m_pInput_Device, , TEXT("Input_Device NULL"));
 	NULL_CHECK_RETURN_MSG(m_pCollision_Manager, , TEXT("Collsion_Manager NULL"));
+
+	m_pTime_Manager->Tick(fTimeDelta);
 
 	m_pInput_Device->Tick();
 
@@ -683,9 +687,60 @@ HRESULT CGameInstance::Add_Prototype_Models(_uint iLevel, ID3D11Device* pDevice,
 	return S_OK;
 }
 
+HRESULT CGameInstance::Add_Timer(const wstring& wstrTimerTag, const CTime_Manager::ALARMDESC& AlarmDesc)
+{
+	NULL_CHECK_RETURN_MSG(m_pTime_Manager, E_FAIL, TEXT("Time_Manager NULL"));
+
+	return m_pTime_Manager->Add_Timer(wstrTimerTag, AlarmDesc);
+}
+
+HRESULT CGameInstance::Remove_Timer(const wstring& wstrTimerTag)
+{
+	NULL_CHECK_RETURN_MSG(m_pTime_Manager, E_FAIL, TEXT("Time_Manager NULL"));
+
+	return m_pTime_Manager->Remove_Timer(wstrTimerTag);
+}
+
+HRESULT CGameInstance::Reset_Timer(const wstring& wstrTimerTag)
+{
+	NULL_CHECK_RETURN_MSG(m_pTime_Manager, E_FAIL, TEXT("Time_Manager NULL"));
+
+	return m_pTime_Manager->Reset_Timer(wstrTimerTag);
+}
+
+_bool CGameInstance::Check_Timer(const wstring& wstrTimerTag)
+{
+	NULL_CHECK_RETURN_MSG(m_pTime_Manager, false, TEXT("Time_Manager NULL"));
+
+	return m_pTime_Manager->Check_Timer(wstrTimerTag);
+}
+
+const _float& CGameInstance::Get_World_TimeAcc() const
+{
+	NULL_CHECK_RETURN_MSG(m_pTime_Manager, 0.f, TEXT("Time_Manager NULL"));
+
+	return m_pTime_Manager->Get_World_TimeAcc();
+}
+
+_float CGameInstance::Get_TimeAcc(const wstring& wstrTimerTag) const
+{
+	NULL_CHECK_RETURN_MSG(m_pTime_Manager, false, TEXT("Time_Manager NULL"));
+
+	return m_pTime_Manager->Get_TimeAcc(wstrTimerTag);
+}
+
+void CGameInstance::Reset_World_TimeAcc()
+{
+	NULL_CHECK_MSG(m_pTime_Manager, TEXT("Time_Manager NULL"));
+
+	return m_pTime_Manager->Reset_World_TimeAcc();
+}
+
 void CGameInstance::Release_Engine()
 {
 	CGameInstance::GetInstance()->DestroyInstance();
+
+	CTime_Manager::GetInstance()->DestroyInstance();
 
 	CPipeLine::GetInstance()->DestroyInstance();
 
@@ -720,6 +775,7 @@ void CGameInstance::Release_Engine()
 
 void CGameInstance::Free()
 {
+	Safe_Release(m_pTime_Manager);
 	Safe_Release(m_pPhysX_Manager);
 	Safe_Release(m_pCalculator);
 	Safe_Release(m_pSound_Manager);

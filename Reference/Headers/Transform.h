@@ -92,6 +92,7 @@ public:
 	// 각각의 X,Y,Z 의 각도 값을 받아 처리.
 	void Rotation(_float3 vRadians);
 	void LookAt(_float3 _vTarget, _bool _isDeleteY = false);
+	void LookAt_Lerp(_float3 _vTarget, _bool _isDeleteY = false);
 
 private:
 	_float4x4		m_WorldMatrix;

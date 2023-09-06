@@ -234,7 +234,7 @@ namespace Engine
 		// 상대 경로의 시작 부분
 		const string relativeStart = "..\\..\\";
 
-		// "3DTeamPortfolio"의 위치 찾기.
+		// "3DTeamPortfolio"의 위치를 찾습니다.
 		size_t found = absolutePath.find(target);
 		if (found != string::npos)
 		{
@@ -242,20 +242,24 @@ namespace Engine
 			return relativeStart + absolutePath.substr(found + target.size() + 1);
 		}
 
-		// 변환할 대상 문자열이 없는 경우 원래의 경로를 반환.
+		// 변환할 대상 문자열이 없는 경우 원래의 절대 경로를 반환합니다.
 		return absolutePath;
 	}
 
-	// ex) ToPrototypeTag(TEXT("Prototype_Component_Texture"), "../../Resources/FileName.png");
-	std::wstring ToPrototypeTag(const wchar_t* pPrototypeName, const wchar_t* pPath)
+	// string - > wstring 변환 함수
+	std::wstring strToWStr(const std::string& str)
 	{
-		fs::path fsPath = pPath;
-		
-		wstring wstrPrototypeTag = pPrototypeName; // Prototype_Component_Texture
-		if (wstrPrototypeTag.back() != TEXT('_'))
-			wstrPrototypeTag += TEXT('_'); // Prototype_Component_Texture_
-		wstrPrototypeTag += fsPath.stem().wstring(); // Prototype_Component_Texture_FileName
-
-		return wstrPrototypeTag;
+		int size_needed = MultiByteToWideChar(CP_UTF8, 0, &str[0], (int)str.size(), NULL, 0);
+		std::wstring wstrTo(size_needed, 0);
+		MultiByteToWideChar(CP_UTF8, 0, &str[0], (int)str.size(), &wstrTo[0], size_needed);
+		return wstrTo;
+	}
+	// wstring - > string 변환 함수
+	std::string wstrToStr(const std::wstring& wstr)
+	{
+		int size_needed = WideCharToMultiByte(CP_UTF8, 0, &wstr[0], (int)wstr.size(), NULL, 0, NULL, NULL);
+		std::string strTo(size_needed, 0);
+		WideCharToMultiByte(CP_UTF8, 0, &wstr[0], (int)wstr.size(), &strTo[0], size_needed, NULL, NULL);
+		return strTo;
 	}
 }
