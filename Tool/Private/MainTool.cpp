@@ -5,7 +5,12 @@
 #include "MapDummy.h"
 #include "MapObject.h"
 #include "Camera_Point.h"
+
+#ifdef _DEBUG
+
 #include "Camera_Line.h"
+
+#endif
 
 CMainTool::CMainTool()
 	: m_pGameInstance(CGameInstance::GetInstance())
@@ -391,11 +396,14 @@ HRESULT CMainTool::Ready_Prototype_Object()
 		CCamera_Point::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+#ifdef _DEBUG
+
 	/* Prototype_GameObject_Camera_Line*/
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_Camera_Line"),
 		CCamera_Line::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+#endif
 	return S_OK;
 }
 

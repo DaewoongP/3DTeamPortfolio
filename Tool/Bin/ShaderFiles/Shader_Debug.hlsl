@@ -2,6 +2,8 @@
 
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
+float4 g_vColor;
+
 struct VS_IN
 {
     float3 vPosition : POSITION;
@@ -40,7 +42,7 @@ PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
 
-    Out.vColor = float4(0.f, 1.f, 1.f, 1.f);
+    Out.vColor = g_vColor;
     
     return Out;
 }

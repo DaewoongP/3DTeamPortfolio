@@ -2,7 +2,12 @@
 #include "Camera_Point.h"
 #include "GameInstance.h"
 #include "Main_Camera.h"
+
+#ifdef _DEBUG
+
 #include "Camera_Line.h"
+
+#endif
 
 CCutScene_Camera_Tool::CCutScene_Camera_Tool(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
 {
@@ -27,9 +32,13 @@ HRESULT CCutScene_Camera_Tool::Initialize(void* pArg)
 
 	pGameInstance->Add_MainCamera((CCamera*)pMain_Camera);
 
+#ifdef _DEBUG
+	
 	//라인 준비
 	Ready_Line();
 	
+#endif
+
 	CCamera_Point::CAMERAPOINTDESC CameraPointDesc;
 
 	CameraPointDesc.vPosition = Point_Create_Position(_float4(), _float4());
@@ -146,6 +155,7 @@ void CCutScene_Camera_Tool::Tick(_float _fTimeDelta)
 	Play_CutScene();
 
 
+#ifdef _DEBUG
 
 	if (true == m_isLineUpdate)
 	{
@@ -155,6 +165,8 @@ void CCutScene_Camera_Tool::Tick(_float _fTimeDelta)
 	m_pEyeLine->Late_Tick(_fTimeDelta);
 	m_pAtLine->Late_Tick(_fTimeDelta);
 	m_pLookLine->Late_Tick(_fTimeDelta);
+
+#endif
 }
 
 HRESULT CCutScene_Camera_Tool::Render()
@@ -216,14 +228,14 @@ void CCutScene_Camera_Tool::Fix_Point()
 			vFixPosition += -vCameraUp.TransNorm() * _float(iMouseMoveY) * fSpeed;
 		}
 
-		isFix = true;
+		m_isLineUpdate = true;
 	}
 	//z축 이동이 있다면
 	if (0 != iMouseMoveZ)
 	{
 		vFixPosition += vCameraLook.TransNorm() * _float(iMouseMoveZ) * fSpeed * fWheelSpeed;
 
-		isFix = true;
+		m_isLineUpdate = true;
 	}
 
 	m_pCurrentPoint->Set_Position(vFixPosition);
@@ -782,7 +794,12 @@ void CCutScene_Camera_Tool::Save_And_Load()
 				Save_CutSceneInfo(wszFilePath);
 
 				m_isLineUpdate = true;
+
+#ifdef _DEBUG
+
 				Line_Update();
+
+#endif
 			}
 		}
 		// 닫는다.
@@ -854,6 +871,8 @@ void CCutScene_Camera_Tool::Add_CutScene(const CAMERAPOINTINFODESC& _CameraPoint
 
 	ENDINSTANCE;
 }
+
+#ifdef _DEBUG
 
 HRESULT CCutScene_Camera_Tool::Ready_Line()
 {
@@ -1037,6 +1056,7 @@ HRESULT CCutScene_Camera_Tool::EyeLine_Update()
 			MSG_BOX("CameraLine Initailize Failed");
 			return E_FAIL;
 		}
+		m_pEyeLine->Set_Color(_float4(0.0f, 0.0f, 1.0f, 1.0f));
 	}
 
 	return S_OK;
@@ -1171,6 +1191,7 @@ HRESULT CCutScene_Camera_Tool::AtLine_Update()
 			MSG_BOX("CameraLine Initailize Failed");
 			return E_FAIL;
 		}
+		m_pAtLine->Set_Color(_float4(1.0f, 0.0f, 0.0f, 1.0f));
 	}
 
 	return S_OK;
@@ -1222,10 +1243,13 @@ HRESULT CCutScene_Camera_Tool::LookLine_Update()
 			MSG_BOX("CameraLine Initailize Failed");
 			return E_FAIL;
 		}
+		m_pLookLine->Set_Color(_float4(0.0f, 1.0f, 0.0f, 1.0f));
 	}
 
 	return S_OK;
 }
+
+#endif
 
 void CCutScene_Camera_Tool::List_Tick(_float _TimeDelta)
 {
@@ -1257,9 +1281,14 @@ void CCutScene_Camera_Tool::Free()
 {
 	Clear_CutSceneList();
 
+#ifdef _DEBUG
+
 	Safe_Release(m_pEyeLine);
 	Safe_Release(m_pAtLine);
 	Safe_Release(m_pLookLine);
+	
+#endif
+
 	Safe_Release(m_pCreateGuidePoint);
 }
 

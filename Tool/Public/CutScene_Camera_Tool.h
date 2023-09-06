@@ -1,4 +1,5 @@
 #pragma once
+
 #include "Base.h"
 #include "Tool_Defines.h"
 
@@ -6,8 +7,9 @@
 BEGIN(Tool)
 
 class CCamera_Point;
+#ifdef _DEBUG
 class CCamera_Line;
-
+#endif
 class CCutScene_Camera_Tool :
     public CBase
 {
@@ -82,6 +84,8 @@ private:
 	//초기화 더블체크 용
 	_bool m_isClearDoubleCheck{ false };
 
+#ifdef _DEBUG
+
 	//Eye 라인
 	CCamera_Line* m_pEyeLine = { nullptr };
 
@@ -91,6 +95,8 @@ private:
 	//Look 라인
 	CCamera_Line* m_pLookLine = { nullptr };
 	
+#endif
+
 	//Line_Update용
 	_bool m_isLineUpdate{ false };
 
@@ -155,6 +161,8 @@ private:
 
 	void Add_CutScene(const CAMERAPOINTINFODESC& _CameraPointInfoDesc);
 
+#ifdef _DEBUG
+
 	//라인 준비
 	HRESULT Ready_Line();
 
@@ -170,6 +178,7 @@ private:
 	//Look라인 업데이트
 	HRESULT LookLine_Update();
 
+#endif
 public:
 	static CCutScene_Camera_Tool* Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, void * pArg = nullptr);
 	virtual void Free() override;

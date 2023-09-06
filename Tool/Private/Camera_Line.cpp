@@ -1,3 +1,4 @@
+#ifdef _DEBUG
 #include "Camera_Line.h"
 #include "GameInstance.h"
 
@@ -84,8 +85,16 @@ HRESULT CCamera_Line::LineBufferInitialize(void* _pArg)
 void CCamera_Line::LineBufferClear()
 {
 	Safe_Release(m_pLineBuffer);
-	m_pLineBuffer = nullptr;
+	
+	auto iter = m_Components.find(TEXT("Com_Line"));
+
+	if (iter != m_Components.end())
+	{
+		Safe_Release((*iter).second);
+		m_Components.erase(iter);
+	}
 }
+
 
 HRESULT CCamera_Line::Add_Components()
 {
@@ -119,6 +128,9 @@ HRESULT CCamera_Line::SetUp_ShaderResources()
 	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
 	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+
+	if (FAILED(m_pShader->Bind_RawValue("g_vColor", &m_vColor,sizeof(_float4))))
 		return E_FAIL;
 	
 	ENDINSTANCE;
@@ -161,4 +173,6 @@ void CCamera_Line::Free()
 	Safe_Release(m_pShader);
 	Safe_Release(m_pRenderer);
 	Safe_Release(m_pLineBuffer);
+	int a = 0;
 }
+#endif //_DEBUG

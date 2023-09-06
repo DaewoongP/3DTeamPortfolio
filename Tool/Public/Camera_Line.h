@@ -1,4 +1,5 @@
 #pragma once
+#ifdef _DEBUG
 #include "GameObject.h"
 #include "Tool_Defines.h"
 
@@ -36,10 +37,10 @@ public:
 	HRESULT LineBufferInitialize(void *_pArg);
 	void LineBufferClear();
 
-#ifdef _DEBUG
-	//디버깅 렌더 색 변경
-	//void Set_Color(_float4 _vColor);
-#endif // _DEBUG
+
+	
+	void Set_Color(_float4 _vColor) { m_vColor = _vColor; };
+
 
 
 private:
@@ -51,6 +52,9 @@ private:
 	CRenderer* m_pRenderer = { nullptr };
 	//사용이 필요할때만 준비
 	CVIBuffer_Line* m_pLineBuffer = { nullptr };
+
+	//색상
+	_float4 m_vColor{ _float4(1.0f, 1.0f, 1.0f, 1.0f) };
 	
 private:
 	HRESULT Add_Components();
@@ -65,3 +69,4 @@ public:
 };
 
 END
+#endif // _DEBUG
