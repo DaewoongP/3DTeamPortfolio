@@ -1,0 +1,4 @@
+
+class CGolem_Grunt
+{
+};

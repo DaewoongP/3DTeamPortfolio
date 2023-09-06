@@ -27,6 +27,8 @@ CAnimation::CAnimation(const CAnimation& rhs)
 	{
 		Safe_AddRef(pChannel);
 	}
+
+	Safe_AddRef(m_pNotify);
 }
 
 void CAnimation::Set_CurrentKeyFrameIndex(CModel::BONES& Bones, _uint iKeyFrameIndex)
@@ -249,6 +251,7 @@ void CAnimation::Free()
 {
 	for (auto& pChannel : m_Channels)
 		Safe_Release(pChannel);
+
 	Safe_Release(m_pNotify);
 
 	m_Channels.clear();

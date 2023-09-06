@@ -50,9 +50,6 @@ private:
 	CWeapon_Armored_Troll* m_pWeapon = { nullptr };
 
 private:
-	PxScene* m_pScene = { nullptr };
-
-private:
 	HRESULT Make_AI();
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();

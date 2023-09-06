@@ -35,13 +35,12 @@ public:
 
 #ifdef _DEBUG
 public:
-	virtual HRESULT Render() override;
-
-	HRESULT Add_Render_Debug_Group(const _float2& vFontPosition, class CRenderer* pRenderer);
+	vector<wstring> Get_DebugBahaviorTags() const {
+		return m_DebugBehaviorTags;
+	}
 
 private:
-	_float2 m_vFontPosition;
-	stack<wstring> m_DebugBehaviorTags;
+	vector<wstring> m_DebugBehaviorTags;
 #endif // _DEBUG
 };
 

@@ -1,7 +1,9 @@
 #include "Armored_Troll.h"
 #include "GameInstance.h"
-#include "PhysXConverter.h"
 #include "Weapon_Armored_Troll.h"
+
+#include "Wait.h"
+#include "Action.h"
 
 CArmored_Troll::CArmored_Troll(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -43,7 +45,11 @@ void CArmored_Troll::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	m_pModelCom->Play_Animation(fTimeDelta);
+	if (nullptr != m_pRootBehavior)
+		m_pRootBehavior->Tick(fTimeDelta);
+
+	if (nullptr != m_pModelCom)
+		m_pModelCom->Play_Animation(fTimeDelta);
 }
 
 void CArmored_Troll::Late_Tick(_float fTimeDelta)
@@ -55,7 +61,6 @@ void CArmored_Troll::Late_Tick(_float fTimeDelta)
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 #ifdef _DEBUG
 		m_pRenderer->Add_DebugGroup(m_pRigidBody);
-		m_pRootBehavior->Add_Render_Debug_Group(_float2(0.f, 0.f), m_pRenderer);
 #endif // _DEBUG
 	}
 }
@@ -66,9 +71,6 @@ HRESULT CArmored_Troll::Render()
 	Tick_ImGui();
 #endif // _DEBUG
 
-	if (FAILED(__super::Render()))
-		return E_FAIL;
-
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
@@ -76,7 +78,7 @@ HRESULT CArmored_Troll::Render()
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
-		try /* Failed Render üũ */
+		try /* Failed Render */
 		{
 			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", i)))
 				throw TEXT("Bind_BoneMatrices");
@@ -112,12 +114,47 @@ HRESULT CArmored_Troll::Make_AI()
 {
 	BEGININSTANCE;
 
-	/*try
+	try
 	{
-		wstring wstrThrowData = { TEXT("") };
-		CSelector* pTest = dynamic_cast<CSelector*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Selector")));
-		if (nullptr == pTest)
-			throw TEXT("pTest");
+		/* Add Types */
+
+		/* Make Childs */
+		CSelector* pSelector = dynamic_cast<CSelector*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Selector")));
+		if (nullptr == pSelector)
+			throw TEXT("pSelector is nullptr");
+
+		CAction* pAction_Attack = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		if (nullptr == pAction_Attack)
+			throw TEXT("pAction_Attack is nullptr");
+		CAction* pAction_Wait = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		if (nullptr == pAction_Wait)
+			throw TEXT("pAction_Wait is nullptr");
+
+		CWait* pTsk_Test = dynamic_cast<CWait*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Wait")));
+		if (nullptr == pTsk_Test)
+			throw TEXT("pTsk_Test is nullptr");
+		CWait* pTsk_Wait = dynamic_cast<CWait*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Wait")));
+		if (nullptr == pTsk_Wait)
+			throw TEXT("pTsk_Wait is nullptr");
+
+		pAction_Attack->Set_Options(TEXT("cmbt_atk_overhead_slam"), m_pModelCom, 5.f);
+		pAction_Wait->Set_Options(TEXT("cmbt_atk_overhead_slam"), m_pModelCom);
+		pTsk_Test->Set_Timer(8.f);
+		pTsk_Wait->Set_Timer(3.f);
+
+		/* Bind Childs */
+		if (FAILED(m_pRootBehavior->Assemble_Behavior(TEXT("Selector"), pSelector)))
+			throw TEXT("RootBehavior Assemble pSelector");
+
+		if (FAILED(pSelector->Assemble_Behavior(TEXT("Action_Attack"), pAction_Attack)))
+			throw TEXT("RootBehavior Assemble pAction_Attack");
+		if (FAILED(pSelector->Assemble_Behavior(TEXT("Action_Wait"), pAction_Wait)))
+			throw TEXT("RootBehavior Assemble pAction_Wait");
+
+		if (FAILED(pAction_Attack->Assemble_Behavior(TEXT("Tsk_Test"), pTsk_Test)))
+			throw TEXT("pAction_Attack Assemble Tsk_Wait");
+		if (FAILED(pAction_Wait->Assemble_Behavior(TEXT("Tsk_Wait"), pTsk_Wait)))
+			throw TEXT("pAction_Attack Assemble Tsk_Wait");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -129,7 +166,7 @@ HRESULT CArmored_Troll::Make_AI()
 
 		return E_FAIL;
 	}
-	*/
+
 	ENDINSTANCE;
 
 	return S_OK;
@@ -164,7 +201,7 @@ HRESULT CArmored_Troll::Add_Components()
 			TEXT("Com_RootBehavior"), reinterpret_cast<CComponent**>(&m_pRootBehavior))))
 			throw TEXT("Com_RootBehavior");
 
-		const CBone* pBone = m_pModelCom->Get_Bone(TEXT("RightHand"));
+		const CBone* pBone = m_pModelCom->Get_Bone(TEXT("SKT_RightHand"));
 		if (nullptr == pBone)
 			throw TEXT("pBone is nullptr");
 
@@ -192,19 +229,37 @@ HRESULT CArmored_Troll::Add_Components()
 
 HRESULT CArmored_Troll::SetUp_ShaderResources()
 {
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
+	BEGININSTANCE;
 
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
-		return E_FAIL;
+	try /* Check SetUp_ShaderResources */
+	{
+		if (nullptr == m_pShaderCom)
+			throw TEXT("m_pShaderCom is nullptr");
 
-	Safe_Release(pGameInstance);
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
+			throw TEXT("Failed Bind_Matrix : g_WorldMatrix");
+
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW))))
+			throw TEXT("Failed Bind_Matrix : g_ViewMatrix");
+
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
+			throw TEXT("Failed Bind_Matrix : g_ProjMatrix");
+
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
+			throw TEXT("Failed Bind_RawValue : g_fCamFar");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed SetUp_ShaderResources : \n");
+		wstrErrorMSG += pErrorTag;
+		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+
+		ENDINSTANCE;
+
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
 
 	return S_OK;
 }
@@ -212,10 +267,30 @@ HRESULT CArmored_Troll::SetUp_ShaderResources()
 #ifdef _DEBUG
 void CArmored_Troll::Tick_ImGui()
 {
+	RECT clientRect;
+	GetClientRect(g_hWnd, &clientRect);
+	POINT leftTop = { clientRect.left, clientRect.top };
+	POINT rightBottom = { clientRect.right, clientRect.bottom };
+	ClientToScreen(g_hWnd, &leftTop);
+	ClientToScreen(g_hWnd, &rightBottom);
+	int Left = leftTop.x;
+	int Top = rightBottom.y;
+	ImVec2 vWinpos = { _float(Left + 1280.f), _float(Top - 300.f) };
+	ImGui::SetNextWindowPos(vWinpos);
+
 	ImGui::Begin("Test Troll");
 
 	if (ImGui::InputInt("animIndex##Armored", &m_iIndex))
 		m_pModelCom->Reset_Animation(m_iIndex);
+
+	ImGui::SeparatorText("Behavior");
+
+	vector<wstring> DebugBehaviorTags = m_pRootBehavior->Get_DebugBahaviorTags();
+
+	for (auto& Tag : DebugBehaviorTags)
+	{
+		ImGui::Text(wstrToStr(Tag).c_str());
+	}
 
 	ImGui::End();
 }
@@ -255,8 +330,8 @@ void CArmored_Troll::Free()
 	{
 		Safe_Release(m_pWeapon);
 		Safe_Release(m_pModelCom);
-		Safe_Release(m_pShaderCom);
 		Safe_Release(m_pRenderer);
+		Safe_Release(m_pShaderCom);
 		Safe_Release(m_pRigidBody);
 		Safe_Release(m_pRootBehavior);
 	}

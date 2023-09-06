@@ -7,7 +7,7 @@
 #include "GameObject.h"
 #include "Dummy_UI_Group.h"
 
-CUI_Window::CUI_Window(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CUI_Window::CUI_Window(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CImWindow(pDevice, pContext)
 {
 }
@@ -46,7 +46,7 @@ void CUI_Window::Tick(_float fTimeDelta)
 	{
 		BEGININSTANCE
 
-		m_pUILayer = pGameInstance->Find_Layer(LEVEL_TOOL, TEXT("Layer_Tool_UI"));
+			m_pUILayer = pGameInstance->Find_Layer(LEVEL_TOOL, TEXT("Layer_Tool_UI"));
 
 		ENDINSTANCE
 	}
@@ -193,7 +193,7 @@ void CUI_Window::Open_Object_List()
 				dynamic_cast<CDummy_UI*>(m_pUIVector[i])->Set_Size(fScale.x, fScale.y);
 
 				ImGui::Begin("Selected Object");
-				
+
 				Select_Obejct(m_pUIVector[i]);
 
 				ImGui::End();
@@ -223,7 +223,7 @@ void CUI_Window::Select_Obejct(CGameObject* pGameObject)
 
 
 void CUI_Window::Object_List()
-{	
+{
 	if (nullptr == m_pUILayer)
 	{
 		return;
@@ -316,7 +316,7 @@ void CUI_Window::Open_File_Path_Tree(UI_Tree* pTree)
 
 		ImGui::SameLine();
 		string strFileName = szFileName;
-		string CreateIndex =  "Create_UI##" + strFileName + to_string(m_iTreeIndex);
+		string CreateIndex = "Create_UI##" + strFileName + to_string(m_iTreeIndex);
 		if (ImGui::SmallButton(CreateIndex.c_str()))
 		{
 			Create_UI(pTree);
@@ -405,7 +405,7 @@ void CUI_Window::Create_UI(UI_Tree* pTree)
 		{
 			MSG_BOX("Failed Create Texture Component");
 		}
-		
+
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, wszGaemObject,
 			CDummy_UI::Create(m_pDevice, m_pContext, wszComponent))))
 		{
@@ -421,13 +421,13 @@ void CUI_Window::Create_UI(UI_Tree* pTree)
 	{
 		iSize = _int(m_pUILayer->Get_Components().size());
 	}
-	
+
 	string strFimeName = szFileName;
 	string GameObjectTag = "UI_" + strFimeName + to_string(iSize);
 	_tchar wszGameObjectTag[MAX_PATH] = TEXT("");
 
 	CharToWChar(GameObjectTag.c_str(), wszGameObjectTag);
-	
+
 	_float2 fSize = _float2(_float(pTree->m_iWidth), _float(pTree->m_iHeight));
 
 	// Dummy UI Object 생성.
@@ -448,7 +448,7 @@ void CUI_Window::Interaction_UI()
 
 	if (nullptr == m_pUILayer)
 		return;
-	
+
 
 	const unordered_map<const _tchar*, CComponent*> Components = m_pUILayer->Get_Components();
 
@@ -473,7 +473,7 @@ void CUI_Window::Interaction_UI()
 	{
 		CGameInstance* pGameInstance = CGameInstance::GetInstance();
 		Safe_AddRef(pGameInstance);
-		if (dynamic_cast<CDummy_UI*>(pGameObject)->Is_In_Rect() && 
+		if (dynamic_cast<CDummy_UI*>(pGameObject)->Is_In_Rect() &&
 			pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN))
 		{
 			m_pDummy_UI = dynamic_cast<CDummy_UI*>(pGameObject);
@@ -489,7 +489,7 @@ void CUI_Window::Interaction_UI()
 	}
 
 #ifdef _DEBUG
-//	cout << m_pDummy_UI << endl;
+	//	cout << m_pDummy_UI << endl;
 #endif // _DEBUG
 }
 
@@ -604,7 +604,7 @@ void CUI_Window::Add_Group(CGameObject* pGameObject)
 			MSG_BOX("Group is null");
 			return;
 		}
-		
+
 		if (m_isParent)
 		{
 			dynamic_cast<CDummy_UI*>(pGameObject)->Set_bParent();
@@ -718,7 +718,7 @@ void CUI_Window::UI_Gruop_Combo()
 				m_pDummy_UI_Group = dynamic_cast<CDummy_UI_Group*>(m_pGroupVector[i]);
 			}
 
-			if (isSelected) 
+			if (isSelected)
 			{
 				//m_isPreGroupComboIndex = m_GroupComboIndex;
 			}
@@ -752,7 +752,7 @@ void CUI_Window::Move_UI()
 		}
 	}
 
-	if (nullptr == m_pDummy_UI || 
+	if (nullptr == m_pDummy_UI ||
 		!(pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_PRESSING)))
 	{
 		m_MousePos = CurrentMousePos; // 현재 위치를 이전 위치로 저장
