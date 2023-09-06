@@ -19,7 +19,6 @@ CRigidBody::CRigidBody(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 CRigidBody::CRigidBody(const CRigidBody& rhs)
 	: CComposite(rhs)
-	, m_vColor(_float4(1.f, 0.f, 0.f, 1.f))
 {
 }
 

@@ -6,6 +6,7 @@
 #include "Layer.h"
 #include "GameObject.h"
 #include "Dummy_UI_Group.h"
+#include "Dummy_Font.h"
 
 #include "RenderTarget_Manager.h"
 #include "RenderTarget.h"
@@ -31,9 +32,10 @@ HRESULT CUI_Window::Initialize(ImVec2 vWindowPos, ImVec2 vWindowSize)
 
 	m_TreeDesc.m_wstrName = TEXT("../../Resources/UI/");
 	m_TreeDesc.m_isFolder = true;
+
 	Read_File_In_Directory_Tree(m_TreeDesc, TEXT("../../Resources/UI/"), TEXT(".png"));
 
-	m_pGroupVector.clear();
+	Initialize_Font();
 
 	return S_OK;
 }
@@ -58,10 +60,21 @@ void CUI_Window::Tick(_float fTimeDelta)
 	{
 		BEGININSTANCE
 
-			m_pUIGroupLayer = pGameInstance->Find_Layer(LEVEL_TOOL, TEXT("Layer_Tool_UI_Group"));
+		m_pUIGroupLayer = pGameInstance->Find_Layer(LEVEL_TOOL, TEXT("Layer_Tool_UI_Group"));
 
 		ENDINSTANCE
 	}
+
+	if (m_pUIGroupLayer == nullptr)
+	{
+		BEGININSTANCE
+
+		m_pFontLayer = pGameInstance->Find_Layer(LEVEL_TOOL, TEXT("Layer_Tool_Font"));
+
+		ENDINSTANCE
+	}
+
+
 
 	ImGui::Begin("UI", nullptr, m_WindowFlag);
 
@@ -88,21 +101,16 @@ void CUI_Window::Tick(_float fTimeDelta)
 		UI_Group_Tree();
 	}
 
+	if (ImGui::CollapsingHeader("Font"))
+	{
+		Create_Font();
+	}
+
+
 	Correction_Pick();
 	Interaction_UI();
 	Move_UI();
-
-
-	if (ImGui::Button("Capture"))
-	{
-		CGameInstance* pGameInstance = CGameInstance::GetInstance();
-		Safe_AddRef(pGameInstance);
-		ID3D11Texture2D* pTexture = pGameInstance->Find_RenderTarget(TEXT("Target_Picking"))->Get_Texture2D();
-
-		Capture_UI(pTexture, TEXT("../../"));
-
-		Safe_Release(pGameInstance);
-	}
+	Capture();
 
 	ImGui::End();
 }
@@ -179,8 +187,7 @@ void CUI_Window::Open_Object_List()
 		{
 			m_isObjectSelected = (m_iObjectListIndex == i);
 
-			_char szGameObjectName[MAX_PATH];
-			memset(szGameObjectName, 0, sizeof(_char) * MAX_PATH);
+			_char szGameObjectName[MAX_PATH] = "";
 
 			WCharToChar(m_pUIVector[i]->Get_Tag(), szGameObjectName);
 			if (ImGui::Selectable(szGameObjectName, m_isObjectSelected))
@@ -278,8 +285,7 @@ void CUI_Window::Open_File_Path_Tree(UI_Tree* pTree)
 	{
 		m_iTreeIndex = m_iInitIndex;
 
-		_char szChar[MAX_PATH];
-		memset(szChar, 0, sizeof(_char) * MAX_PATH);
+		_char szChar[MAX_PATH] = "";
 		WCharToChar(pTree->m_wstrName.c_str(), szChar);
 
 		_int iIndex = 0;
@@ -303,8 +309,7 @@ void CUI_Window::Open_File_Path_Tree(UI_Tree* pTree)
 	}
 	else
 	{
-		_char szChar[MAX_PATH];
-		memset(szChar, 0, sizeof(_char));
+		_char szChar[MAX_PATH] = "";
 		WCharToChar(pTree->m_wstrName.c_str(), szChar);
 
 		_char szFileName[MAX_PATH] = "";
@@ -395,8 +400,7 @@ void CUI_Window::Create_UI(UI_Tree* pTree)
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	_char szChar[MAX_PATH];
-	memset(szChar, 0, sizeof(_char) * MAX_PATH);
+	_char szChar[MAX_PATH] = "";
 	WCharToChar(pTree->m_wstrName.c_str(), szChar);
 
 	_char szFileName[MAX_PATH] = "";
@@ -586,8 +590,7 @@ void CUI_Window::Add_Group(CGameObject* pGameObject)
 	}
 
 
-	_char szGroupName[MAX_PATH];
-	memset(szGroupName, 0, sizeof(_char) * MAX_PATH);
+	_char szGroupName[MAX_PATH] = "";
 	if (m_pGroupVector.size() > 0)
 	{
 		WCharToChar(m_pGroupVector[m_AddGroupIndex]->Get_Tag(), szGroupName);
@@ -604,8 +607,7 @@ void CUI_Window::Add_Group(CGameObject* pGameObject)
 		{
 			bool isSelected = (i == m_AddGroupIndex); // 현재 항목이 선택된 항목인지 확인합니다.
 
-			_char szGameObjectName[MAX_PATH];
-			memset(szGameObjectName, 0, sizeof(_char) * MAX_PATH);
+			_char szGameObjectName[MAX_PATH] = "";
 
 			WCharToChar(m_pGroupVector[i]->Get_Tag(), szGameObjectName);
 
@@ -709,11 +711,9 @@ void CUI_Window::Input_Text()
 
 	if (m_isEnterGroupName)
 	{
-		string strText = m_szInputText;
-		Create_UI_Gruop(strText);
+		Create_UI_Gruop(m_szInputText);
 
-		// Enter 키를 누르면 입력된 텍스트를 객체에 설정합니다.
-		memset(m_szInputText, 0, sizeof(m_szInputText));
+		ZeroMemory(m_szInputText, MAX_PATH);
 		m_isEnterGroupName = false;
 	}
 
@@ -770,22 +770,71 @@ void CUI_Window::Load_UI()
 	Open_Dialog();
 }
 
-void CUI_Window::Capture_UI(ID3D11Texture2D* pTexture, const _tchar* pFilePath)
+void CUI_Window::Capture()
 {
-	HANDLE hFile = CreateFile(pFilePath, GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
-	if (0 == hFile)
+	if (ImGui::Button("Capture"))
 	{
-		MSG_BOX("CutScene Save Fail");
-		CloseHandle(hFile);
-		return;
+		m_isCapture = !m_isCapture;
 	}
 
-	DWORD dwByte = { 0 };
+	if (m_isCapture)
+	{
+		ImGui::Begin("Capture");
 
-	WriteFile(hFile, &iListSize, sizeof(_uint), &dwByte, nullptr);
 
-	MSG_BOX("CutScene Save Success");
-	CloseHandle(hFile);
+		if (ImGui::InputText("File Name", m_szCaptureText, IM_ARRAYSIZE(m_szCaptureText), ImGuiInputTextFlags_EnterReturnsTrue))
+		{
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Enter"))
+		{
+			m_isEnterGroupName = true;
+		}
+		else
+		{
+			m_isEnterGroupName = false;
+		}
+
+		if (m_isEnterGroupName)
+		{
+			_tchar wszFilePath[MAX_PATH] = {};
+
+			string strPath = "../../Resources/UIData/";
+			string strDDS = ".dds";
+
+			string strText = strPath + m_szCaptureText +strDDS;
+
+			CharToWChar(strText.c_str(), wszFilePath);
+
+
+			CGameInstance* pGameInstance = CGameInstance::GetInstance();
+			Safe_AddRef(pGameInstance);
+
+			ID3D11Texture2D* pTexture = pGameInstance->Find_RenderTarget(TEXT("Target_UI"))->Get_Texture2D();
+		
+			Safe_Release(pGameInstance);
+
+			if (nullptr == pTexture)
+			{
+				MSG_BOX("Capture Failed");
+
+				
+				ZeroMemory(m_szCaptureText, MAX_PATH);
+				m_isEnterGroupName = false;
+			}
+			else
+			{
+				MSG_BOX("Capture Success");
+				SaveDDSTextureToFile(m_pContext, pTexture, wszFilePath);
+
+				ZeroMemory(m_szCaptureText, MAX_PATH);
+				m_isEnterGroupName = false;
+			}
+		}
+
+		ImGui::End();
+	}
+
 }
 
 void CUI_Window::Move_UI()
@@ -877,6 +926,23 @@ _bool CUI_Window::Load_ImTexture(const _char* pFilePath, ID3D11ShaderResourceVie
 	return true;
 }
 
+HRESULT CUI_Window::Initialize_Font()
+{
+	BEGININSTANCE
+
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("ProtoType_Component_NexonGothic"),
+		CDummy_Font::Create(m_pDevice, m_pContext, TEXT("../../Resources/Fonts/NexonGothic.spritefont")))))
+	{
+		MSG_BOX("Failed Create Font Component");
+		ENDINSTANCE
+		return E_FAIL;
+	}
+
+	ENDINSTANCE
+
+	return S_OK;
+}
+
 void CUI_Window::UI_Group_Tree()
 {
 	if (nullptr == m_pDummy_UI_Group)
@@ -893,8 +959,8 @@ void CUI_Window::UI_Group_Tree()
 		{
 			_bool selection = false;
 
-			_char szName[MAX_PATH];
-			memset(szName, 0, sizeof(_char) * MAX_PATH);
+			_char szName[MAX_PATH] = "";
+
 			WCharToChar(pParent->Get_Tag(), szName);
 			if (ImGui::Selectable(szName, selection))
 			{
@@ -919,8 +985,7 @@ void CUI_Window::UI_Group_Tree()
 		_uint iIndex = 0;
 		for (auto& iter : *pChilds)
 		{
-			_char szName[MAX_PATH];
-			memset(szName, 0, sizeof(_char) * MAX_PATH);
+			_char szName[MAX_PATH] = "";
 			WCharToChar(iter->Get_Tag(), szName);
 			if (ImGui::Selectable(szName, selection[iIndex]))
 			{
@@ -934,6 +999,86 @@ void CUI_Window::UI_Group_Tree()
 
 		ImGui::TreePop(); // 트리 노드 닫기
 	}
+}
+
+void CUI_Window::Create_Font()
+{
+	string strName = "NexonGothic";
+
+	if (ImGui::BeginCombo("Group List", strName.c_str()))
+	{
+		for (int i = 0; i < (_int)FONT_END; i++)
+		{
+			bool isSelected = (m_FontComboIndex == i);
+
+			if (ImGui::Selectable(strName.c_str(), isSelected))
+			{
+				ImGui::SetItemDefaultFocus(); // 선택한 항목을 기본으로 설정
+				m_FontComboIndex = i;
+				m_eFont = (FONT)i;
+			}
+
+			if (isSelected)
+			{
+				//m_isPreGroupComboIndex = m_GroupComboIndex;
+			}
+		}
+		ImGui::EndCombo();
+	}
+
+	
+	ImGui::InputText("Write Text", m_szFontText, MAX_PATH);
+	ImGui::SameLine();
+
+	if (ImGui::Button("Enter"))
+	{
+		m_isEnterTextName = true;
+		ImGui::DebugTextEncoding(m_szFontText, m_wszFontText);
+	}
+	else
+	{
+		m_isEnterTextName = false;
+	}
+
+	if (m_isEnterTextName)
+	{
+		switch (m_eFont)
+		{
+		case Tool::CUI_Window::GOTHIC:
+		{
+			_int iSize = 0;
+			if (nullptr != m_pUILayer)
+			{
+				iSize = _int(m_pUILayer->Get_Components().size());
+			}
+
+			string strFont = "Font_" + to_string(iSize);
+			_tchar wszFontTag[MAX_PATH] = TEXT("");
+			CharToWChar(strFont.c_str(), wszFontTag);
+
+			BEGININSTANCE
+			if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, TEXT("ProtoType_Component_NexonGothic"),
+				TEXT("Layer_Tool_Font"), wszFontTag, m_wszFontText)))
+			{
+				MSG_BOX("Failed to Created CDummy_Font Clone");
+			}
+			ENDINSTANCE
+
+			ZeroMemory(m_szFontText, MAX_PATH);
+			ZeroMemory(m_wszFontText, MAX_PATH);
+
+			m_isEnterTextName = false;
+		}
+			break;
+		case Tool::CUI_Window::FONT_END:
+			MSG_BOX("Failed Create Font");
+			break;
+		default:
+			MSG_BOX("Failed Create Font");
+			break;
+		}
+	}
+
 }
 
 CUI_Window* CUI_Window::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, ImVec2 vWindowPos, ImVec2 vWindowSize)
