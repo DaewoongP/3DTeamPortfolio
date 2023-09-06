@@ -206,8 +206,6 @@ void CCutScene_Camera_Tool::Fix_Point()
 	_float fSpeed{ 0.01f };
 	_float fWheelSpeed{ 0.01f };
 
-	_bool isFix{ false };
-
 	if (pGameInstance->
 		Get_DIMouseState(
 			CInput_Device::DIMK_LBUTTON,
