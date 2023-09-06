@@ -324,12 +324,12 @@ PS_OUT PS_MAIN_SHADOW(PS_IN In)
     float2 LightUV = float2((vPosition.x + 1.f) / 2.f, (vPosition.y - 1.f) / -2.f);
 
     vector vLightDepth = g_vLightDepthTexture.Sample(BlurSampler, LightUV);
-
-	
+    
+    
+    
     float LightDepth_W = vLightDepth.y * g_fCamFar;
     float LightDepth_Z = vLightDepth.x * LightDepth_W;
     float CamDepth = vPosition.z - 0.1f / g_fCamFar;
-
     if (CamDepth > vLightDepth.x)
     {
         Out.vColor = float4(0.05f, 0.05f, 0.05f, 0.05f);
@@ -337,6 +337,27 @@ PS_OUT PS_MAIN_SHADOW(PS_IN In)
     else
         discard;
 
+    float fragDepth = CamDepth;
+    
+    float fLit = 1.0f;
+    
+    float E_x2 = vLightDepth.z;
+    float Ex_2 =vLightDepth.x*vLightDepth.x;
+    float variance = (E_x2 - Ex_2);
+    variance = max(variance, 0.000005f);
+
+    float mD = (fragDepth - vLightDepth.x);
+    float mD_2 = mD * mD;
+    float p = (variance / (variance + mD_2));
+
+    fLit = max(p, fragDepth > vLightDepth.x);
+    fLit = (1-fLit) + 0.5f;
+    if (fLit > 1.f)
+        fLit = 1.f;
+    
+  // Out.vColor = float4(fLit, fLit, fLit, fLit);
+
+    
     return Out;
 
 

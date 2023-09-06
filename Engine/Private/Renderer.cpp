@@ -52,8 +52,9 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	_uint2 SizeShadow = { 8000,6000 };
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
-		TEXT("Target_Shadow_Depth"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f))))
+		TEXT("Target_Shadow_Depth"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f),true)))
 		return E_FAIL;
+	
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_Shadow"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
@@ -249,6 +250,7 @@ HRESULT CRenderer::Render_NonBlend()
 
 	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Shadow_Depth"))))
 		return E_FAIL;
+	//m_pDevice->
 
 	for (auto& pGameObject : m_RenderObjects[RENDER_NONBLEND])
 	{
