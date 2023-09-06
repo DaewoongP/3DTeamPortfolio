@@ -98,7 +98,7 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 
 #ifdef _DEBUG
-	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Picking"), TEXT("Target_Picking"))))  // ¸Ê ¿ÀºêÁ§ÅÍ Fast PickingÀ» À§ÇÑ ·»´õ Å¸°Ù
+	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Picking"), TEXT("Target_Picking"))))  
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_UI"), TEXT("Target_UI"))))  // UI
 		return E_FAIL;
@@ -142,6 +142,8 @@ HRESULT CRenderer::Initialize_Prototype()
 
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Picking"), 1200.f, 80.f, 160.f, 160.f)))
 		return E_FAIL; // ¸Ê ¿ÀºêÁ§ÅÍ Fast PickingÀ» À§ÇÑ ·»´õ Å¸°Ù
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_UI"), 1200.f, 300.f, 160.f, 160.f)))
+		return E_FAIL;
 	
 #endif // _DEBUG
 
@@ -320,6 +322,8 @@ HRESULT CRenderer::Render_Picking()
 	return S_OK;
 }
 #endif // _DEBUG
+
+
 HRESULT CRenderer::Render_Lights()
 {
 	if (nullptr == m_pRenderTarget_Manager)

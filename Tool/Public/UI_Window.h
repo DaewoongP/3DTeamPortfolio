@@ -6,6 +6,9 @@ BEGIN(Tool)
 class CUI_Window final : public CImWindow
 {
 public:
+	enum FONT { GOTHIC, FONT_END };
+
+public:
 	struct UI_Tree
 	{
 		UI_Tree()
@@ -64,7 +67,9 @@ public: // UI Gruop
 	void	Create_UI_Gruop(string _pGroupName);
 	void	UI_Gruop_Combo();
 	void	UI_Group_Tree();
-	
+
+public:
+	void	Create_Font();
 
 public: // Function
 	void	Interaction_UI();
@@ -72,10 +77,11 @@ public: // Function
 	void	Correction_Pick();
 	void	Save_UI();
 	void	Load_UI();
-	void	Capture_UI(ID3D11Texture2D* pTexture, const _tchar* pFilePath);
+	void	Capture();
 
 public:
 	_bool Load_ImTexture(const _char* pFilePath, ID3D11ShaderResourceView** out_srv, _int* out_width, _int* out_height);
+	HRESULT	Initialize_Font();
 
 private:
 	vector <wstring>					m_FilePaths;
@@ -114,18 +120,30 @@ private:
 	vector <class CGameObject*> m_pGroupVector = { nullptr };
 	class CDummy_UI_Group* m_pDummy_UI_Group = { nullptr }; // 현재 마우스로 잡은 녀석 보관
 
+	class CLayer* m_pFontLayer = { nullptr };
+
+
 
 private:
 	class CDummy_UI* m_pDummy_UI = { nullptr }; // 현재 마우스로 잡은 녀석 보관
 	POINT			 m_MousePos = {}; // 이전 마우스 위치
 
 private:
-	_char				m_szInputText[256] = "";
+	_char				m_szInputText[MAX_PATH] = "";
 	_bool				m_isEnterGroupName = { false };
 	_int				m_GroupComboIndex = { 0 }; // 선택된 항목의 인덱스
 	//_int				m_isPreGroupComboIndex = { 0 };
 
-	//class CDummy_UI_Group* m_pDummy_UI_Group = { nullptr };
+	_char				m_szCaptureText[MAX_PATH] = "";
+	_bool				m_isCapture = { false };
+
+	_tchar				m_wszFontText[MAX_PATH] = TEXT("");
+	_char				m_szFontText[MAX_PATH] = "";
+	_bool				m_isEnterTextName = { false };
+	_int				m_FontComboIndex = { 0 }; // 선택된 항목의 인덱스
+
+private:
+	FONT				m_eFont = { FONT_END };
 
 public:
 	static CUI_Window* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, ImVec2 vWindowPos, ImVec2 vWindowSize);

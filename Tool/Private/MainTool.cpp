@@ -117,6 +117,7 @@ HRESULT CMainTool::Initialize_ImGui()
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
+	io.Fonts->AddFontFromFileTTF("../../Resources/Fonts/NEXONLv1GothicBold.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesKorean());
 
 	// Add default Japanese ranges
 	io.Fonts->AddFontFromFileTTF("../../Resources/YES24GothicR.ttf", 16.f, nullptr, io.Fonts->GetGlyphRangesKorean());
