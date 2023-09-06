@@ -82,7 +82,7 @@ HRESULT CLevel_Tool::Ready_For_Layer_Tool(const _tchar* pLayerTag)
 
 HRESULT CLevel_Tool::Ready_For_Layer_MapObject(const _tchar* pLayerTag)
 {
-	BEGININSTANCE; ENDINSTANCE;
+	// 여기에 MapDummy, MapObject만 들어가야 한다.
 
 	return S_OK;
 }

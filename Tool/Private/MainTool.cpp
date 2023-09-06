@@ -6,6 +6,12 @@
 #include "MapObject.h"
 #include "Camera_Point.h"
 
+#ifdef _DEBUG
+
+#include "Camera_Line.h"
+
+#endif
+
 CMainTool::CMainTool()
 	: m_pGameInstance(CGameInstance::GetInstance())
 	, m_pWindow_Manager(CWindow_Manager::GetInstance())
@@ -117,6 +123,7 @@ HRESULT CMainTool::Initialize_ImGui()
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
+	io.Fonts->AddFontFromFileTTF("../../Resources/Fonts/NEXONLv1GothicBold.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesKorean());
 
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
@@ -190,33 +197,32 @@ HRESULT CMainTool::Add_Windows()
 	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("Object_Window"),
 		CObject_Window::Create(m_pDevice, m_pContext,
 			ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(400.f, 700.f)))))
-		return E_FAIL;
+		MSG_BOX("Failed Create Object_Window");
 	
 	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("Effect_Window"),
 		CEffect_Window::Create(m_pDevice, m_pContext,
 			ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(446.f, 768.f)))))
-		return E_FAIL;
+		MSG_BOX("Failed Create Object_Window");
 
 	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("Animation_Window"),
 		CAnimation_Window::Create(m_pDevice, m_pContext,
-			ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(446.f, 768.f)))))
-		return E_FAIL;
+			ImVec2(_float(100.f), _float(0.f)), ImVec2(446.f, 768.f)))))
+		MSG_BOX("Failed Create Animation_Window");
 
 	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("UI_Window"),
 		CUI_Window::Create(m_pDevice, m_pContext,
 			ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(446.f, 768.f)))))
-		return E_FAIL;
+		MSG_BOX("Failed Create UI_Window");
 
 	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("Camera_Window"),
 		CCamera_Window::Create(m_pDevice, m_pContext,
 			ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(446.f, 768.f)))))
-		return E_FAIL;
+		MSG_BOX("Failed Create Camera_Window");
 
 	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("Light_Window"),
 		CLight_Window::Create(m_pDevice, m_pContext,
-			ImVec2(_float(g_iWinSizeX+8), _float(0.f)), ImVec2(446.f, 768.f)))))
-		return E_FAIL;
-
+			ImVec2(_float(g_iWinSizeX + 8), _float(0.f)), ImVec2(446.f, 768.f)))))
+		MSG_BOX("Failed Create Light_Window");
 
 	return S_OK;
 }
@@ -225,6 +231,12 @@ HRESULT CMainTool::Ready_Prototype_Component()
 {
 	if (nullptr == m_pGameInstance)
 		return E_FAIL;
+
+	//m_pGameInstance->Add_Prototype_Textures(LEVEL_TOOL, m_pDevice, m_pContext
+	//	, TEXT("Prototype_Component_Texture"), TEXT(".png"), TEXT("../../Resources/UI/UI/Game/UI/Common"));
+
+	//m_pGameInstance->Add_Prototype_Models(LEVEL_TOOL, m_pDevice, m_pContext, CModel::TYPE_NONANIM
+	//	, TEXT("Prototype_Component_Model"), TEXT(".dat"), TEXT("../../Resources/Models/NonAnims/"));
 
 	/* Prototype_Component_Renderer */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Renderer"),
@@ -235,10 +247,22 @@ HRESULT CMainTool::Ready_Prototype_Component()
 	}
 	Safe_AddRef(m_pRenderer);
 
+	/* Prototype_Component_Shader_Debug */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Shader_Debug"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Debug.hlsl"),
+			VTXPOSNORTEX_DECL::Elements, VTXPOSNORTEX_DECL::iNumElements))))
+		return E_FAIL;
+
 	/* Prototype_Component_Shader_Terrain */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Shader_Terrain"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Terrain.hlsl"),
 			VTXPOSNORTEX_DECL::Elements, VTXPOSNORTEX_DECL::iNumElements))))
+		return E_FAIL;
+
+	/* Prototype_Component_Shader_DefaultEffect */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Shader_DefaultEffect"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_DefaultEffect.hlsl"),
+			VTXMESH_DECL::Elements, VTXMESH_DECL::iNumElements))))
 		return E_FAIL;
 
 	/* Prototype_Component_Shader_VtxTex */
@@ -280,6 +304,14 @@ HRESULT CMainTool::Ready_Prototype_Component()
 		return E_FAIL;
 	}
 
+	/* For.Prototype_Component_VIBuffer_Line */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_VIBuffer_Line"),
+		CVIBuffer_Line::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_Component_VIBuffer_Line)");
+		return E_FAIL;
+	}
+
 	/* Prototype_Component_VIBuffer_Rect */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_VIBuffer_Rect"),
 		CVIBuffer_Rect::Create(m_pDevice, m_pContext))))
@@ -300,10 +332,11 @@ HRESULT CMainTool::Ready_Prototype_Component()
 		CVIBuffer_Point_Color_Instance::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	/* Prototype_Component_VIBuffer_Point_Color_Instance*/
+	/* Prototype_Component_VIBuffer_Rect_Color_Instance*/
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_VIBuffer_Rect_Color_Instance"),
 		CVIBuffer_Rect_Color_Instance::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+
 
 	/* Prototype_Component_Texture_Terrain */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Texture_Terrain"),
@@ -325,14 +358,30 @@ HRESULT CMainTool::Ready_Prototype_Component()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Textures/Default_Particle.png")))))
 		return E_FAIL;
 
-	/* Prototype_Component_Default_ParticleSystem*/
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Default_ParticleSystem"),
-		CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Particles/Fire/")))))
+	/* Prototype_Component_Texture_Default_Particle*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Texture_T_Default_Material_Grid_M"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/NonAnims/SM_SpherePrimitiveRegularNormals_01/T_Default_Material_Grid_M.png")))))
 		return E_FAIL;
 
 	/* Prototype_Component_Sphere_Collider*/
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Sphere_Collider"),
 		CCollider::Create(m_pDevice, m_pContext,CCollider::TYPE_SPHERE))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_SM_SpherePrimitiveRegularNormals_01*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL
+		, TEXT("Prototype_Component_Model_SM_SpherePrimitiveRegularNormals_01")
+		, CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM
+		, TEXT("../../Resources/Models/NonAnims/SM_SpherePrimitiveRegularNormals_01/SM_SpherePrimitiveRegularNormals_01.dat")))))
+		return E_FAIL;
+
+	/* Prototype_Component_Default_ParticleSystem*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Default_ParticleSystem"),
+		CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Particles/Fire/")))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Default_MeshEffect"),
+		CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Particles/Fire/")))))
 		return E_FAIL;
 
 	return S_OK;
@@ -376,6 +425,14 @@ HRESULT CMainTool::Ready_Prototype_Object()
 		CCamera_Point::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+#ifdef _DEBUG
+
+	/* Prototype_GameObject_Camera_Line*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_Camera_Line"),
+		CCamera_Line::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+#endif
 	return S_OK;
 }
 

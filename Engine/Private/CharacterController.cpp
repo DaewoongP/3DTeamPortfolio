@@ -41,6 +41,9 @@ CCharacterController::CCharacterController(ID3D11Device* pDevice, ID3D11DeviceCo
 
 CCharacterController::CCharacterController(const CCharacterController& rhs)
 	: CComposite(rhs)
+#ifdef _DEBUG
+	, m_vColor(_float4(0.f, 1.f, 0.f, 1.f))
+#endif // _DEBUG
 {
 }
 
@@ -62,7 +65,7 @@ HRESULT CCharacterController::Initialize(void* pArg)
 	}
 
 	PxControllerDesc* ControllerDesc = reinterpret_cast<PxControllerDesc*>(pArg);
-
+	
 	CPhysX_Manager* pPhysX_Manager = CPhysX_Manager::GetInstance();
 	Safe_AddRef(pPhysX_Manager);
 
@@ -80,9 +83,8 @@ HRESULT CCharacterController::Initialize(void* pArg)
 
 	// 컨트롤러 매니저를 통해 컨트롤러를 생성합니다.
 	PxControllerManager* pControllerManager = pPhysX_Manager->Get_ControllerManager();
-
 	m_pController = pControllerManager->createController(*ControllerDesc);
-	
+	m_pController->setUserData(this);
 #ifdef _DEBUG
 	// 다음 렌더링을 위한 갱신 처리
 	pScene->simulate(1 / 60.f);
@@ -97,7 +99,6 @@ HRESULT CCharacterController::Initialize(void* pArg)
 #endif // _DEBUG
 
 	Safe_Release(pPhysX_Manager);
-
 
 #ifdef _DEBUG
 	if (FAILED(Add_Components()))
@@ -134,13 +135,11 @@ HRESULT CCharacterController::Render()
 
 HRESULT CCharacterController::Add_Components()
 {
-	/* Com_Shader */
-	if (FAILED(CComposite::Add_Component(0, TEXT("Prototype_Component_Shader_Debug"),
-		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
-	{
-		MSG_BOX("Failed CCharacterController Add_Component : (Com_Shader)");
+	m_pShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Debug.hlsl"), VTXPOS_DECL::Elements, VTXPOS_DECL::iNumElements);
+	if (nullptr == m_pShader)
 		return E_FAIL;
-	}
+	m_Components.emplace(TEXT("Com_Shader"), m_pShader);
+	Safe_AddRef(m_pShader);
 
 	CPhysX_Manager* pPhysX_Manager = CPhysX_Manager::GetInstance();
 	Safe_AddRef(pPhysX_Manager);
@@ -219,6 +218,8 @@ HRESULT CCharacterController::SetUp_ShaderResources()
 	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", pPipeLine->Get_TransformMatrix(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
 	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", pPipeLine->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+	if (FAILED(m_pShader->Bind_RawValue("g_vColor", &m_vColor, sizeof(m_vColor))))
 		return E_FAIL;
 
 	Safe_Release(pPipeLine);

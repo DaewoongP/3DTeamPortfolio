@@ -52,6 +52,39 @@ void CDummy_UI_Group::Set_Parent()
 	}
 }
 
+void CDummy_UI_Group::Delete(CDummy_UI* pDeleteUI)
+{
+	if (wcscmp(m_pParent->Get_Tag(), pDeleteUI->Get_Tag()) == 0)
+	{
+		m_pParent = nullptr;
+		return;
+	}
+
+	_int iIndex = 0;
+	for (auto& iter : m_Childs)
+	{
+		if (wcscmp(iter->Get_Tag(), pDeleteUI->Get_Tag()) == 0)
+		{
+			m_Childs.erase(m_Childs.begin() + iIndex);
+			return;
+		}
+	}
+
+}
+
+void CDummy_UI_Group::Clear()
+{
+	if (nullptr != m_pParent)
+	{
+		m_pParent = nullptr;
+	}
+
+	if (m_Childs.size() > 0)
+	{
+		m_Childs.clear();
+	}
+}
+
 CDummy_UI_Group* CDummy_UI_Group::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _tchar* pGroupName)
 {
 	CDummy_UI_Group* pInstance = New CDummy_UI_Group(pDevice, pContext);

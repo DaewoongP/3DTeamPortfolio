@@ -14,7 +14,7 @@ BEGIN(Engine)
 class ENGINE_DLL CRenderer final : public CComponent
 {
 public:
-	enum RENDERGROUP {RENDER_PRIORITY, RENDER_NONBLEND, RENDER_NONLIGHT, RENDER_BLEND, RENDER_PICKING, RENDER_UI, RENDER_END };
+	enum RENDERGROUP {RENDER_PRIORITY, RENDER_NONBLEND, RENDER_NONLIGHT, RENDER_BLEND, RENDER_PICKING, RENDER_UI, RENDER_UITEXTURE, RENDER_END };
 
 private:
 	explicit CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -35,7 +35,9 @@ public:
 private:
 	HRESULT Render_Priority();
 	HRESULT Render_NonBlend();
+#ifdef _DEBUG
 	HRESULT Render_Picking();
+#endif // _DEBUG
 	HRESULT Render_Lights();
 	HRESULT Render_Shadow();
 	HRESULT Render_SSAO();
@@ -45,6 +47,10 @@ private:
 	HRESULT Render_Blur();
 	HRESULT Render_PostProcessing();
 	HRESULT Render_UI();
+
+#ifdef _DEBUG
+	HRESULT Render_UITexture();
+#endif // _DEBUG
 
 private:
 	// 알파블렌딩 객체를 그릴때 깊이에 따라 순서 관리를 위한 함수.

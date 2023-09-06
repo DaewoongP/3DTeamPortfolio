@@ -271,12 +271,12 @@ PS_OUT PS_MAIN_SHADOW(PS_IN_SHADOW In)
 	//depthdesc y 는 rgba값이라고 생각하면된다.
     float fViewZ = vDepthDesc.y * g_fCamFar;
     vector vPosition;
-    if (fViewZ == 0)
-        discard;
+    //if (fViewZ == 0)
+    //    discard;
 	/* 투영스페이스 상의 위치 */
-    vPosition.x = (In.vTexUV.x * 2.f - 1.f);
-    vPosition.y = In.vTexUV.y * -2.f + 1.f;
-    vPosition.z = vDepthDesc.x;
+    vPosition.x = (In.vTexUV.x * 2.f - 1.f) ;
+    vPosition.y = (In.vTexUV.y * -2.f + 1.f) ;
+    vPosition.z = vDepthDesc.y ;
     vPosition.w = 1.f;
 
 	/* 뷰스페이스 상의 위치. */
@@ -303,16 +303,14 @@ PS_OUT PS_MAIN_SHADOW(PS_IN_SHADOW In)
 	
     float LightDepth_W = vLightDepth.y * g_fCamFar;
     float LightDepth_Z = vLightDepth.x * LightDepth_W;
-    float CamDepth = vPosition.z - 0.1f / g_fCamFar;
+    float CamDepth = vPosition.z - 0.001f / g_fCamFar;
 
-    //if (CamDepth > vLightDepth.x)
-    //{
-    //    Out.vColor = float4(0.f, 0.f, 0.f, 1.f);
-    //}
-    //else
-    //    discard;
-
-    Out.vColor = float4(0.f, 0.f, 0.f, 1.f);
+    if (CamDepth > vLightDepth.x)
+    {
+        Out.vColor.x = 0.2f;
+    }
+    else
+        discard;
     return Out;
 
 

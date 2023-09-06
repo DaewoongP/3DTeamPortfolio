@@ -169,9 +169,6 @@
     <Filter Include="01. Utility\03. Components\11. ParticleSystem">
       <UniqueIdentifier>{aaf18f8e-a9cf-4dba-9828-95d190790622}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\03. Components\11. ParticleSystem">
-      <UniqueIdentifier>{aaf18f8e-a9cf-4dba-9828-95d190790622}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Utility\03. Components\07. VIBuffer\Sprite">
       <UniqueIdentifier>{b63693e6-fa8a-4ecb-900e-d6e966643d70}</UniqueIdentifier>
     </Filter>
@@ -202,8 +199,8 @@
     <Filter Include="01. Utility\03. Components\07. VIBuffer\Triangle">
       <UniqueIdentifier>{a5f8428d-9252-403e-821d-0690fa879d0b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\03. Components\12. Alarm">
-      <UniqueIdentifier>{9cbb7d45-1355-4391-a17a-ab9735b11f73}</UniqueIdentifier>
+    <Filter Include="01. Utility\02. GameObjects\02. Parts">
+      <UniqueIdentifier>{b2e63afa-998c-44d2-9cf7-ca44f0b814a6}</UniqueIdentifier>
     </Filter>
     <Filter Include="01. Utility\03. Components\13. Status">
       <UniqueIdentifier>{0d097a3d-8ef4-4813-afef-ca81cc0a63bc}</UniqueIdentifier>
@@ -232,9 +229,6 @@
     <Filter Include="01. Utility\03. Components\16. RigidBody">
       <UniqueIdentifier>{34a36dc9-7fff-4175-b4ed-7b026eba34fc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\02. GameObjects\02. Parts">
-      <UniqueIdentifier>{b2e63afa-998c-44d2-9cf7-ca44f0b814a6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Utility\11. Physics\EventCallBack">
       <UniqueIdentifier>{2ebd81df-468e-430d-aa58-2375576ccb78}</UniqueIdentifier>
     </Filter>
@@ -262,8 +256,62 @@
     <Filter Include="01. Utility\03. Components\09. Collider\Bounding\Sphere">
       <UniqueIdentifier>{9ef1f8a7-57da-450b-8888-f477bbda2889}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\11. Physics\Shader">
+      <UniqueIdentifier>{d6e48222-790a-42b5-a30b-71e187ad6d29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\11. Alarm">
+      <UniqueIdentifier>{9cbb7d45-1355-4391-a17a-ab9735b11f73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\12. Status">
+      <UniqueIdentifier>{0d097a3d-8ef4-4813-afef-ca81cc0a63bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\12. Status\00. Health">
+      <UniqueIdentifier>{2c307619-8c41-4f09-8c44-3e7e1dd9bf83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\12. Status\01. Attack">
+      <UniqueIdentifier>{8a7bc604-a1b2-4301-9e99-b36444fc8db5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\12. Status\02. Defence">
+      <UniqueIdentifier>{6b004c01-c864-470b-b278-e400cb119e26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\12. Status\03. Ignite">
+      <UniqueIdentifier>{1181c3a3-d95e-4eab-b1e6-b175481b2152}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\13. CustomModel">
+      <UniqueIdentifier>{123c13cc-5f31-459d-8cbc-5a6c0f6df715}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\13. CustomModel\MeshParts">
+      <UniqueIdentifier>{03be6e6b-609c-44dc-921c-7f8675822f53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\14. CharacterController">
+      <UniqueIdentifier>{34e887bf-9249-4cc8-bdf0-670c9df56fa7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\15. RigidBody">
+      <UniqueIdentifier>{34a36dc9-7fff-4175-b4ed-7b026eba34fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\16. ParticleSystem">
+      <UniqueIdentifier>{aaf18f8e-a9cf-4dba-9828-95d190790622}</UniqueIdentifier>
+    </Filter>
     <Filter Include="01. Utility\03. Components\17. Plane">
       <UniqueIdentifier>{33c81cf5-caa3-47e5-a3d4-5e94a0331092}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\18. MeshEffect">
+      <UniqueIdentifier>{35f210f5-64ec-49e0-97dd-d4fdb9664c1b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\07. VIBuffer\Instance\Obj_Instance">
+      <UniqueIdentifier>{ea29dad9-b37a-44cd-8a08-9d5a49b85102}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\02. GameObjects\00. Parts">
+      <UniqueIdentifier>{b2e63afa-998c-44d2-9cf7-ca44f0b814a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\12. Time_Manager">
+      <UniqueIdentifier>{9cbb7d45-1355-4391-a17a-ab9735b11f73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\11. Physics\Shader">
+      <UniqueIdentifier>{d6e48222-790a-42b5-a30b-71e187ad6d29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\11. Physics\Handler">
+      <UniqueIdentifier>{56a1a23c-9418-428e-9eb5-1d7e5fe7bfb7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -478,7 +526,7 @@
       <Filter>01. Utility\03. Components\10. Behavior\02. Sequence</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ParticleSystem.h">
-      <Filter>01. Utility\03. Components\11. ParticleSystem</Filter>
+      <Filter>01. Utility\03. Components\16. ParticleSystem</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Calculator.h">
       <Filter>01. Utility\10. Calculator</Filter>
@@ -490,37 +538,40 @@
       <Filter>01. Utility\11. Physics\ErrorCallBack</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Health.h">
-      <Filter>01. Utility\03. Components\13. Status\00. Health</Filter>
+      <Filter>01. Utility\03. Components\12. Status\00. Health</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Attack.h">
-      <Filter>01. Utility\03. Components\13. Status\01. Attack</Filter>
+      <Filter>01. Utility\03. Components\12. Status\01. Attack</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Defence.h">
-      <Filter>01. Utility\03. Components\13. Status\02. Defence</Filter>
+      <Filter>01. Utility\03. Components\12. Status\02. Defence</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\VIBuffer_Sprite.h">
       <Filter>01. Utility\03. Components\07. VIBuffer\Sprite</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Ignite.h">
-      <Filter>01. Utility\03. Components\13. Status\03. Ignite</Filter>
+      <Filter>01. Utility\03. Components\12. Status\03. Ignite</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Alarm.h">
-      <Filter>01. Utility\03. Components\12. Alarm</Filter>
+      <Filter>01. Utility\03. Components\11. Alarm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Time_Manager.h">
+      <Filter>01. Utility\12. Time_Manager</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Notify.h">
       <Filter>01. Utility\03. Components\04. Model\Animation\Notify</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Status.h">
-      <Filter>01. Utility\03. Components\13. Status</Filter>
+      <Filter>01. Utility\03. Components\12. Status</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\CustomModel.h">
-      <Filter>01. Utility\03. Components\14. CustomModel</Filter>
+      <Filter>01. Utility\03. Components\13. CustomModel</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MeshParts.h">
-      <Filter>01. Utility\03. Components\14. CustomModel\MeshParts</Filter>
+      <Filter>01. Utility\03. Components\13. CustomModel\MeshParts</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Modules.h">
-      <Filter>01. Utility\03. Components\11. ParticleSystem</Filter>
+      <Filter>01. Utility\03. Components\16. ParticleSystem</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\PhysXConverter.h">
       <Filter>99. Headers</Filter>
@@ -529,13 +580,13 @@
       <Filter>01. Utility\11. Physics\Manager</Filter>
     </ClInclude>
     <ClInclude Include="..\public\RigidBody.h">
-      <Filter>01. Utility\03. Components\16. RigidBody</Filter>
+      <Filter>01. Utility\03. Components\15. RigidBody</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ColliderCom.h">
-      <Filter>01. Utility\03. Components\16. RigidBody</Filter>
+      <Filter>01. Utility\03. Components\15. RigidBody</Filter>
     </ClInclude>
     <ClInclude Include="..\public\CharacterController.h">
-      <Filter>01. Utility\03. Components\15. CharacterController</Filter>
+      <Filter>01. Utility\03. Components\14. CharacterController</Filter>
     </ClInclude>
     <ClInclude Include="..\public\VIBuffer_Triangle.h">
       <Filter>01. Utility\03. Components\07. VIBuffer\Triangle</Filter>
@@ -544,7 +595,7 @@
       <Filter>01. Utility\03. Components\07. VIBuffer\Instance\Rect_Instance</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Parts.h">
-      <Filter>01. Utility\02. GameObjects\02. Parts</Filter>
+      <Filter>01. Utility\02. GameObjects\00. Parts</Filter>
     </ClInclude>
     <ClInclude Include="..\public\PXEventCallBack.h">
       <Filter>01. Utility\11. Physics\EventCallBack</Filter>
@@ -554,6 +605,18 @@
     </ClInclude>
     <ClInclude Include="..\public\Plane.h">
       <Filter>01. Utility\03. Components\17. Plane</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MeshEffect.h">
+      <Filter>01. Utility\03. Components\18. MeshEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\VIBuffer_Object_Instance.h">
+      <Filter>01. Utility\03. Components\07. VIBuffer\Instance\Obj_Instance</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\NVContextCallBack.h">
+      <Filter>01. Utility\11. Physics\EventCallBack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PXAssertHandler.h">
+      <Filter>01. Utility\11. Physics\Handler</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -750,70 +813,85 @@
       <Filter>01. Utility\03. Components\10. Behavior\02. Sequence</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\ParticleSystem.cpp">
-      <Filter>01. Utility\03. Components\11. ParticleSystem</Filter>
+      <Filter>01. Utility\03. Components\16. ParticleSystem</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Calculator.cpp">
       <Filter>01. Utility\10. Calculator</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Health.cpp">
-      <Filter>01. Utility\03. Components\13. Status\00. Health</Filter>
+      <Filter>01. Utility\03. Components\12. Status\00. Health</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Attack.cpp">
-      <Filter>01. Utility\03. Components\13. Status\01. Attack</Filter>
+      <Filter>01. Utility\03. Components\12. Status\01. Attack</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Defence.cpp">
-      <Filter>01. Utility\03. Components\13. Status\02. Defence</Filter>
+      <Filter>01. Utility\03. Components\12. Status\02. Defence</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\VIBuffer_Sprite.cpp">
       <Filter>01. Utility\03. Components\07. VIBuffer\Sprite</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Ignite.cpp">
-      <Filter>01. Utility\03. Components\13. Status\03. Ignite</Filter>
+      <Filter>01. Utility\03. Components\12. Status\03. Ignite</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Alarm.cpp">
-      <Filter>01. Utility\03. Components\12. Alarm</Filter>
+      <Filter>01. Utility\03. Components\11. Alarm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Time_Manager.cpp">
+      <Filter>01. Utility\12. Time_Manager</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Notify.cpp">
       <Filter>01. Utility\03. Components\04. Model\Animation\Notify</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Status.cpp">
-      <Filter>01. Utility\03. Components\13. Status</Filter>
+      <Filter>01. Utility\03. Components\12. Status</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\CustomModel.cpp">
-      <Filter>01. Utility\03. Components\14. CustomModel</Filter>
+      <Filter>01. Utility\03. Components\13. CustomModel</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MeshParts.cpp">
-      <Filter>01. Utility\03. Components\14. CustomModel\MeshParts</Filter>
+      <Filter>01. Utility\03. Components\13. CustomModel\MeshParts</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Modules.cpp">
-      <Filter>01. Utility\03. Components\11. ParticleSystem</Filter>
+      <Filter>01. Utility\03. Components\16. ParticleSystem</Filter>
     </ClCompile>
     <ClCompile Include="..\private\PhysX_Manager.cpp">
       <Filter>01. Utility\11. Physics\Manager</Filter>
     </ClCompile>
     <ClCompile Include="..\private\RigidBody.cpp">
-      <Filter>01. Utility\03. Components\16. RigidBody</Filter>
+      <Filter>01. Utility\03. Components\15. RigidBody</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ColliderCom.cpp">
-      <Filter>01. Utility\03. Components\16. RigidBody</Filter>
+      <Filter>01. Utility\03. Components\15. RigidBody</Filter>
     </ClCompile>
     <ClCompile Include="..\private\CharacterController.cpp">
-      <Filter>01. Utility\03. Components\15. CharacterController</Filter>
+      <Filter>01. Utility\03. Components\14. CharacterController</Filter>
     </ClCompile>
     <ClCompile Include="..\private\VIBuffer_Triangle.cpp">
       <Filter>01. Utility\03. Components\07. VIBuffer\Triangle</Filter>
     </ClCompile>
-    <ClCompile Include="VIBuffer_Rect_Color_Instance.cpp">
-      <Filter>01. Utility\03. Components\07. VIBuffer\Instance\Rect_Instance</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Parts.cpp">
-      <Filter>01. Utility\02. GameObjects\02. Parts</Filter>
+      <Filter>01. Utility\02. GameObjects\00. Parts</Filter>
     </ClCompile>
     <ClCompile Include="..\private\PXEventCallBack.cpp">
       <Filter>01. Utility\11. Physics\EventCallBack</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Plane.cpp">
       <Filter>01. Utility\03. Components\17. Plane</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MeshEffect.cpp">
+      <Filter>01. Utility\03. Components\18. MeshEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\VIBuffer_Rect_Color_Instance.cpp">
+      <Filter>01. Utility\03. Components\07. VIBuffer\Instance\Rect_Instance</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\VIBuffer_Object_Instance.cpp">
+      <Filter>01. Utility\03. Components\07. VIBuffer\Instance\Obj_Instance</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\NVContextCallBack.cpp">
+      <Filter>01. Utility\11. Physics\EventCallBack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PXAssertHandler.cpp">
+      <Filter>01. Utility\11. Physics\Handler</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -832,10 +910,22 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_SSAO.hlsl">
       <Filter>01. Utility\03. Components\02. Renderer\Shader</Filter>
     </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Debug.hlsl">
+      <Filter>01. Utility\11. Physics\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_DefaultEffect.hlsl">
+      <Filter>01. Utility\03. Components\18. MeshEffect</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Public\DirectXTK\matrix.inl">
       <Filter>99. Headers</Filter>
+    </None>
+    <None Include="..\Bin\ShaderFiles\Shader_EngineHeader.hlsli">
+      <Filter>01. Utility\03. Components\18. MeshEffect</Filter>
+    </None>
+    <None Include="..\Bin\ShaderFiles\Shader_Functions.hlsli">
+      <Filter>01. Utility\03. Components\18. MeshEffect</Filter>
     </None>
   </ItemGroup>
 </Project>

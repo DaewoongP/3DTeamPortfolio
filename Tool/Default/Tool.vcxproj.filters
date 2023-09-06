@@ -97,6 +97,12 @@
     <Filter Include="02. ToolObjects\01. Dummy\Dummy_Font">
       <UniqueIdentifier>{93814c9a-ebfe-4f49-93d2-c4b71a7a60fa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Window\CustomWidget\HelpMaker">
+      <UniqueIdentifier>{d6c45bec-d187-4db1-adf1-30da1bfb54cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. ToolObjects\02. Camera\CameraLine">
+      <UniqueIdentifier>{f3dc9106-3922-45b1-89cd-257988ae1513}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tool.h">
@@ -234,6 +240,12 @@
     <ClInclude Include="..\Public\Dummy_UI_Group.h">
       <Filter>02. ToolObjects\01. Dummy\Dummy_UI</Filter>
     </ClInclude>
+    <ClInclude Include="HelpMaker.h">
+      <Filter>01. Window\CustomWidget\HelpMaker</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Camera_Line.h">
+      <Filter>02. ToolObjects\02. Camera\CameraLine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -354,6 +366,9 @@
     <ClCompile Include="..\Private\Dummy_UI_Group.cpp">
       <Filter>02. ToolObjects\01. Dummy\Dummy_UI</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Camera_Line.cpp">
+      <Filter>02. ToolObjects\02. Camera\CameraLine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Bin\ShaderFiles\Shader_Tool_Defines.hlsli">
@@ -383,6 +398,9 @@
       <Filter>97. ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxRectColInstance.hlsl">
+      <Filter>97. ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Debug.hlsl">
       <Filter>97. ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>

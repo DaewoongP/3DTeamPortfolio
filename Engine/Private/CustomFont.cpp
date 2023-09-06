@@ -10,6 +10,9 @@ CCustomFont::CCustomFont(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 HRESULT CCustomFont::Initialize(const _tchar* pFontFilePath)
 {
+	if (false == fs::exists(pFontFilePath))
+		return E_FAIL;
+
 	m_pBatch = new SpriteBatch(m_pContext);
 
 	m_pFont = new SpriteFont(m_pDevice, pFontFilePath);

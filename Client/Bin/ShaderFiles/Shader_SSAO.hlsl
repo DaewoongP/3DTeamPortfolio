@@ -25,7 +25,6 @@ texture2D g_ShadowTexture;
 texture2D g_vLightDepthTexture;
 
 //ray를 뻗어나가면서 무작위로판단하기위해 rand값이 필요함 같이던져줘야할듯
-float3 g_vRandom[13];
 
 float3 g_Ran[13] =
 {
@@ -184,7 +183,7 @@ PS_OUT PS_MAIN(PS_IN In)
     
     if (vNormalDesc.a != 0.f)
     {
-        Out.vColor = (1.f, 1.f, 1.f, 1.f);
+        Out.vColor = vector(1.f, 1.f, 1.f, 1.f);
         return Out;
     }
        vNormalDesc = normalize(vNormalDesc * 2.f - 1.f);
@@ -201,7 +200,7 @@ PS_OUT PS_MAIN(PS_IN In)
     
         for (int i = 0; i < 13; i++)
         {
-            vRay = reflect(RandNormal(In.vTexUV), g_vRandom[i]);
+            vRay = reflect(RandNormal(In.vTexUV), g_Ran[i]);
             vReflect = normalize(reflect(normalize(vRay), normalize(vNormalDesc.rgb))) * g_fRadius;
             vReflect.x *= -1.f;
             vRandomUV = In.vTexUV + vReflect.xy;
@@ -302,10 +301,10 @@ PS_OUT PS_MAIN_SHADOW(PS_IN In)
     if (fViewZ == 0)
         discard;
 	/* 투영스페이스 상의 위치 */
-    vPosition.x = (In.vTexUV.x * 2.f - 1.f);
-    vPosition.y = In.vTexUV.y * -2.f + 1.f;
-    vPosition.z = vDepthDesc.x;
-    vPosition.w = 1.f;
+    vPosition.x = In.vTexUV.x * 2.f - 1.f ;
+    vPosition.y = In.vTexUV.y * -2.f + 1.f ;
+    vPosition.z = vDepthDesc.x ;
+    vPosition.w = 1.f ;
 
 	/* 뷰스페이스 상의 위치. */
     vPosition = vPosition * fViewZ;
@@ -314,8 +313,6 @@ PS_OUT PS_MAIN_SHADOW(PS_IN In)
 
 	/* 월드스페이스 상의 위치. */
     vPosition = mul(vPosition, g_ViewMatrixInv);
-
-
 
     vPosition = mul(vPosition, g_vLightView);
 
@@ -327,20 +324,40 @@ PS_OUT PS_MAIN_SHADOW(PS_IN In)
     float2 LightUV = float2((vPosition.x + 1.f) / 2.f, (vPosition.y - 1.f) / -2.f);
 
     vector vLightDepth = g_vLightDepthTexture.Sample(BlurSampler, LightUV);
-
-	
+    
+    
+    
     float LightDepth_W = vLightDepth.y * g_fCamFar;
     float LightDepth_Z = vLightDepth.x * LightDepth_W;
     float CamDepth = vPosition.z - 0.1f / g_fCamFar;
+    if (CamDepth > vLightDepth.x)
+    {
+        Out.vColor = float4(0.05f, 0.05f, 0.05f, 0.05f);
+    }
+    else
+        discard;
 
-    //if (CamDepth > vLightDepth.x)
-    //{
-    //    Out.vColor = float4(0.f, 0.f, 0.f, 1.f);
-    //}
-    //else
-    //    discard;
+    float fragDepth = CamDepth;
+    
+    float fLit = 1.0f;
+    
+    float E_x2 = vLightDepth.z;
+    float Ex_2 =vLightDepth.x*vLightDepth.x;
+    float variance = (E_x2 - Ex_2);
+    variance = max(variance, 0.000005f);
 
-    Out.vColor = float4(0.f, 0.f, 0.f, 1.f);
+    float mD = (fragDepth - vLightDepth.x);
+    float mD_2 = mD * mD;
+    float p = (variance / (variance + mD_2));
+
+    fLit = max(p, fragDepth > vLightDepth.x);
+    fLit = (1-fLit) + 0.5f;
+    if (fLit > 1.f)
+        fLit = 1.f;
+    
+  // Out.vColor = float4(fLit, fLit, fLit, fLit);
+
+    
     return Out;
 
 

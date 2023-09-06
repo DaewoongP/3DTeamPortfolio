@@ -17,6 +17,10 @@ class ENGINE_DLL CCharacterController final : public CComposite
 public:
 	_float3 Get_Position();
 	void Set_Position(_float3 _vPosition);
+#ifdef _DEBUG
+	void Set_DebugColor(_float4 _vColor) { m_vColor = _vColor; }
+#endif // _DEBUG
+	
 	void Move(_float3 _vVelocity, _float _fTimeDelta, _float _fMinDist = 0.f);
 
 private:
@@ -41,6 +45,7 @@ private:
 	CShader*				m_pShader = { nullptr };
 	CVIBuffer_Line*			m_pLine = { nullptr };
 	CVIBuffer_Triangle*		m_pTriangle = { nullptr };
+	_float4					m_vColor;
 
 private:
 	_uint					m_iNumLineBuffer = { 0 };

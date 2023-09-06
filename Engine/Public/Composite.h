@@ -24,6 +24,7 @@ public:
 public:
 	HRESULT		Add_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, const _tchar* pComponentTag, _Inout_ CComponent** ppOut, void* pArg = nullptr);
 	CComponent* Find_Component(const _tchar* pComponentTag);
+	HRESULT		Delete_Component(const _tchar * pComponentTag);
 
 protected:
 	unordered_map<const _tchar*, class CComponent*>		m_Components;

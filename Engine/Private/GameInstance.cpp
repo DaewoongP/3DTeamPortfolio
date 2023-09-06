@@ -27,6 +27,7 @@ CGameInstance::CGameInstance()
 	, m_pCalculator{ CCalculator::GetInstance() }
 	, m_pPhysX_Manager{ CPhysX_Manager::GetInstance() }
 	, m_pCamera_Manager{ CCamera_Manager::GetInstance() }
+	, m_pTime_Manager{ CTime_Manager::GetInstance() }
 {
 	Safe_AddRef(m_pFrustum);
 	Safe_AddRef(m_pFont_Manager);
@@ -43,6 +44,7 @@ CGameInstance::CGameInstance()
 	Safe_AddRef(m_pCalculator);
 	Safe_AddRef(m_pPhysX_Manager);
 	Safe_AddRef(m_pCamera_Manager);
+	Safe_AddRef(m_pTime_Manager);
 }
 
 HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInst, _uint iNumLevels, const GRAPHICDESC& GraphicDesc, _Inout_ ID3D11Device** ppDevice, _Inout_ ID3D11DeviceContext** ppContext)
@@ -64,7 +66,7 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInst, _uint iNumLevels, cons
 	if (FAILED(m_pSound_Manager->Initialize()))
 		return E_FAIL;
 
-	if (FAILED(m_pPhysX_Manager->Initialize()))
+	if (FAILED(m_pPhysX_Manager->Initialize(*ppDevice, *ppContext)))
 		return E_FAIL;
 
 	if (FAILED(m_pCamera_Manager->Initialize_CameraManager()))
@@ -87,6 +89,8 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 	NULL_CHECK_RETURN_MSG(m_pPipeLine, , TEXT("PipeLine NULL"));
 	NULL_CHECK_RETURN_MSG(m_pInput_Device, , TEXT("Input_Device NULL"));
 	NULL_CHECK_RETURN_MSG(m_pCollision_Manager, , TEXT("Collsion_Manager NULL"));
+
+	m_pTime_Manager->Tick(fTimeDelta);
 
 	m_pInput_Device->Tick();
 
@@ -587,15 +591,160 @@ CRenderTarget* CGameInstance::Find_RenderTarget(const _tchar* pTargetTag)
 	return m_pRenderTarget_Manager->Find_RenderTarget(pTargetTag);
 }
 
+HRESULT CGameInstance::Add_Prototype_Textures(_uint iLevel, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pPrototypeName, const _tchar* pTargetExtension, const _tchar* pDirectoryPath)
+{
+	fs::directory_iterator iter(pDirectoryPath);
+
+	while (iter != fs::end(iter))
+	{
+		const fs::directory_entry& FileEntry = *iter;
+
+		// 대상이 폴더일 경우 재귀로 들어감.
+		if (true == FileEntry.is_directory())
+		{
+			if (FAILED(Add_Prototype_Textures(iLevel, pDevice, pContext, pPrototypeName, pTargetExtension, FileEntry.path().wstring().c_str())))
+			{
+				return E_FAIL;
+			}
+		}
+
+		// 확장자가 있는지 검사.
+		if (true == FileEntry.path().has_extension())
+		{
+			// 확장자를 비교.
+			if (FileEntry.path().extension() == pTargetExtension)
+			{
+				// 태그 만드는 로직
+				wstring wstrPrototypeTag = pPrototypeName; // Prototype_Component_Texture
+				if (wstrPrototypeTag.back() != TEXT('_'))
+					wstrPrototypeTag += TEXT('_'); // Prototype_Component_Texture_
+				wstrPrototypeTag += FileEntry.path().stem().wstring(); // Prototype_Component_Texture_FileName
+				
+				// 경로 만드는 로직.
+				wstring wstrFilePathName = pDirectoryPath; // "../../Resources/Default/Textures
+				if (wstrFilePathName.back() != TEXT('/'))
+					wstrFilePathName += TEXT('/'); // "../../Resources/Default/Textures/
+				wstrFilePathName += FileEntry.path().filename().wstring(); // "../../Resources/Default/Textures/FileName.ext
+
+				// 어떤 텍스처가 문제있는지 일일이 찾기 힘드므로
+				// FAILED_CHECK_RETURN로 문제 있는 텍스처에서 바로 멈추게끔 처리.
+				FAILED_CHECK_RETURN(Add_Prototype(iLevel, wstrPrototypeTag.c_str(),
+					CTexture::Create(pDevice, pContext, wstrFilePathName.c_str())), E_FAIL);
+			}
+		}
+		
+		iter++;
+	}
+
+	return S_OK;
+}
+
+HRESULT CGameInstance::Add_Prototype_Models(_uint iLevel, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CModel::TYPE eType, const _tchar* pPrototypeName, const _tchar* pTargetExtension, const _tchar* pDirectoryPath, _float4x4 PivotMatrix)
+{
+	fs::directory_iterator iter(pDirectoryPath);
+
+	while (iter != fs::end(iter))
+	{
+		const fs::directory_entry& FileEntry = *iter;
+
+		// 대상이 폴더일 경우 재귀로 들어감.
+		if (true == FileEntry.is_directory())
+		{
+			if (FAILED(Add_Prototype_Models(iLevel, pDevice, pContext, eType, pPrototypeName, pTargetExtension, FileEntry.path().wstring().c_str(), PivotMatrix)))
+			{
+				return E_FAIL;
+			}
+		}
+
+		// 확장자가 있는지 검사.
+		if (true == FileEntry.path().has_extension())
+		{
+			// 확장자를 비교.
+			if (FileEntry.path().extension() == pTargetExtension)
+			{
+				// 태그 만드는 로직
+				wstring wstrPrototypeTag = pPrototypeName; // Prototype_Component_Model
+				if (wstrPrototypeTag.back() != TEXT('_'))
+					wstrPrototypeTag += TEXT('_'); // Prototype_Component_Model_
+				wstrPrototypeTag += FileEntry.path().stem().wstring(); // Prototype_Component_Model_FileName
+
+				// 경로 만드는 로직.
+				wstring wstrFilePathName = pDirectoryPath; // "../../Resources/Default/Models
+				if (wstrFilePathName.back() != TEXT('/'))
+					wstrFilePathName += TEXT('/'); // "../../Resources/Default/Models/
+				wstrFilePathName += FileEntry.path().filename().wstring(); // "../../Resources/Default/Models/FileName.ext
+
+				// 어떤 파일에 문제있는지 일일이 찾기 힘드므로
+				// FAILED_CHECK_RETURN로 문제 있는 파일에서 바로 멈추게끔 처리.
+				FAILED_CHECK_RETURN(Add_Prototype(iLevel, wstrPrototypeTag.c_str(),
+					CModel::Create(pDevice, pContext, eType, wstrFilePathName.c_str(), PivotMatrix)), E_FAIL);
+			}
+		}
+
+		++iter;
+	}
+
+	return S_OK;
+}
+
+HRESULT CGameInstance::Add_Timer(const wstring& wstrTimerTag, const CTime_Manager::ALARMDESC& AlarmDesc)
+{
+	NULL_CHECK_RETURN_MSG(m_pTime_Manager, E_FAIL, TEXT("Time_Manager NULL"));
+
+	return m_pTime_Manager->Add_Timer(wstrTimerTag, AlarmDesc);
+}
+
+HRESULT CGameInstance::Remove_Timer(const wstring& wstrTimerTag)
+{
+	NULL_CHECK_RETURN_MSG(m_pTime_Manager, E_FAIL, TEXT("Time_Manager NULL"));
+
+	return m_pTime_Manager->Remove_Timer(wstrTimerTag);
+}
+
+HRESULT CGameInstance::Reset_Timer(const wstring& wstrTimerTag)
+{
+	NULL_CHECK_RETURN_MSG(m_pTime_Manager, E_FAIL, TEXT("Time_Manager NULL"));
+
+	return m_pTime_Manager->Reset_Timer(wstrTimerTag);
+}
+
+_bool CGameInstance::Check_Timer(const wstring& wstrTimerTag)
+{
+	NULL_CHECK_RETURN_MSG(m_pTime_Manager, false, TEXT("Time_Manager NULL"));
+
+	return m_pTime_Manager->Check_Timer(wstrTimerTag);
+}
+
+const _float& CGameInstance::Get_World_TimeAcc() const
+{
+	NULL_CHECK_RETURN_MSG(m_pTime_Manager, 0.f, TEXT("Time_Manager NULL"));
+
+	return m_pTime_Manager->Get_World_TimeAcc();
+}
+
+_float CGameInstance::Get_TimeAcc(const wstring& wstrTimerTag) const
+{
+	NULL_CHECK_RETURN_MSG(m_pTime_Manager, false, TEXT("Time_Manager NULL"));
+
+	return m_pTime_Manager->Get_TimeAcc(wstrTimerTag);
+}
+
+void CGameInstance::Reset_World_TimeAcc()
+{
+	NULL_CHECK_MSG(m_pTime_Manager, TEXT("Time_Manager NULL"));
+
+	return m_pTime_Manager->Reset_World_TimeAcc();
+}
+
 void CGameInstance::Release_Engine()
 {
 	CGameInstance::GetInstance()->DestroyInstance();
 
+	CTime_Manager::GetInstance()->DestroyInstance();
+
 	CPipeLine::GetInstance()->DestroyInstance();
 
 	CComponent_Manager::GetInstance()->DestroyInstance();
-
-	CCamera_Manager::GetInstance()->DestroyInstance();
 
 	CLevel_Manager::GetInstance()->DestroyInstance();
 
@@ -615,6 +764,8 @@ void CGameInstance::Release_Engine()
 
 	CCalculator::GetInstance()->DestroyInstance();
 
+	CCamera_Manager::GetInstance()->DestroyInstance();
+
 	CLight_Manager::GetInstance()->DestroyInstance();
 
 	CInput_Device::GetInstance()->DestroyInstance();
@@ -624,6 +775,7 @@ void CGameInstance::Release_Engine()
 
 void CGameInstance::Free()
 {
+	Safe_Release(m_pTime_Manager);
 	Safe_Release(m_pPhysX_Manager);
 	Safe_Release(m_pCalculator);
 	Safe_Release(m_pSound_Manager);

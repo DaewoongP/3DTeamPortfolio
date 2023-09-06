@@ -36,6 +36,7 @@ public:
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
+	virtual void OnCollisionEnter(COLLISIONDESC CollisionDesc) override;
 	virtual HRESULT Render() override;
 	virtual HRESULT Render_Depth() override;
 
@@ -48,9 +49,6 @@ private:
 
 private:
 	CWeapon_Armored_Troll* m_pWeapon = { nullptr };
-
-private:
-	PxScene* m_pScene = { nullptr };
 
 private:
 	HRESULT Make_AI();
