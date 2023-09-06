@@ -30,7 +30,7 @@ void CLight_Manager::Set_Light(_uint iIndex, CLight::LIGHTDESC LightDesc)
 
 	CTransform* pTransform = CTransform::Create(m_pDevice, m_pContext);
 	pTransform->Set_Position(_float3(LightDesc.vPos.x, LightDesc.vPos.y, LightDesc.vPos.z));
-	pTransform->LookAt(_float3(LightDesc.vDir.x, LightDesc.vDir.y, LightDesc.vDir.z));
+	pTransform->LookTo(_float3(LightDesc.vDir.x, LightDesc.vDir.y, LightDesc.vDir.z));
 	m_ViewLight = pTransform->Get_WorldMatrix_Inverse();
 	Safe_Release(pTransform);
 
@@ -58,7 +58,7 @@ CLight* CLight_Manager::Add_Lights(ID3D11Device* pDevice, ID3D11DeviceContext* p
 	{
 		pTransform->Set_Position(_float3(30.f, 50.f, 30.f));
 		//pTransform->LookAt(_float3(0.34f, 0.98f, 0.34f));
-			pTransform->LookAt(_float3(0.34f, 0.98f, 0.34f));
+			pTransform->LookTo(_float3(0.34f, 0.98f, 0.34f));
 
 	}
 	else

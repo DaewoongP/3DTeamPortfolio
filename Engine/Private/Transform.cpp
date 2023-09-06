@@ -272,6 +272,22 @@ void CTransform::LookAt_Lerp(_float3 _vTarget, _bool _isDeleteY)
 	m_ubTransformChanged |= CHANGEFLAG::ROTATION;*/
 }
 
+void CTransform::LookTo(_float3 vTarget)
+{
+	_float3 vScaled = Get_Scale();
+
+	_float3 vLook = XMVector3Normalize(vTarget) * vScaled.z;
+	_float3 vRight = XMVector3Normalize(XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook)) * vScaled.x;
+	_float3 vUp = XMVector3Normalize(XMVector3Cross(vLook, vRight)) * vScaled.y;
+
+
+	Set_Look(XMVector3Normalize(vLook));
+	Set_Right(XMVector3Normalize(vRight));
+	Set_Up(XMVector3Normalize(vUp));
+
+
+}
+
 void CTransform::Update_Components(_float fTimeDelta)
 {
 	if (nullptr == m_pRigidBody)

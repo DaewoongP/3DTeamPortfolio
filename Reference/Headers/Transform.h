@@ -93,6 +93,7 @@ public:
 	void Rotation(_float3 vRadians);
 	void LookAt(_float3 _vTarget, _bool _isDeleteY = false);
 	void LookAt_Lerp(_float3 _vTarget, _bool _isDeleteY = false);
+	void LookTo(_float3 vTarget);
 
 private:
 	_float4x4		m_WorldMatrix;

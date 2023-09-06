@@ -103,6 +103,9 @@
     <Filter Include="02. ToolObjects\02. Camera\CameraLine">
       <UniqueIdentifier>{f3dc9106-3922-45b1-89cd-257988ae1513}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Window\Window\Light\LightDot">
+      <UniqueIdentifier>{349bca11-b3f2-43b9-9433-c761b0c4903a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tool.h">
@@ -246,6 +249,9 @@
     <ClInclude Include="..\Public\Camera_Line.h">
       <Filter>02. ToolObjects\02. Camera\CameraLine</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\LightDot.h">
+      <Filter>01. Window\Window\Light\LightDot</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -368,6 +374,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Camera_Line.cpp">
       <Filter>02. ToolObjects\02. Camera\CameraLine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\LightDot.cpp">
+      <Filter>01. Window\Window\Light\LightDot</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

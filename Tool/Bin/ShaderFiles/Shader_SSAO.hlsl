@@ -293,7 +293,7 @@ PS_OUT PS_MAIN_SHADOW(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
 
-    vector vDepthDesc = g_DepthTexture.Sample(BlurSampler, In.vTexUV);
+    vector vDepthDesc = g_DepthTexture.Sample(LinearSampler, In.vTexUV);
 
 	//depthdesc y 는 rgba값이라고 생각하면된다.
     float fViewZ = vDepthDesc.y * g_fCamFar;

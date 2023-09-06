@@ -8,7 +8,7 @@ CRenderTarget_Manager::CRenderTarget_Manager()
 
 }
 
-HRESULT CRenderTarget_Manager::Add_RenderTarget(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pTargetTag, _uint iSizeX, _uint iSizeY, DXGI_FORMAT eFormat, const _float4& vClearColor)
+HRESULT CRenderTarget_Manager::Add_RenderTarget(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pTargetTag, _uint iSizeX, _uint iSizeY, DXGI_FORMAT eFormat, const _float4& vClearColor,_bool isShadow)
 {
 	if (nullptr != Find_RenderTarget(pTargetTag))
 		return E_FAIL;
@@ -48,8 +48,32 @@ HRESULT CRenderTarget_Manager::Add_MRT(const _tchar* pMRTTag, const _tchar* pTar
 	return S_OK;
 }
 
-HRESULT CRenderTarget_Manager::Begin_MRT(ID3D11DeviceContext* pContext, const _tchar* pMRTTag)
+HRESULT CRenderTarget_Manager::Begin_MRT(ID3D11DeviceContext* pContext, const _tchar* pMRTTag,_bool Shadow)
 {
+	if(Shadow)
+	{
+		list<CRenderTarget*>* pMRTList = Find_MRT(pMRTTag);
+
+		if (nullptr == pMRTList)
+			return E_FAIL;
+
+		pContext->OMGetRenderTargets(1, &m_pPostRenderTargetView, &m_pShadowView);
+
+		ID3D11RenderTargetView* pRenderTargets[8] = { nullptr };
+
+		_uint		iNumViews = 0;
+
+		for (auto& pRenderTarget : *pMRTList)
+		{
+			pRenderTarget->Clear();
+			pRenderTargets[iNumViews++] = pRenderTarget->Get_RTV();
+		}
+
+		pContext->OMSetRenderTargets(iNumViews, pRenderTargets, m_pShadowView);
+
+		return S_OK;
+	}
+
 	list<CRenderTarget*>* pMRTList = Find_MRT(pMRTTag);
 
 	if (nullptr == pMRTList)
@@ -96,8 +120,20 @@ HRESULT CRenderTarget_Manager::Begin_PostProcessingRenderTarget(ID3D11DeviceCont
 	return S_OK;
 }
 
-HRESULT CRenderTarget_Manager::End_MRT(ID3D11DeviceContext* pContext)
+HRESULT CRenderTarget_Manager::End_MRT(ID3D11DeviceContext* pContext,_bool Shadow)
 {
+	if (Shadow)
+	{
+		ID3D11RenderTargetView* pRenderTargets[8] = { m_pPostRenderTargetView };
+
+		pContext->OMSetRenderTargets(8, pRenderTargets, m_pShadowView);
+
+		Safe_Release(m_pPostRenderTargetView);
+		Safe_Release(m_pShadowView);
+
+		return S_OK;
+	}
+
 	ID3D11RenderTargetView* pRenderTargets[8] = { m_pPostRenderTargetView };
 
 	pContext->OMSetRenderTargets(8, pRenderTargets, m_pDepthStencilView);
