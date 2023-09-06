@@ -621,7 +621,7 @@ _bool CGameInstance::Check_Timer(const wstring& wstrTimerTag)
 
 const _float& CGameInstance::Get_World_TimeAcc() const
 {
-	NULL_CHECK_RETURN_MSG(m_pTime_Manager, false, TEXT("Time_Manager NULL"));
+	NULL_CHECK_RETURN_MSG(m_pTime_Manager, 0.f, TEXT("Time_Manager NULL"));
 
 	return m_pTime_Manager->Get_World_TimeAcc();
 }
