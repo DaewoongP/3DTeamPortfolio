@@ -3,6 +3,12 @@
 #include "GameInstance.h"
 #include "Main_Camera.h"
 
+#ifdef _DEBUG
+
+#include "Camera_Line.h"
+
+#endif
+
 CCutScene_Camera_Tool::CCutScene_Camera_Tool(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
 {
 	m_pDevice = _pDevice;
@@ -26,12 +32,42 @@ HRESULT CCutScene_Camera_Tool::Initialize(void* pArg)
 
 	pGameInstance->Add_MainCamera((CCamera*)pMain_Camera);
 
+#ifdef _DEBUG
+	
+	//라인 준비
+	Ready_Line();
+	
+#endif
+
+	CCamera_Point::CAMERAPOINTDESC CameraPointDesc;
+
+	CameraPointDesc.vPosition = Point_Create_Position(_float4(), _float4());
+
+	//생성 가이드 포인트
+	m_pCreateGuidePoint = 
+		dynamic_cast<CCamera_Point*>(
+			pGameInstance->Clone_Component(LEVEL_TOOL,
+				TEXT("Prototype_GameObject_Camera_Point"),
+				&CameraPointDesc));
+
+	//생성 실패 탈출
+	if (nullptr == m_pCreateGuidePoint)
+	{
+		MSG_BOX("Create Guide Create Failed");
+
+		ENDINSTANCE;
+
+		return E_FAIL;
+	}
+
 	ENDINSTANCE;
 	return S_OK;
 }
 
 void CCutScene_Camera_Tool::Tick(_float _fTimeDelta)
 {
+	m_isLineUpdate = false;
+
 	//제목
 	ImGui::Text("CutScene_Tool");
 
@@ -76,6 +112,14 @@ void CCutScene_Camera_Tool::Tick(_float _fTimeDelta)
 		Fix_CameraPointInfo(vRayPos, vRayDir);
 		break;
 	case Tool::CCutScene_Camera_Tool::CUTSCENEPOINT_CREATE:
+	{
+		Return_RayInfo(vRayPos, vRayDir);
+
+		_float4 vPos = vRayPos + vRayDir * m_fDistance;
+
+		m_pCreateGuidePoint->Set_Position(vPos);
+
+		m_pCreateGuidePoint->Tick(pGameInstance->Get_TimeDelta(TEXT("MainTimer")));
 
 		//생성 거리
 		ImGui::DragFloat("Create Distance", &m_fDistance, 0.01f, 0.0f, 1000.0f);
@@ -86,6 +130,7 @@ void CCutScene_Camera_Tool::Tick(_float _fTimeDelta)
 		{
 			Create_Tick(vRayPos, vRayDir);
 		}
+	}
 		break;
 	case Tool::CCutScene_Camera_Tool::CUTSCENEPOINT_DELETE:
 		//오른쪽 누른 상태에서 왼쪽을 누른 순간만
@@ -108,6 +153,20 @@ void CCutScene_Camera_Tool::Tick(_float _fTimeDelta)
 	Save_And_Load();
 
 	Play_CutScene();
+
+
+#ifdef _DEBUG
+
+	if (true == m_isLineUpdate)
+	{
+		Line_Update();
+	}
+
+	m_pEyeLine->Late_Tick(_fTimeDelta);
+	m_pAtLine->Late_Tick(_fTimeDelta);
+	m_pLookLine->Late_Tick(_fTimeDelta);
+
+#endif
 }
 
 HRESULT CCutScene_Camera_Tool::Render()
@@ -150,6 +209,10 @@ void CCutScene_Camera_Tool::Fix_Point()
 	if (pGameInstance->
 		Get_DIMouseState(
 			CInput_Device::DIMK_LBUTTON,
+			CInput_Device::KEY_PRESSING) &&
+		pGameInstance->
+		Get_DIMouseState(
+			CInput_Device::DIMK_RBUTTON,
 			CInput_Device::KEY_PRESSING))
 	{
 		//x축 이동
@@ -162,14 +225,19 @@ void CCutScene_Camera_Tool::Fix_Point()
 		{
 			vFixPosition += -vCameraUp.TransNorm() * _float(iMouseMoveY) * fSpeed;
 		}
+
+		m_isLineUpdate = true;
 	}
 	//z축 이동이 있다면
 	if (0 != iMouseMoveZ)
 	{
 		vFixPosition += vCameraLook.TransNorm() * _float(iMouseMoveZ) * fSpeed * fWheelSpeed;
+
+		m_isLineUpdate = true;
 	}
 
 	m_pCurrentPoint->Set_Position(vFixPosition);
+
 	ENDINSTANCE;
 
 }
@@ -195,6 +263,8 @@ void CCutScene_Camera_Tool::Clear_CutSceneList()
 	m_pCurrentPoint = nullptr;
 
 	m_pAtCurrentPoint = nullptr;
+
+	m_isLineUpdate = true;
 }
 
 void CCutScene_Camera_Tool::Change_AtPoint(CCamera_Point* _pAtPoint)
@@ -264,6 +334,8 @@ void CCutScene_Camera_Tool::Create_CameraInfo(_float4 _vRayPos, _float4 _vRayDir
 		//현제 오브젝트로 바꿈
 		m_pCurrentPoint = pCameraPoint;
 		
+		m_isLineUpdate = true;
+
 		ENDINSTANCE;
 	}
 }
@@ -300,6 +372,9 @@ void CCutScene_Camera_Tool::Create_OriginAt(_float4 _vRayPos, _float4 _vRayDir)
 #endif	
 		//넣겠다.
 		m_OriginAtList.push_back(pCameraPoint);
+
+		m_isLineUpdate = true;
+
 		ENDINSTANCE;
 	}
 }
@@ -364,9 +439,9 @@ _bool CCutScene_Camera_Tool::Select_OriginAt_Point(_float4 _vRayPos, _float4 _vR
 
 void CCutScene_Camera_Tool::Create_Tick(_float4 _vRayPos, _float4 _vRayDir)
 {
-	
-		Create_CameraInfo(_vRayPos, _vRayDir);
-		Create_OriginAt(_vRayPos, _vRayDir);
+	Create_CameraInfo(_vRayPos, _vRayDir);
+	Create_OriginAt(_vRayPos, _vRayDir);
+
 }
 
 void CCutScene_Camera_Tool::Delete_Eye_Point(_float4 _vRayPos, _float4 _vRayDir)
@@ -385,6 +460,8 @@ void CCutScene_Camera_Tool::Delete_Eye_Point(_float4 _vRayPos, _float4 _vRayDir)
 
 		//선택된 객체 초기화
 		m_pCurrentPoint = nullptr;
+
+		m_isLineUpdate = true;
 	}
 }
 
@@ -438,6 +515,8 @@ void CCutScene_Camera_Tool::Delete_OriginAt_Point(_float4 _vRayPos, _float4 _vRa
 		//선택된 객체 초기화
 		m_pCurrentPoint = nullptr;
 		m_pAtCurrentPoint = nullptr;
+
+		m_isLineUpdate = true;
 	}
 }
 
@@ -506,6 +585,8 @@ void CCutScene_Camera_Tool::Clear_DoubleCheck()
 		{
 			Clear_CutSceneList();
 			m_isClearDoubleCheck = false;
+
+			m_isLineUpdate = true;
 		}
 		ImGui::SameLine();
 		if (ImGui::Button("NO"))
@@ -709,6 +790,14 @@ void CCutScene_Camera_Tool::Save_And_Load()
 
 				//저장 함수 실행
 				Save_CutSceneInfo(wszFilePath);
+
+				m_isLineUpdate = true;
+
+#ifdef _DEBUG
+
+				Line_Update();
+
+#endif
 			}
 		}
 		// 닫는다.
@@ -735,9 +824,19 @@ void CCutScene_Camera_Tool::Save_And_Load()
 			//_tchar로 가공
 			_tchar wszFilePath[MAX_PATH]{};
 			CharToWChar(filePathName.c_str(), wszFilePath);
+			
+			//파일이 없다면
+			if (false == fs::exists(filePathName))
+			{
+				// 닫는다.
+				ImGuiFileDialog::Instance()->Close();
+				return;
+			}
 
 			//불로오기 함수 실행
 			Load_CutSceneInfo(wszFilePath);
+
+			m_isLineUpdate = true;
 		}
 		// 닫는다.
 		ImGuiFileDialog::Instance()->Close();
@@ -771,6 +870,385 @@ void CCutScene_Camera_Tool::Add_CutScene(const CAMERAPOINTINFODESC& _CameraPoint
 	ENDINSTANCE;
 }
 
+#ifdef _DEBUG
+
+HRESULT CCutScene_Camera_Tool::Ready_Line()
+{
+	BEGININSTANCE;
+
+	m_pEyeLine =
+		dynamic_cast<CCamera_Line*>(
+			pGameInstance->Clone_Component(LEVEL_TOOL,
+				TEXT("Prototype_GameObject_Camera_Line")));
+
+	m_pAtLine =
+		dynamic_cast<CCamera_Line*>(
+			pGameInstance->Clone_Component(LEVEL_TOOL,
+				TEXT("Prototype_GameObject_Camera_Line")));
+
+	m_pLookLine =
+		dynamic_cast<CCamera_Line*>(
+			pGameInstance->Clone_Component(LEVEL_TOOL,
+				TEXT("Prototype_GameObject_Camera_Line")));
+
+	//생성 실패 탈출
+	if (nullptr == m_pEyeLine)
+	{
+		MSG_BOX("Camera Eye Line Create Failed");
+
+		ENDINSTANCE;
+
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CCutScene_Camera_Tool::Line_Update()
+{
+	//그냥 지우고
+	m_pEyeLine->LineBufferClear();
+	m_pAtLine->LineBufferClear();
+	m_pLookLine->LineBufferClear();
+
+
+	//사이즈가 있다면
+	if (1 < m_CameraInfoList.size())
+	{
+		EyeLine_Update();
+		AtLine_Update();
+		LookLine_Update();
+	}
+
+	return S_OK;
+}
+
+HRESULT CCutScene_Camera_Tool::EyeLine_Update()
+{
+	CVIBuffer_Line::LINEDESC LineDesc;
+	ZEROMEM(&LineDesc);
+
+	LineDesc.iNum = ((m_CameraInfoList.size() - 1) * 10);
+
+	//라인 포인트
+	vector<_float3> Lines;
+
+	Lines.resize(LineDesc.iNum * 2);
+
+	list<CAMERAPOINTINFODESC>::iterator iter = m_CameraInfoList.begin();
+
+	//인덱스
+	_uint iIndexCount{ 0 };
+
+	for (size_t i = 0; i < m_CameraInfoList.size(); i++)
+	{
+		//첫번째와 마지막 이터레이터는 선형
+		//첫번째
+		if (iter == m_CameraInfoList.begin())
+		{
+			//두번째 이터레이터와
+			list<CAMERAPOINTINFODESC>::iterator nextIter = ++m_CameraInfoList.begin();
+
+			//선형으로 추가
+			for (size_t i = 0; i < 10; i++)
+			{
+				Lines[iIndexCount] = (
+					XMVectorLerp(
+						(*iter).pEyePoint->Get_Position(),
+						(*nextIter).pEyePoint->Get_Position(),
+						i * 0.1f));
+
+				++iIndexCount;
+
+				Lines[iIndexCount] = (
+					XMVectorLerp(
+						(*iter).pEyePoint->Get_Position(),
+						(*nextIter).pEyePoint->Get_Position(),
+						(i + 1) * 0.1f));
+
+				++iIndexCount;
+			}
+		}
+		//끝에서 2번째 오면 마지막 까지 선형
+		else if (iter == ----m_CameraInfoList.end())
+		{
+			//마지막 이터레이터와
+			list<CAMERAPOINTINFODESC>::iterator NextIter = --m_CameraInfoList.end();
+
+			//선형으로 추가
+			for (size_t i = 0; i < 10; i++)
+			{
+				Lines[iIndexCount] = (
+					XMVectorLerp(
+						(*iter).pEyePoint->Get_Position(),
+						(*NextIter).pEyePoint->Get_Position(),
+						i * 0.1f));
+
+				++iIndexCount;
+
+				Lines[iIndexCount] = (
+					XMVectorLerp(
+						(*iter).pEyePoint->Get_Position(),
+						(*NextIter).pEyePoint->Get_Position(),
+						(i + 1) * 0.1f));
+
+				++iIndexCount;
+			}
+		}
+		//마지막 무시
+		else if (iter == --m_CameraInfoList.end())
+		{
+		}
+		//나머지
+		else
+		{
+			//1
+			list<CAMERAPOINTINFODESC>::iterator Ite1 = --iter;
+			//2
+			++iter;
+			//3
+			list<CAMERAPOINTINFODESC>::iterator Ite3 = ++iter;
+			//4
+			list<CAMERAPOINTINFODESC>::iterator Ite4 = ++iter;
+
+			//2
+			----iter;
+
+			for (size_t i = 0; i < 10; i++)
+			{
+				Lines[iIndexCount] = (
+					XMVectorCatmullRom(
+						(*Ite1).pEyePoint->Get_Position(),
+						(*iter).pEyePoint->Get_Position(),
+						(*Ite3).pEyePoint->Get_Position(),
+						(*Ite4).pEyePoint->Get_Position(),
+						i * 0.1f));
+
+				++iIndexCount;
+
+				Lines[iIndexCount] = (
+					XMVectorCatmullRom(
+						(*Ite1).pEyePoint->Get_Position(),
+						(*iter).pEyePoint->Get_Position(),
+						(*Ite3).pEyePoint->Get_Position(),
+						(*Ite4).pEyePoint->Get_Position(),
+						(i + 1) * 0.1f));
+
+				++iIndexCount;
+			}
+		}
+
+		//증가
+		++iter;
+	}
+
+	LineDesc.pLines = Lines.data();
+
+	if (0 < LineDesc.iNum &&
+		nullptr != LineDesc.pLines)
+	{
+		if (FAILED(m_pEyeLine->LineBufferInitialize(&LineDesc)))
+		{
+			MSG_BOX("CameraLine Initailize Failed");
+			return E_FAIL;
+		}
+		m_pEyeLine->Set_Color(_float4(0.0f, 0.0f, 1.0f, 1.0f));
+	}
+
+	return S_OK;
+}
+
+HRESULT CCutScene_Camera_Tool::AtLine_Update()
+{
+	CVIBuffer_Line::LINEDESC LineDesc;
+	ZEROMEM(&LineDesc);
+
+	LineDesc.iNum = ((m_CameraInfoList.size() - 1) * 10);
+
+	//라인 포인트
+	vector<_float3> Lines;
+
+	Lines.resize(LineDesc.iNum * 2);
+
+	list<CAMERAPOINTINFODESC>::iterator iter = m_CameraInfoList.begin();
+
+	//인덱스
+	_uint iIndexCount{ 0 };
+
+	for (size_t i = 0; i < m_CameraInfoList.size(); i++)
+	{
+		//첫번째와 마지막 이터레이터는 선형
+		//첫번째
+		if (iter == m_CameraInfoList.begin())
+		{
+			//두번째 이터레이터와
+			list<CAMERAPOINTINFODESC>::iterator nextIter = ++m_CameraInfoList.begin();
+
+			//선형으로 추가
+			for (size_t i = 0; i < 10; i++)
+			{
+				Lines[iIndexCount] = (
+					XMVectorLerp(
+						(*iter).pAtPoint->Get_Position(),
+						(*nextIter).pAtPoint->Get_Position(),
+						i * 0.1f));
+
+				++iIndexCount;
+
+				Lines[iIndexCount] = (
+					XMVectorLerp(
+						(*iter).pAtPoint->Get_Position(),
+						(*nextIter).pAtPoint->Get_Position(),
+						(i + 1) * 0.1f));
+
+				++iIndexCount;
+			}
+		}
+		//끝에서 2번째 오면 마지막 까지 선형
+		else if (iter == ----m_CameraInfoList.end())
+		{
+			//마지막 이터레이터와
+			list<CAMERAPOINTINFODESC>::iterator NextIter = --m_CameraInfoList.end();
+
+			//선형으로 추가
+			for (size_t i = 0; i < 10; i++)
+			{
+				Lines[iIndexCount] = (
+					XMVectorLerp(
+						(*iter).pAtPoint->Get_Position(),
+						(*NextIter).pAtPoint->Get_Position(),
+						i * 0.1f));
+
+				++iIndexCount;
+
+				Lines[iIndexCount] = (
+					XMVectorLerp(
+						(*iter).pAtPoint->Get_Position(),
+						(*NextIter).pAtPoint->Get_Position(),
+						(i + 1) * 0.1f));
+
+				++iIndexCount;
+			}
+		}
+		//마지막 무시
+		else if (iter == --m_CameraInfoList.end())
+		{
+		}
+		//나머지
+		else
+		{
+			//1
+			list<CAMERAPOINTINFODESC>::iterator Ite1 = --iter;
+			//2
+			++iter;
+			//3
+			list<CAMERAPOINTINFODESC>::iterator Ite3 = ++iter;
+			//4
+			list<CAMERAPOINTINFODESC>::iterator Ite4 = ++iter;
+
+			//2
+			----iter;
+
+			for (size_t i = 0; i < 10; i++)
+			{
+				Lines[iIndexCount] = (
+					XMVectorCatmullRom(
+						(*Ite1).pAtPoint->Get_Position(),
+						(*iter).pAtPoint->Get_Position(),
+						(*Ite3).pAtPoint->Get_Position(),
+						(*Ite4).pAtPoint->Get_Position(),
+						i * 0.1f));
+
+				++iIndexCount;
+
+				Lines[iIndexCount] = (
+					XMVectorCatmullRom(
+						(*Ite1).pAtPoint->Get_Position(),
+						(*iter).pAtPoint->Get_Position(),
+						(*Ite3).pAtPoint->Get_Position(),
+						(*Ite4).pAtPoint->Get_Position(),
+						(i + 1) * 0.1f));
+
+				++iIndexCount;
+			}
+		}
+
+		//증가
+		++iter;
+	}
+
+	LineDesc.pLines = Lines.data();
+
+	if (0 < LineDesc.iNum &&
+		nullptr != LineDesc.pLines)
+	{
+		if (FAILED(m_pAtLine->LineBufferInitialize(&LineDesc)))
+		{
+			MSG_BOX("CameraLine Initailize Failed");
+			return E_FAIL;
+		}
+		m_pAtLine->Set_Color(_float4(1.0f, 0.0f, 0.0f, 1.0f));
+	}
+
+	return S_OK;
+}
+
+HRESULT CCutScene_Camera_Tool::LookLine_Update()
+{
+	CVIBuffer_Line::LINEDESC LineDesc;
+	ZEROMEM(&LineDesc);
+
+	LineDesc.iNum = ((m_CameraInfoList.size()));
+
+	//라인 포인트
+	vector<_float3> Lines;
+
+	Lines.resize(LineDesc.iNum * 2);
+
+	list<CAMERAPOINTINFODESC>::iterator iter = m_CameraInfoList.begin();
+
+	//인덱스
+	_uint iIndexCount{ 0 };
+
+	for (size_t i = 0; i < m_CameraInfoList.size(); i++)
+	{
+		//두번째 이터레이터와
+		list<CAMERAPOINTINFODESC>::iterator nextIter = ++m_CameraInfoList.begin();
+
+		//Eye부터
+		Lines[iIndexCount] = (*iter).pEyePoint->Get_Position().xyz();
+
+		++iIndexCount;
+
+		//At까지
+		Lines[iIndexCount] = (*iter).pAtPoint->Get_Position().xyz();
+
+		++iIndexCount;
+
+		//증가
+		++iter;
+	}
+
+	LineDesc.pLines = Lines.data();
+
+	if (0 < LineDesc.iNum &&
+		nullptr != LineDesc.pLines)
+	{
+		if (FAILED(m_pLookLine->LineBufferInitialize(&LineDesc)))
+		{
+			MSG_BOX("CameraLine Initailize Failed");
+			return E_FAIL;
+		}
+		m_pLookLine->Set_Color(_float4(0.0f, 1.0f, 0.0f, 1.0f));
+	}
+
+	return S_OK;
+}
+
+#endif
+
 void CCutScene_Camera_Tool::List_Tick(_float _TimeDelta)
 {
 	for (auto& iter : m_CameraInfoList)
@@ -800,6 +1278,16 @@ CCutScene_Camera_Tool* CCutScene_Camera_Tool::Create(ID3D11Device* _pDevice, ID3
 void CCutScene_Camera_Tool::Free()
 {
 	Clear_CutSceneList();
+
+#ifdef _DEBUG
+
+	Safe_Release(m_pEyeLine);
+	Safe_Release(m_pAtLine);
+	Safe_Release(m_pLookLine);
+	
+#endif
+
+	Safe_Release(m_pCreateGuidePoint);
 }
 
 void CCutScene_Camera_Tool::Return_RayInfo(_float4& _vRayPos, _float4& _vRayDir)

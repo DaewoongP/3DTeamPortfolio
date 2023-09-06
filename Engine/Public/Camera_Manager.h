@@ -80,6 +80,12 @@ private:
 	//컷씬 카메라 구조체 큐
 	queue<CUTSCENECAMERADESC>	m_CutSceneCameraDescs;
 
+	//구면 러프용으로 담아둘 리스트(추가 삭제에 용이)
+	list<CUTSCENECAMERADESC> m_SplineData;
+
+	//구면 러프용으로 담아둘 백터(인덱스 접근에 용이)(사이즈를 정해 놓고 사용할 것)
+	vector<list<CUTSCENECAMERADESC>::iterator> m_SplineDataIndexAccess;
+	
 	//컷씬 시간 누적 값
 	_float m_fCutSceneTimeAcc = { 0.0f };
 	
@@ -94,11 +100,7 @@ private:
 	//오프셋 카메라 구조체 큐
 	queue<OFFSETCAMERADESC>	m_OffSetCameraDescs;
 
-	//구면 러프용으로 담아둘 리스트(추가 삭제에 용이)
-	list<OFFSETCAMERADESC> m_SplineData;
-
-	//구면 러프용으로 담아둘 백터(인덱스 접근에 용이)(사이즈를 정해 놓고 사용할 것)
-	vector<list<OFFSETCAMERADESC>::iterator> m_SplineDataIndexAccess;
+	
 
 	//오프셋 시간 누적 값
 	_float m_fOffSetTimeAcc = { 0.0f };
@@ -122,6 +124,9 @@ private:
 	//컷씬 재생
 	void Play_CutScene(_float _TimeDelta);
 
+	//컷씬 재생 Spline
+	void Play_Spline_CutScene(_float _TimeDelta);
+
 	//오프셋 재생
 	void Play_OffSetCamera(_float _TimeDelta);
 
@@ -129,6 +134,13 @@ private:
 	{
 		m_isMainCameraOff = true;
 	}
+
+	//list의 원소를 벡터에 연결
+	void Connect_List_To_Vector();
+	
+	void CutScene_Do_Not_Lerp_Update(CUTSCENECAMERADESC _CutSceneCameraDesc);
+	void CutScene_Lerp_Update(CUTSCENECAMERADESC _CutSceneCameraDescStart, CUTSCENECAMERADESC _CutSceneCameraDescEnd);
+
 
 public:
 	virtual void Free() override;

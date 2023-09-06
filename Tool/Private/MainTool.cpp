@@ -6,6 +6,12 @@
 #include "MapObject.h"
 #include "Camera_Point.h"
 
+#ifdef _DEBUG
+
+#include "Camera_Line.h"
+
+#endif
+
 CMainTool::CMainTool()
 	: m_pGameInstance(CGameInstance::GetInstance())
 	, m_pWindow_Manager(CWindow_Manager::GetInstance())
@@ -235,6 +241,12 @@ HRESULT CMainTool::Ready_Prototype_Component()
 	}
 	Safe_AddRef(m_pRenderer);
 
+	/* Prototype_Component_Shader_Debug */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Shader_Debug"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Debug.hlsl"),
+			VTXPOSNORTEX_DECL::Elements, VTXPOSNORTEX_DECL::iNumElements))))
+		return E_FAIL;
+
 	/* Prototype_Component_Shader_Terrain */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Shader_Terrain"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Terrain.hlsl"),
@@ -277,6 +289,14 @@ HRESULT CMainTool::Ready_Prototype_Component()
 			VTXANIMMESH_DECL::Elements, VTXANIMMESH_DECL::iNumElements))))
 	{
 		MSG_BOX("Failed Add_Prototype : (Prototype_Component_Shader_VtxAnimMesh)");
+		return E_FAIL;
+	}
+
+	/* For.Prototype_Component_VIBuffer_Line */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_VIBuffer_Line"),
+		CVIBuffer_Line::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_Component_VIBuffer_Line)");
 		return E_FAIL;
 	}
 
@@ -376,6 +396,14 @@ HRESULT CMainTool::Ready_Prototype_Object()
 		CCamera_Point::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+#ifdef _DEBUG
+
+	/* Prototype_GameObject_Camera_Line*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_Camera_Line"),
+		CCamera_Line::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+#endif
 	return S_OK;
 }
 
