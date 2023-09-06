@@ -15,6 +15,9 @@ private:
 	virtual ~CMesh_Instance() = default;
 
 public:
+	_uint	Get_MaterialIndex() const { return m_iMaterialIndex; }
+
+public:
 	virtual HRESULT Initialize_Prototype(const Engine::MESH Mesh, _float4x4 PivotMatrix, _float4x4* pInstanceMatrix, _uint iNumInstance);
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual HRESULT Render() override;

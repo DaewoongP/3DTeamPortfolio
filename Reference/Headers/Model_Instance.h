@@ -11,6 +11,7 @@ class ENGINE_DLL CModel_Instance : public CComponent
 {
 public:
 	enum TYPE { TYPE_NONANIM, TYPE_ANIM, TYPE_END };
+	enum ANIMTYPE { UPPERBODY, UNDERBODY, ANIM_END };
 
 private:
 	CModel_Instance(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -18,37 +19,56 @@ private:
 	virtual ~CModel_Instance() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype(TYPE eType, const _tchar* pModelFilePath, _float4x4& PivotMatrix);
+	_uint						Get_NumMeshes() const { return m_iNumMeshes; }
+
+public:
+	virtual HRESULT Initialize_Prototype(TYPE eType, const _tchar* pModelFilePath, _float4x4 PivotMatrix);
 	virtual HRESULT Initialize(void* pArg);
-	virtual HRESULT Render() override;
+	virtual HRESULT Render(_uint iMeshIndex);
 
 public:
 	HRESULT Bind_Material(class CShader* pShader, const char* pConstantName, _uint iMeshIndex, TextureType MaterialType);
 
-protected:
-	HRESULT Ready_Meshes(TYPE eType, _float4x4& PivotMatrix);
-	HRESULT Ready_Materials(const _tchar* pModelFilePath);
-
 private: // Files
 	MODEL							m_Model;
+	vector<NODE>					m_NodeDatas;
 	vector<MESH>					m_MeshDatas;
 	vector<MATERIAL>				m_MaterialDatas;
+	vector<ANIMATION>				m_AnimationDatas;
+
+private: /* For.Bones */
+	vector<class CBone*>			m_Bones;
+public:
+	typedef vector<class CBone*>	BONES;
+
+private: /* For.Meshes */
+	_uint							m_iNumMeshes = { 0 };
+	vector<class CMesh_Instance*>	m_Meshes;
 
 private: /* For.Materials */
 	_uint							m_iNumMaterials = { 0 };
 	vector<MESHMATERIAL>			m_Materials;
 
-private: /* For.Meshes */
-	_uint							m_iNumMeshes = { 0 };
-	vector<class CMesh*>			m_Meshes;
+private: /* For.Animations */
+	_uint							m_iAnimationPartCount = { 0 };
+	ANIMATIONDESC					m_tAnimationDesc[ANIM_END];
+
+private: /* For.RootAnimation*/
+	_uint							m_iRootBoneIndex = { 0 };
+	_float4x4						m_PostRootMatrix;
 
 private:
 	_float4x4*						m_pInstanceMatrix = { nullptr };
-	_uint							m_InstanceCnt = { 0 };
+	_uint							m_InstanceCnt = { 5 };
 	_float4x4						m_PivotMatrix;
 
+private:
+	HRESULT Ready_File(TYPE eType, const _tchar* pModelFilePath);
+	HRESULT Ready_Meshes(TYPE eType, _float4x4 PivotMatrix);
+	HRESULT Ready_Materials();
+
 public:
-	static CModel_Instance* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, TYPE eType, const _tchar* pModelFilePath, _float4x4& PivotMatrix);
+	static CModel_Instance* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, TYPE eType, const _tchar* pModelFilePath, _float4x4 PivotMatrix);
 	virtual CComponent* Clone(void* pArg);
 	virtual void Free() override;
 };
