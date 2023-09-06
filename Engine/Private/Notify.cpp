@@ -147,20 +147,20 @@ KEYFRAME* CNotify::Find_Frame(const wchar_t* wszKeyFrameTag)
 	return nullptr;
 }
 
-HRESULT CNotify::AddFrame(KEYFRAME::KEYFRAMETYPE eFrameType, wchar_t* wszNotifyTag, _float fActionTime, _float fSpeed)
+HRESULT CNotify::AddFrame(KEYFRAME_GCM* data)
 {
 	KEYFRAME* keyFrameDesc;
-	switch (eFrameType)
+	switch (data->eKeyFrameType)
 	{
 	case KEYFRAME::KF_SPEED:
 	{
 		SPEEDFRAME* speedFrameDesc = new SPEEDFRAME();
 		speedFrameDesc->eKeyFrameType = KEYFRAME::KF_SPEED;
-		speedFrameDesc->fTime = fActionTime;
-		speedFrameDesc->fSpeed = fSpeed;
+		speedFrameDesc->fTime = data->fTime;
+		speedFrameDesc->fSpeed = reinterpret_cast<SPEEDFRAME_GCM*>(data)->fSpeed;
 		speedFrameDesc->isEnable = true;
 		keyFrameDesc = speedFrameDesc;
-		wstring str = wszNotifyTag;
+		wstring str = data->szName;
 		pair< wstring, KEYFRAME*> NewPair = pair<wstring, KEYFRAME*>(str, keyFrameDesc);
 		m_KeyFrames.push_back(NewPair);
 		break;
@@ -169,10 +169,10 @@ HRESULT CNotify::AddFrame(KEYFRAME::KEYFRAMETYPE eFrameType, wchar_t* wszNotifyT
 	{
 		NOTIFYFRAME* notifyFrameDesc = new NOTIFYFRAME();
 		notifyFrameDesc->eKeyFrameType = KEYFRAME::KF_NOTIFY;
-		notifyFrameDesc->fTime = fActionTime;
+		notifyFrameDesc->fTime = data->fTime;
 		notifyFrameDesc->isEnable = true;
 		keyFrameDesc = notifyFrameDesc;
-		wstring str = wszNotifyTag;
+		wstring str = data->szName;
 		pair< wstring, KEYFRAME*> NewPair = pair<wstring, KEYFRAME*>(str, keyFrameDesc);
 		m_KeyFrames.push_back(NewPair);
 		break;
@@ -181,10 +181,10 @@ HRESULT CNotify::AddFrame(KEYFRAME::KEYFRAMETYPE eFrameType, wchar_t* wszNotifyT
 	{
 		SOUNDFRAME* soundFrameDesc = new SOUNDFRAME();
 		soundFrameDesc->eKeyFrameType = KEYFRAME::KF_SOUND;
-		soundFrameDesc->fTime = fActionTime;
+		soundFrameDesc->fTime = data->fTime;
 		soundFrameDesc->isEnable = true;
 		keyFrameDesc = soundFrameDesc;
-		wstring str = wszNotifyTag;
+		wstring str = data->szName;
 		pair< wstring, KEYFRAME*> NewPair = pair<wstring, KEYFRAME*>(str, keyFrameDesc);
 		m_KeyFrames.push_back(NewPair);
 		break;
@@ -201,7 +201,6 @@ HRESULT CNotify::AddFrame(KEYFRAME::KEYFRAMETYPE eFrameType, wchar_t* wszNotifyT
 		});
 	return S_OK;
 }
-
 CNotify* CNotify::Create()
 {
 	CNotify* pInstance = new CNotify();

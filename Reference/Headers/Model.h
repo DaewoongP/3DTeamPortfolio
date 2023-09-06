@@ -38,6 +38,7 @@ public:
 	_float4x4					Get_BoneCombinedTransformationMatrix(_uint iIndex);
 	vector<class CBone*>*		Get_Bone_Vector_Point() { return &m_Bones; }
 	_uint						Get_AnimationPartCount() { return m_iAnimationPartCount; }
+	_uint						Get_RootBoneIndex() { return m_iRootBoneIndex; }
 public:
 	virtual HRESULT Initialize_Prototype(TYPE eType, const _tchar* pModelFilePath, _float4x4 PivotMatrix);
 	virtual HRESULT Initialize(void* pArg) override;
@@ -66,6 +67,10 @@ private: // Files
 	vector<MATERIAL>				m_MaterialDatas;
 	vector<ANIMATION>				m_AnimationDatas;
 
+	/* For GCM */
+	MODEL_GCM						m_ModelGCM;
+	vector<ANIMATION_GCM>			m_AnimationDatasGCM[ANIM_END];
+
 private: /* For.Bones */
 	vector<class CBone*>			m_Bones;
 public:
@@ -91,14 +96,29 @@ private:
 	_float4x4						m_PivotMatrix;
 
 private:
+	_bool							m_isExportedTool = { false };
+
+private:
 	HRESULT Ready_File(TYPE eType, const _tchar* pModelFilePath);
 	HRESULT Ready_Bones(Engine::NODE Node);
 	HRESULT Ready_Meshes(TYPE eType, _float4x4 PivotMatrix);
 	HRESULT Ready_Materials();
 	HRESULT Ready_Animations();
 
+
+public:
+	HRESULT Convert_Animations_GCM();
+	HRESULT Write_File_GCM(TYPE eType, const _tchar* pModelFilePath);
+
+	HRESULT Ready_File_GCM(TYPE eType, const _tchar* pModelFilePath);
+	HRESULT Ready_Bones_GCM(Engine::NODE Node);
+	HRESULT Ready_Meshes_GCM(TYPE eType, _float4x4 PivotMatrix);
+	HRESULT Ready_Materials_GCM();
+	HRESULT Ready_Animations_GCM();
+
 private:
 	void Release_FileDatas();
+	void Release_FileDatas_GCM();
 	_uint Find_Animation_Index(const wstring& strTag, ANIMTYPE eType = UPPERBODY);
 
 public:

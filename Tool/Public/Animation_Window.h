@@ -28,7 +28,6 @@ private:
 	//애니메이션용도임.
 	_char			m_szCurrentItem[CModel::ANIM_END][MAX_PATH] = {};
 	_int			m_iRootIndex = { 0 };
-	_bool			m_isRootAnimation[CModel::ANIM_END] = { false };
 	_int			m_iFromBone[CModel::ANIM_END] = { 0 };
 	_int			m_iToBone[CModel::ANIM_END] = { 0 };
 
@@ -44,6 +43,8 @@ private:
 	void OpenFile_Button();
 	void AddModel_Button();
 	void Select_Model();
+
+	void Export_Model();
 
 	void Animation_ComboBox(CModel::ANIMTYPE ePartCnt,_char* szCurrentItem, CModel* pDummyModel);
 	void Animation_Action_Button(CModel::ANIMTYPE ePartCnt, CModel* pDummyModel, _float* fNotifyActionTime);

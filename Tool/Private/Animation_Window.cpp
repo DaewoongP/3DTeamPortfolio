@@ -23,7 +23,7 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 	ImGui::Begin("Animation", nullptr, m_WindowFlag);
-
+	Export_Model();
 	Create_Dummy_Button();
 	OpenFile_Button();
 	Select_Model();
@@ -72,9 +72,18 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 		if (pDummyModel->Get_NumAnimations(ePartCnt) != 0)
 		{
 			sprintf_s(szUIName, "%s%d", "SetRootAnim##", ePartCnt);
-			if (ImGui::Checkbox(szUIName, &m_isRootAnimation[ePartCnt]))
+			if (ImGui::Checkbox(szUIName, pDummyModel->Get_Animation(ePartCnt)->Get_RootAnim_Point()))
 			{
-				pDummyModel->Get_Animation(ePartCnt)->Set_RootAnim(m_isRootAnimation[ePartCnt]);
+			}
+			ImGui::SameLine();
+			sprintf_s(szUIName, "%s%d", "SetLerpAnim##", ePartCnt);
+			if (ImGui::Checkbox(szUIName, pDummyModel->Get_Animation(ePartCnt)->Get_LerpAnim_Point()))
+			{
+			}
+			ImGui::SameLine();
+			sprintf_s(szUIName, "%s%d", "SetLoopAnim##", ePartCnt);
+			if (ImGui::Checkbox(szUIName, pDummyModel->Get_Animation(ePartCnt)->Get_LoopAnim_Point()))
+			{
 			}
 
 			sprintf_s(szUIName, "%s%d", szUIName, ePartCnt);
@@ -90,8 +99,6 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 			ImGui::Text("Separate_Parts");
 			sprintf_s(szUIName, "Separate##%d", ePartCnt);
 
-			/*sprintf_s(szUIName, "RootBone##%d", ePartCnt);
-			ImGui::InputInt(szUIName, &m_iRootIndex[ePartCnt]);*/
 			sprintf_s(szUIName, "Bone_From##%d", ePartCnt);
 			ImGui::InputInt(szUIName, &m_iFromBone[ePartCnt]);
 			sprintf_s(szUIName, "Bone_To##%d", ePartCnt);
@@ -132,7 +139,7 @@ void CAnimation_Window::OpenFile_Button()
 {
 	// open Dialog Simple
 	if (ImGui::Button("Open File Dialog"))
-		ImGuiFileDialog::Instance()->OpenDialog("ChooseModel", "Choose File", ".dat", "../../Resources/Models/");
+		ImGuiFileDialog::Instance()->OpenDialog("ChooseModel", "Choose File", ".dat,.gcm", "../../Resources/Models/");
 
 	// display
 	if (ImGuiFileDialog::Instance()->Display("ChooseModel"))
@@ -184,6 +191,8 @@ void CAnimation_Window::AddModel_Button()
 		_tchar wszTypeComboName[MAX_PATH] = {};
 		lstrcpy(wszAnimationName, pCurrentModel->Get_Animation(0)->Get_AnimationName());
 		lstrcpy(wszTypeComboName, TEXT("Speed"));
+
+		m_iRootIndex = pCurrentModel->Get_RootBoneIndex();
 
 		WCharToChar(wszAnimationName, m_szCurrentItem[0]);
 		WCharToChar(wszTypeComboName, m_szCurrentItemType);
@@ -285,10 +294,56 @@ void CAnimation_Window::Add_Notify_Button(CModel::ANIMTYPE ePartCnt, _char* szNo
 	{
 		_tchar  wszNotifyName[MAX_PATH] = {};
 		CharToWChar(szNotifyName, wszNotifyName);
-		if (FAILED(pDummyModel->Get_Animation(ePartCnt)->Add_NotifyFrame(*eNotifyKeyFrameType, wszNotifyName, *fNotifyActionTime, *fNotifySpeed)))
+		
+		
+
+		switch (*eNotifyKeyFrameType)
 		{
-			MSG_BOX("Failed To Add Notify");
+		case KEYFRAME_GCM::KF_SPEED:
+		{
+			SPEEDFRAME_GCM* NotifyKeyFrameDesc = new SPEEDFRAME_GCM{};
+			NotifyKeyFrameDesc->eKeyFrameType = *eNotifyKeyFrameType;
+			NotifyKeyFrameDesc->fTime = *fNotifyActionTime;
+			lstrcpy(NotifyKeyFrameDesc->szName, wszNotifyName);
+			NotifyKeyFrameDesc->fSpeed = *fNotifySpeed;
+			if (FAILED(pDummyModel->Get_Animation(ePartCnt)->Add_NotifyFrame(NotifyKeyFrameDesc)))
+			{
+				MSG_BOX("Failed To Add Notify");
+			}
+			Safe_Delete(NotifyKeyFrameDesc);
+			break;
 		}
+		case KEYFRAME_GCM::KF_NOTIFY:
+		{
+			NOTIFYFRAME_GCM* NotifyKeyFrameDesc = new NOTIFYFRAME_GCM{};
+			NotifyKeyFrameDesc->eKeyFrameType = *eNotifyKeyFrameType;
+			NotifyKeyFrameDesc->fTime = *fNotifyActionTime;
+			lstrcpy(NotifyKeyFrameDesc->szName, wszNotifyName);
+			//reinterpret_cast<NOTIFYFRAME_GCM*>(&NotifyKeyFrameDesc)->fSpeed;
+			if (FAILED(pDummyModel->Get_Animation(ePartCnt)->Add_NotifyFrame(NotifyKeyFrameDesc)))
+			{
+				MSG_BOX("Failed To Add Notify");
+			}
+			Safe_Delete(NotifyKeyFrameDesc);
+			break;
+		}
+		case KEYFRAME_GCM::KF_SOUND:
+		{
+			NOTIFYFRAME_GCM* NotifyKeyFrameDesc = new NOTIFYFRAME_GCM{};
+			NotifyKeyFrameDesc->eKeyFrameType = *eNotifyKeyFrameType;
+			NotifyKeyFrameDesc->fTime = *fNotifyActionTime;
+			lstrcpy(NotifyKeyFrameDesc->szName, wszNotifyName);
+			//reinterpret_cast<NOTIFYFRAME_GCM*>(&NotifyKeyFrameDesc)->fSpeed;
+			if (FAILED(pDummyModel->Get_Animation(ePartCnt)->Add_NotifyFrame(NotifyKeyFrameDesc)))
+			{
+				MSG_BOX("Failed To Add Notify");
+			}
+			Safe_Delete(NotifyKeyFrameDesc);
+			break;
+		}
+		}
+
+		
 	}
 }
 
@@ -307,6 +362,15 @@ void CAnimation_Window::Edit_Notify_Button(CModel::ANIMTYPE ePartCnt, CModel* pD
 void CAnimation_Window::Select_Model()
 {
 	ImGui::ListBox("AnimModelList", &m_iModelIndex, VectorGetter, static_cast<void*>(&m_vecModelList), (_int)m_vecModelList.size(), 15);
+}
+
+void CAnimation_Window::Export_Model()
+{
+	if (ImGui::Button("Export_Model"))
+	{
+		dynamic_cast<CModel*>(m_pDummyObject->Find_Component(TEXT("Com_Model")))->Convert_Animations_GCM();
+		dynamic_cast<CModel*>(m_pDummyObject->Find_Component(TEXT("Com_Model")))->Write_File_GCM(CModel::TYPE_ANIM,TEXT("Temp"));
+	}
 }
 
 void CAnimation_Window::Create_Notify_View(CModel::ANIMTYPE ePartCnt, CModel* pDummyModel)

@@ -77,7 +77,6 @@ namespace Engine
 		/* For Setting Bone*/
 		_uint							iRootBoneIndex = { 0 };
 		vector<_uint>					AffectBoneVec;
-	
 	}ANIMATIONDESC;
 
 	/*typedef struct tagColliderFrame

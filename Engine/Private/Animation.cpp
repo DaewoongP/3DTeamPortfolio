@@ -8,6 +8,7 @@ CAnimation::CAnimation()
 
 CAnimation::CAnimation(const CAnimation& rhs)
 	: m_iNumChannels(rhs.m_iNumChannels)
+	, m_iNumNorify(rhs.m_iNumNorify)
 	, m_Channels(rhs.m_Channels)
 	, m_pNotify(rhs.m_pNotify)
 	, m_ChannelCurrentKeyFrames(rhs.m_ChannelCurrentKeyFrames)
@@ -17,12 +18,14 @@ CAnimation::CAnimation(const CAnimation& rhs)
 	, m_fTickPerSecond(rhs.m_fTickPerSecond)
 	, m_fTimeAcc(rhs.m_fTimeAcc)
 	, m_isLoop(rhs.m_isLoop)
+	, m_isLerp(rhs.m_isLerp)
+	, m_isRootAnim(rhs.m_isRootAnim)
 	, m_isPaused(rhs.m_isPaused)
 	, m_iMaxFrameChannelIndex(rhs.m_iMaxFrameChannelIndex)
 	, m_iAnimationFrames(rhs.m_iAnimationFrames)
 {
 	lstrcpy(m_szName, rhs.m_szName);
-
+	Safe_AddRef(m_pNotify);
 	for (auto& pChannel : m_Channels)
 	{
 		Safe_AddRef(pChannel);
@@ -73,11 +76,12 @@ SOUNDFRAME* CAnimation::Find_SoundFrame(const _tchar* wszSoundTag)
 	return nullptr;
 }
 
-HRESULT CAnimation::Add_NotifyFrame(KEYFRAME::KEYFRAMETYPE eFrameType, wchar_t* wszNotifyTag, _float fActionTime, _float fSpeed)
+HRESULT CAnimation::Add_NotifyFrame(KEYFRAME_GCM* data)
 {
 	if (m_pNotify == nullptr)
 		return E_FAIL;
-	return m_pNotify->AddFrame(eFrameType, wszNotifyTag, fActionTime, fSpeed);
+	m_iNumNorify++;
+	return m_pNotify->AddFrame(data);
 }
 
 void CAnimation::Update_KeyFrame_By_Time()
@@ -132,6 +136,62 @@ HRESULT CAnimation::Initialize(Engine::ANIMATION Animation, const CModel::BONES&
 
 	//노티파이를 생성해줍니다.
 	m_pNotify = CNotify::Create();
+	return S_OK;
+}
+
+HRESULT CAnimation::Initialize(Engine::ANIMATION_GCM Animation, const CModel::BONES& Bones)
+{
+	m_isLoop = true;
+
+	// 애니메이션 정보 저장
+	lstrcpy(m_szName, Animation.szName);
+	m_fDuration = Animation.fDuration;
+
+	m_fOriginTickPerSecond = Animation.fTickPerSecond;
+	m_fTickPerSecond = Animation.fTickPerSecond;
+
+	m_isLoop = Animation.isLoop;
+	m_isRootAnim = Animation.isRootAnim;
+	m_isLerp = Animation.isLerp;
+
+	m_iNumChannels = Animation.iNumChannels;
+
+	for (_uint i = 0; i < m_iNumChannels; ++i)
+	{
+		CChannel* pChannel = CChannel::Create(Animation.Channels[i], Bones);
+
+		if (nullptr == pChannel)
+			return E_FAIL;
+
+		m_Channels.push_back(pChannel);
+	}
+
+	m_ChannelCurrentKeyFrames.resize(m_iNumChannels);
+
+	_uint iNumKeyFrame = { 0 };
+	_uint iChannelIndex = { 0 };
+	// 채널을 순회하면서 모든 채널중 가장 큰 키프레임을 찾아 해당 채널의 인덱스와 해당 프레임을 저장.
+	for (auto& pChannel : m_Channels)
+	{
+		if (pChannel->Get_NumKeyFrames() > iNumKeyFrame)
+		{
+			iNumKeyFrame = pChannel->Get_NumKeyFrames();
+			m_iMaxFrameChannelIndex = iChannelIndex;
+		}
+
+		++iChannelIndex;
+	}
+	m_iAnimationFrames = iNumKeyFrame;
+
+	//노티파이를 생성해줍니다.
+	m_pNotify = CNotify::Create();
+	m_iNumNorify = Animation.Notify->iNumKeyFrames;
+
+	for (_uint i = 0; i < m_iNumNorify; ++i)
+	{
+		m_pNotify->AddFrame(Animation.Notify->tKeyFrame[i]);
+	}
+
 	return S_OK;
 }
 
@@ -229,6 +289,18 @@ void CAnimation::Invalidate_Frame(_float fTimeDelta)
 }
 
 CAnimation* CAnimation::Create(Engine::ANIMATION Animation, const CModel::BONES& Bones)
+{
+	CAnimation* pInstance = new CAnimation();
+
+	if (FAILED(pInstance->Initialize(Animation, Bones)))
+	{
+		MSG_BOX("Failed to Created CAnimation");
+		Safe_Release(pInstance);
+	}
+	return pInstance;
+}
+
+CAnimation* CAnimation::Create(Engine::ANIMATION_GCM Animation, const CModel::BONES& Bones)
 {
 	CAnimation* pInstance = new CAnimation();
 

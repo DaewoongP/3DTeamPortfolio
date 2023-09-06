@@ -144,4 +144,90 @@ namespace Engine
 		// Animation
 		unsigned int		iNumAnimations;
 	}MODEL;
+
+	/* For GCM Convert*/
+	typedef struct tagModel_GCM
+	{
+		// Node
+		unsigned int		iNumNodes;
+		// Mesh
+		unsigned int		iNumMeshes;
+		// Material
+		unsigned int		iNumMaterials;
+		// RootBoneIndex
+		unsigned int		iRootBoneIndex;
+		// PartCount
+		unsigned int		iAnimationPartCount;
+		// Array
+		unsigned int*		iNumAnimations;
+		// Array
+		//(각 파츠가 영향을 주는 뼈의 포인터)를 가리기키는 포인터
+		vector<unsigned int>* iAffectBones;
+	}MODEL_GCM;
+	
+	typedef struct tagFrame_GCM : public KEYFRAME
+	{
+		wchar_t			szName[256];
+	}KEYFRAME_GCM;
+
+	typedef struct tagSpeedFrame_GCM : KEYFRAME_GCM
+	{
+		float			fSpeed{};
+	}SPEEDFRAME_GCM;
+
+	typedef struct tagNotifyFrame_GCM :KEYFRAME_GCM
+	{
+		function<void()> Action;
+	}NOTIFYFRAME_GCM;
+
+	typedef struct tagSoundFrame_GCM : KEYFRAME_GCM
+	{
+		wchar_t wszSoundTag[MAX_PATH] = {};
+	}SOUNDFRAME_GCM;
+
+	//노티파이엔 이름이 없어요.
+	typedef struct tagNotify_GCM
+	{
+		unsigned int			iNumKeyFrames;
+		//프레임에만 이름이 있어요
+		vector<KEYFRAME_GCM*>			tKeyFrame;
+	}NOTIFY_GCM;
+
+	typedef struct tagMatrixFrame_GCM
+	{
+		XMFLOAT3		vScale;
+		XMFLOAT4		vRotation;
+		XMFLOAT3		vTranslation;
+
+		float			fTime;
+	}MATRIXFRAME_GCM;
+
+	typedef struct tagChannel_GCM
+	{
+		wchar_t				szName[256];
+		
+		unsigned int		iNumMartixKeys;
+		MATRIXFRAME_GCM*		iMatrixFrame;
+	}CHANNEL_GCM;
+
+	typedef struct tagAnimation_GCM
+	{
+		wchar_t				szName[256];
+		float				fDuration;
+		float				fTickPerSecond;
+
+		_bool				isLoop;
+		_bool				isRootAnim;
+		_bool				isLerp;
+
+		// Channel
+		unsigned int		iNumChannels;
+		CHANNEL_GCM*		Channels; // array
+
+		//Notify
+		NOTIFY_GCM*			Notify; // one
+
+	}ANIMATION_GCM;
+
+	
 }
