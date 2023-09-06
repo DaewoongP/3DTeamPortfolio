@@ -119,9 +119,6 @@ HRESULT CMainTool::Initialize_ImGui()
 	ImGuiIO& io = ImGui::GetIO();
 	io.Fonts->AddFontFromFileTTF("../../Resources/Fonts/NEXONLv1GothicBold.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesKorean());
 
-	// Add default Japanese ranges
-	io.Fonts->AddFontFromFileTTF("../../Resources/YES24GothicR.ttf", 16.f, nullptr, io.Fonts->GetGlyphRangesKorean());
-
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
