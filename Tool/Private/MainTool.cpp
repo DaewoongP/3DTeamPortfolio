@@ -50,7 +50,7 @@ HRESULT CMainTool::Initialize()
 	if (FAILED(Ready_Fonts()))
 		return E_FAIL;
 
-	if (FAILED(Add_Windows()))
+	if (FAILED(m_pWindow_Manager->Initialize(m_pDevice, m_pContext)))
 		return E_FAIL;
 
 	if (FAILED(Open_Level(LEVEL_TOOL)))
@@ -68,8 +68,6 @@ void CMainTool::Tick(_float fTimeDelta)
 		return;
 	
 	Tick_ImGui();
-
-	//ImGui::ShowDemoWindow();
 
 	// 엔진의 Tick 호출
 	m_pGameInstance->Tick_Engine(fTimeDelta);
@@ -185,58 +183,16 @@ HRESULT CMainTool::Render_ImGui()
 	return S_OK;
 }
 
-HRESULT CMainTool::Add_Windows()
-{
-	if (nullptr == m_pWindow_Manager)
-		return E_FAIL;
-
-	RECT rc;
-	ZEROMEM(&rc);
-	GetWindowRect(g_hWnd, &rc);
-
-	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("Object_Window"),
-		CObject_Window::Create(m_pDevice, m_pContext,
-			ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(400.f, 700.f)))))
-		MSG_BOX("Failed Create Object_Window");
-	
-	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("Effect_Window"),
-		CEffect_Window::Create(m_pDevice, m_pContext,
-			ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(446.f, 768.f)))))
-		MSG_BOX("Failed Create Object_Window");
-
-	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("Animation_Window"),
-		CAnimation_Window::Create(m_pDevice, m_pContext,
-			ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(446.f, 768.f)))))
-		MSG_BOX("Failed Create Animation_Window");
-
-	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("UI_Window"),
-		CUI_Window::Create(m_pDevice, m_pContext,
-			ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(446.f, 768.f)))))
-		MSG_BOX("Failed Create UI_Window");
-
-	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("Camera_Window"),
-		CCamera_Window::Create(m_pDevice, m_pContext,
-			ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(446.f, 768.f)))))
-		MSG_BOX("Failed Create Camera_Window");
-
-	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("Light_Window"),
-		CLight_Window::Create(m_pDevice, m_pContext,
-			ImVec2(_float(g_iWinSizeX + 8), _float(0.f)), ImVec2(446.f, 768.f)))))
-		MSG_BOX("Failed Create Light_Window");
-
-	return S_OK;
-}
-
 HRESULT CMainTool::Ready_Prototype_Component()
 {
 	if (nullptr == m_pGameInstance)
 		return E_FAIL;
+	
+	/*m_pGameInstance->Add_Prototype_Textures(LEVEL_TOOL, m_pDevice, m_pContext
+		, TEXT("Prototype_Component_Texture"), TEXT(".png"), TEXT("../../Resources/UI/UI/Game/UI/Common"));
 
-	//m_pGameInstance->Add_Prototype_Textures(LEVEL_TOOL, m_pDevice, m_pContext
-	//	, TEXT("Prototype_Component_Texture"), TEXT(".png"), TEXT("../../Resources/UI/UI/Game/UI/Common"));
-
-	//m_pGameInstance->Add_Prototype_Models(LEVEL_TOOL, m_pDevice, m_pContext, CModel::TYPE_NONANIM
-	//	, TEXT("Prototype_Component_Model"), TEXT(".dat"), TEXT("../../Resources/Models/NonAnims/"));
+	m_pGameInstance->Add_Prototype_Models(LEVEL_TOOL, m_pDevice, m_pContext, CModel::TYPE_NONANIM
+		, TEXT("Prototype_Component_Model"), TEXT(".dat"), TEXT("../../Resources/Models/NonAnims/"));*/
 
 	/* Prototype_Component_Renderer */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Renderer"),

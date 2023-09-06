@@ -14,8 +14,17 @@ class CWindow_Manager final : public CBase
 {
 private:
 	enum MENULIST {
-		OBJECT_WINDOW, MESH_WINDOW, NAVIGATION_WINDOW, CAMERA_WINDOW, EFFECT_WINDOW
-		, ANIMATION_WINDOW, UI_WINDOW, LIGHT_WIDNOW, MENULIST_END
+		OBJECT_WINDOW, NAVIGATION_WINDOW, CAMERA_WINDOW, EFFECT_WINDOW
+		, ANIMATION_WINDOW, UI_WINDOW, LIGHT_WINDOW, MENULIST_END
+	};
+	enum LOADINGFLAG {
+		OBJECT_LOAD			= 1 << 0,
+		NAVIGATION_LOAD		= 1 << 1,
+		CAMERA_LOAD			= 1 << 2,
+		EFFECT_LOAD			= 1 << 3,
+		ANIAMTION_LOAD		= 1 << 4,
+		UI_LOAD				= 1 << 5,
+		LIGHT_LOAD			= 1 << 6,
 	};
 
 	DECLARE_SINGLETON(CWindow_Manager);
@@ -25,7 +34,7 @@ private:
 	virtual ~CWindow_Manager() = default;
 
 public:
-	HRESULT Initialize();
+	HRESULT Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	void Tick(_float fTimeDelta);
 	HRESULT Render();
 	
@@ -42,6 +51,11 @@ private:
 
 private:
 	MENULIST						m_eCurMenuList = { MENULIST_END };
+	_uint							m_eLoadingFlag = { 0 };
+
+private:
+	ID3D11Device*					m_pDevice = { nullptr };
+	ID3D11DeviceContext*			m_pContext = { nullptr };
 
 public:
 	virtual void Free(void) override;
