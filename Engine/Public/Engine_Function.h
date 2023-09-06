@@ -234,7 +234,7 @@ namespace Engine
 		// 상대 경로의 시작 부분
 		const string relativeStart = "..\\..\\";
 
-		// "3DTeamPortfolio"의 위치를 찾습니다.
+		// "3DTeamPortfolio"의 위치 찾기.
 		size_t found = absolutePath.find(target);
 		if (found != string::npos)
 		{
@@ -242,10 +242,23 @@ namespace Engine
 			return relativeStart + absolutePath.substr(found + target.size() + 1);
 		}
 
-		// 변환할 대상 문자열이 없는 경우 원래의 절대 경로를 반환합니다.
+		// 변환할 대상 문자열이 없는 경우 원래의 경로를 반환.
 		return absolutePath;
 	}
 
+	// ex) ToPrototypeTag(TEXT("Prototype_Component_Texture"), "../../Resources/FileName.png");
+	std::wstring ToPrototypeTag(const wchar_t* pPrototypeName, const wchar_t* pPath)
+	{
+		fs::path fsPath = pPath;
+		
+		wstring wstrPrototypeTag = pPrototypeName; // Prototype_Component_Texture
+		if (wstrPrototypeTag.back() != TEXT('_'))
+			wstrPrototypeTag += TEXT('_'); // Prototype_Component_Texture_
+		wstrPrototypeTag += fsPath.stem().wstring(); // Prototype_Component_Texture_FileName
+
+		return wstrPrototypeTag;
+	}
+	
 	// string - > wstring 변환 함수
 	std::wstring strToWStr(const std::string& str)
 	{

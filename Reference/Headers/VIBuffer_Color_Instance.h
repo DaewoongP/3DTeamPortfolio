@@ -27,7 +27,12 @@ protected:
 public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg) override;
+	virtual void Tick(COLORINSTANCE* pInstances, _int iRenderedParticleNum = -1, _bool isAlphaBlend = false, _float4x4 AlphaBlendObjectWorldMatrixInverse = XMMatrixIdentity());
 
+public:
+	void Sort_AlphaBlend(COLORINSTANCE* pInstances, _float4x4 AlphaBlendObjectWorldMatrixInverse);
+
+public:
 	void Set_DrawNum(_uint iDrawNum);
 	_uint Get_DrawNum();
 

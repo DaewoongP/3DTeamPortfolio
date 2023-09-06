@@ -7,18 +7,22 @@
 //
 /* =============================================== */
 
-#include "Component.h"
+#include "Composite.h"
 #include "VIBuffer_Rect_Color_Instance.h"
 #include "Modules.h"
 
 BEGIN(Engine)
-class CTransform;
+class CRenderer;
 class CTexture;
+class CVIBuffer;
+class CShader;
+class CModel;
+class CTransform;
 END
 
 BEGIN(Engine)
 
-class ENGINE_DLL CParticleSystem final : public CComponent
+class ENGINE_DLL CParticleSystem final : public CComposite
 {
 public:
 	typedef CVIBuffer_Rect_Color_Instance::COLORINSTANCE COL_INSTANCE;
@@ -40,14 +44,14 @@ public:
 public:
 	virtual HRESULT Initialize_Prototype(const _tchar* _pDirectoryPath);
 	virtual HRESULT Initialize(void* _pArg) override;
-	void Tick(_float _fTimeDelta, CVIBuffer_Rect_Color_Instance* pBuffer, CTransform* pTransform);
+	void Tick(_float _fTimeDelta, CTransform* pTransform);
 	HRESULT Render();
 
 public:
 	void Play();
 	void Stop();
 	void Restart();
-	HRESULT Bind_ParticleValue(class CShader* pShader);
+
 
 public:
 	void Enable();
@@ -104,6 +108,10 @@ private:
 	void Action_By_Distance();
 	void Action_By_Bursts();
 
+private:
+	HRESULT Add_Components();
+	HRESULT Setup_ShaderResources();
+
 public:
 	MAIN_MODULE m_MainModuleDesc;
 	EMMISION_MODULE m_EmissionModuleDesc;
@@ -111,9 +119,12 @@ public:
 	RENDERER_MODULE m_RendererModuleDesc;
 
 private: 
+	CRenderer* m_pRenderer = { nullptr };
 	CTexture* m_pTexture = { nullptr }; // 출력에 사용 될 텍스처
 	CTexture* m_pClipTexture = { nullptr }; // 알파테스트에 사용될 텍스처
-	
+	CVIBuffer_Rect_Color_Instance* m_pBuffer = { nullptr };
+	CShader* m_pShader = { nullptr };
+	CModel* m_pModel = { nullptr };
 private:
 	list<PARTICLE> m_Particles[STATE_END];
 	vector<COL_INSTANCE>  m_ParticleMatrices;
@@ -121,7 +132,7 @@ private:
 
 public:
 	static CParticleSystem* Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, const _tchar* _pDirectoryPath);
-	virtual CComponent* Clone(void* _pArg) override;
+	virtual CComposite* Clone(void* _pArg) override;
 	virtual void Free() override;
 };
 
