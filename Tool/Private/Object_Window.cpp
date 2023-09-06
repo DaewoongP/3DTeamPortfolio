@@ -204,15 +204,18 @@ void CObject_Window::Picking_Menu()
 			break;
 
 		case MULTI_METHOD: // 한번에 여러개 설치(인스턴싱)
-
+			Install_Multi_Object(m_pDummy->Get_Transform()->Get_Position());
 			break;
 		}
+
+		// 오브젝트 삭제 관련 메뉴
+		Delete_Object_Menu();
 	}
 }
 
 void CObject_Window::Install_Object(_float3 vPos)
 {
-	ImGui::Text("Press H to install");
+	ImGui::Text("Press H to Install");
 
 	// 범위 안에 있을 경우 H키를 눌러 설치
 	BEGININSTANCE; if (true == pGameInstance->Get_DIKeyState(DIK_H, CInput_Device::KEY_DOWN) &&
@@ -255,9 +258,6 @@ void CObject_Window::Install_Object(_float3 vPos)
 		++m_iMapObjectIndex;
 
 	} ENDINSTANCE;
-
-	// 오브젝트 삭제 관련 메뉴
-	Delete_Object_Menu();
 }
 
 void CObject_Window::Install_Continuous_Object(_float3 vPos)
@@ -266,6 +266,9 @@ void CObject_Window::Install_Continuous_Object(_float3 vPos)
 
 void CObject_Window::Install_Multi_Object(_float3 vPos)
 {
+	ImGui::Text("Press H to Multi Install");
+
+
 }
 
 void CObject_Window::Select_Model()

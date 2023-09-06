@@ -32,7 +32,7 @@ private:
 	void Picking_Menu(); // 피킹 메뉴
 	void Install_Object(_float3 vPos); // 오브젝트 설치 메뉴
 	void Install_Continuous_Object(_float3 vPos); // 오브젝트 연속 설치 메뉴
-	void Install_Multi_Object(_float3 vPos); // 오브젝트 다중 설치 메뉴
+	void Install_Multi_Object(_float3 vPos); // 오브젝트 다중(인스턴싱) 설치 메뉴
 	void Select_Model(); // 모델 선택 메뉴
 	void Current_MapObject(); // 현재 설치되어 있는 맵 오브젝트 확인
 	void Save_Load_Menu(); // 세이브 로드 메뉴

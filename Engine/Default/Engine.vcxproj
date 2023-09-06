@@ -45,6 +45,7 @@
     <ClInclude Include="..\Public\CustomModel.h" />
     <ClInclude Include="..\Public\Modules.h" />
     <ClInclude Include="..\Public\Status.h" />
+    <ClInclude Include="..\Public\VIBuffer_Object_Instance.h" />
     <ClInclude Include="..\public\VIBuffer_Rect_Color_Instance.h" />
     <ClInclude Include="..\Public\VIBuffer_Sprite.h" />
     <ClInclude Include="..\Public\Ignite.h" />
@@ -142,6 +143,7 @@
     <ClCompile Include="..\Private\CustomModel.cpp" />
     <ClCompile Include="..\Private\Modules.cpp" />
     <ClCompile Include="..\Private\Status.cpp" />
+    <ClCompile Include="..\Private\VIBuffer_Object_Instance.cpp" />
     <ClCompile Include="..\Private\VIBuffer_Sprite.cpp" />
     <ClCompile Include="..\Private\Ignite.cpp" />
     <ClCompile Include="..\Private\Defence.cpp" />
