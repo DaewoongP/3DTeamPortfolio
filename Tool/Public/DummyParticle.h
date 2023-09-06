@@ -10,19 +10,21 @@ class CTexture;
 class CVIBuffer_Point_Color_Instance;
 class CVIBuffer_Rect_Color_Instance;
 class CParticleSystem;
+class CModel;
+class CMeshEffect;
 END
 
 BEGIN(Tool)
+class CEffect_Window;
 
 class CDummyParticle : public CGameObject
 {
+	friend class CEffect_Window;
+
 private:
 	explicit CDummyParticle(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext);
 	explicit CDummyParticle(const CDummyParticle& _rhs);
 	virtual ~CDummyParticle() = default;
-
-public:
-	CParticleSystem* Get_ParticleSystem() { return m_pParticleSystem; }
 
 public:
 	// 툴에서만 프로토타입에서 파티클 경로를 받아줌.
@@ -42,18 +44,21 @@ public:
 		m_pParticleSystem->Load(_pDirectoryPath);
 	}
 
+	CModel* ChangeModel(const _tchar* pPrototag);
+
 private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
 
 private:
-	CShader* m_pShader = { nullptr };
-	CRenderer* m_pRenderer = { nullptr };
-	CVIBuffer_Rect_Color_Instance* m_pBuffer = { nullptr };
 	CParticleSystem* m_pParticleSystem = { nullptr };
+	CMeshEffect* m_pMeshEffect = { nullptr };
+	CRenderer* m_pRenderer = { nullptr };
 
-private:
+private: // Prototype_Component_Texture_
 	_uint				  m_iNumInstance;
+	_bool				  m_isRenderPaticle = { true };
+	_bool				  m_isMesh = { false };
 
 public:
 	// 툴에서는 매개변수 추가. 클라에는 삭제하기

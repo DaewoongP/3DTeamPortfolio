@@ -170,6 +170,8 @@ private:
 	class CCamera_Manager*			m_pCamera_Manager = { nullptr };
 
 public:
+	HRESULT Add_Prototype_Textures(_uint iLevel, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pPrototypeName, const _tchar* pTargetExtension, const _tchar* pDirectoryPath);
+	HRESULT Add_Prototype_Models(_uint iLevel, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CModel::TYPE eType, const _tchar* pPrototypeName, const _tchar* pTargetExtension, const _tchar* pDirectoryPath, _float4x4 PivotMatrix = _float4x4());
 	static void Release_Engine();
 	virtual void Free() override;
 };

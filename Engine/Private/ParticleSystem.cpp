@@ -1,19 +1,19 @@
 #include "ParticleSystem.h"
 #include "GameInstance.h"
+#include "Component_Manager.h"
 #include "GameObject.h"
 
 CParticleSystem::CParticleSystem(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
-	: CComponent(_pDevice, _pContext)
+	: CComposite(_pDevice, _pContext)
 {
 
 }
 CParticleSystem::CParticleSystem(const CParticleSystem& _rhs)
-	: CComponent(_rhs)
+	: CComposite(_rhs)
 	, m_MainModuleDesc(_rhs.m_MainModuleDesc)
 	, m_EmissionModuleDesc(_rhs.m_EmissionModuleDesc)
 	, m_ShapeModuleDesc(_rhs.m_ShapeModuleDesc)
 	, m_RendererModuleDesc(_rhs.m_RendererModuleDesc)
-	, m_pTexture(static_cast<CTexture*>(_rhs.m_pTexture->Clone(nullptr)))
 	, m_ParticleMatrices(_rhs.m_ParticleMatrices)
 	, m_StopAction(_rhs.m_StopAction)
 {
@@ -34,20 +34,22 @@ HRESULT CParticleSystem::Initialize_Prototype(const _tchar* _pDirectoryPath)
 	//Reset_AllParticles();
 	Play_On_Awake();
 
-	m_pTexture = CTexture::Create(m_pDevice, m_pContext, m_RendererModuleDesc.wstrMaterial.data());
-
 	return S_OK;
 }
 
 HRESULT CParticleSystem::Initialize(void* _pArg)
 {
+	if (FAILED(Add_Components()))
+		return E_FAIL;
 
 	return S_OK;
 }
-void CParticleSystem::Tick(_float _fTimeDelta, CVIBuffer_Rect_Color_Instance* pBuffer, CTransform* pTransform)
+
+void CParticleSystem::Tick(_float _fTimeDelta, CTransform* pTransform)
 {
 	if (false == IsEnable())
 		return;
+
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
@@ -109,14 +111,23 @@ void CParticleSystem::Tick(_float _fTimeDelta, CVIBuffer_Rect_Color_Instance* pB
 		++iter;
 	}
 
-	pBuffer->Set_DrawNum(_uint(m_Particles[ALIVE].size()));
-	pBuffer->Tick(m_ParticleMatrices.data(), pBuffer->Get_DrawNum());
+	m_pBuffer->Set_DrawNum(_uint(m_Particles[ALIVE].size()));
+	m_pBuffer->Tick(m_ParticleMatrices.data(), m_pBuffer->Get_DrawNum());
 	m_EmissionModuleDesc.vPrevPos = m_EmissionModuleDesc.vCurPos;
 	Safe_Release(pGameInstance);
 }
 
 HRESULT CParticleSystem::Render()
 {
+	if (FAILED(Setup_ShaderResources()))
+		return E_FAIL;
+
+	if (FAILED(m_pShader->Begin("Default")))
+		return E_FAIL;
+
+	if (FAILED(m_pBuffer->Render()))
+		return E_FAIL;
+
 	return S_OK;
 }
 void CParticleSystem::Play()
@@ -132,11 +143,43 @@ void CParticleSystem::Stop()
 {
 	Disable();
 }
-HRESULT CParticleSystem::Bind_ParticleValue(CShader* pShader)
+HRESULT CParticleSystem::Setup_ShaderResources()
 {
-	if (FAILED(m_pTexture->Bind_ShaderResource(pShader, "g_Texture")))
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	CTransform* pTransform = dynamic_cast<CGameObject*>(m_pOwner)->Get_Transform();
+	if (nullptr != pTransform)
+	{
+		if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", pTransform->Get_WorldMatrixPtr())))
+			return E_FAIL;
+
+		if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW))))
+			return E_FAIL;
+
+		if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
+			return E_FAIL;
+	}
+
+	if (FAILED(m_pShader->Bind_RawValue("g_vCamPosition", pGameInstance->Get_CamPosition(), sizeof(_float4))))
+	{
+		Safe_Release(pGameInstance);
 		return E_FAIL;
-	
+	}
+
+	if (FAILED(m_pTexture->Bind_ShaderResource(m_pShader, "g_Texture")))
+	{
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pClipTexture->Bind_ShaderResource(m_pShader, "g_ClipTexture")))
+	{
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	}
+
+	Safe_Release(pGameInstance);
 	return S_OK;
 }
 void CParticleSystem::Enable()
@@ -282,6 +325,36 @@ void CParticleSystem::Action_By_Bursts()
 			}
 		}
 	}
+}
+HRESULT CParticleSystem::Add_Components()
+{
+	if (FAILED(CComposite::Add_Component(0, TEXT("Prototype_Component_Renderer")
+		, TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
+		return E_FAIL;
+
+	if (FAILED(CComposite::Add_Component(0
+		, ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_RendererModuleDesc.wstrMaterialPath.c_str()).c_str()
+		, TEXT("Com_MainTexture")
+		, reinterpret_cast<CComponent**>(&m_pTexture))))
+		return E_FAIL;
+
+	if (FAILED(CComposite::Add_Component(0
+		, ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_ShapeModuleDesc.wstrClipTexture.c_str()).c_str()
+		, TEXT("Com_ClipTexture")
+		, reinterpret_cast<CComponent**>(&m_pClipTexture))))
+		return E_FAIL;
+
+	wstring wstrShaderTag = TEXT("Prototype_Component_");
+	wstrShaderTag += m_RendererModuleDesc.wstrShaderTag;
+	if (FAILED(CComposite::Add_Component(0, wstrShaderTag.c_str()
+		, TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
+		return E_FAIL;
+
+	if (FAILED(CComposite::Add_Component(0, TEXT("Prototype_Component_VIBuffer_Rect_Color_Instance")
+		, TEXT("Com_Buffer"), reinterpret_cast<CComponent**>(&m_pBuffer), &m_MainModuleDesc.iMaxParticles)))
+		return E_FAIL;
+
+	return S_OK;
 }
 void CParticleSystem::Play_On_Awake()
 {
@@ -455,9 +528,9 @@ void CParticleSystem::Restart()
 }
 void CParticleSystem::ChangeMainTexture(const _tchar* pTexturePath)
 {
-	m_RendererModuleDesc.wstrMaterial = pTexturePath;
+	m_RendererModuleDesc.wstrMaterialPath = pTexturePath;
 	Safe_Release(m_pTexture);
-	m_pTexture = CTexture::Create(m_pDevice, m_pContext, m_RendererModuleDesc.wstrMaterial.data());
+	m_pTexture = CTexture::Create(m_pDevice, m_pContext, m_RendererModuleDesc.wstrMaterialPath.data());
 }
 void CParticleSystem::RemakeBuffer(_uint iNumInstance)
 {
@@ -480,7 +553,7 @@ CParticleSystem* CParticleSystem::Create(ID3D11Device* _pDevice, ID3D11DeviceCon
 
 	return pInstance;
 }
-CComponent* CParticleSystem::Clone(void* _pArg)
+CComposite* CParticleSystem::Clone(void* _pArg)
 {
 	CParticleSystem* pInstance = new CParticleSystem(*this);
 
@@ -495,8 +568,15 @@ CComponent* CParticleSystem::Clone(void* _pArg)
 void CParticleSystem::Free()
 {
 	__super::Free();
+	Safe_Release(m_pRenderer);
 	Safe_Release(m_pTexture);
 	Safe_Release(m_pClipTexture);
-	m_Particles[ALIVE].clear();
-	m_Particles[WAIT].clear();
+	Safe_Release(m_pBuffer);
+	Safe_Release(m_pShader);
+	Safe_Release(m_pModel);
+
+	for (_uint i = 0; i < STATE_END; ++i)
+	{
+		m_Particles[i].clear();
+	}
 }

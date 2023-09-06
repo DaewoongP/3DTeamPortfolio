@@ -114,7 +114,7 @@ struct ENGINE_DLL SHAPE_MODULE : public MODULE
 	  string strArcMode = { "Random" }; // Random, Loop, Ping-Pong, Burst_Spread
 	 _float fSpread = { 0.f }; // [0, 1]
 
-	string strTexture = { "" }; // 아래 인자의 채널에 사용할 텍스처
+	wstring wstrClipTexture = { TEXT("../../Resources/Effects/Textures/Default_Particle.png") }; // 아래 인자의 채널에 사용할 텍스처
 	string strClipChannel = { "Red" }; // Red, Greend, Blue, Alpha // 클립 채널(클립 : 알파테스트로 discard)
 	_float fClipThreshold = { 0.f }; // [0, 1], 이것보다 작은 값들은 알파테스트 실패함.
 	_bool isColorAffectsParticles = { true };
@@ -134,9 +134,8 @@ struct ENGINE_DLL SHAPE_MODULE : public MODULE
 struct ENGINE_DLL RENDERER_MODULE : public MODULE
 {
 	RENDERER_MODULE() : MODULE() { __super::isActivate = true; };
-
-	wstring wstrMaterial = { TEXT("../../Resources/Effects/Textures/Default_Particle.png") };
-	CTexture* pTexture = { nullptr }; // 출력에 사용 될 텍스처
+	wstring wstrShaderTag = { TEXT("Shader_VtxRectColInstance") };
+	wstring wstrMaterialPath = { TEXT("../../Resources/Effects/Textures/Default_Particle.png") };
 };
 
 typedef struct tagParticle

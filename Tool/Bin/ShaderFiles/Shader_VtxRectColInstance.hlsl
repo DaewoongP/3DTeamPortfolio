@@ -5,6 +5,7 @@ matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 vector			g_vCamPosition;
 vector			g_vColor = vector(1.f, 1.f, 1.f, 1.f);
 texture2D		g_Texture;
+texture2D		g_ClipTexture;
 float4x4		g_RotationMatrix;
 
 struct VS_IN
@@ -67,14 +68,12 @@ struct PS_OUT
 PS_OUT	PS_MAIN(PS_IN In)
 {
 	PS_OUT		Out = (PS_OUT)0;
-	float4		vAlpha = (float4)0;
 
 	Out.vColor = g_Texture.Sample(LinearSampler, In.vTexUV);
-	vAlpha = Out.vColor;
+	Out.vColor.a = g_ClipTexture.Sample(LinearSampler, In.vTexUV).r;
 
 	Out.vColor *= (In.vColor * g_vColor);
-	Out.vColor.a = vAlpha.r;
-	if (Out.vColor.a < 0.2f)
+	if (Out.vColor.a < 0.5f)
 		discard;
 
 	return Out;

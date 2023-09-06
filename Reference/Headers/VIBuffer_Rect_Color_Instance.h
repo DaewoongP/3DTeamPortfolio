@@ -20,11 +20,8 @@ private:
 public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg = nullptr) override;
-	// 카메라의 위치를 객체의 로컬포지션으로 옮겨서 인스턴스 로컬행렬과 객체 기준 로컬의 카메라 좌표와 연산을한다.
-	virtual void Tick(COLORINSTANCE * pInstances, _int iRenderedParticleNum = -1, _bool isAlphaBlend = false, _float4x4 AlphaBlendObjectWorldMatrixInverse = XMMatrixIdentity());
 
 public:
-	void Sort_AlphaBlend(COLORINSTANCE * pInstances, _float4x4 AlphaBlendObjectWorldMatrixInverse);
 	HRESULT Make_Buffers();
 
 public:

@@ -17,6 +17,7 @@ private:
 public:
 	virtual HRESULT Initialize(ImVec2 _vWindowPos, ImVec2 _vWindowSize) override;
 	virtual void Tick(_float _fTimeDelta) override;
+	void MeshEffect(_float _fTimeDelta);
 
 	void Save_FileDialog();
 	void Load_FileDialog();
@@ -28,7 +29,7 @@ public:
 	void EmissionModule_TreeNode();
 	void ShapeModule_TreeNode();
 	void RendererModule_TreeNode();
-	
+
 private: // À§Á¬ °ü·Ã
 	_bool Table_DragFloat(string _strName, string _strTag, _float* _pValue, _float _fDragSpeed = 0.01f, _float _fMin = 0.f, _float _fMax = FLT_MAX);
 	_bool Table_DragFloat2Range(string _strName, string _strTag, _float2* _pValue, _float _fDragSpeed = 0.01f, _float _fMin = 0.f, _float _fMax = FLT_MAX);
@@ -59,6 +60,7 @@ private:
 private:
 	class CDummyParticle* m_pDummyParticle = { nullptr };
 	CParticleSystem* m_pParticleSystem = { nullptr };
+	CModel* m_pModel = { nullptr };
 
 	_bool m_isPrevLooping = { false };
 

@@ -225,6 +225,12 @@ HRESULT CMainTool::Ready_Prototype_Component()
 	if (nullptr == m_pGameInstance)
 		return E_FAIL;
 
+	//m_pGameInstance->Add_Prototype_Textures(LEVEL_TOOL, m_pDevice, m_pContext
+	//	, TEXT("Prototype_Component_Texture"), TEXT(".png"), TEXT("../../Resources/UI/UI/Game/UI/Common"));
+
+	//m_pGameInstance->Add_Prototype_Models(LEVEL_TOOL, m_pDevice, m_pContext, CModel::TYPE_NONANIM
+	//	, TEXT("Prototype_Component_Model"), TEXT(".dat"), TEXT("../../Resources/Models/NonAnims/"));
+
 	/* Prototype_Component_Renderer */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Renderer"),
 		m_pRenderer = CRenderer::Create(m_pDevice, m_pContext))))
@@ -238,6 +244,12 @@ HRESULT CMainTool::Ready_Prototype_Component()
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Shader_Terrain"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Terrain.hlsl"),
 			VTXPOSNORTEX_DECL::Elements, VTXPOSNORTEX_DECL::iNumElements))))
+		return E_FAIL;
+
+	/* Prototype_Component_Shader_DefaultEffect */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Shader_DefaultEffect"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_DefaultEffect.hlsl"),
+			VTXMESH_DECL::Elements, VTXMESH_DECL::iNumElements))))
 		return E_FAIL;
 
 	/* Prototype_Component_Shader_VtxTex */
@@ -299,10 +311,11 @@ HRESULT CMainTool::Ready_Prototype_Component()
 		CVIBuffer_Point_Color_Instance::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	/* Prototype_Component_VIBuffer_Point_Color_Instance*/
+	/* Prototype_Component_VIBuffer_Rect_Color_Instance*/
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_VIBuffer_Rect_Color_Instance"),
 		CVIBuffer_Rect_Color_Instance::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+
 
 	/* Prototype_Component_Texture_Terrain */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Texture_Terrain"),
@@ -324,14 +337,30 @@ HRESULT CMainTool::Ready_Prototype_Component()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Textures/Default_Particle.png")))))
 		return E_FAIL;
 
-	/* Prototype_Component_Default_ParticleSystem*/
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Default_ParticleSystem"),
-		CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Particles/Fire/")))))
+	/* Prototype_Component_Texture_Default_Particle*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Texture_T_Default_Material_Grid_M"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/NonAnims/SM_SpherePrimitiveRegularNormals_01/T_Default_Material_Grid_M.png")))))
 		return E_FAIL;
 
 	/* Prototype_Component_Sphere_Collider*/
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Sphere_Collider"),
 		CCollider::Create(m_pDevice, m_pContext,CCollider::TYPE_SPHERE))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_SM_SpherePrimitiveRegularNormals_01*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL
+		, TEXT("Prototype_Component_Model_SM_SpherePrimitiveRegularNormals_01")
+		, CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM
+		, TEXT("../../Resources/Models/NonAnims/SM_SpherePrimitiveRegularNormals_01/SM_SpherePrimitiveRegularNormals_01.dat")))))
+		return E_FAIL;
+
+	/* Prototype_Component_Default_ParticleSystem*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Default_ParticleSystem"),
+		CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Particles/Fire/")))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Default_MeshEffect"),
+		CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Particles/Fire/")))))
 		return E_FAIL;
 
 	return S_OK;

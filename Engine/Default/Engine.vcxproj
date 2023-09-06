@@ -35,6 +35,7 @@
     <ClInclude Include="..\Public\Attack.h" />
     <ClInclude Include="..\public\CharacterController.h" />
     <ClInclude Include="..\public\ColliderCom.h" />
+    <ClInclude Include="..\Public\MeshEffect.h" />
     <ClInclude Include="..\Public\Parts.h" />
     <ClInclude Include="..\public\Plane.h" />
     <ClInclude Include="..\public\PXEventCallBack.h" />
@@ -133,6 +134,7 @@
     <ClCompile Include="..\Private\Attack.cpp" />
     <ClCompile Include="..\private\CharacterController.cpp" />
     <ClCompile Include="..\private\ColliderCom.cpp" />
+    <ClCompile Include="..\private\MeshEffect.cpp" />
     <ClCompile Include="..\Private\Parts.cpp" />
     <ClCompile Include="..\private\Plane.cpp" />
     <ClCompile Include="..\private\PXEventCallBack.cpp" />
@@ -142,6 +144,7 @@
     <ClCompile Include="..\Private\CustomModel.cpp" />
     <ClCompile Include="..\Private\Modules.cpp" />
     <ClCompile Include="..\Private\Status.cpp" />
+    <ClCompile Include="..\Private\VIBuffer_Rect_Color_Instance.cpp" />
     <ClCompile Include="..\Private\VIBuffer_Sprite.cpp" />
     <ClCompile Include="..\Private\Ignite.cpp" />
     <ClCompile Include="..\Private\Defence.cpp" />
@@ -202,10 +205,10 @@
     <ClCompile Include="..\Private\VIBuffer.cpp" />
     <ClCompile Include="..\Private\VIBuffer_Rect.cpp" />
     <ClCompile Include="..\private\VIBuffer_Triangle.cpp" />
-    <ClCompile Include="VIBuffer_Rect_Color_Instance.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Debug.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_DefaultEffect.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Navigation.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_PostProcessing.hlsl" />
@@ -215,6 +218,8 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Type.hlsl" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\Bin\ShaderFiles\Shader_EngineHeader.hlsli" />
+    <None Include="..\Bin\ShaderFiles\Shader_Functions.hlsli" />
     <None Include="..\Public\DirectXTK\matrix.inl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

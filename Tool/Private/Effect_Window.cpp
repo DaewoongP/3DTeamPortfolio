@@ -18,7 +18,7 @@ HRESULT CEffect_Window::Initialize(ImVec2 _vWindowPos, ImVec2 _vWindowSize)
 	m_WindowFlag = ImGuiWindowFlags_NoResize;
 
 	m_pDummyParticle = CDummyParticle::Create(m_pDevice, m_pContext);
-	m_pParticleSystem = m_pDummyParticle->Get_ParticleSystem();
+	m_pParticleSystem = m_pDummyParticle->m_pParticleSystem;
 
 	m_pEmitterVelocity_ComboBox = CComboBox::Create(Generate_Hashtag(true).data(), "Emission Velocity", { "RigidBody", "Transform" });
 	m_pShapeCombo = CComboBox::Create(Generate_Hashtag(true).data(), "Shape", { "Sphere", "HemiSphere", "Cone", "Donut", "Box", "Mesh", "Sprite", "Circle", "Edge", "Rectangle"});
@@ -86,9 +86,28 @@ void CEffect_Window::Tick(_float _fTimeDelta)
 	__super::MatrixNode(&pMatrix, "Effect_Transform", "Effect_Position", "Effect_Rotation", "Effect_Scale");
 	m_pDummyParticle->Get_Transform()->Set_WorldMatrix(pMatrix);
 
+	MeshEffect(_fTimeDelta);
 	//ImGui::ShowDemoWindow();
 }
 
+void CEffect_Window::MeshEffect(_float _fTimeDelta)
+{
+	RECT clientRect;
+	GetClientRect(g_hWnd, &clientRect);
+	POINT leftTop = { clientRect.left, clientRect.top };
+	POINT rightBottom = { clientRect.right, clientRect.bottom };
+	ClientToScreen(g_hWnd, &leftTop);
+	ClientToScreen(g_hWnd, &rightBottom);
+	int Left = leftTop.x;
+	int Top = rightBottom.y;
+	ImVec2 vWinpos = { _float(Left + 500.f), _float(Top) };
+	ImGui::SetNextWindowPos(vWinpos);
+
+	ImGui::Begin("MeshEffect");
+
+
+	ImGui::End();
+}
 void CEffect_Window::Save_FileDialog()
 {
 	if (ImGui::Button("Save Particle"))
@@ -164,6 +183,9 @@ void CEffect_Window::Create_Button()
 }
 void CEffect_Window::MainMoudle_TreeNode()
 {
+	if (nullptr == m_pParticleSystem)
+		return;
+
 	MAIN_MODULE* pMainModuleDesc = &m_pParticleSystem->m_MainModuleDesc;
 
 	if (ImGui::Checkbox("##MainModule_CheckBox", &pMainModuleDesc->isActivate))
@@ -237,6 +259,9 @@ void CEffect_Window::MainMoudle_TreeNode()
 }
 void CEffect_Window::EmissionModule_TreeNode()
 {
+	if (nullptr == m_pParticleSystem)
+		return;
+
 	EMMISION_MODULE* pEmissionModuleDesc = &m_pParticleSystem->m_EmissionModuleDesc;
 	if (ImGui::Checkbox("##EmissionModule_CheckBox", &pEmissionModuleDesc->isActivate))
 	{
@@ -325,6 +350,9 @@ void CEffect_Window::EmissionModule_TreeNode()
 }
 void CEffect_Window::ShapeModule_TreeNode()
 {
+	if (nullptr == m_pParticleSystem)
+		return;
+
 	SHAPE_MODULE* pShapeModule = &m_pParticleSystem->m_ShapeModuleDesc;
 	if (ImGui::Checkbox("##ShapeModule_CheckBox", &pShapeModule->isActivate))
 	{
@@ -428,6 +456,9 @@ void CEffect_Window::ShapeModule_TreeNode()
 }
 void CEffect_Window::RendererModule_TreeNode()
 {
+	if (nullptr == m_pParticleSystem)
+		return;
+
 	RENDERER_MODULE* pRendererModule = &m_pParticleSystem->m_RendererModuleDesc;
 	if (ImGui::Checkbox("##ShapeModule_CheckBox", &pRendererModule->isActivate))
 	{
