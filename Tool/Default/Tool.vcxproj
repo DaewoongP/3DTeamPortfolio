@@ -118,7 +118,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_USE_IMGUI;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_USE_IMGUI;_TOOL;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>backends/;../Public/;../../Reference/Headers/;misc/debuggers/;../Default/;../../Reference/Headers/PhysX/;../../Reference/Headers/NvCloth/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -143,7 +143,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_USE_IMGUI;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_USE_IMGUI;_TOOL;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>backends/;../Public/;../../Reference/Headers/;misc/debuggers/;../Default/;../../Reference/Headers/PhysX/;../../Reference/Headers/NvCloth/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
