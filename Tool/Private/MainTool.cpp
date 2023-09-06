@@ -119,6 +119,9 @@ HRESULT CMainTool::Initialize_ImGui()
 	ImGuiIO& io = ImGui::GetIO();
 	io.Fonts->AddFontFromFileTTF("../../Resources/Fonts/NEXONLv1GothicBold.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesKorean());
 
+	// Add default Japanese ranges
+	io.Fonts->AddFontFromFileTTF("../../Resources/YES24GothicR.ttf", 16.f, nullptr, io.Fonts->GetGlyphRangesKorean());
+
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
@@ -200,7 +203,7 @@ HRESULT CMainTool::Add_Windows()
 
 	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("Animation_Window"),
 		CAnimation_Window::Create(m_pDevice, m_pContext,
-			ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(446.f, 768.f)))))
+			ImVec2(_float(100.f), _float(0.f)), ImVec2(446.f, 768.f)))))
 		MSG_BOX("Failed Create Animation_Window");
 
 	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("UI_Window"),
@@ -215,7 +218,7 @@ HRESULT CMainTool::Add_Windows()
 
 	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("Light_Window"),
 		CLight_Window::Create(m_pDevice, m_pContext,
-			ImVec2(_float(g_iWinSizeX+8), _float(0.f)), ImVec2(446.f, 768.f)))))
+			ImVec2(_float(g_iWinSizeX + 8), _float(0.f)), ImVec2(446.f, 768.f)))))
 		MSG_BOX("Failed Create Light_Window");
 
 	return S_OK;

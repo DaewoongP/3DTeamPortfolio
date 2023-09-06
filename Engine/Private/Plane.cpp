@@ -16,6 +16,9 @@ CPlane::CPlane(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 CPlane::CPlane(const CPlane& rhs)
 	: CComposite(rhs)
+#ifdef _DEBUG
+	, m_vColor(_float4(0.f, 1.f, 0.f, 1.f))
+#endif // _DEBUG
 {
 }
 

@@ -51,6 +51,7 @@ private:
 	// Post Processing¿ª ¿ß«— ∑ª¥ı≈∏∞Ÿ
 	ID3D11RenderTargetView* m_pPostRenderTargetView = { nullptr };
 	ID3D11DepthStencilView* m_pDepthStencilView = { nullptr };
+	ID3D11DepthStencilView* m_pShadowView = { nullptr };
 
 private:
 	list<class CRenderTarget*>* Find_MRT(const _tchar* pMRTTag);

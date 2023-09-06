@@ -2,7 +2,6 @@
 
 #include "GameInstance.h"
 #include "BlackBoard.h"
-#include "Model.h"
 
 CAction::CAction(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CBehavior(pDevice, pContext)
@@ -19,25 +18,21 @@ HRESULT CAction::Initialize(void* pArg)
 	/* 쿨타임 */
 	Add_Decoration([&](CBlackBoard* pBlackBoard)->_bool
 		{
-			_float* pTimeAcc = { nullptr };
-			pBlackBoard->Get_Type("fTimeAcc", pTimeAcc);
-			if (nullptr == pTimeAcc)
-			{
-				MSG_BOX("is Not fTimeAcc");
-				return false;
-			}
+			BEGININSTANCE;
+			_float fInterval = pGameInstance->Get_World_TimeAcc() - m_fPreWorldTimeAcc;
+			ENDINSTANCE;
 
-			_float fInterval = *pTimeAcc - m_fPreTimeAcc;
 			if (m_fLimit > fInterval)
 				return false;
 
 			return true;
 		});
 
+	/* 한번만 실행할 액션인지 */
 	Add_Decoration([&](CBlackBoard* pBlackBoard)->_bool
 		{
 			if (true == m_isOneTimeAction &&
-				false == m_isFirstAction)
+				true == m_isPlayAction)
 				return false;
 
 			return true;
@@ -59,11 +54,10 @@ HRESULT CAction::Tick(const _float& fTimeDelta)
 	if (0 != m_Behaviors.size())
 		m_isFinishBehaviors = true;
 
-	m_fTimeAcc += fTimeDelta;
-
 	if (true == m_isFirst)
 	{
-		//m_pModel->Change_Animation(m_strAnimationTag, m_isLerp);
+		m_isPlayAction = true;
+		m_pModel->Reset_Animation(rand() % 150);
 		m_isFirst = false;
 	}
 
@@ -71,9 +65,11 @@ HRESULT CAction::Tick(const _float& fTimeDelta)
 	for (auto& pBehavior : m_Behaviors)
 	{
 		HRESULT hr = pBehavior->Tick(fTimeDelta);
-		/* 하나라도 동작중이면 멈추지마 */
+		/* 하나라도 동작중이면 계속 진행 */
 		if (BEHAVIOR_RUNNING == hr)
 			m_isFinishBehaviors = false;
+
+		pBehavior->Set_ReturnData(hr);
 	}
 
 	_bool bCheck = { false };
@@ -89,22 +85,19 @@ HRESULT CAction::Tick(const _float& fTimeDelta)
 	{
 		bCheck = true;
 	}*/
+	if (true == m_isFinishBehaviors)
+	{
+		bCheck = true;
+	}
 
 	if (true == bCheck)
 	{
-		if (true == m_isOneTimeAction)
-			m_isFirstAction = false;
-
 		m_isFirst = true;
 		m_isFinishBehaviors = false;
 
-		_float* pTimeAcc = { nullptr };
-		m_pBlackBoard->Get_Type("fTimeAcc", pTimeAcc);
-		if (nullptr == pTimeAcc)
-			return E_FAIL;
-
-		m_fTimeAcc = 0.f;
-		m_fPreTimeAcc = *pTimeAcc;
+		BEGININSTANCE;
+		m_fPreWorldTimeAcc = pGameInstance->Get_World_TimeAcc();
+		ENDINSTANCE;
 
 		return BEHAVIOR_SUCCESS;
 	}
@@ -114,6 +107,12 @@ HRESULT CAction::Tick(const _float& fTimeDelta)
 
 void CAction::Set_Options(const wstring& _strAnimationTag, CModel* _pModel, const _float& _fCoolTime, _bool _isOneTimeAction, _bool _isLerp)
 {
+	if (nullptr == _pModel)
+	{
+		MSG_BOX("[CAction] _pModel is nullptr");
+		return;
+	}
+
 	m_pModel = _pModel;
 	Safe_AddRef(m_pModel);
 

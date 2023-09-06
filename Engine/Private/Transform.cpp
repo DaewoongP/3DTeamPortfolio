@@ -250,6 +250,28 @@ void CTransform::LookAt(_float3 _vTarget, _bool _isDeleteY)
 	m_ubTransformChanged |= CHANGEFLAG::ROTATION;
 }
 
+void CTransform::LookAt_Lerp(_float3 _vTarget, _bool _isDeleteY)
+{
+	/*_float3 vPosition = Get_Position();
+
+	_float3 vDestLook = _vTarget - vPosition;
+	if (true == _isDeleteY)
+		vDestLook.y = 0.f;
+
+	_float3 vLook = XMVectorLerp(Get_Look(), vDestLook, );
+
+	_float3 vRight = XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook);
+	_float3 vUp = XMVector3Cross(vLook, vRight);
+
+	_float3 vScale = Get_Scale();
+
+	Set_Right(XMVector3Normalize(vRight) * vScale.x);
+	Set_Up(XMVector3Normalize(vUp) * vScale.y);
+	Set_Look(XMVector3Normalize(vLook) * vScale.z);
+
+	m_ubTransformChanged |= CHANGEFLAG::ROTATION;*/
+}
+
 void CTransform::Update_Components(_float fTimeDelta)
 {
 	if (nullptr == m_pRigidBody)
