@@ -20,6 +20,11 @@ HRESULT CSelector::Tick(const _float& fTimeDelta)
 
 	HRESULT hr = (*m_iterCurBehavior)->Tick(fTimeDelta);
 
+#ifdef _DEBUG
+	(*m_iterCurBehavior)->Set_ReturnData(hr);
+	m_ReturnData = hr;
+#endif // _DEBUG
+
 	switch (hr)
 	{
 	case BEHAVIOR_RUNNING:

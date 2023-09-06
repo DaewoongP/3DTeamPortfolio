@@ -8,6 +8,7 @@
 /* =============================================== */
 
 #include "PipeLine.h"
+#include "Time_Manager.h"
 #include "Input_Device.h"
 #include "Light_Manager.h"
 #include "Sound_Manager.h"
@@ -152,6 +153,25 @@ public:	/* For.Camera_Manager */
 public: /* For.RenderTaget_Manager*/
 	class CRenderTarget* Find_RenderTarget(const _tchar* pTargetTag);
 
+public: /* For.Time_Manager */
+	/*	타이머 추가 
+		*구조체 미설정 시 디폴트 값 설정*  */
+	HRESULT Add_Timer(const wstring& wstrTimerTag, const CTime_Manager::ALARMDESC& AlarmDesc = CTime_Manager::ALARMDESC());
+	/* 타이머 삭제 */
+	HRESULT Remove_Timer(const wstring& wstrTimerTag);
+	/* 타이머의 TimeAcc를 0.f로 초기화 */
+	HRESULT Reset_Timer(const wstring& wstrTimerTag);
+	/*	실질적인 시간 체크 함수. 
+		해당 태그의 시간이 Duration보다 작은 경우 false를 반환.
+		크거나 같으면 true 반환 */
+	_bool Check_Timer(const wstring& wstrTimerTag);
+	/* 현재 월드 누적시간을 반환*/
+	const _float& Get_World_TimeAcc() const;
+	/* 기존에 추가한 타이머의 누적시간을 반환 */
+	_float Get_TimeAcc(const wstring& wstrTimerTag) const;
+	/* 월드 누적시간 초기화 (사용할 경우 팀원들한테 미리 얘기하세요) */
+	void Reset_World_TimeAcc();
+
 private:
 	class CGraphic_Device*			m_pGraphic_Device = { nullptr };
 	class CInput_Device*			m_pInput_Device = { nullptr };
@@ -168,6 +188,7 @@ private:
 	class CCalculator*				m_pCalculator = { nullptr };
 	class CPhysX_Manager*			m_pPhysX_Manager = { nullptr };
 	class CCamera_Manager*			m_pCamera_Manager = { nullptr };
+	class CTime_Manager*			m_pTime_Manager = { nullptr };
 
 public:
 	static void Release_Engine();

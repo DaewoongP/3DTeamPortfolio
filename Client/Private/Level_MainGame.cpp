@@ -15,12 +15,15 @@ HRESULT CLevel_MainGame::Initialize()
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 		return E_FAIL;
 
-
 #ifdef _DEBUG
 	if (FAILED(Ready_Layer_Debug(TEXT("Layer_Debug"))))
 		return E_FAIL;
 #endif // _DEBUG
 
+	BEGININSTANCE;
+	/* 게임 초기화와 함께 월드시간 초기화 */
+	pGameInstance->Reset_World_TimeAcc();
+	ENDINSTANCE;
 
 	return S_OK;
 }
@@ -44,7 +47,7 @@ HRESULT CLevel_MainGame::Render()
 
 HRESULT CLevel_MainGame::Ready_Lights()
 {
-	BEGININSTANCE
+	BEGININSTANCE;
 
 	CLight::LIGHTDESC		LightDesc;
 	ZeroMemory(&LightDesc, sizeof LightDesc);
@@ -58,7 +61,8 @@ HRESULT CLevel_MainGame::Ready_Lights()
 
 	if (nullptr == pGameInstance->Add_Lights(m_pDevice, m_pContext, LightDesc))
 		return E_FAIL;
-	ENDINSTANCE
+
+	ENDINSTANCE;
 
 	return S_OK;
 }
@@ -107,15 +111,27 @@ HRESULT CLevel_MainGame::Ready_Layer_Debug(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Armored_Troll"), pLayerTag, TEXT("GameObject_Armored_Troll"))))
+	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Armored_Troll"), pLayerTag, TEXT("GameObject_Armored_Troll"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Armored_Troll)");
 		return E_FAIL;
 	}
 
-	/*if (FAILED(pGameInstance->Add_GameObject(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Forest_Troll"), pLayerTag, TEXT("GameObject_Forest_Troll"))))
+	/*if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Golem_Merlin"), pLayerTag, TEXT("GameObject_Golem_Combat"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Golem_Combat)");
+		return E_FAIL;
+	}*/
+
+	/*if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Forest_Troll"), pLayerTag, TEXT("GameObject_Forest_Troll"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Forest_Troll)");
+		return E_FAIL;
+	}*/
+
+	/*if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Dugbog"), pLayerTag, TEXT("GameObject_Dugbog"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Dugbog)");
 		return E_FAIL;
 	}*/
 

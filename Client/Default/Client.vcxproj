@@ -166,10 +166,17 @@
     <ClInclude Include="..\Public\Action.h" />
     <ClInclude Include="..\Public\Armored_Troll.h" />
     <ClInclude Include="..\Public\Assasin_Goblin.h" />
+    <ClInclude Include="..\Public\Behavior_Includes.h" />
     <ClInclude Include="..\public\Camera_Debug.h" />
+    <ClInclude Include="..\Public\Golem_Combat.h" />
     <ClInclude Include="..\Public\Client_Defines.h" />
     <ClInclude Include="..\Public\Client_Includes.h" />
+    <ClInclude Include="..\Public\Dugbog.h" />
     <ClInclude Include="..\Public\Forest_Troll.h" />
+    <ClInclude Include="..\Public\Golem_Grunt.h" />
+    <ClInclude Include="..\Public\Golem_Merlin.h" />
+    <ClInclude Include="..\Public\Pensive.h" />
+    <ClInclude Include="..\Public\Wait.h" />
     <ClInclude Include="..\Public\Weapon_Armored_Troll.h" />
     <ClInclude Include="..\Public\Test_NPC.h" />
     <ClInclude Include="..\Public\Level_Loading.h" />
@@ -183,6 +190,10 @@
     <ClInclude Include="..\public\Test_Player.h" />
     <ClInclude Include="..\public\UI.h" />
     <ClInclude Include="..\Public\Weapon_Forest_Troll.h" />
+    <ClInclude Include="..\Public\Weapon_Golem_Combat.h" />
+    <ClInclude Include="..\Public\Weapon_Golem_Grunt.h" />
+    <ClInclude Include="..\Public\Weapon_Golem_Merlin.h" />
+    <ClInclude Include="..\Public\Weapon_Pensive.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="ImGui\backends\imgui_impl_dx11.h">
@@ -229,7 +240,13 @@
     <ClCompile Include="..\Private\Armored_Troll.cpp" />
     <ClCompile Include="..\Private\Assasin_Goblin.cpp" />
     <ClCompile Include="..\private\Camera_Debug.cpp" />
+    <ClCompile Include="..\Private\Golem_Combat.cpp" />
+    <ClCompile Include="..\Private\Dugbog.cpp" />
     <ClCompile Include="..\Private\Forest_Troll.cpp" />
+    <ClCompile Include="..\Private\Golem_Grunt.cpp" />
+    <ClCompile Include="..\Private\Golem_Merlin.cpp" />
+    <ClCompile Include="..\Private\Pensive.cpp" />
+    <ClCompile Include="..\Private\Wait.cpp" />
     <ClCompile Include="..\Private\Weapon_Armored_Troll.cpp" />
     <ClCompile Include="..\Private\Test_NPC.cpp" />
     <ClCompile Include="..\Private\Level_Loading.cpp" />
@@ -245,6 +262,10 @@
     <ClCompile Include="..\private\Test_Player.cpp" />
     <ClCompile Include="..\private\UI.cpp" />
     <ClCompile Include="..\Private\Weapon_Forest_Troll.cpp" />
+    <ClCompile Include="..\Private\Weapon_Golem_Combat.cpp" />
+    <ClCompile Include="..\Private\Weapon_Golem_Grunt.cpp" />
+    <ClCompile Include="..\Private\Weapon_Golem_Merlin.cpp" />
+    <ClCompile Include="..\Private\Weapon_Pensive.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="ImGui\backends\imgui_impl_dx11.cpp">
       <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</IncludeInUnityFile>
