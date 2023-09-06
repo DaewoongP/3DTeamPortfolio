@@ -65,6 +65,11 @@ void CArmored_Troll::Late_Tick(_float fTimeDelta)
 	}
 }
 
+void CArmored_Troll::OnCollisionEnter(COLLISIONDESC CollisionDesc)
+{
+	cout << "Troll Enter" << endl;
+}
+
 HRESULT CArmored_Troll::Render()
 {
 #ifdef _DEBUG

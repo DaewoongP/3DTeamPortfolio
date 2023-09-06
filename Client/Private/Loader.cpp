@@ -39,7 +39,7 @@ _uint WINAPI Thread_Main(void* pArg)
 	CLoader* pLoader = reinterpret_cast<CLoader*>(pArg);
 
 	if (FAILED(pLoader->Loading()))
-		return E_FAIL;
+		return -1;
 
 	return 0;
 }
@@ -254,6 +254,11 @@ HRESULT CLoader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Robe"),
 			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Robe_Student_Test/Robe_Student_Test.dat"), TEXT("ROBE_Default")))))
 			throw TEXT("Prototype_Component_MeshParts_Robe");
+		
+		/* For.Prototype_Component_MeshParts_Robe_Student */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Robe_Student"),
+			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Robe_Student/Robe_Student.dat"), TEXT("ROBE_Student")))))
+			throw TEXT("Prototype_Component_MeshParts_Robe_Student");
 
 		/* For.Prototype_Component_MeshParts_Socks */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Socks"),
@@ -292,13 +297,6 @@ HRESULT CLoader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_Terrain"),
 			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Terrain.hlsl"), VTXPOSNORTEX_DECL::Elements, VTXPOSNORTEX_DECL::iNumElements))))
 			throw TEXT("Prototype_Component_Shader_Terrain");
-
-#ifdef _DEBUG
-		/* For.Prototype_Component_Shader_Debug */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_Debug"),
-			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Debug.hlsl"), VTXPOS_DECL::Elements, VTXPOS_DECL::iNumElements))))
-			throw TEXT("Prototype_Component_Shader_Debug");
-#endif // _DEBUG
 
 		lstrcpy(m_szLoading, TEXT("피직스 로딩 중."));
 		/* For.Prototype_Component_CharacterController*/

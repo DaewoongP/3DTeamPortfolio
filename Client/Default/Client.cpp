@@ -86,7 +86,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_CLIENT));
 
 	CMainApp* pMainApp = CMainApp::Create();
-	NULL_CHECK_RETURN_MSG(pMainApp, FALSE, L"Failed Create MainApp");
+	if (nullptr == pMainApp)
+	{
+		MSG_BOX("Failed Create MainApp");
+		return false;
+	}
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);

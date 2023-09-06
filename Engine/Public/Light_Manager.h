@@ -41,7 +41,8 @@ private:
 	list<class CLight*>				m_Lights;
 	_float4x4 m_ViewLight;
 	_float4x4 m_ProjLight;
-
+	ID3D11Device* m_pDevice = { nullptr };
+	ID3D11DeviceContext* m_pContext = { nullptr };
 
 public:
 	virtual void Free() override;

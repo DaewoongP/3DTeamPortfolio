@@ -265,6 +265,12 @@
     <Filter Include="01. Utility\12. Time_Manager">
       <UniqueIdentifier>{9cbb7d45-1355-4391-a17a-ab9735b11f73}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\11. Physics\Shader">
+      <UniqueIdentifier>{d6e48222-790a-42b5-a30b-71e187ad6d29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\11. Physics\Handler">
+      <UniqueIdentifier>{56a1a23c-9418-428e-9eb5-1d7e5fe7bfb7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -555,6 +561,12 @@
     <ClInclude Include="..\public\Plane.h">
       <Filter>01. Utility\03. Components\17. Plane</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\NVContextCallBack.h">
+      <Filter>01. Utility\11. Physics\EventCallBack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PXAssertHandler.h">
+      <Filter>01. Utility\11. Physics\Handler</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -815,6 +827,12 @@
     <ClCompile Include="..\private\Plane.cpp">
       <Filter>01. Utility\03. Components\17. Plane</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\NVContextCallBack.cpp">
+      <Filter>01. Utility\11. Physics\EventCallBack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PXAssertHandler.cpp">
+      <Filter>01. Utility\11. Physics\Handler</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Navigation.hlsl">
@@ -831,6 +849,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_SSAO.hlsl">
       <Filter>01. Utility\03. Components\02. Renderer\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Debug.hlsl">
+      <Filter>01. Utility\11. Physics\Shader</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
