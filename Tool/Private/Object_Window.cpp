@@ -459,6 +459,7 @@ void CObject_Window::Delete_Object_Menu()
 
 void CObject_Window::Mesh_Picking_Menu()
 {
+#ifdef _DEBUG
 	BEGININSTANCE; if (true == pGameInstance->Get_DIKeyState(DIK_O, CInput_Device::KEY_DOWN))
 	{
 		//Target_PickingÀÇ ID3D11Texture2D¸¦ °¡Á®¿È
@@ -566,6 +567,8 @@ void CObject_Window::Mesh_Picking_Menu()
 	{
 		Delete_Picking_Object();
 	}
+
+#endif
 }
 
 void CObject_Window::Delete_Picking_Object()
