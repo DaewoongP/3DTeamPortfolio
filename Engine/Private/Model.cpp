@@ -5,6 +5,8 @@
 #include "Texture.h"
 #include "Animation.h"
 #include "Transform.h"
+#include "Channel.h"
+#include "Notify.h"
 CModel::CModel(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CComponent(pDevice, pContext)
 {
@@ -18,11 +20,13 @@ CModel::CModel(const CModel& rhs)
 	, m_MeshDatas(rhs.m_MeshDatas)
 	, m_MaterialDatas(rhs.m_MaterialDatas)
 	, m_AnimationDatas(rhs.m_AnimationDatas)
+	, m_ModelGCM(rhs.m_ModelGCM)
 	, m_iNumMeshes(rhs.m_iNumMeshes)
 	, m_Meshes(rhs.m_Meshes)
 	, m_iNumMaterials(rhs.m_iNumMaterials)
 	, m_Materials(rhs.m_Materials)
 	, m_PivotMatrix(rhs.m_PivotMatrix)
+	, m_iRootBoneIndex(rhs.m_iRootBoneIndex)
 	, m_iAnimationPartCount(rhs.m_iAnimationPartCount)
 {
 	for (_uint AnimTypeIndex = 0; AnimTypeIndex < ANIM_END; ++AnimTypeIndex)
@@ -48,6 +52,11 @@ CModel::CModel(const CModel& rhs)
 	{
 		for (auto& pTexture : Material.pMtrlTexture)
 			Safe_AddRef(pTexture);
+	}
+
+	for (int i =0;i<ANIM_END;i++)
+	{
+		m_AnimationDatasGCM[i] = rhs.m_AnimationDatasGCM[i];
 	}
 }
 
@@ -96,25 +105,50 @@ _float4x4 CModel::Get_BoneCombinedTransformationMatrix(_uint iIndex)
 HRESULT CModel::Initialize_Prototype(TYPE eType, const _tchar* pModelFilePath, _float4x4 PivotMatrix)
 {
 	XMStoreFloat4x4(&m_PivotMatrix, PivotMatrix);
-
-	if (FAILED(Ready_File(eType, pModelFilePath)))
-		return E_FAIL;
-
-	if (FAILED(Ready_Bones(m_NodeDatas.front())))
-		return E_FAIL;
-
-	if (FAILED(Ready_Meshes(eType, PivotMatrix)))
-		return E_FAIL;
-
-	if (FAILED(Ready_Materials()))
-		return E_FAIL;
-
-	if (eType == TYPE::TYPE_ANIM)
+	char szFilePath[MAX_PATH] = "";
+	char szExtension[MAX_PATH] = "";
+	WCharToChar(pModelFilePath, szFilePath);
+	_splitpath_s(szFilePath, nullptr, 0, nullptr, 0, nullptr, 0, szExtension, MAX_PATH);
+	if (!strcmp(szExtension, ".dat"))
 	{
-		if (FAILED(Ready_Animations()))
+		if (FAILED(Ready_File(eType, pModelFilePath)))
 			return E_FAIL;
+
+		if (FAILED(Ready_Bones(m_NodeDatas.front())))
+			return E_FAIL;
+
+		if (FAILED(Ready_Meshes(eType, PivotMatrix)))
+			return E_FAIL;
+
+		if (FAILED(Ready_Materials()))
+			return E_FAIL;
+
+		if (eType == TYPE::TYPE_ANIM)
+		{
+			if (FAILED(Ready_Animations()))
+				return E_FAIL;
+		}
 	}
-	
+	else 
+	{
+		if (FAILED(Ready_File_GCM(eType, pModelFilePath)))
+			return E_FAIL;
+
+		if (FAILED(Ready_Bones_GCM(m_NodeDatas.front())))
+			return E_FAIL;
+
+		if (FAILED(Ready_Meshes_GCM(eType, PivotMatrix)))
+			return E_FAIL;
+
+		if (FAILED(Ready_Materials_GCM()))
+			return E_FAIL;
+
+		if (eType == TYPE::TYPE_ANIM)
+		{
+			if (FAILED(Ready_Animations_GCM()))
+				return E_FAIL;
+		}
+	}
 	return S_OK;
 }
 
@@ -690,8 +724,6 @@ HRESULT CModel::Ready_Materials()
 
 HRESULT CModel::Ready_Animations()
 {
-	//for (_uint iAnimTypeIndex = 0; iAnimTypeIndex < ANIM_END; iAnimTypeIndex++)
-	//{
 	for (int i = 0; i < m_Model.iNumNodes; i++)
 	{
 		m_tAnimationDesc[0].AffectBoneVec.push_back(i);
@@ -707,7 +739,821 @@ HRESULT CModel::Ready_Animations()
 
 		m_tAnimationDesc[0].Animations.push_back(pAnimation);
 	}
-	//}
+	return S_OK;
+}
+
+//저장 전 애니메이션을 변환
+HRESULT CModel::Convert_Animations_GCM()
+{
+	m_ModelGCM.iAnimationPartCount = m_iAnimationPartCount;
+	m_ModelGCM.iNumNodes = m_NodeDatas.size();
+	m_ModelGCM.iNumMaterials = m_iNumMeshes;
+	m_ModelGCM.iNumMeshes = m_iNumMaterials;
+	m_ModelGCM.iNumAnimations = new _uint[m_iAnimationPartCount];
+	m_ModelGCM.iRootBoneIndex = m_iRootBoneIndex;
+	
+	m_ModelGCM.iAffectBones = new vector<unsigned int>[m_iAnimationPartCount]();
+	for (_uint partCnt = 0; partCnt < m_iAnimationPartCount; partCnt++)
+	{
+		for (int i = 0; i < m_tAnimationDesc[partCnt].AffectBoneVec.size(); i++)
+		{
+			m_ModelGCM.iAffectBones[partCnt].push_back(m_tAnimationDesc[partCnt].AffectBoneVec[i]);
+		}
+	}
+	
+	for (_uint partCnt = 0; partCnt < m_iAnimationPartCount; partCnt++)
+	{
+		m_ModelGCM.iNumAnimations[partCnt] = m_tAnimationDesc[partCnt].iNumAnimations;
+		//애니메 만들기
+		for (_uint i = 0; i < m_tAnimationDesc[partCnt].iNumAnimations; ++i)
+		{
+			CAnimation* pAnimation = m_tAnimationDesc[partCnt].Animations[i];
+
+			ANIMATION_GCM Animation;
+			ZEROMEM(&Animation);
+			// 애니메이션 이름
+			lstrcpy(Animation.szName, pAnimation->Get_AnimationName());
+
+			// 애니메이션 변수 저장
+			Animation.fDuration = pAnimation->Get_Duration();
+			Animation.fTickPerSecond = pAnimation->Get_TickPerSecond();
+			Animation.iNumChannels = pAnimation->Get_NumChannels();
+			Animation.isLerp = pAnimation->Get_LerpAnim();
+			Animation.isRootAnim = pAnimation->Get_RootAnim();
+			Animation.isLoop = pAnimation->Get_LoopAnim();
+
+			// 채널만들기
+			Animation.Channels = new CHANNEL_GCM[pAnimation->Get_NumChannels()];
+			ZeroMemory(Animation.Channels, sizeof(CHANNEL_GCM) * pAnimation->Get_NumChannels());
+			for (_uint j = 0; j < pAnimation->Get_NumChannels(); ++j)
+			{
+				CChannel* pChannel = pAnimation->Get_ChannelVector_Point()[j];
+
+				CHANNEL_GCM Channel;
+				ZEROMEM(&Channel);
+				// 채널 이름
+				lstrcpy(Channel.szName, pChannel->Get_ChannelName());
+
+				// 채널의 스케일 키 저장
+				Channel.iNumMartixKeys = pChannel->Get_NumKeyFrames();
+				Channel.iMatrixFrame = new MATRIXFRAME_GCM[pChannel->Get_NumKeyFrames()];
+				ZeroMemory(Channel.iMatrixFrame, sizeof(MATRIXFRAME_GCM) * pChannel->Get_NumKeyFrames());
+
+				vector<MATRIXFRAME>* pMatrixVec = pChannel->Get_MarixFrame();
+				for (_uint k = 0; k < pChannel->Get_NumKeyFrames(); ++k)
+				{
+					Channel.iMatrixFrame[k].fTime = (*pMatrixVec)[k].fTime;
+					memcpy(&Channel.iMatrixFrame[k].vScale, &(*pMatrixVec)[k].vScale, sizeof _float3);
+					memcpy(&Channel.iMatrixFrame[k].vRotation, &(*pMatrixVec)[k].vRotation, sizeof _float4);
+					memcpy(&Channel.iMatrixFrame[k].vTranslation, &(*pMatrixVec)[k].vTranslation, sizeof _float3);
+				}
+				// 채널 저장
+				Animation.Channels[j] = Channel;
+			}
+			// 노티파이 만들기
+			Animation.Notify = new NOTIFY_GCM;
+			//노티파이 프레임 만들기
+			Animation.Notify->iNumKeyFrames = pAnimation->Get_Notify_Point()->Get_NotifyFrameCount();
+			//원래값 가져오기
+			vector<pair<wstring, KEYFRAME*>>* pNotifyVec = pAnimation->Get_Notify_Point()->Get_NotifyFrame();
+			
+			//원래값을 새로운곳에 만들어주는 로직임.
+			for (_uint j = 0; j < pAnimation->Get_Notify_Point()->Get_NotifyFrameCount(); ++j)
+			{
+				pair<wstring, KEYFRAME*> keyframe = (*pNotifyVec)[j];
+
+				switch (*reinterpret_cast<KEYFRAME_GCM::KEYFRAMETYPE*>(&keyframe.second->eKeyFrameType))
+				{
+				case KEYFRAME_GCM::KF_SPEED:
+				{
+					SPEEDFRAME_GCM* Notify_Frame = new SPEEDFRAME_GCM();
+
+					lstrcpy(Notify_Frame->szName, keyframe.first.data());
+					Notify_Frame->eKeyFrameType = *reinterpret_cast<KEYFRAME_GCM::KEYFRAMETYPE*>(&keyframe.second->eKeyFrameType);
+					Notify_Frame->fTime = keyframe.second->fTime;
+					Notify_Frame->fSpeed = static_cast<SPEEDFRAME*>(keyframe.second)->fSpeed;
+
+					//원래값이 채워진 새로운 데이터를 노티파이에 넣어줌.
+					Animation.Notify->tKeyFrame.push_back(Notify_Frame);
+					break;
+				}
+					
+				case KEYFRAME_GCM::KF_SOUND:
+				{
+					SOUNDFRAME_GCM* Notify_Frame = new SOUNDFRAME_GCM();
+
+					lstrcpy(Notify_Frame->szName, keyframe.first.data());
+					Notify_Frame->eKeyFrameType = *reinterpret_cast<KEYFRAME_GCM::KEYFRAMETYPE*>(&keyframe.second->eKeyFrameType);
+					Notify_Frame->fTime = keyframe.second->fTime;
+					lstrcpy(Notify_Frame->wszSoundTag, static_cast<SOUNDFRAME*>(keyframe.second)->wszSoundTag);
+
+					//원래값이 채워진 새로운 데이터를 노티파이에 넣어줌.
+					Animation.Notify->tKeyFrame.push_back(Notify_Frame);
+					break;
+				}
+				case KEYFRAME_GCM::KF_NOTIFY:
+				{
+					NOTIFYFRAME_GCM* Notify_Frame = new NOTIFYFRAME_GCM();
+
+					lstrcpy(Notify_Frame->szName, keyframe.first.data());
+					Notify_Frame->eKeyFrameType = *reinterpret_cast<KEYFRAME_GCM::KEYFRAMETYPE*>(&keyframe.second->eKeyFrameType);
+					Notify_Frame->fTime = keyframe.second->fTime;
+
+					//원래값이 채워진 새로운 데이터를 노티파이에 넣어줌.
+					Animation.Notify->tKeyFrame.push_back(Notify_Frame);
+					break;
+				}
+				}
+			}
+
+			m_AnimationDatasGCM[partCnt].push_back(Animation);
+		}
+	}
+	return S_OK;
+}
+
+//gcm 파일을 읽는 친구
+HRESULT CModel::Ready_File_GCM(TYPE eType, const _tchar* pModelFilePath)
+{
+	HANDLE hFile = CreateFile(pModelFilePath,
+		GENERIC_READ,
+		0,
+		0,
+		OPEN_EXISTING,
+		FILE_ATTRIBUTE_NORMAL, 0);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+		return E_FAIL;
+
+	_ulong	dwByte = 0;
+	_ulong	dwStrByte = 0;
+
+	ZEROMEM(&m_ModelGCM);
+
+	// Nodes NumNodes
+	ReadFile(hFile, &(m_ModelGCM.iNumNodes), sizeof(_uint), &dwByte, nullptr);
+
+	for (_uint i = 0; i < m_ModelGCM.iNumNodes; ++i)
+	{
+		NODE Node;
+		ZEROMEM(&Node);
+
+		// Node Name
+		ReadFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
+		ReadFile(hFile, Node.szName, dwStrByte, &dwByte, nullptr);
+		if (0 == dwByte)
+		{
+			MSG_BOX("Failed Read String Data");
+			return E_FAIL;
+		}
+
+		// Node Transformation
+		ReadFile(hFile, &(Node.TransformationMatrix), sizeof(_float4x4), &dwByte, nullptr);
+
+		// Node NodeIndex
+		ReadFile(hFile, &(Node.iNodeIndex), sizeof(_uint), &dwByte, nullptr);
+
+		// Node Parent
+		ReadFile(hFile, &(Node.iParent), sizeof(_int), &dwByte, nullptr);
+
+		// Node NumChildren
+		ReadFile(hFile, &(Node.iNumChildren), sizeof(_uint), &dwByte, nullptr);
+
+		// Node Children (array)
+		Node.iChildrens = new _uint[Node.iNumChildren];
+		ZeroMemory(Node.iChildrens, sizeof(_uint) * (Node.iNumChildren));
+		ReadFile(hFile, Node.iChildrens, sizeof(_uint) * (Node.iNumChildren), &dwByte, nullptr);
+
+		m_NodeDatas.push_back(Node);
+	}
+
+	// Write Meshes
+
+	// Meshes NumMeshes
+	ReadFile(hFile, &(m_ModelGCM.iNumMeshes), sizeof(_uint), &dwByte, nullptr);
+
+	for (_uint i = 0; i < m_ModelGCM.iNumMeshes; ++i)
+	{
+		MESH Mesh;
+		ZEROMEM(&Mesh);
+
+		// Mesh Name
+		ReadFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
+		ReadFile(hFile, Mesh.szName, dwStrByte, &dwByte, nullptr);
+		if (0 == dwByte)
+		{
+			MSG_BOX("Failed Read String Data");
+			return E_FAIL;
+		}
+
+		// Mesh MaterialIndex
+		ReadFile(hFile, &(Mesh.iMaterialIndex), sizeof(_uint), &dwByte, nullptr);
+
+		// Mesh NumVertices
+		ReadFile(hFile, &(Mesh.iNumVertices), sizeof(_uint), &dwByte, nullptr);
+
+		// Mesh NumFaces
+		ReadFile(hFile, &(Mesh.iNumFaces), sizeof(_uint), &dwByte, nullptr);
+
+		Mesh.Faces = new FACE[Mesh.iNumFaces];
+		ZeroMemory(Mesh.Faces, sizeof(FACE) * (Mesh.iNumFaces));
+
+		for (_uint j = 0; j < Mesh.iNumFaces; ++j)
+		{
+			FACE Face;
+			ZEROMEM(&Face);
+
+			// Face NumIndices
+			ReadFile(hFile, &(Face.iNumIndices), sizeof(_uint), &dwByte, nullptr);
+
+			// Face Indices
+			Face.iIndices = new _uint[Face.iNumIndices];
+			ZeroMemory(Face.iIndices, sizeof(_uint) * (Face.iNumIndices));
+			ReadFile(hFile, Face.iIndices, sizeof(_uint) * (Face.iNumIndices), &dwByte, nullptr);
+
+			Mesh.Faces[j] = Face;
+		}
+
+		// Mesh Positions
+		Mesh.vPositions = new _float3[Mesh.iNumVertices];
+		ZeroMemory(Mesh.vPositions, sizeof(_float3) * (Mesh.iNumVertices));
+		ReadFile(hFile, Mesh.vPositions, sizeof(_float3) * (Mesh.iNumVertices), &dwByte, nullptr);
+
+		// Mesh Normals
+		Mesh.vNormals = new _float3[Mesh.iNumVertices];
+		ZeroMemory(Mesh.vNormals, sizeof(_float3) * (Mesh.iNumVertices));
+		ReadFile(hFile, Mesh.vNormals, sizeof(_float3) * (Mesh.iNumVertices), &dwByte, nullptr);
+
+		// Mesh TexCoords
+		Mesh.vTexCoords = new _float2[Mesh.iNumVertices];
+		ZeroMemory(Mesh.vTexCoords, sizeof(_float2) * (Mesh.iNumVertices));
+		ReadFile(hFile, Mesh.vTexCoords, sizeof(_float2) * (Mesh.iNumVertices), &dwByte, nullptr);
+
+		// Mesh Tangents
+		Mesh.vTangents = new _float3[Mesh.iNumVertices];
+		ZeroMemory(Mesh.vTangents, sizeof(_float3) * (Mesh.iNumVertices));
+		ReadFile(hFile, Mesh.vTangents, sizeof(_float3) * (Mesh.iNumVertices), &dwByte, nullptr);
+
+		// Mesh NumBones
+		ReadFile(hFile, &(Mesh.iNumBones), sizeof(_uint), &dwByte, nullptr);
+
+		Mesh.Bones = new BONE[Mesh.iNumBones];
+		ZeroMemory(Mesh.Bones, sizeof(BONE) * (Mesh.iNumBones));
+
+		// Write Bones
+		for (_uint j = 0; j < Mesh.iNumBones; ++j)
+		{
+			BONE Bone;
+			ZEROMEM(&Bone);
+
+			// Mesh Name
+			ReadFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
+			ReadFile(hFile, Bone.szName, dwStrByte, &dwByte, nullptr);
+			if (0 == dwByte)
+			{
+				MSG_BOX("Failed Read String Data");
+				return E_FAIL;
+			}
+
+			// Mesh OffsetMatrix
+			ReadFile(hFile, &(Bone.OffsetMatrix), sizeof(_float4x4), &dwByte, nullptr);
+
+			// Mesh NumWeights
+			ReadFile(hFile, &(Bone.iNumWeights), sizeof(_uint), &dwByte, nullptr);
+
+			Bone.Weights = new WEIGHT[Bone.iNumWeights];
+			ZeroMemory(Bone.Weights, sizeof(WEIGHT) * (Bone.iNumWeights));
+
+			// Write Weights
+			for (_uint k = 0; k < Bone.iNumWeights; ++k)
+			{
+				WEIGHT Weight;
+				ZEROMEM(&Weight);
+
+				// Weight VertexId
+				ReadFile(hFile, &(Weight.iVertexId), sizeof(_uint), &dwByte, nullptr);
+
+				// Weight Weight
+				ReadFile(hFile, &(Weight.fWeight), sizeof(_float), &dwByte, nullptr);
+
+				Bone.Weights[k] = Weight;
+			}
+
+			Mesh.Bones[j] = Bone;
+		}
+
+		m_MeshDatas.push_back(Mesh);
+	}
+
+	// Read Materials
+
+	// Material NumMaterials
+	ReadFile(hFile, &(m_ModelGCM.iNumMaterials), sizeof(_uint), &dwByte, nullptr);
+
+	for (_uint i = 0; i < m_ModelGCM.iNumMaterials; ++i)
+	{
+		MATERIAL Material;
+		ZEROMEM(&Material);
+
+		// MaterialTex
+		ReadFile(hFile, Material.MaterialTexture, sizeof(MATERIALTEX) * TextureType_MAX, &dwByte, nullptr);
+
+		m_MaterialDatas.push_back(Material);
+	}
+	
+	ReadFile(hFile, &(m_ModelGCM.iRootBoneIndex), sizeof(_uint), &dwByte, nullptr);
+
+	// Read Animations
+	if (TYPE_ANIM == eType)
+	{
+		// Animation NumAnimations
+		ReadFile(hFile, &(m_ModelGCM.iAnimationPartCount), sizeof(_uint), &dwByte, nullptr);
+
+		m_ModelGCM.iAffectBones = new vector<unsigned int>[m_ModelGCM.iAnimationPartCount];
+		for (_uint partCnt = 0; partCnt < m_ModelGCM.iAnimationPartCount; partCnt++)
+		{
+			_uint size = 0;
+			ReadFile(hFile, &size, sizeof(_uint), &dwByte, nullptr);
+			m_ModelGCM.iAffectBones[partCnt].resize(size);
+			for (int i = 0; i < size; i++)
+			{
+				ReadFile(hFile, &m_ModelGCM.iAffectBones[partCnt][i], sizeof(_uint), &dwByte, nullptr);
+			}
+		}
+
+
+
+		m_ModelGCM.iNumAnimations = new unsigned int[m_ModelGCM.iAnimationPartCount];
+		for (_uint animPartIndex = 0; animPartIndex < m_ModelGCM.iAnimationPartCount; animPartIndex++)
+		{
+			ReadFile(hFile, &(m_ModelGCM.iNumAnimations[animPartIndex]), sizeof(_uint), &dwByte, nullptr);
+			for (_uint i = 0; i < m_ModelGCM.iNumAnimations[animPartIndex]; ++i)
+			{
+				ANIMATION_GCM Animation;
+				ZEROMEM(&Animation);
+
+				// Animation Name
+				ReadFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
+				ReadFile(hFile, Animation.szName, dwStrByte, &dwByte, nullptr);
+				if (0 == dwByte)
+				{
+					MSG_BOX("Failed Read String Data");
+					return E_FAIL;
+				}
+
+				// Animation Duration
+				ReadFile(hFile, &(Animation.fDuration), sizeof(_float), &dwByte, nullptr);
+
+				// Animation TickPerSecond
+				ReadFile(hFile, &(Animation.fTickPerSecond), sizeof(_float), &dwByte, nullptr);
+
+				// Animation OptionSetting
+				ReadFile(hFile, &(Animation.isLoop), sizeof(_bool), &dwByte, nullptr);
+				ReadFile(hFile, &(Animation.isRootAnim), sizeof(_bool), &dwByte, nullptr);
+				ReadFile(hFile, &(Animation.isLerp), sizeof(_bool), &dwByte, nullptr);
+
+				// Animation NumChannels
+				ReadFile(hFile, &(Animation.iNumChannels), sizeof(_uint), &dwByte, nullptr);
+
+				Animation.Channels = new CHANNEL_GCM[Animation.iNumChannels];
+				ZeroMemory(Animation.Channels, sizeof(CHANNEL_GCM) * (Animation.iNumChannels));
+
+				//채널만큼 반복
+				for (_uint j = 0; j < Animation.iNumChannels; ++j)
+				{
+					CHANNEL_GCM Channel;
+					ZEROMEM(&Channel);
+
+					// Animation Name
+					ReadFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
+					ReadFile(hFile, Channel.szName, dwStrByte, &dwByte, nullptr);
+					if (0 == dwByte)
+					{
+						MSG_BOX("Failed Read String Data");
+						return E_FAIL;
+					}
+					
+					// Channel NumScalingKeys
+					ReadFile(hFile, &(Channel.iNumMartixKeys), sizeof(_uint), &dwByte, nullptr);
+
+					// Channel ScalingKeys
+					Channel.iMatrixFrame = new MATRIXFRAME_GCM[Channel.iNumMartixKeys];
+					ZeroMemory(Channel.iMatrixFrame, sizeof(MATRIXFRAME_GCM) * (Channel.iNumMartixKeys));
+					ReadFile(hFile, Channel.iMatrixFrame, sizeof(MATRIXFRAME_GCM) * (Channel.iNumMartixKeys), &dwByte, nullptr);
+
+					Animation.Channels[j] = Channel;
+				}
+
+				// Animation NumNotify
+				Animation.Notify = new NOTIFY_GCM{};
+				//ZeroMemory(Animation.Notify, sizeof(NOTIFY_GCM));
+
+				ReadFile(hFile, &(Animation.Notify->iNumKeyFrames), sizeof(_uint), &dwByte, nullptr);
+
+				for (_uint j = 0; j < Animation.Notify->iNumKeyFrames; ++j)
+				{
+					_tchar szFrameName[MAX_PATH] = {};
+					_int   iType = 0;
+
+					// Animation Name
+					ReadFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
+					ReadFile(hFile, szFrameName, dwStrByte, &dwByte, nullptr);
+					if (0 == dwByte)
+					{
+						MSG_BOX("Failed Read String Data");
+						return E_FAIL;
+					}
+					ReadFile(hFile, &iType, sizeof(int), &dwByte, nullptr);
+
+					switch (*reinterpret_cast<KEYFRAME_GCM::KEYFRAMETYPE*>(&iType))
+					{
+					case KEYFRAME_GCM::KF_SPEED:
+					{
+						SPEEDFRAME_GCM* NotifyFrame = new SPEEDFRAME_GCM;
+
+						lstrcpy(NotifyFrame->szName, szFrameName);
+						NotifyFrame->eKeyFrameType = *reinterpret_cast<KEYFRAME_GCM::KEYFRAMETYPE*>(&iType);
+						ReadFile(hFile, &NotifyFrame->fTime, sizeof(_float), &dwByte, nullptr);
+						ReadFile(hFile, &NotifyFrame->fSpeed, sizeof(_float), &dwByte, nullptr);
+						Animation.Notify->tKeyFrame.push_back(NotifyFrame);
+						//Animation.Notify->tKeyFrame[j] = NotifyFrame;
+						break;
+					}
+					case KEYFRAME_GCM::KF_NOTIFY:
+					{
+						NOTIFYFRAME_GCM* NotifyFrame = new NOTIFYFRAME_GCM;
+
+						lstrcpy(NotifyFrame->szName, szFrameName);
+						NotifyFrame->eKeyFrameType = *reinterpret_cast<KEYFRAME_GCM::KEYFRAMETYPE*>(&iType);
+						ReadFile(hFile, &NotifyFrame->fTime, sizeof(_float), &dwByte, nullptr);
+						Animation.Notify->tKeyFrame.push_back(NotifyFrame);
+						break;
+					}
+					case KEYFRAME_GCM::KF_SOUND:
+					{
+						SOUNDFRAME_GCM* NotifyFrame = new SOUNDFRAME_GCM;
+
+						lstrcpy(NotifyFrame->szName, szFrameName);
+						NotifyFrame->eKeyFrameType = *reinterpret_cast<KEYFRAME_GCM::KEYFRAMETYPE*>(&iType);
+						ReadFile(hFile, &NotifyFrame->fTime, sizeof(_float), &dwByte, nullptr);
+						ReadFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
+						ReadFile(hFile, NotifyFrame->wszSoundTag, dwStrByte, &dwByte, nullptr);
+						if (0 == dwByte)
+						{
+							MSG_BOX("Failed Read String Data");
+							return E_FAIL;
+						}
+						Animation.Notify->tKeyFrame.push_back(NotifyFrame);
+						break;
+					}
+					}
+				}
+				m_AnimationDatasGCM[animPartIndex].push_back(Animation);
+			}
+		}
+		
+	}
+	else // NonAnim
+	{
+		m_ModelGCM.iNumAnimations = 0;
+	}
+
+	CloseHandle(hFile);
+
+	return S_OK;
+}
+
+HRESULT CModel::Ready_Bones_GCM(Engine::NODE Node)
+{
+	CBone* pBone = CBone::Create(Node);
+
+	if (nullptr == pBone)
+		return E_FAIL;
+
+	m_Bones.push_back(pBone);
+
+	for (_uint i = 0; i < Node.iNumChildren; ++i)
+	{
+		Ready_Bones(m_NodeDatas[Node.iChildrens[i]]);
+	}
+
+	return S_OK;
+}
+
+HRESULT CModel::Ready_Meshes_GCM(TYPE eType, _float4x4 PivotMatrix)
+{
+	m_iNumMeshes = m_ModelGCM.iNumMeshes;
+
+	for (_uint i = 0; i < m_iNumMeshes; ++i)
+	{
+		CMesh* pMesh = CMesh::Create(m_pDevice, m_pContext, eType, m_Bones, m_MeshDatas[i], PivotMatrix);
+		if (nullptr == pMesh)
+			return E_FAIL;
+
+		m_Meshes.push_back(pMesh);
+	}
+
+	return S_OK;
+}
+
+HRESULT CModel::Ready_Materials_GCM()
+{
+	m_iNumMaterials = m_ModelGCM.iNumMaterials;
+
+	for (_uint i = 0; i < m_iNumMaterials; ++i)
+	{
+		MESHMATERIAL	MeshMaterial;
+		ZeroMemory(&MeshMaterial, sizeof MeshMaterial);
+
+		for (_uint j = 0; j < TextureType_MAX; ++j)
+		{
+			if (!lstrcmp(m_MaterialDatas[i].MaterialTexture[j].szTexPath, TEXT("")))
+			{
+				if (j == DIFFUSE)
+				{
+					MSG_BOX("Diffuse Texture NULL");
+				}
+				else
+					continue;
+			}
+
+			MeshMaterial.pMtrlTexture[j] = CTexture::Create(m_pDevice, m_pContext,
+				m_MaterialDatas[i].MaterialTexture[j].szTexPath, 1);
+
+			if (nullptr == MeshMaterial.pMtrlTexture[j])
+			{
+				MSG_BOX("Mtrl Texture NULL");
+				return E_FAIL;
+			}
+		}
+
+		m_Materials.push_back(MeshMaterial);
+	}
+
+	return S_OK;
+}
+
+//gcm으로 변환된 애니정보를 다시 canimation으로 변환
+HRESULT CModel::Ready_Animations_GCM()
+{
+	m_iAnimationPartCount = m_ModelGCM.iAnimationPartCount;
+	m_iRootBoneIndex = m_ModelGCM.iRootBoneIndex;
+	for (_uint iAnimTypeIndex = 0; iAnimTypeIndex < m_iAnimationPartCount; iAnimTypeIndex++)
+	{
+		for (int i = 0; i < m_ModelGCM.iAffectBones[iAnimTypeIndex].size(); i++)
+		{
+			m_tAnimationDesc[iAnimTypeIndex].AffectBoneVec.push_back(m_ModelGCM.iAffectBones[iAnimTypeIndex][i]);
+		}
+
+		m_tAnimationDesc[iAnimTypeIndex].iNumAnimations = m_ModelGCM.iNumAnimations[iAnimTypeIndex];
+		for (_uint i = 0; i < m_ModelGCM.iNumAnimations[iAnimTypeIndex]; ++i)
+		{
+			CAnimation* pAnimation = CAnimation::Create(m_AnimationDatasGCM[iAnimTypeIndex][i], m_Bones);
+			if (nullptr == pAnimation)
+				return E_FAIL;
+
+			m_tAnimationDesc[iAnimTypeIndex].Animations.push_back(pAnimation);
+		}
+	}
+}
+
+HRESULT CModel::Write_File_GCM(TYPE eType, const _tchar* pModelFilePath)
+{
+	m_isExportedTool = true;
+	_tchar szPath[MAX_PATH] = TEXT("../../Resources/Models/Anims/");
+	lstrcat(szPath, pModelFilePath);
+	lstrcat(szPath, TEXT(".gcm"));
+
+	HANDLE hFile = CreateFile(szPath, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+	if (INVALID_HANDLE_VALUE == hFile)
+		return E_FAIL;
+
+	_ulong	dwByte = 0;
+	_ulong	dwStrByte = 0;
+
+	// Write Nodes
+
+	// Nodes NumNodes
+	//ZEROMEM(&m_ModelGCM);
+	WriteFile(hFile, &(m_ModelGCM.iNumNodes), sizeof(_uint), &dwByte, nullptr);
+
+	for (auto& Node : m_NodeDatas)
+	{
+		// Node Name
+		dwStrByte = sizeof(_tchar) * (lstrlen(Node.szName) + 1);
+		WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
+		WriteFile(hFile, Node.szName, dwStrByte, &dwByte, nullptr);
+
+		// Node Transformation
+		WriteFile(hFile, &(Node.TransformationMatrix), sizeof(_float4x4), &dwByte, nullptr);
+
+		// Node NodeIndex
+		WriteFile(hFile, &(Node.iNodeIndex), sizeof(_uint), &dwByte, nullptr);
+
+		// Node Parent
+		WriteFile(hFile, &(Node.iParent), sizeof(_int), &dwByte, nullptr);
+
+		// Node NumChildren
+		WriteFile(hFile, &(Node.iNumChildren), sizeof(_uint), &dwByte, nullptr);
+
+		// Node Children (array)
+		WriteFile(hFile, Node.iChildrens, sizeof(_uint) * Node.iNumChildren, &dwByte, nullptr);
+	}
+
+	// Write Meshes
+
+	// Meshes NumMeshes
+	WriteFile(hFile, &(m_ModelGCM.iNumMeshes), sizeof(_uint), &dwByte, nullptr);
+
+	for (_uint i = 0; i < m_ModelGCM.iNumMeshes; ++i)
+	{
+		MESH Mesh = m_MeshDatas[i];
+
+		// Mesh Name
+		dwStrByte = sizeof(_tchar) * (lstrlen(Mesh.szName) + 1);
+		WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
+		WriteFile(hFile, Mesh.szName, dwStrByte, &dwByte, nullptr);
+
+		// Mesh MaterialIndex
+		WriteFile(hFile, &(Mesh.iMaterialIndex), sizeof(_uint), &dwByte, nullptr);
+
+		// Mesh NumVertices
+		WriteFile(hFile, &(Mesh.iNumVertices), sizeof(_uint), &dwByte, nullptr);
+
+		// Mesh NumFaces
+		WriteFile(hFile, &(Mesh.iNumFaces), sizeof(_uint), &dwByte, nullptr);
+
+		for (_uint j = 0; j < Mesh.iNumFaces; ++j)
+		{
+			FACE Face = Mesh.Faces[j];
+			// Face NumIndices
+			WriteFile(hFile, &(Face.iNumIndices), sizeof(_uint), &dwByte, nullptr);
+
+			// Face Indices
+			WriteFile(hFile, Face.iIndices, sizeof(_uint) * Face.iNumIndices, &dwByte, nullptr);
+		}
+
+		// Mesh Positions
+		WriteFile(hFile, Mesh.vPositions, sizeof(_float3) * Mesh.iNumVertices, &dwByte, nullptr);
+
+		// Mesh Normals
+		WriteFile(hFile, Mesh.vNormals, sizeof(_float3) * Mesh.iNumVertices, &dwByte, nullptr);
+
+		// Mesh TexCoords
+		WriteFile(hFile, Mesh.vTexCoords, sizeof(_float2) * Mesh.iNumVertices, &dwByte, nullptr);
+
+		// Mesh Tangents
+		WriteFile(hFile, Mesh.vTangents, sizeof(_float3) * Mesh.iNumVertices, &dwByte, nullptr);
+
+		// Mesh NumBones
+		WriteFile(hFile, &(Mesh.iNumBones), sizeof(_uint), &dwByte, nullptr);
+
+		// Write Bones
+		for (_uint j = 0; j < Mesh.iNumBones; j++)
+		{
+			BONE Bone = Mesh.Bones[j];
+
+			// Bone Name
+			dwStrByte = (_ulong)sizeof(_tchar) * (lstrlen(Bone.szName) + 1);
+			WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
+			WriteFile(hFile, Bone.szName, dwStrByte, &dwByte, nullptr);
+
+			// Mesh OffsetMatrix
+			WriteFile(hFile, &(Bone.OffsetMatrix), sizeof(_float4x4), &dwByte, nullptr);
+
+			// Mesh NumWeights
+			WriteFile(hFile, &(Bone.iNumWeights), sizeof(_uint), &dwByte, nullptr);
+
+			// Write Weights
+			for (_uint k = 0; k < Bone.iNumWeights; k++)
+			{
+				WEIGHT Weight = Bone.Weights[k];
+
+				// Weight VertexId
+				WriteFile(hFile, &(Weight.iVertexId), sizeof(_uint), &dwByte, nullptr);
+
+				// Weight Weight
+				WriteFile(hFile, &(Weight.fWeight), sizeof(_float), &dwByte, nullptr);
+			}
+		}
+	}
+
+	// Write Materials
+
+	// Material NumMaterials
+	WriteFile(hFile, &(m_ModelGCM.iNumMaterials), sizeof(_uint), &dwByte, nullptr);
+
+	for (_uint i = 0; i < m_ModelGCM.iNumMaterials; ++i)
+	{
+		MATERIAL Material = m_MaterialDatas[i];
+
+		// MaterialTex
+		WriteFile(hFile, Material.MaterialTexture, sizeof(MATERIALTEX) * TextureType_MAX, &dwByte, nullptr);
+	}
+
+	//루트 뼈 저장
+	WriteFile(hFile, &(m_ModelGCM.iRootBoneIndex), sizeof(_uint), &dwByte, nullptr);
+
+	// Write Animations
+	if (TYPE_ANIM == eType)
+	{
+		// Animation NumAnimations
+		WriteFile(hFile, &(m_ModelGCM.iAnimationPartCount), sizeof(_uint), &dwByte, nullptr);
+
+		//AffectBone Write
+		for (_uint partCnt = 0; partCnt < m_iAnimationPartCount; partCnt++)
+		{
+			_uint size = m_ModelGCM.iAffectBones[partCnt].size();
+			WriteFile(hFile, &size, sizeof(_uint), &dwByte, nullptr);
+			for (int i = 0; i < m_ModelGCM.iAffectBones[partCnt].size(); i++)
+			{
+				WriteFile(hFile, &(m_ModelGCM.iAffectBones[partCnt][i]), sizeof(_uint), &dwByte, nullptr);
+			}
+		}
+
+		for (_uint animPartIndex = 0; animPartIndex < m_ModelGCM.iAnimationPartCount; animPartIndex++)
+		{
+			WriteFile(hFile, &(m_ModelGCM.iNumAnimations[animPartIndex]), sizeof(_uint), &dwByte, nullptr);
+			for (_uint i = 0; i < m_ModelGCM.iNumAnimations[animPartIndex]; ++i)
+			{
+				ANIMATION_GCM Animation = m_AnimationDatasGCM[animPartIndex][i];
+
+				// Animation Name
+				dwStrByte = (_ulong)sizeof(_tchar) * (lstrlen(Animation.szName) + 1);
+				WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
+				WriteFile(hFile, Animation.szName, dwStrByte, &dwByte, nullptr);
+
+				// Animation Duration
+				WriteFile(hFile, &(Animation.fDuration), sizeof(_float), &dwByte, nullptr);
+
+				// Animation TickPerSecond
+				WriteFile(hFile, &(Animation.fTickPerSecond), sizeof(_float), &dwByte, nullptr);
+
+				// Animation OptionSetting
+				WriteFile(hFile, &(Animation.isLoop), sizeof(_bool), &dwByte, nullptr);
+				WriteFile(hFile, &(Animation.isRootAnim), sizeof(_bool), &dwByte, nullptr);
+				WriteFile(hFile, &(Animation.isLerp), sizeof(_bool), &dwByte, nullptr);
+
+
+				// Animation NumChannels
+				WriteFile(hFile, &(Animation.iNumChannels), sizeof(_uint), &dwByte, nullptr);
+
+				for (_uint j = 0; j < Animation.iNumChannels; ++j)
+				{
+					CHANNEL_GCM Channel = Animation.Channels[j];
+
+					// Channel Name
+					dwStrByte = (_ulong)sizeof(_tchar) * (lstrlen(Channel.szName) + 1);
+					WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
+					WriteFile(hFile, Channel.szName, dwStrByte, &dwByte, nullptr);
+
+					// Channel NumMatrixKeys
+					WriteFile(hFile, &(Channel.iNumMartixKeys), sizeof(_uint), &dwByte, nullptr);
+
+					// Channel MatrixKeys
+					WriteFile(hFile, Channel.iMatrixFrame, sizeof(MATRIXFRAME_GCM) * (Channel.iNumMartixKeys), &dwByte, nullptr);
+				}
+
+				//노티파이가 얼마나 존재하는지?
+				WriteFile(hFile, &(Animation.Notify->iNumKeyFrames), sizeof(_uint), &dwByte, nullptr);
+
+				//각 노티파이의 프레임을 저장하는 친구라 보면 됨.
+				for (_uint j = 0; j < Animation.Notify->iNumKeyFrames; ++j)
+				{
+					KEYFRAME_GCM* Keyframe = Animation.Notify->tKeyFrame[j];
+
+					// Channel Name
+					dwStrByte = (_ulong)sizeof(_tchar) * (lstrlen(Keyframe->szName) + 1);
+					WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
+					WriteFile(hFile, Keyframe->szName, dwStrByte, &dwByte, nullptr);
+
+					//이넘 저장인데 여기 잘 불러와지는지 봐야할듯.
+					WriteFile(hFile, &(Keyframe->eKeyFrameType), sizeof(int), &dwByte, nullptr);
+					WriteFile(hFile, &(Keyframe->fTime), sizeof(_float), &dwByte, nullptr);
+
+					switch (Keyframe->eKeyFrameType)
+					{
+					case KEYFRAME::KF_SPEED:
+						WriteFile(hFile, &reinterpret_cast<SPEEDFRAME_GCM*>(Keyframe)->fSpeed, sizeof(float), &dwByte, nullptr);
+						break;
+
+					case KEYFRAME::KF_SOUND:
+						dwStrByte = (_ulong)sizeof(_tchar) * (lstrlen(reinterpret_cast<SOUNDFRAME_GCM*>(Keyframe)->wszSoundTag) + 1);
+						WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
+						WriteFile(hFile, reinterpret_cast<SOUNDFRAME_GCM*>(Keyframe)->wszSoundTag, dwStrByte, &dwByte, nullptr);
+						break;
+
+					case KEYFRAME::KF_NOTIFY:
+						break;
+					}
+				}
+			}
+		}
+		
+	}
+
+	CloseHandle(hFile);
+
 	return S_OK;
 }
 
@@ -761,6 +1607,35 @@ void CModel::Release_FileDatas()
 	m_AnimationDatas.clear();
 }
 
+void CModel::Release_FileDatas_GCM()
+{
+	//파츠만큼 반복
+	Safe_Delete_Array(m_ModelGCM.iAffectBones);
+	
+	for (auto& AnimDataGCM : m_AnimationDatasGCM)
+	{
+		//애니메이션만큼 반복
+		for (auto& Animation : AnimDataGCM)
+		{
+			//채널 삭제
+			for (_uint i = 0; i < Animation.iNumChannels; ++i)
+			{
+				Safe_Delete_Array(Animation.Channels[i].iMatrixFrame);
+			}
+			Safe_Delete_Array(Animation.Channels);
+			//노티파이 삭제
+			for (_uint i = 0; i < Animation.Notify->iNumKeyFrames; ++i)
+			{
+				Safe_Delete(Animation.Notify->tKeyFrame[i]);
+			}
+			Safe_Delete(Animation.Notify);
+		}
+
+		AnimDataGCM.clear();
+	}
+	Safe_Delete_Array(m_ModelGCM.iNumAnimations);
+}
+
 _uint CModel::Find_Animation_Index(const wstring& strTag, ANIMTYPE eType)
 {
 	_uint iAnimationIndex = { 0 };
@@ -810,7 +1685,12 @@ void CModel::Free()
 	if (!m_isCloned)
 	{
 		Release_FileDatas();
+		Release_FileDatas_GCM();
 	}
+
+	//툴 익스포트일 경우 누수잡기용
+	if(m_isExportedTool)
+		Release_FileDatas_GCM();
 
 	for (auto& pBone : m_Bones)
 	{

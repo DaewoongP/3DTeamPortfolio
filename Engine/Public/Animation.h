@@ -30,11 +30,23 @@ public:
 	_float Get_Accmulation() { return m_fTimeAcc; }
 	_float Get_Duration() { return m_fDuration; }
 	_float* Get_Accmulation_Pointer() { return &m_fTimeAcc; }
+	_float  Get_TickPerSecond() { return m_fTickPerSecond; }
+	_uint  Get_NumChannels() {	return m_iNumChannels;}
+	_uint  Get_NumNotify() { return m_iNumNorify; }
+	_bool Get_RootAnim() { return m_isRootAnim; }
+	_bool Get_LerpAnim() { return m_isLerp; }
+	_bool Get_LoopAnim() { return m_isLoop; }
+	_bool* Get_RootAnim_Point() { return &m_isRootAnim; }
+	_bool* Get_LerpAnim_Point() { return &m_isLerp; }
+	_bool* Get_LoopAnim_Point() { return &m_isLoop; }
+	vector<class CChannel*>& Get_ChannelVector_Point() { return m_Channels; }
 	class CNotify* Get_Notify_Point() { return m_pNotify; }
 
 	void Set_CurrentKeyFrameIndex(CModel::BONES& Bones, _uint iKeyFrameIndex);
 	void Set_Pause(_bool isPause) { m_isPaused = isPause; }
 	void Set_RootAnim(_bool isRootAnim) { m_isRootAnim = isRootAnim; }
+	void Set_LerpAnim(_bool isLerp) { m_isLerp = isLerp; }
+	void Set_LoopAnim(_bool isLoop) { m_isLoop = isLoop; }
 	void Set_TickPerSecond(_float fMultiply)
 	{
 		if (0 >= fMultiply)
@@ -57,12 +69,13 @@ public:
 	//주로 겜오브제 이니셜라이즈에서 사용할 키프레임 찾아서 가져오는 함수.
 	NOTIFYFRAME* Find_NotifyFrame(const _tchar* wszNotifyTag);
 	SOUNDFRAME*  Find_SoundFrame(const _tchar* wszSoundTag);
-	HRESULT		 Add_NotifyFrame(KEYFRAME::KEYFRAMETYPE eFrameType, wchar_t* wszNotifyTag, _float fActionTime, _float fSpeed = 0);
+	HRESULT		 Add_NotifyFrame(KEYFRAME_GCM* data);
 	void		 Update_KeyFrame_By_Time();
 
 public:
 	HRESULT Initialize(Engine::ANIMATION Animation, const CModel::BONES& Bones);
-	_bool Invalidate_AccTime(_float fTimeDelta);
+	HRESULT Initialize(Engine::ANIMATION_GCM Animation, const CModel::BONES& Bones);
+	_bool Invalidate_AccTime(_float fTimeDelta); 
 	void Invalidate_TransformationMatrix(CModel::BONES& Bones, _float fTimeDelta, vector<_uint>* boneVec = nullptr);
 	void Invalidate_TransformationMatrix_Lerp(CModel::BONES& Bones, _float fTimeDelta, _float LerpTimeAcc, _uint iRootIndex, vector<_uint>* boneVec = nullptr);
 	void Invalidate_Frame(_float fTimeDelta);
@@ -71,6 +84,7 @@ private:
 	_tchar						m_szName[MAX_STR] = TEXT("");
 	// 애니메이션이 사용하는 채널(뼈)의 개수
 	_uint						m_iNumChannels = { 0 };
+	_uint						m_iNumNorify = { 0 };
 	// 채널을 담고있는 벡터 컨테이너
 	vector<class CChannel*>		m_Channels;
 	// 노티파이(알람,사운드,충돌체,파티클,속도 재생용 채널 컨테이너)
@@ -88,6 +102,7 @@ private:
 	_bool						m_isLoop = { false };
 	_bool						m_isPaused = { false };
 	_bool						m_isRootAnim = { false };
+	_bool						m_isLerp = { false };
 
 	// 현재 애니메이션에 해당하는 채널의 프레임 중 가장 프레임이 많은 채널의 인덱스
 	_uint						m_iMaxFrameChannelIndex = { 0 };
@@ -96,6 +111,7 @@ private:
 
 public:
 	static CAnimation* Create(Engine::ANIMATION Animation, const CModel::BONES& Bones);
+	static CAnimation* Create(Engine::ANIMATION_GCM Animation, const CModel::BONES& Bones);
 	CAnimation* Clone();
 	virtual void Free() override;
 };

@@ -18,6 +18,7 @@ private:
 
 public:
 	_uint	Get_NotifyFrameCount() { return m_iNumKeyFrames; }
+	vector<pair<wstring, KEYFRAME*>>* Get_NotifyFrame() { return &m_KeyFrames; }
 
 public:
 	HRESULT Initialize();
@@ -32,7 +33,7 @@ public:
 	//태그를 이용한 검색
 	KEYFRAME*		Find_Frame(const wchar_t* wszKeyFrameTag);
 	//추가(툴용)
-	HRESULT			AddFrame(KEYFRAME::KEYFRAMETYPE eFrameType, wchar_t* wszNotifyTag, _float fActionTime, _float fSpeed);
+	HRESULT			AddFrame(KEYFRAME_GCM* data);
 
 private:
 	vector<pair<wstring, KEYFRAME*>>	m_KeyFrames;

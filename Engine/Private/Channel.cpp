@@ -36,7 +36,7 @@ HRESULT CChannel::Initialize(const Engine::CHANNEL& Channel, const CModel::BONES
 		});
 
 	// SRT 중 가장 많은프레임을 가진 키프레임을 찾아 저장.
-	// 상대적으로 적은수의 프레임을 가진 변수는 어차피 마지막값을 기준으로 프레임이 끝날때까지 그값을 유지하면 되므로. 가장 큰 값만 저장한다.
+	// 상대적으로 적은수의 프레임을 가진 변수는 어차피 마지막값을 기준으로 프레임이 끝날때까지 그값을 유지하면 되므로. 가장 큰 값만 저장한다.	
 	m_iNumKeyFrames = max(Channel.iNumScalingKeys, Channel.iNumRotationKeys);
 	m_iNumKeyFrames = max(m_iNumKeyFrames, Channel.iNumPositionKeys);
 
@@ -74,6 +74,39 @@ HRESULT CChannel::Initialize(const Engine::CHANNEL& Channel, const CModel::BONES
 		Keyframe.vScale = vScale;
 		Keyframe.vRotation = vRotation;
 		Keyframe.vTranslation = vTranslation;
+
+		m_MatrixKeyFrames.push_back(Keyframe);
+	}
+
+	return S_OK;
+}
+
+HRESULT CChannel::Initialize(const Engine::CHANNEL_GCM& Channel, const CModel::BONES& Bones)
+{
+	lstrcpy(m_szName, Channel.szName);
+	// 채널과 이름이 같은 뼈의 인덱스를 찾아 멤버변수에 저장.
+	auto iter = find_if(Bones.begin(), Bones.end(), [&](CBone* pValue) {
+		if (!lstrcmp(m_szName, pValue->Get_Name()))
+			return true;
+		else
+		{
+			++m_iBoneIndex;
+			return false;
+		}
+		});
+
+	// SRT 중 가장 많은프레임을 가진 키프레임을 찾아 저장.
+	// 상대적으로 적은수의 프레임을 가진 변수는 어차피 마지막값을 기준으로 프레임이 끝날때까지 그값을 유지하면 되므로. 가장 큰 값만 저장한다.	
+	m_iNumKeyFrames = Channel.iNumMartixKeys;
+
+	for (_uint i = 0; i < m_iNumKeyFrames; ++i)
+	{
+		MATRIXFRAME				Keyframe;
+
+		Keyframe.vScale = Channel.iMatrixFrame[i].vScale;
+		Keyframe.vRotation = Channel.iMatrixFrame[i].vRotation;
+		Keyframe.vTranslation = Channel.iMatrixFrame[i].vTranslation;
+		Keyframe.fTime = Channel.iMatrixFrame[i].fTime;
 
 		m_MatrixKeyFrames.push_back(Keyframe);
 	}
@@ -206,6 +239,18 @@ void CChannel::Invalidate_TransformationMatrix_Lerp(CModel::BONES& Bones, _float
 }
 
 CChannel* CChannel::Create(const Engine::CHANNEL& Channel, const CModel::BONES& Bones)
+{
+	CChannel* pInstance = new CChannel();
+
+	if (FAILED(pInstance->Initialize(Channel, Bones)))
+	{
+		MSG_BOX("Failed to Created CChannel");
+		Safe_Release(pInstance);
+	}
+	return pInstance;
+}
+
+CChannel* CChannel::Create(const Engine::CHANNEL_GCM& Channel, const CModel::BONES& Bones)
 {
 	CChannel* pInstance = new CChannel();
 
