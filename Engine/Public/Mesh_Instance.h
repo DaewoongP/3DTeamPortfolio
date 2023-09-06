@@ -24,7 +24,6 @@ public:
 
 private:
 	ID3D11Buffer*				m_pVBInstance = { nullptr };
-	_float4x4*					m_pInstanceMatrix = { nullptr };
 
 	_uint						m_iInstanceStride = { 0 };
 	_uint						m_iIndexCountPerInstance = { 0 };	
@@ -32,7 +31,7 @@ private:
 	_uint						m_iMaterialIndex = { 0 };
 
 private:
-	HRESULT Ready_VertexBuffer_NonAnim(const Engine::MESH Mesh, _float4x4 PivotMatrix);
+	HRESULT Ready_VertexBuffer_NonAnim(const Engine::MESH Mesh, _float4x4* pInstanceMatrix, _float4x4 PivotMatrix);
 
 public:
 	static CMesh_Instance* Create(ID3D11Device* pDevice, ID3D11DeviceContext * pContext, 

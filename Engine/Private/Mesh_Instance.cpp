@@ -24,7 +24,7 @@ HRESULT CMesh_Instance::Initialize_Prototype(const Engine::MESH Mesh, _float4x4 
 
 	HRESULT		hr = 0;
 
-	hr = Ready_VertexBuffer_NonAnim(Mesh, PivotMatrix);
+	hr = Ready_VertexBuffer_NonAnim(Mesh, pInstanceMatrix, PivotMatrix);
 
 	FAILED_CHECK_RETURN(hr, E_FAIL);
 
@@ -94,7 +94,7 @@ HRESULT CMesh_Instance::Render()
 	return S_OK;
 }
 
-HRESULT CMesh_Instance::Ready_VertexBuffer_NonAnim(const Engine::MESH Mesh, _float4x4 PivotMatrix)
+HRESULT CMesh_Instance::Ready_VertexBuffer_NonAnim(const Engine::MESH Mesh, _float4x4* pInstanceMatrix, _float4x4 PivotMatrix)
 {
 #pragma region INSTANCE_BUFFER
 	{
@@ -116,10 +116,10 @@ HRESULT CMesh_Instance::Ready_VertexBuffer_NonAnim(const Engine::MESH Mesh, _flo
 
 		for (size_t i = 0; i < m_iNumInstance; ++i)
 		{
-			pVertices[i].vRight = XMFLOAT4(m_pInstanceMatrix[i].m[0][0], m_pInstanceMatrix[i].m[0][1], m_pInstanceMatrix[i].m[0][2], m_pInstanceMatrix[i].m[0][3]);
-			pVertices[i].vUp = XMFLOAT4(m_pInstanceMatrix[i].m[1][0], m_pInstanceMatrix[i].m[1][1], m_pInstanceMatrix[i].m[1][2], m_pInstanceMatrix[i].m[1][3]);
-			pVertices[i].vLook = XMFLOAT4(m_pInstanceMatrix[i].m[2][0], m_pInstanceMatrix[i].m[2][1], m_pInstanceMatrix[i].m[2][2], m_pInstanceMatrix[i].m[2][3]);
-			pVertices[i].vTranslation = XMFLOAT4(m_pInstanceMatrix[i].m[3][0], m_pInstanceMatrix[i].m[3][1], m_pInstanceMatrix[i].m[3][2], m_pInstanceMatrix[i].m[3][3]);
+			pVertices[i].vRight = XMFLOAT4(pInstanceMatrix[i].m[0][0], pInstanceMatrix[i].m[0][1], pInstanceMatrix[i].m[0][2], pInstanceMatrix[i].m[0][3]);
+			pVertices[i].vUp = XMFLOAT4(pInstanceMatrix[i].m[1][0], pInstanceMatrix[i].m[1][1], pInstanceMatrix[i].m[1][2], pInstanceMatrix[i].m[1][3]);
+			pVertices[i].vLook = XMFLOAT4(pInstanceMatrix[i].m[2][0], pInstanceMatrix[i].m[2][1], pInstanceMatrix[i].m[2][2], pInstanceMatrix[i].m[2][3]);
+			pVertices[i].vTranslation = XMFLOAT4(pInstanceMatrix[i].m[3][0], pInstanceMatrix[i].m[3][1], pInstanceMatrix[i].m[3][2], pInstanceMatrix[i].m[3][3]);
 		}
 
 		D3D11_SUBRESOURCE_DATA		SubResourceData;
@@ -205,6 +205,4 @@ CComponent* CMesh_Instance::Clone(void* pArg)
 void CMesh_Instance::Free()
 {
 	Safe_Release(m_pVBInstance);
-	
-	Safe_Delete_Array(m_pInstanceMatrix);
 }

@@ -50,7 +50,7 @@ void CMapObject_Ins::Late_Tick(_float fTimeDelta)
 		m_eRenderCount = RT_NORMAL;
 
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
-		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_PICKING, this);
+		//m_pRenderer->Add_RenderGroup(CRenderer::RENDER_PICKING, this);
 	}
 }
 
@@ -84,23 +84,23 @@ HRESULT CMapObject_Ins::Render()
 		m_eRenderCount = RT_PICKING;
 	}
 
-	// 피킹용 그리기
-	else if (RT_PICKING == m_eRenderCount)
-	{
-		m_pShader->Bind_RawValue("g_vColor", &m_vColor, sizeof(_float4));
+	//// 피킹용 그리기
+	//else if (RT_PICKING == m_eRenderCount)
+	//{
+	//	m_pShader->Bind_RawValue("g_vColor", &m_vColor, sizeof(_float4));
 
-		_uint		iNumMeshes = m_pModel->Get_NumMeshes();
+	//	_uint		iNumMeshes = m_pModel->Get_NumMeshes();
 
-		for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; iMeshCount++)
-		{
-			m_pShader->Begin("Picking");
+	//	for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; iMeshCount++)
+	//	{
+	//		m_pShader->Begin("Picking");
 
-			if (FAILED(m_pModel->Render(iMeshCount)))
-				return E_FAIL;
-		}
+	//		if (FAILED(m_pModel->Render(iMeshCount)))
+	//			return E_FAIL;
+	//	}
 
-		m_eRenderCount = RT_END;
-	}
+	//	m_eRenderCount = RT_END;
+	//}
 
 	return S_OK;
 }
@@ -136,6 +136,15 @@ HRESULT CMapObject_Ins::Add_Components()
 		MSG_BOX("Failed CMapObject Add_Component : (Com_Renderer)");
 		return E_FAIL;
 	}
+
+	/* Com_Shader */
+	if (FAILED(CComposite::Add_Component(LEVEL_TOOL, TEXT("Prototype_Component_Shader_MeshInstance"),
+		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
+	{
+		MSG_BOX("Failed CMapObject Add_Component : (Com_Shader)");
+		return E_FAIL;
+	}
+
 	return S_OK;
 }
 

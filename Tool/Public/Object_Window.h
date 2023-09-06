@@ -5,6 +5,7 @@ BEGIN(Tool)
 
 class CMapDummy;
 class CMapObject;
+class CMapObject_Ins;
 
 class CObject_Window final : public CImWindow
 {
@@ -82,6 +83,9 @@ private:
 	vector<wstring> m_vecMapObjectTag; // 맵에 추가한 오브젝트들의 넘버링 태그를 저장
 	vector<string> m_vecObjectTag_s; // 넘버링 태그를 string으로 저장함
  	vector<SAVEOBJECTDESC> m_vecSaveObject; // 저장할 맵 오브젝트에 대한 정보
+
+	_bool m_bOne = { true };
+	CMapObject_Ins* m_pObjIns = { nullptr };
 
 public:
 	static CObject_Window* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, ImVec2 vWindowPos, ImVec2 vWindowSize);

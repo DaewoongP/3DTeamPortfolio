@@ -67,6 +67,9 @@ private:
 	HRESULT Ready_Meshes(TYPE eType, _float4x4 PivotMatrix);
 	HRESULT Ready_Materials();
 
+private:
+	void Release_FileDatas();
+
 public:
 	static CModel_Instance* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, TYPE eType, const _tchar* pModelFilePath, _float4x4 PivotMatrix);
 	virtual CComponent* Clone(void* pArg);

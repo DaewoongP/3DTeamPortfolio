@@ -1,4 +1,5 @@
 #include "Model_Instance.h"
+#include "Model_Instance.h"
 
 #include "Texture.h"
 #include "Mesh_Instance.h"
@@ -37,6 +38,22 @@ HRESULT CModel_Instance::Initialize_Prototype(TYPE eType, const _tchar* pModelFi
 {
 	XMStoreFloat4x4(&m_PivotMatrix, PivotMatrix);
 
+	m_pInstanceMatrix = new _float4x4[m_InstanceCnt];
+
+	for (size_t i = 0; i < m_InstanceCnt; i++)
+	{
+		_float4x4 vMatrix = { 1.f, 0.f, 0.f, 0.f,
+							0.f, 1.f, 0.f, 0.f,
+							0.f, 0.f, 1.f, 0.f,
+							0.f, 0.f, 0.f, 1.f };
+
+		vMatrix.m[3][0] += i * 5.f;
+		vMatrix.m[3][1] += i * 5.f;
+		vMatrix.m[3][2] += i * 5.f;
+
+		m_pInstanceMatrix[i] = vMatrix;
+	}
+
 	if (FAILED(Ready_File(eType, pModelFilePath)))
 		return E_FAIL;
 
@@ -45,22 +62,6 @@ HRESULT CModel_Instance::Initialize_Prototype(TYPE eType, const _tchar* pModelFi
 
 	if (FAILED(Ready_Materials()))
 		return E_FAIL;
-
-	m_pInstanceMatrix = new _float4x4[m_InstanceCnt];
-
-	for (size_t i = 0; i < m_InstanceCnt; i++)
-	{
-		_float4x4 vMatrix = {1.f, 0.f, 0.f, 0.f,
-							0.f, 1.f, 0.f, 0.f,
-							0.f, 0.f, 1.f, 0.f, 
-							0.f, 0.f, 0.f, 1.f};
-
-		vMatrix.m[3][0] += i * 5.f;
-		vMatrix.m[3][1] += i * 5.f;
-		vMatrix.m[3][2] += i * 5.f;
-
-		m_pInstanceMatrix[i] = vMatrix;
-	}
 
 	return S_OK;
 }
@@ -416,6 +417,56 @@ HRESULT CModel_Instance::Ready_Materials()
 	return S_OK;
 }
 
+void CModel_Instance::Release_FileDatas()
+{
+	for (auto& Node : m_NodeDatas)
+	{
+		Safe_Delete_Array(Node.iChildrens);
+	}
+
+	m_NodeDatas.clear();
+
+	for (auto& Mesh : m_MeshDatas)
+	{
+		for (_uint i = 0; i < Mesh.iNumFaces; ++i)
+		{
+			Safe_Delete_Array(Mesh.Faces[i].iIndices);
+		}
+
+		Safe_Delete_Array(Mesh.Faces);
+
+		Safe_Delete_Array(Mesh.vPositions);
+		Safe_Delete_Array(Mesh.vNormals);
+		Safe_Delete_Array(Mesh.vTexCoords);
+		Safe_Delete_Array(Mesh.vTangents);
+
+		for (_uint i = 0; i < Mesh.iNumBones; ++i)
+		{
+			Safe_Delete_Array(Mesh.Bones[i].Weights);
+		}
+
+		Safe_Delete_Array(Mesh.Bones);
+	}
+
+	m_MeshDatas.clear();
+
+	m_MaterialDatas.clear();
+
+	for (auto& Animation : m_AnimationDatas)
+	{
+		for (_uint i = 0; i < Animation.iNumChannels; ++i)
+		{
+			Safe_Delete_Array(Animation.Channels[i].ScalingKeys);
+			Safe_Delete_Array(Animation.Channels[i].RotationKeys);
+			Safe_Delete_Array(Animation.Channels[i].PositionKeys);
+		}
+
+		Safe_Delete_Array(Animation.Channels);
+	}
+
+	m_AnimationDatas.clear();
+}
+
 CModel_Instance* CModel_Instance::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, TYPE eType, const _tchar* pModelFilePath, _float4x4 PivotMatrix)
 {
 	CModel_Instance* pInstance = new CModel_Instance(pDevice, pContext);
@@ -445,12 +496,19 @@ void CModel_Instance::Free()
 {
 	__super::Free();
 
-	for (auto& pBone : m_Bones)
+	if (!m_isCloned)
+	{
+		Release_FileDatas();
+		Safe_Delete_Array(m_pInstanceMatrix);
+	}
+
+
+	/*for (auto& pBone : m_Bones)
 	{
 		Safe_Release(pBone);
 	}
 
-	m_Bones.clear();
+	m_Bones.clear();*/
 
 	for (auto& pMesh : m_Meshes)
 	{

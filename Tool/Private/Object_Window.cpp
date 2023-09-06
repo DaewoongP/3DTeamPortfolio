@@ -10,9 +10,12 @@
 
 #include "MapDummy.h"
 #include "MapObject.h"
+#include "MapObject_Ins.h"
 #include "Terrain.h"
 
 #include "HelpMaker.h"
+
+#include "Model_Instance.h"
 
 CObject_Window::CObject_Window(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CImWindow(pDevice, pContext)
@@ -105,6 +108,64 @@ void CObject_Window::Tick(_float fTimeDelta)
 	}
 
 	ImGui::Separator();
+
+	if (true == m_bOne)
+	{
+		_float4x4 PivotMatrix = XMMatrixIdentity();
+		BEGININSTANCE; if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Model_Instance_Tree"),
+			CModel_Instance::Create(m_pDevice, m_pContext, CModel_Instance::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Tree/Tree.dat"), PivotMatrix))))
+		{
+			MSG_BOX("Failed to Create New CModel_Instance Prototype");
+		} ENDINSTANCE;
+
+		m_bOne = false;
+	}
+
+	if (ImGui::Button("test"))
+	{
+		ImGui::Text("Press H to Install");
+
+		// 범위 안에 있을 경우 H키를 눌러 설치
+		BEGININSTANCE; 
+		{
+			// 맵 오브젝트에 번호 붙여줌
+			_tchar wszobjName[MAX_PATH] = { 0 };
+			_stprintf_s(wszobjName, TEXT("GameObject_MapObject_%d"), (m_iMapObjectIndex));
+			Deep_Copy_Tag(wszobjName);
+
+			_float4x4 vWorldMatrix = m_pDummy->Get_Transform()->Get_WorldMatrix();
+
+			// 번호를 붙인 태그로 MapObject 등록
+			if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL,
+				TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_MapObject"),
+				m_vecMapObjectTag.at(m_iMapObjectIndex).c_str(), &vWorldMatrix)))
+			{
+				MSG_BOX("Failed to Install MapObject");
+				ENDINSTANCE;
+				return;
+			}
+
+			// 마지막에 설치한 맵 오브젝트 주소 가져옴
+			m_pObjIns = static_cast<CMapObject_Ins*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL,
+				TEXT("Layer_MapObject"), wszobjName));
+
+			m_pObjIns->Add_Model_Component(TEXT("Prototype_Model_Instance_Tree"));
+			//m_pObjIns->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMesh"));
+			m_pObjIns->Set_Color(m_iMapObjectIndex); // 고유한 색깔 값을 넣어줌
+
+			//// 저장용 벡터에 넣어준다.
+			//SAVEOBJECTDESC SaveDesc;
+
+			//SaveDesc.matTransform = vWorldMatrix;
+			//lstrcpy(SaveDesc.wszTag, m_vecModelList_t.at(m_iModelIndex));
+			//SaveDesc.iTagLen = lstrlen(SaveDesc.wszTag) * 2;
+
+			//m_vecSaveObject.push_back(SaveDesc);
+
+			++m_iMapObjectIndex;
+
+		} ENDINSTANCE;
+	}
 
 	ImGui::End();
 }
@@ -336,8 +397,6 @@ void CObject_Window::Select_Model()
 			MSG_BOX("Failed to Change Model");
 			return;
 		}
-
-		CModel* pDummyModel = static_cast<CModel*>(m_pDummy->Find_Component(TEXT("Com_Buffer")));
 
 		// 현재 선택된 모델 이름 갱신
 		_char szName[MAX_PATH];
