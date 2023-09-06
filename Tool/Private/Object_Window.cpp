@@ -499,7 +499,7 @@ void CObject_Window::Mesh_Picking_Menu()
 		// Usage 버퍼 생성, 읽기 전용이다.
 		ID3D11Texture2D* pCopyTexture2D = { nullptr };
 		D3D11_TEXTURE2D_DESC	TextureDescCopy;
-		ZEROMEM(&TextureDescCopy, sizeof(D3D11_TEXTURE2D_DESC));
+		ZEROMEMSIZE(&TextureDescCopy, sizeof(D3D11_TEXTURE2D_DESC));
 
 		TextureDescCopy.Width = 1;
 		TextureDescCopy.Height = 1;

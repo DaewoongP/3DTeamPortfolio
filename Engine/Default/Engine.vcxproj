@@ -368,6 +368,7 @@ call Copy.bat</Command>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <DisableSpecificWarnings>4828;4204;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

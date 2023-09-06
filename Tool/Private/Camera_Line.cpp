@@ -80,6 +80,8 @@ HRESULT CCamera_Line::LineBufferInitialize(void* _pArg)
 
 		m_pLineBuffer->Tick(*LineDesc);
 	}
+
+	return S_OK;
 }
 
 void CCamera_Line::LineBufferClear()

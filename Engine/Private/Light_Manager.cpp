@@ -39,8 +39,6 @@ void CLight_Manager::Set_Light(_uint iIndex, CLight::LIGHTDESC LightDesc)
 	if (0.f < *pPipeLine->Get_CamFar())
 		XMStoreFloat4x4(&m_ProjLight, XMMatrixPerspectiveFovLH(XMConvertToRadians(60.f), 1280.f / 720.f, 0.2f, *pPipeLine->Get_CamFar()));
 	Safe_Release(pPipeLine);
-
-
 }
 
 const CLight::LIGHTDESC* CLight_Manager::Get_Light_Name(string Name)
@@ -78,9 +76,7 @@ CLight* CLight_Manager::Add_Lights(ID3D11Device* pDevice, ID3D11DeviceContext* p
 	XMStoreFloat4x4(&m_ProjLight, XMMatrixPerspectiveFovLH(XMConvertToRadians(60.f), 1280.f / 720.f, 0.2f ,*pPipeLine->Get_CamFar()));
 	Safe_Release(pPipeLine);
 
-
-
-		if (nullptr == pLight)
+	if (nullptr == pLight)
 		return nullptr;
 
 	m_Lights.push_back(pLight);

@@ -206,7 +206,7 @@ HRESULT CMainTool::Add_Windows()
 
 	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("Animation_Window"),
 		CAnimation_Window::Create(m_pDevice, m_pContext,
-			ImVec2(_float(100.f), _float(0.f)), ImVec2(446.f, 768.f)))))
+			ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(446.f, 768.f)))))
 		MSG_BOX("Failed Create Animation_Window");
 
 	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("UI_Window"),

@@ -420,3 +420,5 @@ Tool.lib
 *.dat
 *.zip
 *.spritefont
+
+Resources/

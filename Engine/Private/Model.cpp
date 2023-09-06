@@ -1315,6 +1315,8 @@ HRESULT CModel::Ready_Animations_GCM()
 			m_tAnimationDesc[iAnimTypeIndex].Animations.push_back(pAnimation);
 		}
 	}
+
+	return S_OK;
 }
 
 HRESULT CModel::Write_File_GCM(TYPE eType, const _tchar* pModelFilePath)

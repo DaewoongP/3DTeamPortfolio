@@ -69,7 +69,9 @@ HRESULT CAction::Tick(const _float& fTimeDelta)
 		if (BEHAVIOR_RUNNING == hr)
 			m_isFinishBehaviors = false;
 
+#ifdef _DEBUG
 		pBehavior->Set_ReturnData(hr);
+#endif // _DEBUG
 	}
 
 	_bool bCheck = { false };

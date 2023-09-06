@@ -23,7 +23,6 @@ public:
 	}CAMERADESC;
 
 protected:
-	explicit CCamera() = default;
 	explicit CCamera(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual ~CCamera() = default;
 
@@ -34,14 +33,13 @@ public:
 	virtual void Tick(const _float& fTimeDelta);
 
 protected:
-	class CTransform*	m_pTransform = { nullptr };
-	class CPipeLine*	m_pPipeLine = { nullptr };
+	class CTransform*			m_pTransform = { nullptr };
 
 private:
-	CAMERADESC m_CameraDesc;
+	CAMERADESC					m_CameraDesc;
 
-	ID3D11Device* m_pDevice = { nullptr };
-	ID3D11DeviceContext* m_pContext = { nullptr };
+	ID3D11Device*				m_pDevice = { nullptr };
+	ID3D11DeviceContext*		m_pContext = { nullptr };
 
 public:
 	static CCamera* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const CAMERADESC& CameraDesc);

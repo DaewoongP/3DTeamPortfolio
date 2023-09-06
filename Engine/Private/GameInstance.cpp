@@ -515,7 +515,7 @@ _float4 CGameInstance::Get_RandomVectorInSphere(_float fRadius)
 	return m_pCalculator->Get_RandomVectorInSphere(fRadius);
 }
 
-HRESULT CGameInstance::ReadFileInDirectory(vector<wstring>& OutVector, const _tchar* pFilePath, const _tchar* pExt)
+HRESULT CGameInstance::ReadFileInDirectory(_Inout_ vector<wstring>& OutVector, const _tchar* pFilePath, const _tchar* pExt)
 {
 	NULL_CHECK_RETURN_MSG(m_pCalculator, E_FAIL, TEXT("Calculator NULL"));
 
@@ -742,6 +742,8 @@ void CGameInstance::Release_Engine()
 
 	CTime_Manager::GetInstance()->DestroyInstance();
 
+	CCamera_Manager::GetInstance()->DestroyInstance();
+
 	CPipeLine::GetInstance()->DestroyInstance();
 
 	CComponent_Manager::GetInstance()->DestroyInstance();
@@ -763,8 +765,6 @@ void CGameInstance::Release_Engine()
 	CSound_Manager::GetInstance()->DestroyInstance();
 
 	CCalculator::GetInstance()->DestroyInstance();
-
-	CCamera_Manager::GetInstance()->DestroyInstance();
 
 	CLight_Manager::GetInstance()->DestroyInstance();
 

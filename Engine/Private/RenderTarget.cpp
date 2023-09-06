@@ -46,7 +46,7 @@ HRESULT CRenderTarget::Initialize(_uint iSizeX, _uint iSizeY, DXGI_FORMAT eForma
 	return S_OK;
 }
 
-HRESULT CRenderTarget::Initialize_Depth(_uint iSizeX, _uint iSizeY, DXGI_FORMAT eFormat, const _float4& vClearColor )
+HRESULT CRenderTarget::Initialize_Depth(_uint iSizeX, _uint iSizeY, DXGI_FORMAT eFormat, const _float4& vClearColor)
 {
 	ID3D11Texture2D* m_pDepthStencilTexture = nullptr;
 	D3D11_TEXTURE2D_DESC	TextureDesc;
@@ -149,5 +149,5 @@ void CRenderTarget::Free()
 	Safe_Release(m_pTexture2D);
 	Safe_Release(m_pShadowView);
 	Safe_Release(m_pContext);
-
+	Safe_Release(m_pDevice);
 }
