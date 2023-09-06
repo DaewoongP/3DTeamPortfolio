@@ -28,6 +28,8 @@
     <ClInclude Include="..\Public\Bounding_AABB.h" />
     <ClInclude Include="..\Public\Bounding_OBB.h" />
     <ClInclude Include="..\public\Bounding_Sphere.h" />
+    <ClInclude Include="..\Public\Mesh_Instance.h" />
+    <ClInclude Include="..\Public\Model_Instance.h" />
     <ClInclude Include="..\Public\Time_Manager.h" />
     <ClInclude Include="..\public\Calculator.h" />
     <ClInclude Include="..\public\Camera.h" />
@@ -48,7 +50,6 @@
     <ClInclude Include="..\Public\CustomModel.h" />
     <ClInclude Include="..\Public\Modules.h" />
     <ClInclude Include="..\Public\Status.h" />
-    <ClInclude Include="..\Public\VIBuffer_Object_Instance.h" />
     <ClInclude Include="..\public\VIBuffer_Rect_Color_Instance.h" />
     <ClInclude Include="..\Public\VIBuffer_Sprite.h" />
     <ClInclude Include="..\Public\Ignite.h" />
@@ -130,6 +131,7 @@
     <ClCompile Include="..\Private\Bounding_AABB.cpp" />
     <ClCompile Include="..\Private\Bounding_OBB.cpp" />
     <ClCompile Include="..\private\Bounding_Sphere.cpp" />
+    <ClCompile Include="..\Private\Mesh_Instance.cpp" />
     <ClCompile Include="..\Private\Time_Manager.cpp" />
     <ClCompile Include="..\private\Calculator.cpp" />
     <ClCompile Include="..\private\Camera.cpp" />
@@ -150,7 +152,6 @@
     <ClCompile Include="..\Private\Modules.cpp" />
     <ClCompile Include="..\Private\Status.cpp" />
     <ClCompile Include="..\Private\VIBuffer_Rect_Color_Instance.cpp" />
-    <ClCompile Include="..\Private\VIBuffer_Object_Instance.cpp" />
     <ClCompile Include="..\Private\VIBuffer_Sprite.cpp" />
     <ClCompile Include="..\Private\Ignite.cpp" />
     <ClCompile Include="..\Private\Defence.cpp" />
@@ -211,6 +212,7 @@
     <ClCompile Include="..\Private\VIBuffer.cpp" />
     <ClCompile Include="..\Private\VIBuffer_Rect.cpp" />
     <ClCompile Include="..\private\VIBuffer_Triangle.cpp" />
+    <ClCompile Include="..\Public\Model_Instance.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Debug.hlsl" />
