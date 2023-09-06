@@ -542,6 +542,14 @@ PxControllerManager* CGameInstance::Get_ControllerManager() const
 
 	return m_pPhysX_Manager->Get_ControllerManager();
 }
+
+cloth::Factory* CGameInstance::Get_ClothFactory() const
+{
+	NULL_CHECK_RETURN_MSG(m_pPhysX_Manager, nullptr, TEXT("PhysX_Manager NULL"));
+
+	return m_pPhysX_Manager->Get_ClothFactory();
+}
+
 HRESULT CGameInstance::Add_MainCamera(CCamera* _pMainCamera)
 {
 	NULL_CHECK_RETURN_MSG(m_pCamera_Manager, E_FAIL, TEXT("Camera NULL"));

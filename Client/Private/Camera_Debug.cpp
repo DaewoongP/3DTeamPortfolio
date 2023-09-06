@@ -187,6 +187,13 @@ void CCamera_Debug::Debug_ImGui(_float fTimeDelta)
 		pCam->Set_Position(vPlayerPos + m_v3rdCamOffset);
 	}
 
+	if (ImGui::Button("Goto 0"))
+	{
+		pCam->Set_Position(_float3(0.5f, 5.f, -5.f));
+		pCam->LookAt(_float3(0.f, 0.f, 0.f));
+		
+	}
+
 	Safe_Release(pGameInstance);
 
 	ImGui::End();

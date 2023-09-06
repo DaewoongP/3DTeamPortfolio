@@ -124,6 +124,9 @@
     <Filter Include="02. GameObject\02. Enemy\03. Golem\99. Weapons">
       <UniqueIdentifier>{fde3512d-c9d7-4f98-baac-ed8650da6e1a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\99. Debug\Cloth">
+      <UniqueIdentifier>{3f5e0d18-9b63-46c6-b1ee-b4c3d0a446b1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -267,6 +270,9 @@
     <ClInclude Include="..\Public\Weapon_Pensive.h">
       <Filter>02. GameObject\02. Enemy\03. Golem\99. Weapons</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Test_Cloth.h">
+      <Filter>02. GameObject\99. Debug\Cloth</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -379,6 +385,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Weapon_Pensive.cpp">
       <Filter>02. GameObject\02. Enemy\03. Golem\99. Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Test_Cloth.cpp">
+      <Filter>02. GameObject\99. Debug\Cloth</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

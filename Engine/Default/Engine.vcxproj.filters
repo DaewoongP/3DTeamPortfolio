@@ -301,6 +301,9 @@
     <Filter Include="01. Utility\03. Components\19. MeshEffect">
       <UniqueIdentifier>{35f210f5-64ec-49e0-97dd-d4fdb9664c1b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\03. Components\07. VIBuffer\Cloth">
+      <UniqueIdentifier>{69e6ba97-e3de-4133-b08b-1d0ed23bb071}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -603,6 +606,9 @@
     <ClInclude Include="..\public\PXAssertHandler.h">
       <Filter>01. Utility\11. Physics\Handler</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\VIBuffer_Cloth.h">
+      <Filter>01. Utility\03. Components\07. VIBuffer\Cloth</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -874,6 +880,9 @@
     </ClCompile>
     <ClCompile Include="..\private\PXAssertHandler.cpp">
       <Filter>01. Utility\11. Physics\Handler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\VIBuffer_Cloth.cpp">
+      <Filter>01. Utility\03. Components\07. VIBuffer\Cloth</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

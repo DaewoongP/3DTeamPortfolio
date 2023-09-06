@@ -135,6 +135,7 @@ public: /* For.PhysX_Manager */
 	PxPhysics* Get_Physics() const;
 	PxScene* Get_PhysxScene() const;
 	PxControllerManager* Get_ControllerManager() const;
+	cloth::Factory* Get_ClothFactory() const;
 
 public:	/* For.Camera_Manager */
 	//매인 카메라를 넣어준다.

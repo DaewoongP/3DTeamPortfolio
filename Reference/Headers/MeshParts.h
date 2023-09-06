@@ -50,7 +50,7 @@ public:
 	virtual HRESULT Render(const _uint& _iMeshIndex);
 
 public:
-	HRESULT Bind_Material(CShader* _pShader, const char* _pConstantName, 
+	HRESULT Bind_Material(class CShader* _pShader, const char* _pConstantName, 
 		const _uint& _iMeshIndex, Engine::TextureType _MaterialType);
 
 private:
