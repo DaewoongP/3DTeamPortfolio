@@ -34,7 +34,7 @@ private:
 	virtual ~CPhysX_Manager() = default;
 	
 public:
-	HRESULT Initialize();
+	HRESULT Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	void Tick(_float fTimeDelta);
 
 private: /* 에러 메세지 등 cout 처리 */

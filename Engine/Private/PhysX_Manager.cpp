@@ -3,6 +3,8 @@
 #include "PhysXConverter.h"
 #include "Input_Device.h"
 
+#include <NvClothExt/ClothFabricCooker.h>
+
 IMPLEMENT_SINGLETON(CPhysX_Manager)
 
 #ifdef _DEBUG
@@ -37,7 +39,7 @@ void CPhysX_Manager::Add_LastTriangleBufferIndex(_uint iNumTriangles)
 }
 #endif // _DEBUG
 
-HRESULT CPhysX_Manager::Initialize()
+HRESULT CPhysX_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	// 파운데이션 생성
 	m_pFoundation = PxCreateFoundation(PX_PHYSICS_VERSION, m_PXAllocator, m_PXErrorCallBack);
@@ -83,14 +85,101 @@ HRESULT CPhysX_Manager::Initialize()
 		return E_FAIL;
 	}
 
+	// NvCloth Initialize
+	m_pContextManagerCallBack = New CNVContextCallBack(pDevice, pContext);
+	if (nullptr == m_pContextManagerCallBack)
+	{
+		MSG_BOX("Failed Create NvCallBack");
+		return E_FAIL;
+	}
+
 	cloth::InitializeNvCloth(&m_PXAllocator, &m_PXErrorCallBack, m_pAssertHandler, nullptr);
-	m_pClothFactory = NvClothCreateFactoryCPU();
+	m_pClothFactory = NvClothCreateFactoryDX11(m_pContextManagerCallBack);
 	if (nullptr == m_pClothFactory)
 	{
 		MSG_BOX("Failed Create ClothFactory");
 		return E_FAIL;
 	}
 
+
+	//----------------------------------------------------------------------------------------
+	//nv::cloth::ClothMeshDesc meshDesc;
+
+	////Fill meshDesc with data
+	//meshDesc.setToDefault();
+	//meshDesc.points.data = vertexArray;
+	//meshDesc.points.stride = sizeof(vertexArray[0]);
+	//meshDesc.points.count = vertexCount;
+	////etc. for quads, triangles and invMasses
+
+	//physx::PxVec3 gravity(0.0f, -9.8f, 0.0f);
+	//nv::cloth::Vector<int32_t>::Type phaseTypeInfo;
+	//nv::cloth::Fabric* fabric = NvClothCookFabricFromMesh(m_pClothFactory, meshDesc, gravity, &phaseTypeInfo);
+
+	//physx::PxVec4* particlePositions = ...;
+
+
+	//nv::cloth::Cloth* cloth = m_pClothFactory->createCloth(nv::cloth::Range<physx::PxVec4>(particlePositions, particlePositions + particleCount), *fabric);
+	//// particlePositions can be freed here.'
+
+
+
+	//nv::cloth::PhaseConfig* phases = new nv::cloth::PhaseConfig[fabric->getNumPhases()];
+	//for (int i = 0; i < fabric->getNumPhases(); i++)
+	//{
+	//	phases[i].mPhaseIndex = i; // Set index to the corresponding set (constraint group)
+
+	//	//Give phases different configs depending on type
+	//	switch (phaseTypeInfo[i])
+	//	{
+	//	case nv::cloth::ClothFabricPhaseType::eINVALID:
+	//		//ERROR
+	//		break;
+	//	case nv::cloth::ClothFabricPhaseType::eVERTICAL:
+	//		break;
+	//	case nv::cloth::ClothFabricPhaseType::eHORIZONTAL:
+	//		break;
+	//	case nv::cloth::ClothFabricPhaseType::eBENDING:
+	//		break;
+	//	case nv::cloth::ClothFabricPhaseType::eSHEARING:
+	//		break;
+	//	}
+
+	//	//For this example we give very phase the same config
+	//	phases[i].mStiffness = 1.0f;
+	//	phases[i].mStiffnessMultiplier = 1.0f;
+	//	phases[i].mCompressionLimit = 1.0f;
+	//	phases[i].mStretchLimit = 1.0f;
+	//}
+
+	//cloth->setPhaseConfig(nv::cloth::Range<nv::cloth::PhaseConfig>(phases, phases + fabric->getNumPhases()));
+	//delete[] phases;
+
+	//nv::cloth::Solver* solver = factory->createSolver();
+
+	//solver->addCloth(cloth);
+	//float deltaTime = 1.0f / 60.0f;
+	//solver->beginSimulation(deltaTime);
+	//for (int i = 0; i < solver->getSimulationChunkCount(); i++)
+	//{
+	//	solver->simulateChunk(i);
+	//}
+
+	//// Render
+	//nv::cloth::MappedRange<physx::PxVec4> particles = mCloth->getCurrentParticles();
+	//for (int i = 0; i < particles.size(); i++)
+	//{
+	//	//do something with particles[i]
+	//	//the xyz components are the current positions
+	//	//the w component is the invMass.
+	//}
+
+
+	//solver->endSimulation();
+	//solver->removeCloth(cloth);
+	//NV_CLOTH_DELETE(solver);
+
+	//NV_CLOTH_DELETE(cloth);
 	return S_OK;
 }
 
@@ -135,8 +224,13 @@ void CPhysX_Manager::Free()
 {
 	// 순서 주의
 	// 삭제 순서는 거의 이걸로 고정합니다.
+	
 	NvClothDestroyFactory(m_pClothFactory);
 	m_pClothFactory = nullptr;
+
+	delete m_pContextManagerCallBack;
+	m_pContextManagerCallBack = nullptr;
+
 	if (nullptr != m_pControllerManager)
 	{
 		m_pControllerManager->release();
