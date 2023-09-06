@@ -119,8 +119,8 @@ HRESULT CMainTool::Initialize_ImGui()
 	ImGuiIO& io = ImGui::GetIO();
 
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-	//io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
-	//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
+	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
 
 	ImGui::StyleColorsDark();
 	ImGuiStyle& style = ImGui::GetStyle();
@@ -214,7 +214,7 @@ HRESULT CMainTool::Add_Windows()
 
 	if (FAILED(m_pWindow_Manager->Add_Window(TEXT("Light_Window"),
 		CLight_Window::Create(m_pDevice, m_pContext,
-			ImVec2(_float(100.f+8), _float(0.f)), ImVec2(446.f, 768.f)))))
+			ImVec2(_float(g_iWinSizeX + 8), _float(0.f)), ImVec2(446.f, 768.f)))))
 		MSG_BOX("Failed Create Light_Window");
 
 	return S_OK;

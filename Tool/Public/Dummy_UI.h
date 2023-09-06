@@ -24,6 +24,8 @@ protected:
 
 public:
 	_float2 Get_fXY() { return _float2(m_fX, m_fY); }
+	_bool	Get_bParent() { return m_isParent; }
+	CDummy_UI* Get_Parent() { return m_pParent; }
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -67,7 +69,7 @@ private:
 	HRESULT SetUp_ShaderResources();
 
 protected:
-	_float2			m_Offset ={ 0.f, 0.f };
+	_float2			m_vCombinedXY ={ 0.f, 0.f };
 	// 윈도우창의 실제 x좌표
 	_float			m_fX = { 650.f };
 	// 윈도우창의 실제 y좌표

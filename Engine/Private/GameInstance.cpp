@@ -64,7 +64,7 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInst, _uint iNumLevels, cons
 	if (FAILED(m_pSound_Manager->Initialize()))
 		return E_FAIL;
 
-	if (FAILED(m_pPhysX_Manager->Initialize()))
+	if (FAILED(m_pPhysX_Manager->Initialize(*ppDevice, *ppContext)))
 		return E_FAIL;
 
 	if (FAILED(m_pCamera_Manager->Initialize_CameraManager()))

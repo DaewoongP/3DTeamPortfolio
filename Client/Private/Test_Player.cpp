@@ -169,44 +169,8 @@ HRESULT CTest_Player::Add_Components()
 		return E_FAIL;
 	}
 
-	/* For.Prototype_Component_MeshParts_Head */
-	if (FAILED(m_pModelCom->Add_MeshParts(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Head"), CCustomModel::HEAD)))
-	{
-		MSG_BOX("[CTest_Player] Failed Add_MeshParts");
-		return E_FAIL;
-	}
-	/* For.Prototype_Component_MeshParts_Arm */
-	/*if (FAILED(m_pModelCom->Add_MeshParts(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Arm"), CCustomModel::ARM)))
-	{
-		MSG_BOX("[CTest_Player] Failed Add_MeshParts");
-		return E_FAIL;
-	}*/
-	/* For.Prototype_Component_MeshParts_Up */
-	if (FAILED(m_pModelCom->Add_MeshParts(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Up"), CCustomModel::UPPERBODY)))
-	{
-		MSG_BOX("[CTest_Player] Failed Add_MeshParts");
-		return E_FAIL;
-	}
-	/* For.Prototype_Component_MeshParts_Low */
-	if (FAILED(m_pModelCom->Add_MeshParts(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Low"), CCustomModel::UNDERBODY)))
-	{
-		MSG_BOX("[CTest_Player] Failed Add_MeshParts");
-		return E_FAIL;
-	}
-	/* For.Prototype_Component_MeshParts_Robe */
-	if (FAILED(m_pModelCom->Add_MeshParts(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Robe"), CCustomModel::ROBE)))
-	{
-		MSG_BOX("[CTest_Player] Failed Add_MeshParts");
-		return E_FAIL;
-	}
-	/* For.Prototype_Component_MeshParts_Socks */
-	if (FAILED(m_pModelCom->Add_MeshParts(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Socks"), CCustomModel::SOCKS)))
-	{
-		MSG_BOX("[CTest_Player] Failed Add_MeshParts");
-		return E_FAIL;
-	}
-	/* For.Prototype_Component_MeshParts_Shoes */
-	if (FAILED(m_pModelCom->Add_MeshParts(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Shoes"), CCustomModel::SHOES)))
+	/* For.Prototype_Component_MeshParts_Robe_Student */
+	if (FAILED(m_pModelCom->Add_MeshParts(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Robe_Student"), CCustomModel::ROBE)))
 	{
 		MSG_BOX("[CTest_Player] Failed Add_MeshParts");
 		return E_FAIL;

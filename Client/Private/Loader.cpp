@@ -211,6 +211,11 @@ HRESULT CLoader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Robe"),
 			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Robe/Robe.dat"), TEXT("ROBE_Default")))))
 			throw TEXT("Prototype_Component_MeshParts_Robe");
+		
+		/* For.Prototype_Component_MeshParts_Robe_Student */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Robe_Student"),
+			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Robe_Student/Robe_Student.dat"), TEXT("ROBE_Student")))))
+			throw TEXT("Prototype_Component_MeshParts_Robe_Student");
 
 		/* For.Prototype_Component_MeshParts_Socks */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Socks"),

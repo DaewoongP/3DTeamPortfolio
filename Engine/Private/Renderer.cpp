@@ -65,18 +65,22 @@ HRESULT CRenderer::Initialize_Prototype()
 		TEXT("Target_Blur"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
 
+#ifdef _DEBUG
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
-		TEXT("Target_Picking"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f)
-		, true)))
+		TEXT("Target_Picking"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f), true)))
 		return E_FAIL; // ¸Ê ¿ÀºêÁ§ÅÍ Fast PickingÀ» À§ÇÑ ·»´õ Å¸°Ù
+
+	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
+		TEXT("Target_UI"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
+		return E_FAIL;
+#endif // _DEBUG
+
 
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Diffuse"))))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Normal"))))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Depth"))))
-		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Picking"), TEXT("Target_Picking"))))  // ¸Ê ¿ÀºêÁ§ÅÍ Fast PickingÀ» À§ÇÑ ·»´õ Å¸°Ù
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Lights"), TEXT("Target_Shade"))))
 		return E_FAIL;
@@ -92,6 +96,13 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Blur"), TEXT("Target_Blur"))))
 		return E_FAIL;
+
+#ifdef _DEBUG
+	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Picking"), TEXT("Target_Picking"))))  // ¸Ê ¿ÀºêÁ§ÅÍ Fast PickingÀ» À§ÇÑ ·»´õ Å¸°Ù
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_UI"), TEXT("Target_UI"))))  // UI
+		return E_FAIL;
+#endif // _DEBUG
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
@@ -203,6 +214,11 @@ HRESULT CRenderer::Draw_RenderGroup()
 	if (FAILED(Render_UI()))
 		return E_FAIL;
 
+#ifdef _DEBUG
+	if (FAILED(Render_UITexture()))
+		return E_FAIL;
+#endif // _DEBUG
+
 
 #ifdef _DEBUG
 	CInput_Device* pInput_Device = CInput_Device::GetInstance();
@@ -282,7 +298,7 @@ HRESULT CRenderer::Render_NonBlend()
 
 	return S_OK;
 }
-
+#ifdef _DEBUG
 HRESULT CRenderer::Render_Picking()
 {
 	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Picking"))))
@@ -303,7 +319,7 @@ HRESULT CRenderer::Render_Picking()
 		
 	return S_OK;
 }
-
+#endif // _DEBUG
 HRESULT CRenderer::Render_Lights()
 {
 	if (nullptr == m_pRenderTarget_Manager)
@@ -569,6 +585,29 @@ HRESULT CRenderer::Render_UI()
 	return S_OK;
 }
 
+#ifdef _DEBUG
+HRESULT CRenderer::Render_UITexture()
+{
+	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_UI"))))
+		return E_FAIL;
+
+	for (auto& pGameObject : m_RenderObjects[RENDER_UITEXTURE])
+	{
+		if (nullptr != pGameObject)
+			pGameObject->Render();
+
+		Safe_Release(pGameObject);
+	}
+
+	m_RenderObjects[RENDER_UITEXTURE].clear();
+
+	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext)))
+		return E_FAIL;
+
+	return S_OK;
+}
+#endif // _DEBUG
+
 HRESULT CRenderer::Sort_Blend()
 {
 	CPipeLine* pPipeLine = CPipeLine::GetInstance();
@@ -625,8 +664,6 @@ HRESULT CRenderer::Add_Components()
 	m_pPostProcessingBuffer = CVIBuffer_Rect::Create(m_pDevice, m_pContext);
 	if (nullptr == m_pPostProcessingBuffer)
 		return E_FAIL;
-
-	
 
 	m_pSSAOShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_SSAO.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements);
 	if (nullptr == m_pSSAOShader)
