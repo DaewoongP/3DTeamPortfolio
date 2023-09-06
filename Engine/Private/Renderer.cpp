@@ -50,17 +50,19 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_PostProcessing"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 0.f))))
 		return E_FAIL;
+	_uint2 SizeShadow = { 8000,6000 };
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
-		TEXT("Target_Shadow_Depth"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f))))
+		TEXT("Target_Shadow_Depth"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f),true)))
 		return E_FAIL;
+	
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_Shadow"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
-		TEXT("Target_SSAO"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
+		TEXT("Target_SSAO"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
-		TEXT("Target_Blur"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
+		TEXT("Target_Blur"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
 
 #ifdef _DEBUG
@@ -179,14 +181,16 @@ HRESULT CRenderer::Draw_RenderGroup()
 
 	if (FAILED(Render_Priority()))
 		return E_FAIL;
+	
 	if (FAILED(Render_NonBlend()))
+		return E_FAIL;
+	if (FAILED(Render_Lights()))
 		return E_FAIL;
 #ifdef _DEBUG
 	if (FAILED(Render_Picking())) 	// ¸Ê ¿ÀºêÁ§ÅÍ Fast PickingÀ» À§ÇÑ ·»´õ Å¸°Ù
 		return E_FAIL;
 #endif // _DEBUG
-	if (FAILED(Render_Lights()))
-		return E_FAIL;
+	
 	if (FAILED(Render_Shadow()))
 		return E_FAIL;
 	if (FAILED(Render_SSAO()))
@@ -262,6 +266,7 @@ HRESULT CRenderer::Render_NonBlend()
 
 	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Shadow_Depth"))))
 		return E_FAIL;
+	//m_pDevice->
 
 	for (auto& pGameObject : m_RenderObjects[RENDER_NONBLEND])
 	{
@@ -380,6 +385,8 @@ HRESULT CRenderer::Render_Shadow()
 
 	if (FAILED(m_pSSAOShader->Bind_Matrix("g_ProjMatrixInv",pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
+	if (FAILED(m_pSSAOShader->Bind_RawValue("g_fCamFar", pPipeLine->Get_CamFar(), sizeof(_float))))
+		return E_FAIL;
 	//ºûÀÇ°ªÀ» ´øÁ®ÁÖ±â
 	if (FAILED(m_pSSAOShader->Bind_Matrix("g_vLightView", m_pLight_Manager->Get_LightView())))
 		return E_FAIL;
@@ -422,26 +429,6 @@ HRESULT CRenderer::Render_SSAO()
 	if (FAILED(m_pSSAOShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
 
-
-	_float3 g_vRandom[13] =
-	{
-		_float3(0.2024537f, 0.841204f, -0.9060241f),
-		_float3(-0.221324f, 0.324325f, -0.8234234f),
-		_float3(0.8724724f, 0.8547973f, -0.43252611f),
-		_float3(0.2698734f, 0.5684943f, -0.12515022f),
-		_float3(0.26482924f, 0.236820f, 0.72384287f),
-		_float3(0.20348342f, 0.234832f, 0.23682923f),
-		_float3(-0.0012315f, 0.8234823f, 0.23483244f),
-		_float3(-0.2342863f, 0.234982f, -0.00001524f),
-		_float3(-0.3426888f, 0.780742f, -0.8349823f),
-		_float3(-0.5234832f,0.8291234f,0.23941929f),
-		_float3(0.90889192f,0.8123121f,-0.12812992f),
-		_float3(0.4520239f,0.1201011f,-0.82943914f)
-	};
-	
-	if (FAILED(m_pSSAOShader->Bind_RawValue("g_vRandom", &g_vRandom, sizeof(_float3))))
-		return E_FAIL;
-
 	if (FAILED(m_pSSAOShader->Begin("SSAO")))
 		return E_FAIL;
 
@@ -464,8 +451,8 @@ HRESULT CRenderer::Render_Deferred()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Shadow"), m_pDeferredShader, "g_ShadowTexture")))
 		return E_FAIL;
-	/*if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Specular"), m_pDeferredShader, "g_SpecularTexture")))
-		return E_FAIL;*/
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Specular"), m_pDeferredShader, "g_SpecularTexture")))
+		return E_FAIL;
 
 	if (FAILED(m_pDeferredShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;

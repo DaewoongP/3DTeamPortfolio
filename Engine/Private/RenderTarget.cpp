@@ -54,28 +54,6 @@ HRESULT CRenderTarget::Initialize(_uint iSizeX, _uint iSizeY, DXGI_FORMAT eForma
 		Initialize(iSizeX, iSizeY, eFormat, vClearColor);
 		return S_OK;
 	}
-
-	// Usage 滚欺 积己
-	D3D11_TEXTURE2D_DESC	TextureDescCopy;
-	ZEROMEM(&TextureDescCopy, sizeof(D3D11_TEXTURE2D_DESC));
-	
-	TextureDescCopy.Width = 1;
-	TextureDescCopy.Height = 1;
-	TextureDescCopy.MipLevels = 1;
-	TextureDescCopy.ArraySize = 1;
-	TextureDescCopy.Format = eFormat;
-
-	TextureDescCopy.SampleDesc.Quality = 0;
-	TextureDescCopy.SampleDesc.Count = 1;
-	
-	TextureDescCopy.Usage = D3D11_USAGE_STAGING;
-	TextureDescCopy.BindFlags = 0;
-	TextureDescCopy.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE | D3D11_CPU_ACCESS_READ;
-	TextureDescCopy.MiscFlags = 0;
-
-	if (FAILED(m_pDevice->CreateTexture2D(&TextureDescCopy, nullptr, &m_pCopyTexture2D)))
-		return E_FAIL;
-
 	// 老馆 滚欺 积己
 	D3D11_TEXTURE2D_DESC	TextureDesc;
 	ZeroMemory(&TextureDesc, sizeof(D3D11_TEXTURE2D_DESC));
@@ -94,21 +72,50 @@ HRESULT CRenderTarget::Initialize(_uint iSizeX, _uint iSizeY, DXGI_FORMAT eForma
 	TextureDesc.CPUAccessFlags = 0;
 	TextureDesc.MiscFlags = 0;
 
-	/// RenderTargetView 2D
-	D3D11_RENDER_TARGET_VIEW_DESC rtvDesc;
-	ZeroMemory(&rtvDesc, sizeof(rtvDesc));
-	rtvDesc.Format = TextureDesc.Format;
-	rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
-	rtvDesc.Texture2D.MipSlice = 0;
-
 	if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &m_pTexture2D)))
 		return E_FAIL;
 
-	if (FAILED(m_pDevice->CreateRenderTargetView(m_pTexture2D, &rtvDesc, &m_pRTV)))
+	if (FAILED(m_pDevice->CreateRenderTargetView(m_pTexture2D, nullptr, &m_pRTV)))
 		return E_FAIL;
 
 	if (FAILED(m_pDevice->CreateShaderResourceView(m_pTexture2D, nullptr, &m_pSRV)))
 		return E_FAIL;
+
+	m_vClearColor = vClearColor;
+	Initialize_Depth(iSizeX, iSizeY, eFormat, m_vClearColor);
+
+	return S_OK;
+}
+
+HRESULT CRenderTarget::Initialize_Depth(_uint iSizeX, _uint iSizeY, DXGI_FORMAT eFormat, const _float4& vClearColor )
+{
+	ID3D11Texture2D* m_pDepthStencilTexture = nullptr;
+	D3D11_TEXTURE2D_DESC	TextureDesc;
+	ZeroMemory(&TextureDesc, sizeof(D3D11_TEXTURE2D_DESC));
+
+	TextureDesc.Width = 8000;
+	TextureDesc.Height = 6000;
+	TextureDesc.MipLevels = 1;
+	TextureDesc.ArraySize = 1;
+	TextureDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+
+	TextureDesc.SampleDesc.Quality = 0;
+	TextureDesc.SampleDesc.Count = 1;
+
+	TextureDesc.Usage = D3D11_USAGE_DEFAULT;
+
+	TextureDesc.BindFlags =  D3D11_BIND_DEPTH_STENCIL;
+	TextureDesc.CPUAccessFlags = 0;
+	TextureDesc.MiscFlags = 0;
+
+	
+	if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &m_pDepthStencilTexture)))
+		return E_FAIL;
+	
+	if (FAILED(m_pDevice->CreateDepthStencilView(m_pDepthStencilTexture, nullptr, &m_pShadowView)))
+		return E_FAIL;
+
+	Safe_Release(m_pDepthStencilTexture);
 
 	m_vClearColor = vClearColor;
 
@@ -181,7 +188,9 @@ void CRenderTarget::Free()
 	Safe_Release(m_pRTV);
 	Safe_Release(m_pSRV);
 	Safe_Release(m_pTexture2D);
+	Safe_Release(m_pShadowView);
 	Safe_Release(m_pCopyTexture2D);
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);
+
 }
