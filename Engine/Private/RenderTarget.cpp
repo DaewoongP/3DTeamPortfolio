@@ -63,14 +63,14 @@ HRESULT CRenderTarget::Initialize_Depth(_uint iSizeX, _uint iSizeY, DXGI_FORMAT 
 
 	TextureDesc.Usage = D3D11_USAGE_DEFAULT;
 
-	TextureDesc.BindFlags =  D3D11_BIND_DEPTH_STENCIL;
+	TextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 	TextureDesc.CPUAccessFlags = 0;
 	TextureDesc.MiscFlags = 0;
 
-	
+
 	if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &m_pDepthStencilTexture)))
 		return E_FAIL;
-	
+
 	if (FAILED(m_pDevice->CreateDepthStencilView(m_pDepthStencilTexture, nullptr, &m_pShadowView)))
 		return E_FAIL;
 
