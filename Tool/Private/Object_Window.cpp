@@ -12,9 +12,16 @@
 #include "MapObject.h"
 #include "Terrain.h"
 
+#include "HelpMaker.h"
+
 CObject_Window::CObject_Window(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CImWindow(pDevice, pContext)
 {
+	ZeroMemory(&m_vDummyMatrix, sizeof m_vDummyMatrix);
+
+	// 스케일 값 1로 초기화
+	for (size_t i = 0; i < 3; i++)
+		m_vDummyMatrix[DUMMY_SCALE][i] = 1.f;
 }
 
 HRESULT CObject_Window::Initialize(ImVec2 vWindowPos, ImVec2 vWindowSize)
@@ -24,10 +31,10 @@ HRESULT CObject_Window::Initialize(ImVec2 vWindowPos, ImVec2 vWindowSize)
 
 	// 0이 Non_Anim이다.
 	if (FAILED(Save_Model_Path(0, TEXT("../../Resources/Models/NonAnims/"))))
-		return E_FAIL;
-
-	if (FAILED(Create_Dummy()))
-		return E_FAIL;
+	{
+		MSG_BOX("Failed to Save_Model_Path function");
+		return S_OK;
+	}
 
 	m_WindowFlag = ImGuiWindowFlags_NoResize;
 
@@ -39,6 +46,26 @@ void CObject_Window::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	ImGui::Begin("Object", nullptr, m_WindowFlag);
+
+	// Create Dummy 버튼
+	if (ImGui::Button("Create Dummy"))
+	{
+		if (FAILED(Create_Dummy()))
+		{
+			MSG_BOX("Failed to Create Dummy");
+		}
+	}
+
+	ImGui::SameLine();
+
+	// Delete Dummy 버튼
+	if (ImGui::Button("Delete Dummy"))
+	{
+		if (FAILED(Delete_Dummy()))
+		{
+			MSG_BOX("Failed to Delete Dummy");
+		}
+	}
 
 	// Picking 창 On / Off
 	ImGui::Checkbox("Picking", &m_isCheckPicking);
@@ -62,9 +89,10 @@ void CObject_Window::Tick(_float fTimeDelta)
 	ImGui::Checkbox("Current MapObject", &m_isCurrentMapObject);
 	if (true == m_isCurrentMapObject)
 	{
-		ImGui::Begin("Current MapObject", nullptr);
+		// 새창으로 띄우면 프레임 떨어져서 주석처리함
+		//ImGui::Begin("Current MapObject", nullptr);
 		Current_MapObject();
-		ImGui::End();
+		//ImGui::End();
 	}
 
 	ImGui::Separator();
@@ -88,6 +116,12 @@ HRESULT CObject_Window::Render()
 
 void CObject_Window::Picking_Menu()
 {
+	if (nullptr == m_pDummy)
+	{
+		ImGui::Text("Dummy does not exist");
+		return;
+	}
+
 	_float3 vPos = Find_PickingPos();
 
 	// 현재 피킹 위치 표시
@@ -100,37 +134,88 @@ void CObject_Window::Picking_Menu()
 	ImGui::Text("%.1f", vPos.z);
 	ImGui::Separator();
 
-	// 마우스 좌클릭을 하면 해당 위치로 더미 이동
-	BEGININSTANCE; if (true == pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN) &&
-		-1.f != vPos.x)
+	ImGui::Text("Choice Install Method");
+	ImGui::RadioButton("1Click One_Install", &m_iInstallMethod, 0);
+	ImGui::RadioButton("1Pressing Multi_Install", &m_iInstallMethod, 1);
+
+	ImGui::Text("");
+
+	// imGui에서 값을 조정해서 변환 행렬을 만들어줌.
+	ImGui::DragFloat3("Scale", m_vDummyMatrix[DUMMY_SCALE], 0.1f, 0.1f, 10.f);
+	ImGui::SameLine(); CHelpMaker::HelpMarker("0.1f ~ 10.f");
+
+	ImGui::DragFloat3("Rotation", m_vDummyMatrix[DUMMY_ROT], 5.f, 0.f, 360.f);
+	ImGui::SameLine(); CHelpMaker::HelpMarker("0.f ~ 360.f");
+
+	ImGui::DragFloat3("Translation", m_vDummyMatrix[DUMMY_TRANS], 1.f, -50.f, 50.f);
+	ImGui::SameLine(); CHelpMaker::HelpMarker("-50.f ~ 50.f");
+
+	// 상태 행렬 초기화
+	if (ImGui::Button("reset"))
 	{
+		ZeroMemory(&m_vDummyMatrix, sizeof m_vDummyMatrix);
+
+		// 스케일 값 1로 초기화
+		for (size_t i = 0; i < 3; i++)
+			m_vDummyMatrix[DUMMY_SCALE][i] = 1.f;
+	}
+
+	ImGui::Text("");
+
+	// 조정한 상태값을 Dummy에 적용시킴
+	if (nullptr != m_pDummy)
+	{
+		_float3 vScale;
+		memcpy(&vScale, m_vDummyMatrix[DUMMY_SCALE], sizeof _float3);
+
+		_float3 vRotation;
+		memcpy(&vRotation, m_vDummyMatrix[DUMMY_ROT], sizeof _float3);
+
 		// shift키를 누르고 있으면 격자에 딱 맞게 위치가 반올림됨
-		if (true == pGameInstance->Get_DIKeyState(DIK_LSHIFT, CInput_Device::KEY_PRESSING))
+		BEGININSTANCE; if (true == pGameInstance->Get_DIKeyState(DIK_LSHIFT, CInput_Device::KEY_PRESSING))
 		{
 			vPos.x = round(vPos.x);
 			vPos.y = round(vPos.y);
 			vPos.z = round(vPos.z);
 
 			m_pDummy->Set_Pos(vPos);
-		}
+		} ENDINSTANCE;
 
-		else
-		{
-			m_pDummy->Set_Pos(vPos);
-		}
-	} ENDINSTANCE;
+		_float3 vTranslation = 
+		{ vPos.x + m_vDummyMatrix[DUMMY_TRANS][0], vPos.y + m_vDummyMatrix[DUMMY_TRANS][1], vPos.z + m_vDummyMatrix[DUMMY_TRANS][2] };
+
+		m_pDummy->Get_Transform()->Set_Scale(vScale);
+		m_pDummy->Get_Transform()->Set_Quaternion(m_pDummy->Get_Transform()->Get_QuaternionVector_RollPitchYaw(vRotation));
+		m_pDummy->Get_Transform()->Set_Position(vTranslation);
+	}
 
 	// Object Install 선택 창 On / Off
 	ImGui::Checkbox("Object Install", &m_isInstallObject);
-	if (true == m_isInstallObject)
+	if (true == m_isInstallObject && nullptr != m_pDummy)
 	{
-		Install_Object(m_pDummy->Get_Transform()->Get_Position());
+		switch (m_iInstallMethod)
+		{
+		case ONE_METHOD: // 클릭 당 한 번 설치
+			Install_Object(m_pDummy->Get_Transform()->Get_Position());
+			break;
+
+		case CONTINUOUS_METHOD: // 누르고 있으면 쭉 설치
+			Install_Continuous_Object(m_pDummy->Get_Transform()->Get_Position());
+			break;
+
+		case MULTI_METHOD: // 한번에 여러개 설치(인스턴싱)
+			Install_Multi_Object(m_pDummy->Get_Transform()->Get_Position());
+			break;
+		}
+
+		// 오브젝트 삭제 관련 메뉴
+		Delete_Object_Menu();
 	}
 }
 
 void CObject_Window::Install_Object(_float3 vPos)
 {
-	ImGui::Text("Press H to install");
+	ImGui::Text("Press H to Install");
 
 	// 범위 안에 있을 경우 H키를 눌러 설치
 	BEGININSTANCE; if (true == pGameInstance->Get_DIKeyState(DIK_H, CInput_Device::KEY_DOWN) &&
@@ -141,10 +226,12 @@ void CObject_Window::Install_Object(_float3 vPos)
 		_stprintf_s(wszobjName, TEXT("GameObject_MapObject_%d"), (m_iMapObjectIndex));
 		Deep_Copy_Tag(wszobjName);
 
+		_float4x4 vWorldMatrix = m_pDummy->Get_Transform()->Get_WorldMatrix();
+
 		// 번호를 붙인 태그로 MapObject 등록
 		if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL,
 			TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_MapObject"), 
-			m_vecMapObjectTag.at(m_iMapObjectIndex).c_str(), &vPos)))
+			m_vecMapObjectTag.at(m_iMapObjectIndex).c_str(), &vWorldMatrix)))
 		{
 			MSG_BOX("Failed to Install MapObject");
 			ENDINSTANCE;
@@ -162,7 +249,7 @@ void CObject_Window::Install_Object(_float3 vPos)
 		// 저장용 벡터에 넣어준다.
 		SAVEOBJECTDESC SaveDesc;
 
-		SaveDesc.vPos = vPos;
+		SaveDesc.matTransform = vWorldMatrix;
 		lstrcpy(SaveDesc.wszTag, m_vecModelList_t.at(m_iModelIndex));
 		SaveDesc.iTagLen = lstrlen(SaveDesc.wszTag) * 2;
 
@@ -171,13 +258,27 @@ void CObject_Window::Install_Object(_float3 vPos)
 		++m_iMapObjectIndex;
 
 	} ENDINSTANCE;
+}
 
-	// 오브젝트 삭제 관련 메뉴
-	Delete_Object_Menu();
+void CObject_Window::Install_Continuous_Object(_float3 vPos)
+{
+}
+
+void CObject_Window::Install_Multi_Object(_float3 vPos)
+{
+	ImGui::Text("Press H to Multi Install");
+
+
 }
 
 void CObject_Window::Select_Model()
 {
+	if (nullptr == m_pDummy)
+	{
+		ImGui::Text("Dummy does not exist");
+		return;
+	}
+
 	// 현재 선택된 모델이 무엇인지 표시
 	ImGui::TextColored(ImVec4(1, 0, 0, 1), "Current Model");
 	ImGui::TextColored(ImVec4(1, 0, 0, 1), ":");
@@ -358,7 +459,7 @@ void CObject_Window::Delete_Object_Menu()
 
 void CObject_Window::Mesh_Picking_Menu()
 {
-	
+#ifdef _DEBUG
 	BEGININSTANCE; if (true == pGameInstance->Get_DIKeyState(DIK_O, CInput_Device::KEY_DOWN))
 	{
 		//Target_Picking의 ID3D11Texture2D를 가져옴
@@ -387,6 +488,7 @@ void CObject_Window::Mesh_Picking_Menu()
 		D3D11_BOX findDesc;
 		ZEROMEM(&findDesc);
 
+		// 이 구조체의 정보를 토대로 단 하나의 픽셀을 가져온다
 		findDesc.left = pt.x;
 		findDesc.right = pt.x + 1;
 		findDesc.top = pt.y;
@@ -394,7 +496,7 @@ void CObject_Window::Mesh_Picking_Menu()
 		findDesc.front = 0;
 		findDesc.back = 1;
 
-		// Usage 버퍼 생성
+		// Usage 버퍼 생성, 읽기 전용이다.
 		ID3D11Texture2D* pCopyTexture2D = { nullptr };
 		D3D11_TEXTURE2D_DESC	TextureDescCopy;
 		ZEROMEM(&TextureDescCopy, sizeof(D3D11_TEXTURE2D_DESC));
@@ -416,6 +518,7 @@ void CObject_Window::Mesh_Picking_Menu()
 		if (FAILED(m_pDevice->CreateTexture2D(&TextureDescCopy, nullptr, &pCopyTexture2D)))
 			return;
 
+		// 새로 만든 1칸짜리 텍스처에 가져온 렌더 타겟 텍스처에서 원하는 1칸을 넣어준다.
 		m_pContext->CopySubresourceRegion(pCopyTexture2D, 0, 0, 0, 0, pTexture, 0, &findDesc);
 
 		D3D11_MAPPED_SUBRESOURCE MappedDesc;
@@ -424,16 +527,14 @@ void CObject_Window::Mesh_Picking_Menu()
 		if (FAILED(m_pContext->Map(pCopyTexture2D, 0, D3D11_MAP_READ, 0, &MappedDesc)))
 		{
 			m_pContext->Unmap(pCopyTexture2D, 0);
-			m_pContext->Unmap(pTexture, 0);
 			MSG_BOX("Failed to Map Picking Texture");
 			return;
-		}			
+		}
 
 		// 해당 Pixel Copy가 잘못 되었을 경우..
 		if (MappedDesc.pData == nullptr)
 		{
 			m_pContext->Unmap(pCopyTexture2D, 0);
-			m_pContext->Unmap(pTexture, 0);
 			MSG_BOX("Copy Data is nullptr");
 			return;
 		}
@@ -441,38 +542,86 @@ void CObject_Window::Mesh_Picking_Menu()
 		_uint pickID = { 0 };
 		pickID = ((_uint*)MappedDesc.pData)[0];
 
-		m_iTagIndex = pickID - 4278190080;
+		pickID -= 4278190080;
+
+		string s = ("GameObject_MapObject_");
+		s += std::to_string(pickID);
+
+		// 대상 인덱스를 찾는 과정
+		m_iTagIndex = 0;
+		for (auto& iter : m_vecObjectTag_s)
+		{
+			if (iter == s)
+				break;
+
+			++m_iTagIndex;
+		}
 
 		m_pContext->Unmap(pCopyTexture2D, 0);
 
 		Safe_Release(pCopyTexture2D);
-
-		m_pContext->Unmap(pTexture, 0);
 	}ENDINSTANCE;
+
+	// 메쉬 피킹한 오브젝트 삭제 메뉴
+	if (ImGui::Button("Delete Choice MapObject"))
+	{
+		Delete_Picking_Object();
+	}
+
+#endif
+}
+
+void CObject_Window::Delete_Picking_Object()
+{
+	if (0 < m_vecObjectTag_s.size())
+	{
+		BEGININSTANCE;
+		if (FAILED(pGameInstance->Delete_Component(LEVEL_TOOL,
+			TEXT("Layer_MapObject"), m_vecMapObjectTag.at(m_iTagIndex).c_str())))
+		{
+			MSG_BOX("Failed to delete Picking MapObject");
+			return;
+		} ENDINSTANCE;
+
+		m_vecMapObjectTag.erase(m_vecMapObjectTag.begin() + m_iTagIndex);
+		m_vecObjectTag_s.erase(m_vecObjectTag_s.begin() + m_iTagIndex);
+		m_vecSaveObject.erase(m_vecSaveObject.begin() + m_iTagIndex);
+	}
 }
 
 HRESULT CObject_Window::Save_MapObject()
 {
-	_tchar dataFile[MAX_PATH] = TEXT("../../Resources/MapData/MapObject.ddd");
+	_tchar dataFile[MAX_PATH] = TEXT("../../Resources/GameData/MapData/MapObject.ddd");
 
 	HANDLE hFile = CreateFile(dataFile, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
 	if (INVALID_HANDLE_VALUE == hFile)
 	{
 		MSG_BOX("Failed to Create MapObject File for Save MapObject");
+		return E_FAIL;
 	}
 
 	DWORD	dwByte = 0;
 
 	for (auto& iter : m_vecSaveObject)
 	{
-		if (!WriteFile(hFile, &iter.vPos, sizeof(_float3), &dwByte, nullptr))
+		if (!WriteFile(hFile, &iter.matTransform, sizeof(_float4x4), &dwByte, nullptr))
+		{
 			MSG_BOX("Failed to Write m_vecSaveObject.vPos");
+			return E_FAIL;
+		}
+			
 
 		if (!WriteFile(hFile, &iter.iTagLen, sizeof(_uint), &dwByte, nullptr))
+		{ 
 			MSG_BOX("Failed to Write m_vecSaveObject.iTagLen");
+			return E_FAIL;
+		}
 
 		if (!WriteFile(hFile, &iter.wszTag, iter.iTagLen, &dwByte, nullptr))
+		{
 			MSG_BOX("Failed to Write m_vecSaveObject.wszTag");
+			return E_FAIL;
+		}
 	}
 
 	MSG_BOX("Save Success");
@@ -486,13 +635,14 @@ HRESULT CObject_Window::Load_MapObject()
 {
 	m_vecSaveObject.clear();
 
-	_tchar dataFile[MAX_PATH] = TEXT("../../Resources/MapData/MapObject.ddd");
+	_tchar dataFile[MAX_PATH] = TEXT("../../Resources/GameData/MapData/MapObject.ddd");
 
 	HANDLE hFile = CreateFile(dataFile, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
 	if (INVALID_HANDLE_VALUE == hFile)
 	{
 		MSG_BOX("Failed to Create MapObject File for Load MapObject");
+		return E_FAIL;
 	}
 
 	DWORD	dwByte = 0;
@@ -502,14 +652,22 @@ HRESULT CObject_Window::Load_MapObject()
 		SAVEOBJECTDESC SaveDesc;
 		ZEROMEM(&SaveDesc);
 
-		if (!ReadFile(hFile, &SaveDesc.vPos, sizeof(_float3), &dwByte, nullptr))
+		if (!ReadFile(hFile, &SaveDesc.matTransform, sizeof(_float4x4), &dwByte, nullptr))
+		{
 			MSG_BOX("Failed to Read m_vecSaveObject.vPos");
+			return E_FAIL;
+		}
 
 		if (!ReadFile(hFile, &SaveDesc.iTagLen, sizeof(_uint), &dwByte, nullptr))
+		{
 			MSG_BOX("Failed to Read m_vecSaveObject.iTagLen");
+		}
 
 		if (!ReadFile(hFile, &SaveDesc.wszTag, SaveDesc.iTagLen, &dwByte, nullptr))
+		{
 			MSG_BOX("Failed to Read m_vecSaveObject.wszTag");
+			return E_FAIL;
+		}
 
 		if (dwByte == 0)
 		{
@@ -551,7 +709,7 @@ HRESULT CObject_Window::Load_MapObject()
 		// 번호를 붙인 태그로 MapObject 등록
 		BEGININSTANCE if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL,
 			TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_MapObject"),
-			m_vecMapObjectTag.at(m_iMapObjectIndex).c_str(), &m_vecSaveObject[i].vPos)))
+			m_vecMapObjectTag.at(m_iMapObjectIndex).c_str(), &m_vecSaveObject[i].matTransform)))
 		{
 			MSG_BOX("Failed to Install MapObject");
 			ENDINSTANCE;
@@ -674,6 +832,12 @@ const _tchar* CObject_Window::Deep_Copy(const _tchar* wszString)
 
 _float3 CObject_Window::Find_PickingPos()
 {
+	if (nullptr == m_pDummy)
+	{
+		ImGui::Text("Dummy does not exist");
+		return _float3(-1.f, -1.f, -1.f);
+	}
+
 	_float4 vRayPos = { 0.f, 0.f, 0.f, 1.f };
 	_float4 vRayDir = { 0.f, 0.f, 0.f, 0.f };
 
@@ -706,6 +870,13 @@ _float3 CObject_Window::Find_PickingPos()
 
 HRESULT CObject_Window::Create_Dummy()
 {
+	// 이미 더미가 있다면 리턴
+	if (nullptr != m_pDummy)
+	{
+		MSG_BOX("Dummy Already exists");
+		return S_OK;
+	}
+
 	_float3 vPos = { 5.f, 0.f, 5.f };
 
 	BEGININSTANCE; if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_MapDummy"),
@@ -718,6 +889,28 @@ HRESULT CObject_Window::Create_Dummy()
 	m_pDummy = static_cast<CMapDummy*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL, TEXT("Layer_Tool"), TEXT("Map_Dummy")));
 	m_pDummy->Add_Model_Component(TEXT("Prototype_Component_Model_Tree"));
 	m_pDummy->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMesh")); ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CObject_Window::Delete_Dummy()
+{
+	// 이미 더미가 없다면 리턴
+	if (nullptr == m_pDummy)
+	{
+		MSG_BOX("Dummy Already deleted");
+		return S_OK;
+	}
+
+	BEGININSTANCE;
+	if (FAILED(pGameInstance->Delete_Component(LEVEL_TOOL,
+		TEXT("Layer_Tool"), TEXT("Map_Dummy"))))
+	{
+		MSG_BOX("Failed to delete MapDummy");
+		return E_FAIL;
+	} ENDINSTANCE;
+
+	m_pDummy = nullptr;
 
 	return S_OK;
 }
@@ -743,6 +936,12 @@ HRESULT CObject_Window::Save_Model_Path(_uint iType, const _tchar* pFilePath)
 			if (!lstrcmp(entry.path().extension().c_str(), TEXT(".fbx")) ||
 				!lstrcmp(entry.path().extension().c_str(), TEXT(".FBX")))
 			{
+				if (false == fs::exists(entry.path()))
+				{
+					MSG_BOX("Failed to find FBX file");
+					return E_FAIL;
+				}
+
 				// .fbx를 .dat로 변경
 				size_t _dat = entry.path().string().find(".");
 				wstring pathresult = entry.path().wstring().substr(0, _dat);

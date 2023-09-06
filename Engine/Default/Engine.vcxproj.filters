@@ -259,6 +259,9 @@
     <Filter Include="01. Utility\03. Components\17. Plane">
       <UniqueIdentifier>{33c81cf5-caa3-47e5-a3d4-5e94a0331092}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\03. Components\07. VIBuffer\Instance\Obj_Instance">
+      <UniqueIdentifier>{ea29dad9-b37a-44cd-8a08-9d5a49b85102}</UniqueIdentifier>
+    </Filter>
     <Filter Include="01. Utility\02. GameObjects\00. Parts">
       <UniqueIdentifier>{b2e63afa-998c-44d2-9cf7-ca44f0b814a6}</UniqueIdentifier>
     </Filter>
@@ -561,6 +564,9 @@
     <ClInclude Include="..\public\Plane.h">
       <Filter>01. Utility\03. Components\17. Plane</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\VIBuffer_Object_Instance.h">
+      <Filter>01. Utility\03. Components\07. VIBuffer\Instance\Obj_Instance</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\NVContextCallBack.h">
       <Filter>01. Utility\11. Physics\EventCallBack</Filter>
     </ClInclude>
@@ -826,6 +832,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Plane.cpp">
       <Filter>01. Utility\03. Components\17. Plane</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\VIBuffer_Object_Instance.cpp">
+      <Filter>01. Utility\03. Components\07. VIBuffer\Instance\Obj_Instance</Filter>
     </ClCompile>
     <ClCompile Include="..\private\NVContextCallBack.cpp">
       <Filter>01. Utility\11. Physics\EventCallBack</Filter>
