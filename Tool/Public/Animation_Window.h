@@ -49,8 +49,11 @@ private:
 
 	void Export_Model();
 
+	void OffsetVectorSetting(CModel* pDummyModel);
+
 	void Animation_ComboBox(CModel::ANIMTYPE ePartCnt,_char* szCurrentItem, CModel* pDummyModel);
 	void Animation_ChildFrame(CModel::ANIMTYPE ePartCnt, _char* szCurrentItem, CModel* pDummyModel);
+	void Animation_Table(CModel::ANIMTYPE ePartCnt, _char* szCurrentItem, CModel* pDummyModel);
 	void Animation_Action_Button(CModel::ANIMTYPE ePartCnt, CModel* pDummyModel, _float* fNotifyActionTime);
 	void Notify_InputFileds( _char* szNotifyName, KEYFRAME::KEYFRAMETYPE* eNotifyKeyFrameType, _float* fNotifyActionTime, _float* fNotifySpeed);
 	void Add_Notify_Button(CModel::ANIMTYPE ePartCnt, _char* szNotifyName, CModel* pDummyModel, KEYFRAME::KEYFRAMETYPE* eNotifyKeyFrameType, _float* fNotifyActionTime, _float* fNotifySpeed);

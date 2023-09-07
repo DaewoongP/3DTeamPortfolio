@@ -39,6 +39,7 @@ public:
 	vector<class CBone*>*		Get_Bone_Vector_Point() { return &m_Bones; }
 	_uint						Get_AnimationPartCount() { return m_iAnimationPartCount; }
 	_uint						Get_RootBoneIndex() { return m_iRootBoneIndex; }
+
 public:
 	virtual HRESULT Initialize_Prototype(TYPE eType, const _tchar* pModelFilePath, _float4x4 PivotMatrix);
 	virtual HRESULT Initialize(void* pArg) override;
@@ -97,6 +98,7 @@ private:
 
 private:
 	_bool							m_isExportedTool = { false };
+	_bool							m_isCreatedByGCM = { false };
 
 private:
 	HRESULT Ready_File(TYPE eType, const _tchar* pModelFilePath);
@@ -104,7 +106,6 @@ private:
 	HRESULT Ready_Meshes(TYPE eType, _float4x4 PivotMatrix);
 	HRESULT Ready_Materials();
 	HRESULT Ready_Animations();
-
 
 public:
 	HRESULT Convert_Animations_GCM();

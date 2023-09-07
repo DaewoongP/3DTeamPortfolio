@@ -41,6 +41,7 @@ public:
 	_bool* Get_LoopAnim_Point() { return &m_isLoop; }
 	vector<class CChannel*>& Get_ChannelVector_Point() { return m_Channels; }
 	class CNotify* Get_Notify_Point() { return m_pNotify; }
+	_float3 Get_OffsetPosition() { return m_vOffsetPosition; }
 
 	void Set_AnimationName(_tchar* tag) { lstrcpy(m_szName, tag); }
 	void Set_CurrentKeyFrameIndex(CModel::BONES& Bones, _uint iKeyFrameIndex);
@@ -56,6 +57,8 @@ public:
 		m_fTickPerSecond = m_fOriginTickPerSecond * fMultiply;
 	}
 	void Set_Loop(_bool isLoop) { m_isLoop = isLoop; }
+	void Set_OffsetPosition(float* pos) { m_vOffsetPosition.x = pos[0]; m_vOffsetPosition.y = pos[1]; m_vOffsetPosition.z = pos[2];}
+
 	// 애니메이션을 초기화 하는 함수
 	void Reset()
 	{
@@ -103,6 +106,8 @@ private:
 	_bool						m_isPaused = { false };
 	_bool						m_isRootAnim = { true };
 	_bool						m_isLerp = { true };
+
+	_float3						m_vOffsetPosition = {};
 
 	// 현재 애니메이션에 해당하는 채널의 프레임 중 가장 프레임이 많은 채널의 인덱스
 	_uint						m_iMaxFrameChannelIndex = { 0 };

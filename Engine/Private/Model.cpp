@@ -28,6 +28,8 @@ CModel::CModel(const CModel& rhs)
 	, m_PivotMatrix(rhs.m_PivotMatrix)
 	, m_iRootBoneIndex(rhs.m_iRootBoneIndex)
 	, m_iAnimationPartCount(rhs.m_iAnimationPartCount)
+	, m_isCreatedByGCM(rhs.m_isCreatedByGCM)
+	, m_isExportedTool(rhs.m_isExportedTool)
 {
 	for (_uint AnimTypeIndex = 0; AnimTypeIndex < ANIM_END; ++AnimTypeIndex)
 	{
@@ -131,6 +133,7 @@ HRESULT CModel::Initialize_Prototype(TYPE eType, const _tchar* pModelFilePath, _
 	}
 	else 
 	{
+		m_isCreatedByGCM = true;
 		if (FAILED(Ready_File_GCM(eType, pModelFilePath)))
 			return E_FAIL;
 
@@ -320,7 +323,10 @@ void CModel::Do_Root_Animation(CTransform* pTransform)
 		_float3 Calculated_Position = (vCurrent_Position - vPost_Position);
 		memcpy(player_Matrix_Override.m[3], &Calculated_Position, sizeof _float3);
 
-		pTransform->Set_WorldMatrix(player_Matrix_Override * pTransform->Get_WorldMatrix());
+		_float3 vOffsetVector = m_tAnimationDesc[0].Animations[m_tAnimationDesc[0].iCurrentAnimIndex]->Get_OffsetPosition();
+		_float4x4 offsetPositionMatrix = XMMatrixTranslation(vOffsetVector.x, vOffsetVector.y, vOffsetVector.z);
+
+		pTransform->Set_WorldMatrix(player_Matrix_Override * offsetPositionMatrix *  pTransform->Get_WorldMatrix());
 		m_PostRootMatrix = m_Bones[m_iRootBoneIndex]->Get_CombinedTransformationMatrix();
 	}
 }
@@ -364,9 +370,10 @@ void CModel::Delete_Animation(_uint iAnimIndex, ANIMTYPE eType)
 {
 	Safe_Release(*(m_tAnimationDesc[eType].Animations.begin() + iAnimIndex));
 	m_tAnimationDesc[eType].Animations.erase(m_tAnimationDesc[eType].Animations.begin() + iAnimIndex);
-	if (m_tAnimationDesc[eType].iCurrentAnimIndex == iAnimIndex)
-		m_tAnimationDesc[eType].iCurrentAnimIndex--;
 	m_tAnimationDesc[eType].iNumAnimations--;
+
+	if (m_tAnimationDesc[eType].iCurrentAnimIndex >= m_tAnimationDesc[eType].iNumAnimations && m_tAnimationDesc[eType].iNumAnimations!=0)
+		m_tAnimationDesc[eType].iCurrentAnimIndex--;
 }
 
 HRESULT CModel::Bind_Material(CShader* pShader, const char* pConstantName, _uint iMeshIndex, Engine::TextureType MaterialType)
@@ -760,6 +767,15 @@ HRESULT CModel::Ready_Animations()
 //저장 전 애니메이션을 변환
 HRESULT CModel::Convert_Animations_GCM()
 {
+	if (m_isExportedTool)
+		Release_FileDatas_GCM();
+	else 
+	{
+		ZEROMEM(&m_ModelGCM);
+		for (int i = 0; i < ANIM_END; i++)
+			m_AnimationDatasGCM[i].clear();
+	}
+
 	m_ModelGCM.iAnimationPartCount = m_iAnimationPartCount;
 	m_ModelGCM.iNumNodes = m_NodeDatas.size();
 	m_ModelGCM.iNumMaterials = m_iNumMeshes;
@@ -796,6 +812,7 @@ HRESULT CModel::Convert_Animations_GCM()
 			Animation.isLerp = pAnimation->Get_LerpAnim();
 			Animation.isRootAnim = pAnimation->Get_RootAnim();
 			Animation.isLoop = pAnimation->Get_LoopAnim();
+			Animation.vOffsetPosition = pAnimation->Get_OffsetPosition();
 
 			// 채널만들기
 			Animation.Channels = new CHANNEL_GCM[pAnimation->Get_NumChannels()];
@@ -1126,6 +1143,8 @@ HRESULT CModel::Ready_File_GCM(TYPE eType, const _tchar* pModelFilePath)
 				ReadFile(hFile, &(Animation.isLoop), sizeof(_bool), &dwByte, nullptr);
 				ReadFile(hFile, &(Animation.isRootAnim), sizeof(_bool), &dwByte, nullptr);
 				ReadFile(hFile, &(Animation.isLerp), sizeof(_bool), &dwByte, nullptr);
+
+				ReadFile(hFile, &(Animation.vOffsetPosition), sizeof(XMFLOAT3), &dwByte, nullptr);
 
 				// Animation NumChannels
 				ReadFile(hFile, &(Animation.iNumChannels), sizeof(_uint), &dwByte, nullptr);
@@ -1513,6 +1532,8 @@ HRESULT CModel::Write_File_GCM(TYPE eType, const _tchar* pModelFilePath)
 				WriteFile(hFile, &(Animation.isRootAnim), sizeof(_bool), &dwByte, nullptr);
 				WriteFile(hFile, &(Animation.isLerp), sizeof(_bool), &dwByte, nullptr);
 
+				WriteFile(hFile, &(Animation.vOffsetPosition), sizeof(XMFLOAT3), &dwByte, nullptr);
+
 
 				// Animation NumChannels
 				WriteFile(hFile, &(Animation.iNumChannels), sizeof(_uint), &dwByte, nullptr);
@@ -1704,11 +1725,12 @@ void CModel::Free()
 	if (!m_isCloned)
 	{
 		Release_FileDatas();
-		Release_FileDatas_GCM();
+		if(m_isCreatedByGCM)
+			Release_FileDatas_GCM();
 	}
 
-	//툴 익스포트일 경우 누수잡기용
-	if(m_isExportedTool)
+	//익스포트한 경우에는 본체가 아닌 클론에 gcm이 갱신되므로 제거해줘야함.
+	if(m_isExportedTool/*&&!m_isCreatedByGCM*/)
 		Release_FileDatas_GCM();
 
 	for (auto& pBone : m_Bones)

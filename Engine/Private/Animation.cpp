@@ -20,6 +20,7 @@ CAnimation::CAnimation(const CAnimation& rhs)
 	, m_isLoop(rhs.m_isLoop)
 	, m_isLerp(rhs.m_isLerp)
 	, m_isRootAnim(rhs.m_isRootAnim)
+	, m_vOffsetPosition(rhs.m_vOffsetPosition)
 	, m_isPaused(rhs.m_isPaused)
 	, m_iMaxFrameChannelIndex(rhs.m_iMaxFrameChannelIndex)
 	, m_iAnimationFrames(rhs.m_iAnimationFrames)
@@ -145,6 +146,8 @@ HRESULT CAnimation::Initialize(Engine::ANIMATION_GCM Animation, const CModel::BO
 	m_isLoop = Animation.isLoop;
 	m_isRootAnim = Animation.isRootAnim;
 	m_isLerp = Animation.isLerp;
+
+	m_vOffsetPosition = Animation.vOffsetPosition;
 
 	m_iNumChannels = Animation.iNumChannels;
 
