@@ -137,8 +137,18 @@ void CCutScene_Camera_Tool::Tick(_float _fTimeDelta)
 
 		m_pCreateGuidePoint->Tick(pGameInstance->Get_World_Tick());
 
+		BEGININSTANCE;
+		if (pGameInstance->Get_DIKeyState(DIKEYBOARD_G, CInput_Device::KEY_DOWN))
+		{
+			m_isInsertBefore = !m_isInsertBefore;
+
+		}
+		ENDINSTANCE;
+		ImGui::Checkbox("Insert before", &m_isInsertBefore);
+
 		//생성 거리
 		ImGui::DragFloat("Create Distance", &m_fDistance, 0.01f, 0.0f, 1000.0f);
+
 
 		//오른쪽 누른 상태에서 왼쪽을 누른 순간만
 		if (pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN) &&
@@ -288,6 +298,8 @@ void CCutScene_Camera_Tool::Clear_CutSceneList()
 	m_iterStart = m_CameraInfoList.end();
 
 	m_iterEnd = m_CameraInfoList.end(); 
+
+	m_iterCurEyePoint = m_CameraInfoList.end();
 }
 
 void CCutScene_Camera_Tool::Change_AtPoint(CCamera_Point* _pAtPoint)
@@ -309,6 +321,26 @@ void CCutScene_Camera_Tool::Change_AtPoint(CCamera_Point* _pAtPoint)
 	m_pAtCurrentPoint->Set_Collider_Color(_float4(1.0f, 191.0f / 255.0f, 0.0f, 1.0f));
 #endif // _DEBUG
 
+}
+
+void CCutScene_Camera_Tool::Change_EyePoint(list<CAMERAPOINTINFODESC>::iterator _iterEye)
+{
+	//기존에 선택된 것이 있다면
+	if (m_CameraInfoList.end() != m_iterCurEyePoint)
+	{
+#ifdef _DEBUG
+		//기존 오브젝트 색 돌려주고
+		(*m_iterCurEyePoint).pEyePoint->Set_Collider_Color(_float4(0.0f, 0.0f, 1.0f, 1.0f));
+#endif // _DEBUG
+	}
+
+	//바꿔 끼고
+	m_iterCurEyePoint = _iterEye;
+
+#ifdef _DEBUG
+	//색을 입힘
+	(*m_iterCurEyePoint).pEyePoint->Set_Collider_Color(_float4(0.0f, 1.0f, 1.0f, 1.0f));
+#endif // _DEBUG
 }
 
 void CCutScene_Camera_Tool::Create_CameraInfo(_float4 _vRayPos, _float4 _vRayDir)
@@ -349,8 +381,31 @@ void CCutScene_Camera_Tool::Create_CameraInfo(_float4 _vRayPos, _float4 _vRayDir
 		CameraPointInfoDesc.pAtPoint = m_pAtCurrentPoint;
 		Safe_AddRef(m_pAtCurrentPoint);
 
-		m_CameraInfoList.push_back(CameraPointInfoDesc);
+		//현제 선택된 포인트의 앞에 놓거나.
+		if (true == m_isInsertBefore)
+		{
+			if (m_CameraInfoList.end() != m_iterCurEyePoint)
+			{
+				m_CameraInfoList.insert(m_iterCurEyePoint, CameraPointInfoDesc);
+			}
+			else
+			{
+				MSG_BOX("Failed Insert Before");
 
+				Safe_Release(m_pAtCurrentPoint);
+
+				Safe_Release(pCameraPoint);
+
+				ENDINSTANCE;
+
+				return;
+			}
+		}
+		else
+		{
+			//맨뒤에 넣거나
+			m_CameraInfoList.push_back(CameraPointInfoDesc);
+		}
 		//가장 마지막 이터레이터로 갱신
 		m_CurrentIterater = --m_CameraInfoList.end();
 
@@ -423,6 +478,9 @@ _bool CCutScene_Camera_Tool::Select_Eye_Point(_float4 _vRayPos, _float4 _vRayDir
 				//이터레이터 갱신
 				m_CurrentIterater = iter;
 
+				//색 변경
+				Change_EyePoint(m_CurrentIterater);
+
 				isSelect = true;
 			}
 		}
@@ -464,7 +522,6 @@ void CCutScene_Camera_Tool::Create_Tick(_float4 _vRayPos, _float4 _vRayDir)
 {
 	Create_CameraInfo(_vRayPos, _vRayDir);
 	Create_OriginAt(_vRayPos, _vRayDir);
-
 }
 
 void CCutScene_Camera_Tool::Delete_Eye_Point(_float4 _vRayPos, _float4 _vRayDir)
@@ -485,6 +542,8 @@ void CCutScene_Camera_Tool::Delete_Eye_Point(_float4 _vRayPos, _float4 _vRayDir)
 		m_pCurrentPoint = nullptr;
 
 		m_isLineUpdate = true;
+
+		m_iterCurEyePoint = m_CameraInfoList.end();;
 	}
 }
 

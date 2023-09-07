@@ -124,6 +124,12 @@ private:
 
 	_int m_iSectionRadio{ 0 };
 
+	//중간 삽입 위치 파악 용
+	list<CAMERAPOINTINFODESC>::iterator m_iterCurEyePoint{ m_CameraInfoList.end() };
+
+	//중간 삽입 할거임?
+	_bool m_isInsertBefore{ false };
+
 private:
 	//마우스로 위치 수정 기능
 	void Fix_Point();
@@ -133,6 +139,10 @@ private:
 
 	//AtPoint 바꾸기
 	void Change_AtPoint(CCamera_Point* _pAtPoint);
+
+	//EyePoint 저장 및 바꾸기
+	void Change_EyePoint(list<CAMERAPOINTINFODESC>::iterator _iterEye);
+
 
 private:
 	//클릭 시 RayPos, RayDir 반환
