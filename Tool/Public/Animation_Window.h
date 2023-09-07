@@ -24,7 +24,6 @@ private:
 	vector<string>  m_vecModelList;
 	vector<wstring> m_vecModelList_t;
 
-	_int			m_iSelectedNotifyIndex = { 0 };
 	//애니메이션용도임.
 	_char			m_szCurrentItem[CModel::ANIM_END][MAX_PATH] = {};
 	_int			m_iRootIndex = { 0 };
@@ -38,6 +37,8 @@ private:
 	_char			m_szNotifyName[MAX_PATH] = "";
 	_char			m_szCurrentItemType[MAX_PATH] = "";			
 	KEYFRAME::KEYFRAMETYPE m_eNotifyKeyFrameType = { KEYFRAME::KF_SPEED };
+
+	_int			m_iSelectedNotifyIndex[CModel::ANIM_END] = { 0 };
 
 	_tchar			m_wszCurrentDummyModelTag[MAX_PATH] = {};
 private:

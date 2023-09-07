@@ -135,6 +135,11 @@ void CNotify::Edit_Frame(_uint iFindFrame, KEYFRAME::KEYFRAMETYPE eFrameType, _f
 	{
 		static_cast<SPEEDFRAME*>(pKeyFrame)->fSpeed = fSpeed;
 	}
+
+	//Á¤·Ä
+	sort(m_KeyFrames.begin(), m_KeyFrames.end(), [&](std::pair<wstring, KEYFRAME*>& frame1, std::pair<wstring, KEYFRAME*>& frame2) ->  bool {
+		return (frame1.second->fTime < frame2.second->fTime);
+		});
 }
 
 KEYFRAME* CNotify::Find_Frame(const wchar_t* wszKeyFrameTag)

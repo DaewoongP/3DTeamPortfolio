@@ -413,8 +413,6 @@ void CAnimation_Window::Add_Notify_Button(CModel::ANIMTYPE ePartCnt, _char* szNo
 			break;
 		}
 		}
-
-		
 	}
 }
 
@@ -426,7 +424,7 @@ void CAnimation_Window::Edit_Notify_Button(CModel::ANIMTYPE ePartCnt, CModel* pD
 	if (ImGui::Button(szUIName))
 	{
 		CNotify* pNotify = pDummyModel->Get_Animation(ePartCnt)->Get_Notify_Point();
-		pNotify->Edit_Frame(m_iSelectedNotifyIndex, m_eNotifyKeyFrameType, m_fNotifyActionTime, m_fNotifySpeed);
+		pNotify->Edit_Frame(m_iSelectedNotifyIndex[ePartCnt], m_eNotifyKeyFrameType, m_fNotifyActionTime, m_fNotifySpeed);
 	}
 }
 
@@ -491,6 +489,7 @@ void CAnimation_Window::Create_Notify_View(CModel::ANIMTYPE ePartCnt, CModel* pD
 			{
 				m_fNotifySpeed = static_cast<SPEEDFRAME*>(pNotify->Find_Frame(iNotifyCount))->fSpeed;
 			}
+			m_iSelectedNotifyIndex[ePartCnt] = iNotifyCount;
 		}
 		ImGui::SameLine();
 		ImGui::Text((eNotifyType == KEYFRAME::KF_NOTIFY) ? ("Notify") :
