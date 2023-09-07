@@ -2,7 +2,6 @@
 
 matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 texture2D		g_DiffuseTexture;
-texture2D g_PickTexture;
 
 float4			g_vColor;
 

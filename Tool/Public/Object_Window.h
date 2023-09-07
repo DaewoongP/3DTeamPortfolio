@@ -98,9 +98,9 @@ private:
 	vector<string> m_vecObjectTag_s; // 넘버링 태그를 string으로 저장함
  	vector<SAVEOBJECTDESC> m_vecSaveObject; // 저장할 맵 오브젝트에 대한 정보
 
-	vector<SAVEINSOBJECTDESC> m_vecSaveInsObject; // 저장할 인스턴싱한 맵 오브젝트에 대한 정보
-
-	_bool m_bOne = { true };
+	_uint m_iInsObjectCnt = { 0 }; // 인스턴싱할 맵 오브젝트 개수
+	vector<SAVEINSOBJECTDESC> m_vecSaveInsObject; // 저장된 인스턴싱 맵 오브젝트에 대한 정보를 받아올 벡터
+	vector<_float4x4> m_vecSaveInsObjectWorld; // 인스턴싱으로 저장할 객체들의 월드 상태 행렬
 
 public:
 	static CObject_Window* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, ImVec2 vWindowPos, ImVec2 vWindowSize);
