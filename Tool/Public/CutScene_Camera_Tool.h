@@ -228,9 +228,11 @@ private:
 	//구간 재생
 	void Play_Section();
 
-	
+	//현제 선택된 포인트로 포지션 옮김
+	void Set_Position_CurrentPoint();
 
-
+	//컷씬 중지
+	void Stop_CutScene();
 public:
 	static CCutScene_Camera_Tool* Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, void * pArg = nullptr);
 	virtual void Free() override;

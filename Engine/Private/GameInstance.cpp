@@ -542,12 +542,6 @@ PxControllerManager* CGameInstance::Get_ControllerManager() const
 
 	return m_pPhysX_Manager->Get_ControllerManager();
 }
-HRESULT CGameInstance::Add_MainCamera(CCamera* _pMainCamera)
-{
-	NULL_CHECK_RETURN_MSG(m_pCamera_Manager, E_FAIL, TEXT("Camera NULL"));
-
-	return m_pCamera_Manager->Add_MainCamera(_pMainCamera);
-}
 
 HRESULT CGameInstance::Read_CutSceneCamera(const _tchar* _CutSceneTag, const _tchar* _CutScenePath)
 {
@@ -582,6 +576,34 @@ HRESULT CGameInstance::Add_OffSetCamera(const _tchar* _OffSetTag)
 	NULL_CHECK_RETURN_MSG(m_pCamera_Manager, E_FAIL, TEXT("Camera NULL"));
 
 	return m_pCamera_Manager->Add_OffSetCamera(_OffSetTag);
+}
+
+HRESULT CGameInstance::Add_Camera(const _tchar* _CameraTag, CCamera* _pCamera)
+{
+	NULL_CHECK_RETURN_MSG(m_pCamera_Manager, E_FAIL, TEXT("Camera NULL"));
+
+	return m_pCamera_Manager->Add_Camera(_CameraTag, _pCamera);
+}
+
+HRESULT CGameInstance::Set_Camera(const _tchar* _CameraTag)
+{
+	NULL_CHECK_RETURN_MSG(m_pCamera_Manager, E_FAIL, TEXT("Camera NULL"));
+
+	return m_pCamera_Manager->Set_Camera(_CameraTag);
+}
+
+CCamera* CGameInstance::Find_Camera(const _tchar* _CameraTag)
+{
+	NULL_CHECK_RETURN_MSG(m_pCamera_Manager, nullptr, TEXT("Camera NULL"));
+
+	return m_pCamera_Manager->Find_Camera(_CameraTag);
+}
+
+void CGameInstance::Stop_CutScene()
+{
+	NULL_CHECK_RETURN_MSG(m_pCamera_Manager, , TEXT("Camera NULL"));
+
+	return m_pCamera_Manager->Stop_CutScene();
 }
 
 CRenderTarget* CGameInstance::Find_RenderTarget(const _tchar* pTargetTag)

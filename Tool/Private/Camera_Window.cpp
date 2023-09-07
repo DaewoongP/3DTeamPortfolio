@@ -32,7 +32,9 @@ HRESULT CCamera_Window::Initialize(ImVec2 _vWindowPos, ImVec2 _vWindowSize)
 
 		m_pMainCamera->Set_MoveSpeed(5.0f);
 
-		pGameInstance->Add_MainCamera((CCamera*)m_pMainCamera);
+		pGameInstance->Add_Camera(TEXT("Main_Camera"), (CCamera*)m_pMainCamera);
+
+		pGameInstance->Set_Camera(TEXT("Main_Camera"));
 	}
 	ENDINSTANCE;
 

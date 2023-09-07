@@ -19,19 +19,7 @@ HRESULT CCutScene_Camera_Tool::Initialize(void* pArg)
 {
 	BEGININSTANCE;
 
-	CCamera::CAMERADESC CameraDesc;
-
-	CameraDesc.m_fAspect = _float(g_iWinSizeX) / _float(g_iWinSizeY);
-	CameraDesc.m_fFovY = XMConvertToRadians(90.f);
-	CameraDesc.m_fNear = 0.1f;
-	CameraDesc.m_fFar = 1000.f;
-
-	CMain_Camera* pMain_Camera = CMain_Camera::Create(m_pDevice, m_pContext, &CameraDesc);
-
-	pMain_Camera->Set_MoveSpeed(5.0f);
-
-	pGameInstance->Add_MainCamera((CCamera*)pMain_Camera);
-
+	
 #ifdef _DEBUG
 
 	//라인 준비
@@ -144,7 +132,7 @@ void CCutScene_Camera_Tool::Tick(_float _fTimeDelta)
 
 		}
 		ENDINSTANCE;
-		ImGui::Checkbox("Insert before", &m_isInsertBefore);
+		ImGui::Checkbox("Insert before : \"G\" true<->false", &m_isInsertBefore);
 
 		//생성 거리
 		ImGui::DragFloat("Create Distance", &m_fDistance, 0.01f, 0.0f, 1000.0f);
@@ -175,6 +163,20 @@ void CCutScene_Camera_Tool::Tick(_float _fTimeDelta)
 		break;
 	}
 
+	_float4 vPos = *pGameInstance->Get_CamPosition();
+
+	vector<_float> vecPos;
+
+	vecPos.resize(3);
+
+	vecPos[0] = vPos.x;
+	vecPos[1] = vPos.y;
+	vecPos[2] = vPos.z;
+
+	ImGui::DragFloat3("PipelinePos", vecPos.data());
+	
+	Set_Position_CurrentPoint();
+
 	ENDINSTANCE;
 
 	List_Tick(_fTimeDelta);
@@ -196,6 +198,9 @@ void CCutScene_Camera_Tool::Tick(_float _fTimeDelta)
 	m_pLookLine->Late_Tick(_fTimeDelta);
 
 #endif
+
+	Stop_CutScene();
+
 }
 
 HRESULT CCutScene_Camera_Tool::Render()
@@ -1733,6 +1738,31 @@ void CCutScene_Camera_Tool::Play_Section()
 			}
 		}
 	}
+}
+
+void CCutScene_Camera_Tool::Set_Position_CurrentPoint()
+{
+	ImGui::Text("\"T\" : Set position to selected point");
+	BEGININSTANCE;
+
+	if (nullptr != m_pCurrentPoint && pGameInstance->Get_DIKeyState(DIKEYBOARD_T, CInput_Device::KEY_DOWN))
+	{
+		dynamic_cast<CMain_Camera*>(pGameInstance->Find_Camera(TEXT("Main_Camera")))->Set_Position(m_pCurrentPoint->Get_Position().xyz());
+	}
+
+	ENDINSTANCE;
+}
+
+void CCutScene_Camera_Tool::Stop_CutScene()
+{
+	BEGININSTANCE;
+
+	if (ImGui::Button("Stop_CurScene"))
+	{
+		pGameInstance->Stop_CutScene();
+	}
+
+	ENDINSTANCE;
 }
 
 CCutScene_Camera_Tool* CCutScene_Camera_Tool::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, void* pArg)
