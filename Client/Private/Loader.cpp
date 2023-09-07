@@ -433,6 +433,7 @@ HRESULT CLoader::Loading_For_MainGame()
 			CTest_Cloth::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Test_Cloth");
 #endif // _DEBUG
+		
 	}
 	catch (const _tchar* pErrorTag)
 	{

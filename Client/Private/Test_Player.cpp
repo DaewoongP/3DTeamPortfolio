@@ -170,7 +170,7 @@ HRESULT CTest_Player::Add_Components()
 	}
 
 	/* For.Prototype_Component_MeshParts_Robe_Student */
-	if (FAILED(m_pModelCom->Add_MeshParts(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Robe_Student"), CCustomModel::ROBE)))
+	if (FAILED(m_pModelCom->Add_MeshParts(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Robe"), CCustomModel::ROBE)))
 	{
 		MSG_BOX("[CTest_Player] Failed Add_MeshParts");
 		return E_FAIL;

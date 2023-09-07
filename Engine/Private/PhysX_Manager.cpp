@@ -48,7 +48,7 @@ HRESULT CPhysX_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* p
 		return E_FAIL;
 	}
 	// 乔流胶按眉 积己
-	m_pPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_pFoundation, PxTolerancesScale(), true, nullptr);
+	m_pPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_pFoundation, PxTolerancesScale(1.f, 1.f), true, nullptr);
 	if (nullptr == m_pPhysics)
 	{
 		MSG_BOX("PxCreatePhysics failed!");

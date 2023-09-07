@@ -33,6 +33,8 @@ HRESULT CCamera_Debug::Initialize(void* pArg)
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
 	m_pTransform->Set_Position(_float3(0.f, 2.f, 0.f));
 
+	m_fCameraNear = 1.f;
+
 	return S_OK;
 }
 
@@ -51,7 +53,7 @@ void CCamera_Debug::Tick(_float fTimeDelta)
 
 	pGameInstance->Set_CameraFar(1000.f);
 	pGameInstance->Set_Transform(CPipeLine::D3DTS_VIEW, m_pTransform->Get_WorldMatrix_Inverse());
-	pGameInstance->Set_Transform(CPipeLine::D3DTS_PROJ, XMMatrixPerspectiveFovLH(XMConvertToRadians(90.f), _float(g_iWinSizeX) / g_iWinSizeY, 1.f, 1000.f));
+	pGameInstance->Set_Transform(CPipeLine::D3DTS_PROJ, XMMatrixPerspectiveFovLH(XMConvertToRadians(90.f), _float(g_iWinSizeX) / g_iWinSizeY, m_fCameraNear, 1000.f));
 
 	Safe_Release(pGameInstance);
 
@@ -187,12 +189,22 @@ void CCamera_Debug::Debug_ImGui(_float fTimeDelta)
 		pCam->Set_Position(vPlayerPos + m_v3rdCamOffset);
 	}
 
+	if (ImGui::InputFloat("Cam near", &m_fCameraNear, 0.1f))
+	{
+		if (m_fCameraNear < 0.1f)
+		{
+			m_fCameraNear = 0.1f;
+		}
+	}
+
 	if (ImGui::Button("Goto 0"))
 	{
 		pCam->Set_Position(_float3(0.5f, 5.f, -5.f));
 		pCam->LookAt(_float3(0.f, 0.f, 0.f));
 		
 	}
+
+	
 
 	Safe_Release(pGameInstance);
 

@@ -59,7 +59,7 @@ HRESULT CTest_Cloth::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	if (FAILED(m_pShader->Begin("Cloth")))
+	if (FAILED(m_pShader->Begin("Terrain")))
 		return E_FAIL;
 
 	if (FAILED(m_pBuffer->Render()))
@@ -116,9 +116,11 @@ HRESULT CTest_Cloth::SetUp_ShaderResources()
 	return S_OK;
 }
 
+#ifdef _DEBUG
 void CTest_Cloth::Tick_ImGui()
 {
 }
+#endif // _DEBUG
 
 CTest_Cloth* CTest_Cloth::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
