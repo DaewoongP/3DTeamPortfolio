@@ -120,9 +120,20 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 		}
 	}
 
-	if (ImGui::Button("Reset_Dummy_WorldMatrix"))
+	if (ImGui::Button("Reset_Dummy_WorldMatrix##Animation"))
 	{
 		dynamic_cast<CTransform*>(m_pDummyObject->Find_Component(TEXT("Com_Transform")))->Set_WorldMatrix(XMMatrixIdentity());
+	}
+
+	if (ImGui::Button("Delete_Dummy##Animation"))
+	{
+		BEGININSTANCE;
+		if (FAILED(pGameInstance->Delete_Component(LEVEL_TOOL,
+			TEXT("Layer_Tool"), TEXT("Dummy_Animation"))))
+		{
+			MSG_BOX("Failed to delete Dummy_Animation");
+		} ENDINSTANCE;
+		m_pDummyObject = nullptr;
 	}
 	ImGui::End();
 }
@@ -136,14 +147,20 @@ void CAnimation_Window::Create_Dummy_Button()
 {
 	if (ImGui::Button("Create Dummy"))
 	{
+		if(m_pDummyObject!=nullptr)
+		{
+			MSG_BOX("Failed because of Dummy is Not Null");
+			return;
+		}
+
 		CGameInstance* pGameInstance = CGameInstance::GetInstance();
 		Safe_AddRef(pGameInstance);
-		if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_Dummy"), TEXT("Layer_Tool"), TEXT("Dummy"), nullptr)))
+		if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_Dummy"), TEXT("Layer_Tool"), TEXT("Dummy_Animation"), nullptr)))
 		{
 			MSG_BOX("Failed to Created Dummy Clone");
 		}
 
-		m_pDummyObject = dynamic_cast<CDummy*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL, TEXT("Layer_Tool"), TEXT("Dummy")));
+		m_pDummyObject = dynamic_cast<CDummy*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL, TEXT("Layer_Tool"), TEXT("Dummy_Animation")));
 		Safe_Release(pGameInstance);
 	}
 }

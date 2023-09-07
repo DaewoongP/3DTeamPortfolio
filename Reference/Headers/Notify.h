@@ -8,6 +8,10 @@
 
 #include "Model.h"
 
+// 노티파이 함수 추가 예시
+// static_cast<NOTIFYFRAME*>(m_pModel->Get_Animation()->Find_NotifyFrame(TEXT("hihi")))->Action = [&] {(*this).NotifyTest(); };
+
+
 BEGIN(Engine)
 
 class ENGINE_DLL CNotify final : public CBase
