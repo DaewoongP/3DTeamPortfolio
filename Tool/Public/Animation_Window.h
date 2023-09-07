@@ -59,6 +59,7 @@ private:
 	void Add_Notify_Button(CModel::ANIMTYPE ePartCnt, _char* szNotifyName, CModel* pDummyModel, KEYFRAME::KEYFRAMETYPE* eNotifyKeyFrameType, _float* fNotifyActionTime, _float* fNotifySpeed);
 	void Edit_Notify_Button(CModel::ANIMTYPE ePartCnt, CModel* pDummyModel);
 	
+	void Create_Notify_ChildFrame(CModel::ANIMTYPE ePartCnt, CModel* pDummyModel);
 	void Create_Notify_View(CModel::ANIMTYPE ePartCnt, CModel* pDummyModel);
 
 	void Bone_Tree( CBone* bone, CModel* pDummyModel);

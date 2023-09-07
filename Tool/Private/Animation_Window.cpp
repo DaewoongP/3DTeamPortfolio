@@ -107,7 +107,7 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 			Add_Notify_Button(ePartCnt, m_szNotifyName, pDummyModel, &m_eNotifyKeyFrameType, &m_fNotifyActionTime, &m_fNotifySpeed);
 
 			Edit_Notify_Button(ePartCnt, pDummyModel);
-			Create_Notify_View(ePartCnt, pDummyModel);
+			Create_Notify_ChildFrame(ePartCnt, pDummyModel);
 
 			
 			ImGui::Separator();
@@ -286,7 +286,7 @@ void CAnimation_Window::Animation_ChildFrame(CModel::ANIMTYPE ePartCnt, _char* s
 {
 	_char szUIName[MAX_PATH] = "AnimChildFrame##";
 	sprintf_s(szUIName, "%s%d", szUIName, ePartCnt);
-	const auto  draw_childframe_size = ImVec2(500, 260);
+	const auto  draw_childframe_size = ImVec2(400, 260);
 	ImGui::BeginChildFrame(ImGui::GetID(szUIName), draw_childframe_size,ImGuiWindowFlags_AlwaysHorizontalScrollbar);
 	{
 		_char szAnimationName[MAX_PATH] = "";
@@ -544,6 +544,71 @@ void CAnimation_Window::OffsetVectorSetting(CModel* pDummyModel)
 	{
 		pDummyModel->Get_Animation()->Set_OffsetPosition(data);
 	}
+}
+
+void CAnimation_Window::Create_Notify_ChildFrame(CModel::ANIMTYPE ePartCnt, CModel* pDummyModel)
+{
+	_char szUIName[MAX_PATH] = "AnimNotifyChildFrame##";
+	sprintf_s(szUIName, "%s%d", szUIName, ePartCnt);
+	const auto  draw_childframe_size = ImVec2(400, 260);
+	ImGui::BeginChildFrame(ImGui::GetID(szUIName), draw_childframe_size, ImGuiWindowFlags_AlwaysHorizontalScrollbar);
+	{
+		for (_uint iNotifyCount = 0; iNotifyCount < pDummyModel->Get_Animation(ePartCnt)->Get_Notify_Point()->Get_NotifyFrameCount(); iNotifyCount++)
+		{
+			CNotify* pNotify = pDummyModel->Get_Animation(ePartCnt)->Get_Notify_Point();
+			_char  szNotifyButtonName[MAX_PATH];
+			ZEROMEM(szNotifyButtonName);
+
+			WCharToChar(pNotify->Find_Frame_Key(iNotifyCount), szNotifyButtonName);
+			sprintf_s(szNotifyButtonName, "%s##%d%d", szNotifyButtonName, ePartCnt, iNotifyCount);
+			KEYFRAME::KEYFRAMETYPE eNotifyType = pNotify->Find_Frame(iNotifyCount)->eKeyFrameType;
+
+			if (ImGui::ColorButton("Type",
+				(eNotifyType == KEYFRAME::KF_NOTIFY) ? (ImVec4(0.7f, 0.f, 0.f, 1)) :
+				((eNotifyType == KEYFRAME::KF_SOUND) ? (ImVec4(0.0f, 0.7f, 0.f, 1)) :
+					(ImVec4(0.0f, 0.f, 0.7f, 1)))))
+			{
+			}
+			ImGui::SameLine();
+
+			if (ImGui::Button(szNotifyButtonName))
+			{
+				//정보갱신
+				m_fNotifyActionTime = pNotify->Find_Frame(iNotifyCount)->fTime;
+				WCharToChar(pNotify->Find_Frame_Key(iNotifyCount), m_szNotifyName);
+				m_eNotifyKeyFrameType = pNotify->Find_Frame(iNotifyCount)->eKeyFrameType;
+				if (m_eNotifyKeyFrameType == KEYFRAME::KF_SPEED)
+				{
+					m_fNotifySpeed = static_cast<SPEEDFRAME*>(pNotify->Find_Frame(iNotifyCount))->fSpeed;
+				}
+				m_iSelectedNotifyIndex[ePartCnt] = iNotifyCount;
+			}
+			ImGui::SameLine();
+			ImGui::Text((eNotifyType == KEYFRAME::KF_NOTIFY) ? ("Notify") :
+				((eNotifyType == KEYFRAME::KF_SOUND) ? (("Sound")) :
+					(("Speed"))));
+
+			_char  szTimeMessage[MAX_PATH] = "Action Time : ";
+			sprintf_s(szTimeMessage, "%s%f", szTimeMessage, pNotify->Find_Frame(iNotifyCount)->fTime);
+			ImGui::SameLine();  ImGui::Text(szTimeMessage);
+			ImGui::SameLine();
+			if (eNotifyType == KEYFRAME::KF_SPEED)
+			{
+				_char  szSpeedMessage[MAX_PATH] = "Speed : ";
+				SPEEDFRAME* frame = static_cast<SPEEDFRAME*>(pNotify->Find_Frame(iNotifyCount));
+				sprintf_s(szSpeedMessage, "%s%f", szSpeedMessage, frame->fSpeed);
+				ImGui::SameLine();  ImGui::Text(szSpeedMessage);
+			}
+			ImGui::SameLine();
+			_char szDeleteButtonName[MAX_PATH] = "Delete##";
+			sprintf_s(szDeleteButtonName, "%s%d", szDeleteButtonName, iNotifyCount);
+			if (ImGui::Button(szDeleteButtonName))
+			{
+				pNotify->Delete_Frame(iNotifyCount);
+			}
+		}
+	}
+	ImGui::EndChildFrame();
 }
 
 void CAnimation_Window::Create_Notify_View(CModel::ANIMTYPE ePartCnt, CModel* pDummyModel)
