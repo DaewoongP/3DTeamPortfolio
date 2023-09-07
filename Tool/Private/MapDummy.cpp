@@ -109,6 +109,8 @@ HRESULT CMapDummy::Change_Model_Component(const _tchar* pPrototypeTag)
 		return E_FAIL;
 	}
 
+	Safe_Release(m_pModel);
+
 	if (FAILED(CComposite::Add_Component(LEVEL_TOOL, pPrototypeTag,
 		TEXT("Com_Buffer"), reinterpret_cast<CComponent**>(&m_pModel))))
 	{

@@ -109,63 +109,18 @@ void CObject_Window::Tick(_float fTimeDelta)
 
 	ImGui::Separator();
 
-	// Test
-	if (true == m_bOne)
-	{
-		_float4x4 PivotMatrix = XMMatrixIdentity();
-		BEGININSTANCE; if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Model_Instance_Tree"),
-			CModel_Instance::Create(m_pDevice, m_pContext, CModel_Instance::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Tree/Tree.dat"), PivotMatrix))))
-		{
-			MSG_BOX("Failed to Create New CModel_Instance Prototype");
-		} ENDINSTANCE;
+	//// Test, 현재 누수남
+	//if (true == m_bOne)
+	//{
+	//	_float4x4 PivotMatrix = XMMatrixIdentity();
+	//	BEGININSTANCE; if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Model_Instance_Tree"),
+	//		CModel_Instance::Create(m_pDevice, m_pContext, CModel_Instance::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Tree/Tree.dat"), PivotMatrix))))
+	//	{
+	//		MSG_BOX("Failed to Create New CModel_Instance Prototype");
+	//	} ENDINSTANCE;
 
-		m_bOne = false;
-	}
-
-	if (ImGui::Button("test"))
-	{
-		ImGui::Text("Press H to Install");
-
-		// 범위 안에 있을 경우 H키를 눌러 설치
-		BEGININSTANCE; 
-		{
-			// 맵 오브젝트에 번호 붙여줌
-			_tchar wszobjName[MAX_PATH] = { 0 };
-			_stprintf_s(wszobjName, TEXT("GameObject_MapObject_%d"), (m_iMapObjectIndex));
-			Deep_Copy_Tag(wszobjName);
-
-			_float4x4 vWorldMatrix = m_pDummy->Get_Transform()->Get_WorldMatrix();
-			// 번호를 붙인 태그로 MapObject 등록
-			if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL,
-				TEXT("Prototype_GameObject_MapObject_Ins"), TEXT("Layer_MapObject"),
-				m_vecMapObjectTag.at(m_iMapObjectIndex).c_str(), &vWorldMatrix)))
-			{
-				MSG_BOX("Failed to Install MapObject_Ins");
-				ENDINSTANCE;
-				return;
-			}
-
-			// 마지막에 설치한 맵 오브젝트 주소 가져옴
-			m_pObjIns = static_cast<CMapObject_Ins*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL,
-				TEXT("Layer_MapObject"), wszobjName));
-
-			m_pObjIns->Add_Model_Component(TEXT("Prototype_Component_Model_Instance_Tree"));
-			m_pObjIns->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMeshInstance"));
-			m_pObjIns->Set_Color(m_iMapObjectIndex); // 고유한 색깔 값을 넣어줌
-
-			//// 저장용 벡터에 넣어준다.
-			//SAVEOBJECTDESC SaveDesc;
-
-			//SaveDesc.matTransform = vWorldMatrix;
-			//lstrcpy(SaveDesc.wszTag, m_vecModelList_t.at(m_iModelIndex));
-			//SaveDesc.iTagLen = lstrlen(SaveDesc.wszTag) * 2;
-
-			//m_vecSaveObject.push_back(SaveDesc);
-
-			++m_iMapObjectIndex;
-
-		} ENDINSTANCE;
-	}
+	//	m_bOne = false;
+	//}
 
 	ImGui::End();
 }
@@ -197,7 +152,8 @@ void CObject_Window::Picking_Menu()
 
 	ImGui::Text("Choice Install Method");
 	ImGui::RadioButton("1Click One_Install", &m_iInstallMethod, 0);
-	ImGui::RadioButton("1Pressing Multi_Install", &m_iInstallMethod, 1);
+	ImGui::RadioButton("1Pressing Continuius_Install", &m_iInstallMethod, 1);
+	ImGui::RadioButton("1Click Multi_Install", &m_iInstallMethod, 2);
 
 	ImGui::Text("");
 
@@ -323,13 +279,53 @@ void CObject_Window::Install_Object(_float3 vPos)
 
 void CObject_Window::Install_Continuous_Object(_float3 vPos)
 {
+	
 }
 
 void CObject_Window::Install_Multi_Object(_float3 vPos)
 {
-	ImGui::Text("Press H to Multi Install");
+	ImGui::Text("Press H to Install");
 
+	// 범위 안에 있을 경우 H키를 눌러 설치
+	BEGININSTANCE; if (true == pGameInstance->Get_DIKeyState(DIK_H, CInput_Device::KEY_DOWN) &&
+		-1.f != vPos.x)
+	{
+		// 맵 오브젝트에 번호 붙여줌
+		_tchar wszobjName[MAX_PATH] = { 0 };
+		_stprintf_s(wszobjName, TEXT("GameObject_MapObject_%d"), (m_iMapObjectIndex));
+		Deep_Copy_Tag(wszobjName);
 
+		_float4x4 vWorldMatrix = m_pDummy->Get_Transform()->Get_WorldMatrix();
+		// 번호를 붙인 태그로 MapObject 등록
+		if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL,
+			TEXT("Prototype_GameObject_MapObject_Ins"), TEXT("Layer_MapObject"),
+			m_vecMapObjectTag.at(m_iMapObjectIndex).c_str(), &vWorldMatrix)))
+		{
+			MSG_BOX("Failed to Install MapObject_Ins");
+			ENDINSTANCE;
+			return;
+		}
+
+		// 마지막에 설치한 맵 오브젝트 주소 가져옴
+		m_pObjIns = static_cast<CMapObject_Ins*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL,
+			TEXT("Layer_MapObject"), wszobjName));
+
+		m_pObjIns->Add_Model_Component(TEXT("Prototype_Component_Model_Instance_Tree"));
+		m_pObjIns->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMeshInstance"));
+		m_pObjIns->Set_Color(m_iMapObjectIndex); // 고유한 색깔 값을 넣어줌
+
+		//// 저장용 벡터에 넣어준다.
+		//SAVEOBJECTDESC SaveDesc;
+
+		//SaveDesc.matTransform = vWorldMatrix;
+		//lstrcpy(SaveDesc.wszTag, m_vecModelList_t.at(m_iModelIndex));
+		//SaveDesc.iTagLen = lstrlen(SaveDesc.wszTag) * 2;
+
+		//m_vecSaveObject.push_back(SaveDesc);
+
+		++m_iMapObjectIndex;
+
+	} ENDINSTANCE;
 }
 
 void CObject_Window::Select_Model()
@@ -1023,10 +1019,12 @@ HRESULT CObject_Window::Save_Model_Path(_uint iType, const _tchar* pFilePath)
 				// 2차 분리, 여기서 모델 이름이 나와야 함
 				string result1 = result.substr(0, current1);
 
+				// 모델 리스트에 출력할 문자열 모음에 넣음
+				m_vecModelList.push_back(result1);
+
 				// 이제 컴포넌트 모델 이름으로 결합
 				string modelname = ("Prototype_Component_Model_");
 				modelname += result1;
-				m_vecModelList.push_back(modelname);
 
 				wstring wmodelname(modelname.begin(), modelname.end());
 				Deep_Copy_Name(wmodelname.c_str());
