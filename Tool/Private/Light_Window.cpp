@@ -63,10 +63,10 @@ void CLight_Window::Tick(_float fTimeDelta)
 	m_iCurrent_LightIndex = m_iLightIndex;//list 박스에서 다른 빛으로변경할때 변경된것판단.
 
 	Light_ComboBox();
-	
+	BEGININSTANCE
 	if (m_iLightIndex != m_iCurrent_LightIndex)
 	{
-		BEGININSTANCE
+		
 		LightDesc = *pGameInstance->Get_Light(m_iLightIndex);
 
 		FloatToFloat4(vPos, LightDesc.vPos);
@@ -77,11 +77,18 @@ void CLight_Window::Tick(_float fTimeDelta)
 		FloatToFloat4(vAmbient, LightDesc.vAmbient);
 		FloatToFloat4(vSpecular, LightDesc.vSpecular);
 		m_iLightType = LightDesc.iLightType;
-		ENDINSTANCE
+		
 	}
-	Set_LightInfo();
 	ImGui::Separator();
 
+	if (pGameInstance->Get_DIKeyState(DIK_H,CInput_Device::KEY_DOWN) && m_isHold == true)
+		m_isHold = false;
+	else if (pGameInstance->Get_DIKeyState(DIK_H, CInput_Device::KEY_DOWN)&&m_isHold==false)
+		m_isHold = true;
+
+	Set_LightInfo();
+	ImGui::Text("Press 'H' to Hold Position");
+	
 	ImGui::Checkbox("Picking", &m_isCheckPicking);
 		if (m_isCheckPicking)
 	{
@@ -99,7 +106,7 @@ void CLight_Window::Tick(_float fTimeDelta)
 	Delete_Light(m_iLightIndex,LightDesc.szName);
 	Clear_Light();
 
-	BEGININSTANCE
+	
 	m_pLightDot->Set_Position(LightDesc.vPos);
 	m_pLightDot->Tick(fTimeDelta);
 	m_pLightDot->Set_Collider_Color(_float4(0.f, 0.f, 1.f, 1.f));
@@ -244,7 +251,7 @@ HRESULT CLight_Window::Save_Light()
 {
 	if(ImGui::Button("Save"))
 	{
-		_tchar dataFile[MAX_PATH] = TEXT("../../Resources/LightData/Light.ljh");
+		_tchar dataFile[MAX_PATH] = TEXT("../../Resources/GameData/LightData/Light.ljh");
 
 		HANDLE hFile = CreateFile(dataFile, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
 		if (INVALID_HANDLE_VALUE == hFile)
@@ -306,7 +313,7 @@ HRESULT CLight_Window::Load_Light()
 		Clear_Light();
 		m_vecLightDesc.clear();
 
-		_tchar dataFile[MAX_PATH] = TEXT("../../Resources/LightData/Light.ljh");
+		_tchar dataFile[MAX_PATH] = TEXT("../../Resources/GameData/LightData/Light.ljh");
 
 		HANDLE hFile = CreateFile(dataFile, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
@@ -360,7 +367,7 @@ HRESULT CLight_Window::Load_Light()
 			m_vecLightList.push_back(SaveDesc.szName);
 
 		}
-
+		
 		MSG_BOX("Load Successed");
 
 		CloseHandle(hFile);
@@ -373,7 +380,6 @@ HRESULT CLight_Window::Load_Light()
 				pGameInstance->Add_Lights( m_pDevice,m_pContext, LightDesc);
 
 			}
-
 		ENDINSTANCE
 	}
 	
@@ -530,11 +536,13 @@ _float3 CLight_Window::Find_PickPos()
 	_float4 vRayPos = { 0.f, 0.f, 0.f, 1.f };
 	_float4 vRayDir = { 0.f, 0.f, 0.f, 0.f };
 
-	BEGININSTANCE; pGameInstance->Get_WorldMouseRay(m_pContext, g_hWnd, &vRayPos, &vRayDir);
+	BEGININSTANCE
+		pGameInstance->Get_WorldMouseRay(m_pContext, g_hWnd, &vRayPos, &vRayDir);
 
 	CVIBuffer_Terrain* pTerrain = static_cast<CVIBuffer_Terrain*>(
 		static_cast<CTerrain*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL, TEXT("Layer_Tool"),
-			TEXT("GameObject_Terrain")))->Get_Buffer()); ENDINSTANCE;
+			TEXT("GameObject_Terrain")))->Get_Buffer());
+	ENDINSTANCE
 
 	float fDist = FLT_MAX; // 피킹 연산 후 최종 거리값
 
@@ -566,7 +574,7 @@ void CLight_Window::Picking_Menu(CLight::LIGHTDESC LightDesc)
 	ScreenToClient(g_hWnd, &pt);
 
 	// 마우스 커서의 위치가 화면 밖으로 나갔는지 확인합니다.
-	if (pt.x > 0 && pt.x < 1280 &&
+	if (m_isHold&&pt.x > 0 && pt.x < 1280 &&
 		pt.y >0 && pt.y < 720)
 	{
 		m_isCursorIn = true;
@@ -574,8 +582,8 @@ void CLight_Window::Picking_Menu(CLight::LIGHTDESC LightDesc)
 	}
 	else
 		m_isCursorIn = false;
-
-		m_vPickPos = Find_PickPos();
+		if(m_isHold)
+			m_vPickPos = _float3(Find_PickPos().x,m_vPickPos.y,Find_PickPos().z);
 		// 현재 피킹 위치 표시
 		ImGui::Text("Picking Position");
 		ImGui::Text("Pressing LShift : Rounding the value");
@@ -587,8 +595,10 @@ void CLight_Window::Picking_Menu(CLight::LIGHTDESC LightDesc)
 		ImGui::Separator();
 		//LightDesc.vPos = _float4(m_vPickPos.x, m_vPickPos.y, m_vPickPos.z, 1.f);
 		if (m_isCursorIn)
-		{
+		{	
 			BEGININSTANCE
+				if (pGameInstance->Get_DIMouseMove(CInput_Device::DIMM_WHEEL))
+					m_vPickPos.y += 0.1f;
 				if (pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN))
 				{
 					m_isSetting = false;
@@ -597,7 +607,7 @@ void CLight_Window::Picking_Menu(CLight::LIGHTDESC LightDesc)
 					m_vecLightDesc.push_back(LightDesc);
 					m_vecLightList.push_back(StrInput);
 					m_iLightIndex++;
-					/*CLightDot::LIGHTPOS LightDot;
+					CLightDot::LIGHTPOS LightDot;
 					ZEROMEM(&LightDot);
 
 					LightDot.vPosition = LightDesc.vPos;
@@ -606,111 +616,16 @@ void CLight_Window::Picking_Menu(CLight::LIGHTDESC LightDesc)
 						LightDot.fRange = 3.f;
 					else
 						LightDot.fRange = LightDesc.fRange;
-					m_pLightDot = dynamic_cast<CLightDot*>(pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_LightDot"), &LightDot));*/
-
+					 CLightDot* pLightDot = dynamic_cast<CLightDot*>(pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_LightDot"), &LightDot));
+					 
+					 Safe_Release(pLightDot);
 					ResetValue();
 				}
 			ENDINSTANCE
 		}
 
 }
-void CLight_Window::Mesh_Picking()
-{
-#ifdef _DEBUG
-	BEGININSTANCE
-	
-		//Target_Picking의 ID3D11Texture2D를 가져옴
-		ID3D11Texture2D* pTexture = pGameInstance->Find_RenderTarget(TEXT("Target_Picking"))->Get_Texture2D();
 
-		// 텍스처의 너비와 높이
-		D3D11_TEXTURE2D_DESC  TextureDesc;
-		pTexture->GetDesc(&TextureDesc);
-
-		_uint iWidth = TextureDesc.Width;
-		_uint iHeight = TextureDesc.Height;
-
-		// 마우스 위치
-		D3D11_VIEWPORT ViewPort;
-		_uint iNumViewPorts = 1;
-
-		ZEROMEM(&ViewPort);
-		if (nullptr == m_pContext)
-			return;
-		m_pContext->RSGetViewports(&iNumViewPorts, &ViewPort);
-
-		POINT	pt{};
-		GetCursorPos(&pt);
-		ScreenToClient(g_hWnd, &pt);
-
-		D3D11_BOX findDesc;
-		ZEROMEM(&findDesc);
-
-		// 이 구조체의 정보를 토대로 단 하나의 픽셀을 가져온다
-		findDesc.left = pt.x;
-		findDesc.right = pt.x + 1;
-		findDesc.top = pt.y;
-		findDesc.bottom = pt.y + 1;
-		findDesc.front = 0;
-		findDesc.back = 1;
-
-		// Usage 버퍼 생성, 읽기 전용이다.
-		ID3D11Texture2D* pCopyTexture2D = { nullptr };
-		D3D11_TEXTURE2D_DESC	TextureDescCopy;
-		ZEROMEMSIZE(&TextureDescCopy, sizeof(D3D11_TEXTURE2D_DESC));
-
-		TextureDescCopy.Width = 1;
-		TextureDescCopy.Height = 1;
-		TextureDescCopy.MipLevels = 1;
-		TextureDescCopy.ArraySize = 1;
-		TextureDescCopy.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-
-		TextureDescCopy.SampleDesc.Quality = 0;
-		TextureDescCopy.SampleDesc.Count = 1;
-
-		TextureDescCopy.Usage = D3D11_USAGE_STAGING;
-		TextureDescCopy.BindFlags = 0;
-		TextureDescCopy.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
-		TextureDescCopy.MiscFlags = 0;
-
-		if (FAILED(m_pDevice->CreateTexture2D(&TextureDescCopy, nullptr, &pCopyTexture2D)))
-			return;
-
-		// 새로 만든 1칸짜리 텍스처에 가져온 렌더 타겟 텍스처에서 원하는 1칸을 넣어준다.
-		m_pContext->CopySubresourceRegion(pCopyTexture2D, 0, 0, 0, 0, pTexture, 0, &findDesc);
-
-		D3D11_MAPPED_SUBRESOURCE MappedDesc;
-		ZEROMEM(&MappedDesc);
-
-		if (FAILED(m_pContext->Map(pCopyTexture2D, 0, D3D11_MAP_READ, 0, &MappedDesc)))
-		{
-			m_pContext->Unmap(pCopyTexture2D, 0);
-			MSG_BOX("Failed to Map Picking Texture");
-			return;
-		}
-
-		// 해당 Pixel Copy가 잘못 되었을 경우..
-		if (MappedDesc.pData == nullptr)
-		{
-			m_pContext->Unmap(pCopyTexture2D, 0);
-			MSG_BOX("Copy Data is nullptr");
-			return;
-		}
-
-		_uint pickID = { 0 };
-		pickID = ((_uint*)MappedDesc.pData)[0];
-
-		pickID -= 4278190080;
-
-		string s = ("GameObject_MapObject_");
-		s += std::to_string(pickID);
-
-	
-		m_pContext->Unmap(pCopyTexture2D, 0);
-
-		Safe_Release(pCopyTexture2D);
-	ENDINSTANCE;
-#endif
-}
 CLight_Window* CLight_Window::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, ImVec2 vWindowPos, ImVec2 vWindowSize)
 {
 	CLight_Window* pInstance = New CLight_Window(pDevice, pContext);
@@ -729,6 +644,7 @@ void CLight_Window::Free()
 {
 	__super::Free();
 	Safe_Release(m_pLightDot);
+
 	m_vecLightDesc.clear();
 	m_vecLightList.clear();
 

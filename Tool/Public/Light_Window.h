@@ -56,9 +56,7 @@ public:
 	void Float4ToFloat(_float* Input, _float4 Out);//이름반대로댐
 	_float3 Find_PickPos();
 	void Picking_Menu(CLight::LIGHTDESC LightDesc);
-	void Mesh_Picking();
-	/*void Picking();
-	_float3 Find_PickingPos();*/
+
 private:
 	int m_iLightType = 0;
 	_int m_iLightIndex;
@@ -69,6 +67,7 @@ private:
 	string StrInput;
 	_uint m_iCurrent_Idx = 0;
 
+	_bool m_isHold = true;
 	_bool m_isCurrent_Idx;
 	_bool m_isRender = true;
 	_char AddLightName[MAX_PATH] = {};
@@ -98,7 +97,7 @@ private://Engine
 private://tool
 
 	CMapObject* m_pObject = { nullptr };
-	CLightDot* m_pLightDot = { nullptr };
+	CLightDot* m_pLightDot = { nullptr};
 
 
 public:

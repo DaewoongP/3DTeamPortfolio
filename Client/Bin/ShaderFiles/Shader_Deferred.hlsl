@@ -296,7 +296,7 @@ PS_OUT_LIGHT PS_MAIN_SPOTLIGHT(PS_IN In)
 
     float fDistance = length(vLightDir);
 
-
+    
     // spotlight factor
     float fSpot = pow(max(dot(normalize(vLightDir), g_vLightDir), 0.0f), g_fSpotPower);
 
@@ -304,12 +304,12 @@ PS_OUT_LIGHT PS_MAIN_SPOTLIGHT(PS_IN In)
     // 실제 거리에 따른 공식처리 -> fSpot / fDistance * fDistance // -> f
     float fAtt = fSpot / fDistance * fDistance;
 	
-    Out.vShade = g_vLightDiffuse * saturate(max(dot(normalize(vLightDir) * -1.f, vNormal), 0.f) + (g_vLightAmbient * g_vMtrlAmbient)) * fAtt;
+    Out.vShade = g_vLightDiffuse * saturate(max(dot(normalize(vLightDir) , vNormal), 0.f) + (g_vLightAmbient * g_vMtrlAmbient)) * fAtt;
 
     vector vReflect = reflect(normalize(vLightDir), vNormal);
     vector vLook = vPosition - g_vCamPosition;
 
-    Out.vSpecular = (g_vLightSpecular) * (g_vMtrlSpecular) * pow(max(dot(normalize(vReflect) * -1.f, normalize(vLook)), 0.f), 10.f) * fAtt;
+    Out.vSpecular = (g_vLightSpecular) * (g_vMtrlSpecular) * pow(max(dot(normalize(vReflect) , normalize(vLook)), 0.f), 10.f) * fAtt;
 
     return Out;
 }
