@@ -283,7 +283,7 @@ PS_OUT_LIGHT PS_MAIN_SPOTLIGHT(PS_IN In)
     vPosition.x = In.vTexUV.x * 2.f - 1.f;
     vPosition.y = In.vTexUV.y * -2.f + 1.f;
     vPosition.z = vDepthDesc.x;
-    vPosition.w = 1.f;
+    vPosition.w = 1.f; 
 
 	/* 뷰스페이스 상의 위치. */
     vPosition = vPosition * fViewZ;
