@@ -65,7 +65,7 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 
 		CModel::ANIMTYPE ePartCnt = static_cast<CModel::ANIMTYPE>(partCnt);
 
-		Animation_ListBox(ePartCnt,m_szCurrentItem[ePartCnt], pDummyModel);
+		Animation_ChildFrame(ePartCnt,m_szCurrentItem[ePartCnt], pDummyModel);
 		Animation_Action_Button(ePartCnt,pDummyModel, &m_fNotifyActionTime);
 
 		_char szUIName[MAX_PATH] = "Animation##";
@@ -269,12 +269,12 @@ void CAnimation_Window::Animation_ComboBox(CModel::ANIMTYPE ePartCnt, _char* szC
 	}
 }
 
-void CAnimation_Window::Animation_ListBox(CModel::ANIMTYPE ePartCnt, _char* szCurrentItem, CModel* pDummyModel)
+void CAnimation_Window::Animation_ChildFrame(CModel::ANIMTYPE ePartCnt, _char* szCurrentItem, CModel* pDummyModel)
 {
-	_char szUIName[MAX_PATH] = "AnimComboBox##";
+	_char szUIName[MAX_PATH] = "##AnimChildFrame";
 	sprintf_s(szUIName, "%s%d", szUIName, ePartCnt);
-	const auto  draw_list_size = ImVec2(500, 260);
-	if (ImGui::BeginListBox(szUIName, draw_list_size))
+	const auto  draw_childframe_size = ImVec2(500, 260);
+	ImGui::BeginChildFrame(ImGui::GetID(&szUIName), draw_childframe_size,ImGuiWindowFlags_AlwaysHorizontalScrollbar);
 	{
 		_char szAnimationName[MAX_PATH] = "";
 		_tchar wszAnimationName[MAX_PATH] = {};
@@ -305,8 +305,8 @@ void CAnimation_Window::Animation_ListBox(CModel::ANIMTYPE ePartCnt, _char* szCu
 				pDummyModel->Delete_Animation(i, ePartCnt);
 			}
 		}
-		ImGui::EndListBox();
 	}
+	ImGui::EndChildFrame();
 }
 
 void CAnimation_Window::Animation_Action_Button(CModel::ANIMTYPE ePartCnt, CModel* pDummyModel, _float* fNotifyActionTime)
