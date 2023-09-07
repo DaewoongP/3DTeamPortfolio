@@ -4,6 +4,7 @@
 #include "Dummy.h"
 #include "MapDummy.h"
 #include "MapObject.h"
+#include "MapObject_Ins.h"
 #include "Camera_Point.h"
 
 #ifdef _DEBUG
@@ -121,7 +122,7 @@ HRESULT CMainTool::Initialize_ImGui()
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
-	io.Fonts->AddFontFromFileTTF("../../Resources/Fonts/NEXONLv1GothicBold.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesKorean());
+	io.Fonts->AddFontFromFileTTF("../../Resources/Fonts/NEXONLv1GothicBold.ttf", 15.0f, NULL, io.Fonts->GetGlyphRangesKorean());
 
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
@@ -261,11 +262,11 @@ HRESULT CMainTool::Ready_Prototype_Component()
 	}
 
 	/* For.Prototype_Component_Shader_MeshInstance */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Shader_MeshInstance"),
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Shader_VtxMeshInstance"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxMeshInstance.hlsl"),
 			VTXMESHINSTANCE_DECL::Elements, VTXMESHINSTANCE_DECL::iNumElements))))
 	{
-		MSG_BOX("Failed Add_Prototype : (Prototype_Component_Shader_MeshInstance)");
+		MSG_BOX("Failed Add_Prototype : (Prototype_Component_Shader_VtxMeshInstance)");
 		return E_FAIL;
 	}
 
@@ -383,6 +384,11 @@ HRESULT CMainTool::Ready_Prototype_Object()
 	/* Prototype_GameObject_MapObject*/
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_MapObject"),
 		CMapObject::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* Prototype_GameObject_MapObject_Ins*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_MapObject_Ins"),
+		CMapObject_Ins::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 		
 	/* Prototype_GameObject_Camera_Point*/

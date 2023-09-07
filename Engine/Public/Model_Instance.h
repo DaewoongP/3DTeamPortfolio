@@ -11,7 +11,6 @@ class ENGINE_DLL CModel_Instance : public CComponent
 {
 public:
 	enum TYPE { TYPE_NONANIM, TYPE_ANIM, TYPE_END };
-	enum ANIMTYPE { UPPERBODY, UNDERBODY, ANIM_END };
 
 private:
 	CModel_Instance(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -36,11 +35,6 @@ private: // Files
 	vector<MATERIAL>				m_MaterialDatas;
 	vector<ANIMATION>				m_AnimationDatas;
 
-private: /* For.Bones */
-	vector<class CBone*>			m_Bones;
-public:
-	typedef vector<class CBone*>	BONES;
-
 private: /* For.Meshes */
 	_uint							m_iNumMeshes = { 0 };
 	vector<class CMesh_Instance*>	m_Meshes;
@@ -48,14 +42,6 @@ private: /* For.Meshes */
 private: /* For.Materials */
 	_uint							m_iNumMaterials = { 0 };
 	vector<MESHMATERIAL>			m_Materials;
-
-private: /* For.Animations */
-	_uint							m_iAnimationPartCount = { 0 };
-	ANIMATIONDESC					m_tAnimationDesc[ANIM_END];
-
-private: /* For.RootAnimation*/
-	_uint							m_iRootBoneIndex = { 0 };
-	_float4x4						m_PostRootMatrix;
 
 private:
 	_float4x4*						m_pInstanceMatrix = { nullptr };

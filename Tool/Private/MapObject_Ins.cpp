@@ -137,19 +137,13 @@ HRESULT CMapObject_Ins::Add_Components()
 		return E_FAIL;
 	}
 
-	/* Com_Shader */
-	if (FAILED(CComposite::Add_Component(LEVEL_TOOL, TEXT("Prototype_Component_Shader_MeshInstance"),
-		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
-	{
-		MSG_BOX("Failed CMapObject Add_Component : (Com_Shader)");
-		return E_FAIL;
-	}
-
 	return S_OK;
 }
 
 HRESULT CMapObject_Ins::SetUp_ShaderResources()
 {
+	_float4x4 vMat = m_pTransform->Get_WorldMatrix();
+
 	BEGININSTANCE; if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
 		return E_FAIL;
 

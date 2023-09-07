@@ -109,10 +109,11 @@ void CObject_Window::Tick(_float fTimeDelta)
 
 	ImGui::Separator();
 
+	// Test
 	if (true == m_bOne)
 	{
 		_float4x4 PivotMatrix = XMMatrixIdentity();
-		BEGININSTANCE; if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Model_Instance_Tree"),
+		BEGININSTANCE; if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Model_Instance_Tree"),
 			CModel_Instance::Create(m_pDevice, m_pContext, CModel_Instance::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Tree/Tree.dat"), PivotMatrix))))
 		{
 			MSG_BOX("Failed to Create New CModel_Instance Prototype");
@@ -134,13 +135,12 @@ void CObject_Window::Tick(_float fTimeDelta)
 			Deep_Copy_Tag(wszobjName);
 
 			_float4x4 vWorldMatrix = m_pDummy->Get_Transform()->Get_WorldMatrix();
-
 			// 번호를 붙인 태그로 MapObject 등록
 			if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL,
-				TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_MapObject"),
+				TEXT("Prototype_GameObject_MapObject_Ins"), TEXT("Layer_MapObject"),
 				m_vecMapObjectTag.at(m_iMapObjectIndex).c_str(), &vWorldMatrix)))
 			{
-				MSG_BOX("Failed to Install MapObject");
+				MSG_BOX("Failed to Install MapObject_Ins");
 				ENDINSTANCE;
 				return;
 			}
@@ -149,8 +149,8 @@ void CObject_Window::Tick(_float fTimeDelta)
 			m_pObjIns = static_cast<CMapObject_Ins*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL,
 				TEXT("Layer_MapObject"), wszobjName));
 
-			m_pObjIns->Add_Model_Component(TEXT("Prototype_Model_Instance_Tree"));
-			//m_pObjIns->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMesh"));
+			m_pObjIns->Add_Model_Component(TEXT("Prototype_Component_Model_Instance_Tree"));
+			m_pObjIns->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMeshInstance"));
 			m_pObjIns->Set_Color(m_iMapObjectIndex); // 고유한 색깔 값을 넣어줌
 
 			//// 저장용 벡터에 넣어준다.
@@ -694,7 +694,7 @@ HRESULT CObject_Window::Load_MapObject()
 {
 	m_vecSaveObject.clear();
 
-	_tchar dataFile[MAX_PATH] = TEXT("../../Resources/GameData/MapData/MapObject.dat");
+	_tchar dataFile[MAX_PATH] = TEXT("../../Resources/GameData/MapData/MapObject.ddd");
 
 	HANDLE hFile = CreateFile(dataFile, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 

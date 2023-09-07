@@ -45,9 +45,12 @@ HRESULT CMesh_Instance::Initialize_Prototype(const Engine::MESH Mesh, _float4x4 
 
 	for (size_t i = 0; i < m_iNumInstance; i++)
 	{
-		pIndices[iNumFaces++] = Mesh.Faces[i].iIndices[0];
-		pIndices[iNumFaces++] = Mesh.Faces[i].iIndices[1];
-		pIndices[iNumFaces++] = Mesh.Faces[i].iIndices[2];
+		for (size_t i = 0; i < Mesh.iNumFaces; i++)
+		{
+			pIndices[iNumFaces++] = Mesh.Faces[i].iIndices[0];
+			pIndices[iNumFaces++] = Mesh.Faces[i].iIndices[1];
+			pIndices[iNumFaces++] = Mesh.Faces[i].iIndices[2];
+		}		
 	}
 
 	ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
@@ -56,6 +59,7 @@ HRESULT CMesh_Instance::Initialize_Prototype(const Engine::MESH Mesh, _float4x4 
 	if (FAILED(__super::Create_Buffer(&m_pIB)))
 		return E_FAIL;
 	Safe_Delete_Array(pIndices);
+	int i = 0;
 #pragma endregion
 
 	return S_OK;

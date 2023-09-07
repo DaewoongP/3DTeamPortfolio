@@ -12,8 +12,10 @@ CModel_Instance::CModel_Instance(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
 CModel_Instance::CModel_Instance(const CModel_Instance& rhs)
 	: CComponent(rhs)
 	, m_Model(rhs.m_Model)
+	, m_NodeDatas(rhs.m_NodeDatas)
 	, m_MeshDatas(rhs.m_MeshDatas)
 	, m_MaterialDatas(rhs.m_MaterialDatas)
+	, m_AnimationDatas(rhs.m_AnimationDatas)
 	, m_iNumMeshes(rhs.m_iNumMeshes)
 	, m_Meshes(rhs.m_Meshes)
 	, m_iNumMaterials(rhs.m_iNumMaterials)
@@ -137,9 +139,18 @@ HRESULT CModel_Instance::Ready_File(TYPE eType, const _tchar* pModelFilePath)
 		ReadFile(hFile, &(Node.iNumChildren), sizeof(_uint), &dwByte, nullptr);
 
 		// Node Children (array)
-		Node.iChildrens = new _uint[Node.iNumChildren];
-		ZeroMemory(Node.iChildrens, sizeof(_uint) * (Node.iNumChildren));
-		ReadFile(hFile, Node.iChildrens, sizeof(_uint) * (Node.iNumChildren), &dwByte, nullptr);
+		// iNumChildren 이 0일 경우 동적 할당 안함
+		if (0 != Node.iNumChildren)
+		{
+			Node.iChildrens = new _uint[Node.iNumChildren];
+			ZeroMemory(Node.iChildrens, sizeof(_uint) * (Node.iNumChildren));
+			ReadFile(hFile, Node.iChildrens, sizeof(_uint) * (Node.iNumChildren), &dwByte, nullptr);
+		}
+
+		else
+		{
+			Node.iChildrens = nullptr;
+		}
 
 		m_NodeDatas.push_back(Node);
 	}
@@ -502,14 +513,6 @@ void CModel_Instance::Free()
 		Safe_Delete_Array(m_pInstanceMatrix);
 	}
 
-
-	/*for (auto& pBone : m_Bones)
-	{
-		Safe_Release(pBone);
-	}
-
-	m_Bones.clear();*/
-
 	for (auto& pMesh : m_Meshes)
 	{
 		Safe_Release(pMesh);
@@ -524,15 +527,4 @@ void CModel_Instance::Free()
 	}
 
 	m_Materials.clear();
-
-	for (int i = 0; i < ANIM_END; i++)
-	{
-		if (m_tAnimationDesc[i].Animations.size() == 0)
-			continue;
-		for (auto& pAnimation : m_tAnimationDesc[i].Animations)
-		{
-			Safe_Release(pAnimation);
-		}
-		m_tAnimationDesc[i].Animations.clear();
-	}
 }
