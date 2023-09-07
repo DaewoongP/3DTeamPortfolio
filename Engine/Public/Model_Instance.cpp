@@ -20,8 +20,6 @@ CModel_Instance::CModel_Instance(const CModel_Instance& rhs)
 	, m_Meshes(rhs.m_Meshes)
 	, m_iNumMaterials(rhs.m_iNumMaterials)
 	, m_Materials(rhs.m_Materials)
-	, m_pInstanceMatrix(rhs.m_pInstanceMatrix)
-	, m_InstanceCnt(rhs.m_InstanceCnt)
 	, m_PivotMatrix(rhs.m_PivotMatrix)
 {
 	for (auto& pMesh : m_Meshes)
@@ -36,30 +34,14 @@ CModel_Instance::CModel_Instance(const CModel_Instance& rhs)
 	}
 }
 
-HRESULT CModel_Instance::Initialize_Prototype(TYPE eType, const _tchar* pModelFilePath, _float4x4 PivotMatrix)
+HRESULT CModel_Instance::Initialize_Prototype(TYPE eType, const _tchar* pModelFilePath, _float4x4* pInstanceMatrix, _uint iInstanceCnt, _float4x4 PivotMatrix)
 {
 	XMStoreFloat4x4(&m_PivotMatrix, PivotMatrix);
-
-	m_pInstanceMatrix = new _float4x4[m_InstanceCnt];
-
-	for (size_t i = 0; i < m_InstanceCnt; i++)
-	{
-		_float4x4 vMatrix = { 1.f, 0.f, 0.f, 0.f,
-							0.f, 1.f, 0.f, 0.f,
-							0.f, 0.f, 1.f, 0.f,
-							0.f, 0.f, 0.f, 1.f };
-
-		vMatrix.m[3][0] += i * 5.f;
-		vMatrix.m[3][1] += i * 5.f;
-		vMatrix.m[3][2] += i * 5.f;
-
-		m_pInstanceMatrix[i] = vMatrix;
-	}
 
 	if (FAILED(Ready_File(eType, pModelFilePath)))
 		return E_FAIL;
 
-	if (FAILED(Ready_Meshes(eType, PivotMatrix)))
+	if (FAILED(Ready_Meshes(eType, pInstanceMatrix, iInstanceCnt, PivotMatrix)))
 		return E_FAIL;
 
 	if (FAILED(Ready_Materials()))
@@ -375,13 +357,13 @@ HRESULT CModel_Instance::Ready_File(TYPE eType, const _tchar* pModelFilePath)
 	return S_OK;
 }
 
-HRESULT CModel_Instance::Ready_Meshes(TYPE eType, _float4x4 PivotMatrix)
+HRESULT CModel_Instance::Ready_Meshes(TYPE eType, _float4x4* pInstanceMatrix, _uint iInstanceCnt, _float4x4 PivotMatrix)
 {
 	m_iNumMeshes = m_Model.iNumMeshes;
 
 	for (_uint i = 0; i < m_iNumMeshes; ++i)
 	{
-		CMesh_Instance* pMesh = CMesh_Instance::Create(m_pDevice, m_pContext, m_MeshDatas[i], PivotMatrix, m_pInstanceMatrix, m_InstanceCnt);
+		CMesh_Instance* pMesh = CMesh_Instance::Create(m_pDevice, m_pContext, m_MeshDatas[i], pInstanceMatrix, iInstanceCnt, PivotMatrix);
 		if (nullptr == pMesh)
 			return E_FAIL;
 
@@ -478,10 +460,10 @@ void CModel_Instance::Release_FileDatas()
 	m_AnimationDatas.clear();
 }
 
-CModel_Instance* CModel_Instance::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, TYPE eType, const _tchar* pModelFilePath, _float4x4 PivotMatrix)
+CModel_Instance* CModel_Instance::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, TYPE eType, const _tchar* pModelFilePath, _float4x4* pInstanceMatrix, _uint iInstanceCnt, _float4x4 PivotMatrix)
 {
 	CModel_Instance* pInstance = new CModel_Instance(pDevice, pContext);
-	if (FAILED(pInstance->Initialize_Prototype(eType, pModelFilePath, PivotMatrix)))
+	if (FAILED(pInstance->Initialize_Prototype(eType, pModelFilePath, pInstanceMatrix, iInstanceCnt, PivotMatrix)))
 	{
 		MSG_BOX("Failed to Created CModel_Instance");
 		Safe_Release(pInstance);
@@ -510,7 +492,6 @@ void CModel_Instance::Free()
 	if (!m_isCloned)
 	{
 		Release_FileDatas();
-		Safe_Delete_Array(m_pInstanceMatrix);
 	}
 
 	for (auto& pMesh : m_Meshes)

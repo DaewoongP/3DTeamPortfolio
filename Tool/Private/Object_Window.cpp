@@ -109,18 +109,27 @@ void CObject_Window::Tick(_float fTimeDelta)
 
 	ImGui::Separator();
 
-	//// Test, 현재 누수남
-	//if (true == m_bOne)
-	//{
-	//	_float4x4 PivotMatrix = XMMatrixIdentity();
-	//	BEGININSTANCE; if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Model_Instance_Tree"),
-	//		CModel_Instance::Create(m_pDevice, m_pContext, CModel_Instance::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Tree/Tree.dat"), PivotMatrix))))
-	//	{
-	//		MSG_BOX("Failed to Create New CModel_Instance Prototype");
-	//	} ENDINSTANCE;
+	// Save Load 선택 창 On / Off
+	ImGui::Checkbox("Instance Save Load", &m_isInsSaveLoad);
+	if (true == m_isInsSaveLoad)
+	{
+		Ins_Save_Load_Menu();
+	}
 
-	//	m_bOne = false;
-	//}
+	ImGui::Separator();
+
+	// Test, 현재 누수남
+	if (true == m_bOne)
+	{
+		/*_float4x4 PivotMatrix = XMMatrixIdentity();
+		BEGININSTANCE; if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Model_Instance_Tree"),
+			CModel_Instance::Create(m_pDevice, m_pContext, CModel_Instance::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Tree/Tree.dat"), PivotMatrix))))
+		{
+			MSG_BOX("Failed to Create New CModel_Instance Prototype");
+		} ENDINSTANCE;
+
+		m_bOne = false;*/
+	}
 
 	ImGui::End();
 }
@@ -436,6 +445,25 @@ void CObject_Window::Save_Load_Menu()
 	}
 }
 
+void CObject_Window::Ins_Save_Load_Menu()
+{
+	// 세이브 버튼 처리
+	if (ImGui::Button("Save"))
+	{
+		if (FAILED(Save_MapObject_Ins()))
+			MSG_BOX("Failed to Save MapObject_Ins on Menu");
+	}
+
+	ImGui::SameLine();
+
+	// 로드 버튼 처리
+	if (ImGui::Button("Load"))
+	{
+		if (FAILED(Load_MapObject_Ins()))
+			MSG_BOX("Failed to Load MapObject_Ins on Menu");
+	}
+}
+
 void CObject_Window::Delete_Object_Menu()
 {
 	// 마지막에 설치한 오브젝트를 제거
@@ -663,8 +691,7 @@ HRESULT CObject_Window::Save_MapObject()
 		{
 			MSG_BOX("Failed to Write m_vecSaveObject.vPos");
 			return E_FAIL;
-		}
-			
+		}			
 
 		if (!WriteFile(hFile, &iter.iTagLen, sizeof(_uint), &dwByte, nullptr))
 		{ 
@@ -739,23 +766,6 @@ HRESULT CObject_Window::Load_MapObject()
 	// 로드한 데이터를 적용시켜 주는 부분
 	for (size_t i = 0; i < m_vecSaveObject.size(); i++)
 	{
-		_uint iCount = 0;
-
-		// m_vecModelList_t를 순회하며 중복되는 문자열이 있는지 체크
-		for (auto& iter : m_vecModelList_t)
-		{
-			if (0 == lstrcmp(iter, m_vecSaveObject[i].wszTag))
-			{
-				++iCount;
-			}
-		}
-
-		// 중복되는 문자열이 없다면 m_vecModelList_t에 모델 이름 삽입
-		if (0 == iCount) 
-		{
-			m_vecModelList_t.push_back(Deep_Copy(m_vecSaveObject[i].wszTag));
-		}
-
 		// 맵 오브젝트에 번호 붙여줌
 		_tchar wszobjName[MAX_PATH] = { 0 };
 		_stprintf_s(wszobjName, TEXT("GameObject_MapObject_%d"), (m_iMapObjectIndex));
@@ -781,6 +791,156 @@ HRESULT CObject_Window::Load_MapObject()
 
 		++m_iMapObjectIndex;
 	}	
+
+	return S_OK;
+}
+
+HRESULT CObject_Window::Save_MapObject_Ins()
+{
+	_tchar dataFile[MAX_PATH] = TEXT("../../Resources/GameData/MapData/MapObject_Ins.ddd");
+
+	HANDLE hFile = CreateFile(dataFile, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+	if (INVALID_HANDLE_VALUE == hFile)
+	{
+		MSG_BOX("Failed to Create MapObject_Ins File for Save MapObject_Ins");
+		return E_FAIL;
+	}
+
+	DWORD	dwByte = 0;
+
+	for (auto& iter : m_vecSaveInsObject)
+	{
+		if (!WriteFile(hFile, &iter.iInstanceCnt, sizeof(_uint), &dwByte, nullptr))
+		{
+			MSG_BOX("Failed to Write m_vecSaveInsObject.iInstanceCnt");
+			return E_FAIL;
+		}
+
+		for (size_t i = 0; i < iter.iInstanceCnt; i++)
+		{
+			if (!WriteFile(hFile, &iter.pMatTransform[i], sizeof(_float4x4), &dwByte, nullptr))
+			{
+				MSG_BOX("Failed to Write m_vecSaveInsObject.pMatTransform");
+				return E_FAIL;
+			}
+		}
+
+		if (!WriteFile(hFile, &iter.matTransform, sizeof(_float4x4), &dwByte, nullptr))
+		{
+			MSG_BOX("Failed to Write m_vecSaveInsObject.matTransform");
+			return E_FAIL;
+		}
+
+		if (!WriteFile(hFile, &iter.iTagLen, sizeof(_uint), &dwByte, nullptr))
+		{
+			MSG_BOX("Failed to Write m_vecSaveInsObject.iTagLen");
+			return E_FAIL;
+		}
+
+		if (!WriteFile(hFile, &iter.wszTag, iter.iTagLen, &dwByte, nullptr))
+		{
+			MSG_BOX("Failed to Write m_vecSaveInsObject.wszTag");
+			return E_FAIL;
+		}
+	}
+
+	MSG_BOX("Save Success");
+
+	CloseHandle(hFile);
+
+	return S_OK;
+}
+
+HRESULT CObject_Window::Load_MapObject_Ins()
+{
+	m_vecSaveInsObject.clear();
+
+	_tchar dataFile[MAX_PATH] = TEXT("../../Resources/GameData/MapData/MapObject_Ins.ddd");
+
+	HANDLE hFile = CreateFile(dataFile, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+	{
+		MSG_BOX("Failed to Create MapObject_Ins File for Load MapObject_Ins");
+		return E_FAIL;
+	}
+
+	DWORD	dwByte = 0;
+
+	while (true)
+	{
+		SAVEINSOBJECTDESC SaveDesc;
+		ZEROMEM(&SaveDesc);
+
+		if (!WriteFile(hFile, &SaveDesc.iInstanceCnt, sizeof(_uint), &dwByte, nullptr))
+		{
+			MSG_BOX("Failed to Read m_vecSaveInsObject.iInstanceCnt");
+			return E_FAIL;
+		}
+
+		// 저장되어있던 인스턴스 개수만큼 동적할당
+		SaveDesc.pMatTransform = new _float4x4[SaveDesc.iInstanceCnt];
+
+		for (size_t i = 0; i < SaveDesc.iInstanceCnt; i++)
+		{
+			if (!ReadFile(hFile, &SaveDesc.pMatTransform[i], sizeof(_float4x4), &dwByte, nullptr))
+			{
+				MSG_BOX("Failed to Read m_vecSaveInsObject.pMatTransform");
+				return E_FAIL;
+			}
+		}
+
+		if (!ReadFile(hFile, &SaveDesc.iTagLen, sizeof(_uint), &dwByte, nullptr))
+		{
+			MSG_BOX("Failed to Read m_vecSaveInsObject.iTagLen");
+		}
+
+		if (!ReadFile(hFile, &SaveDesc.wszTag, SaveDesc.iTagLen, &dwByte, nullptr))
+		{
+			MSG_BOX("Failed to Read m_vecSaveInsObject.wszTag");
+			return E_FAIL;
+		}
+
+		if (dwByte == 0)
+		{
+			break;
+		}
+
+		m_vecSaveInsObject.push_back(SaveDesc);
+	}
+
+	MSG_BOX("Load Successed");
+
+	CloseHandle(hFile);
+
+	// 로드한 데이터를 적용시켜 주는 부분
+	for (size_t i = 0; i < m_vecSaveInsObject.size(); i++)
+	{
+		// 맵 오브젝트에 번호 붙여줌
+		_tchar wszobjName[MAX_PATH] = { 0 };
+		_stprintf_s(wszobjName, TEXT("GameObject_MapObject_Ins_%d"), (m_iMapObjectIndex));
+		Deep_Copy_Tag(wszobjName);
+
+		// 번호를 붙인 태그로 MapObject_Ins 등록
+		BEGININSTANCE if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL,
+			TEXT("Prototype_GameObject_MapObject_Ins"), TEXT("Layer_MapObject"),
+			m_vecMapObjectTag.at(m_iMapObjectIndex).c_str(), &m_vecSaveInsObject[i].pMatTransform)))
+		{
+			MSG_BOX("Failed to Install MapObject");
+			ENDINSTANCE;
+			return E_FAIL;
+		} ENDINSTANCE;
+
+		// 마지막에 설치한 맵 오브젝트 주소 가져옴
+		m_pObjIns = static_cast<CMapObject_Ins*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL,
+			TEXT("Layer_MapObject"), wszobjName));
+
+		m_pObject->Add_Model_Component(m_vecSaveInsObject[i].wszTag);
+		m_pObject->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMeshInstance"));
+		m_pObject->Set_Color(m_iMapObjectIndex); // 고유한 색깔 값을 넣어줌
+
+		++m_iMapObjectIndex;
+	}
 
 	return S_OK;
 }

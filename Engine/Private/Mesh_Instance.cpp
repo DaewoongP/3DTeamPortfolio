@@ -182,7 +182,7 @@ HRESULT CMesh_Instance::Ready_VertexBuffer_NonAnim(const Engine::MESH Mesh, _flo
 	return S_OK;
 }
 
-CMesh_Instance* CMesh_Instance::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const Engine::MESH Mesh, _float4x4 PivotMatrix, _float4x4* pInstanceMatrix, _uint iNumInstance)
+CMesh_Instance* CMesh_Instance::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const Engine::MESH Mesh, _float4x4* pInstanceMatrix, _uint iNumInstance, _float4x4 PivotMatrix)
 {
 	CMesh_Instance* pInstance = new CMesh_Instance(pDevice, pContext);
 

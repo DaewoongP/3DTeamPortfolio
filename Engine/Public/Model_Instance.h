@@ -21,7 +21,7 @@ public:
 	_uint						Get_NumMeshes() const { return m_iNumMeshes; }
 
 public:
-	virtual HRESULT Initialize_Prototype(TYPE eType, const _tchar* pModelFilePath, _float4x4 PivotMatrix);
+	virtual HRESULT Initialize_Prototype(TYPE eType, const _tchar* pModelFilePath, _float4x4* pInstanceMatrix, _uint iInstanceCnt, _float4x4 PivotMatrix);
 	virtual HRESULT Initialize(void* pArg);
 	virtual HRESULT Render(_uint iMeshIndex);
 
@@ -44,20 +44,19 @@ private: /* For.Materials */
 	vector<MESHMATERIAL>			m_Materials;
 
 private:
-	_float4x4*						m_pInstanceMatrix = { nullptr };
-	_uint							m_InstanceCnt = { 5 };
 	_float4x4						m_PivotMatrix;
 
 private:
 	HRESULT Ready_File(TYPE eType, const _tchar* pModelFilePath);
-	HRESULT Ready_Meshes(TYPE eType, _float4x4 PivotMatrix);
+	HRESULT Ready_Meshes(TYPE eType, _float4x4* pInstanceMatrix, _uint iInstanceCnt, _float4x4 PivotMatrix);
 	HRESULT Ready_Materials();
 
 private:
 	void Release_FileDatas();
 
 public:
-	static CModel_Instance* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, TYPE eType, const _tchar* pModelFilePath, _float4x4 PivotMatrix);
+	static CModel_Instance* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, TYPE eType, const _tchar* pModelFilePath, 
+		_float4x4* pInstanceMatrix, _uint iInstanceCnt, _float4x4 PivotMatrix);
 	virtual CComponent* Clone(void* pArg);
 	virtual void Free() override;
 };

@@ -32,7 +32,7 @@ void CWindow_Manager::Tick(_float fTimeDelta)
 		{
 			if (FAILED(Add_Window(TEXT("Object_Window"),
 				CObject_Window::Create(m_pDevice, m_pContext,
-					ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(400.f, 700.f)))))
+					ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(400.f, 900.f)))))
 				MSG_BOX("Failed Create Object_Window");
 		}
 
