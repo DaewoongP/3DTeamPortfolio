@@ -19,6 +19,7 @@ public:
 		CUTSCENEPOINT_SELECT,
 		CUTSCENEPOINT_CREATE,
 		CUTSCENEPOINT_DELETE,
+		CUTSCENEPOINT_SECTION,
 		CUTSCENEPOINT_END
 	};
 
@@ -29,13 +30,19 @@ public:
 		CUTSCENE_END
 	};
 
+	enum SECTION_SELECT
+	{
+		SECTION_START,
+		SECTION_END
+	};
+
 	typedef struct tagCameraPointInfoDesc
 	{
 		CCamera_Point* pEyePoint{ nullptr };
 		CCamera_Point* pAtPoint{ nullptr };
 		_bool isLerp{ true };
-		_float fDuration{ 1.0f };
-		//축, 특정값 추가 예정(구면 보간)
+		_float fDuration{ 1.0f };			//스플라인 / 스피드
+		_float fSplineLength{ 0.0f };		//이전 점부터 스플라인 보간 한 거리 10으로 보간 
 	}CAMERAPOINTINFODESC;
 
 private:
@@ -99,6 +106,23 @@ private:
 
 	//Line_Update용
 	_bool m_isLineUpdate{ false };
+
+	//스피드(원소 크기만큼 선형으로 보간 하면...빨랐다가 점점 느려지는 것도 가능할 듯?)
+	_float m_fSpeed{ 1.0f };				
+
+	//스피드 러프할지 말지...
+	_uint m_iSpeedLerp{ 0 };
+
+	//구간 선택
+	//시작 
+	list<CAMERAPOINTINFODESC>::iterator m_iterStart{ m_CameraInfoList.end() };
+	//끝
+	list<CAMERAPOINTINFODESC>::iterator m_iterEnd{ m_CameraInfoList.end() };
+
+	//구간 진행 시간 변수
+	_float m_fSectionPlayTime{ 1.0f };
+
+	_int m_iSectionRadio{ 0 };
 
 private:
 	//마우스로 위치 수정 기능
@@ -169,7 +193,7 @@ private:
 	//추가 및 수정 시에
 	HRESULT Line_Update();
 
-	//Eye라인 업데이트
+	//Eye라인 업데이트//보간 거리 저장//첫번째는 0 나머지 저장
 	HRESULT EyeLine_Update();
 
 	//At라인 업데이트
@@ -177,8 +201,26 @@ private:
 
 	//Look라인 업데이트
 	HRESULT LookLine_Update();
-
 #endif
+	//구간을 정하는 것....(이 구간을 이 시간안에 진행 하겠다.)(길이 / 총길이 * 시간)
+	void Select_Start_Point(_In_ _float4 _vRayPos, _In_ _float4 _vRayDir);
+	void Select_End_Point(_In_ _float4 _vRayPos, _In_ _float4 _vRayDir);
+
+	//구간 포인트 스왑
+	void Swap_Section_Point();
+
+	//구간 업데이트
+	void Section_Point_Update(_In_ _float4 _vRayPos, _In_ _float4 _vRayDir);
+
+	//구간 속도
+	void Set_Section_Point_Duration();
+
+	//구간 재생
+	void Play_Section();
+
+	
+
+
 public:
 	static CCutScene_Camera_Tool* Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, void * pArg = nullptr);
 	virtual void Free() override;

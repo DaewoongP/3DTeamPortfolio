@@ -722,6 +722,13 @@ const _float& CGameInstance::Get_World_TimeAcc() const
 	return m_pTime_Manager->Get_World_TimeAcc();
 }
 
+_float CGameInstance::Get_World_Tick() const
+{
+	NULL_CHECK_RETURN_MSG(m_pTime_Manager, 0.f, TEXT("Time_Manager NULL"));
+
+	return m_pTime_Manager->Get_World_Tick();
+}
+
 _float CGameInstance::Get_TimeAcc(const wstring& wstrTimerTag) const
 {
 	NULL_CHECK_RETURN_MSG(m_pTime_Manager, false, TEXT("Time_Manager NULL"));

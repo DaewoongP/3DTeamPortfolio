@@ -330,7 +330,7 @@ void CCamera_Manager::Play_Spline_CutScene(_float _TimeDelta)
 			//러프 비율
 			_float fRatio =
 				m_fCutSceneTimeAcc /
-				(*m_SplineDataIndexAccess[3]).fDuration;
+				(*m_SplineDataIndexAccess[2]).fDuration;
 
 			_float4 vEye = XMVectorCatmullRom(
 				(*m_SplineDataIndexAccess[0]).vEye,

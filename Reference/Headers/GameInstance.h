@@ -167,6 +167,8 @@ public: /* For.Time_Manager */
 	_bool Check_Timer(const wstring& wstrTimerTag);
 	/* 현재 월드 누적시간을 반환*/
 	const _float& Get_World_TimeAcc() const;
+	/* 현재 월드 틱을 반환 */
+	_float Get_World_Tick() const;
 	/* 기존에 추가한 타이머의 누적시간을 반환 */
 	_float Get_TimeAcc(const wstring& wstrTimerTag) const;
 	/* 월드 누적시간 초기화 (사용할 경우 팀원들한테 미리 얘기하세요) */
