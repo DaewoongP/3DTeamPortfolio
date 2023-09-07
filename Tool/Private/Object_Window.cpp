@@ -872,16 +872,19 @@ HRESULT CObject_Window::Load_MapObject_Ins()
 		}
 
 		// 저장되어있던 인스턴스 개수만큼 동적할당
-		SaveDesc.pMatTransform = new _float4x4[SaveDesc.iInstanceCnt];
-
-		for (size_t i = 0; i < SaveDesc.iInstanceCnt; i++)
+		if (0 != SaveDesc.iInstanceCnt)
 		{
-			if (!ReadFile(hFile, &SaveDesc.pMatTransform[i], sizeof(_float4x4), &dwByte, nullptr))
+			SaveDesc.pMatTransform = new _float4x4[SaveDesc.iInstanceCnt];
+
+			for (size_t i = 0; i < SaveDesc.iInstanceCnt; i++)
 			{
-				MSG_BOX("Failed to Read m_vecSaveInsObject.pMatTransform");
-				return E_FAIL;
+				if (!ReadFile(hFile, &SaveDesc.pMatTransform[i], sizeof(_float4x4), &dwByte, nullptr))
+				{
+					MSG_BOX("Failed to Read m_vecSaveInsObject.pMatTransform");
+					return E_FAIL;
+				}
 			}
-		}
+		}		
 
 		if (!ReadFile(hFile, &SaveDesc.matTransform, sizeof(_float4x4), &dwByte, nullptr))
 		{
