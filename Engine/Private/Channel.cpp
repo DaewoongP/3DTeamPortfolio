@@ -180,8 +180,6 @@ void CChannel::Invalidate_TransformationMatrix_Lerp(CModel::BONES& Bones, _float
 	ZEROMEM(&vRotation);
 	_float3	vTranslation;
 	ZEROMEM(&vTranslation);
-
-	//기존 뼈 움직임코드
 	{
 		if (fTimeAcc >= LastKeyFrame.fTime)
 		{
@@ -207,6 +205,9 @@ void CChannel::Invalidate_TransformationMatrix_Lerp(CModel::BONES& Bones, _float
 			_float4		vDestRotation = m_MatrixKeyFrames[(*pCurrentKeyFrameIndex) + 1].vRotation;
 			_float3		vDestTranslation = m_MatrixKeyFrames[(*pCurrentKeyFrameIndex) + 1].vTranslation;
 
+			vSourRotation = XMQuaternionNormalize(vSourRotation);
+			vDestRotation = XMQuaternionNormalize(vDestRotation);
+
 			// 선형보간 함수. Rotation의 경우 Quaternion 형태여서 Slerp 함수 사용.
 			vScale = vScale.Lerp(vSourScale, vDestScale, fRatio);
 			vRotation = XMQuaternionSlerp(vSourRotation, vDestRotation, fRatio);
@@ -222,20 +223,41 @@ void CChannel::Invalidate_TransformationMatrix_Lerp(CModel::BONES& Bones, _float
 	_float4		vSourRotation = XMQuaternionRotationMatrix(Bones[m_iBoneIndex]->Get_TransformationMatrix());
 	_float3		vSourTranslation = Bones[m_iBoneIndex]->Get_TransformationMatrix_Position();
 
-	if (m_iBoneIndex == 3)
-	{
-		return;
-	}
-		
+	//이거 걸면 큰일남.
+	//if (m_iBoneIndex == 3)
+	//	return;
 	vSourRotation = XMQuaternionNormalize(vSourRotation);
 	vRotation = XMQuaternionNormalize(vRotation);
 
 	vScale = vScale.Lerp(vSourScale, vScale, fRatio);
-	vRotation = XMQuaternionSlerp(vSourRotation, vRotation, fRatio);
+	_float4 vFinalRotation = XMQuaternionSlerp(vSourRotation, vRotation, fRatio);
 	vTranslation = vTranslation.Lerp(vSourTranslation, vTranslation, fRatio);
 
-	_float4x4	TransformationMatrix = XMMatrixAffineTransformation(vScale, _float4(0.f, 0.f, 0.f, 1.f), vRotation, vTranslation);
+	vFinalRotation = XMQuaternionNormalize(vFinalRotation);
+
+	_float4x4	TransformationMatrix = XMMatrixAffineTransformation(vScale, _float4(0.f, 0.f, 0.f, 1.f), vFinalRotation, vTranslation);
 	Bones[m_iBoneIndex]->Set_TransformationMatrix(TransformationMatrix);	
+
+	////튀는거 방지용 재검토 수식 추가해야할듯함.
+	//_float4 vAfterRotation = XMQuaternionRotationMatrix(Bones[m_iBoneIndex]->Get_TransformationMatrix());
+	//if (m_iBoneIndex==3/*vAfterRotation != vFinalRotation*/)
+	//{
+	//	vFinalRotation = XMVectorSet(0, 0, 0, 0);
+	//	//vFinalRotation = XMQuaternionSlerp(vSourRotation, vRotation, fRatio);
+	//	vFinalRotation.x = Lerp(vSourRotation.x, vRotation.x, fRatio*-1);
+	//	//vFinalRotation.y = Lerp(vSourRotation.y, vRotation.y, fRatio);
+	//	//vFinalRotation.z = Lerp(vSourRotation.z, vRotation.z, fRatio);
+	//	vFinalRotation.w = Lerp(vSourRotation.w, vRotation.w, fRatio*-1);
+	//	
+	//	vFinalRotation = XMQuaternionNormalize(vFinalRotation);
+
+	//	_float4x4 scaleMatrix = XMMatrixScaling(vScale.x, vScale.y, vScale.z);
+	//	_float4x4 rotationMatrix = XMMatrixRotationQuaternion(vFinalRotation);
+	//	_float4x4 transMatrix = XMMatrixTranslation(vTranslation.x, vTranslation.y, vTranslation.z);
+
+	//	_float4x4	TransformationMatrix = scaleMatrix * rotationMatrix * transMatrix;
+	//	Bones[m_iBoneIndex]->Set_TransformationMatrix(TransformationMatrix);
+	//}
 }
 
 CChannel* CChannel::Create(const Engine::CHANNEL& Channel, const CModel::BONES& Bones)

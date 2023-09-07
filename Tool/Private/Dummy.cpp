@@ -148,6 +148,11 @@ HRESULT CDummy::Add_Shader_Component(const wchar_t* wszShaderTag)
 	return S_OK;
 }
 
+void CDummy::NotifyTest()
+{
+	cout << "Notify Action" << endl;
+}
+
 HRESULT CDummy::Add_Components()
 {
 	/* Com_Renderer */

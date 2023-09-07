@@ -37,6 +37,9 @@ private:
 	CRenderer* m_pRenderer = { nullptr };
 	CModel* m_pModel = { nullptr };
 
+public:
+	void	NotifyTest();
+
 private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();

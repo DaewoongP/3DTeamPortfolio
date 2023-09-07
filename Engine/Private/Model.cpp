@@ -182,45 +182,56 @@ void CModel::Reset_Animation(_uint iAnimIndex, ANIMTYPE eType)
 
 void CModel::Play_Animation(_float fTimeDelta, ANIMTYPE eType, CTransform* pTransform)
 {
+	// 애니메이션 없으면 리턴해줘
 	if (m_tAnimationDesc[eType].iNumAnimations == 0)
 		return;
+
+	// 애니메이션이 종료고 애니메이션 리셋하라는 신호가 들어오면
 	if (m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Invalidate_AccTime(fTimeDelta) || m_tAnimationDesc[eType].isResetAnimTrigger )
 	{
-		//애니메이션 재생이 다 되면 여기가 실행되는거임.
+		//애니메이션 리셋해줘
 		m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Reset();
-		m_tAnimationDesc[eType].isAnimChangeLerp = true;
-		m_tAnimationDesc[eType].fAnimChangeTimer = ANIMATIONLERPTIME;
-		if(eType==0)
+		
+		//러프가 설정돼있으면 러프도 세팅해줘.
+		if (m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Get_LerpAnim())
+		{
+			m_tAnimationDesc[eType].isAnimChangeLerp = true;
+			m_tAnimationDesc[eType].fAnimChangeTimer = ANIMATIONLERPTIME;
+		}
+		//0번노드(하체)라면? 루트 매트릭스 날려줘.
+		if (eType == 0)
 			m_PostRootMatrix = XMMatrixIdentity();
+		//리셋설정 다됐으니까 트리거 꺼줘.
 		m_tAnimationDesc[eType].isResetAnimTrigger = false;
 	}
+	//트랜스폼이 있다면?
 	else if (pTransform != nullptr)
 	{
+		//루트애니메이션 설정돼있다면 루트애니메이션 진행해줘.
 		if(m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Get_RootAnim_State())
 			Do_Root_Animation(pTransform);
 	}
 
-	//노티파이용
+	//노티파이 돌리기
 	m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Invalidate_Frame(fTimeDelta);
 
-	//뼈 이동용
+	//뼈 돌리기
+	//지금 모델에 러프설정이 안돼있다면 그냥 돌려줘
 	if (!m_tAnimationDesc[eType].isAnimChangeLerp)
 	{
-		//0번 인발리데이트가 1번에도 영향을 준다?
-		//if (eType == 0)
-		//	return;
 		m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Invalidate_TransformationMatrix(m_Bones, fTimeDelta, &m_tAnimationDesc[eType].AffectBoneVec);
 	}
 	else if (m_tAnimationDesc[eType].fAnimChangeTimer >= 0.0)
 	{
+		//러프설정이 돼있따면 러프해줘.
 		m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Invalidate_TransformationMatrix_Lerp(m_Bones, fTimeDelta, ANIMATIONLERPTIME - m_tAnimationDesc[eType].fAnimChangeTimer, m_iRootBoneIndex, &m_tAnimationDesc[eType].AffectBoneVec);
 		m_tAnimationDesc[eType].fAnimChangeTimer -= fTimeDelta;
 	}
 	else
+		//러프설정이 돼있는데 시간이 다됐으면? 러프설정 꺼줘.
 		m_tAnimationDesc[eType].isAnimChangeLerp = false;
 	
 	
-	/* 모델에 표현되어있는 모든 뼈들의 CombinedTransformationMatrix */
 	for (auto& pBone : m_Bones)
 	{
 		_int iFindIndex = pBone->Get_Index();
@@ -235,8 +246,10 @@ void CModel::Play_Animation(_float fTimeDelta, ANIMTYPE eType, CTransform* pTran
 			continue;
 		}
 			
+		//설정할 뼈가 루트본에 직접연결돼있다면? 그리고 루트애니메이션이 설정돼있다면?
 		if (m_iRootBoneIndex == pBone->Get_ParentNodeIndex()&& m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Get_RootAnim_State())
 		{
+			//이 뼈는 루트본에 영향을 받지않아야함.(루트의 matrix는 transform에 직접적으로 연결해줄거기 때문에.)
 			pBone->Invalidate_CombinedTransformationMatrix_Basic(m_Bones);
 		}
 		else
@@ -351,6 +364,8 @@ void CModel::Delete_Animation(_uint iAnimIndex, ANIMTYPE eType)
 {
 	Safe_Release(*(m_tAnimationDesc[eType].Animations.begin() + iAnimIndex));
 	m_tAnimationDesc[eType].Animations.erase(m_tAnimationDesc[eType].Animations.begin() + iAnimIndex);
+	if (m_tAnimationDesc[eType].iCurrentAnimIndex == iAnimIndex)
+		m_tAnimationDesc[eType].iCurrentAnimIndex--;
 	m_tAnimationDesc[eType].iNumAnimations--;
 }
 
@@ -1323,6 +1338,8 @@ HRESULT CModel::Write_File_GCM(TYPE eType, const _tchar* pModelFilePath)
 {
 	m_isExportedTool = true;
 	_tchar szPath[MAX_PATH] = TEXT("../../Resources/Models/Anims/");
+	lstrcat(szPath, pModelFilePath);
+	lstrcat(szPath, TEXT("/"));
 	lstrcat(szPath, pModelFilePath);
 	lstrcat(szPath, TEXT(".gcm"));
 

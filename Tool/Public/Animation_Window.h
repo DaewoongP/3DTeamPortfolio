@@ -30,6 +30,7 @@ private:
 	_int			m_iRootIndex = { 0 };
 	_int			m_iFromBone[CModel::ANIM_END] = { 0 };
 	_int			m_iToBone[CModel::ANIM_END] = { 0 };
+	_char			m_szAnimationTag[CModel::ANIM_END][MAX_PATH] = {};
 
 	//노티파이
 	_float			m_fNotifyActionTime = { 0 };
@@ -38,6 +39,7 @@ private:
 	_char			m_szCurrentItemType[MAX_PATH] = "";			
 	KEYFRAME::KEYFRAMETYPE m_eNotifyKeyFrameType = { KEYFRAME::KF_SPEED };
 
+	_tchar			m_wszCurrentDummyModelTag[MAX_PATH] = {};
 private:
 	void Create_Dummy_Button();
 	void OpenFile_Button();
@@ -47,6 +49,7 @@ private:
 	void Export_Model();
 
 	void Animation_ComboBox(CModel::ANIMTYPE ePartCnt,_char* szCurrentItem, CModel* pDummyModel);
+	void Animation_ListBox(CModel::ANIMTYPE ePartCnt, _char* szCurrentItem, CModel* pDummyModel);
 	void Animation_Action_Button(CModel::ANIMTYPE ePartCnt, CModel* pDummyModel, _float* fNotifyActionTime);
 	void Notify_InputFileds( _char* szNotifyName, KEYFRAME::KEYFRAMETYPE* eNotifyKeyFrameType, _float* fNotifyActionTime, _float* fNotifySpeed);
 	void Add_Notify_Button(CModel::ANIMTYPE ePartCnt, _char* szNotifyName, CModel* pDummyModel, KEYFRAME::KEYFRAMETYPE* eNotifyKeyFrameType, _float* fNotifyActionTime, _float* fNotifySpeed);

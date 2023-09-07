@@ -42,6 +42,7 @@ public:
 	vector<class CChannel*>& Get_ChannelVector_Point() { return m_Channels; }
 	class CNotify* Get_Notify_Point() { return m_pNotify; }
 
+	void Set_AnimationName(_tchar* tag) { lstrcpy(m_szName, tag); }
 	void Set_CurrentKeyFrameIndex(CModel::BONES& Bones, _uint iKeyFrameIndex);
 	void Set_Pause(_bool isPause) { m_isPaused = isPause; }
 	void Set_RootAnim(_bool isRootAnim) { m_isRootAnim = isRootAnim; }
@@ -67,8 +68,7 @@ public:
 	void Delete_Rotation();
 	
 	//주로 겜오브제 이니셜라이즈에서 사용할 키프레임 찾아서 가져오는 함수.
-	NOTIFYFRAME* Find_NotifyFrame(const _tchar* wszNotifyTag);
-	SOUNDFRAME*  Find_SoundFrame(const _tchar* wszSoundTag);
+	KEYFRAME*	Find_NotifyFrame(const _tchar* wszNotifyTag);
 	HRESULT		 Add_NotifyFrame(KEYFRAME_GCM* data);
 	void		 Update_KeyFrame_By_Time();
 
@@ -101,8 +101,8 @@ private:
 
 	_bool						m_isLoop = { false };
 	_bool						m_isPaused = { false };
-	_bool						m_isRootAnim = { false };
-	_bool						m_isLerp = { false };
+	_bool						m_isRootAnim = { true };
+	_bool						m_isLerp = { true };
 
 	// 현재 애니메이션에 해당하는 채널의 프레임 중 가장 프레임이 많은 채널의 인덱스
 	_uint						m_iMaxFrameChannelIndex = { 0 };

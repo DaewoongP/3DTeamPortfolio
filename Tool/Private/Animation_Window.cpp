@@ -65,12 +65,20 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 
 		CModel::ANIMTYPE ePartCnt = static_cast<CModel::ANIMTYPE>(partCnt);
 
-		Animation_ComboBox(ePartCnt,m_szCurrentItem[ePartCnt], pDummyModel);
+		Animation_ListBox(ePartCnt,m_szCurrentItem[ePartCnt], pDummyModel);
 		Animation_Action_Button(ePartCnt,pDummyModel, &m_fNotifyActionTime);
 
 		_char szUIName[MAX_PATH] = "Animation##";
 		if (pDummyModel->Get_NumAnimations(ePartCnt) != 0)
 		{
+			sprintf_s(szUIName, "%s%d", "AnimationTag##", ePartCnt);
+			WCharToChar(pDummyModel->Get_Animation(ePartCnt)->Get_AnimationName(), m_szAnimationTag[ePartCnt]);
+			if (ImGui::InputText(szUIName, m_szAnimationTag[ePartCnt], 32))
+			{
+				_tchar wsaAnimationTag[MAX_PATH] = {};
+				CharToWChar(m_szAnimationTag[ePartCnt], wsaAnimationTag);
+				pDummyModel->Get_Animation(ePartCnt)->Set_AnimationName(wsaAnimationTag);
+			}
 			sprintf_s(szUIName, "%s%d", "SetRootAnim##", ePartCnt);
 			if (ImGui::Checkbox(szUIName, pDummyModel->Get_Animation(ePartCnt)->Get_RootAnim_Point()))
 			{
@@ -110,6 +118,11 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 				pDummyModel->Separate_Animation(m_iFromBone[ePartCnt], m_iToBone[ePartCnt],ePartCnt);
 			}
 		}
+	}
+
+	if (ImGui::Button("Reset_Dummy_WorldMatrix"))
+	{
+		dynamic_cast<CTransform*>(m_pDummyObject->Find_Component(TEXT("Com_Transform")))->Set_WorldMatrix(XMMatrixIdentity());
 	}
 	ImGui::End();
 }
@@ -185,6 +198,7 @@ void CAnimation_Window::AddModel_Button()
 	if (ImGui::Button("AddModelToDummy"))
 	{
 		m_pDummyObject->Add_Model_Component(m_vecModelList_t[m_iModelIndex].c_str());
+		lstrcpy(m_wszCurrentDummyModelTag, m_vecModelList_t[m_iModelIndex].c_str());
 		m_pDummyObject->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxAnimMesh"));
 		CModel* pCurrentModel = dynamic_cast<CModel*>(m_pDummyObject->Find_Component(TEXT("Com_Model")));
 		_tchar wszAnimationName[MAX_PATH] = {};
@@ -235,6 +249,46 @@ void CAnimation_Window::Animation_ComboBox(CModel::ANIMTYPE ePartCnt, _char* szC
 			}
 		}
 		ImGui::EndCombo();
+	}
+}
+
+void CAnimation_Window::Animation_ListBox(CModel::ANIMTYPE ePartCnt, _char* szCurrentItem, CModel* pDummyModel)
+{
+	_char szUIName[MAX_PATH] = "AnimComboBox##";
+	sprintf_s(szUIName, "%s%d", szUIName, ePartCnt);
+	const auto  draw_list_size = ImVec2(500, 260);
+	if (ImGui::BeginListBox(szUIName, draw_list_size))
+	{
+		_char szAnimationName[MAX_PATH] = "";
+		_tchar wszAnimationName[MAX_PATH] = {};
+		for (_uint i = 0; i < pDummyModel->Get_NumAnimations(ePartCnt); i++)
+		{
+			ZEROMEM(szAnimationName);
+			ZEROMEM(wszAnimationName);
+
+			lstrcpy(wszAnimationName, pDummyModel->Get_Animation(i, ePartCnt)->Get_AnimationName());
+			WCharToChar(wszAnimationName, szAnimationName);
+			bool is_selected = (!strcmp(szCurrentItem, szAnimationName));
+			ImGui::Text(szAnimationName);
+
+			ImGui::SameLine();
+			_char szUIName[MAX_PATH] = "Select##_Anim";
+			sprintf_s(szUIName, "%s%d##%s", szUIName, ePartCnt, szAnimationName);
+			if (ImGui::SmallButton(szUIName))
+			{
+				strcpy_s(szCurrentItem, sizeof(szAnimationName), szAnimationName);
+				ImGui::SetItemDefaultFocus();
+				pDummyModel->Reset_Animation(i, ePartCnt);
+			}
+
+			ImGui::SameLine();
+			sprintf_s(szUIName, "Delete##_Anim%d%s", ePartCnt, szAnimationName);
+			if (ImGui::SmallButton(szUIName))
+			{
+				pDummyModel->Delete_Animation(i, ePartCnt);
+			}
+		}
+		ImGui::EndListBox();
 	}
 }
 
@@ -368,8 +422,25 @@ void CAnimation_Window::Export_Model()
 {
 	if (ImGui::Button("Export_Model"))
 	{
+		if (m_pDummyObject == nullptr)
+		{
+			MSG_BOX("Failed to Export Because of No Dummy");
+			return;
+		}
+		if (nullptr == m_pDummyObject->Find_Component(TEXT("Com_Model")))
+		{
+			MSG_BOX("Failed to Export Because of No Model");
+			return;
+		}
 		dynamic_cast<CModel*>(m_pDummyObject->Find_Component(TEXT("Com_Model")))->Convert_Animations_GCM();
-		dynamic_cast<CModel*>(m_pDummyObject->Find_Component(TEXT("Com_Model")))->Write_File_GCM(CModel::TYPE_ANIM,TEXT("Temp"));
+		
+		wchar_t temp[MAX_PATH] = {};
+		wcscpy_s(temp, m_wszCurrentDummyModelTag);
+		const wchar_t* found = wcsstr(temp, TEXT("Prototype_Component_Model_"));
+		if (found != nullptr) {
+			wcscpy_s(temp, found + wcslen(TEXT("Prototype_Component_Model_")));
+		}
+		dynamic_cast<CModel*>(m_pDummyObject->Find_Component(TEXT("Com_Model")))->Write_File_GCM(CModel::TYPE_ANIM, temp);
 	}
 }
 

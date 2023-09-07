@@ -86,7 +86,7 @@ void CWindow_Manager::Tick(_float fTimeDelta)
 		{
 			if (FAILED(Add_Window(TEXT("Animation_Window"),
 				CAnimation_Window::Create(m_pDevice, m_pContext,
-					ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(446.f, 768.f)))))
+					ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(600.f, 768.f)))))
 				MSG_BOX("Failed Create Animation_Window");
 		}
 

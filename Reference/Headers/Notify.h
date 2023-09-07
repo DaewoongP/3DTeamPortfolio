@@ -35,6 +35,9 @@ public:
 	//추가(툴용)
 	HRESULT			AddFrame(KEYFRAME_GCM* data);
 
+public:
+	void			Notify_NULL_WarningAlam();
+
 private:
 	vector<pair<wstring, KEYFRAME*>>	m_KeyFrames;
 	_uint				m_iNumKeyFrames = { 0 };
