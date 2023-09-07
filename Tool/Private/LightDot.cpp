@@ -13,6 +13,8 @@ _float4 CLightDot::Get_Position()
 void CLightDot::Set_Position(_float4 _vPosition)
 {
 	m_pTransform->Set_Position(_vPosition.xyz());
+	//BoundingSphereDesc.fRadius = LightInfo.fRange;
+	//m_pCollider->Set_BoundingDesc(&BoundingSphereDesc);
 }
 
 HRESULT CLightDot::Initialize_Prototype()
@@ -28,8 +30,7 @@ HRESULT CLightDot::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	if (FAILED(Add_Components()))
-		return E_FAIL;
+	
 	ZEROMEM(&LightInfo);
 	if (nullptr != pArg)
 	{	
@@ -38,7 +39,8 @@ HRESULT CLightDot::Initialize(void* pArg)
 		LightInfo.vPosition = Info->vPosition;
 		LightInfo.fRange = 1.f;
 	}
-	
+	if (FAILED(Add_Components()))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -80,7 +82,6 @@ HRESULT CLightDot::Add_Components()
 		return E_FAIL;
 	}
 
-	CBounding_Sphere::BOUNDINGSPHEREDESC BoundingSphereDesc{};
 
 	BoundingSphereDesc.fRadius = LightInfo.fRange;
 	BoundingSphereDesc.vPosition = _float3(0.0f, 0.0f, 0.0f);

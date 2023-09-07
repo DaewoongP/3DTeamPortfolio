@@ -56,7 +56,8 @@ private:
 
 private:
 	HRESULT Add_Components();
-
+private:
+	CBounding_Sphere::BOUNDINGSPHEREDESC BoundingSphereDesc{};
 
 
 public:

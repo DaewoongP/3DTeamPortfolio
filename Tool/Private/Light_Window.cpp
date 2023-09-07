@@ -34,8 +34,10 @@ HRESULT CLight_Window::Initialize(ImVec2 vWindowPos, ImVec2 vWindowSize)
 	
 	CLightDot::LIGHTPOS LightDot;
 	ZEROMEM(&LightDot);
-	FloatToFloat4(vPos, LightDot.vPosition);
-	FloatToFloat4(vDir, LightDot.vDir);
+	
+	LightDot.vPosition = LightDesc.vPos;
+	LightDot.vDir = LightDesc.vDir;
+	LightDot.fRange = 1.f;
 	m_pLightDot =dynamic_cast<CLightDot*>(pGameInstance->Clone_Component(LEVEL_TOOL,TEXT("Prototype_GameObject_LightDot"),&LightDot));
 
 
@@ -50,7 +52,6 @@ void CLight_Window::Tick(_float fTimeDelta)
 	ImGui::Begin("Light", nullptr, m_WindowFlag);
 	
 	
-
 	const char* Types[] = { "Directional","Point","Spot"};
 
 	ImGui::Combo("LightType", &m_iLightType, Types, IM_ARRAYSIZE(Types));
@@ -98,6 +99,11 @@ void CLight_Window::Tick(_float fTimeDelta)
 	Delete_Light(m_iLightIndex,LightDesc.szName);
 	Clear_Light();
 
+	BEGININSTANCE
+	m_pLightDot->Set_Position(LightDesc.vPos);
+	m_pLightDot->Tick(fTimeDelta);
+	m_pLightDot->Set_Collider_Color(_float4(0.f, 0.f, 1.f, 1.f));
+	ENDINSTANCE
 	ImGui::End();
 }
 
@@ -591,6 +597,17 @@ void CLight_Window::Picking_Menu(CLight::LIGHTDESC LightDesc)
 					m_vecLightDesc.push_back(LightDesc);
 					m_vecLightList.push_back(StrInput);
 					m_iLightIndex++;
+					/*CLightDot::LIGHTPOS LightDot;
+					ZEROMEM(&LightDot);
+
+					LightDot.vPosition = LightDesc.vPos;
+					LightDot.vDir = LightDesc.vDir;
+					if (LightDesc.eType == CLight::TYPE_DIRECTIONAL)
+						LightDot.fRange = 3.f;
+					else
+						LightDot.fRange = LightDesc.fRange;
+					m_pLightDot = dynamic_cast<CLightDot*>(pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_LightDot"), &LightDot));*/
+
 					ResetValue();
 				}
 			ENDINSTANCE
