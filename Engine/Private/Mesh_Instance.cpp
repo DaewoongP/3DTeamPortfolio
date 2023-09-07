@@ -7,6 +7,10 @@ CMesh_Instance::CMesh_Instance(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
 
 CMesh_Instance::CMesh_Instance(const CMesh_Instance& rhs)
 	: CVIBuffer(rhs)
+	, m_iMaterialIndex(rhs.m_iMaterialIndex)
+	, m_iInstanceStride(rhs.m_iInstanceStride)
+	, m_iIndexCountPerInstance(rhs.m_iIndexCountPerInstance)
+	, m_iNumInstance(rhs.m_iNumInstance)
 {
 }
 
@@ -14,6 +18,7 @@ HRESULT CMesh_Instance::Initialize_Prototype(const Engine::MESH Mesh, _float4x4 
 {
 	m_iNumInstance = { iNumInstance }; // 인스턴스의 개수
 
+	m_iMaterialIndex = Mesh.iMaterialIndex;
 	m_iIndexCountPerInstance = Mesh.iNumFaces * 3;
 	m_iNumVertexBuffers = { 2 };
 	m_iNumVertices = Mesh.iNumVertices;
@@ -208,5 +213,7 @@ CComponent* CMesh_Instance::Clone(void* pArg)
 
 void CMesh_Instance::Free()
 {
+	__super::Free();
+
 	Safe_Release(m_pVBInstance);
 }

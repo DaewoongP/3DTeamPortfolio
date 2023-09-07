@@ -121,14 +121,17 @@ void CObject_Window::Tick(_float fTimeDelta)
 	// Test, 현재 누수남
 	if (true == m_bOne)
 	{
-		/*_float4x4 PivotMatrix = XMMatrixIdentity();
+		_float4x4 vMat = XMMatrixIdentity();
+		_uint i = 1;
+
+		_float4x4 PivotMatrix = XMMatrixIdentity();
 		BEGININSTANCE; if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Model_Instance_Tree"),
-			CModel_Instance::Create(m_pDevice, m_pContext, CModel_Instance::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Tree/Tree.dat"), PivotMatrix))))
+			CModel_Instance::Create(m_pDevice, m_pContext, CModel_Instance::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Tree/Tree.dat"), &vMat, i, PivotMatrix))))
 		{
 			MSG_BOX("Failed to Create New CModel_Instance Prototype");
 		} ENDINSTANCE;
 
-		m_bOne = false;*/
+		m_bOne = false;
 	}
 
 	ImGui::End();
