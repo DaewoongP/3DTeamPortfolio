@@ -1,4 +1,5 @@
 #pragma once
+
 namespace Tool
 {
 	static bool VectorGetter(void* data, int idx, const char** out_str)

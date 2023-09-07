@@ -211,8 +211,10 @@ void CModel::Play_Animation(_float fTimeDelta, ANIMTYPE eType, CTransform* pTran
 	else if (pTransform != nullptr)
 	{
 		//루트애니메이션 설정돼있다면 루트애니메이션 진행해줘.
-		if(m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Get_RootAnim_State())
-			Do_Root_Animation(pTransform);
+		if(m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Get_RootAnim_State()&& 
+			!m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Get_Paused_State()&&
+			/*애니메이션이 정지상태라면?*/m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Get_Duration()> m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Get_Accmulation())
+			Do_Root_Animation(fTimeDelta,pTransform);
 	}
 
 	//노티파이 돌리기
@@ -291,7 +293,7 @@ void CModel::Set_CurrentAnimIndex(_uint iIndex, ANIMTYPE eType)
 	m_tAnimationDesc[eType].fAnimChangeTimer = ANIMATIONLERPTIME;
 }
 
-void CModel::Do_Root_Animation(CTransform* pTransform)
+void CModel::Do_Root_Animation(_float fTimeDelta,CTransform* pTransform)
 {
 	if (pTransform != nullptr)
 	{
@@ -321,12 +323,12 @@ void CModel::Do_Root_Animation(CTransform* pTransform)
 		_float3 vCurrent_Position = current_Matrix.Translation();
 		_float3 vPost_Position = post_Matirx.Translation();
 		_float3 Calculated_Position = (vCurrent_Position - vPost_Position);
-		memcpy(player_Matrix_Override.m[3], &Calculated_Position, sizeof _float3);
+		_float4x4 PositionMatrix = XMMatrixTranslation(Calculated_Position.x, Calculated_Position.y, Calculated_Position.z);
 
-		_float3 vOffsetVector = m_tAnimationDesc[0].Animations[m_tAnimationDesc[0].iCurrentAnimIndex]->Get_OffsetPosition();
+		_float3 vOffsetVector = m_tAnimationDesc[0].Animations[m_tAnimationDesc[0].iCurrentAnimIndex]->Get_OffsetPosition() * fTimeDelta;
 		_float4x4 offsetPositionMatrix = XMMatrixTranslation(vOffsetVector.x, vOffsetVector.y, vOffsetVector.z);
 
-		pTransform->Set_WorldMatrix(player_Matrix_Override * offsetPositionMatrix *  pTransform->Get_WorldMatrix());
+		pTransform->Set_WorldMatrix(offsetPositionMatrix * player_Matrix_Override * PositionMatrix*  pTransform->Get_WorldMatrix());
 		m_PostRootMatrix = m_Bones[m_iRootBoneIndex]->Get_CombinedTransformationMatrix();
 	}
 }

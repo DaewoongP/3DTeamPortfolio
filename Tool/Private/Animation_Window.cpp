@@ -540,7 +540,7 @@ void CAnimation_Window::OffsetVectorSetting(CModel* pDummyModel)
 	_float data[3] = {};
 	_float3 pos = pDummyModel->Get_Animation()->Get_OffsetPosition();
 	memcpy(data, &pos, sizeof(_float) * 3);
-	if (ImGui::InputFloat3("#OffsetVectorSetting", data))
+	if (ImGui::DragFloat3("#OffsetVectorSetting", data,0.01f))
 	{
 		pDummyModel->Get_Animation()->Set_OffsetPosition(data);
 	}
