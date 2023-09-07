@@ -272,12 +272,12 @@ HRESULT CVIBuffer_Cloth::Initialize_ClothMesh()
 
 	m_pSolver = pClothFactory->createSolver();
 
-	m_pCloth->setSolverFrequency(300.f);
+	m_pCloth->setSolverFrequency(20.f);
 	m_pCloth->setTetherConstraintScale(1.2f);
 	m_pCloth->setDragCoefficient(0.5f);
 	m_pCloth->setLiftCoefficient(0.6f);
 	m_pCloth->setWindVelocity(PxVec3(0.f, 0.f, -10.f));
-	//m_pCloth->setGravity(vGravity);
+	m_pCloth->setGravity(vGravity);
 
 	m_pSolver->addCloth(m_pCloth);
 

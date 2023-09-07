@@ -2,6 +2,7 @@
 
 #include "Bone.h"
 #include "Mesh.h"
+#include "Dynamic_Mesh.h"
 #include "Texture.h"
 #include "Animation.h"
 
@@ -71,6 +72,11 @@ HRESULT CMeshParts::Initialize(void* _pArg)
 		return E_FAIL;
 
 	return S_OK;
+}
+
+void CMeshParts::Tick(const _uint& _iMeshIndex, _float _fTimeDelta)
+{
+	m_Meshes[_iMeshIndex]->Tick(_fTimeDelta);
 }
 
 HRESULT CMeshParts::Render(const _uint& _iMeshIndex)
@@ -475,6 +481,7 @@ CMeshParts* CMeshParts::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pCo
 		MSG_BOX("Failed to Created CMeshParts");
 		Safe_Release(pInstance);
 	}
+
 	return pInstance;
 }
 
@@ -487,8 +494,8 @@ CMeshParts* CMeshParts::Clone(void* _pArg)
 		MSG_BOX("Failed to Cloned CMeshParts");
 		Safe_Release(pInstance);
 	}
+
 	return pInstance;
-	return nullptr;
 }
 
 void CMeshParts::Free()

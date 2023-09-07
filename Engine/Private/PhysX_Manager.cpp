@@ -92,7 +92,7 @@ HRESULT CPhysX_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* p
 	}
 
 	cloth::InitializeNvCloth(&m_PXAllocator, &m_PXErrorCallBack, m_pAssertHandler, nullptr);
-	m_pClothFactory = NvClothCreateFactoryDX11(m_pContextManagerCallBack);
+	m_pClothFactory = NvClothCreateFactoryDX11(m_pContextManagerCallBack);//NvClothCreateFactoryCPU();
 	if (nullptr == m_pClothFactory)
 	{
 		MSG_BOX("Failed Create ClothFactory");

@@ -12,13 +12,6 @@ BEGIN(Engine)
 
 class ENGINE_DLL CVIBuffer_Cloth final : public CVIBuffer
 {
-public:
-	typedef struct tagClothDesc
-	{
-		_uint iNum = { 0 };
-		const _float3* pTriangles = { nullptr };
-	}CLOTHDESC;
-
 private:
 	explicit CVIBuffer_Cloth(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CVIBuffer_Cloth(const CVIBuffer_Cloth& rhs);

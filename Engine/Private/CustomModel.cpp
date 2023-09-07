@@ -128,6 +128,20 @@ HRESULT CCustomModel::Initialize(void* pArg)
 	return S_OK;
 }
 
+void CCustomModel::Tick(const _uint& _iMeshPartsIndex, const _uint& _iMeshIndex, _float _fTimeDelta)
+{
+	if (0 > _iMeshPartsIndex || MESH_END <= _iMeshPartsIndex)
+	{
+		MSG_BOX("[CCustomModel] Range Of Out Array");
+		return;
+	}
+
+	if (nullptr == m_MeshParts[_iMeshPartsIndex])
+		return;
+
+	m_MeshParts[_iMeshPartsIndex]->Tick(_iMeshIndex, _fTimeDelta);
+}
+
 HRESULT CCustomModel::Render(const _uint& _iMeshPartsIndex, const _uint& _iMeshIndex)
 {
 	if (0 > _iMeshPartsIndex || MESH_END <= _iMeshPartsIndex)

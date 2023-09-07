@@ -56,6 +56,7 @@ public:
 public:
 	virtual HRESULT Initialize_Prototype(const wstring& _wstrModelFilePath, _float4x4 _PivotMatrix);
 	virtual HRESULT Initialize(void* pArg) override;
+	virtual void Tick(const _uint& _iMeshPartsIndex, const _uint& _iMeshIndex, _float _fTimeDelta);
 	virtual HRESULT Render(const _uint& _iMeshPartsIndex, const _uint& _iMeshIndex);
 
 public:

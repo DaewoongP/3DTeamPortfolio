@@ -47,6 +47,7 @@ public:
 public:
 	virtual HRESULT Initialize_Prototype(const wstring& _wstrMeshPartsFilePath, const wstring& _wstrMeshPartsTag);
 	virtual HRESULT Initialize(void* pArg);
+	virtual void Tick(const _uint& _iMeshIndex, _float _fTimeDelta);
 	virtual HRESULT Render(const _uint& _iMeshIndex);
 
 public:
