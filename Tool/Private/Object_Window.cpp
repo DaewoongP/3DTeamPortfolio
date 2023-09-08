@@ -638,23 +638,24 @@ void CObject_Window::Mesh_Picking_Menu()
 
 void CObject_Window::Change_Picking_Menu(const _tchar* wszTag, _uint iTagNum)
 {
+	ImGui::Text("Press J to Change Matrix");
+
 	BEGININSTANCE; m_pObject = static_cast<CMapObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL,
 		TEXT("Layer_MapObject"), wszTag)); 
 
 	if (nullptr == m_pObject)
 	{
 		MSG_BOX("Failed to Find Picking Object");
+		m_isChangeObject = false;
+		ENDINSTANCE;
 		return;
 	}
 
 	if (true == pGameInstance->Get_DIKeyState(DIK_J, CInput_Device::KEY_DOWN))
 	{
 		m_pObject->Get_Transform()->Set_WorldMatrix(m_pDummy->Get_Transform()->Get_WorldMatrix());
-
 		m_vecSaveObject.at(m_iTagIndex).matTransform = m_pDummy->Get_Transform()->Get_WorldMatrix();
-	}
-
-	ENDINSTANCE;
+	} ENDINSTANCE;	
 }
 
 void CObject_Window::Delete_Picking_Object()
