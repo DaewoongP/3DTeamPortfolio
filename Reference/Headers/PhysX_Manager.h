@@ -4,6 +4,7 @@
 #include "PXEventCallBack.h"
 #include "NVContextCallBack.h"
 #include "PXAssertHandler.h"
+#include "JobManager.h"
 #include "Base.h"
 
 BEGIN(Engine)
@@ -19,6 +20,7 @@ public:
 	// **피직스의 씬을 리턴합니다**
 	PxScene* Get_PhysxScene() const { return m_pPhysxScene; }
 	PxControllerManager* Get_ControllerManager() const { return m_pControllerManager; }
+	cloth::Factory* Get_ClothFactory() const { return m_pClothFactory; }
 
 #ifdef _DEBUG
 	const PxRenderBuffer* Get_RenderBuffer();

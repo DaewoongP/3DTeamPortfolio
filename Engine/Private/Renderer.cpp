@@ -50,7 +50,6 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_PostProcessing"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 0.f))))
 		return E_FAIL;
-	_uint2 SizeShadow = { 8000,6000 };
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_Shadow_Depth"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
@@ -195,8 +194,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 	
 	if (FAILED(Render_Shadow()))
 		return E_FAIL;
-	if (FAILED(Render_SSAO()))
-		return E_FAIL;
+	//if (FAILED(Render_SSAO()))
+	//	return E_FAIL;
 	if (FAILED(Render_Blur()))
 		return E_FAIL;
 	
@@ -268,7 +267,6 @@ HRESULT CRenderer::Render_NonBlend()
 
 	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Shadow_Depth"))))
 		return E_FAIL;
-	//m_pDevice->
 
 	for (auto& pGameObject : m_RenderObjects[RENDER_NONBLEND])
 	{
@@ -380,7 +378,7 @@ HRESULT CRenderer::Render_Shadow()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Shadow_Depth"), m_pSSAOShader, "g_vLightDepthTexture")))
 		return E_FAIL;
-
+	
 	CPipeLine* pPipeLine = CPipeLine::GetInstance();
 	Safe_AddRef(pPipeLine);
 
@@ -389,6 +387,7 @@ HRESULT CRenderer::Render_Shadow()
 
 	if (FAILED(m_pSSAOShader->Bind_Matrix("g_ProjMatrixInv",pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
+
 	if (FAILED(m_pSSAOShader->Bind_RawValue("g_fCamFar", pPipeLine->Get_CamFar(), sizeof(_float))))
 		return E_FAIL;
 	//빛의값을 던져주기
@@ -409,7 +408,6 @@ HRESULT CRenderer::Render_Shadow()
 	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext)))
 		return E_FAIL;
 
-	// 객체를 받아오고 빛과 연산을 해야하지않을지>?
 	return S_OK;
 }
 

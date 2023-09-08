@@ -130,6 +130,7 @@ HRESULT CMapDummy::Add_Components()
 		MSG_BOX("Failed CMapDummy Add_Component : (Com_Renderer)");
 		return E_FAIL;
 	}
+
 	return S_OK;
 }
 
@@ -180,7 +181,7 @@ CGameObject* CMapDummy::Clone(void* pArg)
 void CMapDummy::Free()
 {
 	__super::Free();
-	Safe_Release(m_pTransform);
+	
 	Safe_Release(m_pShader);
 	Safe_Release(m_pModel);
 	Safe_Release(m_pRenderer);

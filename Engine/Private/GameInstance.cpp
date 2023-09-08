@@ -197,11 +197,18 @@ HRESULT CGameInstance::Render_Level()
 	return m_pLevel_Manager->Render();
 }
 
-HRESULT CGameInstance::Add_Prototype(_uint iLevelIndex, const _tchar* pPrototypeTag, CComponent* pPrototype)
+CComponent* CGameInstance::Find_Prototype(_uint iLevelIndex, const _tchar* pPrototypeTag)
+{
+	NULL_CHECK_RETURN_MSG(m_pComponent_Manager, nullptr, TEXT("Component_Manager NULL"));
+
+	return m_pComponent_Manager->Find_Prototype(iLevelIndex, pPrototypeTag);
+}
+
+HRESULT CGameInstance::Add_Prototype(_uint iLevelIndex, const _tchar* pPrototypeTag, class CComponent* pPrototype, _bool isFailedSkip)
 {
 	NULL_CHECK_RETURN_MSG(m_pComponent_Manager, E_FAIL, TEXT("Component_Manager NULL"));
 
-	return m_pComponent_Manager->Add_Prototype(iLevelIndex, pPrototypeTag, pPrototype);
+	return m_pComponent_Manager->Add_Prototype(iLevelIndex, pPrototypeTag, pPrototype, isFailedSkip);
 }
 
 HRESULT CGameInstance::Add_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, const _tchar* pLayerTag, const _tchar* pComponentTag, void* pArg)
@@ -522,6 +529,13 @@ HRESULT CGameInstance::ReadFileInDirectory(_Inout_ vector<wstring>& OutVector, c
 	return m_pCalculator->ReadFileInDirectory(OutVector, pFilePath, pExt);
 }
 
+_float3 CGameInstance::PolarToCartesian(_float _fLength, _float _fTheta, _float _fPhi)
+{
+	NULL_CHECK_RETURN_MSG(m_pCalculator, _float3(), TEXT("Calculator NULL"));
+
+	return m_pCalculator->PolarToCartesian(_fLength, _fTheta, _fPhi);
+}
+
 PxPhysics* CGameInstance::Get_Physics() const
 {
 	NULL_CHECK_RETURN_MSG(m_pPhysX_Manager, nullptr, TEXT("PhysX_Manager NULL"));
@@ -542,11 +556,12 @@ PxControllerManager* CGameInstance::Get_ControllerManager() const
 
 	return m_pPhysX_Manager->Get_ControllerManager();
 }
-HRESULT CGameInstance::Add_MainCamera(CCamera* _pMainCamera)
-{
-	NULL_CHECK_RETURN_MSG(m_pCamera_Manager, E_FAIL, TEXT("Camera NULL"));
 
-	return m_pCamera_Manager->Add_MainCamera(_pMainCamera);
+cloth::Factory* CGameInstance::Get_ClothFactory() const
+{
+	NULL_CHECK_RETURN_MSG(m_pPhysX_Manager, nullptr, TEXT("PhysX_Manager NULL"));
+
+	return m_pPhysX_Manager->Get_ClothFactory();
 }
 
 HRESULT CGameInstance::Read_CutSceneCamera(const _tchar* _CutSceneTag, const _tchar* _CutScenePath)
@@ -584,6 +599,34 @@ HRESULT CGameInstance::Add_OffSetCamera(const _tchar* _OffSetTag)
 	return m_pCamera_Manager->Add_OffSetCamera(_OffSetTag);
 }
 
+HRESULT CGameInstance::Add_Camera(const _tchar* _CameraTag, CCamera* _pCamera)
+{
+	NULL_CHECK_RETURN_MSG(m_pCamera_Manager, E_FAIL, TEXT("Camera NULL"));
+
+	return m_pCamera_Manager->Add_Camera(_CameraTag, _pCamera);
+}
+
+HRESULT CGameInstance::Set_Camera(const _tchar* _CameraTag)
+{
+	NULL_CHECK_RETURN_MSG(m_pCamera_Manager, E_FAIL, TEXT("Camera NULL"));
+
+	return m_pCamera_Manager->Set_Camera(_CameraTag);
+}
+
+CCamera* CGameInstance::Find_Camera(const _tchar* _CameraTag)
+{
+	NULL_CHECK_RETURN_MSG(m_pCamera_Manager, nullptr, TEXT("Camera NULL"));
+
+	return m_pCamera_Manager->Find_Camera(_CameraTag);
+}
+
+void CGameInstance::Stop_CutScene()
+{
+	NULL_CHECK_RETURN_MSG(m_pCamera_Manager, , TEXT("Camera NULL"));
+
+	return m_pCamera_Manager->Stop_CutScene();
+}
+
 CRenderTarget* CGameInstance::Find_RenderTarget(const _tchar* pTargetTag)
 {
 	NULL_CHECK_RETURN_MSG(m_pRenderTarget_Manager, nullptr, TEXT("RenderTarget_Manager NULL"));
@@ -591,7 +634,7 @@ CRenderTarget* CGameInstance::Find_RenderTarget(const _tchar* pTargetTag)
 	return m_pRenderTarget_Manager->Find_RenderTarget(pTargetTag);
 }
 
-HRESULT CGameInstance::Add_Prototype_Textures(_uint iLevel, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pPrototypeName, const _tchar* pTargetExtension, const _tchar* pDirectoryPath)
+HRESULT CGameInstance::Add_Prototype_Textures(_uint iLevel, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pPrototypeName, const _tchar* pTargetExtension, const _tchar* pDirectoryPath, _bool isFailedSkip)
 {
 	fs::directory_iterator iter(pDirectoryPath);
 
@@ -602,7 +645,7 @@ HRESULT CGameInstance::Add_Prototype_Textures(_uint iLevel, ID3D11Device* pDevic
 		// 대상이 폴더일 경우 재귀로 들어감.
 		if (true == FileEntry.is_directory())
 		{
-			if (FAILED(Add_Prototype_Textures(iLevel, pDevice, pContext, pPrototypeName, pTargetExtension, FileEntry.path().wstring().c_str())))
+			if (FAILED(Add_Prototype_Textures(iLevel, pDevice, pContext, pPrototypeName, pTargetExtension, FileEntry.path().wstring().c_str(), isFailedSkip)))
 			{
 				return E_FAIL;
 			}
@@ -628,8 +671,10 @@ HRESULT CGameInstance::Add_Prototype_Textures(_uint iLevel, ID3D11Device* pDevic
 
 				// 어떤 텍스처가 문제있는지 일일이 찾기 힘드므로
 				// FAILED_CHECK_RETURN로 문제 있는 텍스처에서 바로 멈추게끔 처리.
+				
 				FAILED_CHECK_RETURN(Add_Prototype(iLevel, wstrPrototypeTag.c_str(),
-					CTexture::Create(pDevice, pContext, wstrFilePathName.c_str())), E_FAIL);
+					CTexture::Create(pDevice, pContext, wstrFilePathName.c_str()), isFailedSkip), E_FAIL);
+				// 만약에 경로를 못찾았다는 오류가 뜨면 원본 파일이 손상되어있을 가능성이 있음. 직접 열어봐야함.
 			}
 		}
 		
@@ -639,7 +684,7 @@ HRESULT CGameInstance::Add_Prototype_Textures(_uint iLevel, ID3D11Device* pDevic
 	return S_OK;
 }
 
-HRESULT CGameInstance::Add_Prototype_Models(_uint iLevel, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CModel::TYPE eType, const _tchar* pPrototypeName, const _tchar* pTargetExtension, const _tchar* pDirectoryPath, _float4x4 PivotMatrix)
+HRESULT CGameInstance::Add_Prototype_Models(_uint iLevel, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CModel::TYPE eType, const _tchar* pPrototypeName, const _tchar* pTargetExtension, const _tchar* pDirectoryPath, _bool isFailedSkip, _float4x4 PivotMatrix)
 {
 	fs::directory_iterator iter(pDirectoryPath);
 
@@ -650,7 +695,7 @@ HRESULT CGameInstance::Add_Prototype_Models(_uint iLevel, ID3D11Device* pDevice,
 		// 대상이 폴더일 경우 재귀로 들어감.
 		if (true == FileEntry.is_directory())
 		{
-			if (FAILED(Add_Prototype_Models(iLevel, pDevice, pContext, eType, pPrototypeName, pTargetExtension, FileEntry.path().wstring().c_str(), PivotMatrix)))
+			if (FAILED(Add_Prototype_Models(iLevel, pDevice, pContext, eType, pPrototypeName, pTargetExtension, FileEntry.path().wstring().c_str(), isFailedSkip, PivotMatrix)))
 			{
 				return E_FAIL;
 			}
@@ -677,7 +722,7 @@ HRESULT CGameInstance::Add_Prototype_Models(_uint iLevel, ID3D11Device* pDevice,
 				// 어떤 파일에 문제있는지 일일이 찾기 힘드므로
 				// FAILED_CHECK_RETURN로 문제 있는 파일에서 바로 멈추게끔 처리.
 				FAILED_CHECK_RETURN(Add_Prototype(iLevel, wstrPrototypeTag.c_str(),
-					CModel::Create(pDevice, pContext, eType, wstrFilePathName.c_str(), PivotMatrix)), E_FAIL);
+					CModel::Create(pDevice, pContext, eType, wstrFilePathName.c_str(), PivotMatrix), isFailedSkip), E_FAIL);
 			}
 		}
 
@@ -720,6 +765,13 @@ const _float& CGameInstance::Get_World_TimeAcc() const
 	NULL_CHECK_RETURN_MSG(m_pTime_Manager, 0.f, TEXT("Time_Manager NULL"));
 
 	return m_pTime_Manager->Get_World_TimeAcc();
+}
+
+_float CGameInstance::Get_World_Tick() const
+{
+	NULL_CHECK_RETURN_MSG(m_pTime_Manager, 0.f, TEXT("Time_Manager NULL"));
+
+	return m_pTime_Manager->Get_World_Tick();
 }
 
 _float CGameInstance::Get_TimeAcc(const wstring& wstrTimerTag) const

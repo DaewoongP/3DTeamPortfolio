@@ -20,7 +20,6 @@ HRESULT CVIBuffer_Cube::Initialize_Prototype()
 	m_eFormat = DXGI_FORMAT_R16_UINT;
 	m_eTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
-
 #pragma region VERTEX_BUFFER
 	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
 

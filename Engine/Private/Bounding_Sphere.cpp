@@ -97,7 +97,7 @@ CBounding_Sphere* CBounding_Sphere::Create(ID3D11Device* pDevice, ID3D11DeviceCo
 	return pInstance;
 }
 
-CBounding* CBounding_Sphere::Clone(void* pBoundingDesc)
+CBounding_Sphere* CBounding_Sphere::Clone(void* pBoundingDesc)
 {
 	CBounding_Sphere* pInstance = new CBounding_Sphere(*this);
 

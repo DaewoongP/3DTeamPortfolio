@@ -7,7 +7,7 @@ texture2D		g_DiffuseTexture;
 
 float4			g_vColor;
 float4			g_vCamPosition;
-float2			g_vOffset;
+
 
 struct VS_IN
 {
@@ -23,7 +23,6 @@ struct VS_OUT
 	float2 vTexUV : TEXCOORD0;
 	float4 vWorldPos : TEXCOORD1;
 };
-
 
 /* 정점을 받고 변환하고 정점을 리턴한다. */
 VS_OUT VS_MAIN(VS_IN In)
@@ -62,7 +61,7 @@ PS_OUT	PS_MAIN(PS_IN In)
 {
 	PS_OUT		Out = (PS_OUT)0;
 
-	TilingAndOffset_float(In.vTexUV, 1.f, g_vOffset, In.vTexUV);
+	TilingAndOffset_float(In.vTexUV, g_vTililing, g_vOffset, In.vTexUV);
 
 	vector		vDiffuse = g_Texture.Sample(LinearSampler, In.vTexUV);
 	//if (vDiffuse.r == 0.f && vDiffuse.g == 0.f && vDiffuse.b == 0.f)
@@ -92,7 +91,7 @@ technique11		DefaultTechnique
 {
 	pass Default
 	{
-		SetRasterizerState(RS_Default);
+		SetRasterizerState(RS_Cull_None);
 		SetDepthStencilState(DSS_Default, 0);
 		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		VertexShader = compile vs_5_0 VS_MAIN();

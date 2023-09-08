@@ -61,6 +61,8 @@
 #include <Factory.h>
 #include <PhaseConfig.h>
 #include <DxContextManagerCallback.h>
+#include <NvClothExt/ClothFabricCooker.h>
+#include <NvClothExt/ClothMeshDesc.h>
 #include <Fabric.h>
 #include <Cloth.h>
 #include <Range.h>

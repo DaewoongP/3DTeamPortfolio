@@ -13,7 +13,8 @@ private:
     virtual ~CComboBox() = default;
     
 public:
-    HRESULT Initialize(const _char* _szTag, const _char* szName, initializer_list<string> _Items, const _char* pStartName);
+    HRESULT Initialize(const _char* _szTag, const _char* _szName, initializer_list<string> _Items, const _char* _pStartName);
+    HRESULT Initialize(const _char* _szTag, const _char* _szName, vector<string> _Items, const _char* _pStartName);
 
 public:
     string Get_Current_Item() { return m_strCurrentItem; };
@@ -23,9 +24,16 @@ public:
     void Set_Name(string _strName);
     void Set_StartTag(string _strStartTag);
 public:
+    // imgui 콤보박스를 띄우고 현재 선택된 항목을 반환한다.
     string Tick(FLAG eFlag = NONE, _bool _isImplement = true);
 
 public:
+    // 설명 : 콤보박스의 항목들을 없애고 새로운 벡터 컨테이너로 채운다.
+    // 사용법
+    // vector<string> Items{ "AAAA", "BBBB" };
+    // Change_List(Items);
+    void Change_Items(vector<string> _Items);
+
     // 사용법 : Push_Back("AAAA");
     void Push_Back(const _char* _szItem);
 
@@ -50,6 +58,7 @@ private:
 
 public:
     static CComboBox* Create(const _char* _szTag, const _char* szName, initializer_list<string> _Items, const _char* pStartName = nullptr);
+    static CComboBox* Create(const _char* _szTag, const _char* szName, vector<string> _Items, const _char* pStartName = nullptr);
     virtual void Free(void) override;
 };
 END

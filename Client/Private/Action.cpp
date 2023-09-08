@@ -57,7 +57,7 @@ HRESULT CAction::Tick(const _float& fTimeDelta)
 	if (true == m_isFirst)
 	{
 		m_isPlayAction = true;
-		m_pModel->Reset_Animation(rand() % 150);
+		m_pModel->Reset_Animation(0);
 		m_isFirst = false;
 	}
 
@@ -76,18 +76,8 @@ HRESULT CAction::Tick(const _float& fTimeDelta)
 
 	_bool bCheck = { false };
 
-	/*if (false == m_pModel->isLoopAnimation())
-	{
-		if (true == m_pModel->isAbleChangeAnimation() ||
-			true == m_pModel->isFinishedAnimation())
-			bCheck = true;
-	}
-
-	else if (true == m_isFinishBehaviors)
-	{
-		bCheck = true;
-	}*/
-	if (true == m_isFinishBehaviors)
+	if (true == m_pModel->Is_Able_Change_Animation() || 
+		true == m_isFinishBehaviors)
 	{
 		bCheck = true;
 	}
