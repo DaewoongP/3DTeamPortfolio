@@ -66,6 +66,10 @@ void CNotify::Invalidate_Frame(_float fTimeAcc, _Inout_ _uint* pCurrentKeyFrameI
 				switch (pKeyFrame->eKeyFrameType)
 				{
 				case KEYFRAME::KF_NOTIFY:
+				{
+					static_cast<NOTIFYFRAME*>(pKeyFrame)->Action();
+				}
+					
 					break;
 				case KEYFRAME::KF_SOUND:
 					break;
@@ -131,6 +135,11 @@ void CNotify::Edit_Frame(_uint iFindFrame, KEYFRAME::KEYFRAMETYPE eFrameType, _f
 	{
 		static_cast<SPEEDFRAME*>(pKeyFrame)->fSpeed = fSpeed;
 	}
+
+	//Á¤·Ä
+	sort(m_KeyFrames.begin(), m_KeyFrames.end(), [&](std::pair<wstring, KEYFRAME*>& frame1, std::pair<wstring, KEYFRAME*>& frame2) ->  bool {
+		return (frame1.second->fTime < frame2.second->fTime);
+		});
 }
 
 KEYFRAME* CNotify::Find_Frame(const wchar_t* wszKeyFrameTag)
@@ -171,6 +180,7 @@ HRESULT CNotify::AddFrame(KEYFRAME_GCM* data)
 		notifyFrameDesc->eKeyFrameType = KEYFRAME::KF_NOTIFY;
 		notifyFrameDesc->fTime = data->fTime;
 		notifyFrameDesc->isEnable = true;
+		notifyFrameDesc->Action = [&] {(*this).Notify_NULL_WarningAlam(); };
 		keyFrameDesc = notifyFrameDesc;
 		wstring str = data->szName;
 		pair< wstring, KEYFRAME*> NewPair = pair<wstring, KEYFRAME*>(str, keyFrameDesc);
@@ -200,6 +210,10 @@ HRESULT CNotify::AddFrame(KEYFRAME_GCM* data)
 		return (frame1.second->fTime < frame2.second->fTime);
 		});
 	return S_OK;
+}
+void CNotify::Notify_NULL_WarningAlam()
+{
+	cout << "Please Input Notify Action" << endl;
 }
 CNotify* CNotify::Create()
 {

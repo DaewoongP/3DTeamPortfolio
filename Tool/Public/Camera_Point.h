@@ -36,7 +36,7 @@ public:
 
 public:
 	_bool RayIntersects(_float4 vOrigin, _float4 vDirection, _Inout_ _float& fDist);
-
+	void Set_BoundingDesc(void* pBoundingDesc);
 
 
 #ifdef _DEBUG

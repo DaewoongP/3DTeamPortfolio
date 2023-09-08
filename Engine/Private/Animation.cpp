@@ -20,6 +20,7 @@ CAnimation::CAnimation(const CAnimation& rhs)
 	, m_isLoop(rhs.m_isLoop)
 	, m_isLerp(rhs.m_isLerp)
 	, m_isRootAnim(rhs.m_isRootAnim)
+	, m_vOffsetPosition(rhs.m_vOffsetPosition)
 	, m_isPaused(rhs.m_isPaused)
 	, m_iMaxFrameChannelIndex(rhs.m_iMaxFrameChannelIndex)
 	, m_iAnimationFrames(rhs.m_iAnimationFrames)
@@ -68,14 +69,9 @@ void CAnimation::Delete_Rotation()
 	}
 }
 
-NOTIFYFRAME* CAnimation::Find_NotifyFrame(const _tchar* wszNotifyTag)
+KEYFRAME* CAnimation::Find_NotifyFrame(const _tchar* wszNotifyTag)
 {
-	return nullptr;
-}
-
-SOUNDFRAME* CAnimation::Find_SoundFrame(const _tchar* wszSoundTag)
-{
-	return nullptr;
+	return m_pNotify->Find_Frame(wszNotifyTag);
 }
 
 HRESULT CAnimation::Add_NotifyFrame(KEYFRAME_GCM* data)
@@ -98,8 +94,6 @@ void CAnimation::Update_KeyFrame_By_Time()
 
 HRESULT CAnimation::Initialize(Engine::ANIMATION Animation, const CModel::BONES& Bones)
 {
-	m_isLoop = true;
-
 	// 애니메이션 정보 저장
 	lstrcpy(m_szName, Animation.szName);
 	m_fDuration = Animation.fDuration;
@@ -143,8 +137,6 @@ HRESULT CAnimation::Initialize(Engine::ANIMATION Animation, const CModel::BONES&
 
 HRESULT CAnimation::Initialize(Engine::ANIMATION_GCM Animation, const CModel::BONES& Bones)
 {
-	m_isLoop = true;
-
 	// 애니메이션 정보 저장
 	lstrcpy(m_szName, Animation.szName);
 	m_fDuration = Animation.fDuration;
@@ -155,6 +147,8 @@ HRESULT CAnimation::Initialize(Engine::ANIMATION_GCM Animation, const CModel::BO
 	m_isLoop = Animation.isLoop;
 	m_isRootAnim = Animation.isRootAnim;
 	m_isLerp = Animation.isLerp;
+
+	m_vOffsetPosition = Animation.vOffsetPosition;
 
 	m_iNumChannels = Animation.iNumChannels;
 
@@ -240,9 +234,6 @@ void CAnimation::Invalidate_TransformationMatrix(CModel::BONES& Bones, _float fT
 			if (iter == (*boneVec).end())
 			{
 				continue;
-			}
-			else {
-				int a = 0;
 			}
 		}
 

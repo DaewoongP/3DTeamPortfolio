@@ -58,6 +58,11 @@ _bool CCamera_Point::RayIntersects(_float4 vOrigin, _float4 vDirection, _float& 
 	return m_pCollider->RayIntersects(vOrigin, vDirection, fDist);
 }
 
+void CCamera_Point::Set_BoundingDesc(void* pBoundingDesc)
+{
+	m_pCollider->Set_BoundingDesc(pBoundingDesc);
+}
+
 
 HRESULT CCamera_Point::Add_Components()
 {

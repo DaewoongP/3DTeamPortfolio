@@ -8,6 +8,10 @@
 
 #include "Model.h"
 
+// 노티파이 함수 추가 예시
+// static_cast<NOTIFYFRAME*>(m_pModel->Get_Animation()->Find_NotifyFrame(TEXT("hihi")))->Action = [&] {(*this).NotifyTest(); };
+
+
 BEGIN(Engine)
 
 class ENGINE_DLL CNotify final : public CBase
@@ -34,6 +38,9 @@ public:
 	KEYFRAME*		Find_Frame(const wchar_t* wszKeyFrameTag);
 	//추가(툴용)
 	HRESULT			AddFrame(KEYFRAME_GCM* data);
+
+public:
+	void			Notify_NULL_WarningAlam();
 
 private:
 	vector<pair<wstring, KEYFRAME*>>	m_KeyFrames;

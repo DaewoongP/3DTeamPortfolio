@@ -220,6 +220,8 @@ namespace Engine
 		_bool				isRootAnim;
 		_bool				isLerp;
 
+		XMFLOAT3			vOffsetPosition = {};
+
 		// Channel
 		unsigned int		iNumChannels;
 		CHANNEL_GCM*		Channels; // array
