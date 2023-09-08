@@ -71,7 +71,6 @@ void CWindow_Manager::Tick(_float fTimeDelta)
 		m_eLoadingFlag |= CAMERA_LOAD;
 	}
 
-
 	if (ImGui::RadioButton("Effect", iCurMenuList, EFFECT_WINDOW))
 	{
 		if (0 == (m_eLoadingFlag & EFFECT_LOAD))
@@ -88,7 +87,6 @@ void CWindow_Manager::Tick(_float fTimeDelta)
 		Setup_Current_Window(TEXT("Effect_Window"));
 		m_eLoadingFlag |= EFFECT_LOAD;
 	}
-
 
 	if (ImGui::RadioButton("Animation", iCurMenuList, ANIMATION_WINDOW))
 	{
@@ -107,7 +105,6 @@ void CWindow_Manager::Tick(_float fTimeDelta)
 		m_eLoadingFlag |= ANIAMTION_LOAD;
 	}
 
-
 	if (ImGui::RadioButton("UI", iCurMenuList, UI_WINDOW))
 	{
 		if (0 == (m_eLoadingFlag & UI_LOAD))
@@ -123,7 +120,6 @@ void CWindow_Manager::Tick(_float fTimeDelta)
 		Setup_Current_Window(TEXT("UI_Window"));
 		m_eLoadingFlag |= UI_LOAD;
 	}
-
 
 	if (ImGui::RadioButton("Light", iCurMenuList, LIGHT_WINDOW))
 	{

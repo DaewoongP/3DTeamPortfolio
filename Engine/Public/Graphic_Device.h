@@ -38,11 +38,12 @@ private:
 	IDXGISwapChain*				m_pSwapChain = { nullptr };
 	ID3D11RenderTargetView*		m_pBackBufferRTV = { nullptr };
 	ID3D11DepthStencilView*		m_pDepthStencilView = { nullptr };
-
+	ID3D11DepthStencilView*		m_pShadowDepth = { nullptr };
 private:
 	HRESULT Ready_SwapChain(HWND hWnd, GRAPHICDESC::WINMODE eWinMode, _uint iWinCX, _uint iWinCY);
 	HRESULT Ready_BackBufferRenderTargetView();
 	HRESULT Ready_DepthStencilRenderTargetView(_uint iWinCX, _uint iWinCY);
+	HRESULT Ready_ShadowDepthRenderTarget(_uint iWinCX, _uint iWinCY);
 
 public:
 	virtual void Free() override;

@@ -25,6 +25,7 @@ public:
 	{ 
 		return &m_ViewLight;
 	}
+	_float4* Get_LightPosition() { return &m_fLightPos; }
 
 	void Set_Light(_uint iIndex, CLight::LIGHTDESC LightDesc);
 	void Set_LightProj(_float4x4 ProjLight) { m_ProjLight = ProjLight; }
@@ -41,10 +42,10 @@ private:
 	list<class CLight*>				m_Lights;
 	_float4x4 m_ViewLight;
 	_float4x4 m_ProjLight;
+	_float4 m_fLightPos;
 	ID3D11Device* m_pDevice = { nullptr };
 	ID3D11DeviceContext* m_pContext = { nullptr };
 
-public:
 	virtual void Free() override;
 };
 

@@ -172,6 +172,7 @@
     <ClInclude Include="..\public\Dummy_Cloth.h" />
     <ClInclude Include="..\Public\Dummy_Font.h" />
     <ClInclude Include="..\Public\Dummy_UI_Group.h" />
+    <ClInclude Include="..\Public\LightDot.h" />
     <ClInclude Include="..\Public\Light_Window.h" />
     <ClInclude Include="..\Public\ComboBox.h" />
     <ClInclude Include="..\public\CustomWidget.h" />
@@ -226,6 +227,7 @@
     <ClCompile Include="..\Private\Dummy_Font.cpp" />
     <ClCompile Include="..\Private\Dummy_UI.cpp" />
     <ClCompile Include="..\Private\Dummy_UI_Group.cpp" />
+    <ClCompile Include="..\Private\LightDot.cpp" />
     <ClCompile Include="..\Private\Light_Window.cpp" />
     <ClCompile Include="..\Private\Camera_Point.cpp" />
     <ClCompile Include="..\private\CutScene_Camera_Tool.cpp" />
