@@ -103,6 +103,12 @@ HRESULT CMapDummy::Add_Shader_Component(const wchar_t* wszShaderTag)
 
 HRESULT CMapDummy::Change_Model_Component(const _tchar* pPrototypeTag)
 {
+	if (FAILED(CComposite::Delete_Component(TEXT("Com_Buffer"))))
+	{
+		MSG_BOX("Failed to chagne MapDummy Model");
+		return E_FAIL;
+	}
+
 	Safe_Release(m_pModel);
 
 	if (FAILED(CComposite::Add_Component(LEVEL_TOOL, pPrototypeTag,
@@ -111,8 +117,6 @@ HRESULT CMapDummy::Change_Model_Component(const _tchar* pPrototypeTag)
 		MSG_BOX("Failed CMapDummy Change_Component : (Com_Buffer)");
 		return E_FAIL;
 	}
-
-	Safe_Release(m_pModel);
 
 	return S_OK;
 }

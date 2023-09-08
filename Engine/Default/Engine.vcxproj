@@ -28,6 +28,10 @@
     <ClInclude Include="..\Public\Bounding_AABB.h" />
     <ClInclude Include="..\Public\Bounding_OBB.h" />
     <ClInclude Include="..\public\Bounding_Sphere.h" />
+    <ClInclude Include="..\Public\Mesh_Instance.h" />
+    <ClInclude Include="..\Public\Model_Instance.h" />
+    <ClInclude Include="..\public\Shader_Node.h" />
+    <ClInclude Include="..\Public\Shader_Nodes.h" />
     <ClInclude Include="..\Public\Shape_GeoSphere.h" />
     <ClInclude Include="..\public\Dynamic_Mesh.h" />
     <ClInclude Include="..\Public\JobManager.h" />
@@ -136,6 +140,7 @@
     <ClCompile Include="..\Private\Bounding_AABB.cpp" />
     <ClCompile Include="..\Private\Bounding_OBB.cpp" />
     <ClCompile Include="..\private\Bounding_Sphere.cpp" />
+    <ClCompile Include="..\Private\Mesh_Instance.cpp" />
     <ClCompile Include="..\Private\Shape_GeoSphere.cpp" />
     <ClCompile Include="..\private\Dynamic_Mesh.cpp" />
     <ClCompile Include="..\Private\JobManager.cpp" />
@@ -162,7 +167,6 @@
     <ClCompile Include="..\private\VIBuffer_GeoSphere.cpp" />
     <ClCompile Include="..\private\VIBuffer_Cloth.cpp" />
     <ClCompile Include="..\Private\VIBuffer_Rect_Color_Instance.cpp" />
-    <ClCompile Include="..\Private\VIBuffer_Object_Instance.cpp" />
     <ClCompile Include="..\Private\VIBuffer_Sprite.cpp" />
     <ClCompile Include="..\Private\Ignite.cpp" />
     <ClCompile Include="..\Private\Defence.cpp" />
@@ -223,6 +227,8 @@
     <ClCompile Include="..\Private\VIBuffer.cpp" />
     <ClCompile Include="..\Private\VIBuffer_Rect.cpp" />
     <ClCompile Include="..\private\VIBuffer_Triangle.cpp" />
+    <ClCompile Include="..\Public\Model_Instance.cpp" />
+    <ClCompile Include="Shader_Node.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Debug.hlsl" />

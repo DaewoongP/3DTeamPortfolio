@@ -29,6 +29,8 @@
 #include "MeshEffect.h"
 #pragma endregion Effects
 
+#include "MapObject.h"
+
 #ifdef _DEBUG
 #include "Test_Player.h"
 #include "Test_NPC.h"
@@ -246,6 +248,12 @@ HRESULT CLoader::Loading_For_MainGame()
 		//	CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/PensivePaladin/PensivePaladin.dat")))))
 		//	throw TEXT("Prototype_Component_Model_Pensive");
 
+		// 프로토타입 생성
+		PivotMatrix = XMMatrixIdentity();
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model__Intro_RuinsFloorBroken"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Intro__RuinsFloorBroken/Intro__RuinsFloorBroken.dat"), PivotMatrix))))
+			throw TEXT("Prototype_Component_Model__Intro_RuinsFloorBroken");
+
 #ifdef _DEBUG
 		PivotMatrix = XMMatrixScaling(100.f, 100.f, 100.f) * XMMatrixRotationY(XMConvertToRadians(180.f));
 		/* For.Prototype_Component_Model_Fiona*/
@@ -409,6 +417,11 @@ HRESULT CLoader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Armored_Troll"),
 			CArmored_Troll::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Armored_Troll");
+
+		/* For.Prototype_GameObject_MapObject */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_MapObject"),
+			CMapObject::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_MapObject");
 
 		///* For.Prototype_GameObject_Forest_Troll */
 		//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Forest_Troll"),
