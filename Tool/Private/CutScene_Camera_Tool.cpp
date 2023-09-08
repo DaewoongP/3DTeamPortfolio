@@ -78,11 +78,11 @@ void CCutScene_Camera_Tool::Tick(_float _fTimeDelta)
 	ImGui::RadioButton("Section_Edit", &m_iPointRadio, 3);
 
 	//Eye 또는 At 편집
-	if (pGameInstance->Get_DIKeyState(DIKEYBOARD_LCONTROL))
+	if (pGameInstance->Get_DIKeyState(DIK_LCONTROL))
 	{
 		m_iEyeOrAt = CUTSCENE_AT;
 	}
-	else if (pGameInstance->Get_DIKeyState(DIKEYBOARD_SPACE))
+	else if (pGameInstance->Get_DIKeyState(DIK_SPACE))
 	{
 		m_iEyeOrAt = CUTSCENE_EYE;
 	}
@@ -126,7 +126,7 @@ void CCutScene_Camera_Tool::Tick(_float _fTimeDelta)
 		m_pCreateGuidePoint->Tick(pGameInstance->Get_World_Tick());
 
 		BEGININSTANCE;
-		if (pGameInstance->Get_DIKeyState(DIKEYBOARD_G, CInput_Device::KEY_DOWN))
+		if (pGameInstance->Get_DIKeyState(DIK_G, CInput_Device::KEY_DOWN))
 		{
 			m_isInsertBefore = !m_isInsertBefore;
 
@@ -1731,7 +1731,7 @@ void CCutScene_Camera_Tool::Set_Position_CurrentPoint()
 	ImGui::Text("\"T\" : Set position to selected point");
 	BEGININSTANCE;
 
-	if (nullptr != m_pCurrentPoint && pGameInstance->Get_DIKeyState(DIKEYBOARD_T, CInput_Device::KEY_DOWN))
+	if (nullptr != m_pCurrentPoint && pGameInstance->Get_DIKeyState(DIK_T, CInput_Device::KEY_DOWN))
 	{
 		dynamic_cast<CMain_Camera*>(pGameInstance->Find_Camera(TEXT("Main_Camera")))->Set_Position(m_pCurrentPoint->Get_Position().xyz());
 	}

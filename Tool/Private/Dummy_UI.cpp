@@ -182,6 +182,8 @@ HRESULT CDummy_UI::Set_AlphaTexture(_tchar* pFilePath)
 
 	Set_AlphaTextureTag(wszComName);
 	Set_AlphaTexturePath(pFilePath);
+
+	return S_OK;
 }
 
 

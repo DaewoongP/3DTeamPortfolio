@@ -596,7 +596,7 @@ void CUI_Window::Correction_Pick()
 			}
 			else
 			{
-				m_pDummy_UI->Set_fXY(CurrentMousePos.x, CurrentMousePos.y);
+				m_pDummy_UI->Set_fXY(_float(CurrentMousePos.x), _float(CurrentMousePos.y));
 			}
 		}
 
@@ -736,7 +736,7 @@ void CUI_Window::Open_Font_List()
 				}
 
 				ImGui::Text("Scale##"); ImGui::SameLine();
-				if (ImGui::DragFloat2("vScale", reinterpret_cast<_float*>(&vScale), 1.0f))
+				if (ImGui::DragFloat2("vScale", reinterpret_cast<_float*>(&vScale), 0.1f))
 				{
 					m_pDummy_Font->Set_vScale(vScale);
 				}
@@ -1559,7 +1559,7 @@ void CUI_Window::UI_Group_Tree()
 	if (ImGui::TreeNode("Child"))
 	{
 		_bool* selection = new _bool[iSize];
-		for (int i = 0; i < iSize; i++)
+		for (_uint i = 0; i < iSize; i++)
 		{
 			selection[i] = false;
 		}
