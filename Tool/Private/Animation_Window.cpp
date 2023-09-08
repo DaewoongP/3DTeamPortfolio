@@ -3,6 +3,8 @@
 #include "GameInstance.h"
 #include "Dummy.h"
 #include "Notify.h"
+#include "Camera_Point.h"
+#include "Bounding_Sphere.h"
 
 CAnimation_Window::CAnimation_Window(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CImWindow(pDevice, pContext)
@@ -13,6 +15,23 @@ HRESULT CAnimation_Window::Initialize(ImVec2 vWindowPos, ImVec2 vWindowSize)
 {
 	if (FAILED(__super::Initialize(vWindowPos, vWindowSize)))
 		return E_FAIL;
+
+	BEGININSTANCE;
+
+	CCamera_Point::CAMERAPOINTDESC CameraPointDesc;
+
+	CameraPointDesc.vPosition = _float4(0,0,0,1);
+	m_pCameraPoint =
+		dynamic_cast<CCamera_Point*>(
+			pGameInstance->Clone_Component(LEVEL_TOOL,
+				TEXT("Prototype_GameObject_Camera_Point"),
+				&CameraPointDesc));
+
+	CBounding_Sphere::BOUNDINGSPHEREDESC sphereDesc;
+	sphereDesc.fRadius = 0.1f;
+	sphereDesc.vPosition = _float3(0, 0, 0);
+	m_pCameraPoint->Set_BoundingDesc(&sphereDesc);
+	ENDINSTANCE;
 
 	m_WindowFlag = ImGuiWindowFlags_NoResize;
 
@@ -537,6 +556,7 @@ void CAnimation_Window::OffsetVectorSetting(CModel* pDummyModel)
 {
 	if (pDummyModel->Get_NumAnimations() == 0)
 		return;
+
 	_float data[3] = {};
 	_float3 pos = pDummyModel->Get_Animation()->Get_OffsetPosition();
 	memcpy(data, &pos, sizeof(_float) * 3);
@@ -544,6 +564,16 @@ void CAnimation_Window::OffsetVectorSetting(CModel* pDummyModel)
 	{
 		pDummyModel->Get_Animation()->Set_OffsetPosition(data);
 	}
+
+	if (m_pCameraPoint == nullptr)
+		return;
+
+	_float4 vCombinedPosition = { data[0],data[1],data[2],1};
+	vCombinedPosition = XMVector3TransformCoord(vCombinedPosition.xyz(), m_pDummyObject->Get_Transform()->Get_WorldMatrix());
+	m_pCameraPoint->Set_Position(vCombinedPosition);
+	BEGININSTANCE
+	m_pCameraPoint->Tick(pGameInstance->Get_TimeDelta(TEXT("MainTimer")));
+	ENDINSTANCE
 }
 
 void CAnimation_Window::Create_Notify_ChildFrame(CModel::ANIMTYPE ePartCnt, CModel* pDummyModel)

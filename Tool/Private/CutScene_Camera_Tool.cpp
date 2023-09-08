@@ -311,7 +311,11 @@ void CCutScene_Camera_Tool::Create_CameraInfo(_float4 _vRayPos, _float4 _vRayDir
 		if (nullptr == pCameraPoint)
 		{
 			MSG_BOX("CameraInfo Create Failed");
+			BEGININSTANCE;
 
+		CCamera_Point::CAMERAPOINTDESC CameraPointDesc;
+
+		CameraPointDesc.vPosition = Point_Create_Position(_vRayPos, _vRayDir);
 			ENDINSTANCE;
 
 			return;
