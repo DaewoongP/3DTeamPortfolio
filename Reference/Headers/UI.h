@@ -3,12 +3,6 @@
 
 
 BEGIN(Engine)
-class CShader;
-class CTexture;
-class CRenderer;
-class CTransform;
-class CVIBuffer_Rect;
-END
 
 class ENGINE_DLL CUI :  public CGameObject
 {
@@ -76,14 +70,6 @@ public:
 
 
 protected:
-	CShader* m_pShaderCom = { nullptr };
-	CTexture* m_pTextureCom = { nullptr };
-	CRenderer* m_pRendererCom = { nullptr };
-	CVIBuffer_Rect* m_pVIBufferCom = { nullptr };
-	CTexture* m_pAlphaTextureCom = { nullptr };
-
-
-protected:
 	_float2			m_vCombinedXY = { 0.f, 0.f };
 	// 윈도우창의 실제 x좌표
 	_float			m_fX = { 650.f };
@@ -103,15 +89,15 @@ protected:
 	_float4x4		m_ViewMatrix;
 	_float4x4		m_ProjMatrix;
 
-private:
+protected:
 	_tchar			m_wszTextureName[MAX_STR] = {};
 	_tchar			m_wszTexturePath[MAX_STR] = {};
 
 	UI_ID			m_eUIType = { UI_ID_END };
 	_bool			m_isParent = { false };
-	CUI* m_pParent = { nullptr };
+	CUI*			m_pParent = { nullptr };
 
-private:
+protected:
 	_bool			m_isAlpha = { false };
 	_float4			m_vColor = { 1.f, 1.f, 1.f, 1.f };
 	_tchar			m_wszAlphaTexturePrototypeTag[MAX_PATH] = TEXT("");
@@ -129,7 +115,8 @@ protected:
 	HRESULT Change_Scale(_float fX, _float fY);
 
 public:
-	static CUI* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);
-	virtual CGameObject* Clone(void* pArg) override;
+	virtual CGameObject* Clone(void* pArg) PURE;
 	virtual void Free() override;
 };
+
+END

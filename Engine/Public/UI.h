@@ -2,6 +2,8 @@
 #include "GameObject.h"
 
 
+BEGIN(Engine)
+
 class ENGINE_DLL CUI :  public CGameObject
 {
 public:
@@ -87,7 +89,7 @@ protected:
 	_float4x4		m_ViewMatrix;
 	_float4x4		m_ProjMatrix;
 
-private:
+protected:
 	_tchar			m_wszTextureName[MAX_STR] = {};
 	_tchar			m_wszTexturePath[MAX_STR] = {};
 
@@ -95,7 +97,7 @@ private:
 	_bool			m_isParent = { false };
 	CUI*			m_pParent = { nullptr };
 
-private:
+protected:
 	_bool			m_isAlpha = { false };
 	_float4			m_vColor = { 1.f, 1.f, 1.f, 1.f };
 	_tchar			m_wszAlphaTexturePrototypeTag[MAX_PATH] = TEXT("");
@@ -116,3 +118,5 @@ public:
 	virtual CGameObject* Clone(void* pArg) PURE;
 	virtual void Free() override;
 };
+
+END

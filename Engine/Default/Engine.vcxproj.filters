@@ -642,6 +642,9 @@
     <ClInclude Include="..\public\Model_LOD.h">
       <Filter>01. Utility\03. Components\04. Model\LOD</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_Gruop.h">
+      <Filter>01. Utility\03. Components\19. UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -940,6 +943,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Model_LOD.cpp">
       <Filter>01. Utility\03. Components\04. Model\LOD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Gruop.cpp">
+      <Filter>01. Utility\03. Components\19. UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
