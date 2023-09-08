@@ -175,6 +175,10 @@ void CObject_Window::Picking_Menu()
 		_float3 vRotation;
 		memcpy(&vRotation, m_vDummyMatrix[DUMMY_ROT], sizeof _float3);
 
+		vRotation.x = XMConvertToRadians(vRotation.x);
+		vRotation.y = XMConvertToRadians(vRotation.y);
+		vRotation.z = XMConvertToRadians(vRotation.z);
+
 		// shift키를 누르고 있으면 격자에 딱 맞게 위치가 반올림됨
 		BEGININSTANCE; if (true == pGameInstance->Get_DIKeyState(DIK_LSHIFT, CInput_Device::KEY_PRESSING))
 		{

@@ -267,6 +267,9 @@
     <ClInclude Include="..\Public\Weapon_Pensive.h">
       <Filter>02. GameObject\02. Enemy\03. Golem\99. Weapons</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\MapObject.h">
+      <Filter>02. GameObject\04. MapObject</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -379,6 +382,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Weapon_Pensive.cpp">
       <Filter>02. GameObject\02. Enemy\03. Golem\99. Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MapObject.cpp">
+      <Filter>02. GameObject\04. MapObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
