@@ -1,6 +1,8 @@
 #include "..\Public\Level_MainGame.h"
 #include "GameInstance.h"
 
+#include "MapObject.h"
+
 CLevel_MainGame::CLevel_MainGame(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CLevel(pDevice, pContext)
 {
@@ -85,6 +87,8 @@ HRESULT CLevel_MainGame::Ready_Layer_BackGround(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
+	Load_MapObject();
+
 	Safe_Release(pGameInstance);
 
 	return S_OK;
@@ -94,6 +98,81 @@ HRESULT CLevel_MainGame::Ready_Layer_Player(const _tchar* pLayerTag)
 {
 	return S_OK;
 }
+
+HRESULT CLevel_MainGame::Load_MapObject()
+{
+	_tchar dataFile[MAX_PATH] = TEXT("../../Resources/GameData/MapData/MapObject.ddd");
+
+	HANDLE hFile = CreateFile(dataFile, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+	{
+		MSG_BOX("Failed to Create MapObject File for Load MapObject");
+		return E_FAIL;
+	}
+
+	// 맵 오브젝트 번호
+	_uint iObjectNum = 0;
+
+	DWORD	dwByte = 0;
+
+	while (true)
+	{
+		LOADOBJECTDESC LoadDesc;
+		ZEROMEM(&LoadDesc);		
+
+		if (!ReadFile(hFile, &LoadDesc.matTransform, sizeof(_float4x4), &dwByte, nullptr))
+		{
+			MSG_BOX("Failed to Read m_vecSaveObject.vPos");
+			return E_FAIL;
+		}
+
+		if (!ReadFile(hFile, &LoadDesc.iTagLen, sizeof(_uint), &dwByte, nullptr))
+		{
+			MSG_BOX("Failed to Read m_vecSaveObject.iTagLen");
+		}
+
+		if (!ReadFile(hFile, &LoadDesc.wszTag, LoadDesc.iTagLen, &dwByte, nullptr))
+		{
+			MSG_BOX("Failed to Read m_vecSaveObject.wszTag");
+			return E_FAIL;
+		}
+
+		if (dwByte == 0)
+		{
+			break;
+		}
+
+		// 맵 오브젝트에 번호 붙여줌
+		_tchar wszobjName[MAX_PATH] = { 0 };
+		_stprintf_s(wszobjName, TEXT("GameObject_MapObject_%d"), (iObjectNum));
+
+		// 번호를 붙인 태그로 MapObject 등록
+		BEGININSTANCE if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME,
+			TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_BackGround"),
+			wszobjName, &LoadDesc.matTransform)))
+		{
+			MSG_BOX("Failed to Install MapObject");
+			ENDINSTANCE;
+			return E_FAIL;
+		} ENDINSTANCE;
+
+		// 마지막에 설치한 맵 오브젝트 주소 가져옴
+		CMapObject* pObject = static_cast<CMapObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME,
+			TEXT("Layer_BackGround"), wszobjName));
+
+		pObject->Add_Model_Component(TEXT("Prototype_Component_Model__Intro_RuinsFloorBroken"));
+		pObject->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMesh"));
+		pObject->Set_Color(iObjectNum); // 고유한 색깔 값을 넣어줌
+
+		++iObjectNum;	
+	}
+
+	CloseHandle(hFile);
+
+	return S_OK;
+}
+
 HRESULT CLevel_MainGame::Ready_Layer_Effect(const _tchar* pLayerTag)
 {
 

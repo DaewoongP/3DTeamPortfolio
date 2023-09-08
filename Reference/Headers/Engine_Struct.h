@@ -238,6 +238,12 @@ namespace Engine
 		XMFLOAT4		vTranslation;
 	}VTXINSTANCE;
 
+	typedef struct ENGINE_DLL tagVertex_Mesh_Instance_Declaration
+	{
+		static const unsigned int				iNumElements = { 8 };
+		static const D3D11_INPUT_ELEMENT_DESC			Elements[8];
+	}VTXMESHINSTANCE_DECL;
+
 	// VTXPOSTEX
 	typedef struct ENGINE_DLL tagVertex_Rect_Instance_Declaration
 	{
