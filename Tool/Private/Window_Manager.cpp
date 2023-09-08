@@ -23,7 +23,7 @@ void CWindow_Manager::Tick(_float fTimeDelta)
 	ImGui::SetNextWindowPos(ImVec2(0.f, 0.f));
 	ImGui::SetNextWindowSize(ImVec2(200.f, 236.f));
 
-	ImGui::Begin("Menu", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
+	ImGui::Begin("Menu", nullptr, ImGuiWindowFlags_None);//ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
 
 	_int* iCurMenuList = reinterpret_cast<_int*>(&m_eCurMenuList);
 
@@ -33,7 +33,7 @@ void CWindow_Manager::Tick(_float fTimeDelta)
 		{
 			if (FAILED(Add_Window(TEXT("Object_Window"),
 				CObject_Window::Create(m_pDevice, m_pContext,
-					ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(400.f, 700.f)))))
+					ImVec2(_float(100.f), _float(0.f)), ImVec2(400.f, 700.f)))))
 			{
 				MSG_BOX("Failed Create Object_Window");
 				return;
@@ -101,7 +101,7 @@ void CWindow_Manager::Tick(_float fTimeDelta)
 		{
 			if (FAILED(Add_Window(TEXT("Animation_Window"),
 				CAnimation_Window::Create(m_pDevice, m_pContext,
-					ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(446.f, 768.f)))))
+					ImVec2(_float(100.f), _float(-30.f)), ImVec2(446.f, 768.f)))))
 			{
 				MSG_BOX("Failed Create Animation_Window");
 				return;
@@ -134,7 +134,7 @@ void CWindow_Manager::Tick(_float fTimeDelta)
 		{
 			if (FAILED(Add_Window(TEXT("Light_Window"),
 				CLight_Window::Create(m_pDevice, m_pContext,
-					ImVec2(_float(g_iWinSizeX + 8), _float(0.f)), ImVec2(446.f, 768.f)))))
+					ImVec2(_float(100.f + 8), _float(-30.f)), ImVec2(446.f, 768.f)))))
 			{
 				MSG_BOX("Failed Create Light_Window");
 				return;
@@ -170,7 +170,7 @@ void CWindow_Manager::Tick(_float fTimeDelta)
 		ImGui::SetNextWindowPos(ImVec2(200.f, 0.f));
 		ImGui::SetNextWindowSize(ImVec2(550.f, 100.f));
 
-		ImGui::Begin("Camera_Speed", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
+		ImGui::Begin("Camera_Speed", nullptr, ImGuiWindowFlags_None);
 
 		if (nullptr != m_pCurrrentWindow && dynamic_cast<CCamera_Window*>(Find_Window(TEXT("Camera_Window"))))
 			dynamic_cast<CCamera_Window*>(Find_Window(TEXT("Camera_Window")))->Camera_Speed();

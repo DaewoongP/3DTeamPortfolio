@@ -197,7 +197,8 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     vector vNormal = vector(vNormalDesc.xyz * 2.f - 1.f, 0.f);
 
     Out.vShade = g_vLightDiffuse * saturate(max(dot(normalize(g_vLightDir) * -1.f, vNormal), 0.f) + (g_vLightAmbient * g_vMtrlAmbient));
-
+    Out.vShade.a = 1.f;
+    
     vector vDepthDesc = g_DepthTexture.Sample(PointSampler, In.vTexUV);
     float fViewZ = vDepthDesc.y * g_fCamFar;
     vector vPosition;
@@ -219,7 +220,7 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     vector vLook = vPosition - g_vCamPosition;
 
     Out.vSpecular = (g_vLightSpecular) * (g_vMtrlSpecular) * pow(max(dot(normalize(vReflect) * -1.f, normalize(vLook)), 0.f), 10.f);
-
+    Out.vSpecular.a = 0.f;
     return Out;
 }
 
@@ -330,11 +331,9 @@ PS_OUT PS_MAIN_DEFERRED(PS_IN In)
     
     vector vShadow = g_ShadowTexture.Sample(LinearSampler, In.vTexUV);
     
-<<<<<<< Updated upstream
-    Out.vColor = vDiffuse/* * vShadow*/ * vShade * vBlur + 0.5*vSpecular;
-=======
-    Out.vColor = vDiffuse *vShadow * vShade * vBlur + 0.5*vSpecular;
->>>>>>> Stashed changes
+    if(vBlur.x<0.8f)
+        vBlur += 0.2f;
+        Out.vColor = vDiffuse * vShadow * vShade * vBlur + 0.5 * vSpecular;
 
     return Out;
 }

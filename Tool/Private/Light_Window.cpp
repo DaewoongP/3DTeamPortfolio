@@ -18,7 +18,7 @@ HRESULT CLight_Window::Initialize(ImVec2 vWindowPos, ImVec2 vWindowSize)
 
 	
 
-	m_WindowFlag = ImGuiWindowFlags_NoResize;
+	m_WindowFlag = ImGuiWindowFlags_None;
 	//StrInput = "Default_Dir_Light";
 	BEGININSTANCE
 	ZEROMEM(&LightDesc);

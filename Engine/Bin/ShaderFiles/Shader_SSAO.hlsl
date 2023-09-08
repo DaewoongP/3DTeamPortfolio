@@ -330,8 +330,8 @@ PS_OUT PS_MAIN_SHADOW(PS_IN In)
     
     float LightDepth_W = vLightDepth.y * g_fCamFar;
     float LightDepth_Z = vLightDepth.x * LightDepth_W;
-    float CamDepth = vPosition.z - 0.005f / g_fCamFar;
-    if (CamDepth > vLightDepth.x)
+    float CamDepth = vPosition.z / g_fCamFar;
+    if (vPosition.z - 0.01f > vLightDepth.x*g_fCamFar)
     {
         Out.vColor = float4(0.05f, 0.05f, 0.05f, 0.05f);
     }
