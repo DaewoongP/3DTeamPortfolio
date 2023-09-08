@@ -1555,7 +1555,6 @@ void CCutScene_Camera_Tool::Set_Section_Point_Duration()
 			return;
 		}
 
-
 		//시작임?
 		_bool isStart{ false };
 
@@ -1590,7 +1589,6 @@ void CCutScene_Camera_Tool::Set_Section_Point_Duration()
 			MSG_BOX("Section Total Length is Zero");
 			return;
 		}
-
 
 		//구해진 총길이로 듀레이션 결정
 		for (list<CAMERAPOINTINFODESC>::iterator iter = m_CameraInfoList.begin();

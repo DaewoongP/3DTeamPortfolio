@@ -133,7 +133,7 @@ void CWindow_Manager::Tick(_float fTimeDelta)
 
 		ImGui::Begin("Camera_Speed", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
 
-		if (nullptr != m_pCurrrentWindow)
+		if (nullptr != m_pCurrrentWindow && dynamic_cast<CCamera_Window*>(Find_Window(TEXT("Camera_Window"))))
 			dynamic_cast<CCamera_Window*>(Find_Window(TEXT("Camera_Window")))->Camera_Speed();
 
 		ImGui::End();
