@@ -542,7 +542,7 @@ void CUI_Window::Interaction_UI()
 	{
 		CGameInstance* pGameInstance = CGameInstance::GetInstance();
 		Safe_AddRef(pGameInstance);
-		if (dynamic_cast<CDummy_UI*>(pGameObject)->Is_In_Rect() &&
+		if (dynamic_cast<CDummy_UI*>(pGameObject)->Is_In_Rect(g_hWnd) &&
 			pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN))
 		{
 			m_pDummy_UI = dynamic_cast<CDummy_UI*>(pGameObject);
@@ -587,7 +587,7 @@ void CUI_Window::Correction_Pick()
 			else
 				CurrentMousePos.y += (10 - iRoundY);
 
-			CDummy_UI* pParent = dynamic_cast<CDummy_UI*>(m_pDummy_UI)->Get_Parent();
+			CDummy_UI* pParent = dynamic_cast<CDummy_UI*>(m_pDummy_UI->Get_Parent());
 
 			if (nullptr != pParent)
 			{
@@ -1040,7 +1040,7 @@ HRESULT CUI_Window::Save_Data(_tchar* pFilePath)
 			WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
 			WriteFile(hFile, wszGroupName, dwStrByte, &dwByte, nullptr);
 
-			CDummy_UI* pParent = dynamic_cast<CDummy_UI_Group*>(pGroup)->Get_Parent();
+			CUI* pParent = dynamic_cast<CDummy_UI_Group*>(pGroup)->Get_Parent();
 
 			_float2 vCombinedXY = pParent->Get_vCombinedXY();
 			WriteFile(hFile, &vCombinedXY, sizeof(_float2), &dwByte, nullptr);
@@ -1064,45 +1064,45 @@ HRESULT CUI_Window::Save_Data(_tchar* pFilePath)
 			WriteFile(hFile, &m_fSizeY, sizeof(_float), &dwByte, nullptr);
 
 			_tchar wszTextureName[MAX_PATH] = TEXT("");
-			lstrcpy(wszTextureName, pParent->Get_TextureName());
+			lstrcpy(wszTextureName, dynamic_cast<CDummy_UI*>(pParent)->Get_TextureName());
 			dwStrByte = sizeof(_tchar) * (lstrlen(wszTextureName) + 1);
 			WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
 			WriteFile(hFile, wszTextureName, dwStrByte, &dwByte, nullptr);
 
 			_tchar wszTexturePath[MAX_PATH] = TEXT("");
-			lstrcpy(wszTexturePath, pParent->Get_TexturePath());
+			lstrcpy(wszTexturePath, dynamic_cast<CDummy_UI*>(pParent)->Get_TexturePath());
 			dwStrByte = sizeof(_tchar) * (lstrlen(wszTexturePath) + 1);
 			WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
 			WriteFile(hFile, wszTexturePath, dwStrByte, &dwByte, nullptr);
 
-			CDummy_UI::UI_ID eType = pParent->Get_UI_ID();
+			CDummy_UI::UI_ID eType = dynamic_cast<CDummy_UI*>(pParent)->Get_UI_ID();
 			WriteFile(hFile, &eType, sizeof(CDummy_UI::UI_ID), &dwByte, nullptr);
 
-			_bool isParent = pParent->Get_bParent();
+			_bool isParent = dynamic_cast<CDummy_UI*>(pParent)->Get_bParent();
 			WriteFile(hFile, &isParent, sizeof(_bool), &dwByte, nullptr);
 
-			_bool isAlpha = pParent->Get_bAlpha();
+			_bool isAlpha = dynamic_cast<CDummy_UI*>(pParent)->Get_bAlpha();
 			WriteFile(hFile, &isAlpha, sizeof(_bool), &dwByte, nullptr);
 
 			if (isAlpha)
 			{
-				_float4 vColor = pParent->Get_vColor();
+				_float4 vColor = dynamic_cast<CDummy_UI*>(pParent)->Get_vColor();
 				WriteFile(hFile, &vColor, sizeof(_float4), &dwByte, nullptr);
 
 				_tchar wszAlphaTexturePrototypeTag[MAX_PATH] = TEXT("");
-				lstrcpy(wszAlphaTexturePrototypeTag, pParent->Get_AlphaPrototypeTag());
+				lstrcpy(wszAlphaTexturePrototypeTag, dynamic_cast<CDummy_UI*>(pParent)->Get_AlphaPrototypeTag());
 				dwStrByte = sizeof(_tchar) * (lstrlen(wszAlphaTexturePrototypeTag) + 1);
 				WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
 				WriteFile(hFile, wszAlphaTexturePrototypeTag, dwStrByte, &dwByte, nullptr);
 
 				_tchar wszAlphaTextureFilePath[MAX_PATH] = TEXT("");
-				lstrcpy(wszAlphaTextureFilePath, pParent->Get_AlphaTexturePath());
+				lstrcpy(wszAlphaTextureFilePath, dynamic_cast<CDummy_UI*>(pParent)->Get_AlphaTexturePath());
 				dwStrByte = sizeof(_tchar) * (lstrlen(wszAlphaTextureFilePath) + 1);
 				WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
 				WriteFile(hFile, wszAlphaTextureFilePath, dwStrByte, &dwByte, nullptr);
 			}
 
-			vector <class CDummy_UI*>* m_Childs = dynamic_cast<CDummy_UI_Group*>(pGroup)->Get_Childs();
+			vector <class CUI*>* m_Childs = dynamic_cast<CDummy_UI_Group*>(pGroup)->Get_Childs();
 			iSize = m_Childs->size();
 			WriteFile(hFile, &iSize, sizeof(_uint), &dwByte, nullptr);
 
@@ -1130,39 +1130,39 @@ HRESULT CUI_Window::Save_Data(_tchar* pFilePath)
 				WriteFile(hFile, &m_fSizeY, sizeof(_float), &dwByte, nullptr);
 
 				_tchar wszTextureName[MAX_PATH] = TEXT("");
-				lstrcpy(wszTextureName, pChild->Get_TextureName());
+				lstrcpy(wszTextureName, dynamic_cast<CDummy_UI*>(pChild)->Get_TextureName());
 				dwStrByte = sizeof(_tchar) * (lstrlen(wszTextureName) + 1);
 				WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
 				WriteFile(hFile, wszTextureName, dwStrByte, &dwByte, nullptr);
 
 				_tchar wszTexturePath[MAX_PATH] = TEXT("");
-				lstrcpy(wszTexturePath, pChild->Get_TexturePath());
+				lstrcpy(wszTexturePath, dynamic_cast<CDummy_UI*>(pChild)->Get_TexturePath());
 				dwStrByte = sizeof(_tchar) * (lstrlen(wszTexturePath) + 1);
 				WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
 				WriteFile(hFile, wszTexturePath, dwStrByte, &dwByte, nullptr);
 
-				CDummy_UI::UI_ID eType = pChild->Get_UI_ID();
+				CDummy_UI::UI_ID eType = dynamic_cast<CDummy_UI*>(pChild)->Get_UI_ID();
 				WriteFile(hFile, &eType, sizeof(CDummy_UI::UI_ID), &dwByte, nullptr);
 
-				_bool isParent = pChild->Get_bParent();
+				_bool isParent = dynamic_cast<CDummy_UI*>(pChild)->Get_bParent();
 				WriteFile(hFile, &isParent, sizeof(_bool), &dwByte, nullptr);
 
-				_bool isAlpha = pChild->Get_bAlpha();
+				_bool isAlpha = dynamic_cast<CDummy_UI*>(pChild)->Get_bAlpha();
 				WriteFile(hFile, &isAlpha, sizeof(_bool), &dwByte, nullptr);
 
 				if (isAlpha)
 				{
-					_float4 vColor = pChild->Get_vColor();
+					_float4 vColor = dynamic_cast<CDummy_UI*>(pChild)->Get_vColor();
 					WriteFile(hFile, &vColor, sizeof(_float4), &dwByte, nullptr);
 
 					_tchar wszAlphaTexturePrototypeTag[MAX_PATH] = TEXT("");
-					lstrcpy(wszAlphaTexturePrototypeTag, pChild->Get_AlphaPrototypeTag());
+					lstrcpy(wszAlphaTexturePrototypeTag, dynamic_cast<CDummy_UI*>(pChild)->Get_AlphaPrototypeTag());
 					dwStrByte = sizeof(_tchar) * (lstrlen(wszAlphaTexturePrototypeTag) + 1);
 					WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
 					WriteFile(hFile, wszAlphaTexturePrototypeTag, dwStrByte, &dwByte, nullptr);
 
 					_tchar wszAlphaTextureFilePath[MAX_PATH] = TEXT("");
-					lstrcpy(wszAlphaTextureFilePath, pChild->Get_AlphaTexturePath());
+					lstrcpy(wszAlphaTextureFilePath, dynamic_cast<CDummy_UI*>(pChild)->Get_AlphaTexturePath());
 					dwStrByte = sizeof(_tchar) * (lstrlen(wszAlphaTextureFilePath) + 1);
 					WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
 					WriteFile(hFile, wszAlphaTextureFilePath, dwStrByte, &dwByte, nullptr);
@@ -1537,7 +1537,7 @@ void CUI_Window::UI_Group_Tree()
 		return;
 	}
 
-	CDummy_UI* pParent = m_pDummy_UI_Group->Get_Parent();
+	CUI* pParent = m_pDummy_UI_Group->Get_Parent();
 
 	if (ImGui::TreeNode("Parent"))
 	{
@@ -1556,7 +1556,7 @@ void CUI_Window::UI_Group_Tree()
 		ImGui::TreePop(); // 트리 노드 닫기
 	}
 
-	vector<class CDummy_UI*>* pChilds = m_pDummy_UI_Group->Get_Childs();
+	vector<class CUI*>* pChilds = m_pDummy_UI_Group->Get_Childs();
 	_uint iSize = (*pChilds).size();
 
 	if (ImGui::TreeNode("Child"))

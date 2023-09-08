@@ -11,12 +11,6 @@ CDummy_UI::CDummy_UI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 CDummy_UI::CDummy_UI(const CDummy_UI& rhs)
 	: CUI(rhs)
-	, m_fX(rhs.m_fX)
-	, m_fY(rhs.m_fY)
-	, m_fSizeX(rhs.m_fSizeX)
-	, m_fSizeY(rhs.m_fSizeY)
-	, m_ViewMatrix(rhs.m_ViewMatrix)
-	, m_ProjMatrix(rhs.m_ProjMatrix)
 {
 	//lstrcpy(m_wszTextureName, rhs.m_wszTextureName);
 }
@@ -273,57 +267,6 @@ HRESULT CDummy_UI::SetUp_ShaderResources()
 	return S_OK;
 }
 
-_bool CDummy_UI::Is_In_Rect()
-{
-	_bool		isIn = false;
-
-	POINT		ptMouse;
-	GetCursorPos(&ptMouse);
-
-	ScreenToClient(g_hWnd, &ptMouse);
-
-	RECT		rcUI;
-
-	SetRect(&rcUI, _int(m_vCombinedXY.x - m_fSizeX * 0.5f), _int(m_vCombinedXY.y - m_fSizeY * 0.5f), _int(m_vCombinedXY.x + m_fSizeX * 0.5f), _int(m_vCombinedXY.y + m_fSizeY * 0.5f));
-	
-	isIn = PtInRect(&rcUI, ptMouse);
-
-	return isIn;
-}
-
-_float2 CDummy_UI::UIPos_To_WorldPos(_float fX, _float fY)
-{
-	_float2 fXY = _float2(fX - g_iWinSizeX * 0.5f, -fY + g_iWinSizeY * 0.5f);
-
-	return fXY;
-}
-
-_float2 CDummy_UI::WorldPos_To_UIPos(_float fX, _float fY)
-{
-	 _float2 fXY = _float2(fX + g_iWinSizeX * 0.5f, -(fY - g_iWinSizeY * 0.5f));
-
-	return fXY;
-}
-
-HRESULT CDummy_UI::Change_Position(_float fX, _float fY)
-{
-
-	m_pTransform->Set_Position(
-			XMVectorSet(m_vCombinedXY.x - g_iWinSizeX * 0.5f, -m_vCombinedXY.y + g_iWinSizeY * 0.5f, m_fZ, 1.f));
-	
-
-	return S_OK;
-}
-
-HRESULT CDummy_UI::Change_Scale(_float fX, _float fY)
-{
-	//	m_fSizeX = fX;
-	//	m_fSizeY = fY;
-
-	m_pTransform->Set_Scale(_float3(m_fSizeX, m_fSizeY, 1.f));
-
-	return S_OK;
-}
 
 CDummy_UI* CDummy_UI::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {

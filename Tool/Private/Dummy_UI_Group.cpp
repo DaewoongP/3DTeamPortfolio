@@ -3,12 +3,12 @@
 #include "Dummy_UI.h"
 
 CDummy_UI_Group::CDummy_UI_Group(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CGameObject(pDevice, pContext)
+	: CUI_Gruop(pDevice, pContext)
 {
 }
 
 CDummy_UI_Group::CDummy_UI_Group(const CDummy_UI_Group& rhs)
-	: CGameObject(rhs)
+	: CUI_Gruop(rhs)
 {
 }
 
@@ -65,16 +65,6 @@ void CDummy_UI_Group::Late_Tick(_float fTimeDelta)
 	}
 }
 
-void CDummy_UI_Group::Set_Parent()
-{
-	if (nullptr == m_pParent)
-		return;
-
-	for (auto& iter : m_Childs)
-	{
-		iter->Set_Parent(m_pParent);
-	}
-}
 
 void CDummy_UI_Group::Delete(CDummy_UI* pDeleteUI)
 {
