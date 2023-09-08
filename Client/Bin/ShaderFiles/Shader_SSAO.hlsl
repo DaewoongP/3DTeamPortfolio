@@ -336,7 +336,7 @@ PS_OUT PS_MAIN_SHADOW(PS_IN In)
         Out.vColor = float4(0.05f, 0.05f, 0.05f, 0.05f);
     }
     else
-        discard;
+        Out.vColor = float4(1.f, 1.f, 1.f, 1.f);
 
     float fragDepth = CamDepth;
     
@@ -356,7 +356,7 @@ PS_OUT PS_MAIN_SHADOW(PS_IN In)
     if (fLit > 1.f)
         fLit = 1.f;
     
-  // Out.vColor = float4(fLit, fLit, fLit, fLit);
+  //Out.vColor = float4(fLit, fLit, fLit, fLit);
 
     
     return Out;

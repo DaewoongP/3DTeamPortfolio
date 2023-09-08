@@ -114,7 +114,7 @@ PS_OUT_DEPTH PS_MAIN_DEPTH(PS_IN In)
 {
     PS_OUT_DEPTH Out = (PS_OUT_DEPTH) 0;
 
-    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fCamFar, (In.vProjPos.z / In.vProjPos.w * In.vProjPos.z / In.vProjPos.w), 1.f);
+    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fCamFar, (In.vProjPos.z / In.vProjPos.w * In.vProjPos.z / In.vProjPos.w), 0.f);
 	
     return Out;
 }
