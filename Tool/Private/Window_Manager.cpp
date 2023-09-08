@@ -1,5 +1,6 @@
 #include "..\Public\Window_Manager.h"
 #include "ImWindow.h"
+#include "Camera_Window.h"
 
 IMPLEMENT_SINGLETON(CWindow_Manager)
 
@@ -59,8 +60,8 @@ void CWindow_Manager::Tick(_float fTimeDelta)
 		{
 			if (FAILED(Add_Window(TEXT("Camera_Window"),
 				CCamera_Window::Create(m_pDevice, m_pContext,
-					ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(446.f, 768.f)))))
-			{
+					ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(500.f, 768.f)))))
+			{	
 				MSG_BOX("Failed Create Camera_Window");
 				return;
 			}
@@ -69,7 +70,7 @@ void CWindow_Manager::Tick(_float fTimeDelta)
 		Setup_Current_Window(TEXT("Camera_Window"));
 		m_eLoadingFlag |= CAMERA_LOAD;
 	}
-		
+
 
 	if (ImGui::RadioButton("Effect", iCurMenuList, EFFECT_WINDOW))
 	{
@@ -87,7 +88,7 @@ void CWindow_Manager::Tick(_float fTimeDelta)
 		Setup_Current_Window(TEXT("Effect_Window"));
 		m_eLoadingFlag |= EFFECT_LOAD;
 	}
-		
+
 
 	if (ImGui::RadioButton("Animation", iCurMenuList, ANIMATION_WINDOW))
 	{
@@ -105,7 +106,7 @@ void CWindow_Manager::Tick(_float fTimeDelta)
 		Setup_Current_Window(TEXT("Animation_Window"));
 		m_eLoadingFlag |= ANIAMTION_LOAD;
 	}
-		
+
 
 	if (ImGui::RadioButton("UI", iCurMenuList, UI_WINDOW))
 	{
@@ -122,7 +123,7 @@ void CWindow_Manager::Tick(_float fTimeDelta)
 		Setup_Current_Window(TEXT("UI_Window"));
 		m_eLoadingFlag |= UI_LOAD;
 	}
-		
+
 
 	if (ImGui::RadioButton("Light", iCurMenuList, LIGHT_WINDOW))
 	{
@@ -160,6 +161,19 @@ void CWindow_Manager::Tick(_float fTimeDelta)
 		
 
 	ImGui::End();
+
+	//카메라 스피드
+	{
+		ImGui::SetNextWindowPos(ImVec2(200.f, 0.f));
+		ImGui::SetNextWindowSize(ImVec2(550.f, 50.f));
+
+		ImGui::Begin("Camera_Speed", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
+
+		if (nullptr != m_pCurrrentWindow && dynamic_cast<CCamera_Window*>(Find_Window(TEXT("Camera_Window"))))
+			dynamic_cast<CCamera_Window*>(Find_Window(TEXT("Camera_Window")))->Camera_Speed();
+
+		ImGui::End();
+	}
 
 	if (nullptr != m_pCurrrentWindow)
 		m_pCurrrentWindow->Tick(fTimeDelta);

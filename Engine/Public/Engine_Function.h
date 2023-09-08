@@ -162,6 +162,28 @@ namespace Engine
 		_value = min(_value, _max);
 	}
 
+	//	값의 범위를 제한하는 함수
+	//	제한이 되었는지 아닌지도 알수 있다.
+	template<typename T>
+	inline int Saturate(T& _value, T _min, T _max)
+	{
+		if (_min > _max)
+			std::swap(_min, _max);
+
+		if (_value >= _max)
+		{
+			_value = _max;
+			return 1;
+		}
+		else if (_value <= _max)
+		{
+			_value = _min;
+			return -1;
+		}
+
+		return 0;
+	}
+
 	// ex) _float fResult = Random_Generator(-5.f, 10.f)
 	// 결과 : [-5.f, 10.f]의 랜덤한 실수가 들어감.
 	template<typename T>
@@ -294,4 +316,6 @@ namespace Engine
 		WideCharToMultiByte(CP_UTF8, 0, &wstr[0], (int)wstr.size(), &strTo[0], size_needed, NULL, NULL);
 		return strTo;
 	}
+
+
 }

@@ -120,6 +120,11 @@ void CMain_Camera::IsLimitButton()
 	ENDINSTANCE;
 }
 
+void CMain_Camera::Set_Position(_float3 _vPos)
+{
+	m_pTransform->Set_Position(_vPos);
+}
+
 
 
 CMain_Camera* CMain_Camera::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, void* pArg)
