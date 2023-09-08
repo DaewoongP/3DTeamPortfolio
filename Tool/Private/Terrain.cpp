@@ -142,6 +142,12 @@ HRESULT CTerrain::SetUp_ShaderResources()
 	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
+	if (FAILED(m_pShader->Bind_RawValue("g_vBrushPos", &m_vBrushingPoint, sizeof(_float3))))
+		return E_FAIL;
+
+	if (FAILED(m_pShader->Bind_RawValue("g_fBrushRadius", &m_fBrushSize, sizeof(_float))))
+		return E_FAIL;
+
 	Safe_Release(pGameInstance);
 
 	if (FAILED(m_pTexture->Bind_ShaderResource(m_pShader, "g_DiffuseTexture", 0)))

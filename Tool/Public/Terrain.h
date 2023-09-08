@@ -21,6 +21,8 @@ private:
 
 public:
 	CVIBuffer_Terrain* Get_Buffer() const { return m_pBuffer; }
+	void Set_BrushingSize(_float fSize) { m_fBrushSize = fSize; }
+	void Set_BrushingPoint(_float3 vPos) { m_vBrushingPoint = vPos; }
 
 public:
 	virtual HRESULT Initialize_Prototype();
@@ -34,6 +36,8 @@ public:
 
 private:
 	_bool				m_isRendering = { false };
+	_float				m_fBrushSize = { 10.f };
+	_float3				m_vBrushingPoint = { 0.f, 0.f, 0.f };
 
 private:
 	CShader* m_pShader = { nullptr };

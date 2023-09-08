@@ -51,6 +51,7 @@ private:
 	void Mesh_Picking_Menu(); // 메쉬 피킹 메뉴
 	void Change_Picking_Menu(const _tchar* wszTag, _uint iTagNum); // 피킹한 메쉬 변경
 	void Delete_Picking_Object(); // 피킹한 오브젝트 삭제 메뉴
+	void Map_Brushing_Menu(); // 맵 그리기 메뉴
 	HRESULT Save_MapObject(string szMapDataPath); // MapObject 저장
 	HRESULT Load_MapObject(const _tchar* wszMapDataPath); // MapObject 로드
 	HRESULT Save_MapObject_Ins(); // MapObject_Ins 저장
@@ -76,6 +77,7 @@ private:
 	_bool m_isInstallObject = { true };
 	_bool m_isPickingObject = { false };
 	_bool m_isChangeObject = { false };
+	_bool m_isBrushingMap = { false };
 
 	// 버튼 On Off _bool 변수 모음
 	_bool m_isDeleteObject = { false };
@@ -107,6 +109,8 @@ private:
 	_uint m_iInsObjectCnt = { 0 }; // 인스턴싱할 맵 오브젝트 개수
 	vector<SAVEINSOBJECTDESC> m_vecSaveInsObject; // 저장된 인스턴싱 맵 오브젝트에 대한 정보를 받아올 벡터
 	vector<_float4x4> m_vecSaveInsObjectWorld; // 인스턴싱으로 저장할 객체들의 월드 상태 행렬
+
+	_float m_fBrushSize = { 10.f }; // 브러쉬 사이즈
 
 public:
 	static CObject_Window* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, ImVec2 vWindowPos, ImVec2 vWindowSize);

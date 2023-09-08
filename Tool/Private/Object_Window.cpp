@@ -100,11 +100,20 @@ void CObject_Window::Tick(_float fTimeDelta)
 
 	ImGui::Separator();
 
-	// Save Load 선택 창 On / Off
+	// 인스턴스 Save Load 선택 창 On / Off
 	ImGui::Checkbox("Instance Save Load", &m_isInsSaveLoad);
 	if (true == m_isInsSaveLoad)
 	{
 		Ins_Save_Load_Menu();
+	}
+
+	ImGui::Separator();
+
+	// 맵 브러싱 메뉴 창 On / Off
+	ImGui::Checkbox("Map Brushing", &m_isBrushingMap);
+	if (true == m_isBrushingMap)
+	{
+		Map_Brushing_Menu();
 	}
 
 	ImGui::Separator();
@@ -669,6 +678,19 @@ void CObject_Window::Delete_Picking_Object()
 		m_vecObjectTag_s.erase(m_vecObjectTag_s.begin() + m_iTagIndex);
 		m_vecSaveObject.erase(m_vecSaveObject.begin() + m_iTagIndex);
 	}
+}
+
+void CObject_Window::Map_Brushing_Menu()
+{
+	_float3 vPos = Find_PickingPos();
+
+	BEGININSTANCE; CTerrain* pTerrain = static_cast<CTerrain*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL, 
+		TEXT("Layer_Tool"), TEXT("GameObject_Terrain"))); ENDINSTANCE;
+
+	ImGui::DragFloat("Brush Size", &m_fBrushSize, 0.1f, 0.1f, 100.f);
+
+	pTerrain->Set_BrushingPoint(vPos);
+	pTerrain->Set_BrushingSize(m_fBrushSize);
 }
 
 HRESULT CObject_Window::Save_MapObject(string szMapDataPath)
