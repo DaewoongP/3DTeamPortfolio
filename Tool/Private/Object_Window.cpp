@@ -366,7 +366,7 @@ void CObject_Window::Current_MapObject()
 void CObject_Window::Save_Load_Menu()
 {
 	// open Dialog Simple
-	// 모델을 골라 프로토타입 만들어주는 부분
+	// Load 경로 지정
 	if (ImGui::Button("Open File Dialog"))
 		ImGuiFileDialog::Instance()->OpenDialog("ChooseData", "Choose File", ".ddd",
 			"../../Resources/GameData/MapData/");
@@ -383,17 +383,22 @@ void CObject_Window::Save_Load_Menu()
 			
 			wstring ws;
 			ws.assign(strFilePathName.begin(), strFilePathName.end());
-			lstrcpy(m_wszMapDataPath, ws.c_str());
+			lstrcpy(m_wszMapLoadDataPath, ws.c_str());
 		}
 
 		// close
 		ImGuiFileDialog::Instance()->Close();
 	}
 
+	if (ImGui::InputTextWithHint("SaveData Path", "enter SaveDataName.ddd", szPath, IM_ARRAYSIZE(szPath)))
+	{
+		m_strPath = szPath;
+	}
+
 	// 세이브 버튼 처리
 	if (ImGui::Button("Save"))
 	{
-		if (FAILED(Save_MapObject(m_wszMapDataPath)))
+		if (FAILED(Save_MapObject(m_strPath)))
 			MSG_BOX("Failed to Save MapObject on Menu");
 	}
 
@@ -402,7 +407,7 @@ void CObject_Window::Save_Load_Menu()
 	// 로드 버튼 처리
 	if (ImGui::Button("Load"))
 	{
-		if (FAILED(Load_MapObject(m_wszMapDataPath)))
+		if (FAILED(Load_MapObject(m_wszMapLoadDataPath)))
 			MSG_BOX("Failed to Load MapObject on Menu");
 	}
 }
@@ -666,9 +671,16 @@ void CObject_Window::Delete_Picking_Object()
 	}
 }
 
-HRESULT CObject_Window::Save_MapObject(const _tchar* m_wszMapDataPath)
+HRESULT CObject_Window::Save_MapObject(string szMapDataPath)
 {
-	HANDLE hFile = CreateFile(m_wszMapDataPath, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+	_tchar wszPath[MAX_PATH] = TEXT("../../Resources/GameData/MapData/");
+
+	//m_wszMapSaveDataPath = TEXT("");
+	CharToWChar(szMapDataPath.c_str(), m_wszMapSaveDataPath);
+	lstrcat(wszPath, m_wszMapSaveDataPath);
+	lstrcpy(m_wszMapSaveDataPath, wszPath);
+
+	HANDLE hFile = CreateFile(m_wszMapSaveDataPath, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
 	if (INVALID_HANDLE_VALUE == hFile)
 	{
 		MSG_BOX("Failed to Create MapObject File for Save MapObject");
@@ -705,11 +717,11 @@ HRESULT CObject_Window::Save_MapObject(const _tchar* m_wszMapDataPath)
 	return S_OK;
 }
 
-HRESULT CObject_Window::Load_MapObject(const _tchar* m_wszMapDataPath)
+HRESULT CObject_Window::Load_MapObject(const _tchar* wszMapDataPath)
 {
 	m_vecSaveObject.clear();
 
-	HANDLE hFile = CreateFile(m_wszMapDataPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+	HANDLE hFile = CreateFile(wszMapDataPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
 	if (INVALID_HANDLE_VALUE == hFile)
 	{
