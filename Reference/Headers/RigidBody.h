@@ -69,6 +69,7 @@ public:
 
 public:
 	HRESULT Create_Actor();
+	// 액터 설정 세팅하려고 만들어 놨는데 지금일단 Create Actor 함수에서 전부 처리중입니다.
 	HRESULT SetUp_Actor(_float3 _vInitPos, 	PxGeometry _ShapeType, _bool _isTrigger, 
 		RigidBodyConstraint eConstraintFlag, _float3 _vResistance, PxFilterData FilterData);
 	//void Add_Collider(CColliderCom* collider);

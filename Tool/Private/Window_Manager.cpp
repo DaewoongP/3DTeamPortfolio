@@ -165,13 +165,21 @@ void CWindow_Manager::Tick(_float fTimeDelta)
 	//카메라 스피드
 	{
 		ImGui::SetNextWindowPos(ImVec2(200.f, 0.f));
-		ImGui::SetNextWindowSize(ImVec2(550.f, 50.f));
+		ImGui::SetNextWindowSize(ImVec2(550.f, 100.f));
 
 		ImGui::Begin("Camera_Speed", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
 
 		if (nullptr != m_pCurrrentWindow && dynamic_cast<CCamera_Window*>(Find_Window(TEXT("Camera_Window"))))
 			dynamic_cast<CCamera_Window*>(Find_Window(TEXT("Camera_Window")))->Camera_Speed();
 
+		CGameInstance* pGameInstance = CGameInstance::GetInstance();
+		Safe_AddRef(pGameInstance);
+
+		_float4 vPos = *pGameInstance->Get_CamPosition();
+
+		ImGui::DragFloat3("Camera_Pos", reinterpret_cast<_float*>(&vPos));
+
+		Safe_Release(pGameInstance);
 		ImGui::End();
 	}
 

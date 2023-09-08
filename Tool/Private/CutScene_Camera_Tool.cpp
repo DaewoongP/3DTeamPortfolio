@@ -163,18 +163,6 @@ void CCutScene_Camera_Tool::Tick(_float _fTimeDelta)
 		break;
 	}
 
-	_float4 vPos = *pGameInstance->Get_CamPosition();
-
-	vector<_float> vecPos;
-
-	vecPos.resize(3);
-
-	vecPos[0] = vPos.x;
-	vecPos[1] = vPos.y;
-	vecPos[2] = vPos.z;
-
-	ImGui::DragFloat3("PipelinePos", vecPos.data());
-	
 	Set_Position_CurrentPoint();
 
 	ENDINSTANCE;
