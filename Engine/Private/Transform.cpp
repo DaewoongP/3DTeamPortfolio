@@ -387,10 +387,11 @@ void CTransform::LookAt(_float3 _vTarget, _bool _isDeleteY)
 	_float3 vPosition = Get_Position();
 
 	_float3 vLook = _vTarget - vPosition;
+	
 	if (true == _isDeleteY)
 		vLook.y = 0.f;
 
-	_float3 vRight = XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook);
+	_float3 vRight = XMVector3Cross(_float3(0.f, 1.f, 0.f), vLook);
 	_float3 vUp = XMVector3Cross(vLook, vRight);
 
 	_float3 vScale = Get_Scale();
@@ -398,44 +399,6 @@ void CTransform::LookAt(_float3 _vTarget, _bool _isDeleteY)
 	Set_Right(XMVector3Normalize(vRight) * vScale.x);
 	Set_Up(XMVector3Normalize(vUp) * vScale.y);
 	Set_Look(XMVector3Normalize(vLook) * vScale.z);
-}
-
-void CTransform::LookAt_Lerp(_float3 _vTarget, _bool _isDeleteY)
-{
-	/*_float3 vPosition = Get_Position();
-
-	_float3 vDestLook = _vTarget - vPosition;
-	if (true == _isDeleteY)
-		vDestLook.y = 0.f;
-
-	_float3 vLook = XMVectorLerp(Get_Look(), vDestLook, );
-
-	_float3 vRight = XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook);
-	_float3 vUp = XMVector3Cross(vLook, vRight);
-
-	_float3 vScale = Get_Scale();
-
-	Set_Right(XMVector3Normalize(vRight) * vScale.x);
-	Set_Up(XMVector3Normalize(vUp) * vScale.y);
-	Set_Look(XMVector3Normalize(vLook) * vScale.z);
-
-	m_ubTransformChanged |= CHANGEFLAG::ROTATION;*/
-}
-
-void CTransform::LookTo(_float3 vTarget)
-{
-	_float3 vScaled = Get_Scale();
-
-	_float3 vLook = XMVector3Normalize(vTarget) * vScaled.z;
-	_float3 vRight = XMVector3Normalize(XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook)) * vScaled.x;
-	_float3 vUp = XMVector3Normalize(XMVector3Cross(vLook, vRight)) * vScaled.y;
-
-
-	Set_Look(XMVector3Normalize(vLook));
-	Set_Right(XMVector3Normalize(vRight));
-	Set_Up(XMVector3Normalize(vUp));
-
-
 }
 
 _bool CTransform::Check_CellY(_float3 vXZPosition, _float3 vCurrentPosition)
