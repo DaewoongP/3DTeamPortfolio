@@ -30,8 +30,8 @@
 #include "RigidBody.h"
 #include "Decorator.h"
 #include "MeshParts.h"
-#include "Navigation.h"
 #include "MeshEffect.h"
+#include "Navigation.h"
 #include "BlackBoard.h"
 #include "CustomModel.h"
 #include "Bounding_OBB.h"
@@ -41,14 +41,12 @@
 #include "VIBuffer_Line.h"
 #include "VIBuffer_Cube.h"
 #include "VIBuffer_Cell.h"
+#include "VIBuffer_Cloth.h"
 #include "ParticleSystem.h"
 #include "Bounding_Sphere.h"
-#include "Shape_GeoSphere.h"
 #include "VIBuffer_Terrain.h"
 #include "VIBuffer_Triangle.h"
-#include "VIBuffer_Geometry.h"
 #include "VIBuffer_Instance.h"
-#include "VIBuffer_GeoSphere.h"
 #include "VIBuffer_Rect_Trail.h"
 #include "CharacterController.h"
 #include "VIBuffer_Rect_Dynamic.h"
@@ -70,7 +68,7 @@ private:
 public:
 	HRESULT				Reserve_Containers(_uint iNumLevels);
 	// 프로토타입 생성
-	HRESULT				Add_Prototype(_uint iLevelIndex, const _tchar* pPrototypeTag, class CComponent* pPrototype, _bool isFailedSkip = false);
+	HRESULT				Add_Prototype(_uint iLevelIndex, const _tchar* pPrototypeTag, class CComponent* pPrototype);
 	// Tick에 컴포넌트가 돌아가게끔 clone 처리
 	HRESULT				Add_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, const _tchar* pLayerTag, const _tchar* pComponentTag, void* pArg);
 	class CComponent*	Clone_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, void* pArg);
@@ -78,7 +76,6 @@ public:
 	HRESULT				Delete_Component(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pComponentTag);
 
 	class CComponent*	Find_Component_In_Layer(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pComponentTag);
-	class CComponent*	Find_Prototype(_uint iLevelIndex, const _tchar* pPrototypeTag);
 	class CLayer*		Find_Layer(_uint iLevelIndex, const _tchar* pLayerTag);
 	HRESULT				Clear_Layer(_uint iLevelIndex, const _tchar* pLayerTag);
 
@@ -95,7 +92,8 @@ private:
 	LAYERS*				m_pLayers = { nullptr };
 	_uint				m_iNumLevels = { 0 };
 
-public:
+private:
+	class CComponent*	Find_Prototype(_uint iLevelIndex, const _tchar* pPrototypeTag);
 
 public:
 	virtual void Free() override;

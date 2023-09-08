@@ -14,7 +14,6 @@ class CTransform;
 #define ANIMATIONLERPTIME 0.3f
 class ENGINE_DLL CModel : public CComponent
 {
-
 public:
 	enum TYPE { TYPE_NONANIM, TYPE_ANIM, TYPE_END };
 	enum ANIMTYPE { UPPERBODY, UNDERBODY, ANIM_END };
@@ -39,6 +38,8 @@ public:
 	vector<class CBone*>*		Get_Bone_Vector_Point() { return &m_Bones; }
 	_uint						Get_AnimationPartCount() { return m_iAnimationPartCount; }
 	_uint						Get_RootBoneIndex() { return m_iRootBoneIndex; }
+	_bool						Is_Able_Change_Animation() { return m_isChangeAnimation; }
+
 public:
 	virtual HRESULT Initialize_Prototype(TYPE eType, const _tchar* pModelFilePath, _float4x4 PivotMatrix);
 	virtual HRESULT Initialize(void* pArg) override;
@@ -97,6 +98,9 @@ private:
 
 private:
 	_bool							m_isExportedTool = { false };
+
+	/* 애니메이션 상태 확인용 */
+	_bool							m_isChangeAnimation = { false };
 
 private:
 	HRESULT Ready_File(TYPE eType, const _tchar* pModelFilePath);

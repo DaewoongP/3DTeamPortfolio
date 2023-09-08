@@ -14,6 +14,7 @@ protected:
 public:
 	_float2 Get_vPos() { return m_vPos; }
 	_float2	Get_vScale() { return m_vScale; }
+	_float4 Get_vColor() { return m_vColor; }
 
 public:
 	virtual HRESULT Initialize_Prototype(const _tchar* pFontFilePath);
@@ -24,14 +25,18 @@ public:
 
 	void Set_vPos(_float2 vPos) { m_vPos = vPos; }
 	void Set_vScale(_float2 vScale) { m_vScale = vScale;}
+	void Set_vColor(_float4 vColor) { m_vColor = vColor; }
 
 protected:
 	_tchar			m_pText[MAX_PATH] = TEXT("");
 	_float2			m_vPos = { 650.f, 360.f };
-	XMVECTOR		m_vColor = Colors::White;
+	XMVECTOR		m_vColor = _float4(1.f, 1.f, 1.f, 1.f);
 	_float			m_fRotation = { 0.f };
 	_float2			m_vOrigin = { 0.f, 0.f };
 	_float2 		m_vScale = { 1.f, 1.f };
+
+private:
+	_bool	Is_In_Rect();
 
 private:
 	SpriteBatch*		m_pBatch = { nullptr };
@@ -40,7 +45,6 @@ private:
 private:
 	_bool			m_isClone = { false };
 	CRenderer*		m_pRendererCom = { nullptr };
-
 
 public:
 	static CDummy_Font* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFontFilePath);

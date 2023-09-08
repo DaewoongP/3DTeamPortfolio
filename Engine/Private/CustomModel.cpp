@@ -75,7 +75,7 @@ _float4x4 CCustomModel::Get_BoneCombinedTransformationMatrix(_uint iIndex)
 	return m_Bones[iIndex]->Get_CombinedTransformationMatrix();
 }
 
-HRESULT CCustomModel::Add_MeshParts(const _uint& _iLevelIndex, const wstring& _wstrPrototypeTag, MESHTYPE _eMeshPartsType)
+HRESULT CCustomModel::Add_MeshParts(const _uint& _iLevelIndex, const wstring& _wstrPrototypeTag, MESHTYPE _eMeshPartsType, const _tchar* _szClothDataFilePath)
 {
 	if (0 > _eMeshPartsType || MESH_END <= _eMeshPartsType)
 	{
@@ -87,7 +87,8 @@ HRESULT CCustomModel::Add_MeshParts(const _uint& _iLevelIndex, const wstring& _w
 	Safe_AddRef(pGameInstance);
 
 	CMeshParts::MESHPARTSDESC MeshPartsDesc;
-	MeshPartsDesc.m_pBones = &m_Bones;
+	MeshPartsDesc.pBones = &m_Bones;
+	MeshPartsDesc.szClothDataFilePath = _szClothDataFilePath;
 	CMeshParts* pMeshParts = static_cast<CMeshParts*>(pGameInstance->Clone_Component(_iLevelIndex, _wstrPrototypeTag.c_str(), &MeshPartsDesc));
 
 	Safe_Release(pGameInstance);
@@ -126,6 +127,20 @@ HRESULT CCustomModel::Initialize_Prototype(const wstring& _wstrModelFilePath, _f
 HRESULT CCustomModel::Initialize(void* pArg)
 {
 	return S_OK;
+}
+
+void CCustomModel::Tick(const _uint& _iMeshPartsIndex, const _uint& _iMeshIndex, _float _fTimeDelta)
+{
+	if (0 > _iMeshPartsIndex || MESH_END <= _iMeshPartsIndex)
+	{
+		MSG_BOX("[CCustomModel] Range Of Out Array");
+		return;
+	}
+
+	if (nullptr == m_MeshParts[_iMeshPartsIndex])
+		return;
+
+	m_MeshParts[_iMeshPartsIndex]->Tick(_iMeshIndex, _fTimeDelta);
 }
 
 HRESULT CCustomModel::Render(const _uint& _iMeshPartsIndex, const _uint& _iMeshIndex)

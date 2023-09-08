@@ -4,6 +4,7 @@
 #include "Dummy.h"
 #include "MapDummy.h"
 #include "MapObject.h"
+#include"LightDot.h"
 #include "Camera_Point.h"
 #include "DummyMeshEffect.h"
 #ifdef _DEBUG
@@ -121,7 +122,7 @@ HRESULT CMainTool::Initialize_ImGui()
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
-	io.Fonts->AddFontFromFileTTF("../../Resources/Fonts/NEXONLv1GothicBold.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesKorean());
+	io.Fonts->AddFontFromFileTTF("../../Resources/Fonts/NEXONLv1GothicBold.ttf", 15.0f, NULL, io.Fonts->GetGlyphRangesKorean());
 
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
@@ -239,7 +240,7 @@ HRESULT CMainTool::Ready_Prototype_Component()
 			VTXRECTCOLORINSTANCE_DECL::Elements, VTXRECTCOLORINSTANCE_DECL::iNumElements))))
 		return E_FAIL;
 
-	/* For.Prototype_Component_Shader_VtxMesh*/
+	/* For.Prototype_Component_Shader_VtxMesh */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Shader_VtxMesh"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxMesh.hlsl"),
 			VTXMESH_DECL::Elements, VTXMESH_DECL::iNumElements))))
@@ -253,6 +254,12 @@ HRESULT CMainTool::Ready_Prototype_Component()
 		MSG_BOX("Failed Add_Prototype : (Prototype_Component_Shader_VtxAnimMesh)");
 		return E_FAIL;
 	}
+
+	/* For.Prototype_Component_Shader_Navigation */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Shader_Navigation"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Navigation.hlsl"),
+			VTXPOS_DECL::Elements, VTXPOS_DECL::iNumElements))))
+		return E_FAIL;
 
 	/* For.Prototype_Component_VIBuffer_Line */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_VIBuffer_Line"),
@@ -376,7 +383,11 @@ HRESULT CMainTool::Ready_Prototype_Object()
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_MapObject"),
 		CMapObject::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
-		
+	/* Prototype_GameObject_LightDot*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_LightDot"),
+		CLightDot::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	/* Prototype_GameObject_Camera_Point*/
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_Camera_Point"),
 		CCamera_Point::Create(m_pDevice, m_pContext))))

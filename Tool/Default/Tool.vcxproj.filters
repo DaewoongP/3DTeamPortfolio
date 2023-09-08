@@ -106,6 +106,18 @@
     <Filter Include="02. ToolObjects\01. Dummy\DummyMeshEffect">
       <UniqueIdentifier>{5c072822-d3f0-4560-b1e1-0352b7658505}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Window\Window\Navigation">
+      <UniqueIdentifier>{1604be8a-97e3-4386-885c-d69774abbd80}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Window\Window\Light\LightDot">
+      <UniqueIdentifier>{349bca11-b3f2-43b9-9433-c761b0c4903a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Window\Window\Cloth">
+      <UniqueIdentifier>{b22e6093-ef65-47d6-8b49-65a9a34f497e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. ToolObjects\01. Dummy\Dummy_Cloth">
+      <UniqueIdentifier>{96d81abe-75a6-4828-952f-2eb9e1a68bb2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tool.h">
@@ -252,6 +264,18 @@
     <ClInclude Include="..\public\DummyMeshEffect.h">
       <Filter>02. ToolObjects\01. Dummy\DummyMeshEffect</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Navigation_Window.h">
+      <Filter>01. Window\Window\Navigation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\LightDot.h">
+      <Filter>01. Window\Window\Light\LightDot</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Cloth_Window.h">
+      <Filter>01. Window\Window\Cloth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Dummy_Cloth.h">
+      <Filter>02. ToolObjects\01. Dummy\Dummy_Cloth</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -378,6 +402,18 @@
     <ClCompile Include="..\private\DummyMeshEffect.cpp">
       <Filter>02. ToolObjects\01. Dummy\DummyMeshEffect</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Navigation_Window.cpp">
+      <Filter>01. Window\Window\Navigation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\LightDot.cpp">
+      <Filter>01. Window\Window\Light\LightDot</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Cloth_Window.cpp">
+      <Filter>01. Window\Window\Cloth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Dummy_Cloth.cpp">
+      <Filter>02. ToolObjects\01. Dummy\Dummy_Cloth</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Bin\ShaderFiles\Shader_Tool_Defines.hlsli">
@@ -404,6 +440,9 @@
       <Filter>97. ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Debug.hlsl">
+      <Filter>97. ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Navigation.hlsl">
       <Filter>97. ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>

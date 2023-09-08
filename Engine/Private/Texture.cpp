@@ -66,15 +66,16 @@ HRESULT CTexture::Initialize_Prototype(const _tchar* pTextureFilePath, _uint iNu
 	m_iNumTextures = iNumTextures;
 	
 	m_Textures.reserve(m_iNumTextures);
+	m_szTextureFilePathes.reserve(m_iNumTextures);
 
 	// 텍스처들을 순회하면서 SRV를 생성하여 처리
-	for (_uint i = 0; i < iNumTextures; ++i)
+	for (_uint i = 0; i < m_iNumTextures; ++i)
 	{
 		ID3D11ShaderResourceView* pSRV = { nullptr };
 
 		wsprintf(szTextureFilePath, pTextureFilePath, i);
 
-		lstrcpy(m_szTextureFilePath, pTextureFilePath);
+		m_szTextureFilePathes.push_back(pTextureFilePath);
 
 		_tchar			szExt[MAX_PATH] = TEXT("");
 		_wsplitpath_s(szTextureFilePath, nullptr, 0, nullptr, 0, nullptr, 0, szExt, 256);
