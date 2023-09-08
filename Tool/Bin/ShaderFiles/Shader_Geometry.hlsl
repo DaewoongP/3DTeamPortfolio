@@ -64,25 +64,11 @@ PS_OUT	PS_MAIN(PS_IN In)
 	TilingAndOffset_float(In.vTexUV, g_vTililing, g_vOffset, In.vTexUV);
 
 	vector		vDiffuse = g_Texture.Sample(LinearSampler, In.vTexUV);
-	//if (vDiffuse.r == 0.f && vDiffuse.g == 0.f && vDiffuse.b == 0.f)
-	//	vDiffuse.a = 0;
 
 	if (vDiffuse.a < 0.1f)
 		discard;
 
 	Out.vColor = vDiffuse;
-
-	return Out;
-}
-
-PS_OUT	PS_MAIN_PICKING(PS_IN In)
-{
-	PS_OUT		Out = (PS_OUT)0;
-
-	Out.vColor.x = g_vColor.x / 255.f;
-	Out.vColor.y = g_vColor.y / 255.f;
-	Out.vColor.z = g_vColor.z / 255.f;
-	Out.vColor.w = 1.f;
 
 	return Out;
 }
@@ -99,29 +85,5 @@ technique11		DefaultTechnique
 		HullShader = NULL/*compile hs_5_0 HS_MAIN()*/;
 		DomainShader = NULL/*compile ds_5_0 DS_MAIN()*/;
 		PixelShader = compile ps_5_0 PS_MAIN();
-	}
-
-	pass Tree
-	{
-		SetRasterizerState(RS_Default);
-		SetDepthStencilState(DSS_Default, 0);
-		SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-		VertexShader = compile vs_5_0 VS_MAIN();
-		GeometryShader = NULL/*compile gs_5_0 GS_MAIN()*/;
-		HullShader = NULL/*compile hs_5_0 HS_MAIN()*/;
-		DomainShader = NULL/*compile ds_5_0 DS_MAIN()*/;
-		PixelShader = compile ps_5_0 PS_MAIN();
-	}
-
-	pass Picking
-	{
-		SetRasterizerState(RS_Default);
-		SetDepthStencilState(DSS_Default, 0);
-		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-		VertexShader = compile vs_5_0 VS_MAIN();
-		GeometryShader = NULL/*compile gs_5_0 GS_MAIN()*/;
-		HullShader = NULL/*compile hs_5_0 HS_MAIN()*/;
-		DomainShader = NULL/*compile ds_5_0 DS_MAIN()*/;
-		PixelShader = compile ps_5_0 PS_MAIN_PICKING();
 	}
 }

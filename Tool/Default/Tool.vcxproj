@@ -168,6 +168,7 @@
   <ItemGroup>
     <ClInclude Include="..\Public\Camera_Line.h" />
     <ClInclude Include="..\Public\Camera_Window.h" />
+    <ClInclude Include="..\public\DummyMeshEffect.h" />
     <ClInclude Include="..\public\Cloth_Window.h" />
     <ClInclude Include="..\public\Dummy_Cloth.h" />
     <ClInclude Include="..\Public\Dummy_Font.h" />
@@ -224,6 +225,7 @@
     <ClCompile Include="..\private\Cloth_Window.cpp" />
     <ClCompile Include="..\Private\ComboBox.cpp" />
     <ClCompile Include="..\private\CustomWidget.cpp" />
+    <ClCompile Include="..\private\DummyMeshEffect.cpp" />
     <ClCompile Include="..\private\Dummy_Cloth.cpp" />
     <ClCompile Include="..\Private\Dummy_Font.cpp" />
     <ClCompile Include="..\Private\Dummy_UI.cpp" />
@@ -302,10 +304,8 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Navigation.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Sky.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Terrain.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointColInstance.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxMesh.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMesh.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxRectColInstance.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTex.hlsl" />
   </ItemGroup>
   <ItemGroup>

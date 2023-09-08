@@ -55,10 +55,10 @@ struct ENGINE_DLL MAIN_MODULE : public MODULE
 	_bool isAutoRandomSeed = { true }; // 파티클 수명 주기마다 랜덤 값을 매번 바뀌게하는 용도.
 	string strStopAction = {"None"}; // None, Disable, Destroy, Callback // 객체 수명이 다하거나 파티클의 모든 재생이 완료됐을 때 옵션에 따라 행동이 달라진다.
 };
-struct ENGINE_DLL EMMISION_MODULE : public MODULE
+struct ENGINE_DLL EMISSION_MODULE : public MODULE
 {
-	EMMISION_MODULE() : MODULE() { __super::isActivate = true; };
-	~EMMISION_MODULE() { Bursts.clear(); }
+	EMISSION_MODULE() : MODULE() { __super::isActivate = true; };
+	~EMISSION_MODULE() { Bursts.clear(); }
 
 	HRESULT Save(const _tchar* _pDirectoyPath);
 	HRESULT Load(const _tchar* _pDirectoyPath);
@@ -83,7 +83,6 @@ struct ENGINE_DLL EMMISION_MODULE : public MODULE
 	_float	fRateOverDistance = { 0.f }; // 움직인 거리에 따라 몇 개의 파티클을 뿜어낼지 정함.
 	vector<BURST> Bursts;
 };
-
 struct ENGINE_DLL SHAPE_MODULE : public MODULE
 {
 	SHAPE_MODULE() : MODULE() { __super::isActivate = true; };
@@ -111,29 +110,32 @@ struct ENGINE_DLL SHAPE_MODULE : public MODULE
 	_float fRadiusThickness = { 1.f }; // [0, 1]
 
 	_float fArc = { 360.f };
-	  string strArcMode = { "Random" }; // Random, Loop, Ping-Pong, Burst_Spread
-	 _float fSpread = { 0.f }; // [0, 1]
+	   string strArcMode = { "Random" }; // Random, Loop, Ping-Pong, Burst_Spread
+	  _float fSpread = { 0.f }; // [0, 1]
 
-	wstring wstrClipTexture = { TEXT("../../Resources/Effects/Textures/Default_Particle.png") }; // 아래 인자의 채널에 사용할 텍스처
+	wstring wstrClipTexturePath = { TEXT("../../Resources/Effects/Textures/Default_Particle.png") }; // 아래 인자의 채널에 사용할 텍스처
 	string strClipChannel = { "Red" }; // Red, Greend, Blue, Alpha // 클립 채널(클립 : 알파테스트로 discard)
-	_float fClipThreshold = { 0.f }; // [0, 1], 이것보다 작은 값들은 알파테스트 실패함.
+	_float fClipThreshold = { 0.33f }; // [0, 1], 이것보다 작은 값들은 알파테스트 실패함.
 	_bool isColorAffectsParticles = { true };
 	_bool isAlphaAffectsParticles = { true };
 	_bool isBilinearFiltering = { false };
 
-	_float3 fPosition = { 0.f, 0.f, 0.f };
-	_float3 fRotation = { 0.f, 0.f, 0.f };
-	_float3 fScale = { 1.f, 1.f, 1.f };
+	_float3 vPosition = { 0.f, 0.f, 0.f };
+	_float3 vRotation = { 0.f, 0.f, 0.f };
+	_float3 vScale = { 1.f, 1.f, 1.f };
 
 	_bool isAlignToDirection = false;
-	_float fRandomizeDirection; //[0, 1]
-	_float fSpherizeDirection; //[0, 1]
-	_float fRandomizePosition;
+	_float fRandomizeDirection = { 0.f }; //[0, 1]
+	_float fSpherizeDirection = { 0.f };  //[0, 1]
+	_float fRandomizePosition = { 0.f };
 };
-
 struct ENGINE_DLL RENDERER_MODULE : public MODULE
 {
 	RENDERER_MODULE() : MODULE() { __super::isActivate = true; };
+
+	HRESULT Save(const _tchar* _pDirectoyPath);
+	HRESULT Load(const _tchar* _pDirectoyPath);
+
 	wstring wstrShaderTag = { TEXT("Shader_VtxRectColInstance") };
 	wstring wstrMaterialPath = { TEXT("../../Resources/Effects/Textures/Default_Particle.png") };
 };

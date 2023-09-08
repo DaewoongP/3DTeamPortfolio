@@ -37,6 +37,10 @@ public:
 	// 쉐이더파일에 바인딩 할 일반 변수
 	HRESULT Bind_RawValue(const _char * pConstantName, const void* pData, _uint iSize);
 
+	// 셰이더 패스 이름들을 string 벡터에 담아서 반환한다.
+	// 콤보박스에 활용하기 위해 만듬.
+	vector<string> Get_PassList();
+
 private:
 	ID3DX11Effect*				m_pEffect = { nullptr };
 	_uint						m_iNumPasses = { 0 };

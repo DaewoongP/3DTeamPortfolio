@@ -112,6 +112,28 @@ HRESULT CMainApp::Ready_Prototype_Component_For_Static()
 				VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements))))
 			throw TEXT("Prototype_Component_Shader_VtxTex");
 
+		/* For.Prototype_Component_Shader_VtxPointColInstance */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxPointColInstance"),
+			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxPointColInstance.hlsl"),
+				VTXPOINTCOLORINSTANCE_DECL::Elements, VTXPOINTCOLORINSTANCE_DECL::iNumElements))))
+			return E_FAIL;
+
+		/* For.Prototype_Component_Shader_VtxRectColInstance */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxRectColInstance"),
+			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxRectColInstance.hlsl"),
+				VTXRECTCOLORINSTANCE_DECL::Elements, VTXRECTCOLORINSTANCE_DECL::iNumElements))))
+			return E_FAIL;
+
+		/* Prototype_Component_VIBuffer_Point_Color_Instance*/
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Point_Color_Instance"),
+			CVIBuffer_Point_Color_Instance::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_VIBuffer_Point_Color_Instance");
+
+		/* Prototype_Component_VIBuffer_Rect_Color_Instance*/
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Rect_Color_Instance"),
+			CVIBuffer_Rect_Color_Instance::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_VIBuffer_Rect_Color_Instance");
+
 		/* Prototype_Component_VIBuffer_Rect */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Rect"),
 			CVIBuffer_Rect::Create(m_pDevice, m_pContext))))
