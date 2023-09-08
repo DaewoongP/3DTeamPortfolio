@@ -56,7 +56,6 @@
     <ClInclude Include="..\public\VIBuffer_Geometry.h" />
     <ClInclude Include="..\public\VIBuffer_GeoSphere.h" />
     <ClInclude Include="..\public\VIBuffer_Cloth.h" />
-    <ClInclude Include="..\Public\VIBuffer_Object_Instance.h" />
     <ClInclude Include="..\public\VIBuffer_Rect_Color_Instance.h" />
     <ClInclude Include="..\Public\VIBuffer_Sprite.h" />
     <ClInclude Include="..\Public\Ignite.h" />
