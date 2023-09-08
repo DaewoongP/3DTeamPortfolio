@@ -307,6 +307,9 @@
     <Filter Include="01. Utility\03. Components\18. StaticMeshInstance\Mesh_Instance">
       <UniqueIdentifier>{4e0825c4-2a29-4254-9e2f-acfb05af52b1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\03. Components\04. Model\LOD">
+      <UniqueIdentifier>{e9debebd-b0a7-4cdb-9b70-0d37024ce611}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -630,6 +633,9 @@
     <ClInclude Include="..\Public\JobManager.h">
       <Filter>01. Utility\11. Physics\Job</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Model_LOD.h">
+      <Filter>01. Utility\03. Components\04. Model\LOD</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -922,6 +928,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\JobManager.cpp">
       <Filter>01. Utility\11. Physics\Job</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Model_LOD.cpp">
+      <Filter>01. Utility\03. Components\04. Model\LOD</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

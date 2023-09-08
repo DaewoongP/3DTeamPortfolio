@@ -47,7 +47,7 @@ private:
 	HRESULT Sort_Bones();
 	HRESULT Convert_Meshes();
 	HRESULT Store_Mesh(const aiMesh * pAIMesh, _Inout_ MESH * outMesh);
-	HRESULT Convert_Materials(TYPE eType, const char* pModelFilePath, const _tchar* pSaveDirectory, const _tchar* pFileName);
+	HRESULT Convert_Materials(TYPE eType, const char* pModelFilePath, const _tchar* pSaveDirectory);
 	HRESULT Convert_Animations();
 
 private:
