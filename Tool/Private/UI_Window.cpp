@@ -166,7 +166,10 @@ void CUI_Window::Object_List_Button()
 	{
 		for (auto& iter : m_pUIVector)
 		{
-			m_pDummy_UI_Group->Clear();
+			if (nullptr != m_pDummy_UI_Group)
+			{
+				m_pDummy_UI_Group->Clear();
+			}
 			iter->Set_ObjEvent(CGameObject::OBJ_EVENT::OBJ_DEAD);
 		}
 	}

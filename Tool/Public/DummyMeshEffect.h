@@ -3,7 +3,6 @@
 //#include "Composite.h"
 #include "MeshEffect.h"
 #include "Modules.h"
-#include "Shader_Nodes.h"
 
 BEGIN(Engine)
 class CRenderer;

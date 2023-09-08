@@ -3,14 +3,14 @@
 #include "UI_Window.h"
 
 CDummy_UI::CDummy_UI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CGameObject(pDevice, pContext)
+	: CUI(pDevice, pContext)
 {
 	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixIdentity());
 }
 
 CDummy_UI::CDummy_UI(const CDummy_UI& rhs)
-	: CGameObject(rhs)
+	: CUI(rhs)
 	, m_fX(rhs.m_fX)
 	, m_fY(rhs.m_fY)
 	, m_fSizeX(rhs.m_fSizeX)
