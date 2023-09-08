@@ -135,10 +135,9 @@ public: /* For.PhysX_Manager */
 	PxPhysics* Get_Physics() const;
 	PxScene* Get_PhysxScene() const;
 	PxControllerManager* Get_ControllerManager() const;
+	cloth::Factory* Get_ClothFactory() const;
 
 public:	/* For.Camera_Manager */
-	//매인 카메라를 넣어준다.
-	HRESULT Add_MainCamera(class CCamera* _pMainCamera);
 	//컷씬 카메라 데이터를 담는다.
 	HRESULT Read_CutSceneCamera(const _tchar* _CutSceneTag, const _tchar* _CutScenePath);
 	//컷씬 재생을 위한 큐 추가
@@ -149,6 +148,14 @@ public:	/* For.Camera_Manager */
 	HRESULT Read_OffSetCamera(const _tchar* _OffSetTag, const _tchar* _OffSetPath);
 	//오프셋 재생을 위한 큐 추가
 	HRESULT Add_OffSetCamera(const _tchar* _OffSetTag);
+	//카메라 추가
+	HRESULT Add_Camera(const _tchar* _CameraTag, class CCamera* _pCamera);
+	//카메라 변경
+	HRESULT Set_Camera(const _tchar* _CameraTag);
+	//카메라 찾기
+	class CCamera* Find_Camera(const _tchar* _CameraTag);
+	//컷씬 중지
+	void Stop_CutScene();
 
 public: /* For.RenderTaget_Manager*/
 	class CRenderTarget* Find_RenderTarget(const _tchar* pTargetTag);
@@ -167,6 +174,8 @@ public: /* For.Time_Manager */
 	_bool Check_Timer(const wstring& wstrTimerTag);
 	/* 현재 월드 누적시간을 반환*/
 	const _float& Get_World_TimeAcc() const;
+	/* 현재 월드 틱을 반환 */
+	_float Get_World_Tick() const;
 	/* 기존에 추가한 타이머의 누적시간을 반환 */
 	_float Get_TimeAcc(const wstring& wstrTimerTag) const;
 	/* 월드 누적시간 초기화 (사용할 경우 팀원들한테 미리 얘기하세요) */

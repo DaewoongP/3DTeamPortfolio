@@ -148,7 +148,7 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>backends/;../Public/;../../Reference/Headers/;misc/debuggers/;../Default/;../../Reference/Headers/PhysX/;../../Reference/Headers/NvCloth/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4828;4204</DisableSpecificWarnings>
-      <Optimization>Full</Optimization>
+      <Optimization>MaxSpeed</Optimization>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -168,8 +168,11 @@
   <ItemGroup>
     <ClInclude Include="..\Public\Camera_Line.h" />
     <ClInclude Include="..\Public\Camera_Window.h" />
+    <ClInclude Include="..\public\Cloth_Window.h" />
+    <ClInclude Include="..\public\Dummy_Cloth.h" />
     <ClInclude Include="..\Public\Dummy_Font.h" />
     <ClInclude Include="..\Public\Dummy_UI_Group.h" />
+    <ClInclude Include="..\Public\LightDot.h" />
     <ClInclude Include="..\Public\Light_Window.h" />
     <ClInclude Include="..\Public\ComboBox.h" />
     <ClInclude Include="..\public\CustomWidget.h" />
@@ -218,11 +221,14 @@
   <ItemGroup>
     <ClCompile Include="..\Private\Camera_Line.cpp" />
     <ClCompile Include="..\Private\Camera_Window.cpp" />
+    <ClCompile Include="..\private\Cloth_Window.cpp" />
     <ClCompile Include="..\Private\ComboBox.cpp" />
     <ClCompile Include="..\private\CustomWidget.cpp" />
+    <ClCompile Include="..\private\Dummy_Cloth.cpp" />
     <ClCompile Include="..\Private\Dummy_Font.cpp" />
     <ClCompile Include="..\Private\Dummy_UI.cpp" />
     <ClCompile Include="..\Private\Dummy_UI_Group.cpp" />
+    <ClCompile Include="..\Private\LightDot.cpp" />
     <ClCompile Include="..\Private\Light_Window.cpp" />
     <ClCompile Include="..\Private\Camera_Point.cpp" />
     <ClCompile Include="..\private\CutScene_Camera_Tool.cpp" />

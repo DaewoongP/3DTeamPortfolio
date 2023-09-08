@@ -14,7 +14,6 @@ class CTransform;
 #define ANIMATIONLERPTIME 0.3f
 class ENGINE_DLL CModel : public CComponent
 {
-
 public:
 	enum TYPE { TYPE_NONANIM, TYPE_ANIM, TYPE_END };
 	enum ANIMTYPE { UPPERBODY, UNDERBODY, ANIM_END };

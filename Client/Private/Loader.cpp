@@ -20,6 +20,7 @@
 #ifdef _DEBUG
 #include "Test_Player.h"
 #include "Test_NPC.h"
+#include "Test_Cloth.h"
 #include "Camera_Debug.h"
 #endif // _DEBUG
 
@@ -155,6 +156,11 @@ HRESULT CLoader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Terrain"),
 			CVIBuffer_Terrain::Create(m_pDevice, m_pContext, 531, 531))))
 			throw TEXT("Prototype_Component_VIBuffer_Terrain");
+		
+		/* For.Prototype_Component_VIBuffer_Cloth */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Cloth"),
+			CVIBuffer_Cloth::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_VIBuffer_Cloth");
 
 		lstrcpy(m_szLoading, TEXT("¸ðµ¨ ·Îµù Áß."));
 
@@ -162,11 +168,11 @@ HRESULT CLoader::Loading_For_MainGame()
 
 		/* For.Weapon Models */
 		/* For.Prototype_Component_Model_Weopon_Armored_Troll */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Weopon_Armored_Troll"),
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Troll_Armored_Club/Troll_Armored_Club.dat"), PivotMatrix))))
-			throw TEXT("Prototype_Component_Model_Weopon_Armored_Troll");
+		//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Weopon_Armored_Troll"),
+		//	CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Troll_Armored_Club/Troll_Armored_Club.dat"), PivotMatrix))))
+		//	throw TEXT("Prototype_Component_Model_Weopon_Armored_Troll");
 
-		/* For.Prototype_Component_Model_Weopon_Forest_Troll */
+		///* For.Prototype_Component_Model_Weopon_Forest_Troll */
 		//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Weopon_Forest_Troll"),
 		//	CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Troll_Forest_Club/Troll_Forest_Club.dat"), PivotMatrix))))
 		//	throw TEXT("Prototype_Component_Model_Weopon_Forest_Troll");
@@ -421,7 +427,13 @@ HRESULT CLoader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_NPC"),
 			CTest_NPC::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Test_NPC");
+
+		/* For.Prototype_GameObject_Test_Cloth*/
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Cloth"),
+			CTest_Cloth::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Test_Cloth");
 #endif // _DEBUG
+		
 	}
 	catch (const _tchar* pErrorTag)
 	{

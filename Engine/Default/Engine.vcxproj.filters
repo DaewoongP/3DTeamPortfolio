@@ -199,6 +199,21 @@
     <Filter Include="01. Utility\02. GameObjects\02. Parts">
       <UniqueIdentifier>{b2e63afa-998c-44d2-9cf7-ca44f0b814a6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\03. Components\13. Status">
+      <UniqueIdentifier>{0d097a3d-8ef4-4813-afef-ca81cc0a63bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\13. Status\00. Health">
+      <UniqueIdentifier>{2c307619-8c41-4f09-8c44-3e7e1dd9bf83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\13. Status\01. Attack">
+      <UniqueIdentifier>{8a7bc604-a1b2-4301-9e99-b36444fc8db5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\13. Status\02. Defence">
+      <UniqueIdentifier>{6b004c01-c864-470b-b278-e400cb119e26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\13. Status\03. Ignite">
+      <UniqueIdentifier>{1181c3a3-d95e-4eab-b1e6-b175481b2152}</UniqueIdentifier>
+    </Filter>
     <Filter Include="01. Utility\11. Physics\EventCallBack">
       <UniqueIdentifier>{2ebd81df-468e-430d-aa58-2375576ccb78}</UniqueIdentifier>
     </Filter>
@@ -268,17 +283,26 @@
     <Filter Include="01. Utility\03. Components\12. CustomModel\MeshParts">
       <UniqueIdentifier>{03be6e6b-609c-44dc-921c-7f8675822f53}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\03. Components\16. RigidBody">
+    <Filter Include="01. Utility\03. Components\07. VIBuffer\Cloth">
+      <UniqueIdentifier>{69e6ba97-e3de-4133-b08b-1d0ed23bb071}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\04. Model\Mesh\Dynamic">
+      <UniqueIdentifier>{32da167c-e0ce-414b-8472-ea7c15d3648c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\15. RigidBody">
       <UniqueIdentifier>{34a36dc9-7fff-4175-b4ed-7b026eba34fc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\03. Components\17. ParticleSystem">
+    <Filter Include="01. Utility\03. Components\16. ParticleSystem">
       <UniqueIdentifier>{aaf18f8e-a9cf-4dba-9828-95d190790622}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\03. Components\18. Plane">
+    <Filter Include="01. Utility\03. Components\17. Plane">
       <UniqueIdentifier>{33c81cf5-caa3-47e5-a3d4-5e94a0331092}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\03. Components\19. MeshEffect">
+    <Filter Include="01. Utility\03. Components\18. MeshEffect">
       <UniqueIdentifier>{35f210f5-64ec-49e0-97dd-d4fdb9664c1b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\11. Physics\Job">
+      <UniqueIdentifier>{def8c79f-6f0e-40f1-80f6-4f10844dcc2d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -493,7 +517,7 @@
       <Filter>01. Utility\03. Components\10. Behavior\02. Sequence</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ParticleSystem.h">
-      <Filter>01. Utility\03. Components\17. ParticleSystem</Filter>
+      <Filter>01. Utility\03. Components\16. ParticleSystem</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Calculator.h">
       <Filter>01. Utility\10. Calculator</Filter>
@@ -535,7 +559,7 @@
       <Filter>01. Utility\03. Components\12. CustomModel\MeshParts</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Modules.h">
-      <Filter>01. Utility\03. Components\17. ParticleSystem</Filter>
+      <Filter>01. Utility\03. Components\16. ParticleSystem</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\PhysXConverter.h">
       <Filter>99. Headers</Filter>
@@ -544,10 +568,10 @@
       <Filter>01. Utility\11. Physics\Manager</Filter>
     </ClInclude>
     <ClInclude Include="..\public\RigidBody.h">
-      <Filter>01. Utility\03. Components\16. RigidBody</Filter>
+      <Filter>01. Utility\03. Components\15. RigidBody</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ColliderCom.h">
-      <Filter>01. Utility\03. Components\16. RigidBody</Filter>
+      <Filter>01. Utility\03. Components\15. RigidBody</Filter>
     </ClInclude>
     <ClInclude Include="..\public\CharacterController.h">
       <Filter>01. Utility\03. Components\14. CharacterController</Filter>
@@ -568,10 +592,10 @@
       <Filter>01. Utility\03. Components\00. Manager</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Plane.h">
-      <Filter>01. Utility\03. Components\18. Plane</Filter>
+      <Filter>01. Utility\03. Components\17. Plane</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MeshEffect.h">
-      <Filter>01. Utility\03. Components\19. MeshEffect</Filter>
+      <Filter>01. Utility\03. Components\18. MeshEffect</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\VIBuffer_Object_Instance.h">
       <Filter>01. Utility\03. Components\07. VIBuffer\Instance\Obj_Instance</Filter>
@@ -581,6 +605,15 @@
     </ClInclude>
     <ClInclude Include="..\public\PXAssertHandler.h">
       <Filter>01. Utility\11. Physics\Handler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\VIBuffer_Cloth.h">
+      <Filter>01. Utility\03. Components\07. VIBuffer\Cloth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Dynamic_Mesh.h">
+      <Filter>01. Utility\03. Components\04. Model\Mesh\Dynamic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\JobManager.h">
+      <Filter>01. Utility\11. Physics\Job</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -777,7 +810,7 @@
       <Filter>01. Utility\03. Components\10. Behavior\02. Sequence</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\ParticleSystem.cpp">
-      <Filter>01. Utility\03. Components\17. ParticleSystem</Filter>
+      <Filter>01. Utility\03. Components\16. ParticleSystem</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Calculator.cpp">
       <Filter>01. Utility\10. Calculator</Filter>
@@ -813,16 +846,16 @@
       <Filter>01. Utility\03. Components\12. CustomModel\MeshParts</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Modules.cpp">
-      <Filter>01. Utility\03. Components\17. ParticleSystem</Filter>
+      <Filter>01. Utility\03. Components\16. ParticleSystem</Filter>
     </ClCompile>
     <ClCompile Include="..\private\PhysX_Manager.cpp">
       <Filter>01. Utility\11. Physics\Manager</Filter>
     </ClCompile>
     <ClCompile Include="..\private\RigidBody.cpp">
-      <Filter>01. Utility\03. Components\16. RigidBody</Filter>
+      <Filter>01. Utility\03. Components\15. RigidBody</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ColliderCom.cpp">
-      <Filter>01. Utility\03. Components\16. RigidBody</Filter>
+      <Filter>01. Utility\03. Components\15. RigidBody</Filter>
     </ClCompile>
     <ClCompile Include="..\private\CharacterController.cpp">
       <Filter>01. Utility\03. Components\14. CharacterController</Filter>
@@ -837,10 +870,10 @@
       <Filter>01. Utility\11. Physics\EventCallBack</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Plane.cpp">
-      <Filter>01. Utility\03. Components\18. Plane</Filter>
+      <Filter>01. Utility\03. Components\17. Plane</Filter>
     </ClCompile>
     <ClCompile Include="..\private\MeshEffect.cpp">
-      <Filter>01. Utility\03. Components\19. MeshEffect</Filter>
+      <Filter>01. Utility\03. Components\18. MeshEffect</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\VIBuffer_Rect_Color_Instance.cpp">
       <Filter>01. Utility\03. Components\07. VIBuffer\Instance\Rect_Instance</Filter>
@@ -853,6 +886,15 @@
     </ClCompile>
     <ClCompile Include="..\private\PXAssertHandler.cpp">
       <Filter>01. Utility\11. Physics\Handler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\VIBuffer_Cloth.cpp">
+      <Filter>01. Utility\03. Components\07. VIBuffer\Cloth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Dynamic_Mesh.cpp">
+      <Filter>01. Utility\03. Components\04. Model\Mesh\Dynamic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\JobManager.cpp">
+      <Filter>01. Utility\11. Physics\Job</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -875,7 +917,7 @@
       <Filter>01. Utility\11. Physics\Shader</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_DefaultEffect.hlsl">
-      <Filter>01. Utility\03. Components\19. MeshEffect</Filter>
+      <Filter>01. Utility\03. Components\18. MeshEffect</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
@@ -883,10 +925,10 @@
       <Filter>99. Headers</Filter>
     </None>
     <None Include="..\Bin\ShaderFiles\Shader_EngineHeader.hlsli">
-      <Filter>01. Utility\03. Components\19. MeshEffect</Filter>
+      <Filter>01. Utility\03. Components\18. MeshEffect</Filter>
     </None>
     <None Include="..\Bin\ShaderFiles\Shader_Functions.hlsli">
-      <Filter>01. Utility\03. Components\19. MeshEffect</Filter>
+      <Filter>01. Utility\03. Components\18. MeshEffect</Filter>
     </None>
   </ItemGroup>
 </Project>

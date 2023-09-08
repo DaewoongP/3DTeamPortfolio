@@ -127,6 +127,9 @@
     <Filter Include="03. Tasks\Actions">
       <UniqueIdentifier>{22de2c6d-33c0-405e-880a-8329dd7ffd58}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\99. Debug\Cloth">
+      <UniqueIdentifier>{3f5e0d18-9b63-46c6-b1ee-b4c3d0a446b1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -270,6 +273,9 @@
     <ClInclude Include="..\Public\Action.h">
       <Filter>03. Tasks\Actions</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Test_Cloth.h">
+      <Filter>02. GameObject\99. Debug\Cloth</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -382,6 +388,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Action.cpp">
       <Filter>03. Tasks\Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Test_Cloth.cpp">
+      <Filter>02. GameObject\99. Debug\Cloth</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
