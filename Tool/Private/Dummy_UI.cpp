@@ -1,5 +1,6 @@
 #include "Dummy_UI.h"
 #include "GameInstance.h"
+#include "UI_Window.h"
 
 CDummy_UI::CDummy_UI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -17,7 +18,7 @@ CDummy_UI::CDummy_UI(const CDummy_UI& rhs)
 	, m_ViewMatrix(rhs.m_ViewMatrix)
 	, m_ProjMatrix(rhs.m_ProjMatrix)
 {
-	lstrcpy(m_wszTextureName, rhs.m_wszTextureName);
+	//lstrcpy(m_wszTextureName, rhs.m_wszTextureName);
 }
 
 HRESULT CDummy_UI::Initialize_Prototype()
@@ -33,13 +34,52 @@ HRESULT CDummy_UI::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	if (FAILED(Add_Components()))
-		return E_FAIL;
-	
 	if (nullptr != pArg)
 	{
-		_float2* fSize = (_float2*)pArg;
-		Set_Size(fSize->x, fSize->y);
+		CUI_Window::UI_DATA* UIDesc = (CUI_Window::UI_DATA*)pArg;
+
+		if (UIDesc->isSave)
+		{
+			m_vCombinedXY = UIDesc->vCombinedXY;
+			m_fX = UIDesc->m_fX;
+			m_fY = UIDesc->m_fY;
+			m_fZ = UIDesc->m_fZ;
+			m_fSizeX = UIDesc->m_fSizeX;
+			m_fSizeY = UIDesc->m_fSizeY;
+
+			lstrcpy(m_wszTextureName, UIDesc->m_wszTextureName);
+			lstrcpy(m_wszTexturePath, UIDesc->m_wszTexturePath);
+
+			m_eUIType = UIDesc->m_eType;
+
+			m_isParent = UIDesc->m_isParent;
+
+			m_isAlpha = UIDesc->m_isAlpha;
+			m_vColor = UIDesc->m_vColor;
+			lstrcpy(m_wszAlphaTexturePrototypeTag, UIDesc->m_wszAlphaTexturePrototypeTag);
+			lstrcpy(m_wszAlphaTextureFilePath, UIDesc->m_wszAlphaTextureFilePath);
+		}
+		else
+		{
+			_float2 fSize = _float2(UIDesc->m_fSizeX, UIDesc->m_fSizeY);
+			Set_Size(fSize.x, fSize.y);
+
+			lstrcpy(m_wszTextureName, UIDesc->m_wszTextureName);
+			lstrcpy(m_wszTexturePath, UIDesc->m_wszTexturePath);
+		}
+	}
+	else
+	{
+		return E_FAIL;
+	}		
+
+	if (FAILED(Add_Components()))
+		return E_FAIL;
+
+
+	if (m_isAlpha)
+	{
+		Add_AlphaTexture();
 	}
 
 	m_pTransform->Set_Scale(_float3(m_fSizeX, m_fSizeY, 1.f));
@@ -55,7 +95,7 @@ void CDummy_UI::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	// 
+	
 	if (m_pParent == nullptr)
 	{
 		m_vCombinedXY.x = m_fX;
@@ -92,13 +132,58 @@ HRESULT CDummy_UI::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	m_pShaderCom->Begin("UI");
+	if (m_isAlpha && nullptr != m_pAlphaTextureCom)
+	{
+		m_pShaderCom->Begin("UIAlpha");
+
+	}
+	else
+	{
+		m_pShaderCom->Begin("UI");
+	}
+
 
 	if (FAILED(m_pVIBufferCom->Render()))
 		return E_FAIL;
 
 	return S_OK;
 }
+
+HRESULT CDummy_UI::Set_AlphaTexture(_tchar* pFilePath)
+{
+	_char szChar[MAX_PATH] = "";
+	WCharToChar(pFilePath, szChar);
+
+	_char szFileName[MAX_PATH] = "";
+	_splitpath_s(szChar, nullptr, 0, nullptr, 0, szFileName, MAX_PATH, nullptr, 0);
+
+	string strFileName = szFileName;
+	string strCom = "Prototype_Component_" + strFileName + "_Texture";
+
+	_tchar wszComName[MAX_PATH] = TEXT("");
+	CharToWChar(strCom.c_str(), wszComName);
+
+	BEGININSTANCE
+
+	// 텍스쳐 추가.
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, wszComName,
+		CTexture::Create(m_pDevice, m_pContext, pFilePath))))
+	{
+		MSG_BOX("Failed Create Texture Component");
+	}
+	ENDINSTANCE
+
+	if (FAILED(CComposite::Add_Component(LEVEL_TOOL, wszComName,
+		TEXT("Com_AlphaTexture"), reinterpret_cast<CComponent**>(&m_pAlphaTextureCom))))
+	{
+		MSG_BOX("Failed CDummy_UI Add_Component : (Com_Texture)");
+		return E_FAIL;
+	}
+
+	Set_AlphaTextureTag(wszComName);
+	Set_AlphaTexturePath(pFilePath);
+}
+
 
 HRESULT CDummy_UI::Add_Components()
 {
@@ -134,7 +219,27 @@ HRESULT CDummy_UI::Add_Components()
 		return E_FAIL;
 	}
 
+	return S_OK;
+}
 
+HRESULT CDummy_UI::Add_AlphaTexture()
+{
+	BEGININSTANCE
+
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, m_wszAlphaTexturePrototypeTag,
+			CTexture::Create(m_pDevice, m_pContext, m_wszAlphaTextureFilePath))))
+		{
+			MSG_BOX("Failed Create Texture Component");
+		}
+
+	ENDINSTANCE
+
+		if (FAILED(CComposite::Add_Component(LEVEL_TOOL, m_wszAlphaTexturePrototypeTag,
+			TEXT("Com_AlphaTexture"), reinterpret_cast<CComponent**>(&m_pAlphaTextureCom))))
+		{
+			MSG_BOX("Failed CDummy_UI Add_Component : (Com_Texture)");
+			return E_FAIL;
+		}
 
 	return S_OK;
 }
@@ -152,6 +257,16 @@ HRESULT CDummy_UI::SetUp_ShaderResources()
 
 	if (FAILED(m_pTextureCom->Bind_ShaderResources(m_pShaderCom, "g_Texture")))
 		return E_FAIL;
+
+	if (m_isAlpha && nullptr !=m_pAlphaTextureCom)
+	{
+		if (FAILED(m_pAlphaTextureCom->Bind_ShaderResources(m_pShaderCom, "g_AlphaTexture")))
+			return E_FAIL;
+
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_vColor", &m_vColor, sizeof(_float4))))
+			return E_FAIL;
+
+	}
 
 	return S_OK;
 }
@@ -200,19 +315,18 @@ HRESULT CDummy_UI::Change_Position(_float fX, _float fY)
 
 HRESULT CDummy_UI::Change_Scale(_float fX, _float fY)
 {
-//	m_fSizeX = fX;
-	//m_fSizeY = fY;
+	//	m_fSizeX = fX;
+	//	m_fSizeY = fY;
 
 	m_pTransform->Set_Scale(_float3(m_fSizeX, m_fSizeY, 1.f));
 
 	return S_OK;
 }
 
-CDummy_UI* CDummy_UI::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _tchar* TextureComTag)
+CDummy_UI* CDummy_UI::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CDummy_UI* pInstance = New CDummy_UI(pDevice, pContext);
 
-	lstrcpy(pInstance->m_wszTextureName, TextureComTag);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -244,4 +358,6 @@ void CDummy_UI::Free()
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pRendererCom);
+
+	Safe_Release(m_pAlphaTextureCom);
 }

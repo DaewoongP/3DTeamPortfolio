@@ -32,6 +32,7 @@ HRESULT CComponent_Manager::Add_Prototype(_uint iLevelIndex, const _tchar* pProt
 		Safe_Release(pPrototype);
 		MSG_BOX("Already have Prototype In CComponent_Manager");
 		return E_FAIL;
+#endif // _TOOL
 	}
 
 	if (nullptr == pPrototype)
@@ -116,13 +117,13 @@ void CComponent_Manager::Clear_LevelResources(_uint iLevelIndex)
 		return;
 	}
 
-	// ·¹ÀÌ¾î »èÁ¦.
+	// ï¿½ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½.
 	for (auto& Pair : m_pLayers[iLevelIndex])
 		Safe_Release(Pair.second);
 
 	m_pLayers[iLevelIndex].clear();
 
-	// ÇÁ·ÎÅäÅ¸ÀÔ »èÁ¦
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	for (auto& Pair : m_pPrototypes[iLevelIndex])
 		Safe_Release(Pair.second);
 
