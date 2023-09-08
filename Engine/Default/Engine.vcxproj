@@ -54,6 +54,8 @@
     <ClInclude Include="..\Public\CustomModel.h" />
     <ClInclude Include="..\Public\Modules.h" />
     <ClInclude Include="..\Public\Status.h" />
+    <ClInclude Include="..\Public\UI.h" />
+    <ClInclude Include="..\Public\UI_Gruop.h" />
     <ClInclude Include="..\public\VIBuffer_Geometry.h" />
     <ClInclude Include="..\public\VIBuffer_GeoSphere.h" />
     <ClInclude Include="..\public\VIBuffer_Cloth.h" />
@@ -164,6 +166,8 @@
     <ClCompile Include="..\Private\CustomModel.cpp" />
     <ClCompile Include="..\Private\Modules.cpp" />
     <ClCompile Include="..\Private\Status.cpp" />
+    <ClCompile Include="..\Private\UI.cpp" />
+    <ClCompile Include="..\Private\UI_Gruop.cpp" />
     <ClCompile Include="..\private\VIBuffer_Geometry.cpp" />
     <ClCompile Include="..\private\VIBuffer_GeoSphere.cpp" />
     <ClCompile Include="..\private\VIBuffer_Cloth.cpp" />
