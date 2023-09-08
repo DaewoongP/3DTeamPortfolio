@@ -48,7 +48,7 @@ void CArmored_Troll::Tick(_float fTimeDelta)
 		m_pRootBehavior->Tick(fTimeDelta);
 
 	if (nullptr != m_pModelCom)
-		m_pModelCom->Play_Animation(fTimeDelta);
+		m_pModelCom->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 }
 
 void CArmored_Troll::Late_Tick(_float fTimeDelta)
@@ -127,38 +127,9 @@ HRESULT CArmored_Troll::Make_AI()
 		if (nullptr == pSelector)
 			throw TEXT("pSelector is nullptr");
 
-		CAction* pAction_Attack = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Attack)
-			throw TEXT("pAction_Attack is nullptr");
-		CAction* pAction_Wait = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Wait)
-			throw TEXT("pAction_Wait is nullptr");
-
-		CWait* pTsk_Test = dynamic_cast<CWait*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Wait")));
-		if (nullptr == pTsk_Test)
-			throw TEXT("pTsk_Test is nullptr");
-		CWait* pTsk_Wait = dynamic_cast<CWait*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Wait")));
-		if (nullptr == pTsk_Wait)
-			throw TEXT("pTsk_Wait is nullptr");
-
-		pAction_Attack->Set_Options(TEXT("cmbt_atk_overhead_slam"), m_pModelCom, 5.f);
-		pAction_Wait->Set_Options(TEXT("cmbt_atk_overhead_slam"), m_pModelCom);
-		pTsk_Test->Set_Timer(8.f);
-		pTsk_Wait->Set_Timer(3.f);
-
 		/* Bind Childs */
 		if (FAILED(m_pRootBehavior->Assemble_Behavior(TEXT("Selector"), pSelector)))
 			throw TEXT("RootBehavior Assemble pSelector");
-
-		if (FAILED(pSelector->Assemble_Behavior(TEXT("Action_Attack"), pAction_Attack)))
-			throw TEXT("RootBehavior Assemble pAction_Attack");
-		if (FAILED(pSelector->Assemble_Behavior(TEXT("Action_Wait"), pAction_Wait)))
-			throw TEXT("RootBehavior Assemble pAction_Wait");
-
-		if (FAILED(pAction_Attack->Assemble_Behavior(TEXT("Tsk_Test"), pTsk_Test)))
-			throw TEXT("pAction_Attack Assemble Tsk_Wait");
-		if (FAILED(pAction_Wait->Assemble_Behavior(TEXT("Tsk_Wait"), pTsk_Wait)))
-			throw TEXT("pAction_Attack Assemble Tsk_Wait");
 	}
 	catch (const _tchar* pErrorTag)
 	{

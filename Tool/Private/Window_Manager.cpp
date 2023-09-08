@@ -138,6 +138,24 @@ void CWindow_Manager::Tick(_float fTimeDelta)
 		m_eLoadingFlag |= LIGHT_LOAD;
 	}
 
+
+	if (ImGui::RadioButton("Navigation", iCurMenuList, NEVIGATION_WINDOW))
+	{
+		if (0 == (m_eLoadingFlag & NEVIGATION_LOAD))
+		{
+			if (FAILED(Add_Window(TEXT("Navigation_Window"),
+				CNavigation_Window::Create(m_pDevice, m_pContext,
+					ImVec2(_float(g_iWinSizeX + 8), _float(0.f)), ImVec2(446.f, 768.f)))))
+			{
+				MSG_BOX("Failed Create Navigation_Window");
+				return;
+			}
+		}
+
+		Setup_Current_Window(TEXT("Navigation_Window"));
+		m_eLoadingFlag |= NEVIGATION_LOAD;
+	}
+
 	if (ImGui::RadioButton("Cloth", iCurMenuList, CLOTH_WINDOW))
 	{
 		if (0 == (m_eLoadingFlag & CLOTH_LOAD))

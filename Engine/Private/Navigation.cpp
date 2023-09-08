@@ -5,6 +5,7 @@
 #ifdef _DEBUG
 #include "Shader.h"
 #include "PipeLine.h"
+#include "Bounding_Sphere.h"
 #endif
 
 CNavigation::CNavigation(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -26,7 +27,6 @@ CNavigation::CNavigation(const CNavigation& rhs)
 #ifdef _DEBUG
 	Safe_AddRef(m_pShader);
 #endif
-
 }
 
 _float CNavigation::Get_CurrentCellY(_float3 vPosition) const
@@ -59,6 +59,12 @@ CELLFLAG CNavigation::Get_CurrentCellFlag() const
 
 HRESULT CNavigation::Initialize_Prototype(const _tchar* pNavigationDataFiles)
 {
+#ifdef _DEBUG
+	m_pShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Navigation.hlsl"), VTXPOS_DECL::Elements, VTXPOS_DECL::iNumElements);
+	if (nullptr == m_pShader)
+		return E_FAIL;
+#endif
+
 	_ulong		dwByte = { 0 };
 
 	HANDLE		hFile = CreateFile(pNavigationDataFiles, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
@@ -84,12 +90,6 @@ HRESULT CNavigation::Initialize_Prototype(const _tchar* pNavigationDataFiles)
 
 	if (FAILED(SetUp_Neighbors()))
 		return E_FAIL;
-
-#ifdef _DEBUG
-	m_pShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Navigation.hlsl"), VTXPOS_DECL::Elements, VTXPOS_DECL::iNumElements);
-	if (nullptr == m_pShader)
-		return E_FAIL;
-#endif
 
 	return S_OK;
 }
@@ -179,7 +179,6 @@ HRESULT CNavigation::Render()
 
 	if (-1 == m_iCurrentIndex)
 	{
-
 		if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", &WorldMatrix)))
 			return E_FAIL;
 

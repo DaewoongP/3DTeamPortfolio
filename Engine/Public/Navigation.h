@@ -33,7 +33,6 @@ public:
 #ifdef _DEBUG
 public:
 	virtual HRESULT Render() override;
-
 #endif // _DEBUG
 	
 private:
@@ -43,7 +42,7 @@ private:
 
 #ifdef _DEBUG
 private:
-	class CShader*				m_pShader = { nullptr };
+	class CShader*						m_pShader = { nullptr };
 #endif // _DEBUG
 
 private:

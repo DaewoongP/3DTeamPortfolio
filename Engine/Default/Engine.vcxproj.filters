@@ -196,6 +196,9 @@
     <Filter Include="01. Utility\03. Components\07. VIBuffer\Triangle">
       <UniqueIdentifier>{a5f8428d-9252-403e-821d-0690fa879d0b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\02. GameObjects\02. Parts">
+      <UniqueIdentifier>{b2e63afa-998c-44d2-9cf7-ca44f0b814a6}</UniqueIdentifier>
+    </Filter>
     <Filter Include="01. Utility\03. Components\13. Status">
       <UniqueIdentifier>{0d097a3d-8ef4-4813-afef-ca81cc0a63bc}</UniqueIdentifier>
     </Filter>

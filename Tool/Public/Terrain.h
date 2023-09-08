@@ -6,6 +6,7 @@ BEGIN(Engine)
 class CShader;
 class CTexture;
 class CRenderer;
+class CNavigation;
 class CVIBuffer_Terrain;
 END
 
@@ -27,6 +28,9 @@ public:
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
+
+public:
+	HRESULT Picking_On_Terrain(_Inout_ _float4* pPickPosition);
 
 private:
 	_bool				m_isRendering = { false };
