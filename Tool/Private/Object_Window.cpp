@@ -675,10 +675,11 @@ HRESULT CObject_Window::Save_MapObject(string szMapDataPath)
 {
 	_tchar wszPath[MAX_PATH] = TEXT("../../Resources/GameData/MapData/");
 
-	//m_wszMapSaveDataPath = TEXT("");
-	CharToWChar(szMapDataPath.c_str(), m_wszMapSaveDataPath);
-	lstrcat(wszPath, m_wszMapSaveDataPath);
-	lstrcpy(m_wszMapSaveDataPath, wszPath);
+	lstrcpy(m_wszMapSaveDataPath, TEXT(""));
+	lstrcat(m_wszMapSaveDataPath, wszPath);
+	wstring ws(szMapDataPath.begin(), szMapDataPath.end());
+	lstrcat(m_wszMapSaveDataPath, ws.c_str());
+	lstrcat(m_wszMapSaveDataPath, TEXT(".ddd"));
 
 	HANDLE hFile = CreateFile(m_wszMapSaveDataPath, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
 	if (INVALID_HANDLE_VALUE == hFile)
