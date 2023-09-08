@@ -57,7 +57,7 @@ HRESULT CRenderTarget_Manager::Begin_MRT(ID3D11DeviceContext* pContext, const _t
 		if (nullptr == pMRTList)
 			return E_FAIL;
 
-		pContext->OMGetRenderTargets(1, &m_pPostRenderTargetView, &m_pShadowView);
+		pContext->OMGetRenderTargets(1, &m_pPostRenderTargetView, &m_pDepthStencilView);
 
 		ID3D11RenderTargetView* pRenderTargets[8] = { nullptr };
 
@@ -70,6 +70,8 @@ HRESULT CRenderTarget_Manager::Begin_MRT(ID3D11DeviceContext* pContext, const _t
 		}
 
 		pContext->OMSetRenderTargets(iNumViews, pRenderTargets, m_pShadowView);
+		
+		Change_DepthStencil(pContext, _float4(1.f, 1.f, 1.f, 1.f));
 
 		return S_OK;
 	}
@@ -92,6 +94,7 @@ HRESULT CRenderTarget_Manager::Begin_MRT(ID3D11DeviceContext* pContext, const _t
 	}
 
 	pContext->OMSetRenderTargets(iNumViews, pRenderTargets, m_pDepthStencilView);
+
 
 	return S_OK;
 }
@@ -126,10 +129,10 @@ HRESULT CRenderTarget_Manager::End_MRT(ID3D11DeviceContext* pContext,_bool Shado
 	{
 		ID3D11RenderTargetView* pRenderTargets[8] = { m_pPostRenderTargetView };
 
-		pContext->OMSetRenderTargets(8, pRenderTargets, m_pShadowView);
+		pContext->OMSetRenderTargets(8, pRenderTargets, m_pDepthStencilView);
 
 		Safe_Release(m_pPostRenderTargetView);
-		Safe_Release(m_pShadowView);
+		Safe_Release(m_pDepthStencilView);
 
 		return S_OK;
 	}
@@ -164,6 +167,22 @@ HRESULT CRenderTarget_Manager::Bind_ShaderResourceView(const _tchar* pTargetTag,
 		return E_FAIL;
 
 	return pRenderTarget->Bind_ShaderResourceView(pShader, pConstantName);
+}
+
+HRESULT CRenderTarget_Manager::Change_DepthStencil(ID3D11DeviceContext* pContext,_float4 vClearColor)
+{
+	pContext->OMGetRenderTargets(1, &m_pPostRenderTargetView, &m_pDepthStencilView);
+	pContext->OMSetRenderTargets(1, &m_pPostRenderTargetView, m_pShadowView);
+	 
+	pContext->ClearRenderTargetView(m_pBackBufferView,(_float*)&vClearColor);
+	return S_OK;
+}
+
+HRESULT CRenderTarget_Manager::End_Depthstencil(ID3D11DeviceContext* pContext)
+{
+	pContext->OMSetRenderTargets(1, &m_pPostRenderTargetView, m_pDepthStencilView);
+	Safe_Release(m_pDepthStencilView);
+	return S_OK;
 }
 
 #ifdef _DEBUG

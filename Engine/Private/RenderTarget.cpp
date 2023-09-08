@@ -60,7 +60,7 @@ HRESULT CRenderTarget::Initialize_Depth(_uint iSizeX, _uint iSizeY, DXGI_FORMAT 
 	TextureDesc.Height = iSizeY;
 	TextureDesc.MipLevels = 1;
 	TextureDesc.ArraySize = 1;
-	TextureDesc.Format = eFormat;
+	TextureDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
 	TextureDesc.SampleDesc.Quality = 0;
 	TextureDesc.SampleDesc.Count = 1;

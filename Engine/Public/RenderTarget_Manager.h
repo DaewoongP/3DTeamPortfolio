@@ -31,7 +31,8 @@ public:
 	HRESULT End_PostProcessingRenderTarget(ID3D11DeviceContext* pContext);
 
 	HRESULT Bind_ShaderResourceView(const _tchar* pTargetTag, class CShader* pShader, const _char* pConstantName);
-
+	HRESULT Change_DepthStencil(ID3D11DeviceContext* pContext, _float4 vClearColor);
+	HRESULT End_Depthstencil(ID3D11DeviceContext* pContext);
 	class CRenderTarget* Find_RenderTarget(const _tchar* pTargetTag);
 
 #ifdef _DEBUG
