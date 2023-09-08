@@ -29,10 +29,6 @@ HRESULT CComponent_Manager::Add_Prototype(_uint iLevelIndex, const _tchar* pProt
 {
 	if (nullptr != Find_Prototype(iLevelIndex, pPrototypeTag))
 	{
-#ifdef _TOOL
-		Safe_Release(pPrototype);
-		return S_OK;
-#endif // _TOOL
 		Safe_Release(pPrototype);
 		MSG_BOX("Already have Prototype In CComponent_Manager");
 		return E_FAIL;

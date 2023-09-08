@@ -135,6 +135,7 @@ public: /* For.PhysX_Manager */
 	PxPhysics* Get_Physics() const;
 	PxScene* Get_PhysxScene() const;
 	PxControllerManager* Get_ControllerManager() const;
+	cloth::Factory* Get_ClothFactory() const;
 
 public:	/* For.Camera_Manager */
 	//컷씬 카메라 데이터를 담는다.

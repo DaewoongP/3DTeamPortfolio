@@ -34,6 +34,7 @@ private:
 	_bool			m_isFix3rdCam = { false };
 	_float3			m_v3rdCamOffset;
 	
+	
 private:
 	void		Debug_ImGui(_float fTimeDelta);
 #endif // _DEBUG
@@ -42,6 +43,7 @@ private:
 private:
 	_bool		m_isFixMouse = { 0 };
 	_float		m_fSpeed = { 0.f };
+	_float		m_fCameraNear = { 0.f };
 
 public:
 	static CCamera_Debug* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

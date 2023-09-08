@@ -21,7 +21,7 @@ void CWindow_Manager::Tick(_float fTimeDelta)
 	GetWindowRect(g_hWnd, &rc);
 
 	ImGui::SetNextWindowPos(ImVec2(0.f, 0.f));
-	ImGui::SetNextWindowSize(ImVec2(200.f, 200.f));
+	ImGui::SetNextWindowSize(ImVec2(200.f, 236.f));
 
 	ImGui::Begin("Menu", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
 
@@ -34,7 +34,10 @@ void CWindow_Manager::Tick(_float fTimeDelta)
 			if (FAILED(Add_Window(TEXT("Object_Window"),
 				CObject_Window::Create(m_pDevice, m_pContext,
 					ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(400.f, 700.f)))))
+			{
 				MSG_BOX("Failed Create Object_Window");
+				return;
+			}
 		}
 
 		Setup_Current_Window(TEXT("Object_Window"));
@@ -58,7 +61,10 @@ void CWindow_Manager::Tick(_float fTimeDelta)
 			if (FAILED(Add_Window(TEXT("Camera_Window"),
 				CCamera_Window::Create(m_pDevice, m_pContext,
 					ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(500.f, 768.f)))))
+			{	
 				MSG_BOX("Failed Create Camera_Window");
+				return;
+			}
 		}
 
 		Setup_Current_Window(TEXT("Camera_Window"));
@@ -73,7 +79,10 @@ void CWindow_Manager::Tick(_float fTimeDelta)
 			if (FAILED(Add_Window(TEXT("Effect_Window"),
 				CEffect_Window::Create(m_pDevice, m_pContext,
 					ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(446.f, 768.f)))))
+			{
 				MSG_BOX("Failed Create Object_Window");
+				return;
+			}
 		}
 
 		Setup_Current_Window(TEXT("Effect_Window"));
@@ -88,7 +97,10 @@ void CWindow_Manager::Tick(_float fTimeDelta)
 			if (FAILED(Add_Window(TEXT("Animation_Window"),
 				CAnimation_Window::Create(m_pDevice, m_pContext,
 					ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(446.f, 768.f)))))
+			{
 				MSG_BOX("Failed Create Animation_Window");
+				return;
+			}
 		}
 
 		Setup_Current_Window(TEXT("Animation_Window"));
@@ -103,7 +115,10 @@ void CWindow_Manager::Tick(_float fTimeDelta)
 			if (FAILED(Add_Window(TEXT("UI_Window"),
 				CUI_Window::Create(m_pDevice, m_pContext,
 					ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(446.f, 768.f)))))
+			{
 				MSG_BOX("Failed Create UI_Window");
+				return;
+			}
 		}
 		Setup_Current_Window(TEXT("UI_Window"));
 		m_eLoadingFlag |= UI_LOAD;
@@ -117,12 +132,33 @@ void CWindow_Manager::Tick(_float fTimeDelta)
 			if (FAILED(Add_Window(TEXT("Light_Window"),
 				CLight_Window::Create(m_pDevice, m_pContext,
 					ImVec2(_float(g_iWinSizeX + 8), _float(0.f)), ImVec2(446.f, 768.f)))))
+			{
 				MSG_BOX("Failed Create Light_Window");
+				return;
+			}
 		}
 
 		Setup_Current_Window(TEXT("Light_Window"));
 		m_eLoadingFlag |= LIGHT_LOAD;
 	}
+
+	if (ImGui::RadioButton("Cloth", iCurMenuList, CLOTH_WINDOW))
+	{
+		if (0 == (m_eLoadingFlag & CLOTH_LOAD))
+		{
+			if (FAILED(Add_Window(TEXT("Cloth_Window"),
+				CCloth_Window::Create(m_pDevice, m_pContext,
+					ImVec2(_float(g_iWinSizeX + 8), _float(0.f)), ImVec2(446.f, 768.f)))))
+			{
+				MSG_BOX("Failed Create Cloth_Window");
+				return;
+			}
+		}
+
+		Setup_Current_Window(TEXT("Cloth_Window"));
+		m_eLoadingFlag |= CLOTH_LOAD;
+	}
+		
 
 	ImGui::End();
 

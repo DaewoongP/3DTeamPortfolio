@@ -103,6 +103,12 @@
     <Filter Include="02. ToolObjects\02. Camera\CameraLine">
       <UniqueIdentifier>{f3dc9106-3922-45b1-89cd-257988ae1513}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Window\Window\Cloth">
+      <UniqueIdentifier>{b22e6093-ef65-47d6-8b49-65a9a34f497e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. ToolObjects\01. Dummy\Dummy_Cloth">
+      <UniqueIdentifier>{96d81abe-75a6-4828-952f-2eb9e1a68bb2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tool.h">
@@ -246,6 +252,12 @@
     <ClInclude Include="..\Public\Camera_Line.h">
       <Filter>02. ToolObjects\02. Camera\CameraLine</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Cloth_Window.h">
+      <Filter>01. Window\Window\Cloth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Dummy_Cloth.h">
+      <Filter>02. ToolObjects\01. Dummy\Dummy_Cloth</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -368,6 +380,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Camera_Line.cpp">
       <Filter>02. ToolObjects\02. Camera\CameraLine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Cloth_Window.cpp">
+      <Filter>01. Window\Window\Cloth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Dummy_Cloth.cpp">
+      <Filter>02. ToolObjects\01. Dummy\Dummy_Cloth</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
