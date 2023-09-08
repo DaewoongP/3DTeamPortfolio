@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GameObject.h"
+#include "ParticleSystem.h"
 #include "Tool_Defines.h"
 
 BEGIN(Engine)
@@ -9,7 +9,6 @@ class CShader;
 class CTexture;
 class CVIBuffer_Point_Color_Instance;
 class CVIBuffer_Rect_Color_Instance;
-class CParticleSystem;
 class CModel;
 class CMeshEffect;
 END
@@ -17,7 +16,7 @@ END
 BEGIN(Tool)
 class CEffect_Window;
 
-class CDummyParticle : public CGameObject
+class CDummyParticle : public CParticleSystem
 {
 	friend class CEffect_Window;
 
@@ -28,41 +27,47 @@ private:
 
 public:
 	// 툴에서만 프로토타입에서 파티클 경로를 받아줌.
-	HRESULT Initialize_Prototype();
+	HRESULT Initialize_Prototype(const _tchar* _pDirectoryPath);
 	// 클라에서는 이니셜라이즈에서 경로 받아줘서 초기화 하면 됨
 	virtual HRESULT Initialize(void* _pArg) override;
-	virtual void Tick(_float _fTimeDelta) override;
-	virtual void Late_Tick(_float _fTimeDelta) override;
-	virtual HRESULT Render() override;
+
+private:
+// 파티클 텍스처 변경.
+	void ChangeMainTexture(const _tchar* pTexturePath);
+	void ChangeTexture(CTexture** _pTexture, wstring& _wstrOriginPath, const _tchar* _pDestPath);
+
+	// 인스턴스 수를 변경
+	void RemakeBuffer(_uint iNumInstance);
 
 public:
-	void SaveParticle(const _tchar* _pDirectoryPath) {
-		m_pParticleSystem->Save(_pDirectoryPath);
-	}
-
-	void LoadParticle(const _tchar* _pDirectoryPath) {
-		m_pParticleSystem->Load(_pDirectoryPath);
-	}
-
-	CModel* ChangeModel(const _tchar* pPrototag);
-
-private:
-	HRESULT Add_Components();
-	HRESULT SetUp_ShaderResources();
+	void Tick_Imgui(_float _fTimeDelta);
+	void MainMoudle_TreeNode();
+	void EmissionModule_TreeNode();
+	void ShapeModule_TreeNode();
+	void RendererModule_TreeNode();
+	void Save_FileDialog();
+	void Load_FileDialog();
+	virtual void Restart() override;
 
 private:
-	CParticleSystem* m_pParticleSystem = { nullptr };
-	CMeshEffect* m_pMeshEffect = { nullptr };
-	CRenderer* m_pRenderer = { nullptr };
+	class CComboBox* m_pEmitterVelocity_ComboBox = { nullptr };
+	class CComboBox* m_pShapeCombo = { nullptr };
+	class CComboBox* m_pMeshModeCombo = { nullptr };
+	class CComboBox* m_pSpriteTypeCombo = { nullptr };
+	class CComboBox* m_pArcModeCombo = { nullptr };
+	class CComboBox* m_pMeshCombo = { nullptr };
+	class CComboBox* m_pConeEmitFromCombo = { nullptr };
+	class CComboBox* m_pBoxEmitFromCombo = { nullptr };
+	class CComboBox* m_pMeshTypeCombo = { nullptr };
+	class CComboBox* m_pClipChannelCombo = { nullptr };
 
-private: // Prototype_Component_Texture_
-	_uint				  m_iNumInstance;
-	_bool				  m_isRenderPaticle = { true };
-	_bool				  m_isMesh = { false };
-
+	class CImageFileDialog* m_pMaterialTexture = { nullptr };
+	class CImageFileDialog* m_pAlphaTexture = { nullptr };
+	class CImageFileDialog* m_pSpriteTexture = { nullptr };
+	_bool m_isPrevLooping = { false };
 public:
 	// 툴에서는 매개변수 추가. 클라에는 삭제하기
-	static CDummyParticle* Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext);
+	static CDummyParticle* Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, const _tchar* _pDirectoryPath);
 	virtual CGameObject* Clone(void* _pArg) override;
 	virtual void Free(void) override;
 };

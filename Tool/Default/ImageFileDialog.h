@@ -45,6 +45,7 @@ private:
     
 private:
     ID3D11Device* m_pDevice = { nullptr };
+    ImGuiFileDialog m_pInstance;
 
 private: // 이미지 관련 변수
     ID3D11ShaderResourceView* m_pDefaultTexture = { nullptr };

@@ -5,7 +5,26 @@ CComboBox::CComboBox()
 {
 }
 
-HRESULT CComboBox::Initialize(const _char* _szTag, const _char* _szName, initializer_list<string> _Items, const _char* _pStartItem)
+HRESULT CComboBox::Initialize(const _char* _szTag, const _char* _szName, vector<string> _Items, const _char* _pStartName)
+{
+    Set_Tag(_szTag);
+    Set_Name(_szName);
+
+    for (_uint i = 0; i < _Items.size(); ++i)
+    {
+        Push_Back(_Items[i].data());
+    }
+
+    if (false == m_Items.empty())
+        Update_Current_Item(0);
+
+    if (nullptr != _pStartName)
+        Set_StartTag(_pStartName);
+
+    return S_OK;
+}
+
+HRESULT CComboBox::Initialize(const _char* _szTag, const _char* _szName, initializer_list<string> _Items, const _char* _pStartName)
 {
     Set_Tag(_szTag);
     Set_Name(_szName);
@@ -15,8 +34,8 @@ HRESULT CComboBox::Initialize(const _char* _szTag, const _char* _szName, initial
     if (false == m_Items.empty())
         Update_Current_Item(0);
 
-    if(nullptr != _pStartItem)
-        Set_StartTag(_pStartItem);
+    if(nullptr != _pStartName)
+        Set_StartTag(_pStartName);
 
     return S_OK;
 }
@@ -83,6 +102,16 @@ string CComboBox::Tick(FLAG eFlag, _bool _isImplement)
     return Get_Current_Item();
 }
 
+void CComboBox::Change_Items(vector<string> _Items)
+{
+    m_Items.clear();
+
+    for (_uint i = 0; i < _Items.size(); ++i)
+        Push_Back(_Items[i].data());
+
+    Update_Current_Item(0);
+}
+
 void CComboBox::Push_Back(const _char* _szItem)
 {
     m_Items.push_back(_szItem);
@@ -127,6 +156,19 @@ void CComboBox::Update_Current_Item(_uint _iItemIndex)
 }
 
 CComboBox* CComboBox::Create(const _char* _szTag, const _char* _szName, initializer_list<string> _Items, const _char* pStartName)
+{
+    CComboBox* pInstance = new CComboBox;
+
+    if (FAILED(pInstance->Initialize(_szTag, _szName, _Items, pStartName)))
+    {
+        MSG_BOX("Failed to Created ComboBox");
+        Safe_Release(pInstance);
+    }
+
+    return pInstance;
+}
+
+CComboBox* CComboBox::Create(const _char* _szTag, const _char* _szName, vector<string> _Items, const _char* pStartName)
 {
     CComboBox* pInstance = new CComboBox;
 

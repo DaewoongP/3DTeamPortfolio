@@ -3,19 +3,31 @@
 #include "Client_Includes.h"
 #include "Behavior_Includes.h"
 
+#pragma region BackGrounds
 #include "Sky.h"
 #include "Terrain.h"
 #include "Logo_BackGround.h"
+#pragma endregion BackGrounds
+
+#pragma region Monsters & NPC
 #include "Armored_Troll.h"
 #include "Forest_Troll.h"
 #include "Golem_Combat.h"
 #include "Golem_Merlin.h"
 #include "Dugbog.h"
+#pragma endregion Monsters & NPC
 
+#pragma region Weapon
 #include "Weapon_Armored_Troll.h"
 #include "Weapon_Forest_Troll.h"
 #include "Weapon_Golem_Combat.h"
 #include "Weapon_Golem_Merlin.h"
+#pragma endregion Weapon
+
+#pragma region Effects
+#include "ParticleSystem.h"
+#include "MeshEffect.h"
+#pragma endregion Effects
 
 #ifdef _DEBUG
 #include "Test_Player.h"
@@ -144,6 +156,17 @@ HRESULT CLoader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Texture_SkyBox"),
 			CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/SkyBox/Sky_%d.dds"), 4))))
 			throw TEXT("Prototype_Component_Texture_SkyBox");
+
+		/* Prototype_Component_Texture_Default_Particle*/
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Texture_Default_Particle"),
+			CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Textures/Default_Particle.png")))))
+			throw TEXT("Prototype_Component_Texture_Default_Particle");
+
+		/* Prototype_Component_Texture_T_Default_Material_Grid_M*/
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Texture_T_Default_Material_Grid_M"),
+			CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/NonAnims/SM_SpherePrimitiveRegularNormals_01/T_Default_Material_Grid_M.png")))))
+			throw TEXT("Prototype_Component_Texture_Default_Particle");
+
 
 		lstrcpy(m_szLoading, TEXT("버퍼 로딩 중."));
 		/* For.Prototype_Component_VIBuffer_Cube */
@@ -421,6 +444,11 @@ HRESULT CLoader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_NPC"),
 			CTest_NPC::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Test_NPC");
+
+		/* For.Prototype_GameObject_Sky */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Particle"),
+			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Test/"), LEVEL_STATIC))))
+			throw TEXT("Prototype_GameObject_Test_Particle");
 #endif // _DEBUG
 	}
 	catch (const _tchar* pErrorTag)

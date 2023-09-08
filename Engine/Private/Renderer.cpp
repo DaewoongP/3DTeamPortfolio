@@ -195,8 +195,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 	
 	if (FAILED(Render_Shadow()))
 		return E_FAIL;
-	if (FAILED(Render_SSAO()))
-		return E_FAIL;
+	//if (FAILED(Render_SSAO()))
+	//	return E_FAIL;
 	if (FAILED(Render_Blur()))
 		return E_FAIL;
 	

@@ -5,7 +5,7 @@
 #include "MapDummy.h"
 #include "MapObject.h"
 #include "Camera_Point.h"
-
+#include "DummyMeshEffect.h"
 #ifdef _DEBUG
 
 #include "Camera_Line.h"
@@ -187,12 +187,6 @@ HRESULT CMainTool::Ready_Prototype_Component()
 {
 	if (nullptr == m_pGameInstance)
 		return E_FAIL;
-	
-	/*m_pGameInstance->Add_Prototype_Textures(LEVEL_TOOL, m_pDevice, m_pContext
-		, TEXT("Prototype_Component_Texture"), TEXT(".png"), TEXT("../../Resources/UI/UI/Game/UI/Common"));
-
-	m_pGameInstance->Add_Prototype_Models(LEVEL_TOOL, m_pDevice, m_pContext, CModel::TYPE_NONANIM
-		, TEXT("Prototype_Component_Model"), TEXT(".dat"), TEXT("../../Resources/Models/NonAnims/"));*/
 
 	/* Prototype_Component_Renderer */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Renderer"),
@@ -273,6 +267,11 @@ HRESULT CMainTool::Ready_Prototype_Component()
 		CVIBuffer_Rect::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	/* Prototype_Component_VIBuffer_GeoSphere */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_VIBuffer_GeoSphere"),
+		CVIBuffer_GeoSphere::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	/* Prototype_Component_VIBuffer_Terrain */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_VIBuffer_Terrain"),
 		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, 513, 513))))
@@ -292,7 +291,6 @@ HRESULT CMainTool::Ready_Prototype_Component()
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_VIBuffer_Rect_Color_Instance"),
 		CVIBuffer_Rect_Color_Instance::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
-
 
 	/* Prototype_Component_Texture_Terrain */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Texture_Terrain"),
@@ -314,7 +312,7 @@ HRESULT CMainTool::Ready_Prototype_Component()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Textures/Default_Particle.png")))))
 		return E_FAIL;
 
-	/* Prototype_Component_Texture_Default_Particle*/
+	/* Prototype_Component_Texture_T_Default_Material_Grid_M*/
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Texture_T_Default_Material_Grid_M"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/NonAnims/SM_SpherePrimitiveRegularNormals_01/T_Default_Material_Grid_M.png")))))
 		return E_FAIL;
@@ -331,20 +329,19 @@ HRESULT CMainTool::Ready_Prototype_Component()
 		, TEXT("../../Resources/Models/NonAnims/SM_SpherePrimitiveRegularNormals_01/SM_SpherePrimitiveRegularNormals_01.dat")))))
 		return E_FAIL;
 
-	/* Prototype_Component_Default_ParticleSystem*/
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Default_ParticleSystem"),
-		CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Particles/Fire/")))))
-		return E_FAIL;
-
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Default_MeshEffect"),
-		CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Particles/Fire/")))))
-		return E_FAIL;
-
 	return S_OK;
 }
 
 HRESULT CMainTool::Ready_Prototype_Object()
 {
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Default_ParticleSystem"),
+		CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Test/"), LEVEL_TOOL))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Default_MeshEffect"),
+		CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Test/")))))
+		return E_FAIL;
+
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_Terrain"),
 		CTerrain::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
@@ -358,7 +355,11 @@ HRESULT CMainTool::Ready_Prototype_Object()
 		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyParticle"),
-		CDummyParticle::Create(m_pDevice, m_pContext))))
+		CDummyParticle::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Test/")))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyMeshEffect"),
+		CDummyMeshEffect::Create(m_pDevice, m_pContext, L""))))
 		return E_FAIL;
 
 	/* Prototype_GameObject_Dummy*/
@@ -379,6 +380,11 @@ HRESULT CMainTool::Ready_Prototype_Object()
 	/* Prototype_GameObject_Camera_Point*/
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_Camera_Point"),
 		CCamera_Point::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* Prototype_GameObject_Camera_Point*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_Shape_GeoSphere"),
+		CShape_GeoSphere::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 #ifdef _DEBUG

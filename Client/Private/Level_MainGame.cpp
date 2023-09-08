@@ -14,7 +14,8 @@ HRESULT CLevel_MainGame::Initialize()
 		return E_FAIL;
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 		return E_FAIL;
-
+	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
+		return E_FAIL;
 #ifdef _DEBUG
 	if (FAILED(Ready_Layer_Debug(TEXT("Layer_Debug"))))
 		return E_FAIL;
@@ -91,6 +92,23 @@ HRESULT CLevel_MainGame::Ready_Layer_BackGround(const _tchar* pLayerTag)
 
 HRESULT CLevel_MainGame::Ready_Layer_Player(const _tchar* pLayerTag)
 {
+	return S_OK;
+}
+HRESULT CLevel_MainGame::Ready_Layer_Effect(const _tchar* pLayerTag)
+{
+
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+#ifdef _DEBUG
+ 	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Particle"), pLayerTag, TEXT("GameObject_Test_Particle"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Particle)");
+		return E_FAIL;
+	}
+#endif _DEBUG
+	Safe_Release(pGameInstance);
+
 	return S_OK;
 }
 #ifdef _DEBUG

@@ -8,6 +8,7 @@ CMeshEffect::CMeshEffect(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
 	: CGameObject(_pDevice, _pContext)
 {
 	m_Path[TEXTURE_PATH] = TEXT("../../Resources/NonAnims/SM_SpherePrimitiveRegularNormals_01/T_Default_Material_Grid_M.png");
+	m_Path[ALPHA_CLIP_TEXTURE_PATH] = TEXT("");
 	m_Path[MODEL_PATH] = TEXT("../../Resources/NonAnims/SM_SpherePrimitiveRegularNormals_01/SM_SpherePrimitiveRegularNormals_01.dat");
 	m_Path[SHADER_PATH] = TEXT("../Bin/ShaderFiles/Shader_DefaultEffect.hlsl");
 }
@@ -17,6 +18,11 @@ CMeshEffect::CMeshEffect(const CMeshEffect& _rhs)
 {
 	for (_uint i = 0; i < PATH_END; ++i)
 		m_Path[i] = _rhs.m_Path[i];
+}
+
+CMeshEffect::~CMeshEffect()
+{
+
 }
 
 HRESULT CMeshEffect::Initialize_Prototype(const _tchar* _pDirectoryPath)
@@ -34,15 +40,14 @@ HRESULT CMeshEffect::Initialize(void* _pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-
 	return S_OK;
 }
 
 void CMeshEffect::Tick(_float _fTimeDelta)
 {
-	//m_pModel->Play_Animation(_fTimeDelta);
+	//if(nullptr != m_pModel)
+		//m_pModel->Play_Animation(_fTimeDelta);
 	//m_eMeshEffectDesc.vOffset.x += 1.f * _fTimeDelta;
-	m_eMeshEffectDesc.vOffset.y += 1.f * _fTimeDelta;
 }
 
 void CMeshEffect::Late_Tick(_float _fTimeDelta)
@@ -69,11 +74,6 @@ HRESULT CMeshEffect::Render()
 	}
 
 	return S_OK;
-}
-
-MESHEFFECT* CMeshEffect::Get_MeshEffect_Desc()
-{
-	return &m_eMeshEffectDesc;
 }
 
 void CMeshEffect::Set_PassName(string strPassName)
@@ -113,6 +113,17 @@ HRESULT CMeshEffect::Add_Components()
 		return E_FAIL;
 	}
 
+	/* For.Com_AlphaClipTexture */
+	if (TEXT("") != m_Path[ALPHA_CLIP_TEXTURE_PATH])
+	{
+		if (FAILED(CComposite::Add_Component(0, ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_Path[TEXTURE_PATH].c_str()).c_str()
+			, TEXT("Com_AlphaClipTexture"), reinterpret_cast<CComponent**>(&m_pAlphaClipTexture))))
+		{
+			MSG_BOX("Failed to Add Component in CMeshEffect");
+			return E_FAIL;
+		}
+	}
+
 	/* For.Com_Shader */
 	if (FAILED(CComposite::Add_Component(0, ToPrototypeTag(TEXT("Prototype_Component"), m_Path[SHADER_PATH].c_str()).c_str()
 		, TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
@@ -136,7 +147,10 @@ HRESULT CMeshEffect::Setup_ShaderResources()
 		WorldMatirx *= OwnerWorldMatirx;
 	}
 
-	if (FAILED(m_pShader->Bind_RawValue("g_vOffset", &m_eMeshEffectDesc.vOffset, sizeof(_float2))))
+	if (FAILED(m_pShader->Bind_RawValue("g_vOffset", &m_vOffset, sizeof m_vOffset)))
+		return E_FAIL;
+
+	if (FAILED(m_pShader->Bind_RawValue("g_vTililing", &m_vTililing, sizeof m_vTililing)))
 		return E_FAIL;
 
 	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", &WorldMatirx)))
@@ -151,8 +165,17 @@ HRESULT CMeshEffect::Setup_ShaderResources()
 	if (FAILED(m_pShader->Bind_RawValue("g_vCamPosition", pGameInstance->Get_CamPosition(), sizeof(_float4))))
 		return E_FAIL;
 
-	if (FAILED(m_pTexture->Bind_ShaderResource(m_pShader, "g_Texture")))
-		return E_FAIL;
+	if (nullptr != m_pTexture)
+	{
+		if (FAILED(m_pTexture->Bind_ShaderResource(m_pShader, "g_Texture")))
+			return E_FAIL;
+	}
+	
+	if (nullptr != m_pAlphaClipTexture)
+	{
+		if (FAILED(m_pAlphaClipTexture->Bind_ShaderResource(m_pShader, "g_AlphaClipTexture")))
+			return E_FAIL;
+	}
 
 	return S_OK;
 }
@@ -184,6 +207,7 @@ void CMeshEffect::Free()
 {
 	__super::Free();
 	Safe_Release(m_pTexture);
+	Safe_Release(m_pAlphaClipTexture);
 	Safe_Release(m_pModel);
 	Safe_Release(m_pShader);
 	Safe_Release(m_pRenderer);

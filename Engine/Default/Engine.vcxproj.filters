@@ -301,6 +301,21 @@
     <Filter Include="01. Utility\03. Components\19. MeshEffect">
       <UniqueIdentifier>{35f210f5-64ec-49e0-97dd-d4fdb9664c1b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\03. Components\19. MeshEffect\Shader_Node">
+      <UniqueIdentifier>{9f3baec5-f71e-493a-83f3-0da1a053593a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\07. VIBuffer\Geometry">
+      <UniqueIdentifier>{4ca17cb9-064d-4866-a7e1-0787a6f5a8f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\02. GameObjects\01. Geometry">
+      <UniqueIdentifier>{1384f4d7-749c-4868-b059-bcaf61a52b4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\07. VIBuffer\Geometry\Shader">
+      <UniqueIdentifier>{e399c3da-b65d-48dc-965f-f4a2aaed7461}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\98. ShaderFiles">
+      <UniqueIdentifier>{33f1a79f-231a-4c0f-99eb-1faf844badeb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -603,6 +618,21 @@
     <ClInclude Include="..\public\PXAssertHandler.h">
       <Filter>01. Utility\11. Physics\Handler</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Shader_Nodes.h">
+      <Filter>01. Utility\03. Components\19. MeshEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Shader_Node.h">
+      <Filter>01. Utility\03. Components\19. MeshEffect\Shader_Node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\VIBuffer_GeoSphere.h">
+      <Filter>01. Utility\03. Components\07. VIBuffer\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\VIBuffer_Geometry.h">
+      <Filter>01. Utility\03. Components\07. VIBuffer\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Shape_GeoSphere.h">
+      <Filter>01. Utility\02. GameObjects\01. Geometry</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -875,6 +905,18 @@
     <ClCompile Include="..\private\PXAssertHandler.cpp">
       <Filter>01. Utility\11. Physics\Handler</Filter>
     </ClCompile>
+    <ClCompile Include="Shader_Node.cpp">
+      <Filter>01. Utility\03. Components\19. MeshEffect\Shader_Node</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\VIBuffer_GeoSphere.cpp">
+      <Filter>01. Utility\03. Components\07. VIBuffer\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\VIBuffer_Geometry.cpp">
+      <Filter>01. Utility\03. Components\07. VIBuffer\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Shape_GeoSphere.cpp">
+      <Filter>01. Utility\02. GameObjects\01. Geometry</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Navigation.hlsl">
@@ -895,19 +937,28 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Debug.hlsl">
       <Filter>01. Utility\11. Physics\Shader</Filter>
     </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointColInstance.hlsl">
+      <Filter>01. Utility\98. ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxRectColInstance.hlsl">
+      <Filter>01. Utility\98. ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Geometry.hlsl">
+      <Filter>01. Utility\98. ShaderFiles</Filter>
+    </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_DefaultEffect.hlsl">
-      <Filter>01. Utility\03. Components\19. MeshEffect</Filter>
+      <Filter>01. Utility\98. ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Public\DirectXTK\matrix.inl">
       <Filter>99. Headers</Filter>
     </None>
-    <None Include="..\Bin\ShaderFiles\Shader_EngineHeader.hlsli">
-      <Filter>01. Utility\03. Components\19. MeshEffect</Filter>
-    </None>
     <None Include="..\Bin\ShaderFiles\Shader_Functions.hlsli">
-      <Filter>01. Utility\03. Components\19. MeshEffect</Filter>
+      <Filter>01. Utility\98. ShaderFiles</Filter>
+    </None>
+    <None Include="..\Bin\ShaderFiles\Shader_EngineHeader.hlsli">
+      <Filter>01. Utility\98. ShaderFiles</Filter>
     </None>
   </ItemGroup>
 </Project>
