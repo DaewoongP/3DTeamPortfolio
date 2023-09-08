@@ -219,9 +219,9 @@ HRESULT CLoader::Loading_For_MainGame()
 
 		/* For.Monster Models */
 		/* For.Prototype_Component_Model_Armored_Troll */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Armored_Troll"),
+		/*if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Armored_Troll"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/Troll_Armored.gcm")))))
-			throw TEXT("Prototype_Component_Model_Armored_Troll");
+			throw TEXT("Prototype_Component_Model_Armored_Troll");*/
 
 		/* For.Prototype_Component_Model_Forest_Troll */
 		//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Forest_Troll"),

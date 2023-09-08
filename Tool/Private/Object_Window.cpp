@@ -622,7 +622,7 @@ void CObject_Window::Mesh_Picking_Menu()
 	}ENDINSTANCE;
 
 	// 메쉬 피킹한 오브젝트 상태 행렬 변경 메뉴
-	if (ImGui::Checkbox("Change MapObject's Matrix", &m_isChangeObject));
+	ImGui::Checkbox("Change MapObject's Matrix", &m_isChangeObject);
 	if (true == m_isChangeObject)
 	{
 		wstring ws = TEXT("GameObject_MapObject_");
@@ -732,6 +732,7 @@ HRESULT CObject_Window::Load_MapObject()
 	if (INVALID_HANDLE_VALUE == hFile)
 	{
 		MSG_BOX("Failed to Create MapObject File for Load MapObject");
+		CloseHandle(hFile);
 		return E_FAIL;
 	}
 
@@ -745,17 +746,20 @@ HRESULT CObject_Window::Load_MapObject()
 		if (!ReadFile(hFile, &SaveDesc.matTransform, sizeof(_float4x4), &dwByte, nullptr))
 		{
 			MSG_BOX("Failed to Read m_vecSaveObject.vPos");
+			CloseHandle(hFile);
 			return E_FAIL;
 		}
 
 		if (!ReadFile(hFile, &SaveDesc.iTagLen, sizeof(_uint), &dwByte, nullptr))
 		{
 			MSG_BOX("Failed to Read m_vecSaveObject.iTagLen");
+			CloseHandle(hFile);
 		}
 
 		if (!ReadFile(hFile, &SaveDesc.wszTag, SaveDesc.iTagLen, &dwByte, nullptr))
 		{
 			MSG_BOX("Failed to Read m_vecSaveObject.wszTag");
+			CloseHandle(hFile);
 			return E_FAIL;
 		}
 

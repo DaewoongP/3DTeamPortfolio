@@ -30,8 +30,6 @@
     <ClInclude Include="..\public\Bounding_Sphere.h" />
     <ClInclude Include="..\Public\Mesh_Instance.h" />
     <ClInclude Include="..\Public\Model_Instance.h" />
-    <ClInclude Include="..\public\Shader_Node.h" />
-    <ClInclude Include="..\Public\Shader_Nodes.h" />
     <ClInclude Include="..\Public\Shape_GeoSphere.h" />
     <ClInclude Include="..\public\Dynamic_Mesh.h" />
     <ClInclude Include="..\Public\JobManager.h" />
@@ -228,7 +226,6 @@
     <ClCompile Include="..\Private\VIBuffer_Rect.cpp" />
     <ClCompile Include="..\private\VIBuffer_Triangle.cpp" />
     <ClCompile Include="..\Public\Model_Instance.cpp" />
-    <ClCompile Include="Shader_Node.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Debug.hlsl" />

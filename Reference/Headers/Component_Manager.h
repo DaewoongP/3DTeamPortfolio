@@ -42,6 +42,7 @@
 #include "VIBuffer_Line.h"
 #include "VIBuffer_Cube.h"
 #include "VIBuffer_Cell.h"
+#include "Model_Instance.h"
 #include "VIBuffer_Cloth.h"
 #include "ParticleSystem.h"
 #include "Bounding_Sphere.h"

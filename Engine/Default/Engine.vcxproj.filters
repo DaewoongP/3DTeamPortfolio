@@ -307,9 +307,6 @@
     <Filter Include="01. Utility\03. Components\20. StaticMeshInstance\Mesh_Instance">
       <UniqueIdentifier>{4e0825c4-2a29-4254-9e2f-acfb05af52b1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\03. Components\19. MeshEffect\Shader_Node">
-      <UniqueIdentifier>{9f3baec5-f71e-493a-83f3-0da1a053593a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Utility\03. Components\07. VIBuffer\Geometry">
       <UniqueIdentifier>{4ca17cb9-064d-4866-a7e1-0787a6f5a8f4}</UniqueIdentifier>
     </Filter>
@@ -630,12 +627,6 @@
     <ClInclude Include="..\Public\Model_Instance.h">
       <Filter>01. Utility\03. Components\20. StaticMeshInstance\Model_Instance</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Shader_Nodes.h">
-      <Filter>01. Utility\03. Components\19. MeshEffect</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Shader_Node.h">
-      <Filter>01. Utility\03. Components\19. MeshEffect\Shader_Node</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\VIBuffer_GeoSphere.h">
       <Filter>01. Utility\03. Components\07. VIBuffer\Geometry</Filter>
     </ClInclude>
@@ -654,6 +645,7 @@
     <ClInclude Include="..\Public\JobManager.h">
       <Filter>01. Utility\11. Physics\Job</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\VIBuffer_Object_Instance.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -928,9 +920,6 @@
     </ClCompile>
     <ClCompile Include="..\Public\Model_Instance.cpp">
       <Filter>01. Utility\03. Components\20. StaticMeshInstance\Model_Instance</Filter>
-    </ClCompile>
-    <ClCompile Include="Shader_Node.cpp">
-      <Filter>01. Utility\03. Components\19. MeshEffect\Shader_Node</Filter>
     </ClCompile>
     <ClCompile Include="..\private\VIBuffer_GeoSphere.cpp">
       <Filter>01. Utility\03. Components\07. VIBuffer\Geometry</Filter>

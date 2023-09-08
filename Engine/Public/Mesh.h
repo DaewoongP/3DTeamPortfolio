@@ -11,7 +11,7 @@
 
 BEGIN(Engine)
 
-class CMesh : public CVIBuffer
+class ENGINE_DLL CMesh : public CVIBuffer
 {
 protected:
 	explicit CMesh(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
