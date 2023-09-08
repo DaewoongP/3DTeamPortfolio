@@ -36,7 +36,7 @@ private:
 	CShader*				m_pShaderCom = { nullptr };
 	CRenderer*				m_pRenderer = { nullptr };
 	CRigidBody*				m_pRigidBody = { nullptr };
-
+	
 	CCharacterController*	m_pController = { nullptr };
 
 private:

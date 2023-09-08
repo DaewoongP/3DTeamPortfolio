@@ -28,6 +28,8 @@
     <ClInclude Include="..\Public\Bounding_AABB.h" />
     <ClInclude Include="..\Public\Bounding_OBB.h" />
     <ClInclude Include="..\public\Bounding_Sphere.h" />
+    <ClInclude Include="..\public\Dynamic_Mesh.h" />
+    <ClInclude Include="..\Public\JobManager.h" />
     <ClInclude Include="..\Public\Time_Manager.h" />
     <ClInclude Include="..\public\Calculator.h" />
     <ClInclude Include="..\public\Camera.h" />
@@ -48,6 +50,7 @@
     <ClInclude Include="..\Public\CustomModel.h" />
     <ClInclude Include="..\Public\Modules.h" />
     <ClInclude Include="..\Public\Status.h" />
+    <ClInclude Include="..\public\VIBuffer_Cloth.h" />
     <ClInclude Include="..\Public\VIBuffer_Object_Instance.h" />
     <ClInclude Include="..\public\VIBuffer_Rect_Color_Instance.h" />
     <ClInclude Include="..\Public\VIBuffer_Sprite.h" />
@@ -130,6 +133,8 @@
     <ClCompile Include="..\Private\Bounding_AABB.cpp" />
     <ClCompile Include="..\Private\Bounding_OBB.cpp" />
     <ClCompile Include="..\private\Bounding_Sphere.cpp" />
+    <ClCompile Include="..\private\Dynamic_Mesh.cpp" />
+    <ClCompile Include="..\Private\JobManager.cpp" />
     <ClCompile Include="..\Private\Time_Manager.cpp" />
     <ClCompile Include="..\private\Calculator.cpp" />
     <ClCompile Include="..\private\Camera.cpp" />
@@ -149,6 +154,7 @@
     <ClCompile Include="..\Private\CustomModel.cpp" />
     <ClCompile Include="..\Private\Modules.cpp" />
     <ClCompile Include="..\Private\Status.cpp" />
+    <ClCompile Include="..\private\VIBuffer_Cloth.cpp" />
     <ClCompile Include="..\Private\VIBuffer_Rect_Color_Instance.cpp" />
     <ClCompile Include="..\Private\VIBuffer_Object_Instance.cpp" />
     <ClCompile Include="..\Private\VIBuffer_Sprite.cpp" />
@@ -368,7 +374,7 @@ call Copy.bat</Command>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <DisableSpecificWarnings>4828;4204;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <Optimization>Full</Optimization>
+      <Optimization>MaxSpeed</Optimization>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

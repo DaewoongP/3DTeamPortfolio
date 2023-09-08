@@ -36,7 +36,6 @@ HRESULT CArmored_Troll::Initialize(void* pArg)
 
 	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
-	m_pTransform->Set_RigidBody(m_pRigidBody);
 
 	return S_OK;
 }

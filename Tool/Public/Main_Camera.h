@@ -19,7 +19,7 @@ public:
 public:
 	void Set_MoveSpeed(const _float& _fMoveSpeed);
 	void IsLimitButton();
-
+	void Set_Position(_float3 _vPos);
 
 public:
 	HRESULT Initialize(void* pArg);

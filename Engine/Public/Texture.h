@@ -21,6 +21,7 @@ private:
 public:
 	const _float2 Get_TextureSize(_uint iTextureIndex);
 	_uint Get_NumTextures() { return m_iNumTextures; }
+	const _tchar* Get_TextureFilePath(_uint iTextureIndex = 0) { return m_szTextureFilePathes[iTextureIndex]; }
 
 public:
 	virtual HRESULT Initialize_Prototype(const _tchar * pTextureFilePath, _uint iNumTextures);
@@ -33,7 +34,7 @@ public:
 private:
 	_uint								m_iNumTextures = { 0 };
 	vector<ID3D11ShaderResourceView*>	m_Textures;
-	_tchar								m_szTextureFilePath[MAX_PATH] = TEXT("");
+	vector<const _tchar*>						m_szTextureFilePathes;
 
 public:
 	static CTexture* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar * pTextureFilePath, _uint iNumTextures = 1);

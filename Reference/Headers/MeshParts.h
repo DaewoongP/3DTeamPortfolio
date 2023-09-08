@@ -23,7 +23,9 @@ class ENGINE_DLL CMeshParts final : public CComponent
 public:
 	typedef struct tagMeshPartsDesc
 	{
-		const CModel::BONES* m_pBones = { nullptr };
+		const CModel::BONES*	pBones = { nullptr };
+		// 옷 처리용 데이터 파일 경로
+		const _tchar*			szClothDataFilePath = { nullptr };
 	}MESHPARTSDESC;
 
 private:
@@ -38,6 +40,7 @@ public:
 	_uint Get_NumMeshes() {
 		return m_iNumMeshes;
 	}
+	const vector<class CMesh*> Get_Meshes() const { return m_Meshes; }
 	void Get_Matrices(const _uint& _iMeshIndex, CModel::BONES _Bones, 
 		_Inout_ _float4x4* _pMatrices, _float4x4 _PivotMatrix);
 	void Set_MeshType(CCustomModel::MESHTYPE _eType) {
@@ -47,34 +50,36 @@ public:
 public:
 	virtual HRESULT Initialize_Prototype(const wstring& _wstrMeshPartsFilePath, const wstring& _wstrMeshPartsTag);
 	virtual HRESULT Initialize(void* pArg);
+	virtual void Tick(const _uint& _iMeshIndex, _float _fTimeDelta);
 	virtual HRESULT Render(const _uint& _iMeshIndex);
 
 public:
-	HRESULT Bind_Material(CShader* _pShader, const char* _pConstantName, 
+	HRESULT Bind_Material(class CShader* _pShader, const char* _pConstantName, 
 		const _uint& _iMeshIndex, Engine::TextureType _MaterialType);
 
 private:
-	CCustomModel::MESHTYPE m_eMeshType = { CCustomModel::MESH_END };
-	wstring		m_wstrMeshPartsTag = { TEXT("") };
+	CCustomModel::MESHTYPE		m_eMeshType = { CCustomModel::MESH_END };
+	wstring						m_wstrMeshPartsTag = { TEXT("") };
 
 private: // Files
-	MODEL				m_Model;
-	vector<NODE>		m_NodeDatas;
-	vector<MESH>		m_MeshDatas;
-	vector<MATERIAL>	m_MaterialDatas;
-	vector<ANIMATION>	m_AnimationDatas;
+	MODEL						m_Model;
+	vector<NODE>				m_NodeDatas;
+	vector<MESH>				m_MeshDatas;
+	vector<MATERIAL>			m_MaterialDatas;
+	vector<ANIMATION>			m_AnimationDatas;
 
 private: /* For.Meshes */
-	_uint					m_iNumMeshes = { 0 };
-	vector<class CMesh*>	m_Meshes;
+	_uint						m_iNumMeshes = { 0 };
+	vector<class CMesh*>		m_Meshes;
 
 private: /* For.Materials */
-	_uint					m_iNumMaterials = { 0 };
-	vector<MESHMATERIAL>	m_Materials;
+	_uint						m_iNumMaterials = { 0 };
+	vector<MESHMATERIAL>		m_Materials;
 
 private:
 	HRESULT Ready_File(const _tchar* _pMeshPartsFilePath);
 	HRESULT Ready_Mesh(const CModel::BONES& _Bones);
+	HRESULT Ready_DynamicMesh(const CModel::BONES& _Bones, const _tchar* szClothDataFilePath);
 	HRESULT Ready_Material();
 
 	void Release_FileDatas();
