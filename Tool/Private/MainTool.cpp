@@ -4,8 +4,10 @@
 #include "Dummy.h"
 #include "MapDummy.h"
 #include "MapObject.h"
+#include "MapObject_Ins.h"
+#include"LightDot.h"
 #include "Camera_Point.h"
-
+#include "DummyMeshEffect.h"
 #ifdef _DEBUG
 
 #include "Camera_Line.h"
@@ -121,7 +123,7 @@ HRESULT CMainTool::Initialize_ImGui()
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
-	io.Fonts->AddFontFromFileTTF("../../Resources/Fonts/NEXONLv1GothicBold.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesKorean());
+	io.Fonts->AddFontFromFileTTF("../../Resources/Fonts/NEXONLv1GothicBold.ttf", 15.0f, NULL, io.Fonts->GetGlyphRangesKorean());
 
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
@@ -245,7 +247,7 @@ HRESULT CMainTool::Ready_Prototype_Component()
 			VTXRECTCOLORINSTANCE_DECL::Elements, VTXRECTCOLORINSTANCE_DECL::iNumElements))))
 		return E_FAIL;
 
-	/* For.Prototype_Component_Shader_VtxMesh*/
+	/* For.Prototype_Component_Shader_VtxMesh */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Shader_VtxMesh"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxMesh.hlsl"),
 			VTXMESH_DECL::Elements, VTXMESH_DECL::iNumElements))))
@@ -260,6 +262,21 @@ HRESULT CMainTool::Ready_Prototype_Component()
 		return E_FAIL;
 	}
 
+	/* For.Prototype_Component_Shader_MeshInstance */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Shader_VtxMeshInstance"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxMeshInstance.hlsl"),
+			VTXMESHINSTANCE_DECL::Elements, VTXMESHINSTANCE_DECL::iNumElements))))
+	{
+		MSG_BOX("Failed Add_Prototype : (Prototype_Component_Shader_VtxMeshInstance)");
+		return E_FAIL;
+	}
+
+	/* For.Prototype_Component_Shader_Navigation */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Shader_Navigation"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Navigation.hlsl"),
+			VTXPOS_DECL::Elements, VTXPOS_DECL::iNumElements))))
+		return E_FAIL;
+
 	/* For.Prototype_Component_VIBuffer_Line */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_VIBuffer_Line"),
 		CVIBuffer_Line::Create(m_pDevice, m_pContext))))
@@ -271,6 +288,11 @@ HRESULT CMainTool::Ready_Prototype_Component()
 	/* Prototype_Component_VIBuffer_Rect */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_VIBuffer_Rect"),
 		CVIBuffer_Rect::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* Prototype_Component_VIBuffer_GeoSphere */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_VIBuffer_GeoSphere"),
+		CVIBuffer_GeoSphere::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* Prototype_Component_VIBuffer_Terrain */
@@ -293,7 +315,6 @@ HRESULT CMainTool::Ready_Prototype_Component()
 		CVIBuffer_Rect_Color_Instance::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-
 	/* Prototype_Component_Texture_Terrain */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Texture_Terrain"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Terrain/Tile%d.dds"), 2))))
@@ -314,7 +335,7 @@ HRESULT CMainTool::Ready_Prototype_Component()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Textures/Default_Particle.png")))))
 		return E_FAIL;
 
-	/* Prototype_Component_Texture_Default_Particle*/
+	/* Prototype_Component_Texture_T_Default_Material_Grid_M*/
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Texture_T_Default_Material_Grid_M"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/NonAnims/SM_SpherePrimitiveRegularNormals_01/T_Default_Material_Grid_M.png")))))
 		return E_FAIL;
@@ -331,20 +352,19 @@ HRESULT CMainTool::Ready_Prototype_Component()
 		, TEXT("../../Resources/Models/NonAnims/SM_SpherePrimitiveRegularNormals_01/SM_SpherePrimitiveRegularNormals_01.dat")))))
 		return E_FAIL;
 
-	/* Prototype_Component_Default_ParticleSystem*/
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Default_ParticleSystem"),
-		CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Particles/Fire/")))))
-		return E_FAIL;
-
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Default_MeshEffect"),
-		CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Particles/Fire/")))))
-		return E_FAIL;
-
 	return S_OK;
 }
 
 HRESULT CMainTool::Ready_Prototype_Object()
 {
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Default_ParticleSystem"),
+		CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Test/"), LEVEL_TOOL))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Default_MeshEffect"),
+		CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Test/")))))
+		return E_FAIL;
+
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_Terrain"),
 		CTerrain::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
@@ -358,7 +378,11 @@ HRESULT CMainTool::Ready_Prototype_Object()
 		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyParticle"),
-		CDummyParticle::Create(m_pDevice, m_pContext))))
+		CDummyParticle::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Test/")))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyMeshEffect"),
+		CDummyMeshEffect::Create(m_pDevice, m_pContext, L""))))
 		return E_FAIL;
 
 	/* Prototype_GameObject_Dummy*/
@@ -375,10 +399,25 @@ HRESULT CMainTool::Ready_Prototype_Object()
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_MapObject"),
 		CMapObject::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+
+	/* Prototype_GameObject_MapObject_Ins*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_MapObject_Ins"),
+		CMapObject_Ins::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 		
+	/* Prototype_GameObject_LightDot*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_LightDot"),
+		CLightDot::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	/* Prototype_GameObject_Camera_Point*/
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_Camera_Point"),
 		CCamera_Point::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* Prototype_GameObject_Camera_Point*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_Shape_GeoSphere"),
+		CShape_GeoSphere::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 #ifdef _DEBUG

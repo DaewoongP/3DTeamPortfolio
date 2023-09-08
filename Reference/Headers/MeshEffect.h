@@ -2,7 +2,6 @@
 
 //#include "Composite.h"
 #include "GameObject.h"
-#include "Modules.h"
 
 BEGIN(Engine)
 class CRenderer;
@@ -13,23 +12,16 @@ class CModel;
 class CTransform;
 END
 
-typedef struct ENGINE_DLL tagMeshEffect
-{
-	_float2 vOffset = { 0.f, 0.f };
-}MESHEFFECT;
-
 BEGIN(Engine)
-class ENGINE_DLL CMeshEffect final : public CGameObject
+class ENGINE_DLL CMeshEffect : public CGameObject
 {
-	enum PATH { TEXTURE_PATH, MODEL_PATH, SHADER_PATH, PATH_END};
+protected:
+	enum PATH { TEXTURE_PATH, ALPHA_CLIP_TEXTURE_PATH, MODEL_PATH, SHADER_PATH, PATH_END};
 
-private:
+protected:
 	explicit CMeshEffect(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext);
 	explicit CMeshEffect(const CMeshEffect& _rhs);
-	virtual ~CMeshEffect() = default;
-
-public:
-	MESHEFFECT* Get_MeshEffect_Desc();
+	virtual ~CMeshEffect();
 
 public:
 	void Set_PassName(string strPassName);
@@ -41,21 +33,24 @@ public:
 	void Tick(_float _fTimeDelta) override;
 	void Late_Tick(_float _fTimeDelta) override;
 	HRESULT Render() override;
-
-private:
+	
+protected:
 	HRESULT Add_Components();
 	HRESULT Setup_ShaderResources();
 
-private:
-	MESHEFFECT m_eMeshEffectDesc;
+protected:
+	_float2 m_vOffset = { 0.f, 0.f, };
+	_float2 m_vTililing = { 1.f, 1.f };
 
-private:
+protected:
 	string m_strPassName = { "Default" };
 	wstring m_Path[PATH_END];
+	_bool m_isAlphaClipTexture = { false };
 
-private:
+protected:
 	CModel* m_pModel = { nullptr };
 	CTexture* m_pTexture = { nullptr };
+	CTexture* m_pAlphaClipTexture = { nullptr };
 	CShader* m_pShader = { nullptr };
 	CRenderer* m_pRenderer = { nullptr };
 

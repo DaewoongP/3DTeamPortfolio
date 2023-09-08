@@ -175,7 +175,9 @@
     <ClInclude Include="..\Public\Forest_Troll.h" />
     <ClInclude Include="..\Public\Golem_Grunt.h" />
     <ClInclude Include="..\Public\Golem_Merlin.h" />
+    <ClInclude Include="..\Public\MapObject.h" />
     <ClInclude Include="..\Public\Pensive.h" />
+    <ClInclude Include="..\public\Test_Cloth.h" />
     <ClInclude Include="..\Public\Wait.h" />
     <ClInclude Include="..\Public\Weapon_Armored_Troll.h" />
     <ClInclude Include="..\Public\Test_NPC.h" />
@@ -245,7 +247,9 @@
     <ClCompile Include="..\Private\Forest_Troll.cpp" />
     <ClCompile Include="..\Private\Golem_Grunt.cpp" />
     <ClCompile Include="..\Private\Golem_Merlin.cpp" />
+    <ClCompile Include="..\Private\MapObject.cpp" />
     <ClCompile Include="..\Private\Pensive.cpp" />
+    <ClCompile Include="..\private\Test_Cloth.cpp" />
     <ClCompile Include="..\Private\Wait.cpp" />
     <ClCompile Include="..\Private\Weapon_Armored_Troll.cpp" />
     <ClCompile Include="..\Private\Test_NPC.cpp" />

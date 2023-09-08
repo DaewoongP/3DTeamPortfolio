@@ -24,12 +24,12 @@ const _float4 CCamera_Manager::Get_OffSetEye(OFFSETCAMERADESC& _OffSetCameraDesc
 
 void CCamera_Manager::Tick(_float _TimeDelta)
 {
-	if (nullptr == m_pMainCamera)
+	if (nullptr == m_pCurrentCamera)
 	{
 		return;
 	}
 
-	m_pMainCamera->Tick(_TimeDelta);
+	m_pCurrentCamera->Tick(_TimeDelta);
 
 	//컷씬에 재생 할 것 이 있다면.
 	if (false == m_SplineData.empty() || false == m_CutSceneCameraDescs.empty())
@@ -55,7 +55,7 @@ void CCamera_Manager::Tick(_float _TimeDelta)
 
 void CCamera_Manager::Late_Tick(_float _TimeDelta)
 {
-	if (nullptr == m_pMainCamera)
+	if (nullptr == m_pCurrentCamera)
 	{
 		return;
 	}
@@ -74,22 +74,6 @@ HRESULT CCamera_Manager::Initialize_CameraManager()
 	{
 		iter = m_SplineData.end();
 	}
-
-	return S_OK;
-}
-
-HRESULT CCamera_Manager::Add_MainCamera(CCamera* _pMainCamera)
-{
-	NULL_CHECK_RETURN(_pMainCamera, E_FAIL);
-
-	//혹시있다면 변경이므로 레퍼런스 카운트 여기서 제거
-	if (nullptr != m_pMainCamera)
-	{
-		Safe_Release(m_pMainCamera);
-		m_pMainCamera = nullptr;
-	}
-
-	m_pMainCamera = _pMainCamera;
 
 	return S_OK;
 }
@@ -197,6 +181,55 @@ HRESULT CCamera_Manager::Add_OffSetCamera(const _tchar* _OffSetTag)
 	}
 
 	return S_OK;
+}
+
+HRESULT CCamera_Manager::Add_Camera(const _tchar* _CameraTag, CCamera* _pCamera)
+{
+	if (nullptr == _CameraTag || nullptr == _pCamera)
+	{
+		MSG_BOX("Failed Add Camera");
+
+		return E_FAIL;
+	}
+
+	m_Cameras.emplace(_CameraTag, _pCamera);
+
+	return S_OK;
+}
+
+HRESULT CCamera_Manager::Set_Camera(const _tchar* _CameraTag)
+{
+	m_pCurrentCamera = Find_Camera(_CameraTag);
+
+	if (nullptr == m_pCurrentCamera)
+	{
+		return E_FAIL;
+	}
+
+	return S_OK;
+}
+
+CCamera* CCamera_Manager::Find_Camera(const _tchar* _CameraTag)
+{
+	unordered_map<const _tchar*, class CCamera*>::iterator iter = find_if(m_Cameras.begin(), m_Cameras.end(), CTag_Finder(_CameraTag));
+
+	if (m_Cameras.end() == iter)
+	{
+		MSG_BOX("Failed Fine Camera");
+
+		return nullptr;
+	}
+
+	return iter->second;
+}
+
+void CCamera_Manager::Stop_CutScene()
+{
+	Clear_Queue(m_CutSceneCameraDescs);
+
+	m_SplineData.clear();
+
+	m_fCutSceneTimeAcc = 0.0f;
 }
 
 void CCamera_Manager::Play_CutScene(_float _TimeDelta)
@@ -330,7 +363,7 @@ void CCamera_Manager::Play_Spline_CutScene(_float _TimeDelta)
 			//러프 비율
 			_float fRatio =
 				m_fCutSceneTimeAcc /
-				(*m_SplineDataIndexAccess[3]).fDuration;
+				(*m_SplineDataIndexAccess[2]).fDuration;
 
 			_float4 vEye = XMVectorCatmullRom(
 				(*m_SplineDataIndexAccess[0]).vEye,
@@ -586,5 +619,5 @@ void CCamera_Manager::CutScene_Lerp_Update(CUTSCENECAMERADESC _CutSceneCameraDes
 void CCamera_Manager::Free()
 {
 	Safe_Release(m_pPipeLine);
-	Safe_Release(m_pMainCamera);
+	Safe_Release(m_pCurrentCamera);
 }

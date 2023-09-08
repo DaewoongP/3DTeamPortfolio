@@ -1,9 +1,11 @@
 #include "..\Public\Navigation.h"
 #include "Cell.h"
+#include "GameObject.h"
 
 #ifdef _DEBUG
 #include "Shader.h"
 #include "PipeLine.h"
+#include "Bounding_Sphere.h"
 #endif
 
 CNavigation::CNavigation(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -25,11 +27,44 @@ CNavigation::CNavigation(const CNavigation& rhs)
 #ifdef _DEBUG
 	Safe_AddRef(m_pShader);
 #endif
+}
 
+_float CNavigation::Get_CurrentCellY(_float3 vPosition) const
+{
+	if (0 > m_iCurrentIndex)
+		return 0.f;
+
+	_float3 vPointA = m_Cells[m_iCurrentIndex]->Get_Point(CCell::POINT_A);
+	_float3 vPointB = m_Cells[m_iCurrentIndex]->Get_Point(CCell::POINT_B);
+	_float3 vPointC = m_Cells[m_iCurrentIndex]->Get_Point(CCell::POINT_C);
+
+	_float4 vCurrentPlane = XMPlaneFromPoints(vPointA, vPointB, vPointC);
+
+	// y = (-ax -cz -d) / b
+	return -1.f * vCurrentPlane.x * vPosition.x +
+		-1.f * vCurrentPlane.z * vPosition.z +
+		-1.f * vCurrentPlane.w / vCurrentPlane.y;
+}
+
+CELLFLAG CNavigation::Get_CurrentCellFlag() const
+{
+	if (0 > m_iCurrentIndex)
+	{
+		MSG_BOX("Failed Get_CurrentCellFlag");
+		return CELLFLAG();
+	}
+
+	return m_Cells[m_iCurrentIndex]->Get_CellFlag();
 }
 
 HRESULT CNavigation::Initialize_Prototype(const _tchar* pNavigationDataFiles)
 {
+#ifdef _DEBUG
+	m_pShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Navigation.hlsl"), VTXPOS_DECL::Elements, VTXPOS_DECL::iNumElements);
+	if (nullptr == m_pShader)
+		return E_FAIL;
+#endif
+
 	_ulong		dwByte = { 0 };
 
 	HANDLE		hFile = CreateFile(pNavigationDataFiles, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
@@ -56,44 +91,46 @@ HRESULT CNavigation::Initialize_Prototype(const _tchar* pNavigationDataFiles)
 	if (FAILED(SetUp_Neighbors()))
 		return E_FAIL;
 
-#ifdef _DEBUG
-	m_pShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Navigation.hlsl"), VTXPOS_DECL::Elements, VTXPOS_DECL::iNumElements);
-	if (nullptr == m_pShader)
-		return E_FAIL;
-#endif
-
 	return S_OK;
 }
 
 HRESULT CNavigation::Initialize(void* pArg)
 {
-	if (nullptr != pArg)
-		memmove(&m_NaviDesc, pArg, sizeof(NAVIGATIONDESC));
+	if (nullptr == m_pOwner)
+	{
+		MSG_BOX("NULL Owner");
+		return E_FAIL;
+	}
+	_float3 vPosition = static_cast<CGameObject*>(m_pOwner)->Get_Transform()->Get_Position();
+
+	Find_MyCell(vPosition);
 
 	return S_OK;
 }
 
-_bool CNavigation::is_Move(_float3 vPosition)
+_bool CNavigation::Is_Move(_float3 vPosition, _Inout_ _float3* pNormal, _Inout_ CELLFLAG* pFlag)
 {
 	_int		iNeighborIndex = -1;
+	_float3		vXZPosition = XMVectorSet(XMVectorGetX(vPosition), 0.f, XMVectorGetZ(vPosition), 1.f);
 
-	if (true == m_Cells[m_NaviDesc.iCurrentIndex]->is_In(vPosition, &iNeighborIndex))
+	if (true == m_Cells[m_iCurrentIndex]->Is_In(vXZPosition, pNormal, &iNeighborIndex, pFlag))
 	{
 		return true;
 	}
-	else /* 밖으로 나갔어. */
+	else
 	{
-		if (-1 != iNeighborIndex) /* 이웃이  있다라면. */
+		if (-1 != iNeighborIndex)
 		{
 			while (true)
 			{
 				if (-1 == iNeighborIndex)
 					return false;
 
-				if (true == m_Cells[iNeighborIndex]->is_In(vPosition, &iNeighborIndex))
+				if (true == m_Cells[iNeighborIndex]->Is_In(vXZPosition, pNormal, &iNeighborIndex, pFlag))
 					break;
 			}
-			m_NaviDesc.iCurrentIndex = iNeighborIndex;
+
+			m_iCurrentIndex = iNeighborIndex;
 
 			return true;
 		}
@@ -103,6 +140,18 @@ _bool CNavigation::is_Move(_float3 vPosition)
 
 	return false;
 }
+
+HRESULT CNavigation::Find_MyCell(_float3 vPosition)
+{
+	for (auto& pCell : m_Cells)
+	{
+		if (true == pCell->Is_In(vPosition, nullptr, nullptr, nullptr))
+			m_iInitialIndex = m_iCurrentIndex = pCell->Get_CellIndex();
+	}
+
+	return S_OK;
+}
+
 
 #ifdef _DEBUG
 HRESULT CNavigation::Render()
@@ -123,14 +172,13 @@ HRESULT CNavigation::Render()
 
 	Safe_Release(pPipeLine);
 
-	_float4		vColor = -1 == m_NaviDesc.iCurrentIndex ? _float4(0.f, 1.f, 0.f, 1.f) : _float4(1.f, 0.f, 0.f, 1.f);
+	_float4		vColor = -1 == m_iCurrentIndex ? _float4(0.f, 1.f, 0.f, 1.f) : _float4(1.f, 0.f, 0.f, 1.f);
 
 	if (FAILED(m_pShader->Bind_RawValue("g_vColor", &vColor, sizeof(_float4))))
 		return E_FAIL;
 
-	if (-1 == m_NaviDesc.iCurrentIndex)
+	if (-1 == m_iCurrentIndex)
 	{
-
 		if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", &WorldMatrix)))
 			return E_FAIL;
 
@@ -147,7 +195,7 @@ HRESULT CNavigation::Render()
 
 		m_pShader->Begin(0);
 
-		m_Cells[m_NaviDesc.iCurrentIndex]->Render();
+		m_Cells[m_iCurrentIndex]->Render();
 	}
 
 	return S_OK;

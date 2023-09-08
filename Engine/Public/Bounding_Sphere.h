@@ -53,7 +53,7 @@ private:
 
 public:
 	static CBounding_Sphere* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CBounding* Clone(void* pBoundingDesc) override;
+	virtual CBounding_Sphere* Clone(void* pBoundingDesc) override;
 	virtual void Free() override;
 };
 

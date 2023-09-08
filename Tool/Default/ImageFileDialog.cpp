@@ -33,44 +33,45 @@ void CImageFileDialog::Tick()
     m_isOk = false;
     _int iTemp1;
     _int iTemp2;
-
+    
+    
     if (nullptr == m_pTexture)
     {
         if (ImGui::ImageButton(m_pDefaultTexture, ImVec2(_float(m_iImageButtonWidth), _float(m_iImageButtonHeight))))
         {
-            ImGuiFileDialog::Instance()->OpenDialog(m_strFileDialogTag.data(), m_strFileDialogName.data(), m_strHeaderFilter.data(), m_strStartPath.data());
+            m_pInstance.OpenDialog(m_strFileDialogTag.data(), m_strFileDialogName.data(), m_strHeaderFilter.data(), m_strStartPath.data());
         }
     }
     else
     {
         if (ImGui::ImageButton(m_pTexture, ImVec2(_float(m_iImageButtonWidth), _float(m_iImageButtonHeight))))
         {
-            ImGuiFileDialog::Instance()->OpenDialog(m_strFileDialogTag.data(), m_strFileDialogName.data(), m_strHeaderFilter.data(), m_strStartPath.data());
+            m_pInstance.OpenDialog(m_strFileDialogTag.data(), m_strFileDialogName.data(), m_strHeaderFilter.data(), m_strStartPath.data());
         }
     }
 
     // display
-    if (ImGuiFileDialog::Instance()->Display(m_strFileDialogTag.data()))
+    if (m_pInstance.Display(m_strFileDialogTag.data()))
     {
         // action if OK
-        if (ImGuiFileDialog::Instance()->IsOk())
+        if (m_pInstance.IsOk())
         {
-            m_strFilePathName = ImGuiFileDialog::Instance()->GetFilePathName();
-            m_strFilePath = ImGuiFileDialog::Instance()->GetCurrentPath();
+            m_strFilePathName = m_pInstance.GetFilePathName();
+            m_strFilePath = m_pInstance.GetCurrentPath();
             m_isOk = true;
             Safe_Release(m_pTexture);
             LoadTextureFromFile(m_strFilePathName.data(), &m_pTexture, &iTemp1, &iTemp2);
         }
 
         // close
-        ImGuiFileDialog::Instance()->Close();
+        m_pInstance.Close();
     }
 
-    if (ImGuiFileDialog::Instance()->IsOpened())
+    if (m_pInstance.IsOpened())
     {
-        if (m_strPrevFilePathName != ImGuiFileDialog::Instance()->GetFilePathName())
+        if (m_strPrevFilePathName != m_pInstance.GetFilePathName())
         {
-            string strCurrentFilePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+            string strCurrentFilePathName = m_pInstance.GetFilePathName();
             Safe_Release(m_pTexture);
             LoadTextureFromFile(strCurrentFilePathName.data(), &m_pTexture, &iTemp1, &iTemp2);
             m_strPrevFilePathName = strCurrentFilePathName;
@@ -140,16 +141,16 @@ bool CImageFileDialog::LoadTextureFromFile(const char* filename, ID3D11ShaderRes
 
 CImageFileDialog* CImageFileDialog::Create(ID3D11Device* _pDevice, const _char* _pTag)
 {
-    CImageFileDialog* pInstance = New CImageFileDialog;
+    CImageFileDialog* m_pInstance = New CImageFileDialog;
 
-    if (FAILED(pInstance->Initialize(_pDevice, _pTag)))
+    if (FAILED(m_pInstance->Initialize(_pDevice, _pTag)))
     {
         MSG_BOX("Failed Create CImageFileDialog");
-        Safe_Release(pInstance);
+        Safe_Release(m_pInstance);
         return nullptr;
     }
 
-    return pInstance;
+    return m_pInstance;
 }
 
 void CImageFileDialog::Free(void)

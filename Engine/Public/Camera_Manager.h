@@ -41,9 +41,6 @@ public:
 	//엔진 초기화
 	HRESULT Initialize_CameraManager();
 
-	//매인 카메라를 넣어준다.
-	HRESULT Add_MainCamera(class CCamera* _pMainCamera);
-
 	//컷씬 카메라 데이터를 담는다.
 	HRESULT Read_CutSceneCamera(const _tchar* _CutSceneTag, const _tchar* _CutScenePath);
 
@@ -59,6 +56,20 @@ public:
 	//오프셋 재생을 위한 큐 추가
 	HRESULT Add_OffSetCamera(const _tchar* _OffSetTag);
 
+	//카메라 추가
+	HRESULT Add_Camera(const _tchar* _CameraTag, class CCamera* _pCamera);
+
+	//카메라 변경
+	HRESULT Set_Camera(const _tchar* _CameraTag);
+
+	//카메라 찾기
+	class CCamera* Find_Camera(const _tchar* _CameraTag);
+
+	//중지
+	void Stop_CutScene();
+
+
+
 	//for.protected
 
 protected:
@@ -70,9 +81,12 @@ private:
 	//파이프라인
 	class CPipeLine* m_pPipeLine = { nullptr };
 
-	//매인 카메라
-	class CCamera* m_pMainCamera = { nullptr };
+	//현제 카메라
+	class CCamera* m_pCurrentCamera = { nullptr };
 	
+	//카메라 컨테이너
+	unordered_map<const _tchar*, class CCamera*>	m_Cameras;
+
 	//for. CutScene
 	//컷씬 카메라 구조체 (이전 값을 담기 위함)
 	CUTSCENECAMERADESC m_PreviousCutSceneCameraDesc = {};

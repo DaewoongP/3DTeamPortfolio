@@ -25,14 +25,16 @@ HRESULT CComponent_Manager::Reserve_Containers(_uint iNumLevels)
 	return S_OK;
 }
 
-HRESULT CComponent_Manager::Add_Prototype(_uint iLevelIndex, const _tchar* pPrototypeTag, CComponent* pPrototype)
+HRESULT CComponent_Manager::Add_Prototype(_uint iLevelIndex, const _tchar* pPrototypeTag, CComponent* pPrototype, _bool isFailedSkip)
 {
 	if (nullptr != Find_Prototype(iLevelIndex, pPrototypeTag))
 	{
-#ifdef _TOOL
-		Safe_Release(pPrototype);
-		return S_OK;
-#endif // _TOOL
+		if (true == isFailedSkip)
+		{
+			Safe_Release(pPrototype);
+			return S_OK;
+		}
+
 		Safe_Release(pPrototype);
 		MSG_BOX("Already have Prototype In CComponent_Manager");
 		return E_FAIL;
@@ -120,13 +122,13 @@ void CComponent_Manager::Clear_LevelResources(_uint iLevelIndex)
 		return;
 	}
 
-	// ·¹ÀÌ¾î »èÁ¦.
+	// ï¿½ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½.
 	for (auto& Pair : m_pLayers[iLevelIndex])
 		Safe_Release(Pair.second);
 
 	m_pLayers[iLevelIndex].clear();
 
-	// ÇÁ·ÎÅäÅ¸ÀÔ »èÁ¦
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	for (auto& Pair : m_pPrototypes[iLevelIndex])
 		Safe_Release(Pair.second);
 

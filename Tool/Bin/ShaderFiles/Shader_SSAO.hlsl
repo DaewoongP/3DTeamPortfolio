@@ -3,6 +3,7 @@ matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix g_ViewMatrixInv, g_ProjMatrixInv;
 matrix g_vLightView;
 matrix g_vLightProj;
+
 float g_fCamFar;
 
 
@@ -293,7 +294,7 @@ PS_OUT PS_MAIN_SHADOW(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
 
-    vector vDepthDesc = g_DepthTexture.Sample(BlurSampler, In.vTexUV);
+    vector vDepthDesc = g_DepthTexture.Sample(LinearSampler, In.vTexUV);
 
 	//depthdesc y 는 rgba값이라고 생각하면된다.
     float fViewZ = vDepthDesc.y * g_fCamFar;
@@ -329,7 +330,7 @@ PS_OUT PS_MAIN_SHADOW(PS_IN In)
     
     float LightDepth_W = vLightDepth.y * g_fCamFar;
     float LightDepth_Z = vLightDepth.x * LightDepth_W;
-    float CamDepth = vPosition.z - 0.1f / g_fCamFar;
+    float CamDepth = vPosition.z - 0.005f / g_fCamFar;
     if (CamDepth > vLightDepth.x)
     {
         Out.vColor = float4(0.05f, 0.05f, 0.05f, 0.05f);

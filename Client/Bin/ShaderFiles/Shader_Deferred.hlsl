@@ -283,7 +283,7 @@ PS_OUT_LIGHT PS_MAIN_SPOTLIGHT(PS_IN In)
     vPosition.x = In.vTexUV.x * 2.f - 1.f;
     vPosition.y = In.vTexUV.y * -2.f + 1.f;
     vPosition.z = vDepthDesc.x;
-    vPosition.w = 1.f;
+    vPosition.w = 1.f; 
 
 	/* 뷰스페이스 상의 위치. */
     vPosition = vPosition * fViewZ;
@@ -296,20 +296,20 @@ PS_OUT_LIGHT PS_MAIN_SPOTLIGHT(PS_IN In)
 
     float fDistance = length(vLightDir);
 
-
+    
     // spotlight factor
     float fSpot = pow(max(dot(normalize(vLightDir), g_vLightDir), 0.0f), g_fSpotPower);
 
-	// 감쇠 효과
+	// 감쇄 효과
     // 실제 거리에 따른 공식처리 -> fSpot / fDistance * fDistance // -> f
     float fAtt = fSpot / fDistance * fDistance;
 	
-    Out.vShade = g_vLightDiffuse * saturate(max(dot(normalize(vLightDir) * -1.f, vNormal), 0.f) + (g_vLightAmbient * g_vMtrlAmbient)) * fAtt;
+    Out.vShade = g_vLightDiffuse * saturate(max(dot(normalize(vLightDir) , vNormal), 0.2f) + (g_vLightAmbient * g_vMtrlAmbient)) * fAtt;
 
     vector vReflect = reflect(normalize(vLightDir), vNormal);
     vector vLook = vPosition - g_vCamPosition;
 
-    Out.vSpecular = (g_vLightSpecular) * (g_vMtrlSpecular) * pow(max(dot(normalize(vReflect) * -1.f, normalize(vLook)), 0.f), 10.f) * fAtt;
+    Out.vSpecular = (g_vLightSpecular) * (g_vMtrlSpecular) * pow(max(dot(normalize(vReflect) , normalize(vLook)), 0.2f), 10.f) * fAtt;
 
     return Out;
 }
@@ -330,7 +330,7 @@ PS_OUT PS_MAIN_DEFERRED(PS_IN In)
     
     vector vShadow = g_ShadowTexture.Sample(LinearSampler, In.vTexUV);
     
-    Out.vColor = vDiffuse /** vShadow*/ * vShade * vBlur + 0.5*vSpecular;
+    Out.vColor = vDiffuse/* * vShadow*/ * vShade * vBlur + 0.5*vSpecular;
 
     return Out;
 }

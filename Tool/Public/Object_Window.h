@@ -5,6 +5,7 @@ BEGIN(Tool)
 
 class CMapDummy;
 class CMapObject;
+class CMapObject_Ins;
 
 class CObject_Window final : public CImWindow
 {
@@ -17,6 +18,15 @@ class CObject_Window final : public CImWindow
 		_uint iTagLen; // 문자열 길이
 		_tchar wszTag[MAX_PATH]; // 오브젝트 종류(모델 컴포넌트 이름)
 	}SAVEOBJECTDESC;
+
+	typedef struct SaveInsObjectDesc
+	{
+		_uint iInstanceCnt; // 인스턴스 개수
+		_float4x4* pMatTransform; // 각각 상태 행렬들의 주소
+		_float4x4 matTransform; // 상태 행렬
+		_uint iTagLen; // 문자열 길이
+		_tchar wszTag[MAX_PATH]; // 오브젝트 종류(모델 컴포넌트 이름)
+	}SAVEINSOBJECTDESC;
 
 private:
 	explicit CObject_Window(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -35,12 +45,16 @@ private:
 	void Install_Multi_Object(_float3 vPos); // 오브젝트 다중(인스턴싱) 설치 메뉴
 	void Select_Model(); // 모델 선택 메뉴
 	void Current_MapObject(); // 현재 설치되어 있는 맵 오브젝트 확인
-	void Save_Load_Menu(); // 세이브 로드 메뉴
+	void Save_Load_Menu(); // 오브젝트 세이브 로드 메뉴
+	void Ins_Save_Load_Menu(); // 인스턴트 오브젝트 세이브 로드 메뉴
 	void Delete_Object_Menu(); // 오브젝트 삭제 관련 메뉴
 	void Mesh_Picking_Menu(); // 메쉬 피킹 메뉴
+	void Change_Picking_Menu(const _tchar* wszTag, _uint iTagNum); // 피킹한 메쉬 변경
 	void Delete_Picking_Object(); // 피킹한 오브젝트 삭제 메뉴
 	HRESULT Save_MapObject(); // MapObject 저장
 	HRESULT Load_MapObject(); // MapObject 로드
+	HRESULT Save_MapObject_Ins(); // MapObject_Ins 저장
+	HRESULT Load_MapObject_Ins(); // MapObject_Ins 로드
 
 	void Deep_Copy_Name(const _tchar* wszName = nullptr); // 모델 이름 문자열 깊은 복사
 	void Deep_Copy_Path(const _tchar* wszPath); // 모델 경로 문자열 깊은 복사
@@ -58,8 +72,10 @@ private:
 	_bool m_isSelectModel = { false };
 	_bool m_isCurrentMapObject = { false };
 	_bool m_isSaveLoad = { false };
+	_bool m_isInsSaveLoad = { false };
 	_bool m_isInstallObject = { true };
 	_bool m_isPickingObject = { false };
+	_bool m_isChangeObject = { false };
 
 	// 버튼 On Off _bool 변수 모음
 	_bool m_isDeleteObject = { false };
@@ -69,6 +85,7 @@ private:
 
 	CMapDummy* m_pDummy = { nullptr }; // 생성해둔 Dummy의 주소
 	CMapObject* m_pObject = { nullptr }; // 설치할 MapObject의 주소
+	CMapObject_Ins* m_pObjIns = { nullptr }; // 설치할 MapObejct_Ins의 주소
 	_uint m_iMapObjectIndex = { 0 }; // 현재 맵에 설치된 맵 오브젝트의 개수
 
 	string m_strCurrentModel = { "Dummy" }; // 현재 활성화된 모델 이름, 초기값은 더미
@@ -82,6 +99,10 @@ private:
 	vector<wstring> m_vecMapObjectTag; // 맵에 추가한 오브젝트들의 넘버링 태그를 저장
 	vector<string> m_vecObjectTag_s; // 넘버링 태그를 string으로 저장함
  	vector<SAVEOBJECTDESC> m_vecSaveObject; // 저장할 맵 오브젝트에 대한 정보
+
+	_uint m_iInsObjectCnt = { 0 }; // 인스턴싱할 맵 오브젝트 개수
+	vector<SAVEINSOBJECTDESC> m_vecSaveInsObject; // 저장된 인스턴싱 맵 오브젝트에 대한 정보를 받아올 벡터
+	vector<_float4x4> m_vecSaveInsObjectWorld; // 인스턴싱으로 저장할 객체들의 월드 상태 행렬
 
 public:
 	static CObject_Window* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, ImVec2 vWindowPos, ImVec2 vWindowSize);

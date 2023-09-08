@@ -31,6 +31,7 @@ public:
 	_float4 Get_RandomVectorInSphere(_float fRadius);
 	HRESULT ReadFileInDirectory(_Inout_ vector<wstring>& OutVector, const _tchar* pFilePath, const _tchar* pExt);
 
+	_float3 PolarToCartesian(_float _fLength, _float _fTheta, _float fPhi);
 public:
 	virtual void Free() override;
 };

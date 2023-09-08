@@ -14,7 +14,6 @@ class CTransform;
 #define ANIMATIONLERPTIME 0.3f
 class ENGINE_DLL CModel : public CComponent
 {
-
 public:
 	enum TYPE { TYPE_NONANIM, TYPE_ANIM, TYPE_END };
 	enum ANIMTYPE { UPPERBODY, UNDERBODY, ANIM_END };
@@ -39,6 +38,7 @@ public:
 	vector<class CBone*>*		Get_Bone_Vector_Point() { return &m_Bones; }
 	_uint						Get_AnimationPartCount() { return m_iAnimationPartCount; }
 	_uint						Get_RootBoneIndex() { return m_iRootBoneIndex; }
+	_bool						Is_Able_Change_Animation() { return m_isChangeAnimation; }
 
 public:
 	virtual HRESULT Initialize_Prototype(TYPE eType, const _tchar* pModelFilePath, _float4x4 PivotMatrix);
@@ -53,7 +53,7 @@ public:
 	HRESULT Find_BoneIndex(const _tchar* pBoneName, _Inout_ _uint* iIndex);
 	void	Set_CurrentAnimIndex(_uint iIndex, ANIMTYPE eType = UPPERBODY);
 	void	Set_RootBone(_uint iIndex) { m_iRootBoneIndex = iIndex; }
-	void	Do_Root_Animation(_float fTimeDelta,CTransform* pTransform = nullptr);
+	void	Do_Root_Animation(CTransform* pTransform = nullptr);
 	HRESULT Separate_Animation(_int iFromIndex, _int iToIndex, ANIMTYPE eType);
 	void	Delete_Animation(_uint iAnimIndex, ANIMTYPE eType = UPPERBODY);
 
@@ -98,7 +98,9 @@ private:
 
 private:
 	_bool							m_isExportedTool = { false };
-	_bool							m_isCreatedByGCM = { false };
+
+	/* 애니메이션 상태 확인용 */
+	_bool							m_isChangeAnimation = { false };
 
 private:
 	HRESULT Ready_File(TYPE eType, const _tchar* pModelFilePath);
@@ -106,6 +108,7 @@ private:
 	HRESULT Ready_Meshes(TYPE eType, _float4x4 PivotMatrix);
 	HRESULT Ready_Materials();
 	HRESULT Ready_Animations();
+
 
 public:
 	HRESULT Convert_Animations_GCM();

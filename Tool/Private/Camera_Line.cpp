@@ -86,8 +86,6 @@ HRESULT CCamera_Line::LineBufferInitialize(void* _pArg)
 
 void CCamera_Line::LineBufferClear()
 {
-	Safe_Release(m_pLineBuffer);
-	
 	auto iter = m_Components.find(TEXT("Com_Line"));
 
 	if (iter != m_Components.end())
@@ -95,6 +93,8 @@ void CCamera_Line::LineBufferClear()
 		Safe_Release((*iter).second);
 		m_Components.erase(iter);
 	}
+	
+	Safe_Release(m_pLineBuffer);
 }
 
 

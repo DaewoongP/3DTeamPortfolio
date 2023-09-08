@@ -50,7 +50,7 @@ HRESULT CShader::Initialize_Prototype(const _tchar* pShaderFilePath, const D3D11
 		ZeroMemory(&PassDesc, sizeof PassDesc);
 		pPass->GetDesc(&PassDesc);
 
-		if (FAILED(m_pDevice->CreateInputLayout(pElements, iNumElements, 
+		if (FAILED(m_pDevice->CreateInputLayout(pElements, iNumElements,
 			PassDesc.pIAInputSignature, PassDesc.IAInputSignatureSize, &pInputLayout)))
 			return E_FAIL;
 
@@ -80,7 +80,7 @@ HRESULT CShader::Begin(const _char* pPassName)
 	ID3DX11EffectPass* pPass = pTechnique->GetPassByName(pPassName);
 	if (nullptr == pPass)
 		return E_FAIL;
-		
+
 	pPass->Apply(0, m_pContext);
 
 	ID3D11InputLayout* pInputLayout = Find_InputLayout(pPassName);
@@ -132,11 +132,11 @@ HRESULT CShader::Bind_Matrix(const _char* pConstantName, const _float4x4* pMatri
 	ID3DX11EffectVariable* pVariable = m_pEffect->GetVariableByName(pConstantName);
 	if (nullptr == pVariable)
 		return E_FAIL;
-	
+
 	ID3DX11EffectMatrixVariable* pVariableMatrix = pVariable->AsMatrix();
 	if (nullptr == pVariableMatrix)
 		return E_FAIL;
-	
+
 	return pVariableMatrix->SetMatrix((_float*)pMatrix);
 }
 
@@ -168,6 +168,55 @@ HRESULT CShader::Bind_RawValue(const _char* pConstantName, const void* pData, _u
 	return pVariable->SetRawValue(pData, 0, iSize);
 }
 
+vector<string> CShader::Get_PassList()
+{
+	vector<string> passNames;
+	// nullptr 체크
+	if (!m_pEffect)
+	{
+		return passNames;
+	}
+
+	// 넉넉하게 15개의 공간 확보.
+	passNames.reserve(15);
+	D3DX11_EFFECT_DESC effectDesc;
+	if (FAILED(m_pEffect->GetDesc(&effectDesc)))
+	{
+		return passNames;
+	}
+
+	// 테크니크 얻어옴.
+	ID3DX11EffectTechnique* pTech = m_pEffect->GetTechniqueByIndex(0);
+
+	// 테크니크 유효성 검사
+	if (nullptr != pTech && pTech->IsValid())
+	{
+		D3DX11_TECHNIQUE_DESC techDesc;
+		pTech->GetDesc(&techDesc);
+
+		// 모든 패스에 대해 반복
+		for (_uint passIndex = 0; passIndex < techDesc.Passes; ++passIndex)
+		{
+			ID3DX11EffectPass* pPass = pTech->GetPassByIndex(passIndex);
+
+			// 패스 유효성 검사
+			if (nullptr != pPass && pPass->IsValid())
+			{
+				D3DX11_PASS_DESC passDesc;
+				if (FAILED(pPass->GetDesc(&passDesc)))
+				{
+					continue;
+				}
+
+				// 패스 이름을 벡터에 추가
+				passNames.push_back(passDesc.Name);
+			}
+		}
+	}
+
+	return passNames;
+}
+
 ID3D11InputLayout* CShader::Find_InputLayout(const _char* pPassName)
 {
 	ID3D11InputLayout* pInputLayout = { nullptr };
@@ -182,7 +231,7 @@ ID3D11InputLayout* CShader::Find_InputLayout(const _char* pPassName)
 		{
 			return false;
 		}
-	});
+		});
 
 	if (m_InputLayouts.end() == iter)
 		return nullptr;

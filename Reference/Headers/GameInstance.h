@@ -54,7 +54,8 @@ public: /* For.Level_Manager */
 	HRESULT Render_Level();
 
 public: /* For.Component_Manager*/
-	HRESULT Add_Prototype(_uint iLevelIndex, const _tchar * pPrototypeTag, class CComponent* pPrototype);
+	class CComponent* Find_Prototype(_uint iLevelIndex, const _tchar * pPrototypeTag);
+	HRESULT Add_Prototype(_uint iLevelIndex, const _tchar * pPrototypeTag, class CComponent* pPrototype, _bool isFailedSkip = false);
 	HRESULT Add_Component(_uint iLevelIndex, const _tchar * pPrototypeTag, const _tchar * pLayerTag, const _tchar * pComponentTag, void* pArg = nullptr);
 	class CComponent* Clone_Component(_uint iLevelIndex, const _tchar * pPrototypeTag, void* pArg = nullptr);
 	class CComponent* Find_Component_In_Layer(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pComponentTag);
@@ -130,15 +131,14 @@ public: /* For. Calculator */
 	_float4 Get_RandomVectorInSphere(_float fRadius);
 	// FilePath 내의 모든 파일을 순회하면서 Ext 확장자에 맞는 파일들을 OutVector에 넣어줍니다.
 	HRESULT ReadFileInDirectory(_Inout_ vector<wstring>& OutVector, const _tchar* pFilePath, const _tchar* pExt);
-
+	_float3 PolarToCartesian(_float _fLength, _float _fTheta, _float _fPhi);
 public: /* For.PhysX_Manager */
 	PxPhysics* Get_Physics() const;
 	PxScene* Get_PhysxScene() const;
 	PxControllerManager* Get_ControllerManager() const;
+	cloth::Factory* Get_ClothFactory() const;
 
 public:	/* For.Camera_Manager */
-	//매인 카메라를 넣어준다.
-	HRESULT Add_MainCamera(class CCamera* _pMainCamera);
 	//컷씬 카메라 데이터를 담는다.
 	HRESULT Read_CutSceneCamera(const _tchar* _CutSceneTag, const _tchar* _CutScenePath);
 	//컷씬 재생을 위한 큐 추가
@@ -149,6 +149,14 @@ public:	/* For.Camera_Manager */
 	HRESULT Read_OffSetCamera(const _tchar* _OffSetTag, const _tchar* _OffSetPath);
 	//오프셋 재생을 위한 큐 추가
 	HRESULT Add_OffSetCamera(const _tchar* _OffSetTag);
+	//카메라 추가
+	HRESULT Add_Camera(const _tchar* _CameraTag, class CCamera* _pCamera);
+	//카메라 변경
+	HRESULT Set_Camera(const _tchar* _CameraTag);
+	//카메라 찾기
+	class CCamera* Find_Camera(const _tchar* _CameraTag);
+	//컷씬 중지
+	void Stop_CutScene();
 
 public: /* For.RenderTaget_Manager*/
 	class CRenderTarget* Find_RenderTarget(const _tchar* pTargetTag);
@@ -167,6 +175,8 @@ public: /* For.Time_Manager */
 	_bool Check_Timer(const wstring& wstrTimerTag);
 	/* 현재 월드 누적시간을 반환*/
 	const _float& Get_World_TimeAcc() const;
+	/* 현재 월드 틱을 반환 */
+	_float Get_World_Tick() const;
 	/* 기존에 추가한 타이머의 누적시간을 반환 */
 	_float Get_TimeAcc(const wstring& wstrTimerTag) const;
 	/* 월드 누적시간 초기화 (사용할 경우 팀원들한테 미리 얘기하세요) */
@@ -191,8 +201,9 @@ private:
 	class CTime_Manager*			m_pTime_Manager = { nullptr };
 
 public:
-	HRESULT Add_Prototype_Textures(_uint iLevel, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pPrototypeName, const _tchar* pTargetExtension, const _tchar* pDirectoryPath);
-	HRESULT Add_Prototype_Models(_uint iLevel, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CModel::TYPE eType, const _tchar* pPrototypeName, const _tchar* pTargetExtension, const _tchar* pDirectoryPath, _float4x4 PivotMatrix = _float4x4());
+	
+	HRESULT Add_Prototype_Textures(_uint iLevel, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pPrototypeName, const _tchar* pTargetExtension, const _tchar* pDirectoryPath, _bool isFailedSkip);
+	HRESULT Add_Prototype_Models(_uint iLevel, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CModel::TYPE eType, const _tchar* pPrototypeName, const _tchar* pTargetExtension, const _tchar* pDirectoryPath, _bool isFailedSkip, _float4x4 PivotMatrix = _float4x4());
 	static void Release_Engine();
 	virtual void Free() override;
 };

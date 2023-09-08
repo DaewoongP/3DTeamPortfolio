@@ -172,16 +172,24 @@ HRESULT CModel::Render(_uint iMeshIndex)
 
 void CModel::Reset_Animation(const wstring& wstrAnimationTag, ANIMTYPE eType)
 {
+	if (false == m_isChangeAnimation)
+		return;
+
 	m_tAnimationDesc[eType].iCurrentAnimIndex = Find_Animation_Index(wstrAnimationTag);
 	m_tAnimationDesc[eType].iPreviousAnimIndex = m_tAnimationDesc[eType].iCurrentAnimIndex;
 	m_tAnimationDesc[eType].isResetAnimTrigger = true;
+	m_isChangeAnimation = false;
 }
 
 void CModel::Reset_Animation(_uint iAnimIndex, ANIMTYPE eType)
 {
+	if (false == m_isChangeAnimation)
+		return;
+
 	m_tAnimationDesc[eType].iCurrentAnimIndex = iAnimIndex;
 	m_tAnimationDesc[eType].iPreviousAnimIndex = m_tAnimationDesc[eType].iCurrentAnimIndex;
 	m_tAnimationDesc[eType].isResetAnimTrigger = true;
+	m_isChangeAnimation = false;
 }
 
 void CModel::Play_Animation(_float fTimeDelta, ANIMTYPE eType, CTransform* pTransform)
@@ -207,6 +215,9 @@ void CModel::Play_Animation(_float fTimeDelta, ANIMTYPE eType, CTransform* pTran
 			m_PostRootMatrix = XMMatrixIdentity();
 		//리셋설정 다됐으니까 트리거 꺼줘.
 		m_tAnimationDesc[eType].isResetAnimTrigger = false;
+
+		/* 애니메이션 변경 가능 설정 */
+		m_isChangeAnimation = true;
 	}
 	//트랜스폼이 있다면?
 	else if (pTransform != nullptr)
