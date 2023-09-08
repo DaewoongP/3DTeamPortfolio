@@ -30,6 +30,7 @@
     <ClInclude Include="..\public\Bounding_Sphere.h" />
     <ClInclude Include="..\Public\Mesh_Instance.h" />
     <ClInclude Include="..\Public\Model_Instance.h" />
+    <ClInclude Include="..\public\Model_LOD.h" />
     <ClInclude Include="..\Public\Shape_GeoSphere.h" />
     <ClInclude Include="..\public\Dynamic_Mesh.h" />
     <ClInclude Include="..\Public\JobManager.h" />
@@ -139,6 +140,9 @@
     <ClCompile Include="..\Private\Bounding_OBB.cpp" />
     <ClCompile Include="..\private\Bounding_Sphere.cpp" />
     <ClCompile Include="..\Private\Mesh_Instance.cpp" />
+    <ClCompile Include="..\private\Model_LOD.cpp">
+      <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</IncludeInUnityFile>
+    </ClCompile>
     <ClCompile Include="..\Private\Shape_GeoSphere.cpp" />
     <ClCompile Include="..\private\Dynamic_Mesh.cpp" />
     <ClCompile Include="..\Private\JobManager.cpp" />

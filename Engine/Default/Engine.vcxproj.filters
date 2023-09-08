@@ -310,6 +310,9 @@
     <Filter Include="01. Utility\03. Components\19. UI">
       <UniqueIdentifier>{ff366626-d11e-4a5a-8868-da95ef27a9e4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\03. Components\04. Model\LOD">
+      <UniqueIdentifier>{e9debebd-b0a7-4cdb-9b70-0d37024ce611}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -636,6 +639,9 @@
     <ClInclude Include="..\Public\UI.h">
       <Filter>01. Utility\03. Components\19. UI</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Model_LOD.h">
+      <Filter>01. Utility\03. Components\04. Model\LOD</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -931,6 +937,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI.cpp">
       <Filter>01. Utility\03. Components\19. UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Model_LOD.cpp">
+      <Filter>01. Utility\03. Components\04. Model\LOD</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

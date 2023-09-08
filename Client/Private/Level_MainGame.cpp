@@ -195,24 +195,150 @@ HRESULT CLevel_MainGame::Ready_Layer_Debug(const _tchar* pLayerTag)
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
-
+	//
 	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Camera_Debug"), pLayerTag, TEXT("GameObject_Camera_Debug"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Camera_Debug)");
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Player"), pLayerTag, TEXT("GameObject_Test_Player"))))
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Player"), pLayerTag, TEXT("GameObject_Test_Player1"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Player)");
+		return E_FAIL;
+	}
+	
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Player"), pLayerTag, TEXT("GameObject_Test_Player2"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Player)");
+		return E_FAIL;
+	}
+	
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Player"), pLayerTag, TEXT("GameObject_Test_Player3"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Player)");
+		return E_FAIL;
+	}
+	
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Player"), pLayerTag, TEXT("GameObject_Test_Player4"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Player)");
+		return E_FAIL;
+	}
+	
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Player"), pLayerTag, TEXT("GameObject_Test_Player5"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Player)");
+		return E_FAIL;
+	}
+	
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Player"), pLayerTag, TEXT("GameObject_Test_Player6"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Player)");
+		return E_FAIL;
+	}
+	
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Player"), pLayerTag, TEXT("GameObject_Test_Player7"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Player)");
+		return E_FAIL;
+	}
+	
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Player"), pLayerTag, TEXT("GameObject_Test_Player8"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Player)");
+		return E_FAIL;
+	}
+	
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Player"), pLayerTag, TEXT("GameObject_Test_Player9"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Player)");
+		return E_FAIL;
+	}
+	
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Player"), pLayerTag, TEXT("GameObject_Test_Player0"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Player)");
+		return E_FAIL;
+	}
+	
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Player"), pLayerTag, TEXT("GameObject_Test_Player11"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Player)");
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Cloth"), pLayerTag, TEXT("GameObject_Test_Cloth"))))
+	//
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Player"), pLayerTag, TEXT("GameObject_Test_Playera1"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Player)");
+		return E_FAIL;
+	}
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Player"), pLayerTag, TEXT("GameObject_Test_Playera2"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Player)");
+		return E_FAIL;
+	}
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Player"), pLayerTag, TEXT("GameObject_Test_Playera3"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Player)");
+		return E_FAIL;
+	}
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Player"), pLayerTag, TEXT("GameObject_Test_Playera4"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Player)");
+		return E_FAIL;
+	}
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Player"), pLayerTag, TEXT("GameObject_Test_Playera5"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Player)");
+		return E_FAIL;
+	}
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Player"), pLayerTag, TEXT("GameObject_Test_Playera6"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Player)");
+		return E_FAIL;
+	}
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Player"), pLayerTag, TEXT("GameObject_Test_Playera7"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Player)");
+		return E_FAIL;
+	}
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Player"), pLayerTag, TEXT("GameObject_Test_Playera8"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Player)");
+		return E_FAIL;
+	}
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Player"), pLayerTag, TEXT("GameObject_Test_Playera9"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Player)");
+		return E_FAIL;
+	}
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Player"), pLayerTag, TEXT("GameObject_Test_Playera0"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Player)");
+		return E_FAIL;
+	}
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Player"), pLayerTag, TEXT("GameObject_Test_Playera11"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Player)");
+		return E_FAIL;
+	}
+	/*if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Cloth"), pLayerTag, TEXT("GameObject_Test_Cloth"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Cloth)");
 		return E_FAIL;
-	}
+	}*/
 
 	/*if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Armored_Troll"), pLayerTag, TEXT("GameObject_Armored_Troll"))))
 	{
