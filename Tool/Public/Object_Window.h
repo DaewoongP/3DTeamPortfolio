@@ -49,6 +49,7 @@ private:
 	void Ins_Save_Load_Menu(); // 인스턴트 오브젝트 세이브 로드 메뉴
 	void Delete_Object_Menu(); // 오브젝트 삭제 관련 메뉴
 	void Mesh_Picking_Menu(); // 메쉬 피킹 메뉴
+	void Change_Picking_Menu(const _tchar* wszTag, _uint iTagNum); // 피킹한 메쉬 변경
 	void Delete_Picking_Object(); // 피킹한 오브젝트 삭제 메뉴
 	HRESULT Save_MapObject(); // MapObject 저장
 	HRESULT Load_MapObject(); // MapObject 로드
@@ -74,6 +75,7 @@ private:
 	_bool m_isInsSaveLoad = { false };
 	_bool m_isInstallObject = { true };
 	_bool m_isPickingObject = { false };
+	_bool m_isChangeObject = { false };
 
 	// 버튼 On Off _bool 변수 모음
 	_bool m_isDeleteObject = { false };

@@ -394,9 +394,8 @@ void CObject_Window::Current_MapObject()
 	ImGui::Checkbox("Object Picking", &m_isPickingObject);
 	if (true == m_isPickingObject)
 	{
-		// 지형 피킹 메뉴 Off
 		Mesh_Picking_Menu();
-	}	
+	}
 }
 
 void CObject_Window::Save_Load_Menu()
@@ -618,6 +617,16 @@ void CObject_Window::Mesh_Picking_Menu()
 		Safe_Release(pCopyTexture2D);
 	}ENDINSTANCE;
 
+	// 메쉬 피킹한 오브젝트 상태 행렬 변경 메뉴
+	if (ImGui::Checkbox("Change MapObject's Matrix", &m_isChangeObject));
+	if (true == m_isChangeObject)
+	{
+		wstring ws = TEXT("GameObject_MapObject_");
+		ws += std::to_wstring(m_iTagIndex);
+
+		Change_Picking_Menu(ws.c_str(), m_iTagIndex);
+	}
+
 	// 메쉬 피킹한 오브젝트 삭제 메뉴
 	if (ImGui::Button("Delete Choice MapObject"))
 	{
@@ -625,6 +634,27 @@ void CObject_Window::Mesh_Picking_Menu()
 	}
 
 #endif
+}
+
+void CObject_Window::Change_Picking_Menu(const _tchar* wszTag, _uint iTagNum)
+{
+	BEGININSTANCE; m_pObject = static_cast<CMapObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL,
+		TEXT("Layer_MapObject"), wszTag)); 
+
+	if (nullptr == m_pObject)
+	{
+		MSG_BOX("Failed to Find Picking Object");
+		return;
+	}
+
+	if (true == pGameInstance->Get_DIKeyState(DIK_J, CInput_Device::KEY_DOWN))
+	{
+		m_pObject->Get_Transform()->Set_WorldMatrix(m_pDummy->Get_Transform()->Get_WorldMatrix());
+
+		m_vecSaveObject.at(m_iTagIndex).matTransform = m_pDummy->Get_Transform()->Get_WorldMatrix();
+	}
+
+	ENDINSTANCE;
 }
 
 void CObject_Window::Delete_Picking_Object()
