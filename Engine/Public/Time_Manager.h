@@ -35,6 +35,8 @@ private:
 public:
 	/* 현재 월드 누적시간을 반환*/
 	const _float& Get_World_TimeAcc() const { return m_fWorldTimeAcc; }
+	/* 현재 월드 틱을 반환 */
+	_float Get_World_Tick() const { return m_fWorldTick; }
 	/* 기존에 추가한 타이머의 누적시간을 반환 */
 	_float Get_TimeAcc(const wstring& wstrTimerTag) const;
 
@@ -55,6 +57,7 @@ public:
 
 private:
 	_float m_fWorldTimeAcc = { 0.f };
+	_float m_fWorldTick = { 0.f };
 	unordered_map<wstring, ALARMDESC> m_Timers;
 
 public:

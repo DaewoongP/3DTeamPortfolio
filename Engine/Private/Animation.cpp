@@ -25,7 +25,7 @@ CAnimation::CAnimation(const CAnimation& rhs)
 	, m_iAnimationFrames(rhs.m_iAnimationFrames)
 {
 	lstrcpy(m_szName, rhs.m_szName);
-	Safe_AddRef(m_pNotify);
+	
 	for (auto& pChannel : m_Channels)
 	{
 		Safe_AddRef(pChannel);

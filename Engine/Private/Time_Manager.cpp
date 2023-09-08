@@ -15,6 +15,8 @@ void CTime_Manager::Tick(const _float& fTimeDelta)
 {
 	m_fWorldTimeAcc += fTimeDelta;
 
+	m_fWorldTick = fTimeDelta;
+
 	for (auto& Pair : m_Timers)
 		Pair.second.m_fTimeAcc += fTimeDelta;
 }

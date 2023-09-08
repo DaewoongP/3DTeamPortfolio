@@ -32,7 +32,9 @@ HRESULT CCamera_Window::Initialize(ImVec2 _vWindowPos, ImVec2 _vWindowSize)
 
 		m_pMainCamera->Set_MoveSpeed(5.0f);
 
-		pGameInstance->Add_MainCamera((CCamera*)m_pMainCamera);
+		pGameInstance->Add_Camera(TEXT("Main_Camera"), (CCamera*)m_pMainCamera);
+
+		pGameInstance->Set_Camera(TEXT("Main_Camera"));
 	}
 	ENDINSTANCE;
 
@@ -57,12 +59,18 @@ HRESULT CCamera_Window::Render()
 
 void CCamera_Window::Camera_Speed()
 {
-	_float fMoveSpeed = m_pMainCamera->Get_MoveSeed();
-
-	if (ImGui::DragFloat("Main Camera Speed", &fMoveSpeed, 0.01f, 0.0f, 1000.0f))
+	_float fMoveSpeed{};
+	
+	if (nullptr != m_pMainCamera)
 	{
-		m_pMainCamera->Set_MoveSpeed(fMoveSpeed);
+		fMoveSpeed = m_pMainCamera->Get_MoveSeed();
+		if (ImGui::DragFloat("Main Camera Speed", &fMoveSpeed, 0.1f, 0.0f, 1000.0f))
+		{
+			m_pMainCamera->Set_MoveSpeed(fMoveSpeed);
+		}
 	}
+
+	
 }
 
 CCamera_Window* CCamera_Window::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, ImVec2 _vWindowPos, ImVec2 _vWindowSize)

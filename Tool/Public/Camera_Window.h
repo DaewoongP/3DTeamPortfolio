@@ -17,6 +17,7 @@ public:
 	virtual void Tick(_float _fTimeDelta) override;
 	virtual HRESULT Render() override;
 
+	void Camera_Speed();
 
 
 
@@ -32,7 +33,6 @@ private:
 
 
 private:
-	void Camera_Speed();
 
 
 public:

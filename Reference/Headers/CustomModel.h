@@ -51,11 +51,13 @@ public:
 	}
 	const _float4x4* Get_BoneCombinedTransformationMatrixPtr(_uint iIndex);
 	_float4x4 Get_BoneCombinedTransformationMatrix(_uint iIndex);
-	HRESULT Add_MeshParts(const _uint& _iLevelIndex, const wstring& _wstrPrototypeTag, MESHTYPE _eMeshPartsType);
+	array<class CMeshParts*, MESH_END> Get_MeshParts() const { return m_MeshParts; }
+	HRESULT Add_MeshParts(const _uint& _iLevelIndex, const wstring& _wstrPrototypeTag, MESHTYPE _eMeshPartsType, const _tchar* _szClothDataFilePath = nullptr);
 
 public:
 	virtual HRESULT Initialize_Prototype(const wstring& _wstrModelFilePath, _float4x4 _PivotMatrix);
 	virtual HRESULT Initialize(void* pArg) override;
+	virtual void Tick(const _uint& _iMeshPartsIndex, const _uint& _iMeshIndex, _float _fTimeDelta);
 	virtual HRESULT Render(const _uint& _iMeshPartsIndex, const _uint& _iMeshIndex);
 
 public:

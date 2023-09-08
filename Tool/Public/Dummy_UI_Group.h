@@ -50,7 +50,7 @@ private:
 	vector <class CDummy_UI*>	m_Childs;
 
 public:
-	static CDummy_UI_Group* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _tchar* pGroupName);
+	static CDummy_UI_Group* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;
 };
