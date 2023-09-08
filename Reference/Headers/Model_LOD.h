@@ -11,8 +11,15 @@ public:
 	{
 		_uint			iLevelIndex = { 0 };
 		_tchar			szPrototypeName[MAX_STR] = TEXT("");
-		CModel::TYPE	eType = { CModel::TYPE_END };
+		CModel::TYPE	eModelType = { CModel::TYPE_END };
+		_float4x4		PivotMatrix = XMMatrixIdentity();
 	}LODDESC;
+
+public:
+	_uint Get_NumMeshes() const;
+	HRESULT Bind_BoneMatrices(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex);
+	HRESULT Bind_Material(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex, Engine::TextureType MaterialType);
+	void Set_MaxLodDistance(_float fMaxDistance) { m_fMaxLodDistance = fMaxDistance; }
 
 private:
 	explicit CModel_LOD(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -20,17 +27,31 @@ private:
 	virtual ~CModel_LOD() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype() override;
+	virtual HRESULT Initialize_Prototype(LODDESC& LodDesc, const _tchar* szModelFilePath, _uint iNumModel);
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
-	virtual HRESULT Render() override;
-
-private:
-	HRESULT Add_Components(const LODDESC& LodDesc);
+	virtual HRESULT Render(_uint iMeshIndex);
 
 public:
-	static CModel_LOD* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar* szModelFilePath, _uint iNumModel = 1);
+	void Play_Animation(_float fTimeDelta);
+
+private:
+	// 프로토타입 이름, 레벨
+	vector<pair<_tchar*, _uint>>			m_LodPrototypes;
+	vector<_tchar*>							m_ModelComponentTags;
+
+private:
+	CModel*									m_pCurrentModel = { nullptr };
+	_float									m_fMaxLodDistance = { 0.f };
+	_uint									m_iNumModels = { 0 };
+
+private:
+	HRESULT Add_Components();
+	void Check_CameraDistance();
+
+public:
+	static CModel_LOD* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, LODDESC& LodDesc, const _tchar* szModelFilePath, _uint iNumModel = 1);
 	virtual CComponent* Clone(void* pArg) override;
 	virtual void Free() override;
 };

@@ -122,13 +122,11 @@ void CComponent_Manager::Clear_LevelResources(_uint iLevelIndex)
 		return;
 	}
 
-	// ���̾� ����.
 	for (auto& Pair : m_pLayers[iLevelIndex])
 		Safe_Release(Pair.second);
 
 	m_pLayers[iLevelIndex].clear();
 
-	// ������Ÿ�� ����
 	for (auto& Pair : m_pPrototypes[iLevelIndex])
 		Safe_Release(Pair.second);
 
