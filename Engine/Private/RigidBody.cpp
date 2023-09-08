@@ -155,8 +155,8 @@ HRESULT CRigidBody::Initialize(void* pArg)
 
 void CRigidBody::Late_Tick(_float fTimeDelta)
 {
-	m_pActor->addForce(m_pActor->getLinearVelocity() * -m_fAirDrag);
-	m_pActor->addTorque(m_pActor->getAngularVelocity() * -m_fAirDrag);
+	/*m_pActor->addForce(m_pActor->getLinearVelocity() * -m_fAirDrag);
+	m_pActor->addTorque(m_pActor->getAngularVelocity() * -m_fAirDrag);*/
 
 #ifdef _DEBUG
 	Make_Buffers();
@@ -187,15 +187,21 @@ HRESULT CRigidBody::Create_Actor()
 	CPhysX_Manager* pPhysX_Manager = CPhysX_Manager::GetInstance();
 	Safe_AddRef(pPhysX_Manager);
 
+	// 매니저를 통해 피직스 객체 가져옴
 	PxPhysics* pPhysX = pPhysX_Manager->Get_Physics();
+	// 액터를 바인딩할 씬 가져옴
 	m_pScene = pPhysX_Manager->Get_PhysxScene();
 
+	// 초기 포지션 세팅
 	PxVec3 vLocal = PxVec3(0.f, 10.f, 5.f);
 	PxTransform localTm(vLocal);
 	m_pActor = pPhysX->createRigidDynamic(localTm);
+	// 유저데이터에 이 컴포넌트 세팅해서 나중에 충돌처리 함수 부르기 위해 처리.
 	m_pActor->userData = this;
+	// 저항 처리
+	m_pMaterial = pPhysX->createMaterial(0.5f, 0.5f, 0.5f);
 
-#ifdef _DEBUG
+#ifdef _DEBUG // 렌더링
 	m_pScene->simulate(1 / 60.f);
 	m_pScene->fetchResults(true);
 	_uint iPrevLines = m_pScene->getRenderBuffer().getNbLines();
@@ -205,20 +211,28 @@ HRESULT CRigidBody::Create_Actor()
 	m_iStartTriangleBufferIndex = pPhysX_Manager->Get_LastTriangleBufferIndex();
 #endif // _DEBUG
 
-	m_pMaterial = pPhysX->createMaterial(0.5f, 0.5f, 0.5f);
-#ifdef _DEBUG
+#ifdef _DEBUG // 렌더링 선택
+	// shape 생성 (1번 매개변수에 Capsule, Box, Sphere등 선택가능합니다 (Px~Geometry 쓰면됨.))
 	PxShape* boxshape = pPhysX->createShape(PxCapsuleGeometry(1.f, 1.f), *m_pMaterial, false, PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSIMULATION_SHAPE);
 #else
 	PxShape* boxshape = pPhysX->createShape(PxCapsuleGeometry(1.f, 1.f), *m_pMaterial, false, PxShapeFlag::eSIMULATION_SHAPE);
 #endif // _DEBUG
 
+	// 충돌처리에 필요한 유저 데이터값 바인딩
 	PxFilterData data;
-	data.word0 = 0x1111;
+	data.word0 = 0x1111; // 이데이터는 일단 고정.
 	boxshape->setSimulationFilterData(data);
-	// OffsetPosition 처리
+
+	// OffsetPosition 처리 (피직스는 오른손 좌표계를 사용해서 왼손좌표계로 바꿔주기위해 회전 처리합니다.)
+	// 이거 확인정확하게 안해봐서 앞뒤가 정확한지는 모르겠어요
+	// 근데 앞뒤 달라도 상관없을거 같긴함.
 	_float4 vQuaternion = XMQuaternionRotationRollPitchYaw(0.f, XMConvertToRadians(180.f), XMConvertToRadians(90.f));
 	PxTransform relativePose(PxQuat(PhysXConverter::ToPxQuat(vQuaternion)));
 	boxshape->setLocalPose(relativePose);
+
+	// 액터와 씬 처리.
+	// AttachShape로 콜라이더 여러개 바인딩 가능.
+	// 씬도 일단 한개만 처리하게 해둬서 신경 안써도 될듯.
 	m_pActor->attachShape(*boxshape);
 	m_pScene->addActor(*m_pActor);
 	
