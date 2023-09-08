@@ -61,9 +61,9 @@ private:
 	class CComboBox* m_pMeshTypeCombo = { nullptr };
 	class CComboBox* m_pClipChannelCombo = { nullptr };
 
-	class CImageFileDialog* m_pMaterialTexture = { nullptr };
-	class CImageFileDialog* m_pAlphaTexture = { nullptr };
-	class CImageFileDialog* m_pSpriteTexture = { nullptr };
+	class CImageFileDialog* m_pMaterialTextureIFD = { nullptr };
+	class CImageFileDialog* m_pAlphaTextureIFD = { nullptr };
+	class CImageFileDialog* m_pSpriteTextureIFD = { nullptr };
 	_bool m_isPrevLooping = { false };
 public:
 	// 툴에서는 매개변수 추가. 클라에는 삭제하기

@@ -254,7 +254,7 @@ HRESULT SHAPE_MODULE::Save(const _tchar* _pDirectoyPath)
 	WriteFile(hFile, &fArc, sizeof(fArc), &dwByte, nullptr);
 	WriteFile(hFile, strArcMode.data(), sizeof(_char) * MAX_PATH, &dwByte, nullptr);
 	WriteFile(hFile, &fSpread, sizeof(fSpread), &dwByte, nullptr);
-	WriteFile(hFile, wstrClipTexture.data(), sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
+	WriteFile(hFile, wstrClipTexturePath.data(), sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
 	WriteFile(hFile, strClipChannel.data(), sizeof(_char) * MAX_PATH, &dwByte, nullptr);
 	WriteFile(hFile, &fClipThreshold, sizeof(fClipThreshold), &dwByte, nullptr);
 	WriteFile(hFile, &isColorAffectsParticles, sizeof(isColorAffectsParticles), &dwByte, nullptr);
@@ -318,7 +318,7 @@ HRESULT SHAPE_MODULE::Load(const _tchar* _pDirectoyPath)
 	strArcMode = szBuffer;
 	ReadFile(hFile, &fSpread, sizeof(fSpread), &dwByte, nullptr);
 	ReadFile(hFile, wszBuffer, sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
-	wstrClipTexture = wszBuffer;
+	wstrClipTexturePath = wszBuffer;
 	ReadFile(hFile, szBuffer, sizeof(_char) * MAX_PATH, &dwByte, nullptr);
 	strClipChannel = szBuffer;
 	ReadFile(hFile, &fClipThreshold, sizeof(fClipThreshold), &dwByte, nullptr);
