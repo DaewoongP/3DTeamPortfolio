@@ -10,7 +10,6 @@ CDummy_UI_Group::CDummy_UI_Group(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
 CDummy_UI_Group::CDummy_UI_Group(const CDummy_UI_Group& rhs)
 	: CGameObject(rhs)
 {
-	lstrcpy(m_wszUIGroupName, rhs.m_wszUIGroupName);
 }
 
 HRESULT CDummy_UI_Group::Initialize_Prototype()
@@ -26,6 +25,11 @@ HRESULT CDummy_UI_Group::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
+	if (nullptr == pArg)
+		return E_FAIL;
+
+	lstrcpy(m_wszUIGroupName, (_tchar*)pArg);
+	
 	return S_OK;
 }
 
@@ -34,11 +38,31 @@ void CDummy_UI_Group::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	Set_Parent();
+
+	if (nullptr != m_pParent)
+	{
+		m_pParent->Tick(fTimeDelta);
+	}
+
+	for (auto& iter : m_Childs)
+	{
+		iter->Tick(fTimeDelta);
+	}
+
+
 }
 
 void CDummy_UI_Group::Late_Tick(_float fTimeDelta)
 {
+	if (nullptr != m_pParent)
+	{
+		m_pParent->Late_Tick(fTimeDelta);
+	}
 
+	for (auto& iter : m_Childs)
+	{
+		iter->Late_Tick(fTimeDelta);
+	}
 }
 
 void CDummy_UI_Group::Set_Parent()
@@ -85,11 +109,9 @@ void CDummy_UI_Group::Clear()
 	}
 }
 
-CDummy_UI_Group* CDummy_UI_Group::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _tchar* pGroupName)
+CDummy_UI_Group* CDummy_UI_Group::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CDummy_UI_Group* pInstance = New CDummy_UI_Group(pDevice, pContext);
-
-	lstrcpy(pInstance->m_wszUIGroupName, pGroupName);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -116,5 +138,4 @@ CGameObject* CDummy_UI_Group::Clone(void* pArg)
 void CDummy_UI_Group::Free()
 {
 	__super::Free();
-
 }

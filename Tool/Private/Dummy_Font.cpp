@@ -89,6 +89,24 @@ HRESULT CDummy_Font::Render()
 	return S_OK;
 }
 
+_bool CDummy_Font::Is_In_Rect()
+{
+	_bool		isIn = false;
+
+	POINT		ptMouse;
+	GetCursorPos(&ptMouse);
+
+	ScreenToClient(g_hWnd, &ptMouse);
+
+	RECT		rcUI;
+
+	//SetRect(&rcUI, _int(m_vCombinedXY.x - m_fSizeX * 0.5f), _int(m_vCombinedXY.y - m_fSizeY * 0.5f), _int(m_vCombinedXY.x + m_fSizeX * 0.5f), _int(m_vCombinedXY.y + m_fSizeY * 0.5f));
+
+	isIn = PtInRect(&rcUI, ptMouse);
+
+	return isIn;
+}
+
 
 CDummy_Font* CDummy_Font::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFontFilePath)
 {

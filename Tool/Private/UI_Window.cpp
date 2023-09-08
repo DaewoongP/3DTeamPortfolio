@@ -37,6 +37,19 @@ HRESULT CUI_Window::Initialize(ImVec2 vWindowPos, ImVec2 vWindowSize)
 
 	Initialize_Font();
 
+	BEGININSTANCE
+
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("ProtoType_GameObject_Dummy_UI"),
+		CDummy_UI::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Failed Create UI");
+	}
+
+	ENDINSTANCE
+
+	m_pGroupVector.clear();
+
+
 	return S_OK;
 }
 
@@ -65,7 +78,7 @@ void CUI_Window::Tick(_float fTimeDelta)
 		ENDINSTANCE
 	}
 
-	if (m_pUIGroupLayer == nullptr)
+	if (m_pFontLayer == nullptr)
 	{
 		BEGININSTANCE
 
@@ -104,6 +117,7 @@ void CUI_Window::Tick(_float fTimeDelta)
 	if (ImGui::CollapsingHeader("Font"))
 	{
 		Create_Font();
+		Open_Font_List();
 	}
 
 
@@ -111,6 +125,21 @@ void CUI_Window::Tick(_float fTimeDelta)
 	Interaction_UI();
 	Move_UI();
 	Capture();
+
+	if (ImGui::Button("Save_UI"))
+	{
+		m_isSave = !m_isSave;
+	}
+
+	if (ImGui::Button("Load_UI"))
+	{
+		m_isLoad = !m_isLoad;
+	}
+
+	if (m_isSave || m_isLoad)
+	{
+		Save_Load_Button();
+	}
 
 	ImGui::End();
 }
@@ -122,24 +151,7 @@ HRESULT CUI_Window::Render()
 
 void CUI_Window::Open_Dialog()
 {
-	// open Dialog Simple
-	if (ImGui::Button("Open File Dialog"))
-		ImGuiFileDialog::Instance()->OpenDialog("UI_Texture", "Choose File", ".png, .dds", "");
 
-	// display
-	if (ImGuiFileDialog::Instance()->Display("UI_Texture"))
-	{
-		// action if OK
-		if (ImGuiFileDialog::Instance()->IsOk())
-		{
-			std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
-			std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
-			// action
-		}
-
-		// close
-		ImGuiFileDialog::Instance()->Close();
-	}
 }
 
 void CUI_Window::Object_List_Button()
@@ -160,17 +172,6 @@ void CUI_Window::Object_List_Button()
 	}
 
 	ImGui::Checkbox("MouseInteraction", &m_isListMouseInteraction);
-
-	if (ImGui::Button("Save_UI"))
-	{
-		Save_UI();
-	}
-
-	if (ImGui::Button("Load_UI"))
-	{
-
-	}
-
 
 
 
@@ -198,8 +199,8 @@ void CUI_Window::Open_Object_List()
 			if (m_isObjectSelected)
 			{
 				ImGui::SetItemDefaultFocus();
-				_tchar wszGameObjectName[MAX_PATH];
-				lstrcpy(wszGameObjectName, m_pUIVector[i]->Get_Tag());
+				//_tchar wszGameObjectName[MAX_PATH];
+				//lstrcpy(wszGameObjectName, m_pUIVector[i]->Get_Tag());
 				m_pDummy_UI = dynamic_cast<CDummy_UI*>(m_pUIVector[i]);
 				string DragFloatTag = "Transform##";
 				_float4x4 pMatrix = m_pUIVector[i]->Get_Transform()->Get_WorldMatrix();
@@ -246,13 +247,45 @@ void CUI_Window::Select_Obejct(CGameObject* pGameObject)
 
 	Add_Group(pGameObject);
 
+	_float4 Color = dynamic_cast<CDummy_UI*>(pGameObject)->Get_vColor();
+	
+	if (ImGui::ColorEdit4("Color Picker", (float*)&Color))
+	{
+		dynamic_cast<CDummy_UI*>(pGameObject)->Set_vColor(Color);
+	}
+
+	_bool	isAlpha = dynamic_cast<CDummy_UI*>(pGameObject)->Get_bAlpha();
+	ImGui::Checkbox("isAlpha", &isAlpha);
+	dynamic_cast<CDummy_UI*>(pGameObject)->Set_bAlpha(isAlpha);
+
+
+	Select_Object_ID(pGameObject);
+
+
+
+	if (isAlpha)
+	{
+		if (ImGui::Button("Select AlphaTexture"))
+		{
+			m_isOpenSelectAlphaTexture = !m_isOpenSelectAlphaTexture;
+		}
+
+		if (m_isOpenSelectAlphaTexture)
+		{
+			Select_AlphaTexture(dynamic_cast<CDummy_UI*>(pGameObject));
+		}
+	}
+
+
+
+
 	if (ImGui::Button("Delete"))
 	{
 		m_pDummy_UI_Group->Delete(dynamic_cast<CDummy_UI*>(pGameObject));
 		pGameObject->Set_ObjEvent(CGameObject::OBJ_EVENT::OBJ_DEAD);
 	}
-}
 
+}
 
 void CUI_Window::Object_List()
 {
@@ -434,13 +467,12 @@ void CUI_Window::Create_UI(UI_Tree* pTree)
 		{
 			MSG_BOX("Failed Create Texture Component");
 		}
-
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, wszGaemObject,
-			CDummy_UI::Create(m_pDevice, m_pContext, wszComponent))))
-		{
-			MSG_BOX("Failed Create UI");
-		}
-		pTree->m_isAddPrototype = true;
+		//if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, wszGaemObject,
+		//	CDummy_UI::Create(m_pDevice, m_pContext, wszComponent))))
+		//{ // 무조건 정해진 더미유아이 텍스쳐가 정해진
+		//	MSG_BOX("Failed Create UI");
+		//}
+		//pTree->m_isAddPrototype = true;
 	}
 
 
@@ -457,11 +489,16 @@ void CUI_Window::Create_UI(UI_Tree* pTree)
 
 	CharToWChar(GameObjectTag.c_str(), wszGameObjectTag);
 
-	_float2 fSize = _float2(_float(pTree->m_iWidth), _float(pTree->m_iHeight));
+	UI_DATA	UIDesc;
+	UIDesc.isSave = false;
+	UIDesc.m_fSizeX =  _float(pTree->m_iWidth);
+	UIDesc.m_fSizeY =  _float(pTree->m_iHeight);
+	lstrcpy(UIDesc.m_wszTextureName, wszComponent);
+	lstrcpy(UIDesc.m_wszTexturePath, pTree->m_wstrName.c_str());
 
 	// Dummy UI Object 생성.
-	if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, wszGaemObject,
-		TEXT("Layer_Tool_UI"), wszGameObjectTag, &fSize)))
+	if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, TEXT("ProtoType_GameObject_Dummy_UI"),
+		TEXT("Layer_Tool_UI"), wszGameObjectTag, &UIDesc)))
 	{
 		MSG_BOX("Failed to Created CDummy_UI Clone");
 	}
@@ -566,13 +603,158 @@ void CUI_Window::Correction_Pick()
 	ENDINSTANCE
 }
 
-void CUI_Window::Save_UI()
+void CUI_Window::Select_Object_ID(CGameObject* pGameObject)
 {
-	ImGui::Begin("List Interaction");
+	m_iIDIndex = (_int)dynamic_cast<CDummy_UI*>(pGameObject)->Get_UI_ID();
+	const _char* szID[] = { "NONE", "BUTTON", "PROGRESS", "END"};
 
-	Open_Dialog();
+	if (ImGui::BeginCombo("ID List", szID[m_iIDIndex]))
+	{
+		for (_int i = 0; i < (_int)CDummy_UI::UI_ID_END; i++)
+		{
+			_bool isSelected = (m_iIDIndex == i);
 
-	ImGui::End();
+			if (ImGui::Selectable(szID[i], isSelected))
+			{
+				ImGui::SetItemDefaultFocus(); // 선택한 항목을 기본으로 설정
+				m_iIDIndex = i;
+				dynamic_cast<CDummy_UI*>(pGameObject)->Set_eUIID((CDummy_UI::UI_ID)m_iIDIndex);
+			}
+
+			if (isSelected)
+			{
+				//m_isPreGroupComboIndex = m_GroupComboIndex;
+			}
+		}
+		ImGui::EndCombo();
+	}
+}
+
+void CUI_Window::Save_Load_Button()
+{	
+	// open Dialog Simple
+	ImGuiFileDialog::Instance()->OpenDialog("UI_Texture", "Choose File", ".uidata", ".png, .dds", "");
+
+	// display
+	if (ImGuiFileDialog::Instance()->Display("UI_Texture"))
+	{
+		// action if OK
+		if (ImGuiFileDialog::Instance()->IsOk())
+		{
+			std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+			std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
+			// action
+			_tchar wszFilePath[MAX_PATH] = TEXT("");
+			CharToWChar(filePathName.c_str(), wszFilePath);
+
+			if (m_isSave)
+			{
+				if (FAILED(Save_Data(wszFilePath)))
+				{
+					MSG_BOX("Failed Save");
+				}
+				else
+				{
+					MSG_BOX("Save Complete");
+				}
+				m_isSave = false;
+			}
+			else if (m_isLoad)
+			{
+				if (FAILED(Load(wszFilePath)))
+				{
+					MSG_BOX("Failed Load");
+				}
+				else
+				{
+					MSG_BOX("Load Complete");
+				}
+				m_isLoad = false;
+			}
+		}
+
+		// close
+		ImGuiFileDialog::Instance()->Close();
+	}
+}
+
+void CUI_Window::Open_Font_List()
+{
+	if (nullptr == m_pFontLayer)
+	{
+		return;
+	}
+
+	const unordered_map<const _tchar*, CComponent*> Components = m_pFontLayer->Get_Components();
+
+	m_pFontVector.clear();
+
+	for (const auto& pair : Components)
+	{
+		m_pFontVector.push_back(static_cast<CGameObject*>(pair.second));
+	}
+
+	_tchar	wszName[MAX_STR] = {};
+	if (m_pFontVector.size() > 0)
+	{
+		lstrcpy(wszName, m_pFontVector[0]->Get_Tag());
+	}
+
+	if (ImGui::BeginListBox("  "))
+	{
+		for (_int i = 0; i < m_pFontVector.size(); i++)
+		{
+			m_isFontSelected = (m_iFontListIndex == i);
+
+			_char szGameObjectName[MAX_PATH] = "";
+			WCharToChar(m_pFontVector[i]->Get_Tag(), szGameObjectName);
+			if (ImGui::Selectable(szGameObjectName, m_isFontSelected))
+			{
+				m_iFontListIndex = i;
+			}
+
+			if (m_isFontSelected)
+			{
+				ImGui::SetItemDefaultFocus();
+				m_pDummy_Font = dynamic_cast<CDummy_Font*>(m_pFontVector[i]);
+				//string DragFloatTag = "Transform##";
+				//_float4x4 pMatrix = m_pUIVector[i]->Get_Transform()->Get_WorldMatrix();
+
+				RECT rc;
+				GetWindowRect(g_hWnd, &rc);
+				ImGui::SetNextWindowPos(ImVec2(_float(rc.left), _float(rc.top + 750.f)) + m_vWindowPos);
+
+				ImGui::Begin("Font Setting");
+
+				_float2 vPos = m_pDummy_Font->Get_vPos();
+				_float2 vScale = m_pDummy_Font->Get_vScale();
+
+				ImGui::Text("Position##"); ImGui::SameLine();
+				if (ImGui::DragFloat2("vPos", reinterpret_cast<_float*>(&vPos), 1.0f))
+				{
+					m_pDummy_Font->Set_vPos(vPos);
+				}
+
+				ImGui::Text("Scale##"); ImGui::SameLine();
+				if (ImGui::DragFloat2("vScale", reinterpret_cast<_float*>(&vScale), 1.0f))
+				{
+					m_pDummy_Font->Set_vScale(vScale);
+				}
+
+				_float4 Color = m_pDummy_Font->Get_vColor();
+
+				if (ImGui::ColorEdit4("Font Color", (float*)&Color))
+				{
+					m_pDummy_Font->Set_vColor(Color);
+				}
+
+				ImGui::End();
+			}
+		}
+		ImGui::EndListBox();
+	}
+
+
 }
 
 void CUI_Window::Add_Group(CGameObject* pGameObject)
@@ -668,12 +850,6 @@ void CUI_Window::Create_UI_Gruop(string _strGroupName)
 	_tchar wszGroupName[MAX_PATH] = TEXT("");
 	CharToWChar(strGroupName.c_str(), wszGroupName);
 
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, wszGroupName,
-		CDummy_UI_Group::Create(m_pDevice, m_pContext, wszGroupName))))
-	{
-		MSG_BOX("Failed Create UI");
-	}
-
 	_int iSize = 0;
 	if (nullptr != m_pUIGroupLayer)
 	{
@@ -685,8 +861,8 @@ void CUI_Window::Create_UI_Gruop(string _strGroupName)
 
 	CharToWChar(strGameObjectTag.c_str(), wszGameObjectTag);
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, wszGroupName,
-		TEXT("Layer_Tool_UI_Group"), wszGameObjectTag)))
+	if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, TEXT("ProtoType_Component_Dummy_UI_Gruop"),
+		TEXT("Layer_Tool_UI_Group"), wszGameObjectTag, wszGroupName)))
 	{
 		MSG_BOX("Failed to Created CDummy_UI Clone");
 	}
@@ -786,7 +962,7 @@ void CUI_Window::Capture()
 		{
 		}
 		ImGui::SameLine();
-		if (ImGui::Button("Enter"))
+		if (ImGui::Button("OK"))
 		{
 			m_isEnterGroupName = true;
 		}
@@ -834,6 +1010,377 @@ void CUI_Window::Capture()
 
 		ImGui::End();
 	}
+
+}
+
+HRESULT CUI_Window::Save_Data(_tchar* pFilePath)
+{
+	_ulong dwByte = 0;
+	HANDLE hFile = CreateFile(pFilePath, GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+	if (hFile == INVALID_HANDLE_VALUE)
+	{
+		MSG_BOX("Failed Save");
+		CloseHandle(hFile);
+		return E_FAIL;
+	}
+
+	_uint iSize = m_pGroupVector.size();;
+	if (iSize > 0)
+	{
+		WriteFile(hFile, &iSize, sizeof(_uint), &dwByte, nullptr);
+		for (auto& pGroup : m_pGroupVector)
+		{
+			// 그룹의 Tag
+			_tchar wszGroupName[MAX_PATH] = TEXT("");
+			lstrcpy(wszGroupName, dynamic_cast<CDummy_UI_Group*>(pGroup)->Get_GroupName());
+			DWORD dwStrByte = sizeof(_tchar) * (lstrlen(wszGroupName) + 1);
+			WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
+			WriteFile(hFile, wszGroupName, dwStrByte, &dwByte, nullptr);
+
+			CDummy_UI* pParent = dynamic_cast<CDummy_UI_Group*>(pGroup)->Get_Parent();
+
+			_float2 vCombinedXY = pParent->Get_vCombinedXY();
+			WriteFile(hFile, &vCombinedXY, sizeof(_float2), &dwByte, nullptr);
+
+			_float2 fXY = pParent->Get_fXY();
+
+			_float m_fX = fXY.x;
+			WriteFile(hFile, &m_fX, sizeof(_float), &dwByte, nullptr);
+
+			_float m_fY = fXY.y;
+			WriteFile(hFile, &m_fY, sizeof(_float), &dwByte, nullptr);
+
+			_float m_fZ = pParent->Get_fZ();
+			WriteFile(hFile, &m_fZ, sizeof(_float), &dwByte, nullptr);
+
+			_float2 fSize = pParent->Get_fSize();
+			_float m_fSizeX = fSize.x;
+			WriteFile(hFile, &m_fSizeX, sizeof(_float), &dwByte, nullptr);
+
+			_float m_fSizeY = fSize.y;
+			WriteFile(hFile, &m_fSizeY, sizeof(_float), &dwByte, nullptr);
+
+			_tchar wszTextureName[MAX_PATH] = TEXT("");
+			lstrcpy(wszTextureName, pParent->Get_TextureName());
+			dwStrByte = sizeof(_tchar) * (lstrlen(wszTextureName) + 1);
+			WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
+			WriteFile(hFile, wszTextureName, dwStrByte, &dwByte, nullptr);
+
+			_tchar wszTexturePath[MAX_PATH] = TEXT("");
+			lstrcpy(wszTexturePath, pParent->Get_TexturePath());
+			dwStrByte = sizeof(_tchar) * (lstrlen(wszTexturePath) + 1);
+			WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
+			WriteFile(hFile, wszTexturePath, dwStrByte, &dwByte, nullptr);
+
+			CDummy_UI::UI_ID eType = pParent->Get_UI_ID();
+			WriteFile(hFile, &eType, sizeof(CDummy_UI::UI_ID), &dwByte, nullptr);
+
+			_bool isParent = pParent->Get_bParent();
+			WriteFile(hFile, &isParent, sizeof(_bool), &dwByte, nullptr);
+
+			_bool isAlpha = pParent->Get_bAlpha();
+			WriteFile(hFile, &isAlpha, sizeof(_bool), &dwByte, nullptr);
+
+			if (isAlpha)
+			{
+				_float4 vColor = pParent->Get_vColor();
+				WriteFile(hFile, &vColor, sizeof(_float4), &dwByte, nullptr);
+
+				_tchar wszAlphaTexturePrototypeTag[MAX_PATH] = TEXT("");
+				lstrcpy(wszAlphaTexturePrototypeTag, pParent->Get_AlphaPrototypeTag());
+				dwStrByte = sizeof(_tchar) * (lstrlen(wszAlphaTexturePrototypeTag) + 1);
+				WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
+				WriteFile(hFile, wszAlphaTexturePrototypeTag, dwStrByte, &dwByte, nullptr);
+
+				_tchar wszAlphaTextureFilePath[MAX_PATH] = TEXT("");
+				lstrcpy(wszAlphaTextureFilePath, pParent->Get_AlphaTexturePath());
+				dwStrByte = sizeof(_tchar) * (lstrlen(wszAlphaTextureFilePath) + 1);
+				WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
+				WriteFile(hFile, wszAlphaTextureFilePath, dwStrByte, &dwByte, nullptr);
+			}
+
+			vector <class CDummy_UI*>* m_Childs = dynamic_cast<CDummy_UI_Group*>(pGroup)->Get_Childs();
+			iSize = m_Childs->size();
+			WriteFile(hFile, &iSize, sizeof(_uint), &dwByte, nullptr);
+
+			for (auto& pChild : *m_Childs)
+			{
+				_float2 vCombinedXY = pChild->Get_vCombinedXY();
+				WriteFile(hFile, &vCombinedXY, sizeof(_float2), &dwByte, nullptr);
+
+				_float2 fXY = pChild->Get_fXY();
+
+				_float m_fX = fXY.x;
+				WriteFile(hFile, &m_fX, sizeof(_float), &dwByte, nullptr);
+
+				_float m_fY = fXY.y;
+				WriteFile(hFile, &m_fY, sizeof(_float), &dwByte, nullptr);
+
+				_float m_fZ = pChild->Get_fZ();
+				WriteFile(hFile, &m_fZ, sizeof(_float), &dwByte, nullptr);
+
+				_float2 fSize = pChild->Get_fSize();
+				_float m_fSizeX = fSize.x;
+				WriteFile(hFile, &m_fSizeX, sizeof(_float), &dwByte, nullptr);
+
+				_float m_fSizeY = fSize.y;
+				WriteFile(hFile, &m_fSizeY, sizeof(_float), &dwByte, nullptr);
+
+				_tchar wszTextureName[MAX_PATH] = TEXT("");
+				lstrcpy(wszTextureName, pChild->Get_TextureName());
+				dwStrByte = sizeof(_tchar) * (lstrlen(wszTextureName) + 1);
+				WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
+				WriteFile(hFile, wszTextureName, dwStrByte, &dwByte, nullptr);
+
+				_tchar wszTexturePath[MAX_PATH] = TEXT("");
+				lstrcpy(wszTexturePath, pChild->Get_TexturePath());
+				dwStrByte = sizeof(_tchar) * (lstrlen(wszTexturePath) + 1);
+				WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
+				WriteFile(hFile, wszTexturePath, dwStrByte, &dwByte, nullptr);
+
+				CDummy_UI::UI_ID eType = pChild->Get_UI_ID();
+				WriteFile(hFile, &eType, sizeof(CDummy_UI::UI_ID), &dwByte, nullptr);
+
+				_bool isParent = pChild->Get_bParent();
+				WriteFile(hFile, &isParent, sizeof(_bool), &dwByte, nullptr);
+
+				_bool isAlpha = pChild->Get_bAlpha();
+				WriteFile(hFile, &isAlpha, sizeof(_bool), &dwByte, nullptr);
+
+				if (isAlpha)
+				{
+					_float4 vColor = pChild->Get_vColor();
+					WriteFile(hFile, &vColor, sizeof(_float4), &dwByte, nullptr);
+
+					_tchar wszAlphaTexturePrototypeTag[MAX_PATH] = TEXT("");
+					lstrcpy(wszAlphaTexturePrototypeTag, pChild->Get_AlphaPrototypeTag());
+					dwStrByte = sizeof(_tchar) * (lstrlen(wszAlphaTexturePrototypeTag) + 1);
+					WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
+					WriteFile(hFile, wszAlphaTexturePrototypeTag, dwStrByte, &dwByte, nullptr);
+
+					_tchar wszAlphaTextureFilePath[MAX_PATH] = TEXT("");
+					lstrcpy(wszAlphaTextureFilePath, pChild->Get_AlphaTexturePath());
+					dwStrByte = sizeof(_tchar) * (lstrlen(wszAlphaTextureFilePath) + 1);
+					WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
+					WriteFile(hFile, wszAlphaTextureFilePath, dwStrByte, &dwByte, nullptr);
+				}
+			}
+		}
+	}
+	CloseHandle(hFile);
+	return S_OK;
+}
+
+HRESULT CUI_Window::Load(_tchar* pFilePath)
+{
+		_ulong dwByte =  0;
+	HANDLE hFile = CreateFile(pFilePath, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+	if (hFile == INVALID_HANDLE_VALUE)
+	{
+		MSG_BOX("Failed Load");
+		CloseHandle(hFile);
+		return E_FAIL;
+	}
+
+	
+	_uint iGroupSize = 0;
+	ReadFile(hFile, &iGroupSize, sizeof(_uint), &dwByte, nullptr);
+	BEGININSTANCE
+
+	for (size_t i = 0; i < iGroupSize; i++)
+	{
+		// 그룹의 Tag
+		_tchar wszGroupName[MAX_PATH] = TEXT("");
+		DWORD dwStrByte;
+		ReadFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
+		ReadFile(hFile, wszGroupName, dwStrByte, &dwByte, nullptr);
+
+
+		// UI Layer 사이즈 확인 후 GameObjectTag 뒤 번호 달기.
+		_int iSize = 0;
+		if (nullptr != m_pUIGroupLayer)
+		{
+			iSize = _int(m_pUIGroupLayer->Get_Components().size());
+		}
+
+		_char szGameObjectName[MAX_PATH] = "";
+		WCharToChar(wszGroupName, szGameObjectName);
+
+		string strFimeName = szGameObjectName;
+		string GameObjectTag = "GameObject_UI_Group_" + strFimeName + to_string(iSize);
+		_tchar wszGameObjectTag[MAX_PATH] = TEXT("");
+		CharToWChar(GameObjectTag.c_str(), wszGameObjectTag);
+
+		if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, TEXT("ProtoType_Component_Dummy_UI_Gruop"),
+			TEXT("Layer_Tool_UI_Group"), wszGameObjectTag, wszGroupName)))
+		{
+			MSG_BOX("Failed to Created CDummy_UI Clone");
+		}
+		CDummy_UI_Group* pGroup = static_cast<CDummy_UI_Group*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL, TEXT("Layer_Tool_UI_Group"), wszGameObjectTag));
+		
+
+		m_UIDesc.isSave = true;
+
+		ReadFile(hFile, &m_UIDesc.vCombinedXY, sizeof(_float2), &dwByte, nullptr);
+
+		ReadFile(hFile, &m_UIDesc.m_fX, sizeof(_float), &dwByte, nullptr);
+
+		ReadFile(hFile, &m_UIDesc.m_fY, sizeof(_float), &dwByte, nullptr);
+
+		ReadFile(hFile, &m_UIDesc.m_fZ, sizeof(_float), &dwByte, nullptr);
+
+		ReadFile(hFile, &m_UIDesc.m_fSizeX, sizeof(_float), &dwByte, nullptr);
+
+		ReadFile(hFile, &m_UIDesc.m_fSizeY, sizeof(_float), &dwByte, nullptr);
+
+
+		ReadFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
+		ReadFile(hFile, m_UIDesc.m_wszTextureName, dwStrByte, &dwByte, nullptr);
+
+		_tchar wszTexturePath[MAX_PATH] = TEXT("");
+		dwStrByte = 0;
+		ReadFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
+		ReadFile(hFile, m_UIDesc.m_wszTexturePath, dwStrByte, &dwByte, nullptr);
+
+		CDummy_UI::UI_ID eType = CDummy_UI::UI_ID::UI_ID_END;
+		ReadFile(hFile, &m_UIDesc.m_eType, sizeof(CDummy_UI::UI_ID), &dwByte, nullptr);
+
+		_bool isParent = false;
+		ReadFile(hFile, &m_UIDesc.m_isParent, sizeof(_bool), &dwByte, nullptr);
+
+
+		ReadFile(hFile, &m_UIDesc.m_isAlpha, sizeof(_bool), &dwByte, nullptr);
+
+		if (m_UIDesc.m_isAlpha)
+		{
+			ReadFile(hFile, &m_UIDesc.m_vColor, sizeof(_float4), &dwByte, nullptr);
+
+			ReadFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
+			ReadFile(hFile, m_UIDesc.m_wszAlphaTexturePrototypeTag, dwStrByte, &dwByte, nullptr);
+
+			ReadFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
+			ReadFile(hFile, m_UIDesc.m_wszAlphaTextureFilePath, dwStrByte, &dwByte, nullptr);
+		}
+
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, m_UIDesc.m_wszTextureName,
+			CTexture::Create(m_pDevice, m_pContext, m_UIDesc.m_wszTexturePath))))
+		{
+			MSG_BOX("Failed Create Texture Component");
+		}
+
+
+		// UI Layer 사이즈 확인 후 GameObjectTag 뒤 번호 달기.
+		iSize = 0;
+		if (nullptr != m_pUILayer)
+		{
+			iSize = _int(m_pUILayer->Get_Components().size());
+		}
+
+		WCharToChar(m_UIDesc.m_wszTextureName, szGameObjectName);
+
+		strFimeName = szGameObjectName;
+		GameObjectTag = "UI_" + strFimeName + Generate_Hashtag(true);
+		CharToWChar(GameObjectTag.c_str(), wszGameObjectTag);
+
+
+		if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, TEXT("ProtoType_GameObject_Dummy_UI"),
+			TEXT("Layer_Tool_UI"), wszGameObjectTag, &m_UIDesc)))
+		{
+			MSG_BOX("Failed to Created CDummy_UI Clone");
+		}
+		CDummy_UI* pParent = static_cast<CDummy_UI*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL, TEXT("Layer_Tool_UI"), wszGameObjectTag));
+		pGroup->Set_Parent(pParent);
+
+		_uint iChildSize = 0;
+		ReadFile(hFile, &iChildSize, sizeof(_uint), &dwByte, nullptr);
+
+		for (size_t i = 0; i < iChildSize; i++)
+		{
+			ZeroMemory(&m_UIDesc, sizeof(UI_DATA));
+
+			m_UIDesc.isSave = true;
+
+			_float2 vCombinedXY = { 0.f, 0.f };
+			ReadFile(hFile, &m_UIDesc.vCombinedXY, sizeof(_float2), &dwByte, nullptr);
+
+
+			_float m_fX = 0.f;
+			ReadFile(hFile, &m_UIDesc.m_fX, sizeof(_float), &dwByte, nullptr);
+
+			_float m_fY = 0.f;
+			ReadFile(hFile, &m_UIDesc.m_fY, sizeof(_float), &dwByte, nullptr);
+
+			_float m_fZ = 0.f;
+			ReadFile(hFile, &m_UIDesc.m_fZ, sizeof(_float), &dwByte, nullptr);
+
+			_float m_fSizeX = 0.f;
+			ReadFile(hFile, &m_UIDesc.m_fSizeX, sizeof(_float), &dwByte, nullptr);
+
+			_float m_fSizeY = 0.f;
+			ReadFile(hFile, &m_UIDesc.m_fSizeY, sizeof(_float), &dwByte, nullptr);
+
+			_tchar wszTextureName[MAX_PATH] = TEXT("");
+			dwStrByte = 0;
+			ReadFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
+			ReadFile(hFile, m_UIDesc.m_wszTextureName, dwStrByte, &dwByte, nullptr);
+
+			ReadFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
+			ReadFile(hFile, m_UIDesc.m_wszTexturePath, dwStrByte, &dwByte, nullptr);
+
+			m_UIDesc.m_eType = CDummy_UI::UI_ID::UI_ID_END;
+			ReadFile(hFile, &m_UIDesc.m_eType, sizeof(CDummy_UI::UI_ID), &dwByte, nullptr);
+
+			_bool isParent = false;
+			ReadFile(hFile, &m_UIDesc.m_isParent, sizeof(_bool), &dwByte, nullptr);
+
+			ReadFile(hFile, &m_UIDesc.m_isAlpha, sizeof(_bool), &dwByte, nullptr);
+
+			if (m_UIDesc.m_isAlpha)
+			{
+				ReadFile(hFile, &m_UIDesc.m_vColor, sizeof(_float4), &dwByte, nullptr);
+
+				ReadFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
+				ReadFile(hFile, m_UIDesc.m_wszAlphaTexturePrototypeTag, dwStrByte, &dwByte, nullptr);
+
+				ReadFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
+				ReadFile(hFile, m_UIDesc.m_wszAlphaTextureFilePath, dwStrByte, &dwByte, nullptr);
+			}
+
+
+			if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, m_UIDesc.m_wszTextureName,
+			CTexture::Create(m_pDevice, m_pContext, m_UIDesc.m_wszTexturePath))))
+			{
+				MSG_BOX("Failed Create Texture Component");
+			}
+
+
+			iSize = 0;
+			if (nullptr != m_pUILayer)
+			{
+				iSize = _int(m_pUILayer->Get_Components().size());
+			}
+
+			_char szGameObjectName[MAX_PATH] = "";
+			WCharToChar(m_UIDesc.m_wszTextureName, szGameObjectName);
+
+			string strFimeName = szGameObjectName;
+			string GameObjectTag = "UI_" + strFimeName + to_string(iSize);
+			_tchar wszGameObjectTag[MAX_PATH] = TEXT("");
+			CharToWChar(GameObjectTag.c_str(), wszGameObjectTag);
+
+
+			if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, TEXT("ProtoType_GameObject_Dummy_UI"),
+				TEXT("Layer_Tool_UI"), wszGameObjectTag, &m_UIDesc)))
+			{
+				MSG_BOX("Failed to Created CDummy_UI Clone");
+			}
+			CDummy_UI* pChild = static_cast<CDummy_UI*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL, TEXT("Layer_Tool_UI"), wszGameObjectTag));
+			pGroup->Set_Child(pChild);
+			pChild->Set_Parent(pParent, true);
+		}
+	}
+	ENDINSTANCE
+	return S_OK;
 
 }
 
@@ -938,9 +1485,45 @@ HRESULT CUI_Window::Initialize_Font()
 		return E_FAIL;
 	}
 
+
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("ProtoType_Component_Dummy_UI_Gruop"),
+		CDummy_UI_Group::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Failed Create UI");
+	}
+
 	ENDINSTANCE
 
 	return S_OK;
+}
+
+void CUI_Window::Select_AlphaTexture(CDummy_UI* pDummyUI)
+{
+	// open Dialog Simple
+	ImGuiFileDialog::Instance()->OpenDialog("Alpha_texture", "Choose File", ".png, .dds", "");
+
+	// display
+	if (ImGuiFileDialog::Instance()->Display("Alpha_texture"))
+	{
+		// action if OK
+		if (ImGuiFileDialog::Instance()->IsOk())
+		{
+			std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+			std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
+			// action
+			_tchar wszFilePath[MAX_PATH] = TEXT("");
+			CharToWChar(filePathName.c_str(), wszFilePath);
+			
+			pDummyUI->Set_AlphaTexture(wszFilePath);
+			pDummyUI->Set_bAlpha(true);
+
+
+			m_isOpenSelectAlphaTexture = false;
+		}
+
+		// close
+		ImGuiFileDialog::Instance()->Close();
+	}
 }
 
 void CUI_Window::UI_Group_Tree()
@@ -1005,7 +1588,7 @@ void CUI_Window::Create_Font()
 {
 	string strName = "NexonGothic";
 
-	if (ImGui::BeginCombo("Group List", strName.c_str()))
+	if (ImGui::BeginCombo("Font List", strName.c_str()))
 	{
 		for (int i = 0; i < (_int)FONT_END; i++)
 		{
@@ -1030,7 +1613,7 @@ void CUI_Window::Create_Font()
 	ImGui::InputText("Write Text", m_szFontText, MAX_PATH);
 	ImGui::SameLine();
 
-	if (ImGui::Button("Enter"))
+	if (ImGui::Button("Create Font"))
 	{
 		m_isEnterTextName = true;
 		ImGui::DebugTextEncoding(m_szFontText, m_wszFontText);
@@ -1047,9 +1630,9 @@ void CUI_Window::Create_Font()
 		case Tool::CUI_Window::GOTHIC:
 		{
 			_int iSize = 0;
-			if (nullptr != m_pUILayer)
+			if (nullptr != m_pFontLayer)
 			{
-				iSize = _int(m_pUILayer->Get_Components().size());
+				iSize = _int(m_pFontLayer->Get_Components().size());
 			}
 
 			string strFont = "Font_" + to_string(iSize);

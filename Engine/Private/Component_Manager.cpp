@@ -32,10 +32,11 @@ HRESULT CComponent_Manager::Add_Prototype(_uint iLevelIndex, const _tchar* pProt
 #ifdef _TOOL
 		Safe_Release(pPrototype);
 		return S_OK;
-#endif // _TOOL
+#else
 		Safe_Release(pPrototype);
 		MSG_BOX("Already have Prototype In CComponent_Manager");
 		return E_FAIL;
+#endif // _TOOL
 	}
 
 	if (nullptr == pPrototype)
