@@ -124,6 +124,9 @@
     <Filter Include="02. GameObject\02. Enemy\03. Golem\99. Weapons">
       <UniqueIdentifier>{fde3512d-c9d7-4f98-baac-ed8650da6e1a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Tasks\Actions">
+      <UniqueIdentifier>{22de2c6d-33c0-405e-880a-8329dd7ffd58}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -231,9 +234,6 @@
     <ClInclude Include="..\Public\Weapon_Forest_Troll.h">
       <Filter>02. GameObject\02. Enemy\00. Troll\01. Forest_Troll\Weapon</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Action.h">
-      <Filter>03. Tasks</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Behavior_Includes.h">
       <Filter>99. Headers</Filter>
     </ClInclude>
@@ -266,6 +266,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\Weapon_Pensive.h">
       <Filter>02. GameObject\02. Enemy\03. Golem\99. Weapons</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Action.h">
+      <Filter>03. Tasks\Actions</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -347,9 +350,6 @@
     <ClCompile Include="..\Private\Weapon_Forest_Troll.cpp">
       <Filter>02. GameObject\02. Enemy\00. Troll\01. Forest_Troll\Weapon</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Action.cpp">
-      <Filter>03. Tasks</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Wait.cpp">
       <Filter>03. Tasks\Movement</Filter>
     </ClCompile>
@@ -379,6 +379,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Weapon_Pensive.cpp">
       <Filter>02. GameObject\02. Enemy\03. Golem\99. Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Action.cpp">
+      <Filter>03. Tasks\Actions</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

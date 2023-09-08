@@ -60,6 +60,37 @@ HRESULT CTerrain::Render()
 	return S_OK;
 }
 
+HRESULT CTerrain::Picking_On_Terrain(_Inout_ _float4* pPickPosition)
+{
+	_float4 vRayPos = { 0.f, 0.f, 0.f, 1.f };
+	_float4 vRayDir = { 0.f, 0.f, 0.f, 0.f };
+
+	BEGININSTANCE;
+	pGameInstance->Get_WorldMouseRay(m_pContext, g_hWnd, &vRayPos, &vRayDir);
+	ENDINSTANCE;
+
+	_float fDist = FLT_MAX; // 피킹 연산 후 최종 거리값
+
+	_bool bResult = m_pBuffer->IsPicked(vRayPos, vRayDir, fDist);
+
+	// 결과가 나올 경우 RayDir에 거리값을 곱해 최종 위치 산출
+	if (true == bResult)
+	{
+		if (FLT_MAX > fDist)
+		{
+			_float4 vFinalPos;
+
+			vRayDir *= fDist;
+			vFinalPos = vRayPos + vRayDir;
+			memcpy(pPickPosition, &vFinalPos, sizeof(_float4));
+
+			return S_OK;
+		}
+	}
+
+	return E_FAIL;
+}
+
 HRESULT CTerrain::Add_Components()
 {
 	/* Com_Renderer */

@@ -117,24 +117,6 @@ HRESULT CLevel_MainGame::Ready_Layer_Debug(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	/*if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Golem_Merlin"), pLayerTag, TEXT("GameObject_Golem_Combat"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Golem_Combat)");
-		return E_FAIL;
-	}*/
-
-	/*if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Forest_Troll"), pLayerTag, TEXT("GameObject_Forest_Troll"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Forest_Troll)");
-		return E_FAIL;
-	}*/
-
-	/*if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Dugbog"), pLayerTag, TEXT("GameObject_Dugbog"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Dugbog)");
-		return E_FAIL;
-	}*/
-
 	Safe_Release(pGameInstance);
 
 	return S_OK;

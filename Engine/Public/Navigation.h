@@ -19,6 +19,7 @@ public:
 			: iCurrentIndex(-1) { }
 		tagNavigationDesc(_int _iCurrentIndex)
 			: iCurrentIndex{ _iCurrentIndex } {	}
+
 		_int	iCurrentIndex = { -1 };
 
 	}NAVIGATIONDESC;
@@ -39,17 +40,16 @@ public:
 #ifdef _DEBUG
 public:
 	virtual HRESULT Render() override;
-
 #endif // _DEBUG
 	
 private:
-	NAVIGATIONDESC					m_NaviDesc;
-	_int							m_iInitialIndex = { 0 };
-	vector<class CCell*>			m_Cells;
+	NAVIGATIONDESC						m_NaviDesc;
+	_int								m_iInitialIndex = { 0 };
+	vector<class CCell*>				m_Cells;
 
 #ifdef _DEBUG
 private:
-	class CShader*				m_pShader = { nullptr };
+	class CShader*						m_pShader = { nullptr };
 #endif // _DEBUG
 
 private:

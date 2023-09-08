@@ -245,7 +245,7 @@ HRESULT CMainTool::Ready_Prototype_Component()
 			VTXRECTCOLORINSTANCE_DECL::Elements, VTXRECTCOLORINSTANCE_DECL::iNumElements))))
 		return E_FAIL;
 
-	/* For.Prototype_Component_Shader_VtxMesh*/
+	/* For.Prototype_Component_Shader_VtxMesh */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Shader_VtxMesh"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxMesh.hlsl"),
 			VTXMESH_DECL::Elements, VTXMESH_DECL::iNumElements))))
@@ -259,6 +259,12 @@ HRESULT CMainTool::Ready_Prototype_Component()
 		MSG_BOX("Failed Add_Prototype : (Prototype_Component_Shader_VtxAnimMesh)");
 		return E_FAIL;
 	}
+
+	/* For.Prototype_Component_Shader_Navigation */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Shader_Navigation"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Navigation.hlsl"),
+			VTXPOS_DECL::Elements, VTXPOS_DECL::iNumElements))))
+		return E_FAIL;
 
 	/* For.Prototype_Component_VIBuffer_Line */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_VIBuffer_Line"),

@@ -173,6 +173,7 @@
     <ClInclude Include="..\Public\Light_Window.h" />
     <ClInclude Include="..\Public\ComboBox.h" />
     <ClInclude Include="..\public\CustomWidget.h" />
+    <ClInclude Include="..\Public\Navigation_Window.h" />
     <ClInclude Include="..\Public\stb_image.h" />
     <ClInclude Include="..\Public\Dummy_UI.h" />
     <ClInclude Include="..\Public\Camera_Point.h" />
@@ -226,6 +227,7 @@
     <ClCompile Include="..\Private\Camera_Point.cpp" />
     <ClCompile Include="..\private\CutScene_Camera_Tool.cpp" />
     <ClCompile Include="..\private\Main_Camera.cpp" />
+    <ClCompile Include="..\Private\Navigation_Window.cpp" />
     <ClCompile Include="..\Private\UI_Window.cpp" />
     <ClCompile Include="..\private\DummyParticle.cpp" />
     <ClCompile Include="..\Private\Animation_Window.cpp" />
@@ -291,6 +293,7 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Debug.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Navigation.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Sky.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Terrain.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointColInstance.hlsl" />

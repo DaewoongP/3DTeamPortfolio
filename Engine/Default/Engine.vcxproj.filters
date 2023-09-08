@@ -199,21 +199,6 @@
     <Filter Include="01. Utility\02. GameObjects\02. Parts">
       <UniqueIdentifier>{b2e63afa-998c-44d2-9cf7-ca44f0b814a6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\03. Components\13. Status">
-      <UniqueIdentifier>{0d097a3d-8ef4-4813-afef-ca81cc0a63bc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\03. Components\13. Status\00. Health">
-      <UniqueIdentifier>{2c307619-8c41-4f09-8c44-3e7e1dd9bf83}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\03. Components\13. Status\01. Attack">
-      <UniqueIdentifier>{8a7bc604-a1b2-4301-9e99-b36444fc8db5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\03. Components\13. Status\02. Defence">
-      <UniqueIdentifier>{6b004c01-c864-470b-b278-e400cb119e26}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\03. Components\13. Status\03. Ignite">
-      <UniqueIdentifier>{1181c3a3-d95e-4eab-b1e6-b175481b2152}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Utility\11. Physics\EventCallBack">
       <UniqueIdentifier>{2ebd81df-468e-430d-aa58-2375576ccb78}</UniqueIdentifier>
     </Filter>
@@ -281,12 +266,6 @@
       <UniqueIdentifier>{123c13cc-5f31-459d-8cbc-5a6c0f6df715}</UniqueIdentifier>
     </Filter>
     <Filter Include="01. Utility\03. Components\12. CustomModel\MeshParts">
-      <UniqueIdentifier>{03be6e6b-609c-44dc-921c-7f8675822f53}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\03. Components\15. CustomModel">
-      <UniqueIdentifier>{123c13cc-5f31-459d-8cbc-5a6c0f6df715}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\03. Components\15. CustomModel\MeshParts">
       <UniqueIdentifier>{03be6e6b-609c-44dc-921c-7f8675822f53}</UniqueIdentifier>
     </Filter>
     <Filter Include="01. Utility\03. Components\16. RigidBody">

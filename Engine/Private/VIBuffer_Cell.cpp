@@ -114,19 +114,7 @@ void CVIBuffer_Cell::Tick(_float fTimeDelta)
 	}
 }
 
-#ifdef _DEBUG
-HRESULT CVIBuffer_Cell::Render_Sphere()
-{
-	for (auto& pSphere : m_BoundingSpheres)
-	{
-		pSphere->Render();
-	}
-
-	return S_OK;
-}
-#endif // _DEBUG
-
-HRESULT CVIBuffer_Cell::Begin(_float3* pPoints)
+HRESULT CVIBuffer_Cell::Begin(const _float3* pPoints)
 {
 	D3D11_MAPPED_SUBRESOURCE MappedSubResource;
 	

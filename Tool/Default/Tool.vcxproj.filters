@@ -103,6 +103,9 @@
     <Filter Include="02. ToolObjects\02. Camera\CameraLine">
       <UniqueIdentifier>{f3dc9106-3922-45b1-89cd-257988ae1513}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Window\Window\Navigation">
+      <UniqueIdentifier>{1604be8a-97e3-4386-885c-d69774abbd80}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tool.h">
@@ -246,6 +249,9 @@
     <ClInclude Include="..\Public\Camera_Line.h">
       <Filter>02. ToolObjects\02. Camera\CameraLine</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Navigation_Window.h">
+      <Filter>01. Window\Window\Navigation</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -369,6 +375,9 @@
     <ClCompile Include="..\Private\Camera_Line.cpp">
       <Filter>02. ToolObjects\02. Camera\CameraLine</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Navigation_Window.cpp">
+      <Filter>01. Window\Window\Navigation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Bin\ShaderFiles\Shader_Tool_Defines.hlsli">
@@ -401,6 +410,9 @@
       <Filter>97. ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Debug.hlsl">
+      <Filter>97. ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Navigation.hlsl">
       <Filter>97. ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>

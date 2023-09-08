@@ -2,7 +2,7 @@
 /* =============================================== */
 // 
 //	정 : 박대웅
-//	부 :
+//	부 : 주성환
 //
 /* =============================================== */
 
@@ -10,7 +10,7 @@
 
 BEGIN(Engine)
 
-class CCell final : public CBase
+class ENGINE_DLL CCell final : public CBase
 {
 public:
 	enum POINT { POINT_A, POINT_B, POINT_C, POINT_END };
@@ -30,20 +30,20 @@ public:
 	_bool Compare_Points(_float3 vSourPoint, _float3 vDestPoint);
 	_bool is_In(_float3 vPosition, _int* pNeighborIndex);
 
-
 #ifdef _DEBUG
 public:
 	HRESULT Render();
-
 #endif
 
 private:
 	ID3D11Device* m_pDevice = { nullptr };
 	ID3D11DeviceContext* m_pContext = { nullptr };
+
 private:
 	_int				m_iIndex = { 0 };
 	_float3				m_vPoints[POINT_END];
 	_float3				m_vNormals[NEIGHBOR_END];
+	CELLFLAG            m_eCellFlag = { CELL_MOVE };
 	_int				m_iNeighborIndices[NEIGHBOR_END] = { -1, -1, -1 };
 
 #ifdef _DEBUG

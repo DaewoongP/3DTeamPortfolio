@@ -58,7 +58,7 @@ void CTest_Player::Late_Tick(_float fTimeDelta)
 	}
 
 #ifdef _DEBUG
-	Tick_ImGui();
+	//Tick_ImGui();
 #endif // _DEBUG
 }
 
@@ -317,9 +317,12 @@ void CTest_Player::Free()
 {
 	__super::Free();
 
-	Safe_Release(m_pModelCom);
-	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pRenderer);
-	Safe_Release(m_pController);
-	Safe_Release(m_pRigidBody);
+	if (true == m_isCloned)
+	{
+		Safe_Release(m_pModelCom);
+		Safe_Release(m_pShaderCom);
+		Safe_Release(m_pRenderer);
+		Safe_Release(m_pController);
+		Safe_Release(m_pRigidBody);
+	}
 }
