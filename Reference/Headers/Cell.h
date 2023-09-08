@@ -2,7 +2,7 @@
 /* =============================================== */
 // 
 //	정 : 박대웅
-//	부 :
+//	부 : 주성환
 //
 /* =============================================== */
 
@@ -10,7 +10,7 @@
 
 BEGIN(Engine)
 
-class CCell final : public CBase
+class ENGINE_DLL CCell final : public CBase
 {
 public:
 	enum POINT { POINT_A, POINT_B, POINT_C, POINT_END };
