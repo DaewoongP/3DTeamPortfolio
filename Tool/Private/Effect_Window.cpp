@@ -30,11 +30,10 @@ HRESULT CEffect_Window::Initialize(ImVec2 _vWindowPos, ImVec2 _vWindowSize)
 
 	//m_pDummyParticle = dynamic_cast<CDummyParticle*>(pGameInstance->Clone_Component(0, TEXT("Prototype_GameObject_DummyParticle")));
 
-	pGameInstance->Add_Component(0, TEXT("Prototype_Component_Default_ParticleSystem"), L"Test", L"VIXCV");
-
+	pGameInstance->Add_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyParticle")
+		, TEXT("Test"), TEXT("TestParticle"));
+	m_pDummyParticle = dynamic_cast<CDummyParticle*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL, TEXT("Test"), TEXT("TestParticle")));
 	m_pDummyMeshEffect = dynamic_cast<CDummyMeshEffect*>(pGameInstance->Clone_Component(0, L"Prototype_GameObject_DummyMeshEffect"));
-	
-
 
 	ENDINSTANCE;
 	return S_OK;
@@ -44,7 +43,6 @@ void CEffect_Window::Tick(_float _fTimeDelta)
 	__super::Tick(_fTimeDelta);
 
 	ImGui::Begin("Effect", nullptr, m_WindowFlag);
-
 
 	m_pDummyParticle->Tick_Imgui(_fTimeDelta);
 

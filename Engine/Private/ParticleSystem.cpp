@@ -43,7 +43,7 @@ HRESULT CParticleSystem::Initialize_Prototype(const _tchar* _pDirectoryPath, _ui
 	}
 
 	// นÝบน.
-	ProtoTag = ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_ShapeModuleDesc.wstrClipTexture.c_str());
+	ProtoTag = ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_ShapeModuleDesc.wstrClipTexturePath.c_str());
 	if (nullptr == pGameInstance->Find_Prototype(iLevel, ProtoTag.data()))
 	{
 		pGameInstance->Add_Prototype(iLevel
@@ -541,7 +541,7 @@ HRESULT CParticleSystem::Add_Components(CLONE_DESC _cloneDesc)
 			throw(TEXT("Com_MainTexture"));
 
 		if (FAILED(CComposite::Add_Component(iLevel
-			, ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_ShapeModuleDesc.wstrClipTexture.c_str()).c_str()
+			, ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_ShapeModuleDesc.wstrClipTexturePath.c_str()).c_str()
 			, TEXT("Com_ClipTexture")
 			, reinterpret_cast<CComponent**>(&m_pClipTexture))))
 			throw(TEXT("Com_ClipTexture"));

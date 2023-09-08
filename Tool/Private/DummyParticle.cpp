@@ -42,17 +42,17 @@ HRESULT CDummyParticle::Initialize(void* _pArg)
 	m_pClipChannelCombo = CComboBox::Create(Generate_Hashtag(true).data(), "ClipChannel", { "Red", "Green", "Blue", "Alpha" }, "Alpha");
 	m_pClipChannelCombo->Set_StartTag(m_ShapeModuleDesc.strClipChannel.data());
 
-	m_pAlphaTexture = CImageFileDialog::Create(m_pDevice, "SelectTexture2D");
-	m_pAlphaTexture->m_strStartPath = "../../Resources/Default/Textures/Particles/";
-	m_pAlphaTexture->m_iImageButtonWidth = 32;
+	m_pAlphaTextureIFD = CImageFileDialog::Create(m_pDevice, "SelectTexture2D");
+	m_pAlphaTextureIFD->m_strStartPath = "../../Resources/Default/Textures/Particles/";
+	m_pAlphaTextureIFD->m_iImageButtonWidth = 32;
 
-	m_pSpriteTexture = CImageFileDialog::Create(m_pDevice, "SpriteImageDialog");
-	m_pSpriteTexture->m_strStartPath = "../../Resources/Default/Textures/Particles/";
-	m_pSpriteTexture->m_iImageButtonWidth = 32;
+	m_pSpriteTextureIFD = CImageFileDialog::Create(m_pDevice, "SpriteImageDialog");
+	m_pSpriteTextureIFD->m_strStartPath = "../../Resources/Default/Textures/Particles/";
+	m_pSpriteTextureIFD->m_iImageButtonWidth = 32;
 
-	m_pMaterialTexture = CImageFileDialog::Create(m_pDevice, "MainTextureDialog");
-	m_pMaterialTexture->m_strStartPath = "../../Resources/UI/UI/Game/VFX/Textures/";
-	m_pMaterialTexture->m_iImageButtonWidth = 32;
+	m_pMaterialTextureIFD = CImageFileDialog::Create(m_pDevice, "MainTextureDialog");
+	m_pMaterialTextureIFD->m_strStartPath = "../../Resources/UI/UI/Game/VFX/Textures/";
+	m_pMaterialTextureIFD->m_iImageButtonWidth = 32;
 
 	return S_OK;
 }
@@ -273,7 +273,7 @@ void CDummyParticle::ShapeModule_TreeNode()
 				m_pSpriteTypeCombo->Tick(CComboBox::FLAG::TABLE);
 
 			if (strShape == "Sprite")
-				pEffectWindow->Table_ImageButton("Sprite", "zxcvouiorvj39dxcv", m_pSpriteTexture);
+				pEffectWindow->Table_ImageButton("Sprite", "zxcvouiorvj39dxcv", m_pSpriteTextureIFD);
 
 			if (strShape == "Mesh" || strShape == "Sprite")
 				pEffectWindow->Table_DragFloat("NormalOffset", "SDFPI48083X", &m_ShapeModuleDesc.fNormalOffset);
@@ -313,12 +313,12 @@ void CDummyParticle::ShapeModule_TreeNode()
 			// ---------------------------------------------------------------
 			pEffectWindow->Table_Void();
 
-			pEffectWindow->Table_ImageButton("Texture", "XCVKPVUIIUE", m_pAlphaTexture);
-			if (m_pAlphaTexture->IsOk())
+			pEffectWindow->Table_ImageButton("Texture", "XCVKPVUIIUE", m_pAlphaTextureIFD);
+			if (m_pAlphaTextureIFD->IsOk())
 			{
-				string strFilePath = m_pAlphaTexture->Get_FilePathName();
+				string strFilePath = m_pAlphaTextureIFD->Get_FilePathName();
 				fs::path fsFilePath = ToRelativePath(strFilePath.data());
-				//ChangeTexture(fsFilePath.wstring().data());
+				ChangeTexture(&m_pClipTexture, m_ShapeModuleDesc.wstrClipTexturePath, fsFilePath.wstring().data());
 			}
 			m_ShapeModuleDesc.strClipChannel = m_pClipChannelCombo->Tick(CComboBox::FLAG::TABLE);
 			pEffectWindow->Table_DragFloat("Clip Threshold", "XC08VB890890T4", &m_ShapeModuleDesc.fClipThreshold, 0.01f, 0.f, 1.f);
@@ -363,10 +363,10 @@ void CDummyParticle::RendererModule_TreeNode()
 		{
 			ImGui::TableNextRow();
 
-			pEffectWindow->Table_ImageButton("Material", "xcvi3489009dv", m_pMaterialTexture);
-			if (m_pMaterialTexture->IsOk())
+			pEffectWindow->Table_ImageButton("Material", "xcvi3489009dv", m_pMaterialTextureIFD);
+			if (m_pMaterialTextureIFD->IsOk())
 			{
-				string strFilePath = m_pMaterialTexture->Get_FilePathName();
+				string strFilePath = m_pMaterialTextureIFD->Get_FilePathName();
 				fs::path fsFilePath = ToRelativePath(strFilePath.data());
 				ChangeTexture(&m_pTexture, m_RendererModuleDesc.wstrMaterialPath, fsFilePath.wstring().data());
 				wcout << m_RendererModuleDesc.wstrMaterialPath << endl;
@@ -512,7 +512,7 @@ void CDummyParticle::Free(void)
 	Safe_Release(m_pBoxEmitFromCombo);
 	Safe_Release(m_pMeshTypeCombo);
 	Safe_Release(m_pClipChannelCombo);
-	Safe_Release(m_pAlphaTexture);
-	Safe_Release(m_pSpriteTexture);
-	Safe_Release(m_pMaterialTexture);
+	Safe_Release(m_pAlphaTextureIFD);
+	Safe_Release(m_pSpriteTextureIFD);
+	Safe_Release(m_pMaterialTextureIFD);
 }
