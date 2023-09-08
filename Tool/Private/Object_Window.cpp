@@ -332,45 +332,6 @@ void CObject_Window::Select_Model()
 	ImGui::ListBox("ModelList", &m_iModelIndex, VectorGetter, 
 		static_cast<void*>(&m_vecModelList), (_int)m_vecModelList.size(), 15);
 
-	// open Dialog Simple
-	// 모델을 골라 프로토타입 만들어주는 부분
-	if (ImGui::Button("Open File Dialog"))
-		ImGuiFileDialog::Instance()->OpenDialog("ChooseModel", "Choose File", ".dat",
-			"../../Resources/Models/NonAnims/");
-
-	// display
-	if (ImGuiFileDialog::Instance()->Display("ChooseModel"))
-	{
-		// action if OK
-		if (ImGuiFileDialog::Instance()->IsOk())
-		{
-			// action
-			// 주소 가공
-			std::string strFilePathName = ImGuiFileDialog::Instance()->GetFilePathName();
-			_char fileName[MAX_PATH] = "";
-			_splitpath_s(strFilePathName.c_str(), nullptr, 0, nullptr, 0, fileName, MAX_PATH, nullptr, 0);
-
-			_tchar wszfilePath[MAX_PATH] = {};
-			_tchar wszfileName[MAX_PATH] = {};
-			CharToWChar(strFilePathName.c_str(), wszfilePath);
-			CharToWChar(fileName, wszfileName);
-			_tchar wszModelTag[MAX_PATH] = TEXT("Prototype_Component_Model_");
-			lstrcat(wszModelTag, wszfileName);
-
-			// _tchar형태의 문자열을 string으로 변환
-			_char szTag[MAX_PATH] = "";
-			WCharToChar(wszModelTag, szTag);
-			m_strCurrentModel.clear();
-			m_strCurrentModel.append(szTag);
-
-			m_vecModelList.push_back(m_strCurrentModel);
-			Deep_Copy_Name();
-		}
-
-		// close
-		ImGuiFileDialog::Instance()->Close();
-	}
-
 	// 선택된 모델을 적용
 	if (ImGui::Button("SelectModel"))
 	{
@@ -404,10 +365,35 @@ void CObject_Window::Current_MapObject()
 
 void CObject_Window::Save_Load_Menu()
 {
+	// open Dialog Simple
+	// 모델을 골라 프로토타입 만들어주는 부분
+	if (ImGui::Button("Open File Dialog"))
+		ImGuiFileDialog::Instance()->OpenDialog("ChooseData", "Choose File", ".ddd",
+			"../../Resources/GameData/MapData/");
+
+	// display
+	if (ImGuiFileDialog::Instance()->Display("ChooseData"))
+	{
+		// action if OK
+		if (ImGuiFileDialog::Instance()->IsOk())
+		{
+			// action
+			// 주소 가공
+			std::string strFilePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+			
+			wstring ws;
+			ws.assign(strFilePathName.begin(), strFilePathName.end());
+			lstrcpy(m_wszMapDataPath, ws.c_str());
+		}
+
+		// close
+		ImGuiFileDialog::Instance()->Close();
+	}
+
 	// 세이브 버튼 처리
 	if (ImGui::Button("Save"))
 	{
-		if (FAILED(Save_MapObject()))
+		if (FAILED(Save_MapObject(m_wszMapDataPath)))
 			MSG_BOX("Failed to Save MapObject on Menu");
 	}
 
@@ -416,7 +402,7 @@ void CObject_Window::Save_Load_Menu()
 	// 로드 버튼 처리
 	if (ImGui::Button("Load"))
 	{
-		if (FAILED(Load_MapObject()))
+		if (FAILED(Load_MapObject(m_wszMapDataPath)))
 			MSG_BOX("Failed to Load MapObject on Menu");
 	}
 }
@@ -680,11 +666,9 @@ void CObject_Window::Delete_Picking_Object()
 	}
 }
 
-HRESULT CObject_Window::Save_MapObject()
+HRESULT CObject_Window::Save_MapObject(const _tchar* m_wszMapDataPath)
 {
-	_tchar dataFile[MAX_PATH] = TEXT("../../Resources/GameData/MapData/MapObject.ddd");
-
-	HANDLE hFile = CreateFile(dataFile, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+	HANDLE hFile = CreateFile(m_wszMapDataPath, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
 	if (INVALID_HANDLE_VALUE == hFile)
 	{
 		MSG_BOX("Failed to Create MapObject File for Save MapObject");
@@ -721,13 +705,11 @@ HRESULT CObject_Window::Save_MapObject()
 	return S_OK;
 }
 
-HRESULT CObject_Window::Load_MapObject()
+HRESULT CObject_Window::Load_MapObject(const _tchar* m_wszMapDataPath)
 {
 	m_vecSaveObject.clear();
 
-	_tchar dataFile[MAX_PATH] = TEXT("../../Resources/GameData/MapData/MapObject.ddd");
-
-	HANDLE hFile = CreateFile(dataFile, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+	HANDLE hFile = CreateFile(m_wszMapDataPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
 	if (INVALID_HANDLE_VALUE == hFile)
 	{

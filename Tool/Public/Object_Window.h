@@ -51,8 +51,8 @@ private:
 	void Mesh_Picking_Menu(); // 메쉬 피킹 메뉴
 	void Change_Picking_Menu(const _tchar* wszTag, _uint iTagNum); // 피킹한 메쉬 변경
 	void Delete_Picking_Object(); // 피킹한 오브젝트 삭제 메뉴
-	HRESULT Save_MapObject(); // MapObject 저장
-	HRESULT Load_MapObject(); // MapObject 로드
+	HRESULT Save_MapObject(const _tchar* m_wszMapDataPath); // MapObject 저장
+	HRESULT Load_MapObject(const _tchar* m_wszMapDataPath); // MapObject 로드
 	HRESULT Save_MapObject_Ins(); // MapObject_Ins 저장
 	HRESULT Load_MapObject_Ins(); // MapObject_Ins 로드
 
@@ -88,6 +88,7 @@ private:
 	CMapObject_Ins* m_pObjIns = { nullptr }; // 설치할 MapObejct_Ins의 주소
 	_uint m_iMapObjectIndex = { 0 }; // 현재 맵에 설치된 맵 오브젝트의 개수
 
+	_tchar m_wszMapDataPath[MAX_PATH] = TEXT("");
 	string m_strCurrentModel = { "Dummy" }; // 현재 활성화된 모델 이름, 초기값은 더미
 	_float m_vDummyMatrix[DUMMY_END][3];	// 더미의 상태 행렬, 이 값을 .ddd 파일에 저장함
 
