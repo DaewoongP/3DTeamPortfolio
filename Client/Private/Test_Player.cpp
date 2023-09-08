@@ -30,7 +30,6 @@ HRESULT CTest_Player::Initialize(void* pArg)
 
 	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
-	m_pTransform->Set_RigidBody(m_pRigidBody);
 
 	return S_OK;
 }
@@ -171,8 +170,9 @@ HRESULT CTest_Player::Add_Components()
 		return E_FAIL;
 	}
 
+	// ¿Ê °æ·Î ³Ö¾îÁà¾ßÇÔ.
 	/* For.Prototype_Component_MeshParts_Robe_Student */
-	if (FAILED(m_pModelCom->Add_MeshParts(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Robe_Student"), CCustomModel::ROBE)))
+	if (FAILED(m_pModelCom->Add_MeshParts(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Robe_Student"), CCustomModel::ROBE, nullptr)))
 	{
 		MSG_BOX("[CTest_Player] Failed Add_MeshParts");
 		return E_FAIL;

@@ -196,9 +196,6 @@
     <Filter Include="01. Utility\03. Components\07. VIBuffer\Triangle">
       <UniqueIdentifier>{a5f8428d-9252-403e-821d-0690fa879d0b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\02. GameObjects\02. Parts">
-      <UniqueIdentifier>{b2e63afa-998c-44d2-9cf7-ca44f0b814a6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Utility\03. Components\13. Status">
       <UniqueIdentifier>{0d097a3d-8ef4-4813-afef-ca81cc0a63bc}</UniqueIdentifier>
     </Filter>
@@ -300,6 +297,9 @@
     </Filter>
     <Filter Include="01. Utility\03. Components\18. MeshEffect">
       <UniqueIdentifier>{35f210f5-64ec-49e0-97dd-d4fdb9664c1b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\11. Physics\Job">
+      <UniqueIdentifier>{def8c79f-6f0e-40f1-80f6-4f10844dcc2d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -609,6 +609,9 @@
     <ClInclude Include="..\public\Dynamic_Mesh.h">
       <Filter>01. Utility\03. Components\04. Model\Mesh\Dynamic</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\JobManager.h">
+      <Filter>01. Utility\11. Physics\Job</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -886,6 +889,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Dynamic_Mesh.cpp">
       <Filter>01. Utility\03. Components\04. Model\Mesh\Dynamic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\JobManager.cpp">
+      <Filter>01. Utility\11. Physics\Job</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

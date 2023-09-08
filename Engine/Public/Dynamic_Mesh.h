@@ -6,12 +6,11 @@
 //
 /* =============================================== */
 
-#include "VIBuffer.h"
-#include "Model.h"
+#include "Mesh.h"
 
 BEGIN(Engine)
 
-class CDynamic_Mesh final : public CVIBuffer
+class ENGINE_DLL CDynamic_Mesh final : public CMesh
 {
 private:
 	explicit CDynamic_Mesh(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -19,22 +18,16 @@ private:
 	virtual ~CDynamic_Mesh() = default;
 
 public:
-	_uint	Get_MaterialIndex() const { return m_iMaterialIndex; }
-	void	Get_Matrices(CModel::BONES Bones, _Inout_ _float4x4 * pMatrices, _float4x4 PivotMatrix);
+	cloth::Cloth* Get_Cloth() const { return m_pCloth; }
 
 public:
-	virtual HRESULT Initialize_Prototype(CModel::TYPE eType, const CModel::BONES & Bones, const Engine::MESH Mesh, _float4x4 PivotMatrix);
+	virtual HRESULT Initialize_Prototype(CModel::TYPE eType, const CModel::BONES & Bones, const Engine::MESH Mesh, _float4x4 PivotMatrix, const _tchar* szClothDataFilePath);
 	virtual HRESULT Initialize(void* pArg) override;
-	void Tick(_float fTimeDelta);
+	virtual void Tick(_float fTimeDelta) override;
 
-private:
-	_tchar			m_szName[MAX_PATH] = TEXT("");
-	_uint			m_iMaterialIndex = { 0 };
-	CModel::TYPE	m_eType = { CModel::TYPE_END };
-
-private:
-	_uint			m_iNumBones = { 0 };
-	vector<_uint>	m_BoneIndices;
+public:
+	// 바람 등으로 움직였던 옷을 초기위치로 다시 세팅함.
+	void Reset_Position();
 
 private: /* For. Cloth */
 	cloth::Fabric*		m_pFabric = { nullptr };
@@ -43,14 +36,19 @@ private: /* For. Cloth */
 	vector<_float3>		m_VertexPositions;
 	vector<_ulong>		m_Indices;
 	vector<_float>		m_InvMasses;
+	CModel::TYPE		m_eType = { CModel::TYPE_END };
 
 private:
-	HRESULT Ready_VertexBuffer_NonAnim(const Engine::MESH Mesh, _float4x4 PivotMatrix);
-	HRESULT Ready_VertexBuffer_Anim(const Engine::MESH Mesh, const CModel::BONES & Bones);
+	vector<VTXANIMMESH>		m_AnimVertices;
+	vector<VTXMESH>			m_NonAnimVertices;
+
+private:
+	virtual HRESULT Ready_VertexBuffer_NonAnim(const Engine::MESH Mesh, _float4x4 PivotMatrix) override;
+	virtual HRESULT Ready_VertexBuffer_Anim(const Engine::MESH Mesh, const CModel::BONES & Bones) override;
 	HRESULT Initialize_ClothMesh();
 
 public:
-	static CDynamic_Mesh* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, CModel::TYPE eType, const CModel::BONES & Bones, const Engine::MESH Mesh, _float4x4 PivotMatrix);
+	static CDynamic_Mesh* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, CModel::TYPE eType, const CModel::BONES & Bones, const Engine::MESH Mesh, _float4x4 PivotMatrix, const _tchar* szClothDataFilePath);
 	virtual CComponent* Clone(void* pArg) override;
 	virtual void Free() override;
 };

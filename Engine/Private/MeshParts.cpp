@@ -62,14 +62,22 @@ HRESULT CMeshParts::Initialize(void* _pArg)
 	}
 
 	MESHPARTSDESC* pMeshPartsDesc = static_cast<MESHPARTSDESC*>(_pArg);
-	if (nullptr == pMeshPartsDesc->m_pBones)
+	if (nullptr == pMeshPartsDesc->pBones)
 	{
 		MSG_BOX("[CMeshParts] pMeshPartsDesc's m_pBones is nullptr");
 		return E_FAIL;
 	}
 
-	if (FAILED(Ready_Mesh(*pMeshPartsDesc->m_pBones)))
-		return E_FAIL;
+	if (nullptr == pMeshPartsDesc->szClothDataFilePath)
+	{
+		if (FAILED(Ready_Mesh(*pMeshPartsDesc->pBones)))
+			return E_FAIL;
+	}
+	else
+	{
+		if (FAILED(Ready_DynamicMesh(*pMeshPartsDesc->pBones, pMeshPartsDesc->szClothDataFilePath)))
+			return E_FAIL;
+	}
 
 	return S_OK;
 }
@@ -375,6 +383,22 @@ HRESULT CMeshParts::Ready_Mesh(const CModel::BONES& _Bones)
 	for (_uint i = 0; i < m_iNumMeshes; ++i)
 	{
 		CMesh* pMesh = CMesh::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, _Bones, m_MeshDatas[i], _float4x4());
+		if (nullptr == pMesh)
+			return E_FAIL;
+
+		m_Meshes.push_back(pMesh);
+	}
+
+	return S_OK;
+}
+
+HRESULT CMeshParts::Ready_DynamicMesh(const CModel::BONES& _Bones, const _tchar* szClothDataFilePath)
+{
+	m_iNumMeshes = m_Model.iNumMeshes;
+
+	for (_uint i = 0; i < m_iNumMeshes; ++i)
+	{
+		CDynamic_Mesh* pMesh = CDynamic_Mesh::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, _Bones, m_MeshDatas[i], _float4x4(), szClothDataFilePath);
 		if (nullptr == pMesh)
 			return E_FAIL;
 

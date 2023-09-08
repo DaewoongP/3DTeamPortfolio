@@ -4,33 +4,18 @@
 #include "PhysXConverter.h"
 
 CDynamic_Mesh::CDynamic_Mesh(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CVIBuffer(pDevice, pContext)
+	: CMesh(pDevice, pContext)
 {
 }
 
 CDynamic_Mesh::CDynamic_Mesh(const CDynamic_Mesh& rhs)
-	: CVIBuffer(rhs)
-	, m_iMaterialIndex(rhs.m_iMaterialIndex)
-	, m_iNumBones(rhs.m_iNumBones)
-	, m_BoneIndices(rhs.m_BoneIndices)
+	: CMesh(rhs)
 {
-	lstrcpy(m_szName, rhs.m_szName);
 }
 
-void CDynamic_Mesh::Get_Matrices(CModel::BONES Bones, _Inout_ _float4x4* pMatrices, _float4x4 PivotMatrix)
+HRESULT CDynamic_Mesh::Initialize_Prototype(CModel::TYPE eType, const CModel::BONES& Bones, const Engine::MESH Mesh, _float4x4 PivotMatrix, const _tchar* szClothDataFilePath)
 {
-	_uint		iIndex = 0;
-
-	for (auto iBoneIndex : m_BoneIndices)
-	{
-		_float4x4 OffsetMatrix = Bones[iBoneIndex]->Get_OffsetMatrix();
-		_float4x4 CombinedMatrix = Bones[iBoneIndex]->Get_CombinedTransformationMatrix();
-		pMatrices[iIndex++] = OffsetMatrix * CombinedMatrix * PivotMatrix;
-	}
-}
-
-HRESULT CDynamic_Mesh::Initialize_Prototype(CModel::TYPE eType, const CModel::BONES& Bones, const Engine::MESH Mesh, _float4x4 PivotMatrix)
-{
+	//Default exception : Tool_Cloth
 	m_iMaterialIndex = Mesh.iMaterialIndex;
 	lstrcpy(m_szName, Mesh.szName);
 	m_iNumVertexBuffers = { 1 };
@@ -109,7 +94,7 @@ void CDynamic_Mesh::Tick(_float fTimeDelta)
 	}
 
 	m_pSolver->endSimulation();
-
+	
 	// 동적버퍼 map 전에 미리 값을 옮겨둠.
 	cloth::MappedRange<PxVec4>	Particles = m_pCloth->getCurrentParticles();
 	vector<_float3> Positions;
@@ -148,6 +133,34 @@ void CDynamic_Mesh::Tick(_float fTimeDelta)
 		{
 			pVertices[i].vPosition = Positions[i];
 		}
+
+		m_pContext->Unmap(m_pVB, 0);
+	}
+}
+
+void CDynamic_Mesh::Reset_Position()
+{
+	if (CModel::TYPE_NONANIM == m_eType)
+	{
+		D3D11_MAPPED_SUBRESOURCE	MappedSubResource;
+
+		m_pContext->Map(m_pVB, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &MappedSubResource);
+
+		VTXMESH* pVertices = static_cast<VTXMESH*>(MappedSubResource.pData);
+
+		memcpy(pVertices, m_NonAnimVertices.data(), sizeof(VTXMESH) * m_iNumVertices);
+
+		m_pContext->Unmap(m_pVB, 0);
+	}
+	else
+	{
+		D3D11_MAPPED_SUBRESOURCE	MappedSubResource;
+
+		m_pContext->Map(m_pVB, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &MappedSubResource);
+
+		VTXANIMMESH* pVertices = static_cast<VTXANIMMESH*>(MappedSubResource.pData);
+
+		memcpy(pVertices, m_AnimVertices.data(), sizeof(VTXANIMMESH) * m_iNumVertices);
 
 		m_pContext->Unmap(m_pVB, 0);
 	}
@@ -192,6 +205,9 @@ HRESULT CDynamic_Mesh::Ready_VertexBuffer_NonAnim(const Engine::MESH Mesh, _floa
 
 	if (FAILED(__super::Create_Buffer(&m_pVB)))
 		return E_FAIL;
+
+	m_NonAnimVertices.resize(m_iNumVertices);
+	memcpy(m_NonAnimVertices.data(), pVertices, sizeof(VTXMESH) * m_iNumVertices);
 
 	Safe_Delete_Array(pVertices);
 
@@ -304,6 +320,11 @@ HRESULT CDynamic_Mesh::Ready_VertexBuffer_Anim(const Engine::MESH Mesh, const CM
 
 	if (FAILED(__super::Create_Buffer(&m_pVB)))
 		return E_FAIL;
+
+	m_AnimVertices.clear();
+	m_AnimVertices.resize(m_iNumVertices);
+	memcpy(m_AnimVertices.data(), pVertices, sizeof(VTXANIMMESH) * m_iNumVertices);
+
 	Safe_Delete_Array(pVertices);
 
 	return S_OK;
@@ -401,20 +422,22 @@ HRESULT CDynamic_Mesh::Initialize_ClothMesh()
 	m_pCloth->setSolverFrequency(10.f);
 	m_pCloth->setTetherConstraintScale(1.f);
 	m_pCloth->setDragCoefficient(0.5f);
-	m_pCloth->setLiftCoefficient(0.6f);
-	m_pCloth->setWindVelocity(PxVec3(0.f, 0.f, -5.f));
+	m_pCloth->setLiftCoefficient(1.f);
+	m_pCloth->setWindVelocity(PxVec3(0.f, 0.f, 0.f));
 	m_pCloth->setGravity(vGravity);
+	_float4 vPivotRoation = XMQuaternionRotationRollPitchYaw(XMConvertToRadians(90.f), 0.f, 0.f);
+	m_pCloth->setRotation(PhysXConverter::ToPxQuat(vPivotRoation));
 
 	m_pSolver->addCloth(m_pCloth);
 
 	return S_OK;
 }
 
-CDynamic_Mesh* CDynamic_Mesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CModel::TYPE eType, const CModel::BONES& Bones, const Engine::MESH Mesh, _float4x4 PivotMatrix)
+CDynamic_Mesh* CDynamic_Mesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CModel::TYPE eType, const CModel::BONES& Bones, const Engine::MESH Mesh, _float4x4 PivotMatrix, const _tchar* szClothDataFilePath)
 {
 	CDynamic_Mesh* pInstance = new CDynamic_Mesh(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize_Prototype(eType, Bones, Mesh, PivotMatrix)))
+	if (FAILED(pInstance->Initialize_Prototype(eType, Bones, Mesh, PivotMatrix, szClothDataFilePath)))
 	{
 		MSG_BOX("Failed to Created CDynamic_Mesh");
 		Safe_Release(pInstance);
@@ -440,15 +463,18 @@ void CDynamic_Mesh::Free()
 {
 	__super::Free();
 
-	if (nullptr != m_pSolver)
+	if (false == m_isCloned)
 	{
-		m_pSolver->removeCloth(m_pCloth);
-	}
+		if (nullptr != m_pSolver)
+		{
+			m_pSolver->removeCloth(m_pCloth);
+		}
 
-	Safe_Delete(m_pSolver);
-	Safe_Delete(m_pCloth);
-	if (nullptr != m_pFabric)
-	{
-		m_pFabric->decRefCount();
+		Safe_Delete(m_pSolver);
+		Safe_Delete(m_pCloth);
+		if (nullptr != m_pFabric)
+		{
+			m_pFabric->decRefCount();
+		}
 	}
 }

@@ -204,6 +204,25 @@ namespace Engine
 		return result;
 	}
 
+	std::wstring Generate_HashtagW(bool _isSpSp = false, int _iLength = 15)
+	{
+		const std::wstring chars = TEXT("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
+		std::random_device rd;
+		std::mt19937 generator(rd());
+
+		std::wstring result = TEXT("");
+		if (true == _isSpSp)
+		{
+			result = TEXT("##");
+		}
+
+		for (int i = 0; i < _iLength; ++i) {
+			result += chars[generator() % chars.size()];
+		}
+
+		return result;
+	}
+
 	std::wstring ToRelativePath(const wchar_t* pAbsolutePath)
 	{
 		wstring absolutePath = pAbsolutePath;

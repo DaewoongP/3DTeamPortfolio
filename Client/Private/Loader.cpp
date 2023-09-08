@@ -246,7 +246,7 @@ HRESULT CLoader::Loading_For_MainGame()
 			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Arm/Arm.dat"), TEXT("ARM_Default")))))
 			throw TEXT("Prototype_Component_MeshParts_Arm");*/
 
-			/* For.Prototype_Component_MeshParts_Up */
+		/* For.Prototype_Component_MeshParts_Up */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Up"),
 			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Up/Up.dat"), TEXT("UPPERBODY_Default")))))
 			throw TEXT("Prototype_Component_MeshParts_Up");

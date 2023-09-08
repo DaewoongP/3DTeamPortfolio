@@ -7,6 +7,7 @@
 #include "Animation_Window.h"
 #include "Camera_Window.h"
 #include "Light_Window.h"
+#include "Cloth_Window.h"
 
 BEGIN(Tool)
 
@@ -15,8 +16,9 @@ class CWindow_Manager final : public CBase
 private:
 	enum MENULIST {
 		OBJECT_WINDOW, NAVIGATION_WINDOW, CAMERA_WINDOW, EFFECT_WINDOW
-		, ANIMATION_WINDOW, UI_WINDOW, LIGHT_WINDOW, MENULIST_END
+		, ANIMATION_WINDOW, UI_WINDOW, LIGHT_WINDOW, CLOTH_WINDOW, MENULIST_END
 	};
+	// window 생성시 위 리스트와 아래 플래그값을 하나씪 추가해주시면 됩니다.
 	enum LOADINGFLAG {
 		OBJECT_LOAD			= 1 << 0,
 		NAVIGATION_LOAD		= 1 << 1,
@@ -25,6 +27,7 @@ private:
 		ANIAMTION_LOAD		= 1 << 4,
 		UI_LOAD				= 1 << 5,
 		LIGHT_LOAD			= 1 << 6,
+		CLOTH_LOAD			= 1 << 7,
 	};
 
 	DECLARE_SINGLETON(CWindow_Manager);

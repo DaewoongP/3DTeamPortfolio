@@ -75,7 +75,7 @@ _float4x4 CCustomModel::Get_BoneCombinedTransformationMatrix(_uint iIndex)
 	return m_Bones[iIndex]->Get_CombinedTransformationMatrix();
 }
 
-HRESULT CCustomModel::Add_MeshParts(const _uint& _iLevelIndex, const wstring& _wstrPrototypeTag, MESHTYPE _eMeshPartsType)
+HRESULT CCustomModel::Add_MeshParts(const _uint& _iLevelIndex, const wstring& _wstrPrototypeTag, MESHTYPE _eMeshPartsType, const _tchar* _szClothDataFilePath)
 {
 	if (0 > _eMeshPartsType || MESH_END <= _eMeshPartsType)
 	{
@@ -87,7 +87,8 @@ HRESULT CCustomModel::Add_MeshParts(const _uint& _iLevelIndex, const wstring& _w
 	Safe_AddRef(pGameInstance);
 
 	CMeshParts::MESHPARTSDESC MeshPartsDesc;
-	MeshPartsDesc.m_pBones = &m_Bones;
+	MeshPartsDesc.pBones = &m_Bones;
+	MeshPartsDesc.szClothDataFilePath = _szClothDataFilePath;
 	CMeshParts* pMeshParts = static_cast<CMeshParts*>(pGameInstance->Clone_Component(_iLevelIndex, _wstrPrototypeTag.c_str(), &MeshPartsDesc));
 
 	Safe_Release(pGameInstance);

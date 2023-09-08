@@ -4,6 +4,7 @@
 #include "PXEventCallBack.h"
 #include "NVContextCallBack.h"
 #include "PXAssertHandler.h"
+#include "JobManager.h"
 #include "Base.h"
 
 BEGIN(Engine)
