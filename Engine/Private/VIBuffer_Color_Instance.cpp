@@ -68,7 +68,7 @@ HRESULT CVIBuffer_Color_Instance::Initialize(void* pArg)
 	return S_OK;
 }
 
-void CVIBuffer_Color_Instance::Tick(COLORINSTANCE* pInstances, _int iRenderedParticleNum, _bool isAlphaBlend, _float4x4 AlphaBlendObjectWorldMatrixInverse)
+void CVIBuffer_Color_Instance::Tick(VTXCOLINSTANCE* pInstances, _int iRenderedParticleNum, _bool isAlphaBlend, _float4x4 AlphaBlendObjectWorldMatrixInverse)
 {
 	if (nullptr == pInstances)
 		return;
@@ -85,7 +85,7 @@ void CVIBuffer_Color_Instance::Tick(COLORINSTANCE* pInstances, _int iRenderedPar
 
 	if (true == isAlphaBlend)
 	{
-		Sort_AlphaBlend(pInstances, AlphaBlendObjectWorldMatrixInverse);
+		Sort_AlphaBlend(pInstances, iRenderedParticleNum, AlphaBlendObjectWorldMatrixInverse);
 	}
 
 	D3D11_MAPPED_SUBRESOURCE	MappedSubResource;
@@ -96,17 +96,17 @@ void CVIBuffer_Color_Instance::Tick(COLORINSTANCE* pInstances, _int iRenderedPar
 
 	for (_uint i = 0; i < iRenderedParticleNum; ++i)
 	{
-		memcpy(&pVtxInstance[i].vRight, &pInstances[i].InstanceLocalMatrix.m[0], sizeof(_float4));
-		memcpy(&pVtxInstance[i].vUp, &pInstances[i].InstanceLocalMatrix.m[1], sizeof(_float4));
-		memcpy(&pVtxInstance[i].vLook, &pInstances[i].InstanceLocalMatrix.m[2], sizeof(_float4));
-		memcpy(&pVtxInstance[i].vTranslation, &pInstances[i].InstanceLocalMatrix.m[3], sizeof(_float4));
-		memcpy(&pVtxInstance[i].vColor, &pInstances[i].vInstanceColor, sizeof(_float4));
+		memcpy(&pVtxInstance[i].vRight, &pInstances[i].vRight, sizeof(_float4));
+		memcpy(&pVtxInstance[i].vUp, &pInstances[i].vUp, sizeof(_float4));
+		memcpy(&pVtxInstance[i].vLook, &pInstances[i].vLook, sizeof(_float4));
+		memcpy(&pVtxInstance[i].vTranslation, &pInstances[i].vTranslation, sizeof(_float4));
+		memcpy(&pVtxInstance[i].vColor, &pInstances[i].vColor, sizeof(_float4));
 	}
 
 	m_pContext->Unmap(m_pVBInstance, 0);
 }
 
-void CVIBuffer_Color_Instance::Sort_AlphaBlend(COLORINSTANCE* pInstances, _float4x4 AlphaBlendObjectWorldMatrixInverse)
+void CVIBuffer_Color_Instance::Sort_AlphaBlend(VTXCOLINSTANCE* pInstances, _int iRenderedParticleNum, _float4x4 AlphaBlendObjectWorldMatrixInverse)
 {
 	CPipeLine* pPipeLine = CPipeLine::GetInstance();
 	Safe_AddRef(pPipeLine);
@@ -116,15 +116,15 @@ void CVIBuffer_Color_Instance::Sort_AlphaBlend(COLORINSTANCE* pInstances, _float
 
 	Safe_Release(pPipeLine);
 
-	vector<COLORINSTANCE> ColorInstances;
+	vector<VTXCOLINSTANCE> ColorInstances;
 	ColorInstances.resize(m_iNumInstance);
 
-	memcpy(ColorInstances.data(), pInstances, sizeof(COLORINSTANCE) * m_iNumInstance);
+	memcpy(ColorInstances.data(), pInstances, sizeof(VTXCOLINSTANCE) * iRenderedParticleNum);
 
-	sort(ColorInstances.begin(), ColorInstances.end(), [vCamLocalPos](COLORINSTANCE SourInstance, COLORINSTANCE DestInstance) {
+	sort(ColorInstances.begin(), ColorInstances.end(), [vCamLocalPos](VTXCOLINSTANCE SourInstance, VTXCOLINSTANCE DestInstance) {
 		_float4 vSourLocalPos, vDestLocalPos;
-		memcpy(&vSourLocalPos, SourInstance.InstanceLocalMatrix.m[3], sizeof(_float4));
-		memcpy(&vDestLocalPos, DestInstance.InstanceLocalMatrix.m[3], sizeof(_float4));
+		memcpy(&vSourLocalPos, &SourInstance.vTranslation, sizeof(_float4));
+		memcpy(&vDestLocalPos, &DestInstance.vTranslation, sizeof(_float4));
 
 		_float4 vSour = vSourLocalPos - vCamLocalPos;
 		_float4 vDest = vDestLocalPos - vCamLocalPos;
@@ -136,7 +136,7 @@ void CVIBuffer_Color_Instance::Sort_AlphaBlend(COLORINSTANCE* pInstances, _float
 		return false;
 		});
 
-	memcpy(pInstances, ColorInstances.data(), sizeof(COLORINSTANCE) * m_iNumInstance);
+	memcpy(pInstances, ColorInstances.data(), sizeof(VTXCOLINSTANCE) * iRenderedParticleNum);
 }
 
 void CVIBuffer_Color_Instance::Set_DrawNum(_uint iDrawNum)

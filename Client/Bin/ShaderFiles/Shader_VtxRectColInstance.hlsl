@@ -84,6 +84,7 @@ PS_OUT	PS_MAIN(PS_IN In)
 		Out.vColor.a = g_ClipTexture.Sample(LinearSampler, In.vTexUV).a;
 
 	Out.vColor *= (In.vColor * g_vColor);
+	
 	if (Out.vColor.a < g_fClipThreshold)
 		discard;
 

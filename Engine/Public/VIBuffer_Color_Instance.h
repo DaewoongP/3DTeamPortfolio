@@ -12,13 +12,6 @@ BEGIN(Engine)
 
 class ENGINE_DLL CVIBuffer_Color_Instance abstract : public CVIBuffer
 {
-public:
-	typedef struct tagColorInstance
-	{
-		_float4x4	InstanceLocalMatrix;
-		_float4		vInstanceColor;
-	}COLORINSTANCE;
-
 protected:
 	explicit CVIBuffer_Color_Instance(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CVIBuffer_Color_Instance(const CVIBuffer_Color_Instance& rhs);
@@ -27,10 +20,10 @@ protected:
 public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg) override;
-	virtual void Tick(COLORINSTANCE* pInstances, _int iRenderedParticleNum = -1, _bool isAlphaBlend = false, _float4x4 AlphaBlendObjectWorldMatrixInverse = XMMatrixIdentity());
+	virtual void Tick(VTXCOLINSTANCE * pInstances, _int iRenderedParticleNum = -1, _bool isAlphaBlend = false, _float4x4 AlphaBlendObjectWorldMatrixInverse = XMMatrixIdentity());
 
 public:
-	void Sort_AlphaBlend(COLORINSTANCE* pInstances, _float4x4 AlphaBlendObjectWorldMatrixInverse);
+	void Sort_AlphaBlend(VTXCOLINSTANCE * pInstances, _int iRenderedParticleNum, _float4x4 AlphaBlendObjectWorldMatrixInverse);
 
 public:
 	void Set_DrawNum(_uint iDrawNum);

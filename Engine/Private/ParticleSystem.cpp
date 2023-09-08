@@ -130,21 +130,24 @@ void CParticleSystem::Tick(_float _fTimeDelta)
 		_float4x4 TransMatrix = _float4x4::MatrixTranslation(vPos.xyz());
 		_float4x4 TransfomationMatrix = ScaleMatrix * BillBoardMatrix * RotationMatrix * TransMatrix;
 
-		colInstDesc.InstanceLocalMatrix = TransfomationMatrix;
-		colInstDesc.vInstanceColor = iter->vColor;
+		colInstDesc.vRight = TransfomationMatrix.Right().TransNorm();
+		colInstDesc.vUp = TransfomationMatrix.Up().TransNorm();
+		colInstDesc.vLook = TransfomationMatrix.Look().TransNorm();
+		colInstDesc.vTranslation = TransfomationMatrix.Translation().TransCoord();
+		colInstDesc.vColor = iter->vColor;
 		m_ParticleMatrices.push_back(colInstDesc);
 		++iter;
 	}
 
 	m_pBuffer->Set_DrawNum(_uint(m_Particles[ALIVE].size()));
-	m_pBuffer->Tick(m_ParticleMatrices.data(), m_pBuffer->Get_DrawNum());
+	m_pBuffer->Tick(m_ParticleMatrices.data(), m_pBuffer->Get_DrawNum(), true, m_pTransform->Get_WorldMatrix_Inverse());
 	m_EmissionModuleDesc.vPrevPos = m_EmissionModuleDesc.vCurPos;
 	Safe_Release(pGameInstance);
 }
 void CParticleSystem::Late_Tick(_float _fTimeDelta)
 {
 	if (nullptr != m_pRenderer)
-		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONLIGHT, this);
+		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BLEND, this);
 }
 HRESULT CParticleSystem::Render()
 {

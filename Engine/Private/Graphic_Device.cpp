@@ -218,6 +218,7 @@ HRESULT CGraphic_Device::Ready_ShadowDepthRenderTarget(_uint iWinCX, _uint iWinC
 
 	Safe_Release(pDepthStencilTexture);
 
+	return S_OK;
 }
 
 void CGraphic_Device::Free()

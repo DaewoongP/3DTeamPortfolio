@@ -25,7 +25,7 @@ BEGIN(Engine)
 class ENGINE_DLL CParticleSystem : public CGameObject
 {
 public:
-	typedef CVIBuffer_Rect_Color_Instance::COLORINSTANCE COL_INSTANCE;
+	typedef VTXCOLINSTANCE COL_INSTANCE;
 	typedef list<PARTICLE>::iterator PARTICLE_IT;
 
 public:
