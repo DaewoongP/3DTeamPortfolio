@@ -65,7 +65,8 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMap)
 		{
 			_uint		iIndex = i * iNumVerticesX + j;
 
-			m_pPos[iIndex] = pVertices[iIndex].vPosition = _float3((_float)j, (pPixel[iIndex] & 0x000000ff) / 10.0f, (_float)i);
+			m_pPos[iIndex] = pVertices[iIndex].vPosition = _float3((_float)j, 
+				(static_cast<unsigned char>(pPixel[iIndex] >> 16) & 0xff) / 50.f, (_float)i);
 			pVertices[iIndex].vNormal = _float3(0.f, 0.f, 0.f);
 			pVertices[iIndex].vTexCoord = _float2((_float)j / (iNumVerticesX - 1.f), i / (iNumVerticesZ - 1.f));
 		}
@@ -110,7 +111,6 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMap)
 			vDest = XMLoadFloat3(&pVertices[iIndices[2]].vPosition) -
 				XMLoadFloat3(&pVertices[iIndices[1]].vPosition);
 			vNormal = XMVector3Normalize(XMVector3Cross(vSour, vDest));
-
 
 			XMStoreFloat3(&pVertices[iIndices[0]].vNormal,
 				XMLoadFloat3(&pVertices[iIndices[0]].vNormal) + vNormal);
