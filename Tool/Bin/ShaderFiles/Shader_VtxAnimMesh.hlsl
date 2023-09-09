@@ -147,7 +147,7 @@ technique11 DefaultTechnique
 {
 	pass AnimMesh
 	{
-        SetRasterizerState(RS_Default);
+        SetRasterizerState(RS_WireFrame);
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
@@ -172,7 +172,7 @@ technique11 DefaultTechnique
     // 메쉬 선택 하이라이팅용 입니다.
     pass AnimColorMesh
     {
-        SetRasterizerState(RS_Default);
+        SetRasterizerState(RS_WireFrame);
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 

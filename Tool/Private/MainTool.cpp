@@ -5,7 +5,7 @@
 #include "MapDummy.h"
 #include "MapObject.h"
 #include "MapObject_Ins.h"
-#include"LightDot.h"
+#include "LightDot.h"
 #include "Camera_Point.h"
 #include "DummyMeshEffect.h"
 #ifdef _DEBUG

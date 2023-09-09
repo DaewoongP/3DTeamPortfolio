@@ -2,6 +2,10 @@
 #include "ImWindow.h"
 #include "CustomModel.h"
 
+BEGIN(Engine)
+class CCollider;
+END
+
 BEGIN(Tool)
 class CDummy_Cloth;
 class CCamera_Free;
@@ -21,17 +25,21 @@ private:
 	CDummy_Cloth*			m_pDummy_Cloth = { nullptr };
 	CCamera_Free*			m_pCamera_Free = { nullptr };
 	cloth::Cloth*			m_pCurrent_Cloth = { nullptr };
+	CCollider*				m_pCollider = { nullptr };
 
 private:
 	_tchar					m_wszDummyName[MAX_STR] = TEXT("");
 	CCustomModel::MESHTYPE	m_eMeshType = { CCustomModel::MESH_END };
 	_int					m_iMeshIndex = { 0 };
+	_bool					m_isPickMesh = { false };
+	vector<_float3>			m_PickPositions;
 
 private:
 	void Radio_Select_MeshType(_float fTimeDelta);
 	void Open_Model(_float fTimeDelta);
 	void Input_Mesh_Index(_float fTimeDelta);
 	_bool isValid_Mesh_Index(_int iIndex);
+	void Pick_Mesh(_float fTimeDelta);
 	void Input_Wind(_float fTimeDelta);
 	_bool isValid_Dummy();
 

@@ -124,8 +124,11 @@ HRESULT CVIBuffer_Cloth::Initialize(void* pArg)
 
 void CVIBuffer_Cloth::Tick(_float fTimeDelta)
 {
-	m_pSolver->beginSimulation(fTimeDelta);
+	if (0 == m_pSolver->getNumCloths())
+		return;
 
+	m_pSolver->beginSimulation(fTimeDelta);
+	
 	for (_uint i = 0; i < m_pSolver->getSimulationChunkCount(); ++i)
 	{
 		m_pSolver->simulateChunk(i);
@@ -135,6 +138,7 @@ void CVIBuffer_Cloth::Tick(_float fTimeDelta)
 
 	// 동적버퍼 map 전에 미리 값을 옮겨둠.
 	cloth::MappedRange<PxVec4>	Particles = m_pCloth->getCurrentParticles();
+	
 	vector<VTXPOSTEX> VTXs;
 	VTXs.resize(m_iNumVertices);
 	for (_int i = 0; i < Particles.size(); ++i)
@@ -144,7 +148,6 @@ void CVIBuffer_Cloth::Tick(_float fTimeDelta)
 		VTXs[i].vPosition = PhysXConverter::ToXMFLOAT3(Particles[i].getXYZ());
 		VTXs[i].vTexCoord = _float2(0.f, 0.f);
 	}
-
 
 	D3D11_MAPPED_SUBRESOURCE	MappedSubResource;
 	
@@ -199,21 +202,8 @@ HRESULT CVIBuffer_Cloth::Initialize_ClothMesh()
 	m_InvMasses.clear();
 	m_InvMasses.resize(m_iNumVertices);
 	fill(m_InvMasses.begin(), m_InvMasses.end(), 1.f);
-	//for (_uint z = 0; z < m_iNumVerticesZ - 1; ++z)
-	//	for (_uint x = 0; x < m_iNumVerticesX - 1; ++x)
-	//		if (z == 0)// || (!attachByWidth && x == 0))
-	//		{
-	//			m_InvMasses[x + z * (m_iNumVerticesX - 1)] = 0.f;
-	//		}
-
 	m_InvMasses[0] = 0.f;
-	m_InvMasses[99] = 0.f;
-	//m_InvMasses[m_iNumVerticesX] = 0.f;
 
-	/*for (_uint i = 0; i < (_uint)m_InvMasses.size(); ++i)
-		if (m_InvMasses[i] > 1e-6f)
-			m_InvMasses[i] = 0.9f;*/
-	
 	MeshDesc.invMasses.data = m_InvMasses.data();
 	MeshDesc.invMasses.stride = sizeof(_float);
 	MeshDesc.invMasses.count = m_iNumVertices;
@@ -281,7 +271,8 @@ HRESULT CVIBuffer_Cloth::Initialize_ClothMesh()
 
 	m_pSolver->addCloth(m_pCloth);
 
-	
+	m_pSolver->removeCloth(m_pCloth);
+
 	return S_OK;
 }
 

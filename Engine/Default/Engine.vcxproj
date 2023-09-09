@@ -40,7 +40,6 @@
     <ClInclude Include="..\public\Camera_Manager.h" />
     <ClInclude Include="..\Public\Attack.h" />
     <ClInclude Include="..\public\CharacterController.h" />
-    <ClInclude Include="..\public\ColliderCom.h" />
     <ClInclude Include="..\Public\MeshEffect.h" />
     <ClInclude Include="..\public\NVContextCallBack.h" />
     <ClInclude Include="..\Public\Parts.h" />
@@ -153,7 +152,6 @@
     <ClCompile Include="..\private\Camera_Manager.cpp" />
     <ClCompile Include="..\Private\Attack.cpp" />
     <ClCompile Include="..\private\CharacterController.cpp" />
-    <ClCompile Include="..\private\ColliderCom.cpp" />
     <ClCompile Include="..\private\MeshEffect.cpp" />
     <ClCompile Include="..\private\NVContextCallBack.cpp" />
     <ClCompile Include="..\Private\Parts.cpp" />

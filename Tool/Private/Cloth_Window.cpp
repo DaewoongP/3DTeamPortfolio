@@ -1,6 +1,8 @@
 #include "..\Public\Cloth_Window.h"
 #include "Dummy_Cloth.h"
 #include "Camera_Free.h"
+#include "Bounding_Sphere.h"
+#include "Collider.h"
 
 CCloth_Window::CCloth_Window(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
 	: CImWindow(_pDevice, _pContext)
@@ -34,6 +36,8 @@ HRESULT CCloth_Window::Initialize(ImVec2 _vWindowPos, ImVec2 _vWindowSize)
 		MSG_BOX("Failed Clone Dummy_Cloth");
 		return E_FAIL;
 	}
+	
+	m_pCollider = static_cast<CCollider*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Sphere_Collider")));
 
 	m_pDummy_Cloth = static_cast<CDummy_Cloth*>(m_pGameInstance->Find_Component_In_Layer(LEVEL_TOOL, TEXT("Layer_Dummy_Cloth"), TEXT("Com_Dummy")));
 	Safe_AddRef(m_pDummy_Cloth);
@@ -54,6 +58,8 @@ void CCloth_Window::Tick(_float _fTimeDelta)
 
 	Input_Mesh_Index(_fTimeDelta);
 
+	Pick_Mesh(_fTimeDelta);
+
 	Input_Wind(_fTimeDelta);
 
 	ImGui::End();
@@ -61,6 +67,15 @@ void CCloth_Window::Tick(_float _fTimeDelta)
 
 HRESULT CCloth_Window::Render()
 {
+	CBounding_Sphere::BOUNDINGSPHEREDESC SphereDesc;
+	SphereDesc.fRadius = 0.01f;
+	for (auto& PickPos : m_PickPositions)
+	{
+		SphereDesc.vPosition = PickPos;
+		m_pCollider->Set_BoundingDesc(&SphereDesc);
+		m_pCollider->Render();
+	}
+	
 	return S_OK;
 }
 
@@ -181,6 +196,64 @@ _bool CCloth_Window::isValid_Mesh_Index(_int iIndex)
 	return true;
 }
 
+void CCloth_Window::Pick_Mesh(_float fTimeDelta)
+{
+	if (nullptr == m_pDummy_Cloth)
+		return;
+
+	ImGui::SeparatorText("Setting Vertex");
+	ImGui::Checkbox("Pick Vertex", &m_isPickMesh);
+	ImGui::SameLine();
+	if (ImGui::Button("Reset Vertex"))
+	{
+		m_pDummy_Cloth->Reset_Position();
+	}
+
+	if (true == m_isPickMesh)
+	{
+		m_pDummy_Cloth->Set_MeshIndex(m_iMeshIndex);
+		m_pDummy_Cloth->Set_Testing(false);
+
+		_uint iVertexIndex = { 0 };
+		_float3 vPickPosition;
+
+		cloth::Cloth* pCloth = m_pDummy_Cloth->Get_CurrentMesh_Cloth();
+		cloth::MappedRange<PxVec4>	Particles = pCloth->getCurrentParticles();
+		vector<_float> InvMasses = m_pDummy_Cloth->Get_InvMasses();
+		
+		if (m_pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN) &&
+			true == m_pDummy_Cloth->Get_VertexIndex_By_Picking(&iVertexIndex, &vPickPosition))
+		{
+			if (iVertexIndex > InvMasses.size() - 1)
+			{
+				MSG_BOX("Out of Mesh Index");
+				return;
+			}
+			InvMasses[iVertexIndex] = 0.f;
+
+			m_pCurrent_Cloth = nullptr;
+			m_pDummy_Cloth->Remake_ClothMesh(InvMasses);
+			m_pDummy_Cloth->Reset_Position();
+
+			m_PickPositions.push_back(vPickPosition);
+		}
+
+		_uint iIndex = { 0 };
+		for (auto& Mass : InvMasses)
+		{
+			if (0.f == Mass)
+			{
+				ImGui::Text("Cur Index : %d", iIndex);
+				++iIndex;
+			}
+		}
+	}
+	else
+	{
+		m_pDummy_Cloth->Set_Testing(true);
+	}
+}
+
 void CCloth_Window::Input_Wind(_float fTimeDelta)
 {
 	if (false == isValid_Dummy())
@@ -230,4 +303,5 @@ void CCloth_Window::Free(void)
 
 	Safe_Release(m_pDummy_Cloth);
 	Safe_Release(m_pCamera_Free);
+	Safe_Release(m_pCollider);
 }

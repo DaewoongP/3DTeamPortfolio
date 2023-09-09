@@ -579,9 +579,6 @@
     <ClInclude Include="..\public\RigidBody.h">
       <Filter>01. Utility\03. Components\14. RigidBody</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\ColliderCom.h">
-      <Filter>01. Utility\03. Components\14. RigidBody</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\CharacterController.h">
       <Filter>01. Utility\03. Components\13. CharacterController</Filter>
     </ClInclude>
@@ -882,9 +879,6 @@
       <Filter>01. Utility\11. Physics\Manager</Filter>
     </ClCompile>
     <ClCompile Include="..\private\RigidBody.cpp">
-      <Filter>01. Utility\03. Components\14. RigidBody</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\ColliderCom.cpp">
       <Filter>01. Utility\03. Components\14. RigidBody</Filter>
     </ClCompile>
     <ClCompile Include="..\private\CharacterController.cpp">
