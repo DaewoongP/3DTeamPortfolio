@@ -305,12 +305,12 @@ PS_OUT_LIGHT PS_MAIN_SPOTLIGHT(PS_IN In)
     // 실제 거리에 따른 공식처리 -> fSpot / fDistance * fDistance // -> f
     float fAtt = fSpot / fDistance * fDistance;
 	
-    Out.vShade = g_vLightDiffuse * saturate(max(dot(normalize(vLightDir)*-1.f, vNormal), 0.2f) + (g_vLightAmbient * g_vMtrlAmbient)) * fAtt;
+    Out.vShade = g_vLightDiffuse * saturate(max(dot(normalize(vLightDir)*-1.f, vNormal), 0.f) + (g_vLightAmbient * g_vMtrlAmbient)) * fAtt;
 
     vector vReflect = reflect(normalize(vLightDir), vNormal);
     vector vLook = vPosition - g_vCamPosition;
 
-    Out.vSpecular = (g_vLightSpecular) * (g_vMtrlSpecular) * pow(max(dot(normalize(vReflect)*-1.f , normalize(vLook)), 0.2f), 10.f) * fAtt;
+    Out.vSpecular = (g_vLightSpecular) * (g_vMtrlSpecular) * pow(max(dot(normalize(vReflect)*-1.f , normalize(vLook)), 0.0f), 10.f) * fAtt;
 
     return Out;
 }
@@ -331,8 +331,11 @@ PS_OUT PS_MAIN_DEFERRED(PS_IN In)
     
     vector vShadow = g_ShadowTexture.Sample(LinearSampler, In.vTexUV);
     
-  
-        Out.vColor = vDiffuse * vShadow * vShade * vBlur + 0.5 * vSpecular;
+  if(vShadow.x<=0.1f)
+        vShade *= 0.2f;
+       
+   
+       Out.vColor = vDiffuse * vShade + 0.5 * vSpecular;
 
     return Out;
 }

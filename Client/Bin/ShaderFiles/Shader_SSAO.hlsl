@@ -294,17 +294,17 @@ PS_OUT PS_MAIN_SHADOW(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
 
-    vector vDepthDesc = g_DepthTexture.Sample(BlurSampler, In.vTexUV);
+    vector vDepthDesc = g_DepthTexture.Sample(LinearSampler, In.vTexUV);
 
 	//depthdesc y 는 rgba값이라고 생각하면된다.
-    float fViewZ = vDepthDesc.w * g_fCamFar;
+    float fViewZ = vDepthDesc.x * g_fCamFar;
     vector vPosition;
-    if (fViewZ == 0)
-        discard;
+    //if (fViewZ == 0)
+    //    discard;
 	/* 투영스페이스 상의 위치 */
     vPosition.x = In.vTexUV.x * 2.f - 1.f ;
     vPosition.y = In.vTexUV.y * -2.f + 1.f ;
-    vPosition.z = vDepthDesc.y ;
+    vPosition.z = vDepthDesc.z ;
     vPosition.w = 1.f ;
 
 	/* 뷰스페이스 상의 위치. */
@@ -317,29 +317,36 @@ PS_OUT PS_MAIN_SHADOW(PS_IN In)
 
     vPosition = mul(vPosition, g_vLightView);
 
-    vPosition = mul(vPosition, g_vLightProj);
+    //vPosition = mul(vPosition, g_vLightProj);
 	//w 나누기.
-    vPosition = vPosition / vPosition.w;
+    //vPosition = vPosition / vPosition.w;
     
 	//광원으로의깊이값.
-    float2 LightUV = float2((vPosition.x + 1.f) / 2.f, (vPosition.y - 1.f) / -2.f);
+    //float2 LightUV = float2((vPosition.x + 1.f) / 2.f, (vPosition.y - 1.f) / -2.f);
 
-    vector vLightDepth = g_vLightDepthTexture.Sample(BlurSampler, LightUV);
+    vector vUVPos = mul(vPosition, g_vLightProj);
+    float2 vNewUV;
+	
+    vNewUV.x = (vUVPos.x / vUVPos.w) * 0.5f + 0.5f;
+    vNewUV.y = (vUVPos.y / vUVPos.w) * -0.5f + 0.5f;
     
-    if(vPosition.z>vLightDepth.a-0.1)
-        Out.vColor = vector(0.f, 0.f, 0.f, 1.f);
+    
+    vector vLightDepth = g_vLightDepthTexture.Sample(LinearSampler, vNewUV);
+    
+    if(vPosition.z-0.001f>vLightDepth.y*g_fCamFar)
+       Out.vColor = vector(0.f, 0.f, 0.f, 1.f);
     
     
     
-    //float LightDepth_W = vLightDepth.y * g_fCamFar;
-    //float LightDepth_Z = vLightDepth.x * LightDepth_W;
+    float LightDepth_W = vLightDepth.y * g_fCamFar;
+    float LightDepth_Z = vLightDepth.x * LightDepth_W;
     float CamDepth = vPosition.z / g_fCamFar;
-    //if (vPosition.z - 0.01f > vLightDepth.x*g_fCamFar)
-    //{
-    //    Out.vColor = float4(0.05f, 0.05f, 0.05f, 0.05f);
-    //}
-    //else
-    //    Out.vColor = float4(1.f, 1.f, 1.f, 1.f);
+   //if (vPosition.z - 0.01f > vLightDepth.x * g_fCamFar)
+   //{
+   //    Out.vColor = float4(0.05f, 0.05f, 0.05f, 0.05f);
+   //}
+   //else
+   //    Out.vColor = float4(1.f, 1.f, 1.f, 1.f);
 
     float fragDepth = CamDepth;
     

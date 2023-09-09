@@ -88,11 +88,12 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Lights"), TEXT("Target_Specular"))))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_PostProcessing"), TEXT("Target_PostProcessing"))))
-		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Shadow_Depth"), TEXT("Target_Shadow_Depth"))))
 		return E_FAIL; 
+	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Shadow_Depth"), TEXT("Target_Shadow_Depth"))))
+		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Shadow"), TEXT("Target_Shadow"))))
 		return E_FAIL;
+	
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_SSAO"), TEXT("Target_SSAO"))))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Blur"), TEXT("Target_Blur"))))
@@ -131,7 +132,7 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Shadow_Depth"), 80.f, 560.f, 160.f, 160.f)))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Distortion"), 240.f, 560.f, 160.f, 160.f)))
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Blur"), 240.f, 560.f, 160.f, 160.f)))
 		return E_FAIL;
 
 	/*if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_SSAO"), 300.f, 300.f, 600.f, 600.f)))
@@ -200,15 +201,12 @@ HRESULT CRenderer::Draw_RenderGroup()
 //		return E_FAIL;
 //#endif // _DEBUG
 	
-	
+	if (FAILED(Render_Deferred()))
+		return E_FAIL;
 	if (FAILED(Render_SSAO()))
 		return E_FAIL;
 	if (FAILED(Render_Blur()))
 		return E_FAIL;
-	
-	if (FAILED(Render_Deferred()))
-		return E_FAIL;
-
 	if (FAILED(Render_NonLight()))
 		return E_FAIL;
 	if (FAILED(Render_Blend()))
@@ -219,8 +217,7 @@ HRESULT CRenderer::Draw_RenderGroup()
 	
 	if (FAILED(Render_PostProcessing()))
 		return E_FAIL;	
-	if (FAILED(Render_Dicstortion()))
-		return E_FAIL;
+	
 
 	if (FAILED(Render_UI()))
 		return E_FAIL;
@@ -355,7 +352,7 @@ HRESULT CRenderer::Render_Lights()
 	if (FAILED(m_pDeferredShader->Bind_Matrix("g_ProjMatrixInv", pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
-	if (FAILED(m_pDeferredShader->Bind_RawValue("g_vCamPosition", m_pLight_Manager->Get_LightPosition(), sizeof(_float4))))
+	if (FAILED(m_pDeferredShader->Bind_RawValue("g_vCamPosition",m_pLight_Manager->Get_LightPosition(), sizeof(_float4))))
 		return E_FAIL;
 	if (FAILED(m_pDeferredShader->Bind_RawValue("g_fCamFar", pPipeLine->Get_CamFar(), sizeof(_float))))
 		return E_FAIL;
@@ -366,8 +363,12 @@ HRESULT CRenderer::Render_Lights()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Depth"), m_pDeferredShader, "g_DepthTexture")))
 		return E_FAIL;
-
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Normal"), m_pSSAOShader, "g_NormalTexture")))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Depth"), m_pSSAOShader, "g_DepthTexture")))
+		return E_FAIL;
 	m_pLight_Manager->Render_Lights(m_pDeferredShader, m_pDeferredBuffer);
+	m_pLight_Manager->Render_Lights(m_pSSAOShader, m_pSSAOBuffer);
 
 	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext)))
 		return E_FAIL;

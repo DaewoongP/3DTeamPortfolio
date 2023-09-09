@@ -106,7 +106,7 @@ PS_OUT PS_MAIN(PS_IN In)
     Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
     // SV_POSITION으로 설정되지 않았던 투영포지션 값이므로 w나누기를 수행한 z값 (투영스페이스) 값을 r, 
     // 다시 이후 셰이더에서 w를 곱해주기 위해 b에 값을 다시 대입해줌.
-    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fCamFar, 0.f, 0.f);
+    Out.vDepth = vector(In.vProjPos.w / g_fCamFar, In.vProjPos.z / In.vProjPos.w, 0.f, 0.f);
     
     return Out;
 }
