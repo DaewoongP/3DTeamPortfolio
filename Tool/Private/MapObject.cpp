@@ -110,45 +110,45 @@ HRESULT CMapObject::Render()
 
 HRESULT CMapObject::Render_Depth()
 {
-	/*if (FAILED(__super::Render_Depth()))
-		return E_FAIL;*/
+	if (FAILED(__super::Render_Depth()))
+		return E_FAIL;
 
-	//if (nullptr == m_pShader ||
-	//	nullptr == m_pModel)
-	//	return S_OK;
+	if (nullptr == m_pShader ||
+		nullptr == m_pModel)
+		return S_OK;
 
-	//BEGININSTANCE
-	//if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
-	//	return E_FAIL;
+	BEGININSTANCE
+	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
+		return E_FAIL;
 
-	//if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW))))
-	//	return E_FAIL;
+	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix",pGameInstance->Get_LightView())))
+		return E_FAIL;
 
-	//if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
-	//	return E_FAIL;
-	//if (FAILED(m_pShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
-	//	return E_FAIL;
-	//ENDINSTANCE
+	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_LightProj())))
+		return E_FAIL;
+	if (FAILED(m_pShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
+		return E_FAIL;
+	ENDINSTANCE
 
-	//
-	//// 일반 그리기
-	//if (RT_NORMAL == m_eRenderCount)
-	//{
-	//	_uint		iNumMeshes = m_pModel->Get_NumMeshes();
+	
+	// 일반 그리기
+	if (RT_NORMAL == m_eRenderCount)
+	{
+		_uint		iNumMeshes = m_pModel->Get_NumMeshes();
 
-	//	for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; iMeshCount++)
-	//	{
-	//		m_pModel->Bind_BoneMatrices(m_pShader, "g_BoneMatrices", iMeshCount);
-	//		m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", iMeshCount, DIFFUSE);
+		for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; iMeshCount++)
+		{
+			m_pModel->Bind_BoneMatrices(m_pShader, "g_BoneMatrices", iMeshCount);
+			m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", iMeshCount, DIFFUSE);
 
-	//		m_pShader->Begin("Shadow");
+			m_pShader->Begin("Shadow");
 
-	//		if (FAILED(m_pModel->Render(iMeshCount)))
-	//			return E_FAIL;
-	//	}
+			if (FAILED(m_pModel->Render(iMeshCount)))
+				return E_FAIL;
+		}
 
-	//	m_eRenderCount = RT_PICKING;
-	//}
+		m_eRenderCount = RT_PICKING;
+	}
 	return S_OK;
 }
 

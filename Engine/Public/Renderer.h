@@ -46,6 +46,7 @@ private:
 	HRESULT Render_Blend();
 	HRESULT Render_Blur();
 	HRESULT Render_PostProcessing();
+	HRESULT Render_Dicstortion();
 	HRESULT Render_UI();
 
 #ifdef _DEBUG
@@ -92,6 +93,10 @@ private: /* Shader_Type */
 private: /* Shader_Type */
 	class CVIBuffer_Rect*			m_pSSAOBuffer = { nullptr };//각종 쉐이더처리 해줄때 쓸 것
 	class CShader*					m_pSSAOShader = { nullptr };
+
+private: /* AfterShader*/
+	class CVIBuffer_Rect* m_pAfterShaderBuffer = { nullptr };//각종 쉐이더처리 해줄때 쓸 것
+	class CShader* m_pAfterShader = { nullptr };
 
 public:
 	static CRenderer* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);
