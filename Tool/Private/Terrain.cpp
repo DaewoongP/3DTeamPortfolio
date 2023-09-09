@@ -29,6 +29,22 @@ HRESULT CTerrain::Initialize(void* pArg)
 
 	m_isRendering = true;
 
+	////Test
+	//for (size_t i = 0; i < m_iBrushPosCnt; i++)
+	//{
+	//	_float3 vPos = { i * 20.f, 0.f, i * 20.f };
+	//	m_vecBrushPos.push_back(vPos);
+	//}
+
+	//m_pBrushPos = New _float3[m_iBrushPosCnt];
+
+	//for (size_t i = 0; i < m_iBrushPosCnt; i++)
+	//{
+	//	m_pBrushPos[i] = m_vecBrushPos.at(i);
+	//}
+
+	//m_iBrushPosCnt = m_vecBrushPos.size();
+
 	return S_OK;
 }
 
@@ -41,7 +57,7 @@ void CTerrain::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	//m_pBuffer->Culling(m_pTransform->Get_WorldMatrix());
+	m_pBuffer->Culling(m_pTransform->Get_WorldMatrix());
 
 	if (nullptr != m_pRenderer)
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
@@ -52,7 +68,14 @@ HRESULT CTerrain::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	m_pShader->Begin("Terrain");
+	// 데이터가 들어있을 경우 쉐이더에 브러쉬 위치값 던져줌
+	if (0 < m_vecBrushPos.size())
+	{
+		if (FAILED(SetUp_ShaderDynamicResources()))
+			return E_FAIL;
+	}
+
+	m_pShader->Begin("Terrain_Brush");
 
 	if (FAILED(m_pBuffer->Render()))
 		return E_FAIL;
@@ -142,9 +165,7 @@ HRESULT CTerrain::SetUp_ShaderResources()
 	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
-	if (FAILED(m_pShader->Bind_RawValue("g_vBrushPos", &m_vBrushingPoint, sizeof(_float3))))
-		return E_FAIL;
-
+	// 브러쉬 고정 정보
 	if (FAILED(m_pShader->Bind_RawValue("g_fBrushRadius", &m_fBrushSize, sizeof(_float))))
 		return E_FAIL;
 
@@ -155,6 +176,20 @@ HRESULT CTerrain::SetUp_ShaderResources()
 
 	if (FAILED(m_pTexture->Bind_ShaderResource(m_pShader, "g_BrushTexture", 1)))
 		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CTerrain::SetUp_ShaderDynamicResources()
+{	
+	if (FAILED(m_pShader->Bind_RawValue("g_iBrushPointCnt", &m_iBrushPosCnt, sizeof(_uint))))
+		return E_FAIL;
+
+	if (FAILED(m_pShader->Bind_RawValue("g_vBrushCurrentPoint", &m_vBrushingPoint, sizeof(_float3))))
+		return E_FAIL;
+
+	/*if (FAILED(m_pShader->Bind_RawValue("g_vBrushPoint", &m_pBrushPos, 256)))
+		return E_FAIL;*/
 
 	return S_OK;
 }
@@ -188,6 +223,8 @@ CGameObject* CTerrain::Clone(void* pArg)
 void CTerrain::Free()
 {
 	__super::Free();
+
+	//Safe_Delete_Array(m_pBrushPos);
 
 	Safe_Release(m_pTexture);
 	Safe_Release(m_pShader);
