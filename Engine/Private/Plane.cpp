@@ -78,6 +78,7 @@ HRESULT CPlane::Render()
 
 HRESULT CPlane::Create_HeightMap(const _tchar* szHeightMapPath)
 {
+	
 	return S_OK;
 }
 
@@ -99,16 +100,46 @@ HRESULT CPlane::Create_PlaneActor()
 #endif // _DEBUG
 
 	Safe_Release(pPhysX_Manager);
+	_int numCols = 100;
+	_int numRows = 50;
 
-	m_pActor = pPhysX->createRigidStatic(PxTransformFromPlaneEquation(PxPlane(PxVec3(0.f, 1.f, 0.f), 0.f)));
+	PxHeightFieldSample* samples = new PxHeightFieldSample[sizeof(PxHeightFieldSample) * (numCols * numRows)];
+	_uint index = 0;
+	for (_uint i = 0; i < numCols * numRows; ++i)
+	{
+		samples[i].height = Random_Generator<_float>(0.f, 2.f);
+	}
+		
+
+	PxHeightFieldDesc hfDesc;
+	hfDesc.format = PxHeightFieldFormat::eS16_TM;
+	hfDesc.nbColumns = numCols;
+	hfDesc.nbRows = numRows;
+	hfDesc.samples.data = samples;
+	hfDesc.samples.stride = sizeof(PxHeightFieldSample);
+
+	PxHeightField* aHeightField = PxCreateHeightField(hfDesc,
+		pPhysX->getPhysicsInsertionCallback());
+
+	_float heightScale = 1.f;
+	_float rowScale = 1.f;
+	_float colScale = 1.f;
+	PxHeightFieldGeometry hfGeom(aHeightField, PxMeshGeometryFlags(), heightScale, rowScale,
+		colScale);
+	PxVec3 vLocal = PxVec3(0.f, 0.f, 0.f);
+	PxTransform localTm(vLocal);
+	m_pActor = pPhysX->createRigidStatic(localTm);
 	m_pMaterial = pPhysX->createMaterial(1.f, 0.1f, 0.1f);
+
+	PxShape* aHeightFieldShape = pPhysX->createShape(hfGeom, *m_pMaterial, PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSIMULATION_SHAPE);
 #ifdef _DEBUG
 	PxShape* pPlaneShape = pPhysX->createShape(PxPlaneGeometry(), *m_pMaterial, false, PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSIMULATION_SHAPE);
 #else
 	PxShape* pPlaneShape = pPhysX->createShape(PxPlaneGeometry(), *m_pMaterial, false, PxShapeFlag::eSIMULATION_SHAPE);
 #endif // _DEBUG
+	Safe_Delete_Array(samples);
 
-	m_pActor->attachShape(*pPlaneShape);
+	m_pActor->attachShape(*aHeightFieldShape);
 	m_pScene->addActor(*m_pActor);
 
 	return S_OK;
