@@ -180,12 +180,15 @@
     <ClInclude Include="..\public\CustomWidget.h" />
     <ClInclude Include="..\Public\MapObject_Ins.h" />
     <ClInclude Include="..\Public\Navigation_Window.h" />
+    <ClInclude Include="..\Public\PhysXRender.h" />
     <ClInclude Include="..\Public\stb_image.h" />
     <ClInclude Include="..\Public\Dummy_UI.h" />
     <ClInclude Include="..\Public\Camera_Point.h" />
     <ClInclude Include="..\public\CutScene_Camera_Tool.h" />
     <ClInclude Include="..\public\Main_Camera.h" />
     <ClInclude Include="..\Public\Tool_Functions.h" />
+    <ClInclude Include="..\Public\TriangleCollider_Window.h" />
+    <ClInclude Include="..\Public\TriangleColMesh.h" />
     <ClInclude Include="..\Public\UI_Window.h" />
     <ClInclude Include="..\public\DummyParticle.h" />
     <ClInclude Include="..\Public\Animation_Window.h" />
@@ -240,6 +243,9 @@
     <ClCompile Include="..\private\Main_Camera.cpp" />
     <ClCompile Include="..\Private\MapObject_Ins.cpp" />
     <ClCompile Include="..\Private\Navigation_Window.cpp" />
+    <ClCompile Include="..\Private\PhysXRender.cpp" />
+    <ClCompile Include="..\Private\TriangleCollider_Window.cpp" />
+    <ClCompile Include="..\Private\TriangleColMesh.cpp" />
     <ClCompile Include="..\Private\UI_Window.cpp" />
     <ClCompile Include="..\private\DummyParticle.cpp" />
     <ClCompile Include="..\Private\Animation_Window.cpp" />

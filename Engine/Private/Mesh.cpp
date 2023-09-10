@@ -72,6 +72,10 @@ HRESULT CMesh::Initialize_Prototype(CModel::TYPE eType, const CModel::BONES& Bon
 		pIndices[iNumFaces++] = Mesh.Faces[i].iIndices[0];
 		pIndices[iNumFaces++] = Mesh.Faces[i].iIndices[1];
 		pIndices[iNumFaces++] = Mesh.Faces[i].iIndices[2];
+
+		m_IndicesVec.push_back(Mesh.Faces[i].iIndices[0]);
+		m_IndicesVec.push_back(Mesh.Faces[i].iIndices[1]);
+		m_IndicesVec.push_back(Mesh.Faces[i].iIndices[2]);
 	}
 
 	ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
@@ -111,6 +115,8 @@ HRESULT CMesh::Ready_VertexBuffer_NonAnim(const Engine::MESH Mesh, _float4x4 Piv
 		memcpy(&pVertices[i].vPosition, &Mesh.vPositions[i], sizeof(_float3));
 		XMStoreFloat3(&pVertices[i].vPosition,
 			XMVector3TransformCoord(XMLoadFloat3(&pVertices[i].vPosition), PivotMatrix));
+
+		m_VerticesPositionVec.push_back(Mesh.vPositions[i]);
 
 		memcpy(&pVertices[i].vNormal, &Mesh.vNormals[i], sizeof(_float3));
 		XMStoreFloat3(&pVertices[i].vNormal,

@@ -3,20 +3,14 @@
 #include "UI_Window.h"
 
 CDummy_UI::CDummy_UI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CGameObject(pDevice, pContext)
+	: CUI(pDevice, pContext)
 {
 	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixIdentity());
 }
 
 CDummy_UI::CDummy_UI(const CDummy_UI& rhs)
-	: CGameObject(rhs)
-	, m_fX(rhs.m_fX)
-	, m_fY(rhs.m_fY)
-	, m_fSizeX(rhs.m_fSizeX)
-	, m_fSizeY(rhs.m_fSizeY)
-	, m_ViewMatrix(rhs.m_ViewMatrix)
-	, m_ProjMatrix(rhs.m_ProjMatrix)
+	: CUI(rhs)
 {
 	//lstrcpy(m_wszTextureName, rhs.m_wszTextureName);
 }
@@ -34,44 +28,20 @@ HRESULT CDummy_UI::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	if (nullptr != pArg)
+	if (nullptr != pArg && m_isSave == false)
 	{
 		CUI_Window::UI_DATA* UIDesc = (CUI_Window::UI_DATA*)pArg;
 
-		if (UIDesc->isSave)
-		{
-			m_vCombinedXY = UIDesc->vCombinedXY;
-			m_fX = UIDesc->m_fX;
-			m_fY = UIDesc->m_fY;
-			m_fZ = UIDesc->m_fZ;
-			m_fSizeX = UIDesc->m_fSizeX;
-			m_fSizeY = UIDesc->m_fSizeY;
+		_float2 fSize = _float2(UIDesc->m_fSizeX, UIDesc->m_fSizeY);
+		Set_Size(fSize.x, fSize.y);
 
-			lstrcpy(m_wszTextureName, UIDesc->m_wszTextureName);
-			lstrcpy(m_wszTexturePath, UIDesc->m_wszTexturePath);
-
-			m_eUIType = UIDesc->m_eType;
-
-			m_isParent = UIDesc->m_isParent;
-
-			m_isAlpha = UIDesc->m_isAlpha;
-			m_vColor = UIDesc->m_vColor;
-			lstrcpy(m_wszAlphaTexturePrototypeTag, UIDesc->m_wszAlphaTexturePrototypeTag);
-			lstrcpy(m_wszAlphaTextureFilePath, UIDesc->m_wszAlphaTextureFilePath);
-		}
-		else
-		{
-			_float2 fSize = _float2(UIDesc->m_fSizeX, UIDesc->m_fSizeY);
-			Set_Size(fSize.x, fSize.y);
-
-			lstrcpy(m_wszTextureName, UIDesc->m_wszTextureName);
-			lstrcpy(m_wszTexturePath, UIDesc->m_wszTexturePath);
-		}
+		lstrcpy(m_wszTextureName, UIDesc->m_wszTextureName);
+		lstrcpy(m_wszTexturePath, UIDesc->m_wszTexturePath);
 	}
-	else
-	{
+
+	
+	if (FAILED(Ready_Texture()))
 		return E_FAIL;
-	}		
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
@@ -94,21 +64,6 @@ HRESULT CDummy_UI::Initialize(void* pArg)
 void CDummy_UI::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
-	
-	if (m_pParent == nullptr)
-	{
-		m_vCombinedXY.x = m_fX;
-		m_vCombinedXY.y = m_fY;
-	}
-	else
-	{
-		_float2 vParentPos = m_pParent->Get_fXY();
-
-		m_vCombinedXY.x = vParentPos.x + m_fX;
-		m_vCombinedXY.y = vParentPos.y + m_fY;
-	}
-	
 }
 
 void CDummy_UI::Late_Tick(_float fTimeDelta)
@@ -147,6 +102,11 @@ HRESULT CDummy_UI::Render()
 		return E_FAIL;
 
 	return S_OK;
+}
+
+void CDummy_UI::Tick_Imgui()
+{
+
 }
 
 HRESULT CDummy_UI::Set_AlphaTexture(_tchar* pFilePath)
@@ -203,6 +163,16 @@ HRESULT CDummy_UI::Add_Components()
 	{
 		MSG_BOX("Failed CDummy_UI Add_Component : (Com_Texture)");
 		return E_FAIL;
+	}
+
+	if (m_isAlpha)
+	{
+		if (FAILED(CComposite::Add_Component(LEVEL_TOOL, m_wszAlphaTexturePrototypeTag,
+			TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTextureCom))))
+		{
+			MSG_BOX("Failed CDummy_UI Add_Component : (Com_Texture)");
+			return E_FAIL;
+		}
 	}
 
 	/* Com_Renderer */
@@ -273,57 +243,31 @@ HRESULT CDummy_UI::SetUp_ShaderResources()
 	return S_OK;
 }
 
-_bool CDummy_UI::Is_In_Rect()
+HRESULT CDummy_UI::Ready_Texture()
 {
-	_bool		isIn = false;
+	BEGININSTANCE
 
-	POINT		ptMouse;
-	GetCursorPos(&ptMouse);
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, m_wszTextureName,
+		CTexture::Create(m_pDevice, m_pContext, m_wszTexturePath))))
+	{
+		MSG_BOX("Failed Create Texture Component");
+	}
 
-	ScreenToClient(g_hWnd, &ptMouse);
 
-	RECT		rcUI;
+	if (m_isAlpha)
+	{
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, m_wszAlphaTexturePrototypeTag,
+			CTexture::Create(m_pDevice, m_pContext, m_wszAlphaTextureFilePath))))
+		{
+			MSG_BOX("Failed Create Texture Component");
+		}
+	}
 
-	SetRect(&rcUI, _int(m_vCombinedXY.x - m_fSizeX * 0.5f), _int(m_vCombinedXY.y - m_fSizeY * 0.5f), _int(m_vCombinedXY.x + m_fSizeX * 0.5f), _int(m_vCombinedXY.y + m_fSizeY * 0.5f));
-	
-	isIn = PtInRect(&rcUI, ptMouse);
-
-	return isIn;
-}
-
-_float2 CDummy_UI::UIPos_To_WorldPos(_float fX, _float fY)
-{
-	_float2 fXY = _float2(fX - g_iWinSizeX * 0.5f, -fY + g_iWinSizeY * 0.5f);
-
-	return fXY;
-}
-
-_float2 CDummy_UI::WorldPos_To_UIPos(_float fX, _float fY)
-{
-	 _float2 fXY = _float2(fX + g_iWinSizeX * 0.5f, -(fY - g_iWinSizeY * 0.5f));
-
-	return fXY;
-}
-
-HRESULT CDummy_UI::Change_Position(_float fX, _float fY)
-{
-
-	m_pTransform->Set_Position(
-			XMVectorSet(m_vCombinedXY.x - g_iWinSizeX * 0.5f, -m_vCombinedXY.y + g_iWinSizeY * 0.5f, m_fZ, 1.f));
-	
+	ENDINSTANCE
 
 	return S_OK;
 }
 
-HRESULT CDummy_UI::Change_Scale(_float fX, _float fY)
-{
-	//	m_fSizeX = fX;
-	//	m_fSizeY = fY;
-
-	m_pTransform->Set_Scale(_float3(m_fSizeX, m_fSizeY, 1.f));
-
-	return S_OK;
-}
 
 CDummy_UI* CDummy_UI::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {

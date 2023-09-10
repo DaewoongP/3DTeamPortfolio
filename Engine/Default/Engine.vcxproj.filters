@@ -283,6 +283,12 @@
     <Filter Include="01. Utility\11. Physics\Job">
       <UniqueIdentifier>{def8c79f-6f0e-40f1-80f6-4f10844dcc2d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\03. Components\22. ConvexMesh">
+      <UniqueIdentifier>{0b0a3cc0-390c-4e04-b18b-3927f2a1d00b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\23. TriangleMesh">
+      <UniqueIdentifier>{018aa039-fd8d-4b13-a025-b83948a5eef5}</UniqueIdentifier>
+    </Filter>
     <Filter Include="01. Utility\03. Components\13. CharacterController">
       <UniqueIdentifier>{34e887bf-9249-4cc8-bdf0-670c9df56fa7}</UniqueIdentifier>
     </Filter>
@@ -309,6 +315,15 @@
     </Filter>
     <Filter Include="01. Utility\03. Components\19. Trail">
       <UniqueIdentifier>{50324599-654c-470e-9273-c2595c7c9fbd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\19. UI">
+      <UniqueIdentifier>{ff366626-d11e-4a5a-8868-da95ef27a9e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\04. Model\LOD">
+      <UniqueIdentifier>{e9debebd-b0a7-4cdb-9b70-0d37024ce611}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\13. String_Manager">
+      <UniqueIdentifier>{78086519-d9fc-431b-83eb-726c49e0a41e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -576,9 +591,6 @@
     <ClInclude Include="..\public\RigidBody.h">
       <Filter>01. Utility\03. Components\14. RigidBody</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\ColliderCom.h">
-      <Filter>01. Utility\03. Components\14. RigidBody</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\CharacterController.h">
       <Filter>01. Utility\03. Components\13. CharacterController</Filter>
     </ClInclude>
@@ -635,6 +647,24 @@
     </ClInclude>
     <ClInclude Include="..\public\Trail.h">
       <Filter>01. Utility\03. Components\19. Trail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ConvexMesh.h">
+      <Filter>01. Utility\03. Components\22. ConvexMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\TriangleMesh.h">
+      <Filter>01. Utility\03. Components\23. TriangleMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI.h">
+      <Filter>01. Utility\03. Components\19. UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Model_LOD.h">
+      <Filter>01. Utility\03. Components\04. Model\LOD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Group.h">
+      <Filter>01. Utility\03. Components\19. UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\String_Manager.h">
+      <Filter>01. Utility\13. String_Manager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -875,9 +905,6 @@
     <ClCompile Include="..\private\RigidBody.cpp">
       <Filter>01. Utility\03. Components\14. RigidBody</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\ColliderCom.cpp">
-      <Filter>01. Utility\03. Components\14. RigidBody</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\CharacterController.cpp">
       <Filter>01. Utility\03. Components\13. CharacterController</Filter>
     </ClCompile>
@@ -932,6 +959,24 @@
     <ClCompile Include="..\private\Trail.cpp">
       <Filter>01. Utility\03. Components\19. Trail</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\UI.cpp">
+      <Filter>01. Utility\03. Components\19. UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Model_LOD.cpp">
+      <Filter>01. Utility\03. Components\04. Model\LOD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Group.cpp">
+      <Filter>01. Utility\03. Components\19. UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\String_Manager.cpp">
+      <Filter>01. Utility\13. String_Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ConvexMesh.cpp">
+      <Filter>01. Utility\03. Components\22. ConvexMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\TriangleMesh.cpp">
+      <Filter>01. Utility\03. Components\23. TriangleMesh</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Navigation.hlsl">
@@ -966,6 +1011,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Trail.hlsl">
       <Filter>01. Utility\98. ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_AfterShade.hlsl">
+      <Filter>01. Utility\03. Components\02. Renderer\Shader</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

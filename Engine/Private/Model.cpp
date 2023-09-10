@@ -220,6 +220,7 @@ void CModel::Play_Animation(_float fTimeDelta, ANIMTYPE eType, CTransform* pTran
 		/* 애니메이션 변경 가능 설정 */
 		m_isChangeAnimation = true;
 	}
+
 	//트랜스폼이 있다면?
 	else if (pTransform != nullptr)
 	{

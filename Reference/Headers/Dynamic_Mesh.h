@@ -19,6 +19,9 @@ private:
 
 public:
 	cloth::Cloth* Get_Cloth() const { return m_pCloth; }
+	vector<_float3> Get_VertexPositions() const { return m_VertexPositions; }
+	vector<_ulong> Get_Indices() const { return m_Indices; }
+	vector<_float> Get_InvMasses() const { return m_InvMasses; }
 
 public:
 	virtual HRESULT Initialize_Prototype(CModel::TYPE eType, const CModel::BONES & Bones, const Engine::MESH Mesh, _float4x4 PivotMatrix, const _tchar* szClothDataFilePath);
@@ -28,6 +31,7 @@ public:
 public:
 	// 바람 등으로 움직였던 옷을 초기위치로 다시 세팅함.
 	void Reset_Position();
+	HRESULT Remake_ClothMesh(vector<_float> InvMasses);
 
 private: /* For. Cloth */
 	cloth::Fabric*		m_pFabric = { nullptr };
@@ -37,6 +41,7 @@ private: /* For. Cloth */
 	vector<_ulong>		m_Indices;
 	vector<_float>		m_InvMasses;
 	CModel::TYPE		m_eType = { CModel::TYPE_END };
+	_bool				m_isRemakeMesh = { false };
 
 private:
 	vector<VTXANIMMESH>		m_AnimVertices;
@@ -46,6 +51,7 @@ private:
 	virtual HRESULT Ready_VertexBuffer_NonAnim(const Engine::MESH Mesh, _float4x4 PivotMatrix) override;
 	virtual HRESULT Ready_VertexBuffer_Anim(const Engine::MESH Mesh, const CModel::BONES & Bones) override;
 	HRESULT Initialize_ClothMesh();
+	void Clear_ClothMesh();
 
 public:
 	static CDynamic_Mesh* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, CModel::TYPE eType, const CModel::BONES & Bones, const Engine::MESH Mesh, _float4x4 PivotMatrix, const _tchar* szClothDataFilePath);

@@ -10,10 +10,10 @@ HRESULT CModel_Converter::Convert_Model(_uint iType, const _char* pModelFilePath
 	TYPE eType = TYPE(iType);
 	_uint		iFlag = 0;
 
-	if (TYPE_NONANIM == eType)
-		iFlag = aiProcess_PreTransformVertices | aiProcess_GlobalScale | aiProcess_ConvertToLeftHanded | aiProcessPreset_TargetRealtime_Fast;
-	else
+	if (TYPE_ANIM == eType)
 		iFlag = aiProcess_GlobalScale | aiProcess_ConvertToLeftHanded | aiProcessPreset_TargetRealtime_Fast;
+	else
+		iFlag = aiProcess_PreTransformVertices | aiProcess_GlobalScale | aiProcess_ConvertToLeftHanded | aiProcessPreset_TargetRealtime_Fast;
 
 	// importer에서 파일을 읽음
 	m_pAIScene = m_Importer.ReadFile(pModelFilePath, iFlag);
@@ -46,25 +46,45 @@ HRESULT CModel_Converter::Convert_Model(_uint iType, const _char* pModelFilePath
 	_wsplitpath_s(FullPath, nullptr, 0, nullptr, 0, szFileName, MAX_PATH, nullptr, 0);
 
 	_tchar szPath[MAX_PATH] = TEXT("../../Resources/Models/");
+	wstring szSubFileName;
+	if (wcswcs(szFileName, TEXT("Lod")))
+	{
+		szSubFileName = szFileName;
+		szSubFileName = szSubFileName.substr(0, szSubFileName.size() - 5);
+	}
+	else
+	{
+		szSubFileName = szFileName;
+	}
+
 	// Write Anim
 	if (TYPE_ANIM == eType)
 	{
 		lstrcat(szPath, TEXT("Anims/"));
-		lstrcat(szPath, szFileName);
+		lstrcat(szPath, szSubFileName.c_str());
 		lstrcat(szPath, TEXT("/"));
 		fs::create_directory(szPath);
 	}
 	// Write NonAnim
-	else
+	else if(TYPE_NONANIM == eType)
 	{
 		lstrcat(szPath, TEXT("NonAnims/"));
+		lstrcat(szPath, szSubFileName.c_str());
+		lstrcat(szPath, TEXT("/"));
+		fs::create_directory(szPath);
+	}
+	// Write MapObject
+	else if (TYPE_MAPOBJECT == eType)
+	{
+		lstrcat(szPath, TEXT("NonAnims/MapObject/"));
 		lstrcat(szPath, szFileName);
 		lstrcat(szPath, TEXT("/"));
 		fs::create_directory(szPath);
 	}
 
+
 	cout << "Convert Materials..." << endl;
-	if (FAILED(Convert_Materials(eType, pModelFilePath, szPath, szFileName)))
+	if (FAILED(Convert_Materials(eType, pModelFilePath, szPath)))
 	{
 		MSG_BOX("Failed (Convert_Materials)");
 		return E_FAIL;
@@ -82,7 +102,8 @@ HRESULT CModel_Converter::Convert_Model(_uint iType, const _char* pModelFilePath
 	}
 
 	cout << "Writing Files..." << endl;
-	if (FAILED(Write_File(eType, szPath, szFileName)))
+
+	if ((TYPE_COL == eType )? FAILED(Write_File_COL(eType, szPath, szFileName)) :FAILED(Write_File(eType, szPath, szFileName)))
 	{
 		MSG_BOX("Failed (Write_File)");
 		return E_FAIL;
@@ -304,7 +325,7 @@ HRESULT CModel_Converter::Store_Mesh(const aiMesh* pAIMesh, MESH* outMesh)
 	return S_OK;
 }
 
-HRESULT CModel_Converter::Convert_Materials(TYPE eType, const char* pModelFilePath, const _tchar* pSaveDirectory, const _tchar* pFileName)
+HRESULT CModel_Converter::Convert_Materials(TYPE eType, const char* pModelFilePath, const _tchar* pSaveDirectory)
 {
 	// 머테리얼 개수
 	m_Model.iNumMaterials = m_pAIScene->mNumMaterials;
@@ -672,6 +693,56 @@ HRESULT CModel_Converter::Write_File(TYPE eType, const _tchar* pSaveDirectory, c
 
 	return S_OK;
 }
+
+HRESULT CModel_Converter::Write_File_COL(TYPE eType, const _tchar* pSaveDirectory, const _tchar* pFileName)
+{
+	_tchar szPath[MAX_PATH] = TEXT("");
+	lstrcpy(szPath, pSaveDirectory);
+
+	lstrcat(szPath, pFileName);
+	lstrcat(szPath, TEXT(".dat"));
+
+	HANDLE hFile = CreateFile(szPath, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+	if (INVALID_HANDLE_VALUE == hFile)
+		return E_FAIL;
+
+	_ulong	dwByte = 0;
+	_ulong	dwStrByte = 0;
+
+	// Write Nodes
+
+	// Meshes NumMeshes
+	WriteFile(hFile, &(m_Model.iNumMeshes), sizeof(_uint), &dwByte, nullptr);
+
+	for (_uint i = 0; i < m_Model.iNumMeshes; ++i)
+	{
+		MESH Mesh = m_pMesh[i];
+
+		// Mesh NumVertices
+		WriteFile(hFile, &(Mesh.iNumVertices), sizeof(_uint), &dwByte, nullptr);
+
+		// Mesh NumFaces
+		WriteFile(hFile, &(Mesh.iNumFaces), sizeof(_uint), &dwByte, nullptr);
+
+		for (_uint j = 0; j < Mesh.iNumFaces; ++j)
+		{
+			FACE Face = Mesh.Faces[j];
+			// Face NumIndices
+			WriteFile(hFile, &(Face.iNumIndices), sizeof(_uint), &dwByte, nullptr);
+
+			// Face Indices
+			WriteFile(hFile, Face.iIndices, sizeof(_uint) * Face.iNumIndices, &dwByte, nullptr);
+		}
+
+		// Mesh Positions
+		WriteFile(hFile, Mesh.vPositions, sizeof(_float3) * Mesh.iNumVertices, &dwByte, nullptr);
+	}
+
+	CloseHandle(hFile);
+
+	return S_OK;
+}
+
 
 HRESULT CModel_Converter::Convert(_uint iType, const _char* pModelFilePath)
 {

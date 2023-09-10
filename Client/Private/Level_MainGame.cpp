@@ -14,7 +14,10 @@ HRESULT CLevel_MainGame::Initialize()
 		return E_FAIL;
 	if (FAILED(Ready_Lights()))
 		return E_FAIL;
+
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
+		return E_FAIL;
+	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
 		return E_FAIL;
@@ -87,7 +90,7 @@ HRESULT CLevel_MainGame::Ready_Layer_BackGround(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	Load_MapObject();
+	//Load_MapObject();
 
 	Safe_Release(pGameInstance);
 
@@ -101,7 +104,7 @@ HRESULT CLevel_MainGame::Ready_Layer_Player(const _tchar* pLayerTag)
 
 HRESULT CLevel_MainGame::Load_MapObject()
 {
-	_tchar dataFile[MAX_PATH] = TEXT("../../Resources/GameData/MapData/MapObject.ddd");
+	_tchar dataFile[MAX_PATH] = TEXT("../../Resources/GameData/MapData/MapData.ddd");
 
 	HANDLE hFile = CreateFile(dataFile, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
@@ -113,6 +116,7 @@ HRESULT CLevel_MainGame::Load_MapObject()
 
 	// 맵 오브젝트 번호
 	_uint iObjectNum = 0;
+	vector<const _tchar*> wszModelName;
 
 	DWORD	dwByte = 0;
 
@@ -143,29 +147,65 @@ HRESULT CLevel_MainGame::Load_MapObject()
 			break;
 		}
 
+		_uint iCount = 0;
+
+		// 이미 생성된 프로토타입이 아니어야 생성
+		BEGININSTANCE; for (auto& iter : wszModelName)
+		{
+			if (!lstrcmp(iter, LoadDesc.wszTag))
+			{
+				++iCount;
+			}
+		}
+
+		if (0 == iCount)
+		{
+			wszModelName.push_back(LoadDesc.wszTag);
+
+			// 프로토타입 생성 부분
+			wstring ws(LoadDesc.wszTag);
+			size_t findIndex = ws.find(TEXT("Model_")) + 6;
+
+			wstring modelName = ws.substr(findIndex);
+
+			wstring modelPath(TEXT("../../Resources/Models/NonAnims/MapObject/"));
+			modelPath += modelName;
+			modelPath += TEXT("/");
+			modelPath += modelName;
+			modelPath += TEXT(".dat");
+
+			// 프로토타입 생성
+			_float4x4 PivotMatrix = XMMatrixRotationX(XMConvertToRadians(90.f));
+			if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAINGAME, LoadDesc.wszTag,
+				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, modelPath.c_str(), PivotMatrix))))
+			{
+				MSG_BOX("Failed to Create New Model Prototype");
+			}
+		}
+
 		// 맵 오브젝트에 번호 붙여줌
 		_tchar wszobjName[MAX_PATH] = { 0 };
 		_stprintf_s(wszobjName, TEXT("GameObject_MapObject_%d"), (iObjectNum));
 
 		// 번호를 붙인 태그로 MapObject 등록
-		BEGININSTANCE if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME,
+		if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME,
 			TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_BackGround"),
 			wszobjName, &LoadDesc.matTransform)))
 		{
 			MSG_BOX("Failed to Install MapObject");
 			ENDINSTANCE;
 			return E_FAIL;
-		} ENDINSTANCE;
+		}
 
 		// 마지막에 설치한 맵 오브젝트 주소 가져옴
 		CMapObject* pObject = static_cast<CMapObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME,
 			TEXT("Layer_BackGround"), wszobjName));
 
-		pObject->Add_Model_Component(TEXT("Prototype_Component_Model__Intro_RuinsFloorBroken"));
+		pObject->Add_Model_Component(LoadDesc.wszTag);
 		pObject->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMesh"));
 		pObject->Set_Color(iObjectNum); // 고유한 색깔 값을 넣어줌
 
-		++iObjectNum;	
+		++iObjectNum; ENDINSTANCE;
 	}
 
 	CloseHandle(hFile);
@@ -190,12 +230,39 @@ HRESULT CLevel_MainGame::Ready_Layer_Effect(const _tchar* pLayerTag)
 
 	return S_OK;
 }
+HRESULT CLevel_MainGame::Ready_Layer_UI(const _tchar* pLayerTag)
+{
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	_tchar pFilePath[MAX_PATH] = TEXT("../../Resources/GameData/UIData/aaa.uidata");
+	_ulong dwByte = 0;
+	HANDLE hFile = CreateFile(pFilePath, GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+	
+	if (hFile == INVALID_HANDLE_VALUE)
+	{
+		MSG_BOX("Failed Save");
+		CloseHandle(hFile);
+		return E_FAIL;
+	}
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_HP"),
+		pLayerTag, TEXT("GameObject_UI_Group_HP"), &hFile)))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_HP)");
+		return E_FAIL;
+	}
+
+	Safe_Release(pGameInstance);
+
+	return S_OK;
+}
 #ifdef _DEBUG
 HRESULT CLevel_MainGame::Ready_Layer_Debug(const _tchar* pLayerTag)
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
-
+	//
 	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Camera_Debug"), pLayerTag, TEXT("GameObject_Camera_Debug"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Camera_Debug)");
@@ -208,11 +275,25 @@ HRESULT CLevel_MainGame::Ready_Layer_Debug(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Cloth"), pLayerTag, TEXT("GameObject_Test_Cloth"))))
+	/*if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Cloth"), pLayerTag, TEXT("GameObject_Test_Cloth"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Cloth)");
 		return E_FAIL;
+	}	
+	*/
+
+	/*if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Stair"), pLayerTag, TEXT("GameObject_Test_Stair"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Stair)");
+		return E_FAIL;
 	}
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_PhysxRenderer"), pLayerTag, TEXT("GameObject_PhysxRenderer"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_PhysxRenderer)");
+		return E_FAIL;
+	}*/
+	
 
 	/*if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Armored_Troll"), pLayerTag, TEXT("GameObject_Armored_Troll"))))
 	{

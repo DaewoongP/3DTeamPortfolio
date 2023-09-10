@@ -7,6 +7,7 @@
 #include "PhysX_Manager.h"
 #include "Graphic_Device.h"
 #include "Camera_Manager.h"
+#include "String_Manager.h"
 #include "RenderTarget_Manager.h"
 
 IMPLEMENT_SINGLETON(CGameInstance)
@@ -28,6 +29,7 @@ CGameInstance::CGameInstance()
 	, m_pPhysX_Manager{ CPhysX_Manager::GetInstance() }
 	, m_pCamera_Manager{ CCamera_Manager::GetInstance() }
 	, m_pTime_Manager{ CTime_Manager::GetInstance() }
+	, m_pString_Manager{ CString_Manager::GetInstance() }
 {
 	Safe_AddRef(m_pFrustum);
 	Safe_AddRef(m_pFont_Manager);
@@ -45,6 +47,7 @@ CGameInstance::CGameInstance()
 	Safe_AddRef(m_pPhysX_Manager);
 	Safe_AddRef(m_pCamera_Manager);
 	Safe_AddRef(m_pTime_Manager);
+	Safe_AddRef(m_pString_Manager);
 }
 
 HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInst, _uint iNumLevels, const GRAPHICDESC& GraphicDesc, _Inout_ ID3D11Device** ppDevice, _Inout_ ID3D11DeviceContext** ppContext)
@@ -788,6 +791,20 @@ void CGameInstance::Reset_World_TimeAcc()
 	return m_pTime_Manager->Reset_World_TimeAcc();
 }
 
+_char* CGameInstance::Make_Char(const _char* pMakeChar)
+{
+	NULL_CHECK_MSG(m_pString_Manager, TEXT("Time_Manager NULL"));
+
+	return m_pString_Manager->Make_Char(pMakeChar);
+}
+
+_tchar* CGameInstance::Make_WChar(const _tchar* pMakeWChar)
+{
+	NULL_CHECK_MSG(m_pString_Manager, TEXT("Time_Manager NULL"));
+
+	return m_pString_Manager->Make_WChar(pMakeWChar);
+}
+
 void CGameInstance::Release_Engine()
 {
 	CGameInstance::GetInstance()->DestroyInstance();
@@ -822,11 +839,14 @@ void CGameInstance::Release_Engine()
 
 	CInput_Device::GetInstance()->DestroyInstance();
 
+	CString_Manager::GetInstance()->DestroyInstance();
+
 	CGraphic_Device::GetInstance()->DestroyInstance();
 }
 
 void CGameInstance::Free()
 {
+	Safe_Release(m_pString_Manager);
 	Safe_Release(m_pTime_Manager);
 	Safe_Release(m_pPhysX_Manager);
 	Safe_Release(m_pCalculator);

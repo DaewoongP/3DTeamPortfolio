@@ -130,6 +130,33 @@
     <Filter Include="02. GameObject\99. Debug\Cloth">
       <UniqueIdentifier>{3f5e0d18-9b63-46c6-b1ee-b4c3d0a446b1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\99. Debug\Stair">
+      <UniqueIdentifier>{9ea51d67-5f15-45a3-ae58-2fbf7f6f12bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\99. Debug\PhysxRender">
+      <UniqueIdentifier>{ffbc88f7-a780-4e66-87b7-7baf68d24ed3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. ShaderFiles\Debug">
+      <UniqueIdentifier>{1d5583a2-e4a6-4d7c-a4bd-c23fd81f765f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Function">
+      <UniqueIdentifier>{a0782665-36f6-4fd7-ab5c-79b74a2f4762}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Group">
+      <UniqueIdentifier>{7206f782-d4db-4b46-8797-de58df3e32e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Group\UI_HP">
+      <UniqueIdentifier>{081ca7b0-6581-4898-a252-d4947ea8ef08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Group\UI_Skill">
+      <UniqueIdentifier>{ffcdd06d-9e79-4b4e-8438-f500909b5260}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Function\UI_ProGress">
+      <UniqueIdentifier>{b67a2632-11f7-4c4a-843a-9eeecc086fc5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Function\CUI_Back">
+      <UniqueIdentifier>{3b6be744-8047-49de-88b4-d917b595c1ae}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -167,9 +194,6 @@
     </ClInclude>
     <ClInclude Include="..\public\Logo_BackGround.h">
       <Filter>02. GameObject\05. UI\Logo</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\UI.h">
-      <Filter>02. GameObject\05. UI</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Level_MainGame.h">
       <Filter>01. Levels\01. MainGame</Filter>
@@ -279,6 +303,24 @@
     <ClInclude Include="..\public\Test_Cloth.h">
       <Filter>02. GameObject\99. Debug\Cloth</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Test_Stair.h">
+      <Filter>02. GameObject\99. Debug\Stair</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PhysXRender.h">
+      <Filter>02. GameObject\99. Debug\PhysxRender</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Group_HP.h">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_HP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Skill.h">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Skill</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Progress.h">
+      <Filter>02. GameObject\05. UI\UI_Function\UI_ProGress</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Back.h">
+      <Filter>02. GameObject\05. UI\UI_Function\CUI_Back</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -301,9 +343,6 @@
     </ClCompile>
     <ClCompile Include="..\private\Logo_BackGround.cpp">
       <Filter>02. GameObject\05. UI\Logo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\UI.cpp">
-      <Filter>02. GameObject\05. UI</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Level_MainGame.cpp">
       <Filter>01. Levels\01. MainGame</Filter>
@@ -398,6 +437,24 @@
     <ClCompile Include="..\private\Test_Cloth.cpp">
       <Filter>02. GameObject\99. Debug\Cloth</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Test_Stair.cpp">
+      <Filter>02. GameObject\99. Debug\Stair</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PhysXRender.cpp">
+      <Filter>02. GameObject\99. Debug\PhysxRender</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Group_HP.cpp">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_HP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Skill.cpp">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Skill</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Progress.cpp">
+      <Filter>02. GameObject\05. UI\UI_Function\UI_ProGress</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Back.cpp">
+      <Filter>02. GameObject\05. UI\UI_Function\CUI_Back</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -435,6 +492,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxMesh.hlsl">
       <Filter>97. ShaderFiles\Meshes</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Debug.hlsl">
+      <Filter>97. ShaderFiles\Debug</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

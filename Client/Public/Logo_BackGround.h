@@ -1,5 +1,14 @@
 #pragma once
 #include "UI.h"
+#include "Client_Defines.h"
+
+BEGIN(Engine)
+class CShader;
+class CTexture;
+class CRenderer;
+class CTransform;
+class CVIBuffer_Rect;
+END
 
 BEGIN(Client)
 
@@ -20,6 +29,14 @@ public:
 private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
+
+private:
+	CShader* m_pShaderCom = { nullptr };
+	CTexture* m_pTextureCom = { nullptr };
+	CRenderer* m_pRendererCom = { nullptr };
+	CVIBuffer_Rect* m_pVIBufferCom = { nullptr };
+
+	CTexture* m_pAlphaTextureCom = { nullptr };
 
 public:
 	static CLogo_BackGround* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);

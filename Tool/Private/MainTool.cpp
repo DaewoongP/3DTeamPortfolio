@@ -5,7 +5,7 @@
 #include "MapDummy.h"
 #include "MapObject.h"
 #include "MapObject_Ins.h"
-#include"LightDot.h"
+#include "LightDot.h"
 #include "Camera_Point.h"
 #include "DummyMeshEffect.h"
 #include "DummyTrail.h"
@@ -287,6 +287,11 @@ HRESULT CMainTool::Ready_Prototype_Component()
 		return E_FAIL;
 	}
 
+	/* For.Prototype_Component_VIBuffer_Triangle */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_VIBuffer_Triangle"),
+		CVIBuffer_Triangle::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	/* Prototype_Component_VIBuffer_Rect */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_VIBuffer_Rect"),
 		CVIBuffer_Rect::Create(m_pDevice, m_pContext))))
@@ -297,9 +302,14 @@ HRESULT CMainTool::Ready_Prototype_Component()
 		CVIBuffer_GeoSphere::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	///* Prototype_Component_VIBuffer_Terrain */
+	//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_VIBuffer_Terrain"),
+	//	CVIBuffer_Terrain::Create(m_pDevice, m_pContext, 513, 513))))
+	//	return E_FAIL;
+
 	/* Prototype_Component_VIBuffer_Terrain */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_VIBuffer_Terrain"),
-		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, 513, 513))))
+		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Terrain/Height.bmp")))))
 		return E_FAIL;
 
 	/* Prototype_Component_VIBuffer_Cube */

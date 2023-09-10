@@ -1,4 +1,5 @@
 #include "..\Public\Logo_BackGround.h"
+#include "Logo_BackGround.h"
 #include "GameInstance.h"
 
 CLogo_BackGround::CLogo_BackGround(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -149,4 +150,10 @@ CGameObject* CLogo_BackGround::Clone(void* pArg)
 void CLogo_BackGround::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pTextureCom);
+	Safe_Release(m_pRendererCom);
+	Safe_Release(m_pVIBufferCom);
+	Safe_Release(m_pAlphaTextureCom);
 }

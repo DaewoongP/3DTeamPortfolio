@@ -140,6 +140,15 @@ void CRigidBody::Set_Density(_float _fDensity) const
 	}
 }
 
+void CRigidBody::Set_AngularDamping(_float _fAngualrDamping) const
+{
+	if (nullptr != m_pActor &&
+		nullptr != m_pActor->is<PxRigidBody>())
+	{
+		reinterpret_cast<PxRigidDynamic*>(m_pActor)->setAngularDamping(_fAngualrDamping);
+	}
+}
+
 HRESULT CRigidBody::Initialize(void* pArg)
 {
 	if (FAILED(Create_Actor()))
@@ -193,7 +202,7 @@ HRESULT CRigidBody::Create_Actor()
 	m_pScene = pPhysX_Manager->Get_PhysxScene();
 
 	// 초기 포지션 세팅
-	PxVec3 vLocal = PxVec3(0.f, 10.f, 5.f);
+	PxVec3 vLocal = PxVec3(5.f, 10.f, 5.f);
 	PxTransform localTm(vLocal);
 	m_pActor = pPhysX->createRigidDynamic(localTm);
 	// 유저데이터에 이 컴포넌트 세팅해서 나중에 충돌처리 함수 부르기 위해 처리.
