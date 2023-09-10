@@ -637,6 +637,7 @@ HRESULT CNavigation_Window::Render_Cells()
 			return E_FAIL;
 	}
 
+#ifdef _DEBUG
 	for (auto& CellDesc : m_Cells)
 	{
 		for (auto& Sphere : CellDesc.m_pBufferCom->Get_BoundingSpheres())
@@ -645,6 +646,7 @@ HRESULT CNavigation_Window::Render_Cells()
 				return E_FAIL;
 		}
 	}
+#endif // _DEBUG
 
 	vColor = _float4(1.f, 0.f, 0.f, 1.f);
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_vColor", &vColor, sizeof(_float4))))

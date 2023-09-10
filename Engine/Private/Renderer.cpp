@@ -63,7 +63,9 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_Blur"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
-
+	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
+		TEXT("Target_Distortion"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f))))
+		return E_FAIL;
 #ifdef _DEBUG
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_Picking"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
@@ -86,14 +88,17 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Lights"), TEXT("Target_Specular"))))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_PostProcessing"), TEXT("Target_PostProcessing"))))
+		return E_FAIL; 
+	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Shadow_Depth"), TEXT("Target_Shadow_Depth"))))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Shadow"), TEXT("Target_Shadow"))))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Shadow_Depth"), TEXT("Target_Shadow_Depth"))))
-		return E_FAIL;
+	
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_SSAO"), TEXT("Target_SSAO"))))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Blur"), TEXT("Target_Blur"))))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Distortion"), TEXT("Target_Distortion"))))
 		return E_FAIL;
 
 #ifdef _DEBUG
@@ -139,8 +144,8 @@ HRESULT CRenderer::Initialize_Prototype()
 	/*if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_PostProcessing"), 240.f, 560.f, 160.f, 160.f)))
 		return E_FAIL;*/
 
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Picking"), 1200.f, 80.f, 160.f, 160.f)))
-		return E_FAIL; // ¸Ê ¿ÀºêÁ§ÅÍ Fast PickingÀ» À§ÇÑ ·»´õ Å¸°Ù
+	//if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Picking"), 1200.f, 80.f, 160.f, 160.f)))
+	//	return E_FAIL; // ¸Ê ¿ÀºêÁ§ÅÍ Fast PickingÀ» À§ÇÑ ·»´õ Å¸°Ù
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_UI"), 1200.f, 300.f, 160.f, 160.f)))
 		return E_FAIL;
 	
@@ -187,21 +192,21 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 	if (FAILED(Render_Lights()))
 		return E_FAIL;
-#ifdef _DEBUG
-	if (FAILED(Render_Picking())) 	// ¸Ê ¿ÀºêÁ§ÅÍ Fast PickingÀ» À§ÇÑ ·»´õ Å¸°Ù
-		return E_FAIL;
-#endif // _DEBUG
-	
+
 	if (FAILED(Render_Shadow()))
+		return E_FAIL;
+
+//#ifdef _DEBUG
+//	if (FAILED(Render_Picking())) 	// ¸Ê ¿ÀºêÁ§ÅÍ Fast PickingÀ» À§ÇÑ ·»´õ Å¸°Ù
+//		return E_FAIL;
+//#endif // _DEBUG
+	
+	if (FAILED(Render_Deferred()))
 		return E_FAIL;
 	if (FAILED(Render_SSAO()))
 		return E_FAIL;
 	if (FAILED(Render_Blur()))
 		return E_FAIL;
-	
-	if (FAILED(Render_Deferred()))
-		return E_FAIL;
-
 	if (FAILED(Render_NonLight()))
 		return E_FAIL;
 	if (FAILED(Render_Blend()))
@@ -212,6 +217,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 	
 	if (FAILED(Render_PostProcessing()))
 		return E_FAIL;	
+	
+
 	if (FAILED(Render_UI()))
 		return E_FAIL;
 
@@ -345,7 +352,7 @@ HRESULT CRenderer::Render_Lights()
 	if (FAILED(m_pDeferredShader->Bind_Matrix("g_ProjMatrixInv", pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
-	if (FAILED(m_pDeferredShader->Bind_RawValue("g_vCamPosition", pPipeLine->Get_CamPosition(), sizeof(_float4))))
+	if (FAILED(m_pDeferredShader->Bind_RawValue("g_vCamPosition",m_pLight_Manager->Get_LightPosition(), sizeof(_float4))))
 		return E_FAIL;
 	if (FAILED(m_pDeferredShader->Bind_RawValue("g_fCamFar", pPipeLine->Get_CamFar(), sizeof(_float))))
 		return E_FAIL;
@@ -356,8 +363,9 @@ HRESULT CRenderer::Render_Lights()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Depth"), m_pDeferredShader, "g_DepthTexture")))
 		return E_FAIL;
-
+	
 	m_pLight_Manager->Render_Lights(m_pDeferredShader, m_pDeferredBuffer);
+	m_pLight_Manager->Render_Lights(m_pSSAOShader, m_pSSAOBuffer);
 
 	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext)))
 		return E_FAIL;
@@ -373,19 +381,19 @@ HRESULT CRenderer::Render_Shadow()
 
 	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Shadow"))))
 		return E_FAIL;
-	
+
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Depth"), m_pSSAOShader, "g_DepthTexture")))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Shadow_Depth"), m_pSSAOShader, "g_vLightDepthTexture")))
 		return E_FAIL;
-	
+
 	CPipeLine* pPipeLine = CPipeLine::GetInstance();
 	Safe_AddRef(pPipeLine);
 
-	if (FAILED(m_pSSAOShader->Bind_Matrix("g_ViewMatrixInv",pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_VIEW))))
+	if (FAILED(m_pSSAOShader->Bind_Matrix("g_ViewMatrixInv", pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
 
-	if (FAILED(m_pSSAOShader->Bind_Matrix("g_ProjMatrixInv",pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_PROJ))))
+	if (FAILED(m_pSSAOShader->Bind_Matrix("g_ProjMatrixInv", pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
 	if (FAILED(m_pSSAOShader->Bind_RawValue("g_fCamFar", pPipeLine->Get_CamFar(), sizeof(_float))))
@@ -405,7 +413,7 @@ HRESULT CRenderer::Render_Shadow()
 
 
 
-	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext)))
+	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext),true))
 		return E_FAIL;
 
 	return S_OK;
@@ -569,6 +577,28 @@ HRESULT CRenderer::Render_PostProcessing()
 	return S_OK;
 }
 
+HRESULT CRenderer::Render_Dicstortion()
+{
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_PostProcessing"), m_pAfterShader, "g_PostProcessingTexture")))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Diffuse"), m_pAfterShader, "g_vDistortionTexture")))
+		return E_FAIL;
+
+
+	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
+		return E_FAIL;
+
+	m_pAfterShader->Begin("Distortion");
+
+	m_pAfterShaderBuffer->Render();
+
+	return S_OK;
+}
+
 HRESULT CRenderer::Render_UI()
 {
 	if (FAILED(Sort_UI()))
@@ -683,6 +713,15 @@ HRESULT CRenderer::Add_Components()
 	if (nullptr == m_pShadeTypeBuffer)
 		return E_FAIL;
 
+	m_pAfterShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_AfterShade.hlsl"), VTXPOSNORTEX_DECL::Elements, VTXPOSNORTEX_DECL::iNumElements);
+	if (nullptr == m_pAfterShader)
+		return E_FAIL;
+
+	m_pAfterShaderBuffer = CVIBuffer_Rect::Create(m_pDevice, m_pContext);
+	if (nullptr == m_pAfterShaderBuffer)
+		return E_FAIL;
+
+
 	return S_OK;
 }
 
@@ -759,6 +798,9 @@ void CRenderer::Free()
 
 	Safe_Release(m_pRenderTarget_Manager);
 	Safe_Release(m_pLight_Manager);
+	
+	Safe_Release(m_pAfterShaderBuffer);
+	Safe_Release(m_pAfterShader);
 
 	Safe_Release(m_pSSAOBuffer);
 	Safe_Release(m_pSSAOShader);

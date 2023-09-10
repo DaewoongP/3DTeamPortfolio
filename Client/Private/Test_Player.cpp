@@ -42,14 +42,15 @@ void CTest_Player::Tick(_float fTimeDelta)
 
 	//m_pModelCom->Tick(2, 2, fTimeDelta);
 
- 	m_pModelCom->Play_Animation(fTimeDelta);
+	//m_pModel_LOD->Play_Animation(fTimeDelta);
 }
 
 void CTest_Player::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
-
-	if (nullptr != m_pRenderer)
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	if (nullptr != m_pRenderer &&
+		true == pGameInstance->isIn_WorldFrustum(m_pTransform->Get_Position().TransCoord(), 10.f))
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 #ifdef _DEBUG
@@ -59,7 +60,7 @@ void CTest_Player::Late_Tick(_float fTimeDelta)
 	}
 
 #ifdef _DEBUG
-	//Tick_ImGui();
+	Tick_ImGui();
 #endif // _DEBUG
 }
 
@@ -86,21 +87,18 @@ HRESULT CTest_Player::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	for (_uint iPartsIndex = 0; iPartsIndex < CCustomModel::MESH_END; ++iPartsIndex)
+	/*_uint		iNumMeshes = m_pModel_LOD->Get_NumMeshes();
+
+	for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; ++iMeshCount)
 	{
-		_uint		iNumMeshes = m_pModelCom->Get_NumMeshes(iPartsIndex);
+		m_pModel_LOD->Bind_Material(m_pShaderCom, "g_DiffuseTexture", iMeshCount, DIFFUSE);
 
-		for (_uint i = 0; i < iNumMeshes; ++i)
-		{
-			m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", iPartsIndex, i);
+		if (FAILED(m_pShaderCom->Begin("Mesh")))
+			return E_FAIL;
 
-			m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", iPartsIndex, i, DIFFUSE);
-
-			m_pShaderCom->Begin("AnimMesh");
-
-			m_pModelCom->Render(iPartsIndex, i);
-		}
-	}
+		if (FAILED(m_pModel_LOD->Render(iMeshCount)))
+			return E_FAIL;
+	}*/
 
 	return S_OK;
 }
@@ -120,18 +118,18 @@ HRESULT CTest_Player::Add_Components()
 		return E_FAIL;
 	}
 
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
+	//CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	//Safe_AddRef(pGameInstance);
 
-	PxCapsuleControllerDesc CapsuleControllerDesc;
-	CapsuleControllerDesc.setToDefault();
-	CapsuleControllerDesc.radius = 1.f;
-	CapsuleControllerDesc.height = 1.f;
-	CapsuleControllerDesc.material = pGameInstance->Get_Physics()->createMaterial(0.f, 0.f, 0.f);
-	CapsuleControllerDesc.density = 30.f;
-	CapsuleControllerDesc.isValid();
+	//PxCapsuleControllerDesc CapsuleControllerDesc;
+	//CapsuleControllerDesc.setToDefault();
+	//CapsuleControllerDesc.radius = 1.f;
+	//CapsuleControllerDesc.height = 1.f;
+	//CapsuleControllerDesc.material = pGameInstance->Get_Physics()->createMaterial(0.f, 0.f, 0.f);
+	//CapsuleControllerDesc.density = 30.f;
+	//CapsuleControllerDesc.isValid();
 
-	Safe_Release(pGameInstance);
+	//Safe_Release(pGameInstance);
 
 	/* Com_Controller */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_CharacterController"),
@@ -158,23 +156,23 @@ HRESULT CTest_Player::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_CustomModel"),
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 	{
-		MSG_BOX("Failed CTest_Player Add_Component : (Com_Model)");
+		MSG_BOX("Failed CTest_Player Add_Component : (Com_RigidBody)");
 		return E_FAIL;
 	}
 
+	///* For.Com_Model_LOD */
+	//if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Test_Robe_LOD"),
+	//	TEXT("Com_Model_LOD"), reinterpret_cast<CComponent**>(&m_pModel_LOD))))
+	//{
+	//	MSG_BOX("Failed CTest_Player Add_Component : (Com_Model_LOD)");
+	//	return E_FAIL;
+	//}
+
 	/* For.Com_Shader */
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimMesh"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 	{
 		MSG_BOX("Failed CTest_Player Add_Component : (Com_Shader)");
-		return E_FAIL;
-	}
-
-	// ¿Ê °æ·Î ³Ö¾îÁà¾ßÇÔ.
-	/* For.Prototype_Component_MeshParts_Robe_Student */
-	if (FAILED(m_pModelCom->Add_MeshParts(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Robe_Student"), CCustomModel::ROBE, nullptr)))
-	{
-		MSG_BOX("[CTest_Player] Failed Add_MeshParts");
 		return E_FAIL;
 	}
 
@@ -268,9 +266,9 @@ void CTest_Player::Tick_ImGui()
 	ImGui::SetNextItemWidth(20.f);
 	ImGui::Text("%.1f /", vPlayerPos.x); ImGui::SameLine();
 	ImGui::SetNextItemWidth(20.f);
-	ImGui::Text("%.1f /", vPlayerPos.x); ImGui::SameLine();
+	ImGui::Text("%.1f /", vPlayerPos.y); ImGui::SameLine();
 	ImGui::SetNextItemWidth(20.f);
-	ImGui::Text("%.1f /", vPlayerPos.x);
+	ImGui::Text("%.1f /", vPlayerPos.z);
 	ImGui::SetNextItemWidth(100.f);
 	if (ImGui::InputFloat3("Set Position", (_float*)(&vPlayerPos)))
 	{
@@ -326,5 +324,6 @@ void CTest_Player::Free()
 		Safe_Release(m_pRenderer);
 		Safe_Release(m_pController);
 		Safe_Release(m_pRigidBody);
+		Safe_Release(m_pModel_LOD);
 	}
 }

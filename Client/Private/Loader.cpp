@@ -179,9 +179,14 @@ HRESULT CLoader::Loading_For_MainGame()
 			CVIBuffer_Cube::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_VIBuffer_Cube");
 
-		/* For.Prototype_Component_VIBuffer_Terrain */
+		///* For.Prototype_Component_VIBuffer_Terrain */
+		//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Terrain"),
+		//	CVIBuffer_Terrain::Create(m_pDevice, m_pContext, 513, 513))))
+		//	throw TEXT("Prototype_Component_VIBuffer_Terrain");
+
+		/* Prototype_Component_VIBuffer_Terrain */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Terrain"),
-			CVIBuffer_Terrain::Create(m_pDevice, m_pContext, 531, 531))))
+			CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Terrain/Height.bmp")))))
 			throw TEXT("Prototype_Component_VIBuffer_Terrain");
 		
 		/* For.Prototype_Component_VIBuffer_Cloth */
@@ -249,12 +254,17 @@ HRESULT CLoader::Loading_For_MainGame()
 		//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Pensive"),
 		//	CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/PensivePaladin/PensivePaladin.dat")))))
 		//	throw TEXT("Prototype_Component_Model_Pensive");
+		
+		//-------------------------- LOD Models --------------------------//
+		/*CModel_LOD::LODDESC LodDesc;
+		LodDesc.iLevelIndex = LEVEL_MAINGAME;
+		lstrcpy(LodDesc.szPrototypeName, TEXT("Prototype_Component_Model_Test_Rock"));
+		LodDesc.eModelType = CModel::TYPE_NONANIM;
+		LodDesc.PivotMatrix = XMMatrixIdentity();
 
-		// 프로토타입 생성
-		PivotMatrix = XMMatrixIdentity();
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model__Intro_RuinsFloorBroken"),
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Intro__RuinsFloorBroken/Intro__RuinsFloorBroken.dat"), PivotMatrix))))
-			throw TEXT("Prototype_Component_Model__Intro_RuinsFloorBroken");
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Test_Robe_LOD"),
+			CModel_LOD::Create(m_pDevice, m_pContext, LodDesc, TEXT("../../Resources/Models/NonAnims/SM_DungeonEnterance_Cave_A/SM_DungeonEnterance_Cave_A_Lod%d.dat"), 3))))
+			throw TEXT("Prototype_Component_Model_Test_Robe_LOD");*/
 
 		PivotMatrix = XMMatrixIdentity();
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Stair"),

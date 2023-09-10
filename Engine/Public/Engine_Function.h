@@ -2,6 +2,18 @@
 
 namespace Engine
 {
+	void Error_Message_Box(const char* pError)
+	{
+		wchar_t pReturnError[MAX_PATH] = TEXT("");
+		MultiByteToWideChar(CP_ACP, 0, pError, (int)strlen(pError), pReturnError, MAX_PATH);
+		MessageBox(nullptr, pReturnError, TEXT("System Message"), MB_OK);
+	}
+
+	void Error_Message_Box(const wchar_t* pError)
+	{
+		MessageBox(nullptr, pError, TEXT("System Message"), MB_OK);
+	}
+
 	template <typename T>
 	unsigned long Safe_AddRef(T& pointer)
 	{
@@ -316,6 +328,4 @@ namespace Engine
 		WideCharToMultiByte(CP_UTF8, 0, &wstr[0], (int)wstr.size(), &strTo[0], size_needed, NULL, NULL);
 		return strTo;
 	}
-
-
 }

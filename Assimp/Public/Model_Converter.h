@@ -8,7 +8,7 @@ class CModel_Converter final : public CBase
 {
 public:
 	// ¸ðµ¨ Å¸ÀÔ
-	enum TYPE { TYPE_NONANIM, TYPE_ANIM,TYPE_COL, TYPE_END };
+	enum TYPE { TYPE_NONANIM, TYPE_ANIM, TYPE_COL, TYPE_MAPOBJECT, TYPE_END };
 
 private:
 	explicit CModel_Converter();
@@ -46,7 +46,7 @@ private:
 	HRESULT Sort_Bones();
 	HRESULT Convert_Meshes();
 	HRESULT Store_Mesh(const aiMesh * pAIMesh, _Inout_ MESH * outMesh);
-	HRESULT Convert_Materials(TYPE eType, const char* pModelFilePath, const _tchar* pSaveDirectory, const _tchar* pFileName);
+	HRESULT Convert_Materials(TYPE eType, const char* pModelFilePath, const _tchar* pSaveDirectory);
 	HRESULT Convert_Animations();
 
 private:

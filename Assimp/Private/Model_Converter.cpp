@@ -46,25 +46,44 @@ HRESULT CModel_Converter::Convert_Model(_uint iType, const _char* pModelFilePath
 	_wsplitpath_s(FullPath, nullptr, 0, nullptr, 0, szFileName, MAX_PATH, nullptr, 0);
 
 	_tchar szPath[MAX_PATH] = TEXT("../../Resources/Models/");
+	wstring szSubFileName;
+	if (wcswcs(szFileName, TEXT("Lod")))
+	{
+		szSubFileName = szFileName;
+		szSubFileName = szSubFileName.substr(0, szSubFileName.size() - 5);
+	}
+	else
+	{
+		szSubFileName = szFileName;
+	}
+
 	// Write Anim
 	if (TYPE_ANIM == eType)
 	{
 		lstrcat(szPath, TEXT("Anims/"));
-		lstrcat(szPath, szFileName);
+		lstrcat(szPath, szSubFileName.c_str());
 		lstrcat(szPath, TEXT("/"));
 		fs::create_directory(szPath);
 	}
 	// Write NonAnim
-	else
+	else if(TYPE_NONANIM == eType)
 	{
 		lstrcat(szPath, TEXT("NonAnims/"));
+		lstrcat(szPath, szSubFileName.c_str());
+		lstrcat(szPath, TEXT("/"));
+		fs::create_directory(szPath);
+	}
+	// Write MapObject
+	else if (TYPE_MAPOBJECT == eType)
+	{
+		lstrcat(szPath, TEXT("NonAnims/MapObject/"));
 		lstrcat(szPath, szFileName);
 		lstrcat(szPath, TEXT("/"));
 		fs::create_directory(szPath);
 	}
 
 	cout << "Convert Materials..." << endl;
-	if (FAILED(Convert_Materials(eType, pModelFilePath, szPath, szFileName)))
+	if (FAILED(Convert_Materials(eType, pModelFilePath, szPath)))
 	{
 		MSG_BOX("Failed (Convert_Materials)");
 		return E_FAIL;
@@ -305,7 +324,7 @@ HRESULT CModel_Converter::Store_Mesh(const aiMesh* pAIMesh, MESH* outMesh)
 	return S_OK;
 }
 
-HRESULT CModel_Converter::Convert_Materials(TYPE eType, const char* pModelFilePath, const _tchar* pSaveDirectory, const _tchar* pFileName)
+HRESULT CModel_Converter::Convert_Materials(TYPE eType, const char* pModelFilePath, const _tchar* pSaveDirectory)
 {
 	// 머테리얼 개수
 	m_Model.iNumMaterials = m_pAIScene->mNumMaterials;

@@ -9,14 +9,14 @@ CLight_Manager::CLight_Manager()
 
 }
 
-const CLight::LIGHTDESC * CLight_Manager::Get_Light(_uint iIndex)
+const CLight::LIGHTDESC* CLight_Manager::Get_Light(_uint iIndex)
 {
 	auto	iter = m_Lights.begin();
 
 	for (size_t i = 0; i < iIndex; ++i)
 		++iter;
 
-	return (*iter)->Get_LightDesc();	
+	return (*iter)->Get_LightDesc();
 }
 
 void CLight_Manager::Set_Light(_uint iIndex, CLight::LIGHTDESC LightDesc)
@@ -46,17 +46,18 @@ const CLight::LIGHTDESC* CLight_Manager::Get_Light_Name(string Name)
 	return nullptr;
 }
 
-CLight* CLight_Manager::Add_Lights(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const CLight::LIGHTDESC & LightDesc)
+CLight* CLight_Manager::Add_Lights(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const CLight::LIGHTDESC& LightDesc)
 {
 	m_pDevice = pDevice;
 	m_pContext = pContext;
-	CLight*		pLight = CLight::Create(LightDesc);
+	CLight* pLight = CLight::Create(LightDesc);
 
-	
+
 	CTransform* pTransform = CTransform::Create(pDevice, pContext);
 	if (LightDesc.eType == CLight::TYPE_DIRECTIONAL)
 	{
 		pTransform->Set_Position(_float3(30.f, 50.f, 30.f));
+		//pTransform->LookAt(_float3(0.34f, 0.98f, 0.34f));
 		pTransform->LookAt(_float3(0.34f, 0.98f, 0.34f));
 
 	}
@@ -71,9 +72,9 @@ CLight* CLight_Manager::Add_Lights(ID3D11Device* pDevice, ID3D11DeviceContext* p
 
 	CPipeLine* pPipeLine = CPipeLine::GetInstance();
 	Safe_AddRef(pPipeLine);
-	if(0.f<*pPipeLine->Get_CamFar())
-	XMStoreFloat4x4(&m_ProjLight, XMMatrixPerspectiveFovLH(XMConvertToRadians(60.f), 1280.f / 720.f, 0.1f ,*pPipeLine->Get_CamFar()));
-	
+	if (0.f < *pPipeLine->Get_CamFar())
+		XMStoreFloat4x4(&m_ProjLight, XMMatrixPerspectiveFovLH(XMConvertToRadians(60.f), 1280.f / 720.f, 0.1f, *pPipeLine->Get_CamFar()));
+
 	Safe_Release(pPipeLine);
 	m_fLightPos = LightDesc.vPos;
 	if (nullptr == pLight)
@@ -84,7 +85,7 @@ CLight* CLight_Manager::Add_Lights(ID3D11Device* pDevice, ID3D11DeviceContext* p
 	return pLight;
 }
 
-HRESULT CLight_Manager::Delete_Lights(_uint iIndex,const _char* Name)
+HRESULT CLight_Manager::Delete_Lights(_uint iIndex, const _char* Name)
 {
 	auto iter = m_Lights.begin();
 	for (size_t i = 0; i < iIndex; ++i)
@@ -101,7 +102,7 @@ HRESULT CLight_Manager::Clear_Lights()
 		Safe_Release(pLight);
 
 	m_Lights.clear();
-	
+
 	return S_OK;
 }
 
@@ -112,7 +113,7 @@ HRESULT CLight_Manager::Render_Lights(CShader* pShader, CVIBuffer_Rect* pVIBuffe
 		if (nullptr != pLight)
 			pLight->Render(pShader, pVIBuffer);
 
-		
+
 	}
 
 	return S_OK;

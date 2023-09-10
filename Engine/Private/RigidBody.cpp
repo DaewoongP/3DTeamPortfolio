@@ -202,7 +202,7 @@ HRESULT CRigidBody::Create_Actor()
 	m_pScene = pPhysX_Manager->Get_PhysxScene();
 
 	// 초기 포지션 세팅
-	PxVec3 vLocal = PxVec3(0.f, 10.f, 5.f);
+	PxVec3 vLocal = PxVec3(5.f, 10.f, 5.f);
 	PxTransform localTm(vLocal);
 	m_pActor = pPhysX->createRigidDynamic(localTm);
 	// 유저데이터에 이 컴포넌트 세팅해서 나중에 충돌처리 함수 부르기 위해 처리.

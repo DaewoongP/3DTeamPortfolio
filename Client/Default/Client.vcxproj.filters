@@ -139,6 +139,9 @@
     <Filter Include="97. ShaderFiles\Debug">
       <UniqueIdentifier>{1d5583a2-e4a6-4d7c-a4bd-c23fd81f765f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Skill">
+      <UniqueIdentifier>{ffcdd06d-9e79-4b4e-8438-f500909b5260}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">

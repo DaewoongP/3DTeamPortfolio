@@ -191,43 +191,12 @@ HRESULT CGraphic_Device::Ready_DepthStencilRenderTargetView(_uint iWinCX, _uint 
 	return S_OK;
 }
 
-HRESULT CGraphic_Device::Ready_ShadowDepthRenderTarget(_uint iWinCX, _uint iWinCY)
-{
-	NULL_CHECK_RETURN_MSG(m_pDevice, E_FAIL, TEXT("Device NULL"));
-
-	ID3D11Texture2D* pDepthStencilTexture = nullptr;
-	D3D11_TEXTURE2D_DESC	TextureDesc;
-	ZeroMemory(&TextureDesc, sizeof(D3D11_TEXTURE2D_DESC));
-
-	TextureDesc.Width = iWinCX;
-	TextureDesc.Height = iWinCY;
-	TextureDesc.MipLevels = 1;
-	TextureDesc.ArraySize = 1;
-	TextureDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	TextureDesc.SampleDesc.Quality = 0;
-	TextureDesc.SampleDesc.Count = 1;
-	TextureDesc.Usage = D3D11_USAGE_DEFAULT;
-
-	TextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL/*| D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE*/;
-	TextureDesc.CPUAccessFlags = 0;
-	TextureDesc.MiscFlags = 0;
-
-	FAILED_CHECK_RETURN_MSG(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &pDepthStencilTexture), E_FAIL, L"Failed Create Texture2D");
-	FAILED_CHECK_RETURN_MSG(m_pDevice->CreateDepthStencilView(pDepthStencilTexture, nullptr, &m_pShadowDepth), E_FAIL,
-		L"Failed CreateShdowDepth");
-
-	Safe_Release(pDepthStencilTexture);
-
-	return S_OK;
-}
-
 void CGraphic_Device::Free()
 {
 	Safe_Release(m_pSwapChain);
 	Safe_Release(m_pBackBufferRTV);
 	Safe_Release(m_pDeviceContext);
 	Safe_Release(m_pDepthStencilView);
-	Safe_Release(m_pShadowDepth);
 
 	// 컴객체 누수시 디버그 용도.
 	/*#if defined(DEBUG) || defined(_DEBUG)

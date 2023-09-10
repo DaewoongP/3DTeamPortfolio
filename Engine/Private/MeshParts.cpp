@@ -398,7 +398,7 @@ HRESULT CMeshParts::Ready_DynamicMesh(const CModel::BONES& _Bones, const _tchar*
 
 	for (_uint i = 0; i < m_iNumMeshes; ++i)
 	{
-		CDynamic_Mesh* pMesh = CDynamic_Mesh::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, _Bones, m_MeshDatas[i], _float4x4(), szClothDataFilePath);
+		CDynamic_Mesh* pMesh = CDynamic_Mesh::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, _Bones, m_MeshDatas[i], XMMatrixRotationQuaternion(XMQuaternionRotationRollPitchYaw(XMConvertToRadians(90.f), 0.f, 0.f)), szClothDataFilePath);
 		if (nullptr == pMesh)
 			return E_FAIL;
 

@@ -29,6 +29,7 @@
 #include "Transform.h"
 #include "RigidBody.h"
 #include "Decorator.h"
+#include "Model_LOD.h"
 #include "MeshParts.h"
 #include "MeshEffect.h"
 #include "Navigation.h"

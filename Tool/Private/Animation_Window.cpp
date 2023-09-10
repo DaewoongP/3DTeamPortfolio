@@ -745,4 +745,6 @@ void CAnimation_Window::Free(void)
 {
 	Safe_Release(m_pCameraPoint);
 	__super::Free();
+
+	Safe_Release(m_pCameraPoint);
 }
