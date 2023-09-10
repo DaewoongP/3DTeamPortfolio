@@ -363,10 +363,7 @@ HRESULT CRenderer::Render_Lights()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Depth"), m_pDeferredShader, "g_DepthTexture")))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Normal"), m_pSSAOShader, "g_NormalTexture")))
-		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Depth"), m_pSSAOShader, "g_DepthTexture")))
-		return E_FAIL;
+	
 	m_pLight_Manager->Render_Lights(m_pDeferredShader, m_pDeferredBuffer);
 	m_pLight_Manager->Render_Lights(m_pSSAOShader, m_pSSAOBuffer);
 
@@ -384,19 +381,19 @@ HRESULT CRenderer::Render_Shadow()
 
 	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Shadow"))))
 		return E_FAIL;
-	
+
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Depth"), m_pSSAOShader, "g_DepthTexture")))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Shadow_Depth"), m_pSSAOShader, "g_vLightDepthTexture")))
 		return E_FAIL;
-	
+
 	CPipeLine* pPipeLine = CPipeLine::GetInstance();
 	Safe_AddRef(pPipeLine);
 
-	if (FAILED(m_pSSAOShader->Bind_Matrix("g_ViewMatrixInv",pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_VIEW))))
+	if (FAILED(m_pSSAOShader->Bind_Matrix("g_ViewMatrixInv", pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
 
-	if (FAILED(m_pSSAOShader->Bind_Matrix("g_ProjMatrixInv",pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_PROJ))))
+	if (FAILED(m_pSSAOShader->Bind_Matrix("g_ProjMatrixInv", pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
 	if (FAILED(m_pSSAOShader->Bind_RawValue("g_fCamFar", pPipeLine->Get_CamFar(), sizeof(_float))))
@@ -416,7 +413,7 @@ HRESULT CRenderer::Render_Shadow()
 
 
 
-	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext)))
+	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext),true))
 		return E_FAIL;
 
 	return S_OK;

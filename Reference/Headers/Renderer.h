@@ -72,7 +72,8 @@ private:
 	list<class CComponent*>			m_DebugObject;
 	_bool							m_isDebugRender = { true };
 #endif // _DEBUG
-	
+
+
 private:
 	class CRenderTarget_Manager*	m_pRenderTarget_Manager = { nullptr };
 	class CLight_Manager*			m_pLight_Manager = { nullptr };
@@ -97,7 +98,7 @@ private: /* Shader_Type */
 private: /* AfterShader*/
 	class CVIBuffer_Rect* m_pAfterShaderBuffer = { nullptr };//각종 쉐이더처리 해줄때 쓸 것
 	class CShader* m_pAfterShader = { nullptr };
-
+	
 public:
 	static CRenderer* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);
 	virtual CComponent* Clone(void* pArg) override;
