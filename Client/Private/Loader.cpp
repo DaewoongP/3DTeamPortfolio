@@ -36,6 +36,8 @@
 #include "Test_NPC.h"
 #include "Test_Cloth.h"
 #include "Camera_Debug.h"
+#include "Test_Stair.h"
+#include "PhysXRender.h"
 #endif // _DEBUG
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -254,6 +256,11 @@ HRESULT CLoader::Loading_For_MainGame()
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Intro__RuinsFloorBroken/Intro__RuinsFloorBroken.dat"), PivotMatrix))))
 			throw TEXT("Prototype_Component_Model__Intro_RuinsFloorBroken");
 
+		PivotMatrix = XMMatrixIdentity();
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Stair"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/SM_Intro_Cliffside_RuinsStairsBase_01/SM_Intro_Cliffside_RuinsStairsBase_01.dat"), PivotMatrix))))
+			throw TEXT("Prototype_Component_Model_Stair");
+
 #ifdef _DEBUG
 		PivotMatrix = XMMatrixScaling(100.f, 100.f, 100.f) * XMMatrixRotationY(XMConvertToRadians(180.f));
 		/* For.Prototype_Component_Model_Fiona*/
@@ -312,6 +319,8 @@ HRESULT CLoader::Loading_For_MainGame()
 		//	CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Shoes/Shoes.dat"), TEXT("SHOES_Default")))))
 		//	throw TEXT("Prototype_Component_MeshParts_Shoes");
 
+		
+
 #endif // _DEBUG
 
 		lstrcpy(m_szLoading, TEXT("셰이더 로딩 중."));
@@ -334,6 +343,11 @@ HRESULT CLoader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_Terrain"),
 			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Terrain.hlsl"), VTXPOSNORTEX_DECL::Elements, VTXPOSNORTEX_DECL::iNumElements))))
 			throw TEXT("Prototype_Component_Shader_Terrain");
+
+		/* For.Prototype_Component_Shader_Terrain */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_Debug"),
+			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Debug.hlsl"), VTXPOSNORTEX_DECL::Elements, VTXPOSNORTEX_DECL::iNumElements))))
+			throw TEXT("Prototype_Component_Shader_Debug");
 
 		lstrcpy(m_szLoading, TEXT("피직스 로딩 중."));
 		/* For.Prototype_Component_CharacterController*/
@@ -387,6 +401,16 @@ HRESULT CLoader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Terrain"),
 			CTerrain::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Terrain");
+
+		/* For.Prototype_GameObject_ConvexMesh*/
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_ConvexMesh"),
+			CConvexMesh::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_ConvexMesh");
+
+		/* For.Prototype_GameObject_ConvexMesh*/
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_TriangleMesh"),
+			CTriangleMesh::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_TriangleMesh");
 
 		/* For.Prototype_Component_Weapon_Armored_Troll */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Weapon_Armored_Troll"),
@@ -473,6 +497,14 @@ HRESULT CLoader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Cloth"),
 			CTest_Cloth::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Test_Cloth");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Stair"),
+			CTest_Stair::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Test_Stair");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_PhysxRenderer"),
+			CPhysXRender::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_PhysxRenderer");
 #endif // _DEBUG
 		
 	}

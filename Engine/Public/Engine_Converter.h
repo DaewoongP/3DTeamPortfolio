@@ -54,6 +54,14 @@ namespace Engine
 		BONE*				Bones; // array
 	}MESH;
 
+	typedef struct tagColMesh
+	{
+		unsigned int		iNumVertices;
+		unsigned int		iNumFaces;
+		FACE* Faces; // array
+		XMFLOAT3* vPositions; // array
+	}COLMESH;
+
 	typedef enum TextureType
 	{
 		NONE,

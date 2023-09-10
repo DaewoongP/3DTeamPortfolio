@@ -322,6 +322,12 @@
     <Filter Include="01. Utility\11. Physics\Job">
       <UniqueIdentifier>{def8c79f-6f0e-40f1-80f6-4f10844dcc2d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\03. Components\22. ConvexMesh">
+      <UniqueIdentifier>{0b0a3cc0-390c-4e04-b18b-3927f2a1d00b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\23. TriangleMesh">
+      <UniqueIdentifier>{018aa039-fd8d-4b13-a025-b83948a5eef5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -646,6 +652,12 @@
       <Filter>01. Utility\11. Physics\Job</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\VIBuffer_Object_Instance.h" />
+    <ClInclude Include="..\Public\ConvexMesh.h">
+      <Filter>01. Utility\03. Components\22. ConvexMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\TriangleMesh.h">
+      <Filter>01. Utility\03. Components\23. TriangleMesh</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -937,6 +949,12 @@
       <Filter>01. Utility\03. Components\04. Model\Mesh\Dynamic</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\JobManager.cpp">
+    </ClCompile>
+    <ClCompile Include="..\Private\ConvexMesh.cpp">
+      <Filter>01. Utility\03. Components\22. ConvexMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\TriangleMesh.cpp">
+      <Filter>01. Utility\03. Components\23. TriangleMesh</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -42,7 +42,7 @@ void CTest_Player::Tick(_float fTimeDelta)
 
 	//m_pModelCom->Tick(2, 2, fTimeDelta);
 
-	m_pModelCom->Play_Animation(fTimeDelta);
+ 	m_pModelCom->Play_Animation(fTimeDelta);
 }
 
 void CTest_Player::Late_Tick(_float fTimeDelta)
@@ -142,17 +142,17 @@ HRESULT CTest_Player::Add_Components()
 	}
 
 	/* Com_RigidBody */
-	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
-	//	TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody))))
-	//{
-	//	MSG_BOX("Failed CTest_Player Add_Component : (Com_RigidBody)");
-	//	return E_FAIL;
-	//}
-	//// 리지드바디 액터 설정
-	//PxRigidBody* Rigid = m_pRigidBody->Get_RigidBodyActor();
-	//Rigid->setMaxLinearVelocity(1000.f);
-	//Rigid->setMass(10.f);
-	// ...
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
+		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody))))
+	{
+		MSG_BOX("Failed CTest_Player Add_Component : (Com_RigidBody)");
+		return E_FAIL;
+	}
+	// 리지드바디 액터 설정
+	PxRigidBody* Rigid = m_pRigidBody->Get_RigidBodyActor();
+	Rigid->setMaxLinearVelocity(1000.f);
+	Rigid->setMass(10.f);
+	Rigid->setAngularDamping(0.7f);
 
 	/* For.Com_Model */
 	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_CustomModel"),
@@ -206,12 +206,12 @@ void CTest_Player::Key_Input(_float fTimeDelta)
 
 	if (pGameInstance->Get_DIKeyState(DIK_UP))
 	{
-		//m_pRigidBody->Add_Force(m_pTransform->Get_Look() * m_pTransform->Get_Speed(), PxForceMode::eACCELERATION);
+		m_pRigidBody->Add_Force(m_pTransform->Get_Look() * m_pTransform->Get_Speed(), PxForceMode::eACCELERATION);
 	}
 	
 	if (pGameInstance->Get_DIKeyState(DIK_DOWN))
 	{
-		//m_pRigidBody->Add_Force(m_pTransform->Get_Look() * -m_pTransform->Get_Speed(), PxForceMode::eACCELERATION);
+		m_pRigidBody->Add_Force(m_pTransform->Get_Look() * -m_pTransform->Get_Speed(), PxForceMode::eACCELERATION);
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_LEFT))
@@ -226,7 +226,7 @@ void CTest_Player::Key_Input(_float fTimeDelta)
 
 	if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
 	{
-		//m_pRigidBody->Add_Force(m_pTransform->Get_Up() * 30.f, PxForceMode::eIMPULSE);
+		m_pRigidBody->Add_Force(m_pTransform->Get_Up() * 30.f, PxForceMode::eIMPULSE);
 	}
 
 	ENDINSTANCE;

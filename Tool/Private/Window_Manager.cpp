@@ -161,7 +161,6 @@ void CWindow_Manager::Tick(_float fTimeDelta)
 		Setup_Current_Window(TEXT("Cloth_Window"));
 		m_eLoadingFlag |= CLOTH_LOAD;
 	}
-		
 
 	ImGui::End();
 

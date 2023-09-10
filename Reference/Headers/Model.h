@@ -39,6 +39,8 @@ public:
 	_uint						Get_AnimationPartCount() { return m_iAnimationPartCount; }
 	_uint						Get_RootBoneIndex() { return m_iRootBoneIndex; }
 	_bool						Is_Able_Change_Animation() { return m_isChangeAnimation; }
+	class CMesh*				Get_Meshes_Test() { return(m_Meshes[0]); }
+	vector<class CMesh*>*		Get_MeshesVec() { return &m_Meshes; }
 
 public:
 	virtual HRESULT Initialize_Prototype(TYPE eType, const _tchar* pModelFilePath, _float4x4 PivotMatrix);
@@ -53,7 +55,7 @@ public:
 	HRESULT Find_BoneIndex(const _tchar* pBoneName, _Inout_ _uint* iIndex);
 	void	Set_CurrentAnimIndex(_uint iIndex, ANIMTYPE eType = UPPERBODY);
 	void	Set_RootBone(_uint iIndex) { m_iRootBoneIndex = iIndex; }
-	void	Do_Root_Animation(CTransform* pTransform = nullptr);
+	void	Do_Root_Animation(_float fTimeDelta,CTransform* pTransform = nullptr);
 	HRESULT Separate_Animation(_int iFromIndex, _int iToIndex, ANIMTYPE eType);
 	void	Delete_Animation(_uint iAnimIndex, ANIMTYPE eType = UPPERBODY);
 
@@ -98,6 +100,7 @@ private:
 
 private:
 	_bool							m_isExportedTool = { false };
+	_bool							m_isCreatedByGCM = { false };
 
 	/* 애니메이션 상태 확인용 */
 	_bool							m_isChangeAnimation = { false };
@@ -108,7 +111,6 @@ private:
 	HRESULT Ready_Meshes(TYPE eType, _float4x4 PivotMatrix);
 	HRESULT Ready_Materials();
 	HRESULT Ready_Animations();
-
 
 public:
 	HRESULT Convert_Animations_GCM();

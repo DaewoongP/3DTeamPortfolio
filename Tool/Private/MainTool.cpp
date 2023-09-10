@@ -285,6 +285,11 @@ HRESULT CMainTool::Ready_Prototype_Component()
 		return E_FAIL;
 	}
 
+	/* For.Prototype_Component_VIBuffer_Triangle */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_VIBuffer_Triangle"),
+		CVIBuffer_Triangle::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	/* Prototype_Component_VIBuffer_Rect */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_VIBuffer_Rect"),
 		CVIBuffer_Rect::Create(m_pDevice, m_pContext))))
