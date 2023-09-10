@@ -13,6 +13,7 @@
 #include "Mesh.h"
 #include "Plane.h"
 #include "Model.h"
+#include "Trail.h"
 #include "Shader.h"
 #include "Status.h"
 #include "Attack.h"

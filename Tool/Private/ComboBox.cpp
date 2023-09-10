@@ -40,6 +40,11 @@ HRESULT CComboBox::Initialize(const _char* _szTag, const _char* _szName, initial
     return S_OK;
 }
 
+_bool CComboBox::IsUpdated()
+{
+    return m_isUpdated;
+}
+
 void CComboBox::Set_Tag(string _strTag)
 {
     m_strTag = _strTag;
@@ -66,6 +71,7 @@ void CComboBox::Set_StartTag(string _strStartTag)
 
 string CComboBox::Tick(FLAG eFlag, _bool _isImplement)
 {
+    m_isUpdated = false;
     if (TABLE == eFlag)
     {
         ImGui::TableSetColumnIndex(0);
@@ -80,6 +86,7 @@ string CComboBox::Tick(FLAG eFlag, _bool _isImplement)
             if (ImGui::Selectable(m_Items[n].data(), is_selected))
             {
                 Update_Current_Item(n);
+                m_isUpdated = true;
             }
 
             if (is_selected)

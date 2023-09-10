@@ -25,13 +25,62 @@ CMeshEffect::~CMeshEffect()
 
 }
 
-HRESULT CMeshEffect::Initialize_Prototype(const _tchar* _pDirectoryPath)
+HRESULT CMeshEffect::Initialize_Prototype(const _tchar* pFilePath, _uint _iLevel)
 {
 	__super::Initialize_Prototype();
 	// 여기서 m_Path로드해주기.
 
-	m_pTransform->Set_Position(_float3(0.f, 0.f, 0.f));
+	//this->Load(pFilePath);
 
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	// 컴포넌트 조사 후 추가.
+	wstring ProtoTag;
+	m_iLevel = _iLevel;
+
+	// 필요한 텍스처 조사하고 원본 추가하는 로직
+	ProtoTag = ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_Path[TEXTURE_PATH].c_str());
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, ProtoTag.data()))
+	{
+		pGameInstance->Add_Prototype(m_iLevel
+			, ProtoTag.data()
+			, CTexture::Create(m_pDevice, m_pContext, m_Path[TEXTURE_PATH].c_str()));
+	}
+
+	// 경로 = TEXT("")일 경우 실행안함.
+	if (TEXT("") != m_Path[ALPHA_CLIP_TEXTURE_PATH])
+	{
+		// 필요한 텍스처 조사하고 원본 추가하는 로직
+		ProtoTag = ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_Path[ALPHA_CLIP_TEXTURE_PATH].c_str());
+		if (nullptr == pGameInstance->Find_Prototype(m_iLevel, ProtoTag.data()))
+		{
+			pGameInstance->Add_Prototype(m_iLevel
+				, ProtoTag.data()
+				, CTexture::Create(m_pDevice, m_pContext, m_Path[ALPHA_CLIP_TEXTURE_PATH].c_str()));
+		}
+	}
+	
+	CModel::TYPE eType;
+	ProtoTag = ToPrototypeTag(TEXT("Prototype_Component_Model"), m_Path[MODEL_PATH].c_str());
+
+	// 필요한 모델 조사이 레벨에 있는지 조사.
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, ProtoTag.data()))
+	{
+		// 있으면 
+		fs::path fsFilePath = m_Path[MODEL_PATH];
+		string strPath = fsFilePath.parent_path().parent_path().stem().string();
+		if ("NonAnims" == strPath)
+			eType = CModel::TYPE_NONANIM;
+		else
+			eType = CModel::TYPE_ANIM;
+		pGameInstance->Add_Prototype(m_iLevel
+			, ProtoTag.data()
+			, CModel::Create(m_pDevice, m_pContext, eType, m_Path[MODEL_PATH].c_str(), m_PivotMatrix));
+	}
+
+	m_pTransform->Set_Position(_float3(0.f, 0.f, 0.f));
+	Safe_Release(pGameInstance);
 	return S_OK;
 }
 
@@ -68,7 +117,7 @@ HRESULT CMeshEffect::Render()
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
-		m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", i, TextureType::DIFFUSE);
+		//m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", i, TextureType::DIFFUSE);
 		if (FAILED(m_pModel->Render(i)))
 			return E_FAIL;
 	}
@@ -170,7 +219,7 @@ HRESULT CMeshEffect::Setup_ShaderResources()
 		if (FAILED(m_pTexture->Bind_ShaderResource(m_pShader, "g_Texture")))
 			return E_FAIL;
 	}
-	
+
 	if (nullptr != m_pAlphaClipTexture)
 	{
 		if (FAILED(m_pAlphaClipTexture->Bind_ShaderResource(m_pShader, "g_AlphaClipTexture")))
@@ -179,11 +228,11 @@ HRESULT CMeshEffect::Setup_ShaderResources()
 
 	return S_OK;
 }
-CMeshEffect* CMeshEffect::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, const _tchar* _pDirectoryPath)
+CMeshEffect* CMeshEffect::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, const _tchar* pFilePath, _uint _iLevel)
 {
 	CMeshEffect* pInstance = new CMeshEffect(_pDevice, _pContext);
 
-	if (FAILED(pInstance->Initialize_Prototype(_pDirectoryPath)))
+	if (FAILED(pInstance->Initialize_Prototype(pFilePath, _iLevel)))
 	{
 		MSG_BOX("Failed to Created CMeshEffect");
 		Safe_Release(pInstance);

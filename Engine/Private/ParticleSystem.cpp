@@ -27,28 +27,32 @@ HRESULT CParticleSystem::Initialize_Prototype(const _tchar* _pDirectoryPath, _ui
 	this->Load(_pDirectoryPath);
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
-	wstring ProtoTag;
+	
 	iLevel = _iLevel;
-	// 필요한 텍스처가 없으면 로드하는 로직.
-	// 파일명을 통해 태그를 만든다.
+	// 필요한 원본 텍스처가 없으면 원본 텍스처를 만드는 로직
+	wstring ProtoTag;
 	ProtoTag = ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_RendererModuleDesc.wstrMaterialPath.c_str());
-
-	// 기존에 원본이 존재하는지 조사한다.
 	if (nullptr == pGameInstance->Find_Prototype(iLevel, ProtoTag.data()))
 	{
-		// 없으면 원본을 추가한다.
 		pGameInstance->Add_Prototype(iLevel
 			, ProtoTag.data()
-			, CTexture::Create(m_pDevice, m_pContext, m_RendererModuleDesc.wstrMaterialPath.c_str()));
+			, CTexture::Create(m_pDevice, m_pContext, m_ShapeModuleDesc.wstrClipTexturePath.c_str()));
 	}
 
-	// 반복.
 	ProtoTag = ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_ShapeModuleDesc.wstrClipTexturePath.c_str());
 	if (nullptr == pGameInstance->Find_Prototype(iLevel, ProtoTag.data()))
 	{
 		pGameInstance->Add_Prototype(iLevel
 			, ProtoTag.data()
-			, CTexture::Create(m_pDevice, m_pContext, m_RendererModuleDesc.wstrMaterialPath.c_str()));
+			, CTexture::Create(m_pDevice, m_pContext, m_ShapeModuleDesc.wstrClipTexturePath.c_str()));
+	}
+
+	ProtoTag = ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_ShapeModuleDesc.wstrClipTexturePath.c_str());
+	if (nullptr == pGameInstance->Find_Prototype(iLevel, ProtoTag.data()))
+	{
+		pGameInstance->Add_Prototype(iLevel
+			, ProtoTag.data()
+			, CTexture::Create(m_pDevice, m_pContext, m_ShapeModuleDesc.wstrClipTexturePath.c_str()));
 	}
 
 	Safe_Release(pGameInstance);
@@ -162,14 +166,7 @@ HRESULT CParticleSystem::Render()
 
 	return S_OK;
 }
-#ifdef _DEBUG
-HRESULT CParticleSystem::Render_Shape()
-{
 
-
-	return S_OK;
-}
-#endif // _DEBUG
 void CParticleSystem::Play()
 {
 	Enable();
@@ -198,57 +195,40 @@ HRESULT CParticleSystem::Setup_ShaderResources()
 		}
 	}
 
-	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", &WorldMatrix)))
+	try
 	{
-		Safe_Release(pGameInstance);
-		return E_FAIL;
+		if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", &WorldMatrix)))
+			throw "g_WorldMatrix";
+
+		if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW))))
+			throw "g_ViewMatrix";
+
+		if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
+			throw "g_ProjMatrix";
+
+		if (FAILED(m_pMainTexture->Bind_ShaderResource(m_pShader, "g_Texture")))
+			throw "g_Texture";
+
+		if (FAILED(m_pClipTexture->Bind_ShaderResource(m_pShader, "g_ClipTexture")))
+			throw "g_ClipTexture";
+
+		if (FAILED(m_pShader->Bind_RawValue("g_fClipThreshold", &m_ShapeModuleDesc.fClipThreshold, sizeof(_float))))
+			throw "g_fClipThreshold";
+
+		_int iClipChannel = { 3 };
+		if (m_ShapeModuleDesc.strClipChannel == "Red") { iClipChannel = 0; }
+		else if (m_ShapeModuleDesc.strClipChannel == "Green") { iClipChannel = 1; }
+		else if (m_ShapeModuleDesc.strClipChannel == "Blue") { iClipChannel = 2; }
+		else if (m_ShapeModuleDesc.strClipChannel == "Alpha") { iClipChannel = 3; }
+
+		if (FAILED(m_pShader->Bind_RawValue("g_iClipChannel", &iClipChannel, sizeof(_int))))
+			throw "g_iClipChannel";
 	}
-
-	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW))))
+	catch (const _tchar* pErrorTag)
 	{
-		Safe_Release(pGameInstance);
-		return E_FAIL;
-	}
-		
-
-	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
-	{
-		Safe_Release(pGameInstance);
-		return E_FAIL;
-	}
-
-	if (FAILED(m_pShader->Bind_RawValue("g_vCamPosition", pGameInstance->Get_CamPosition(), sizeof(_float4))))
-	{
-		Safe_Release(pGameInstance);
-		return E_FAIL;
-	}
-
-	if (FAILED(m_pTexture->Bind_ShaderResource(m_pShader, "g_Texture")))
-	{
-		Safe_Release(pGameInstance);
-		return E_FAIL;
-	}
-
-	if (FAILED(m_pClipTexture->Bind_ShaderResource(m_pShader, "g_ClipTexture")))
-	{
-		Safe_Release(pGameInstance);
-		return E_FAIL;
-	}
-
-	if (FAILED(m_pShader->Bind_RawValue("g_fClipThreshold", &m_ShapeModuleDesc.fClipThreshold, sizeof(_float))))
-	{
-		Safe_Release(pGameInstance);
-		return E_FAIL;
-	}
-
-	_int iClipChannel = { 3 };
-	if (m_ShapeModuleDesc.strClipChannel == "Red") { iClipChannel = 0; }
-	else if (m_ShapeModuleDesc.strClipChannel == "Green") { iClipChannel = 1; }
-	else if (m_ShapeModuleDesc.strClipChannel == "Blue") { iClipChannel = 2; }
-	else if (m_ShapeModuleDesc.strClipChannel == "Alpha") { iClipChannel = 3; }
-
-	if (FAILED(m_pShader->Bind_RawValue("g_iClipChannel", &iClipChannel, sizeof(_int))))
-	{
+		wstring wstrErrorMSG = TEXT("Failed SetupResources : ");
+		wstrErrorMSG += pErrorTag;
+		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
 		Safe_Release(pGameInstance);
 		return E_FAIL;
 	}
@@ -256,51 +236,7 @@ HRESULT CParticleSystem::Setup_ShaderResources()
 	Safe_Release(pGameInstance);
 	return S_OK;
 }
-HRESULT CParticleSystem::SetUp_ShaderResources_Shape()
-{
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
 
-	_float4x4 WorldMatrix = m_pTransform->Get_WorldMatrix();
-	if (nullptr != m_pOwner)
-	{
-		CTransform* pOwnerTransform = dynamic_cast<CGameObject*>(m_pOwner)->Get_Transform();
-		if (nullptr != pOwnerTransform)
-		{
-			WorldMatrix *= pOwnerTransform->Get_WorldMatrix();
-		}
-	}
-
-	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", &WorldMatrix)))
-		return E_FAIL;
-
-	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW))))
-		return E_FAIL;
-
-	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
-
-	if (FAILED(m_pShader->Bind_RawValue("g_vCamPosition", pGameInstance->Get_CamPosition(), sizeof(_float4))))
-	{
-		Safe_Release(pGameInstance);
-		return E_FAIL;
-	}
-
-	if (FAILED(m_pTexture->Bind_ShaderResource(m_pShader, "g_Texture")))
-	{
-		Safe_Release(pGameInstance);
-		return E_FAIL;
-	}
-
-	if (FAILED(m_pClipTexture->Bind_ShaderResource(m_pShader, "g_ClipTexture")))
-	{
-		Safe_Release(pGameInstance);
-		return E_FAIL;
-	}
-
-	Safe_Release(pGameInstance);
-	return S_OK;
-}
 void CParticleSystem::Enable()
 {
 	m_MainModuleDesc.isEnable = true;
@@ -540,7 +476,7 @@ HRESULT CParticleSystem::Add_Components(CLONE_DESC _cloneDesc)
 		if (FAILED(CComposite::Add_Component(iLevel
 			, ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_RendererModuleDesc.wstrMaterialPath.c_str()).c_str()
 			, TEXT("Com_MainTexture")
-			, reinterpret_cast<CComponent**>(&m_pTexture))))
+			, reinterpret_cast<CComponent**>(&m_pMainTexture))))
 			throw(TEXT("Com_MainTexture"));
 
 		if (FAILED(CComposite::Add_Component(iLevel
@@ -561,7 +497,7 @@ HRESULT CParticleSystem::Add_Components(CLONE_DESC _cloneDesc)
 	}
 	catch (const _tchar* pErrorTag)
 	{
-		wstring wstrErrorMSG = TEXT("Failed Add_Component : ");
+		wstring wstrErrorMSG = TEXT("Failed Add_Component in CParticleSystem: ");
 		wstrErrorMSG += pErrorTag;
 		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
 		Safe_Release(pGameInstance);
@@ -758,7 +694,7 @@ void CParticleSystem::Free()
 {
 	__super::Free();
 	Safe_Release(m_pRenderer);
-	Safe_Release(m_pTexture);
+	Safe_Release(m_pMainTexture);
 	Safe_Release(m_pClipTexture);
 	Safe_Release(m_pBuffer);
 	Safe_Release(m_pShader);

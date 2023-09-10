@@ -37,8 +37,7 @@ HRESULT CDummyMeshEffect::Initialize(void* pArg)
 	return S_OK;
 }
 
-
-void CDummyMeshEffect::ImGui(_float _fTimeDelta)
+void CDummyMeshEffect::Tick_Imgui(_float _fTimeDelta)
 {
 	CImWindow* pWindow = CWindow_Manager::GetInstance()->Find_Window(TEXT("Effect_Window"));
 	CEffect_Window* pEffectWindow = dynamic_cast<CEffect_Window*>(pWindow);
@@ -52,11 +51,7 @@ void CDummyMeshEffect::ImGui(_float _fTimeDelta)
 		if (m_pTextureIFD->IsOk())
 		{
 			fs::path fsFilePath = m_pTextureIFD->Get_FilePathName();
-			m_Path[TEXTURE_PATH] = ToRelativePath(fsFilePath.wstring().data());
-			wstring wstrTag = ToPrototypeTag(TEXT("Prototype_Component_Texture"), fsFilePath.wstring().data());
-			CComposite::Delete_Component(TEXT("Com_MainTexture"));
-			Safe_Release(m_pTexture);
-			CComposite::Add_Component(0, wstrTag.data(), L"Com_MainTexture", (CComponent**)&m_pTexture);
+			ChangeTexture(&m_pTexture, m_Path[TEXTURE_PATH], ToRelativePath(fsFilePath.wstring().data()).c_str());
 		}
 
 		pEffectWindow->Table_ImageButton("Change AlphaClipTexture", "xcvljii23458", m_pAlphaClipTextureIFD);
@@ -64,11 +59,7 @@ void CDummyMeshEffect::ImGui(_float _fTimeDelta)
 		if (m_pAlphaClipTextureIFD->IsOk())
 		{
 			fs::path fsFilePath = m_pAlphaClipTextureIFD->Get_FilePathName();
-			m_Path[ALPHA_CLIP_TEXTURE_PATH] = ToRelativePath(fsFilePath.wstring().data());
-			wstring wstrTag = ToPrototypeTag(TEXT("Prototype_Component_Texture"), fsFilePath.wstring().data());
-			CComposite::Delete_Component(TEXT("Com_AlphaClipTexture"));
-			Safe_Release(m_pAlphaClipTexture);
-			CComposite::Add_Component(0, wstrTag.data(), L"Com_AlphaClipTexture", (CComponent**)&m_pAlphaClipTexture);
+			ChangeTexture(&m_pTexture, m_Path[ALPHA_CLIP_TEXTURE_PATH], ToRelativePath(fsFilePath.wstring().data()).c_str());
 		}
 		
 		// 모델 교체
@@ -86,11 +77,7 @@ void CDummyMeshEffect::ImGui(_float _fTimeDelta)
 			{
 				fs::path fsFilePathName = ImGuiFileDialog::Instance()->GetFilePathName();
 				fs::path fsFilePath = ImGuiFileDialog::Instance()->GetCurrentPath();
-				m_Path[MODEL_PATH] = ToRelativePath(fsFilePath.wstring().data());
-				wstring pTag = ToPrototypeTag(TEXT("Prototype_Component_Model"), fsFilePath.wstring().data());
-				Safe_Release(m_pModel);
-				CComposite::Delete_Component(TEXT("Com_Model"));
-				CComposite::Add_Component(0, pTag.data(), TEXT("Com_Model"), (CComponent**)&m_pModel);
+				ChangeModel(&m_pModel, m_Path[MODEL_PATH], ToRelativePath(fsFilePathName.wstring().data()).c_str());
 			}
 
 			// close
@@ -130,21 +117,117 @@ void CDummyMeshEffect::ImGui(_float _fTimeDelta)
 		pEffectWindow->Table_DragFloat2Range("Tililing", "dfvrpv8348e48dic", &m_vTililing);
 		ImGui::EndTable();
 	}
+
+	// 왼쪽 아래로 고정
+	RECT clientRect;
+	GetClientRect(g_hWnd, &clientRect);
+	POINT leftTop = { clientRect.left, clientRect.top };
+	POINT rightBottom = { clientRect.right, clientRect.bottom };
+	ClientToScreen(g_hWnd, &leftTop);
+	ClientToScreen(g_hWnd, &rightBottom);
+	int Left = leftTop.x;
+	int Top = rightBottom.y;
+	ImVec2 vWinpos = { _float(Left + 0.f), _float(Top) };
+	ImGui::SetNextWindowPos(vWinpos);
+	_float4x4 WorldMatirx = Get_Transform()->Get_WorldMatrix();
+	pEffectWindow->MatrixNode(&WorldMatirx, "DummyMesh_Transform", "DummyMesh_Position", "DummyMesh_Rotation", "DummyMesh_Scale");
+	Get_Transform()->Set_WorldMatrix(WorldMatirx);
 }
 
-void CDummyMeshEffect::ChangeTexture(const _tchar* _pTag)
+void CDummyMeshEffect::ChangeTexture(CTexture** _pTexture, wstring& _wstrOriginPath, const _tchar* _pDestPath)
 {
+	// 소유하고 있는 컴포넌트를 지운다.
+	_tchar wszTag[MAX_STR];
+	lstrcpy(wszTag, (*_pTexture)->Get_Tag());
+
+	if (FAILED(CComposite::Delete_Component(wszTag)))
+	{
+		MSG_BOX("Failed to Delete");
+		E_FAIL;
+	}
+
+	Safe_Release(*_pTexture);
+
+	BEGININSTANCE;
+	// 찾는 컴포넌트가 없으면 원본을 만들어준다.
+	wstring tempTag = ToPrototypeTag(TEXT("Prototype_Component_Texture"), _pDestPath).data();
+	_tchar* pTag = { nullptr };
+	m_pTags.push_back(pTag = new _tchar[tempTag.length() + 1]);
+	lstrcpy(pTag, tempTag.c_str());
+
+	// 기존에 컴포넌트가 존재하는지 확인
+	if (nullptr == pGameInstance->Find_Prototype(LEVEL_TOOL, pTag))
+	{
+		// 없다면 새로운 프로토타입 컴포넌트 생성
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, pTag, CTexture::Create(m_pDevice
+			, m_pContext, _pDestPath))))
+		{
+			MSG_BOX("Failed to Create Prototype : Change Texture");
+		}
+	}
+
+	// 새로운 텍스처 컴포넌트를 클론한다.
+
+	_wstrOriginPath = _pDestPath;
+	if (FAILED(CComposite::Add_Component(LEVEL_TOOL, pTag
+		, wszTag, reinterpret_cast<CComponent**>(_pTexture))))
+	{
+		MSG_BOX("Failed to Add Component");
+		ENDINSTANCE;
+		return;
+	}
+	ENDINSTANCE;
 }
 
-void CDummyMeshEffect::ChangeModel(const _tchar* _pTag)
+void CDummyMeshEffect::ChangeModel(CModel** _pModel, wstring& _wstrOriginPath, const _tchar* _pDestPath, CModel::TYPE _eAnimType)
 {
+	// 소유하고 있는 컴포넌트를 지운다.
+	_tchar wszTag[MAX_STR];
+	lstrcpy(wszTag, (*_pModel)->Get_Tag());
+
+	if (FAILED(CComposite::Delete_Component(wszTag)))
+	{
+		MSG_BOX("Failed to Delete");
+		E_FAIL;
+	}
+
+	Safe_Release(*_pModel);
+
+	BEGININSTANCE;
+	// 찾는 컴포넌트가 없으면 원본을 만들어준다.
+	wstring tempTag = ToPrototypeTag(TEXT("Prototype_Component_Model"), _pDestPath).data();
+	_tchar* pTag = { nullptr };
+	m_pTags.push_back(pTag = new _tchar[tempTag.length() + 1]);
+	lstrcpy(pTag, tempTag.c_str());
+
+	// 기존에 컴포넌트가 존재하는지 확인
+	if (nullptr == pGameInstance->Find_Prototype(LEVEL_TOOL, pTag))
+	{
+		// 없다면 새로운 프로토타입 컴포넌트 생성
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, pTag, CModel::Create(m_pDevice
+			, m_pContext, _eAnimType,_pDestPath))))
+		{
+			MSG_BOX("Failed to Create Prototype : Change Model");
+		}
+	}
+
+	// 새로운 모델 컴포넌트를 클론한다.
+	_wstrOriginPath = _pDestPath;
+	if (FAILED(CComposite::Add_Component(LEVEL_TOOL, pTag
+		, wszTag, reinterpret_cast<CComponent**>(_pModel))))
+	{
+		MSG_BOX("Failed to Add Component");
+		ENDINSTANCE;
+		return;
+	}
+	ENDINSTANCE;
 }
 
-CDummyMeshEffect* CDummyMeshEffect::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, const _tchar* _pDirectoryPath)
+CDummyMeshEffect* CDummyMeshEffect::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, const _tchar* pFilePath, _uint _iLevel)
 {
 	CDummyMeshEffect* pInstance = new CDummyMeshEffect(_pDevice, _pContext);
 
-	if (FAILED(pInstance->Initialize_Prototype(_pDirectoryPath)))
+	if (FAILED(pInstance->Initialize_Prototype(pFilePath, _iLevel)))
 	{
 		MSG_BOX("Failed to Created CDummyMeshEffect");
 		Safe_Release(pInstance);
@@ -173,4 +256,7 @@ void CDummyMeshEffect::Free()
 	Safe_Release(m_pTextureIFD);
 	Safe_Release(m_pAlphaClipTextureIFD);
 	Safe_Release(m_pPassComboBox);
+
+	for (auto& pTag : m_pTags)
+		Safe_Delete_Array(pTag);
 }

@@ -62,6 +62,7 @@ public:
 	HRESULT Bind_BoneMatrices(class CShader* pShader, const char* pConstantName, _uint iMeshIndex);
 
 private: // Files
+	wstring							m_wstrModelPath;
 	MODEL							m_Model;
 	vector<NODE>					m_NodeDatas;
 	vector<MESH>					m_MeshDatas;

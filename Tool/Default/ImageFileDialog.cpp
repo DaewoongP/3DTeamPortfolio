@@ -33,8 +33,8 @@ void CImageFileDialog::Tick()
     m_isOk = false;
     _int iTemp1;
     _int iTemp2;
-    
-    
+
+    // 빈 텍스처면 기본 텍스처 출력
     if (nullptr == m_pTexture)
     {
         if (ImGui::ImageButton(m_pDefaultTexture, ImVec2(_float(m_iImageButtonWidth), _float(m_iImageButtonHeight))))
@@ -42,7 +42,7 @@ void CImageFileDialog::Tick()
             m_pInstance.OpenDialog(m_strFileDialogTag.data(), m_strFileDialogName.data(), m_strHeaderFilter.data(), m_strStartPath.data());
         }
     }
-    else
+    else // 값이 있으면 새로운 이미지 출력
     {
         if (ImGui::ImageButton(m_pTexture, ImVec2(_float(m_iImageButtonWidth), _float(m_iImageButtonHeight))))
         {
@@ -67,6 +67,7 @@ void CImageFileDialog::Tick()
         m_pInstance.Close();
     }
 
+    // 열려있으면 버튼 아래에 사각형 이미지 출력.
     if (m_pInstance.IsOpened())
     {
         if (m_strPrevFilePathName != m_pInstance.GetFilePathName())
