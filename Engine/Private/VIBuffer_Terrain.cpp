@@ -50,7 +50,6 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMap)
 	m_eFormat = { DXGI_FORMAT_R32_UINT };
 	m_eTopology = { D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST };
 
-
 #pragma region VERTEX_BUFFER
 
 	VTXPOSNORTEX* pVertices = new VTXPOSNORTEX[m_iNumVertices];
@@ -59,14 +58,34 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMap)
 	m_pPos = new _float3[m_iNumVertices];
 	ZeroMemory(m_pPos, sizeof(_float3) * m_iNumVertices);
 
+	// Bmp 로드
+	DirectX::ScratchImage image;
+	HRESULT hr = DirectX::LoadFromWICFile(pHeightMap, DirectX::WIC_FLAGS_NONE, nullptr, image);
+
+	// 이미지 데이터 추출
+	const DirectX::Image* img = image.GetImage(0, 0, 0);
+
+	// Height Map 생성 (예: R 채널 값 사용)
+	std::vector<float> heightMap(img->height * img->width);
+
+	if (SUCCEEDED(hr))	{
+		
+		for (size_t i = 0; i < img->height * img->width; ++i)
+		{
+			heightMap[i] = static_cast<float>(img->pixels[i * 4]); // R 채널 값을 사용
+		}
+	}
+
 	for (_uint i = 0; i < iNumVerticesZ; ++i)
 	{
 		for (_uint j = 0; j < iNumVerticesX; j++)
 		{
 			_uint		iIndex = i * iNumVerticesX + j;
 
-			m_pPos[iIndex] = pVertices[iIndex].vPosition = _float3((_float)j, 
-				(static_cast<unsigned char>(pPixel[iIndex] >> 16) & 0xff) / 50.f, (_float)i);
+			/*m_pPos[iIndex] = pVertices[iIndex].vPosition = _float3((_float)j, 
+				(static_cast<unsigned char>(pPixel[iIndex] >> 16) & 0xff) / 10.f, (_float)i);*/
+			//m_pPos[iIndex] = pVertices[iIndex].vPosition = _float3((_float)j, (pPixel[iIndex] & 0x000000ff) / 1.f, (_float)i);
+			m_pPos[iIndex] = pVertices[iIndex].vPosition = _float3((_float)j, (heightMap[iIndex]) / 1.f, (_float)i);
 			pVertices[iIndex].vNormal = _float3(0.f, 0.f, 0.f);
 			pVertices[iIndex].vTexCoord = _float2((_float)j / (iNumVerticesX - 1.f), i / (iNumVerticesZ - 1.f));
 		}
