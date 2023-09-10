@@ -101,7 +101,7 @@ HRESULT CLevel_MainGame::Ready_Layer_Player(const _tchar* pLayerTag)
 
 HRESULT CLevel_MainGame::Load_MapObject()
 {
-	_tchar dataFile[MAX_PATH] = TEXT("../../Resources/GameData/MapData/MapObject.ddd");
+	_tchar dataFile[MAX_PATH] = TEXT("../../Resources/GameData/MapData/MapData.ddd");
 
 	HANDLE hFile = CreateFile(dataFile, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
@@ -113,6 +113,7 @@ HRESULT CLevel_MainGame::Load_MapObject()
 
 	// 맵 오브젝트 번호
 	_uint iObjectNum = 0;
+	vector<const _tchar*> wszModelName;
 
 	DWORD	dwByte = 0;
 
@@ -143,29 +144,65 @@ HRESULT CLevel_MainGame::Load_MapObject()
 			break;
 		}
 
+		_uint iCount = 0;
+
+		// 이미 생성된 프로토타입이 아니어야 생성
+		BEGININSTANCE; for (auto& iter : wszModelName)
+		{
+			if (!lstrcmp(iter, LoadDesc.wszTag))
+			{
+				++iCount;
+			}
+		}
+
+		if (0 == iCount)
+		{
+			wszModelName.push_back(LoadDesc.wszTag);
+
+			// 프로토타입 생성 부분
+			wstring ws(LoadDesc.wszTag);
+			size_t findIndex = ws.find(TEXT("Model_")) + 6;
+
+			wstring modelName = ws.substr(findIndex);
+
+			wstring modelPath(TEXT("../../Resources/Models/NonAnims/MapObject/"));
+			modelPath += modelName;
+			modelPath += TEXT("/");
+			modelPath += modelName;
+			modelPath += TEXT(".dat");
+
+			// 프로토타입 생성
+			_float4x4 PivotMatrix = XMMatrixRotationX(XMConvertToRadians(90.f));
+			if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAINGAME, LoadDesc.wszTag,
+				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, modelPath.c_str(), PivotMatrix))))
+			{
+				MSG_BOX("Failed to Create New Model Prototype");
+			}
+		}
+
 		// 맵 오브젝트에 번호 붙여줌
 		_tchar wszobjName[MAX_PATH] = { 0 };
 		_stprintf_s(wszobjName, TEXT("GameObject_MapObject_%d"), (iObjectNum));
 
 		// 번호를 붙인 태그로 MapObject 등록
-		BEGININSTANCE if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME,
+		if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME,
 			TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_BackGround"),
 			wszobjName, &LoadDesc.matTransform)))
 		{
 			MSG_BOX("Failed to Install MapObject");
 			ENDINSTANCE;
 			return E_FAIL;
-		} ENDINSTANCE;
+		}
 
 		// 마지막에 설치한 맵 오브젝트 주소 가져옴
 		CMapObject* pObject = static_cast<CMapObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME,
 			TEXT("Layer_BackGround"), wszobjName));
 
-		pObject->Add_Model_Component(TEXT("Prototype_Component_Model__Intro_RuinsFloorBroken"));
+		pObject->Add_Model_Component(LoadDesc.wszTag);
 		pObject->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMesh"));
 		pObject->Set_Color(iObjectNum); // 고유한 색깔 값을 넣어줌
 
-		++iObjectNum;	
+		++iObjectNum; ENDINSTANCE;
 	}
 
 	CloseHandle(hFile);

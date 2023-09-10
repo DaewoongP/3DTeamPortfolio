@@ -179,8 +179,13 @@ HRESULT CLoader::Loading_For_MainGame()
 
 		/* For.Prototype_Component_VIBuffer_Terrain */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Terrain"),
-			CVIBuffer_Terrain::Create(m_pDevice, m_pContext, 531, 531))))
+			CVIBuffer_Terrain::Create(m_pDevice, m_pContext, 513, 513))))
 			throw TEXT("Prototype_Component_VIBuffer_Terrain");
+
+		///* Prototype_Component_VIBuffer_Terrain */
+		//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Terrain"),
+		//	CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Terrain/Height.bmp")))))
+		//	throw TEXT("Prototype_Component_VIBuffer_Terrain");
 		
 		/* For.Prototype_Component_VIBuffer_Cloth */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Cloth"),
@@ -247,12 +252,6 @@ HRESULT CLoader::Loading_For_MainGame()
 		//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Pensive"),
 		//	CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/PensivePaladin/PensivePaladin.dat")))))
 		//	throw TEXT("Prototype_Component_Model_Pensive");
-
-		// 프로토타입 생성
-		PivotMatrix = XMMatrixIdentity();
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model__Intro_RuinsFloorBroken"),
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Intro__RuinsFloorBroken/Intro__RuinsFloorBroken.dat"), PivotMatrix))))
-			throw TEXT("Prototype_Component_Model__Intro_RuinsFloorBroken");
 
 #ifdef _DEBUG
 		PivotMatrix = XMMatrixScaling(100.f, 100.f, 100.f) * XMMatrixRotationY(XMConvertToRadians(180.f));
