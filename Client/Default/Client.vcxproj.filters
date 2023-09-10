@@ -130,6 +130,9 @@
     <Filter Include="02. GameObject\99. Debug\Cloth">
       <UniqueIdentifier>{3f5e0d18-9b63-46c6-b1ee-b4c3d0a446b1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Skill">
+      <UniqueIdentifier>{ffcdd06d-9e79-4b4e-8438-f500909b5260}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">

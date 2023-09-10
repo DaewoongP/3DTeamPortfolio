@@ -12,7 +12,7 @@ static const unsigned int MAX_PARTICLE_NUM = 200;
 
 ///////////////////////// default Macros /////////////////////////////
 #ifndef			MSG_BOX
-#define			MSG_BOX(_message)			MessageBox(nullptr, TEXT(_message), L"System Message", MB_OK)
+#define			MSG_BOX(_message)			Error_Message_Box(_message)
 #endif
 
 #define			BEGIN(NAMESPACE)		namespace NAMESPACE {

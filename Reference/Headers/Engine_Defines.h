@@ -46,6 +46,8 @@
 
 #pragma comment(lib, "PhysX/PhysX_64.lib")
 #pragma comment(lib, "PhysX/PhysXCommon_64.lib")
+// 지금 디버깅용인데 패스할거임.
+#pragma comment(lib, "PhysXd/PhysXCooking_64.lib")
 #pragma comment(lib, "PhysX/PhysXFoundation_64.lib")
 #pragma comment(lib, "PhysX/PhysXExtensions_static_64.lib")
 #pragma comment(lib, "PhysX/PhysXCharacterKinematic_static_64.lib")
