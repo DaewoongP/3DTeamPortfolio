@@ -109,7 +109,7 @@ HRESULT CPlane::Create_PlaneActor()
 	{
 		samples[i].height = Random_Generator<_float>(0.f, 2.f);
 	}
-		
+
 
 	PxHeightFieldDesc hfDesc;
 	hfDesc.format = PxHeightFieldFormat::eS16_TM;

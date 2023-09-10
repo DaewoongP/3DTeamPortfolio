@@ -28,7 +28,6 @@ _bool CDummy_Cloth::Get_VertexIndex_By_Picking(_Inout_ _uint* pVertexIndex, _Ino
 
 	vector<_float3> Vertices = m_pCurrent_Dynamic_Mesh->Get_VertexPositions();
 
-
 	vector<_ulong> Indices = m_pCurrent_Dynamic_Mesh->Get_Indices();
 
 	_float4 vMouseOrigin, vMouseDirection;
@@ -135,6 +134,9 @@ void CDummy_Cloth::Set_Model_Component(CCustomModel::MESHTYPE _eMeshType, const 
 
 void CDummy_Cloth::Set_MeshIndex(_uint _iMeshIndex)
 {
+	if (nullptr == m_pModelCom)
+		return;
+
 	array<CMeshParts*, CCustomModel::MESH_END> MeshParts = m_pModelCom->Get_MeshParts();
 	for (_uint i = 0; i < CCustomModel::MESH_END; ++i)
 	{

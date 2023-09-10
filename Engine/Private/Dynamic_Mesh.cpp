@@ -429,8 +429,8 @@ HRESULT CDynamic_Mesh::Initialize_ClothMesh()
 	m_pCloth->setLiftCoefficient(1.f);
 	m_pCloth->setWindVelocity(PxVec3(0.f, 0.f, 0.f));
 	m_pCloth->setGravity(vGravity);
-	_float4 vPivotRoation = XMQuaternionRotationRollPitchYaw(XMConvertToRadians(90.f), 0.f, 0.f);
-	m_pCloth->setRotation(PhysXConverter::ToPxQuat(vPivotRoation));
+	/*_float4 vPivotRoation = XMQuaternionRotationRollPitchYaw(XMConvertToRadians(90.f), 0.f, 0.f);
+	m_pCloth->setRotation(PhysXConverter::ToPxQuat(vPivotRoation));*/
 
 	m_pSolver->addCloth(m_pCloth);
 

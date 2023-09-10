@@ -313,6 +313,9 @@
     <Filter Include="01. Utility\03. Components\04. Model\LOD">
       <UniqueIdentifier>{e9debebd-b0a7-4cdb-9b70-0d37024ce611}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\13. String_Manager">
+      <UniqueIdentifier>{78086519-d9fc-431b-83eb-726c49e0a41e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -642,6 +645,12 @@
     <ClInclude Include="..\Public\UI_Gruop.h">
       <Filter>01. Utility\03. Components\19. UI</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\String_Manager.h">
+      <Filter>01. Utility\13. String_Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PhysX\geometry\PxHeightFieldSample.h">
+      <Filter>01. Utility\03. Components\16. Plane</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -940,6 +949,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_Gruop.cpp">
       <Filter>01. Utility\03. Components\19. UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\String_Manager.cpp">
+      <Filter>01. Utility\13. String_Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

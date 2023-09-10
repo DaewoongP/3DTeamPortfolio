@@ -60,8 +60,22 @@ void CCloth_Window::Tick(_float _fTimeDelta)
 
 	Pick_Mesh(_fTimeDelta);
 
-	Input_Wind(_fTimeDelta);
+	Current_Picked_Vertices(_fTimeDelta);
 
+	Pick_Collider(_fTimeDelta);
+
+	ImGui::End();
+	
+	RECT rc;
+	GetWindowRect(g_hWnd, &rc);
+
+	ImGui::SetNextWindowPos(ImVec2(_float(rc.left), _float(rc.bottom)));
+	ImGui::SetNextWindowSize(ImVec2(_float(g_iWinSizeX), 200.f));
+
+	ImGui::Begin("Options", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
+
+	Input_Wind(_fTimeDelta);
+	
 	ImGui::End();
 }
 
@@ -69,11 +83,25 @@ HRESULT CCloth_Window::Render()
 {
 	CBounding_Sphere::BOUNDINGSPHEREDESC SphereDesc;
 	SphereDesc.fRadius = 0.01f;
-	for (auto& PickPos : m_PickPositions)
+	_uint iIndex = { 0 };
+	for (auto& PickPair : m_PickVetices)
 	{
-		SphereDesc.vPosition = PickPos;
+		SphereDesc.vPosition = PickPair.second;
 		m_pCollider->Set_BoundingDesc(&SphereDesc);
+
+#ifdef _DEBUG
+		if (iIndex == m_iPickVertexIndex)
+		{
+			m_pCollider->Set_Color(_float4(0.f, 0.f, 1.f, 1.f));
+		}
+		else
+		{
+			m_pCollider->Set_Color(_float4(0.f, 1.f, 0.f, 1.f));
+		}
+#endif // _DEBUG
+
 		m_pCollider->Render();
+		++iIndex;
 	}
 	
 	return S_OK;
@@ -220,8 +248,17 @@ void CCloth_Window::Pick_Mesh(_float fTimeDelta)
 		cloth::Cloth* pCloth = m_pDummy_Cloth->Get_CurrentMesh_Cloth();
 		cloth::MappedRange<PxVec4>	Particles = pCloth->getCurrentParticles();
 		vector<_float> InvMasses = m_pDummy_Cloth->Get_InvMasses();
+
+		_bool isPicking = { false };
 		
-		if (m_pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN) &&
+		if (m_pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN) ||
+			m_pGameInstance->Get_DIKeyState(DIK_LSHIFT, CInput_Device::KEY_PRESSING) &&
+			m_pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_PRESSING))
+		{
+			isPicking = true;
+		}
+
+		if (true == isPicking &&
 			true == m_pDummy_Cloth->Get_VertexIndex_By_Picking(&iVertexIndex, &vPickPosition))
 		{
 			if (iVertexIndex > InvMasses.size() - 1)
@@ -229,28 +266,56 @@ void CCloth_Window::Pick_Mesh(_float fTimeDelta)
 				MSG_BOX("Out of Mesh Index");
 				return;
 			}
+
 			InvMasses[iVertexIndex] = 0.f;
 
-			m_pCurrent_Cloth = nullptr;
 			m_pDummy_Cloth->Remake_ClothMesh(InvMasses);
-			m_pDummy_Cloth->Reset_Position();
+			m_pCurrent_Cloth = m_pDummy_Cloth->Get_CurrentMesh_Cloth();
 
-			m_PickPositions.push_back(vPickPosition);
-		}
+			CGameInstance* pGameInstance = CGameInstance::GetInstance();
+			Safe_AddRef(pGameInstance);
 
-		_uint iIndex = { 0 };
-		for (auto& Mass : InvMasses)
-		{
-			if (0.f == Mass)
-			{
-				ImGui::Text("Cur Index : %d", iIndex);
-				++iIndex;
-			}
+			string szName;
+			szName = "Vertex Index : " + to_string(iVertexIndex) + 
+				" | x : " + to_string(vPickPosition.x) + ", y : " + to_string(vPickPosition.y) + ", z : " + to_string(vPickPosition.z);
+
+			m_PickVetices.push_back({ iVertexIndex, vPickPosition });
+			m_PickVerticesName.push_back(pGameInstance->Make_Char(szName.c_str()));
+
+			Safe_Release(pGameInstance);
 		}
 	}
 	else
 	{
 		m_pDummy_Cloth->Set_Testing(true);
+	}
+}
+
+void CCloth_Window::Current_Picked_Vertices(_float fTimeDelta)
+{
+	if (0 > m_PickVetices.size() ||
+		0 > m_PickVerticesName.size())
+		return;
+
+	ImGui::SeparatorText("Picked Vertices");
+	ImGui::SetNextItemWidth(m_vWindowSize.x);
+	if (ImGui::ListBox(" ", &m_iPickVertexIndex, m_PickVerticesName.data(), _int(m_PickVerticesName.size()), 20))
+	{
+		// 리스트박스 최대치 예외처리
+		if (0 > m_iPickVertexIndex)
+			m_iPickVertexIndex = 0;
+		else if (m_PickVerticesName.size() <= m_iPickVertexIndex)
+			m_iPickVertexIndex = m_PickVerticesName.size() - 1;
+	}
+
+	ImGui::Separator();
+}
+
+void CCloth_Window::Pick_Collider(_float fTimeDelta)
+{
+	for (auto& VertexPair : m_PickVetices)
+	{
+
 	}
 }
 
@@ -261,7 +326,7 @@ void CCloth_Window::Input_Wind(_float fTimeDelta)
 
 	ImGui::SeparatorText("Wind");
 	ImGui::SetNextItemWidth(200.f);
-	
+	m_pCurrent_Cloth = m_pDummy_Cloth->Get_CurrentMesh_Cloth();
 	PxVec3 vWindVelocity = m_pCurrent_Cloth->getWindVelocity();
 	if (ImGui::InputFloat3("", reinterpret_cast<_float*>(&vWindVelocity), "%.1f"))
 	{
