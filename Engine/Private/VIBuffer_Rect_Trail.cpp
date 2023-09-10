@@ -19,6 +19,7 @@ HRESULT CVIBuffer_Rect_Trail::Reset_Trail()
 	// Local Position
 	_float3 vHighPos = ((*m_TrailDesc.pHighLocalMatrix) * (*m_TrailDesc.pPivotMatrix)).Translation();
 	_float3 vLowPos = ((*m_TrailDesc.pLowLocalMatrix) * (*m_TrailDesc.pPivotMatrix)).Translation();
+	
 	// World Position
 	_float3 vHighWorldPos = XMVector3TransformCoord(vHighPos, *m_TrailDesc.pWorldMatrix);
 	_float3 vLowWorldPos = XMVector3TransformCoord(vLowPos, *m_TrailDesc.pWorldMatrix);
@@ -82,6 +83,7 @@ HRESULT CVIBuffer_Rect_Trail::Initialize(void* pArg)
 	// Local Position
 	_float3 vHighPos = ((*m_TrailDesc.pHighLocalMatrix) * (*m_TrailDesc.pPivotMatrix)).Translation();
 	_float3 vLowPos = ((*m_TrailDesc.pLowLocalMatrix) * (*m_TrailDesc.pPivotMatrix)).Translation();
+
 	// World Position
 	_float3 vHighWorldPos = XMVector3TransformCoord(vHighPos, *m_TrailDesc.pWorldMatrix);
 	_float3 vLowWorldPos = XMVector3TransformCoord(vLowPos, *m_TrailDesc.pWorldMatrix);
@@ -213,6 +215,11 @@ HRESULT CVIBuffer_Rect_Trail::Render(const _char* pConstantName, CTexture* pText
 	if (FAILED(pShader->Begin(pPassName)))
 		return E_FAIL;
 
+	return __super::Render();
+}
+
+HRESULT CVIBuffer_Rect_Trail::Render()
+{
 	return __super::Render();
 }
 

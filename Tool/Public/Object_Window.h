@@ -51,8 +51,9 @@ private:
 	void Mesh_Picking_Menu(); // 메쉬 피킹 메뉴
 	void Change_Picking_Menu(const _tchar* wszTag, _uint iTagNum); // 피킹한 메쉬 변경
 	void Delete_Picking_Object(); // 피킹한 오브젝트 삭제 메뉴
-	HRESULT Save_MapObject(); // MapObject 저장
-	HRESULT Load_MapObject(); // MapObject 로드
+	void Map_Brushing_Menu(); // 맵 그리기 메뉴
+	HRESULT Save_MapObject(string szMapDataPath); // MapObject 저장
+	HRESULT Load_MapObject(const _tchar* wszMapDataPath); // MapObject 로드
 	HRESULT Save_MapObject_Ins(); // MapObject_Ins 저장
 	HRESULT Load_MapObject_Ins(); // MapObject_Ins 로드
 
@@ -76,6 +77,7 @@ private:
 	_bool m_isInstallObject = { true };
 	_bool m_isPickingObject = { false };
 	_bool m_isChangeObject = { false };
+	_bool m_isBrushingMap = { false };
 
 	// 버튼 On Off _bool 변수 모음
 	_bool m_isDeleteObject = { false };
@@ -88,6 +90,10 @@ private:
 	CMapObject_Ins* m_pObjIns = { nullptr }; // 설치할 MapObejct_Ins의 주소
 	_uint m_iMapObjectIndex = { 0 }; // 현재 맵에 설치된 맵 오브젝트의 개수
 
+	string m_strPath = "";// 새롭게 저장할 세이브 파일 이름 받아오는 부분
+	_char szPath[MAX_PATH] = ""; // 새롭게 저장할 세이브 파일 이름 받아오는 부분
+	_tchar m_wszMapLoadDataPath[MAX_PATH] = TEXT(""); // ImGuiFileDialog로 읽어온 모델 경로
+	_tchar m_wszMapSaveDataPath[MAX_PATH] = TEXT("../../Resources/GameData/MapData/MapData.ddd"); // Save할 경로
 	string m_strCurrentModel = { "Dummy" }; // 현재 활성화된 모델 이름, 초기값은 더미
 	_float m_vDummyMatrix[DUMMY_END][3];	// 더미의 상태 행렬, 이 값을 .ddd 파일에 저장함
 
@@ -103,6 +109,8 @@ private:
 	_uint m_iInsObjectCnt = { 0 }; // 인스턴싱할 맵 오브젝트 개수
 	vector<SAVEINSOBJECTDESC> m_vecSaveInsObject; // 저장된 인스턴싱 맵 오브젝트에 대한 정보를 받아올 벡터
 	vector<_float4x4> m_vecSaveInsObjectWorld; // 인스턴싱으로 저장할 객체들의 월드 상태 행렬
+
+	_float m_fBrushSize = { 10.f }; // 브러쉬 사이즈
 
 public:
 	static CObject_Window* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, ImVec2 vWindowPos, ImVec2 vWindowSize);

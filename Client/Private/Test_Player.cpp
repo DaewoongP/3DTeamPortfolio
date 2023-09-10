@@ -60,7 +60,7 @@ void CTest_Player::Late_Tick(_float fTimeDelta)
 	}
 
 #ifdef _DEBUG
-	//Tick_ImGui();
+	Tick_ImGui();
 #endif // _DEBUG
 }
 
@@ -136,24 +136,25 @@ HRESULT CTest_Player::Add_Components()
 		return E_FAIL;
 	}
 
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
 
-	PxCapsuleControllerDesc CapsuleControllerDesc;
-	CapsuleControllerDesc.setToDefault();
-	CapsuleControllerDesc.radius = 1.f;
-	CapsuleControllerDesc.height = 1.f;
-	CapsuleControllerDesc.material = pGameInstance->Get_Physics()->createMaterial(0.f, 0.f, 0.f);
-	CapsuleControllerDesc.density = 30.f;
-	CapsuleControllerDesc.isValid();
-
-	Safe_Release(pGameInstance);
-
-	/* Com_Controller */
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_CharacterController"),
-		TEXT("Com_Controller"), reinterpret_cast<CComponent**>(&m_pController), &CapsuleControllerDesc)))
+	/* Com_RigidBody */
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
+		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody))))
 	{
-		MSG_BOX("Failed CTest_Player Add_Component : (Com_Controller)");
+		MSG_BOX("Failed CTest_Player Add_Component : (Com_RigidBody)");
+		return E_FAIL;
+	}
+	// 리지드바디 액터 설정
+	PxRigidBody* Rigid = m_pRigidBody->Get_RigidBodyActor();
+	Rigid->setMaxLinearVelocity(1000.f);
+	Rigid->setMass(10.f);
+	Rigid->setAngularDamping(0.7f);
+
+	/* For.Com_Model */
+	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_CustomModel"),
+		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
+	{
+		MSG_BOX("Failed CTest_Player Add_Component : (Com_RigidBody)");
 		return E_FAIL;
 	}
 
@@ -204,12 +205,12 @@ void CTest_Player::Key_Input(_float fTimeDelta)
 
 	if (pGameInstance->Get_DIKeyState(DIK_UP))
 	{
-		//m_pRigidBody->Add_Force(m_pTransform->Get_Look() * m_pTransform->Get_Speed(), PxForceMode::eACCELERATION);
+		m_pRigidBody->Add_Force(m_pTransform->Get_Look() * m_pTransform->Get_Speed(), PxForceMode::eACCELERATION);
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_DOWN))
 	{
-		//m_pRigidBody->Add_Force(m_pTransform->Get_Look() * -m_pTransform->Get_Speed(), PxForceMode::eACCELERATION);
+		m_pRigidBody->Add_Force(m_pTransform->Get_Look() * -m_pTransform->Get_Speed(), PxForceMode::eACCELERATION);
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_LEFT))
@@ -224,7 +225,7 @@ void CTest_Player::Key_Input(_float fTimeDelta)
 
 	if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
 	{
-		//m_pRigidBody->Add_Force(m_pTransform->Get_Up() * 30.f, PxForceMode::eIMPULSE);
+		m_pRigidBody->Add_Force(m_pTransform->Get_Up() * 30.f, PxForceMode::eIMPULSE);
 	}
 
 	ENDINSTANCE;
@@ -266,9 +267,9 @@ void CTest_Player::Tick_ImGui()
 	ImGui::SetNextItemWidth(20.f);
 	ImGui::Text("%.1f /", vPlayerPos.x); ImGui::SameLine();
 	ImGui::SetNextItemWidth(20.f);
-	ImGui::Text("%.1f /", vPlayerPos.x); ImGui::SameLine();
+	ImGui::Text("%.1f /", vPlayerPos.y); ImGui::SameLine();
 	ImGui::SetNextItemWidth(20.f);
-	ImGui::Text("%.1f /", vPlayerPos.x);
+	ImGui::Text("%.1f /", vPlayerPos.z);
 	ImGui::SetNextItemWidth(100.f);
 	if (ImGui::InputFloat3("Set Position", (_float*)(&vPlayerPos)))
 	{

@@ -39,6 +39,12 @@ HRESULT CUI_Window::Initialize(ImVec2 vWindowPos, ImVec2 vWindowSize)
 
 	BEGININSTANCE
 
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("ProtoType_GameObject_Dummy_UI_Group"),
+		CDummy_UI_Group::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Failed Create UI Group");
+	}
+
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("ProtoType_GameObject_Dummy_UI"),
 		CDummy_UI::Create(m_pDevice, m_pContext))))
 	{
@@ -166,7 +172,10 @@ void CUI_Window::Object_List_Button()
 	{
 		for (auto& iter : m_pUIVector)
 		{
-			m_pDummy_UI_Group->Clear();
+			if (nullptr != m_pDummy_UI_Group)
+			{
+				m_pDummy_UI_Group->Clear();
+			}
 			iter->Set_ObjEvent(CGameObject::OBJ_EVENT::OBJ_DEAD);
 		}
 	}
@@ -539,7 +548,7 @@ void CUI_Window::Interaction_UI()
 	{
 		CGameInstance* pGameInstance = CGameInstance::GetInstance();
 		Safe_AddRef(pGameInstance);
-		if (dynamic_cast<CDummy_UI*>(pGameObject)->Is_In_Rect() &&
+		if (dynamic_cast<CDummy_UI*>(pGameObject)->Is_In_Rect(g_hWnd) &&
 			pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN))
 		{
 			m_pDummy_UI = dynamic_cast<CDummy_UI*>(pGameObject);
@@ -584,7 +593,7 @@ void CUI_Window::Correction_Pick()
 			else
 				CurrentMousePos.y += (10 - iRoundY);
 
-			CDummy_UI* pParent = dynamic_cast<CDummy_UI*>(m_pDummy_UI)->Get_Parent();
+			CDummy_UI* pParent = dynamic_cast<CDummy_UI*>(m_pDummy_UI->Get_Parent());
 
 			if (nullptr != pParent)
 			{
@@ -649,7 +658,7 @@ void CUI_Window::Save_Load_Button()
 
 			if (m_isSave)
 			{
-				if (FAILED(Save_Data(wszFilePath)))
+				if (FAILED(Save(wszFilePath)))
 				{
 					MSG_BOX("Failed Save");
 				}
@@ -1037,7 +1046,7 @@ HRESULT CUI_Window::Save_Data(_tchar* pFilePath)
 			WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
 			WriteFile(hFile, wszGroupName, dwStrByte, &dwByte, nullptr);
 
-			CDummy_UI* pParent = dynamic_cast<CDummy_UI_Group*>(pGroup)->Get_Parent();
+			CUI* pParent = dynamic_cast<CDummy_UI_Group*>(pGroup)->Get_Parent();
 
 			_float2 vCombinedXY = pParent->Get_vCombinedXY();
 			WriteFile(hFile, &vCombinedXY, sizeof(_float2), &dwByte, nullptr);
@@ -1061,45 +1070,45 @@ HRESULT CUI_Window::Save_Data(_tchar* pFilePath)
 			WriteFile(hFile, &m_fSizeY, sizeof(_float), &dwByte, nullptr);
 
 			_tchar wszTextureName[MAX_PATH] = TEXT("");
-			lstrcpy(wszTextureName, pParent->Get_TextureName());
+			lstrcpy(wszTextureName, dynamic_cast<CDummy_UI*>(pParent)->Get_TextureName());
 			dwStrByte = sizeof(_tchar) * (lstrlen(wszTextureName) + 1);
 			WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
 			WriteFile(hFile, wszTextureName, dwStrByte, &dwByte, nullptr);
 
 			_tchar wszTexturePath[MAX_PATH] = TEXT("");
-			lstrcpy(wszTexturePath, pParent->Get_TexturePath());
+			lstrcpy(wszTexturePath, dynamic_cast<CDummy_UI*>(pParent)->Get_TexturePath());
 			dwStrByte = sizeof(_tchar) * (lstrlen(wszTexturePath) + 1);
 			WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
 			WriteFile(hFile, wszTexturePath, dwStrByte, &dwByte, nullptr);
 
-			CDummy_UI::UI_ID eType = pParent->Get_UI_ID();
+			CDummy_UI::UI_ID eType = dynamic_cast<CDummy_UI*>(pParent)->Get_UI_ID();
 			WriteFile(hFile, &eType, sizeof(CDummy_UI::UI_ID), &dwByte, nullptr);
 
-			_bool isParent = pParent->Get_bParent();
+			_bool isParent = dynamic_cast<CDummy_UI*>(pParent)->Get_bParent();
 			WriteFile(hFile, &isParent, sizeof(_bool), &dwByte, nullptr);
 
-			_bool isAlpha = pParent->Get_bAlpha();
+			_bool isAlpha = dynamic_cast<CDummy_UI*>(pParent)->Get_bAlpha();
 			WriteFile(hFile, &isAlpha, sizeof(_bool), &dwByte, nullptr);
 
 			if (isAlpha)
 			{
-				_float4 vColor = pParent->Get_vColor();
+				_float4 vColor = dynamic_cast<CDummy_UI*>(pParent)->Get_vColor();
 				WriteFile(hFile, &vColor, sizeof(_float4), &dwByte, nullptr);
 
 				_tchar wszAlphaTexturePrototypeTag[MAX_PATH] = TEXT("");
-				lstrcpy(wszAlphaTexturePrototypeTag, pParent->Get_AlphaPrototypeTag());
+				lstrcpy(wszAlphaTexturePrototypeTag, dynamic_cast<CDummy_UI*>(pParent)->Get_AlphaPrototypeTag());
 				dwStrByte = sizeof(_tchar) * (lstrlen(wszAlphaTexturePrototypeTag) + 1);
 				WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
 				WriteFile(hFile, wszAlphaTexturePrototypeTag, dwStrByte, &dwByte, nullptr);
 
 				_tchar wszAlphaTextureFilePath[MAX_PATH] = TEXT("");
-				lstrcpy(wszAlphaTextureFilePath, pParent->Get_AlphaTexturePath());
+				lstrcpy(wszAlphaTextureFilePath, dynamic_cast<CDummy_UI*>(pParent)->Get_AlphaTexturePath());
 				dwStrByte = sizeof(_tchar) * (lstrlen(wszAlphaTextureFilePath) + 1);
 				WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
 				WriteFile(hFile, wszAlphaTextureFilePath, dwStrByte, &dwByte, nullptr);
 			}
 
-			vector <class CDummy_UI*>* m_Childs = dynamic_cast<CDummy_UI_Group*>(pGroup)->Get_Childs();
+			vector <class CUI*>* m_Childs = dynamic_cast<CDummy_UI_Group*>(pGroup)->Get_Childs();
 			iSize = m_Childs->size();
 			WriteFile(hFile, &iSize, sizeof(_uint), &dwByte, nullptr);
 
@@ -1127,39 +1136,39 @@ HRESULT CUI_Window::Save_Data(_tchar* pFilePath)
 				WriteFile(hFile, &m_fSizeY, sizeof(_float), &dwByte, nullptr);
 
 				_tchar wszTextureName[MAX_PATH] = TEXT("");
-				lstrcpy(wszTextureName, pChild->Get_TextureName());
+				lstrcpy(wszTextureName, dynamic_cast<CDummy_UI*>(pChild)->Get_TextureName());
 				dwStrByte = sizeof(_tchar) * (lstrlen(wszTextureName) + 1);
 				WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
 				WriteFile(hFile, wszTextureName, dwStrByte, &dwByte, nullptr);
 
 				_tchar wszTexturePath[MAX_PATH] = TEXT("");
-				lstrcpy(wszTexturePath, pChild->Get_TexturePath());
+				lstrcpy(wszTexturePath, dynamic_cast<CDummy_UI*>(pChild)->Get_TexturePath());
 				dwStrByte = sizeof(_tchar) * (lstrlen(wszTexturePath) + 1);
 				WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
 				WriteFile(hFile, wszTexturePath, dwStrByte, &dwByte, nullptr);
 
-				CDummy_UI::UI_ID eType = pChild->Get_UI_ID();
+				CDummy_UI::UI_ID eType = dynamic_cast<CDummy_UI*>(pChild)->Get_UI_ID();
 				WriteFile(hFile, &eType, sizeof(CDummy_UI::UI_ID), &dwByte, nullptr);
 
-				_bool isParent = pChild->Get_bParent();
+				_bool isParent = dynamic_cast<CDummy_UI*>(pChild)->Get_bParent();
 				WriteFile(hFile, &isParent, sizeof(_bool), &dwByte, nullptr);
 
-				_bool isAlpha = pChild->Get_bAlpha();
+				_bool isAlpha = dynamic_cast<CDummy_UI*>(pChild)->Get_bAlpha();
 				WriteFile(hFile, &isAlpha, sizeof(_bool), &dwByte, nullptr);
 
 				if (isAlpha)
 				{
-					_float4 vColor = pChild->Get_vColor();
+					_float4 vColor = dynamic_cast<CDummy_UI*>(pChild)->Get_vColor();
 					WriteFile(hFile, &vColor, sizeof(_float4), &dwByte, nullptr);
 
 					_tchar wszAlphaTexturePrototypeTag[MAX_PATH] = TEXT("");
-					lstrcpy(wszAlphaTexturePrototypeTag, pChild->Get_AlphaPrototypeTag());
+					lstrcpy(wszAlphaTexturePrototypeTag, dynamic_cast<CDummy_UI*>(pChild)->Get_AlphaPrototypeTag());
 					dwStrByte = sizeof(_tchar) * (lstrlen(wszAlphaTexturePrototypeTag) + 1);
 					WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
 					WriteFile(hFile, wszAlphaTexturePrototypeTag, dwStrByte, &dwByte, nullptr);
 
 					_tchar wszAlphaTextureFilePath[MAX_PATH] = TEXT("");
-					lstrcpy(wszAlphaTextureFilePath, pChild->Get_AlphaTexturePath());
+					lstrcpy(wszAlphaTextureFilePath, dynamic_cast<CDummy_UI*>(pChild)->Get_AlphaTexturePath());
 					dwStrByte = sizeof(_tchar) * (lstrlen(wszAlphaTextureFilePath) + 1);
 					WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
 					WriteFile(hFile, wszAlphaTextureFilePath, dwStrByte, &dwByte, nullptr);
@@ -1171,7 +1180,124 @@ HRESULT CUI_Window::Save_Data(_tchar* pFilePath)
 	return S_OK;
 }
 
+HRESULT CUI_Window::Save(_tchar* pFilePath)
+{
+	_ulong dwByte = 0;
+	HANDLE hFile = CreateFile(pFilePath, GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+	if (hFile == INVALID_HANDLE_VALUE)
+	{
+		MSG_BOX("Failed Save");
+		CloseHandle(hFile);
+		return E_FAIL;
+	}
+
+	_tchar wszGroupName[MAX_PATH] = TEXT("");
+	lstrcpy(wszGroupName, dynamic_cast<CDummy_UI_Group*>(m_pDummy_UI_Group)->Get_GroupName());
+	DWORD dwStrByte = sizeof(_tchar) * (lstrlen(wszGroupName) + 1);
+	WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
+	WriteFile(hFile, wszGroupName, dwStrByte, &dwByte, nullptr);
+
+	CDummy_UI* pParent = dynamic_cast<CDummy_UI*>(m_pDummy_UI_Group->Get_Parent());
+
+	pParent->Save(hFile, dwByte);
+
+	vector <class CUI*>* m_Childs = dynamic_cast<CDummy_UI_Group*>(m_pDummy_UI_Group)->Get_Childs();
+
+	_uint iSize = m_Childs->size();
+	WriteFile(hFile, &iSize, sizeof(iSize), &dwByte, nullptr);
+
+	for (auto& pChild : (*m_Childs))
+	{
+		pChild->Save(hFile, dwByte);
+	}
+
+	CloseHandle(hFile);
+	return S_OK;
+}
 HRESULT CUI_Window::Load(_tchar* pFilePath)
+{
+	_ulong dwByte = 0;
+	HANDLE hFile = CreateFile(pFilePath, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+	if (hFile == INVALID_HANDLE_VALUE)
+	{
+		MSG_BOX("Failed Load");
+		CloseHandle(hFile);
+		return E_FAIL;
+	}
+
+	_tchar wszGroupName[MAX_PATH] = TEXT("");
+	DWORD dwStrByte;
+	ReadFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
+	ReadFile(hFile, wszGroupName, dwStrByte, &dwByte, nullptr);
+
+	// UI Layer 사이즈 확인 후 GameObjectTag 뒤 번호 달기.
+	_int iSize = 0;
+	if (nullptr != m_pUIGroupLayer)
+	{
+		iSize = _int(m_pUIGroupLayer->Get_Components().size());
+	}
+
+	_char szGameObjectName[MAX_PATH] = "";
+	WCharToChar(wszGroupName, szGameObjectName);
+
+	string strFimeName = szGameObjectName;
+	string GameObjectTag = "GameObject_UI_Group_" + strFimeName + to_string(iSize);
+	_tchar wszGameObjectTag[MAX_PATH] = TEXT("");
+	CharToWChar(GameObjectTag.c_str(), wszGameObjectTag);
+
+	BEGININSTANCE
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, TEXT("ProtoType_Component_Dummy_UI_Gruop"),
+		TEXT("Layer_Tool_UI_Group"), wszGameObjectTag, wszGroupName)))
+	{
+		MSG_BOX("Failed to Created CDummy_UI_Group Clone");
+	}
+	CDummy_UI_Group* pGroup = static_cast<CDummy_UI_Group*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL, TEXT("Layer_Tool_UI_Group"), wszGameObjectTag));
+	ENDINSTANCE
+
+
+	
+	GameObjectTag = "UI_" + Generate_Hashtag(true);
+	ZeroMemory(wszGameObjectTag, sizeof(_tchar) * MAX_PATH);
+	CharToWChar(GameObjectTag.c_str(), wszGameObjectTag);
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, TEXT("ProtoType_GameObject_Dummy_UI"),
+		TEXT("Layer_Tool_UI"), wszGameObjectTag, hFile)))
+	{
+		MSG_BOX("Failed to Created CDummy_UI Clone");
+	}
+	CDummy_UI* pParent = static_cast<CDummy_UI*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL, TEXT("Layer_Tool_UI"), wszGameObjectTag));
+	pGroup->Set_Parent(pParent);
+
+	_uint iChildSize = 0;
+	ReadFile(hFile, &iChildSize, sizeof(_uint), &dwByte, nullptr);
+	for (size_t i = 0; i < iChildSize; i++)
+	{
+		iSize = 0;
+		if (nullptr != m_pUILayer)
+		{
+			iSize = _int(m_pUILayer->Get_Components().size());
+		}
+
+		string GameObjectTag = "UI_" + Generate_Hashtag(true);
+		_tchar wszGameObjectTag[MAX_PATH] = TEXT("");
+		CharToWChar(GameObjectTag.c_str(), wszGameObjectTag);
+
+		if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, TEXT("ProtoType_GameObject_Dummy_UI"),
+			TEXT("Layer_Tool_UI"), wszGameObjectTag, hFile)))
+		{
+			MSG_BOX("Failed to Created CDummy_UI Clone");
+		}
+
+		CDummy_UI* pChild = static_cast<CDummy_UI*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL, TEXT("Layer_Tool_UI"), wszGameObjectTag));
+		pGroup->Set_Child(pChild);
+		pChild->Set_Parent(pParent, true);
+	}
+
+	return S_OK;
+}
+
+HRESULT CUI_Window::Load_Data(_tchar* pFilePath)
 {
 		_ulong dwByte =  0;
 	HANDLE hFile = CreateFile(pFilePath, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
@@ -1534,7 +1660,7 @@ void CUI_Window::UI_Group_Tree()
 		return;
 	}
 
-	CDummy_UI* pParent = m_pDummy_UI_Group->Get_Parent();
+	CUI* pParent = m_pDummy_UI_Group->Get_Parent();
 
 	if (ImGui::TreeNode("Parent"))
 	{
@@ -1553,7 +1679,7 @@ void CUI_Window::UI_Group_Tree()
 		ImGui::TreePop(); // 트리 노드 닫기
 	}
 
-	vector<class CDummy_UI*>* pChilds = m_pDummy_UI_Group->Get_Childs();
+	vector<class CUI*>* pChilds = m_pDummy_UI_Group->Get_Childs();
 	_uint iSize = (*pChilds).size();
 
 	if (ImGui::TreeNode("Child"))

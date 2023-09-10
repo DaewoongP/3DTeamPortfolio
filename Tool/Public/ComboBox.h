@@ -19,6 +19,7 @@ public:
 public:
     string Get_Current_Item() { return m_strCurrentItem; };
     _uint Get_Current_Item_Index() { return m_iCurrent_Index; }
+    _bool IsUpdated();
 
     void Set_Tag(string _strTag);
     void Set_Name(string _strName);
@@ -55,7 +56,7 @@ private:
     string m_strCurrentItem = { "" };
     _uint  m_iCurrent_Index = { 0 };
     vector<string> m_Items;
-
+    _bool m_isUpdated = { false };
 public:
     static CComboBox* Create(const _char* _szTag, const _char* szName, initializer_list<string> _Items, const _char* pStartName = nullptr);
     static CComboBox* Create(const _char* _szTag, const _char* szName, vector<string> _Items, const _char* pStartName = nullptr);

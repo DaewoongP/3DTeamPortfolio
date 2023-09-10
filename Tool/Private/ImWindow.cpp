@@ -88,8 +88,8 @@ void CImWindow::MatrixNode(_float4x4* pMatrix, const _char* pNodeName, const _ch
 	vAngles.z = XMConvertToRadians(vAngles.z);
 
 	// SRT연산
-	_float4x4 ScaleMatrix = _float4x4::MatrixScale(vScales);
-	_float4x4 RotMatrix = _float4x4::MatrixRotationZ(vAngles.z) * _float4x4::MatrixRotationX(vAngles.x) *_float4x4::MatrixRotationY(vAngles.y);
+	_float4x4 ScaleMatrix = _float4x4::MatrixScale(vScales);	
+	_float4x4 RotMatrix = _float4x4::MatrixFromQuaternion(XMQuaternionRotationRollPitchYaw(vAngles.x, vAngles.y, vAngles.z));
 	_float4x4 TransMatrix = _float4x4::MatrixTranslation(vTranslations);
 
 	// 새로운 월드행렬 만듬.

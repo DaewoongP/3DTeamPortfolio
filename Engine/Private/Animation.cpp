@@ -210,6 +210,7 @@ _bool CAnimation::Invalidate_AccTime(_float fTimeDelta)
 			isEnd = true;
 			m_fTimeAcc = m_fDuration;
 		}
+		m_fTickPerSecond = 30.f;
 	}
 	return isEnd;
 }

@@ -746,6 +746,7 @@ CAnimation_Window* CAnimation_Window::Create(ID3D11Device* pDevice, ID3D11Device
 
 void CAnimation_Window::Free(void)
 {
+	Safe_Release(m_pCameraPoint);
 	__super::Free();
 
 	Safe_Release(m_pCameraPoint);

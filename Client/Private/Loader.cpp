@@ -9,6 +9,10 @@
 #include "Logo_BackGround.h"
 #pragma endregion BackGrounds
 
+#pragma region UI
+#include "UI_Group_HP.h"
+#pragma endregion UI
+
 #pragma region Monsters & NPC
 #include "Armored_Troll.h"
 #include "Forest_Troll.h"
@@ -37,6 +41,8 @@
 #include "Test_Cloth.h"
 #include "Camera_Debug.h"
 #include "Dummy.h"
+#include "Test_Stair.h"
+#include "PhysXRender.h"
 #endif // _DEBUG
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -177,9 +183,14 @@ HRESULT CLoader::Loading_For_MainGame()
 			CVIBuffer_Cube::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_VIBuffer_Cube");
 
-		/* For.Prototype_Component_VIBuffer_Terrain */
+		///* For.Prototype_Component_VIBuffer_Terrain */
+		//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Terrain"),
+		//	CVIBuffer_Terrain::Create(m_pDevice, m_pContext, 513, 513))))
+		//	throw TEXT("Prototype_Component_VIBuffer_Terrain");
+
+		/* Prototype_Component_VIBuffer_Terrain */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Terrain"),
-			CVIBuffer_Terrain::Create(m_pDevice, m_pContext, 531, 531))))
+			CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Terrain/Height.bmp")))))
 			throw TEXT("Prototype_Component_VIBuffer_Terrain");
 		
 		/* For.Prototype_Component_VIBuffer_Cloth */
@@ -247,7 +258,7 @@ HRESULT CLoader::Loading_For_MainGame()
 		//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Pensive"),
 		//	CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/PensivePaladin/PensivePaladin.dat")))))
 		//	throw TEXT("Prototype_Component_Model_Pensive");
-
+		
 		//-------------------------- LOD Models --------------------------//
 		/*CModel_LOD::LODDESC LodDesc;
 		LodDesc.iLevelIndex = LEVEL_MAINGAME;
@@ -317,6 +328,8 @@ HRESULT CLoader::Loading_For_MainGame()
 		//	CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Shoes/Shoes.dat"), TEXT("SHOES_Default")))))
 		//	throw TEXT("Prototype_Component_MeshParts_Shoes");
 
+		
+
 #endif // _DEBUG
 
 		lstrcpy(m_szLoading, TEXT("셰이더 로딩 중."));
@@ -339,6 +352,11 @@ HRESULT CLoader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_Terrain"),
 			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Terrain.hlsl"), VTXPOSNORTEX_DECL::Elements, VTXPOSNORTEX_DECL::iNumElements))))
 			throw TEXT("Prototype_Component_Shader_Terrain");
+
+		/* For.Prototype_Component_Shader_Terrain */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_Debug"),
+			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Debug.hlsl"), VTXPOSNORTEX_DECL::Elements, VTXPOSNORTEX_DECL::iNumElements))))
+			throw TEXT("Prototype_Component_Shader_Debug");
 
 		lstrcpy(m_szLoading, TEXT("피직스 로딩 중."));
 		/* For.Prototype_Component_CharacterController*/
@@ -392,6 +410,16 @@ HRESULT CLoader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Terrain"),
 			CTerrain::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Terrain");
+
+		/* For.Prototype_GameObject_ConvexMesh*/
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_ConvexMesh"),
+			CConvexMesh::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_ConvexMesh");
+
+		/* For.Prototype_GameObject_ConvexMesh*/
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_TriangleMesh"),
+			CTriangleMesh::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_TriangleMesh");
 
 		/* For.Prototype_Component_Weapon_Armored_Troll */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Weapon_Armored_Troll"),
@@ -483,6 +511,18 @@ HRESULT CLoader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Cloth"),
 			CTest_Cloth::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Test_Cloth");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Stair"),
+			CTest_Stair::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Test_Stair");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_PhysxRenderer"),
+			CPhysXRender::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_PhysxRenderer");
+		/* For.Prototype_GameObject_Test_UI*/
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_HP"),
+			CUI_Group_HP::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_UI_Group_HP");
 #endif // _DEBUG
 		
 	}

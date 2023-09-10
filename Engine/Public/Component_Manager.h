@@ -13,6 +13,7 @@
 #include "Mesh.h"
 #include "Plane.h"
 #include "Model.h"
+#include "Trail.h"
 #include "Shader.h"
 #include "Status.h"
 #include "Attack.h"
@@ -61,6 +62,8 @@
 #include "VIBuffer_Point_Instance.h"
 #include "VIBuffer_Rect_Color_Instance.h"
 #include "VIBuffer_Point_Color_Instance.h"
+#include "ConvexMesh.h"
+#include "TriangleMesh.h"
 
 BEGIN(Engine)
 

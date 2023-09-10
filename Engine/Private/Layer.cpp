@@ -34,17 +34,22 @@ HRESULT CLayer::Clear_Layer()
 
 HRESULT CLayer::Delete_Component(const _tchar* pComponentTag)
 {
-	for (auto iter = m_Components.begin(); iter != m_Components.end();)
+	CComponent* pComponent = Find_Component(pComponentTag);
+	if (nullptr == pComponent)
 	{
-		if (!lstrcmp(pComponentTag, iter->first))
+		return E_FAIL;
+	}
+
+	for (auto iter = m_Components.begin(); iter != m_Components.end(); )
+	{
+		if (0 == lstrcmp(iter->first, pComponentTag))
 		{
-			Safe_Release(iter->second);
 			iter = m_Components.erase(iter);
+			Safe_Release(pComponent);
+			return S_OK;
 		}
 		else
-		{
 			++iter;
-		}
 	}
 
 	return S_OK;

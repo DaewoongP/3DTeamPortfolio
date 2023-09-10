@@ -18,7 +18,7 @@ public:
 	enum TYPE { TYPE_NONANIM, TYPE_ANIM, TYPE_END };
 	enum ANIMTYPE { UPPERBODY, UNDERBODY, ANIM_END };
 
-protected:
+private:
 	explicit CModel(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CModel(const CModel& rhs);
 	virtual ~CModel() = default;
@@ -33,13 +33,14 @@ public:
 	class CBone*				Get_Bone_Index(_uint iIndex);
 	class CAnimation*			Get_Animation(ANIMTYPE eType = UPPERBODY) const { return m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]; }
 	class CAnimation*			Get_Animation(_uint iAnimationIndex, ANIMTYPE eType = UPPERBODY) const { return  m_tAnimationDesc[eType].Animations[iAnimationIndex]; }
-	class CAnimation*			Get_Animation(const wstring& wstrAnimationTag, ANIMTYPE eType = UPPERBODY) const;
 	const _float4x4*			Get_BoneCombinedTransformationMatrixPtr(_uint iIndex);
 	_float4x4					Get_BoneCombinedTransformationMatrix(_uint iIndex);
 	vector<class CBone*>*		Get_Bone_Vector_Point() { return &m_Bones; }
 	_uint						Get_AnimationPartCount() { return m_iAnimationPartCount; }
 	_uint						Get_RootBoneIndex() { return m_iRootBoneIndex; }
-	_bool						Is_Finish_Animation() { return m_isFinishAnimation; }
+	_bool						Is_Able_Change_Animation() { return m_isChangeAnimation; }
+	class CMesh*				Get_Meshes_Test() { return(m_Meshes[0]); }
+	vector<class CMesh*>*		Get_MeshesVec() { return &m_Meshes; }
 
 public:
 	virtual HRESULT Initialize_Prototype(TYPE eType, const _tchar* pModelFilePath, _float4x4 PivotMatrix);
@@ -47,8 +48,8 @@ public:
 	virtual HRESULT Render(_uint iMeshIndex);
 
 public:
-	void	Change_Animation(const wstring& wstrAnimationTag, ANIMTYPE eType = UPPERBODY);
-	void	Change_Animation(_uint iAnimIndex, ANIMTYPE eType = UPPERBODY);
+	void	Reset_Animation(const wstring& wstrAnimationTag, ANIMTYPE eType = UPPERBODY);
+	void	Reset_Animation(_uint iAnimIndex, ANIMTYPE eType = UPPERBODY);
 	//루트애니메이션을 사용할경우 ctransform을 넣어준다.
 	void	Play_Animation(_float fTimeDelta, ANIMTYPE eType = UPPERBODY, CTransform* pTransform = nullptr);
 	HRESULT Find_BoneIndex(const _tchar* pBoneName, _Inout_ _uint* iIndex);
@@ -59,10 +60,11 @@ public:
 	void	Delete_Animation(_uint iAnimIndex, ANIMTYPE eType = UPPERBODY);
 
 public:
-	virtual HRESULT Bind_Material(class CShader* pShader, const char* pConstantName, _uint iMeshIndex, Engine::TextureType MaterialType);
-	virtual HRESULT Bind_BoneMatrices(class CShader* pShader, const char* pConstantName, _uint iMeshIndex);
+	HRESULT Bind_Material(class CShader* pShader, const char* pConstantName, _uint iMeshIndex, Engine::TextureType MaterialType);
+	HRESULT Bind_BoneMatrices(class CShader* pShader, const char* pConstantName, _uint iMeshIndex);
 
-protected: // Files
+private: // Files
+	wstring							m_wstrModelPath;
 	MODEL							m_Model;
 	vector<NODE>					m_NodeDatas;
 	vector<MESH>					m_MeshDatas;
@@ -73,37 +75,38 @@ protected: // Files
 	MODEL_GCM						m_ModelGCM;
 	vector<ANIMATION_GCM>			m_AnimationDatasGCM[ANIM_END];
 
-protected: /* For.Bones */
+private: /* For.Bones */
 	vector<class CBone*>			m_Bones;
 public:
 	typedef vector<class CBone*>	BONES;
 
-protected: /* For.Meshes */
+private: /* For.Meshes */
 	_uint							m_iNumMeshes = { 0 };
 	vector<class CMesh*>			m_Meshes;
 
-protected: /* For.Materials */
+private: /* For.Materials */
 	_uint							m_iNumMaterials = { 0 };
 	vector<MESHMATERIAL>			m_Materials;
 
-protected: /* For.Animations */
+private: /* For.Animations */
 	_uint							m_iAnimationPartCount = { 0 };
 	ANIMATIONDESC					m_tAnimationDesc[ANIM_END];
 
-protected: /* For.RootAnimation*/
+private: /* For.RootAnimation*/
 	_uint							m_iRootBoneIndex = { 0 };
 	_float4x4						m_PostRootMatrix;
 
-protected:
+private:
 	_float4x4						m_PivotMatrix;
 
-protected:
+private:
 	_bool							m_isExportedTool = { false };
 	_bool							m_isCreatedByGCM = { false };
-	
-	_bool							m_isFinishAnimation = { false };
 
-protected:
+	/* 애니메이션 상태 확인용 */
+	_bool							m_isChangeAnimation = { false };
+
+private:
 	HRESULT Ready_File(TYPE eType, const _tchar* pModelFilePath);
 	HRESULT Ready_Bones(Engine::NODE Node);
 	HRESULT Ready_Meshes(TYPE eType, _float4x4 PivotMatrix);
@@ -120,11 +123,10 @@ public:
 	HRESULT Ready_Materials_GCM();
 	HRESULT Ready_Animations_GCM();
 
-protected:
+private:
 	void Release_FileDatas();
 	void Release_FileDatas_GCM();
-	_uint Find_Animation_Index(const wstring& strTag, ANIMTYPE eType = UPPERBODY) const;
-	void Reset_Animation(ANIMTYPE eType);
+	_uint Find_Animation_Index(const wstring& strTag, ANIMTYPE eType = UPPERBODY);
 
 public:
 	static CModel* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, TYPE eType, const _tchar* pModelFilePath, _float4x4 PivotMatrix = XMMatrixIdentity());

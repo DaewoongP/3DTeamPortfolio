@@ -116,6 +116,7 @@ _float4x4 CModel::Get_BoneCombinedTransformationMatrix(_uint iIndex)
 
 HRESULT CModel::Initialize_Prototype(TYPE eType, const _tchar* pModelFilePath, _float4x4 PivotMatrix)
 {
+	m_wstrModelPath = ToRelativePath(pModelFilePath);
 	XMStoreFloat4x4(&m_PivotMatrix, PivotMatrix);
 	char szFilePath[MAX_PATH] = "";
 	char szExtension[MAX_PATH] = "";

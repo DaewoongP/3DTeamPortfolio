@@ -178,7 +178,13 @@
     <ClInclude Include="..\Public\Golem_Merlin.h" />
     <ClInclude Include="..\Public\MapObject.h" />
     <ClInclude Include="..\Public\Pensive.h" />
+    <ClInclude Include="..\Public\PhysXRender.h" />
     <ClInclude Include="..\public\Test_Cloth.h" />
+    <ClInclude Include="..\Public\Test_Stair.h" />
+    <ClInclude Include="..\Public\UI_Back.h" />
+    <ClInclude Include="..\Public\UI_Group_HP.h" />
+    <ClInclude Include="..\Public\UI_Progress.h" />
+    <ClInclude Include="..\Public\UI_Skill.h" />
     <ClInclude Include="..\Public\Wait.h" />
     <ClInclude Include="..\Public\Weapon_Armored_Troll.h" />
     <ClInclude Include="..\Public\Test_NPC.h" />
@@ -191,7 +197,6 @@
     <ClInclude Include="..\public\Sky.h" />
     <ClInclude Include="..\public\Terrain.h" />
     <ClInclude Include="..\public\Test_Player.h" />
-    <ClInclude Include="..\public\UI.h" />
     <ClInclude Include="..\Public\Weapon_Forest_Troll.h" />
     <ClInclude Include="..\Public\Weapon_Golem_Combat.h" />
     <ClInclude Include="..\Public\Weapon_Golem_Grunt.h" />
@@ -251,7 +256,13 @@
     <ClCompile Include="..\Private\Golem_Merlin.cpp" />
     <ClCompile Include="..\Private\MapObject.cpp" />
     <ClCompile Include="..\Private\Pensive.cpp" />
+    <ClCompile Include="..\Private\PhysXRender.cpp" />
     <ClCompile Include="..\private\Test_Cloth.cpp" />
+    <ClCompile Include="..\Private\Test_Stair.cpp" />
+    <ClCompile Include="..\Private\UI_Back.cpp" />
+    <ClCompile Include="..\Private\UI_Group_HP.cpp" />
+    <ClCompile Include="..\Private\UI_Progress.cpp" />
+    <ClCompile Include="..\Private\UI_Skill.cpp" />
     <ClCompile Include="..\Private\Wait.cpp" />
     <ClCompile Include="..\Private\Weapon_Armored_Troll.cpp" />
     <ClCompile Include="..\Private\Test_NPC.cpp" />
@@ -266,7 +277,6 @@
     <ClCompile Include="..\private\Sky.cpp" />
     <ClCompile Include="..\private\Terrain.cpp" />
     <ClCompile Include="..\private\Test_Player.cpp" />
-    <ClCompile Include="..\private\UI.cpp" />
     <ClCompile Include="..\Private\Weapon_Forest_Troll.cpp" />
     <ClCompile Include="..\Private\Weapon_Golem_Combat.cpp" />
     <ClCompile Include="..\Private\Weapon_Golem_Grunt.cpp" />
@@ -322,6 +332,7 @@
     <ResourceCompile Include="Client.rc" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Debug.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Terrain.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMesh.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxCube.hlsl" />

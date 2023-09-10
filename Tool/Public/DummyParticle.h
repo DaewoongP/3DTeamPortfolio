@@ -31,9 +31,9 @@ public:
 	// 클라에서는 이니셜라이즈에서 경로 받아줘서 초기화 하면 됨
 	virtual HRESULT Initialize(void* _pArg) override;
 
+	HRESULT Render() override;
 private:
 // 파티클 텍스처 변경.
-	void ChangeMainTexture(const _tchar* pTexturePath);
 	void ChangeTexture(CTexture** _pTexture, wstring& _wstrOriginPath, const _tchar* _pDestPath);
 
 	// 인스턴스 수를 변경
@@ -41,10 +41,10 @@ private:
 
 public:
 	void Tick_Imgui(_float _fTimeDelta);
-	void MainMoudle_TreeNode();
-	void EmissionModule_TreeNode();
-	void ShapeModule_TreeNode();
-	void RendererModule_TreeNode();
+	void MainMoudle_TreeNode(CEffect_Window* pEffectWindow);
+	void EmissionModule_TreeNode(CEffect_Window* pEffectWindow);
+	void ShapeModule_TreeNode(CEffect_Window* pEffectWindow);
+	void RendererModule_TreeNode(CEffect_Window* pEffectWindow);
 	void Save_FileDialog();
 	void Load_FileDialog();
 	virtual void Restart() override;
@@ -65,6 +65,8 @@ private:
 	class CImageFileDialog* m_pAlphaTextureIFD = { nullptr };
 	class CImageFileDialog* m_pSpriteTextureIFD = { nullptr };
 	_bool m_isPrevLooping = { false };
+	list<_tchar*> m_pTags;
+
 public:
 	// 툴에서는 매개변수 추가. 클라에는 삭제하기
 	static CDummyParticle* Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, const _tchar* _pDirectoryPath);

@@ -189,8 +189,8 @@ PS_OUT PS_MAIN(PS_IN In)
     }
        vNormalDesc = normalize(vNormalDesc * 2.f - 1.f);
     //vector vNormal = vector(vNormalDesc.xyz * 2.f - 1.f, 0.f);
-        float fViewZ = vDepthDesc.r * g_fFar; //뷰포트에서의 깊이
-        float vDepth = vDepthDesc.g * g_fFar * fViewZ; // 월드에서의 실제깊이
+    float fViewZ = vDepthDesc.r * g_fCamFar; //뷰포트에서의 깊이
+    float vDepth = vDepthDesc.g * g_fCamFar * fViewZ; // 월드에서의 실제깊이
     
         float3 vRay;
         float3 vReflect;
@@ -205,7 +205,7 @@ PS_OUT PS_MAIN(PS_IN In)
             vReflect = normalize(reflect(normalize(vRay), normalize(vNormalDesc.rgb))) * g_fRadius;
             vReflect.x *= -1.f;
             vRandomUV = In.vTexUV + vReflect.xy;
-             fOccNorm = g_DepthTexture.Sample(LinearSampler, vRandomUV).g * g_fFar * fViewZ;
+             fOccNorm = g_DepthTexture.Sample(LinearSampler, vRandomUV).g * g_fCamFar * fViewZ;
             if (fOccNorm <= vDepth + 0.0005f)
                 ++iColor;
                   
@@ -302,10 +302,10 @@ PS_OUT PS_MAIN_SHADOW(PS_IN In)
     if (fViewZ == 0)
         discard;
 	/* 투영스페이스 상의 위치 */
-    vPosition.x = In.vTexUV.x * 2.f - 1.f ;
-    vPosition.y = In.vTexUV.y * -2.f + 1.f ;
-    vPosition.z = vDepthDesc.x ;
-    vPosition.w = 1.f ;
+    vPosition.x = In.vTexUV.x * 2.f - 1.f;
+    vPosition.y = In.vTexUV.y * -2.f + 1.f;
+    vPosition.z = vDepthDesc.x;
+    vPosition.w = 1.f;
 
 	/* 뷰스페이스 상의 위치. */
     vPosition = vPosition * fViewZ;
@@ -343,7 +343,7 @@ PS_OUT PS_MAIN_SHADOW(PS_IN In)
     float fLit = 1.0f;
     
     float E_x2 = vLightDepth.z;
-    float Ex_2 =vLightDepth.x*vLightDepth.x;
+    float Ex_2 = vLightDepth.x * vLightDepth.x;
     float variance = (E_x2 - Ex_2);
     variance = max(variance, 0.000005f);
 
@@ -352,7 +352,7 @@ PS_OUT PS_MAIN_SHADOW(PS_IN In)
     float p = (variance / (variance + mD_2));
 
     fLit = max(p, fragDepth > vLightDepth.x);
-    fLit = (1-fLit) + 0.5f;
+    fLit = (1 - fLit) + 0.5f;
     if (fLit > 1.f)
         fLit = 1.f;
     

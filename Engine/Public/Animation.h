@@ -42,6 +42,8 @@ public:
 	vector<class CChannel*>& Get_ChannelVector_Point() { return m_Channels; }
 	class CNotify* Get_Notify_Point() { return m_pNotify; }
 	_float3 Get_OffsetPosition() { return m_vOffsetPosition; }
+	_bool	sfadsfsdf() { return (m_fDuration < m_fTimeAcc); }
+
 
 	void Set_AnimationName(_tchar* tag) { lstrcpy(m_szName, tag); }
 	void Set_CurrentKeyFrameIndex(CModel::BONES& Bones, _uint iKeyFrameIndex);

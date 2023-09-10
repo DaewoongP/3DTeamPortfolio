@@ -182,6 +182,14 @@ public: /* For.Time_Manager */
 	/* 월드 누적시간 초기화 (사용할 경우 팀원들한테 미리 얘기하세요) */
 	void Reset_World_TimeAcc();
 
+public: /* For. String_Manager */
+	// 동적배열로 문자열을 할당해주는 함수
+	// 게임이 종료되기 전까지 살아있는 문자열입니다.
+	_char* Make_Char(const _char* pMakeChar);
+	// 동적배열로 문자열을 할당해주는 함수
+	// 게임이 종료되기 전까지 살아있는 문자열입니다.
+	_tchar* Make_WChar(const _tchar* pMakeWChar);
+
 private:
 	class CGraphic_Device*			m_pGraphic_Device = { nullptr };
 	class CInput_Device*			m_pInput_Device = { nullptr };
@@ -199,7 +207,8 @@ private:
 	class CPhysX_Manager*			m_pPhysX_Manager = { nullptr };
 	class CCamera_Manager*			m_pCamera_Manager = { nullptr };
 	class CTime_Manager*			m_pTime_Manager = { nullptr };
-
+	class CString_Manager*			m_pString_Manager = { nullptr };
+	
 public:
 	
 	HRESULT Add_Prototype_Textures(_uint iLevel, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pPrototypeName, const _tchar* pTargetExtension, const _tchar* pDirectoryPath, _bool isFailedSkip);
