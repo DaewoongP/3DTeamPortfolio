@@ -109,7 +109,9 @@ void CLight_Window::Tick(_float fTimeDelta)
 	
 	m_pLightDot->Set_Position(LightDesc.vPos);
 	m_pLightDot->Tick(fTimeDelta);
+#ifdef DEBUG
 	m_pLightDot->Set_Collider_Color(_float4(0.f, 0.f, 1.f, 1.f));
+#endif // DEBUG
 	ENDINSTANCE
 	ImGui::End();
 }
