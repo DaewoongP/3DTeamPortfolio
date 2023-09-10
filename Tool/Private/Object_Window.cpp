@@ -24,7 +24,7 @@ HRESULT CObject_Window::Initialize(ImVec2 vWindowPos, ImVec2 vWindowSize)
 		return E_FAIL;
 
 	// 0이 Non_Anim이다.
-	if (FAILED(Save_Model_Path(0, TEXT("../../Resources/Models/NonAnims/MapObject/"))))
+	if (FAILED(Save_Model_Path(0, TEXT("../../Resources/Models/MapObject/NonAnims/"))))
 	{
 		MSG_BOX("Failed to Save_Model_Path function");
 		return S_OK;
@@ -1230,12 +1230,12 @@ HRESULT CObject_Window::Save_Model_Path(_uint iType, const _tchar* pFilePath)
 		}
 		else
 		{
-			// fbx파일 체크
+			// dat파일 체크
 			if (!lstrcmp(entry.path().extension().c_str(), TEXT(".dat")))
 			{
 				if (false == fs::exists(entry.path()))
 				{
-					MSG_BOX("Failed to find FBX file");
+					MSG_BOX("Failed to find dat file");
 					return E_FAIL;
 				}
 
@@ -1247,10 +1247,18 @@ HRESULT CObject_Window::Save_Model_Path(_uint iType, const _tchar* pFilePath)
 				string s = entry.path().string();
 
 				size_t path_length = pathresult.length();
-				size_t current = s.find("MapObject") + 10;
+				size_t current = s.find("MapObject\\NonAnims") + 19;
 
 				// 1차 분리, 여기서 모델 이름 파일 경로가 나와야 함.
 				string result = s.substr(current, path_length);
+
+				// 파일명에 Lod가 들어가 있는지 찾는다.
+				if (std::string::npos != result.find(("_Lod")))
+				{
+					// 만약 있다면 프로토 타입을 만들지 않는다.
+					iter++;
+					continue;
+				}
 
 				size_t current1 = result.find("\\");
 
@@ -1268,9 +1276,9 @@ HRESULT CObject_Window::Save_Model_Path(_uint iType, const _tchar* pFilePath)
 				Deep_Copy_Name(wmodelname.c_str());
 
 				// 프로토타입 생성
-				_float4x4 PivotMatrix = XMMatrixRotationX(XMConvertToRadians(90.f));
+				_float4x4 PivotMatrix;
 				BEGININSTANCE; if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, m_vecModelList_t.back(),
-					CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, m_vecModelPath_t.back(), PivotMatrix))))
+					CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, m_vecModelPath_t.back(), PivotMatrix), true)))
 				{
 					MSG_BOX("Failed to Create New Model Prototype");
 				} ENDINSTANCE;
