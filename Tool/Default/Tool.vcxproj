@@ -170,6 +170,7 @@
     <ClInclude Include="..\Public\Camera_Window.h" />
     <ClInclude Include="..\public\DummyMeshEffect.h" />
     <ClInclude Include="..\public\Cloth_Window.h" />
+    <ClInclude Include="..\public\DummyTrail.h" />
     <ClInclude Include="..\public\Dummy_Cloth.h" />
     <ClInclude Include="..\Public\Dummy_Font.h" />
     <ClInclude Include="..\Public\Dummy_UI_Group.h" />
@@ -230,6 +231,7 @@
     <ClCompile Include="..\Private\ComboBox.cpp" />
     <ClCompile Include="..\private\CustomWidget.cpp" />
     <ClCompile Include="..\private\DummyMeshEffect.cpp" />
+    <ClCompile Include="..\private\DummyTrail.cpp" />
     <ClCompile Include="..\private\Dummy_Cloth.cpp" />
     <ClCompile Include="..\Private\Dummy_Font.cpp" />
     <ClCompile Include="..\Private\Dummy_UI.cpp" />

@@ -8,6 +8,8 @@
 #include "LightDot.h"
 #include "Camera_Point.h"
 #include "DummyMeshEffect.h"
+#include "DummyTrail.h"
+
 #ifdef _DEBUG
 
 #include "Camera_Line.h"
@@ -371,10 +373,6 @@ HRESULT CMainTool::Ready_Prototype_Object()
 		CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Test/"), LEVEL_TOOL))))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Default_MeshEffect"),
-		CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Test/")))))
-		return E_FAIL;
-
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_Terrain"),
 		CTerrain::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
@@ -392,7 +390,11 @@ HRESULT CMainTool::Ready_Prototype_Object()
 		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyMeshEffect"),
-		CDummyMeshEffect::Create(m_pDevice, m_pContext, L""))))
+		CDummyMeshEffect::Create(m_pDevice, m_pContext, TEXT(""), LEVEL_TOOL))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyTrail"),
+		CDummyTrail::Create(m_pDevice, m_pContext, TEXT(""), LEVEL_TOOL))))
 		return E_FAIL;
 
 	/* Prototype_GameObject_Dummy*/

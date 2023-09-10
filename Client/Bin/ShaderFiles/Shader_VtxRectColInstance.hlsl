@@ -3,13 +3,13 @@
 
 matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
-vector			g_vCamPosition;
-vector			g_vColor = vector(1.f, 1.f, 1.f, 1.f);
 texture2D		g_Texture;
 texture2D		g_ClipTexture;
 float			g_fClipThreshold = 0.33f;
-float4x4		g_RotationMatrix;
 int				g_iClipChannel;
+
+
+vector			g_vColor = vector(1.f, 1.f, 1.f, 1.f);
 
 struct VS_IN
 {
@@ -83,8 +83,8 @@ PS_OUT	PS_MAIN(PS_IN In)
 	else if (3 == g_iClipChannel)
 		Out.vColor.a = g_ClipTexture.Sample(LinearSampler, In.vTexUV).a;
 
-	Out.vColor *= (In.vColor * g_vColor);
-	
+	Out.vColor *= (In.vColor);
+
 	if (Out.vColor.a < g_fClipThreshold)
 		discard;
 

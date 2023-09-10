@@ -313,6 +313,9 @@
     <Filter Include="01. Utility\03. Components\18. StaticMeshInstance\Mesh_Instance">
       <UniqueIdentifier>{4e0825c4-2a29-4254-9e2f-acfb05af52b1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\03. Components\19. Trail">
+      <UniqueIdentifier>{50324599-654c-470e-9273-c2595c7c9fbd}</UniqueIdentifier>
+    </Filter>
     <Filter Include="01. Utility\03. Components\19. UI">
       <UniqueIdentifier>{ff366626-d11e-4a5a-8868-da95ef27a9e4}</UniqueIdentifier>
     </Filter>
@@ -642,6 +645,9 @@
     <ClInclude Include="..\Public\JobManager.h">
       <Filter>01. Utility\11. Physics\Job</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Trail.h">
+      <Filter>01. Utility\03. Components\19. Trail</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\ConvexMesh.h">
       <Filter>01. Utility\03. Components\22. ConvexMesh</Filter>
     </ClInclude>
@@ -950,6 +956,9 @@
     <ClCompile Include="..\Private\JobManager.cpp">
       <Filter>01. Utility\11. Physics\Job</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Trail.cpp">
+      <Filter>01. Utility\03. Components\19. Trail</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\UI.cpp">
       <Filter>01. Utility\03. Components\19. UI</Filter>
     </ClCompile>
@@ -999,7 +1008,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_DefaultEffect.hlsl">
       <Filter>01. Utility\98. ShaderFiles</Filter>
-      <Filter>01. Utility\03. Components\17. MeshEffect</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Trail.hlsl">
+      <Filter>01. Utility\98. ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_AfterShade.hlsl">
       <Filter>01. Utility\03. Components\02. Renderer\Shader</Filter>

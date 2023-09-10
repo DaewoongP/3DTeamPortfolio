@@ -42,9 +42,10 @@ private:
 private:
 	class CDummyParticle* m_pDummyParticle = { nullptr };
 	CModel* m_pModel = { nullptr };
-
 	class CDummyMeshEffect* m_pDummyMeshEffect = { nullptr };
+	class CDummyTrail* m_pDummyTrail = { nullptr };
 
+	_int m_iChooseRadio = { 0 };
 	
 
 public:

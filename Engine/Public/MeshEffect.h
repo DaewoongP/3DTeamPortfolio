@@ -2,13 +2,13 @@
 
 //#include "Composite.h"
 #include "GameObject.h"
+#include "Model.h"
 
 BEGIN(Engine)
 class CRenderer;
 class CTexture;
 class CVIBuffer;
 class CShader;
-class CModel;
 class CTransform;
 END
 
@@ -28,7 +28,7 @@ public:
 	void Set_Path(wstring wstrPath, PATH ePath);
 
 public:
-	virtual HRESULT Initialize_Prototype(const _tchar * _pDirectoryPath);
+	virtual HRESULT Initialize_Prototype(const _tchar* pFilePath, _uint _iLevel);
 	virtual HRESULT Initialize(void* _pArg) override;
 	void Tick(_float _fTimeDelta) override;
 	void Late_Tick(_float _fTimeDelta) override;
@@ -39,6 +39,7 @@ protected:
 	HRESULT Setup_ShaderResources();
 
 protected:
+	_uint m_iLevel = { 0 };
 	_float2 m_vOffset = { 0.f, 0.f, };
 	_float2 m_vTililing = { 1.f, 1.f };
 
@@ -46,6 +47,8 @@ protected:
 	string m_strPassName = { "Default" };
 	wstring m_Path[PATH_END];
 	_bool m_isAlphaClipTexture = { false };
+	_bool m_isAnimModel = { false };
+	_float4x4 m_PivotMatrix = { _float4x4() };
 
 protected:
 	CModel* m_pModel = { nullptr };
@@ -55,7 +58,7 @@ protected:
 	CRenderer* m_pRenderer = { nullptr };
 
 public:
-	static CMeshEffect* Create(ID3D11Device * _pDevice, ID3D11DeviceContext * _pContext, const _tchar * _pDirectoryPath);
+	static CMeshEffect* Create(ID3D11Device * _pDevice, ID3D11DeviceContext * _pContext, const _tchar* pFilePath, _uint _iLevel = 0);
 	virtual CGameObject* Clone(void* _pArg) override;
 	virtual void Free() override;
 };

@@ -9,7 +9,6 @@
 
 #include "GameObject.h"
 #include "VIBuffer_Rect_Color_Instance.h"
-#include "VIBuffer_Geometry.h"
 #include "Modules.h"
 
 BEGIN(Engine)
@@ -54,9 +53,6 @@ public:
 	void Late_Tick(_float _fTimeDelta) override;
 	HRESULT Render();
 
-#ifdef _DEBUG
-	HRESULT Render_Shape();
-#endif //_DEBUG
 public:
 	void Play();
 	void Stop();
@@ -117,9 +113,6 @@ protected:
 	HRESULT Setup_ShaderResources();
 
 protected:
-	HRESULT SetUp_ShaderResources_Shape();
-
-protected:
 	MAIN_MODULE m_MainModuleDesc;
 	EMISSION_MODULE m_EmissionModuleDesc;
 	SHAPE_MODULE	m_ShapeModuleDesc;
@@ -128,7 +121,7 @@ protected:
 protected: 
 	//CVIBuffer_Geometry* m_pShapeBuffer = { nullptr };
 	CRenderer* m_pRenderer = { nullptr };
-	CTexture* m_pTexture = { nullptr }; // 출력에 사용 될 텍스처
+	CTexture* m_pMainTexture = { nullptr }; // 출력에 사용 될 텍스처
 	CTexture* m_pClipTexture = { nullptr }; // 알파테스트에 사용될 텍스처
 	CVIBuffer_Rect_Color_Instance* m_pBuffer = { nullptr };
 	CShader* m_pShader = { nullptr };
@@ -139,6 +132,7 @@ protected:
 	vector<COL_INSTANCE>  m_ParticleMatrices;
 	function<void()> m_StopAction;
 	_uint iLevel = { 0 };
+
 public:
 	static CParticleSystem* Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, const _tchar* _pDirectoryPath, _uint iLevel = 0);
 	virtual CGameObject* Clone(void* _pArg) override;

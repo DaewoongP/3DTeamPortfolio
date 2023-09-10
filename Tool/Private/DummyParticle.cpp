@@ -9,12 +9,10 @@ CDummyParticle::CDummyParticle(ID3D11Device* _pDevice, ID3D11DeviceContext* _pCo
 	: CParticleSystem(_pDevice, _pContext)
 {
 }
-
 CDummyParticle::CDummyParticle(const CDummyParticle& _rhs)
 	: CParticleSystem(_rhs)
 {
 }
-
 HRESULT CDummyParticle::Initialize_Prototype(const _tchar* _pDirectoryPath)
 {
 	if (FAILED(__super::Initialize_Prototype(_pDirectoryPath, LEVEL_TOOL)))
@@ -24,7 +22,6 @@ HRESULT CDummyParticle::Initialize_Prototype(const _tchar* _pDirectoryPath)
 
 	return S_OK;
 }
-
 HRESULT CDummyParticle::Initialize(void* _pArg)
 {
 	if (FAILED(__super::Initialize(_pArg)))
@@ -57,24 +54,44 @@ HRESULT CDummyParticle::Initialize(void* _pArg)
 	return S_OK;
 }
 
-void CDummyParticle::Tick_Imgui(_float _fTimeDelta)
+HRESULT CDummyParticle::Render()
 {
-	MainMoudle_TreeNode();
-	ImGui::Separator();
-	EmissionModule_TreeNode();
-	ImGui::Separator();
-	ShapeModule_TreeNode();
-	ImGui::Separator();
-	RendererModule_TreeNode();
-	ImGui::Separator();
-	Save_FileDialog();
-	Load_FileDialog();
+	return __super::Render();
 }
-void CDummyParticle::MainMoudle_TreeNode()
+
+void CDummyParticle::Tick_Imgui(_float _fTimeDelta)
 {
 	CImWindow* pWindow = CWindow_Manager::GetInstance()->Find_Window(TEXT("Effect_Window"));
 	CEffect_Window* pEffectWindow = dynamic_cast<CEffect_Window*>(pWindow);
 
+	MainMoudle_TreeNode(pEffectWindow);
+	ImGui::Separator();
+	EmissionModule_TreeNode(pEffectWindow);
+	ImGui::Separator();
+	ShapeModule_TreeNode(pEffectWindow);
+	ImGui::Separator();
+	RendererModule_TreeNode(pEffectWindow);
+	ImGui::Separator();
+	Save_FileDialog();
+	Load_FileDialog();
+
+	// 왼쪽 아래로 고정
+	RECT clientRect;
+	GetClientRect(g_hWnd, &clientRect);
+	POINT leftTop = { clientRect.left, clientRect.top };
+	POINT rightBottom = { clientRect.right, clientRect.bottom };
+	ClientToScreen(g_hWnd, &leftTop);
+	ClientToScreen(g_hWnd, &rightBottom);
+	int Left = leftTop.x;
+	int Top = rightBottom.y;
+	ImVec2 vWinpos = { _float(Left + 0.f), _float(Top) };
+	ImGui::SetNextWindowPos(vWinpos);
+	_float4x4 WorldMatirx = Get_Transform()->Get_WorldMatrix();
+	pEffectWindow->MatrixNode(&WorldMatirx, "Effect_Transform", "Effect_Position", "Effect_Rotation", "Effect_Scale");
+	Get_Transform()->Set_WorldMatrix(WorldMatirx);
+}
+void CDummyParticle::MainMoudle_TreeNode(CEffect_Window* pEffectWindow)
+{
 	if (ImGui::Checkbox("##MainModule_CheckBox", &m_MainModuleDesc.isActivate))
 	{
 		m_MainModuleDesc.isActivate = true;
@@ -143,11 +160,8 @@ void CDummyParticle::MainMoudle_TreeNode()
 		ImGui::TreePop(); // SubNode의 끝
 	}
 }
-void CDummyParticle::EmissionModule_TreeNode()
+void CDummyParticle::EmissionModule_TreeNode(CEffect_Window* pEffectWindow)
 {
-	CImWindow* pWindow = CWindow_Manager::GetInstance()->Find_Window(TEXT("Effect_Window"));
-	CEffect_Window* pEffectWindow = dynamic_cast<CEffect_Window*>(pWindow);
-
 	if (ImGui::Checkbox("##EmissionModule_CheckBox", &m_EmissionModuleDesc.isActivate))
 	{
 		// 이미션 노드는 항상 참이어야 함.
@@ -233,11 +247,8 @@ void CDummyParticle::EmissionModule_TreeNode()
 		ImGui::TreePop(); // SubNode의 끝
 	}
 }
-void CDummyParticle::ShapeModule_TreeNode()
+void CDummyParticle::ShapeModule_TreeNode(CEffect_Window* pEffectWindow)
 {
-	CImWindow* pWindow = CWindow_Manager::GetInstance()->Find_Window(TEXT("Effect_Window"));
-	CEffect_Window* pEffectWindow = dynamic_cast<CEffect_Window*>(pWindow);
-
 	if (ImGui::Checkbox("##ShapeModule_CheckBox", &m_ShapeModuleDesc.isActivate))
 	{
 		// 셰이프 노드는 항상 참이어야 함.
@@ -255,7 +266,7 @@ void CDummyParticle::ShapeModule_TreeNode()
 			// 셰이프
 			m_ShapeModuleDesc.strShape = m_pShapeCombo->Tick(CComboBox::FLAG::TABLE);
 			string strShape = m_ShapeModuleDesc.strShape;
-			//--------------------------------------------------
+			//-------------------------------------------------------
 
 			if (strShape == "Box")
 				m_ShapeModuleDesc.strBoxEmitFrom = m_pBoxEmitFromCombo->Tick(CComboBox::FLAG::TABLE);
@@ -320,7 +331,11 @@ void CDummyParticle::ShapeModule_TreeNode()
 				fs::path fsFilePath = ToRelativePath(strFilePath.data());
 				ChangeTexture(&m_pClipTexture, m_ShapeModuleDesc.wstrClipTexturePath, fsFilePath.wstring().data());
 			}
-			m_ShapeModuleDesc.strClipChannel = m_pClipChannelCombo->Tick(CComboBox::FLAG::TABLE);
+			
+			m_pClipChannelCombo->Tick(CComboBox::FLAG::TABLE);
+			if (m_pClipChannelCombo->IsUpdated())
+				m_ShapeModuleDesc.strClipChannel = m_pClipChannelCombo->Get_Current_Item();
+
 			pEffectWindow->Table_DragFloat("Clip Threshold", "XC08VB890890T4", &m_ShapeModuleDesc.fClipThreshold, 0.01f, 0.f, 1.f);
 			pEffectWindow->Table_CheckBox("Color affects Particles", "D3UIOF79H79EFB", &m_ShapeModuleDesc.isColorAffectsParticles);
 			pEffectWindow->Table_CheckBox("Alpha affects Particles", "ZXCIUFV7980RV890", &m_ShapeModuleDesc.isAlphaAffectsParticles);
@@ -344,11 +359,8 @@ void CDummyParticle::ShapeModule_TreeNode()
 		ImGui::TreePop(); // SubNode의 끝
 	}
 }
-void CDummyParticle::RendererModule_TreeNode()
+void CDummyParticle::RendererModule_TreeNode(CEffect_Window* pEffectWindow)
 {
-	CImWindow* pWindow = CWindow_Manager::GetInstance()->Find_Window(TEXT("Effect_Window"));
-	CEffect_Window* pEffectWindow = dynamic_cast<CEffect_Window*>(pWindow);
-
 	if (ImGui::Checkbox("##ShapeModule_CheckBox", &m_RendererModuleDesc.isActivate))
 	{
 		// 렌더러 노드는 항상 참이어야 함.
@@ -368,8 +380,9 @@ void CDummyParticle::RendererModule_TreeNode()
 			{
 				string strFilePath = m_pMaterialTextureIFD->Get_FilePathName();
 				fs::path fsFilePath = ToRelativePath(strFilePath.data());
-				ChangeTexture(&m_pTexture, m_RendererModuleDesc.wstrMaterialPath, fsFilePath.wstring().data());
-				wcout << m_RendererModuleDesc.wstrMaterialPath << endl;
+				ChangeTexture(&m_pMainTexture, m_RendererModuleDesc.wstrMaterialPath, fsFilePath.wstring().data());
+				// ../../Resources/Effect/Default_Particle.png;
+				////////
 			}
 
 			ImGui::EndTable();
@@ -397,6 +410,7 @@ void CDummyParticle::Save_FileDialog()
 				MSG_BOX("Failed to Saved CDummyParticle");
 				return;
 			}
+
 			MSG_BOX("Success to Saved CDummyParticle");
 		}
 
@@ -431,44 +445,53 @@ void CDummyParticle::Load_FileDialog()
 		ImGuiFileDialog::Instance()->Close();
 	}
 }
-
 void CDummyParticle::Restart()
 {
 	Reset_AllParticles();
 	__super::Restart();
 }
-void CDummyParticle::ChangeMainTexture(const _tchar* pTexturePath)
-{
-	m_RendererModuleDesc.wstrMaterialPath = pTexturePath;
-	Safe_Release(m_pTexture);
-	m_pTexture = CTexture::Create(m_pDevice, m_pContext, m_RendererModuleDesc.wstrMaterialPath.data());
-}
 void CDummyParticle::ChangeTexture(CTexture** _pTexture, wstring& _wstrOriginPath, const _tchar* _pDestPath)
 {
-	BEGININSTANCE;
-
 	// 소유하고 있는 컴포넌트를 지운다.
-	wstring wstrComponentTag = (*_pTexture)->Get_Tag();
-	CComposite::Delete_Component(wstrComponentTag.data());
+	_tchar wszTag[MAX_STR];
+	lstrcpy(wszTag, (*_pTexture)->Get_Tag());
+	
+	if (FAILED(CComposite::Delete_Component(wszTag)))
+	{
+		MSG_BOX("Failed to Delete");
+		E_FAIL;
+	}
+		
 	Safe_Release(*_pTexture);
 
+	BEGININSTANCE;
 	// 찾는 컴포넌트가 없으면 원본을 만들어준다.
-	wstring wstrTag = ToPrototypeTag(TEXT("Prototype_Component_Texture"), _pDestPath);
-	if (nullptr == pGameInstance->Find_Prototype(LEVEL_TOOL, wstrTag.data()))
+	wstring tempTag = ToPrototypeTag(TEXT("Prototype_Component_Texture"), _pDestPath).data();
+	_tchar* pTag = { nullptr };
+	m_pTags.push_back(pTag = new _tchar[tempTag.length() + 1]);
+	lstrcpy(pTag, tempTag.c_str());
+
+	// 기존에 컴포넌트가 존재하는지 확인
+	if (nullptr == pGameInstance->Find_Prototype(LEVEL_TOOL, pTag))
 	{
-		pGameInstance->Add_Prototype(LEVEL_TOOL, wstrTag.data(), CTexture::Create(m_pDevice, m_pContext, m_RendererModuleDesc.wstrMaterialPath.data()));
+		// 없다면 새로운 프로토타입 컴포넌트 생성
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, pTag, CTexture::Create(m_pDevice
+			, m_pContext, _pDestPath))))
+		{
+			MSG_BOX("Failed to Create Prototype : Change Texture");
+		}
 	}
 
-	// 새로운 텍스처 컴포넌트를 추가한다.
-	if (FAILED(CComposite::Add_Component(LEVEL_TOOL, wstrTag.data()
-		, wstrComponentTag.data(), reinterpret_cast<CComponent**>(_pTexture))))
+	// 새로운 텍스처 컴포넌트를 클론한다.
+
+	_wstrOriginPath = _pDestPath;
+	if (FAILED(CComposite::Add_Component(LEVEL_TOOL, pTag
+		, wszTag, reinterpret_cast<CComponent**>(_pTexture))))
 	{
 		MSG_BOX("Failed to Add Component");
 		ENDINSTANCE;
 		return;
 	}
-	_wstrOriginPath = _pDestPath;
-
 	ENDINSTANCE;
 }
 void CDummyParticle::RemakeBuffer(_uint iNumInstance)
@@ -515,4 +538,7 @@ void CDummyParticle::Free(void)
 	Safe_Release(m_pAlphaTextureIFD);
 	Safe_Release(m_pSpriteTextureIFD);
 	Safe_Release(m_pMaterialTextureIFD);
+
+	for (auto& pTag : m_pTags)
+		Safe_Delete_Array(pTag);
 }

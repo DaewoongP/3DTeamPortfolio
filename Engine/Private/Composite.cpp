@@ -62,14 +62,20 @@ CComponent* CComposite::Find_Component(const _tchar* pComponentTag)
 
 HRESULT CComposite::Delete_Component(const _tchar* pComponentTag)
 {
-	CComponent* pComponent = Find_Component(pComponentTag);
-	if (nullptr == pComponent)
+	for (auto iter = m_Components.begin(); iter != m_Components.end(); )
 	{
-		return E_FAIL;
+		if (0 == lstrcmp(iter->second->Get_Tag(), pComponentTag))
+		{
+			CComponent* pComponent = iter->second;
+			m_Components.erase(iter);
+			Safe_Release(pComponent);
+			return S_OK;
+		}
+		else
+			++iter;
 	}
-	Safe_Release(pComponent);
-	m_Components.erase(pComponentTag);
-	return S_OK;
+	
+	return E_FAIL;
 }
 
 void CComposite::Free()

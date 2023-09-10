@@ -6,7 +6,7 @@
 #include "ComboBox.h"
 #include "ImageFileDialog.h"
 #include "DummyMeshEffect.h"
-
+#include "DummyTrail.h"
 CEffect_Window::CEffect_Window(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
 	: CImWindow(_pDevice, _pContext)
 {
@@ -17,82 +17,98 @@ HRESULT CEffect_Window::Initialize(ImVec2 _vWindowPos, ImVec2 _vWindowSize)
 		return E_FAIL;
 	BEGININSTANCE;
 
-	//pGameInstance->Add_Prototype_Textures(LEVEL_TOOL, m_pDevice, m_pContext
-	//	, TEXT("Prototype_Component_Texture"), TEXT(".png"), TEXT("../../Resources/Effects"), true);
-
-	//pGameInstance->Add_Prototype_Textures(LEVEL_TOOL, m_pDevice, m_pContext
-	//	, TEXT("Prototype_Component_Texture"), TEXT(".png"), TEXT("../../Resources/UI/UI/Game/VFX/Textures"), true);
-
-	//pGameInstance->Add_Prototype_Models(LEVEL_TOOL, m_pDevice, m_pContext, CModel::TYPE_NONANIM
-	//	, TEXT("Prototype_Component_Model"), TEXT(".dat"), TEXT("../../Resources/Models/NonAnims/"), true);
-
 	m_WindowFlag = ImGuiWindowFlags_NoResize;
 
-	//m_pDummyParticle = dynamic_cast<CDummyParticle*>(pGameInstance->Clone_Component(0, TEXT("Prototype_GameObject_DummyParticle")));
+	// 레이어에서 돌리기
+	//pGameInstance->Add_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyParticle")
+	//	, TEXT("Test"), TEXT("TestParticle"));
+	//m_pDummyParticle = dynamic_cast<CDummyParticle*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL, TEXT("Test"), TEXT("TestParticle")));
 
-	pGameInstance->Add_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyParticle")
-		, TEXT("Test"), TEXT("TestParticle"));
-	m_pDummyParticle = dynamic_cast<CDummyParticle*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL, TEXT("Test"), TEXT("TestParticle")));
-	m_pDummyMeshEffect = dynamic_cast<CDummyMeshEffect*>(pGameInstance->Clone_Component(0, L"Prototype_GameObject_DummyMeshEffect"));
+	//pGameInstance->Add_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyMeshEffect")
+	//	, TEXT("Test"), TEXT("TestMeshEffect"));
+	//m_pDummyMeshEffect = dynamic_cast<CDummyMeshEffect*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL, TEXT("Test"), TEXT("TestMeshEffect")));
+
+	// 직접 돌리기.
+	m_pDummyParticle = dynamic_cast<CDummyParticle*>(pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyParticle")));
+	m_pDummyMeshEffect = dynamic_cast<CDummyMeshEffect*>(pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyMeshEffect")));
+	m_pDummyTrail = dynamic_cast<CDummyTrail*>(pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyTrail")));
 
 	ENDINSTANCE;
 	return S_OK;
 }
+
 void CEffect_Window::Tick(_float _fTimeDelta)
 {
 	__super::Tick(_fTimeDelta);
+	// 왼쪽 아래로 고정
 
-	ImGui::Begin("Effect", nullptr, m_WindowFlag);
+	ImGui::RadioButton("Particle", &m_iChooseRadio, 0);
+	ImGui::RadioButton("MeshEffect", &m_iChooseRadio, 1);
+	ImGui::RadioButton("Trail", &m_iChooseRadio, 2);
 
-	m_pDummyParticle->Tick_Imgui(_fTimeDelta);
-
-	ImGui::End();
-
-	if (nullptr != m_pDummyParticle)
+	switch (m_iChooseRadio)
 	{
-		/*m_pDummyParticle->Tick(_fTimeDelta);
-		m_pDummyParticle->Late_Tick(_fTimeDelta);*/
+	case 0:
+		ImGui::Begin("Particle", nullptr, m_WindowFlag);
+		if (nullptr != m_pDummyParticle)
+		{
+			m_pDummyParticle->Tick_Imgui(_fTimeDelta);
+			m_pDummyParticle->Tick(_fTimeDelta);
+			m_pDummyParticle->Late_Tick(_fTimeDelta);
+		}
+		ImGui::End();
+		break;
+	case 1:
+	{
+		if (nullptr != m_pDummyParticle)
+		{
+			ImGui::Begin("MeshEffect", nullptr, m_WindowFlag);
+			m_pDummyMeshEffect->Tick_Imgui(_fTimeDelta);
+			m_pDummyMeshEffect->Tick(_fTimeDelta);
+			m_pDummyMeshEffect->Late_Tick(_fTimeDelta);
+		}
+		ImGui::End();
+	}
+	case 2:
+	{
+		if (nullptr != m_pDummyTrail)
+		{
+			ImGui::Begin("Trail", nullptr, m_WindowFlag);
+			m_pDummyTrail->Tick_Imgui(_fTimeDelta);
+			m_pDummyTrail->Tick(_fTimeDelta);
+			m_pDummyTrail->Late_Tick(_fTimeDelta);
+		}
+		ImGui::End();
+	}
+		break;
+	default:
+		break;
 	}
 
-	// 왼쪽 아래로 고정
-	RECT clientRect;
-	GetClientRect(g_hWnd, &clientRect);
-	POINT leftTop = { clientRect.left, clientRect.top };
-	POINT rightBottom = { clientRect.right, clientRect.bottom };
-	ClientToScreen(g_hWnd, &leftTop);
-	ClientToScreen(g_hWnd, &rightBottom);
-	int Left = leftTop.x;
-	int Top = rightBottom.y;
-	ImVec2 vWinpos = { _float(Left + 0.f), _float(Top) };
-	ImGui::SetNextWindowPos(vWinpos);
-	_float4x4 pMatrix = m_pDummyParticle->Get_Transform()->Get_WorldMatrix();
-	__super::MatrixNode(&pMatrix, "Effect_Transform", "Effect_Position", "Effect_Rotation", "Effect_Scale");
-	m_pDummyParticle->Get_Transform()->Set_WorldMatrix(pMatrix);
-
-	MeshEffect(_fTimeDelta);
+	//MeshEffect(_fTimeDelta);
 	//ImGui::ShowDemoWindow();
 }
 void CEffect_Window::MeshEffect(_float _fTimeDelta)
 {
-	RECT clientRect;
-	GetClientRect(g_hWnd, &clientRect);
-	POINT leftTop = { clientRect.left, clientRect.top };
-	POINT rightBottom = { clientRect.right, clientRect.bottom };
-	ClientToScreen(g_hWnd, &leftTop);
-	ClientToScreen(g_hWnd, &rightBottom);
-	int Left = leftTop.x;
-	int Top = rightBottom.y;
-	ImVec2 vWinpos = { _float(Left + 500.f), _float(Top) };
-	ImGui::SetNextWindowPos(vWinpos);
-	
-	m_pDummyMeshEffect->Tick(_fTimeDelta);
-	m_pDummyMeshEffect->Late_Tick(_fTimeDelta);
+	//RECT clientRect;
+	//GetClientRect(g_hWnd, &clientRect);
+	//POINT leftTop = { clientRect.left, clientRect.top };
+	//POINT rightBottom = { clientRect.right, clientRect.bottom };
+	//ClientToScreen(g_hWnd, &leftTop);
+	//ClientToScreen(g_hWnd, &rightBottom);
+	//int Left = leftTop.x;
+	//int Top = rightBottom.y;
+	//ImVec2 vWinpos = { _float(Left + 500.f), _float(Top) };
+	//ImGui::SetNextWindowPos(vWinpos);
+	//
+	//m_pDummyMeshEffect->Tick(_fTimeDelta);
+	//m_pDummyMeshEffect->Late_Tick(_fTimeDelta);
 
-	ImGui::Begin("MeshEffect");
+	//ImGui::Begin("MeshEffect");
 
-	m_pDummyMeshEffect->ImGui(_fTimeDelta);
-	 
-	ImGui::End();
+	//m_pDummyMeshEffect->ImGui(_fTimeDelta);
+	// 
+	//ImGui::End();
 }
 void CEffect_Window::Create_Button()
 {
@@ -273,4 +289,5 @@ void CEffect_Window::Free(void)
 
 	Safe_Release(m_pDummyParticle);
 	Safe_Release(m_pDummyMeshEffect);
+	Safe_Release(m_pDummyTrail);
 }

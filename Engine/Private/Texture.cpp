@@ -11,6 +11,7 @@ CTexture::CTexture(const CTexture& rhs)
 	: CComponent(rhs)
 	, m_Textures(rhs.m_Textures)
 	, m_iNumTextures(rhs.m_iNumTextures)
+	, m_szTextureFilePathes(rhs.m_szTextureFilePathes)
 {
 	for (auto& pTexture : m_Textures)
 	{
