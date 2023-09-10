@@ -17,8 +17,7 @@ HRESULT CRenderTarget::Initialize(_uint iSizeX, _uint iSizeY, DXGI_FORMAT eForma
 {
 	if (isShadow)
 	{
-		Initialize_Depth(iSizeX, iSizeY, eFormat, vClearColor);
-		return S_OK;
+		Initialize_Depth(iSizeX*12, iSizeY*12, eFormat, vClearColor);
 	}
 	D3D11_TEXTURE2D_DESC	TextureDesc;
 	ZeroMemory(&TextureDesc, sizeof(D3D11_TEXTURE2D_DESC));
@@ -66,7 +65,7 @@ HRESULT CRenderTarget::Initialize_Depth(_uint iSizeX, _uint iSizeY, DXGI_FORMAT 
 	TextureDesc.SampleDesc.Count = 1;
 
 	TextureDesc.Usage = D3D11_USAGE_DEFAULT;
-	TextureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+	TextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 	TextureDesc.CPUAccessFlags = 0;
 	TextureDesc.MiscFlags = 0;
 
@@ -79,9 +78,6 @@ HRESULT CRenderTarget::Initialize_Depth(_uint iSizeX, _uint iSizeY, DXGI_FORMAT 
 
 	if (FAILED(m_pDevice->CreateShaderResourceView(m_pTexture2D, nullptr, &m_pSRV)))
 		return E_FAIL;
-
-
-	m_vClearColor = vClearColor;
 
 	return S_OK;
 }

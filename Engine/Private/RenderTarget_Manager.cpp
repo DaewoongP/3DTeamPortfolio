@@ -13,7 +13,7 @@ HRESULT CRenderTarget_Manager::Add_RenderTarget(ID3D11Device* pDevice, ID3D11Dev
 	if (nullptr != Find_RenderTarget(pTargetTag))
 		return E_FAIL;
 
-	CRenderTarget* pRenderTarget = CRenderTarget::Create(pDevice, pContext, iSizeX, iSizeY, eFormat, vClearColor);
+	CRenderTarget* pRenderTarget = CRenderTarget::Create(pDevice, pContext, iSizeX, iSizeY, eFormat, vClearColor,isShadow);
 
 	if (nullptr == pRenderTarget)
 		return E_FAIL;
@@ -128,11 +128,12 @@ HRESULT CRenderTarget_Manager::End_MRT(ID3D11DeviceContext* pContext,_bool Shado
 	if (Shadow)
 	{
 		ID3D11RenderTargetView* pRenderTargets[8] = { m_pPostRenderTargetView };
+		pContext->OMGetRenderTargets(8, pRenderTargets, &m_pShadowView);
 
 		pContext->OMSetRenderTargets(8, pRenderTargets, m_pDepthStencilView);
 
 		Safe_Release(m_pPostRenderTargetView);
-		Safe_Release(m_pDepthStencilView);
+		Safe_Release(m_pShadowView);
 
 		return S_OK;
 	}
@@ -245,6 +246,6 @@ void CRenderTarget_Manager::Free()
 
 	for (auto& Pair : m_RenderTargets)
 		Safe_Release(Pair.second);
-
+	Safe_Release(m_pShadowView);
 	m_RenderTargets.clear();
 }
