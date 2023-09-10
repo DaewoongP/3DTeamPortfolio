@@ -43,7 +43,7 @@ void CTerrain::Late_Tick(_float fTimeDelta)
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONLIGHT, this);
 #ifdef _DEBUG
-		//m_pRenderer->Add_DebugGroup(m_pPlane);
+		m_pRenderer->Add_DebugGroup(m_pPlane);
 #endif // _DEBUG
 	}
 }

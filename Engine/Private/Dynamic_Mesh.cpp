@@ -73,6 +73,11 @@ HRESULT CDynamic_Mesh::Initialize_Prototype(CModel::TYPE eType, const CModel::BO
 	Safe_Delete_Array(pIndices);
 #pragma endregion
 
+	// 질량값 초기화
+	m_InvMasses.clear();
+	m_InvMasses.resize(m_iNumVertices);
+	fill(m_InvMasses.begin(), m_InvMasses.end(), 1.f);
+
 	if (FAILED(Initialize_ClothMesh()))
 		return E_FAIL;
 
@@ -86,6 +91,10 @@ HRESULT CDynamic_Mesh::Initialize(void* pArg)
 
 void CDynamic_Mesh::Tick(_float fTimeDelta)
 {
+	if (nullptr == m_pCloth ||
+		nullptr == m_pSolver)
+		return;
+
 	m_pSolver->beginSimulation(fTimeDelta);
 
 	for (_uint i = 0; i < m_pSolver->getSimulationChunkCount(); ++i)
@@ -94,7 +103,7 @@ void CDynamic_Mesh::Tick(_float fTimeDelta)
 	}
 
 	m_pSolver->endSimulation();
-	
+
 	// 동적버퍼 map 전에 미리 값을 옮겨둠.
 	cloth::MappedRange<PxVec4>	Particles = m_pCloth->getCurrentParticles();
 	vector<_float3> Positions;
@@ -164,6 +173,19 @@ void CDynamic_Mesh::Reset_Position()
 
 		m_pContext->Unmap(m_pVB, 0);
 	}
+}
+
+HRESULT CDynamic_Mesh::Remake_ClothMesh(vector<_float> InvMasses)
+{
+	m_InvMasses.clear();
+	m_InvMasses = InvMasses;
+
+	Clear_ClothMesh();
+
+	if (FAILED(Initialize_ClothMesh()))
+		return E_FAIL;
+
+	return S_OK;
 }
 
 HRESULT CDynamic_Mesh::Ready_VertexBuffer_NonAnim(const Engine::MESH Mesh, _float4x4 PivotMatrix)
@@ -343,24 +365,6 @@ HRESULT CDynamic_Mesh::Initialize_ClothMesh()
 	MeshDesc.triangles.stride = sizeof(_ulong) * 3;
 	MeshDesc.triangles.count = m_Indices.size() / 3;
 
-	m_InvMasses.clear();
-	m_InvMasses.resize(m_iNumVertices);
-	fill(m_InvMasses.begin(), m_InvMasses.end(), 1.f);
-	//for (_uint z = 0; z < m_iNumVerticesZ - 1; ++z)
-	//	for (_uint x = 0; x < m_iNumVerticesX - 1; ++x)
-	//		if (z == 0)// || (!attachByWidth && x == 0))
-	//		{
-	//			m_InvMasses[x + z * (m_iNumVerticesX - 1)] = 0.f;
-	//		}
-
-	m_InvMasses[0] = 0.f;
-
-	//m_InvMasses[m_iNumVerticesX] = 0.f;
-
-	/*for (_uint i = 0; i < (_uint)m_InvMasses.size(); ++i)
-		if (m_InvMasses[i] > 1e-6f)
-			m_InvMasses[i] = 0.9f;*/
-
 	MeshDesc.invMasses.data = m_InvMasses.data();
 	MeshDesc.invMasses.stride = sizeof(_float);
 	MeshDesc.invMasses.count = m_iNumVertices;
@@ -386,14 +390,14 @@ HRESULT CDynamic_Mesh::Initialize_ClothMesh()
 	}
 	//
 
-	vector<PxVec4>			ParticlesCopy;
+	vector<PxVec4>	ParticlesCopy;
 	ParticlesCopy.resize(m_iNumVertices);
 
 	for (_uint i = 0; i < m_iNumVertices; ++i)
 	{
 		// To put attachment point closer to each other
-		if (m_InvMasses[i] < 1e-6)
-			m_VertexPositions[i] = m_VertexPositions[i] * 0.95f;
+		/*if (m_InvMasses[i] < 1e-6)
+			m_VertexPositions[i] = m_VertexPositions[i] * 0.95f;*/
 
 		// w component is 1/mass, or 0.0f for anchored/fixed particles
 		ParticlesCopy[i] = physx::PxVec4(PhysXConverter::ToPxVec3(m_VertexPositions[i]), m_InvMasses[i]);
@@ -425,12 +429,28 @@ HRESULT CDynamic_Mesh::Initialize_ClothMesh()
 	m_pCloth->setLiftCoefficient(1.f);
 	m_pCloth->setWindVelocity(PxVec3(0.f, 0.f, 0.f));
 	m_pCloth->setGravity(vGravity);
-	_float4 vPivotRoation = XMQuaternionRotationRollPitchYaw(XMConvertToRadians(90.f), 0.f, 0.f);
-	m_pCloth->setRotation(PhysXConverter::ToPxQuat(vPivotRoation));
+	/*_float4 vPivotRoation = XMQuaternionRotationRollPitchYaw(XMConvertToRadians(90.f), 0.f, 0.f);
+	m_pCloth->setRotation(PhysXConverter::ToPxQuat(vPivotRoation));*/
 
 	m_pSolver->addCloth(m_pCloth);
 
 	return S_OK;
+}
+
+void CDynamic_Mesh::Clear_ClothMesh()
+{
+	if (nullptr != m_pSolver)
+	{
+		m_pSolver->removeCloth(m_pCloth);
+	}
+
+	Safe_Delete(m_pSolver);
+	Safe_Delete(m_pCloth);
+
+	if (nullptr != m_pFabric)
+	{
+		m_pFabric->decRefCount();
+	}
 }
 
 CDynamic_Mesh* CDynamic_Mesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CModel::TYPE eType, const CModel::BONES& Bones, const Engine::MESH Mesh, _float4x4 PivotMatrix, const _tchar* szClothDataFilePath)
@@ -465,16 +485,6 @@ void CDynamic_Mesh::Free()
 
 	if (false == m_isCloned)
 	{
-		if (nullptr != m_pSolver)
-		{
-			m_pSolver->removeCloth(m_pCloth);
-		}
-
-		Safe_Delete(m_pSolver);
-		Safe_Delete(m_pCloth);
-		if (nullptr != m_pFabric)
-		{
-			m_pFabric->decRefCount();
-		}
+		Clear_ClothMesh();
 	}
 }

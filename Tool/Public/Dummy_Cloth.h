@@ -22,9 +22,18 @@ private:
 public:
 	CCustomModel* Get_CustomModel() const { return m_pModelCom; }
 	_uint Get_Max_NumMesh() const { return m_pModelCom->Get_NumMeshes(m_eMeshPartsType); }
-	cloth::Cloth* Get_CurrentMesh_Cloth() const { return m_pCurrent_Dynamic_Mesh->Get_Cloth(); }
+	cloth::Cloth* Get_CurrentMesh_Cloth() const { 
+		if (nullptr == m_pCurrent_Dynamic_Mesh) return nullptr;
+		return m_pCurrent_Dynamic_Mesh->Get_Cloth();
+	}
+	vector<_float> Get_InvMasses() const { 
+		if (nullptr == m_pCurrent_Dynamic_Mesh) return vector<_float>();
+		return m_pCurrent_Dynamic_Mesh->Get_InvMasses(); 
+	}
+	_bool Get_VertexIndex_By_Picking(_Inout_ _uint* pVertexIndex, _Inout_ _float3* pPickPosition);
 	void Set_Model_Component(CCustomModel::MESHTYPE _eMeshType, const _tchar* _pModelTag);
 	void Set_MeshIndex(_uint _iMeshIndex);
+	void Set_Testing(_bool _isTesting) { m_isTesting = _isTesting; }
 
 public:
 	virtual HRESULT Initialize_Prototype();
@@ -32,7 +41,11 @@ public:
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
-	
+
+public:
+	void Reset_Position();
+	HRESULT Remake_ClothMesh(vector<_float> InvMasses);
+
 private:
 	CShader*				m_pShaderCom = { nullptr };
 	CRenderer*				m_pRendererCom = { nullptr };
@@ -42,6 +55,11 @@ private:
 private:
 	CCustomModel::MESHTYPE	m_eMeshPartsType = { CCustomModel::MESH_END };
 	_uint					m_iMeshIndex = { 0 };
+	_bool					m_isRemakeMesh = { false };
+	vector<_float>			m_InvMasses;
+
+private:
+	_bool					m_isTesting = { false };
 
 private:
 	HRESULT Add_Components();

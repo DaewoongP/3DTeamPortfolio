@@ -30,16 +30,18 @@
     <ClInclude Include="..\public\Bounding_Sphere.h" />
     <ClInclude Include="..\Public\Mesh_Instance.h" />
     <ClInclude Include="..\Public\Model_Instance.h" />
+    <ClInclude Include="..\public\Model_LOD.h" />
+    <ClInclude Include="..\Public\PhysX\geometry\PxHeightFieldSample.h" />
     <ClInclude Include="..\Public\Shape_GeoSphere.h" />
     <ClInclude Include="..\public\Dynamic_Mesh.h" />
     <ClInclude Include="..\Public\JobManager.h" />
+    <ClInclude Include="..\public\String_Manager.h" />
     <ClInclude Include="..\Public\Time_Manager.h" />
     <ClInclude Include="..\public\Calculator.h" />
     <ClInclude Include="..\public\Camera.h" />
     <ClInclude Include="..\public\Camera_Manager.h" />
     <ClInclude Include="..\Public\Attack.h" />
     <ClInclude Include="..\public\CharacterController.h" />
-    <ClInclude Include="..\public\ColliderCom.h" />
     <ClInclude Include="..\Public\MeshEffect.h" />
     <ClInclude Include="..\public\NVContextCallBack.h" />
     <ClInclude Include="..\Public\Parts.h" />
@@ -53,6 +55,8 @@
     <ClInclude Include="..\Public\CustomModel.h" />
     <ClInclude Include="..\Public\Modules.h" />
     <ClInclude Include="..\Public\Status.h" />
+    <ClInclude Include="..\Public\UI.h" />
+    <ClInclude Include="..\Public\UI_Gruop.h" />
     <ClInclude Include="..\public\VIBuffer_Geometry.h" />
     <ClInclude Include="..\public\VIBuffer_GeoSphere.h" />
     <ClInclude Include="..\public\VIBuffer_Cloth.h" />
@@ -138,16 +142,19 @@
     <ClCompile Include="..\Private\Bounding_OBB.cpp" />
     <ClCompile Include="..\private\Bounding_Sphere.cpp" />
     <ClCompile Include="..\Private\Mesh_Instance.cpp" />
+    <ClCompile Include="..\private\Model_LOD.cpp">
+      <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</IncludeInUnityFile>
+    </ClCompile>
     <ClCompile Include="..\Private\Shape_GeoSphere.cpp" />
     <ClCompile Include="..\private\Dynamic_Mesh.cpp" />
     <ClCompile Include="..\Private\JobManager.cpp" />
+    <ClCompile Include="..\private\String_Manager.cpp" />
     <ClCompile Include="..\Private\Time_Manager.cpp" />
     <ClCompile Include="..\private\Calculator.cpp" />
     <ClCompile Include="..\private\Camera.cpp" />
     <ClCompile Include="..\private\Camera_Manager.cpp" />
     <ClCompile Include="..\Private\Attack.cpp" />
     <ClCompile Include="..\private\CharacterController.cpp" />
-    <ClCompile Include="..\private\ColliderCom.cpp" />
     <ClCompile Include="..\private\MeshEffect.cpp" />
     <ClCompile Include="..\private\NVContextCallBack.cpp" />
     <ClCompile Include="..\Private\Parts.cpp" />
@@ -160,6 +167,8 @@
     <ClCompile Include="..\Private\CustomModel.cpp" />
     <ClCompile Include="..\Private\Modules.cpp" />
     <ClCompile Include="..\Private\Status.cpp" />
+    <ClCompile Include="..\Private\UI.cpp" />
+    <ClCompile Include="..\Private\UI_Gruop.cpp" />
     <ClCompile Include="..\private\VIBuffer_Geometry.cpp" />
     <ClCompile Include="..\private\VIBuffer_GeoSphere.cpp" />
     <ClCompile Include="..\private\VIBuffer_Cloth.cpp" />
@@ -227,6 +236,7 @@
     <ClCompile Include="..\Public\Model_Instance.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_AfterShade.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Debug.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_DefaultEffect.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred.hlsl" />

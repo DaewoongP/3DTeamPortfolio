@@ -307,6 +307,15 @@
     <Filter Include="01. Utility\03. Components\18. StaticMeshInstance\Mesh_Instance">
       <UniqueIdentifier>{4e0825c4-2a29-4254-9e2f-acfb05af52b1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\03. Components\19. UI">
+      <UniqueIdentifier>{ff366626-d11e-4a5a-8868-da95ef27a9e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\04. Model\LOD">
+      <UniqueIdentifier>{e9debebd-b0a7-4cdb-9b70-0d37024ce611}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\13. String_Manager">
+      <UniqueIdentifier>{78086519-d9fc-431b-83eb-726c49e0a41e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -573,9 +582,6 @@
     <ClInclude Include="..\public\RigidBody.h">
       <Filter>01. Utility\03. Components\14. RigidBody</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\ColliderCom.h">
-      <Filter>01. Utility\03. Components\14. RigidBody</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\CharacterController.h">
       <Filter>01. Utility\03. Components\13. CharacterController</Filter>
     </ClInclude>
@@ -629,6 +635,21 @@
     </ClInclude>
     <ClInclude Include="..\Public\JobManager.h">
       <Filter>01. Utility\11. Physics\Job</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI.h">
+      <Filter>01. Utility\03. Components\19. UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Model_LOD.h">
+      <Filter>01. Utility\03. Components\04. Model\LOD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Gruop.h">
+      <Filter>01. Utility\03. Components\19. UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\String_Manager.h">
+      <Filter>01. Utility\13. String_Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PhysX\geometry\PxHeightFieldSample.h">
+      <Filter>01. Utility\03. Components\16. Plane</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -869,9 +890,6 @@
     <ClCompile Include="..\private\RigidBody.cpp">
       <Filter>01. Utility\03. Components\14. RigidBody</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\ColliderCom.cpp">
-      <Filter>01. Utility\03. Components\14. RigidBody</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\CharacterController.cpp">
       <Filter>01. Utility\03. Components\13. CharacterController</Filter>
     </ClCompile>
@@ -923,6 +941,18 @@
     <ClCompile Include="..\Private\JobManager.cpp">
       <Filter>01. Utility\11. Physics\Job</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\UI.cpp">
+      <Filter>01. Utility\03. Components\19. UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Model_LOD.cpp">
+      <Filter>01. Utility\03. Components\04. Model\LOD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Gruop.cpp">
+      <Filter>01. Utility\03. Components\19. UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\String_Manager.cpp">
+      <Filter>01. Utility\13. String_Manager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Navigation.hlsl">
@@ -955,6 +985,9 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_DefaultEffect.hlsl">
       <Filter>01. Utility\98. ShaderFiles</Filter>
       <Filter>01. Utility\03. Components\17. MeshEffect</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_AfterShade.hlsl">
+      <Filter>01. Utility\03. Components\02. Renderer\Shader</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

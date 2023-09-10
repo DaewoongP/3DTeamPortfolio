@@ -42,14 +42,15 @@ void CTest_Player::Tick(_float fTimeDelta)
 
 	//m_pModelCom->Tick(2, 2, fTimeDelta);
 
-	m_pModelCom->Play_Animation(fTimeDelta);
+	//m_pModel_LOD->Play_Animation(fTimeDelta);
 }
 
 void CTest_Player::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
-
-	if (nullptr != m_pRenderer)
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	if (nullptr != m_pRenderer &&
+		true == pGameInstance->isIn_WorldFrustum(m_pTransform->Get_Position().TransCoord(), 10.f))
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 #ifdef _DEBUG
@@ -59,7 +60,7 @@ void CTest_Player::Late_Tick(_float fTimeDelta)
 	}
 
 #ifdef _DEBUG
-	//Tick_ImGui();
+	Tick_ImGui();
 #endif // _DEBUG
 }
 
@@ -86,21 +87,18 @@ HRESULT CTest_Player::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	for (_uint iPartsIndex = 0; iPartsIndex < CCustomModel::MESH_END; ++iPartsIndex)
+	/*_uint		iNumMeshes = m_pModel_LOD->Get_NumMeshes();
+
+	for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; ++iMeshCount)
 	{
-		_uint		iNumMeshes = m_pModelCom->Get_NumMeshes(iPartsIndex);
+		m_pModel_LOD->Bind_Material(m_pShaderCom, "g_DiffuseTexture", iMeshCount, DIFFUSE);
 
-		for (_uint i = 0; i < iNumMeshes; ++i)
-		{
-			m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", iPartsIndex, i);
+		if (FAILED(m_pShaderCom->Begin("Mesh")))
+			return E_FAIL;
 
-			m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", iPartsIndex, i, DIFFUSE);
-
-			m_pShaderCom->Begin("AnimMesh");
-
-			m_pModelCom->Render(iPartsIndex, i);
-		}
-	}
+		if (FAILED(m_pModel_LOD->Render(iMeshCount)))
+			return E_FAIL;
+	}*/
 
 	return S_OK;
 }
@@ -120,61 +118,48 @@ HRESULT CTest_Player::Add_Components()
 		return E_FAIL;
 	}
 
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
+	//CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	//Safe_AddRef(pGameInstance);
 
-	PxCapsuleControllerDesc CapsuleControllerDesc;
-	CapsuleControllerDesc.setToDefault();
-	CapsuleControllerDesc.radius = 1.f;
-	CapsuleControllerDesc.height = 1.f;
-	CapsuleControllerDesc.material = pGameInstance->Get_Physics()->createMaterial(0.f, 0.f, 0.f);
-	CapsuleControllerDesc.density = 30.f;
-	CapsuleControllerDesc.isValid();
+	//PxCapsuleControllerDesc CapsuleControllerDesc;
+	//CapsuleControllerDesc.setToDefault();
+	//CapsuleControllerDesc.radius = 1.f;
+	//CapsuleControllerDesc.height = 1.f;
+	//CapsuleControllerDesc.material = pGameInstance->Get_Physics()->createMaterial(0.f, 0.f, 0.f);
+	//CapsuleControllerDesc.density = 30.f;
+	//CapsuleControllerDesc.isValid();
 
-	Safe_Release(pGameInstance);
+	//Safe_Release(pGameInstance);
 
-	/* Com_Controller */
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_CharacterController"),
-		TEXT("Com_Controller"), reinterpret_cast<CComponent**>(&m_pController), &CapsuleControllerDesc)))
-	{
-		MSG_BOX("Failed CTest_Player Add_Component : (Com_Controller)");
-		return E_FAIL;
-	}
-
-	/* Com_RigidBody */
-	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
-	//	TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody))))
+	///* Com_Controller */
+	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_CharacterController"),
+	//	TEXT("Com_Controller"), reinterpret_cast<CComponent**>(&m_pController), &CapsuleControllerDesc)))
 	//{
-	//	MSG_BOX("Failed CTest_Player Add_Component : (Com_RigidBody)");
+	//	MSG_BOX("Failed CTest_Player Add_Component : (Com_Controller)");
 	//	return E_FAIL;
 	//}
-	//// 리지드바디 액터 설정
-	//PxRigidBody* Rigid = m_pRigidBody->Get_RigidBodyActor();
-	//Rigid->setMaxLinearVelocity(1000.f);
-	//Rigid->setMass(10.f);
-	// ...
-
-	/* For.Com_Model */
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_CustomModel"),
-		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
+	
+	/* Com_RigidBody */
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
+		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody))))
 	{
-		MSG_BOX("Failed CTest_Player Add_Component : (Com_Model)");
+		MSG_BOX("Failed CTest_Player Add_Component : (Com_RigidBody)");
 		return E_FAIL;
 	}
 
+	///* For.Com_Model_LOD */
+	//if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Test_Robe_LOD"),
+	//	TEXT("Com_Model_LOD"), reinterpret_cast<CComponent**>(&m_pModel_LOD))))
+	//{
+	//	MSG_BOX("Failed CTest_Player Add_Component : (Com_Model_LOD)");
+	//	return E_FAIL;
+	//}
+
 	/* For.Com_Shader */
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimMesh"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 	{
 		MSG_BOX("Failed CTest_Player Add_Component : (Com_Shader)");
-		return E_FAIL;
-	}
-
-	// 옷 경로 넣어줘야함.
-	/* For.Prototype_Component_MeshParts_Robe_Student */
-	if (FAILED(m_pModelCom->Add_MeshParts(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Robe_Student"), CCustomModel::ROBE, nullptr)))
-	{
-		MSG_BOX("[CTest_Player] Failed Add_MeshParts");
 		return E_FAIL;
 	}
 
@@ -206,12 +191,12 @@ void CTest_Player::Key_Input(_float fTimeDelta)
 
 	if (pGameInstance->Get_DIKeyState(DIK_UP))
 	{
-		//m_pRigidBody->Add_Force(m_pTransform->Get_Look() * m_pTransform->Get_Speed(), PxForceMode::eACCELERATION);
+		m_pRigidBody->Add_Force(m_pTransform->Get_Look() * m_pTransform->Get_Speed(), PxForceMode::eACCELERATION);
 	}
 	
 	if (pGameInstance->Get_DIKeyState(DIK_DOWN))
 	{
-		//m_pRigidBody->Add_Force(m_pTransform->Get_Look() * -m_pTransform->Get_Speed(), PxForceMode::eACCELERATION);
+		m_pRigidBody->Add_Force(m_pTransform->Get_Look() * -m_pTransform->Get_Speed(), PxForceMode::eACCELERATION);
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_LEFT))
@@ -226,7 +211,7 @@ void CTest_Player::Key_Input(_float fTimeDelta)
 
 	if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
 	{
-		//m_pRigidBody->Add_Force(m_pTransform->Get_Up() * 30.f, PxForceMode::eIMPULSE);
+		m_pRigidBody->Add_Force(m_pTransform->Get_Up() * 30.f, PxForceMode::eIMPULSE);
 	}
 
 	ENDINSTANCE;
@@ -268,9 +253,9 @@ void CTest_Player::Tick_ImGui()
 	ImGui::SetNextItemWidth(20.f);
 	ImGui::Text("%.1f /", vPlayerPos.x); ImGui::SameLine();
 	ImGui::SetNextItemWidth(20.f);
-	ImGui::Text("%.1f /", vPlayerPos.x); ImGui::SameLine();
+	ImGui::Text("%.1f /", vPlayerPos.y); ImGui::SameLine();
 	ImGui::SetNextItemWidth(20.f);
-	ImGui::Text("%.1f /", vPlayerPos.x);
+	ImGui::Text("%.1f /", vPlayerPos.z);
 	ImGui::SetNextItemWidth(100.f);
 	if (ImGui::InputFloat3("Set Position", (_float*)(&vPlayerPos)))
 	{
@@ -326,5 +311,6 @@ void CTest_Player::Free()
 		Safe_Release(m_pRenderer);
 		Safe_Release(m_pController);
 		Safe_Release(m_pRigidBody);
+		Safe_Release(m_pModel_LOD);
 	}
 }

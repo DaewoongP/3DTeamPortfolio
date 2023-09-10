@@ -252,6 +252,17 @@ HRESULT CLoader::Loading_For_MainGame()
 		//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Pensive"),
 		//	CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/PensivePaladin/PensivePaladin.dat")))))
 		//	throw TEXT("Prototype_Component_Model_Pensive");
+		
+		//-------------------------- LOD Models --------------------------//
+		/*CModel_LOD::LODDESC LodDesc;
+		LodDesc.iLevelIndex = LEVEL_MAINGAME;
+		lstrcpy(LodDesc.szPrototypeName, TEXT("Prototype_Component_Model_Test_Rock"));
+		LodDesc.eModelType = CModel::TYPE_NONANIM;
+		LodDesc.PivotMatrix = XMMatrixIdentity();
+
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Test_Robe_LOD"),
+			CModel_LOD::Create(m_pDevice, m_pContext, LodDesc, TEXT("../../Resources/Models/NonAnims/SM_DungeonEnterance_Cave_A/SM_DungeonEnterance_Cave_A_Lod%d.dat"), 3))))
+			throw TEXT("Prototype_Component_Model_Test_Robe_LOD");*/
 
 #ifdef _DEBUG
 		PivotMatrix = XMMatrixScaling(100.f, 100.f, 100.f) * XMMatrixRotationY(XMConvertToRadians(180.f));
