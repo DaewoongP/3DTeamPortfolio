@@ -7,7 +7,6 @@ BEGIN(Engine)
 class CShader;
 class CTexture;
 class CRenderer;
-class CTransform;
 class CVIBuffer_Rect;
 END
 
@@ -26,7 +25,7 @@ public:
 	_float2		Get_fSize() { return _float2(m_fSizeX, m_fSizeY); }
 	_float2		Get_vCombinedXY() { return m_vCombinedXY; }
 	_bool		Get_bParent() { return m_isParent; }
-	CUI*	Get_Parent() { return m_pParent; }
+	CUI*		Get_Parent() { return m_pParent; }
 	_tchar*		Get_TextureName() { return m_wszTextureName; }
 	_tchar*		Get_TexturePath() { return m_wszTexturePath; }
 	UI_ID		Get_UI_ID() { return m_eUIType; }
@@ -42,6 +41,7 @@ public:
 	virtual void	Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
+	void Tick_Imgui();
 public:
 	void Set_fXY(_float fX, _float fY) 
 	{ 
@@ -97,6 +97,7 @@ private:
 	HRESULT Add_Components();
 	HRESULT Add_AlphaTexture();
 	HRESULT SetUp_ShaderResources();
+	HRESULT	Ready_Texture();
 
 public:
 	static CDummy_UI* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

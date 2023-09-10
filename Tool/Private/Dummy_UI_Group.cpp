@@ -3,12 +3,12 @@
 #include "Dummy_UI.h"
 
 CDummy_UI_Group::CDummy_UI_Group(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CUI_Gruop(pDevice, pContext)
+	: CUI_Group(pDevice, pContext)
 {
 }
 
 CDummy_UI_Group::CDummy_UI_Group(const CDummy_UI_Group& rhs)
-	: CUI_Gruop(rhs)
+	: CUI_Group(rhs)
 {
 }
 

@@ -130,9 +130,14 @@ public: // Function
 	void	Save_Load_Button();
 	HRESULT	Save_Data(_tchar* pFilePath);
 	void	Load_UI();
-	HRESULT	Load(_tchar* pFilePath);
+	HRESULT	Load_Data(_tchar* pFilePath);
 	void	Capture();
 	void	Select_AlphaTexture(CDummy_UI* pDummyUI);
+	
+
+	HRESULT Save(_tchar* pFilePath);
+	HRESULT Load(_tchar* pFilePath);
+
 
 
 public:
