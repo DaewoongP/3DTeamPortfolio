@@ -82,6 +82,7 @@ HRESULT CModel_Converter::Convert_Model(_uint iType, const _char* pModelFilePath
 		fs::create_directory(szPath);
 	}
 
+
 	cout << "Convert Materials..." << endl;
 	if (FAILED(Convert_Materials(eType, pModelFilePath, szPath)))
 	{

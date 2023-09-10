@@ -266,10 +266,10 @@ HRESULT CLoader::Loading_For_MainGame()
 			CModel_LOD::Create(m_pDevice, m_pContext, LodDesc, TEXT("../../Resources/Models/NonAnims/SM_DungeonEnterance_Cave_A/SM_DungeonEnterance_Cave_A_Lod%d.dat"), 3))))
 			throw TEXT("Prototype_Component_Model_Test_Robe_LOD");*/
 
-		PivotMatrix = XMMatrixIdentity();
+		/*PivotMatrix = XMMatrixIdentity();
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Stair"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/SM_Intro_Cliffside_RuinsStairsBase_01/SM_Intro_Cliffside_RuinsStairsBase_01.dat"), PivotMatrix))))
-			throw TEXT("Prototype_Component_Model_Stair");
+			throw TEXT("Prototype_Component_Model_Stair");*/
 
 #ifdef _DEBUG
 		PivotMatrix = XMMatrixScaling(100.f, 100.f, 100.f) * XMMatrixRotationY(XMConvertToRadians(180.f));

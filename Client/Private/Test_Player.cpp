@@ -118,26 +118,6 @@ HRESULT CTest_Player::Add_Components()
 		return E_FAIL;
 	}
 
-	//CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	//Safe_AddRef(pGameInstance);
-
-	//PxCapsuleControllerDesc CapsuleControllerDesc;
-	//CapsuleControllerDesc.setToDefault();
-	//CapsuleControllerDesc.radius = 1.f;
-	//CapsuleControllerDesc.height = 1.f;
-	//CapsuleControllerDesc.material = pGameInstance->Get_Physics()->createMaterial(0.f, 0.f, 0.f);
-	//CapsuleControllerDesc.density = 30.f;
-	//CapsuleControllerDesc.isValid();
-
-	//Safe_Release(pGameInstance);
-
-	/* Com_Controller */
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_CharacterController"),
-		TEXT("Com_Controller"), reinterpret_cast<CComponent**>(&m_pController), &CapsuleControllerDesc)))
-	{
-		MSG_BOX("Failed CTest_Player Add_Component : (Com_Controller)");
-		return E_FAIL;
-	}
 
 	/* Com_RigidBody */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
