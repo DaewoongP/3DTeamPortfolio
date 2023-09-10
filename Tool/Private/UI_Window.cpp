@@ -1293,6 +1293,8 @@ HRESULT CUI_Window::Load(_tchar* pFilePath)
 		pGroup->Set_Child(pChild);
 		pChild->Set_Parent(pParent, true);
 	}
+
+	return S_OK;
 }
 
 HRESULT CUI_Window::Load_Data(_tchar* pFilePath)

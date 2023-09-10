@@ -174,7 +174,8 @@ HRESULT CTrail::SetUp_ShaderResources()
 	{
 		wstring wstrErrorMSG = TEXT("Failed SetupResources : ");
 		wstrErrorMSG += pErrorTag;
-		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+		MSG_BOX(wstrErrorMSG.c_str());
+		
 		Safe_Release(pGameInstance);
 		return E_FAIL;
 	}
