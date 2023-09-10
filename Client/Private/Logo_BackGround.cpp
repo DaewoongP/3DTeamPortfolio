@@ -149,4 +149,10 @@ CGameObject* CLogo_BackGround::Clone(void* pArg)
 void CLogo_BackGround::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pTextureCom);
+	Safe_Release(m_pRendererCom);
+	Safe_Release(m_pVIBufferCom);
+	Safe_Release(m_pAlphaTextureCom);
 }

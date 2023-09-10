@@ -1,11 +1,11 @@
 #pragma once
 #include "GameObject.h"
-#include "UI.h"
 
 BEGIN(Engine)
 
-class ENGINE_DLL CUI_Gruop : public CGameObject
+class ENGINE_DLL CUI_Group : public CGameObject
 {
+public:
 	struct UI_DATA
 	{
 		UI_DATA()
@@ -22,7 +22,6 @@ class ENGINE_DLL CUI_Gruop : public CGameObject
 
 			ZeroMemory(m_wszTextureName, MAX_PATH);
 
-			m_eType = { CUI::UI_ID::UI_ID_END };
 			m_isParent = { false };
 
 			m_isAlpha = { false };
@@ -44,7 +43,7 @@ class ENGINE_DLL CUI_Gruop : public CGameObject
 		_tchar				m_wszTextureName[MAX_PATH];
 		_tchar				m_wszTexturePath[MAX_PATH];
 
-		CUI::UI_ID	m_eType;
+		_uint			m_eType;
 
 		_bool				m_isParent;
 
@@ -55,9 +54,9 @@ class ENGINE_DLL CUI_Gruop : public CGameObject
 	};
 
 protected:
-	explicit CUI_Gruop(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	explicit CUI_Gruop(const CUI_Gruop& rhs);
-	virtual ~CUI_Gruop() = default;
+	explicit CUI_Group(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	explicit CUI_Group(const CUI_Group& rhs);
+	virtual ~CUI_Group() = default;
 
 public:
 	const _tchar* Get_GroupName() const { return m_wszUIGroupName; }
@@ -88,11 +87,10 @@ public:
 
 	HRESULT	Save(const _tchar* pFileDirectory);
 	HRESULT	Load(const _tchar* pFileDirectory);
+	HRESULT	Load(const _tchar* pFileDirectory, CUI* pParent, vector<CUI*>& pChild);
 
 protected:
 	_tchar	m_wszUIGroupName[MAX_STR] = {};
-
-
 	_tchar* m_wszUIProtoTypeTag;
 
 protected:

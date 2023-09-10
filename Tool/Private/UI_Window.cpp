@@ -39,6 +39,12 @@ HRESULT CUI_Window::Initialize(ImVec2 vWindowPos, ImVec2 vWindowSize)
 
 	BEGININSTANCE
 
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("ProtoType_GameObject_Dummy_UI_Group"),
+		CDummy_UI_Group::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Failed Create UI Group");
+	}
+
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("ProtoType_GameObject_Dummy_UI"),
 		CDummy_UI::Create(m_pDevice, m_pContext))))
 	{
@@ -652,7 +658,7 @@ void CUI_Window::Save_Load_Button()
 
 			if (m_isSave)
 			{
-				if (FAILED(Save_Data(wszFilePath)))
+				if (FAILED(Save(wszFilePath)))
 				{
 					MSG_BOX("Failed Save");
 				}
@@ -1174,7 +1180,122 @@ HRESULT CUI_Window::Save_Data(_tchar* pFilePath)
 	return S_OK;
 }
 
+HRESULT CUI_Window::Save(_tchar* pFilePath)
+{
+	_ulong dwByte = 0;
+	HANDLE hFile = CreateFile(pFilePath, GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+	if (hFile == INVALID_HANDLE_VALUE)
+	{
+		MSG_BOX("Failed Save");
+		CloseHandle(hFile);
+		return E_FAIL;
+	}
+
+	_tchar wszGroupName[MAX_PATH] = TEXT("");
+	lstrcpy(wszGroupName, dynamic_cast<CDummy_UI_Group*>(m_pDummy_UI_Group)->Get_GroupName());
+	DWORD dwStrByte = sizeof(_tchar) * (lstrlen(wszGroupName) + 1);
+	WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
+	WriteFile(hFile, wszGroupName, dwStrByte, &dwByte, nullptr);
+
+	CDummy_UI* pParent = dynamic_cast<CDummy_UI*>(m_pDummy_UI_Group->Get_Parent());
+
+	pParent->Save(hFile, dwByte);
+
+	vector <class CUI*>* m_Childs = dynamic_cast<CDummy_UI_Group*>(m_pDummy_UI_Group)->Get_Childs();
+
+	_uint iSize = m_Childs->size();
+	WriteFile(hFile, &iSize, sizeof(iSize), &dwByte, nullptr);
+
+	for (auto& pChild : (*m_Childs))
+	{
+		pChild->Save(hFile, dwByte);
+	}
+
+	CloseHandle(hFile);
+	return S_OK;
+}
 HRESULT CUI_Window::Load(_tchar* pFilePath)
+{
+	_ulong dwByte = 0;
+	HANDLE hFile = CreateFile(pFilePath, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+	if (hFile == INVALID_HANDLE_VALUE)
+	{
+		MSG_BOX("Failed Load");
+		CloseHandle(hFile);
+		return E_FAIL;
+	}
+
+	_tchar wszGroupName[MAX_PATH] = TEXT("");
+	DWORD dwStrByte;
+	ReadFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
+	ReadFile(hFile, wszGroupName, dwStrByte, &dwByte, nullptr);
+
+	// UI Layer 사이즈 확인 후 GameObjectTag 뒤 번호 달기.
+	_int iSize = 0;
+	if (nullptr != m_pUIGroupLayer)
+	{
+		iSize = _int(m_pUIGroupLayer->Get_Components().size());
+	}
+
+	_char szGameObjectName[MAX_PATH] = "";
+	WCharToChar(wszGroupName, szGameObjectName);
+
+	string strFimeName = szGameObjectName;
+	string GameObjectTag = "GameObject_UI_Group_" + strFimeName + to_string(iSize);
+	_tchar wszGameObjectTag[MAX_PATH] = TEXT("");
+	CharToWChar(GameObjectTag.c_str(), wszGameObjectTag);
+
+	BEGININSTANCE
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, TEXT("ProtoType_Component_Dummy_UI_Gruop"),
+		TEXT("Layer_Tool_UI_Group"), wszGameObjectTag, wszGroupName)))
+	{
+		MSG_BOX("Failed to Created CDummy_UI_Group Clone");
+	}
+	CDummy_UI_Group* pGroup = static_cast<CDummy_UI_Group*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL, TEXT("Layer_Tool_UI_Group"), wszGameObjectTag));
+	ENDINSTANCE
+
+
+	
+	GameObjectTag = "UI_" + Generate_Hashtag(true);
+	ZeroMemory(wszGameObjectTag, sizeof(_tchar) * MAX_PATH);
+	CharToWChar(GameObjectTag.c_str(), wszGameObjectTag);
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, TEXT("ProtoType_GameObject_Dummy_UI"),
+		TEXT("Layer_Tool_UI"), wszGameObjectTag, hFile)))
+	{
+		MSG_BOX("Failed to Created CDummy_UI Clone");
+	}
+	CDummy_UI* pParent = static_cast<CDummy_UI*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL, TEXT("Layer_Tool_UI"), wszGameObjectTag));
+	pGroup->Set_Parent(pParent);
+
+	_uint iChildSize = 0;
+	ReadFile(hFile, &iChildSize, sizeof(_uint), &dwByte, nullptr);
+	for (size_t i = 0; i < iChildSize; i++)
+	{
+		iSize = 0;
+		if (nullptr != m_pUILayer)
+		{
+			iSize = _int(m_pUILayer->Get_Components().size());
+		}
+
+		string GameObjectTag = "UI_" + Generate_Hashtag(true);
+		_tchar wszGameObjectTag[MAX_PATH] = TEXT("");
+		CharToWChar(GameObjectTag.c_str(), wszGameObjectTag);
+
+		if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, TEXT("ProtoType_GameObject_Dummy_UI"),
+			TEXT("Layer_Tool_UI"), wszGameObjectTag, hFile)))
+		{
+			MSG_BOX("Failed to Created CDummy_UI Clone");
+		}
+
+		CDummy_UI* pChild = static_cast<CDummy_UI*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL, TEXT("Layer_Tool_UI"), wszGameObjectTag));
+		pGroup->Set_Child(pChild);
+		pChild->Set_Parent(pParent, true);
+	}
+}
+
+HRESULT CUI_Window::Load_Data(_tchar* pFilePath)
 {
 		_ulong dwByte =  0;
 	HANDLE hFile = CreateFile(pFilePath, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);

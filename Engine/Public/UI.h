@@ -1,6 +1,6 @@
 #pragma once
 #include "GameObject.h"
-
+#include "UI_Group.h"
 
 BEGIN(Engine)
 
@@ -15,10 +15,10 @@ protected:
 	virtual ~CUI() = default;
 
 public:
+	_float2		Get_vCombinedXY() { return m_vCombinedXY; }
 	_float2		Get_fXY() { return _float2(m_fX, m_fY); }
 	_float		Get_fZ() { return m_fZ; }
 	_float2		Get_fSize() { return _float2(m_fSizeX, m_fSizeY); }
-	_float2		Get_vCombinedXY() { return m_vCombinedXY; }
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -69,7 +69,7 @@ public:
 	void	Set_eUIID(UI_ID eType) { m_eUIType = eType; }
 
 
-protected:
+protected: // None이 사용하는 변수
 	_float2			m_vCombinedXY = { 0.f, 0.f };
 	// 윈도우창의 실제 x좌표
 	_float			m_fX = { 650.f };
@@ -90,8 +90,8 @@ protected:
 	_float4x4		m_ProjMatrix;
 
 protected:
-	_tchar			m_wszTextureName[MAX_STR] = {};
-	_tchar			m_wszTexturePath[MAX_STR] = {};
+	_tchar			m_wszTextureName[MAX_PATH] = {};
+	_tchar			m_wszTexturePath[MAX_PATH] = {};
 
 	UI_ID			m_eUIType = { UI_ID_END };
 	_bool			m_isParent = { false };
@@ -103,6 +103,9 @@ protected:
 	_tchar			m_wszAlphaTexturePrototypeTag[MAX_PATH] = TEXT("");
 	_tchar			m_wszAlphaTextureFilePath[MAX_PATH] = TEXT("");
 
+protected:
+	_bool			m_isSave = { false };
+
 public:
 	_bool	Is_In_Rect(HWND hWnd);
 
@@ -113,6 +116,10 @@ public:
 protected:
 	HRESULT Change_Position(_float fX, _float fY);
 	HRESULT Change_Scale(_float fX, _float fY);
+
+public:
+	HRESULT	Save(HANDLE hFile, _ulong& dwByte);
+	HRESULT	Load(HANDLE hFile, _ulong& dwByte);
 
 public:
 	virtual CGameObject* Clone(void* pArg) PURE;
