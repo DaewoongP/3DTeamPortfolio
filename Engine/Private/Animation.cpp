@@ -203,11 +203,11 @@ _bool CAnimation::Invalidate_AccTime(_float fTimeDelta)
 	{
 		if (true == m_isLoop)
 		{
-			isEnd = true;
 			m_fTimeAcc = 0.f;
 		}
 		else 
 		{
+			isEnd = true;
 			m_fTimeAcc = m_fDuration;
 		}
 	}

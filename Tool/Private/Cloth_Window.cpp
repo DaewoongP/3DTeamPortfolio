@@ -15,7 +15,7 @@ HRESULT CCloth_Window::Initialize(ImVec2 _vWindowPos, ImVec2 _vWindowSize)
 	m_WindowFlag = ImGuiWindowFlags_NoResize;
 	/* For.Prototype_Component_Model_CustomModel */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Model_CustomModel"),
-		CCustomModel::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/test/test.dat")))))
+		CCustomModel::Create(m_pDevice, m_pContext, CCustomModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/test/test.dat")))))
 	{
 		MSG_BOX("Failed Create CCustomModel");
 		return E_FAIL;

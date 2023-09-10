@@ -31,6 +31,7 @@
     <ClInclude Include="..\Public\Mesh_Instance.h" />
     <ClInclude Include="..\Public\Model_Instance.h" />
     <ClInclude Include="..\public\Model_LOD.h" />
+    <ClInclude Include="..\Public\RandomChoose.h" />
     <ClInclude Include="..\Public\Shape_GeoSphere.h" />
     <ClInclude Include="..\public\Dynamic_Mesh.h" />
     <ClInclude Include="..\Public\JobManager.h" />
@@ -142,6 +143,7 @@
     <ClCompile Include="..\private\Model_LOD.cpp">
       <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</IncludeInUnityFile>
     </ClCompile>
+    <ClCompile Include="..\Private\RandomChoose.cpp" />
     <ClCompile Include="..\Private\Shape_GeoSphere.cpp" />
     <ClCompile Include="..\private\Dynamic_Mesh.cpp" />
     <ClCompile Include="..\Private\JobManager.cpp" />

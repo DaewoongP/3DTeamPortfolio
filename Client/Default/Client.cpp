@@ -121,7 +121,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		pGameInstance->Tick_Timer(TEXT("Timer_Default"));
 		fTimerAcc += pGameInstance->Get_TimeDelta(TEXT("Timer_Default"));
 
-		if (1)
+		if (fTimerAcc >= 1.f / g_fFrame)
 		{
 			pGameInstance->Tick_Timer(TEXT("MainTimer"));
 			pMainApp->Tick(pGameInstance->Get_TimeDelta(TEXT("MainTimer")));

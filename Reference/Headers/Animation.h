@@ -2,7 +2,7 @@
 /* =============================================== */
 // 
 //	정 : 개철민
-//	부 :
+//	부 : 주성환
 //
 /* =============================================== */
 
@@ -78,6 +78,11 @@ public:
 public:
 	HRESULT Initialize(Engine::ANIMATION Animation, const CModel::BONES& Bones);
 	HRESULT Initialize(Engine::ANIMATION_GCM Animation, const CModel::BONES& Bones);
+	/* 
+		현재 진행중인 애니메이션이 끝났는지 유무를 확인 
+		루프 애니메이션인 경우 반환값은 항상 false 이다.
+		루프애니메이션이 아닌경우 TimeAcc가 duration을 넘어갈 경우 true를 반환한다.
+	*/
 	_bool Invalidate_AccTime(_float fTimeDelta); 
 	void Invalidate_TransformationMatrix(CModel::BONES& Bones, _float fTimeDelta, vector<_uint>* boneVec = nullptr);
 	void Invalidate_TransformationMatrix_Lerp(CModel::BONES& Bones, _float fTimeDelta, _float LerpTimeAcc, _uint iRootIndex, vector<_uint>* boneVec = nullptr);

@@ -8,6 +8,7 @@
 #include "Channel.h"
 #include "Notify.h"
 #include "Bone.h"
+
 CModel::CModel(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CComponent(pDevice, pContext)
 {
@@ -22,6 +23,7 @@ CModel::CModel(const CModel& rhs)
 	, m_MaterialDatas(rhs.m_MaterialDatas)
 	, m_AnimationDatas(rhs.m_AnimationDatas)
 	, m_ModelGCM(rhs.m_ModelGCM)
+
 	, m_iNumMeshes(rhs.m_iNumMeshes)
 	, m_Meshes(rhs.m_Meshes)
 	, m_iNumMaterials(rhs.m_iNumMaterials)
@@ -93,6 +95,13 @@ CBone* CModel::Get_Bone_Index(_uint iIndex)
 		return nullptr;
 
 	return *iter;
+}
+
+CAnimation* CModel::Get_Animation(const wstring& wstrAnimationTag, ANIMTYPE eType) const
+{
+	_uint iAnimationIndex = Find_Animation_Index(wstrAnimationTag);
+
+	return m_tAnimationDesc[eType].Animations[iAnimationIndex];
 }
 
 const _float4x4* CModel::Get_BoneCombinedTransformationMatrixPtr(_uint iIndex)
@@ -170,26 +179,24 @@ HRESULT CModel::Render(_uint iMeshIndex)
 	return S_OK;
 }
 
-void CModel::Reset_Animation(const wstring& wstrAnimationTag, ANIMTYPE eType)
+void CModel::Change_Animation(const wstring& wstrAnimationTag, ANIMTYPE eType)
 {
-	if (false == m_isChangeAnimation)
-		return;
-
 	m_tAnimationDesc[eType].iCurrentAnimIndex = Find_Animation_Index(wstrAnimationTag);
 	m_tAnimationDesc[eType].iPreviousAnimIndex = m_tAnimationDesc[eType].iCurrentAnimIndex;
 	m_tAnimationDesc[eType].isResetAnimTrigger = true;
-	m_isChangeAnimation = false;
+	m_isFinishAnimation = false;
+
+	Reset_Animation(eType);
 }
 
-void CModel::Reset_Animation(_uint iAnimIndex, ANIMTYPE eType)
+void CModel::Change_Animation(_uint iAnimIndex, ANIMTYPE eType)
 {
-	if (false == m_isChangeAnimation)
-		return;
-
 	m_tAnimationDesc[eType].iCurrentAnimIndex = iAnimIndex;
 	m_tAnimationDesc[eType].iPreviousAnimIndex = m_tAnimationDesc[eType].iCurrentAnimIndex;
 	m_tAnimationDesc[eType].isResetAnimTrigger = true;
-	m_isChangeAnimation = false;
+	m_isFinishAnimation = false;
+
+	Reset_Animation(eType);
 }
 
 void CModel::Play_Animation(_float fTimeDelta, ANIMTYPE eType, CTransform* pTransform)
@@ -198,34 +205,16 @@ void CModel::Play_Animation(_float fTimeDelta, ANIMTYPE eType, CTransform* pTran
 	if (m_tAnimationDesc[eType].iNumAnimations == 0)
 		return;
 
-	// 애니메이션이 종료고 애니메이션 리셋하라는 신호가 들어오면
-	if (m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Invalidate_AccTime(fTimeDelta) || m_tAnimationDesc[eType].isResetAnimTrigger )
-	{
-		//애니메이션 리셋해줘
-		m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Reset();
-		
-		//러프가 설정돼있으면 러프도 세팅해줘.
-		if (m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Get_LerpAnim())
-		{
-			m_tAnimationDesc[eType].isAnimChangeLerp = true;
-			m_tAnimationDesc[eType].fAnimChangeTimer = ANIMATIONLERPTIME;
-		}
-		//0번노드(하체)라면? 루트 매트릭스 날려줘.
-		if (eType == 0)
-			m_PostRootMatrix = XMMatrixIdentity();
-		//리셋설정 다됐으니까 트리거 꺼줘.
-		m_tAnimationDesc[eType].isResetAnimTrigger = false;
-
-		/* 애니메이션 변경 가능 설정 */
-		m_isChangeAnimation = true;
-	}
+	// 애니메이션 종료 체크 ( 루프 일 경우 계속 false )
+	m_isFinishAnimation = m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Invalidate_AccTime(fTimeDelta);
+	
 	//트랜스폼이 있다면?
-	else if (pTransform != nullptr)
+	if (pTransform != nullptr)
 	{
 		//루트애니메이션 설정돼있다면 루트애니메이션 진행해줘.
 		if(m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Get_RootAnim_State()&& 
 			!m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Get_Paused_State()&&
-			/*애니메이션이 정지상태라면?*/m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Get_Duration()> m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Get_Accmulation())
+			/*애니메이션이 정지상태라면?*/m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Get_Duration() > m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Get_Accmulation())
 			Do_Root_Animation(fTimeDelta,pTransform);
 	}
 
@@ -247,7 +236,6 @@ void CModel::Play_Animation(_float fTimeDelta, ANIMTYPE eType, CTransform* pTran
 	else
 		//러프설정이 돼있는데 시간이 다됐으면? 러프설정 꺼줘.
 		m_tAnimationDesc[eType].isAnimChangeLerp = false;
-	
 	
 	for (auto& pBone : m_Bones)
 	{
@@ -1690,7 +1678,7 @@ void CModel::Release_FileDatas_GCM()
 	Safe_Delete_Array(m_ModelGCM.iNumAnimations);
 }
 
-_uint CModel::Find_Animation_Index(const wstring& strTag, ANIMTYPE eType)
+_uint CModel::Find_Animation_Index(const wstring& wstrTag, ANIMTYPE eType) const
 {
 	_uint iAnimationIndex = { 0 };
 
@@ -1698,13 +1686,36 @@ _uint CModel::Find_Animation_Index(const wstring& strTag, ANIMTYPE eType)
 	{
 		wstring wstrAnimationTag = pAnimation->Get_AnimationName();
 
-		if (wstring::npos != wstrAnimationTag.find(strTag))
+		if (wstring::npos != wstrAnimationTag.find(wstrTag))
 			break;
 
 		++iAnimationIndex;
 	}
 
 	return iAnimationIndex;
+}
+
+void CModel::Reset_Animation(ANIMTYPE eType)
+{
+	if (true == m_tAnimationDesc[eType].isResetAnimTrigger)
+	{
+		// 애니메이션 리셋
+		m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Reset();
+
+		// 현재 애니메이션에 러프가 설정되어있으면 러프 세팅
+		if (m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Get_LerpAnim())
+		{
+			m_tAnimationDesc[eType].isAnimChangeLerp = true;
+			m_tAnimationDesc[eType].fAnimChangeTimer = ANIMATIONLERPTIME;
+		}
+
+		// 0번노드(하체)라면? 루트 매트릭스 초기화
+		if (eType == 0)
+			m_PostRootMatrix = XMMatrixIdentity();
+
+		// 리셋설정 다됐으니까 트리거 꺼줘.
+		m_tAnimationDesc[eType].isResetAnimTrigger = false;
+	}
 }
 
 CModel* CModel::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, TYPE eType, const _tchar* pModelFilePath, _float4x4 PivotMatrix)

@@ -205,7 +205,7 @@ void CDugbog::Tick_ImGui()
 	ImGui::Begin("Test Dugbog");
 
 	if (ImGui::InputInt("animIndex##Armored", &m_iIndex))
-		m_pModelCom->Reset_Animation(m_iIndex);
+		m_pModelCom->Change_Animation(m_iIndex);
 
 	ImGui::SeparatorText("Behavior");
 

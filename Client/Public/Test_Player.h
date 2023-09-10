@@ -3,8 +3,6 @@
 #include "Client_Defines.h"
 
 BEGIN(Engine)
-class CModel;
-class CModel_LOD;
 class CCustomModel;
 class CShader;
 class CRenderer;
@@ -37,12 +35,8 @@ private:
 	CShader*				m_pShaderCom = { nullptr };
 	CRenderer*				m_pRenderer = { nullptr };
 	CRigidBody*				m_pRigidBody = { nullptr };
-	CModel_LOD*				m_pModel_LOD = { nullptr };
 	
 	CCharacterController*	m_pController = { nullptr };
-
-private:
-	PxScene*		m_pScene = { nullptr };
 
 private:
 	HRESULT Add_Components();

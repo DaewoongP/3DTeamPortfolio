@@ -48,8 +48,6 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 	Select_Model();
 	AddModel_Button();
 
-	
-
 	if (m_pDummyObject == nullptr)
 	{
 		ImGui::End();
@@ -71,7 +69,6 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 	ImGui::Text("Notify");
 	Notify_InputFileds(m_szNotifyName, &m_eNotifyKeyFrameType, &m_fNotifyActionTime, &m_fNotifySpeed);
 
-	
 	ImGui::Separator();
 	ImGui::Text("Root&BoneTree");
 
@@ -128,7 +125,6 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 			Edit_Notify_Button(ePartCnt, pDummyModel);
 			Create_Notify_ChildFrame(ePartCnt, pDummyModel);
 
-			
 			ImGui::Separator();
 			ImGui::Text("Separate_Parts");
 			sprintf_s(szUIName, "Separate##%d", ePartCnt);
@@ -144,11 +140,6 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 				pDummyModel->Separate_Animation(m_iFromBone[ePartCnt], m_iToBone[ePartCnt],ePartCnt);
 			}
 		}
-	}
-
-	if (ImGui::Button("Reset_Dummy_WorldMatrix##Animation"))
-	{
-		dynamic_cast<CTransform*>(m_pDummyObject->Find_Component(TEXT("Com_Transform")))->Set_WorldMatrix(XMMatrixIdentity());
 	}
 
 	if (ImGui::Button("Delete_Dummy##Animation"))
@@ -287,7 +278,7 @@ void CAnimation_Window::Animation_ComboBox(CModel::ANIMTYPE ePartCnt, _char* szC
 			{
 				strcpy_s(szCurrentItem, sizeof(szAnimationName), szAnimationName);
 				ImGui::SetItemDefaultFocus();
-				pDummyModel->Reset_Animation(i, ePartCnt);
+				pDummyModel->Change_Animation(i, ePartCnt);
 			}
 
 			ImGui::SameLine();
@@ -327,7 +318,7 @@ void CAnimation_Window::Animation_ChildFrame(CModel::ANIMTYPE ePartCnt, _char* s
 			{
 				strcpy_s(szCurrentItem, sizeof(szAnimationName), szAnimationName);
 				ImGui::SetItemDefaultFocus();
-				pDummyModel->Reset_Animation(i, ePartCnt);
+				pDummyModel->Change_Animation(i, ePartCnt);
 			}
 
 			ImGui::SameLine();
@@ -386,7 +377,7 @@ void CAnimation_Window::Animation_Table(CModel::ANIMTYPE ePartCnt, _char* szCurr
 			{
 				strcpy_s(szCurrentItem, sizeof(szAnimationName), szAnimationName);
 				ImGui::SetItemDefaultFocus();
-				pDummyModel->Reset_Animation(i, ePartCnt);
+				pDummyModel->Change_Animation(i, ePartCnt);
 			}
 
 			ImGui::TableSetColumnIndex(3);
@@ -416,6 +407,18 @@ void CAnimation_Window::Animation_Action_Button(CModel::ANIMTYPE ePartCnt, CMode
 	{
 		pDummyModel->Get_Animation(ePartCnt)->Set_Pause(!pDummyModel->Get_Animation(ePartCnt)->Get_Paused_State());
 		*fNotifyActionTime = pDummyModel->Get_Animation(ePartCnt)->Get_Accmulation();
+	}
+
+	ImGui::SameLine();
+	if (ImGui::Button("Reset_Dummy_WorldMatrix##Animation"))
+	{
+		dynamic_cast<CTransform*>(m_pDummyObject->Find_Component(TEXT("Com_Transform")))->Set_WorldMatrix(XMMatrixIdentity());
+	}
+
+	ImGui::SameLine();
+	if (ImGui::Button("Reset_Animation##Animation"))
+	{
+		pDummyModel->Change_Animation(pDummyModel->Get_CurrentAnimIndex(), ePartCnt);
 	}
 }
 
@@ -523,7 +526,7 @@ void CAnimation_Window::Edit_Notify_Button(CModel::ANIMTYPE ePartCnt, CModel* pD
 void CAnimation_Window::Select_Model()
 {
 	ImGui::Text("AnimModelList");
-	ImGui::ListBox("##AnimModelListBox", &m_iModelIndex, VectorGetter, static_cast<void*>(&m_vecModelList), (_int)m_vecModelList.size(), 15);
+	ImGui::ListBox("##AnimModelListBox", &m_iModelIndex, VectorGetter, static_cast<void*>(&m_vecModelList), (_int)m_vecModelList.size(), 3);
 }
 
 void CAnimation_Window::Export_Model()

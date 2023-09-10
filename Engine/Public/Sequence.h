@@ -20,7 +20,7 @@ protected:
 	explicit CSequence(const CSequence& rhs);
 	virtual ~CSequence() = default;
 
-public:
+public: 
 	virtual HRESULT Initialize_Prototype() override { return S_OK; }
 	virtual HRESULT Initialize(void* pArg) override { return S_OK; }
 	virtual HRESULT Tick(const _float& fTimeDelta) override;

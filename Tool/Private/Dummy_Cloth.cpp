@@ -88,33 +88,6 @@ HRESULT CDummy_Cloth::Initialize(void* pArg)
 
 void CDummy_Cloth::Tick(_float fTimeDelta)
 {
-	if (nullptr != m_pModelCom)
-		m_pModelCom->Tick(m_eMeshPartsType, m_iMeshIndex, fTimeDelta);
-	//_bool CMesh::Check_RayModel(RAY ray, _float & _dist)
-	//{
-	//	_float dist = 10000;
-	//	_vector origin = XMLoadFloat4(&ray.vOrigin);
-	//	_vector dir = XMLoadFloat4(&ray.vDir);
-
-	//	for (_uint i = 0; i < Get_IndexNum() / 3; ++i)
-	//	{
-	//		//모든 인덱스를 돌며 float3를 3개 담은 친구를 반환해줌.
-	//		_vector vtx01 = Return_Vertex(i * 3 + 0);
-	//		_vector vtx02 = Return_Vertex(i * 3 + 1);
-	//		_vector vtx03 = Return_Vertex(i * 3 + 2);
-	//		if (TriangleTests::Intersects(origin, dir, vtx01, vtx02, vtx03, dist))
-	//		{
-	//			//오리진,방향,길이를 이용한 충돌지점 반환
-	//			//origin을 dir로 dist만큼 이동시키면 됨.
-	//			if (dist < _dist)
-	//			{
-	//				_dist = dist;
-	//			}
-	//			return true;
-	//		}
-	//	}
-	//	return false;
-	//}
 }
 
 void CDummy_Cloth::Late_Tick(_float fTimeDelta)

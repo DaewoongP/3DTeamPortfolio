@@ -1,7 +1,12 @@
 #include "Golem_Combat.h"
 #include "GameInstance.h"
 
+// 테스트용 
+#include "Layer.h"
+#include "Dummy.h"
+//
 #include "Weapon_Golem_Combat.h"
+#include "Action.h"
 
 CGolem_Combat::CGolem_Combat(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -46,7 +51,7 @@ void CGolem_Combat::Tick(_float fTimeDelta)
 		m_pRootBehavior->Tick(fTimeDelta);
 
 	if (nullptr != m_pModelCom)
-		m_pModelCom->Play_Animation(fTimeDelta);
+		m_pModelCom->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 }
 
 void CGolem_Combat::Late_Tick(_float fTimeDelta)
@@ -56,9 +61,6 @@ void CGolem_Combat::Late_Tick(_float fTimeDelta)
 	if (nullptr != m_pRenderer)
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
-#ifdef _DEBUG
-		m_pRenderer->Add_DebugGroup(m_pRigidBody);
-#endif // _DEBUG
 	}
 }
 
@@ -109,6 +111,54 @@ HRESULT CGolem_Combat::Render_Depth()
 
 HRESULT CGolem_Combat::Make_AI()
 {
+	BEGININSTANCE;
+
+	try /* Failed Check Make_AI */
+	{
+		/* Add Types */
+		/* 이거는 테스트 용으로 더미클래스 찾으려고 넣은 코드임 */
+		//CLayer* pLayer = pGameInstance->Find_Layer(LEVEL_MAINGAME, TEXT("Layer_Debug"));
+		/*CDummy* pTestTarget = dynamic_cast<CDummy*>(pLayer->Find_Component(TEXT("GameObject_Dummy")));
+		if (nullptr == pTestTarget)
+			throw TEXT("pTestTarget is nullptr");
+		if (FAILED(m_pRootBehavior->Add_Type("pTestTarget", pTestTarget)))
+			throw TEXT("Failed Add_Type pTestTArget");*/
+
+		/* Make Child Behaviors */
+		CSelector* pSelector = dynamic_cast<CSelector*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Selector")));
+		if (nullptr == pSelector)
+			throw TEXT("pSelector is nullptr");
+
+		CSequence* pSequence_Descendo = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
+		if (nullptr == pSequence_Descendo)
+			throw TEXT("pSequence_Descendo is nullptr");
+
+		/* Set Options */
+
+		/* Assemble Behaviors */
+		if (FAILED(m_pRootBehavior->Assemble_Behavior(TEXT("Selector"), pSelector)))
+			throw TEXT("Failed Assemble_Behavior Selector");
+
+		/*if (FAILED(pSelector->Assemble_Behavior(), ))
+			throw TEXT("Failed Assemble_Behavior ");*/
+		if (FAILED(pSelector->Assemble_Behavior(TEXT("pSequence_Descendo"), pSequence_Descendo)))
+			throw TEXT("Failed Assemble_Behavior pSequence_Descendo");
+
+		if (FAILED(Make_Descendo(pSequence_Descendo)))
+			throw TEXT("Failed Make_Descendo");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CGolem_Combat] Failed Make_AI : \n");
+		wstrErrorMSG += pErrorTag;
+		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+		ENDINSTANCE;
+
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
 	return S_OK;
 }
 
@@ -121,11 +171,6 @@ HRESULT CGolem_Combat::Add_Components()
 			TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
 			throw TEXT("Com_Renderer");
 
-		/* Com_RigidBody */
-		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
-			TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody))))
-			throw TEXT("Com_RigidBody");
-
 		/* For.Com_Model */
 		if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Golem_Combat"),
 			TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
@@ -137,9 +182,9 @@ HRESULT CGolem_Combat::Add_Components()
 			throw TEXT("Com_Shader");
 
 		/* For.Com_RootBehavior */
-		/*if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RootBehavior"),
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RootBehavior"),
 			TEXT("Com_RootBehavior"), reinterpret_cast<CComponent**>(&m_pRootBehavior))))
-			throw TEXT("Com_RootBehavior");*/
+			throw TEXT("Com_RootBehavior");
 
 		const CBone* pBone = m_pModelCom->Get_Bone(TEXT("SKT_RightHand"));
 		if (nullptr == pBone)
@@ -157,7 +202,7 @@ HRESULT CGolem_Combat::Add_Components()
 	}
 	catch (const _tchar* pErrorTag)
 	{
-		wstring wstrErrorMSG = TEXT("[CGolem_Combat] Failed Add_Components : ");
+		wstring wstrErrorMSG = TEXT("[CGolem_Combat] Failed Add_Components : \n");
 		wstrErrorMSG += pErrorTag;
 		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
 
@@ -221,20 +266,83 @@ void CGolem_Combat::Tick_ImGui()
 	ImGui::Begin("Test Golem_Combat");
 
 	if (ImGui::InputInt("animIndex##Armored", &m_iIndex))
-		m_pModelCom->Reset_Animation(m_iIndex);
+		m_pModelCom->Change_Animation(m_iIndex);
+	wstring wstrTag = m_pModelCom->Get_Animation(m_iIndex)->Get_AnimationName();
+	ImGui::Text(wstrToStr(wstrTag).c_str());
 
 	ImGui::SeparatorText("Behavior");
 
-	/*vector<wstring> DebugBehaviorTags = m_pRootBehavior->Get_DebugBahaviorTags();
+	vector<wstring> DebugBehaviorTags = m_pRootBehavior->Get_DebugBahaviorTags();
 
 	for (auto& Tag : DebugBehaviorTags)
 	{
 		ImGui::Text(wstrToStr(Tag).c_str());
-	}*/
+	}
 
 	ImGui::End();
 }
 #endif // _DEBUG
+
+HRESULT CGolem_Combat::Make_Descendo(_Inout_ CSequence* pSequence)
+{
+	BEGININSTANCE;
+
+	try /* Failed Check_Make_Descendo */
+	{
+		if (nullptr == pSequence)
+			throw TEXT("Parameter pSequence is nullptr");
+
+		/* Make Child Behaviors */
+		CAction* pAction_Descendo1 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		if (nullptr == pAction_Descendo1)
+			throw TEXT("pAction_Descendo1 is nullptr");
+		CAction* pAction_Descendo2 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		if (nullptr == pAction_Descendo2)
+			throw TEXT("pAction_Descendo2 is nullptr");
+		CAction* pAction_Descendo3 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		if (nullptr == pAction_Descendo3)
+			throw TEXT("pAction_Descendo3 is nullptr");
+		CAction* pAction_Descendo4 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		if (nullptr == pAction_Descendo4)
+			throw TEXT("pAction_Descendo4 is nullptr");
+		CAction* pAction_GetUp = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		if (nullptr == pAction_GetUp)
+			throw TEXT("pAction_GetUp is nullptr");
+
+		/* Set Options */
+		pAction_Descendo1->Set_Options(TEXT("Descendo_1"), m_pModelCom);
+		pAction_Descendo2->Set_Options(TEXT("Descendo_2"), m_pModelCom);
+		pAction_Descendo3->Set_Options(TEXT("Descendo_3"), m_pModelCom);
+		pAction_Descendo4->Set_Options(TEXT("Descendo_4"), m_pModelCom);
+		pAction_GetUp->Set_Options(TEXT("GetUp_Front"), m_pModelCom);
+
+		/* Assemble Behaviors */
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("pAction_Descendo1"), pAction_Descendo1)))
+			throw TEXT("Failed Assemble_Behavior pAction_Descendo1");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("pAction_Descendo2"), pAction_Descendo2)))
+			throw TEXT("Failed Assemble_Behavior pAction_Descendo1");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("pAction_Descendo3"), pAction_Descendo3)))
+			throw TEXT("Failed Assemble_Behavior pAction_Descendo1");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("pAction_Descendo4"), pAction_Descendo4)))
+			throw TEXT("Failed Assemble_Behavior pAction_Descendo1");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("pAction_GetUp"), pAction_GetUp)))
+			throw TEXT("Failed Assemble_Behavior pAction_GetUp");
+
+		ENDINSTANCE;
+
+		return S_OK;
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed Make_Descendo : \n");
+		wstrErrorMSG += pErrorTag;
+		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+
+		ENDINSTANCE;
+
+		return E_FAIL;
+	}
+}
 
 CGolem_Combat* CGolem_Combat::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
@@ -272,7 +380,6 @@ void CGolem_Combat::Free()
 		Safe_Release(m_pModelCom);
 		Safe_Release(m_pRenderer);
 		Safe_Release(m_pShaderCom);
-		Safe_Release(m_pRigidBody);
 		Safe_Release(m_pRootBehavior);
 	}
 }
