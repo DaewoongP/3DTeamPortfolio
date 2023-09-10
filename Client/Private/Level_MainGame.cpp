@@ -14,7 +14,10 @@ HRESULT CLevel_MainGame::Initialize()
 		return E_FAIL;
 	if (FAILED(Ready_Lights()))
 		return E_FAIL;
+
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
+		return E_FAIL;
+	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
 		return E_FAIL;
@@ -186,6 +189,33 @@ HRESULT CLevel_MainGame::Ready_Layer_Effect(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 #endif _DEBUG
+	Safe_Release(pGameInstance);
+
+	return S_OK;
+}
+HRESULT CLevel_MainGame::Ready_Layer_UI(const _tchar* pLayerTag)
+{
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	_tchar pFilePath[MAX_PATH] = TEXT("../../Resources/GameData/UIData/aaa.uidata");
+	_ulong dwByte = 0;
+	HANDLE hFile = CreateFile(pFilePath, GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+	
+	if (hFile == INVALID_HANDLE_VALUE)
+	{
+		MSG_BOX("Failed Save");
+		CloseHandle(hFile);
+		return E_FAIL;
+	}
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_HP"),
+		pLayerTag, TEXT("GameObject_UI_Group_HP"), &hFile)))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_HP)");
+		return E_FAIL;
+	}
+
 	Safe_Release(pGameInstance);
 
 	return S_OK;

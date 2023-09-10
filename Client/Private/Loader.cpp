@@ -9,6 +9,10 @@
 #include "Logo_BackGround.h"
 #pragma endregion BackGrounds
 
+#pragma region UI
+#include "UI_Group_HP.h"
+#pragma endregion UI
+
 #pragma region Monsters & NPC
 #include "Armored_Troll.h"
 #include "Forest_Troll.h"
@@ -473,6 +477,11 @@ HRESULT CLoader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Cloth"),
 			CTest_Cloth::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Test_Cloth");
+
+		/* For.Prototype_GameObject_Test_UI*/
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_HP"),
+			CUI_Group_HP::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_UI_Group_HP");
 #endif // _DEBUG
 		
 	}

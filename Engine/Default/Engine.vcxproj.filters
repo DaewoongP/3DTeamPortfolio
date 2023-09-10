@@ -636,7 +636,7 @@
     <ClInclude Include="..\Public\UI.h">
       <Filter>01. Utility\03. Components\19. UI</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\UI_Gruop.h">
+    <ClInclude Include="..\Public\UI_Group.h">
       <Filter>01. Utility\03. Components\19. UI</Filter>
     </ClInclude>
   </ItemGroup>
@@ -935,7 +935,7 @@
     <ClCompile Include="..\Private\UI.cpp">
       <Filter>01. Utility\03. Components\19. UI</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\UI_Gruop.cpp">
+    <ClCompile Include="..\Private\UI_Group.cpp">
       <Filter>01. Utility\03. Components\19. UI</Filter>
     </ClCompile>
   </ItemGroup>

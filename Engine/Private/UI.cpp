@@ -1,5 +1,6 @@
 #include "UI.h"
 #include "GameInstance.h"
+#include "Component_Manager.h"
 
 CUI::CUI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -25,6 +26,9 @@ HRESULT CUI::Initialize_Prototype()
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
 
+	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
+	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(m_fWinSizeX, m_fWinSizeY, 0.f, 1.f));
+
 	return S_OK;
 }
 
@@ -33,6 +37,12 @@ HRESULT CUI::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
+	if (nullptr != pArg)
+	{
+		DWORD dwByte = 0;
+		Load(pArg, dwByte);
+	}
+
 	return S_OK;
 }
 
@@ -40,6 +50,18 @@ void CUI::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
+	if (m_pParent == nullptr)
+	{
+		m_vCombinedXY.x = m_fX;
+		m_vCombinedXY.y = m_fY;
+	}
+	else
+	{
+		_float2 vParentPos = m_pParent->Get_fXY();
+
+		m_vCombinedXY.x = vParentPos.x + m_fX;
+		m_vCombinedXY.y = vParentPos.y + m_fY;
+	}
 }
 
 void CUI::Late_Tick(_float fTimeDelta)
@@ -91,7 +113,6 @@ _float2 CUI::WorldPos_To_UIPos(_float fX, _float fY)
 
 HRESULT CUI::Change_Position(_float fX, _float fY)
 {
-
 	m_pTransform->Set_Position(
 		XMVectorSet(m_vCombinedXY.x - m_fWinSizeX * 0.5f, -m_vCombinedXY.y + m_fWinSizeY * 0.5f, m_fZ, 1.f));
 
@@ -108,8 +129,53 @@ HRESULT CUI::Change_Scale(_float fX, _float fY)
 	return S_OK;
 }
 
+HRESULT CUI::Save(HANDLE hFile, _ulong& dwByte)
+{
+	WriteFile(hFile, &m_vCombinedXY, sizeof m_vCombinedXY, &dwByte, nullptr);
+	WriteFile(hFile, &m_fX, sizeof m_fX, &dwByte, nullptr);
+	WriteFile(hFile, &m_fY, sizeof m_fY, &dwByte, nullptr);
+	WriteFile(hFile, &m_fZ, sizeof m_fZ, &dwByte, nullptr);
+	WriteFile(hFile, &m_fSizeX, sizeof m_fSizeX, &dwByte, nullptr);
+	WriteFile(hFile, &m_fSizeY, sizeof m_fSizeY, &dwByte, nullptr);
+	WriteFile(hFile, m_wszTextureName, sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
+	WriteFile(hFile, m_wszTexturePath, sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
+	WriteFile(hFile, &m_isParent, sizeof(_bool), &dwByte, nullptr);
+	WriteFile(hFile, &m_isAlpha, sizeof m_isAlpha, &dwByte, nullptr);
+	WriteFile(hFile, &m_vColor, sizeof m_vColor, &dwByte, nullptr);
+	WriteFile(hFile, m_wszAlphaTexturePrototypeTag, sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
+	WriteFile(hFile, m_wszAlphaTextureFilePath, sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
+	WriteFile(hFile, &m_eUIType, sizeof(UI_ID), &dwByte, nullptr);
+	
+	m_isSave = true;
+	WriteFile(hFile, &m_isSave, sizeof(_bool), &dwByte, nullptr);
+
+	return S_OK;
+}
+
+HRESULT CUI::Load(HANDLE hFile, _ulong& dwByte)
+{
+	ReadFile(hFile, &m_vCombinedXY, sizeof(_float2), &dwByte, nullptr);
+	ReadFile(hFile, &m_fX, sizeof(_float), &dwByte, nullptr);
+	ReadFile(hFile, &m_fY, sizeof(_float), &dwByte, nullptr);
+	ReadFile(hFile, &m_fZ, sizeof(_float), &dwByte, nullptr);
+	ReadFile(hFile, &m_fSizeX, sizeof(_float), &dwByte, nullptr);
+	ReadFile(hFile, &m_fSizeY, sizeof(_float), &dwByte, nullptr);
+	ReadFile(hFile, m_wszTextureName, sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
+	ReadFile(hFile, m_wszTexturePath, sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
+	ReadFile(hFile, &m_isParent, sizeof(_bool), &dwByte, nullptr);
+	ReadFile(hFile, &m_isAlpha, sizeof m_isAlpha, &dwByte, nullptr);
+	ReadFile(hFile, &m_vColor, sizeof m_vColor, &dwByte, nullptr);
+	ReadFile(hFile, m_wszAlphaTexturePrototypeTag, sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
+	ReadFile(hFile, m_wszAlphaTextureFilePath, sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
+	ReadFile(hFile, &m_eUIType, sizeof(UI_ID), &dwByte, nullptr);
+	ReadFile(hFile, &m_isSave, sizeof(_bool), &dwByte, nullptr);
+
+	return S_OK;
+}
+
 void CUI::Free()
 {
 	__super::Free();
 
+	Safe_Release(m_pParent);
 }

@@ -1,10 +1,10 @@
 #pragma once
-#include "UI_Gruop.h"
+#include "UI_Group.h"
 #include "Tool_Defines.h"
 
 BEGIN(Tool)
 
-class CDummy_UI_Group final : public CUI_Gruop
+class CDummy_UI_Group final : public CUI_Group
 {
 protected:
 	explicit CDummy_UI_Group(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
