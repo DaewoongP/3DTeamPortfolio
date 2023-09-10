@@ -1,18 +1,17 @@
-#include "Forest_Troll.h"
+#include "Dummy.h"
 #include "GameInstance.h"
-#include "Weapon_Forest_Troll.h"
 
-CForest_Troll::CForest_Troll(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CDummy::CDummy(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
 }
 
-CForest_Troll::CForest_Troll(const CForest_Troll& rhs)
+CDummy::CDummy(const CDummy& rhs)
 	: CGameObject(rhs)
 {
 }
 
-HRESULT CForest_Troll::Initialize_Prototype()
+HRESULT CDummy::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
@@ -20,7 +19,7 @@ HRESULT CForest_Troll::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CForest_Troll::Initialize(void* pArg)
+HRESULT CDummy::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -30,39 +29,31 @@ HRESULT CForest_Troll::Initialize(void* pArg)
 
 	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
+	m_pTransform->Set_Position(_float3(7.f, 0.f, 7.f));
 
 	return S_OK;
 }
 
-void CForest_Troll::Tick(_float fTimeDelta)
+void CDummy::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	m_pModelCom->Play_Animation(fTimeDelta);
+	if (nullptr != m_pModelCom)
+		m_pModelCom->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 }
 
-void CForest_Troll::Late_Tick(_float fTimeDelta)
+void CDummy::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
 	if (nullptr != m_pRenderer)
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
-#ifdef _DEBUG
-		m_pRenderer->Add_DebugGroup(m_pRigidBody);
-#endif // _DEBUG
 	}
 }
 
-HRESULT CForest_Troll::Render()
+HRESULT CDummy::Render()
 {
-#ifdef _DEBUG
-	Tick_ImGui();
-#endif // _DEBUG
-
-	if (FAILED(__super::Render()))
-		return E_FAIL;
-
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
@@ -86,7 +77,7 @@ HRESULT CForest_Troll::Render()
 		}
 		catch (const _tchar* pErrorTag)
 		{
-			wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed Render : ");
+			wstring wstrErrorMSG = TEXT("[CDummy] Failed Render : ");
 			wstrErrorMSG += pErrorTag;
 			MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
 
@@ -97,12 +88,12 @@ HRESULT CForest_Troll::Render()
 	return S_OK;
 }
 
-HRESULT CForest_Troll::Render_Depth()
+HRESULT CDummy::Render_Depth()
 {
 	return S_OK;
 }
 
-HRESULT CForest_Troll::Add_Components()
+HRESULT CDummy::Add_Components()
 {
 	try /* Check Add_Components */
 	{
@@ -111,13 +102,8 @@ HRESULT CForest_Troll::Add_Components()
 			TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
 			throw TEXT("Com_Renderer");
 
-		/* Com_RigidBody */
-		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
-			TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody))))
-			throw TEXT("Com_RigidBody");
-
 		/* For.Com_Model */
-		if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Forest_Troll"),
+		if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Golem_Combat"),
 			TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 			throw TEXT("Com_Model");
 
@@ -125,24 +111,10 @@ HRESULT CForest_Troll::Add_Components()
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimMesh"),
 			TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 			throw TEXT("Com_Shader");
-
-		const CBone* pBone = m_pModelCom->Get_Bone(TEXT("SKT_RightHand"));
-		if (nullptr == pBone)
-			throw TEXT("pBone is nullptr");
-
-		CWeapon_Forest_Troll::PARENTMATRIXDESC ParentMatrixDesc;
-		ParentMatrixDesc.OffsetMatrix = _float4x4();
-		ParentMatrixDesc.PivotMatrix = m_pModelCom->Get_PivotFloat4x4();
-		ParentMatrixDesc.pCombindTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
-		ParentMatrixDesc.pParentWorldMatrix = m_pTransform->Get_WorldMatrixPtr();
-
-		if (FAILED(Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Weapon_Forest_Troll"),
-			TEXT("Com_Weapon"), reinterpret_cast<CComponent**>(&m_pWeapon), &ParentMatrixDesc)))
-			throw TEXT("Com_Weapon");
 	}
 	catch (const _tchar* pErrorTag)
 	{
-		wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed Add_Components : ");
+		wstring wstrErrorMSG = TEXT("[CDummy] Failed Add_Components : \n");
 		wstrErrorMSG += pErrorTag;
 		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
 
@@ -152,7 +124,7 @@ HRESULT CForest_Troll::Add_Components()
 	return S_OK;
 }
 
-HRESULT CForest_Troll::SetUp_ShaderResources()
+HRESULT CDummy::SetUp_ShaderResources()
 {
 	BEGININSTANCE;
 
@@ -189,54 +161,40 @@ HRESULT CForest_Troll::SetUp_ShaderResources()
 	return S_OK;
 }
 
-#ifdef _DEBUG
-void CForest_Troll::Tick_ImGui()
+CDummy* CDummy::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	ImGui::Begin("Test Troll");
-
-	if (ImGui::InputInt("animIndex##Forest", &m_iIndex))
-		m_pModelCom->Change_Animation(m_iIndex);
-
-	ImGui::End();
-}
-#endif // _DEBUG
-
-CForest_Troll* CForest_Troll::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-{
-	CForest_Troll* pInstance = New CForest_Troll(pDevice, pContext);
+	CDummy* pInstance = New CDummy(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Created CForest_Troll");
+		MSG_BOX("Failed to Created CDummy");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject* CForest_Troll::Clone(void* pArg)
+CGameObject* CDummy::Clone(void* pArg)
 {
-	CForest_Troll* pInstance = New CForest_Troll(*this);
+	CDummy* pInstance = New CDummy(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned CForest_Troll");
+		MSG_BOX("Failed to Cloned CDummy");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CForest_Troll::Free()
+void CDummy::Free()
 {
 	__super::Free();
 
 	if (true == m_isCloned)
 	{
-		Safe_Release(m_pWeapon);
 		Safe_Release(m_pModelCom);
-		Safe_Release(m_pShaderCom);
 		Safe_Release(m_pRenderer);
-		Safe_Release(m_pRigidBody);
+		Safe_Release(m_pShaderCom);
 	}
 }

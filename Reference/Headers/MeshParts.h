@@ -50,7 +50,6 @@ public:
 public:
 	virtual HRESULT Initialize_Prototype(const wstring& _wstrMeshPartsFilePath, const wstring& _wstrMeshPartsTag);
 	virtual HRESULT Initialize(void* pArg);
-	virtual void Tick(const _uint& _iMeshIndex, _float _fTimeDelta);
 	virtual HRESULT Render(const _uint& _iMeshIndex);
 
 public:
@@ -83,6 +82,9 @@ private:
 	HRESULT Ready_Material();
 
 	void Release_FileDatas();
+
+private:
+
 
 public:
 	static CMeshParts* Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, 

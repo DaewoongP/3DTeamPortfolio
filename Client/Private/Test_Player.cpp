@@ -40,9 +40,9 @@ void CTest_Player::Tick(_float fTimeDelta)
 
 	Key_Input(fTimeDelta);
 
-	//m_pModelCom->Tick(2, 2, fTimeDelta);
+	m_pModelCom->Tick(fTimeDelta);
 
-	//m_pModel_LOD->Play_Animation(fTimeDelta);
+	m_pModelCom->Play_Animation(fTimeDelta);
 }
 
 void CTest_Player::Late_Tick(_float fTimeDelta)
@@ -87,18 +87,36 @@ HRESULT CTest_Player::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	/*_uint		iNumMeshes = m_pModel_LOD->Get_NumMeshes();
-
-	for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; ++iMeshCount)
+	for (_uint iParts = 0; iParts < CCustomModel::MESH_END; ++iParts)
 	{
-		m_pModel_LOD->Bind_Material(m_pShaderCom, "g_DiffuseTexture", iMeshCount, DIFFUSE);
+		_uint		iNumMeshes = m_pModelCom->Get_NumMeshes(iParts);
 
-		if (FAILED(m_pShaderCom->Begin("Mesh")))
-			return E_FAIL;
+		for (_uint i = 0; i < iNumMeshes; ++i)
+		{
+			try /* Failed Render */
+			{
+				if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", iParts, i)))
+					throw TEXT("Bind_BoneMatrices");
 
-		if (FAILED(m_pModel_LOD->Render(iMeshCount)))
-			return E_FAIL;
-	}*/
+				if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", iParts, i, DIFFUSE)))
+					throw TEXT("Bind_Material Diffuse");
+
+				if (FAILED(m_pShaderCom->Begin("AnimMesh")))
+					throw TEXT("Shader Begin AnimMesh");
+
+				if (FAILED(m_pModelCom->Render(iParts, i)))
+					throw TEXT("Model Render");
+			}
+			catch (const _tchar* pErrorTag)
+			{
+				wstring wstrErrorMSG = TEXT("[CTest_Player] Failed Render : ");
+				wstrErrorMSG += pErrorTag;
+				MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+
+				return E_FAIL;
+			}
+		}
+	}
 
 	return S_OK;
 }
@@ -140,21 +158,24 @@ HRESULT CTest_Player::Add_Components()
 		return E_FAIL;
 	}
 
-	///* For.Com_Model_LOD */
-	//if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Test_Robe_LOD"),
-	//	TEXT("Com_Model_LOD"), reinterpret_cast<CComponent**>(&m_pModel_LOD))))
-	//{
-	//	MSG_BOX("Failed CTest_Player Add_Component : (Com_Model_LOD)");
-	//	return E_FAIL;
-	//}
+	/* Com_CustomModel */
+	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_CustomModel"),
+		TEXT("Com_CustomModel"), reinterpret_cast<CComponent**>(&m_pModelCom), &CapsuleControllerDesc)))
+	{
+		MSG_BOX("Failed CTest_Player Add_Component : (Com_CustomModel)");
+		return E_FAIL;
+	}
 
 	/* For.Com_Shader */
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxMesh"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 	{
 		MSG_BOX("Failed CTest_Player Add_Component : (Com_Shader)");
 		return E_FAIL;
 	}
+
+	m_pModelCom->Add_MeshParts(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Robe_Student"), CCustomModel::ROBE);
+	m_pModelCom->Add_MeshParts(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Low"), CCustomModel::PANTS);
 
 	return S_OK;
 }
@@ -186,7 +207,7 @@ void CTest_Player::Key_Input(_float fTimeDelta)
 	{
 		m_pRigidBody->Add_Force(m_pTransform->Get_Look() * m_pTransform->Get_Speed(), PxForceMode::eACCELERATION);
 	}
-	
+
 	if (pGameInstance->Get_DIKeyState(DIK_DOWN))
 	{
 		m_pRigidBody->Add_Force(m_pTransform->Get_Look() * -m_pTransform->Get_Speed(), PxForceMode::eACCELERATION);
@@ -241,7 +262,7 @@ void CTest_Player::Tick_ImGui()
 		m_pRigidBody->Get_RigidBodyActor()->setMaxLinearVelocity(fMaxLinearVelocity);
 	}
 
-	
+
 	_float3 vPlayerPos;
 	ImGui::SetNextItemWidth(20.f);
 	ImGui::Text("%.1f /", vPlayerPos.x); ImGui::SameLine();
@@ -304,6 +325,5 @@ void CTest_Player::Free()
 		Safe_Release(m_pRenderer);
 		Safe_Release(m_pController);
 		Safe_Release(m_pRigidBody);
-		Safe_Release(m_pModel_LOD);
 	}
 }

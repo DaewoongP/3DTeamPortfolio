@@ -30,7 +30,7 @@ public:
 		4. 한번만 실행 할 행동인지
 		5. 애니메이션 러프 유무
 	*/
-	void Set_Options(const wstring& _strAnimationTag, CModel* _pModel, const _float& _fCoolTime = 0.f,
+	void Set_Options(const wstring& _wstrAnimationTag, CModel* _pModel, const _float& _fCoolTime = 0.f,
 		_bool _isOneTimeAction = false, _bool _isLerp = true);
 
 private:
@@ -43,7 +43,6 @@ private:
 	_bool m_isOneTimeAction = { false };
 	_bool m_isPlayAction = { false };
 	_bool m_isFirst = { true };
-	_bool m_isLerp = { true };
 
 private:
 	CModel* m_pModel = { nullptr };

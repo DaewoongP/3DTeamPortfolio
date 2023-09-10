@@ -37,6 +37,7 @@
 #include "MeshEffect.h"
 #include "BlackBoard.h"
 #include "CustomModel.h"
+#include "RandomChoose.h"
 #include "Bounding_OBB.h"
 #include "RootBehavior.h"
 #include "Bounding_AABB.h"

@@ -51,13 +51,13 @@ HRESULT CAction::Tick(const _float& fTimeDelta)
 	}
 
 	/* 행동이 하나라도 있으면 행동체크 활성화 */
-	if (0 != m_Behaviors.size())
+	if (0 < m_Behaviors.size())
 		m_isFinishBehaviors = true;
 
 	if (true == m_isFirst)
 	{
 		m_isPlayAction = true;
-		m_pModel->Reset_Animation(0);
+		m_pModel->Change_Animation(m_wstrAnimationTag);
 		m_isFirst = false;
 	}
 
@@ -76,7 +76,7 @@ HRESULT CAction::Tick(const _float& fTimeDelta)
 
 	_bool bCheck = { false };
 
-	if (true == m_pModel->Is_Able_Change_Animation() || 
+	if (true == m_pModel->Is_Finish_Animation() ||
 		true == m_isFinishBehaviors)
 	{
 		bCheck = true;
@@ -97,7 +97,7 @@ HRESULT CAction::Tick(const _float& fTimeDelta)
 	return BEHAVIOR_RUNNING;
 }
 
-void CAction::Set_Options(const wstring& _strAnimationTag, CModel* _pModel, const _float& _fCoolTime, _bool _isOneTimeAction, _bool _isLerp)
+void CAction::Set_Options(const wstring& _wstrAnimationTag, CModel* _pModel, const _float& _fCoolTime, _bool _isOneTimeAction, _bool _isLerp)
 {
 	if (nullptr == _pModel)
 	{
@@ -108,10 +108,11 @@ void CAction::Set_Options(const wstring& _strAnimationTag, CModel* _pModel, cons
 	m_pModel = _pModel;
 	Safe_AddRef(m_pModel);
 
-	m_wstrAnimationTag = _strAnimationTag;
+	m_wstrAnimationTag = _wstrAnimationTag;
 	m_fLimit = _fCoolTime;
 	m_isOneTimeAction = _isOneTimeAction;
-	m_isLerp = _isLerp;
+
+	m_pModel->Get_Animation(m_wstrAnimationTag)->Set_LerpAnim(_isLerp);
 }
 
 CAction* CAction::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

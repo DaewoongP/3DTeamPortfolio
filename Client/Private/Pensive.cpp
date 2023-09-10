@@ -221,7 +221,7 @@ void CPensive::Tick_ImGui()
 	ImGui::Begin("Test Golem_Merlin");
 
 	if (ImGui::InputInt("animIndex##Armored", &m_iIndex))
-		m_pModelCom->Reset_Animation(m_iIndex);
+		m_pModelCom->Change_Animation(m_iIndex);
 
 	ImGui::SeparatorText("Behavior");
 

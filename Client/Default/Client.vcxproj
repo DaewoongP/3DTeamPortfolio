@@ -168,6 +168,7 @@
     <ClInclude Include="..\Public\Assasin_Goblin.h" />
     <ClInclude Include="..\Public\Behavior_Includes.h" />
     <ClInclude Include="..\public\Camera_Debug.h" />
+    <ClInclude Include="..\Public\Dummy.h" />
     <ClInclude Include="..\Public\Golem_Combat.h" />
     <ClInclude Include="..\Public\Client_Defines.h" />
     <ClInclude Include="..\Public\Client_Includes.h" />
@@ -247,6 +248,7 @@
     <ClCompile Include="..\Private\Armored_Troll.cpp" />
     <ClCompile Include="..\Private\Assasin_Goblin.cpp" />
     <ClCompile Include="..\private\Camera_Debug.cpp" />
+    <ClCompile Include="..\Private\Dummy.cpp" />
     <ClCompile Include="..\Private\Golem_Combat.cpp" />
     <ClCompile Include="..\Private\Dugbog.cpp" />
     <ClCompile Include="..\Private\Forest_Troll.cpp" />

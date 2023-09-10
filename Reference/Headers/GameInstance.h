@@ -43,9 +43,9 @@ public: /* For. Graphic_Device */
 	HRESULT Bind_BackBuffer();
 
 public: /* For.Timer_Manager */
-	HRESULT		Add_Timer(const _tchar * pTimerTag);
-	void		Tick_Timer(const _tchar * pTimerTag);
-	_float		Get_TimeDelta(const _tchar * pTimerTag);
+	HRESULT	Add_Timer(const _tchar * pTimerTag);
+	void	Tick_Timer(const _tchar * pTimerTag);
+	_float	Get_TimeDelta(const _tchar * pTimerTag);
 
 public: /* For.Level_Manager */
 	HRESULT Open_Level(_uint iLevelIndex, class CLevel * pNewLevel);

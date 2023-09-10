@@ -169,7 +169,7 @@ void CAssassin_Goblin::Tick_ImGui()
 	ImGui::Begin("Test Troll");
 
 	if (ImGui::InputInt("animIndex", &m_iIndex))
-		m_pModelCom->Reset_Animation(m_iIndex);
+		m_pModelCom->Change_Animation(m_iIndex);
 
 	ImGui::End();
 }

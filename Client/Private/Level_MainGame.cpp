@@ -220,11 +220,11 @@ HRESULT CLevel_MainGame::Ready_Layer_Effect(const _tchar* pLayerTag)
 	Safe_AddRef(pGameInstance);
 
 #ifdef _DEBUG
- 	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Particle"), pLayerTag, TEXT("GameObject_Test_Particle"))))
+ 	/*if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Particle"), pLayerTag, TEXT("GameObject_Test_Particle"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Particle)");
 		return E_FAIL;
-	}
+	}*/
 #endif _DEBUG
 	Safe_Release(pGameInstance);
 
@@ -274,7 +274,7 @@ HRESULT CLevel_MainGame::Ready_Layer_Debug(const _tchar* pLayerTag)
 		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Player)");
 		return E_FAIL;
 	}
-
+	
 	/*if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Cloth"), pLayerTag, TEXT("GameObject_Test_Cloth"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Cloth)");
@@ -295,11 +295,17 @@ HRESULT CLevel_MainGame::Ready_Layer_Debug(const _tchar* pLayerTag)
 	}*/
 	
 
-	/*if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Armored_Troll"), pLayerTag, TEXT("GameObject_Armored_Troll"))))
+	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Golem_Combat"), pLayerTag, TEXT("GameObject_Test_Monster"))))
 	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Armored_Troll)");
+		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Monster)");
 		return E_FAIL;
-	}*/
+	}
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Dummy"), pLayerTag, TEXT("GameObject_Dummy"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Dummy)");
+		return E_FAIL;
+	}
 
 	Safe_Release(pGameInstance);
 
