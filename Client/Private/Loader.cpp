@@ -177,15 +177,15 @@ HRESULT CLoader::Loading_For_MainGame()
 			CVIBuffer_Cube::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_VIBuffer_Cube");
 
-		/* For.Prototype_Component_VIBuffer_Terrain */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Terrain"),
-			CVIBuffer_Terrain::Create(m_pDevice, m_pContext, 513, 513))))
-			throw TEXT("Prototype_Component_VIBuffer_Terrain");
-
-		///* Prototype_Component_VIBuffer_Terrain */
+		///* For.Prototype_Component_VIBuffer_Terrain */
 		//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Terrain"),
-		//	CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Terrain/Height.bmp")))))
+		//	CVIBuffer_Terrain::Create(m_pDevice, m_pContext, 513, 513))))
 		//	throw TEXT("Prototype_Component_VIBuffer_Terrain");
+
+		/* Prototype_Component_VIBuffer_Terrain */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Terrain"),
+			CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Terrain/Height.bmp")))))
+			throw TEXT("Prototype_Component_VIBuffer_Terrain");
 		
 		/* For.Prototype_Component_VIBuffer_Cloth */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Cloth"),
