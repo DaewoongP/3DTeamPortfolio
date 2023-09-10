@@ -119,30 +119,6 @@ PS_OUT_DEPTH PS_MAIN_DEPTH(PS_IN In)
     return Out;
 }
 
-PS_OUT PS_MAIN_COLOR(PS_IN In)
-{
-     // 메쉬 선택 하이라이팅용 입니다.
-    // 클라이언트에서 사용 시 주의해주십셔
-    PS_OUT Out = (PS_OUT) 0;
-
-    vector vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
-    
-    vector vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
-  
-    float3 vNormal = vNormalDesc.xyz * 2.f - 1.f;
-
-    float3x3 WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal.xyz, In.vNormal.xyz);
-
-    vNormal = mul(vNormal, WorldMatrix);
-    
-    vector vSelectColor = vector(1.f, 0.1f, 0.1f, 0.3f);
-    
-    Out.vDiffuse = vDiffuse * vSelectColor;
-    Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
-    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fCamFar, 0.f, 0.f);
-    
-    return Out;
-}
 technique11 DefaultTechnique
 {
 	pass AnimMesh
@@ -168,19 +144,6 @@ technique11 DefaultTechnique
         HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
         DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
         PixelShader = compile ps_5_0 PS_MAIN_DEPTH();
-    }
-    // 메쉬 선택 하이라이팅용 입니다.
-    pass AnimColorMesh
-    {
-        SetRasterizerState(RS_WireFrame);
-        SetDepthStencilState(DSS_Default, 0);
-        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-
-        VertexShader = compile vs_5_0 VS_MAIN();
-        GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
-        HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
-        DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
-        PixelShader = compile ps_5_0 PS_MAIN_COLOR();
     }
 }
 

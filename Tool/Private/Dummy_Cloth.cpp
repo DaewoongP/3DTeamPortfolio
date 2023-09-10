@@ -27,10 +27,8 @@ _bool CDummy_Cloth::Get_VertexIndex_By_Picking(_Inout_ _uint* pVertexIndex, _Ino
 	}
 
 	vector<_float3> Vertices = m_pCurrent_Dynamic_Mesh->Get_VertexPositions();
-	for (auto& Vertex : Vertices)
-	{
-		Vertex = XMVector3TransformCoord(Vertex, XMMatrixRotationQuaternion(XMQuaternionRotationRollPitchYaw(XMConvertToRadians(90.f), 0.f, 0.f)));
-	}
+
+
 	vector<_ulong> Indices = m_pCurrent_Dynamic_Mesh->Get_Indices();
 
 	_float4 vMouseOrigin, vMouseDirection;
@@ -52,18 +50,18 @@ _bool CDummy_Cloth::Get_VertexIndex_By_Picking(_Inout_ _uint* pVertexIndex, _Ino
 	_uint iVertexIndex0 = { 0 };
 	_bool	isIntersects = { false };
 
-	for (_uint i = 0; i < Indices.size(); ++i)
+	for (_uint i = 0; i < Indices.size() - 3; ++i)
 	{
-		vVertex0 = Vertices[Indices[i++]];
-		vVertex1 = Vertices[Indices[i++]];
-		vVertex2 = Vertices[Indices[i++]];
+		vVertex0 = Vertices[Indices[i]];
+		vVertex1 = Vertices[Indices[i + 1]];
+		vVertex2 = Vertices[Indices[i + 2]];
 
 		if (TriangleTests::Intersects(vMouseOrigin, vMouseDirection, vVertex0, vVertex1, vVertex2, fDist))
 		{
 			if (fDist < fReturnDist)
 			{
 				fReturnDist = fDist;
-				iVertexIndex0 = Indices[i - 3];
+				iVertexIndex0 = Indices[i];
 
 				vIntersectVertex0 = vVertex0;
 				vIntersectVertex1 = vVertex1;
@@ -132,7 +130,7 @@ void CDummy_Cloth::Set_Model_Component(CCustomModel::MESHTYPE _eMeshType, const 
 
 	m_eMeshPartsType = _eMeshType;
 
-	m_pModelCom->Play_Animation(0.f);
+	//m_pModelCom->Play_Animation(0.f);
 }
 
 void CDummy_Cloth::Set_MeshIndex(_uint _iMeshIndex)
@@ -185,9 +183,12 @@ HRESULT CDummy_Cloth::Initialize(void* pArg)
 }
 
 void CDummy_Cloth::Tick(_float fTimeDelta)
-{
+{	
 	if (nullptr != m_pModelCom)
 		m_pModelCom->Tick(m_eMeshPartsType, m_iMeshIndex, fTimeDelta);
+
+	//m_pModelCom->Play_Animation(fTimeDelta);
+
 }
 
 void CDummy_Cloth::Late_Tick(_float fTimeDelta)
@@ -221,11 +222,10 @@ HRESULT CDummy_Cloth::Render()
 				m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", iPartsIndex, i);
 
 				m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", iPartsIndex, i, DIFFUSE);
-
 				if (m_iMeshIndex != i)
-					m_pShaderCom->Begin("AnimMesh");
+					m_pShaderCom->Begin("Default");
 				else
-					m_pShaderCom->Begin("AnimColorMesh");
+					m_pShaderCom->Begin("MeshColor");
 
 				m_pModelCom->Render(iPartsIndex, i);
 			}
@@ -263,7 +263,7 @@ HRESULT CDummy_Cloth::Add_Components()
 	}
 
 	/* Com_Shader */
-	if (FAILED(CComposite::Add_Component(LEVEL_TOOL, TEXT("Prototype_Component_Shader_VtxAnimMesh"),
+	if (FAILED(CComposite::Add_Component(LEVEL_TOOL, TEXT("Prototype_Component_Shader_VtxMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 	{
 		MSG_BOX("Failed CDummy_Cloth Add_Component : (Com_Shader)");

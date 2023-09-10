@@ -396,8 +396,8 @@ HRESULT CDynamic_Mesh::Initialize_ClothMesh()
 	for (_uint i = 0; i < m_iNumVertices; ++i)
 	{
 		// To put attachment point closer to each other
-		if (m_InvMasses[i] < 1e-6)
-			m_VertexPositions[i] = m_VertexPositions[i] * 0.95f;
+		/*if (m_InvMasses[i] < 1e-6)
+			m_VertexPositions[i] = m_VertexPositions[i] * 0.95f;*/
 
 		// w component is 1/mass, or 0.0f for anchored/fixed particles
 		ParticlesCopy[i] = physx::PxVec4(PhysXConverter::ToPxVec3(m_VertexPositions[i]), m_InvMasses[i]);
