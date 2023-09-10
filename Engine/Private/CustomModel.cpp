@@ -171,6 +171,7 @@ void CCustomModel::Reset_Animation(const _uint& _iAnimIndex)
 
 void CCustomModel::Play_Animation(const _float& _fTimeDelta)
 {
+	m_Animations[m_iCurrentAnimIndex]->Invalidate_AccTime(_fTimeDelta);
 	m_Animations[m_iCurrentAnimIndex]->Invalidate_Frame(_fTimeDelta);
 	m_Animations[m_iCurrentAnimIndex]->Invalidate_TransformationMatrix(m_Bones, _fTimeDelta);
 

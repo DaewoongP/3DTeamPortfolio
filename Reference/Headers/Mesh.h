@@ -21,6 +21,8 @@ protected:
 public:
 	_uint	Get_MaterialIndex() const { return m_iMaterialIndex; }
 	void	Get_Matrices(CModel::BONES Bones, _Inout_ _float4x4* pMatrices, _float4x4 PivotMatrix);
+	vector<_float3>* Get_VerticesPositionVec() { return &m_VerticesPositionVec; }
+	vector<PxU32>* Get_IndicesVec() { return &m_IndicesVec; }
 
 public:
 	virtual HRESULT Initialize_Prototype(CModel::TYPE eType, const CModel::BONES& Bones, const Engine::MESH Mesh, _float4x4 PivotMatrix);
@@ -33,6 +35,10 @@ protected:
 protected:
 	_uint			m_iNumBones = { 0 };
 	vector<_uint>	m_BoneIndices;
+
+	// Physx ConvexMesh »ý¼º¿ë
+	vector<_float3> m_VerticesPositionVec;
+	vector<PxU32> m_IndicesVec;
 
 protected:
 	virtual HRESULT Ready_VertexBuffer_NonAnim(const Engine::MESH Mesh, _float4x4 PivotMatrix);

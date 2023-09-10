@@ -49,6 +49,7 @@ public:
 	void Set_Constraint(RigidBodyConstraint eConstraintFlag, _bool _isEnable);
 	void Set_Kinematic(_bool _isKinematic);
 	void Set_Density(_float _fDensity) const;
+	void Set_AngularDamping(_float _fAngualrDamping) const;
 
 #ifdef _DEBUG
 	void Set_DebugColor(_float4 _vColor) { m_vColor = _vColor; }

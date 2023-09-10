@@ -39,6 +39,8 @@ public:
 	_uint						Get_AnimationPartCount() { return m_iAnimationPartCount; }
 	_uint						Get_RootBoneIndex() { return m_iRootBoneIndex; }
 	_bool						Is_Able_Change_Animation() { return m_isChangeAnimation; }
+	class CMesh*				Get_Meshes_Test() { return(m_Meshes[0]); }
+	vector<class CMesh*>*		Get_MeshesVec() { return &m_Meshes; }
 
 public:
 	virtual HRESULT Initialize_Prototype(TYPE eType, const _tchar* pModelFilePath, _float4x4 PivotMatrix);
