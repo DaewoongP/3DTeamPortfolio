@@ -8,7 +8,7 @@ class CModel_Converter final : public CBase
 {
 public:
 	// 모델 타입
-	enum TYPE { TYPE_NONANIM, TYPE_ANIM, TYPE_MAPOBJECT, TYPE_END };
+	enum TYPE { TYPE_NONANIM, TYPE_ANIM, TYPE_COL, TYPE_MAPOBJECT, TYPE_END };
 
 private:
 	explicit CModel_Converter();
@@ -40,7 +40,6 @@ private: /* For. Converted Structs */
 	MATERIAL*				m_pMaterial = { nullptr };
 	// AIScene->mAnimations 의 값들을 담기위한 변수
 	ANIMATION*				m_pAnimation = { nullptr };
-
 private:
 	HRESULT Convert_Bones(aiNode * pNode, _uint iParentIndex, _Inout_ _uint * iChildIndex, _bool isRoot = false);
 	// 뼈를 인덱스 순서대로 처리하기 위한 정렬 함수
@@ -53,6 +52,7 @@ private:
 private:
 	// 현재까지 담은 구조체와 변수들을 파일로 써주는 함수
 	HRESULT Write_File(TYPE eType, const _tchar* pSaveDirectory, const _tchar * pFileName);
+	HRESULT Write_File_COL(TYPE eType, const _tchar* pSaveDirectory, const _tchar* pFileName);
 	
 public:
 	static HRESULT Convert(_uint iType, const _char * pModelFilePath);

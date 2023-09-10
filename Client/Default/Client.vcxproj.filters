@@ -130,6 +130,15 @@
     <Filter Include="02. GameObject\99. Debug\Cloth">
       <UniqueIdentifier>{3f5e0d18-9b63-46c6-b1ee-b4c3d0a446b1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\99. Debug\Stair">
+      <UniqueIdentifier>{9ea51d67-5f15-45a3-ae58-2fbf7f6f12bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\99. Debug\PhysxRender">
+      <UniqueIdentifier>{ffbc88f7-a780-4e66-87b7-7baf68d24ed3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. ShaderFiles\Debug">
+      <UniqueIdentifier>{1d5583a2-e4a6-4d7c-a4bd-c23fd81f765f}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\05. UI\UI_Skill">
       <UniqueIdentifier>{ffcdd06d-9e79-4b4e-8438-f500909b5260}</UniqueIdentifier>
     </Filter>
@@ -282,6 +291,12 @@
     <ClInclude Include="..\public\Test_Cloth.h">
       <Filter>02. GameObject\99. Debug\Cloth</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Test_Stair.h">
+      <Filter>02. GameObject\99. Debug\Stair</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PhysXRender.h">
+      <Filter>02. GameObject\99. Debug\PhysxRender</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -401,6 +416,12 @@
     <ClCompile Include="..\private\Test_Cloth.cpp">
       <Filter>02. GameObject\99. Debug\Cloth</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Test_Stair.cpp">
+      <Filter>02. GameObject\99. Debug\Stair</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PhysXRender.cpp">
+      <Filter>02. GameObject\99. Debug\PhysxRender</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -438,6 +459,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxMesh.hlsl">
       <Filter>97. ShaderFiles\Meshes</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Debug.hlsl">
+      <Filter>97. ShaderFiles\Debug</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

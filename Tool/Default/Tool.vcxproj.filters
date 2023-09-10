@@ -121,6 +121,15 @@
     <Filter Include="02. ToolObjects\01. Dummy\Dummy_Cloth">
       <UniqueIdentifier>{96d81abe-75a6-4828-952f-2eb9e1a68bb2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. ToolObjects\06. PhysX">
+      <UniqueIdentifier>{f99c162b-06a0-4805-9bf5-4624a6157e42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Window\Window\TriangleCollider">
+      <UniqueIdentifier>{37f2fa06-2d22-45ba-b600-79e1ddd37989}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. ToolObjects\05. TrianlgeColMesh">
+      <UniqueIdentifier>{a1c13a60-e1b0-4642-95b8-30f251a9228d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tool.h">
@@ -282,6 +291,15 @@
     <ClInclude Include="..\public\Dummy_Cloth.h">
       <Filter>02. ToolObjects\01. Dummy\Dummy_Cloth</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\PhysXRender.h">
+      <Filter>02. ToolObjects\06. PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\TriangleCollider_Window.h">
+      <Filter>01. Window\Window\TriangleCollider</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\TriangleColMesh.h">
+      <Filter>02. ToolObjects\05. TrianlgeColMesh</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -422,6 +440,15 @@
     </ClCompile>
     <ClCompile Include="..\private\Dummy_Cloth.cpp">
       <Filter>02. ToolObjects\01. Dummy\Dummy_Cloth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PhysXRender.cpp">
+      <Filter>02. ToolObjects\06. PhysX</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\TriangleCollider_Window.cpp">
+      <Filter>01. Window\Window\TriangleCollider</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\TriangleColMesh.cpp">
+      <Filter>02. ToolObjects\05. TrianlgeColMesh</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

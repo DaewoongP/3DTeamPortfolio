@@ -283,6 +283,12 @@
     <Filter Include="01. Utility\11. Physics\Job">
       <UniqueIdentifier>{def8c79f-6f0e-40f1-80f6-4f10844dcc2d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\03. Components\22. ConvexMesh">
+      <UniqueIdentifier>{0b0a3cc0-390c-4e04-b18b-3927f2a1d00b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\23. TriangleMesh">
+      <UniqueIdentifier>{018aa039-fd8d-4b13-a025-b83948a5eef5}</UniqueIdentifier>
+    </Filter>
     <Filter Include="01. Utility\03. Components\13. CharacterController">
       <UniqueIdentifier>{34e887bf-9249-4cc8-bdf0-670c9df56fa7}</UniqueIdentifier>
     </Filter>
@@ -636,6 +642,13 @@
     <ClInclude Include="..\Public\JobManager.h">
       <Filter>01. Utility\11. Physics\Job</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\VIBuffer_Object_Instance.h" />
+    <ClInclude Include="..\Public\ConvexMesh.h">
+      <Filter>01. Utility\03. Components\22. ConvexMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\TriangleMesh.h">
+      <Filter>01. Utility\03. Components\23. TriangleMesh</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\UI.h">
       <Filter>01. Utility\03. Components\19. UI</Filter>
     </ClInclude>
@@ -952,6 +965,12 @@
     </ClCompile>
     <ClCompile Include="..\private\String_Manager.cpp">
       <Filter>01. Utility\13. String_Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ConvexMesh.cpp">
+      <Filter>01. Utility\03. Components\22. ConvexMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\TriangleMesh.cpp">
+      <Filter>01. Utility\03. Components\23. TriangleMesh</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

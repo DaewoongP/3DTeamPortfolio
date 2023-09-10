@@ -12,15 +12,15 @@ HRESULT CLevel_MainGame::Initialize()
 {
 	if (FAILED(__super::Initialize()))
 		return E_FAIL;
-	if (FAILED(Ready_Lights()))
+	/*if (FAILED(Ready_Lights()))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
-		return E_FAIL;
-	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
-		return E_FAIL;
+		return E_FAIL;*/
+	/*if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
+		return E_FAIL;*/
 #ifdef _DEBUG
-	if (FAILED(Ready_Layer_Debug(TEXT("Layer_Debug"))))
-		return E_FAIL;
+	/*if (FAILED(Ready_Layer_Debug(TEXT("Layer_Debug"))))
+		return E_FAIL;*/
 #endif // _DEBUG
 
 	BEGININSTANCE;
@@ -81,13 +81,13 @@ HRESULT CLevel_MainGame::Ready_Layer_BackGround(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Terrain"), pLayerTag, TEXT("GameObject_Terrain"))))
+	/*if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Terrain"), pLayerTag, TEXT("GameObject_Terrain"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Terrain)");
 		return E_FAIL;
-	}
+	}*/
 
-	Load_MapObject();
+	//Load_MapObject();
 
 	Safe_Release(pGameInstance);
 
@@ -244,12 +244,26 @@ HRESULT CLevel_MainGame::Ready_Layer_Debug(const _tchar* pLayerTag)
 		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Player)");
 		return E_FAIL;
 	}
-	
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Cloth"), pLayerTag, TEXT("GameObject_Test_Cloth"))))
+
+	/*if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Cloth"), pLayerTag, TEXT("GameObject_Test_Cloth"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Cloth)");
 		return E_FAIL;
+	}	
+	*/
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Stair"), pLayerTag, TEXT("GameObject_Test_Stair"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Stair)");
+		return E_FAIL;
 	}
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_PhysxRenderer"), pLayerTag, TEXT("GameObject_PhysxRenderer"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_PhysxRenderer)");
+		return E_FAIL;
+	}
+	
 
 	/*if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Armored_Troll"), pLayerTag, TEXT("GameObject_Armored_Troll"))))
 	{

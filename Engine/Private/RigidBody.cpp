@@ -140,6 +140,15 @@ void CRigidBody::Set_Density(_float _fDensity) const
 	}
 }
 
+void CRigidBody::Set_AngularDamping(_float _fAngualrDamping) const
+{
+	if (nullptr != m_pActor &&
+		nullptr != m_pActor->is<PxRigidBody>())
+	{
+		reinterpret_cast<PxRigidDynamic*>(m_pActor)->setAngularDamping(_fAngualrDamping);
+	}
+}
+
 HRESULT CRigidBody::Initialize(void* pArg)
 {
 	if (FAILED(Create_Actor()))

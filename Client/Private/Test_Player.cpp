@@ -131,17 +131,30 @@ HRESULT CTest_Player::Add_Components()
 
 	//Safe_Release(pGameInstance);
 
-	///* Com_Controller */
-	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_CharacterController"),
-	//	TEXT("Com_Controller"), reinterpret_cast<CComponent**>(&m_pController), &CapsuleControllerDesc)))
-	//{
-	//	MSG_BOX("Failed CTest_Player Add_Component : (Com_Controller)");
-	//	return E_FAIL;
-	//}
-	
+	/* Com_Controller */
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_CharacterController"),
+		TEXT("Com_Controller"), reinterpret_cast<CComponent**>(&m_pController), &CapsuleControllerDesc)))
+	{
+		MSG_BOX("Failed CTest_Player Add_Component : (Com_Controller)");
+		return E_FAIL;
+	}
+
 	/* Com_RigidBody */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
 		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody))))
+	{
+		MSG_BOX("Failed CTest_Player Add_Component : (Com_RigidBody)");
+		return E_FAIL;
+	}
+	// 리지드바디 액터 설정
+	PxRigidBody* Rigid = m_pRigidBody->Get_RigidBodyActor();
+	Rigid->setMaxLinearVelocity(1000.f);
+	Rigid->setMass(10.f);
+	Rigid->setAngularDamping(0.7f);
+
+	/* For.Com_Model */
+	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_CustomModel"),
+		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 	{
 		MSG_BOX("Failed CTest_Player Add_Component : (Com_RigidBody)");
 		return E_FAIL;
