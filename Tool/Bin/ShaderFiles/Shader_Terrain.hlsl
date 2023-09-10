@@ -92,8 +92,9 @@ PS_OUT PS_BRUSH(PS_IN In)
         }
     }   */
 
-    if (g_vBrushCurrentPoint.x - g_fBrushRadius < In.vWorldPos.x && In.vWorldPos.x <= g_vBrushCurrentPoint.x + g_fBrushRadius &&
-        g_vBrushCurrentPoint.z - g_fBrushRadius < In.vWorldPos.z && In.vWorldPos.z <= g_vBrushCurrentPoint.z + g_fBrushRadius)
+    /*if (g_vBrushCurrentPoint.x - g_fBrushRadius < In.vWorldPos.x && In.vWorldPos.x <= g_vBrushCurrentPoint.x + g_fBrushRadius &&
+        g_vBrushCurrentPoint.z - g_fBrushRadius < In.vWorldPos.z && In.vWorldPos.z <= g_vBrushCurrentPoint.z + g_fBrushRadius)*/
+    if(50.f <= In.vWorldPos.y)
     {
         float2		vTexUV;
 
