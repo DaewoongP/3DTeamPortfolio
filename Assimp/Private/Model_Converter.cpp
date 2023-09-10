@@ -66,10 +66,18 @@ HRESULT CModel_Converter::Convert_Model(_uint iType, const _char* pModelFilePath
 		fs::create_directory(szPath);
 	}
 	// Write NonAnim
-	else
+	else if(TYPE_NONANIM == eType)
 	{
 		lstrcat(szPath, TEXT("NonAnims/"));
 		lstrcat(szPath, szSubFileName.c_str());
+		lstrcat(szPath, TEXT("/"));
+		fs::create_directory(szPath);
+	}
+	// Write MapObject
+	else if (TYPE_MAPOBJECT == eType)
+	{
+		lstrcat(szPath, TEXT("NonAnims/MapObject/"));
+		lstrcat(szPath, szFileName);
 		lstrcat(szPath, TEXT("/"));
 		fs::create_directory(szPath);
 	}

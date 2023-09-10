@@ -8,7 +8,7 @@ class CModel_Converter final : public CBase
 {
 public:
 	// ¸ðµ¨ Å¸ÀÔ
-	enum TYPE { TYPE_NONANIM, TYPE_ANIM, TYPE_END };
+	enum TYPE { TYPE_NONANIM, TYPE_ANIM, TYPE_MAPOBJECT, TYPE_END };
 
 private:
 	explicit CModel_Converter();

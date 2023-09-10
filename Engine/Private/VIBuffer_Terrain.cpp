@@ -50,13 +50,31 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMap)
 	m_eFormat = { DXGI_FORMAT_R32_UINT };
 	m_eTopology = { D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST };
 
-
 #pragma region VERTEX_BUFFER
 
 	VTXPOSNORTEX* pVertices = new VTXPOSNORTEX[m_iNumVertices];
 	ZeroMemory(pVertices, sizeof(VTXPOSNORTEX) * m_iNumVertices);
 
 	m_pPos = new _float3[m_iNumVertices];
+	ZeroMemory(m_pPos, sizeof(_float3) * m_iNumVertices);
+
+	// Bmp 로드
+	DirectX::ScratchImage image;
+	HRESULT hr = DirectX::LoadFromWICFile(pHeightMap, DirectX::WIC_FLAGS_NONE, nullptr, image);
+
+	// 이미지 데이터 추출
+	const DirectX::Image* img = image.GetImage(0, 0, 0);
+
+	// Height Map 생성 (예: R 채널 값 사용)
+	std::vector<float> heightMap(img->height * img->width);
+
+	if (SUCCEEDED(hr))	{
+		
+		for (size_t i = 0; i < img->height * img->width; ++i)
+		{
+			heightMap[i] = static_cast<float>(img->pixels[i * 4]); // R 채널 값을 사용
+		}
+	}
 
 	for (_uint i = 0; i < iNumVerticesZ; ++i)
 	{
@@ -64,11 +82,10 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMap)
 		{
 			_uint		iIndex = i * iNumVerticesX + j;
 
-			pVertices[iIndex].vPosition = _float3((_float)j, (pPixel[iIndex] & 0x000000ff) / 10.0f, (_float)i);
+			//m_pPos[iIndex] = pVertices[iIndex].vPosition = _float3((_float)j, (pPixel[iIndex] & 0x000000ff) / 10.f, (_float)i);
+			m_pPos[iIndex] = pVertices[iIndex].vPosition = _float3((_float)j, (heightMap[iIndex]) / 1.f, (_float)i);
 			pVertices[iIndex].vNormal = _float3(0.f, 0.f, 0.f);
 			pVertices[iIndex].vTexCoord = _float2((_float)j / (iNumVerticesX - 1.f), i / (iNumVerticesZ - 1.f));
-
-			m_pPos[iIndex] = _float3((_float)j, (pPixel[iIndex] & 0x000000ff) / 10.0f, (_float)i);
 		}
 	}
 
@@ -80,6 +97,10 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMap)
 
 	_ulong* pIndices = new _ulong[m_iNumIndices];
 	ZeroMemory(pIndices, sizeof(_ulong) * m_iNumIndices);
+
+	m_pIndex = new _uint[m_iNumIndices];
+	ZeroMemory(m_pIndex, sizeof(_uint) * m_iNumIndices);
+	//memcpy(m_pIndex, pIndices, sizeof(_uint) * m_iNumIndices);
 
 	_uint		iNumIndices = { 0 };
 
@@ -108,7 +129,6 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMap)
 				XMLoadFloat3(&pVertices[iIndices[1]].vPosition);
 			vNormal = XMVector3Normalize(XMVector3Cross(vSour, vDest));
 
-
 			XMStoreFloat3(&pVertices[iIndices[0]].vNormal,
 				XMLoadFloat3(&pVertices[iIndices[0]].vNormal) + vNormal);
 			XMStoreFloat3(&pVertices[iIndices[1]].vNormal,
@@ -135,9 +155,6 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMap)
 		}
 	}
 
-	m_pIndex = new _uint[m_iNumIndices];
-	memcpy(m_pIndex, pIndices, sizeof(_uint) * m_iNumIndices);
-
 	for (size_t i = 0; i < m_iNumVertices; i++)
 	{
 		XMStoreFloat3(&pVertices[i].vNormal,
@@ -162,10 +179,10 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMap)
 	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
 
 	m_BufferDesc.ByteWidth = { m_iIndexStride * m_iNumIndices };
-	m_BufferDesc.Usage = { D3D11_USAGE_DEFAULT };
+	m_BufferDesc.Usage = { D3D11_USAGE_DYNAMIC };
 	m_BufferDesc.BindFlags = { D3D11_BIND_INDEX_BUFFER };
 	m_BufferDesc.StructureByteStride = { 0 };
-	m_BufferDesc.CPUAccessFlags = { 0 };
+	m_BufferDesc.CPUAccessFlags = { D3D11_CPU_ACCESS_WRITE };
 	m_BufferDesc.MiscFlags = { 0 };
 
 	ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
@@ -183,6 +200,9 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMap)
 		iNumVerticesX * iNumVerticesZ - 1,
 		iNumVerticesX - 1,
 		0);
+
+	if (FAILED(m_pQuadTree->Make_Neighbors()))
+		return E_FAIL;
 
 	return S_OK;
 }

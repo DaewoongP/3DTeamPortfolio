@@ -31,6 +31,8 @@
 #include "fmod\fmod.h"
 #include "fmod\fmod.hpp"
 
+#include "DirectXTex/DirectXTex.h"
+
 #ifdef _DEBUG
 
 #pragma comment(lib, "PhysXd/PhysX_64.lib")
