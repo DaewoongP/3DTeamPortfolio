@@ -37,10 +37,10 @@ HRESULT CUI_Group_HP::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	BEGININSTANCE
+	/*BEGININSTANCE
 
 	pGameInstance->Add_Component(LEVEL_MAINGAME, m_ProtoTypeTags[0], TEXT("Layer_UI"), TEXT(""), pArg);
-	
+
 	CUI* pUI = dynamic_cast<CUI*>(pGameInstance->Clone_Component(LEVEL_MAINGAME, m_ProtoTypeTags[0], pArg));
 	m_pParent = pUI;
 	Safe_AddRef(m_pParent);
@@ -53,7 +53,7 @@ HRESULT CUI_Group_HP::Initialize(void* pArg)
 	m_Childs.push_back(pUI);
 	Safe_AddRef(pUI);
 
-	ENDINSTANCE;
+	ENDINSTANCE;*/
 	// parent -> Prototypetag / level
 	//__super::Load(TEXT("../../Resources/UIDATA/"), vector<pair<Prototypetag / level>>, Prototypetag / level);
 

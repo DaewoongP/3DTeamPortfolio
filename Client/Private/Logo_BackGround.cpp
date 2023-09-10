@@ -1,4 +1,5 @@
 #include "..\Public\Logo_BackGround.h"
+#include "Logo_BackGround.h"
 #include "GameInstance.h"
 
 CLogo_BackGround::CLogo_BackGround(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

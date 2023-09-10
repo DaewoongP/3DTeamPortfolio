@@ -642,7 +642,6 @@
     <ClInclude Include="..\Public\JobManager.h">
       <Filter>01. Utility\11. Physics\Job</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\VIBuffer_Object_Instance.h" />
     <ClInclude Include="..\Public\ConvexMesh.h">
       <Filter>01. Utility\03. Components\22. ConvexMesh</Filter>
     </ClInclude>
@@ -660,9 +659,6 @@
     </ClInclude>
     <ClInclude Include="..\public\String_Manager.h">
       <Filter>01. Utility\13. String_Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\PhysX\geometry\PxHeightFieldSample.h">
-      <Filter>01. Utility\03. Components\16. Plane</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
