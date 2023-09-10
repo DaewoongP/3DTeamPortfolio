@@ -92,7 +92,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	// Main Tool
 	CMainTool* pMainTool = CMainTool::Create();
-    NULL_CHECK_RETURN_MSG(pMainTool, FALSE, L"Failed Create MainTool");
+    if (nullptr == pMainTool)
+    {
+        MSG_BOX("Failed Create MainTool");
+        return FALSE;
+    }
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);

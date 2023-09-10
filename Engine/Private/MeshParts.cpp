@@ -82,6 +82,11 @@ HRESULT CMeshParts::Initialize(void* _pArg)
 	return S_OK;
 }
 
+void CMeshParts::Tick(const _uint& _iMeshIndex, _float _fTimeDelta)
+{
+	m_Meshes[_iMeshIndex]->Tick(_fTimeDelta);
+}
+
 HRESULT CMeshParts::Render(const _uint& _iMeshIndex)
 {
 	if (FAILED(m_Meshes[_iMeshIndex]->Render()))

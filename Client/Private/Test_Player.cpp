@@ -40,8 +40,6 @@ void CTest_Player::Tick(_float fTimeDelta)
 
 	Key_Input(fTimeDelta);
 
-	m_pModelCom->Tick(fTimeDelta);
-
 	m_pModelCom->Play_Animation(fTimeDelta);
 }
 
@@ -160,7 +158,7 @@ HRESULT CTest_Player::Add_Components()
 
 	/* Com_CustomModel */
 	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_CustomModel"),
-		TEXT("Com_CustomModel"), reinterpret_cast<CComponent**>(&m_pModelCom), &CapsuleControllerDesc)))
+		TEXT("Com_CustomModel"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 	{
 		MSG_BOX("Failed CTest_Player Add_Component : (Com_CustomModel)");
 		return E_FAIL;

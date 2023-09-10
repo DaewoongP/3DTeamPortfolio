@@ -185,12 +185,11 @@ HRESULT CDummy_Cloth::Initialize(void* pArg)
 }
 
 void CDummy_Cloth::Tick(_float fTimeDelta)
-{	
+{
 	if (nullptr != m_pModelCom)
 		m_pModelCom->Tick(m_eMeshPartsType, m_iMeshIndex, fTimeDelta);
 
-	//m_pModelCom->Play_Animation(fTimeDelta);
-
+	__super::Tick(fTimeDelta);
 }
 
 void CDummy_Cloth::Late_Tick(_float fTimeDelta)
