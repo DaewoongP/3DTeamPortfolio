@@ -46,7 +46,7 @@ _bool CDummy_Cloth::Get_VertexIndex_By_Picking(_Inout_ _uint* pVertexIndex, _Ino
 	_float3 vVertex0, vIntersectVertex0;
 	_float3 vVertex1, vIntersectVertex1;
 	_float3 vVertex2, vIntersectVertex2;
-	_uint iVertexIndex0 = { 0 };
+	_uint iIndex0 = { 0 };
 	_bool	isIntersects = { false };
 
 	for (_uint i = 0; i < Indices.size() - 3; ++i)
@@ -60,7 +60,7 @@ _bool CDummy_Cloth::Get_VertexIndex_By_Picking(_Inout_ _uint* pVertexIndex, _Ino
 			if (fDist < fReturnDist)
 			{
 				fReturnDist = fDist;
-				iVertexIndex0 = Indices[i];
+				iIndex0 = i;
 
 				vIntersectVertex0 = vVertex0;
 				vIntersectVertex1 = vVertex1;
@@ -83,7 +83,7 @@ _bool CDummy_Cloth::Get_VertexIndex_By_Picking(_Inout_ _uint* pVertexIndex, _Ino
 	if (fVertexDist0 <= fVertexDist1 &&
 		fVertexDist0 <= fVertexDist2)
 	{
-		*pVertexIndex = iVertexIndex0;
+		*pVertexIndex = Indices[iIndex0];
 		*pPickPosition = vIntersectVertex0;
 		return true;
 	}
@@ -91,7 +91,7 @@ _bool CDummy_Cloth::Get_VertexIndex_By_Picking(_Inout_ _uint* pVertexIndex, _Ino
 	if (fVertexDist1 <= fVertexDist0 &&
 		fVertexDist1 <= fVertexDist2)
 	{
-		*pVertexIndex = iVertexIndex0 + 1;
+		*pVertexIndex = Indices[iIndex0 + 1];
 		*pPickPosition = vIntersectVertex1;
 		return true;
 	}
@@ -99,7 +99,7 @@ _bool CDummy_Cloth::Get_VertexIndex_By_Picking(_Inout_ _uint* pVertexIndex, _Ino
 	if (fVertexDist2 <= fVertexDist1 &&
 		fVertexDist2 <= fVertexDist0)
 	{
-		*pVertexIndex = iVertexIndex0 + 2;
+		*pVertexIndex = Indices[iIndex0 + 2];
 		*pPickPosition = vIntersectVertex2;
 		return true;
 	}
@@ -186,7 +186,8 @@ HRESULT CDummy_Cloth::Initialize(void* pArg)
 
 void CDummy_Cloth::Tick(_float fTimeDelta)
 {
-	if (nullptr != m_pModelCom)
+	if (nullptr != m_pModelCom &&
+		true == m_isTesting)
 		m_pModelCom->Tick(m_eMeshPartsType, m_iMeshIndex, fTimeDelta);
 
 	__super::Tick(fTimeDelta);
@@ -226,7 +227,22 @@ HRESULT CDummy_Cloth::Render()
 				if (m_iMeshIndex != i)
 					m_pShaderCom->Begin("Default");
 				else
-					m_pShaderCom->Begin("MeshColor");
+				{
+					if (true == m_isWireFrame)
+					{
+						if (true == m_isMeshHighLight)
+							m_pShaderCom->Begin("MeshWireColor");
+						else
+							m_pShaderCom->Begin("MeshWire");
+					}
+					else
+					{
+						if (true == m_isMeshHighLight)
+							m_pShaderCom->Begin("MeshColor");
+						else
+							m_pShaderCom->Begin("Default");
+					}
+				}
 
 				m_pModelCom->Render(iPartsIndex, i);
 			}

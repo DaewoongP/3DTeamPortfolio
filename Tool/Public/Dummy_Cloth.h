@@ -20,6 +20,7 @@ private:
 	virtual ~CDummy_Cloth() = default;
 
 public:
+	_bool Get_WireFrame() { return m_isWireFrame; }
 	CCustomModel* Get_CustomModel() const { return m_pModelCom; }
 	_uint Get_Max_NumMesh() const { return m_pModelCom->Get_NumMeshes(m_eMeshPartsType); }
 	cloth::Cloth* Get_CurrentMesh_Cloth() const { 
@@ -34,6 +35,8 @@ public:
 	void Set_Model_Component(CCustomModel::MESHTYPE _eMeshType, const _tchar* _pModelTag);
 	void Set_MeshIndex(_uint _iMeshIndex);
 	void Set_Testing(_bool _isTesting) { m_isTesting = _isTesting; }
+	void Set_WireFrame(_bool _isWireFrame) { m_isWireFrame = _isWireFrame; }
+	void Set_MeshHighLight(_bool _isMeshHighLight) { m_isMeshHighLight = _isMeshHighLight; }
 
 public:
 	virtual HRESULT Initialize_Prototype();
@@ -60,6 +63,8 @@ private:
 
 private:
 	_bool					m_isTesting = { false };
+	_bool					m_isWireFrame = { false };
+	_bool					m_isMeshHighLight = { false };
 
 private:
 	HRESULT Add_Components();

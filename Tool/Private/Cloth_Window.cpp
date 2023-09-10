@@ -38,6 +38,7 @@ HRESULT CCloth_Window::Initialize(ImVec2 _vWindowPos, ImVec2 _vWindowSize)
 	}
 	
 	m_pCollider = static_cast<CCollider*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Sphere_Collider")));
+	m_pRenderer = static_cast<CRenderer*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Renderer")));
 
 	m_pDummy_Cloth = static_cast<CDummy_Cloth*>(m_pGameInstance->Find_Component_In_Layer(LEVEL_TOOL, TEXT("Layer_Dummy_Cloth"), TEXT("Com_Dummy")));
 	Safe_AddRef(m_pDummy_Cloth);
@@ -52,6 +53,14 @@ void CCloth_Window::Tick(_float _fTimeDelta)
 	CImWindow::Tick(_fTimeDelta);
 	ImGui::Begin("Cloth", nullptr, m_WindowFlag);
 
+	if (true == m_isPickMesh ||
+		true == m_isPickCollider)
+	{
+		m_pDummy_Cloth->Set_Testing(false);
+	}
+	else
+		m_pDummy_Cloth->Set_Testing(true);
+
 	Radio_Select_MeshType(_fTimeDelta);
 
 	Open_Model(_fTimeDelta);
@@ -62,64 +71,53 @@ void CCloth_Window::Tick(_float _fTimeDelta)
 
 	Current_Picked_Vertices(_fTimeDelta);
 
-	Pick_Collider(_fTimeDelta);
-
 	ImGui::End();
-	
-	RECT rc;
-	GetWindowRect(g_hWnd, &rc);
 
-	ImGui::SetNextWindowPos(ImVec2(_float(rc.left), _float(rc.bottom)));
-	ImGui::SetNextWindowSize(ImVec2(_float(g_iWinSizeX), 200.f));
 
-	ImGui::Begin("Options", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
+	Input_Options(_fTimeDelta);	
 
-	Input_Wind(_fTimeDelta);
-	
-	ImGui::End();
 }
 
 HRESULT CCloth_Window::Render()
 {
-	CBounding_Sphere::BOUNDINGSPHEREDESC SphereDesc;
-	SphereDesc.fRadius = 0.01f;
-	_uint iIndex = { 0 };
-	for (auto& PickPair : m_PickVetices)
-	{
-		SphereDesc.vPosition = PickPair.second;
-		m_pCollider->Set_BoundingDesc(&SphereDesc);
-
 #ifdef _DEBUG
-		if (iIndex == m_iPickVertexIndex)
+	_uint iIndex = { 0 };
+
+	for (auto& ClothVertex : m_ClothVertices)
+	{
+		if (iIndex == m_iClothVertexListIndex)
 		{
-			m_pCollider->Set_Color(_float4(0.f, 0.f, 1.f, 1.f));
+			ClothVertex.pCollider->Set_Color(_float4(0.f, 0.f, 1.f, 1.f));
 		}
 		else
 		{
-			m_pCollider->Set_Color(_float4(0.f, 1.f, 0.f, 1.f));
+			ClothVertex.pCollider->Set_Color(_float4(0.f, 1.f, 0.f, 1.f));
 		}
-#endif // _DEBUG
 
-		m_pCollider->Render();
+		if (nullptr != m_pRenderer)
+		{
+			m_pRenderer->Add_DebugGroup(ClothVertex.pCollider);
+		}
+
 		++iIndex;
 	}
-	
+#endif // _DEBUG	
 	return S_OK;
 }
 
 void CCloth_Window::Radio_Select_MeshType(_float fTimeDelta)
 {
 	ImGui::SeparatorText("Select Mesh Type");
-
+	
 	ImGui::RadioButton("Head", (_int*)(&m_eMeshType), _int(CCustomModel::HEAD));
 	ImGui::SameLine();
 	ImGui::RadioButton("Arm", (_int*)(&m_eMeshType), _int(CCustomModel::ARM));
 	ImGui::SameLine();
 	ImGui::RadioButton("Robe", (_int*)(&m_eMeshType), _int(CCustomModel::ROBE));
 	ImGui::SameLine();
-	ImGui::RadioButton("Upper Body", (_int*)(&m_eMeshType), _int(CCustomModel::UPPERBODY));
+	ImGui::RadioButton("Top", (_int*)(&m_eMeshType), _int(CCustomModel::TOP));
 	
-	ImGui::RadioButton("Under Body", (_int*)(&m_eMeshType), _int(CCustomModel::UNDERBODY));
+	ImGui::RadioButton("Pants", (_int*)(&m_eMeshType), _int(CCustomModel::PANTS));
 	ImGui::SameLine();
 	ImGui::RadioButton("Socks", (_int*)(&m_eMeshType), _int(CCustomModel::SOCKS));
 	ImGui::SameLine();
@@ -230,17 +228,36 @@ void CCloth_Window::Pick_Mesh(_float fTimeDelta)
 		return;
 
 	ImGui::SeparatorText("Setting Vertex");
-	ImGui::Checkbox("Pick Vertex", &m_isPickMesh);
-	ImGui::SameLine();
-	if (ImGui::Button("Reset Vertex"))
+	if (ImGui::Checkbox("Pick Vertex", &m_isPickMesh))
 	{
-		m_pDummy_Cloth->Reset_Position();
+		m_isPickCollider = false;
+	}
+	ImGui::SameLine();
+	Pick_Collider(fTimeDelta);
+
+	if (ImGui::Checkbox("Mesh HighLight", &m_isMeshHighLight))
+	{
+		m_pDummy_Cloth->Set_MeshHighLight(m_isMeshHighLight);
+	}
+	ImGui::SameLine();
+	if (true == m_pDummy_Cloth->Get_WireFrame())
+	{
+		if (ImGui::Button("Set Default"))
+		{
+			m_pDummy_Cloth->Set_WireFrame(false);
+		}
+	}
+	else
+	{
+		if (ImGui::Button("Set WireFrame"))
+		{
+			m_pDummy_Cloth->Set_WireFrame(true);
+		}
 	}
 
 	if (true == m_isPickMesh)
 	{
 		m_pDummy_Cloth->Set_MeshIndex(m_iMeshIndex);
-		m_pDummy_Cloth->Set_Testing(false);
 
 		_uint iVertexIndex = { 0 };
 		_float3 vPickPosition;
@@ -267,6 +284,10 @@ void CCloth_Window::Pick_Mesh(_float fTimeDelta)
 				return;
 			}
 
+			// 이미 0이면 리턴
+			if (0.f == InvMasses[iVertexIndex])
+				return;
+
 			InvMasses[iVertexIndex] = 0.f;
 
 			m_pDummy_Cloth->Remake_ClothMesh(InvMasses);
@@ -279,33 +300,44 @@ void CCloth_Window::Pick_Mesh(_float fTimeDelta)
 			szName = "Vertex Index : " + to_string(iVertexIndex) + 
 				" | x : " + to_string(vPickPosition.x) + ", y : " + to_string(vPickPosition.y) + ", z : " + to_string(vPickPosition.z);
 
-			m_PickVetices.push_back({ iVertexIndex, vPickPosition });
-			m_PickVerticesName.push_back(pGameInstance->Make_Char(szName.c_str()));
+			CLOTHVERTEX ClothVertex;
+			ClothVertex.iVertexIndex = iVertexIndex;
+			ClothVertex.vVertexPosition = vPickPosition;
+			ClothVertex.pVertexName = pGameInstance->Make_Char(szName.c_str());
+
+			CBounding_Sphere::BOUNDINGSPHEREDESC SphereDesc;
+			SphereDesc.fRadius = 0.01f;
+			SphereDesc.vPosition = vPickPosition;
+
+			ClothVertex.pCollider = static_cast<CCollider*>(m_pCollider->Clone(&SphereDesc));
+			m_ClothVertices.push_back(ClothVertex);
 
 			Safe_Release(pGameInstance);
 		}
-	}
-	else
-	{
-		m_pDummy_Cloth->Set_Testing(true);
 	}
 }
 
 void CCloth_Window::Current_Picked_Vertices(_float fTimeDelta)
 {
-	if (0 > m_PickVetices.size() ||
-		0 > m_PickVerticesName.size())
+	if (0 > m_ClothVertices.size())
 		return;
 
 	ImGui::SeparatorText("Picked Vertices");
 	ImGui::SetNextItemWidth(m_vWindowSize.x);
-	if (ImGui::ListBox(" ", &m_iPickVertexIndex, m_PickVerticesName.data(), _int(m_PickVerticesName.size()), 20))
+
+	vector<_char*> VerticesName;
+	for (auto& ClothVertex : m_ClothVertices)
+	{
+		VerticesName.push_back(ClothVertex.pVertexName);
+	}
+
+	if (ImGui::ListBox(" ", &m_iClothVertexListIndex, VerticesName.data(), _int(VerticesName.size()), 20))
 	{
 		// 리스트박스 최대치 예외처리
-		if (0 > m_iPickVertexIndex)
-			m_iPickVertexIndex = 0;
-		else if (m_PickVerticesName.size() <= m_iPickVertexIndex)
-			m_iPickVertexIndex = m_PickVerticesName.size() - 1;
+		if (0 > m_iClothVertexListIndex)
+			m_iClothVertexListIndex = 0;
+		else if (VerticesName.size() <= m_iClothVertexListIndex)
+			m_iClothVertexListIndex = VerticesName.size() - 1;
 	}
 
 	ImGui::Separator();
@@ -313,16 +345,85 @@ void CCloth_Window::Current_Picked_Vertices(_float fTimeDelta)
 
 void CCloth_Window::Pick_Collider(_float fTimeDelta)
 {
-	for (auto& VertexPair : m_PickVetices)
+	if (ImGui::Checkbox("Delete Vertex In List", &m_isPickCollider))
 	{
-
+		m_isPickMesh = false;
 	}
+	if (0 >= m_ClothVertices.size())
+		return;
+
+	if (false == m_isPickCollider)
+		return;
+	else
+		m_pDummy_Cloth->Set_MeshIndex(m_iMeshIndex);
+
+	_bool isPicking = { false };
+
+	if (m_pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN) ||
+		m_pGameInstance->Get_DIKeyState(DIK_LSHIFT, CInput_Device::KEY_PRESSING) &&
+		m_pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_PRESSING))
+	{
+		isPicking = true;
+	}
+
+	if (true == isPicking)
+	{
+		_float4 vMouseOrigin, vMouseDirection;
+		_float fDist = 1000.f;
+		_float fReturnDist = fDist;
+		_uint iReturnIndex = { 0 };
+		_bool isIntersect = { false };
+
+		if (FAILED(m_pGameInstance->Get_WorldMouseRay(m_pContext, g_hWnd, &vMouseOrigin, &vMouseDirection)))
+			return;
+
+		_uint iIndex = { 0 };
+		for (auto& ClothVertex : m_ClothVertices)
+		{
+			if (true == ClothVertex.pCollider->RayIntersects(vMouseOrigin, vMouseDirection, fDist))
+			{
+				if (fDist < fReturnDist)
+				{
+					fReturnDist = fDist;
+					iReturnIndex = iIndex;
+
+					isIntersect = true;
+				}
+			}
+
+			++iIndex;
+		}
+
+		if (false == isIntersect)
+			return;
+
+		// 피킹된점 삭제
+		if (iReturnIndex == m_iClothVertexListIndex)
+		{
+			if (0 != m_iClothVertexListIndex)
+				--m_iClothVertexListIndex;
+			else
+				m_iClothVertexListIndex = 0;
+		}
+
+		vector<_float> InvMasses = m_pDummy_Cloth->Get_InvMasses();
+		InvMasses[m_ClothVertices[iReturnIndex].iVertexIndex] = 1.f;
+
+		m_pDummy_Cloth->Remake_ClothMesh(InvMasses);
+		m_pCurrent_Cloth = m_pDummy_Cloth->Get_CurrentMesh_Cloth();
+			
+		Safe_Release(m_ClothVertices[iReturnIndex].pCollider);
+		m_ClothVertices.erase(m_ClothVertices.begin() + iReturnIndex);
+	}
+	
 }
 
-void CCloth_Window::Input_Wind(_float fTimeDelta)
+void CCloth_Window::Input_Options(_float fTimeDelta)
 {
 	if (false == isValid_Dummy())
 		return;
+
+	ImGui::Begin("Options");
 
 	ImGui::SeparatorText("Wind");
 	ImGui::SetNextItemWidth(200.f);
@@ -332,8 +433,10 @@ void CCloth_Window::Input_Wind(_float fTimeDelta)
 	{
 		m_pCurrent_Cloth->setWindVelocity(vWindVelocity);
 	}
-
+	
 	ImGui::Separator();
+
+	ImGui::End();
 }
 
 _bool CCloth_Window::isValid_Dummy()
@@ -366,7 +469,14 @@ void CCloth_Window::Free(void)
 {
 	__super::Free();
 
+	for (auto& ClothVertex : m_ClothVertices)
+	{
+		Safe_Release(ClothVertex.pCollider);
+	}
+	m_ClothVertices.clear();
+
 	Safe_Release(m_pDummy_Cloth);
 	Safe_Release(m_pCamera_Free);
 	Safe_Release(m_pCollider);
+	Safe_Release(m_pRenderer);
 }

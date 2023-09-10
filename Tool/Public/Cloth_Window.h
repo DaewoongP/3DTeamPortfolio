@@ -4,6 +4,7 @@
 
 BEGIN(Engine)
 class CCollider;
+class CRenderer;
 END
 
 BEGIN(Tool)
@@ -14,11 +15,12 @@ class CCloth_Window final : public CImWindow
 {
 	typedef struct tagVertex
 	{
-		_char szVertexName[MAX_PATH] = "";
+		_char* pVertexName = { nullptr };
 		_uint iVertexIndex = { 0 };
 		_float3 vVertexPosition;
 		CCollider* pCollider = { nullptr };
 	}CLOTHVERTEX;
+
 private:
 	explicit CCloth_Window(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext);
 	virtual ~CCloth_Window() = default;
@@ -33,16 +35,18 @@ private:
 	CCamera_Free*					m_pCamera_Free = { nullptr };
 	cloth::Cloth*					m_pCurrent_Cloth = { nullptr };
 	CCollider*						m_pCollider = { nullptr };
+	CRenderer*						m_pRenderer = { nullptr };
 
 private:
 	_tchar							m_wszDummyName[MAX_STR] = TEXT("");
 	CCustomModel::MESHTYPE			m_eMeshType = { CCustomModel::MESH_END };
 	_int							m_iMeshIndex = { 0 };
 	_bool							m_isPickMesh = { false };
+	_bool							m_isPickCollider = { false };
+	_bool							m_isMeshHighLight = { false };
 	// 현재 피킹된 버텍스의 인덱스와 포지션을 저장하는 배열
-	vector<pair<_uint, _float3>>	m_PickVetices;
-	vector<_char*>					m_PickVerticesName;
-	_int							m_iPickVertexIndex = { 0 };
+	vector<CLOTHVERTEX>				m_ClothVertices;
+	_int							m_iClothVertexListIndex = { 0 };
 
 private:
 	void Radio_Select_MeshType(_float fTimeDelta);
@@ -52,7 +56,7 @@ private:
 	void Pick_Mesh(_float fTimeDelta);
 	void Pick_Collider(_float fTimeDelta);
 	void Current_Picked_Vertices(_float fTimeDelta);
-	void Input_Wind(_float fTimeDelta);
+	void Input_Options(_float fTimeDelta);
 	_bool isValid_Dummy();
 
 public:
