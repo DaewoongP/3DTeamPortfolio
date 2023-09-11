@@ -250,24 +250,61 @@ HRESULT CLevel_MainGame::Ready_Layer_UI(const _tchar* pLayerTag)
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	_tchar pFilePath[MAX_PATH] = TEXT("../../Resources/GameData/UIData/aaa.uidata");
+	_tchar pFilePath[MAX_PATH] = TEXT("../../Resources/GameData/UIData/UI_Group_HP3.uidata");
 	_ulong dwByte = 0;
-	HANDLE hFile = CreateFile(pFilePath, GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
-	
+	HANDLE hFile = CreateFile(pFilePath, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 	if (hFile == INVALID_HANDLE_VALUE)
 	{
-		MSG_BOX("Failed Save");
+		MSG_BOX("Failed Load");
 		CloseHandle(hFile);
 		return E_FAIL;
 	}
-
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_HP"),
-		pLayerTag, TEXT("GameObject_UI_Group_HP"), &hFile)))
+	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_HP"),
+		pLayerTag, TEXT("GameObject_UI_Group_HP"), hFile)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_HP)");
 		return E_FAIL;
 	}
+	CloseHandle(hFile);
 
+	lstrcpy(pFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Potion2.uidata"));
+	 dwByte = 0;
+	 hFile = CreateFile(pFilePath, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+	if (hFile == INVALID_HANDLE_VALUE)
+	{
+		MSG_BOX("Failed Load");
+		CloseHandle(hFile);
+		return E_FAIL;
+	}
+	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_Potion"),
+		pLayerTag, TEXT("GameObject_UI_Group_Potion"), hFile)))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_Potion)");
+		return E_FAIL;
+	}
+	CloseHandle(hFile);
+
+
+	lstrcpy(pFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Finisher_Front.uidata"));
+	dwByte = 0;
+	hFile = CreateFile(pFilePath, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+	if (hFile == INVALID_HANDLE_VALUE)
+	{
+		MSG_BOX("Failed Load");
+		CloseHandle(hFile);
+		return E_FAIL;
+	}
+	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_Finisher"),
+		pLayerTag, TEXT("GameObject_UI_Group_Finisher"), hFile)))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_Finisher)");
+		return E_FAIL;
+	}
+	CloseHandle(hFile);
+
+
+
+	
 	Safe_Release(pGameInstance);
 
 	return S_OK;

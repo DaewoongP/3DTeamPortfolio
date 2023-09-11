@@ -17,7 +17,7 @@ CDummy_UI::CDummy_UI(const CDummy_UI& rhs)
 
 HRESULT CDummy_UI::Initialize_Prototype()
 {
-	if (FAILED(__super::Initialize_Prototype()))
+	if (FAILED(__super::Initialize_Prototype(g_iWinSizeX, g_iWinSizeY)))
 		return E_FAIL;
 
 	return S_OK;
