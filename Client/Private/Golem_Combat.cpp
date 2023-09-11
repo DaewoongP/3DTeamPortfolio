@@ -162,8 +162,8 @@ HRESULT CGolem_Combat::Make_AI()
 
 		if (FAILED(Make_Descendo(pSequence_Descendo)))
 			throw TEXT("Failed Make_Descendo");
-		/*if (FAILED(Make_Move(pSequence_Move)))
-			throw TEXT("Failed Make_Move");*/
+		if (FAILED(Make_Move(pSequence_Move)))
+			throw TEXT("Failed Make_Move");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -427,10 +427,6 @@ HRESULT CGolem_Combat::Make_Move(_Inout_ CSequence* pSequence)
 		if (nullptr == pAction_Right135)
 			throw TEXT("pAction_Right135 is nullptr");
 
-		CTurn* pTsk_Turn = dynamic_cast<CTurn*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Turn")));
-		if(nullptr == pTsk_Turn)
-			throw TEXT("pTsk_Turn is nullptr");
-
 		/* Set Decorations */
 
 		/* Set Options */
@@ -440,12 +436,11 @@ HRESULT CGolem_Combat::Make_Move(_Inout_ CSequence* pSequence)
 		pAction_Front->Set_Options(TEXT("Move_Back"), m_pModelCom);
 		pAction_Back->Set_Options(TEXT("Idle_Turn_180"), m_pModelCom);
 		pAction_Left45->Set_Options(TEXT("Move_Left_Back"), m_pModelCom);
-		pAction_Left90->Set_Options(TEXT("Idle_Turn_Left_90"), m_pModelCom);
-		pAction_Left135->Set_Options(TEXT("Move_Left_Front"), m_pModelCom);
+		pAction_Left90->Set_Options(TEXT("Idle_Turn_Right_90"), m_pModelCom);
+		pAction_Left135->Set_Options(TEXT("Idle_Turn_180"), m_pModelCom);
 		pAction_Right45->Set_Options(TEXT("Move_Right_Back"), m_pModelCom);
-		pAction_Right90->Set_Options(TEXT("Idle_Turn_Right_90"), m_pModelCom);
-		pAction_Right135->Set_Options(TEXT("Move_Right_Front"), m_pModelCom);
-		pTsk_Turn->Set_Transform(m_pTransform);
+		pAction_Right90->Set_Options(TEXT("Idle_Turn_Left_90"), m_pModelCom);
+		pAction_Right135->Set_Options(TEXT("Idle_Turn_180"), m_pModelCom);
 
 		/* Assemble Behaviors */
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Tsk_TargetDegree"), pTsk_TargetDegree)))
@@ -486,9 +481,6 @@ HRESULT CGolem_Combat::Make_Move(_Inout_ CSequence* pSequence)
 			throw TEXT("Failed Assemble_Childs pSequence_MoveRight90 Action_Right90");
 		if (FAILED(pSequence_MoveRight135->Assemble_Behavior(TEXT("Action_Right135"), pAction_Right135)))
 			throw TEXT("Failed Assemble_Childs pSequence_MoveRight135 Action_Right135");
-
-		if (FAILED(pAction_Front->Assemble_Behavior(TEXT("Tsk_Turn"), pTsk_Turn)))
-			throw TEXT("Failed Assemble_Childs pAction_Front Tsk_Turn");
 	}
 	catch (const _tchar* pErrorTag)
 	{

@@ -66,4 +66,9 @@ CTurn* CTurn::Clone(void* pArg)
 void CTurn::Free()
 {
 	__super::Free();
+
+	if (true == m_isCloned)
+	{
+		Safe_Release(m_pOwnerTransform);
+	}
 }
