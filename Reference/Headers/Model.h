@@ -96,6 +96,7 @@ protected: /* For.Animations */
 protected: /* For.RootAnimation*/
 	_uint							m_iRootBoneIndex = { 0 };
 	_float4x4						m_PostRootMatrix;
+	_float4x4						m_BeginRootMatrix;
 
 protected:
 	_float4x4						m_PivotMatrix;

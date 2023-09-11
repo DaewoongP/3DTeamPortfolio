@@ -791,16 +791,30 @@ HRESULT CGameInstance::Add_Prototype_Models(_uint iLevel, ID3D11Device* pDevice,
 
 _char* CGameInstance::Make_Char(const _char* pMakeChar)
 {
-	NULL_CHECK_MSG(m_pString_Manager, TEXT("Time_Manager NULL"));
+	NULL_CHECK_RETURN_MSG(m_pString_Manager, nullptr, TEXT("String_Manager NULL"));
 
 	return m_pString_Manager->Make_Char(pMakeChar);
 }
 
 _tchar* CGameInstance::Make_WChar(const _tchar* pMakeWChar)
 {
-	NULL_CHECK_MSG(m_pString_Manager, TEXT("Time_Manager NULL"));
+	NULL_CHECK_RETURN_MSG(m_pString_Manager, nullptr, TEXT("String_Manager NULL"));
 
 	return m_pString_Manager->Make_WChar(pMakeWChar);
+}
+
+HRESULT CGameInstance::Delete_Char(_char* pChar)
+{
+	NULL_CHECK_RETURN_MSG(m_pString_Manager, E_FAIL, TEXT("String_Manager NULL"));
+
+	return m_pString_Manager->Delete_Char(pChar);
+}
+
+HRESULT CGameInstance::Delete_WChar(_tchar* pWChar)
+{
+	NULL_CHECK_RETURN_MSG(m_pString_Manager, E_FAIL, TEXT("String_Manager NULL"));
+
+	return m_pString_Manager->Delete_WChar(pWChar);
 }
 
 void CGameInstance::Release_Engine()

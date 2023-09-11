@@ -64,6 +64,8 @@
 #include "VIBuffer_Point_Color_Instance.h"
 #include "ConvexMesh.h"
 #include "TriangleMesh.h"
+#include "UI_Button.h"
+#include "UI_Progress1.h"
 
 BEGIN(Engine)
 

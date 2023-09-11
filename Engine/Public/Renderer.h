@@ -63,6 +63,9 @@ private:
 #ifdef _DEBUG
 private:
 	HRESULT Render_Debug();
+	HRESULT Render_MRTs();
+	_bool Is_DebugRender();
+	_bool Is_MRTRender();
 #endif // _DEBUG
 
 private:	
@@ -71,6 +74,7 @@ private:
 private:
 	list<class CComponent*>			m_DebugObject;
 	_bool							m_isDebugRender = { true };
+	_bool							m_isMRTRender = { true };
 #endif // _DEBUG
 
 

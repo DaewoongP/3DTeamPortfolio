@@ -17,8 +17,6 @@ public:
 	virtual void Tick(_float _fTimeDelta) override;
 	virtual HRESULT Render() override;
 
-	void Camera_Speed();
-
 
 
 
@@ -29,7 +27,7 @@ private:
 	CCutScene_Camera_Tool* m_pCutSceneCameraTool;
 
 private:
-	CMain_Camera* m_pMainCamera = { nullptr };
+	
 
 
 private:

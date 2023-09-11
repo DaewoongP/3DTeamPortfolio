@@ -325,6 +325,15 @@
     <Filter Include="01. Utility\13. String_Manager">
       <UniqueIdentifier>{78086519-d9fc-431b-83eb-726c49e0a41e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\03. Components\19. UI\UI_Component">
+      <UniqueIdentifier>{0bc1cd5b-dbb4-4efc-9d97-40b27fb2e53b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\19. UI\UI_Component\UI_Progress">
+      <UniqueIdentifier>{d103077e-8a8e-4860-b87b-da12292e4106}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\19. UI\UI_Component\UI_Button">
+      <UniqueIdentifier>{6afa2e70-9622-4c7c-b457-0b5c723cf153}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -666,6 +675,12 @@
     <ClInclude Include="..\public\String_Manager.h">
       <Filter>01. Utility\13. String_Manager</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_Button.h">
+      <Filter>01. Utility\03. Components\19. UI\UI_Component\UI_Button</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Progress1.h">
+      <Filter>01. Utility\03. Components\19. UI\UI_Component\UI_Progress</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -976,6 +991,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\TriangleMesh.cpp">
       <Filter>01. Utility\03. Components\23. TriangleMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Button.cpp">
+      <Filter>01. Utility\03. Components\19. UI\UI_Component\UI_Button</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Progress1.cpp">
+      <Filter>01. Utility\03. Components\19. UI\UI_Component\UI_Progress</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

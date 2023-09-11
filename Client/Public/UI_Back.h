@@ -37,6 +37,7 @@ private:
 	HRESULT Add_Components();
 	HRESULT Add_AlphaTexture();
 	HRESULT SetUp_ShaderResources();
+	HRESULT Ready_Texture();
 
 public:
 	static CUI_Back* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

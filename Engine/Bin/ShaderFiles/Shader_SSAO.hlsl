@@ -214,6 +214,7 @@ PS_OUT PS_MAIN(PS_IN In)
         float4 vAmbient = abs((iColor / 13.f) - 1);
    
         Out.vColor = 1.f - vAmbient;
+    Out.vColor = vector(1.f, 1.f, 1.f, 1.f);
         return Out;
     }
 
@@ -322,11 +323,9 @@ PS_OUT PS_MAIN_SHADOW(PS_IN In)
     vPosition = vPosition / vPosition.w;
     
 	//±¤¿øÀ¸·ÎÀÇ±íÀÌ°ª.
-    float2 LightUV = float2((vPosition.x + 1.f) / 2.f, (vPosition.y - 1.f) / -2.f);
+    float2 LightUV = float2((vPosition.x / 2.f) + 0.5f, (vPosition.y / -2.f) + 0.5f);
 
     vector vLightDepth = g_vLightDepthTexture.Sample(BlurSampler, LightUV);
-    
-    
     
     float LightDepth_W = vLightDepth.y * g_fCamFar;
     float LightDepth_Z = vLightDepth.x * LightDepth_W;

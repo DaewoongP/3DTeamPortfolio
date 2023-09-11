@@ -1,77 +1,34 @@
-#include "UI_Progress.h"
+#include "UI_HP.h"
 #include "GameInstance.h"
 #include "UI_Group.h"
 
-CUI_Progress::CUI_Progress(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CUI_HP::CUI_HP(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUI(pDevice, pContext)
 {
 }
 
-CUI_Progress::CUI_Progress(const CUI_Progress& rhs)
+CUI_HP::CUI_HP(const CUI_HP& rhs)
 	: CUI(rhs)
 {
 }
 
-HRESULT CUI_Progress::Initialize_Prototype()
+HRESULT CUI_HP::Initialize_Prototype()
 {
-	if (FAILED(__super::Initialize_Prototype()))
+	if (FAILED(__super::Initialize_Prototype(g_iWinSizeX, g_iWinSizeY)))
 		return E_FAIL;
 
 	return S_OK;
 }
 
-HRESULT CUI_Progress::Initialize(void* pArg)
+HRESULT CUI_HP::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	if (nullptr != pArg)
-	{
-		CUI_Group::UI_DATA* UIDesc = (CUI_Group::UI_DATA*)pArg;
-
-		if (UIDesc->isSave)
-		{
-			m_vCombinedXY = UIDesc->vCombinedXY;
-			m_fX = UIDesc->m_fX;
-			m_fY = UIDesc->m_fY;
-			m_fZ = UIDesc->m_fZ;
-			m_fSizeX = UIDesc->m_fSizeX;
-			m_fSizeY = UIDesc->m_fSizeY;
-
-			lstrcpy(m_wszTextureName, UIDesc->m_wszTextureName);
-			lstrcpy(m_wszTexturePath, UIDesc->m_wszTexturePath);
-
-			//m_eUIType = UIDesc->m_eType;
-
-			m_isParent = UIDesc->m_isParent;
-
-			m_isAlpha = UIDesc->m_isAlpha;
-			m_vColor = UIDesc->m_vColor;
-			lstrcpy(m_wszAlphaTexturePrototypeTag, UIDesc->m_wszAlphaTexturePrototypeTag);
-			lstrcpy(m_wszAlphaTextureFilePath, UIDesc->m_wszAlphaTextureFilePath);
-		}
-		else
-		{
-			_float2 fSize = _float2(UIDesc->m_fSizeX, UIDesc->m_fSizeY);
-			Set_Size(fSize.x, fSize.y);
-
-			lstrcpy(m_wszTextureName, UIDesc->m_wszTextureName);
-			lstrcpy(m_wszTexturePath, UIDesc->m_wszTexturePath);
-		}
-	}
-	else
-	{
-		return E_FAIL;
-	}
+	Ready_Texture();
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
-
-
-	if (m_isAlpha)
-	{
-		Add_AlphaTexture();
-	}
 
 	m_pTransform->Set_Scale(_float3(m_fSizeX, m_fSizeY, 1.f));
 	m_pTransform->Set_Position(_float3(m_fX - g_iWinSizeX * 0.5f, -m_fY + g_iWinSizeY * 0.5f, m_fZ));
@@ -79,17 +36,26 @@ HRESULT CUI_Progress::Initialize(void* pArg)
 	return S_OK;
 }
 
-void CUI_Progress::Tick(_float fTimeDelta)
+void CUI_HP::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+#ifdef _DEBUG
+	Debug_UI(fTimeDelta);
+#endif // DEBUG
 }
 
-void CUI_Progress::Late_Tick(_float fTimeDelta)
+void CUI_HP::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
+
+	if (nullptr != m_pRendererCom)
+	{
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this);
+	}
 }
 
-HRESULT CUI_Progress::Render()
+HRESULT CUI_HP::Render()
 {
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
@@ -100,7 +66,7 @@ HRESULT CUI_Progress::Render()
 	}
 	else
 	{
-		m_pShaderCom->Begin("UI");
+		m_pShaderCom->Begin("HP_Progress");
 	}
 
 	if (FAILED(m_pVIBufferCom->Render()))
@@ -109,13 +75,13 @@ HRESULT CUI_Progress::Render()
 	return S_OK;
 }
 
-HRESULT CUI_Progress::Add_Components()
-{	
+HRESULT CUI_HP::Add_Components()
+{
 	/* Com_Shader */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxTex"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 	{
-		MSG_BOX("Failed CDummy_UI Add_Component : (Com_Shader)");
+		MSG_BOX("Failed CUI_HP Add_Component : (Com_Shader)");
 		return E_FAIL;
 	}
 
@@ -123,7 +89,7 @@ HRESULT CUI_Progress::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, m_wszTextureName,
 		TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTextureCom))))
 	{
-		MSG_BOX("Failed CDummy_UI Add_Component : (Com_Texture)");
+		MSG_BOX("Failed CUI_HP Add_Component : (Com_Texture)");
 		return E_FAIL;
 	}
 
@@ -131,7 +97,7 @@ HRESULT CUI_Progress::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"),
 		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRendererCom))))
 	{
-		MSG_BOX("Failed CDummy_UI Add_Component : (Com_Renderer)");
+		MSG_BOX("Failed CUI_HP Add_Component : (Com_Renderer)");
 		return E_FAIL;
 	}
 
@@ -139,14 +105,23 @@ HRESULT CUI_Progress::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Rect"),
 		TEXT("Com_Buffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
 	{
-		MSG_BOX("Failed CDummy_UI Add_Component : (Com_Buffer)");
+		MSG_BOX("Failed CUI_HP Add_Component : (Com_Buffer)");
+		return E_FAIL;
+	}
+
+	_float3 vProgress = _float3(100.f, 100.f, 80.f);
+	/* Com_Progress */
+	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_UI_Progress"),
+		TEXT("Com_Progress"), reinterpret_cast<CComponent**>(&m_pProgressCom), &vProgress)))
+	{
+		MSG_BOX("Failed CUI_HP Add_Component : (Com_Progress)");
 		return E_FAIL;
 	}
 
 	return S_OK;
 }
 
-HRESULT CUI_Progress::Add_AlphaTexture()
+HRESULT CUI_HP::Add_AlphaTexture()
 {
 	BEGININSTANCE
 
@@ -161,14 +136,14 @@ HRESULT CUI_Progress::Add_AlphaTexture()
 		if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, m_wszAlphaTexturePrototypeTag,
 			TEXT("Com_AlphaTexture"), reinterpret_cast<CComponent**>(&m_pAlphaTextureCom))))
 		{
-			MSG_BOX("Failed CDummy_UI Add_Component : (Com_Texture)");
+			MSG_BOX("Failed CUI_HP Add_Component : (Com_Texture)");
 			return E_FAIL;
 		}
 
 	return S_OK;
 }
 
-HRESULT CUI_Progress::SetUp_ShaderResources()
+HRESULT CUI_HP::SetUp_ShaderResources()
 {
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
 		return E_FAIL;
@@ -180,6 +155,10 @@ HRESULT CUI_Progress::SetUp_ShaderResources()
 		return E_FAIL;
 
 	if (FAILED(m_pTextureCom->Bind_ShaderResources(m_pShaderCom, "g_Texture")))
+		return E_FAIL;
+
+	_float fPercent = m_pProgressCom->Get_Gauge_Percent();
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fPercent", &fPercent, sizeof(_float))))
 		return E_FAIL;
 
 	if (m_isAlpha && nullptr != m_pAlphaTextureCom)
@@ -195,33 +174,68 @@ HRESULT CUI_Progress::SetUp_ShaderResources()
 	return S_OK;
 }
 
-CUI_Progress* CUI_Progress::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+HRESULT CUI_HP::Ready_Texture()
 {
-	CUI_Progress* pInstance = new CUI_Progress(pDevice, pContext);
+	BEGININSTANCE
+
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAINGAME, m_wszTextureName,
+		CTexture::Create(m_pDevice, m_pContext, m_wszTexturePath))))
+	{
+		MSG_BOX("Failed Create Texture Component");
+	}
+
+
+	if (m_isAlpha)
+	{
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAINGAME, m_wszAlphaTexturePrototypeTag,
+			CTexture::Create(m_pDevice, m_pContext, m_wszAlphaTextureFilePath))))
+		{
+			MSG_BOX("Failed Create Texture Component");
+		}
+	}
+
+	ENDINSTANCE
+
+	return S_OK;
+
+}
+
+#ifdef _DEBUG
+HRESULT CUI_HP::Debug_UI(_float fTimeDelta)
+{
+	ImGui::Button("Hi");
+
+	return S_OK;
+}
+#endif // _DEBUG
+
+CUI_HP* CUI_HP::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+{
+	CUI_HP* pInstance = new CUI_HP(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Created CUI_Progress");
+		MSG_BOX("Failed to Created CUI_HP");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject* CUI_Progress::Clone(void* pArg)
+CGameObject* CUI_HP::Clone(void* pArg)
 {
-	CUI_Progress* pInstance = new CUI_Progress(*this);
+	CUI_HP* pInstance = new CUI_HP(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned CUI_Progress");
+		MSG_BOX("Failed to Cloned CUI_HP");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CUI_Progress::Free()
+void CUI_HP::Free()
 {
 	__super::Free();
 
@@ -230,4 +244,5 @@ void CUI_Progress::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pAlphaTextureCom);
+	Safe_Release(m_pProgressCom);
 }

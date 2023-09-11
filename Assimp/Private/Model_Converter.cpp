@@ -76,10 +76,25 @@ HRESULT CModel_Converter::Convert_Model(_uint iType, const _char* pModelFilePath
 	// Write MapObject
 	else if (TYPE_MAPOBJECT == eType)
 	{
-		lstrcat(szPath, TEXT("NonAnims/MapObject/"));
+		lstrcat(szPath, TEXT("MapObject/NonAnims/"));
 		lstrcat(szPath, szFileName);
-		lstrcat(szPath, TEXT("/"));
-		fs::create_directory(szPath);
+
+		// 파일 명에 Lod 가 들어갈 경우 가공해야 된다.
+		wstring ws(szPath);
+		if (std::string::npos != ws.find(TEXT("_Lod")))
+		{
+			size_t findLod = ws.find(TEXT("_Lod"));
+			ws = ws.substr(0, findLod);
+			lstrcpy(szPath, ws.c_str());
+			lstrcat(szPath, TEXT("/"));
+			fs::create_directory(szPath);
+		}
+
+		else
+		{
+			lstrcat(szPath, TEXT("/"));
+			fs::create_directory(szPath);
+		}		
 	}
 
 
@@ -102,8 +117,15 @@ HRESULT CModel_Converter::Convert_Model(_uint iType, const _char* pModelFilePath
 	}
 
 	cout << "Writing Files..." << endl;
+	// fbx파일 체크
 
-	if ((TYPE_COL == eType )? FAILED(Write_File_COL(eType, szPath, szFileName)) :FAILED(Write_File(eType, szPath, szFileName)))
+	_tchar fileName[MAX_PATH] = {};
+	_wsplitpath_s(FullPath, nullptr, 0, nullptr, 0, fileName, MAX_PATH, nullptr, 0);
+
+	size_t fileNameLength = wcslen(fileName);
+	const wchar_t* suffix = L"_COL";
+
+	if ((fileNameLength >= wcslen(suffix) && wcscmp(fileName + fileNameLength - wcslen(suffix), suffix) == 0) ? FAILED(Write_File_COL(eType, szPath, szFileName)) :FAILED(Write_File(eType, szPath, szFileName)))
 	{
 		MSG_BOX("Failed (Write_File)");
 		return E_FAIL;

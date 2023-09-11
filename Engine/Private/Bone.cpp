@@ -52,7 +52,6 @@ void CBone::Invalidate_CombinedTransformationMatrix_Basic(const CModel::BONES& B
 	_float fZLength = Bones[m_iParentIndex]->m_CombinedTransformationMatrix.Look().Length();
 
 	_float4x4 scaleMatrix = XMMatrixScaling(fXLength, fYLength, fZLength);
-
 	m_CombinedTransformationMatrix = m_TransformationMatrix * scaleMatrix;
 }
 
