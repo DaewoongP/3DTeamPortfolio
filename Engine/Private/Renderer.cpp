@@ -366,7 +366,6 @@ HRESULT CRenderer::Render_Lights()
 		return E_FAIL;
 	
 	m_pLight_Manager->Render_Lights(m_pDeferredShader, m_pDeferredBuffer);
-	m_pLight_Manager->Render_Lights(m_pSSAOShader, m_pSSAOBuffer);
 
 	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext)))
 		return E_FAIL;

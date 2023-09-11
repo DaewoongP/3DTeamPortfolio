@@ -75,7 +75,6 @@ HRESULT CMapObject::Render()
 
 		for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; iMeshCount++)
 		{
-			m_pModel->Bind_BoneMatrices(m_pShader, "g_BoneMatrices", iMeshCount);
 			m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", iMeshCount, DIFFUSE);
 
 			m_pShader->Begin("Mesh");
@@ -97,7 +96,6 @@ HRESULT CMapObject::Render()
 
 	//	for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; iMeshCount++)
 	//	{
-	//		m_pModel->Bind_BoneMatrices(m_pShader, "g_BoneMatrices", iMeshCount);
 
 	//		m_pShader->Begin("Picking");
 

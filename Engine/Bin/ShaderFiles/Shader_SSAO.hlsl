@@ -359,8 +359,6 @@ PS_OUT PS_MAIN_SHADOW(PS_IN In)
 
     
     return Out;
-
-
 }
 
 technique11 DefaultTechnique
