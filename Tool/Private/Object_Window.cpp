@@ -279,7 +279,53 @@ void CObject_Window::Install_Object(_float3 vPos)
 
 void CObject_Window::Install_Continuous_Object(_float3 vPos)
 {
+	// 범위 안에 있을 경우 H키를 눌러 설치
+	BEGININSTANCE; m_fTimeAcc += pGameInstance->Get_World_Tick();
 	
+	// 마우스를 꾹 누르고 있으면 연속 설치
+	if (true == pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_PRESSING) &&
+		-1.f != vPos.x && 
+		0.1f < m_fTimeAcc)
+	{
+		m_fTimeAcc = 0.f;
+
+		// 맵 오브젝트에 번호 붙여줌
+		_tchar wszobjName[MAX_PATH] = { 0 };
+		_stprintf_s(wszobjName, TEXT("GameObject_MapObject_%d"), (m_iMapObjectIndex));
+		Deep_Copy_Tag(wszobjName);
+
+		_float4x4 vWorldMatrix = m_pDummy->Get_Transform()->Get_WorldMatrix();
+
+		// 번호를 붙인 태그로 MapObject 등록
+		if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL,
+			TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_MapObject"),
+			m_vecMapObjectTag.at(m_iMapObjectIndex).c_str(), &vWorldMatrix)))
+		{
+			MSG_BOX("Failed to Install MapObject");
+			ENDINSTANCE;
+			return;
+		}
+
+		// 마지막에 설치한 맵 오브젝트 주소 가져옴
+		m_pObject = static_cast<CMapObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL,
+			TEXT("Layer_MapObject"), wszobjName));
+
+		m_pObject->Add_Model_Component(m_vecModelList_t.at(m_iModelIndex));
+		m_pObject->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMesh"));
+		m_pObject->Set_Color(m_iMapObjectIndex); // 고유한 색깔 값을 넣어줌
+
+		// 저장용 벡터에 넣어준다.
+		SAVEOBJECTDESC SaveDesc;
+
+		SaveDesc.matTransform = vWorldMatrix;
+		lstrcpy(SaveDesc.wszTag, m_vecModelList_t.at(m_iModelIndex));
+		SaveDesc.iTagLen = lstrlen(SaveDesc.wszTag) * 2;
+
+		m_vecSaveObject.push_back(SaveDesc);
+
+		++m_iMapObjectIndex;
+
+	} ENDINSTANCE;
 }
 
 void CObject_Window::Install_Multi_Object(_float3 vPos)
@@ -376,7 +422,7 @@ void CObject_Window::Save_Load_Menu()
 {
 	// open Dialog Simple
 	// Load 경로 지정
-	if (ImGui::Button("Open File Dialog"))
+	if (ImGui::Button("Open Load File Dialog"))
 		ImGuiFileDialog::Instance()->OpenDialog("ChooseData", "Choose File", ".ddd",
 			"../../Resources/GameData/MapData/");
 
@@ -826,12 +872,12 @@ HRESULT CObject_Window::Load_MapObject(const _tchar* wszMapDataPath)
 
 HRESULT CObject_Window::Save_MapObject_Ins()
 {
-	_tchar dataFile[MAX_PATH] = TEXT("../../Resources/GameData/MapData/MapObject_Ins.ddd");
+	_tchar dataFile[MAX_PATH] = TEXT("../../Resources/GameData/MapData/MapData_Ins.ddd");
 
 	HANDLE hFile = CreateFile(dataFile, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
 	if (INVALID_HANDLE_VALUE == hFile)
 	{
-		MSG_BOX("Failed to Create MapObject_Ins File for Save MapObject_Ins");
+		MSG_BOX("Failed to Create MapObject_Ins File for Save MapData_Ins");
 		return E_FAIL;
 	}
 
@@ -989,7 +1035,7 @@ HRESULT CObject_Window::Load_MapObject_Ins()
 		wstring wsModelName = wsSave.substr(iLength);
 		ws += wsModelName;
 
-		wstring wsPath = TEXT("../../Resources/Models/NonAnims/");
+		wstring wsPath = TEXT("../../Resources/Models/MapObject/NonAnims/");
 		wsPath += wsModelName;
 		wsPath += TEXT("/");
 		wsPath += wsModelName;
