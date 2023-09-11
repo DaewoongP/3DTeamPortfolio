@@ -48,7 +48,7 @@ public:
 	void Select_Model();
 
 	// 모델에서 피킹하는 함수임.
-	_bool Get_VertexIndex_By_Picking(_Inout_ _float3* pPickPosition);
+	_bool Get_VertexIndex_By_Picking(_Inout_ _float4* pPickPosition);
 
 	// 정점을 피킹하는 함수임.
 	_bool Pick_Spheres(const _float4& vOrigin, const _float4& vDirection, _Inout_ vector<PICKCOLDESC>& Out);

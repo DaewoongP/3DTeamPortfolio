@@ -48,14 +48,21 @@ void CTriangleCollider_Window::Tick(_float fTimeDelta)
 	AddModel_Button();
 	if (m_pTriangleColMesh != nullptr)
 		m_pTriangleColMesh->Tick(fTimeDelta);
-	
 
+	/*_float3 pickPos = {};
+	if (OPTION_CREATE == m_iSelectOption&&
+		m_pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN) &&
+		Get_VertexIndex_By_Picking(&pickPos))
+	{
+		Make_Cell();
+	}*/
+	Make_Cell();
 	/* Check Option */
 	ImGui::RadioButton("Nothing", &m_iSelectOption, OPTION_NOTHING); ImGui::SameLine();
 	ImGui::RadioButton("Make Navi", &m_iSelectOption, OPTION_CREATE); ImGui::SameLine();
 	ImGui::RadioButton("Pick Navi", &m_iSelectOption, OPTION_PICK);
 
-	Pick_Navigation(fTimeDelta);
+	//Pick_Navigation(fTimeDelta);
 	CurrentNavigationPosition();
 	Navigation_List();
 	Delete_Cell();
@@ -108,7 +115,7 @@ HRESULT CTriangleCollider_Window::Render()
 
 		_uint iVP = 1;
 		D3D11_VIEWPORT ViewPort;
-		ZEROMEM(&ViewPort);
+		std::ZEROMEM(&ViewPort);
 		m_pContext->RSGetViewports(&iVP, &ViewPort);
 
 		_float3 vRenderCenterPos = vProjPos.xyz();
@@ -267,7 +274,7 @@ void CTriangleCollider_Window::Select_Model()
 
 }
 
-_bool CTriangleCollider_Window::Get_VertexIndex_By_Picking(_Inout_ _float3* pPickPosition)
+_bool CTriangleCollider_Window::Get_VertexIndex_By_Picking(_Inout_ _float4* pPickPosition)
 {
 	if (nullptr == m_pTriangleColMesh)
 		return false;
@@ -284,6 +291,9 @@ _bool CTriangleCollider_Window::Get_VertexIndex_By_Picking(_Inout_ _float3* pPic
 	vector<_float3> Vertices = m_pTriangleColMesh->Get_VertexPositions();
 
 	vector<_ulong> Indices = m_pTriangleColMesh->Get_Indices();
+
+	if (Vertices.size() == 0 || Indices.size() == 0)
+		return false;
 
 	_float4 vMouseOrigin, vMouseDirection;
 	if (FAILED(pGameInstance->Get_WorldMouseRay(m_pContext, g_hWnd, &vMouseOrigin, &vMouseDirection)))
@@ -315,46 +325,21 @@ _bool CTriangleCollider_Window::Get_VertexIndex_By_Picking(_Inout_ _float3* pPic
 			{
 				fReturnDist = fDist;
 				iVertexIndex0 = Indices[i];
-
+				
 				vIntersectVertex0 = vVertex0;
 				vIntersectVertex1 = vVertex1;
 				vIntersectVertex2 = vVertex2;
 
 				isIntersects = true;
+				//카메라 위치에서 dir로 dist만큼 간 점.
+				*pPickPosition = vMouseOrigin + (vMouseDirection * fDist);
+				return true;
 			}
 		}
 	}
 
 	if (false == isIntersects)
 		return false;
-
-	_float3 vIntersectPosition = vMouseOrigin.xyz() + vMouseDirection.xyz() * fReturnDist;
-
-	_float fVertexDist0 = (vIntersectPosition - vIntersectVertex0).Length();
-	_float fVertexDist1 = (vIntersectPosition - vIntersectVertex1).Length();
-	_float fVertexDist2 = (vIntersectPosition - vIntersectVertex2).Length();
-
-	if (fVertexDist0 <= fVertexDist1 &&
-		fVertexDist0 <= fVertexDist2)
-	{
-		*pPickPosition = vIntersectVertex0;
-		return true;
-	}
-
-	if (fVertexDist1 <= fVertexDist0 &&
-		fVertexDist1 <= fVertexDist2)
-	{
-		*pPickPosition = vIntersectVertex1;
-		return true;
-	}
-
-	if (fVertexDist2 <= fVertexDist1 &&
-		fVertexDist2 <= fVertexDist0)
-	{
-		*pPickPosition = vIntersectVertex2;
-		return true;
-	}
-
 	return false;
 }
 
@@ -484,133 +469,65 @@ HRESULT CTriangleCollider_Window::Create_COLCELL(COLMESH* PMesh)
 	return S_OK;
 }
 
-HRESULT CTriangleCollider_Window::Pick_Navigation(_float fTimeDelta)
-{
-	if (m_pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN) &&
-		m_pGameInstance->IsMouseInClient(m_pContext, g_hWnd))
-	{
-		_float4 vOrigin;
-		_float4 vDirection;
-		m_pGameInstance->Get_WorldMouseRay(m_pContext, g_hWnd, &vOrigin, &vDirection);
-		Pick_Spheres(vOrigin, vDirection, m_PickDatas);
-
-		if (OPTION_CREATE == m_iSelectOption)
-		{
-			Make_Cell();
-		}
-		else if (OPTION_PICK == m_iSelectOption)
-		{
-			
-		}
-	}
-
-	if (m_pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_PRESSING) &&
-		m_pGameInstance->IsMouseInClient(m_pContext, g_hWnd) &&
-		OPTION_PICK == m_iSelectOption)
-	{
-		_long dwMouseMove = { 0 };
-		dwMouseMove = m_pGameInstance->Get_DIMouseMove(CInput_Device::DIMM_Y);
-
-		if (0 != dwMouseMove)
-		{
-			for (auto PickDesc : m_PickDatas)
-			{
-				// Buffer.first == 버퍼의 인덱스 (POINT A,B,C)
-				if (CCell::POINT_END <= PickDesc.m_ePoint ||
-					0 > PickDesc.m_ePoint)
-					return E_FAIL;
-
-				_float3 vPosition = m_Cells[PickDesc.m_iCellIndex].m_Points[PickDesc.m_ePoint];
-				vPosition.y -= _float(dwMouseMove * fTimeDelta * 0.8f);
-				m_Cells[PickDesc.m_iCellIndex].m_Points[PickDesc.m_ePoint] = vPosition;
-				if (FAILED(Remake_Cells()))
-					return E_FAIL;
-			}
-		}
-
-	}
-
-	if (m_pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_UP) &&
-		0 < m_PickDatas.size())
-	{
-		COLCELLDESC StandardCell = m_Cells[m_PickDatas[0].m_iCellIndex];
-		_float3 vStandardPosition = StandardCell.m_Points[m_PickDatas[0].m_ePoint];
-		for (auto& PickDesc : m_PickDatas)
-		{
-			_float vDistance = _float3::Distance(vStandardPosition,
-				m_Cells[PickDesc.m_iCellIndex].m_Points[PickDesc.m_ePoint]);
-			if(0.3f > vDistance)
-				m_Cells[PickDesc.m_iCellIndex].m_Points[PickDesc.m_ePoint] = vStandardPosition;
-		}
-		// 현재 움직이고 있던 버퍼 포지션 클리어.
-		m_PickDatas.clear();
-		m_vPickPos = _float4(0.f, 0.f, 0.f, 1.f);
-
-		Remake_Cells();
-	}
-
-	return S_OK;
-}
-
 HRESULT CTriangleCollider_Window::Make_Cell()
 {
 	/* 현재 옵션이 셀 생성인 경우에만 */
 	if (OPTION_CREATE != m_iSelectOption)
 		return S_OK;
 
-	if (m_pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN) &&
-		m_pGameInstance->IsMouseInClient(m_pContext, g_hWnd))
+	if (!m_pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN))
+		return S_OK;
+
+	
+
+	/* 만약 피킹한 셀의 콜라이더 구체를 피킹하지 않았다면 */
+	if (0 == m_PickDatas.size())
 	{
-		m_isMakingCell = true;
-
-		/* 만약 피킹한 셀의 콜라이더 구체를 피킹하지 않았다면 */
-		if (0 == m_PickDatas.size())
-		{
-			//매쉬피킹 로직
-		}
-		else /* 콜라이더 구체를 피킹한 경우 */
-		{
-			COLCELLDESC CellDesc = m_Cells[m_PickDatas.front().m_iCellIndex];
-			m_vPickPos = CellDesc.m_Points[m_PickDatas.front().m_ePoint].TransCoord();
-		}
-
-		// 컨트롤을 누르고 피킹하면 반올림하여 처리
-		if (true == m_pGameInstance->Get_DIKeyState(DIK_LCONTROL))
-		{
-			m_vPickPos.x = roundf(m_vPickPos.x);
-			m_vPickPos.y = roundf(m_vPickPos.y);
-			m_vPickPos.z = roundf(m_vPickPos.z);
-		}
-
-		// 피킹처리
-		if (CCell::POINT_END > m_iCurrentPickPointIndex)
-		{
-			m_vCell[m_iCurrentPickPointIndex++] = m_vPickPos.xyz();
-		}
-
-		// 3번의 피킹이 끝나면 벡터컨테이너에 값을 넣고 피킹 인덱스 초기화
-		if (CCell::POINT_END == m_iCurrentPickPointIndex)
-		{
-			CCWSort_Cell(m_vCell.data());
-
-			COLCELLDESC CellDesc;
-			CellDesc.m_Points = m_vCell;
-			CellDesc.m_pBufferCom = CVIBuffer_Cell::Create(m_pDevice, m_pContext, m_vCell.data());
-			if (nullptr == CellDesc.m_pBufferCom)
-			{
-				MSG_BOX("Failed Make_Cell : CellDesc.m_pBufferCom is nullptr");
-				return E_FAIL;
-			}
-
-			m_Cells.push_back(CellDesc);
-
-			m_iCurrentPickPointIndex = CCell::POINT_A;
-
-			m_PickDatas.clear();
-			m_isMakingCell = false;
-		}
+		//위치가 이상한지 이상한곳에서 생성되는중임.
+		if (!Get_VertexIndex_By_Picking(&m_vPickPos))
+			return S_OK;
+	}
+	else /* 콜라이더 구체를 피킹한 경우 */
+	{
+		COLCELLDESC CellDesc = m_Cells[m_PickDatas.front().m_iCellIndex];
+		m_vPickPos = CellDesc.m_Points[m_PickDatas.front().m_ePoint].TransCoord();
+	}
+	m_isMakingCell = true;
+	// 컨트롤을 누르고 피킹하면 반올림하여 처리
+	if (true == m_pGameInstance->Get_DIKeyState(DIK_LCONTROL))
+	{
+		m_vPickPos.x = roundf(m_vPickPos.x);
+		m_vPickPos.y = roundf(m_vPickPos.y);
+		m_vPickPos.z = roundf(m_vPickPos.z);
 	}
 
+	// 피킹처리
+	if (CCell::POINT_END > m_iCurrentPickPointIndex)
+	{
+		m_vCell[m_iCurrentPickPointIndex++] = m_vPickPos.xyz();
+	}
+
+	// 3번의 피킹이 끝나면 벡터컨테이너에 값을 넣고 피킹 인덱스 초기화
+	if (CCell::POINT_END == m_iCurrentPickPointIndex)
+	{
+		CCWSort_Cell(m_vCell.data());
+
+		COLCELLDESC CellDesc;
+		CellDesc.m_Points = m_vCell;
+		CellDesc.m_pBufferCom = CVIBuffer_Cell::Create(m_pDevice, m_pContext, m_vCell.data());
+		if (nullptr == CellDesc.m_pBufferCom)
+		{
+			MSG_BOX("Failed Make_Cell : CellDesc.m_pBufferCom is nullptr");
+			return E_FAIL;
+		}
+
+		m_Cells.push_back(CellDesc);
+
+		m_iCurrentPickPointIndex = CCell::POINT_A;
+
+		m_PickDatas.clear();
+		m_isMakingCell = false;
+	}
 	return S_OK;
 }
 
