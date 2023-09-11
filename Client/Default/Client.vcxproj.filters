@@ -327,6 +327,9 @@
     <ClInclude Include="..\Public\UI_Back.h">
       <Filter>02. GameObject\05. UI\UI_Function\CUI_Back</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Player.h">
+      <Filter>02. GameObject\01. Player</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -463,6 +466,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_Back.cpp">
       <Filter>02. GameObject\05. UI\UI_Function\CUI_Back</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player.cpp">
+      <Filter>02. GameObject\01. Player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
