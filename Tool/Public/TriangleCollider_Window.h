@@ -17,8 +17,7 @@ public:
 	/* 생성한 셀의 정보 */
 	typedef struct tagColCellDesc
 	{
-		string m_strIndexName = { "" };
-		array<_float3, CCell::POINT_END> m_Points;
+		array<_float3, 3> m_Points;
 		CVIBuffer_Cell* m_pBufferCom = { nullptr };
 	}COLCELLDESC;
 
@@ -44,7 +43,15 @@ public:
 	virtual void Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
-	_bool Get_VertexIndex_By_Picking(_uint* pVertexIndex, _float3* pPickPosition);
+	void OpenFile_Button();
+	void AddModel_Button();
+	void Select_Model();
+
+	// 모델에서 피킹하는 함수임.
+	_bool Get_VertexIndex_By_Picking(_Inout_ _float3* pPickPosition);
+
+	// 정점을 피킹하는 함수임.
+	_bool Pick_Spheres(const _float4& vOrigin, const _float4& vDirection, _Inout_ vector<PICKCOLDESC>& Out);
 
 private:
 	/* 현재 생성한 셀 들의 정보 */
@@ -66,15 +73,22 @@ private:
 	/* 현재 셀 생성중인지 확인용 bool */
 	_bool m_isMakingCell = { false };
 
+	//모델 가져오기용도임.
+	_int			m_iMaxModelIndex = { 0 };
+	_int		    m_iModelIndex = { 0 };
+	vector<string>  m_vecModelList;
+	vector<wstring> m_vecModelList_t;
+	_tchar			m_wszCurrentDummyModelTag[MAX_PATH] = {};
+
 private:
 	CShader* m_pShaderCom = { nullptr };
 	CTriangleColMesh* m_pTriangleColMesh = { nullptr };
 
-public:
-	/* 피킹한 구체를 가지고 있는 셀의 정보들을 반환 */
-	_bool Pick_Spheres(const _float4& vOrigin, const _float4& vDirection, _Inout_ vector<PICKCOLDESC>& Out);
-
 private:
+	HRESULT Read_File_Data(_tchar* pModelFilePath);
+	HRESULT Release_Mesh(COLMESH* Mesh);
+	HRESULT Create_COLCELL(COLMESH* PMesh);
+
 	/* 셀 피킹 함수 */
 	HRESULT Pick_Navigation(_float fTimeDelta);
 	HRESULT Make_Cell();
@@ -84,13 +98,6 @@ private:
 	HRESULT Delete_Cell();
 	/* 셀들의 렌더 갱신 */
 	HRESULT Remake_Cells();
-
-private: /* For.FileSystem */
-	HRESULT NavigationSaveLoad();
-	HRESULT NavigationSaveButton();
-	HRESULT NavigationWrite_File(const _tchar* pPath);
-	HRESULT NavigationLoadButton();
-	HRESULT NavigationRead_File(const _tchar* pFileName);
 
 private:
 	// 셀의 방향 처리(CCW로 변경)
