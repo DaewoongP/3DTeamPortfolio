@@ -45,14 +45,13 @@ public:
 
 	void OpenFile_Button();
 	void AddModel_Button();
-	void Select_Model();
 
 	// 모델에서 피킹하는 함수임.
 	_bool Get_VertexIndex_By_Picking(_Inout_ _float4* pPickPosition);
 
 	// 정점을 피킹하는 함수임.
 	_bool Pick_Spheres(const _float4& vOrigin, const _float4& vDirection, _Inout_ vector<PICKCOLDESC>& Out);
-
+	HRESULT Save_MeshData();
 private:
 	/* 현재 생성한 셀 들의 정보 */
 	vector<COLCELLDESC> m_Cells;

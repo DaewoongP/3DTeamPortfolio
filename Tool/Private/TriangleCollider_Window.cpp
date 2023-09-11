@@ -44,7 +44,6 @@ void CTriangleCollider_Window::Tick(_float fTimeDelta)
 	ImGui::Begin("Navigation", nullptr, m_WindowFlag);
 
 	OpenFile_Button();
-	Select_Model();
 	AddModel_Button();
 	if (m_pTriangleColMesh != nullptr)
 		m_pTriangleColMesh->Tick(fTimeDelta);
@@ -267,13 +266,6 @@ void CTriangleCollider_Window::AddModel_Button()
 	}
 }
 
-void CTriangleCollider_Window::Select_Model()
-{
-	ImGui::Text("AnimModelList");
-	ImGui::ListBox("##AnimModelListBox", &m_iModelIndex, VectorGetter, static_cast<void*>(&m_vecModelList), (_int)m_vecModelList.size(), 3);
-
-}
-
 _bool CTriangleCollider_Window::Get_VertexIndex_By_Picking(_Inout_ _float4* pPickPosition)
 {
 	if (nullptr == m_pTriangleColMesh)
@@ -311,36 +303,26 @@ _bool CTriangleCollider_Window::Get_VertexIndex_By_Picking(_Inout_ _float4* pPic
 	_float3 vVertex0, vIntersectVertex0;
 	_float3 vVertex1, vIntersectVertex1;
 	_float3 vVertex2, vIntersectVertex2;
-	_uint iVertexIndex0 = { 0 };
+
 	_bool    isIntersects = { false };
-	for (_uint i = 0; i < Indices.size() - 3; ++i)
+	for (_uint i = 0; i < Indices.size() - 3;)
 	{
-		vVertex0 = Vertices[Indices[i]];
-		vVertex1 = Vertices[Indices[i + 1]];
-		vVertex2 = Vertices[Indices[i + 2]];
+		vVertex0 = Vertices[Indices[i++]];
+		vVertex1 = Vertices[Indices[i++]];
+		vVertex2 = Vertices[Indices[i++]];
 
 		if (TriangleTests::Intersects(vMouseOrigin, vMouseDirection, vVertex0, vVertex1, vVertex2, fDist))
 		{
 			if (fDist < fReturnDist)
 			{
 				fReturnDist = fDist;
-				iVertexIndex0 = Indices[i];
-				
-				vIntersectVertex0 = vVertex0;
-				vIntersectVertex1 = vVertex1;
-				vIntersectVertex2 = vVertex2;
-
 				isIntersects = true;
 				//카메라 위치에서 dir로 dist만큼 간 점.
 				*pPickPosition = vMouseOrigin + (vMouseDirection * fDist);
-				return true;
 			}
 		}
 	}
-
-	if (false == isIntersects)
-		return false;
-	return false;
+	return isIntersects;
 }
 
 _bool CTriangleCollider_Window::Pick_Spheres(const _float4& vOrigin, const _float4& vDirection, _Inout_ vector<PICKCOLDESC>& Out)
@@ -371,6 +353,12 @@ _bool CTriangleCollider_Window::Pick_Spheres(const _float4& vOrigin, const _floa
 	}
 
 	return bReturnData;
+}
+
+HRESULT CTriangleCollider_Window::Save_MeshData()
+{
+
+	return S_OK;
 }
 
 HRESULT CTriangleCollider_Window::Read_File_Data(_tchar* pModelFilePath)
