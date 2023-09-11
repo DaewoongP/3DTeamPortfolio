@@ -101,9 +101,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	if (FAILED(pGameInstance->Add_Timer(TEXT("Timer_Default"))))
+	if (FAILED(pGameInstance->Add_QueryTimer(TEXT("Timer_Default"))))
 		return FALSE;
-	if (FAILED(pGameInstance->Add_Timer(TEXT("MainTimer"))))
+	if (FAILED(pGameInstance->Add_QueryTimer(TEXT("MainTimer"))))
 		return FALSE;
 
     MSG msg;
