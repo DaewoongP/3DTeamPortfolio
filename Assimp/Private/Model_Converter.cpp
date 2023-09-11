@@ -117,8 +117,15 @@ HRESULT CModel_Converter::Convert_Model(_uint iType, const _char* pModelFilePath
 	}
 
 	cout << "Writing Files..." << endl;
+	// fbx파일 체크
 
-	if ((TYPE_COL == eType )? FAILED(Write_File_COL(eType, szPath, szFileName)) :FAILED(Write_File(eType, szPath, szFileName)))
+	_tchar fileName[MAX_PATH] = {};
+	_wsplitpath_s(FullPath, nullptr, 0, nullptr, 0, fileName, MAX_PATH, nullptr, 0);
+
+	size_t fileNameLength = wcslen(fileName);
+	const wchar_t* suffix = L"_COL";
+
+	if ((fileNameLength >= wcslen(suffix) && wcscmp(fileName + fileNameLength - wcslen(suffix), suffix) == 0) ? FAILED(Write_File_COL(eType, szPath, szFileName)) :FAILED(Write_File(eType, szPath, szFileName)))
 	{
 		MSG_BOX("Failed (Write_File)");
 		return E_FAIL;

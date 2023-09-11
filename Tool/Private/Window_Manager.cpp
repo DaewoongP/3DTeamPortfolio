@@ -65,21 +65,21 @@ void CWindow_Manager::Tick(_float fTimeDelta)
 		m_eLoadingFlag |= OBJECT_LOAD;
 	}
 
-	if (ImGui::RadioButton("Navigation", iCurMenuList, NAVIGATION_WINDOW))
+	if (ImGui::RadioButton("TriangleCollider", iCurMenuList, TRIANGLECOLLIDER_WINDOW))
 	{
-		if (0 == (m_eLoadingFlag & NAVIGATION_LOAD))
+		if (0 == (m_eLoadingFlag & TRIANGLECOLLIDER_LOAD))
 		{
-			if (FAILED(Add_Window(TEXT("Navigation_Window"),
-				CNavigation_Window::Create(m_pDevice, m_pContext,
+			if (FAILED(Add_Window(TEXT("TriangleCollider_Window"),
+				CTriangleCollider_Window::Create(m_pDevice, m_pContext,
 					ImVec2(_float(g_iWinSizeX + 8), _float(0.f)), ImVec2(446.f, 768.f)))))
 			{
-				MSG_BOX("Failed Create Navigation_Window");
+				MSG_BOX("Failed Create TriangleCollider_Window");
 				return;
 			}
 		}
 
-		Setup_Current_Window(TEXT("Navigation_Window"));
-		m_eLoadingFlag |= NAVIGATION_LOAD;
+		Setup_Current_Window(TEXT("TriangleCollider_Window"));
+		m_eLoadingFlag |= TRIANGLECOLLIDER_LOAD;
 	}
 
 	if (ImGui::RadioButton("Camera", iCurMenuList, CAMERA_WINDOW))

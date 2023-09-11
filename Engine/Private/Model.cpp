@@ -186,8 +186,7 @@ void CModel::Change_Animation(const wstring& wstrAnimationTag, ANIMTYPE eType)
 	m_tAnimationDesc[eType].iPreviousAnimIndex = m_tAnimationDesc[eType].iCurrentAnimIndex;
 	m_tAnimationDesc[eType].isResetAnimTrigger = true;
 	m_isFinishAnimation = false;
-
-	Reset_Animation(eType);
+	//Reset_Animation(eType);
 }
 
 void CModel::Change_Animation(_uint iAnimIndex, ANIMTYPE eType)
@@ -196,8 +195,7 @@ void CModel::Change_Animation(_uint iAnimIndex, ANIMTYPE eType)
 	m_tAnimationDesc[eType].iPreviousAnimIndex = m_tAnimationDesc[eType].iCurrentAnimIndex;
 	m_tAnimationDesc[eType].isResetAnimTrigger = true;
 	m_isFinishAnimation = false;
-
-	Reset_Animation(eType);
+	//Reset_Animation(eType);
 }
 
 void CModel::Play_Animation(_float fTimeDelta, ANIMTYPE eType, CTransform* pTransform)
@@ -206,32 +204,54 @@ void CModel::Play_Animation(_float fTimeDelta, ANIMTYPE eType, CTransform* pTran
 	if (m_tAnimationDesc[eType].iNumAnimations == 0)
 		return;
 
-	// 애니메이션 종료 체크 ( 루프 일 경우 계속 false )
-	m_isFinishAnimation = m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Invalidate_AccTime(fTimeDelta);
 	
+	CAnimation* currentAnimation = m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex];
+	if (currentAnimation->Invalidate_AccTime(fTimeDelta) || m_tAnimationDesc[eType].isResetAnimTrigger)
+	{
+		// 애니메이션 종료 체크 ( 루프 일 경우 계속 false )
+		m_isFinishAnimation = currentAnimation->Get_Duration() <
+			currentAnimation->Get_Accmulation() &&
+			!currentAnimation->Get_LoopAnim();
+
+		//애니메이션 리셋해줘
+		currentAnimation->Reset();
+		m_BeginRootMatrix = pTransform->Get_WorldMatrix();
+		//러프가 설정돼있으면 러프도 세팅해줘.
+		if (currentAnimation->Get_LerpAnim())
+		{
+			m_tAnimationDesc[eType].isAnimChangeLerp = true;
+			m_tAnimationDesc[eType].fAnimChangeTimer = ANIMATIONLERPTIME;
+		}
+		//0번노드(하체)라면? 루트 매트릭스 날려줘.
+		if (eType == 0)
+			m_PostRootMatrix = XMMatrixIdentity();
+		//리셋설정 다됐으니까 트리거 꺼줘.
+		m_tAnimationDesc[eType].isResetAnimTrigger = false;
+	}
 	//트랜스폼이 있다면?
-	if (pTransform != nullptr)
+	else if (pTransform != nullptr)
 	{
 		//루트애니메이션 설정돼있다면 루트애니메이션 진행해줘.
-		if(m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Get_RootAnim_State()&& 
-			!m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Get_Paused_State()&&
-			/*애니메이션이 정지상태라면?*/m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Get_Duration() > m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Get_Accmulation())
-			Do_Root_Animation(fTimeDelta,pTransform);
+		if (currentAnimation->Get_RootAnim_State() &&
+			!currentAnimation->Get_Paused_State() &&
+			(currentAnimation->Get_Duration() >
+				currentAnimation->Get_Accmulation()))
+			Do_Root_Animation(fTimeDelta, pTransform);
 	}
 
 	//노티파이 돌리기
-	m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Invalidate_Frame(fTimeDelta);
+	currentAnimation->Invalidate_Frame(fTimeDelta);
 
 	//뼈 돌리기
 	//지금 모델에 러프설정이 안돼있다면 그냥 돌려줘
 	if (!m_tAnimationDesc[eType].isAnimChangeLerp)
 	{
-		m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Invalidate_TransformationMatrix(m_Bones, fTimeDelta, &m_tAnimationDesc[eType].AffectBoneVec);
+		currentAnimation->Invalidate_TransformationMatrix(m_Bones, fTimeDelta, &m_tAnimationDesc[eType].AffectBoneVec);
 	}
 	else if (m_tAnimationDesc[eType].fAnimChangeTimer >= 0.0)
 	{
 		//러프설정이 돼있따면 러프해줘.
-		m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Invalidate_TransformationMatrix_Lerp(m_Bones, fTimeDelta, ANIMATIONLERPTIME - m_tAnimationDesc[eType].fAnimChangeTimer, m_iRootBoneIndex, &m_tAnimationDesc[eType].AffectBoneVec);
+		currentAnimation->Invalidate_TransformationMatrix_Lerp(m_Bones, fTimeDelta, ANIMATIONLERPTIME - m_tAnimationDesc[eType].fAnimChangeTimer, m_iRootBoneIndex, &m_tAnimationDesc[eType].AffectBoneVec);
 		m_tAnimationDesc[eType].fAnimChangeTimer -= fTimeDelta;
 	}
 	else
@@ -298,6 +318,7 @@ void CModel::Do_Root_Animation(_float fTimeDelta,CTransform* pTransform)
 {
 	if (pTransform != nullptr)
 	{
+		//애니메이션을 적용시키기 전 matrix를 보관해보자.
 		_float4x4 current_Matrix = m_Bones[m_iRootBoneIndex]->Get_CombinedTransformationMatrix();
 		_float4x4 post_Matirx = m_PostRootMatrix;
 
@@ -309,7 +330,6 @@ void CModel::Do_Root_Animation(_float fTimeDelta,CTransform* pTransform)
 		vCurrent_Look.Normalize();
 		vPost_Look.Normalize();
 
-		
 		if (vCurrent_Look != vPost_Look && fabsf(vCurrent_Look.x - vPost_Look.x) >0.0001f && fabsf(vCurrent_Look.z - vPost_Look.z) > 0.0001f)
 		{
 			_float dot = XMVectorGetX(XMVector3Dot(vPost_Look, vCurrent_Look));
@@ -323,11 +343,24 @@ void CModel::Do_Root_Animation(_float fTimeDelta,CTransform* pTransform)
 
 		_float3 vCurrent_Position = current_Matrix.Translation();
 		_float3 vPost_Position = post_Matirx.Translation();
+		
+		_float4x4 vPivotOutPosScale = m_PivotMatrix;
+		vPivotOutPosScale.MatrixScale(_float3(1, 1, 1));
+		vPivotOutPosScale._41 = 0;
+		vPivotOutPosScale._42 = 0;
+		vPivotOutPosScale._43 = 0;
+
+		//vPivotOutPosScale_float4x4 temp = XMMatrixInverse(nullptr, player_Matrix_Override);
+
 		_float3 Calculated_Position = (vCurrent_Position - vPost_Position);
+
+		Calculated_Position = XMVector3TransformNormal(Calculated_Position, vPivotOutPosScale);
+
 		_float4x4 PositionMatrix = XMMatrixTranslation(Calculated_Position.x, Calculated_Position.y, Calculated_Position.z);
 
 		_float3 vOffsetVector = m_tAnimationDesc[0].Animations[m_tAnimationDesc[0].iCurrentAnimIndex]->Get_OffsetPosition();
 		_float4x4 offsetPositionMatrix = XMMatrixTranslation(vOffsetVector.x, vOffsetVector.y, vOffsetVector.z);
+			
 
 		pTransform->Set_WorldMatrix(offsetPositionMatrix * player_Matrix_Override * PositionMatrix*  pTransform->Get_WorldMatrix());
 		m_PostRootMatrix = m_Bones[m_iRootBoneIndex]->Get_CombinedTransformationMatrix();

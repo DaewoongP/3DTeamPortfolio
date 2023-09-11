@@ -211,8 +211,7 @@ void CAnimation_Window::OpenFile_Button()
 			m_vecModelList_t.push_back(wszModelTag);
 			m_vecModelList.push_back(szModelTag);
 
-			_float4x4 PivotMatrix = XMMatrixIdentity();
-			PivotMatrix = XMMatrixIdentity();
+			_float4x4 PivotMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
 			CGameInstance* pGameInstance = CGameInstance::GetInstance();
 			Safe_AddRef(pGameInstance);
 			if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, m_vecModelList_t[m_iMaxModelIndex].c_str(),

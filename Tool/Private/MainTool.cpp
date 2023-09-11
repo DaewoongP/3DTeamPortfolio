@@ -9,6 +9,7 @@
 #include "Camera_Point.h"
 #include "DummyMeshEffect.h"
 #include "DummyTrail.h"
+#include "TriangleColMesh.h"
 
 #ifdef _DEBUG
 
@@ -425,6 +426,12 @@ HRESULT CMainTool::Ready_Prototype_Object()
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_Shape_GeoSphere"),
 		CShape_GeoSphere::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+
+	/* Prototype_GameObject_TriangleColMesh*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_TriangleColMesh"),
+		CTriangleColMesh::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	
 
 #ifdef _DEBUG
 
