@@ -6,8 +6,10 @@
 
 BEGIN(Engine)
 class CShader;
+class CCollider;
 class CRenderer;
 class CCustomModel;
+class CVIBuffer_Line;
 END
 
 BEGIN(Tool)
@@ -37,6 +39,7 @@ public:
 	void Set_Testing(_bool _isTesting) { m_isTesting = _isTesting; }
 	void Set_WireFrame(_bool _isWireFrame) { m_isWireFrame = _isWireFrame; }
 	void Set_MeshHighLight(_bool _isMeshHighLight) { m_isMeshHighLight = _isMeshHighLight; }
+	void Set_CapsuleCollider(vector<pair<_float3, _float>> Capsules);
 
 public:
 	virtual HRESULT Initialize_Prototype();
@@ -48,18 +51,23 @@ public:
 public:
 	void Reset_Position();
 	HRESULT Remake_ClothMesh(vector<_float> InvMasses);
+	HRESULT Render_Capsules();
 
 private:
 	CShader*				m_pShaderCom = { nullptr };
+	CShader*				m_pDebugShaderCom = { nullptr };
 	CRenderer*				m_pRendererCom = { nullptr };
 	CCustomModel*			m_pModelCom = { nullptr };
 	CDynamic_Mesh*			m_pCurrent_Dynamic_Mesh = { nullptr };
+	CCollider*				m_pColliderCom = { nullptr };
+	vector<CVIBuffer_Line*>	m_Lines;
 
 private:
 	CCustomModel::MESHTYPE	m_eMeshPartsType = { CCustomModel::MESH_END };
 	_uint					m_iMeshIndex = { 0 };
 	_bool					m_isRemakeMesh = { false };
 	vector<_float>			m_InvMasses;
+	vector<pair<_float3, _float>> m_Spheres;
 
 private:
 	_bool					m_isTesting = { false };
@@ -69,6 +77,8 @@ private:
 private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
+	HRESULT SetUp_DebugShaderResources();
+	void Make_CapsuleLines(vector<pair<_float3, _float>> Capsules);
 
 public:
 	static CDummy_Cloth* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);

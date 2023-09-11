@@ -26,6 +26,22 @@ _tchar* CString_Manager::Make_WChar(const _tchar* pMakeWChar)
 	return pNewChar;
 }
 
+HRESULT CString_Manager::Delete_Char(_char* pChar)
+{
+	m_Characters.remove(pChar);
+	Safe_Delete_Array(pChar);
+
+	return S_OK;
+}
+
+HRESULT CString_Manager::Delete_WChar(_tchar* pWChar)
+{
+	m_WideCharacters.remove(pWChar);
+	Safe_Delete_Array(pWChar);
+
+	return S_OK;
+}
+
 void CString_Manager::Free()
 {
 	for (auto& Character : m_Characters)

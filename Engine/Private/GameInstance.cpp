@@ -765,7 +765,7 @@ _bool CGameInstance::Check_Timer(const wstring& wstrTimerTag)
 
 const _float& CGameInstance::Get_World_TimeAcc() const
 {
-	NULL_CHECK_RETURN_MSG(m_pTime_Manager, 0.f, TEXT("Time_Manager NULL"));
+	NULL_CHECK_MSG(m_pTime_Manager, TEXT("Time_Manager NULL"));
 
 	return m_pTime_Manager->Get_World_TimeAcc();
 }
@@ -793,16 +793,30 @@ void CGameInstance::Reset_World_TimeAcc()
 
 _char* CGameInstance::Make_Char(const _char* pMakeChar)
 {
-	NULL_CHECK_MSG(m_pString_Manager, TEXT("Time_Manager NULL"));
+	NULL_CHECK_RETURN_MSG(m_pString_Manager, nullptr, TEXT("String_Manager NULL"));
 
 	return m_pString_Manager->Make_Char(pMakeChar);
 }
 
 _tchar* CGameInstance::Make_WChar(const _tchar* pMakeWChar)
 {
-	NULL_CHECK_MSG(m_pString_Manager, TEXT("Time_Manager NULL"));
+	NULL_CHECK_RETURN_MSG(m_pString_Manager, nullptr, TEXT("String_Manager NULL"));
 
 	return m_pString_Manager->Make_WChar(pMakeWChar);
+}
+
+HRESULT CGameInstance::Delete_Char(_char* pChar)
+{
+	NULL_CHECK_RETURN_MSG(m_pString_Manager, E_FAIL, TEXT("String_Manager NULL"));
+
+	return m_pString_Manager->Delete_Char(pChar);
+}
+
+HRESULT CGameInstance::Delete_WChar(_tchar* pWChar)
+{
+	NULL_CHECK_RETURN_MSG(m_pString_Manager, E_FAIL, TEXT("String_Manager NULL"));
+
+	return m_pString_Manager->Delete_WChar(pWChar);
 }
 
 void CGameInstance::Release_Engine()

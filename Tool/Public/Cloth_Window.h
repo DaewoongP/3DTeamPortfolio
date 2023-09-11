@@ -13,6 +13,7 @@ class CCamera_Free;
 
 class CCloth_Window final : public CImWindow
 {
+private: /* window 에서만 사용하는 구조체입니다 */
 	typedef struct tagVertex
 	{
 		_char* pVertexName = { nullptr };
@@ -20,6 +21,13 @@ class CCloth_Window final : public CImWindow
 		_float3 vVertexPosition;
 		CCollider* pCollider = { nullptr };
 	}CLOTHVERTEX;
+
+	typedef struct tagCapsule
+	{
+		_char* pCapsuleIndexName = { nullptr };
+		pair<_float3, _float> SourSphere;
+		pair<_float3, _float> DestSphere;
+	}CAPSULE;
 
 private:
 	explicit CCloth_Window(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext);
@@ -48,16 +56,37 @@ private:
 	vector<CLOTHVERTEX>				m_ClothVertices;
 	_int							m_iClothVertexListIndex = { 0 };
 
+	_float							m_fInvMass = { 1.f };
+
 private:
-	void Radio_Select_MeshType(_float fTimeDelta);
-	void Open_Model(_float fTimeDelta);
+	pair<_float3, _float>			m_SourSphere;
+	pair<_float3, _float>			m_DestSphere;
+	vector<CAPSULE>					m_Capsules;
+	_int							m_iCapsuleIndex = { 0 };
+
+private:
+	_bool							m_isModifyCapsule = { false };
+
+private:
+	void Is_Testing();
+	void Radio_Select_MeshType();
+	void Button_Open_ModelDialog();
+	void ModelDialog();
 	void Input_Mesh_Index(_float fTimeDelta);
 	_bool isValid_Mesh_Index(_int iIndex);
 	void Pick_Mesh(_float fTimeDelta);
 	void Pick_Collider(_float fTimeDelta);
 	void Current_Picked_Vertices(_float fTimeDelta);
+	void Make_CapsuleCollider(_float fTimeDelta);
+	void Modify_CapsuleCollider(_float fTimeDelta);
 	void Input_Options(_float fTimeDelta);
+	void Delete_CapsuleCollider(_bool& _isModified);
 	_bool isValid_Dummy();
+
+private:
+	void Update_Cloth();
+	void Create_MeshParts_Prototype(string strFilePathName);
+	HRESULT Render_Collider();
 
 public:
 	static CCloth_Window* Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, ImVec2 _vWindowPos, ImVec2 _vWindowSize);

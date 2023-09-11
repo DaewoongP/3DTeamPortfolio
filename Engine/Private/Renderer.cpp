@@ -8,6 +8,7 @@
 
 #ifdef _DEBUG
 #include "Input_Device.h"
+#include "Font_Manager.h"
 #endif // _DEBUG
 
 
@@ -187,7 +188,6 @@ HRESULT CRenderer::Draw_RenderGroup()
 
 	if (FAILED(Render_Priority()))
 		return E_FAIL;
-	
 	if (FAILED(Render_NonBlend()))
 		return E_FAIL;
 	if (FAILED(Render_Lights()))
@@ -227,26 +227,28 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 #endif // _DEBUG
 
-
 #ifdef _DEBUG
-	CInput_Device* pInput_Device = CInput_Device::GetInstance();
-	Safe_AddRef(pInput_Device);
+	CFont_Manager* pFont_Manager = CFont_Manager::GetInstance();
+	Safe_AddRef(pFont_Manager);
 
-	if (pInput_Device->Get_DIKeyState(DIK_F1, CInput_Device::KEY_DOWN))
-	{
-		if (true == m_isDebugRender)
-			m_isDebugRender = false;
-		else
-			m_isDebugRender = true;
-	}
-
-	if (true == m_isDebugRender)
+	if (true == Is_DebugRender())
 	{
 		if (FAILED(Render_Debug()))
 			return E_FAIL;
+		if (FAILED(pFont_Manager->Render_Font(TEXT("Font_135"), TEXT("Debug Render"), _float2(1120.f, 690.f),
+			_float4(0.f, 1.f, 0.f, 1.f), 0.f, _float2(), 0.5f)))
+			return E_FAIL;
+	}
+	if (true == Is_MRTRender())
+	{
+		if (FAILED(Render_MRTs()))
+			return E_FAIL;
+		if (FAILED(pFont_Manager->Render_Font(TEXT("Font_135"), TEXT("Target Render"), _float2(1120.f, 660.f),
+			_float4(1.f, 0.f, 0.f, 1.f), 0.f, _float2(), 0.5f)))
+			return E_FAIL;
 	}
 
-	Safe_Release(pInput_Device);
+	Safe_Release(pFont_Manager);
 #endif // _DEBUG
 
 	return S_OK;
@@ -728,9 +730,6 @@ HRESULT CRenderer::Add_Components()
 #ifdef _DEBUG
 HRESULT CRenderer::Render_Debug()
 {
-	if (nullptr == m_pRenderTarget_Manager)
-		return E_FAIL;
-
 	for (auto& pDebugCom : m_DebugObject)
 	{
 		if (nullptr != pDebugCom &&
@@ -741,6 +740,14 @@ HRESULT CRenderer::Render_Debug()
 	}
 
 	m_DebugObject.clear();
+
+	return S_OK;
+}
+
+HRESULT CRenderer::Render_MRTs()
+{
+	if (nullptr == m_pRenderTarget_Manager)
+		return E_FAIL;
 
 	if (FAILED(m_pDeferredShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
 		return E_FAIL;
@@ -755,6 +762,39 @@ HRESULT CRenderer::Render_Debug()
 	return S_OK;
 }
 
+_bool CRenderer::Is_DebugRender()
+{
+	CInput_Device* pInput_Device = CInput_Device::GetInstance();
+	Safe_AddRef(pInput_Device);
+
+	if (pInput_Device->Get_DIKeyState(DIK_F1, CInput_Device::KEY_DOWN))
+	{
+		if (true == m_isDebugRender)
+			m_isDebugRender = false;
+		else
+			m_isDebugRender = true;
+	}
+	Safe_Release(pInput_Device);
+
+	return m_isDebugRender;
+}
+
+_bool CRenderer::Is_MRTRender()
+{
+	CInput_Device* pInput_Device = CInput_Device::GetInstance();
+	Safe_AddRef(pInput_Device);
+
+	if (pInput_Device->Get_DIKeyState(DIK_F2, CInput_Device::KEY_DOWN))
+	{
+		if (true == m_isMRTRender)
+			m_isMRTRender = false;
+		else
+			m_isMRTRender = true;
+	}
+	Safe_Release(pInput_Device);
+
+	return m_isMRTRender;
+}
 #endif // _DEBUG
 
 CRenderer* CRenderer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
