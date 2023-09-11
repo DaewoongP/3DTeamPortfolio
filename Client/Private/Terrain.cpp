@@ -98,12 +98,12 @@ HRESULT CTerrain::Add_Components()
 	}
 
 	/* Com_Texture */
-	/*if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Texture_Terrain"),
+	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Texture_Terrain"),
 		TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTexture))))
 	{
 		MSG_BOX("Failed CTerrain Add_Component : (Com_Texture)");
 		return E_FAIL;
-	}*/
+	}
 
 	return S_OK;
 }
@@ -123,6 +123,12 @@ HRESULT CTerrain::SetUp_ShaderResources()
 		return E_FAIL;
 
 	Safe_Release(pGameInstance);
+
+	if (FAILED(m_pTexture->Bind_ShaderResource(m_pShader, "g_DiffuseTexture", 0)))
+		return E_FAIL;
+
+	if (FAILED(m_pTexture->Bind_ShaderResource(m_pShader, "g_BrushTexture", 1)))
+		return E_FAIL;
 
 	return S_OK;
 }
