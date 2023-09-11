@@ -950,7 +950,7 @@ HRESULT CObject_Window::Load_MapObject_Ins()
 	m_vecSaveInsObject.clear();
 	m_vecSaveInsObjectWorld.clear();
 
-	_tchar dataFile[MAX_PATH] = TEXT("../../Resources/GameData/MapData/MapObject_Ins.ddd");
+	_tchar dataFile[MAX_PATH] = TEXT("../../Resources/GameData/MapData/MapData_Ins.ddd");
 
 	HANDLE hFile = CreateFile(dataFile, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 

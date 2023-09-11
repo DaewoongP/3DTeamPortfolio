@@ -279,7 +279,6 @@ HRESULT CRenderer::Render_NonBlend()
 
 	for (auto& pGameObject : m_RenderObjects[RENDER_NONBLEND])
 	{
-
 		if (nullptr != pGameObject)
 			pGameObject->Render_Depth();
 	}

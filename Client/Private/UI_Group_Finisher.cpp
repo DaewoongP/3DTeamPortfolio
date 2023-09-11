@@ -70,7 +70,7 @@ HRESULT CUI_Group_Finisher::Initialize(void* pArg)
 #pragma endregion
 
 #pragma region Back Load
-	_tchar pFilePath[MAX_PATH] = TEXT("../../Resources/GameData/UIData/UI_Group_Finisher_Back.uidata");
+	_tchar pFilePath[MAX_PATH] = TEXT("../../Resources/GameData/UIData/UI_Group_Finisher_Back2.uidata");
 	HANDLE hFile = CreateFile(pFilePath, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 	if (hFile == INVALID_HANDLE_VALUE)
 	{
@@ -119,7 +119,6 @@ void CUI_Group_Finisher::Tick(_float fTimeDelta)
 void CUI_Group_Finisher::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
-
 }
 
 _bool CUI_Group_Finisher::Set_Gauge(_float fMin, _float fMax, _float fCurrent, CUI_Progress::GAUGE eType)

@@ -14,6 +14,7 @@ private:
 		BACK,
 		FINISHER_END
 	};
+
 private:
 	explicit CUI_Group_Finisher(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CUI_Group_Finisher(const CUI_Group_Finisher& rhs);

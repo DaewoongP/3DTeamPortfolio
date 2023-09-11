@@ -137,6 +137,24 @@ HRESULT CUI::Change_Scale(_float fX, _float fY)
 
 HRESULT CUI::Save(HANDLE hFile, _ulong& dwByte)
 {
+	wstring strPath = L"3DTeamPortfolio";
+	wstring strFullPath = m_wszTexturePath;
+
+	strFullPath.find(strPath);
+
+	_uint found = strFullPath.find(strPath);
+
+	if (found != std::wstring::npos)
+	{
+		_tchar wszPath[MAX_PATH] = TEXT("");
+		std::wstring result = TEXT("..\\..") + strFullPath.substr(found + strPath.length());
+		lstrcpy(m_wszTexturePath, result.c_str());
+	}
+	else
+	{
+		MSG_BOX("Failed UI Save");
+	}
+
 	WriteFile(hFile, &m_vCombinedXY, sizeof m_vCombinedXY, &dwByte, nullptr);
 	WriteFile(hFile, &m_fX, sizeof m_fX, &dwByte, nullptr);
 	WriteFile(hFile, &m_fY, sizeof m_fY, &dwByte, nullptr);

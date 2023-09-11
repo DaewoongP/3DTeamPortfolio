@@ -323,8 +323,11 @@ PS_OUT PS_MAIN_SHADOW(PS_IN In)
     vPosition = vPosition / vPosition.w;
     
 	//±¤¿øÀ¸·ÎÀÇ±íÀÌ°ª.
-    float2 LightUV = float2((vPosition.x + 1.f) / 2.f, (vPosition.y - 1.f) / -2.f);
-
+    float2 LightUV = float2((vPosition.x / 2.f) + 0.5f, ( vPosition.y / -2.f) + 0.5f);
+    
+    
+    
+    
     vector vLightDepth = g_vLightDepthTexture.Sample(BlurSampler, LightUV);
     
     
