@@ -181,6 +181,11 @@ HRESULT CLoader::Loading_For_MainGame()
 			CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/NonAnims/SM_SpherePrimitiveRegularNormals_01/T_Default_Material_Grid_M.png")))))
 			throw TEXT("Prototype_Component_Texture_Default_Particle");
 
+		/* Prototype_Component_Texture_Terrain */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Texture_Terrain"),
+			CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Terrain/Tile%d.dds"), 2))))
+			throw TEXT("Prototype_Component_Texture_Terrain");
+
 		lstrcpy(m_szLoading, TEXT("버퍼 로딩 중."));
 		/* For.Prototype_Component_VIBuffer_Cube */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Cube"),
