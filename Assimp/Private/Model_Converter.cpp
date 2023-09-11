@@ -76,10 +76,25 @@ HRESULT CModel_Converter::Convert_Model(_uint iType, const _char* pModelFilePath
 	// Write MapObject
 	else if (TYPE_MAPOBJECT == eType)
 	{
-		lstrcat(szPath, TEXT("NonAnims/MapObject/"));
+		lstrcat(szPath, TEXT("MapObject/NonAnims/"));
 		lstrcat(szPath, szFileName);
-		lstrcat(szPath, TEXT("/"));
-		fs::create_directory(szPath);
+
+		// 파일 명에 Lod 가 들어갈 경우 가공해야 된다.
+		wstring ws(szPath);
+		if (std::string::npos != ws.find(TEXT("_Lod")))
+		{
+			size_t findLod = ws.find(TEXT("_Lod"));
+			ws = ws.substr(0, findLod);
+			lstrcpy(szPath, ws.c_str());
+			lstrcat(szPath, TEXT("/"));
+			fs::create_directory(szPath);
+		}
+
+		else
+		{
+			lstrcat(szPath, TEXT("/"));
+			fs::create_directory(szPath);
+		}		
 	}
 
 

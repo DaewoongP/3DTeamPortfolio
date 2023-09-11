@@ -13,6 +13,8 @@
 
 BEGIN(Tool)
 
+class CMain_Camera;
+
 class CWindow_Manager final : public CBase
 {
 private:
@@ -49,6 +51,8 @@ public:
 
 private:
 	HRESULT Setup_Current_Window(const _tchar* pTag);
+	
+	void Camera_Speed();
 
 private:
 	unordered_map<const _tchar*, class CImWindow*>      m_ImWindows;
@@ -62,6 +66,8 @@ private:
 	ID3D11Device*					m_pDevice = { nullptr };
 	ID3D11DeviceContext*			m_pContext = { nullptr };
 
+private:
+	CMain_Camera* m_pMainCamera = { nullptr };
 public:
 	virtual void Free(void) override;
 };

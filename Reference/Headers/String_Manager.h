@@ -19,6 +19,9 @@ public:
 	// 게임이 종료되기 전까지 살아있는 문자열입니다.
 	_tchar* Make_WChar(const _tchar* pMakeWChar);
 
+	HRESULT Delete_Char(_char* pChar);
+	HRESULT Delete_WChar(_tchar* pWChar);
+
 private:
 	list<_char*> m_Characters;
 	list<_tchar*> m_WideCharacters;

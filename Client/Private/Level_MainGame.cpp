@@ -90,7 +90,7 @@ HRESULT CLevel_MainGame::Ready_Layer_BackGround(const _tchar* pLayerTag)
 	//	return E_FAIL;
 	//}
 
-	//Load_MapObject();
+	Load_MapObject();
 
 	Safe_Release(pGameInstance);
 
@@ -99,11 +99,26 @@ HRESULT CLevel_MainGame::Ready_Layer_BackGround(const _tchar* pLayerTag)
 
 HRESULT CLevel_MainGame::Ready_Layer_Player(const _tchar* pLayerTag)
 {
+	BEGININSTANCE;
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Terrain"), pLayerTag, TEXT("GameObject_Terrain"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Terrain)");
+		return E_FAIL;
+	}
+
+
+	ENDINSTANCE;
+
 	return S_OK;
 }
 
 HRESULT CLevel_MainGame::Load_MapObject()
 {
+	// 데이터 파일 이름 선택
+	//_tchar dataFile[MAX_PATH] = { 0 };
+	//_stprintf_s(dataFile, TEXT("../../Resources/GameData/MapData/MapData%d.ddd"), (Num));
+
 	_tchar dataFile[MAX_PATH] = TEXT("../../Resources/GameData/MapData/MapData.ddd");
 
 	HANDLE hFile = CreateFile(dataFile, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
@@ -168,14 +183,14 @@ HRESULT CLevel_MainGame::Load_MapObject()
 
 			wstring modelName = ws.substr(findIndex);
 
-			wstring modelPath(TEXT("../../Resources/Models/NonAnims/MapObject/"));
+			wstring modelPath(TEXT("../../Resources/Models/MapObject/NonAnims/"));
 			modelPath += modelName;
 			modelPath += TEXT("/");
 			modelPath += modelName;
 			modelPath += TEXT(".dat");
 
 			// 프로토타입 생성
-			_float4x4 PivotMatrix = XMMatrixRotationX(XMConvertToRadians(90.f));
+			_float4x4 PivotMatrix = XMMatrixIdentity();
 			if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAINGAME, LoadDesc.wszTag,
 				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, modelPath.c_str(), PivotMatrix))))
 			{
@@ -295,11 +310,11 @@ HRESULT CLevel_MainGame::Ready_Layer_Debug(const _tchar* pLayerTag)
 	}*/
 	
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Golem_Combat"), pLayerTag, TEXT("GameObject_Test_Monster"))))
+	/*if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Golem_Combat"), pLayerTag, TEXT("GameObject_Test_Monster"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Monster)");
 		return E_FAIL;
-	}
+	}*/
 
 	/*if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Dummy"), pLayerTag, TEXT("GameObject_Dummy"))))
 	{

@@ -76,7 +76,7 @@ HRESULT CDynamic_Mesh::Initialize_Prototype(CModel::TYPE eType, const CModel::BO
 	// 질량값 초기화
 	m_InvMasses.clear();
 	m_InvMasses.resize(m_iNumVertices);
-	fill(m_InvMasses.begin(), m_InvMasses.end(), 1.f);
+	fill(m_InvMasses.begin(), m_InvMasses.end(), 0.5f);
 
 	if (FAILED(Initialize_ClothMesh()))
 		return E_FAIL;
@@ -426,11 +426,31 @@ HRESULT CDynamic_Mesh::Initialize_ClothMesh()
 	m_pCloth->setSolverFrequency(10.f);
 	m_pCloth->setTetherConstraintScale(1.f);
 	m_pCloth->setDragCoefficient(0.5f);
-	m_pCloth->setLiftCoefficient(1.f);
+	m_pCloth->setLiftCoefficient(0.6f);
+	//m_pCloth->setFriction(10.f);
 	m_pCloth->setWindVelocity(PxVec3(0.f, 0.f, 0.f));
 	m_pCloth->setGravity(vGravity);
-	/*_float4 vPivotRoation = XMQuaternionRotationRollPitchYaw(XMConvertToRadians(90.f), 0.f, 0.f);
-	m_pCloth->setRotation(PhysXConverter::ToPxQuat(vPivotRoation));*/
+
+	if (1 != m_ClothSpheres.size() % 2 &&
+		0 != m_ClothSpheres.size())
+	{
+		vector<PxVec4> Spheres;
+		Spheres.reserve(m_ClothSpheres.size());
+		for (auto& ClothSphere : m_ClothSpheres)
+		{
+			Spheres.push_back({ PhysXConverter::ToPxVec3(ClothSphere.first), ClothSphere.second });
+		}
+
+		m_pCloth->setSpheres(cloth::Range<PxVec4>(Spheres.data(), Spheres.data() + 2), 0, m_pCloth->getNumSpheres());
+
+		vector<_uint> CapsuleIndices;
+		for (_uint i = 0; i < m_ClothSpheres.size(); ++i)
+		{
+			CapsuleIndices.push_back(i);
+		}
+
+		m_pCloth->setCapsules(cloth::Range<_uint>(CapsuleIndices.data(), CapsuleIndices.data() + 2), 0, m_pCloth->getNumCapsules());
+	}
 
 	m_pSolver->addCloth(m_pCloth);
 
