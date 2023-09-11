@@ -1,6 +1,6 @@
 #include "Level_Tool.h"
 #include "GameInstance.h"
-
+#include"Light.h"
 CLevel_Tool::CLevel_Tool(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CLevel(pDevice, pContext)
 {
@@ -16,7 +16,8 @@ HRESULT CLevel_Tool::Initialize()
 	
 	if (FAILED(Ready_For_Layer_MapObject(TEXT("Layer_MapObject"))))
 		return E_FAIL;
-
+	if (FAILED(Ready_For_Layer_Light(TEXT("Layer_Light"))))
+		return E_FAIL;
 	return S_OK;
 }
 
@@ -84,6 +85,23 @@ HRESULT CLevel_Tool::Ready_For_Layer_MapObject(const _tchar* pLayerTag)
 {
 	// 여기에 MapDummy, MapObject만 들어가야 한다.
 
+	return S_OK;
+}
+
+HRESULT CLevel_Tool::Ready_For_Layer_Light(const _tchar* pLayerTag)
+{
+	BEGININSTANCE
+	CLight::LIGHTDESC LightDesc;
+	ZEROMEM(&LightDesc);
+	LightDesc.vPos = _float4(50.f, 300.f, 50.f, 1.f);
+	LightDesc.vDir = _float4(0.f, -0.98f, 0.f, 0.f);
+
+	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+	LightDesc.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
+	LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
+	LightDesc.eType = CLight::TYPE_DIRECTIONAL;
+	pGameInstance->Add_Lights(m_pDevice, m_pContext, LightDesc);
+	ENDINSTANCE
 	return S_OK;
 }
 
