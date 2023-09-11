@@ -179,11 +179,6 @@ HRESULT CLoader::Loading_For_MainGame()
 			CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Textures/Default_Particle.png")))))
 			throw TEXT("Prototype_Component_Texture_Default_Particle");
 
-		/* Prototype_Component_Texture_T_Default_Material_Grid_M*/
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Texture_T_Default_Material_Grid_M"),
-			CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/NonAnims/SM_SpherePrimitiveRegularNormals_01/T_Default_Material_Grid_M.png")))))
-			throw TEXT("Prototype_Component_Texture_Default_Particle");
-
 		/* Prototype_Component_Texture_Terrain */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Texture_Terrain"),
 			CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Terrain/Tile%d.dds"), 2))))
@@ -196,9 +191,9 @@ HRESULT CLoader::Loading_For_MainGame()
 			throw TEXT("Prototype_Component_VIBuffer_Cube");
 
 		/* Prototype_Component_VIBuffer_Terrain */
-		//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Terrain"),
-		//	CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Terrain/Height.bmp")))))
-		//	throw TEXT("Prototype_Component_VIBuffer_Terrain");
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Terrain"),
+			CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Terrain/Height.bmp")))))
+			throw TEXT("Prototype_Component_VIBuffer_Terrain");
 		
 		/* For.Prototype_Component_VIBuffer_Cloth */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Cloth"),
@@ -280,32 +275,11 @@ HRESULT CLoader::Loading_For_MainGame()
 			throw TEXT("Prototype_Component_Model_Test_Robe_LOD");*/
 
 #ifdef _DEBUG
-		PivotMatrix = XMMatrixScaling(100.f, 100.f, 100.f) * XMMatrixRotationY(XMConvertToRadians(180.f));
-		/* For.Prototype_Component_Model_Fiona*/
-		/*if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Fiona"),
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/Fiona/Fiona.dat"), PivotMatrix))))
-			throw TEXT("Prototype_Component_Model_Fiona");*/
-
-		///* For.Prototype_Component_Model_CustomModel */
-		//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_CustomModel_Player"),
-		//	CCustomModel::Create(m_pDevice, m_pContext, CCustomModel::TYPE_ANIM, L"../../Resources/Models/Anims/test/test.dat"))))
-		//	throw TEXT("Prototype_Component_Model_CustomModel");
 
 		/* For.Prototype_Component_Model_CustomModel_Player */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_CustomModel_Player"),
 			CCustomModel::Create(m_pDevice, m_pContext, CCustomModel::TYPE_ANIM, L"../../Resources/Models/Anims/Biped_Skeleton/Biped_Skeleton.dat"))))
 			throw TEXT("Prototype_Component_Model_CustomModel_Player");
-
-		///* MeshParts (테스트용) */
-		///* For.Prototype_Component_MeshParts_Head */
-		//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Head"),
-		//	CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/head/head.dat"), TEXT("HEAD_Default")))))
-		//	throw TEXT("Prototype_Component_MeshParts_Head");
-
-		/* For.Prototype_Component_MeshParts_Arm */
-		/*if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Arm"),
-			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Arm/Arm.dat"), TEXT("ARM_Default")))))
-			throw TEXT("Prototype_Component_MeshParts_Arm");*/
 
 		/* For.Prototype_Component_MeshParts_Up */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Up"),
@@ -342,7 +316,6 @@ HRESULT CLoader::Loading_For_MainGame()
 			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Shoes/Shoes.dat"), TEXT("SHOES_Default")))))
 			throw TEXT("Prototype_Component_MeshParts_Shoes");
 
-		
 
 #endif // _DEBUG
 
@@ -551,7 +524,7 @@ HRESULT CLoader::Loading_For_MainGame()
 #endif // _DEBUG
 
 		// For.UI
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_HP"),
+		/*if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_HP"),
 			CUI_Group_HP::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_UI_Group_HP");
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_UI_Progress"),
@@ -562,7 +535,7 @@ HRESULT CLoader::Loading_For_MainGame()
 			throw TEXT("Prototype_GameObject_UI_Group_Potion");
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_Finisher"),
 			CUI_Group_Finisher::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_UI_Group_Finisher");
+			throw TEXT("Prototype_GameObject_UI_Group_Finisher");*/
 
 
 		/* For.Prototype_GameObject_Player*/
