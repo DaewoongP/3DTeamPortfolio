@@ -1,5 +1,13 @@
 #pragma once
 
+/* =============================================== */
+//	[CAction]
+//	: 객체의 애니메이션을 담당하는 클래스
+//	정 : 주성환
+//	부 :
+//
+/* =============================================== */
+
 #include "Behavior.h"
 #include "Client_Defines.h"
 
@@ -26,11 +34,13 @@ public:
 		매개변수
 		1. 바인딩 할 애니메이션 태그
 		2. 모델 포인터
-		3. 쿨타임
-		4. 한번만 실행 할 행동인지
-		5. 애니메이션 러프 유무
+		3. 행동 체크 할건지 (비헤비어 성공시 action 탈출 하는 경우 true로 변경)
+		4. 쿨타임
+		5. 한번만 실행 할 행동인지
+		6. 애니메이션 러프 유무
 	*/
-	void Set_Options(const wstring& _wstrAnimationTag, CModel* _pModel, const _float& _fCoolTime = 0.f,
+	void Set_Options(const wstring& _wstrAnimationTag, CModel* _pModel, 
+		_bool _isCheckBehavior = false, const _float& _fCoolTime = 0.f,
 		_bool _isOneTimeAction = false, _bool _isLerp = true);
 
 private:
@@ -40,6 +50,7 @@ private:
 	wstring m_wstrAnimationTag = { TEXT("") };
 
 	_bool m_isFinishBehaviors = { false };
+	_bool m_isCheckBehavior = { false };
 	_bool m_isOneTimeAction = { false };
 	_bool m_isPlayAction = { false };
 	_bool m_isFirst = { true };

@@ -189,9 +189,9 @@ HRESULT CLoader::Loading_For_MainGame()
 		//	throw TEXT("Prototype_Component_VIBuffer_Terrain");
 
 		/* Prototype_Component_VIBuffer_Terrain */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Terrain"),
-			CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Terrain/Height.bmp")))))
-			throw TEXT("Prototype_Component_VIBuffer_Terrain");
+		//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Terrain"),
+		//	CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Terrain/Height.bmp")))))
+		//	throw TEXT("Prototype_Component_VIBuffer_Terrain");
 		
 		/* For.Prototype_Component_VIBuffer_Cloth */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Cloth"),
@@ -399,6 +399,21 @@ HRESULT CLoader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Wait"),
 			CWait::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Wait");
+
+		/* For.Prototype_Component_Turn */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Turn"),
+			CTurn::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Turn");
+
+		/* For.Prototype_Component_TargetDegree */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_TargetDegree"),
+			CTargetDegree::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_TargetDegree");
+
+		/* For.Prototype_Component_Selector_Degree */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Selector_Degree"),
+			CSelector_Degree::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Selector_Degree");
 
 		lstrcpy(m_szLoading, TEXT("°´Ã¼ ·Îµù Áß."));
 		/* For.Prototype_GameObject_Sky */

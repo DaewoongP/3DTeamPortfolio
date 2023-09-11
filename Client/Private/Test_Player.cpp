@@ -157,12 +157,12 @@ HRESULT CTest_Player::Add_Components()
 	}
 
 	/* Com_CustomModel */
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_CustomModel"),
+	/*if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_CustomModel"),
 		TEXT("Com_CustomModel"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 	{
 		MSG_BOX("Failed CTest_Player Add_Component : (Com_CustomModel)");
 		return E_FAIL;
-	}
+	}*/
 
 	/* For.Com_Shader */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimMesh"),

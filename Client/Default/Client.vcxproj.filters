@@ -94,14 +94,8 @@
     <Filter Include="02. GameObject\02. Enemy\00. Troll\01. Forest_Troll\Weapon">
       <UniqueIdentifier>{716e173e-d10b-4137-8676-391c2c340ccd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Tasks">
-      <UniqueIdentifier>{68f60c2e-b68f-4392-b9de-da48723e2496}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\02. Enemy\00. Troll\00. Armored_Troll\Weapon">
       <UniqueIdentifier>{cc4def40-eb2b-4c6e-b1d0-03d0027e89bc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Tasks\Movement">
-      <UniqueIdentifier>{d95f3888-ed91-44de-bed2-7ee502737efa}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\02. Enemy\02. Dugbog">
       <UniqueIdentifier>{ea8cf730-c75f-4ad8-a593-3de6f11919a8}</UniqueIdentifier>
@@ -123,9 +117,6 @@
     </Filter>
     <Filter Include="02. GameObject\02. Enemy\03. Golem\99. Weapons">
       <UniqueIdentifier>{fde3512d-c9d7-4f98-baac-ed8650da6e1a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Tasks\Actions">
-      <UniqueIdentifier>{22de2c6d-33c0-405e-880a-8329dd7ffd58}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\99. Debug\Cloth">
       <UniqueIdentifier>{3f5e0d18-9b63-46c6-b1ee-b4c3d0a446b1}</UniqueIdentifier>
@@ -159,6 +150,24 @@
     </Filter>
     <Filter Include="02. GameObject\05. UI\UI_Function\CUI_Back">
       <UniqueIdentifier>{3b6be744-8047-49de-88b4-d917b595c1ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Behaviors">
+      <UniqueIdentifier>{68f60c2e-b68f-4392-b9de-da48723e2496}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Behaviors\00. Actions">
+      <UniqueIdentifier>{22de2c6d-33c0-405e-880a-8329dd7ffd58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Behaviors\01. Selectors">
+      <UniqueIdentifier>{71a935c5-d66c-42f6-b634-774235c64530}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Behaviors\02. Sequences">
+      <UniqueIdentifier>{d6997012-3cb3-41af-a953-a7da969ed441}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Behaviors\03. Movement">
+      <UniqueIdentifier>{d95f3888-ed91-44de-bed2-7ee502737efa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Behaviors\04. Function">
+      <UniqueIdentifier>{11282af5-bac7-4061-9441-81c0be48d567}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -268,7 +277,7 @@
       <Filter>99. Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Wait.h">
-      <Filter>03. Tasks\Movement</Filter>
+      <Filter>03. Behaviors\03. Movement</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Dugbog.h">
       <Filter>02. GameObject\02. Enemy\02. Dugbog</Filter>
@@ -301,7 +310,7 @@
       <Filter>02. GameObject\04. MapObject</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Action.h">
-      <Filter>03. Tasks\Actions</Filter>
+      <Filter>03. Behaviors\00. Actions</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Test_Cloth.h">
       <Filter>02. GameObject\99. Debug\Cloth</Filter>
@@ -326,6 +335,15 @@
     </ClInclude>
     <ClInclude Include="..\Public\UI_Back.h">
       <Filter>02. GameObject\05. UI\UI_Function\CUI_Back</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\TargetDegree.h">
+      <Filter>03. Behaviors\04. Function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Turn.h">
+      <Filter>03. Behaviors\03. Movement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Selector_Degree.h">
+      <Filter>03. Behaviors\01. Selectors</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -405,7 +423,7 @@
       <Filter>02. GameObject\02. Enemy\00. Troll\01. Forest_Troll\Weapon</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Wait.cpp">
-      <Filter>03. Tasks\Movement</Filter>
+      <Filter>03. Behaviors\03. Movement</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Dugbog.cpp">
       <Filter>02. GameObject\02. Enemy\02. Dugbog</Filter>
@@ -438,7 +456,7 @@
       <Filter>02. GameObject\04. MapObject</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Action.cpp">
-      <Filter>03. Tasks\Actions</Filter>
+      <Filter>03. Behaviors\00. Actions</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Test_Cloth.cpp">
       <Filter>02. GameObject\99. Debug\Cloth</Filter>
@@ -463,6 +481,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_Back.cpp">
       <Filter>02. GameObject\05. UI\UI_Function\CUI_Back</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\TargetDegree.cpp">
+      <Filter>03. Behaviors\04. Function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Turn.cpp">
+      <Filter>03. Behaviors\03. Movement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Selector_Degree.cpp">
+      <Filter>03. Behaviors\01. Selectors</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

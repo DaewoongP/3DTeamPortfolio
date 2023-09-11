@@ -37,7 +37,6 @@
     <ClInclude Include="..\public\Dynamic_Mesh.h" />
     <ClInclude Include="..\Public\JobManager.h" />
     <ClInclude Include="..\public\String_Manager.h" />
-    <ClInclude Include="..\Public\Time_Manager.h" />
     <ClInclude Include="..\public\Calculator.h" />
     <ClInclude Include="..\public\Camera.h" />
     <ClInclude Include="..\public\Camera_Manager.h" />
@@ -154,7 +153,6 @@
     <ClCompile Include="..\private\Dynamic_Mesh.cpp" />
     <ClCompile Include="..\Private\JobManager.cpp" />
     <ClCompile Include="..\private\String_Manager.cpp" />
-    <ClCompile Include="..\Private\Time_Manager.cpp" />
     <ClCompile Include="..\private\Calculator.cpp" />
     <ClCompile Include="..\private\Camera.cpp" />
     <ClCompile Include="..\private\Camera_Manager.cpp" />

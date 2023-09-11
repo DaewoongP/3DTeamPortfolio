@@ -40,6 +40,7 @@ private:
 	CRenderer* m_pRenderer = { nullptr };
 
 private:
+	void Key_Input(_float fTimeDelta);
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
 

@@ -84,11 +84,11 @@ HRESULT CLevel_MainGame::Ready_Layer_BackGround(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Terrain"), pLayerTag, TEXT("GameObject_Terrain"))))
+	/*if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Terrain"), pLayerTag, TEXT("GameObject_Terrain"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Terrain)");
 		return E_FAIL;
-	}
+	}*/
 
 	//Load_MapObject();
 
@@ -294,16 +294,15 @@ HRESULT CLevel_MainGame::Ready_Layer_Debug(const _tchar* pLayerTag)
 		return E_FAIL;
 	}*/
 	
+	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Dummy"), pLayerTag, TEXT("GameObject_Dummy"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Dummy)");
+		return E_FAIL;
+	}
 
 	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Golem_Combat"), pLayerTag, TEXT("GameObject_Test_Monster"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Monster)");
-		return E_FAIL;
-	}
-
-	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Dummy"), pLayerTag, TEXT("GameObject_Dummy"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Dummy)");
 		return E_FAIL;
 	}
 

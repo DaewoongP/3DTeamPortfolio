@@ -226,9 +226,6 @@
     <Filter Include="01. Utility\02. GameObjects\00. Parts">
       <UniqueIdentifier>{b2e63afa-998c-44d2-9cf7-ca44f0b814a6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\12. Time_Manager">
-      <UniqueIdentifier>{9cbb7d45-1355-4391-a17a-ab9735b11f73}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Utility\11. Physics\Shader">
       <UniqueIdentifier>{d6e48222-790a-42b5-a30b-71e187ad6d29}</UniqueIdentifier>
     </Filter>
@@ -567,9 +564,6 @@
     <ClInclude Include="..\Public\Ignite.h">
       <Filter>01. Utility\03. Components\11. Status\03. Ignite</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Time_Manager.h">
-      <Filter>01. Utility\12. Time_Manager</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Notify.h">
       <Filter>01. Utility\03. Components\04. Model\Animation\Notify</Filter>
     </ClInclude>
@@ -886,9 +880,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\Ignite.cpp">
       <Filter>01. Utility\03. Components\11. Status\03. Ignite</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Time_Manager.cpp">
-      <Filter>01. Utility\12. Time_Manager</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Notify.cpp">
       <Filter>01. Utility\03. Components\04. Model\Animation\Notify</Filter>

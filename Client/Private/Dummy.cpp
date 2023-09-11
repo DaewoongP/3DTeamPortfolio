@@ -29,13 +29,15 @@ HRESULT CDummy::Initialize(void* pArg)
 
 	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
-	m_pTransform->Set_Position(_float3(7.f, 0.f, 7.f));
+	m_pTransform->Set_Position(_float3(-5.f, 0.f, 5.f));
 
 	return S_OK;
 }
 
 void CDummy::Tick(_float fTimeDelta)
 {
+	Key_Input(fTimeDelta);
+
 	__super::Tick(fTimeDelta);
 
 	if (nullptr != m_pModelCom)
@@ -91,6 +93,25 @@ HRESULT CDummy::Render()
 HRESULT CDummy::Render_Depth()
 {
 	return S_OK;
+}
+
+void CDummy::Key_Input(_float fTimeDelta)
+{
+	BEGININSTANCE;
+
+	if (pGameInstance->Get_DIKeyState(DIK_UP, CInput_Device::KEY_PRESSING))
+		m_pTransform->Go_Straight(fTimeDelta);
+
+	if (pGameInstance->Get_DIKeyState(DIK_LEFT, CInput_Device::KEY_PRESSING))
+		m_pTransform->Go_Left(fTimeDelta);
+
+	if (pGameInstance->Get_DIKeyState(DIK_DOWN, CInput_Device::KEY_PRESSING))
+		m_pTransform->Go_Backward(fTimeDelta);
+
+	if (pGameInstance->Get_DIKeyState(DIK_RIGHT, CInput_Device::KEY_PRESSING))
+		m_pTransform->Go_Right(fTimeDelta);
+
+	ENDINSTANCE;
 }
 
 HRESULT CDummy::Add_Components()

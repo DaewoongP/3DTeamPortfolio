@@ -4,11 +4,6 @@ IMPLEMENT_SINGLETON(CTime_Manager)
 
 _float CTime_Manager::Get_TimeAcc(const wstring& wstrTimerTag) const
 {
-	auto iter = m_Timers.find(wstrTimerTag);
-	if (m_Timers.end() == iter)
-		return 0.f;
-
-	return iter->second.m_fTimeAcc;
 }
 
 void CTime_Manager::Tick(const _float& fTimeDelta)
