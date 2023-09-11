@@ -11,6 +11,9 @@
 
 #pragma region UI
 #include "UI_Group_HP.h"
+#include "UI_Group_Potion.h"
+#include "UI_Group_Finisher.h"
+#include "UI_Progress1.h"
 #pragma endregion UI
 
 #pragma region Monsters & NPC
@@ -511,7 +514,7 @@ HRESULT CLoader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Cloth"),
 			CTest_Cloth::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Test_Cloth");
-
+		
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Stair"),
 			CTest_Stair::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Test_Stair");
@@ -519,12 +522,22 @@ HRESULT CLoader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_PhysxRenderer"),
 			CPhysXRender::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_PhysxRenderer");
-		/* For.Prototype_GameObject_Test_UI*/
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_HP"),
+#endif // _DEBUG
+
+		// For.UI
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_HP"),
 			CUI_Group_HP::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_UI_Group_HP");
-#endif // _DEBUG
-		
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_UI_Progress"),
+			CUI_Progress::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_UI_Progress");
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_Potion"),
+			CUI_Group_Potion::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_UI_Group_Potion");
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_Finisher"),
+			CUI_Group_Finisher::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_UI_Group_Finisher");
+
 	}
 	catch (const _tchar* pErrorTag)
 	{

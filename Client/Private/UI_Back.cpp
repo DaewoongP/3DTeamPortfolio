@@ -14,7 +14,7 @@ CUI_Back::CUI_Back(const CUI_Back& rhs)
 
 HRESULT CUI_Back::Initialize_Prototype()
 {
-	if (FAILED(__super::Initialize_Prototype()))
+	if (FAILED(__super::Initialize_Prototype(g_iWinSizeX, g_iWinSizeY)))
 		return E_FAIL;
 
 	return S_OK;
@@ -24,49 +24,11 @@ HRESULT CUI_Back::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
-
-	if (nullptr != pArg)
-	{
-		CUI_Group::UI_DATA* UIDesc = (CUI_Group::UI_DATA*)pArg;
-
-		if (UIDesc->isSave)
-		{
-			m_vCombinedXY = UIDesc->vCombinedXY;
-			m_fX = UIDesc->m_fX;
-			m_fY = UIDesc->m_fY;
-			m_fZ = UIDesc->m_fZ;
-			m_fSizeX = UIDesc->m_fSizeX;
-			m_fSizeY = UIDesc->m_fSizeY;
-
-			lstrcpy(m_wszTextureName, UIDesc->m_wszTextureName);
-			lstrcpy(m_wszTexturePath, UIDesc->m_wszTexturePath);
-
-			//m_eUIType = UIDesc->m_eType;
-
-			m_isParent = UIDesc->m_isParent;
-
-			m_isAlpha = UIDesc->m_isAlpha;
-			m_vColor = UIDesc->m_vColor;
-			lstrcpy(m_wszAlphaTexturePrototypeTag, UIDesc->m_wszAlphaTexturePrototypeTag);
-			lstrcpy(m_wszAlphaTextureFilePath, UIDesc->m_wszAlphaTextureFilePath);
-		}
-		else
-		{
-			_float2 fSize = _float2(UIDesc->m_fSizeX, UIDesc->m_fSizeY);
-			Set_Size(fSize.x, fSize.y);
-
-			lstrcpy(m_wszTextureName, UIDesc->m_wszTextureName);
-			lstrcpy(m_wszTexturePath, UIDesc->m_wszTexturePath);
-		}
-	}
-	else
-	{
-		return E_FAIL;
-	}
+	
+	Ready_Texture();
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
-
 
 	if (m_isAlpha)
 	{
@@ -88,6 +50,11 @@ void CUI_Back::Tick(_float fTimeDelta)
 void CUI_Back::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
+
+	if (nullptr != m_pRendererCom)
+	{
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this);
+	}
 }
 
 HRESULT CUI_Back::Render()
@@ -194,6 +161,31 @@ HRESULT CUI_Back::SetUp_ShaderResources()
 	}
 
 	return S_OK;
+}
+
+HRESULT CUI_Back::Ready_Texture()
+{
+	BEGININSTANCE
+
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAINGAME, m_wszTextureName,
+			CTexture::Create(m_pDevice, m_pContext, m_wszTexturePath))))
+		{
+			MSG_BOX("Failed Create Texture Component");
+		}
+
+
+	if (m_isAlpha)
+	{
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAINGAME, m_wszAlphaTexturePrototypeTag,
+			CTexture::Create(m_pDevice, m_pContext, m_wszAlphaTextureFilePath))))
+		{
+			MSG_BOX("Failed Create Texture Component");
+		}
+	}
+
+	ENDINSTANCE
+
+		return S_OK;
 }
 
 CUI_Back* CUI_Back::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

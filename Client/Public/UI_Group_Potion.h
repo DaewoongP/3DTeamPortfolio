@@ -4,12 +4,12 @@
 
 BEGIN(Client)
 
-class CUI_Group_HP final : public CUI_Group
+class CUI_Group_Potion final : public CUI_Group
 {
 private:
-	explicit CUI_Group_HP(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	explicit CUI_Group_HP(const CUI_Group_HP& rhs);
-	virtual ~CUI_Group_HP() = default;
+	explicit CUI_Group_Potion(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	explicit CUI_Group_Potion(const CUI_Group_Potion& rhs);
+	virtual ~CUI_Group_Potion() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -24,7 +24,7 @@ private:
 	vector<_tchar*> m_ProtoTypeTags;
 
 public:
-	static CUI_Group_HP* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);
+	static CUI_Group_Potion* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;
 };
