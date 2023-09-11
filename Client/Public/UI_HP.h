@@ -41,6 +41,11 @@ private:
 	HRESULT SetUp_ShaderResources();
 	HRESULT Ready_Texture();
 
+#ifdef _DEBUG
+	HRESULT Debug_UI(_float fTimeDelta);
+#endif // _DEBUG
+
+
 public:
 	static CUI_HP* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;

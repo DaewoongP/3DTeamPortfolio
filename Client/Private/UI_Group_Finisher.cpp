@@ -139,7 +139,9 @@ _bool CUI_Group_Finisher::Set_Gauge(_float fMin, _float fMax, _float fCurrent, C
 		m_pFinishers[FRONT]->Set_Gauge(fCurrent * 2.f, eType);
 		m_pFinishers[BACK]->Set_Gauge(fMax, eType);
 	}
-		
+	
+
+	return true;
 }
 
 HRESULT CUI_Group_Finisher::Add_ProtoType()

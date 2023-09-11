@@ -165,13 +165,15 @@ HRESULT CUI_Back::SetUp_ShaderResources()
 
 HRESULT CUI_Back::Ready_Texture()
 {
-	BEGININSTANCE
+	BEGININSTANCE;
 
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAINGAME, m_wszTextureName,
-			CTexture::Create(m_pDevice, m_pContext, m_wszTexturePath))))
-		{
-			MSG_BOX("Failed Create Texture Component");
-		}
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAINGAME, m_wszTextureName,
+		CTexture::Create(m_pDevice, m_pContext, m_wszTexturePath))))
+	{
+		MSG_BOX("Failed Create Texture Component");
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	}
 
 
 	if (m_isAlpha)
@@ -180,12 +182,14 @@ HRESULT CUI_Back::Ready_Texture()
 			CTexture::Create(m_pDevice, m_pContext, m_wszAlphaTextureFilePath))))
 		{
 			MSG_BOX("Failed Create Texture Component");
+			Safe_Release(pGameInstance);
+			return E_FAIL;
 		}
 	}
 
-	ENDINSTANCE
+	ENDINSTANCE;
 
-		return S_OK;
+	return S_OK;
 }
 
 CUI_Back* CUI_Back::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

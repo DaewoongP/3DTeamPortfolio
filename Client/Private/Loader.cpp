@@ -297,15 +297,15 @@ HRESULT CLoader::Loading_For_MainGame()
 		//	throw TEXT("Prototype_Component_Model_CustomModel");
 
 		/* For.Prototype_Component_Model_CustomModel_Player */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_CustomModel_Player"),
-			CCustomModel::Create(m_pDevice, m_pContext, CCustomModel::TYPE_ANIM, L"../../Resources/Models/Anims/Biped_Skeleton/Biped_Skeleton.gcm"))))
-			throw TEXT("Prototype_Component_Model_CustomModel_Player");
+		//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_CustomModel_Player"),
+		//	CCustomModel::Create(m_pDevice, m_pContext, CCustomModel::TYPE_ANIM, L"../../Resources/Models/Anims/Biped_Skeleton/Biped_Skeleton.gcm"))))
+		//	throw TEXT("Prototype_Component_Model_CustomModel_Player");
 
-		/* MeshParts (테스트용) */
-		/* For.Prototype_Component_MeshParts_Head */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Head"),
-			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/head/head.dat"), TEXT("HEAD_Default")))))
-			throw TEXT("Prototype_Component_MeshParts_Head");
+		///* MeshParts (테스트용) */
+		///* For.Prototype_Component_MeshParts_Head */
+		//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Head"),
+		//	CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/head/head.dat"), TEXT("HEAD_Default")))))
+		//	throw TEXT("Prototype_Component_MeshParts_Head");
 
 		/* For.Prototype_Component_MeshParts_Arm */
 		/*if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Arm"),

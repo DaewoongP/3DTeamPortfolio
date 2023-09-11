@@ -39,6 +39,10 @@ HRESULT CUI_HP::Initialize(void* pArg)
 void CUI_HP::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+#ifdef _DEBUG
+	Debug_UI(fTimeDelta);
+#endif // DEBUG
 }
 
 void CUI_HP::Late_Tick(_float fTimeDelta)
@@ -195,6 +199,15 @@ HRESULT CUI_HP::Ready_Texture()
 	return S_OK;
 
 }
+
+#ifdef _DEBUG
+HRESULT CUI_HP::Debug_UI(_float fTimeDelta)
+{
+	ImGui::Button("Hi");
+
+	return S_OK;
+}
+#endif // _DEBUG
 
 CUI_HP* CUI_HP::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {

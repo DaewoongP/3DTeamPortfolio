@@ -214,6 +214,7 @@ PS_OUT PS_MAIN(PS_IN In)
         float4 vAmbient = abs((iColor / 13.f) - 1);
    
         Out.vColor = 1.f - vAmbient;
+    Out.vColor = vector(1.f, 1.f, 1.f, 1.f);
         return Out;
     }
 
