@@ -23,7 +23,7 @@ HRESULT CMapObject::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
-
+	
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
@@ -50,7 +50,7 @@ void CMapObject::Late_Tick(_float fTimeDelta)
 		m_eRenderCount = RT_NORMAL;
 
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
-		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_PICKING, this);
+		//m_pRenderer->Add_RenderGroup(CRenderer::RENDER_PICKING, this);
 	}
 }
 

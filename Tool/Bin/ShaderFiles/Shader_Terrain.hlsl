@@ -96,12 +96,7 @@ PS_OUT PS_BRUSH(PS_IN In)
         g_vBrushCurrentPoint.z - g_fBrushRadius < In.vWorldPos.z && In.vWorldPos.z <= g_vBrushCurrentPoint.z + g_fBrushRadius)*/
     if(50.f <= In.vWorldPos.y)
     {
-        float2		vTexUV;
-
-        vTexUV.x = (In.vWorldPos.x - (g_vBrushCurrentPoint.x - g_fBrushRadius)) / (2.f * g_fBrushRadius);
-        vTexUV.y = ((g_vBrushCurrentPoint.z - g_fBrushRadius) - In.vWorldPos.z) / (2.f * g_fBrushRadius);
-
-        vBrush = g_BrushTexture.Sample(LinearSampler, vTexUV);
+        vBrush = g_BrushTexture.Sample(LinearSampler, In.vTexUV);
     }
 
     Out.vColor = vDiffuse + vBrush;

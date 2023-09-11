@@ -513,11 +513,11 @@ void CVIBuffer_Terrain::Free()
 {
 	__super::Free();
 
-	if (m_isCloned)
+	if (false == m_isCloned)
 	{
 		Safe_Delete_Array(m_pPos);
 		Safe_Delete_Array(m_pIndex);
-	}
+	}	
 
 	Safe_Release(m_pQuadTree);
 }

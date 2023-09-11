@@ -345,6 +345,9 @@
     <ClInclude Include="..\Public\UI_Finisher.h">
       <Filter>02. GameObject\05. UI\UI_\UI_Finisher</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Player.h">
+      <Filter>02. GameObject\01. Player</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -490,6 +493,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_Finisher.cpp">
       <Filter>02. GameObject\05. UI\UI_\UI_Finisher</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player.cpp">
+      <Filter>02. GameObject\01. Player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
