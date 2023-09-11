@@ -13,8 +13,7 @@ _float4 CLightDot::Get_Position()
 void CLightDot::Set_Position(_float4 _vPosition)
 {
 	m_pTransform->Set_Position(_vPosition.xyz());
-	//BoundingSphereDesc.fRadius = LightInfo.fRange;
-	//m_pCollider->Set_BoundingDesc(&BoundingSphereDesc);
+
 }
 
 HRESULT CLightDot::Initialize_Prototype()
