@@ -283,7 +283,6 @@ HRESULT CRenderer::Render_NonBlend()
 			pGameObject->Render_Depth();
 	}
 
-
 	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext)))
 		return E_FAIL;
 
@@ -353,7 +352,7 @@ HRESULT CRenderer::Render_Lights()
 	if (FAILED(m_pDeferredShader->Bind_Matrix("g_ProjMatrixInv", pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
-	if (FAILED(m_pDeferredShader->Bind_RawValue("g_vCamPosition",m_pLight_Manager->Get_LightPosition(), sizeof(_float4))))
+	if (FAILED(m_pDeferredShader->Bind_RawValue("g_vCamPosition", m_pLight_Manager->Get_LightPosition(), sizeof(_float4))))
 		return E_FAIL;
 	if (FAILED(m_pDeferredShader->Bind_RawValue("g_fCamFar", pPipeLine->Get_CamFar(), sizeof(_float))))
 		return E_FAIL;
@@ -398,11 +397,19 @@ HRESULT CRenderer::Render_Shadow()
 
 	if (FAILED(m_pSSAOShader->Bind_RawValue("g_fCamFar", pPipeLine->Get_CamFar(), sizeof(_float))))
 		return E_FAIL;
+
+	_float4x4	ViewMatrix, ProjMatrix;
+	ViewMatrix = XMMatrixLookAtLH(_float4(0.f, 10.f, 0.f, 1.f), _float4(3.f, 0.f, 3.f, 1.f), _float4(0.f, 1.f, 0.f, 0.f));
+	ProjMatrix = XMMatrixPerspectiveFovLH(XMConvertToRadians(90.f), _float(1280) / 720.f, 1.f, 100.f);
+	if (FAILED(m_pSSAOShader->Bind_Matrix("g_vLightView", &ViewMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pSSAOShader->Bind_Matrix("g_vLightProj", &ProjMatrix)))
+		return E_FAIL;
 	//빛의값을 던져주기
-	if (FAILED(m_pSSAOShader->Bind_Matrix("g_vLightView", m_pLight_Manager->Get_LightView())))
+	/*if (FAILED(m_pSSAOShader->Bind_Matrix("g_vLightView", m_pLight_Manager->Get_LightView())))
 		return E_FAIL;
 	if (FAILED(m_pSSAOShader->Bind_Matrix("g_vLightProj", m_pLight_Manager->Get_LightProj())))
-		return E_FAIL;
+		return E_FAIL;*/
 
 	Safe_Release(pPipeLine);
 

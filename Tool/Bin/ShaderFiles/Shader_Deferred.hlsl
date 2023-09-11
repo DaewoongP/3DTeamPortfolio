@@ -320,21 +320,18 @@ PS_OUT PS_MAIN_DEFERRED(PS_IN In)
     PS_OUT Out = (PS_OUT) 0;
 
     vector vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
-    if(vDiffuse.a==0.f)
+    
+    if (vDiffuse.a == 0.f)
         discard;
     vector vShade = g_ShadeTexture.Sample(LinearSampler, In.vTexUV);
     
     vector vSpecular = g_SpecularTexture.Sample(LinearSampler, In.vTexUV);
     
-    
     vector vBlur = g_BlurTexture.Sample(LinearSampler, In.vTexUV);
     
     vector vShadow = g_ShadowTexture.Sample(LinearSampler, In.vTexUV);
-    
- 
-       
    
-       Out.vColor = vDiffuse /**vShadow*/* vShade * vBlur +0.5 * vSpecular;
+    Out.vColor = vDiffuse * vShadow * vShade * vBlur +0.5 * vSpecular;
 
     return Out;
 }

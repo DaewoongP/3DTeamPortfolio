@@ -318,24 +318,27 @@ PS_OUT PS_MAIN_SHADOW(PS_IN In)
 
     vPosition = mul(vPosition, g_vLightView);
 
-    vPosition = mul(vPosition, g_vLightProj);
-	//w 나누기.
-    vPosition = vPosition / vPosition.w;
-    
-	//광원으로의깊이값.
-    float2 LightUV = float2((vPosition.x / 2.f) + 0.5f, (vPosition.y / -2.f) + 0.5f);
+    vector vUVPos = mul(vPosition, g_vLightProj);
+    float2 vLightUV;
+    vLightUV.x = (vUVPos.x / vUVPos.w) * 0.5f + 0.5f;
+    vLightUV.y = (vUVPos.y / vUVPos.w) * -0.5f + 0.5f;
 
-    vector vLightDepth = g_vLightDepthTexture.Sample(BlurSampler, LightUV);
+    vector vLightDepth = g_vLightDepthTexture.Sample(BlurSampler, vLightUV);
     
-    float LightDepth_W = vLightDepth.y * g_fCamFar;
-    float LightDepth_Z = vLightDepth.x * LightDepth_W;
+    float3 vProjTest = vUVPos.xyz / vUVPos.w;
+    if (-1.f > vProjTest.x ||
+		1.f < vProjTest.x ||
+		-1.f > vProjTest.y ||
+		1.f < vProjTest.y ||
+        0.f > vProjTest.z ||
+		1.f < vProjTest.z)
+        Out.vColor = vector(1.f, 1.f, 1.f, 1.f);
+    // 투영행렬의 far를 다시곱해주어 포지션과 연산
+    // 현재 픽셀의 깊이값과 해당하는 픽셀이 존재하는 빛기준의 텍스처 UV좌표 깊이값과 비교하여 처리한다.
+    else if (vPosition.z - 0.1f < vLightDepth.y * g_fCamFar)
+        Out.vColor.rgb = vector(0.5f, 0.5f, 0.5f, 0.5f);
+    
     float CamDepth = vPosition.z - 0.005f / g_fCamFar;
-    if (CamDepth > vLightDepth.x)
-    {
-        Out.vColor = float4(0.05f, 0.05f, 0.05f, 0.05f);
-    }
-    else
-        discard;
 
     float fragDepth = CamDepth;
     
@@ -359,8 +362,6 @@ PS_OUT PS_MAIN_SHADOW(PS_IN In)
 
     
     return Out;
-
-
 }
 
 technique11 DefaultTechnique
