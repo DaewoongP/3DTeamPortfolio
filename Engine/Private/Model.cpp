@@ -206,32 +206,54 @@ void CModel::Play_Animation(_float fTimeDelta, ANIMTYPE eType, CTransform* pTran
 	if (m_tAnimationDesc[eType].iNumAnimations == 0)
 		return;
 
-	// 애니메이션 종료 체크 ( 루프 일 경우 계속 false )
-	m_isFinishAnimation = m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Invalidate_AccTime(fTimeDelta);
 	
+	CAnimation* currentAnimation = m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex];
+	if (currentAnimation->Invalidate_AccTime(fTimeDelta) || m_tAnimationDesc[eType].isResetAnimTrigger)
+	{
+		// 애니메이션 종료 체크 ( 루프 일 경우 계속 false )
+		m_isFinishAnimation = currentAnimation->Get_Duration() >
+			currentAnimation->Get_Accmulation() &&
+			!currentAnimation->Get_LoopAnim();
+
+		//애니메이션 리셋해줘
+		currentAnimation->Reset();
+
+		//러프가 설정돼있으면 러프도 세팅해줘.
+		if (currentAnimation->Get_LerpAnim())
+		{
+			m_tAnimationDesc[eType].isAnimChangeLerp = true;
+			m_tAnimationDesc[eType].fAnimChangeTimer = ANIMATIONLERPTIME;
+		}
+		//0번노드(하체)라면? 루트 매트릭스 날려줘.
+		if (eType == 0)
+			m_PostRootMatrix = XMMatrixIdentity();
+		//리셋설정 다됐으니까 트리거 꺼줘.
+		m_tAnimationDesc[eType].isResetAnimTrigger = false;
+	}
 	//트랜스폼이 있다면?
-	if (pTransform != nullptr)
+	else if (pTransform != nullptr)
 	{
 		//루트애니메이션 설정돼있다면 루트애니메이션 진행해줘.
-		if(m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Get_RootAnim_State()&& 
-			!m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Get_Paused_State()&&
-			/*애니메이션이 정지상태라면?*/m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Get_Duration() > m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Get_Accmulation())
+		if(currentAnimation->Get_RootAnim_State()&&
+			!currentAnimation->Get_Paused_State()&&
+			(currentAnimation->Get_Duration() >
+				currentAnimation->Get_Accmulation()))
 			Do_Root_Animation(fTimeDelta,pTransform);
 	}
 
 	//노티파이 돌리기
-	m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Invalidate_Frame(fTimeDelta);
+	currentAnimation->Invalidate_Frame(fTimeDelta);
 
 	//뼈 돌리기
 	//지금 모델에 러프설정이 안돼있다면 그냥 돌려줘
 	if (!m_tAnimationDesc[eType].isAnimChangeLerp)
 	{
-		m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Invalidate_TransformationMatrix(m_Bones, fTimeDelta, &m_tAnimationDesc[eType].AffectBoneVec);
+		currentAnimation->Invalidate_TransformationMatrix(m_Bones, fTimeDelta, &m_tAnimationDesc[eType].AffectBoneVec);
 	}
 	else if (m_tAnimationDesc[eType].fAnimChangeTimer >= 0.0)
 	{
 		//러프설정이 돼있따면 러프해줘.
-		m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Invalidate_TransformationMatrix_Lerp(m_Bones, fTimeDelta, ANIMATIONLERPTIME - m_tAnimationDesc[eType].fAnimChangeTimer, m_iRootBoneIndex, &m_tAnimationDesc[eType].AffectBoneVec);
+		currentAnimation->Invalidate_TransformationMatrix_Lerp(m_Bones, fTimeDelta, ANIMATIONLERPTIME - m_tAnimationDesc[eType].fAnimChangeTimer, m_iRootBoneIndex, &m_tAnimationDesc[eType].AffectBoneVec);
 		m_tAnimationDesc[eType].fAnimChangeTimer -= fTimeDelta;
 	}
 	else
