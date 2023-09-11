@@ -986,7 +986,7 @@ HRESULT CObject_Window::Load_MapObject_Ins()
 					return E_FAIL;
 				}
 			}
-		}		
+		}
 
 		if (!ReadFile(hFile, &SaveDesc.matTransform, sizeof(_float4x4), &dwByte, nullptr))
 		{
@@ -1045,7 +1045,7 @@ HRESULT CObject_Window::Load_MapObject_Ins()
 		_float4x4 PivotMatrix = XMMatrixIdentity();
 		BEGININSTANCE; if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, ws.c_str(),
 			CModel_Instance::Create(m_pDevice, m_pContext, CModel_Instance::TYPE_NONANIM, wsPath.c_str(),
-				m_vecSaveInsObject.at(i).pMatTransform, m_vecSaveInsObject.at(i).iInstanceCnt, PivotMatrix))))
+				m_vecSaveInsObject.at(i).pMatTransform, m_vecSaveInsObject.at(i).iInstanceCnt, PivotMatrix), true)))
 		{
 			MSG_BOX("Failed to Create New CModel_Instance Prototype");
 		}
@@ -1058,15 +1058,18 @@ HRESULT CObject_Window::Load_MapObject_Ins()
 			MSG_BOX("Failed to Install MapObject");
 			ENDINSTANCE;
 			return E_FAIL;
-		} ENDINSTANCE;
+		}
 
 		// 마지막에 설치한 맵 오브젝트 주소 가져옴
 		m_pObjIns = static_cast<CMapObject_Ins*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL,
-			TEXT("Layer_MapObject"), wszobjName));
+			TEXT("Layer_MapObject"), wszobjName)); ENDINSTANCE;
 
-		m_pObjIns->Add_Model_Component(ws.c_str());
-		m_pObjIns->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMeshInstance"));
-		m_pObjIns->Set_Color(m_iMapObjectIndex); // 고유한 색깔 값을 넣어줌
+		if (nullptr != m_pObjIns)
+		{
+			m_pObjIns->Add_Model_Component(ws.c_str());
+			m_pObjIns->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMeshInstance"));
+			m_pObjIns->Set_Color(m_iMapObjectIndex); // 고유한 색깔 값을 넣어줌
+		}
 
 		++m_iMapObjectIndex;
 	}
