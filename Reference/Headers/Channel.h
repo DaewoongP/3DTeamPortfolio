@@ -35,7 +35,7 @@ public:
 	HRESULT Initialize(const Engine::CHANNEL_GCM& Channel, const CModel::BONES& Bones);
 	// Time Acc에 해당하는 현재 채널의 키프레임 상태값을 기반으로 선형보간하여 뼈에 상태행렬을 전달하는 함수.
 	void	Invalidate_TransformationMatrix(CModel::BONES& Bones, _float fTimeAcc, _Inout_ _uint* pCurrentKeyFrameIndex);
-	void	Invalidate_TransformationMatrix_Lerp(CModel::BONES& Bones, _float fTimeAcc, _Inout_ _uint* pCurrentKeyFrameIndex, _double LerpTimeAcc);
+	void	Invalidate_TransformationMatrix_Lerp(CModel::BONES& Bones, _float fTimeAcc, _Inout_ _uint* pCurrentKeyFrameIndex, _float fLerpTimeAcc);
 
 private:
 	_tchar				m_szName[MAX_STR] = TEXT("");

@@ -84,7 +84,6 @@ HRESULT MAIN_MODULE::Load(const _tchar* _pDirectoyPath)
 
 	_ulong dwByte = 0;
 	_char szBuffer[MAX_PATH];
-	_tchar wszBuffer[MAX_PATH];
 	__super::Load(hFile, dwByte);
 
 	ReadFile(hFile, &isEnable, sizeof isEnable, &dwByte, nullptr);
@@ -379,7 +378,7 @@ HRESULT RENDERER_MODULE::Load(const _tchar* _pDirectoyPath)
 		return E_FAIL;
 
 	_ulong dwByte = 0;
-	_char szBuffer[MAX_PATH];
+
 	_tchar wszBuffer[MAX_PATH];
 	__super::Load(hFile, dwByte);
 

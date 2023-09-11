@@ -420,7 +420,7 @@ HRESULT CRenderer::Render_Shadow()
 
 
 
-	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext),true))
+	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext)))
 		return E_FAIL;
 
 	return S_OK;

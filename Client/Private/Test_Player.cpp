@@ -46,9 +46,8 @@ void CTest_Player::Tick(_float fTimeDelta)
 void CTest_Player::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	if (nullptr != m_pRenderer &&
-		true == pGameInstance->isIn_WorldFrustum(m_pTransform->Get_Position().TransCoord(), 10.f))
+	
+	if (nullptr != m_pRenderer)
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 #ifdef _DEBUG
@@ -134,17 +133,25 @@ HRESULT CTest_Player::Add_Components()
 		return E_FAIL;
 	}
 
-
+	CRigidBody::RIGIDBODYDESC RigidBodyDesc;
+	RigidBodyDesc.isStatic = false;
+	RigidBodyDesc.vInitPosition = _float3(5.f, 5.f, 5.f);
+	RigidBodyDesc.fStaticFriction = 0.5f;
+	RigidBodyDesc.fDynamicFriction = 0.5f;
+	RigidBodyDesc.fRestitution = 0.f;
+	PxBoxGeometry GeoMetry = PxBoxGeometry(2.f, 2.f, 2.f);
+	RigidBodyDesc.pGeometry = &GeoMetry;
+	RigidBodyDesc.Constraint = CRigidBody::AllRot;
 	/* Com_RigidBody */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
-		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody))))
+		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
 	{
 		MSG_BOX("Failed CTest_Player Add_Component : (Com_RigidBody)");
 		return E_FAIL;
 	}
-	// 리지드바디 액터 설정
+	// 리지드바디 액터 추가 옵션 설정
 	PxRigidBody* Rigid = m_pRigidBody->Get_RigidBodyActor();
-	Rigid->setMaxLinearVelocity(1000.f);
+	Rigid->setMaxLinearVelocity(500.f);
 	Rigid->setMass(10.f);
 	Rigid->setAngularDamping(0.7f);
 
@@ -195,22 +202,22 @@ void CTest_Player::Key_Input(_float fTimeDelta)
 
 	if (pGameInstance->Get_DIKeyState(DIK_UP))
 	{
-		m_pRigidBody->Add_Force(m_pTransform->Get_Look() * m_pTransform->Get_Speed(), PxForceMode::eACCELERATION);
+		m_pRigidBody->Add_Force(m_pTransform->Get_Look() * m_pTransform->Get_Speed(), PxForceMode::eFORCE);
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_DOWN))
 	{
-		m_pRigidBody->Add_Force(m_pTransform->Get_Look() * -m_pTransform->Get_Speed(), PxForceMode::eACCELERATION);
+		m_pRigidBody->Add_Force(m_pTransform->Get_Look() * -m_pTransform->Get_Speed(), PxForceMode::eFORCE);
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_LEFT))
 	{
-		m_pTransform->Turn(_float3(0.f, -1.f, 0.f), fTimeDelta);
+		m_pRigidBody->Add_Force(m_pTransform->Get_Right() * -m_pTransform->Get_Speed(), PxForceMode::eFORCE);
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_RIGHT))
 	{
-		m_pTransform->Turn(_float3(0.f, 1.f, 0.f), fTimeDelta);
+		m_pRigidBody->Add_Force(m_pTransform->Get_Right() * m_pTransform->Get_Speed(), PxForceMode::eFORCE);
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))

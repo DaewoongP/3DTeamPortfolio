@@ -107,7 +107,7 @@ HRESULT CPlane::Create_PlaneActor()
 	_uint index = 0;
 	for (_uint i = 0; i < numCols * numRows; ++i)
 	{
-		samples[i].height = Random_Generator<_float>(0.f, 2.f);
+		samples[i].height = 0;
 	}
 
 

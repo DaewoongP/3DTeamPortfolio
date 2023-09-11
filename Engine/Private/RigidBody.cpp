@@ -151,7 +151,13 @@ void CRigidBody::Set_AngularDamping(_float _fAngualrDamping) const
 
 HRESULT CRigidBody::Initialize(void* pArg)
 {
-	if (FAILED(Create_Actor()))
+	if (nullptr == pArg)
+	{
+		MSG_BOX("Failed Clone RigidBody : Argument is NULL");
+		return E_FAIL;
+	}
+	
+	if (FAILED(Create_Actor(reinterpret_cast<RIGIDBODYDESC*>(pArg))))
 		return E_FAIL;
 
 #ifdef _DEBUG
@@ -164,9 +170,6 @@ HRESULT CRigidBody::Initialize(void* pArg)
 
 void CRigidBody::Late_Tick(_float fTimeDelta)
 {
-	/*m_pActor->addForce(m_pActor->getLinearVelocity() * -m_fAirDrag);
-	m_pActor->addTorque(m_pActor->getAngularVelocity() * -m_fAirDrag);*/
-
 #ifdef _DEBUG
 	Make_Buffers();
 #endif // _DEBUG
@@ -191,7 +194,7 @@ HRESULT CRigidBody::Render()
 }
 #endif // _DEBUG
 
-HRESULT CRigidBody::Create_Actor()
+HRESULT CRigidBody::Create_Actor(RIGIDBODYDESC* pRigidBodyDesc)
 {
 	CPhysX_Manager* pPhysX_Manager = CPhysX_Manager::GetInstance();
 	Safe_AddRef(pPhysX_Manager);
@@ -202,13 +205,30 @@ HRESULT CRigidBody::Create_Actor()
 	m_pScene = pPhysX_Manager->Get_PhysxScene();
 
 	// 초기 포지션 세팅
-	PxVec3 vLocal = PxVec3(5.f, 10.f, 5.f);
-	PxTransform localTm(vLocal);
-	m_pActor = pPhysX->createRigidDynamic(localTm);
+	PxTransform InitTransform(PhysXConverter::ToPxVec3(pRigidBodyDesc->vInitPosition));
+
+	if (true == pRigidBodyDesc->isStatic)
+	{
+		m_pActor = pPhysX->createRigidStatic(InitTransform);
+	}
+	else
+	{
+		m_pActor = pPhysX->createRigidDynamic(InitTransform);
+	}
+
+	if (nullptr == m_pActor)
+	{
+		MSG_BOX("Failed Create RigidBody Actor");
+		Safe_Release(pPhysX_Manager);
+		return E_FAIL;
+	}
+	
 	// 유저데이터에 이 컴포넌트 세팅해서 나중에 충돌처리 함수 부르기 위해 처리.
 	m_pActor->userData = this;
 	// 저항 처리
-	m_pMaterial = pPhysX->createMaterial(0.5f, 0.5f, 0.5f);
+	m_pMaterial = pPhysX->createMaterial(pRigidBodyDesc->fStaticFriction, 
+		pRigidBodyDesc->fDynamicFriction, 
+		pRigidBodyDesc->fRestitution);
 
 #ifdef _DEBUG // 렌더링
 	m_pScene->simulate(1 / 60.f);
@@ -220,38 +240,41 @@ HRESULT CRigidBody::Create_Actor()
 	m_iStartTriangleBufferIndex = pPhysX_Manager->Get_LastTriangleBufferIndex();
 #endif // _DEBUG
 
-#ifdef _DEBUG // 렌더링 선택
-	// shape 생성 (1번 매개변수에 Capsule, Box, Sphere등 선택가능합니다 (Px~Geometry 쓰면됨.))
-	PxShape* boxshape = pPhysX->createShape(PxCapsuleGeometry(1.f, 1.f), *m_pMaterial, false, PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSIMULATION_SHAPE);
+#ifdef _DEBUG // 렌더링 옵션 선택
+	PxShape* pShape = pPhysX->createShape(*pRigidBodyDesc->pGeometry, 
+		*m_pMaterial, false, PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSIMULATION_SHAPE);
 #else
-	PxShape* boxshape = pPhysX->createShape(PxCapsuleGeometry(1.f, 1.f), *m_pMaterial, false, PxShapeFlag::eSIMULATION_SHAPE);
+	PxShape* pShape = pPhysX->createShape(*pRigidBodyDesc->pGeometry,
+		*m_pMaterial, false, PxShapeFlag::eSIMULATION_SHAPE);
 #endif // _DEBUG
 
 	// 충돌처리에 필요한 유저 데이터값 바인딩
-	PxFilterData data;
-	data.word0 = 0x1111; // 이데이터는 일단 고정.
-	boxshape->setSimulationFilterData(data);
+	// 나중에 충돌 타입 정해서 처리할거임.
+	// 32비트 데이터라 총 8개로 플래그값 설정 가능 (word3 까지 포함하면 총 32개 옵션 설정가능.)
+	// 구조체에 옵션값으로 설정하게 해줘야함.
+	PxFilterData FilterData;
+	FilterData.word0 = 0x1111; // 이데이터는 일단 고정.
+	pShape->setSimulationFilterData(FilterData);
 
 	// OffsetPosition 처리 (피직스는 오른손 좌표계를 사용해서 왼손좌표계로 바꿔주기위해 회전 처리합니다.)
 	// 이거 확인정확하게 안해봐서 앞뒤가 정확한지는 모르겠어요
 	// 근데 앞뒤 달라도 상관없을거 같긴함.
 	_float4 vQuaternion = XMQuaternionRotationRollPitchYaw(0.f, XMConvertToRadians(180.f), XMConvertToRadians(90.f));
 	PxTransform relativePose(PxQuat(PhysXConverter::ToPxQuat(vQuaternion)));
-	boxshape->setLocalPose(relativePose);
+	pShape->setLocalPose(relativePose);
 
 	// 액터와 씬 처리.
 	// AttachShape로 콜라이더 여러개 바인딩 가능.
 	// 씬도 일단 한개만 처리하게 해둬서 신경 안써도 될듯.
-	m_pActor->attachShape(*boxshape);
+	m_pActor->attachShape(*pShape);
 	m_pScene->addActor(*m_pActor);
-	
 
-	PxRigidDynamic* pRigidBody = m_pActor->is<PxRigidDynamic>();
+	if (false == pRigidBodyDesc->isStatic)
+	{
+		PxRigidDynamic* pRigidBody = m_pActor->is<PxRigidDynamic>();
 
-	// 회전을 " 하기 싫은 " 부분만 true로 처리해주면 된다.
-	pRigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, true);
-	pRigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, false);
-	pRigidBody->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, true);
+		Set_Constraint(pRigidBodyDesc->Constraint, false);
+	}
 
 #ifdef _DEBUG
 	// 다음 렌더링을 위한 갱신 처리
@@ -269,11 +292,6 @@ HRESULT CRigidBody::Create_Actor()
 	Safe_Release(pPhysX_Manager);
 
 	return S_OK;
-}
-
-HRESULT CRigidBody::SetUp_Actor(_float3 _vInitPos, PxGeometry _ShapeType, _bool _isTrigger, RigidBodyConstraint eConstraintFlag, _float3 _vResistance, PxFilterData FilterData)
-{
-	return E_NOTIMPL;
 }
 
 void CRigidBody::Put_To_Sleep() const
