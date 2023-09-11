@@ -574,7 +574,7 @@ void CAnimation_Window::OffsetVectorSetting(CModel* pDummyModel)
 	vCombinedPosition = XMVector3TransformCoord(vCombinedPosition.xyz(), m_pDummyObject->Get_Transform()->Get_WorldMatrix());
 	m_pCameraPoint->Set_Position(vCombinedPosition);
 	BEGININSTANCE
-	m_pCameraPoint->Tick(pGameInstance->Get_TimeDelta(TEXT("MainTimer")));
+	m_pCameraPoint->Tick(pGameInstance->Get_QueryTimeDelta(TEXT("MainTimer")));
 	ENDINSTANCE
 }
 
