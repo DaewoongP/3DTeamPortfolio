@@ -308,7 +308,7 @@ void CAnimation_Window::Animation_ChildFrame(CModel::ANIMTYPE ePartCnt, _char* s
 			lstrcpy(wszAnimationName, pDummyModel->Get_Animation(i, ePartCnt)->Get_AnimationName());
 			WCharToChar(wszAnimationName, szAnimationName);
 		
-			if (strstr(szAnimationName,m_szAnimationSearch) == nullptr)
+			if (strstr(szAnimationName,m_szAnimationSearch[ePartCnt]) == nullptr)
 				continue;
 			
 			bool is_selected = (!strcmp(szCurrentItem, szAnimationName));
@@ -335,7 +335,7 @@ void CAnimation_Window::Animation_ChildFrame(CModel::ANIMTYPE ePartCnt, _char* s
 	ImGui::EndChildFrame();
 
 	sprintf_s(szUIName, "Search##TextBox%d", ePartCnt);
-	ImGui::InputText(szUIName, m_szAnimationSearch, 32);
+	ImGui::InputText(szUIName, m_szAnimationSearch[ePartCnt], 32);
 }
 
 void CAnimation_Window::Animation_Table(CModel::ANIMTYPE ePartCnt, _char* szCurrentItem, CModel* pDummyModel)
