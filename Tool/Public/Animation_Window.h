@@ -39,6 +39,8 @@ private:
 	_char			m_szCurrentItemType[MAX_PATH] = "";			
 	KEYFRAME::KEYFRAMETYPE m_eNotifyKeyFrameType = { KEYFRAME::KF_SPEED };
 
+	_char			m_szAnimationSearch[MAX_PATH] = "";
+
 	_int			m_iSelectedNotifyIndex[CModel::ANIM_END] = { 0 };
 
 	_tchar			m_wszCurrentDummyModelTag[MAX_PATH] = {};
