@@ -28,8 +28,11 @@ HRESULT CTest_Player::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-	m_pTransform->Set_Speed(10.f);
+	m_pTransform->Set_Speed(50.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
+	m_pTransform->Set_RigidBody(m_pRigidBody);
+
+	m_pModelCom->Play_Animation(0.f);
 
 	return S_OK;
 }
@@ -40,7 +43,9 @@ void CTest_Player::Tick(_float fTimeDelta)
 
 	Key_Input(fTimeDelta);
 
-	//m_pModelCom->Play_Animation(fTimeDelta);
+	m_pModelCom->Set_WindVelocity(PhysXConverter::ToXMFLOAT3(m_pRigidBody->Get_RigidBodyActor()->getLinearVelocity()) * m_fWindPower * -1.f);
+	m_pModelCom->Tick(CCustomModel::ROBE, 2, fTimeDelta);
+
 }
 
 void CTest_Player::Late_Tick(_float fTimeDelta)
@@ -84,36 +89,36 @@ HRESULT CTest_Player::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	//for (_uint iParts = 0; iParts < CCustomModel::MESH_END; ++iParts)
-	//{
-	//	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes(iParts);
+	for (_uint iParts = 0; iParts < CCustomModel::MESH_END; ++iParts)
+	{
+		_uint		iNumMeshes = m_pModelCom->Get_NumMeshes(iParts);
 
-	//	for (_uint i = 0; i < iNumMeshes; ++i)
-	//	{
-	//		try /* Failed Render */
-	//		{
-	//			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", iParts, i)))
-	//				throw TEXT("Bind_BoneMatrices");
+		for (_uint i = 0; i < iNumMeshes; ++i)
+		{
+			try /* Failed Render */
+			{
+				if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", iParts, i)))
+					throw TEXT("Bind_BoneMatrices");
 
-	//			if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", iParts, i, DIFFUSE)))
-	//				throw TEXT("Bind_Material Diffuse");
+				if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", iParts, i, DIFFUSE)))
+					throw TEXT("Bind_Material Diffuse");
 
-	//			if (FAILED(m_pShaderCom->Begin("AnimMesh")))
-	//				throw TEXT("Shader Begin AnimMesh");
+				if (FAILED(m_pShaderCom->Begin("AnimMeshNonCull")))
+					throw TEXT("Shader Begin AnimMesh");
 
-	//			if (FAILED(m_pModelCom->Render(iParts, i)))
-	//				throw TEXT("Model Render");
-	//		}
-	//		catch (const _tchar* pErrorTag)
-	//		{
-	//			wstring wstrErrorMSG = TEXT("[CTest_Player] Failed Render : ");
-	//			wstrErrorMSG += pErrorTag;
-	//			MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+				if (FAILED(m_pModelCom->Render(iParts, i)))
+					throw TEXT("Model Render");
+			}
+			catch (const _tchar* pErrorTag)
+			{
+				wstring wstrErrorMSG = TEXT("[CTest_Player] Failed Render : ");
+				wstrErrorMSG += pErrorTag;
+				MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
 
-	//			return E_FAIL;
-	//		}
-	//	}
-	//}
+				return E_FAIL;
+			}
+		}
+	}
 
 	return S_OK;
 }
@@ -139,7 +144,7 @@ HRESULT CTest_Player::Add_Components()
 	RigidBodyDesc.fStaticFriction = 0.5f;
 	RigidBodyDesc.fDynamicFriction = 0.5f;
 	RigidBodyDesc.fRestitution = 0.f;
-	PxBoxGeometry GeoMetry = PxBoxGeometry(2.f, 2.f, 2.f);
+	PxCapsuleGeometry GeoMetry = PxCapsuleGeometry(0.5f, 0.5f);
 	RigidBodyDesc.pGeometry = &GeoMetry;
 	RigidBodyDesc.Constraint = CRigidBody::AllRot;
 	/* Com_RigidBody */
@@ -151,17 +156,16 @@ HRESULT CTest_Player::Add_Components()
 	}
 	// 리지드바디 액터 추가 옵션 설정
 	PxRigidBody* Rigid = m_pRigidBody->Get_RigidBodyActor();
-	Rigid->setMaxLinearVelocity(500.f);
+	Rigid->setMaxLinearVelocity(1000.f);
 	Rigid->setMass(10.f);
-	Rigid->setAngularDamping(0.7f);
-
+	
 	/* Com_CustomModel */
-	/*if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_CustomModel_Player"),
+	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_CustomModel_test"),
 		TEXT("Com_CustomModel"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 	{
 		MSG_BOX("Failed CTest_Player Add_Component : (Com_CustomModel)");
 		return E_FAIL;
-	}*/
+	}
 
 	/* For.Com_Shader */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimMesh"),
@@ -171,7 +175,7 @@ HRESULT CTest_Player::Add_Components()
 		return E_FAIL;
 	}
 
-	//m_pModelCom->Add_MeshParts(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Robe_Student"), CCustomModel::ROBE);
+	m_pModelCom->Add_MeshParts(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Robe_Student"), CCustomModel::ROBE, TEXT("../../Resources/GameData/ClothData/Test.cloth"));
 	//m_pModelCom->Add_MeshParts(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Low"), CCustomModel::PANTS);
 
 	return S_OK;

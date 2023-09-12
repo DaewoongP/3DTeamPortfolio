@@ -5,6 +5,9 @@
 #include "NVContextCallBack.h"
 #include "PXAssertHandler.h"
 #include "JobManager.h"
+
+#include "PhysXConverter.h"
+
 #include "Base.h"
 
 BEGIN(Engine)

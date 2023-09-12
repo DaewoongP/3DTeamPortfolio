@@ -256,9 +256,6 @@
     <Filter Include="01. Utility\03. Components\07. VIBuffer\Cloth">
       <UniqueIdentifier>{69e6ba97-e3de-4133-b08b-1d0ed23bb071}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\03. Components\04. Model\Mesh\Dynamic">
-      <UniqueIdentifier>{32da167c-e0ce-414b-8472-ea7c15d3648c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Utility\03. Components\07. VIBuffer\Geometry">
       <UniqueIdentifier>{4ca17cb9-064d-4866-a7e1-0787a6f5a8f4}</UniqueIdentifier>
     </Filter>
@@ -333,6 +330,9 @@
     </Filter>
     <Filter Include="01. Utility\03. Components\19. UI\UI_Component\UI_Button">
       <UniqueIdentifier>{6afa2e70-9622-4c7c-b457-0b5c723cf153}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\12. CustomModel\Dynamic">
+      <UniqueIdentifier>{32da167c-e0ce-414b-8472-ea7c15d3648c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -646,7 +646,7 @@
       <Filter>01. Utility\03. Components\07. VIBuffer\Cloth</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Dynamic_Mesh.h">
-      <Filter>01. Utility\03. Components\04. Model\Mesh\Dynamic</Filter>
+      <Filter>01. Utility\03. Components\12. CustomModel\Dynamic</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\JobManager.h">
       <Filter>01. Utility\11. Physics\Job</Filter>
@@ -963,7 +963,7 @@
       <Filter>01. Utility\03. Components\07. VIBuffer\Cloth</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Dynamic_Mesh.cpp">
-      <Filter>01. Utility\03. Components\04. Model\Mesh\Dynamic</Filter>
+      <Filter>01. Utility\03. Components\12. CustomModel\Dynamic</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\JobManager.cpp">
       <Filter>01. Utility\11. Physics\Job</Filter>

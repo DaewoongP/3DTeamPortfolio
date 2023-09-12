@@ -29,6 +29,7 @@ public:
 	HRESULT								Add_MeshParts(const _uint& _iLevelIndex, const wstring& _wstrPrototypeTag, MESHTYPE _eMeshPartsType, const _tchar* _szClothDataFilePath = nullptr);
 	_uint								Get_NumMeshes(const _uint& _iMeshPartsIndex) const;
 	array<class CMeshParts*, MESH_END>	Get_MeshParts() const { return m_MeshParts; }
+	void								Set_WindVelocity(_float3 vWindVelocity);
 
 public:
 	virtual HRESULT Initialize_Prototype(TYPE eType, const wstring& _wstrModelFilePath, _float4x4 _PivotMatrix);

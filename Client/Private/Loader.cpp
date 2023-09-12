@@ -280,6 +280,11 @@ HRESULT CLoader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_CustomModel_Player"),
 			CCustomModel::Create(m_pDevice, m_pContext, CCustomModel::TYPE_ANIM, L"../../Resources/Models/Anims/Biped_Skeleton/Biped_Skeleton.dat"))))
 			throw TEXT("Prototype_Component_Model_CustomModel_Player");
+		
+		/* For.Prototype_Component_Model_CustomModel_test */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_CustomModel_test"),
+			CCustomModel::Create(m_pDevice, m_pContext, CCustomModel::TYPE_ANIM, L"../../Resources/Models/Anims/test/test.dat"))))
+			throw TEXT("Prototype_Component_Model_CustomModel_test");
 
 		/* For.Prototype_Component_MeshParts_Up */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Up"),

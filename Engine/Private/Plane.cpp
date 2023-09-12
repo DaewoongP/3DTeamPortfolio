@@ -107,9 +107,8 @@ HRESULT CPlane::Create_PlaneActor()
 	_uint index = 0;
 	for (_uint i = 0; i < numCols * numRows; ++i)
 	{
-		samples[i].height = 0;
+		samples[i].height = Random_Generator<_float>(0.f, 2.f);
 	}
-
 
 	PxHeightFieldDesc hfDesc;
 	hfDesc.format = PxHeightFieldFormat::eS16_TM;
@@ -129,7 +128,7 @@ HRESULT CPlane::Create_PlaneActor()
 	PxVec3 vLocal = PxVec3(0.f, 0.f, 0.f);
 	PxTransform localTm(vLocal);
 	m_pActor = pPhysX->createRigidStatic(localTm);
-	m_pMaterial = pPhysX->createMaterial(1.f, 0.1f, 0.1f);
+	m_pMaterial = pPhysX->createMaterial(0.5, 0.5f, 0.f);
 
 	PxShape* aHeightFieldShape = pPhysX->createShape(hfGeom, *m_pMaterial, PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSIMULATION_SHAPE);
 #ifdef _DEBUG
