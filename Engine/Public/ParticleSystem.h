@@ -28,23 +28,16 @@ public:
 	typedef list<PARTICLE>::iterator PARTICLE_IT;
 
 public:
-	typedef struct tagParticleSystem
-	{
-		_uint iLevel = { 0 };
-	}CLONE_DESC;
-
-public:
+	// ALIVE : 업데이트 되고 있는 파티클
+	// DELAY : 대기시간이 채워지면 ALIVE로 넘어감
+	// WAIT : 파티클 풀 장소
+	// DEAD : 파티클이 부활 할 수 없는 상태.
 	enum STATE { ALIVE, DELAY, WAIT, DEAD, STATE_END };
 
 protected:
 	explicit CParticleSystem(ID3D11Device * _pDevice, ID3D11DeviceContext * _pContext);
 	explicit CParticleSystem(const CParticleSystem& _rhs);
 	virtual ~CParticleSystem() = default;
-
-public:
-	MAIN_MODULE* Get_MainModulePtr() {
-		return &m_MainModuleDesc;
-	}
 
 public:
 	virtual HRESULT Initialize_Prototype(const _tchar* _pDirectoryPath, _uint iLevel);
@@ -58,7 +51,7 @@ public:
 	void Stop();
 	virtual void Restart();
 
-public:
+protected:
 	void Enable();
 	void Disable();
 
@@ -80,9 +73,6 @@ public:
 protected:
 	// WAIT->DELAY로 이동.
 	_bool Wating_One_Particle();
-
-	// 리스트 간에 원소를 주고받는 함수.
-	PARTICLE_IT TransitionTo(PARTICLE_IT& _particle_iter, list<PARTICLE>& _source, list<PARTICLE>& _dest);
 
 	// 빌보드
 	_float4x4 LookAt(_float3 vPos, _float3 _vTarget, _bool _isDeleteY = false);
@@ -107,16 +97,18 @@ protected:
 	void Action_By_RateOverTime();
 	void Action_By_Distance();
 	void Action_By_Bursts();
+	void Action_By_RotationOverLifeTime(PARTICLE_IT& _particle_iter, _float fTimeDelta);
 
 protected:
-	HRESULT Add_Components(CLONE_DESC _cloneDesc);
+	HRESULT Add_Components();
 	HRESULT Setup_ShaderResources();
 
 protected:
-	MAIN_MODULE m_MainModuleDesc;
-	EMISSION_MODULE m_EmissionModuleDesc;
-	SHAPE_MODULE	m_ShapeModuleDesc;
-	RENDERER_MODULE m_RendererModuleDesc;
+	MAIN_MODULE						m_MainModuleDesc;
+	EMISSION_MODULE					m_EmissionModuleDesc;
+	SHAPE_MODULE					m_ShapeModuleDesc;
+	RENDERER_MODULE					m_RendererModuleDesc;
+	ROTATION_OVER_LIFETIME_MODULE	m_RotationOverLifetimeModuleDesc;
 
 protected: 
 	//CVIBuffer_Geometry* m_pShapeBuffer = { nullptr };

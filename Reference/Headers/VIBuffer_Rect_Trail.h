@@ -12,6 +12,9 @@ BEGIN(Engine)
 
 class ENGINE_DLL CVIBuffer_Rect_Trail final : public CVIBuffer
 {
+private:
+	enum GROUP { ACTIVATED ,IN_HEAD, GROUP_END };
+
 public:
 	typedef struct tagTrailDesc
 	{
@@ -21,6 +24,19 @@ public:
 		const _float4x4*	pPivotMatrix;
 		const _float4x4*	pWorldMatrix;
 	}TRAILDESC;
+
+private:
+	typedef struct tagTrail
+	{
+		_float3 vHighPosition = { _float3() };
+		_float3 vLowPosition = { _float3() };
+	}TRAIL;
+
+	typedef struct tagTrailData
+	{
+		TRAIL Trail;
+		_float fTimeAcc = { 0.f };
+	}TRAIL_DATA;
 
 private:
 	explicit CVIBuffer_Rect_Trail(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -34,14 +50,19 @@ public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick();
+
 	// 쉐이더 컬러 변수이름, 컬러값, 쉐이더 변수, 패스 인덱스
 	virtual HRESULT Render(const _char* pConstantName, _float4 vColor, class CShader* pShader, const _char* pPassName);
+
 	// 쉐이더 텍스처 변수이름, 텍스처 변수, 쉐이더 변수, 패스 인덱스
 	virtual HRESULT Render(const _char* pConstantName, class CTexture* pTexture, class CShader* pShader, const _char* pPassName);
 	virtual HRESULT Render() override;
 
 private:
 	TRAILDESC			m_TrailDesc;
+	//_float				m_fMinVertexDistance = 0.1f;
+	//_float				m_fTime = 1.f;
+    //	vector<TRAIL_DATA>	m_TrailDatas[GROUP_END];
 
 private:
 	HRESULT Setup_ShaderResources(class CShader* pShader);

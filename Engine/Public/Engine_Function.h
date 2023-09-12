@@ -328,4 +328,20 @@ namespace Engine
 		WideCharToMultiByte(CP_UTF8, 0, &wstr[0], (int)wstr.size(), &strTo[0], size_needed, NULL, NULL);
 		return strTo;
 	}
+
+	template<typename T>
+	typename std::list<T>::iterator TransitionTo(typename std::list<T>::iterator& _iter, std::list<T>& _source, std::list<T>& _dest)
+	{
+		typename std::list<T>::iterator next_it = std::next(_iter);
+		_dest.splice(_dest.end(), _source, _iter);
+		return next_it;
+	}
+
+	template<typename T>
+	typename std::vector<T>::iterator TransitionTo(typename std::vector<T>::iterator& _iter, std::vector<T>& _source, std::vector<T>& _dest)
+	{
+		typename std::vector<T>::iterator next_it = std::next(_iter);
+		_dest.splice(_dest.end(), _source, _iter);
+		return next_it;
+	}
 }
