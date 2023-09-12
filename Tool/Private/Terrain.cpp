@@ -9,6 +9,8 @@ CTerrain::CTerrain(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 CTerrain::CTerrain(const CTerrain& rhs)
 	: CGameObject(rhs)
 {
+	ZEROMEM(m_vBrushPos);
+	ZEROMEM(m_fBrushRange);
 }
 
 HRESULT CTerrain::Initialize_Prototype()
@@ -29,18 +31,21 @@ HRESULT CTerrain::Initialize(void* pArg)
 
 	m_isRendering = true;
 
-	m_vBrushPos[0] = { 50.f, 0.f, 50.f };
-	m_fBrushRange[0] = { 10.f };
-	m_vBrushPos[1] = { 100.f, 0.f, 100.f };
-	m_fBrushRange[1] = { 20.f };
-	m_iBrushPosCnt = 2;
-
 	return S_OK;
 }
 
 void CTerrain::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	// 벡터 값을 대입
+	m_iBrushPosCnt = m_vecBrushInfo.size();
+
+	for (size_t i = 0; i < m_iBrushPosCnt; i++)
+	{
+		m_vBrushPos[i] = m_vecBrushInfo.at(i).vPos;
+		m_fBrushRange[i] = m_vecBrushInfo.at(i).fRange;
+	}	
 }
 
 void CTerrain::Late_Tick(_float fTimeDelta)
@@ -164,7 +169,7 @@ HRESULT CTerrain::SetUp_ShaderResources()
 }
 
 HRESULT CTerrain::SetUp_ShaderDynamicResources()
-{	
+{
 	// 현재 브러쉬 커서의 위치
 	if (FAILED(m_pShader->Bind_RawValue("g_vBrushCurrentPos", &m_vBrushCurrentPos, sizeof(_float3))))
 		return E_FAIL;

@@ -32,6 +32,14 @@ public:
 	void Set_CurrentBrushingPoint(_float3 vPos) { m_vBrushCurrentPos = vPos; }
 	void Set_DiffuseTextureIndex(_uint iIndex) { m_iDiffuseTextureIndex = iIndex; }
 	void Set_BrushTextureIndex(_uint iIndex) { m_iBrushTextureIndex = iIndex; }
+	void Set_BrushDesc(_float3 vPos, _float fRange, _uint iIndex) { // 브러쉬 정보 저장
+		BRUSH BrushDesc;
+		BrushDesc.vPos = vPos;
+		BrushDesc.fRange = fRange;
+		BrushDesc.iTextureIndex = iIndex;
+
+		m_vecBrushInfo.push_back(BrushDesc);
+	}
 
 public:
 	virtual HRESULT Initialize_Prototype();
@@ -49,7 +57,7 @@ private:
 	_float3				m_vBrushCurrentPos = { 0.f, 0.f, 0.f }; // 현재 브러쉬 커서의 위치
 	_float				m_fBrushCurrentRange = { 10.f }; // 현재 브러쉬 커서의 범위
 
-	vector<BRUSH>		m_vecBrushPos; // 브러쉬 정보 저장 벡터
+	vector<BRUSH>		m_vecBrushInfo; // 브러쉬 정보 저장 벡터
 	_uint				m_iBrushPosCnt; // 칠해질 개수
 	_float3				m_vBrushPos[MAX_SHADERVECTOR]; // 칠해질 위치
 	_float				m_fBrushRange[MAX_SHADERVECTOR]; // 칠해질 범위

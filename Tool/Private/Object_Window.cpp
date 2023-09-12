@@ -236,6 +236,7 @@ void CObject_Window::Install_Object(_float3 vPos)
 
 	// 범위 안에 있을 경우 H키를 눌러 설치
 	BEGININSTANCE; if (true == pGameInstance->Get_DIKeyState(DIK_H, CInput_Device::KEY_DOWN) &&
+		pGameInstance->IsMouseInClient(m_pContext, g_hWnd) &&
 		-1.f != vPos.x)
 	{
 		// 맵 오브젝트에 번호 붙여줌
@@ -283,6 +284,7 @@ void CObject_Window::Install_Continuous_Object(_float3 vPos)
 	
 	// 마우스를 꾹 누르고 있으면 연속 설치
 	if (true == pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_PRESSING) &&
+		pGameInstance->IsMouseInClient(m_pContext, g_hWnd) &&
 		-1.f != vPos.x && 
 		0.1f < m_fTimeAcc)
 	{
@@ -752,10 +754,12 @@ void CObject_Window::Map_Brushing_Menu()
 
 	// 마우스를 꾹 누르고 있으면 연속 설치
 	if (true == pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_PRESSING) &&
+		pGameInstance->IsMouseInClient(m_pContext, g_hWnd) &&
 		-1.f != vPos.x &&
 		0.1f < m_fTimeAccBrush)
 	{
-
+		pTerrain->Set_BrushDesc(vPos, m_fBrushSize, m_iBrushIndex);
+		m_fTimeAccBrush = 0.f;
 	} ENDINSTANCE;
 }
 

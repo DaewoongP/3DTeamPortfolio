@@ -101,7 +101,7 @@ PS_OUT PS_BRUSH(PS_IN In)
     //if(50.f <= In.vWorldPos.y)
     {
         vBrush = g_BrushTexture.Sample(LinearSampler, In.vTexUV);
-        vDiffuse += vBrush;
+        vDiffuse = vBrush;
     }
 
     Out.vColor = vDiffuse;
