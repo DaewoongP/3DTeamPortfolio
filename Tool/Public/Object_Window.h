@@ -92,8 +92,10 @@ private:
 
 	string m_strPath = "";// 새롭게 저장할 세이브 파일 이름 받아오는 부분
 	_char szPath[MAX_PATH] = ""; // 새롭게 저장할 세이브 파일 이름 받아오는 부분
+	string m_strFindModel = ""; // 찾을 모델 이름
+	_char m_szFindModel[MAX_PATH] = ""; // 찾을 모델 이름을 받아올 문자열
 	_tchar m_wszMapLoadDataPath[MAX_PATH] = TEXT(""); // ImGuiFileDialog로 읽어온 모델 경로
-	_tchar m_wszMapSaveDataPath[MAX_PATH] = TEXT("../../Resources/GameData/MapData/MapData.ddd"); // Save할 경로
+	_tchar m_wszMapSaveDataPath[MAX_PATH] = TEXT(""); // Save할 경로
 	string m_strCurrentModel = { "Dummy" }; // 현재 활성화된 모델 이름, 초기값은 더미
 	_float m_vDummyMatrix[DUMMY_END][3];	// 더미의 상태 행렬, 이 값을 .ddd 파일에 저장함
 

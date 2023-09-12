@@ -384,6 +384,30 @@ void CObject_Window::Select_Model()
 	ImGui::SameLine();
 	ImGui::TextColored(ImVec4(1, 0, 0, 1), m_strCurrentModel.c_str());
 
+	// ¸ðµ¨ °Ë»ö
+	if (ImGui::InputTextWithHint("FInd Model", "enter ModelName", m_szFindModel, IM_ARRAYSIZE(m_szFindModel)))
+	{
+		m_strFindModel = m_szFindModel;
+	}
+
+	ImGui::SameLine();
+
+	if (ImGui::Button("Find"))
+	{
+		_uint i = 0;
+
+		for (auto& iter : m_vecModelList)
+		{
+			if (string::npos != iter.find(m_strFindModel))
+			{
+				m_iModelIndex = i;
+				break;
+			}
+
+			++i;
+		}
+	}
+
 	// ¸ðµ¨ ¼±ÅÃ
 	ImGui::ListBox("ModelList", &m_iModelIndex, VectorGetter, 
 		static_cast<void*>(&m_vecModelList), (_int)m_vecModelList.size(), 15);
