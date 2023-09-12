@@ -178,6 +178,15 @@
     <Filter Include="03. Behaviors\04. Function">
       <UniqueIdentifier>{11282af5-bac7-4061-9441-81c0be48d567}</UniqueIdentifier>
     </Filter>
+    <Filter Include="04. Magic">
+      <UniqueIdentifier>{e77db5d2-8ca4-49d3-9854-41ff5a14a55b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Magic\00. BaseAttack">
+      <UniqueIdentifier>{7b18bdec-a7a7-4970-a1b3-2cd80ea999f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. MagicBall">
+      <UniqueIdentifier>{7667aa3f-fd7d-47db-b815-b3a9a26ac4c5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -366,6 +375,15 @@
     <ClInclude Include="..\Public\Selector_Degree.h">
       <Filter>03. Behaviors\01. Selectors</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\BaseAttack.h">
+      <Filter>04. Magic\00. BaseAttack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Magic.h">
+      <Filter>04. Magic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MagicBall.h">
+      <Filter>02. GameObject\09. MagicBall</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -523,6 +541,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\Selector_Degree.cpp">
       <Filter>03. Behaviors\01. Selectors</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BaseAttack.cpp">
+      <Filter>04. Magic\00. BaseAttack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Magic.cpp">
+      <Filter>04. Magic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MagicBall.cpp">
+      <Filter>02. GameObject\09. MagicBall</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
