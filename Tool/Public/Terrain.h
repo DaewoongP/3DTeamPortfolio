@@ -18,6 +18,7 @@ class CTerrain final : public CGameObject
 	{
 		_float3 vPos; // 위치
 		_float fRange; // 브러쉬 범위
+		_uint iTextureIndex; // 어떤 텍스처인지
 	}BRUSH;
 
 private:

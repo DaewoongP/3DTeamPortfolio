@@ -106,7 +106,8 @@ private:
 	vector<string> m_vecObjectTag_s; // 넘버링 태그를 string으로 저장함
  	vector<SAVEOBJECTDESC> m_vecSaveObject; // 저장할 맵 오브젝트에 대한 정보
 
-	_float m_fTimeAcc = { 0.f };
+	_float m_fTimeAcc = { 0.f }; // MapObject 연속 설치 시간 컨트롤 변수
+	_float m_fTimeAccBrush = { 0.f }; // Brush 연속 설치 시간 컨트롤 변수
 
 	_uint m_iInsObjectCnt = { 0 }; // 인스턴싱할 맵 오브젝트 개수
 	vector<SAVEINSOBJECTDESC> m_vecSaveInsObject; // 저장된 인스턴싱 맵 오브젝트에 대한 정보를 받아올 벡터

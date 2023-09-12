@@ -31,7 +31,9 @@ HRESULT CTerrain::Initialize(void* pArg)
 
 	m_vBrushPos[0] = { 50.f, 0.f, 50.f };
 	m_fBrushRange[0] = { 10.f };
-	m_iBrushPosCnt = 1;
+	m_vBrushPos[1] = { 100.f, 0.f, 100.f };
+	m_fBrushRange[1] = { 20.f };
+	m_iBrushPosCnt = 2;
 
 	return S_OK;
 }
@@ -126,7 +128,7 @@ HRESULT CTerrain::Add_Components()
 	}
 
 	/* Com_Texture */
-	if (FAILED(CComposite::Add_Component(LEVEL_TOOL, TEXT("Prototype_Component_Texture_Terrain"),
+	if (FAILED(CComposite::Add_Component(LEVEL_TOOL, TEXT("Prototype_Component_Texture_Ground"),
 		TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTexture))))
 	{
 		MSG_BOX("Failed CTerrain Add_Component : (Com_Texture)");

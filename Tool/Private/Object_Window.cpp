@@ -279,7 +279,6 @@ void CObject_Window::Install_Object(_float3 vPos)
 
 void CObject_Window::Install_Continuous_Object(_float3 vPos)
 {
-	// 범위 안에 있을 경우 H키를 눌러 설치
 	BEGININSTANCE; m_fTimeAcc += pGameInstance->Get_World_Tick();
 	
 	// 마우스를 꾹 누르고 있으면 연속 설치
@@ -731,12 +730,22 @@ void CObject_Window::Map_Brushing_Menu()
 	_float3 vPos = Find_PickingPos();
 
 	BEGININSTANCE; CTerrain* pTerrain = static_cast<CTerrain*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL, 
-		TEXT("Layer_Tool"), TEXT("GameObject_Terrain"))); ENDINSTANCE;
+		TEXT("Layer_Tool"), TEXT("GameObject_Terrain")));
 
 	ImGui::DragFloat("Brush Size", &m_fBrushSize, 0.1f, 0.1f, 100.f);
 
 	pTerrain->Set_CurrentBrushingPoint(vPos);
 	pTerrain->Set_CurrentBrushingSize(m_fBrushSize);
+
+	m_fTimeAccBrush += pGameInstance->Get_World_Tick();
+
+	// 마우스를 꾹 누르고 있으면 연속 설치
+	if (true == pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_PRESSING) &&
+		-1.f != vPos.x &&
+		0.1f < m_fTimeAccBrush)
+	{
+
+	} ENDINSTANCE;
 }
 
 HRESULT CObject_Window::Save_MapObject(string szMapDataPath)
