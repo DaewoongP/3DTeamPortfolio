@@ -470,19 +470,14 @@ void CObject_Window::Save_Load_Menu()
 		ImGuiFileDialog::Instance()->Close();
 	}
 
-	if (ImGui::InputTextWithHint("SaveData Path", "enter SaveDataName.ddd", szPath, IM_ARRAYSIZE(szPath)))
-	{
-		m_strPath = szPath;
-	}
+	_char szLoadPath[MAX_PATH] = "";
+	WCharToChar(m_wszMapLoadDataPath, szLoadPath);
 
-	// 세이브 버튼 처리
-	if (ImGui::Button("Save"))
-	{
-		if (FAILED(Save_MapObject(m_strPath)))
-			MSG_BOX("Failed to Save MapObject on Menu");
-	}
-
+	// 현재 로드 경로 표시
+	ImGui::TextColored(ImVec4(1, 0, 0, 1), "Load Path");
+	ImGui::TextColored(ImVec4(1, 0, 0, 1), ":");
 	ImGui::SameLine();
+	ImGui::TextColored(ImVec4(1, 0, 0, 1), szLoadPath);
 
 	// 로드 버튼 처리
 	if (ImGui::Button("Load"))
@@ -490,24 +485,97 @@ void CObject_Window::Save_Load_Menu()
 		if (FAILED(Load_MapObject(m_wszMapLoadDataPath)))
 			MSG_BOX("Failed to Load MapObject on Menu");
 	}
+
+	ImGui::Separator();
+
+	if (ImGui::InputTextWithHint("SaveData Path", "enter SaveDataName.ddd", m_szPath, IM_ARRAYSIZE(m_szPath)))
+	{
+		m_strPath = m_szPath;
+	}
+
+	string s = ("../../Resources/GameData/MapData/");
+	s += m_strPath;
+	s += (".ddd");
+
+	// 현재 세이브 경로 표시
+	ImGui::TextColored(ImVec4(1, 0, 0, 1), "Save Path");
+	ImGui::TextColored(ImVec4(1, 0, 0, 1), ":");
+	ImGui::SameLine();
+	ImGui::TextColored(ImVec4(1, 0, 0, 1), s.c_str());
+
+	// 세이브 버튼 처리
+	if (ImGui::Button("Save"))
+	{
+		if (FAILED(Save_MapObject(m_strPath)))
+			MSG_BOX("Failed to Save MapObject on Menu");
+	}
 }
 
 void CObject_Window::Ins_Save_Load_Menu()
 {
-	// 세이브 버튼 처리
-	if (ImGui::Button("Save"))
+	// open Dialog Simple
+	// Load 경로 지정
+	if (ImGui::Button("Open Load File Dialog"))
+		ImGuiFileDialog::Instance()->OpenDialog("ChooseData", "Choose File", ".ddd",
+			"../../Resources/GameData/MapData/");
+
+	// display
+	if (ImGuiFileDialog::Instance()->Display("ChooseData"))
 	{
-		if (FAILED(Save_MapObject_Ins()))
-			MSG_BOX("Failed to Save MapObject_Ins on Menu");
+		// action if OK
+		if (ImGuiFileDialog::Instance()->IsOk())
+		{
+			// action
+			// 주소 가공
+			std::string strFilePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+
+			wstring ws;
+			ws.assign(strFilePathName.begin(), strFilePathName.end());
+			lstrcpy(m_wszMapInsLoadDataPath, ws.c_str());
+		}
+
+		// close
+		ImGuiFileDialog::Instance()->Close();
 	}
 
+	_char szLoadPath[MAX_PATH] = "";
+	WCharToChar(m_wszMapInsLoadDataPath, szLoadPath);
+
+	// 현재 로드 경로 표시
+	ImGui::TextColored(ImVec4(1, 0, 0, 1), "Load Path");
+	ImGui::TextColored(ImVec4(1, 0, 0, 1), ":");
 	ImGui::SameLine();
+	ImGui::TextColored(ImVec4(1, 0, 0, 1), szLoadPath);
 
 	// 로드 버튼 처리
 	if (ImGui::Button("Load"))
 	{
-		if (FAILED(Load_MapObject_Ins()))
+		if (FAILED(Load_MapObject_Ins(m_wszMapInsLoadDataPath)))
 			MSG_BOX("Failed to Load MapObject_Ins on Menu");
+	}
+
+	ImGui::Separator();
+
+	if (ImGui::InputTextWithHint("SaveData Path", "enter SaveDataName_Ins.ddd", m_szPath_Ins, IM_ARRAYSIZE(m_szPath_Ins)))
+	{
+		m_strPath_Ins = m_szPath_Ins;
+	}
+
+	string s = ("../../Resources/GameData/MapData/");
+	s += m_strPath_Ins;
+	s += (".ddd");
+
+	// 현재 세이브 경로 표시
+	ImGui::TextColored(ImVec4(1, 0, 0, 1), "Save Path");
+	ImGui::TextColored(ImVec4(1, 0, 0, 1), ":");
+	ImGui::SameLine();
+	ImGui::TextColored(ImVec4(1, 0, 0, 1), s.c_str());
+
+	// 세이브 버튼 처리
+	if (ImGui::Button("Save"))
+	{
+		if (FAILED(Save_MapObject_Ins(m_strPath_Ins)))
+			MSG_BOX("Failed to Save MapObject_Ins on Menu");
 	}
 }
 
@@ -918,11 +986,17 @@ HRESULT CObject_Window::Load_MapObject(const _tchar* wszMapDataPath)
 	return S_OK;
 }
 
-HRESULT CObject_Window::Save_MapObject_Ins()
+HRESULT CObject_Window::Save_MapObject_Ins(string szMapDataPath)
 {
-	_tchar dataFile[MAX_PATH] = TEXT("../../Resources/GameData/MapData/MapData_Ins.ddd");
+	_tchar wszPath[MAX_PATH] = TEXT("../../Resources/GameData/MapData/");
 
-	HANDLE hFile = CreateFile(dataFile, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+	lstrcpy(m_wszMapInsSaveDataPath, TEXT(""));
+	lstrcat(m_wszMapInsSaveDataPath, wszPath);
+	wstring ws(szMapDataPath.begin(), szMapDataPath.end());
+	lstrcat(m_wszMapInsSaveDataPath, ws.c_str());
+	lstrcat(m_wszMapInsSaveDataPath, TEXT(".ddd"));
+
+	HANDLE hFile = CreateFile(m_wszMapInsSaveDataPath, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
 	if (INVALID_HANDLE_VALUE == hFile)
 	{
 		MSG_BOX("Failed to Create MapObject_Ins File for Save MapData_Ins");
@@ -988,7 +1062,7 @@ HRESULT CObject_Window::Save_MapObject_Ins()
 	return S_OK;
 }
 
-HRESULT CObject_Window::Load_MapObject_Ins()
+HRESULT CObject_Window::Load_MapObject_Ins(const _tchar* wszMapDataPath)
 {
 	for (auto& iter : m_vecSaveInsObject)
 	{
@@ -998,9 +1072,7 @@ HRESULT CObject_Window::Load_MapObject_Ins()
 	m_vecSaveInsObject.clear();
 	m_vecSaveInsObjectWorld.clear();
 
-	_tchar dataFile[MAX_PATH] = TEXT("../../Resources/GameData/MapData/MapData_Ins.ddd");
-
-	HANDLE hFile = CreateFile(dataFile, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+	HANDLE hFile = CreateFile(wszMapDataPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
 	if (INVALID_HANDLE_VALUE == hFile)
 	{

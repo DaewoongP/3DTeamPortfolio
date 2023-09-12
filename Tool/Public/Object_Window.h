@@ -54,8 +54,8 @@ private:
 	void Map_Brushing_Menu(); // 맵 그리기 메뉴
 	HRESULT Save_MapObject(string szMapDataPath); // MapObject 저장
 	HRESULT Load_MapObject(const _tchar* wszMapDataPath); // MapObject 로드
-	HRESULT Save_MapObject_Ins(); // MapObject_Ins 저장
-	HRESULT Load_MapObject_Ins(); // MapObject_Ins 로드
+	HRESULT Save_MapObject_Ins(string szMapDataPath); // MapObject_Ins 저장
+	HRESULT Load_MapObject_Ins(const _tchar* wszMapDataPath); // MapObject_Ins 로드
 
 	void Deep_Copy_Name(const _tchar* wszName = nullptr); // 모델 이름 문자열 깊은 복사
 	void Deep_Copy_Path(const _tchar* wszPath); // 모델 경로 문자열 깊은 복사
@@ -91,16 +91,21 @@ private:
 	_uint m_iMapObjectIndex = { 0 }; // 현재 맵에 설치된 맵 오브젝트의 개수
 
 	string m_strPath = "";// 새롭게 저장할 세이브 파일 이름 받아오는 부분
-	_char szPath[MAX_PATH] = ""; // 새롭게 저장할 세이브 파일 이름 받아오는 부분
+	_char m_szPath[MAX_PATH] = ""; // 새롭게 저장할 세이브 파일 이름 받아오는 부분
+	string m_strPath_Ins = "";// 새롭게 저장할 인스턴스 세이브 파일 이름 받아오는 부분
+	_char m_szPath_Ins[MAX_PATH] = ""; // 새롭게 저장할 인스턴스 세이브 파일 이름 받아오는 부분
 	string m_strFindModel = ""; // 찾을 모델 이름
 	_char m_szFindModel[MAX_PATH] = ""; // 찾을 모델 이름을 받아올 문자열
-	_tchar m_wszMapLoadDataPath[MAX_PATH] = TEXT(""); // ImGuiFileDialog로 읽어온 모델 경로
-	_tchar m_wszMapSaveDataPath[MAX_PATH] = TEXT(""); // Save할 경로
-	string m_strCurrentModel = { "Dummy" }; // 현재 활성화된 모델 이름, 초기값은 더미
+	_tchar m_wszMapLoadDataPath[MAX_PATH] = TEXT(""); // ImGuiFileDialog로 읽어온 오브젝트 경로
+	_tchar m_wszMapSaveDataPath[MAX_PATH] = TEXT(""); // 맵 오브젝트를 Save할 경로
+	_tchar m_wszMapInsLoadDataPath[MAX_PATH] = TEXT(""); // ImGuiFileDialog로 읽어온 인스턴스 오브젝트 경로
+	_tchar m_wszMapInsSaveDataPath[MAX_PATH] = TEXT(""); // 인스턴스 맵 오브젝트를 Save할 경로
+	
 	_float m_vDummyMatrix[DUMMY_END][3];	// 더미의 상태 행렬, 이 값을 .ddd 파일에 저장함
 
 	_int m_iModelIndex = { 0 }; // 선택된 모델 인덱스
 	_int m_iTagIndex = { 0 }; // 선택된 맵 오브젝트 태그 인덱스
+	string m_strCurrentModel = { "Dummy" }; // 현재 활성화된 모델 이름, 초기값은 더미
 	vector<string> m_vecModelList; // 현재 추가해둔 모델 이름 리스트
 	vector<const _tchar*> m_vecModelList_t; // 모델 이름을 _tchar로 저장해둠
 	vector<const _tchar*> m_vecModelPath_t; // 모델 경로를 _tchar로 저장해둠
