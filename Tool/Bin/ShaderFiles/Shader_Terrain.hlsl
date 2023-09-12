@@ -8,7 +8,7 @@ texture2D		g_BrushTexture;
 float			g_fBrushRadius;
 unsigned int    g_iBrushPointCnt;
 float3          g_vBrushCurrentPoint;
-float3          g_vBrushPoint[256];
+float3          g_vBrushPoint[512];
 
 struct VS_IN
 {
@@ -77,7 +77,7 @@ PS_OUT PS_BRUSH(PS_IN In)
     vector vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV * 30.f);
     vector vBrush = vector(0.0f, 0.0f, 0.0f, 0.0f)/*g_BrushTexture.Sample(LinearSampler, In.vTexUV)*/;
 
-    /*for (int i = 0; i < g_iBrushPointCnt; i++)
+    for (int i = 0; i < g_iBrushPointCnt; i++)
     {
         if (g_vBrushPoint[i].x - g_fBrushRadius < In.vWorldPos.x && In.vWorldPos.x <= g_vBrushPoint[i].x + g_fBrushRadius &&
             g_vBrushPoint[i].z - g_fBrushRadius < In.vWorldPos.z && In.vWorldPos.z <= g_vBrushPoint[i].z + g_fBrushRadius)
@@ -90,16 +90,17 @@ PS_OUT PS_BRUSH(PS_IN In)
             vBrush = g_BrushTexture.Sample(LinearSampler, vTexUV);
             vDiffuse += vBrush;
         }
-    }   */
+    }   
 
     /*if (g_vBrushCurrentPoint.x - g_fBrushRadius < In.vWorldPos.x && In.vWorldPos.x <= g_vBrushCurrentPoint.x + g_fBrushRadius &&
         g_vBrushCurrentPoint.z - g_fBrushRadius < In.vWorldPos.z && In.vWorldPos.z <= g_vBrushCurrentPoint.z + g_fBrushRadius)*/
-    if(50.f <= In.vWorldPos.y)
+        
+    /*if(50.f <= In.vWorldPos.y)
     {
         vBrush = g_BrushTexture.Sample(LinearSampler, In.vTexUV);
-    }
+    }*/
 
-    Out.vColor = vDiffuse + vBrush;
+    Out.vColor = vDiffuse;
 
     return Out;
 }

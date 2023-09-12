@@ -29,21 +29,21 @@ HRESULT CTerrain::Initialize(void* pArg)
 
 	m_isRendering = true;
 
-	////Test
-	//for (size_t i = 0; i < m_iBrushPosCnt; i++)
-	//{
-	//	_float3 vPos = { i * 20.f, 0.f, i * 20.f };
-	//	m_vecBrushPos.push_back(vPos);
-	//}
+	//Test
+	for (size_t i = 0; i < m_iBrushPosCnt; i++)
+	{
+		_float3 vPos = { i * 20.f, 0.f, i * 20.f };
+		m_vecBrushPos.push_back(vPos);
+	}
 
-	//m_pBrushPos = New _float3[m_iBrushPosCnt];
+	m_pBrushPos = New _float3[m_iBrushPosCnt];
 
-	//for (size_t i = 0; i < m_iBrushPosCnt; i++)
-	//{
-	//	m_pBrushPos[i] = m_vecBrushPos.at(i);
-	//}
+	for (size_t i = 0; i < m_iBrushPosCnt; i++)
+	{
+		m_pBrushPos[i] = m_vecBrushPos.at(i);
+	}
 
-	//m_iBrushPosCnt = m_vecBrushPos.size();
+	m_iBrushPosCnt = m_vecBrushPos.size();
 
 	return S_OK;
 }
@@ -165,10 +165,6 @@ HRESULT CTerrain::SetUp_ShaderResources()
 	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
-	// 브러쉬 고정 정보
-	if (FAILED(m_pShader->Bind_RawValue("g_fBrushRadius", &m_fBrushSize, sizeof(_float))))
-		return E_FAIL;
-
 	Safe_Release(pGameInstance);
 
 	if (FAILED(m_pTexture->Bind_ShaderResource(m_pShader, "g_DiffuseTexture", 0)))
@@ -182,14 +178,21 @@ HRESULT CTerrain::SetUp_ShaderResources()
 
 HRESULT CTerrain::SetUp_ShaderDynamicResources()
 {	
-	if (FAILED(m_pShader->Bind_RawValue("g_iBrushPointCnt", &m_iBrushPosCnt, sizeof(_uint))))
+	// 브러쉬 범위
+	if (FAILED(m_pShader->Bind_RawValue("g_fBrushRadius", &m_fBrushSize, sizeof(_float))))
 		return E_FAIL;
 
+	// 브러쉬 현재 위치
 	if (FAILED(m_pShader->Bind_RawValue("g_vBrushCurrentPoint", &m_vBrushingPoint, sizeof(_float3))))
 		return E_FAIL;
 
-	/*if (FAILED(m_pShader->Bind_RawValue("g_vBrushPoint", &m_pBrushPos, 256)))
-		return E_FAIL;*/
+	// 쉐이더로 던져줄 브러쉬 위치의 개수
+	if (FAILED(m_pShader->Bind_RawValue("g_iBrushPointCnt", &m_iBrushPosCnt, sizeof(_uint))))
+		return E_FAIL;
+
+	// 쉐이더로 던져줄 브러쉬 위치 
+	if(FAILED(m_pShader->Bind_Vectors("g_vBrushPoint", m_pBrushPos, MAX_SHADERVECTOR)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -224,7 +227,10 @@ void CTerrain::Free()
 {
 	__super::Free();
 
-	//Safe_Delete_Array(m_pBrushPos);
+	if (true == m_isCloned)
+	{
+		Safe_Delete_Array(m_pBrushPos);
+	}	
 
 	Safe_Release(m_pTexture);
 	Safe_Release(m_pShader);

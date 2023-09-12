@@ -34,6 +34,8 @@ public:
 	HRESULT Bind_Matrix(const _char * pConstantName, const _float4x4 * pMatrix);
 	// 쉐이더파일에 바인딩 할 행렬
 	HRESULT Bind_Matrices(const _char * pConstantName, const _float4x4 * pMatrix, _uint iNumMatrices);
+	// 쉐이더파일에 바인딩 할 벡터
+	HRESULT Bind_Vectors(const _char * pConstantName, const _float3 * pVector, _uint iNumVectors);
 	// 쉐이더파일에 바인딩 할 일반 변수
 	HRESULT Bind_RawValue(const _char * pConstantName, const void* pData, _uint iSize);
 
