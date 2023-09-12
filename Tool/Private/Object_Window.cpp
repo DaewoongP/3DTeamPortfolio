@@ -734,8 +734,19 @@ void CObject_Window::Map_Brushing_Menu()
 
 	ImGui::DragFloat("Brush Size", &m_fBrushSize, 0.1f, 0.1f, 100.f);
 
+	// 지형 커서의 움직임과 크기 설정
 	pTerrain->Set_CurrentBrushingPoint(vPos);
 	pTerrain->Set_CurrentBrushingSize(m_fBrushSize);
+
+	// 지형 텍스처와 브러쉬 텍스처 선택
+	const char* GroundTexture[] = { "FarGrass", "Grass_Spring", "DeadGrass", "DeadGrassLeaves" };
+	const char* BrushTexture[] = { "FarGrass", "Grass_Spring", "DeadGrass", "DeadGrassLeaves" };
+
+	ImGui::Combo("GroundTexture", &m_iDiffuseIndex, GroundTexture, IM_ARRAYSIZE(GroundTexture));
+	pTerrain->Set_DiffuseTextureIndex((_uint)m_iDiffuseIndex);
+
+	ImGui::Combo("BrushTexture", &m_iBrushIndex, BrushTexture, IM_ARRAYSIZE(BrushTexture));
+	pTerrain->Set_BrushTextureIndex((_uint)m_iBrushIndex);
 
 	m_fTimeAccBrush += pGameInstance->Get_World_Tick();
 

@@ -154,10 +154,10 @@ HRESULT CTerrain::SetUp_ShaderResources()
 
 	Safe_Release(pGameInstance);
 
-	if (FAILED(m_pTexture->Bind_ShaderResource(m_pShader, "g_DiffuseTexture", 0)))
+	if (FAILED(m_pTexture->Bind_ShaderResource(m_pShader, "g_DiffuseTexture", m_iDiffuseTextureIndex)))
 		return E_FAIL;
 
-	if (FAILED(m_pTexture->Bind_ShaderResource(m_pShader, "g_BrushTexture", 1)))
+	if (FAILED(m_pTexture->Bind_ShaderResource(m_pShader, "g_BrushTexture", m_iBrushTextureIndex)))
 		return E_FAIL;
 
 	return S_OK;

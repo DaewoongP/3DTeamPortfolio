@@ -30,6 +30,8 @@ public:
 	CVIBuffer_Terrain* Get_Buffer() const { return m_pBuffer; }
 	void Set_CurrentBrushingSize(_float fSize) { m_fBrushCurrentRange = fSize; }
 	void Set_CurrentBrushingPoint(_float3 vPos) { m_vBrushCurrentPos = vPos; }
+	void Set_DiffuseTextureIndex(_uint iIndex) { m_iDiffuseTextureIndex = iIndex; }
+	void Set_BrushTextureIndex(_uint iIndex) { m_iBrushTextureIndex = iIndex; }
 
 public:
 	virtual HRESULT Initialize_Prototype();
@@ -51,6 +53,9 @@ private:
 	_uint				m_iBrushPosCnt; // 칠해질 개수
 	_float3				m_vBrushPos[MAX_SHADERVECTOR]; // 칠해질 위치
 	_float				m_fBrushRange[MAX_SHADERVECTOR]; // 칠해질 범위
+
+	_uint				m_iDiffuseTextureIndex = { 0 }; // 기본 지형 텍스처
+	_uint				m_iBrushTextureIndex = { 1 };	// 그려줄 지형 텍스처
 
 private:
 	CShader*			m_pShader = { nullptr };

@@ -90,8 +90,8 @@ PS_OUT PS_BRUSH(PS_IN In)
             vTexUV.x = (In.vWorldPos.x - (g_vBrushPos[i].x - g_fBrushRange[i])) / (2.f * g_fBrushRange[i]);
             vTexUV.y = ((g_vBrushPos[i].z - g_fBrushRange[i]) - In.vWorldPos.z) / (2.f * g_fBrushRange[i]);
 
-            vBrush = g_BrushTexture.Sample(LinearSampler, vTexUV * 30.f);
-            vDiffuse += vBrush;
+            vBrush = g_BrushTexture.Sample(LinearSampler, vTexUV);
+            vDiffuse = vBrush;
         }
     }   
 
@@ -100,7 +100,7 @@ PS_OUT PS_BRUSH(PS_IN In)
         g_vBrushCurrentPos.z - g_fBrushCurrentRange < In.vWorldPos.z && In.vWorldPos.z <= g_vBrushCurrentPos.z + g_fBrushCurrentRange)
     //if(50.f <= In.vWorldPos.y)
     {
-        vBrush = g_BrushTexture.Sample(LinearSampler, In.vTexUV * 30.f);
+        vBrush = g_BrushTexture.Sample(LinearSampler, In.vTexUV);
         vDiffuse += vBrush;
     }
 
