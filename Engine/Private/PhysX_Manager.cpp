@@ -4,38 +4,6 @@
 
 IMPLEMENT_SINGLETON(CPhysX_Manager)
 
-#ifdef _DEBUG
-const PxRenderBuffer* CPhysX_Manager::Get_RenderBuffer()
-{
-	if (nullptr == m_pPhysxScene)
-		return nullptr;
-	
-	const PxRenderBuffer* RenderBuf = &m_pPhysxScene->getRenderBuffer();
-
-	return RenderBuf;
-}
-
-_uint CPhysX_Manager::Get_LastLineBufferIndex()
-{
-	return m_iLastLineBufferIndex;
-}
-
-_uint CPhysX_Manager::Get_LastTriangleBufferIndex()
-{
-	return m_iLastTriangleBufferIndex;
-}
-
-void CPhysX_Manager::Add_LastLineBufferIndex(_uint iNumLines)
-{
-	m_iLastLineBufferIndex += iNumLines;
-}
-
-void CPhysX_Manager::Add_LastTriangleBufferIndex(_uint iNumTriangles)
-{
-	m_iLastTriangleBufferIndex += iNumTriangles;
-}
-#endif // _DEBUG
-
 HRESULT CPhysX_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	// 颇款单捞记 积己
@@ -109,14 +77,6 @@ void CPhysX_Manager::Tick(_float fTimeDelta)
 	m_pPhysxScene->simulate(1 / 60.f);
 	m_pPhysxScene->fetchResults(true);
 }
-
-#ifdef _DEBUG
-void CPhysX_Manager::Clear_BufferIndex()
-{
-	m_iLastLineBufferIndex = 0;
-	m_iLastTriangleBufferIndex = 0;
-}
-#endif // _DEBUG
 
 PxScene* CPhysX_Manager::Create_Scene()
 {

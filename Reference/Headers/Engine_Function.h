@@ -100,19 +100,18 @@ namespace Engine
 		PX_UNUSED(constantBlockSize);
 		PX_UNUSED(constantBlock);
 
+		pairFlags = PxPairFlag::eSOLVE_CONTACT | PxPairFlag::eDETECT_DISCRETE_CONTACT
+			| PxPairFlag::eNOTIFY_TOUCH_FOUND
+			| PxPairFlag::eNOTIFY_TOUCH_PERSISTS
+			| PxPairFlag::eNOTIFY_TOUCH_LOST;
+
 		if (PxFilterObjectType::eRIGID_STATIC == PxGetFilterObjectType(attribute0) ||
 			PxFilterObjectType::eRIGID_STATIC == PxGetFilterObjectType(attribute1))
 		{
-			pairFlags = PxPairFlag::eSOLVE_CONTACT | PxPairFlag::eDETECT_DISCRETE_CONTACT;
+			if (0 == filterData0.word0)
+				pairFlags = PxPairFlag::eSOLVE_CONTACT | PxPairFlag::eDETECT_DISCRETE_CONTACT;
 		}
-		else
-		{
-			pairFlags = PxPairFlag::eSOLVE_CONTACT | PxPairFlag::eDETECT_DISCRETE_CONTACT
-				| PxPairFlag::eNOTIFY_TOUCH_FOUND
-				| PxPairFlag::eNOTIFY_TOUCH_PERSISTS
-				| PxPairFlag::eNOTIFY_TOUCH_LOST;
-		}
-
+		
 		return PxFilterFlag::eDEFAULT;
 	}
 

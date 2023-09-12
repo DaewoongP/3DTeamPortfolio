@@ -25,15 +25,6 @@ public:
 	PxControllerManager* Get_ControllerManager() const { return m_pControllerManager; }
 	cloth::Factory* Get_ClothFactory() const { return m_pClothFactory; }
 
-#ifdef _DEBUG
-	const PxRenderBuffer* Get_RenderBuffer();
-	_uint Get_LastLineBufferIndex();
-	_uint Get_LastTriangleBufferIndex();
-	void Add_LastLineBufferIndex(_uint iNumLines);
-	void Add_LastTriangleBufferIndex(_uint iNumTriangles);
-	void Clear_BufferIndex();
-#endif // _DEBUG
-
 private:
 	explicit CPhysX_Manager() = default;
 	virtual ~CPhysX_Manager() = default;
@@ -64,16 +55,6 @@ private: /* NvCloth */
 	cloth::Factory*				m_pClothFactory = { nullptr };
 	CNVContextCallBack*			m_pContextManagerCallBack = { nullptr };
 	CPXAssertHandler*			m_pAssertHandler = { nullptr };
-
-#ifdef _DEBUG
-	private:
-	// 디버그 렌더링에 필요한 인덱스값
-	// 마지막 인덱스를 저장해두고 렌더링 처리함.
-	_uint						m_iLastLineBufferIndex = { 0 };
-	// 디버그 렌더링에 필요한 인덱스값
-	// 마지막 인덱스를 저장해두고 렌더링 처리함.
-	_uint						m_iLastTriangleBufferIndex = { 0 };
-#endif // _DEBUG
 
 private:
 	PxScene* Create_Scene();

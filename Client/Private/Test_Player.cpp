@@ -144,7 +144,7 @@ HRESULT CTest_Player::Add_Components()
 	RigidBodyDesc.fStaticFriction = 0.5f;
 	RigidBodyDesc.fDynamicFriction = 0.5f;
 	RigidBodyDesc.fRestitution = 0.f;
-	PxCapsuleGeometry GeoMetry = PxCapsuleGeometry(0.5f, 0.5f);
+	PxCapsuleGeometry GeoMetry = PxCapsuleGeometry(1.f, 2.f);
 	RigidBodyDesc.pGeometry = &GeoMetry;
 	RigidBodyDesc.Constraint = CRigidBody::AllRot;
 	/* Com_RigidBody */

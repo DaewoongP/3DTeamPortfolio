@@ -11,11 +11,8 @@ BEGIN(Engine)
 
 #ifdef _DEBUG
 class CShader;
-class CVIBuffer_Line;
-class CVIBuffer_Triangle;
 #endif // _DEBUG
 
-// 렌더링 하려면 Late_Tick을 불러주시면 됩니다 (컴포지트에서 자동으로 돌아감)
 class ENGINE_DLL CRigidBody final : public CComposite
 {
 public:
@@ -73,6 +70,8 @@ public:
 		// 어느방향으로도 회전하지 않으려면 아래와같이 처리하면 됩니다.
 		// ex) Constraint = RotX | RotY | RotZ;
 		RigidBodyConstraint Constraint;
+		// 디버그 컬러
+		_float4		vDebugColor = _float4(0.f, 1.f, 0.f, 1.f);
 	}RIGIDBODYDESC;
 
 private:
@@ -103,8 +102,8 @@ public:
 	_bool Is_Kinematic() const { return m_isKinematic; }
 
 public:
+	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg) override;
-	virtual void Late_Tick(_float fTimeDelta) override;
 
 #ifdef _DEBUG
 	virtual HRESULT Render() override;
@@ -134,8 +133,7 @@ private:
 #ifdef _DEBUG
 private:
 	CShader*				m_pShader = { nullptr };
-	CVIBuffer_Line*			m_pLine = { nullptr };
-	CVIBuffer_Triangle*		m_pTriangle = { nullptr };
+	CComponent*				m_pDebug_Render = { nullptr };
 	_float4					m_vColor;
 
 private:
@@ -149,9 +147,8 @@ private:
 
 #ifdef _DEBUG
 private:
-	HRESULT Add_Components();
+	HRESULT Add_Components(PxGeometry* pPxValues);
 	HRESULT SetUp_ShaderResources();
-	void Make_Buffers();
 #endif // _DEBUG
 
 public:

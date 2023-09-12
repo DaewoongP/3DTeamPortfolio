@@ -52,9 +52,6 @@ void CPlane::Tick(_float fTimeDelta)
 
 void CPlane::Late_Tick(_float fTimeDelta)
 {
-#ifdef _DEBUG
-	Make_Buffers();
-#endif // _DEBUG
 }
 
 #ifdef _DEBUG
@@ -64,12 +61,6 @@ HRESULT CPlane::Render()
 		return E_FAIL;
 
 	if (FAILED(m_pShader->Begin("Debug")))
-		return E_FAIL;
-
-	if (FAILED(m_pLine->Render()))
-		return E_FAIL;
-
-	if (FAILED(m_pTriangle->Render()))
 		return E_FAIL;
 
 	return S_OK;
@@ -89,15 +80,6 @@ HRESULT CPlane::Create_PlaneActor()
 
 	PxPhysics* pPhysX = pPhysX_Manager->Get_Physics();
 	m_pScene = pPhysX_Manager->Get_PhysxScene();
-
-#ifdef _DEBUG
-	m_pScene->simulate(1 / 60.f);
-	m_pScene->fetchResults(true);
-
-	const PxRenderBuffer* pBuffer = pPhysX_Manager->Get_RenderBuffer();
-	m_iStartLineBufferIndex = pBuffer->getNbLines();
-	m_iStartTriangleBufferIndex = pBuffer->getNbTriangles();
-#endif // _DEBUG
 
 	Safe_Release(pPhysX_Manager);
 	_int numCols = 100;
@@ -131,11 +113,11 @@ HRESULT CPlane::Create_PlaneActor()
 	m_pMaterial = pPhysX->createMaterial(0.5, 0.5f, 0.f);
 
 	PxShape* aHeightFieldShape = pPhysX->createShape(hfGeom, *m_pMaterial, PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSIMULATION_SHAPE);
-#ifdef _DEBUG
-	PxShape* pPlaneShape = pPhysX->createShape(PxPlaneGeometry(), *m_pMaterial, false, PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSIMULATION_SHAPE);
-#else
-	PxShape* pPlaneShape = pPhysX->createShape(PxPlaneGeometry(), *m_pMaterial, false, PxShapeFlag::eSIMULATION_SHAPE);
-#endif // _DEBUG
+	PxFilterData FilterData;
+	FilterData.word0 = 0x0000;
+	aHeightFieldShape->setSimulationFilterData(FilterData);
+	//PxShape* pPlaneShape = pPhysX->createShape(PxPlaneGeometry(), *m_pMaterial, false, PxShapeFlag::eSIMULATION_SHAPE);
+
 	Safe_Delete_Array(samples);
 
 	m_pActor->attachShape(*aHeightFieldShape);
@@ -152,72 +134,6 @@ HRESULT CPlane::Add_Components()
 		return E_FAIL;
 	m_Components.emplace(TEXT("Com_Shader"), m_pShader);
 	Safe_AddRef(m_pShader);
-
-	CPhysX_Manager* pPhysX_Manager = CPhysX_Manager::GetInstance();
-	Safe_AddRef(pPhysX_Manager);
-
-	// Plane 생성이후 개수 확인
-	m_pScene->simulate(1 / 60.f);
-	m_pScene->fetchResults(true);
-	const PxRenderBuffer* pBuffer = pPhysX_Manager->Get_RenderBuffer();
-	m_iNumLineBuffer = pBuffer->getNbLines() - m_iStartLineBufferIndex;
-	m_iNumTriangleBuffer = pBuffer->getNbTriangles() - m_iStartTriangleBufferIndex;
-
-	CVIBuffer_Line::LINEDESC LineDesc;
-	ZEROMEM(&LineDesc);
-
-	LineDesc.iNum = m_iNumLineBuffer;
-	const PxDebugLine* pLines = pBuffer->getLines();
-
-	vector<_float3> Lines;
-	for (_uint i = pBuffer->getNbLines() - m_iNumLineBuffer + 1; i < pBuffer->getNbLines(); ++i)
-	{
-		Lines.push_back(PhysXConverter::ToXMFLOAT3(pLines[i].pos0));
-		Lines.push_back(PhysXConverter::ToXMFLOAT3(pLines[i].pos1));
-	}
-	LineDesc.pLines = Lines.data();
-
-	if (0 < LineDesc.iNum &&
-		nullptr != LineDesc.pLines)
-	{
-		/* For.Com_Line */
-		if (FAILED(CComposite::Add_Component(0, TEXT("Prototype_Component_VIBuffer_Line"),
-			TEXT("Com_Line"), reinterpret_cast<CComponent**>(&m_pLine), &LineDesc)))
-		{
-			MSG_BOX("Failed CRigidBody Add_Component : (Com_Line)");
-			return E_FAIL;
-		}
-	}
-
-	CVIBuffer_Triangle::TRIANGLEDESC TriangleDesc;
-	ZEROMEM(&TriangleDesc);
-
-	TriangleDesc.iNum = m_iNumTriangleBuffer;
-	const PxDebugTriangle* pDebugTriangles = pBuffer->getTriangles();
-
-	vector<_float3> Triangles;
-	for (_uint i = pBuffer->getNbTriangles() - m_iNumTriangleBuffer + 1; i < pBuffer->getNbTriangles(); ++i)
-	{
-		Triangles.push_back(PhysXConverter::ToXMFLOAT3(pDebugTriangles[i].pos0));
-		Triangles.push_back(PhysXConverter::ToXMFLOAT3(pDebugTriangles[i].pos1));
-		Triangles.push_back(PhysXConverter::ToXMFLOAT3(pDebugTriangles[i].pos2));
-	}
-	TriangleDesc.pTriangles = Triangles.data();
-
-	if (0 < TriangleDesc.iNum &&
-		nullptr != TriangleDesc.pTriangles)
-	{
-		/* For.Com_Triangle */
-		if (FAILED(CComposite::Add_Component(0, TEXT("Prototype_Component_VIBuffer_Triangle"),
-			TEXT("Com_Triangle"), reinterpret_cast<CComponent**>(&m_pTriangle), &TriangleDesc)))
-		{
-			MSG_BOX("Failed CRigidBody Add_Component : (Com_Triangle)");
-			return E_FAIL;
-		}
-	}
-
-	pPhysX_Manager->Clear_BufferIndex();
-	Safe_Release(pPhysX_Manager);
 
 	return S_OK;
 }
@@ -242,49 +158,6 @@ HRESULT CPlane::SetUp_ShaderResources()
 	return S_OK;
 }
 
-void CPlane::Make_Buffers()
-{
-	CVIBuffer_Line::LINEDESC LineDesc;
-	ZEROMEM(&LineDesc);
-
-	CPhysX_Manager* pPhysX_Manager = CPhysX_Manager::GetInstance();
-	Safe_AddRef(pPhysX_Manager);
-
-	const PxRenderBuffer* pBuffer = pPhysX_Manager->Get_RenderBuffer();
-
-	Safe_Release(pPhysX_Manager);
-
-	const PxDebugLine* pDebugLines = pBuffer->getLines();
-	_uint iNumLines = pBuffer->getNbLines();
-	vector<_float3> Lines;
-	for (_uint i = iNumLines - m_iNumLineBuffer; i < iNumLines; ++i)
-	{
-		Lines.push_back(PhysXConverter::ToXMFLOAT3(pDebugLines[i].pos0));
-		Lines.push_back(PhysXConverter::ToXMFLOAT3(pDebugLines[i].pos1));
-	}
-
-	LineDesc.iNum = m_iNumLineBuffer;
-	LineDesc.pLines = Lines.data();
-
-	m_pLine->Tick(LineDesc);
-
-	CVIBuffer_Triangle::TRIANGLEDESC TriangleDesc;
-	ZEROMEM(&TriangleDesc);
-
-	const PxDebugTriangle* pDebugTriangles = pBuffer->getTriangles();
-	_uint iNumTriangles = pBuffer->getNbTriangles();
-	vector<_float3> Triangles;
-	for (_uint i = iNumTriangles - m_iNumTriangleBuffer; i < iNumTriangles; ++i)
-	{
-		Triangles.push_back(PhysXConverter::ToXMFLOAT3(pDebugTriangles[i].pos0));
-		Triangles.push_back(PhysXConverter::ToXMFLOAT3(pDebugTriangles[i].pos1));
-		Triangles.push_back(PhysXConverter::ToXMFLOAT3(pDebugTriangles[i].pos2));
-	}
-	TriangleDesc.iNum = m_iNumTriangleBuffer;
-	TriangleDesc.pTriangles = Triangles.data();
-
-	m_pTriangle->Tick(TriangleDesc);
-}
 #endif // _DEBUG
 
 CPlane* CPlane::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* szHeightMapPath)
@@ -318,8 +191,6 @@ void CPlane::Free()
 	__super::Free();
 
 #ifdef _DEBUG
-	Safe_Release(m_pTriangle);
 	Safe_Release(m_pShader);
-	Safe_Release(m_pLine);
 #endif // _DEBUG
 }

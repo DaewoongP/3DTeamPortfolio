@@ -8,6 +8,7 @@ class CConvexMesh;
 class CTriangleMesh;
 class CShader;
 class CRenderer;
+class CRigidBody;
 END
 
 BEGIN(Client)
@@ -32,6 +33,7 @@ private:
 	CRenderer*				m_pRenderer = { nullptr };
 	CConvexMesh*			m_pConvexMesh = { nullptr };
 	CTriangleMesh*			m_pTriangleMesh = { nullptr };
+	CRigidBody*				m_pRigidBody = { nullptr };
 
 private:
 	HRESULT Add_Components();
