@@ -54,6 +54,39 @@ void CTriangleCollider_Window::Tick(_float fTimeDelta)
 	ImGui::RadioButton("MakeCell", &m_iSelectOption, OPTION_CREATE); ImGui::SameLine();
 	ImGui::RadioButton("EditCell", &m_iSelectOption, OPTION_PICK);
 
+	if (ImGui::Button("Delete_Before_CELL") && m_Cells.size())
+	{
+		_uint vtxCnt[3] = {0};
+		_uint tempIdx[3] = {};
+		for (int i = 0; i < 3; i++)
+		{
+			tempIdx[i] =m_Cells[m_Cells.size()-1].m_iIndices[i];
+		}
+		Safe_Release(m_Cells.back().m_pBufferCom);
+		m_Cells.pop_back();
+
+		for (COLCELLDESC cell : m_Cells)
+		{
+			for (int i = 0; i < 3; i++)
+			{
+				if (tempIdx[0] == cell.m_iIndices[i])
+					vtxCnt[0]++;
+				if (tempIdx[1] == cell.m_iIndices[i])
+					vtxCnt[1]++;
+				if (tempIdx[2] == cell.m_iIndices[i])
+					vtxCnt[2]++;
+			}
+		}
+		for (int i = 0; i < 3; i++)
+		{
+			//찾아서 없애야할듯
+			if (vtxCnt[i] == 0)
+			{
+				m_Vertices.erase(m_Vertices.begin()+ tempIdx[i]);
+			}
+		}
+	}
+
 	if(ImGui::Button("Save_Collider"))
 	{
 		Save_MeshData();
@@ -519,11 +552,8 @@ HRESULT CTriangleCollider_Window::Make_Cell()
 		if (CCell::POINT_END == m_iCurrentPickPointIndex)
 		{
 			_float3 data[3] = {};
-			data[0] = m_Vertices[m_vCell[0]];
-			data[1] = m_Vertices[m_vCell[1]];
-			data[2] = m_Vertices[m_vCell[2]];
 
-			CCWSort_Cell(data);
+			CCWSort_Cell(m_vCell);
 			COLCELLDESC CellDesc;
 			for (int i = 0; i < 3; i++)
 			{
@@ -565,20 +595,20 @@ HRESULT CTriangleCollider_Window::ReMake_Cell()
 	return S_OK;
 }
 
-void CTriangleCollider_Window::CCWSort_Cell(_float3* pPoints)
+void CTriangleCollider_Window::CCWSort_Cell(_uint* pPoints)
 {
 	_float4 vAB, vAC, vCross;
 	_float4 vUp = XMVectorSet(0.f, 1.f, 0.f, 0.f);
 
-	vAB = _float4(pPoints[CCell::POINT_B] - pPoints[CCell::POINT_A]);
-	vAC = _float4(pPoints[CCell::POINT_C] - pPoints[CCell::POINT_A]);
+	vAB = _float4(m_Vertices[pPoints[CCell::POINT_B]] - m_Vertices[pPoints[CCell::POINT_A]]);
+	vAC = _float4(m_Vertices[pPoints[CCell::POINT_C]] - m_Vertices[pPoints[CCell::POINT_A]]);
 
 	vCross = XMVector3Normalize(XMVector3Cross(vAB, vAC));
 
 	// not CCW
 	if (0 > XMVectorGetX(XMVector3Dot(vUp, vCross)))
 	{
-		_float3 vSour = pPoints[CCell::POINT_B];
+		UINT vSour = pPoints[CCell::POINT_B];
 		pPoints[CCell::POINT_B] = pPoints[CCell::POINT_C];
 		pPoints[CCell::POINT_C] = vSour;
 	}

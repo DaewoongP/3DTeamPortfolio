@@ -221,6 +221,11 @@ HRESULT CLoader::Loading_For_MainGame()
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Golem_Combat_Sword/Golem_Combat_Sword.dat"), PivotMatrix))))
 			throw TEXT("Prototype_Component_Model_Weopon_Golem_Combat");
 
+		PivotMatrix = XMMatrixIdentity();
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Stair"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/SM_Intro_Cliffside_RuinsStairsBase_01/SM_Intro_Cliffside_RuinsStairsBase_01.dat"), PivotMatrix))))
+			throw TEXT("Prototype_Component_Model_Stair");
+
 		///* For.Prototype_Component_Model_Weopon_Golem_Merlin */
 		//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Weopon_Golem_Merlin"),
 		//	CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Golem_Combat_Mace/Golem_Combat_Mace.dat"), PivotMatrix))))

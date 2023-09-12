@@ -90,7 +90,7 @@ private:
 
 private:
 	// 셀의 방향 처리(CCW로 변경)
-	void CCWSort_Cell(_float3* pPoints);
+	void CCWSort_Cell(_uint* pPoints);
 	HRESULT Render_Cells();
 
 public:
