@@ -175,6 +175,7 @@ HRESULT CRenderTarget_Manager::Change_DepthStencil(ID3D11DeviceContext* pContext
 	pContext->OMGetRenderTargets(1, &m_pPostRenderTargetView, &m_pDepthStencilView);
 	pContext->OMSetRenderTargets(1, &m_pPostRenderTargetView, m_pShadowView);
 	 
+
 	pContext->ClearRenderTargetView(m_pBackBufferView,(_float*)&vClearColor);
 	return S_OK;
 }

@@ -5,7 +5,7 @@
 #include "PipeLine.h"
 #include "Shader.h"
 #include "VIBuffer_Rect.h"
-
+#include "Texture.h"
 #ifdef _DEBUG
 #include "Input_Device.h"
 #include "Font_Manager.h"
@@ -65,7 +65,7 @@ HRESULT CRenderer::Initialize_Prototype()
 		TEXT("Target_Blur"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
-		TEXT("Target_Distortion"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f))))
+		TEXT("Target_Distortion"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_R32G32B32A32_UINT, _float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
 #ifdef _DEBUG
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
@@ -131,9 +131,9 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Shadow"), 240.f, 400.f, 160.f, 160.f)))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Shadow_Depth"), 80.f, 560.f, 160.f, 160.f)))
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Distortion"), 80.f, 560.f, 160.f, 160.f)))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Blur"), 240.f, 560.f, 160.f, 160.f)))
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_SSAO"), 240.f, 560.f, 160.f, 160.f)))
 		return E_FAIL;
 
 	/*if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_SSAO"), 300.f, 300.f, 600.f, 600.f)))
@@ -151,6 +151,11 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	
 #endif // _DEBUG
+
+	m_pTexture = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/noise01.dds"));
+	m_pTexture2 = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/alpha01.dds"));
+	m_pTexture3 = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/fire01.dds"));
+
 
 	return S_OK;
 }
@@ -211,14 +216,14 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 	if (FAILED(Render_Blend()))
 		return E_FAIL;
-
+	
 	if (FAILED(m_pRenderTarget_Manager->End_PostProcessingRenderTarget(m_pContext)))
 		return E_FAIL;
 	
 	if (FAILED(Render_PostProcessing()))
 		return E_FAIL;	
-	
-
+	//if (FAILED(Render_Distortion()))
+	//	return E_FAIL;
 	if (FAILED(Render_UI()))
 		return E_FAIL;
 
@@ -336,7 +341,7 @@ HRESULT CRenderer::Render_Lights()
 
 	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Lights"))))
 		return E_FAIL;
-
+	
 	if (FAILED(m_pDeferredShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
 	if (FAILED(m_pDeferredShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
@@ -544,7 +549,7 @@ HRESULT CRenderer::Render_Blur()
 	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Blur"))))
 		return E_FAIL;
 
-	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Blur"), m_pShadeTypeShader, "g_BlurTexture")))
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Blur"), m_pSSAOShader, "g_BlurTexture")))
 		return E_FAIL;
 
 	if (FAILED(m_pSSAOShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
@@ -584,21 +589,34 @@ HRESULT CRenderer::Render_PostProcessing()
 	return S_OK;
 }
 
-HRESULT CRenderer::Render_Dicstortion()
+HRESULT CRenderer::Render_Distortion()
 {
+
+	m_pTexture->Bind_ShaderResource(m_pAfterShader, "g_vDistortionTexture");
+	m_pTexture2->Bind_ShaderResource(m_pAfterShader, "g_vAlphaTexture");
+	//m_pTexture3->Bind_ShaderResource(m_pAfterShader, "g_PostProcessingTexture");
+
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_PostProcessing"), m_pAfterShader, "g_PostProcessingTexture")))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Diffuse"), m_pAfterShader, "g_vDistortionTexture")))
-		return E_FAIL;
 
 
-	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+	if (FAILED(m_pAfterShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
-	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+	if (FAILED(m_pAfterShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
 		return E_FAIL;
-	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
+	if (FAILED(m_pAfterShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
-
+	m_fFrameTime += 0.01f;
+	if (m_fFrameTime > 1000.f)
+		m_fFrameTime = 0.f;
+	if (FAILED(m_pAfterShader->Bind_RawValue("g_FrameTime", &m_fFrameTime, sizeof(_float))))
+		return E_FAIL;
+	_float3 Speed = { 1.3f, 2.1f, 2.3f };
+	if (FAILED(m_pAfterShader->Bind_RawValue("g_ScrollSpeed", &Speed, sizeof(_float3))))
+		return E_FAIL;
+	_float3 Scale = { 1.f, 2.f, 3.f };
+	if (FAILED(m_pAfterShader->Bind_RawValue("g_Scales", &Scale, sizeof(_float3))))
+		return E_FAIL;
 	m_pAfterShader->Begin("Distortion");
 
 	m_pAfterShaderBuffer->Render();
@@ -720,7 +738,7 @@ HRESULT CRenderer::Add_Components()
 	if (nullptr == m_pShadeTypeBuffer)
 		return E_FAIL;
 
-	m_pAfterShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_AfterShade.hlsl"), VTXPOSNORTEX_DECL::Elements, VTXPOSNORTEX_DECL::iNumElements);
+	m_pAfterShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_AfterShade.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements);
 	if (nullptr == m_pAfterShader)
 		return E_FAIL;
 
@@ -844,6 +862,10 @@ void CRenderer::Free()
 	Safe_Release(m_pRenderTarget_Manager);
 	Safe_Release(m_pLight_Manager);
 	
+	Safe_Release(m_pTexture);
+	Safe_Release(m_pTexture2);
+	Safe_Release(m_pTexture3);
+
 	Safe_Release(m_pAfterShaderBuffer);
 	Safe_Release(m_pAfterShader);
 
