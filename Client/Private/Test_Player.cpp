@@ -62,7 +62,7 @@ void CTest_Player::Late_Tick(_float fTimeDelta)
 	}
 
 #ifdef _DEBUG
-	Tick_ImGui();
+	//Tick_ImGui();
 #endif // _DEBUG
 }
 
@@ -140,6 +140,7 @@ HRESULT CTest_Player::Add_Components()
 
 	CRigidBody::RIGIDBODYDESC RigidBodyDesc;
 	RigidBodyDesc.isStatic = false;
+	RigidBodyDesc.isTrigger = false;
 	RigidBodyDesc.vInitPosition = _float3(5.f, 5.f, 5.f);
 	RigidBodyDesc.fStaticFriction = 0.5f;
 	RigidBodyDesc.fDynamicFriction = 0.5f;
@@ -147,6 +148,8 @@ HRESULT CTest_Player::Add_Components()
 	PxCapsuleGeometry GeoMetry = PxCapsuleGeometry(1.f, 2.f);
 	RigidBodyDesc.pGeometry = &GeoMetry;
 	RigidBodyDesc.Constraint = CRigidBody::AllRot;
+	RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 0.f, 1.f);
+	RigidBodyDesc.pOwnerObject = this;
 	/* Com_RigidBody */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
 		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
@@ -227,6 +230,11 @@ void CTest_Player::Key_Input(_float fTimeDelta)
 	if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
 	{
 		m_pRigidBody->Add_Force(m_pTransform->Get_Up() * 30.f, PxForceMode::eIMPULSE);
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_K, CInput_Device::KEY_DOWN))
+	{
+		m_eObjEvent = CComponent::OBJ_DEAD;
 	}
 
 	ENDINSTANCE;

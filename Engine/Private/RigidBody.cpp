@@ -193,7 +193,7 @@ HRESULT CRigidBody::Initialize(void* pArg)
 	}
 
 	RIGIDBODYDESC* pRigidDesc = reinterpret_cast<RIGIDBODYDESC*>(pArg);
-
+	
 	if (FAILED(Create_Actor(pRigidDesc)))
 		return E_FAIL;
 	
@@ -235,7 +235,7 @@ HRESULT CRigidBody::Create_Actor(RIGIDBODYDESC* pRigidBodyDesc)
 
 	// 초기 포지션 세팅
 	PxTransform InitTransform(PhysXConverter::ToPxVec3(pRigidBodyDesc->vInitPosition));
-
+	
 	if (true == pRigidBodyDesc->isStatic)
 	{
 		m_pActor = pPhysX->createRigidStatic(InitTransform);
@@ -253,15 +253,28 @@ HRESULT CRigidBody::Create_Actor(RIGIDBODYDESC* pRigidBodyDesc)
 	}
 	
 	// 유저데이터에 이 컴포넌트 세팅해서 나중에 충돌처리 함수 부르기 위해 처리.
-	m_pActor->userData = this;
+	m_pActor->userData = pRigidBodyDesc->pOwnerObject;
 	
 	// 저항 처리
 	m_pMaterial = pPhysX->createMaterial(pRigidBodyDesc->fStaticFriction, 
 		pRigidBodyDesc->fDynamicFriction, 
 		pRigidBodyDesc->fRestitution);
 
+	PxShapeFlags ePxFlag;
+	// 트리거 설정
+	// Query : 레이캐스트 처리
+	if (true == pRigidBodyDesc->isTrigger)
+	{
+		ePxFlag = PxShapeFlag::eSCENE_QUERY_SHAPE | PxShapeFlag::eTRIGGER_SHAPE;
+	}
+	else
+	{
+		ePxFlag = PxShapeFlag::eSCENE_QUERY_SHAPE | PxShapeFlag::eSIMULATION_SHAPE;
+	}
+
+	m_pGeometry = pRigidBodyDesc->pGeometry;
 	PxShape* pShape = pPhysX->createShape(*pRigidBodyDesc->pGeometry,
-		*m_pMaterial, false, PxShapeFlag::eSIMULATION_SHAPE);
+		*m_pMaterial, false, ePxFlag);
 
 	// 충돌처리에 필요한 유저 데이터값 바인딩
 	// 나중에 충돌 타입 정해서 처리할거임.
@@ -283,7 +296,7 @@ HRESULT CRigidBody::Create_Actor(RIGIDBODYDESC* pRigidBodyDesc)
 	// 씬도 일단 한개만 처리하게 해둬서 신경 안써도 될듯.
 	m_pActor->attachShape(*pShape);
 	m_pScene->addActor(*m_pActor);
-
+	
 	if (false == pRigidBodyDesc->isStatic)
 	{
 		PxRigidDynamic* pRigidBody = m_pActor->is<PxRigidDynamic>();
@@ -385,6 +398,23 @@ void CRigidBody::Rotate(_float4 _vRotation) const
 	}
 }
 
+PxRaycastHit CRigidBody::RayCast(_float3 vOrigin, _float3 vDir, _float fMaxDist, _uint iMaxHits)
+{
+	PxRaycastHit HitInfo;
+	const PxHitFlags eHitFlags = PxHitFlag::eDEFAULT;
+	PxRaycastBuffer buf;
+	if (true == m_pScene->raycast(PhysXConverter::ToPxVec3(vOrigin), PhysXConverter::ToPxVec3(vDir),
+		fMaxDist, buf))
+	{
+		int a = 1;
+	}
+
+	/*PxU32 hitCount = PxGeometryQuery::raycast(PhysXConverter::ToPxVec3(vOrigin), PhysXConverter::ToPxVec3(vDir),
+		*m_pGeometry, m_pActor->getGlobalPose(), fMaxDist, eHitFlags, iMaxHits, &HitInfo);*/
+	
+	return HitInfo;
+}
+
 #ifdef _DEBUG
 HRESULT CRigidBody::Add_Components(PxGeometry* pPxValues)
 {
@@ -394,7 +424,7 @@ HRESULT CRigidBody::Add_Components(PxGeometry* pPxValues)
 
 	m_Components.emplace(TEXT("Com_Shader"), m_pShader);
 	Safe_AddRef(m_pShader);
-	
+
 	if (PxGeometryType::eBOX == pPxValues->getType())
 	{
 		// Debug Components

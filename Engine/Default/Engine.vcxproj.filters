@@ -352,9 +352,6 @@
     <Filter Include="01. Utility\03. Components\100. Plane%28do not use this%29">
       <UniqueIdentifier>{33c81cf5-caa3-47e5-a3d4-5e94a0331092}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\03. Components\16. Trigger">
-      <UniqueIdentifier>{73d62328-c3f5-48be-986d-a72b7b290a7b}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -714,9 +711,6 @@
     <ClInclude Include="..\public\Debug_Render_Ring.h">
       <Filter>01. Utility\03. Components\14. RigidBody\DebugRender\Ring</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Trigger.h">
-      <Filter>01. Utility\03. Components\16. Trigger</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -1045,9 +1039,6 @@
     </ClCompile>
     <ClCompile Include="..\private\Debug_Render_Ring.cpp">
       <Filter>01. Utility\03. Components\14. RigidBody\DebugRender\Ring</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Trigger.cpp">
-      <Filter>01. Utility\03. Components\16. Trigger</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

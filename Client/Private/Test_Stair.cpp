@@ -60,6 +60,21 @@ void CTest_Stair::Late_Tick(_float fTimeDelta)
 	}
 }
 
+void CTest_Stair::OnCollisionEnter(COLLISIONDESC CollisionDesc)
+{
+	cout << "Stair Enter" << endl;
+}
+
+void CTest_Stair::OnCollisionStay(COLLISIONDESC CollisionDesc)
+{
+	cout << "Stair Stay" << endl;
+}
+
+void CTest_Stair::OnCollisionExit(COLLISIONDESC CollisionDesc)
+{
+	cout << "Stair Exit" << endl;
+}
+
 HRESULT CTest_Stair::Render()
 {
 	if (FAILED(__super::Render()))
@@ -95,13 +110,15 @@ HRESULT CTest_Stair::Add_Components()
 
 	CRigidBody::RIGIDBODYDESC RigidBodyDesc;
 	RigidBodyDesc.isStatic = true;
+	RigidBodyDesc.isTrigger = true;
 	RigidBodyDesc.vInitPosition = _float3(15.f, 5.f, 5.f);
 	RigidBodyDesc.fStaticFriction = 0.5f;
 	RigidBodyDesc.fDynamicFriction = 0.5f;
 	RigidBodyDesc.fRestitution = 0.f;
 	PxSphereGeometry GeoMetry = PxSphereGeometry(2.f);
 	RigidBodyDesc.pGeometry = &GeoMetry;
-	
+	RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 0.f, 1.f);
+	RigidBodyDesc.pOwnerObject = this;
 	/* Com_RigidBody */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
 		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))

@@ -100,7 +100,15 @@ namespace Engine
 		PX_UNUSED(constantBlockSize);
 		PX_UNUSED(constantBlock);
 
-		pairFlags = PxPairFlag::eSOLVE_CONTACT | PxPairFlag::eDETECT_DISCRETE_CONTACT
+		// Trigger
+		if ((attribute0 & physx::PxFilterObjectFlag::eTRIGGER) != 0 || 
+			(attribute1 & physx::PxFilterObjectFlag::eTRIGGER) != 0)
+		{
+			pairFlags |= physx::PxPairFlag::eTRIGGER_DEFAULT;
+			return physx::PxFilterFlag::eDEFAULT;
+		}
+		
+		pairFlags = PxPairFlag::eCONTACT_DEFAULT
 			| PxPairFlag::eNOTIFY_TOUCH_FOUND
 			| PxPairFlag::eNOTIFY_TOUCH_PERSISTS
 			| PxPairFlag::eNOTIFY_TOUCH_LOST;
@@ -109,7 +117,7 @@ namespace Engine
 			PxFilterObjectType::eRIGID_STATIC == PxGetFilterObjectType(attribute1))
 		{
 			if (0 == filterData0.word0)
-				pairFlags = PxPairFlag::eSOLVE_CONTACT | PxPairFlag::eDETECT_DISCRETE_CONTACT;
+				pairFlags = PxPairFlag::eCONTACT_DEFAULT;
 		}
 		
 		return PxFilterFlag::eDEFAULT;

@@ -17,15 +17,17 @@ void CPXEventCallBack::onContact(const PxContactPairHeader& pairHeader, const Px
 {
 	for (PxU32 i = 0; i < nbPairs; ++i)
 	{
-		COLLISIONDESC Desc;
-		CComposite* pSourData = reinterpret_cast<CComposite*>(pairHeader.actors[0]->userData);
-		CComposite* pDestData = reinterpret_cast<CComposite*>(pairHeader.actors[1]->userData);
-		if (nullptr == pSourData ||
-			nullptr == pDestData)
-			continue;
-		
-		CGameObject* pSourObject = static_cast<CGameObject*>(pSourData->Get_Owner());
-		CGameObject* pDestObject = static_cast<CGameObject*>(pDestData->Get_Owner());
+		COLLISIONDESC SourDesc, DestDesc;
+		CGameObject* pSourObject = static_cast<CGameObject*>(pairHeader.actors[0]->userData);
+		CGameObject* pDestObject = static_cast<CGameObject*>(pairHeader.actors[1]->userData);
+
+		SourDesc.pOtherObjectTag = pDestObject->Get_Tag();
+		SourDesc.pOtherOwner = pDestObject;
+		SourDesc.pOtherTransform = pDestObject->Get_Transform();
+
+		DestDesc.pOtherObjectTag = pSourObject->Get_Tag();
+		DestDesc.pOtherOwner = pSourObject;
+		DestDesc.pOtherTransform = pSourObject->Get_Transform();
 
 		if (nullptr == pSourObject ||
 			nullptr == pDestObject)
@@ -33,33 +35,85 @@ void CPXEventCallBack::onContact(const PxContactPairHeader& pairHeader, const Px
 
 		if (pairs[i].events.isSet(PxPairFlag::eNOTIFY_TOUCH_FOUND))
 		{
-			pSourObject->OnCollisionEnter(Desc);
-			pDestObject->OnCollisionEnter(Desc);
+			pSourObject->OnCollisionEnter(SourDesc);
+			pDestObject->OnCollisionEnter(DestDesc);
 		}
 
 		if (pairs[i].events.isSet(PxPairFlag::eNOTIFY_TOUCH_PERSISTS))
 		{
-			pSourObject->OnCollisionStay(Desc);
-			pDestObject->OnCollisionStay(Desc);
+			pSourObject->OnCollisionStay(SourDesc);
+			pDestObject->OnCollisionStay(DestDesc);
+
+			if (CComponent::OBJ_DEAD == pSourObject->Get_ObjEvent())
+			{
+				pSourObject->OnCollisionExit(SourDesc);
+				pDestObject->OnCollisionExit(DestDesc);
+				pairHeader.actors[0]->userData = nullptr;
+			}
+			else if (CComponent::OBJ_DEAD == pDestObject->Get_ObjEvent())
+			{
+				pSourObject->OnCollisionExit(SourDesc);
+				pDestObject->OnCollisionExit(DestDesc);
+				pairHeader.actors[1]->userData = nullptr;
+			}
 		}
 
 		if (pairs[i].events.isSet(PxPairFlag::eNOTIFY_TOUCH_LOST))
 		{
-			pSourObject->OnCollisionExit(Desc);
-			pDestObject->OnCollisionExit(Desc);
+			pSourObject->OnCollisionExit(SourDesc);
+			pDestObject->OnCollisionExit(DestDesc);
 		}
 	}
 }
 
 void CPXEventCallBack::onTrigger(PxTriggerPair* pairs, PxU32 count)
 {
-	cout << "Trigger Collision" << endl;
 	for (PxU32 i = 0; i < count; i++)
 	{
 		// ignore pairs when shapes have been deleted
 		if (pairs[i].flags & (PxTriggerPairFlag::eREMOVED_SHAPE_TRIGGER | PxTriggerPairFlag::eREMOVED_SHAPE_OTHER))
 			continue;
 		
+		COLLISIONDESC SourDesc, DestDesc;
+
+		
+		CGameObject* pSourObject = static_cast<CGameObject*>(pairs->triggerActor->userData);
+		CGameObject* pDestObject = static_cast<CGameObject*>(pairs->otherActor->userData);
+
+		SourDesc.pOtherObjectTag = pDestObject->Get_Tag();
+		SourDesc.pOtherOwner = pDestObject;
+		SourDesc.pOtherTransform = pDestObject->Get_Transform();
+
+		DestDesc.pOtherObjectTag = pSourObject->Get_Tag();
+		DestDesc.pOtherOwner = pSourObject;
+		DestDesc.pOtherTransform = pSourObject->Get_Transform();
+
+		if (nullptr == pSourObject ||
+			nullptr == pDestObject)
+			continue;
+		
+		if (pairs->status == PxPairFlag::eNOTIFY_TOUCH_FOUND)
+		{
+			pSourObject->OnCollisionEnter(SourDesc);
+			pDestObject->OnCollisionEnter(DestDesc);
+		}
+
+		// trigger는 stay 존재 x 따로 제작해주거나 해야함.
+
+		if (pairs->status == PxPairFlag::eNOTIFY_TOUCH_LOST)
+		{
+			pSourObject->OnCollisionExit(SourDesc);
+			pDestObject->OnCollisionExit(DestDesc);
+		}
+
+		if (CComponent::OBJ_DEAD == pSourObject->Get_ObjEvent())
+		{
+			pairs->triggerActor->userData = nullptr;
+		}
+		else if (CComponent::OBJ_DEAD == pDestObject->Get_ObjEvent())
+		{
+			pairs->otherActor->userData = nullptr;
+		}
 	}
 }
 

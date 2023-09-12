@@ -33,9 +33,15 @@ public:
 
 	typedef struct tagRigidBodyDesc
 	{
+		// this포인터 대입하면 됩니다.
+		// 내부적으로 레퍼런스 카운트 관리
+		CGameObject* pOwnerObject = { nullptr };
 		// static(true) : 움직이지 않는 물체 (다른 객체의 충돌에 의해 움직일 수도 있음.)
 		// dynamic(false) : 움직이는 물체
 		_bool isStatic = { false };
+		// Trigger 옵션
+		// ****** Enter와 exit만 처리됩니다. ******
+		_bool isTrigger = { false };
 		// 초기 포지션 세팅
 		// 지면과 붙어있을 경우 튕겨져 나갈 수 있습니다.
 		_float3 vInitPosition;
@@ -121,9 +127,13 @@ public:
 	void Translate(_float3 _vPosition) const;
 	void Rotate(_float4 _vRotation) const;
 
+public:
+	PxRaycastHit RayCast(_float3 vOrigin, _float3 vDir, _float fMaxDist, _uint iMaxHits = 1);
+
 private:
 	PxRigidActor*			m_pActor = { nullptr };
 	PxMaterial*				m_pMaterial = { nullptr };
+	PxGeometry*				m_pGeometry = { nullptr };
 	PxScene*				m_pScene = { nullptr };
 
 private:
@@ -135,13 +145,6 @@ private:
 	CShader*				m_pShader = { nullptr };
 	CComponent*				m_pDebug_Render = { nullptr };
 	_float4					m_vColor;
-
-private:
-	_uint					m_iNumLineBuffer = { 0 };
-	_uint					m_iStartLineBufferIndex = { 0 };
-
-	_uint					m_iNumTriangleBuffer = { 0 };
-	_uint					m_iStartTriangleBufferIndex = { 0 };
 #endif // _DEBUG
 
 
