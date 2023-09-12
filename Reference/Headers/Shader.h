@@ -38,6 +38,8 @@ public:
 	HRESULT Bind_Vectors(const _char * pConstantName, const _float3 * pVector, _uint iNumVectors);
 	// 쉐이더파일에 바인딩 할 float 배열
 	HRESULT Bind_FloatValues(const _char * pConstantName, const _float * pFloatValue, _uint iNumValues);
+	// 쉐이더파일에 바인딩 할 Int 배열
+	HRESULT Bind_IntValues(const _char * pConstantName, const _int * pIntValue, _uint iNumValues);
 	// 쉐이더파일에 바인딩 할 일반 변수
 	HRESULT Bind_RawValue(const _char * pConstantName, const void* pData, _uint iSize);
 

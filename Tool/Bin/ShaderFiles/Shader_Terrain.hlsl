@@ -3,14 +3,17 @@
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
 texture2D		g_DiffuseTexture;
-texture2D		g_BrushTexture;
 
+texture2D		g_BrushTexture[4];
+
+unsigned int    g_iBrushTextureIndex;
 float3          g_vBrushCurrentPos;
 float			g_fBrushCurrentRange;
 
 unsigned int    g_iBrushPosCnt;
 float3          g_vBrushPos[512];
 float           g_fBrushRange[512];
+int             g_iBrushIndex[512];
 
 struct VS_IN
 {
@@ -77,7 +80,7 @@ PS_OUT PS_BRUSH(PS_IN In)
     PS_OUT Out = (PS_OUT)0;
 
     vector vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV * 30.f);
-    vector vBrush = vector(0.0f, 0.0f, 0.0f, 0.0f)/*g_BrushTexture.Sample(LinearSampler, In.vTexUV)*/;
+    vector vBrush = vector(0.0f, 0.0f, 0.0f, 0.0f);
 
     // 불러온 정보로 지형을 그림
     for (int i = 0; i < g_iBrushPosCnt; i++)
@@ -90,7 +93,15 @@ PS_OUT PS_BRUSH(PS_IN In)
             vTexUV.x = (In.vWorldPos.x - (g_vBrushPos[i].x - g_fBrushRange[i])) / (2.f * g_fBrushRange[i]);
             vTexUV.y = ((g_vBrushPos[i].z - g_fBrushRange[i]) - In.vWorldPos.z) / (2.f * g_fBrushRange[i]);
 
-            vBrush = g_BrushTexture.Sample(LinearSampler, vTexUV);
+            if(0 == g_iBrushIndex[i])
+                vBrush = g_BrushTexture[0].Sample(LinearSampler, vTexUV);
+            else if(1 == g_iBrushIndex[i])
+                vBrush = g_BrushTexture[1].Sample(LinearSampler, vTexUV);
+            else if (2 == g_iBrushIndex[i])
+                vBrush = g_BrushTexture[2].Sample(LinearSampler, vTexUV);
+            else if (3 == g_iBrushIndex[i])
+                vBrush = g_BrushTexture[3].Sample(LinearSampler, vTexUV);
+
             vDiffuse = vBrush;
         }
     }   
@@ -98,9 +109,21 @@ PS_OUT PS_BRUSH(PS_IN In)
     // 현재 브러쉬 위치
     if (g_vBrushCurrentPos.x - g_fBrushCurrentRange < In.vWorldPos.x && In.vWorldPos.x <= g_vBrushCurrentPos.x + g_fBrushCurrentRange &&
         g_vBrushCurrentPos.z - g_fBrushCurrentRange < In.vWorldPos.z && In.vWorldPos.z <= g_vBrushCurrentPos.z + g_fBrushCurrentRange)
-    //if(50.f <= In.vWorldPos.y)
     {
-        vBrush = g_BrushTexture.Sample(LinearSampler, In.vTexUV);
+        float2		vTexUV;
+
+        vTexUV.x = (In.vWorldPos.x - (g_vBrushCurrentPos.x - g_fBrushCurrentRange)) / (2.f * g_fBrushCurrentRange);
+        vTexUV.y = ((g_vBrushCurrentPos.z - g_fBrushCurrentRange) - In.vWorldPos.z) / (2.f * g_fBrushCurrentRange);
+
+        if (0 == g_iBrushTextureIndex)
+            vBrush = g_BrushTexture[0].Sample(LinearSampler, vTexUV);
+        else if (1 == g_iBrushTextureIndex)
+            vBrush = g_BrushTexture[1].Sample(LinearSampler, vTexUV);
+        else if (2 == g_iBrushTextureIndex)
+            vBrush = g_BrushTexture[2].Sample(LinearSampler, vTexUV);
+        else if (3 == g_iBrushTextureIndex)
+            vBrush = g_BrushTexture[3].Sample(LinearSampler, vTexUV);
+
         vDiffuse = vBrush;
     }
 

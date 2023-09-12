@@ -38,21 +38,25 @@ void CTerrain::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	// 벡터 값을 대입
-	m_iBrushPosCnt = m_vecBrushInfo.size();
-
-	for (size_t i = 0; i < m_iBrushPosCnt; i++)
+	// 이전 사이즈와 다르다면 벡터 값을 대입
+	if (m_iBrushPosCnt != m_vecBrushInfo.size())
 	{
-		m_vBrushPos[i] = m_vecBrushInfo.at(i).vPos;
-		m_fBrushRange[i] = m_vecBrushInfo.at(i).fRange;
-	}	
+		for (size_t i = m_iBrushPosCnt - 1; i < m_vecBrushInfo.size(); i++)
+		{
+			m_vBrushPos[i] = m_vecBrushInfo.at(i).vPos;
+			m_fBrushRange[i] = m_vecBrushInfo.at(i).fRange;
+			m_iBrushIndex[i] = m_vecBrushInfo.at(i).iTextureIndex;
+		}
+
+		m_iBrushPosCnt = m_vecBrushInfo.size();
+	}
 }
 
 void CTerrain::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	/*m_pBuffer->Culling(m_pTransform->Get_WorldMatrix());*/
+	//m_pBuffer->Culling(m_pTransform->Get_WorldMatrix());
 
 	if (nullptr != m_pRenderer)
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
@@ -63,7 +67,7 @@ HRESULT CTerrain::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	// 데이터가 들어있을 경우 쉐이더에 브러쉬 위치값 던져줌
+	// 쉐이더에 브러쉬 위치값 던져줌
 	if (FAILED(SetUp_ShaderDynamicResources()))
 		return E_FAIL;
 
@@ -145,8 +149,7 @@ HRESULT CTerrain::Add_Components()
 
 HRESULT CTerrain::SetUp_ShaderResources()
 {
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
+	BEGININSTANCE;
 
 	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
 		return E_FAIL;
@@ -157,12 +160,12 @@ HRESULT CTerrain::SetUp_ShaderResources()
 	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
-	Safe_Release(pGameInstance);
+	ENDINSTANCE;
 
 	if (FAILED(m_pTexture->Bind_ShaderResource(m_pShader, "g_DiffuseTexture", m_iDiffuseTextureIndex)))
 		return E_FAIL;
 
-	if (FAILED(m_pTexture->Bind_ShaderResource(m_pShader, "g_BrushTexture", m_iBrushTextureIndex)))
+	if (FAILED(m_pTexture->Bind_ShaderResources(m_pShader, "g_BrushTexture")))
 		return E_FAIL;
 
 	return S_OK;
@@ -170,6 +173,10 @@ HRESULT CTerrain::SetUp_ShaderResources()
 
 HRESULT CTerrain::SetUp_ShaderDynamicResources()
 {
+	// 현재 브러쉬 커서의 텍스처 번호
+	if (FAILED(m_pShader->Bind_RawValue("g_iBrushTextureIndex", &m_iBrushTextureIndex, sizeof(_uint))))
+		return E_FAIL;
+
 	// 현재 브러쉬 커서의 위치
 	if (FAILED(m_pShader->Bind_RawValue("g_vBrushCurrentPos", &m_vBrushCurrentPos, sizeof(_float3))))
 		return E_FAIL;
@@ -188,6 +195,10 @@ HRESULT CTerrain::SetUp_ShaderDynamicResources()
 
 	// 쉐이더로 던져줄 브러쉬 범위
 	if (FAILED(m_pShader->Bind_FloatValues("g_fBrushRange", m_fBrushRange, MAX_SHADERVECTOR)))
+		return E_FAIL;
+
+	// 쉐이더로 던져줄 브러쉬 범위
+	if (FAILED(m_pShader->Bind_IntValues("g_iBrushIndex", m_iBrushIndex, MAX_SHADERVECTOR)))
 		return E_FAIL;
 
 	return S_OK;

@@ -18,7 +18,7 @@ class CTerrain final : public CGameObject
 	{
 		_float3 vPos; // 위치
 		_float fRange; // 브러쉬 범위
-		_uint iTextureIndex; // 어떤 텍스처인지
+		_int iTextureIndex; // 어떤 텍스처인지
 	}BRUSH;
 
 private:
@@ -61,6 +61,7 @@ private:
 	_uint				m_iBrushPosCnt; // 칠해질 개수
 	_float3				m_vBrushPos[MAX_SHADERVECTOR]; // 칠해질 위치
 	_float				m_fBrushRange[MAX_SHADERVECTOR]; // 칠해질 범위
+	_int				m_iBrushIndex[MAX_SHADERVECTOR]; // 칠해질 텍스처 번호
 
 	_uint				m_iDiffuseTextureIndex = { 0 }; // 기본 지형 텍스처
 	_uint				m_iBrushTextureIndex = { 1 };	// 그려줄 지형 텍스처
