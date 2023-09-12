@@ -735,8 +735,8 @@ void CObject_Window::Map_Brushing_Menu()
 
 	ImGui::DragFloat("Brush Size", &m_fBrushSize, 0.1f, 0.1f, 100.f);
 
-	pTerrain->Set_BrushingPoint(vPos);
-	pTerrain->Set_BrushingSize(m_fBrushSize);
+	pTerrain->Set_CurrentBrushingPoint(vPos);
+	pTerrain->Set_CurrentBrushingSize(m_fBrushSize);
 }
 
 HRESULT CObject_Window::Save_MapObject(string szMapDataPath)
