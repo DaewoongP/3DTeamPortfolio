@@ -106,14 +106,16 @@ vector<_ulong> CTriangleColMesh::Get_Indices()
 	vector<_ulong> IndicesVec;
 
 	vector<CMesh*>* MeshVec = m_pModel->Get_MeshesVec();
+	_uint iStack_Count = { 0 };
 	for (CMesh* mesh : (*MeshVec))
 	{
 		_uint max = mesh->Get_NumIndices();
 		vector<PxU32>* meshIndicesVec = mesh->Get_IndicesVec();
 		for (_uint i = 0; i < max; i++)
 		{
-			IndicesVec.push_back((*meshIndicesVec)[i]);
+			IndicesVec.push_back((*meshIndicesVec)[i] + iStack_Count);
 		}
+		iStack_Count += mesh->Get_NumVertices();
 	}
 	return IndicesVec;
 }
