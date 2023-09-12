@@ -149,7 +149,8 @@ void CObject_Window::Picking_Menu()
 	ImGui::Text("Choice Install Method");
 	ImGui::RadioButton("1Click One_Install", &m_iInstallMethod, 0);
 	ImGui::RadioButton("1Pressing Continuius_Install", &m_iInstallMethod, 1);
-	ImGui::RadioButton("1Click One_Install for Instance", &m_iInstallMethod, 2);
+	ImGui::RadioButton("2Click Random_Install in Range", &m_iInstallMethod, 2);
+	ImGui::RadioButton("1Click One_Install for Instance", &m_iInstallMethod, 3);
 
 	ImGui::Text("");
 
@@ -189,15 +190,15 @@ void CObject_Window::Picking_Menu()
 		vRotation.z = XMConvertToRadians(vRotation.z);
 
 		// shift키를 누르고 있으면 격자에 딱 맞게 위치가 반올림됨
-		BEGININSTANCE; if (true == pGameInstance->Get_DIKeyState(DIK_LSHIFT, CInput_Device::KEY_PRESSING))
+		if (true == m_pGameInstance->Get_DIKeyState(DIK_LSHIFT, CInput_Device::KEY_PRESSING))
 		{
 			vPos.x = round(vPos.x);
 			vPos.y = round(vPos.y);
 			vPos.z = round(vPos.z);
 
 			m_pDummy->Set_Pos(vPos);
-		} ENDINSTANCE;
-
+		}
+		
 		_float3 vTranslation = 
 		{ vPos.x + m_vDummyMatrix[DUMMY_TRANS][0], vPos.y + m_vDummyMatrix[DUMMY_TRANS][1], vPos.z + m_vDummyMatrix[DUMMY_TRANS][2] };
 
@@ -220,6 +221,10 @@ void CObject_Window::Picking_Menu()
 			Install_Continuous_Object(m_pDummy->Get_Transform()->Get_Position());
 			break;
 
+		case RANDOM_METHOD: // 일정 범위를 지정해주면 그 안에서 랜덤 설치
+			Install_Random_Object(m_pDummy->Get_Transform()->Get_Position());
+			break;
+
 		case MULTI_METHOD: // 한번에 여러개 설치(인스턴싱)
 			Install_Multi_Object(m_pDummy->Get_Transform()->Get_Position());
 			break;
@@ -235,8 +240,8 @@ void CObject_Window::Install_Object(_float3 vPos)
 	ImGui::Text("Press H to Install");
 
 	// 범위 안에 있을 경우 H키를 눌러 설치
-	BEGININSTANCE; if (true == pGameInstance->Get_DIKeyState(DIK_H, CInput_Device::KEY_DOWN) &&
-		pGameInstance->IsMouseInClient(m_pContext, g_hWnd) &&
+	if (true == m_pGameInstance->Get_DIKeyState(DIK_H, CInput_Device::KEY_DOWN) &&
+		m_pGameInstance->IsMouseInClient(m_pContext, g_hWnd) &&
 		-1.f != vPos.x)
 	{
 		// 맵 오브젝트에 번호 붙여줌
@@ -247,17 +252,16 @@ void CObject_Window::Install_Object(_float3 vPos)
 		_float4x4 vWorldMatrix = m_pDummy->Get_Transform()->Get_WorldMatrix();
 
 		// 번호를 붙인 태그로 MapObject 등록
-		if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL,
+		if (FAILED(m_pGameInstance->Add_Component(LEVEL_TOOL,
 			TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_MapObject"), 
 			m_vecMapObjectTag.at(m_iMapObjectIndex).c_str(), &vWorldMatrix)))
 		{
 			MSG_BOX("Failed to Install MapObject");
-			ENDINSTANCE;
 			return;
 		}
 
 		// 마지막에 설치한 맵 오브젝트 주소 가져옴
-		m_pObject = static_cast<CMapObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL, 
+		m_pObject = static_cast<CMapObject*>(m_pGameInstance->Find_Component_In_Layer(LEVEL_TOOL,
 			TEXT("Layer_MapObject"), wszobjName));
 
 		m_pObject->Add_Model_Component(m_vecModelList_t.at(m_iModelIndex));
@@ -274,17 +278,16 @@ void CObject_Window::Install_Object(_float3 vPos)
 		m_vecSaveObject.push_back(SaveDesc);
 
 		++m_iMapObjectIndex;
-
-	} ENDINSTANCE;
+	}
 }
 
 void CObject_Window::Install_Continuous_Object(_float3 vPos)
 {
-	BEGININSTANCE; m_fTimeAcc += pGameInstance->Get_World_Tick();
+	m_fTimeAcc += m_pGameInstance->Get_World_Tick();
 	
 	// 마우스를 꾹 누르고 있으면 연속 설치
-	if (true == pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_PRESSING) &&
-		pGameInstance->IsMouseInClient(m_pContext, g_hWnd) &&
+	if (true == m_pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_PRESSING) &&
+		m_pGameInstance->IsMouseInClient(m_pContext, g_hWnd) &&
 		-1.f != vPos.x && 
 		0.1f < m_fTimeAcc)
 	{
@@ -298,17 +301,16 @@ void CObject_Window::Install_Continuous_Object(_float3 vPos)
 		_float4x4 vWorldMatrix = m_pDummy->Get_Transform()->Get_WorldMatrix();
 
 		// 번호를 붙인 태그로 MapObject 등록
-		if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL,
+		if (FAILED(m_pGameInstance->Add_Component(LEVEL_TOOL,
 			TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_MapObject"),
 			m_vecMapObjectTag.at(m_iMapObjectIndex).c_str(), &vWorldMatrix)))
 		{
 			MSG_BOX("Failed to Install MapObject");
-			ENDINSTANCE;
 			return;
 		}
 
 		// 마지막에 설치한 맵 오브젝트 주소 가져옴
-		m_pObject = static_cast<CMapObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL,
+		m_pObject = static_cast<CMapObject*>(m_pGameInstance->Find_Component_In_Layer(LEVEL_TOOL,
 			TEXT("Layer_MapObject"), wszobjName));
 
 		m_pObject->Add_Model_Component(m_vecModelList_t.at(m_iModelIndex));
@@ -325,8 +327,76 @@ void CObject_Window::Install_Continuous_Object(_float3 vPos)
 		m_vecSaveObject.push_back(SaveDesc);
 
 		++m_iMapObjectIndex;
+	}
+}
 
-	} ENDINSTANCE;
+void CObject_Window::Install_Random_Object(_float3 vPos)
+{
+	ImGui::Text("Press H to Install");
+
+	// 범위 안에 있을 경우 H키를 눌러 설치
+	if (true == m_pGameInstance->Get_DIKeyState(DIK_H, CInput_Device::KEY_DOWN) &&
+		m_pGameInstance->IsMouseInClient(m_pContext, g_hWnd) &&
+		-1.f != vPos.x)
+	{
+		m_vRandomInstall[m_iRandomInstall_Seq] = vPos;
+		++m_iRandomInstall_Seq;
+
+		// 두 포지션이 정했다면
+		if (2 == m_iRandomInstall_Seq)
+		{
+			_float fL, fR, fT, fB;
+
+			fL = min(m_vRandomInstall[0].x, m_vRandomInstall[1].x);
+			fR = max(m_vRandomInstall[0].x, m_vRandomInstall[1].x);
+			fT = max(m_vRandomInstall[0].z, m_vRandomInstall[1].z);
+			fB = min(m_vRandomInstall[0].z, m_vRandomInstall[1].z);
+			
+			// 범위 내 랜덤한 곳에 설정한 수만큼 모델 설치
+			for (size_t i = 0; i < 5; i++)
+			{
+				// 맵 오브젝트에 번호 붙여줌
+				_tchar wszobjName[MAX_PATH] = { 0 };
+				_stprintf_s(wszobjName, TEXT("GameObject_MapObject_%d"), (m_iMapObjectIndex));
+				Deep_Copy_Tag(wszobjName);
+
+				_float4x4 vWorldMatrix = m_pDummy->Get_Transform()->Get_WorldMatrix();
+
+				vWorldMatrix._41 = fL + (rand() % (_uint)(fR - fL));
+				vWorldMatrix._43 = fB + (rand() % (_uint)(fT - fB));
+
+				// 번호를 붙인 태그로 MapObject 등록
+				if (FAILED(m_pGameInstance->Add_Component(LEVEL_TOOL,
+					TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_MapObject"),
+					m_vecMapObjectTag.at(m_iMapObjectIndex).c_str(), &vWorldMatrix)))
+				{
+					MSG_BOX("Failed to Install MapObject");
+					return;
+				}
+
+				// 마지막에 설치한 맵 오브젝트 주소 가져옴
+				m_pObject = static_cast<CMapObject*>(m_pGameInstance->Find_Component_In_Layer(LEVEL_TOOL,
+					TEXT("Layer_MapObject"), wszobjName));
+
+				m_pObject->Add_Model_Component(m_vecModelList_t.at(m_iModelIndex));
+				m_pObject->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMesh"));
+				m_pObject->Set_Color(m_iMapObjectIndex); // 고유한 색깔 값을 넣어줌
+
+				// 저장용 벡터에 넣어준다.
+				SAVEOBJECTDESC SaveDesc;
+
+				SaveDesc.matTransform = vWorldMatrix;
+				lstrcpy(SaveDesc.wszTag, m_vecModelList_t.at(m_iModelIndex));
+				SaveDesc.iTagLen = lstrlen(SaveDesc.wszTag) * 2;
+
+				m_vecSaveObject.push_back(SaveDesc);
+
+				++m_iMapObjectIndex;
+			}
+
+			m_iRandomInstall_Seq = 0;
+		}
+	}
 }
 
 void CObject_Window::Install_Multi_Object(_float3 vPos)
@@ -334,7 +404,7 @@ void CObject_Window::Install_Multi_Object(_float3 vPos)
 	ImGui::Text("Press H to Install");
 
 	// 범위 안에 있을 경우 H키를 눌러 설치
-	BEGININSTANCE; if (true == pGameInstance->Get_DIKeyState(DIK_H, CInput_Device::KEY_DOWN) &&
+	if (true == m_pGameInstance->Get_DIKeyState(DIK_H, CInput_Device::KEY_DOWN) &&
 		-1.f != vPos.x)
 	{
 		// 맵 오브젝트에 번호 붙여줌
@@ -344,17 +414,16 @@ void CObject_Window::Install_Multi_Object(_float3 vPos)
 
 		_float4x4 vWorldMatrix = m_pDummy->Get_Transform()->Get_WorldMatrix();
 		// 번호를 붙인 태그로 MapObject 등록
-		if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL,
+		if (FAILED(m_pGameInstance->Add_Component(LEVEL_TOOL,
 			TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_MapObject"),
 			m_vecMapObjectTag.at(m_iMapObjectIndex).c_str(), &vWorldMatrix)))
 		{
 			MSG_BOX("Failed to Install MapObject_Ins");
-			ENDINSTANCE;
 			return;
 		}
 
 		// 마지막에 설치한 맵 오브젝트 주소 가져옴
-		m_pObject = static_cast<CMapObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL,
+		m_pObject = static_cast<CMapObject*>(m_pGameInstance->Find_Component_In_Layer(LEVEL_TOOL,
 			TEXT("Layer_MapObject"), wszobjName));
 
 		m_pObject->Add_Model_Component(m_vecModelList_t.at(m_iModelIndex));
@@ -366,8 +435,7 @@ void CObject_Window::Install_Multi_Object(_float3 vPos)
 
 		++m_iMapObjectIndex;
 		++m_iInsObjectCnt;
-
-	} ENDINSTANCE;
+	}
 }
 
 void CObject_Window::Select_Model()
@@ -385,7 +453,7 @@ void CObject_Window::Select_Model()
 	ImGui::TextColored(ImVec4(1, 0, 0, 1), m_strCurrentModel.c_str());
 
 	// 모델 검색
-	if (ImGui::InputTextWithHint("FInd Model", "enter ModelName", m_szFindModel, IM_ARRAYSIZE(m_szFindModel)))
+	if (ImGui::InputTextWithHint("Find Model", "enter ModelName", m_szFindModel, IM_ARRAYSIZE(m_szFindModel)))
 	{
 		m_strFindModel = m_szFindModel;
 	}
@@ -587,12 +655,11 @@ void CObject_Window::Delete_Object_Menu()
 	{
 		if (0 != m_vecObjectTag_s.size())
 		{
-			BEGININSTANCE;
-			if (FAILED(pGameInstance->Delete_Component(LEVEL_TOOL, 
+			if (FAILED(m_pGameInstance->Delete_Component(LEVEL_TOOL,
 				TEXT("Layer_MapObject"), m_vecMapObjectTag.back().c_str())))
 			{
 				MSG_BOX("Failed to delete last MapObject");
-			} ENDINSTANCE;
+			}
 
 			if (0 < m_iTagIndex)
 			{
@@ -629,11 +696,10 @@ void CObject_Window::Delete_Object_Menu()
 		 // yes를 누르면 MapObject 전부 삭제
 		if (ImGui::Button("Yes"))
 		{
-			BEGININSTANCE;
-			if (FAILED(pGameInstance->Clear_Layer(LEVEL_TOOL, TEXT("Layer_MapObject"))))
+			if (FAILED(m_pGameInstance->Clear_Layer(LEVEL_TOOL, TEXT("Layer_MapObject"))))
 			{
 				MSG_BOX("Failed to clear MapObject");
-			} ENDINSTANCE;
+			}
 
 			// 값 초기화
 			m_iMapObjectIndex = 0;
@@ -658,10 +724,10 @@ void CObject_Window::Delete_Object_Menu()
 void CObject_Window::Mesh_Picking_Menu()
 {
 #ifdef _DEBUG
-	BEGININSTANCE; if (true == pGameInstance->Get_DIKeyState(DIK_O, CInput_Device::KEY_DOWN))
+	if (true == m_pGameInstance->Get_DIKeyState(DIK_O, CInput_Device::KEY_DOWN))
 	{
 		//Target_Picking의 ID3D11Texture2D를 가져옴
-		ID3D11Texture2D* pTexture = pGameInstance->Find_RenderTarget(TEXT("Target_Picking"))->Get_Texture2D();
+		ID3D11Texture2D* pTexture = m_pGameInstance->Find_RenderTarget(TEXT("Target_Picking"))->Get_Texture2D();
 
 		// 텍스처의 너비와 높이
 		D3D11_TEXTURE2D_DESC  TextureDesc;
@@ -758,7 +824,7 @@ void CObject_Window::Mesh_Picking_Menu()
 		m_pContext->Unmap(pCopyTexture2D, 0);
 
 		Safe_Release(pCopyTexture2D);
-	}ENDINSTANCE;
+	}
 
 	// 메쉬 피킹한 오브젝트 상태 행렬 변경 메뉴
 	ImGui::Checkbox("Change MapObject's Matrix", &m_isChangeObject);
@@ -783,35 +849,33 @@ void CObject_Window::Change_Picking_Menu(const _tchar* wszTag, _uint iTagNum)
 {
 	ImGui::Text("Press J to Change Matrix");
 
-	BEGININSTANCE; m_pObject = static_cast<CMapObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL,
+	m_pObject = static_cast<CMapObject*>(m_pGameInstance->Find_Component_In_Layer(LEVEL_TOOL,
 		TEXT("Layer_MapObject"), wszTag)); 
 
 	if (nullptr == m_pObject)
 	{
 		MSG_BOX("Failed to Find Picking Object");
 		m_isChangeObject = false;
-		ENDINSTANCE;
 		return;
 	}
 
-	if (true == pGameInstance->Get_DIKeyState(DIK_J, CInput_Device::KEY_DOWN))
+	if (true == m_pGameInstance->Get_DIKeyState(DIK_J, CInput_Device::KEY_DOWN))
 	{
 		m_pObject->Get_Transform()->Set_WorldMatrix(m_pDummy->Get_Transform()->Get_WorldMatrix());
 		m_vecSaveObject.at(m_iTagIndex).matTransform = m_pDummy->Get_Transform()->Get_WorldMatrix();
-	} ENDINSTANCE;	
+	}
 }
 
 void CObject_Window::Delete_Picking_Object()
 {
 	if (0 < m_vecObjectTag_s.size())
 	{
-		BEGININSTANCE;
-		if (FAILED(pGameInstance->Delete_Component(LEVEL_TOOL,
+		if (FAILED(m_pGameInstance->Delete_Component(LEVEL_TOOL,
 			TEXT("Layer_MapObject"), m_vecMapObjectTag.at(m_iTagIndex).c_str())))
 		{
 			MSG_BOX("Failed to delete Picking MapObject");
 			return;
-		} ENDINSTANCE;
+		}
 
 		m_vecMapObjectTag.erase(m_vecMapObjectTag.begin() + m_iTagIndex);
 		m_vecObjectTag_s.erase(m_vecObjectTag_s.begin() + m_iTagIndex);
@@ -823,7 +887,7 @@ void CObject_Window::Map_Brushing_Menu()
 {
 	_float3 vPos = Find_PickingPos();
 
-	BEGININSTANCE; CTerrain* pTerrain = static_cast<CTerrain*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL, 
+	CTerrain* pTerrain = static_cast<CTerrain*>(m_pGameInstance->Find_Component_In_Layer(LEVEL_TOOL,
 		TEXT("Layer_Tool"), TEXT("GameObject_Terrain")));
 
 	ImGui::DragFloat("Brush Size", &m_fBrushSize, 0.1f, 0.1f, 100.f);
@@ -842,17 +906,17 @@ void CObject_Window::Map_Brushing_Menu()
 	ImGui::Combo("BrushTexture", &m_iBrushIndex, BrushTexture, IM_ARRAYSIZE(BrushTexture));
 	pTerrain->Set_BrushTextureIndex((_uint)m_iBrushIndex);
 
-	m_fTimeAccBrush += pGameInstance->Get_World_Tick();
+	m_fTimeAccBrush += m_pGameInstance->Get_World_Tick();
 
 	// 마우스를 꾹 누르고 있으면 연속 설치
-	if (true == pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_PRESSING) &&
-		pGameInstance->IsMouseInClient(m_pContext, g_hWnd) &&
+	if (true == m_pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_PRESSING) &&
+		m_pGameInstance->IsMouseInClient(m_pContext, g_hWnd) &&
 		-1.f != vPos.x &&
 		0.1f < m_fTimeAccBrush)
 	{
 		pTerrain->Set_BrushDesc(vPos, m_fBrushSize, m_iBrushIndex);
 		m_fTimeAccBrush = 0.f;
-	} ENDINSTANCE;
+	}
 }
 
 HRESULT CObject_Window::Save_MapObject(string szMapDataPath)
@@ -963,17 +1027,16 @@ HRESULT CObject_Window::Load_MapObject(const _tchar* wszMapDataPath)
 		Deep_Copy_Tag(wszobjName);
 
 		// 번호를 붙인 태그로 MapObject 등록
-		BEGININSTANCE if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL,
+		if (FAILED(m_pGameInstance->Add_Component(LEVEL_TOOL,
 			TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_MapObject"),
 			m_vecMapObjectTag.at(m_iMapObjectIndex).c_str(), &m_vecSaveObject[i].matTransform)))
 		{
 			MSG_BOX("Failed to Install MapObject");
-			ENDINSTANCE;
 			return E_FAIL;
-		} ENDINSTANCE;
+		}
 
 		// 마지막에 설치한 맵 오브젝트 주소 가져옴
-		m_pObject = static_cast<CMapObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL,
+		m_pObject = static_cast<CMapObject*>(m_pGameInstance->Find_Component_In_Layer(LEVEL_TOOL,
 			TEXT("Layer_MapObject"), wszobjName));
 
 		m_pObject->Add_Model_Component(m_vecSaveObject[i].wszTag);
@@ -1163,7 +1226,7 @@ HRESULT CObject_Window::Load_MapObject_Ins(const _tchar* wszMapDataPath)
 
 		// 인스턴스 모델 프로토타입 생성
 		_float4x4 PivotMatrix = XMMatrixIdentity();
-		BEGININSTANCE; if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, ws.c_str(),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, ws.c_str(),
 			CModel_Instance::Create(m_pDevice, m_pContext, CModel_Instance::TYPE_NONANIM, wsPath.c_str(),
 				m_vecSaveInsObject.at(i).pMatTransform, m_vecSaveInsObject.at(i).iInstanceCnt, PivotMatrix), true)))
 		{
@@ -1171,18 +1234,17 @@ HRESULT CObject_Window::Load_MapObject_Ins(const _tchar* wszMapDataPath)
 		}
 
 		// 번호를 붙인 태그로 MapObject_Ins 등록
-		if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL,
+		if (FAILED(m_pGameInstance->Add_Component(LEVEL_TOOL,
 			TEXT("Prototype_GameObject_MapObject_Ins"), TEXT("Layer_MapObject"),
 			m_vecMapObjectTag.at(m_iMapObjectIndex).c_str(), &m_vecSaveInsObject[i].matTransform)))
 		{
 			MSG_BOX("Failed to Install MapObject");
-			ENDINSTANCE;
 			return E_FAIL;
 		}
 
 		// 마지막에 설치한 맵 오브젝트 주소 가져옴
-		m_pObjIns = static_cast<CMapObject_Ins*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL,
-			TEXT("Layer_MapObject"), wszobjName)); ENDINSTANCE;
+		m_pObjIns = static_cast<CMapObject_Ins*>(m_pGameInstance->Find_Component_In_Layer(LEVEL_TOOL,
+			TEXT("Layer_MapObject"), wszobjName));
 
 		if (nullptr != m_pObjIns)
 		{
@@ -1308,11 +1370,17 @@ _float3 CObject_Window::Find_PickingPos()
 	_float4 vRayPos = { 0.f, 0.f, 0.f, 1.f };
 	_float4 vRayDir = { 0.f, 0.f, 0.f, 0.f };
 
-	BEGININSTANCE; pGameInstance->Get_WorldMouseRay(m_pContext, g_hWnd, &vRayPos, &vRayDir);
+	// 마우스가 화면 밖에 있으면 검색 안함
+	if (false == m_pGameInstance->IsMouseInClient(m_pContext, g_hWnd))
+	{
+		return _float3(-1.f, -1.f, -1.f);
+	}	
+	
+	m_pGameInstance->Get_WorldMouseRay(m_pContext, g_hWnd, &vRayPos, &vRayDir);
 
 	CVIBuffer_Terrain* pTerrain = static_cast<CVIBuffer_Terrain*>(
-		static_cast<CTerrain*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL, TEXT("Layer_Tool"),
-			TEXT("GameObject_Terrain")))->Get_Buffer()); ENDINSTANCE;
+		static_cast<CTerrain*>(m_pGameInstance->Find_Component_In_Layer(LEVEL_TOOL, TEXT("Layer_Tool"),
+			TEXT("GameObject_Terrain")))->Get_Buffer());
 
 	float fDist = FLT_MAX; // 피킹 연산 후 최종 거리값
 
@@ -1346,16 +1414,16 @@ HRESULT CObject_Window::Create_Dummy()
 
 	_float3 vPos = { 5.f, 0.f, 5.f };
 
-	BEGININSTANCE; if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_MapDummy"),
+	if (FAILED(m_pGameInstance->Add_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_MapDummy"),
 		TEXT("Layer_Tool"), TEXT("Map_Dummy"), &vPos)))
 	{
 		MSG_BOX("Failed to GameObject Map_Dummy");
 		return E_FAIL;
 	}
 
-	m_pDummy = static_cast<CMapDummy*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL, TEXT("Layer_Tool"), TEXT("Map_Dummy")));
+	m_pDummy = static_cast<CMapDummy*>(m_pGameInstance->Find_Component_In_Layer(LEVEL_TOOL, TEXT("Layer_Tool"), TEXT("Map_Dummy")));
 	m_pDummy->Add_Model_Component(TEXT("Prototype_Component_Model_Tree"));
-	m_pDummy->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMesh")); ENDINSTANCE;
+	m_pDummy->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMesh"));
 
 	return S_OK;
 }
@@ -1369,13 +1437,12 @@ HRESULT CObject_Window::Delete_Dummy()
 		return S_OK;
 	}
 
-	BEGININSTANCE;
-	if (FAILED(pGameInstance->Delete_Component(LEVEL_TOOL,
+	if (FAILED(m_pGameInstance->Delete_Component(LEVEL_TOOL,
 		TEXT("Layer_Tool"), TEXT("Map_Dummy"))))
 	{
 		MSG_BOX("Failed to delete MapDummy");
 		return E_FAIL;
-	} ENDINSTANCE;
+	}
 
 	m_pDummy = nullptr;
 
@@ -1446,11 +1513,11 @@ HRESULT CObject_Window::Save_Model_Path(_uint iType, const _tchar* pFilePath)
 
 				// 프로토타입 생성
 				_float4x4 PivotMatrix;
-				BEGININSTANCE; if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, m_vecModelList_t.back(),
+				if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, m_vecModelList_t.back(),
 					CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, m_vecModelPath_t.back(), PivotMatrix), true)))
 				{
 					MSG_BOX("Failed to Create New Model Prototype");
-				} ENDINSTANCE;
+				}
 			}
 		}
 

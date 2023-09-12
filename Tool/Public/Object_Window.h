@@ -10,7 +10,7 @@ class CMapObject_Ins;
 class CObject_Window final : public CImWindow
 {
 	enum DUMMY_MATRIX { DUMMY_SCALE, DUMMY_ROT, DUMMY_TRANS, DUMMY_END }; // 더미의 상태
-	enum INSTALL_METHOD { ONE_METHOD, CONTINUOUS_METHOD, MULTI_METHOD, END_METHOD }; // 설치 방법
+	enum INSTALL_METHOD { ONE_METHOD, CONTINUOUS_METHOD, RANDOM_METHOD, MULTI_METHOD, END_METHOD }; // 설치 방법
 
 	typedef struct SaveObjectDesc
 	{
@@ -42,6 +42,7 @@ private:
 	void Picking_Menu(); // 피킹 메뉴
 	void Install_Object(_float3 vPos); // 오브젝트 설치 메뉴
 	void Install_Continuous_Object(_float3 vPos); // 오브젝트 연속 설치 메뉴
+	void Install_Random_Object(_float3 vPos); // 오브젝트 (범위 내) 랜덤 설치 메뉴
 	void Install_Multi_Object(_float3 vPos); // 오브젝트 다중(인스턴싱) 설치 메뉴
 	void Select_Model(); // 모델 선택 메뉴
 	void Current_MapObject(); // 현재 설치되어 있는 맵 오브젝트 확인
@@ -102,6 +103,9 @@ private:
 	_tchar m_wszMapInsSaveDataPath[MAX_PATH] = TEXT(""); // 인스턴스 맵 오브젝트를 Save할 경로
 	
 	_float m_vDummyMatrix[DUMMY_END][3];	// 더미의 상태 행렬, 이 값을 .ddd 파일에 저장함
+
+	_float3 m_vRandomInstall[2] = { { -1.f, -1.f, -1.f }, { -1.f, -1.f, -1.f } }; // 랜덤 설치할 때 범위 지정
+	_uint m_iRandomInstall_Seq = { 0 }; // 범위 순서
 
 	_int m_iModelIndex = { 0 }; // 선택된 모델 인덱스
 	_int m_iTagIndex = { 0 }; // 선택된 맵 오브젝트 태그 인덱스
