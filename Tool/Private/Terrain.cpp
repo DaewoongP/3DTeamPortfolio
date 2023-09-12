@@ -11,6 +11,7 @@ CTerrain::CTerrain(const CTerrain& rhs)
 {
 	ZEROMEM(m_vBrushPos);
 	ZEROMEM(m_fBrushRange);
+	ZEROMEM(m_iBrushIndex);
 }
 
 HRESULT CTerrain::Initialize_Prototype()
@@ -37,19 +38,6 @@ HRESULT CTerrain::Initialize(void* pArg)
 void CTerrain::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
-	// 이전 사이즈와 다르다면 벡터 값을 대입
-	if (m_iBrushPosCnt != m_vecBrushInfo.size())
-	{
-		for (size_t i = m_iBrushPosCnt - 1; i < m_vecBrushInfo.size(); i++)
-		{
-			m_vBrushPos[i] = m_vecBrushInfo.at(i).vPos;
-			m_fBrushRange[i] = m_vecBrushInfo.at(i).fRange;
-			m_iBrushIndex[i] = m_vecBrushInfo.at(i).iTextureIndex;
-		}
-
-		m_iBrushPosCnt = m_vecBrushInfo.size();
-	}
 }
 
 void CTerrain::Late_Tick(_float fTimeDelta)

@@ -3,7 +3,6 @@
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
 texture2D		g_DiffuseTexture;
-
 texture2D		g_BrushTexture[4];
 
 unsigned int    g_iBrushTextureIndex;
@@ -93,9 +92,9 @@ PS_OUT PS_BRUSH(PS_IN In)
             vTexUV.x = (In.vWorldPos.x - (g_vBrushPos[i].x - g_fBrushRange[i])) / (2.f * g_fBrushRange[i]);
             vTexUV.y = ((g_vBrushPos[i].z - g_fBrushRange[i]) - In.vWorldPos.z) / (2.f * g_fBrushRange[i]);
 
-            if(0 == g_iBrushIndex[i])
+            if (0 == g_iBrushIndex[i])
                 vBrush = g_BrushTexture[0].Sample(LinearSampler, vTexUV);
-            else if(1 == g_iBrushIndex[i])
+            else if (1 == g_iBrushIndex[i])
                 vBrush = g_BrushTexture[1].Sample(LinearSampler, vTexUV);
             else if (2 == g_iBrushIndex[i])
                 vBrush = g_BrushTexture[2].Sample(LinearSampler, vTexUV);
@@ -104,7 +103,7 @@ PS_OUT PS_BRUSH(PS_IN In)
 
             vDiffuse = vBrush;
         }
-    }   
+    }
 
     // 현재 브러쉬 위치
     if (g_vBrushCurrentPos.x - g_fBrushCurrentRange < In.vWorldPos.x && In.vWorldPos.x <= g_vBrushCurrentPos.x + g_fBrushCurrentRange &&
