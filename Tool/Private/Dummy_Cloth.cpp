@@ -27,6 +27,11 @@ _bool CDummy_Cloth::Get_VertexIndex_By_Picking(_Inout_ _uint* pVertexIndex, _Ino
 	}
 
 	vector<_float3> Vertices = m_pCurrent_Dynamic_Mesh->Get_VertexPositions();
+	//m_pModelCom->Get_BoneCombinedTransformationMatrix()
+	for (auto& Vertex : Vertices)
+	{
+		Vertex = XMVector3TransformCoord(Vertex, XMMatrixRotationQuaternion(XMQuaternionRotationRollPitchYaw(XMConvertToRadians(90.f), 0.f, 0.f)));
+	}
 
 	vector<_ulong> Indices = m_pCurrent_Dynamic_Mesh->Get_Indices();
 
@@ -243,14 +248,14 @@ HRESULT CDummy_Cloth::Render()
 					if (true == m_isWireFrame)
 					{
 						if (true == m_isMeshHighLight)
-							m_pShaderCom->Begin("AnimMesh");
+							m_pShaderCom->Begin("ClothDebug1");
 						else
-							m_pShaderCom->Begin("AnimMesh");
+							m_pShaderCom->Begin("ClothDebug0");
 					}
 					else
 					{
 						if (true == m_isMeshHighLight)
-							m_pShaderCom->Begin("AnimMesh");
+							m_pShaderCom->Begin("ClothDebug2");
 						else
 							m_pShaderCom->Begin("AnimMesh");
 					}

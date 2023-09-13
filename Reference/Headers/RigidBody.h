@@ -75,7 +75,7 @@ public:
 		// 콜라이더를 움직이지 않을 방향 또는 회전을 선택합니다.
 		// 어느방향으로도 회전하지 않으려면 아래와같이 처리하면 됩니다.
 		// ex) Constraint = RotX | RotY | RotZ;
-		RigidBodyConstraint Constraint;
+		_uint eConstraintFlag;
 		// 디버그 컬러
 		_float4		vDebugColor = _float4(0.f, 1.f, 0.f, 1.f);
 	}RIGIDBODYDESC;
@@ -93,7 +93,7 @@ public:
 	void Set_Position(_float3 vPosition);
 	void Set_Rotation(_float4 vRotation);
 	void Set_Material(_float3 vMaterial);
-	void Set_Constraint(RigidBodyConstraint eConstraintFlag, _bool _isEnable);
+	void Set_Constraint(_uint eConstraintFlag, _bool _isEnable);
 	void Set_Kinematic(_bool _isKinematic);
 	void Set_Density(_float _fDensity) const;
 	void Set_AngularDamping(_float _fAngualrDamping) const;

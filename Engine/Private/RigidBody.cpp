@@ -87,7 +87,7 @@ void CRigidBody::Set_Material(_float3 vMaterial)
 	Safe_Release(pPhysX_Manager);
 }
 
-void CRigidBody::Set_Constraint(RigidBodyConstraint eConstraintFlag, _bool _isEnable)
+void CRigidBody::Set_Constraint(_uint eConstraintFlag, _bool _isEnable)
 {
 	if (nullptr == m_pActor)
 		return;
@@ -310,7 +310,7 @@ HRESULT CRigidBody::Create_Actor(RIGIDBODYDESC* pRigidBodyDesc)
 	{
 		PxRigidDynamic* pRigidBody = m_pActor->is<PxRigidDynamic>();
 
-		Set_Constraint(pRigidBodyDesc->Constraint, false);
+		Set_Constraint(pRigidBodyDesc->eConstraintFlag, false);
 	}
 
 	Safe_Release(pPhysX_Manager);

@@ -150,7 +150,7 @@ HRESULT CTest_Player::Add_Components()
 	//PxSphereGeometry
 	//PxBoxGeometry
 	RigidBodyDesc.pGeometry = &GeoMetry; // 위에서 만든거 넣어주시면됩니다.
-	RigidBodyDesc.Constraint = CRigidBody::AllRot; // 움직임을 제한할 값을 넣어주면 됩니다. (ex allrot의 경우 로테이션을 하지않습니다.)
+	RigidBodyDesc.eConstraintFlag = CRigidBody::AllRot; // 움직임을 제한할 값을 넣어주면 됩니다. (ex allrot의 경우 로테이션을 하지않습니다.)
 	RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 0.f, 1.f); // 디버그 컬러
 	RigidBodyDesc.pOwnerObject = this; // 디스포인터 넣ㄹ어주셔야 안터집니다 !!
 

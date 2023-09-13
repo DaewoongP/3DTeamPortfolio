@@ -84,7 +84,7 @@ HRESULT CMagicBall::Add_Components()
 	RigidBodyDesc.fRestitution = 0.f;
 	PxSphereGeometry SphereGeometry = PxSphereGeometry(1.f);
 	RigidBodyDesc.pGeometry = &SphereGeometry;
-	RigidBodyDesc.Constraint = CRigidBody::AllRot;
+	RigidBodyDesc.eConstraintFlag = CRigidBody::AllRot;
 	RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 0.f, 1.f);
 	RigidBodyDesc.vInitPosition = _float3(0.f, 0.f, 0.f);
 	RigidBodyDesc.pOwnerObject = this;
