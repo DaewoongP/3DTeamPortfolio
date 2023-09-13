@@ -180,6 +180,7 @@
     <ClInclude Include="..\Public\Pensive.h" />
     <ClInclude Include="..\Public\PhysXRender.h" />
     <ClInclude Include="..\Public\Player.h" />
+    <ClInclude Include="..\public\Player_Camera.h" />
     <ClInclude Include="..\public\Test_Cloth.h" />
     <ClInclude Include="..\Public\Test_Stair.h" />
     <ClInclude Include="..\Public\UI_Back.h" />
@@ -249,6 +250,7 @@
     <ClCompile Include="..\Private\Armored_Troll.cpp" />
     <ClCompile Include="..\Private\Assasin_Goblin.cpp" />
     <ClCompile Include="..\private\Camera_Debug.cpp" />
+    <ClCompile Include="..\private\Player_Camera.cpp" />
     <ClCompile Include="..\Private\Dummy.cpp" />
     <ClCompile Include="..\Private\Golem_Combat.cpp" />
     <ClCompile Include="..\Private\Dugbog.cpp" />

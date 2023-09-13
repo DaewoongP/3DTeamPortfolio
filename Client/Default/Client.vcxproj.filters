@@ -160,6 +160,9 @@
     <Filter Include="02. GameObject\05. UI\UI_Function\CUI_Back">
       <UniqueIdentifier>{3b6be744-8047-49de-88b4-d917b595c1ae}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\01. Player\00. Camera">
+      <UniqueIdentifier>{f3759d26-a3c7-4580-b9e7-a5b9ac3325cb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -330,6 +333,9 @@
     <ClInclude Include="..\Public\Player.h">
       <Filter>02. GameObject\01. Player</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Player_Camera.h">
+      <Filter>02. GameObject\01. Player\00. Camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -469,6 +475,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Player.cpp">
       <Filter>02. GameObject\01. Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Player_Camera.cpp">
+      <Filter>02. GameObject\01. Player\00. Camera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

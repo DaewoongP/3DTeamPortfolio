@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "Client_Defines.h"
 
+
 BEGIN(Engine)
 
 class CShader;
@@ -13,7 +14,7 @@ END
 
 BEGIN(Client)
 
-class CDebug_Point;
+class CPlayer_Camera;
 
 class CPlayer final : public CGameObject
 {
@@ -38,6 +39,7 @@ private:
 	CRenderer*		m_pRenderer = { nullptr };
 	CCustomModel*	m_pCustomModel = { nullptr };
 	
+	CPlayer_Camera* m_pPlayer_Camera = { nullptr };
 
 #ifdef _DEBUG
 
@@ -53,6 +55,8 @@ private:
 	void Key_Input(_float fTimeDelta);
 
 	HRESULT Ready_MeshParts();
+
+	HRESULT Ready_Caemra();
 
 #ifdef _DEBUG
 
