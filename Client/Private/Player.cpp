@@ -42,7 +42,6 @@ HRESULT CPlayer::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
-
 #ifdef _DEBUG
 	
 	if (FAILED(Ready_Test_Collider()))
@@ -53,7 +52,6 @@ HRESULT CPlayer::Initialize(void* pArg)
 	}
 
 #endif // _DEBUG
-
 
 	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
@@ -66,7 +64,6 @@ void CPlayer::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	Key_Input(fTimeDelta);
-
 
 	m_pCustomModel->Play_Animation(fTimeDelta);
 }
@@ -84,7 +81,6 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 		m_pRenderer->Add_DebugGroup(m_pTestCollider);
 
 #endif // _DEBUG
-
 	}
 
 #ifdef _DEBUG

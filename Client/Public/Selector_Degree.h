@@ -20,7 +20,7 @@ BEGIN(Client)
 class CSelector_Degree final : public CSelector
 {
 public:
-	enum DEGREES { FRONT, BACK, LEFT_45, LEFT_90, LEFT_135, RIGHT_45, RIGHT_90, RIGHT_135, DEGREE_END };
+	enum DEGREES { LEFT_FRONT, LEFT_BACK, LEFT_45, LEFT_90, LEFT_135, RIGHT_FRONT, RIGHT_BACK, RIGHT_45, RIGHT_90, RIGHT_135, DEGREE_END };
 
 private:
 	explicit CSelector_Degree(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

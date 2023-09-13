@@ -63,7 +63,6 @@ public:
 
 	void Add_Force(_float3 vDir, _float fJumpForce, _float fTimeDelta);
 
-
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;

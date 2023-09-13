@@ -3,10 +3,10 @@
 #include "Client_Defines.h"
 
 BEGIN(Engine)
-class CCustomModel;
 class CShader;
 class CRenderer;
 class CRigidBody;
+class CCustomModel;
 class CCharacterController;
 END
 
@@ -31,10 +31,10 @@ public:
 	virtual HRESULT Render_Depth() override;
 
 private:
-	CCustomModel*			m_pModelCom = { nullptr };
 	CShader*				m_pShaderCom = { nullptr };
 	CRenderer*				m_pRenderer = { nullptr };
 	CRigidBody*				m_pRigidBody = { nullptr };
+	CCustomModel*			m_pModelCom = { nullptr };
 	
 	CCharacterController*	m_pController = { nullptr };
 
@@ -44,6 +44,7 @@ private:
 	void Key_Input(_float fTimeDelta);
 
 #ifdef _DEBUG
+	_int m_iIndex = { 0 };
 	void Tick_ImGui();
 #endif // _DEBUG
 

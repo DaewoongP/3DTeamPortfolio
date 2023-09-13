@@ -170,8 +170,8 @@ _int CCalculator::RandomChoose(vector<_float> Weights, _uint iChooseSize)
 		}
 
 		// 마지막 인덱스 예외처리.
-		if (iIndex + 1 == Weights.size() - 1)
-			return iIndex + 1;
+		if (iIndex == Weights.size() - 1)
+			return iIndex;
 		else
 		{
 			Weights[iIndex + 1] += Weights[iIndex];

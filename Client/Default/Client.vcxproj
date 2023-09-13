@@ -164,6 +164,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Action.h" />
+    <ClInclude Include="..\Public\LookAt.h" />
+    <ClInclude Include="..\Public\Professor_FIg.h" />
     <ClInclude Include="..\Public\Selector_Degree.h" />
     <ClInclude Include="..\Public\Armored_Troll.h" />
     <ClInclude Include="..\Public\Assasin_Goblin.h" />
@@ -194,7 +196,6 @@
     <ClInclude Include="..\Public\UI_Skill.h" />
     <ClInclude Include="..\Public\Wait.h" />
     <ClInclude Include="..\Public\Weapon_Armored_Troll.h" />
-    <ClInclude Include="..\Public\Test_NPC.h" />
     <ClInclude Include="..\Public\Level_Loading.h" />
     <ClInclude Include="..\Public\Level_Logo.h" />
     <ClInclude Include="..\public\Level_MainGame.h" />
@@ -252,6 +253,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Action.cpp" />
+    <ClCompile Include="..\Private\LookAt.cpp" />
+    <ClCompile Include="..\Private\Professor_FIg.cpp" />
     <ClCompile Include="..\Private\Selector_Degree.cpp" />
     <ClCompile Include="..\Private\Armored_Troll.cpp" />
     <ClCompile Include="..\Private\Assasin_Goblin.cpp" />
@@ -279,7 +282,6 @@
     <ClCompile Include="..\Private\UI_Skill.cpp" />
     <ClCompile Include="..\Private\Wait.cpp" />
     <ClCompile Include="..\Private\Weapon_Armored_Troll.cpp" />
-    <ClCompile Include="..\Private\Test_NPC.cpp" />
     <ClCompile Include="..\Private\Level_Loading.cpp" />
     <ClCompile Include="..\Private\Level_Logo.cpp" />
     <ClCompile Include="..\private\Level_MainGame.cpp" />

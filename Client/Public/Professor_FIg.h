@@ -5,6 +5,8 @@
 BEGIN(Engine)
 class CModel;
 class CShader;
+class CSelector;
+class CSequence;
 class CRenderer;
 class CRigidBody;
 class CRootBehavior;
@@ -12,12 +14,12 @@ END
 
 BEGIN(Client)
 
-class CTest_NPC final : public CGameObject
+class CProfessor_Fig final : public CGameObject
 {
 private:
-	explicit CTest_NPC(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	explicit CTest_NPC(const CTest_NPC& rhs);
-	virtual ~CTest_NPC() = default;
+	explicit CProfessor_Fig(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	explicit CProfessor_Fig(const CProfessor_Fig& rhs);
+	virtual ~CProfessor_Fig() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -35,19 +37,16 @@ private:
 	CRootBehavior* m_pRootBehavior = { nullptr };
 
 private:
-	PxScene* m_pScene = { nullptr };
-
-private:
+	HRESULT Make_AI();
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
-	void Key_Input(_float fTimeDelta);
 
 #ifdef _DEBUG
 	void Tick_ImGui();
 #endif // _DEBUG
 
 public:
-	static CTest_NPC* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CProfessor_Fig* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;
 };

@@ -281,42 +281,10 @@ HRESULT CLoader::Loading_For_MainGame()
 			CCustomModel::Create(m_pDevice, m_pContext, CCustomModel::TYPE_ANIM, L"../../Resources/Models/Anims/Biped_Skeleton/Biped_Skeleton.dat"))))
 			throw TEXT("Prototype_Component_Model_CustomModel_Player");
 
-		/* For.Prototype_Component_MeshParts_Up */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Up"),
-			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Up/Up.dat"), TEXT("UPPERBODY_Default")))))
-			throw TEXT("Prototype_Component_MeshParts_Up");
-
-		///* For.Prototype_Component_MeshParts_Low */
-		//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Low"),
-		//	CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Low/Low.dat"), TEXT("UNDERBODY_Default")))))
-		//	throw TEXT("Prototype_Component_MeshParts_Low");
-
 		/* For.Prototype_Component_MeshParts_Robe */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Robe"),
 			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Robe_Student_Test/Robe_Student_Test.dat"), TEXT("ROBE_Default")))))
 			throw TEXT("Prototype_Component_MeshParts_Robe");
-		
-		/* For.Prototype_Component_MeshParts_Robe_Student */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Robe_Student"),
-			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Robe_Student/Robe_Student.dat"), TEXT("ROBE_Student")))))
-			throw TEXT("Prototype_Component_MeshParts_Robe_Student");
-
-		/* For.Prototype_Component_MeshParts_Socks */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Socks"),
-			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Socks/Socks.dat"), TEXT("SOCKS_Default")))))
-			throw TEXT("Prototype_Component_MeshParts_Socks");
-
-		/* For.Prototype_Component_MeshParts_Socks1 */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Socks1"),
-			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Socks1/Socks1.dat"), TEXT("SOCKS_Default")))))
-			throw TEXT("Prototype_Component_MeshParts_Socks1");
-
-		/* For.Prototype_Component_MeshParts_Shoes */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Shoes"),
-			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Shoes/Shoes.dat"), TEXT("SHOES_Default")))))
-			throw TEXT("Prototype_Component_MeshParts_Shoes");
-
-
 #endif // _DEBUG
 
 		lstrcpy(m_szLoading, TEXT("셰이더 로딩 중."));
@@ -376,6 +344,11 @@ HRESULT CLoader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sequence"),
 			CSequence::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Sequence");
+
+		/* For.Prototype_Component_RandomChoose */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_RandomChoose"),
+			CRandomChoose::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_RandomChoose");
 
 		/* For.Prototype_Component_Action */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Action"),
@@ -498,11 +471,6 @@ HRESULT CLoader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Player"),
 			CTest_Player::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Test_Player");
-
-		/* For.Prototype_GameObject_Test_NPC*/
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_NPC"),
-			CTest_NPC::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_Test_NPC");
 
 		/* For.Prototype_GameObject_Test_Particle */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Particle"),

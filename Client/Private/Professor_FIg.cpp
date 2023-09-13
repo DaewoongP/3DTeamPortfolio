@@ -1,19 +1,18 @@
-#include "Golem_Merlin.h"
+#include "Professor_Fig.h"
 #include "GameInstance.h"
+#include "PhysXConverter.h"
 
-#include "Weapon_Golem_Merlin.h"
-
-CGolem_Merlin::CGolem_Merlin(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CProfessor_Fig::CProfessor_Fig(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
 }
 
-CGolem_Merlin::CGolem_Merlin(const CGolem_Merlin& rhs)
+CProfessor_Fig::CProfessor_Fig(const CProfessor_Fig& rhs)
 	: CGameObject(rhs)
 {
 }
 
-HRESULT CGolem_Merlin::Initialize_Prototype()
+HRESULT CProfessor_Fig::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
@@ -21,7 +20,7 @@ HRESULT CGolem_Merlin::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CGolem_Merlin::Initialize(void* pArg)
+HRESULT CProfessor_Fig::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -38,7 +37,7 @@ HRESULT CGolem_Merlin::Initialize(void* pArg)
 	return S_OK;
 }
 
-void CGolem_Merlin::Tick(_float fTimeDelta)
+void CProfessor_Fig::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
@@ -46,10 +45,10 @@ void CGolem_Merlin::Tick(_float fTimeDelta)
 		m_pRootBehavior->Tick(fTimeDelta);
 
 	if (nullptr != m_pModelCom)
-		m_pModelCom->Play_Animation(fTimeDelta);
+		m_pModelCom->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 }
 
-void CGolem_Merlin::Late_Tick(_float fTimeDelta)
+void CProfessor_Fig::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
@@ -62,7 +61,7 @@ void CGolem_Merlin::Late_Tick(_float fTimeDelta)
 	}
 }
 
-HRESULT CGolem_Merlin::Render()
+HRESULT CProfessor_Fig::Render()
 {
 #ifdef _DEBUG
 	Tick_ImGui();
@@ -71,7 +70,7 @@ HRESULT CGolem_Merlin::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
+	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
@@ -83,17 +82,25 @@ HRESULT CGolem_Merlin::Render()
 			if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", i, DIFFUSE)))
 				throw TEXT("Bind_Material Diffuse");
 
-			if (FAILED(m_pShaderCom->Begin("AnimMesh")))
-				throw TEXT("Shader Begin AnimMesh");
+			if (0 == i)
+			{
+				if (FAILED(m_pShaderCom->Begin("HairMesh")))
+					throw TEXT("Shader Begin HairMesh");
+			}
+			else
+			{
+				if (FAILED(m_pShaderCom->Begin("AnimMesh")))
+					throw TEXT("Shader Begin AnimMesh");
+			}
 
 			if (FAILED(m_pModelCom->Render(i)))
 				throw TEXT("Model Render");
 		}
 		catch (const _tchar* pErrorTag)
 		{
-			wstring wstrErrorMSG = TEXT("[CGolem_Merlin] Failed Render : ");
+			wstring wstrErrorMSG = TEXT("[CGolem_Combat] Failed Render : ");
 			wstrErrorMSG += pErrorTag;
-			MSG_BOX(wstrErrorMSG.c_str());
+			MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
 
 			return E_FAIL;
 		}
@@ -102,17 +109,41 @@ HRESULT CGolem_Merlin::Render()
 	return S_OK;
 }
 
-HRESULT CGolem_Merlin::Render_Depth()
+HRESULT CProfessor_Fig::Render_Depth()
 {
 	return S_OK;
 }
 
-HRESULT CGolem_Merlin::Make_AI()
+HRESULT CProfessor_Fig::Make_AI()
 {
+	BEGININSTANCE;
+
+	try /* Check Failed Make_AI */
+	{
+		CSelector* pSelector = dynamic_cast<CSelector*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Selector")));
+		if (nullptr == pSelector)
+			throw TEXT("pSelector is nullptr");
+
+		if (FAILED(m_pRootBehavior->Assemble_Behavior(TEXT("Selector"), pSelector)))
+			throw TEXT("Failed Assemble_Behavior Selector");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CProfessor_Fig] Failed Make_AI : \n");
+		wstrErrorMSG += pErrorTag;
+		MSG_BOX(wstrErrorMSG.c_str());
+
+		ENDINSTANCE;
+
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
 	return S_OK;
 }
 
-HRESULT CGolem_Merlin::Add_Components()
+HRESULT CProfessor_Fig::Add_Components()
 {
 	try /* Check Add_Components */
 	{
@@ -121,15 +152,15 @@ HRESULT CGolem_Merlin::Add_Components()
 			TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
 			throw TEXT("Com_Renderer");
 
+		/* For.Com_Model */
+		if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Golem_Combat"),
+			TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
+			throw TEXT("Com_Model");
+
 		/* Com_RigidBody */
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
 			TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody))))
 			throw TEXT("Com_RigidBody");
-
-		/* For.Com_Model */
-		if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Golem_Merlin"),
-			TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
-			throw TEXT("Com_Model");
 
 		/* For.Com_Shader */
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimMesh"),
@@ -137,27 +168,13 @@ HRESULT CGolem_Merlin::Add_Components()
 			throw TEXT("Com_Shader");
 
 		/* For.Com_RootBehavior */
-		/*if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RootBehavior"),
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RootBehavior"),
 			TEXT("Com_RootBehavior"), reinterpret_cast<CComponent**>(&m_pRootBehavior))))
-			throw TEXT("Com_RootBehavior");*/
-
-		const CBone* pBone = m_pModelCom->Get_Bone(TEXT("SKT_RightHand"));
-		if (nullptr == pBone)
-			throw TEXT("pBone is nullptr");
-
-		CWeapon_Golem_Merlin::PARENTMATRIXDESC ParentMatrixDesc;
-		ParentMatrixDesc.OffsetMatrix = pBone->Get_OffsetMatrix();
-		ParentMatrixDesc.PivotMatrix = m_pModelCom->Get_PivotFloat4x4();
-		ParentMatrixDesc.pCombindTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
-		ParentMatrixDesc.pParentWorldMatrix = m_pTransform->Get_WorldMatrixPtr();
-
-		if (FAILED(Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Weapon_Golem_Merlin"),
-			TEXT("Com_Weapon"), reinterpret_cast<CComponent**>(&m_pWeapon), &ParentMatrixDesc)))
-			throw TEXT("Com_Weapon");
+			throw TEXT("Com_RootBehavior");
 	}
 	catch (const _tchar* pErrorTag)
 	{
-		wstring wstrErrorMSG = TEXT("[CGolem_Merlin] Failed Add_Components : ");
+		wstring wstrErrorMSG = TEXT("[CGolem_Combat] Failed Add_Components : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
 
@@ -167,7 +184,7 @@ HRESULT CGolem_Merlin::Add_Components()
 	return S_OK;
 }
 
-HRESULT CGolem_Merlin::SetUp_ShaderResources()
+HRESULT CProfessor_Fig::SetUp_ShaderResources()
 {
 	BEGININSTANCE;
 
@@ -192,7 +209,7 @@ HRESULT CGolem_Merlin::SetUp_ShaderResources()
 	{
 		wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed SetUp_ShaderResources : \n");
 		wstrErrorMSG += pErrorTag;
-		MSG_BOX(wstrErrorMSG.c_str());
+		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
 
 		ENDINSTANCE;
 
@@ -205,73 +222,46 @@ HRESULT CGolem_Merlin::SetUp_ShaderResources()
 }
 
 #ifdef _DEBUG
-void CGolem_Merlin::Tick_ImGui()
+void CProfessor_Fig::Tick_ImGui()
 {
-	RECT clientRect;
-	GetClientRect(g_hWnd, &clientRect);
-	POINT leftTop = { clientRect.left, clientRect.top };
-	POINT rightBottom = { clientRect.right, clientRect.bottom };
-	ClientToScreen(g_hWnd, &leftTop);
-	ClientToScreen(g_hWnd, &rightBottom);
-	int Left = leftTop.x;
-	int Top = rightBottom.y;
-	ImVec2 vWinpos = { _float(Left + 1280.f), _float(Top - 300.f) };
-	ImGui::SetNextWindowPos(vWinpos);
-
-	ImGui::Begin("Test Golem_Merlin");
-
-	if (ImGui::InputInt("animIndex##Armored", &m_iIndex))
-		m_pModelCom->Change_Animation(m_iIndex);
-
-	ImGui::SeparatorText("Behavior");
-
-	/*vector<wstring> DebugBehaviorTags = m_pRootBehavior->Get_DebugBahaviorTags();
-
-	for (auto& Tag : DebugBehaviorTags)
-	{
-		ImGui::Text(wstrToStr(Tag).c_str());
-	}*/
-
-	ImGui::End();
 }
 #endif // _DEBUG
 
-CGolem_Merlin* CGolem_Merlin::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CProfessor_Fig* CProfessor_Fig::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CGolem_Merlin* pInstance = New CGolem_Merlin(pDevice, pContext);
+	CProfessor_Fig* pInstance = New CProfessor_Fig(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Created CGolem_Merlin");
+		MSG_BOX("Failed to Created CProfessor_Fig");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject* CGolem_Merlin::Clone(void* pArg)
+CGameObject* CProfessor_Fig::Clone(void* pArg)
 {
-	CGolem_Merlin* pInstance = New CGolem_Merlin(*this);
+	CProfessor_Fig* pInstance = New CProfessor_Fig(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned CGolem_Merlin");
+		MSG_BOX("Failed to Cloned CProfessor_Fig");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CGolem_Merlin::Free()
+void CProfessor_Fig::Free()
 {
 	__super::Free();
 
 	if (true == m_isCloned)
 	{
-		Safe_Release(m_pWeapon);
 		Safe_Release(m_pModelCom);
-		Safe_Release(m_pRenderer);
 		Safe_Release(m_pShaderCom);
+		Safe_Release(m_pRenderer);
 		Safe_Release(m_pRigidBody);
 		Safe_Release(m_pRootBehavior);
 	}

@@ -164,9 +164,6 @@ HRESULT CTest_Player::Add_Components()
 		return E_FAIL;
 	}
 
-	//m_pModelCom->Add_MeshParts(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Robe_Student"), CCustomModel::ROBE);
-	//m_pModelCom->Add_MeshParts(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Low"), CCustomModel::PANTS);
-
 	return S_OK;
 }
 
