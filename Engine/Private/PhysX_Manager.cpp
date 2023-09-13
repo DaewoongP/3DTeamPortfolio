@@ -50,7 +50,7 @@ HRESULT CPhysX_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* p
 		MSG_BOX("Failed Create ControllerManager");
 		return E_FAIL;
 	}
-
+	
 	// NvCloth Initialize
 	m_pContextManagerCallBack = New CNVContextCallBack(pDevice, pContext);
 	if (nullptr == m_pContextManagerCallBack)

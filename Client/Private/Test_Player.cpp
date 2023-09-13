@@ -168,7 +168,7 @@ HRESULT CTest_Player::Add_Components()
 	Rigid->setMass(10.f);
 	
 	/* Com_CustomModel */
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_CustomModel_test"),
+	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_CustomModel_Player"),
 		TEXT("Com_CustomModel"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 	{
 		MSG_BOX("Failed CTest_Player Add_Component : (Com_CustomModel)");
@@ -201,7 +201,7 @@ HRESULT CTest_Player::Add_Components()
 		return E_FAIL;
 	}
 	
-	m_pModelCom->Add_MeshParts(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Robe_Student"), CCustomModel::ROBE, TEXT("../../Resources/GameData/ClothData/Test.cloth"));
+	m_pModelCom->Add_MeshParts(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshPart_Robe01"), CCustomModel::ROBE, TEXT("../../Resources/GameData/ClothData/Test.cloth"));
 
 	return S_OK;
 }
@@ -295,7 +295,6 @@ void CTest_Player::Tick_ImGui()
 	{
 		m_pRigidBody->Get_RigidBodyActor()->setMaxLinearVelocity(fMaxLinearVelocity);
 	}
-
 
 	_float3 vPlayerPos;
 	ImGui::SetNextItemWidth(20.f);

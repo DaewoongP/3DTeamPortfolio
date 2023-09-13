@@ -211,7 +211,7 @@ public:
 		float postFix = elapsedTime -= 2;
 		return changeAmount / 2 * ((postFix)*elapsedTime * (((s *= (1.525f)) + 1) * elapsedTime + s) + 2) + startValue;
 	}
-
+	
 	static const char* pEase[EASE_END];
 	static float Ease(EASE eEase, float elapsedTime, float startValue, float changeAmount, float totalDuration)
 	{

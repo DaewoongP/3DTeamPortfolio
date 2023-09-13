@@ -82,11 +82,12 @@ void CPlayer_Camera::Tick(const _float& _TimeDelta)
 
 #ifdef _DEBUG
 	
-	Tick_ImGui();
+	//Tick_ImGui();
 
 #endif // _DEBUG
 }
 
+#ifdef _DEBUG
 void CPlayer_Camera::Tick_ImGui()
 {
 	ImGui::Begin("Test Player Camera");
@@ -100,6 +101,7 @@ void CPlayer_Camera::Tick_ImGui()
 
 	ImGui::End();
 }
+#endif // _DEBUG
 
 void CPlayer_Camera::Mouse_Input(_float _TimeDelta)
 {

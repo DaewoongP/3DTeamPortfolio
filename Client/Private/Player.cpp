@@ -50,7 +50,6 @@ HRESULT CPlayer::Initialize(void* pArg)
 		return E_FAIL;
 	}*/
 
-
 #ifdef _DEBUG
 	
 	if (FAILED(Ready_Test_Collider()))
@@ -93,7 +92,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	}
 
 #ifdef _DEBUG
-	//Tick_ImGui();
+	Tick_ImGui();
 #endif // _DEBUG
 }
 

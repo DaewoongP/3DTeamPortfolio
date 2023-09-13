@@ -206,9 +206,9 @@ HRESULT CLoader::Loading_For_MainGame()
 			throw TEXT("Prototype_Component_VIBuffer_Cube");
 
 		/* Prototype_Component_VIBuffer_Terrain */
-		/*if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Terrain"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Terrain"),
 			CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Terrain/Height.bmp")))))
-			throw TEXT("Prototype_Component_VIBuffer_Terrain");*/
+			throw TEXT("Prototype_Component_VIBuffer_Terrain");
 		
 		/* For.Prototype_Component_VIBuffer_Cloth */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Cloth"),
@@ -235,11 +235,6 @@ HRESULT CLoader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Weopon_Golem_Combat"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Golem_Combat_Sword/Golem_Combat_Sword.dat"), PivotMatrix))))
 			throw TEXT("Prototype_Component_Model_Weopon_Golem_Combat");
-
-		PivotMatrix = XMMatrixIdentity();
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Stair"),
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/SM_Intro_Cliffside_RuinsStairsBase_01/SM_Intro_Cliffside_RuinsStairsBase_01.dat"), PivotMatrix))))
-			throw TEXT("Prototype_Component_Model_Stair");
 
 		///* For.Prototype_Component_Model_Weopon_Golem_Merlin */
 		//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Weopon_Golem_Merlin"),
@@ -294,21 +289,11 @@ HRESULT CLoader::Loading_For_MainGame()
 			CModel_LOD::Create(m_pDevice, m_pContext, LodDesc, TEXT("../../Resources/Models/NonAnims/SM_DungeonEnterance_Cave_A/SM_DungeonEnterance_Cave_A_Lod%d.dat"), 3))))
 			throw TEXT("Prototype_Component_Model_Test_Robe_LOD");*/
 
-#ifdef _DEBUG
-		/* For.Prototype_Component_Model_CustomModel */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_CustomModel"),
-			CCustomModel::Create(m_pDevice, m_pContext, CCustomModel::TYPE_ANIM, L"../../Resources/Models/Anims/test/test.dat"))))
-			throw TEXT("Prototype_Component_Model_CustomModel");
 
 		/* For.Prototype_Component_Model_CustomModel_Player */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_CustomModel_Player"),
 			CCustomModel::Create(m_pDevice, m_pContext, CCustomModel::TYPE_ANIM, L"../../Resources/Models/Anims/Biped_Skeleton_Set/Biped_Skeleton_Set.dat"))))
-			throw TEXT("Prototype_Component_Model_CustomModel_Player");
-
-		/* For.Prototype_Component_MeshParts_Robe */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Robe"),
-			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Robe_Student_Test/Robe_Student_Test.dat"), TEXT("ROBE_Default")))))
-			throw TEXT("Prototype_Component_MeshParts_Robe");
+			throw TEXT("Prototype_Component_Model_CustomModel_Player");	
 #pragma region Player Parts
 		/* For.Prototype_Component_MeshPart_Adult_M_Head */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshPart_Adult_M_Head"),
@@ -345,9 +330,6 @@ HRESULT CLoader::Loading_For_MainGame()
 			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/StuShoes03/StuShoes03.dat"), TEXT("StuShoes03")))))
 			throw TEXT("Prototype_Component_MeshPart_StuShoes03");
 #pragma endregion
-
-
-#endif // _DEBUG
 
 		lstrcpy(m_szLoading, TEXT("셰이더 로딩 중."));
 		/* For.Prototype_Component_Shader_VtxCube */
@@ -513,17 +495,17 @@ HRESULT CLoader::Loading_For_MainGame()
 		//	CGolem_Merlin::Create(m_pDevice, m_pContext))))
 		//	throw TEXT("Prototype_GameObject_Pensive");
 
-		/* For.Prototype_GameObject_Dummy */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Dummy"),
-			CDummy::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_Dummy");
-
 		/* For.Prototype_GameObject_Test_UI*/
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Default_Magic_Effect"),
 			CDefault_Magic_Effect::Create(m_pDevice, m_pContext, LEVEL_MAINGAME))))
 			throw TEXT("Prototype_GameObject_Default_Magic_Effect");
 
 #ifdef _DEBUG
+		/* For.Prototype_GameObject_Dummy */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Dummy"),
+			CDummy::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Dummy");
+
 		/* For.Prototype_GameObject_Camera_Debug*/
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Camera_Debug"),
 			CCamera_Debug::Create(m_pDevice, m_pContext))))
@@ -622,7 +604,7 @@ HRESULT CLoader::Loading_For_MainGame()
 			throw TEXT("Prototype_Component_UI_Image");
 
 		/* For.Prototype_GameObject_Player*/
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Player"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Player"),
 			CPlayer::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Player");
 		

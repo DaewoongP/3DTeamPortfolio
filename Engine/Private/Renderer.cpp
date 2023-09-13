@@ -239,8 +239,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 	
 	if (FAILED(Render_PostProcessing()))
 		return E_FAIL;	
-	//if (FAILED(Render_Distortion()))
-	//	return E_FAIL;
+	if (FAILED(Render_Distortion()))
+		return E_FAIL;
 	if (FAILED(Render_UI()))
 		return E_FAIL;
 
@@ -687,10 +687,10 @@ HRESULT CRenderer::Render_Distortion()
 
 	m_pTexture->Bind_ShaderResource(m_pAfterShader, "g_vDistortionTexture");
 	m_pTexture2->Bind_ShaderResource(m_pAfterShader, "g_vAlphaTexture");
-	//m_pTexture3->Bind_ShaderResource(m_pAfterShader, "g_PostProcessingTexture");
+	m_pTexture3->Bind_ShaderResource(m_pAfterShader, "g_PostProcessingTexture");
 
-	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_PostProcessing"), m_pAfterShader, "g_PostProcessingTexture")))
-		return E_FAIL;
+	/*if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_PostProcessing"), m_pAfterShader, "g_PostProcessingTexture")))
+		return E_FAIL;*/
 
 
 	if (FAILED(m_pAfterShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))

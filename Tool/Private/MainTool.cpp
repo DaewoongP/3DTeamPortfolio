@@ -393,9 +393,9 @@ HRESULT CMainTool::Ready_Prototype_Object()
 		CDummyMeshEffect::Create(m_pDevice, m_pContext, TEXT(""), LEVEL_TOOL))))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyTrail"),
+	/*if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyTrail"),
 		CDummyTrail::Create(m_pDevice, m_pContext, TEXT(""), LEVEL_TOOL))))
-		return E_FAIL;
+		return E_FAIL;*/
 
 	/* Prototype_GameObject_Dummy*/
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_Dummy"),

@@ -362,6 +362,14 @@ void CObject_Window::Install_Random_Object(_float3 vPos)
 
 				_float4x4 vWorldMatrix = m_pDummy->Get_Transform()->Get_WorldMatrix();
 
+				_uint iX = _uint(fR - fL);
+				_uint iY = _uint(fT - fB);
+				if (0 == iX ||
+					0 == iY)
+				{
+					return;
+				}
+
 				vWorldMatrix._41 = fL + (rand() % (_uint)(fR - fL));
 				vWorldMatrix._43 = fB + (rand() % (_uint)(fT - fB));
 
