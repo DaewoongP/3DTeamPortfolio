@@ -241,7 +241,7 @@ PS_OUT PS_MAIN_DISTORTION(PS_IN In)
     
     Out.vColor = vPost;
     
-    Out.vColor.a = vAlpha;
+    Out.vColor.a = vAlpha.r;
     
     return Out;
 }

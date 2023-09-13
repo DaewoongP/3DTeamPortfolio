@@ -577,8 +577,11 @@ HRESULT CTriangleCollider_Window::Make_Cell()
 
 			m_isMakingCell = false;
 		}
+
 		return S_OK;
 	}
+
+	return S_OK;
 }
 
 HRESULT CTriangleCollider_Window::ReMake_Cell()

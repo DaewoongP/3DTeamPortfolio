@@ -287,7 +287,7 @@ PS_OUT PS_MAIN_SHADOW(PS_IN_SHAODW In)
     
     vector TexColor = g_ShadeTexture.Sample(LinearSampler, In.vTexUV);
     Out.vColor = Out.vColor * TexColor;
-    float2 newUV = (In.Position.x / In.vPosition.w / 2.f + 0.5f, -In.Position.y / In.Position.w / 2.f + 0.5f);
+    float2 newUV = float2(In.Position.x / In.vPosition.w / 2.f + 0.5f, -In.Position.y / In.Position.w / 2.f + 0.5f);
     vector Shadow = g_ShadowTexture.Sample(BlurSampler, newUV).r;
     Out.vColor = Out.vColor * Shadow;
     return Out;

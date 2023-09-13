@@ -3,6 +3,7 @@ matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix g_ViewMatrixInv, g_ProjMatrixInv;
 matrix g_vLightView;
 matrix g_vLightProj;
+vector g_LightPos;
 
 float g_fCamFar;
 
@@ -189,34 +190,37 @@ PS_OUT PS_MAIN(PS_IN In)
     }
        vNormalDesc = normalize(vNormalDesc * 2.f - 1.f);
     //vector vNormal = vector(vNormalDesc.xyz * 2.f - 1.f, 0.f);
-    float fViewZ = vDepthDesc.r * g_fCamFar; //뷰포트에서의 깊이
-    float vDepth = vDepthDesc.g * g_fCamFar * fViewZ; // 월드에서의 실제깊이
+    float fViewZ = vDepthDesc.x * g_fCamFar; //뷰포트에서의 깊이
+    float vDepth = vDepthDesc.y * g_fCamFar * fViewZ; // 월드에서의 실제깊이
     
-        float3 vRay;
-        float3 vReflect;
-        float2 vRandomUV;
-        float fOccNorm;
+    float3 vRay;
+    float3 vReflect;
+    float2 vRandomUV;
+    float fOccNorm;
     
-        int iColor = 0;
+    int iColor = 0;
     
-        for (int i = 0; i < 13; i++)
-        {
-            vRay = reflect(RandNormal(In.vTexUV), g_Ran[i]);
-            vReflect = normalize(reflect(normalize(vRay), normalize(vNormalDesc.rgb))) * g_fRadius;
-            vReflect.x *= -1.f;
-            vRandomUV = In.vTexUV + vReflect.xy;
-            fOccNorm = g_DepthTexture.Sample(LinearSampler, vRandomUV).g * g_fCamFar * fViewZ;
-            if (fOccNorm <= vDepth + 0.0005f)
-                ++iColor;
+    
+    
+    for (int i = 0; i < 13; i++)
+    {
+        vRay = reflect(RandNormal(In.vTexUV), g_Ran[i]);
+        vReflect = normalize(reflect(normalize(vRay), normalize(vNormalDesc.rgb))) * g_fRadius;
+        vReflect.x *= -1.f;
+        vRandomUV = In.vTexUV + vReflect.xy;
+        fOccNorm = g_DepthTexture.Sample(LinearSampler, vRandomUV).g * g_fCamFar * fViewZ;
+        if (fOccNorm <= vDepth + 0.0005f)
+            ++iColor;
                   
-        }
-    
-        float4 vAmbient = abs((iColor / 13.f) - 1);
-   
-        Out.vColor = 1.f - vAmbient;
-    Out.vColor = vector(1.f, 1.f, 1.f, 1.f);
-        return Out;
     }
+    
+    float4 vAmbient = abs((iColor / 13.f) - 1);
+   
+    Out.vColor = 1.f - vAmbient;
+    
+    // Out.vColor = vector(1.f, 1.f, 1.f, 1.f);
+    return Out;
+}
 
 
 PS_OUT PS_MAIN_BLURX(PS_IN In)
@@ -336,31 +340,32 @@ PS_OUT PS_MAIN_SHADOW(PS_IN In)
     // 투영행렬의 far를 다시곱해주어 포지션과 연산
     // 현재 픽셀의 깊이값과 해당하는 픽셀이 존재하는 빛기준의 텍스처 UV좌표 깊이값과 비교하여 처리한다.
     else if (vPosition.z - 0.1f < vLightDepth.y * g_fCamFar)
-        Out.vColor.rgba = vector(0.5f, 0.5f, 0.5f, 0.5f);
+    { 
+        // Out.vColor.rgb = vector(0.5f, 0.5f, 0.5f, 0.5f);
     
-    float CamDepth = vPosition.z - 0.005f / g_fCamFar;
+        float CamDepth = vPosition.z - 0.1f / g_fCamFar;
 
-    float fragDepth = CamDepth;
+        float fragDepth = CamDepth;
     
-    float fLit = 1.0f;
+        float fLit = 1.0f;
     
-    float E_x2 = vLightDepth.z;
-    float Ex_2 = vLightDepth.x * vLightDepth.x;
-    float variance = (E_x2 - Ex_2);
-    variance = max(variance, 0.000005f);
+        float E_x2 = vLightDepth.z;
+        float Ex_2 = vLightDepth.x * vLightDepth.x;
+        float variance = (E_x2 - Ex_2);
+        variance = max(variance, 0.00005f);
 
-    float mD = (fragDepth - vLightDepth.x);
-    float mD_2 = mD * mD;
-    float p = (variance / (variance + mD_2));
+        float mD = (fragDepth - vLightDepth.x);
+        float mD_2 = mD * mD;
+        float p = (variance / (variance + mD_2));
 
-    fLit = max(p, fragDepth > vLightDepth.x);
-    fLit = (1 - fLit) + 0.5f;
-    if (fLit > 1.f)
-        fLit = 1.f;
+        fLit = max(p, fragDepth <= vLightDepth.x);
+        fLit = (1 - fLit) + 0.5f;
+        if (fLit > 1.f)
+            fLit = 1.f;
     
-  // Out.vColor = float4(fLit, fLit, fLit, fLit);
+        Out.vColor = float4(fLit, fLit, fLit, fLit);
 
-    
+    }
     return Out;
 }
 
@@ -411,5 +416,17 @@ technique11 DefaultTechnique
         DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
         PixelShader = compile ps_5_0 PS_MAIN_SHADOW();
     }
+    pass SoftShadow
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Depth_Disable, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
+        HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
+        DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
+        PixelShader = compile ps_5_0 PS_MAIN_SHADOW();
+    }
+
 
 }
