@@ -9,6 +9,9 @@ CTerrain::CTerrain(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 CTerrain::CTerrain(const CTerrain& rhs)
 	: CGameObject(rhs)
 {
+	ZEROMEM(m_vBrushPos);
+	ZEROMEM(m_fBrushRange);
+	ZEROMEM(m_iBrushIndex);
 }
 
 HRESULT CTerrain::Initialize_Prototype()
@@ -29,21 +32,8 @@ HRESULT CTerrain::Initialize(void* pArg)
 
 	m_isRendering = true;
 
-	////Test
-	//for (size_t i = 0; i < m_iBrushPosCnt; i++)
-	//{
-	//	_float3 vPos = { i * 20.f, 0.f, i * 20.f };
-	//	m_vecBrushPos.push_back(vPos);
-	//}
-
-	//m_pBrushPos = New _float3[m_iBrushPosCnt];
-
-	//for (size_t i = 0; i < m_iBrushPosCnt; i++)
-	//{
-	//	m_pBrushPos[i] = m_vecBrushPos.at(i);
-	//}
-
-	//m_iBrushPosCnt = m_vecBrushPos.size();
+	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
+	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(g_iWinSizeX, g_iWinSizeY, 0.5f, 1.f));
 
 	return S_OK;
 }
@@ -57,10 +47,17 @@ void CTerrain::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	/*m_pBuffer->Culling(m_pTransform->Get_WorldMatrix());*/
+	//m_pBuffer->Culling(m_pTransform->Get_WorldMatrix());
 
 	if (nullptr != m_pRenderer)
+	{
+		m_eRenderCount = RT_NORMAL;
+
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+#ifdef _DEBUG
+		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BRUSHING, this);
+#endif // _DEBUG		
+	}		
 }
 
 HRESULT CTerrain::Render()
@@ -68,17 +65,61 @@ HRESULT CTerrain::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	// 데이터가 들어있을 경우 쉐이더에 브러쉬 위치값 던져줌
-	if (0 < m_vecBrushPos.size())
+	// 쉐이더에 브러쉬 위치값 던져줌
+	if (FAILED(SetUp_ShaderDynamicResources()))
+		return E_FAIL;
+
+	// 일반 그리기
+	if (RT_NORMAL == m_eRenderCount)
 	{
-		if (FAILED(SetUp_ShaderDynamicResources()))
+		m_pShader->Begin("Terrain_Brush");
+
+		if (FAILED(m_pBuffer->Render()))
 			return E_FAIL;
+
+		m_eRenderCount = RT_BRUSHING;
 	}
 
-	m_pShader->Begin("Terrain_Brush");
+#ifdef _DEBUG
+	// 브러싱용 그리기
+	else if (RT_BRUSHING == m_eRenderCount)
+	{
+		BEGININSTANCE;
 
-	if (FAILED(m_pBuffer->Render()))
-		return E_FAIL;
+		_uint				iNumViews = { 1 };
+		D3D11_VIEWPORT		ViewportDesc;
+
+		m_pContext->RSGetViewports(&iNumViews, &ViewportDesc);
+
+		_float4x4 WorldMatrix, ViewMatrix, ProjMatrix;
+
+		_float3 vEye = { (m_pBuffer->Get_TerrainSizeX() * 0.5f) + 1,
+			250.f, (m_pBuffer->Get_TerrainSizeZ() * 0.5f) + 1 };
+		_float3 vAt = { (m_pBuffer->Get_TerrainSizeX() * 0.5f) + 1,
+			0.f, (m_pBuffer->Get_TerrainSizeZ() * 0.5f) + 1 };
+		_float3 vUp = { 0.f, 0.f, 1.f };
+
+		ViewMatrix = XMMatrixLookAtLH(vEye, vAt, vUp);
+
+		if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
+			return E_FAIL;
+
+		if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", &ViewMatrix)))
+			return E_FAIL;
+
+		if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
+			return E_FAIL;
+
+		m_pShader->Begin("Terrain_Brush");
+
+		if (FAILED(m_pBuffer->Render()))
+			return E_FAIL;
+
+		m_eRenderCount = RT_END;
+
+		ENDINSTANCE;
+	}
+#endif // _DEBUG
 
 	return S_OK;
 }
@@ -141,7 +182,7 @@ HRESULT CTerrain::Add_Components()
 	}
 
 	/* Com_Texture */
-	if (FAILED(CComposite::Add_Component(LEVEL_TOOL, TEXT("Prototype_Component_Texture_Terrain"),
+	if (FAILED(CComposite::Add_Component(LEVEL_TOOL, TEXT("Prototype_Component_Texture_Ground"),
 		TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTexture))))
 	{
 		MSG_BOX("Failed CTerrain Add_Component : (Com_Texture)");
@@ -153,8 +194,7 @@ HRESULT CTerrain::Add_Components()
 
 HRESULT CTerrain::SetUp_ShaderResources()
 {
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
+	BEGININSTANCE;
 
 	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
 		return E_FAIL;
@@ -165,31 +205,46 @@ HRESULT CTerrain::SetUp_ShaderResources()
 	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
-	// 브러쉬 고정 정보
-	if (FAILED(m_pShader->Bind_RawValue("g_fBrushRadius", &m_fBrushSize, sizeof(_float))))
+	ENDINSTANCE;
+
+	if (FAILED(m_pTexture->Bind_ShaderResource(m_pShader, "g_DiffuseTexture", m_iDiffuseTextureIndex)))
 		return E_FAIL;
 
-	Safe_Release(pGameInstance);
-
-	if (FAILED(m_pTexture->Bind_ShaderResource(m_pShader, "g_DiffuseTexture", 0)))
-		return E_FAIL;
-
-	if (FAILED(m_pTexture->Bind_ShaderResource(m_pShader, "g_BrushTexture", 1)))
+	if (FAILED(m_pTexture->Bind_ShaderResources(m_pShader, "g_BrushTexture")))
 		return E_FAIL;
 
 	return S_OK;
 }
 
 HRESULT CTerrain::SetUp_ShaderDynamicResources()
-{	
-	if (FAILED(m_pShader->Bind_RawValue("g_iBrushPointCnt", &m_iBrushPosCnt, sizeof(_uint))))
+{
+	// 현재 브러쉬 커서의 텍스처 번호
+	if (FAILED(m_pShader->Bind_RawValue("g_iBrushTextureIndex", &m_iBrushTextureIndex, sizeof(_uint))))
 		return E_FAIL;
 
-	if (FAILED(m_pShader->Bind_RawValue("g_vBrushCurrentPoint", &m_vBrushingPoint, sizeof(_float3))))
+	// 현재 브러쉬 커서의 위치
+	if (FAILED(m_pShader->Bind_RawValue("g_vBrushCurrentPos", &m_vBrushCurrentPos, sizeof(_float3))))
 		return E_FAIL;
 
-	/*if (FAILED(m_pShader->Bind_RawValue("g_vBrushPoint", &m_pBrushPos, 256)))
-		return E_FAIL;*/
+	// 현재 브러쉬 커서의 범위
+	if (FAILED(m_pShader->Bind_RawValue("g_fBrushCurrentRange", &m_fBrushCurrentRange, sizeof(_float))))
+		return E_FAIL;
+
+	// 쉐이더로 던져줄 브러쉬 위치의 개수
+	if (FAILED(m_pShader->Bind_RawValue("g_iBrushPosCnt", &m_iBrushPosCnt, sizeof(_uint))))
+		return E_FAIL;
+
+	// 쉐이더로 던져줄 브러쉬 위치 
+	if(FAILED(m_pShader->Bind_Vectors("g_vBrushPos", m_vBrushPos, MAX_SHADERVECTOR)))
+		return E_FAIL;
+
+	// 쉐이더로 던져줄 브러쉬 범위
+	if (FAILED(m_pShader->Bind_FloatValues("g_fBrushRange", m_fBrushRange, MAX_SHADERVECTOR)))
+		return E_FAIL;
+
+	// 쉐이더로 던져줄 브러쉬 범위
+	if (FAILED(m_pShader->Bind_IntValues("g_iBrushIndex", m_iBrushIndex, MAX_SHADERVECTOR)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -223,8 +278,6 @@ CGameObject* CTerrain::Clone(void* pArg)
 void CTerrain::Free()
 {
 	__super::Free();
-
-	//Safe_Delete_Array(m_pBrushPos);
 
 	Safe_Release(m_pTexture);
 	Safe_Release(m_pShader);

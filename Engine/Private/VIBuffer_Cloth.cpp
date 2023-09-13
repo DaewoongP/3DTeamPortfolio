@@ -37,7 +37,7 @@ HRESULT CVIBuffer_Cloth::Initialize(void* pArg)
 			_uint		iIndex = i * m_iNumVerticesX + j;
 
 			// 일단 체크용 x,y에 띄워서 처리
-			pVertices[iIndex].vPosition = _float3(j, i, 0.f) * 0.1f;
+			pVertices[iIndex].vPosition = _float3(_float(j), _float(i), 0.f) * 0.1f;
 			pVertices[iIndex].vTexCoord = _float2(j / (m_iNumVerticesX - 1.f), i / (m_iNumVerticesZ - 1.f));
 		}
 	}

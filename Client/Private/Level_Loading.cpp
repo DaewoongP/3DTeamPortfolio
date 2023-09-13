@@ -53,8 +53,8 @@ void CLevel_Loading::Tick(_float fTimeDelta)
 		return;
 
 	_ulong dwData = { 0 };
-
-	if (true == GetExitCodeThread(m_pLoader->Get_Thread(), &dwData))
+	
+	if (TRUE == GetExitCodeThread(m_pLoader->Get_Thread(), &dwData))
 	{
 		if (-1 == dwData)
 		{

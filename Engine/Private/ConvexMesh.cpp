@@ -137,7 +137,7 @@ HRESULT CConvexMesh::Create_ConvexMeshActor(void* pArg)
 
 
 			PxDefaultMemoryOutputStream buf;
-			PxConvexMeshCookingResult::Enum result;
+			//PxConvexMeshCookingResult::Enum result;
 
 			m_pActor = pPhysX->createRigidStatic(PxTransform(PxVec3(0, 0, 0)));
 			m_pMaterial = pPhysX->createMaterial(1.f, 0.1f, 0.1f);

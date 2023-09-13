@@ -2,11 +2,11 @@
 #include "Shader_Functions.hlsli"
 
 matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
-texture2D		g_Texture;
-texture2D		g_DiffuseTexture;
+texture2D		g_AlphaTexture;
+texture2D		g_GradientTexture;
 
-float4			g_vColor;
-float4			g_vCamPosition;
+float3			g_vHeadColor = float3(1.f, 1.f, 1.f);
+float3			g_vTailColor = float3(1.f, 1.f, 1.f);
 
 struct VS_IN
 {
@@ -32,7 +32,7 @@ VS_OUT VS_MAIN(VS_IN In)
 
 	Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);
 	Out.vTexUV = In.vTexUV;
-
+	
 	return Out;
 }
 
@@ -52,12 +52,14 @@ PS_OUT	PS_MAIN(PS_IN In)
 {
 	PS_OUT		Out = (PS_OUT)0;
 
-	vector		vDiffuse = g_Texture.Sample(LinearSampler, In.vTexUV);
+	vector		vAlpha = g_AlphaTexture.Sample(LinearSampler, In.vTexUV);
+	float		fGradient = g_GradientTexture.Sample(LinearSampler, In.vTexUV).r;
 
-	//if (vDiffuse.a < 0.1f)
-	//	discard;
+	Out.vColor.xyz = lerp(g_vHeadColor, g_vTailColor, fGradient);
+	Out.vColor.a = vAlpha.r;
 
-	Out.vColor = vDiffuse;
+	if (Out.vColor.a < 0.1f)
+		discard;
 
 	return Out;
 }
@@ -68,7 +70,7 @@ technique11		DefaultTechnique
 	{
 		SetRasterizerState(RS_Cull_None);
 		SetDepthStencilState(DSS_Default, 0);
-		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		VertexShader = compile vs_5_0 VS_MAIN();
 		GeometryShader = NULL/*compile gs_5_0 GS_MAIN()*/;
 		HullShader = NULL/*compile hs_5_0 HS_MAIN()*/;

@@ -50,7 +50,9 @@ void CMapObject::Late_Tick(_float fTimeDelta)
 		m_eRenderCount = RT_NORMAL;
 
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+#ifdef _DEBUG
 		//m_pRenderer->Add_RenderGroup(CRenderer::RENDER_PICKING, this);
+#endif // _DEBUG		
 	}
 }
 
@@ -73,7 +75,6 @@ HRESULT CMapObject::Render()
 
 		for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; iMeshCount++)
 		{
-			m_pModel->Bind_BoneMatrices(m_pShader, "g_BoneMatrices", iMeshCount);
 			m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", iMeshCount, DIFFUSE);
 
 			m_pShader->Begin("Default");
@@ -85,6 +86,7 @@ HRESULT CMapObject::Render()
 		m_eRenderCount = RT_PICKING;
 	}
 
+#ifdef _DEBUG
 	// 피킹용 그리기
 	/*else if (RT_PICKING == m_eRenderCount)
 	{
@@ -104,6 +106,7 @@ HRESULT CMapObject::Render()
 
 		m_eRenderCount = RT_END;
 	}*/
+#endif // _DEBUG
 
 	return S_OK;
 }

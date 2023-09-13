@@ -167,7 +167,7 @@ void CChannel::Invalidate_TransformationMatrix(CModel::BONES& Bones, _float fTim
 	Bones[m_iBoneIndex]->Set_TransformationMatrix(TransformationMatrix);
 }
 
-void CChannel::Invalidate_TransformationMatrix_Lerp(CModel::BONES& Bones, _float fTimeAcc, _uint* pCurrentKeyFrameIndex, _double LerpTimeAcc)
+void CChannel::Invalidate_TransformationMatrix_Lerp(CModel::BONES& Bones, _float fTimeAcc, _uint* pCurrentKeyFrameIndex, _float fLerpTimeAcc)
 {
 	if (0.f == fTimeAcc)
 		*pCurrentKeyFrameIndex = 0;
@@ -215,10 +215,10 @@ void CChannel::Invalidate_TransformationMatrix_Lerp(CModel::BONES& Bones, _float
 		}
 	}
 	//러프시킬 뼈 움직임 코드
-	if (LerpTimeAcc > ANIMATIONLERPTIME)
-		LerpTimeAcc = ANIMATIONLERPTIME;
+	if (fLerpTimeAcc > ANIMATIONLERPTIME)
+		fLerpTimeAcc = ANIMATIONLERPTIME;
 	
-	_float		fRatio = LerpTimeAcc / ANIMATIONLERPTIME;
+	_float		fRatio = fLerpTimeAcc / ANIMATIONLERPTIME;
 	_float3		vSourScale = Bones[m_iBoneIndex]->Get_TransformationMatrix_Scale();
 	_float4		vSourRotation = XMQuaternionRotationMatrix(Bones[m_iBoneIndex]->Get_TransformationMatrix());
 	_float3		vSourTranslation = Bones[m_iBoneIndex]->Get_TransformationMatrix_Position();

@@ -4,7 +4,6 @@
 #include "Font_Manager.h"
 #include "Level_Manager.h"
 #include "Timer_Manager.h"
-#include "PhysX_Manager.h"
 #include "Graphic_Device.h"
 #include "Camera_Manager.h"
 #include "String_Manager.h"
@@ -179,7 +178,7 @@ _bool CGameInstance::Check_Timer(const wstring& wstrTimerTag)
 
 const _float& CGameInstance::Get_World_TimeAcc() const
 {
-	NULL_CHECK_RETURN_MSG(m_pTimer_Manager, 0.f, TEXT("Time_Manager NULL"));
+	NULL_CHECK_MSG(m_pTimer_Manager, TEXT("Time_Manager NULL"));
 
 	return m_pTimer_Manager->Get_World_TimeAcc();
 }
@@ -593,6 +592,13 @@ _float3 CGameInstance::PolarToCartesian(_float _fLength, _float _fTheta, _float 
 	return m_pCalculator->PolarToCartesian(_fLength, _fTheta, _fPhi);
 }
 
+_float4x4 CGameInstance::RightUpLook_In_Vectors(_float3 vDestPos, _float3 vSourPos)
+{
+	NULL_CHECK_RETURN_MSG(m_pCalculator, _float4x4(), TEXT("Calculator NULL"));
+
+	return m_pCalculator->RightUpLook_In_Vectors(vDestPos, vSourPos);
+}
+
 PxPhysics* CGameInstance::Get_Physics() const
 {
 	NULL_CHECK_RETURN_MSG(m_pPhysX_Manager, nullptr, TEXT("PhysX_Manager NULL"));
@@ -619,6 +625,20 @@ cloth::Factory* CGameInstance::Get_ClothFactory() const
 	NULL_CHECK_RETURN_MSG(m_pPhysX_Manager, nullptr, TEXT("PhysX_Manager NULL"));
 
 	return m_pPhysX_Manager->Get_ClothFactory();
+}
+
+_bool CGameInstance::RayCast(_float3 vOrigin, _float3 vDir, _float fMaxDist, _Inout_ _float3* pHitPosition, _Inout_ _float* pDist, _uint iMaxHits, CPhysX_Manager::RayCastQueryFlag RaycastFlag)
+{
+	NULL_CHECK_RETURN_MSG(m_pPhysX_Manager, false, TEXT("PhysX_Manager NULL"));
+
+	return m_pPhysX_Manager->RayCast(vOrigin, vDir, fMaxDist, pHitPosition, pDist, iMaxHits, RaycastFlag);
+}
+
+_bool CGameInstance::Mouse_RayCast(HWND hWnd, ID3D11DeviceContext* pContext, _float fMaxDist, _Inout_ _float3* pHitPosition, _Inout_ _float* pDist, _uint iMaxHits, CPhysX_Manager::RayCastQueryFlag RaycastFlag)
+{
+	NULL_CHECK_RETURN_MSG(m_pPhysX_Manager, false, TEXT("PhysX_Manager NULL"));
+
+	return m_pPhysX_Manager->Mouse_RayCast(hWnd, pContext, fMaxDist, pHitPosition, pDist, iMaxHits, RaycastFlag);
 }
 
 HRESULT CGameInstance::Read_CutSceneCamera(const _tchar* _CutSceneTag, const _tchar* _CutScenePath)

@@ -11,7 +11,6 @@ CVIBuffer_Color_Instance::CVIBuffer_Color_Instance(const CVIBuffer_Color_Instanc
 	, m_iInstanceStride(rhs.m_iInstanceStride)
 	, m_iIndexCountPerInstance(rhs.m_iIndexCountPerInstance)
 	, m_iNumInstance(rhs.m_iNumInstance)
-	, m_iDrawNum(rhs.m_iDrawNum)
 {
 }
 
