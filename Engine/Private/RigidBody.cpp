@@ -7,6 +7,7 @@
 
 #ifdef _DEBUG
 #include "Shader.h"
+#include "Debug_Render_HeightField.h"
 #include "Debug_Render_Box.h"
 #include "Debug_Render_Sphere.h"
 #include "Debug_Render_Capsule.h"
@@ -178,6 +179,14 @@ HRESULT CRigidBody::Initialize_Prototype()
 		return E_FAIL;
 	}
 
+	if (FAILED(pComponent_Manager->Add_Prototype(0, TEXT("Prototype_Component_RigidBody_Debug_Render_HeightField"),
+		CDebug_Render_HeightField::Create(m_pDevice, m_pContext), true)))
+	{
+		MSG_BOX("Failed Create Prototype : RigidBody DebugRender Height Field");
+		Safe_Release(pComponent_Manager);
+		return E_FAIL;
+	}
+
 	Safe_Release(pComponent_Manager);
 #endif // _DEBUG
 
@@ -199,7 +208,7 @@ HRESULT CRigidBody::Initialize(void* pArg)
 	
 #ifdef _DEBUG
 	m_vColor = pRigidDesc->vDebugColor;
-
+	
 	if (FAILED(Add_Components(pRigidDesc->pGeometry)))
 		return E_FAIL;
 #endif // _DEBUG
@@ -274,22 +283,22 @@ HRESULT CRigidBody::Create_Actor(RIGIDBODYDESC* pRigidBodyDesc)
 
 	m_pGeometry = pRigidBodyDesc->pGeometry;
 	PxShape* pShape = pPhysX->createShape(*pRigidBodyDesc->pGeometry,
-		*m_pMaterial, false, PxShapeFlag::eSIMULATION_SHAPE);
+		*m_pMaterial, false, ePxFlag);
 
 	// 충돌처리에 필요한 유저 데이터값 바인딩
 	// 나중에 충돌 타입 정해서 처리할거임.
 	// 32비트 데이터라 총 8개로 플래그값 설정 가능 (word3 까지 포함하면 총 32개 옵션 설정가능.)
 	// 구조체에 옵션값으로 설정하게 해줘야함.
 	PxFilterData FilterData;
-	FilterData.word0 = 0x1111; // 이데이터는 일단 고정.
+	if (PxGeometryType::eHEIGHTFIELD == pRigidBodyDesc->pGeometry->getType())
+		FilterData.word0 = 0;
+	else
+		FilterData.word0 = 0x1111; // 이데이터는 일단 고정.
 	pShape->setSimulationFilterData(FilterData);
 
 	// OffsetPosition 처리 (피직스는 오른손 좌표계를 사용해서 왼손좌표계로 바꿔주기위해 회전 처리합니다.)
 	// 이거 확인정확하게 안해봐서 앞뒤가 정확한지는 모르겠어요
 	// 근데 앞뒤 달라도 상관없을거 같긴함.
-	_float4 vQuaternion = XMQuaternionRotationRollPitchYaw(0.f, XMConvertToRadians(180.f), XMConvertToRadians(90.f));
-	PxTransform relativePose(PxQuat(PhysXConverter::ToPxQuat(vQuaternion)));
-	pShape->setLocalPose(relativePose);
 
 	// 액터와 씬 처리.
 	// AttachShape로 콜라이더 여러개 바인딩 가능.
@@ -441,13 +450,43 @@ HRESULT CRigidBody::Add_Components(PxGeometry* pPxValues)
 		CapsuleDesc.fRadius = reinterpret_cast<PxCapsuleGeometry*>(pPxValues)->radius;
 		CapsuleDesc.fHalfHeight = reinterpret_cast<PxCapsuleGeometry*>(pPxValues)->halfHeight;
 		CapsuleDesc.vOrigin = _float3(0.f, 0.f, 0.f);
-		/* For.Com_Debug_Render_Sphere */
+		/* For.Com_Debug_Render_Capsule */
 		if (FAILED(CComposite::Add_Component(0, TEXT("Prototype_Component_RigidBody_Debug_Render_Capsule"),
 			TEXT("Com_Debug_Render_Capsule"), reinterpret_cast<CComponent**>(&m_pDebug_Render), &CapsuleDesc)))
 		{
 			MSG_BOX("Failed CRigidBody Add_Component : (Com_Debug_Render_Capsule)");
 			return E_FAIL;
 		}
+	}
+	else if (PxGeometryType::eHEIGHTFIELD == pPxValues->getType())
+	{
+		CDebug_Render_HeightField::HEIGHTFIELDDESC HeightFieldDesc;
+		PxHeightField* pHeightField = reinterpret_cast<PxHeightFieldGeometry*>(pPxValues)->heightField;
+		HeightFieldDesc.iNumRows = pHeightField->getNbRows() - 1;
+		HeightFieldDesc.iNumColumns = pHeightField->getNbColumns() - 1;
+
+		vector<_float3> Positions;
+		Positions.resize((HeightFieldDesc.iNumRows + 1) * (HeightFieldDesc.iNumColumns + 1));
+		for (_uint i = 0; i < HeightFieldDesc.iNumColumns + 1; ++i)
+		{
+			for (_uint j = 0; j < HeightFieldDesc.iNumRows + 1; ++j)
+			{
+				_uint iIndex = j + (HeightFieldDesc.iNumRows + 1) * i;
+
+				Positions[iIndex] = _float3((_float)j, pHeightField->getHeight(_float(j), _float(i)), (_float)i);
+			}
+		}
+		HeightFieldDesc.pPositions = Positions.data();
+		HeightFieldDesc.vOrigin = _float3(0.f, 0.f, 0.f);
+		/* For.Com_Debug_Render_HeightField */
+		if (FAILED(CComposite::Add_Component(0, TEXT("Prototype_Component_RigidBody_Debug_Render_HeightField"),
+			TEXT("Com_Debug_Render_HeightField"), reinterpret_cast<CComponent**>(&m_pDebug_Render), &HeightFieldDesc)))
+		{
+			MSG_BOX("Failed CRigidBody Add_Component : (Com_Debug_Render_HeightField)");
+			return E_FAIL;
+		}
+
+		pHeightField->release();
 	}
 
 	return S_OK;

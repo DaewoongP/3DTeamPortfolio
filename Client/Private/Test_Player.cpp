@@ -62,7 +62,7 @@ void CTest_Player::Late_Tick(_float fTimeDelta)
 	}
 
 #ifdef _DEBUG
-	//Tick_ImGui();
+	Tick_ImGui();
 #endif // _DEBUG
 }
 
@@ -230,11 +230,6 @@ void CTest_Player::Key_Input(_float fTimeDelta)
 	if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
 	{
 		m_pRigidBody->Add_Force(m_pTransform->Get_Up() * 30.f, PxForceMode::eIMPULSE);
-	}
-
-	if (pGameInstance->Get_DIKeyState(DIK_K, CInput_Device::KEY_DOWN))
-	{
-		m_eObjEvent = CComponent::OBJ_DEAD;
 	}
 
 	ENDINSTANCE;

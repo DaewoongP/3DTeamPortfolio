@@ -32,6 +32,7 @@
     <ClInclude Include="..\Public\Debug_Functions.h" />
     <ClInclude Include="..\public\Debug_Render_Box.h" />
     <ClInclude Include="..\public\Debug_Render_Capsule.h" />
+    <ClInclude Include="..\public\Debug_Render_HeightField.h" />
     <ClInclude Include="..\public\Debug_Render_Ring.h" />
     <ClInclude Include="..\public\Debug_Render_Sphere.h" />
     <ClInclude Include="..\Public\Mesh_Instance.h" />
@@ -153,6 +154,7 @@
     <ClCompile Include="..\Private\ConvexMesh.cpp" />
     <ClCompile Include="..\private\Debug_Render_Box.cpp" />
     <ClCompile Include="..\private\Debug_Render_Capsule.cpp" />
+    <ClCompile Include="..\private\Debug_Render_HeightField.cpp" />
     <ClCompile Include="..\private\Debug_Render_Ring.cpp" />
     <ClCompile Include="..\private\Debug_Render_Sphere.cpp" />
     <ClCompile Include="..\Private\Mesh_Instance.cpp" />

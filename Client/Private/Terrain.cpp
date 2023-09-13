@@ -45,7 +45,7 @@ void CTerrain::Late_Tick(_float fTimeDelta)
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONLIGHT, this);
 #ifdef _DEBUG
-		m_pRenderer->Add_DebugGroup(m_pPlane);
+		m_pRenderer->Add_DebugGroup(m_pRigidBody);
 #endif // _DEBUG
 	}
 }
@@ -88,12 +88,51 @@ HRESULT CTerrain::Add_Components()
 		MSG_BOX("Failed CTerrain Add_Component : (Com_Buffer)");
 		return E_FAIL;
 	}
+
+	CRigidBody::RIGIDBODYDESC RigidBodyDesc;
+	RigidBodyDesc.isStatic = true;
+	RigidBodyDesc.isTrigger = false;
+	RigidBodyDesc.vInitPosition = _float3(0.f, 0.f, 0.f);
+	RigidBodyDesc.fStaticFriction = 0.5f;
+	RigidBodyDesc.fDynamicFriction = 0.5f;
+	RigidBodyDesc.fRestitution = 0.f;
 	
-	/* Com_Plane */
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Plane"),
-		TEXT("Com_Plane"), reinterpret_cast<CComponent**>(&m_pPlane))))
+	PxHeightFieldDesc HeightFieldDesc;
+	HeightFieldDesc.format = PxHeightFieldFormat::eS16_TM;
+	HeightFieldDesc.nbRows = m_pBuffer->Get_TerrainSizeX(); // 가로 개수
+	HeightFieldDesc.nbColumns = m_pBuffer->Get_TerrainSizeZ(); // 세로 개수
+	
+	PxHeightFieldSample* pSample = New PxHeightFieldSample[sizeof(PxHeightFieldSample) * HeightFieldDesc.nbRows * HeightFieldDesc.nbColumns];
+	const _float3* pPosArray = m_pBuffer->Get_PosArray();
+
+	for (_uint i = 0; i < HeightFieldDesc.nbColumns; ++i)
 	{
-		MSG_BOX("Failed CTerrain Add_Component : (Com_Buffer)");
+		for (_uint j = 0; j < HeightFieldDesc.nbRows; ++j)
+		{
+			_uint iIndex = j + HeightFieldDesc.nbRows * i;
+			_uint iTest = i + HeightFieldDesc.nbColumns * j;
+			pSample[iTest].height = pPosArray[iIndex].y;
+		}
+	}
+
+	HeightFieldDesc.samples.data = pSample; // 버텍스 높이값
+	HeightFieldDesc.samples.stride = sizeof(PxHeightFieldSample); // Stride
+	HeightFieldDesc.flags = PxHeightFieldFlags();
+
+	PxHeightField* pHeightField = PxCreateHeightField(HeightFieldDesc);//, pPhysX->getPhysicsInsertionCallback());
+	Safe_Delete_Array(pSample);
+	
+	PxHeightFieldGeometry GeoMetry(pHeightField, PxMeshGeometryFlags(), 1.f, 1.f, 1.f);
+	RigidBodyDesc.pGeometry = &GeoMetry;
+	RigidBodyDesc.Constraint = CRigidBody::All;
+	RigidBodyDesc.vDebugColor = _float4(0.f, 1.f, 0.f, 1.f);
+	RigidBodyDesc.pOwnerObject = this;
+
+	/* Com_RigidBody */
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
+		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
+	{
+		MSG_BOX("Failed CTerrain Add_Component : (Com_RigidBody)");
 		return E_FAIL;
 	}
 
@@ -163,7 +202,7 @@ void CTerrain::Free()
 {
 	__super::Free();
 
-	Safe_Release(m_pPlane);
+	Safe_Release(m_pRigidBody);
 	Safe_Release(m_pTexture);
 	Safe_Release(m_pShader);
 	Safe_Release(m_pBuffer);

@@ -55,23 +55,13 @@ void CCamera_Debug::Tick(_float fTimeDelta)
 	pGameInstance->Set_Transform(CPipeLine::D3DTS_VIEW, m_pTransform->Get_WorldMatrix_Inverse());
 	pGameInstance->Set_Transform(CPipeLine::D3DTS_PROJ, XMMatrixPerspectiveFovLH(XMConvertToRadians(90.f), _float(g_iWinSizeX) / g_iWinSizeY, m_fCameraNear, 1000.f));
 
-	if (pGameInstance->Get_DIKeyState(DIK_T, CInput_Device::KEY_DOWN))
-	{
-		if (true == pGameInstance->Mouse_RayCast(g_hWnd, m_pContext))
-		{
-			int a = 1;
-		}
-	}
-
 	Safe_Release(pGameInstance);
 
 	__super::Tick(fTimeDelta);
 
 #ifdef _DEBUG
-	//Debug_ImGui(fTimeDelta);
-#endif // _DEBUG
-
-	
+	Debug_ImGui(fTimeDelta);
+#endif // _DEBUG	
 }
 
 void CCamera_Debug::Key_Input(const _float& fTimeDelta)

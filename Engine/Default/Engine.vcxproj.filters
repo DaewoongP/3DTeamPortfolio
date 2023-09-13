@@ -714,6 +714,9 @@
     <ClInclude Include="..\Public\Debug_Functions.h">
       <Filter>99. Headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Debug_Render_HeightField.h">
+      <Filter>01. Utility\03. Components\14. RigidBody\DebugRender\Plane</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -1042,6 +1045,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Debug_Render_Ring.cpp">
       <Filter>01. Utility\03. Components\14. RigidBody\DebugRender\Ring</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Debug_Render_HeightField.cpp">
+      <Filter>01. Utility\03. Components\14. RigidBody\DebugRender\Plane</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
