@@ -2,7 +2,7 @@
 #include "UI.h"
 #include "Client_Defines.h"
 
-#include "CUI_Image.h"
+#include "UI_Image.h"
 #include "UI_Group_Skill.h"
 
 BEGIN(Engine)

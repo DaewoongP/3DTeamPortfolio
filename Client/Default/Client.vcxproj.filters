@@ -426,7 +426,7 @@
     <ClInclude Include="..\Public\UI_Group_T.h">
       <Filter>02. GameObject\05. UI\UI_Group\UI_Group_T</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\CUI_Image.h">
+    <ClInclude Include="..\Public\UI_Image.h">
       <Filter>02. GameObject\05. UI\UI_Composite</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Magic.h">
@@ -450,7 +450,7 @@
     <ClInclude Include="..\Public\LookAt.h">
       <Filter>03. Behaviors\03. Movement</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Professor_FIg.h">
+    <ClInclude Include="..\Public\Professor_Fig.h">
       <Filter>02. GameObject\07. NPC</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Player.h">
@@ -635,7 +635,7 @@
     <ClCompile Include="..\Private\UI_Group_T.cpp">
       <Filter>02. GameObject\05. UI\UI_Group\UI_Group_T</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\CUI_Image.cpp">
+    <ClCompile Include="..\Private\UI_Image.cpp">
       <Filter>02. GameObject\05. UI\UI_Composite</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Magic.cpp">
@@ -659,7 +659,7 @@
     <ClCompile Include="..\Private\LookAt.cpp">
       <Filter>03. Behaviors\03. Movement</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Professor_FIg.cpp">
+    <ClCompile Include="..\Private\Professor_Fig.cpp">
       <Filter>02. GameObject\07. NPC</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Player.cpp">

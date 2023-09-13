@@ -16,7 +16,7 @@
 #include "UI_Group_Finisher_Icon.h"
 #include "UI_Group_Skill.h"
 #include "UI_Progress1.h"
-#include "CUI_Image.h"
+#include "UI_Image.h"
 #pragma endregion UI
 
 #pragma region Monsters & NPC

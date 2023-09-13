@@ -164,7 +164,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Action.h" />
-    <ClInclude Include="..\Public\CUI_Image.h" />
+    <ClInclude Include="..\Public\UI_Image.h" />
     <ClInclude Include="..\Public\BasicCast.h" />
     <ClInclude Include="..\Public\Magic.h" />
     <ClInclude Include="..\Public\MagicBall.h" />
@@ -172,7 +172,7 @@
     <ClInclude Include="..\Public\Protego.h" />
     <ClInclude Include="..\Public\Revelio.h" />
     <ClInclude Include="..\Public\LookAt.h" />
-    <ClInclude Include="..\Public\Professor_FIg.h" />
+    <ClInclude Include="..\Public\Professor_Fig.h" />
     <ClInclude Include="..\Public\Selector_Degree.h" />
     <ClInclude Include="..\Public\Armored_Troll.h" />
     <ClInclude Include="..\Public\Assasin_Goblin.h" />
@@ -268,7 +268,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Action.cpp" />
-    <ClCompile Include="..\Private\CUI_Image.cpp" />
+    <ClCompile Include="..\Private\UI_Image.cpp" />
     <ClCompile Include="..\Private\BasicCast.cpp" />
     <ClCompile Include="..\Private\Magic.cpp" />
     <ClCompile Include="..\Private\MagicBall.cpp" />
@@ -276,7 +276,7 @@
     <ClCompile Include="..\Private\Protego.cpp" />
     <ClCompile Include="..\Private\Revelio.cpp" />
     <ClCompile Include="..\Private\LookAt.cpp" />
-    <ClCompile Include="..\Private\Professor_FIg.cpp" />
+    <ClCompile Include="..\Private\Professor_Fig.cpp" />
     <ClCompile Include="..\Private\Selector_Degree.cpp" />
     <ClCompile Include="..\Private\Armored_Troll.cpp" />
     <ClCompile Include="..\Private\Assasin_Goblin.cpp" />
