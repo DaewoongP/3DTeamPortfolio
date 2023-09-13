@@ -438,11 +438,47 @@ void CObject_Window::Install_Multi_Object(_float3 vPos)
 		m_pObject->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMesh"));
 		m_pObject->Set_Color(m_iMapObjectIndex); // 고유한 색깔 값을 넣어줌
 
-		// 인스턴스 저장용 벡터에 넣어준다.
-		m_vecSaveInsObjectWorld.push_back(vWorldMatrix);
-
 		++m_iMapObjectIndex;
 		++m_iInsObjectCnt;
+	}
+
+	// 설치한 맵 오브젝트들을 인스턴스 모델로 묶음
+	if (ImGui::Button("push_back"))
+	{
+		vector<_float4x4> vecWorldMatrix;
+
+		for (size_t i = m_iMapObjectIndex - m_iInsObjectCnt; i < m_iMapObjectIndex - 1; i++)
+		{
+			// 해당 게임 오브젝트를 찾음
+			_tchar wszobjName[MAX_PATH] = { 0 };
+			_stprintf_s(wszobjName, TEXT("GameObject_InsMapObject_%d"), (i));
+
+			CMapObject* pObject = static_cast<CMapObject*>(m_pGameInstance->Find_Component_In_Layer(LEVEL_TOOL,
+				TEXT("Layer_MapObject"), wszobjName));
+
+			vecWorldMatrix.push_back(pObject->Get_Transform()->Get_WorldMatrix());
+		}
+
+		m_SaveInsObjectDesc.iInstanceCnt = m_iInsObjectCnt;
+
+		m_SaveInsObjectDesc.pMatTransform = New _float4x4[m_SaveInsObjectDesc.iInstanceCnt];
+		for (size_t i = 0; i < m_SaveInsObjectDesc.iInstanceCnt; i++)
+		{
+			m_SaveInsObjectDesc.pMatTransform[i] = vecWorldMatrix.at(i);
+		}
+
+		m_SaveInsObjectDesc.matTransform = XMMatrixIdentity();
+		m_SaveInsObjectDesc.iTagLen = lstrlen(m_vecModelList_t.at(m_iModelIndex)) * 2;
+		lstrcpy(m_SaveInsObjectDesc.wszTag, m_vecModelList_t.at(m_iModelIndex));
+
+		m_vecSaveInsObject.push_back(m_SaveInsObjectDesc);
+
+		m_iInsObjectCnt = 0;
+
+		m_SaveInsObjectDesc.iInstanceCnt = 0;
+		m_SaveInsObjectDesc.iTagLen = 0;
+		m_SaveInsObjectDesc.matTransform = XMMatrixIdentity();
+		ZEROMEM(m_SaveInsObjectDesc.wszTag);
 	}
 }
 
@@ -1116,46 +1152,38 @@ HRESULT CObject_Window::Save_MapObject_Ins(string szMapDataPath)
 	DWORD	dwByte = 0;
 
 	// 한번에 한 종류의 모델만 저장
-	for (_uint i = 0; i < 1; ++i)
+	for (_uint i = 0; i < m_vecSaveInsObject.size(); ++i)
 	{
-		if (!WriteFile(hFile, &m_iInsObjectCnt, sizeof(_uint), &dwByte, nullptr))
+		if (!WriteFile(hFile, &m_vecSaveInsObject.at(i).iInstanceCnt, sizeof(_uint), &dwByte, nullptr))
 		{
-			MSG_BOX("Failed to Write m_iInsObjectCnt");
+			MSG_BOX("Failed to Write iInstanceCnt");
 			return E_FAIL;
 		}
 		
 		// 여기서 따로 벡터에 저장해둔 값들을 저장한다.
-		for (size_t i = 0; i < m_iInsObjectCnt; i++)
+		for (size_t j = 0; j < m_vecSaveInsObject.at(i).iInstanceCnt; i++)
 		{
-			if (!WriteFile(hFile, &m_vecSaveInsObjectWorld[i], sizeof(_float4x4), &dwByte, nullptr))
+			if (!WriteFile(hFile, &m_vecSaveInsObject.at(i).pMatTransform[j], sizeof(_float4x4), &dwByte, nullptr))
 			{
-				MSG_BOX("Failed to Write m_vecSaveInsObjectWorld");
+				MSG_BOX("Failed to Write pMatTransform");
 				return E_FAIL;
 			}
 		}
 
-		_float4x4 vMatrix = XMMatrixIdentity();
-		if (!WriteFile(hFile, &vMatrix, sizeof(_float4x4), &dwByte, nullptr))
+		if (!WriteFile(hFile, &m_vecSaveInsObject.at(i).matTransform, sizeof(_float4x4), &dwByte, nullptr))
 		{
-			MSG_BOX("Failed to Write vMatrix");
+			MSG_BOX("Failed to Write matTransform");
 			return E_FAIL;
 		}
 
-		// 현재 선택된 모델 문자열의 길이
-		_uint iLength = lstrlen(m_vecModelList_t.at(m_iModelIndex)) * 2;
-
-		if (!WriteFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr))
+		if (!WriteFile(hFile, &m_vecSaveInsObject.at(i).iTagLen, sizeof(_uint), &dwByte, nullptr))
 		{
-			MSG_BOX("Failed to Write iLength");
+			MSG_BOX("Failed to Write iTagLen");
 			return E_FAIL;
 		}
-
-		_tchar wszTag[MAX_PATH] = TEXT("");
-
-		lstrcpy(wszTag, m_vecModelList_t.at(m_iModelIndex));
 
 		// 현재 선택된 모델 문자열
-		if (!WriteFile(hFile, &wszTag, iLength, &dwByte, nullptr))
+		if (!WriteFile(hFile, &m_vecSaveInsObject.at(i).wszTag, m_vecSaveInsObject.at(i).iTagLen, &dwByte, nullptr))
 		{
 			MSG_BOX("Failed to Write m_vecModelList_t.at(m_iModelIndex)");
 			return E_FAIL;
@@ -1163,7 +1191,7 @@ HRESULT CObject_Window::Save_MapObject_Ins(string szMapDataPath)
 	}
 
 	m_iInsObjectCnt = 0;
-	m_vecSaveInsObjectWorld.clear();
+	m_vecSaveInsObject.clear();
 
 	MSG_BOX("Save Success");
 
@@ -1180,7 +1208,7 @@ HRESULT CObject_Window::Load_MapObject_Ins(const _tchar* wszMapDataPath)
 	}
 
 	m_vecSaveInsObject.clear();
-	m_vecSaveInsObjectWorld.clear();
+	m_vecSaveInsObject.clear();
 
 	HANDLE hFile = CreateFile(wszMapDataPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 

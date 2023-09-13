@@ -123,7 +123,7 @@ private:
 
 	_uint m_iInsObjectCnt = { 0 }; // 인스턴싱할 맵 오브젝트 개수
 	vector<SAVEINSOBJECTDESC> m_vecSaveInsObject; // 저장된 인스턴싱 맵 오브젝트에 대한 정보를 받아올 벡터
-	vector<_float4x4> m_vecSaveInsObjectWorld; // 인스턴싱으로 저장할 객체들의 월드 상태 행렬
+	SAVEINSOBJECTDESC m_SaveInsObjectDesc; // 인스턴싱으로 저장할 객체들의 정보
 
 	_float m_fBrushSize = { 10.f }; // 브러쉬 사이즈
 	_int m_iDiffuseIndex = { 0 }; // 어떤 텍스처를 Diffuse로 선택했는지
