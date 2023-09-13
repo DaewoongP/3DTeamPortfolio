@@ -82,7 +82,7 @@ PS_OUT PS_BRUSH(PS_IN In)
     vector vBrush = vector(0.0f, 0.0f, 0.0f, 0.0f);
 
     // 불러온 정보로 지형을 그림
-    for (int i = 0; i < g_iBrushPosCnt; i++)
+    for (uint i = 0; i < g_iBrushPosCnt; i++)
     {
         if (g_vBrushPos[i].x - g_fBrushRange[i] < In.vWorldPos.x && In.vWorldPos.x <= g_vBrushPos[i].x + g_fBrushRange[i] &&
             g_vBrushPos[i].z - g_fBrushRange[i] < In.vWorldPos.z && In.vWorldPos.z <= g_vBrushPos[i].z + g_fBrushRange[i])

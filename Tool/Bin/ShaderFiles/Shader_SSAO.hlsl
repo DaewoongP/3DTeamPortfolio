@@ -318,13 +318,10 @@ PS_OUT PS_MAIN_SHADOW(PS_IN In)
 
     vPosition = mul(vPosition, g_vLightView);
 
-    vPosition = mul(vPosition, g_vLightProj);
-	//w 나누기.
-    vPosition = vPosition / vPosition.w;
-    // -1~1
-    
-	//광원으로의깊이값.
-    float2 LightUV = float2((vPosition.x + 1.f) * 0.5f, (vPosition.y + 1.f) * -0.5f);
+    vector vUVPos = mul(vPosition, g_vLightProj);
+    float2 vLightUV;
+    vLightUV.x = (vUVPos.x / vUVPos.w) * 0.5f + 0.5f;
+    vLightUV.y = (vUVPos.y / vUVPos.w) * -0.5f + 0.5f;
 
     vector vLightDepth = g_vLightDepthTexture.Sample(BlurSampler, vLightUV);
     
