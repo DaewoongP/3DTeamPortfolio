@@ -918,6 +918,26 @@ void CObject_Window::Map_Brushing_Menu()
 		m_fTimeAccBrush = 0.f;
 	}
 
+	// 브러쉬 Undo
+	if (ImGui::Button("Undo"))
+	{
+		pTerrain->Set_BrushUndo();
+	}
+
+	ImGui::SameLine();
+
+	// 브러쉬 전체 삭제
+	if (ImGui::Button("Delete All"))
+	{
+		m_isDeleteBrush = !m_isDeleteBrush;
+	}
+
+	if (true == m_isDeleteBrush)
+	{
+		pTerrain->Set_BrushReset();
+		m_isDeleteBrush = false;
+	}
+
 	// 현재 지형을 텍스처로 뽑아냄
 	if (ImGui::Button("Save"))
 	{
@@ -926,36 +946,15 @@ void CObject_Window::Map_Brushing_Menu()
 				TEXT("GameObject_Terrain")))->Get_Buffer());
 
 		//Target_Brushing의 ID3D11Texture2D를 가져옴
-		ID3D11Texture2D* pTexture = m_pGameInstance->Find_RenderTarget(TEXT("Target_Brushing"))->Get_Texture2D();
+		ID3D11Texture2D* pTexture = m_pGameInstance->Find_RenderTarget(TEXT("Target_MapBrushing"))->Get_Texture2D();
 
-		//// 텍스처의 너비와 높이
-		//D3D11_TEXTURE2D_DESC  TextureDesc;
-		//pTexture->GetDesc(&TextureDesc);
+		if (FAILED(SaveDDSTextureToFile(m_pContext, pTexture, TEXT("../../Resources/Default/Textures/Ground/Filter.dds"))))
+		{
+			MSG_BOX("Failed to Save Terrain Texture");
+			return;
+		}
 
-		//_uint iWidth = TextureDesc.Width;
-		//_uint iHeight = TextureDesc.Height;
-
-		//// Usage 버퍼 생성, 읽기 전용이다.
-		//ID3D11Texture2D* pCopyTexture2D = { nullptr };
-		//D3D11_TEXTURE2D_DESC	TextureDescCopy;
-		//ZEROMEMSIZE(&TextureDescCopy, sizeof(D3D11_TEXTURE2D_DESC));
-
-		//TextureDescCopy.Width = iWidth;
-		//TextureDescCopy.Height = iHeight;
-		//TextureDescCopy.MipLevels = 1;
-		//TextureDescCopy.ArraySize = 1;
-		//TextureDescCopy.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-
-		//TextureDescCopy.SampleDesc.Quality = 0;
-		//TextureDescCopy.SampleDesc.Count = 1;
-
-		//TextureDescCopy.Usage = D3D11_USAGE_STAGING;
-		//TextureDescCopy.BindFlags = 0;
-		//TextureDescCopy.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
-		//TextureDescCopy.MiscFlags = 0;
-
-		//if (FAILED(m_pDevice->CreateTexture2D(&TextureDescCopy, nullptr, &pCopyTexture2D)))
-		//	return;
+		MSG_BOX("Save Terrain Texture");
 	}
 }
 

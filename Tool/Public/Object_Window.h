@@ -81,7 +81,8 @@ private:
 	_bool m_isBrushingMap = { false };
 
 	// 버튼 On Off _bool 변수 모음
-	_bool m_isDeleteObject = { false };
+	_bool m_isDeleteObject = { false }; // 맵 오브젝트 전체 삭제 선택지
+	_bool m_isDeleteBrush = { false }; // 브러쉬 전체 삭제 선택지
 
 	// Radio 버튼 _int 변수 모음
 	_int m_iInstallMethod = { 0 }; // MapObject 설치 방법 변경 변수

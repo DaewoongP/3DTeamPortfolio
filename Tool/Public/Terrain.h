@@ -42,6 +42,26 @@ public:
 		
 		++m_iBrushPosCnt;
 	}
+	void Set_BrushUndo() { // 브러쉬 Undo
+		if (0 >= m_iBrushPosCnt)
+			return;
+
+		m_vBrushPos[m_iBrushPosCnt] = _float3(0.f, 0.f, 0.f);
+		m_fBrushRange[m_iBrushPosCnt] = 0.f;
+		m_iBrushIndex[m_iBrushPosCnt] = 0;
+
+		--m_iBrushPosCnt;
+	}
+	void Set_BrushReset() { // 브러쉬 정보 전부 지움
+		if (0 >= m_iBrushPosCnt)
+			return;
+
+		m_iBrushPosCnt = 0;
+
+		ZEROMEM(m_vBrushPos);
+		ZEROMEM(m_fBrushRange);
+		ZEROMEM(m_iBrushIndex);
+	}
 
 public:
 	virtual HRESULT Initialize_Prototype();

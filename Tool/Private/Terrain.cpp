@@ -93,10 +93,10 @@ HRESULT CTerrain::Render()
 
 		_float4x4 WorldMatrix, ViewMatrix, ProjMatrix;
 
-		_float3 vEye = { (m_pBuffer->Get_TerrainSizeX() * 0.5f),
-			500.f, (m_pBuffer->Get_TerrainSizeZ() * 0.5f) };
-		_float3 vAt = { (m_pBuffer->Get_TerrainSizeX() * 0.5f),
-			0.f, (m_pBuffer->Get_TerrainSizeZ() * 0.5f) };
+		_float3 vEye = { (m_pBuffer->Get_TerrainSizeX() * 0.5f) + 1,
+			250.f, (m_pBuffer->Get_TerrainSizeZ() * 0.5f) + 1 };
+		_float3 vAt = { (m_pBuffer->Get_TerrainSizeX() * 0.5f) + 1,
+			0.f, (m_pBuffer->Get_TerrainSizeZ() * 0.5f) + 1 };
 		_float3 vUp = { 0.f, 0.f, 1.f };
 
 		ViewMatrix = XMMatrixLookAtLH(vEye, vAt, vUp);
