@@ -11,6 +11,7 @@
 #include "Time_Manager.h"
 #include "Input_Device.h"
 #include "Light_Manager.h"
+#include "PhysX_Manager.h"
 #include "Sound_Manager.h"
 #include "Component_Manager.h"
 #include "Collision_Manager.h"
@@ -43,9 +44,28 @@ public: /* For. Graphic_Device */
 	HRESULT Bind_BackBuffer();
 
 public: /* For.Timer_Manager */
-	HRESULT	Add_Timer(const _tchar * pTimerTag);
-	void	Tick_Timer(const _tchar * pTimerTag);
-	_float	Get_TimeDelta(const _tchar * pTimerTag);
+	/*	타이머 추가 
+		*구조체 미설정 시 디폴트 값 설정*  */
+	HRESULT Add_Timer(const wstring & wstrTimerTag, _bool m_isRepeat = false, const _float fDuration = 0.f);
+	/* 타이머 삭제 */
+	HRESULT Remove_Timer(const wstring & wstrTimerTag);
+	/* 타이머의 TimeAcc를 0.f로 초기화 */
+	HRESULT Reset_Timer(const wstring & wstrTimerTag);
+	/*	실질적인 시간 체크 함수.
+		해당 태그의 시간이 Duration보다 작은 경우 false를 반환.
+		크거나 같으면 true 반환 */
+	_bool Check_Timer(const wstring & wstrTimerTag);
+	/* 현재 월드 누적시간을 반환*/
+	const _float& Get_World_TimeAcc() const;
+	/* 현재 월드 틱을 반환 */
+	_float Get_World_Tick() const;
+	/* 기존에 추가한 타이머의 누적시간을 반환 */
+	_float Get_TimeAcc(const wstring & wstrTimerTag) const;
+	/* 월드 누적시간 초기화 (사용할 경우 팀원들한테 미리 얘기하세요) */
+	void Reset_World_TimeAcc();
+	HRESULT	Add_QueryTimer(const _tchar * pTimerTag);
+	void	Tick_QueryTimer(const _tchar * pTimerTag);
+	_float	Get_QueryTimeDelta(const _tchar * pTimerTag);
 
 public: /* For.Level_Manager */
 	HRESULT Open_Level(_uint iLevelIndex, class CLevel * pNewLevel);
@@ -137,6 +157,14 @@ public: /* For.PhysX_Manager */
 	PxScene* Get_PhysxScene() const;
 	PxControllerManager* Get_ControllerManager() const;
 	cloth::Factory* Get_ClothFactory() const;
+	// 1. vOrigin : 레이 시작지점 2. vDir : 방향 3. fMaxDist : 최대거리 4. pHitPosition : (out)레이가 충돌한 위치 5. pDist : (out)충돌한 거리 
+	// 6. iMaxHits : 레이를 맞을 수 있는 최대 개수 7. RaycastFlag : dynamic / static / all 중에 레이와 충돌할 객체 타입 (static에 하이트맵도 현재 포함중인거 생각해야합니다.)
+	// 반환 : 충돌 했을 시 true
+	_bool RayCast(_float3 vOrigin, _float3 vDir, _float fMaxDist = PX_MAX_F32, _Inout_ _float3* pHitPosition = nullptr, _Inout_ _float* pDist = nullptr, _uint iMaxHits = 1, CPhysX_Manager::RayCastQueryFlag RaycastFlag = CPhysX_Manager::RAY_ALL);
+	// 1. pContext : Dx11 DeviceContext 2. hWnd : 클라이언트 핸들 3. fMaxDist : 최대거리 4. pHitPosition : (out)레이가 충돌한 위치 5. pDist : (out)충돌한 거리 
+	// 6. iMaxHits : 레이를 맞을 수 있는 최대 개수 7. RaycastFlag : dynamic / static / all 중에 레이와 충돌할 객체 타입 (static에 하이트맵도 현재 포함중인거 생각해야합니다.)
+	// 반환 : 충돌 했을 시 true
+	_bool Mouse_RayCast(HWND hWnd, ID3D11DeviceContext* pContext, _float fMaxDist = PX_MAX_F32, _Inout_ _float3* pHitPosition = nullptr, _Inout_ _float* pDist = nullptr, _uint iMaxHits = 1, CPhysX_Manager::RayCastQueryFlag RaycastFlag = CPhysX_Manager::RAY_ALL);
 
 public:	/* For.Camera_Manager */
 	//컷씬 카메라 데이터를 담는다.
@@ -161,27 +189,6 @@ public:	/* For.Camera_Manager */
 public: /* For.RenderTaget_Manager*/
 	class CRenderTarget* Find_RenderTarget(const _tchar* pTargetTag);
 
-public: /* For.Time_Manager */
-	/*	타이머 추가 
-		*구조체 미설정 시 디폴트 값 설정*  */
-	HRESULT Add_Timer(const wstring& wstrTimerTag, const CTime_Manager::ALARMDESC& AlarmDesc = CTime_Manager::ALARMDESC());
-	/* 타이머 삭제 */
-	HRESULT Remove_Timer(const wstring& wstrTimerTag);
-	/* 타이머의 TimeAcc를 0.f로 초기화 */
-	HRESULT Reset_Timer(const wstring& wstrTimerTag);
-	/*	실질적인 시간 체크 함수. 
-		해당 태그의 시간이 Duration보다 작은 경우 false를 반환.
-		크거나 같으면 true 반환 */
-	_bool Check_Timer(const wstring& wstrTimerTag);
-	/* 현재 월드 누적시간을 반환*/
-	const _float& Get_World_TimeAcc() const;
-	/* 현재 월드 틱을 반환 */
-	_float Get_World_Tick() const;
-	/* 기존에 추가한 타이머의 누적시간을 반환 */
-	_float Get_TimeAcc(const wstring& wstrTimerTag) const;
-	/* 월드 누적시간 초기화 (사용할 경우 팀원들한테 미리 얘기하세요) */
-	void Reset_World_TimeAcc();
-
 public: /* For. String_Manager */
 	// 동적배열로 문자열을 할당해주는 함수
 	// 게임이 종료되기 전까지 살아있는 문자열입니다.
@@ -189,6 +196,8 @@ public: /* For. String_Manager */
 	// 동적배열로 문자열을 할당해주는 함수
 	// 게임이 종료되기 전까지 살아있는 문자열입니다.
 	_tchar* Make_WChar(const _tchar* pMakeWChar);
+	HRESULT Delete_Char(_char* pChar);
+	HRESULT Delete_WChar(_tchar* pWChar);
 
 private:
 	class CGraphic_Device*			m_pGraphic_Device = { nullptr };
@@ -206,7 +215,6 @@ private:
 	class CCalculator*				m_pCalculator = { nullptr };
 	class CPhysX_Manager*			m_pPhysX_Manager = { nullptr };
 	class CCamera_Manager*			m_pCamera_Manager = { nullptr };
-	class CTime_Manager*			m_pTime_Manager = { nullptr };
 	class CString_Manager*			m_pString_Manager = { nullptr };
 	
 public:

@@ -2,6 +2,9 @@
 
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
+texture2D		g_DiffuseTexture;
+texture2D		g_BrushTexture;
+
 struct VS_IN
 {
     float3 vPosition : POSITION;
@@ -52,7 +55,17 @@ PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
 
-    Out.vColor = float4(0.f, 1.f, 0.f, 1.f);
+    //Out.vColor = float4(0.f, 1.f, 0.f, 1.f);
+
+    vector vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV * 30.f);
+    vector vBrush = vector(0.0f, 0.0f, 0.0f, 0.0f)/*g_BrushTexture.Sample(LinearSampler, In.vTexUV)*/;
+
+    if (60.f <= In.vWorldPos.y)
+    {
+        vBrush = g_BrushTexture.Sample(LinearSampler, In.vTexUV * 10.f);
+    }
+
+    Out.vColor = vDiffuse + vBrush;
     
     return Out;
 }
@@ -70,7 +83,7 @@ technique11 DefaultTechnique
 {
     pass Terrain
     {
-        SetRasterizerState(RS_WireFrame);
+        SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();

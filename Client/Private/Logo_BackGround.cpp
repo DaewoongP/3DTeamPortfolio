@@ -14,7 +14,7 @@ CLogo_BackGround::CLogo_BackGround(const CLogo_BackGround& rhs)
 
 HRESULT CLogo_BackGround::Initialize_Prototype()
 {
-	if (FAILED(__super::Initialize_Prototype()))
+	if (FAILED(__super::Initialize_Prototype(g_iWinSizeX, g_iWinSizeY)))
 		return E_FAIL;
 
 	return S_OK;

@@ -15,19 +15,24 @@ CUI::CUI(const CUI& rhs)
 	, m_fY(rhs.m_fY)
 	, m_fSizeX(rhs.m_fSizeX)
 	, m_fSizeY(rhs.m_fSizeY)
+	, m_iWinSizeX(rhs.m_iWinSizeX)
+	, m_iWinSizeY(rhs.m_iWinSizeY)
 	, m_ViewMatrix(rhs.m_ViewMatrix)
 	, m_ProjMatrix(rhs.m_ProjMatrix)
 {
 	//lstrcpy(m_wszTextureName, rhs.m_wszTextureName);
 }
 
-HRESULT CUI::Initialize_Prototype()
+HRESULT CUI::Initialize_Prototype(_uint iWinSizeX, _uint iWinSizeY)
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
 
+	m_iWinSizeX = iWinSizeX;
+	m_iWinSizeY = iWinSizeY;
+
 	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
-	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(m_fWinSizeX, m_fWinSizeY, 0.f, 1.f));
+	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(_float(m_iWinSizeX), _float(m_iWinSizeY), 0.f, 1.f));
 
 	return S_OK;
 }
@@ -90,7 +95,8 @@ _bool CUI::Is_In_Rect(HWND hWnd)
 
 	RECT		rcUI;
 
-	SetRect(&rcUI, _int(m_vCombinedXY.x - m_fSizeX * 0.5f), _int(m_vCombinedXY.y - m_fSizeY * 0.5f), _int(m_vCombinedXY.x + m_fSizeX * 0.5f), _int(m_vCombinedXY.y + m_fSizeY * 0.5f));
+	SetRect(&rcUI, _int(m_vCombinedXY.x - m_fSizeX * 0.5f), _int(m_vCombinedXY.y - m_fSizeY * 0.5f), 
+		_int(m_vCombinedXY.x + m_fSizeX * 0.5f), _int(m_vCombinedXY.y + m_fSizeY * 0.5f));
 
 	isIn = PtInRect(&rcUI, ptMouse);
 
@@ -99,14 +105,14 @@ _bool CUI::Is_In_Rect(HWND hWnd)
 
 _float2 CUI::UIPos_To_WorldPos(_float fX, _float fY)
 {
-	_float2 fXY = _float2(fX - m_fWinSizeX * 0.5f, -fY + m_fWinSizeY * 0.5f);
+	_float2 fXY = _float2(fX - m_iWinSizeX * 0.5f, -fY + m_iWinSizeY * 0.5f);
 
 	return fXY;
 }
 
 _float2 CUI::WorldPos_To_UIPos(_float fX, _float fY)
 {
-	_float2 fXY = _float2(fX + m_fWinSizeX * 0.5f, -(fY - m_fWinSizeY * 0.5f));
+	_float2 fXY = _float2(fX + m_iWinSizeX * 0.5f, -(fY - m_iWinSizeY * 0.5f));
 
 	return fXY;
 }
@@ -114,7 +120,7 @@ _float2 CUI::WorldPos_To_UIPos(_float fX, _float fY)
 HRESULT CUI::Change_Position(_float fX, _float fY)
 {
 	m_pTransform->Set_Position(
-		XMVectorSet(m_vCombinedXY.x - m_fWinSizeX * 0.5f, -m_vCombinedXY.y + m_fWinSizeY * 0.5f, m_fZ, 1.f));
+		XMVectorSet(m_vCombinedXY.x - m_iWinSizeX * 0.5f, -m_vCombinedXY.y + m_iWinSizeY * 0.5f, m_fZ, 1.f));
 
 	return S_OK;
 }
@@ -131,6 +137,22 @@ HRESULT CUI::Change_Scale(_float fX, _float fY)
 
 HRESULT CUI::Save(HANDLE hFile, _ulong& dwByte)
 {
+	wstring strPath = L"3DTeamPortfolio";
+	wstring strFullPath = m_wszTexturePath;
+
+	_uint found = strFullPath.find(strPath);
+
+	if (found != std::wstring::npos)
+	{
+		_tchar wszPath[MAX_PATH] = TEXT("");
+		std::wstring result = TEXT("..\\..") + strFullPath.substr(found + strPath.length());
+		lstrcpy(m_wszTexturePath, result.c_str());
+	}
+	else
+	{
+		MSG_BOX("Failed UI Save");
+	}
+
 	WriteFile(hFile, &m_vCombinedXY, sizeof m_vCombinedXY, &dwByte, nullptr);
 	WriteFile(hFile, &m_fX, sizeof m_fX, &dwByte, nullptr);
 	WriteFile(hFile, &m_fY, sizeof m_fY, &dwByte, nullptr);
@@ -172,6 +194,7 @@ HRESULT CUI::Load(HANDLE hFile, _ulong& dwByte)
 
 	return S_OK;
 }
+
 
 void CUI::Free()
 {

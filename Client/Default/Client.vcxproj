@@ -164,6 +164,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Action.h" />
+    <ClInclude Include="..\Public\Selector_Degree.h" />
     <ClInclude Include="..\Public\Armored_Troll.h" />
     <ClInclude Include="..\Public\Assasin_Goblin.h" />
     <ClInclude Include="..\Public\Behavior_Includes.h" />
@@ -181,11 +182,17 @@
     <ClInclude Include="..\Public\PhysXRender.h" />
     <ClInclude Include="..\Public\Player.h" />
     <ClInclude Include="..\public\Player_Camera.h" />
+    <ClInclude Include="..\Public\TargetDegree.h" />
+    <ClInclude Include="..\Public\Player.h" />
     <ClInclude Include="..\public\Test_Cloth.h" />
     <ClInclude Include="..\Public\Test_Stair.h" />
+    <ClInclude Include="..\Public\Turn.h" />
     <ClInclude Include="..\Public\UI_Back.h" />
+    <ClInclude Include="..\Public\UI_Finisher.h" />
+    <ClInclude Include="..\Public\UI_Group_Finisher.h" />
     <ClInclude Include="..\Public\UI_Group_HP.h" />
-    <ClInclude Include="..\Public\UI_Progress.h" />
+    <ClInclude Include="..\Public\UI_HP.h" />
+    <ClInclude Include="..\Public\UI_Group_Potion.h" />
     <ClInclude Include="..\Public\UI_Skill.h" />
     <ClInclude Include="..\Public\Wait.h" />
     <ClInclude Include="..\Public\Weapon_Armored_Troll.h" />
@@ -247,6 +254,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Action.cpp" />
+    <ClCompile Include="..\Private\Selector_Degree.cpp" />
     <ClCompile Include="..\Private\Armored_Troll.cpp" />
     <ClCompile Include="..\Private\Assasin_Goblin.cpp" />
     <ClCompile Include="..\private\Camera_Debug.cpp" />
@@ -260,12 +268,17 @@
     <ClCompile Include="..\Private\MapObject.cpp" />
     <ClCompile Include="..\Private\Pensive.cpp" />
     <ClCompile Include="..\Private\PhysXRender.cpp" />
+    <ClCompile Include="..\Private\TargetDegree.cpp" />
     <ClCompile Include="..\Private\Player.cpp" />
     <ClCompile Include="..\private\Test_Cloth.cpp" />
     <ClCompile Include="..\Private\Test_Stair.cpp" />
+    <ClCompile Include="..\Private\Turn.cpp" />
     <ClCompile Include="..\Private\UI_Back.cpp" />
+    <ClCompile Include="..\Private\UI_Finisher.cpp" />
+    <ClCompile Include="..\Private\UI_Group_Finisher.cpp" />
     <ClCompile Include="..\Private\UI_Group_HP.cpp" />
-    <ClCompile Include="..\Private\UI_Progress.cpp" />
+    <ClCompile Include="..\Private\UI_HP.cpp" />
+    <ClCompile Include="..\Private\UI_Group_Potion.cpp" />
     <ClCompile Include="..\Private\UI_Skill.cpp" />
     <ClCompile Include="..\Private\Wait.cpp" />
     <ClCompile Include="..\Private\Weapon_Armored_Troll.cpp" />

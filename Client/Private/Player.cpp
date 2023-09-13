@@ -165,15 +165,7 @@ HRESULT CPlayer::Add_Components()
 		return E_FAIL;
 	}
 
-	///* For.Prototype_Component_Model_CustomModel */
-	//if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_CustomModel"),
-	//	TEXT("Com_Model_CustomModel"), reinterpret_cast<CComponent**>(&m_pCustomModel))))
-	//{
-	//	MSG_BOX("Failed CPlayer Add_Component : (Com_Model_CustomModel)");
-	//	return E_FAIL;
-	//}
-
-	/* For.Prototype_Component_Model_CustomModel_Player */
+	/* For.Com_Model_CustomModel_Player */
 	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_CustomModel_Player"),
 		TEXT("Com_Model_CustomModel_Player"), reinterpret_cast<CComponent**>(&m_pCustomModel))))
 	{

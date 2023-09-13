@@ -20,6 +20,7 @@ private:
 	// 1. eType : 애니메이션모델, 스태틱모델 타입 설정
 	// 2. DirectoryPath : 순회할 최상위폴더 설정.
 	HRESULT ReadFileInDirectory(_uint iType, const _tchar* pFilePath);
+	HRESULT ReadFileInDirectory_COL(_uint iType, const _tchar* pFilePath);
 
 public:
 	static void Convert(_uint iType, const _tchar* pFilePath);

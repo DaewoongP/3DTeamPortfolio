@@ -38,6 +38,12 @@ RasterizerState RS_Cull_None
     FrontCounterClockwise = false;
 };
 
+RasterizerState RS_WireFrame
+{
+    FillMode = WireFrame;
+    CullMode = None;
+};
+
 /* Depth_Stencil State */
 
 DepthStencilState DSS_Default
@@ -126,7 +132,7 @@ technique11 DefaultTechnique
 {
     pass Debug
     {
-        SetRasterizerState(RS_Cull_None);
+        SetRasterizerState(RS_WireFrame);
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();

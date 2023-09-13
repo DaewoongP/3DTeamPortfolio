@@ -3,7 +3,7 @@
 
 
 #include "UI_Back.h"
-#include "UI_Progress.h"
+#include "UI_HP.h"
 
 CUI_Group_HP::CUI_Group_HP(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUI_Group(pDevice, pContext)
@@ -12,6 +12,7 @@ CUI_Group_HP::CUI_Group_HP(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 CUI_Group_HP::CUI_Group_HP(const CUI_Group_HP& rhs)
 	: CUI_Group(rhs)
+	, m_ProtoTypeTags(rhs.m_ProtoTypeTags)
 {
 }
 
@@ -37,25 +38,34 @@ HRESULT CUI_Group_HP::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	/*BEGININSTANCE
+	BEGININSTANCE
 
-	pGameInstance->Add_Component(LEVEL_MAINGAME, m_ProtoTypeTags[0], TEXT("Layer_UI"), TEXT(""), pArg);
+	_tchar wszGroupName[MAX_PATH] = TEXT("");
+	DWORD dwStrByte;
+	DWORD dwByte = 0;
+	ReadFile(pArg, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
+	ReadFile(pArg, wszGroupName, dwStrByte, &dwByte, nullptr);
 
-	CUI* pUI = dynamic_cast<CUI*>(pGameInstance->Clone_Component(LEVEL_MAINGAME, m_ProtoTypeTags[0], pArg));
+	pGameInstance->Add_Component(LEVEL_MAINGAME, m_ProtoTypeTags[0], TEXT("Layer_UI"), 
+		TEXT("GameObject_UI_HP_Frame"), pArg);
+
+	CUI* pUI = dynamic_cast<CUI*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME,TEXT("Layer_UI"), TEXT("GameObject_UI_HP_Frame")));
 	m_pParent = pUI;
 	Safe_AddRef(m_pParent);
-
 	pUI = nullptr;
-	pUI = dynamic_cast<CUI*>(pGameInstance->Clone_Component(LEVEL_MAINGAME, m_ProtoTypeTags[1], pArg));
+
+	_uint iSize = 0;
+	ReadFile(pArg, &iSize, sizeof(iSize), &dwByte, nullptr);
+	pGameInstance->Add_Component(LEVEL_MAINGAME, m_ProtoTypeTags[1], TEXT("Layer_UI"), TEXT("GameObject_UI_HP_Gauge"), pArg);
+
+	pUI = dynamic_cast<CUI*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME,TEXT("Layer_UI"), TEXT("GameObject_UI_HP_Gauge")));
 	pUI->Set_Parent(m_pParent);
 	Safe_AddRef(m_pParent);
 
 	m_Childs.push_back(pUI);
 	Safe_AddRef(pUI);
 
-	ENDINSTANCE;*/
-	// parent -> Prototypetag / level
-	//__super::Load(TEXT("../../Resources/UIDATA/"), vector<pair<Prototypetag / level>>, Prototypetag / level);
+	ENDINSTANCE;
 
 	return S_OK;
 }
@@ -75,7 +85,7 @@ HRESULT CUI_Group_HP::Add_ProtoType()
 {
 	BEGININSTANCE
 
-	_tchar* pName = new _tchar[MAX_PATH];
+	_tchar pName[MAX_PATH] = TEXT("");
 	lstrcpy(pName, TEXT("Prototype_GameObject_UI_Back"));
 
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAINGAME, pName,
@@ -83,19 +93,18 @@ HRESULT CUI_Group_HP::Add_ProtoType()
 	{
 		MSG_BOX("Failed Create Prototype_GameObject_UI_Back");
 	}
-	m_ProtoTypeTags.push_back(pName);
-	pName = nullptr;
+	m_ProtoTypeTags.push_back(pGameInstance->Make_WChar(pName));
 
-	pName = new _tchar[MAX_PATH];
-	lstrcpy(pName, TEXT("Prototype_GameObject_UI_Progress"));
+
+	lstrcpy(pName, TEXT("Prototype_GameObject_CUI_HP"));
 
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAINGAME, pName,
-		CUI_Progress::Create(m_pDevice, m_pContext))))
+		CUI_HP::Create(m_pDevice, m_pContext))))
 	{
-		MSG_BOX("Failed Create Prototype_GameObject_UI_Progress");
+		MSG_BOX("Failed Create Prototype_GameObject_CUI_HP");
 	}
 
-	m_ProtoTypeTags.push_back(pName);
+	m_ProtoTypeTags.push_back(pGameInstance->Make_WChar(pName));
 
 	ENDINSTANCE
 
@@ -132,10 +141,5 @@ CGameObject* CUI_Group_HP::Clone(void* pArg)
 void CUI_Group_HP::Free()
 {
 	__super::Free();
-	
-	for (auto& iter : m_ProtoTypeTags)
-	{
-		Safe_Delete_Array(iter);
-	}
 }
 

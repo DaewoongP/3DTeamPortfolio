@@ -77,13 +77,13 @@ struct PS_OUT
     float4 vDiffuse : SV_TARGET0;
     float4 vNormal : SV_TARGET1;
     float4 vDepth : SV_TARGET2;
-    float4 vEmissive : SV_TARGET3;
 };
 
 struct PS_OUT_DEPTH
 {
     vector vDepth : SV_TARGET0;
 };
+
 PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
@@ -123,7 +123,7 @@ technique11 DefaultTechnique
 {
 	pass AnimMesh
 	{
-        SetRasterizerState(RS_WireFrame);
+        SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 

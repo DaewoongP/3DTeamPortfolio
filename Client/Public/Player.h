@@ -2,7 +2,6 @@
 #include "GameObject.h"
 #include "Client_Defines.h"
 
-
 BEGIN(Engine)
 
 class CShader;
@@ -13,7 +12,6 @@ class CCustomModel;
 END
 
 BEGIN(Client)
-
 class CPlayer_Camera;
 
 class CPlayer final : public CGameObject
@@ -48,27 +46,20 @@ private:
 #endif // _DEBUG
 
 private:
-
-private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
+
+private:
 	void Key_Input(_float fTimeDelta);
 
+private:
 	HRESULT Ready_MeshParts();
-
 	HRESULT Ready_Caemra();
 
 #ifdef _DEBUG
-
+private:
 	HRESULT Ready_Test_Collider();
-
-
-
-
 	void Tick_ImGui();
-
-
-
 #endif // _DEBUG
 
 public:

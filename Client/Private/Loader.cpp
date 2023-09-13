@@ -11,6 +11,9 @@
 
 #pragma region UI
 #include "UI_Group_HP.h"
+#include "UI_Group_Potion.h"
+#include "UI_Group_Finisher.h"
+#include "UI_Progress1.h"
 #pragma endregion UI
 
 #pragma region Monsters & NPC
@@ -176,21 +179,16 @@ HRESULT CLoader::Loading_For_MainGame()
 			CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Textures/Default_Particle.png")))))
 			throw TEXT("Prototype_Component_Texture_Default_Particle");
 
-		/* Prototype_Component_Texture_T_Default_Material_Grid_M*/
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Texture_T_Default_Material_Grid_M"),
-			CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/NonAnims/SM_SpherePrimitiveRegularNormals_01/T_Default_Material_Grid_M.png")))))
-			throw TEXT("Prototype_Component_Texture_Default_Particle");
+		/* Prototype_Component_Texture_Terrain */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Texture_Terrain"),
+			CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Terrain/Tile%d.dds"), 2))))
+			throw TEXT("Prototype_Component_Texture_Terrain");
 
 		lstrcpy(m_szLoading, TEXT("버퍼 로딩 중."));
 		/* For.Prototype_Component_VIBuffer_Cube */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Cube"),
 			CVIBuffer_Cube::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_VIBuffer_Cube");
-
-		///* For.Prototype_Component_VIBuffer_Terrain */
-		//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Terrain"),
-		//	CVIBuffer_Terrain::Create(m_pDevice, m_pContext, 513, 513))))
-		//	throw TEXT("Prototype_Component_VIBuffer_Terrain");
 
 		/* Prototype_Component_VIBuffer_Terrain */
 		/*if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Terrain"),
@@ -218,6 +216,7 @@ HRESULT CLoader::Loading_For_MainGame()
 		//	throw TEXT("Prototype_Component_Model_Weopon_Forest_Troll");
 
 		/* For.Prototype_Component_Model_Weopon_Golem_Combat */
+		PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f));
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Weopon_Golem_Combat"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Golem_Combat_Sword/Golem_Combat_Sword.dat"), PivotMatrix))))
 			throw TEXT("Prototype_Component_Model_Weopon_Golem_Combat");
@@ -248,9 +247,10 @@ HRESULT CLoader::Loading_For_MainGame()
 		//	CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/Dugbog/Dugbog.dat")))))
 		//	throw TEXT("Prototype_Component_Model_Dugbog");
 
+		PivotMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
 		/* For.Prototype_Component_Model_Golem_Combat */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Golem_Combat"),
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/Golem_CombatGrunt/Golem_CombatGrunt.gcm")))))
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/Golem_CombatGrunt/Golem_CombatGrunt.gcm"), PivotMatrix))))
 			throw TEXT("Prototype_Component_Model_Golem_Combat");
 
 		///* For.Prototype_Component_Model_Golem_Merlin */
@@ -275,14 +275,6 @@ HRESULT CLoader::Loading_For_MainGame()
 			throw TEXT("Prototype_Component_Model_Test_Robe_LOD");*/
 
 #ifdef _DEBUG
-		PivotMatrix = XMMatrixScaling(100.f, 100.f, 100.f) * XMMatrixRotationY(XMConvertToRadians(180.f));
-		/* For.Prototype_Component_Model_Fiona*/
-		/*if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Fiona"),
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/Fiona/Fiona.dat"), PivotMatrix))))
-			throw TEXT("Prototype_Component_Model_Fiona");*/
-
-
-
 		/* For.Prototype_Component_Model_CustomModel */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_CustomModel"),
 			CCustomModel::Create(m_pDevice, m_pContext, CCustomModel::TYPE_ANIM, L"../../Resources/Models/Anims/test/test.dat"))))
@@ -299,20 +291,20 @@ HRESULT CLoader::Loading_For_MainGame()
 			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/head/head.dat"), TEXT("HEAD_Default")))))
 			throw TEXT("Prototype_Component_MeshParts_Head");
 
-		/* For.Prototype_Component_MeshParts_Arm */
-		/*if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Arm"),
-			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Arm/Arm.dat"), TEXT("ARM_Default")))))
-			throw TEXT("Prototype_Component_MeshParts_Arm");*/
+		/* For.Prototype_Component_Model_CustomModel_test */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_CustomModel_test"),
+			CCustomModel::Create(m_pDevice, m_pContext, CCustomModel::TYPE_ANIM, L"../../Resources/Models/Anims/test/test.dat"))))
+			throw TEXT("Prototype_Component_Model_CustomModel_test");
 
 		/* For.Prototype_Component_MeshParts_Up */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Up"),
 			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Up/Up.dat"), TEXT("UPPERBODY_Default")))))
 			throw TEXT("Prototype_Component_MeshParts_Up");
 
-		/* For.Prototype_Component_MeshParts_Low */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Low"),
-			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Low/Low.dat"), TEXT("UNDERBODY_Default")))))
-			throw TEXT("Prototype_Component_MeshParts_Low");
+		///* For.Prototype_Component_MeshParts_Low */
+		//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Low"),
+		//	CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Low/Low.dat"), TEXT("UNDERBODY_Default")))))
+		//	throw TEXT("Prototype_Component_MeshParts_Low");
 
 		/* For.Prototype_Component_MeshParts_Robe */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Robe"),
@@ -340,8 +332,6 @@ HRESULT CLoader::Loading_For_MainGame()
 			throw TEXT("Prototype_Component_MeshParts_Shoes");
 
 #pragma region Player Parts
-
-
 		/* For.Prototype_Component_MeshPart_Adult_M_Head */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshPart_Adult_M_Head"),
 			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Adult_M_Head/Adult_M_Head.dat"), TEXT("Adult_M_Head")))))
@@ -460,6 +450,21 @@ HRESULT CLoader::Loading_For_MainGame()
 			CWait::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Wait");
 
+		/* For.Prototype_Component_Turn */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Turn"),
+			CTurn::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Turn");
+
+		/* For.Prototype_Component_TargetDegree */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_TargetDegree"),
+			CTargetDegree::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_TargetDegree");
+
+		/* For.Prototype_Component_Selector_Degree */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Selector_Degree"),
+			CSelector_Degree::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Selector_Degree");
+
 		lstrcpy(m_szLoading, TEXT("객체 로딩 중."));
 		/* For.Prototype_GameObject_Sky */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Sky"),
@@ -567,26 +572,22 @@ HRESULT CLoader::Loading_For_MainGame()
 			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Test/"), LEVEL_STATIC))))
 			throw TEXT("Prototype_GameObject_Test_Particle");
 			
-		///* For.Prototype_GameObject_Test_Cloth*/
-		//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Cloth"),
-		//	CTest_Cloth::Create(m_pDevice, m_pContext))))
-		//	throw TEXT("Prototype_GameObject_Test_Cloth");
-
-		//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Stair"),
-		//	CTest_Stair::Create(m_pDevice, m_pContext))))
-		//	throw TEXT("Prototype_GameObject_Test_Stair");
+		/* For.Prototype_GameObject_Test_Cloth*/
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Cloth"),
+			CTest_Cloth::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Test_Cloth");
+		
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Stair"),
+			CTest_Stair::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Test_Stair");
 
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_PhysxRenderer"),
 			CPhysXRender::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_PhysxRenderer");
-		/* For.Prototype_GameObject_Test_UI*/
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_HP"),
-			CUI_Group_HP::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_UI_Group_HP");
 #endif // _DEBUG
 
 		/* For.Prototype_GameObject_Player*/
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Player"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Player"),
 			CPlayer::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Player");
 		

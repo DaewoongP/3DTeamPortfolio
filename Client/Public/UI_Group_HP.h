@@ -2,6 +2,7 @@
 #include "UI_Group.h"
 #include "Client_Defines.h"
 
+BEGIN(Client)
 
 class CUI_Group_HP final : public CUI_Group
 {
@@ -27,3 +28,5 @@ public:
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;
 };
+
+END

@@ -61,6 +61,7 @@ private:
 
 private: /* Çàµ¿ ¹­À½µé */
 	HRESULT Make_Descendo(_Inout_ CSequence* pSequence);
+	HRESULT Make_Move(_Inout_ CSequence* pSequence);
 
 public:
 	static CGolem_Combat* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

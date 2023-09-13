@@ -226,9 +226,6 @@
     <Filter Include="01. Utility\02. GameObjects\00. Parts">
       <UniqueIdentifier>{b2e63afa-998c-44d2-9cf7-ca44f0b814a6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\12. Time_Manager">
-      <UniqueIdentifier>{9cbb7d45-1355-4391-a17a-ab9735b11f73}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Utility\11. Physics\Shader">
       <UniqueIdentifier>{d6e48222-790a-42b5-a30b-71e187ad6d29}</UniqueIdentifier>
     </Filter>
@@ -259,9 +256,6 @@
     <Filter Include="01. Utility\03. Components\07. VIBuffer\Cloth">
       <UniqueIdentifier>{69e6ba97-e3de-4133-b08b-1d0ed23bb071}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\03. Components\04. Model\Mesh\Dynamic">
-      <UniqueIdentifier>{32da167c-e0ce-414b-8472-ea7c15d3648c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Utility\03. Components\07. VIBuffer\Geometry">
       <UniqueIdentifier>{4ca17cb9-064d-4866-a7e1-0787a6f5a8f4}</UniqueIdentifier>
     </Filter>
@@ -291,9 +285,6 @@
     </Filter>
     <Filter Include="01. Utility\03. Components\15. ParticleSystem">
       <UniqueIdentifier>{aaf18f8e-a9cf-4dba-9828-95d190790622}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\03. Components\16. Plane">
-      <UniqueIdentifier>{33c81cf5-caa3-47e5-a3d4-5e94a0331092}</UniqueIdentifier>
     </Filter>
     <Filter Include="01. Utility\03. Components\17. MeshEffect">
       <UniqueIdentifier>{35f210f5-64ec-49e0-97dd-d4fdb9664c1b}</UniqueIdentifier>
@@ -327,6 +318,39 @@
     </Filter>
     <Filter Include="01. Utility\13. String_Manager">
       <UniqueIdentifier>{78086519-d9fc-431b-83eb-726c49e0a41e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\19. UI\UI_Component">
+      <UniqueIdentifier>{0bc1cd5b-dbb4-4efc-9d97-40b27fb2e53b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\19. UI\UI_Component\UI_Progress">
+      <UniqueIdentifier>{d103077e-8a8e-4860-b87b-da12292e4106}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\19. UI\UI_Component\UI_Button">
+      <UniqueIdentifier>{6afa2e70-9622-4c7c-b457-0b5c723cf153}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\12. CustomModel\Dynamic">
+      <UniqueIdentifier>{32da167c-e0ce-414b-8472-ea7c15d3648c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\14. RigidBody\DebugRender">
+      <UniqueIdentifier>{f80f6c50-fcbc-44ee-913d-2e67eaa71ae2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\14. RigidBody\DebugRender\Sphere">
+      <UniqueIdentifier>{625519c8-7e62-47b7-aa0f-bd4986361d3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\14. RigidBody\DebugRender\Box">
+      <UniqueIdentifier>{777bca6a-e539-47de-a071-06f393bab050}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\14. RigidBody\DebugRender\Capsule">
+      <UniqueIdentifier>{b2113ebe-419a-455a-938d-d907def848b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\14. RigidBody\DebugRender\Plane">
+      <UniqueIdentifier>{0f6c26c3-9e90-488a-9f0a-62f8dbcf13ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\14. RigidBody\DebugRender\Ring">
+      <UniqueIdentifier>{79aba21c-54a6-4216-b0b5-e711df9445aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\100. Plane%28do not use this%29">
+      <UniqueIdentifier>{33c81cf5-caa3-47e5-a3d4-5e94a0331092}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -567,9 +591,6 @@
     <ClInclude Include="..\Public\Ignite.h">
       <Filter>01. Utility\03. Components\11. Status\03. Ignite</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Time_Manager.h">
-      <Filter>01. Utility\12. Time_Manager</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Notify.h">
       <Filter>01. Utility\03. Components\04. Model\Animation\Notify</Filter>
     </ClInclude>
@@ -613,7 +634,7 @@
       <Filter>01. Utility\03. Components\00. Manager</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Plane.h">
-      <Filter>01. Utility\03. Components\16. Plane</Filter>
+      <Filter>01. Utility\03. Components\100. Plane%28do not use this%29</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MeshEffect.h">
       <Filter>01. Utility\03. Components\17. MeshEffect</Filter>
@@ -643,7 +664,7 @@
       <Filter>01. Utility\03. Components\07. VIBuffer\Cloth</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Dynamic_Mesh.h">
-      <Filter>01. Utility\03. Components\04. Model\Mesh\Dynamic</Filter>
+      <Filter>01. Utility\03. Components\12. CustomModel\Dynamic</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\JobManager.h">
       <Filter>01. Utility\11. Physics\Job</Filter>
@@ -671,6 +692,30 @@
     </ClInclude>
     <ClInclude Include="..\public\String_Manager.h">
       <Filter>01. Utility\13. String_Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Button.h">
+      <Filter>01. Utility\03. Components\19. UI\UI_Component\UI_Button</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Progress1.h">
+      <Filter>01. Utility\03. Components\19. UI\UI_Component\UI_Progress</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Debug_Render_Box.h">
+      <Filter>01. Utility\03. Components\14. RigidBody\DebugRender\Box</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Debug_Render_Capsule.h">
+      <Filter>01. Utility\03. Components\14. RigidBody\DebugRender\Capsule</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Debug_Render_Sphere.h">
+      <Filter>01. Utility\03. Components\14. RigidBody\DebugRender\Sphere</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Debug_Render_Ring.h">
+      <Filter>01. Utility\03. Components\14. RigidBody\DebugRender\Ring</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Debug_Functions.h">
+      <Filter>99. Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Debug_Render_HeightField.h">
+      <Filter>01. Utility\03. Components\14. RigidBody\DebugRender\Plane</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -887,9 +932,6 @@
     <ClCompile Include="..\Private\Ignite.cpp">
       <Filter>01. Utility\03. Components\11. Status\03. Ignite</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Time_Manager.cpp">
-      <Filter>01. Utility\12. Time_Manager</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Notify.cpp">
       <Filter>01. Utility\03. Components\04. Model\Animation\Notify</Filter>
     </ClCompile>
@@ -924,7 +966,7 @@
       <Filter>01. Utility\11. Physics\EventCallBack</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Plane.cpp">
-      <Filter>01. Utility\03. Components\16. Plane</Filter>
+      <Filter>01. Utility\03. Components\100. Plane%28do not use this%29</Filter>
     </ClCompile>
     <ClCompile Include="..\private\MeshEffect.cpp">
       <Filter>01. Utility\03. Components\17. MeshEffect</Filter>
@@ -957,7 +999,7 @@
       <Filter>01. Utility\03. Components\07. VIBuffer\Cloth</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Dynamic_Mesh.cpp">
-      <Filter>01. Utility\03. Components\04. Model\Mesh\Dynamic</Filter>
+      <Filter>01. Utility\03. Components\12. CustomModel\Dynamic</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\JobManager.cpp">
       <Filter>01. Utility\11. Physics\Job</Filter>
@@ -985,6 +1027,27 @@
     </ClCompile>
     <ClCompile Include="..\Private\TriangleMesh.cpp">
       <Filter>01. Utility\03. Components\23. TriangleMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Button.cpp">
+      <Filter>01. Utility\03. Components\19. UI\UI_Component\UI_Button</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Progress1.cpp">
+      <Filter>01. Utility\03. Components\19. UI\UI_Component\UI_Progress</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Debug_Render_Box.cpp">
+      <Filter>01. Utility\03. Components\14. RigidBody\DebugRender\Box</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Debug_Render_Capsule.cpp">
+      <Filter>01. Utility\03. Components\14. RigidBody\DebugRender\Capsule</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Debug_Render_Sphere.cpp">
+      <Filter>01. Utility\03. Components\14. RigidBody\DebugRender\Sphere</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Debug_Render_Ring.cpp">
+      <Filter>01. Utility\03. Components\14. RigidBody\DebugRender\Ring</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Debug_Render_HeightField.cpp">
+      <Filter>01. Utility\03. Components\14. RigidBody\DebugRender\Plane</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
