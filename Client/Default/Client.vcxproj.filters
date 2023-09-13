@@ -136,9 +136,6 @@
     <Filter Include="02. GameObject\05. UI\UI_Group">
       <UniqueIdentifier>{7206f782-d4db-4b46-8797-de58df3e32e7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\05. UI\UI_Group\UI_Potion">
-      <UniqueIdentifier>{33c5525a-2279-40c2-9d48-f7921b35001b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_HP">
       <UniqueIdentifier>{081ca7b0-6581-4898-a252-d4947ea8ef08}</UniqueIdentifier>
     </Filter>
@@ -177,6 +174,30 @@
     </Filter>
     <Filter Include="03. Behaviors\04. Function">
       <UniqueIdentifier>{11282af5-bac7-4061-9441-81c0be48d567}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_Finisher_Icon">
+      <UniqueIdentifier>{fcbbd145-242a-4b88-9a6d-b01139b69406}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_Potion">
+      <UniqueIdentifier>{33c5525a-2279-40c2-9d48-f7921b35001b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_\UI_Finisher_Icon">
+      <UniqueIdentifier>{94045f3c-76d0-49d5-8fca-f6edef6c9ea9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_Skill">
+      <UniqueIdentifier>{48686970-0b4c-42ea-88ac-966830027166}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_\UI_Effect_Back">
+      <UniqueIdentifier>{6f63ec72-3503-4230-9a92-5c2bd38a636e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_R">
+      <UniqueIdentifier>{0bc67e96-28ec-48d2-b52e-271e88fbe34b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_T">
+      <UniqueIdentifier>{279484dd-52a7-44cf-a944-5b3f6d56994d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Composite">
+      <UniqueIdentifier>{bcff362f-a7cb-497b-b754-00e1c5101961}</UniqueIdentifier>
     </Filter>
     <Filter Include="04. Magic">
       <UniqueIdentifier>{e77db5d2-8ca4-49d3-9854-41ff5a14a55b}</UniqueIdentifier>
@@ -364,7 +385,7 @@
       <Filter>02. GameObject\05. UI\UI_\UI_None</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_Group_Potion.h">
-      <Filter>02. GameObject\05. UI\UI_Group\UI_Potion</Filter>
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Potion</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_HP.h">
       <Filter>02. GameObject\05. UI\UI_\UI_HP</Filter>
@@ -386,6 +407,27 @@
     </ClInclude>
     <ClInclude Include="..\Public\Selector_Degree.h">
       <Filter>03. Behaviors\01. Selectors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Group_Finisher_Icon.h">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Finisher_Icon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Finisher_Icon.h">
+      <Filter>02. GameObject\05. UI\UI_\UI_Finisher_Icon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Group_Skill.h">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Skill</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Effect_Back.h">
+      <Filter>02. GameObject\05. UI\UI_\UI_Effect_Back</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Group_R.h">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_R</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Group_T.h">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_T</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CUI_Image.h">
+      <Filter>02. GameObject\05. UI\UI_Composite</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Magic.h">
       <Filter>04. Magic</Filter>
@@ -552,7 +594,7 @@
       <Filter>02. GameObject\05. UI\UI_\UI_None</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_Group_Potion.cpp">
-      <Filter>02. GameObject\05. UI\UI_Group\UI_Potion</Filter>
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Potion</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_HP.cpp">
       <Filter>02. GameObject\05. UI\UI_\UI_HP</Filter>
@@ -574,6 +616,27 @@
     </ClCompile>
     <ClCompile Include="..\Private\Selector_Degree.cpp">
       <Filter>03. Behaviors\01. Selectors</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Group_Finisher_Icon.cpp">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Finisher_Icon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Finisher_Icon.cpp">
+      <Filter>02. GameObject\05. UI\UI_\UI_Finisher_Icon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Group_Skill.cpp">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Skill</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Effect_Back.cpp">
+      <Filter>02. GameObject\05. UI\UI_\UI_Effect_Back</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Group_R.cpp">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_R</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Group_T.cpp">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_T</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CUI_Image.cpp">
+      <Filter>02. GameObject\05. UI\UI_Composite</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Magic.cpp">
       <Filter>04. Magic</Filter>

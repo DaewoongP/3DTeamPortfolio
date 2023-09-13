@@ -72,7 +72,7 @@ void CUI::Tick(_float fTimeDelta)
 void CUI::Late_Tick(_float fTimeDelta)
 {
 	Change_Scale(m_fSizeX, m_fSizeY);
-	Change_Position(m_fX, m_fY);
+	Change_Position(m_vCombinedXY.x, m_vCombinedXY.y);
 
 	__super::Late_Tick(fTimeDelta);
 }
@@ -140,17 +140,10 @@ HRESULT CUI::Save(HANDLE hFile, _ulong& dwByte)
 	wstring strPath = L"3DTeamPortfolio";
 	wstring strFullPath = m_wszTexturePath;
 
-	_uint found = strFullPath.find(strPath);
-
-	if (found != std::wstring::npos)
+	if (strFullPath.find(strPath) != std::wstring::npos)
 	{
-		_tchar wszPath[MAX_PATH] = TEXT("");
-		std::wstring result = TEXT("..\\..") + strFullPath.substr(found + strPath.length());
+		std::wstring result = TEXT("..\\..") + strFullPath.substr(strFullPath.find(strPath) + strPath.length());
 		lstrcpy(m_wszTexturePath, result.c_str());
-	}
-	else
-	{
-		MSG_BOX("Failed UI Save");
 	}
 
 	WriteFile(hFile, &m_vCombinedXY, sizeof m_vCombinedXY, &dwByte, nullptr);
@@ -201,4 +194,5 @@ void CUI::Free()
 	__super::Free();
 
 	Safe_Release(m_pParent);
+
 }

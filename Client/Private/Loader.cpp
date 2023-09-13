@@ -13,7 +13,10 @@
 #include "UI_Group_HP.h"
 #include "UI_Group_Potion.h"
 #include "UI_Group_Finisher.h"
+#include "UI_Group_Finisher_Icon.h"
+#include "UI_Group_Skill.h"
 #include "UI_Progress1.h"
+#include "CUI_Image.h"
 #pragma endregion UI
 
 #pragma region Monsters & NPC
@@ -594,6 +597,29 @@ HRESULT CLoader::Loading_For_MainGame()
 		//	throw TEXT("Prototype_Component_MagicBallPool");
 
 #endif // _DEBUG
+
+		// For.UI
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_HP"),
+			CUI_Group_HP::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_UI_Group_HP");
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_UI_Progress"),
+			CUI_Progress::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_UI_Progress");
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_Potion"),
+			CUI_Group_Potion::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_UI_Group_Potion");
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_Finisher"),
+			CUI_Group_Finisher::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_UI_Group_Finisher");
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_Finisher_Icon"),
+			CUI_Group_Finisher_Icon::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_UI_Group_Finisher_Icon");
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_Skill"),
+			CUI_Group_Skill::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_UI_Group_Skill");
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_UI_Image"),
+			CUI_Image::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_UI_Image");
 
 		/* For.Prototype_GameObject_Player*/
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Player"),

@@ -70,7 +70,7 @@ void CDummy_UI::Late_Tick(_float fTimeDelta)
 {
 	Change_Scale(m_fSizeX, m_fSizeY);
 	Change_Position(m_fX, m_fY);
-
+	
 	__super::Late_Tick(fTimeDelta);
 
 	if (nullptr != m_pRendererCom)

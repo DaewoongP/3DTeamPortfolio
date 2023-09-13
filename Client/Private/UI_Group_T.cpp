@@ -1,42 +1,42 @@
-#include "UI_Group_Potion.h"
+#include "UI_Group_T.h"
 #include "GameInstance.h"
 
 
 #include "UI_Back.h"
 #include "UI_HP.h"
 
-CUI_Group_Potion::CUI_Group_Potion(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CUI_Group_T::CUI_Group_T(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUI_Group(pDevice, pContext)
 {
 }
 
-CUI_Group_Potion::CUI_Group_Potion(const CUI_Group_Potion& rhs)
+CUI_Group_T::CUI_Group_T(const CUI_Group_T& rhs)
 	: CUI_Group(rhs)
 	, m_ProtoTypeTags(rhs.m_ProtoTypeTags)
 {
 }
 
-HRESULT CUI_Group_Potion::Initialize_Prototype()
+HRESULT CUI_Group_T::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 
 	if (FAILED(Add_ProtoType()))
 	{
-		MSG_BOX("Failed CUI_Group_Potion Add ProtoType");
+		MSG_BOX("Failed CUI_Group_T Add ProtoType");
 		return E_FAIL;
 	}
 
 	return S_OK;
 }
 
-HRESULT CUI_Group_Potion::Initialize(void* pArg)
+HRESULT CUI_Group_T::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
 	BEGININSTANCE
 
-	_tchar wszGroupName[MAX_PATH] = TEXT("");
+		_tchar wszGroupName[MAX_PATH] = TEXT("");
 	DWORD dwStrByte;
 	DWORD dwByte = 0;
 	ReadFile(pArg, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
@@ -56,18 +56,18 @@ HRESULT CUI_Group_Potion::Initialize(void* pArg)
 	return S_OK;
 }
 
-void CUI_Group_Potion::Tick(_float fTimeDelta)
+void CUI_Group_T::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 }
 
-void CUI_Group_Potion::Late_Tick(_float fTimeDelta)
+void CUI_Group_T::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
 }
 
-HRESULT CUI_Group_Potion::Add_ProtoType()
+HRESULT CUI_Group_T::Add_ProtoType()
 {
 	BEGININSTANCE
 
@@ -88,26 +88,26 @@ HRESULT CUI_Group_Potion::Add_ProtoType()
 		return S_OK;
 }
 
-CUI_Group_Potion* CUI_Group_Potion::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CUI_Group_T* CUI_Group_T::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CUI_Group_Potion* pInstance = new CUI_Group_Potion(pDevice, pContext);
+	CUI_Group_T* pInstance = new CUI_Group_T(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Created CUI_Group_Potion");
+		MSG_BOX("Failed to Created CUI_Group_T");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject* CUI_Group_Potion::Clone(void* pArg)
+CGameObject* CUI_Group_T::Clone(void* pArg)
 {
-	CUI_Group_Potion* pInstance = new CUI_Group_Potion(*this);
+	CUI_Group_T* pInstance = new CUI_Group_T(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned CUI_Group_Potion");
+		MSG_BOX("Failed to Cloned CUI_Group_T");
 		Safe_Release(pInstance);
 	}
 
@@ -115,7 +115,7 @@ CGameObject* CUI_Group_Potion::Clone(void* pArg)
 }
 
 
-void CUI_Group_Potion::Free()
+void CUI_Group_T::Free()
 {
 	__super::Free();
 }

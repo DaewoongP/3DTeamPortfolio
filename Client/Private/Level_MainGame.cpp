@@ -277,10 +277,9 @@ HRESULT CLevel_MainGame::Ready_Layer_Effect(const _tchar* pLayerTag)
 }
 HRESULT CLevel_MainGame::Ready_Layer_UI(const _tchar* pLayerTag)
 {
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
+	BEGININSTANCE;
 
-	_tchar pFilePath[MAX_PATH] = TEXT("../../Resources/GameData/UIData/UI_Group_HP_Test3.uidata");
+	_tchar pFilePath[MAX_PATH] = TEXT("../../Resources/GameData/UIData/UI_Group_HP.uidata");
 	_ulong dwByte = 0;
 	HANDLE hFile = CreateFile(pFilePath, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 	if (hFile == INVALID_HANDLE_VALUE)
@@ -297,7 +296,7 @@ HRESULT CLevel_MainGame::Ready_Layer_UI(const _tchar* pLayerTag)
 	}
 	CloseHandle(hFile);
 
-	lstrcpy(pFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Potion_Test2.uidata"));
+	lstrcpy(pFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Potion.uidata"));
 	dwByte = 0;
 	hFile = CreateFile(pFilePath, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 	if (hFile == INVALID_HANDLE_VALUE)
@@ -315,7 +314,7 @@ HRESULT CLevel_MainGame::Ready_Layer_UI(const _tchar* pLayerTag)
 	CloseHandle(hFile);
 
 
-	lstrcpy(pFilePath, TEXT("../../Resources/GameData/UIData/UI_Grouo_Finisher_Front2.uidata"));
+	lstrcpy(pFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Finisher_Front.uidata"));
 	dwByte = 0;
 	hFile = CreateFile(pFilePath, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 	if (hFile == INVALID_HANDLE_VALUE)
@@ -332,7 +331,42 @@ HRESULT CLevel_MainGame::Ready_Layer_UI(const _tchar* pLayerTag)
 	}
 	CloseHandle(hFile);
 
-	Safe_Release(pGameInstance);
+	lstrcpy(pFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Finisher_Icon.uidata"));
+	dwByte = 0;
+	hFile = CreateFile(pFilePath, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+	if (hFile == INVALID_HANDLE_VALUE)
+	{
+		MSG_BOX("Failed Load");
+		CloseHandle(hFile);
+		return E_FAIL;
+	}
+	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_Finisher_Icon"),
+		pLayerTag, TEXT("GameObject_UI_Group_Finisher_Icon"), hFile)))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_Finisher_Icon)");
+		return E_FAIL;
+	}
+	CloseHandle(hFile);
+
+	lstrcpy(pFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Skill_1.uidata"));
+	dwByte = 0;
+	hFile = CreateFile(pFilePath, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+	if (hFile == INVALID_HANDLE_VALUE)
+	{
+		MSG_BOX("Failed Load");
+		CloseHandle(hFile);
+		return E_FAIL;
+	}
+	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_Skill"),
+		pLayerTag, TEXT("Prototype_GameObject_UI_Group_Skill"), hFile)))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_UI_Group_Skill)");
+		return E_FAIL;
+	}
+	CloseHandle(hFile);
+
+
+	ENDINSTANCE;
 
 	return S_OK;
 }

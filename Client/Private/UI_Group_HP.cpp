@@ -29,10 +29,6 @@ HRESULT CUI_Group_HP::Initialize_Prototype()
 	return S_OK;
 }
 
-// UI_Group_HP 를 클론할때 hFile을 던진다.
-// 
-// 
-// h파일 pArg로 받아오면됨.
 HRESULT CUI_Group_HP::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
@@ -88,22 +84,25 @@ HRESULT CUI_Group_HP::Add_ProtoType()
 	_tchar pName[MAX_PATH] = TEXT("");
 	lstrcpy(pName, TEXT("Prototype_GameObject_UI_Back"));
 
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAINGAME, pName,
-		CUI_Back::Create(m_pDevice, m_pContext))))
+
+	CComponent* pComponent = pGameInstance->Find_Prototype(LEVEL_MAINGAME, pName);
+
+	if (nullptr == pComponent)
 	{
-		MSG_BOX("Failed Create Prototype_GameObject_UI_Back");
+		pGameInstance->Add_Prototype(LEVEL_MAINGAME, pName, CUI_Back::Create(m_pDevice, m_pContext));
 	}
 	m_ProtoTypeTags.push_back(pGameInstance->Make_WChar(pName));
 
 
-	lstrcpy(pName, TEXT("Prototype_GameObject_CUI_HP"));
+	lstrcpy(pName, TEXT("Prototype_GameObject_UI_HP"));
 
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAINGAME, pName,
-		CUI_HP::Create(m_pDevice, m_pContext))))
+
+	pComponent = pGameInstance->Find_Prototype(LEVEL_MAINGAME, pName);
+
+	if (nullptr == pComponent)
 	{
-		MSG_BOX("Failed Create Prototype_GameObject_CUI_HP");
+		pGameInstance->Add_Prototype(LEVEL_MAINGAME, pName, CUI_HP::Create(m_pDevice, m_pContext));
 	}
-
 	m_ProtoTypeTags.push_back(pGameInstance->Make_WChar(pName));
 
 	ENDINSTANCE
