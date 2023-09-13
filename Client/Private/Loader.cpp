@@ -38,6 +38,16 @@
 #include "Default_Magic_Effect.h"
 #pragma endregion Effects
 
+#pragma region Magic
+#include "Magic.h"
+#include "MagicBallPool.h"
+
+#include "BasicCast.h"
+#include "Protego.h"
+#include "Revelio.h"
+#pragma endregion Magic
+
+
 #pragma region Player
 #include "Player.h"
 #pragma endregion Player
@@ -222,6 +232,11 @@ HRESULT CLoader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Weopon_Golem_Combat"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Golem_Combat_Sword/Golem_Combat_Sword.dat"), PivotMatrix))))
 			throw TEXT("Prototype_Component_Model_Weopon_Golem_Combat");
+
+		PivotMatrix = XMMatrixIdentity();
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Stair"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/SM_Intro_Cliffside_RuinsStairsBase_01/SM_Intro_Cliffside_RuinsStairsBase_01.dat"), PivotMatrix))))
+			throw TEXT("Prototype_Component_Model_Stair");
 
 		///* For.Prototype_Component_Model_Weopon_Golem_Merlin */
 		//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Weopon_Golem_Merlin"),
@@ -533,6 +548,51 @@ HRESULT CLoader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_PhysxRenderer"),
 			CPhysXRender::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_PhysxRenderer");
+
+		////////////////////////////////////////////////마법////////////////////////////////////////////////////
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Magic"),
+			CMagic::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Magic");
+
+		/* Prototype_Component_Texture_T_Default_Material_Grid_M*/
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Texture_T_Default_Material_Grid_M"),
+			CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/NonAnims/SM_SpherePrimitiveRegularNormals_01/T_Default_Material_Grid_M.png")))))
+			return E_FAIL;
+
+		/* Prototype_Component_Model_SM_SpherePrimitiveRegularNormals_01*/
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC
+			, TEXT("Prototype_Component_Model_SM_SpherePrimitiveRegularNormals_01")
+			, CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM
+				, TEXT("../../Resources/Models/NonAnims/SM_SpherePrimitiveRegularNormals_01/SM_SpherePrimitiveRegularNormals_01.dat")))))
+			return E_FAIL;
+
+		/* Prototype_Component_Shader_DefaultEffect */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_DefaultEffect"),
+			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_DefaultEffect.hlsl"),
+				VTXMESH_DECL::Elements, VTXMESH_DECL::iNumElements))))
+			return E_FAIL;
+
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_MeshEffect"),
+			CMeshEffect::Create(m_pDevice, m_pContext, TEXT("aaa"), LEVEL_STATIC))))
+			throw TEXT("Prototype_Component_MeshEffect");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_BaseAttack"),
+			CBasicCast::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_BaseAttack");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Protego"),
+			CProtego::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Protego");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Revelio"),
+			CRevelio::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Revelio");
+
+		////마법 풀은 마법관련중에 제일 뒤에 만들어져야함
+		//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_MagicBallPool"),
+		//	CMagicBallPool::Create(m_pDevice, m_pContext))))
+		//	throw TEXT("Prototype_Component_MagicBallPool");
+
 #endif // _DEBUG
 
 		/* For.Prototype_GameObject_Player*/

@@ -164,6 +164,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Action.h" />
+    <ClInclude Include="..\Public\BasicCast.h" />
+    <ClInclude Include="..\Public\Magic.h" />
+    <ClInclude Include="..\Public\MagicBall.h" />
+    <ClInclude Include="..\Public\MagicBallPool.h" />
+    <ClInclude Include="..\Public\Protego.h" />
+    <ClInclude Include="..\Public\Revelio.h" />
     <ClInclude Include="..\Public\LookAt.h" />
     <ClInclude Include="..\Public\Professor_FIg.h" />
     <ClInclude Include="..\Public\Selector_Degree.h" />
@@ -255,6 +261,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Action.cpp" />
+    <ClCompile Include="..\Private\BasicCast.cpp" />
+    <ClCompile Include="..\Private\Magic.cpp" />
+    <ClCompile Include="..\Private\MagicBall.cpp" />
+    <ClCompile Include="..\Private\MagicBallPool.cpp" />
+    <ClCompile Include="..\Private\Protego.cpp" />
+    <ClCompile Include="..\Private\Revelio.cpp" />
     <ClCompile Include="..\Private\LookAt.cpp" />
     <ClCompile Include="..\Private\Professor_FIg.cpp" />
     <ClCompile Include="..\Private\Selector_Degree.cpp" />
@@ -302,6 +314,7 @@
     <ClCompile Include="..\Private\Weapon_Golem_Grunt.cpp" />
     <ClCompile Include="..\Private\Weapon_Golem_Merlin.cpp" />
     <ClCompile Include="..\Private\Weapon_Pensive.cpp" />
+    <ClCompile Include="..\Public\MagicBallPool.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="ImGui\backends\imgui_impl_dx11.cpp">
       <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</IncludeInUnityFile>
