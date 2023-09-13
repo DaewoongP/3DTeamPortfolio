@@ -587,7 +587,6 @@
     <ClCompile Include="..\Private\Revelio.cpp">
       <Filter>02. GameObject\09. MagicBall\02. Revelio</Filter>
     </ClCompile>
-    <ClCompile Include="..\Public\MagicBallPool.cpp" />
     <ClCompile Include="..\Private\MagicBallPool.cpp">
       <Filter>02. GameObject\09. MagicBall\MagicBallPool</Filter>
     </ClCompile>

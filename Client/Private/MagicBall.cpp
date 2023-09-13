@@ -88,6 +88,8 @@ HRESULT CMagicBall::Add_Components()
 	Rigid->setMaxLinearVelocity(1000.f);
 	Rigid->setMass(10.f);
 	Rigid->setAngularDamping(0.7f);
+
+	return S_OK;
 }
 
 void CMagicBall::Free()
