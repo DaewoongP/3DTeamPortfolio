@@ -36,6 +36,7 @@ public:
 private:
 	// 파티클 텍스처 변경.
 	void ChangeTexture(CTexture** _pTexture, wstring& _wstrOriginPath, const _tchar* _pDestPath);
+	void RemakeBuffer();
 
 public:
 	void Tick_Imgui(_float _fTimeDelta);

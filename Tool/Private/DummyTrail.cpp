@@ -53,6 +53,30 @@ void CDummyTrail::Tick_Imgui(_float _fTimeDelta)
 			ChangeTexture(&m_pTexture, m_wstrPath, ToRelativePath(fsFilePath.wstring().data()).c_str());
 		}
 
+		// 패스 선택
+		m_strPass = m_pPassComboBox->Tick(CComboBox::TABLE, true);
+
+		// 색깔 선택
+		ImGui::Separator();
+		pEffectWindow->Table_ColorEdit3("Head Color", "dpiv92490v", &m_vHeadColor);
+		pEffectWindow->Table_ColorEdit3("Tail Color", "cklvklcvxjoiowe", &m_vTailColor);
+		ImGui::Separator();
+
+		// 너비 선택
+		if (pEffectWindow->Table_DragFloat("Width", "xcvklje8oi", &m_fWidth))
+		{
+			m_HighLocalMatrix.Translation(_float3(0.f, m_fWidth, 0.f));
+			m_LowLocalMatrix.Translation(_float3(0.f, -m_fWidth, 0.f));
+		}
+
+		pEffectWindow->Table_DragFloat("Duration", "cvixcviuoiwe", &m_fTailDuration, 0.01f, 0.f, FLT_MAX);
+
+		// 시간 선택
+
+		// 최소 거리 선택
+
+		
+
 		ImGui::EndTable();
 	}
 
@@ -115,6 +139,17 @@ void CDummyTrail::ChangeTexture(CTexture** _pTexture, wstring& _wstrOriginPath, 
 		return;
 	}
 	ENDINSTANCE;
+}
+
+void CDummyTrail::RemakeBuffer()
+{
+	TRAILDESC trailDesc;
+	trailDesc.iTrailNum = m_iTrailNum;
+	trailDesc.pHighLocalMatrix = &m_HighLocalMatrix;
+	trailDesc.pLowLocalMatrix = &m_LowLocalMatrix;
+	trailDesc.pPivotMatrix = &m_PivotMatrix;
+	trailDesc.pWorldMatrix = m_pTransform->Get_WorldMatrixPtr();
+	m_pBuffer->Initialize(&trailDesc);
 }
 
 CDummyTrail* CDummyTrail::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, const _tchar* _pDirectoryPath, _uint _iLevel)

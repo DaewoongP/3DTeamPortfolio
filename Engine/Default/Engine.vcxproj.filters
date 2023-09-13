@@ -298,6 +298,9 @@
     <Filter Include="01. Utility\13. String_Manager">
       <UniqueIdentifier>{78086519-d9fc-431b-83eb-726c49e0a41e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\14. Ease">
+      <UniqueIdentifier>{db445bd0-d6d8-42a9-9226-3315e30f7c55}</UniqueIdentifier>
+    </Filter>
     <Filter Include="01. Utility\03. Components\19. UI\UI_Component">
       <UniqueIdentifier>{0bc1cd5b-dbb4-4efc-9d97-40b27fb2e53b}</UniqueIdentifier>
     </Filter>
@@ -687,6 +690,9 @@
     <ClInclude Include="..\public\String_Manager.h">
       <Filter>01. Utility\13. String_Manager</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Ease.h">
+      <Filter>01. Utility\14. Ease</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\UI_Button.h">
       <Filter>01. Utility\03. Components\19. UI\UI_Component\UI_Button</Filter>
     </ClInclude>
@@ -1039,6 +1045,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Debug_Render_HeightField.cpp">
       <Filter>01. Utility\03. Components\14. RigidBody\DebugRender\Plane</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Ease.cpp">
+      <Filter>01. Utility\14. Ease</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

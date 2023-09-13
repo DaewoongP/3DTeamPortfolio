@@ -33,7 +33,9 @@
 
 #pragma region Effects
 #include "ParticleSystem.h"
+#include "Trail.h"
 #include "MeshEffect.h"
+#include "Default_Magic_Effect.h"
 #pragma endregion Effects
 
 #pragma region Player
@@ -545,6 +547,11 @@ HRESULT CLoader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Dummy"),
 			CDummy::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Dummy");
+
+		/* For.Prototype_GameObject_Test_UI*/
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Default_Magic_Effect"),
+			CDefault_Magic_Effect::Create(m_pDevice, m_pContext, LEVEL_MAINGAME))))
+			throw TEXT("Prototype_GameObject_Default_Magic_Effect");
 
 #ifdef _DEBUG
 		/* For.Prototype_GameObject_Camera_Debug*/

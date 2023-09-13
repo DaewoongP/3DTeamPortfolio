@@ -8,6 +8,7 @@ void MODULE::Load(HANDLE hFile, _ulong& dwByte)
 {
 	ReadFile(hFile, &isActivate, sizeof isActivate, &dwByte, nullptr);
 }
+
 HRESULT MAIN_MODULE::Save(const _tchar* _pDirectoyPath)
 {
 	fs::path fsFilePath = _pDirectoyPath;
@@ -126,6 +127,11 @@ HRESULT MAIN_MODULE::Load(const _tchar* _pDirectoyPath)
 
 	return S_OK;
 }
+void MAIN_MODULE::Restart()
+{
+	fParticleSystemAge = 0.f;
+}
+
 HRESULT EMISSION_MODULE::Save(const _tchar* _pDirectoyPath)
 {
 	fs::path fsFilePath = _pDirectoyPath;
@@ -215,6 +221,18 @@ HRESULT EMISSION_MODULE::Load(const _tchar* _pDirectoyPath)
 	CloseHandle(hFile);
 	return S_OK;
 }
+void EMISSION_MODULE::Restart()
+{
+	for (auto& Burst : Bursts)
+	{
+		Burst.iCycleCount = 0;
+		Burst.fIntervalTimeAcc = 0.f;
+		Burst.isTrigger = false;
+		Burst.fTriggerTimeAcc = 0.f;
+	}
+	fRateOverTimeAcc = 0.f;
+}
+
 HRESULT SHAPE_MODULE::Save(const _tchar* _pDirectoyPath)
 {
 	fs::path fsFilePath = _pDirectoyPath;
@@ -235,24 +253,27 @@ HRESULT SHAPE_MODULE::Save(const _tchar* _pDirectoyPath)
 
 	__super::Save(hFile, dwByte);
 
-	WriteFile(hFile, strShape.data(), sizeof(_char) * MAX_PATH , &dwByte, nullptr);
-	WriteFile(hFile, strBoxEmitFrom.data(), sizeof(_char) * MAX_PATH , &dwByte, nullptr);
-	WriteFile(hFile, strMeshType.data(), sizeof(_char) * MAX_PATH , &dwByte, nullptr);
-	WriteFile(hFile, strMeshTypeMode.data(), sizeof(_char) * MAX_PATH , &dwByte, nullptr);
-	WriteFile(hFile, strMesh.data(), sizeof(_char) * MAX_PATH , &dwByte, nullptr);
-	WriteFile(hFile, &isSingleMaterial, sizeof(isSingleMaterial) , &dwByte, nullptr);
-	WriteFile(hFile, &iMaterialNum, sizeof(iMaterialNum) , &dwByte, nullptr);
-	WriteFile(hFile, &isUseMeshColors, sizeof(isUseMeshColors) , &dwByte, nullptr);
-	WriteFile(hFile, &fNormalOffset, sizeof(fNormalOffset) , &dwByte, nullptr);
-	WriteFile(hFile, &fLength, sizeof(fLength) , &dwByte, nullptr);
+	WriteFile(hFile, strShape.data(), sizeof(_char) * MAX_PATH, &dwByte, nullptr);
+	WriteFile(hFile, strBoxEmitFrom.data(), sizeof(_char) * MAX_PATH, &dwByte, nullptr);
+	WriteFile(hFile, strMeshType.data(), sizeof(_char) * MAX_PATH, &dwByte, nullptr);
+	WriteFile(hFile, strMeshTypeMode.data(), sizeof(_char) * MAX_PATH, &dwByte, nullptr);
+	WriteFile(hFile, strMesh.data(), sizeof(_char) * MAX_PATH, &dwByte, nullptr);
+	WriteFile(hFile, &isSingleMaterial, sizeof(isSingleMaterial), &dwByte, nullptr);
+	WriteFile(hFile, &iMaterialNum, sizeof(iMaterialNum), &dwByte, nullptr);
+	WriteFile(hFile, &isUseMeshColors, sizeof(isUseMeshColors), &dwByte, nullptr);
+	WriteFile(hFile, &fNormalOffset, sizeof(fNormalOffset), &dwByte, nullptr);
+	WriteFile(hFile, &vLength, sizeof(vLength), &dwByte, nullptr);
 	WriteFile(hFile, strConeEmitFrom.data(), sizeof(_char) * MAX_PATH, &dwByte, nullptr);
-	WriteFile(hFile, &fAngle, sizeof(fAngle), &dwByte, nullptr);
-	WriteFile(hFile, &fRadius, sizeof(fRadius), &dwByte, nullptr);
-	WriteFile(hFile, &fDonutRadius, sizeof(fDonutRadius), &dwByte, nullptr);
-	WriteFile(hFile, &fRadiusThickness, sizeof(fRadiusThickness), &dwByte, nullptr);
-	WriteFile(hFile, &fArc, sizeof(fArc), &dwByte, nullptr);
-	WriteFile(hFile, strArcMode.data(), sizeof(_char) * MAX_PATH, &dwByte, nullptr);
-	WriteFile(hFile, &fSpread, sizeof(fSpread), &dwByte, nullptr);
+	WriteFile(hFile, &isPhiRange, sizeof(isPhiRange), &dwByte, nullptr);
+	WriteFile(hFile, &vPhi, sizeof(vPhi), &dwByte, nullptr);
+	WriteFile(hFile, strPhiMode.data(), sizeof(_char) * MAX_PATH, &dwByte, nullptr);
+	WriteFile(hFile, &fPhiSpread, sizeof(fPhiSpread), &dwByte, nullptr);
+	WriteFile(hFile, &isThetaRange, sizeof(isThetaRange), &dwByte, nullptr);
+	WriteFile(hFile, &vTheta, sizeof(vTheta), &dwByte, nullptr);
+	WriteFile(hFile, strThetaMode.data(), sizeof(_char) * MAX_PATH, &dwByte, nullptr);
+	WriteFile(hFile, &fThetaSpread, sizeof(fThetaSpread), &dwByte, nullptr);
+	WriteFile(hFile, &fThetaInterval, sizeof(fThetaInterval), &dwByte, nullptr);
+	WriteFile(hFile, &fPhiInterval, sizeof(fPhiInterval), &dwByte, nullptr);
 	WriteFile(hFile, wstrClipTexturePath.data(), sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
 	WriteFile(hFile, strClipChannel.data(), sizeof(_char) * MAX_PATH, &dwByte, nullptr);
 	WriteFile(hFile, &fClipThreshold, sizeof(fClipThreshold), &dwByte, nullptr);
@@ -305,17 +326,21 @@ HRESULT SHAPE_MODULE::Load(const _tchar* _pDirectoyPath)
 	ReadFile(hFile, &iMaterialNum, sizeof(iMaterialNum), &dwByte, nullptr);
 	ReadFile(hFile, &isUseMeshColors, sizeof(isUseMeshColors), &dwByte, nullptr);
 	ReadFile(hFile, &fNormalOffset, sizeof(fNormalOffset), &dwByte, nullptr);
-	ReadFile(hFile, &fLength, sizeof(fLength), &dwByte, nullptr);
+	ReadFile(hFile, &vLength, sizeof(vLength), &dwByte, nullptr);
 	ReadFile(hFile, szBuffer, sizeof(_char) * MAX_PATH, &dwByte, nullptr);
 	strConeEmitFrom = szBuffer;
-	ReadFile(hFile, &fAngle, sizeof(fAngle), &dwByte, nullptr);
-	ReadFile(hFile, &fRadius, sizeof(fRadius), &dwByte, nullptr);
-	ReadFile(hFile, &fDonutRadius, sizeof(fDonutRadius), &dwByte, nullptr);
-	ReadFile(hFile, &fRadiusThickness, sizeof(fRadiusThickness), &dwByte, nullptr);
-	ReadFile(hFile, &fArc, sizeof(fArc), &dwByte, nullptr);
+	ReadFile(hFile, &isPhiRange, sizeof(isPhiRange), &dwByte, nullptr);
+	ReadFile(hFile, &vPhi, sizeof(vPhi), &dwByte, nullptr);
 	ReadFile(hFile, szBuffer, sizeof(_char) * MAX_PATH, &dwByte, nullptr);
-	strArcMode = szBuffer;
-	ReadFile(hFile, &fSpread, sizeof(fSpread), &dwByte, nullptr);
+	strPhiMode = szBuffer;
+	ReadFile(hFile, &fPhiSpread, sizeof(fPhiSpread), &dwByte, nullptr);
+	ReadFile(hFile, &isThetaRange, sizeof(isThetaRange), &dwByte, nullptr);
+	ReadFile(hFile, &vTheta, sizeof(vTheta), &dwByte, nullptr);
+	ReadFile(hFile, szBuffer, sizeof(_char) * MAX_PATH, &dwByte, nullptr);
+	strThetaMode = szBuffer;
+	ReadFile(hFile, &fThetaSpread, sizeof(fThetaSpread), &dwByte, nullptr);
+	ReadFile(hFile, &fThetaInterval, sizeof(fThetaInterval), &dwByte, nullptr);
+	ReadFile(hFile, &fPhiInterval, sizeof(fPhiInterval), &dwByte, nullptr);
 	ReadFile(hFile, wszBuffer, sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
 	wstrClipTexturePath = wszBuffer;
 	ReadFile(hFile, szBuffer, sizeof(_char) * MAX_PATH, &dwByte, nullptr);
@@ -335,6 +360,12 @@ HRESULT SHAPE_MODULE::Load(const _tchar* _pDirectoyPath)
 	CloseHandle(hFile);
 	return S_OK;
 }
+void SHAPE_MODULE::Restart()
+{
+	fLoopPhi = vPhi.x;
+	fLoopTheta = vTheta.x;
+}
+
 HRESULT RENDERER_MODULE::Save(const _tchar* _pDirectoyPath)
 {
 	fs::path fsFilePath = _pDirectoyPath;
@@ -389,4 +420,95 @@ HRESULT RENDERER_MODULE::Load(const _tchar* _pDirectoyPath)
 
 	CloseHandle(hFile);
 	return S_OK;
+}
+void RENDERER_MODULE::Restart()
+{
+}
+
+HRESULT ROTATION_OVER_LIFETIME_MODULE::Save(const _tchar* _pDirectoyPath)
+{
+	fs::path fsFilePath = _pDirectoyPath;
+	fsFilePath = fsFilePath / TEXT("RotationOverLifeTimeModule.ptc");
+
+	HANDLE hFile = CreateFile(fsFilePath.wstring().data()
+		, GENERIC_WRITE
+		, 0
+		, 0
+		, CREATE_ALWAYS
+		, FILE_ATTRIBUTE_NORMAL
+		, 0);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+		return E_FAIL;
+
+	_ulong dwByte = 0;
+
+	__super::Save(hFile, dwByte);
+
+	WriteFile(hFile, &isSeperateAxes, sizeof isSeperateAxes, &dwByte, nullptr);
+	WriteFile(hFile, &AngularVelocityXYZ, sizeof AngularVelocityXYZ, &dwByte, nullptr);
+	WriteFile(hFile, &fFlipProperty, sizeof fFlipProperty, &dwByte, nullptr);
+	WriteFile(hFile, &fRadius, sizeof fRadius, &dwByte, nullptr);
+	WriteFile(hFile, &fSpeed, sizeof fSpeed, &dwByte, nullptr);
+
+
+	CloseHandle(hFile);
+	return S_OK;
+}
+HRESULT ROTATION_OVER_LIFETIME_MODULE::Load(const _tchar* _pDirectoyPath)
+{
+	fs::path fsFilePath = _pDirectoyPath;
+	fsFilePath = fsFilePath / TEXT("RotationOverLifeTimeModule.ptc");
+
+	HANDLE hFile = CreateFile(fsFilePath.wstring().data()
+		, GENERIC_READ
+		, 0
+		, 0
+		, OPEN_EXISTING
+		, FILE_ATTRIBUTE_NORMAL
+		, 0);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+		return E_FAIL;
+
+	_ulong dwByte = 0;
+	_char szBuffer[MAX_PATH];
+	_tchar wszBuffer[MAX_PATH];
+	__super::Load(hFile, dwByte);
+
+	ReadFile(hFile, &isSeperateAxes, sizeof isSeperateAxes, &dwByte, nullptr);
+	ReadFile(hFile, &AngularVelocityXYZ, sizeof AngularVelocityXYZ, &dwByte, nullptr);
+	ReadFile(hFile, &fFlipProperty, sizeof fFlipProperty, &dwByte, nullptr);
+	ReadFile(hFile, &fRadius, sizeof fRadius, &dwByte, nullptr);
+	ReadFile(hFile, &fSpeed, sizeof fSpeed, &dwByte, nullptr);
+
+	CloseHandle(hFile);
+	return S_OK;
+}
+void ROTATION_OVER_LIFETIME_MODULE::Restart()
+{
+}
+
+HRESULT COLOR_OVER_LIFETIME::Save(const _tchar* _pDirectoyPath)
+{
+	return S_OK;
+}
+HRESULT COLOR_OVER_LIFETIME::Load(const _tchar* _pDirectoyPath)
+{
+	return S_OK;
+}
+void COLOR_OVER_LIFETIME::Restart()
+{
+}
+
+HRESULT SIZE_OVER_LIFETIME::Save(const _tchar* _pDirectoyPath)
+{
+	return S_OK;
+}
+HRESULT SIZE_OVER_LIFETIME::Load(const _tchar* _pDirectoyPath)
+{
+	return S_OK;
+}
+void SIZE_OVER_LIFETIME::Restart()
+{
 }

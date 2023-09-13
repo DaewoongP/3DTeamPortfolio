@@ -31,6 +31,7 @@ public: // À§Á¬ °ü·Ã
 	_bool Table_DragInt(string _strName, string _strTag, _int* _pValue, _float _fDragSpeed = 0.1f, _int _iMin = 0.f, _int _iMax = INT_MAX);
 	_bool Table_CheckBox(string _strName, string _strTag, _bool* _pValue, _bool isImplement = true);
 	_bool Table_ColorEdit4(string _strName, string _strTag, _float4* pValue);
+	_bool Table_ColorEdit3(string _strName, string _strTag, _float3* pValue);
 	_bool Table_ImageButton(string _strName, string _strTag, CImageFileDialog* _pImageFileDialog);
 	_bool Table_Void();
 	_bool Table_DragFloatWithOption(string _strName, string _strTag, _float* _pValue, _float2* _pRangeValue, _bool* _pCheckBox, _float _fDragSpeed = 0.01f, _float _fMin = 0.f, _float _fMax = FLT_MAX);

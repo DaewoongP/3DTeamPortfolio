@@ -45,6 +45,9 @@ public:
 	void EmissionModule_TreeNode(CEffect_Window* pEffectWindow);
 	void ShapeModule_TreeNode(CEffect_Window* pEffectWindow);
 	void RendererModule_TreeNode(CEffect_Window* pEffectWindow);
+	void ColorOverLifeTime_TreeNode(CEffect_Window* pEffectWindow);
+	void SizeOverLifeTime_TreeNode(CEffect_Window* pEffectWindow);
+	void RotationOverLifetimeModule_TreeNode(CEffect_Window* pEffectWindow);
 	void Save_FileDialog();
 	void Load_FileDialog();
 	virtual void Restart() override;
@@ -54,12 +57,15 @@ private:
 	class CComboBox* m_pShapeCombo = { nullptr };
 	class CComboBox* m_pMeshModeCombo = { nullptr };
 	class CComboBox* m_pSpriteTypeCombo = { nullptr };
-	class CComboBox* m_pArcModeCombo = { nullptr };
+	class CComboBox* m_pThetaModeCombo = { nullptr };
+	class CComboBox* m_pPhiModeCombo = { nullptr };
 	class CComboBox* m_pMeshCombo = { nullptr };
 	class CComboBox* m_pConeEmitFromCombo = { nullptr };
 	class CComboBox* m_pBoxEmitFromCombo = { nullptr };
 	class CComboBox* m_pMeshTypeCombo = { nullptr };
+	class CComboBox* m_pStopActionCombo = { nullptr };
 	class CComboBox* m_pClipChannelCombo = { nullptr };
+	vector<CComboBox*> m_pEaseCombo;
 
 	class CImageFileDialog* m_pMaterialTextureIFD = { nullptr };
 	class CImageFileDialog* m_pAlphaTextureIFD = { nullptr };
