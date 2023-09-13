@@ -32,6 +32,9 @@ HRESULT CTerrain::Initialize(void* pArg)
 
 	m_isRendering = true;
 
+	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
+	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(g_iWinSizeX, g_iWinSizeY, 0.5f, 1.f));
+
 	return S_OK;
 }
 
@@ -47,7 +50,14 @@ void CTerrain::Late_Tick(_float fTimeDelta)
 	//m_pBuffer->Culling(m_pTransform->Get_WorldMatrix());
 
 	if (nullptr != m_pRenderer)
+	{
+		m_eRenderCount = RT_NORMAL;
+
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+#ifdef _DEBUG
+		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BRUSHING, this);
+#endif // _DEBUG		
+	}		
 }
 
 HRESULT CTerrain::Render()
@@ -59,10 +69,57 @@ HRESULT CTerrain::Render()
 	if (FAILED(SetUp_ShaderDynamicResources()))
 		return E_FAIL;
 
-	m_pShader->Begin("Terrain_Brush");
+	// 일반 그리기
+	if (RT_NORMAL == m_eRenderCount)
+	{
+		m_pShader->Begin("Terrain_Brush");
 
-	if (FAILED(m_pBuffer->Render()))
-		return E_FAIL;
+		if (FAILED(m_pBuffer->Render()))
+			return E_FAIL;
+
+		m_eRenderCount = RT_BRUSHING;
+	}
+
+#ifdef _DEBUG
+	// 브러싱용 그리기
+	else if (RT_BRUSHING == m_eRenderCount)
+	{
+		BEGININSTANCE;
+
+		_uint				iNumViews = { 1 };
+		D3D11_VIEWPORT		ViewportDesc;
+
+		m_pContext->RSGetViewports(&iNumViews, &ViewportDesc);
+
+		_float4x4 WorldMatrix, ViewMatrix, ProjMatrix;
+
+		_float3 vEye = { (m_pBuffer->Get_TerrainSizeX() * 0.5f),
+			500.f, (m_pBuffer->Get_TerrainSizeZ() * 0.5f) };
+		_float3 vAt = { (m_pBuffer->Get_TerrainSizeX() * 0.5f),
+			0.f, (m_pBuffer->Get_TerrainSizeZ() * 0.5f) };
+		_float3 vUp = { 0.f, 0.f, 1.f };
+
+		ViewMatrix = XMMatrixLookAtLH(vEye, vAt, vUp);
+
+		if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
+			return E_FAIL;
+
+		if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", &ViewMatrix)))
+			return E_FAIL;
+
+		if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
+			return E_FAIL;
+
+		m_pShader->Begin("Terrain_Brush");
+
+		if (FAILED(m_pBuffer->Render()))
+			return E_FAIL;
+
+		m_eRenderCount = RT_END;
+
+		ENDINSTANCE;
+	}
+#endif // _DEBUG
 
 	return S_OK;
 }

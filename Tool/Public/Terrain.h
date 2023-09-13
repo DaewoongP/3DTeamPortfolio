@@ -14,6 +14,9 @@ BEGIN(Tool)
 
 class CTerrain final : public CGameObject
 {
+	// 일반 렌더인지 브러싱용 렌더인지 정해줌
+	enum eRenderType { RT_NORMAL, RT_BRUSHING, RT_END };
+
 	typedef struct BrushDesc
 	{
 		_float3 vPos; // 위치
@@ -63,6 +66,9 @@ private:
 
 	_uint				m_iDiffuseTextureIndex = { 0 }; // 기본 지형 텍스처
 	_uint				m_iBrushTextureIndex = { 1 };	// 그려줄 지형 텍스처
+
+	_float4x4 m_ViewMatrix, m_ProjMatrix;
+	eRenderType	m_eRenderCount = { RT_END }; // 랜더 순서를 정해주는 변수
 
 private:
 	CShader*			m_pShader = { nullptr };
