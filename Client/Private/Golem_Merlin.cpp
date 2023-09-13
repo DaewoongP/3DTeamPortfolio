@@ -93,7 +93,7 @@ HRESULT CGolem_Merlin::Render()
 		{
 			wstring wstrErrorMSG = TEXT("[CGolem_Merlin] Failed Render : ");
 			wstrErrorMSG += pErrorTag;
-			MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+			MSG_BOX(wstrErrorMSG.c_str());
 
 			return E_FAIL;
 		}
@@ -159,7 +159,7 @@ HRESULT CGolem_Merlin::Add_Components()
 	{
 		wstring wstrErrorMSG = TEXT("[CGolem_Merlin] Failed Add_Components : ");
 		wstrErrorMSG += pErrorTag;
-		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+		MSG_BOX(wstrErrorMSG.c_str());
 
 		return E_FAIL;
 	}
@@ -192,7 +192,7 @@ HRESULT CGolem_Merlin::SetUp_ShaderResources()
 	{
 		wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed SetUp_ShaderResources : \n");
 		wstrErrorMSG += pErrorTag;
-		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+		MSG_BOX(wstrErrorMSG.c_str());
 
 		ENDINSTANCE;
 

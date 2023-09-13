@@ -9,8 +9,6 @@
 
 BEGIN(Engine)
 class CShader;
-class CVIBuffer_Line;
-class CVIBuffer_Triangle;
 
 class ENGINE_DLL CCharacterController final : public CComposite
 {
@@ -43,23 +41,14 @@ private:
 #ifdef _DEBUG
 private:
 	CShader*				m_pShader = { nullptr };
-	CVIBuffer_Line*			m_pLine = { nullptr };
-	CVIBuffer_Triangle*		m_pTriangle = { nullptr };
+
 	_float4					m_vColor;
-
-private:
-	_uint					m_iNumLineBuffer = { 0 };
-	_uint					m_iStartLineBufferIndex = { 0 };
-
-	_uint					m_iNumTriangleBuffer = { 0 };
-	_uint					m_iStartTriangleBufferIndex = { 0 };
 #endif // _DEBUG
 
 #ifdef _DEBUG
 private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
-	void Make_Buffers();
 #endif // _DEBUG
 
 public:

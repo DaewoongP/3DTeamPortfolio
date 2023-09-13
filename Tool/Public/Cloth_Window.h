@@ -19,6 +19,7 @@ private: /* window 에서만 사용하는 구조체입니다 */
 		_char* pVertexName = { nullptr };
 		_uint iVertexIndex = { 0 };
 		_float3 vVertexPosition;
+		// 피킹된 점을 표시하기 위한 콜라이더
 		CCollider* pCollider = { nullptr };
 	}CLOTHVERTEX;
 
@@ -82,6 +83,9 @@ private:
 	void Input_Options(_float fTimeDelta);
 	void Delete_CapsuleCollider(_bool& _isModified);
 	_bool isValid_Dummy();
+	void Make_Data();
+	void Save_Data(const _tchar* szSaveDataPath);
+	void Load_Data(const _tchar* szLoadDataPath);
 
 private:
 	void Update_Cloth();

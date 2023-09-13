@@ -33,6 +33,10 @@ public:
 		if (nullptr == m_pCurrent_Dynamic_Mesh) return vector<_float>();
 		return m_pCurrent_Dynamic_Mesh->Get_InvMasses(); 
 	}
+	vector<_float3> Get_VertexPositions() {
+		if (nullptr == m_pCurrent_Dynamic_Mesh) return vector<_float3>();
+		return m_pCurrent_Dynamic_Mesh->Get_VertexPositions();
+	}
 	_bool Get_VertexIndex_By_Picking(_Inout_ _uint* pVertexIndex, _Inout_ _float3* pPickPosition);
 	void Set_Model_Component(CCustomModel::MESHTYPE _eMeshType, const _tchar* _pModelTag);
 	void Set_MeshIndex(_uint _iMeshIndex);
@@ -40,6 +44,7 @@ public:
 	void Set_WireFrame(_bool _isWireFrame) { m_isWireFrame = _isWireFrame; }
 	void Set_MeshHighLight(_bool _isMeshHighLight) { m_isMeshHighLight = _isMeshHighLight; }
 	void Set_CapsuleCollider(vector<pair<_float3, _float>> Capsules);
+	void Set_WindVelocity(_float3 vWindVelocity) { m_pModelCom->Set_WindVelocity(vWindVelocity); }
 
 public:
 	virtual HRESULT Initialize_Prototype();

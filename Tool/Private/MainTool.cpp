@@ -347,9 +347,19 @@ HRESULT CMainTool::Ready_Prototype_Component()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/NonAnims/SM_SpherePrimitiveRegularNormals_01/T_Default_Material_Grid_M.png")))))
 		return E_FAIL;
 
+	/* Prototype_Component_Texture_Ground */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Texture_Ground"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Terrain/Ground/Ground%d.dds"), 4))))
+		return E_FAIL;
+
 	/* Prototype_Component_Sphere_Collider*/
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Sphere_Collider"),
 		CCollider::Create(m_pDevice, m_pContext,CCollider::TYPE_SPHERE))))
+		return E_FAIL;
+	
+	/* Prototype_Component_RigidBody*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_RigidBody"),
+		CRigidBody::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* Prototype_Component_Model_SM_SpherePrimitiveRegularNormals_01*/

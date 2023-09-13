@@ -19,7 +19,10 @@ HRESULT CRandomChoose::Tick(const _float& fTimeDelta)
 		return E_FAIL;
 
 	if (false == Check_Decorations())
+	{
+		Set_Random_Behavior();
 		return BEHAVIOR_FAIL;
+	}
 
 	HRESULT hr = (*m_iterCurBehavior)->Tick(fTimeDelta);
 
@@ -30,18 +33,7 @@ HRESULT CRandomChoose::Tick(const _float& fTimeDelta)
 
 	if (BEHAVIOR_RUNNING != hr)
 	{
-		CCalculator* pCalculator = CCalculator::GetInstance();
-		Safe_AddRef(pCalculator);
-
-		_uint iIndex = pCalculator->RandomChoose(m_ChildWeights, (_uint)m_Behaviors.size());
-
-		Safe_Release(pCalculator);
-
-		if (-1 == iIndex)
-			return E_FAIL;
-
-		while (0 < iIndex--)
-			++m_iterCurBehavior;
+		Set_Random_Behavior();
 	}
 
 	return hr;
@@ -68,6 +60,24 @@ HRESULT CRandomChoose::Assemble_Behavior(const wstring& BehaviorTag, CBehavior* 
 	Safe_Release(pCalculator);
 
 	return S_OK;
+}
+
+void CRandomChoose::Set_Random_Behavior()
+{
+	m_iterCurBehavior = m_Behaviors.begin();
+
+	CCalculator* pCalculator = CCalculator::GetInstance();
+	Safe_AddRef(pCalculator);
+
+	_uint iIndex = pCalculator->RandomChoose(m_ChildWeights, (_uint)m_Behaviors.size());
+
+	Safe_Release(pCalculator);
+
+	if (-1 == iIndex)
+		return;
+
+	while (0 < iIndex--)
+		++m_iterCurBehavior;
 }
 
 CRandomChoose* CRandomChoose::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

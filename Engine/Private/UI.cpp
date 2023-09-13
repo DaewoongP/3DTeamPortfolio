@@ -32,7 +32,7 @@ HRESULT CUI::Initialize_Prototype(_uint iWinSizeX, _uint iWinSizeY)
 	m_iWinSizeY = iWinSizeY;
 
 	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
-	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(m_iWinSizeX, m_iWinSizeY, 0.f, 1.f));
+	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(_float(m_iWinSizeX), _float(m_iWinSizeY), 0.f, 1.f));
 
 	return S_OK;
 }
@@ -139,8 +139,6 @@ HRESULT CUI::Save(HANDLE hFile, _ulong& dwByte)
 {
 	wstring strPath = L"3DTeamPortfolio";
 	wstring strFullPath = m_wszTexturePath;
-
-	strFullPath.find(strPath);
 
 	_uint found = strFullPath.find(strPath);
 

@@ -208,11 +208,6 @@ void CModel::Play_Animation(_float fTimeDelta, ANIMTYPE eType, CTransform* pTran
 	CAnimation* currentAnimation = m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex];
 	if (currentAnimation->Invalidate_AccTime(fTimeDelta) || m_tAnimationDesc[eType].isResetAnimTrigger)
 	{
-		// 애니메이션 종료 체크 ( 루프 일 경우 계속 false )
-		m_isFinishAnimation = currentAnimation->Get_Duration() <
-			currentAnimation->Get_Accmulation() &&
-			!currentAnimation->Get_LoopAnim();
-
 		//애니메이션 리셋해줘
 		currentAnimation->Reset();
 		m_BeginRootMatrix = pTransform->Get_WorldMatrix();
@@ -242,6 +237,10 @@ void CModel::Play_Animation(_float fTimeDelta, ANIMTYPE eType, CTransform* pTran
 			
 		
 	}
+	// 애니메이션 종료 체크 ( 루프 일 경우 계속 false )
+	m_isFinishAnimation = currentAnimation->Get_Duration() <=
+		currentAnimation->Get_Accmulation() &&
+		!currentAnimation->Get_LoopAnim();
 
 	//노티파이 돌리기
 	currentAnimation->Invalidate_Frame(fTimeDelta);

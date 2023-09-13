@@ -100,19 +100,26 @@ namespace Engine
 		PX_UNUSED(constantBlockSize);
 		PX_UNUSED(constantBlock);
 
+		// Trigger
+		if ((attribute0 & physx::PxFilterObjectFlag::eTRIGGER) != 0 || 
+			(attribute1 & physx::PxFilterObjectFlag::eTRIGGER) != 0)
+		{
+			pairFlags |= physx::PxPairFlag::eTRIGGER_DEFAULT;
+			return physx::PxFilterFlag::eDEFAULT;
+		}
+		
+		pairFlags = PxPairFlag::eCONTACT_DEFAULT
+			| PxPairFlag::eNOTIFY_TOUCH_FOUND
+			| PxPairFlag::eNOTIFY_TOUCH_PERSISTS
+			| PxPairFlag::eNOTIFY_TOUCH_LOST;
+
 		if (PxFilterObjectType::eRIGID_STATIC == PxGetFilterObjectType(attribute0) ||
 			PxFilterObjectType::eRIGID_STATIC == PxGetFilterObjectType(attribute1))
 		{
-			pairFlags = PxPairFlag::eSOLVE_CONTACT | PxPairFlag::eDETECT_DISCRETE_CONTACT;
+			if (0 == filterData0.word0)
+				pairFlags = PxPairFlag::eCONTACT_DEFAULT;
 		}
-		else
-		{
-			pairFlags = PxPairFlag::eSOLVE_CONTACT | PxPairFlag::eDETECT_DISCRETE_CONTACT
-				| PxPairFlag::eNOTIFY_TOUCH_FOUND
-				| PxPairFlag::eNOTIFY_TOUCH_PERSISTS
-				| PxPairFlag::eNOTIFY_TOUCH_LOST;
-		}
-
+		
 		return PxFilterFlag::eDEFAULT;
 	}
 
@@ -201,6 +208,9 @@ namespace Engine
 	template<typename T>
 	T Random_Generator(T _lowBound, T _highBound)
 	{
+		if (_lowBound > _highBound)
+			std::swap(_lowBound, _highBound);
+
 		// static을 사용하여 같은 엔진이 반복적으로 초기화되지 않도록 합니다.
 		static std::default_random_engine RandGenerator(std::chrono::system_clock::now().time_since_epoch().count());
 
@@ -327,5 +337,21 @@ namespace Engine
 		std::string strTo(size_needed, 0);
 		WideCharToMultiByte(CP_UTF8, 0, &wstr[0], (int)wstr.size(), &strTo[0], size_needed, NULL, NULL);
 		return strTo;
+	}
+
+	template<typename T>
+	typename std::list<T>::iterator TransitionTo(typename std::list<T>::iterator& _iter, std::list<T>& _source, std::list<T>& _dest)
+	{
+		typename std::list<T>::iterator next_it = std::next(_iter);
+		_dest.splice(_dest.end(), _source, _iter);
+		return next_it;
+	}
+
+	template<typename T>
+	typename std::vector<T>::iterator TransitionTo(typename std::vector<T>::iterator& _iter, std::vector<T>& _source, std::vector<T>& _dest)
+	{
+		typename std::vector<T>::iterator next_it = std::next(_iter);
+		_dest.splice(_dest.end(), _source, _iter);
+		return next_it;
 	}
 }

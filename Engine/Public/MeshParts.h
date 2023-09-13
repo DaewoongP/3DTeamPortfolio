@@ -46,6 +46,7 @@ public:
 	void Set_MeshType(CCustomModel::MESHTYPE _eType) {
 		m_eMeshType = _eType;
 	}
+	void Set_WindVelocity(_float3 vWindVelocity);
 
 public:
 	virtual HRESULT Initialize_Prototype(const wstring& _wstrMeshPartsFilePath, const wstring& _wstrMeshPartsTag);
@@ -73,6 +74,9 @@ private: /* For.Meshes */
 	_uint						m_iNumMeshes = { 0 };
 	vector<class CMesh*>		m_Meshes;
 
+	// Dynamic Mesh Index
+	vector<_uint>				m_DynamicMeshIndices;
+
 private: /* For.Materials */
 	_uint						m_iNumMaterials = { 0 };
 	vector<MESHMATERIAL>		m_Materials;
@@ -85,8 +89,8 @@ private:
 
 	void Release_FileDatas();
 
-private:
-
+private: /* cloth */
+	HANDLE Read_ClothIndexData(const _tchar* szClothDataFilePath, _uint iMeshIndex);
 
 public:
 	static CMeshParts* Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, 

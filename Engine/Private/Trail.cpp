@@ -4,13 +4,20 @@
 CTrail::CTrail(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
-	m_wstrPath = { TEXT("../../Resources/Effects/Textures/Default_Particle.png") };
+
 }
 
 CTrail::CTrail(const CTrail& rhs)
 	: CGameObject(rhs)
+	, m_iLevel(rhs.m_iLevel)
 	, m_wstrPath(rhs.m_wstrPath)
+	, m_iTrailNum(rhs.m_iTrailNum)
+	, m_PivotMatrix(rhs.m_PivotMatrix)
+	, m_HighLocalMatrix(rhs.m_HighLocalMatrix)
+	, m_LowLocalMatrix(rhs.m_LowLocalMatrix)
+	, m_isEnable(rhs.m_isEnable)
 {
+
 }
 
 HRESULT CTrail::Initialize_Prototype(const _tchar* _pDirectoryPath, _uint _iLevel)
@@ -24,34 +31,45 @@ HRESULT CTrail::Initialize_Prototype(const _tchar* _pDirectoryPath, _uint _iLeve
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
+	m_iLevel = _iLevel;
 	// 필요한 텍스처가 없으면 로드하는 로직.
 	// 파일명을 통해 태그를 만든다.
 	wstring ProtoTag;
 
 	// 필요한 원본 버퍼가 없을 시에 컴포넌트 매니저에 원본 추가.
 	ProtoTag = ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_wstrPath.c_str());
-	if (nullptr == pGameInstance->Find_Prototype(_iLevel, ProtoTag.data()))
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, ProtoTag.data()))
 	{
 		// 없으면 원본을 추가한다.
-		pGameInstance->Add_Prototype(_iLevel
+		pGameInstance->Add_Prototype(m_iLevel
 			, ProtoTag.data()
 			, CTexture::Create(m_pDevice, m_pContext, m_wstrPath.c_str()));
 	}
 
-	// 필요한 원본 텍스처가 없을 시에 컴포넌트 매니저에 원본 추가.
-	if (nullptr == pGameInstance->Find_Prototype(_iLevel, TEXT("Prototype_Component_VIBuffer_Rect_Trail")))
+	// 필요한 텍스처가 없을 시에 컴포넌트 매니저에 원본 추가.
+	ProtoTag = TEXT("Prototype_Component_Texture_CustomLinearGradient");
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, ProtoTag.data()))
 	{
 		// 없으면 원본을 추가한다.
-		pGameInstance->Add_Prototype(_iLevel
+		pGameInstance->Add_Prototype(m_iLevel
+			, ProtoTag.data()
+			, CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Textures/Gradients/CustomLinearGradient.png")));
+	}
+
+	// 필요한 원본 텍스처가 없을 시에 컴포넌트 매니저에 원본 추가.
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_Component_VIBuffer_Rect_Trail")))
+	{
+		// 없으면 원본을 추가한다.
+		pGameInstance->Add_Prototype(m_iLevel
 			, TEXT("Prototype_Component_VIBuffer_Rect_Trail")
 			, CVIBuffer_Rect_Trail::Create(m_pDevice, m_pContext));
 	}
 
-	// 필요한 원본 셰이더 없을 시에 컴포넌트 매니저에 원본 추가.
-	if (nullptr == pGameInstance->Find_Prototype(_iLevel, TEXT("Prototype_Component_Shader_Trail")))
+	// 필요한 원본 셰이더가 없을 시에 컴포넌트 매니저에 원본 추가.
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_Component_Shader_Trail")))
 	{
 		// 없으면 원본을 추가한다.
-		pGameInstance->Add_Prototype(_iLevel
+		pGameInstance->Add_Prototype(m_iLevel
 			, TEXT("Prototype_Component_Shader_Trail")
 			, CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Trail.hlsl"),
 				VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements));
@@ -76,6 +94,8 @@ HRESULT CTrail::Initialize(void* pArg)
 
 void CTrail::Tick(_float fTimeDelta)
 {
+	if (false == m_isEnable)
+		return;
 	__super::Tick(fTimeDelta);
 
 	if (nullptr != m_pBuffer)
@@ -84,10 +104,13 @@ void CTrail::Tick(_float fTimeDelta)
 
 void CTrail::Late_Tick(_float fTimeDelta)
 {
+	if (false == m_isEnable)
+		return;
+
 	__super::Late_Tick(fTimeDelta);
 
 	if (nullptr != m_pRenderer)
-		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONLIGHT, this);
+		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BLEND, this);
 }
 
 HRESULT CTrail::Render()
@@ -114,26 +137,31 @@ HRESULT CTrail::Add_Components()
 			throw(TEXT("Com_Renderer"));
 
 		/* Com_Shader */
-		if (FAILED(CComposite::Add_Component(0, TEXT("Prototype_Component_Shader_DefaultEffect"),
+		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_Component_Shader_Trail"),
 			TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
 			throw(TEXT("Com_Shader"));
 
 		/* Com_Texture */
-		if (FAILED(CComposite::Add_Component(0, ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_wstrPath.c_str()).c_str(),
+		if (FAILED(CComposite::Add_Component(m_iLevel, ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_wstrPath.c_str()).c_str(),
 			TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTexture))))
 			throw(TEXT("Com_Texture"));
 
+		/* Com_GradientTexture */
+		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_Component_Texture_CustomLinearGradient"),
+			TEXT("Com_GradientTexture"), reinterpret_cast<CComponent**>(&m_pGradientTexture))))
+			throw(TEXT("Com_GradientTexture"));
+
 		/* Com_Buffer */
 		CVIBuffer_Rect_Trail::TRAILDESC trailDesc;
-		m_HighLocalMatrix.Translation(_float3(0.f, 1.f, 0.f));
-		m_LowLocalMatrix.Translation(_float3(0.f, -1.f, 0.f));
+		m_HighLocalMatrix.Translation(_float3(0.f, m_fWidth * 0.5f, 0.f));
+		m_LowLocalMatrix.Translation(_float3(0.f, -m_fWidth * 0.5f, 0.f));
 
-		trailDesc.iTrailNum = 20;
+		trailDesc.iTrailNum = m_iTrailNum;
 		trailDesc.pHighLocalMatrix = &m_HighLocalMatrix;
 		trailDesc.pLowLocalMatrix = &m_LowLocalMatrix;
 		trailDesc.pPivotMatrix = &m_PivotMatrix;
 		trailDesc.pWorldMatrix = m_pTransform->Get_WorldMatrixPtr();
-		if (FAILED(CComposite::Add_Component(0, TEXT("Prototype_Component_VIBuffer_Rect_Trail"),
+		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_Component_VIBuffer_Rect_Trail"),
 			TEXT("Com_Buffer"), reinterpret_cast<CComponent**>(&m_pBuffer), &trailDesc)))
 			throw(TEXT("Com_Buffer"));
 	}
@@ -153,9 +181,7 @@ HRESULT CTrail::SetUp_ShaderResources()
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	//_float4x4 WorldMatrix = m_pTransform->Get_WorldMatrix();
 	_float4x4 WorldMatrix = _float4x4();
-
 	try
 	{
 		if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", &WorldMatrix)))
@@ -167,15 +193,24 @@ HRESULT CTrail::SetUp_ShaderResources()
 		if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
 			throw "g_ProjMatrix";
 
-		if (FAILED(m_pTexture->Bind_ShaderResource(m_pShader, "g_Texture")))
-			throw "g_Texture";
+		if (FAILED(m_pTexture->Bind_ShaderResource(m_pShader, "g_AlphaTexture")))
+			throw "g_AlphaTexture";
+
+		if (FAILED(m_pGradientTexture->Bind_ShaderResource(m_pShader, "g_GradientTexture")))
+			throw "g_GradientTexture";
+
+		if (FAILED(m_pShader->Bind_RawValue("g_vHeadColor", &m_vHeadColor, sizeof m_vHeadColor)))
+			throw "g_vHeadColor";
+
+		if (FAILED(m_pShader->Bind_RawValue("g_vTailColor", &m_vTailColor, sizeof m_vTailColor)))
+			throw "g_vTailColor";
 	}
 	catch (const _tchar* pErrorTag)
 	{
 		wstring wstrErrorMSG = TEXT("Failed SetupResources : ");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
-		
+
 		Safe_Release(pGameInstance);
 		return E_FAIL;
 	}
@@ -218,4 +253,5 @@ void CTrail::Free()
 	Safe_Release(m_pShader);
 	Safe_Release(m_pBuffer);
 	Safe_Release(m_pTexture);
+	Safe_Release(m_pGradientTexture);
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Engine_Defines.h"
+#include "Ease.h"
 
 // 객체 : 모든 파티클을 돌리는 ParticleSystem의 인스턴스를 뜻함.
 // 파티클 : 각 입자들을 의미함.
@@ -20,6 +21,7 @@ struct ENGINE_DLL MAIN_MODULE : public MODULE
 
 	HRESULT Save(const _tchar* _pDirectoyPath);
 	HRESULT Load(const _tchar* _pDirectoyPath);
+	void Restart();
 
 	_bool isEnable = { true };
 	_float fParticleSystemAge = { 0.f };
@@ -59,9 +61,10 @@ struct ENGINE_DLL EMISSION_MODULE : public MODULE
 {
 	EMISSION_MODULE() : MODULE() { __super::isActivate = true; };
 	~EMISSION_MODULE() { Bursts.clear(); }
-
+	
 	HRESULT Save(const _tchar* _pDirectoyPath);
 	HRESULT Load(const _tchar* _pDirectoyPath);
+	void Restart();
 
 	typedef struct tagBurst
 	{
@@ -89,8 +92,9 @@ struct ENGINE_DLL SHAPE_MODULE : public MODULE
 
 	HRESULT Save(const _tchar* _pDirectoyPath);
 	HRESULT Load(const _tchar* _pDirectoyPath);
+	void Restart();
 
-	string strShape = { "Sphere" }; // Shpere, HemiSphere, Cone, Dount, Box, Mesh, Sprite, Circle, Rectangle
+	string strShape = { "Sphere" }; // Shpere, Box, Mesh, Sprite, Rectangle
 	string strBoxEmitFrom = { "Volume" }; // Volume, Sheel, Edge
 
 	string strMeshType = { "Vertex" }; // Vertex, Edge, Triangle
@@ -102,16 +106,25 @@ struct ENGINE_DLL SHAPE_MODULE : public MODULE
 	_bool isUseMeshColors = { true }; // 버퍼의 꼭지점이 가진 색상을 입자와 섞는다.
 	_float fNormalOffset = { 0.f }; // 0인 경우 메쉬의 노말벡터의 꼬리에서 시작, 오프셋 값 만큼 시작위치는 노말 벡터 방향으로 이동한다.
 	
-	_float fLength = { 5.f };
 	string strConeEmitFrom = { "Base" }; // Base, Volume
-	_float fAngle = { 25.f };
-	_float fRadius = { 1.f };
-	_float fDonutRadius = { 0.2f };
-	_float fRadiusThickness = { 1.f }; // [0, 1]
 
-	_float fArc = { 360.f };
-	   string strArcMode = { "Random" }; // Random, Loop, Ping-Pong, Burst_Spread
-	  _float fSpread = { 0.f }; // [0, 1]
+	_bool isfLengthRange = { false };
+	_float2 vLength = { 0.f, 5.f };
+
+	_bool isPhiRange = { true };
+	_float2 vPhi = { 0.f, 360.f };
+	   string strPhiMode = { "Random" }; // Random, Loop, Ping-Pong, Burst_Spread
+	  _float fPhiSpread = { 0.f }; // [0, 1]
+
+	_bool isThetaRange = { true };
+	_float2 vTheta = { 0.f, 360.f };
+	   string strThetaMode = { "Random" }; // Random, Loop, Ping-Pong, Burst_Spread
+	  _float fThetaSpread = { 0.f }; // [0, 1] 1에 가까울수록 전 지점에서 터짐.
+
+	_float fLoopPhi = { 0.f };
+	_float fLoopTheta = { 0.f };
+	_float fPhiInterval = { 1.f };
+	_float fThetaInterval = { 1.f };
 
 	wstring wstrClipTexturePath = { TEXT("../../Resources/Effects/Textures/Default_Particle.png") }; // 아래 인자의 채널에 사용할 텍스처
 	string strClipChannel = { "Red" }; // Red, Greend, Blue, Alpha // 클립 채널(클립 : 알파테스트로 discard)
@@ -128,6 +141,8 @@ struct ENGINE_DLL SHAPE_MODULE : public MODULE
 	_float fRandomizeDirection = { 0.f }; //[0, 1]
 	_float fSpherizeDirection = { 0.f };  //[0, 1]
 	_float fRandomizePosition = { 0.f };
+
+
 };
 struct ENGINE_DLL RENDERER_MODULE : public MODULE
 {
@@ -135,11 +150,57 @@ struct ENGINE_DLL RENDERER_MODULE : public MODULE
 
 	HRESULT Save(const _tchar* _pDirectoyPath);
 	HRESULT Load(const _tchar* _pDirectoyPath);
+	void Restart();
 
 	wstring wstrShaderTag = { TEXT("Shader_VtxRectColInstance") };
 	wstring wstrMaterialPath = { TEXT("../../Resources/Effects/Textures/Default_Particle.png") };
 };
+struct ENGINE_DLL ROTATION_OVER_LIFETIME_MODULE : public MODULE
+{
+	ROTATION_OVER_LIFETIME_MODULE() : MODULE() { };
 
+	HRESULT Save(const _tchar* _pDirectoyPath);
+	HRESULT Load(const _tchar* _pDirectoyPath);
+	void Restart();
+
+	// 자체 회전에 사용할 값들
+	_bool isSeperateAxes = { false }; // 비 활성화시 기본 Z축사용
+	_float3 AngularVelocityXYZ = { 0.f, 0.f, 0.f };
+
+	// 원 운동에 사용할 값들.
+	_bool isFlipOption = { false };
+	_float fFlipProperty = { 0.f }; // [0, 1] 확률적으로 반대방향으로 회전한다.
+	_float fRadius = { 0.f }; // 회전할 원의 반지름
+	_float fSpeed = { 1.f }; // 원운동 속도
+};
+struct ENGINE_DLL COLOR_OVER_LIFETIME : public MODULE
+{
+	COLOR_OVER_LIFETIME() : MODULE() { };
+
+	HRESULT Save(const _tchar* _pDirectoyPath);
+	HRESULT Load(const _tchar* _pDirectoyPath);
+	void Restart();
+
+	_float4 vStartColor = { 0.f, 0.f, 0.f, 1.f };
+	_float4 vEndColor = { 1.f, 1.f, 1.f, 1.f };
+
+	CEase::EASE eEase = { CEase::OUT_QUINT };
+};
+struct ENGINE_DLL SIZE_OVER_LIFETIME : public MODULE
+{
+	SIZE_OVER_LIFETIME() : MODULE() { };
+
+	HRESULT Save(const _tchar* _pDirectoyPath);
+	HRESULT Load(const _tchar* _pDirectoyPath);
+	void Restart();
+
+	_bool isSeparateAxes = { false };
+	_float3 vSizeXYZ = { 1.f, 1.f, 1.f };
+	_float fSize = { 1.f };
+	_float2 vSizeRange = { 0.f, 1.f };
+
+	_float fSizeTimeAcc = { 0.f };
+};
 typedef struct tagParticle
 {
 	_float		fAge = { 0.f };
@@ -150,6 +211,7 @@ typedef struct tagParticle
 	_float		fGenTime = { 0.f };
 	_float      fLifeTime = { 0.f };
 	_float		fAngle = { 0.f };
+	_float		fCircularMotionAngle = { 0.f };
 	_float4		vColor = { 1.f, 1.f, 1.f, 1.f };
 	_float3		vScale = { 1.f, 1.f, 1.f };
 }PARTICLE;

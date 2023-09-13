@@ -170,8 +170,8 @@ _int CCalculator::RandomChoose(vector<_float> Weights, _uint iChooseSize)
 		}
 
 		// 마지막 인덱스 예외처리.
-		if (iIndex + 1 == Weights.size() - 1)
-			return iIndex + 1;
+		if (iIndex == Weights.size() - 1)
+			return iIndex;
 		else
 		{
 			Weights[iIndex + 1] += Weights[iIndex];
@@ -305,6 +305,28 @@ _float3 CCalculator::GetVectorSlerp(_float3 v1, _float3 v2, _float3 vUp, _float 
 	vOut = XMVector3TransformCoord(OV1, RotationMatrix);
 
 	return vCenter + vOut;
+}
+
+_float4x4 CCalculator::RightUpLook_In_Vectors(_float3 vSourPos, _float3 vDestPos)
+{
+	_float4x4 ResultMatrix = _float4x4();
+
+	_float3 vRight, vUp, vLook;
+	
+	vLook = vSourPos - vDestPos;
+	vLook.Normalize();
+	vUp = _float3(0.f, 1.f, 0.f);
+	vRight = vUp.Cross(vLook);
+	vUp = vLook.Cross(vRight);
+
+	vRight.Normalize();
+	vUp.Normalize();
+
+	ResultMatrix.Right(vRight);
+	ResultMatrix.Up(vUp);
+	ResultMatrix.Look(vLook);
+
+	return ResultMatrix;
 }
 
 void CCalculator::Free()

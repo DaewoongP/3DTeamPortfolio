@@ -9,6 +9,7 @@
 #pragma warning (disable : 26495) // Value Initialize
 #pragma warning (disable : 6387) // Inout Value NULL
 #pragma warning (disable : 4267) // size_t to uint change
+#pragma warning (disable : 4018) // signed, unsigned comp
 
 #define DIRECTINPUT_VERSION		0x0800
 #include <dinput.h>
@@ -106,6 +107,10 @@ using namespace nv; // nvCloth
 #include "Engine_Struct.h"
 
 #include "Engine_Converter.h"
+
+#ifdef _DEBUG
+#include "Debug_Functions.h"
+#endif // _DEBUG
 
 #ifdef _DEBUG
 

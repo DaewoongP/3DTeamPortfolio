@@ -61,9 +61,7 @@ void CCamera_Debug::Tick(_float fTimeDelta)
 
 #ifdef _DEBUG
 	Debug_ImGui(fTimeDelta);
-#endif // _DEBUG
-
-
+#endif // _DEBUG	
 }
 
 void CCamera_Debug::Key_Input(const _float& fTimeDelta)
