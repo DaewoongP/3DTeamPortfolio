@@ -101,9 +101,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	if (FAILED(pGameInstance->Add_Timer(TEXT("Timer_Default"))))
+	if (FAILED(pGameInstance->Add_QueryTimer(TEXT("Timer_Default"))))
 		return FALSE;
-	if (FAILED(pGameInstance->Add_Timer(TEXT("MainTimer"))))
+	if (FAILED(pGameInstance->Add_QueryTimer(TEXT("MainTimer"))))
 		return FALSE;
 
     MSG msg;
@@ -124,13 +124,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 			}
         }
 
-		pGameInstance->Tick_Timer(TEXT("Timer_Default"));
-		fTimerAcc += pGameInstance->Get_TimeDelta(TEXT("Timer_Default"));
+		pGameInstance->Tick_QueryTimer(TEXT("Timer_Default"));
+		fTimerAcc += pGameInstance->Get_QueryTimeDelta(TEXT("Timer_Default"));
 
 		if (fTimerAcc >= 1.f / g_fFrame)
 		{
-			pGameInstance->Tick_Timer(TEXT("MainTimer"));
-			pMainTool->Tick(pGameInstance->Get_TimeDelta(TEXT("MainTimer")));
+			pGameInstance->Tick_QueryTimer(TEXT("MainTimer"));
+			pMainTool->Tick(pGameInstance->Get_QueryTimeDelta(TEXT("MainTimer")));
 			
 			pMainTool->Render();
 

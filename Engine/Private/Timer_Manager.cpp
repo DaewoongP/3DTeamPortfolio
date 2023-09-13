@@ -7,7 +7,16 @@ CTimer_Manager::CTimer_Manager()
 {
 }
 
-_float CTimer_Manager::Get_TimeDelta(const _tchar* pTimerTag)
+_float CTimer_Manager::Get_TimeAcc(const wstring& wstrTimerTag) const
+{
+	auto iter = m_Timers.find(wstrTimerTag);
+	if (m_Timers.end() == iter)
+		return 0.f;
+
+	return iter->second.m_fTimeAcc;
+}
+
+_float CTimer_Manager::Get_QueryTimeDelta(const _tchar* pTimerTag)
 {
 	CTimer*		pTimer = Find_Timer(pTimerTag);
 
@@ -17,7 +26,88 @@ _float CTimer_Manager::Get_TimeDelta(const _tchar* pTimerTag)
 	return pTimer->Get_TimeDelta();
 }
 
-HRESULT CTimer_Manager::Add_Timer(const _tchar* pTimerTag)
+void CTimer_Manager::Tick(const _float& fTimeDelta)
+{
+	m_fWorldTimeAcc += fTimeDelta;
+
+	m_fWorldTick = fTimeDelta;
+
+	for (auto& Pair : m_Timers)
+		Pair.second.m_fTimeAcc += fTimeDelta;
+}
+
+HRESULT CTimer_Manager::Add_Timer(const wstring& _wstrTimerTag, _bool _isRepeat, const _float fDuration)
+{
+	auto Timer = m_Timers.find(_wstrTimerTag);
+
+	if (m_Timers.end() != Timer)
+	{
+		MSG_BOX("[CTime_Manager] Tag is duplicate Tag");
+		return E_FAIL;
+	}
+
+	ALARMDESC AlarmDesc;
+	AlarmDesc.m_fDuration = fDuration;
+	AlarmDesc.m_isRepeat = _isRepeat;
+	AlarmDesc.m_fTimeAcc = 0.f;
+
+	m_Timers.emplace(_wstrTimerTag, AlarmDesc);
+
+	return S_OK;
+}
+
+HRESULT CTimer_Manager::Remove_Timer(const wstring& wstrTimerTag)
+{
+	auto Timer = m_Timers.find(wstrTimerTag);
+
+	if (m_Timers.end() == Timer)
+	{
+		MSG_BOX("[CTime_Manager] Tag is not in Container");
+		return E_FAIL;
+	}
+
+	m_Timers.erase(Timer);
+
+	return S_OK;
+}
+
+HRESULT CTimer_Manager::Reset_Timer(const wstring& wstrTimerTag)
+{
+	auto Timer = m_Timers.find(wstrTimerTag);
+
+	if (m_Timers.end() == Timer)
+	{
+		MSG_BOX("[CTime_Manager] Tag is not in Container");
+		return E_FAIL;
+	}
+
+	Timer->second.m_fTimeAcc = 0.f;
+
+	return S_OK;
+}
+
+_bool CTimer_Manager::Check_Timer(const wstring& wstrTimerTag)
+{
+	auto Timer = m_Timers.find(wstrTimerTag);
+
+	if (m_Timers.end() == Timer)
+	{
+		MSG_BOX("[CTime_Manager] Tag is not in map");
+		return false;
+	}
+
+	if (Timer->second.m_fDuration <= Timer->second.m_fTimeAcc)
+	{
+		if (true == Timer->second.m_isRepeat)
+			Timer->second.m_fTimeAcc = 0.f;
+
+		return true;
+	}
+
+	return false;
+}
+
+HRESULT CTimer_Manager::Add_QueryTimer(const _tchar* pTimerTag)
 {
 	CTimer* pTimer = Find_Timer(pTimerTag);
 
@@ -33,7 +123,7 @@ HRESULT CTimer_Manager::Add_Timer(const _tchar* pTimerTag)
 	return S_OK;
 }
 
-void CTimer_Manager::Tick_Timer(const _tchar * pTimerTag)
+void CTimer_Manager::Tick_QueryTimer(const _tchar * pTimerTag)
 {
 	CTimer*		pTimer = Find_Timer(pTimerTag);
 

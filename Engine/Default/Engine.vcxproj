@@ -30,6 +30,12 @@
     <ClInclude Include="..\public\Bounding_Sphere.h" />
     <ClInclude Include="..\Public\ConvexMesh.h" />
     <ClInclude Include="..\public\Ease.h" />
+    <ClInclude Include="..\Public\Debug_Functions.h" />
+    <ClInclude Include="..\public\Debug_Render_Box.h" />
+    <ClInclude Include="..\public\Debug_Render_Capsule.h" />
+    <ClInclude Include="..\public\Debug_Render_HeightField.h" />
+    <ClInclude Include="..\public\Debug_Render_Ring.h" />
+    <ClInclude Include="..\public\Debug_Render_Sphere.h" />
     <ClInclude Include="..\Public\Mesh_Instance.h" />
     <ClInclude Include="..\Public\Model_Instance.h" />
     <ClInclude Include="..\public\Model_LOD.h" />
@@ -38,7 +44,6 @@
     <ClInclude Include="..\public\Dynamic_Mesh.h" />
     <ClInclude Include="..\Public\JobManager.h" />
     <ClInclude Include="..\public\String_Manager.h" />
-    <ClInclude Include="..\Public\Time_Manager.h" />
     <ClInclude Include="..\public\Calculator.h" />
     <ClInclude Include="..\public\Camera.h" />
     <ClInclude Include="..\public\Camera_Manager.h" />
@@ -47,7 +52,6 @@
     <ClInclude Include="..\Public\MeshEffect.h" />
     <ClInclude Include="..\public\NVContextCallBack.h" />
     <ClInclude Include="..\Public\Parts.h" />
-    <ClInclude Include="..\public\Plane.h" />
     <ClInclude Include="..\public\PXAssertHandler.h" />
     <ClInclude Include="..\public\PXEventCallBack.h" />
     <ClInclude Include="..\Public\PhysXConverter.h" />
@@ -60,7 +64,9 @@
     <ClInclude Include="..\public\Trail.h" />
     <ClInclude Include="..\Public\TriangleMesh.h" />
     <ClInclude Include="..\Public\UI.h" />
+    <ClInclude Include="..\Public\UI_Button.h" />
     <ClInclude Include="..\Public\UI_Group.h" />
+    <ClInclude Include="..\Public\UI_Progress1.h" />
     <ClInclude Include="..\public\VIBuffer_Geometry.h" />
     <ClInclude Include="..\public\VIBuffer_GeoSphere.h" />
     <ClInclude Include="..\public\VIBuffer_Cloth.h" />
@@ -147,6 +153,11 @@
     <ClCompile Include="..\private\Bounding_Sphere.cpp" />
     <ClCompile Include="..\Private\ConvexMesh.cpp" />
     <ClCompile Include="..\Private\Ease.cpp" />
+    <ClCompile Include="..\private\Debug_Render_Box.cpp" />
+    <ClCompile Include="..\private\Debug_Render_Capsule.cpp" />
+    <ClCompile Include="..\private\Debug_Render_HeightField.cpp" />
+    <ClCompile Include="..\private\Debug_Render_Ring.cpp" />
+    <ClCompile Include="..\private\Debug_Render_Sphere.cpp" />
     <ClCompile Include="..\Private\Mesh_Instance.cpp" />
     <ClCompile Include="..\private\Model_LOD.cpp">
       <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</IncludeInUnityFile>
@@ -156,7 +167,6 @@
     <ClCompile Include="..\private\Dynamic_Mesh.cpp" />
     <ClCompile Include="..\Private\JobManager.cpp" />
     <ClCompile Include="..\private\String_Manager.cpp" />
-    <ClCompile Include="..\Private\Time_Manager.cpp" />
     <ClCompile Include="..\private\Calculator.cpp" />
     <ClCompile Include="..\private\Camera.cpp" />
     <ClCompile Include="..\private\Camera_Manager.cpp" />
@@ -165,7 +175,6 @@
     <ClCompile Include="..\private\MeshEffect.cpp" />
     <ClCompile Include="..\private\NVContextCallBack.cpp" />
     <ClCompile Include="..\Private\Parts.cpp" />
-    <ClCompile Include="..\private\Plane.cpp" />
     <ClCompile Include="..\private\PXAssertHandler.cpp" />
     <ClCompile Include="..\private\PXEventCallBack.cpp" />
     <ClCompile Include="..\private\PhysX_Manager.cpp" />
@@ -177,7 +186,9 @@
     <ClCompile Include="..\private\Trail.cpp" />
     <ClCompile Include="..\Private\TriangleMesh.cpp" />
     <ClCompile Include="..\Private\UI.cpp" />
+    <ClCompile Include="..\Private\UI_Button.cpp" />
     <ClCompile Include="..\Private\UI_Group.cpp" />
+    <ClCompile Include="..\Private\UI_Progress1.cpp" />
     <ClCompile Include="..\private\VIBuffer_Geometry.cpp" />
     <ClCompile Include="..\private\VIBuffer_GeoSphere.cpp" />
     <ClCompile Include="..\private\VIBuffer_Cloth.cpp" />

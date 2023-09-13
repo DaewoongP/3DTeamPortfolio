@@ -27,12 +27,6 @@ HRESULT CTriangleColMesh::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-	if (nullptr != pArg)
-	{
-		_float4x4* vWorldMatrix = (_float4x4*)pArg;
-		m_pTransform->Set_WorldMatrix(*vWorldMatrix);
-	}
-
 	return S_OK;
 }
 
@@ -200,7 +194,6 @@ CGameObject* CTriangleColMesh::Clone(void* pArg)
 void CTriangleColMesh::Free()
 {
 	__super::Free();
-	Safe_Release(m_pTransform);
 	Safe_Release(m_pShader);
 	Safe_Release(m_pModel);
 	Safe_Release(m_pRenderer);

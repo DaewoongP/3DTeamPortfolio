@@ -8,6 +8,7 @@ class CConvexMesh;
 class CTriangleMesh;
 class CShader;
 class CRenderer;
+class CRigidBody;
 END
 
 BEGIN(Client)
@@ -24,6 +25,9 @@ public:
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
+	virtual void OnCollisionEnter(COLLISIONDESC CollisionDesc) override;
+	virtual void OnCollisionStay(COLLISIONDESC CollisionDesc) override;
+	virtual void OnCollisionExit(COLLISIONDESC CollisionDesc) override;
 	virtual HRESULT Render() override;
 
 private:
@@ -32,6 +36,7 @@ private:
 	CRenderer*				m_pRenderer = { nullptr };
 	CConvexMesh*			m_pConvexMesh = { nullptr };
 	CTriangleMesh*			m_pTriangleMesh = { nullptr };
+	CRigidBody*				m_pRigidBody = { nullptr };
 
 private:
 	HRESULT Add_Components();

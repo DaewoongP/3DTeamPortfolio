@@ -1,7 +1,6 @@
 #include "..\Public\Dynamic_Mesh.h"
 #include "Bone.h"
 #include "PhysX_Manager.h"
-#include "PhysXConverter.h"
 
 CDynamic_Mesh::CDynamic_Mesh(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CMesh(pDevice, pContext)
@@ -13,9 +12,22 @@ CDynamic_Mesh::CDynamic_Mesh(const CDynamic_Mesh& rhs)
 {
 }
 
-HRESULT CDynamic_Mesh::Initialize_Prototype(CModel::TYPE eType, const CModel::BONES& Bones, const Engine::MESH Mesh, _float4x4 PivotMatrix, const _tchar* szClothDataFilePath)
+void CDynamic_Mesh::Set_WindVelocity(_float3 vWindVelocity)
 {
-	//Default exception : Tool_Cloth
+	if (nullptr == m_pCloth)
+		return;
+
+	if (80.f < vWindVelocity.Length())
+	{
+		vWindVelocity.Normalize();
+		vWindVelocity *= 80.f;
+	}
+
+	m_pCloth->setWindVelocity(PhysXConverter::ToPxVec3(vWindVelocity));
+}
+
+HRESULT CDynamic_Mesh::Initialize_Prototype(CModel::TYPE eType, const CModel::BONES& Bones, const Engine::MESH Mesh, _float4x4 PivotMatrix, HANDLE hFile)
+{
 	m_iMaterialIndex = Mesh.iMaterialIndex;
 	lstrcpy(m_szName, Mesh.szName);
 	m_iNumVertexBuffers = { 1 };
@@ -73,13 +85,22 @@ HRESULT CDynamic_Mesh::Initialize_Prototype(CModel::TYPE eType, const CModel::BO
 	Safe_Delete_Array(pIndices);
 #pragma endregion
 
+
 	// 질량값 초기화
 	m_InvMasses.clear();
 	m_InvMasses.resize(m_iNumVertices);
-	fill(m_InvMasses.begin(), m_InvMasses.end(), 1.f);
+	fill(m_InvMasses.begin(), m_InvMasses.end(), 0.3f);
 
-	if (FAILED(Initialize_ClothMesh()))
-		return E_FAIL;
+	if (0 == hFile)
+	{
+		if (FAILED(Initialize_ClothMesh()))
+			return E_FAIL;
+	}
+	else
+	{
+		if (FAILED(Initialize_ClothMesh(hFile)))
+			return E_FAIL;
+	}
 
 	return S_OK;
 }
@@ -95,7 +116,8 @@ void CDynamic_Mesh::Tick(_float fTimeDelta)
 		nullptr == m_pSolver)
 		return;
 
-	m_pSolver->beginSimulation(fTimeDelta);
+	// 고정 프레임
+	m_pSolver->beginSimulation(1 / 60.f);
 
 	for (_uint i = 0; i < m_pSolver->getSimulationChunkCount(); ++i)
 	{
@@ -352,6 +374,114 @@ HRESULT CDynamic_Mesh::Ready_VertexBuffer_Anim(const Engine::MESH Mesh, const CM
 	return S_OK;
 }
 
+HRESULT CDynamic_Mesh::Initialize_ClothMesh(HANDLE hFile)
+{
+	if (FAILED(Read_ClothData(hFile)))
+	{
+		MSG_BOX("Failed Read File");
+		return E_FAIL;
+	}
+
+	nv::cloth::ClothMeshDesc MeshDesc;
+	MeshDesc.setToDefault();
+	MeshDesc.points.data = m_VertexPositions.data();
+	MeshDesc.points.stride = sizeof(_float3);
+	MeshDesc.points.count = m_iNumVertices;
+
+	MeshDesc.flags = 0; // 32bit
+	MeshDesc.triangles.data = m_Indices.data();
+	MeshDesc.triangles.stride = sizeof(_ulong) * 3;
+	MeshDesc.triangles.count = m_Indices.size() / 3;
+
+	MeshDesc.invMasses.data = m_InvMasses.data();
+	MeshDesc.invMasses.stride = sizeof(_float);
+	MeshDesc.invMasses.count = m_iNumVertices;
+
+	if (false == MeshDesc.isValid())
+	{
+		MSG_BOX("Failed to Create Cloth MeshDesc");
+		return E_FAIL;
+	}
+
+	PxVec3 vGravity(0.f, -9.81f, 0.f);
+	cloth::Vector<_int>::Type PhaseTypeInfo;
+	CPhysX_Manager* pPhysX_Manager = CPhysX_Manager::GetInstance();
+	Safe_AddRef(pPhysX_Manager);
+	cloth::Factory* pClothFactory = pPhysX_Manager->Get_ClothFactory();
+	m_pFabric = NvClothCookFabricFromMesh(pClothFactory, MeshDesc, vGravity, &PhaseTypeInfo, false);
+	Safe_Release(pPhysX_Manager);
+
+	if (nullptr == m_pFabric)
+	{
+		MSG_BOX("Failed Create Fabric");
+		return E_FAIL;
+	}
+
+	vector<PxVec4>	ParticlesCopy;
+	ParticlesCopy.resize(m_iNumVertices);
+
+	for (_uint i = 0; i < m_iNumVertices; ++i)
+	{
+		ParticlesCopy[i] = physx::PxVec4(PhysXConverter::ToPxVec3(m_VertexPositions[i]), m_InvMasses[i]);
+	}
+
+	// Create Cloth
+	m_pCloth = pClothFactory->createCloth(cloth::Range<PxVec4>(&ParticlesCopy[0], &ParticlesCopy[0] + ParticlesCopy.size()), *m_pFabric);
+	ParticlesCopy.clear();
+
+	//
+	cloth::PhaseConfig* pPhases = New cloth::PhaseConfig[m_pFabric->getNumPhases()];
+	for (_int i = 0; i < m_pFabric->getNumPhases(); ++i)
+	{
+		pPhases[i].mPhaseIndex = i;
+		pPhases[i].mStiffness = 1.f;
+		pPhases[i].mStiffnessMultiplier = 1.f;
+		pPhases[i].mCompressionLimit = 1.f;
+		pPhases[i].mStretchLimit = 1.f;
+	}
+
+	m_pCloth->setPhaseConfig(cloth::Range<cloth::PhaseConfig>(pPhases, pPhases + m_pFabric->getNumPhases()));
+	Safe_Delete_Array(pPhases);
+
+	m_pSolver = pClothFactory->createSolver();
+	
+	/* 크게 건드릴게 없는 고정 옵션 값 */
+	m_pCloth->setSolverFrequency(60.f);
+	m_pCloth->setTetherConstraintScale(1.1f);
+	m_pCloth->setDragCoefficient(0.5f);
+	m_pCloth->setLiftCoefficient(0.6f);
+	//m_pCloth->setFriction(10.f);
+	m_pCloth->setWindVelocity(PxVec3(0.f, 0.f, 0.f));
+	m_pCloth->setGravity(vGravity);	
+	_float4 vQuat = XMQuaternionRotationRollPitchYaw(XMConvertToRadians(90.f), 0.f, 0.f);
+	m_pCloth->setRotation(PhysXConverter::ToPxQuat(vQuat));
+
+	if (1 != m_ClothSpheres.size() % 2 &&
+		0 != m_ClothSpheres.size())
+	{
+		vector<PxVec4> Spheres;
+		Spheres.reserve(m_ClothSpheres.size());
+		for (auto& ClothSphere : m_ClothSpheres)
+		{
+			Spheres.push_back({ PhysXConverter::ToPxVec3(ClothSphere.first), ClothSphere.second });
+		}
+
+		m_pCloth->setSpheres(cloth::Range<PxVec4>(Spheres.data(), Spheres.data() + 2), 0, m_pCloth->getNumSpheres());
+
+		vector<_uint> CapsuleIndices;
+		for (_uint i = 0; i < m_ClothSpheres.size(); ++i)
+		{
+			CapsuleIndices.push_back(i);
+		}
+
+		m_pCloth->setCapsules(cloth::Range<_uint>(CapsuleIndices.data(), CapsuleIndices.data() + 2), 0, m_pCloth->getNumCapsules());
+	}
+
+	m_pSolver->addCloth(m_pCloth);
+
+	return S_OK;
+}
+
 HRESULT CDynamic_Mesh::Initialize_ClothMesh()
 {
 	nv::cloth::ClothMeshDesc MeshDesc;
@@ -388,18 +518,12 @@ HRESULT CDynamic_Mesh::Initialize_ClothMesh()
 		MSG_BOX("Failed Create Fabric");
 		return E_FAIL;
 	}
-	//
 
 	vector<PxVec4>	ParticlesCopy;
 	ParticlesCopy.resize(m_iNumVertices);
 
 	for (_uint i = 0; i < m_iNumVertices; ++i)
 	{
-		// To put attachment point closer to each other
-		/*if (m_InvMasses[i] < 1e-6)
-			m_VertexPositions[i] = m_VertexPositions[i] * 0.95f;*/
-
-		// w component is 1/mass, or 0.0f for anchored/fixed particles
 		ParticlesCopy[i] = physx::PxVec4(PhysXConverter::ToPxVec3(m_VertexPositions[i]), m_InvMasses[i]);
 	}
 
@@ -423,14 +547,37 @@ HRESULT CDynamic_Mesh::Initialize_ClothMesh()
 
 	m_pSolver = pClothFactory->createSolver();
 
+	/* 크게 건드릴게 없는 고정 옵션 값 */
 	m_pCloth->setSolverFrequency(10.f);
 	m_pCloth->setTetherConstraintScale(1.f);
 	m_pCloth->setDragCoefficient(0.5f);
-	m_pCloth->setLiftCoefficient(1.f);
+	m_pCloth->setLiftCoefficient(0.6f);
+	//m_pCloth->setFriction(10.f);
 	m_pCloth->setWindVelocity(PxVec3(0.f, 0.f, 0.f));
 	m_pCloth->setGravity(vGravity);
-	/*_float4 vPivotRoation = XMQuaternionRotationRollPitchYaw(XMConvertToRadians(90.f), 0.f, 0.f);
-	m_pCloth->setRotation(PhysXConverter::ToPxQuat(vPivotRoation));*/
+	_float4 vQuat = XMQuaternionRotationRollPitchYaw(XMConvertToRadians(90.f), 0.f, 0.f);
+	m_pCloth->setRotation(PhysXConverter::ToPxQuat(vQuat));
+
+	if (1 != m_ClothSpheres.size() % 2 &&
+		0 != m_ClothSpheres.size())
+	{
+		vector<PxVec4> Spheres;
+		Spheres.reserve(m_ClothSpheres.size());
+		for (auto& ClothSphere : m_ClothSpheres)
+		{
+			Spheres.push_back({ PhysXConverter::ToPxVec3(ClothSphere.first), ClothSphere.second });
+		}
+
+		m_pCloth->setSpheres(cloth::Range<PxVec4>(Spheres.data(), Spheres.data() + 2), 0, m_pCloth->getNumSpheres());
+
+		vector<_uint> CapsuleIndices;
+		for (_uint i = 0; i < m_ClothSpheres.size(); ++i)
+		{
+			CapsuleIndices.push_back(i);
+		}
+
+		m_pCloth->setCapsules(cloth::Range<_uint>(CapsuleIndices.data(), CapsuleIndices.data() + 2), 0, m_pCloth->getNumCapsules());
+	}
 
 	m_pSolver->addCloth(m_pCloth);
 
@@ -453,11 +600,59 @@ void CDynamic_Mesh::Clear_ClothMesh()
 	}
 }
 
-CDynamic_Mesh* CDynamic_Mesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CModel::TYPE eType, const CModel::BONES& Bones, const Engine::MESH Mesh, _float4x4 PivotMatrix, const _tchar* szClothDataFilePath)
+HRESULT CDynamic_Mesh::Read_ClothData(HANDLE hFile)
+{
+	_ulong	dwByte = 0;
+
+	_uint iSize = { 0 };
+	// Vertex Num
+	ReadFile(hFile, &iSize, sizeof(_uint), &dwByte, nullptr);
+
+	if (iSize != m_VertexPositions.size())
+	{
+		MSG_BOX("Invalid Data");
+		CloseHandle(hFile);
+		return E_FAIL;
+	}
+
+	m_InvMasses.clear();
+	m_InvMasses.reserve(iSize);
+
+	for (_uint i = 0; i < iSize; ++i)
+	{
+		_float fInvMass = 1.f;
+		ReadFile(hFile, &fInvMass, sizeof(_float), &dwByte, nullptr);
+		m_InvMasses.push_back(fInvMass);
+	}
+
+	_uint iCapsuleSize = { 0 };
+	ReadFile(hFile, &iCapsuleSize, sizeof(_uint), &dwByte, nullptr);
+
+	m_ClothSpheres.reserve(iCapsuleSize * 2);
+
+	for (_uint i = 0; i < iCapsuleSize; ++i)
+	{
+		pair<_float3, _float> SourSphere, DestSphere;
+		ReadFile(hFile, &SourSphere.first, sizeof(_float3), &dwByte, nullptr);
+		ReadFile(hFile, &SourSphere.second, sizeof(_float), &dwByte, nullptr);
+
+		m_ClothSpheres.push_back(SourSphere);
+
+		ReadFile(hFile, &DestSphere.first, sizeof(_float3), &dwByte, nullptr);
+		ReadFile(hFile, &DestSphere.second, sizeof(_float), &dwByte, nullptr);
+
+		m_ClothSpheres.push_back(DestSphere);
+	}
+
+	return S_OK;
+}
+
+CDynamic_Mesh* CDynamic_Mesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,
+	CModel::TYPE eType, const CModel::BONES& Bones, const Engine::MESH Mesh, _float4x4 PivotMatrix, HANDLE hFile)
 {
 	CDynamic_Mesh* pInstance = new CDynamic_Mesh(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize_Prototype(eType, Bones, Mesh, PivotMatrix, szClothDataFilePath)))
+	if (FAILED(pInstance->Initialize_Prototype(eType, Bones, Mesh, PivotMatrix, hFile)))
 	{
 		MSG_BOX("Failed to Created CDynamic_Mesh");
 		Safe_Release(pInstance);

@@ -94,14 +94,8 @@
     <Filter Include="02. GameObject\02. Enemy\00. Troll\01. Forest_Troll\Weapon">
       <UniqueIdentifier>{716e173e-d10b-4137-8676-391c2c340ccd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Tasks">
-      <UniqueIdentifier>{68f60c2e-b68f-4392-b9de-da48723e2496}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\02. Enemy\00. Troll\00. Armored_Troll\Weapon">
       <UniqueIdentifier>{cc4def40-eb2b-4c6e-b1d0-03d0027e89bc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Tasks\Movement">
-      <UniqueIdentifier>{d95f3888-ed91-44de-bed2-7ee502737efa}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\02. Enemy\02. Dugbog">
       <UniqueIdentifier>{ea8cf730-c75f-4ad8-a593-3de6f11919a8}</UniqueIdentifier>
@@ -124,9 +118,6 @@
     <Filter Include="02. GameObject\02. Enemy\03. Golem\99. Weapons">
       <UniqueIdentifier>{fde3512d-c9d7-4f98-baac-ed8650da6e1a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Tasks\Actions">
-      <UniqueIdentifier>{22de2c6d-33c0-405e-880a-8329dd7ffd58}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\99. Debug\Cloth">
       <UniqueIdentifier>{3f5e0d18-9b63-46c6-b1ee-b4c3d0a446b1}</UniqueIdentifier>
     </Filter>
@@ -142,23 +133,53 @@
     <Filter Include="97. ShaderFiles\Debug">
       <UniqueIdentifier>{1d5583a2-e4a6-4d7c-a4bd-c23fd81f765f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\05. UI\UI_Function">
-      <UniqueIdentifier>{a0782665-36f6-4fd7-ab5c-79b74a2f4762}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\05. UI\UI_Group">
       <UniqueIdentifier>{7206f782-d4db-4b46-8797-de58df3e32e7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\05. UI\UI_Group\UI_HP">
+    <Filter Include="02. GameObject\05. UI\UI_Group\UI_Potion">
+      <UniqueIdentifier>{33c5525a-2279-40c2-9d48-f7921b35001b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_HP">
       <UniqueIdentifier>{081ca7b0-6581-4898-a252-d4947ea8ef08}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\05. UI\UI_Group\UI_Skill">
+    <Filter Include="02. GameObject\05. UI\UI_">
+      <UniqueIdentifier>{a0782665-36f6-4fd7-ab5c-79b74a2f4762}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_\UI_None">
+      <UniqueIdentifier>{3b6be744-8047-49de-88b4-d917b595c1ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_\UI_HP">
+      <UniqueIdentifier>{a3f66fec-9f9a-486b-afc5-bfcd37dcf729}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_\UI_Skill">
       <UniqueIdentifier>{ffcdd06d-9e79-4b4e-8438-f500909b5260}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\05. UI\UI_Function\UI_ProGress">
-      <UniqueIdentifier>{b67a2632-11f7-4c4a-843a-9eeecc086fc5}</UniqueIdentifier>
+    <Filter Include="02. GameObject\05. UI\UI_\UI_Finisher">
+      <UniqueIdentifier>{6cda2f04-0443-4bed-b4ca-7039288a3488}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\05. UI\UI_Function\CUI_Back">
-      <UniqueIdentifier>{3b6be744-8047-49de-88b4-d917b595c1ae}</UniqueIdentifier>
+    <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_Finisher">
+      <UniqueIdentifier>{e81ad826-eb83-476b-b1aa-59c061bddf73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Behaviors">
+      <UniqueIdentifier>{68f60c2e-b68f-4392-b9de-da48723e2496}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Behaviors\00. Actions">
+      <UniqueIdentifier>{22de2c6d-33c0-405e-880a-8329dd7ffd58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Behaviors\01. Selectors">
+      <UniqueIdentifier>{71a935c5-d66c-42f6-b634-774235c64530}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Behaviors\02. Sequences">
+      <UniqueIdentifier>{d6997012-3cb3-41af-a953-a7da969ed441}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Behaviors\03. Movement">
+      <UniqueIdentifier>{d95f3888-ed91-44de-bed2-7ee502737efa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Behaviors\04. Function">
+      <UniqueIdentifier>{11282af5-bac7-4061-9441-81c0be48d567}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\00. Camera">
+      <UniqueIdentifier>{f3759d26-a3c7-4580-b9e7-a5b9ac3325cb}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\03. Effect\Default_Magic_Effect">
       <UniqueIdentifier>{8b8055e2-19be-427d-ade6-ac77b13c71b2}</UniqueIdentifier>
@@ -271,7 +292,7 @@
       <Filter>99. Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Wait.h">
-      <Filter>03. Tasks\Movement</Filter>
+      <Filter>03. Behaviors\03. Movement</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Dugbog.h">
       <Filter>02. GameObject\02. Enemy\02. Dugbog</Filter>
@@ -304,7 +325,7 @@
       <Filter>02. GameObject\04. MapObject</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Action.h">
-      <Filter>03. Tasks\Actions</Filter>
+      <Filter>03. Behaviors\00. Actions</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Test_Cloth.h">
       <Filter>02. GameObject\99. Debug\Cloth</Filter>
@@ -319,16 +340,43 @@
       <Filter>02. GameObject\99. Debug\PhysxRender</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_Group_HP.h">
-      <Filter>02. GameObject\05. UI\UI_Group\UI_HP</Filter>
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_HP</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_Skill.h">
-      <Filter>02. GameObject\05. UI\UI_Group\UI_Skill</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\UI_Progress.h">
-      <Filter>02. GameObject\05. UI\UI_Function\UI_ProGress</Filter>
+      <Filter>02. GameObject\05. UI\UI_\UI_Skill</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_Back.h">
-      <Filter>02. GameObject\05. UI\UI_Function\CUI_Back</Filter>
+      <Filter>02. GameObject\05. UI\UI_\UI_None</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Group_Potion.h">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Potion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_HP.h">
+      <Filter>02. GameObject\05. UI\UI_\UI_HP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Group_Finisher.h">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Finisher</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Finisher.h">
+      <Filter>02. GameObject\05. UI\UI_\UI_Finisher</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player.h">
+      <Filter>02. GameObject\01. Player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\TargetDegree.h">
+      <Filter>03. Behaviors\04. Function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Turn.h">
+      <Filter>03. Behaviors\03. Movement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Selector_Degree.h">
+      <Filter>03. Behaviors\01. Selectors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player.h">
+      <Filter>02. GameObject\01. Player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Player_Camera.h">
+      <Filter>02. GameObject\01. Player\00. Camera</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Default_Magic_Effect.h">
       <Filter>02. GameObject\03. Effect\Default_Magic_Effect</Filter>
@@ -411,7 +459,7 @@
       <Filter>02. GameObject\02. Enemy\00. Troll\01. Forest_Troll\Weapon</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Wait.cpp">
-      <Filter>03. Tasks\Movement</Filter>
+      <Filter>03. Behaviors\03. Movement</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Dugbog.cpp">
       <Filter>02. GameObject\02. Enemy\02. Dugbog</Filter>
@@ -444,7 +492,7 @@
       <Filter>02. GameObject\04. MapObject</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Action.cpp">
-      <Filter>03. Tasks\Actions</Filter>
+      <Filter>03. Behaviors\00. Actions</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Test_Cloth.cpp">
       <Filter>02. GameObject\99. Debug\Cloth</Filter>
@@ -459,16 +507,43 @@
       <Filter>02. GameObject\99. Debug\PhysxRender</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_Group_HP.cpp">
-      <Filter>02. GameObject\05. UI\UI_Group\UI_HP</Filter>
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_HP</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_Skill.cpp">
-      <Filter>02. GameObject\05. UI\UI_Group\UI_Skill</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\UI_Progress.cpp">
-      <Filter>02. GameObject\05. UI\UI_Function\UI_ProGress</Filter>
+      <Filter>02. GameObject\05. UI\UI_\UI_Skill</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_Back.cpp">
-      <Filter>02. GameObject\05. UI\UI_Function\CUI_Back</Filter>
+      <Filter>02. GameObject\05. UI\UI_\UI_None</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Group_Potion.cpp">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Potion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_HP.cpp">
+      <Filter>02. GameObject\05. UI\UI_\UI_HP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Group_Finisher.cpp">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Finisher</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Finisher.cpp">
+      <Filter>02. GameObject\05. UI\UI_\UI_Finisher</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player.cpp">
+      <Filter>02. GameObject\01. Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\TargetDegree.cpp">
+      <Filter>03. Behaviors\04. Function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Turn.cpp">
+      <Filter>03. Behaviors\03. Movement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Selector_Degree.cpp">
+      <Filter>03. Behaviors\01. Selectors</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player.cpp">
+      <Filter>02. GameObject\01. Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Player_Camera.cpp">
+      <Filter>02. GameObject\01. Player\00. Camera</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Default_Magic_Effect.cpp">
       <Filter>02. GameObject\03. Effect\Default_Magic_Effect</Filter>

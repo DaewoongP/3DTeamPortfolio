@@ -9,6 +9,7 @@
 #include "Camera_Point.h"
 #include "DummyMeshEffect.h"
 #include "DummyTrail.h"
+#include "TriangleColMesh.h"
 
 #ifdef _DEBUG
 
@@ -296,15 +297,15 @@ HRESULT CMainTool::Ready_Prototype_Component()
 		CVIBuffer_GeoSphere::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	///* Prototype_Component_VIBuffer_Terrain */
-	//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_VIBuffer_Terrain"),
-	//	CVIBuffer_Terrain::Create(m_pDevice, m_pContext, 513, 513))))
-	//	return E_FAIL;
-
 	/* Prototype_Component_VIBuffer_Terrain */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_VIBuffer_Terrain"),
-		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Terrain/Height.bmp")))))
+		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, 513, 513))))
 		return E_FAIL;
+
+	///* Prototype_Component_VIBuffer_Terrain */
+	//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_VIBuffer_Terrain"),
+	//	CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Terrain/Height.bmp")))))
+	//	return E_FAIL;
 
 	/* Prototype_Component_VIBuffer_Cube */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_VIBuffer_Cube"),
@@ -349,6 +350,11 @@ HRESULT CMainTool::Ready_Prototype_Component()
 	/* Prototype_Component_Sphere_Collider*/
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Sphere_Collider"),
 		CCollider::Create(m_pDevice, m_pContext,CCollider::TYPE_SPHERE))))
+		return E_FAIL;
+	
+	/* Prototype_Component_RigidBody*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_RigidBody"),
+		CRigidBody::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* Prototype_Component_Model_SM_SpherePrimitiveRegularNormals_01*/
@@ -425,6 +431,12 @@ HRESULT CMainTool::Ready_Prototype_Object()
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_Shape_GeoSphere"),
 		CShape_GeoSphere::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+
+	/* Prototype_GameObject_TriangleColMesh*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_TriangleColMesh"),
+		CTriangleColMesh::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	
 
 #ifdef _DEBUG
 

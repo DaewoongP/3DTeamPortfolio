@@ -5,6 +5,9 @@
 #include "NVContextCallBack.h"
 #include "PXAssertHandler.h"
 #include "JobManager.h"
+
+#include "PhysXConverter.h"
+
 #include "Base.h"
 
 BEGIN(Engine)
@@ -12,6 +15,9 @@ BEGIN(Engine)
 class CPhysX_Manager final : public CBase
 {
 	DECLARE_SINGLETON(CPhysX_Manager)
+
+public:
+	enum RayCastQueryFlag { RAY_ONLY_DYNAMIC, RAY_ONLY_STATIC, RAY_ALL, RAY_END };
 
 public:
 	// **피직스의 디바이스를 리턴합니다**
@@ -22,15 +28,6 @@ public:
 	PxControllerManager* Get_ControllerManager() const { return m_pControllerManager; }
 	cloth::Factory* Get_ClothFactory() const { return m_pClothFactory; }
 
-#ifdef _DEBUG
-	const PxRenderBuffer* Get_RenderBuffer();
-	_uint Get_LastLineBufferIndex();
-	_uint Get_LastTriangleBufferIndex();
-	void Add_LastLineBufferIndex(_uint iNumLines);
-	void Add_LastTriangleBufferIndex(_uint iNumTriangles);
-	void Clear_BufferIndex();
-#endif // _DEBUG
-
 private:
 	explicit CPhysX_Manager() = default;
 	virtual ~CPhysX_Manager() = default;
@@ -38,6 +35,16 @@ private:
 public:
 	HRESULT Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	void Tick(_float fTimeDelta);
+
+public:
+	// 1. vOrigin : 레이 시작지점 2. vDir : 방향 3. fMaxDist : 최대거리 4. pHitPosition : (out)레이가 충돌한 위치 5. pDist : (out)충돌한 거리 
+	// 6. iMaxHits : 레이를 맞을 수 있는 최대 개수 7. RaycastFlag : dynamic / static / all 중에 레이와 충돌할 객체 타입 (static에 하이트맵도 현재 포함중인거 생각해야합니다.)
+	// 반환 : 충돌 했을 시 true
+	_bool RayCast(_float3 vOrigin, _float3 vDir, _float fMaxDist = PX_MAX_F32, _Inout_ _float3* pHitPosition = nullptr, _Inout_ _float* pDist = nullptr, _uint iMaxHits = 1, RayCastQueryFlag RaycastFlag = RAY_ALL);
+	// 1. pContext : Dx11 DeviceContext 2. hWnd : 클라이언트 핸들 3. fMaxDist : 최대거리 4. pHitPosition : (out)레이가 충돌한 위치 5. pDist : (out)충돌한 거리 
+	// 6. iMaxHits : 레이를 맞을 수 있는 최대 개수 7. RaycastFlag : dynamic / static / all 중에 레이와 충돌할 객체 타입 (static에 하이트맵도 현재 포함중인거 생각해야합니다.)
+	// 반환 : 충돌 했을 시 true
+	_bool Mouse_RayCast(HWND hWnd, ID3D11DeviceContext* pContext, _float fMaxDist = PX_MAX_F32, _Inout_ _float3* pHitPosition = nullptr, _Inout_ _float* pDist = nullptr, _uint iMaxHits = 1, RayCastQueryFlag RaycastFlag = RAY_ALL);
 
 private: /* 에러 메세지 등 cout 처리 */
 	CPXErrorCallBack			m_PXErrorCallBack;
@@ -61,16 +68,6 @@ private: /* NvCloth */
 	cloth::Factory*				m_pClothFactory = { nullptr };
 	CNVContextCallBack*			m_pContextManagerCallBack = { nullptr };
 	CPXAssertHandler*			m_pAssertHandler = { nullptr };
-
-#ifdef _DEBUG
-	private:
-	// 디버그 렌더링에 필요한 인덱스값
-	// 마지막 인덱스를 저장해두고 렌더링 처리함.
-	_uint						m_iLastLineBufferIndex = { 0 };
-	// 디버그 렌더링에 필요한 인덱스값
-	// 마지막 인덱스를 저장해두고 렌더링 처리함.
-	_uint						m_iLastTriangleBufferIndex = { 0 };
-#endif // _DEBUG
 
 private:
 	PxScene* Create_Scene();

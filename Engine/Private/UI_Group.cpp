@@ -28,8 +28,6 @@ HRESULT CUI_Group::Initialize(void* pArg)
 	if (nullptr == pArg)
 		return E_FAIL;
 
-	lstrcpy(m_wszUIGroupName, (_tchar*)pArg);
-
 	return S_OK;
 }
 

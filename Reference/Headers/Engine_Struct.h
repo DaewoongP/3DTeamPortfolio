@@ -137,6 +137,7 @@ namespace Engine
 
 	typedef struct tagCollisionDesc
 	{
+		// 삭제 예정
 		enum COLTYPE
 		{
 			COLTYPE_PLAYER,
@@ -145,9 +146,14 @@ namespace Engine
 		};
 
 		COLTYPE						ColType = { COLTYPE_END };
+		const class CCollider* pMyCollider = { nullptr };
+		const class CCollider* pOtherCollider = { nullptr };
+		// 삭제 예정
 
-		const class CCollider*		pMyCollider = { nullptr };
-		const class CCollider*		pOtherCollider = { nullptr };
+
+
+
+		const _tchar*				pOtherObjectTag = { nullptr };
 		const class CGameObject*	pOtherOwner = { nullptr };
 		const class CTransform*		pOtherTransform = { nullptr };
 	}COLLISIONDESC;

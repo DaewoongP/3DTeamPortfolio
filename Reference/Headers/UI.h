@@ -21,7 +21,7 @@ public:
 	_float2		Get_fSize() { return _float2(m_fSizeX, m_fSizeY); }
 
 public:
-	virtual HRESULT Initialize_Prototype() override;
+	virtual HRESULT Initialize_Prototype(_uint iWinSizeX, _uint iWinSizeY);
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void	Tick(_float fTimeDelta) override;
 	virtual void	Late_Tick(_float fTimeDelta) override;
@@ -82,8 +82,8 @@ protected: // None이 사용하는 변수
 	// 텍스처 y사이즈 설정
 	_float			m_fSizeY = { 100.f };
 
-	_float			m_fWinSizeX = { 1280.f };
-	_float			m_fWinSizeY = { 640.f };
+	_uint			m_iWinSizeX = { 0 };
+	_uint			m_iWinSizeY = { 0 };
 
 
 	_float4x4		m_ViewMatrix;
@@ -120,6 +120,7 @@ protected:
 public:
 	HRESULT	Save(HANDLE hFile, _ulong& dwByte);
 	HRESULT	Load(HANDLE hFile, _ulong& dwByte);
+
 
 public:
 	virtual CGameObject* Clone(void* pArg) PURE;

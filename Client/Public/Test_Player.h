@@ -39,6 +39,9 @@ private:
 	CCharacterController*	m_pController = { nullptr };
 
 private:
+	_float					m_fWindPower = { 10.f };
+
+private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
 	void Key_Input(_float fTimeDelta);

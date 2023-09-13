@@ -71,13 +71,15 @@ HRESULT CAction::Tick(const _float& fTimeDelta)
 
 #ifdef _DEBUG
 		pBehavior->Set_ReturnData(hr);
+		wcout << m_wstrAnimationTag << endl;
 #endif // _DEBUG
 	}
 
 	_bool bCheck = { false };
 
 	if (true == m_pModel->Is_Finish_Animation() ||
-		true == m_isFinishBehaviors)
+		(true == m_isCheckBehavior &&
+		true == m_isFinishBehaviors))
 	{
 		bCheck = true;
 	}
@@ -97,7 +99,7 @@ HRESULT CAction::Tick(const _float& fTimeDelta)
 	return BEHAVIOR_RUNNING;
 }
 
-void CAction::Set_Options(const wstring& _wstrAnimationTag, CModel* _pModel, const _float& _fCoolTime, _bool _isOneTimeAction, _bool _isLerp)
+void CAction::Set_Options(const wstring& _wstrAnimationTag, CModel* _pModel, _bool _isCheckBehavior, const _float& _fCoolTime, _bool _isOneTimeAction, _bool _isLerp)
 {
 	if (nullptr == _pModel)
 	{

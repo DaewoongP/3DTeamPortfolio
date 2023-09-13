@@ -290,7 +290,10 @@ void CUI_Window::Select_Obejct(CGameObject* pGameObject)
 
 	if (ImGui::Button("Delete"))
 	{
-		m_pDummy_UI_Group->Delete(dynamic_cast<CDummy_UI*>(pGameObject));
+		if (nullptr != m_pDummy_UI_Group)
+		{
+			m_pDummy_UI_Group->Delete(dynamic_cast<CDummy_UI*>(pGameObject));
+		}
 		pGameObject->Set_ObjEvent(CGameObject::OBJ_EVENT::OBJ_DEAD);
 	}
 

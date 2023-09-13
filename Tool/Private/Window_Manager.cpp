@@ -1,6 +1,6 @@
 #include "..\Public\Window_Manager.h"
 #include "ImWindow.h"
-#include "Camera_Window.h"
+#include "Main_Camera.h"
 
 IMPLEMENT_SINGLETON(CWindow_Manager)
 
@@ -11,6 +11,27 @@ HRESULT CWindow_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* 
 
 	m_pContext = pContext;
 	Safe_AddRef(m_pContext);
+
+	BEGININSTANCE;
+	//메인 카메라 추가
+	{
+		CCamera::CAMERADESC CameraDesc;
+
+		CameraDesc.m_fAspect = _float(g_iWinSizeX) / _float(g_iWinSizeY);
+		CameraDesc.m_fFovY = XMConvertToRadians(90.f);
+		CameraDesc.m_fNear = 0.1f;
+		CameraDesc.m_fFar = 1000.f;
+
+		m_pMainCamera = CMain_Camera::Create(m_pDevice, m_pContext, &CameraDesc);
+
+		m_pMainCamera->Set_MoveSpeed(5.0f);
+
+		pGameInstance->Add_Camera(TEXT("Main_Camera"), (CCamera*)m_pMainCamera);
+
+		pGameInstance->Set_Camera(TEXT("Main_Camera"));
+	}
+	ENDINSTANCE;
+
 	return S_OK;
 }
 
@@ -33,7 +54,7 @@ void CWindow_Manager::Tick(_float fTimeDelta)
 		{
 			if (FAILED(Add_Window(TEXT("Object_Window"),
 				CObject_Window::Create(m_pDevice, m_pContext,
-					ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(400.f, 700.f)))))
+					ImVec2(_float(g_iWinSizeX), _float(0.f)), ImVec2(600.f, 700.f)))))
 			{
 				MSG_BOX("Failed Create Object_Window");
 				return;
@@ -44,21 +65,21 @@ void CWindow_Manager::Tick(_float fTimeDelta)
 		m_eLoadingFlag |= OBJECT_LOAD;
 	}
 
-	if (ImGui::RadioButton("Navigation", iCurMenuList, NAVIGATION_WINDOW))
+	if (ImGui::RadioButton("TriangleCollider", iCurMenuList, TRIANGLECOLLIDER_WINDOW))
 	{
-		if (0 == (m_eLoadingFlag & NAVIGATION_LOAD))
+		if (0 == (m_eLoadingFlag & TRIANGLECOLLIDER_LOAD))
 		{
-			if (FAILED(Add_Window(TEXT("Navigation_Window"),
-				CNavigation_Window::Create(m_pDevice, m_pContext,
+			if (FAILED(Add_Window(TEXT("TriangleCollider_Window"),
+				CTriangleCollider_Window::Create(m_pDevice, m_pContext,
 					ImVec2(_float(g_iWinSizeX + 8), _float(0.f)), ImVec2(446.f, 768.f)))))
 			{
-				MSG_BOX("Failed Create Navigation_Window");
+				MSG_BOX("Failed Create TriangleCollider_Window");
 				return;
 			}
 		}
 
-		Setup_Current_Window(TEXT("Navigation_Window"));
-		m_eLoadingFlag |= NAVIGATION_LOAD;
+		Setup_Current_Window(TEXT("TriangleCollider_Window"));
+		m_eLoadingFlag |= TRIANGLECOLLIDER_LOAD;
 	}
 
 	if (ImGui::RadioButton("Camera", iCurMenuList, CAMERA_WINDOW))
@@ -171,8 +192,7 @@ void CWindow_Manager::Tick(_float fTimeDelta)
 
 		ImGui::Begin("Camera_Speed", nullptr, ImGuiWindowFlags_None);
 
-		if (nullptr != m_pCurrrentWindow && dynamic_cast<CCamera_Window*>(Find_Window(TEXT("Camera_Window"))))
-			dynamic_cast<CCamera_Window*>(Find_Window(TEXT("Camera_Window")))->Camera_Speed();
+		Camera_Speed();
 
 		CGameInstance* pGameInstance = CGameInstance::GetInstance();
 		Safe_AddRef(pGameInstance);
@@ -228,6 +248,20 @@ HRESULT CWindow_Manager::Setup_Current_Window(const _tchar* pTag)
 		return E_FAIL;
 
 	return S_OK;
+}
+
+void CWindow_Manager::Camera_Speed()
+{
+	_float fMoveSpeed{};
+
+	if (nullptr != m_pMainCamera)
+	{
+		fMoveSpeed = m_pMainCamera->Get_MoveSeed();
+		if (ImGui::DragFloat("Main Camera Speed", &fMoveSpeed, 0.1f, 0.0f, 1000.0f))
+		{
+			m_pMainCamera->Set_MoveSpeed(fMoveSpeed);
+		}
+	}
 }
 
 void CWindow_Manager::Free(void)
