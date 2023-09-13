@@ -139,21 +139,6 @@
     <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_HP">
       <UniqueIdentifier>{081ca7b0-6581-4898-a252-d4947ea8ef08}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\05. UI\UI_">
-      <UniqueIdentifier>{a0782665-36f6-4fd7-ab5c-79b74a2f4762}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\05. UI\UI_\UI_None">
-      <UniqueIdentifier>{3b6be744-8047-49de-88b4-d917b595c1ae}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\05. UI\UI_\UI_HP">
-      <UniqueIdentifier>{a3f66fec-9f9a-486b-afc5-bfcd37dcf729}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\05. UI\UI_\UI_Skill">
-      <UniqueIdentifier>{ffcdd06d-9e79-4b4e-8438-f500909b5260}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\05. UI\UI_\UI_Finisher">
-      <UniqueIdentifier>{6cda2f04-0443-4bed-b4ca-7039288a3488}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_Finisher">
       <UniqueIdentifier>{e81ad826-eb83-476b-b1aa-59c061bddf73}</UniqueIdentifier>
     </Filter>
@@ -181,14 +166,8 @@
     <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_Potion">
       <UniqueIdentifier>{33c5525a-2279-40c2-9d48-f7921b35001b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\05. UI\UI_\UI_Finisher_Icon">
-      <UniqueIdentifier>{94045f3c-76d0-49d5-8fca-f6edef6c9ea9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_Skill">
       <UniqueIdentifier>{48686970-0b4c-42ea-88ac-966830027166}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\05. UI\UI_\UI_Effect_Back">
-      <UniqueIdentifier>{6f63ec72-3503-4230-9a92-5c2bd38a636e}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_R">
       <UniqueIdentifier>{0bc67e96-28ec-48d2-b52e-271e88fbe34b}</UniqueIdentifier>
@@ -222,6 +201,27 @@
     </Filter>
     <Filter Include="02. GameObject\03. Effect\Default_Magic_Effect">
       <UniqueIdentifier>{8b8055e2-19be-427d-ade6-ac77b13c71b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI">
+      <UniqueIdentifier>{a0782665-36f6-4fd7-ab5c-79b74a2f4762}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI\UI_None">
+      <UniqueIdentifier>{3b6be744-8047-49de-88b4-d917b595c1ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI\UI_HP">
+      <UniqueIdentifier>{a3f66fec-9f9a-486b-afc5-bfcd37dcf729}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI\UI_Skill">
+      <UniqueIdentifier>{ffcdd06d-9e79-4b4e-8438-f500909b5260}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI\UI_Finisher">
+      <UniqueIdentifier>{6cda2f04-0443-4bed-b4ca-7039288a3488}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI\UI_Finisher_Icon">
+      <UniqueIdentifier>{94045f3c-76d0-49d5-8fca-f6edef6c9ea9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI\UI_Effect_Back">
+      <UniqueIdentifier>{6f63ec72-3503-4230-9a92-5c2bd38a636e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -379,22 +379,22 @@
       <Filter>02. GameObject\05. UI\UI_Group\UI_Group_HP</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_Skill.h">
-      <Filter>02. GameObject\05. UI\UI_\UI_Skill</Filter>
+      <Filter>02. GameObject\05. UI\UI\UI_Skill</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_Back.h">
-      <Filter>02. GameObject\05. UI\UI_\UI_None</Filter>
+      <Filter>02. GameObject\05. UI\UI\UI_None</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_Group_Potion.h">
       <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Potion</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_HP.h">
-      <Filter>02. GameObject\05. UI\UI_\UI_HP</Filter>
+      <Filter>02. GameObject\05. UI\UI\UI_HP</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_Group_Finisher.h">
       <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Finisher</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_Finisher.h">
-      <Filter>02. GameObject\05. UI\UI_\UI_Finisher</Filter>
+      <Filter>02. GameObject\05. UI\UI\UI_Finisher</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Player.h">
       <Filter>02. GameObject\01. Player</Filter>
@@ -412,13 +412,13 @@
       <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Finisher_Icon</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_Finisher_Icon.h">
-      <Filter>02. GameObject\05. UI\UI_\UI_Finisher_Icon</Filter>
+      <Filter>02. GameObject\05. UI\UI\UI_Finisher_Icon</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_Group_Skill.h">
       <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Skill</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_Effect_Back.h">
-      <Filter>02. GameObject\05. UI\UI_\UI_Effect_Back</Filter>
+      <Filter>02. GameObject\05. UI\UI\UI_Effect_Back</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_Group_R.h">
       <Filter>02. GameObject\05. UI\UI_Group\UI_Group_R</Filter>
@@ -588,22 +588,22 @@
       <Filter>02. GameObject\05. UI\UI_Group\UI_Group_HP</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_Skill.cpp">
-      <Filter>02. GameObject\05. UI\UI_\UI_Skill</Filter>
+      <Filter>02. GameObject\05. UI\UI\UI_Skill</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_Back.cpp">
-      <Filter>02. GameObject\05. UI\UI_\UI_None</Filter>
+      <Filter>02. GameObject\05. UI\UI\UI_None</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_Group_Potion.cpp">
       <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Potion</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_HP.cpp">
-      <Filter>02. GameObject\05. UI\UI_\UI_HP</Filter>
+      <Filter>02. GameObject\05. UI\UI\UI_HP</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_Group_Finisher.cpp">
       <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Finisher</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_Finisher.cpp">
-      <Filter>02. GameObject\05. UI\UI_\UI_Finisher</Filter>
+      <Filter>02. GameObject\05. UI\UI\UI_Finisher</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Player.cpp">
       <Filter>02. GameObject\01. Player</Filter>
@@ -621,13 +621,13 @@
       <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Finisher_Icon</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_Finisher_Icon.cpp">
-      <Filter>02. GameObject\05. UI\UI_\UI_Finisher_Icon</Filter>
+      <Filter>02. GameObject\05. UI\UI\UI_Finisher_Icon</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_Group_Skill.cpp">
       <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Skill</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_Effect_Back.cpp">
-      <Filter>02. GameObject\05. UI\UI_\UI_Effect_Back</Filter>
+      <Filter>02. GameObject\05. UI\UI\UI_Effect_Back</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_Group_R.cpp">
       <Filter>02. GameObject\05. UI\UI_Group\UI_Group_R</Filter>

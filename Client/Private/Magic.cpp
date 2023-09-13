@@ -78,7 +78,7 @@ _bool CMagic::Magic_Cast(CTransform* pTarget)
 		if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_BaseAttack"), TEXT("Layer_Debug"), TEXT("GameObject_BaseAttack"))))
 		{
 			MSG_BOX("Failed Add_GameObject : (GameObject_BaseAttack)");
-			return E_FAIL;
+			return false;
 		}
 
 		Safe_Release(pGameInstance);

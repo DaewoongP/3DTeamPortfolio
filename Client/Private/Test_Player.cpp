@@ -140,17 +140,20 @@ HRESULT CTest_Player::Add_Components()
 	}
 
 	CRigidBody::RIGIDBODYDESC RigidBodyDesc;
-	RigidBodyDesc.isStatic = false;
-	RigidBodyDesc.isTrigger = false;
-	RigidBodyDesc.vInitPosition = _float3(5.f, 5.f, 5.f);
-	RigidBodyDesc.fStaticFriction = 0.5f;
-	RigidBodyDesc.fDynamicFriction = 0.5f;
-	RigidBodyDesc.fRestitution = 0.f;
-	PxCapsuleGeometry GeoMetry = PxCapsuleGeometry(1.f, 2.f);
-	RigidBodyDesc.pGeometry = &GeoMetry;
-	RigidBodyDesc.Constraint = CRigidBody::AllRot;
-	RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 0.f, 1.f);
-	RigidBodyDesc.pOwnerObject = this;
+	RigidBodyDesc.isStatic = false; // static - 고정된 물체 (true -> 고정) (false -> 움직임)
+	RigidBodyDesc.isTrigger = false; // 트리거임 원래 콜라이더 생각하시면됩니다.
+	RigidBodyDesc.vInitPosition = _float3(5.f, 5.f, 5.f); // -> 트랜스폼에다가 초기 포지션 줘도 적용 안됩니다 !! / 요기다 주셔야 합니다 (리지드 바디가 있는 경우만 해당)
+	RigidBodyDesc.fStaticFriction = 0.5f; // 가만히 있을때 움직이기 위한 최소 힘의 수치 0~1
+	RigidBodyDesc.fDynamicFriction = 0.5f; // 움직일때 멈추기위한 마찰력? 0~1
+	RigidBodyDesc.fRestitution = 0.f; // 탄성값이 얼마나 들어갈 것인가 0~1 -> 1로주면 존나튑니다 보통 0으로줍니다.
+	PxCapsuleGeometry GeoMetry = PxCapsuleGeometry(1.f, 2.f); // Px~Geometry
+	//PxSphereGeometry
+	//PxBoxGeometry
+	RigidBodyDesc.pGeometry = &GeoMetry; // 위에서 만든거 넣어주시면됩니다.
+	RigidBodyDesc.Constraint = CRigidBody::AllRot; // 움직임을 제한할 값을 넣어주면 됩니다. (ex allrot의 경우 로테이션을 하지않습니다.)
+	RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 0.f, 1.f); // 디버그 컬러
+	RigidBodyDesc.pOwnerObject = this; // 디스포인터 넣ㄹ어주셔야 안터집니다 !!
+
 	/* Com_RigidBody */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
 		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
@@ -158,8 +161,9 @@ HRESULT CTest_Player::Add_Components()
 		MSG_BOX("Failed CTest_Player Add_Component : (Com_RigidBody)");
 		return E_FAIL;
 	}
-	// 리지드바디 액터 추가 옵션 설정
+	// 리지드바디 액터 추가
 	PxRigidBody* Rigid = m_pRigidBody->Get_RigidBodyActor();
+	Rigid->setAngularDamping(10.f);
 	Rigid->setMaxLinearVelocity(1000.f);
 	Rigid->setMass(10.f);
 	
