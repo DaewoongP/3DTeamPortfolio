@@ -472,8 +472,6 @@ HRESULT ROTATION_OVER_LIFETIME_MODULE::Load(const _tchar* _pDirectoyPath)
 		return E_FAIL;
 
 	_ulong dwByte = 0;
-	_char szBuffer[MAX_PATH];
-	_tchar wszBuffer[MAX_PATH];
 	__super::Load(hFile, dwByte);
 
 	ReadFile(hFile, &isSeperateAxes, sizeof isSeperateAxes, &dwByte, nullptr);
@@ -483,6 +481,7 @@ HRESULT ROTATION_OVER_LIFETIME_MODULE::Load(const _tchar* _pDirectoyPath)
 	ReadFile(hFile, &fSpeed, sizeof fSpeed, &dwByte, nullptr);
 
 	CloseHandle(hFile);
+
 	return S_OK;
 }
 void ROTATION_OVER_LIFETIME_MODULE::Restart()

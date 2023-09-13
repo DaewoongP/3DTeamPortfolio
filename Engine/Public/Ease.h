@@ -103,16 +103,16 @@ public:
 
 	// Expo
 	static float InExpo(float elapsedTime, float startValue, float changeAmount, float totalDuration) {
-		return (elapsedTime == 0) ? startValue : changeAmount * pow(2, 10 * (elapsedTime / totalDuration - 1)) + startValue;
+		return (elapsedTime == 0) ? startValue : changeAmount * powf(2, 10 * (elapsedTime / totalDuration - 1)) + startValue;
 	}
 	static float OutExpo(float elapsedTime, float startValue, float changeAmount, float totalDuration) {
-		return (elapsedTime == totalDuration) ? startValue + changeAmount : changeAmount * (-pow(2, -10 * elapsedTime / totalDuration) + 1) + startValue;
+		return (elapsedTime == totalDuration) ? startValue + changeAmount : changeAmount * (-powf(2, -10 * elapsedTime / totalDuration) + 1) + startValue;
 	}
 	static float InOutExpo(float elapsedTime, float startValue, float changeAmount, float totalDuration) {
 		if (elapsedTime == 0) return startValue;
 		if (elapsedTime == totalDuration) return startValue + changeAmount;
-		if ((elapsedTime /= totalDuration / 2) < 1) return changeAmount / 2 * pow(2, 10 * (elapsedTime - 1)) + startValue;
-		return changeAmount / 2 * (-pow(2, -10 * --elapsedTime) + 2) + startValue;
+		if ((elapsedTime /= totalDuration / 2) < 1) return changeAmount / 2 * powf(2, 10 * (elapsedTime - 1)) + startValue;
+		return changeAmount / 2 * (-powf(2, -10 * --elapsedTime) + 2) + startValue;
 	}
 
 	// Elastic
@@ -121,15 +121,15 @@ public:
 		float p = totalDuration * .3f;
 		float a = changeAmount;
 		float s = p / 4;
-		float postFix = a * pow(2, 10 * (elapsedTime -= 1)); // this is a fix, again, with post-increment operators
-		return -(postFix * sin((elapsedTime * totalDuration - s) * (2 * XM_PI) / p)) + startValue;
+		float postFix = a * powf(2, 10 * (elapsedTime -= 1)); // this is a fix, again, with post-increment operators
+		return -(postFix * sinf((elapsedTime * totalDuration - s) * (2 * XM_PI) / p)) + startValue;
 	}
 	static float OutElastic(float elapsedTime, float startValue, float changeAmount, float totalDuration) {
 		if (elapsedTime == 0) return startValue;  if ((elapsedTime /= totalDuration) == 1) return startValue + changeAmount;
 		float p = totalDuration * .3f;
 		float a = changeAmount;
 		float s = p / 4;
-		return (a * pow(2, -10 * elapsedTime) * sin((elapsedTime * totalDuration - s) * (2 * XM_PI) / p) + changeAmount + startValue);
+		return (a * powf(2, -10 * elapsedTime) * sinf((elapsedTime * totalDuration - s) * (2 * XM_PI) / p) + changeAmount + startValue);
 	}
 	static float InOutElastic(float elapsedTime, float startValue, float changeAmount, float totalDuration) {
 		if (elapsedTime == 0) return startValue;  if ((elapsedTime /= totalDuration / 2) == 2) return startValue + changeAmount;
@@ -138,11 +138,11 @@ public:
 		float s = p / 4;
 
 		if (elapsedTime < 1) {
-			float postFix = a * pow(2, 10 * (elapsedTime -= 1)); // postIncrement is evil
-			return -.5f * (postFix * sin((elapsedTime * totalDuration - s) * (2 * XM_PI) / p)) + startValue;
+			float postFix = a * powf(2, 10 * (elapsedTime -= 1)); // postIncrement is evil
+			return -.5f * (postFix * sinf((elapsedTime * totalDuration - s) * (2 * XM_PI) / p)) + startValue;
 		}
-		float postFix = a * pow(2, -10 * (elapsedTime -= 1)); // postIncrement is evil
-		return postFix * sin((elapsedTime * totalDuration - s) * (2 * XM_PI) / p) * .5f + changeAmount + startValue;
+		float postFix = a * powf(2, -10 * (elapsedTime -= 1)); // postIncrement is evil
+		return postFix * sinf((elapsedTime * totalDuration - s) * (2 * XM_PI) / p) * .5f + changeAmount + startValue;
 	}
 
 	// Cubic
@@ -159,14 +159,14 @@ public:
 
 	// Circ
 	static float InCirc(float elapsedTime, float startValue, float changeAmount, float totalDuration) {
-		return -changeAmount * (sqrt(1 - (elapsedTime /= totalDuration) * elapsedTime) - 1) + startValue;
+		return -changeAmount * (sqrtf(1 - (elapsedTime /= totalDuration) * elapsedTime) - 1) + startValue;
 	}
 	static float OutCirc(float elapsedTime, float startValue, float changeAmount, float totalDuration) {
-		return changeAmount * sqrt(1 - (elapsedTime = elapsedTime / totalDuration - 1) * elapsedTime) + startValue;
+		return changeAmount * sqrtf(1 - (elapsedTime = elapsedTime / totalDuration - 1) * elapsedTime) + startValue;
 	}
 	static float InOutCirc(float elapsedTime, float startValue, float changeAmount, float totalDuration) {
-		if ((elapsedTime /= totalDuration / 2) < 1) return -changeAmount / 2 * (sqrt(1 - elapsedTime * elapsedTime) - 1) + startValue;
-		return changeAmount / 2 * (sqrt(1 - elapsedTime * (elapsedTime -= 2)) + 1) + startValue;
+		if ((elapsedTime /= totalDuration / 2) < 1) return -changeAmount / 2 * (sqrtf(1 - elapsedTime * elapsedTime) - 1) + startValue;
+		return changeAmount / 2 * (sqrtf(1 - elapsedTime * (elapsedTime -= 2)) + 1) + startValue;
 	}
 
 	// Bounce
@@ -212,7 +212,7 @@ public:
 		return changeAmount / 2 * ((postFix)*elapsedTime * (((s *= (1.525f)) + 1) * elapsedTime + s) + 2) + startValue;
 	}
 
-	static const _char* pEase[EASE_END];
+	static const char* pEase[EASE_END];
 	static float Ease(EASE eEase, float elapsedTime, float startValue, float changeAmount, float totalDuration)
 	{
 		switch (eEase)
@@ -286,6 +286,8 @@ public:
 		case Engine::CEase::INOUT_BACK:
 			return InOutBack(elapsedTime, startValue, changeAmount, totalDuration);
 		}
+
+		return 0.f;
 	}
 };
 END

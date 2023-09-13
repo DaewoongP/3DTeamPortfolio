@@ -189,6 +189,7 @@ void CComboBox::Update_Current_Item(string strItem)
             return true;
         else
             ++iIndex;
+        return false;
         });
 
      if (iter == m_Items.end())
