@@ -127,9 +127,6 @@ public:
 	void Translate(_float3 _vPosition) const;
 	void Rotate(_float4 _vRotation) const;
 
-public:
-	PxRaycastHit RayCast(_float3 vOrigin, _float3 vDir, _float fMaxDist, _uint iMaxHits = 1);
-
 private:
 	PxRigidActor*			m_pActor = { nullptr };
 	PxMaterial*				m_pMaterial = { nullptr };

@@ -55,13 +55,13 @@ void CCamera_Debug::Tick(_float fTimeDelta)
 	pGameInstance->Set_Transform(CPipeLine::D3DTS_VIEW, m_pTransform->Get_WorldMatrix_Inverse());
 	pGameInstance->Set_Transform(CPipeLine::D3DTS_PROJ, XMMatrixPerspectiveFovLH(XMConvertToRadians(90.f), _float(g_iWinSizeX) / g_iWinSizeY, m_fCameraNear, 1000.f));
 
-
-	/*CTest_Player* pTest_Player = static_cast<CTest_Player*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Debug"), TEXT("GameObject_Test_Player")));
-	CRigidBody* pRigid = static_cast<CRigidBody*>(pTest_Player->Find_Component(TEXT("Com_RigidBody")));
-	_float4 vRayPos, vRayDir;
-	pGameInstance->Get_WorldMouseRay(m_pContext, g_hWnd, &vRayPos, &vRayDir);
-	vRayDir.Normalize();
-	pRigid->RayCast(vRayPos.xyz(), vRayDir.xyz(), 100.f);*/
+	if (pGameInstance->Get_DIKeyState(DIK_T, CInput_Device::KEY_DOWN))
+	{
+		if (true == pGameInstance->Mouse_RayCast(g_hWnd, m_pContext))
+		{
+			int a = 1;
+		}
+	}
 
 	Safe_Release(pGameInstance);
 

@@ -351,6 +351,11 @@ HRESULT CMainTool::Ready_Prototype_Component()
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Sphere_Collider"),
 		CCollider::Create(m_pDevice, m_pContext,CCollider::TYPE_SPHERE))))
 		return E_FAIL;
+	
+	/* Prototype_Component_RigidBody*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_RigidBody"),
+		CRigidBody::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
 	/* Prototype_Component_Model_SM_SpherePrimitiveRegularNormals_01*/
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL

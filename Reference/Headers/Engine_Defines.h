@@ -109,6 +109,10 @@ using namespace nv; // nvCloth
 #include "Engine_Converter.h"
 
 #ifdef _DEBUG
+#include "Debug_Functions.h"
+#endif // _DEBUG
+
+#ifdef _DEBUG
 
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>

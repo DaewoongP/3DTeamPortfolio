@@ -259,7 +259,7 @@ HRESULT CRigidBody::Create_Actor(RIGIDBODYDESC* pRigidBodyDesc)
 	m_pMaterial = pPhysX->createMaterial(pRigidBodyDesc->fStaticFriction, 
 		pRigidBodyDesc->fDynamicFriction, 
 		pRigidBodyDesc->fRestitution);
-
+	
 	PxShapeFlags ePxFlag;
 	// 트리거 설정
 	// Query : 레이캐스트 처리
@@ -274,7 +274,7 @@ HRESULT CRigidBody::Create_Actor(RIGIDBODYDESC* pRigidBodyDesc)
 
 	m_pGeometry = pRigidBodyDesc->pGeometry;
 	PxShape* pShape = pPhysX->createShape(*pRigidBodyDesc->pGeometry,
-		*m_pMaterial, false, ePxFlag);
+		*m_pMaterial, false, PxShapeFlag::eSIMULATION_SHAPE);
 
 	// 충돌처리에 필요한 유저 데이터값 바인딩
 	// 나중에 충돌 타입 정해서 처리할거임.
@@ -396,23 +396,6 @@ void CRigidBody::Rotate(_float4 _vRotation) const
 			PxTransform(PhysXConverter::ToPxVec3(Get_Position()), 
 				PhysXConverter::ToPxQuat(_vRotation)));
 	}
-}
-
-PxRaycastHit CRigidBody::RayCast(_float3 vOrigin, _float3 vDir, _float fMaxDist, _uint iMaxHits)
-{
-	PxRaycastHit HitInfo;
-	const PxHitFlags eHitFlags = PxHitFlag::eDEFAULT;
-	PxRaycastBuffer buf;
-	if (true == m_pScene->raycast(PhysXConverter::ToPxVec3(vOrigin), PhysXConverter::ToPxVec3(vDir),
-		fMaxDist, buf))
-	{
-		int a = 1;
-	}
-
-	/*PxU32 hitCount = PxGeometryQuery::raycast(PhysXConverter::ToPxVec3(vOrigin), PhysXConverter::ToPxVec3(vDir),
-		*m_pGeometry, m_pActor->getGlobalPose(), fMaxDist, eHitFlags, iMaxHits, &HitInfo);*/
-	
-	return HitInfo;
 }
 
 #ifdef _DEBUG

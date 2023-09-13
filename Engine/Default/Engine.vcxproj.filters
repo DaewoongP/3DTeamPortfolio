@@ -711,6 +711,9 @@
     <ClInclude Include="..\public\Debug_Render_Ring.h">
       <Filter>01. Utility\03. Components\14. RigidBody\DebugRender\Ring</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Debug_Functions.h">
+      <Filter>99. Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
