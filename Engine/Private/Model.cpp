@@ -208,11 +208,6 @@ void CModel::Play_Animation(_float fTimeDelta, ANIMTYPE eType, CTransform* pTran
 	CAnimation* currentAnimation = m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex];
 	if (currentAnimation->Invalidate_AccTime(fTimeDelta) || m_tAnimationDesc[eType].isResetAnimTrigger)
 	{
-		// 애니메이션 종료 체크 ( 루프 일 경우 계속 false )
-		m_isFinishAnimation = currentAnimation->Get_Duration() <
-			currentAnimation->Get_Accmulation() &&
-			!currentAnimation->Get_LoopAnim();
-
 		//애니메이션 리셋해줘
 		currentAnimation->Reset();
 		m_BeginRootMatrix = pTransform->Get_WorldMatrix();
@@ -224,7 +219,11 @@ void CModel::Play_Animation(_float fTimeDelta, ANIMTYPE eType, CTransform* pTran
 		}
 		//0번노드(하체)라면? 루트 매트릭스 날려줘.
 		if (eType == 0)
+		{
+			//m_PostRootMatrix = m_Bones[m_iRootBoneIndex]->Get_TransformationMatrix();
 			m_PostRootMatrix = XMMatrixIdentity();
+		}
+			
 		//리셋설정 다됐으니까 트리거 꺼줘.
 		m_tAnimationDesc[eType].isResetAnimTrigger = false;
 	}
@@ -238,6 +237,10 @@ void CModel::Play_Animation(_float fTimeDelta, ANIMTYPE eType, CTransform* pTran
 				currentAnimation->Get_Accmulation()))
 			Do_Root_Animation(fTimeDelta, pTransform);
 	}
+	// 애니메이션 종료 체크 ( 루프 일 경우 계속 false )
+	m_isFinishAnimation = currentAnimation->Get_Duration() <=
+		currentAnimation->Get_Accmulation() &&
+		!currentAnimation->Get_LoopAnim();
 
 	//노티파이 돌리기
 	currentAnimation->Invalidate_Frame(fTimeDelta);

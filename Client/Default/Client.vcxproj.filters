@@ -234,9 +234,6 @@
     <ClInclude Include="..\public\Test_Player.h">
       <Filter>02. GameObject\99. Debug\Player</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Test_NPC.h">
-      <Filter>02. GameObject\07. NPC</Filter>
-    </ClInclude>
     <ClInclude Include="ImGui\imconfig.h">
       <Filter>98. Default\ImGui_Defaults</Filter>
     </ClInclude>
@@ -372,6 +369,12 @@
     <ClInclude Include="..\Public\Selector_Degree.h">
       <Filter>03. Behaviors\01. Selectors</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\LookAt.h">
+      <Filter>03. Behaviors\03. Movement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Professor_FIg.h">
+      <Filter>02. GameObject\07. NPC</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\Player.h">
       <Filter>02. GameObject\01. Player</Filter>
     </ClInclude>
@@ -415,9 +418,6 @@
     </ClCompile>
     <ClCompile Include="..\private\Test_Player.cpp">
       <Filter>02. GameObject\99. Debug\Player</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Test_NPC.cpp">
-      <Filter>02. GameObject\07. NPC</Filter>
     </ClCompile>
     <ClCompile Include="ImGui\imgui.cpp">
       <Filter>98. Default\ImGui_Defaults</Filter>
@@ -538,6 +538,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Selector_Degree.cpp">
       <Filter>03. Behaviors\01. Selectors</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\LookAt.cpp">
+      <Filter>03. Behaviors\03. Movement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Professor_FIg.cpp">
+      <Filter>02. GameObject\07. NPC</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Player.cpp">
       <Filter>02. GameObject\01. Player</Filter>

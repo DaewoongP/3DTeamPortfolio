@@ -36,26 +36,40 @@ HRESULT CTargetDegree::Tick(const _float& fTimeDelta)
 
 	_float3 vLook = m_pOwnerTransform->Get_Look();
 	_float3 vDirection = vTargetPosition - vPosition;
+	vLook.y = 0.f;
+	vDirection.y = 0.f;
 	vLook.Normalize();
 	vDirection.Normalize();
 
 	_float fCrossY = vLook.Cross(vDirection).y;
 	_bool isLeft = { false };
-	isLeft = (0.f < fCrossY);
-	
+	isLeft = (0.f > fCrossY);
+
+	_float fDegree = XMConvertToDegrees(acosf(vLook.Dot(vDirection)));
+
+	if (0 != isnan(fDegree))
+	{
+		fDegree = 0.f;
+	}
+
 	if (FAILED(m_pBlackBoard->Set_Type("isTargetToLeft", isLeft)))
 	{
 		MSG_BOX("[CTargetDegree] Failed Set_Type fTargetToLR");
 		return E_FAIL;
 	}
 
-	_float fDegree = XMConvertToDegrees(acosf(vLook.Dot(vDirection))); 
-	
 	if (FAILED(m_pBlackBoard->Set_Type("fTargetToDegree", fDegree)))
 	{
 		MSG_BOX("[CTargetDegree] Failed Set_Type fTargetToLR");
 		return E_FAIL;
 	}
+
+	/*if (true == isLeft)
+		cout << "Left" << endl;
+	else
+		cout << "RIght" << endl;
+
+	cout << fDegree << endl;*/
 
 	return BEHAVIOR_SUCCESS;
 }

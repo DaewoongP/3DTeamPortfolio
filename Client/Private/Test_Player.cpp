@@ -179,7 +179,6 @@ HRESULT CTest_Player::Add_Components()
 	}
 
 	m_pModelCom->Add_MeshParts(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Robe_Student"), CCustomModel::ROBE, TEXT("../../Resources/GameData/ClothData/Test.cloth"));
-	//m_pModelCom->Add_MeshParts(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Low"), CCustomModel::PANTS);
 
 	return S_OK;
 }

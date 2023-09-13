@@ -27,6 +27,7 @@ public:
 
 public:
 	HRESULT Assemble_Behavior(const wstring& BehaviorTag, CBehavior* pBehavior, const _float& fWeight);
+	void Set_Random_Behavior();
 
 protected:
 	vector<_float>		m_ChildWeights;

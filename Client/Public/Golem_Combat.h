@@ -15,6 +15,7 @@ class CModel;
 class CShader;
 class CRenderer;
 class CSequence;
+class CSelector;
 class CRigidBody;
 class CRootBehavior;
 END
@@ -48,6 +49,9 @@ private:
 
 private:
 	CWeapon_Golem_Combat* m_pWeapon = { nullptr };
+	
+private:
+	_bool m_isParring = { false };
 
 private:
 	HRESULT Make_AI();
@@ -61,7 +65,10 @@ private:
 
 private: /* Çàµ¿ ¹­À½µé */
 	HRESULT Make_Descendo(_Inout_ CSequence* pSequence);
+	HRESULT Make_Turns(_Inout_ CSequence* pSequence);
 	HRESULT Make_Move(_Inout_ CSequence* pSequence);
+	HRESULT Make_Attack(_Inout_ CSelector* pSelector);
+	HRESULT Make_Groggy(_Inout_ CSequence* pSequence);
 
 public:
 	static CGolem_Combat* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
