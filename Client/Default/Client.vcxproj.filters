@@ -178,6 +178,30 @@
     <Filter Include="03. Behaviors\04. Function">
       <UniqueIdentifier>{11282af5-bac7-4061-9441-81c0be48d567}</UniqueIdentifier>
     </Filter>
+    <Filter Include="04. Magic">
+      <UniqueIdentifier>{e77db5d2-8ca4-49d3-9854-41ff5a14a55b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. MagicBall">
+      <UniqueIdentifier>{7667aa3f-fd7d-47db-b815-b3a9a26ac4c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. MagicBall\MagicBallPool">
+      <UniqueIdentifier>{9de24398-e881-4455-91ad-ee52934ecab4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. MagicBall\01. Protego">
+      <UniqueIdentifier>{bcd138af-102e-4b5f-b68d-6ea12de5208b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. MagicBall\02. Revelio">
+      <UniqueIdentifier>{35319448-1444-4cfb-8ce5-26aa0f43aca3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. MagicBall\00. BasicCast">
+      <UniqueIdentifier>{753e950f-efbe-4660-a035-8339816dab1b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\00. Camera">
+      <UniqueIdentifier>{f3759d26-a3c7-4580-b9e7-a5b9ac3325cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. Effect\Default_Magic_Effect">
+      <UniqueIdentifier>{8b8055e2-19be-427d-ade6-ac77b13c71b2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -227,9 +251,6 @@
     </ClInclude>
     <ClInclude Include="..\public\Test_Player.h">
       <Filter>02. GameObject\99. Debug\Player</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Test_NPC.h">
-      <Filter>02. GameObject\07. NPC</Filter>
     </ClInclude>
     <ClInclude Include="ImGui\imconfig.h">
       <Filter>98. Default\ImGui_Defaults</Filter>
@@ -366,6 +387,39 @@
     <ClInclude Include="..\Public\Selector_Degree.h">
       <Filter>03. Behaviors\01. Selectors</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Magic.h">
+      <Filter>04. Magic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MagicBall.h">
+      <Filter>02. GameObject\09. MagicBall</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MagicBallPool.h">
+      <Filter>02. GameObject\09. MagicBall\MagicBallPool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Protego.h">
+      <Filter>02. GameObject\09. MagicBall\01. Protego</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Revelio.h">
+      <Filter>02. GameObject\09. MagicBall\02. Revelio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BasicCast.h">
+      <Filter>02. GameObject\09. MagicBall\00. BasicCast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\LookAt.h">
+      <Filter>03. Behaviors\03. Movement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Professor_FIg.h">
+      <Filter>02. GameObject\07. NPC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player.h">
+      <Filter>02. GameObject\01. Player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Player_Camera.h">
+      <Filter>02. GameObject\01. Player\00. Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Default_Magic_Effect.h">
+      <Filter>02. GameObject\03. Effect\Default_Magic_Effect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -400,9 +454,6 @@
     </ClCompile>
     <ClCompile Include="..\private\Test_Player.cpp">
       <Filter>02. GameObject\99. Debug\Player</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Test_NPC.cpp">
-      <Filter>02. GameObject\07. NPC</Filter>
     </ClCompile>
     <ClCompile Include="ImGui\imgui.cpp">
       <Filter>98. Default\ImGui_Defaults</Filter>
@@ -523,6 +574,39 @@
     </ClCompile>
     <ClCompile Include="..\Private\Selector_Degree.cpp">
       <Filter>03. Behaviors\01. Selectors</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Magic.cpp">
+      <Filter>04. Magic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MagicBall.cpp">
+      <Filter>02. GameObject\09. MagicBall</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Protego.cpp">
+      <Filter>02. GameObject\09. MagicBall\01. Protego</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Revelio.cpp">
+      <Filter>02. GameObject\09. MagicBall\02. Revelio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MagicBallPool.cpp">
+      <Filter>02. GameObject\09. MagicBall\MagicBallPool</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BasicCast.cpp">
+      <Filter>02. GameObject\09. MagicBall\00. BasicCast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\LookAt.cpp">
+      <Filter>03. Behaviors\03. Movement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Professor_FIg.cpp">
+      <Filter>02. GameObject\07. NPC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player.cpp">
+      <Filter>02. GameObject\01. Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Player_Camera.cpp">
+      <Filter>02. GameObject\01. Player\00. Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Default_Magic_Effect.cpp">
+      <Filter>02. GameObject\03. Effect\Default_Magic_Effect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

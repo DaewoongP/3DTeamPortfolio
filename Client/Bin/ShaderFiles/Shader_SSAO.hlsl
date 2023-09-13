@@ -206,7 +206,7 @@ PS_OUT PS_MAIN(PS_IN In)
             vReflect = normalize(reflect(normalize(vRay), normalize(vNormalDesc.rgb))) * g_fRadius;
             vReflect.x *= -1.f;
             vRandomUV = In.vTexUV + vReflect.xy;
-             fOccNorm = g_DepthTexture.Sample(LinearSampler, vRandomUV).g * g_fCamFar * fViewZ;
+            fOccNorm = g_DepthTexture.Sample(LinearSampler, vRandomUV).g * g_fCamFar * fViewZ;
             if (fOccNorm <= vDepth + 0.0005f)
                 ++iColor;
                   
@@ -337,33 +337,35 @@ PS_OUT PS_MAIN_SHADOW(PS_IN In)
     // 투영행렬의 far를 다시곱해주어 포지션과 연산
     // 현재 픽셀의 깊이값과 해당하는 픽셀이 존재하는 빛기준의 텍스처 UV좌표 깊이값과 비교하여 처리한다.
     else if (vPosition.z - 0.1f < vLightDepth.y * g_fCamFar)
-    { // Out.vColor.rgb = vector(0.5f, 0.5f, 0.5f, 0.5f);
-    
-        float CamDepth = vPosition.z - 0.1f / g_fCamFar;
+        { 
+            // Out.vColor.rgb = vector(0.5f, 0.5f, 0.5f, 0.5f);
+        
+            float CamDepth = vPosition.z - 0.1f / g_fCamFar;
 
-        float fragDepth = CamDepth;
-    
-        float fLit = 1.0f;
-    
-        float E_x2 = vLightDepth.z;
-        float Ex_2 = vLightDepth.x * vLightDepth.x;
-        float variance = (E_x2 - Ex_2);
-        variance = max(variance, 0.00005f);
+            float fragDepth = CamDepth;
+        
+            float fLit = 1.0f;
+        
+            float E_x2 = vLightDepth.z;
+            float Ex_2 = vLightDepth.x * vLightDepth.x;
+            float variance = (E_x2 - Ex_2);
+            variance = max(variance, 0.00005f);
 
-        float mD = (fragDepth - vLightDepth.x);
-        float mD_2 = mD * mD;
-        float p = (variance / (variance + mD_2));
+            float mD = (fragDepth - vLightDepth.x);
+            float mD_2 = mD * mD;
+            float p = (variance / (variance + mD_2));
 
-        fLit = max(p, fragDepth <= vLightDepth.x);
-        fLit = (1 - fLit) + 0.5f;
-        if (fLit > 1.f)
-            fLit = 1.f;
-    
-        Out.vColor = float4(fLit, fLit, fLit, fLit);
+            fLit = max(p, fragDepth <= vLightDepth.x);
+            fLit = (1 - fLit) + 0.5f;
+            if (fLit > 1.f)
+                fLit = 1.f;
+        
+            Out.vColor = float4(fLit, fLit, fLit, fLit);
 
-    }
-        return Out;
-    }
+        }
+    return Out;
+}
+
 
 technique11 DefaultTechnique
 {

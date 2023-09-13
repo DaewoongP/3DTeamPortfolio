@@ -162,8 +162,6 @@ void CTransform::Turn(_float3 vAxis, _float fTimeDelta)
 	_float4x4 RotationMatrix = XMMatrixRotationQuaternion(
 		Get_QuaternionVector_From_Axis(vAxis, m_fRotationSpeed * fTimeDelta));
 
-	//	_float4x4 RotationMatrix = XMMatrixRotationAxis(XMVector3Normalize(vAxis), m_fRotationSpeed * fTimeDelta);
-
 	Set_Right(XMVector3TransformNormal(vRight, RotationMatrix));
 	Set_Up(XMVector3TransformNormal(vUp, RotationMatrix));
 	Set_Look(XMVector3TransformNormal(vLook, RotationMatrix));

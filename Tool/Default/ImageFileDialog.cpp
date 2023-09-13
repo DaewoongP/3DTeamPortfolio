@@ -27,6 +27,14 @@ string CImageFileDialog::Get_CurretnPath()
     return m_strFilePath;
 }
 
+void CImageFileDialog::ChangeTexture(const _char* pFilePathName)
+{
+    _int iTemp1;
+    _int iTemp2;
+    Safe_Release(m_pTexture);
+    LoadTextureFromFile(pFilePathName, &m_pTexture, &iTemp1, &iTemp2);
+}
+
 void CImageFileDialog::Tick()
 {
     // 텍스처가 없으면 기본 텍스처 출력
@@ -59,8 +67,7 @@ void CImageFileDialog::Tick()
             m_strFilePathName = m_pInstance.GetFilePathName();
             m_strFilePath = m_pInstance.GetCurrentPath();
             m_isOk = true;
-            Safe_Release(m_pTexture);
-            LoadTextureFromFile(m_strFilePathName.data(), &m_pTexture, &iTemp1, &iTemp2);
+            ChangeTexture(m_strFilePathName.data());
         }
 
         // close
@@ -156,6 +163,7 @@ CImageFileDialog* CImageFileDialog::Create(ID3D11Device* _pDevice, const _char* 
 
 void CImageFileDialog::Free(void)
 {
+    __super::Free();
     Safe_Release(m_pDevice);
     Safe_Release(m_pTexture);
     Safe_Release(m_pDefaultTexture);

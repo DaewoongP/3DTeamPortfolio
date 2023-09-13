@@ -5,6 +5,7 @@
 #include "ComboBox.h"
 #include "ImageFileDialog.h"
 
+
 CDummyParticle::CDummyParticle(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
 	: CParticleSystem(_pDevice, _pContext)
 {
@@ -28,19 +29,24 @@ HRESULT CDummyParticle::Initialize(void* _pArg)
 		return E_FAIL;
 
 	m_pEmitterVelocity_ComboBox = CComboBox::Create(Generate_Hashtag(true).data(), "Emission Velocity", { "RigidBody", "Transform" });
-	m_pShapeCombo = CComboBox::Create(Generate_Hashtag(true).data(), "Shape", { "Sphere", "HemiSphere", "Cone", "Donut", "Box", "Mesh", "Sprite", "Circle", "Edge", "Rectangle" });
+	m_pShapeCombo = CComboBox::Create(Generate_Hashtag(true).data(), "Shape", { "Sphere", "Circle", "Box", "Mesh", "Sprite", "Edge", "Rectangle" }, "Sphere");
 	m_pMeshModeCombo = CComboBox::Create(Generate_Hashtag(true).data(), "   Mode", { "Random", "Loop", "Ping-Pong" });
 	m_pSpriteTypeCombo = CComboBox::Create(Generate_Hashtag(true).data(), "Type", { "Vertex", "Edge", "Triangle" });
-	m_pArcModeCombo = CComboBox::Create(Generate_Hashtag(true).data(), "   Mode", { "Random", "Loop", "Ping-Pong, Burst_Spread" });
+	m_pThetaModeCombo = CComboBox::Create(Generate_Hashtag(true).data(), "   Mode", { "Random", "Loop", "Ping-Pong", "Burst_Spread" });
+	m_pPhiModeCombo = CComboBox::Create(Generate_Hashtag(true).data(), "   Mode", { "Random", "Loop", "Ping-Pong", "Burst_Spread" });
 	m_pMeshCombo = CComboBox::Create(Generate_Hashtag(true).data(), "Mesh", { "Cube", "Capsule", "Capsule", "Cylinder", "Plane", "Sphere", "Quad" });
 	m_pConeEmitFromCombo = CComboBox::Create(Generate_Hashtag(true).data(), "Emit From", { "Base", "Volume" });
 	m_pBoxEmitFromCombo = CComboBox::Create(Generate_Hashtag(true).data(), "Emit From", { "Volume", "Shell", "Edge" });
 	m_pMeshTypeCombo = CComboBox::Create(Generate_Hashtag(true).data(), "Type", { "Vertex", "Edge", "Triangle" });
+	m_pStopActionCombo = CComboBox::Create(Generate_Hashtag(true).data(), "Stop Action", { "None", "Disable", "Destroy", "Callback"}, "None");
 	m_pClipChannelCombo = CComboBox::Create(Generate_Hashtag(true).data(), "ClipChannel", { "Red", "Green", "Blue", "Alpha" }, "Alpha");
 	m_pClipChannelCombo->Set_StartTag(m_ShapeModuleDesc.strClipChannel.data());
-
+	
+	m_pEaseCombo.push_back(CComboBox::Create(Generate_Hashtag(true).data(), "Easing", CEase::pEases, CEase::EASE_END, CEase::pEases[0]));
+	//CComboBox::Create(Generate_Hashtag(true).data(), "xvclk", CEase::asdfED, "vsd");
+	
 	m_pAlphaTextureIFD = CImageFileDialog::Create(m_pDevice, "SelectTexture2D");
-	m_pAlphaTextureIFD->m_strStartPath = "../../Resources/Default/Textures/Particles/";
+	m_pAlphaTextureIFD->m_strStartPath = "../../Resources/Effects/Textures/";
 	m_pAlphaTextureIFD->m_iImageButtonWidth = 32;
 
 	m_pSpriteTextureIFD = CImageFileDialog::Create(m_pDevice, "SpriteImageDialog");
@@ -48,17 +54,15 @@ HRESULT CDummyParticle::Initialize(void* _pArg)
 	m_pSpriteTextureIFD->m_iImageButtonWidth = 32;
 
 	m_pMaterialTextureIFD = CImageFileDialog::Create(m_pDevice, "MainTextureDialog");
-	m_pMaterialTextureIFD->m_strStartPath = "../../Resources/UI/UI/Game/VFX/Textures/";
+	m_pMaterialTextureIFD->m_strStartPath = "../../Resources/Effects/Textures/";
 	m_pMaterialTextureIFD->m_iImageButtonWidth = 32;
 
 	return S_OK;
 }
-
 HRESULT CDummyParticle::Render()
 {
 	return __super::Render();
 }
-
 void CDummyParticle::Tick_Imgui(_float _fTimeDelta)
 {
 	CImWindow* pWindow = CWindow_Manager::GetInstance()->Find_Window(TEXT("Effect_Window"));
@@ -70,10 +74,24 @@ void CDummyParticle::Tick_Imgui(_float _fTimeDelta)
 	ImGui::Separator();
 	ShapeModule_TreeNode(pEffectWindow);
 	ImGui::Separator();
+	RotationOverLifetimeModule_TreeNode(pEffectWindow);
+	ImGui::Separator();
 	RendererModule_TreeNode(pEffectWindow);
+	ImGui::Separator();
+	ColorOverLifeTime_TreeNode(pEffectWindow);
 	ImGui::Separator();
 	Save_FileDialog();
 	Load_FileDialog();
+	ImGui::Separator();
+
+	if (ImGui::Button("Play"))
+		Play();
+	ImGui::SameLine();
+	if (ImGui::Button("Stop"))
+		Stop();
+	ImGui::SameLine();
+	if (ImGui::Button("Reset"))
+		Reset_AllParticles();
 
 	// 왼쪽 아래로 고정
 	RECT clientRect;
@@ -89,6 +107,7 @@ void CDummyParticle::Tick_Imgui(_float _fTimeDelta)
 	_float4x4 WorldMatirx = Get_Transform()->Get_WorldMatrix();
 	pEffectWindow->MatrixNode(&WorldMatirx, "Effect_Transform", "Effect_Position", "Effect_Rotation", "Effect_Scale");
 	Get_Transform()->Set_WorldMatrix(WorldMatirx);
+
 }
 void CDummyParticle::MainMoudle_TreeNode(CEffect_Window* pEffectWindow)
 {
@@ -106,11 +125,6 @@ void CDummyParticle::MainMoudle_TreeNode(CEffect_Window* pEffectWindow)
 
 			pEffectWindow->Table_DragFloat("Duration", "ciovj380238uf", &m_MainModuleDesc.fDuration);
 			pEffectWindow->Table_CheckBox("Looping", "eu9v73429hc", &m_MainModuleDesc.isLooping);
-			if (m_isPrevLooping != m_MainModuleDesc.isLooping)
-			{
-				Restart();
-				m_isPrevLooping = m_MainModuleDesc.isLooping;
-			}
 
 			if (true == m_MainModuleDesc.isLooping)
 			{
@@ -151,8 +165,11 @@ void CDummyParticle::MainMoudle_TreeNode(CEffect_Window* pEffectWindow)
 			m_MainModuleDesc.strEmmiterVelocity = m_pEmitterVelocity_ComboBox->Tick(CComboBox::FLAG::TABLE, false);
 			if (pEffectWindow->Table_DragInt("Max Particles", "cv883diicvxcv", &m_MainModuleDesc.iMaxParticles, 0.6f, 1, MAX_PARTICLE_NUM))
 			{
+				Resize_Container(m_MainModuleDesc.iMaxParticles);
 				RemakeBuffer(m_MainModuleDesc.iMaxParticles);
 			}
+			 m_MainModuleDesc.strStopAction = m_pStopActionCombo->Tick(CComboBox::TABLE);
+
 
 			ImGui::EndTable();
 		}
@@ -209,7 +226,7 @@ void CDummyParticle::EmissionModule_TreeNode(CEffect_Window* pEffectWindow)
 				ImGui::PushItemWidth(200.f);
 
 				ImGui::TableSetColumnIndex(0);
-				ImGui::DragFloat(strTag[0].data(), &m_EmissionModuleDesc.Bursts[i].fTime);
+				ImGui::DragFloat(strTag[0].data(), &m_EmissionModuleDesc.Bursts[i].fTime, 0.f, FLT_MAX);
 
 				ImGui::TableSetColumnIndex(1);
 				ImGui::DragIntRange2(strTag[1].data(), &m_EmissionModuleDesc.Bursts[i].iCount.x
@@ -219,10 +236,10 @@ void CDummyParticle::EmissionModule_TreeNode(CEffect_Window* pEffectWindow)
 				ImGui::DragInt(strTag[2].data(), &m_EmissionModuleDesc.Bursts[i].iCycles, 0.1f, 0, INT_MAX);
 
 				ImGui::TableSetColumnIndex(3);
-				ImGui::DragFloat(strTag[3].data(), &m_EmissionModuleDesc.Bursts[i].fInterval, 0.1f, 0, m_EmissionModuleDesc.Bursts[i].fTime - 0.001f);
+				ImGui::DragFloat(strTag[3].data(), &m_EmissionModuleDesc.Bursts[i].fInterval, 0.1f, 0.f, m_EmissionModuleDesc.Bursts[i].fTime - 0.001f);
 
 				ImGui::TableSetColumnIndex(4);
-				ImGui::DragFloat(strTag[4].data(), &m_EmissionModuleDesc.Bursts[i].fProbability, 0.1f, 0, 1.f);
+				ImGui::DragFloat(strTag[4].data(), &m_EmissionModuleDesc.Bursts[i].fProbability, 0.1f, 0.f, 1.f);
 				ImGui::TableNextRow();
 
 				ImGui::PopItemWidth();
@@ -289,37 +306,50 @@ void CDummyParticle::ShapeModule_TreeNode(CEffect_Window* pEffectWindow)
 			if (strShape == "Mesh" || strShape == "Sprite")
 				pEffectWindow->Table_DragFloat("NormalOffset", "SDFPI48083X", &m_ShapeModuleDesc.fNormalOffset);
 
-			if (strShape == "Cone")
-				pEffectWindow->Table_DragFloat("Angle", "QWD0U8I38F", &m_ShapeModuleDesc.fAngle);
+			pEffectWindow->Table_Void();
+			
+			if (strShape == "Sphere" || strShape == "Circle")
+			{
+				pEffectWindow->Table_DragFloatWithOption("Length", "vxckeiic93dk", &m_ShapeModuleDesc.vLength.y, &m_ShapeModuleDesc.vLength, &m_ShapeModuleDesc.isfLengthRange);
+			}
 
-			if (strShape == "Sphere" || strShape == "HemiSphere" || strShape == "Cone"
-				|| strShape == "Donut" || strShape == "Circle" || strShape == "Edge")
-				pEffectWindow->Table_DragFloat("Radius", "DVIFV809082CV", &m_ShapeModuleDesc.fRadius);
+			if (strShape == "Sphere")
+			{
+				pEffectWindow->Table_DragFloatWithOption("Phi", "909082ccvijdf", &m_ShapeModuleDesc.vPhi.y, &m_ShapeModuleDesc.vPhi, &m_ShapeModuleDesc.isPhiRange, 0.9f, 0.f, 360.f);
+				m_ShapeModuleDesc.strPhiMode = m_pPhiModeCombo->Tick(CComboBox::FLAG::TABLE);
+				pEffectWindow->Table_DragFloat("   Spread", "cljkuo838", &m_ShapeModuleDesc.fPhiSpread, 0.01f, 0.f, 1.f);
+				if ("Loop" == m_ShapeModuleDesc.strPhiMode || "Ping-Pong" == m_ShapeModuleDesc.strPhiMode)
+				{
+					pEffectWindow->Table_DragFloat("Phi Interval", "xcvkl2309ck", &m_ShapeModuleDesc.fPhiInterval);
+				}
 
-			if (strShape == "Donut")
-				pEffectWindow->Table_DragFloat("DonutRadius", "WSDFVIO0H13890802", &m_ShapeModuleDesc.fDonutRadius);
+				pEffectWindow->Table_Void();
+			}
 
-			if (strShape == "Sphere" || strShape == "HemiSphere" || strShape == "Cone"
-				|| strShape == "Donut" || strShape == "Circle")
-				pEffectWindow->Table_DragFloat("RadiusThickness", "1AOUYU89AYIXC78", &m_ShapeModuleDesc.fRadiusThickness, 0.01f, 0.f, 1.f);
+			if (strShape == "Sphere" || strShape == "Circle")
+			{
+				pEffectWindow->Table_DragFloatWithOption("Theta", "XVBIO008DFB89", &m_ShapeModuleDesc.vTheta.y, &m_ShapeModuleDesc.vTheta, &m_ShapeModuleDesc.isThetaRange, 0.9f, 0.f, 360.f);
+				m_ShapeModuleDesc.strThetaMode = m_pThetaModeCombo->Tick(CComboBox::FLAG::TABLE);
+				pEffectWindow->Table_DragFloat("   Spread", "SCFVPIFV8989R", &m_ShapeModuleDesc.fThetaSpread, 0.01f, 0.f, 1.f);
+				if ("Loop" == m_ShapeModuleDesc.strThetaMode || "Ping-Pong" == m_ShapeModuleDesc.strThetaMode)
+				{
+					pEffectWindow->Table_DragFloat("Theta Interval", "xcvkl2309ck", &m_ShapeModuleDesc.fThetaInterval);
+				}
+			}
 
-			if (strShape == "Sphere" || strShape == "HemiSphere" || strShape == "Cone"
-				|| strShape == "Donut" || strShape == "Circle")
-				pEffectWindow->Table_DragFloat("Arc", "XVBIO008DFB89", &m_ShapeModuleDesc.fArc, 0.9f, 0.f, 360.f);
-
-			if (strShape == "Sphere" || strShape == "HemiSphere" || strShape == "Cone"
-				|| strShape == "Donut" || strShape == "Circle")
-				m_pArcModeCombo->Tick(CComboBox::FLAG::TABLE);
-
-			if (strShape == "Sphere" || strShape == "HemiSphere" || strShape == "Cone"
-				|| strShape == "Donut" || strShape == "Circle")
-				pEffectWindow->Table_DragFloat("   Spread", "SCFVPIFV8989R", &m_ShapeModuleDesc.fSpread, 0.01f, 0.f, 1.f);
+			///////
 
 			if (strShape == "Cone" && m_ShapeModuleDesc.strConeEmitFrom == "Base")
-				pEffectWindow->Table_DragFloat("Length", "diovoirdmcmxjk", &m_ShapeModuleDesc.fLength);
+				pEffectWindow->Table_DragFloat("Length", "diovoirdmcmxjk", &m_ShapeModuleDesc.vLength.y);
 
 			if (strShape == "Cone")
 				m_pConeEmitFromCombo->Tick(CComboBox::FLAG::TABLE);
+
+			if (strShape == "Cone")
+				pEffectWindow->Table_DragFloat("Phi Interval", "xclvk039icik", &m_ShapeModuleDesc.fPhiInterval);
+
+			if (strShape == "Cone")
+				pEffectWindow->Table_DragFloat("Theta Interval", "sxcdjmim85", &m_ShapeModuleDesc.fThetaInterval);
 
 			// ---------------------------------------------------------------
 			pEffectWindow->Table_Void();
@@ -390,6 +420,103 @@ void CDummyParticle::RendererModule_TreeNode(CEffect_Window* pEffectWindow)
 		ImGui::TreePop();
 	}
 }
+void CDummyParticle::ColorOverLifeTime_TreeNode(CEffect_Window* pEffectWindow)
+{
+	ImGui::Checkbox("##ColorOverLifeTimeModule_CheckBox", &m_ColorOverLifeTimeModuleDesc.isActivate);
+
+	if (false == m_ColorOverLifeTimeModuleDesc.isActivate)
+	{
+		ImGui::SameLine();
+		ImGui::Text("     ColorOverLifeTimeModule");
+		return;
+	}
+
+	ImGui::SameLine();
+
+	if (ImGui::TreeNode("ColorOverLifeTimeModule"))
+	{
+		if (ImGui::BeginTable("ColorOverLifeTimeTable", 2))
+		{
+			ImGui::TableNextRow();
+
+			pEffectWindow->Table_ColorEdit4("Start Color", "xcvkljo8234", &m_ColorOverLifeTimeModuleDesc.vStartColor);
+			pEffectWindow->Table_ColorEdit4("End Color", "dlkjiv993kdkc", &m_ColorOverLifeTimeModuleDesc.vEndColor);
+
+			ImGui::EndTable();
+		}
+		ImGui::TreePop();
+	}
+}
+void CDummyParticle::SizeOverLifeTime_TreeNode(CEffect_Window* pEffectWindow)
+{
+	ImGui::Checkbox("##SizeOverLifeTimeModule_CheckBox", &m_SizeOverLifeTimeModuleDesc.isActivate);
+
+	if (false == m_SizeOverLifeTimeModuleDesc.isActivate)
+	{
+		ImGui::SameLine();
+		ImGui::Text("     SizeOverLifeTimeModule");
+		return;
+	}
+
+	ImGui::SameLine();
+
+	if (ImGui::TreeNode("SizeOverLifeTimeModule"))
+	{
+		if (ImGui::BeginTable("SizeOverLifeTimeTable", 2))
+		{
+			ImGui::TableNextRow();
+			pEffectWindow->Table_CheckBox("Separate Axes", "xcvklj3909di", &m_SizeOverLifeTimeModuleDesc.isSeparateAxes);
+			
+			
+
+			ImGui::EndTable();
+		}
+		ImGui::TreePop();
+	}
+}
+void CDummyParticle::RotationOverLifetimeModule_TreeNode(CEffect_Window* pEffectWindow)
+{
+	ImGui::Checkbox("##RotationOverLifetimeModule_CheckBox", &m_RotationOverLifetimeModuleDesc.isActivate);
+
+	if (false == m_RotationOverLifetimeModuleDesc.isActivate)
+	{
+		ImGui::SameLine();
+		ImGui::Text("     RotationOverLifetimeModule");
+		return;
+	}
+
+	ImGui::SameLine();
+
+	if (ImGui::TreeNode("RotationOverLifetimeModule"))
+	{
+		if (ImGui::BeginTable("RotationOverLifetimeTable", 2))
+		{
+			ImGui::TableNextRow();
+
+			pEffectWindow->Table_CheckBox("SeperateAxes", "zxcvtbynynumei", &m_RotationOverLifetimeModuleDesc.isSeperateAxes);
+			if (false == m_RotationOverLifetimeModuleDesc.isSeperateAxes)
+			{
+				pEffectWindow->Table_DragFloat("AngularVelocity", "xcvojiueu", &m_RotationOverLifetimeModuleDesc.AngularVelocityXYZ.z, 0.9f, FLT_MIN, FLT_MAX);
+			}
+			else
+			{
+				pEffectWindow->Table_DragXYZ("AngularVelocityXYZ", "VSDKvoije4", &m_RotationOverLifetimeModuleDesc.AngularVelocityXYZ, 0.9f, FLT_MIN, FLT_MAX, false);				
+			}
+
+			pEffectWindow->Table_CheckBox("Flip Option", "zxclkei909d", &m_RotationOverLifetimeModuleDesc.isFlipOption);
+			if (true == m_RotationOverLifetimeModuleDesc.isFlipOption)
+			{
+				pEffectWindow->Table_DragFloat("FlipProperty", "SDKIIksdjki", &m_RotationOverLifetimeModuleDesc.fFlipProperty, 0.01f, 0.f, 1.f);
+			}
+			
+			pEffectWindow->Table_DragFloat("Radius", "cxvljkKCIEKMC", &m_RotationOverLifetimeModuleDesc.fRadius, 0.001f);
+			pEffectWindow->Table_DragFloat("Speed", "DKLCIExcvi39", &m_RotationOverLifetimeModuleDesc.fSpeed);
+
+			ImGui::EndTable();
+		}
+		ImGui::TreePop();
+	}
+}
 void CDummyParticle::Save_FileDialog()
 {
 	if (ImGui::Button("Save Particle"))
@@ -421,7 +548,7 @@ void CDummyParticle::Save_FileDialog()
 void CDummyParticle::Load_FileDialog()
 {
 	if (ImGui::Button("Load Particle"))
-		ImGuiFileDialog::Instance()->OpenDialog("CooseLoadFilePtcKey", "Load File", ".ptc", "../../Resources/Effects/Particles/");
+		ImGuiFileDialog::Instance()->OpenDialog("CooseLoadFilePtcKey", "Load File", ".ptc", "../../Resources/GameData/ParticleData/");
 
 	// display
 	if (ImGuiFileDialog::Instance()->Display("CooseLoadFilePtcKey"))
@@ -431,14 +558,37 @@ void CDummyParticle::Load_FileDialog()
 		{
 			std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
 			std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
-
-			_tchar wszFilePath[MAX_PATH];
-			ZeroMemory(wszFilePath, sizeof(_tchar) * MAX_PATH);
-			CharToWChar(filePath.c_str(), wszFilePath);
+			fs::path fsFilePathName = filePathName;
+			fs::path fsFilePath = filePath;
 
 			_ulong dwByte = 0;
 
-			MSG_BOX("The file has been loaded successfully");
+			if (FAILED(Load(fsFilePath.wstring().c_str())))
+			{
+				MSG_BOX("Failed to loaded file");
+			}
+			else
+			{
+				RemakeBuffer(m_MainModuleDesc.iMaxParticles);
+				Resize_Container(m_MainModuleDesc.iMaxParticles);
+ 				m_pShapeCombo->Update_Current_Item(m_ShapeModuleDesc.strShape);
+				m_pMeshModeCombo->Update_Current_Item(m_ShapeModuleDesc.strMeshTypeMode);
+				m_pMeshTypeCombo->Update_Current_Item(m_ShapeModuleDesc.strMeshType);
+				m_pMeshCombo->Update_Current_Item(m_ShapeModuleDesc.strMesh);
+				m_pStopActionCombo->Update_Current_Item(m_MainModuleDesc.strStopAction);
+				m_pPhiModeCombo->Update_Current_Item(m_ShapeModuleDesc.strPhiMode);
+				m_pThetaModeCombo->Update_Current_Item(m_ShapeModuleDesc.strThetaMode);
+				m_pClipChannelCombo->Update_Current_Item(m_ShapeModuleDesc.strClipChannel);
+				ChangeTexture(&m_pMainTexture, m_RendererModuleDesc.wstrMaterialPath, ToRelativePath(m_RendererModuleDesc.wstrMaterialPath.c_str()).c_str());
+				ChangeTexture(&m_pClipTexture, m_ShapeModuleDesc.wstrClipTexturePath, ToRelativePath(m_ShapeModuleDesc.wstrClipTexturePath.c_str()).c_str());
+				//m_pMaterialTextureIFD->ChangeTexture(wstrToStr(m_RendererModuleDesc.wstrMaterialPath).data());
+				//m_pAlphaTextureIFD->ChangeTexture(wstrToStr(m_ShapeModuleDesc.wstrClipTexturePath).data());
+				//m_pSpriteTypeCombo->Update_Current_Item(m_ShapeModuleDesc.str);
+				//m_pConeEmitFromCombo->Update_Current_Item(m_MainModuleDesc.str);
+				//m_pBoxEmitFromCombo->Update_Current_Item(m_ShapeModuleDesc.strThetaMode);
+
+				MSG_BOX("The file has been loaded successfully");
+			}
 		}
 
 		// close
@@ -452,19 +602,20 @@ void CDummyParticle::Restart()
 }
 void CDummyParticle::ChangeTexture(CTexture** _pTexture, wstring& _wstrOriginPath, const _tchar* _pDestPath)
 {
+	BEGININSTANCE;
 	// 소유하고 있는 컴포넌트를 지운다.
-	_tchar wszTag[MAX_STR];
-	lstrcpy(wszTag, (*_pTexture)->Get_Tag());
-	
+
+	_tchar* wszTag = pGameInstance->Make_WChar((*_pTexture)->Get_Tag());
+
 	if (FAILED(CComposite::Delete_Component(wszTag)))
 	{
 		MSG_BOX("Failed to Delete");
+		ENDINSTANCE;
 		E_FAIL;
 	}
 		
 	Safe_Release(*_pTexture);
 
-	BEGININSTANCE;
 	// 찾는 컴포넌트가 없으면 원본을 만들어준다.
 	wstring tempTag = ToPrototypeTag(TEXT("Prototype_Component_Texture"), _pDestPath).data();
 	_tchar* pTag = { nullptr };
@@ -474,6 +625,7 @@ void CDummyParticle::ChangeTexture(CTexture** _pTexture, wstring& _wstrOriginPat
 	// 기존에 컴포넌트가 존재하는지 확인
 	if (nullptr == pGameInstance->Find_Prototype(LEVEL_TOOL, pTag))
 	{
+
 		// 없다면 새로운 프로토타입 컴포넌트 생성
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, pTag, CTexture::Create(m_pDevice
 			, m_pContext, _pDestPath))))
@@ -529,15 +681,22 @@ void CDummyParticle::Free(void)
 	Safe_Release(m_pShapeCombo);
 	Safe_Release(m_pMeshModeCombo);
 	Safe_Release(m_pSpriteTypeCombo);
-	Safe_Release(m_pArcModeCombo);
+	Safe_Release(m_pThetaModeCombo);
+	Safe_Release(m_pPhiModeCombo);
 	Safe_Release(m_pMeshCombo);
 	Safe_Release(m_pConeEmitFromCombo);
 	Safe_Release(m_pBoxEmitFromCombo);
 	Safe_Release(m_pMeshTypeCombo);
 	Safe_Release(m_pClipChannelCombo);
+	Safe_Release(m_pStopActionCombo);
 	Safe_Release(m_pAlphaTextureIFD);
 	Safe_Release(m_pSpriteTextureIFD);
 	Safe_Release(m_pMaterialTextureIFD);
+	
+	for (auto& EaseComboBox : m_pEaseCombo)
+	{
+		Safe_Release(EaseComboBox);
+	}
 
 	for (auto& pTag : m_pTags)
 		Safe_Delete_Array(pTag);

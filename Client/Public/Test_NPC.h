@@ -4,11 +4,10 @@
 
 BEGIN(Engine)
 class CModel;
-class CCustomModel;
 class CShader;
 class CRenderer;
 class CRigidBody;
-class CCharacterController;
+class CRootBehavior;
 END
 
 BEGIN(Client)
@@ -33,8 +32,7 @@ private:
 	CShader* m_pShaderCom = { nullptr };
 	CRenderer* m_pRenderer = { nullptr };
 	CRigidBody* m_pRigidBody = { nullptr };
-
-	CCharacterController* m_pController = { nullptr };
+	CRootBehavior* m_pRootBehavior = { nullptr };
 
 private:
 	PxScene* m_pScene = { nullptr };

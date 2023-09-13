@@ -1,6 +1,7 @@
 #include "..\Public\Test_Player.h"
 #include "GameInstance.h"
 #include "PhysXConverter.h"
+#include "Magic.h"
 
 CTest_Player::CTest_Player(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -28,8 +29,11 @@ HRESULT CTest_Player::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-	m_pTransform->Set_Speed(10.f);
+	m_pTransform->Set_Speed(50.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
+	m_pTransform->Set_RigidBody(m_pRigidBody);
+
+	m_pModelCom->Play_Animation(0.f);
 
 	return S_OK;
 }
@@ -40,7 +44,9 @@ void CTest_Player::Tick(_float fTimeDelta)
 
 	Key_Input(fTimeDelta);
 
-	//m_pModelCom->Play_Animation(fTimeDelta);
+	m_pModelCom->Set_WindVelocity(PhysXConverter::ToXMFLOAT3(m_pRigidBody->Get_RigidBodyActor()->getLinearVelocity()) * m_fWindPower * -1.f);
+	m_pModelCom->Tick(CCustomModel::ROBE, 2, fTimeDelta);
+
 }
 
 void CTest_Player::Late_Tick(_float fTimeDelta)
@@ -84,36 +90,36 @@ HRESULT CTest_Player::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	//for (_uint iParts = 0; iParts < CCustomModel::MESH_END; ++iParts)
-	//{
-	//	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes(iParts);
+	for (_uint iParts = 0; iParts < CCustomModel::MESH_END; ++iParts)
+	{
+		_uint		iNumMeshes = m_pModelCom->Get_NumMeshes(iParts);
 
-	//	for (_uint i = 0; i < iNumMeshes; ++i)
-	//	{
-	//		try /* Failed Render */
-	//		{
-	//			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", iParts, i)))
-	//				throw TEXT("Bind_BoneMatrices");
+		for (_uint i = 0; i < iNumMeshes; ++i)
+		{
+			try /* Failed Render */
+			{
+				if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", iParts, i)))
+					throw TEXT("Bind_BoneMatrices");
 
-	//			if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", iParts, i, DIFFUSE)))
-	//				throw TEXT("Bind_Material Diffuse");
+				if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", iParts, i, DIFFUSE)))
+					throw TEXT("Bind_Material Diffuse");
 
-	//			if (FAILED(m_pShaderCom->Begin("AnimMesh")))
-	//				throw TEXT("Shader Begin AnimMesh");
+				if (FAILED(m_pShaderCom->Begin("AnimMeshNonCull")))
+					throw TEXT("Shader Begin AnimMesh");
 
-	//			if (FAILED(m_pModelCom->Render(iParts, i)))
-	//				throw TEXT("Model Render");
-	//		}
-	//		catch (const _tchar* pErrorTag)
-	//		{
-	//			wstring wstrErrorMSG = TEXT("[CTest_Player] Failed Render : ");
-	//			wstrErrorMSG += pErrorTag;
-	//			MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+				if (FAILED(m_pModelCom->Render(iParts, i)))
+					throw TEXT("Model Render");
+			}
+			catch (const _tchar* pErrorTag)
+			{
+				wstring wstrErrorMSG = TEXT("[CTest_Player] Failed Render : ");
+				wstrErrorMSG += pErrorTag;
+				MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
 
-	//			return E_FAIL;
-	//		}
-	//	}
-	//}
+				return E_FAIL;
+			}
+		}
+	}
 
 	return S_OK;
 }
@@ -135,13 +141,16 @@ HRESULT CTest_Player::Add_Components()
 
 	CRigidBody::RIGIDBODYDESC RigidBodyDesc;
 	RigidBodyDesc.isStatic = false;
+	RigidBodyDesc.isTrigger = false;
 	RigidBodyDesc.vInitPosition = _float3(5.f, 5.f, 5.f);
 	RigidBodyDesc.fStaticFriction = 0.5f;
 	RigidBodyDesc.fDynamicFriction = 0.5f;
 	RigidBodyDesc.fRestitution = 0.f;
-	PxBoxGeometry GeoMetry = PxBoxGeometry(2.f, 2.f, 2.f);
+	PxCapsuleGeometry GeoMetry = PxCapsuleGeometry(1.f, 2.f);
 	RigidBodyDesc.pGeometry = &GeoMetry;
 	RigidBodyDesc.Constraint = CRigidBody::AllRot;
+	RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 0.f, 1.f);
+	RigidBodyDesc.pOwnerObject = this;
 	/* Com_RigidBody */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
 		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
@@ -151,17 +160,16 @@ HRESULT CTest_Player::Add_Components()
 	}
 	// 리지드바디 액터 추가 옵션 설정
 	PxRigidBody* Rigid = m_pRigidBody->Get_RigidBodyActor();
-	Rigid->setMaxLinearVelocity(500.f);
+	Rigid->setMaxLinearVelocity(1000.f);
 	Rigid->setMass(10.f);
-	Rigid->setAngularDamping(0.7f);
-
+	
 	/* Com_CustomModel */
-	/*if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_CustomModel_Player"),
+	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_CustomModel_test"),
 		TEXT("Com_CustomModel"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 	{
 		MSG_BOX("Failed CTest_Player Add_Component : (Com_CustomModel)");
 		return E_FAIL;
-	}*/
+	}
 
 	/* For.Com_Shader */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimMesh"),
@@ -171,8 +179,25 @@ HRESULT CTest_Player::Add_Components()
 		return E_FAIL;
 	}
 
-	//m_pModelCom->Add_MeshParts(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Robe_Student"), CCustomModel::ROBE);
-	//m_pModelCom->Add_MeshParts(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Low"), CCustomModel::PANTS);
+	/* For.Com_Magic*/
+	//마법 클론할때 구조체 떤져줘야함.
+	CMagic::MAGICDESC magicInitDesc;
+	magicInitDesc.eBuffType = CMagic::BUFF_NONE;
+	magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
+	magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+	magicInitDesc.eMagicTag = BASICCAST;
+	magicInitDesc.fCoolTime = 1.f;
+	magicInitDesc.fDamage = 10.f;
+	magicInitDesc.fDistance = 0;
+
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_BaseAttack"),
+		TEXT("Com_Magic"), reinterpret_cast<CComponent**>(&m_pMagic), &magicInitDesc)))
+	{
+		MSG_BOX("Failed CTest_Player Add_Component : (Com_Magic)");
+		return E_FAIL;
+	}
+	
+	m_pModelCom->Add_MeshParts(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshParts_Robe_Student"), CCustomModel::ROBE, TEXT("../../Resources/GameData/ClothData/Test.cloth"));
 
 	return S_OK;
 }
@@ -218,6 +243,14 @@ void CTest_Player::Key_Input(_float fTimeDelta)
 	if (pGameInstance->Get_DIKeyState(DIK_RIGHT))
 	{
 		m_pRigidBody->Add_Force(m_pTransform->Get_Right() * m_pTransform->Get_Speed(), PxForceMode::eFORCE);
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_C, CInput_Device::KEY_DOWN))
+	{
+		if (m_pMagic != nullptr)
+		{
+			m_pMagic->Magic_Cast(m_pTransform);
+		}
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
@@ -322,5 +355,6 @@ void CTest_Player::Free()
 		Safe_Release(m_pRenderer);
 		Safe_Release(m_pController);
 		Safe_Release(m_pRigidBody);
+		Safe_Release(m_pMagic);
 	}
 }

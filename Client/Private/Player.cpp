@@ -1,5 +1,6 @@
 #include "..\Public\Player.h"
 #include "GameInstance.h"
+#include "Player_Camera.h"
 
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -42,6 +43,13 @@ HRESULT CPlayer::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
+	/*if (FAILED(Ready_Caemra()))
+	{
+		MSG_BOX("Failed Ready Player Caemra");
+
+		return E_FAIL;
+	}*/
+
 
 #ifdef _DEBUG
 	
@@ -54,7 +62,6 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 #endif // _DEBUG
 
-
 	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
 
@@ -66,7 +73,6 @@ void CPlayer::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	Key_Input(fTimeDelta);
-
 
 	m_pCustomModel->Play_Animation(fTimeDelta);
 }
@@ -84,7 +90,6 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 		m_pRenderer->Add_DebugGroup(m_pTestCollider);
 
 #endif // _DEBUG
-
 	}
 
 #ifdef _DEBUG
@@ -192,22 +197,24 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 	if (pGameInstance->Get_DIKeyState(DIK_UP))
 	{
-		//m_pRigidBody->Add_Force(m_pTransform->Get_Look() * m_pTransform->Get_Speed(), PxForceMode::eACCELERATION);
+		m_pTransform->Go_Straight(fTimeDelta);
 	}
 	
 	if (pGameInstance->Get_DIKeyState(DIK_DOWN))
 	{
-		//m_pRigidBody->Add_Force(m_pTransform->Get_Look() * -m_pTransform->Get_Speed(), PxForceMode::eACCELERATION);
+		m_pTransform->Go_Backward(fTimeDelta);
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_LEFT))
 	{
-		m_pTransform->Turn(_float3(0.f, -1.f, 0.f), fTimeDelta);
+		//m_pTransform->Turn(_float3(0.f, -1.f, 0.f), fTimeDelta);
+		m_pTransform->Go_Left(fTimeDelta);
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_RIGHT))
 	{
-		m_pTransform->Turn(_float3(0.f, 1.f, 0.f), fTimeDelta);
+		//m_pTransform->Turn(_float3(0.f, 1.f, 0.f), fTimeDelta);
+		m_pTransform->Go_Right(fTimeDelta);
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
@@ -220,71 +227,117 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 HRESULT CPlayer::Ready_MeshParts()
 {
+	//Head
+	if (FAILED(m_pCustomModel->Add_MeshParts(
+		LEVEL_MAINGAME,
+		TEXT("Prototype_Component_MeshPart_Adult_M_Head"),
+		CCustomModel::HEAD)))
+	{
+		MSG_BOX("Failed Add MeshPart Head");
+
+		return E_FAIL;
+	}
+
+	//Arm
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_MAINGAME, 
-		TEXT("Prototype_Component_MeshParts_Up"),
-		CCustomModel::TOP, 
-		nullptr)))
+		TEXT("Prototype_Component_MeshPart_Arms01"),
+		CCustomModel::TOP)))
 	{
-		MSG_BOX("Failed Add MeshPart Up");
+		MSG_BOX("Failed Add MeshPart Arm");
 
 		return E_FAIL;
 	}
 
+	//Robe
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_MAINGAME,
-		TEXT("Prototype_Component_MeshParts_Low"),
-		CCustomModel::PANTS,
-		nullptr)))
-	{
-		MSG_BOX("Failed Add MeshPart Low");
-
-		return E_FAIL;
-	}
-
-	if (FAILED(m_pCustomModel->Add_MeshParts(
-		LEVEL_MAINGAME,
-		TEXT("Prototype_Component_MeshParts_Robe"),
-		CCustomModel::ROBE,
-		nullptr)))
+		TEXT("Prototype_Component_MeshPart_Robe01"),
+		CCustomModel::PANTS)))
 	{
 		MSG_BOX("Failed Add MeshPart Robe");
 
 		return E_FAIL;
 	}
 
+	//Top
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_MAINGAME,
-		TEXT("Prototype_Component_MeshParts_Socks"),
-		CCustomModel::SOCKS,
-		nullptr)))
+		TEXT("Prototype_Component_MeshPart_StuUni03_LongSleeve"),
+		CCustomModel::ROBE)))
 	{
-		MSG_BOX("Failed Add MeshPart Socks");
+		MSG_BOX("Failed Add MeshPart Upper");
 
 		return E_FAIL;
 	}
 
+	//Pants
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_MAINGAME,
-		TEXT("Prototype_Component_MeshParts_Socks1"),
-		CCustomModel::SOCKS,
-		nullptr)))
+		TEXT("Prototype_Component_MeshPart_Low_Slcialite01"),
+		CCustomModel::SOCKS)))
 	{
-		MSG_BOX("Failed Add MeshPart Socks1");
+		MSG_BOX("Failed Add MeshPart Lower");
 
 		return E_FAIL;
 	}
 
+	//Socks
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_MAINGAME,
-		TEXT("Prototype_Component_MeshParts_Shoes"),
-		CCustomModel::SHOES,
-		nullptr)))
+		TEXT("Prototype_Component_MeshPart_Socks01"),
+		CCustomModel::SOCKS)))
+	{
+		MSG_BOX("Failed Add MeshPart Socks01");
+
+		return E_FAIL;
+	}
+
+	//Shoes
+	if (FAILED(m_pCustomModel->Add_MeshParts(
+		LEVEL_MAINGAME,
+		TEXT("Prototype_Component_MeshPart_StuShoes03"),
+		CCustomModel::SHOES)))
 	{
 		MSG_BOX("Failed Add MeshPart Shoes");
 
 		return E_FAIL;
 	}
+
+	return S_OK;
+}
+
+HRESULT CPlayer::Ready_Caemra()
+{
+	//어떤 뼈에 붙일 것인가.
+	_uint iBoneIndex{ 0 };
+
+	m_pCustomModel->Find_BoneIndex(TEXT("SKT_HeadCamera"), &iBoneIndex);
+
+	CCamera::CAMERADESC CameraDesc;
+
+	CameraDesc.m_fAspect = _float(g_iWinSizeX) / _float(g_iWinSizeY);
+	CameraDesc.m_fFovY = XMConvertToRadians(90.f);
+	CameraDesc.m_fNear = 0.1f;
+	CameraDesc.m_fFar = 1000.f;
+
+	CPlayer_Camera::PLAYERCAMERADESC PlayerCameraDesc;
+
+	PlayerCameraDesc.CameraDesc = CameraDesc;
+	PlayerCameraDesc.pFollowTargetBoneMatrix = m_pCustomModel->Get_BoneCombinedTransformationMatrixPtr(iBoneIndex);
+	PlayerCameraDesc.pFollowTargetMatrix = m_pTransform->Get_WorldMatrixPtr();
+
+	m_pPlayer_Camera = CPlayer_Camera::Create(m_pDevice,m_pContext, &PlayerCameraDesc);
+
+	NULL_CHECK_RETURN_MSG(m_pPlayer_Camera, E_FAIL, TEXT("Failed Create Player Camera"));
+
+	BEGININSTANCE;
+
+	pGameInstance->Add_Camera(TEXT("Player_Camera"), (CCamera*)m_pPlayer_Camera);
+
+	pGameInstance->Set_Camera(TEXT("Player_Camera"));
+
+	ENDINSTANCE;
 
 	return S_OK;
 }

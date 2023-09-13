@@ -170,8 +170,8 @@ _int CCalculator::RandomChoose(vector<_float> Weights, _uint iChooseSize)
 		}
 
 		// 마지막 인덱스 예외처리.
-		if (iIndex + 1 == Weights.size() - 1)
-			return iIndex + 1;
+		if (iIndex == Weights.size() - 1)
+			return iIndex;
 		else
 		{
 			Weights[iIndex + 1] += Weights[iIndex];
@@ -277,6 +277,56 @@ _float3 CCalculator::PolarToCartesian(_float _fLength, _float _fTheta, _float _f
 	_float z = _fLength * cos(_fTheta);
 
 	return _float3(x, y, z);
+}
+
+/* 구면선형보간 - output, 시작점, 끝점, 점간의 업벡터, 선형보간 중점과 원의 중점간 거리 k, 원하는 보간 값 f*/
+_float3 CCalculator::GetVectorSlerp(_float3 v1, _float3 v2, _float3 vUp, _float k, _float f)
+{
+	_float3 v3, OV1, OV2, vCenter, vNormal1, vNormal2, vOut;
+	_float fRad;
+	_float4x4    RotationMatrix = XMMatrixIdentity();
+
+	v3 = (v1 + v2) / 2.f;
+	vCenter = XMVector3Cross(v1 - v3, vUp);
+	vCenter.Normalize();
+	vCenter *= k;
+	vCenter = v3 + vCenter;
+
+	OV1 = v1 - vCenter;
+	OV2 = v2 - vCenter;
+
+	vNormal1 = XMVector3Normalize(OV1);
+	vNormal2 = XMVector3Normalize(OV2);
+
+	fRad = acosf(vNormal1.Dot(vNormal2));
+	fRad *= f;
+	RotationMatrix = XMMatrixRotationAxis(vUp, fRad);
+
+	vOut = XMVector3TransformCoord(OV1, RotationMatrix);
+
+	return vCenter + vOut;
+}
+
+_float4x4 CCalculator::RightUpLook_In_Vectors(_float3 vSourPos, _float3 vDestPos)
+{
+	_float4x4 ResultMatrix = _float4x4();
+
+	_float3 vRight, vUp, vLook;
+	
+	vLook = vSourPos - vDestPos;
+	vLook.Normalize();
+	vUp = _float3(0.f, 1.f, 0.f);
+	vRight = vUp.Cross(vLook);
+	vUp = vLook.Cross(vRight);
+
+	vRight.Normalize();
+	vUp.Normalize();
+
+	ResultMatrix.Right(vRight);
+	ResultMatrix.Up(vUp);
+	ResultMatrix.Look(vLook);
+
+	return ResultMatrix;
 }
 
 void CCalculator::Free()

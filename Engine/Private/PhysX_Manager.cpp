@@ -1,41 +1,9 @@
 #include "..\Public\PhysX_Manager.h"
 #include "Component_Manager.h"
-#include "PhysXConverter.h"
+#include "Calculator.h"
 #include "Input_Device.h"
 
 IMPLEMENT_SINGLETON(CPhysX_Manager)
-
-#ifdef _DEBUG
-const PxRenderBuffer* CPhysX_Manager::Get_RenderBuffer()
-{
-	if (nullptr == m_pPhysxScene)
-		return nullptr;
-	
-	const PxRenderBuffer* RenderBuf = &m_pPhysxScene->getRenderBuffer();
-
-	return RenderBuf;
-}
-
-_uint CPhysX_Manager::Get_LastLineBufferIndex()
-{
-	return m_iLastLineBufferIndex;
-}
-
-_uint CPhysX_Manager::Get_LastTriangleBufferIndex()
-{
-	return m_iLastTriangleBufferIndex;
-}
-
-void CPhysX_Manager::Add_LastLineBufferIndex(_uint iNumLines)
-{
-	m_iLastLineBufferIndex += iNumLines;
-}
-
-void CPhysX_Manager::Add_LastTriangleBufferIndex(_uint iNumTriangles)
-{
-	m_iLastTriangleBufferIndex += iNumTriangles;
-}
-#endif // _DEBUG
 
 HRESULT CPhysX_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
@@ -111,13 +79,55 @@ void CPhysX_Manager::Tick(_float fTimeDelta)
 	m_pPhysxScene->fetchResults(true);
 }
 
-#ifdef _DEBUG
-void CPhysX_Manager::Clear_BufferIndex()
+_bool CPhysX_Manager::RayCast(_float3 vOrigin, _float3 vDir, _float fMaxDist, _Inout_ _float3* pHitPosition, _Inout_ _float* pDist, _uint iMaxHits, RayCastQueryFlag RaycastFlag)
 {
-	m_iLastLineBufferIndex = 0;
-	m_iLastTriangleBufferIndex = 0;
+	vDir.Normalize();
+
+	PxRaycastBuffer CallbackBuf;
+	PxQueryFilterData FilterData;
+	if (RAY_ONLY_DYNAMIC == RaycastFlag)
+	{
+		FilterData.flags = PxQueryFlag::eDYNAMIC;
+	}
+	else if (RAY_ONLY_STATIC == RaycastFlag)
+	{
+		FilterData.flags = PxQueryFlag::eSTATIC;
+	}
+	else
+		FilterData.flags = PxQueryFlag::eDYNAMIC | PxQueryFlag::eSTATIC;
+
+	PxHitFlags eHitFlag = PxHitFlag::ePOSITION | PxHitFlag::eNORMAL | PxHitFlag::eUV;
+
+	_bool isCollision = m_pPhysxScene->raycast(PhysXConverter::ToPxVec3(vOrigin), PhysXConverter::ToPxVec3(vDir),
+		fMaxDist, CallbackBuf, eHitFlag, FilterData);
+
+	if (true == isCollision)
+	{
+		if (nullptr != pHitPosition)
+			*pHitPosition = PhysXConverter::ToXMFLOAT3(CallbackBuf.block.position);
+		if (nullptr != pDist)
+			*pDist = CallbackBuf.block.distance;
+	}
+
+	return isCollision;
 }
-#endif // _DEBUG
+
+_bool CPhysX_Manager::Mouse_RayCast(HWND hWnd, ID3D11DeviceContext* pContext, _float fMaxDist, _float3* pHitPosition, _float* pDist, _uint iMaxHits, RayCastQueryFlag RaycastFlag)
+{
+	CCalculator* pCalculator = CCalculator::GetInstance();
+	Safe_AddRef(pCalculator);
+
+	_float4 vRayPos, vRayDir;
+	if (FAILED(pCalculator->Get_WorldMouseRay(pContext, hWnd, &vRayPos, &vRayDir)))
+	{
+		Safe_Release(pCalculator);
+		return false;
+	}
+
+	Safe_Release(pCalculator);
+
+	return RayCast(vRayPos.xyz(), vRayDir.xyz(), fMaxDist, pHitPosition, pDist, iMaxHits, RaycastFlag);
+}
 
 PxScene* CPhysX_Manager::Create_Scene()
 {

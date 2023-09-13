@@ -36,6 +36,8 @@ HRESULT CTest_Stair::Initialize(void* pArg)
 		m_pTransform->Set_Position(_float3(0,0,3));
 	}
 
+	m_pTransform->Set_RigidBody(m_pRigidBody);
+
 	return S_OK;
 }
 
@@ -52,9 +54,25 @@ void CTest_Stair::Late_Tick(_float fTimeDelta)
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 #ifdef _DEBUG
+		m_pRenderer->Add_DebugGroup(m_pRigidBody);
 		m_pRenderer->Add_DebugGroup(m_pConvexMesh);
 #endif // _DEBUG
 	}
+}
+
+void CTest_Stair::OnCollisionEnter(COLLISIONDESC CollisionDesc)
+{
+	cout << "Stair Enter" << endl;
+}
+
+void CTest_Stair::OnCollisionStay(COLLISIONDESC CollisionDesc)
+{
+	cout << "Stair Stay" << endl;
+}
+
+void CTest_Stair::OnCollisionExit(COLLISIONDESC CollisionDesc)
+{
+	cout << "Stair Exit" << endl;
 }
 
 HRESULT CTest_Stair::Render()
@@ -69,18 +87,6 @@ HRESULT CTest_Stair::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-	for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; iMeshCount++)
-	{
-		m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", iMeshCount);
-		m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", iMeshCount, DIFFUSE);
-
-		m_pShaderCom->Begin("Mesh");
-
-		if (FAILED(m_pModelCom->Render(iMeshCount)))
-			return E_FAIL;
-	}
 	return S_OK;
 }
 
@@ -94,14 +100,6 @@ HRESULT CTest_Stair::Add_Components()
 		return E_FAIL;
 	}
 
-	/* For.Com_Model */
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Stair"),
-		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
-	{
-		MSG_BOX("Failed CTest_Stair Add_Component : (Com_Model)");
-		return E_FAIL;
-	}
-
 	/* For.Com_Shader */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
@@ -110,24 +108,25 @@ HRESULT CTest_Stair::Add_Components()
 		return E_FAIL;
 	}
 
-	///* For.ConvexMesh*/
- //	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_ConvexMesh"),
-	//	TEXT("Com_ConvexMesh"), reinterpret_cast<CComponent**>(&m_pConvexMesh), m_pModelCom->Get_Meshes_Test())))
-	//{
-	//	MSG_BOX("Failed CTest_Stair Add_Component : (Com_ConvexMesh)");
-	//	return E_FAIL;
-	//}
-	//return S_OK;
-
-	/* For.TriangleMesh*/
-	_tchar szFileName[MAX_PATH] = {};
-	lstrcpy(szFileName, TEXT("../../Resources/Models/NonAnims/SM_Intro_Cliffside_RuinsStairsBase_01_COL/SM_Intro_Cliffside_RuinsStairsBase_01_COL.dat"));
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_TriangleMesh"),
-		TEXT("Com_TriangleMesh"), reinterpret_cast<CComponent**>(&m_pTriangleMesh),&szFileName)))
+	CRigidBody::RIGIDBODYDESC RigidBodyDesc;
+	RigidBodyDesc.isStatic = true;
+	RigidBodyDesc.isTrigger = true;
+	RigidBodyDesc.vInitPosition = _float3(15.f, 5.f, 5.f);
+	RigidBodyDesc.fStaticFriction = 0.5f;
+	RigidBodyDesc.fDynamicFriction = 0.5f;
+	RigidBodyDesc.fRestitution = 0.f;
+	PxSphereGeometry GeoMetry = PxSphereGeometry(2.f);
+	RigidBodyDesc.pGeometry = &GeoMetry;
+	RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 0.f, 1.f);
+	RigidBodyDesc.pOwnerObject = this;
+	/* Com_RigidBody */
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
+		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
 	{
-		MSG_BOX("Failed CTest_Stair Add_Component : (Com_TriangleMesh)");
+		MSG_BOX("Failed CTest_Player Add_Component : (Com_RigidBody)");
 		return E_FAIL;
 	}
+
 	return S_OK;
 }
 
@@ -184,5 +183,6 @@ void CTest_Stair::Free()
 		Safe_Release(m_pRenderer);
 		Safe_Release(m_pConvexMesh);
 		Safe_Release(m_pTriangleMesh);
+		Safe_Release(m_pRigidBody);
 	}
 }

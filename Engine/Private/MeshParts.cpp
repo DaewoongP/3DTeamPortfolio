@@ -40,6 +40,17 @@ void CMeshParts::Get_Matrices(const _uint& _iMeshIndex, CModel::BONES _Bones, _I
 	m_Meshes[_iMeshIndex]->Get_Matrices(_Bones, _pMatrices, _PivotMatrix);
 }
 
+void CMeshParts::Set_WindVelocity(_float3 vWindVelocity)
+{
+	if (0 == m_DynamicMeshIndices.size())
+		return;
+
+	for (auto& DynamicMeshIndex : m_DynamicMeshIndices)
+	{
+		static_cast<CDynamic_Mesh*>(m_Meshes[DynamicMeshIndex])->Set_WindVelocity(vWindVelocity);
+	}
+}
+
 HRESULT CMeshParts::Initialize_Prototype(const wstring& _wstrMeshPartsFilePath, const wstring& _wstrMeshPartsTag)
 {
 	if (FAILED(Ready_File(_wstrMeshPartsFilePath.c_str())))
@@ -398,9 +409,22 @@ HRESULT CMeshParts::Ready_DynamicMesh(const CModel::BONES& _Bones, const _tchar*
 
 	for (_uint i = 0; i < m_iNumMeshes; ++i)
 	{
-		CDynamic_Mesh* pMesh = CDynamic_Mesh::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, _Bones, m_MeshDatas[i], XMMatrixRotationQuaternion(XMQuaternionRotationRollPitchYaw(XMConvertToRadians(90.f), 0.f, 0.f)), szClothDataFilePath);
+		HANDLE hFile = Read_ClothIndexData(szClothDataFilePath, i);
+
+		CDynamic_Mesh* pMesh = CDynamic_Mesh::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, _Bones, m_MeshDatas[i], _float4x4(), hFile);
+		
+		if (0 != hFile)
+		{
+#ifdef _DEBUG
+			MSG_BOX("File Load Success");
+#endif // _DEBUG
+			CloseHandle(hFile);
+		}			
+
 		if (nullptr == pMesh)
 			return E_FAIL;
+
+		m_DynamicMeshIndices.push_back(m_Meshes.size());
 
 		m_Meshes.push_back(pMesh);
 	}
@@ -493,6 +517,34 @@ void CMeshParts::Release_FileDatas()
 	}
 
 	m_AnimationDatas.clear();
+}
+
+HANDLE CMeshParts::Read_ClothIndexData(const _tchar* szClothDataFilePath, _uint iMeshIndex)
+{
+	if (nullptr == szClothDataFilePath ||
+		!lstrcmp(TEXT("Default"), szClothDataFilePath))
+		return 0;
+
+	HANDLE hFile = CreateFile(szClothDataFilePath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+	{
+		CloseHandle(hFile);
+		return 0;
+	}
+
+	_ulong	dwByte = 0;
+
+	_uint iDataIndex = { 99999 };
+	ReadFile(hFile, &iDataIndex, sizeof(_uint), &dwByte, nullptr);
+
+	if (iDataIndex != iMeshIndex)
+	{
+		CloseHandle(hFile);
+		return 0;
+	}
+	
+	return hFile;
 }
 
 CMeshParts* CMeshParts::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, 

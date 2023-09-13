@@ -7,8 +7,11 @@
 
 #ifdef _DEBUG
 #include "Shader.h"
-#include "VIBuffer_Line.h"
-#include "VIBuffer_Triangle.h"
+#include "Debug_Render_HeightField.h"
+#include "Debug_Render_Box.h"
+#include "Debug_Render_Sphere.h"
+#include "Debug_Render_Capsule.h"
+#include "Component_Manager.h"
 #endif // _DEBUG
 
 
@@ -19,9 +22,6 @@ CRigidBody::CRigidBody(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 CRigidBody::CRigidBody(const CRigidBody& rhs)
 	: CComposite(rhs)
-#ifdef _DEBUG
-	, m_vColor(_float4(1.f, 0.f, 0.f, 1.f))
-#endif // _DEBUG
 {
 }
 
@@ -149,6 +149,50 @@ void CRigidBody::Set_AngularDamping(_float _fAngualrDamping) const
 	}
 }
 
+HRESULT CRigidBody::Initialize_Prototype()
+{
+#ifdef _DEBUG
+	CComponent_Manager* pComponent_Manager = CComponent_Manager::GetInstance();
+	Safe_AddRef(pComponent_Manager);
+
+	if (FAILED(pComponent_Manager->Add_Prototype(0, TEXT("Prototype_Component_RigidBody_Debug_Render_Box"), 
+		CDebug_Render_Box::Create(m_pDevice, m_pContext), true)))
+	{
+		MSG_BOX("Failed Create Prototype : RigidBody DebugRender Box");
+		Safe_Release(pComponent_Manager);
+		return E_FAIL;
+	}
+
+	if (FAILED(pComponent_Manager->Add_Prototype(0, TEXT("Prototype_Component_RigidBody_Debug_Render_Sphere"),
+		CDebug_Render_Sphere::Create(m_pDevice, m_pContext), true)))
+	{
+		MSG_BOX("Failed Create Prototype : RigidBody DebugRender Sphere");
+		Safe_Release(pComponent_Manager);
+		return E_FAIL;
+	}
+	
+	if (FAILED(pComponent_Manager->Add_Prototype(0, TEXT("Prototype_Component_RigidBody_Debug_Render_Capsule"),
+		CDebug_Render_Capsule::Create(m_pDevice, m_pContext), true)))
+	{
+		MSG_BOX("Failed Create Prototype : RigidBody DebugRender Capsule");
+		Safe_Release(pComponent_Manager);
+		return E_FAIL;
+	}
+
+	if (FAILED(pComponent_Manager->Add_Prototype(0, TEXT("Prototype_Component_RigidBody_Debug_Render_HeightField"),
+		CDebug_Render_HeightField::Create(m_pDevice, m_pContext), true)))
+	{
+		MSG_BOX("Failed Create Prototype : RigidBody DebugRender Height Field");
+		Safe_Release(pComponent_Manager);
+		return E_FAIL;
+	}
+
+	Safe_Release(pComponent_Manager);
+#endif // _DEBUG
+
+	return S_OK;
+}
+
 HRESULT CRigidBody::Initialize(void* pArg)
 {
 	if (nullptr == pArg)
@@ -156,23 +200,20 @@ HRESULT CRigidBody::Initialize(void* pArg)
 		MSG_BOX("Failed Clone RigidBody : Argument is NULL");
 		return E_FAIL;
 	}
-	
-	if (FAILED(Create_Actor(reinterpret_cast<RIGIDBODYDESC*>(pArg))))
-		return E_FAIL;
 
+	RIGIDBODYDESC* pRigidDesc = reinterpret_cast<RIGIDBODYDESC*>(pArg);
+	
+	if (FAILED(Create_Actor(pRigidDesc)))
+		return E_FAIL;
+	
 #ifdef _DEBUG
-	if (FAILED(Add_Components()))
+	m_vColor = pRigidDesc->vDebugColor;
+	
+	if (FAILED(Add_Components(pRigidDesc->pGeometry)))
 		return E_FAIL;
 #endif // _DEBUG
 
 	return S_OK;
-}
-
-void CRigidBody::Late_Tick(_float fTimeDelta)
-{
-#ifdef _DEBUG
-	Make_Buffers();
-#endif // _DEBUG
 }
 
 #ifdef _DEBUG
@@ -184,10 +225,7 @@ HRESULT CRigidBody::Render()
 	if (FAILED(m_pShader->Begin("Debug")))
 		return E_FAIL;
 
-	if (FAILED(m_pLine->Render()))
-		return E_FAIL;
-
-	if (FAILED(m_pTriangle->Render()))
+	if (FAILED(m_pDebug_Render->Render()))
 		return E_FAIL;
 
 	return S_OK;
@@ -206,7 +244,7 @@ HRESULT CRigidBody::Create_Actor(RIGIDBODYDESC* pRigidBodyDesc)
 
 	// 초기 포지션 세팅
 	PxTransform InitTransform(PhysXConverter::ToPxVec3(pRigidBodyDesc->vInitPosition));
-
+	
 	if (true == pRigidBodyDesc->isStatic)
 	{
 		m_pActor = pPhysX->createRigidStatic(InitTransform);
@@ -224,70 +262,56 @@ HRESULT CRigidBody::Create_Actor(RIGIDBODYDESC* pRigidBodyDesc)
 	}
 	
 	// 유저데이터에 이 컴포넌트 세팅해서 나중에 충돌처리 함수 부르기 위해 처리.
-	m_pActor->userData = this;
+	m_pActor->userData = pRigidBodyDesc->pOwnerObject;
+	
 	// 저항 처리
 	m_pMaterial = pPhysX->createMaterial(pRigidBodyDesc->fStaticFriction, 
 		pRigidBodyDesc->fDynamicFriction, 
 		pRigidBodyDesc->fRestitution);
+	
+	PxShapeFlags ePxFlag;
+	// 트리거 설정
+	// Query : 레이캐스트 처리
+	if (true == pRigidBodyDesc->isTrigger)
+	{
+		ePxFlag = PxShapeFlag::eSCENE_QUERY_SHAPE | PxShapeFlag::eTRIGGER_SHAPE;
+	}
+	else
+	{
+		ePxFlag = PxShapeFlag::eSCENE_QUERY_SHAPE | PxShapeFlag::eSIMULATION_SHAPE;
+	}
 
-#ifdef _DEBUG // 렌더링
-	m_pScene->simulate(1 / 60.f);
-	m_pScene->fetchResults(true);
-	_uint iPrevLines = m_pScene->getRenderBuffer().getNbLines();
-	_uint iPrevTriangles = m_pScene->getRenderBuffer().getNbTriangles();
-
-	m_iStartLineBufferIndex = pPhysX_Manager->Get_LastLineBufferIndex();
-	m_iStartTriangleBufferIndex = pPhysX_Manager->Get_LastTriangleBufferIndex();
-#endif // _DEBUG
-
-#ifdef _DEBUG // 렌더링 옵션 선택
-	PxShape* pShape = pPhysX->createShape(*pRigidBodyDesc->pGeometry, 
-		*m_pMaterial, false, PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSIMULATION_SHAPE);
-#else
+	m_pGeometry = pRigidBodyDesc->pGeometry;
 	PxShape* pShape = pPhysX->createShape(*pRigidBodyDesc->pGeometry,
-		*m_pMaterial, false, PxShapeFlag::eSIMULATION_SHAPE);
-#endif // _DEBUG
+		*m_pMaterial, false, ePxFlag);
 
 	// 충돌처리에 필요한 유저 데이터값 바인딩
 	// 나중에 충돌 타입 정해서 처리할거임.
 	// 32비트 데이터라 총 8개로 플래그값 설정 가능 (word3 까지 포함하면 총 32개 옵션 설정가능.)
 	// 구조체에 옵션값으로 설정하게 해줘야함.
 	PxFilterData FilterData;
-	FilterData.word0 = 0x1111; // 이데이터는 일단 고정.
+	if (PxGeometryType::eHEIGHTFIELD == pRigidBodyDesc->pGeometry->getType())
+		FilterData.word0 = 0;
+	else
+		FilterData.word0 = 0x1111; // 이데이터는 일단 고정.
 	pShape->setSimulationFilterData(FilterData);
 
 	// OffsetPosition 처리 (피직스는 오른손 좌표계를 사용해서 왼손좌표계로 바꿔주기위해 회전 처리합니다.)
 	// 이거 확인정확하게 안해봐서 앞뒤가 정확한지는 모르겠어요
 	// 근데 앞뒤 달라도 상관없을거 같긴함.
-	_float4 vQuaternion = XMQuaternionRotationRollPitchYaw(0.f, XMConvertToRadians(180.f), XMConvertToRadians(90.f));
-	PxTransform relativePose(PxQuat(PhysXConverter::ToPxQuat(vQuaternion)));
-	pShape->setLocalPose(relativePose);
 
 	// 액터와 씬 처리.
 	// AttachShape로 콜라이더 여러개 바인딩 가능.
 	// 씬도 일단 한개만 처리하게 해둬서 신경 안써도 될듯.
 	m_pActor->attachShape(*pShape);
 	m_pScene->addActor(*m_pActor);
-
+	
 	if (false == pRigidBodyDesc->isStatic)
 	{
 		PxRigidDynamic* pRigidBody = m_pActor->is<PxRigidDynamic>();
 
 		Set_Constraint(pRigidBodyDesc->Constraint, false);
 	}
-
-#ifdef _DEBUG
-	// 다음 렌더링을 위한 갱신 처리
-	m_pScene->simulate(1 / 60.f);
-	m_pScene->fetchResults(true);
-	_uint iNewLines = m_pScene->getRenderBuffer().getNbLines();
-	_uint iNewTriangles = m_pScene->getRenderBuffer().getNbTriangles();
-
-	m_iNumLineBuffer = iNewLines - iPrevLines;
-	m_iNumTriangleBuffer = iNewTriangles - iPrevTriangles;
-	pPhysX_Manager->Add_LastLineBufferIndex(iNewLines - iPrevLines);
-	pPhysX_Manager->Add_LastTriangleBufferIndex(iNewTriangles - iPrevTriangles);
-#endif // _DEBUG
 
 	Safe_Release(pPhysX_Manager);
 
@@ -384,75 +408,86 @@ void CRigidBody::Rotate(_float4 _vRotation) const
 }
 
 #ifdef _DEBUG
-HRESULT CRigidBody::Add_Components()
+HRESULT CRigidBody::Add_Components(PxGeometry* pPxValues)
 {
 	m_pShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Debug.hlsl"), VTXPOS_DECL::Elements, VTXPOS_DECL::iNumElements);
 	if (nullptr == m_pShader)
 		return E_FAIL;
+
 	m_Components.emplace(TEXT("Com_Shader"), m_pShader);
 	Safe_AddRef(m_pShader);
-	
-	CPhysX_Manager* pPhysX_Manager = CPhysX_Manager::GetInstance();
-	Safe_AddRef(pPhysX_Manager);
 
-	const PxRenderBuffer* pBuffer = pPhysX_Manager->Get_RenderBuffer();
-
-	CVIBuffer_Line::LINEDESC LineDesc;
-	ZEROMEM(&LineDesc);
-
-	LineDesc.iNum = m_iNumLineBuffer;
-	const PxDebugLine* pLines = pBuffer->getLines();
-
-	vector<_float3> Lines;
-	for (_uint i = m_iStartLineBufferIndex;
-		i < m_iStartLineBufferIndex + m_iNumLineBuffer; ++i)
+	if (PxGeometryType::eBOX == pPxValues->getType())
 	{
-		Lines.push_back(PhysXConverter::ToXMFLOAT3(pLines[i].pos0));
-		Lines.push_back(PhysXConverter::ToXMFLOAT3(pLines[i].pos1));
-	}
-	LineDesc.pLines = Lines.data();
-
-	if (0 < LineDesc.iNum &&
-		nullptr != LineDesc.pLines)
-	{
-		/* For.Com_Line */
-		if (FAILED(CComposite::Add_Component(0, TEXT("Prototype_Component_VIBuffer_Line"),
-			TEXT("Com_Line"), reinterpret_cast<CComponent**>(&m_pLine), &LineDesc)))
+		// Debug Components
+		CDebug_Render_Box::BOXDESC BoxDesc;
+		BoxDesc.vExtents = PhysXConverter::ToXMFLOAT3(reinterpret_cast<PxBoxGeometry*>(pPxValues)->halfExtents);
+		BoxDesc.vOrigin = _float3(0.f, 0.f, 0.f);
+		/* For.Com_Debug_Render_Box */
+		if (FAILED(CComposite::Add_Component(0, TEXT("Prototype_Component_RigidBody_Debug_Render_Box"),
+			TEXT("Com_Debug_Render_Box"), reinterpret_cast<CComponent**>(&m_pDebug_Render), &BoxDesc)))
 		{
-			MSG_BOX("Failed CRigidBody Add_Component : (Com_Line)");
+			MSG_BOX("Failed CRigidBody Add_Component : (Com_Debug_Render_Box)");
 			return E_FAIL;
 		}
 	}
-
-	CVIBuffer_Triangle::TRIANGLEDESC TriangleDesc;
-	ZEROMEM(&TriangleDesc);
-
-	TriangleDesc.iNum = m_iNumTriangleBuffer;
-	const PxDebugTriangle* pDebugTriangles = pBuffer->getTriangles();
-
-	vector<_float3> Triangles;
-	for (_uint i = m_iStartTriangleBufferIndex;
-		i < m_iStartTriangleBufferIndex + m_iNumTriangleBuffer; ++i)
+	else if (PxGeometryType::eSPHERE == pPxValues->getType())
 	{
-		Triangles.push_back(PhysXConverter::ToXMFLOAT3(pDebugTriangles[i].pos0));
-		Triangles.push_back(PhysXConverter::ToXMFLOAT3(pDebugTriangles[i].pos1));
-		Triangles.push_back(PhysXConverter::ToXMFLOAT3(pDebugTriangles[i].pos2));
-	}
-	TriangleDesc.pTriangles = Triangles.data();
-
-	if (0 < TriangleDesc.iNum &&
-		nullptr != TriangleDesc.pTriangles)
-	{
-		/* For.Com_Triangle */
-		if (FAILED(CComposite::Add_Component(0, TEXT("Prototype_Component_VIBuffer_Triangle"),
-			TEXT("Com_Triangle"), reinterpret_cast<CComponent**>(&m_pTriangle), &TriangleDesc)))
+		CDebug_Render_Sphere::SPHEREDESC SphereDesc;
+		SphereDesc.fRadius = reinterpret_cast<PxSphereGeometry*>(pPxValues)->radius;
+		SphereDesc.vOrigin = _float3(0.f, 0.f, 0.f);
+		/* For.Com_Debug_Render_Sphere */
+		if (FAILED(CComposite::Add_Component(0, TEXT("Prototype_Component_RigidBody_Debug_Render_Sphere"),
+			TEXT("Com_Debug_Render_Sphere"), reinterpret_cast<CComponent**>(&m_pDebug_Render), &SphereDesc)))
 		{
-			MSG_BOX("Failed CRigidBody Add_Component : (Com_Triangle)");
+			MSG_BOX("Failed CRigidBody Add_Component : (Com_Debug_Render_Sphere)");
 			return E_FAIL;
 		}
 	}
+	else if (PxGeometryType::eCAPSULE == pPxValues->getType())
+	{
+		CDebug_Render_Capsule::CAPSULEDESC CapsuleDesc;
+		CapsuleDesc.fRadius = reinterpret_cast<PxCapsuleGeometry*>(pPxValues)->radius;
+		CapsuleDesc.fHalfHeight = reinterpret_cast<PxCapsuleGeometry*>(pPxValues)->halfHeight;
+		CapsuleDesc.vOrigin = _float3(0.f, 0.f, 0.f);
+		/* For.Com_Debug_Render_Capsule */
+		if (FAILED(CComposite::Add_Component(0, TEXT("Prototype_Component_RigidBody_Debug_Render_Capsule"),
+			TEXT("Com_Debug_Render_Capsule"), reinterpret_cast<CComponent**>(&m_pDebug_Render), &CapsuleDesc)))
+		{
+			MSG_BOX("Failed CRigidBody Add_Component : (Com_Debug_Render_Capsule)");
+			return E_FAIL;
+		}
+	}
+	else if (PxGeometryType::eHEIGHTFIELD == pPxValues->getType())
+	{
+		CDebug_Render_HeightField::HEIGHTFIELDDESC HeightFieldDesc;
+		PxHeightField* pHeightField = reinterpret_cast<PxHeightFieldGeometry*>(pPxValues)->heightField;
+		HeightFieldDesc.iNumRows = pHeightField->getNbRows() - 1;
+		HeightFieldDesc.iNumColumns = pHeightField->getNbColumns() - 1;
 
-	Safe_Release(pPhysX_Manager);
+		vector<_float3> Positions;
+		Positions.resize((HeightFieldDesc.iNumRows + 1) * (HeightFieldDesc.iNumColumns + 1));
+		for (_uint i = 0; i < HeightFieldDesc.iNumColumns + 1; ++i)
+		{
+			for (_uint j = 0; j < HeightFieldDesc.iNumRows + 1; ++j)
+			{
+				_uint iIndex = j + (HeightFieldDesc.iNumRows + 1) * i;
+
+				Positions[iIndex] = _float3((_float)j, pHeightField->getHeight(_float(j), _float(i)), (_float)i);
+			}
+		}
+		HeightFieldDesc.pPositions = Positions.data();
+		HeightFieldDesc.vOrigin = _float3(0.f, 0.f, 0.f);
+		/* For.Com_Debug_Render_HeightField */
+		if (FAILED(CComposite::Add_Component(0, TEXT("Prototype_Component_RigidBody_Debug_Render_HeightField"),
+			TEXT("Com_Debug_Render_HeightField"), reinterpret_cast<CComponent**>(&m_pDebug_Render), &HeightFieldDesc)))
+		{
+			MSG_BOX("Failed CRigidBody Add_Component : (Com_Debug_Render_HeightField)");
+			return E_FAIL;
+		}
+
+		pHeightField->release();
+	}
 
 	return S_OK;
 }
@@ -462,7 +497,11 @@ HRESULT CRigidBody::SetUp_ShaderResources()
 	CPipeLine* pPipeLine = CPipeLine::GetInstance();
 	Safe_AddRef(pPipeLine);
 
-	_float4x4 WorldMatrix = XMMatrixIdentity();
+	PxTransform Trans = m_pActor->getGlobalPose();
+	_float3 vPos = PhysXConverter::ToXMFLOAT3(Trans.p);
+	_float4 vQuat(Trans.q.x, Trans.q.y, Trans.q.z, Trans.q.w);
+
+	_float4x4 WorldMatrix = XMMatrixRotationQuaternion(vQuat) * XMMatrixTranslation(vPos.x, vPos.y, vPos.z);
 
 	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", &WorldMatrix)))
 		return E_FAIL;
@@ -474,53 +513,8 @@ HRESULT CRigidBody::SetUp_ShaderResources()
 		return E_FAIL;
 
 	Safe_Release(pPipeLine);
+
 	return S_OK;
-}
-
-void CRigidBody::Make_Buffers()
-{
-	CVIBuffer_Line::LINEDESC LineDesc;
-	ZEROMEM(&LineDesc);
-
-	CPhysX_Manager* pPhysX_Manager = CPhysX_Manager::GetInstance();
-	Safe_AddRef(pPhysX_Manager);
-
-	const PxRenderBuffer* pBuffer = pPhysX_Manager->Get_RenderBuffer();
-
-	Safe_Release(pPhysX_Manager);
-
-	const PxDebugLine* pDebugLines = pBuffer->getLines();
-
-	vector<_float3> Lines;
-	for (_uint i = m_iStartLineBufferIndex;
-		i < m_iStartLineBufferIndex + m_iNumLineBuffer; ++i)
-	{
-		Lines.push_back(PhysXConverter::ToXMFLOAT3(pDebugLines[i].pos0));
-		Lines.push_back(PhysXConverter::ToXMFLOAT3(pDebugLines[i].pos1));
-	}
-
-	LineDesc.iNum = m_iNumLineBuffer;
-	LineDesc.pLines = Lines.data();
-
-	m_pLine->Tick(LineDesc);
-
-	CVIBuffer_Triangle::TRIANGLEDESC TriangleDesc;
-	ZEROMEM(&TriangleDesc);
-
-	const PxDebugTriangle* pDebugTriangles = pBuffer->getTriangles();
-
-	vector<_float3> Triangles;
-	for (_uint i = m_iStartTriangleBufferIndex;
-		i < m_iStartTriangleBufferIndex + m_iNumTriangleBuffer; ++i)
-	{
-		Triangles.push_back(PhysXConverter::ToXMFLOAT3(pDebugTriangles[i].pos0));
-		Triangles.push_back(PhysXConverter::ToXMFLOAT3(pDebugTriangles[i].pos1));
-		Triangles.push_back(PhysXConverter::ToXMFLOAT3(pDebugTriangles[i].pos2));
-	}
-	TriangleDesc.iNum = m_iNumTriangleBuffer;
-	TriangleDesc.pTriangles = Triangles.data();
-
-	m_pTriangle->Tick(TriangleDesc);
 }
 #endif // _DEBUG
 
@@ -555,8 +549,7 @@ void CRigidBody::Free()
 	__super::Free();
 
 #ifdef _DEBUG
-	Safe_Release(m_pTriangle);
 	Safe_Release(m_pShader);
-	Safe_Release(m_pLine);
+	Safe_Release(m_pDebug_Render);
 #endif // _DEBUG
 }

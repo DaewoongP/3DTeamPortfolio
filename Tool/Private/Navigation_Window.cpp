@@ -442,7 +442,6 @@ HRESULT CNavigation_Window::Remake_Cells()
 		CellDesc.m_pBufferCom->Begin(CellDesc.m_Points.data());
 		CellDesc.m_pBufferCom->End();
 	}
-
 	return S_OK;
 }
 

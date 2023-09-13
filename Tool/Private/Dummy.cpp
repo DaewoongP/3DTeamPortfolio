@@ -15,7 +15,7 @@ HRESULT CDummy::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
-
+	
 	m_pTransform->Set_Position(_float3(3.f, 0.f, 3.f));
 	return S_OK;
 }

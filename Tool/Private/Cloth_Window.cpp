@@ -2,6 +2,7 @@
 #include "Dummy_Cloth.h"
 #include "Camera_Free.h"
 #include "Bounding_Sphere.h"
+#include "PhysXConverter.h"
 #include "Collider.h"
 
 CCloth_Window::CCloth_Window(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
@@ -67,9 +68,11 @@ void CCloth_Window::Tick(_float _fTimeDelta)
 
 	Make_CapsuleCollider(_fTimeDelta);
 
-	ImGui::End();
-
 	Input_Options(_fTimeDelta);	
+
+	Make_Data();
+
+	ImGui::End();
 
 	Render_Collider();
 }
@@ -139,9 +142,6 @@ void CCloth_Window::ModelDialog()
 			Create_MeshParts_Prototype(ImGuiFileDialog::Instance()->GetFilePathName());
 
 			Update_Cloth();
-
-			m_pCamera_Free->Get_Transform()->Set_Position(_float3(0.f, 1.3f, -1.3f));
-			m_pCamera_Free->Get_Transform()->LookAt(_float3(0.f, 1.f, 0.f));
 		}
 
 		ImGuiFileDialog::Instance()->Close();
@@ -509,15 +509,14 @@ void CCloth_Window::Input_Options(_float fTimeDelta)
 	if (false == isValid_Dummy())
 		return;
 
-	ImGui::Begin("Options");
-
 	ImGui::SeparatorText("Wind");
 	ImGui::SetNextItemWidth(200.f);
 	m_pCurrent_Cloth = m_pDummy_Cloth->Get_CurrentMesh_Cloth();
 	PxVec3 vWindVelocity = m_pCurrent_Cloth->getWindVelocity();
-	if (ImGui::InputFloat3("", reinterpret_cast<_float*>(&vWindVelocity), "%.1f"))
+	if (ImGui::InputFloat3(" ", reinterpret_cast<_float*>(&vWindVelocity), "%.1f"))
 	{
-		m_pCurrent_Cloth->setWindVelocity(vWindVelocity);
+		m_pDummy_Cloth->Set_WindVelocity(_float3(vWindVelocity.x, vWindVelocity.y, vWindVelocity.z));
+		//m_pCurrent_Cloth->setWindVelocity(vWindVelocity);
 	}
 	
 	ImGui::Separator();
@@ -535,8 +534,6 @@ void CCloth_Window::Input_Options(_float fTimeDelta)
 
 		m_pDummy_Cloth->Remake_ClothMesh(InvMasses);
 	}
-
-	ImGui::End();
 }
 
 void CCloth_Window::Delete_CapsuleCollider(_bool& _isModified)
@@ -573,6 +570,200 @@ _bool CCloth_Window::isValid_Dummy()
 		return false;
 
 	return true;
+}
+
+void CCloth_Window::Make_Data()
+{
+	ImGui::PushID(0);
+	ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(2 / 7.0f, 0.6f, 0.6f));
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(2 / 7.0f, 0.7f, 0.7f));
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(2 / 7.0f, 0.8f, 0.8f));	
+	if (ImGui::Button("Save Cloth Data"))
+	{
+		ImGuiFileDialog::Instance()->OpenDialog("Save Cloth Data", "Save File", ".cloth", "../../Resources/GameData/ClothData/");
+	}
+	ImGui::PopStyleColor(3);
+	ImGui::PopID();
+
+	if (ImGuiFileDialog::Instance()->Display("Save Cloth Data"))
+	{
+		// action if OK
+		if (ImGuiFileDialog::Instance()->IsOk())
+		{
+			_tchar szPath[MAX_PATH] = TEXT("");
+			CharToWChar(ImGuiFileDialog::Instance()->GetFilePathName().c_str(), szPath);
+			Save_Data(szPath);
+		}
+
+		ImGuiFileDialog::Instance()->Close();
+	}
+
+	ImGui::SameLine();
+	ImGui::PushID(0);
+	ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0.6f, 1.0f, 0.6f));
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0.7f, 1.0f, 0.7f));
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0.8f, 1.0f, 0.8f));
+	if (ImGui::Button("Load Cloth Data"))
+	{
+		ImGuiFileDialog::Instance()->OpenDialog("Load Cloth Data", "Load File", ".cloth", "../../Resources/GameData/ClothData/");
+	}
+	ImGui::PopStyleColor(3);
+	ImGui::PopID();
+
+	if (ImGuiFileDialog::Instance()->Display("Load Cloth Data"))
+	{
+		// action if OK
+		if (ImGuiFileDialog::Instance()->IsOk())
+		{
+			_tchar szPath[MAX_PATH] = TEXT("");
+			CharToWChar(ImGuiFileDialog::Instance()->GetFilePathName().c_str(), szPath);
+			Load_Data(szPath);
+		}
+
+		ImGuiFileDialog::Instance()->Close();
+	}
+}
+
+void CCloth_Window::Save_Data(const _tchar* szSaveDataPath)
+{
+	HANDLE hFile = CreateFile(szSaveDataPath, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+	{
+		CloseHandle(hFile);
+		return;
+	}
+
+	_ulong	dwByte = 0;
+
+	WriteFile(hFile, &m_iMeshIndex, sizeof(_uint), &dwByte, nullptr);
+
+	vector<_float> InvMasses = m_pDummy_Cloth->Get_InvMasses();
+	_uint iSize = _uint(InvMasses.size());
+	// Vertex Num
+	WriteFile(hFile, &iSize, sizeof(_uint), &dwByte, nullptr);
+
+	for (auto& InvMass : InvMasses)
+	{
+		WriteFile(hFile, &InvMass, sizeof(_float), &dwByte, nullptr);
+	}
+
+	_uint iCapsuleSize = m_Capsules.size();
+	WriteFile(hFile, &iCapsuleSize, sizeof(_uint), &dwByte, nullptr);
+
+	for (auto& CapsuleDesc : m_Capsules)
+	{
+		WriteFile(hFile, &CapsuleDesc.SourSphere.first, sizeof(_float3), &dwByte, nullptr);
+		WriteFile(hFile, &CapsuleDesc.SourSphere.second, sizeof(_float), &dwByte, nullptr);
+		WriteFile(hFile, &CapsuleDesc.DestSphere.first, sizeof(_float3), &dwByte, nullptr);
+		WriteFile(hFile, &CapsuleDesc.DestSphere.second, sizeof(_float), &dwByte, nullptr);
+	}
+
+	MSG_BOX("File Save Success");
+
+	CloseHandle(hFile);
+}
+
+void CCloth_Window::Load_Data(const _tchar* szLoadDataPath)
+{
+	if (nullptr == m_pCollider ||
+		nullptr == m_pDummy_Cloth)
+	{
+		MSG_BOX("Dummy is NULL");
+		return;
+	}
+
+	HANDLE hFile = CreateFile(szLoadDataPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+	{
+		CloseHandle(hFile);
+		return;
+	}
+
+	_ulong	dwByte = 0;
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	ReadFile(hFile, &m_iMeshIndex, sizeof(_uint), &dwByte, nullptr);
+	m_pDummy_Cloth->Set_MeshIndex(m_iMeshIndex);
+
+	vector<_float> InvMasses;
+	_uint iSize = { 0 };
+	// Vertex Num
+	ReadFile(hFile, &iSize, sizeof(_uint), &dwByte, nullptr);
+
+	InvMasses.reserve(iSize);
+
+	vector<_float3> VertexPositions = m_pDummy_Cloth->Get_VertexPositions();
+
+	for (_uint i = 0; i < iSize; ++i)
+	{
+		_float fInvMass = 1.f;
+		ReadFile(hFile, &fInvMass, sizeof(_float), &dwByte, nullptr);
+		InvMasses.push_back(fInvMass);
+
+		if (0.f == fInvMass)
+		{
+			string szName;
+			szName = "Vertex Index : " + to_string(i) +
+				" | x : " + to_string(VertexPositions[i].x) + ", y : " + to_string(VertexPositions[i].y) + ", z : " + to_string(VertexPositions[i].z);
+
+			CLOTHVERTEX ClothVertex;
+			ClothVertex.iVertexIndex = i;
+			ClothVertex.vVertexPosition = VertexPositions[i];
+			ClothVertex.pVertexName = pGameInstance->Make_Char(szName.c_str());
+
+			CBounding_Sphere::BOUNDINGSPHEREDESC SphereDesc;
+			SphereDesc.fRadius = 0.01f;
+			SphereDesc.vPosition = VertexPositions[i];
+
+			ClothVertex.pCollider = static_cast<CCollider*>(m_pCollider->Clone(&SphereDesc));
+			m_ClothVertices.push_back(ClothVertex);
+		}
+
+	}
+
+	_uint iCapsuleSize = { 0 };
+	ReadFile(hFile, &iCapsuleSize, sizeof(_uint), &dwByte, nullptr);
+
+	for (_uint i = 0; i < iCapsuleSize; ++i)
+	{
+		CAPSULE CapsuleDesc;
+		ZEROMEM(&CapsuleDesc);
+
+		ReadFile(hFile, &CapsuleDesc.SourSphere.first, sizeof(_float3), &dwByte, nullptr);
+		ReadFile(hFile, &CapsuleDesc.SourSphere.second, sizeof(_float), &dwByte, nullptr);
+		ReadFile(hFile, &CapsuleDesc.DestSphere.first, sizeof(_float3), &dwByte, nullptr);
+		ReadFile(hFile, &CapsuleDesc.DestSphere.second, sizeof(_float), &dwByte, nullptr);
+
+		_char szIndex[MAX_PATH] = "";
+		_itoa_s(m_Capsules.size(), szIndex, MAX_PATH, 10);
+		CapsuleDesc.pCapsuleIndexName = pGameInstance->Make_Char(szIndex);
+
+		m_Capsules.push_back(CapsuleDesc);
+	}
+
+	Safe_Release(pGameInstance);
+
+	// 디버그 렌더 갱신
+
+
+	vector<pair<_float3, _float>> Spheres;
+	for (auto& Capsule : m_Capsules)
+	{
+		Spheres.push_back(Capsule.SourSphere);
+		Spheres.push_back(Capsule.DestSphere);
+	}
+
+	m_pDummy_Cloth->Set_MeshIndex(m_iMeshIndex);
+	m_pDummy_Cloth->Set_CapsuleCollider(Spheres);
+
+	m_pDummy_Cloth->Remake_ClothMesh(InvMasses);
+
+	MSG_BOX("File Load Success");
+
+	CloseHandle(hFile);
 }
 
 void CCloth_Window::Update_Cloth()

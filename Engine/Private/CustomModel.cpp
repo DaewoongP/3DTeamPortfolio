@@ -35,6 +35,15 @@ _uint CCustomModel::Get_NumMeshes(const _uint& _iMeshPartsIndex) const
 	return m_MeshParts[_iMeshPartsIndex]->Get_NumMeshes();
 }
 
+void CCustomModel::Set_WindVelocity(_float3 vWindVelocity)
+{
+	for (auto& Mesh : m_MeshParts)
+	{
+		if (nullptr != Mesh)
+			Mesh->Set_WindVelocity(vWindVelocity);
+	}
+}
+
 HRESULT CCustomModel::Initialize_Prototype(TYPE eType, const wstring& _wstrModelFilePath, _float4x4 _PivotMatrix)
 {
 	if (FAILED(__super::Initialize_Prototype(eType, _wstrModelFilePath.c_str(), _PivotMatrix)))

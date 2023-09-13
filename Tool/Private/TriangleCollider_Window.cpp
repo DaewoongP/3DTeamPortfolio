@@ -17,19 +17,19 @@ HRESULT CTriangleCollider_Window::Initialize(ImVec2 vWindowPos, ImVec2 vWindowSi
 
 	m_WindowFlag = ImGuiWindowFlags_NoResize;
 
-	m_pShaderCom = static_cast<CShader*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Shader_Navigation")));
+	m_pShaderCom = static_cast<CShader*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Shader_Debug")));
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 	BEGININSTANCE
 
-	m_pTriangleColMesh =
-	dynamic_cast<CTriangleColMesh*>(
-		pGameInstance->Clone_Component(LEVEL_TOOL,
-			TEXT("Prototype_GameObject_TriangleColMesh")));
+		m_pTriangleColMesh =
+		dynamic_cast<CTriangleColMesh*>(
+			pGameInstance->Clone_Component(LEVEL_TOOL,
+				TEXT("Prototype_GameObject_TriangleColMesh")));
 
 	m_pTriangleColMesh->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMesh"));
-	 ENDINSTANCE
-	return S_OK;
+	ENDINSTANCE
+		return S_OK;
 }
 
 void CTriangleCollider_Window::Tick(_float fTimeDelta)
@@ -41,30 +41,56 @@ void CTriangleCollider_Window::Tick(_float fTimeDelta)
 		CellDesc.m_pBufferCom->Tick(fTimeDelta);
 	}
 
-	ImGui::Begin("Navigation", nullptr, m_WindowFlag);
+	ImGui::Begin("TriangleCollider", nullptr, m_WindowFlag);
 
 	OpenFile_Button();
 	AddModel_Button();
 	if (m_pTriangleColMesh != nullptr)
 		m_pTriangleColMesh->Tick(fTimeDelta);
-
-	/*_float3 pickPos = {};
-	if (OPTION_CREATE == m_iSelectOption&&
-		m_pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN) &&
-		Get_VertexIndex_By_Picking(&pickPos))
-	{
-		Make_Cell();
-	}*/
+	EditVertices(fTimeDelta);
 	Make_Cell();
 	/* Check Option */
 	ImGui::RadioButton("Nothing", &m_iSelectOption, OPTION_NOTHING); ImGui::SameLine();
-	ImGui::RadioButton("Make Navi", &m_iSelectOption, OPTION_CREATE); ImGui::SameLine();
-	ImGui::RadioButton("Pick Navi", &m_iSelectOption, OPTION_PICK);
+	ImGui::RadioButton("MakeCell", &m_iSelectOption, OPTION_CREATE); ImGui::SameLine();
+	ImGui::RadioButton("EditCell", &m_iSelectOption, OPTION_PICK);
 
-	//Pick_Navigation(fTimeDelta);
-	CurrentNavigationPosition();
-	Navigation_List();
-	Delete_Cell();
+	if (ImGui::Button("Delete_Before_CELL") && m_Cells.size())
+	{
+		_uint vtxCnt[3] = {0};
+		_uint tempIdx[3] = {};
+		for (int i = 0; i < 3; i++)
+		{
+			tempIdx[i] =m_Cells[m_Cells.size()-1].m_iIndices[i];
+		}
+		Safe_Release(m_Cells.back().m_pBufferCom);
+		m_Cells.pop_back();
+
+		for (COLCELLDESC cell : m_Cells)
+		{
+			for (int i = 0; i < 3; i++)
+			{
+				if (tempIdx[0] == cell.m_iIndices[i])
+					vtxCnt[0]++;
+				if (tempIdx[1] == cell.m_iIndices[i])
+					vtxCnt[1]++;
+				if (tempIdx[2] == cell.m_iIndices[i])
+					vtxCnt[2]++;
+			}
+		}
+		for (int i = 0; i < 3; i++)
+		{
+			//찾아서 없애야할듯
+			if (vtxCnt[i] == 0)
+			{
+				m_Vertices.erase(m_Vertices.begin()+ tempIdx[i]);
+			}
+		}
+	}
+
+	if(ImGui::Button("Save_Collider"))
+	{
+		Save_MeshData();
+	}
 
 	ImGui::End();
 }
@@ -74,111 +100,9 @@ HRESULT CTriangleCollider_Window::Render()
 	if (FAILED(Render_Cells()))
 		return E_FAIL;
 
-	if (true == m_isMakingCell)
-	{
-		_tchar szPickIndex[20] = TEXT("");
-		_itow_s(m_iCurrentPickPointIndex, szPickIndex, sizeof(4), 10);
-
-		_tchar szFont[20] = TEXT("Current Index : ");
-
-		lstrcat(szFont, szPickIndex);
-
-		_float2 vCursorPos;
-		POINT	pt{};
-		GetCursorPos(&pt);
-		ScreenToClient(g_hWnd, &pt);
-
-		vCursorPos.x = (_float)pt.x;
-		vCursorPos.y = (_float)pt.y;
-
-		if (FAILED(m_pGameInstance->Render_Font(TEXT("Font_135"), szPickIndex, vCursorPos, _float4(0.f, 0.f, 1.f, 1.f), 0.f, _float2(0.f, 0.f), 2.f)))
-			return E_FAIL;
-	}
-
-	for (auto& CellDesc : m_Cells)
-	{
-		_float4 vCenter = XMVectorZero();
-
-		for (_uint i = 0; i < CCell::POINT_END; ++i)
-		{
-			vCenter += CellDesc.m_Points[CCell::POINT(i)].TransCoord();
-		}
-
-		vCenter /= CCell::POINT_END;
-
-		_float4x4 ViewMatrix = *m_pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW);
-		_float4x4 ProjMatrix = *m_pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ);
-
-		_float4 vViewPos = XMVector3TransformCoord(vCenter, ViewMatrix);
-		_float4 vProjPos = XMVector3TransformCoord(vViewPos, ProjMatrix);
-
-		_uint iVP = 1;
-		D3D11_VIEWPORT ViewPort;
-		std::ZEROMEM(&ViewPort);
-		m_pContext->RSGetViewports(&iVP, &ViewPort);
-
-		_float3 vRenderCenterPos = vProjPos.xyz();
-		_float2 vRender;
-		// 투영 좌표가 아닌 친구들을 렌더링 하지 않게 처리.
-		if (-1.f > vRenderCenterPos.x ||
-			1.f < vRenderCenterPos.x ||
-			-1.f > vRenderCenterPos.y ||
-			1.f < vRenderCenterPos.y ||
-			0.f > vRenderCenterPos.z ||
-			1.f < vRenderCenterPos.z)
-			continue;
-
-		vRender.x = (vRenderCenterPos.x + 1.f) * 0.5f * ViewPort.Width;
-		vRender.y = (1.f - vRenderCenterPos.y) * 0.5f * ViewPort.Height;
-
-		_float fDepth = (1.f - vRenderCenterPos.z) * 200.f;
-	}
-
-	if (0 < m_Cells.size())
-	{
-		_uint iCellIndex = { 0 };
-		for (auto& Point : m_Cells[m_iCurrentCellIndex].m_Points)
-		{
-			_float4 vPosition = Point.TransCoord();
-
-			_float4x4 ViewMatrix = *m_pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW);
-			_float4x4 ProjMatrix = *m_pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ);
-
-			_float4 vViewPos = XMVector3TransformCoord(vPosition, ViewMatrix);
-			_float4 vProjPos = XMVector3TransformCoord(vViewPos, ProjMatrix);
-
-			_uint iVP = 1;
-			D3D11_VIEWPORT ViewPort;
-			ZEROMEM(&ViewPort);
-			m_pContext->RSGetViewports(&iVP, &ViewPort);
-
-			_float3 vRenderCenterPos = vProjPos.xyz();
-			_float2 vRender;
-			// 투영 좌표가 아닌 친구들을 렌더링 하지 않게 처리.
-			if (-1.f > vRenderCenterPos.x ||
-				1.f < vRenderCenterPos.x ||
-				-1.f > vRenderCenterPos.y ||
-				1.f < vRenderCenterPos.y ||
-				0.f > vRenderCenterPos.z ||
-				1.f < vRenderCenterPos.z)
-			{
-				++iCellIndex;
-				continue;
-			}
-
-			vRender.x = (vRenderCenterPos.x + 1.f) * 0.5f * ViewPort.Width;
-			vRender.y = (1.f - vRenderCenterPos.y) * 0.5f * ViewPort.Height;
-
-			_float fDepth = (1.f - vRenderCenterPos.z) * 200.f;
-
-			wstring wstrCellIndex = to_wstring(iCellIndex++);
-			
-			if (FAILED(m_pGameInstance->Render_Font(TEXT("Font_135"), wstrCellIndex.c_str(), vRender, _float4(1.f, 0.f, 1.f, 1.f), 0.f, _float2(0.f, 0.f), 1.f)))
-				return E_FAIL;
-		}
-	}
 	if (m_pTriangleColMesh != nullptr)
 		m_pTriangleColMesh->Render();
+
 	return S_OK;
 }
 
@@ -234,13 +158,15 @@ void CTriangleCollider_Window::OpenFile_Button()
 				lstrcat(wszColFullPath, wszfilePath);
 				lstrcat(wszColFullPath, wszfileName);
 				lstrcat(wszColFullPath, TEXT(".dat"));
-
+				lstrcpy(m_CurrentFilePath_COL, wszColFullPath);
 				//위 파일 이름으로 정점 인덱스 데이터를 불러옵니다.
 				if (FAILED(Read_File_Data(wszColFullPath)))
 				{
 					MSG_BOX("Failed to Create ColData");
 				}
 			}
+
+			
 
 			Safe_Release(pGameInstance);
 			m_iMaxModelIndex++;
@@ -325,12 +251,11 @@ _bool CTriangleCollider_Window::Get_VertexIndex_By_Picking(_Inout_ _float4* pPic
 	return isIntersects;
 }
 
-_bool CTriangleCollider_Window::Pick_Spheres(const _float4& vOrigin, const _float4& vDirection, _Inout_ vector<PICKCOLDESC>& Out)
+_bool CTriangleCollider_Window::Pick_Spheres(const _float4& vOrigin, const _float4& vDirection, _uint* iIndex)
 {
-	Out.clear();
-
 	_bool bReturnData = { false };
-	_float fDistance = { 0.f };
+	_float fDistance = { 1000.f };
+	_float fReturnDist = { 10000.f };
 
 	_uint iSphereIndex = { 0 };
 	for (auto& CellDesc : m_Cells)
@@ -339,24 +264,123 @@ _bool CTriangleCollider_Window::Pick_Spheres(const _float4& vOrigin, const _floa
 		{
 			if (true == pSphere->Get_Bounding()->Intersects(vOrigin, vDirection, fDistance))
 			{
-				PICKCOLDESC InputDesc;
-
-				InputDesc.m_iCellIndex = iSphereIndex / CCell::POINT_END;
-				InputDesc.m_ePoint = CCell::POINT(iSphereIndex % CCell::POINT_END);
-				InputDesc.m_fDistance = fDistance;
-
-				Out.push_back(InputDesc);
+				if (fDistance < fReturnDist)
+				{
+					fReturnDist = fDistance;
+					*iIndex = CellDesc.m_iIndices[iSphereIndex];
+				}
 				bReturnData = true;
 			}
 			++iSphereIndex;
 		}
+		iSphereIndex = 0;
 	}
-
 	return bReturnData;
+}
+
+void CTriangleCollider_Window::EditVertices(_float fTimeDelta)
+{
+	if (OPTION_PICK == m_iSelectOption)
+	{
+		if (m_pGameInstance->Get_DIKeyState(DIK_X, CInput_Device::KEY_DOWN))
+		{
+			m_EidtMoveType = EDIT_X;
+		}
+		else if (m_pGameInstance->Get_DIKeyState(DIK_Y, CInput_Device::KEY_DOWN))
+		{
+			m_EidtMoveType = EDIT_Y;
+		}
+		else if (m_pGameInstance->Get_DIKeyState(DIK_Z, CInput_Device::KEY_DOWN))
+		{
+			m_EidtMoveType = EDIT_Z;
+		}
+
+		if (m_pGameInstance->Get_DIKeyState(DIK_G, CInput_Device::KEY_DOWN))
+		{
+			m_isMoveTrigger = !m_isMoveTrigger;
+		}
+		
+		if (m_Vertices.size() > 0&& m_isMoveTrigger)
+		{
+			//움직여줍니다.
+			_long dwMouseMove = { 0 };
+			dwMouseMove = m_pGameInstance->Get_DIMouseMove(CInput_Device::DIMM_Y);
+			if (0 != dwMouseMove)
+			{
+				_float3 vPosition = m_Vertices[m_vPickIndex];
+				if(m_EidtMoveType == EDIT_X)
+					vPosition.x -= _float(dwMouseMove * fTimeDelta * 0.8f);
+				if (m_EidtMoveType == EDIT_Y)
+					vPosition.y -= _float(dwMouseMove * fTimeDelta * 0.8f);
+				if (m_EidtMoveType == EDIT_Z)
+					vPosition.z -= _float(dwMouseMove * fTimeDelta * 0.8f);
+				m_Vertices[m_vPickIndex] = vPosition;
+				if (FAILED(ReMake_Cell()))
+					return;
+			}
+		}
+	}
 }
 
 HRESULT CTriangleCollider_Window::Save_MeshData()
 {
+	HANDLE hFile = CreateFile(m_CurrentFilePath_COL, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+	if (INVALID_HANDLE_VALUE == hFile)
+		return E_FAIL;
+
+	_ulong	dwByte = 0;
+	_ulong	dwStrByte = 0;
+	_uint iMeshCount = 1;
+	WriteFile(hFile, &iMeshCount, sizeof(_uint), &dwByte, nullptr);
+
+	//저장하기 위한 콜라이더 매쉬를 생성합니다.
+	COLMESH Mesh;
+	Mesh.iNumVertices = m_Vertices.size();
+	Mesh.iNumFaces = m_Cells.size();
+
+	Mesh.vPositions = new XMFLOAT3[Mesh.iNumVertices];
+	for (int i = 0; i < Mesh.iNumVertices; i++)
+	{
+		Mesh.vPositions[i] = m_Vertices[i];
+	}
+
+	Mesh.Faces = new FACE[Mesh.iNumFaces];
+	for (int i = 0; i < Mesh.iNumFaces; i++)
+	{
+		//여기 지금 이상하
+		Mesh.Faces[i].iIndices = new _uint[3];
+		Mesh.Faces[i].iIndices[0] = m_Cells[i].m_iIndices[0];
+		Mesh.Faces[i].iIndices[1] = m_Cells[i].m_iIndices[1];
+		Mesh.Faces[i].iIndices[2] = m_Cells[i].m_iIndices[2];
+		Mesh.Faces[i].iNumIndices = 3;
+	}
+
+	// Mesh NumVertices
+	WriteFile(hFile, &(Mesh.iNumVertices), sizeof(_uint), &dwByte, nullptr);
+	// Mesh NumFaces
+	WriteFile(hFile, &(Mesh.iNumFaces), sizeof(_uint), &dwByte, nullptr);
+
+	//0다음 1번부터 이상한게 들어가는데?
+	for (_uint j = 0; j < Mesh.iNumFaces; ++j)
+	{
+		FACE Face = Mesh.Faces[j];
+		// Face NumIndices
+		WriteFile(hFile, &(Face.iNumIndices), sizeof(_uint), &dwByte, nullptr);
+		// Face Indices
+		WriteFile(hFile, Face.iIndices, sizeof(_uint) * Face.iNumIndices, &dwByte, nullptr);
+	}
+	// Mesh Positions
+	WriteFile(hFile, Mesh.vPositions, sizeof(_float3) * Mesh.iNumVertices, &dwByte, nullptr);
+	
+	CloseHandle(hFile);
+
+	for (_uint j = 0; j < Mesh.iNumFaces; ++j)
+	{
+		Safe_Delete_Array(Mesh.Faces[j].iIndices);
+	}
+	Safe_Delete_Array(Mesh.Faces);
+
+	Safe_Delete_Array(Mesh.vPositions);
 
 	return S_OK;
 }
@@ -413,6 +437,10 @@ HRESULT CTriangleCollider_Window::Read_File_Data(_tchar* pModelFilePath)
 		ZeroMemory(Mesh.vPositions, sizeof(_float3) * (Mesh.iNumVertices));
 		ReadFile(hFile, Mesh.vPositions, sizeof(_float3) * (Mesh.iNumVertices), &dwByte, nullptr);
 
+		//매쉬에 들어있던 모든 정점들을 추가해줍니다.
+		for (int i = 0; i < Mesh.iNumVertices; i++)
+			m_Vertices.push_back(Mesh.vPositions[i]);
+
 		//위 정점들을 기반으로 포인트들을 만들어줍니다.
 		Create_COLCELL(&Mesh);
 		Release_Mesh(&Mesh);
@@ -440,12 +468,16 @@ HRESULT CTriangleCollider_Window::Create_COLCELL(COLMESH* PMesh)
 	for (_uint i = 0; i < indicesNum; ++i)
 	{
 		COLCELLDESC CellDesc;
-		
-		CellDesc.m_Points[0] = PMesh->vPositions[PMesh->Faces[i].iIndices[0]];
-		CellDesc.m_Points[1] = PMesh->vPositions[PMesh->Faces[i].iIndices[1]];
-		CellDesc.m_Points[2] = PMesh->vPositions[PMesh->Faces[i].iIndices[2]];
 
-		CellDesc.m_pBufferCom = CVIBuffer_Cell::Create(m_pDevice, m_pContext, m_vCell.data());
+		CellDesc.m_iIndices[0] = PMesh->Faces[i].iIndices[0];
+		CellDesc.m_iIndices[1] = PMesh->Faces[i].iIndices[1];
+		CellDesc.m_iIndices[2] = PMesh->Faces[i].iIndices[2];
+
+		_float3 data[3] = {};
+		data[0] = m_Vertices[CellDesc.m_iIndices[0]];
+		data[1] = m_Vertices[CellDesc.m_iIndices[1]];
+		data[2] = m_Vertices[CellDesc.m_iIndices[2]];
+		CellDesc.m_pBufferCom = CVIBuffer_Cell::Create(m_pDevice, m_pContext, data);
 		if (nullptr == CellDesc.m_pBufferCom)
 		{
 			MSG_BOX("Failed NavigationRead_File : CellDesc.m_pBufferCom is nullptr");
@@ -453,190 +485,130 @@ HRESULT CTriangleCollider_Window::Create_COLCELL(COLMESH* PMesh)
 		}
 		m_Cells.push_back(CellDesc);
 	}
-	Remake_Cells();
+	//Remake_Cells();
 	return S_OK;
 }
 
 HRESULT CTriangleCollider_Window::Make_Cell()
 {
-	/* 현재 옵션이 셀 생성인 경우에만 */
-	if (OPTION_CREATE != m_iSelectOption)
-		return S_OK;
-
 	if (!m_pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN))
 		return S_OK;
 
-	
 
-	/* 만약 피킹한 셀의 콜라이더 구체를 피킹하지 않았다면 */
-	if (0 == m_PickDatas.size())
+	if (false == m_pGameInstance->IsMouseInClient(m_pContext, g_hWnd))
 	{
-		//위치가 이상한지 이상한곳에서 생성되는중임.
-		if (!Get_VertexIndex_By_Picking(&m_vPickPos))
-			return S_OK;
-	}
-	else /* 콜라이더 구체를 피킹한 경우 */
-	{
-		COLCELLDESC CellDesc = m_Cells[m_PickDatas.front().m_iCellIndex];
-		m_vPickPos = CellDesc.m_Points[m_PickDatas.front().m_ePoint].TransCoord();
-	}
-	m_isMakingCell = true;
-	// 컨트롤을 누르고 피킹하면 반올림하여 처리
-	if (true == m_pGameInstance->Get_DIKeyState(DIK_LCONTROL))
-	{
-		m_vPickPos.x = roundf(m_vPickPos.x);
-		m_vPickPos.y = roundf(m_vPickPos.y);
-		m_vPickPos.z = roundf(m_vPickPos.z);
-	}
-
-	// 피킹처리
-	if (CCell::POINT_END > m_iCurrentPickPointIndex)
-	{
-		m_vCell[m_iCurrentPickPointIndex++] = m_vPickPos.xyz();
-	}
-
-	// 3번의 피킹이 끝나면 벡터컨테이너에 값을 넣고 피킹 인덱스 초기화
-	if (CCell::POINT_END == m_iCurrentPickPointIndex)
-	{
-		CCWSort_Cell(m_vCell.data());
-
-		COLCELLDESC CellDesc;
-		CellDesc.m_Points = m_vCell;
-		CellDesc.m_pBufferCom = CVIBuffer_Cell::Create(m_pDevice, m_pContext, m_vCell.data());
-		if (nullptr == CellDesc.m_pBufferCom)
-		{
-			MSG_BOX("Failed Make_Cell : CellDesc.m_pBufferCom is nullptr");
-			return E_FAIL;
-		}
-
-		m_Cells.push_back(CellDesc);
-
-		m_iCurrentPickPointIndex = CCell::POINT_A;
-
-		m_PickDatas.clear();
-		m_isMakingCell = false;
-	}
-	return S_OK;
-}
-
-HRESULT CTriangleCollider_Window::CurrentNavigationPosition()
-{
-	if (0 == m_Cells.size())
-	{
-		ImGui::Text("Cell Empty.");
 		return S_OK;
 	}
 
-	ImGui::SetNextItemWidth(150.f);
+	vector<_float3> Vertices = m_pTriangleColMesh->Get_VertexPositions();
+	vector<_ulong> Indices = m_pTriangleColMesh->Get_Indices();
 
-	if (ImGui::DragFloat3("Cell A",
-		reinterpret_cast<_float*>(&m_Cells[m_iCurrentCellIndex].m_Points[CCell::POINT_A]), 0.01f, 0.f, 5000.f, "%.2f"))
+	if (Vertices.size() == 0 || Indices.size() == 0)
+		return S_OK;
+
+	_float4 vMouseOrigin, vMouseDirection;
+	if (FAILED(m_pGameInstance->Get_WorldMouseRay(m_pContext, g_hWnd, &vMouseOrigin, &vMouseDirection)))
 	{
-		CCWSort_Cell(m_Cells[m_iCurrentCellIndex].m_Points.data());
-		Remake_Cells();
+		return S_OK;
 	}
-	ImGui::SetNextItemWidth(150.f);
-	if (ImGui::DragFloat3("Cell B",
-		reinterpret_cast<_float*>(&m_Cells[m_iCurrentCellIndex].m_Points[CCell::POINT_B]), 0.01f, 0.f, 5000.f, "%.2f"))
+	vMouseDirection.Normalize();
+
+
+	if (Pick_Spheres(vMouseOrigin, vMouseDirection, &m_vPickIndex))
 	{
-		CCWSort_Cell(m_Cells[m_iCurrentCellIndex].m_Points.data());
-		Remake_Cells();
 	}
-	ImGui::SetNextItemWidth(150.f);
-	if (ImGui::DragFloat3("Cell C",
-		reinterpret_cast<_float*>(&m_Cells[m_iCurrentCellIndex].m_Points[CCell::POINT_C]), 0.01f, 0.f, 5000.f, "%.2f"))
+	else if (OPTION_CREATE == m_iSelectOption && 
+		Get_VertexIndex_By_Picking(&m_vPickPos))
 	{
-		CCWSort_Cell(m_Cells[m_iCurrentCellIndex].m_Points.data());
-		Remake_Cells();
+		//m_vPickPos위치에 새로운 정점 생성해줘야함.
+		m_Vertices.push_back(m_vPickPos.xyz());
+		m_vPickIndex = m_Vertices.size() - 1;
 	}
+	else
+		return S_OK;
 
-	return S_OK;
-}
-
-HRESULT CTriangleCollider_Window::Navigation_List()
-{
-	ImGui::SetNextItemWidth(150.f);
-
-	if (ImGui::BeginListBox("Cell Index"))
+	//셀만들기 시작
+	if (OPTION_CREATE == m_iSelectOption)
 	{
-		m_iSelecIndex = 0;
+		m_isMakingCell = true;
 
-		for (auto& CellDesc : m_Cells)
+		if (true == m_pGameInstance->Get_DIKeyState(DIK_LCONTROL))
 		{
-			//if (ImGui::Selectable(CellDesc.m_strIndexName.c_str()))
-			{
-				m_iCurrentCellIndex = m_iSelecIndex;
-
-				CCamera_Free* pCamera = dynamic_cast<CCamera_Free*>(m_pGameInstance->Find_Component_In_Layer(LEVEL_TOOL, TEXT("Layer_Tool"), TEXT("GameObject_Camera_Free")));
-				if (nullptr == pCamera)
-					return E_FAIL;
-
-				// 셀의 중심값을 바라보게 카메라 처리
-				_float4 vTransform;
-				ZEROMEM(&vTransform);
-				for (_uint i = 0; i < CCell::POINT_END; ++i)
-				{
-					vTransform += m_Cells[m_iCurrentCellIndex].m_Points[CCell::POINT(i)].TransCoord();
-				}
-
-				_float4 vCamPos;
-				_float4 vPos = vCamPos = vTransform / 3.f;
-
-				vCamPos.y += 5.f;
-				vCamPos.z -= 5.f;
-				//pCamera->Set_CameraView(vCamPos, vPos, _float4(0.f, 1.f, 0.f, 0.f));
-
-				break;
-			}
-			++m_iSelecIndex;
+			m_vPickPos.x = roundf(m_vPickPos.x);
+			m_vPickPos.y = roundf(m_vPickPos.y);
+			m_vPickPos.z = roundf(m_vPickPos.z);
 		}
-		ImGui::EndListBox();
-	}
 
-	return S_OK;
+		if (CCell::POINT_END > m_iCurrentPickPointIndex)
+		{
+			//현재 피킹 인덱스가 3 미만이면 새로운 그거 추가함.
+			if (m_vPickIndex != -1)
+			{
+				m_vCell[m_iCurrentPickPointIndex++] = m_vPickIndex;
+			}
+		}
+
+		// 3번의 피킹이 끝나면 벡터컨테이너에 값을 넣고 피킹 인덱스 초기화
+		if (CCell::POINT_END == m_iCurrentPickPointIndex)
+		{
+			_float3 data[3] = {};
+
+			CCWSort_Cell(m_vCell);
+			COLCELLDESC CellDesc;
+			for (int i = 0; i < 3; i++)
+			{
+				CellDesc.m_iIndices[i] = m_vCell[i];
+			}
+
+			//포지션배열 던져줘야함
+			data[0] = m_Vertices[m_vCell[0]];
+			data[1] = m_Vertices[m_vCell[1]];
+			data[2] = m_Vertices[m_vCell[2]];
+			CellDesc.m_pBufferCom = CVIBuffer_Cell::Create(m_pDevice, m_pContext, data);
+			if (nullptr == CellDesc.m_pBufferCom)
+			{
+				MSG_BOX("Failed Make_Cell : CellDesc.m_pBufferCom is nullptr");
+				return E_FAIL;
+			}
+
+			m_Cells.push_back(CellDesc);
+
+			m_iCurrentPickPointIndex = CCell::POINT_A;
+
+			m_isMakingCell = false;
+		}
+		return S_OK;
+	}
 }
 
-HRESULT CTriangleCollider_Window::Delete_Cell()
-{
-	if (ImGui::Button("Delete Cell", ImVec2(100, 20)) && m_Cells.size() > 0)
-	{
-		Safe_Release(m_Cells[m_iCurrentCellIndex].m_pBufferCom);
-
-		auto iter = m_Cells.begin();
-		m_Cells.erase(iter + m_iCurrentCellIndex);
-
-		if (m_Cells.size() == m_iCurrentCellIndex)
-			m_iCurrentCellIndex = (0 == m_iCurrentCellIndex) ? 0 : --m_iCurrentCellIndex;
-	}
-
-	return S_OK;
-}
-
-HRESULT CTriangleCollider_Window::Remake_Cells()
+HRESULT CTriangleCollider_Window::ReMake_Cell()
 {
 	for (auto& CellDesc : m_Cells)
 	{
-		CellDesc.m_pBufferCom->Begin(CellDesc.m_Points.data());
+		_float3 pointArr[3] = {};
+		pointArr[0] = m_Vertices[CellDesc.m_iIndices[0]];
+		pointArr[1] = m_Vertices[CellDesc.m_iIndices[1]];
+		pointArr[2] = m_Vertices[CellDesc.m_iIndices[2]];
+		CellDesc.m_pBufferCom->Begin(pointArr);
 		CellDesc.m_pBufferCom->End();
 	}
-
 	return S_OK;
 }
 
-void CTriangleCollider_Window::CCWSort_Cell(_float3* pPoints)
+void CTriangleCollider_Window::CCWSort_Cell(_uint* pPoints)
 {
 	_float4 vAB, vAC, vCross;
 	_float4 vUp = XMVectorSet(0.f, 1.f, 0.f, 0.f);
 
-	vAB = _float4(pPoints[CCell::POINT_B] - pPoints[CCell::POINT_A]);
-	vAC = _float4(pPoints[CCell::POINT_C] - pPoints[CCell::POINT_A]);
+	vAB = _float4(m_Vertices[pPoints[CCell::POINT_B]] - m_Vertices[pPoints[CCell::POINT_A]]);
+	vAC = _float4(m_Vertices[pPoints[CCell::POINT_C]] - m_Vertices[pPoints[CCell::POINT_A]]);
 
 	vCross = XMVector3Normalize(XMVector3Cross(vAB, vAC));
 
 	// not CCW
 	if (0 > XMVectorGetX(XMVector3Dot(vUp, vCross)))
 	{
-		_float3 vSour = pPoints[CCell::POINT_B];
+		UINT vSour = pPoints[CCell::POINT_B];
 		pPoints[CCell::POINT_B] = pPoints[CCell::POINT_C];
 		pPoints[CCell::POINT_C] = vSour;
 	}
@@ -663,7 +635,7 @@ HRESULT CTriangleCollider_Window::Render_Cells()
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &WorldMatrix)))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Begin("Cell")))
+	if (FAILED(m_pShaderCom->Begin("Debug")))
 		return E_FAIL;
 
 	for (auto& CellDesc : m_Cells)
@@ -672,14 +644,18 @@ HRESULT CTriangleCollider_Window::Render_Cells()
 			return E_FAIL;
 	}
 
+#ifdef _DEBUG
 	for (auto& CellDesc : m_Cells)
 	{
 		for (auto& Sphere : CellDesc.m_pBufferCom->Get_BoundingSpheres())
 		{
+#ifdef _DEBUG
 			if (FAILED(Sphere->Render()))
 				return E_FAIL;
+#endif // _DEBUG
 		}
 	}
+#endif // _DEBUG	
 
 	vColor = _float4(1.f, 0.f, 0.f, 1.f);
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_vColor", &vColor, sizeof(_float4))))
@@ -689,7 +665,7 @@ HRESULT CTriangleCollider_Window::Render_Cells()
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &WorldMatrix)))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Begin("Cell")))
+	if (FAILED(m_pShaderCom->Begin("Debug")))
 		return E_FAIL;
 
 	if (0 < m_Cells.size())
