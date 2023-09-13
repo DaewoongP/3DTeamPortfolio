@@ -216,7 +216,7 @@ PS_OUT PS_MAIN_DISTORTION(PS_IN In)
 
     
     
-    vector noise1 = g_PostProcessingTexture.Sample(LinearSampler, In.texCoords1);
+    vector noise1 = g_vDistortionTexture.Sample(LinearSampler, In.texCoords1);
     vector noise2 = g_vDistortionTexture.Sample(LinearSampler, In.texCoords2);
     vector noise3 = g_vDistortionTexture.Sample(LinearSampler, In.texCoords3);
    // Out.vColor = noise1;
