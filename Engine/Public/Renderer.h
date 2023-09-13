@@ -40,6 +40,7 @@ private:
 #endif // _DEBUG
 	HRESULT Render_Lights();
 	HRESULT Render_Shadow();
+	HRESULT Render_SoftShadow();
 	HRESULT Render_SSAO();
 	HRESULT Render_Deferred();
 	HRESULT Render_NonLight();
