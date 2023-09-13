@@ -272,6 +272,7 @@ HRESULT CGameInstance::Add_Component(_uint iLevelIndex, const _tchar* pPrototype
 {
 	NULL_CHECK_RETURN_MSG(m_pComponent_Manager, E_FAIL, TEXT("Component_Manager NULL"));
 
+
 	return m_pComponent_Manager->Add_Component(iLevelIndex, pPrototypeTag, pLayerTag, pComponentTag, pArg);
 }
 

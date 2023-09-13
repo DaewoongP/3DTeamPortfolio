@@ -134,11 +134,8 @@ public: // Function
 	void	Capture();
 	void	Select_AlphaTexture(CDummy_UI* pDummyUI);
 	
-
 	HRESULT Save(_tchar* pFilePath);
 	HRESULT Load(_tchar* pFilePath);
-
-
 
 public:
 	_bool Load_ImTexture(const _char* pFilePath, ID3D11ShaderResourceView** out_srv, _int* out_width, _int* out_height);

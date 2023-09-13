@@ -77,7 +77,7 @@ HRESULT CUI_Skill::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxTex"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 	{
-		MSG_BOX("Failed CDummy_UI Add_Component : (Com_Shader)");
+		MSG_BOX("Failed CUI_Skill Add_Component : (Com_Shader)");
 		return E_FAIL;
 	}
 
@@ -85,7 +85,7 @@ HRESULT CUI_Skill::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, m_wszTextureName,
 		TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTextureCom))))
 	{
-		MSG_BOX("Failed CDummy_UI Add_Component : (Com_Texture)");
+		MSG_BOX("Failed CUI_Skill Add_Component : (Com_Texture)");
 		return E_FAIL;
 	}
 
@@ -93,7 +93,7 @@ HRESULT CUI_Skill::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"),
 		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRendererCom))))
 	{
-		MSG_BOX("Failed CDummy_UI Add_Component : (Com_Renderer)");
+		MSG_BOX("Failed CUI_Skill Add_Component : (Com_Renderer)");
 		return E_FAIL;
 	}
 
@@ -101,7 +101,7 @@ HRESULT CUI_Skill::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Rect"),
 		TEXT("Com_Buffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
 	{
-		MSG_BOX("Failed CDummy_UI Add_Component : (Com_Buffer)");
+		MSG_BOX("Failed CUI_Skill Add_Component : (Com_Buffer)");
 		return E_FAIL;
 	}
 

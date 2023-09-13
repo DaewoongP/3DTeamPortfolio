@@ -167,12 +167,15 @@ HRESULT CUI_Back::Ready_Texture()
 {
 	BEGININSTANCE;
 
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAINGAME, m_wszTextureName,
-		CTexture::Create(m_pDevice, m_pContext, m_wszTexturePath))))
+	CComponent* pComponenet = pGameInstance->Find_Prototype(LEVEL_MAINGAME, m_wszTextureName);
+
+	if (pComponenet == nullptr)
 	{
-		MSG_BOX("Failed Create Texture Component");
-		Safe_Release(pGameInstance);
-		return E_FAIL;
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAINGAME, m_wszTextureName,
+			CTexture::Create(m_pDevice, m_pContext, m_wszTexturePath))))
+		{
+			MSG_BOX("Failed Create Texture Component");
+		}
 	}
 
 

@@ -184,13 +184,18 @@ HRESULT CUI_Finisher::SetUp_ShaderResources()
 
 HRESULT CUI_Finisher::Ready_Texture()
 {
-	BEGININSTANCE
+	BEGININSTANCE;
 
+	CComponent* pComponenet = pGameInstance->Find_Prototype(LEVEL_MAINGAME, m_wszTextureName);
+
+	if (pComponenet == nullptr)
+	{
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAINGAME, m_wszTextureName,
 			CTexture::Create(m_pDevice, m_pContext, m_wszTexturePath))))
 		{
 			MSG_BOX("Failed Create Texture Component");
 		}
+	}
 
 
 	if (m_isAlpha)

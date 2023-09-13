@@ -70,7 +70,7 @@ HRESULT CUI_Group_Finisher::Initialize(void* pArg)
 #pragma endregion
 
 #pragma region Back Load
-	_tchar pFilePath[MAX_PATH] = TEXT("../../Resources/GameData/UIData/UI_Group_Finisher_Back2.uidata");
+	_tchar pFilePath[MAX_PATH] = TEXT("../../Resources/GameData/UIData/UI_Group_Finisher_Back.uidata");
 	HANDLE hFile = CreateFile(pFilePath, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 	if (hFile == INVALID_HANDLE_VALUE)
 	{
@@ -135,10 +135,9 @@ _bool CUI_Group_Finisher::Set_Gauge(_float fMin, _float fMax, _float fCurrent, C
 	}
 	else if (fPercent > 0.5f)
 	{
-		m_pFinishers[FRONT]->Set_Gauge(fCurrent * 2.f, eType);
+		m_pFinishers[FRONT]->Set_Gauge((fCurrent - 50.f) * 2.f, eType);
 		m_pFinishers[BACK]->Set_Gauge(fMax, eType);
 	}
-	
 
 	return true;
 }
@@ -150,21 +149,27 @@ HRESULT CUI_Group_Finisher::Add_ProtoType()
 		_tchar pName[MAX_PATH] = TEXT("");
 	lstrcpy(pName, TEXT("Prototype_GameObject_UI_Back"));
 
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAINGAME, pName,
-		CUI_Back::Create(m_pDevice, m_pContext))))
+
+	CComponent* pComponent = pGameInstance->Find_Prototype(LEVEL_MAINGAME, pName);
+
+	if (nullptr == pComponent)
 	{
-		MSG_BOX("Failed Create Prototype_GameObject_UI_Back");
+		pGameInstance->Add_Prototype(LEVEL_MAINGAME, pName, CUI_Back::Create(m_pDevice, m_pContext));
 	}
+
 	m_ProtoTypeTags.push_back(pGameInstance->Make_WChar(pName));
+
 
 
 	lstrcpy(pName, TEXT("Prototype_GameObject_UI_Finisher"));
 
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAINGAME, pName,
-		CUI_Finisher::Create(m_pDevice, m_pContext))))
+	pComponent = pGameInstance->Find_Prototype(LEVEL_MAINGAME, pName);
+
+	if (nullptr == pComponent)
 	{
-		MSG_BOX("Failed Create Prototype_GameObject_UI_Finisher");
+		pGameInstance->Add_Prototype(LEVEL_MAINGAME, pName, CUI_Finisher::Create(m_pDevice, m_pContext));
 	}
+	
 
 	m_ProtoTypeTags.push_back(pGameInstance->Make_WChar(pName));
 

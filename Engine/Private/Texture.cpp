@@ -58,6 +58,19 @@ const _float2 CTexture::Get_TextureSize(_uint iTextureIndex)
 	return vSize;
 }
 
+_int CTexture::Get_TextureIndex_By_Path(const _tchar* pPath)
+{
+	_int iIndex = -1;
+	for (auto& TexturePath : m_szTextureFilePathes)
+	{
+		if (!lstrcmp(TexturePath, pPath))
+			return iIndex;
+		++iIndex;
+	}
+
+	return -1;
+}
+
 HRESULT CTexture::Initialize_Prototype(const _tchar* pTextureFilePath, _uint iNumTextures)
 {
 	//FAILED_CHECK_RETURN(CoInitializeEx(nullptr, 0), E_FAIL);
@@ -77,7 +90,7 @@ HRESULT CTexture::Initialize_Prototype(const _tchar* pTextureFilePath, _uint iNu
 		wsprintf(szTextureFilePath, pTextureFilePath, i);
 
 		m_szTextureFilePathes.push_back(pTextureFilePath);
-
+		
 		_tchar			szExt[MAX_PATH] = TEXT("");
 		_wsplitpath_s(szTextureFilePath, nullptr, 0, nullptr, 0, nullptr, 0, szExt, 256);
 

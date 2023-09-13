@@ -164,6 +164,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Action.h" />
+    <ClInclude Include="..\Public\CUI_Image.h" />
     <ClInclude Include="..\Public\Selector_Degree.h" />
     <ClInclude Include="..\Public\Armored_Troll.h" />
     <ClInclude Include="..\Public\Assasin_Goblin.h" />
@@ -186,9 +187,15 @@
     <ClInclude Include="..\Public\Test_Stair.h" />
     <ClInclude Include="..\Public\Turn.h" />
     <ClInclude Include="..\Public\UI_Back.h" />
+    <ClInclude Include="..\Public\UI_Effect_Back.h" />
     <ClInclude Include="..\Public\UI_Finisher.h" />
+    <ClInclude Include="..\Public\UI_Finisher_Icon.h" />
     <ClInclude Include="..\Public\UI_Group_Finisher.h" />
+    <ClInclude Include="..\Public\UI_Group_Finisher_Icon.h" />
     <ClInclude Include="..\Public\UI_Group_HP.h" />
+    <ClInclude Include="..\Public\UI_Group_R.h" />
+    <ClInclude Include="..\Public\UI_Group_Skill.h" />
+    <ClInclude Include="..\Public\UI_Group_T.h" />
     <ClInclude Include="..\Public\UI_HP.h" />
     <ClInclude Include="..\Public\UI_Group_Potion.h" />
     <ClInclude Include="..\Public\UI_Skill.h" />
@@ -252,6 +259,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Action.cpp" />
+    <ClCompile Include="..\Private\CUI_Image.cpp" />
     <ClCompile Include="..\Private\Selector_Degree.cpp" />
     <ClCompile Include="..\Private\Armored_Troll.cpp" />
     <ClCompile Include="..\Private\Assasin_Goblin.cpp" />
@@ -271,9 +279,15 @@
     <ClCompile Include="..\Private\Test_Stair.cpp" />
     <ClCompile Include="..\Private\Turn.cpp" />
     <ClCompile Include="..\Private\UI_Back.cpp" />
+    <ClCompile Include="..\Private\UI_Effect_Back.cpp" />
     <ClCompile Include="..\Private\UI_Finisher.cpp" />
+    <ClCompile Include="..\Private\UI_Finisher_Icon.cpp" />
     <ClCompile Include="..\Private\UI_Group_Finisher.cpp" />
+    <ClCompile Include="..\Private\UI_Group_Finisher_Icon.cpp" />
     <ClCompile Include="..\Private\UI_Group_HP.cpp" />
+    <ClCompile Include="..\Private\UI_Group_R.cpp" />
+    <ClCompile Include="..\Private\UI_Group_Skill.cpp" />
+    <ClCompile Include="..\Private\UI_Group_T.cpp" />
     <ClCompile Include="..\Private\UI_HP.cpp" />
     <ClCompile Include="..\Private\UI_Group_Potion.cpp" />
     <ClCompile Include="..\Private\UI_Skill.cpp" />

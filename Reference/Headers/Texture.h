@@ -22,6 +22,7 @@ public:
 	const _float2 Get_TextureSize(_uint iTextureIndex);
 	_uint Get_NumTextures() { return m_iNumTextures; }
 	const _tchar* Get_TextureFilePath(_uint iTextureIndex = 0) { return m_szTextureFilePathes[iTextureIndex]; }
+	_int Get_TextureIndex_By_Path(const _tchar* pPath);
 
 public:
 	virtual HRESULT Initialize_Prototype(const _tchar * pTextureFilePath, _uint iNumTextures);

@@ -1258,7 +1258,6 @@ HRESULT CUI_Window::Load(_tchar* pFilePath)
 	CDummy_UI_Group* pGroup = static_cast<CDummy_UI_Group*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL, TEXT("Layer_Tool_UI_Group"), wszGameObjectTag));
 	ENDINSTANCE
 
-
 	
 	GameObjectTag = "UI_" + Generate_Hashtag(true);
 	ZeroMemory(wszGameObjectTag, sizeof(_tchar) * MAX_PATH);
