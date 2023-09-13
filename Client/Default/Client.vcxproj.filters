@@ -178,6 +178,9 @@
     <Filter Include="03. Behaviors\04. Function">
       <UniqueIdentifier>{11282af5-bac7-4061-9441-81c0be48d567}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\01. Player\00. Camera">
+      <UniqueIdentifier>{f3759d26-a3c7-4580-b9e7-a5b9ac3325cb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -366,6 +369,12 @@
     <ClInclude Include="..\Public\Selector_Degree.h">
       <Filter>03. Behaviors\01. Selectors</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Player.h">
+      <Filter>02. GameObject\01. Player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Player_Camera.h">
+      <Filter>02. GameObject\01. Player\00. Camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -523,6 +532,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Selector_Degree.cpp">
       <Filter>03. Behaviors\01. Selectors</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player.cpp">
+      <Filter>02. GameObject\01. Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Player_Camera.cpp">
+      <Filter>02. GameObject\01. Player\00. Camera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
