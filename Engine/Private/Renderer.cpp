@@ -239,8 +239,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 	
 	if (FAILED(Render_PostProcessing()))
 		return E_FAIL;	
-	if (FAILED(Render_Distortion()))
-		return E_FAIL;
+	/*if (FAILED(Render_Distortion()))
+		return E_FAIL;*/
 	if (FAILED(Render_UI()))
 		return E_FAIL;
 
