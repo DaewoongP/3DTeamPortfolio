@@ -344,7 +344,7 @@ HRESULT CMainTool::Ready_Prototype_Component()
 
 	/* Prototype_Component_Texture_Ground */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Texture_Ground"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Terrain/Ground/Ground%d.dds"), 4))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Texture/Terrain/Ground/Ground%d.dds"), 4))))
 		return E_FAIL;
 
 	/* Prototype_Component_Sphere_Collider*/

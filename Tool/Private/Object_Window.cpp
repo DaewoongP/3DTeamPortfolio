@@ -411,6 +411,8 @@ void CObject_Window::Install_Multi_Object(_float3 vPos)
 {
 	ImGui::Text("Press H to Install");
 
+	ImGui::Text("There is %d Instance Model", m_iPushBackInsObject);
+
 	// 범위 안에 있을 경우 H키를 눌러 설치
 	if (true == m_pGameInstance->Get_DIKeyState(DIK_H, CInput_Device::KEY_DOWN) &&
 		-1.f != vPos.x)
@@ -447,7 +449,7 @@ void CObject_Window::Install_Multi_Object(_float3 vPos)
 	{
 		vector<_float4x4> vecWorldMatrix;
 
-		for (size_t i = m_iMapObjectIndex - m_iInsObjectCnt; i < m_iMapObjectIndex - 1; i++)
+		for (size_t i = m_iMapObjectIndex - m_iInsObjectCnt; i < m_iMapObjectIndex; i++)
 		{
 			// 해당 게임 오브젝트를 찾음
 			_tchar wszobjName[MAX_PATH] = { 0 };
@@ -478,7 +480,10 @@ void CObject_Window::Install_Multi_Object(_float3 vPos)
 		m_SaveInsObjectDesc.iInstanceCnt = 0;
 		m_SaveInsObjectDesc.iTagLen = 0;
 		m_SaveInsObjectDesc.matTransform = XMMatrixIdentity();
+		m_vecFreeMatrix.push_back(m_SaveInsObjectDesc.pMatTransform);
 		ZEROMEM(m_SaveInsObjectDesc.wszTag);
+
+		++m_iPushBackInsObject;
 	}
 }
 
@@ -992,7 +997,7 @@ void CObject_Window::Map_Brushing_Menu()
 		//Target_Brushing의 ID3D11Texture2D를 가져옴
 		ID3D11Texture2D* pTexture = m_pGameInstance->Find_RenderTarget(TEXT("Target_MapBrushing"))->Get_Texture2D();
 
-		if (FAILED(SaveDDSTextureToFile(m_pContext, pTexture, TEXT("../../Resources/Default/Textures/Ground/Filter.dds"))))
+		if (FAILED(SaveDDSTextureToFile(m_pContext, pTexture, TEXT("../../Resources/Texture/Terrain/Create/Filter.dds"))))
 		{
 			MSG_BOX("Failed to Save Terrain Texture");
 			return;
@@ -1161,7 +1166,7 @@ HRESULT CObject_Window::Save_MapObject_Ins(string szMapDataPath)
 		}
 		
 		// 여기서 따로 벡터에 저장해둔 값들을 저장한다.
-		for (size_t j = 0; j < m_vecSaveInsObject.at(i).iInstanceCnt; i++)
+		for (size_t j = 0; j < m_vecSaveInsObject.at(i).iInstanceCnt; ++j)
 		{
 			if (!WriteFile(hFile, &m_vecSaveInsObject.at(i).pMatTransform[j], sizeof(_float4x4), &dwByte, nullptr))
 			{
@@ -1639,5 +1644,10 @@ void CObject_Window::Free(void)
 	for (auto& iter : m_vecSaveInsObject)
 	{
 		Safe_Delete_Array(iter.pMatTransform);
+	}
+
+	for (auto& iter : m_vecFreeMatrix)
+	{
+		Safe_Delete_Array(iter);
 	}
 }
