@@ -14,6 +14,7 @@ texture2D g_ShadowTexture;
 texture2D g_SpecularTexture;
 texture2D g_SSAOTexture;
 texture2D g_BlurTexture;
+texture2D g_SoftShadowTexuture;
 
 vector g_vLightDir;
 vector g_vLightPos;
@@ -331,7 +332,9 @@ PS_OUT PS_MAIN_DEFERRED(PS_IN In)
     
     vector vShadow = g_ShadowTexture.Sample(LinearSampler, In.vTexUV);
    
-    Out.vColor = vDiffuse /* vShadow */ * vShade * vBlur +0.5 * vSpecular;
+    //vector vSoftShadow = g_SoftShadowTexuture.Sample(LinearSampler, In.vTexUV);
+ 
+    Out.vColor = vDiffuse * vShadow * vShade * vBlur + 0.5 * vSpecular;
 
     return Out;
 }
