@@ -14,7 +14,7 @@ public:
 
     string Get_FilePathName();
     string Get_CurretnPath();
-
+    void ChangeTexture(const _char* pFilePathName);
 public:
     void Tick();
     _bool IsOk();

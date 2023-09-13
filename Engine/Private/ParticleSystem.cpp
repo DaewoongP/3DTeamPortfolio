@@ -1,7 +1,7 @@
 #include "ParticleSystem.h"
 #include "GameInstance.h"
 #include "Component_Manager.h"
-
+#include "Ease.h"
 CParticleSystem::CParticleSystem(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
 	: CGameObject(_pDevice, _pContext)
 {
@@ -15,6 +15,7 @@ CParticleSystem::CParticleSystem(const CParticleSystem& _rhs)
 	, m_RendererModuleDesc(_rhs.m_RendererModuleDesc)
 	, m_ParticleMatrices(_rhs.m_ParticleMatrices)
 	, m_StopAction(_rhs.m_StopAction)
+	, m_iLevel(_rhs.m_iLevel)
 {
 	for (int i = 0; i < STATE_END; ++i)
 		m_Particles[i] = _rhs.m_Particles[i];
@@ -24,27 +25,46 @@ HRESULT CParticleSystem::Initialize_Prototype(const _tchar* _pDirectoryPath, _ui
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
 
-	//this->Load(_pDirectoryPath);
+	this->Load(_pDirectoryPath);
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 	
-	iLevel = _iLevel;
+	m_iLevel = _iLevel;
 	// 필요한 원본 텍스처가 없으면 원본 텍스처를 만드는 로직
 	wstring ProtoTag; 
 	ProtoTag = ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_RendererModuleDesc.wstrMaterialPath.c_str());
-	if (nullptr == pGameInstance->Find_Prototype(iLevel, ProtoTag.data()))
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, ProtoTag.data()))
 	{
-		pGameInstance->Add_Prototype(iLevel
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel
 			, ProtoTag.data()
-			, CTexture::Create(m_pDevice, m_pContext, m_RendererModuleDesc.wstrMaterialPath.c_str()));
+			, CTexture::Create(m_pDevice, m_pContext, m_RendererModuleDesc.wstrMaterialPath.c_str()))))
+			return E_FAIL;
 	}
 
 	ProtoTag = ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_ShapeModuleDesc.wstrClipTexturePath.c_str());
-	if (nullptr == pGameInstance->Find_Prototype(iLevel, ProtoTag.data()))
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, ProtoTag.data()))
 	{
-		pGameInstance->Add_Prototype(iLevel
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel
 			, ProtoTag.data()
-			, CTexture::Create(m_pDevice, m_pContext, m_ShapeModuleDesc.wstrClipTexturePath.c_str()));
+			, CTexture::Create(m_pDevice, m_pContext, m_ShapeModuleDesc.wstrClipTexturePath.c_str()))))
+			return E_FAIL;
+	}
+
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_Component_Shader_VtxRectColInstance")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel
+			, TEXT("Prototype_Component_Shader_VtxRectColInstance")
+			, CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxRectColInstance.hlsl")
+			,VTXRECTCOLORINSTANCE_DECL::Elements, VTXRECTCOLORINSTANCE_DECL::iNumElements))))
+			return E_FAIL;
+	}
+
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_Component_VIBuffer_Rect_Color_Instance")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel
+			, TEXT("Prototype_Component_VIBuffer_Rect_Color_Instance")
+			, CVIBuffer_Rect_Color_Instance::Create(m_pDevice, m_pContext))))
+			return E_FAIL;
 	}
 
 	Safe_Release(pGameInstance);
@@ -112,6 +132,8 @@ void CParticleSystem::Tick(_float _fTimeDelta)
 		// 위치 갱신
 		iter->WorldMatrix.Translation(vPos.xyz());
 		Action_By_RotationOverLifeTime(iter, _fTimeDelta);
+		
+		Action_By_ColorOverLifeTime(iter, _fTimeDelta);
 
 		// SRT 연산
 		_float4x4 ScaleMatrix = _float4x4::MatrixScale(iter->vScale);
@@ -363,7 +385,7 @@ void CParticleSystem::Action_By_Bursts()
 {
 	for (auto& Burst : m_EmissionModuleDesc.Bursts)
 	{
-		if (false == Burst.isTrigger && Burst.fTriggerTimeAcc >= Burst.fTime)
+		if (false == Burst.isTrigger && Burst.fTriggerTimeAcc >= Burst.fTime && 0 == Burst.iCycleCount)
 		{
 			if (RandomBool(Burst.fProbability))
 			{
@@ -389,7 +411,6 @@ void CParticleSystem::Action_By_Bursts()
 			if (Burst.iCycleCount >= Burst.iCycles)
 			{
 				Burst.isTrigger = false;
-				Burst.fTriggerTimeAcc = 0.f;
 			}
 		}
 	}
@@ -428,7 +449,38 @@ void CParticleSystem::Action_By_RotationOverLifeTime(PARTICLE_IT& _particle_iter
 	_particle_iter->WorldMatrix.Translation(vPos);
 	Safe_Release(pGameInstance);
 }
+void CParticleSystem::Action_By_ColorOverLifeTime(PARTICLE_IT& _particle_iter, _float fTimeDelta)
+{
+	if (false == m_ColorOverLifeTimeModuleDesc.isActivate)
+		return;
+	_float4 changeAmount = m_ColorOverLifeTimeModuleDesc.vEndColor - m_ColorOverLifeTimeModuleDesc.vStartColor;
 
+	_particle_iter->vColor.x = CEase::Ease(m_ColorOverLifeTimeModuleDesc.eEase, _particle_iter->fAge
+		, m_ColorOverLifeTimeModuleDesc.vStartColor.x
+		, changeAmount.x
+		, _particle_iter->fLifeTime);
+
+	_particle_iter->vColor.y = CEase::Ease(m_ColorOverLifeTimeModuleDesc.eEase, _particle_iter->fAge
+		, m_ColorOverLifeTimeModuleDesc.vStartColor.y
+		, changeAmount.y
+		, _particle_iter->fLifeTime);
+
+	_particle_iter->vColor.z = CEase::Ease(m_ColorOverLifeTimeModuleDesc.eEase, _particle_iter->fAge
+		, m_ColorOverLifeTimeModuleDesc.vStartColor.z
+		, changeAmount.z
+		, _particle_iter->fLifeTime);
+
+	_particle_iter->vColor.w = CEase::Ease(m_ColorOverLifeTimeModuleDesc.eEase, _particle_iter->fAge
+		, m_ColorOverLifeTimeModuleDesc.vStartColor.w
+		, changeAmount.w
+		, _particle_iter->fLifeTime);
+
+	//_particle_iter->vColor = m_MainModuleDesc.vStartColor * _float3::Lerp(m_ColorOverLifeTimeModuleDesc.vStartColor.xyz()
+	//	, m_ColorOverLifeTimeModuleDesc.vEndColor.xyz(), _particle_iter->fAge / _particle_iter->fLifeTime).TransCoord();
+
+	// 레이어에서 빼고, 세이프 릴리즈도 해주고,
+	// 풀매니저 -> 레퍼런스 카운트를 1을 가지고 있어서.
+}
 void CParticleSystem::ResetStartPosition(PARTICLE_IT& _particle_iter)
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
@@ -439,14 +491,14 @@ void CParticleSystem::ResetStartPosition(PARTICLE_IT& _particle_iter)
 	_float4x4 ScaleMatrix = _float4x4::MatrixScale(m_ShapeModuleDesc.vScale);
 	_float4x4 ShapeMatrix = ScaleMatrix * RotationMatrix * TranslationMatrix;
 
-	if (m_ShapeModuleDesc.strShape == "Sphere")
+	if ("Sphere" == m_ShapeModuleDesc.strShape)
 	{
-		_float3 vLook = _float3(0.f, 0.f, 1.f);
+		_float3 vDir = _float3(0.f, 0.f, 1.f);
 		_float fLength = 0.f;
 		_float fTheta = 0.f;
 		_float fPhi = 0.f;
-		_float fMinLength = m_ShapeModuleDesc.vLength.y;
-		_float fMaxLength = m_ShapeModuleDesc.vLength.y;
+		_float fMinLength = 0.f;
+		_float fMaxLength = 0.f;
 		_float fMinPhi = 0.f;
 		_float fMaxPhi = 360.f;
 		_float fMinTheta = 0.f;
@@ -456,8 +508,13 @@ void CParticleSystem::ResetStartPosition(PARTICLE_IT& _particle_iter)
 		if (true == m_ShapeModuleDesc.isfLengthRange)
 		{
 			fMinLength = m_ShapeModuleDesc.vLength.x;
+			fMaxLength = m_ShapeModuleDesc.vLength.y;
+			fLength = Random_Generator(fMinLength, fMaxLength);
 		}
-		fLength = Random_Generator(m_ShapeModuleDesc.vLength.x, m_ShapeModuleDesc.vLength.y);
+		else
+		{
+			fLength = m_ShapeModuleDesc.vLength.y;
+		}
 
 		// Phi각도 정함.
 		if ("Random" == m_ShapeModuleDesc.strPhiMode)
@@ -468,7 +525,11 @@ void CParticleSystem::ResetStartPosition(PARTICLE_IT& _particle_iter)
 		}
 		else if ("Loop" == m_ShapeModuleDesc.strPhiMode)
 		{
-			
+			m_ShapeModuleDesc.fLoopPhi += m_ShapeModuleDesc.fPhiInterval;
+			if (m_ShapeModuleDesc.fLoopPhi >= m_ShapeModuleDesc.vPhi.y)
+				m_ShapeModuleDesc.fLoopPhi -= m_ShapeModuleDesc.vPhi.y - m_ShapeModuleDesc.vPhi.x;
+
+			fPhi = m_ShapeModuleDesc.fLoopPhi;
 		}
 
 		// Theta각도 정함
@@ -480,9 +541,9 @@ void CParticleSystem::ResetStartPosition(PARTICLE_IT& _particle_iter)
 		}
 		else if ("Loop" == m_ShapeModuleDesc.strThetaMode)
 		{
-			m_ShapeModuleDesc.fLoopPhi += m_ShapeModuleDesc.fPhiInterval;
-			if (m_ShapeModuleDesc.fLoopPhi >= m_ShapeModuleDesc.vPhi.y)
-				m_ShapeModuleDesc.fLoopPhi -= m_ShapeModuleDesc.vPhi.y;
+			m_ShapeModuleDesc.fLoopTheta += m_ShapeModuleDesc.fThetaInterval;
+			if (m_ShapeModuleDesc.fLoopTheta >= m_ShapeModuleDesc.vTheta.y)
+				m_ShapeModuleDesc.fLoopTheta -= m_ShapeModuleDesc.vTheta.y - m_ShapeModuleDesc.vTheta.x;
 
 			fTheta = m_ShapeModuleDesc.fLoopTheta;
 		}
@@ -490,9 +551,63 @@ void CParticleSystem::ResetStartPosition(PARTICLE_IT& _particle_iter)
 		// 위치 설정
 		fTheta = XMConvertToRadians(fTheta);
 		fPhi = XMConvertToRadians(fPhi);
-		vLook = XMVector3TransformCoord(vLook, _float4x4::MatrixRotationX(fTheta) * _float4x4::MatrixRotationY(fPhi));
+
+		_float3 vLook = _float3(0.f, 0.f, 1.f);
+		vDir = XMVector3TransformCoord(vDir, _float4x4::MatrixRotationX(fTheta) * _float4x4::MatrixRotationY(fPhi));
 		
-		(*_particle_iter).WorldMatrix.Translation(fLength * vLook);
+		(*_particle_iter).WorldMatrix.Translation(fLength * vDir);
+		(*_particle_iter).WorldMatrix *= ShapeMatrix;
+	}
+	else if("Circle" == m_ShapeModuleDesc.strShape)
+	{
+		_float3 vDir = _float3(0.f, 0.f, 1.f);
+		_float fLength = 0.f;
+		_float fTheta = 0.f;
+
+		_float fMinLength = 0.f;
+		_float fMaxLength = 0.f;
+		_float fMinTheta = 0.f;
+		_float fMaxTheta = 360.f;
+
+		// 길이 정함
+		if (true == m_ShapeModuleDesc.isfLengthRange)
+		{
+			fMinLength = m_ShapeModuleDesc.vLength.x;
+			fMaxLength = m_ShapeModuleDesc.vLength.y;
+			fLength = Random_Generator(fMinLength, fMaxLength);
+		}
+		else
+		{
+			fLength = m_ShapeModuleDesc.vLength.y;
+		}
+
+		// Theta각도 정함
+		if ("Random" == m_ShapeModuleDesc.strThetaMode)
+		{
+			fMinTheta = m_ShapeModuleDesc.vTheta.x;
+			fMaxTheta = m_ShapeModuleDesc.vTheta.y;
+			fTheta = Random_Generator(fMinTheta, fMaxTheta);
+		}
+		else if ("Loop" == m_ShapeModuleDesc.strThetaMode)
+		{
+			m_ShapeModuleDesc.fLoopTheta += m_ShapeModuleDesc.fThetaInterval;
+			if (m_ShapeModuleDesc.fLoopTheta >= m_ShapeModuleDesc.vTheta.y)
+				m_ShapeModuleDesc.fLoopTheta -= m_ShapeModuleDesc.vTheta.y - m_ShapeModuleDesc.vTheta.x;
+
+			fTheta = m_ShapeModuleDesc.fLoopTheta;
+		}
+
+		_float3 vPos = _particle_iter->WorldMatrix.Translation();
+		_float3 vCamPos = pGameInstance->Get_CamPosition()->xyz();
+		_float4x4 ResultMatrix = pGameInstance->RightUpLook_In_Vectors(vPos, vCamPos);
+
+		// 위치 설정
+		fTheta = XMConvertToRadians(fTheta);
+
+		_float3 vLook = _float3(0.f, 0.f, 1.f);
+		vDir = XMVector3TransformCoord(ResultMatrix.Right(), _float4x4::MatrixRotationAxis(ResultMatrix.Look(), fTheta));
+
+		(*_particle_iter).WorldMatrix.Translation(fLength * vDir);
 		(*_particle_iter).WorldMatrix *= ShapeMatrix;
 	}
 
@@ -510,7 +625,7 @@ void CParticleSystem::ResetVelocity(PARTICLE_IT& _particle_iter)
 	else
 		fSpeed = m_MainModuleDesc.fStartSpeed;
 
-	if (m_ShapeModuleDesc.strShape == "Sphere")
+	if ("Sphere" == m_ShapeModuleDesc.strShape || "Circle" == m_ShapeModuleDesc.strShape)
 	{
 		_float4 vDir = _particle_iter->WorldMatrix.Translation().TransCoord() - _float4();
 		vDir.Normalize();
@@ -529,25 +644,23 @@ HRESULT CParticleSystem::Add_Components()
 			, TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
 			throw(TEXT("Com_Renderer"));
 
-		if (FAILED(CComposite::Add_Component(iLevel
+		if (FAILED(CComposite::Add_Component(m_iLevel
 			, ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_RendererModuleDesc.wstrMaterialPath.c_str()).c_str()
 			, TEXT("Com_MainTexture")
 			, reinterpret_cast<CComponent**>(&m_pMainTexture))))
 			throw(TEXT("Com_MainTexture"));
 
-		if (FAILED(CComposite::Add_Component(iLevel
+		if (FAILED(CComposite::Add_Component(m_iLevel
 			, ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_ShapeModuleDesc.wstrClipTexturePath.c_str()).c_str()
 			, TEXT("Com_ClipTexture")
 			, reinterpret_cast<CComponent**>(&m_pClipTexture))))
 			throw(TEXT("Com_ClipTexture"));
-
-		wstring wstrShaderTag = TEXT("Prototype_Component_");
-		wstrShaderTag += m_RendererModuleDesc.wstrShaderTag;
-		if (FAILED(CComposite::Add_Component(0, wstrShaderTag.c_str()
+		
+		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_Component_Shader_VtxRectColInstance")
 			, TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
 			throw(TEXT("Com_Shader"));
 
-		if (FAILED(CComposite::Add_Component(0, TEXT("Prototype_Component_VIBuffer_Rect_Color_Instance")
+		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_Component_VIBuffer_Rect_Color_Instance")
 			, TEXT("Com_Buffer"), reinterpret_cast<CComponent**>(&m_pBuffer), &m_MainModuleDesc.iMaxParticles)))
 			throw(TEXT("Com_Buffer"));
 	}
@@ -710,19 +823,30 @@ _float4x4 CParticleSystem::LookAt(_float3 vPos, _float3 _vTarget, _bool _isDelet
 }
 void CParticleSystem::Restart()
 {
+	// DEAD->WAIT
 	for (auto iter = m_Particles[DEAD].begin(); iter != m_Particles[DEAD].end();)
 	{
 		Reset_Particle(iter);
 		iter = TransitionTo(iter, m_Particles[DEAD], m_Particles[WAIT]);
 	}
 
-	m_MainModuleDesc.fParticleSystemAge = 0.f; // 객체 수명 초기화
+	// 수명리셋
+	for (auto& Particle : m_Particles[ALIVE])
+		Particle.fAge = 0.f;
+	for (auto& Particle : m_Particles[DELAY])
+		Particle.fAge = 0.f;
+
+	m_MainModuleDesc.Restart();
+	m_EmissionModuleDesc.Restart();
+	m_ShapeModuleDesc.Restart();
+	m_RendererModuleDesc.Restart();
+	m_RotationOverLifetimeModuleDesc.Restart();
 }
-CParticleSystem* CParticleSystem::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, const _tchar* _pDirectoryPath, _uint iLevel)
+CParticleSystem* CParticleSystem::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, const _tchar* _pDirectoryPath, _uint m_iLevel)
 {
 	CParticleSystem* pInstance = new CParticleSystem(_pDevice, _pContext);
 
-	if (FAILED(pInstance->Initialize_Prototype(_pDirectoryPath, iLevel)))
+	if (FAILED(pInstance->Initialize_Prototype(_pDirectoryPath, m_iLevel)))
 	{
 		MSG_BOX("Failed to Created CParticleSystem");
 		Safe_Release(pInstance);

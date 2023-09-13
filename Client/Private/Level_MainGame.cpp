@@ -123,7 +123,7 @@ HRESULT CLevel_MainGame::Load_MapObject()
 	while (true)
 	{
 		LOADOBJECTDESC LoadDesc;
-		ZEROMEM(&LoadDesc);		
+		ZEROMEM(&LoadDesc);
 
 		if (!ReadFile(hFile, &LoadDesc.matTransform, sizeof(_float4x4), &dwByte, nullptr))
 		{
@@ -220,11 +220,17 @@ HRESULT CLevel_MainGame::Ready_Layer_Effect(const _tchar* pLayerTag)
 	Safe_AddRef(pGameInstance);
 
 #ifdef _DEBUG
- 	/*if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Particle"), pLayerTag, TEXT("GameObject_Test_Particle"))))
+	/*if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Particle"), pLayerTag, TEXT("GameObject_Test_Particle"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Particle)");
 		return E_FAIL;
 	}*/
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Default_Magic_Effect"), pLayerTag, TEXT("GameObject_Default_Magic_Effect"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Default_Magic_Effect)");
+		return E_FAIL;
+	}
 #endif _DEBUG
 	Safe_Release(pGameInstance);
 
@@ -238,7 +244,7 @@ HRESULT CLevel_MainGame::Ready_Layer_UI(const _tchar* pLayerTag)
 	_tchar pFilePath[MAX_PATH] = TEXT("../../Resources/GameData/UIData/aaa.uidata");
 	_ulong dwByte = 0;
 	HANDLE hFile = CreateFile(pFilePath, GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
-	
+
 	if (hFile == INVALID_HANDLE_VALUE)
 	{
 		MSG_BOX("Failed Save");
@@ -274,12 +280,12 @@ HRESULT CLevel_MainGame::Ready_Layer_Debug(const _tchar* pLayerTag)
 		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Player)");
 		return E_FAIL;
 	}
-	
+
 	/*if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Cloth"), pLayerTag, TEXT("GameObject_Test_Cloth"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Cloth)");
 		return E_FAIL;
-	}	
+	}
 	*/
 
 	/*if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Stair"), pLayerTag, TEXT("GameObject_Test_Stair"))))
@@ -293,7 +299,7 @@ HRESULT CLevel_MainGame::Ready_Layer_Debug(const _tchar* pLayerTag)
 		MSG_BOX("Failed Add_GameObject : (GameObject_PhysxRenderer)");
 		return E_FAIL;
 	}*/
-	
+
 
 	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Golem_Combat"), pLayerTag, TEXT("GameObject_Test_Monster"))))
 	{

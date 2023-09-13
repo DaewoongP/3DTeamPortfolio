@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Engine_Defines.h"
+#include "Ease.h"
 
 // 객체 : 모든 파티클을 돌리는 ParticleSystem의 인스턴스를 뜻함.
 // 파티클 : 각 입자들을 의미함.
@@ -20,6 +21,7 @@ struct ENGINE_DLL MAIN_MODULE : public MODULE
 
 	HRESULT Save(const _tchar* _pDirectoyPath);
 	HRESULT Load(const _tchar* _pDirectoyPath);
+	void Restart();
 
 	_bool isEnable = { true };
 	_float fParticleSystemAge = { 0.f };
@@ -59,9 +61,10 @@ struct ENGINE_DLL EMISSION_MODULE : public MODULE
 {
 	EMISSION_MODULE() : MODULE() { __super::isActivate = true; };
 	~EMISSION_MODULE() { Bursts.clear(); }
-
+	
 	HRESULT Save(const _tchar* _pDirectoyPath);
 	HRESULT Load(const _tchar* _pDirectoyPath);
+	void Restart();
 
 	typedef struct tagBurst
 	{
@@ -89,6 +92,7 @@ struct ENGINE_DLL SHAPE_MODULE : public MODULE
 
 	HRESULT Save(const _tchar* _pDirectoyPath);
 	HRESULT Load(const _tchar* _pDirectoyPath);
+	void Restart();
 
 	string strShape = { "Sphere" }; // Shpere, Box, Mesh, Sprite, Rectangle
 	string strBoxEmitFrom = { "Volume" }; // Volume, Sheel, Edge
@@ -146,17 +150,18 @@ struct ENGINE_DLL RENDERER_MODULE : public MODULE
 
 	HRESULT Save(const _tchar* _pDirectoyPath);
 	HRESULT Load(const _tchar* _pDirectoyPath);
+	void Restart();
 
 	wstring wstrShaderTag = { TEXT("Shader_VtxRectColInstance") };
 	wstring wstrMaterialPath = { TEXT("../../Resources/Effects/Textures/Default_Particle.png") };
 };
-
 struct ENGINE_DLL ROTATION_OVER_LIFETIME_MODULE : public MODULE
 {
 	ROTATION_OVER_LIFETIME_MODULE() : MODULE() { };
 
 	HRESULT Save(const _tchar* _pDirectoyPath);
 	HRESULT Load(const _tchar* _pDirectoyPath);
+	void Restart();
 
 	// 자체 회전에 사용할 값들
 	_bool isSeperateAxes = { false }; // 비 활성화시 기본 Z축사용
@@ -168,7 +173,34 @@ struct ENGINE_DLL ROTATION_OVER_LIFETIME_MODULE : public MODULE
 	_float fRadius = { 0.f }; // 회전할 원의 반지름
 	_float fSpeed = { 1.f }; // 원운동 속도
 };
+struct ENGINE_DLL COLOR_OVER_LIFETIME : public MODULE
+{
+	COLOR_OVER_LIFETIME() : MODULE() { };
 
+	HRESULT Save(const _tchar* _pDirectoyPath);
+	HRESULT Load(const _tchar* _pDirectoyPath);
+	void Restart();
+
+	_float4 vStartColor = { 0.f, 0.f, 0.f, 1.f };
+	_float4 vEndColor = { 1.f, 1.f, 1.f, 1.f };
+
+	CEase::EASE eEase = { CEase::OUT_QUINT };
+};
+struct ENGINE_DLL SIZE_OVER_LIFETIME : public MODULE
+{
+	SIZE_OVER_LIFETIME() : MODULE() { };
+
+	HRESULT Save(const _tchar* _pDirectoyPath);
+	HRESULT Load(const _tchar* _pDirectoyPath);
+	void Restart();
+
+	_bool isSeparateAxes = { false };
+	_float3 vSizeXYZ = { 1.f, 1.f, 1.f };
+	_float fSize = { 1.f };
+	_float2 vSizeRange = { 0.f, 1.f };
+
+	_float fSizeTimeAcc = { 0.f };
+};
 typedef struct tagParticle
 {
 	_float		fAge = { 0.f };

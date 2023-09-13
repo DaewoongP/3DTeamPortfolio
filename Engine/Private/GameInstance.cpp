@@ -539,6 +539,13 @@ _float3 CGameInstance::PolarToCartesian(_float _fLength, _float _fTheta, _float 
 	return m_pCalculator->PolarToCartesian(_fLength, _fTheta, _fPhi);
 }
 
+_float4x4 CGameInstance::RightUpLook_In_Vectors(_float3 vDestPos, _float3 vSourPos)
+{
+	NULL_CHECK_RETURN_MSG(m_pCalculator, _float4x4(), TEXT("Calculator NULL"));
+
+	return m_pCalculator->RightUpLook_In_Vectors(vDestPos, vSourPos);
+}
+
 PxPhysics* CGameInstance::Get_Physics() const
 {
 	NULL_CHECK_RETURN_MSG(m_pPhysX_Manager, nullptr, TEXT("PhysX_Manager NULL"));

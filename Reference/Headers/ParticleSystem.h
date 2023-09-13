@@ -98,7 +98,7 @@ protected:
 	void Action_By_Distance();
 	void Action_By_Bursts();
 	void Action_By_RotationOverLifeTime(PARTICLE_IT& _particle_iter, _float fTimeDelta);
-
+	void Action_By_ColorOverLifeTime(PARTICLE_IT& _particle_iter, _float fTimeDelta);
 protected:
 	HRESULT Add_Components();
 	HRESULT Setup_ShaderResources();
@@ -108,6 +108,8 @@ protected:
 	EMISSION_MODULE					m_EmissionModuleDesc;
 	SHAPE_MODULE					m_ShapeModuleDesc;
 	RENDERER_MODULE					m_RendererModuleDesc;
+	COLOR_OVER_LIFETIME				m_ColorOverLifeTimeModuleDesc;
+	SIZE_OVER_LIFETIME				m_SizeOverLifeTimeModuleDesc;
 	ROTATION_OVER_LIFETIME_MODULE	m_RotationOverLifetimeModuleDesc;
 
 protected: 
@@ -123,7 +125,7 @@ protected:
 	list<PARTICLE> m_Particles[STATE_END];
 	vector<COL_INSTANCE>  m_ParticleMatrices;
 	function<void()> m_StopAction;
-	_uint iLevel = { 0 };
+	_uint m_iLevel = { 0 };
 
 public:
 	static CParticleSystem* Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, const _tchar* _pDirectoryPath, _uint iLevel = 0);

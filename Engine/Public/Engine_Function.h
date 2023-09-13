@@ -201,6 +201,9 @@ namespace Engine
 	template<typename T>
 	T Random_Generator(T _lowBound, T _highBound)
 	{
+		if (_lowBound > _highBound)
+			std::swap(_lowBound, _highBound);
+
 		// static을 사용하여 같은 엔진이 반복적으로 초기화되지 않도록 합니다.
 		static std::default_random_engine RandGenerator(std::chrono::system_clock::now().time_since_epoch().count());
 

@@ -22,8 +22,6 @@ class ENGINE_DLL CTrail : public CGameObject
 protected:
 	typedef CVIBuffer_Rect_Trail::TRAILDESC TRAILDESC;
 	
-	
-
 private:
 	typedef list<VTXPOSTEX>::iterator TRAIL_IT;
 
@@ -45,9 +43,14 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
+public:
+	void Enable() { m_isEnable = true; }
+	void Disable() { m_isEnable = false; }
+
 protected: /* For. Component */
 	_uint m_iLevel = { 0 };
 	string	m_strPass = "Default";
+	_bool m_isEnable = { true };
 
 	_uint     m_iTrailNum = { 50 };
 	_float4x4 m_PivotMatrix = _float4x4();
@@ -67,9 +70,9 @@ protected: /* For. Component */
 	// Ä¿ºê
 
 protected:
-	CShader* m_pShader = { nullptr };
 	CRenderer* m_pRenderer = { nullptr };
 	CVIBuffer_Rect_Trail* m_pBuffer = { nullptr };
+	CShader* m_pShader = { nullptr };
 	CTexture* m_pTexture = { nullptr };
 	CTexture* m_pGradientTexture = { nullptr };
 	wstring m_wstrPath = { TEXT("../../Resources/Effects/Textures/Default_Particle.png") };
