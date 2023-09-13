@@ -37,11 +37,12 @@ HRESULT CTest_NPC::Initialize(void* pArg)
 void CTest_NPC::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-	//m_pTransform->Set_Position(m_pController->Get_Position());
 
-	Key_Input(fTimeDelta);
+	if (nullptr != m_pRootBehavior)
+		m_pRootBehavior->Tick(fTimeDelta);
 
-	m_pModelCom->Play_Animation(fTimeDelta);
+	if (nullptr != m_pModelCom)
+		m_pModelCom->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 }
 
 void CTest_NPC::Late_Tick(_float fTimeDelta)
@@ -70,13 +71,36 @@ HRESULT CTest_NPC::Render()
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
-		m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", i);
+		try /* Failed Render */
+		{
+			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", i)))
+				throw TEXT("Bind_BoneMatrices");
 
-		m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", i, DIFFUSE);
+			if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", i, DIFFUSE)))
+				throw TEXT("Bind_Material Diffuse");
 
-		m_pShaderCom->Begin("AnimMesh");
+			if (0 == i)
+			{
+				if (FAILED(m_pShaderCom->Begin("HairMesh")))
+					throw TEXT("Shader Begin HairMesh");
+			}
+			else
+			{
+				if (FAILED(m_pShaderCom->Begin("AnimMesh")))
+					throw TEXT("Shader Begin AnimMesh");
+			}
 
-		m_pModelCom->Render(i);
+			if (FAILED(m_pModelCom->Render(i)))
+				throw TEXT("Model Render");
+		}
+		catch (const _tchar* pErrorTag)
+		{
+			wstring wstrErrorMSG = TEXT("[CGolem_Combat] Failed Render : ");
+			wstrErrorMSG += pErrorTag;
+			MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+
+			return E_FAIL;
+		}
 	}
 
 	return S_OK;
@@ -96,26 +120,6 @@ HRESULT CTest_NPC::Add_Components()
 		MSG_BOX("Failed CTest_NPC Add_Component : (Com_Renderer)");
 		return E_FAIL;
 	}
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
-
-	PxCapsuleControllerDesc CapsuleControllerDesc;
-	CapsuleControllerDesc.setToDefault();
-	CapsuleControllerDesc.radius = 1.f;
-	CapsuleControllerDesc.height = 1.f;
-	CapsuleControllerDesc.material = pGameInstance->Get_Physics()->createMaterial(0.f, 0.f, 0.f);
-	CapsuleControllerDesc.density = 30.f;
-	CapsuleControllerDesc.isValid();
-
-	Safe_Release(pGameInstance);
-
-	/* Com_Controller */
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_CharacterController"),
-		TEXT("Com_Controller"), reinterpret_cast<CComponent**>(&m_pController), &CapsuleControllerDesc)))
-	{
-		MSG_BOX("Failed CTest_NPC Add_Component : (Com_Controller)");
-		return E_FAIL;
-	}
 
 	/* Com_RigidBody */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
@@ -126,7 +130,7 @@ HRESULT CTest_NPC::Add_Components()
 	}
 
 	/* For.Com_Model */
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_TestModel"),
+	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_TestFig"),
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 	{
 		MSG_BOX("Failed CTest_NPC Add_Component : (Com_Model)");
@@ -146,19 +150,37 @@ HRESULT CTest_NPC::Add_Components()
 
 HRESULT CTest_NPC::SetUp_ShaderResources()
 {
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
+	BEGININSTANCE;
 
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
-		return E_FAIL;
+	try /* Check SetUp_ShaderResources */
+	{
+		if (nullptr == m_pShaderCom)
+			throw TEXT("m_pShaderCom is nullptr");
 
-	Safe_Release(pGameInstance);
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
+			throw TEXT("Failed Bind_Matrix : g_WorldMatrix");
+
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW))))
+			throw TEXT("Failed Bind_Matrix : g_ViewMatrix");
+
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
+			throw TEXT("Failed Bind_Matrix : g_ProjMatrix");
+
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
+			throw TEXT("Failed Bind_RawValue : g_fCamFar");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed SetUp_ShaderResources : \n");
+		wstrErrorMSG += pErrorTag;
+		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+
+		ENDINSTANCE;
+
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
 
 	return S_OK;
 }
@@ -237,6 +259,6 @@ void CTest_NPC::Free()
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRenderer);
-	Safe_Release(m_pController);
 	Safe_Release(m_pRigidBody);
+	Safe_Release(m_pRootBehavior);
 }

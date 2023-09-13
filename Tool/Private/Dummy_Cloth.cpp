@@ -129,7 +129,7 @@ void CDummy_Cloth::Set_Model_Component(CCustomModel::MESHTYPE _eMeshType, const 
 
 	m_eMeshPartsType = _eMeshType;
 
-	//m_pModelCom->Play_Animation(0.f);
+	m_pModelCom->Play_Animation(1 / 60.f);
 }
 
 void CDummy_Cloth::Set_MeshIndex(_uint _iMeshIndex)
@@ -198,7 +198,9 @@ void CDummy_Cloth::Tick(_float fTimeDelta)
 {
 	if (nullptr != m_pModelCom &&
 		true == m_isTesting)
+	{
 		m_pModelCom->Tick(m_eMeshPartsType, m_iMeshIndex, fTimeDelta);
+	}
 
 	__super::Tick(fTimeDelta);
 }
@@ -235,22 +237,22 @@ HRESULT CDummy_Cloth::Render()
 
 				m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", iPartsIndex, i, DIFFUSE);
 				if (m_iMeshIndex != i)
-					m_pShaderCom->Begin("Default");
+					m_pShaderCom->Begin("AnimMesh");
 				else
 				{
 					if (true == m_isWireFrame)
 					{
 						if (true == m_isMeshHighLight)
-							m_pShaderCom->Begin("MeshWireColor");
+							m_pShaderCom->Begin("AnimMesh");
 						else
-							m_pShaderCom->Begin("MeshWire");
+							m_pShaderCom->Begin("AnimMesh");
 					}
 					else
 					{
 						if (true == m_isMeshHighLight)
-							m_pShaderCom->Begin("MeshColor");
+							m_pShaderCom->Begin("AnimMesh");
 						else
-							m_pShaderCom->Begin("Default");
+							m_pShaderCom->Begin("AnimMesh");
 					}
 				}
 
@@ -320,7 +322,7 @@ HRESULT CDummy_Cloth::Add_Components()
 	}
 
 	/* Com_Shader */
-	if (FAILED(CComposite::Add_Component(LEVEL_TOOL, TEXT("Prototype_Component_Shader_VtxMesh"),
+	if (FAILED(CComposite::Add_Component(LEVEL_TOOL, TEXT("Prototype_Component_Shader_VtxAnimMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 	{
 		MSG_BOX("Failed CDummy_Cloth Add_Component : (Com_Shader)");

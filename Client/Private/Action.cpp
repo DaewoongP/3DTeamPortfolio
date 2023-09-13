@@ -45,20 +45,41 @@ HRESULT CAction::Tick(const _float& fTimeDelta)
 {
 	if (false == Check_Decorations())
 	{
-		m_isFirst = true;
 		m_isFinishBehaviors = false;
 		return BEHAVIOR_FAIL;
 	}
+
+	_bool isFirst = { false };
+	if (FAILED(m_pBlackBoard->Get_Type("isFirst", isFirst)))
+		return E_FAIL;
 
 	/* 행동이 하나라도 있으면 행동체크 활성화 */
 	if (0 < m_Behaviors.size())
 		m_isFinishBehaviors = true;
 
-	if (true == m_isFirst)
+	if (true == isFirst)
 	{
 		m_isPlayAction = true;
 		m_pModel->Change_Animation(m_wstrAnimationTag);
-		m_isFirst = false;
+
+		if (FAILED(m_pBlackBoard->Set_Type("isFirst", false)))
+			return E_FAIL;
+
+		if (0 < m_wstrTimerTag.size())
+		{
+			BEGININSTANCE;
+			pGameInstance->Reset_Timer(m_wstrTimerTag);
+			ENDINSTANCE;
+		}
+	}
+
+	/* 시간 체크 */
+	_bool isRunOutOfTime = { false };
+	if (0 < m_wstrTimerTag.size())
+	{
+		BEGININSTANCE;
+		isRunOutOfTime = pGameInstance->Check_Timer(m_wstrTimerTag);
+		ENDINSTANCE;
 	}
 
 	/* 행동 체크 */
@@ -71,22 +92,23 @@ HRESULT CAction::Tick(const _float& fTimeDelta)
 
 #ifdef _DEBUG
 		pBehavior->Set_ReturnData(hr);
-		wcout << m_wstrAnimationTag << endl;
 #endif // _DEBUG
 	}
 
 	_bool bCheck = { false };
 
-	if (true == m_pModel->Is_Finish_Animation() ||
-		(true == m_isCheckBehavior &&
-		true == m_isFinishBehaviors))
+	if (true == m_pModel->Is_Finish_Animation() ||					// 애니메이션이 끝났거나
+		true == isRunOutOfTime ||									// 시간초과했거나 
+		(true == m_isCheckBehavior && true == m_isFinishBehaviors)) // 행동체크를 할건데 모든 행동이 끝났으면
 	{
-		bCheck = true;
+		bCheck = true;	// 나가
 	}
 
 	if (true == bCheck)
 	{
-		m_isFirst = true;
+		if (FAILED(m_pBlackBoard->Set_Type("isFirst", true)))
+			return E_FAIL;
+
 		m_isFinishBehaviors = false;
 
 		BEGININSTANCE;
@@ -99,12 +121,23 @@ HRESULT CAction::Tick(const _float& fTimeDelta)
 	return BEHAVIOR_RUNNING;
 }
 
-void CAction::Set_Options(const wstring& _wstrAnimationTag, CModel* _pModel, _bool _isCheckBehavior, const _float& _fCoolTime, _bool _isOneTimeAction, _bool _isLerp)
+void CAction::Set_Options(const wstring& _wstrAnimationTag, CModel* _pModel,
+	_bool _isCheckBehavior, const _float& _fCoolTime,
+	const wstring& _wstrTimerTag, const _float& _fDurationTime,
+	_bool _isOneTimeAction, _bool _isLerp)
 {
 	if (nullptr == _pModel)
 	{
 		MSG_BOX("[CAction] _pModel is nullptr");
 		return;
+	}
+
+	if (0 < _wstrTimerTag.size())
+	{
+		BEGININSTANCE;
+		m_wstrTimerTag = _wstrTimerTag;
+		pGameInstance->Add_Timer(_wstrTimerTag, false, _fDurationTime);
+		ENDINSTANCE;
 	}
 
 	m_pModel = _pModel;
@@ -113,6 +146,7 @@ void CAction::Set_Options(const wstring& _wstrAnimationTag, CModel* _pModel, _bo
 	m_wstrAnimationTag = _wstrAnimationTag;
 	m_fLimit = _fCoolTime;
 	m_isOneTimeAction = _isOneTimeAction;
+	m_isCheckBehavior = _isCheckBehavior;
 
 	m_pModel->Get_Animation(m_wstrAnimationTag)->Set_LerpAnim(_isLerp);
 }

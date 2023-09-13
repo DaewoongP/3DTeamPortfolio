@@ -20,6 +20,7 @@ protected:
 public:
 	_uint Get_NumVertices() const { return m_iNumVertices; }
 	_uint Get_NumIndices() const { return m_iNumIndices; }
+	_uint Get_Stride() const { return m_iStride; }
 
 public:
 	virtual HRESULT Initialize_Prototype() override;

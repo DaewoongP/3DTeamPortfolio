@@ -32,6 +32,11 @@ public:
 	HRESULT ReadFileInDirectory(_Inout_ vector<wstring>& OutVector, const _tchar* pFilePath, const _tchar* pExt);
 
 	_float3 PolarToCartesian(_float _fLength, _float _fTheta, _float fPhi);
+	_float3 GetVectorSlerp(_float3 v1, _float3 v2, _float3 vUp, _float k, _float f);
+
+	// 두 점으로 직교하는 right, up, look벡터를 채워서 반환해줌.
+	// ex) _float4x4 ResultMatrix = RightUpLook_In_Vectors(vPos, vCamPos);
+	_float4x4 RightUpLook_In_Vectors(_float3 vDestPos, _float3 vSourPos);
 public:
 	virtual void Free() override;
 };

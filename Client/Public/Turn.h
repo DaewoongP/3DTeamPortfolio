@@ -30,12 +30,16 @@ public:
 	virtual HRESULT Tick(const _float& fTimeDelta) override;
 
 public:
+	void Set_Degree(const _float& _fDegree) {
+		m_fDegree = _fDegree;
+	}
 	void Set_Transform(CTransform* pTransform) {
 		m_pOwnerTransform = pTransform;
 		Safe_AddRef(m_pOwnerTransform);
 	}
 
 private:
+	_float m_fDegree = { 0.f };
 	CTransform* m_pOwnerTransform = { nullptr };
 
 public:

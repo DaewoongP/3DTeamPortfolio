@@ -11,8 +11,6 @@ BEGIN(Engine)
 
 #ifdef _DEBUG
 class CShader;
-class CVIBuffer_Line;
-class CVIBuffer_Triangle;
 #endif // _DEBUG
 
 class ENGINE_DLL CRigidBody final : public CComposite
@@ -32,6 +30,55 @@ public:
 		AllTrans = TransX | TransY | TransZ,
 		All = AllRot | AllTrans
 	};
+
+	typedef struct tagRigidBodyDesc
+	{
+		// this포인터 대입하면 됩니다.
+		// 내부적으로 레퍼런스 카운트 관리
+		CGameObject* pOwnerObject = { nullptr };
+		// static(true) : 움직이지 않는 물체 (다른 객체의 충돌에 의해 움직일 수도 있음.)
+		// dynamic(false) : 움직이는 물체
+		_bool isStatic = { false };
+		// Trigger 옵션
+		// ****** Enter와 exit만 처리됩니다. ******
+		_bool isTrigger = { false };
+		// 초기 포지션 세팅
+		// 지면과 붙어있을 경우 튕겨져 나갈 수 있습니다.
+		_float3 vInitPosition;
+		// 정지 상태에서의 마찰계수
+		// 멈춰있을때 동작할때까지의 힘이 얼마나 많이 드는지에 대한 변수입니다.
+		// default : 0.5f
+		// 0일수록 힘이 덜들어서 빠르게 치고나가고
+		// 1일수록 힘이 많이들어서 느리게 치고나갑니다.
+		// 1에 가까운데 maxvelocity가 작을경우 움직이지 않을 수도 있습니다.
+		_float fStaticFriction = { 0.f };
+		// 움직이는 상태에서의 마찰계수
+		// 움직일때 멈출때까지의 힘이 얼마나 드는지에 대한 변수입니다.
+		// default = 0.5f
+		// 0일수록 미끄러짐이 심하고
+		// 1일수록 미끄러짐이 없어 빠르게 정지합니다.
+		// 0일경우 멈추지 않고 계속 미끄러질 수도 있습니다.
+		_float fDynamicFriction = { 0.f };
+		// 탄성계수
+		// 무언가 충돌하였을때 튕겨져 나가는 정도에 대한 변수입니다.
+		// default = 0.f
+		// 0일수록 부딪혀도 튕겨나가지 않고
+		// 1일수록 부딪히면 멀리 튕겨나갑니다.
+		_float fRestitution = { 0.f };
+		// GeometryType과 같은 형태로 대입해줍니다.
+		// ex) eSphere, PxSphereGeometry
+		// 구조체 형태로써 선언하고 멤버변수를 채워 주시면 됩니다.
+		// ex) PxSphereGeometry Sphere;
+		// Sphere.radius = 5.f;
+		PxGeometry* pGeometry = { nullptr };
+		// ******** Dynamic Rigid Body를 위한 옵션입니다 ********
+		// 콜라이더를 움직이지 않을 방향 또는 회전을 선택합니다.
+		// 어느방향으로도 회전하지 않으려면 아래와같이 처리하면 됩니다.
+		// ex) Constraint = RotX | RotY | RotZ;
+		RigidBodyConstraint Constraint;
+		// 디버그 컬러
+		_float4		vDebugColor = _float4(0.f, 1.f, 0.f, 1.f);
+	}RIGIDBODYDESC;
 
 private:
 	explicit CRigidBody(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -61,19 +108,15 @@ public:
 	_bool Is_Kinematic() const { return m_isKinematic; }
 
 public:
+	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg) override;
-	virtual void Late_Tick(_float fTimeDelta) override;
 
 #ifdef _DEBUG
 	virtual HRESULT Render() override;
 #endif // _DEBUG
 
 public:
-	HRESULT Create_Actor();
-	// 액터 설정 세팅하려고 만들어 놨는데 지금일단 Create Actor 함수에서 전부 처리중입니다.
-	HRESULT SetUp_Actor(_float3 _vInitPos, 	PxGeometry _ShapeType, _bool _isTrigger, 
-		RigidBodyConstraint eConstraintFlag, _float3 _vResistance, PxFilterData FilterData);
-	//void Add_Collider(CColliderCom* collider);
+	HRESULT Create_Actor(RIGIDBODYDESC* pRigidBodyDesc);
 
 	void Put_To_Sleep() const;
 	void Add_Force(const _float3 & _vForce, PxForceMode::Enum _eMode = PxForceMode::eFORCE, _bool _bAutowake = true) const;
@@ -85,38 +128,27 @@ public:
 	void Rotate(_float4 _vRotation) const;
 
 private:
-	PxRigidDynamic*			m_pActor = { nullptr };
+	PxRigidActor*			m_pActor = { nullptr };
 	PxMaterial*				m_pMaterial = { nullptr };
+	PxGeometry*				m_pGeometry = { nullptr };
 	PxScene*				m_pScene = { nullptr };
 
 private:
 	_bool					m_isStatic = { false };
 	_bool					m_isKinematic = { false };
 
-private:
-	_float					m_fAirDrag = { 0.f };
-
 #ifdef _DEBUG
 private:
 	CShader*				m_pShader = { nullptr };
-	CVIBuffer_Line*			m_pLine = { nullptr };
-	CVIBuffer_Triangle*		m_pTriangle = { nullptr };
+	CComponent*				m_pDebug_Render = { nullptr };
 	_float4					m_vColor;
-
-private:
-	_uint					m_iNumLineBuffer = { 0 };
-	_uint					m_iStartLineBufferIndex = { 0 };
-
-	_uint					m_iNumTriangleBuffer = { 0 };
-	_uint					m_iStartTriangleBufferIndex = { 0 };
 #endif // _DEBUG
 
 
 #ifdef _DEBUG
 private:
-	HRESULT Add_Components();
+	HRESULT Add_Components(PxGeometry* pPxValues);
 	HRESULT SetUp_ShaderResources();
-	void Make_Buffers();
 #endif // _DEBUG
 
 public:

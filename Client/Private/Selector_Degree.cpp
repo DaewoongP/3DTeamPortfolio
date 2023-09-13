@@ -33,7 +33,7 @@ HRESULT CSelector_Degree::Assemble_Childs(DEGREES eType, CBehavior* pBehavior)
 		wstring wstrBehaviorTag = { TEXT("") };
 		switch (eType)
 		{
-		case Client::CSelector_Degree::FRONT:
+		case Client::CSelector_Degree::LEFT_FRONT:
 			pBehavior->Add_Decoration([&](CBlackBoard* pBlackBoard)->_bool
 				{
 					_bool isLeft = { false };
@@ -43,14 +43,14 @@ HRESULT CSelector_Degree::Assemble_Childs(DEGREES eType, CBehavior* pBehavior)
 					if (FAILED(pBlackBoard->Get_Type("fTargetToDegree", fDegree)))
 						return false;
 
-					if (fDegree >= 22.5f)
+					if (false == isLeft || fDegree >= 22.5f)
 						return false;
 					return true;
 				});
-			wstrBehaviorTag = TEXT("Behavior_Front");
+			wstrBehaviorTag = TEXT("Behavior_Left_Front");
 			break;
 
-		case Client::CSelector_Degree::BACK:
+		case Client::CSelector_Degree::LEFT_BACK:
 			pBehavior->Add_Decoration([&](CBlackBoard* pBlackBoard)->_bool
 				{
 					_bool isLeft = { false };
@@ -60,11 +60,11 @@ HRESULT CSelector_Degree::Assemble_Childs(DEGREES eType, CBehavior* pBehavior)
 					if (FAILED(pBlackBoard->Get_Type("fTargetToDegree", fDegree)))
 						return false;
 
-					if (fDegree < 157.5f)
+					if (false == isLeft || fDegree < 157.5f)
 						return false;
 					return true;
 				});
-			wstrBehaviorTag = TEXT("Behavior_Back");
+			wstrBehaviorTag = TEXT("Behavior_Left_Back");
 			break;
 
 		case Client::CSelector_Degree::LEFT_45:
@@ -121,6 +121,40 @@ HRESULT CSelector_Degree::Assemble_Childs(DEGREES eType, CBehavior* pBehavior)
 			wstrBehaviorTag = TEXT("Behavior_Left135");
 			break;
 
+		case Client::CSelector_Degree::RIGHT_FRONT:
+			pBehavior->Add_Decoration([&](CBlackBoard* pBlackBoard)->_bool
+				{
+					_bool isLeft = { false };
+					if (FAILED(pBlackBoard->Get_Type("isTargetToLeft", isLeft)))
+						return false;
+					_float fDegree = { 0.f };
+					if (FAILED(pBlackBoard->Get_Type("fTargetToDegree", fDegree)))
+						return false;
+
+					if (true == isLeft || fDegree >= 22.5f)
+						return false;
+					return true;
+				});
+			wstrBehaviorTag = TEXT("Behavior_Right_Front");
+			break;
+
+		case Client::CSelector_Degree::RIGHT_BACK:
+			pBehavior->Add_Decoration([&](CBlackBoard* pBlackBoard)->_bool
+				{
+					_bool isLeft = { false };
+					if (FAILED(pBlackBoard->Get_Type("isTargetToLeft", isLeft)))
+						return false;
+					_float fDegree = { 0.f };
+					if (FAILED(pBlackBoard->Get_Type("fTargetToDegree", fDegree)))
+						return false;
+
+					if (true == isLeft || fDegree < 157.5f)
+						return false;
+					return true;
+				});
+			wstrBehaviorTag = TEXT("Behavior_Right_Back");
+			break;
+
 		case Client::CSelector_Degree::RIGHT_45:
 			pBehavior->Add_Decoration([&](CBlackBoard* pBlackBoard)->_bool
 				{
@@ -166,12 +200,6 @@ HRESULT CSelector_Degree::Assemble_Childs(DEGREES eType, CBehavior* pBehavior)
 					_float fDegree = { 0.f };
 					if (FAILED(pBlackBoard->Get_Type("fTargetToDegree", fDegree)))
 						return false;
-
-					if (true == isLeft)
-						cout << "Left" << endl;
-					else
-						cout << "Right" << endl;
-					cout << fDegree << endl;
 
 					if (true == isLeft ||
 						fDegree >= 157.5f || fDegree < 112.5f)

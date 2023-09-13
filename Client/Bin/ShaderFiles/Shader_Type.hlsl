@@ -21,7 +21,7 @@ texture2D g_vLightDepthTexture;
 texture2D g_SSAOTexture;
 texture2D g_BlurTexture;
 
-float3 g_Diffuse = float3(1.f, 1.f, 1.f);
+float4 g_Diffuse = float4(0.5f, 0.5f, 0.5f, 0.5f);
 
 float g_Metallic = 0.5f;
 float g_Roughness = 0.5f;
@@ -32,8 +32,8 @@ float g_fLightRange;
 float g_fSpotPower;
 
 vector g_vLightDiffuse;
-vector g_vLightAmbient;
-vector g_vLightSpecular;
+vector g_vLightAmbient = vector(1.f, 1.f, 1.f, 1.f);
+vector g_vLightSpecular = vector(1.f, 1.f, 1.f, 1.f);
 
 
 vector g_vMtrlAmbient = vector(0.5f, 0.5f, 0.5f, 1.f);
@@ -162,29 +162,30 @@ matrix MyMatrixLookAtLH(float4 vEye, float4 vAt)
 
 struct VS_IN_PBR
 {
-    float4 vPosition : POSITION;
-    float2 vTexUV : TEXCOORD0;
+    float3 vPosition : POSITION;
     float3 vNormal : NORMAL;
+
+    float2 vTexUV : TEXCOORD0;
 };
 
 struct VS_OUT_PBR
 {
     float4 vPosition : SV_POSITION;
-    float2 vTexUV : TEXCOORD0;
     float3 vNormal : NORMAL;
+
+    float2 vTexUV : TEXCOORD0;
+
+};
+struct VS_OUT_SOFTSHADOW
+{
+    float4  vPosition: SV_POSITION;
+    float3 vNormal : NORMAL;
+
+    float2 vTexUV : TEXCOORD0;
+    float4 Position : TEXCOORD1;
+    float3 lightPos : TEXCOORD2;
 };
 
-struct VS_IN
-{
-    float3 vPosition : POSITION;
-    float2 vTexUV : TEXCOORD0;
-};
-
-struct VS_OUT
-{
-    float4 vPosition : SV_POSITION;
-    float2 vTexUV : TEXCOORD0;
-};
 VS_OUT_PBR VS_MAIN_PBR(VS_IN_PBR In)
 {
     VS_OUT_PBR Out = (VS_OUT_PBR) 0;
@@ -194,23 +195,29 @@ VS_OUT_PBR VS_MAIN_PBR(VS_IN_PBR In)
     matWV = mul(g_WorldMatrix, g_ViewMatrix);
     matWVP = mul(matWV, g_ProjMatrix);
 
-    Out.vPosition = mul(In.vPosition, matWVP);
+    Out.vPosition = mul(vector(In.vPosition,1), matWVP);
 
     return Out;
 }
 
-VS_OUT VS_MAIN_SHADOW(VS_IN In)
+VS_OUT_SOFTSHADOW VS_MAIN_SHADOW(VS_IN_PBR In)
 {
-    VS_OUT Out = (VS_OUT) 0;
+    VS_OUT_SOFTSHADOW Out = (VS_OUT_SOFTSHADOW) 0;
 
     matrix matWV, matWVP;
 
     matWV = mul(g_WorldMatrix, g_ViewMatrix);
     matWVP = mul(matWV, g_ProjMatrix);
 
+    
     Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);
     Out.vTexUV = In.vTexUV;
-
+    Out.Position = Out.vPosition;
+    Out.vNormal = normalize(mul(In.vNormal, (float3x3)g_WorldMatrix));
+    vector WorldPosition = mul(vector(In.vPosition, 1.f), g_WorldMatrix);
+    Out.lightPos = g_vLightPos.xyz - WorldPosition.xyz;
+    Out.lightPos = normalize(Out.lightPos);
+    
     return Out;
 }
 
@@ -220,17 +227,21 @@ struct PS_IN
 {
    
     float4 vPosition : SV_POSITION;
-    float2 vTexUV : TEXCOORD0;
     float3 vNormal : NORMAL;
+
+    float2 vTexUV : TEXCOORD0;
 };
 
-struct PS_IN_SHADOW
+struct PS_IN_SHAODW
 {
    
     float4 vPosition : SV_POSITION;
-    float2 vTexUV : TEXCOORD0;
-};
+    float3 vNormal : NORMAL;
 
+    float2 vTexUV : TEXCOORD0;
+    float4 Position : TEXCOORD1;
+    float3 lightPos : TEXCoord2;//방향임 pos아님
+};
 
 struct PS_OUT
 {
@@ -262,55 +273,26 @@ PS_OUT PS_MAIN_PBR(PS_IN In)
     return Out;
 }
 
-PS_OUT PS_MAIN_SHADOW(PS_IN_SHADOW In)
+PS_OUT PS_MAIN_SHADOW(PS_IN_SHAODW In)
 {
     PS_OUT Out = (PS_OUT) 0;
 
-    vector vDepthDesc = g_DepthTexture.Sample(BlurSampler, In.vTexUV);
-
-	//depthdesc y 는 rgba값이라고 생각하면된다.
-    float fViewZ = vDepthDesc.y * g_fCamFar;
-    vector vPosition;
-    //if (fViewZ == 0)
-    //    discard;
-	/* 투영스페이스 상의 위치 */
-    vPosition.x = (In.vTexUV.x * 2.f - 1.f) ;
-    vPosition.y = (In.vTexUV.y * -2.f + 1.f) ;
-    vPosition.z = vDepthDesc.y ;
-    vPosition.w = 1.f;
-
-	/* 뷰스페이스 상의 위치. */
-    vPosition = vPosition * fViewZ;
-    
-    vPosition = mul(vPosition, g_ProjMatrixInv);
-
-	/* 월드스페이스 상의 위치. */
-    vPosition = mul(vPosition, g_ViewMatrixInv);
-
-
-
-    vPosition = mul(vPosition, g_vLightView);
-
-    vPosition = mul(vPosition, g_vLightProj);
-	//w 나누기.
-    vPosition = vPosition / vPosition.w;
-    
-	//광원으로의깊이값.
-    float2 LightUV = float2((vPosition.x + 1.f) / 2.f, (vPosition.y - 1.f) / -2.f);
-
-    vector vLightDepth = g_vLightDepthTexture.Sample(BlurSampler, LightUV);
-
-	
-    float LightDepth_W = vLightDepth.y * g_fCamFar;
-    float LightDepth_Z = vLightDepth.x * LightDepth_W;
-    float CamDepth = vPosition.z - 0.001f / g_fCamFar;
-
-    if (CamDepth > vLightDepth.x)
+    Out.vColor = g_vLightAmbient;
+    float LightIntensity = saturate(dot(In.vNormal, In.lightPos));
+    if(LightIntensity>0.f)
     {
-        Out.vColor.x = 0.2f;
+        Out.vColor += (g_Diffuse * LightIntensity);
+        Out.vColor = saturate(Out.vColor);
     }
-    else
-        discard;
+    
+    vector TexColor = g_ShadeTexture.Sample(LinearSampler, In.vTexUV);
+    Out.vColor = Out.vColor * TexColor;
+    float2 newUV = float2(In.Position.x / In.vPosition.w / 2.f + 0.5f, -In.Position.y / In.Position.w / 2.f + 0.5f);
+    vector Shadow = g_ShadowTexture.Sample(BlurSampler, newUV).r;
+    Out.vColor = Out.vColor * Shadow;
+    return Out;
+    
+   
     return Out;
 
 
@@ -332,7 +314,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_PBR();
     }
 
-    pass Shadow
+    pass Softshadow
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Depth_Disable, 0);

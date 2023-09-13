@@ -208,11 +208,6 @@ void CModel::Play_Animation(_float fTimeDelta, ANIMTYPE eType, CTransform* pTran
 	CAnimation* currentAnimation = m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex];
 	if (currentAnimation->Invalidate_AccTime(fTimeDelta) || m_tAnimationDesc[eType].isResetAnimTrigger)
 	{
-		// 애니메이션 종료 체크 ( 루프 일 경우 계속 false )
-		m_isFinishAnimation = currentAnimation->Get_Duration() <
-			currentAnimation->Get_Accmulation() &&
-			!currentAnimation->Get_LoopAnim();
-
 		//애니메이션 리셋해줘
 		currentAnimation->Reset();
 		m_BeginRootMatrix = pTransform->Get_WorldMatrix();
@@ -222,9 +217,8 @@ void CModel::Play_Animation(_float fTimeDelta, ANIMTYPE eType, CTransform* pTran
 			m_tAnimationDesc[eType].isAnimChangeLerp = true;
 			m_tAnimationDesc[eType].fAnimChangeTimer = ANIMATIONLERPTIME;
 		}
-		//0번노드(하체)라면? 루트 매트릭스 날려줘.
-		if (eType == 0)
-			m_PostRootMatrix = XMMatrixIdentity();
+		////0번노드(하체)라면? 루트 매트릭스 날려줘.
+		m_isFirstFrame = true;
 		//리셋설정 다됐으니까 트리거 꺼줘.
 		m_tAnimationDesc[eType].isResetAnimTrigger = false;
 	}
@@ -236,8 +230,17 @@ void CModel::Play_Animation(_float fTimeDelta, ANIMTYPE eType, CTransform* pTran
 			!currentAnimation->Get_Paused_State() &&
 			(currentAnimation->Get_Duration() >
 				currentAnimation->Get_Accmulation()))
-			Do_Root_Animation(fTimeDelta, pTransform);
+		{
+			Do_Root_Animation(fTimeDelta, pTransform, m_isFirstFrame);
+			m_isFirstFrame = false;
+		}
+			
+		
 	}
+	// 애니메이션 종료 체크 ( 루프 일 경우 계속 false )
+	m_isFinishAnimation = currentAnimation->Get_Duration() <=
+		currentAnimation->Get_Accmulation() &&
+		!currentAnimation->Get_LoopAnim();
 
 	//노티파이 돌리기
 	currentAnimation->Invalidate_Frame(fTimeDelta);
@@ -314,14 +317,18 @@ void CModel::Set_CurrentAnimIndex(_uint iIndex, ANIMTYPE eType)
 	m_tAnimationDesc[eType].fAnimChangeTimer = ANIMATIONLERPTIME;
 }
 
-void CModel::Do_Root_Animation(_float fTimeDelta,CTransform* pTransform)
+void CModel::Do_Root_Animation(_float fTimeDelta,CTransform* pTransform,_bool isFirstFrame)
 {
 	if (pTransform != nullptr)
 	{
 		//애니메이션을 적용시키기 전 matrix를 보관해보자.
 		_float4x4 current_Matrix = m_Bones[m_iRootBoneIndex]->Get_CombinedTransformationMatrix();
-		_float4x4 post_Matirx = m_PostRootMatrix;
-
+		//애니메이션 변경 후 첫 프레임이면
+		_float4x4 post_Matirx = {};
+		if (isFirstFrame)
+			m_PostRootMatrix = current_Matrix;
+		post_Matirx = m_PostRootMatrix;
+		
 		_float3 vCurrent_Look = current_Matrix.Look();
 		_float3 vPost_Look = post_Matirx.Look();
 
@@ -355,7 +362,6 @@ void CModel::Do_Root_Animation(_float fTimeDelta,CTransform* pTransform)
 		_float3 Calculated_Position = (vCurrent_Position - vPost_Position);
 
 		Calculated_Position = XMVector3TransformNormal(Calculated_Position, vPivotOutPosScale);
-
 		_float4x4 PositionMatrix = XMMatrixTranslation(Calculated_Position.x, Calculated_Position.y, Calculated_Position.z);
 
 		_float3 vOffsetVector = m_tAnimationDesc[0].Animations[m_tAnimationDesc[0].iCurrentAnimIndex]->Get_OffsetPosition();

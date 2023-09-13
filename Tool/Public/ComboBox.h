@@ -15,6 +15,7 @@ private:
 public:
     HRESULT Initialize(const _char* _szTag, const _char* _szName, initializer_list<string> _Items, const _char* _pStartName);
     HRESULT Initialize(const _char* _szTag, const _char* _szName, vector<string> _Items, const _char* _pStartName);
+    HRESULT Initialize(const _char* _szTag, const _char* _szName, const _char** _pItems, _uint iSize, const _char* pStartName);
 
 public:
     string Get_Current_Item() { return m_strCurrentItem; };
@@ -47,8 +48,9 @@ public:
     // »ç¿ë¹ý : Erase({"BBBB", "AAAA"});
     void Erase(initializer_list<string> _Items);
 
-private:
+public:
     void Update_Current_Item(_uint _iItemIndex);
+    void Update_Current_Item(string strItem);
 
 private:
     string m_strName = "";
@@ -60,6 +62,7 @@ private:
 public:
     static CComboBox* Create(const _char* _szTag, const _char* szName, initializer_list<string> _Items, const _char* pStartName = nullptr);
     static CComboBox* Create(const _char* _szTag, const _char* szName, vector<string> _Items, const _char* pStartName = nullptr);
+    static CComboBox* Create(const _char* _szTag, const _char* szName, const _char** _pItems, _uint iSize, const _char* pStartName = nullptr);
     virtual void Free(void) override;
 };
 END

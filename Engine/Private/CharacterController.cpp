@@ -71,32 +71,10 @@ HRESULT CCharacterController::Initialize(void* pArg)
 
 	PxScene* pScene = pPhysX_Manager->Get_PhysxScene();
 
-#ifdef _DEBUG
-	pScene->simulate(1 / 60.f);
-	pScene->fetchResults(true);
-	_uint iPrevLines = pScene->getRenderBuffer().getNbLines();
-	_uint iPrevTriangles = pScene->getRenderBuffer().getNbTriangles();
-
-	m_iStartLineBufferIndex = pPhysX_Manager->Get_LastLineBufferIndex();
-	m_iStartTriangleBufferIndex = pPhysX_Manager->Get_LastTriangleBufferIndex();
-#endif // _DEBUG
-
 	// 컨트롤러 매니저를 통해 컨트롤러를 생성합니다.
 	PxControllerManager* pControllerManager = pPhysX_Manager->Get_ControllerManager();
 	m_pController = pControllerManager->createController(*ControllerDesc);
 	m_pController->setUserData(this);
-#ifdef _DEBUG
-	// 다음 렌더링을 위한 갱신 처리
-	pScene->simulate(1 / 60.f);
-	pScene->fetchResults(true);
-	_uint iNewLines = pScene->getRenderBuffer().getNbLines();
-	_uint iNewTriangles = pScene->getRenderBuffer().getNbTriangles();
-
-	m_iNumLineBuffer = iNewLines - iPrevLines;
-	m_iNumTriangleBuffer = iNewTriangles - iPrevTriangles;
-	pPhysX_Manager->Add_LastLineBufferIndex(iNewLines - iPrevLines);
-	pPhysX_Manager->Add_LastTriangleBufferIndex(iNewTriangles - iPrevTriangles);
-#endif // _DEBUG
 
 	Safe_Release(pPhysX_Manager);
 
@@ -110,9 +88,6 @@ HRESULT CCharacterController::Initialize(void* pArg)
 
 void CCharacterController::Late_Tick(_float fTimeDelta)
 {
-#ifdef _DEBUG
-	Make_Buffers();
-#endif // _DEBUG
 }
 
 #ifdef _DEBUG
@@ -122,12 +97,6 @@ HRESULT CCharacterController::Render()
 		return E_FAIL;
 
 	if (FAILED(m_pShader->Begin("Debug")))
-		return E_FAIL;
-
-	if (FAILED(m_pLine->Render()))
-		return E_FAIL;
-
-	if (FAILED(m_pTriangle->Render()))
 		return E_FAIL;
 
 	return S_OK;
@@ -141,68 +110,7 @@ HRESULT CCharacterController::Add_Components()
 	m_Components.emplace(TEXT("Com_Shader"), m_pShader);
 	Safe_AddRef(m_pShader);
 
-	CPhysX_Manager* pPhysX_Manager = CPhysX_Manager::GetInstance();
-	Safe_AddRef(pPhysX_Manager);
-
-	const PxRenderBuffer* pBuffer = pPhysX_Manager->Get_RenderBuffer();
-
-	CVIBuffer_Line::LINEDESC LineDesc;
-	ZEROMEM(&LineDesc);
-
-	LineDesc.iNum = m_iNumLineBuffer;
-	const PxDebugLine* pLines = pBuffer->getLines();
-
-	vector<_float3> Lines;
-	for (_uint i = m_iStartLineBufferIndex;
-		i < m_iStartLineBufferIndex + m_iNumLineBuffer; ++i)
-	{
-		Lines.push_back(PhysXConverter::ToXMFLOAT3(pLines[i].pos0));
-		Lines.push_back(PhysXConverter::ToXMFLOAT3(pLines[i].pos1));
-	}
-	LineDesc.pLines = Lines.data();
-
-	if (0 < LineDesc.iNum &&
-		nullptr != LineDesc.pLines)
-	{
-		/* For.Com_Line */
-		if (FAILED(CComposite::Add_Component(0, TEXT("Prototype_Component_VIBuffer_Line"),
-			TEXT("Com_Line"), reinterpret_cast<CComponent**>(&m_pLine), &LineDesc)))
-		{
-			MSG_BOX("Failed CRigidBody Add_Component : (Com_Line)");
-			return E_FAIL;
-		}
-	}
-
-	CVIBuffer_Triangle::TRIANGLEDESC TriangleDesc;
-	ZEROMEM(&TriangleDesc);
-
-	TriangleDesc.iNum = m_iNumTriangleBuffer;
-	const PxDebugTriangle* pDebugTriangles = pBuffer->getTriangles();
-
-	vector<_float3> Triangles;
-	for (_uint i = m_iStartTriangleBufferIndex;
-		i < m_iStartTriangleBufferIndex + m_iNumTriangleBuffer; ++i)
-	{
-		Triangles.push_back(PhysXConverter::ToXMFLOAT3(pDebugTriangles[i].pos0));
-		Triangles.push_back(PhysXConverter::ToXMFLOAT3(pDebugTriangles[i].pos1));
-		Triangles.push_back(PhysXConverter::ToXMFLOAT3(pDebugTriangles[i].pos2));
-	}
-	TriangleDesc.pTriangles = Triangles.data();
-
-	if (0 < TriangleDesc.iNum &&
-		nullptr != TriangleDesc.pTriangles)
-	{
-		/* For.Com_Triangle */
-		if (FAILED(CComposite::Add_Component(0, TEXT("Prototype_Component_VIBuffer_Triangle"),
-			TEXT("Com_Triangle"), reinterpret_cast<CComponent**>(&m_pTriangle), &TriangleDesc)))
-		{
-			MSG_BOX("Failed CRigidBody Add_Component : (Com_Triangle)");
-			return E_FAIL;
-		}
-	}
-
-	Safe_Release(pPhysX_Manager);
-
+	
 	return S_OK;
 }
 
@@ -226,51 +134,6 @@ HRESULT CCharacterController::SetUp_ShaderResources()
 	return S_OK;
 }
 
-void CCharacterController::Make_Buffers()
-{
-	CVIBuffer_Line::LINEDESC LineDesc;
-	ZEROMEM(&LineDesc);
-
-	CPhysX_Manager* pPhysX_Manager = CPhysX_Manager::GetInstance();
-	Safe_AddRef(pPhysX_Manager);
-
-	const PxRenderBuffer* pBuffer = pPhysX_Manager->Get_RenderBuffer();
-
-	Safe_Release(pPhysX_Manager);
-
-	const PxDebugLine* pDebugLines = pBuffer->getLines();
-
-	vector<_float3> Lines;
-	for (_uint i = m_iStartLineBufferIndex;
-		i < m_iStartLineBufferIndex + m_iNumLineBuffer; ++i)
-	{
-		Lines.push_back(PhysXConverter::ToXMFLOAT3(pDebugLines[i].pos0));
-		Lines.push_back(PhysXConverter::ToXMFLOAT3(pDebugLines[i].pos1));
-	}
-
-	LineDesc.iNum = m_iNumLineBuffer;
-	LineDesc.pLines = Lines.data();
-
-	m_pLine->Tick(LineDesc);
-
-	CVIBuffer_Triangle::TRIANGLEDESC TriangleDesc;
-	ZEROMEM(&TriangleDesc);
-
-	const PxDebugTriangle* pDebugTriangles = pBuffer->getTriangles();
-
-	vector<_float3> Triangles;
-	for (_uint i = m_iStartTriangleBufferIndex;
-		i < m_iStartTriangleBufferIndex + m_iNumTriangleBuffer; ++i)
-	{
-		Triangles.push_back(PhysXConverter::ToXMFLOAT3(pDebugTriangles[i].pos0));
-		Triangles.push_back(PhysXConverter::ToXMFLOAT3(pDebugTriangles[i].pos1));
-		Triangles.push_back(PhysXConverter::ToXMFLOAT3(pDebugTriangles[i].pos2));
-	}
-	TriangleDesc.iNum = m_iNumTriangleBuffer;
-	TriangleDesc.pTriangles = Triangles.data();
-
-	m_pTriangle->Tick(TriangleDesc);
-}
 #endif // _DEBUG
 
 CCharacterController* CCharacterController::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -310,7 +173,5 @@ void CCharacterController::Free()
 
 #ifdef _DEBUG
 	Safe_Release(m_pShader);
-	Safe_Release(m_pLine);
-	Safe_Release(m_pTriangle);
 #endif // _DEBUG
 }

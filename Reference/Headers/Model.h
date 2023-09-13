@@ -56,7 +56,7 @@ public:
 	HRESULT Find_BoneIndex(const _tchar* pBoneName, _Inout_ _uint* iIndex);
 	void	Set_CurrentAnimIndex(_uint iIndex, ANIMTYPE eType = UPPERBODY);
 	void	Set_RootBone(_uint iIndex) { m_iRootBoneIndex = iIndex; }
-	void	Do_Root_Animation(_float fTimeDelta,CTransform* pTransform = nullptr);
+	void	Do_Root_Animation(_float fTimeDelta,CTransform* pTransform = nullptr, _bool isFirstFrame = false);
 	HRESULT Separate_Animation(_int iFromIndex, _int iToIndex, ANIMTYPE eType);
 	void	Delete_Animation(_uint iAnimIndex, ANIMTYPE eType = UPPERBODY);
 
@@ -106,7 +106,7 @@ protected:
 	_bool							m_isCreatedByGCM = { false };
 	
 	_bool							m_isFinishAnimation = { false };
-
+	_bool							m_isFirstFrame = { false };
 protected:
 	HRESULT Ready_File(TYPE eType, const _tchar* pModelFilePath);
 	HRESULT Ready_Bones(Engine::NODE Node);

@@ -28,11 +28,19 @@ HRESULT CTurn::Tick(const _float& fTimeDelta)
 	if (FAILED(m_pBlackBoard->Get_Type("isTargetToLeft", isLeft)))
 		return E_FAIL;
 
-	_float fRadian = XMConvertToRadians(45.f);
-	if (false == isLeft)
+	_float fDegree = m_fDegree;
+
+	if (0.f == fDegree)
+	{
+		if (FAILED(m_pBlackBoard->Get_Type("fTargetToDegree", fDegree)))
+			return E_FAIL;
+	}
+
+	_float fRadian = XMConvertToRadians(fDegree);
+	if (true == isLeft)
 		fRadian *= -1.f;
 
-	m_pOwnerTransform->Turn(_float3(0.f, 1.f, 0.f), fRadian, fTimeDelta);
+	m_pOwnerTransform->Turn(_float3(0.f, 1.f, 0.f), fRadian * 2.f, fTimeDelta);
 
 	return BEHAVIOR_SUCCESS;
 }

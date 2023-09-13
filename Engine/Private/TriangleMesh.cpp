@@ -128,11 +128,9 @@ HRESULT CTriangleMesh::Create_ConvexMeshActor(COLMESH* PMesh)
 		memcpy(&vertices[i], &(PMesh->vPositions[i]), sizeof(_float3));
 	}
 
-	//인덱스 어떻게 할건지?
 	_uint iIndicesIndex = { 0 };
 	for (int i = 0; i < indicesCount/3;i++)
 	{
-		//여기가 이상한거같음.
 		memcpy(&indices[iIndicesIndex++], &PMesh->Faces[i].iIndices[0], sizeof(PxU32));
 		memcpy(&indices[iIndicesIndex++], &PMesh->Faces[i].iIndices[1], sizeof(PxU32));
 		memcpy(&indices[iIndicesIndex++], &PMesh->Faces[i].iIndices[2], sizeof(PxU32));
