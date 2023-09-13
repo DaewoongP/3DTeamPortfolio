@@ -96,13 +96,13 @@ public:
 
 private:
 	_float4x4		m_WorldMatrix;
-	_float			m_fSpeed = { 0.f };
-	_float			m_fRotationSpeed = { 0.f };
+	_float			m_fSpeed = { 10.f };
+	_float			m_fRotationSpeed = { XMConvertToRadians(90.f) };
 
 	_ubyte			m_ubTransformChanged = { 0 };
 
 private:
-	CRigidBody* m_pRigidBody = { nullptr };
+	CRigidBody*		m_pRigidBody = { nullptr };
 
 private:
 	void Update_Components(_float fTimeDelta);
