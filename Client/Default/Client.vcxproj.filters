@@ -181,11 +181,20 @@
     <Filter Include="04. Magic">
       <UniqueIdentifier>{e77db5d2-8ca4-49d3-9854-41ff5a14a55b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="04. Magic\00. BaseAttack">
-      <UniqueIdentifier>{7b18bdec-a7a7-4970-a1b3-2cd80ea999f1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\09. MagicBall">
       <UniqueIdentifier>{7667aa3f-fd7d-47db-b815-b3a9a26ac4c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. MagicBall\MagicBallPool">
+      <UniqueIdentifier>{9de24398-e881-4455-91ad-ee52934ecab4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. MagicBall\01. Protego">
+      <UniqueIdentifier>{bcd138af-102e-4b5f-b68d-6ea12de5208b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. MagicBall\02. Revelio">
+      <UniqueIdentifier>{35319448-1444-4cfb-8ce5-26aa0f43aca3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. MagicBall\00. BasicCast">
+      <UniqueIdentifier>{753e950f-efbe-4660-a035-8339816dab1b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -375,14 +384,23 @@
     <ClInclude Include="..\Public\Selector_Degree.h">
       <Filter>03. Behaviors\01. Selectors</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\BaseAttack.h">
-      <Filter>04. Magic\00. BaseAttack</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Magic.h">
       <Filter>04. Magic</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MagicBall.h">
       <Filter>02. GameObject\09. MagicBall</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MagicBallPool.h">
+      <Filter>02. GameObject\09. MagicBall\MagicBallPool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Protego.h">
+      <Filter>02. GameObject\09. MagicBall\01. Protego</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Revelio.h">
+      <Filter>02. GameObject\09. MagicBall\02. Revelio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BasicCast.h">
+      <Filter>02. GameObject\09. MagicBall\00. BasicCast</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -542,14 +560,24 @@
     <ClCompile Include="..\Private\Selector_Degree.cpp">
       <Filter>03. Behaviors\01. Selectors</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\BaseAttack.cpp">
-      <Filter>04. Magic\00. BaseAttack</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Magic.cpp">
       <Filter>04. Magic</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MagicBall.cpp">
       <Filter>02. GameObject\09. MagicBall</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Protego.cpp">
+      <Filter>02. GameObject\09. MagicBall\01. Protego</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Revelio.cpp">
+      <Filter>02. GameObject\09. MagicBall\02. Revelio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Public\MagicBallPool.cpp" />
+    <ClCompile Include="..\Private\MagicBallPool.cpp">
+      <Filter>02. GameObject\09. MagicBall\MagicBallPool</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BasicCast.cpp">
+      <Filter>02. GameObject\09. MagicBall\00. BasicCast</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -15,8 +15,8 @@ HRESULT CLevel_MainGame::Initialize()
 	if (FAILED(Ready_Lights()))
 		return E_FAIL;
 
-	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
-		return E_FAIL;
+	/*if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
+		return E_FAIL;*/
 	/*if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
 		return E_FAIL;*/
 	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))

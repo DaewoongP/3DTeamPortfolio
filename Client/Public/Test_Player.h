@@ -37,6 +37,7 @@ private:
 	CRigidBody*				m_pRigidBody = { nullptr };
 	
 	CCharacterController*	m_pController = { nullptr };
+	class CMagic*			m_pMagic = { nullptr };
 
 private:
 	HRESULT Add_Components();

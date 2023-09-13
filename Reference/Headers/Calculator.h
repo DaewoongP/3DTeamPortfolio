@@ -32,6 +32,8 @@ public:
 	HRESULT ReadFileInDirectory(_Inout_ vector<wstring>& OutVector, const _tchar* pFilePath, const _tchar* pExt);
 
 	_float3 PolarToCartesian(_float _fLength, _float _fTheta, _float fPhi);
+	_float3 GetVectorSlerp(_float3 v1, _float3 v2, _float3 vUp, _float k, _float f);
+
 public:
 	virtual void Free() override;
 };

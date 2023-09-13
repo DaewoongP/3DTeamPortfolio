@@ -35,8 +35,16 @@ HRESULT CMagicBall::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
-	m_pTransform->Set_Speed(10.f);
-	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
+	MAGICBALLINITDESC* initDesc = static_cast<MAGICBALLINITDESC*>(pArg);
+
+	m_eMagicGroup = initDesc->eMagicGroup;;
+	m_eMagicType =	initDesc->eMagicType;
+	m_eBuffType =	initDesc->eBuffType;
+	m_eMagicTag =	initDesc->eMagicTag;
+	m_fDamage =		initDesc->fDamage;
+	m_vStartPosition = initDesc->vStartPos;
+	m_pTransform->Set_Position(m_vStartPosition);
+	initDesc->eMagicGroup;
 
 	return S_OK;
 }

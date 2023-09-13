@@ -51,10 +51,10 @@ public:
 
 	typedef struct MagicDesc
 	{
-		_tchar			wszMagicName[MAX_PATH] = {};
 		MAGIC_GROUP		eMagicGroup = { MG_END };
 		MAGIC_TYPE		eMagicType = { MT_END };
 		BUFF_TYPE		eBuffType = { BUFF_NONE };
+		SPELL			eMagicTag = { SPELL_END };
 		_float			fCoolTime = { 0 };
 		_float			fDamage = { 0 };
 		_float			fDistance = { 0 };
@@ -72,18 +72,17 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 
 public:
-	virtual _bool Action_Magic(class CTransform* pTarget);
+	virtual _bool Magic_Cast(class CTransform* pTarget);
 	virtual HRESULT Add_ActionFunc(function<void()> func);
 
 protected:
-	// 마법의 이름
-	_tchar						m_wszMagicName[MAX_PATH] = {};
-	// 어디 그룹에 속한 마법인지?
 	MAGIC_GROUP					m_eMagicGroup = { MG_END };
 	// 어떤 색의 보호막을 공격하는 마법인지?
 	MAGIC_TYPE					m_eMagicType = { MT_END };
 	// 마법이 입히는 버프/디버프는 뭔지?
 	BUFF_TYPE					m_eBuffType = { BUFF_NONE };
+	// 풀 혹은 UI에 보내주기 위한 내가 어떤 마법인지.
+	SPELL						m_eMagicTag = { SPELL_END };
 	//발동시 적용시켜줄 쿨타임
 	_float						m_fInitCoolTime = { 0 };
 	_float						m_fCurrentCoolTime = { 0 };
@@ -93,9 +92,15 @@ protected:
 	_float						m_fDistance = { 0 };
 	//마법 사용시 같이 불러주고싶은 외부 함수
 	vector<function<void()>>	m_ActionVec;
+	//마법 풀
+	//class CMagicBallPool*		m_pMagicBallPool;
+
+protected:
+	HRESULT Add_Component();
 
 public:
-	virtual CComponent* Clone(void* pArg) = 0;
+	static CMagic* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	virtual CMagic* Clone(void* pArg) override;
 	virtual void Free() override;
 };
 

@@ -151,6 +151,7 @@ public: /* For. Calculator */
 	// FilePath 내의 모든 파일을 순회하면서 Ext 확장자에 맞는 파일들을 OutVector에 넣어줍니다.
 	HRESULT ReadFileInDirectory(_Inout_ vector<wstring>& OutVector, const _tchar* pFilePath, const _tchar* pExt);
 	_float3 PolarToCartesian(_float _fLength, _float _fTheta, _float _fPhi);
+	_float3 GetVectorSlerp(_float3 v1, _float3 v2, _float3 vUp, _float k, _float f);
 public: /* For.PhysX_Manager */
 	PxPhysics* Get_Physics() const;
 	PxScene* Get_PhysxScene() const;

@@ -224,24 +224,6 @@ void CModel::Play_Animation(_float fTimeDelta, ANIMTYPE eType, CTransform* pTran
 		}
 		////0번노드(하체)라면? 루트 매트릭스 날려줘.
 		m_isFirstFrame = true;
-			//m_PostRootMatrix = XMMatrixIdentity();
-			
-		//{
-		//	_uint i = 0;
-		//	//채널을 가져옴
-		//	vector<CChannel*> channelVec = currentAnimation->Get_ChannelVector_Point();
-		//	//루트와 인덱스가 같은 채널을 찾음
-		//	auto iter = find_if(channelVec.begin(), channelVec.end(), [&](CChannel* channel) {
-		//		return (channel->Get_BoneIndex() == 5);
-		//		});
-		//	//그 채널을 이용해 과거의 위치를 해당 애니메이션 첫 프레임으로 변경
-		//	if (iter != channelVec.end())
-		//	{
-		//		(*iter)->Invalidate_TransformationMatrix(m_Bones, 0, &i);
-		//		m_PostRootMatrix = m_Bones[m_iRootBoneIndex]->Get_CombinedTransformationMatrix();
-		//	}
-		//}
-			
 		//리셋설정 다됐으니까 트리거 꺼줘.
 		m_tAnimationDesc[eType].isResetAnimTrigger = false;
 	}
