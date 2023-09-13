@@ -51,7 +51,6 @@
     <ClInclude Include="..\Public\MeshEffect.h" />
     <ClInclude Include="..\public\NVContextCallBack.h" />
     <ClInclude Include="..\Public\Parts.h" />
-    <ClInclude Include="..\public\Plane.h" />
     <ClInclude Include="..\public\PXAssertHandler.h" />
     <ClInclude Include="..\public\PXEventCallBack.h" />
     <ClInclude Include="..\Public\PhysXConverter.h" />
@@ -174,7 +173,6 @@
     <ClCompile Include="..\private\MeshEffect.cpp" />
     <ClCompile Include="..\private\NVContextCallBack.cpp" />
     <ClCompile Include="..\Private\Parts.cpp" />
-    <ClCompile Include="..\private\Plane.cpp" />
     <ClCompile Include="..\private\PXAssertHandler.cpp" />
     <ClCompile Include="..\private\PXEventCallBack.cpp" />
     <ClCompile Include="..\private\PhysX_Manager.cpp" />

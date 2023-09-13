@@ -180,7 +180,6 @@
     <ClInclude Include="..\Public\MapObject.h" />
     <ClInclude Include="..\Public\Pensive.h" />
     <ClInclude Include="..\Public\PhysXRender.h" />
-    <ClInclude Include="..\Public\Player.h" />
     <ClInclude Include="..\public\Player_Camera.h" />
     <ClInclude Include="..\Public\TargetDegree.h" />
     <ClInclude Include="..\Public\Player.h" />
