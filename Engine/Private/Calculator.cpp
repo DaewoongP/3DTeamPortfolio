@@ -279,6 +279,28 @@ _float3 CCalculator::PolarToCartesian(_float _fLength, _float _fTheta, _float _f
 	return _float3(x, y, z);
 }
 
+_float4x4 CCalculator::RightUpLook_In_Vectors(_float3 vDestPos, _float3 vSourPos)
+{
+	_float4x4 ResultMatrix = _float4x4();
+
+	_float3 vRight, vUp, vLook;
+	
+	vLook = vDestPos - vSourPos;
+	vLook.Normalize();
+	vUp = _float3(0.f, 1.f, 0.f);
+	vRight = vUp.Cross(vLook);
+	vUp = vLook.Cross(vRight);
+
+	vRight.Normalize();
+	vUp.Normalize();
+
+	ResultMatrix.Right(vRight);
+	ResultMatrix.Up(vUp);
+	ResultMatrix.Look(vLook);
+
+	return ResultMatrix;
+}
+
 void CCalculator::Free()
 {
 }

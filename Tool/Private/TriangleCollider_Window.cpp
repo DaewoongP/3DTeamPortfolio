@@ -677,8 +677,10 @@ HRESULT CTriangleCollider_Window::Render_Cells()
 	{
 		for (auto& Sphere : CellDesc.m_pBufferCom->Get_BoundingSpheres())
 		{
+#ifdef _DEBUG
 			if (FAILED(Sphere->Render()))
 				return E_FAIL;
+#endif // _DEBUG
 		}
 	}
 #endif // _DEBUG	

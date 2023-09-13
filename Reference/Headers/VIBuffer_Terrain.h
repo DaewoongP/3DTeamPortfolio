@@ -25,6 +25,7 @@ public:
 	const _uint Get_TerrainSizeX() const { return m_iTerrainSizeX; }
 	const _uint Get_TerrainSizeZ() const { return m_iTerrainSizeZ; }
 
+
 public:
 	virtual HRESULT Initialize_Prototype(const _tchar * pHeightMap);
 	virtual HRESULT Initialize_Prototype(_uint iTerrainSizeX, _uint iTerrainSizeY);

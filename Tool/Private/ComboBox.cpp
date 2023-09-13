@@ -24,6 +24,25 @@ HRESULT CComboBox::Initialize(const _char* _szTag, const _char* _szName, vector<
     return S_OK;
 }
 
+HRESULT CComboBox::Initialize(const _char* _szTag, const _char* _szName, const _char** _pItems, _uint iSize, const _char* _pStartName)
+{
+    Set_Tag(_szTag);
+    Set_Name(_szName);
+
+    for (_uint i = 0; i < iSize; ++i)
+    {
+        Push_Back(_pItems[i]);
+    }
+
+    if (false == m_Items.empty())
+        Update_Current_Item(0);
+
+    if (nullptr != _pStartName)
+        Set_StartTag(_pStartName);
+
+    return S_OK;
+}
+
 HRESULT CComboBox::Initialize(const _char* _szTag, const _char* _szName, initializer_list<string> _Items, const _char* _pStartName)
 {
     Set_Tag(_szTag);
@@ -162,6 +181,24 @@ void CComboBox::Update_Current_Item(_uint _iItemIndex)
     m_strCurrentItem = m_Items[_iItemIndex];
 }
 
+void CComboBox::Update_Current_Item(string strItem)
+{
+    _uint iIndex = 0;
+    auto iter = find_if(m_Items.begin(), m_Items.end(), [&](const string& Item) {
+        if (strItem == Item)
+            return true;
+        else
+            ++iIndex;
+        return false;
+        });
+
+     if (iter == m_Items.end())
+        return;
+
+    m_iCurrent_Index = iIndex;
+    m_strCurrentItem = strItem;
+}
+
 CComboBox* CComboBox::Create(const _char* _szTag, const _char* _szName, initializer_list<string> _Items, const _char* pStartName)
 {
     CComboBox* pInstance = new CComboBox;
@@ -180,6 +217,19 @@ CComboBox* CComboBox::Create(const _char* _szTag, const _char* _szName, vector<s
     CComboBox* pInstance = new CComboBox;
 
     if (FAILED(pInstance->Initialize(_szTag, _szName, _Items, pStartName)))
+    {
+        MSG_BOX("Failed to Created ComboBox");
+        Safe_Release(pInstance);
+    }
+
+    return pInstance;
+}
+
+CComboBox* CComboBox::Create(const _char* _szTag, const _char* _szName, const _char** _pItems, _uint iSize, const _char* pStartName)
+{
+    CComboBox* pInstance = new CComboBox;
+
+    if (FAILED(pInstance->Initialize(_szTag, _szName, _pItems, iSize, pStartName)))
     {
         MSG_BOX("Failed to Created ComboBox");
         Safe_Release(pInstance);

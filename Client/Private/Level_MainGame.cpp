@@ -13,17 +13,45 @@ HRESULT CLevel_MainGame::Initialize()
 	if (FAILED(__super::Initialize()))
 		return E_FAIL;
 	if (FAILED(Ready_Lights()))
-		return E_FAIL;
+	{
+		MSG_BOX("Failed Ready_Lights");
 
+		return E_FAIL;
+	}
+
+	
+
+	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
+	{
+		MSG_BOX("Failed Ready_Layer_Player");
+
+		return E_FAIL;
+	}
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
+	{
+		MSG_BOX("Failed Ready_Layer_BackGround");
+
 		return E_FAIL;
-	/*if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
-		return E_FAIL;*/
+	}
+	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
+	{
+		MSG_BOX("Failed Ready_Layer_UI");
+
+		return E_FAIL;
+	}
 	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
+	{
+		MSG_BOX("Failed Ready_Layer_Effect");
+
 		return E_FAIL;
+	}
 #ifdef _DEBUG
 	if (FAILED(Ready_Layer_Debug(TEXT("Layer_Debug"))))
+	{
+		MSG_BOX("Failed Ready_Layer_Debug");
+
 		return E_FAIL;
+	}
 #endif // _DEBUG
 
 	BEGININSTANCE;
@@ -101,12 +129,11 @@ HRESULT CLevel_MainGame::Ready_Layer_Player(const _tchar* pLayerTag)
 {
 	BEGININSTANCE;
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Terrain"), pLayerTag, TEXT("GameObject_Terrain"))))
+	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Player"), pLayerTag, TEXT("GameObject_Player"))))
 	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Terrain)");
+		MSG_BOX("Failed Add_GameObject : (GameObject_Player)");
 		return E_FAIL;
 	}
-
 
 	ENDINSTANCE;
 
@@ -138,7 +165,7 @@ HRESULT CLevel_MainGame::Load_MapObject()
 	while (true)
 	{
 		LOADOBJECTDESC LoadDesc;
-		ZEROMEM(&LoadDesc);		
+		ZEROMEM(&LoadDesc);
 
 		if (!ReadFile(hFile, &LoadDesc.matTransform, sizeof(_float4x4), &dwByte, nullptr))
 		{
@@ -235,11 +262,17 @@ HRESULT CLevel_MainGame::Ready_Layer_Effect(const _tchar* pLayerTag)
 	Safe_AddRef(pGameInstance);
 
 #ifdef _DEBUG
- 	/*if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Particle"), pLayerTag, TEXT("GameObject_Test_Particle"))))
+	/*if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Particle"), pLayerTag, TEXT("GameObject_Test_Particle"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Particle)");
 		return E_FAIL;
 	}*/
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Default_Magic_Effect"), pLayerTag, TEXT("GameObject_Default_Magic_Effect"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Default_Magic_Effect)");
+		return E_FAIL;
+	}
 #endif _DEBUG
 	Safe_Release(pGameInstance);
 
@@ -321,6 +354,12 @@ HRESULT CLevel_MainGame::Ready_Layer_Debug(const _tchar* pLayerTag)
 	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Player"), pLayerTag, TEXT("GameObject_Test_Player"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Player)");
+		return E_FAIL;
+	}
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Stair"), pLayerTag, TEXT("GameObject_Test_Stair"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Stair)");
 		return E_FAIL;
 	}
 

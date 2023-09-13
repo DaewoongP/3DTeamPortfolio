@@ -25,7 +25,7 @@ texture2D g_ShadeTexture;
 texture2D g_ShadowTexture;
 texture2D g_vLightDepthTexture;
 
-//ray¸¦ »¸¾î³ª°¡¸é¼­ ¹«ÀÛÀ§·ÎÆÇ´ÜÇÏ±âÀ§ÇØ rand°ªÀÌ ÇÊ¿äÇÔ °°ÀÌ´øÁ®Áà¾ßÇÒµí
+//rayï¿½ï¿½ ï¿½ï¿½ï¿½î³ªï¿½ï¿½ï¿½é¼­ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç´ï¿½ï¿½Ï±ï¿½ï¿½ï¿½ï¿½ï¿½ randï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òµï¿½
 
 float3 g_Ran[13] =
 {
@@ -189,8 +189,8 @@ PS_OUT PS_MAIN(PS_IN In)
     }
        vNormalDesc = normalize(vNormalDesc * 2.f - 1.f);
     //vector vNormal = vector(vNormalDesc.xyz * 2.f - 1.f, 0.f);
-    float fViewZ = vDepthDesc.r * g_fCamFar; //ºäÆ÷Æ®¿¡¼­ÀÇ ±íÀÌ
-    float vDepth = vDepthDesc.g * g_fCamFar * fViewZ; // ¿ùµå¿¡¼­ÀÇ ½ÇÁ¦±íÀÌ
+    float fViewZ = vDepthDesc.r * g_fCamFar; //ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    float vDepth = vDepthDesc.g * g_fCamFar * fViewZ; // ï¿½ï¿½ï¿½å¿¡ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     
         float3 vRay;
         float3 vReflect;
@@ -205,7 +205,7 @@ PS_OUT PS_MAIN(PS_IN In)
             vReflect = normalize(reflect(normalize(vRay), normalize(vNormalDesc.rgb))) * g_fRadius;
             vReflect.x *= -1.f;
             vRandomUV = In.vTexUV + vReflect.xy;
-             fOccNorm = g_DepthTexture.Sample(LinearSampler, vRandomUV).g * g_fCamFar * fViewZ;
+            fOccNorm = g_DepthTexture.Sample(LinearSampler, vRandomUV).g * g_fCamFar * fViewZ;
             if (fOccNorm <= vDepth + 0.0005f)
                 ++iColor;
                   
@@ -297,46 +297,51 @@ PS_OUT PS_MAIN_SHADOW(PS_IN In)
 
     vector vDepthDesc = g_DepthTexture.Sample(LinearSampler, In.vTexUV);
 
-	//depthdesc y ´Â rgba°ªÀÌ¶ó°í »ý°¢ÇÏ¸éµÈ´Ù.
+	//depthdesc y ï¿½ï¿½ rgbaï¿½ï¿½ï¿½Ì¶ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½È´ï¿½.
     float fViewZ = vDepthDesc.y * g_fCamFar;
     vector vPosition;
     if (fViewZ == 0)
         discard;
-	/* Åõ¿µ½ºÆäÀÌ½º »óÀÇ À§Ä¡ */
+	/* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ */
     vPosition.x = In.vTexUV.x * 2.f - 1.f;
     vPosition.y = In.vTexUV.y * -2.f + 1.f;
     vPosition.z = vDepthDesc.x;
     vPosition.w = 1.f;
 
-	/* ºä½ºÆäÀÌ½º »óÀÇ À§Ä¡. */
+	/* ï¿½ä½ºï¿½ï¿½ï¿½Ì½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡. */
     vPosition = vPosition * fViewZ;
     
     vPosition = mul(vPosition, g_ProjMatrixInv);
 
-	/* ¿ùµå½ºÆäÀÌ½º »óÀÇ À§Ä¡. */
+	/* ï¿½ï¿½ï¿½å½ºï¿½ï¿½ï¿½Ì½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡. */
     vPosition = mul(vPosition, g_ViewMatrixInv);
 
     vPosition = mul(vPosition, g_vLightView);
 
     vPosition = mul(vPosition, g_vLightProj);
-	//w ³ª´©±â.
+	//w ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
     vPosition = vPosition / vPosition.w;
     // -1~1
     
-	//±¤¿øÀ¸·ÎÀÇ±íÀÌ°ª.
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç±ï¿½ï¿½Ì°ï¿½.
     float2 LightUV = float2((vPosition.x + 1.f) * 0.5f, (vPosition.y + 1.f) * -0.5f);
 
-    vector vLightDepth = g_vLightDepthTexture.Sample(BlurSampler, LightUV);
+    vector vLightDepth = g_vLightDepthTexture.Sample(BlurSampler, vLightUV);
     
-    float LightDepth_W = vLightDepth.y * g_fCamFar;
-    float LightDepth_Z = vLightDepth.x * LightDepth_W;
+    float3 vProjTest = vUVPos.xyz / vUVPos.w;
+    if (-1.f > vProjTest.x ||
+		1.f < vProjTest.x ||
+		-1.f > vProjTest.y ||
+		1.f < vProjTest.y ||
+        0.f > vProjTest.z ||
+		1.f < vProjTest.z)
+        Out.vColor = vector(1.f, 1.f, 1.f, 1.f);
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ farï¿½ï¿½ ï¿½Ù½Ã°ï¿½ï¿½ï¿½ï¿½Ö¾ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ ï¿½ï¿½ï¿½ï¿½
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì°ï¿½ï¿½ï¿½ ï¿½Ø´ï¿½ï¿½Ï´ï¿½ ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ø½ï¿½Ã³ UVï¿½ï¿½Ç¥ ï¿½ï¿½ï¿½Ì°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ï¿ï¿½ Ã³ï¿½ï¿½ï¿½Ñ´ï¿½.
+    else if (vPosition.z - 0.1f < vLightDepth.y * g_fCamFar)
+        Out.vColor.rgba = vector(0.5f, 0.5f, 0.5f, 0.5f);
+    
     float CamDepth = vPosition.z - 0.005f / g_fCamFar;
-    if (CamDepth > vLightDepth.x)
-    {
-        Out.vColor = float4(0.05f, 0.05f, 0.05f, 0.05f);
-    }
-    else
-        discard;
 
     float fragDepth = CamDepth;
     

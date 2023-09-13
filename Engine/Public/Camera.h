@@ -35,7 +35,7 @@ public:
 protected:
 	class CTransform*			m_pTransform = { nullptr };
 
-private:
+protected:
 	CAMERADESC					m_CameraDesc;
 
 	ID3D11Device*				m_pDevice = { nullptr };

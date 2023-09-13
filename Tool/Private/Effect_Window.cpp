@@ -181,6 +181,15 @@ _bool CEffect_Window::Table_ColorEdit4(string _strName, string _strTag, _float4*
 	isResult = ImGui::ColorEdit4(strTag.data(), reinterpret_cast<_float*>(pValue)); ImGui::TableNextRow();
 	return isResult;
 }
+_bool CEffect_Window::Table_ColorEdit3(string _strName, string _strTag, _float3* pValue)
+{
+	_bool isResult = false;
+	ImGui::TableSetColumnIndex(0);
+	ImGui::Text(_strName.data()); ImGui::TableSetColumnIndex(1);
+	string strTag = "##" + _strTag;
+	isResult = ImGui::ColorEdit3(strTag.data(), reinterpret_cast<_float*>(pValue)); ImGui::TableNextRow();
+	return isResult;
+}
 _bool CEffect_Window::Table_ImageButton(string _strName, string _strTag, CImageFileDialog* _pImageFileDialog)
 {
 	ImGui::TableSetColumnIndex(0);
