@@ -1165,7 +1165,6 @@ HRESULT CObject_Window::Save_MapObject_Ins(string szMapDataPath)
 
 	DWORD	dwByte = 0;
 
-	// 한번에 한 종류의 모델만 저장
 	for (_uint i = 0; i < m_vecSaveInsObject.size(); ++i)
 	{
 		if (!WriteFile(hFile, &m_vecSaveInsObject.at(i).iInstanceCnt, sizeof(_uint), &dwByte, nullptr))
