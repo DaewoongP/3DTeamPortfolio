@@ -92,6 +92,7 @@ void CTransform::Set_Position(_float3 _vPosition)
 void CTransform::Set_WorldMatrix(_float4x4 _WorldMatrix)
 {
 	m_WorldMatrix = _WorldMatrix;
+	m_ubTransformChanged |= CHANGEFLAG::ROTATION | CHANGEFLAG::TRANSLATION;
 }
 
 HRESULT CTransform::Initialize_Prototype()

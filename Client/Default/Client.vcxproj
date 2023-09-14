@@ -164,6 +164,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Action.h" />
+    <ClInclude Include="..\Public\Check_Distance.h" />
+    <ClInclude Include="..\Public\Sequence_Attack.h" />
+    <ClInclude Include="..\Public\Sequence_MoveTarget.h" />
     <ClInclude Include="..\public\StateMachine.h" />
     <ClInclude Include="..\public\IdleState.h" />
     <ClInclude Include="..\Public\UI_Image.h">
@@ -195,7 +198,7 @@
     <ClInclude Include="..\Public\Pensive.h" />
     <ClInclude Include="..\Public\PhysXRender.h" />
     <ClInclude Include="..\public\Player_Camera.h" />
-    <ClInclude Include="..\Public\TargetDegree.h" />
+    <ClInclude Include="..\Public\Check_Degree.h" />
     <ClInclude Include="..\Public\Player.h" />
     <ClInclude Include="..\public\Test_Cloth.h" />
     <ClInclude Include="..\Public\Test_Stair.h" />
@@ -302,6 +305,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Action.cpp" />
+    <ClCompile Include="..\Private\Check_Distance.cpp" />
+    <ClCompile Include="..\Private\Sequence_Attack.cpp" />
+    <ClCompile Include="..\Private\Sequence_MoveTarget.cpp" />
     <ClCompile Include="..\private\StateMachine.cpp" />
     <ClCompile Include="..\Private\IdleState.cpp" />
     <ClCompile Include="..\private\StateContext.cpp" />
@@ -331,7 +337,7 @@
     <ClCompile Include="..\Private\MapObject.cpp" />
     <ClCompile Include="..\Private\Pensive.cpp" />
     <ClCompile Include="..\Private\PhysXRender.cpp" />
-    <ClCompile Include="..\Private\TargetDegree.cpp" />
+    <ClCompile Include="..\Private\Check_Degree.cpp" />
     <ClCompile Include="..\Private\Player.cpp" />
     <ClCompile Include="..\private\Test_Cloth.cpp" />
     <ClCompile Include="..\Private\Test_Stair.cpp" />

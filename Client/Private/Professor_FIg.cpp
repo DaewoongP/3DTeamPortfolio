@@ -153,14 +153,9 @@ HRESULT CProfessor_Fig::Add_Components()
 			throw TEXT("Com_Renderer");
 
 		/* For.Com_Model */
-		if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Golem_Combat"),
+		if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Professor_Fig"),
 			TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 			throw TEXT("Com_Model");
-
-		/* Com_RigidBody */
-		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
-			TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody))))
-			throw TEXT("Com_RigidBody");
 
 		/* For.Com_Shader */
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimMesh"),
@@ -171,6 +166,24 @@ HRESULT CProfessor_Fig::Add_Components()
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RootBehavior"),
 			TEXT("Com_RootBehavior"), reinterpret_cast<CComponent**>(&m_pRootBehavior))))
 			throw TEXT("Com_RootBehavior");
+
+		CRigidBody::RIGIDBODYDESC RigidBodyDesc;
+		RigidBodyDesc.isStatic = true;
+		RigidBodyDesc.isTrigger = false;
+		RigidBodyDesc.eConstraintFlag = CRigidBody::RotX | CRigidBody::RotY | CRigidBody::RotZ;
+		RigidBodyDesc.fDynamicFriction = 1.f;
+		RigidBodyDesc.fRestitution = 0.f;
+		RigidBodyDesc.fStaticFriction = 0.f;
+		RigidBodyDesc.pOwnerObject = this;
+		RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 0.f, 1.f);
+		RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
+		PxCapsuleGeometry pCapsuleGeomatry = PxCapsuleGeometry(1.f, 2.f);
+		RigidBodyDesc.pGeometry = &pCapsuleGeomatry;
+
+		/* Com_RigidBody */
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
+			TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
+			throw TEXT("Com_RigidBody");
 	}
 	catch (const _tchar* pErrorTag)
 	{

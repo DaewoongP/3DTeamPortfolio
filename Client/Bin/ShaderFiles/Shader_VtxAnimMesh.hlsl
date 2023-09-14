@@ -105,7 +105,7 @@ PS_OUT PS_MAIN(PS_IN In)
     
     return Out;
 }
-
+// DAO ≈ÿΩ∫√≥ ≥÷æÓ¡‡æﬂµ 
 PS_OUT PS_MAIN_HAIR(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
@@ -123,7 +123,7 @@ PS_OUT PS_MAIN_HAIR(PS_IN In)
     if (vDiffuse.g < 0.1f)
         discard;
     
-    vDiffuse.rgb = vDiffuse.r;
+    vDiffuse.rgb = 1.f - vDiffuse.r - vDiffuse.b;
 
     Out.vDiffuse = vDiffuse;
 	

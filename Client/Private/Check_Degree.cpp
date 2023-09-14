@@ -1,25 +1,25 @@
-#include "TargetDegree.h"
+#include "Check_Degree.h"
 
 #include "GameObject.h"
 #include "BlackBoard.h"
 #include "Transform.h"
 
-CTargetDegree::CTargetDegree(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CCheck_Degree::CCheck_Degree(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CBehavior(pDevice, pContext)
 {
 }
 
-CTargetDegree::CTargetDegree(const CTargetDegree& rhs)
+CCheck_Degree::CCheck_Degree(const CCheck_Degree& rhs)
 	: CBehavior(rhs)
 {
 }
 
-HRESULT CTargetDegree::Initialize(void* pArg)
+HRESULT CCheck_Degree::Initialize(void* pArg)
 {
 	return S_OK;
 }
 
-HRESULT CTargetDegree::Tick(const _float& fTimeDelta)
+HRESULT CCheck_Degree::Tick(const _float& fTimeDelta)
 {
 	if (false == Check_Decorations())
 		return BEHAVIOR_FAIL;
@@ -27,7 +27,7 @@ HRESULT CTargetDegree::Tick(const _float& fTimeDelta)
 	CGameObject* pTarget = { nullptr };
 	if (FAILED(m_pBlackBoard->Get_Type("pTarget", pTarget)))
 	{
-		MSG_BOX("[CTargetDegree] Failed Get_Type pTarget");
+		MSG_BOX("[CCheck_Degree] Failed Get_Type pTarget");
 		return E_FAIL;
 	}
 
@@ -54,13 +54,13 @@ HRESULT CTargetDegree::Tick(const _float& fTimeDelta)
 
 	if (FAILED(m_pBlackBoard->Set_Type("isTargetToLeft", isLeft)))
 	{
-		MSG_BOX("[CTargetDegree] Failed Set_Type fTargetToLR");
+		MSG_BOX("[CCheck_Degree] Failed Set_Type fTargetToLR");
 		return E_FAIL;
 	}
 
 	if (FAILED(m_pBlackBoard->Set_Type("fTargetToDegree", fDegree)))
 	{
-		MSG_BOX("[CTargetDegree] Failed Set_Type fTargetToLR");
+		MSG_BOX("[CCheck_Degree] Failed Set_Type fTargetToLR");
 		return E_FAIL;
 	}
 
@@ -74,33 +74,33 @@ HRESULT CTargetDegree::Tick(const _float& fTimeDelta)
 	return BEHAVIOR_SUCCESS;
 }
 
-CTargetDegree* CTargetDegree::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CCheck_Degree* CCheck_Degree::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CTargetDegree* pInstance = new CTargetDegree(pDevice, pContext);
+	CCheck_Degree* pInstance = new CCheck_Degree(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Created CTargetDegree");
+		MSG_BOX("Failed to Created CCheck_Degree");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CTargetDegree* CTargetDegree::Clone(void* pArg)
+CCheck_Degree* CCheck_Degree::Clone(void* pArg)
 {
-	CTargetDegree* pInstance = new CTargetDegree(*this);
+	CCheck_Degree* pInstance = new CCheck_Degree(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned CTargetDegree");
+		MSG_BOX("Failed to Cloned CCheck_Degree");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CTargetDegree::Free()
+void CCheck_Degree::Free()
 {
 	__super::Free();
 

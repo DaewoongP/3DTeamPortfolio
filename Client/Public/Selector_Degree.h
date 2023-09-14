@@ -34,7 +34,7 @@ public:
 
 public:
 	/* 각 각도에 실행 시킬 비헤비어를 넣으면 됨 */
-	HRESULT Assemble_Childs(DEGREES eType, CBehavior* pBehavior);
+	virtual HRESULT Assemble_Childs(DEGREES eType, CBehavior* pBehavior);
 
 public:
 	static CSelector_Degree* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

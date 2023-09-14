@@ -32,6 +32,9 @@ public:
 protected:
 	vector<_float>		m_ChildWeights;
 
+protected:
+	virtual HRESULT Assemble_Childs() override { return S_OK; }
+
 public:
 	static CRandomChoose* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);
 	virtual CRandomChoose* Clone(void* pArg);
