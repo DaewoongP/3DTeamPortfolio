@@ -32,9 +32,6 @@ HRESULT CTerrain::Initialize(void* pArg)
 
 	m_isRendering = true;
 
-	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
-	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(g_iWinSizeX, g_iWinSizeY, 0.5f, 1.f));
-
 	return S_OK;
 }
 
@@ -56,8 +53,8 @@ void CTerrain::Late_Tick(_float fTimeDelta)
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 #ifdef _DEBUG
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BRUSHING, this);
-#endif // _DEBUG		
-	}		
+#endif // _DEBUG
+	}
 }
 
 HRESULT CTerrain::Render()
@@ -78,6 +75,8 @@ HRESULT CTerrain::Render()
 			return E_FAIL;
 
 		m_eRenderCount = RT_BRUSHING;
+
+		return S_OK;
 	}
 
 #ifdef _DEBUG

@@ -87,7 +87,6 @@ private:
 	_uint				m_iDiffuseTextureIndex = { 0 }; // 기본 지형 텍스처
 	_uint				m_iBrushTextureIndex = { 1 };	// 그려줄 지형 텍스처
 
-	_float4x4 m_ViewMatrix, m_ProjMatrix;
 	eRenderType	m_eRenderCount = { RT_END }; // 랜더 순서를 정해주는 변수
 
 private:
