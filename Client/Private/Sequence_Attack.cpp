@@ -100,7 +100,7 @@ HRESULT CSequence_Attack::Assemble_Childs()
 			});
 
 		/* Set Options */
-		pTsk_Turn->Set_Option(180.f, 3.5f);
+		pTsk_Turn->Set_Option(45.f, 3.5f);
 		pTsk_Turn->Set_Transform(pTransform);
 		pTsk_Check_Distance->Set_Transform(pTransform);
 
