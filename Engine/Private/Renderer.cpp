@@ -165,9 +165,9 @@ HRESULT CRenderer::Initialize_Prototype()
 	
 #endif // _DEBUG
 
-	m_pTexture = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/noise01.dds"));
-	m_pTexture2 = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/alpha01.dds"));
-	m_pTexture3 = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/fire01.dds"));
+	m_pTexture = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/noise01.dds"));
+	m_pTexture2 = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/alpha01.dds"));
+	m_pTexture3 = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/fire01.dds"));
 
 
 	return S_OK;
@@ -243,8 +243,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 	
 	if (FAILED(Render_PostProcessing()))
 		return E_FAIL;	
-	/*if (FAILED(Render_Distortion()))
-		return E_FAIL;*/
+	if (FAILED(Render_Distortion()))
+		return E_FAIL;
 	if (FAILED(Render_UI()))
 		return E_FAIL;
 
