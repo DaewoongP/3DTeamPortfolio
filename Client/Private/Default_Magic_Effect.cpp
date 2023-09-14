@@ -163,11 +163,14 @@ CGameObject* CDefault_Magic_Effect::Clone(void* pArg)
 
 void CDefault_Magic_Effect::Free()
 {
-	__super::Free();
+	if (true == m_isCloned)
+	{
+		__super::Free();
 
-	Safe_Release(m_pTrail);
-	Safe_Release(m_pParticleSystem);
+		Safe_Release(m_pTrail);
+		Safe_Release(m_pParticleSystem);
 
-	Safe_Release(m_pParticleTransform);
-	Safe_Release(m_pTrailTransform);
+		Safe_Release(m_pParticleTransform);
+		Safe_Release(m_pTrailTransform);
+	}
 }

@@ -27,7 +27,7 @@ public: // 困连 包访
 	_bool Table_DragFloat(string _strName, string _strTag, _float* _pValue, _float _fDragSpeed = 0.01f, _float _fMin = 0.f, _float _fMax = FLT_MAX);
 	_bool Table_DragFloat2(string _strName, string _strTag, _float2* _pValue, _float _fDragSpeed = 0.01f, _float _fMin = 0.f, _float _fMax = FLT_MAX);
 	_bool Table_DragFloat2Range(string _strName, string _strTag, _float2* _pValue, _float _fDragSpeed = 0.01f, _float _fMin = 0.f, _float _fMax = FLT_MAX);
-	_bool Table_DragXYZ(string _strName, string _strTag, _float3* pValue, _float _fDragSpeed = 0.01f, _float _fMin = 0.f, _float _fMax = FLT_MAX, _bool isImplement = true);
+	_bool Table_DragXYZ(string _strName, string _strTag, _float3* pValue, _float _fDragSpeed = 0.1f, _float _fMin = -FLT_MAX, _float _fMax = FLT_MAX, _bool isImplement = true);
 	_bool Table_DragInt(string _strName, string _strTag, _int* _pValue, _float _fDragSpeed = 0.1f, _int _iMin = 0.f, _int _iMax = INT_MAX);
 	_bool Table_CheckBox(string _strName, string _strTag, _bool* _pValue, _bool isImplement = true);
 	_bool Table_ColorEdit4(string _strName, string _strTag, _float4* pValue);
@@ -36,15 +36,16 @@ public: // 困连 包访
 	_bool Table_Void();
 	_bool Table_DragFloatWithOption(string _strName, string _strTag, _float* _pValue, _float2* _pRangeValue, _bool* _pCheckBox, _float _fDragSpeed = 0.01f, _float _fMin = 0.f, _float _fMax = FLT_MAX);
 
+	
 private:
 	_float	   m_fWidgetSize = { 200.f };
-
 
 private:
 	class CDummyParticle* m_pDummyParticle = { nullptr };
 	CModel* m_pModel = { nullptr };
 	class CDummyMeshEffect* m_pDummyMeshEffect = { nullptr };
 	class CDummyTrail* m_pDummyTrail = { nullptr };
+	class CDummy_Effect* m_pDummyEffect= { nullptr };
 
 	_int m_iChooseRadio = { 0 };
 	

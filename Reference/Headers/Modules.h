@@ -41,12 +41,12 @@ struct ENGINE_DLL MAIN_MODULE : public MODULE
 	_float2 vStartSizeRange = { 1.f, 1.f };
 	_float fStartSize = { 1.f }; // 초기화 시 정해지는 파티클 크기.
 	_bool is3DStartSize = { false }; // x,y,z축 회전을 활성화하려면 true.
-	_float3 f3DSizeXYZ = { 1.f, 1.f, 1.f }; // 파티클의 3D 스케일을 정해줍니다
+	_float3 v3DSizeXYZ = { 1.f, 1.f, 1.f }; // 파티클의 3D 스케일을 정해줍니다
 	_bool is3DStartRotation = { false }; // 초기화 시 정해지는 파티클 3차원 회전값(월드 x,y,z축 기준)
 	_bool isStartRotationRange = { false };
 	_float2 vStartRotationRange = { 0.f, 0.f }; // 초기화 시 정해지는 파티클 오일러각(빌보드 행렬의 x,y축 기준)
 	_float fStartRotation = { 0.f };
-	_float3 f3DRotationXYZ = { 0.f, 0.f, 0.f }; // 파티클의 3D 스케일을 정해줍니다
+	_float3 v3DRotationXYZ = { 0.f, 0.f, 0.f }; // 파티클의 3D 스케일을 정해줍니다
 	_float fFlipRotation = { 0.f }; // [0, 1]값으로 예를들어, 0.5의 값인 경우 파티클 초기화 시 50%확률로 반대방향으로 회전한다.
 	_float4 vStartColor = { 1.f, 1.f, 1.f, 1.f }; // 초기화 시 정해지는 파티클의 컬러
 	_float fGravityModifier = { 0.f }; // 파티클에 적용 되는 중력값
@@ -85,6 +85,7 @@ struct ENGINE_DLL EMISSION_MODULE : public MODULE
 	_float	fRateOverTimeAcc = { 0.f };
 	_float	fRateOverDistance = { 0.f }; // 움직인 거리에 따라 몇 개의 파티클을 뿜어낼지 정함.
 	vector<BURST> Bursts;
+	_float fAccumulatedError = { 0.0f };
 };
 struct ENGINE_DLL SHAPE_MODULE : public MODULE
 {
@@ -106,7 +107,6 @@ struct ENGINE_DLL SHAPE_MODULE : public MODULE
 	_bool isUseMeshColors = { true }; // 버퍼의 꼭지점이 가진 색상을 입자와 섞는다.
 	_float fNormalOffset = { 0.f }; // 0인 경우 메쉬의 노말벡터의 꼬리에서 시작, 오프셋 값 만큼 시작위치는 노말 벡터 방향으로 이동한다.
 	
-	string strConeEmitFrom = { "Base" }; // Base, Volume
 
 	_bool isfLengthRange = { false };
 	_float2 vLength = { 0.f, 5.f };
@@ -126,6 +126,15 @@ struct ENGINE_DLL SHAPE_MODULE : public MODULE
 	_float fPhiInterval = { 1.f };
 	_float fThetaInterval = { 1.f };
 
+	_float fRadiusThickness = { 1.f };
+
+	// Cone
+	string strConeEmitFrom = { "Base" }; // Base, Volume
+	_float fAngle = { 25.f };
+	_float fBaseRadius = { 0.5f };
+	_float fConeLength = { 1.f }; // Volume에서 Length로 활용됨..
+	///////////////////////////
+
 	wstring wstrClipTexturePath = { TEXT("../../Resources/Effects/Textures/Default_Particle.png") }; // 아래 인자의 채널에 사용할 텍스처
 	string strClipChannel = { "Red" }; // Red, Greend, Blue, Alpha // 클립 채널(클립 : 알파테스트로 discard)
 	_float fClipThreshold = { 0.33f }; // [0, 1], 이것보다 작은 값들은 알파테스트 실패함.
@@ -133,9 +142,7 @@ struct ENGINE_DLL SHAPE_MODULE : public MODULE
 	_bool isAlphaAffectsParticles = { true };
 	_bool isBilinearFiltering = { false };
 
-	_float3 vPosition = { 0.f, 0.f, 0.f };
-	_float3 vRotation = { 0.f, 0.f, 0.f };
-	_float3 vScale = { 1.f, 1.f, 1.f };
+	_float4x4 ShapeMatrix = { _float4x4() };
 
 	_bool isAlignToDirection = false;
 	_float fRandomizeDirection = { 0.f }; //[0, 1]
@@ -166,12 +173,6 @@ struct ENGINE_DLL ROTATION_OVER_LIFETIME_MODULE : public MODULE
 	// 자체 회전에 사용할 값들
 	_bool isSeperateAxes = { false }; // 비 활성화시 기본 Z축사용
 	_float3 AngularVelocityXYZ = { 0.f, 0.f, 0.f };
-
-	// 원 운동에 사용할 값들.
-	_bool isFlipOption = { false };
-	_float fFlipProperty = { 0.f }; // [0, 1] 확률적으로 반대방향으로 회전한다.
-	_float fRadius = { 0.f }; // 회전할 원의 반지름
-	_float fSpeed = { 1.f }; // 원운동 속도
 };
 struct ENGINE_DLL COLOR_OVER_LIFETIME : public MODULE
 {
@@ -211,7 +212,6 @@ typedef struct tagParticle
 	_float		fGenTime = { 0.f };
 	_float      fLifeTime = { 0.f };
 	_float		fAngle = { 0.f };
-	_float		fCircularMotionAngle = { 0.f };
 	_float4		vColor = { 1.f, 1.f, 1.f, 1.f };
 	_float3		vScale = { 1.f, 1.f, 1.f };
 }PARTICLE;

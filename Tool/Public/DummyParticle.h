@@ -50,7 +50,38 @@ public:
 	void RotationOverLifetimeModule_TreeNode(CEffect_Window* pEffectWindow);
 	void Save_FileDialog();
 	void Load_FileDialog();
+	void Load_After();
 	virtual void Restart() override;
+
+	Vector3 QuaternionToEuler(const Quaternion& q) {
+		Vector3 angles;
+
+		// roll (x-axis rotation)
+		float sinr_cosp = 2 * (q.w * q.x + q.y * q.z);
+		float cosr_cosp = 1 - 2 * (q.x * q.x + q.y * q.y);
+		angles.z = atan2(sinr_cosp, cosr_cosp);
+
+		// pitch (y-axis rotation)
+		float sinp = 2 * (q.w * q.y - q.z * q.x);
+		if (fabs(sinp) >= 1)
+			angles.x = copysign(XM_PI / 2, sinp); // use 90 degrees if out of range
+		else
+			angles.x = asin(sinp);
+
+		// yaw (z-axis rotation)
+		float siny_cosp = 2 * (q.w * q.z + q.x * q.y);
+		float cosy_cosp = 1 - 2 * (q.y * q.y + q.z * q.z);
+		angles.y = atan2(siny_cosp, cosy_cosp);
+
+		return angles;
+	}
+
+
+private:
+	_float3 vShapePosition = { _float3() };
+	_float3 vShapeRotation = {  };
+	_float3 vShapeScale = { 2.f, 2.f, 2.f };
+	Quaternion vShapeQuaternion = { Quaternion() };
 
 private:
 	class CComboBox* m_pEmitterVelocity_ComboBox = { nullptr };

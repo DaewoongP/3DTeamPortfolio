@@ -49,9 +49,6 @@
     <Filter Include="02. ToolObjects\03. Sky">
       <UniqueIdentifier>{4461d7fd-a6a1-45bd-9424-3d9bfaf2e36f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. ToolObjects\01. Dummy\DummyParticle">
-      <UniqueIdentifier>{7edb6c26-6338-4754-9239-502063c38924}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Window\Window\Animation">
       <UniqueIdentifier>{f24db859-61c1-45a9-96e6-80c730ace989}</UniqueIdentifier>
     </Filter>
@@ -118,12 +115,6 @@
     <Filter Include="02. ToolObjects\01. Dummy\Dummy_Cloth">
       <UniqueIdentifier>{96d81abe-75a6-4828-952f-2eb9e1a68bb2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. ToolObjects\01. Dummy\DummyParticle\DummyTrail">
-      <UniqueIdentifier>{54e7e86b-5a40-424a-957c-7e19887c5f19}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. ToolObjects\01. Dummy\DummyParticle\DummyMeshEffect">
-      <UniqueIdentifier>{5c072822-d3f0-4560-b1e1-0352b7658505}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. ToolObjects\06. PhysX">
       <UniqueIdentifier>{f99c162b-06a0-4805-9bf5-4624a6157e42}</UniqueIdentifier>
     </Filter>
@@ -132,6 +123,18 @@
     </Filter>
     <Filter Include="02. ToolObjects\05. TrianlgeColMesh">
       <UniqueIdentifier>{a1c13a60-e1b0-4642-95b8-30f251a9228d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. ToolObjects\01. Dummy\Dummy_Effect">
+      <UniqueIdentifier>{bda54650-3679-4a83-97e6-2e489457f5aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. ToolObjects\01. Dummy\Dummy_Effect\DummyParticle">
+      <UniqueIdentifier>{7edb6c26-6338-4754-9239-502063c38924}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. ToolObjects\01. Dummy\Dummy_Effect\DummyMeshEffect">
+      <UniqueIdentifier>{5c072822-d3f0-4560-b1e1-0352b7658505}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. ToolObjects\01. Dummy\Dummy_Effect\DummyTrail">
+      <UniqueIdentifier>{54e7e86b-5a40-424a-957c-7e19887c5f19}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -217,7 +220,7 @@
       <Filter>02. ToolObjects\03. Sky</Filter>
     </ClInclude>
     <ClInclude Include="..\public\DummyParticle.h">
-      <Filter>02. ToolObjects\01. Dummy\DummyParticle</Filter>
+      <Filter>02. ToolObjects\01. Dummy\Dummy_Effect\DummyParticle</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Animation_Window.h">
       <Filter>01. Window\Window\Animation</Filter>
@@ -280,7 +283,7 @@
       <Filter>02. ToolObjects\04. MapObject\MapObject_Ins</Filter>
     </ClInclude>
     <ClInclude Include="..\public\DummyMeshEffect.h">
-      <Filter>02. ToolObjects\01. Dummy\DummyParticle\DummyMeshEffect</Filter>
+      <Filter>02. ToolObjects\01. Dummy\Dummy_Effect\DummyMeshEffect</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Navigation_Window.h">
       <Filter>01. Window\Window\Navigation</Filter>
@@ -295,7 +298,7 @@
       <Filter>02. ToolObjects\01. Dummy\Dummy_Cloth</Filter>
     </ClInclude>
     <ClInclude Include="..\public\DummyTrail.h">
-      <Filter>02. ToolObjects\01. Dummy\DummyParticle\DummyTrail</Filter>
+      <Filter>02. ToolObjects\01. Dummy\Dummy_Effect\DummyTrail</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\PhysXRender.h">
       <Filter>02. ToolObjects\06. PhysX</Filter>
@@ -305,6 +308,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\TriangleColMesh.h">
       <Filter>02. ToolObjects\05. TrianlgeColMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Dummy_Effect.h">
+      <Filter>02. ToolObjects\01. Dummy\Dummy_Effect</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -379,7 +385,7 @@
       <Filter>02. ToolObjects\03. Sky</Filter>
     </ClCompile>
     <ClCompile Include="..\private\DummyParticle.cpp">
-      <Filter>02. ToolObjects\01. Dummy\DummyParticle</Filter>
+      <Filter>02. ToolObjects\01. Dummy\Dummy_Effect\DummyParticle</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Animation_Window.cpp">
       <Filter>01. Window\Window\Animation</Filter>
@@ -433,7 +439,7 @@
       <Filter>02. ToolObjects\04. MapObject\MapObject_Ins</Filter>
     </ClCompile>
     <ClCompile Include="..\private\DummyMeshEffect.cpp">
-      <Filter>02. ToolObjects\01. Dummy\DummyParticle\DummyMeshEffect</Filter>
+      <Filter>02. ToolObjects\01. Dummy\Dummy_Effect\DummyMeshEffect</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Navigation_Window.cpp">
       <Filter>01. Window\Window\Navigation</Filter>
@@ -448,7 +454,7 @@
       <Filter>02. ToolObjects\01. Dummy\Dummy_Cloth</Filter>
     </ClCompile>
     <ClCompile Include="..\private\DummyTrail.cpp">
-      <Filter>02. ToolObjects\01. Dummy\DummyParticle\DummyTrail</Filter>
+      <Filter>02. ToolObjects\01. Dummy\Dummy_Effect\DummyTrail</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\PhysXRender.cpp">
       <Filter>02. ToolObjects\06. PhysX</Filter>
@@ -458,6 +464,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\TriangleColMesh.cpp">
       <Filter>02. ToolObjects\05. TrianlgeColMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Dummy_Effect.cpp">
+      <Filter>02. ToolObjects\01. Dummy\Dummy_Effect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

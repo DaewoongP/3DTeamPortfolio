@@ -47,12 +47,12 @@ HRESULT MAIN_MODULE::Save(const _tchar* _pDirectoyPath)
 	WriteFile(hFile, &vStartSizeRange, sizeof vStartSizeRange, &dwByte, nullptr);
 	WriteFile(hFile, &fStartSize, sizeof fStartSize, &dwByte, nullptr);
 	WriteFile(hFile, &is3DStartSize, sizeof is3DStartSize, &dwByte, nullptr);
-	WriteFile(hFile, &f3DSizeXYZ, sizeof f3DSizeXYZ, &dwByte, nullptr);
+	WriteFile(hFile, &v3DSizeXYZ, sizeof v3DSizeXYZ, &dwByte, nullptr);
 	WriteFile(hFile, &is3DStartRotation, sizeof is3DStartRotation, &dwByte, nullptr);
 	WriteFile(hFile, &isStartRotationRange, sizeof isStartRotationRange, &dwByte, nullptr);
 	WriteFile(hFile, &vStartRotationRange, sizeof vStartRotationRange, &dwByte, nullptr);
 	WriteFile(hFile, &fStartRotation, sizeof fStartRotation, &dwByte, nullptr);
-	WriteFile(hFile, &f3DRotationXYZ, sizeof f3DRotationXYZ, &dwByte, nullptr);
+	WriteFile(hFile, &v3DRotationXYZ, sizeof v3DRotationXYZ, &dwByte, nullptr);
 	WriteFile(hFile, &fFlipRotation, sizeof fFlipRotation, &dwByte, nullptr);
 	WriteFile(hFile, &vStartColor, sizeof vStartColor, &dwByte, nullptr);
 	WriteFile(hFile, &fGravityModifier, sizeof fGravityModifier, &dwByte, nullptr);
@@ -105,12 +105,12 @@ HRESULT MAIN_MODULE::Load(const _tchar* _pDirectoyPath)
 	ReadFile(hFile, &vStartSizeRange, sizeof vStartSizeRange, &dwByte, nullptr);
 	ReadFile(hFile, &fStartSize, sizeof fStartSize, &dwByte, nullptr);
 	ReadFile(hFile, &is3DStartSize, sizeof is3DStartSize, &dwByte, nullptr);
-	ReadFile(hFile, &f3DSizeXYZ, sizeof f3DSizeXYZ, &dwByte, nullptr);
+	ReadFile(hFile, &v3DSizeXYZ, sizeof v3DSizeXYZ, &dwByte, nullptr);
 	ReadFile(hFile, &is3DStartRotation, sizeof is3DStartRotation, &dwByte, nullptr);
 	ReadFile(hFile, &isStartRotationRange, sizeof isStartRotationRange, &dwByte, nullptr);
 	ReadFile(hFile, &vStartRotationRange, sizeof vStartRotationRange, &dwByte, nullptr);
 	ReadFile(hFile, &fStartRotation, sizeof fStartRotation, &dwByte, nullptr);
-	ReadFile(hFile, &f3DRotationXYZ, sizeof f3DRotationXYZ, &dwByte, nullptr);
+	ReadFile(hFile, &v3DRotationXYZ, sizeof v3DRotationXYZ, &dwByte, nullptr);
 	ReadFile(hFile, &fFlipRotation, sizeof fFlipRotation, &dwByte, nullptr);
 	ReadFile(hFile, &vStartColor, sizeof vStartColor, &dwByte, nullptr);
 	ReadFile(hFile, &fGravityModifier, sizeof fGravityModifier, &dwByte, nullptr);
@@ -231,6 +231,7 @@ void EMISSION_MODULE::Restart()
 		Burst.fTriggerTimeAcc = 0.f;
 	}
 	fRateOverTimeAcc = 0.f;
+	fAccumulatedError = 0.0f;
 }
 
 HRESULT SHAPE_MODULE::Save(const _tchar* _pDirectoyPath)
@@ -280,13 +281,15 @@ HRESULT SHAPE_MODULE::Save(const _tchar* _pDirectoyPath)
 	WriteFile(hFile, &isColorAffectsParticles, sizeof(isColorAffectsParticles), &dwByte, nullptr);
 	WriteFile(hFile, &isAlphaAffectsParticles, sizeof(isAlphaAffectsParticles), &dwByte, nullptr);
 	WriteFile(hFile, &isBilinearFiltering, sizeof(isBilinearFiltering), &dwByte, nullptr);
-	WriteFile(hFile, &vPosition, sizeof(vPosition), &dwByte, nullptr);
-	WriteFile(hFile, &vRotation, sizeof(vRotation), &dwByte, nullptr);
-	WriteFile(hFile, &vScale, sizeof(vScale), &dwByte, nullptr);
+	WriteFile(hFile, &ShapeMatrix, sizeof(ShapeMatrix), &dwByte, nullptr);
 	WriteFile(hFile, &isAlignToDirection, sizeof(isAlignToDirection), &dwByte, nullptr);
 	WriteFile(hFile, &fRandomizeDirection, sizeof(fRandomizeDirection), &dwByte, nullptr);
 	WriteFile(hFile, &fSpherizeDirection, sizeof(fSpherizeDirection), &dwByte, nullptr);
 	WriteFile(hFile, &fRandomizePosition, sizeof(fRandomizePosition), &dwByte, nullptr);
+	WriteFile(hFile, &fRadiusThickness, sizeof(fRadiusThickness), &dwByte, nullptr);
+	WriteFile(hFile, &fAngle, sizeof(fAngle), &dwByte, nullptr);
+	WriteFile(hFile, &fBaseRadius, sizeof(fBaseRadius), &dwByte, nullptr);
+	WriteFile(hFile, &fConeLength, sizeof(fConeLength), &dwByte, nullptr);
 
 	CloseHandle(hFile);
 	return S_OK;
@@ -349,13 +352,16 @@ HRESULT SHAPE_MODULE::Load(const _tchar* _pDirectoyPath)
 	ReadFile(hFile, &isColorAffectsParticles, sizeof(isColorAffectsParticles), &dwByte, nullptr);
 	ReadFile(hFile, &isAlphaAffectsParticles, sizeof(isAlphaAffectsParticles), &dwByte, nullptr);
 	ReadFile(hFile, &isBilinearFiltering, sizeof(isBilinearFiltering), &dwByte, nullptr);
-	ReadFile(hFile, &vPosition, sizeof(vPosition), &dwByte, nullptr);
-	ReadFile(hFile, &vRotation, sizeof(vRotation), &dwByte, nullptr);
-	ReadFile(hFile, &vScale, sizeof(vScale), &dwByte, nullptr);
+	ReadFile(hFile, &ShapeMatrix, sizeof(ShapeMatrix), &dwByte, nullptr);
 	ReadFile(hFile, &isAlignToDirection, sizeof(isAlignToDirection), &dwByte, nullptr);
 	ReadFile(hFile, &fRandomizeDirection, sizeof(fRandomizeDirection), &dwByte, nullptr);
 	ReadFile(hFile, &fSpherizeDirection, sizeof(fSpherizeDirection), &dwByte, nullptr);
 	ReadFile(hFile, &fRandomizePosition, sizeof(fRandomizePosition), &dwByte, nullptr);
+
+	ReadFile(hFile, &fRadiusThickness, sizeof(fRadiusThickness), &dwByte, nullptr);
+	ReadFile(hFile, &fAngle, sizeof(fAngle), &dwByte, nullptr);
+	ReadFile(hFile, &fBaseRadius, sizeof(fBaseRadius), &dwByte, nullptr);
+	ReadFile(hFile, &fConeLength, sizeof(fConeLength), &dwByte, nullptr);
 
 	CloseHandle(hFile);
 	return S_OK;
@@ -447,10 +453,6 @@ HRESULT ROTATION_OVER_LIFETIME_MODULE::Save(const _tchar* _pDirectoyPath)
 
 	WriteFile(hFile, &isSeperateAxes, sizeof isSeperateAxes, &dwByte, nullptr);
 	WriteFile(hFile, &AngularVelocityXYZ, sizeof AngularVelocityXYZ, &dwByte, nullptr);
-	WriteFile(hFile, &fFlipProperty, sizeof fFlipProperty, &dwByte, nullptr);
-	WriteFile(hFile, &fRadius, sizeof fRadius, &dwByte, nullptr);
-	WriteFile(hFile, &fSpeed, sizeof fSpeed, &dwByte, nullptr);
-
 
 	CloseHandle(hFile);
 	return S_OK;
@@ -476,9 +478,6 @@ HRESULT ROTATION_OVER_LIFETIME_MODULE::Load(const _tchar* _pDirectoyPath)
 
 	ReadFile(hFile, &isSeperateAxes, sizeof isSeperateAxes, &dwByte, nullptr);
 	ReadFile(hFile, &AngularVelocityXYZ, sizeof AngularVelocityXYZ, &dwByte, nullptr);
-	ReadFile(hFile, &fFlipProperty, sizeof fFlipProperty, &dwByte, nullptr);
-	ReadFile(hFile, &fRadius, sizeof fRadius, &dwByte, nullptr);
-	ReadFile(hFile, &fSpeed, sizeof fSpeed, &dwByte, nullptr);
 
 	CloseHandle(hFile);
 

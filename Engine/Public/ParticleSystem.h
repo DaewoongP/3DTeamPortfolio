@@ -31,7 +31,7 @@ public:
 	// ALIVE : 업데이트 되고 있는 파티클
 	// DELAY : 대기시간이 채워지면 ALIVE로 넘어감
 	// WAIT : 파티클 풀 장소
-	// DEAD : 파티클이 부활 할 수 없는 상태.
+	// DEAD : 죽은 파티클 부활 할 수 없음.
 	enum STATE { ALIVE, DELAY, WAIT, DEAD, STATE_END };
 
 protected:
@@ -40,11 +40,26 @@ protected:
 	virtual ~CParticleSystem() = default;
 
 public:
+	void Set_ChaseTransform(_bool isChase) { m_isChase = isChase; }
+	_uint Get_DeadCount() { return m_Particles[DEAD].size(); }
+	_bool Is_AllDead() { return (m_Particles[ALIVE].empty() && m_Particles[DELAY].empty()); }
+
+public:
 	virtual HRESULT Initialize_Prototype(const _tchar* _pDirectoryPath, _uint iLevel);
 	virtual HRESULT Initialize(void* _pArg) override;
 	void Tick(_float _fTimeDelta);
 	void Late_Tick(_float _fTimeDelta) override;
 	HRESULT Render();
+
+public: 
+	// ex) MAIN_MODULE& MainModule = m_pParticleSystem->Get_MainModuleRef();
+	MAIN_MODULE&					Get_MainModuleRef() { return m_MainModuleDesc; }
+	EMISSION_MODULE&				Get_EmissionModuleRef() { return m_EmissionModuleDesc; }
+	SHAPE_MODULE&					Get_ShapeModuleRef() { return m_ShapeModuleDesc; }
+	RENDERER_MODULE&				Get_RendererModuleRef() { return m_RendererModuleDesc; }
+	COLOR_OVER_LIFETIME&			Get_ColorOverLifetimeModuleRef() { return m_ColorOverLifeTimeModuleDesc; }
+	SIZE_OVER_LIFETIME&				Get_SizeOverLifetimeModuleRef() { return m_SizeOverLifeTimeModuleDesc; }
+	ROTATION_OVER_LIFETIME_MODULE&	Get_RotationOverLifetimeModuleRef() { return m_RotationOverLifetimeModuleDesc; }
 
 public:
 	void Play();
@@ -57,7 +72,6 @@ protected:
 
 public:
 	_bool IsEnable() { return m_MainModuleDesc.isEnable; }
-	_bool IsAllDead() { return m_Particles[ALIVE].empty(); }
 
 protected:
 	HRESULT Save(const _tchar* _pDirectoyPath);
@@ -68,7 +82,6 @@ public:
 	void Reset_Particles(STATE eGroup);
 	void Reset_AllParticles();
 	void ResetStartPosition(PARTICLE_IT& _particle_iter);
-	void ResetVelocity(PARTICLE_IT& _particle_iter);
 
 protected:
 	// WAIT->DELAY로 이동.
@@ -99,6 +112,7 @@ protected:
 	void Action_By_Bursts();
 	void Action_By_RotationOverLifeTime(PARTICLE_IT& _particle_iter, _float fTimeDelta);
 	void Action_By_ColorOverLifeTime(PARTICLE_IT& _particle_iter, _float fTimeDelta);
+
 protected:
 	HRESULT Add_Components();
 	HRESULT Setup_ShaderResources();
@@ -126,7 +140,7 @@ protected:
 	vector<COL_INSTANCE>  m_ParticleMatrices;
 	function<void()> m_StopAction;
 	_uint m_iLevel = { 0 };
-
+	_bool m_isChase = { true };
 public:
 	static CParticleSystem* Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, const _tchar* _pDirectoryPath, _uint iLevel = 0);
 	virtual CGameObject* Clone(void* _pArg) override;

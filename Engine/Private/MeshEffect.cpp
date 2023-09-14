@@ -255,9 +255,12 @@ CGameObject* CMeshEffect::Clone(void* _pArg)
 void CMeshEffect::Free()
 {
 	__super::Free();
-	Safe_Release(m_pTexture);
-	Safe_Release(m_pAlphaClipTexture);
-	Safe_Release(m_pModel);
-	Safe_Release(m_pShader);
-	Safe_Release(m_pRenderer);
+	if (true == m_isCloned)
+	{
+		Safe_Release(m_pTexture);
+		Safe_Release(m_pAlphaClipTexture);
+		Safe_Release(m_pModel);
+		Safe_Release(m_pShader);
+		Safe_Release(m_pRenderer);
+	}
 }

@@ -20,7 +20,7 @@ CUI::CUI(const CUI& rhs)
 	, m_ViewMatrix(rhs.m_ViewMatrix)
 	, m_ProjMatrix(rhs.m_ProjMatrix)
 {
-	//lstrcpy(m_wszTextureName, rhs.m_wszTextureName);
+	//lstrcpy(m_wszTextureName, rhs.m_wszTextureName); L""
 }
 
 HRESULT CUI::Initialize_Prototype(_uint iWinSizeX, _uint iWinSizeY)

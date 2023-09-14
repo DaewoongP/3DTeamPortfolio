@@ -20,13 +20,82 @@ CTrail::CTrail(const CTrail& rhs)
 
 }
 
-HRESULT CTrail::Initialize_Prototype(const _tchar* _pDirectoryPath, _uint _iLevel)
+HRESULT CTrail::Save(const _tchar* pFilePath)
+{
+	HANDLE hFile = CreateFile(pFilePath
+		, GENERIC_WRITE
+		, 0
+		, 0
+		, CREATE_ALWAYS
+		, FILE_ATTRIBUTE_NORMAL
+		, 0);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+		return E_FAIL;
+
+	_ulong dwByte = 0;
+
+	WriteFile(hFile, m_strPass.data(), sizeof(char) * MAX_PATH, &dwByte, nullptr);
+	WriteFile(hFile, m_wstrPath.data(), sizeof(wchar_t) * MAX_PATH, &dwByte, nullptr);
+	WriteFile(hFile, &m_isEnable, sizeof(m_isEnable), &dwByte, nullptr);
+	WriteFile(hFile, &m_iTrailNum, sizeof(m_iTrailNum), &dwByte, nullptr);
+	WriteFile(hFile, &m_iTrailNum, sizeof(m_iTrailNum), &dwByte, nullptr);
+	WriteFile(hFile, &m_PivotMatrix, sizeof(m_PivotMatrix), &dwByte, nullptr);
+	WriteFile(hFile, &m_HighLocalMatrix, sizeof(m_HighLocalMatrix), &dwByte, nullptr);
+	WriteFile(hFile, &m_LowLocalMatrix, sizeof(m_LowLocalMatrix), &dwByte, nullptr);
+	WriteFile(hFile, &m_vHeadColor, sizeof(m_vHeadColor), &dwByte, nullptr);
+	WriteFile(hFile, &m_vTailColor, sizeof(m_vTailColor), &dwByte, nullptr);
+	WriteFile(hFile, &m_fWidth, sizeof(m_fWidth), &dwByte, nullptr);
+
+	return S_OK;
+}
+
+HRESULT CTrail::Load(const _tchar* pFilePath)
+{
+	HANDLE hFile = CreateFile(pFilePath
+		, GENERIC_READ
+		, 0
+		, 0
+		, OPEN_EXISTING
+		, FILE_ATTRIBUTE_NORMAL
+		, 0);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+		return E_FAIL;
+
+	char szBuffer[MAX_PATH];
+	wchar_t wszBuffer[MAX_PATH];
+	_ulong dwByte = 0;
+
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	
+	ReadFile(hFile, szBuffer, sizeof(char) * MAX_PATH, &dwByte, nullptr);
+	m_strPass = pGameInstance->Make_Char(szBuffer);
+	
+	ReadFile(hFile, wszBuffer, sizeof(wchar_t) * MAX_PATH, &dwByte, nullptr);
+	m_wstrPath = pGameInstance->Make_WChar(wszBuffer);
+
+	ReadFile(hFile, &m_isEnable, sizeof(m_isEnable), &dwByte, nullptr);
+	ReadFile(hFile, &m_iTrailNum, sizeof(m_iTrailNum), &dwByte, nullptr);
+	ReadFile(hFile, &m_iTrailNum, sizeof(m_iTrailNum), &dwByte, nullptr);
+	ReadFile(hFile, &m_PivotMatrix, sizeof(m_PivotMatrix), &dwByte, nullptr);
+	ReadFile(hFile, &m_HighLocalMatrix, sizeof(m_HighLocalMatrix), &dwByte, nullptr);
+	ReadFile(hFile, &m_LowLocalMatrix, sizeof(m_LowLocalMatrix), &dwByte, nullptr);
+	ReadFile(hFile, &m_vHeadColor, sizeof(m_vHeadColor), &dwByte, nullptr);
+	ReadFile(hFile, &m_vTailColor, sizeof(m_vTailColor), &dwByte, nullptr);
+	ReadFile(hFile, &m_fWidth, sizeof(m_fWidth), &dwByte, nullptr);
+
+	Safe_Release(pGameInstance);
+	return S_OK;
+}
+
+HRESULT CTrail::Initialize_Prototype(const _tchar* _pFilePath, _uint _iLevel)
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
 
-	// this->Load(_pDirectoryPath);
-	// m_wstrPath = _pDirectoryPath;
+	 this->Load(_pFilePath);
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
@@ -248,10 +317,12 @@ CGameObject* CTrail::Clone(void* pArg)
 void CTrail::Free()
 {
 	__super::Free();
-
-	Safe_Release(m_pRenderer);
-	Safe_Release(m_pShader);
-	Safe_Release(m_pBuffer);
-	Safe_Release(m_pTexture);
-	Safe_Release(m_pGradientTexture);
+	if (true == m_isCloned)
+	{
+		Safe_Release(m_pRenderer);
+		Safe_Release(m_pShader);
+		Safe_Release(m_pBuffer);
+		Safe_Release(m_pTexture);
+		Safe_Release(m_pGradientTexture);
+	}
 }
