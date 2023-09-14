@@ -461,27 +461,24 @@ void CObject_Window::Install_Multi_Object(_float3 vPos)
 			vecWorldMatrix.push_back(pObject->Get_Transform()->Get_WorldMatrix());
 		}
 
-		m_SaveInsObjectDesc.iInstanceCnt = m_iInsObjectCnt;
+		SAVEINSOBJECTDESC SaveDesc;
 
-		m_SaveInsObjectDesc.pMatTransform = New _float4x4[m_SaveInsObjectDesc.iInstanceCnt];
-		for (size_t i = 0; i < m_SaveInsObjectDesc.iInstanceCnt; i++)
+		SaveDesc.iInstanceCnt = m_iInsObjectCnt;
+
+		SaveDesc.pMatTransform = New _float4x4[SaveDesc.iInstanceCnt];
+		for (size_t i = 0; i < SaveDesc.iInstanceCnt; i++)
 		{
-			m_SaveInsObjectDesc.pMatTransform[i] = vecWorldMatrix.at(i);
+			SaveDesc.pMatTransform[i] = vecWorldMatrix.at(i);
 		}
 
-		m_SaveInsObjectDesc.matTransform = XMMatrixIdentity();
-		m_SaveInsObjectDesc.iTagLen = lstrlen(m_vecModelList_t.at(m_iModelIndex)) * 2;
-		lstrcpy(m_SaveInsObjectDesc.wszTag, m_vecModelList_t.at(m_iModelIndex));
+		SaveDesc.matTransform = XMMatrixIdentity();
+		SaveDesc.iTagLen = lstrlen(m_vecModelList_t.at(m_iModelIndex)) * 2;
+		lstrcpy(SaveDesc.wszTag, m_vecModelList_t.at(m_iModelIndex));
 
-		m_vecSaveInsObject.push_back(m_SaveInsObjectDesc);
+		m_vecSaveInsObject.push_back(SaveDesc);
+		m_vecFreeMatrix.push_back(SaveDesc.pMatTransform);
 
 		m_iInsObjectCnt = 0;
-
-		m_SaveInsObjectDesc.iInstanceCnt = 0;
-		m_SaveInsObjectDesc.iTagLen = 0;
-		m_SaveInsObjectDesc.matTransform = XMMatrixIdentity();
-		m_vecFreeMatrix.push_back(m_SaveInsObjectDesc.pMatTransform);
-		ZEROMEM(m_SaveInsObjectDesc.wszTag);
 
 		++m_iPushBackInsObject;
 	}
@@ -756,6 +753,18 @@ void CObject_Window::Delete_Object_Menu()
 			m_vecSaveObject.clear();
 			m_vecObjectTag_s.clear();
 			m_vecMapObjectTag.clear();
+
+			// 인스턴싱 관련 초기화
+			m_iPushBackInsObject = 0;
+			m_iInsObjectCnt = 0;
+			
+			for (auto& iter : m_vecFreeMatrix)
+			{
+				Safe_Delete_Array(iter);
+			}
+
+			m_vecFreeMatrix.clear();
+			m_vecSaveInsObject.clear();
 
 			m_isDeleteObject = false;
 		}
@@ -1213,7 +1222,6 @@ HRESULT CObject_Window::Load_MapObject_Ins(const _tchar* wszMapDataPath)
 	}
 
 	m_vecSaveInsObject.clear();
-	m_vecSaveInsObject.clear();
 
 	HANDLE hFile = CreateFile(wszMapDataPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
@@ -1249,6 +1257,8 @@ HRESULT CObject_Window::Load_MapObject_Ins(const _tchar* wszMapDataPath)
 					return E_FAIL;
 				}
 			}
+
+			m_vecFreeMatrix.push_back(SaveDesc.pMatTransform);
 		}
 
 		if (!ReadFile(hFile, &SaveDesc.matTransform, sizeof(_float4x4), &dwByte, nullptr))
@@ -1643,13 +1653,11 @@ void CObject_Window::Free(void)
 	m_vecObjectTag_s.clear();
 	m_vecMapObjectTag.clear();
 
-	for (auto& iter : m_vecSaveInsObject)
-	{
-		Safe_Delete_Array(iter.pMatTransform);
-	}
-
 	for (auto& iter : m_vecFreeMatrix)
 	{
 		Safe_Delete_Array(iter);
 	}
+
+	m_vecFreeMatrix.clear();
+	m_vecSaveInsObject.clear();
 }
