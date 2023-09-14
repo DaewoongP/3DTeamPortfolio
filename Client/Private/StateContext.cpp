@@ -49,6 +49,7 @@ HRESULT CStateContext::Set_StateMachine(const _tchar* _pTag)
 		m_pCurrentStateMachine->OnStateExit();
 
 		Safe_Release(m_pCurrentStateMachine);
+		return E_FAIL;
 	}
 
 	m_pCurrentStateMachine = Find_StateMachine(_pTag);
@@ -58,6 +59,8 @@ HRESULT CStateContext::Set_StateMachine(const _tchar* _pTag)
 	Safe_AddRef(m_pCurrentStateMachine);
 
 	m_pCurrentStateMachine->OnStateEnter();
+
+	return S_OK;
 }
 
 CStateMachine* CStateContext::Find_StateMachine(const _tchar* _pTag)

@@ -51,12 +51,7 @@ private:
 	/* 마법을 위한 공간 */
 	class CMagic*	m_pMagic = { nullptr };
 	CWeapon_Player_Wand*	m_pWeapon = { nullptr };
-	
-#ifdef _DEBUG
 
-	CCollider*		m_pTestCollider = { nullptr };
-
-#endif // _DEBUG
 
 private:
 	HRESULT Add_Components();
@@ -76,7 +71,6 @@ public:
 
 #ifdef _DEBUG
 private:
-	HRESULT Ready_Test_Collider();
 	void Tick_ImGui();
 #endif // _DEBUG
 

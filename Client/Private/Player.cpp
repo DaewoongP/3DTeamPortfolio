@@ -52,17 +52,6 @@ HRESULT CPlayer::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
-#ifdef _DEBUG
-	
-	if (FAILED(Ready_Test_Collider()))
-	{
-		MSG_BOX("Failed Ready Player Test_Collider");
-
-		return E_FAIL;
-	}
-
-#endif // _DEBUG
-
 	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
 
@@ -85,12 +74,6 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	if (nullptr != m_pRenderer)
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
-
-#ifdef _DEBUG
-		
-		m_pRenderer->Add_DebugGroup(m_pTestCollider);
-
-#endif // _DEBUG
 	}
 
 #ifdef _DEBUG
@@ -397,24 +380,6 @@ void CPlayer::MagicTestTextOutput()
 
 #ifdef _DEBUG
 
-HRESULT CPlayer::Ready_Test_Collider()
-{
-	CBounding_Sphere::BOUNDINGSPHEREDESC BoundingSphereDesc{};
-
-	BoundingSphereDesc.fRadius = 0.5f;
-	BoundingSphereDesc.vPosition = _float3(0.0f, 0.0f, 0.0f);
-
-	/* For.Com_Collider */
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sphere_Collider"),
-		TEXT("Com_TestCollider"), reinterpret_cast<CComponent**>(&m_pTestCollider), &BoundingSphereDesc)))
-	{
-		MSG_BOX("Failed CDebug_Point Add_Component : (Com_TestCollider)");
-		return E_FAIL;
-	}
-
-	return S_OK;
-}
-
 void CPlayer::Tick_ImGui()
 {
 	//ImGui::Begin("Player");
@@ -497,8 +462,5 @@ void CPlayer::Free()
 		Safe_Release(m_pMagic);
 		Safe_Release(m_pWeapon);
 
-#ifdef _DEBUG
-		Safe_Release(m_pTestCollider);
-#endif // _DEBUG
 	}
 }
