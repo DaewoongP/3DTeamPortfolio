@@ -279,11 +279,11 @@ HRESULT CRigidBody::Create_Collider(RIGIDBODYDESC* pRigidBodyDesc)
 	// Query : 레이캐스트 처리
 	if (true == pRigidBodyDesc->isTrigger)
 	{
-		ePxFlag = PxShapeFlag::eSCENE_QUERY_SHAPE | PxShapeFlag::eTRIGGER_SHAPE | PxShapeFlag::eVISUALIZATION;
+		ePxFlag = PxShapeFlag::eSCENE_QUERY_SHAPE | PxShapeFlag::eTRIGGER_SHAPE;
 	}
 	else
 	{
-		ePxFlag = PxShapeFlag::eSCENE_QUERY_SHAPE | PxShapeFlag::eSIMULATION_SHAPE | PxShapeFlag::eVISUALIZATION;
+		ePxFlag = PxShapeFlag::eSCENE_QUERY_SHAPE | PxShapeFlag::eSIMULATION_SHAPE;
 	}
 
 	m_pGeometry = pRigidBodyDesc->pGeometry;
