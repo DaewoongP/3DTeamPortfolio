@@ -379,7 +379,7 @@ void CDummyParticle::ShapeModule_TreeNode(CEffect_Window* pEffectWindow)
 			m_pClipChannelCombo->Tick(CComboBox::FLAG::TABLE);
 			if (m_pClipChannelCombo->IsUpdated())
 				m_ShapeModuleDesc.strClipChannel = m_pClipChannelCombo->Get_Current_Item();
-			
+
 			pEffectWindow->Table_DragFloat("Clip Threshold", "XC08VB890890T4", &m_ShapeModuleDesc.fClipThreshold, 0.01f, 0.f, 1.f);
 			pEffectWindow->Table_CheckBox("Color affects Particles", "D3UIOF79H79EFB", &m_ShapeModuleDesc.isColorAffectsParticles);
 			pEffectWindow->Table_CheckBox("Alpha affects Particles", "ZXCIUFV7980RV890", &m_ShapeModuleDesc.isAlphaAffectsParticles);
@@ -397,7 +397,7 @@ void CDummyParticle::ShapeModule_TreeNode(CEffect_Window* pEffectWindow)
 				_float4x4 ScaleMatrix = _float4x4::MatrixScale(vShapeScale);
 				m_ShapeModuleDesc.ShapeMatrix = ScaleMatrix * RotationMatrix * TranslationMatrix;
 			}
-			
+
 			if (pEffectWindow->Table_DragXYZ("Rotation", "vioc4ijdfg", &vShapeRotation))
 			{
 				_float4x4 TranslationMatrix = _float4x4::MatrixTranslation(vShapePosition);
@@ -407,7 +407,7 @@ void CDummyParticle::ShapeModule_TreeNode(CEffect_Window* pEffectWindow)
 					XMConvertToRadians(vShapeRotation.z)));
 				_float4x4 ScaleMatrix = _float4x4::MatrixScale(vShapeScale);
 				m_ShapeModuleDesc.ShapeMatrix = ScaleMatrix * RotationMatrix * TranslationMatrix;
-				
+
 
 			}
 			if (pEffectWindow->Table_DragXYZ("Scale", "xciv8348kd", &vShapeScale))
@@ -426,6 +426,8 @@ void CDummyParticle::ShapeModule_TreeNode(CEffect_Window* pEffectWindow)
 			pEffectWindow->Table_DragFloat("Randomize Direction", "XC08xcsd890890T4", &m_ShapeModuleDesc.fRandomizeDirection, 0.01f, 0.f, 1.f);
 			pEffectWindow->Table_DragFloat("Spherize Direction", "XC08wceV90cvT4", &m_ShapeModuleDesc.fSpherizeDirection, 0.01f, 0.f, 1.f);
 			pEffectWindow->Table_DragFloat("Randomize Position", "xcf8u8vceV90", &m_ShapeModuleDesc.fRandomizePosition);
+
+			pEffectWindow->Table_CheckBox("Chase", "ck939cikcke", &m_ShapeModuleDesc.isChase);
 
 			ImGui::EndTable();
 		}
@@ -605,13 +607,6 @@ void CDummyParticle::Load_FileDialog()
 			else
 			{
 				Load_After();
-
-				//m_pMaterialTextureIFD->ChangeTexture(wstrToStr(m_RendererModuleDesc.wstrMaterialPath).data());
-				//m_pAlphaTextureIFD->ChangeTexture(wstrToStr(m_ShapeModuleDesc.wstrClipTexturePath).data());
-				//m_pSpriteTypeCombo->Update_Current_Item(m_ShapeModuleDesc.str);
-				//m_pConeEmitFromCombo->Update_Current_Item(m_MainModuleDesc.str);
-				//m_pBoxEmitFromCombo->Update_Current_Item(m_ShapeModuleDesc.strThetaMode);
-
 				MSG_BOX("The file has been loaded successfully");
 			}
 		}
@@ -636,6 +631,11 @@ void CDummyParticle::Load_After()
 	m_pClipChannelCombo->Update_Current_Item(m_ShapeModuleDesc.strClipChannel);
 	ChangeTexture(&m_pMainTexture, m_RendererModuleDesc.wstrMaterialPath, ToRelativePath(m_RendererModuleDesc.wstrMaterialPath.c_str()).c_str());
 	ChangeTexture(&m_pClipTexture, m_ShapeModuleDesc.wstrClipTexturePath, ToRelativePath(m_ShapeModuleDesc.wstrClipTexturePath.c_str()).c_str());
+	//m_pMaterialTextureIFD->ChangeTexture(wstrToStr(m_RendererModuleDesc.wstrMaterialPath).data());
+//m_pAlphaTextureIFD->ChangeTexture(wstrToStr(m_ShapeModuleDesc.wstrClipTexturePath).data());
+//m_pSpriteTypeCombo->Update_Current_Item(m_ShapeModuleDesc.str);
+//m_pConeEmitFromCombo->Update_Current_Item(m_MainModuleDesc.str);
+//m_pBoxEmitFromCombo->Update_Current_Item(m_ShapeModuleDesc.strThetaMode);
 }
 void CDummyParticle::Restart()
 {

@@ -40,9 +40,10 @@ protected:
 	virtual ~CParticleSystem() = default;
 
 public:
-	void Set_ChaseTransform(_bool isChase) { m_isChase = isChase; }
 	_uint Get_DeadCount() { return m_Particles[DEAD].size(); }
 	_bool Is_AllDead() { return (m_Particles[ALIVE].empty() && m_Particles[DELAY].empty()); }
+	_bool IsEnable() { return m_MainModuleDesc.isEnable; }
+	_bool Is_AliveEmpty() { return m_Particles[ALIVE].empty(); }
 
 public:
 	virtual HRESULT Initialize_Prototype(const _tchar* _pDirectoryPath, _uint iLevel);
@@ -66,12 +67,9 @@ public:
 	void Stop();
 	virtual void Restart();
 
-protected:
+public:
 	void Enable();
 	void Disable();
-
-public:
-	_bool IsEnable() { return m_MainModuleDesc.isEnable; }
 
 protected:
 	HRESULT Save(const _tchar* _pDirectoyPath);
@@ -79,7 +77,6 @@ protected:
 
 public:
 	void Reset_Particle(PARTICLE_IT& _particle_iter);
-	void Reset_Particles(STATE eGroup);
 	void Reset_AllParticles();
 	void ResetStartPosition(PARTICLE_IT& _particle_iter);
 
@@ -140,7 +137,7 @@ protected:
 	vector<COL_INSTANCE>  m_ParticleMatrices;
 	function<void()> m_StopAction;
 	_uint m_iLevel = { 0 };
-	_bool m_isChase = { true };
+
 public:
 	static CParticleSystem* Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, const _tchar* _pDirectoryPath, _uint iLevel = 0);
 	virtual CGameObject* Clone(void* _pArg) override;

@@ -110,45 +110,57 @@ void CParticleSystem::Tick(_float _fTimeDelta)
 	// Burst옵션에 따른 파티클 생성
 	Action_By_Bursts();
 
-	_float4 vCamPosition = XMVector3TransformCoord(*pGameInstance->Get_CamPosition(), m_pTransform->Get_WorldMatrix_Inverse());
+	// 카메라가 파티클 시스템의 로컬 포지션으로 감.
+	_float4 vCamPosition;
+	if (true == m_ShapeModuleDesc.isChase)
+	{
+		vCamPosition = XMVector3TransformCoord(*pGameInstance->Get_CamPosition(), m_pTransform->Get_WorldMatrix_Inverse());
+	}
+	else
+	{
+		vCamPosition = *pGameInstance->Get_CamPosition();
+	}
 
 	// 파티클 연산 시작
-	for (auto iter = m_Particles[ALIVE].begin(); iter != m_Particles[ALIVE].end();)
+	for (auto Particle_iter = m_Particles[ALIVE].begin(); Particle_iter != m_Particles[ALIVE].end();)
 	{
 		COL_INSTANCE colInstDesc;
-		_float4 vPos;
+		_float3 vPos;
 
 		// 이전프레임의 값들을 가져옴.
-		vPos = iter->WorldMatrix.Translation().TransCoord();
+		vPos = Particle_iter->WorldMatrix.Translation();
 
 		// 위치에 속도를 더해서 최종 위치를 정함.
-		vPos = vPos + iter->vVelocity * _fTimeDelta;
-
+		vPos = vPos + Particle_iter->vVelocity * _fTimeDelta;
+		
 		// 중력값 적용
-		iter->fGravityAccel += m_MainModuleDesc.fGravityModifier * _fTimeDelta;
-		vPos.y -= iter->fGravityAccel * 0.1f; // 0.1f는 값을 미세하게 조정하기 위한 상수값.
+		Particle_iter->fGravityAccel += m_MainModuleDesc.fGravityModifier * _fTimeDelta;
+		vPos.y -= Particle_iter->fGravityAccel * 0.1f; // 0.1f는 값을 미세하게 조정하기 위한 상수값.
 
 		// 위치 갱신
-		iter->WorldMatrix.Translation(vPos.xyz());
-		Action_By_RotationOverLifeTime(iter, _fTimeDelta);
+		Particle_iter->WorldMatrix.Translation(vPos);
 
-		Action_By_ColorOverLifeTime(iter, _fTimeDelta);
+		// 모듈
+		Action_By_RotationOverLifeTime(Particle_iter, _fTimeDelta);
+
+		// 모듈
+		Action_By_ColorOverLifeTime(Particle_iter, _fTimeDelta);
 
 		// SRT 연산
-		_float4x4 ScaleMatrix = _float4x4::MatrixScale(iter->vScale);
-		_float4x4 BillBoardMatrix = LookAt(vPos.xyz(), vCamPosition.xyz());
-		_float4x4 RotationMatrix = _float4x4::MatrixRotationAxis(_float3(vPos.xyz() - vCamPosition), XMConvertToRadians(iter->fAngle));
-		_float4x4 TranslationMatrix = _float4x4::MatrixTranslation(vPos.xyz());
+		_float4x4 ScaleMatrix = _float4x4::MatrixScale(Particle_iter->vScale);
+		_float4x4 BillBoardMatrix = LookAt(vPos, vCamPosition.xyz());
+		_float4x4 RotationMatrix = _float4x4::MatrixRotationAxis(_float3(vPos - vCamPosition), XMConvertToRadians(Particle_iter->fAngle));
+		_float4x4 TranslationMatrix = _float4x4::MatrixTranslation(vPos);
 		_float4x4 TransfomationMatrix = ScaleMatrix * BillBoardMatrix * RotationMatrix * TranslationMatrix;
 
 		colInstDesc.vRight = TransfomationMatrix.Right().TransNorm();
 		colInstDesc.vUp = TransfomationMatrix.Up().TransNorm();
 		colInstDesc.vLook = TransfomationMatrix.Look().TransNorm();
 		colInstDesc.vTranslation = TransfomationMatrix.Translation().TransCoord();
-		colInstDesc.vColor = iter->vColor;
+		colInstDesc.vColor = Particle_iter->vColor;
 
 		m_ParticleMatrices.push_back(colInstDesc);
-		++iter;
+		++Particle_iter;
 	}
 
 	m_pBuffer->Set_DrawNum(_uint(m_Particles[ALIVE].size()));
@@ -202,7 +214,7 @@ HRESULT CParticleSystem::Setup_ShaderResources()
 	Safe_AddRef(pGameInstance);
 
 	_float4x4 WorldMatrix;
-	if(true == m_isChase)
+	if(true == m_ShapeModuleDesc.isChase)
 		WorldMatrix = m_pTransform->Get_WorldMatrix();
 
 	try
@@ -372,7 +384,8 @@ void CParticleSystem::Action_By_RateOverTime()
 void CParticleSystem::Action_By_Distance()
 {
 	_float fPositionDelta = { _float3(m_EmissionModuleDesc.vCurPos - m_EmissionModuleDesc.vPrevPos).Length() };
-
+	if (fPositionDelta < 0.01f)
+		return;
 	_float fTotalParticles = fPositionDelta * m_EmissionModuleDesc.fRateOverDistance + m_EmissionModuleDesc.fAccumulatedError;
 	_uint iParticleCount = (_uint)fTotalParticles;
 
@@ -609,8 +622,12 @@ void CParticleSystem::ResetStartPosition(PARTICLE_IT& _particle_iter)
 	vPosition = XMVector3TransformCoord(vPosition, m_ShapeModuleDesc.ShapeMatrix);
 	vDirection = XMVector3TransformNormal(vDirection, m_ShapeModuleDesc.ShapeMatrix);
 	vDirection.Normalize();
+	if (m_ShapeModuleDesc.isChase == false)
+	{
+		vPosition += m_pTransform->Get_Position();
+	}
+	_particle_iter->WorldMatrix.Translation(vPosition);
 
-	_particle_iter->WorldMatrix.Translation(vPosition + m_pTransform->Get_Position());
 	_particle_iter->vVelocity = (vDirection * fSpeed).TransNorm();
 	
 	Safe_Release(pGameInstance);
@@ -750,13 +767,7 @@ void CParticleSystem::Reset_Particle(PARTICLE_IT& _particle_iter)
 	_particle_iter->fGravityAccel = { 0.f };
 
 }
-void CParticleSystem::Reset_Particles(STATE eGroup)
-{
-	for (auto it = m_Particles[eGroup].begin(); it != m_Particles[eGroup].end(); ++it)
-	{
-		Reset_Particle(it);
-	}
-}
+
 void CParticleSystem::Reset_AllParticles()
 {
 	for (_uint i = 0; i < STATE_END; ++i)
@@ -814,8 +825,8 @@ void CParticleSystem::Restart()
 	}
 
 	// 수명리셋
-	//for (auto& Particle : m_Particles[ALIVE])
-	//	Particle.fAge = 0.f;
+	for (auto& Particle : m_Particles[ALIVE])
+	 	Particle.fAge = 0.f;
 	for (auto& Particle : m_Particles[DELAY])
 		Particle.fAge = 0.f;
 

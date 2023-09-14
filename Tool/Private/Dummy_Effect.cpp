@@ -85,12 +85,11 @@ void CDummy_Effect::Tick(_float fTimeDelta)
 	{
 		m_pTransform->Go_Right(fTimeDelta);
 	}
-	m_pParticleSystemTransform->Set_Position(m_pTransform->Get_Position());
-	_float4x4 Results = pGameInstance->RightUpLook_In_Vectors(m_pTransform->Get_Position(), m_vPrevPos);
+	else if (pGameInstance->Get_DIKeyState(DIK_SPACE))
+	{
+		m_pParticleSystem->Play();
+	}
 
-	SHAPE_MODULE& shapeModule = m_pParticleSystem->Get_ShapeModuleRef();
-	shapeModule.strShape = "Cone";
-	shapeModule.ShapeMatrix = Results;
 
 	// // / //////////////
 

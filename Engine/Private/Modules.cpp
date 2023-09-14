@@ -30,7 +30,6 @@ HRESULT MAIN_MODULE::Save(const _tchar* _pDirectoyPath)
 	__super::Save(hFile, dwByte);
 
 	WriteFile(hFile, &isEnable, sizeof isEnable, &dwByte, nullptr);
-	WriteFile(hFile, &fParticleSystemAge, sizeof fParticleSystemAge, &dwByte, nullptr);
 	WriteFile(hFile, &fDuration, sizeof fDuration, &dwByte, nullptr);
 	WriteFile(hFile, &isLooping, sizeof isLooping, &dwByte, nullptr);
 	WriteFile(hFile, &isPrewarm, sizeof isPrewarm, &dwByte, nullptr);
@@ -88,7 +87,6 @@ HRESULT MAIN_MODULE::Load(const _tchar* _pDirectoyPath)
 	__super::Load(hFile, dwByte);
 
 	ReadFile(hFile, &isEnable, sizeof isEnable, &dwByte, nullptr);
-	ReadFile(hFile, &fParticleSystemAge, sizeof fParticleSystemAge, &dwByte, nullptr);
 	ReadFile(hFile, &fDuration, sizeof fDuration, &dwByte, nullptr);
 	ReadFile(hFile, &isLooping, sizeof isLooping, &dwByte, nullptr);
 	ReadFile(hFile, &isPrewarm, sizeof isPrewarm, &dwByte, nullptr);
@@ -290,7 +288,8 @@ HRESULT SHAPE_MODULE::Save(const _tchar* _pDirectoyPath)
 	WriteFile(hFile, &fAngle, sizeof(fAngle), &dwByte, nullptr);
 	WriteFile(hFile, &fBaseRadius, sizeof(fBaseRadius), &dwByte, nullptr);
 	WriteFile(hFile, &fConeLength, sizeof(fConeLength), &dwByte, nullptr);
-
+	WriteFile(hFile, &isChase, sizeof(isChase), &dwByte, nullptr);
+	
 	CloseHandle(hFile);
 	return S_OK;
 }
@@ -363,6 +362,7 @@ HRESULT SHAPE_MODULE::Load(const _tchar* _pDirectoyPath)
 	ReadFile(hFile, &fBaseRadius, sizeof(fBaseRadius), &dwByte, nullptr);
 	ReadFile(hFile, &fConeLength, sizeof(fConeLength), &dwByte, nullptr);
 
+	ReadFile(hFile, &isChase, sizeof(isChase), &dwByte, nullptr);
 	CloseHandle(hFile);
 	return S_OK;
 }

@@ -20,9 +20,9 @@ HRESULT CDefault_Magic_Effect::Initialize_Prototype(_uint iLevel)
 	m_iLevel = iLevel;
 
 	BEGININSTANCE;
-	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_TestTrail")))
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Default_Magic_Trail")))
 	{
-		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_TestTrail")
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Default_Magic_Trail")
 			, CTrail::Create(m_pDevice, m_pContext, TEXT("../"), m_iLevel))))
 		{
 			ENDINSTANCE;
@@ -30,9 +30,9 @@ HRESULT CDefault_Magic_Effect::Initialize_Prototype(_uint iLevel)
 		}
 	}
 
-	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_TestParticle")))
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Default_Magic_Boom_Particle")))
 	{
-		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_TestParticle")
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Default_Magic_Boom_Particle")
 			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Default_Spell"), m_iLevel))))
 		{
 			ENDINSTANCE;
@@ -40,6 +40,25 @@ HRESULT CDefault_Magic_Effect::Initialize_Prototype(_uint iLevel)
 		}
 	}
 
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Default_Magic_Trace_Particle")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Default_Magic_Trace_Particle")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Default_Spell/Default_Magic_Trace"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Default_Magic_ConeEmit_Particle")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Default_Magic_ConeEmit_Particle")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Default_Spell/ConeEmit"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
 	ENDINSTANCE;
 	return S_OK;
 }
@@ -54,62 +73,81 @@ HRESULT CDefault_Magic_Effect::Initialize(void* pArg)
 
 	m_pTransform->Set_Position(_float3(0.f, 0.f, 0.f));
 	m_pTransform->Set_Speed(20.f);
+	
 	m_pParticleTransform = m_pParticleSystem->Get_Transform();
 	Safe_AddRef(m_pParticleTransform);
 
 	m_pTrailTransform = m_pTrail->Get_Transform();
 	Safe_AddRef(m_pTrailTransform);
-	
+
+	m_pTraceParticleTransform = m_pTraceParticle->Get_Transform();
+	Safe_AddRef(m_pTraceParticleTransform);
+
+	m_pConeEmitTransform = m_pConeEmitParticle->Get_Transform();
+	Safe_AddRef(m_pConeEmitTransform);
+
 	return S_OK;
 }
 
 void CDefault_Magic_Effect::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
+	BEGININSTANCE;
 #ifdef _DEBUG
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
-
 	if (pGameInstance->Get_DIKeyState(DIK_UPARROW))
 	{
 		m_pTransform->Go_Straight(fTimeDelta);
 	}
-
-	if (pGameInstance->Get_DIKeyState(DIK_RIGHTARROW))
-	{
-		m_pTransform->Go_Right(fTimeDelta);
-	}
-
-	if (pGameInstance->Get_DIKeyState(DIK_LEFTARROW))
-	{
-		m_pTransform->Go_Left(fTimeDelta);
-	}
-
-	if (pGameInstance->Get_DIKeyState(DIK_DOWNARROW))
+	else if (pGameInstance->Get_DIKeyState(DIK_DOWNARROW))
 	{
 		m_pTransform->Go_Backward(fTimeDelta);
 	}
-
-	if (pGameInstance->Get_DIKeyState(DIK_SPACE))
+	else if (pGameInstance->Get_DIKeyState(DIK_LEFTARROW))
 	{
-		Play_Particle(m_pTransform->Get_Position());
+		m_pTransform->Go_Left(fTimeDelta);
 	}
+	else if (pGameInstance->Get_DIKeyState(DIK_RIGHTARROW))
+	{
+		m_pTransform->Go_Right(fTimeDelta);
+	}
+	else if (pGameInstance->Get_DIKeyState(DIK_SPACE))
+	{
+		Play_ConeEmit(_float3(3.f, 2.f, 0.f));
+	}
+#endif // _DEBUG
 
-	Safe_Release(pGameInstance);
-#endif // DEBUG
+	// For. Trace Particle
+	m_pTraceParticleTransform->Set_Position(m_pTransform->Get_Position());
+	_float4x4 Results = pGameInstance->RightUpLook_In_Vectors(m_pTransform->Get_Position(), m_vPrevPos);
+	SHAPE_MODULE& shapeModule = m_pParticleSystem->Get_ShapeModuleRef();
+	shapeModule.strShape = "Cone";
+	shapeModule.ShapeMatrix = Results;
+
+	// For. ConeEmitParticle
+	if (false == m_pConeEmitParticle->Is_AliveEmpty())
+	{
+		m_pConeEmitTransform->Set_Position(m_pTransform->Get_Position());
+	}
+	ENDINSTANCE;
 }
 
 void CDefault_Magic_Effect::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 	m_pTrailTransform->Set_Position(m_pTransform->Get_Position());
+	m_vPrevPos = m_pTransform->Get_Position();
 }
 
 void CDefault_Magic_Effect::Play_Particle(_float3 vPos)
 {
-	m_pParticleSystem->Play();
 	m_pParticleTransform->Set_Position(vPos);
+	m_pParticleSystem->Play();
+}
+
+void CDefault_Magic_Effect::Play_ConeEmit(_float3 vPos)
+{
+	m_pConeEmitTransform->Set_Position(vPos);
+	m_pConeEmitParticle->Play();
 }
 
 void CDefault_Magic_Effect::Set_Position(_float3 vPos)
@@ -122,14 +160,27 @@ void CDefault_Magic_Effect::Enable_Trail(_bool _isEnable)
 	(true == _isEnable) ? m_pTrail->Enable() : m_pTrail->Disable();
 }
 
+void CDefault_Magic_Effect::Enable_TraceParticle(_bool _isEnable)
+{
+	(true == _isEnable) ? m_pTraceParticle->Enable() : m_pTraceParticle->Disable();
+}
+
 HRESULT CDefault_Magic_Effect::Add_Components()
 {
-	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_TestTrail")
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Default_Magic_Trail")
 		, TEXT("Com_Trail"), (CComponent**)&m_pTrail)))
 		return E_FAIL;
 
-	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_TestParticle")
-		, TEXT("Com_Particle"), (CComponent**)&m_pParticleSystem)))
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Default_Magic_Boom_Particle")
+		, TEXT("Com_Boom_Particle"), (CComponent**)&m_pParticleSystem)))
+		return E_FAIL;
+
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Default_Magic_Trace_Particle")
+		, TEXT("Com_Trace_Particle"), (CComponent**)&m_pTraceParticle)))
+		return E_FAIL;
+
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Default_Magic_ConeEmit_Particle")
+		, TEXT("Com_ConeEmit_Particle"), (CComponent**)&m_pConeEmitParticle)))
 		return E_FAIL;
 
 	return S_OK;
@@ -163,14 +214,17 @@ CGameObject* CDefault_Magic_Effect::Clone(void* pArg)
 
 void CDefault_Magic_Effect::Free()
 {
+	__super::Free();
 	if (true == m_isCloned)
 	{
-		__super::Free();
-
 		Safe_Release(m_pTrail);
 		Safe_Release(m_pParticleSystem);
+		Safe_Release(m_pTraceParticle);
+		Safe_Release(m_pConeEmitParticle);
 
 		Safe_Release(m_pParticleTransform);
 		Safe_Release(m_pTrailTransform);
+		Safe_Release(m_pTraceParticleTransform);
+		Safe_Release(m_pConeEmitTransform);
 	}
 }

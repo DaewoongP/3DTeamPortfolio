@@ -149,7 +149,7 @@ struct ENGINE_DLL SHAPE_MODULE : public MODULE
 	_float fSpherizeDirection = { 0.f };  //[0, 1]
 	_float fRandomizePosition = { 0.f };
 
-
+	_bool isChase = { false };
 };
 struct ENGINE_DLL RENDERER_MODULE : public MODULE
 {
