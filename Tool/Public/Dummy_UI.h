@@ -12,9 +12,12 @@ END
 
 BEGIN(Tool)
 
-class CDummy_UI final : public CUI
+class CDummy_UI final : public CGameObject
 {
-protected:
+public:
+	enum UI_ID { NONE, BUTTON, PROGRESS, UI_ID_END };
+
+private:
 	explicit CDummy_UI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CDummy_UI(const CDummy_UI& rhs);
 	virtual ~CDummy_UI() = default;
@@ -25,7 +28,7 @@ public:
 	_float2		Get_fSize() { return _float2(m_fSizeX, m_fSizeY); }
 	_float2		Get_vCombinedXY() { return m_vCombinedXY; }
 	_bool		Get_bParent() { return m_isParent; }
-	CUI*		Get_Parent() { return m_pParent; }
+	CDummy_UI*		Get_Parent() { return m_pParent; }
 	_tchar*		Get_TextureName() { return m_wszTextureName; }
 	_tchar*		Get_TexturePath() { return m_wszTexturePath; }
 	UI_ID		Get_UI_ID() { return m_eUIType; }
@@ -84,14 +87,67 @@ public:
 	}
 	void	Set_eUIID(UI_ID eType) { m_eUIType = eType; }
 
+public:
+	_bool	Is_In_Rect(HWND hWnd);
 
-protected:
+public:
+	_float2	UIPos_To_WorldPos(_float fX, _float fY);
+	_float2 WorldPos_To_UIPos(_float fX, _float fY);
+
+private:
+	HRESULT Change_Position(_float fX, _float fY);
+	HRESULT Change_Scale(_float fX, _float fY);
+
+public:
+	HRESULT	Save(HANDLE hFile, _ulong& dwByte);
+	HRESULT	Load(HANDLE hFile, _ulong& dwByte);
+
+
+private:
 	CShader*			m_pShaderCom = { nullptr };
 	CTexture*			m_pTextureCom = { nullptr };
 	CRenderer*			m_pRendererCom = { nullptr };
 	CVIBuffer_Rect*		m_pVIBufferCom = { nullptr };
 
 	CTexture*			m_pAlphaTextureCom = { nullptr };
+
+private: // None이 사용하는 변수
+	_float2			m_vCombinedXY = { 0.f, 0.f };
+	// 윈도우창의 실제 x좌표
+	_float			m_fX = { 650.f };
+	// 윈도우창의 실제 y좌표
+	_float			m_fY = { 360.f };
+	// UI 거리 체크용 z값
+	_float			m_fZ = { 0.f };
+	// 텍스처 x사이즈 설정
+	_float			m_fSizeX = { 100.f };
+	// 텍스처 y사이즈 설정
+	_float			m_fSizeY = { 100.f };
+
+	_uint			m_iWinSizeX = { 0 };
+	_uint			m_iWinSizeY = { 0 };
+
+
+	_float4x4		m_ViewMatrix;
+	_float4x4		m_ProjMatrix;
+
+private:
+	_tchar			m_wszTextureName[MAX_PATH] = {};
+	_tchar			m_wszTexturePath[MAX_PATH] = {};
+
+	UI_ID			m_eUIType = { UI_ID_END };
+	_bool			m_isParent = { false };
+	CDummy_UI*			m_pParent = { nullptr };
+
+private:
+	_bool			m_isAlpha = { false };
+	_float4			m_vColor = { 1.f, 1.f, 1.f, 1.f };
+	_tchar			m_wszAlphaTexturePrototypeTag[MAX_PATH] = TEXT("");
+	_tchar			m_wszAlphaTextureFilePath[MAX_PATH] = TEXT("");
+
+private:
+	_bool			m_isSave = { false };
+
 
 private:
 	HRESULT Add_Components();

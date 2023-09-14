@@ -279,7 +279,20 @@ HRESULT CLevel_MainGame::Ready_Layer_UI(const _tchar* pLayerTag)
 {
 	BEGININSTANCE;
 
-	_tchar pFilePath[MAX_PATH] = TEXT("../../Resources/GameData/UIData/UI_Group_HP.uidata");
+	_tchar szFilePath[MAX_PATH] = TEXT("");
+
+
+	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_HP.uidata"));
+	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_HP"),
+		pLayerTag, TEXT("GameObject_UI_Group_HP"), szFilePath)))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_HP)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+	/*_tchar pFilePath[MAX_PATH] = TEXT("../../Resources/GameData/UIData/UI_Group_HP.uidata");
 	_ulong dwByte = 0;
 	HANDLE hFile = CreateFile(pFilePath, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 	if (hFile == INVALID_HANDLE_VALUE)
@@ -372,7 +385,7 @@ HRESULT CLevel_MainGame::Ready_Layer_UI(const _tchar* pLayerTag)
 	CloseHandle(hFile);
 
 
-	ENDINSTANCE;
+	ENDINSTANCE;*/
 
 	return S_OK;
 }
@@ -410,6 +423,12 @@ HRESULT CLevel_MainGame::Ready_Layer_Debug(const _tchar* pLayerTag)
 	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Player"), pLayerTag, TEXT("GameObject_Test_Player"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Player)");
+		return E_FAIL;
+	}
+	
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_PhysxRenderer"), pLayerTag, TEXT("GameObject_PhysxRenderer"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_PhysxRenderer)");
 		return E_FAIL;
 	}
 

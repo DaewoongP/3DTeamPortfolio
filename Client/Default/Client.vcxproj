@@ -164,7 +164,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Action.h" />
-    <ClInclude Include="..\Public\UI_Image.h" />
+    <ClInclude Include="..\Public\UI_Image.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="..\Public\BasicCast.h" />
     <ClInclude Include="..\Public\Magic.h" />
     <ClInclude Include="..\Public\MagicBall.h" />
@@ -196,26 +198,54 @@
     <ClInclude Include="..\public\Test_Cloth.h" />
     <ClInclude Include="..\Public\Test_Stair.h" />
     <ClInclude Include="..\Public\Turn.h" />
-    <ClInclude Include="..\Public\UI_Back.h" />
-    <ClInclude Include="..\Public\UI_Effect_Back.h" />
-    <ClInclude Include="..\Public\UI_Finisher.h" />
-    <ClInclude Include="..\Public\UI_Finisher_Icon.h" />
-    <ClInclude Include="..\Public\UI_Group_Finisher.h" />
-    <ClInclude Include="..\Public\UI_Group_Finisher_Icon.h" />
-    <ClInclude Include="..\Public\UI_Group_HP.h" />
-    <ClInclude Include="..\Public\UI_Group_R.h" />
-    <ClInclude Include="..\Public\UI_Group_Skill.h" />
-    <ClInclude Include="..\Public\UI_Group_T.h" />
-    <ClInclude Include="..\Public\UI_HP.h" />
-    <ClInclude Include="..\Public\UI_Group_Potion.h" />
-    <ClInclude Include="..\Public\UI_Skill.h" />
+    <ClInclude Include="..\Public\UI_Back.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Effect_Back.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Finisher.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Finisher_Icon.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Group_Finisher.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Group_Finisher_Icon.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Group_HP.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Group_R.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Group_Skill.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Group_T.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_HP.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Group_Potion.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Skill.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="..\Public\Wait.h" />
     <ClInclude Include="..\Public\Weapon_Armored_Troll.h" />
     <ClInclude Include="..\Public\Level_Loading.h" />
     <ClInclude Include="..\Public\Level_Logo.h" />
     <ClInclude Include="..\public\Level_MainGame.h" />
     <ClInclude Include="..\Public\Loader.h" />
-    <ClInclude Include="..\public\Logo_BackGround.h" />
+    <ClInclude Include="..\public\Logo_BackGround.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="..\public\MainApp.h" />
     <ClInclude Include="..\public\Sky.h" />
     <ClInclude Include="..\public\Terrain.h" />
@@ -268,7 +298,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Action.cpp" />
-    <ClCompile Include="..\Private\UI_Image.cpp" />
+    <ClCompile Include="..\Private\UI_Image.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\Private\BasicCast.cpp" />
     <ClCompile Include="..\Private\Magic.cpp" />
     <ClCompile Include="..\Private\MagicBall.cpp" />
@@ -297,19 +329,45 @@
     <ClCompile Include="..\private\Test_Cloth.cpp" />
     <ClCompile Include="..\Private\Test_Stair.cpp" />
     <ClCompile Include="..\Private\Turn.cpp" />
-    <ClCompile Include="..\Private\UI_Back.cpp" />
-    <ClCompile Include="..\Private\UI_Effect_Back.cpp" />
-    <ClCompile Include="..\Private\UI_Finisher.cpp" />
-    <ClCompile Include="..\Private\UI_Finisher_Icon.cpp" />
-    <ClCompile Include="..\Private\UI_Group_Finisher.cpp" />
-    <ClCompile Include="..\Private\UI_Group_Finisher_Icon.cpp" />
-    <ClCompile Include="..\Private\UI_Group_HP.cpp" />
-    <ClCompile Include="..\Private\UI_Group_R.cpp" />
-    <ClCompile Include="..\Private\UI_Group_Skill.cpp" />
-    <ClCompile Include="..\Private\UI_Group_T.cpp" />
-    <ClCompile Include="..\Private\UI_HP.cpp" />
-    <ClCompile Include="..\Private\UI_Group_Potion.cpp" />
-    <ClCompile Include="..\Private\UI_Skill.cpp" />
+    <ClCompile Include="..\Private\UI_Back.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Effect_Back.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Finisher.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Finisher_Icon.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Group_Finisher.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Group_Finisher_Icon.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Group_HP.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Group_R.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Group_Skill.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Group_T.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_HP.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Group_Potion.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Skill.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\Private\Wait.cpp" />
     <ClCompile Include="..\Private\Weapon_Armored_Troll.cpp" />
     <ClCompile Include="..\Private\Level_Loading.cpp" />
@@ -318,7 +376,9 @@
     <ClCompile Include="..\Private\Loader.cpp">
       <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</IncludeInUnityFile>
     </ClCompile>
-    <ClCompile Include="..\private\Logo_BackGround.cpp" />
+    <ClCompile Include="..\private\Logo_BackGround.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\private\MainApp.cpp" />
     <ClCompile Include="..\private\Sky.cpp" />
     <ClCompile Include="..\private\Terrain.cpp" />

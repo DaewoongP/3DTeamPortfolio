@@ -35,7 +35,7 @@ public:
 	{
 		// this포인터 대입하면 됩니다.
 		// 내부적으로 레퍼런스 카운트 관리
-		CGameObject* pOwnerObject = { nullptr };
+		class CGameObject* pOwnerObject = { nullptr };
 		// static(true) : 움직이지 않는 물체 (다른 객체의 충돌에 의해 움직일 수도 있음.)
 		// dynamic(false) : 움직이는 물체
 		_bool isStatic = { false };
