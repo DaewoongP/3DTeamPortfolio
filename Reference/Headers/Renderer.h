@@ -47,6 +47,7 @@ private:
 	HRESULT Render_NonLight();
 	HRESULT Render_Blend();
 	HRESULT Render_Blur();
+	HRESULT Render_BlurShadow();
 	HRESULT Render_PostProcessing();
 	HRESULT Render_Distortion();
 	HRESULT Render_UI();

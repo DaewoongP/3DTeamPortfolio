@@ -209,10 +209,11 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 	if (FAILED(Render_Lights()))
 		return E_FAIL;
-
 	if (FAILED(Render_Shadow()))
 		return E_FAIL;
 	if (FAILED(Render_SoftShadow()))
+		return E_FAIL;
+	if (FAILED(Render_BlurShadow()))
 		return E_FAIL;
 //#ifdef _DEBUG
 
@@ -222,13 +223,13 @@ HRESULT CRenderer::Draw_RenderGroup()
 	if (FAILED(Render_Brushing())) 	// ¸Ê ºê·¯½Ì °á°ú ÀúÀåÀ» À§ÇÑ ·»´õ Å¸°Ù
 		return E_FAIL;
 #endif // _DEBUG
-	
 	if (FAILED(Render_Deferred()))
 		return E_FAIL;
 	if (FAILED(Render_SSAO()))
 		return E_FAIL;
 	if (FAILED(Render_Blur()))
 		return E_FAIL;
+	
 	if (FAILED(Render_NonLight()))
 		return E_FAIL;
 	if (FAILED(Render_Blend()))
@@ -395,7 +396,7 @@ HRESULT CRenderer::Render_Lights()
 	if (FAILED(m_pDeferredShader->Bind_Matrix("g_ProjMatrixInv", pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
-	if (FAILED(m_pDeferredShader->Bind_RawValue("g_vCamPosition", m_pLight_Manager->Get_LightPosition(), sizeof(_float4))))
+	if (FAILED(m_pDeferredShader->Bind_RawValue("g_vCamPosition", pPipeLine->Get_CamPosition(), sizeof(_float4))))
 		return E_FAIL;
 	if (FAILED(m_pDeferredShader->Bind_RawValue("g_fCamFar", pPipeLine->Get_CamFar(), sizeof(_float))))
 		return E_FAIL;
@@ -442,11 +443,26 @@ HRESULT CRenderer::Render_Shadow()
 		return E_FAIL;
 
 	_float4x4	ViewMatrix, ProjMatrix;
-	ViewMatrix = XMMatrixLookAtLH(_float4(0.f, 10.f, 0.f, 1.f), _float4(3.f, 0.f, 3.f, 1.f), _float4(0.f, 1.f, 0.f, 0.f));
-	ProjMatrix = XMMatrixPerspectiveFovLH(XMConvertToRadians(90.f), _float(1280) / 720.f, 1.f, 100.f);
+	if (!m_pLight_Manager->Light_NullCheck())
+	{
+		ViewMatrix = XMMatrixLookAtLH(_float4(0.f,10.f,0.f,1.f), _float4(3.f, 0.f, 3.f, 1.f), _float4(0.f, 1.f, 0.f, 0.f));
+		ProjMatrix = XMMatrixPerspectiveFovLH(XMConvertToRadians(90.f), _float(1280) / 720.f, 1.f, 100.f);
+	}
+	else
+	{
+		_float4* LightPos = m_pLight_Manager->Get_LightPosition();
+
+		_float4 LightDir = m_pLight_Manager->Get_Light(1)->vDir;
+		ViewMatrix = XMMatrixLookAtLH(*LightPos, _float4(3.f, 0.f, 3.f, 1.f), LightDir);
+		ProjMatrix = XMMatrixPerspectiveFovLH(XMConvertToRadians(90.f), _float(1280) / 720.f, 1.f, 100.f);
+	}
+		
+
+			
+
 	if (FAILED(m_pSSAOShader->Bind_Matrix("g_vLightView", &ViewMatrix)))
 		return E_FAIL;
-	if (FAILED(m_pSSAOShader->Bind_Matrix("g_vLightProj", &ProjMatrix)))
+	if (FAILED(m_pSSAOShader->Bind_Matrix("g_vLightProj",&ProjMatrix)))
 		return E_FAIL;
 	//ºûÀÇ°ªÀ» ´øÁ®ÁÖ±â
 	/*if (FAILED(m_pSSAOShader->Bind_Matrix("g_vLightView", m_pLight_Manager->Get_LightView())))
@@ -635,14 +651,25 @@ HRESULT CRenderer::Render_Blur()
 
 	if (FAILED(m_pSSAOShader->Begin("BlurX")))
 		return E_FAIL;
+	if (FAILED(m_pSSAOShader->Begin("BlurY")))
+		return E_FAIL;
+
+	if (FAILED(m_pSSAOBuffer->Render()))
+		return E_FAIL;
 
 	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext)))
 		return E_FAIL;
-	
-	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Blur"))))
+	return S_OK;
+}
+
+HRESULT CRenderer::Render_BlurShadow()
+{
+	if (nullptr == m_pRenderTarget_Manager)
 		return E_FAIL;
 
-	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Blur"), m_pSSAOShader, "g_BlurTexture")))
+	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Blur"))))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Shadow"), m_pSSAOShader, "g_SSAOTexture")))
 		return E_FAIL;
 
 	if (FAILED(m_pSSAOShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
@@ -652,6 +679,8 @@ HRESULT CRenderer::Render_Blur()
 	if (FAILED(m_pSSAOShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
 
+	if (FAILED(m_pSSAOShader->Begin("BlurX")))
+		return E_FAIL;
 	if (FAILED(m_pSSAOShader->Begin("BlurY")))
 		return E_FAIL;
 
