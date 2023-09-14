@@ -64,6 +64,9 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	Key_Input(fTimeDelta);
 
+	m_pCustomModel->Set_WindVelocity(_float3(50.f, 50.f, 50.f));
+	m_pCustomModel->Tick(CCustomModel::ROBE, 2, fTimeDelta);
+
 	m_pCustomModel->Play_Animation(fTimeDelta);
 }
 
@@ -114,7 +117,7 @@ HRESULT CPlayer::Render()
 
 			m_pCustomModel->Bind_Material(m_pShader, "g_DiffuseTexture", iPartsIndex, i, DIFFUSE);
 
-			m_pShader->Begin("AnimMesh");
+			m_pShader->Begin("AnimMeshNonCull");
 
 			m_pCustomModel->Render(iPartsIndex, i);
 		}
@@ -271,7 +274,7 @@ HRESULT CPlayer::Ready_MeshParts()
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_MAINGAME, 
 		TEXT("Prototype_Component_MeshPart_Arms01"),
-		CCustomModel::TOP)))
+		CCustomModel::ARM)))
 	{
 		MSG_BOX("Failed Add MeshPart Arm");
 
@@ -282,7 +285,7 @@ HRESULT CPlayer::Ready_MeshParts()
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_MAINGAME,
 		TEXT("Prototype_Component_MeshPart_Robe01"),
-		CCustomModel::PANTS)))
+		CCustomModel::ROBE), TEXT("../../Resources/GameData/ClothData/Test.cloth")))
 	{
 		MSG_BOX("Failed Add MeshPart Robe");
 
@@ -293,7 +296,7 @@ HRESULT CPlayer::Ready_MeshParts()
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_MAINGAME,
 		TEXT("Prototype_Component_MeshPart_StuUni03_LongSleeve"),
-		CCustomModel::ROBE)))
+		CCustomModel::TOP)))
 	{
 		MSG_BOX("Failed Add MeshPart Upper");
 
@@ -304,7 +307,7 @@ HRESULT CPlayer::Ready_MeshParts()
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_MAINGAME,
 		TEXT("Prototype_Component_MeshPart_Low_Slcialite01"),
-		CCustomModel::SOCKS)))
+		CCustomModel::PANTS)))
 	{
 		MSG_BOX("Failed Add MeshPart Lower");
 

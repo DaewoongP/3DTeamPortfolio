@@ -34,6 +34,8 @@ HRESULT CTest_Player::Initialize(void* pArg)
 
 	m_pModelCom->Play_Animation(0.f);
 
+	m_fWindPower = 5.f;
+
 	return S_OK;
 }
 
@@ -44,8 +46,8 @@ void CTest_Player::Tick(_float fTimeDelta)
 	Key_Input(fTimeDelta);
 
 	m_pModelCom->Set_WindVelocity(PhysXConverter::ToXMFLOAT3(m_pRigidBody->Get_RigidBodyActor()->getLinearVelocity()) * m_fWindPower * -1.f);
-	m_pModelCom->Tick(CCustomModel::ROBE, 2, fTimeDelta);
 
+	m_pModelCom->Tick(CCustomModel::ROBE, 2, fTimeDelta);
 }
 
 void CTest_Player::Late_Tick(_float fTimeDelta)
