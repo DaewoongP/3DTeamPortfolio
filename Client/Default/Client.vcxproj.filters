@@ -223,6 +223,15 @@
     <Filter Include="02. GameObject\05. UI\UI\UI_Effect_Back">
       <UniqueIdentifier>{6f63ec72-3503-4230-9a92-5c2bd38a636e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine">
+      <UniqueIdentifier>{80131a04-5be6-4f74-b2ac-09649853f473}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\02. StateContext">
+      <UniqueIdentifier>{52207591-197e-4e0b-ba0b-670292f5f012}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\00. IdleState">
+      <UniqueIdentifier>{f9cc4dbf-4550-4855-a9f9-8562b44f54a4}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\01. Player\01. Weapon">
       <UniqueIdentifier>{e492e81f-a203-4fa9-9a45-dbbf54d55c64}</UniqueIdentifier>
     </Filter>
@@ -465,6 +474,15 @@
     <ClInclude Include="..\public\Default_Magic_Effect.h">
       <Filter>02. GameObject\03. Effect\Default_Magic_Effect</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\StateMachine.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine</Filter>
+    </ClInclude>
+    <ClInclude Include="StateContext.h">
+      <Filter>02. GameObject\01. Player\02. StateContext</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\IdleState.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\00. IdleState</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\Golem_Grunt.h">
       <Filter>02. GameObject\02. Enemy\03. Golem\01. Grunt</Filter>
     </ClInclude>
@@ -679,6 +697,15 @@
     </ClCompile>
     <ClCompile Include="..\private\Default_Magic_Effect.cpp">
       <Filter>02. GameObject\03. Effect\Default_Magic_Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\StateMachine.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\StateContext.cpp">
+      <Filter>02. GameObject\01. Player\02. StateContext</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\IdleState.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\00. IdleState</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Weapon_Player_Wand.cpp">
       <Filter>02. GameObject\01. Player\01. Weapon\Wand</Filter>

@@ -199,12 +199,19 @@ HRESULT CCamera_Manager::Add_Camera(const _tchar* _CameraTag, CCamera* _pCamera)
 
 HRESULT CCamera_Manager::Set_Camera(const _tchar* _CameraTag)
 {
+	if (nullptr != m_pCurrentCamera)
+	{
+		Safe_Release(m_pCurrentCamera);
+	}
+
 	m_pCurrentCamera = Find_Camera(_CameraTag);
 
 	if (nullptr == m_pCurrentCamera)
 	{
 		return E_FAIL;
 	}
+
+	Safe_AddRef(m_pCurrentCamera);
 
 	return S_OK;
 }
@@ -620,4 +627,11 @@ void CCamera_Manager::Free()
 {
 	Safe_Release(m_pPipeLine);
 	Safe_Release(m_pCurrentCamera);
+
+	for (auto& iter : m_Cameras)
+	{
+		Safe_Release(iter.second);
+	}
+
+	m_Cameras.clear();
 }
