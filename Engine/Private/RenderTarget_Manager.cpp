@@ -58,6 +58,7 @@ HRESULT CRenderTarget_Manager::Begin_MRT(ID3D11DeviceContext* pContext, const _t
 			return E_FAIL;
 
 		pContext->OMGetRenderTargets(1, &m_pPostRenderTargetView, &m_pDepthStencilView);
+		pContext->OMSetRenderTargets(1, &m_pPostRenderTargetView, m_pShadowView);
 
 		ID3D11RenderTargetView* pRenderTargets[8] = { nullptr };
 
@@ -69,8 +70,7 @@ HRESULT CRenderTarget_Manager::Begin_MRT(ID3D11DeviceContext* pContext, const _t
 			pRenderTargets[iNumViews++] = pRenderTarget->Get_RTV();
 		}
 
-		pContext->OMSetRenderTargets(iNumViews, pRenderTargets, m_pShadowView);
-		
+		_float4 Color = { 1.f, 1.f, 1.f, 1.f };
 		Change_DepthStencil(pContext, _float4(1.f, 1.f, 1.f, 1.f));
 
 		return S_OK;
@@ -130,8 +130,6 @@ HRESULT CRenderTarget_Manager::End_MRT(ID3D11DeviceContext* pContext,_bool Shado
 		ID3D11RenderTargetView* pRenderTargets[8] = { m_pPostRenderTargetView };
 		pContext->OMGetRenderTargets(8, pRenderTargets, &m_pShadowView);
 
-		pContext->OMSetRenderTargets(8, pRenderTargets, m_pDepthStencilView);
-
 		Safe_Release(m_pPostRenderTargetView);
 		Safe_Release(m_pShadowView);
 
@@ -172,11 +170,11 @@ HRESULT CRenderTarget_Manager::Bind_ShaderResourceView(const _tchar* pTargetTag,
 
 HRESULT CRenderTarget_Manager::Change_DepthStencil(ID3D11DeviceContext* pContext,_float4 vClearColor)
 {
-	pContext->OMGetRenderTargets(1, &m_pPostRenderTargetView, &m_pDepthStencilView);
-	pContext->OMSetRenderTargets(1, &m_pPostRenderTargetView, m_pShadowView);
+	pContext->OMGetRenderTargets(1, &m_pPostRenderTargetView, &m_pShadowView);
+	pContext->OMSetRenderTargets(1, &m_pPostRenderTargetView, m_pDepthStencilView);
 	 
-
-	pContext->ClearRenderTargetView(m_pBackBufferView,(_float*)&vClearColor);
+	//pContext->ClearDepthStencilView(m_pDepthStencilView,D3D11_CLEAR_DEPTH,)
+	pContext->ClearRenderTargetView(m_pPostRenderTargetView,(_float*)&vClearColor);
 	return S_OK;
 }
 

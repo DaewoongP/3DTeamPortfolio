@@ -201,17 +201,33 @@ HRESULT CRigidBody::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
-	RIGIDBODYDESC* pRigidDesc = reinterpret_cast<RIGIDBODYDESC*>(pArg);
+	RIGIDBODYDESC* pRigidBodyDesc = reinterpret_cast<RIGIDBODYDESC*>(pArg);
+
+	CPhysX_Manager* pPhysX_Manager = CPhysX_Manager::GetInstance();
+	Safe_AddRef(pPhysX_Manager);
+
+	PxPhysics* pPhysX = pPhysX_Manager->Get_Physics();
+	m_pScene = pPhysX_Manager->Get_PhysxScene();
+
+	// 초기 포지션 세팅
+	if (nullptr == m_pActor)
+	{
+		PxTransform InitTransform(PhysXConverter::ToPxVec3(pRigidBodyDesc->vInitPosition),
+			PhysXConverter::ToPxQuat(pRigidBodyDesc->vInitRotation));
+
+		// 액터생성 - 실제 월드위치 대입.
+		if (true == pRigidBodyDesc->isStatic)
+			m_pActor = pPhysX->createRigidStatic(InitTransform);
+		else
+			m_pActor = pPhysX->createRigidDynamic(InitTransform);
+	}
+
+	Safe_Release(pPhysX_Manager);
 	
-	if (FAILED(Create_Actor(pRigidDesc)))
+	if (FAILED(Create_Collider(pRigidBodyDesc)))
 		return E_FAIL;
 	
-#ifdef _DEBUG
-	m_vColor = pRigidDesc->vDebugColor;
-	
-	if (FAILED(Add_Components(pRigidDesc->pGeometry)))
-		return E_FAIL;
-#endif // _DEBUG
+	m_pScene->addActor(*m_pActor);
 
 	return S_OK;
 }
@@ -219,45 +235,34 @@ HRESULT CRigidBody::Initialize(void* pArg)
 #ifdef _DEBUG
 HRESULT CRigidBody::Render()
 {
-	if (FAILED(SetUp_ShaderResources()))
-		return E_FAIL;
+	for (_uint i = 0; i < m_Debug_Renders.size(); ++i)
+	{
+		if (FAILED(SetUp_ShaderResources(i)))
+			return E_FAIL;
 
-	if (FAILED(m_pShader->Begin("Debug")))
-		return E_FAIL;
+		if (FAILED(m_Shaders[i]->Begin("Debug")))
+			return E_FAIL;
 
-	if (FAILED(m_pDebug_Render->Render()))
-		return E_FAIL;
-
+		if (FAILED(m_Debug_Renders[i]->Render()))
+			return E_FAIL;
+	}
+	
 	return S_OK;
 }
 #endif // _DEBUG
 
-HRESULT CRigidBody::Create_Actor(RIGIDBODYDESC* pRigidBodyDesc)
+HRESULT CRigidBody::Create_Collider(RIGIDBODYDESC* pRigidBodyDesc)
 {
 	CPhysX_Manager* pPhysX_Manager = CPhysX_Manager::GetInstance();
 	Safe_AddRef(pPhysX_Manager);
 
-	// 매니저를 통해 피직스 객체 가져옴
 	PxPhysics* pPhysX = pPhysX_Manager->Get_Physics();
-	// 액터를 바인딩할 씬 가져옴
-	m_pScene = pPhysX_Manager->Get_PhysxScene();
 
-	// 초기 포지션 세팅
-	PxTransform InitTransform(PhysXConverter::ToPxVec3(pRigidBodyDesc->vInitPosition));
-	
-	if (true == pRigidBodyDesc->isStatic)
-	{
-		m_pActor = pPhysX->createRigidStatic(InitTransform);
-	}
-	else
-	{
-		m_pActor = pPhysX->createRigidDynamic(InitTransform);
-	}
+	Safe_Release(pPhysX_Manager);
 
 	if (nullptr == m_pActor)
 	{
-		MSG_BOX("Failed Create RigidBody Actor");
-		Safe_Release(pPhysX_Manager);
+		MSG_BOX("Failed Create Collider");
 		return E_FAIL;
 	}
 	
@@ -274,11 +279,11 @@ HRESULT CRigidBody::Create_Actor(RIGIDBODYDESC* pRigidBodyDesc)
 	// Query : 레이캐스트 처리
 	if (true == pRigidBodyDesc->isTrigger)
 	{
-		ePxFlag = PxShapeFlag::eSCENE_QUERY_SHAPE | PxShapeFlag::eTRIGGER_SHAPE;
+		ePxFlag = PxShapeFlag::eSCENE_QUERY_SHAPE | PxShapeFlag::eTRIGGER_SHAPE | PxShapeFlag::eVISUALIZATION;
 	}
 	else
 	{
-		ePxFlag = PxShapeFlag::eSCENE_QUERY_SHAPE | PxShapeFlag::eSIMULATION_SHAPE;
+		ePxFlag = PxShapeFlag::eSCENE_QUERY_SHAPE | PxShapeFlag::eSIMULATION_SHAPE | PxShapeFlag::eVISUALIZATION;
 	}
 
 	m_pGeometry = pRigidBodyDesc->pGeometry;
@@ -296,25 +301,27 @@ HRESULT CRigidBody::Create_Actor(RIGIDBODYDESC* pRigidBodyDesc)
 		FilterData.word0 = 0x1111; // 이데이터는 일단 고정.
 	pShape->setSimulationFilterData(FilterData);
 
-	// OffsetPosition 처리 (피직스는 오른손 좌표계를 사용해서 왼손좌표계로 바꿔주기위해 회전 처리합니다.)
-	// 이거 확인정확하게 안해봐서 앞뒤가 정확한지는 모르겠어요
-	// 근데 앞뒤 달라도 상관없을거 같긴함.
+	PxTransform OffsetTransform(PhysXConverter::ToPxVec3(pRigidBodyDesc->vOffsetPosition), PhysXConverter::ToPxQuat(pRigidBodyDesc->vOffsetRotation));
+	pShape->setLocalPose(OffsetTransform);
 
 	// 액터와 씬 처리.
 	// AttachShape로 콜라이더 여러개 바인딩 가능.
 	// 씬도 일단 한개만 처리하게 해둬서 신경 안써도 될듯.
 	m_pActor->attachShape(*pShape);
-	//m_pScene->setGravity(PxVec3(0.f, 0.f, 0.f));
-	m_pScene->addActor(*m_pActor);
-	
+
+#ifdef _DEBUG
+	// 렌더링용 쉐이더, 버퍼
+	if (FAILED(Add_Components(pRigidBodyDesc->pGeometry, pShape)))
+		return E_FAIL;
+	m_Colors.push_back(pRigidBodyDesc->vDebugColor);
+#endif // _DEBUG
+
 	if (false == pRigidBodyDesc->isStatic)
 	{
 		PxRigidDynamic* pRigidBody = m_pActor->is<PxRigidDynamic>();
 
 		Set_Constraint(pRigidBodyDesc->eConstraintFlag, false);
 	}
-
-	Safe_Release(pPhysX_Manager);
 
 	return S_OK;
 }
@@ -409,24 +416,27 @@ void CRigidBody::Rotate(_float4 _vRotation) const
 }
 
 #ifdef _DEBUG
-HRESULT CRigidBody::Add_Components(PxGeometry* pPxValues)
+HRESULT CRigidBody::Add_Components(PxGeometry* pPxValues, PxShape* pShape)
 {
-	m_pShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Debug.hlsl"), VTXPOS_DECL::Elements, VTXPOS_DECL::iNumElements);
-	if (nullptr == m_pShader)
-		return E_FAIL;
+	// Debug Shader 생성
+	m_Shaders.push_back(CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Debug.hlsl"), VTXPOS_DECL::Elements, VTXPOS_DECL::iNumElements));
 
-	m_Components.emplace(TEXT("Com_Shader"), m_pShader);
-	Safe_AddRef(m_pShader);
+	_float3 vOffsetPos = _float3(pShape->getLocalPose().p.x, pShape->getLocalPose().p.y, pShape->getLocalPose().p.z);
+	_float4 vOffsetRot = _float4(pShape->getLocalPose().q.x, pShape->getLocalPose().q.y, pShape->getLocalPose().q.z, pShape->getLocalPose().q.w);
+
+	CComponent* pComponent = { nullptr };
 
 	if (PxGeometryType::eBOX == pPxValues->getType())
 	{
 		// Debug Components
 		CDebug_Render_Box::BOXDESC BoxDesc;
 		BoxDesc.vExtents = PhysXConverter::ToXMFLOAT3(reinterpret_cast<PxBoxGeometry*>(pPxValues)->halfExtents);
-		BoxDesc.vOrigin = _float3(0.f, 0.f, 0.f);
+		BoxDesc.vOffsetPosition = vOffsetPos;
+		BoxDesc.vOffsetRotation = vOffsetRot;
+		
 		/* For.Com_Debug_Render_Box */
 		if (FAILED(CComposite::Add_Component(0, TEXT("Prototype_Component_RigidBody_Debug_Render_Box"),
-			TEXT("Com_Debug_Render_Box"), reinterpret_cast<CComponent**>(&m_pDebug_Render), &BoxDesc)))
+			TEXT("Com_Debug_Render_Box"), reinterpret_cast<CComponent**>(&pComponent), &BoxDesc)))
 		{
 			MSG_BOX("Failed CRigidBody Add_Component : (Com_Debug_Render_Box)");
 			return E_FAIL;
@@ -436,10 +446,11 @@ HRESULT CRigidBody::Add_Components(PxGeometry* pPxValues)
 	{
 		CDebug_Render_Sphere::SPHEREDESC SphereDesc;
 		SphereDesc.fRadius = reinterpret_cast<PxSphereGeometry*>(pPxValues)->radius;
-		SphereDesc.vOrigin = _float3(0.f, 0.f, 0.f);
+		SphereDesc.vOffsetPosition = vOffsetPos;
+		SphereDesc.vOffsetRotation = vOffsetRot;
 		/* For.Com_Debug_Render_Sphere */
 		if (FAILED(CComposite::Add_Component(0, TEXT("Prototype_Component_RigidBody_Debug_Render_Sphere"),
-			TEXT("Com_Debug_Render_Sphere"), reinterpret_cast<CComponent**>(&m_pDebug_Render), &SphereDesc)))
+			TEXT("Com_Debug_Render_Sphere"), reinterpret_cast<CComponent**>(&pComponent), &SphereDesc)))
 		{
 			MSG_BOX("Failed CRigidBody Add_Component : (Com_Debug_Render_Sphere)");
 			return E_FAIL;
@@ -450,10 +461,11 @@ HRESULT CRigidBody::Add_Components(PxGeometry* pPxValues)
 		CDebug_Render_Capsule::CAPSULEDESC CapsuleDesc;
 		CapsuleDesc.fRadius = reinterpret_cast<PxCapsuleGeometry*>(pPxValues)->radius;
 		CapsuleDesc.fHalfHeight = reinterpret_cast<PxCapsuleGeometry*>(pPxValues)->halfHeight;
-		CapsuleDesc.vOrigin = _float3(0.f, 0.f, 0.f);
+		CapsuleDesc.vOffsetPosition = vOffsetPos;
+		CapsuleDesc.vOffsetRotation = vOffsetRot;
 		/* For.Com_Debug_Render_Capsule */
 		if (FAILED(CComposite::Add_Component(0, TEXT("Prototype_Component_RigidBody_Debug_Render_Capsule"),
-			TEXT("Com_Debug_Render_Capsule"), reinterpret_cast<CComponent**>(&m_pDebug_Render), &CapsuleDesc)))
+			TEXT("Com_Debug_Render_Capsule"), reinterpret_cast<CComponent**>(&pComponent), &CapsuleDesc)))
 		{
 			MSG_BOX("Failed CRigidBody Add_Component : (Com_Debug_Render_Capsule)");
 			return E_FAIL;
@@ -465,7 +477,7 @@ HRESULT CRigidBody::Add_Components(PxGeometry* pPxValues)
 		PxHeightField* pHeightField = reinterpret_cast<PxHeightFieldGeometry*>(pPxValues)->heightField;
 		HeightFieldDesc.iNumRows = pHeightField->getNbRows() - 1;
 		HeightFieldDesc.iNumColumns = pHeightField->getNbColumns() - 1;
-
+		
 		vector<_float3> Positions;
 		Positions.resize((HeightFieldDesc.iNumRows + 1) * (HeightFieldDesc.iNumColumns + 1));
 		for (_uint i = 0; i < HeightFieldDesc.iNumColumns + 1; ++i)
@@ -478,10 +490,11 @@ HRESULT CRigidBody::Add_Components(PxGeometry* pPxValues)
 			}
 		}
 		HeightFieldDesc.pPositions = Positions.data();
-		HeightFieldDesc.vOrigin = _float3(0.f, 0.f, 0.f);
+		HeightFieldDesc.vOffsetPosition = vOffsetPos;
+		HeightFieldDesc.vOffsetRotation = vOffsetRot;
 		/* For.Com_Debug_Render_HeightField */
 		if (FAILED(CComposite::Add_Component(0, TEXT("Prototype_Component_RigidBody_Debug_Render_HeightField"),
-			TEXT("Com_Debug_Render_HeightField"), reinterpret_cast<CComponent**>(&m_pDebug_Render), &HeightFieldDesc)))
+			TEXT("Com_Debug_Render_HeightField"), reinterpret_cast<CComponent**>(&pComponent), &HeightFieldDesc)))
 		{
 			MSG_BOX("Failed CRigidBody Add_Component : (Com_Debug_Render_HeightField)");
 			return E_FAIL;
@@ -490,10 +503,15 @@ HRESULT CRigidBody::Add_Components(PxGeometry* pPxValues)
 		pHeightField->release();
 	}
 
+	if (nullptr == pComponent)
+		return E_FAIL;
+
+	m_Debug_Renders.push_back(pComponent);
+
 	return S_OK;
 }
 
-HRESULT CRigidBody::SetUp_ShaderResources()
+HRESULT CRigidBody::SetUp_ShaderResources(_uint iColliderIndex)
 {
 	CPipeLine* pPipeLine = CPipeLine::GetInstance();
 	Safe_AddRef(pPipeLine);
@@ -504,13 +522,13 @@ HRESULT CRigidBody::SetUp_ShaderResources()
 
 	_float4x4 WorldMatrix = XMMatrixRotationQuaternion(vQuat) * XMMatrixTranslation(vPos.x, vPos.y, vPos.z);
 
-	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", &WorldMatrix)))
+	if (FAILED(m_Shaders[iColliderIndex]->Bind_Matrix("g_WorldMatrix", &WorldMatrix)))
 		return E_FAIL;
-	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", pPipeLine->Get_TransformMatrix(CPipeLine::D3DTS_VIEW))))
+	if (FAILED(m_Shaders[iColliderIndex]->Bind_Matrix("g_ViewMatrix", pPipeLine->Get_TransformMatrix(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
-	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", pPipeLine->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
+	if (FAILED(m_Shaders[iColliderIndex]->Bind_Matrix("g_ProjMatrix", pPipeLine->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
-	if (FAILED(m_pShader->Bind_RawValue("g_vColor", &m_vColor, sizeof(m_vColor))))
+	if (FAILED(m_Shaders[iColliderIndex]->Bind_RawValue("g_vColor", &m_Colors[iColliderIndex], sizeof(_float4))))
 		return E_FAIL;
 
 	Safe_Release(pPipeLine);
@@ -550,7 +568,11 @@ void CRigidBody::Free()
 	__super::Free();
 
 #ifdef _DEBUG
-	Safe_Release(m_pShader);
-	Safe_Release(m_pDebug_Render);
+	for (auto& pShader : m_Shaders)
+		Safe_Release(pShader);
+	m_Shaders.clear();
+	for (auto& pComponent : m_Debug_Renders)
+		Safe_Release(pComponent);
+	m_Debug_Renders.clear();
 #endif // _DEBUG
 }

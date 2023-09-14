@@ -12,29 +12,23 @@ CLogo_BackGround::CLogo_BackGround(const CLogo_BackGround& rhs)
 {
 }
 
-HRESULT CLogo_BackGround::Initialize_Prototype()
-{
-	if (FAILED(__super::Initialize_Prototype(g_iWinSizeX, g_iWinSizeY)))
-		return E_FAIL;
-
-	return S_OK;
-}
-
 HRESULT CLogo_BackGround::Initialize(void* pArg)
 {
+	if (FAILED(__super::Initialize(pArg)))
+		return E_FAIL;
+
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-	// 윈도우 창에 꽉채우게 설정함.
 	m_fSizeX = g_iWinSizeX;
 	m_fSizeY = g_iWinSizeY;
 
-	// 윈도우창의 중간에 표시하게 설정.
 	m_fX = g_iWinSizeX * 0.5f;
 	m_fY = g_iWinSizeY * 0.5f;
 
-	if (FAILED(__super::Initialize(pArg)))
-		return E_FAIL;
+	Change_Scale(m_fSizeX, m_fSizeY);
+	Make_Matrix(g_iWinSizeX, g_iWinSizeY);
+	Make_CombinedXY();
 
 	return S_OK;
 }
@@ -155,5 +149,4 @@ void CLogo_BackGround::Free()
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pVIBufferCom);
-	Safe_Release(m_pAlphaTextureCom);
 }

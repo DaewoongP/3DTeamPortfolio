@@ -11,7 +11,8 @@ public:
 		_float fRadius = { 0.f };
 		_float3 vMajorAxis;
 		_float3 vMinorAxis;
-		_float3 vOrigin;
+		_float3 vOffsetPosition;
+		_float4 vOffsetRotation;
 	}RINGDESC;
 
 private:

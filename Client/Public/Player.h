@@ -13,7 +13,10 @@ END
 
 BEGIN(Client)
 class CPlayer_Camera;
+class CWeapon_Player_Wand;
+END
 
+BEGIN(Client)
 class CPlayer final : public CGameObject
 {
 private:
@@ -37,13 +40,18 @@ private:
 	CRenderer*		m_pRenderer = { nullptr };
 	CCustomModel*	m_pCustomModel = { nullptr };
 	
+private:
 	CPlayer_Camera* m_pPlayer_Camera = { nullptr };
 
-#ifdef _DEBUG
+private:
+	//카메라룩과 플레이어룩의 차이 각을 담기위한 변수(음수일 경우 오른쪽, 양수일 경우 왼쪽)
+	_float m_fLookAngle{};
 
-	CCollider*		m_pTestCollider = { nullptr };
+	
+	/* 마법을 위한 공간 */
+	class CMagic*	m_pMagic = { nullptr };
+	CWeapon_Player_Wand*	m_pWeapon = { nullptr };
 
-#endif // _DEBUG
 
 private:
 	HRESULT Add_Components();
@@ -56,11 +64,19 @@ private:
 	HRESULT Ready_MeshParts();
 	HRESULT Ready_Caemra();
 
+public:
+	// 마법에 함수가 잘 들어가나 테스트용도입니다.
+	// 추후에 마법 사용시 지팡이가 빛나게 하는 파티클 action을 여기에 넣어주면 될거같음.
+	void MagicTestTextOutput();
+
 #ifdef _DEBUG
 private:
-	HRESULT Ready_Test_Collider();
 	void Tick_ImGui();
 #endif // _DEBUG
+
+private:
+	//카메라와 플레이어의 각을 검사해서 저장한다.
+	void UpdateLookAngle();
 
 public:
 	static CPlayer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

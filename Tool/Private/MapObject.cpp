@@ -50,8 +50,10 @@ void CMapObject::Late_Tick(_float fTimeDelta)
 		m_eRenderCount = RT_NORMAL;
 
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
+
 #ifdef _DEBUG
-		//m_pRenderer->Add_RenderGroup(CRenderer::RENDER_PICKING, this);
+		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_PICKING, this);
 #endif // _DEBUG		
 	}
 }
@@ -68,8 +70,8 @@ HRESULT CMapObject::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	// 일반 그리기
-	//if (RT_NORMAL == m_eRenderCount)
+	// 일반 그리기 
+	if (RT_NORMAL == m_eRenderCount)
 	{
 		_uint		iNumMeshes = m_pModel->Get_NumMeshes();
 
@@ -84,11 +86,13 @@ HRESULT CMapObject::Render()
 		}
 
 		m_eRenderCount = RT_PICKING;
+
+		return S_OK;
 	}
 
 #ifdef _DEBUG
 	// 피킹용 그리기
-	/*else if (RT_PICKING == m_eRenderCount)
+	else if (RT_PICKING == m_eRenderCount)
 	{
 		m_pShader->Bind_RawValue("g_vColor", &m_vColor, sizeof(_float4));
 
@@ -96,8 +100,6 @@ HRESULT CMapObject::Render()
 
 		for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; iMeshCount++)
 		{
-			m_pModel->Bind_BoneMatrices(m_pShader, "g_BoneMatrices", iMeshCount);
-
 			m_pShader->Begin("Picking");
 
 			if (FAILED(m_pModel->Render(iMeshCount)))
@@ -105,7 +107,7 @@ HRESULT CMapObject::Render()
 		}
 
 		m_eRenderCount = RT_END;
-	}*/
+	}
 #endif // _DEBUG
 
 	return S_OK;
@@ -133,24 +135,16 @@ HRESULT CMapObject::Render_Depth()
 		return E_FAIL;
 	ENDINSTANCE
 
-	
-	// 일반 그리기
-	if (RT_NORMAL == m_eRenderCount)
+	_uint		iNumMeshes = m_pModel->Get_NumMeshes();
+
+	for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; iMeshCount++)
 	{
-		_uint		iNumMeshes = m_pModel->Get_NumMeshes();
+		m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", iMeshCount, DIFFUSE);
 
-		for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; iMeshCount++)
-		{
-			m_pModel->Bind_BoneMatrices(m_pShader, "g_BoneMatrices", iMeshCount);
-			m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", iMeshCount, DIFFUSE);
+		m_pShader->Begin("Shadow");
 
-			m_pShader->Begin("Shadow");
-
-			if (FAILED(m_pModel->Render(iMeshCount)))
-				return E_FAIL;
-		}
-
-		m_eRenderCount = RT_PICKING;
+		if (FAILED(m_pModel->Render(iMeshCount)))
+			return E_FAIL;
 	}
 	return S_OK;
 }
@@ -198,10 +192,7 @@ HRESULT CMapObject::SetUp_ShaderResources()
 		return E_FAIL;
 
 	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
-	/*if (FAILED(m_pShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
-		return E_FAIL;*/
-		ENDINSTANCE;
+		return E_FAIL; ENDINSTANCE;
 
 	return S_OK;
 }

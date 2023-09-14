@@ -116,7 +116,7 @@ void CVIBuffer_Color_Instance::Sort_AlphaBlend(VTXCOLINSTANCE* pInstances, _int 
 	Safe_Release(pPipeLine);
 
 	vector<VTXCOLINSTANCE> ColorInstances;
-	ColorInstances.resize(m_iNumInstance);
+	ColorInstances.resize(iRenderedParticleNum);
 
 	memcpy(ColorInstances.data(), pInstances, sizeof(VTXCOLINSTANCE) * iRenderedParticleNum);
 

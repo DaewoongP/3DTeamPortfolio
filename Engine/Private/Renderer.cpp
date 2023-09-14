@@ -51,6 +51,7 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_PostProcessing"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 0.f))))
 		return E_FAIL;
+
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_Shadow_Depth"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
@@ -155,8 +156,8 @@ HRESULT CRenderer::Initialize_Prototype()
 	/*if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_PostProcessing"), 240.f, 560.f, 160.f, 160.f)))
 		return E_FAIL;*/
 
-	//if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Picking"), 1200.f, 80.f, 160.f, 160.f)))
-	//	return E_FAIL; // ¸Ê ¿ÀºêÁ§ÅÍ Fast PickingÀ» À§ÇÑ ·»´õ Å¸°Ù
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Picking"), 1200.f, 80.f, 160.f, 160.f)))
+		return E_FAIL; // ¸Ê ¿ÀºêÁ§ÅÍ Fast PickingÀ» À§ÇÑ ·»´õ Å¸°Ù
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_MapBrushing"), 1040.f, 80.f, 160.f, 160.f)))
 		return E_FAIL; // ¸Ê ºê·¯½Ì °á°ú ÀúÀåÀ» À§ÇÑ ·»´õ Å¸°Ù
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_UI"), 1200.f, 300.f, 160.f, 160.f)))
@@ -164,9 +165,9 @@ HRESULT CRenderer::Initialize_Prototype()
 	
 #endif // _DEBUG
 
-	m_pTexture = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/noise01.dds"));
-	m_pTexture2 = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/alpha01.dds"));
-	m_pTexture3 = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/fire01.dds"));
+	m_pTexture = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/noise01.dds"));
+	m_pTexture2 = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/alpha01.dds"));
+	m_pTexture3 = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/fire01.dds"));
 
 
 	return S_OK;
@@ -205,30 +206,26 @@ HRESULT CRenderer::Draw_RenderGroup()
 
 	if (FAILED(Render_Priority()))
 		return E_FAIL;
+	if (FAILED(Render_Depth()))
+		return E_FAIL;
 	if (FAILED(Render_NonBlend()))
 		return E_FAIL;
 	if (FAILED(Render_Lights()))
 		return E_FAIL;
-
 	if (FAILED(Render_Shadow()))
 		return E_FAIL;
 	if (FAILED(Render_SoftShadow()))
 		return E_FAIL;
-//#ifdef _DEBUG
-
-#ifdef _DEBUG
-//	if (FAILED(Render_Picking())) 	// ¸Ê ¿ÀºêÁ§ÅÍ Fast PickingÀ» À§ÇÑ ·»´õ Å¸°Ù
-//		return E_FAIL;
-	if (FAILED(Render_Brushing())) 	// ¸Ê ºê·¯½Ì °á°ú ÀúÀåÀ» À§ÇÑ ·»´õ Å¸°Ù
+	if (FAILED(Render_BlurShadow()))
 		return E_FAIL;
-#endif // _DEBUG
-	
 	if (FAILED(Render_Deferred()))
 		return E_FAIL;
+
 	if (FAILED(Render_SSAO()))
 		return E_FAIL;
 	if (FAILED(Render_Blur()))
 		return E_FAIL;
+	
 	if (FAILED(Render_NonLight()))
 		return E_FAIL;
 	if (FAILED(Render_Blend()))
@@ -236,11 +233,17 @@ HRESULT CRenderer::Draw_RenderGroup()
 	
 	if (FAILED(m_pRenderTarget_Manager->End_PostProcessingRenderTarget(m_pContext)))
 		return E_FAIL;
+
+#ifdef _DEBUG
+	if (FAILED(Render_Picking())) 	// ¸Ê ¿ÀºêÁ§ÅÍ Fast PickingÀ» À§ÇÑ ·»´õ Å¸°Ù
+		return E_FAIL;
+	if (FAILED(Render_Brushing())) 	// ¸Ê ºê·¯½Ì °á°ú ÀúÀåÀ» À§ÇÑ ·»´õ Å¸°Ù
+		return E_FAIL;
+#endif // _DEBUG
 	
 	if (FAILED(Render_PostProcessing()))
 		return E_FAIL;	
-	/*if (FAILED(Render_Distortion()))
-		return E_FAIL;*/
+	
 	if (FAILED(Render_UI()))
 		return E_FAIL;
 
@@ -269,7 +272,11 @@ HRESULT CRenderer::Draw_RenderGroup()
 			_float4(1.f, 0.f, 0.f, 1.f), 0.f, _float2(), 0.5f)))
 			return E_FAIL;
 	}
-
+	if(true==Is_Render_Distortion())
+	{ 
+		if (FAILED(Render_Distortion()))
+		return E_FAIL; 
+	}
 	Safe_Release(pFont_Manager);
 #endif // _DEBUG
 
@@ -290,8 +297,7 @@ HRESULT CRenderer::Render_Priority()
 
 	return S_OK;
 }
-
-HRESULT CRenderer::Render_NonBlend()
+HRESULT CRenderer::Render_Depth()
 {
 	if (nullptr == m_pRenderTarget_Manager)
 		return E_FAIL;
@@ -299,15 +305,22 @@ HRESULT CRenderer::Render_NonBlend()
 	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Shadow_Depth"))))
 		return E_FAIL;
 
-	for (auto& pGameObject : m_RenderObjects[RENDER_NONBLEND])
+	for (auto& pGameObject : m_RenderObjects[RENDER_DEPTH])
 	{
 		if (nullptr != pGameObject)
 			pGameObject->Render_Depth();
+		Safe_Release(pGameObject);
 	}
+
+	m_RenderObjects[RENDER_DEPTH].clear();
 
 	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext)))
 		return E_FAIL;
-
+}
+HRESULT CRenderer::Render_NonBlend()
+{
+	if (nullptr == m_pRenderTarget_Manager)
+		return E_FAIL;
 
 	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_GameObjects"))))
 		return E_FAIL;
@@ -395,7 +408,7 @@ HRESULT CRenderer::Render_Lights()
 	if (FAILED(m_pDeferredShader->Bind_Matrix("g_ProjMatrixInv", pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
-	if (FAILED(m_pDeferredShader->Bind_RawValue("g_vCamPosition", m_pLight_Manager->Get_LightPosition(), sizeof(_float4))))
+	if (FAILED(m_pDeferredShader->Bind_RawValue("g_vCamPosition", pPipeLine->Get_CamPosition(), sizeof(_float4))))
 		return E_FAIL;
 	if (FAILED(m_pDeferredShader->Bind_RawValue("g_fCamFar", pPipeLine->Get_CamFar(), sizeof(_float))))
 		return E_FAIL;
@@ -415,6 +428,8 @@ HRESULT CRenderer::Render_Lights()
 
 	return S_OK;
 }
+
+
 
 HRESULT CRenderer::Render_Shadow()
 {
@@ -442,11 +457,26 @@ HRESULT CRenderer::Render_Shadow()
 		return E_FAIL;
 
 	_float4x4	ViewMatrix, ProjMatrix;
-	ViewMatrix = XMMatrixLookAtLH(_float4(0.f, 10.f, 0.f, 1.f), _float4(3.f, 0.f, 3.f, 1.f), _float4(0.f, 1.f, 0.f, 0.f));
-	ProjMatrix = XMMatrixPerspectiveFovLH(XMConvertToRadians(90.f), _float(1280) / 720.f, 1.f, 100.f);
+	if (!m_pLight_Manager->Light_NullCheck())
+	{
+		ViewMatrix = XMMatrixLookAtLH(_float4(0.f,10.f,0.f,1.f), _float4(3.f, 0.f, 3.f, 1.f), _float4(0.f, 1.f, 0.f, 0.f));
+		ProjMatrix = XMMatrixPerspectiveFovLH(XMConvertToRadians(90.f), _float(1280) / 720.f, 1.f, 100.f);
+	}
+	else
+	{
+		_float4* LightPos = m_pLight_Manager->Get_LightPosition();
+
+		_float4 LightDir = m_pLight_Manager->Get_Light(1)->vDir;
+		ViewMatrix = XMMatrixLookAtLH(*LightPos, _float4(3.f, 0.f, 3.f, 1.f), LightDir);
+		ProjMatrix = XMMatrixPerspectiveFovLH(XMConvertToRadians(90.f), _float(1280) / 720.f, 1.f, 100.f);
+	}
+		
+
+			
+
 	if (FAILED(m_pSSAOShader->Bind_Matrix("g_vLightView", &ViewMatrix)))
 		return E_FAIL;
-	if (FAILED(m_pSSAOShader->Bind_Matrix("g_vLightProj", &ProjMatrix)))
+	if (FAILED(m_pSSAOShader->Bind_Matrix("g_vLightProj",&ProjMatrix)))
 		return E_FAIL;
 	//ºûÀÇ°ªÀ» ´øÁ®ÁÖ±â
 	/*if (FAILED(m_pSSAOShader->Bind_Matrix("g_vLightView", m_pLight_Manager->Get_LightView())))
@@ -635,14 +665,25 @@ HRESULT CRenderer::Render_Blur()
 
 	if (FAILED(m_pSSAOShader->Begin("BlurX")))
 		return E_FAIL;
+	if (FAILED(m_pSSAOShader->Begin("BlurY")))
+		return E_FAIL;
+
+	if (FAILED(m_pSSAOBuffer->Render()))
+		return E_FAIL;
 
 	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext)))
 		return E_FAIL;
-	
-	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Blur"))))
+	return S_OK;
+}
+
+HRESULT CRenderer::Render_BlurShadow()
+{
+	if (nullptr == m_pRenderTarget_Manager)
 		return E_FAIL;
 
-	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Blur"), m_pSSAOShader, "g_BlurTexture")))
+	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Blur"))))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Shadow"), m_pSSAOShader, "g_SSAOTexture")))
 		return E_FAIL;
 
 	if (FAILED(m_pSSAOShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
@@ -652,8 +693,10 @@ HRESULT CRenderer::Render_Blur()
 	if (FAILED(m_pSSAOShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
 
-	if (FAILED(m_pSSAOShader->Begin("BlurY")))
+	if (FAILED(m_pSSAOShader->Begin("BlurX")))
 		return E_FAIL;
+	//if (FAILED(m_pSSAOShader->Begin("BlurY")))
+	//	return E_FAIL;
 
 	if (FAILED(m_pSSAOBuffer->Render()))
 		return E_FAIL;
@@ -912,7 +955,22 @@ _bool CRenderer::Is_MRTRender()
 	return m_isMRTRender;
 }
 #endif // _DEBUG
+_bool CRenderer::Is_Render_Distortion()
+{
+	CInput_Device* pInput_Device = CInput_Device::GetInstance();
+	Safe_AddRef(pInput_Device);
 
+	if (pInput_Device->Get_DIKeyState(DIK_F3, CInput_Device::KEY_DOWN))
+	{
+		if (true == m_isDistortion)
+			m_isDistortion = false;
+		else
+			m_isDistortion = true;
+	}
+	Safe_Release(pInput_Device);
+
+	return m_isDistortion;
+}
 CRenderer* CRenderer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CRenderer* pInstance = new CRenderer(pDevice, pContext);

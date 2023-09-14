@@ -100,19 +100,25 @@ void CPXEventCallBack::onTrigger(PxTriggerPair* pairs, PxU32 count)
 
 		// trigger는 stay 존재 x 따로 제작해주거나 해야함.
 
+		if (CComponent::OBJ_DEAD == pSourObject->Get_ObjEvent())
+		{
+			pSourObject->OnCollisionExit(SourDesc);
+			pDestObject->OnCollisionExit(DestDesc);
+			pairs->triggerActor->userData = nullptr;
+			continue;
+		}
+		else if (CComponent::OBJ_DEAD == pDestObject->Get_ObjEvent())
+		{
+			pSourObject->OnCollisionExit(SourDesc);
+			pDestObject->OnCollisionExit(DestDesc);
+			pairs->otherActor->userData = nullptr;
+			continue;
+		}
+
 		if (pairs->status == PxPairFlag::eNOTIFY_TOUCH_LOST)
 		{
 			pSourObject->OnCollisionExit(SourDesc);
 			pDestObject->OnCollisionExit(DestDesc);
-		}
-
-		if (CComponent::OBJ_DEAD == pSourObject->Get_ObjEvent())
-		{
-			pairs->triggerActor->userData = nullptr;
-		}
-		else if (CComponent::OBJ_DEAD == pDestObject->Get_ObjEvent())
-		{
-			pairs->otherActor->userData = nullptr;
 		}
 	}
 }

@@ -4,7 +4,6 @@
 
 BEGIN(Engine)
 class CShader;
-class CTexture;
 class CRenderer;
 class CVIBuffer_Rect;
 class CUI_Progress;
@@ -14,37 +13,30 @@ BEGIN(Client)
 
 class CUI_HP final : public CUI
 {
-protected:
+private:
 	explicit CUI_HP(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CUI_HP(const CUI_HP& rhs);
 	virtual ~CUI_HP() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void	Tick(_float fTimeDelta) override;
 	virtual void	Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
-protected:
-	CShader* m_pShaderCom = { nullptr };
-	CTexture* m_pTextureCom = { nullptr };
-	CRenderer* m_pRendererCom = { nullptr };
-	CVIBuffer_Rect* m_pVIBufferCom = { nullptr };
-	CTexture* m_pAlphaTextureCom = { nullptr };
-
-	CUI_Progress* m_pProgressCom = { nullptr };
+private:
+	CShader*			m_pShaderCom = { nullptr };
+	CRenderer*			m_pRendererCom = { nullptr };
+	CVIBuffer_Rect*		m_pVIBufferCom = { nullptr };
+	CUI_Progress*		m_pProgressCom = { nullptr };
 
 private:
 	HRESULT Add_Components();
-	HRESULT Add_AlphaTexture();
 	HRESULT SetUp_ShaderResources();
-	HRESULT Ready_Texture();
-
+	
 #ifdef _DEBUG
 	HRESULT Debug_UI(_float fTimeDelta);
 #endif // _DEBUG
-
 
 public:
 	static CUI_HP* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -223,6 +223,21 @@
     <Filter Include="03. Behaviors\00. Action">
       <UniqueIdentifier>{22de2c6d-33c0-405e-880a-8329dd7ffd58}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine">
+      <UniqueIdentifier>{80131a04-5be6-4f74-b2ac-09649853f473}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\02. StateContext">
+      <UniqueIdentifier>{52207591-197e-4e0b-ba0b-670292f5f012}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\00. IdleState">
+      <UniqueIdentifier>{f9cc4dbf-4550-4855-a9f9-8562b44f54a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. Weapon">
+      <UniqueIdentifier>{e492e81f-a203-4fa9-9a45-dbbf54d55c64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. Weapon\Wand">
+      <UniqueIdentifier>{3eacb79d-9519-4b74-935b-b05ac19d8cfc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -335,9 +350,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\Golem_Combat.h">
       <Filter>02. GameObject\02. Enemy\03. Golem\00. Combat</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Golem_Grunt.h">
-      <Filter>02. GameObject\02. Enemy\03. Golem\01. Grunt</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Golem_Merlin.h">
       <Filter>02. GameObject\02. Enemy\03. Golem\02. Merlin</Filter>
@@ -470,6 +482,21 @@
     </ClInclude>
     <ClInclude Include="..\Public\Sequence_MoveTarget.h">
       <Filter>03. Behaviors\02. Sequences</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\StateMachine.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine</Filter>
+    </ClInclude>
+    <ClInclude Include="StateContext.h">
+      <Filter>02. GameObject\01. Player\02. StateContext</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\IdleState.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\00. IdleState</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Golem_Grunt.h">
+      <Filter>02. GameObject\02. Enemy\03. Golem\01. Grunt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Weapon_Player_Wand.h">
+      <Filter>02. GameObject\01. Player\01. Weapon\Wand</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -688,6 +715,18 @@
     </ClCompile>
     <ClCompile Include="..\Private\Sequence_MoveTarget.cpp">
       <Filter>03. Behaviors\02. Sequences</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\StateMachine.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\StateContext.cpp">
+      <Filter>02. GameObject\01. Player\02. StateContext</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\IdleState.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\00. IdleState</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Weapon_Player_Wand.cpp">
+      <Filter>02. GameObject\01. Player\01. Weapon\Wand</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

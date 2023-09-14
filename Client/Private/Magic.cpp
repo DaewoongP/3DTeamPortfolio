@@ -7,20 +7,11 @@ CMagic::CMagic(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 }
 
+// 재생성될때 값 가지고 올 필요 없음.
+// 클론할때 데이터 입력해줄거임.
 CMagic::CMagic(const CMagic& rhs)
 	: CComposite(rhs)
-	, m_eMagicGroup(rhs.m_eMagicGroup)
-	, m_eMagicType(rhs.m_eMagicType)
-	, m_eBuffType(rhs.m_eBuffType)
-	, m_fInitCoolTime(rhs.m_fInitCoolTime)
-	, m_fDamage(rhs.m_fDamage)
-	, m_fDistance(rhs.m_fDistance)
-	, m_eMagicTag(rhs.m_eMagicTag)
 {
-	for (auto func : rhs.m_ActionVec)
-	{
-		m_ActionVec.push_back(func);
-	}
 }
 
 HRESULT CMagic::Initialize_Prototype()
@@ -36,13 +27,15 @@ HRESULT CMagic::Initialize(void* pArg)
 	__super::Initialize(pArg);
 
 	MAGICDESC* InitDesc = static_cast<MAGICDESC*>(pArg);
-	m_eMagicGroup	= InitDesc->eMagicGroup;
-	m_eMagicType	= InitDesc->eMagicType;
-	m_eBuffType		= InitDesc->eBuffType;
+	m_eMagicGroup = InitDesc->eMagicGroup;
+	m_eMagicType = InitDesc->eMagicType;
+	m_eBuffType = InitDesc->eBuffType;
 	m_fInitCoolTime = InitDesc->fCoolTime;
-	m_fDamage		= InitDesc->fDamage;
-	m_fDistance		= InitDesc->fDistance;
-	m_eMagicTag		= InitDesc->eMagicTag;
+	m_fDamage = InitDesc->fDamage;
+	m_fCastDistance = InitDesc->fCastDistance;
+	m_fBallDistance = InitDesc->fBallDistance;
+	m_eMagicTag = InitDesc->eMagicTag;
+	m_fLifeTime = InitDesc->fLifeTime;
 
 	if (FAILED(Add_Component()))
 	{
@@ -67,25 +60,32 @@ void CMagic::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 }
 
-_bool CMagic::Magic_Cast(CTransform* pTarget)
+_bool CMagic::Magic_Cast(CTransform* pTarget, class CWeapon_Player_Wand* pWeapon)
 {
 	if (m_fCurrentCoolTime <= 0)
 	{
 		//마법을 생성 합니다.
-		
-		CGameInstance* pGameInstance = CGameInstance::GetInstance();
-		Safe_AddRef(pGameInstance);
-		if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_BaseAttack"), TEXT("Layer_Debug"), TEXT("GameObject_BaseAttack"))))
+		CMagicBall::MAGICBALLINITDESC ballInit;
+		ballInit.eBuffType = m_eBuffType;
+		ballInit.eMagicGroup = m_eMagicGroup;
+		ballInit.eMagicTag = m_eMagicTag;
+		ballInit.eMagicType = m_eMagicType;
+		ballInit.fDamage = m_fDamage;
+		ballInit.fDistance = m_fBallDistance;
+		ballInit.pTarget = pTarget;
+		ballInit.fLiftTime = m_fLifeTime;
+		ballInit.pWeapon = pWeapon;
+
+		BEGININSTANCE;
+		if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_BaseAttack"), TEXT("Layer_Magic"), Generate_HashtagW().c_str(), &ballInit)))
 		{
 			MSG_BOX("Failed Add_GameObject : (GameObject_BaseAttack)");
 			return false;
 		}
+		ENDINSTANCE;
 
-		Safe_Release(pGameInstance);
-		//마법 발사시 같이 호출해줬으면 하는 함수들 행동 개시
 		for (_uint i = 0; i < m_ActionVec.size(); i++)
 		{
-			
 			m_ActionVec[i]();
 		}
 		m_fCurrentCoolTime = m_fInitCoolTime;
@@ -102,13 +102,6 @@ HRESULT CMagic::Add_ActionFunc(function<void()> func)
 
 HRESULT CMagic::Add_Component()
 {
-	/*if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_MagicBallPool"),
-		TEXT("Com_Pool"), reinterpret_cast<CComponent**>(&m_pMagicBallPool))))
-	{
-		MSG_BOX("Failed CMagic Add_Component : (Com_Pool)");
-		return E_FAIL;
-	}*/
-
 	return S_OK;
 }
 
@@ -140,6 +133,5 @@ CMagic* CMagic::Clone(void* pArg)
 
 void CMagic::Free()
 {
-	//Safe_Release(m_pMagicBallPool);
 	__super::Free();
 }

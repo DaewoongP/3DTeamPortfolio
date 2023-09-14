@@ -411,6 +411,8 @@ void CObject_Window::Install_Multi_Object(_float3 vPos)
 {
 	ImGui::Text("Press H to Install");
 
+	ImGui::Text("There is %d Instance Model", m_iPushBackInsObject);
+
 	// 범위 안에 있을 경우 H키를 눌러 설치
 	if (true == m_pGameInstance->Get_DIKeyState(DIK_H, CInput_Device::KEY_DOWN) &&
 		-1.f != vPos.x)
@@ -438,11 +440,47 @@ void CObject_Window::Install_Multi_Object(_float3 vPos)
 		m_pObject->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMesh"));
 		m_pObject->Set_Color(m_iMapObjectIndex); // 고유한 색깔 값을 넣어줌
 
-		// 인스턴스 저장용 벡터에 넣어준다.
-		m_vecSaveInsObjectWorld.push_back(vWorldMatrix);
-
 		++m_iMapObjectIndex;
 		++m_iInsObjectCnt;
+	}
+
+	// 설치한 맵 오브젝트들을 인스턴스 모델로 묶음
+	if (ImGui::Button("push_back"))
+	{
+		vector<_float4x4> vecWorldMatrix;
+
+		for (size_t i = m_iMapObjectIndex - m_iInsObjectCnt; i < m_iMapObjectIndex; i++)
+		{
+			// 해당 게임 오브젝트를 찾음
+			_tchar wszobjName[MAX_PATH] = { 0 };
+			_stprintf_s(wszobjName, TEXT("GameObject_InsMapObject_%d"), (i));
+
+			CMapObject* pObject = static_cast<CMapObject*>(m_pGameInstance->Find_Component_In_Layer(LEVEL_TOOL,
+				TEXT("Layer_MapObject"), wszobjName));
+
+			vecWorldMatrix.push_back(pObject->Get_Transform()->Get_WorldMatrix());
+		}
+
+		SAVEINSOBJECTDESC SaveDesc;
+
+		SaveDesc.iInstanceCnt = m_iInsObjectCnt;
+
+		SaveDesc.pMatTransform = New _float4x4[SaveDesc.iInstanceCnt];
+		for (size_t i = 0; i < SaveDesc.iInstanceCnt; i++)
+		{
+			SaveDesc.pMatTransform[i] = vecWorldMatrix.at(i);
+		}
+
+		SaveDesc.matTransform = XMMatrixIdentity();
+		SaveDesc.iTagLen = lstrlen(m_vecModelList_t.at(m_iModelIndex)) * 2;
+		lstrcpy(SaveDesc.wszTag, m_vecModelList_t.at(m_iModelIndex));
+
+		m_vecSaveInsObject.push_back(SaveDesc);
+		m_vecFreeMatrix.push_back(SaveDesc.pMatTransform);
+
+		m_iInsObjectCnt = 0;
+
+		++m_iPushBackInsObject;
 	}
 }
 
@@ -716,6 +754,18 @@ void CObject_Window::Delete_Object_Menu()
 			m_vecObjectTag_s.clear();
 			m_vecMapObjectTag.clear();
 
+			// 인스턴싱 관련 초기화
+			m_iPushBackInsObject = 0;
+			m_iInsObjectCnt = 0;
+			
+			for (auto& iter : m_vecFreeMatrix)
+			{
+				Safe_Delete_Array(iter);
+			}
+
+			m_vecFreeMatrix.clear();
+			m_vecSaveInsObject.clear();
+
 			m_isDeleteObject = false;
 		}
 
@@ -920,7 +970,7 @@ void CObject_Window::Map_Brushing_Menu()
 	if (true == m_pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_PRESSING) &&
 		m_pGameInstance->IsMouseInClient(m_pContext, g_hWnd) &&
 		-1.f != vPos.x &&
-		0.1f < m_fTimeAccBrush)
+		0.2f < m_fTimeAccBrush)
 	{
 		pTerrain->Set_BrushDesc(vPos, m_fBrushSize, m_iBrushIndex);
 		m_fTimeAccBrush = 0.f;
@@ -956,7 +1006,7 @@ void CObject_Window::Map_Brushing_Menu()
 		//Target_Brushing의 ID3D11Texture2D를 가져옴
 		ID3D11Texture2D* pTexture = m_pGameInstance->Find_RenderTarget(TEXT("Target_MapBrushing"))->Get_Texture2D();
 
-		if (FAILED(SaveDDSTextureToFile(m_pContext, pTexture, TEXT("../../Resources/Default/Textures/Ground/Filter.dds"))))
+		if (FAILED(SaveDDSTextureToFile(m_pContext, pTexture, TEXT("../../Resources/Texture/Terrain/Create/Filter.dds"))))
 		{
 			MSG_BOX("Failed to Save Terrain Texture");
 			return;
@@ -1115,47 +1165,38 @@ HRESULT CObject_Window::Save_MapObject_Ins(string szMapDataPath)
 
 	DWORD	dwByte = 0;
 
-	// 한번에 한 종류의 모델만 저장
-	for (_uint i = 0; i < 1; ++i)
+	for (_uint i = 0; i < m_vecSaveInsObject.size(); ++i)
 	{
-		if (!WriteFile(hFile, &m_iInsObjectCnt, sizeof(_uint), &dwByte, nullptr))
+		if (!WriteFile(hFile, &m_vecSaveInsObject.at(i).iInstanceCnt, sizeof(_uint), &dwByte, nullptr))
 		{
-			MSG_BOX("Failed to Write m_iInsObjectCnt");
+			MSG_BOX("Failed to Write iInstanceCnt");
 			return E_FAIL;
 		}
 		
 		// 여기서 따로 벡터에 저장해둔 값들을 저장한다.
-		for (size_t i = 0; i < m_iInsObjectCnt; i++)
+		for (size_t j = 0; j < m_vecSaveInsObject.at(i).iInstanceCnt; ++j)
 		{
-			if (!WriteFile(hFile, &m_vecSaveInsObjectWorld[i], sizeof(_float4x4), &dwByte, nullptr))
+			if (!WriteFile(hFile, &m_vecSaveInsObject.at(i).pMatTransform[j], sizeof(_float4x4), &dwByte, nullptr))
 			{
-				MSG_BOX("Failed to Write m_vecSaveInsObjectWorld");
+				MSG_BOX("Failed to Write pMatTransform");
 				return E_FAIL;
 			}
 		}
 
-		_float4x4 vMatrix = XMMatrixIdentity();
-		if (!WriteFile(hFile, &vMatrix, sizeof(_float4x4), &dwByte, nullptr))
+		if (!WriteFile(hFile, &m_vecSaveInsObject.at(i).matTransform, sizeof(_float4x4), &dwByte, nullptr))
 		{
-			MSG_BOX("Failed to Write vMatrix");
+			MSG_BOX("Failed to Write matTransform");
 			return E_FAIL;
 		}
 
-		// 현재 선택된 모델 문자열의 길이
-		_uint iLength = lstrlen(m_vecModelList_t.at(m_iModelIndex)) * 2;
-
-		if (!WriteFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr))
+		if (!WriteFile(hFile, &m_vecSaveInsObject.at(i).iTagLen, sizeof(_uint), &dwByte, nullptr))
 		{
-			MSG_BOX("Failed to Write iLength");
+			MSG_BOX("Failed to Write iTagLen");
 			return E_FAIL;
 		}
-
-		_tchar wszTag[MAX_PATH] = TEXT("");
-
-		lstrcpy(wszTag, m_vecModelList_t.at(m_iModelIndex));
 
 		// 현재 선택된 모델 문자열
-		if (!WriteFile(hFile, &wszTag, iLength, &dwByte, nullptr))
+		if (!WriteFile(hFile, &m_vecSaveInsObject.at(i).wszTag, m_vecSaveInsObject.at(i).iTagLen, &dwByte, nullptr))
 		{
 			MSG_BOX("Failed to Write m_vecModelList_t.at(m_iModelIndex)");
 			return E_FAIL;
@@ -1163,7 +1204,7 @@ HRESULT CObject_Window::Save_MapObject_Ins(string szMapDataPath)
 	}
 
 	m_iInsObjectCnt = 0;
-	m_vecSaveInsObjectWorld.clear();
+	m_vecSaveInsObject.clear();
 
 	MSG_BOX("Save Success");
 
@@ -1180,7 +1221,6 @@ HRESULT CObject_Window::Load_MapObject_Ins(const _tchar* wszMapDataPath)
 	}
 
 	m_vecSaveInsObject.clear();
-	m_vecSaveInsObjectWorld.clear();
 
 	HANDLE hFile = CreateFile(wszMapDataPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
@@ -1216,6 +1256,8 @@ HRESULT CObject_Window::Load_MapObject_Ins(const _tchar* wszMapDataPath)
 					return E_FAIL;
 				}
 			}
+
+			m_vecFreeMatrix.push_back(SaveDesc.pMatTransform);
 		}
 
 		if (!ReadFile(hFile, &SaveDesc.matTransform, sizeof(_float4x4), &dwByte, nullptr))
@@ -1468,6 +1510,8 @@ HRESULT CObject_Window::Create_Dummy()
 		return E_FAIL;
 	}
 
+	Safe_AddRef(m_pDummy);
+
 	m_pDummy = static_cast<CMapDummy*>(m_pGameInstance->Find_Component_In_Layer(LEVEL_TOOL, TEXT("Layer_Tool"), TEXT("Map_Dummy")));
 	m_pDummy->Add_Model_Component(TEXT("Prototype_Component_Model_Tree"));
 	m_pDummy->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMesh"));
@@ -1491,7 +1535,7 @@ HRESULT CObject_Window::Delete_Dummy()
 		return E_FAIL;
 	}
 
-	m_pDummy = nullptr;
+	Safe_Release(m_pDummy);
 
 	return S_OK;
 }
@@ -1608,8 +1652,11 @@ void CObject_Window::Free(void)
 	m_vecObjectTag_s.clear();
 	m_vecMapObjectTag.clear();
 
-	for (auto& iter : m_vecSaveInsObject)
+	for (auto& iter : m_vecFreeMatrix)
 	{
-		Safe_Delete_Array(iter.pMatTransform);
+		Safe_Delete_Array(iter);
 	}
+
+	m_vecFreeMatrix.clear();
+	m_vecSaveInsObject.clear();
 }

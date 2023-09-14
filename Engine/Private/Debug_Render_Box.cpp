@@ -53,7 +53,8 @@ HRESULT CDebug_Render_Box::Initialize(void* pArg)
 
 	for (_uint i = 0; i < m_iNumVertices; ++i)
 	{
-		pVertices[i].vPosition = pVertices[i].vPosition + BoxDesc.vOrigin;
+		XMStoreFloat3(&pVertices[i].vPosition, XMVector3TransformCoord(XMLoadFloat3(&pVertices[i].vPosition), 
+			XMMatrixRotationQuaternion(BoxDesc.vOffsetRotation)) + XMLoadFloat3(&BoxDesc.vOffsetPosition));
 	}
 
 	ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
