@@ -52,6 +52,7 @@ HRESULT CMagicBall::Initialize(void* pArg)
 	m_pTransform->Set_Position(m_vStartPosition);
 
 	m_vStartPosition = m_pWeapon->Get_Transform()->Get_Position() + m_pWeapon->Get_Wand_Point_Offset();
+	//cout << m_vStartPosition.x << " " << m_vStartPosition.y << " " << m_vStartPosition.z << endl;
 	return S_OK;
 }
 
