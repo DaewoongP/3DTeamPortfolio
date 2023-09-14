@@ -49,7 +49,9 @@ public:
 
 public:
 	HRESULT Add_Decoration(function<_bool(class CBlackBoard*)> Func);
+	/* 주의. pBehavior의 AddRef를 진행하지 않는다. */
 	HRESULT Assemble_Behavior(const wstring & BehaviorTag, CBehavior * pBehavior);
+	virtual void Reset_Behavior() {};
 
 protected:
 	wstring m_wstrBehaviorTag = { L"" };
@@ -66,6 +68,7 @@ protected:
 protected:
 	_bool Check_Decorations();
 	CBehavior* Find_Behavior(const wstring & BehaviorTag);
+	virtual HRESULT Assemble_Childs() { return S_OK; }
 
 protected:
 	virtual CBehavior* Clone(void* pArg) = 0;

@@ -1,6 +1,7 @@
 #include "RandomChoose.h"
 
 #include "Calculator.h"
+#include "BlackBoard.h"
 
 CRandomChoose::CRandomChoose(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CBehavior(pDevice, pContext)
@@ -20,7 +21,7 @@ HRESULT CRandomChoose::Tick(const _float& fTimeDelta)
 
 	if (false == Check_Decorations())
 	{
-		Set_Random_Behavior();
+		(*m_iterCurBehavior)->Reset_Behavior();
 		return BEHAVIOR_FAIL;
 	}
 
@@ -33,6 +34,7 @@ HRESULT CRandomChoose::Tick(const _float& fTimeDelta)
 
 	if (BEHAVIOR_RUNNING != hr)
 	{
+		(*m_iterCurBehavior)->Reset_Behavior();
 		Set_Random_Behavior();
 	}
 
@@ -51,13 +53,13 @@ HRESULT CRandomChoose::Assemble_Behavior(const wstring& BehaviorTag, CBehavior* 
 
 	_uint iIndex = pCalculator->RandomChoose(m_ChildWeights, (_uint)m_Behaviors.size());
 
+	Safe_Release(pCalculator);
+
 	if (-1 == iIndex)
 		return E_FAIL;
 
 	while (0 < iIndex--)
 		++m_iterCurBehavior;
-
-	Safe_Release(pCalculator);
 
 	return S_OK;
 }

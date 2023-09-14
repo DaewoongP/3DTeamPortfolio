@@ -13,6 +13,36 @@ CAction::CAction(const CAction& rhs)
 {
 }
 
+void CAction::Set_Options(const wstring& _wstrAnimationTag, CModel* _pModel,
+	_bool _isCheckBehavior, const _float& _fCoolTime,
+	const wstring& _wstrTimerTag, const _float& _fDurationTime,
+	_bool _isOneTimeAction, _bool _isLerp)
+{
+	if (nullptr == _pModel)
+	{
+		MSG_BOX("[CAction] _pModel is nullptr");
+		return;
+	}
+
+	if (0 < _wstrTimerTag.size())
+	{
+		BEGININSTANCE;
+		m_wstrTimerTag = _wstrTimerTag;
+		pGameInstance->Add_Timer(_wstrTimerTag, false, _fDurationTime);
+		ENDINSTANCE;
+	}
+
+	m_pModel = _pModel;
+	Safe_AddRef(m_pModel);
+
+	m_wstrAnimationTag = _wstrAnimationTag;
+	m_fLimit = _fCoolTime;
+	m_isOneTimeAction = _isOneTimeAction;
+	m_isCheckBehavior = _isCheckBehavior;
+
+	m_pModel->Get_Animation(m_wstrAnimationTag)->Set_LerpAnim(_isLerp);
+}
+
 HRESULT CAction::Initialize(void* pArg)
 {
 	/* ÄðÅ¸ÀÓ */
@@ -44,10 +74,7 @@ HRESULT CAction::Initialize(void* pArg)
 HRESULT CAction::Tick(const _float& fTimeDelta)
 {
 	if (false == Check_Decorations())
-	{
-		m_isFinishBehaviors = false;
 		return BEHAVIOR_FAIL;
-	}
 
 	_bool isFirst = { false };
 	if (FAILED(m_pBlackBoard->Get_Type("isFirst", isFirst)))
@@ -105,50 +132,21 @@ HRESULT CAction::Tick(const _float& fTimeDelta)
 	}
 
 	if (true == bCheck)
-	{
-		if (FAILED(m_pBlackBoard->Set_Type("isFirst", true)))
-			return E_FAIL;
-
-		m_isFinishBehaviors = false;
-
-		BEGININSTANCE;
-		m_fPreWorldTimeAcc = pGameInstance->Get_World_TimeAcc();
-		ENDINSTANCE;
-
 		return BEHAVIOR_SUCCESS;
-	}
 
 	return BEHAVIOR_RUNNING;
 }
 
-void CAction::Set_Options(const wstring& _wstrAnimationTag, CModel* _pModel,
-	_bool _isCheckBehavior, const _float& _fCoolTime,
-	const wstring& _wstrTimerTag, const _float& _fDurationTime,
-	_bool _isOneTimeAction, _bool _isLerp)
+void CAction::Reset_Behavior()
 {
-	if (nullptr == _pModel)
-	{
-		MSG_BOX("[CAction] _pModel is nullptr");
+	if (FAILED(m_pBlackBoard->Set_Type("isFirst", true)))
 		return;
-	}
 
-	if (0 < _wstrTimerTag.size())
-	{
-		BEGININSTANCE;
-		m_wstrTimerTag = _wstrTimerTag;
-		pGameInstance->Add_Timer(_wstrTimerTag, false, _fDurationTime);
-		ENDINSTANCE;
-	}
+	m_isFinishBehaviors = false;
 
-	m_pModel = _pModel;
-	Safe_AddRef(m_pModel);
-
-	m_wstrAnimationTag = _wstrAnimationTag;
-	m_fLimit = _fCoolTime;
-	m_isOneTimeAction = _isOneTimeAction;
-	m_isCheckBehavior = _isCheckBehavior;
-
-	m_pModel->Get_Animation(m_wstrAnimationTag)->Set_LerpAnim(_isLerp);
+	BEGININSTANCE;
+	m_fPreWorldTimeAcc = pGameInstance->Get_World_TimeAcc();
+	ENDINSTANCE;
 }
 
 CAction* CAction::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

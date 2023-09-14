@@ -16,7 +16,10 @@ HRESULT CSelector::Tick(const _float& fTimeDelta)
 		return E_FAIL;
 
 	if (false == Check_Decorations())
+	{
+		(*m_iterCurBehavior)->Reset_Behavior();
 		return BEHAVIOR_FAIL;
+	}
 
 	HRESULT hr = (*m_iterCurBehavior)->Tick(fTimeDelta);
 
@@ -31,10 +34,12 @@ HRESULT CSelector::Tick(const _float& fTimeDelta)
 		return BEHAVIOR_RUNNING;
 
 	case BEHAVIOR_SUCCESS:
+		(*m_iterCurBehavior)->Reset_Behavior();
 		m_iterCurBehavior = m_Behaviors.begin();
 		return BEHAVIOR_SUCCESS;
 
 	case BEHAVIOR_FAIL:
+		(*m_iterCurBehavior)->Reset_Behavior();
 		++m_iterCurBehavior;
 
 		if (m_iterCurBehavior == m_Behaviors.end())

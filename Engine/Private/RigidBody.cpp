@@ -304,6 +304,7 @@ HRESULT CRigidBody::Create_Actor(RIGIDBODYDESC* pRigidBodyDesc)
 	// AttachShape로 콜라이더 여러개 바인딩 가능.
 	// 씬도 일단 한개만 처리하게 해둬서 신경 안써도 될듯.
 	m_pActor->attachShape(*pShape);
+	//m_pScene->setGravity(PxVec3(0.f, 0.f, 0.f));
 	m_pScene->addActor(*m_pActor);
 	
 	if (false == pRigidBodyDesc->isStatic)

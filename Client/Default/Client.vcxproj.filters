@@ -145,9 +145,6 @@
     <Filter Include="03. Behaviors">
       <UniqueIdentifier>{68f60c2e-b68f-4392-b9de-da48723e2496}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Behaviors\00. Actions">
-      <UniqueIdentifier>{22de2c6d-33c0-405e-880a-8329dd7ffd58}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03. Behaviors\01. Selectors">
       <UniqueIdentifier>{71a935c5-d66c-42f6-b634-774235c64530}</UniqueIdentifier>
     </Filter>
@@ -222,6 +219,9 @@
     </Filter>
     <Filter Include="02. GameObject\05. UI\UI\UI_Effect_Back">
       <UniqueIdentifier>{6f63ec72-3503-4230-9a92-5c2bd38a636e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Behaviors\00. Action">
+      <UniqueIdentifier>{22de2c6d-33c0-405e-880a-8329dd7ffd58}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -361,7 +361,7 @@
       <Filter>02. GameObject\04. MapObject</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Action.h">
-      <Filter>03. Behaviors\00. Actions</Filter>
+      <Filter>03. Behaviors\00. Action</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Test_Cloth.h">
       <Filter>02. GameObject\99. Debug\Cloth</Filter>
@@ -399,7 +399,7 @@
     <ClInclude Include="..\Public\Player.h">
       <Filter>02. GameObject\01. Player</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\TargetDegree.h">
+    <ClInclude Include="..\Public\Check_Degree.h">
       <Filter>03. Behaviors\04. Function</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Turn.h">
@@ -461,6 +461,15 @@
     </ClInclude>
     <ClInclude Include="..\public\Default_Magic_Effect.h">
       <Filter>02. GameObject\03. Effect\Default_Magic_Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Sequence_Attack.h">
+      <Filter>03. Behaviors\02. Sequences</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Check_Distance.h">
+      <Filter>03. Behaviors\04. Function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Sequence_MoveTarget.h">
+      <Filter>03. Behaviors\02. Sequences</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -570,7 +579,7 @@
       <Filter>02. GameObject\04. MapObject</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Action.cpp">
-      <Filter>03. Behaviors\00. Actions</Filter>
+      <Filter>03. Behaviors\00. Action</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Test_Cloth.cpp">
       <Filter>02. GameObject\99. Debug\Cloth</Filter>
@@ -608,7 +617,7 @@
     <ClCompile Include="..\Private\Player.cpp">
       <Filter>02. GameObject\01. Player</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\TargetDegree.cpp">
+    <ClCompile Include="..\Private\Check_Degree.cpp">
       <Filter>03. Behaviors\04. Function</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Turn.cpp">
@@ -670,6 +679,15 @@
     </ClCompile>
     <ClCompile Include="..\private\Default_Magic_Effect.cpp">
       <Filter>02. GameObject\03. Effect\Default_Magic_Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Sequence_Attack.cpp">
+      <Filter>03. Behaviors\02. Sequences</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Check_Distance.cpp">
+      <Filter>03. Behaviors\04. Function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Sequence_MoveTarget.cpp">
+      <Filter>03. Behaviors\02. Sequences</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

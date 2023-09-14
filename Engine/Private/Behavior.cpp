@@ -54,6 +54,13 @@ HRESULT CBehavior::Assemble_Behavior(const wstring& _BehaviorTag, CBehavior* _pB
 
 	m_iterCurBehavior = m_Behaviors.begin();
 
+	if (FAILED(_pBehavior->Assemble_Childs()))
+	{
+		wstring wstrErrorTag = TEXT("[") + m_wstrBehaviorTag + TEXT("] Failed Assemble_Behavior ") + _BehaviorTag;
+		MSG_BOX(wstrErrorTag.c_str());
+		return E_FAIL;
+	}
+
 	return S_OK;
 }
 

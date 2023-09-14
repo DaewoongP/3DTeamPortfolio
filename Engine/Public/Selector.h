@@ -25,6 +25,9 @@ public:
 	virtual HRESULT Initialize(void* pArg) override { return S_OK; }
 	virtual HRESULT Tick(const _float& fTimeDelta) override;
 
+protected:
+	virtual HRESULT Assemble_Childs() override { return S_OK; }
+
 public:
 	static CSelector* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CSelector* Clone(void* pArg) override;

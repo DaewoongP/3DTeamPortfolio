@@ -45,6 +45,7 @@ private:
 	CModel* m_pModelCom = { nullptr };
 	CShader* m_pShaderCom = { nullptr };
 	CRenderer* m_pRenderer = { nullptr };
+	CRigidBody* m_pRigidBody = { nullptr };
 	CRootBehavior* m_pRootBehavior = { nullptr };
 
 private:
@@ -66,7 +67,6 @@ private:
 private: /* Çàµ¿ ¹­À½µé */
 	HRESULT Make_Descendo(_Inout_ CSequence* pSequence);
 	HRESULT Make_Turns(_Inout_ CSequence* pSequence);
-	HRESULT Make_Move(_Inout_ CSequence* pSequence);
 	HRESULT Make_Attack(_Inout_ CSelector* pSelector);
 	HRESULT Make_Groggy(_Inout_ CSequence* pSequence);
 
