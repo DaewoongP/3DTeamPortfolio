@@ -112,8 +112,8 @@ void CBasicCast::Tick(_float fTimeDelta)
 			m_bDeadTrigger = true;
 			m_pEffect->Play_Particle(_float3(0,0,0));
 		}
-		/*if(m_pEffect->IsEnable())
-			Set_ObjEvent(OBJ_DEAD);*/
+		if(m_pEffect->IsEnable())
+			Set_ObjEvent(OBJ_DEAD);
 	}
 	__super::Tick(fTimeDelta);
 }
@@ -123,19 +123,19 @@ void CBasicCast::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 }
 
-void CBasicCast::OnCollisionEnter(COLLISIONDESC CollisionDesc)
+void CBasicCast::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
-	__super::OnCollisionEnter(CollisionDesc);
+	__super::OnCollisionEnter(CollisionEventDesc);
 }
 
-void CBasicCast::OnCollisionStay(COLLISIONDESC CollisionDesc)
+void CBasicCast::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)
 {
-	__super::OnCollisionStay(CollisionDesc);
+	__super::OnCollisionStay(CollisionEventDesc);
 }
 
-void CBasicCast::OnCollisionExit(COLLISIONDESC CollisionDesc)
+void CBasicCast::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 {
-	__super::OnCollisionExit(CollisionDesc);
+	__super::OnCollisionExit(CollisionEventDesc);
 }
 
 HRESULT CBasicCast::Add_Components()

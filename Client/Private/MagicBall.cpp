@@ -70,17 +70,17 @@ void CMagicBall::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 }
 
-void CMagicBall::OnCollisionEnter(COLLISIONDESC CollisionDesc)
+void CMagicBall::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
 	cout << "Player Enter" << endl;
 }
 
-void CMagicBall::OnCollisionStay(COLLISIONDESC CollisionDesc)
+void CMagicBall::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)
 {
 	cout << "stay" << endl;
 }
 
-void CMagicBall::OnCollisionExit(COLLISIONDESC CollisionDesc)
+void CMagicBall::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 {
 	cout << "Exit" << endl;
 }

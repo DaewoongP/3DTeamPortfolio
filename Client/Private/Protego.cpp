@@ -47,21 +47,21 @@ void CProtego::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 }
 
-void CProtego::OnCollisionEnter(COLLISIONDESC CollisionDesc)
+void CProtego::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
-	__super::OnCollisionEnter(CollisionDesc);
+	__super::OnCollisionEnter(CollisionEventDesc);
 	cout << "Player Enter" << endl;
 }
 
-void CProtego::OnCollisionStay(COLLISIONDESC CollisionDesc)
+void CProtego::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)
 {
-	__super::OnCollisionStay(CollisionDesc);
+	__super::OnCollisionStay(CollisionEventDesc);
 	cout << "stay" << endl;
 }
 
-void CProtego::OnCollisionExit(COLLISIONDESC CollisionDesc)
+void CProtego::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 {
-	__super::OnCollisionExit(CollisionDesc);
+	__super::OnCollisionExit(CollisionEventDesc);
 	cout << "Exit" << endl;
 }
 

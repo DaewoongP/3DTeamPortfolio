@@ -66,17 +66,17 @@ void CTest_Player::Late_Tick(_float fTimeDelta)
 #endif // _DEBUG
 }
 
-void CTest_Player::OnCollisionEnter(COLLISIONDESC CollisionDesc)
+void CTest_Player::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
 	cout << "Player Enter" << endl;
 }
 
-void CTest_Player::OnCollisionStay(COLLISIONDESC CollisionDesc)
+void CTest_Player::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)
 {
 	cout << "stay" << endl;
 }
 
-void CTest_Player::OnCollisionExit(COLLISIONDESC CollisionDesc)
+void CTest_Player::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 {
 	cout << "Exit" << endl;
 }

@@ -178,21 +178,6 @@
     <Filter Include="04. Magic">
       <UniqueIdentifier>{e77db5d2-8ca4-49d3-9854-41ff5a14a55b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\09. MagicBall">
-      <UniqueIdentifier>{7667aa3f-fd7d-47db-b815-b3a9a26ac4c5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\09. MagicBall\MagicBallPool">
-      <UniqueIdentifier>{9de24398-e881-4455-91ad-ee52934ecab4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\09. MagicBall\01. Protego">
-      <UniqueIdentifier>{bcd138af-102e-4b5f-b68d-6ea12de5208b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\09. MagicBall\02. Revelio">
-      <UniqueIdentifier>{35319448-1444-4cfb-8ce5-26aa0f43aca3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\09. MagicBall\00. BasicCast">
-      <UniqueIdentifier>{753e950f-efbe-4660-a035-8339816dab1b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\01. Player\00. Camera">
       <UniqueIdentifier>{f3759d26-a3c7-4580-b9e7-a5b9ac3325cb}</UniqueIdentifier>
     </Filter>
@@ -237,6 +222,21 @@
     </Filter>
     <Filter Include="02. GameObject\01. Player\01. Weapon\Wand">
       <UniqueIdentifier>{3eacb79d-9519-4b74-935b-b05ac19d8cfc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Magic\MagicBall">
+      <UniqueIdentifier>{7667aa3f-fd7d-47db-b815-b3a9a26ac4c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Magic\MagicBall\MagicBallPool">
+      <UniqueIdentifier>{9de24398-e881-4455-91ad-ee52934ecab4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Magic\MagicBall\01. Protego">
+      <UniqueIdentifier>{bcd138af-102e-4b5f-b68d-6ea12de5208b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Magic\MagicBall\02. Revelio">
+      <UniqueIdentifier>{35319448-1444-4cfb-8ce5-26aa0f43aca3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Magic\MagicBall\00. BasicCast">
+      <UniqueIdentifier>{753e950f-efbe-4660-a035-8339816dab1b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -445,19 +445,19 @@
       <Filter>04. Magic</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MagicBall.h">
-      <Filter>02. GameObject\09. MagicBall</Filter>
+      <Filter>04. Magic\MagicBall</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MagicBallPool.h">
-      <Filter>02. GameObject\09. MagicBall\MagicBallPool</Filter>
+      <Filter>04. Magic\MagicBall\MagicBallPool</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Protego.h">
-      <Filter>02. GameObject\09. MagicBall\01. Protego</Filter>
+      <Filter>04. Magic\MagicBall\01. Protego</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Revelio.h">
-      <Filter>02. GameObject\09. MagicBall\02. Revelio</Filter>
+      <Filter>04. Magic\MagicBall\02. Revelio</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\BasicCast.h">
-      <Filter>02. GameObject\09. MagicBall\00. BasicCast</Filter>
+      <Filter>04. Magic\MagicBall\00. BasicCast</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\LookAt.h">
       <Filter>03. Behaviors\03. Movement</Filter>
@@ -678,19 +678,19 @@
       <Filter>04. Magic</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MagicBall.cpp">
-      <Filter>02. GameObject\09. MagicBall</Filter>
+      <Filter>04. Magic\MagicBall</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Protego.cpp">
-      <Filter>02. GameObject\09. MagicBall\01. Protego</Filter>
+      <Filter>04. Magic\MagicBall\01. Protego</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Revelio.cpp">
-      <Filter>02. GameObject\09. MagicBall\02. Revelio</Filter>
+      <Filter>04. Magic\MagicBall\02. Revelio</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MagicBallPool.cpp">
-      <Filter>02. GameObject\09. MagicBall\MagicBallPool</Filter>
+      <Filter>04. Magic\MagicBall\MagicBallPool</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\BasicCast.cpp">
-      <Filter>02. GameObject\09. MagicBall\00. BasicCast</Filter>
+      <Filter>04. Magic\MagicBall\00. BasicCast</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\LookAt.cpp">
       <Filter>03. Behaviors\03. Movement</Filter>

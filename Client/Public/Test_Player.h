@@ -24,9 +24,9 @@ public:
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
-	virtual void OnCollisionEnter(COLLISIONDESC CollisionDesc) override;
-	virtual void OnCollisionStay(COLLISIONDESC CollisionDesc) override;
-	virtual void OnCollisionExit(COLLISIONDESC CollisionDesc) override;
+	virtual void OnCollisionEnter(COLLEVENTDESC CollisionEventDesc) override;
+	virtual void OnCollisionStay(COLLEVENTDESC CollisionEventDesc) override;
+	virtual void OnCollisionExit(COLLEVENTDESC CollisionEventDesc) override;
 	virtual HRESULT Render() override;
 	virtual HRESULT Render_Depth() override;
 

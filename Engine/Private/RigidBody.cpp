@@ -567,6 +567,12 @@ void CRigidBody::Free()
 {
 	__super::Free();
 
+	if (nullptr != m_pActor)
+	{
+		m_pActor->userData = nullptr;
+		m_pActor->release();
+	}
+	
 #ifdef _DEBUG
 	for (auto& pShader : m_Shaders)
 		Safe_Release(pShader);
