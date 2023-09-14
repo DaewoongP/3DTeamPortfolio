@@ -51,6 +51,7 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_PostProcessing"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 0.f))))
 		return E_FAIL;
+
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_Shadow_Depth"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
@@ -205,6 +206,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 
 	if (FAILED(Render_Priority()))
 		return E_FAIL;
+	if (FAILED(Render_Depth()))
+		return E_FAIL;
 	if (FAILED(Render_NonBlend()))
 		return E_FAIL;
 	if (FAILED(Render_Lights()))
@@ -291,8 +294,7 @@ HRESULT CRenderer::Render_Priority()
 
 	return S_OK;
 }
-
-HRESULT CRenderer::Render_NonBlend()
+HRESULT CRenderer::Render_Depth()
 {
 	if (nullptr == m_pRenderTarget_Manager)
 		return E_FAIL;
@@ -300,15 +302,22 @@ HRESULT CRenderer::Render_NonBlend()
 	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Shadow_Depth"))))
 		return E_FAIL;
 
-	for (auto& pGameObject : m_RenderObjects[RENDER_NONBLEND])
+	for (auto& pGameObject : m_RenderObjects[RENDER_DEPTH])
 	{
 		if (nullptr != pGameObject)
 			pGameObject->Render_Depth();
+		Safe_Release(pGameObject);
 	}
+
+	m_RenderObjects[RENDER_DEPTH].clear();
 
 	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext)))
 		return E_FAIL;
-
+}
+HRESULT CRenderer::Render_NonBlend()
+{
+	if (nullptr == m_pRenderTarget_Manager)
+		return E_FAIL;
 
 	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_GameObjects"))))
 		return E_FAIL;
@@ -416,6 +425,8 @@ HRESULT CRenderer::Render_Lights()
 
 	return S_OK;
 }
+
+
 
 HRESULT CRenderer::Render_Shadow()
 {
