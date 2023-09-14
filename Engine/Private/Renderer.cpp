@@ -155,8 +155,8 @@ HRESULT CRenderer::Initialize_Prototype()
 	/*if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_PostProcessing"), 240.f, 560.f, 160.f, 160.f)))
 		return E_FAIL;*/
 
-	//if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Picking"), 1200.f, 80.f, 160.f, 160.f)))
-	//	return E_FAIL; // ∏  ø¿∫Í¡ß≈Õ Fast Picking¿ª ¿ß«— ∑ª¥ı ≈∏∞Ÿ
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Picking"), 1200.f, 80.f, 160.f, 160.f)))
+		return E_FAIL; // ∏  ø¿∫Í¡ß≈Õ Fast Picking¿ª ¿ß«— ∑ª¥ı ≈∏∞Ÿ
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_MapBrushing"), 1040.f, 80.f, 160.f, 160.f)))
 		return E_FAIL; // ∏  ∫Í∑ØΩÃ ∞·∞˙ ¿˙¿Â¿ª ¿ß«— ∑ª¥ı ≈∏∞Ÿ
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_UI"), 1200.f, 300.f, 160.f, 160.f)))
@@ -214,14 +214,6 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 	if (FAILED(Render_SoftShadow()))
 		return E_FAIL;
-//#ifdef _DEBUG
-
-#ifdef _DEBUG
-//	if (FAILED(Render_Picking())) 	// ∏  ø¿∫Í¡ß≈Õ Fast Picking¿ª ¿ß«— ∑ª¥ı ≈∏∞Ÿ
-//		return E_FAIL;
-	if (FAILED(Render_Brushing())) 	// ∏  ∫Í∑ØΩÃ ∞·∞˙ ¿˙¿Â¿ª ¿ß«— ∑ª¥ı ≈∏∞Ÿ
-		return E_FAIL;
-#endif // _DEBUG
 	
 	if (FAILED(Render_Deferred()))
 		return E_FAIL;
@@ -236,6 +228,13 @@ HRESULT CRenderer::Draw_RenderGroup()
 	
 	if (FAILED(m_pRenderTarget_Manager->End_PostProcessingRenderTarget(m_pContext)))
 		return E_FAIL;
+
+#ifdef _DEBUG
+	if (FAILED(Render_Picking())) 	// ∏  ø¿∫Í¡ß≈Õ Fast Picking¿ª ¿ß«— ∑ª¥ı ≈∏∞Ÿ
+		return E_FAIL;
+	if (FAILED(Render_Brushing())) 	// ∏  ∫Í∑ØΩÃ ∞·∞˙ ¿˙¿Â¿ª ¿ß«— ∑ª¥ı ≈∏∞Ÿ
+		return E_FAIL;
+#endif // _DEBUG
 	
 	if (FAILED(Render_PostProcessing()))
 		return E_FAIL;	

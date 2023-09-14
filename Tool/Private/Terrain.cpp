@@ -53,8 +53,8 @@ void CTerrain::Late_Tick(_float fTimeDelta)
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 #ifdef _DEBUG
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BRUSHING, this);
-#endif // _DEBUG		
-	}		
+#endif // _DEBUG
+	}
 }
 
 HRESULT CTerrain::Render()
@@ -75,6 +75,8 @@ HRESULT CTerrain::Render()
 			return E_FAIL;
 
 		m_eRenderCount = RT_BRUSHING;
+
+		return S_OK;
 	}
 
 #ifdef _DEBUG

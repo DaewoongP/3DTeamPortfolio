@@ -873,7 +873,6 @@ void CObject_Window::Mesh_Picking_Menu()
 		m_pContext->Unmap(pCopyTexture2D, 0);
 
 		Safe_Release(pCopyTexture2D);
-		Safe_Release(pTexture); // 누수 확인
 	}
 
 	// 메쉬 피킹한 오브젝트 상태 행렬 변경 메뉴
@@ -962,7 +961,7 @@ void CObject_Window::Map_Brushing_Menu()
 	if (true == m_pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_PRESSING) &&
 		m_pGameInstance->IsMouseInClient(m_pContext, g_hWnd) &&
 		-1.f != vPos.x &&
-		0.1f < m_fTimeAccBrush)
+		0.2f < m_fTimeAccBrush)
 	{
 		pTerrain->Set_BrushDesc(vPos, m_fBrushSize, m_iBrushIndex);
 		m_fTimeAccBrush = 0.f;
