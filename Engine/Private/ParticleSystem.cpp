@@ -28,10 +28,10 @@ HRESULT CParticleSystem::Initialize_Prototype(const _tchar* _pDirectoryPath, _ui
 	this->Load(_pDirectoryPath);
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
-	
+
 	m_iLevel = _iLevel;
 	// 필요한 원본 텍스처가 없으면 원본 텍스처를 만드는 로직
-	wstring ProtoTag; 
+	wstring ProtoTag;
 	ProtoTag = ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_RendererModuleDesc.wstrMaterialPath.c_str());
 	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, ProtoTag.data()))
 	{
@@ -55,7 +55,7 @@ HRESULT CParticleSystem::Initialize_Prototype(const _tchar* _pDirectoryPath, _ui
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel
 			, TEXT("Prototype_Component_Shader_VtxRectColInstance")
 			, CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxRectColInstance.hlsl")
-			,VTXRECTCOLORINSTANCE_DECL::Elements, VTXRECTCOLORINSTANCE_DECL::iNumElements))))
+				, VTXRECTCOLORINSTANCE_DECL::Elements, VTXRECTCOLORINSTANCE_DECL::iNumElements))))
 			return E_FAIL;
 	}
 
@@ -110,46 +110,57 @@ void CParticleSystem::Tick(_float _fTimeDelta)
 	// Burst옵션에 따른 파티클 생성
 	Action_By_Bursts();
 
-	_float4 vCamPosition = XMVector3TransformCoord(*pGameInstance->Get_CamPosition(), m_pTransform->Get_WorldMatrix_Inverse());
-	_float3 vCamUp = *pGameInstance->Get_CamUp();
+	// 카메라가 파티클 시스템의 로컬 포지션으로 감.
+	_float4 vCamPosition;
+	if (true == m_ShapeModuleDesc.isChase)
+	{
+		vCamPosition = XMVector3TransformCoord(*pGameInstance->Get_CamPosition(), m_pTransform->Get_WorldMatrix_Inverse());
+	}
+	else
+	{
+		vCamPosition = *pGameInstance->Get_CamPosition();
+	}
 
 	// 파티클 연산 시작
-	for (auto iter = m_Particles[ALIVE].begin(); iter != m_Particles[ALIVE].end();)
+	for (auto Particle_iter = m_Particles[ALIVE].begin(); Particle_iter != m_Particles[ALIVE].end();)
 	{
 		COL_INSTANCE colInstDesc;
-		_float4 vPos;
+		_float3 vPos;
 
 		// 이전프레임의 값들을 가져옴.
-		vPos = iter->WorldMatrix.Translation().TransCoord();
+		vPos = Particle_iter->WorldMatrix.Translation();
 
 		// 위치에 속도를 더해서 최종 위치를 정함.
-		vPos = vPos + iter->vVelocity * _fTimeDelta;
-
+		vPos = vPos + Particle_iter->vVelocity * _fTimeDelta;
+		
 		// 중력값 적용
-		iter->fGravityAccel += m_MainModuleDesc.fGravityModifier * _fTimeDelta;
-		vPos.y -= iter->fGravityAccel * 0.1f; // 0.1f는 값을 미세하게 조정하기 위한 상수값.
+		Particle_iter->fGravityAccel += m_MainModuleDesc.fGravityModifier * _fTimeDelta;
+		vPos.y -= Particle_iter->fGravityAccel * 0.1f; // 0.1f는 값을 미세하게 조정하기 위한 상수값.
 
 		// 위치 갱신
-		iter->WorldMatrix.Translation(vPos.xyz());
-		Action_By_RotationOverLifeTime(iter, _fTimeDelta);
-		
-		Action_By_ColorOverLifeTime(iter, _fTimeDelta);
+		Particle_iter->WorldMatrix.Translation(vPos);
+
+		// 모듈
+		Action_By_RotationOverLifeTime(Particle_iter, _fTimeDelta);
+
+		// 모듈
+		Action_By_ColorOverLifeTime(Particle_iter, _fTimeDelta);
 
 		// SRT 연산
-		_float4x4 ScaleMatrix = _float4x4::MatrixScale(iter->vScale);
-		_float4x4 BillBoardMatrix = LookAt(vPos.xyz(), vCamPosition.xyz());
-		_float4x4 RotationMatrix = _float4x4::MatrixRotationAxis(_float3(vPos.xyz() - vCamPosition), XMConvertToRadians(iter->fAngle));
-		_float4x4 TransMatrix = _float4x4::MatrixTranslation(vPos.xyz());
-		_float4x4 TransfomationMatrix = ScaleMatrix * BillBoardMatrix * RotationMatrix * TransMatrix;
+		_float4x4 ScaleMatrix = _float4x4::MatrixScale(Particle_iter->vScale);
+		_float4x4 BillBoardMatrix = LookAt(vPos, vCamPosition.xyz());
+		_float4x4 RotationMatrix = _float4x4::MatrixRotationAxis(_float3(vPos - vCamPosition), XMConvertToRadians(Particle_iter->fAngle));
+		_float4x4 TranslationMatrix = _float4x4::MatrixTranslation(vPos);
+		_float4x4 TransfomationMatrix = ScaleMatrix * BillBoardMatrix * RotationMatrix * TranslationMatrix;
 
 		colInstDesc.vRight = TransfomationMatrix.Right().TransNorm();
 		colInstDesc.vUp = TransfomationMatrix.Up().TransNorm();
 		colInstDesc.vLook = TransfomationMatrix.Look().TransNorm();
 		colInstDesc.vTranslation = TransfomationMatrix.Translation().TransCoord();
-		colInstDesc.vColor = iter->vColor;
+		colInstDesc.vColor = Particle_iter->vColor;
 
 		m_ParticleMatrices.push_back(colInstDesc);
-		++iter;
+		++Particle_iter;
 	}
 
 	m_pBuffer->Set_DrawNum(_uint(m_Particles[ALIVE].size()));
@@ -183,9 +194,10 @@ HRESULT CParticleSystem::Render()
 }
 void CParticleSystem::Play()
 {
-	Enable();
+	if (true == IsEnable())
+		Restart();
 
-	Restart();
+	Enable();
 }
 void CParticleSystem::Stop()
 {
@@ -201,15 +213,9 @@ HRESULT CParticleSystem::Setup_ShaderResources()
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	_float4x4 WorldMatrix = m_pTransform->Get_WorldMatrix();
-	if (nullptr != m_pOwner)
-	{
-		CTransform* pOwnerTransform = dynamic_cast<CGameObject*>(m_pOwner)->Get_Transform();
-		if (nullptr != pOwnerTransform)
-		{
-			WorldMatrix *= pOwnerTransform->Get_WorldMatrix();
-		}
-	}
+	_float4x4 WorldMatrix;
+	if(true == m_ShapeModuleDesc.isChase)
+		WorldMatrix = m_pTransform->Get_WorldMatrix();
 
 	try
 	{
@@ -288,11 +294,13 @@ HRESULT CParticleSystem::Load(const _tchar* _pDirectoryPath)
 		return E_FAIL;
 	return S_OK;
 }
+
 void CParticleSystem::Simulation_Speed(_float& fTimeDelta)
 {
 	// 재생 속도에 따른 타임델타 값 변경.
 	fTimeDelta *= m_MainModuleDesc.fSimulationSpeed;
 }
+
 void CParticleSystem::Action_By_Age()
 {
 	// DELAY시간 완료된 애들은 ALIVE로 이동
@@ -343,6 +351,7 @@ void CParticleSystem::Action_By_StopOption()
 	if (m_MainModuleDesc.strStopAction == "Disable")
 	{
 		Stop();
+		Restart();
 	}
 	else if (m_MainModuleDesc.strStopAction == "Destroy")
 	{
@@ -354,7 +363,9 @@ void CParticleSystem::Action_By_StopOption()
 	}
 	else if (m_MainModuleDesc.strStopAction == "Callback")
 	{
-
+		m_StopAction();
+		Stop();
+		Restart();
 	}
 }
 void CParticleSystem::Action_By_RateOverTime()
@@ -373,10 +384,14 @@ void CParticleSystem::Action_By_RateOverTime()
 void CParticleSystem::Action_By_Distance()
 {
 	_float fPositionDelta = { _float3(m_EmissionModuleDesc.vCurPos - m_EmissionModuleDesc.vPrevPos).Length() };
-	if (fPositionDelta <= 0.001f)
+	if (fPositionDelta < 0.01f)
 		return;
+	_float fTotalParticles = fPositionDelta * m_EmissionModuleDesc.fRateOverDistance + m_EmissionModuleDesc.fAccumulatedError;
+	_uint iParticleCount = (_uint)fTotalParticles;
 
-	for (_uint i = 0; i < _uint(fPositionDelta * m_EmissionModuleDesc.fRateOverDistance); ++i)
+	m_EmissionModuleDesc.fAccumulatedError = fTotalParticles - iParticleCount;
+
+	for (_uint i = 0; i < iParticleCount; ++i)
 	{
 		Wating_One_Particle();
 	}
@@ -419,35 +434,6 @@ void CParticleSystem::Action_By_RotationOverLifeTime(PARTICLE_IT& _particle_iter
 {
 	if (false == m_RotationOverLifetimeModuleDesc.isActivate)
 		return;
-
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
-
-	_float3 vLook = pGameInstance->Get_CamPosition()->xyz() - _particle_iter->WorldMatrix.Translation();
-	vLook.Normalize();
-	_float3 vUp = { 0.f, 1.f, 0.f };
-	_float3 vRight = vUp.Cross(vLook);
-	vUp = vLook.Cross(vRight);
-
-	_particle_iter->fCircularMotionAngle += m_RotationOverLifetimeModuleDesc.fSpeed * fTimeDelta;
-
-	_float fX = m_RotationOverLifetimeModuleDesc.fRadius * cos(_particle_iter->fCircularMotionAngle);
-	_float fY = m_RotationOverLifetimeModuleDesc.fRadius * sin(_particle_iter->fCircularMotionAngle);
-
-	if (true == m_RotationOverLifetimeModuleDesc.isFlipOption)
-	{
-		if (RandomBool(m_RotationOverLifetimeModuleDesc.fFlipProperty))
-		{
-			fX = -fX;
-			fY = -fY;
-		}
-	}
-
-	_float3 vPos = _particle_iter->WorldMatrix.Translation();
-	vPos += fX * vRight + fY * vUp;
-
-	_particle_iter->WorldMatrix.Translation(vPos);
-	Safe_Release(pGameInstance);
 }
 void CParticleSystem::Action_By_ColorOverLifeTime(PARTICLE_IT& _particle_iter, _float fTimeDelta)
 {
@@ -485,15 +471,22 @@ void CParticleSystem::ResetStartPosition(PARTICLE_IT& _particle_iter)
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
-	_particle_iter->WorldMatrix = _float4x4();
-	_float4x4 TranslationMatrix = _float4x4::MatrixTranslation(m_ShapeModuleDesc.vPosition);
-	_float4x4 RotationMatrix = _float4x4::MatrixFromQuaternion(XMQuaternionRotationRollPitchYaw(m_ShapeModuleDesc.vRotation.x, m_ShapeModuleDesc.vRotation.y, m_ShapeModuleDesc.vRotation.z));
-	_float4x4 ScaleMatrix = _float4x4::MatrixScale(m_ShapeModuleDesc.vScale);
-	_float4x4 ShapeMatrix = ScaleMatrix * RotationMatrix * TranslationMatrix;
 
+	// 변수 초기화
+	_float3 vDirection;
+	_float3 vPosition;
+	_float fSpeed;
+
+	// 속도 설정
+	if (true == m_MainModuleDesc.isStartSpeedRange)
+		fSpeed = Random_Generator(m_MainModuleDesc.vStartSpeedRange.x, m_MainModuleDesc.vStartSpeedRange.y);
+	else
+		fSpeed = m_MainModuleDesc.fStartSpeed;
+
+	// 위치와 방향 설정
 	if ("Sphere" == m_ShapeModuleDesc.strShape)
 	{
-		_float3 vDir = _float3(0.f, 0.f, 1.f);
+		vDirection = _float3(0.f, 0.f, 1.f);
 		_float fLength = 0.f;
 		_float fTheta = 0.f;
 		_float fPhi = 0.f;
@@ -553,14 +546,12 @@ void CParticleSystem::ResetStartPosition(PARTICLE_IT& _particle_iter)
 		fPhi = XMConvertToRadians(fPhi);
 
 		_float3 vLook = _float3(0.f, 0.f, 1.f);
-		vDir = XMVector3TransformCoord(vDir, _float4x4::MatrixRotationX(fTheta) * _float4x4::MatrixRotationY(fPhi));
-		
-		(*_particle_iter).WorldMatrix.Translation(fLength * vDir);
-		(*_particle_iter).WorldMatrix *= ShapeMatrix;
+		vDirection = XMVector3TransformCoord(vDirection, _float4x4::MatrixRotationX(fTheta) * _float4x4::MatrixRotationY(fPhi));
+		vPosition = fLength * vDirection;
 	}
-	else if("Circle" == m_ShapeModuleDesc.strShape)
+	else if ("Circle" == m_ShapeModuleDesc.strShape)
 	{
-		_float3 vDir = _float3(0.f, 0.f, 1.f);
+		vDirection = _float3(0.f, 0.f, 1.f);
 		_float fLength = 0.f;
 		_float fTheta = 0.f;
 
@@ -597,41 +588,51 @@ void CParticleSystem::ResetStartPosition(PARTICLE_IT& _particle_iter)
 			fTheta = m_ShapeModuleDesc.fLoopTheta;
 		}
 
-		_float3 vPos = _particle_iter->WorldMatrix.Translation();
 		_float3 vCamPos = pGameInstance->Get_CamPosition()->xyz();
-		_float4x4 ResultMatrix = pGameInstance->RightUpLook_In_Vectors(vPos, vCamPos);
+		_float4x4 ResultMatrix = pGameInstance->RightUpLook_In_Vectors(vPosition, vCamPos);
 
 		// 위치 설정
 		fTheta = XMConvertToRadians(fTheta);
 
 		_float3 vLook = _float3(0.f, 0.f, 1.f);
-		vDir = XMVector3TransformCoord(ResultMatrix.Right(), _float4x4::MatrixRotationAxis(ResultMatrix.Look(), fTheta));
+		vDirection = XMVector3TransformCoord(ResultMatrix.Right(), _float4x4::MatrixRotationAxis(ResultMatrix.Look(), fTheta));
 
-		(*_particle_iter).WorldMatrix.Translation(fLength * vDir);
-		(*_particle_iter).WorldMatrix *= ShapeMatrix;
+		(*_particle_iter).WorldMatrix.Translation(fLength * vDirection);
 	}
-
-	Safe_Release(pGameInstance);
-
-	// fRadiusThickness에 따라 외곽에서 나올지 전체적으로 고루게 나올지 정함.
-	//fMinLength = m_ShapeModuleDesc.fRadius * (1.f - m_ShapeModuleDesc.fRadiusThickness);
-	//fMaxLength = m_ShapeModuleDesc.fRadius;
-}
-void CParticleSystem::ResetVelocity(PARTICLE_IT& _particle_iter)
-{
-	_float fSpeed;
-	if (true == m_MainModuleDesc.isStartSpeedRange)
-		fSpeed = Random_Generator(m_MainModuleDesc.vStartSpeedRange.x, m_MainModuleDesc.vStartSpeedRange.y);
-	else
-		fSpeed = m_MainModuleDesc.fStartSpeed;
-
-	if ("Sphere" == m_ShapeModuleDesc.strShape || "Circle" == m_ShapeModuleDesc.strShape)
+	else if ("Cone" == m_ShapeModuleDesc.strShape)
 	{
-		_float4 vDir = _particle_iter->WorldMatrix.Translation().TransCoord() - _float4();
-		vDir.Normalize();
-		_particle_iter->vVelocity = vDir * fSpeed;
+		Clamp(m_ShapeModuleDesc.fAngle, 0.f, 90.f);
+		_float fTopRadius = m_ShapeModuleDesc.fBaseRadius + m_ShapeModuleDesc.fConeLength * tanf(XMConvertToRadians(m_ShapeModuleDesc.fAngle));
+		Clamp(m_ShapeModuleDesc.fBaseRadius, 0.f, fTopRadius);
+		_float fAngle = Random_Generator(0.f, m_ShapeModuleDesc.fAngle);
+		fAngle = XMConvertToRadians(fAngle);
+
+		_float fMinBaseRadius = m_ShapeModuleDesc.fBaseRadius * (1.f - m_ShapeModuleDesc.fRadiusThickness);
+		_float fMaxBaseRadius = m_ShapeModuleDesc.fBaseRadius;
+		_float2 vResult = pGameInstance->PolarToCartesian(Random_Generator(fMinBaseRadius, fMaxBaseRadius), Random_Generator(0.f, 360.f));
+		vPosition.x = vResult.x;
+		vPosition.z = vResult.y;
+
+		_float fTheta = fAngle; // 원뿔대의 중심축과의 각도
+		_float fPhi = Random_Generator(0.f, 2 * XM_PI); // 원뿔대의 베이스 평면에서의 각도
+		
+		vDirection = pGameInstance->PolarToCartesian(1.f, fTheta, fPhi);
 	}
+
+	vPosition = XMVector3TransformCoord(vPosition, m_ShapeModuleDesc.ShapeMatrix);
+	vDirection = XMVector3TransformNormal(vDirection, m_ShapeModuleDesc.ShapeMatrix);
+	vDirection.Normalize();
+	if (m_ShapeModuleDesc.isChase == false)
+	{
+		vPosition += m_pTransform->Get_Position();
+	}
+	_particle_iter->WorldMatrix.Translation(vPosition);
+
+	_particle_iter->vVelocity = (vDirection * fSpeed).TransNorm();
+	
+	Safe_Release(pGameInstance);
 }
+
 HRESULT CParticleSystem::Add_Components()
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
@@ -655,7 +656,7 @@ HRESULT CParticleSystem::Add_Components()
 			, TEXT("Com_ClipTexture")
 			, reinterpret_cast<CComponent**>(&m_pClipTexture))))
 			throw(TEXT("Com_ClipTexture"));
-		
+
 		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_Component_Shader_VtxRectColInstance")
 			, TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
 			throw(TEXT("Com_Shader"));
@@ -731,7 +732,6 @@ void CParticleSystem::Reset_Particle(PARTICLE_IT& _particle_iter)
 
 	// 시작 위치
 	ResetStartPosition(_particle_iter);
-	ResetVelocity(_particle_iter);
 
 	if (false == m_MainModuleDesc.is3DStartRotation)
 	{
@@ -746,7 +746,7 @@ void CParticleSystem::Reset_Particle(PARTICLE_IT& _particle_iter)
 	// Size 결정
 	if (true == m_MainModuleDesc.is3DStartSize)
 	{
-		_particle_iter->vScale = _float3(m_MainModuleDesc.f3DSizeXYZ.x, m_MainModuleDesc.f3DSizeXYZ.y, m_MainModuleDesc.f3DSizeXYZ.z);
+		_particle_iter->vScale = _float3(m_MainModuleDesc.v3DSizeXYZ.x, m_MainModuleDesc.v3DSizeXYZ.y, m_MainModuleDesc.v3DSizeXYZ.z);
 	}
 	else
 	{
@@ -767,13 +767,7 @@ void CParticleSystem::Reset_Particle(PARTICLE_IT& _particle_iter)
 	_particle_iter->fGravityAccel = { 0.f };
 
 }
-void CParticleSystem::Reset_Particles(STATE eGroup)
-{
-	for (auto it = m_Particles[eGroup].begin(); it != m_Particles[eGroup].end(); ++it)
-	{
-		Reset_Particle(it);
-	}
-}
+
 void CParticleSystem::Reset_AllParticles()
 {
 	for (_uint i = 0; i < STATE_END; ++i)
@@ -832,7 +826,7 @@ void CParticleSystem::Restart()
 
 	// 수명리셋
 	for (auto& Particle : m_Particles[ALIVE])
-		Particle.fAge = 0.f;
+	 	Particle.fAge = 0.f;
 	for (auto& Particle : m_Particles[DELAY])
 		Particle.fAge = 0.f;
 
@@ -869,12 +863,15 @@ CGameObject* CParticleSystem::Clone(void* _pArg)
 void CParticleSystem::Free()
 {
 	__super::Free();
-	Safe_Release(m_pRenderer);
-	Safe_Release(m_pMainTexture);
-	Safe_Release(m_pClipTexture);
-	Safe_Release(m_pBuffer);
-	Safe_Release(m_pShader);
-	Safe_Release(m_pModel);
+	if (true == m_isCloned)
+	{
+		Safe_Release(m_pRenderer);
+		Safe_Release(m_pMainTexture);
+		Safe_Release(m_pClipTexture);
+		Safe_Release(m_pBuffer);
+		Safe_Release(m_pShader);
+		Safe_Release(m_pModel);
+	}
 
 	for (_uint i = 0; i < STATE_END; ++i)
 	{

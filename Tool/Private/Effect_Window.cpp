@@ -7,6 +7,7 @@
 #include "ImageFileDialog.h"
 #include "DummyMeshEffect.h"
 #include "DummyTrail.h"
+#include "Dummy_Effect.h"
 CEffect_Window::CEffect_Window(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
 	: CImWindow(_pDevice, _pContext)
 {
@@ -32,6 +33,7 @@ HRESULT CEffect_Window::Initialize(ImVec2 _vWindowPos, ImVec2 _vWindowSize)
 	m_pDummyParticle = dynamic_cast<CDummyParticle*>(pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyParticle")));
 	m_pDummyMeshEffect = dynamic_cast<CDummyMeshEffect*>(pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyMeshEffect")));
 	m_pDummyTrail = dynamic_cast<CDummyTrail*>(pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyTrail")));
+	m_pDummyEffect = dynamic_cast<CDummy_Effect*>(pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyEffect")));
 
 	ENDINSTANCE;
 	return S_OK;
@@ -45,6 +47,7 @@ void CEffect_Window::Tick(_float _fTimeDelta)
 	ImGui::RadioButton("Particle", &m_iChooseRadio, 0);
 	ImGui::RadioButton("MeshEffect", &m_iChooseRadio, 1);
 	ImGui::RadioButton("Trail", &m_iChooseRadio, 2);
+	ImGui::RadioButton("DummyEffect", &m_iChooseRadio, 3);
 
 	switch (m_iChooseRadio)
 	{
@@ -77,6 +80,17 @@ void CEffect_Window::Tick(_float _fTimeDelta)
 			m_pDummyTrail->Tick_Imgui(_fTimeDelta);
 			m_pDummyTrail->Tick(_fTimeDelta);
 			m_pDummyTrail->Late_Tick(_fTimeDelta);
+		}
+		ImGui::End();
+	}
+	case 3:
+	{
+		if (nullptr != m_pDummyTrail)
+		{
+			ImGui::Begin("DummyEffect", nullptr, m_WindowFlag);
+			m_pDummyEffect->Tick_Imgui(_fTimeDelta);
+			m_pDummyEffect->Tick(_fTimeDelta);
+			m_pDummyEffect->Late_Tick(_fTimeDelta);
 		}
 		ImGui::End();
 	}
@@ -230,12 +244,13 @@ _bool CEffect_Window::Table_DragFloatWithOption(string _strName, string _strTag,
 	ImGui::TableNextRow();
 	return isResult;
 }
+
 _bool CEffect_Window::Table_DragXYZ(string _strName, string _strTag, _float3* pValue, _float _fDragSpeed, _float _fMin, _float _fMax, _bool isImplement)
 {
 	string strTagX = "##" + _strTag + "X"; // X, Y, Z를 구분하도록 수정
 	string strTagY = "##" + _strTag + "Y";
 	string strTagZ = "##" + _strTag + "Z";
-	_bool isResult = false;
+	_bool isResult[3] = {};
 	ImVec2 textSize = ImGui::CalcTextSize("X");
 	_float textWidth = textSize.x;
 
@@ -246,13 +261,13 @@ _bool CEffect_Window::Table_DragXYZ(string _strName, string _strTag, _float3* pV
 	ImGui::PushItemWidth(40.0f);  // DragFloat의 길이를 60으로 설정
 
 	ImGui::Text("X"); ImGui::SameLine();
-	isResult = ImGui::DragFloat(strTagX.data(), &pValue->x, _fDragSpeed, _fMin, _fMax); ImGui::SameLine();
+	isResult[0] = ImGui::DragFloat(strTagX.data(), &pValue->x, _fDragSpeed, _fMin, _fMax); ImGui::SameLine();
 
 	ImGui::Text("Y"); ImGui::SameLine();
-	isResult = ImGui::DragFloat(strTagY.data(), &pValue->y, _fDragSpeed, _fMin, _fMax); ImGui::SameLine();
+	isResult[1] = ImGui::DragFloat(strTagY.data(), &pValue->y, _fDragSpeed, _fMin, _fMax); ImGui::SameLine();
 
 	ImGui::Text("Z"); ImGui::SameLine();
-	isResult = ImGui::DragFloat(strTagZ.data(), &pValue->z, _fDragSpeed, _fMin, _fMax); ImGui::SameLine();
+	isResult[2] = ImGui::DragFloat(strTagZ.data(), &pValue->z, _fDragSpeed, _fMin, _fMax); ImGui::SameLine();
 
 	ImGui::PopItemWidth();  // 설정을 원래대로 돌려놓습니다
 
@@ -263,7 +278,10 @@ _bool CEffect_Window::Table_DragXYZ(string _strName, string _strTag, _float3* pV
 
 	ImGui::TableNextRow();
 
-	return isResult;
+	if (isResult[0] || isResult[1] || isResult[2])
+		return true;
+
+	return false;
 }
 _bool CEffect_Window::Table_DragInt(string _strName, string _strTag, _int* _pValue, _float _fDragSpeed, _int _iMin, _int _iMax)
 {
@@ -299,4 +317,5 @@ void CEffect_Window::Free(void)
 	Safe_Release(m_pDummyParticle);
 	Safe_Release(m_pDummyMeshEffect);
 	Safe_Release(m_pDummyTrail);
+	Safe_Release(m_pDummyEffect);
 }

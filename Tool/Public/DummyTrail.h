@@ -39,6 +39,10 @@ private:
 	void RemakeBuffer();
 
 public:
+	void Save_FileDialog();
+	void Load_FileDialog();
+
+public:
 	void Tick_Imgui(_float _fTimeDelta);
 
 private:

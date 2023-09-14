@@ -30,7 +30,7 @@ public:
 	void Set_Light(_uint iIndex, CLight::LIGHTDESC LightDesc);
 	void Set_LightProj(_float4x4 ProjLight) { m_ProjLight = ProjLight; }
 	void Set_LightView(_float4x4 ViewLight) { m_ViewLight = ViewLight; }
-
+	_bool Light_NullCheck() { return m_Lights.empty(); }
 public:
 	CLight* Add_Lights(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const CLight::LIGHTDESC& LightDesc);
 	HRESULT Delete_Lights(_uint iIndex,const _char* Name);

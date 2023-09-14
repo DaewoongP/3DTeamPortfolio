@@ -26,6 +26,7 @@ public:
 	virtual void	Late_Tick(_float fTimeDelta) override;
 
 public:
+	_float Get_Gauge(GAUGE eType);
 	void	Set_Gauge(_float fGauge, GAUGE eType);
 
 public:

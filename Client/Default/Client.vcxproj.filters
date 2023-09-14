@@ -223,6 +223,12 @@
     <Filter Include="02. GameObject\05. UI\UI\UI_Effect_Back">
       <UniqueIdentifier>{6f63ec72-3503-4230-9a92-5c2bd38a636e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\01. Player\01. Weapon">
+      <UniqueIdentifier>{e492e81f-a203-4fa9-9a45-dbbf54d55c64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. Weapon\Wand">
+      <UniqueIdentifier>{3eacb79d-9519-4b74-935b-b05ac19d8cfc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -335,9 +341,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\Golem_Combat.h">
       <Filter>02. GameObject\02. Enemy\03. Golem\00. Combat</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Golem_Grunt.h">
-      <Filter>02. GameObject\02. Enemy\03. Golem\01. Grunt</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Golem_Merlin.h">
       <Filter>02. GameObject\02. Enemy\03. Golem\02. Merlin</Filter>
@@ -461,6 +464,12 @@
     </ClInclude>
     <ClInclude Include="..\public\Default_Magic_Effect.h">
       <Filter>02. GameObject\03. Effect\Default_Magic_Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Golem_Grunt.h">
+      <Filter>02. GameObject\02. Enemy\03. Golem\01. Grunt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Weapon_Player_Wand.h">
+      <Filter>02. GameObject\01. Player\01. Weapon\Wand</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -670,6 +679,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Default_Magic_Effect.cpp">
       <Filter>02. GameObject\03. Effect\Default_Magic_Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Weapon_Player_Wand.cpp">
+      <Filter>02. GameObject\01. Player\01. Weapon\Wand</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

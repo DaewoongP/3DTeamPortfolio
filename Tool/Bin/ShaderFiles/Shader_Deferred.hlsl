@@ -25,7 +25,7 @@ vector g_vLightDiffuse;
 vector g_vLightAmbient;
 vector g_vLightSpecular;
 
-vector g_vMtrlAmbient = vector(0.5f, 0.5f, 0.5f, 1.f);
+vector g_vMtrlAmbient = vector(1.f, 1.f, 1.f, 1.f);
 vector g_vMtrlSpecular = vector(1.f, 1.f, 1.f, 1.f);
 
 /* Sampler State */
@@ -212,12 +212,14 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 
 	/* 뷰스페이스 상의 위치. */
     vPosition = vPosition * fViewZ;
+    vector vLightDir = vPosition - g_vLightPos;
+
     vPosition = mul(vPosition, g_ProjMatrixInv);
 
 	/* 월드스페이스 상의 위치. */
     vPosition = mul(vPosition, g_ViewMatrixInv);
 
-    vector vReflect = reflect(normalize(g_vLightDir), vNormal);
+    vector vReflect = reflect(normalize(vLightDir), vNormal);
     vector vLook = vPosition - g_vCamPosition;
 
     Out.vSpecular = (g_vLightSpecular) * (g_vMtrlSpecular) * pow(max(dot(normalize(vReflect) * -1.f, normalize(vLook)), 0.f), 10.f);
@@ -333,8 +335,12 @@ PS_OUT PS_MAIN_DEFERRED(PS_IN In)
     vector vShadow = g_ShadowTexture.Sample(LinearSampler, In.vTexUV);
    
     //vector vSoftShadow = g_SoftShadowTexuture.Sample(LinearSampler, In.vTexUV);
- 
-    Out.vColor = vDiffuse * /*vShadow */ vShade * vBlur + 0.5 * vSpecular;
+
+   
+    
+    
+        Out.vColor = vDiffuse *vShade * vBlur + 0.5f * vSpecular;
+
 
     return Out;
 }

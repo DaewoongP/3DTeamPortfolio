@@ -1,6 +1,5 @@
 #include "UI_Progress1.h"
 #include "GameInstance.h"
-#include "UI_Group.h"
 
 CUI_Progress::CUI_Progress(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CComponent(pDevice, pContext)
@@ -45,6 +44,24 @@ void CUI_Progress::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 }
 
+
+_float CUI_Progress::Get_Gauge(GAUGE eType)
+{
+	switch (eType)
+	{
+	case Engine::CUI_Progress::MIN:
+		return m_fMinGauge;
+	case Engine::CUI_Progress::MAX:
+		return m_fMaxGauge;
+	case Engine::CUI_Progress::CURRENT:
+		return m_fCurrentGauge;
+	case Engine::CUI_Progress::GAUGE_END:
+		MSG_BOX("Failed Set Gauge");
+	default:
+		MSG_BOX("Failed Set Gauge");
+	}
+	return 0.f;
+}
 
 void CUI_Progress::Set_Gauge(_float fGauge, GAUGE eType)
 {

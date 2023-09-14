@@ -15,10 +15,7 @@ CRenderTarget::CRenderTarget(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 
 HRESULT CRenderTarget::Initialize(_uint iSizeX, _uint iSizeY, DXGI_FORMAT eFormat, const _float4& vClearColor,_bool isShadow)
 {
-	if (isShadow)
-	{
-		Initialize_Depth(iSizeX*12, iSizeY*12, eFormat, vClearColor);
-	}
+	
 	D3D11_TEXTURE2D_DESC	TextureDesc;
 	ZeroMemory(&TextureDesc, sizeof(D3D11_TEXTURE2D_DESC));
 
@@ -46,12 +43,17 @@ HRESULT CRenderTarget::Initialize(_uint iSizeX, _uint iSizeY, DXGI_FORMAT eForma
 		return E_FAIL;
 
 	m_vClearColor = vClearColor;
-
+	if (isShadow)
+	{
+		Initialize_Depth(iSizeX, iSizeY, eFormat, vClearColor);
+	}
 	return S_OK;
 }
 
 HRESULT CRenderTarget::Initialize_Depth(_uint iSizeX, _uint iSizeY, DXGI_FORMAT eFormat, const _float4& vClearColor)
 {
+
+
 	D3D11_TEXTURE2D_DESC	TextureDesc;
 	ZeroMemory(&TextureDesc, sizeof(D3D11_TEXTURE2D_DESC));
 
@@ -70,14 +72,12 @@ HRESULT CRenderTarget::Initialize_Depth(_uint iSizeX, _uint iSizeY, DXGI_FORMAT 
 	TextureDesc.MiscFlags = 0;
 
 
-	if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &m_pTexture2D)))
+	if (FAILED( m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &m_pTexture2D)))
 		return E_FAIL;
 
-	if (FAILED(m_pDevice->CreateRenderTargetView(m_pTexture2D, nullptr, &m_pRTV)))
-		return E_FAIL;
+	m_pDevice->CreateDepthStencilView(m_pTexture2D, nullptr, &m_pShadowView);
 
-	if (FAILED(m_pDevice->CreateShaderResourceView(m_pTexture2D, nullptr, &m_pSRV)))
-		return E_FAIL;
+	
 
 	return S_OK;
 }
