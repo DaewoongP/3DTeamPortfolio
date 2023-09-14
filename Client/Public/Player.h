@@ -13,7 +13,10 @@ END
 
 BEGIN(Client)
 class CPlayer_Camera;
+class CWeapon_Player_Wand;
+END
 
+BEGIN(Client)
 class CPlayer final : public CGameObject
 {
 private:
@@ -38,7 +41,11 @@ private:
 	CCustomModel*	m_pCustomModel = { nullptr };
 	
 	CPlayer_Camera* m_pPlayer_Camera = { nullptr };
-
+	
+	/* 마법을 위한 공간 */
+	class CMagic*	m_pMagic = { nullptr };
+	CWeapon_Player_Wand*	m_pWeapon = { nullptr };
+	
 #ifdef _DEBUG
 
 	CCollider*		m_pTestCollider = { nullptr };
@@ -55,6 +62,11 @@ private:
 private:
 	HRESULT Ready_MeshParts();
 	HRESULT Ready_Caemra();
+
+public:
+	// 마법에 함수가 잘 들어가나 테스트용도입니다.
+	// 추후에 마법 사용시 지팡이가 빛나게 하는 파티클 action을 여기에 넣어주면 될거같음.
+	void MagicTestTextOutput();
 
 #ifdef _DEBUG
 private:

@@ -1,7 +1,6 @@
 #include "..\Public\Test_Player.h"
 #include "GameInstance.h"
 #include "PhysXConverter.h"
-#include "Magic.h"
 
 CTest_Player::CTest_Player(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -196,24 +195,6 @@ HRESULT CTest_Player::Add_Components()
 		return E_FAIL;
 	}
 
-	/* For.Com_Magic*/
-	//마법 클론할때 구조체 떤져줘야함.
-	CMagic::MAGICDESC magicInitDesc;
-	magicInitDesc.eBuffType = CMagic::BUFF_NONE;
-	magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
-	magicInitDesc.eMagicType = CMagic::MT_NOTHING;
-	magicInitDesc.eMagicTag = BASICCAST;
-	magicInitDesc.fCoolTime = 1.f;
-	magicInitDesc.fDamage = 10.f;
-	magicInitDesc.fDistance = 0;
-
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Magic"),
-		TEXT("Com_Magic"), reinterpret_cast<CComponent**>(&m_pMagic), &magicInitDesc)))
-	{
-		MSG_BOX("Failed CTest_Player Add_Component : (Com_Magic)");
-		return E_FAIL;
-	}
-	
 	m_pModelCom->Add_MeshParts(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshPart_Robe01"), CCustomModel::ROBE, TEXT("../../Resources/GameData/ClothData/Test.cloth"));
 
 	return S_OK;
@@ -260,14 +241,6 @@ void CTest_Player::Key_Input(_float fTimeDelta)
 	if (pGameInstance->Get_DIKeyState(DIK_RIGHT))
 	{
 		m_pRigidBody->Add_Force(m_pTransform->Get_Right() * m_pTransform->Get_Speed(), PxForceMode::eFORCE);
-	}
-
-	if (pGameInstance->Get_DIKeyState(DIK_C, CInput_Device::KEY_DOWN))
-	{
-		if (m_pMagic != nullptr)
-		{
-			m_pMagic->Magic_Cast(m_pTransform);
-		}
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
@@ -371,6 +344,5 @@ void CTest_Player::Free()
 		Safe_Release(m_pRenderer);
 		Safe_Release(m_pController);
 		Safe_Release(m_pRigidBody);
-		Safe_Release(m_pMagic);
 	}
 }

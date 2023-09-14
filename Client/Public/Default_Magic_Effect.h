@@ -34,6 +34,13 @@ public:
 	void Play_ConeEmit(_float3 vPos);
 
 	void Enable_Trail(_bool _isEnable);
+	HRESULT Reset_Trail();
+	_bool IsEnable() {
+		_bool value = { false };
+		if(m_pParticleSystem!=nullptr)
+			value = m_pParticleSystem->IsEnable();
+		return value;
+	}
 	void Enable_TraceParticle(_bool _isEnable);
 
 private: /* For. Component */

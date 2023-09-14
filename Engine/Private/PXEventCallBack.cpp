@@ -120,7 +120,6 @@ void CPXEventCallBack::onTrigger(PxTriggerPair* pairs, PxU32 count)
 			pSourObject->OnCollisionExit(SourDesc);
 			pDestObject->OnCollisionExit(DestDesc);
 		}
-
 	}
 }
 

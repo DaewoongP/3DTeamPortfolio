@@ -255,6 +255,7 @@
     <ClInclude Include="..\Public\Weapon_Golem_Grunt.h" />
     <ClInclude Include="..\Public\Weapon_Golem_Merlin.h" />
     <ClInclude Include="..\Public\Weapon_Pensive.h" />
+    <ClInclude Include="..\Public\Weapon_Player_Wand.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="ImGui\backends\imgui_impl_dx11.h">
@@ -388,6 +389,7 @@
     <ClCompile Include="..\Private\Weapon_Golem_Grunt.cpp" />
     <ClCompile Include="..\Private\Weapon_Golem_Merlin.cpp" />
     <ClCompile Include="..\Private\Weapon_Pensive.cpp" />
+    <ClCompile Include="..\Private\Weapon_Player_Wand.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="ImGui\backends\imgui_impl_dx11.cpp">
       <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</IncludeInUnityFile>

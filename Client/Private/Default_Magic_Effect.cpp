@@ -92,43 +92,6 @@ HRESULT CDefault_Magic_Effect::Initialize(void* pArg)
 void CDefault_Magic_Effect::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-	BEGININSTANCE;
-#ifdef _DEBUG
-	if (pGameInstance->Get_DIKeyState(DIK_UPARROW))
-	{
-		m_pTransform->Go_Straight(fTimeDelta);
-	}
-	else if (pGameInstance->Get_DIKeyState(DIK_DOWNARROW))
-	{
-		m_pTransform->Go_Backward(fTimeDelta);
-	}
-	else if (pGameInstance->Get_DIKeyState(DIK_LEFTARROW))
-	{
-		m_pTransform->Go_Left(fTimeDelta);
-	}
-	else if (pGameInstance->Get_DIKeyState(DIK_RIGHTARROW))
-	{
-		m_pTransform->Go_Right(fTimeDelta);
-	}
-	else if (pGameInstance->Get_DIKeyState(DIK_SPACE))
-	{
-		Play_ConeEmit(_float3(3.f, 2.f, 0.f));
-	}
-#endif // _DEBUG
-
-	// For. Trace Particle
-	m_pTraceParticleTransform->Set_Position(m_pTransform->Get_Position());
-	_float4x4 Results = pGameInstance->RightUpLook_In_Vectors(m_pTransform->Get_Position(), m_vPrevPos);
-	SHAPE_MODULE& shapeModule = m_pParticleSystem->Get_ShapeModuleRef();
-	shapeModule.strShape = "Cone";
-	shapeModule.ShapeMatrix = Results;
-
-	// For. ConeEmitParticle
-	if (false == m_pConeEmitParticle->Is_AliveEmpty())
-	{
-		m_pConeEmitTransform->Set_Position(m_pTransform->Get_Position());
-	}
-	ENDINSTANCE;
 }
 
 void CDefault_Magic_Effect::Late_Tick(_float fTimeDelta)
@@ -160,6 +123,16 @@ void CDefault_Magic_Effect::Enable_Trail(_bool _isEnable)
 	(true == _isEnable) ? m_pTrail->Enable() : m_pTrail->Disable();
 }
 
+HRESULT CDefault_Magic_Effect::Reset_Trail()
+{
+	if (m_pTrail == nullptr)
+	{
+		MSG_BOX("Failed to Reset_Trail");
+		return S_OK;
+	}
+		
+	return   m_pTrail->Reset_Trail(); 
+}
 void CDefault_Magic_Effect::Enable_TraceParticle(_bool _isEnable)
 {
 	(true == _isEnable) ? m_pTraceParticle->Enable() : m_pTraceParticle->Disable();

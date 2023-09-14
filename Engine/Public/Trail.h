@@ -48,6 +48,11 @@ public:
 public:
 	void Enable() { m_isEnable = true; }
 	void Disable() { m_isEnable = false; }
+	HRESULT Reset_Trail() {
+		if (m_pBuffer != nullptr)
+			return m_pBuffer->Reset_Trail();
+		return E_FAIL;
+	}
 
 protected:
 	HRESULT Save(const _tchar* pFilePath);
