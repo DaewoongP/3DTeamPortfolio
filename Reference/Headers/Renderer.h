@@ -70,6 +70,8 @@ private:
 	HRESULT Render_MRTs();
 	_bool Is_DebugRender();
 	_bool Is_MRTRender();
+	_bool Is_Render_Distortion();
+
 #endif // _DEBUG
 
 private:	
@@ -79,6 +81,7 @@ private:
 	list<class CComponent*>			m_DebugObject;
 	_bool							m_isDebugRender = { true };
 	_bool							m_isMRTRender = { true };
+	_bool							m_isDistortion = { false };
 #endif // _DEBUG
 
 

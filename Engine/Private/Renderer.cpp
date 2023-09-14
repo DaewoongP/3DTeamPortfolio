@@ -226,8 +226,10 @@ HRESULT CRenderer::Draw_RenderGroup()
 	if (FAILED(Render_Brushing())) 	// ¸Ê ºê·¯½Ì °á°ú ÀúÀåÀ» À§ÇÑ ·»´õ Å¸°Ù
 		return E_FAIL;
 #endif // _DEBUG
-	if (FAILED(Render_Deferred()))
-		return E_FAIL;
+	
+		if (FAILED(Render_Deferred()))
+			return E_FAIL;
+
 	if (FAILED(Render_SSAO()))
 		return E_FAIL;
 	if (FAILED(Render_Blur()))
@@ -243,8 +245,7 @@ HRESULT CRenderer::Draw_RenderGroup()
 	
 	if (FAILED(Render_PostProcessing()))
 		return E_FAIL;	
-	if (FAILED(Render_Distortion()))
-		return E_FAIL;
+	
 	if (FAILED(Render_UI()))
 		return E_FAIL;
 
@@ -273,7 +274,11 @@ HRESULT CRenderer::Draw_RenderGroup()
 			_float4(1.f, 0.f, 0.f, 1.f), 0.f, _float2(), 0.5f)))
 			return E_FAIL;
 	}
-
+	if(true==Is_Render_Distortion())
+	{ 
+		if (FAILED(Render_Distortion()))
+		return E_FAIL; 
+	}
 	Safe_Release(pFont_Manager);
 #endif // _DEBUG
 
@@ -692,8 +697,8 @@ HRESULT CRenderer::Render_BlurShadow()
 
 	if (FAILED(m_pSSAOShader->Begin("BlurX")))
 		return E_FAIL;
-	if (FAILED(m_pSSAOShader->Begin("BlurY")))
-		return E_FAIL;
+	//if (FAILED(m_pSSAOShader->Begin("BlurY")))
+	//	return E_FAIL;
 
 	if (FAILED(m_pSSAOBuffer->Render()))
 		return E_FAIL;
@@ -952,7 +957,22 @@ _bool CRenderer::Is_MRTRender()
 	return m_isMRTRender;
 }
 #endif // _DEBUG
+_bool CRenderer::Is_Render_Distortion()
+{
+	CInput_Device* pInput_Device = CInput_Device::GetInstance();
+	Safe_AddRef(pInput_Device);
 
+	if (pInput_Device->Get_DIKeyState(DIK_F3, CInput_Device::KEY_DOWN))
+	{
+		if (true == m_isDistortion)
+			m_isDistortion = false;
+		else
+			m_isDistortion = true;
+	}
+	Safe_Release(pInput_Device);
+
+	return m_isDistortion;
+}
 CRenderer* CRenderer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CRenderer* pInstance = new CRenderer(pDevice, pContext);

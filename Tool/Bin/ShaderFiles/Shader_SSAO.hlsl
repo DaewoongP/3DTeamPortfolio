@@ -228,8 +228,7 @@ PS_OUT PS_MAIN_BLURX(PS_IN In)
     PS_OUT Out = (PS_OUT) 0;
     
     
-    float dx = 1.0f / (1280.f / 2.f);
-    float dy = 1.0f / 720.f;
+    float dx = 1.0f / (1280.f / 4.f);
     
     float2 UV = 0;
     
@@ -243,7 +242,16 @@ PS_OUT PS_MAIN_BLURX(PS_IN In)
     }
     Out.vColor /= total;
     //Out.vColor = (SSAO.xyz, 0.f);
+    float dy = 1.0f / (720.f / 2.f);
     
+   
+    for (int i = -11; i < 11; ++i)
+    {
+        UV = In.vTexUV + float2(0, dy * i);
+        vector SSAO = g_SSAOTexture.Sample(BlurSampler, UV);
+        Out.vColor += BlurWeights[11 + i] * SSAO;
+    }
+    Out.vColor /= total;
     
     return Out;
 }
