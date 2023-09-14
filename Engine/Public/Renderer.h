@@ -14,7 +14,7 @@ BEGIN(Engine)
 class ENGINE_DLL CRenderer final : public CComponent
 {
 public:
-	enum RENDERGROUP {RENDER_PRIORITY, RENDER_NONBLEND, RENDER_NONLIGHT, RENDER_BLEND, RENDER_PICKING, RENDER_BRUSHING, RENDER_UI, RENDER_UITEXTURE, RENDER_END };
+	enum RENDERGROUP {RENDER_PRIORITY, RENDER_DEPTH,RENDER_NONBLEND, RENDER_NONLIGHT, RENDER_BLEND, RENDER_PICKING, RENDER_BRUSHING, RENDER_UI, RENDER_UITEXTURE, RENDER_END };
 
 private:
 	explicit CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -40,6 +40,7 @@ private:
 	HRESULT Render_Brushing();
 #endif // _DEBUG
 	HRESULT Render_Lights();
+	HRESULT Render_Depth();
 	HRESULT Render_Shadow();
 	HRESULT Render_SoftShadow();
 	HRESULT Render_SSAO();
@@ -47,6 +48,7 @@ private:
 	HRESULT Render_NonLight();
 	HRESULT Render_Blend();
 	HRESULT Render_Blur();
+	HRESULT Render_BlurShadow();
 	HRESULT Render_PostProcessing();
 	HRESULT Render_Distortion();
 	HRESULT Render_UI();
@@ -68,6 +70,8 @@ private:
 	HRESULT Render_MRTs();
 	_bool Is_DebugRender();
 	_bool Is_MRTRender();
+	_bool Is_Render_Distortion();
+
 #endif // _DEBUG
 
 private:	
@@ -77,6 +81,7 @@ private:
 	list<class CComponent*>			m_DebugObject;
 	_bool							m_isDebugRender = { true };
 	_bool							m_isMRTRender = { true };
+	_bool							m_isDistortion = { false };
 #endif // _DEBUG
 
 

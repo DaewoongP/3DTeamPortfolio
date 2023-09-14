@@ -39,7 +39,7 @@ private:
 
 private:
 	ID3D11Texture2D*			m_pTexture2D = { nullptr };
-	//ID3D11Texture2D*			m_pDepthStencilTexture = nullptr;
+	ID3D11Texture2D*			m_pShadow2D = nullptr;
 	
 	ID3D11RenderTargetView*		m_pRTV = { nullptr };
 	ID3D11ShaderResourceView*	m_pSRV = { nullptr };

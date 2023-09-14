@@ -227,45 +227,31 @@ PS_OUT PS_MAIN_BLURX(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
     
-    vector SSAO = g_SSAOTexture.Sample(LinearSampler, In.vTexUV);
-    //int mip = 0;
-    //int width, height, levels;
-
-    //g_SSAOTexture.GetDimensions(mip, width, height, levels);
-    //float dx = 1.0f / width;
-    //float dy = 1.0f / height;
     
-    //float4 color = float4(0.f, 0.f, 0.f, 0.f);
-    //int nrIterations = 5;
-    
-    //for (int i = 0; i < nrIterations; ++i)
-    //{
-    //    for (int j = 0; j < nrIterations; ++j)
-    //    {
-    //        float2 offset = float2((dx * 2 * i) - dx, (dy * 2 * j) - dy);
-    //        color += g_SSAOTexture.Sample(BlurSampler, In.vTexUV + offset);
-    //    }
-    //}
-    //color /= nrIterations * nrIterations;
-    //Out.vColor = color;
-    
-    
-    int mip = 0;
-    int width, height, levels;
-    g_SSAOTexture.GetDimensions(mip, width, height, levels);
-    float dx = 1.0f / width;
-    float dy = 1.0f / height;
+    float dx = 1.0f / (1280.f / 4.f);
     
     float2 UV = 0;
     
     for (int i = -11; i < 11; ++i)
     {
-        UV = In.vTexUV + float2(dx * i, 1);
+
+        UV = In.vTexUV + float2(dx * i, 0.f);
+        vector SSAO = g_SSAOTexture.Sample(BlurSampler, UV);
+        
         Out.vColor += BlurWeights[11 + i] * SSAO;
     }
     Out.vColor /= total;
     //Out.vColor = (SSAO.xyz, 0.f);
+    float dy = 1.0f / (720.f / 2.f);
     
+   
+    for (int i = -11; i < 11; ++i)
+    {
+        UV = In.vTexUV + float2(0, dy * i);
+        vector SSAO = g_SSAOTexture.Sample(BlurSampler, UV);
+        Out.vColor += BlurWeights[11 + i] * SSAO;
+    }
+    Out.vColor /= total;
     
     return Out;
 }
@@ -273,19 +259,15 @@ PS_OUT PS_MAIN_BLURY(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
     
-    vector SSAO = g_SSAOTexture.Sample(BlurSampler, In.vTexUV);
-    
-    int mip = 0;
-    int width, height, levels;
-    g_SSAOTexture.GetDimensions(mip, width, height, levels);
-    float dx = 1.0f / width;
-    float dy = 1.0f / height/2;
+ 
+    float dy = 1.0f / (720.f / 2.f);
     
     float2 UV = 0;
    
     for (int i = -11; i < 11; ++i)
     {
         UV = In.vTexUV + float2(0,dy * i);
+        vector SSAO = g_SSAOTexture.Sample(BlurSampler, UV);
         Out.vColor += BlurWeights[11 + i] * SSAO;
     }
     Out.vColor /= total;
@@ -339,35 +321,35 @@ PS_OUT PS_MAIN_SHADOW(PS_IN In)
         Out.vColor = vector(1.f, 1.f, 1.f, 1.f);
     // 투영행렬의 far를 다시곱해주어 포지션과 연산
     // 현재 픽셀의 깊이값과 해당하는 픽셀이 존재하는 빛기준의 텍스처 UV좌표 깊이값과 비교하여 처리한다.
-    else if (vPosition.z - 0.1f < vLightDepth.y * g_fCamFar)
-    { 
-        // Out.vColor.rgb = vector(0.5f, 0.5f, 0.5f, 0.5f);
+    else if (vPosition.z - 0.01f < vLightDepth.y * g_fCamFar)
+    {
+        Out.vColor = vector(1.f, 1.f, 1.f, 1.f);
     
-        float CamDepth = vPosition.z - 0.1f / g_fCamFar;
+        //float CamDepth = vPosition.z - 0.01f / g_fCamFar;
 
-        float fragDepth = CamDepth;
+        //float fragDepth = CamDepth;
     
-        float fLit = 1.0f;
+        //float fLit = 1.0f;
     
-        float E_x2 = vLightDepth.z;
-        float Ex_2 = vLightDepth.x * vLightDepth.x;
-        float variance = (E_x2 - Ex_2);
-        variance = max(variance, 0.00005f);
+        //float E_x2 = vLightDepth.z;
+        //float Ex_2 = vLightDepth.x * vLightDepth.x;
+        //float variance = (E_x2 - Ex_2);
+        //variance = max(variance, 0.00005f);
 
-        float mD = (fragDepth - vLightDepth.x);
-        float mD_2 = mD * mD;
-        float p = (variance / (variance + mD_2));
+        //float mD = (fragDepth - vLightDepth.x);
+        //float mD_2 = mD * mD;
+        //float p = (variance / (variance + mD_2));
 
-        fLit = max(p, fragDepth <= vLightDepth.x);
-        fLit = (1 - fLit) + 0.5f;
-        if (fLit > 1.f)
-            fLit = 1.f;
+        //fLit = max(p, fragDepth <= vLightDepth.x);
+        //fLit = (1 - fLit) + 0.5f;
+        //if (fLit > 1.f)
+        //    fLit = 1.f;
     
-        Out.vColor = float4(fLit, fLit, fLit, fLit);
-
+        //Out.vColor = float4(fLit, fLit, fLit, fLit);
     }
-    return Out;
-}
+    
+        return Out;
+    }
 
 technique11 DefaultTechnique
 {
