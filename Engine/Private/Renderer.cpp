@@ -75,9 +75,9 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_Picking"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL; // ∏  ø¿∫Í¡ß≈Õ Fast Picking¿ª ¿ß«— ∑ª¥ı ≈∏∞Ÿ
-	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
-		TEXT("Target_MapBrushing"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
-		return E_FAIL; // ∏  ∫Í∑ØΩÃ ∞·∞˙ ¿˙¿Â¿ª ¿ß«— ∑ª¥ı ≈∏∞Ÿ
+	//if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
+	//	TEXT("Target_MapBrushing"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
+	//	return E_FAIL; // ∏  ∫Í∑ØΩÃ ∞·∞˙ ¿˙¿Â¿ª ¿ß«— ∑ª¥ı ≈∏∞Ÿ
 
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_UI"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
@@ -114,8 +114,8 @@ HRESULT CRenderer::Initialize_Prototype()
 #ifdef _DEBUG
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Picking"), TEXT("Target_Picking"))))  
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Brushing"), TEXT("Target_MapBrushing"))))
-		return E_FAIL;
+	/*if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Brushing"), TEXT("Target_MapBrushing"))))
+		return E_FAIL;*/
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_UI"), TEXT("Target_UI"))))  // UI
 		return E_FAIL;
 #endif // _DEBUG
@@ -158,8 +158,8 @@ HRESULT CRenderer::Initialize_Prototype()
 
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Picking"), 1200.f, 80.f, 160.f, 160.f)))
 		return E_FAIL; // ∏  ø¿∫Í¡ß≈Õ Fast Picking¿ª ¿ß«— ∑ª¥ı ≈∏∞Ÿ
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_MapBrushing"), 1040.f, 80.f, 160.f, 160.f)))
-		return E_FAIL; // ∏  ∫Í∑ØΩÃ ∞·∞˙ ¿˙¿Â¿ª ¿ß«— ∑ª¥ı ≈∏∞Ÿ
+	//if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_MapBrushing"), 1040.f, 80.f, 160.f, 160.f)))
+	//	return E_FAIL; // ∏  ∫Í∑ØΩÃ ∞·∞˙ ¿˙¿Â¿ª ¿ß«— ∑ª¥ı ≈∏∞Ÿ
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_UI"), 1200.f, 300.f, 160.f, 160.f)))
 		return E_FAIL;
 	
@@ -237,8 +237,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 #ifdef _DEBUG
 	if (FAILED(Render_Picking())) 	// ∏  ø¿∫Í¡ß≈Õ Fast Picking¿ª ¿ß«— ∑ª¥ı ≈∏∞Ÿ
 		return E_FAIL;
-	if (FAILED(Render_Brushing())) 	// ∏  ∫Í∑ØΩÃ ∞·∞˙ ¿˙¿Â¿ª ¿ß«— ∑ª¥ı ≈∏∞Ÿ
-		return E_FAIL;
+	//if (FAILED(Render_Brushing())) 	// ∏  ∫Í∑ØΩÃ ∞·∞˙ ¿˙¿Â¿ª ¿ß«— ∑ª¥ı ≈∏∞Ÿ
+	//	return E_FAIL;
 #endif // _DEBUG
 	
 	if (FAILED(Render_PostProcessing()))

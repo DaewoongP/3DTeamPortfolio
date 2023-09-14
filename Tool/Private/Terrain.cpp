@@ -52,7 +52,7 @@ void CTerrain::Late_Tick(_float fTimeDelta)
 
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 #ifdef _DEBUG
-		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BRUSHING, this);
+		//m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BRUSHING, this);
 #endif // _DEBUG
 	}
 }
@@ -62,13 +62,13 @@ HRESULT CTerrain::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	// 쉐이더에 브러쉬 위치값 던져줌
-	if (FAILED(SetUp_ShaderDynamicResources()))
-		return E_FAIL;
+	//// 쉐이더에 브러쉬 위치값 던져줌
+	//if (FAILED(SetUp_ShaderDynamicResources()))
+	//	return E_FAIL;
 
-	// 일반 그리기
-	if (RT_NORMAL == m_eRenderCount)
-	{
+	//// 일반 그리기
+	//if (RT_NORMAL == m_eRenderCount)
+	//{
 		m_pShader->Begin("Terrain_Brush");
 
 		if (FAILED(m_pBuffer->Render()))
@@ -77,47 +77,47 @@ HRESULT CTerrain::Render()
 		m_eRenderCount = RT_BRUSHING;
 
 		return S_OK;
-	}
+	//}
 
 #ifdef _DEBUG
-	// 브러싱용 그리기
-	else if (RT_BRUSHING == m_eRenderCount)
-	{
-		BEGININSTANCE;
+	//// 브러싱용 그리기
+	//else if (RT_BRUSHING == m_eRenderCount)
+	//{
+	//	BEGININSTANCE;
 
-		_uint				iNumViews = { 1 };
-		D3D11_VIEWPORT		ViewportDesc;
+	//	_uint				iNumViews = { 1 };
+	//	D3D11_VIEWPORT		ViewportDesc;
 
-		m_pContext->RSGetViewports(&iNumViews, &ViewportDesc);
+	//	m_pContext->RSGetViewports(&iNumViews, &ViewportDesc);
 
-		_float4x4 WorldMatrix, ViewMatrix, ProjMatrix;
+	//	_float4x4 WorldMatrix, ViewMatrix, ProjMatrix;
 
-		_float3 vEye = { (m_pBuffer->Get_TerrainSizeX() * 0.5f) + 1,
-			250.f, (m_pBuffer->Get_TerrainSizeZ() * 0.5f) + 1 };
-		_float3 vAt = { (m_pBuffer->Get_TerrainSizeX() * 0.5f) + 1,
-			0.f, (m_pBuffer->Get_TerrainSizeZ() * 0.5f) + 1 };
-		_float3 vUp = { 0.f, 0.f, 1.f };
+	//	_float3 vEye = { (m_pBuffer->Get_TerrainSizeX() * 0.5f) + 1,
+	//		250.f, (m_pBuffer->Get_TerrainSizeZ() * 0.5f) + 1 };
+	//	_float3 vAt = { (m_pBuffer->Get_TerrainSizeX() * 0.5f) + 1,
+	//		0.f, (m_pBuffer->Get_TerrainSizeZ() * 0.5f) + 1 };
+	//	_float3 vUp = { 0.f, 0.f, 1.f };
 
-		ViewMatrix = XMMatrixLookAtLH(vEye, vAt, vUp);
+	//	ViewMatrix = XMMatrixLookAtLH(vEye, vAt, vUp);
 
-		if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
-			return E_FAIL;
+	//	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
+	//		return E_FAIL;
 
-		if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", &ViewMatrix)))
-			return E_FAIL;
+	//	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", &ViewMatrix)))
+	//		return E_FAIL;
 
-		if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
-			return E_FAIL;
+	//	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
+	//		return E_FAIL;
 
-		m_pShader->Begin("Terrain_Brush");
+	//	m_pShader->Begin("Terrain_Brush");
 
-		if (FAILED(m_pBuffer->Render()))
-			return E_FAIL;
+	//	if (FAILED(m_pBuffer->Render()))
+	//		return E_FAIL;
 
-		m_eRenderCount = RT_END;
+	//	m_eRenderCount = RT_END;
 
-		ENDINSTANCE;
-	}
+	//	ENDINSTANCE;
+	//}
 #endif // _DEBUG
 
 	return S_OK;
