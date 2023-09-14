@@ -43,12 +43,12 @@ HRESULT CPlayer::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
-	/*if (FAILED(Ready_Caemra()))
+	if (FAILED(Ready_Caemra()))
 	{
 		MSG_BOX("Failed Ready Player Caemra");
 
 		return E_FAIL;
-	}*/
+	}
 
 #ifdef _DEBUG
 	
@@ -328,6 +328,8 @@ HRESULT CPlayer::Ready_Caemra()
 
 	m_pPlayer_Camera = CPlayer_Camera::Create(m_pDevice,m_pContext, &PlayerCameraDesc);
 
+	Safe_AddRef(m_pPlayer_Camera);
+
 	NULL_CHECK_RETURN_MSG(m_pPlayer_Camera, E_FAIL, TEXT("Failed Create Player Camera"));
 
 	BEGININSTANCE;
@@ -370,6 +372,40 @@ void CPlayer::Tick_ImGui()
 
 #endif // _DEBUG
 
+void CPlayer::UpdateLookAngle()
+{
+	//카메라의 룩을 가지고 온다.
+	BEGININSTANCE;
+
+	_float3 vCamLook = *pGameInstance->Get_CamLook();
+
+	//y값 지우고
+	vCamLook = XMVectorSetY(vCamLook, 0.0f);
+
+	vCamLook.Normalize();
+
+	//플레이어의 룩을 가지고 온다.
+	_float3 vPlayerLook = m_pTransform->Get_Look();
+
+	//y값 지우고
+	vPlayerLook = XMVectorSetY(vPlayerLook, 0.0f);
+
+	vPlayerLook.Normalize();
+
+	//내적한다.
+	_float fLookAngle = vPlayerLook.Dot(vCamLook);
+
+	//좌우 구분을 위한 외적
+	if (0.0f > vPlayerLook.Cross(vCamLook).y)
+	{
+		fLookAngle *= -1;
+	}
+
+	m_fLookAngle = fLookAngle;
+
+	ENDINSTANCE;
+}
+
 CPlayer* CPlayer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CPlayer* pInstance = New CPlayer(pDevice, pContext);
@@ -405,6 +441,7 @@ void CPlayer::Free()
 		Safe_Release(m_pShader);
 		Safe_Release(m_pRenderer);
 		Safe_Release(m_pCustomModel);
+		Safe_Release(m_pPlayer_Camera);
 
 #ifdef _DEBUG
 

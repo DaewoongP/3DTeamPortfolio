@@ -164,6 +164,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Action.h" />
+    <ClInclude Include="..\public\StateMachine.h" />
+    <ClInclude Include="..\public\IdleState.h" />
     <ClInclude Include="..\Public\UI_Image.h" />
     <ClInclude Include="..\Public\BasicCast.h" />
     <ClInclude Include="..\Public\Magic.h" />
@@ -264,10 +266,14 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="StateContext.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Action.cpp" />
+    <ClCompile Include="..\private\StateMachine.cpp" />
+    <ClCompile Include="..\Private\IdleState.cpp" />
+    <ClCompile Include="..\private\StateContext.cpp" />
     <ClCompile Include="..\Private\UI_Image.cpp" />
     <ClCompile Include="..\Private\BasicCast.cpp" />
     <ClCompile Include="..\Private\Magic.cpp" />
