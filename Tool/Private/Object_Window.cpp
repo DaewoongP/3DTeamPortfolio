@@ -873,6 +873,7 @@ void CObject_Window::Mesh_Picking_Menu()
 		m_pContext->Unmap(pCopyTexture2D, 0);
 
 		Safe_Release(pCopyTexture2D);
+		Safe_Release(pTexture); // 누수 확인
 	}
 
 	// 메쉬 피킹한 오브젝트 상태 행렬 변경 메뉴
@@ -1501,6 +1502,8 @@ HRESULT CObject_Window::Create_Dummy()
 		return E_FAIL;
 	}
 
+	Safe_AddRef(m_pDummy);
+
 	m_pDummy = static_cast<CMapDummy*>(m_pGameInstance->Find_Component_In_Layer(LEVEL_TOOL, TEXT("Layer_Tool"), TEXT("Map_Dummy")));
 	m_pDummy->Add_Model_Component(TEXT("Prototype_Component_Model_Tree"));
 	m_pDummy->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMesh"));
@@ -1524,7 +1527,7 @@ HRESULT CObject_Window::Delete_Dummy()
 		return E_FAIL;
 	}
 
-	m_pDummy = nullptr;
+	Safe_Release(m_pDummy);
 
 	return S_OK;
 }

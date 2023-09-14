@@ -32,9 +32,6 @@ HRESULT CTerrain::Initialize(void* pArg)
 
 	m_isRendering = true;
 
-	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
-	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(g_iWinSizeX, g_iWinSizeY, 0.5f, 1.f));
-
 	return S_OK;
 }
 
