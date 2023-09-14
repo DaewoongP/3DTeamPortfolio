@@ -216,8 +216,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 	if (FAILED(Render_SoftShadow()))
 		return E_FAIL;
-	if (FAILED(Render_BlurShadow()))
-		return E_FAIL;
+	/*if (FAILED(Render_BlurShadow()))
+		return E_FAIL;*/
 	if (FAILED(Render_Deferred()))
 		return E_FAIL;
 
@@ -316,6 +316,8 @@ HRESULT CRenderer::Render_Depth()
 
 	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext)))
 		return E_FAIL;
+
+	return S_OK;
 }
 HRESULT CRenderer::Render_NonBlend()
 {
@@ -457,19 +459,19 @@ HRESULT CRenderer::Render_Shadow()
 		return E_FAIL;
 
 	_float4x4	ViewMatrix, ProjMatrix;
-	if (!m_pLight_Manager->Light_NullCheck())
+	//if (!m_pLight_Manager->Light_NullCheck())
 	{
 		ViewMatrix = XMMatrixLookAtLH(_float4(0.f,10.f,0.f,1.f), _float4(3.f, 0.f, 3.f, 1.f), _float4(0.f, 1.f, 0.f, 0.f));
 		ProjMatrix = XMMatrixPerspectiveFovLH(XMConvertToRadians(90.f), _float(1280) / 720.f, 1.f, 100.f);
 	}
-	else
+	/*else
 	{
 		_float4* LightPos = m_pLight_Manager->Get_LightPosition();
 
 		_float4 LightDir = m_pLight_Manager->Get_Light(1)->vDir;
 		ViewMatrix = XMMatrixLookAtLH(*LightPos, _float4(3.f, 0.f, 3.f, 1.f), LightDir);
 		ProjMatrix = XMMatrixPerspectiveFovLH(XMConvertToRadians(90.f), _float(1280) / 720.f, 1.f, 100.f);
-	}
+	}*/
 		
 
 			
