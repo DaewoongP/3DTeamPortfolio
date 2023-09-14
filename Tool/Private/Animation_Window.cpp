@@ -53,8 +53,8 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 		ImGui::End();
 		return;
 	}
-	CModel* pDummyModel = dynamic_cast<CModel*>(m_pDummyObject->Find_Component(TEXT("Com_Model")));
-	if (pDummyModel == nullptr)
+	
+	if (m_pDummyModel == nullptr)
 	{
 		ImGui::End();
 		return;
@@ -63,7 +63,7 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 	ImGui::Separator();
 	ImGui::Text("AnimationOffset");
 
-	OffsetVectorSetting(pDummyModel);
+	OffsetVectorSetting(m_pDummyModel);
 
 	ImGui::Separator();
 	ImGui::Text("Notify");
@@ -72,15 +72,15 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 	ImGui::Separator();
 	ImGui::Text("Root&BoneTree");
 
-	Bone_Tree(pDummyModel->Get_Bone_Index(0), pDummyModel);
+	Bone_Tree(m_pDummyModel->Get_Bone_Index(0), m_pDummyModel);
 	ImGui::InputInt("RootBone", &m_iRootIndex);
 
 	if (ImGui::Button("Set_Root"))
 	{
-		pDummyModel->Set_RootBone(m_iRootIndex);
+		m_pDummyModel->Set_RootBone(m_iRootIndex);
 	}
 
-	for (_uint partCnt = 0; partCnt < pDummyModel->Get_AnimationPartCount(); partCnt++)
+	for (_uint partCnt = 0; partCnt < m_pDummyModel->Get_AnimationPartCount(); partCnt++)
 	{
 		
 		ImGui::Separator();
@@ -88,42 +88,42 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 
 		CModel::ANIMTYPE ePartCnt = static_cast<CModel::ANIMTYPE>(partCnt);
 
-		Animation_ChildFrame(ePartCnt,m_szCurrentItem[ePartCnt], pDummyModel);
-		Animation_Action_Button(ePartCnt,pDummyModel, &m_fNotifyActionTime);
+		Animation_ChildFrame(ePartCnt,m_szCurrentItem[ePartCnt], m_pDummyModel);
+		Animation_Action_Button(ePartCnt,m_pDummyModel, &m_fNotifyActionTime);
 
 		_char szUIName[MAX_PATH] = "Animation##";
-		if (pDummyModel->Get_NumAnimations(ePartCnt) != 0)
+		if (m_pDummyModel->Get_NumAnimations(ePartCnt) != 0)
 		{
 			sprintf_s(szUIName, "%s%d", "AnimationTag##", ePartCnt);
-			WCharToChar(pDummyModel->Get_Animation(ePartCnt)->Get_AnimationName(), m_szAnimationTag[ePartCnt]);
+			WCharToChar(m_pDummyModel->Get_Animation(ePartCnt)->Get_AnimationName(), m_szAnimationTag[ePartCnt]);
 			if (ImGui::InputText(szUIName, m_szAnimationTag[ePartCnt], 32))
 			{
 				_tchar wsaAnimationTag[MAX_PATH] = {};
 				CharToWChar(m_szAnimationTag[ePartCnt], wsaAnimationTag);
-				pDummyModel->Get_Animation(ePartCnt)->Set_AnimationName(wsaAnimationTag);
+				m_pDummyModel->Get_Animation(ePartCnt)->Set_AnimationName(wsaAnimationTag);
 			}
 			sprintf_s(szUIName, "%s%d", "SetRootAnim##", ePartCnt);
-			if (ImGui::Checkbox(szUIName, pDummyModel->Get_Animation(ePartCnt)->Get_RootAnim_Point()))
+			if (ImGui::Checkbox(szUIName, m_pDummyModel->Get_Animation(ePartCnt)->Get_RootAnim_Point()))
 			{
 			}
 			ImGui::SameLine();
 			sprintf_s(szUIName, "%s%d", "SetLerpAnim##", ePartCnt);
-			if (ImGui::Checkbox(szUIName, pDummyModel->Get_Animation(ePartCnt)->Get_LerpAnim_Point()))
+			if (ImGui::Checkbox(szUIName, m_pDummyModel->Get_Animation(ePartCnt)->Get_LerpAnim_Point()))
 			{
 			}
 			ImGui::SameLine();
 			sprintf_s(szUIName, "%s%d", "SetLoopAnim##", ePartCnt);
-			if (ImGui::Checkbox(szUIName, pDummyModel->Get_Animation(ePartCnt)->Get_LoopAnim_Point()))
+			if (ImGui::Checkbox(szUIName, m_pDummyModel->Get_Animation(ePartCnt)->Get_LoopAnim_Point()))
 			{
 			}
 
 			sprintf_s(szUIName, "%s%d", szUIName, ePartCnt);
-			ImGui::SliderFloat(szUIName, pDummyModel->Get_Animation(ePartCnt)->Get_Accmulation_Pointer(), 0, pDummyModel->Get_Animation(ePartCnt)->Get_Duration());
-			pDummyModel->Get_Animation(ePartCnt)->Update_KeyFrame_By_Time();
-			Add_Notify_Button(ePartCnt, m_szNotifyName, pDummyModel, &m_eNotifyKeyFrameType, &m_fNotifyActionTime, &m_fNotifySpeed);
+			ImGui::SliderFloat(szUIName, m_pDummyModel->Get_Animation(ePartCnt)->Get_Accmulation_Pointer(), 0, m_pDummyModel->Get_Animation(ePartCnt)->Get_Duration());
+			m_pDummyModel->Get_Animation(ePartCnt)->Update_KeyFrame_By_Time();
+			Add_Notify_Button(ePartCnt, m_szNotifyName, m_pDummyModel, &m_eNotifyKeyFrameType, &m_fNotifyActionTime, &m_fNotifySpeed);
 
-			Edit_Notify_Button(ePartCnt, pDummyModel);
-			Create_Notify_ChildFrame(ePartCnt, pDummyModel);
+			Edit_Notify_Button(ePartCnt, m_pDummyModel);
+			Create_Notify_ChildFrame(ePartCnt, m_pDummyModel);
 
 			ImGui::Separator();
 			ImGui::Text("Separate_Parts");
@@ -137,7 +137,7 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 			sprintf_s(szUIName, "Seprate##%d", ePartCnt);
 			if (ImGui::Button(szUIName))
 			{
-				pDummyModel->Separate_Animation(m_iFromBone[ePartCnt], m_iToBone[ePartCnt],ePartCnt);
+				m_pDummyModel->Separate_Animation(m_iFromBone[ePartCnt], m_iToBone[ePartCnt],ePartCnt);
 			}
 		}
 	}
@@ -145,11 +145,15 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 	if (ImGui::Button("Delete_Dummy##Animation"))
 	{
 		BEGININSTANCE;
+		
 		if (FAILED(pGameInstance->Delete_Component(LEVEL_TOOL,
 			TEXT("Layer_Tool"), TEXT("Dummy_Animation"))))
 		{
 			MSG_BOX("Failed to delete Dummy_Animation");
 		} ENDINSTANCE;
+		Safe_Release(m_pDummyModel);
+		Safe_Release(m_pDummyObject);
+		m_pDummyModel = nullptr;
 		m_pDummyObject = nullptr;
 	}
 	ImGui::End();
@@ -176,8 +180,8 @@ void CAnimation_Window::Create_Dummy_Button()
 		{
 			MSG_BOX("Failed to Created Dummy Clone");
 		}
-
 		m_pDummyObject = dynamic_cast<CDummy*>(pGameInstance->Find_Component_In_Layer(LEVEL_TOOL, TEXT("Layer_Tool"), TEXT("Dummy_Animation")));
+		Safe_AddRef(m_pDummyObject);
 		Safe_Release(pGameInstance);
 	}
 }
@@ -239,6 +243,8 @@ void CAnimation_Window::AddModel_Button()
 		m_pDummyObject->Add_Model_Component(m_vecModelList_t[m_iModelIndex].c_str());
 		lstrcpy(m_wszCurrentDummyModelTag, m_vecModelList_t[m_iModelIndex].c_str());
 		m_pDummyObject->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxAnimMesh"));
+		m_pDummyModel = dynamic_cast<CModel*>(m_pDummyObject->Find_Component(TEXT("Com_Model")));
+		Safe_AddRef(m_pDummyModel);
 		CModel* pCurrentModel = dynamic_cast<CModel*>(m_pDummyObject->Find_Component(TEXT("Com_Model")));
 		_tchar wszAnimationName[MAX_PATH] = {};
 		_tchar wszTypeComboName[MAX_PATH] = {};
@@ -252,7 +258,7 @@ void CAnimation_Window::AddModel_Button()
 	}
 }
 
-void CAnimation_Window::Animation_ComboBox(CModel::ANIMTYPE ePartCnt, _char* szCurrentItem, CModel* pDummyModel)
+void CAnimation_Window::Animation_ComboBox(CModel::ANIMTYPE ePartCnt, _char* szCurrentItem, CModel* m_pDummyModel)
 {
 	_char szUIName[MAX_PATH] = "AnimComboBox##";
 	sprintf_s(szUIName, "%s%d", szUIName, ePartCnt);
@@ -260,12 +266,12 @@ void CAnimation_Window::Animation_ComboBox(CModel::ANIMTYPE ePartCnt, _char* szC
 	{
 		_char szAnimationName[MAX_PATH] = "";
 		_tchar wszAnimationName[MAX_PATH] = {};
-		for (_uint i = 0; i < pDummyModel->Get_NumAnimations(ePartCnt); i++)
+		for (_uint i = 0; i < m_pDummyModel->Get_NumAnimations(ePartCnt); i++)
 		{
 			ZEROMEM(szAnimationName);
 			ZEROMEM(wszAnimationName);
 
-			lstrcpy(wszAnimationName, pDummyModel->Get_Animation(i, ePartCnt)->Get_AnimationName());
+			lstrcpy(wszAnimationName, m_pDummyModel->Get_Animation(i, ePartCnt)->Get_AnimationName());
 			WCharToChar(wszAnimationName, szAnimationName);
 			bool is_selected = (!strcmp(szCurrentItem, szAnimationName));
 			ImGui::Text(szAnimationName);
@@ -277,21 +283,21 @@ void CAnimation_Window::Animation_ComboBox(CModel::ANIMTYPE ePartCnt, _char* szC
 			{
 				strcpy_s(szCurrentItem, sizeof(szAnimationName), szAnimationName);
 				ImGui::SetItemDefaultFocus();
-				pDummyModel->Change_Animation(i, ePartCnt);
+				m_pDummyModel->Change_Animation(i, ePartCnt);
 			}
 
 			ImGui::SameLine();
 			sprintf_s(szUIName, "Delete##_Anim%d%s" ,ePartCnt, szAnimationName);
 			if (ImGui::SmallButton(szUIName))
 			{
-				pDummyModel->Delete_Animation(i, ePartCnt);
+				m_pDummyModel->Delete_Animation(i, ePartCnt);
 			}
 		}
 		ImGui::EndCombo();
 	}
 }
 
-void CAnimation_Window::Animation_ChildFrame(CModel::ANIMTYPE ePartCnt, _char* szCurrentItem, CModel* pDummyModel)
+void CAnimation_Window::Animation_ChildFrame(CModel::ANIMTYPE ePartCnt, _char* szCurrentItem, CModel* m_pDummyModel)
 {
 	_char szUIName[MAX_PATH] = "AnimChildFrame##";
 	sprintf_s(szUIName, "%s%d", szUIName, ePartCnt);
@@ -300,12 +306,12 @@ void CAnimation_Window::Animation_ChildFrame(CModel::ANIMTYPE ePartCnt, _char* s
 	{
 		_char szAnimationName[MAX_PATH] = "";
 		_tchar wszAnimationName[MAX_PATH] = {};
-		for (_uint i = 0; i < pDummyModel->Get_NumAnimations(ePartCnt); i++)
+		for (_uint i = 0; i < m_pDummyModel->Get_NumAnimations(ePartCnt); i++)
 		{
 			ZEROMEM(szAnimationName);
 			ZEROMEM(wszAnimationName);
 
-			lstrcpy(wszAnimationName, pDummyModel->Get_Animation(i, ePartCnt)->Get_AnimationName());
+			lstrcpy(wszAnimationName, m_pDummyModel->Get_Animation(i, ePartCnt)->Get_AnimationName());
 			WCharToChar(wszAnimationName, szAnimationName);
 		
 			if (strstr(szAnimationName,m_szAnimationSearch[ePartCnt]) == nullptr)
@@ -321,14 +327,14 @@ void CAnimation_Window::Animation_ChildFrame(CModel::ANIMTYPE ePartCnt, _char* s
 			{
 				strcpy_s(szCurrentItem, sizeof(szAnimationName), szAnimationName);
 				ImGui::SetItemDefaultFocus();
-				pDummyModel->Change_Animation(i, ePartCnt);
+				m_pDummyModel->Change_Animation(i, ePartCnt);
 			}
 
 			ImGui::SameLine();
 			sprintf_s(szUIName, "Delete##_Anim%d%s", ePartCnt, szAnimationName);
 			if (ImGui::SmallButton(szUIName))
 			{
-				pDummyModel->Delete_Animation(i, ePartCnt);
+				m_pDummyModel->Delete_Animation(i, ePartCnt);
 			}
 		}
 	}
@@ -338,7 +344,7 @@ void CAnimation_Window::Animation_ChildFrame(CModel::ANIMTYPE ePartCnt, _char* s
 	ImGui::InputText(szUIName, m_szAnimationSearch[ePartCnt], 32);
 }
 
-void CAnimation_Window::Animation_Table(CModel::ANIMTYPE ePartCnt, _char* szCurrentItem, CModel* pDummyModel)
+void CAnimation_Window::Animation_Table(CModel::ANIMTYPE ePartCnt, _char* szCurrentItem, CModel* m_pDummyModel)
 {
 	_char szUIName[MAX_PATH] = "AnimChildFrame##";
 	sprintf_s(szUIName, "%s%d", szUIName, ePartCnt);
@@ -360,7 +366,7 @@ void CAnimation_Window::Animation_Table(CModel::ANIMTYPE ePartCnt, _char* szCurr
 
 		_char szAnimationName[MAX_PATH] = "";
 		_tchar wszAnimationName[MAX_PATH] = {};
-		for (_uint i = 0; i < pDummyModel->Get_NumAnimations(ePartCnt); i++)
+		for (_uint i = 0; i < m_pDummyModel->Get_NumAnimations(ePartCnt); i++)
 		{
 			ZEROMEM(szAnimationName);
 			ZEROMEM(wszAnimationName);
@@ -371,7 +377,7 @@ void CAnimation_Window::Animation_Table(CModel::ANIMTYPE ePartCnt, _char* szCurr
 			ImGui::Text(szUIName);
 			
 			ImGui::TableSetColumnIndex(1);
-			lstrcpy(wszAnimationName, pDummyModel->Get_Animation(i, ePartCnt)->Get_AnimationName());
+			lstrcpy(wszAnimationName, m_pDummyModel->Get_Animation(i, ePartCnt)->Get_AnimationName());
 			WCharToChar(wszAnimationName, szAnimationName);
 			bool is_selected = (!strcmp(szCurrentItem, szAnimationName));
 			ImGui::Text(szAnimationName);
@@ -383,14 +389,14 @@ void CAnimation_Window::Animation_Table(CModel::ANIMTYPE ePartCnt, _char* szCurr
 			{
 				strcpy_s(szCurrentItem, sizeof(szAnimationName), szAnimationName);
 				ImGui::SetItemDefaultFocus();
-				pDummyModel->Change_Animation(i, ePartCnt);
+				m_pDummyModel->Change_Animation(i, ePartCnt);
 			}
 
 			ImGui::TableSetColumnIndex(3);
 			sprintf_s(szUIName, "Delete##_Anim%d%s", ePartCnt, szAnimationName);
 			if (ImGui::SmallButton(szUIName))
 			{
-				pDummyModel->Delete_Animation(i, ePartCnt);
+				m_pDummyModel->Delete_Animation(i, ePartCnt);
 			}
 		}
 		ImGui::EndTable();
@@ -398,21 +404,21 @@ void CAnimation_Window::Animation_Table(CModel::ANIMTYPE ePartCnt, _char* szCurr
 	
 }
 
-void CAnimation_Window::Animation_Action_Button(CModel::ANIMTYPE ePartCnt, CModel* pDummyModel, _float* fNotifyActionTime)
+void CAnimation_Window::Animation_Action_Button(CModel::ANIMTYPE ePartCnt, CModel* m_pDummyModel, _float* fNotifyActionTime)
 {
-	_uint iAnimCnt = pDummyModel->Get_NumAnimations(ePartCnt);
+	_uint iAnimCnt = m_pDummyModel->Get_NumAnimations(ePartCnt);
 	if (iAnimCnt == 0)
 		return;
 	_char szUIName[MAX_PATH] = "";
-	if(pDummyModel->Get_Animation(ePartCnt)->Get_Paused_State())
+	if(m_pDummyModel->Get_Animation(ePartCnt)->Get_Paused_State())
 		sprintf_s(szUIName, "Stop##%d", ePartCnt);
 	else
 		sprintf_s(szUIName, "Play##%d", ePartCnt);
 
 	if (ImGui::Button(szUIName))
 	{
-		pDummyModel->Get_Animation(ePartCnt)->Set_Pause(!pDummyModel->Get_Animation(ePartCnt)->Get_Paused_State());
-		*fNotifyActionTime = pDummyModel->Get_Animation(ePartCnt)->Get_Accmulation();
+		m_pDummyModel->Get_Animation(ePartCnt)->Set_Pause(!m_pDummyModel->Get_Animation(ePartCnt)->Get_Paused_State());
+		*fNotifyActionTime = m_pDummyModel->Get_Animation(ePartCnt)->Get_Accmulation();
 	}
 
 	ImGui::SameLine();
@@ -424,7 +430,7 @@ void CAnimation_Window::Animation_Action_Button(CModel::ANIMTYPE ePartCnt, CMode
 	ImGui::SameLine();
 	if (ImGui::Button("Reset_Animation##Animation"))
 	{
-		pDummyModel->Change_Animation(pDummyModel->Get_CurrentAnimIndex(), ePartCnt);
+		m_pDummyModel->Change_Animation(m_pDummyModel->Get_CurrentAnimIndex(), ePartCnt);
 	}
 }
 
@@ -458,7 +464,7 @@ void CAnimation_Window::Notify_InputFileds(_char* szNotifyName, KEYFRAME::KEYFRA
 	}
 }
 
-void CAnimation_Window::Add_Notify_Button(CModel::ANIMTYPE ePartCnt, _char* szNotifyName, CModel* pDummyModel, KEYFRAME::KEYFRAMETYPE* eNotifyKeyFrameType, _float* fNotifyActionTime, _float* fNotifySpeed)
+void CAnimation_Window::Add_Notify_Button(CModel::ANIMTYPE ePartCnt, _char* szNotifyName, CModel* m_pDummyModel, KEYFRAME::KEYFRAMETYPE* eNotifyKeyFrameType, _float* fNotifyActionTime, _float* fNotifySpeed)
 {
 	_char szUIName[MAX_PATH] = "Add_Notify##";
 	sprintf_s(szUIName, "%s%d", szUIName, ePartCnt);
@@ -478,7 +484,7 @@ void CAnimation_Window::Add_Notify_Button(CModel::ANIMTYPE ePartCnt, _char* szNo
 			NotifyKeyFrameDesc->fTime = *fNotifyActionTime;
 			lstrcpy(NotifyKeyFrameDesc->szName, wszNotifyName);
 			NotifyKeyFrameDesc->fSpeed = *fNotifySpeed;
-			if (FAILED(pDummyModel->Get_Animation(ePartCnt)->Add_NotifyFrame(NotifyKeyFrameDesc)))
+			if (FAILED(m_pDummyModel->Get_Animation(ePartCnt)->Add_NotifyFrame(NotifyKeyFrameDesc)))
 			{
 				MSG_BOX("Failed To Add Notify");
 			}
@@ -492,7 +498,7 @@ void CAnimation_Window::Add_Notify_Button(CModel::ANIMTYPE ePartCnt, _char* szNo
 			NotifyKeyFrameDesc->fTime = *fNotifyActionTime;
 			lstrcpy(NotifyKeyFrameDesc->szName, wszNotifyName);
 			//reinterpret_cast<NOTIFYFRAME_GCM*>(&NotifyKeyFrameDesc)->fSpeed;
-			if (FAILED(pDummyModel->Get_Animation(ePartCnt)->Add_NotifyFrame(NotifyKeyFrameDesc)))
+			if (FAILED(m_pDummyModel->Get_Animation(ePartCnt)->Add_NotifyFrame(NotifyKeyFrameDesc)))
 			{
 				MSG_BOX("Failed To Add Notify");
 			}
@@ -506,7 +512,7 @@ void CAnimation_Window::Add_Notify_Button(CModel::ANIMTYPE ePartCnt, _char* szNo
 			NotifyKeyFrameDesc->fTime = *fNotifyActionTime;
 			lstrcpy(NotifyKeyFrameDesc->szName, wszNotifyName);
 			//reinterpret_cast<NOTIFYFRAME_GCM*>(&NotifyKeyFrameDesc)->fSpeed;
-			if (FAILED(pDummyModel->Get_Animation(ePartCnt)->Add_NotifyFrame(NotifyKeyFrameDesc)))
+			if (FAILED(m_pDummyModel->Get_Animation(ePartCnt)->Add_NotifyFrame(NotifyKeyFrameDesc)))
 			{
 				MSG_BOX("Failed To Add Notify");
 			}
@@ -517,14 +523,14 @@ void CAnimation_Window::Add_Notify_Button(CModel::ANIMTYPE ePartCnt, _char* szNo
 	}
 }
 
-void CAnimation_Window::Edit_Notify_Button(CModel::ANIMTYPE ePartCnt, CModel* pDummyModel)
+void CAnimation_Window::Edit_Notify_Button(CModel::ANIMTYPE ePartCnt, CModel* m_pDummyModel)
 {
 	ImGui::SameLine();
 	_char szUIName[MAX_PATH] = "Edit_Notify##Notify##";
 	sprintf_s(szUIName, "%s%d", szUIName, ePartCnt);
 	if (ImGui::Button(szUIName))
 	{
-		CNotify* pNotify = pDummyModel->Get_Animation(ePartCnt)->Get_Notify_Point();
+		CNotify* pNotify = m_pDummyModel->Get_Animation(ePartCnt)->Get_Notify_Point();
 		pNotify->Edit_Frame(m_iSelectedNotifyIndex[ePartCnt], m_eNotifyKeyFrameType, m_fNotifyActionTime, m_fNotifySpeed);
 	}
 }
@@ -561,17 +567,17 @@ void CAnimation_Window::Export_Model()
 	}
 }
 
-void CAnimation_Window::OffsetVectorSetting(CModel* pDummyModel)
+void CAnimation_Window::OffsetVectorSetting(CModel* m_pDummyModel)
 {
-	if (pDummyModel->Get_NumAnimations() == 0)
+	if (m_pDummyModel->Get_NumAnimations() == 0)
 		return;
 
 	_float data[3] = {};
-	_float3 pos = pDummyModel->Get_Animation()->Get_OffsetPosition();
+	_float3 pos = m_pDummyModel->Get_Animation()->Get_OffsetPosition();
 	memcpy(data, &pos, sizeof(_float) * 3);
 	if (ImGui::DragFloat3("#OffsetVectorSetting", data,0.01f))
 	{
-		pDummyModel->Get_Animation()->Set_OffsetPosition(data);
+		m_pDummyModel->Get_Animation()->Set_OffsetPosition(data);
 	}
 
 	if (m_pCameraPoint == nullptr)
@@ -585,16 +591,16 @@ void CAnimation_Window::OffsetVectorSetting(CModel* pDummyModel)
 	ENDINSTANCE
 }
 
-void CAnimation_Window::Create_Notify_ChildFrame(CModel::ANIMTYPE ePartCnt, CModel* pDummyModel)
+void CAnimation_Window::Create_Notify_ChildFrame(CModel::ANIMTYPE ePartCnt, CModel* m_pDummyModel)
 {
 	_char szUIName[MAX_PATH] = "AnimNotifyChildFrame##";
 	sprintf_s(szUIName, "%s%d", szUIName, ePartCnt);
 	const auto  draw_childframe_size = ImVec2(400, 260);
 	ImGui::BeginChildFrame(ImGui::GetID(szUIName), draw_childframe_size, ImGuiWindowFlags_AlwaysHorizontalScrollbar);
 	{
-		for (_uint iNotifyCount = 0; iNotifyCount < pDummyModel->Get_Animation(ePartCnt)->Get_Notify_Point()->Get_NotifyFrameCount(); iNotifyCount++)
+		for (_uint iNotifyCount = 0; iNotifyCount < m_pDummyModel->Get_Animation(ePartCnt)->Get_Notify_Point()->Get_NotifyFrameCount(); iNotifyCount++)
 		{
-			CNotify* pNotify = pDummyModel->Get_Animation(ePartCnt)->Get_Notify_Point();
+			CNotify* pNotify = m_pDummyModel->Get_Animation(ePartCnt)->Get_Notify_Point();
 			_char  szNotifyButtonName[MAX_PATH];
 			ZEROMEM(szNotifyButtonName);
 
@@ -650,11 +656,11 @@ void CAnimation_Window::Create_Notify_ChildFrame(CModel::ANIMTYPE ePartCnt, CMod
 	ImGui::EndChildFrame();
 }
 
-void CAnimation_Window::Create_Notify_View(CModel::ANIMTYPE ePartCnt, CModel* pDummyModel)
+void CAnimation_Window::Create_Notify_View(CModel::ANIMTYPE ePartCnt, CModel* m_pDummyModel)
 {
-	for (_uint iNotifyCount = 0; iNotifyCount < pDummyModel->Get_Animation(ePartCnt)->Get_Notify_Point()->Get_NotifyFrameCount(); iNotifyCount++)
+	for (_uint iNotifyCount = 0; iNotifyCount < m_pDummyModel->Get_Animation(ePartCnt)->Get_Notify_Point()->Get_NotifyFrameCount(); iNotifyCount++)
 	{
-		CNotify* pNotify = pDummyModel->Get_Animation(ePartCnt)->Get_Notify_Point();
+		CNotify* pNotify = m_pDummyModel->Get_Animation(ePartCnt)->Get_Notify_Point();
 		_char  szNotifyButtonName[MAX_PATH];
 		ZEROMEM(szNotifyButtonName);
 
@@ -707,7 +713,7 @@ void CAnimation_Window::Create_Notify_View(CModel::ANIMTYPE ePartCnt, CModel* pD
 	}
 }
 
-void CAnimation_Window::Bone_Tree(CBone* bone, CModel* pDummyModel)
+void CAnimation_Window::Bone_Tree(CBone* bone, CModel* m_pDummyModel)
 {
 	_char szUIName[MAX_PATH] = "";
 	_char szBone_Name[MAX_PATH] = "";
@@ -716,11 +722,11 @@ void CAnimation_Window::Bone_Tree(CBone* bone, CModel* pDummyModel)
 	sprintf_s(szUIName, "%s##%d", szBone_Name,0);
 	if (ImGui::TreeNode(szUIName))
 	{
-		for (auto child : *pDummyModel->Get_Bone_Vector_Point())
+		for (auto child : *m_pDummyModel->Get_Bone_Vector_Point())
 		{
 			if (bone->Get_Index() == child->Get_ParentNodeIndex())
 			{
-				Bone_Tree(child, pDummyModel);
+				Bone_Tree(child, m_pDummyModel);
 			}
 		}
 		ImGui::TreePop();
@@ -753,7 +759,7 @@ CAnimation_Window* CAnimation_Window::Create(ID3D11Device* pDevice, ID3D11Device
 void CAnimation_Window::Free(void)
 {
 	Safe_Release(m_pCameraPoint);
+	Safe_Release(m_pDummyModel);
+	Safe_Release(m_pDummyObject);
 	__super::Free();
-
-	Safe_Release(m_pCameraPoint);
 }

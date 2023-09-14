@@ -43,19 +43,43 @@ HRESULT CBasicCast::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
-	//m_vTargetPosition = m_pTarget->Get_Position();
-	m_vTargetPosition = _float3(0, 20, 0);
+	m_vTargetPosition = _float3(0, 2, 30);
+
+	// 플레이어가 타겟을 보는 vector를 구함.
+	_float3 vDir = m_vTargetPosition - m_vStartPosition;
+	vDir.Normalize();
+
+	// 그 vector를 플레이어 기준 반대방향으로 1만큼 이동한 뒤 랜덤값을 잡아줌
+	m_vLerpWeight[0] = m_vStartPosition - vDir;
+	m_vLerpWeight[0] += _float3(Random_Generator(-100.f, 100.f), 0, 0);
+
+	// 그 vector를 타겟 기준 정방향으로 1만큼 이동한 뒤 랜덤값을 잡아줌
+	m_vLerpWeight[1] = m_vTargetPosition + vDir;
+	m_vLerpWeight[1] += _float3(Random_Generator(-100.f, 100.f), 0, 0);
+
 	return S_OK;
 }
 
 void CBasicCast::Tick(_float fTimeDelta)
 {
-	m_fLerpAcc += fTimeDelta;
-	BEGININSTANCE
-	_float3 movedPos = pGameInstance->GetVectorSlerp(m_vStartPosition, m_vTargetPosition, _float3(0, 1, 0), 0.5f, m_fLerpAcc);
-	ENDINSTANCE
-	m_pTransform->Set_Position(movedPos);
-	m_pMeshEffectTrans->Set_Position(m_pTransform->Get_Position());
+	if (m_fLiftTime > 0)
+	{
+		m_fLerpAcc += fTimeDelta / m_fInitLiftTime;
+		_float3 movedPos = XMVectorCatmullRom(m_vLerpWeight[0], m_vStartPosition, m_vTargetPosition, m_vLerpWeight[1], m_fLerpAcc);
+		if (m_pTransform != nullptr)
+			m_pTransform->Set_Position(movedPos);
+
+		if (m_pEffectTrans != nullptr)
+			m_pEffectTrans->Set_Position(m_pTransform->Get_Position());
+	}
+	else 
+	{
+		if (!m_bDeadTrigger)
+		{
+			m_bDeadTrigger = true;
+			m_pEffect->Play_Particle(_float3(0,0,0));
+		}
+	}
 	__super::Tick(fTimeDelta);
 }
 
@@ -67,19 +91,16 @@ void CBasicCast::Late_Tick(_float fTimeDelta)
 void CBasicCast::OnCollisionEnter(COLLISIONDESC CollisionDesc)
 {
 	__super::OnCollisionEnter(CollisionDesc);
-	cout << "Player Enter" << endl;
 }
 
 void CBasicCast::OnCollisionStay(COLLISIONDESC CollisionDesc)
 {
 	__super::OnCollisionStay(CollisionDesc);
-	cout << "stay" << endl;
 }
 
 void CBasicCast::OnCollisionExit(COLLISIONDESC CollisionDesc)
 {
 	__super::OnCollisionExit(CollisionDesc);
-	cout << "Exit" << endl;
 }
 
 HRESULT CBasicCast::Add_Components()
@@ -89,16 +110,15 @@ HRESULT CBasicCast::Add_Components()
 
 HRESULT CBasicCast::Add_Effect()
 {
-	/* Com_RigidBody */
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_MeshEffect"),
-		TEXT("Com_MeshEffect"), reinterpret_cast<CComponent**>(&m_pMeshEffect))))
+	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Default_Magic_Effect"), 
+		TEXT("Layer_Effect"), reinterpret_cast<CComponent**>(&m_pEffect))))
 	{
-		MSG_BOX("Failed CBasicCast Add_Component : (Com_MeshEffect)");
+		MSG_BOX("Failed Add_GameObject : (GameObject_Default_Magic_Effect)");
 		return E_FAIL;
 	}
 
-	m_pMeshEffectTrans = m_pMeshEffect->Get_Transform();
-	Safe_AddRef(m_pMeshEffectTrans);
+	m_pEffectTrans = m_pEffect->Get_Transform();
+	Safe_AddRef(m_pEffectTrans);
 	return S_OK;
 }
 
@@ -130,6 +150,10 @@ CGameObject* CBasicCast::Clone(void* pArg)
 void CBasicCast::Free()
 {
 	__super::Free();
-	Safe_Release(m_pMeshEffectTrans);
-	Safe_Release(m_pMeshEffect);
+	if (true == m_isCloned)
+	{
+		Safe_Release(m_pEffectTrans);
+		Safe_Release(m_pEffect);
+	}
+	
 }

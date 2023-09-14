@@ -2,7 +2,7 @@
 #include "GameObject.h"
 #include "Client_Defines.h"
 #include "MagicBall.h"
-#include "MeshEffect.h"
+#include "Default_Magic_Effect.h"
 
 BEGIN(Client)
 class CBasicCast final : public CMagicBall
@@ -22,13 +22,14 @@ public:
 	virtual void OnCollisionExit(COLLISIONDESC CollisionDesc) override;
 
 private:
-	CMeshEffect*		 m_pMeshEffect = { nullptr };
-	CTransform*			 m_pMeshEffectTrans = { nullptr };
+	CDefault_Magic_Effect*		m_pEffect = { nullptr };
+	CTransform*					m_pEffectTrans = { nullptr };
 
 private:
 	_float3				m_vTargetPosition = {};
+	_float3				m_vLerpWeight[2] = {};
 	_float				m_fLerpAcc = { 0.f };
-
+	_bool				m_bDeadTrigger = { false };
 private:
 	HRESULT Add_Components();
 	virtual HRESULT Add_Effect();

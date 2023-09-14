@@ -38,13 +38,14 @@ HRESULT CMagicBall::Initialize(void* pArg)
 	MAGICBALLINITDESC* initDesc = static_cast<MAGICBALLINITDESC*>(pArg);
 
 	m_eMagicGroup = initDesc->eMagicGroup;;
-	m_eMagicType =	initDesc->eMagicType;
-	m_eBuffType =	initDesc->eBuffType;
-	m_eMagicTag =	initDesc->eMagicTag;
-	m_fDamage =		initDesc->fDamage;
+	m_eMagicType = initDesc->eMagicType;
+	m_eBuffType = initDesc->eBuffType;
+	m_eMagicTag = initDesc->eMagicTag;
+	m_fDamage = initDesc->fDamage;
+	m_fInitLiftTime = initDesc->fLiftTime;
 	m_vStartPosition = initDesc->vStartPos;
+	m_fLiftTime = m_fInitLiftTime;
 	m_pTransform->Set_Position(m_vStartPosition);
-	initDesc->eMagicGroup;
 
 	return S_OK;
 }
@@ -52,6 +53,16 @@ HRESULT CMagicBall::Initialize(void* pArg)
 void CMagicBall::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+	
+	//시간이 흐름.
+	if (m_fLiftTime > 0)
+		m_fLiftTime -= fTimeDelta;
+	else 
+	{
+		//생명을 다함.
+		//Set_ObjEvent(OBJ_DEAD);
+	}
+	
 }
 
 void CMagicBall::Late_Tick(_float fTimeDelta)
@@ -111,5 +122,6 @@ void CMagicBall::Free()
 	if (true == m_isCloned)
 	{
 		Safe_Release(m_pRigidBody);
+		Safe_Release(m_pTarget);
 	}
 }

@@ -193,8 +193,9 @@ HRESULT CTest_Player::Add_Components()
 	magicInitDesc.fCoolTime = 1.f;
 	magicInitDesc.fDamage = 10.f;
 	magicInitDesc.fDistance = 0;
+	magicInitDesc.fLifeTime = 0.5f;
 
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_BaseAttack"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Magic"),
 		TEXT("Com_Magic"), reinterpret_cast<CComponent**>(&m_pMagic), &magicInitDesc)))
 	{
 		MSG_BOX("Failed CTest_Player Add_Component : (Com_Magic)");

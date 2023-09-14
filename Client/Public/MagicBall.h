@@ -23,6 +23,7 @@ public:
 		CMagic::BUFF_TYPE		eBuffType = { CMagic::BUFF_NONE };
 		SPELL					eMagicTag = { SPELL_END };
 		_float					fDamage = { 0 };
+		_float					fLiftTime = { 1.0f };
 	}MAGICBALLINITDESC;
 
 protected:
@@ -42,6 +43,8 @@ public:
 protected:
 	// 충돌을 위한 리지드바디 입니다.
 	CRigidBody*		m_pRigidBody = { nullptr };
+
+	//타겟에 대한 트랜스폼임.
 	CTransform*		m_pTarget = { nullptr };
 
 protected:
@@ -51,6 +54,8 @@ protected:
 	SPELL					m_eMagicTag = { SPELL_END };
 	_float3					m_vStartPosition = {};
 	_float					m_fDamage = { 0 };
+	_float					m_fInitLiftTime = { 1.0f };
+	_float					m_fLiftTime = { 1.0f };
 
 protected:
 	HRESULT Add_Components();
