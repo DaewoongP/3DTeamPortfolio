@@ -142,6 +142,7 @@ HRESULT CTest_Player::Add_Components()
 	RigidBodyDesc.isStatic = false; // static - 고정된 물체 (true -> 고정) (false -> 움직임)
 	RigidBodyDesc.isTrigger = false; // 트리거임 원래 콜라이더 생각하시면됩니다.
 	RigidBodyDesc.vInitPosition = _float3(5.f, 5.f, 5.f); // -> 트랜스폼에다가 초기 포지션 줘도 적용 안됩니다 !! / 요기다 주셔야 합니다 (리지드 바디가 있는 경우만 해당)
+	RigidBodyDesc.vOffsetRotation = XMQuaternionRotationRollPitchYaw(0.f, 0.f, XMConvertToRadians(90.f));
 	RigidBodyDesc.fStaticFriction = 0.5f; // 가만히 있을때 움직이기 위한 최소 힘의 수치 0~1
 	RigidBodyDesc.fDynamicFriction = 0.5f; // 움직일때 멈추기위한 마찰력? 0~1
 	RigidBodyDesc.fRestitution = 0.f; // 탄성값이 얼마나 들어갈 것인가 0~1 -> 1로주면 존나튑니다 보통 0으로줍니다.
@@ -160,7 +161,19 @@ HRESULT CTest_Player::Add_Components()
 		MSG_BOX("Failed CTest_Player Add_Component : (Com_RigidBody)");
 		return E_FAIL;
 	}
-	// 리지드바디 액터 추가
+	RigidBodyDesc.pOwnerObject = this;
+	RigidBodyDesc.isStatic = true;
+	RigidBodyDesc.isTrigger = true;
+	RigidBodyDesc.vOffsetPosition = _float3(-5.f, 3.f, 5.f);
+	RigidBodyDesc.vOffsetRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	RigidBodyDesc.fStaticFriction = 0.5f;
+	RigidBodyDesc.fDynamicFriction = 0.5f;
+	RigidBodyDesc.fRestitution = 0.f;
+	PxBoxGeometry BoxGeometry = PxBoxGeometry(3.f, 1.f, 1.f);
+	RigidBodyDesc.pGeometry = &BoxGeometry;
+	RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 0.f, 1.f);
+	m_pRigidBody->Create_Collider(&RigidBodyDesc);
+	// 리지드바디 액터 옵션 추가
 	PxRigidBody* Rigid = m_pRigidBody->Get_RigidBodyActor();
 	Rigid->setAngularDamping(10.f);
 	Rigid->setMaxLinearVelocity(1000.f);

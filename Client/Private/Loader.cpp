@@ -11,12 +11,12 @@
 
 #pragma region UI
 #include "UI_Group_HP.h"
-#include "UI_Group_Potion.h"
-#include "UI_Group_Finisher.h"
-#include "UI_Group_Finisher_Icon.h"
-#include "UI_Group_Skill.h"
-#include "UI_Progress1.h"
-#include "UI_Image.h"
+//#include "UI_Group_Potion.h"
+//#include "UI_Group_Finisher.h"
+//#include "UI_Group_Finisher_Icon.h"
+//#include "UI_Group_Skill.h"
+//#include "UI_Progress1.h"
+//#include "UI_Image.h"
 #pragma endregion UI
 
 #pragma region Monsters & NPC
@@ -208,7 +208,7 @@ HRESULT CLoader::Loading_For_MainGame()
 
 		/* Prototype_Component_VIBuffer_Terrain */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Terrain"),
-			CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Terrain/Height.bmp")))))
+			CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Terrain/MyFilter.bmp")))))
 			throw TEXT("Prototype_Component_VIBuffer_Terrain");
 		
 		/* For.Prototype_Component_VIBuffer_Cloth */
@@ -584,7 +584,7 @@ HRESULT CLoader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_UI_Progress"),
 			CUI_Progress::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_UI_Progress");
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_Potion"),
+		/*if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_Potion"),
 			CUI_Group_Potion::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_UI_Group_Potion");
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_Finisher"),
@@ -598,7 +598,7 @@ HRESULT CLoader::Loading_For_MainGame()
 			throw TEXT("Prototype_GameObject_UI_Group_Skill");
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_UI_Image"),
 			CUI_Image::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_UI_Image");
+			throw TEXT("Prototype_Component_UI_Image");*/
 
 		/* For.Prototype_GameObject_Player*/
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Player"),

@@ -684,9 +684,6 @@
     <ClInclude Include="..\Public\RandomChoose.h">
       <Filter>01. Utility\03. Components\10. Behavior\03. Random</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\UI_Group.h">
-      <Filter>01. Utility\03. Components\19. UI</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\String_Manager.h">
       <Filter>01. Utility\12. String_Manager</Filter>
     </ClInclude>
@@ -1012,9 +1009,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\RandomChoose.cpp">
       <Filter>01. Utility\03. Components\10. Behavior\03. Random</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\UI_Group.cpp">
-      <Filter>01. Utility\03. Components\19. UI</Filter>
     </ClCompile>
     <ClCompile Include="..\private\String_Manager.cpp">
       <Filter>01. Utility\12. String_Manager</Filter>

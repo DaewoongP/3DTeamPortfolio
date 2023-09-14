@@ -6,7 +6,6 @@ BEGIN(Engine)
 class CShader;
 class CTexture;
 class CRenderer;
-class CTransform;
 class CVIBuffer_Rect;
 END
 
@@ -20,7 +19,6 @@ private:
 	virtual ~CLogo_BackGround() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
@@ -31,12 +29,10 @@ private:
 	HRESULT SetUp_ShaderResources();
 
 private:
-	CShader* m_pShaderCom = { nullptr };
-	CTexture* m_pTextureCom = { nullptr };
-	CRenderer* m_pRendererCom = { nullptr };
-	CVIBuffer_Rect* m_pVIBufferCom = { nullptr };
-
-	CTexture* m_pAlphaTextureCom = { nullptr };
+	CShader*					m_pShaderCom = { nullptr };
+	CTexture*					m_pTextureCom = { nullptr };
+	CRenderer*					m_pRendererCom = { nullptr };
+	CVIBuffer_Rect*				m_pVIBufferCom = { nullptr };
 
 public:
 	static CLogo_BackGround* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);

@@ -593,6 +593,13 @@ _float3 CGameInstance::PolarToCartesian(_float _fLength, _float _fTheta, _float 
 	return m_pCalculator->PolarToCartesian(_fLength, _fTheta, _fPhi);
 }
 
+_float2 CGameInstance::PolarToCartesian(_float _fLength, _float _fTheta)
+{
+	NULL_CHECK_RETURN_MSG(m_pCalculator, _float2(), TEXT("Calculator NULL"));
+
+	return m_pCalculator->PolarToCartesian(_fLength, _fTheta);
+}
+
 _float3 CGameInstance::GetVectorSlerp(_float3 v1, _float3 v2, _float3 vUp, _float k, _float f)
 {
 	NULL_CHECK_RETURN_MSG(m_pCalculator, _float3(), TEXT("Calculator NULL"));
@@ -600,11 +607,11 @@ _float3 CGameInstance::GetVectorSlerp(_float3 v1, _float3 v2, _float3 vUp, _floa
 	return m_pCalculator->GetVectorSlerp(v1, v2, vUp, k, f);
 }
 
-_float4x4 CGameInstance::RightUpLook_In_Vectors(_float3 vDestPos, _float3 vSourPos)
+_float4x4 CGameInstance::RightUpLook_In_Vectors(_float3 vSourPos, _float3 vDestPos)
 {
 	NULL_CHECK_RETURN_MSG(m_pCalculator, _float4x4(), TEXT("Calculator NULL"));
 
-	return m_pCalculator->RightUpLook_In_Vectors(vDestPos, vSourPos);
+	return m_pCalculator->RightUpLook_In_Vectors(vSourPos, vDestPos);
 }
 
 PxPhysics* CGameInstance::Get_Physics() const

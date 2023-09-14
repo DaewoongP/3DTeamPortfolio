@@ -172,6 +172,7 @@
     <ClInclude Include="..\public\Cloth_Window.h" />
     <ClInclude Include="..\public\DummyTrail.h" />
     <ClInclude Include="..\public\Dummy_Cloth.h" />
+    <ClInclude Include="..\public\Dummy_Effect.h" />
     <ClInclude Include="..\Public\Dummy_Font.h" />
     <ClInclude Include="..\Public\Dummy_UI_Group.h" />
     <ClInclude Include="..\Public\LightDot.h" />
@@ -233,6 +234,7 @@
     <ClCompile Include="..\private\DummyMeshEffect.cpp" />
     <ClCompile Include="..\private\DummyTrail.cpp" />
     <ClCompile Include="..\private\Dummy_Cloth.cpp" />
+    <ClCompile Include="..\private\Dummy_Effect.cpp" />
     <ClCompile Include="..\Private\Dummy_Font.cpp" />
     <ClCompile Include="..\Private\Dummy_UI.cpp" />
     <ClCompile Include="..\Private\Dummy_UI_Group.cpp" />

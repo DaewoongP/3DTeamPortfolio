@@ -31,13 +31,15 @@ public:
 		_float fLifetime;
 	}TRAIL_POINT;
 
+
+
 protected:
 	CTrail(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CTrail(const CTrail& rhs);
 	virtual ~CTrail() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype(const _tchar* _pDirectoryPath, _uint _iLevel);
+	virtual HRESULT Initialize_Prototype(const _tchar* _pFilePath, _uint _iLevel);
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
@@ -52,9 +54,14 @@ public:
 		return E_FAIL;
 	}
 
+protected:
+	HRESULT Save(const _tchar* pFilePath);
+	HRESULT Load(const _tchar* pFilePath);
+
 protected: /* For. Component */
 	_uint m_iLevel = { 0 };
 	string	m_strPass = "Default";
+	wstring m_wstrPath = { TEXT("../../Resources/Effects/Textures/Default_Particle.png") };
 	_bool m_isEnable = { true };
 
 	_uint     m_iTrailNum = { 50 };
@@ -62,6 +69,7 @@ protected: /* For. Component */
 	_float4x4 m_HighLocalMatrix = _float4x4();
 	_float4x4 m_LowLocalMatrix = _float4x4();
 	list<TRAIL_POINT>	m_TrailGroup;
+
 	// 색상
 	_float3 m_vHeadColor = { 1.f, 1.f, 1.f };
 	_float3 m_vTailColor = { 1.f, 1.f, 1.f };
@@ -72,7 +80,6 @@ protected: /* For. Component */
 	// 꼬리 지속시간
 	_float m_fTailDuration = { 0.032f };
 	_float m_fTimeAcc = { 0.f };
-	// 커브
 
 protected:
 	CRenderer* m_pRenderer = { nullptr };
@@ -80,7 +87,6 @@ protected:
 	CShader* m_pShader = { nullptr };
 	CTexture* m_pTexture = { nullptr };
 	CTexture* m_pGradientTexture = { nullptr };
-	wstring m_wstrPath = { TEXT("../../Resources/Effects/Textures/Default_Particle.png") };
 
 protected:
 	HRESULT Add_Components();
