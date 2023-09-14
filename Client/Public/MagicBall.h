@@ -8,22 +8,24 @@ class CRigidBody;
 END
 
 BEGIN(Client)
+class CWeapon_Player_Wand;
+END
+
+BEGIN(Client)
 class CMagicBall : public CGameObject
 {
 public:
-	// 이동의 타입. 어떤식으로 날라갈지?
-	enum MOVINGTYPE { MOVETYPE_STRAIGHT, MOVETYPE_CURVE, MOVETYPE_CURVE_S, MOVETYPE_SPIN, MOVETYPE_END};
-
 	typedef struct MagicBallInitDesc
 	{
 		CTransform*				pTarget = { nullptr };
-		_float3					vStartPos = {};
 		CMagic::MAGIC_GROUP		eMagicGroup = { CMagic::MG_END };
 		CMagic::MAGIC_TYPE		eMagicType = { CMagic::MT_END };
 		CMagic::BUFF_TYPE		eBuffType = { CMagic::BUFF_NONE };
 		SPELL					eMagicTag = { SPELL_END };
 		_float					fDamage = { 0 };
+		_float					fDistance = { 0 };
 		_float					fLiftTime = { 1.0f };
+		CWeapon_Player_Wand*	pWeapon = { nullptr };
 	}MAGICBALLINITDESC;
 
 protected:
@@ -54,8 +56,10 @@ protected:
 	SPELL					m_eMagicTag = { SPELL_END };
 	_float3					m_vStartPosition = {};
 	_float					m_fDamage = { 0 };
+	_float					m_fDistance = { 0 };
 	_float					m_fInitLiftTime = { 1.0f };
 	_float					m_fLiftTime = { 1.0f };
+	CWeapon_Player_Wand*	m_pWeapon = { nullptr };
 
 protected:
 	HRESULT Add_Components();

@@ -202,14 +202,6 @@ HRESULT CParticleSystem::Setup_ShaderResources()
 	Safe_AddRef(pGameInstance);
 
 	_float4x4 WorldMatrix = m_pTransform->Get_WorldMatrix();
-	if (nullptr != m_pOwner)
-	{
-		CTransform* pOwnerTransform = dynamic_cast<CGameObject*>(m_pOwner)->Get_Transform();
-		if (nullptr != pOwnerTransform)
-		{
-			WorldMatrix *= pOwnerTransform->Get_WorldMatrix();
-		}
-	}
 
 	try
 	{

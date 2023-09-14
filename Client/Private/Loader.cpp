@@ -32,6 +32,7 @@
 #include "Weapon_Forest_Troll.h"
 #include "Weapon_Golem_Combat.h"
 #include "Weapon_Golem_Merlin.h"
+#include "Weapon_Player_Wand.h"
 #pragma endregion Weapon
 
 #pragma region Effects
@@ -234,7 +235,14 @@ HRESULT CLoader::Loading_For_MainGame()
 		PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f));
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Weopon_Golem_Combat"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Golem_Combat_Sword/Golem_Combat_Sword.dat"), PivotMatrix))))
+
 			throw TEXT("Prototype_Component_Model_Weopon_Golem_Combat");
+
+		/* For.Prototype_Component_Model_Weopon_Player_Wand */
+		PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f)) * XMMatrixScaling(5,5,5);
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Weopon_Player_Wand"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/gaechul/gaechul.dat"), PivotMatrix))))
+			throw TEXT("Prototype_Component_Model_Weopon_Player_Wand");
 
 		///* For.Prototype_Component_Model_Weopon_Golem_Merlin */
 		//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Weopon_Golem_Merlin"),
@@ -460,6 +468,11 @@ HRESULT CLoader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Weapon_Golem_Combat"),
 			CWeapon_Golem_Combat::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Weapon_Golem_Combat");
+
+		/* For.Prototype_Component_Weapon_Player_Wand */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Weapon_Player_Wand"),
+			CWeapon_Player_Wand::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Weapon_Player_Wand");
 
 		///* For.Prototype_Component_Weapon_Golem_Merlin */
 		//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Weapon_Golem_Merlin"),

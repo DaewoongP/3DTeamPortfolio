@@ -29,6 +29,13 @@ public:
 	void Play_Particle(_float3 vPos);
 	void Set_Position(_float3 vPos);
 	void Enable_Trail(_bool _isEnable);
+	HRESULT Reset_Trail();
+	_bool IsEnable() {
+		_bool value = { false };
+		if(m_pParticleSystem!=nullptr)
+			value = m_pParticleSystem->IsEnable();
+		return value;
+	}
 
 private: /* For. Component */
 	CTrail* m_pTrail = { nullptr };

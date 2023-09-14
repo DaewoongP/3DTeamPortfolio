@@ -22,14 +22,17 @@ public:
 	virtual void OnCollisionExit(COLLISIONDESC CollisionDesc) override;
 
 private:
-	CDefault_Magic_Effect*		m_pEffect = { nullptr };
-	CTransform*					m_pEffectTrans = { nullptr };
+	CDefault_Magic_Effect* m_pEffect = { nullptr };
+	CTransform* m_pEffectTrans = { nullptr };
 
 private:
 	_float3				m_vTargetPosition = {};
 	_float3				m_vLerpWeight[2] = {};
 	_float				m_fLerpAcc = { 0.f };
 	_bool				m_bDeadTrigger = { false };
+
+	_float				m_fSettingTimer = { 0.2f };
+	_float				m_fTimerForSearch = { 0.f };
 private:
 	HRESULT Add_Components();
 	virtual HRESULT Add_Effect();

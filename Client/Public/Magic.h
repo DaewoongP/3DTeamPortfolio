@@ -57,7 +57,10 @@ public:
 		SPELL			eMagicTag = { SPELL_END };
 		_float			fCoolTime = { 0 };
 		_float			fDamage = { 0 };
-		_float			fDistance = { 0 };
+		//마법의 발동 사거리
+		_float			fCastDistance = { 0 };
+		//투사체의 사거리.
+		_float			fBallDistance = { 0 };
 		_float			fLifeTime = { 1.0f };
 	}MAGICDESC;
 
@@ -73,8 +76,8 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 
 public:
-	//목표와 시작 위치를 설정해줌.
-	virtual _bool Magic_Cast(class CTransform* pTarget,_float3 vStartPos);
+	//목표와 시작 위치를 설정해줌. 지팡이에서 파티클 재생을 해주기위해 지팡이도 던져줌.
+	virtual _bool Magic_Cast(class CTransform* pTarget,class CWeapon_Player_Wand* pWeapon);
 	virtual HRESULT Add_ActionFunc(function<void()> func);
 
 protected:
@@ -90,8 +93,10 @@ protected:
 	_float						m_fCurrentCoolTime = { 0 };
 	//데미지
 	_float						m_fDamage = { 0 };
-	//마법의 사거리
-	_float						m_fDistance = { 0 };
+	// 마법의 사거리
+	_float						m_fCastDistance = { 0 };
+	// 투사체의 사거리
+	_float						m_fBallDistance = { 0 };
 	//마법의 생명주기
 	_float						m_fLifeTime = { 1.0f };
 	//마법 사용시 같이 불러주고싶은 외부 함수

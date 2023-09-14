@@ -43,19 +43,46 @@ HRESULT CBasicCast::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
-	m_vTargetPosition = _float3(0, 2, 30);
+	//만약 타겟이 존재하지 않는다면?
+	if (m_pTarget == nullptr)
+	{
+		// 마우스가 찍는 방향이 곧 마법 발사 방향이다.
+		// 마우스origin,dir을 가져와 origin에서 dir만큼 마우스 origin 기준 dist의 크기로 이동.
+		// 플레이어가 그 점을 보는 방향벡터를 만들어 플레이어 기준 dist의 크기로 이동.
+
+		BEGININSTANCE;
+		_float4 vMouseOrigin, vMouseDirection;
+		_float3 vMouseWorldPickPosition, vDirStartToPicked;
+		if (FAILED(pGameInstance->Get_WorldMouseRay(m_pContext, g_hWnd, &vMouseOrigin, &vMouseDirection)))
+		{
+			Safe_Release(pGameInstance);
+			return false;
+		}
+		ENDINSTANCE;
+
+		vMouseWorldPickPosition = vMouseOrigin.xyz() + vMouseDirection.xyz() * 10000;
+		vDirStartToPicked = (vMouseWorldPickPosition - m_vStartPosition);
+		vDirStartToPicked.Normalize();
+		m_vTargetPosition = vDirStartToPicked * m_fDistance;
+	}
+	else 
+	{
+		//이거 근데 몹의 발위치로 지금 설정돼있을듯함.
+		m_vTargetPosition = m_pTarget->Get_Position();
+	}
 
 	// 플레이어가 타겟을 보는 vector를 구함.
 	_float3 vDir = m_vTargetPosition - m_vStartPosition;
 	vDir.Normalize();
 
+	//Clamp
 	// 그 vector를 플레이어 기준 반대방향으로 1만큼 이동한 뒤 랜덤값을 잡아줌
 	m_vLerpWeight[0] = m_vStartPosition - vDir;
-	m_vLerpWeight[0] += _float3(Random_Generator(-100.f, 100.f), 0, 0);
+	m_vLerpWeight[0] += _float3(Random_Generator(-30.f, 30.f), Random_Generator(-30.f, 30.f), Random_Generator(-30.f, 30.f));
 
 	// 그 vector를 타겟 기준 정방향으로 1만큼 이동한 뒤 랜덤값을 잡아줌
 	m_vLerpWeight[1] = m_vTargetPosition + vDir;
-	m_vLerpWeight[1] += _float3(Random_Generator(-100.f, 100.f), 0, 0);
+	m_vLerpWeight[1] += _float3(Random_Generator(-30.f, 30.f), Random_Generator(-30.f, 30.f), Random_Generator(-30.f, 30.f));
 
 	return S_OK;
 }
@@ -79,6 +106,8 @@ void CBasicCast::Tick(_float fTimeDelta)
 			m_bDeadTrigger = true;
 			m_pEffect->Play_Particle(_float3(0,0,0));
 		}
+		/*if(m_pEffect->IsEnable())
+			Set_ObjEvent(OBJ_DEAD);*/
 	}
 	__super::Tick(fTimeDelta);
 }

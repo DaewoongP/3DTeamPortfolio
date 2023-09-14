@@ -32,7 +32,8 @@ HRESULT CMagic::Initialize(void* pArg)
 	m_eBuffType = InitDesc->eBuffType;
 	m_fInitCoolTime = InitDesc->fCoolTime;
 	m_fDamage = InitDesc->fDamage;
-	m_fDistance = InitDesc->fDistance;
+	m_fCastDistance = InitDesc->fCastDistance;
+	m_fBallDistance = InitDesc->fBallDistance;
 	m_eMagicTag = InitDesc->eMagicTag;
 	m_fLifeTime = InitDesc->fLifeTime;
 
@@ -59,7 +60,7 @@ void CMagic::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 }
 
-_bool CMagic::Magic_Cast(CTransform* pTarget, _float3 vStartPos)
+_bool CMagic::Magic_Cast(CTransform* pTarget, class CWeapon_Player_Wand* pWeapon)
 {
 	if (m_fCurrentCoolTime <= 0)
 	{
@@ -70,18 +71,19 @@ _bool CMagic::Magic_Cast(CTransform* pTarget, _float3 vStartPos)
 		ballInit.eMagicTag = m_eMagicTag;
 		ballInit.eMagicType = m_eMagicType;
 		ballInit.fDamage = m_fDamage;
+		ballInit.fDistance = m_fBallDistance;
 		ballInit.pTarget = pTarget;
-		ballInit.vStartPos = vStartPos;
 		ballInit.fLiftTime = m_fLifeTime;
+		ballInit.pWeapon = pWeapon;
 
-		CGameInstance* pGameInstance = CGameInstance::GetInstance();
-		Safe_AddRef(pGameInstance);
+		BEGININSTANCE;
 		if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_BaseAttack"), TEXT("Layer_Magic"), Generate_HashtagW().c_str(), &ballInit)))
 		{
 			MSG_BOX("Failed Add_GameObject : (GameObject_BaseAttack)");
 			return false;
 		}
-		Safe_Release(pGameInstance);
+		ENDINSTANCE;
+
 		for (_uint i = 0; i < m_ActionVec.size(); i++)
 		{
 			m_ActionVec[i]();

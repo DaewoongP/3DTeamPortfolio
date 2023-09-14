@@ -1,5 +1,6 @@
 #include "MagicBall.h"
 #include "GameInstance.h"
+#include "Weapon_Player_Wand.h"
 
 CMagicBall::CMagicBall(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -42,11 +43,15 @@ HRESULT CMagicBall::Initialize(void* pArg)
 	m_eBuffType = initDesc->eBuffType;
 	m_eMagicTag = initDesc->eMagicTag;
 	m_fDamage = initDesc->fDamage;
+	m_fDistance = initDesc->fDistance;
 	m_fInitLiftTime = initDesc->fLiftTime;
-	m_vStartPosition = initDesc->vStartPos;
+	m_pWeapon = initDesc->pWeapon;
+	Safe_AddRef(m_pWeapon);
+
 	m_fLiftTime = m_fInitLiftTime;
 	m_pTransform->Set_Position(m_vStartPosition);
 
+	m_vStartPosition = m_pWeapon->Get_Transform()->Get_Position() + m_pWeapon->Get_Wand_Point_Offset();
 	return S_OK;
 }
 
@@ -56,13 +61,7 @@ void CMagicBall::Tick(_float fTimeDelta)
 	
 	//시간이 흐름.
 	if (m_fLiftTime > 0)
-		m_fLiftTime -= fTimeDelta;
-	else 
-	{
-		//생명을 다함.
-		//Set_ObjEvent(OBJ_DEAD);
-	}
-	
+		m_fLiftTime -= fTimeDelta;	
 }
 
 void CMagicBall::Late_Tick(_float fTimeDelta)
@@ -123,5 +122,6 @@ void CMagicBall::Free()
 	{
 		Safe_Release(m_pRigidBody);
 		Safe_Release(m_pTarget);
+		Safe_Release(m_pWeapon);
 	}
 }

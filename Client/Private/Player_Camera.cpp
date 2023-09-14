@@ -165,7 +165,7 @@ void CPlayer_Camera::Follow_Transform()
 	if (m_fFollowLimit < vTargetDir.Length())
 	{
 		//거리 만큼이동
-		m_pTransform->Set_Speed((_float)pow((double)vTargetDir.Length(), 2.0));
+		m_pTransform->Set_Speed((_float)vTargetDir.Length() * m_fTimeSpeed);
 
 		//이동
 		m_pTransform->Move_Direction(vTargetDir, pGameInstance->Get_World_Tick());
@@ -173,7 +173,6 @@ void CPlayer_Camera::Follow_Transform()
 
 	ENDINSTANCE;
 }
-
 void CPlayer_Camera::Eye_At_Distance()
 {
 	//상태에 따라 거리가 바뀐다.

@@ -66,38 +66,6 @@ HRESULT CDefault_Magic_Effect::Initialize(void* pArg)
 void CDefault_Magic_Effect::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
-#ifdef _DEBUG
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
-
-	if (pGameInstance->Get_DIKeyState(DIK_UPARROW))
-	{
-		m_pTransform->Go_Straight(fTimeDelta);
-	}
-
-	if (pGameInstance->Get_DIKeyState(DIK_RIGHTARROW))
-	{
-		m_pTransform->Go_Right(fTimeDelta);
-	}
-
-	if (pGameInstance->Get_DIKeyState(DIK_LEFTARROW))
-	{
-		m_pTransform->Go_Left(fTimeDelta);
-	}
-
-	if (pGameInstance->Get_DIKeyState(DIK_DOWNARROW))
-	{
-		m_pTransform->Go_Backward(fTimeDelta);
-	}
-
-	if (pGameInstance->Get_DIKeyState(DIK_SPACE))
-	{
-		Play_Particle(m_pTransform->Get_Position());
-	}
-
-	Safe_Release(pGameInstance);
-#endif // DEBUG
 }
 
 void CDefault_Magic_Effect::Late_Tick(_float fTimeDelta)
@@ -120,6 +88,17 @@ void CDefault_Magic_Effect::Set_Position(_float3 vPos)
 void CDefault_Magic_Effect::Enable_Trail(_bool _isEnable)
 {
 	(true == _isEnable) ? m_pTrail->Enable() : m_pTrail->Disable();
+}
+
+HRESULT CDefault_Magic_Effect::Reset_Trail()
+{
+	if (m_pTrail == nullptr)
+	{
+		MSG_BOX("Failed to Reset_Trail");
+		return S_OK;
+	}
+		
+	return   m_pTrail->Reset_Trail(); 
 }
 
 HRESULT CDefault_Magic_Effect::Add_Components()
