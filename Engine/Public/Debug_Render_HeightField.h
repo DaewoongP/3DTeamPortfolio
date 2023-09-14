@@ -11,7 +11,8 @@ public:
 		_uint iNumRows = { 0 };
 		_uint iNumColumns = { 0 };
 		const _float3* pPositions = { nullptr };
-		_float3 vOrigin;
+		_float3 vOffsetPosition;
+		_float4 vOffsetRotation;
 	}HEIGHTFIELDDESC;
 
 private:

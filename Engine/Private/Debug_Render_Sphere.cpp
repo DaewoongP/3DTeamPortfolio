@@ -44,7 +44,8 @@ HRESULT CDebug_Render_Sphere::Initialize(void* pArg)
 	RingDesc.fRadius = SphereDesc.fRadius;
 	RingDesc.vMajorAxis = _float3(1.f, 0.f, 0.f);
 	RingDesc.vMinorAxis = _float3(0.f, 0.f, 1.f);
-	RingDesc.vOrigin = SphereDesc.vOrigin;
+	RingDesc.vOffsetPosition = SphereDesc.vOffsetPosition;
+	RingDesc.vOffsetRotation = SphereDesc.vOffsetRotation;
 
 	/* For.Com_XZRing */
 	if (FAILED(CComposite::Add_Component(0, TEXT("Prototype_Component_Debug_Render_Ring_For_Sphere"),

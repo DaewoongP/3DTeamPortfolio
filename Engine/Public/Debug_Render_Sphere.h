@@ -10,7 +10,8 @@ public:
 	typedef struct tagSphereDesc
 	{
 		_float fRadius = { 0.f };
-		_float3 vOrigin;
+		_float3 vOffsetPosition;
+		_float4 vOffsetRotation;
 	}SPHEREDESC;
 private:
 	explicit CDebug_Render_Sphere(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

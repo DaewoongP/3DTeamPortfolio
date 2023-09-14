@@ -35,16 +35,28 @@ public:
 	{
 		// this포인터 대입하면 됩니다.
 		// 내부적으로 레퍼런스 카운트 관리
-		CGameObject* pOwnerObject = { nullptr };
+		class CGameObject* pOwnerObject = { nullptr };
 		// static(true) : 움직이지 않는 물체 (다른 객체의 충돌에 의해 움직일 수도 있음.)
 		// dynamic(false) : 움직이는 물체
 		_bool isStatic = { false };
 		// Trigger 옵션
 		// ****** Enter와 exit만 처리됩니다. ******
 		_bool isTrigger = { false };
-		// 초기 포지션 세팅
+		// ******* RigidBody Clone이 아닌 새로 콜라이더 세팅할경우 필요 없는 옵션입니다 *******
+		// 객체의 초기 포지션 세팅 (객체의 포지션 Transform Pos)
 		// 지면과 붙어있을 경우 튕겨져 나갈 수 있습니다.
-		_float3 vInitPosition;
+		_float3 vInitPosition = _float3(0.f, 0.f, 0.f);
+		// ******* RigidBody Clone이 아닌 새로 콜라이더 세팅할경우 필요 없는 옵션입니다 *******
+		// 객체의 초기 쿼터니언 로테이션 세팅 (객체의 쿼터니언 로테이션 값 Get_Quaternion)
+		// 초기값은 (0,0,0,1) 입니다.
+		_float4 vInitRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		// 오프셋 포지션
+		// 초기 포지션과의 오프셋을 통한 콜라이더 포지션 위치를 세팅합니다.
+		_float3 vOffsetPosition = _float3(0.f, 0.f, 0.f);
+		// 오프셋 쿼터니언 로테이션
+		// 초기 로테이션과의 오프셋을 통한 콜라이더 포지션 위치를 세팅합니다.
+		// 초기값은 (0,0,0,1) 입니다.
+		_float4 vOffsetRotation = _float4(0.f, 0.f, 0.f, 1.f);
 		// 정지 상태에서의 마찰계수
 		// 멈춰있을때 동작할때까지의 힘이 얼마나 많이 드는지에 대한 변수입니다.
 		// default : 0.5f
@@ -99,7 +111,7 @@ public:
 	void Set_AngularDamping(_float _fAngualrDamping) const;
 
 #ifdef _DEBUG
-	void Set_DebugColor(_float4 _vColor) { m_vColor = _vColor; }
+	void Set_DebugColor(_uint iColliderIndex, _float4 _vColor) { m_Colors[iColliderIndex] = _vColor; }
 #endif // _DEBUG
 
 
@@ -116,7 +128,7 @@ public:
 #endif // _DEBUG
 
 public:
-	HRESULT Create_Actor(RIGIDBODYDESC* pRigidBodyDesc);
+	HRESULT Create_Collider(RIGIDBODYDESC* pRigidBodyDesc);
 
 	void Put_To_Sleep() const;
 	void Add_Force(const _float3 & _vForce, PxForceMode::Enum _eMode = PxForceMode::eFORCE, _bool _bAutowake = true) const;
@@ -139,16 +151,16 @@ private:
 
 #ifdef _DEBUG
 private:
-	CShader*				m_pShader = { nullptr };
-	CComponent*				m_pDebug_Render = { nullptr };
-	_float4					m_vColor;
+	vector<CShader*>				m_Shaders;
+	vector<CComponent*>				m_Debug_Renders;
+	vector<_float4>					m_Colors;
 #endif // _DEBUG
 
 
 #ifdef _DEBUG
 private:
-	HRESULT Add_Components(PxGeometry* pPxValues);
-	HRESULT SetUp_ShaderResources();
+	HRESULT Add_Components(PxGeometry* pPxValues, PxShape* pShape);
+	HRESULT SetUp_ShaderResources(_uint iColliderIndex);
 #endif // _DEBUG
 
 public:

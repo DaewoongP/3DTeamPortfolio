@@ -54,10 +54,11 @@ HRESULT CDebug_Render_Ring::Initialize(void* pArg)
 	// origin = center
 	// Axis 두개설정해서 ex) xz평면 식으로 처리하나봄.
 	_float fRadius = RingDesc.fRadius;
-	_float3 vOrigin = RingDesc.vOrigin;
+	_float3 vOrigin = RingDesc.vOffsetPosition;
+	_float4 vQuat = RingDesc.vOffsetRotation;
 
-	_float3 vMajorAxis = RingDesc.vMajorAxis * fRadius;
-	_float3 vMinorAxis = RingDesc.vMinorAxis * fRadius;
+	_float3 vMajorAxis = XMVector3TransformNormal(RingDesc.vMajorAxis * fRadius, XMMatrixRotationQuaternion(vQuat));
+	_float3 vMinorAxis = XMVector3TransformNormal(RingDesc.vMinorAxis * fRadius, XMMatrixRotationQuaternion(vQuat));
 
 	for (_uint i = 0; i < iRingSegments; ++i)
 	{
