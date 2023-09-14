@@ -37,7 +37,6 @@ private:
 	CCustomModel*			m_pModelCom = { nullptr };
 	
 	CCharacterController*	m_pController = { nullptr };
-	class CMagic*			m_pMagic = { nullptr };
 
 private:
 	_float					m_fWindPower = { 10.f };

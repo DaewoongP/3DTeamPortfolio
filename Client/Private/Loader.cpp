@@ -11,12 +11,12 @@
 
 #pragma region UI
 #include "UI_Group_HP.h"
-#include "UI_Group_Potion.h"
-#include "UI_Group_Finisher.h"
-#include "UI_Group_Finisher_Icon.h"
-#include "UI_Group_Skill.h"
-#include "UI_Progress1.h"
-#include "UI_Image.h"
+//#include "UI_Group_Potion.h"
+//#include "UI_Group_Finisher.h"
+//#include "UI_Group_Finisher_Icon.h"
+//#include "UI_Group_Skill.h"
+//#include "UI_Progress1.h"
+//#include "UI_Image.h"
 #pragma endregion UI
 
 #pragma region Monsters & NPC
@@ -32,6 +32,7 @@
 #include "Weapon_Forest_Troll.h"
 #include "Weapon_Golem_Combat.h"
 #include "Weapon_Golem_Merlin.h"
+#include "Weapon_Player_Wand.h"
 #pragma endregion Weapon
 
 #pragma region Effects
@@ -207,7 +208,7 @@ HRESULT CLoader::Loading_For_MainGame()
 
 		/* Prototype_Component_VIBuffer_Terrain */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Terrain"),
-			CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Terrain/Height.bmp")))))
+			CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Terrain/MyFilter.bmp")))))
 			throw TEXT("Prototype_Component_VIBuffer_Terrain");
 		
 		/* For.Prototype_Component_VIBuffer_Cloth */
@@ -234,7 +235,14 @@ HRESULT CLoader::Loading_For_MainGame()
 		PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f));
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Weopon_Golem_Combat"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Golem_Combat_Sword/Golem_Combat_Sword.dat"), PivotMatrix))))
+
 			throw TEXT("Prototype_Component_Model_Weopon_Golem_Combat");
+
+		/* For.Prototype_Component_Model_Weopon_Player_Wand */
+		PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f)) * XMMatrixScaling(5,5,5);
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Weopon_Player_Wand"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/gaechul/gaechul.dat"), PivotMatrix))))
+			throw TEXT("Prototype_Component_Model_Weopon_Player_Wand");
 
 		///* For.Prototype_Component_Model_Weopon_Golem_Merlin */
 		//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Weopon_Golem_Merlin"),
@@ -357,6 +365,12 @@ HRESULT CLoader::Loading_For_MainGame()
 			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Debug.hlsl"), VTXPOSNORTEX_DECL::Elements, VTXPOSNORTEX_DECL::iNumElements))))
 			throw TEXT("Prototype_Component_Shader_Debug");
 
+		/* Prototype_Component_Shader_DefaultEffect */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_DefaultEffect"),
+			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_DefaultEffect.hlsl"),
+				VTXMESH_DECL::Elements, VTXMESH_DECL::iNumElements))))
+			return E_FAIL;
+
 		lstrcpy(m_szLoading, TEXT("피직스 로딩 중."));
 		/* For.Prototype_Component_CharacterController*/
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_CharacterController"),
@@ -414,6 +428,11 @@ HRESULT CLoader::Loading_For_MainGame()
 			CSelector_Degree::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Selector_Degree");
 
+		/* For. Prototype_Component_Magic*/
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Magic"),
+			CMagic::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Magic");
+
 		lstrcpy(m_szLoading, TEXT("객체 로딩 중."));
 		/* For.Prototype_GameObject_Sky */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Sky"),
@@ -449,6 +468,11 @@ HRESULT CLoader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Weapon_Golem_Combat"),
 			CWeapon_Golem_Combat::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Weapon_Golem_Combat");
+
+		/* For.Prototype_Component_Weapon_Player_Wand */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Weapon_Player_Wand"),
+			CWeapon_Player_Wand::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Weapon_Player_Wand");
 
 		///* For.Prototype_Component_Weapon_Golem_Merlin */
 		//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Weapon_Golem_Merlin"),
@@ -500,6 +524,23 @@ HRESULT CLoader::Loading_For_MainGame()
 			CDefault_Magic_Effect::Create(m_pDevice, m_pContext, LEVEL_MAINGAME))))
 			throw TEXT("Prototype_GameObject_Default_Magic_Effect");
 
+#pragma region Magic
+		/* For.Prototype_GameObject_BaseAttack */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_BaseAttack"),
+			CBasicCast::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_BaseAttack");
+
+		/* For.Prototype_GameObject_Protego */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Protego"),
+			CProtego::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Protego");
+
+		/* For.Prototype_GameObject_Revelio */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Revelio"),
+			CRevelio::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Revelio");
+#pragma endregion
+
 #ifdef _DEBUG
 		/* For.Prototype_GameObject_Dummy */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Dummy"),
@@ -534,50 +575,6 @@ HRESULT CLoader::Loading_For_MainGame()
 			CPhysXRender::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_PhysxRenderer");
 
-		////////////////////////////////////////////////마법////////////////////////////////////////////////////
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Magic"),
-			CMagic::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_Magic");
-
-		/* Prototype_Component_Texture_T_Default_Material_Grid_M*/
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Texture_T_Default_Material_Grid_M"),
-			CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/NonAnims/SM_SpherePrimitiveRegularNormals_01/T_Default_Material_Grid_M.png")))))
-			return E_FAIL;
-
-		/* Prototype_Component_Model_SM_SpherePrimitiveRegularNormals_01*/
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC
-			, TEXT("Prototype_Component_Model_SM_SpherePrimitiveRegularNormals_01")
-			, CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM
-				, TEXT("../../Resources/Models/NonAnims/SM_SpherePrimitiveRegularNormals_01/SM_SpherePrimitiveRegularNormals_01.dat")))))
-			return E_FAIL;
-
-		/* Prototype_Component_Shader_DefaultEffect */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_DefaultEffect"),
-			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_DefaultEffect.hlsl"),
-				VTXMESH_DECL::Elements, VTXMESH_DECL::iNumElements))))
-			return E_FAIL;
-
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_MeshEffect"),
-			CMeshEffect::Create(m_pDevice, m_pContext, TEXT("aaa"), LEVEL_STATIC))))
-			throw TEXT("Prototype_Component_MeshEffect");
-
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_BaseAttack"),
-			CBasicCast::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_BaseAttack");
-
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Protego"),
-			CProtego::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_Protego");
-
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Revelio"),
-			CRevelio::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_Revelio");
-
-		////마법 풀은 마법관련중에 제일 뒤에 만들어져야함
-		//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_MagicBallPool"),
-		//	CMagicBallPool::Create(m_pDevice, m_pContext))))
-		//	throw TEXT("Prototype_Component_MagicBallPool");
-
 #endif // _DEBUG
 
 		// For.UI
@@ -587,7 +584,7 @@ HRESULT CLoader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_UI_Progress"),
 			CUI_Progress::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_UI_Progress");
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_Potion"),
+		/*if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_Potion"),
 			CUI_Group_Potion::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_UI_Group_Potion");
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_Finisher"),
@@ -601,7 +598,7 @@ HRESULT CLoader::Loading_For_MainGame()
 			throw TEXT("Prototype_GameObject_UI_Group_Skill");
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_UI_Image"),
 			CUI_Image::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_UI_Image");
+			throw TEXT("Prototype_Component_UI_Image");*/
 
 		/* For.Prototype_GameObject_Player*/
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Player"),

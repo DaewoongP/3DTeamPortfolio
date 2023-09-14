@@ -9,7 +9,8 @@ public:
 	typedef struct tagBoxDesc
 	{
 		_float3 vExtents;
-		_float3 vOrigin;
+		_float3 vOffsetPosition;
+		_float4 vOffsetRotation;
 	}BOXDESC;
 
 private:

@@ -173,7 +173,6 @@ void CPlayer_Camera::Follow_Transform()
 
 	ENDINSTANCE;
 }
-
 void CPlayer_Camera::Eye_At_Distance()
 {
 	//상태에 따라 거리가 바뀐다.

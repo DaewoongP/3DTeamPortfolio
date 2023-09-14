@@ -40,7 +40,13 @@ HRESULT CDebug_Render_HeightField::Initialize(void* pArg)
 	VTXPOS* pVertices = new VTXPOS[m_iNumVertices];
 	ZeroMemory(pVertices, sizeof(VTXPOS) * m_iNumVertices);
 
-	memcpy(pVertices, HeightFieldDesc.pPositions, sizeof(VTXPOS) * m_iNumVertices);
+	vector<_float3> Positions;
+	Positions.reserve(m_iNumVertices);
+	for (_uint i = 0; i < m_iNumVertices; ++i)
+	{
+		XMStoreFloat3(&pVertices[i].vPosition, XMVector3TransformCoord(XMLoadFloat3(&HeightFieldDesc.pPositions[i]),
+			XMMatrixRotationQuaternion(HeightFieldDesc.vOffsetRotation)) + XMLoadFloat3(&HeightFieldDesc.vOffsetPosition));		
+	}
 
 	ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
 	m_SubResourceData.pSysMem = pVertices;

@@ -269,14 +269,23 @@ HRESULT CCalculator::ReadFileInDirectory(_Inout_ vector<wstring>& OutVector, con
 	return S_OK;
 }
 
+// 주어진 극좌표계에서 3차원 좌표계로 변환
 _float3 CCalculator::PolarToCartesian(_float _fLength, _float _fTheta, _float _fPhi)
 {
-	// 주어진 극좌표계에서 3차원 좌표계로 변환
-	_float x = _fLength * sin(_fTheta) * cos(_fPhi);
-	_float y = _fLength * sin(_fTheta) * sin(_fPhi);
-	_float z = _fLength * cos(_fTheta);
+	_float x = _fLength * sinf(_fTheta) * cosf(_fPhi);
+	_float z = _fLength * cosf(_fTheta);
+	_float y = _fLength * sinf(_fTheta) * sinf(_fPhi);
 
 	return _float3(x, y, z);
+}
+
+// 주어진 극좌표에서 2차원 좌표계로 변환
+_float2 CCalculator::PolarToCartesian(_float _fLength, _float _fTheta)
+{
+	_float x = _fLength * cos(_fTheta);
+	_float y = _fLength * sin(_fTheta);
+
+	return _float2(x, y);
 }
 
 /* 구면선형보간 - output, 시작점, 끝점, 점간의 업벡터, 선형보간 중점과 원의 중점간 거리 k, 원하는 보간 값 f*/
@@ -313,7 +322,7 @@ _float4x4 CCalculator::RightUpLook_In_Vectors(_float3 vSourPos, _float3 vDestPos
 
 	_float3 vRight, vUp, vLook;
 	
-	vLook = vSourPos - vDestPos;
+	vLook = vDestPos - vSourPos;
 	vLook.Normalize();
 	vUp = _float3(0.f, 1.f, 0.f);
 	vRight = vUp.Cross(vLook);

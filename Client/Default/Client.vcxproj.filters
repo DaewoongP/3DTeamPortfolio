@@ -232,6 +232,12 @@
     <Filter Include="02. GameObject\01. Player\01. StateMachine\00. IdleState">
       <UniqueIdentifier>{f9cc4dbf-4550-4855-a9f9-8562b44f54a4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\01. Player\01. Weapon">
+      <UniqueIdentifier>{e492e81f-a203-4fa9-9a45-dbbf54d55c64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. Weapon\Wand">
+      <UniqueIdentifier>{3eacb79d-9519-4b74-935b-b05ac19d8cfc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -344,9 +350,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\Golem_Combat.h">
       <Filter>02. GameObject\02. Enemy\03. Golem\00. Combat</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Golem_Grunt.h">
-      <Filter>02. GameObject\02. Enemy\03. Golem\01. Grunt</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Golem_Merlin.h">
       <Filter>02. GameObject\02. Enemy\03. Golem\02. Merlin</Filter>
@@ -479,6 +482,12 @@
     </ClInclude>
     <ClInclude Include="..\public\IdleState.h">
       <Filter>02. GameObject\01. Player\01. StateMachine\00. IdleState</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Golem_Grunt.h">
+      <Filter>02. GameObject\02. Enemy\03. Golem\01. Grunt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Weapon_Player_Wand.h">
+      <Filter>02. GameObject\01. Player\01. Weapon\Wand</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -697,6 +706,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\IdleState.cpp">
       <Filter>02. GameObject\01. Player\01. StateMachine\00. IdleState</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Weapon_Player_Wand.cpp">
+      <Filter>02. GameObject\01. Player\01. Weapon\Wand</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

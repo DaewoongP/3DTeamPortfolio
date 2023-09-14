@@ -18,6 +18,7 @@ public:
 private:
 	// 현재 수정중인 더미 오브젝트
 	class CDummy* m_pDummyObject = { nullptr };
+	class CModel* m_pDummyModel = { nullptr };
 	class CCamera_Point* m_pCameraPoint = { nullptr };
 
 	_int			m_iMaxModelIndex = { 0 };

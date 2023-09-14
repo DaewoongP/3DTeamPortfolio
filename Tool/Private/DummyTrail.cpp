@@ -152,6 +152,77 @@ void CDummyTrail::RemakeBuffer()
 	m_pBuffer->Initialize(&trailDesc);
 }
 
+void CDummyTrail::Save_FileDialog()
+{
+	if (ImGui::Button("Save Trail"))
+		ImGuiFileDialog::Instance()->OpenDialog("CooseSaveFileTrailKey", "Save File", ".trail", "../../Resources/GameData/TrailData/");
+
+	// display
+	if (ImGuiFileDialog::Instance()->Display("CooseSaveFileTrailKey"))
+	{
+		// action if OK
+		if (ImGuiFileDialog::Instance()->IsOk())
+		{
+			std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+			std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
+
+			fs::path fsFilePathName = ToRelativePath(filePathName.data());
+			if (FAILED(__super::Save(fsFilePathName.wstring().data())))
+			{
+				MSG_BOX("Failed to Saved CDummyTrail");
+				return;
+			}
+
+			MSG_BOX("Success to Saved CDummyTrail");
+		}
+
+		// close
+		ImGuiFileDialog::Instance()->Close();
+	}
+}
+
+void CDummyTrail::Load_FileDialog()
+{
+	if (ImGui::Button("Load Particle"))
+		ImGuiFileDialog::Instance()->OpenDialog("CooseLoadFilePtcKey", "Load File", ".ptc", "../../Resources/GameData/ParticleData/");
+
+	// display
+	if (ImGuiFileDialog::Instance()->Display("CooseLoadFilePtcKey"))
+	{
+		// action if OK
+		if (ImGuiFileDialog::Instance()->IsOk())
+		{
+			std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+			std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
+			fs::path fsFilePathName = filePathName;
+			fs::path fsFilePath = filePath;
+
+			_ulong dwByte = 0;
+
+			if (FAILED(Load(fsFilePath.wstring().c_str())))
+			{
+				MSG_BOX("Failed to loaded file");
+			}
+			else
+			{
+				//RemakeBuffer(m_MainModuleDesc.iMaxParticles);
+				//ChangeTexture(&m_pMainTexture, m_RendererModuleDesc.wstrMaterialPath, ToRelativePath(m_RendererModuleDesc.wstrMaterialPath.c_str()).c_str());
+				//ChangeTexture(&m_pClipTexture, m_ShapeModuleDesc.wstrClipTexturePath, ToRelativePath(m_ShapeModuleDesc.wstrClipTexturePath.c_str()).c_str());
+				//m_pMaterialTextureIFD->ChangeTexture(wstrToStr(m_RendererModuleDesc.wstrMaterialPath).data());
+				//m_pAlphaTextureIFD->ChangeTexture(wstrToStr(m_ShapeModuleDesc.wstrClipTexturePath).data());
+				//m_pSpriteTypeCombo->Update_Current_Item(m_ShapeModuleDesc.str);
+				//m_pConeEmitFromCombo->Update_Current_Item(m_MainModuleDesc.str);
+				//m_pBoxEmitFromCombo->Update_Current_Item(m_ShapeModuleDesc.strThetaMode);
+
+				MSG_BOX("The file has been loaded successfully");
+			}
+		}
+
+		// close
+		ImGuiFileDialog::Instance()->Close();
+	}
+}
+
 CDummyTrail* CDummyTrail::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, const _tchar* _pDirectoryPath, _uint _iLevel)
 {
 	CDummyTrail* pInstance = New CDummyTrail(_pDevice, _pContext);

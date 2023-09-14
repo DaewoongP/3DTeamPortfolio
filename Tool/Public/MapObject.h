@@ -22,7 +22,7 @@ private:
 	virtual ~CMapObject() = default;
 
 public:
-	_float4 Get_Color() { return m_vColor; }
+	_float4 Get_Color() const { return m_vColor; }
 	void	Set_Pos(_float3 vPos) { m_pTransform->Set_Position(vPos); }
 	void	Set_Color(int iColor) {
 		m_vColor.x = ((iColor >> 16) & 0xff) * 1.f; // r

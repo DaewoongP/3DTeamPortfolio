@@ -83,7 +83,7 @@ HRESULT CLevel_Tool::Ready_For_Layer_Light(const _tchar* pLayerTag)
 	BEGININSTANCE
 	CLight::LIGHTDESC LightDesc;
 	ZEROMEM(&LightDesc);
-	LightDesc.vPos = _float4(50.f, 300.f, 50.f, 1.f);
+	LightDesc.vPos = _float4(0.f, 10.f, 0.f, 1.f);
 	LightDesc.vDir = _float4(0.f, -0.98f, 0.f, 0.f);
 
 	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);

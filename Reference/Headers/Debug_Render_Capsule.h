@@ -13,7 +13,8 @@ public:
 		_float fRadius = { 0.f };
 		// ≥Ù¿Ã extents
 		_float fHalfHeight = { 0.f };
-		_float3 vOrigin;
+		_float3 vOffsetPosition;
+		_float4 vOffsetRotation;
 	}CAPSULEDESC;
 
 private:

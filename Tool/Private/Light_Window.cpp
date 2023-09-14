@@ -135,7 +135,7 @@ HRESULT CLight_Window::Create_Light()
 			ZEROMEM(&LightDesc);
 
 			m_szName = "DirectionLight";
-			LightDesc.vPos = _float4(50.f,300.f,50.f,1.f);
+			LightDesc.vPos = _float4(vPos);
 			LightDesc.vDir = _float4(vDir);
 
 			LightDesc.vDiffuse = _float4(vDiffuse);

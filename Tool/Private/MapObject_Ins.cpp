@@ -51,8 +51,8 @@ void CMapObject_Ins::Late_Tick(_float fTimeDelta)
 
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 #ifdef _DEBUG
-		//m_pRenderer->Add_RenderGroup(CRenderer::RENDER_PICKING, this);
-#endif // _DEBUG		
+		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_PICKING, this);
+#endif // _DEBUG
 	}
 }
 
@@ -69,7 +69,7 @@ HRESULT CMapObject_Ins::Render()
 		return E_FAIL;
 
 	// 일반 그리기
-	//if (RT_NORMAL == m_eRenderCount)
+	if (RT_NORMAL == m_eRenderCount)
 	{
 		_uint		iNumMeshes = m_pModel->Get_NumMeshes();
 
@@ -84,11 +84,13 @@ HRESULT CMapObject_Ins::Render()
 		}
 
 		m_eRenderCount = RT_PICKING;
+
+		return S_OK;
 	}
 
 #ifdef _DEBUG
 	// 피킹용 그리기
-	/*else if (RT_PICKING == m_eRenderCount)
+	else if (RT_PICKING == m_eRenderCount)
 	{
 		m_pShader->Bind_RawValue("g_vColor", &m_vColor, sizeof(_float4));
 
@@ -103,7 +105,7 @@ HRESULT CMapObject_Ins::Render()
 		}
 
 		m_eRenderCount = RT_END;
-	}*/
+	}
 #endif // _DEBUG	
 
 	return S_OK;

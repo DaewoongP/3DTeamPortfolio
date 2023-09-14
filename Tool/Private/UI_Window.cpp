@@ -1049,7 +1049,7 @@ HRESULT CUI_Window::Save_Data(_tchar* pFilePath)
 			WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
 			WriteFile(hFile, wszGroupName, dwStrByte, &dwByte, nullptr);
 
-			CUI* pParent = dynamic_cast<CDummy_UI_Group*>(pGroup)->Get_Parent();
+			CDummy_UI* pParent = dynamic_cast<CDummy_UI_Group*>(pGroup)->Get_Parent();
 
 			_float2 vCombinedXY = pParent->Get_vCombinedXY();
 			WriteFile(hFile, &vCombinedXY, sizeof(_float2), &dwByte, nullptr);
@@ -1111,7 +1111,7 @@ HRESULT CUI_Window::Save_Data(_tchar* pFilePath)
 				WriteFile(hFile, wszAlphaTextureFilePath, dwStrByte, &dwByte, nullptr);
 			}
 
-			vector <class CUI*>* m_Childs = dynamic_cast<CDummy_UI_Group*>(pGroup)->Get_Childs();
+			vector <class CDummy_UI*>* m_Childs = dynamic_cast<CDummy_UI_Group*>(pGroup)->Get_Childs();
 			iSize = m_Childs->size();
 			WriteFile(hFile, &iSize, sizeof(_uint), &dwByte, nullptr);
 
@@ -1204,7 +1204,7 @@ HRESULT CUI_Window::Save(_tchar* pFilePath)
 
 	pParent->Save(hFile, dwByte);
 
-	vector <class CUI*>* m_Childs = dynamic_cast<CDummy_UI_Group*>(m_pDummy_UI_Group)->Get_Childs();
+	vector <class CDummy_UI*>* m_Childs = dynamic_cast<CDummy_UI_Group*>(m_pDummy_UI_Group)->Get_Childs();
 
 	_uint iSize = m_Childs->size();
 	WriteFile(hFile, &iSize, sizeof(iSize), &dwByte, nullptr);
@@ -1662,7 +1662,7 @@ void CUI_Window::UI_Group_Tree()
 		return;
 	}
 
-	CUI* pParent = m_pDummy_UI_Group->Get_Parent();
+	CDummy_UI* pParent = m_pDummy_UI_Group->Get_Parent();
 
 	if (ImGui::TreeNode("Parent"))
 	{
@@ -1681,7 +1681,7 @@ void CUI_Window::UI_Group_Tree()
 		ImGui::TreePop(); // 트리 노드 닫기
 	}
 
-	vector<class CUI*>* pChilds = m_pDummy_UI_Group->Get_Childs();
+	vector<class CDummy_UI*>* pChilds = m_pDummy_UI_Group->Get_Childs();
 	_uint iSize = (*pChilds).size();
 
 	if (ImGui::TreeNode("Child"))
