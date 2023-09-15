@@ -80,7 +80,6 @@ CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	Safe_AddRef(m_pContext);
 }
 
-
 _uint WINAPI Thread_Main(void* pArg)
 {
 	CLoader* pLoader = reinterpret_cast<CLoader*>(pArg);

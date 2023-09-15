@@ -176,6 +176,7 @@ HRESULT CTest_Player::Add_Components()
 	RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 0.f, 1.f);
 	m_pRigidBody->Create_Collider(&RigidBodyDesc);
 	// 리지드바디 액터 옵션 추가
+	
 	PxRigidBody* Rigid = m_pRigidBody->Get_RigidBodyActor();
 	Rigid->setAngularDamping(10.f);
 	Rigid->setMaxLinearVelocity(1000.f);

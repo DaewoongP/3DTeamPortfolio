@@ -498,6 +498,9 @@
     <ClInclude Include="..\Public\Weapon_Player_Wand.h">
       <Filter>02. GameObject\01. Player\01. Weapon\Wand</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Seamless_Loader.h">
+      <Filter>01. Levels\99. Loading</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -727,6 +730,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Weapon_Player_Wand.cpp">
       <Filter>02. GameObject\01. Player\01. Weapon\Wand</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Seamless_Loader.cpp">
+      <Filter>01. Levels\99. Loading</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

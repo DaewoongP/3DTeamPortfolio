@@ -253,6 +253,8 @@ HRESULT CRigidBody::Render()
 
 HRESULT CRigidBody::Create_Collider(RIGIDBODYDESC* pRigidBodyDesc)
 {
+	std::lock_guard<std::mutex> lock(mtx);
+
 	CPhysX_Manager* pPhysX_Manager = CPhysX_Manager::GetInstance();
 	Safe_AddRef(pPhysX_Manager);
 

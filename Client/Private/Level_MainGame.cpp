@@ -1,6 +1,6 @@
 #include "..\Public\Level_MainGame.h"
 #include "GameInstance.h"
-
+#include "Seamless_Loader.h"
 #include "MapObject.h"
 
 CLevel_MainGame::CLevel_MainGame(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -12,6 +12,7 @@ HRESULT CLevel_MainGame::Initialize()
 {
 	if (FAILED(__super::Initialize()))
 		return E_FAIL;
+
 	if (FAILED(Ready_Lights()))
 	{
 		MSG_BOX("Failed Ready_Lights");
@@ -42,13 +43,14 @@ HRESULT CLevel_MainGame::Initialize()
 
 		return E_FAIL;
 	}
+
 #ifdef _DEBUG
-	if (FAILED(Ready_Layer_Debug(TEXT("Layer_Debug"))))
+	/*if (FAILED(Ready_Layer_Debug(TEXT("Layer_Debug"))))
 	{
 		MSG_BOX("Failed Ready_Layer_Debug");
 
 		return E_FAIL;
-	}
+	}*/
 
 	if (FAILED(Ready_Layer_SceneTest(TEXT("Layer_SceneTest"))))
 	{
@@ -72,6 +74,8 @@ void CLevel_MainGame::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	BEGININSTANCE;
+
+	// 씬변경 테스트
 	if (pGameInstance->Get_DIKeyState(DIK_T, CInput_Device::KEY_DOWN))
 	{
 		pGameInstance->Set_CurrentScene(TEXT("Scene_Main"));
@@ -80,6 +84,35 @@ void CLevel_MainGame::Tick(_float fTimeDelta)
 	{
 		pGameInstance->Set_CurrentScene(TEXT("Scene_Info"));
 	}
+	// 멀티스레드 로딩 테스트
+	if (pGameInstance->Get_DIKeyState(DIK_N, CInput_Device::KEY_DOWN))
+	{
+		m_pLoader = CSeamless_Loader::Create(m_pDevice, m_pContext);
+	}
+
+	if (nullptr != m_pLoader)
+	{
+		if (m_pLoader->Get_Finished())
+		{
+			Safe_Release(m_pLoader);
+			pGameInstance->Set_CurrentScene(TEXT("Scene_Main"));
+			return;
+		}
+
+		_ulong dwData = { 0 };
+
+		if (TRUE == GetExitCodeThread(m_pLoader->Get_Thread(), &dwData))
+		{
+			if (-1 == dwData)
+			{
+				MSG_BOX("Loading Failed");
+				PostQuitMessage(0);
+				Safe_Release(m_pLoader);
+				return;
+			}
+		}
+	}
+
 	ENDINSTANCE;
 
 #ifdef _DEBUG
@@ -310,7 +343,6 @@ HRESULT CLevel_MainGame::Ready_Layer_UI(const _tchar* pLayerTag)
 
 	_tchar szFilePath[MAX_PATH] = TEXT("");
 
-
 	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_HP.uidata"));
 	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_HP"),
 		pLayerTag, TEXT("GameObject_UI_Group_HP"), szFilePath)))
@@ -481,16 +513,7 @@ HRESULT CLevel_MainGame::Ready_Layer_SceneTest(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	_tchar szFilePath[MAX_PATH] = TEXT("");
-
-	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_HP.uidata"));
-	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_HP"),
-		pLayerTag, TEXT("GameObject_UI_Group_HP"), szFilePath)))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_HP)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
+	
 
 	Safe_Release(pGameInstance);
 

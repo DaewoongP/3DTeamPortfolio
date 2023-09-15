@@ -87,6 +87,8 @@
 #include <stack>
 #include <random>
 #include <tchar.h>
+#include <mutex>
+static std::mutex mtx;
 
 // file system - c++ 17
 #include <filesystem>
