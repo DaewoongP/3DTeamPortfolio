@@ -349,6 +349,9 @@
     <Filter Include="01. Utility\03. Components\16. MeshEffect">
       <UniqueIdentifier>{35f210f5-64ec-49e0-97dd-d4fdb9664c1b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\03. Components\02. Renderer\Blur">
+      <UniqueIdentifier>{799ecc2a-624c-4be1-893f-cc68859512b0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -711,6 +714,9 @@
     <ClInclude Include="..\public\Debug_Render_HeightField.h">
       <Filter>01. Utility\03. Components\14. RigidBody\DebugRender\Plane</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Blur.h">
+      <Filter>01. Utility\03. Components\02. Renderer\Blur</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -1040,6 +1046,9 @@
     <ClCompile Include="..\Private\Ease.cpp">
       <Filter>01. Utility\13. Ease</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Blur.cpp">
+      <Filter>01. Utility\03. Components\02. Renderer\Blur</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Navigation.hlsl">
@@ -1076,6 +1085,9 @@
       <Filter>01. Utility\98. ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_AfterShade.hlsl">
+      <Filter>01. Utility\03. Components\02. Renderer\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Blur.hlsl">
       <Filter>01. Utility\03. Components\02. Renderer\Shader</Filter>
     </FxCompile>
   </ItemGroup>

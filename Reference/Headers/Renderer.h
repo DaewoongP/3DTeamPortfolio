@@ -47,7 +47,6 @@ private:
 	HRESULT Render_Deferred();
 	HRESULT Render_NonLight();
 	HRESULT Render_Blend();
-	HRESULT Render_Blur();
 	HRESULT Render_BlurShadow();
 	HRESULT Render_PostProcessing();
 	HRESULT Render_Distortion();
@@ -109,6 +108,10 @@ private: /* Shader_Type */
 private: /* AfterShader*/
 	class CVIBuffer_Rect* m_pAfterShaderBuffer = { nullptr };//각종 쉐이더처리 해줄때 쓸 것
 	class CShader* m_pAfterShader = { nullptr };
+
+private:
+	class CBlur*					m_pSSAOBlur = { nullptr };
+
 private:
 	_float m_fFrameTime = 0.f;
 

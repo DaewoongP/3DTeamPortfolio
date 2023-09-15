@@ -45,12 +45,12 @@ HRESULT CLevel_MainGame::Initialize()
 	}
 
 #ifdef _DEBUG
-	/*if (FAILED(Ready_Layer_Debug(TEXT("Layer_Debug"))))
+	if (FAILED(Ready_Layer_Debug(TEXT("Layer_Debug"))))
 	{
 		MSG_BOX("Failed Ready_Layer_Debug");
 
 		return E_FAIL;
-	}*/
+	}
 
 	if (FAILED(Ready_Layer_SceneTest(TEXT("Layer_SceneTest"))))
 	{
@@ -473,7 +473,7 @@ HRESULT CLevel_MainGame::Ready_Layer_Debug(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Dummy"), pLayerTag, TEXT("GameObject_Dummy"))))
+	/*if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Dummy"), pLayerTag, TEXT("GameObject_Dummy"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Dummy)");
 		return E_FAIL;
@@ -495,7 +495,7 @@ HRESULT CLevel_MainGame::Ready_Layer_Debug(const _tchar* pLayerTag)
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Professor_Fig)");
 		return E_FAIL;
-	}
+	}*/
 
 	Safe_Release(pGameInstance);
 

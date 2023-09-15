@@ -323,6 +323,8 @@ HRESULT CVIBuffer_Terrain::Initialize(void* pArg)
 
 void CVIBuffer_Terrain::Culling(_Matrix WorldMatrix)
 {
+	std::lock_guard<std::mutex> lock(mtx);
+
 	CFrustum* pFrustum = CFrustum::GetInstance();
 	Safe_AddRef(pFrustum);
 

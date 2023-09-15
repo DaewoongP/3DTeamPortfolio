@@ -2,6 +2,12 @@
 #include "GameObject.h"
 #include "Client_Defines.h"
 
+BEGIN(Engine)
+class CShader;
+class CRenderer;
+class CModel;
+END
+
 BEGIN(Client)
 
 class CSky final : public CGameObject
@@ -19,10 +25,9 @@ public:
 	virtual HRESULT Render() override;
 
 private:
+	CModel*				m_pModel = { nullptr };
 	CShader*			m_pShader = { nullptr };
-	CTexture*			m_pTexture = { nullptr };
 	CRenderer*			m_pRenderer = { nullptr };
-	CVIBuffer_Cube*		m_pBuffer = { nullptr };
 
 private:
 	HRESULT Add_Components();

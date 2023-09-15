@@ -186,10 +186,6 @@ HRESULT CLoader::Loading_For_MainGame()
 	try /* Failed Check Add_Prototype*/
 	{
 		lstrcpy(m_szLoading, TEXT("텍스쳐 로딩 중."));
-		/* For.Prototype_Component_Texture_SkyBox*/
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Texture_SkyBox"),
-			CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/SkyBox/Sky_%d.dds"), 4))))
-			throw TEXT("Prototype_Component_Texture_SkyBox");
 
 		/* Prototype_Component_Texture_Default_Particle*/
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Texture_Default_Particle"),
@@ -221,6 +217,10 @@ HRESULT CLoader::Loading_For_MainGame()
 
 		_float4x4 PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f));
 
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Model_Sky"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/SkySphere/SkySphere.dat")))))
+			throw TEXT("Prototype_Component_Model_Sky");
+
 		/* For.Weapon Models */
 		/* For.Prototype_Component_Model_Weopon_Armored_Troll */
 		//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Weopon_Armored_Troll"),
@@ -236,7 +236,6 @@ HRESULT CLoader::Loading_For_MainGame()
 		PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f));
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Weopon_Golem_Combat"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Golem_Combat_Sword/Golem_Combat_Sword.dat"), PivotMatrix))))
-
 			throw TEXT("Prototype_Component_Model_Weopon_Golem_Combat");
 
 		/* For.Prototype_Component_Model_Weopon_Player_Wand */
@@ -299,7 +298,7 @@ HRESULT CLoader::Loading_For_MainGame()
 			throw TEXT("Prototype_Component_Model_Test_Robe_LOD");*/
 
 
-			/* For.Prototype_Component_Model_CustomModel_Player */
+		/* For.Prototype_Component_Model_CustomModel_Player */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_CustomModel_Player"),
 			CCustomModel::Create(m_pDevice, m_pContext, CCustomModel::TYPE_ANIM, L"../../Resources/Models/Anims/Biped_Skeleton_Set/Biped_Skeleton_Set.dat"))))
 			throw TEXT("Prototype_Component_Model_CustomModel_Player");

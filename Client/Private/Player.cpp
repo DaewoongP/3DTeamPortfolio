@@ -45,12 +45,12 @@ HRESULT CPlayer::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
-	if (FAILED(Ready_Caemra()))
+	/*if (FAILED(Ready_Caemra()))
 	{
 		MSG_BOX("Failed Ready Player Caemra");
 
 		return E_FAIL;
-	}
+	}*/
 
 	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));

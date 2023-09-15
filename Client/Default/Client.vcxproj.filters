@@ -238,6 +238,9 @@
     <Filter Include="04. Magic\MagicBall\00. BasicCast">
       <UniqueIdentifier>{753e950f-efbe-4660-a035-8339816dab1b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\08. Info">
+      <UniqueIdentifier>{1e29bda0-136c-4d92-b977-07e6393b4c68}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -501,6 +504,9 @@
     <ClInclude Include="..\public\Seamless_Loader.h">
       <Filter>01. Levels\99. Loading</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Info_Main.h">
+      <Filter>02. GameObject\08. Info</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -733,6 +739,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Seamless_Loader.cpp">
       <Filter>01. Levels\99. Loading</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Info_Main.cpp">
+      <Filter>02. GameObject\08. Info</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
