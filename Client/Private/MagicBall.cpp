@@ -38,20 +38,21 @@ HRESULT CMagicBall::Initialize(void* pArg)
 
 	MAGICBALLINITDESC* initDesc = static_cast<MAGICBALLINITDESC*>(pArg);
 
-	m_eMagicGroup = initDesc->eMagicGroup;;
-	m_eMagicType = initDesc->eMagicType;
-	m_eBuffType = initDesc->eBuffType;
-	m_eMagicTag = initDesc->eMagicTag;
-	m_fDamage = initDesc->fDamage;
-	m_fDistance = initDesc->fDistance;
-	m_fInitLiftTime = initDesc->fLiftTime;
+	m_MagicBallDesc.eMagicGroup = initDesc->eMagicGroup;;
+	m_MagicBallDesc.eMagicType = initDesc->eMagicType;
+	m_MagicBallDesc.eBuffType = initDesc->eBuffType;
+	m_MagicBallDesc.eMagicTag = initDesc->eMagicTag;
+	m_MagicBallDesc.fDamage = initDesc->fDamage;
+	m_MagicBallDesc.fDistance = initDesc->fDistance;
+	m_MagicBallDesc.fInitLiftTime = initDesc->fLifeTime;
+
 	m_pWeapon = initDesc->pWeapon;
 	Safe_AddRef(m_pWeapon);
 
-	m_fLiftTime = m_fInitLiftTime;
-	m_pTransform->Set_Position(m_vStartPosition);
+	m_MagicBallDesc.fLifeTime = m_MagicBallDesc.fInitLiftTime;
+	m_pTransform->Set_Position(m_MagicBallDesc.vStartPosition);
 
-	m_vStartPosition = m_pWeapon->Get_Transform()->Get_Position() + m_pWeapon->Get_Wand_Point_Offset();
+	m_MagicBallDesc.vStartPosition = m_pWeapon->Get_Transform()->Get_Position() + m_pWeapon->Get_Wand_Point_Offset();
 	//cout << m_vStartPosition.x << " " << m_vStartPosition.y << " " << m_vStartPosition.z << endl;
 	return S_OK;
 }
@@ -61,8 +62,8 @@ void CMagicBall::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 	
 	//½Ã°£ÀÌ Èå¸§.
-	if (m_fLiftTime > 0)
-		m_fLiftTime -= fTimeDelta;	
+	if (m_MagicBallDesc.fLifeTime > 0)
+		m_MagicBallDesc.fLifeTime -= fTimeDelta;
 }
 
 void CMagicBall::Late_Tick(_float fTimeDelta)

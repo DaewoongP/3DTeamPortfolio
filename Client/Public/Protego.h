@@ -3,7 +3,16 @@
 #include "Client_Defines.h"
 #include "MagicBall.h"
 
+BEGIN(Engine)
+
+END
+
 BEGIN(Client)
+class CProtego_Effect;
+END
+
+BEGIN(Client)
+
 class CProtego final : public CMagicBall
 {
 private:
@@ -23,6 +32,9 @@ public:
 private:
 	HRESULT Add_Components();
 	virtual HRESULT Add_Effect();
+
+private:
+	CProtego_Effect* m_pProtegoEffect = { nullptr };
 
 public:
 	static CProtego* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

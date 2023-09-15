@@ -149,7 +149,22 @@ void CParticleSystem::Tick(_float _fTimeDelta)
 		// SRT 연산
 		_float4x4 ScaleMatrix = _float4x4::MatrixScale(Particle_iter->vScale);
 		_float4x4 BillBoardMatrix = LookAt(vPos, vCamPosition.xyz());
-		_float4x4 RotationMatrix = _float4x4::MatrixRotationAxis(_float3(vPos - vCamPosition), XMConvertToRadians(Particle_iter->fAngle));
+		_float4x4 RotationMatrix;
+		if (true == m_MainModuleDesc.isDirectionRotation) // 진행 방향으로 회전
+		{
+			_float3 vLook = BillBoardMatrix.Look();
+			_float3 vUp = BillBoardMatrix.Up();
+			_float3 vDirection = Particle_iter->vVelocity.xyz();
+			vDirection.Normalize();
+			_float fRadian = XMVectorGetX(XMVector3AngleBetweenVectors(vDirection, vUp));
+			if (vUp.Cross(vDirection).y <= 0.f)
+				fRadian *= -1.f;
+			RotationMatrix = _float4x4::MatrixRotationAxis(vLook, fRadian);
+		}
+		else
+		{
+			RotationMatrix = _float4x4::MatrixRotationAxis(_float3(vPos - vCamPosition), XMConvertToRadians(Particle_iter->fAngle));
+		}
 		_float4x4 TranslationMatrix = _float4x4::MatrixTranslation(vPos);
 		_float4x4 TransfomationMatrix = ScaleMatrix * BillBoardMatrix * RotationMatrix * TranslationMatrix;
 

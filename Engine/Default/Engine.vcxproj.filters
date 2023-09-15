@@ -352,6 +352,9 @@
     <Filter Include="01. Utility\13. Ease">
       <UniqueIdentifier>{db445bd0-d6d8-42a9-9226-3315e30f7c55}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\03. Components\07. VIBuffer\Geometry\GeoSphere">
+      <UniqueIdentifier>{96531350-10f0-44b4-b9ec-6cfed7531891}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -648,9 +651,6 @@
     <ClInclude Include="..\Public\Model_Instance.h">
       <Filter>01. Utility\03. Components\17. StaticMeshInstance\Model_Instance</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\VIBuffer_GeoSphere.h">
-      <Filter>01. Utility\03. Components\07. VIBuffer\Geometry</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\VIBuffer_Geometry.h">
       <Filter>01. Utility\03. Components\07. VIBuffer\Geometry</Filter>
     </ClInclude>
@@ -713,6 +713,9 @@
     </ClInclude>
     <ClInclude Include="..\public\Debug_Render_HeightField.h">
       <Filter>01. Utility\03. Components\14. RigidBody\DebugRender\Plane</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\VIBuffer_GeoSphere.h">
+      <Filter>01. Utility\03. Components\07. VIBuffer\Geometry\GeoSphere</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -980,9 +983,6 @@
     <ClCompile Include="..\Public\Model_Instance.cpp">
       <Filter>01. Utility\03. Components\17. StaticMeshInstance\Model_Instance</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\VIBuffer_GeoSphere.cpp">
-      <Filter>01. Utility\03. Components\07. VIBuffer\Geometry</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\VIBuffer_Geometry.cpp">
       <Filter>01. Utility\03. Components\07. VIBuffer\Geometry</Filter>
     </ClCompile>
@@ -1042,6 +1042,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Ease.cpp">
       <Filter>01. Utility\13. Ease</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\VIBuffer_GeoSphere.cpp">
+      <Filter>01. Utility\03. Components\07. VIBuffer\Geometry\GeoSphere</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

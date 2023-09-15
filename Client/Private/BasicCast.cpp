@@ -61,9 +61,9 @@ HRESULT CBasicCast::Initialize(void* pArg)
 		ENDINSTANCE;
 
 		vMouseWorldPickPosition = vMouseOrigin.xyz() + vMouseDirection.xyz() * 10000;
-		vDirStartToPicked = (vMouseWorldPickPosition - m_vStartPosition);
+		vDirStartToPicked = (vMouseWorldPickPosition - m_MagicBallDesc.vStartPosition);
 		vDirStartToPicked.Normalize();
-		m_vTargetPosition = vDirStartToPicked * m_fDistance;
+		m_vTargetPosition = vDirStartToPicked * m_MagicBallDesc.fDistance;
 	}
 	else 
 	{
@@ -72,19 +72,19 @@ HRESULT CBasicCast::Initialize(void* pArg)
 	}
 
 	// 플레이어가 타겟을 보는 vector를 구함.
-	_float3 vDir = m_vTargetPosition - m_vStartPosition;
+	_float3 vDir = m_vTargetPosition - m_MagicBallDesc.vStartPosition;
 	vDir.Normalize();
 
 	// 그 vector를 플레이어 기준 반대방향으로 1만큼 이동한 뒤 랜덤값을 잡아줌
-	while (m_vLerpWeight[0].Length() < m_vStartPosition.Length())
+	while (m_vLerpWeight[0].Length() < m_MagicBallDesc.vStartPosition.Length())
 	{
-		m_vLerpWeight[0] = m_vStartPosition - vDir;
+		m_vLerpWeight[0] = m_MagicBallDesc.vStartPosition - vDir;
 		m_vLerpWeight[0] += _float3(Random_Generator(-20.f, 20.f), Random_Generator(-20.f, 20.f), Random_Generator(-20.f, 20.f));
 	}
 	
 
 	// 그 vector를 타겟 기준 정방향으로 1만큼 이동한 뒤 랜덤값을 잡아줌
-	while (m_vLerpWeight[1].Length() < m_vStartPosition.Length())
+	while (m_vLerpWeight[1].Length() < m_MagicBallDesc.vStartPosition.Length())
 	{
 		m_vLerpWeight[1] = m_vTargetPosition + vDir;
 		m_vLerpWeight[1] += _float3(Random_Generator(-20.f, 20.f), Random_Generator(-20.f, 20.f), Random_Generator(-20.f, 20.f));
@@ -95,10 +95,10 @@ HRESULT CBasicCast::Initialize(void* pArg)
 
 void CBasicCast::Tick(_float fTimeDelta)
 {
-	if (m_fLiftTime > 0)
+	if (m_MagicBallDesc.fLifeTime > 0)
 	{
-		m_fLerpAcc += fTimeDelta / m_fInitLiftTime;
-		_float3 movedPos = XMVectorCatmullRom(m_vLerpWeight[0], m_vStartPosition, m_vTargetPosition, m_vLerpWeight[1], m_fLerpAcc);
+		m_fLerpAcc += fTimeDelta / m_MagicBallDesc.fInitLiftTime;
+		_float3 movedPos = XMVectorCatmullRom(m_vLerpWeight[0], m_MagicBallDesc.vStartPosition, m_vTargetPosition, m_vLerpWeight[1], m_fLerpAcc);
 		if (m_pTransform != nullptr)
 			m_pTransform->Set_Position(movedPos);
 

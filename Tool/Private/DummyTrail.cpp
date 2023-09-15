@@ -39,6 +39,29 @@ HRESULT CDummyTrail::Initialize(void* _pArg)
 
 void CDummyTrail::Tick_Imgui(_float _fTimeDelta)
 {
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	if (pGameInstance->Get_DIKeyState(DIK_UPARROW))
+	{
+		m_pTransform->Go_Straight(_fTimeDelta);
+	}
+	if (pGameInstance->Get_DIKeyState(DIK_DOWNARROW))
+	{
+		m_pTransform->Go_Backward(_fTimeDelta);
+	}
+	if (pGameInstance->Get_DIKeyState(DIK_RIGHTARROW))
+	{
+		m_pTransform->Go_Right(_fTimeDelta);
+	}
+	if (pGameInstance->Get_DIKeyState(DIK_LEFTARROW))
+	{
+		m_pTransform->Go_Left(_fTimeDelta);
+	}
+
+	Safe_Release(pGameInstance);
+
+
 	CImWindow* pWindow = CWindow_Manager::GetInstance()->Find_Window(TEXT("Effect_Window"));
 	CEffect_Window* pEffectWindow = dynamic_cast<CEffect_Window*>(pWindow);
 	if (ImGui::BeginTable("CDummyTrailTable", 2))

@@ -53,9 +53,11 @@ PS_OUT	PS_MAIN(PS_IN In)
 	PS_OUT		Out = (PS_OUT)0;
 
 	vector		vAlpha = g_AlphaTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vDiffuse = g_AlphaTexture.Sample(LinearSampler, In.vTexUV);
 	float		fGradient = g_GradientTexture.Sample(LinearSampler, In.vTexUV).r;
 
-	Out.vColor.xyz = lerp(g_vHeadColor, g_vTailColor, fGradient);
+	Out.vColor = vDiffuse;
+	Out.vColor.xyz *= lerp(g_vHeadColor, g_vTailColor, fGradient);
 	Out.vColor.a = vAlpha.r;
 
 	if (Out.vColor.a < 0.1f)

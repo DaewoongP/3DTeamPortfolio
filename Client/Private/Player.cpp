@@ -169,16 +169,27 @@ HRESULT CPlayer::Add_Components()
 		throw TEXT("Com_Weapon");
 
 	/* For.Com_Magic*/
+	//CMagic::MAGICDESC magicInitDesc;
+	//magicInitDesc.eBuffType = CMagic::BUFF_NONE;
+	//magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
+	//magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+	//magicInitDesc.eMagicTag = BASICCAST;
+	//magicInitDesc.fCoolTime = 1.f;
+	//magicInitDesc.fDamage = 10.f;
+	//magicInitDesc.fCastDistance = 1000;
+	//magicInitDesc.fBallDistance = 30;
+	//magicInitDesc.fLifeTime = 0.1f;
+
 	CMagic::MAGICDESC magicInitDesc;
-	magicInitDesc.eBuffType = CMagic::BUFF_NONE;
+	magicInitDesc.eBuffType = CMagic::BUFF_SHILED;
 	magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
-	magicInitDesc.eMagicType = CMagic::MT_NOTHING;
-	magicInitDesc.eMagicTag = BASICCAST;
+	magicInitDesc.eMagicType = CMagic::MT_ALL;
+	magicInitDesc.eMagicTag = PROTEGO;
 	magicInitDesc.fCoolTime = 1.f;
-	magicInitDesc.fDamage = 10.f;
+	magicInitDesc.fDamage = 0.f;
 	magicInitDesc.fCastDistance = 1000;
 	magicInitDesc.fBallDistance = 30;
-	magicInitDesc.fLifeTime = 0.1f;
+	magicInitDesc.fLifeTime = 5.f;
 
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Magic"),
 		TEXT("Com_Magic"), reinterpret_cast<CComponent**>(&m_pMagic), &magicInitDesc)))

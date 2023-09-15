@@ -42,6 +42,7 @@
 #include "Trail.h"
 #include "MeshEffect.h"
 #include "Default_Magic_Effect.h"
+#include "Protego_Effect.h"
 #pragma endregion Effects
 
 #pragma region Magic
@@ -627,11 +628,15 @@ HRESULT CLoader::Loading_For_MainGame()
 			CUI_Image::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_UI_Image");*/
 
-		/* For.Prototype_GameObject_Player*/
+			/* For.Prototype_GameObject_Player*/
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Player"),
 			CPlayer::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Player");
 
+		/* For.Prototype_GameObject_Player*/
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Protego_Effect"),
+			CProtego_Effect::Create(m_pDevice, m_pContext, LEVEL_MAINGAME))))
+			throw TEXT("Prototype_GameObject_Protego_Effect");
 	}
 	catch (const _tchar* pErrorTag)
 	{

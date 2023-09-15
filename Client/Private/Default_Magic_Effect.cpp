@@ -155,7 +155,7 @@ HRESULT CDefault_Magic_Effect::Add_Components()
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Default_Magic_ConeEmit_Particle")
 		, TEXT("Com_ConeEmit_Particle"), (CComponent**)&m_pConeEmitParticle)))
 		return E_FAIL;
-
+	
 	return S_OK;
 }
 

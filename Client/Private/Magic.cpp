@@ -73,11 +73,11 @@ _bool CMagic::Magic_Cast(CTransform* pTarget, class CWeapon_Player_Wand* pWeapon
 		ballInit.fDamage = m_fDamage;
 		ballInit.fDistance = m_fBallDistance;
 		ballInit.pTarget = pTarget;
-		ballInit.fLiftTime = m_fLifeTime;
+		ballInit.fLifeTime = m_fLifeTime;
 		ballInit.pWeapon = pWeapon;
 
 		BEGININSTANCE;
-		if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_BaseAttack"), TEXT("Layer_Magic"), Generate_HashtagW().c_str(), &ballInit)))
+		if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Protego"), TEXT("Layer_Magic"), Generate_HashtagW().c_str(), &ballInit)))
 		{
 			MSG_BOX("Failed Add_GameObject : (GameObject_BaseAttack)");
 			return false;

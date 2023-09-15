@@ -238,6 +238,15 @@
     <Filter Include="02. GameObject\01. Player\01. Weapon\Wand">
       <UniqueIdentifier>{3eacb79d-9519-4b74-935b-b05ac19d8cfc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\03. Effect\Protego_Effect">
+      <UniqueIdentifier>{5396d56e-27c2-4130-b99f-23fa2a791f02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. ShaderFiles\Magic">
+      <UniqueIdentifier>{922a952c-44f9-4be5-8a2d-7c9cffdf861d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. ShaderFiles\Magic\Protego">
+      <UniqueIdentifier>{2b531332-cdaa-4769-a0cb-b4ae97608818}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -498,6 +507,9 @@
     <ClInclude Include="..\Public\Weapon_Player_Wand.h">
       <Filter>02. GameObject\01. Player\01. Weapon\Wand</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Protego_Effect.h">
+      <Filter>02. GameObject\03. Effect\Protego_Effect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -728,6 +740,9 @@
     <ClCompile Include="..\Private\Weapon_Player_Wand.cpp">
       <Filter>02. GameObject\01. Player\01. Weapon\Wand</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Protego_Effect.cpp">
+      <Filter>02. GameObject\03. Effect\Protego_Effect</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -768,6 +783,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Debug.hlsl">
       <Filter>97. ShaderFiles\Debug</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Protego.hlsl">
+      <Filter>97. ShaderFiles\Magic\Protego</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
