@@ -11,6 +11,8 @@ texture2D g_BlurTexture;
 texture2D g_PostProcessingTexture;
 texture2D g_vDistortionTexture;
 texture2D g_vAlphaTexture;
+texture2D g_DoBlurTexture;
+texture2D g_WhiteBloomTexture;
 
 vector g_vLightDiffuse;
 vector g_vLightAmbient;
@@ -19,6 +21,13 @@ vector g_vLightSpecular;
 float g_FrameTime;
 float3 g_ScrollSpeed;
 float3 g_Scales;
+
+float BlurWeights[23] =
+{
+    0.0011, 0.0123, 0.0561, 0.1353, 0.278, 0.3001, 0.4868, 0.6666, 0.7261, 0.8712, 0.9231,
+    0.9986, 0.9231, 0.8712, 0.7261, 0.6666, 0.4868, 0.3001, 0.278, 0.1353, 0.0561, 0.0123, 0.0011
+};
+float total = 11.4776f;
 
 /* Sampler State */
 sampler LinearSampler = sampler_state
@@ -34,9 +43,22 @@ sampler PointSampler = sampler_state
     AddressU = WRAP;
     AddressV = WRAP;
 };
-sampler DistortionSampler = sampler_state
+sampler BlurSampler = sampler_state
+{
+    Filter = MIN_MAG_MIP_LINEAR;
+    AddressU = clamp;
+    AddressV = clamp;
+};
+
+sampler BloomSampler = sampler_state
 {
     Filter = MIN_MAG_MIP_POINT;
+    AddressU = clamp;
+    AddressV = clamp;
+};
+sampler DistortionSampler = sampler_state
+{
+    Filter = MIN_MAG_MIP_LINEAR;
     AddressU = clamp;
     AddressV = clamp;
 };
@@ -106,9 +128,9 @@ BlendState BS_BlendOne
 matrix MyMatrixLookAtLH(float4 vEye, float4 vAt)
 {
     matrix ViewMatrix = matrix(
-    1.f, 0.f, 0.f, 0.f, 
-    0.f, 1.f, 0.f, 0.f, 
-    0.f, 0.f, 1.f, 0.f, 
+    1.f, 0.f, 0.f, 0.f,
+    0.f, 1.f, 0.f, 0.f,
+    0.f, 0.f, 1.f, 0.f,
     0.f, 0.f, 0.f, 1.f);
     
     vector vLook = float4(normalize(vAt.xyz - vEye.xyz), 0.f);
@@ -138,6 +160,13 @@ struct VS_IN
     float2 vTexUV : TEXCOORD0;
 };
 
+struct VS_OUT_BLOOM
+{
+    float4 vPosition : SV_POSITION;
+    float2 vTexUV : TEXCOORD0;
+};
+
+
 struct VS_OUT
 {
     float4 vPosition : SV_POSITION;
@@ -161,8 +190,8 @@ VS_OUT VS_MAIN(VS_IN In)
     Out.vTexUV = In.vTexUV;
     
     //Out.texCoords1 = In.vTexUV;
-   Out.texCoords1 = (In.vTexUV * g_Scales.x);
-   Out.texCoords1.y = Out.texCoords1.y + (g_FrameTime * g_ScrollSpeed.x);
+    Out.texCoords1 = (In.vTexUV * g_Scales.x);
+    Out.texCoords1.y = Out.texCoords1.y + (g_FrameTime * g_ScrollSpeed.x);
     
     Out.texCoords2 = (In.vTexUV * g_Scales.y);
     Out.texCoords2.y = Out.texCoords2.y + (g_FrameTime * g_ScrollSpeed.y);
@@ -174,6 +203,24 @@ VS_OUT VS_MAIN(VS_IN In)
     
     return Out;
 }
+VS_OUT_BLOOM VS_MAIN_BLOOM(VS_IN In)
+{
+    VS_OUT_BLOOM Out = (VS_OUT_BLOOM) 0;
+
+    matrix matWV, matWVP;
+    
+    matWV = mul(g_WorldMatrix, g_ViewMatrix);
+    matWVP = mul(matWV, g_ProjMatrix);
+    
+    
+    Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);
+    Out.vTexUV = In.vTexUV;
+    
+    return Out;
+}
+
+
+
 
 struct PS_IN
 {
@@ -182,6 +229,11 @@ struct PS_IN
     float2 texCoords1 : TEXCOORD1;
     float2 texCoords2 : TEXCOORD2;
     float2 texCoords3 : TEXCOORD3;
+};
+struct PS_IN_BLOOM
+{
+    float4 vPosition : SV_POSITION;
+    float2 vTexUV : TEXCOORD0;
 };
 
 struct PS_OUT
@@ -245,6 +297,92 @@ PS_OUT PS_MAIN_DISTORTION(PS_IN In)
     
     return Out;
 }
+PS_OUT PS_MAIN_BLURX(PS_IN_BLOOM In)
+{
+    PS_OUT Out = (PS_OUT) 0;
+    
+    
+    float dx = 1.0f / (1280.f / 4.f);
+    
+    float2 UV = 0;
+    
+    for (int i = -11; i < 11; ++i)
+    {
+
+        UV = In.vTexUV + float2(dx * i, 0.f);
+        vector SSAO = g_DoBlurTexture.Sample(BlurSampler, UV);
+        
+        Out.vColor += BlurWeights[11 + i] * SSAO;
+    }
+    Out.vColor /= total;
+    return Out;
+}
+PS_OUT PS_MAIN_BLURY(PS_IN_BLOOM In)
+{
+    PS_OUT Out = (PS_OUT) 0;
+    
+ 
+    float dy = 1.0f / (720.f / 2.f);
+    
+    float2 UV = 0;
+   
+    for (int i = -11; i < 11; ++i)
+    {
+        UV = In.vTexUV + float2(0, dy * i);
+        vector SSAO = g_DoBlurTexture.Sample(BlurSampler, UV);
+        Out.vColor += BlurWeights[11 + i] * SSAO;
+    }
+    Out.vColor /= total;
+    
+    
+    
+    return Out;
+}
+
+
+PS_OUT PS_MAIN_BLOOM(PS_IN_BLOOM In)
+{
+    PS_OUT Out = (PS_OUT) 0;
+
+    
+    vector vBloom = g_PostProcessingTexture.Sample(BloomSampler, In.vTexUV); //vBloom은 하얀부분을뽑아낼 텍스쳐
+   
+    float BrightColor = 0.f;
+    float Brigtness = dot(vBloom.rgb, float3(0.2126f, 0.7152f, 0.0722f));
+   
+    if (Brigtness > 0.99f)
+    {
+        BrightColor = vector(vBloom.rgb, 1.f);
+        Out.vColor = BrightColor;
+    }
+    else
+        discard;
+    
+    
+    
+    return Out;
+}
+
+PS_OUT PS_MAIN_BLOOM_AFTER(PS_IN_BLOOM In)
+{
+    PS_OUT Out = (PS_OUT) 0;
+    
+    vector vWhiteBloom = g_WhiteBloomTexture.Sample(BloomSampler, In.vTexUV); //하얀부분을뽑아낼 텍스쳐
+    vector vBloomColor = g_DoBlurTexture.Sample(BloomSampler, In.vTexUV); //하얀부분을 블러처리
+    vector vBloomOriTex = g_PostProcessingTexture.Sample(BloomSampler, In.vTexUV); //최초의 이미지
+    
+    vector vBloom = pow(pow(abs(vBloomColor), 2.2f) + pow(abs(vBloomOriTex), 2.2f), 1.f / 2.2f);
+    
+    float4 Value = vWhiteBloom;
+    Value = pow(abs(Value), 2.2f);
+    vBloom = pow(abs(vBloom), 2.2f);
+    
+    Value += vBloom;
+    
+    Out.vColor = pow(abs(Value), 1 / 2.2f);
+    return Out;
+    
+}
 
 
 technique11 DefaultTechnique
@@ -261,4 +399,51 @@ technique11 DefaultTechnique
         DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
         PixelShader = compile ps_5_0 PS_MAIN_DISTORTION();
     }
+
+    pass Bloom
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Depth_Disable, 0);
+        SetBlendState(BS_BlendOne, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN_BLOOM();
+        GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
+        HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
+        DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
+        PixelShader = compile ps_5_0 PS_MAIN_BLOOM();
+    }
+    pass BlurX
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Depth_Disable, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
+        HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
+        DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
+        PixelShader = compile ps_5_0 PS_MAIN_BLURX();
+    }
+    pass BlurY
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Depth_Disable, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
+        HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
+        DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
+        PixelShader = compile ps_5_0 PS_MAIN_BLURY();
+    }
+
+    pass FinBloom
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Depth_Disable, 0);
+        SetBlendState(BS_BlendOne, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN_BLOOM();
+        GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
+        HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
+        DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
+        PixelShader = compile ps_5_0 PS_MAIN_BLOOM_AFTER();
+    }
+
 }
