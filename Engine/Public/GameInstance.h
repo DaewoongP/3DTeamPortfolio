@@ -72,6 +72,7 @@ public: /* For.Level_Manager */
 	_uint Get_CurrentLevelIndex() const;
 	class CLevel* Get_CurrentLevel();
 	HRESULT Render_Level();
+	HRESULT Add_Scene(const _tchar * pSceneTag, const _tchar * pLayerTag);
 
 public: /* For.Component_Manager*/
 	class CComponent* Find_Prototype(_uint iLevelIndex, const _tchar * pPrototypeTag);
@@ -82,6 +83,8 @@ public: /* For.Component_Manager*/
 	class CLayer* Find_Layer(_uint iLevelIndex, const _tchar * pLayerTag);
 	HRESULT	Clear_Layer(_uint iLevelIndex, const _tchar * pLayerTag);
 	HRESULT	Delete_Component(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pComponentTag);
+	void Set_CurrentScene(const _tchar * pSceneTag);
+	const _tchar* Get_CurrentSceneTag() const;
 
 public: /* For.Input_Device*/
 	_bool		Get_DIKeyState(_ubyte ubyKeyID, CInput_Device::KEYSTATE eState = CInput_Device::KEY_PRESSING);

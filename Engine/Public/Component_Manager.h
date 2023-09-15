@@ -84,23 +84,27 @@ private:
 	virtual ~CComponent_Manager() = default;
 
 public:
+	const _tchar* Get_CurrentSceneTag() const { return m_szCurrentSceneTag; }
+	void Set_CurrentScene(const _tchar* pSceneTag);
+
+public:
+	void	Tick(_float fTimeDelta);
+	void	Late_Tick(_float fTimeDelta);
+
+public:
 	HRESULT				Reserve_Containers(_uint iNumLevels);
 	// 프로토타입 생성
 	HRESULT				Add_Prototype(_uint iLevelIndex, const _tchar* pPrototypeTag, class CComponent* pPrototype, _bool isFailedSkip = false);
 	// Tick에 컴포넌트가 돌아가게끔 clone 처리
 	HRESULT				Add_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, const _tchar* pLayerTag, const _tchar* pComponentTag, void* pArg);
-	class CComponent*	Clone_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, void* pArg);
+	class CComponent* Clone_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, void* pArg);
 	void				Clear_LevelResources(_uint iLevelIndex);
 	HRESULT				Delete_Component(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pComponentTag);
 
-	class CComponent*	Find_Component_In_Layer(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pComponentTag);
-	class CComponent*	Find_Prototype(_uint iLevelIndex, const _tchar* pPrototypeTag);
-	class CLayer*		Find_Layer(_uint iLevelIndex, const _tchar* pLayerTag);
+	class CComponent* Find_Component_In_Layer(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pComponentTag);
+	class CComponent* Find_Prototype(_uint iLevelIndex, const _tchar* pPrototypeTag);
+	class CLayer* Find_Layer(_uint iLevelIndex, const _tchar* pLayerTag);
 	HRESULT				Clear_Layer(_uint iLevelIndex, const _tchar* pLayerTag);
-
-public:
-	void	Tick(_float fTimeDelta);
-	void	Late_Tick(_float fTimeDelta);
 
 private:
 	typedef unordered_map<const _tchar*, class CLayer*>		LAYERS;
@@ -111,7 +115,9 @@ private:
 	LAYERS*				m_pLayers = { nullptr };
 	_uint				m_iNumLevels = { 0 };
 
-public:
+private:
+	_tchar				m_szCurrentSceneTag[MAX_PATH] = TEXT("");
+	LAYERS*				m_pCurrentLayers = { nullptr };
 
 public:
 	virtual void Free() override;

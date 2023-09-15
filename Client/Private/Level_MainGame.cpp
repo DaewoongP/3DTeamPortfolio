@@ -49,11 +49,19 @@ HRESULT CLevel_MainGame::Initialize()
 
 		return E_FAIL;
 	}
+
+	if (FAILED(Ready_Layer_SceneTest(TEXT("Layer_SceneTest"))))
+	{
+		MSG_BOX("Failed Ready_Layer_Debug");
+
+		return E_FAIL;
+	}
 #endif // _DEBUG
 
 	BEGININSTANCE;
 	/* 게임 초기화와 함께 월드시간 초기화 */
 	pGameInstance->Reset_World_TimeAcc();
+	pGameInstance->Set_CurrentScene(TEXT("Scene_Main"));
 	ENDINSTANCE;
 
 	return S_OK;
@@ -62,6 +70,17 @@ HRESULT CLevel_MainGame::Initialize()
 void CLevel_MainGame::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	BEGININSTANCE;
+	if (pGameInstance->Get_DIKeyState(DIK_T, CInput_Device::KEY_DOWN))
+	{
+		pGameInstance->Set_CurrentScene(TEXT("Scene_Main"));
+	}
+	if (pGameInstance->Get_DIKeyState(DIK_Y, CInput_Device::KEY_DOWN))
+	{
+		pGameInstance->Set_CurrentScene(TEXT("Scene_Info"));
+	}
+	ENDINSTANCE;
 
 #ifdef _DEBUG
 	SetWindowText(g_hWnd, TEXT("메인게임레벨입니다."));
@@ -103,6 +122,14 @@ HRESULT CLevel_MainGame::Ready_Layer_BackGround(const _tchar* pLayerTag)
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
+	/* Add Scene : Main */
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
+	{
+		MSG_BOX("Failed Add Scene : (Scene_Main)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
 	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Sky"), pLayerTag, TEXT("GameObject_Sky"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Sky)");
@@ -126,9 +153,18 @@ HRESULT CLevel_MainGame::Ready_Layer_Player(const _tchar* pLayerTag)
 {
 	BEGININSTANCE;
 
+	/* Add Scene : Main */
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
+	{
+		MSG_BOX("Failed Add Scene : (Scene_Main)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
 	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Player"), pLayerTag, TEXT("GameObject_Player"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Player)");
+		ENDINSTANCE;
 		return E_FAIL;
 	}
 
@@ -254,17 +290,10 @@ HRESULT CLevel_MainGame::Load_MapObject()
 
 HRESULT CLevel_MainGame::Ready_Layer_Effect(const _tchar* pLayerTag)
 {
-
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
 #ifdef _DEBUG
-	/*if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Particle"), pLayerTag, TEXT("GameObject_Test_Particle"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Particle)");
-		return E_FAIL;
-	}*/
-
 	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Default_Magic_Effect"), pLayerTag, TEXT("GameObject_Default_Magic_Effect"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Default_Magic_Effect)");
@@ -395,6 +424,14 @@ HRESULT CLevel_MainGame::Ready_Layer_Debug(const _tchar* pLayerTag)
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
+
+	/* Add Scene : Main */
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
+	{
+		MSG_BOX("Failed Add Scene : (Scene_Main)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
 	
 	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Camera_Debug"), pLayerTag, TEXT("GameObject_Camera_Debug"))))
 	{
@@ -423,6 +460,35 @@ HRESULT CLevel_MainGame::Ready_Layer_Debug(const _tchar* pLayerTag)
 	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Professor_Fig"), pLayerTag, TEXT("GameObject_Professor_Fig"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Professor_Fig)");
+		return E_FAIL;
+	}
+
+	Safe_Release(pGameInstance);
+
+	return S_OK;
+}
+
+HRESULT CLevel_MainGame::Ready_Layer_SceneTest(const _tchar* pLayerTag)
+{
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	/* Add Scene : Main */
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Info"), pLayerTag)))
+	{
+		MSG_BOX("Failed Add Scene : (Scene_Main)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	_tchar szFilePath[MAX_PATH] = TEXT("");
+
+	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_HP.uidata"));
+	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_HP"),
+		pLayerTag, TEXT("GameObject_UI_Group_HP"), szFilePath)))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_HP)");
+		ENDINSTANCE;
 		return E_FAIL;
 	}
 
