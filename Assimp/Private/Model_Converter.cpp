@@ -425,29 +425,29 @@ HRESULT CModel_Converter::Convert_Materials(TYPE eType, const char* pModelFilePa
 			CharToWChar(strFileName, szTextureName);
 			lstrcat(szTexturePath, pSaveDirectory);
 
-			/*if (eType != TYPE_MAPOBJECT)
-			{*/
+			if (eType != TYPE_MAPOBJECT)
+			{
 				lstrcat(szTexturePath, szTextureName);
 
 				lstrcpy(Material.MaterialTexture[j].szTexPath, szTexturePath);
 				Material.MaterialTexture[j].TexType = TEXTYPE(j);
-			//}				
-			//else // 맵 오브젝트일 경우 경로를 다르게 설정한다.
-			//{
-			//	wstring wsTexturePath(szTexturePath);
-			//	wstring wsTargetIndex(TEXT("MapObject/"));
-			//	size_t Targetsize = wsTargetIndex.size();
-			//	size_t FindIndex = wsTexturePath.find(wsTargetIndex);
-			//	wstring wsNewTexturePath = wsTexturePath.substr(0, FindIndex + Targetsize);
-			//	wsNewTexturePath += TEXT("Texture/");
+			}
+			else // 맵 오브젝트일 경우 경로를 다르게 설정한다.
+			{
+				wstring wsTexturePath(szTexturePath);
+				wstring wsTargetIndex(TEXT("MapObject/"));
+				size_t Targetsize = wsTargetIndex.size();
+				size_t FindIndex = wsTexturePath.find(wsTargetIndex);
+				wstring wsNewTexturePath = wsTexturePath.substr(0, FindIndex + Targetsize);
+				wsNewTexturePath += TEXT("Texture/");
 
-			//	_tchar	szNewTexturePath[MAX_PATH] = TEXT("");
-			//	lstrcpy(szNewTexturePath, wsNewTexturePath.c_str());
-			//	lstrcat(szNewTexturePath, szTextureName);
+				_tchar	szNewTexturePath[MAX_PATH] = TEXT("");
+				lstrcpy(szNewTexturePath, wsNewTexturePath.c_str());
+				lstrcat(szNewTexturePath, szTextureName);
 
-			//	lstrcpy(Material.MaterialTexture[j].szTexPath, szNewTexturePath);
-			//	Material.MaterialTexture[j].TexType = TEXTYPE(j);
-			//}			
+				lstrcpy(Material.MaterialTexture[j].szTexPath, szNewTexturePath);
+				Material.MaterialTexture[j].TexType = TEXTYPE(j);
+			}			
 		}
 
 		// 머테리얼 저장
