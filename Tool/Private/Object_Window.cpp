@@ -1065,8 +1065,6 @@ HRESULT CObject_Window::Save_MapObject(string szMapDataPath)
 
 HRESULT CObject_Window::Load_MapObject(const _tchar* wszMapDataPath)
 {
-	m_vecSaveObject.clear();
-
 	HANDLE hFile = CreateFile(wszMapDataPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
 	if (INVALID_HANDLE_VALUE == hFile)
@@ -1215,13 +1213,6 @@ HRESULT CObject_Window::Save_MapObject_Ins(string szMapDataPath)
 
 HRESULT CObject_Window::Load_MapObject_Ins(const _tchar* wszMapDataPath)
 {
-	for (auto& iter : m_vecSaveInsObject)
-	{
-		Safe_Delete_Array(iter.pMatTransform);
-	}
-
-	m_vecSaveInsObject.clear();
-
 	HANDLE hFile = CreateFile(wszMapDataPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
 	if (INVALID_HANDLE_VALUE == hFile)
