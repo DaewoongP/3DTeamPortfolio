@@ -9,7 +9,7 @@ class CVIBuffer_Rect;
 class CBlur final : public CComponent
 {
 public:
-	enum BLUR { BLUR_X, BLUR_Y, BLUR_ALL, BLUR_END };
+	enum BLUR { BLUR_X, BLUR_Y, BLUR_END };
 private:
 	explicit CBlur(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual ~CBlur() = default;

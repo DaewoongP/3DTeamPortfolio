@@ -18,11 +18,11 @@ HRESULT CComponent_Manager::Reserve_Containers(_uint iNumLevels)
 		return E_FAIL;
 	}
 
-	m_pPrototypes = new PROTOTYPES[iNumLevels];
+	m_pPrototypes = New PROTOTYPES[iNumLevels];
 
-	m_pLayers = new LAYERS[iNumLevels];
+	m_pLayers = New LAYERS[iNumLevels];
 
-	m_pCurrentLayers = new LAYERS[iNumLevels];
+	m_pCurrentLayers = New LAYERS[iNumLevels];
 
 	m_iNumLevels = iNumLevels;
 
@@ -269,17 +269,6 @@ void CComponent_Manager::Free()
 {
 	for (_uint i = 0; i < m_iNumLevels; ++i)
 	{
-		for (auto& Pair : m_pLayers[i])
-		{
-			Safe_Release(Pair.second);
-		}
-		m_pLayers[i].clear();
-	}
-
-	Safe_Delete_Array(m_pLayers);
-	
-	for (_uint i = 0; i < m_iNumLevels; ++i)
-	{
 		for (auto& Pair : m_pCurrentLayers[i])
 		{
 			Safe_Release(Pair.second);
@@ -288,6 +277,17 @@ void CComponent_Manager::Free()
 	}
 
 	Safe_Delete_Array(m_pCurrentLayers);
+
+	for (_uint i = 0; i < m_iNumLevels; ++i)
+	{
+		for (auto& Pair : m_pLayers[i])
+		{
+			Safe_Release(Pair.second);
+		}
+		m_pLayers[i].clear();
+	}
+
+	Safe_Delete_Array(m_pLayers);
 
 	for (_uint i = 0; i < m_iNumLevels; ++i)
 	{

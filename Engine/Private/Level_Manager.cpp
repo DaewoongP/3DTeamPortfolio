@@ -54,21 +54,38 @@ HRESULT CLevel_Manager::Render()
 
 HRESULT CLevel_Manager::Add_Scene(const _tchar* pSceneTag, const _tchar* pLayerTag)
 {
-	auto iter = find_if(m_Scenes.begin(), m_Scenes.end(), CTag_Finder(pSceneTag));
-
-	// 설정한 씬태그에 레이어가 존재 하지 않으면 생성해서 대입
-	if (m_Scenes.end() == iter)
+	auto SceneIter = find_if(m_Scenes.begin(), m_Scenes.end(), CTag_Finder(pSceneTag));
+	
+	// 씬이 없으면
+	if (m_Scenes.end() == SceneIter)
 	{
+		// 레이어 리스트만 그냥 생성해서 emplace
 		list<const _tchar*> Layers;
 		Layers.push_back(pLayerTag);
-
 		m_Scenes.emplace(pSceneTag, Layers);
 	}
-	else // 존재하면 그 리스트에 대입
+	else // 씬이 이미 있으면
 	{
-		(*iter).second.push_back(pLayerTag);
+		// 레이어 태그가 있는지 검사하고
+		for (auto& ListLayerTag : (*SceneIter).second)
+		{
+			if (!lstrcmp(ListLayerTag, pLayerTag))
+			{
+#ifdef _DEBUG
+				MSG_BOX("Failed to Add Scene");
+				// 아마 여기 걸리셨으면 이미 씬을 만들어두고 또 하신거니
+				// 그냥 Add_Scene함수를 지우면 됩니다.
+				// (딱 한번만 불러주면 됩니다 같은 레이어에 대해서.)
+				__debugbreak();
+#endif // _DEBUG
+				return S_FALSE;
+			}
+		}
+		// 레이어가 없으면
+		// 그 씬에 레이어 태그를 푸쉬백
+		SceneIter->second.push_back(pLayerTag);
 	}
-
+	
 	return S_OK;
 }
 
