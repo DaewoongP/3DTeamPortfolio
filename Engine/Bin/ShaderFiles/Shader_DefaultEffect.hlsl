@@ -8,7 +8,6 @@ texture2D		g_DiffuseTexture;
 float4			g_vColor;
 float4			g_vCamPosition;
 
-
 struct VS_IN
 {
 	float3 vPosition : POSITION;

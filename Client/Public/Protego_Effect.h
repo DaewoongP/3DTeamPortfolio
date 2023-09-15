@@ -42,6 +42,7 @@ public:
 	void Play();
 
 	void Exit();
+
 private:
 	void Tick_Enter(const _float& fTimeDelta);
 	void Tick_Stay(const _float& fTimeDelta);
@@ -53,12 +54,12 @@ private:
 
 private:
 	void Find_And_Add_Texture(const _tchar* pPath);
-	
+	void Tick_Imgui();
 private: /* For. Component */
 	CShader* m_pShader = { nullptr };
 	CRenderer* m_pRenderer = { nullptr };
 	CTexture* m_pTexture[5] = {};
-	CVIBuffer_Rect* m_pBuffer = { nullptr };
+	CVIBuffer_GeoSphere* m_pBuffer = { nullptr };
 	
 private: // Protego의 정보
 	const MAGICBALLDESC* m_pMagicBallDesc;
@@ -66,11 +67,13 @@ private: // Protego의 정보
 private:
 	_uint m_iLevel = { 0 };
 	STATE m_eCurState = { ENTER };
-	_float4 m_vColor = { 1.f, 1.f, 1.f, 1.f };
+	_float4 m_vColor1 = { 1.f, 1.f, 1.f, 1.f };
+	_float4 m_vColor2 = { 1.f, 1.f, 1.f, 1.f };
 	_float m_fScale = { 0.1f };
 	_float m_fTimeAcc = { 0.f };
 	_float m_fEnterDuration = { 0.1f };
 	_float m_fExitDuration = { 0.1f };
+	_float m_fRimPower = { 4.7f };
 
 private:
 	HRESULT Add_Components();

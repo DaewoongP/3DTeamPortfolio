@@ -20,11 +20,19 @@ HRESULT CProtego_Effect::Initialize_Prototype(_uint _iLevel)
 	m_iLevel = _iLevel;
 	BEGININSTANCE;
 
+	/* For.Prototype_Component_Shader_Protego */
+	/*if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_Component_Shader_Protego")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_Component_Shader_Protego"),
+			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Protego.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements))))
+			return E_FAIL;
+	}*/
+
 	/* For.Prototype_Component_Shader_VtxMesh */
 	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_Component_Shader_Protego")))
 	{
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_Component_Shader_Protego"),
-			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Protego.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements))))
+			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Protego.hlsl"), VTXPOSNORTEX_DECL::Elements, VTXPOSNORTEX_DECL::iNumElements))))
 			return E_FAIL;
 	}
 
@@ -68,7 +76,8 @@ HRESULT CProtego_Effect::Initialize(void* pArg)
 	case Client::CMagic::MT_RED:
 		break;
 	case Client::CMagic::MT_ALL:
-		m_vColor = { 0.1647f, 0.4470f, 1.f, 1.f };
+		m_vColor1 = { 0.f, 0.f, 1.f, 1.f };
+		m_vColor2 = { 0.5f, 0.f, 0.5f, 1.f };
 		break;
 	default:
 		break;
@@ -83,8 +92,9 @@ HRESULT CProtego_Effect::Initialize(void* pArg)
 void CProtego_Effect::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+	//Tick_Imgui();
+
 	BEGININSTANCE;
-	m_pTransform->LookAt(pGameInstance->Get_CamPosition()->xyz());
 
 #ifdef _DEBUG
 	
@@ -96,6 +106,7 @@ void CProtego_Effect::Tick(_float fTimeDelta)
 	{
 		Exit();
 	}
+
 #endif // _DEBUG
 	m_fTimeAcc += fTimeDelta;
 	switch (m_eCurState)
@@ -178,7 +189,8 @@ void CProtego_Effect::Tick_Enter(const _float& fTimeDelta)
 {
 	_float fRatio = m_fTimeAcc / m_fEnterDuration;
 	m_fScale = fRatio * 3.f;
-	m_vColor.w = fRatio;
+	m_vColor1.w = fRatio;
+	m_vColor2.w = fRatio;
 
 	m_pTransform->Set_Scale(_float3(m_fScale, m_fScale, m_fScale));
 
@@ -190,13 +202,14 @@ void CProtego_Effect::Tick_Enter(const _float& fTimeDelta)
 void CProtego_Effect::Tick_Stay(const _float& fTimeDelta)
 {
 	if (m_pMagicBallDesc->fLifeTime - m_fTimeAcc <= m_fExitDuration)
-		Exit();
+		;// Exit();
 }
 
 void CProtego_Effect::Tick_Exit(const _float& fTimeDelta)
 {
 	_float fRatio = m_fTimeAcc / m_fExitDuration;
-	m_vColor.w = fRatio;
+	m_vColor1.w = fRatio;
+	m_vColor2.w = fRatio;
 	m_fScale = 3.f - fRatio * 3.f;
 	m_pTransform->Set_Scale(_float3(m_fScale, m_fScale, m_fScale));
 
@@ -229,6 +242,26 @@ void CProtego_Effect::Find_And_Add_Texture(const _tchar* pPath)
 	ENDINSTANCE;
 }
 
+void CProtego_Effect::Tick_Imgui()
+{
+	RECT clientRect;
+	GetClientRect(g_hWnd, &clientRect);
+	POINT leftTop = { clientRect.left, clientRect.top };
+	POINT rightBottom = { clientRect.right, clientRect.bottom };
+	ClientToScreen(g_hWnd, &leftTop);
+	ClientToScreen(g_hWnd, &rightBottom);
+	int Left = leftTop.x;
+	int Top = rightBottom.y;
+	ImVec2 vWinpos = { _float(Left + 0.f), _float(Top) };
+	ImGui::SetNextWindowPos(vWinpos);
+
+	ImGui::Begin("RimPOWER");
+	
+	ImGui::DragFloat("RimPower", &m_fRimPower, 0.1f, 0.f, FLT_MAX);
+
+	ImGui::End();
+}
+
 HRESULT CProtego_Effect::Add_Components()
 {
 	try
@@ -238,7 +271,7 @@ HRESULT CProtego_Effect::Add_Components()
 			TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
 			throw "Com_Renderer";
 
-		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Rect"),
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_GeoSphere"),
 			TEXT("Com_Buffer"), reinterpret_cast<CComponent**>(&m_pBuffer))))
 			throw "Com_Buffer";
 
@@ -297,8 +330,10 @@ HRESULT CProtego_Effect::SetUp_ShaderResources()
 	// RawValue
 	FAILED_CHECK_RETURN(m_pShader->Bind_RawValue("g_vCamPos", pGameInstance->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float)), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShader->Bind_RawValue("g_vColor", &m_vColor, sizeof(_float4)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShader->Bind_RawValue("g_vColor1", &m_vColor1, sizeof(_float4)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShader->Bind_RawValue("g_vColor2", &m_vColor2, sizeof(_float4)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShader->Bind_RawValue("g_fTime", &m_fTimeAcc, sizeof(_float)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShader->Bind_RawValue("g_fRimPower", &m_fRimPower, sizeof(_float)), E_FAIL);
 
 	Safe_Release(pGameInstance);
 

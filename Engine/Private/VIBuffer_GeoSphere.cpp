@@ -51,7 +51,7 @@ HRESULT CVIBuffer_GeoSphere::Initialize_Prototype()
 
 	for (int i = 0; i < m_iSubdivisionNum; ++i)
 	{
-		subdivide(vertices, triangles);
+		Subdivide(vertices, triangles);
 	}
 
 	// Á¤±ÔÈ­
@@ -88,6 +88,12 @@ HRESULT CVIBuffer_GeoSphere::Initialize_Prototype()
 	ZeroMemory(pVertices, sizeof(VTXPOSNORTEX) * m_iNumVertices);
 
 	memcpy(pVertices, &vertices[0], sizeof(VTXPOSNORTEX) * m_iNumVertices);
+
+	for (_uint i = 0; i < m_iNumVertices; ++i)
+	{
+		pVertices->vNormal = (pVertices->vPosition - _float3(0.f, 0.f, 0.f));
+		XMStoreFloat3(&pVertices->vNormal, XMVector3Normalize(XMLoadFloat3(&pVertices->vNormal)));
+	}
 
 	ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
 	m_SubResourceData.pSysMem = pVertices;
@@ -175,7 +181,7 @@ _uint CVIBuffer_GeoSphere::getMidpointIndex(vector<Vertex>& vertices, _uint inde
 	return newIndex;
 }
 
-void CVIBuffer_GeoSphere::subdivide(vector<Vertex>& vertices, vector<Triangle>& triangles)
+void CVIBuffer_GeoSphere::Subdivide(vector<Vertex>& vertices, vector<Triangle>& triangles)
 {
 	std::vector<Triangle> newTriangles;
 

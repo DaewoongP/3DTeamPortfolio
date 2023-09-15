@@ -23,7 +23,7 @@ protected:
 	//void ComputeNormalTex();
 
 	_uint getMidpointIndex(vector<Vertex>& vertices, _uint index1, _uint index2);
-	void subdivide(vector<Vertex>& vertices, vector<Triangle>& triangles);
+	void Subdivide(vector<Vertex>& vertices, vector<Triangle>& triangles);
 	
 private:
 	_uint m_iSubdivisionNum = { 3 };
