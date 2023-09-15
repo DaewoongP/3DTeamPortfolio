@@ -53,6 +53,7 @@ private:
 	void Change_Picking_Menu(const _tchar* wszTag, _uint iTagNum); // 피킹한 메쉬 변경
 	void Delete_Picking_Object(); // 피킹한 오브젝트 삭제 메뉴
 	void Map_Brushing_Menu(); // 맵 그리기 메뉴
+	void All_Map_Object_Translation(); // 맵 오브젝트 전체 이동
 	HRESULT Save_MapObject(string szMapDataPath); // MapObject 저장
 	HRESULT Load_MapObject(const _tchar* wszMapDataPath); // MapObject 로드
 	HRESULT Save_MapObject_Ins(string szMapDataPath); // MapObject_Ins 저장
@@ -79,6 +80,7 @@ private:
 	_bool m_isPickingObject = { false };
 	_bool m_isChangeObject = { false };
 	_bool m_isBrushingMap = { false };
+	_bool m_isAllTranslation = { false };
 
 	// 버튼 On Off _bool 변수 모음
 	_bool m_isDeleteObject = { false }; // 맵 오브젝트 전체 삭제 선택지
@@ -107,6 +109,7 @@ private:
 
 	_float3 m_vRandomInstall[2] = { { -1.f, -1.f, -1.f }, { -1.f, -1.f, -1.f } }; // 랜덤 설치할 때 범위 지정
 	_uint m_iRandomInstall_Seq = { 0 }; // 범위 순서
+	_float3 m_vObjectPickingPos = { -1.f, -1.f, -1.f }; // 오브젝트 피킹으로 찾은 물체의 위치
 
 	_int m_iModelIndex = { 0 }; // 선택된 모델 인덱스
 	_int m_iTagIndex = { 0 }; // 선택된 맵 오브젝트 태그 인덱스
@@ -129,6 +132,15 @@ private:
 	_float m_fBrushSize = { 10.f }; // 브러쉬 사이즈
 	_int m_iDiffuseIndex = { 0 }; // 어떤 텍스처를 Diffuse로 선택했는지
 	_int m_iBrushIndex = { 1 };	// 어떤 텍스처를 Brush로 선택했는지
+
+	_float m_vAllMapTrans[3] = { 0.f, 0.f, 0.f }; // 설치된 모든 맵 오브젝트 이동 값
+	_float m_vAllMapPre[3] = { 0.f, 0.f, 0.f }; // 위의 위치 이전 값
+
+	_float m_vChangeMapObject[DUMMY_END][3] = { 0.f, 0.f, 0.f }; // 설치된 모든 맵 오브젝트 이동 값
+	_float3 m_vChangeMapScaleOffset = { 0.f, 0.f, 0.f }; // 각각
+	_float4 m_vChangeMapRotOffset = { 0.f, 0.f, 0.f, 1.f }; // 오프셋
+	_float3 m_vChangeMapTransOffset = { 0.f, 0.f, 0.f }; // 변수다.
+	CMapObject* m_pChangeMapObject = { nullptr }; // 비교용 변수
 
 public:
 	static CObject_Window* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, ImVec2 vWindowPos, ImVec2 vWindowSize);

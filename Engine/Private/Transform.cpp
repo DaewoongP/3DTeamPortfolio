@@ -69,6 +69,27 @@ void CTransform::Set_Scale(_float3 _vScale)
 	Set_Look(XMVector3Normalize(vLook) * _vScale.z);
 }
 
+void CTransform::Set_Scale_No_Zero(_float3 _vScale)
+{
+	/* Tool에서 맵 오브젝트를 설치할 때 실수로 0의 값을 집어넣는
+	경우를 막기위한 함수*/
+
+	_float3 vRight = Get_Right();
+	_float3 vUp = Get_Up();
+	_float3 vLook = Get_Look();
+
+	if (0.f == _vScale.x)
+		_vScale.x = 0.1;
+	if (0.f == _vScale.y)
+		_vScale.y = 0.1;
+	if (0.f == _vScale.z)
+		_vScale.z = 0.1;
+
+	Set_Right(XMVector3Normalize(vRight) * _vScale.x);
+	Set_Up(XMVector3Normalize(vUp) * _vScale.y);
+	Set_Look(XMVector3Normalize(vLook) * _vScale.z);
+}
+
 void CTransform::Set_Right(_float3 _vRight)
 {
 	memcpy(&m_WorldMatrix.m[0][0], &_vRight, sizeof(_float3));

@@ -12,10 +12,14 @@ CObject_Window::CObject_Window(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
 	: CImWindow(pDevice, pContext)
 {
 	ZeroMemory(&m_vDummyMatrix, sizeof m_vDummyMatrix);
+	ZeroMemory(&m_vChangeMapObject, sizeof m_vChangeMapObject);
 
 	// 스케일 값 1로 초기화
 	for (size_t i = 0; i < 3; i++)
+	{
 		m_vDummyMatrix[DUMMY_SCALE][i] = 1.f;
+		m_vChangeMapObject[DUMMY_SCALE][i] = 1.f;
+	}		
 }
 
 HRESULT CObject_Window::Initialize(ImVec2 vWindowPos, ImVec2 vWindowSize)
@@ -109,11 +113,18 @@ void CObject_Window::Tick(_float fTimeDelta)
 
 	ImGui::Separator();
 
-	// 맵 브러싱 메뉴 창 On / Off
-	ImGui::Checkbox("Map Brushing", &m_isBrushingMap);
-	if (true == m_isBrushingMap)
+	//// 맵 브러싱 메뉴 창 On / Off
+	//ImGui::Checkbox("Map Brushing", &m_isBrushingMap);
+	//if (true == m_isBrushingMap)
+	//{
+	//	Map_Brushing_Menu();
+	//}
+
+	// 맵 오브젝트 전체 이동 메뉴 On / Off
+	ImGui::Checkbox("All MapObject Translation", &m_isAllTranslation);
+	if (true == m_isAllTranslation)
 	{
-		Map_Brushing_Menu();
+		All_Map_Object_Translation();
 	}
 
 	ImGui::Separator();
@@ -202,7 +213,7 @@ void CObject_Window::Picking_Menu()
 		_float3 vTranslation = 
 		{ vPos.x + m_vDummyMatrix[DUMMY_TRANS][0], vPos.y + m_vDummyMatrix[DUMMY_TRANS][1], vPos.z + m_vDummyMatrix[DUMMY_TRANS][2] };
 
-		m_pDummy->Get_Transform()->Set_Scale(vScale);
+		m_pDummy->Get_Transform()->Set_Scale_No_Zero(vScale);
 		m_pDummy->Get_Transform()->Set_Quaternion(m_pDummy->Get_Transform()->Get_QuaternionVector_RollPitchYaw(vRotation));
 		m_pDummy->Get_Transform()->Set_Position(vTranslation);
 	}
@@ -879,10 +890,27 @@ void CObject_Window::Mesh_Picking_Menu()
 			++m_iTagIndex;
 		}
 
+		wstring ws = TEXT("GameObject_MapObject_");
+		ws += std::to_wstring(m_iTagIndex);
+
+		CGameObject* pObject = static_cast<CGameObject*>(m_pGameInstance->Find_Component_In_Layer(LEVEL_TOOL,
+			TEXT("Layer_MapObject"), ws.c_str()));
+
+		if (nullptr == pObject)
+		{
+			m_vObjectPickingPos = { -1.f, -1.f, -1.f };
+		}
+		else
+		{
+			m_vObjectPickingPos = pObject->Get_Transform()->Get_Position();
+		}		
+
 		m_pContext->Unmap(pCopyTexture2D, 0);
 
 		Safe_Release(pCopyTexture2D);
 	}
+
+	ImGui::Text("x : %f, y : %f, z : %f", m_vObjectPickingPos.x, m_vObjectPickingPos.y, m_vObjectPickingPos.z);
 
 	// 메쉬 피킹한 오브젝트 상태 행렬 변경 메뉴
 	ImGui::Checkbox("Change MapObject's Matrix", &m_isChangeObject);
@@ -905,10 +933,8 @@ void CObject_Window::Mesh_Picking_Menu()
 
 void CObject_Window::Change_Picking_Menu(const _tchar* wszTag, _uint iTagNum)
 {
-	ImGui::Text("Press J to Change Matrix");
-
 	m_pObject = static_cast<CMapObject*>(m_pGameInstance->Find_Component_In_Layer(LEVEL_TOOL,
-		TEXT("Layer_MapObject"), wszTag)); 
+		TEXT("Layer_MapObject"), wszTag));
 
 	if (nullptr == m_pObject)
 	{
@@ -917,10 +943,70 @@ void CObject_Window::Change_Picking_Menu(const _tchar* wszTag, _uint iTagNum)
 		return;
 	}
 
-	if (true == m_pGameInstance->Get_DIKeyState(DIK_J, CInput_Device::KEY_DOWN))
+	if (m_pChangeMapObject != m_pObject)
 	{
-		m_pObject->Get_Transform()->Set_WorldMatrix(m_pDummy->Get_Transform()->Get_WorldMatrix());
-		m_vecSaveObject.at(m_iTagIndex).matTransform = m_pDummy->Get_Transform()->Get_WorldMatrix();
+		ZeroMemory(&m_vChangeMapObject, sizeof m_vChangeMapObject);
+
+		// 스케일 값 1로 초기화
+		for (size_t i = 0; i < 3; i++)
+			m_vChangeMapObject[DUMMY_SCALE][i] = 1.f;
+
+		m_vChangeMapScaleOffset = m_pObject->Get_Transform()->Get_Scale();
+		m_vChangeMapRotOffset = m_pObject->Get_Transform()->Get_Quaternion();
+		m_vChangeMapTransOffset = m_pObject->Get_Transform()->Get_Position();
+		
+		m_pChangeMapObject = m_pObject;
+	}	
+
+	// imGui에서 값을 조정해서 변환 행렬을 만들어줌.
+	ImGui::DragFloat3("Scale", m_vChangeMapObject[DUMMY_SCALE], 0.1f, 0.1f, 10.f);
+	ImGui::SameLine(); CHelpMaker::HelpMarker("0.1f ~ 10.f");
+
+	ImGui::DragFloat3("Rotation", m_vChangeMapObject[DUMMY_ROT], 5.f, 0.f, 360.f);
+	ImGui::SameLine(); CHelpMaker::HelpMarker("0.f ~ 360.f");
+
+	ImGui::DragFloat3("Translation", m_vChangeMapObject[DUMMY_TRANS], 1.f, -50.f, 50.f);
+	ImGui::SameLine(); CHelpMaker::HelpMarker("-50.f ~ 50.f");
+
+	// 상태 행렬 초기화
+	if (ImGui::Button("reset"))
+	{
+		ZeroMemory(&m_vChangeMapObject, sizeof m_vChangeMapObject);
+
+		// 스케일 값 1로 초기화
+		for (size_t i = 0; i < 3; i++)
+			m_vChangeMapObject[DUMMY_SCALE][i] = 1.f;
+	}
+
+	ImGui::Text("");
+
+	// 조정한 상태값을 적용시킴
+	if (nullptr != m_pObject)
+	{
+		_float3 vScale;
+		vScale.x = m_vChangeMapScaleOffset.x * m_vChangeMapObject[DUMMY_SCALE][0];
+		vScale.y = m_vChangeMapScaleOffset.y * m_vChangeMapObject[DUMMY_SCALE][1];
+		vScale.z = m_vChangeMapScaleOffset.z * m_vChangeMapObject[DUMMY_SCALE][2];
+
+		_float3 vRotation;
+		vRotation.x = m_vChangeMapRotOffset.x + XMConvertToRadians(m_vChangeMapObject[DUMMY_ROT][0]);
+		vRotation.y = m_vChangeMapRotOffset.y + XMConvertToRadians(m_vChangeMapObject[DUMMY_ROT][1]);
+		vRotation.z = m_vChangeMapRotOffset.z + XMConvertToRadians(m_vChangeMapObject[DUMMY_ROT][2]);
+
+		/*vRotation.x = XMConvertToRadians(vRotation.x);
+		vRotation.y = XMConvertToRadians(vRotation.y);
+		vRotation.z = XMConvertToRadians(vRotation.z);*/
+
+		_float3 vTranslation =
+		{ m_vChangeMapTransOffset.x + m_vChangeMapObject[DUMMY_TRANS][0],
+			m_vChangeMapTransOffset.y + m_vChangeMapObject[DUMMY_TRANS][1],
+			m_vChangeMapTransOffset.z + m_vChangeMapObject[DUMMY_TRANS][2] };
+
+		m_pObject->Get_Transform()->Set_Scale_No_Zero(vScale);
+		m_pObject->Get_Transform()->Set_Quaternion(m_pObject->Get_Transform()->Get_QuaternionVector_RollPitchYaw(vRotation));
+		m_pObject->Get_Transform()->Set_Position(vTranslation);
+
+		m_vecSaveObject.at(m_iTagIndex).matTransform = m_pObject->Get_Transform()->Get_WorldMatrix();
 	}
 }
 
@@ -1014,6 +1100,51 @@ void CObject_Window::Map_Brushing_Menu()
 
 		MSG_BOX("Save Terrain Texture");
 	}
+}
+
+void CObject_Window::All_Map_Object_Translation()
+{
+	ImGui::DragFloat3("All MapObject Translation", m_vAllMapTrans, 1.f, -100.f, 100.f);
+	ImGui::SameLine(); CHelpMaker::HelpMarker("-100.f ~ 100.f");
+
+	if (m_vAllMapTrans[0] != m_vAllMapPre[0] ||
+		m_vAllMapTrans[1] != m_vAllMapPre[1] || 
+		m_vAllMapTrans[2] != m_vAllMapPre[2])
+	{
+		for (auto& iter : m_vecMapObjectTag)
+		{
+			CGameObject* pMapObject = static_cast<CGameObject*>(m_pGameInstance->Find_Component_In_Layer(LEVEL_TOOL,
+				TEXT("Layer_MapObject"), iter.c_str()));
+
+			_float3 vPos = pMapObject->Get_Transform()->Get_Position();
+
+			_float3 vTranslation =
+			{ vPos.x + (m_vAllMapTrans[0] - m_vAllMapPre[0]), 
+				vPos.y + (m_vAllMapTrans[1] - m_vAllMapPre[1]),
+				vPos.z + (m_vAllMapTrans[2] - m_vAllMapPre[2]) };
+
+			pMapObject->Get_Transform()->Set_Position(vTranslation);
+
+			for (auto& iter : m_vecSaveObject)
+			{
+				iter.matTransform._41 += (m_vAllMapTrans[0] - m_vAllMapPre[0]);
+				iter.matTransform._42 += (m_vAllMapTrans[1] - m_vAllMapPre[1]);
+				iter.matTransform._43 += (m_vAllMapTrans[2] - m_vAllMapPre[2]);
+			}
+
+			for (auto& iter : m_vecSaveInsObject)
+			{
+				iter.matTransform._41 += (m_vAllMapTrans[0] - m_vAllMapPre[0]);
+				iter.matTransform._42 += (m_vAllMapTrans[1] - m_vAllMapPre[1]);
+				iter.matTransform._43 += (m_vAllMapTrans[2] - m_vAllMapPre[2]);
+			}
+		}		
+
+		for (size_t i = 0; i < 3; i++)
+		{
+			m_vAllMapPre[i] = m_vAllMapTrans[i];
+		}
+	}	
 }
 
 HRESULT CObject_Window::Save_MapObject(string szMapDataPath)
