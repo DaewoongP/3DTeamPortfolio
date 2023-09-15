@@ -1,6 +1,7 @@
 #include "../Public/Component_Manager.h"
 #include "../Public/Component.h"
 #include "Layer.h"
+#include "PhysX_Manager.h"
 #include "Level_Manager.h"
 
 IMPLEMENT_SINGLETON(CComponent_Manager)
@@ -198,8 +199,15 @@ HRESULT CComponent_Manager::Clear_Layer(_uint iLevelIndex, const _tchar* pLayerT
 	return pLayer->Clear_Layer();
 }
 
-void CComponent_Manager::Set_CurrentScene(const _tchar* pSceneTag)
+void CComponent_Manager::Set_CurrentScene(const _tchar* pSceneTag, _bool isSimulation)
 {
+	CPhysX_Manager* pPhysX_Manager = CPhysX_Manager::GetInstance();
+	Safe_AddRef(pPhysX_Manager);
+
+	pPhysX_Manager->Set_Simulation(isSimulation);
+
+	Safe_Release(pPhysX_Manager);
+
 	for (_uint i = 0; i < m_iNumLevels; ++i)
 	{
 		for (auto& Pair : m_pCurrentLayers[i])

@@ -85,7 +85,7 @@ private:
 
 public:
 	const _tchar* Get_CurrentSceneTag() const { return m_szCurrentSceneTag; }
-	void Set_CurrentScene(const _tchar* pSceneTag);
+	void Set_CurrentScene(const _tchar* pSceneTag, _bool isSimulation);
 
 public:
 	void	Tick(_float fTimeDelta);

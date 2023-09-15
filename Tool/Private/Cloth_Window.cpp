@@ -23,7 +23,7 @@ HRESULT CCloth_Window::Initialize(ImVec2 _vWindowPos, ImVec2 _vWindowSize)
 		MSG_BOX("Failed Create CCustomModel");
 		return E_FAIL;
 	}
-
+	
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_Dummy_Cloth"),
 		CDummy_Cloth::Create(m_pDevice, m_pContext))))
 	{
@@ -37,7 +37,7 @@ HRESULT CCloth_Window::Initialize(ImVec2 _vWindowPos, ImVec2 _vWindowSize)
 		MSG_BOX("Failed Clone Dummy_Cloth");
 		return E_FAIL;
 	}
-	
+		
 	m_pCollider = static_cast<CCollider*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Sphere_Collider")));
 	m_pRenderer = static_cast<CRenderer*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Renderer")));
 

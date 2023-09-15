@@ -72,6 +72,8 @@ HRESULT CPhysX_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* p
 
 void CPhysX_Manager::Tick(_float fTimeDelta)
 {
+	if (false == m_isSimulation)
+		return;
 	// 피직스의 처리를 위한 함수들.
 	// 1/60으로 고정해두는 형태가 필요함.
 	// fTimeDelta를 사용할 경우 프레임에 따라 처리가 달라질 수 있음.

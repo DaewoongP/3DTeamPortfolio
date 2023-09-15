@@ -63,7 +63,7 @@ HRESULT CLevel_MainGame::Initialize()
 	BEGININSTANCE;
 	/* 게임 초기화와 함께 월드시간 초기화 */
 	pGameInstance->Reset_World_TimeAcc();
-	pGameInstance->Set_CurrentScene(TEXT("Scene_Main"));
+	pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
 	ENDINSTANCE;
 
 	return S_OK;
@@ -78,11 +78,11 @@ void CLevel_MainGame::Tick(_float fTimeDelta)
 	// 씬변경 테스트
 	if (pGameInstance->Get_DIKeyState(DIK_T, CInput_Device::KEY_DOWN))
 	{
-		pGameInstance->Set_CurrentScene(TEXT("Scene_Main"));
+		pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
 	}
 	if (pGameInstance->Get_DIKeyState(DIK_Y, CInput_Device::KEY_DOWN))
 	{
-		pGameInstance->Set_CurrentScene(TEXT("Scene_Info"));
+		pGameInstance->Set_CurrentScene(TEXT("Scene_Info"), false);
 	}
 	// 멀티스레드 로딩 테스트
 	if (pGameInstance->Get_DIKeyState(DIK_N, CInput_Device::KEY_DOWN))
@@ -92,13 +92,6 @@ void CLevel_MainGame::Tick(_float fTimeDelta)
 
 	if (nullptr != m_pLoader)
 	{
-		if (m_pLoader->Get_Finished())
-		{
-			Safe_Release(m_pLoader);
-			pGameInstance->Set_CurrentScene(TEXT("Scene_Main"));
-			return;
-		}
-
 		_ulong dwData = { 0 };
 
 		if (TRUE == GetExitCodeThread(m_pLoader->Get_Thread(), &dwData))
@@ -108,8 +101,17 @@ void CLevel_MainGame::Tick(_float fTimeDelta)
 				MSG_BOX("Loading Failed");
 				PostQuitMessage(0);
 				Safe_Release(m_pLoader);
+				ENDINSTANCE;
 				return;
 			}
+		}
+
+		if (m_pLoader->Get_Finished())
+		{
+			Safe_Release(m_pLoader);
+			pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
+			ENDINSTANCE;
+			return;
 		}
 	}
 
@@ -464,7 +466,7 @@ HRESULT CLevel_MainGame::Ready_Layer_Debug(const _tchar* pLayerTag)
 		ENDINSTANCE;
 		return E_FAIL;
 	}
-	
+
 	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Camera_Debug"), pLayerTag, TEXT("GameObject_Camera_Debug"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Camera_Debug)");
@@ -513,7 +515,7 @@ HRESULT CLevel_MainGame::Ready_Layer_SceneTest(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	
+
 
 	Safe_Release(pGameInstance);
 
