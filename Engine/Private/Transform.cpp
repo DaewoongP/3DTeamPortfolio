@@ -72,7 +72,7 @@ void CTransform::Set_Scale(_float3 _vScale)
 void CTransform::Set_Scale_No_Zero(_float3 _vScale)
 {
 	/* Tool에서 맵 오브젝트를 설치할 때 실수로 0의 값을 집어넣는
-	경우를 막기위한 함수 */
+	경우를 막기위한 함수*/
 
 	_float3 vRight = Get_Right();
 	_float3 vUp = Get_Up();
