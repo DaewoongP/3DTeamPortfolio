@@ -47,12 +47,7 @@ void CMapObject::Late_Tick(_float fTimeDelta)
 
 	if (nullptr != m_pRenderer)
 	{
-		m_eRenderCount = RT_NORMAL;
-
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
-#ifdef _DEBUG
-		//m_pRenderer->Add_RenderGroup(CRenderer::RENDER_PICKING, this);
-#endif // _DEBUG
 	}
 }
 
@@ -68,44 +63,17 @@ HRESULT CMapObject::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	// 일반 그리기
-	if (RT_NORMAL == m_eRenderCount)
+	_uint		iNumMeshes = m_pModel->Get_NumMeshes();
+
+	for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; iMeshCount++)
 	{
-		_uint		iNumMeshes = m_pModel->Get_NumMeshes();
+		m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", iMeshCount, DIFFUSE);
 
-		for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; iMeshCount++)
-		{
-			m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", iMeshCount, DIFFUSE);
+		m_pShader->Begin("Mesh");
 
-			m_pShader->Begin("Mesh");
-
-			if (FAILED(m_pModel->Render(iMeshCount)))
-				return E_FAIL;
-		}
-
-		m_eRenderCount = RT_PICKING;
+		if (FAILED(m_pModel->Render(iMeshCount)))
+			return E_FAIL;
 	}
-
-#ifdef _DEBUG
-	//// 피킹용 그리기
-	//else if (RT_PICKING == m_eRenderCount)
-	//{
-	//	m_pShader->Bind_RawValue("g_vColor", &m_vColor, sizeof(_float4));
-
-	//	_uint		iNumMeshes = m_pModel->Get_NumMeshes();
-
-	//	for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; iMeshCount++)
-	//	{
-
-	//		m_pShader->Begin("Picking");
-
-	//		if (FAILED(m_pModel->Render(iMeshCount)))
-	//			return E_FAIL;
-	//	}
-
-	//	m_eRenderCount = RT_END;
-	//}
-#endif // _DEBUG
 
 	return S_OK;
 }

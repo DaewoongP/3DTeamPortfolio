@@ -169,7 +169,7 @@ HRESULT CLevel_MainGame::Ready_Layer_BackGround(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	//Load_MapObject();
+	Load_MapObject();
 
 	Safe_Release(pGameInstance);
 
@@ -256,7 +256,7 @@ HRESULT CLevel_MainGame::Load_MapObject()
 	//_tchar dataFile[MAX_PATH] = { 0 };
 	//_stprintf_s(dataFile, TEXT("../../Resources/GameData/MapData/MapData%d.ddd"), (Num));
 
-	_tchar dataFile[MAX_PATH] = TEXT("../../Resources/GameData/MapData/MapData.ddd");
+	_tchar dataFile[MAX_PATH] = TEXT("../../Resources/GameData/MapData/0916123.ddd");
 
 	HANDLE hFile = CreateFile(dataFile, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
@@ -268,7 +268,6 @@ HRESULT CLevel_MainGame::Load_MapObject()
 
 	// 맵 오브젝트 번호
 	_uint iObjectNum = 0;
-	vector<const _tchar*> wszModelName;
 
 	DWORD	dwByte = 0;
 
@@ -299,40 +298,26 @@ HRESULT CLevel_MainGame::Load_MapObject()
 			break;
 		}
 
-		_uint iCount = 0;
+		BEGININSTANCE;
 
-		// 이미 생성된 프로토타입이 아니어야 생성
-		BEGININSTANCE; for (auto& iter : wszModelName)
+		// 프로토타입 생성 부분
+		wstring ws(LoadDesc.wszTag);
+		size_t findIndex = ws.find(TEXT("Model_")) + 6;
+
+		wstring modelName = ws.substr(findIndex);
+
+		wstring modelPath(TEXT("../../Resources/Models/MapObject/NonAnims/"));
+		modelPath += modelName;
+		modelPath += TEXT("/");
+		modelPath += modelName;
+		modelPath += TEXT(".dat");
+
+		// 프로토타입 생성
+		_float4x4 PivotMatrix = XMMatrixIdentity();
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAINGAME, LoadDesc.wszTag,
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, modelPath.c_str(), PivotMatrix), true)))
 		{
-			if (!lstrcmp(iter, LoadDesc.wszTag))
-			{
-				++iCount;
-			}
-		}
-
-		if (0 == iCount)
-		{
-			wszModelName.push_back(LoadDesc.wszTag);
-
-			// 프로토타입 생성 부분
-			wstring ws(LoadDesc.wszTag);
-			size_t findIndex = ws.find(TEXT("Model_")) + 6;
-
-			wstring modelName = ws.substr(findIndex);
-
-			wstring modelPath(TEXT("../../Resources/Models/MapObject/NonAnims/"));
-			modelPath += modelName;
-			modelPath += TEXT("/");
-			modelPath += modelName;
-			modelPath += TEXT(".dat");
-
-			// 프로토타입 생성
-			_float4x4 PivotMatrix = XMMatrixIdentity();
-			if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAINGAME, LoadDesc.wszTag,
-				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, modelPath.c_str(), PivotMatrix))))
-			{
-				MSG_BOX("Failed to Create New Model Prototype");
-			}
+			MSG_BOX("Failed to Create New Model Prototype");
 		}
 
 		// 맵 오브젝트에 번호 붙여줌
@@ -355,7 +340,6 @@ HRESULT CLevel_MainGame::Load_MapObject()
 
 		pObject->Add_Model_Component(LoadDesc.wszTag);
 		pObject->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMesh"));
-		pObject->Set_Color(iObjectNum); // 고유한 색깔 값을 넣어줌
 
 		++iObjectNum; ENDINSTANCE;
 	}

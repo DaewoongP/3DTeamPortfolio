@@ -1184,7 +1184,7 @@ HRESULT CObject_Window::Save_MapObject(string szMapDataPath)
 		{
 			MSG_BOX("Failed to Write m_vecSaveObject.vPos");
 			return E_FAIL;
-		}			
+		}
 
 		if (!WriteFile(hFile, &iter.iTagLen, sizeof(_uint), &dwByte, nullptr))
 		{ 
@@ -1618,7 +1618,7 @@ _float3 CObject_Window::Find_PickingPos()
 	_float4 vRayPos = { 0.f, 0.f, 0.f, 1.f };
 	_float4 vRayDir = { 0.f, 0.f, 0.f, 0.f };
 
-	// shift키를 누르고 있으면 격자에 딱 맞게 위치가 반올림됨
+	// U키를 누르면 마우스 움직임 봉쇄
 	if (true == m_pGameInstance->Get_DIKeyState(DIK_U, CInput_Device::KEY_DOWN))
 	{
 		m_isLockMouseMove = !m_isLockMouseMove;
