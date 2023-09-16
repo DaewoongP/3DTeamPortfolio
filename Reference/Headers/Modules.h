@@ -95,7 +95,7 @@ struct ENGINE_DLL SHAPE_MODULE : public MODULE
 	HRESULT Save(const _tchar* _pDirectoyPath);
 	HRESULT Load(const _tchar* _pDirectoyPath);
 	void Restart();
-
+	void Set_ShapeLook(_float3 vSourPos, _float3 vDestPos);
 	string strShape = { "Sphere" }; // Shpere, Box, Mesh, Sprite, Rectangle
 	string strBoxEmitFrom = { "Volume" }; // Volume, Sheel, Edge
 

@@ -20,19 +20,19 @@ HRESULT CProtego_Effect::Initialize_Prototype(_uint _iLevel)
 	m_iLevel = _iLevel;
 	BEGININSTANCE;
 
-	/* For.Prototype_Component_Shader_Protego */
-	/*if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_Component_Shader_Protego")))
-	{
-		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_Component_Shader_Protego"),
-			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Protego.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements))))
-			return E_FAIL;
-	}*/
-
 	/* For.Prototype_Component_Shader_VtxMesh */
 	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_Component_Shader_Protego")))
 	{
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_Component_Shader_Protego"),
 			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Protego.hlsl"), VTXPOSNORTEX_DECL::Elements, VTXPOSNORTEX_DECL::iNumElements))))
+			return E_FAIL;
+	}
+
+	/* For.Prototype_GameObject_DefaultConeEmit_Particle */
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_DefaultConeEmit_Particle")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_DefaultConeEmit_Particle"),
+			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/DefaultConeEmit"), m_iLevel))))
 			return E_FAIL;
 	}
 
@@ -100,14 +100,18 @@ void CProtego_Effect::Tick(_float fTimeDelta)
 	
 	if (pGameInstance->Get_DIKeyState(DIK_K))
 	{
-		Play();
+		Play_ForceField();
 	}
 	if (pGameInstance->Get_DIKeyState(DIK_L))
 	{
-		Exit();
+		Exit_ForceField();
 	}
-
+	if (pGameInstance->Get_DIKeyState(DIK_J))
+	{
+		Hit_Effect(_float3(3.f, 3.f, 3.f));
+	}
 #endif // _DEBUG
+
 	m_fTimeAcc += fTimeDelta;
 	switch (m_eCurState)
 	{
@@ -172,17 +176,27 @@ HRESULT CProtego_Effect::Render()
 	return S_OK;
 }
 
-void CProtego_Effect::Play()
+void CProtego_Effect::Play_ForceField()
 {
 	m_eCurState = ENTER;
 	m_fTimeAcc = 0.f;
 	m_pTransform->Set_Scale(_float3(0.f, 0.f, 0.f));
 }
 
-void CProtego_Effect::Exit()
+void CProtego_Effect::Exit_ForceField()
 {
 	m_fTimeAcc = 0.f;
 	m_eCurState = EXIT;
+}
+
+void CProtego_Effect::Hit_Effect(_float3 vPosition)
+{
+	// 파티클 위치 설정 후 터트리기
+	SHAPE_MODULE& shapeModule = m_pDefaultConeEmit_Particle->Get_ShapeModuleRef();
+	shapeModule.Set_ShapeLook(m_pTransform->Get_Position(), vPosition);
+	m_pDefaultConeEmit_Particle->Play();
+
+	// 
 }
 
 void CProtego_Effect::Tick_Enter(const _float& fTimeDelta)
@@ -299,6 +313,10 @@ HRESULT CProtego_Effect::Add_Components()
 		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_Component_Texture_VFX_T_Wisps_2_D"),
 			TEXT("Com_VFX_VFX_T_Wisps_2_D"), reinterpret_cast<CComponent**>(&m_pTexture[4]))))
 			throw "Com_VFX_VFX_T_Wisps_2_D";
+
+		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_DefaultConeEmit_Particle"),
+			TEXT("Com_DefaultConeEmit_Particle"), reinterpret_cast<CComponent**>(&m_pDefaultConeEmit_Particle))))
+			throw "Com_DefaultConeEmit_Particle";
 	}
 	catch (const char* pErrorMessage)
 	{
@@ -315,19 +333,19 @@ HRESULT CProtego_Effect::SetUp_ShaderResources()
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	// Matrix
+	// Matrices
 	FAILED_CHECK_RETURN(m_pShader->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr()), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShader->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ)), E_FAIL);
 
-	// Texture
+	// Textures
 	FAILED_CHECK_RETURN(m_pTexture[0]->Bind_ShaderResource(m_pShader, "g_Circle_LayerMask_Texture"), E_FAIL);
 	FAILED_CHECK_RETURN(m_pTexture[1]->Bind_ShaderResource(m_pShader, "g_Noise04_Texture"), E_FAIL);
 	FAILED_CHECK_RETURN(m_pTexture[2]->Bind_ShaderResource(m_pShader, "g_RibbonOffset_Texture"), E_FAIL);
 	FAILED_CHECK_RETURN(m_pTexture[3]->Bind_ShaderResource(m_pShader, "g_Inky_Smoke_Texture"), E_FAIL);
 	FAILED_CHECK_RETURN(m_pTexture[4]->Bind_ShaderResource(m_pShader, "g_Wisps_2_Texture"), E_FAIL);
 
-	// RawValue
+	// RawValues
 	FAILED_CHECK_RETURN(m_pShader->Bind_RawValue("g_vCamPos", pGameInstance->Get_CamPosition(), sizeof(_float4)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShader->Bind_RawValue("g_vColor1", &m_vColor1, sizeof(_float4)), E_FAIL);
@@ -377,5 +395,6 @@ void CProtego_Effect::Free()
 		for (auto pTexture : m_pTexture)
 			Safe_Release(pTexture);
 		Safe_Release(m_pBuffer);
+		Safe_Release(m_pDefaultConeEmit_Particle);
 	}
 }

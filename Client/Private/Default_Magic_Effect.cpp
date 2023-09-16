@@ -50,10 +50,10 @@ HRESULT CDefault_Magic_Effect::Initialize_Prototype(_uint iLevel)
 		}
 	}
 
-	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Default_Magic_ConeEmit_Particle")))
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_DefaultConeEmit_Particle")))
 	{
-		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Default_Magic_ConeEmit_Particle")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Default_Spell/ConeEmit"), m_iLevel))))
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_DefaultConeEmit_Particle")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/DefaultConeEmit"), m_iLevel))))
 		{
 			ENDINSTANCE;
 			return E_FAIL;
@@ -152,8 +152,8 @@ HRESULT CDefault_Magic_Effect::Add_Components()
 		, TEXT("Com_Trace_Particle"), (CComponent**)&m_pTraceParticle)))
 		return E_FAIL;
 
-	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Default_Magic_ConeEmit_Particle")
-		, TEXT("Com_ConeEmit_Particle"), (CComponent**)&m_pConeEmitParticle)))
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_DefaultConeEmit_Particle")
+		, TEXT("Com_DefaultConeEmit_Particle"), (CComponent**)&m_pConeEmitParticle)))
 		return E_FAIL;
 	
 	return S_OK;

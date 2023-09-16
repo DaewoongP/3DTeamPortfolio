@@ -17,6 +17,7 @@ class CNavigation;
 class CModel;
 class CVIBuffer_GeoSphere;
 class CVIBuffer_Rect;
+class CParticleSystem;
 END
 
 BEGIN(Client)
@@ -39,9 +40,9 @@ public:
 	virtual HRESULT Render() override;
 
 public:
-	void Play();
-
-	void Exit();
+	void Play_ForceField();
+	void Exit_ForceField();
+	void Hit_Effect(_float3 vPosition);
 
 private:
 	void Tick_Enter(const _float& fTimeDelta);
@@ -60,7 +61,8 @@ private: /* For. Component */
 	CRenderer* m_pRenderer = { nullptr };
 	CTexture* m_pTexture[5] = {};
 	CVIBuffer_GeoSphere* m_pBuffer = { nullptr };
-	
+	CParticleSystem* m_pDefaultConeEmit_Particle = { nullptr };
+
 private: // Protego¿« ¡§∫∏
 	const MAGICBALLDESC* m_pMagicBallDesc;
 
