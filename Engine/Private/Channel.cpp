@@ -40,6 +40,8 @@ HRESULT CChannel::Initialize(const Engine::CHANNEL& Channel, const CModel::BONES
 	m_iNumKeyFrames = max(Channel.iNumScalingKeys, Channel.iNumRotationKeys);
 	m_iNumKeyFrames = max(m_iNumKeyFrames, Channel.iNumPositionKeys);
 
+	m_iNumKeyFrames -= 1;
+
 	_float3	vScale;
 	ZEROMEM(&vScale);
 	_float4	vRotation;

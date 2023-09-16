@@ -57,6 +57,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
 
+
 	return S_OK;
 }
 
@@ -70,8 +71,8 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	m_pStateContext->Tick(fTimeDelta);
 
-	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UNDERBODY);
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
+	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UNDERBODY);
 }
 
 void CPlayer::Late_Tick(_float fTimeDelta)
