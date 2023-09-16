@@ -20,6 +20,11 @@ private:
 	virtual ~CDummy() = default;
 
 public:
+	CModel* Get_Model() const {
+		return m_pModel;
+	}
+
+public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;
