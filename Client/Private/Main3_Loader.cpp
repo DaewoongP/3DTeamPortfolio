@@ -98,15 +98,13 @@ HRESULT CMain3_Loader::Loading_For_MainGame()
 		return E_FAIL;
 	try /* Failed Check Add_Prototype*/
 	{
-		
-
 		/* For.Prototype_GameObject_Player*/
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Player"),
 			CPlayer::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Player");
 
 		_float4x4 PivotMatrix;
-		PivotMatrix = XMMatrixRotationAxis(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f), XMConvertToRadians(180.0f));
+		PivotMatrix = XMMatrixRotationQuaternion(XMQuaternionRotationRollPitchYaw(0.f, XMConvertToRadians(180.f), 0.f));
 		/* For.Prototype_Component_Model_CustomModel_Player */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_CustomModel_Player"),
 			CCustomModel::Create(m_pDevice, m_pContext, CCustomModel::TYPE_ANIM, L"../../Resources/Models/Anims/Biped_Skeleton_jog_idle_face/Biped_Skeleton_jog_idle_face.gcm", PivotMatrix))))

@@ -148,7 +148,7 @@ HRESULT CTest_Player::Add_Components()
 	RigidBodyDesc.fStaticFriction = 0.5f; // 가만히 있을때 움직이기 위한 최소 힘의 수치 0~1
 	RigidBodyDesc.fDynamicFriction = 0.5f; // 움직일때 멈추기위한 마찰력? 0~1
 	RigidBodyDesc.fRestitution = 0.f; // 탄성값이 얼마나 들어갈 것인가 0~1 -> 1로주면 존나튑니다 보통 0으로줍니다.
-	PxCapsuleGeometry GeoMetry = PxCapsuleGeometry(1.f, 2.f); // Px~Geometry
+	PxCapsuleGeometry GeoMetry = PxCapsuleGeometry(0.5f, 1.f); // Px~Geometry
 	//PxSphereGeometry
 	//PxBoxGeometry
 	RigidBodyDesc.pGeometry = &GeoMetry; // 위에서 만든거 넣어주시면됩니다.
@@ -163,7 +163,8 @@ HRESULT CTest_Player::Add_Components()
 		MSG_BOX("Failed CTest_Player Add_Component : (Com_RigidBody)");
 		return E_FAIL;
 	}
-	RigidBodyDesc.pOwnerObject = this;
+	// 추가 콜라이더 만드는방법
+	/*RigidBodyDesc.pOwnerObject = this;
 	RigidBodyDesc.isStatic = true;
 	RigidBodyDesc.isTrigger = true;
 	RigidBodyDesc.vOffsetPosition = _float3(-5.f, 3.f, 5.f);
@@ -174,7 +175,7 @@ HRESULT CTest_Player::Add_Components()
 	PxBoxGeometry BoxGeometry = PxBoxGeometry(3.f, 1.f, 1.f);
 	RigidBodyDesc.pGeometry = &BoxGeometry;
 	RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 0.f, 1.f);
-	m_pRigidBody->Create_Collider(&RigidBodyDesc);
+	m_pRigidBody->Create_Collider(&RigidBodyDesc);*/
 	// 리지드바디 액터 옵션 추가
 	
 	PxRigidBody* Rigid = m_pRigidBody->Get_RigidBodyActor();

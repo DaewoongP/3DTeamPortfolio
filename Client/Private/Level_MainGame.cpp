@@ -256,6 +256,8 @@ HRESULT CLevel_MainGame::Ready_Layer_NPC(const _tchar* pLayerTag)
 
 HRESULT CLevel_MainGame::Load_MapObject(const _tchar* pObjectFilePath)
 {
+	std::lock_guard<std::mutex> lock(mtx);
+
 	HANDLE hFile = CreateFile(pObjectFilePath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
 	if (INVALID_HANDLE_VALUE == hFile)
@@ -271,21 +273,20 @@ HRESULT CLevel_MainGame::Load_MapObject(const _tchar* pObjectFilePath)
 
 	while (true)
 	{
-		LOADOBJECTDESC LoadDesc;
-		ZEROMEM(&LoadDesc);
-
-		if (!ReadFile(hFile, &LoadDesc.matTransform, sizeof(_float4x4), &dwByte, nullptr))
+		CMapObject::MAPOBJECTDESC MapObjectDesc;
+		
+		if (!ReadFile(hFile, &MapObjectDesc.WorldMatrix, sizeof(_float4x4), &dwByte, nullptr))
 		{
 			MSG_BOX("Failed to Read m_vecSaveObject.vPos");
 			return E_FAIL;
 		}
 
-		if (!ReadFile(hFile, &LoadDesc.iTagLen, sizeof(_uint), &dwByte, nullptr))
+		if (!ReadFile(hFile, &MapObjectDesc.iTagLen, sizeof(_uint), &dwByte, nullptr))
 		{
 			MSG_BOX("Failed to Read m_vecSaveObject.iTagLen");
 		}
 
-		if (!ReadFile(hFile, &LoadDesc.wszTag, LoadDesc.iTagLen, &dwByte, nullptr))
+		if (!ReadFile(hFile, &MapObjectDesc.wszTag, MapObjectDesc.iTagLen, &dwByte, nullptr))
 		{
 			MSG_BOX("Failed to Read m_vecSaveObject.wszTag");
 			return E_FAIL;
@@ -304,19 +305,12 @@ HRESULT CLevel_MainGame::Load_MapObject(const _tchar* pObjectFilePath)
 		// 번호를 붙인 태그로 MapObject 등록
 		if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME,
 			TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_BackGround"),
-			wszobjName, &LoadDesc.matTransform)))
+			wszobjName, &MapObjectDesc)))
 		{
 			MSG_BOX("Failed to Install MapObject");
 			ENDINSTANCE;
 			return E_FAIL;
 		}
-
-		// 마지막에 설치한 맵 오브젝트 주소 가져옴
-		CMapObject* pObject = static_cast<CMapObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME,
-			TEXT("Layer_BackGround"), wszobjName));
-
-		pObject->Add_Model_Component(LoadDesc.wszTag);
-		pObject->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMesh"));
 
 		++iObjectNum; ENDINSTANCE;
 	}
