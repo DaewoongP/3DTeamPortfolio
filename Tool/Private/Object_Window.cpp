@@ -1256,8 +1256,10 @@ HRESULT CObject_Window::Load_MapObject(const _tchar* wszMapDataPath)
 
 	CloseHandle(hFile);
 
+	_uint iPreCnt = m_iMapObjectIndex;
+
 	// 로드한 데이터를 적용시켜 주는 부분
-	for (size_t i = 0; i < m_vecSaveObject.size(); i++)
+	for (size_t i = iPreCnt; i < m_vecSaveObject.size(); i++)
 	{
 		// 맵 오브젝트에 번호 붙여줌
 		_tchar wszobjName[MAX_PATH] = { 0 };
