@@ -1,16 +1,17 @@
 #pragma once
+
 #include "StateMachine.h"
 
 BEGIN(Client)
 
-class CIdleState :
+class CMoveStartState :
     public CStateMachine
 {
 
 private:
-    explicit CIdleState(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext);
-    explicit CIdleState(const CIdleState& rhs);
-    virtual ~CIdleState() = default;
+    explicit CMoveStartState(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext);
+    explicit CMoveStartState(const CMoveStartState& rhs);
+    virtual ~CMoveStartState() = default;
 
 public:
     //Get,Set
@@ -25,16 +26,26 @@ public:
     virtual void OnStateTick();
     virtual void OnStateExit();
 
-private:
-    void Go_Turn();
+    void LookFront();
 
-    void Go_Start();
+    void Go_Idle();
 
+    void Go_Loop();
+
+    void Over_135();
+
+
+    void None_Angle();
+
+    void Right_Angle();
+
+    void Left_Angle();
 
 public:
-    static CIdleState* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);
+    static CMoveStartState* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
     virtual CComposite* Clone(void* pArg) override;
     virtual void Free() override;
 };
 
 END
+

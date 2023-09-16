@@ -29,7 +29,8 @@ private:
 
 	//for. Get, Set
 public:
-
+	_float3 Get_CamLookXZ();
+	_float3 Get_CamRightXZ();
 public:
 
 public:
@@ -66,6 +67,8 @@ private:
 	_float m_fTimeSpeed = { 0.0f };
 
 	_float4x4 m_FollowTargetMatrix{};
+
+	_float m_fCameraHeight{ 0.0f };
 
 private:
 	void	Mouse_Input(_float _TimeDelta);

@@ -4,6 +4,7 @@
 BEGIN(Engine)
 
 class CModel;
+class CTransform;
 
 END
 
@@ -14,18 +15,7 @@ class CStateMachine :
 {
     //컴포넌트니까 전부 오너를 가질 수 있다.
     //오너의 모델을 가지고 있다가 변경한다.
-protected:
-    enum LOOKANGLE
-    {
-        L45,
-        L90,
-        L135,
-        L180, 
-        R45,
-        R90,
-        R135,
-        R180
-    };
+
 public:
 
 protected:
@@ -35,6 +25,14 @@ protected:
 
 public:
     //Get,Set
+public:
+    HRESULT Set_StateMachine(const _tchar* _pTag);
+public:
+    void Set_OwnerModel(CModel* _pOwnerModel);
+    void Set_OwnerLookAngle(_float* _pOwnerLookAngle);
+    void Set_IsDirectionKeyPressed(_bool* _pIsDirectionKeyPressed);
+    void Set_PlayerTransform(CTransform* _pPlayerTransform);
+
 
 public:
     virtual HRESULT Initialize_Prototype();
@@ -45,14 +43,16 @@ public:
     virtual void OnStateEnter() {};
     virtual void OnStateTick()  {};
     virtual void OnStateExit()  {};
-public:
-    void Set_OwnerModel(CModel* _pOwnerModel);
-    void Set_OwnerLookAngle(_float* _pOwnerLookAngle);
+
 
 protected:
     CModel* m_pOwnerModel = { nullptr };
     _float* m_pOwnerLookAngle = { nullptr };
+    _bool* m_pIsDirectionKeyPressed = { nullptr };
+    CTransform* m_pPlayerTransform = { nullptr };
     
+    _float m_f45Angle = { XMConvertToRadians(45.0f) };
+    _float m_f135Angle = { XMConvertToRadians(135.0f) };
     
 public:
     static CStateMachine* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

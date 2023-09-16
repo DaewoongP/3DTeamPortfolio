@@ -166,6 +166,9 @@
     <ClInclude Include="..\Public\Action.h" />
     <ClInclude Include="..\Public\Action_Deflect.h" />
     <ClInclude Include="..\Public\Check_Distance.h" />
+    <ClInclude Include="..\Public\MoveLoopState.h" />
+    <ClInclude Include="..\public\MoveStartState.h" />
+    <ClInclude Include="..\Public\MoveTurnState.h" />
     <ClInclude Include="..\public\Protego_Effect.h" />
     <ClInclude Include="..\Public\Default_MagicTraill_Effect.h" />
     <ClInclude Include="..\Public\Levioso.h" />
@@ -177,6 +180,7 @@
     <ClInclude Include="..\Public\Sequence_Attack.h" />
     <ClInclude Include="..\Public\Sequence_Groggy.h" />
     <ClInclude Include="..\Public\Sequence_MoveTarget.h" />
+    <ClInclude Include="..\Public\StateContext.h" />
     <ClInclude Include="..\public\StateMachine.h" />
     <ClInclude Include="..\public\IdleState.h" />
     <ClInclude Include="..\Public\UI_Image.h">
@@ -322,13 +326,15 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="Resource.h" />
-    <ClInclude Include="StateContext.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Action.cpp" />
     <ClCompile Include="..\Private\Action_Deflect.cpp" />
     <ClCompile Include="..\Private\Check_Distance.cpp" />
+    <ClCompile Include="..\Private\MoveLoopState.cpp" />
+    <ClCompile Include="..\private\MoveStartState.cpp" />
+    <ClCompile Include="..\Private\MoveTurnState.cpp" />
     <ClCompile Include="..\private\Protego_Effect.cpp" />
     <ClCompile Include="..\Private\Default_MagicTraill_Effect.cpp" />
     <ClCompile Include="..\Private\Levioso.cpp" />

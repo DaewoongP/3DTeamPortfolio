@@ -3,6 +3,8 @@
 #include "Player_Camera.h"
 #include "Magic.h"
 #include "Weapon_Player_Wand.h"
+#include "StateContext.h"
+#include "IdleState.h"
 
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -45,12 +47,12 @@ HRESULT CPlayer::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
-	/*if (FAILED(Ready_Caemra()))
+	if (FAILED(Ready_Caemra()))
 	{
 		MSG_BOX("Failed Ready Player Caemra");
 
 		return E_FAIL;
-	}*/
+	}
 
 	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
@@ -64,15 +66,19 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	Key_Input(fTimeDelta);
 
-	m_pCustomModel->Set_WindVelocity(_float3(50.f, 50.f, 50.f));
-	m_pCustomModel->Tick(CCustomModel::ROBE, 2, fTimeDelta);
+	UpdateLookAngle();
 
-	m_pCustomModel->Play_Animation(fTimeDelta);
+	m_pStateContext->Tick(fTimeDelta);
+
+	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
+	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UNDERBODY);
 }
 
 void CPlayer::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
+
+	m_pStateContext->Late_Tick(fTimeDelta);
 
 	if (nullptr != m_pRenderer)
 	{
@@ -154,6 +160,21 @@ HRESULT CPlayer::Add_Components()
 		TEXT("Com_Model_CustomModel_Player"), reinterpret_cast<CComponent**>(&m_pCustomModel))))
 	{
 		MSG_BOX("Failed CPlayer Add_Component : (Com_Model_CustomModel_Player)");
+		return E_FAIL;
+	}
+
+	CStateContext::STATECONTEXTDESC StateContextDesc{};
+
+	StateContextDesc.pOwnerModel = m_pCustomModel;
+	StateContextDesc.pOwnerLookAngle = &m_fLookAngle;
+	StateContextDesc.pIsDirectionPressed = &m_isDirectionKeyPressed;
+	StateContextDesc.pPlayerTransform = m_pTransform;
+
+	/* For.Com_StateContext */
+	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_StateContext"),
+		TEXT("Com_StateContext"), reinterpret_cast<CComponent**>(&m_pStateContext),&StateContextDesc)))
+	{
+		MSG_BOX("Failed CPlayer Add_Component : (Com_StateContext)");
 		return E_FAIL;
 	}
 
@@ -304,11 +325,11 @@ HRESULT CPlayer::Ready_MeshParts()
 	//Robe
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_MAINGAME,
-		TEXT("Prototype_Component_MeshPart_Player_Robe"),
+		TEXT("Prototype_Component_MeshPart_Robe01"),
 		CCustomModel::ROBE)))
 	{
 		MSG_BOX("Failed Add MeshPart Robe");
-
+	
 		return E_FAIL;
 	}
 
@@ -318,7 +339,7 @@ HRESULT CPlayer::Ready_MeshParts()
 		TEXT("Prototype_Component_MeshPart_Player_Top"),
 		CCustomModel::TOP)))
 	{
-		MSG_BOX("Failed Add MeshPart Upper");
+		MSG_BOX("Failed Add MeshPart Top");
 
 		return E_FAIL;
 	}
@@ -329,7 +350,7 @@ HRESULT CPlayer::Ready_MeshParts()
 		TEXT("Prototype_Component_MeshPart_Player_Pants"),
 		CCustomModel::PANTS)))
 	{
-		MSG_BOX("Failed Add MeshPart Lower");
+		MSG_BOX("Failed Add MeshPart Pants");
 
 		return E_FAIL;
 	}
@@ -340,7 +361,7 @@ HRESULT CPlayer::Ready_MeshParts()
 		TEXT("Prototype_Component_MeshPart_Player_Socks"),
 		CCustomModel::SOCKS)))
 	{
-		MSG_BOX("Failed Add MeshPart Socks01");
+		MSG_BOX("Failed Add MeshPart Socks");
 
 		return E_FAIL;
 	}
@@ -376,7 +397,7 @@ HRESULT CPlayer::Ready_Caemra()
 	CPlayer_Camera::PLAYERCAMERADESC PlayerCameraDesc;
 
 	PlayerCameraDesc.CameraDesc = CameraDesc;
-	PlayerCameraDesc.pFollowTargetBoneMatrix = m_pCustomModel->Get_BoneCombinedTransformationMatrixPtr(iBoneIndex);
+	//PlayerCameraDesc.pFollowTargetBoneMatrix = m_pCustomModel->Get_BoneCombinedTransformationMatrixPtr(iBoneIndex);
 	PlayerCameraDesc.pFollowTargetMatrix = m_pTransform->Get_WorldMatrixPtr();
 
 	m_pPlayer_Camera = CPlayer_Camera::Create(m_pDevice,m_pContext, &PlayerCameraDesc);
@@ -396,6 +417,7 @@ HRESULT CPlayer::Ready_Caemra()
 	return S_OK;
 }
 
+
 void CPlayer::MagicTestTextOutput()
 {
 	cout << "마법 발동" << endl;
@@ -414,15 +436,42 @@ void CPlayer::Tick_ImGui()
 
 void CPlayer::UpdateLookAngle()
 {
-	//카메라의 룩을 가지고 온다.
 	BEGININSTANCE;
+	
+	m_isDirectionKeyPressed = false;
 
-	_float3 vCamLook = *pGameInstance->Get_CamLook();
+	//키 입력에 따라 비교 각이 바뀐다.
 
-	//y값 지우고
-	vCamLook = XMVectorSetY(vCamLook, 0.0f);
+	_float3 vNextLook{};
 
-	vCamLook.Normalize();
+	//앞 키 > 룩
+	if (pGameInstance->Get_DIKeyState(DIK_W, CInput_Device::KEY_PRESSING) || 
+		pGameInstance->Get_DIKeyState(DIK_W,CInput_Device::KEY_DOWN))
+	{
+		vNextLook = m_pPlayer_Camera->Get_CamLookXZ();
+		m_isDirectionKeyPressed = true;
+	}
+	//뒷 키 > -룩
+	else if (pGameInstance->Get_DIKeyState(DIK_S, CInput_Device::KEY_PRESSING) ||
+		pGameInstance->Get_DIKeyState(DIK_S, CInput_Device::KEY_DOWN))
+	{
+		vNextLook = -m_pPlayer_Camera->Get_CamLookXZ();
+		m_isDirectionKeyPressed = true;
+	}
+	//오른쪽 키 > 라이트
+	else if (pGameInstance->Get_DIKeyState(DIK_D, CInput_Device::KEY_PRESSING) ||
+		pGameInstance->Get_DIKeyState(DIK_D, CInput_Device::KEY_DOWN))
+	{
+		vNextLook = m_pPlayer_Camera->Get_CamRightXZ();
+		m_isDirectionKeyPressed = true;
+	}
+	//왼쪽 키 > -라이트
+	else if (pGameInstance->Get_DIKeyState(DIK_A, CInput_Device::KEY_PRESSING) ||
+		pGameInstance->Get_DIKeyState(DIK_A, CInput_Device::KEY_DOWN))
+	{
+		vNextLook = -m_pPlayer_Camera->Get_CamRightXZ();
+		m_isDirectionKeyPressed = true;
+	}
 
 	//플레이어의 룩을 가지고 온다.
 	_float3 vPlayerLook = m_pTransform->Get_Look();
@@ -432,16 +481,17 @@ void CPlayer::UpdateLookAngle()
 
 	vPlayerLook.Normalize();
 
-	//내적한다.
-	_float fLookAngle = vPlayerLook.Dot(vCamLook);
+	//내적한다.cos(-1 ~ 1)
+	_float fLookAngle = vPlayerLook.Dot(vNextLook);
+
+	//라디안 화
+	m_fLookAngle = acosf(fLookAngle);
 
 	//좌우 구분을 위한 외적
-	if (0.0f > vPlayerLook.Cross(vCamLook).y)
+	if (0.0f > vPlayerLook.Cross(vNextLook).y)
 	{
-		fLookAngle *= -1;
+		m_fLookAngle *= -1;
 	}
-
-	m_fLookAngle = fLookAngle;
 
 	ENDINSTANCE;
 }
@@ -484,6 +534,7 @@ void CPlayer::Free()
 		Safe_Release(m_pPlayer_Camera);
 		Safe_Release(m_pMagic);
 		Safe_Release(m_pWeapon);
+		Safe_Release(m_pStateContext);
 
 	}
 }

@@ -401,6 +401,13 @@ const _float3* CGameInstance::Get_CamLook()
 	return m_pPipeLine->Get_CamLook();
 }
 
+const _float3* CGameInstance::Get_CamRight()
+{
+	NULL_CHECK_RETURN_MSG(m_pPipeLine, nullptr, TEXT("PipeLine NULL"));
+
+	return m_pPipeLine->Get_CamRight();
+}
+
 const _float* CGameInstance::Get_CamFar()
 {
 	NULL_CHECK_RETURN_MSG(m_pPipeLine, nullptr, TEXT("PipeLine NULL"));

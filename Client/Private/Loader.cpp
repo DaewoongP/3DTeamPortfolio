@@ -61,6 +61,11 @@
 
 #pragma region Player
 #include "Player.h"
+#include "StateContext.h"
+#include "IdleState.h"
+#include "MoveTurnState.h"
+#include "MoveStartState.h"
+#include "MoveLoopState.h"
 #pragma endregion Player
 
 #include "MapObject.h"
@@ -306,47 +311,83 @@ HRESULT CLoader::Loading_For_MainGame()
 			CModel_LOD::Create(m_pDevice, m_pContext, LodDesc, TEXT("../../Resources/Models/NonAnims/SM_DungeonEnterance_Cave_A/SM_DungeonEnterance_Cave_A_Lod%d.dat"), 3))))
 			throw TEXT("Prototype_Component_Model_Test_Robe_LOD");*/
 
+		PivotMatrix = XMMatrixRotationAxis(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f), XMConvertToRadians(180.0f));
 
 		/* For.Prototype_Component_Model_CustomModel_Player */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_CustomModel_Player"),
-			CCustomModel::Create(m_pDevice, m_pContext, CCustomModel::TYPE_ANIM, L"../../Resources/Models/Anims/Player/Player.dat"))))
+			CCustomModel::Create(m_pDevice, m_pContext, CCustomModel::TYPE_ANIM, L"../../Resources/Models/Anims/Biped_Skeleton_jog_idle_face/Biped_Skeleton_jog_idle_face.gcm", PivotMatrix))))
 			throw TEXT("Prototype_Component_Model_CustomModel_Player");
+
+		/* For.Prototype_Component_StateContext */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_StateContext"),
+			CStateContext::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_StateContext");
+
 #pragma region Player Parts
+
 		/* For.Prototype_Component_MeshPart_Player_Head */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshPart_Player_Head"),
-			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Player_Head/Player_Head.dat"), TEXT("Default_Head")))))
+
+			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Player_Head/Player_Head.dat"), TEXT("Player_Head")))))
 			throw TEXT("Prototype_Component_MeshPart_Player_Head");
 
 		/* For.Prototype_Component_MeshPart_Player_Arm */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshPart_Player_Arm"),
-			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Player_Arm/Player_Arm.dat"), TEXT("Default_Arm")))))
+			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Player_Arm/Player_Arm.dat"), TEXT("Player_Arm")))))
 			throw TEXT("Prototype_Component_MeshPart_Player_Arm");
 
-		/* For.Prototype_Component_MeshPart_Player_Robe */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshPart_Player_Robe"),
-			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Robe_Student/Robe_Student.dat"), TEXT("Default_Robe")))))
-			throw TEXT("Prototype_Component_MeshPart_Player_Robe");
+		/* For.Prototype_Component_MeshPart_Robe01 */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshPart_Robe01"),
+			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Robe_Student/Robe_Student.dat"), TEXT("Robe01")))))
+			throw TEXT("Prototype_Component_MeshPart_Robe01");
 
 		/* For.Prototype_Component_MeshPart_Player_Top */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshPart_Player_Top"),
-			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Player_Top/Player_Top.dat"), TEXT("Default_Top")))))
+			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Player_Top/Player_Top.dat"), TEXT("Player_Top")))))
 			throw TEXT("Prototype_Component_MeshPart_Player_Top");
 
 		/* For.Prototype_Component_MeshPart_Player_Pants */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshPart_Player_Pants"),
-			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Player_Pants/Player_Pants.dat"), TEXT("Default_Pants")))))
+			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Player_Pants/Player_Pants.dat"), TEXT("Player_Pants")))))
 			throw TEXT("Prototype_Component_MeshPart_Player_Pants");
 
 		/* For.Prototype_Component_MeshPart_Player_Socks */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshPart_Player_Socks"),
-			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Player_Socks/Player_Socks.dat"), TEXT("Default_Socks")))))
+			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Player_Socks/Player_Socks.dat"), TEXT("Player_Socks")))))
 			throw TEXT("Prototype_Component_MeshPart_Player_Socks");
 
 		/* For.Prototype_Component_MeshPart_Player_Shoes */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshPart_Player_Shoes"),
-			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Player_Shoes/Player_Shoes.dat"), TEXT("Default_Shoes")))))
+			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Player_Shoes/Player_Shoes.dat"), TEXT("Player_Shoes")))))
 			throw TEXT("Prototype_Component_MeshPart_Player_Shoes");
+
 #pragma endregion // Player Parts
+
+#pragma region Player State
+
+		/* For.Prototype_Component_State_Idle */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_State_Idle"),
+			CIdleState::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_State_Idle");
+
+		/* For.Prototype_Component_State_Move_Turn */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_State_Move_Turn"),
+			CMoveTurnState::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_State_Move_Turn");
+
+		/* For.Prototype_Component_State_Move_Start */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_State_Move_Start"),
+			CMoveStartState::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_State_Move_Start");
+
+		/* For.Prototype_Component_State_Move_Loop */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_State_Move_Loop"),
+			CMoveLoopState::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_State_Move_Loop");
+
+#pragma endregion
+
+
 
 		/* For.Prototype_Component_Model_Professor_Fig */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Professor_Fig"),

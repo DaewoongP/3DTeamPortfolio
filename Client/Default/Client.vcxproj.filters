@@ -241,6 +241,18 @@
     <Filter Include="04. Magic\MagicBall\00. BasicCast">
       <UniqueIdentifier>{753e950f-efbe-4660-a035-8339816dab1b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\01. MoveState">
+      <UniqueIdentifier>{cbccc006-d073-4d19-b0ee-2b3ba8950a41}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\01. MoveState\00. TurnState">
+      <UniqueIdentifier>{82333232-6f4e-4985-a33f-ca96b14a81f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\01. MoveState\01. StartState">
+      <UniqueIdentifier>{20ef874c-0484-4793-9cd6-f509d35738b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\01. MoveState\02. LoopState">
+      <UniqueIdentifier>{18909992-b942-42f4-bf43-2d702d0b39ef}</UniqueIdentifier>
+    </Filter>
     <Filter Include="04. Magic\MagicBall\03. Wingardiumleviosa">
       <UniqueIdentifier>{679315ef-dd4e-4f8a-8102-42d3e7531140}</UniqueIdentifier>
     </Filter>
@@ -516,9 +528,6 @@
     <ClInclude Include="..\public\StateMachine.h">
       <Filter>02. GameObject\01. Player\01. StateMachine</Filter>
     </ClInclude>
-    <ClInclude Include="StateContext.h">
-      <Filter>02. GameObject\01. Player\02. StateContext</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\IdleState.h">
       <Filter>02. GameObject\01. Player\01. StateMachine\00. IdleState</Filter>
     </ClInclude>
@@ -527,6 +536,18 @@
     </ClInclude>
     <ClInclude Include="..\Public\Weapon_Player_Wand.h">
       <Filter>02. GameObject\01. Player\01. Weapon\Wand</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\StateContext.h">
+      <Filter>02. GameObject\01. Player\02. StateContext</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MoveStartState.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\01. MoveState\01. StartState</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MoveTurnState.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\01. MoveState\00. TurnState</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MoveLoopState.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\01. MoveState\02. LoopState</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Protego_Effect.h">
       <Filter>02. GameObject\03. Effect\Protego_Effect</Filter>
@@ -790,6 +811,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\Weapon_Player_Wand.cpp">
       <Filter>02. GameObject\01. Player\01. Weapon\Wand</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MoveStartState.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\01. MoveState\01. StartState</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MoveTurnState.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\01. MoveState\00. TurnState</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MoveLoopState.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\01. MoveState\02. LoopState</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Protego_Effect.cpp">
       <Filter>02. GameObject\03. Effect\Protego_Effect</Filter>

@@ -34,6 +34,7 @@ public:
 	const _float4* Get_CamPosition();
 	const _float3* Get_CamUp();
 	const _float3* Get_CamLook();
+	const _float3* Get_CamRight();
 	const _float* Get_CamFar();
 
 public:
@@ -42,9 +43,10 @@ public:
 private:
 	_float4x4				m_TransformMatrix[D3DTS_END];
 	_float4x4				m_TransformMatrix_Inverse[D3DTS_END];
-	_float3					m_vCameraLook;
-	_float3					m_vCameraUp;
-	_float4					m_vCameraPos;
+	_float3					m_vCameraRight{};
+	_float3					m_vCameraLook{};
+	_float3					m_vCameraUp{};
+	_float4					m_vCameraPos{};
 	_float					m_fCameraFar = { 0.f };
 
 	_float4x4				m_LightTransformMatrix[D3DTS_END];
