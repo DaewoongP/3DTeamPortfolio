@@ -851,10 +851,11 @@
     <ClCompile Include="..\Private\UI_Group_T.cpp">
       <Filter>02. GameObject\05. UI\UI_Group\UI_Group_T</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Info_Main.cpp">
+      <Filter>05. Scene</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\UI_Group_Skill.cpp">
       <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Skill</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Info_Main.cpp">
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

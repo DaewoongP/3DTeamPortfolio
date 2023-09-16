@@ -290,7 +290,6 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\..\Desktop\Client\Private\UI_Group_Skill.cpp" />
     <ClCompile Include="..\Private\Action.cpp" />
     <ClCompile Include="..\Private\Action_Deflect.cpp" />
     <ClCompile Include="..\Private\Check_Distance.cpp" />
@@ -321,6 +320,7 @@
     <ClCompile Include="..\Private\UI_Group_MiniMap.cpp" />
     <ClCompile Include="..\Private\UI_Group_Potion.cpp" />
     <ClCompile Include="..\Private\UI_Group_R.cpp" />
+    <ClCompile Include="..\Private\UI_Group_Skill.cpp" />
     <ClCompile Include="..\Private\UI_Group_T.cpp" />
     <ClCompile Include="..\Private\UI_HP.cpp" />
     <ClCompile Include="..\Private\BasicCast.cpp" />
