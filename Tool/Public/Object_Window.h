@@ -114,6 +114,7 @@ private:
 
 	_int m_iModelIndex = { 0 }; // 선택된 모델 인덱스
 	_int m_iTagIndex = { 0 }; // 선택된 맵 오브젝트 태그 인덱스
+	_int m_iModelCnt = { 0 }; // 삭제와 상관없는 모델 번호
 	string m_strCurrentModel = { "Dummy" }; // 현재 활성화된 모델 이름, 초기값은 더미
 	vector<string> m_vecModelList; // 현재 추가해둔 모델 이름 리스트
 	vector<const _tchar*> m_vecModelList_t; // 모델 이름을 _tchar로 저장해둠

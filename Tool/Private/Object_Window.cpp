@@ -259,15 +259,16 @@ void CObject_Window::Install_Object(_float3 vPos)
 	{
 		// 맵 오브젝트에 번호 붙여줌
 		_tchar wszobjName[MAX_PATH] = { 0 };
-		_stprintf_s(wszobjName, TEXT("GameObject_MapObject_%d"), (m_iMapObjectIndex));
+		_stprintf_s(wszobjName, TEXT("GameObject_MapObject_%d"), (m_iModelCnt));
 		Deep_Copy_Tag(wszobjName);
+		++m_iModelCnt;
 
 		_float4x4 vWorldMatrix = m_pDummy->Get_Transform()->Get_WorldMatrix();
 
 		// 번호를 붙인 태그로 MapObject 등록
 		if (FAILED(m_pGameInstance->Add_Component(LEVEL_TOOL,
 			TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_MapObject"), 
-			m_vecMapObjectTag.at(m_iMapObjectIndex).c_str(), &vWorldMatrix)))
+			m_vecMapObjectTag.back().c_str(), &vWorldMatrix)))
 		{
 			MSG_BOX("Failed to Install MapObject");
 			return;
@@ -279,7 +280,7 @@ void CObject_Window::Install_Object(_float3 vPos)
 
 		m_pObject->Add_Model_Component(m_vecModelList_t.at(m_iModelIndex));
 		m_pObject->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMesh"));
-		m_pObject->Set_Color(m_iMapObjectIndex); // 고유한 색깔 값을 넣어줌
+		m_pObject->Set_Color(m_iModelCnt); // 고유한 색깔 값을 넣어줌
 
 		// 저장용 벡터에 넣어준다.
 		SAVEOBJECTDESC SaveDesc;
@@ -308,15 +309,16 @@ void CObject_Window::Install_Continuous_Object(_float3 vPos)
 
 		// 맵 오브젝트에 번호 붙여줌
 		_tchar wszobjName[MAX_PATH] = { 0 };
-		_stprintf_s(wszobjName, TEXT("GameObject_MapObject_%d"), (m_iMapObjectIndex));
+		_stprintf_s(wszobjName, TEXT("GameObject_MapObject_%d"), (m_iModelCnt));
 		Deep_Copy_Tag(wszobjName);
+		++m_iModelCnt;
 
 		_float4x4 vWorldMatrix = m_pDummy->Get_Transform()->Get_WorldMatrix();
 
 		// 번호를 붙인 태그로 MapObject 등록
 		if (FAILED(m_pGameInstance->Add_Component(LEVEL_TOOL,
 			TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_MapObject"),
-			m_vecMapObjectTag.at(m_iMapObjectIndex).c_str(), &vWorldMatrix)))
+			m_vecMapObjectTag.back().c_str(), &vWorldMatrix)))
 		{
 			MSG_BOX("Failed to Install MapObject");
 			return;
@@ -328,7 +330,7 @@ void CObject_Window::Install_Continuous_Object(_float3 vPos)
 
 		m_pObject->Add_Model_Component(m_vecModelList_t.at(m_iModelIndex));
 		m_pObject->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMesh"));
-		m_pObject->Set_Color(m_iMapObjectIndex); // 고유한 색깔 값을 넣어줌
+		m_pObject->Set_Color(m_iModelCnt); // 고유한 색깔 값을 넣어줌
 
 		// 저장용 벡터에 넣어준다.
 		SAVEOBJECTDESC SaveDesc;
@@ -368,10 +370,12 @@ void CObject_Window::Install_Random_Object(_float3 vPos)
 			// 범위 내 랜덤한 곳에 설정한 수만큼 모델 설치
 			for (size_t i = 0; i < 5; i++)
 			{
+
 				// 맵 오브젝트에 번호 붙여줌
 				_tchar wszobjName[MAX_PATH] = { 0 };
-				_stprintf_s(wszobjName, TEXT("GameObject_MapObject_%d"), (m_iMapObjectIndex));
+				_stprintf_s(wszobjName, TEXT("GameObject_MapObject_%d"), (m_iModelCnt));
 				Deep_Copy_Tag(wszobjName);
+				++m_iModelCnt;
 
 				_float4x4 vWorldMatrix = m_pDummy->Get_Transform()->Get_WorldMatrix();
 
@@ -389,7 +393,7 @@ void CObject_Window::Install_Random_Object(_float3 vPos)
 				// 번호를 붙인 태그로 MapObject 등록
 				if (FAILED(m_pGameInstance->Add_Component(LEVEL_TOOL,
 					TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_MapObject"),
-					m_vecMapObjectTag.at(m_iMapObjectIndex).c_str(), &vWorldMatrix)))
+					m_vecMapObjectTag.back().c_str(), &vWorldMatrix)))
 				{
 					MSG_BOX("Failed to Install MapObject");
 					return;
@@ -401,7 +405,7 @@ void CObject_Window::Install_Random_Object(_float3 vPos)
 
 				m_pObject->Add_Model_Component(m_vecModelList_t.at(m_iModelIndex));
 				m_pObject->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMesh"));
-				m_pObject->Set_Color(m_iMapObjectIndex); // 고유한 색깔 값을 넣어줌
+				m_pObject->Set_Color(m_iModelCnt); // 고유한 색깔 값을 넣어줌
 
 				// 저장용 벡터에 넣어준다.
 				SAVEOBJECTDESC SaveDesc;
@@ -432,16 +436,18 @@ void CObject_Window::Install_Multi_Object(_float3 vPos)
 	{
 		// 맵 오브젝트에 번호 붙여줌
 		_tchar wszobjName[MAX_PATH] = { 0 };
-		_stprintf_s(wszobjName, TEXT("GameObject_InsMapObject_%d"), (m_iMapObjectIndex));
+		_stprintf_s(wszobjName, TEXT("GameObject_MapObject_%d"), (m_iModelCnt));
 		Deep_Copy_Tag(wszobjName);
+		++m_iModelCnt;
 
 		_float4x4 vWorldMatrix = m_pDummy->Get_Transform()->Get_WorldMatrix();
+
 		// 번호를 붙인 태그로 MapObject 등록
 		if (FAILED(m_pGameInstance->Add_Component(LEVEL_TOOL,
 			TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_MapObject"),
-			m_vecMapObjectTag.at(m_iMapObjectIndex).c_str(), &vWorldMatrix)))
+			m_vecMapObjectTag.back().c_str(), &vWorldMatrix)))
 		{
-			MSG_BOX("Failed to Install MapObject_Ins");
+			MSG_BOX("Failed to Install MapObject");
 			return;
 		}
 
@@ -451,7 +457,7 @@ void CObject_Window::Install_Multi_Object(_float3 vPos)
 
 		m_pObject->Add_Model_Component(m_vecModelList_t.at(m_iModelIndex));
 		m_pObject->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMesh"));
-		m_pObject->Set_Color(m_iMapObjectIndex); // 고유한 색깔 값을 넣어줌
+		m_pObject->Set_Color(m_iModelCnt); // 고유한 색깔 값을 넣어줌
 
 		++m_iMapObjectIndex;
 		++m_iInsObjectCnt;
@@ -877,7 +883,7 @@ void CObject_Window::Mesh_Picking_Menu()
 		_uint pickID = { 0 };
 		pickID = ((_uint*)MappedDesc.pData)[0];
 
-		pickID -= 4278190080;
+		pickID -= 4278190081;
 
 		string s = ("GameObject_MapObject_");
 		s += std::to_string(pickID);
@@ -887,6 +893,9 @@ void CObject_Window::Mesh_Picking_Menu()
 		for (auto& iter : m_vecObjectTag_s)
 		{
 			if (iter == s)
+				break;
+
+			if (m_iTagIndex >= m_vecObjectTag_s.size() - 1)
 				break;
 
 			++m_iTagIndex;
@@ -1252,13 +1261,14 @@ HRESULT CObject_Window::Load_MapObject(const _tchar* wszMapDataPath)
 	{
 		// 맵 오브젝트에 번호 붙여줌
 		_tchar wszobjName[MAX_PATH] = { 0 };
-		_stprintf_s(wszobjName, TEXT("GameObject_MapObject_%d"), (m_iMapObjectIndex));
+		_stprintf_s(wszobjName, TEXT("GameObject_MapObject_%d"), (m_iModelCnt));
 		Deep_Copy_Tag(wszobjName);
+		++m_iModelCnt;
 
 		// 번호를 붙인 태그로 MapObject 등록
 		if (FAILED(m_pGameInstance->Add_Component(LEVEL_TOOL,
 			TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_MapObject"),
-			m_vecMapObjectTag.at(m_iMapObjectIndex).c_str(), &m_vecSaveObject[i].matTransform)))
+			m_vecMapObjectTag.back().c_str(), &m_vecSaveObject[i].matTransform)))
 		{
 			MSG_BOX("Failed to Install MapObject");
 			return E_FAIL;
@@ -1270,7 +1280,7 @@ HRESULT CObject_Window::Load_MapObject(const _tchar* wszMapDataPath)
 
 		m_pObject->Add_Model_Component(m_vecSaveObject[i].wszTag);
 		m_pObject->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMesh"));
-		m_pObject->Set_Color(m_iMapObjectIndex); // 고유한 색깔 값을 넣어줌
+		m_pObject->Set_Color(m_iModelCnt); // 고유한 색깔 값을 넣어줌
 
 		++m_iMapObjectIndex;
 	}	
