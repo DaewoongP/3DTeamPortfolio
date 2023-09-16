@@ -55,7 +55,9 @@ private:
 
 private:
 	void Find_And_Add_Texture(const _tchar* pPath);
+#ifdef _DEBUG
 	void Tick_Imgui();
+#endif // _DEBUG
 private: /* For. Component */
 	CShader* m_pShader = { nullptr };
 	CRenderer* m_pRenderer = { nullptr };

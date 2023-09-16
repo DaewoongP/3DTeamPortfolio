@@ -259,6 +259,7 @@ void CProtego_Effect::Find_And_Add_Texture(const _tchar* pPath)
 	ENDINSTANCE;
 }
 
+#ifdef _DEBUG
 void CProtego_Effect::Tick_Imgui()
 {
 	RECT clientRect;
@@ -278,6 +279,7 @@ void CProtego_Effect::Tick_Imgui()
 
 	ImGui::End();
 }
+#endif // _DEBUG
 
 HRESULT CProtego_Effect::Add_Components()
 {
