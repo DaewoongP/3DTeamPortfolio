@@ -253,6 +253,8 @@ HRESULT CRigidBody::Render()
 
 HRESULT CRigidBody::Create_Collider(RIGIDBODYDESC* pRigidBodyDesc)
 {
+	std::lock_guard<std::mutex> lock(mtx);
+
 	CPhysX_Manager* pPhysX_Manager = CPhysX_Manager::GetInstance();
 	Safe_AddRef(pPhysX_Manager);
 
@@ -271,8 +273,7 @@ HRESULT CRigidBody::Create_Collider(RIGIDBODYDESC* pRigidBodyDesc)
 	
 	// 저항 처리
 	m_pMaterial = pPhysX->createMaterial(pRigidBodyDesc->fStaticFriction, 
-		pRigidBodyDesc->fDynamicFriction, 
-		pRigidBodyDesc->fRestitution);
+		pRigidBodyDesc->fDynamicFriction, pRigidBodyDesc->fRestitution);
 	
 	PxShapeFlags ePxFlag;
 	// 트리거 설정
@@ -567,6 +568,12 @@ void CRigidBody::Free()
 {
 	__super::Free();
 
+	if (nullptr != m_pActor)
+	{
+		m_pActor->userData = nullptr;
+		m_pActor->release();
+	}
+	
 #ifdef _DEBUG
 	for (auto& pShader : m_Shaders)
 		Safe_Release(pShader);

@@ -134,7 +134,7 @@ namespace Engine
 		_float4 vEye;
 	}ACTIONCAMERADESC;
 
-
+	// // ****************** 사용 금지 ************************* //
 	typedef struct tagCollisionDesc
 	{
 		// 삭제 예정
@@ -157,6 +157,15 @@ namespace Engine
 		const class CGameObject*	pOtherOwner = { nullptr };
 		const class CTransform*		pOtherTransform = { nullptr };
 	}COLLISIONDESC;
+
+	// 피직스 콜라이더 이벤트 구조체.
+	typedef struct tagCollisionEventDesc
+	{
+		const _tchar*				pOtherObjectTag = { nullptr };
+		const class CGameObject*	pOtherOwner = { nullptr };
+		const class CTransform*		pOtherTransform = { nullptr };
+		void*						pArg = { nullptr };
+	}COLLEVENTDESC;
 
 	typedef struct tagVertex_Position
 	{

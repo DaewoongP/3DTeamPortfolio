@@ -125,11 +125,13 @@ HRESULT CMapObject::Render_Depth()
 	BEGININSTANCE
 	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
 		return E_FAIL;
-
-	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix",pGameInstance->Get_LightView())))
+	_float4x4	ViewMatrix, ProjMatrix;
+	ViewMatrix = XMMatrixLookAtLH(_float4(0.f, 50.f, 0.f, 1.f), _float4(50.f, 0.f, 50.f, 1.f), _float4(0.f, 1.f, 0.f, 0.f));
+	ProjMatrix = XMMatrixPerspectiveFovLH(XMConvertToRadians(90.f), _float(g_iWinSizeX) / g_iWinSizeY, 1.f, 100.f);
+	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", &ViewMatrix)))
 		return E_FAIL;
 
-	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_LightProj())))
+	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", &ProjMatrix)))
 		return E_FAIL;
 	if (FAILED(m_pShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
 		return E_FAIL;

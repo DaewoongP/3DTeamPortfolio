@@ -27,6 +27,7 @@ public:
 	PxScene* Get_PhysxScene() const { return m_pPhysxScene; }
 	PxControllerManager* Get_ControllerManager() const { return m_pControllerManager; }
 	cloth::Factory* Get_ClothFactory() const { return m_pClothFactory; }
+	void Set_Simulation(_bool isSimulation) { m_isSimulation = isSimulation; }
 
 private:
 	explicit CPhysX_Manager() = default;
@@ -68,6 +69,9 @@ private: /* NvCloth */
 	cloth::Factory*				m_pClothFactory = { nullptr };
 	CNVContextCallBack*			m_pContextManagerCallBack = { nullptr };
 	CPXAssertHandler*			m_pAssertHandler = { nullptr };
+
+private:
+	_bool						m_isSimulation = { false };
 
 private:
 	PxScene* Create_Scene();

@@ -31,13 +31,16 @@ void CLight_Manager::Set_Light(_uint iIndex, CLight::LIGHTDESC LightDesc)
 	CTransform* pTransform = CTransform::Create(m_pDevice, m_pContext);
 	pTransform->Set_Position(_float3(LightDesc.vPos.x, LightDesc.vPos.y, LightDesc.vPos.z));
 	pTransform->LookAt(_float3(LightDesc.vDir.x, LightDesc.vDir.y, LightDesc.vDir.z));
-	m_ViewLight = pTransform->Get_WorldMatrix_Inverse();
+
+	m_ViewLight = XMMatrixLookAtLH(_float4(-5.f, 15.f, -5.f, 1.f), _float4(3.f, 0.f, 3.f, 1.f), _float4(0.f, 1.f, 0.f, 0.f));
+	m_ProjLight = XMMatrixPerspectiveFovLH(XMConvertToRadians(90.f), _float(1280) / 720.f, 1.f, 100.f);
+	//m_ViewLight = pTransform->Get_WorldMatrix_Inverse();
 	Safe_Release(pTransform);
 
 	CPipeLine* pPipeLine = CPipeLine::GetInstance();
 	Safe_AddRef(pPipeLine);
 
-		m_ProjLight=XMMatrixPerspectiveFovLH(XMConvertToRadians(60.f), 1280.f / 720.f, 0.2f,100.f);
+		//m_ProjLight=XMMatrixPerspectiveFovLH(XMConvertToRadians(60.f), 1280.f / 720.f, 0.2f,100.f);
 	Safe_Release(pPipeLine);
 }
 

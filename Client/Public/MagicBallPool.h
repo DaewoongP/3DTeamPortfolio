@@ -25,7 +25,7 @@ private:
 
 private:
 	CMagicBall* Create_Magic(SPELL tag);
-	void		Create_InitMagic(CGameInstance* pGameInstance, SPELL tag,const _tchar* tagName);
+	void		Create_InitMagic(CGameInstance* pGameInstance, SPELL tag, const _tchar* tagName);
 
 public:
 	static CMagicBallPool* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

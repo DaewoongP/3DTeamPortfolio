@@ -48,12 +48,21 @@ HRESULT CMagicBall::Initialize(void* pArg)
 
 	m_pWeapon = initDesc->pWeapon;
 	Safe_AddRef(m_pWeapon);
+	m_pTarget = initDesc->pTarget;
+	Safe_AddRef(m_pTarget);
 
 	m_MagicBallDesc.fLifeTime = m_MagicBallDesc.fInitLiftTime;
 	m_pTransform->Set_Position(m_MagicBallDesc.vStartPosition);
 
 	m_MagicBallDesc.vStartPosition = m_pWeapon->Get_Transform()->Get_Position() + m_pWeapon->Get_Wand_Point_Offset();
-	//cout << m_vStartPosition.x << " " << m_vStartPosition.y << " " << m_vStartPosition.z << endl;
+	
+	m_CollisionDesc.eMagicGroup = m_eMagicGroup;
+	m_CollisionDesc.eMagicType = m_eMagicType;
+	m_CollisionDesc.eBuffType = m_eBuffType;
+	m_CollisionDesc.eMagicTag = m_eMagicTag;
+	m_CollisionDesc.fDamage = m_fDamage;
+
+	Set_CollisionData(&m_CollisionDesc);
 	return S_OK;
 }
 
@@ -71,17 +80,17 @@ void CMagicBall::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 }
 
-void CMagicBall::OnCollisionEnter(COLLISIONDESC CollisionDesc)
+void CMagicBall::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
 	cout << "Player Enter" << endl;
 }
 
-void CMagicBall::OnCollisionStay(COLLISIONDESC CollisionDesc)
+void CMagicBall::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)
 {
 	cout << "stay" << endl;
 }
 
-void CMagicBall::OnCollisionExit(COLLISIONDESC CollisionDesc)
+void CMagicBall::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 {
 	cout << "Exit" << endl;
 }

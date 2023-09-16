@@ -45,6 +45,7 @@ private:
 
 public:
 	HRESULT Reset_Trail();
+	HRESULT Reset_Trail(_float3 vHighPos, _float3 vLowPos);
 
 public:
 	virtual HRESULT Initialize_Prototype();

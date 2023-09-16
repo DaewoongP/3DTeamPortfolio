@@ -64,6 +64,9 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	Key_Input(fTimeDelta);
 
+	m_pCustomModel->Set_WindVelocity(_float3(50.f, 50.f, 50.f));
+	m_pCustomModel->Tick(CCustomModel::ROBE, 2, fTimeDelta);
+
 	m_pCustomModel->Play_Animation(fTimeDelta);
 }
 
@@ -81,17 +84,17 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 #endif // _DEBUG
 }
 
-void CPlayer::OnCollisionEnter(COLLISIONDESC CollisionDesc)
+void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
 	cout << "Player Enter" << endl;
 }
 
-void CPlayer::OnCollisionStay(COLLISIONDESC CollisionDesc)
+void CPlayer::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)
 {
 	cout << "stay" << endl;
 }
 
-void CPlayer::OnCollisionExit(COLLISIONDESC CollisionDesc)
+void CPlayer::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 {
 	cout << "Exit" << endl;
 }
@@ -114,7 +117,7 @@ HRESULT CPlayer::Render()
 
 			m_pCustomModel->Bind_Material(m_pShader, "g_DiffuseTexture", iPartsIndex, i, DIFFUSE);
 
-			m_pShader->Begin("AnimMesh");
+			m_pShader->Begin("AnimMeshNonCull");
 
 			m_pCustomModel->Render(iPartsIndex, i);
 		}
@@ -183,8 +186,10 @@ HRESULT CPlayer::Add_Components()
 	CMagic::MAGICDESC magicInitDesc;
 	magicInitDesc.eBuffType = CMagic::BUFF_SHILED;
 	magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
-	magicInitDesc.eMagicType = CMagic::MT_ALL;
-	magicInitDesc.eMagicTag = PROTEGO;
+	/*magicInitDesc.eMagicType = CMagic::MT_ALL;
+	magicInitDesc.eMagicTag = PROTEGO;*/
+	magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+	magicInitDesc.eMagicTag = LEVIOSO;
 	magicInitDesc.fCoolTime = 1.f;
 	magicInitDesc.fDamage = 0.f;
 	magicInitDesc.fCastDistance = 1000;
@@ -258,7 +263,14 @@ void CPlayer::Key_Input(_float fTimeDelta)
 			// 목표의 transform과 시작 위치를 가져와야합니다.
 			// 아직 타겟 설정하는게 없어서 널로 넣었음.
 			// 지팡이 위치를 2번째 인자 pos로 넣어야하는데 지팡이도 없어서 그냥 pTransform->Get_Position()로 넣음.
-			m_pMagic->Magic_Cast(nullptr,m_pWeapon);
+			// 임의로 아무거나 집어오겠음.
+			
+			/* 이거는 테스트 용으로 더미클래스 찾으려고 넣은 코드를 훔쳐온거임 */
+			CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Debug"), TEXT("GameObject_Dummy")));
+			if (nullptr == pTestTarget)
+				throw TEXT("pTestTarget is nullptr");
+
+			m_pMagic->Magic_Cast(pTestTarget->Get_Transform(),m_pWeapon);
 		}
 	}
 
@@ -270,7 +282,7 @@ HRESULT CPlayer::Ready_MeshParts()
 	//Head
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_MAINGAME,
-		TEXT("Prototype_Component_MeshPart_Adult_M_Head"),
+		TEXT("Prototype_Component_MeshPart_Player_Head"),
 		CCustomModel::HEAD)))
 	{
 		MSG_BOX("Failed Add MeshPart Head");
@@ -281,8 +293,8 @@ HRESULT CPlayer::Ready_MeshParts()
 	//Arm
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_MAINGAME, 
-		TEXT("Prototype_Component_MeshPart_Arms01"),
-		CCustomModel::TOP)))
+		TEXT("Prototype_Component_MeshPart_Player_Arm"),
+		CCustomModel::ARM)))
 	{
 		MSG_BOX("Failed Add MeshPart Arm");
 
@@ -292,8 +304,8 @@ HRESULT CPlayer::Ready_MeshParts()
 	//Robe
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_MAINGAME,
-		TEXT("Prototype_Component_MeshPart_Robe01"),
-		CCustomModel::PANTS)))
+		TEXT("Prototype_Component_MeshPart_Player_Robe"),
+		CCustomModel::ROBE)))
 	{
 		MSG_BOX("Failed Add MeshPart Robe");
 
@@ -303,8 +315,8 @@ HRESULT CPlayer::Ready_MeshParts()
 	//Top
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_MAINGAME,
-		TEXT("Prototype_Component_MeshPart_StuUni03_LongSleeve"),
-		CCustomModel::ROBE)))
+		TEXT("Prototype_Component_MeshPart_Player_Top"),
+		CCustomModel::TOP)))
 	{
 		MSG_BOX("Failed Add MeshPart Upper");
 
@@ -314,8 +326,8 @@ HRESULT CPlayer::Ready_MeshParts()
 	//Pants
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_MAINGAME,
-		TEXT("Prototype_Component_MeshPart_Low_Slcialite01"),
-		CCustomModel::SOCKS)))
+		TEXT("Prototype_Component_MeshPart_Player_Pants"),
+		CCustomModel::PANTS)))
 	{
 		MSG_BOX("Failed Add MeshPart Lower");
 
@@ -325,7 +337,7 @@ HRESULT CPlayer::Ready_MeshParts()
 	//Socks
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_MAINGAME,
-		TEXT("Prototype_Component_MeshPart_Socks01"),
+		TEXT("Prototype_Component_MeshPart_Player_Socks"),
 		CCustomModel::SOCKS)))
 	{
 		MSG_BOX("Failed Add MeshPart Socks01");
@@ -336,7 +348,7 @@ HRESULT CPlayer::Ready_MeshParts()
 	//Shoes
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_MAINGAME,
-		TEXT("Prototype_Component_MeshPart_StuShoes03"),
+		TEXT("Prototype_Component_MeshPart_Player_Shoes"),
 		CCustomModel::SHOES)))
 	{
 		MSG_BOX("Failed Add MeshPart Shoes");
