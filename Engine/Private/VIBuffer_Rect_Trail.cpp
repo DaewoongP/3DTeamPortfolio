@@ -43,6 +43,27 @@ HRESULT CVIBuffer_Rect_Trail::Reset_Trail()
 	return S_OK;
 }
 
+HRESULT CVIBuffer_Rect_Trail::Reset_Trail(_float3 vHighPos, _float3 vLowPos)
+{
+	D3D11_MAPPED_SUBRESOURCE	MappedSubResource;
+
+	m_pContext->Map(m_pVB, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &MappedSubResource);
+
+	VTXPOSTEX* pData = static_cast<VTXPOSTEX*>(MappedSubResource.pData);
+
+	for (_uint i = 0; i < m_iNumVertices; ++i)
+	{
+		if (1 == i % 2)
+			pData->vPosition = vHighPos;
+		else
+			pData->vPosition = vLowPos;
+	}
+
+	m_pContext->Unmap(m_pVB, 0);
+
+	return S_OK;
+}
+
 HRESULT CVIBuffer_Rect_Trail::Initialize_Prototype()
 {
 	return S_OK;
