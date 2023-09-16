@@ -109,6 +109,7 @@ private:
 
 	_float3 m_vRandomInstall[2] = { { -1.f, -1.f, -1.f }, { -1.f, -1.f, -1.f } }; // 랜덤 설치할 때 범위 지정
 	_uint m_iRandomInstall_Seq = { 0 }; // 범위 순서
+
 	_float3 m_vObjectPickingPos = { -1.f, -1.f, -1.f }; // 오브젝트 피킹으로 찾은 물체의 위치
 
 	_int m_iModelIndex = { 0 }; // 선택된 모델 인덱스
@@ -136,11 +137,11 @@ private:
 	_float m_vAllMapTrans[3] = { 0.f, 0.f, 0.f }; // 설치된 모든 맵 오브젝트 이동 값
 	_float m_vAllMapPre[3] = { 0.f, 0.f, 0.f }; // 위의 위치 이전 값
 
-	_float m_vChangeMapObject[DUMMY_END][3] = { 0.f, 0.f, 0.f }; // 설치된 모든 맵 오브젝트 이동 값
+	_float m_vChangeMapObject[DUMMY_END][3] = { 0.f, 0.f, 0.f }; // 피킹된 맵 오브젝트 상태 행렬
 	_float3 m_vChangeMapScaleOffset = { 0.f, 0.f, 0.f }; // 각각
 	_float4 m_vChangeMapRotOffset = { 0.f, 0.f, 0.f, 1.f }; // 오프셋
 	_float3 m_vChangeMapTransOffset = { 0.f, 0.f, 0.f }; // 변수다.
-	CMapObject* m_pChangeMapObject = { nullptr }; // 비교용 변수
+	CMapObject* m_pChangeMapObject = { nullptr }; // 객체 비교용 변수
 
 public:
 	static CObject_Window* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, ImVec2 vWindowPos, ImVec2 vWindowSize);

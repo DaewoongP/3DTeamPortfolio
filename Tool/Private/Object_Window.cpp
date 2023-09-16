@@ -54,16 +54,16 @@ void CObject_Window::Tick(_float fTimeDelta)
 		}
 	}
 
-	ImGui::SameLine();
+	//ImGui::SameLine();
 
-	// Delete Dummy 버튼
-	if (ImGui::Button("Delete Dummy"))
-	{
-		if (FAILED(Delete_Dummy()))
-		{
-			MSG_BOX("Failed to Delete Dummy");
-		}
-	}
+	//// Delete Dummy 버튼
+	//if (ImGui::Button("Delete Dummy"))
+	//{
+	//	if (FAILED(Delete_Dummy()))
+	//	{
+	//		MSG_BOX("Failed to Delete Dummy");
+	//	}
+	//}
 
 	// Picking 창 On / Off
 	ImGui::Checkbox("Picking", &m_isCheckPicking);
@@ -993,10 +993,6 @@ void CObject_Window::Change_Picking_Menu(const _tchar* wszTag, _uint iTagNum)
 		vRotation.y = m_vChangeMapRotOffset.y + XMConvertToRadians(m_vChangeMapObject[DUMMY_ROT][1]);
 		vRotation.z = m_vChangeMapRotOffset.z + XMConvertToRadians(m_vChangeMapObject[DUMMY_ROT][2]);
 
-		/*vRotation.x = XMConvertToRadians(vRotation.x);
-		vRotation.y = XMConvertToRadians(vRotation.y);
-		vRotation.z = XMConvertToRadians(vRotation.z);*/
-
 		_float3 vTranslation =
 		{ m_vChangeMapTransOffset.x + m_vChangeMapObject[DUMMY_TRANS][0],
 			m_vChangeMapTransOffset.y + m_vChangeMapObject[DUMMY_TRANS][1],
@@ -1108,7 +1104,7 @@ void CObject_Window::All_Map_Object_Translation()
 	ImGui::SameLine(); CHelpMaker::HelpMarker("-100.f ~ 100.f");
 
 	if (m_vAllMapTrans[0] != m_vAllMapPre[0] ||
-		m_vAllMapTrans[1] != m_vAllMapPre[1] || 
+		m_vAllMapTrans[1] != m_vAllMapPre[1] ||
 		m_vAllMapTrans[2] != m_vAllMapPre[2])
 	{
 		for (auto& iter : m_vecMapObjectTag)
@@ -1124,21 +1120,21 @@ void CObject_Window::All_Map_Object_Translation()
 				vPos.z + (m_vAllMapTrans[2] - m_vAllMapPre[2]) };
 
 			pMapObject->Get_Transform()->Set_Position(vTranslation);
+		}
 
-			for (auto& iter : m_vecSaveObject)
-			{
-				iter.matTransform._41 += (m_vAllMapTrans[0] - m_vAllMapPre[0]);
-				iter.matTransform._42 += (m_vAllMapTrans[1] - m_vAllMapPre[1]);
-				iter.matTransform._43 += (m_vAllMapTrans[2] - m_vAllMapPre[2]);
-			}
+		for (auto& iter : m_vecSaveObject)
+		{
+			iter.matTransform._41 += (m_vAllMapTrans[0] - m_vAllMapPre[0]);
+			iter.matTransform._42 += (m_vAllMapTrans[1] - m_vAllMapPre[1]);
+			iter.matTransform._43 += (m_vAllMapTrans[2] - m_vAllMapPre[2]);
+		}
 
-			for (auto& iter : m_vecSaveInsObject)
-			{
-				iter.matTransform._41 += (m_vAllMapTrans[0] - m_vAllMapPre[0]);
-				iter.matTransform._42 += (m_vAllMapTrans[1] - m_vAllMapPre[1]);
-				iter.matTransform._43 += (m_vAllMapTrans[2] - m_vAllMapPre[2]);
-			}
-		}		
+		for (auto& iter : m_vecSaveInsObject)
+		{
+			iter.matTransform._41 += (m_vAllMapTrans[0] - m_vAllMapPre[0]);
+			iter.matTransform._42 += (m_vAllMapTrans[1] - m_vAllMapPre[1]);
+			iter.matTransform._43 += (m_vAllMapTrans[2] - m_vAllMapPre[2]);
+		}
 
 		for (size_t i = 0; i < 3; i++)
 		{
