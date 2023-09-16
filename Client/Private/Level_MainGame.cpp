@@ -81,13 +81,6 @@ HRESULT CLevel_MainGame::Initialize()
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), TEXT("Layer_BackGround"))))
-	{
-		MSG_BOX("Failed Add Scene : (Scene_Main)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
-
 	
 	/* 게임 초기화와 함께 월드시간 초기화 */
 	pGameInstance->Reset_World_TimeAcc();
