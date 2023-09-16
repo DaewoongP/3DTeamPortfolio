@@ -63,6 +63,7 @@ HRESULT CLevel_MainGame::Initialize()
 	BEGININSTANCE;
 	/* 게임 초기화와 함께 월드시간 초기화 */
 	pGameInstance->Reset_World_TimeAcc();
+	// 현재 씬 설정.
 	pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
 	ENDINSTANCE;
 
@@ -84,37 +85,7 @@ void CLevel_MainGame::Tick(_float fTimeDelta)
 	{
 		pGameInstance->Set_CurrentScene(TEXT("Scene_Info"), false);
 	}
-	// 멀티스레드 로딩 테스트
-	if (pGameInstance->Get_DIKeyState(DIK_N, CInput_Device::KEY_DOWN))
-	{
-		m_pLoader = CSeamless_Loader::Create(m_pDevice, m_pContext);
-	}
-
-	if (nullptr != m_pLoader)
-	{
-		_ulong dwData = { 0 };
-
-		if (TRUE == GetExitCodeThread(m_pLoader->Get_Thread(), &dwData))
-		{
-			if (-1 == dwData)
-			{
-				MSG_BOX("Loading Failed");
-				PostQuitMessage(0);
-				Safe_Release(m_pLoader);
-				ENDINSTANCE;
-				return;
-			}
-		}
-
-		if (m_pLoader->Get_Finished())
-		{
-			Safe_Release(m_pLoader);
-			pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
-			ENDINSTANCE;
-			return;
-		}
-	}
-
+	
 	ENDINSTANCE;
 
 #ifdef _DEBUG
@@ -473,7 +444,7 @@ HRESULT CLevel_MainGame::Ready_Layer_Debug(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	/*if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Dummy"), pLayerTag, TEXT("GameObject_Dummy"))))
+	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Dummy"), pLayerTag, TEXT("GameObject_Dummy"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Dummy)");
 		return E_FAIL;
@@ -495,7 +466,13 @@ HRESULT CLevel_MainGame::Ready_Layer_Debug(const _tchar* pLayerTag)
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Professor_Fig)");
 		return E_FAIL;
-	}*/
+	}
+	
+	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_LoadTrigger"), pLayerTag, TEXT("GameObject_LoadTrigger"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_LoadTrigger)");
+		return E_FAIL;
+	}
 
 	Safe_Release(pGameInstance);
 

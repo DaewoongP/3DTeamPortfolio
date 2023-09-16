@@ -201,50 +201,15 @@ HRESULT CComponent_Manager::Clear_Layer(_uint iLevelIndex, const _tchar* pLayerT
 
 void CComponent_Manager::Set_CurrentScene(const _tchar* pSceneTag, _bool isSimulation)
 {
-	CPhysX_Manager* pPhysX_Manager = CPhysX_Manager::GetInstance();
-	Safe_AddRef(pPhysX_Manager);
-
-	pPhysX_Manager->Set_Simulation(isSimulation);
-
-	Safe_Release(pPhysX_Manager);
-
-	for (_uint i = 0; i < m_iNumLevels; ++i)
-	{
-		for (auto& Pair : m_pCurrentLayers[i])
-		{
-			Safe_Release(Pair.second);
-		}
-		m_pCurrentLayers[i].clear();
-	}
-
-	CLevel_Manager* pLevel_Manager = CLevel_Manager::GetInstance();
-	Safe_AddRef(pLevel_Manager);
-
-	list<const _tchar*> SceneLayers = pLevel_Manager->Get_Layers(pSceneTag);
-
-	Safe_Release(pLevel_Manager);
-
-	for (_uint i = 0; i < m_iNumLevels; ++i)
-	{
-		for (auto& Pair : m_pLayers[i])
-		{
-			for (auto& LayerTag : SceneLayers)
-			{
-				if (!lstrcmp(Pair.first, LayerTag))
-				{
-					m_pCurrentLayers[i].emplace(Pair);
-					Safe_AddRef(Pair.second);
-				}
-			}
-			
-		}
-	}
-
 	lstrcpy(m_szCurrentSceneTag, pSceneTag);
+	m_isSimulation = isSimulation;
+	m_isChanged = true;
 }
 
 void CComponent_Manager::Tick(_float fTimeDelta)
 {
+	Update_CurrentScene();
+
 	for (_uint i = 0; i < m_iNumLevels; ++i)
 	{
 		for (auto& Pair : m_pCurrentLayers[i])
@@ -263,6 +228,55 @@ void CComponent_Manager::Late_Tick(_float fTimeDelta)
 			Pair.second->Late_Tick(fTimeDelta);
 		}
 	}
+}
+
+void CComponent_Manager::Update_CurrentScene()
+{
+	if (false == m_isChanged)
+		return;
+
+	CPhysX_Manager* pPhysX_Manager = CPhysX_Manager::GetInstance();
+	Safe_AddRef(pPhysX_Manager);
+
+	pPhysX_Manager->Set_Simulation(m_isSimulation);
+
+	Safe_Release(pPhysX_Manager);
+
+	for (_uint i = 0; i < m_iNumLevels; ++i)
+	{
+		for (auto& Pair : m_pCurrentLayers[i])
+		{
+			Safe_Release(Pair.second);
+		}
+		m_pCurrentLayers[i].clear();
+	}
+
+	CLevel_Manager* pLevel_Manager = CLevel_Manager::GetInstance();
+	Safe_AddRef(pLevel_Manager);
+
+	list<const _tchar*> SceneLayers = pLevel_Manager->Get_Layers(m_szCurrentSceneTag);
+
+	Safe_Release(pLevel_Manager);
+
+	for (_uint i = 0; i < m_iNumLevels; ++i)
+	{
+		for (auto& Pair : m_pLayers[i])
+		{
+			for (auto& LayerTag : SceneLayers)
+			{
+				if (!lstrcmp(Pair.first, LayerTag))
+				{
+					m_pCurrentLayers[i].emplace(Pair);
+					Safe_AddRef(Pair.second);
+				}
+			}
+
+		}
+	}
+
+	lstrcpy(m_szCurrentSceneTag, TEXT(""));
+	m_isSimulation = false;
+	m_isChanged = false;
 }
 
 void CComponent_Manager::Free()

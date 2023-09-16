@@ -165,7 +165,8 @@
   <ItemGroup>
     <ClInclude Include="..\Public\Action.h" />
     <ClInclude Include="..\Public\Check_Distance.h" />
-    <ClInclude Include="..\public\Info_Main.h" />
+    <ClInclude Include="..\public\LoadTrigger.h" />
+    <ClInclude Include="..\public\MagicSlot.h" />
     <ClInclude Include="..\public\Seamless_Loader.h" />
     <ClInclude Include="..\Public\Sequence_Attack.h" />
     <ClInclude Include="..\Public\Sequence_MoveTarget.h" />
@@ -319,7 +320,8 @@
   <ItemGroup>
     <ClCompile Include="..\Private\Action.cpp" />
     <ClCompile Include="..\Private\Check_Distance.cpp" />
-    <ClCompile Include="..\private\Info_Main.cpp" />
+    <ClCompile Include="..\private\LoadTrigger.cpp" />
+    <ClCompile Include="..\private\MagicSlot.cpp" />
     <ClCompile Include="..\private\Seamless_Loader.cpp" />
     <ClCompile Include="..\Private\Sequence_Attack.cpp" />
     <ClCompile Include="..\Private\Sequence_MoveTarget.cpp" />

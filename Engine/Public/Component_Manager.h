@@ -85,6 +85,8 @@ private:
 
 public:
 	const _tchar* Get_CurrentSceneTag() const { return m_szCurrentSceneTag; }
+	// 씬변경이 루프내에서 처리되지 않게 해주세요
+	// 프레임 하락에 많은 영향을 끼칩니다.
 	void Set_CurrentScene(const _tchar* pSceneTag, _bool isSimulation);
 
 public:
@@ -117,7 +119,12 @@ private:
 
 private:
 	_tchar				m_szCurrentSceneTag[MAX_PATH] = TEXT("");
+	_bool				m_isSimulation = { false };
+	_bool				m_isChanged = { false };
 	LAYERS*				m_pCurrentLayers = { nullptr };
+
+private:
+	void Update_CurrentScene();
 
 public:
 	virtual void Free() override;

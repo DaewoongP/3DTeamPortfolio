@@ -66,34 +66,13 @@ HRESULT CSeamless_Loader::Ready_Layer_Debug(const _tchar* pLayerTag)
 {
 	std::lock_guard<std::mutex> lock(mtx);
 
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
-
-	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Dummy"), pLayerTag, TEXT("GameObject_Dummy"))))
+	// 로딩할 객체 생성
+	if (FAILED(m_pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Player"), pLayerTag, TEXT("GameObject_Test1"))))
 	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Dummy)");
+		MSG_BOX("Failed Add_GameObject : (GameObject_Test1)");
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Golem_Combat"), pLayerTag, TEXT("GameObject_Test_Monster"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Monster)");
-		return E_FAIL;
-	}
-
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Player"), pLayerTag, TEXT("GameObject_Test_Player"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Player)");
-		return E_FAIL;
-	}
-
-	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Professor_Fig"), pLayerTag, TEXT("GameObject_Professor_Fig"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Professor_Fig)");
-		return E_FAIL;
-	}
-
-	Safe_Release(pGameInstance);
 
 	return S_OK;
 }

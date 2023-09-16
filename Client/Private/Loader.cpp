@@ -60,6 +60,10 @@
 
 #include "MapObject.h"
 
+#pragma region Trigger
+#include "LoadTrigger.h"
+#pragma endregion Trigger
+
 #ifdef _DEBUG
 #include "Test_Player.h"
 #include "Test_NPC.h"
@@ -599,6 +603,10 @@ HRESULT CLoader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_PhysxRenderer"),
 			CPhysXRender::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_PhysxRenderer");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_LoadTrigger"),
+			CLoadTrigger::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_LoadTrigger");
 
 #endif // _DEBUG
 

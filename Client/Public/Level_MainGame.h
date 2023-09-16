@@ -38,10 +38,6 @@ private:
 	HRESULT Ready_Layer_SceneTest(const _tchar* pLayerTag);
 #endif // _DEBUG
 
-private:
-	// 다음 레벨을 구성하기위한 쓰레드 생성 객체
-	class CSeamless_Loader* m_pLoader = { nullptr };
-
 public:
 	static CLevel_MainGame* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual void Free() override;
