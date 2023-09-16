@@ -1019,6 +1019,11 @@ void CObject_Window::Delete_Picking_Object()
 			return;
 		}
 
+		if (0 < m_iMapObjectIndex)
+		{
+			--m_iMapObjectIndex;
+		}
+
 		m_vecMapObjectTag.erase(m_vecMapObjectTag.begin() + m_iTagIndex);
 		m_vecObjectTag_s.erase(m_vecObjectTag_s.begin() + m_iTagIndex);
 		m_vecSaveObject.erase(m_vecSaveObject.begin() + m_iTagIndex);
