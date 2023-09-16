@@ -164,7 +164,7 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Bloom"), 80.f, 560.f, 160.f, 160.f)))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_BlurY"), 240.f, 560.f, 160.f, 160.f)))
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Blur"), 240.f, 560.f, 160.f, 160.f)))
 		return E_FAIL;
 
 	/*if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_SSAO"), 300.f, 300.f, 600.f, 600.f)))
@@ -236,13 +236,13 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 	if (FAILED(Render_SoftShadow()))
 		return E_FAIL;
-	if (FAILED(Render_BlurShadow()))
-		return E_FAIL;
+	/*if (FAILED(Render_BlurShadow()))
+		return E_FAIL;*/
 	if (FAILED(Render_Deferred()))
 		return E_FAIL;
 
-	if (FAILED(Render_SSAO()))
-		return E_FAIL;
+	/*if (FAILED(Render_SSAO()))
+		return E_FAIL;*/
 	if (FAILED(m_pSSAOBlur->Render()))
 		return E_FAIL;
 	
@@ -264,8 +264,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 
 	if (FAILED(Render_PostProcessing()))
 		return E_FAIL;
-	if (FAILED(Render_Bloom()))
-		return E_FAIL;
+	/*if (FAILED(Render_Bloom()))
+		return E_FAIL;*/
 
 	if (FAILED(Render_UI()))
 		return E_FAIL;
@@ -614,7 +614,7 @@ HRESULT CRenderer::Render_Deferred()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Shade"), m_pDeferredShader, "g_ShadeTexture")))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_BlurY"), m_pDeferredShader, "g_BlurTexture")))
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Blur"), m_pDeferredShader, "g_BlurTexture")))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Shadow"), m_pDeferredShader, "g_ShadowTexture")))
 		return E_FAIL;
