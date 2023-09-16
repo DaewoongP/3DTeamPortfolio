@@ -51,7 +51,7 @@ void CMoveLoopState::OnStateTick()
 
 	if (m_pOwnerModel->Is_Finish_Animation())
 	{
-		m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_anm"));
+		m_pOwnerModel->Change_Animation(TEXT("Hu_BM_Jog_Loop_Fwd_anm"));
 	}
 }
 

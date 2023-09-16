@@ -199,7 +199,7 @@ void CGraphic_Device::Free()
 	Safe_Release(m_pDepthStencilView);
 
 	// 컴객체 누수시 디버그 용도.
-	/*#if defined(DEBUG) || defined(_DEBUG)
+	#if defined(DEBUG) || defined(_DEBUG)
 		ID3D11Debug* d3dDebug;
 		HRESULT hr = m_pDevice->QueryInterface(__uuidof(ID3D11Debug), reinterpret_cast<void**>(&d3dDebug));
 		if (SUCCEEDED(hr))
@@ -215,7 +215,7 @@ void CGraphic_Device::Free()
 			OutputDebugStringW(L"----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- \r ");
 		}
 		if (d3dDebug != nullptr)            d3dDebug->Release();
-	#endif*/
+	#endif
 
 	// 디버그할때 디바이스가 필요하여 아래쪽에서 삭제처리.
 	Safe_Release(m_pDevice);
