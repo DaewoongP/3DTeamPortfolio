@@ -57,6 +57,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
 
+
 	return S_OK;
 }
 
