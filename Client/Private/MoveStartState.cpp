@@ -80,6 +80,7 @@ void CMoveStartState::Go_Idle()
 	//방향키가 눌리지 않았을 경우
 	if (true != *m_pIsDirectionKeyPressed)
 	{
+		m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_anm"));
 		Set_StateMachine(TEXT("Idle"));
 	}
 }

@@ -70,8 +70,8 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	m_pStateContext->Tick(fTimeDelta);
 
-	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UNDERBODY);
+	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 }
 
 void CPlayer::Late_Tick(_float fTimeDelta)
