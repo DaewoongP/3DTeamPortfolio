@@ -136,6 +136,9 @@
     <Filter Include="02. ToolObjects\01. Dummy\Dummy_Effect\DummyTrail">
       <UniqueIdentifier>{54e7e86b-5a40-424a-957c-7e19887c5f19}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Window\Window\Monster">
+      <UniqueIdentifier>{13a1d64c-b8ec-4bc3-b317-1a0bf7f90ef5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tool.h">
@@ -312,6 +315,9 @@
     <ClInclude Include="..\public\Dummy_Effect.h">
       <Filter>02. ToolObjects\01. Dummy\Dummy_Effect</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Monster_Window.h">
+      <Filter>01. Window\Window\Monster</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -467,6 +473,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Dummy_Effect.cpp">
       <Filter>02. ToolObjects\01. Dummy\Dummy_Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Monster_Window.cpp">
+      <Filter>01. Window\Window\Monster</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

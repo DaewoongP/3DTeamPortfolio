@@ -10,6 +10,7 @@
 #include "Navigation_Window.h"
 #include "Cloth_Window.h"
 #include "TriangleCollider_Window.h"
+#include "Monster_Window.h"
 
 BEGIN(Tool)
 
@@ -19,7 +20,7 @@ class CWindow_Manager final : public CBase
 {
 private:
 	enum MENULIST {
-		OBJECT_WINDOW, TRIANGLECOLLIDER_WINDOW, CAMERA_WINDOW, EFFECT_WINDOW
+		OBJECT_WINDOW, MONSTER_WINDOW, TRIANGLECOLLIDER_WINDOW, CAMERA_WINDOW, EFFECT_WINDOW
 		, ANIMATION_WINDOW, UI_WINDOW, LIGHT_WINDOW, CLOTH_WINDOW,MENULIST_END
 	};
 	// window 생성시 위 리스트와 아래 플래그값을 하나씪 추가해주시면 됩니다.
@@ -32,6 +33,7 @@ private:
 		UI_LOAD				= 1 << 5,
 		LIGHT_LOAD			= 1 << 6,
 		CLOTH_LOAD			= 1 << 7,
+		MONSTER_LOAD		= 1 << 8,
 	};
 
 	DECLARE_SINGLETON(CWindow_Manager);
