@@ -77,14 +77,14 @@ void CLevel_MainGame::Tick(_float fTimeDelta)
 	BEGININSTANCE;
 
 	// 씬변경 테스트
-	if (pGameInstance->Get_DIKeyState(DIK_T, CInput_Device::KEY_DOWN))
+	/*if (pGameInstance->Get_DIKeyState(DIK_T, CInput_Device::KEY_DOWN))
 	{
 		pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
 	}
 	if (pGameInstance->Get_DIKeyState(DIK_Y, CInput_Device::KEY_DOWN))
 	{
 		pGameInstance->Set_CurrentScene(TEXT("Scene_Info"), false);
-	}
+	}*/
 	
 	ENDINSTANCE;
 

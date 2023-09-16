@@ -76,19 +76,19 @@ HRESULT CBasicCast::Initialize(void* pArg)
 	vDir.Normalize();
 
 	// 그 vector를 플레이어 기준 반대방향으로 1만큼 이동한 뒤 랜덤값을 잡아줌
-	while (m_vLerpWeight[0].Length() < m_vStartPosition.Length())
+	/*while (m_vLerpWeight[0].Length() < m_vStartPosition.Length())
 	{
 		m_vLerpWeight[0] = m_vStartPosition - vDir;
 		m_vLerpWeight[0] += _float3(Random_Generator(-20.f, 20.f), Random_Generator(-20.f, 20.f), Random_Generator(-20.f, 20.f));
-	}
+	}*/
 	
 
 	// 그 vector를 타겟 기준 정방향으로 1만큼 이동한 뒤 랜덤값을 잡아줌
-	while (m_vLerpWeight[1].Length() < m_vStartPosition.Length())
+	/*while (m_vLerpWeight[1].Length() < m_vStartPosition.Length())
 	{
 		m_vLerpWeight[1] = m_vTargetPosition + vDir;
 		m_vLerpWeight[1] += _float3(Random_Generator(-20.f, 20.f), Random_Generator(-20.f, 20.f), Random_Generator(-20.f, 20.f));
-	}
+	}*/
 
 	return S_OK;
 }
