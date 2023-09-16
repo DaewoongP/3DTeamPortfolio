@@ -61,7 +61,9 @@ private: /* For. Component */
 	CRenderer* m_pRenderer = { nullptr };
 	CTexture* m_pTexture[5] = {};
 	CVIBuffer_GeoSphere* m_pBuffer = { nullptr };
-	CParticleSystem* m_pDefaultConeEmit_Particle = { nullptr };
+	CParticleSystem* m_pDefaultConeBoom_Particle = { nullptr };
+
+private: // 파티클 Transform
 
 private: // Protego의 정보
 	const MAGICBALLDESC* m_pMagicBallDesc;

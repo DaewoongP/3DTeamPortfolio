@@ -79,7 +79,7 @@ HRESULT CParticleSystem::Initialize(void* _pArg)
 
 	Resize_Container(m_MainModuleDesc.iMaxParticles);
 	Play_On_Awake();
-
+	
 	return S_OK;
 }
 void CParticleSystem::Tick(_float _fTimeDelta)

@@ -28,11 +28,11 @@ HRESULT CProtego_Effect::Initialize_Prototype(_uint _iLevel)
 			return E_FAIL;
 	}
 
-	/* For.Prototype_GameObject_DefaultConeEmit_Particle */
-	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_DefaultConeEmit_Particle")))
+	/* For.Prototype_GameObject_DefaultConeBoom_Particle */
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_DefaultConeBoom_Particle")))
 	{
-		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_DefaultConeEmit_Particle"),
-			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/DefaultConeEmit"), m_iLevel))))
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_DefaultConeBoom_Particle"),
+			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/DefaultConeBoom"), m_iLevel))))
 			return E_FAIL;
 	}
 
@@ -108,7 +108,7 @@ void CProtego_Effect::Tick(_float fTimeDelta)
 	}
 	if (pGameInstance->Get_DIKeyState(DIK_J))
 	{
-		Hit_Effect(_float3(3.f, 3.f, 3.f));
+		Hit_Effect(_float3(9.f, 9.f, 9.f));
 	}
 #endif // _DEBUG
 
@@ -192,11 +192,14 @@ void CProtego_Effect::Exit_ForceField()
 void CProtego_Effect::Hit_Effect(_float3 vPosition)
 {
 	// 파티클 위치 설정 후 터트리기
-	SHAPE_MODULE& shapeModule = m_pDefaultConeEmit_Particle->Get_ShapeModuleRef();
+	_float3 vDirection = vPosition - m_pTransform->Get_Position();
+	vDirection.Normalize();
+	_float3 vResultPosition = vDirection * m_pTransform->Get_Scale().x;
+	SHAPE_MODULE& shapeModule = m_pDefaultConeBoom_Particle->Get_ShapeModuleRef();
 	shapeModule.Set_ShapeLook(m_pTransform->Get_Position(), vPosition);
-	m_pDefaultConeEmit_Particle->Play();
+	m_pDefaultConeBoom_Particle->Get_Transform()->Set_Position(vResultPosition);
+	m_pDefaultConeBoom_Particle->Play();
 
-	// 
 }
 
 void CProtego_Effect::Tick_Enter(const _float& fTimeDelta)
@@ -314,9 +317,9 @@ HRESULT CProtego_Effect::Add_Components()
 			TEXT("Com_VFX_VFX_T_Wisps_2_D"), reinterpret_cast<CComponent**>(&m_pTexture[4]))))
 			throw "Com_VFX_VFX_T_Wisps_2_D";
 
-		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_DefaultConeEmit_Particle"),
-			TEXT("Com_DefaultConeEmit_Particle"), reinterpret_cast<CComponent**>(&m_pDefaultConeEmit_Particle))))
-			throw "Com_DefaultConeEmit_Particle";
+		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_DefaultConeBoom_Particle"),
+			TEXT("Com_DefaultConeBoom_Particle"), reinterpret_cast<CComponent**>(&m_pDefaultConeBoom_Particle))))
+			throw "Com_DefaultConeBoom_Particle";
 	}
 	catch (const char* pErrorMessage)
 	{
@@ -395,6 +398,6 @@ void CProtego_Effect::Free()
 		for (auto pTexture : m_pTexture)
 			Safe_Release(pTexture);
 		Safe_Release(m_pBuffer);
-		Safe_Release(m_pDefaultConeEmit_Particle);
+		Safe_Release(m_pDefaultConeBoom_Particle);
 	}
 }
