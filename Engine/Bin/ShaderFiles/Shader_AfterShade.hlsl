@@ -13,6 +13,8 @@ texture2D g_vDistortionTexture;
 texture2D g_vAlphaTexture;
 texture2D g_DoBlurTexture;
 texture2D g_WhiteBloomTexture;
+texture2D g_GlowTexture;
+texture2D g_OriTexture;
 
 vector g_vLightDiffuse;
 vector g_vLightAmbient;
@@ -160,7 +162,7 @@ struct VS_IN
     float2 vTexUV : TEXCOORD0;
 };
 
-struct VS_OUT_BLOOM
+struct VS_OUT_POSTEX
 {
     float4 vPosition : SV_POSITION;
     float2 vTexUV : TEXCOORD0;
@@ -203,9 +205,9 @@ VS_OUT VS_MAIN(VS_IN In)
     
     return Out;
 }
-VS_OUT_BLOOM VS_MAIN_BLOOM(VS_IN In)
+VS_OUT_POSTEX VS_MAIN_POSTEX(VS_IN In)
 {
-    VS_OUT_BLOOM Out = (VS_OUT_BLOOM) 0;
+    VS_OUT_POSTEX Out = (VS_OUT_POSTEX) 0;
 
     matrix matWV, matWVP;
     
@@ -230,7 +232,7 @@ struct PS_IN
     float2 texCoords2 : TEXCOORD2;
     float2 texCoords3 : TEXCOORD3;
 };
-struct PS_IN_BLOOM
+struct PS_IN_POSTEX
 {
     float4 vPosition : SV_POSITION;
     float2 vTexUV : TEXCOORD0;
@@ -297,7 +299,7 @@ PS_OUT PS_MAIN_DISTORTION(PS_IN In)
     
     return Out;
 }
-PS_OUT PS_MAIN_BLURX(PS_IN_BLOOM In)
+PS_OUT PS_MAIN_BLURX(PS_IN_POSTEX In)
 {
     PS_OUT Out = (PS_OUT) 0;
     
@@ -317,7 +319,7 @@ PS_OUT PS_MAIN_BLURX(PS_IN_BLOOM In)
     Out.vColor /= total;
     return Out;
 }
-PS_OUT PS_MAIN_BLURY(PS_IN_BLOOM In)
+PS_OUT PS_MAIN_BLURY(PS_IN_POSTEX In)
 {
     PS_OUT Out = (PS_OUT) 0;
     
@@ -340,7 +342,7 @@ PS_OUT PS_MAIN_BLURY(PS_IN_BLOOM In)
 }
 
 
-PS_OUT PS_MAIN_BLOOM(PS_IN_BLOOM In)
+PS_OUT PS_MAIN_BLOOM(PS_IN_POSTEX In)
 {
     PS_OUT Out = (PS_OUT) 0;
 
@@ -363,7 +365,7 @@ PS_OUT PS_MAIN_BLOOM(PS_IN_BLOOM In)
     return Out;
 }
 
-PS_OUT PS_MAIN_BLOOM_AFTER(PS_IN_BLOOM In)
+PS_OUT PS_MAIN_BLOOM_AFTER(PS_IN_POSTEX In)
 {
     PS_OUT Out = (PS_OUT) 0;
     
@@ -384,7 +386,18 @@ PS_OUT PS_MAIN_BLOOM_AFTER(PS_IN_BLOOM In)
     
 }
 
-
+PS_OUT PS_MAIN_GLOW(PS_IN_POSTEX In)
+{
+    PS_OUT Out = (PS_OUT) 0;
+    
+    vector vTextureColor = g_OriTexture.Sample(LinearSampler, In.vTexUV);
+    vector vPixelColor = g_GlowTexture.Sample(LinearSampler, In.vTexUV);
+    
+    
+   // Out.vColor = saturate(vTextureColor)
+    return Out;
+    
+}
 technique11 DefaultTechnique
 {
    
@@ -405,7 +418,7 @@ technique11 DefaultTechnique
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Depth_Disable, 0);
         SetBlendState(BS_BlendOne, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN_BLOOM();
+        VertexShader = compile vs_5_0 VS_MAIN_POSTEX();
         GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
         HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
         DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
@@ -439,11 +452,23 @@ technique11 DefaultTechnique
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Depth_Disable, 0);
         SetBlendState(BS_BlendOne, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN_BLOOM();
+        VertexShader = compile vs_5_0 VS_MAIN_POSTEX();
         GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
         HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
         DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
         PixelShader = compile ps_5_0 PS_MAIN_BLOOM_AFTER();
     }
+    pass Glow
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Depth_Disable, 0);
+        SetBlendState(BS_BlendOne, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN_POSTEX();
+        GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
+        HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
+        DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
+        PixelShader = compile ps_5_0 PS_MAIN_GLOW();
+    }
+
 
 }

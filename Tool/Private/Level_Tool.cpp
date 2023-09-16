@@ -18,6 +18,7 @@ HRESULT CLevel_Tool::Initialize()
 		return E_FAIL;
 	if (FAILED(Ready_For_Layer_Light(TEXT("Layer_Light"))))
 		return E_FAIL;
+
 	return S_OK;
 }
 

@@ -240,8 +240,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 	if (FAILED(Render_Shadow()))
 		return E_FAIL;
-	if (FAILED(Render_SoftShadow()))
-		return E_FAIL;
+	//if (FAILED(Render_SoftShadow()))
+	//	return E_FAIL;
 	if (FAILED(Render_BlurShadow()))
 		return E_FAIL;
 
@@ -274,7 +274,6 @@ HRESULT CRenderer::Draw_RenderGroup()
 
 	if (FAILED(Render_PostProcessing()))
 		return E_FAIL;
-
 	if (FAILED(Render_Bloom()))
 		return E_FAIL;
 
@@ -494,7 +493,8 @@ HRESULT CRenderer::Render_Shadow()
 	_float4x4	ViewMatrix, ProjMatrix;
 	//if (!m_pLight_Manager->Light_NullCheck())
 	{
-		ViewMatrix = XMMatrixLookAtLH(_float4(0.f, 10.f, 0.f, 1.f), _float4(3.f, 0.f, 3.f, 1.f), _float4(0.f, 1.f, 0.f, 0.f));
+		_float4* Pos = m_pLight_Manager->Get_LightPosition();
+		ViewMatrix = XMMatrixLookAtLH(*Pos, _float4(3.f, 0.f, 3.f, 1.f), _float4(0.f, 1.f, 0.f, 0.f));
 		ProjMatrix = XMMatrixPerspectiveFovLH(XMConvertToRadians(90.f), _float(1280) / 720.f, 1.f, 100.f);
 	}
 	/*else
