@@ -1,20 +1,16 @@
 #include "UI_Group_Finisher.h"
 #include "GameInstance.h"
-
-
 #include "UI_Back.h"
 #include "UI_Finisher.h"
 
+
 CUI_Group_Finisher::CUI_Group_Finisher(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CUI_Group(pDevice, pContext)
+	: CGameObject(pDevice, pContext)
 {
 }
 
 CUI_Group_Finisher::CUI_Group_Finisher(const CUI_Group_Finisher& rhs)
-	: CUI_Group(rhs)
-	, m_ProtoTypeTags(rhs.m_ProtoTypeTags)
-	, m_pBacks(rhs.m_pBacks)
-	, m_pFinishers(rhs.m_pFinishers)
+	: CGameObject(rhs)
 {
 }
 
@@ -22,12 +18,13 @@ HRESULT CUI_Group_Finisher::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 
-	if (FAILED(Add_ProtoType()))
+	if (FAILED(Add_Prototype()))
 	{
 		MSG_BOX("Failed CUI_Group_Finisher Add ProtoType");
 		return E_FAIL;
 	}
 
+	m_pBacks.clear();
 	m_pFinishers.clear();
 
 	return S_OK;
@@ -38,76 +35,8 @@ HRESULT CUI_Group_Finisher::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	BEGININSTANCE
-#pragma region Front Load
-	_tchar wszGroupName[MAX_PATH] = TEXT("");
-	DWORD dwStrByte;
-	DWORD dwByte = 0;
-	ReadFile(pArg, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
-	ReadFile(pArg, wszGroupName, dwStrByte, &dwByte, nullptr);
-
-	pGameInstance->Add_Component(LEVEL_MAINGAME, m_ProtoTypeTags[0], TEXT("Layer_UI"),
-		TEXT("GameObject_UI_Finisher_Frame_Front"), pArg);
-
-	CUI* pUI = dynamic_cast<CUI*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_UI"), TEXT("GameObject_UI_Finisher_Frame_Front")));
-	m_pBacks.push_back(dynamic_cast<CUI_Back*>(pUI));
-	Safe_AddRef(pUI);
-	pUI = nullptr;
-
-	_uint iSize = 0;
-	ReadFile(pArg, &iSize, sizeof(iSize), &dwByte, nullptr);
-	pGameInstance->Add_Component(LEVEL_MAINGAME, m_ProtoTypeTags[1], TEXT("Layer_UI"), TEXT("GameObject_UI_Finisher_Gauge_Front"), pArg);
-
-	pUI = dynamic_cast<CUI*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_UI"), TEXT("GameObject_UI_Finisher_Gauge_Front")));
-	pUI->Set_Parent(m_pBacks[0]);
-	Safe_AddRef(m_pBacks[0]);
-
-	m_pFinishers.push_back(dynamic_cast<CUI_Finisher*>(pUI));
-	Safe_AddRef(pUI);
-	pUI = nullptr;
-
-	CloseHandle(pArg);
-#pragma endregion
-
-#pragma region Back Load
-	_tchar pFilePath[MAX_PATH] = TEXT("../../Resources/GameData/UIData/UI_Group_Finisher_Back.uidata");
-	HANDLE hFile = CreateFile(pFilePath, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
-	if (hFile == INVALID_HANDLE_VALUE)
-	{
-		MSG_BOX("Failed Load");
-		CloseHandle(hFile);
-		return E_FAIL;
-	}
-
-	lstrcpy(wszGroupName, TEXT(""));
-	dwStrByte = 0;
-	dwByte = 0;
-	ReadFile(pArg, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
-	ReadFile(pArg, wszGroupName, dwStrByte, &dwByte, nullptr);
-
-	pGameInstance->Add_Component(LEVEL_MAINGAME, m_ProtoTypeTags[0], TEXT("Layer_UI"),
-		TEXT("GameObject_UI_Finisher_Frame_Back"), pArg);
-
-	pUI = dynamic_cast<CUI*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_UI"), TEXT("GameObject_UI_Finisher_Frame_Back")));
-	m_pBacks.push_back(dynamic_cast<CUI_Back*>(pUI));
-	Safe_AddRef(pUI);
-	pUI = nullptr;
-
-	iSize = 0;
-	ReadFile(pArg, &iSize, sizeof(iSize), &dwByte, nullptr);
-	pGameInstance->Add_Component(LEVEL_MAINGAME, m_ProtoTypeTags[1], TEXT("Layer_UI"), TEXT("GameObject_UI_Finisher_Gauge_Back"), pArg);
-
-	pUI = dynamic_cast<CUI*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_UI"), TEXT("GameObject_UI_Finisher_Gauge_Back")));
-	pUI->Set_Parent(m_pBacks[1]);
-	Safe_AddRef(m_pBacks[1]);
-
-	m_pFinishers.push_back(dynamic_cast<CUI_Finisher*>(pUI));
-	Safe_AddRef(pUI);
-
-#pragma endregion
-
-	ENDINSTANCE;
-
+	Create_Front(pArg);
+	Create_Back(TEXT("../../Resources/GameData/UIData/UI_Group_Finisher_Back.uidata"));
 	return S_OK;
 }
 
@@ -142,38 +71,160 @@ _bool CUI_Group_Finisher::Set_Gauge(_float fMin, _float fMax, _float fCurrent, C
 	return true;
 }
 
-HRESULT CUI_Group_Finisher::Add_ProtoType()
+HRESULT CUI_Group_Finisher::Add_Prototype()
 {
-	BEGININSTANCE
+	BEGININSTANCE;
 
-		_tchar pName[MAX_PATH] = TEXT("");
-	lstrcpy(pName, TEXT("Prototype_GameObject_UI_Back"));
-
-
-	CComponent* pComponent = pGameInstance->Find_Prototype(LEVEL_MAINGAME, pName);
-
-	if (nullptr == pComponent)
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Back"),
+		CUI_Back::Create(m_pDevice, m_pContext), true)))
 	{
-		pGameInstance->Add_Prototype(LEVEL_MAINGAME, pName, CUI_Back::Create(m_pDevice, m_pContext));
+		ENDINSTANCE;
+		return E_FAIL;
 	}
 
-	m_ProtoTypeTags.push_back(pGameInstance->Make_WChar(pName));
-
-
-
-	lstrcpy(pName, TEXT("Prototype_GameObject_UI_Finisher"));
-
-	pComponent = pGameInstance->Find_Prototype(LEVEL_MAINGAME, pName);
-
-	if (nullptr == pComponent)
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Finisher"),
+		CUI_Finisher::Create(m_pDevice, m_pContext), true)))
 	{
-		pGameInstance->Add_Prototype(LEVEL_MAINGAME, pName, CUI_Finisher::Create(m_pDevice, m_pContext));
+		ENDINSTANCE;
+		return E_FAIL;
 	}
-	
 
-	m_ProtoTypeTags.push_back(pGameInstance->Make_WChar(pName));
+	ENDINSTANCE;
 
-	ENDINSTANCE
+	return S_OK;
+}
+
+HRESULT CUI_Group_Finisher::Add_Components(wstring wszTag)
+{
+	BEGININSTANCE;
+	CUI_Back* pBack = nullptr;
+	CUI_Finisher* pFinisher = nullptr;
+
+	wstring wszFrameTag = TEXT("Com_UI_Back_Frame_");
+	wszFrameTag += wszTag;
+	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Back"),
+		wszFrameTag.c_str(), reinterpret_cast<CComponent**>(&pBack))))
+	{
+		MSG_BOX("Com_UI_Finisher : Failed Clone Component (Com_UI_Finisher_Frame)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+	m_pBacks.push_back(pBack);
+
+	wstring wszFinisherTag = TEXT("Com_UI_Finisher_");
+	wszFinisherTag += wszTag;
+	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Finisher"),
+		wszFinisherTag.c_str(), reinterpret_cast<CComponent**>(&pFinisher))))
+	{
+		MSG_BOX("Com_UI_Finisher : Failed Clone Component (Com_UI_Finisher)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+	m_pFinishers.push_back(pFinisher);
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+
+HRESULT CUI_Group_Finisher::Read_File(const _tchar* pFilePath, _uint iIndex)
+{
+	if (nullptr == m_pBacks[iIndex] || iIndex >= FINISHER_END)
+	{
+		MSG_BOX("Failed Load");
+		return E_FAIL;
+	}
+
+	_ulong dwByte = 0;
+	DWORD dwStrByte = 0;
+
+	HANDLE hFile = CreateFile(pFilePath, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+	if (hFile == INVALID_HANDLE_VALUE)
+	{
+		MSG_BOX("Failed Load");
+		CloseHandle(hFile);
+		return E_FAIL;
+	}
+
+	_tchar szGroupName[MAX_PATH] = TEXT("");
+
+	ReadFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
+	ReadFile(hFile, szGroupName, dwStrByte, &dwByte, nullptr);
+
+	m_pBacks[iIndex]->Load(Load_File(hFile));
+
+	_uint iSize = { 0 };
+	ReadFile(hFile, &iSize, sizeof(_uint), &dwByte, nullptr);
+
+	m_pFinishers[iIndex]->Load(Load_File(hFile));
+	m_pFinishers[iIndex]->Set_Parent(m_pBacks[iIndex]);
+
+	CloseHandle(hFile);
+
+	return S_OK;
+}
+
+CUI::UIDESC CUI_Group_Finisher::Load_File(const HANDLE hFile)
+{
+	CUI::UIDESC UIDesc;
+	ZEROMEM(&UIDesc);
+
+	_ulong dwByte = 0;
+	DWORD dwStrByte = 0;
+	_tchar szTextureName[MAX_PATH] = TEXT("");
+	_tchar szAlphaPrototypeTag[MAX_PATH] = TEXT("");
+	_bool isParent, isAlpha, isSave;
+	_int eID;
+
+	ReadFile(hFile, &UIDesc.vCombinedXY, sizeof(_float2), &dwByte, nullptr);
+	ReadFile(hFile, &UIDesc.fX, sizeof(_float), &dwByte, nullptr);
+	ReadFile(hFile, &UIDesc.fY, sizeof(_float), &dwByte, nullptr);
+	ReadFile(hFile, &UIDesc.fZ, sizeof(_float), &dwByte, nullptr);
+	ReadFile(hFile, &UIDesc.fSizeX, sizeof(_float), &dwByte, nullptr);
+	ReadFile(hFile, &UIDesc.fSizeY, sizeof(_float), &dwByte, nullptr);
+	ReadFile(hFile, szTextureName, sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
+	ReadFile(hFile, UIDesc.szTexturePath, sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
+	ReadFile(hFile, &isParent, sizeof(_bool), &dwByte, nullptr);
+	ReadFile(hFile, &isAlpha, sizeof(_bool), &dwByte, nullptr);
+	ReadFile(hFile, &UIDesc.vColor, sizeof(_float4), &dwByte, nullptr);
+	ReadFile(hFile, szAlphaPrototypeTag, sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
+	ReadFile(hFile, UIDesc.szAlphaTexturePath, sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
+	ReadFile(hFile, &eID, sizeof(_int), &dwByte, nullptr);
+	ReadFile(hFile, &isSave, sizeof(_bool), &dwByte, nullptr);
+
+	fs::path fsPath = UIDesc.szTexturePath;
+
+	std::wstring wszExtension = fsPath.extension();
+	if (wszExtension == TEXT(".png"))
+	{
+		fsPath.replace_extension(L".dds");
+		lstrcpy(UIDesc.szTexturePath, fsPath.c_str());
+	}
+
+	return UIDesc;
+}
+
+HRESULT CUI_Group_Finisher::Create_Front(void* pArg)
+{
+	wstring wstrTag = TEXT("Front");
+	if (FAILED(Add_Components(wstrTag)))
+		return E_FAIL;
+
+	if (FAILED(Read_File(reinterpret_cast<const _tchar*>(pArg), FRONT)))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CUI_Group_Finisher::Create_Back(const _tchar* pFIlePath)
+{
+	wstring wstrTag = TEXT("Back");
+	if (FAILED(Add_Components(wstrTag)))
+		return E_FAIL;
+
+	if (FAILED(Read_File(pFIlePath, BACK)))
+		return E_FAIL;
 
 	return S_OK;
 }

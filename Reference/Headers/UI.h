@@ -24,9 +24,12 @@ protected:
 	explicit CUI(const CUI& rhs);
 	virtual ~CUI() = default;
 
+
 public:
-	_float2 Get_XY() { return _float2(m_fX, m_fY); }
 	void Set_Parent(CUI* pUIParent);
+
+public:
+	void Set_Texture(_uint iIndex) { m_iTextureIndex = iIndex; }
 
 public:
 	virtual HRESULT Initialize(void* pArg) override;
@@ -37,6 +40,12 @@ public:
 	HRESULT Change_Position(_float fX, _float fY, _float fZ, _uint iWinSizeX = 1280.f, _uint iWinSizeY = 720.f);
 	HRESULT Change_Scale(_float fX, _float fY);
 	HRESULT Load(UIDESC UIDesc);
+
+public:
+	_float2 Get_CombinedXY()	{ return m_vCombinedXY; }
+	_float2 Get_XY()			{ return _float2(m_fX, m_fY); }
+	_float	Get_Z()				{ return m_fZ; }
+	_float2 Get_SizeXY()		{ return _float2(m_fSizeX, m_fSizeY); }
 
 protected:
 	_float2			m_vCombinedXY = { 0.f, 0.f };
@@ -58,6 +67,8 @@ protected:
 	CUI*					m_pParent = { nullptr };
 	vector<class CTexture*>	m_Textures;
 	vector<class CTexture*>	m_AlphaTextures;
+
+	_uint					m_iTextureIndex = { 0 };
 
 protected:
 	void Make_Matrix(_float fWinSizeX, _float fWinSizeY);

@@ -1,11 +1,13 @@
 #pragma once
-#include "UI_Group.h"
+#include "GameObject.h"
 #include "Client_Defines.h"
 
 #include "UI_Progress1.h"
+#include "UI.h"
+
 BEGIN(Client)
 
-class CUI_Group_Finisher final : public CUI_Group
+class CUI_Group_Finisher final : public CGameObject
 {
 private:
 	enum FINISHER
@@ -30,15 +32,20 @@ public:
 	_bool	Set_Gauge(_float fMin, _float fMax, _float fCurrent, CUI_Progress::GAUGE eType = CUI_Progress::CURRENT);
 
 private:
-	HRESULT Add_ProtoType();
-
-private:
-	vector<_tchar*> m_ProtoTypeTags;
-
-private:
 	// 0 = Front, 1 = Back
 	vector<class CUI_Back*>		m_pBacks;
 	vector<class CUI_Finisher*>	m_pFinishers;
+
+private:
+	HRESULT Add_Prototype();
+	HRESULT Add_Components(wstring wszTag);
+
+	HRESULT Read_File(const _tchar* pFilePath, _uint iIndex);
+	CUI::UIDESC Load_File(const HANDLE hFile);
+
+private:
+	HRESULT Create_Front(void* pArg);
+	HRESULT Create_Back(const _tchar* pFIlePath);
 
 public:
 	static CUI_Group_Finisher* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -51,7 +51,7 @@ void CUI_Image::Tick(_float fTimeDelta)
 	}
 	else
 	{
-		_float2 vParentPos = m_pParent->Get_fXY();
+		_float2 vParentPos = m_pParent->Get_XY();
 
 		m_vCombinedXY.x = vParentPos.x + m_fX;
 		m_vCombinedXY.y = vParentPos.y + m_fY;
@@ -75,7 +75,17 @@ HRESULT CUI_Image::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	m_pShaderCom->Begin("UI");
+	switch (m_eShadertype)
+	{
+	case Client::CUI_Image::MINIMAP:
+		m_pShaderCom->Begin("MiniMap");
+		break;
+	case Client::CUI_Image::SHADERTYPE_END:
+		m_pShaderCom->Begin("UI");
+		break;
+	default:
+		break;
+	}
 
 	if (FAILED(m_pVIBufferCom->Render()))
 		return E_FAIL;
@@ -92,14 +102,6 @@ HRESULT CUI_Image::Add_Components()
 		MSG_BOX("Failed CUI_Image Add_Component : (Com_Shader)");
 		return E_FAIL;
 	}
-
-	///* Com_Texture */
-	//if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, m_ImageDesc.wszTextureTag,
-	//	TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTextureCom))))
-	//{
-	//	MSG_BOX("Failed CUI_Image Add_Component : (Com_Texture)");
-	//	return E_FAIL;
-	//}
 
 	/* Com_Renderer */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"),
@@ -137,6 +139,27 @@ HRESULT CUI_Image::SetUp_ShaderResources()
 			return E_FAIL;
 	}
 
+	if (m_eShadertype == MINIMAP)
+	{
+			ImGui::Begin("aa");
+
+			if (ImGui::DragFloat("aa", &xxx))
+			{
+				vPlayerPos.x = xxx;
+			}
+			if (ImGui::DragFloat("zz", &zzz))
+			{
+				vPlayerPos.z = zzz;
+			}
+
+			ImGui::End();
+
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_vPlayerPos", &vPlayerPos, sizeof(_float3))))
+			return E_FAIL;		
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_vMiniMapSize", &vMiniMapSize, sizeof(_float2))))
+			return E_FAIL;
+	}
+
 
 	return S_OK;
 }
@@ -147,6 +170,19 @@ HRESULT CUI_Image::Set_Texture(CTexture* pTexture)
 
 	m_pTextureCom = pTexture;
 	Safe_AddRef(m_pTextureCom);
+
+	return S_OK;
+}
+
+HRESULT CUI_Image::Set_Desc(IMAGEDESC desc)
+{
+	m_vCombinedXY = desc.vCombinedXY;
+	m_fX = desc.fX;
+	m_fY = desc.fY;
+	m_fZ = desc.fZ;
+	m_fSizeX = desc.fSizeX;
+	m_fSizeY = desc.fSizeY;
+	m_eShadertype = desc.eShadertype;
 
 	return S_OK;
 }

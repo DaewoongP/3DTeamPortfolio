@@ -107,6 +107,11 @@ HRESULT CUI_Back::SetUp_ShaderResources()
 	return S_OK;
 }
 
+void CUI_Back::Set_Rotation(_float3 vAxis, _float fRadian)
+{
+	m_pTransform->Rotation(vAxis, fRadian);
+}
+
 CUI_Back* CUI_Back::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CUI_Back* pInstance = new CUI_Back(pDevice, pContext);

@@ -6,12 +6,12 @@
 #include "UI_HP.h"
 
 CUI_Group_R::CUI_Group_R(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CUI_Group(pDevice, pContext)
+	: CGameObject(pDevice, pContext)
 {
 }
 
 CUI_Group_R::CUI_Group_R(const CUI_Group_R& rhs)
-	: CUI_Group(rhs)
+	: CGameObject(rhs)
 	, m_ProtoTypeTags(rhs.m_ProtoTypeTags)
 {
 }
@@ -46,8 +46,8 @@ HRESULT CUI_Group_R::Initialize(void* pArg)
 		TEXT("GameObject_UI_Potion"), pArg);
 
 	CUI* pUI = dynamic_cast<CUI*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_UI"), TEXT("GameObject_UI_HP_Potion")));
-	m_pParent = pUI;
-	Safe_AddRef(m_pParent);
+	//m_pParent = pUI;
+	//Safe_AddRef(m_pParent);
 	pUI = nullptr;
 
 
