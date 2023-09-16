@@ -44,23 +44,23 @@ HRESULT CMagicBall::Initialize(void* pArg)
 	m_MagicBallDesc.eMagicTag = initDesc->eMagicTag;
 	m_MagicBallDesc.fDamage = initDesc->fDamage;
 	m_MagicBallDesc.fDistance = initDesc->fDistance;
-	m_MagicBallDesc.fInitLiftTime = initDesc->fLifeTime;
+	m_MagicBallDesc.fInitLifeTime = initDesc->fLifeTime;
 
 	m_pWeapon = initDesc->pWeapon;
 	Safe_AddRef(m_pWeapon);
 	m_pTarget = initDesc->pTarget;
 	Safe_AddRef(m_pTarget);
 
-	m_MagicBallDesc.fLifeTime = m_MagicBallDesc.fInitLiftTime;
+	m_MagicBallDesc.fLifeTime = m_MagicBallDesc.fInitLifeTime;
 	m_pTransform->Set_Position(m_MagicBallDesc.vStartPosition);
 
 	m_MagicBallDesc.vStartPosition = m_pWeapon->Get_Transform()->Get_Position() + m_pWeapon->Get_Wand_Point_Offset();
 	
-	m_CollisionDesc.eMagicGroup = m_eMagicGroup;
-	m_CollisionDesc.eMagicType = m_eMagicType;
-	m_CollisionDesc.eBuffType = m_eBuffType;
-	m_CollisionDesc.eMagicTag = m_eMagicTag;
-	m_CollisionDesc.fDamage = m_fDamage;
+	m_CollisionDesc.eMagicGroup = m_MagicBallDesc.eMagicGroup;
+	m_CollisionDesc.eMagicType = m_MagicBallDesc.eMagicType;
+	m_CollisionDesc.eBuffType = m_MagicBallDesc.eBuffType;
+	m_CollisionDesc.eMagicTag = m_MagicBallDesc.eMagicTag;
+	m_CollisionDesc.fDamage = m_MagicBallDesc.fDamage;
 
 	Set_CollisionData(&m_CollisionDesc);
 	return S_OK;

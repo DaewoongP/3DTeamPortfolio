@@ -78,7 +78,7 @@ HRESULT CBasicCast::Initialize(void* pArg)
 	// 그 vector를 플레이어 기준 반대방향으로 1만큼 이동한 뒤 랜덤값을 잡아줌
 	while (m_vLerpWeight[0].Length() < vDir.Length())
 	{
-		m_vLerpWeight[0] = m_vStartPosition - vDirNormalize;
+		m_vLerpWeight[0] = m_MagicBallDesc.vStartPosition - vDirNormalize;
 		m_vLerpWeight[0] += _float3(Random_Generator(-20.f, 20.f), Random_Generator(-20.f, 20.f), Random_Generator(-20.f, 20.f));
 	}
 	
@@ -97,7 +97,7 @@ void CBasicCast::Tick(_float fTimeDelta)
 {
 	if (m_MagicBallDesc.fLifeTime > 0)
 	{
-		m_fLerpAcc += fTimeDelta / m_MagicBallDesc.fInitLiftTime;
+		m_fLerpAcc += fTimeDelta / m_MagicBallDesc.fInitLifeTime;
 		_float3 movedPos = XMVectorCatmullRom(m_vLerpWeight[0], m_MagicBallDesc.vStartPosition, m_vTargetPosition, m_vLerpWeight[1], m_fLerpAcc);
 		if (m_pTransform != nullptr)
 			m_pTransform->Set_Position(movedPos);

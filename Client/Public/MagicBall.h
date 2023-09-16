@@ -46,7 +46,7 @@ public:
 		_float3					vStartPosition = {};
 		_float					fDamage = { 0 };
 		_float					fDistance = { 0 };
-		_float					fInitLiftTime = { 1.0f };
+		_float					fInitLifeTime = { 1.0f };
 		_float					fLifeTime = { 1.0f };
 	}MAGICBALLDESC;
 	
@@ -73,7 +73,7 @@ protected:
 	CWeapon_Player_Wand* m_pWeapon = { nullptr };
 
 protected:
-	MAGICBALLDESC m_MagicBallDesc;
+	MAGICBALLDESC			m_MagicBallDesc;
 
 	COLLSIONREQUESTDESC		m_CollisionDesc = {};
 

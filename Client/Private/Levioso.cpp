@@ -57,9 +57,9 @@ HRESULT CLevioso::Initialize(void* pArg)
 		ENDINSTANCE;
 
 		vMouseWorldPickPosition = vMouseOrigin.xyz() + vMouseDirection.xyz() * 10000;
-		vDirStartToPicked = (vMouseWorldPickPosition - m_vStartPosition);
+		vDirStartToPicked = (vMouseWorldPickPosition - m_MagicBallDesc.vStartPosition);
 		vDirStartToPicked.Normalize();
-		m_vTargetPosition = vDirStartToPicked * m_fDistance;
+		m_vTargetPosition = vDirStartToPicked * m_MagicBallDesc.fDistance;
 	}
 	else 
 	{
@@ -71,12 +71,12 @@ HRESULT CLevioso::Initialize(void* pArg)
 
 void CLevioso::Tick(_float fTimeDelta)
 {
-	if (m_fLiftTime > 0)
+	if (m_MagicBallDesc.fLifeTime > 0)
 	{
 		// 이동시켜주는 로직임.
 		// 여기서 뻉뻉이 돌려주자.
-		m_fLerpAcc += fTimeDelta / m_fInitLiftTime;
-		m_pEffect->Action_Magic(CDefault_MagicTraill_Effect::TRAILACTION_STRIGHT, m_vStartPosition, m_vTargetPosition, m_fLerpAcc, fTimeDelta);
+		m_fLerpAcc += fTimeDelta / m_MagicBallDesc.fInitLifeTime;
+		m_pEffect->Action_Magic(CDefault_MagicTraill_Effect::TRAILACTION_STRIGHT, m_MagicBallDesc.vStartPosition, m_vTargetPosition, m_fLerpAcc, fTimeDelta);
 	}
 	else 
 	{
