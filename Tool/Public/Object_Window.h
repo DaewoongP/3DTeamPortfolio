@@ -143,6 +143,9 @@ private:
 	_float3 m_vChangeMapTransOffset = { 0.f, 0.f, 0.f }; // 변수다.
 	CMapObject* m_pChangeMapObject = { nullptr }; // 객체 비교용 변수
 
+	_bool m_isLockMouseMove = { false }; // 마우스 움직임 제한 변수
+	_float3 m_vLockingMousePos = { 0.f, 0.f, 0.f }; // 제한된 마우스 위치
+
 public:
 	static CObject_Window* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, ImVec2 vWindowPos, ImVec2 vWindowSize);
 	virtual void Free(void) override;

@@ -19,7 +19,7 @@ CObject_Window::CObject_Window(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
 	{
 		m_vDummyMatrix[DUMMY_SCALE][i] = 1.f;
 		m_vChangeMapObject[DUMMY_SCALE][i] = 1.f;
-	}		
+	}
 }
 
 HRESULT CObject_Window::Initialize(ImVec2 vWindowPos, ImVec2 vWindowSize)
@@ -44,6 +44,8 @@ void CObject_Window::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	ImGui::Begin("Object", nullptr, m_WindowFlag);
+
+	ImGui::Text("Press U to Unlock Mouse Move");
 
 	// Create Dummy 버튼
 	if (ImGui::Button("Create Dummy"))
@@ -1577,11 +1579,22 @@ _float3 CObject_Window::Find_PickingPos()
 	_float4 vRayPos = { 0.f, 0.f, 0.f, 1.f };
 	_float4 vRayDir = { 0.f, 0.f, 0.f, 0.f };
 
+	// shift키를 누르고 있으면 격자에 딱 맞게 위치가 반올림됨
+	if (true == m_pGameInstance->Get_DIKeyState(DIK_U, CInput_Device::KEY_DOWN))
+	{
+		m_isLockMouseMove = !m_isLockMouseMove;
+	}
+
+	if (true == m_isLockMouseMove)
+	{
+		return m_vLockingMousePos;
+	}
+
 	// 마우스가 화면 밖에 있으면 검색 안함
 	if (false == m_pGameInstance->IsMouseInClient(m_pContext, g_hWnd))
 	{
 		return _float3(-1.f, -1.f, -1.f);
-	}	
+	}
 	
 	m_pGameInstance->Get_WorldMouseRay(m_pContext, g_hWnd, &vRayPos, &vRayDir);
 
@@ -1602,6 +1615,10 @@ _float3 CObject_Window::Find_PickingPos()
 
 			vRayDir *= fDist;
 			vFinalPos = vRayPos + vRayDir;
+
+			m_vLockingMousePos.x = vFinalPos.x;
+			m_vLockingMousePos.y = vFinalPos.y;
+			m_vLockingMousePos.z = vFinalPos.z;
 
 			return _float3(vFinalPos.x, vFinalPos.y, vFinalPos.z);
 		}
