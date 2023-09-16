@@ -57,6 +57,7 @@ public:
 	_float4 Get_QuaternionVector_Yaw(_float fRadian);
 
 	void Set_Scale(_float3 _vScale);
+	void Set_Scale_No_Zero(_float3 _vScale);
 	void Set_Right(_float3 _vRight);
 	void Set_Up(_float3 _vUp);
 	void Set_Look(_float3 _vLook);
