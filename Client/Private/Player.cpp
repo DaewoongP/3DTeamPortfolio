@@ -71,12 +71,10 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	m_pStateContext->Tick(fTimeDelta);
 
-	m_pCustomModel->Set_WindVelocity(_float3(10.f, 0.f, 10.f));
-
 	m_pCustomModel->Tick(CCustomModel::ROBE, 2, fTimeDelta);
 
-	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
-	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UNDERBODY);
+	/*m_pCustomModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);*/
+	/*m_pCustomModel->Play_Animation(fTimeDelta, CModel::UNDERBODY);*/
 }
 
 void CPlayer::Late_Tick(_float fTimeDelta)
