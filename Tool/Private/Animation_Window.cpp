@@ -16,7 +16,7 @@ HRESULT CAnimation_Window::Initialize(ImVec2 vWindowPos, ImVec2 vWindowSize)
 	if (FAILED(__super::Initialize(vWindowPos, vWindowSize)))
 		return E_FAIL;
 
-	BEGININSTANCE;
+	BEGININSTANCE; 
 
 	CCamera_Point::CAMERAPOINTDESC CameraPointDesc;
 
@@ -176,6 +176,7 @@ void CAnimation_Window::Create_Dummy_Button()
 
 		CGameInstance* pGameInstance = CGameInstance::GetInstance();
 		Safe_AddRef(pGameInstance);
+
 		if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_Dummy"), TEXT("Layer_Tool"), TEXT("Dummy_Animation"), nullptr)))
 		{
 			MSG_BOX("Failed to Created Dummy Clone");

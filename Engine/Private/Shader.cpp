@@ -70,6 +70,8 @@ HRESULT CShader::Initialize(void* pArg)
 
 HRESULT CShader::Begin(const _char* pPassName)
 {
+	std::lock_guard<std::mutex> lock(mtx);
+
 	if (nullptr == pPassName)
 		return E_FAIL;
 
@@ -80,7 +82,7 @@ HRESULT CShader::Begin(const _char* pPassName)
 	ID3DX11EffectPass* pPass = pTechnique->GetPassByName(pPassName);
 	if (nullptr == pPass)
 		return E_FAIL;
-
+	
 	pPass->Apply(0, m_pContext);
 
 	ID3D11InputLayout* pInputLayout = Find_InputLayout(pPassName);

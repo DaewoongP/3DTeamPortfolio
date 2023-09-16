@@ -64,6 +64,9 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	Key_Input(fTimeDelta);
 
+	m_pCustomModel->Set_WindVelocity(_float3(50.f, 50.f, 50.f));
+	m_pCustomModel->Tick(CCustomModel::ROBE, 2, fTimeDelta);
+
 	m_pCustomModel->Play_Animation(fTimeDelta);
 }
 
@@ -114,7 +117,7 @@ HRESULT CPlayer::Render()
 
 			m_pCustomModel->Bind_Material(m_pShader, "g_DiffuseTexture", iPartsIndex, i, DIFFUSE);
 
-			m_pShader->Begin("AnimMesh");
+			m_pShader->Begin("AnimMeshNonCull");
 
 			m_pCustomModel->Render(iPartsIndex, i);
 		}

@@ -39,7 +39,7 @@ HRESULT CComposite::Add_Component(_uint iLevelIndex, const _tchar* pPrototypeTag
 
 	pComponent->Set_Owner(this);
 	pComponent->Set_Tag(pComponentTag);
-	m_Components.emplace(pComponentTag, pComponent);
+	m_Components.emplace(pComponent->Get_Tag(), pComponent);
 
 	*ppOut = pComponent;
 

@@ -37,6 +37,7 @@ private:
 #ifdef _DEBUG
 private:
 	HRESULT Ready_Layer_Debug(const _tchar* pLayerTag);
+	HRESULT Ready_Layer_SceneTest(const _tchar* pLayerTag);
 #endif // _DEBUG
 
 public:

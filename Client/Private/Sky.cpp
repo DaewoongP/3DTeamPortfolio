@@ -60,11 +60,17 @@ HRESULT CSky::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	if (FAILED(m_pShader->Begin("Sky")))
-		return E_FAIL;
+	_uint		iNumMeshes = m_pModel->Get_NumMeshes();
 
-	if (FAILED(m_pBuffer->Render()))
-		return E_FAIL;
+	for (_uint i = 0; i < iNumMeshes; i++)
+	{
+		m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", i, DIFFUSE);
+
+		m_pShader->Begin("Sky");
+
+		if (FAILED(m_pModel->Render(i)))
+			return E_FAIL;
+	}
 
 	return S_OK;
 }
@@ -73,33 +79,25 @@ HRESULT CSky::Add_Components()
 {
 	/* For.Com_Renderer */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"),
-		TEXT("Com_Renderer"), (CComponent**)&m_pRenderer)))
+		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
 	{
 		MSG_BOX("Failed CSky Add_Component : (Com_Renderer)");
 		return E_FAIL;
 	}
 
-	/* For.Com_VIBuffer */
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Cube"),
-		TEXT("Com_VIBuffer"), (CComponent**)&m_pBuffer)))
-	{
-		MSG_BOX("Failed CSky Add_Component : (Com_VIBuffer)");
-		return E_FAIL;
-	}
-
-	/* For.Com_Texture */
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Texture_SkyBox"),
-		TEXT("Com_Texture"), (CComponent**)&m_pTexture)))
-	{
-		MSG_BOX("Failed CSky Add_Component : (Com_Texture)");
-		return E_FAIL;
-	}
-
 	/* For.Com_Shader */
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxCube"),
-		TEXT("Com_Shader"), (CComponent**)&m_pShader)))
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxMesh"),
+		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
 	{
 		MSG_BOX("Failed CSky Add_Component : (Com_Shader)");
+		return E_FAIL;
+	}
+	
+	/* For.Com_Model */
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Model_Sky"),
+		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModel))))
+	{
+		MSG_BOX("Failed CSky Add_Component : (Com_Model)");
 		return E_FAIL;
 	}
 
@@ -121,9 +119,6 @@ HRESULT CSky::SetUp_ShaderResources()
 		return E_FAIL;
 
 	Safe_Release(pGameInstance);
-
-	if (FAILED(m_pTexture->Bind_ShaderResource(m_pShader, "g_Texture", 2)))
-		return E_FAIL;
 
 	return S_OK;
 }
@@ -158,9 +153,8 @@ void CSky::Free()
 {
 	__super::Free();
 
+	Safe_Release(m_pModel);
 	Safe_Release(m_pShader);
-	Safe_Release(m_pTexture);
-	Safe_Release(m_pBuffer);
 	Safe_Release(m_pRenderer);
 
 }

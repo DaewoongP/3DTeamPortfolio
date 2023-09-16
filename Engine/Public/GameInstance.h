@@ -72,6 +72,7 @@ public: /* For.Level_Manager */
 	_uint Get_CurrentLevelIndex() const;
 	class CLevel* Get_CurrentLevel();
 	HRESULT Render_Level();
+	HRESULT Add_Scene(const _tchar * pSceneTag, const _tchar * pLayerTag);
 
 public: /* For.Component_Manager*/
 	class CComponent* Find_Prototype(_uint iLevelIndex, const _tchar * pPrototypeTag);
@@ -82,6 +83,9 @@ public: /* For.Component_Manager*/
 	class CLayer* Find_Layer(_uint iLevelIndex, const _tchar * pLayerTag);
 	HRESULT	Clear_Layer(_uint iLevelIndex, const _tchar * pLayerTag);
 	HRESULT	Delete_Component(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pComponentTag);
+	// 현재 씬을 갱신합니다, Simulation 설정을 통해 피직스가 내부적으로 돌아갈지 말지 선택합니다.
+	void Set_CurrentScene(const _tchar * pSceneTag, _bool isPhysXSimulation);
+	const _tchar* Get_CurrentSceneTag() const;
 
 public: /* For.Input_Device*/
 	_bool		Get_DIKeyState(_ubyte ubyKeyID, CInput_Device::KEYSTATE eState = CInput_Device::KEY_PRESSING);
@@ -161,6 +165,7 @@ public: /* For.PhysX_Manager */
 	PxScene* Get_PhysxScene() const;
 	PxControllerManager* Get_ControllerManager() const;
 	cloth::Factory* Get_ClothFactory() const;
+	void Set_Simulation(_bool isSimulation);
 	// 1. vOrigin : 레이 시작지점 2. vDir : 방향 3. fMaxDist : 최대거리 4. pHitPosition : (out)레이가 충돌한 위치 5. pDist : (out)충돌한 거리 
 	// 6. iMaxHits : 레이를 맞을 수 있는 최대 개수 7. RaycastFlag : dynamic / static / all 중에 레이와 충돌할 객체 타입 (static에 하이트맵도 현재 포함중인거 생각해야합니다.)
 	// 반환 : 충돌 했을 시 true

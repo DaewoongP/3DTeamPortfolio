@@ -12,10 +12,14 @@ CObject_Window::CObject_Window(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
 	: CImWindow(pDevice, pContext)
 {
 	ZeroMemory(&m_vDummyMatrix, sizeof m_vDummyMatrix);
+	ZeroMemory(&m_vChangeMapTrans, sizeof m_vChangeMapTrans);
 
 	// 스케일 값 1로 초기화
 	for (size_t i = 0; i < 3; i++)
+	{
 		m_vDummyMatrix[DUMMY_SCALE][i] = 1.f;
+		m_vChangeMapTrans[DUMMY_SCALE][i] = 1.f;
+	}
 }
 
 HRESULT CObject_Window::Initialize(ImVec2 vWindowPos, ImVec2 vWindowSize)
@@ -879,10 +883,27 @@ void CObject_Window::Mesh_Picking_Menu()
 			++m_iTagIndex;
 		}
 
+		wstring ws = TEXT("GameObjectMapObject");
+		ws += std::to_wstring(m_iTagIndex);
+
+		CGameObject* pObject = static_cast<CGameObject*>(m_pGameInstance->Find_Component_In_Layer(LEVEL_TOOL,
+			TEXT("Layer_MapObject"), ws.c_str()));
+
+		if (nullptr == pObject)
+		{
+			m_vObjectPickingPos = { -1.f, -1.f, -1.f };
+		}
+		else
+		{
+			m_vObjectPickingPos = pObject->Get_Transform()->Get_Position();
+		}
+
 		m_pContext->Unmap(pCopyTexture2D, 0);
 
 		Safe_Release(pCopyTexture2D);
 	}
+
+	ImGui::Text("x : %f, y : %f, z : %f", m_vObjectPickingPos.x, m_vObjectPickingPos.y, m_vObjectPickingPos.z);
 
 	// 메쉬 피킹한 오브젝트 상태 행렬 변경 메뉴
 	ImGui::Checkbox("Change MapObject's Matrix", &m_isChangeObject);
@@ -905,10 +926,8 @@ void CObject_Window::Mesh_Picking_Menu()
 
 void CObject_Window::Change_Picking_Menu(const _tchar* wszTag, _uint iTagNum)
 {
-	ImGui::Text("Press J to Change Matrix");
-
 	m_pObject = static_cast<CMapObject*>(m_pGameInstance->Find_Component_In_Layer(LEVEL_TOOL,
-		TEXT("Layer_MapObject"), wszTag)); 
+		TEXT("Layer_MapObject"), wszTag));
 
 	if (nullptr == m_pObject)
 	{
@@ -917,10 +936,62 @@ void CObject_Window::Change_Picking_Menu(const _tchar* wszTag, _uint iTagNum)
 		return;
 	}
 
-	if (true == m_pGameInstance->Get_DIKeyState(DIK_J, CInput_Device::KEY_DOWN))
+	if (m_pChangeMapObject != m_pObject)
 	{
-		m_pObject->Get_Transform()->Set_WorldMatrix(m_pDummy->Get_Transform()->Get_WorldMatrix());
-		m_vecSaveObject.at(m_iTagIndex).matTransform = m_pDummy->Get_Transform()->Get_WorldMatrix();
+		m_vChangeMapTransOffset = m_pObject->Get_Transform()->Get_Position();
+		m_pChangeMapObject = m_pObject;
+
+		ZeroMemory(&m_vChangeMapTrans, sizeof m_vChangeMapTrans);
+
+		// 스케일 값 1로 초기화
+		for (size_t i = 0; i < 3; i++)
+			m_vChangeMapTrans[DUMMY_SCALE][i] = 1.f;
+	}
+
+	// imGui에서 값을 조정해서 변환 행렬을 만들어줌.
+	ImGui::DragFloat3("Scale", m_vChangeMapTrans[DUMMY_SCALE], 0.1f, 0.1f, 10.f);
+	ImGui::SameLine(); CHelpMaker::HelpMarker("0.1f ~ 10.f");
+
+	ImGui::DragFloat3("Rotation", m_vChangeMapTrans[DUMMY_ROT], 5.f, 0.f, 360.f);
+	ImGui::SameLine(); CHelpMaker::HelpMarker("0.f ~ 360.f");
+
+	ImGui::DragFloat3("Translation", m_vChangeMapTrans[DUMMY_TRANS], 1.f, -50.f, 50.f);
+	ImGui::SameLine(); CHelpMaker::HelpMarker("-50.f ~ 50.f");
+
+	// 상태 행렬 초기화
+	if (ImGui::Button("reset"))
+	{
+		ZeroMemory(&m_vChangeMapTrans, sizeof m_vChangeMapTrans);
+
+		// 스케일 값 1로 초기화
+		for (size_t i = 0; i < 3; i++)
+			m_vChangeMapTrans[DUMMY_SCALE][i] = 1.f;
+	}
+
+	ImGui::Text("");
+	// 조정한 상태값을 적용시킴
+	if (nullptr != m_pObject)
+	{
+		_float3 vScale;
+		memcpy(&vScale, m_vChangeMapTrans[DUMMY_SCALE], sizeof _float3);
+
+		_float3 vRotation;
+		memcpy(&vRotation, m_vChangeMapTrans[DUMMY_ROT], sizeof _float3);
+
+		vRotation.x = XMConvertToRadians(vRotation.x);
+		vRotation.y = XMConvertToRadians(vRotation.y);
+		vRotation.z = XMConvertToRadians(vRotation.z);
+
+		_float3 vTranslation =
+		{ m_vChangeMapTransOffset.x + m_vChangeMapTrans[DUMMY_TRANS][0],
+			m_vChangeMapTransOffset.y + m_vChangeMapTrans[DUMMY_TRANS][1],
+			m_vChangeMapTransOffset.z + m_vChangeMapTrans[DUMMY_TRANS][2] };
+
+		m_pObject->Get_Transform()->Set_Scale_No_Zero(vScale);
+		m_pObject->Get_Transform()->Set_Quaternion(m_pObject->Get_Transform()->Get_QuaternionVector_RollPitchYaw(vRotation));
+		m_pObject->Get_Transform()->Set_Position(vTranslation);
+
+		m_vecSaveObject.at(m_iTagIndex).matTransform = m_pObject->Get_Transform()->Get_WorldMatrix();
 	}
 }
 

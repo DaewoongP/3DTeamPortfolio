@@ -60,6 +60,10 @@
 
 #include "MapObject.h"
 
+#pragma region Trigger
+#include "LoadTrigger.h"
+#pragma endregion Trigger
+
 #ifdef _DEBUG
 #include "Test_Player.h"
 #include "Test_NPC.h"
@@ -79,7 +83,6 @@ CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	Safe_AddRef(m_pDevice);
 	Safe_AddRef(m_pContext);
 }
-
 
 _uint WINAPI Thread_Main(void* pArg)
 {
@@ -187,10 +190,6 @@ HRESULT CLoader::Loading_For_MainGame()
 	try /* Failed Check Add_Prototype*/
 	{
 		lstrcpy(m_szLoading, TEXT("텍스쳐 로딩 중."));
-		/* For.Prototype_Component_Texture_SkyBox*/
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Texture_SkyBox"),
-			CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/SkyBox/Sky_%d.dds"), 4))))
-			throw TEXT("Prototype_Component_Texture_SkyBox");
 
 		/* Prototype_Component_Texture_Default_Particle*/
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Texture_Default_Particle"),
@@ -210,7 +209,7 @@ HRESULT CLoader::Loading_For_MainGame()
 
 		/* Prototype_Component_VIBuffer_Terrain */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Terrain"),
-			CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Terrain/DT.bmp")))))
+			CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Terrain/Height.bmp")))))
 			throw TEXT("Prototype_Component_VIBuffer_Terrain");
 
 		/* For.Prototype_Component_VIBuffer_Cloth */
@@ -221,6 +220,10 @@ HRESULT CLoader::Loading_For_MainGame()
 		lstrcpy(m_szLoading, TEXT("모델 로딩 중."));
 
 		_float4x4 PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f));
+
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Model_Sky"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/SkySphere/SkySphere.dat")))))
+			throw TEXT("Prototype_Component_Model_Sky");
 
 		/* For.Weapon Models */
 		/* For.Prototype_Component_Model_Weopon_Armored_Troll */
@@ -299,7 +302,7 @@ HRESULT CLoader::Loading_For_MainGame()
 			throw TEXT("Prototype_Component_Model_Test_Robe_LOD");*/
 
 
-			/* For.Prototype_Component_Model_CustomModel_Player */
+		/* For.Prototype_Component_Model_CustomModel_Player */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_CustomModel_Player"),
 			CCustomModel::Create(m_pDevice, m_pContext, CCustomModel::TYPE_ANIM, L"../../Resources/Models/Anims/Player/Player.dat"))))
 			throw TEXT("Prototype_Component_Model_CustomModel_Player");
@@ -610,6 +613,10 @@ HRESULT CLoader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_PhysxRenderer"),
 			CPhysXRender::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_PhysxRenderer");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_LoadTrigger"),
+			CLoadTrigger::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_LoadTrigger");
 
 #endif // _DEBUG
 

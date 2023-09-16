@@ -32,6 +32,34 @@ HRESULT CWindow_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* 
 	}
 	ENDINSTANCE;
 
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Tool"), TEXT("Layer_Tool"))))
+	{
+		MSG_BOX("Failed Add Scene : (Scene_Tool)");
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	}
+	
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Tool"), TEXT("Layer_Tool_UI"))))
+	{
+		MSG_BOX("Failed Add Scene : (Scene_Tool)");
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	}
+	
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Tool"), TEXT("Layer_MapObject"))))
+	{
+		MSG_BOX("Failed Add Scene : (Scene_Tool)");
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	}
+
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Tool"), TEXT("Layer_Dummy_Cloth"))))
+	{
+		MSG_BOX("Failed Add Scene : (Scene_Tool)");
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	}
+
 	return S_OK;
 }
 
@@ -40,6 +68,11 @@ void CWindow_Manager::Tick(_float fTimeDelta)
 	RECT rc;
 	ZEROMEM(&rc);
 	GetWindowRect(g_hWnd, &rc);
+
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	pGameInstance->Set_CurrentScene(TEXT("Scene_Tool"), true);
+	Safe_Release(pGameInstance);
 
 	ImGui::SetNextWindowPos(ImVec2(0.f, 0.f));
 	ImGui::SetNextWindowSize(ImVec2(200.f, 236.f));

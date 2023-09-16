@@ -107,6 +107,7 @@ private:
 
 	_float3 m_vRandomInstall[2] = { { -1.f, -1.f, -1.f }, { -1.f, -1.f, -1.f } }; // 랜덤 설치할 때 범위 지정
 	_uint m_iRandomInstall_Seq = { 0 }; // 범위 순서
+	_float3 m_vObjectPickingPos = { -1.f, -1.f, -1.f }; // 오브젝트 피킹으로 찾은 물체의 위치
 
 	_int m_iModelIndex = { 0 }; // 선택된 모델 인덱스
 	_int m_iTagIndex = { 0 }; // 선택된 맵 오브젝트 태그 인덱스
@@ -129,6 +130,10 @@ private:
 	_float m_fBrushSize = { 10.f }; // 브러쉬 사이즈
 	_int m_iDiffuseIndex = { 0 }; // 어떤 텍스처를 Diffuse로 선택했는지
 	_int m_iBrushIndex = { 1 };	// 어떤 텍스처를 Brush로 선택했는지
+
+	_float m_vChangeMapTrans[DUMMY_END][3] = { 0.f, 0.f, 0.f }; // 설치된 모든 맵 오브젝트 이동 값
+	_float3 m_vChangeMapTransOffset = { 0.f, 0.f, 0.f };
+	CMapObject* m_pChangeMapObject = { nullptr }; // 비교용 변수
 
 public:
 	static CObject_Window* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, ImVec2 vWindowPos, ImVec2 vWindowSize);
