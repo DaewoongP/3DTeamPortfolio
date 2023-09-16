@@ -237,24 +237,23 @@ HRESULT CLoader::Loading_For_MainGame()
 		PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f));
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Weopon_Golem_Combat"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Golem_Combat_Sword/Golem_Combat_Sword.dat"), PivotMatrix))))
-
 			throw TEXT("Prototype_Component_Model_Weopon_Golem_Combat");
 
-		/* For.Prototype_Component_Model_Weopon_Player_Wand */
-		PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f)) * XMMatrixScaling(5,5,5);
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Weopon_Player_Wand"),
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/gaechul/gaechul.dat"), PivotMatrix))))
-			throw TEXT("Prototype_Component_Model_Weopon_Player_Wand");
-
-		///* For.Prototype_Component_Model_Weopon_Golem_Merlin */
-		//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Weopon_Golem_Merlin"),
-		//	CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Golem_Combat_Mace/Golem_Combat_Mace.dat"), PivotMatrix))))
-		//	throw TEXT("Prototype_Component_Model_Weopon_Golem_Merlin");
+		/* For.Prototype_Component_Model_Weopon_Golem_Merlin */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Weopon_Golem_Merlin"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Golem_Combat_Mace/Golem_Combat_Mace.dat"), PivotMatrix))))
+			throw TEXT("Prototype_Component_Model_Weopon_Golem_Merlin");
 
 		///* For.Prototype_Component_Model_Weopon_Pensive */
 		//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Weopon_Pensive"),
 		//	CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Pensive_Flail/Pensive_Flail.dat"), PivotMatrix))))
 		//	throw TEXT("Prototype_Component_Model_Weopon_Pensive");
+
+		/* For.Prototype_Component_Model_Weopon_Player_Wand */
+		PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f)) * XMMatrixScaling(5, 5, 5);
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Weopon_Player_Wand"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/gaechul/gaechul.dat"), PivotMatrix))))
+			throw TEXT("Prototype_Component_Model_Weopon_Player_Wand");
 
 		/* For.Monster Models */
 		/* For.Prototype_Component_Model_Armored_Troll */
@@ -278,10 +277,10 @@ HRESULT CLoader::Loading_For_MainGame()
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/Golem_CombatGrunt/Golem_CombatGrunt.gcm"), PivotMatrix))))
 			throw TEXT("Prototype_Component_Model_Golem_Combat");
 
-		///* For.Prototype_Component_Model_Golem_Merlin */
-		//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Golem_Merlin"),
-		//	CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/Golem_MerlinGrunt/Golem_MerlinGrunt.dat")))))
-		//	throw TEXT("Prototype_Component_Model_Golem_Merlin");
+		/* For.Prototype_Component_Model_Golem_Merlin */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Golem_Merlin"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/Golem_MerlinGrunt/Golem_MerlinGrunt.gcm"), PivotMatrix))))
+			throw TEXT("Prototype_Component_Model_Golem_Merlin");
 
 		///* For.Prototype_Component_Model_Pensive */
 		//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Pensive"),
@@ -302,43 +301,43 @@ HRESULT CLoader::Loading_For_MainGame()
 
 			/* For.Prototype_Component_Model_CustomModel_Player */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_CustomModel_Player"),
-			CCustomModel::Create(m_pDevice, m_pContext, CCustomModel::TYPE_ANIM, L"../../Resources/Models/Anims/Biped_Skeleton_Set/Biped_Skeleton_Set.dat"))))
+			CCustomModel::Create(m_pDevice, m_pContext, CCustomModel::TYPE_ANIM, L"../../Resources/Models/Anims/Player/Player.dat"))))
 			throw TEXT("Prototype_Component_Model_CustomModel_Player");
 #pragma region Player Parts
-		/* For.Prototype_Component_MeshPart_Adult_M_Head */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshPart_Adult_M_Head"),
-			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Adult_M_Head/Adult_M_Head.dat"), TEXT("Adult_M_Head")))))
-			throw TEXT("Prototype_Component_MeshPart_Adult_M_Head");
+		/* For.Prototype_Component_MeshPart_Player_Head */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshPart_Player_Head"),
+			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Player_Head/Player_Head.dat"), TEXT("Default_Head")))))
+			throw TEXT("Prototype_Component_MeshPart_Player_Head");
 
-		/* For.Prototype_Component_MeshPart_Arms01 */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshPart_Arms01"),
-			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Arms01/Arms01.dat"), TEXT("Arms01")))))
-			throw TEXT("Prototype_Component_MeshPart_Arms01");
+		/* For.Prototype_Component_MeshPart_Player_Arm */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshPart_Player_Arm"),
+			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Player_Arm/Player_Arm.dat"), TEXT("Default_Arm")))))
+			throw TEXT("Prototype_Component_MeshPart_Player_Arm");
 
-		/* For.Prototype_Component_MeshPart_Robe01 */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshPart_Robe01"),
-			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Robe01/Robe01.dat"), TEXT("Robe01")))))
-			throw TEXT("Prototype_Component_MeshPart_Robe01");
+		/* For.Prototype_Component_MeshPart_Player_Robe */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshPart_Player_Robe"),
+			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Robe_Student/Robe_Student.dat"), TEXT("Default_Robe")))))
+			throw TEXT("Prototype_Component_MeshPart_Player_Robe");
 
-		/* For.Prototype_Component_MeshPart_StuUni03_LongSleeve */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshPart_StuUni03_LongSleeve"),
-			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/StuUni03_LongSleeve/StuUni03_LongSleeve.dat"), TEXT("StuUni03_LongSleeve")))))
-			throw TEXT("Prototype_Component_MeshPart_StuUni03_LongSleeve");
+		/* For.Prototype_Component_MeshPart_Player_Top */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshPart_Player_Top"),
+			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Player_Top/Player_Top.dat"), TEXT("Default_Top")))))
+			throw TEXT("Prototype_Component_MeshPart_Player_Top");
 
-		/* For.Prototype_Component_MeshPart_Low_Slcialite01 */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshPart_Low_Slcialite01"),
-			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Low_Slcialite01/Low_Slcialite01.dat"), TEXT("Low_Slcialite01")))))
-			throw TEXT("Prototype_Component_MeshPart_Low_Slcialite01");
+		/* For.Prototype_Component_MeshPart_Player_Pants */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshPart_Player_Pants"),
+			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Player_Pants/Player_Pants.dat"), TEXT("Default_Pants")))))
+			throw TEXT("Prototype_Component_MeshPart_Player_Pants");
 
-		/* For.Prototype_Component_MeshPart_Socks01 */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshPart_Socks01"),
-			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Socks01/Socks01.dat"), TEXT("Socks01")))))
-			throw TEXT("Prototype_Component_MeshPart_Socks01");
+		/* For.Prototype_Component_MeshPart_Player_Socks */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshPart_Player_Socks"),
+			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Player_Socks/Player_Socks.dat"), TEXT("Default_Socks")))))
+			throw TEXT("Prototype_Component_MeshPart_Player_Socks");
 
-		/* For.Prototype_Component_MeshPart_StuShoes03 */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshPart_StuShoes03"),
-			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/StuShoes03/StuShoes03.dat"), TEXT("StuShoes03")))))
-			throw TEXT("Prototype_Component_MeshPart_StuShoes03");
+		/* For.Prototype_Component_MeshPart_Player_Shoes */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshPart_Player_Shoes"),
+			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Player_Shoes/Player_Shoes.dat"), TEXT("Default_Shoes")))))
+			throw TEXT("Prototype_Component_MeshPart_Player_Shoes");
 #pragma endregion // Player Parts
 
 		/* For.Prototype_Component_Model_Professor_Fig */
@@ -405,10 +404,20 @@ HRESULT CLoader::Loading_For_MainGame()
 			CSequence::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Sequence");
 
-		/* For.Prototype_Component_RandomChoose */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_RandomChoose"),
-			CRandomChoose::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_RandomChoose");
+		/* For.Prototype_Component_Sequence_Groggy */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sequence_Groggy"),
+			CSequence_Groggy::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Sequence_Groggy");
+
+		/* For.Prototype_Component_Random_Attack */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Random_Attack"),
+			CRandom_Attack::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Random_Attack");
+
+		/* For.Prototype_Component_Action_Deflect */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Action_Deflect"),
+			CAction_Deflect::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Action_Deflect");
 
 		/* For.Prototype_Component_Action */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Action"),
@@ -496,10 +505,10 @@ HRESULT CLoader::Loading_For_MainGame()
 			CWeapon_Player_Wand::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Weapon_Player_Wand");
 
-		///* For.Prototype_Component_Weapon_Golem_Merlin */
-		//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Weapon_Golem_Merlin"),
-		//	CWeapon_Golem_Merlin::Create(m_pDevice, m_pContext))))
-		//	throw TEXT("Prototype_Component_Weapon_Golem_Merlin");
+		/* For.Prototype_Component_Weapon_Golem_Merlin */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Weapon_Golem_Merlin"),
+			CWeapon_Golem_Merlin::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Weapon_Golem_Merlin");
 
 		///* For.Prototype_Component_Weapon_Pensive */
 		//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Weapon_Pensive"),
@@ -531,10 +540,10 @@ HRESULT CLoader::Loading_For_MainGame()
 			CGolem_Combat::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Golem_Combat");
 
-		///* For.Prototype_GameObject_Golem_Merlin */
-		//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Golem_Merlin"),
-		//	CGolem_Merlin::Create(m_pDevice, m_pContext))))
-		//	throw TEXT("Prototype_GameObject_Golem_Merlin");
+		/* For.Prototype_GameObject_Golem_Merlin */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Golem_Merlin"),
+			CGolem_Merlin::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Golem_Merlin");
 
 		///* For.Prototype_GameObject_Pensive */
 		//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Pensive"),

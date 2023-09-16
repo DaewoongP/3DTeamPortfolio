@@ -1,8 +1,8 @@
 #pragma once
 
 /* =============================================== */
-//	[CAction]
-//	: 객체의 애니메이션을 담당하는 클래스
+//	[CAction_Deflect]
+//	: 객체의 패링 애니메이션을 담당하는 클래스
 //	정 : 주성환
 //	부 :
 //
@@ -17,12 +17,12 @@ END
 
 BEGIN(Client)
 
-class CAction final : public CBehavior
+class CAction_Deflect final : public CBehavior
 {
 private:
-	explicit CAction(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	explicit CAction(const CAction& rhs);
-	virtual ~CAction() = default;
+	explicit CAction_Deflect(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	explicit CAction_Deflect(const CAction_Deflect& rhs);
+	virtual ~CAction_Deflect() = default;
 
 public:
 	/*
@@ -37,6 +37,10 @@ public:
 	void Set_Options(const wstring& _wstrAnimationTag, CModel* _pModel,
 		_bool _isCheckBehavior = false, const _float& _fCoolTime = 0.f,
 		_bool _isOneTimeAction = false, _bool _isLerp = true);
+	/* 현재 이 행동이 진행중인지 */
+	_bool isPlayAction() const {
+		return m_isPlay;
+	}
 
 public:
 	virtual HRESULT Initialize_Prototype() override { return S_OK; }
@@ -56,14 +60,15 @@ private:
 	_bool m_isCheckBehavior = { false };
 	_bool m_isOneTimeAction = { false };
 	_bool m_isEndFirstPlay = { false };
+	_bool m_isPlay = { false }; // 현재 진행중인지.
 	_bool m_isFirst = { true };
 
 private:
 	CModel* m_pModel = { nullptr };
 
 public:
-	static CAction* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CAction* Clone(void* pArg) override;
+	static CAction_Deflect* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	virtual CAction_Deflect* Clone(void* pArg) override;
 	virtual void Free() override;
 };
 

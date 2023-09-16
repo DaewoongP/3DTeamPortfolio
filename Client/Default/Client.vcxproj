@@ -164,8 +164,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Action.h" />
+    <ClInclude Include="..\Public\Action_Deflect.h" />
     <ClInclude Include="..\Public\Check_Distance.h" />
+    <ClInclude Include="..\Public\Random_Attack.h" />
     <ClInclude Include="..\Public\Sequence_Attack.h" />
+    <ClInclude Include="..\Public\Sequence_Groggy.h" />
     <ClInclude Include="..\Public\Sequence_MoveTarget.h" />
     <ClInclude Include="..\public\StateMachine.h" />
     <ClInclude Include="..\public\IdleState.h" />
@@ -178,7 +181,6 @@
     <ClInclude Include="..\Public\MagicBallPool.h" />
     <ClInclude Include="..\Public\Protego.h" />
     <ClInclude Include="..\Public\Revelio.h" />
-    <ClInclude Include="..\Public\LookAt.h" />
     <ClInclude Include="..\Public\Professor_Fig.h" />
     <ClInclude Include="..\Public\Selector_Degree.h" />
     <ClInclude Include="..\Public\Armored_Troll.h" />
@@ -305,8 +307,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Action.cpp" />
+    <ClCompile Include="..\Private\Action_Deflect.cpp" />
     <ClCompile Include="..\Private\Check_Distance.cpp" />
+    <ClCompile Include="..\Private\Random_Attack.cpp" />
     <ClCompile Include="..\Private\Sequence_Attack.cpp" />
+    <ClCompile Include="..\Private\Sequence_Groggy.cpp" />
     <ClCompile Include="..\Private\Sequence_MoveTarget.cpp" />
     <ClCompile Include="..\private\StateMachine.cpp" />
     <ClCompile Include="..\Private\IdleState.cpp" />
@@ -320,7 +325,6 @@
     <ClCompile Include="..\Private\MagicBallPool.cpp" />
     <ClCompile Include="..\Private\Protego.cpp" />
     <ClCompile Include="..\Private\Revelio.cpp" />
-    <ClCompile Include="..\Private\LookAt.cpp" />
     <ClCompile Include="..\Private\Professor_Fig.cpp" />
     <ClCompile Include="..\Private\Selector_Degree.cpp" />
     <ClCompile Include="..\Private\Armored_Troll.cpp" />

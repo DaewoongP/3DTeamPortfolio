@@ -22,7 +22,10 @@ HRESULT CCheck_Distance::Initialize(void* pArg)
 HRESULT CCheck_Distance::Tick(const _float& fTimeDelta)
 {
 	if (false == Check_Decorations())
+	{
+		m_ReturnData = BEHAVIOR_FAIL;
 		return BEHAVIOR_FAIL;
+	}
 
 	CGameObject* pTarget = { nullptr };
 	if (FAILED(m_pBlackBoard->Get_Type("pTarget", pTarget)))

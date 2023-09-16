@@ -5,6 +5,7 @@
 
 #include "Turn.h"
 #include "Action.h"
+#include "Random_Attack.h"
 #include "Check_Distance.h"
 
 CSequence_Attack::CSequence_Attack(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -19,7 +20,6 @@ CSequence_Attack::CSequence_Attack(const CSequence_Attack& rhs)
 
 void CSequence_Attack::Set_Attack_Action_Options(const wstring& _wstrAnimationTag, CModel* _pModel,
 	_bool _isCheckBehavior, const _float& _fCoolTime,
-	const wstring& _wstrTimerTag, const _float& _fDurationTime,
 	_bool _isOneTimeAction, _bool _isLerp)
 {
 	if (nullptr == m_pAction)
@@ -27,7 +27,6 @@ void CSequence_Attack::Set_Attack_Action_Options(const wstring& _wstrAnimationTa
 
 	m_pAction->Set_Options(_wstrAnimationTag, _pModel,
 		_isCheckBehavior, _fCoolTime,
-		_wstrTimerTag, _fDurationTime,
 		_isOneTimeAction, _isLerp);
 }
 
@@ -62,7 +61,7 @@ HRESULT CSequence_Attack::Tick(const _float& fTimeDelta)
 {
 	if (FAILED(m_pBlackBoard->Set_Type("fAttackRange", m_fAttackRange)))
 		return E_FAIL;
-	
+
 	return __super::Tick(fTimeDelta);
 }
 
@@ -72,44 +71,36 @@ HRESULT CSequence_Attack::Assemble_Childs()
 
 	try
 	{
-		CGameObject* pOwner = dynamic_cast<CGameObject*>(m_pOwner);
-		if (nullptr == pOwner)
-			throw TEXT("pOwner is nullptr");
-		CTransform* pTransform = pOwner->Get_Transform();
-		if (nullptr == pTransform)
+		CTransform* pTransform = { nullptr };
+		if (FAILED(m_pBlackBoard->Get_Type("pTransform", pTransform)))
 			throw TEXT("pTransform is nullptr");
 
-		CCheck_Distance* pTsk_Check_Distance = dynamic_cast<CCheck_Distance*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Check_Distance")));
-		if (nullptr == pTsk_Check_Distance)
-			throw TEXT("pTsk_Check_Distance is nullptr");
+		CCheck_Distance* pTsk_Check_Distance_Enter = dynamic_cast<CCheck_Distance*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Check_Distance")));
+		if (nullptr == pTsk_Check_Distance_Enter)
+			throw TEXT("pTsk_Check_Distance_Enter is nullptr");
+		CCheck_Distance* pTsk_Check_Distance_Exit = dynamic_cast<CCheck_Distance*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Check_Distance")));
+		if (nullptr == pTsk_Check_Distance_Exit)
+			throw TEXT("pTsk_Check_Distance_Exit is nullptr");
 		CTurn* pTsk_Turn = dynamic_cast<CTurn*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Turn")));
 		if (nullptr == pTsk_Turn)
 			throw TEXT("pTsk_Turn is nullptr");
 
 		/* Set Decorations */
-		m_pAction->Add_Decoration([&](CBlackBoard* pBlackBoard)->_bool
-			{
-				_float fDistance = { 0.f };
-				if (FAILED(pBlackBoard->Get_Type("fTargetDistance", fDistance)))
-					return false;
-
-				if (m_fAttackRange < fDistance)
-					return false;
-
-				return true;
-			});
 
 		/* Set Options */
-		pTsk_Turn->Set_Option(45.f, 3.5f);
+		pTsk_Turn->Set_Option(60.f, 3.f);
 		pTsk_Turn->Set_Transform(pTransform);
-		pTsk_Check_Distance->Set_Transform(pTransform);
+		pTsk_Check_Distance_Enter->Set_Transform(pTransform);
+		pTsk_Check_Distance_Exit->Set_Transform(pTransform);
 
-		if (FAILED(Assemble_Behavior(TEXT("Tsk_Check_Distance"), pTsk_Check_Distance)))
-			throw TEXT("Tsk_Check_Distance");
+		if (FAILED(Assemble_Behavior(TEXT("Tsk_Check_Distance_Enter"), pTsk_Check_Distance_Enter)))
+			throw TEXT("Failed Assemble_Behavior Tsk_Check_Distance_Enter");
 		if (FAILED(Assemble_Behavior(TEXT("Tsk_Turn"), pTsk_Turn)))
-			throw TEXT("Failed Assemble_Behavior Tsk_Turn");
+			throw TEXT("Tsk_Turn");
 		if (FAILED(Assemble_Behavior(TEXT("Action_Attack"), m_pAction)))
 			throw TEXT("Action_Attack");
+		if (FAILED(Assemble_Behavior(TEXT("Tsk_Check_Distance_Exit"), pTsk_Check_Distance_Exit)))
+			throw TEXT("Failed Assemble_Behavior Tsk_Check_Distance_Exit");
 		Safe_AddRef(m_pAction);
 	}
 	catch (const _tchar* pErrorTag)
@@ -126,6 +117,18 @@ HRESULT CSequence_Attack::Assemble_Childs()
 	ENDINSTANCE;
 
 	return S_OK;
+}
+
+void CSequence_Attack::Reset_Behavior(HRESULT result)
+{
+	m_pAction->Reset_Behavior(result);
+	(*m_iterCurBehavior)->Reset_Behavior(result);
+
+	m_isPlayAttack = false;
+
+	BEGININSTANCE;
+	m_fPreWorldTimeAcc = pGameInstance->Get_World_TimeAcc();
+	ENDINSTANCE;
 }
 
 CSequence_Attack* CSequence_Attack::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

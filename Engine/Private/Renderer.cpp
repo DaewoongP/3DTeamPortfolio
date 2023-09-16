@@ -956,7 +956,6 @@ _bool CRenderer::Is_MRTRender()
 
 	return m_isMRTRender;
 }
-#endif // _DEBUG
 _bool CRenderer::Is_Render_Distortion()
 {
 	CInput_Device* pInput_Device = CInput_Device::GetInstance();
@@ -973,6 +972,7 @@ _bool CRenderer::Is_Render_Distortion()
 
 	return m_isDistortion;
 }
+#endif // _DEBUG
 CRenderer* CRenderer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CRenderer* pInstance = new CRenderer(pDevice, pContext);
