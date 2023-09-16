@@ -594,9 +594,6 @@
     <ClInclude Include="..\public\Main2_Loader.h">
       <Filter>01. Levels\99. Loading\Loader</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\SeamlessTest_Loader.h">
-      <Filter>01. Levels\99. Loading</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Main0_Loader.h">
       <Filter>01. Levels\99. Loading\Loader</Filter>
     </ClInclude>
@@ -877,9 +874,6 @@
     </ClCompile>
     <ClCompile Include="..\private\Main2_Loader.cpp">
       <Filter>01. Levels\99. Loading\Loader</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\SeamlessTest_Loader.cpp">
-      <Filter>01. Levels\99. Loading</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Main0_Loader.cpp">
       <Filter>01. Levels\99. Loading\Loader</Filter>

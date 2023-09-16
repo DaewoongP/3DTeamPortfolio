@@ -178,7 +178,6 @@
     <ClInclude Include="..\public\Info_Main.h" />
     <ClInclude Include="..\public\LoadTrigger.h" />
     <ClInclude Include="..\public\MagicSlot.h" />
-    <ClInclude Include="..\public\SeamlessTest_Loader.h" />
     <ClInclude Include="..\public\Seamless_Loader.h" />
     <ClInclude Include="..\Public\Sequence_Attack.h" />
     <ClInclude Include="..\Public\Sequence_Groggy.h" />
@@ -309,7 +308,6 @@
     <ClCompile Include="..\private\Info_Main.cpp" />
     <ClCompile Include="..\private\LoadTrigger.cpp" />
     <ClCompile Include="..\private\MagicSlot.cpp" />
-    <ClCompile Include="..\private\SeamlessTest_Loader.cpp" />
     <ClCompile Include="..\private\Seamless_Loader.cpp" />
     <ClCompile Include="..\Private\Sequence_Attack.cpp" />
     <ClCompile Include="..\Private\Sequence_Groggy.cpp" />
