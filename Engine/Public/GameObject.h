@@ -32,6 +32,9 @@ public:
 	virtual void OnCollisionEnter(COLLEVENTDESC CollisionDesc) {}
 	virtual void OnCollisionStay(COLLEVENTDESC CollisionDesc) {}
 	virtual void OnCollisionExit(COLLEVENTDESC CollisionDesc) {}
+
+	//마법이 값을 떤지고 도망가는 함수. 각 오브젝트마다 파서 대응해줘야함.
+	virtual void On_Maigc_Throw_Data(void* data) {}
 	virtual HRESULT Render() override;
 	virtual HRESULT Render_Depth();
 

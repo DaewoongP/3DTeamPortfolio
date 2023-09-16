@@ -265,11 +265,17 @@ HRESULT CLevel_MainGame::Ready_Layer_Effect(const _tchar* pLayerTag)
 		return E_FAIL;
 	}*/
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Default_Magic_Effect"), pLayerTag, TEXT("GameObject_Default_Magic_Effect"))))
+	/*if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Default_Magic_Effect"), pLayerTag, TEXT("GameObject_Default_Magic_Effect"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Default_Magic_Effect)");
 		return E_FAIL;
-	}
+	}*/
+
+	/*if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Wingardium_Effect"), pLayerTag, TEXT("GameObject_Wingardium_Effect"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Wingardium_Effect)");
+		return E_FAIL;
+	}*/
 #endif _DEBUG
 	Safe_Release(pGameInstance);
 

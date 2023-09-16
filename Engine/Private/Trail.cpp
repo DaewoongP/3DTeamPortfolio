@@ -166,7 +166,6 @@ void CTrail::Tick(_float fTimeDelta)
 	if (false == m_isEnable)
 		return;
 	__super::Tick(fTimeDelta);
-
 	if (nullptr != m_pBuffer)
 		m_pBuffer->Tick();
 }

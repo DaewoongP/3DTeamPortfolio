@@ -238,6 +238,18 @@
     <Filter Include="04. Magic\MagicBall\00. BasicCast">
       <UniqueIdentifier>{753e950f-efbe-4660-a035-8339816dab1b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="04. Magic\MagicBall\03. Wingardiumleviosa">
+      <UniqueIdentifier>{679315ef-dd4e-4f8a-8102-42d3e7531140}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Magic\MagicBall\04. Levioso">
+      <UniqueIdentifier>{e6fd5103-b92d-4463-b59d-613d632c8fc3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. Effect\Wingardium_Effect">
+      <UniqueIdentifier>{2225573b-518b-46cd-b9ba-d1ab1cbfdb7d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. Effect\Default_MagicTraill_Effect">
+      <UniqueIdentifier>{5235bea2-54db-4f3f-b105-e99f462db57b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -498,6 +510,18 @@
     <ClInclude Include="..\Public\Weapon_Player_Wand.h">
       <Filter>02. GameObject\01. Player\01. Weapon\Wand</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Wingardium_Effect.h">
+      <Filter>02. GameObject\03. Effect\Wingardium_Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Wingardiumleviosa.h">
+      <Filter>04. Magic\MagicBall\03. Wingardiumleviosa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Levioso.h">
+      <Filter>04. Magic\MagicBall\04. Levioso</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Default_MagicTraill_Effect.h">
+      <Filter>02. GameObject\03. Effect\Default_MagicTraill_Effect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -727,6 +751,18 @@
     </ClCompile>
     <ClCompile Include="..\Private\Weapon_Player_Wand.cpp">
       <Filter>02. GameObject\01. Player\01. Weapon\Wand</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Wingardium_Effect.cpp">
+      <Filter>02. GameObject\03. Effect\Wingardium_Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Wingardiumleviosa.cpp">
+      <Filter>04. Magic\MagicBall\03. Wingardiumleviosa</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Levioso.cpp">
+      <Filter>04. Magic\MagicBall\04. Levioso</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Default_MagicTraill_Effect.cpp">
+      <Filter>02. GameObject\03. Effect\Default_MagicTraill_Effect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -38,7 +38,7 @@ HRESULT CMagicBall::Initialize(void* pArg)
 
 	MAGICBALLINITDESC* initDesc = static_cast<MAGICBALLINITDESC*>(pArg);
 
-	m_eMagicGroup = initDesc->eMagicGroup;;
+	m_eMagicGroup = initDesc->eMagicGroup;
 	m_eMagicType = initDesc->eMagicType;
 	m_eBuffType = initDesc->eBuffType;
 	m_eMagicTag = initDesc->eMagicTag;
@@ -47,12 +47,21 @@ HRESULT CMagicBall::Initialize(void* pArg)
 	m_fInitLiftTime = initDesc->fLiftTime;
 	m_pWeapon = initDesc->pWeapon;
 	Safe_AddRef(m_pWeapon);
+	m_pTarget = initDesc->pTarget;
+	Safe_AddRef(m_pTarget);
 
 	m_fLiftTime = m_fInitLiftTime;
 	m_pTransform->Set_Position(m_vStartPosition);
 
 	m_vStartPosition = m_pWeapon->Get_Transform()->Get_Position() + m_pWeapon->Get_Wand_Point_Offset();
-	//cout << m_vStartPosition.x << " " << m_vStartPosition.y << " " << m_vStartPosition.z << endl;
+	
+	m_CollisionDesc.eMagicGroup = m_eMagicGroup;
+	m_CollisionDesc.eMagicType = m_eMagicType;
+	m_CollisionDesc.eBuffType = m_eBuffType;
+	m_CollisionDesc.eMagicTag = m_eMagicTag;
+	m_CollisionDesc.fDamage = m_fDamage;
+
+	Set_CollisionData(&m_CollisionDesc);
 	return S_OK;
 }
 
