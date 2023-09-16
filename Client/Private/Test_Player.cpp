@@ -198,7 +198,7 @@ HRESULT CTest_Player::Add_Components()
 		return E_FAIL;
 	}
 
-	m_pModelCom->Add_MeshParts(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshPart_Robe01"), CCustomModel::ROBE, TEXT("../../Resources/GameData/ClothData/Test.cloth"));
+	m_pModelCom->Add_MeshParts(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshPart_Robe01"), CCustomModel::ROBE, TEXT("../../Resources/GameData/ClothData/2circle.cloth"));
 
 	return S_OK;
 }

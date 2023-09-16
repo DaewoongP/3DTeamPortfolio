@@ -180,6 +180,10 @@
     <ClInclude Include="..\Public\ComboBox.h" />
     <ClInclude Include="..\public\CustomWidget.h" />
     <ClInclude Include="..\Public\MapObject_Ins.h" />
+    <ClInclude Include="..\Public\Monster_Window.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="..\Public\Navigation_Window.h" />
     <ClInclude Include="..\Public\PhysXRender.h" />
     <ClInclude Include="..\Public\DummyFlipBook.h" />
@@ -245,6 +249,10 @@
     <ClCompile Include="..\private\CutScene_Camera_Tool.cpp" />
     <ClCompile Include="..\private\Main_Camera.cpp" />
     <ClCompile Include="..\Private\MapObject_Ins.cpp" />
+    <ClCompile Include="..\Private\Monster_Window.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\Private\Navigation_Window.cpp" />
     <ClCompile Include="..\Private\PhysXRender.cpp" />
     <ClCompile Include="..\private\DummyFlipBook.cpp" />

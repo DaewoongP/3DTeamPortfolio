@@ -56,6 +56,12 @@ HRESULT CLevel_MainGame::Initialize()
 		return E_FAIL;
 	}
 
+	if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/0916123.ddd"))))
+	{
+		MSG_BOX("Failed Load Map Object");
+
+		return E_FAIL;
+	}
 #ifdef _DEBUG
 	if (FAILED(Ready_Layer_Debug(TEXT("Layer_Debug"))))
 	{
@@ -169,8 +175,6 @@ HRESULT CLevel_MainGame::Ready_Layer_BackGround(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	//Load_MapObject();
-
 	Safe_Release(pGameInstance);
 
 	return S_OK;
@@ -247,18 +251,12 @@ HRESULT CLevel_MainGame::Ready_Layer_NPC(const _tchar* pLayerTag)
 
 	ENDINSTANCE;
 
-	return E_NOTIMPL;
+	return S_OK;
 }
 
-HRESULT CLevel_MainGame::Load_MapObject()
+HRESULT CLevel_MainGame::Load_MapObject(const _tchar* pObjectFilePath)
 {
-	// 데이터 파일 이름 선택
-	//_tchar dataFile[MAX_PATH] = { 0 };
-	//_stprintf_s(dataFile, TEXT("../../Resources/GameData/MapData/MapData%d.ddd"), (Num));
-
-	_tchar dataFile[MAX_PATH] = TEXT("../../Resources/GameData/MapData/MapData.ddd");
-
-	HANDLE hFile = CreateFile(dataFile, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+	HANDLE hFile = CreateFile(pObjectFilePath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
 	if (INVALID_HANDLE_VALUE == hFile)
 	{
@@ -268,9 +266,8 @@ HRESULT CLevel_MainGame::Load_MapObject()
 
 	// 맵 오브젝트 번호
 	_uint iObjectNum = 0;
-	vector<const _tchar*> wszModelName;
 
-	DWORD	dwByte = 0;
+	DWORD    dwByte = 0;
 
 	while (true)
 	{
@@ -298,42 +295,7 @@ HRESULT CLevel_MainGame::Load_MapObject()
 		{
 			break;
 		}
-
-		_uint iCount = 0;
-
-		// 이미 생성된 프로토타입이 아니어야 생성
-		BEGININSTANCE; for (auto& iter : wszModelName)
-		{
-			if (!lstrcmp(iter, LoadDesc.wszTag))
-			{
-				++iCount;
-			}
-		}
-
-		if (0 == iCount)
-		{
-			wszModelName.push_back(LoadDesc.wszTag);
-
-			// 프로토타입 생성 부분
-			wstring ws(LoadDesc.wszTag);
-			size_t findIndex = ws.find(TEXT("Model_")) + 6;
-
-			wstring modelName = ws.substr(findIndex);
-
-			wstring modelPath(TEXT("../../Resources/Models/MapObject/NonAnims/"));
-			modelPath += modelName;
-			modelPath += TEXT("/");
-			modelPath += modelName;
-			modelPath += TEXT(".dat");
-
-			// 프로토타입 생성
-			_float4x4 PivotMatrix = XMMatrixIdentity();
-			if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAINGAME, LoadDesc.wszTag,
-				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, modelPath.c_str(), PivotMatrix))))
-			{
-				MSG_BOX("Failed to Create New Model Prototype");
-			}
-		}
+		BEGININSTANCE;
 
 		// 맵 오브젝트에 번호 붙여줌
 		_tchar wszobjName[MAX_PATH] = { 0 };
@@ -355,7 +317,6 @@ HRESULT CLevel_MainGame::Load_MapObject()
 
 		pObject->Add_Model_Component(LoadDesc.wszTag);
 		pObject->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMesh"));
-		pObject->Set_Color(iObjectNum); // 고유한 색깔 값을 넣어줌
 
 		++iObjectNum; ENDINSTANCE;
 	}

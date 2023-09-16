@@ -8,16 +8,14 @@ END
 
 BEGIN(Client)
 
-class CLoader final : public CBase
+class CMain2_Loader final : public CBase
 {
 private:
-	explicit CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual ~CLoader() = default;
+	explicit CMain2_Loader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	virtual ~CMain2_Loader() = default;
 
 public:
 	const HANDLE Get_Thread() const { return m_hThread; }
-	const _tchar* Get_LoadingText() const { return m_szLoading; }
-	_uint Get_LoadingPercent() const { return m_iLoadingPercent; }
 	_bool Get_Finished() const { return m_isFinished; }
 
 public:
@@ -25,9 +23,7 @@ public:
 	HRESULT Loading();
 
 private:
-	// 쓰레드 생성 핸들
 	HANDLE					m_hThread = { 0 };
-	// 다중 쓰레드에서 해당 쓰레드가 크리티컬 섹션을 벗어나기 전까지 다른 쓰레드가 실행되지 못하게 처리 하는 변수.
 	CRITICAL_SECTION		m_Critical_Section;
 
 private:
@@ -37,19 +33,14 @@ private:
 
 private:
 	LEVELID					m_eNextLevelID = { LEVELID::LEVEL_END };
-	// 로딩 상태 확인용 문자열 변수
-	_tchar					m_szLoading[MAX_STR] = TEXT("");
-	// 로딩이 끝났는지 확인하는 변수
 	_bool					m_isFinished = { false };
-
-	_uint					m_iLoadingPercent = { 0 };
 
 private:
 	HRESULT Loading_For_Logo();
 	HRESULT Loading_For_MainGame();
 
 public:
-	static CLoader* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVELID eNextLevel);
+	static CMain2_Loader* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVELID eNextLevel);
 	virtual void Free() override;
 };
 
