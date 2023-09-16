@@ -15,6 +15,12 @@ HRESULT CLevel_Logo::Initialize()
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 		return E_FAIL;
 
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	// ÇöÀç ¾À ¼³Á¤.
+	pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
+	Safe_Release(pGameInstance);
+
 	return S_OK;
 }
 

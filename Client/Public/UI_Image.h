@@ -89,10 +89,6 @@ private:
 	_float3 vPlayerPos = _float3(1024.f, 0.f, 1024.f);
 	_float2 vMiniMapSize = _float2(1024.f, 1024.f);
 
-	_float xxx = 0.f;
-	_float zzz = 0.f;
-
-
 public:
 	static CUI_Image* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CUI_Image* Clone(void* pArg);

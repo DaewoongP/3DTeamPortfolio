@@ -43,12 +43,12 @@ HRESULT CLevel_MainGame::Initialize()
 
 		return E_FAIL;
 	}
-	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
+	/*if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
 	{
 		MSG_BOX("Failed Ready_Layer_UI");
 
 		return E_FAIL;
-	}
+	}*/
 	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
 	{
 		MSG_BOX("Failed Ready_Layer_Effect");
@@ -73,6 +73,22 @@ HRESULT CLevel_MainGame::Initialize()
 #endif // _DEBUG
 
 	BEGININSTANCE;
+
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), TEXT("Layer_Magic"))))
+	{
+		MSG_BOX("Failed Add Scene : (Scene_Main)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), TEXT("Layer_BackGround"))))
+	{
+		MSG_BOX("Failed Add Scene : (Scene_Main)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	
 	/* 게임 초기화와 함께 월드시간 초기화 */
 	pGameInstance->Reset_World_TimeAcc();
 	// 현재 씬 설정.
@@ -89,14 +105,14 @@ void CLevel_MainGame::Tick(_float fTimeDelta)
 	BEGININSTANCE;
 
 	// 씬변경 테스트
-	/*if (pGameInstance->Get_DIKeyState(DIK_T, CInput_Device::KEY_DOWN))
+	if (pGameInstance->Get_DIKeyState(DIK_T, CInput_Device::KEY_DOWN))
 	{
 		pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
 	}
 	if (pGameInstance->Get_DIKeyState(DIK_Y, CInput_Device::KEY_DOWN))
 	{
 		pGameInstance->Set_CurrentScene(TEXT("Scene_Info"), false);
-	}*/
+	}
 	
 	ENDINSTANCE;
 
@@ -160,7 +176,7 @@ HRESULT CLevel_MainGame::Ready_Layer_BackGround(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	Load_MapObject();
+	//Load_MapObject();
 
 	Safe_Release(pGameInstance);
 
@@ -194,7 +210,14 @@ HRESULT CLevel_MainGame::Ready_Layer_Player(const _tchar* pLayerTag)
 HRESULT CLevel_MainGame::Ready_Layer_Monster(const _tchar* pLayerTag)
 {
 	BEGININSTANCE;
-	
+	/* Add Scene : Main */
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
+	{
+		MSG_BOX("Failed Add Scene : (Scene_Main)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
 	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Golem_Combat"), pLayerTag, TEXT("GameObject_Golem_Combat"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Golem_Combat)");
@@ -215,6 +238,13 @@ HRESULT CLevel_MainGame::Ready_Layer_Monster(const _tchar* pLayerTag)
 HRESULT CLevel_MainGame::Ready_Layer_NPC(const _tchar* pLayerTag)
 {
 	BEGININSTANCE;
+	/* Add Scene : Main */
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
+	{
+		MSG_BOX("Failed Add Scene : (Scene_Main)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
 
 	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Professor_Fig"), pLayerTag, TEXT("GameObject_Professor_Fig"))))
 	{
@@ -461,6 +491,12 @@ HRESULT CLevel_MainGame::Ready_Layer_Debug(const _tchar* pLayerTag)
 	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_LoadTrigger"), pLayerTag, TEXT("GameObject_LoadTrigger"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_LoadTrigger)");
+		return E_FAIL;
+	}
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Dummy"), pLayerTag, TEXT("GameObject_Dummy"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Dummy)");
 		return E_FAIL;
 	}
 

@@ -47,7 +47,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
-	if (FAILED(Ready_Caemra()))
+	if (FAILED(Ready_Camera()))
 	{
 		MSG_BOX("Failed Ready Player Caemra");
 
@@ -207,10 +207,8 @@ HRESULT CPlayer::Add_Components()
 	CMagic::MAGICDESC magicInitDesc;
 	magicInitDesc.eBuffType = CMagic::BUFF_SHILED;
 	magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
-	/*magicInitDesc.eMagicType = CMagic::MT_ALL;
-	magicInitDesc.eMagicTag = PROTEGO;*/
-	magicInitDesc.eMagicType = CMagic::MT_NOTHING;
-	magicInitDesc.eMagicTag = LEVIOSO;
+	magicInitDesc.eMagicType = CMagic::MT_ALL;
+	magicInitDesc.eMagicTag = PROTEGO;
 	magicInitDesc.fCoolTime = 1.f;
 	magicInitDesc.fDamage = 0.f;
 	magicInitDesc.fCastDistance = 1000;
@@ -291,7 +289,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 			if (nullptr == pTestTarget)
 				throw TEXT("pTestTarget is nullptr");
 
-			m_pMagic->Magic_Cast(pTestTarget->Get_Transform(),m_pWeapon);
+			m_pMagic->Magic_Cast(pTestTarget->Get_Transform(), m_pWeapon);
 		}
 	}
 
@@ -380,7 +378,7 @@ HRESULT CPlayer::Ready_MeshParts()
 	return S_OK;
 }
 
-HRESULT CPlayer::Ready_Caemra()
+HRESULT CPlayer::Ready_Camera()
 {
 	//어떤 뼈에 붙일 것인가.
 	_uint iBoneIndex{ 0 };

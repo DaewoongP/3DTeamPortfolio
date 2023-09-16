@@ -141,19 +141,6 @@ HRESULT CUI_Image::SetUp_ShaderResources()
 
 	if (m_eShadertype == MINIMAP)
 	{
-			ImGui::Begin("aa");
-
-			if (ImGui::DragFloat("aa", &xxx))
-			{
-				vPlayerPos.x = xxx;
-			}
-			if (ImGui::DragFloat("zz", &zzz))
-			{
-				vPlayerPos.z = zzz;
-			}
-
-			ImGui::End();
-
 		if (FAILED(m_pShaderCom->Bind_RawValue("g_vPlayerPos", &vPlayerPos, sizeof(_float3))))
 			return E_FAIL;		
 		if (FAILED(m_pShaderCom->Bind_RawValue("g_vMiniMapSize", &vMiniMapSize, sizeof(_float2))))

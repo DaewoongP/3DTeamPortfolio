@@ -66,7 +66,7 @@ private:
 
 private:
 	HRESULT Ready_MeshParts();
-	HRESULT Ready_Caemra();
+	HRESULT Ready_Camera();
 
 public:
 	// 마법에 함수가 잘 들어가나 테스트용도입니다.

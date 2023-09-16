@@ -95,6 +95,9 @@ _bool CMagic::Magic_Cast(CTransform* pTarget, class CWeapon_Player_Wand* pWeapon
 			MSG_BOX(msgBoxText);
 			return false;
 		}
+
+		pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
+
 		ENDINSTANCE;
 
 		for (_uint i = 0; i < m_ActionVec.size(); i++)

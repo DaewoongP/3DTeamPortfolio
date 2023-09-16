@@ -111,8 +111,6 @@ private:
 	_uint m_iRandomInstall_Seq = { 0 }; // 범위 순서
 	_float3 m_vObjectPickingPos = { -1.f, -1.f, -1.f }; // 오브젝트 피킹으로 찾은 물체의 위치
 
-	_float3 m_vObjectPickingPos = { -1.f, -1.f, -1.f }; // 오브젝트 피킹으로 찾은 물체의 위치
-
 	_int m_iModelIndex = { 0 }; // 선택된 모델 인덱스
 	_int m_iTagIndex = { 0 }; // 선택된 맵 오브젝트 태그 인덱스
 	_int m_iModelCnt = { 0 }; // 삭제와 상관없는 모델 번호
