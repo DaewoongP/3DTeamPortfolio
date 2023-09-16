@@ -28,6 +28,7 @@ private:
 	HRESULT Read_File(const _tchar* pFilePath);
 	CUI::UIDESC Load_File(const HANDLE hFile);
 
+
 public:
 	static CUI_Group_HP* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);
 	virtual CGameObject* Clone(void* pArg) override;

@@ -1,6 +1,8 @@
 #include "../Public/Component_Manager.h"
 #include "../Public/Component.h"
 #include "Layer.h"
+#include "PhysX_Manager.h"
+#include "Level_Manager.h"
 
 IMPLEMENT_SINGLETON(CComponent_Manager)
 
@@ -16,9 +18,11 @@ HRESULT CComponent_Manager::Reserve_Containers(_uint iNumLevels)
 		return E_FAIL;
 	}
 
-	m_pPrototypes = new PROTOTYPES[iNumLevels];
+	m_pPrototypes = New PROTOTYPES[iNumLevels];
 
-	m_pLayers = new LAYERS[iNumLevels];
+	m_pLayers = New LAYERS[iNumLevels];
+
+	m_pCurrentLayers = New LAYERS[iNumLevels];
 
 	m_iNumLevels = iNumLevels;
 
@@ -66,11 +70,13 @@ HRESULT CComponent_Manager::Add_Component(_uint iLevelIndex, const _tchar* pProt
 
 	CLayer* pLayer = Find_Layer(iLevelIndex, pLayerTag);
 
+	pComponent->Set_Tag(pComponentTag);
+
 	if (nullptr == pLayer)
 	{
 		pLayer = CLayer::Create();
 
-		if (FAILED(pLayer->Add_Component(pComponentTag, pComponent)))
+		if (FAILED(pLayer->Add_Component(pComponent->Get_Tag(), pComponent)))
 		{
 			Safe_Release(pLayer);
 			Safe_Release(pComponent);
@@ -82,7 +88,7 @@ HRESULT CComponent_Manager::Add_Component(_uint iLevelIndex, const _tchar* pProt
 	}
 	else
 	{
-		if (FAILED(pLayer->Add_Component(pComponentTag, pComponent)))
+		if (FAILED(pLayer->Add_Component(pComponent->Get_Tag(), pComponent)))
 		{
 			Safe_Release(pComponent);
 
@@ -126,6 +132,11 @@ void CComponent_Manager::Clear_LevelResources(_uint iLevelIndex)
 		Safe_Release(Pair.second);
 
 	m_pLayers[iLevelIndex].clear();
+	
+	for (auto& Pair : m_pCurrentLayers[iLevelIndex])
+		Safe_Release(Pair.second);
+
+	m_pCurrentLayers[iLevelIndex].clear();
 
 	for (auto& Pair : m_pPrototypes[iLevelIndex])
 		Safe_Release(Pair.second);
@@ -188,11 +199,20 @@ HRESULT CComponent_Manager::Clear_Layer(_uint iLevelIndex, const _tchar* pLayerT
 	return pLayer->Clear_Layer();
 }
 
+void CComponent_Manager::Set_CurrentScene(const _tchar* pSceneTag, _bool isSimulation)
+{
+	lstrcpy(m_szCurrentSceneTag, pSceneTag);
+	m_isSimulation = isSimulation;
+	m_isChanged = true;
+}
+
 void CComponent_Manager::Tick(_float fTimeDelta)
 {
+	Update_CurrentScene();
+
 	for (_uint i = 0; i < m_iNumLevels; ++i)
 	{
-		for (auto& Pair : m_pLayers[i])
+		for (auto& Pair : m_pCurrentLayers[i])
 		{
 			Pair.second->Tick(fTimeDelta);
 		}
@@ -203,15 +223,75 @@ void CComponent_Manager::Late_Tick(_float fTimeDelta)
 {
 	for (_uint i = 0; i < m_iNumLevels; ++i)
 	{
-		for (auto& Pair : m_pLayers[i])
+		for (auto& Pair : m_pCurrentLayers[i])
 		{
 			Pair.second->Late_Tick(fTimeDelta);
 		}
 	}
 }
 
+void CComponent_Manager::Update_CurrentScene()
+{
+	if (false == m_isChanged)
+		return;
+
+	CPhysX_Manager* pPhysX_Manager = CPhysX_Manager::GetInstance();
+	Safe_AddRef(pPhysX_Manager);
+
+	pPhysX_Manager->Set_Simulation(m_isSimulation);
+
+	Safe_Release(pPhysX_Manager);
+
+	for (_uint i = 0; i < m_iNumLevels; ++i)
+	{
+		for (auto& Pair : m_pCurrentLayers[i])
+		{
+			Safe_Release(Pair.second);
+		}
+		m_pCurrentLayers[i].clear();
+	}
+
+	CLevel_Manager* pLevel_Manager = CLevel_Manager::GetInstance();
+	Safe_AddRef(pLevel_Manager);
+
+	list<const _tchar*> SceneLayers = pLevel_Manager->Get_Layers(m_szCurrentSceneTag);
+
+	Safe_Release(pLevel_Manager);
+
+	for (_uint i = 0; i < m_iNumLevels; ++i)
+	{
+		for (auto& Pair : m_pLayers[i])
+		{
+			for (auto& LayerTag : SceneLayers)
+			{
+				if (!lstrcmp(Pair.first, LayerTag))
+				{
+					m_pCurrentLayers[i].emplace(Pair);
+					Safe_AddRef(Pair.second);
+				}
+			}
+
+		}
+	}
+
+	lstrcpy(m_szCurrentSceneTag, TEXT(""));
+	m_isSimulation = false;
+	m_isChanged = false;
+}
+
 void CComponent_Manager::Free()
 {
+	for (_uint i = 0; i < m_iNumLevels; ++i)
+	{
+		for (auto& Pair : m_pCurrentLayers[i])
+		{
+			Safe_Release(Pair.second);
+		}
+		m_pCurrentLayers[i].clear();
+	}
+
+	Safe_Delete_Array(m_pCurrentLayers);
+
 	for (_uint i = 0; i < m_iNumLevels; ++i)
 	{
 		for (auto& Pair : m_pLayers[i])

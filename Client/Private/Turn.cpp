@@ -30,7 +30,10 @@ HRESULT CTurn::Initialize(void* pArg)
 HRESULT CTurn::Tick(const _float& fTimeDelta)
 {
 	if (false == Check_Decorations())
+	{
+		m_ReturnData = BEHAVIOR_FAIL;
 		return BEHAVIOR_FAIL;
+	}
 
 	_bool isLeft = { false };
 	if (FAILED(m_pBlackBoard->Get_Type("isTargetToLeft", isLeft)))
@@ -50,6 +53,7 @@ HRESULT CTurn::Tick(const _float& fTimeDelta)
 
 	m_pOwnerTransform->Turn(_float3(0.f, 1.f, 0.f), fRadian * 2.f, fTimeDelta);
 
+	//cout << "Call In Turn Class" << endl;
 	// 목표 각도 설정시 목표 각도가 달성될때까지 running한다.
 	if (0.f < m_fTargetDegree)
 	{

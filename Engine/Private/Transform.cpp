@@ -79,11 +79,11 @@ void CTransform::Set_Scale_No_Zero(_float3 _vScale)
 	_float3 vLook = Get_Look();
 
 	if (0.f == _vScale.x)
-		_vScale.x = 0.1;
+		_vScale.x = 0.1f;
 	if (0.f == _vScale.y)
-		_vScale.y = 0.1;
+		_vScale.y = 0.1f;
 	if (0.f == _vScale.z)
-		_vScale.z = 0.1;
+		_vScale.z = 0.1f;
 
 	Set_Right(XMVector3Normalize(vRight) * _vScale.x);
 	Set_Up(XMVector3Normalize(vUp) * _vScale.y);

@@ -17,17 +17,19 @@ void CPXEventCallBack::onContact(const PxContactPairHeader& pairHeader, const Px
 {
 	for (PxU32 i = 0; i < nbPairs; ++i)
 	{
-		COLLISIONDESC SourDesc, DestDesc;
+		COLLEVENTDESC SourDesc, DestDesc;
 		CGameObject* pSourObject = static_cast<CGameObject*>(pairHeader.actors[0]->userData);
 		CGameObject* pDestObject = static_cast<CGameObject*>(pairHeader.actors[1]->userData);
 
 		SourDesc.pOtherObjectTag = pDestObject->Get_Tag();
 		SourDesc.pOtherOwner = pDestObject;
 		SourDesc.pOtherTransform = pDestObject->Get_Transform();
+		SourDesc.pArg = pDestObject->Get_CollisionData();
 
 		DestDesc.pOtherObjectTag = pSourObject->Get_Tag();
 		DestDesc.pOtherOwner = pSourObject;
 		DestDesc.pOtherTransform = pSourObject->Get_Transform();
+		DestDesc.pArg = pSourObject->Get_CollisionData();
 
 		if (nullptr == pSourObject ||
 			nullptr == pDestObject)
@@ -74,7 +76,7 @@ void CPXEventCallBack::onTrigger(PxTriggerPair* pairs, PxU32 count)
 		if (pairs[i].flags & (PxTriggerPairFlag::eREMOVED_SHAPE_TRIGGER | PxTriggerPairFlag::eREMOVED_SHAPE_OTHER))
 			continue;
 		
-		COLLISIONDESC SourDesc, DestDesc;
+		COLLEVENTDESC SourDesc, DestDesc;
 
 		
 		CGameObject* pSourObject = static_cast<CGameObject*>(pairs->triggerActor->userData);
@@ -83,10 +85,12 @@ void CPXEventCallBack::onTrigger(PxTriggerPair* pairs, PxU32 count)
 		SourDesc.pOtherObjectTag = pDestObject->Get_Tag();
 		SourDesc.pOtherOwner = pDestObject;
 		SourDesc.pOtherTransform = pDestObject->Get_Transform();
+		SourDesc.pArg = pDestObject->Get_CollisionData();
 
 		DestDesc.pOtherObjectTag = pSourObject->Get_Tag();
 		DestDesc.pOtherOwner = pSourObject;
 		DestDesc.pOtherTransform = pSourObject->Get_Transform();
+		DestDesc.pArg = pSourObject->Get_CollisionData();
 
 		if (nullptr == pSourObject ||
 			nullptr == pDestObject)

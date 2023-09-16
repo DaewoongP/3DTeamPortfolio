@@ -61,9 +61,9 @@ HRESULT CBasicCast::Initialize(void* pArg)
 		ENDINSTANCE;
 
 		vMouseWorldPickPosition = vMouseOrigin.xyz() + vMouseDirection.xyz() * 10000;
-		vDirStartToPicked = (vMouseWorldPickPosition - m_vStartPosition);
+		vDirStartToPicked = (vMouseWorldPickPosition - m_MagicBallDesc.vStartPosition);
 		vDirStartToPicked.Normalize();
-		m_vTargetPosition = vDirStartToPicked * m_fDistance;
+		m_vTargetPosition = vDirStartToPicked * m_MagicBallDesc.fDistance;
 	}
 	else 
 	{
@@ -72,21 +72,21 @@ HRESULT CBasicCast::Initialize(void* pArg)
 	}
 
 	// 플레이어가 타겟을 보는 vector를 구함.
-	_float3 vDir = m_vTargetPosition - m_vStartPosition;
-	vDir.Normalize();
+	_float3 vDir = m_vTargetPosition - m_MagicBallDesc.vStartPosition;
+	_float3 vDirNormalize = XMVector3Normalize(vDir);
 
 	// 그 vector를 플레이어 기준 반대방향으로 1만큼 이동한 뒤 랜덤값을 잡아줌
-	while (m_vLerpWeight[0].Length() < m_vStartPosition.Length())
+	while (m_vLerpWeight[0].Length() < vDir.Length())
 	{
-		m_vLerpWeight[0] = m_vStartPosition - vDir;
+		m_vLerpWeight[0] = m_MagicBallDesc.vStartPosition - vDirNormalize;
 		m_vLerpWeight[0] += _float3(Random_Generator(-20.f, 20.f), Random_Generator(-20.f, 20.f), Random_Generator(-20.f, 20.f));
 	}
 	
 
 	// 그 vector를 타겟 기준 정방향으로 1만큼 이동한 뒤 랜덤값을 잡아줌
-	while (m_vLerpWeight[1].Length() < m_vStartPosition.Length())
+	while (m_vLerpWeight[1].Length() < vDir.Length())
 	{
-		m_vLerpWeight[1] = m_vTargetPosition + vDir;
+		m_vLerpWeight[1] = m_vTargetPosition + vDirNormalize;
 		m_vLerpWeight[1] += _float3(Random_Generator(-20.f, 20.f), Random_Generator(-20.f, 20.f), Random_Generator(-20.f, 20.f));
 	}
 
@@ -95,10 +95,10 @@ HRESULT CBasicCast::Initialize(void* pArg)
 
 void CBasicCast::Tick(_float fTimeDelta)
 {
-	if (m_fLiftTime > 0)
+	if (m_MagicBallDesc.fLifeTime > 0)
 	{
-		m_fLerpAcc += fTimeDelta / m_fInitLiftTime;
-		_float3 movedPos = XMVectorCatmullRom(m_vLerpWeight[0], m_vStartPosition, m_vTargetPosition, m_vLerpWeight[1], m_fLerpAcc);
+		m_fLerpAcc += fTimeDelta / m_MagicBallDesc.fInitLifeTime;
+		_float3 movedPos = XMVectorCatmullRom(m_vLerpWeight[0], m_MagicBallDesc.vStartPosition, m_vTargetPosition, m_vLerpWeight[1], m_fLerpAcc);
 		if (m_pTransform != nullptr)
 			m_pTransform->Set_Position(movedPos);
 
@@ -110,10 +110,10 @@ void CBasicCast::Tick(_float fTimeDelta)
 		if (!m_bDeadTrigger)
 		{
 			m_bDeadTrigger = true;
-			m_pEffect->Play_Particle(_float3(0,0,0));
+			m_pEffect->Play_Particle(m_pTransform->Get_Position());
 		}
-		/*if(m_pEffect->IsEnable())
-			Set_ObjEvent(OBJ_DEAD);*/
+		if(!m_pEffect->IsEnable())
+			Set_ObjEvent(OBJ_DEAD);
 	}
 	__super::Tick(fTimeDelta);
 }
@@ -123,19 +123,19 @@ void CBasicCast::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 }
 
-void CBasicCast::OnCollisionEnter(COLLISIONDESC CollisionDesc)
+void CBasicCast::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
-	__super::OnCollisionEnter(CollisionDesc);
+	__super::OnCollisionEnter(CollisionEventDesc);
 }
 
-void CBasicCast::OnCollisionStay(COLLISIONDESC CollisionDesc)
+void CBasicCast::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)
 {
-	__super::OnCollisionStay(CollisionDesc);
+	__super::OnCollisionStay(CollisionEventDesc);
 }
 
-void CBasicCast::OnCollisionExit(COLLISIONDESC CollisionDesc)
+void CBasicCast::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 {
-	__super::OnCollisionExit(CollisionDesc);
+	__super::OnCollisionExit(CollisionEventDesc);
 }
 
 HRESULT CBasicCast::Add_Components()

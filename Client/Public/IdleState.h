@@ -25,6 +25,12 @@ public:
     virtual void OnStateTick();
     virtual void OnStateExit();
 
+private:
+    void Go_Turn();
+
+    void Go_Start();
+
+
 public:
     static CIdleState* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);
     virtual CComposite* Clone(void* pArg) override;

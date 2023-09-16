@@ -157,6 +157,15 @@ CUI::UIDESC CUI_Group_HP::Load_File(const HANDLE hFile)
 	ReadFile(hFile, &eID, sizeof(_int), &dwByte, nullptr);
 	ReadFile(hFile, &isSave, sizeof(_bool), &dwByte, nullptr);
 
+	fs::path fsPath = UIDesc.szTexturePath;
+
+	std::wstring wszExtension = fsPath.extension();
+	if (wszExtension == TEXT(".png"))
+	{
+		fsPath.replace_extension(L".dds");
+		lstrcpy(UIDesc.szTexturePath, fsPath.c_str());
+	}
+
 	return UIDesc;
 }
 

@@ -7,6 +7,42 @@ CPlayer_Camera::CPlayer_Camera(ID3D11Device* _pDevice, ID3D11DeviceContext* _pCo
 
 }
 
+_float3 CPlayer_Camera::Get_CamLookXZ()
+{
+	BEGININSTANCE;
+
+	_float3 vXZLook{};
+
+	vXZLook = *pGameInstance->Get_CamLook();
+
+	vXZLook = XMVectorSetY(vXZLook, 0.0f);
+
+	vXZLook.Normalize();
+	
+	ENDINSTANCE;
+
+	return vXZLook;
+}
+
+_float3 CPlayer_Camera::Get_CamRightXZ()	
+{
+	BEGININSTANCE;
+
+	_float3 vXZRight{};
+
+	_float3 vUp(0.0f, 1.0f, 0.0f);
+
+	vXZRight = *pGameInstance->Get_CamRight();
+
+	vXZRight = XMVectorSetY(vXZRight, 0.0f);
+
+	vXZRight.Normalize();
+
+	ENDINSTANCE;
+
+	return vXZRight;
+}
+
 
 HRESULT CPlayer_Camera::Initialize(void* pArg)
 {
@@ -32,7 +68,7 @@ HRESULT CPlayer_Camera::Initialize(void* pArg)
 
 	
 	m_pFollowTargetMatrix = pCameraDesc->pFollowTargetMatrix;
-	m_pFollowTargetBoneMatrix = pCameraDesc->pFollowTargetBoneMatrix;
+	//m_pFollowTargetBoneMatrix = pCameraDesc->pFollowTargetBoneMatrix;
 
 	//위치 초기화
 	Update_FollowMatrix();
@@ -46,11 +82,13 @@ HRESULT CPlayer_Camera::Initialize(void* pArg)
 
 	m_vEyeStandard = _float3(sinf(XMConvertToRadians(30.0f)), 0.0f, -cosf(XMConvertToRadians(30.f)));
 
-	m_fEyeMaxDistance = m_fAtMaxDistance = 10.0f;
+	m_fEyeMaxDistance = m_fAtMaxDistance = 3.0f;
 	m_fEyeMinDistance = m_fAtMinDistance = 1.0f;
 
 
 	m_fTimeSpeed = 10.0f;
+
+	m_fCameraHeight = 1.5f;
 
 	return S_OK;
 }
@@ -82,7 +120,7 @@ void CPlayer_Camera::Tick(const _float& _TimeDelta)
 
 #ifdef _DEBUG
 	
-	//Tick_ImGui();
+	Tick_ImGui();
 
 #endif // _DEBUG
 }
@@ -157,7 +195,7 @@ void CPlayer_Camera::Follow_Transform()
 	//차이 벡터
 	_float3 vTargetDir{};
 
-	vTargetDir = m_FollowTargetMatrix.Translation();
+	vTargetDir = XMVectorSetY(m_FollowTargetMatrix.Translation(), m_FollowTargetMatrix.Translation().y + m_fCameraHeight);
 
 	vTargetDir -= m_pTransform->Get_Position();
 
@@ -173,6 +211,7 @@ void CPlayer_Camera::Follow_Transform()
 
 	ENDINSTANCE;
 }
+
 void CPlayer_Camera::Eye_At_Distance()
 {
 	//상태에 따라 거리가 바뀐다.

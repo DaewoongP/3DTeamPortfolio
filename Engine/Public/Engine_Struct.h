@@ -134,7 +134,7 @@ namespace Engine
 		_float4 vEye;
 	}ACTIONCAMERADESC;
 
-
+	// // ****************** 사용 금지 ************************* //
 	typedef struct tagCollisionDesc
 	{
 		// 삭제 예정
@@ -158,6 +158,15 @@ namespace Engine
 		const class CTransform*		pOtherTransform = { nullptr };
 	}COLLISIONDESC;
 
+	// 피직스 콜라이더 이벤트 구조체.
+	typedef struct tagCollisionEventDesc
+	{
+		const _tchar*				pOtherObjectTag = { nullptr };
+		const class CGameObject*	pOtherOwner = { nullptr };
+		const class CTransform*		pOtherTransform = { nullptr };
+		void*						pArg = { nullptr };
+	}COLLEVENTDESC;
+
 	typedef struct tagVertex_Position
 	{
 		XMFLOAT3		vPosition;
@@ -180,6 +189,18 @@ namespace Engine
 		static const unsigned int				iNumElements = { 2 };
 		static const D3D11_INPUT_ELEMENT_DESC	Elements[iNumElements];
 	}VTXPOSTEX_DECL;
+
+	typedef struct tagVertex_Position_Normal
+	{
+		XMFLOAT3		vPosition;
+		XMFLOAT3		vNormal;
+	}VTXPOSNOR;
+
+	typedef struct ENGINE_DLL tagVertex_Position_Normal_Declaration
+	{
+		static const unsigned int				iNumElements = { 2 };
+		static const D3D11_INPUT_ELEMENT_DESC	Elements[iNumElements];
+	}VTXPOSNOR_DECL;
 
 	typedef struct tagVertex_Position_Normal_TexCoord
 	{

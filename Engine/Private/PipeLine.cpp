@@ -52,6 +52,11 @@ const _float3* CPipeLine::Get_CamLook()
 	return &m_vCameraLook;
 }
 
+const _float3* CPipeLine::Get_CamRight()
+{
+	return &m_vCameraRight;
+}
+
 const _float* CPipeLine::Get_CamFar()
 {
 	return &m_fCameraFar;
@@ -66,13 +71,11 @@ void CPipeLine::Tick()
 
 	}
 	
-	memcpy(&m_vCameraLook, &m_TransformMatrix_Inverse[D3DTS_VIEW].m[1][0], sizeof m_vCameraLook);
-	memcpy(&m_vCameraUp, &m_TransformMatrix_Inverse[D3DTS_VIEW].m[2][0], sizeof m_vCameraUp);
+
+	memcpy(&m_vCameraRight, &m_TransformMatrix_Inverse[D3DTS_VIEW].m[0][0], sizeof m_vCameraRight);
+	memcpy(&m_vCameraUp, &m_TransformMatrix_Inverse[D3DTS_VIEW].m[1][0], sizeof m_vCameraUp);
+	memcpy(&m_vCameraLook, &m_TransformMatrix_Inverse[D3DTS_VIEW].m[2][0], sizeof m_vCameraLook);
 	memcpy(&m_vCameraPos, &m_TransformMatrix_Inverse[D3DTS_VIEW].m[3][0], sizeof m_vCameraPos);
-
-	
-
-
 }
 
 void CPipeLine::Free()

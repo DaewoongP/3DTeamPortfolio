@@ -47,21 +47,21 @@ void CRevelio::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 }
 
-void CRevelio::OnCollisionEnter(COLLISIONDESC CollisionDesc)
+void CRevelio::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
-	__super::OnCollisionEnter(CollisionDesc);
+	__super::OnCollisionEnter(CollisionEventDesc);
 	cout << "Player Enter" << endl;
 }
 
-void CRevelio::OnCollisionStay(COLLISIONDESC CollisionDesc)
+void CRevelio::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)
 {
-	__super::OnCollisionStay(CollisionDesc);
+	__super::OnCollisionStay(CollisionEventDesc);
 	cout << "stay" << endl;
 }
 
-void CRevelio::OnCollisionExit(COLLISIONDESC CollisionDesc)
+void CRevelio::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 {
-	__super::OnCollisionExit(CollisionDesc);
+	__super::OnCollisionExit(CollisionEventDesc);
 	cout << "Exit" << endl;
 }
 

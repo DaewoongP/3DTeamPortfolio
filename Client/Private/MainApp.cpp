@@ -153,6 +153,11 @@ HRESULT CMainApp::Ready_Prototype_Component_For_Static()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Triangle"),
 			CVIBuffer_Triangle::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_VIBuffer_Triangle");
+		
+		/* For.Prototype_Component_VIBuffer_GgoSphere*/
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_GeoSphere"),
+			CVIBuffer_GeoSphere::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_VIBuffer_GeoSphere");
 
 		/* Prototype_Component_Sphere_Collider*/
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sphere_Collider"),

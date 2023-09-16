@@ -152,6 +152,9 @@ void CDummyParticle::MainMoudle_TreeNode(CEffect_Window* pEffectWindow)
 			{
 				pEffectWindow->Table_DragFloatWithOption("Start Size", "XCV89024890R0WRFOU", &m_MainModuleDesc.fStartSize, &m_MainModuleDesc.vStartSizeRange, &m_MainModuleDesc.isStartSizeRange);
 			}
+
+			pEffectWindow->Table_CheckBox("DirectionRotaion", "ckjv8ijie9342", &m_MainModuleDesc.isDirectionRotation);
+
 			pEffectWindow->Table_CheckBox("3D Start Rotation", "vbe088030j45", &m_MainModuleDesc.is3DStartRotation);
 			if (true == m_MainModuleDesc.is3DStartRotation)
 			{
@@ -163,6 +166,7 @@ void CDummyParticle::MainMoudle_TreeNode(CEffect_Window* pEffectWindow)
 			}
 
 			pEffectWindow->Table_DragFloat("Flip Rotation", "xcv ioiw", &m_MainModuleDesc.fFlipRotation, 0.01f, 0.f, 1.f);
+
 			pEffectWindow->Table_ColorEdit4("Start Color", "ergop805", &m_MainModuleDesc.vStartColor);
 			pEffectWindow->Table_DragFloat("GravityModifier", "g50j8dfbji0", &m_MainModuleDesc.fGravityModifier);
 			pEffectWindow->Table_DragFloat("SimulationSpeed", "a1ip40c854dfg", &m_MainModuleDesc.fSimulationSpeed);
@@ -174,7 +178,6 @@ void CDummyParticle::MainMoudle_TreeNode(CEffect_Window* pEffectWindow)
 				RemakeBuffer(m_MainModuleDesc.iMaxParticles);
 			}
 			m_MainModuleDesc.strStopAction = m_pStopActionCombo->Tick(CComboBox::TABLE);
-
 
 			ImGui::EndTable();
 		}

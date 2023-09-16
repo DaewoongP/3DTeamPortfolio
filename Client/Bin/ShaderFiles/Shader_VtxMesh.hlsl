@@ -26,7 +26,7 @@ struct VS_OUT
     float4 vBinormal : BINORMAL;
 };
 
-/* Á¤Á¡À» ¹Ş°í º¯È¯ÇÏ°í Á¤Á¡À» ¸®ÅÏÇÑ´Ù. */
+/* ì •ì ì„ ë°›ê³  ë³€í™˜í•˜ê³  ì •ì ì„ ë¦¬í„´í•œë‹¤. */
 VS_OUT VS_MAIN(VS_IN In)
 {
     VS_OUT Out = (VS_OUT) 0;
@@ -65,7 +65,7 @@ struct PS_OUT
     vector vDepth : SV_TARGET2;
 };
 
-/* ÇÈ¼¿À» ¹Ş°í ÇÈ¼¿ÀÇ »öÀ» °áÁ¤ÇÏ¿© ¸®ÅÏÇÑ´Ù. */
+/* í”½ì…€ì„ ë°›ê³  í”½ì…€ì˜ ìƒ‰ì„ ê²°ì •í•˜ì—¬ ë¦¬í„´í•œë‹¤. */
 PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
@@ -97,6 +97,19 @@ technique11 DefaultTechnique
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
+        HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
+        DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
+        PixelShader = compile ps_5_0 PS_MAIN();
+    }
+
+    pass Sky
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Depth_Disable, 0);
         SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
         VertexShader = compile vs_5_0 VS_MAIN();

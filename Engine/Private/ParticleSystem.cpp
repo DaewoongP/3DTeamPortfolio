@@ -79,7 +79,7 @@ HRESULT CParticleSystem::Initialize(void* _pArg)
 
 	Resize_Container(m_MainModuleDesc.iMaxParticles);
 	Play_On_Awake();
-
+	
 	return S_OK;
 }
 void CParticleSystem::Tick(_float _fTimeDelta)
@@ -126,10 +126,10 @@ void CParticleSystem::Tick(_float _fTimeDelta)
 	{
 		COL_INSTANCE colInstDesc;
 		_float3 vPos;
-
+		
 		// 이전프레임의 값들을 가져옴.
 		vPos = Particle_iter->WorldMatrix.Translation();
-
+		_float3 vPrevPos = vPos;
 		// 위치에 속도를 더해서 최종 위치를 정함.
 		vPos = vPos + Particle_iter->vVelocity * _fTimeDelta;
 		
@@ -149,9 +149,33 @@ void CParticleSystem::Tick(_float _fTimeDelta)
 		// SRT 연산
 		_float4x4 ScaleMatrix = _float4x4::MatrixScale(Particle_iter->vScale);
 		_float4x4 BillBoardMatrix = LookAt(vPos, vCamPosition.xyz());
-		_float4x4 RotationMatrix = _float4x4::MatrixRotationAxis(_float3(vPos - vCamPosition), XMConvertToRadians(Particle_iter->fAngle));
+		_float4x4 RotationMatrix;
+		_float4x4 DirectionMatrix = _float4x4();
+		if (true == m_MainModuleDesc.isDirectionRotation) // 진행 방향으로 회전
+		{
+			DirectionMatrix = LookAt(vPrevPos, vPos);
+			//_float3 vLook = BillBoardMatrix.Look();
+			//_float3 vUp = BillBoardMatrix.Up();
+			//_float3 vDirection = Particle_iter->vVelocity.xyz();
+			//vDirection.Normalize();
+			//_float fRadian = XMVectorGetX(XMVector3AngleBetweenVectors(vDirection, vUp));
+			//if (vUp.Cross(vDirection).y <= 0.f)
+			//	fRadian *= -1.f;
+			//RotationMatrix = _float4x4::MatrixRotationAxis(vLook, fRadian);
+		}
+
+		if (true == m_MainModuleDesc.is3DStartRotation)
+		{
+			RotationMatrix = _float4x4::MatrixFromQuaternion(XMQuaternionRotationRollPitchYaw(
+				XMConvertToRadians(m_MainModuleDesc.v3DRotationXYZ.x),
+				XMConvertToRadians(m_MainModuleDesc.v3DRotationXYZ.y),
+				XMConvertToRadians(m_MainModuleDesc.v3DRotationXYZ.z)));
+		}
+		else
+			RotationMatrix = _float4x4::MatrixRotationAxis(_float3(vPos - vCamPosition), XMConvertToRadians(Particle_iter->fAngle));
+
 		_float4x4 TranslationMatrix = _float4x4::MatrixTranslation(vPos);
-		_float4x4 TransfomationMatrix = ScaleMatrix * BillBoardMatrix * RotationMatrix * TranslationMatrix;
+		_float4x4 TransfomationMatrix = ScaleMatrix * BillBoardMatrix * DirectionMatrix * RotationMatrix * TranslationMatrix;
 
 		colInstDesc.vRight = TransfomationMatrix.Right().TransNorm();
 		colInstDesc.vUp = TransfomationMatrix.Up().TransNorm();
@@ -730,9 +754,6 @@ void CParticleSystem::Reset_Particle(PARTICLE_IT& _particle_iter)
 	_particle_iter->fLifeTime += _particle_iter->fGenTime;
 	_particle_iter->vAccel = _float4();
 
-	// 시작 위치
-	ResetStartPosition(_particle_iter);
-
 	if (false == m_MainModuleDesc.is3DStartRotation)
 	{
 		if (true == m_MainModuleDesc.isStartRotationRange)
@@ -743,7 +764,7 @@ void CParticleSystem::Reset_Particle(PARTICLE_IT& _particle_iter)
 	if (true == RandomBool(m_MainModuleDesc.fFlipRotation))
 		_particle_iter->fAngle *= -1.f;
 
-	// Size 결정
+	// 시작 크기 결정
 	if (true == m_MainModuleDesc.is3DStartSize)
 	{
 		_particle_iter->vScale = _float3(m_MainModuleDesc.v3DSizeXYZ.x, m_MainModuleDesc.v3DSizeXYZ.y, m_MainModuleDesc.v3DSizeXYZ.z);
@@ -760,6 +781,16 @@ void CParticleSystem::Reset_Particle(PARTICLE_IT& _particle_iter)
 		_particle_iter->vScale = _float3(fScale, fScale, fScale);
 	}
 
+	// 시작 회전
+
+
+	//_particle_iter->WorldMatrix = 
+
+
+	// 시작 위치
+	ResetStartPosition(_particle_iter);
+
+	// 시작 색상
 	_particle_iter->vColor = m_MainModuleDesc.vStartColor;
 	//_particle_iter->fAngle = m_MainModuleDesc.f
 

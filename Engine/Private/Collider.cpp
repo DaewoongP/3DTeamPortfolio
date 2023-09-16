@@ -112,7 +112,7 @@ void CCollider::OnCollision(COLLISIONDESC::COLTYPE eCollisionType, CCollider* pO
 
 		m_Collisions.push_back({ false, CollisionDesc });
 
- 		static_cast<CGameObject*>(m_pOwner)->OnCollisionEnter(CollisionDesc);
+ 		//static_cast<CGameObject*>(m_pOwner)->OnCollisionEnter(CollisionDesc);
 	}
 }
 
@@ -137,8 +137,8 @@ _bool CCollider::IsCollision(CCollider* pOtherCollider)
 
 	// 이미 맵안에 들어가있었기때문에 Stay인게 확정.
 	// 나머지는 갱신할 필요 없음.
-	if (nullptr != m_pOwner)
-		static_cast<CGameObject*>(m_pOwner)->OnCollisionStay(iter->second);
+	/*if (nullptr != m_pOwner)
+		static_cast<CGameObject*>(m_pOwner)->OnCollisionStay(iter->second);*/
 
 	return true;
 }
@@ -154,7 +154,7 @@ void CCollider::IsExitCollision()
 	{
 		if (true == m_Collisions[i].first)
 		{
-			static_cast<CGameObject*>(m_pOwner)->OnCollisionExit(m_Collisions[i].second);
+			//static_cast<CGameObject*>(m_pOwner)->OnCollisionExit(m_Collisions[i].second);
 			
 			m_Collisions.erase(iter + i);
 

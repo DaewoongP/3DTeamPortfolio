@@ -28,10 +28,10 @@ _bool CDummy_Cloth::Get_VertexIndex_By_Picking(_Inout_ _uint* pVertexIndex, _Ino
 
 	vector<_float3> Vertices = m_pCurrent_Dynamic_Mesh->Get_VertexPositions();
 	//m_pModelCom->Get_BoneCombinedTransformationMatrix()
-	for (auto& Vertex : Vertices)
+	/*for (auto& Vertex : Vertices)
 	{
 		Vertex = XMVector3TransformCoord(Vertex, XMMatrixRotationQuaternion(XMQuaternionRotationRollPitchYaw(XMConvertToRadians(90.f), 0.f, 0.f)));
-	}
+	}*/
 
 	vector<_ulong> Indices = m_pCurrent_Dynamic_Mesh->Get_Indices();
 
@@ -133,8 +133,6 @@ void CDummy_Cloth::Set_Model_Component(CCustomModel::MESHTYPE _eMeshType, const 
 	}
 
 	m_eMeshPartsType = _eMeshType;
-
-	m_pModelCom->Play_Animation(1 / 60.f);
 }
 
 void CDummy_Cloth::Set_MeshIndex(_uint _iMeshIndex)
@@ -242,22 +240,22 @@ HRESULT CDummy_Cloth::Render()
 
 				m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", iPartsIndex, i, DIFFUSE);
 				if (m_iMeshIndex != i)
-					m_pShaderCom->Begin("AnimMesh");
+					m_pShaderCom->Begin("Default");
 				else
 				{
 					if (true == m_isWireFrame)
 					{
 						if (true == m_isMeshHighLight)
-							m_pShaderCom->Begin("ClothDebug1");
+							m_pShaderCom->Begin("MeshWireColor");
 						else
-							m_pShaderCom->Begin("ClothDebug0");
+							m_pShaderCom->Begin("MeshWire");
 					}
 					else
 					{
 						if (true == m_isMeshHighLight)
-							m_pShaderCom->Begin("ClothDebug2");
+							m_pShaderCom->Begin("MeshColor");
 						else
-							m_pShaderCom->Begin("AnimMesh");
+							m_pShaderCom->Begin("Default");
 					}
 				}
 
@@ -327,7 +325,7 @@ HRESULT CDummy_Cloth::Add_Components()
 	}
 
 	/* Com_Shader */
-	if (FAILED(CComposite::Add_Component(LEVEL_TOOL, TEXT("Prototype_Component_Shader_VtxAnimMesh"),
+	if (FAILED(CComposite::Add_Component(LEVEL_TOOL, TEXT("Prototype_Component_Shader_VtxMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 	{
 		MSG_BOX("Failed CDummy_Cloth Add_Component : (Com_Shader)");

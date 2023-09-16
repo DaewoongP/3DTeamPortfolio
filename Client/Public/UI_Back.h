@@ -18,7 +18,7 @@ private:
 	virtual ~CUI_Back() = default;
 
 public:
-	void Set_Texture(_uint iIndex) { m_iTextureIndex = iIndex; }
+	void Set_Rotation(_float3 vAxis, _float fRadian);
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -31,7 +31,6 @@ private:
 	CShader*			m_pShaderCom = { nullptr };
 	CRenderer*			m_pRendererCom = { nullptr };
 	CVIBuffer_Rect*		m_pVIBufferCom = { nullptr };
-	_uint				m_iTextureIndex = { 0 };
 
 private:
 	HRESULT Add_Components();

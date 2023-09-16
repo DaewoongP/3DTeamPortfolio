@@ -376,7 +376,10 @@ HRESULT CDynamic_Mesh::Ready_VertexBuffer_Anim(const Engine::MESH Mesh, const CM
 
 HRESULT CDynamic_Mesh::Initialize_ClothMesh(HANDLE hFile)
 {
+	std::lock_guard<std::mutex> lock(mtx);
+
 	if (FAILED(Read_ClothData(hFile)))
+
 	{
 		MSG_BOX("Failed Read File");
 		return E_FAIL;
@@ -407,6 +410,7 @@ HRESULT CDynamic_Mesh::Initialize_ClothMesh(HANDLE hFile)
 	cloth::Vector<_int>::Type PhaseTypeInfo;
 	CPhysX_Manager* pPhysX_Manager = CPhysX_Manager::GetInstance();
 	Safe_AddRef(pPhysX_Manager);
+
 	cloth::Factory* pClothFactory = pPhysX_Manager->Get_ClothFactory();
 	m_pFabric = NvClothCookFabricFromMesh(pClothFactory, MeshDesc, vGravity, &PhaseTypeInfo, false);
 	Safe_Release(pPhysX_Manager);
@@ -484,6 +488,8 @@ HRESULT CDynamic_Mesh::Initialize_ClothMesh(HANDLE hFile)
 
 HRESULT CDynamic_Mesh::Initialize_ClothMesh()
 {
+	std::lock_guard<std::mutex> lock(mtx);
+
 	nv::cloth::ClothMeshDesc MeshDesc;
 	MeshDesc.setToDefault();
 	MeshDesc.points.data = m_VertexPositions.data();
@@ -504,7 +510,7 @@ HRESULT CDynamic_Mesh::Initialize_ClothMesh()
 		MSG_BOX("Failed to Create Cloth MeshDesc");
 		return E_FAIL;
 	}
-
+	
 	PxVec3 vGravity(0.f, -9.81f, 0.f);
 	cloth::Vector<_int>::Type PhaseTypeInfo;
 	CPhysX_Manager* pPhysX_Manager = CPhysX_Manager::GetInstance();

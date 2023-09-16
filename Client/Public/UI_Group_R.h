@@ -1,10 +1,10 @@
 #pragma once
-#include "UI_Group.h"
+#include "GameObject.h"
 #include "Client_Defines.h"
 
 BEGIN(Client)
 
-class CUI_Group_R final : public CUI_Group
+class CUI_Group_R final : public CGameObject
 {
 private:
 	explicit CUI_Group_R(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

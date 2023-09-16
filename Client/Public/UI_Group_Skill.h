@@ -1,6 +1,8 @@
 #pragma once
-#include "UI_Group.h"
+#include "GameObject.h"
 #include "Client_Defines.h"
+
+#include "UI_Image.h"
 
 BEGIN(Engine)
 class CTexture;
@@ -8,7 +10,7 @@ END
 
 BEGIN(Client)
 
-class CUI_Group_Skill final : public CUI_Group
+class CUI_Group_Skill final : public CGameObject
 {
 private:
 	enum KEYLIST
@@ -47,16 +49,22 @@ public:
 	void	Set_SpellTexture(KEYLIST eSkill, SPELL eSpell);
 
 private:
-	HRESULT Add_ProtoType();
+	HRESULT Add_Prototype();
+//	HRESULT Add_Components(const _tchar* wszTag);
+	HRESULT Add_Components(wstring wszTag);
+
+	HRESULT Read_File(const _tchar* pFilePath, KEYLIST iIndex);
+	CUI::UIDESC Load_File(const HANDLE hFile);
+
+private:
+	HRESULT Create_First(void* pArg);
+//	HRESULT Create_Component(const _tchar* pFIlePath, const _tchar* wszTag, KEYLIST eType);
+	HRESULT Create_Component(const _tchar* pFIlePath, wstring wszTag, KEYLIST eType);
+
 	void	Add_SpellProtoTypeTag();
 	HRESULT Add_SpellProtoType();
 	HRESULT Add_SpellTexture();
 
-private:
-	void	Load_Skill_1(void* pArg);
-	HRESULT	Load_Skill_2();
-	HRESULT	Load_Skill_3();
-	HRESULT	Load_Skill_4();
 
 private:
 	vector<_tchar*> m_ProtoTypeTags;
