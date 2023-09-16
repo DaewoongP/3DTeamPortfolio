@@ -37,7 +37,7 @@ private:
 	_float			m_fNotifyActionTime = { 0 };
 	_float			m_fNotifySpeed = { 0 };
 	_char			m_szNotifyName[MAX_PATH] = "";
-	_char			m_szCurrentItemType[MAX_PATH] = "";			
+	_char			m_szCurrentItemType[MAX_PATH] = "";
 	KEYFRAME::KEYFRAMETYPE m_eNotifyKeyFrameType = { KEYFRAME::KF_SPEED };
 
 	_char			m_szAnimationSearch[CModel::ANIM_END][MAX_PATH] = {};
@@ -45,28 +45,34 @@ private:
 	_int			m_iSelectedNotifyIndex[CModel::ANIM_END] = { 0 };
 
 	_tchar			m_wszCurrentDummyModelTag[MAX_PATH] = {};
+
+	//¾Ö´Ï¸ÞÀÕ³à Ãß°¡¿ë
+	_bool			m_isAnimationAdd = { false };
+	_int			m_iAnimationPartNum = { 0 };
 private:
 	void Create_Dummy_Button();
 	void OpenFile_Button();
 	void AddModel_Button();
 	void Select_Model();
 
+	void Add_Animation_To_Model(CModel::ANIMTYPE ePartCnt, CModel* m_pDummyModel);
+
 	void Export_Model();
 
 	void OffsetVectorSetting(CModel* pDummyModel);
 
-	void Animation_ComboBox(CModel::ANIMTYPE ePartCnt,_char* szCurrentItem, CModel* pDummyModel);
+	void Animation_ComboBox(CModel::ANIMTYPE ePartCnt, _char* szCurrentItem, CModel* pDummyModel);
 	void Animation_ChildFrame(CModel::ANIMTYPE ePartCnt, _char* szCurrentItem, CModel* pDummyModel);
 	void Animation_Table(CModel::ANIMTYPE ePartCnt, _char* szCurrentItem, CModel* pDummyModel);
 	void Animation_Action_Button(CModel::ANIMTYPE ePartCnt, CModel* pDummyModel, _float* fNotifyActionTime);
-	void Notify_InputFileds( _char* szNotifyName, KEYFRAME::KEYFRAMETYPE* eNotifyKeyFrameType, _float* fNotifyActionTime, _float* fNotifySpeed);
+	void Notify_InputFileds(_char* szNotifyName, KEYFRAME::KEYFRAMETYPE* eNotifyKeyFrameType, _float* fNotifyActionTime, _float* fNotifySpeed);
 	void Add_Notify_Button(CModel::ANIMTYPE ePartCnt, _char* szNotifyName, CModel* pDummyModel, KEYFRAME::KEYFRAMETYPE* eNotifyKeyFrameType, _float* fNotifyActionTime, _float* fNotifySpeed);
 	void Edit_Notify_Button(CModel::ANIMTYPE ePartCnt, CModel* pDummyModel);
-	
+
 	void Create_Notify_ChildFrame(CModel::ANIMTYPE ePartCnt, CModel* pDummyModel);
 	void Create_Notify_View(CModel::ANIMTYPE ePartCnt, CModel* pDummyModel);
 
-	void Bone_Tree( CBone* bone, CModel* pDummyModel);
+	void Bone_Tree(CBone* bone, CModel* pDummyModel);
 public:
 	static CAnimation_Window* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, ImVec2 vWindowPos, ImVec2 vWindowSize);
 	virtual void Free(void) override;

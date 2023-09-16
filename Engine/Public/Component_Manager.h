@@ -49,6 +49,7 @@
 #include "ParticleSystem.h"
 #include "Bounding_Sphere.h"
 #include "Shape_GeoSphere.h"
+#include "Texture_Filpbook.h"
 #include "VIBuffer_Terrain.h"
 #include "Debug_Render_Box.h"
 #include "VIBuffer_Triangle.h"

@@ -720,6 +720,9 @@
     <ClInclude Include="..\Public\UI.h">
       <Filter>01. Utility\03. Components\19. UI</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Texture_Filpbook.h">
+      <Filter>01. Utility\03. Components\06. Texture</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -1051,6 +1054,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI.cpp">
       <Filter>01. Utility\03. Components\19. UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Texture_Filpbook.cpp">
+      <Filter>01. Utility\03. Components\06. Texture</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

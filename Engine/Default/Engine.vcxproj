@@ -62,6 +62,7 @@
     <ClInclude Include="..\Public\CustomModel.h" />
     <ClInclude Include="..\Public\Modules.h" />
     <ClInclude Include="..\Public\Status.h" />
+    <ClInclude Include="..\Public\Texture_Filpbook.h" />
     <ClInclude Include="..\public\Trail.h" />
     <ClInclude Include="..\Public\TriangleMesh.h" />
     <ClInclude Include="..\Public\UI.h" />
@@ -184,6 +185,7 @@
     <ClCompile Include="..\Private\CustomModel.cpp" />
     <ClCompile Include="..\Private\Modules.cpp" />
     <ClCompile Include="..\Private\Status.cpp" />
+    <ClCompile Include="..\Private\Texture_Filpbook.cpp" />
     <ClCompile Include="..\private\Trail.cpp" />
     <ClCompile Include="..\Private\TriangleMesh.cpp" />
     <ClCompile Include="..\Private\UI.cpp" />

@@ -186,6 +186,7 @@
     </ClInclude>
     <ClInclude Include="..\Public\Navigation_Window.h" />
     <ClInclude Include="..\Public\PhysXRender.h" />
+    <ClInclude Include="..\Public\DummyFlipBook.h" />
     <ClInclude Include="..\Public\stb_image.h" />
     <ClInclude Include="..\Public\Dummy_UI.h" />
     <ClInclude Include="..\Public\Camera_Point.h" />
@@ -254,6 +255,7 @@
     </ClCompile>
     <ClCompile Include="..\Private\Navigation_Window.cpp" />
     <ClCompile Include="..\Private\PhysXRender.cpp" />
+    <ClCompile Include="..\private\DummyFlipBook.cpp" />
     <ClCompile Include="..\Private\TriangleCollider_Window.cpp" />
     <ClCompile Include="..\Private\TriangleColMesh.cpp" />
     <ClCompile Include="..\Private\UI_Window.cpp" />
