@@ -73,22 +73,22 @@ HRESULT CBasicCast::Initialize(void* pArg)
 
 	// 플레이어가 타겟을 보는 vector를 구함.
 	_float3 vDir = m_vTargetPosition - m_vStartPosition;
-	vDir.Normalize();
+	_float3 vDirNormalize = XMVector3Normalize(vDir);
 
 	// 그 vector를 플레이어 기준 반대방향으로 1만큼 이동한 뒤 랜덤값을 잡아줌
-	/*while (m_vLerpWeight[0].Length() < m_vStartPosition.Length())
+	while (m_vLerpWeight[0].Length() < vDir.Length())
 	{
-		m_vLerpWeight[0] = m_vStartPosition - vDir;
+		m_vLerpWeight[0] = m_vStartPosition - vDirNormalize;
 		m_vLerpWeight[0] += _float3(Random_Generator(-20.f, 20.f), Random_Generator(-20.f, 20.f), Random_Generator(-20.f, 20.f));
-	}*/
+	}
 	
 
 	// 그 vector를 타겟 기준 정방향으로 1만큼 이동한 뒤 랜덤값을 잡아줌
-	/*while (m_vLerpWeight[1].Length() < m_vStartPosition.Length())
+	while (m_vLerpWeight[1].Length() < vDir.Length())
 	{
-		m_vLerpWeight[1] = m_vTargetPosition + vDir;
+		m_vLerpWeight[1] = m_vTargetPosition + vDirNormalize;
 		m_vLerpWeight[1] += _float3(Random_Generator(-20.f, 20.f), Random_Generator(-20.f, 20.f), Random_Generator(-20.f, 20.f));
-	}*/
+	}
 
 	return S_OK;
 }
@@ -110,9 +110,9 @@ void CBasicCast::Tick(_float fTimeDelta)
 		if (!m_bDeadTrigger)
 		{
 			m_bDeadTrigger = true;
-			m_pEffect->Play_Particle(_float3(0,0,0));
+			m_pEffect->Play_Particle(m_pTransform->Get_Position());
 		}
-		if(m_pEffect->IsEnable())
+		if(!m_pEffect->IsEnable())
 			Set_ObjEvent(OBJ_DEAD);
 	}
 	__super::Tick(fTimeDelta);

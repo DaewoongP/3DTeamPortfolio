@@ -176,7 +176,7 @@ HRESULT CPlayer::Add_Components()
 	magicInitDesc.eBuffType = CMagic::BUFF_NONE;
 	magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 	magicInitDesc.eMagicType = CMagic::MT_NOTHING;
-	magicInitDesc.eMagicTag = BASICCAST;
+	magicInitDesc.eMagicTag = LEVIOSO;
 	magicInitDesc.fCoolTime = 1.f;
 	magicInitDesc.fDamage = 10.f;
 	magicInitDesc.fCastDistance = 1000;
@@ -250,7 +250,14 @@ void CPlayer::Key_Input(_float fTimeDelta)
 			// 목표의 transform과 시작 위치를 가져와야합니다.
 			// 아직 타겟 설정하는게 없어서 널로 넣었음.
 			// 지팡이 위치를 2번째 인자 pos로 넣어야하는데 지팡이도 없어서 그냥 pTransform->Get_Position()로 넣음.
-			m_pMagic->Magic_Cast(nullptr,m_pWeapon);
+			// 임의로 아무거나 집어오겠음.
+			
+			/* 이거는 테스트 용으로 더미클래스 찾으려고 넣은 코드를 훔쳐온거임 */
+			CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Debug"), TEXT("GameObject_Dummy")));
+			if (nullptr == pTestTarget)
+				throw TEXT("pTestTarget is nullptr");
+
+			m_pMagic->Magic_Cast(pTestTarget->Get_Transform(),m_pWeapon);
 		}
 	}
 

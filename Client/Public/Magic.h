@@ -26,27 +26,30 @@ class CMagic : public CComposite
 public:
 	enum BUFF_TYPE
 	{
-		BUFF_NONE			= 0,
-		BUFF_SLOW			= 1 << 0,
-		BUFF_FROZEN			= 1 << 1,
-		BUFF_CHANGE			= 1 << 2,
-		BUFF_RIGID			= 1 << 3,
-		BUFF_WEAPONLOSS		= 1 << 4,
-		BUFF_FIRE			= 1 << 5,
-		BUFF_INVINCIBLE		= 1 << 6,
-		BUFF_LIGHT			= 1 << 7,
-		BUFF_UNGRAVITY		= 1 << 8,
-		BUFF_CURSE			= 1 << 9,
-		BUFF_SEE			= 1 << 10,
-		BUFF_SHILED			= 1 << 11,
-		BUFF_STUN			= 1 << 12,
-		BUFF_LOCK			= 1 << 13,
-		BUFF_GRAB			= 1 << 14,
-		BUFF_CONTROL		= 1 << 15,
+		BUFF_NONE			= 0,		// 아무 디버프 없음.( 평타 )
+		BUFF_SLOW			= 1 << 0,	// 느려지게 만듦
+		BUFF_FROZEN			= 1 << 1,	// 얼어붙게 만듦
+		BUFF_CHANGE			= 1 << 2,	// 외형을 변화시킴
+		BUFF_RIGID			= 1 << 3,	// 물리적 효과를 줌
+		BUFF_WEAPONLOSS		= 1 << 4,	// 무기를 날려버림
+		BUFF_FIRE			= 1 << 5,	// 화상 디버프
+		BUFF_INVINCIBLE		= 1 << 6,	// 투명화 버프
+		BUFF_LIGHT			= 1 << 7,	// 빛을 생성함.
+		BUFF_UNGRAVITY		= 1 << 8,	// 중력을 없앰
+		BUFF_CURSE			= 1 << 9,	// 저주를 걺
+		BUFF_SEE			= 1 << 10,	// 상호작용 오브젝트를 보여줌
+		BUFF_SHILED			= 1 << 11,	// 쉴드
+		BUFF_STUN			= 1 << 12,	// 기절시킴
+		BUFF_LOCK			= 1 << 13,	// 자물쇠 따기 마법
+		BUFF_GRAB			= 1 << 14,	// 움켜쥠
+		BUFF_CONTROL		= 1 << 15,	// 
 		BUFF_END			= 1 << 16
 	};
 
+	// 마법의 구분( 어떤 파티션에 분류되는 친구인가? )
 	enum MAGIC_GROUP { MG_CONTROL, MG_POWER, MG_DAMAGE, MG_UTILITY, MG_CHANGE, MG_CURSE, MG_ESSENTIAL, MG_END };
+	
+	// 마법이 영향을 줄 상대 실드의 색
 	enum MAGIC_TYPE { MT_NOTHING, MT_YELLOW, MT_PURPLE, MT_RED, MT_ALL, MT_END };
 
 	typedef struct MagicDesc
@@ -101,6 +104,16 @@ protected:
 	_float						m_fLifeTime = { 1.0f };
 	//마법 사용시 같이 불러주고싶은 외부 함수
 	vector<function<void()>>	m_ActionVec;
+
+private:
+	//프로토타입 생성을 위한 enum type 별 이름 지정.
+	_tchar m_szTagArray[SPELL_END][MAX_PATH] = {
+		{TEXT("Accio")} , {TEXT("Alohomora")} , {TEXT("Alteration")} , {TEXT("Arrestomomentum")} , {TEXT("Avadakedavra")} , {TEXT("Bombarda")} ,
+		{TEXT("Confringo")} , {TEXT("Conjuration")} , {TEXT("Crucio")} , {TEXT("Depulso")} , {TEXT("Descendo")} , {TEXT("Diffindo")} ,
+		{TEXT("Disillusionment")} , {TEXT("Evaesco")} , {TEXT("Expelliarmus")} , {TEXT("Flipendo")} , {TEXT("Glacius")} , {TEXT("Imperio")} ,
+		{TEXT("Ncendio")} , {TEXT("Levioso")} , {TEXT("Lumos")} , {TEXT("Protego")} , {TEXT("Reparo")} , {TEXT("Revelio")} ,
+		{TEXT("Transformation")} , {TEXT("Transformationoverland")} , {TEXT("Wingardiumleviosa")} , {TEXT("BasicCast")} , {TEXT("Stupefy")} , {TEXT("Petrificustotalus")} ,
+		{TEXT("MagicThrow") }, {TEXT("Finisher")} };
 
 protected:
 	HRESULT Add_Component();

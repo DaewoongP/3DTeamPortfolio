@@ -42,6 +42,8 @@
 #include "Trail.h"
 #include "MeshEffect.h"
 #include "Default_Magic_Effect.h"
+#include "Default_MagicTraill_Effect.h"
+#include "Wingardium_Effect.h"
 #pragma endregion Effects
 
 #pragma region Magic
@@ -51,6 +53,8 @@
 #include "BasicCast.h"
 #include "Protego.h"
 #include "Revelio.h"
+#include "Levioso.h"
+#include "Wingardiumleviosa.h"
 #pragma endregion Magic
 
 
@@ -558,16 +562,30 @@ HRESULT CLoader::Loading_For_MainGame()
 			CProfessor_Fig::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Professor_Fig");
 
+#pragma region Magic_Effect
+
 		/* For.Prototype_GameObject_Default_Magic_Effect*/
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Default_Magic_Effect"),
 			CDefault_Magic_Effect::Create(m_pDevice, m_pContext, LEVEL_MAINGAME))))
 			throw TEXT("Prototype_GameObject_Default_Magic_Effect");
 
+		/* For.Prototype_GameObject_Wingardium_Effect*/
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Wingardium_Effect"),
+			CWingardium_Effect::Create(m_pDevice, m_pContext, LEVEL_MAINGAME))))
+			throw TEXT("Prototype_GameObject_Wingardium_Effect");
+
+		/* For.Prototype_GameObject_Wingardium_Effect*/
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Default_MagicTraill_Effect"),
+			CDefault_MagicTraill_Effect::Create(m_pDevice, m_pContext, LEVEL_MAINGAME))))
+			throw TEXT("Prototype_GameObject_Default_MagicTraill_Effect");
+		
+#pragma endregion
+
 #pragma region Magic
-		/* For.Prototype_GameObject_BaseAttack */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_BaseAttack"),
+		/* For.Prototype_GameObject_BasicCast */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_BasicCast"),
 			CBasicCast::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_BaseAttack");
+			throw TEXT("Prototype_GameObject_BasicCast");
 
 		/* For.Prototype_GameObject_Protego */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Protego"),
@@ -578,6 +596,16 @@ HRESULT CLoader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Revelio"),
 			CRevelio::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Revelio");
+
+		/* For.Prototype_GameObject_Revelio */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Wingardiumleviosa"),
+			CWingardiumleviosa::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Wingardiumleviosa");
+
+		/* For.Prototype_GameObject_Revelio */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Levioso"),
+			CLevioso::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Levioso");
 #pragma endregion
 
 #ifdef _DEBUG

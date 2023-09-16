@@ -96,14 +96,14 @@ HRESULT CVIBuffer_Rect_Trail::Initialize(void* pArg)
 		{
 			iVertexIndex = (i - 1) >> 1;
 			pVertices[i].vPosition = vHighWorldPos;
-			pVertices[i].vTexCoord = _float2(-1.f * (_float)iVertexIndex / m_TrailDesc.iTrailNum, 1.f);
+			pVertices[i].vTexCoord = _float2(1.f * (_float)iVertexIndex / m_TrailDesc.iTrailNum, 1.f);
 		}
 		// Â¦¼ö ... 8 6 4 2 0
 		else
 		{
 			iVertexIndex = i >> 1;
 			pVertices[i].vPosition = vLowWorldPos;
-			pVertices[i].vTexCoord = _float2(-1.f * (_float)iVertexIndex / m_TrailDesc.iTrailNum, 0.f);
+			pVertices[i].vTexCoord = _float2(1.f * (_float)iVertexIndex / m_TrailDesc.iTrailNum, 0.f);
 		}
 	}
 

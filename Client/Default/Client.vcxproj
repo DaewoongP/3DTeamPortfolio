@@ -166,6 +166,8 @@
     <ClInclude Include="..\Public\Action.h" />
     <ClInclude Include="..\Public\Action_Deflect.h" />
     <ClInclude Include="..\Public\Check_Distance.h" />
+    <ClInclude Include="..\Public\Default_MagicTraill_Effect.h" />
+    <ClInclude Include="..\Public\Levioso.h" />
     <ClInclude Include="..\Public\Random_Attack.h" />
     <ClInclude Include="..\public\Info_Main.h" />
     <ClInclude Include="..\public\LoadTrigger.h" />
@@ -278,6 +280,8 @@
     <ClInclude Include="..\Public\Weapon_Golem_Merlin.h" />
     <ClInclude Include="..\Public\Weapon_Pensive.h" />
     <ClInclude Include="..\Public\Weapon_Player_Wand.h" />
+    <ClInclude Include="..\Public\Wingardiumleviosa.h" />
+    <ClInclude Include="..\Public\Wingardium_Effect.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="ImGui\backends\imgui_impl_dx11.h">
@@ -324,6 +328,8 @@
     <ClCompile Include="..\Private\Action.cpp" />
     <ClCompile Include="..\Private\Action_Deflect.cpp" />
     <ClCompile Include="..\Private\Check_Distance.cpp" />
+    <ClCompile Include="..\Private\Default_MagicTraill_Effect.cpp" />
+    <ClCompile Include="..\Private\Levioso.cpp" />
     <ClCompile Include="..\Private\Random_Attack.cpp" />
     <ClCompile Include="..\private\Info_Main.cpp" />
     <ClCompile Include="..\private\LoadTrigger.cpp" />
@@ -436,6 +442,8 @@
     <ClCompile Include="..\Private\Weapon_Golem_Merlin.cpp" />
     <ClCompile Include="..\Private\Weapon_Pensive.cpp" />
     <ClCompile Include="..\Private\Weapon_Player_Wand.cpp" />
+    <ClCompile Include="..\Private\Wingardiumleviosa.cpp" />
+    <ClCompile Include="..\Private\Wingardium_Effect.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="ImGui\backends\imgui_impl_dx11.cpp">
       <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</IncludeInUnityFile>

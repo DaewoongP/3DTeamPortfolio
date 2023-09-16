@@ -77,9 +77,22 @@ _bool CMagic::Magic_Cast(CTransform* pTarget, class CWeapon_Player_Wand* pWeapon
 		ballInit.pWeapon = pWeapon;
 
 		BEGININSTANCE;
-		if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_BaseAttack"), TEXT("Layer_Magic"), Generate_HashtagW().c_str(), &ballInit)))
+
+		//타입별 생성을 위한 태그지정임.
+		_tchar objTag[MAX_PATH] = TEXT("GameObject_MagicBall_");
+		swprintf_s(objTag, TEXT("%s%s"), objTag, Generate_HashtagW().c_str());
+
+		_tchar componentTag[MAX_PATH] = TEXT("Prototype_GameObject_");
+		swprintf_s(componentTag, TEXT("%s%s"), componentTag, m_szTagArray[m_eMagicTag]);
+
+		_char msgBoxText[MAX_PATH] = "Failed Add_GameObject : GameObject_";
+		_char objName[MAX_PATH] = "";
+		WCharToChar(m_szTagArray[m_eMagicTag], objName);
+		sprintf_s(msgBoxText, "%s%s", msgBoxText, objName);
+
+		if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, componentTag, TEXT("Layer_Magic"), objTag, &ballInit)))
 		{
-			MSG_BOX("Failed Add_GameObject : (GameObject_BaseAttack)");
+			MSG_BOX(msgBoxText);
 			return false;
 		}
 		ENDINSTANCE;
@@ -88,7 +101,15 @@ _bool CMagic::Magic_Cast(CTransform* pTarget, class CWeapon_Player_Wand* pWeapon
 		{
 			m_ActionVec[i]();
 		}
-		m_fCurrentCoolTime = m_fInitCoolTime;
+
+		if (pTarget == nullptr)
+		{
+			m_fCurrentCoolTime = 1.f;
+		}
+		else
+		{
+			m_fCurrentCoolTime = m_fInitCoolTime;
+		}
 		return true;
 	}
 	return false;
