@@ -1,6 +1,8 @@
-#include "..\Default\StateContext.h"
+#include "StateContext.h"
 #include "Client_Defines.h"
 #include "StateMachine.h"
+#include "GameInstance.h"
+#include "IdleState.h"
 
 CStateContext::CStateContext(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
 	: CComposite(_pDevice, _pContext)
@@ -29,17 +31,36 @@ HRESULT CStateContext::Initialize(void* pArg)
 
 	Safe_AddRef(m_pOwnerModel);
 
+	m_pIsDirectionPressed = StateContextDesc->pIsDirectionPressed;
+
+	m_pPlayerTransform = StateContextDesc->pPlayerTransform;
+
+	Safe_AddRef(m_pPlayerTransform);
+
+	if (FAILED(Ready_StateMachine()))
+	{
+		MSG_BOX(TEXT("Failed Ready StateMachine"));
+
+		return E_FAIL;
+	}
+
 	return S_OK;
 }
 
 void CStateContext::Tick(_float fTimeDelta)
 {
-	m_pCurrentStateMachine->Tick(fTimeDelta);
+	if (nullptr != m_pCurrentStateMachine)
+	{
+		m_pCurrentStateMachine->Tick(fTimeDelta);
+	}
 }
 
 void CStateContext::Late_Tick(_float fTimeDelta)
 {
-	m_pCurrentStateMachine->Late_Tick(fTimeDelta);
+	if (nullptr != m_pCurrentStateMachine)
+	{
+		m_pCurrentStateMachine->Late_Tick(fTimeDelta);
+	}
 }
 
 HRESULT CStateContext::Set_StateMachine(const _tchar* _pTag)
@@ -49,12 +70,17 @@ HRESULT CStateContext::Set_StateMachine(const _tchar* _pTag)
 		m_pCurrentStateMachine->OnStateExit();
 
 		Safe_Release(m_pCurrentStateMachine);
-		return E_FAIL;
 	}
 
 	m_pCurrentStateMachine = Find_StateMachine(_pTag);
 	
-	NULL_CHECK_RETURN_MSG(m_pCurrentStateMachine,E_FAIL,TEXT("Failed Set StateMachine"));
+
+	if (nullptr == m_pCurrentStateMachine)
+	{
+		MSG_BOX("Failed Set StateMachine");
+
+		return E_FAIL;
+	}
 	
 	Safe_AddRef(m_pCurrentStateMachine);
 
@@ -76,14 +102,78 @@ CStateMachine* CStateContext::Find_StateMachine(const _tchar* _pTag)
 	return iter->second;
 }
 
-void CStateContext::Add_StateMachine(const _tchar* _pTag, CStateMachine* _pState)
+HRESULT CStateContext::Add_StateMachine(const _tchar* _pTag, CStateMachine* _pState)
 {
-	NULL_CHECK_RETURN_MSG(_pState, , TEXT("Failed Add StateMachine"));
-
+	NULL_CHECK_RETURN_MSG(_pState, E_FAIL , TEXT("Failed Add StateMachine"));
+	
+	_pState->Set_Owner(this);
 	_pState->Set_OwnerModel(m_pOwnerModel);
 	_pState->Set_OwnerLookAngle(m_pOwnerLookAngle);
+	_pState->Set_IsDirectionKeyPressed(m_pIsDirectionPressed);
+	_pState->Set_PlayerTransform(m_pPlayerTransform);
 
 	m_pStateMachines.emplace(_pTag, _pState);
+
+	return S_OK;
+}
+
+HRESULT CStateContext::Ready_StateMachine()
+{
+	BEGININSTANCE;
+
+	if (FAILED(Add_StateMachine(TEXT("Idle"),
+		static_cast<CStateMachine*>
+		(pGameInstance->Clone_Component(LEVEL_MAINGAME,
+			TEXT("Prototype_Component_State_Idle"))))))
+	{
+		ENDINSTANCE;
+
+		MSG_BOX("Failed Ready_StateMachine");
+
+		return E_FAIL;
+	};
+
+	if (FAILED(Add_StateMachine(TEXT("Move Turn"),
+		static_cast<CStateMachine*>
+		(pGameInstance->Clone_Component(LEVEL_MAINGAME,
+			TEXT("Prototype_Component_State_Move_Turn"))))))
+	{
+		ENDINSTANCE;
+
+		MSG_BOX("Failed Ready_StateMachine");
+
+		return E_FAIL;
+	};
+
+	if (FAILED(Add_StateMachine(TEXT("Move Start"),
+		static_cast<CStateMachine*>
+		(pGameInstance->Clone_Component(LEVEL_MAINGAME,
+			TEXT("Prototype_Component_State_Move_Start"))))))
+	{
+		ENDINSTANCE;
+
+		MSG_BOX("Failed Ready_StateMachine");
+
+		return E_FAIL;
+	};
+
+	if (FAILED(Add_StateMachine(TEXT("Move Loop"),
+		static_cast<CStateMachine*>
+		(pGameInstance->Clone_Component(LEVEL_MAINGAME,
+			TEXT("Prototype_Component_State_Move_Loop"))))))
+	{
+		ENDINSTANCE;
+
+		MSG_BOX("Failed Ready_StateMachine");
+
+		return E_FAIL;
+	};
+
+	Set_StateMachine(TEXT("Idle"));
+
+	ENDINSTANCE;
+
+	return S_OK;
 }
 
 CStateContext* CStateContext::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -120,5 +210,12 @@ void CStateContext::Free()
 	{
 		Safe_Release(m_pCurrentStateMachine);
 		Safe_Release(m_pOwnerModel);
+		Safe_Release(m_pPlayerTransform);
+
+		for (auto &iter : m_pStateMachines)
+		{
+			Safe_Release(iter.second);
+		}
+		m_pStateMachines.clear();
 	}
 }
