@@ -273,8 +273,7 @@ HRESULT CRigidBody::Create_Collider(RIGIDBODYDESC* pRigidBodyDesc)
 	
 	// 저항 처리
 	m_pMaterial = pPhysX->createMaterial(pRigidBodyDesc->fStaticFriction, 
-		pRigidBodyDesc->fDynamicFriction, 
-		pRigidBodyDesc->fRestitution);
+		pRigidBodyDesc->fDynamicFriction, pRigidBodyDesc->fRestitution);
 	
 	PxShapeFlags ePxFlag;
 	// 트리거 설정

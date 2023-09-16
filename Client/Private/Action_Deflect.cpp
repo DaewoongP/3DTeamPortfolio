@@ -1,25 +1,25 @@
-#include "Action.h"
+#include "Action_Deflect.h"
 
 #include "GameInstance.h"
 #include "BlackBoard.h"
 
-CAction::CAction(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CAction_Deflect::CAction_Deflect(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CBehavior(pDevice, pContext)
 {
 }
 
-CAction::CAction(const CAction& rhs)
+CAction_Deflect::CAction_Deflect(const CAction_Deflect& rhs)
 	: CBehavior(rhs)
 {
 }
 
-void CAction::Set_Options(const wstring& _wstrAnimationTag, CModel* _pModel,
+void CAction_Deflect::Set_Options(const wstring& _wstrAnimationTag, CModel* _pModel,
 	_bool _isCheckBehavior, const _float& _fCoolTime,
 	_bool _isOneTimeAction, _bool _isLerp)
 {
 	if (nullptr == _pModel)
 	{
-		MSG_BOX("[CAction] _pModel is nullptr");
+		MSG_BOX("[CAction_Deflect] _pModel is nullptr");
 		return;
 	}
 
@@ -34,8 +34,18 @@ void CAction::Set_Options(const wstring& _wstrAnimationTag, CModel* _pModel,
 	m_pModel->Get_Animation(m_wstrAnimationTag)->Set_LerpAnim(_isLerp);
 }
 
-HRESULT CAction::Initialize(void* pArg)
+HRESULT CAction_Deflect::Initialize(void* pArg)
 {
+	/* 패링 유무 */
+	Add_Decoration([&](CBlackBoard* pBlackBoard)->_bool
+		{
+			_bool* pIsParring = { nullptr };
+			if (FAILED(pBlackBoard->Get_Type("isParring", pIsParring)))
+				return false;
+
+			return *pIsParring;
+		});
+
 	/* 쿨타임 */
 	Add_Decoration([&](CBlackBoard* pBlackBoard)->_bool
 		{
@@ -62,7 +72,7 @@ HRESULT CAction::Initialize(void* pArg)
 	return S_OK;
 }
 
-HRESULT CAction::Tick(const _float& fTimeDelta)
+HRESULT CAction_Deflect::Tick(const _float& fTimeDelta)
 {
 	if (false == Check_Decorations())
 	{
@@ -73,11 +83,12 @@ HRESULT CAction::Tick(const _float& fTimeDelta)
 	/* 행동이 하나라도 있으면 행동체크 활성화 */
 	if (0 < m_Behaviors.size())
 		m_isFinishBehaviors = true;
-
+	
 	if (true == m_isFirst)
 	{
-		m_isFirst = false;
+		m_isPlay = true;
 		m_pModel->Change_Animation(m_wstrAnimationTag);
+		m_isFirst = false;
 	}
 
 	/* 행동 체크 */
@@ -108,9 +119,17 @@ HRESULT CAction::Tick(const _float& fTimeDelta)
 	return BEHAVIOR_RUNNING;
 }
 
-void CAction::Reset_Behavior(HRESULT result)
+void CAction_Deflect::Reset_Behavior(HRESULT result)
 {
 	m_isFirst = true;
+
+	_bool* pIsParring = { nullptr };
+	if (FAILED(m_pBlackBoard->Get_Type("isParring", pIsParring)))
+		return;
+
+	*pIsParring = false;
+	
+	m_isPlay = false;
 	m_isFinishBehaviors = false;
 
 	BEGININSTANCE;
@@ -118,9 +137,9 @@ void CAction::Reset_Behavior(HRESULT result)
 	ENDINSTANCE;
 }
 
-CAction* CAction::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CAction_Deflect* CAction_Deflect::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CAction* pInstance = new CAction(pDevice, pContext);
+	CAction_Deflect* pInstance = new CAction_Deflect(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -131,9 +150,9 @@ CAction* CAction::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	return pInstance;
 }
 
-CAction* CAction::Clone(void* pArg)
+CAction_Deflect* CAction_Deflect::Clone(void* pArg)
 {
-	CAction* pInstance = new CAction(*this);
+	CAction_Deflect* pInstance = new CAction_Deflect(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
@@ -144,7 +163,7 @@ CAction* CAction::Clone(void* pArg)
 	return pInstance;
 }
 
-void CAction::Free()
+void CAction_Deflect::Free()
 {
 	__super::Free();
 

@@ -36,14 +36,11 @@ public:
 		2. 모델 포인터
 		3. 행동 체크 할건지 (Action에 바인딩 한 비헤비어가 성공시 탈출하길 원하는 경우 true로 변경)
 		4. 쿨타임
-		5. 타이머 태그
-		6. 몇 초 동안 진행할 건지
-		7. 한번만 실행 할 행동인지
-		8. 애니메이션 러프 유무
+		5. 한번만 실행 할 행동인지
+		6. 애니메이션 러프 유무
 	*/
 	void Set_Action_Options(const wstring& _wstrAnimationTag, CModel* _pModel,
 		_bool _isCheckBehavior = false, const _float& _fCoolTime = 0.f,
-		const wstring& _wstrTimerTag = TEXT(""), const _float& _fDurationTime = 0.f,
 		_bool _isOneTimeAction = false, _bool _isLerp = true);
 
 public:

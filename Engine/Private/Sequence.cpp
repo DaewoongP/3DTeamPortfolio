@@ -17,16 +17,14 @@ HRESULT CSequence::Tick(const _float& fTimeDelta)
 
 	if (false == Check_Decorations())
 	{
-		(*m_iterCurBehavior)->Reset_Behavior();
+		m_ReturnData = BEHAVIOR_FAIL;
 		return BEHAVIOR_FAIL;
 	}
 
 	HRESULT hr = (*m_iterCurBehavior)->Tick(fTimeDelta);
 
-#ifdef _DEBUG
 	(*m_iterCurBehavior)->Set_ReturnData(hr);
 	m_ReturnData = hr;
-#endif // _DEBUG
 
 	switch (hr)
 	{
@@ -34,7 +32,7 @@ HRESULT CSequence::Tick(const _float& fTimeDelta)
 		return BEHAVIOR_RUNNING;
 
 	case BEHAVIOR_SUCCESS:
-		(*m_iterCurBehavior)->Reset_Behavior();
+		(*m_iterCurBehavior)->Reset_Behavior(hr);
 		++m_iterCurBehavior;
 
 		if (m_iterCurBehavior == m_Behaviors.end())
@@ -46,7 +44,7 @@ HRESULT CSequence::Tick(const _float& fTimeDelta)
 			return Tick(fTimeDelta);
 
 	case BEHAVIOR_FAIL:
-		(*m_iterCurBehavior)->Reset_Behavior();
+		(*m_iterCurBehavior)->Reset_Behavior(hr);
 		m_iterCurBehavior = m_Behaviors.begin();
 		return BEHAVIOR_FAIL;
 

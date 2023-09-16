@@ -262,7 +262,7 @@ HRESULT CPlayer::Ready_MeshParts()
 	//Head
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_MAINGAME,
-		TEXT("Prototype_Component_MeshPart_Adult_M_Head"),
+		TEXT("Prototype_Component_MeshPart_Player_Head"),
 		CCustomModel::HEAD)))
 	{
 		MSG_BOX("Failed Add MeshPart Head");
@@ -273,7 +273,7 @@ HRESULT CPlayer::Ready_MeshParts()
 	//Arm
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_MAINGAME, 
-		TEXT("Prototype_Component_MeshPart_Arms01"),
+		TEXT("Prototype_Component_MeshPart_Player_Arm"),
 		CCustomModel::ARM)))
 	{
 		MSG_BOX("Failed Add MeshPart Arm");
@@ -284,8 +284,8 @@ HRESULT CPlayer::Ready_MeshParts()
 	//Robe
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_MAINGAME,
-		TEXT("Prototype_Component_MeshPart_Robe01"),
-		CCustomModel::ROBE), TEXT("../../Resources/GameData/ClothData/Test.cloth")))
+		TEXT("Prototype_Component_MeshPart_Player_Robe"),
+		CCustomModel::ROBE)))
 	{
 		MSG_BOX("Failed Add MeshPart Robe");
 
@@ -295,7 +295,7 @@ HRESULT CPlayer::Ready_MeshParts()
 	//Top
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_MAINGAME,
-		TEXT("Prototype_Component_MeshPart_StuUni03_LongSleeve"),
+		TEXT("Prototype_Component_MeshPart_Player_Top"),
 		CCustomModel::TOP)))
 	{
 		MSG_BOX("Failed Add MeshPart Upper");
@@ -306,7 +306,7 @@ HRESULT CPlayer::Ready_MeshParts()
 	//Pants
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_MAINGAME,
-		TEXT("Prototype_Component_MeshPart_Low_Slcialite01"),
+		TEXT("Prototype_Component_MeshPart_Player_Pants"),
 		CCustomModel::PANTS)))
 	{
 		MSG_BOX("Failed Add MeshPart Lower");
@@ -317,7 +317,7 @@ HRESULT CPlayer::Ready_MeshParts()
 	//Socks
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_MAINGAME,
-		TEXT("Prototype_Component_MeshPart_Socks01"),
+		TEXT("Prototype_Component_MeshPart_Player_Socks"),
 		CCustomModel::SOCKS)))
 	{
 		MSG_BOX("Failed Add MeshPart Socks01");
@@ -328,7 +328,7 @@ HRESULT CPlayer::Ready_MeshParts()
 	//Shoes
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_MAINGAME,
-		TEXT("Prototype_Component_MeshPart_StuShoes03"),
+		TEXT("Prototype_Component_MeshPart_Player_Shoes"),
 		CCustomModel::SHOES)))
 	{
 		MSG_BOX("Failed Add MeshPart Shoes");

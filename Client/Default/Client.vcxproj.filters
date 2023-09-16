@@ -151,12 +151,6 @@
     <Filter Include="03. Behaviors\02. Sequences">
       <UniqueIdentifier>{d6997012-3cb3-41af-a953-a7da969ed441}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Behaviors\03. Movement">
-      <UniqueIdentifier>{d95f3888-ed91-44de-bed2-7ee502737efa}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Behaviors\04. Function">
-      <UniqueIdentifier>{11282af5-bac7-4061-9441-81c0be48d567}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_Finisher_Icon">
       <UniqueIdentifier>{fcbbd145-242a-4b88-9a6d-b01139b69406}</UniqueIdentifier>
     </Filter>
@@ -237,6 +231,15 @@
     </Filter>
     <Filter Include="04. Magic\MagicBall\00. BasicCast">
       <UniqueIdentifier>{753e950f-efbe-4660-a035-8339816dab1b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Behaviors\04. Movement">
+      <UniqueIdentifier>{d95f3888-ed91-44de-bed2-7ee502737efa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Behaviors\05. Function">
+      <UniqueIdentifier>{11282af5-bac7-4061-9441-81c0be48d567}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Behaviors\03. RandomChoose">
+      <UniqueIdentifier>{68fa3644-0ca1-4bca-844f-2fc72e090f6d}</UniqueIdentifier>
     </Filter>
     <Filter Include="04. Magic\MagicSlot">
       <UniqueIdentifier>{b7435dcb-b46c-4066-a7d4-3545d611ef11}</UniqueIdentifier>
@@ -352,7 +355,7 @@
       <Filter>99. Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Wait.h">
-      <Filter>03. Behaviors\03. Movement</Filter>
+      <Filter>03. Behaviors\04. Movement</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Dugbog.h">
       <Filter>02. GameObject\02. Enemy\02. Dugbog</Filter>
@@ -421,10 +424,10 @@
       <Filter>02. GameObject\01. Player</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Check_Degree.h">
-      <Filter>03. Behaviors\04. Function</Filter>
+      <Filter>03. Behaviors\05. Function</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Turn.h">
-      <Filter>03. Behaviors\03. Movement</Filter>
+      <Filter>03. Behaviors\04. Movement</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Selector_Degree.h">
       <Filter>03. Behaviors\01. Selectors</Filter>
@@ -468,9 +471,6 @@
     <ClInclude Include="..\Public\BasicCast.h">
       <Filter>04. Magic\MagicBall\00. BasicCast</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\LookAt.h">
-      <Filter>03. Behaviors\03. Movement</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Professor_Fig.h">
       <Filter>02. GameObject\07. NPC</Filter>
     </ClInclude>
@@ -487,7 +487,7 @@
       <Filter>03. Behaviors\02. Sequences</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Check_Distance.h">
-      <Filter>03. Behaviors\04. Function</Filter>
+      <Filter>03. Behaviors\05. Function</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Sequence_MoveTarget.h">
       <Filter>03. Behaviors\02. Sequences</Filter>
@@ -506,6 +506,15 @@
     </ClInclude>
     <ClInclude Include="..\Public\Weapon_Player_Wand.h">
       <Filter>02. GameObject\01. Player\01. Weapon\Wand</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Random_Attack.h">
+      <Filter>03. Behaviors\03. RandomChoose</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Action_Deflect.h">
+      <Filter>03. Behaviors\00. Action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Sequence_Groggy.h">
+      <Filter>03. Behaviors\02. Sequences</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Seamless_Loader.h">
       <Filter>01. Levels\99. Loading</Filter>
@@ -594,7 +603,7 @@
       <Filter>02. GameObject\02. Enemy\00. Troll\01. Forest_Troll\Weapon</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Wait.cpp">
-      <Filter>03. Behaviors\03. Movement</Filter>
+      <Filter>03. Behaviors\04. Movement</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Dugbog.cpp">
       <Filter>02. GameObject\02. Enemy\02. Dugbog</Filter>
@@ -666,10 +675,10 @@
       <Filter>02. GameObject\01. Player</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Check_Degree.cpp">
-      <Filter>03. Behaviors\04. Function</Filter>
+      <Filter>03. Behaviors\05. Function</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Turn.cpp">
-      <Filter>03. Behaviors\03. Movement</Filter>
+      <Filter>03. Behaviors\04. Movement</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Selector_Degree.cpp">
       <Filter>03. Behaviors\01. Selectors</Filter>
@@ -713,9 +722,6 @@
     <ClCompile Include="..\Private\BasicCast.cpp">
       <Filter>04. Magic\MagicBall\00. BasicCast</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\LookAt.cpp">
-      <Filter>03. Behaviors\03. Movement</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Professor_Fig.cpp">
       <Filter>02. GameObject\07. NPC</Filter>
     </ClCompile>
@@ -732,7 +738,7 @@
       <Filter>03. Behaviors\02. Sequences</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Check_Distance.cpp">
-      <Filter>03. Behaviors\04. Function</Filter>
+      <Filter>03. Behaviors\05. Function</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Sequence_MoveTarget.cpp">
       <Filter>03. Behaviors\02. Sequences</Filter>
@@ -748,6 +754,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\Weapon_Player_Wand.cpp">
       <Filter>02. GameObject\01. Player\01. Weapon\Wand</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Random_Attack.cpp">
+      <Filter>03. Behaviors\03. RandomChoose</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Action_Deflect.cpp">
+      <Filter>03. Behaviors\00. Action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Sequence_Groggy.cpp">
+      <Filter>03. Behaviors\02. Sequences</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Seamless_Loader.cpp">
       <Filter>01. Levels\99. Loading</Filter>
