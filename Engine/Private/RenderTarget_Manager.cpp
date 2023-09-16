@@ -50,6 +50,8 @@ HRESULT CRenderTarget_Manager::Add_MRT(const _tchar* pMRTTag, const _tchar* pTar
 
 HRESULT CRenderTarget_Manager::Begin_MRT(ID3D11DeviceContext* pContext, const _tchar* pMRTTag,_bool Shadow)
 {
+	std::lock_guard<std::mutex> lock(mtx);
+
 	if(Shadow)
 	{
 		list<CRenderTarget*>* pMRTList = Find_MRT(pMRTTag);
@@ -80,7 +82,7 @@ HRESULT CRenderTarget_Manager::Begin_MRT(ID3D11DeviceContext* pContext, const _t
 
 	if (nullptr == pMRTList)
 		return E_FAIL;
-
+	
 	pContext->OMGetRenderTargets(1, &m_pPostRenderTargetView, &m_pDepthStencilView);
 
 	ID3D11RenderTargetView* pRenderTargets[8] = { nullptr };
@@ -101,6 +103,8 @@ HRESULT CRenderTarget_Manager::Begin_MRT(ID3D11DeviceContext* pContext, const _t
 
 HRESULT CRenderTarget_Manager::Begin_PostProcessingRenderTarget(ID3D11DeviceContext* pContext, const _tchar* pMRTTag)
 {
+	std::lock_guard<std::mutex> lock(mtx);
+
 	list<CRenderTarget*>* pMRTList = Find_MRT(pMRTTag);
 
 	if (nullptr == pMRTList)
@@ -125,6 +129,8 @@ HRESULT CRenderTarget_Manager::Begin_PostProcessingRenderTarget(ID3D11DeviceCont
 
 HRESULT CRenderTarget_Manager::End_MRT(ID3D11DeviceContext* pContext,_bool Shadow)
 {
+	std::lock_guard<std::mutex> lock(mtx);
+
 	if (Shadow)
 	{
 		ID3D11RenderTargetView* pRenderTargets[8] = { m_pPostRenderTargetView };
@@ -148,6 +154,8 @@ HRESULT CRenderTarget_Manager::End_MRT(ID3D11DeviceContext* pContext,_bool Shado
 
 HRESULT CRenderTarget_Manager::End_PostProcessingRenderTarget(ID3D11DeviceContext* pContext)
 {
+	std::lock_guard<std::mutex> lock(mtx);
+
 	ID3D11RenderTargetView* pRenderTargets[8] = { m_pBackBufferView };
 
 	pContext->OMSetRenderTargets(8, pRenderTargets, m_pDepthStencilView);

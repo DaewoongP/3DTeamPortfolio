@@ -1,5 +1,4 @@
 #pragma once
-#include "UI_Group.h"
 #include "Tool_Defines.h"
 
 BEGIN(Tool)

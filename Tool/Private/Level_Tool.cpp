@@ -13,9 +13,6 @@ HRESULT CLevel_Tool::Initialize()
 
 	if (FAILED(Ready_For_Layer_Tool(TEXT("Layer_Tool"))))
 		return E_FAIL;
-	
-	if (FAILED(Ready_For_Layer_MapObject(TEXT("Layer_MapObject"))))
-		return E_FAIL;
 	if (FAILED(Ready_For_Layer_Light(TEXT("Layer_Light"))))
 		return E_FAIL;
 
@@ -68,13 +65,6 @@ HRESULT CLevel_Tool::Ready_For_Layer_Tool(const _tchar* pLayerTag)
 	}
 
 	Safe_Release(pGameInstance);
-
-	return S_OK;
-}
-
-HRESULT CLevel_Tool::Ready_For_Layer_MapObject(const _tchar* pLayerTag)
-{
-	// 여기에 MapDummy, MapObject만 들어가야 한다.
 
 	return S_OK;
 }

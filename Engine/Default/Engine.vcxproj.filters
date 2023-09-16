@@ -322,9 +322,6 @@
     <Filter Include="01. Utility\03. Components\14. RigidBody\DebugRender\Ring">
       <UniqueIdentifier>{79aba21c-54a6-4216-b0b5-e711df9445aa}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\03. Components\16 MeshEffect">
-      <UniqueIdentifier>{35f210f5-64ec-49e0-97dd-d4fdb9664c1b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Utility\03. Components\17. StaticMeshInstance">
       <UniqueIdentifier>{92f67c79-e020-4a12-af37-19694d3404e0}</UniqueIdentifier>
     </Filter>
@@ -348,6 +345,12 @@
     </Filter>
     <Filter Include="01. Utility\13. Ease">
       <UniqueIdentifier>{db445bd0-d6d8-42a9-9226-3315e30f7c55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\16. MeshEffect">
+      <UniqueIdentifier>{35f210f5-64ec-49e0-97dd-d4fdb9664c1b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\02. Renderer\Blur">
+      <UniqueIdentifier>{799ecc2a-624c-4be1-893f-cc68859512b0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -631,7 +634,7 @@
       <Filter>01. Utility\03. Components\00. Manager</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MeshEffect.h">
-      <Filter>01. Utility\03. Components\16 MeshEffect</Filter>
+      <Filter>01. Utility\03. Components\16. MeshEffect</Filter>
     </ClInclude>
     <ClInclude Include="..\public\NVContextCallBack.h">
       <Filter>01. Utility\11. Physics\EventCallBack</Filter>
@@ -710,6 +713,9 @@
     </ClInclude>
     <ClInclude Include="..\public\Debug_Render_HeightField.h">
       <Filter>01. Utility\03. Components\14. RigidBody\DebugRender\Plane</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Blur.h">
+      <Filter>01. Utility\03. Components\02. Renderer\Blur</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -960,7 +966,7 @@
       <Filter>01. Utility\11. Physics\EventCallBack</Filter>
     </ClCompile>
     <ClCompile Include="..\private\MeshEffect.cpp">
-      <Filter>01. Utility\03. Components\16 MeshEffect</Filter>
+      <Filter>01. Utility\03. Components\16. MeshEffect</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\VIBuffer_Rect_Color_Instance.cpp">
       <Filter>01. Utility\03. Components\07. VIBuffer\Instance\Rect_Instance</Filter>
@@ -1040,6 +1046,9 @@
     <ClCompile Include="..\Private\Ease.cpp">
       <Filter>01. Utility\13. Ease</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Blur.cpp">
+      <Filter>01. Utility\03. Components\02. Renderer\Blur</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Navigation.hlsl">
@@ -1076,6 +1085,9 @@
       <Filter>01. Utility\98. ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_AfterShade.hlsl">
+      <Filter>01. Utility\03. Components\02. Renderer\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Blur.hlsl">
       <Filter>01. Utility\03. Components\02. Renderer\Shader</Filter>
     </FxCompile>
   </ItemGroup>

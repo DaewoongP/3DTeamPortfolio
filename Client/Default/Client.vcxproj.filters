@@ -238,6 +238,15 @@
     <Filter Include="04. Magic\MagicBall\00. BasicCast">
       <UniqueIdentifier>{753e950f-efbe-4660-a035-8339816dab1b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="04. Magic\MagicSlot">
+      <UniqueIdentifier>{b7435dcb-b46c-4066-a7d4-3545d611ef11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\99. Debug\LoadTrigger">
+      <UniqueIdentifier>{96fc0db4-f307-4049-bde3-38b946932417}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Scene">
+      <UniqueIdentifier>{1a46706e-474c-4231-a7ba-2c809467d7a9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -498,6 +507,18 @@
     <ClInclude Include="..\Public\Weapon_Player_Wand.h">
       <Filter>02. GameObject\01. Player\01. Weapon\Wand</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Seamless_Loader.h">
+      <Filter>01. Levels\99. Loading</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MagicSlot.h">
+      <Filter>04. Magic\MagicSlot</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\LoadTrigger.h">
+      <Filter>02. GameObject\99. Debug\LoadTrigger</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Info_Main.h">
+      <Filter>05. Scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -727,6 +748,18 @@
     </ClCompile>
     <ClCompile Include="..\Private\Weapon_Player_Wand.cpp">
       <Filter>02. GameObject\01. Player\01. Weapon\Wand</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Seamless_Loader.cpp">
+      <Filter>01. Levels\99. Loading</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MagicSlot.cpp">
+      <Filter>04. Magic\MagicSlot</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\LoadTrigger.cpp">
+      <Filter>02. GameObject\99. Debug\LoadTrigger</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Info_Main.cpp">
+      <Filter>05. Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
