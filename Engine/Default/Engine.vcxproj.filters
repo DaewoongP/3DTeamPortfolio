@@ -346,6 +346,9 @@
     <Filter Include="01. Utility\13. Ease">
       <UniqueIdentifier>{db445bd0-d6d8-42a9-9226-3315e30f7c55}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\03. Components\07. VIBuffer\Geometry\GeoSphere">
+      <UniqueIdentifier>{96531350-10f0-44b4-b9ec-6cfed7531891}</UniqueIdentifier>
+    </Filter>
     <Filter Include="01. Utility\03. Components\16. MeshEffect">
       <UniqueIdentifier>{35f210f5-64ec-49e0-97dd-d4fdb9664c1b}</UniqueIdentifier>
     </Filter>
@@ -648,9 +651,6 @@
     <ClInclude Include="..\Public\Model_Instance.h">
       <Filter>01. Utility\03. Components\17. StaticMeshInstance\Model_Instance</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\VIBuffer_GeoSphere.h">
-      <Filter>01. Utility\03. Components\07. VIBuffer\Geometry</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\VIBuffer_Geometry.h">
       <Filter>01. Utility\03. Components\07. VIBuffer\Geometry</Filter>
     </ClInclude>
@@ -710,6 +710,9 @@
     </ClInclude>
     <ClInclude Include="..\public\Debug_Render_HeightField.h">
       <Filter>01. Utility\03. Components\14. RigidBody\DebugRender\Plane</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\VIBuffer_GeoSphere.h">
+      <Filter>01. Utility\03. Components\07. VIBuffer\Geometry\GeoSphere</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Blur.h">
       <Filter>01. Utility\03. Components\02. Renderer\Blur</Filter>
@@ -983,9 +986,6 @@
     <ClCompile Include="..\Public\Model_Instance.cpp">
       <Filter>01. Utility\03. Components\17. StaticMeshInstance\Model_Instance</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\VIBuffer_GeoSphere.cpp">
-      <Filter>01. Utility\03. Components\07. VIBuffer\Geometry</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\VIBuffer_Geometry.cpp">
       <Filter>01. Utility\03. Components\07. VIBuffer\Geometry</Filter>
     </ClCompile>
@@ -1043,6 +1043,9 @@
     <ClCompile Include="..\Private\Ease.cpp">
       <Filter>01. Utility\13. Ease</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\VIBuffer_GeoSphere.cpp">
+      <Filter>01. Utility\03. Components\07. VIBuffer\Geometry\GeoSphere</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\Blur.cpp">
       <Filter>01. Utility\03. Components\02. Renderer\Blur</Filter>
     </ClCompile>
@@ -1088,7 +1091,7 @@
       <Filter>01. Utility\03. Components\02. Renderer\Shader</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Blur.hlsl">
-      <Filter>01. Utility\03. Components\02. Renderer\Shader</Filter>
+      <Filter>01. Utility\03. Components\02. Renderer\Blur</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

@@ -22,7 +22,10 @@ HRESULT CCheck_Degree::Initialize(void* pArg)
 HRESULT CCheck_Degree::Tick(const _float& fTimeDelta)
 {
 	if (false == Check_Decorations())
+	{
+		m_ReturnData = BEHAVIOR_FAIL;
 		return BEHAVIOR_FAIL;
+	}
 
 	CGameObject* pTarget = { nullptr };
 	if (FAILED(m_pBlackBoard->Get_Type("pTarget", pTarget)))

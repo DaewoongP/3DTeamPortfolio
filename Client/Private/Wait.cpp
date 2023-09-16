@@ -22,7 +22,10 @@ HRESULT CWait::Initialize(void* pArg)
 HRESULT CWait::Tick(const _float& fTimeDelta)
 {
 	if (false == Check_Decorations())
+	{
+		m_ReturnData = BEHAVIOR_FAIL;
 		return BEHAVIOR_FAIL;
+	}
 
 	m_fTimeAcc += fTimeDelta;
 

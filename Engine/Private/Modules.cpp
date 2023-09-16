@@ -61,6 +61,7 @@ HRESULT MAIN_MODULE::Save(const _tchar* _pDirectoyPath)
 	WriteFile(hFile, &iMaxParticles, sizeof iMaxParticles, &dwByte, nullptr);
 	WriteFile(hFile, &isAutoRandomSeed, sizeof isAutoRandomSeed, &dwByte, nullptr);
 	WriteFile(hFile, strStopAction.data(), sizeof(_char) * MAX_PATH, &dwByte, nullptr);
+	WriteFile(hFile, &isDirectionRotation, sizeof(_bool), &dwByte, nullptr);
 
 	CloseHandle(hFile);
 
@@ -120,7 +121,7 @@ HRESULT MAIN_MODULE::Load(const _tchar* _pDirectoyPath)
 	ReadFile(hFile, &isAutoRandomSeed, sizeof isAutoRandomSeed, &dwByte, nullptr);
 	ReadFile(hFile, szBuffer, sizeof(_char) * MAX_PATH, &dwByte, nullptr);
 	strStopAction = szBuffer;
-
+	ReadFile(hFile, &isDirectionRotation, sizeof isDirectionRotation, &dwByte, nullptr);
 	CloseHandle(hFile);
 
 	return S_OK;
@@ -365,6 +366,25 @@ HRESULT SHAPE_MODULE::Load(const _tchar* _pDirectoyPath)
 	ReadFile(hFile, &isChase, sizeof(isChase), &dwByte, nullptr);
 	CloseHandle(hFile);
 	return S_OK;
+}
+void SHAPE_MODULE::Set_ShapeLook(_float3 vSourPos, _float3 vDestPos)
+{
+	_float3 vRight;
+	_float3 vUp = _float3(0.f, 1.f, 0.f);
+	_float3 vLook = vDestPos - vSourPos;
+	_float fLength = vLook.Length();
+
+	// 제로벡터이면 리턴
+	if (fLength <= 0.001f)
+		return;
+
+	vLook.Normalize();
+	vRight = vUp.Cross(vLook);
+	vUp = vLook.Cross(vRight);
+
+	ShapeMatrix.Right(vRight);
+	ShapeMatrix.Up(vUp);
+	ShapeMatrix.Look(vLook);
 }
 void SHAPE_MODULE::Restart()
 {

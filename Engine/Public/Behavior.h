@@ -43,6 +43,14 @@ protected:
 	virtual ~CBehavior() = default;
 
 public:
+	HRESULT Get_ReturnData() const {
+		return m_ReturnData;
+	}
+	void Set_ReturnData(HRESULT hr) {
+		m_ReturnData = hr;
+	}
+
+public:
 	virtual HRESULT Initialize_Prototype() = 0;
 	virtual HRESULT Initialize(void* pArg) = 0;
 	virtual HRESULT Tick(const _float & fTimeDelta) = 0;
@@ -51,9 +59,10 @@ public:
 	HRESULT Add_Decoration(function<_bool(class CBlackBoard*)> Func);
 	/* 주의. pBehavior의 AddRef를 진행하지 않는다. */
 	HRESULT Assemble_Behavior(const wstring & BehaviorTag, CBehavior * pBehavior);
-	virtual void Reset_Behavior() {};
+	virtual void Reset_Behavior(HRESULT result) {};
 
 protected:
+	_bool m_isPlayBehavior = { false };
 	wstring m_wstrBehaviorTag = { L"" };
 	/* 블랙보드는 루트노드당 하나씩 가지고 루트노드의 자식들은 루트노드의 블랙보드를 공유하는 형태로 가져갈 것이기 때문에 블랙보드의 생성은 루트노드에서 수행한다. */
 	class CBlackBoard* m_pBlackBoard = { nullptr };
@@ -66,6 +75,9 @@ protected:
 	list<CBehavior*>::iterator m_iterCurBehavior;
 
 protected:
+	HRESULT m_ReturnData = { 0 };
+
+protected:
 	_bool Check_Decorations();
 	CBehavior* Find_Behavior(const wstring & BehaviorTag);
 	virtual HRESULT Assemble_Childs() { return S_OK; }
@@ -75,17 +87,6 @@ protected:
 	virtual void Free() override;
 
 #ifdef _DEBUG
-public:
-	HRESULT Get_ReturnData() const {
-		return m_ReturnData;
-	}
-	void Set_ReturnData(HRESULT hr) {
-		m_ReturnData = hr;
-	}
-
-protected:
-	HRESULT m_ReturnData = { 0 };
-
 protected:
 	void Find_Running_Behavior(_Inout_ vector<wstring>& BehaviorTags);
 #endif // _DEBUG

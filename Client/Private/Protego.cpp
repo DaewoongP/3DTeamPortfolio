@@ -1,6 +1,6 @@
 #include "Protego.h"
 #include "GameInstance.h"
-
+#include "Protego_Effect.h"
 CProtego::CProtego(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CMagicBall(pDevice, pContext)
 {
@@ -21,6 +21,7 @@ HRESULT CProtego::Initialize_Prototype()
 
 HRESULT CProtego::Initialize(void* pArg)
 {
+
 	if (FAILED(__super::Initialize(pArg)))
 	{
 		MSG_BOX("Failed Player Initialize");
@@ -67,6 +68,20 @@ void CProtego::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 
 HRESULT CProtego::Add_Components()
 {
+	try
+	{
+		if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Protego_Effect")
+			, TEXT("Com_Protego_Effect"), reinterpret_cast<CComponent**>(&m_pProtegoEffect), &m_MagicBallDesc)))
+			throw "Com_Protego_Effect";
+	}
+	catch (const _char* pErrorMessage)
+	{
+		string strErrorMessage = "Failed to Cloned in CProtego : ";
+		strErrorMessage += pErrorMessage;
+		MSG_BOX(strErrorMessage.data());
+	}
+
+
 	return S_OK;
 }
 
@@ -103,4 +118,9 @@ CGameObject* CProtego::Clone(void* pArg)
 void CProtego::Free()
 {
 	__super::Free();
+
+	if (true == m_isCloned)
+	{
+		Safe_Release(m_pProtegoEffect);
+	}
 }

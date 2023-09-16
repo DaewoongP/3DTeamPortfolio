@@ -25,6 +25,12 @@ public:
 	virtual HRESULT Initialize(void* pArg) override { return S_OK; }
 	virtual HRESULT Tick(const _float& fTimeDelta) override;
 
+public:
+	virtual void Reset_Behavior(HRESULT result) {
+		(*m_iterCurBehavior)->Reset_Behavior(result);
+		m_iterCurBehavior = m_Behaviors.begin();
+	}
+
 protected:
 	virtual HRESULT Assemble_Childs() override { return S_OK; }
 

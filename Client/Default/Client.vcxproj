@@ -164,12 +164,23 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Action.h" />
+    <ClInclude Include="..\Public\Action_Deflect.h" />
     <ClInclude Include="..\Public\Check_Distance.h" />
+    <ClInclude Include="..\Public\MoveLoopState.h" />
+    <ClInclude Include="..\public\MoveStartState.h" />
+    <ClInclude Include="..\Public\MoveTurnState.h" />
+    <ClInclude Include="..\public\Protego_Effect.h" />
+    <ClInclude Include="..\Public\Default_MagicTraill_Effect.h" />
+    <ClInclude Include="..\Public\Levioso.h" />
+    <ClInclude Include="..\Public\Random_Attack.h" />
+    <ClInclude Include="..\public\Info_Main.h" />
     <ClInclude Include="..\public\LoadTrigger.h" />
     <ClInclude Include="..\public\MagicSlot.h" />
     <ClInclude Include="..\public\Seamless_Loader.h" />
     <ClInclude Include="..\Public\Sequence_Attack.h" />
+    <ClInclude Include="..\Public\Sequence_Groggy.h" />
     <ClInclude Include="..\Public\Sequence_MoveTarget.h" />
+    <ClInclude Include="..\Public\StateContext.h" />
     <ClInclude Include="..\public\StateMachine.h" />
     <ClInclude Include="..\public\IdleState.h" />
     <ClInclude Include="..\Public\UI_Back.h" />
@@ -191,7 +202,6 @@
     <ClInclude Include="..\Public\MagicBallPool.h" />
     <ClInclude Include="..\Public\Protego.h" />
     <ClInclude Include="..\Public\Revelio.h" />
-    <ClInclude Include="..\Public\LookAt.h" />
     <ClInclude Include="..\Public\Professor_Fig.h" />
     <ClInclude Include="..\Public\Selector_Degree.h" />
     <ClInclude Include="..\Public\Armored_Troll.h" />
@@ -236,6 +246,8 @@
     <ClInclude Include="..\Public\Weapon_Golem_Merlin.h" />
     <ClInclude Include="..\Public\Weapon_Pensive.h" />
     <ClInclude Include="..\Public\Weapon_Player_Wand.h" />
+    <ClInclude Include="..\Public\Wingardiumleviosa.h" />
+    <ClInclude Include="..\Public\Wingardium_Effect.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="ImGui\backends\imgui_impl_dx11.h">
@@ -275,17 +287,26 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="Resource.h" />
-    <ClInclude Include="StateContext.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\..\Desktop\Client\Private\UI_Group_Skill.cpp" />
     <ClCompile Include="..\Private\Action.cpp" />
+    <ClCompile Include="..\Private\Action_Deflect.cpp" />
     <ClCompile Include="..\Private\Check_Distance.cpp" />
+    <ClCompile Include="..\Private\MoveLoopState.cpp" />
+    <ClCompile Include="..\private\MoveStartState.cpp" />
+    <ClCompile Include="..\Private\MoveTurnState.cpp" />
+    <ClCompile Include="..\private\Protego_Effect.cpp" />
+    <ClCompile Include="..\Private\Default_MagicTraill_Effect.cpp" />
+    <ClCompile Include="..\Private\Levioso.cpp" />
+    <ClCompile Include="..\Private\Random_Attack.cpp" />
+    <ClCompile Include="..\private\Info_Main.cpp" />
     <ClCompile Include="..\private\LoadTrigger.cpp" />
     <ClCompile Include="..\private\MagicSlot.cpp" />
     <ClCompile Include="..\private\Seamless_Loader.cpp" />
     <ClCompile Include="..\Private\Sequence_Attack.cpp" />
+    <ClCompile Include="..\Private\Sequence_Groggy.cpp" />
     <ClCompile Include="..\Private\Sequence_MoveTarget.cpp" />
     <ClCompile Include="..\private\StateMachine.cpp" />
     <ClCompile Include="..\Private\IdleState.cpp" />
@@ -308,7 +329,6 @@
     <ClCompile Include="..\Private\MagicBallPool.cpp" />
     <ClCompile Include="..\Private\Protego.cpp" />
     <ClCompile Include="..\Private\Revelio.cpp" />
-    <ClCompile Include="..\Private\LookAt.cpp" />
     <ClCompile Include="..\Private\Professor_Fig.cpp" />
     <ClCompile Include="..\Private\Selector_Degree.cpp" />
     <ClCompile Include="..\Private\Armored_Troll.cpp" />
@@ -352,6 +372,8 @@
     <ClCompile Include="..\Private\Weapon_Golem_Merlin.cpp" />
     <ClCompile Include="..\Private\Weapon_Pensive.cpp" />
     <ClCompile Include="..\Private\Weapon_Player_Wand.cpp" />
+    <ClCompile Include="..\Private\Wingardiumleviosa.cpp" />
+    <ClCompile Include="..\Private\Wingardium_Effect.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="ImGui\backends\imgui_impl_dx11.cpp">
       <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</IncludeInUnityFile>
@@ -403,6 +425,7 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Debug.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Protego.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Terrain.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMesh.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxCube.hlsl" />

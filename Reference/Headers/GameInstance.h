@@ -102,6 +102,7 @@ public: /* For.PipeLine*/
 	const _float4* Get_CamPosition();
 	const _float3* Get_CamUp();
 	const _float3* Get_CamLook();
+	const _float3* Get_CamRight();
 	const _float* Get_CamFar();
 
 public: /* For. Collision_Manager */

@@ -14,6 +14,7 @@ END
 BEGIN(Client)
 class CPlayer_Camera;
 class CWeapon_Player_Wand;
+class CStateContext;
 END
 
 BEGIN(Client)
@@ -46,7 +47,10 @@ private:
 private:
 	//카메라룩과 플레이어룩의 차이 각을 담기위한 변수(음수일 경우 오른쪽, 양수일 경우 왼쪽)
 	_float m_fLookAngle{};
+	//방향키 입력이 들어왔는지 확인하는 변수
+	_bool m_isDirectionKeyPressed { false };
 
+	CStateContext* m_pStateContext = { nullptr };
 	
 	/* 마법을 위한 공간 */
 	class CMagic*	m_pMagic = { nullptr };

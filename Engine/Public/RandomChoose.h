@@ -13,7 +13,7 @@
 
 BEGIN(Engine)
 
-class ENGINE_DLL CRandomChoose : public CBehavior
+class ENGINE_DLL CRandomChoose abstract : public CBehavior
 {
 protected:
 	explicit CRandomChoose(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -26,8 +26,11 @@ public:
 	virtual HRESULT Tick(const _float & fTimeDelta);
 
 public:
-	HRESULT Assemble_Behavior(const wstring& BehaviorTag, CBehavior* pBehavior, const _float& fWeight);
-	void Set_Random_Behavior();
+	virtual HRESULT Assemble_Behavior(const wstring& BehaviorTag, CBehavior* pBehavior, const _float& fWeight);
+	virtual void Set_Random_Behavior();
+	virtual void Reset_Behavior(HRESULT result) {
+		(*m_iterCurBehavior)->Reset_Behavior(result);
+	}
 
 protected:
 	vector<_float>		m_ChildWeights;
@@ -36,8 +39,6 @@ protected:
 	virtual HRESULT Assemble_Childs() override { return S_OK; }
 
 public:
-	static CRandomChoose* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);
-	virtual CRandomChoose* Clone(void* pArg);
 	virtual void Free() override;
 };
 

@@ -25,6 +25,18 @@ HRESULT CLevel_MainGame::Initialize()
 
 		return E_FAIL;
 	}
+	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
+	{
+		MSG_BOX("Failed Ready_Layer_Monster");
+
+		return E_FAIL;
+	}
+	/*if (FAILED(Ready_Layer_NPC(TEXT("Layer_NPC"))))
+	{
+		MSG_BOX("Failed Ready_Layer_NPC");
+
+		return E_FAIL;
+	}*/
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 	{
 		MSG_BOX("Failed Ready_Layer_BackGround");
@@ -77,14 +89,14 @@ void CLevel_MainGame::Tick(_float fTimeDelta)
 	BEGININSTANCE;
 
 	// 씬변경 테스트
-	if (pGameInstance->Get_DIKeyState(DIK_T, CInput_Device::KEY_DOWN))
+	/*if (pGameInstance->Get_DIKeyState(DIK_T, CInput_Device::KEY_DOWN))
 	{
 		pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
 	}
 	if (pGameInstance->Get_DIKeyState(DIK_Y, CInput_Device::KEY_DOWN))
 	{
 		pGameInstance->Set_CurrentScene(TEXT("Scene_Info"), false);
-	}
+	}*/
 	
 	ENDINSTANCE;
 
@@ -177,6 +189,42 @@ HRESULT CLevel_MainGame::Ready_Layer_Player(const _tchar* pLayerTag)
 	ENDINSTANCE;
 
 	return S_OK;
+}
+
+HRESULT CLevel_MainGame::Ready_Layer_Monster(const _tchar* pLayerTag)
+{
+	BEGININSTANCE;
+	
+	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Golem_Combat"), pLayerTag, TEXT("GameObject_Golem_Combat"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Golem_Combat)");
+		return E_FAIL;
+	}
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Golem_Merlin"), pLayerTag, TEXT("GameObject_Golem_Merlin"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Golem_Merlin)");
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CLevel_MainGame::Ready_Layer_NPC(const _tchar* pLayerTag)
+{
+	BEGININSTANCE;
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Professor_Fig"), pLayerTag, TEXT("GameObject_Professor_Fig"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Professor_Fig)");
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return E_NOTIMPL;
 }
 
 HRESULT CLevel_MainGame::Load_MapObject()
@@ -300,11 +348,23 @@ HRESULT CLevel_MainGame::Ready_Layer_Effect(const _tchar* pLayerTag)
 	Safe_AddRef(pGameInstance);
 
 #ifdef _DEBUG
-	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Default_Magic_Effect"), pLayerTag, TEXT("GameObject_Default_Magic_Effect"))))
+	/*if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Particle"), pLayerTag, TEXT("GameObject_Test_Particle"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Particle)");
+		return E_FAIL;
+	}*/
+
+	/*if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Default_Magic_Effect"), pLayerTag, TEXT("GameObject_Default_Magic_Effect"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Default_Magic_Effect)");
 		return E_FAIL;
-	}
+	}*/
+
+	/*if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Wingardium_Effect"), pLayerTag, TEXT("GameObject_Wingardium_Effect"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Wingardium_Effect)");
+		return E_FAIL;
+	}*/
 #endif _DEBUG
 	Safe_Release(pGameInstance);
 
@@ -383,18 +443,6 @@ HRESULT CLevel_MainGame::Ready_Layer_Debug(const _tchar* pLayerTag)
 	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Camera_Debug"), pLayerTag, TEXT("GameObject_Camera_Debug"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Camera_Debug)");
-		return E_FAIL;
-	}
-
-	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Dummy"), pLayerTag, TEXT("GameObject_Dummy"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Dummy)");
-		return E_FAIL;
-	}
-
-	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Golem_Combat"), pLayerTag, TEXT("GameObject_Test_Monster"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Monster)");
 		return E_FAIL;
 	}
 

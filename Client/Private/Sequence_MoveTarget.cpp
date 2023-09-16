@@ -56,11 +56,8 @@ HRESULT CSequence_MoveTarget::Assemble_Childs()
 
 	try /* Failed Check Make_Move */
 	{
-		CGameObject* pOwner = dynamic_cast<CGameObject*>(m_pOwner);
-		if (nullptr == pOwner)
-			throw TEXT("pOwner is nullptr");
-		CTransform* pTransform = pOwner->Get_Transform();
-		if (nullptr == pTransform)
+		CTransform* pTransform = { nullptr };
+		if (FAILED(m_pBlackBoard->Get_Type("pTransform", pTransform)))
 			throw TEXT("pTransform is nullptr");
 
 		/* Make Child Behaviors */
@@ -109,7 +106,6 @@ HRESULT CSequence_MoveTarget::Assemble_Childs()
 
 void CSequence_MoveTarget::Set_Action_Options(const wstring& _wstrAnimationTag, CModel* _pModel,
 	_bool _isCheckBehavior, const _float& _fCoolTime,
-	const wstring& _wstrTimerTag, const _float& _fDurationTime,
 	_bool _isOneTimeAction, _bool _isLerp)
 {
 	if (nullptr == m_pAction)
@@ -117,7 +113,6 @@ void CSequence_MoveTarget::Set_Action_Options(const wstring& _wstrAnimationTag, 
 
 	m_pAction->Set_Options(_wstrAnimationTag, _pModel,
 		_isCheckBehavior, _fCoolTime,
-		_wstrTimerTag, _fDurationTime,
 		_isOneTimeAction, _isLerp);
 }
 

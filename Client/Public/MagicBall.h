@@ -24,10 +24,32 @@ public:
 		SPELL					eMagicTag = { SPELL_END };
 		_float					fDamage = { 0 };
 		_float					fDistance = { 0 };
-		_float					fLiftTime = { 1.0f };
+		_float					fLifeTime = { 1.0f };
 		CWeapon_Player_Wand*	pWeapon = { nullptr };
 	}MAGICBALLINITDESC;
 
+	typedef struct CollsionRequestDesc
+	{
+		CMagic::MAGIC_GROUP		eMagicGroup = { CMagic::MG_END };
+		CMagic::MAGIC_TYPE		eMagicType = { CMagic::MT_END };
+		CMagic::BUFF_TYPE		eBuffType = { CMagic::BUFF_NONE };
+		SPELL					eMagicTag = { SPELL_END };
+		_float					fDamage = { 0 };
+	}COLLSIONREQUESTDESC;
+
+	typedef struct tagMagicBallDesc
+	{
+		CMagic::MAGIC_GROUP		eMagicGroup = { CMagic::MG_END };
+		CMagic::MAGIC_TYPE		eMagicType = { CMagic::MT_END };
+		CMagic::BUFF_TYPE		eBuffType = { CMagic::BUFF_NONE };
+		SPELL					eMagicTag = { SPELL_END };
+		_float3					vStartPosition = {};
+		_float					fDamage = { 0 };
+		_float					fDistance = { 0 };
+		_float					fInitLifeTime = { 1.0f };
+		_float					fLifeTime = { 1.0f };
+	}MAGICBALLDESC;
+	
 protected:
 	explicit CMagicBall(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CMagicBall(const CMagicBall& rhs);
@@ -41,25 +63,19 @@ public:
 	virtual void OnCollisionEnter(COLLEVENTDESC CollisionEventDesc) override;
 	virtual void OnCollisionStay(COLLEVENTDESC CollisionEventDesc) override;
 	virtual void OnCollisionExit(COLLEVENTDESC CollisionEventDesc) override;
-
+	
 protected:
 	// 충돌을 위한 리지드바디 입니다.
 	CRigidBody*		m_pRigidBody = { nullptr };
 
 	//타겟에 대한 트랜스폼임.
 	CTransform*		m_pTarget = { nullptr };
+	CWeapon_Player_Wand* m_pWeapon = { nullptr };
 
 protected:
-	CMagic::MAGIC_GROUP		m_eMagicGroup = { CMagic::MG_END };
-	CMagic::MAGIC_TYPE		m_eMagicType = { CMagic::MT_END };
-	CMagic::BUFF_TYPE		m_eBuffType = { CMagic::BUFF_NONE };
-	SPELL					m_eMagicTag = { SPELL_END };
-	_float3					m_vStartPosition = {};
-	_float					m_fDamage = { 0 };
-	_float					m_fDistance = { 0 };
-	_float					m_fInitLiftTime = { 1.0f };
-	_float					m_fLiftTime = { 1.0f };
-	CWeapon_Player_Wand*	m_pWeapon = { nullptr };
+	MAGICBALLDESC			m_MagicBallDesc;
+
+	COLLSIONREQUESTDESC		m_CollisionDesc = {};
 
 protected:
 	HRESULT Add_Components();

@@ -14,11 +14,14 @@ BEGIN(Engine)
 class CModel;
 class CShader;
 class CRenderer;
+class CSequence;
+class CSelector;
 class CRigidBody;
 class CRootBehavior;
 END
 
 BEGIN(Client)
+class CAction;
 class CWeapon_Golem_Merlin;
 END
 
@@ -50,6 +53,13 @@ private:
 	CWeapon_Golem_Merlin* m_pWeapon = { nullptr };
 
 private:
+	_uint m_iCurrentSpell = { 0 };
+	_uint m_iPreviousSpell = { 0 };
+
+	_bool m_isParring = { false };
+	_bool m_isSpawn = { false };
+
+private:
 	HRESULT Make_AI();
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
@@ -58,6 +68,13 @@ private:
 	_int m_iIndex = { 0 };
 	void Tick_ImGui();
 #endif // _DEBUG
+
+private: /* Çàµ¿ ¹­À½µé */
+	HRESULT Make_Turns(_Inout_ CSequence* pSequence);
+	HRESULT Make_Attack(_Inout_ CSelector* pSelector);
+	HRESULT Make_NormalAttack(_Inout_ CSelector* pSelector);
+	HRESULT Make_Check_Spell(_Inout_ CSelector* pSelector);
+	HRESULT Make_Descendo(_Inout_ CSequence* pSequence);
 
 public:
 	static CGolem_Merlin* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
