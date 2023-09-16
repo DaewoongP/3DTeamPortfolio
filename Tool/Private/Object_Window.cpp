@@ -56,16 +56,16 @@ void CObject_Window::Tick(_float fTimeDelta)
 		}
 	}
 
-	//ImGui::SameLine();
+	ImGui::SameLine();
 
-	//// Delete Dummy 버튼
-	//if (ImGui::Button("Delete Dummy"))
-	//{
-	//	if (FAILED(Delete_Dummy()))
-	//	{
-	//		MSG_BOX("Failed to Delete Dummy");
-	//	}
-	//}
+	// Delete Dummy 버튼
+	if (ImGui::Button("Delete Dummy"))
+	{
+		if (FAILED(Delete_Dummy()))
+		{
+			MSG_BOX("Failed to Delete Dummy");
+		}
+	}
 
 	// Picking 창 On / Off
 	ImGui::Checkbox("Picking", &m_isCheckPicking);
@@ -1675,7 +1675,7 @@ HRESULT CObject_Window::Delete_Dummy()
 		return E_FAIL;
 	}
 
-	Safe_Release(m_pDummy);
+	m_pDummy = nullptr;
 
 	return S_OK;
 }
