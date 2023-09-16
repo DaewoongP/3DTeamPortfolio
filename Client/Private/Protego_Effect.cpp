@@ -219,7 +219,9 @@ void CProtego_Effect::Tick_Enter(const _float& fTimeDelta)
 void CProtego_Effect::Tick_Stay(const _float& fTimeDelta)
 {
 	if (m_pMagicBallDesc->fLifeTime - m_fTimeAcc <= m_fExitDuration)
-		;// Exit();
+	{
+		// Exit();
+	}
 }
 
 void CProtego_Effect::Tick_Exit(const _float& fTimeDelta)

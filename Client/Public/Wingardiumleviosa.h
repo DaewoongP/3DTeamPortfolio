@@ -2,7 +2,7 @@
 #include "GameObject.h"
 #include "Client_Defines.h"
 #include "MagicBall.h"
-#include "Wingardium_Effect.h".h"
+#include "Wingardium_Effect.h"
 
 
 // 윙 가르디움 레비오우사는 타겟을 설정하고 발동하는 마법입니다.
