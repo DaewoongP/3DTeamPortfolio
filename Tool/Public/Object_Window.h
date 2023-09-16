@@ -129,6 +129,7 @@ private:
 	_uint m_iPushBackInsObject = { 0 }; // 푸시백해서 만들어 준 인스턴스 오브젝트 개수
 	_uint m_iInsObjectCnt = { 0 }; // 인스턴싱할 맵 오브젝트 개수
 	vector<SAVEINSOBJECTDESC> m_vecSaveInsObject; // 저장된 인스턴싱 맵 오브젝트에 대한 정보를 받아올 벡터
+	vector<wstring> m_vecInsObjectTag; // 생성된 인스턴스 모델 태그를 모아둠(중복 체크 비교를 위함)
 	vector<_float4x4*> m_vecFreeMatrix; // 따로 Delete를 해주기 위해 모아둠
 
 	_float m_fBrushSize = { 10.f }; // 브러쉬 사이즈

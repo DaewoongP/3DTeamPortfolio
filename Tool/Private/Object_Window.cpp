@@ -1444,6 +1444,27 @@ HRESULT CObject_Window::Load_MapObject_Ins(const _tchar* wszMapDataPath)
 		wstring wsModelName = wsSave.substr(iLength);
 		ws += wsModelName;
 
+		// 이미 생성된 인스턴스 모델인지 체크
+		_uint j = 0;
+
+		for (auto& iter : m_vecInsObjectTag)
+		{
+			if (iter == ws)
+				++j;
+		}
+
+		if (0 == j)
+		{
+			m_vecInsObjectTag.push_back(ws);
+		}
+
+		else
+		{
+			ws += TEXT("_");
+			ws += j;
+			m_vecInsObjectTag.push_back(ws);
+		}
+
 		wstring wsPath = TEXT("../../Resources/Models/MapObject/NonAnims/");
 		wsPath += wsModelName;
 		wsPath += TEXT("/");
@@ -1476,7 +1497,8 @@ HRESULT CObject_Window::Load_MapObject_Ins(const _tchar* wszMapDataPath)
 		{
 			m_pObjIns->Add_Model_Component(ws.c_str());
 			m_pObjIns->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMeshInstance"));
-			m_pObjIns->Set_Color(m_iMapObjectIndex); // 고유한 색깔 값을 넣어줌
+			m_pObjIns->Set_Color(m_iModelCnt); // 고유한 색깔 값을 넣어줌
+			++m_iModelCnt;
 		}
 
 		++m_iMapObjectIndex;
