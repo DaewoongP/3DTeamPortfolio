@@ -11,7 +11,7 @@ CSeamless_Loader::CSeamless_Loader(ID3D11Device* pDevice, ID3D11DeviceContext* p
 	Safe_AddRef(m_pContext);
 }
 
-_uint WINAPI Thread_Seamless(void* pArg)
+_uint WINAPI Thread_SeamlessTest(void* pArg)
 {
 	CSeamless_Loader* pLoader = reinterpret_cast<CSeamless_Loader*>(pArg);
 
@@ -29,7 +29,7 @@ HRESULT CSeamless_Loader::Initialize()
 	// 쓰레드 시작 함수 호출
 	// 3번째 인자로 시작할 함수포인터 대입.
 	// 4번째 인자로 시작할 함수의 매개변수로 넣어줄 값 대입.
-	m_hThread = (HANDLE)_beginthreadex(nullptr, 0, Thread_Seamless, this, 0, nullptr);
+	m_hThread = (HANDLE)_beginthreadex(nullptr, 0, Thread_SeamlessTest, this, 0, nullptr);
 
 	if (0 == m_hThread)
 	{
@@ -73,6 +73,11 @@ HRESULT CSeamless_Loader::Ready_Layer_Debug(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
+	if (FAILED(m_pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Player"), pLayerTag, TEXT("GameObject_Test2"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Test1)");
+		return E_FAIL;
+	}
 
 	return S_OK;
 }

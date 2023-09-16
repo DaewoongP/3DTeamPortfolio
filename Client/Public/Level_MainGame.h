@@ -30,8 +30,9 @@ private:
 	HRESULT Ready_Layer_NPC(const _tchar* pLayerTag);
 	HRESULT Ready_Layer_Effect(const _tchar* pLayerTag);
 	HRESULT Ready_Layer_UI(const _tchar* pLayerTag);
+
 private:
-	HRESULT Load_MapObject();
+	HRESULT Load_MapObject(const _tchar* pObjectFilePath);
 
 #ifdef _DEBUG
 private:

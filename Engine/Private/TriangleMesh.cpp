@@ -151,7 +151,7 @@ HRESULT CTriangleMesh::Create_ConvexMeshActor(COLMESH* PMesh)
 	PxTriangleMeshCookingResult::Enum result;
 	bool status = PxCookTriangleMesh(params, meshDesc, writeBuffer, &result);
 	if (!status)
-		return NULL;
+		return E_FAIL;
 
 	m_pActor = pPhysX->createRigidStatic(PxTransform(PxVec3(0, 0, 0)));
 	m_pMaterial = pPhysX->createMaterial(1.f, 0.1f, 0.1f);
@@ -167,11 +167,6 @@ HRESULT CTriangleMesh::Create_ConvexMeshActor(COLMESH* PMesh)
 
 	Safe_Delete_Array(vertices);
 	Safe_Delete_Array(indices);
-	
-#ifdef _DEBUG
-	m_pScene->simulate(1 / 60.f);
-	m_pScene->fetchResults(true);
-#endif // _DEBUG
 
 	Safe_Release(pPhysX_Manager);
 	m_pScene->addActor(*m_pActor);

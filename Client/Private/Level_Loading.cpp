@@ -1,5 +1,9 @@
 #include "..\Public\Level_Loading.h"
-#include "Loader.h"
+#include "Main0_Loader.h"
+#include "Main1_Loader.h"
+#include "Main2_Loader.h"
+#include "Main3_Loader.h"
+
 #include "Level_Logo.h"
 #include "GameInstance.h"
 #include "Level_MainGame.h"
@@ -37,9 +41,15 @@ HRESULT CLevel_Loading::Initialize(LEVELID eNextLevelID)
 		break;
 	}
 
-	m_pLoader = CLoader::Create(m_pDevice, m_pContext, eNextLevelID);
+	m_pMain0_Loader = CMain0_Loader::Create(m_pDevice, m_pContext, eNextLevelID);
+	m_pMain1_Loader = CMain1_Loader::Create(m_pDevice, m_pContext, eNextLevelID);
+	m_pMain2_Loader = CMain2_Loader::Create(m_pDevice, m_pContext, eNextLevelID);
+	m_pMain3_Loader = CMain3_Loader::Create(m_pDevice, m_pContext, eNextLevelID);
 
-	if(nullptr == m_pLoader)
+	if(nullptr == m_pMain0_Loader || 
+		nullptr == m_pMain1_Loader || 
+		nullptr == m_pMain2_Loader || 
+		nullptr == m_pMain3_Loader)
 		return E_FAIL;
 
 	return S_OK;
@@ -49,26 +59,37 @@ void CLevel_Loading::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	if (nullptr == m_pLoader)
+	if (nullptr == m_pMain0_Loader ||
+		nullptr == m_pMain1_Loader ||
+		nullptr == m_pMain2_Loader ||
+		nullptr == m_pMain3_Loader)
 		return;
 
-	_ulong dwData = { 0 };
-	
-	if (TRUE == GetExitCodeThread(m_pLoader->Get_Thread(), &dwData))
+#ifdef _DEBUG
+	Render_Finished();
+#endif // _DEBUG
+
+	if (false == Check_Thread_ExitCode(m_pMain0_Loader->Get_Thread()) ||
+		false == Check_Thread_ExitCode(m_pMain1_Loader->Get_Thread()) ||
+		false == Check_Thread_ExitCode(m_pMain2_Loader->Get_Thread()) || 
+		false == Check_Thread_ExitCode(m_pMain3_Loader->Get_Thread()))
 	{
-		if (-1 == dwData)
-		{
-			MSG_BOX("Loading Failed");
-			PostQuitMessage(0);
-			Safe_Release(m_pLoader);
-			return;
-		}
+		MSG_BOX("Loading Failed");
+		Safe_Release(m_pMain0_Loader);
+		Safe_Release(m_pMain1_Loader);
+		Safe_Release(m_pMain2_Loader);
+		Safe_Release(m_pMain3_Loader);
+		PostQuitMessage(0);
+		return;
 	}
 
 	if (GetKeyState(VK_RETURN) & 0x8000)
 	{
 		// 로딩완료 체크
- 		if (false == m_pLoader->Get_Finished())
+		if (false == m_pMain0_Loader->Get_Finished() || 
+			false == m_pMain1_Loader->Get_Finished() || 
+			false == m_pMain2_Loader->Get_Finished() || 
+			false == m_pMain3_Loader->Get_Finished())
 			return;
 
 		CLevel* pLevel = { nullptr };
@@ -107,9 +128,9 @@ void CLevel_Loading::Tick(_float fTimeDelta)
 HRESULT CLevel_Loading::Render()
 {
 #ifdef _DEBUG
-	SetWindowText(g_hWnd, m_pLoader->Get_LoadingText());
-#endif //_DEBUG
+	SetWindowText(g_hWnd, m_szFinishedLoader.c_str());
 
+#endif //_DEBUG
 	return S_OK;
 }
 
@@ -134,9 +155,55 @@ HRESULT CLevel_Loading::Loading_MainGame(const _tchar* pLayerTag)
 	return S_OK;
 }
 
+_bool CLevel_Loading::Check_Thread_ExitCode(HANDLE hWnd)
+{
+	_ulong dwData = { 0 };
+
+	if (TRUE == GetExitCodeThread(hWnd, &dwData))
+	{
+		if (-1 == dwData)
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+#ifdef _DEBUG
+void CLevel_Loading::Render_Finished()
+{
+	m_szFinishedLoader = TEXT("");
+	if (true == m_pMain0_Loader->Get_Finished())
+	{
+		m_szFinishedLoader += TEXT("0");
+	}
+	if (true == m_pMain1_Loader->Get_Finished())
+	{
+		m_szFinishedLoader += TEXT("1");
+	}
+	if (true == m_pMain2_Loader->Get_Finished())
+	{
+		m_szFinishedLoader += TEXT("2");
+	}
+	if (true == m_pMain3_Loader->Get_Finished())
+	{
+		m_szFinishedLoader += TEXT("3");
+	}
+
+	if (true == m_pMain0_Loader->Get_Finished() &&
+		true == m_pMain1_Loader->Get_Finished() &&
+		true == m_pMain2_Loader->Get_Finished() &&
+		true == m_pMain3_Loader->Get_Finished())
+	{
+		m_szFinishedLoader = TEXT("로딩 완료");
+	}
+}
+#endif // _DEBUG
+
 CLevel_Loading* CLevel_Loading::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVELID eNextLevelID)
 {
-	CLevel_Loading* pInstance = new CLevel_Loading(pDevice, pContext);
+	CLevel_Loading* pInstance = New CLevel_Loading(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize(eNextLevelID)))
 	{
@@ -151,5 +218,8 @@ void CLevel_Loading::Free()
 {
 	__super::Free();
 
-	Safe_Release(m_pLoader);
+	Safe_Release(m_pMain0_Loader);
+	Safe_Release(m_pMain1_Loader);
+	Safe_Release(m_pMain2_Loader);
+	Safe_Release(m_pMain3_Loader);
 }

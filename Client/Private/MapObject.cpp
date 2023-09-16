@@ -86,27 +86,6 @@ HRESULT CMapObject::Render()
 		m_eRenderCount = RT_PICKING;
 	}
 
-#ifdef _DEBUG
-	//// 피킹용 그리기
-	//else if (RT_PICKING == m_eRenderCount)
-	//{
-	//	m_pShader->Bind_RawValue("g_vColor", &m_vColor, sizeof(_float4));
-
-	//	_uint		iNumMeshes = m_pModel->Get_NumMeshes();
-
-	//	for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; iMeshCount++)
-	//	{
-
-	//		m_pShader->Begin("Picking");
-
-	//		if (FAILED(m_pModel->Render(iMeshCount)))
-	//			return E_FAIL;
-	//	}
-
-	//	m_eRenderCount = RT_END;
-	//}
-#endif // _DEBUG
-
 	return S_OK;
 }
 
