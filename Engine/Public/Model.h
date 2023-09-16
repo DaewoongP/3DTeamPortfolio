@@ -24,24 +24,24 @@ protected:
 	virtual ~CModel() = default;
 
 public:
-	const _float4x4*			Get_PivotFloat4x4Ptr() const { return &m_PivotMatrix; }
+	const _float4x4* Get_PivotFloat4x4Ptr() const { return &m_PivotMatrix; }
 	_float4x4					Get_PivotFloat4x4() const { return m_PivotMatrix; }
 	_uint						Get_CurrentAnimIndex(ANIMTYPE eType = UPPERBODY) const { return m_tAnimationDesc[eType].iCurrentAnimIndex; }
 	_uint						Get_NumMeshes() const { return m_iNumMeshes; }
 	_uint						Get_NumAnimations(ANIMTYPE eType = UPPERBODY) const { return m_tAnimationDesc[eType].iNumAnimations; }
-	const class CBone*			Get_Bone(const _tchar* pBoneName);
-	class CBone*				Get_Bone_Index(_uint iIndex);
-	class CAnimation*			Get_Animation(ANIMTYPE eType = UPPERBODY) const { return m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]; }
-	class CAnimation*			Get_Animation(_uint iAnimationIndex, ANIMTYPE eType = UPPERBODY) const { return  m_tAnimationDesc[eType].Animations[iAnimationIndex]; }
-	class CAnimation*			Get_Animation(const wstring& wstrAnimationTag, ANIMTYPE eType = UPPERBODY) const;
-	const _float4x4*			Get_BoneCombinedTransformationMatrixPtr(_uint iIndex);
+	const class CBone* Get_Bone(const _tchar* pBoneName);
+	class CBone* Get_Bone_Index(_uint iIndex);
+	class CAnimation* Get_Animation(ANIMTYPE eType = UPPERBODY) const { return m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]; }
+	class CAnimation* Get_Animation(_uint iAnimationIndex, ANIMTYPE eType = UPPERBODY) const { return  m_tAnimationDesc[eType].Animations[iAnimationIndex]; }
+	class CAnimation* Get_Animation(const wstring& wstrAnimationTag, ANIMTYPE eType = UPPERBODY) const;
+	const _float4x4* Get_BoneCombinedTransformationMatrixPtr(_uint iIndex);
 	_float4x4					Get_BoneCombinedTransformationMatrix(_uint iIndex);
-	vector<class CBone*>*		Get_Bone_Vector_Point() { return &m_Bones; }
+	vector<class CBone*>* Get_Bone_Vector_Point() { return &m_Bones; }
 	_uint						Get_AnimationPartCount() { return m_iAnimationPartCount; }
 	_uint						Get_RootBoneIndex() { return m_iRootBoneIndex; }
 	_bool						Is_Finish_Animation() { return m_isFinishAnimation; }
-	class CMesh*				Get_Meshes_Test() { return(m_Meshes[0]); }
-	vector<class CMesh*>*		Get_MeshesVec() { return &m_Meshes; }
+	class CMesh* Get_Meshes_Test() { return(m_Meshes[0]); }
+	vector<class CMesh*>* Get_MeshesVec() { return &m_Meshes; }
 
 public:
 	virtual HRESULT Initialize_Prototype(TYPE eType, const _tchar* pModelFilePath, _float4x4 PivotMatrix);
@@ -56,7 +56,7 @@ public:
 	HRESULT Find_BoneIndex(const _tchar* pBoneName, _Inout_ _uint* iIndex);
 	void	Set_CurrentAnimIndex(_uint iIndex, ANIMTYPE eType = UPPERBODY);
 	void	Set_RootBone(_uint iIndex) { m_iRootBoneIndex = iIndex; }
-	void	Do_Root_Animation(_float fTimeDelta,CTransform* pTransform = nullptr, _bool isFirstFrame = false);
+	void	Do_Root_Animation(_float fTimeDelta, CTransform* pTransform = nullptr, _bool isFirstFrame = false);
 	HRESULT Separate_Animation(_int iFromIndex, _int iToIndex, ANIMTYPE eType);
 	void	Delete_Animation(_uint iAnimIndex, ANIMTYPE eType = UPPERBODY);
 
@@ -104,7 +104,7 @@ protected:
 protected:
 	_bool							m_isExportedTool = { false };
 	_bool							m_isCreatedByGCM = { false };
-	
+
 	_bool							m_isFinishAnimation = { false };
 	_bool							m_isFirstFrame = { false };
 protected:
@@ -123,6 +123,10 @@ public:
 	HRESULT Ready_Meshes_GCM(TYPE eType, _float4x4 PivotMatrix);
 	HRESULT Ready_Materials_GCM();
 	HRESULT Ready_Animations_GCM();
+
+	HRESULT Ready_File_Animation(ANIMTYPE eType, const _tchar* pAnimationFilePath);
+	HRESULT Add_Animations(ANIMTYPE eType, vector<ANIMATION>* AnimVec);
+	HRESULT Release_TempAnimVec(vector<ANIMATION>* AnimVec);
 
 protected:
 	void Release_FileDatas();
