@@ -9,8 +9,10 @@
 #include "Camera_Point.h"
 #include "DummyMeshEffect.h"
 #include "DummyTrail.h"
+#include "DummyFlipBook.h"
 #include "Dummy_Effect.h"
 #include "TriangleColMesh.h"
+
 #ifdef _DEBUG
 
 #include "Camera_Line.h"
@@ -391,6 +393,10 @@ HRESULT CMainTool::Ready_Prototype_Object()
 
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyTrail"),
 		CDummyTrail::Create(m_pDevice, m_pContext, TEXT(""), LEVEL_TOOL))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyFlipbook"),
+		CDummyFlipBook::Create(m_pDevice, m_pContext, LEVEL_TOOL, TEXT("../../Resources/Effects/Textures/Flipbooks/T_FX_Oceansplash_D.png"), 8, 8))))
 		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyEffect"),

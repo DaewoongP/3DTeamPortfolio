@@ -2,6 +2,7 @@
 #include "DummyTrail.h"
 #include "DummyParticle.h"
 #include "DummyMeshEffect.h"
+#include "DummyFlipBook.h"
 #include "GameInstance.h"
 #include "Modules.h"
 CDummy_Effect::CDummy_Effect(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -37,6 +38,15 @@ HRESULT CDummy_Effect::Initialize_Prototype()
 		pGameInstance->Add_Prototype(0, TEXT("Prototype_GameObject_TestMeshEffect")
 			, CDummyMeshEffect::Create(m_pDevice, m_pContext, TEXT("")));
 	}
+
+	if (nullptr == pGameInstance->Find_Prototype(0, TEXT("Prototype_GameObject_TestTexture_Flipbook")))
+	{
+		/* Prototype_Component_Texture_Ground */
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_TestTexture_Flipbook"),
+			CDummyFlipBook::Create(m_pDevice, m_pContext, LEVEL_TOOL, TEXT("../../Resources/Effects/Textures/Flipbooks/VFX_T_Dust_8x8_D.png"), 8, 8))))
+			return E_FAIL;
+	}
+
 	ENDINSTANCE;
 
 	return S_OK;
@@ -66,7 +76,7 @@ void CDummy_Effect::Tick(_float fTimeDelta)
 	m_pTrail->Tick(fTimeDelta);
 	m_pParticleSystem->Tick(fTimeDelta);
 	m_pMeshEffect->Tick(fTimeDelta);
-
+	m_pTextureFlipbook->Tick(fTimeDelta);
 	BEGININSTANCE;
 
 	if (pGameInstance->Get_DIKeyState(DIK_UPARROW))
@@ -131,7 +141,7 @@ void CDummy_Effect::Late_Tick(_float fTimeDelta)
 	//m_pTrail->Late_Tick(fTimeDelta);
 	m_pParticleSystem->Late_Tick(fTimeDelta);
 	//m_pMeshEffect->Late_Tick(fTimeDelta);
-
+	m_pTextureFlipbook->Late_Tick(fTimeDelta);
 	m_vPrevPos = m_pTransform->Get_Position();
 }
 
@@ -158,6 +168,11 @@ HRESULT CDummy_Effect::Add_Components()
 		if (FAILED(CComposite::Add_Component(0, TEXT("Prototype_GameObject_TestMeshEffect"),
 			TEXT("Com_MeshEffect"), reinterpret_cast<CComponent**>(&m_pMeshEffect))))
 			throw "Com_MeshEffect";
+
+		/* Com_Texture_Flipbook */
+		if (FAILED(CComposite::Add_Component(0, TEXT("Prototype_GameObject_TestTexture_Flipbook"),
+			TEXT("Com_Flipbook"), reinterpret_cast<CComponent**>(&m_pTextureFlipbook))))
+			throw "Com_Flipbook";
 	}
 	catch (const _char* pErrorMessage)
 	{
@@ -204,6 +219,8 @@ void CDummy_Effect::Free()
 		Safe_Release(m_pTrail);
 		Safe_Release(m_pParticleSystem);
 		Safe_Release(m_pMeshEffect);
+		Safe_Release(m_pTextureFlipbook);
+
 		Safe_Release(m_pTrailTransform);
 		Safe_Release(m_pParticleSystemTransform);
 		Safe_Release(m_pMeshEffectTransform);

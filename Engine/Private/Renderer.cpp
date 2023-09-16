@@ -131,6 +131,7 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_FinBloom"), TEXT("Target_FinBloom"))))
 		return E_FAIL;
+	
 #ifdef _DEBUG
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Picking"), TEXT("Target_Picking"))))
 		return E_FAIL;
@@ -264,9 +265,9 @@ HRESULT CRenderer::Draw_RenderGroup()
 
 	if (FAILED(Render_PostProcessing()))
 		return E_FAIL;
-	/*if (FAILED(Render_Bloom()))
-		return E_FAIL;*/
-
+	if (FAILED(Render_Bloom()))
+		return E_FAIL;
+	
 	if (FAILED(Render_UI()))
 		return E_FAIL;
 

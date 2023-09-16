@@ -11,8 +11,10 @@ BEGIN(Tool)
 class CDummyTrail;
 class CDummyParticle;
 class CDummyMeshEffect;
-
+class CDummyFlipBook;
 END
+
+
 
 BEGIN(Tool)
 class CDummy_Effect final : public CGameObject
@@ -33,6 +35,7 @@ private: /* For. Component */
 	CDummyTrail* m_pTrail = { nullptr };
 	CDummyParticle* m_pParticleSystem = { nullptr };
 	CDummyMeshEffect* m_pMeshEffect = { nullptr };
+	CDummyFlipBook* m_pTextureFlipbook = { nullptr };
 
 private:
 	CTransform* m_pTrailTransform = { nullptr };

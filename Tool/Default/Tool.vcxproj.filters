@@ -136,6 +136,9 @@
     <Filter Include="02. ToolObjects\01. Dummy\Dummy_Effect\DummyTrail">
       <UniqueIdentifier>{54e7e86b-5a40-424a-957c-7e19887c5f19}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. ToolObjects\01. Dummy\Dummy_Effect\DummyFlipbook">
+      <UniqueIdentifier>{665a7634-50a5-4d36-b316-13f012d01026}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tool.h">
@@ -312,6 +315,9 @@
     <ClInclude Include="..\public\Dummy_Effect.h">
       <Filter>02. ToolObjects\01. Dummy\Dummy_Effect</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\DummyFlipBook.h">
+      <Filter>02. ToolObjects\01. Dummy\Dummy_Effect\DummyFlipbook</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -467,6 +473,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Dummy_Effect.cpp">
       <Filter>02. ToolObjects\01. Dummy\Dummy_Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DummyFlipBook.cpp">
+      <Filter>02. ToolObjects\01. Dummy\Dummy_Effect\DummyFlipbook</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
