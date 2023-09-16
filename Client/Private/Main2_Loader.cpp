@@ -174,10 +174,10 @@ HRESULT CMain2_Loader::Loading_For_MainGame()
 		CDugbog::Create(m_pDevice, m_pContext))))
 		throw TEXT("Prototype_GameObject_Dugbog");
 
-	/* For.Prototype_GameObject_Golem_Combat */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Golem_Combat"),
+	/* For.Prototype_GameObject_Golem_CombatGrunt */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Golem_CombatGrunt"),
 		CGolem_Combat::Create(m_pDevice, m_pContext))))
-		throw TEXT("Prototype_GameObject_Golem_Combat");
+		throw TEXT("Prototype_GameObject_Golem_CombatGrunt");
 
 	/* For.Prototype_GameObject_Golem_Merlin */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Golem_Merlin"),
