@@ -32,6 +32,7 @@ HRESULT CProfessor_Fig::Initialize(void* pArg)
 		return E_FAIL;
 
 	m_pTransform->Set_Speed(10.f);
+	m_pTransform->Set_RigidBody(m_pRigidBody);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
 
 	return S_OK;
@@ -177,13 +178,20 @@ HRESULT CProfessor_Fig::Add_Components()
 		RigidBodyDesc.pOwnerObject = this;
 		RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 0.f, 1.f);
 		RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
-		PxCapsuleGeometry pCapsuleGeomatry = PxCapsuleGeometry(1.f, 2.f);
+		RigidBodyDesc.vOffsetPosition = _float3(0.f, 0.5f, 0.f);
+		RigidBodyDesc.vOffsetRotation = XMQuaternionRotationRollPitchYaw(0.f, 0.f, XMConvertToRadians(90.f));
+		PxCapsuleGeometry pCapsuleGeomatry = PxCapsuleGeometry(0.25f, 0.6f);
 		RigidBodyDesc.pGeometry = &pCapsuleGeomatry;
-
 		/* Com_RigidBody */
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
 			TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
 			throw TEXT("Com_RigidBody");
+
+		RigidBodyDesc.isTrigger = true;
+		PxSphereGeometry pSphereGeomatry = PxSphereGeometry(10.f);
+		RigidBodyDesc.pGeometry = &pSphereGeomatry;
+
+		m_pRigidBody->Create_Collider(&RigidBodyDesc);
 	}
 	catch (const _tchar* pErrorTag)
 	{

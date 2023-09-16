@@ -61,7 +61,8 @@ protected:
 protected: /* For. Component */
 	_uint m_iLevel = { 0 };
 	string	m_strPass = "Default";
-	wstring m_wstrPath = { TEXT("../../Resources/Effects/Textures/Default_Particle.png") };
+	//wstring m_wstrPath = { TEXT("../../Resources/Effects/Textures/Default_Particle.png") };
+	wstring m_wstrPath = { TEXT("../../Resources/Effects/Textures/Trails/Winga.png") };
 	_bool m_isEnable = { true };
 
 	_uint     m_iTrailNum = { 50 };
@@ -72,7 +73,7 @@ protected: /* For. Component */
 
 	// 색상
 	_float3 m_vHeadColor = { 1.f, 1.f, 1.f };
-	_float3 m_vTailColor = { 1.f, 1.f, 1.f };
+	_float3 m_vTailColor = { 0.91f, 0.169f, 0.859f };
 
 	// 너비
 	_float	m_fWidth = { 1.f };

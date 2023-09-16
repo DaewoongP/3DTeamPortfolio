@@ -22,8 +22,16 @@ HRESULT CPhysX_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* p
 		MSG_BOX("PxCreatePhysics failed!");
 		return E_FAIL;
 	}
+//#include <thread>
+//	SYSTEM_INFO sysInfo;
+//	GetSystemInfo(&sysInfo);
+//	int numCores = sysInfo.dwNumberOfProcessors;
+//
+//	std::cout << "현재 시스템의 CPU 코어 개수: " << numCores << std::endl;
+
+
 	// 씬생성에 필요한 디스패쳐 생성
-	m_pDefaultCpuDispatcher = PxDefaultCpuDispatcherCreate(2);
+	m_pDefaultCpuDispatcher = PxDefaultCpuDispatcherCreate(8);
 
 	// 시공간을 생성할 하나의 씬을 생성
 	m_pPhysxScene = Create_Scene();
@@ -34,9 +42,9 @@ HRESULT CPhysX_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* p
 	}
 #ifdef _DEBUG
 	// Debug Rendering을 위한 처리
-	m_pPhysxScene->setVisualizationParameter(PxVisualizationParameter::eACTOR_AXES, 0.5f);
+	/*m_pPhysxScene->setVisualizationParameter(PxVisualizationParameter::eACTOR_AXES, 0.5f);
 	m_pPhysxScene->setVisualizationParameter(PxVisualizationParameter::eSCALE, 1.0f);
-	m_pPhysxScene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_SHAPES, 1.f);
+	m_pPhysxScene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_SHAPES, 1.f);*/
 #endif // _DEBUG
 
 	// 충돌처리 이벤트 활성화
@@ -60,7 +68,7 @@ HRESULT CPhysX_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* p
 	}
 
 	cloth::InitializeNvCloth(&m_PXAllocator, &m_PXErrorCallBack, m_pAssertHandler, nullptr);
-	m_pClothFactory = NvClothCreateFactoryDX11(m_pContextManagerCallBack);//NvClothCreateFactoryCPU();
+	m_pClothFactory = NvClothCreateFactoryDX11(m_pContextManagerCallBack);
 	if (nullptr == m_pClothFactory)
 	{
 		MSG_BOX("Failed Create ClothFactory");
@@ -72,6 +80,8 @@ HRESULT CPhysX_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* p
 
 void CPhysX_Manager::Tick(_float fTimeDelta)
 {
+	if (false == m_isSimulation)
+		return;
 	// 피직스의 처리를 위한 함수들.
 	// 1/60으로 고정해두는 형태가 필요함.
 	// fTimeDelta를 사용할 경우 프레임에 따라 처리가 달라질 수 있음.

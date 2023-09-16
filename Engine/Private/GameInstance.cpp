@@ -253,6 +253,13 @@ HRESULT CGameInstance::Render_Level()
 	return m_pLevel_Manager->Render();
 }
 
+HRESULT CGameInstance::Add_Scene(const _tchar* pSceneTag, const _tchar* pLayerTag)
+{
+	NULL_CHECK_RETURN_MSG(m_pLevel_Manager, E_FAIL, TEXT("Level_Manager NULL"));
+
+	return m_pLevel_Manager->Add_Scene(pSceneTag, pLayerTag);
+}
+
 CComponent* CGameInstance::Find_Prototype(_uint iLevelIndex, const _tchar* pPrototypeTag)
 {
 	NULL_CHECK_RETURN_MSG(m_pComponent_Manager, nullptr, TEXT("Component_Manager NULL"));
@@ -308,6 +315,20 @@ HRESULT CGameInstance::Delete_Component(_uint iLevelIndex, const _tchar* pLayerT
 	NULL_CHECK_RETURN_MSG(m_pComponent_Manager, E_FAIL, TEXT("Component_Manager NULL"));
 
 	return m_pComponent_Manager->Delete_Component(iLevelIndex, pLayerTag, pComponentTag);
+}
+
+void CGameInstance::Set_CurrentScene(const _tchar* pSceneTag, _bool isPhysXSimulation)
+{
+	NULL_CHECK_RETURN_MSG(m_pComponent_Manager, , TEXT("Component_Manager NULL"));
+
+	return m_pComponent_Manager->Set_CurrentScene(pSceneTag, isPhysXSimulation);
+}
+
+const _tchar* CGameInstance::Get_CurrentSceneTag() const
+{
+	NULL_CHECK_RETURN_MSG(m_pComponent_Manager, nullptr, TEXT("Component_Manager NULL"));
+
+	return m_pComponent_Manager->Get_CurrentSceneTag();
 }
 
 _bool	CGameInstance::Get_DIKeyState(_ubyte ubyKeyID, CInput_Device::KEYSTATE eState)
@@ -647,6 +668,13 @@ cloth::Factory* CGameInstance::Get_ClothFactory() const
 	NULL_CHECK_RETURN_MSG(m_pPhysX_Manager, nullptr, TEXT("PhysX_Manager NULL"));
 
 	return m_pPhysX_Manager->Get_ClothFactory();
+}
+
+void CGameInstance::Set_Simulation(_bool isSimulation)
+{
+	NULL_CHECK_RETURN_MSG(m_pPhysX_Manager, , TEXT("PhysX_Manager NULL"));
+
+	m_pPhysX_Manager->Set_Simulation(isSimulation);
 }
 
 _bool CGameInstance::RayCast(_float3 vOrigin, _float3 vDir, _float fMaxDist, _Inout_ _float3* pHitPosition, _Inout_ _float* pDist, _uint iMaxHits, CPhysX_Manager::RayCastQueryFlag RaycastFlag)

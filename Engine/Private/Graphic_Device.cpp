@@ -63,7 +63,7 @@ HRESULT CGraphic_Device::Ready_Graphic_Device(HWND hWnd, GRAPHICDESC::WINMODE eW
 HRESULT CGraphic_Device::Clear_BackBuffer_View(_float4 vClearColor)
 {
 	NULL_CHECK_RETURN_MSG(m_pDeviceContext, E_FAIL, TEXT("Device Context NULL"));
-	
+	std::lock_guard<std::mutex> lock(mtx);
 	m_pDeviceContext->ClearRenderTargetView(m_pBackBufferRTV, (_float*)&vClearColor);
 
 	return S_OK;

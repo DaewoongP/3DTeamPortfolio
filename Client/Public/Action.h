@@ -31,14 +31,11 @@ public:
 		2. 모델 포인터
 		3. 행동 체크 할건지 (Action에 바인딩 한 비헤비어가 성공시 탈출하길 원하는 경우 true로 변경)
 		4. 쿨타임
-		5. 타이머 태그
-		6. 몇 초 동안 진행할 건지
-		7. 한번만 실행 할 행동인지
-		8. 애니메이션 러프 유무
+		5. 한번만 실행 할 행동인지
+		6. 애니메이션 러프 유무
 	*/
 	void Set_Options(const wstring& _wstrAnimationTag, CModel* _pModel,
 		_bool _isCheckBehavior = false, const _float& _fCoolTime = 0.f,
-		const wstring& _wstrTimerTag = TEXT(""), const _float& _fDurationTime = 0.f,
 		_bool _isOneTimeAction = false, _bool _isLerp = true);
 
 public:
@@ -46,23 +43,23 @@ public:
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual HRESULT Tick(const _float& fTimeDelta);
 
+public:
+	virtual void Reset_Behavior(HRESULT result) override;
+
 private:
 	_float m_fLimit = { 0.f };
 	_float m_fPreWorldTimeAcc = { 0.f };
 
 	wstring m_wstrAnimationTag = { TEXT("") };
-	wstring m_wstrTimerTag = { TEXT("") };
 
 	_bool m_isFinishBehaviors = { false };
 	_bool m_isCheckBehavior = { false };
 	_bool m_isOneTimeAction = { false };
-	_bool m_isPlayAction = { false };
+	_bool m_isEndFirstPlay = { false };
+	_bool m_isFirst = { true };
 
 private:
 	CModel* m_pModel = { nullptr };
-
-private:
-	virtual void Reset_Behavior() override;
 
 public:
 	static CAction* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

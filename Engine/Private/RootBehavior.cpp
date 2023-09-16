@@ -33,8 +33,9 @@ HRESULT CRootBehavior::Tick(const _float& fTimeDelta)
 
 	HRESULT hr = (*m_iterCurBehavior)->Tick(fTimeDelta);
 
-#ifdef _DEBUG
 	(*m_iterCurBehavior)->Set_ReturnData(hr);
+	m_ReturnData = hr;
+#ifdef _DEBUG
 	Find_Running_Behavior(m_DebugBehaviorTags);
 #endif // _DEBUG
 
@@ -44,10 +45,12 @@ HRESULT CRootBehavior::Tick(const _float& fTimeDelta)
 		return S_OK;
 
 	case BEHAVIOR_SUCCESS:
+		(*m_iterCurBehavior)->Reset_Behavior(hr);
 		m_iterCurBehavior = m_Behaviors.begin();
 		return S_OK;
 
 	case BEHAVIOR_FAIL:
+		(*m_iterCurBehavior)->Reset_Behavior(hr);
 		m_iterCurBehavior = m_Behaviors.begin();
 		return S_OK;
 

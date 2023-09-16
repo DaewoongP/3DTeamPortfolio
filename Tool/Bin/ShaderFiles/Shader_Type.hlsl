@@ -240,7 +240,7 @@ struct PS_IN_SHAODW
 
     float2 vTexUV : TEXCOORD0;
     float4 Position : TEXCOORD1;
-    float3 lightPos : TEXCoord2;//πÊ«‚¿” posæ∆¥‘
+    float3 lightPos : TEXCOORD2; //πÊ«‚¿” posæ∆¥‘
 };
 
 struct PS_OUT
