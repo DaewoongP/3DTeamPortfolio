@@ -16,6 +16,13 @@ BEGIN(Client)
 class CUI_Image : public CGameObject
 {
 public:
+	enum SHADERTYPE
+	{
+		MINIMAP,
+		SHADERTYPE_END
+	};
+
+public:
 	struct IMAGEDESC
 	{
 		IMAGEDESC()
@@ -29,6 +36,7 @@ public:
 		_float			fZ = { 0.f };
 		_float			fSizeX = { 0.f };
 		_float			fSizeY = { 0.f };
+		SHADERTYPE		eShadertype = SHADERTYPE_END;
 	};
 
 private:
@@ -49,6 +57,7 @@ private:
 
 public:
 	HRESULT	Set_Texture(CTexture* pTexture);
+	HRESULT Set_Desc(IMAGEDESC desc);
 
 protected:
 	HRESULT Change_Position(_float fX, _float fY);
@@ -61,7 +70,6 @@ private:
 	CVIBuffer_Rect* m_pVIBufferCom = { nullptr };
 
 private:
-	//IMAGEDESC			m_ImageDesc;
 	_float4x4			m_ViewMatrix;
 	_float4x4			m_ProjMatrix;
 	vector<_tchar*>		m_wszTags;
@@ -73,10 +81,18 @@ private:
 	_float			m_fZ = { 0.f };
 	_float			m_fSizeX = { 0.f };
 	_float			m_fSizeY = { 0.f };
+	SHADERTYPE		m_eShadertype = { SHADERTYPE_END };
 
 private:
 	CUI* m_pParent = { nullptr };
 	
+	_float3 vPlayerPos = _float3(1024.f, 0.f, 1024.f);
+	_float2 vMiniMapSize = _float2(1024.f, 1024.f);
+
+	_float xxx = 0.f;
+	_float zzz = 0.f;
+
+
 public:
 	static CUI_Image* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CUI_Image* Clone(void* pArg);

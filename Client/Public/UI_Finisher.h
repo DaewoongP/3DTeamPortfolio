@@ -5,7 +5,6 @@
 
 BEGIN(Engine)
 class CShader;
-class CTexture;
 class CRenderer;
 class CVIBuffer_Rect;
 class CUI_Progress;
@@ -16,20 +15,11 @@ BEGIN(Client)
 class CUI_Finisher final : public CUI
 {
 private:
-	enum TEXTURETYPE
-	{
-		DIFFUSE,
-		NOISE,
-		TEXTURETYPE_END
-	};
-
-protected:
 	explicit CUI_Finisher(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CUI_Finisher(const CUI_Finisher& rhs);
 	virtual ~CUI_Finisher() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void	Tick(_float fTimeDelta) override;
 	virtual void	Late_Tick(_float fTimeDelta) override;
@@ -38,20 +28,19 @@ public:
 public:
 	void Set_Gauge(_float fGauge, CUI_Progress::GAUGE eType);
 
-protected:
-	CShader* m_pShaderCom = { nullptr };
-	CTexture* m_pTextureCom[TEXTURETYPE_END] = { nullptr };
-	CRenderer* m_pRendererCom = { nullptr };
-	CVIBuffer_Rect* m_pVIBufferCom = { nullptr };
-	CTexture* m_pAlphaTextureCom = { nullptr };
-	CUI_Progress* m_pProgressCom = { nullptr };
+private:
+	CShader*			m_pShaderCom = { nullptr };
+	CRenderer*			m_pRendererCom = { nullptr };
+	CVIBuffer_Rect*		m_pVIBufferCom = { nullptr };
+	CUI_Progress*		m_pProgressCom = { nullptr };
 
 private:
 	HRESULT Add_Components();
-	HRESULT Add_AlphaTexture();
 	HRESULT SetUp_ShaderResources();
-	HRESULT Ready_Texture();
 
+#ifdef _DEBUG
+	HRESULT Debug_UI(_float fTimeDelta);
+#endif // _DEBUG
 
 public:
 	static CUI_Finisher* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

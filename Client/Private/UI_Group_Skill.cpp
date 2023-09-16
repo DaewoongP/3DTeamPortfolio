@@ -6,12 +6,12 @@
 #include "UI_Effect_Back.h"
 
 CUI_Group_Skill::CUI_Group_Skill(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CUI_Group(pDevice, pContext)
+	: CGameObject(pDevice, pContext)
 {
 }
 
 CUI_Group_Skill::CUI_Group_Skill(const CUI_Group_Skill& rhs)
-	: CUI_Group(rhs)
+	: CGameObject(rhs)
 	, m_ProtoTypeTags(rhs.m_ProtoTypeTags)
 	, m_SpellProtoTypeTags(rhs.m_SpellProtoTypeTags)
 	, m_SkillTextures(rhs.m_SkillTextures)
@@ -22,7 +22,7 @@ HRESULT CUI_Group_Skill::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 
-	if (FAILED(Add_ProtoType()))
+	if (FAILED(Add_Prototype()))
 	{
 		MSG_BOX("Failed CUI_Group_Skill Add ProtoType");
 		return E_FAIL;
@@ -40,18 +40,24 @@ HRESULT CUI_Group_Skill::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	Load_Skill_1(pArg);
-	Load_Skill_2();
-	Load_Skill_3();
-	Load_Skill_4();
+
+	//_tchar SecondTag[MAX_PATH] = TEXT("Second");
+//	_tchar ThirdTag[MAX_PATH] = TEXT("Third");
+	//_tchar FourthTag[MAX_PATH] = TEXT("Fourth");
+
+	wstring SecondTag = TEXT("Second");
+	wstring ThirdTag = TEXT("Third");
+	wstring FourthTag = TEXT("Fourth");
+
+	Create_First(pArg);
+	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Skill_2.uidata"), SecondTag, SECOND);
+	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Skill_3.uidata"), ThirdTag, THIRD);
+	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Skill_4.uidata"), FourthTag, FOURTH);
 
 	m_KeyList[FIRST] = BASICCAST;
 	m_KeyList[SECOND] = BASICCAST;
 	m_KeyList[THIRD] = BASICCAST;
 	m_KeyList[FOURTH] = BASICCAST;
-
-
-//	Set_SpellTexture(FIRST, REVELIO);
 
 	return S_OK;
 }
@@ -84,33 +90,189 @@ void CUI_Group_Skill::Set_SpellTexture(KEYLIST eKey, SPELL eSpell)
 	m_pMains[eKey]->Set_Texture(m_SkillTextures[eSpell]);
 }
 
-HRESULT CUI_Group_Skill::Add_ProtoType()
+
+HRESULT CUI_Group_Skill::Add_Prototype()
 {
-	BEGININSTANCE
+	BEGININSTANCE;
 
-		_tchar pName[MAX_PATH] = TEXT("");
-	lstrcpy(pName, TEXT("Prototype_GameObject_UI_Back"));
-
-	CComponent* pComponent = pGameInstance->Find_Prototype(LEVEL_MAINGAME, pName);
-
-	if (nullptr == pComponent)
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Effect_Back"),
+		CUI_Effect_Back::Create(m_pDevice, m_pContext), true)))
 	{
-		pGameInstance->Add_Prototype(LEVEL_MAINGAME, pName, CUI_Back::Create(m_pDevice, m_pContext));
+		ENDINSTANCE;
+		return E_FAIL;
 	}
-	m_ProtoTypeTags.push_back(pGameInstance->Make_WChar(pName));
 
-
-	lstrcpy(pName, TEXT("Prototype_GameObject_UI_Effect_Back"));
-
-	pComponent = pGameInstance->Find_Prototype(LEVEL_MAINGAME, pName);
-
-	if (nullptr == pComponent)
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Back"),
+		CUI_Back::Create(m_pDevice, m_pContext), true)))
 	{
-		pGameInstance->Add_Prototype(LEVEL_MAINGAME, pName, CUI_Effect_Back::Create(m_pDevice, m_pContext));
+		ENDINSTANCE;
+		return E_FAIL;
 	}
-	m_ProtoTypeTags.push_back(pGameInstance->Make_WChar(pName));
 
-	ENDINSTANCE
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+//HRESULT CUI_Group_Skill::Add_Components(const _tchar* wszTag)
+HRESULT CUI_Group_Skill::Add_Components(wstring wszTag)
+{
+	BEGININSTANCE;
+	CUI_Effect_Back* pMain = nullptr;
+	CUI_Back* pFrame= nullptr;
+	CUI_Back* pNumber = nullptr;
+
+	//_tchar main[MAX_PATH] = TEXT("Com_UI_Effect_Back_Main_");
+	//lstrcat(main, wszTag);
+	//_tchar* pmainTag = pGameInstance->Make_WChar(main);
+	wstring main = TEXT("Com_UI_Effect_Back_Main_");
+	main += wszTag;
+	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Effect_Back"),
+		main.c_str(), reinterpret_cast<CComponent**>(&pMain))))
+	{
+		MSG_BOX("Com_UI_Group_Skill : Failed Clone Component (Com_UI_Effect_Back_Main_)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+	m_pMains.push_back(pMain);
+
+
+	//_tchar frame[MAX_PATH] = TEXT("Com_UI_Back_Frame_");
+	//lstrcat(main, wszTag);
+	//_tchar* pframeTag = pGameInstance->Make_WChar(main);
+	wstring frame = TEXT("Com_UI_Back_Frame_");
+	frame += wszTag;
+	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Back"),
+		frame.c_str(), reinterpret_cast<CComponent**>(&pFrame))))
+	{
+		MSG_BOX("Com_UI_Group_Skill : Failed Clone Component (Com_UI_Back_Frame)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+	m_pFrames.push_back(pFrame);
+
+
+	//_tchar number[MAX_PATH] = TEXT("Com_UI_Back_Number_");
+	//lstrcat(main, wszTag);
+	//_tchar* pnumberTag = pGameInstance->Make_WChar(main);
+	wstring number = TEXT("Com_UI_Back_Number_");
+	number += wszTag;
+	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Back"),
+		number.c_str(), reinterpret_cast<CComponent**>(&pNumber))))
+	{
+		MSG_BOX("Com_UI_Group_Skill : Failed Clone Component (Com_UI_Back_Number)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+	m_pNumbers.push_back(pNumber);
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CUI_Group_Skill::Read_File(const _tchar* pFilePath, KEYLIST iIndex)
+{
+	if (nullptr == m_pMains[iIndex] || nullptr == m_pFrames[iIndex] || nullptr == m_pNumbers[iIndex] || iIndex >= KEYLIST_END)
+	{
+		MSG_BOX("Failed Load");
+		return E_FAIL;
+	}
+
+	_ulong dwByte = 0;
+	DWORD dwStrByte = 0;
+
+	HANDLE hFile = CreateFile(pFilePath, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+	if (hFile == INVALID_HANDLE_VALUE)
+	{
+		MSG_BOX("Failed Load");
+		CloseHandle(hFile);
+		return E_FAIL;
+	}
+
+	_tchar szGroupName[MAX_PATH] = TEXT("");
+
+	ReadFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
+	ReadFile(hFile, szGroupName, dwStrByte, &dwByte, nullptr);
+
+	m_pMains[iIndex]->Load(Load_File(hFile));
+	CUI_Image::IMAGEDESC ImageDesc;
+	ImageDesc.vCombinedXY = m_pMains[iIndex]->Get_CombinedXY();
+	ImageDesc.fX = m_pMains[iIndex]->Get_XY().x;
+	ImageDesc.fY = m_pMains[iIndex]->Get_XY().y;
+	ImageDesc.fZ = 0.f;
+	ImageDesc.fSizeX = m_pMains[iIndex]->Get_SizeXY().x;
+	ImageDesc.fSizeY = m_pMains[iIndex]->Get_SizeXY().y;
+
+	m_pMains[iIndex]->Set_ImageCom(ImageDesc);
+	
+	_uint iSize = { 0 };
+	ReadFile(hFile, &iSize, sizeof(_uint), &dwByte, nullptr);
+
+	m_pFrames[iIndex]->Load(Load_File(hFile));
+	m_pFrames[iIndex]->Set_Parent(m_pMains[iIndex]);
+
+	m_pNumbers[iIndex]->Load(Load_File(hFile));
+	m_pNumbers[iIndex]->Set_Parent(m_pMains[iIndex]);
+
+	CloseHandle(hFile);
+
+	return S_OK;
+}
+
+CUI::UIDESC CUI_Group_Skill::Load_File(const HANDLE hFile)
+{
+	CUI::UIDESC UIDesc;
+	ZEROMEM(&UIDesc);
+
+	_ulong dwByte = 0;
+	DWORD dwStrByte = 0;
+	_tchar szTextureName[MAX_PATH] = TEXT("");
+	_tchar szAlphaPrototypeTag[MAX_PATH] = TEXT("");
+	_bool isParent, isAlpha, isSave;
+	_int eID;
+
+	ReadFile(hFile, &UIDesc.vCombinedXY, sizeof(_float2), &dwByte, nullptr);
+	ReadFile(hFile, &UIDesc.fX, sizeof(_float), &dwByte, nullptr);
+	ReadFile(hFile, &UIDesc.fY, sizeof(_float), &dwByte, nullptr);
+	ReadFile(hFile, &UIDesc.fZ, sizeof(_float), &dwByte, nullptr);
+	ReadFile(hFile, &UIDesc.fSizeX, sizeof(_float), &dwByte, nullptr);
+	ReadFile(hFile, &UIDesc.fSizeY, sizeof(_float), &dwByte, nullptr);
+	ReadFile(hFile, szTextureName, sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
+	ReadFile(hFile, UIDesc.szTexturePath, sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
+	ReadFile(hFile, &isParent, sizeof(_bool), &dwByte, nullptr);
+	ReadFile(hFile, &isAlpha, sizeof(_bool), &dwByte, nullptr);
+	ReadFile(hFile, &UIDesc.vColor, sizeof(_float4), &dwByte, nullptr);
+	ReadFile(hFile, szAlphaPrototypeTag, sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
+	ReadFile(hFile, UIDesc.szAlphaTexturePath, sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
+	ReadFile(hFile, &eID, sizeof(_int), &dwByte, nullptr);
+	ReadFile(hFile, &isSave, sizeof(_bool), &dwByte, nullptr);
+
+	return UIDesc;
+}
+
+HRESULT CUI_Group_Skill::Create_First(void* pArg)
+{
+	//_tchar FirstTag[MAX_PATH] = TEXT("First");
+	wstring wstrTag = TEXT("Front");
+	if (FAILED(Add_Components(wstrTag)))
+		return E_FAIL;
+
+	if (FAILED(Read_File(reinterpret_cast<const _tchar*>(pArg), FIRST)))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+//HRESULT CUI_Group_Skill::Create_Component(const _tchar* pFIlePath, const _tchar* wszTag, KEYLIST eType)
+HRESULT CUI_Group_Skill::Create_Component(const _tchar* pFIlePath, wstring wszTag, KEYLIST eType)
+{
+
+	if (FAILED(Add_Components(wszTag)))
+		return E_FAIL;
+
+	if (FAILED(Read_File(pFIlePath, eType)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -241,204 +403,6 @@ HRESULT CUI_Group_Skill::Add_SpellTexture()
 	return S_OK;
 }
 
-void CUI_Group_Skill::Load_Skill_1(void* pArg)
-{/*
-	m_hFile = (HFILE)pArg;*/
-
-	BEGININSTANCE
-
-	_tchar wszGroupName[MAX_PATH] = TEXT("");
-	DWORD dwStrByte;
-	DWORD dwByte = 0;
-	ReadFile(pArg, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
-	ReadFile(pArg, wszGroupName, dwStrByte, &dwByte, nullptr);
-
-	pGameInstance->Add_Component(LEVEL_MAINGAME, m_ProtoTypeTags[1], TEXT("Layer_UI"),
-		TEXT("GameObject_UI_Skill_Back_1"), pArg);
-
-	CUI_Effect_Back* pMain = dynamic_cast<CUI_Effect_Back*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_UI"), TEXT("GameObject_UI_Skill_Back_1")));
-	
-	m_pMains.push_back(pMain);
-	Safe_AddRef(pMain);
-
-	_uint iSize = 0;
-	ReadFile(pArg, &iSize, sizeof(iSize), &dwByte, nullptr);
-	pGameInstance->Add_Component(LEVEL_MAINGAME, m_ProtoTypeTags[0], TEXT("Layer_UI"), TEXT("GameObject_UI_Skill_Frame_1"), pArg);
-
-	CUI_Back* pFrame = dynamic_cast<CUI_Back*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_UI"), TEXT("GameObject_UI_Skill_Frame_1")));
-	pFrame->Set_Parent(m_pMains[FIRST]);
-	Safe_AddRef(m_pMains[FIRST]);
-	m_pFrames.push_back(pFrame);
-	Safe_AddRef(pFrame);
-
- 	pGameInstance->Add_Component(LEVEL_MAINGAME, m_ProtoTypeTags[0], TEXT("Layer_UI"), TEXT("GameObject_UI_Skill_Number_1"), pArg);
-
-	CUI_Back* pNumber = dynamic_cast<CUI_Back*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_UI"), TEXT("GameObject_UI_Skill_Number_1")));
-	pNumber->Set_Parent(m_pMains[FIRST], true);
-	Safe_AddRef(m_pMains[FIRST]);
-	m_pNumbers.push_back(pNumber);
-	Safe_AddRef(pNumber);
-
-	ENDINSTANCE;
-
-	CloseHandle(pArg);
-}
-
-HRESULT CUI_Group_Skill::Load_Skill_2()
-{
-	_tchar pFilePath[MAX_PATH] = TEXT("../../Resources/GameData/UIData/UI_Group_Skill_2.uidata");
-	_ulong dwByte = 0;
-	HANDLE hFile = CreateFile(pFilePath, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
-	if (hFile == INVALID_HANDLE_VALUE)
-	{
-		MSG_BOX("Failed Load");
-		CloseHandle(hFile);
-		return E_FAIL;
-	}
-
-	BEGININSTANCE;
-
-	_tchar wszGroupName[MAX_PATH] = TEXT("");
-	DWORD dwStrByte;
-	ReadFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
-	ReadFile(hFile, wszGroupName, dwStrByte, &dwByte, nullptr);
-
-	pGameInstance->Add_Component(LEVEL_MAINGAME, m_ProtoTypeTags[1], TEXT("Layer_UI"),
-		TEXT("GameObject_UI_Skill_Back_2"), hFile);
-
-	CUI_Effect_Back* pMain = dynamic_cast<CUI_Effect_Back*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_UI"), TEXT("GameObject_UI_Skill_Back_2")));
-
-	m_pMains.push_back(pMain);
-	Safe_AddRef(pMain);
-
-	_uint iSize = 0;
-	ReadFile(hFile, &iSize, sizeof(iSize), &dwByte, nullptr);
-	pGameInstance->Add_Component(LEVEL_MAINGAME, m_ProtoTypeTags[0], TEXT("Layer_UI"), TEXT("GameObject_UI_Skill_Frame_2"), hFile);
-
-	CUI_Back* pFrame = dynamic_cast<CUI_Back*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_UI"), TEXT("GameObject_UI_Skill_Frame_2")));
-	pFrame->Set_Parent(m_pMains[SECOND]);
-	Safe_AddRef(m_pMains[SECOND]);
-	m_pFrames.push_back(pFrame);
-	Safe_AddRef(pFrame);
-
-	pGameInstance->Add_Component(LEVEL_MAINGAME, m_ProtoTypeTags[0], TEXT("Layer_UI"), TEXT("GameObject_UI_Skill_Number_2"), hFile);
-
-	CUI_Back* pNumber = dynamic_cast<CUI_Back*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_UI"), TEXT("GameObject_UI_Skill_Number_2")));
-	pNumber->Set_Parent(m_pMains[SECOND], true);
-	Safe_AddRef(m_pMains[SECOND]);
-	m_pNumbers.push_back(pNumber);
-	Safe_AddRef(pNumber);
-
-	ENDINSTANCE;
-
-	CloseHandle(hFile);
-
-	return S_OK;
-}
-
-HRESULT CUI_Group_Skill::Load_Skill_3()
-{
-	_tchar pFilePath[MAX_PATH] = TEXT("../../Resources/GameData/UIData/UI_Group_Skill_3.uidata");
-	_ulong dwByte = 0;
-	HANDLE hFile = CreateFile(pFilePath, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
-	if (hFile == INVALID_HANDLE_VALUE)
-	{
-		MSG_BOX("Failed Load");
-		CloseHandle(hFile);
-		return E_FAIL;
-	}
-
-	BEGININSTANCE;
-
-	_tchar wszGroupName[MAX_PATH] = TEXT("");
-	DWORD dwStrByte;
-	ReadFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
-	ReadFile(hFile, wszGroupName, dwStrByte, &dwByte, nullptr);
-
-	pGameInstance->Add_Component(LEVEL_MAINGAME, m_ProtoTypeTags[1], TEXT("Layer_UI"),
-		TEXT("GameObject_UI_Skill_Back_3"), hFile);
-
-	CUI_Effect_Back* pMain = dynamic_cast<CUI_Effect_Back*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_UI"), TEXT("GameObject_UI_Skill_Back_3")));
-
-	m_pMains.push_back(pMain);
-	Safe_AddRef(pMain);
-
-	_uint iSize = 0;
-	ReadFile(hFile, &iSize, sizeof(iSize), &dwByte, nullptr);
-	pGameInstance->Add_Component(LEVEL_MAINGAME, m_ProtoTypeTags[0], TEXT("Layer_UI"), TEXT("GameObject_UI_Skill_Frame_3"), hFile);
-
-	CUI_Back* pFrame = dynamic_cast<CUI_Back*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_UI"), TEXT("GameObject_UI_Skill_Frame_3")));
-	pFrame->Set_Parent(m_pMains[THIRD]);
-	Safe_AddRef(m_pMains[THIRD]);
-	m_pFrames.push_back(pFrame);
-	Safe_AddRef(pFrame);
-
-	pGameInstance->Add_Component(LEVEL_MAINGAME, m_ProtoTypeTags[0], TEXT("Layer_UI"), TEXT("GameObject_UI_Skill_Number_3"), hFile);
-
-	CUI_Back* pNumber = dynamic_cast<CUI_Back*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_UI"), TEXT("GameObject_UI_Skill_Number_3")));
-	pNumber->Set_Parent(m_pMains[THIRD], true);
-	Safe_AddRef(m_pMains[THIRD]);
-	m_pNumbers.push_back(pNumber);
-	Safe_AddRef(pNumber);
-
-	ENDINSTANCE;
-
-	CloseHandle(hFile);
-
-	return S_OK;
-}
-
-HRESULT CUI_Group_Skill::Load_Skill_4()
-{
-	_tchar pFilePath[MAX_PATH] = TEXT("../../Resources/GameData/UIData/UI_Group_Skill_4.uidata");
-	_ulong dwByte = 0;
-	HANDLE hFile = CreateFile(pFilePath, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
-	if (hFile == INVALID_HANDLE_VALUE)
-	{
-		MSG_BOX("Failed Load");
-		CloseHandle(hFile);
-		return E_FAIL;
-	}
-
-	BEGININSTANCE;
-
-	_tchar wszGroupName[MAX_PATH] = TEXT("");
-	DWORD dwStrByte;
-	ReadFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
-	ReadFile(hFile, wszGroupName, dwStrByte, &dwByte, nullptr);
-
-	pGameInstance->Add_Component(LEVEL_MAINGAME, m_ProtoTypeTags[1], TEXT("Layer_UI"),
-		TEXT("GameObject_UI_Skill_Back_4"), hFile);
-
-	CUI_Effect_Back* pMain = dynamic_cast<CUI_Effect_Back*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_UI"), TEXT("GameObject_UI_Skill_Back_4")));
-
-	m_pMains.push_back(pMain);
-	Safe_AddRef(pMain);
-
-	_uint iSize = 0;
-	ReadFile(hFile, &iSize, sizeof(iSize), &dwByte, nullptr);
-	pGameInstance->Add_Component(LEVEL_MAINGAME, m_ProtoTypeTags[0], TEXT("Layer_UI"), TEXT("GameObject_UI_Skill_Frame_4"), hFile);
-
-	CUI_Back* pFrame = dynamic_cast<CUI_Back*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_UI"), TEXT("GameObject_UI_Skill_Frame_4")));
-	pFrame->Set_Parent(m_pMains[FOURTH]);
-	Safe_AddRef(m_pMains[FOURTH]);
-	m_pFrames.push_back(pFrame);
-	Safe_AddRef(pFrame);
-
-	pGameInstance->Add_Component(LEVEL_MAINGAME, m_ProtoTypeTags[0], TEXT("Layer_UI"), TEXT("GameObject_UI_Skill_Number_4"), hFile);
-
-	CUI_Back* pNumber = dynamic_cast<CUI_Back*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_UI"), TEXT("GameObject_UI_Skill_Number_4")));
-	pNumber->Set_Parent(m_pMains[FOURTH], true);
-	Safe_AddRef(m_pMains[FOURTH]);
-	m_pNumbers.push_back(pNumber);
-	Safe_AddRef(pNumber);
-
-	ENDINSTANCE;
-
-	return S_OK;
-}
-
-
 CUI_Group_Skill* CUI_Group_Skill::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CUI_Group_Skill* pInstance = new CUI_Group_Skill(pDevice, pContext);
@@ -474,17 +438,25 @@ void CUI_Group_Skill::Free()
 	{
 		Safe_Release(iter);
 	}
+	m_pMains.clear();
+
 	for (auto& iter : m_pFrames)
 	{
 		Safe_Release(iter);
 	}
+	m_pFrames.clear();
+
 	for (auto& iter : m_pNumbers)
 	{
 		Safe_Release(iter);
 	}
+	m_pNumbers.clear();
+
 	for (auto& iter : m_SkillTextures)
 	{
 		Safe_Release(iter);
 	}
+	m_SkillTextures.clear();
+
 }
 

@@ -106,7 +106,7 @@ HRESULT CUI_HP::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
 
-	if (FAILED(m_Textures[0]->Bind_ShaderResources(m_pShaderCom, "g_Texture")))
+	if (FAILED(m_Textures[m_iTextureIndex]->Bind_ShaderResources(m_pShaderCom, "g_Texture")))
 		return E_FAIL;
 
 	_float fPercent = m_pProgressCom->Get_Gauge_Percent();

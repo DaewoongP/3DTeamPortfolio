@@ -19,38 +19,34 @@ class CUI_Effect_Back final : public CUI
 private:
 	enum TEXTURE { DIFFUSE, EFFECT, TEXTURE_END };
 
-protected:
+private:
 	explicit CUI_Effect_Back(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CUI_Effect_Back(const CUI_Effect_Back& rhs);
 	virtual ~CUI_Effect_Back() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype() override;
+	void Set_Texture(CTexture* pTexture);
+	void Set_ImageCom(CUI_Image::IMAGEDESC desc);
+	void Set_Rotation(_float3 vAxis, _float fRadian);
+
+public:
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void	Tick(_float fTimeDelta) override;
 	virtual void	Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
-protected:
+private:
 	CShader*			m_pShaderCom = { nullptr };
-	CTexture*			m_pTextureCom[TEXTURE_END] = { nullptr };
 	CRenderer*			m_pRendererCom = { nullptr };
 	CVIBuffer_Rect*		m_pVIBufferCom = { nullptr };
-	CTexture*			m_pAlphaTextureCom = { nullptr };
-
 	CUI_Image*			m_pImageCom = { nullptr };
 
 private:
 	HRESULT Add_Components();
-	HRESULT Add_AlphaTexture();
 	HRESULT SetUp_ShaderResources();
-	HRESULT Ready_Texture();
 
-public:
-	void Set_Texture(CTexture* pTexture);
-
+private:
 	CUI_Group_Skill::UISKILLDESC* m_SkillDesc;
-	HFILE						 m_hFile;
 
 public:
 	static CUI_Effect_Back* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
