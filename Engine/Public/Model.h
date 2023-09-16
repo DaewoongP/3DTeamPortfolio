@@ -39,7 +39,7 @@ public:
 	vector<class CBone*>* Get_Bone_Vector_Point() { return &m_Bones; }
 	_uint						Get_AnimationPartCount() { return m_iAnimationPartCount; }
 	_uint						Get_RootBoneIndex() { return m_iRootBoneIndex; }
-	_bool						Is_Finish_Animation() { return m_isFinishAnimation; }
+	_bool						Is_Finish_Animation(ANIMTYPE eType = UPPERBODY) { return  m_tAnimationDesc[eType].isFinishAnimation; }
 	class CMesh* Get_Meshes_Test() { return(m_Meshes[0]); }
 	vector<class CMesh*>* Get_MeshesVec() { return &m_Meshes; }
 
@@ -104,9 +104,8 @@ protected:
 protected:
 	_bool							m_isExportedTool = { false };
 	_bool							m_isCreatedByGCM = { false };
-
-	_bool							m_isFinishAnimation = { false };
 	_bool							m_isFirstFrame = { false };
+
 protected:
 	HRESULT Ready_File(TYPE eType, const _tchar* pModelFilePath);
 	HRESULT Ready_Bones(Engine::NODE Node);

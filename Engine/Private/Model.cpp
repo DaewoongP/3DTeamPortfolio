@@ -185,7 +185,7 @@ void CModel::Change_Animation(const wstring& wstrAnimationTag, ANIMTYPE eType)
 	m_tAnimationDesc[eType].iCurrentAnimIndex = Find_Animation_Index(wstrAnimationTag);
 	m_tAnimationDesc[eType].iPreviousAnimIndex = m_tAnimationDesc[eType].iCurrentAnimIndex;
 	m_tAnimationDesc[eType].isResetAnimTrigger = true;
-	m_isFinishAnimation = false;
+	m_tAnimationDesc[eType].isFinishAnimation = false;
 	//Reset_Animation(eType);
 }
 
@@ -194,7 +194,7 @@ void CModel::Change_Animation(_uint iAnimIndex, ANIMTYPE eType)
 	m_tAnimationDesc[eType].iCurrentAnimIndex = iAnimIndex;
 	m_tAnimationDesc[eType].iPreviousAnimIndex = m_tAnimationDesc[eType].iCurrentAnimIndex;
 	m_tAnimationDesc[eType].isResetAnimTrigger = true;
-	m_isFinishAnimation = false;
+	m_tAnimationDesc[eType].isFinishAnimation = false;
 	//Reset_Animation(eType);
 }
 
@@ -238,7 +238,7 @@ void CModel::Play_Animation(_float fTimeDelta, ANIMTYPE eType, CTransform* pTran
 
 	}
 	// 애니메이션 종료 체크 ( 루프 일 경우 계속 false )
-	m_isFinishAnimation = currentAnimation->Get_Duration() <=
+	m_tAnimationDesc[eType].isFinishAnimation = currentAnimation->Get_Duration() <=
 		currentAnimation->Get_Accmulation() &&
 		!currentAnimation->Get_LoopAnim();
 
@@ -1493,17 +1493,21 @@ HRESULT CModel::Ready_File_Animation(ANIMTYPE eType, const _tchar* pAnimationFil
 
 HRESULT CModel::Add_Animations(ANIMTYPE eType, vector<ANIMATION>* AnimVec)
 {
-	// 추가를 원하는 파츠에 애니메이션 카운트 증가
-	m_tAnimationDesc[eType].iNumAnimations += AnimVec->size();
-
 	// 애니메이션 실제 추가
 	for (auto& anim : (*AnimVec))
 	{
-		CAnimation* pAnimation = CAnimation::Create(anim, m_Bones);
-		if (nullptr == pAnimation)
-			return E_FAIL;
+		auto iter = find_if(m_tAnimationDesc[eType].Animations.begin(), m_tAnimationDesc[eType].Animations.end(), [&](CAnimation* animDesc) {
+			return (!lstrcmpW(anim.szName, animDesc->Get_AnimationName()));
+			});
+		if (iter == m_tAnimationDesc[eType].Animations.end())
+		{
+			CAnimation* pAnimation = CAnimation::Create(anim, m_Bones);
+			if (nullptr == pAnimation)
+				return E_FAIL;
 
-		m_tAnimationDesc[eType].Animations.push_back(pAnimation);
+			m_tAnimationDesc[eType].Animations.push_back(pAnimation);
+			m_tAnimationDesc[eType].iNumAnimations++;
+		}
 	}
 	return S_OK;
 }
