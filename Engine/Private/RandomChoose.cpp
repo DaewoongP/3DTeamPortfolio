@@ -15,28 +15,20 @@ CRandomChoose::CRandomChoose(const CBehavior& rhs)
 
 HRESULT CRandomChoose::Tick(const _float& fTimeDelta)
 {
-	// 데코레이터 확인
 	if (0 == m_Behaviors.size())
 		return E_FAIL;
 
+	// 데코레이터 확인
 	if (false == Check_Decorations())
 	{
-		(*m_iterCurBehavior)->Reset_Behavior();
+		m_ReturnData = BEHAVIOR_FAIL;
 		return BEHAVIOR_FAIL;
 	}
 
 	HRESULT hr = (*m_iterCurBehavior)->Tick(fTimeDelta);
 
-#ifdef _DEBUG
 	(*m_iterCurBehavior)->Set_ReturnData(hr);
 	m_ReturnData = hr;
-#endif // _DEBUG
-
-	if (BEHAVIOR_RUNNING != hr)
-	{
-		(*m_iterCurBehavior)->Reset_Behavior();
-		Set_Random_Behavior();
-	}
 
 	return hr;
 }
@@ -80,32 +72,6 @@ void CRandomChoose::Set_Random_Behavior()
 
 	while (0 < iIndex--)
 		++m_iterCurBehavior;
-}
-
-CRandomChoose* CRandomChoose::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-{
-	CRandomChoose* pInstance = new CRandomChoose(pDevice, pContext);
-
-	if (FAILED(pInstance->Initialize_Prototype()))
-	{
-		MSG_BOX("Failed to Created CRandomChoose");
-		Safe_Release(pInstance);
-	}
-
-	return pInstance;
-}
-
-CRandomChoose* CRandomChoose::Clone(void* pArg)
-{
-	CRandomChoose* pInstance = new CRandomChoose(*this);
-
-	if (FAILED(pInstance->Initialize(pArg)))
-	{
-		MSG_BOX("Failed to Cloned CRandomChoose");
-		Safe_Release(pInstance);
-	}
-
-	return pInstance;
 }
 
 void CRandomChoose::Free()

@@ -8,6 +8,15 @@ CLevel_Manager::CLevel_Manager()
 {
 }
 
+list<const _tchar*> CLevel_Manager::Get_Layers(const _tchar* pSceneTag)
+{
+	auto iter = find_if(m_Scenes.begin(), m_Scenes.end(), CTag_Finder(pSceneTag));
+	if (iter == m_Scenes.end())
+		return list<const _tchar*>();
+
+	return iter->second;
+}
+
 HRESULT CLevel_Manager::Open_Level(_uint iLevelIndex, CLevel* pNewLevel)
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
@@ -41,6 +50,43 @@ HRESULT CLevel_Manager::Render()
 	NULL_CHECK_RETURN_MSG(m_pCurrentLevel, E_FAIL, TEXT("Current Level NULL"));
 
 	return m_pCurrentLevel->Render();
+}
+
+HRESULT CLevel_Manager::Add_Scene(const _tchar* pSceneTag, const _tchar* pLayerTag)
+{
+	auto SceneIter = find_if(m_Scenes.begin(), m_Scenes.end(), CTag_Finder(pSceneTag));
+	
+	// 씬이 없으면
+	if (m_Scenes.end() == SceneIter)
+	{
+		// 레이어 리스트만 그냥 생성해서 emplace
+		list<const _tchar*> Layers;
+		Layers.push_back(pLayerTag);
+		m_Scenes.emplace(pSceneTag, Layers);
+	}
+	else // 씬이 이미 있으면
+	{
+		// 레이어 태그가 있는지 검사하고
+		for (auto& ListLayerTag : (*SceneIter).second)
+		{
+			if (!lstrcmp(ListLayerTag, pLayerTag))
+			{
+#ifdef _DEBUG
+				MSG_BOX("Failed to Add Scene");
+				// 아마 여기 걸리셨으면 이미 씬을 만들어두고 또 하신거니
+				// 그냥 Add_Scene함수를 지우면 됩니다.
+				// (딱 한번만 불러주면 됩니다 같은 레이어에 대해서.)
+				__debugbreak();
+#endif // _DEBUG
+				return S_FALSE;
+			}
+		}
+		// 레이어가 없으면
+		// 그 씬에 레이어 태그를 푸쉬백
+		SceneIter->second.push_back(pLayerTag);
+	}
+	
+	return S_OK;
 }
 
 void CLevel_Manager::Free()

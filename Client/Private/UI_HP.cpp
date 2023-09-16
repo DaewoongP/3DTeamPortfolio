@@ -1,6 +1,5 @@
 #include "UI_HP.h"
 #include "GameInstance.h"
-#include "UI_Group.h"
 
 CUI_HP::CUI_HP(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUI(pDevice, pContext)

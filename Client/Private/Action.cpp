@@ -15,21 +15,12 @@ CAction::CAction(const CAction& rhs)
 
 void CAction::Set_Options(const wstring& _wstrAnimationTag, CModel* _pModel,
 	_bool _isCheckBehavior, const _float& _fCoolTime,
-	const wstring& _wstrTimerTag, const _float& _fDurationTime,
 	_bool _isOneTimeAction, _bool _isLerp)
 {
 	if (nullptr == _pModel)
 	{
 		MSG_BOX("[CAction] _pModel is nullptr");
 		return;
-	}
-
-	if (0 < _wstrTimerTag.size())
-	{
-		BEGININSTANCE;
-		m_wstrTimerTag = _wstrTimerTag;
-		pGameInstance->Add_Timer(_wstrTimerTag, false, _fDurationTime);
-		ENDINSTANCE;
 	}
 
 	m_pModel = _pModel;
@@ -62,7 +53,7 @@ HRESULT CAction::Initialize(void* pArg)
 	Add_Decoration([&](CBlackBoard* pBlackBoard)->_bool
 		{
 			if (true == m_isOneTimeAction &&
-				true == m_isPlayAction)
+				true == m_isEndFirstPlay)
 				return false;
 
 			return true;
@@ -74,39 +65,19 @@ HRESULT CAction::Initialize(void* pArg)
 HRESULT CAction::Tick(const _float& fTimeDelta)
 {
 	if (false == Check_Decorations())
+	{
+		m_ReturnData = BEHAVIOR_FAIL;
 		return BEHAVIOR_FAIL;
-
-	_bool isFirst = { false };
-	if (FAILED(m_pBlackBoard->Get_Type("isFirst", isFirst)))
-		return E_FAIL;
+	}
 
 	/* 행동이 하나라도 있으면 행동체크 활성화 */
 	if (0 < m_Behaviors.size())
 		m_isFinishBehaviors = true;
 
-	if (true == isFirst)
+	if (true == m_isFirst)
 	{
-		m_isPlayAction = true;
+		m_isFirst = false;
 		m_pModel->Change_Animation(m_wstrAnimationTag);
-
-		if (FAILED(m_pBlackBoard->Set_Type("isFirst", false)))
-			return E_FAIL;
-
-		if (0 < m_wstrTimerTag.size())
-		{
-			BEGININSTANCE;
-			pGameInstance->Reset_Timer(m_wstrTimerTag);
-			ENDINSTANCE;
-		}
-	}
-
-	/* 시간 체크 */
-	_bool isRunOutOfTime = { false };
-	if (0 < m_wstrTimerTag.size())
-	{
-		BEGININSTANCE;
-		isRunOutOfTime = pGameInstance->Check_Timer(m_wstrTimerTag);
-		ENDINSTANCE;
 	}
 
 	/* 행동 체크 */
@@ -125,9 +96,9 @@ HRESULT CAction::Tick(const _float& fTimeDelta)
 	_bool bCheck = { false };
 
 	if (true == m_pModel->Is_Finish_Animation() ||					// 애니메이션이 끝났거나
-		true == isRunOutOfTime ||									// 시간초과했거나 
 		(true == m_isCheckBehavior && true == m_isFinishBehaviors)) // 행동체크를 할건데 모든 행동이 끝났으면
 	{
+		m_isEndFirstPlay = true;
 		bCheck = true;	// 나가
 	}
 
@@ -137,11 +108,9 @@ HRESULT CAction::Tick(const _float& fTimeDelta)
 	return BEHAVIOR_RUNNING;
 }
 
-void CAction::Reset_Behavior()
+void CAction::Reset_Behavior(HRESULT result)
 {
-	if (FAILED(m_pBlackBoard->Set_Type("isFirst", true)))
-		return;
-
+	m_isFirst = true;
 	m_isFinishBehaviors = false;
 
 	BEGININSTANCE;

@@ -39,7 +39,7 @@ private:
 	CCharacterController*	m_pController = { nullptr };
 
 private:
-	_float					m_fWindPower = { 10.f };
+	_float					m_fWindPower = { 0.f };
 
 private:
 	HRESULT Add_Components();

@@ -415,9 +415,6 @@ HRESULT CMeshParts::Ready_DynamicMesh(const CModel::BONES& _Bones, const _tchar*
 		
 		if (0 != hFile)
 		{
-#ifdef _DEBUG
-			MSG_BOX("File Load Success");
-#endif // _DEBUG
 			CloseHandle(hFile);
 		}			
 

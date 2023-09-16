@@ -64,6 +64,9 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	Key_Input(fTimeDelta);
 
+	m_pCustomModel->Set_WindVelocity(_float3(50.f, 50.f, 50.f));
+	m_pCustomModel->Tick(CCustomModel::ROBE, 2, fTimeDelta);
+
 	m_pCustomModel->Play_Animation(fTimeDelta);
 }
 
@@ -114,7 +117,7 @@ HRESULT CPlayer::Render()
 
 			m_pCustomModel->Bind_Material(m_pShader, "g_DiffuseTexture", iPartsIndex, i, DIFFUSE);
 
-			m_pShader->Begin("AnimMesh");
+			m_pShader->Begin("AnimMeshNonCull");
 
 			m_pCustomModel->Render(iPartsIndex, i);
 		}
@@ -266,7 +269,7 @@ HRESULT CPlayer::Ready_MeshParts()
 	//Head
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_MAINGAME,
-		TEXT("Prototype_Component_MeshPart_Adult_M_Head"),
+		TEXT("Prototype_Component_MeshPart_Player_Head"),
 		CCustomModel::HEAD)))
 	{
 		MSG_BOX("Failed Add MeshPart Head");
@@ -277,8 +280,8 @@ HRESULT CPlayer::Ready_MeshParts()
 	//Arm
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_MAINGAME, 
-		TEXT("Prototype_Component_MeshPart_Arms01"),
-		CCustomModel::TOP)))
+		TEXT("Prototype_Component_MeshPart_Player_Arm"),
+		CCustomModel::ARM)))
 	{
 		MSG_BOX("Failed Add MeshPart Arm");
 
@@ -288,8 +291,8 @@ HRESULT CPlayer::Ready_MeshParts()
 	//Robe
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_MAINGAME,
-		TEXT("Prototype_Component_MeshPart_Robe01"),
-		CCustomModel::PANTS)))
+		TEXT("Prototype_Component_MeshPart_Player_Robe"),
+		CCustomModel::ROBE)))
 	{
 		MSG_BOX("Failed Add MeshPart Robe");
 
@@ -299,8 +302,8 @@ HRESULT CPlayer::Ready_MeshParts()
 	//Top
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_MAINGAME,
-		TEXT("Prototype_Component_MeshPart_StuUni03_LongSleeve"),
-		CCustomModel::ROBE)))
+		TEXT("Prototype_Component_MeshPart_Player_Top"),
+		CCustomModel::TOP)))
 	{
 		MSG_BOX("Failed Add MeshPart Upper");
 
@@ -310,8 +313,8 @@ HRESULT CPlayer::Ready_MeshParts()
 	//Pants
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_MAINGAME,
-		TEXT("Prototype_Component_MeshPart_Low_Slcialite01"),
-		CCustomModel::SOCKS)))
+		TEXT("Prototype_Component_MeshPart_Player_Pants"),
+		CCustomModel::PANTS)))
 	{
 		MSG_BOX("Failed Add MeshPart Lower");
 
@@ -321,7 +324,7 @@ HRESULT CPlayer::Ready_MeshParts()
 	//Socks
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_MAINGAME,
-		TEXT("Prototype_Component_MeshPart_Socks01"),
+		TEXT("Prototype_Component_MeshPart_Player_Socks"),
 		CCustomModel::SOCKS)))
 	{
 		MSG_BOX("Failed Add MeshPart Socks01");
@@ -332,7 +335,7 @@ HRESULT CPlayer::Ready_MeshParts()
 	//Shoes
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_MAINGAME,
-		TEXT("Prototype_Component_MeshPart_StuShoes03"),
+		TEXT("Prototype_Component_MeshPart_Player_Shoes"),
 		CCustomModel::SHOES)))
 	{
 		MSG_BOX("Failed Add MeshPart Shoes");
