@@ -26,7 +26,7 @@ struct VS_OUT
     float4 vBinormal : BINORMAL;
 };
 
-/* а╓а║ю╩ ╧ч╟М ╨╞х╞го╟М а╓а║ю╩ ╦╝еогя╢ы. */
+/* Л═∙Л═░Л²└ К╟⌡ЙЁ═ КЁ─М≥≤М∙≤ЙЁ═ Л═∙Л═░Л²└ К╕╛М└╢М∙°К▀╓. */
 VS_OUT VS_MAIN(VS_IN In)
 {
     VS_OUT Out = (VS_OUT) 0;
@@ -65,7 +65,7 @@ struct PS_OUT
     vector vDepth : SV_TARGET2;
 };
 
-/* гх╪©ю╩ ╧ч╟М гх╪©юг ╩Жю╩ ╟Аа╓го©╘ ╦╝еогя╢ы. */
+/* М■╫Л┘─Л²└ К╟⌡ЙЁ═ М■╫Л┘─Л²≤ Л┐┴Л²└ Й╡╟Л═∙М∙≤Л≈╛ К╕╛М└╢М∙°К▀╓. */
 PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;

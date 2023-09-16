@@ -73,7 +73,7 @@ _bool CMagic::Magic_Cast(CTransform* pTarget, class CWeapon_Player_Wand* pWeapon
 		ballInit.fDamage = m_fDamage;
 		ballInit.fDistance = m_fBallDistance;
 		ballInit.pTarget = pTarget;
-		ballInit.fLiftTime = m_fLifeTime;
+		ballInit.fLifeTime = m_fLifeTime;
 		ballInit.pWeapon = pWeapon;
 
 		BEGININSTANCE;
