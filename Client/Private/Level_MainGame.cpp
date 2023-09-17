@@ -2,6 +2,7 @@
 #include "GameInstance.h"
 #include "Seamless_Loader.h"
 #include "MapObject.h"
+#include "UI_Group_Enemy_HP.h"
 
 CLevel_MainGame::CLevel_MainGame(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CLevel(pDevice, pContext)
@@ -351,6 +352,12 @@ HRESULT CLevel_MainGame::Ready_Layer_Effect(const _tchar* pLayerTag)
 HRESULT CLevel_MainGame::Ready_Layer_UI(const _tchar* pLayerTag)
 {
 	BEGININSTANCE;
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
+	{
+		MSG_BOX("Failed Add Scene : (Scene_Main)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
 
 	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
 	{
@@ -360,6 +367,7 @@ HRESULT CLevel_MainGame::Ready_Layer_UI(const _tchar* pLayerTag)
 	}
 
 	_tchar szFilePath[MAX_PATH] = TEXT("");
+
 	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_HP.uidata"));
 	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_HP"),
 		pLayerTag, TEXT("GameObject_UI_Group_HP"), szFilePath)))
@@ -405,6 +413,21 @@ HRESULT CLevel_MainGame::Ready_Layer_UI(const _tchar* pLayerTag)
 	//	MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_MiniMap)");
 	//	return E_FAIL;
 	//}
+
+	CUI_Group_Enemy_HP::ENEMYHPDESC  Desc; 
+	_tchar szLevel[MAX_PATH] = TEXT("7");
+	_tchar szName[MAX_PATH] = TEXT("무장한 트롤");
+
+	Desc.eType = CUI_Group_Enemy_HP::ENEMYTYPE::MONSTER;
+	lstrcpy(Desc.wszObjectLevel, szLevel);
+	lstrcpy(Desc.wszObjectName, szName);
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_Enemy_HP"),
+		pLayerTag, TEXT("GameObject_UI_Enemy_HP"), &Desc)))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_UI_Enemy_HP)");
+		return E_FAIL;
+	}
 
 	ENDINSTANCE;
 

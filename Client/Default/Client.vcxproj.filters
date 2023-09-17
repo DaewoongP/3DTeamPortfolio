@@ -283,6 +283,12 @@
     <Filter Include="05. Scene">
       <UniqueIdentifier>{1a46706e-474c-4231-a7ba-2c809467d7a9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_Enemy_HP">
+      <UniqueIdentifier>{bb8be488-5c9d-472c-a62d-2b3677e0ed72}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\Font">
+      <UniqueIdentifier>{8567ad8d-0151-4dca-83f9-c0b84f96b3d6}</UniqueIdentifier>
+    </Filter>
     <Filter Include="01. Levels\99. Loading\Loader">
       <UniqueIdentifier>{5d7f902a-4002-432f-8bd9-34922b397410}</UniqueIdentifier>
     </Filter>
@@ -585,6 +591,13 @@
     <ClInclude Include="..\public\Info_Main.h">
       <Filter>05. Scene</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_Enemy_HP.h" />
+    <ClInclude Include="..\Public\UI_Group_Enemy_HP.h">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Enemy_HP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Font.h">
+      <Filter>02. GameObject\05. UI\Font</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\Main1_Loader.h">
       <Filter>01. Levels\99. Loading\Loader</Filter>
     </ClInclude>
@@ -865,6 +878,13 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_Group_Skill.cpp">
       <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Skill</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Enemy_HP.cpp" />
+    <ClCompile Include="..\Private\UI_Group_Enemy_HP.cpp">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Enemy_HP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Font.cpp">
+      <Filter>02. GameObject\05. UI\Font</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Main1_Loader.cpp">
       <Filter>01. Levels\99. Loading\Loader</Filter>

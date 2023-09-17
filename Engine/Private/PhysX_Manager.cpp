@@ -22,12 +22,12 @@ HRESULT CPhysX_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* p
 		MSG_BOX("PxCreatePhysics failed!");
 		return E_FAIL;
 	}
-//#include <thread>
-//	SYSTEM_INFO sysInfo;
-//	GetSystemInfo(&sysInfo);
-//	int numCores = sysInfo.dwNumberOfProcessors;
-//
-//	std::cout << "현재 시스템의 CPU 코어 개수: " << numCores << std::endl;
+#include <thread>
+	SYSTEM_INFO sysInfo;
+	GetSystemInfo(&sysInfo);
+	int numCores = sysInfo.dwNumberOfProcessors;
+
+	std::cout << "현재 시스템의 CPU 코어 개수: " << numCores << std::endl;
 
 
 	// 씬생성에 필요한 디스패쳐 생성
