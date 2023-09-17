@@ -5,6 +5,24 @@
 
 // 객체 : 모든 파티클을 돌리는 ParticleSystem의 인스턴스를 뜻함.
 // 파티클 : 각 입자들을 의미함.
+BEGIN(Engine)
+typedef struct tagParticle
+{
+	_float		fAge = { 0.f };
+	_float		fGravityAccel = { 0.f };
+	_float4     vAccel = _float4();
+	_float4     vVelocity = _float4();
+	_float4x4   WorldMatrix = _float4x4();
+	_float		fGenTime = { 0.f };
+	_float      fLifeTime = { 0.f };
+	_float		fAngle = { 0.f };
+	_float4		vColor = { 1.f, 1.f, 1.f, 1.f };
+	_float3		vScale = { 1.f, 1.f, 1.f };
+	_uint		iCurIndex = { 0 };
+}PARTICLE;
+class CParticleSystem;
+typedef list<PARTICLE>::iterator PARTICLE_IT;
+
 
 struct ENGINE_DLL MODULE
 {
@@ -65,6 +83,7 @@ struct ENGINE_DLL EMISSION_MODULE : public MODULE
 	
 	HRESULT Save(const _tchar* _pDirectoyPath);
 	HRESULT Load(const _tchar* _pDirectoyPath);
+	void Action(CParticleSystem* pParticleSystem, _float _fTimeDelta);
 	void Restart();
 
 	typedef struct tagBurst
@@ -162,6 +181,7 @@ struct ENGINE_DLL RENDERER_MODULE : public MODULE
 
 	wstring wstrShaderTag = { TEXT("Shader_VtxRectColInstance") };
 	wstring wstrMaterialPath = { TEXT("../../Resources/Effects/Textures/Default_Particle.png") };
+	_bool isDeleteY = { false };
 };
 struct ENGINE_DLL ROTATION_OVER_LIFETIME_MODULE : public MODULE
 {
@@ -169,6 +189,7 @@ struct ENGINE_DLL ROTATION_OVER_LIFETIME_MODULE : public MODULE
 
 	HRESULT Save(const _tchar* _pDirectoyPath);
 	HRESULT Load(const _tchar* _pDirectoyPath);
+	void Action(PARTICLE_IT& _particle_iter, _float _fTimeDelta);
 	void Restart();
 
 	// 자체 회전에 사용할 값들
@@ -181,6 +202,7 @@ struct ENGINE_DLL COLOR_OVER_LIFETIME : public MODULE
 
 	HRESULT Save(const _tchar* _pDirectoyPath);
 	HRESULT Load(const _tchar* _pDirectoyPath);
+	void Action(PARTICLE_IT& _particle_iter, _float _fTimeDelta);
 	void Restart();
 
 	_float4 vStartColor = { 0.f, 0.f, 0.f, 1.f };
@@ -194,6 +216,7 @@ struct ENGINE_DLL SIZE_OVER_LIFETIME : public MODULE
 
 	HRESULT Save(const _tchar* _pDirectoyPath);
 	HRESULT Load(const _tchar* _pDirectoyPath);
+	void Action(PARTICLE_IT& _particle_iter, _float _fTimeDelta);
 	void Restart();
 
 	_bool isSeparateAxes = { false };
@@ -203,16 +226,27 @@ struct ENGINE_DLL SIZE_OVER_LIFETIME : public MODULE
 
 	_float fSizeTimeAcc = { 0.f };
 };
-typedef struct tagParticle
+struct ENGINE_DLL TEXTURE_SHEET_ANIMATION : public MODULE
 {
-	_float		fAge = { 0.f };
-	_float		fGravityAccel = { 0.f };
-	_float4     vAccel = _float4();
-	_float4     vVelocity = _float4();
-	_float4x4   WorldMatrix = _float4x4();
-	_float		fGenTime = { 0.f };
-	_float      fLifeTime = { 0.f };
-	_float		fAngle = { 0.f };
-	_float4		vColor = { 1.f, 1.f, 1.f, 1.f };
-	_float3		vScale = { 1.f, 1.f, 1.f };
-}PARTICLE;
+	TEXTURE_SHEET_ANIMATION() : MODULE() { };
+
+	HRESULT Save(const _tchar* _pDirectoyPath);
+	HRESULT Load(const _tchar* _pDirectoyPath);
+	void Action(PARTICLE_IT& _particle_iter, _float fTimeDelta);
+	void CalculateMaxSize();
+	void Reset(PARTICLE_IT& _particle_iter);
+	void Restart();
+
+	_uint iMaxIndex = { 0 };
+	_uint iWidthLength = { 1 };
+	_uint iHeightLength = { 1 };
+	_bool isStartFrameRange = { false };
+	_float2 vStartFrameRange = { 0.f, 1.f };
+	_float fStartFrame = { 0.f }; // [0, 1]
+	_float fUpdateInterval = { 0.0159f };
+	_float fTimeAcc = { 0.f };
+	_bool isUseNormalTexture = { false };
+	wstring wstrNormalPath = TEXT("../../Resources/Effects/Textures/Flipbooks/VFX_T_Dust_8x8_N.png");
+	_bool isLoopOption = { false };
+};
+END

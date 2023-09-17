@@ -25,8 +25,8 @@ HRESULT CShader::Initialize_Prototype(const _tchar* pShaderFilePath, const D3D11
 #else
 	iHlslFlag = D3DCOMPILE_OPTIMIZATION_LEVEL1;
 #endif
-
-	if (FAILED(D3DX11CompileEffectFromFile(pShaderFilePath, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, iHlslFlag, 0, m_pDevice, &m_pEffect, nullptr)))
+	HRESULT hr;
+	if (FAILED(hr = D3DX11CompileEffectFromFile(pShaderFilePath, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, iHlslFlag, 0, m_pDevice, &m_pEffect, nullptr)))
 		return E_FAIL;
 
 	ID3DX11EffectTechnique* pTechnique = m_pEffect->GetTechniqueByIndex(0);

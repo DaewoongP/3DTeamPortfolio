@@ -396,7 +396,7 @@ HRESULT CMainTool::Ready_Prototype_Object()
 		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyFlipbook"),
-		CDummyFlipBook::Create(m_pDevice, m_pContext, LEVEL_TOOL, TEXT("../../Resources/Effects/Textures/Flipbooks/T_FX_Oceansplash_D.png"), 8, 8))))
+		CDummyFlipBook::Create(m_pDevice, m_pContext, LEVEL_TOOL, nullptr))))
 		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyEffect"),

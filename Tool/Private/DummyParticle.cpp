@@ -60,6 +60,10 @@ HRESULT CDummyParticle::Initialize(void* _pArg)
 	m_pMaterialTextureIFD->m_strStartPath = "../../Resources/Effects/Textures/";
 	m_pMaterialTextureIFD->m_iImageButtonWidth = 32;
 
+	m_pNormalTextureIFD = CImageFileDialog::Create(m_pDevice, "NormalTextureDialog");
+	m_pNormalTextureIFD->m_strStartPath = "../../Resources/Effects/Textures/Flipbooks/";
+	m_pNormalTextureIFD->m_iImageButtonWidth = 32;
+
 	Load_After();
 	return S_OK;
 }
@@ -81,9 +85,11 @@ void CDummyParticle::Tick_Imgui(_float _fTimeDelta)
 	ImGui::Separator();
 	RotationOverLifetimeModule_TreeNode(pEffectWindow);
 	ImGui::Separator();
-	RendererModule_TreeNode(pEffectWindow);
-	ImGui::Separator();
 	ColorOverLifeTime_TreeNode(pEffectWindow);
+	ImGui::Separator();
+	TextureSheetAnimationModule_TreeNode(pEffectWindow);
+	ImGui::Separator();
+	RendererModule_TreeNode(pEffectWindow);
 	ImGui::Separator();
 	Save_FileDialog();
 	Load_FileDialog();
@@ -464,6 +470,8 @@ void CDummyParticle::RendererModule_TreeNode(CEffect_Window* pEffectWindow)
 				////////
 			}
 
+			pEffectWindow->Table_CheckBox("Billboard DeleteY", "CJCJV8389kdjd", &m_RendererModuleDesc.isDeleteY);
+
 			ImGui::EndTable();
 		}
 		ImGui::TreePop();
@@ -557,6 +565,69 @@ void CDummyParticle::RotationOverLifetimeModule_TreeNode(CEffect_Window* pEffect
 		ImGui::TreePop();
 	}
 }
+void CDummyParticle::TextureSheetAnimationModule_TreeNode(CEffect_Window* pEffectWindow)
+{
+	TEXTURE_SHEET_ANIMATION& TSAModule = m_TextureSheetAnimationModuleDesc;
+
+	if (ImGui::Checkbox("##TextureSheetAnimationModule_CheckBox", &TSAModule.isActivate))
+	{
+		TSAModule.iWidthLength = 1;
+		TSAModule.iHeightLength = 1;
+	}
+
+	if (false == TSAModule.isActivate)
+	{
+		ImGui::SameLine();
+		ImGui::Text("     TextureSheetAnimationModule");
+		return;
+	}
+
+	ImGui::SameLine();
+
+	if (ImGui::TreeNode("TextureSheetAnimationModule"))
+	{
+		if (ImGui::BeginTable("TextureSheetAnimationTable", 2))
+		{
+			ImGui::TableNextRow();
+
+			// 열 길이
+			if (pEffectWindow->Table_DragInt("Width Length", "cxvkj3999`9kskxk", (_int*)&TSAModule.iWidthLength))
+			{
+				TSAModule.CalculateMaxSize();
+			}
+
+			// 행 길이
+			if (pEffectWindow->Table_DragInt("Height Length", "lckl9ecv9kkxc", (_int*)&TSAModule.iHeightLength))
+			{
+				TSAModule.CalculateMaxSize();
+			}
+
+			pEffectWindow->Table_DragFloatWithOption("Start Frame", "vkjicjijsiji3c9", &TSAModule.fStartFrame
+				, &TSAModule.vStartFrameRange, &TSAModule.isStartFrameRange, 0.001f, 0.f, 1.f);
+
+			pEffectWindow->Table_DragFloat("Update Interval", "kjkvic898e", &TSAModule.fUpdateInterval, 0.001f, 0.015f);
+
+			// 노말 텍스처 쓸건지 여부
+			pEffectWindow->Table_CheckBox("Use Normal Texture", "vsavsr55", &TSAModule.isUseNormalTexture);
+			if (true == TSAModule.isUseNormalTexture)
+			{
+				pEffectWindow->Table_ImageButton("Normal Texture", "cvbnvbnjk1234eh", m_pNormalTextureIFD);
+				// 노말 텍스처 교체
+				if (m_pNormalTextureIFD->IsOk())
+				{
+					fs::path fsFilePath = m_pNormalTextureIFD->Get_FilePathName();
+					ChangeTexture(&m_pNormalTexture, TSAModule.wstrNormalPath, ToRelativePath(fsFilePath.wstring().data()).c_str());
+					TSAModule.Restart();
+					TSAModule.CalculateMaxSize();
+				}
+			}
+
+			pEffectWindow->Table_CheckBox("LoopOption", "ckjvidjf93sdf", &TSAModule.isLoopOption);
+			ImGui::EndTable();
+		}
+		ImGui::TreePop();
+	}
+}
 void CDummyParticle::Save_FileDialog()
 {
 	if (ImGui::Button("Save Particle"))
@@ -620,6 +691,7 @@ void CDummyParticle::Load_FileDialog()
 }
 void CDummyParticle::Load_After()
 {
+	Restart();
 	m_ShapeModuleDesc.ShapeMatrix.Decompose(vShapeScale, vShapeQuaternion, vShapePosition);
 	vShapeRotation = QuaternionToEuler(vShapeQuaternion);
 	RemakeBuffer(m_MainModuleDesc.iMaxParticles);
@@ -634,6 +706,8 @@ void CDummyParticle::Load_After()
 	m_pClipChannelCombo->Update_Current_Item(m_ShapeModuleDesc.strClipChannel);
 	ChangeTexture(&m_pMainTexture, m_RendererModuleDesc.wstrMaterialPath, ToRelativePath(m_RendererModuleDesc.wstrMaterialPath.c_str()).c_str());
 	ChangeTexture(&m_pClipTexture, m_ShapeModuleDesc.wstrClipTexturePath, ToRelativePath(m_ShapeModuleDesc.wstrClipTexturePath.c_str()).c_str());
+	ChangeTexture(&m_pNormalTexture, m_TextureSheetAnimationModuleDesc.wstrNormalPath, ToRelativePath(m_TextureSheetAnimationModuleDesc.wstrNormalPath.c_str()).c_str());
+	m_TextureSheetAnimationModuleDesc.CalculateMaxSize();
 	//m_pMaterialTextureIFD->ChangeTexture(wstrToStr(m_RendererModuleDesc.wstrMaterialPath).data());
 //m_pAlphaTextureIFD->ChangeTexture(wstrToStr(m_ShapeModuleDesc.wstrClipTexturePath).data());
 //m_pSpriteTypeCombo->Update_Current_Item(m_ShapeModuleDesc.str);
@@ -737,6 +811,7 @@ void CDummyParticle::Free(void)
 	Safe_Release(m_pAlphaTextureIFD);
 	Safe_Release(m_pSpriteTextureIFD);
 	Safe_Release(m_pMaterialTextureIFD);
+	Safe_Release(m_pNormalTextureIFD);
 
 	for (auto& EaseComboBox : m_pEaseCombo)
 	{

@@ -48,6 +48,7 @@ public:
 	void ColorOverLifeTime_TreeNode(CEffect_Window* pEffectWindow);
 	void SizeOverLifeTime_TreeNode(CEffect_Window* pEffectWindow);
 	void RotationOverLifetimeModule_TreeNode(CEffect_Window* pEffectWindow);
+	void TextureSheetAnimationModule_TreeNode(CEffect_Window* pEffectWindow);
 	void Save_FileDialog();
 	void Load_FileDialog();
 	void Load_After();
@@ -101,6 +102,7 @@ private:
 	class CImageFileDialog* m_pMaterialTextureIFD = { nullptr };
 	class CImageFileDialog* m_pAlphaTextureIFD = { nullptr };
 	class CImageFileDialog* m_pSpriteTextureIFD = { nullptr };
+	class CImageFileDialog* m_pNormalTextureIFD = { nullptr };
 	_bool m_isPrevLooping = { false };
 	list<_tchar*> m_pTags;
 
