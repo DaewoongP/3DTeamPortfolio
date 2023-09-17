@@ -44,8 +44,6 @@ HRESULT CUI_Font::Initialize(void* pArg)
 		m_vScale = pDesc->m_vScale;
 	}
 
-	m_isClone = true;
-
 	/* Com_Renderer */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"),
 		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRendererCom))))
@@ -141,9 +139,11 @@ void CUI_Font::Free()
 {
 	__super::Free();
 
+	if (false == m_isCloned)
+	{
 		Safe_Delete(m_pBatch);
 		Safe_Delete(m_pFont);
-	
+	}
 
 	Safe_Release(m_pRendererCom);
 }

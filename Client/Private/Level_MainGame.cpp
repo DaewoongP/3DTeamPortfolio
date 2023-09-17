@@ -359,13 +359,6 @@ HRESULT CLevel_MainGame::Ready_Layer_UI(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
-	{
-		MSG_BOX("Failed Add Scene : (Scene_Main)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
-
 	_tchar szFilePath[MAX_PATH] = TEXT("");
 
 	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_HP.uidata"));
@@ -414,7 +407,7 @@ HRESULT CLevel_MainGame::Ready_Layer_UI(const _tchar* pLayerTag)
 	//	return E_FAIL;
 	//}
 
-	CUI_Group_Enemy_HP::ENEMYHPDESC  Desc; 
+	CUI_Group_Enemy_HP::ENEMYHPDESC  Desc;
 	_tchar szLevel[MAX_PATH] = TEXT("7");
 	_tchar szName[MAX_PATH] = TEXT("무장한 트롤");
 

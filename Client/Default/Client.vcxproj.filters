@@ -591,7 +591,6 @@
     <ClInclude Include="..\public\Info_Main.h">
       <Filter>05. Scene</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\UI_Enemy_HP.h" />
     <ClInclude Include="..\Public\UI_Group_Enemy_HP.h">
       <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Enemy_HP</Filter>
     </ClInclude>
@@ -609,6 +608,9 @@
     </ClInclude>
     <ClInclude Include="..\public\Main0_Loader.h">
       <Filter>01. Levels\99. Loading\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Enemy_HP.h">
+      <Filter>02. GameObject\05. UI\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -879,7 +881,6 @@
     <ClCompile Include="..\Private\UI_Group_Skill.cpp">
       <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Skill</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\UI_Enemy_HP.cpp" />
     <ClCompile Include="..\Private\UI_Group_Enemy_HP.cpp">
       <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Enemy_HP</Filter>
     </ClCompile>
@@ -897,6 +898,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Main0_Loader.cpp">
       <Filter>01. Levels\99. Loading\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Enemy_HP.cpp">
+      <Filter>02. GameObject\05. UI\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

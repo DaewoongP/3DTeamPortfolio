@@ -37,7 +37,7 @@ HRESULT CUI_Group_Enemy_HP::Initialize(void* pArg)
 
 	if (nullptr != pArg)
 	{
-		ENEMYHPDESC* hpDesc = (ENEMYHPDESC*)pArg;
+		ENEMYHPDESC* hpDesc = static_cast<ENEMYHPDESC*>(pArg);
 
 		eEnemyType = hpDesc->eType;
 		lstrcpy(m_wszObjectLevel, hpDesc->wszObjectLevel);
@@ -59,8 +59,6 @@ HRESULT CUI_Group_Enemy_HP::Initialize(void* pArg)
 	default:
 		break;
 	}
-
-
 
 	if (FAILED(Add_Fonts(pArg)))
 		return E_FAIL;
@@ -212,7 +210,7 @@ HRESULT CUI_Group_Enemy_HP::Add_Fonts(void* pArg)
 		ENDINSTANCE;
 		return E_FAIL;
 	}
-	m_Fonts .push_back(pName);
+	m_Fonts.push_back(pName);
 
 	ZeroMemory(&Desc, sizeof(CUI_Font::FONTDESC));
 	lstrcpy(Desc.m_pText, m_wszObjectName);
@@ -231,12 +229,14 @@ HRESULT CUI_Group_Enemy_HP::Add_Fonts(void* pArg)
 	}
 	m_Fonts.push_back(pLevel);
 
+	ENDINSTANCE;
+
 	return S_OK;
 }
 
 CUI_Group_Enemy_HP* CUI_Group_Enemy_HP::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CUI_Group_Enemy_HP* pInstance = new CUI_Group_Enemy_HP(pDevice, pContext);
+	CUI_Group_Enemy_HP* pInstance = New CUI_Group_Enemy_HP(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -249,7 +249,7 @@ CUI_Group_Enemy_HP* CUI_Group_Enemy_HP::Create(ID3D11Device* pDevice, ID3D11Devi
 
 CGameObject* CUI_Group_Enemy_HP::Clone(void* pArg)
 {
-	CUI_Group_Enemy_HP* pInstance = new CUI_Group_Enemy_HP(*this);
+	CUI_Group_Enemy_HP* pInstance = New CUI_Group_Enemy_HP(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
@@ -259,7 +259,6 @@ CGameObject* CUI_Group_Enemy_HP::Clone(void* pArg)
 
 	return pInstance;
 }
-
 
 void CUI_Group_Enemy_HP::Free()
 {

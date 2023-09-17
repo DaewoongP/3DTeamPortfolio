@@ -53,7 +53,6 @@ private:
 	SpriteFont* m_pFont = { nullptr };
 
 private:
-	_bool			m_isClone = { false };
 	CRenderer*		m_pRendererCom = { nullptr };
 
 public:
