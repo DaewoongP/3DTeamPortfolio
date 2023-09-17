@@ -127,7 +127,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>../../Reference/Librarys/</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Engine_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Engine_d.lib;DirectXTKd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <FxCompile>
       <ShaderType>Effect</ShaderType>
@@ -166,6 +166,8 @@
     <ClInclude Include="..\Public\Action.h" />
     <ClInclude Include="..\Public\Action_Deflect.h" />
     <ClInclude Include="..\Public\Check_Distance.h" />
+    <ClInclude Include="..\Public\UI_Font.h" />
+    <ClInclude Include="..\Public\UI_Group_Enemy_HP.h" />
     <ClInclude Include="..\Public\MoveLoopState.h" />
     <ClInclude Include="..\public\MoveStartState.h" />
     <ClInclude Include="..\Public\MoveTurnState.h" />
@@ -185,6 +187,7 @@
     <ClInclude Include="..\public\IdleState.h" />
     <ClInclude Include="..\Public\UI_Back.h" />
     <ClInclude Include="..\Public\UI_Effect_Back.h" />
+    <ClInclude Include="..\Public\UI_Enemy_HP.h" />
     <ClInclude Include="..\Public\UI_Finisher.h" />
     <ClInclude Include="..\Public\UI_Finisher_Icon.h" />
     <ClInclude Include="..\Public\UI_Group_Finisher.h" />
@@ -293,6 +296,8 @@
     <ClCompile Include="..\Private\Action.cpp" />
     <ClCompile Include="..\Private\Action_Deflect.cpp" />
     <ClCompile Include="..\Private\Check_Distance.cpp" />
+    <ClCompile Include="..\Private\UI_Font.cpp" />
+    <ClCompile Include="..\Private\UI_Group_Enemy_HP.cpp" />
     <ClCompile Include="..\Private\MoveLoopState.cpp" />
     <ClCompile Include="..\private\MoveStartState.cpp" />
     <ClCompile Include="..\Private\MoveTurnState.cpp" />
@@ -312,6 +317,7 @@
     <ClCompile Include="..\private\StateContext.cpp" />
     <ClCompile Include="..\Private\UI_Back.cpp" />
     <ClCompile Include="..\Private\UI_Effect_Back.cpp" />
+    <ClCompile Include="..\Private\UI_Enemy_HP.cpp" />
     <ClCompile Include="..\Private\UI_Finisher.cpp" />
     <ClCompile Include="..\Private\UI_Finisher_Icon.cpp" />
     <ClCompile Include="..\Private\UI_Group_Finisher.cpp" />

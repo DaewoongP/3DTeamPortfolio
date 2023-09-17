@@ -10,12 +10,14 @@
 #pragma endregion BackGrounds
 
 #pragma region UI
+#include "UI_Font.h"
 #include "UI_Group_HP.h"
 #include "UI_Group_Potion.h"
 #include "UI_Group_Finisher.h"
 #include "UI_Group_Finisher_Icon.h"
 #include "UI_Group_Skill.h"
 #include "UI_Group_MiniMap.h"
+#include "UI_Group_Enemy_HP.h"
 #include "UI_Progress1.h"
 #include "UI_Image.h"
 #pragma endregion UI
@@ -692,6 +694,9 @@ HRESULT CLoader::Loading_For_MainGame()
 #endif // _DEBUG
 
 		// For.UI
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Font"),
+			CUI_Font::Create(m_pDevice, m_pContext, TEXT("../../Resources/Fonts/NexonGothic.spritefont")))))
+			throw TEXT("Prototype_GameObject_UI_Font");
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_HP"),
 			CUI_Group_HP::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_UI_Group_HP");
@@ -716,6 +721,9 @@ HRESULT CLoader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_MiniMap"),
 			CUI_Group_MiniMap::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_UI_Group_MiniMap");
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_Enemy_HP"),
+			CUI_Group_Enemy_HP::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_UI_Group_Enemy_HP");
 
 			/* For.Prototype_GameObject_Player*/
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Player"),

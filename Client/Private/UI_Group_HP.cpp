@@ -85,8 +85,9 @@ HRESULT CUI_Group_HP::Add_Components()
 		return E_FAIL;
 	}
 
+	CUI_HP::HPTYPE eType = CUI_HP::HPTYPE::PLAYER;
 	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_HP"),
-		TEXT("Com_UI_HP"), reinterpret_cast<CComponent**>(&m_pUI_HP))))
+		TEXT("Com_UI_HP"), reinterpret_cast<CComponent**>(&m_pUI_HP), &eType)))
 	{
 		MSG_BOX("CUI_Group_HP : Failed Clone Component (Com_UI_HP)");
 		ENDINSTANCE;
