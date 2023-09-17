@@ -115,9 +115,6 @@
     <Filter Include="01. Utility\03. Components\07. VIBuffer\Instance">
       <UniqueIdentifier>{f8df0e84-1465-45f8-a3a4-2d6f13b4063c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\03. Components\07. VIBuffer\Instance\Rect_Instance">
-      <UniqueIdentifier>{e9b51dbb-29cb-4a5c-bfcb-304b2f0c7639}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Utility\04. PipeLine">
       <UniqueIdentifier>{e9197bc8-5ee0-4874-8977-ecb624f880e7}</UniqueIdentifier>
     </Filter>
@@ -147,9 +144,6 @@
     </Filter>
     <Filter Include="01. Utility\03. Components\02. Renderer\Shader">
       <UniqueIdentifier>{67b966f5-8d6b-46ea-b659-38dea30a5284}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\03. Components\07. VIBuffer\Instance\Point_Instance">
-      <UniqueIdentifier>{25a97a7a-9418-461f-af41-99bdb8e63243}</UniqueIdentifier>
     </Filter>
     <Filter Include="00. System\02. Sound">
       <UniqueIdentifier>{17836efe-f4ec-4c13-a864-5e165ba6ca07}</UniqueIdentifier>
@@ -355,6 +349,33 @@
     <Filter Include="01. Utility\03. Components\02. Renderer\Blur">
       <UniqueIdentifier>{799ecc2a-624c-4be1-893f-cc68859512b0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\03. Components\07. VIBuffer\Instance\Color">
+      <UniqueIdentifier>{8d843dbc-52ac-4a99-990f-45bd77055364}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\07. VIBuffer\Instance\Color\Point">
+      <UniqueIdentifier>{d476fe25-38ee-43cc-8e2b-f60bb0c203af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\07. VIBuffer\Instance\Color\Rect">
+      <UniqueIdentifier>{2a65dbce-1b3a-45f8-a5b0-2475f831f4de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\07. VIBuffer\Instance\ColorIndex">
+      <UniqueIdentifier>{99f1fc81-66cd-4760-be1b-88f6ea596d18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\07. VIBuffer\Instance\ColorIndex\Rect">
+      <UniqueIdentifier>{707ae27f-fe1f-4e7b-9403-b18fa2f5a3b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\07. VIBuffer\Instance\ColorIndex\Point">
+      <UniqueIdentifier>{51cc0ebb-abb3-4885-86b8-7986fedd45c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\07. VIBuffer\Instance\Default">
+      <UniqueIdentifier>{9d3a21c8-1b22-4fa5-8c3f-f8da5283d746}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\07. VIBuffer\Instance\Default\Rect">
+      <UniqueIdentifier>{6c44fcb0-cb3c-4894-8263-a760d04801ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\07. VIBuffer\Instance\Default\Point">
+      <UniqueIdentifier>{39a6cb73-73c3-40a8-8cb7-ff0bd90b75f1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -486,12 +507,6 @@
     <ClInclude Include="..\Public\Collision_Manager.h">
       <Filter>01. Utility\03. Components\09. Collider\Manager</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\VIBuffer_Instance.h">
-      <Filter>01. Utility\03. Components\07. VIBuffer\Instance</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\VIBuffer_Rect_Instance.h">
-      <Filter>01. Utility\03. Components\07. VIBuffer\Instance\Rect_Instance</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\CustomFont.h">
       <Filter>01. Utility\08. Font</Filter>
     </ClInclude>
@@ -519,23 +534,11 @@
     <ClInclude Include="..\Public\Light_Manager.h">
       <Filter>01. Utility\06. Light\Manager</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\VIBuffer_Point_Instance.h">
-      <Filter>01. Utility\03. Components\07. VIBuffer\Instance\Point_Instance</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Sound_Manager.h">
       <Filter>00. System\02. Sound</Filter>
     </ClInclude>
     <ClInclude Include="..\public\VIBuffer_Rect_Trail.h">
       <Filter>01. Utility\03. Components\07. VIBuffer\Rect</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\VIBuffer_Rect_Matrix.h">
-      <Filter>01. Utility\03. Components\07. VIBuffer\Instance\Rect_Instance</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\VIBuffer_Point_Color_Instance.h">
-      <Filter>01. Utility\03. Components\07. VIBuffer\Instance\Point_Instance</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\VIBuffer_Color_Instance.h">
-      <Filter>01. Utility\03. Components\07. VIBuffer\Instance</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Engine_Converter.h">
       <Filter>99. Headers</Filter>
@@ -623,9 +626,6 @@
     </ClInclude>
     <ClInclude Include="..\public\VIBuffer_Triangle.h">
       <Filter>01. Utility\03. Components\07. VIBuffer\Triangle</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\VIBuffer_Rect_Color_Instance.h">
-      <Filter>01. Utility\03. Components\07. VIBuffer\Instance\Rect_Instance</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Parts.h">
       <Filter>01. Utility\02. GameObjects\00. Parts</Filter>
@@ -722,6 +722,33 @@
     </ClInclude>
     <ClInclude Include="..\Public\Texture_Filpbook.h">
       <Filter>01. Utility\03. Components\06. Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\VIBuffer_Color_Instance.h">
+      <Filter>01. Utility\03. Components\07. VIBuffer\Instance\Color</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\VIBuffer_Color_Index_Instance.h">
+      <Filter>01. Utility\03. Components\07. VIBuffer\Instance\ColorIndex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\VIBuffer_Instance.h">
+      <Filter>01. Utility\03. Components\07. VIBuffer\Instance\Default</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\VIBuffer_Point_Color_Instance.h">
+      <Filter>01. Utility\03. Components\07. VIBuffer\Instance\Color\Point</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\VIBuffer_Rect_Color_Instance.h">
+      <Filter>01. Utility\03. Components\07. VIBuffer\Instance\Color\Rect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\VIBuffer_Point_Instance.h">
+      <Filter>01. Utility\03. Components\07. VIBuffer\Instance\Default\Point</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\VIBuffer_Rect_Matrix.h">
+      <Filter>01. Utility\03. Components\07. VIBuffer\Instance\Default\Rect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\VIBuffer_Rect_Instance.h">
+      <Filter>01. Utility\03. Components\07. VIBuffer\Instance\Default\Rect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\VIBuffer_Rect_Color_Index_Instance.h">
+      <Filter>01. Utility\03. Components\07. VIBuffer\Instance\ColorIndex\Rect</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -842,12 +869,6 @@
     <ClCompile Include="..\Private\Collision_Manager.cpp">
       <Filter>01. Utility\03. Components\09. Collider\Manager</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\VIBuffer_Instance.cpp">
-      <Filter>01. Utility\03. Components\07. VIBuffer\Instance</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\VIBuffer_Rect_Instance.cpp">
-      <Filter>01. Utility\03. Components\07. VIBuffer\Instance\Rect_Instance</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\CustomFont.cpp">
       <Filter>01. Utility\08. Font</Filter>
     </ClCompile>
@@ -875,23 +896,11 @@
     <ClCompile Include="..\Private\Light.cpp">
       <Filter>01. Utility\06. Light</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\VIBuffer_Point_Instance.cpp">
-      <Filter>01. Utility\03. Components\07. VIBuffer\Instance\Point_Instance</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Sound_Manager.cpp">
       <Filter>00. System\02. Sound</Filter>
     </ClCompile>
     <ClCompile Include="..\private\VIBuffer_Rect_Trail.cpp">
       <Filter>01. Utility\03. Components\07. VIBuffer\Rect</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\VIBuffer_Rect_Matrix.cpp">
-      <Filter>01. Utility\03. Components\07. VIBuffer\Instance\Rect_Instance</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\VIBuffer_Point_Color_Instance.cpp">
-      <Filter>01. Utility\03. Components\07. VIBuffer\Instance\Point_Instance</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\VIBuffer_Color_Instance.cpp">
-      <Filter>01. Utility\03. Components\07. VIBuffer\Instance</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Camera_Manager.cpp">
       <Filter>01. Utility\05. Camera\Manager</Filter>
@@ -974,9 +983,6 @@
     <ClCompile Include="..\private\MeshEffect.cpp">
       <Filter>01. Utility\03. Components\16. MeshEffect</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\VIBuffer_Rect_Color_Instance.cpp">
-      <Filter>01. Utility\03. Components\07. VIBuffer\Instance\Rect_Instance</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\NVContextCallBack.cpp">
       <Filter>01. Utility\11. Physics\EventCallBack</Filter>
     </ClCompile>
@@ -1058,6 +1064,33 @@
     <ClCompile Include="..\Private\Texture_Filpbook.cpp">
       <Filter>01. Utility\03. Components\06. Texture</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\VIBuffer_Color_Instance.cpp">
+      <Filter>01. Utility\03. Components\07. VIBuffer\Instance\Color</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\VIBuffer_Color_Index_Instance.cpp">
+      <Filter>01. Utility\03. Components\07. VIBuffer\Instance\ColorIndex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\VIBuffer_Instance.cpp">
+      <Filter>01. Utility\03. Components\07. VIBuffer\Instance\Default</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\VIBuffer_Point_Color_Instance.cpp">
+      <Filter>01. Utility\03. Components\07. VIBuffer\Instance\Color\Point</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\VIBuffer_Rect_Color_Instance.cpp">
+      <Filter>01. Utility\03. Components\07. VIBuffer\Instance\Color\Rect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\VIBuffer_Point_Instance.cpp">
+      <Filter>01. Utility\03. Components\07. VIBuffer\Instance\Default\Point</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\VIBuffer_Rect_Instance.cpp">
+      <Filter>01. Utility\03. Components\07. VIBuffer\Instance\Default\Rect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\VIBuffer_Rect_Matrix.cpp">
+      <Filter>01. Utility\03. Components\07. VIBuffer\Instance\Default\Rect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\VIBuffer_Rect_Color_Index_Instance.cpp">
+      <Filter>01. Utility\03. Components\07. VIBuffer\Instance\ColorIndex\Rect</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Navigation.hlsl">
@@ -1100,6 +1133,9 @@
       <Filter>01. Utility\03. Components\02. Renderer\Blur</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Flipbook.hlsl">
+      <Filter>01. Utility\98. ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxRectColIdxInstance.hlsl">
       <Filter>01. Utility\98. ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>

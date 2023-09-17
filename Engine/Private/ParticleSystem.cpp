@@ -58,21 +58,21 @@ HRESULT CParticleSystem::Initialize_Prototype(const _tchar* _pDirectoryPath, _ui
 			, CTexture::Create(m_pDevice, m_pContext, m_TextureSheetAnimationModuleDesc.wstrNormalPath.c_str()))))
 			return E_FAIL;
 	}
-
-	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_Component_Shader_VtxRectColInstance")))
+														     
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_Component_Shader_VtxRectColIdxInstance")))
 	{
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel
-			, TEXT("Prototype_Component_Shader_VtxRectColInstance")
-			, CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxRectColInstance.hlsl")
-				, VTXRECTCOLORINSTANCE_DECL::Elements, VTXRECTCOLORINSTANCE_DECL::iNumElements))))
+			, TEXT("Prototype_Component_Shader_VtxRectColIdxInstance")
+			, CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxRectColIdxInstance.hlsl")
+			, VTXRECTCOLIDXINSTANCE_DECL::Elements, VTXRECTCOLIDXINSTANCE_DECL::iNumElements))))
 			return E_FAIL;
 	}
 
-	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_Component_VIBuffer_Rect_Color_Instance")))
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_Component_VIBuffer_Rect_Color_Index_Instance")))
 	{
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel
-			, TEXT("Prototype_Component_VIBuffer_Rect_Color_Instance")
-			, CVIBuffer_Rect_Color_Instance::Create(m_pDevice, m_pContext))))
+			, TEXT("Prototype_Component_VIBuffer_Rect_Color_Index_Instance")
+			, CVIBuffer_Rect_Color_Index_Instance::Create(m_pDevice, m_pContext))))
 			return E_FAIL;
 	}
 
@@ -127,7 +127,7 @@ void CParticleSystem::Tick(_float _fTimeDelta)
 	// 파티클 연산 시작
 	for (auto Particle_iter = m_Particles[ALIVE].begin(); Particle_iter != m_Particles[ALIVE].end();)
 	{
-		COL_INSTANCE colInstDesc;
+		INSTANCE colInstDesc;
 		_float3 vPos;
 		
 		// 이전프레임의 값들을 가져옴.
@@ -187,6 +187,8 @@ void CParticleSystem::Tick(_float _fTimeDelta)
 		colInstDesc.vLook = TransfomationMatrix.Look().TransNorm();
 		colInstDesc.vTranslation = TransfomationMatrix.Translation().TransCoord();
 		colInstDesc.vColor = Particle_iter->vColor;
+		colInstDesc.iCurrentIndex = Particle_iter->iCurIndex;
+		
 
 		m_ParticleMatrices.push_back(colInstDesc);
 		++Particle_iter;
@@ -213,7 +215,11 @@ HRESULT CParticleSystem::Render()
 	if (FAILED(Setup_ShaderResources()))
 		return E_FAIL;
 
-	if (FAILED(m_pShader->Begin("Default")))
+	string strPass = "Default";
+	if (true == m_TextureSheetAnimationModuleDesc.isActivate)
+		strPass = "TextureSheetAnimation";
+
+	if (FAILED(m_pShader->Begin(strPass.data())))
 		return E_FAIL;
 
 	if (FAILED(m_pBuffer->Render()))
@@ -274,6 +280,21 @@ HRESULT CParticleSystem::Setup_ShaderResources()
 
 		if (FAILED(m_pShader->Bind_RawValue("g_iClipChannel", &iClipChannel, sizeof(_int))))
 			throw "g_iClipChannel";
+
+		if (true == m_TextureSheetAnimationModuleDesc.isActivate)
+		{
+			if (FAILED(m_pShader->Bind_RawValue("g_iWidthLength", &m_TextureSheetAnimationModuleDesc.iWidthLength, sizeof(_uint))))
+				throw "g_iWidthLength";
+
+			if (FAILED(m_pShader->Bind_RawValue("g_iHeightLength", &m_TextureSheetAnimationModuleDesc.iHeightLength, sizeof(_uint))))
+				throw "g_iHeightLength";
+
+			if (FAILED(m_pShader->Bind_RawValue("g_isUseNormalTexture", &m_TextureSheetAnimationModuleDesc.isUseNormalTexture, sizeof(_bool))))
+				throw "g_isUseNormalTexture";
+
+			if (FAILED(m_pNormalTexture->Bind_ShaderResource(m_pShader, "g_NormalTexture")))
+				throw "g_NormalTexture";
+		}
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -594,11 +615,11 @@ HRESULT CParticleSystem::Add_Components()
 			, reinterpret_cast<CComponent**>(&m_pNormalTexture))))
 			throw(TEXT("Com_NormalTexture"));
 
-		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_Component_Shader_VtxRectColInstance")
+		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_Component_Shader_VtxRectColIdxInstance")
 			, TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
 			throw(TEXT("Com_Shader"));
 
-		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_Component_VIBuffer_Rect_Color_Instance")
+		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_Component_VIBuffer_Rect_Color_Index_Instance")
 			, TEXT("Com_Buffer"), reinterpret_cast<CComponent**>(&m_pBuffer), &m_MainModuleDesc.iMaxParticles)))
 			throw(TEXT("Com_Buffer"));
 	}

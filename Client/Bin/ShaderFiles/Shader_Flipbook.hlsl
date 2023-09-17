@@ -38,24 +38,8 @@ VS_OUT VS_MAIN(VS_IN In)
 	matWVP = mul(matWV, g_ProjMatrix);
 
 	Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);
-	// ex)
-	// g_iCurIndex = 6, 
-	// g_iWidthLength = 4, g_iHeightLenght = 5
 
-	// 비율 계산
-	int iCurWidth = g_iCurIndex % g_iWidthLength;		// 6 % 4 = 2
-	int iCurHeight = int(g_iCurIndex / g_iWidthLength); // 6 / 4 = int(1)
-	float fUnitWidth = 1.f / g_iWidthLength;			// 1.f / 4 = 0.25f
-	float fUnitHeight = 1.f / g_iHeightLength;			// 1.f / 5 = 0.2f;
-	float2 vStartUV;
-
-	// 스프라이트의 시작 UV 좌표 계산
-	vStartUV.x = iCurWidth * fUnitWidth;	// 2 * 0.25f = 0.5f
-	vStartUV.y = iCurHeight * fUnitHeight;	// 1 * 0.2f = 0.2f
-
-	// 해당 스프라이트 내에서의 UV 계산
-	Out.vTexUV.x = In.vTexUV.x * fUnitWidth + vStartUV.x;	// x * 0.25f + 0.5f
-	Out.vTexUV.y = In.vTexUV.y * fUnitHeight + vStartUV.y;	// y * 0.2f + 0.2f
+	SplitUV(In.vTexUV, g_iWidthLength, g_iHeightLength, g_iCurIndex, Out.vTexUV);
 
 	return Out;
 }
@@ -84,10 +68,14 @@ PS_OUT	PS_MAIN(PS_IN In)
 		Out.vColor *= g_vColor;
 	}
 
-	if(0 == g_iClipChannel) Out.vColor.a = vDiffuseTexture.r;
-	else if(1 == g_iClipChannel) Out.vColor.a = vDiffuseTexture.g;
-	else if(2 == g_iClipChannel) Out.vColor.a = vDiffuseTexture.b;
-	else if(3 == g_iClipChannel) Out.vColor.a = vDiffuseTexture.a;
+	if(0 == g_iClipChannel)
+		Out.vColor.a = vDiffuseTexture.r;
+	else if(1 == g_iClipChannel)
+		Out.vColor.a = vDiffuseTexture.g;
+	else if(2 == g_iClipChannel)
+		Out.vColor.a = vDiffuseTexture.b;
+	else if(3 == g_iClipChannel)
+		Out.vColor.a = vDiffuseTexture.a;
 	
 	return Out;
 }

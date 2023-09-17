@@ -1,42 +1,56 @@
-#include "..\Public\VIBuffer_Rect_Matrix.h"
+#include "..\Public\VIBuffer_Rect_Color_Index_Instance.h"
+#include "Texture.h"
+#include "PipeLine.h"
 
-CVIBuffer_Rect_Matrix::CVIBuffer_Rect_Matrix(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CVIBuffer_Instance(pDevice, pContext)
+CVIBuffer_Rect_Color_Index_Instance::CVIBuffer_Rect_Color_Index_Instance(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+	: CVIBuffer_Color_Index_Instance(pDevice, pContext)
 {
 }
 
-CVIBuffer_Rect_Matrix::CVIBuffer_Rect_Matrix(const CVIBuffer_Rect_Matrix& rhs)
-	: CVIBuffer_Instance(rhs)
-	, m_InstanceDesc(rhs.m_InstanceDesc)
+CVIBuffer_Rect_Color_Index_Instance::CVIBuffer_Rect_Color_Index_Instance(const CVIBuffer_Rect_Color_Index_Instance& rhs)
+	: CVIBuffer_Color_Index_Instance(rhs)
 {
 }
 
-HRESULT CVIBuffer_Rect_Matrix::Initialize_Prototype(const INSTANCEDESC* pInstanceDesc, _uint iNumInstance)
+HRESULT CVIBuffer_Rect_Color_Index_Instance::Initialize_Prototype()
 {
-	m_iNumInstance = { iNumInstance }; // 인스턴스의 개수
-	if (FAILED(Make_InstanceLogic(pInstanceDesc)))
+	return S_OK;
+}
+
+HRESULT CVIBuffer_Rect_Color_Index_Instance::Initialize(void* pArg)
+{
+	if (nullptr == pArg)
+	{
+		MSG_BOX("Point Num Instance null");
 		return E_FAIL;
+	}
 
-	m_iIndexCountPerInstance = { 6 }; // 사각형(인스턴스) 하나 그리는데 필요한 인덱스 수
+	// 버퍼 파괴하고 재생성하려고 넣은 코드.
+	Safe_Release(m_pVBInstance);
+	Safe_Release(m_pVB);
+	Safe_Release(m_pIB);
+
+	m_iNumInstance = *reinterpret_cast<_uint*>(pArg);
+
+	m_iIndexCountPerInstance = 6;
 	m_iNumVertexBuffers = { 2 };
 	m_iStride = { sizeof(VTXPOSTEX) };
 	m_iNumVertices = { 4 };
 	m_iIndexStride = { sizeof(_ushort) };
 	m_iNumIndices = { m_iIndexCountPerInstance * m_iNumInstance };
-	m_eFormat = { DXGI_FORMAT_R16_UINT };
-	m_eTopology = { D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST };
+	m_eFormat = DXGI_FORMAT_R16_UINT;
+	m_eTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
 
 #pragma region VERTEX_BUFFER
 	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
 
 	m_BufferDesc.ByteWidth = { m_iStride * m_iNumVertices };
-	m_BufferDesc.Usage = { D3D11_USAGE_DEFAULT }; // 정점 버퍼 자체를 움직이는 것이 아닌, 인스턴스버퍼에서 행렬의 값을 변경시켜 셰이더에서 처리.
+	m_BufferDesc.Usage = { D3D11_USAGE_DEFAULT };
 	m_BufferDesc.BindFlags = { D3D11_BIND_VERTEX_BUFFER };
 	m_BufferDesc.StructureByteStride = { m_iStride };
 	m_BufferDesc.CPUAccessFlags = { 0 };
 	m_BufferDesc.MiscFlags = { 0 };
-
 
 	VTXPOSTEX* pVertices = new VTXPOSTEX[4];
 	ZeroMemory(pVertices, sizeof(VTXPOSTEX) * 4);
@@ -97,17 +111,11 @@ HRESULT CVIBuffer_Rect_Matrix::Initialize_Prototype(const INSTANCEDESC* pInstanc
 	Safe_Delete_Array(pIndices);
 #pragma endregion
 
-	return S_OK;
-}
-
-HRESULT CVIBuffer_Rect_Matrix::Initialize(void* pArg)
-{
 	vector<_float4x4> InitializeMatrices;
 
 	for (_uint i = 0; i < m_iNumInstance; ++i)
 	{
-		_float4x4 InitMatrix;
-		XMStoreFloat4x4(&InitMatrix, XMMatrixIdentity());
+		_float4x4 InitMatrix = XMMatrixIdentity();
 
 		InitializeMatrices.push_back(InitMatrix);
 	}
@@ -118,38 +126,36 @@ HRESULT CVIBuffer_Rect_Matrix::Initialize(void* pArg)
 	return S_OK;
 }
 
-HRESULT CVIBuffer_Rect_Matrix::Make_InstanceLogic(const INSTANCEDESC* pInstanceDesc)
-{
-	return S_OK;
-}
 
-CVIBuffer_Rect_Matrix* CVIBuffer_Rect_Matrix::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const INSTANCEDESC* pInstanceDesc, _uint iNumInstance)
-{
-	CVIBuffer_Rect_Matrix* pInstance = new CVIBuffer_Rect_Matrix(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize_Prototype(pInstanceDesc, iNumInstance)))
+CVIBuffer_Rect_Color_Index_Instance* CVIBuffer_Rect_Color_Index_Instance::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+{
+	CVIBuffer_Rect_Color_Index_Instance* pInstance = new CVIBuffer_Rect_Color_Index_Instance(pDevice, pContext);
+
+	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Created CVIBuffer_Rect_Matrix");
+		MSG_BOX("Failed to Created CVIBuffer_Rect_Color_Index_Instance");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CComponent* CVIBuffer_Rect_Matrix::Clone(void* pArg)
+CComponent* CVIBuffer_Rect_Color_Index_Instance::Clone(void* pArg)
 {
-	CVIBuffer_Rect_Matrix* pInstance = new CVIBuffer_Rect_Matrix(*this);
+	CVIBuffer_Rect_Color_Index_Instance* pInstance = new CVIBuffer_Rect_Color_Index_Instance(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned CVIBuffer_Rect_Matrix");
+		MSG_BOX("Failed to Cloned CVIBuffer_Rect_Color_Index_Instance");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CVIBuffer_Rect_Matrix::Free()
+void CVIBuffer_Rect_Color_Index_Instance::Free()
 {
 	__super::Free();
+
 }

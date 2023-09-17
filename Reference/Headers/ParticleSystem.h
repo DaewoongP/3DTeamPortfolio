@@ -9,6 +9,7 @@
 
 #include "GameObject.h"
 #include "VIBuffer_Rect_Color_Instance.h"
+#include "VIBuffer_Color_Index_Instance.h"
 #include "Modules.h"
 
 BEGIN(Engine)
@@ -24,7 +25,9 @@ BEGIN(Engine)
 class ENGINE_DLL CParticleSystem : public CGameObject
 {
 public:
-	typedef VTXCOLINSTANCE COL_INSTANCE;
+	typedef VTXCOLIDXINSTANCE INSTANCE;
+	typedef CVIBuffer_Color_Index_Instance CBuffer;
+	// CVIBuffer_Rect_Color_Index_Instance;
 
 public:
 	// ALIVE : 업데이트 되고 있는 파티클
@@ -124,13 +127,13 @@ protected:
 	CTexture* m_pMainTexture = { nullptr }; // 출력에 사용 될 텍스처
 	CTexture* m_pClipTexture = { nullptr }; // 알파테스트에 사용될 텍스처
 	CTexture* m_pNormalTexture = { nullptr }; // 텍스처시트에 사용될 텍스처
-	CVIBuffer_Rect_Color_Instance* m_pBuffer = { nullptr };
+	CBuffer* m_pBuffer = { nullptr };
 	CShader* m_pShader = { nullptr };
 	CModel* m_pModel = { nullptr };
 
 protected:
 	list<PARTICLE> m_Particles[STATE_END];
-	vector<COL_INSTANCE>  m_ParticleMatrices;
+	vector<INSTANCE>  m_ParticleMatrices;
 	function<void()> m_StopAction;
 	_uint m_iLevel = { 0 };
 
