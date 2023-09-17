@@ -168,6 +168,7 @@ void CTrail::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 	if (nullptr != m_pBuffer)
 		m_pBuffer->Tick();
+
 }
 
 void CTrail::Late_Tick(_float fTimeDelta)
@@ -252,7 +253,7 @@ HRESULT CTrail::SetUp_ShaderResources()
 	_float4x4 WorldMatrix = _float4x4();
 	try
 	{
-		if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", &WorldMatrix)))
+		if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", (m_LocalSpace==nullptr)? &WorldMatrix : m_LocalSpace)))
 			throw "g_WorldMatrix";
 
 		if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW))))
