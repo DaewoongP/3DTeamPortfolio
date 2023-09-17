@@ -25,7 +25,6 @@ class ENGINE_DLL CParticleSystem : public CGameObject
 {
 public:
 	typedef VTXCOLINSTANCE COL_INSTANCE;
-	typedef list<PARTICLE>::iterator PARTICLE_IT;
 
 public:
 	// ALIVE : 업데이트 되고 있는 파티클
@@ -122,12 +121,14 @@ protected:
 	COLOR_OVER_LIFETIME				m_ColorOverLifeTimeModuleDesc;
 	SIZE_OVER_LIFETIME				m_SizeOverLifeTimeModuleDesc;
 	ROTATION_OVER_LIFETIME_MODULE	m_RotationOverLifetimeModuleDesc;
+	TEXTURE_SHEET_ANIMATION			m_TextureSheetAnimationModuleDesc;
 
 protected: 
 	//CVIBuffer_Geometry* m_pShapeBuffer = { nullptr };
 	CRenderer* m_pRenderer = { nullptr };
 	CTexture* m_pMainTexture = { nullptr }; // 출력에 사용 될 텍스처
 	CTexture* m_pClipTexture = { nullptr }; // 알파테스트에 사용될 텍스처
+	CTexture* m_pNormalTexture = { nullptr }; // 텍스처시트에 사용될 텍스처
 	CVIBuffer_Rect_Color_Instance* m_pBuffer = { nullptr };
 	CShader* m_pShader = { nullptr };
 	CModel* m_pModel = { nullptr };

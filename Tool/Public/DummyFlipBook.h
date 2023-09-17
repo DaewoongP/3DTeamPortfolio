@@ -31,12 +31,16 @@ private:
 	virtual ~CDummyFlipBook() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype(_uint iLevel, const _tchar* pFilePath, _uint iWidthNum, _uint iHeightNum);
+	virtual HRESULT Initialize_Prototype(_uint iLevel, const _tchar* pFilePath);
 	virtual HRESULT Initialize(void* pArg) override;
 
 private:
 	// 파티클 텍스처 변경.
 	void ChangeTexture(CTexture** _pTexture, wstring& _wstrOriginPath, const _tchar* _pDestPath);
+
+public:
+	void Save_FileDialog();
+	void Load_FileDialog();
 
 public:
 	void Tick_Imgui(_float _fTimeDelta);
@@ -50,7 +54,7 @@ private:
 
 	list<_tchar*> m_pTags;
 public:
-	static CDummyFlipBook* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel, const _tchar* pFilePath, _uint iWidthNum, _uint iHeightNum);
+	static CDummyFlipBook* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel, const _tchar* pFilePath);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free(void) override;
 };

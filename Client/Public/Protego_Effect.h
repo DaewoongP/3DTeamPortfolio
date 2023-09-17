@@ -18,6 +18,7 @@ class CModel;
 class CVIBuffer_GeoSphere;
 class CVIBuffer_Rect;
 class CParticleSystem;
+class CTexture_Flipbook;
 END
 
 BEGIN(Client)
@@ -64,7 +65,7 @@ private: /* For. Component */
 	CTexture* m_pTexture[5] = {};
 	CVIBuffer_GeoSphere* m_pBuffer = { nullptr };
 	CParticleSystem* m_pDefaultConeBoom_Particle = { nullptr };
-
+	CTexture_Flipbook* m_pTextureFlipbook = { nullptr };
 private: // 파티클 Transform
 
 private: // Protego의 정보

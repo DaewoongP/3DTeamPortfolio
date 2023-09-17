@@ -1099,6 +1099,9 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Blur.hlsl">
       <Filter>01. Utility\03. Components\02. Renderer\Blur</Filter>
     </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Flipbook.hlsl">
+      <Filter>01. Utility\98. ShaderFiles</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Public\DirectXTK\matrix.inl">

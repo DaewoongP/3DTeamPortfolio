@@ -50,6 +50,15 @@ HRESULT CParticleSystem::Initialize_Prototype(const _tchar* _pDirectoryPath, _ui
 			return E_FAIL;
 	}
 
+	ProtoTag = ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_TextureSheetAnimationModuleDesc.wstrNormalPath.c_str());
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, ProtoTag.data()))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel
+			, ProtoTag.data()
+			, CTexture::Create(m_pDevice, m_pContext, m_TextureSheetAnimationModuleDesc.wstrNormalPath.c_str()))))
+			return E_FAIL;
+	}
+
 	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_Component_Shader_VtxRectColInstance")))
 	{
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel
@@ -109,7 +118,7 @@ void CParticleSystem::Tick(_float _fTimeDelta)
 
 	// Burst옵션에 따른 파티클 생성
 	Action_By_Bursts();
-
+	
 	// 카메라가 파티클 시스템의 로컬 포지션으로 감.
 	_float4 vCamPosition;
 	if (true == m_ShapeModuleDesc.isChase)
@@ -146,9 +155,12 @@ void CParticleSystem::Tick(_float _fTimeDelta)
 		// 모듈
 		Action_By_ColorOverLifeTime(Particle_iter, _fTimeDelta);
 
+		//  모듈
+		m_TextureSheetAnimationModuleDesc.Action(Particle_iter, _fTimeDelta);
+
 		// SRT 연산
 		_float4x4 ScaleMatrix = _float4x4::MatrixScale(Particle_iter->vScale);
-		_float4x4 BillBoardMatrix = LookAt(vPos, vCamPosition.xyz());
+		_float4x4 BillBoardMatrix = LookAt(vPos, vCamPosition.xyz(), m_RendererModuleDesc.isDeleteY);
 		_float4x4 RotationMatrix;
 		_float4x4 DirectionMatrix = _float4x4();
 		if (true == m_MainModuleDesc.isDirectionRotation) // 진행 방향으로 회전
@@ -681,6 +693,12 @@ HRESULT CParticleSystem::Add_Components()
 			, reinterpret_cast<CComponent**>(&m_pClipTexture))))
 			throw(TEXT("Com_ClipTexture"));
 
+		if (FAILED(CComposite::Add_Component(m_iLevel
+			, ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_TextureSheetAnimationModuleDesc.wstrNormalPath.c_str()).c_str()
+			, TEXT("Com_NormalTexture")
+			, reinterpret_cast<CComponent**>(&m_pNormalTexture))))
+			throw(TEXT("Com_NormalTexture"));
+
 		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_Component_Shader_VtxRectColInstance")
 			, TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
 			throw(TEXT("Com_Shader"));
@@ -718,11 +736,14 @@ void CParticleSystem::Resize_Container(_uint iNumMaxParticle)
 void CParticleSystem::Sum_TimeDelta(const _float& _fTimeDelta)
 {
 	// 수명처리
+	// MainModule
 	m_MainModuleDesc.fParticleSystemAge += _fTimeDelta;
 	for (auto& Particle : m_Particles[ALIVE])
 		Particle.fAge += _fTimeDelta;
 	for (auto& Particle : m_Particles[DELAY])
 		Particle.fAge += _fTimeDelta;
+
+	// EmissionModuel
 	for (auto& Burst : m_EmissionModuleDesc.Bursts)
 	{
 		if (true == Burst.isTrigger)
@@ -733,6 +754,12 @@ void CParticleSystem::Sum_TimeDelta(const _float& _fTimeDelta)
 		Burst.fTriggerTimeAcc += _fTimeDelta;
 	}
 	m_EmissionModuleDesc.fRateOverTimeAcc += _fTimeDelta;
+
+	// TextureSheetAnimationModuel
+	if (true == m_TextureSheetAnimationModuleDesc.isActivate)
+	{
+		m_TextureSheetAnimationModuleDesc.fTimeAcc += _fTimeDelta;
+	}
 }
 void CParticleSystem::Reset_Particle(PARTICLE_IT& _particle_iter)
 {
@@ -899,6 +926,7 @@ void CParticleSystem::Free()
 		Safe_Release(m_pRenderer);
 		Safe_Release(m_pMainTexture);
 		Safe_Release(m_pClipTexture);
+		Safe_Release(m_pNormalTexture);
 		Safe_Release(m_pBuffer);
 		Safe_Release(m_pShader);
 		Safe_Release(m_pModel);

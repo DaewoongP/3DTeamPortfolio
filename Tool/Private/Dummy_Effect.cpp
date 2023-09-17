@@ -43,7 +43,7 @@ HRESULT CDummy_Effect::Initialize_Prototype()
 	{
 		/* Prototype_Component_Texture_Ground */
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_TestTexture_Flipbook"),
-			CDummyFlipBook::Create(m_pDevice, m_pContext, LEVEL_TOOL, TEXT("../../Resources/Effects/Textures/Flipbooks/VFX_T_Dust_8x8_D.png"), 8, 8))))
+			CDummyFlipBook::Create(m_pDevice, m_pContext, LEVEL_TOOL, nullptr))))
 			return E_FAIL;
 	}
 

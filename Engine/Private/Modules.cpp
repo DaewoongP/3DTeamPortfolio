@@ -414,7 +414,7 @@ HRESULT RENDERER_MODULE::Save(const _tchar* _pDirectoyPath)
 
 	WriteFile(hFile, wstrShaderTag.data(), sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
 	WriteFile(hFile, wstrMaterialPath.data(), sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
-
+	WriteFile(hFile, &isDeleteY, sizeof(isDeleteY), &dwByte, nullptr);
 	CloseHandle(hFile);
 	return S_OK;
 }
@@ -443,7 +443,7 @@ HRESULT RENDERER_MODULE::Load(const _tchar* _pDirectoyPath)
 	wstrShaderTag = wszBuffer;
 	ReadFile(hFile, wszBuffer, sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
 	wstrMaterialPath = wszBuffer;
-
+	ReadFile(hFile, &isDeleteY, sizeof(isDeleteY), &dwByte, nullptr);
 	CloseHandle(hFile);
 	return S_OK;
 }
@@ -515,6 +515,10 @@ HRESULT COLOR_OVER_LIFETIME::Load(const _tchar* _pDirectoyPath)
 {
 	return S_OK;
 }
+void COLOR_OVER_LIFETIME::Action(PARTICLE_IT& _particle_iter, _float _fTimeDelta)
+{
+
+}
 void COLOR_OVER_LIFETIME::Restart()
 {
 }
@@ -527,6 +531,114 @@ HRESULT SIZE_OVER_LIFETIME::Load(const _tchar* _pDirectoyPath)
 {
 	return S_OK;
 }
+void SIZE_OVER_LIFETIME::Action(PARTICLE_IT& _particle_iter, _float _fTimeDelta)
+{
+
+}
 void SIZE_OVER_LIFETIME::Restart()
 {
+}
+
+
+HRESULT TEXTURE_SHEET_ANIMATION::Save(const _tchar* _pDirectoyPath)
+{
+	fs::path fsFilePath = _pDirectoyPath;
+	fsFilePath = fsFilePath / TEXT("TextureSheetAnimationModule.ptc");
+
+	HANDLE hFile = CreateFile(fsFilePath.wstring().data()
+		, GENERIC_WRITE
+		, 0
+		, 0
+		, CREATE_ALWAYS
+		, FILE_ATTRIBUTE_NORMAL
+		, 0);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+		return E_FAIL;
+
+	_ulong dwByte = 0;
+
+	__super::Save(hFile, dwByte);
+
+	WriteFile(hFile, &iMaxIndex, sizeof iMaxIndex, &dwByte, nullptr);
+	WriteFile(hFile, &iWidthLength, sizeof(iWidthLength), &dwByte, nullptr);
+	WriteFile(hFile, &iHeightLength, sizeof(iHeightLength), &dwByte, nullptr);
+	WriteFile(hFile, &isStartFrameRange, sizeof(isStartFrameRange), &dwByte, nullptr);
+	WriteFile(hFile, &vStartFrameRange, sizeof(vStartFrameRange), &dwByte, nullptr);
+	WriteFile(hFile, &fStartFrame, sizeof(fStartFrame), &dwByte, nullptr);
+	WriteFile(hFile, &fUpdateInterval, sizeof(fUpdateInterval), &dwByte, nullptr);
+	WriteFile(hFile, &isUseNormalTexture, sizeof(isUseNormalTexture), &dwByte, nullptr);
+	WriteFile(hFile, wstrNormalPath.data(), sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
+
+	CloseHandle(hFile);
+	return S_OK;
+}
+HRESULT TEXTURE_SHEET_ANIMATION::Load(const _tchar* _pDirectoyPath)
+{
+	fs::path fsFilePath = _pDirectoyPath;
+	fsFilePath = fsFilePath / TEXT("RendererModule.ptc");
+
+	HANDLE hFile = CreateFile(fsFilePath.wstring().data()
+		, GENERIC_READ
+		, 0
+		, 0
+		, OPEN_EXISTING
+		, FILE_ATTRIBUTE_NORMAL
+		, 0);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+		return E_FAIL;
+
+	_ulong dwByte = 0;
+
+	_tchar wszBuffer[MAX_PATH];
+	__super::Load(hFile, dwByte);
+
+	ReadFile(hFile, &iMaxIndex, sizeof iMaxIndex, &dwByte, nullptr);
+	ReadFile(hFile, &iWidthLength, sizeof(iWidthLength), &dwByte, nullptr);
+	ReadFile(hFile, &iHeightLength, sizeof(iHeightLength), &dwByte, nullptr);
+	ReadFile(hFile, &isStartFrameRange, sizeof(isStartFrameRange), &dwByte, nullptr);
+	ReadFile(hFile, &vStartFrameRange, sizeof(vStartFrameRange), &dwByte, nullptr);
+	ReadFile(hFile, &fStartFrame, sizeof(fStartFrame), &dwByte, nullptr);
+	ReadFile(hFile, &fUpdateInterval, sizeof(fUpdateInterval), &dwByte, nullptr);
+	ReadFile(hFile, &isUseNormalTexture, sizeof(isUseNormalTexture), &dwByte, nullptr);
+	ReadFile(hFile, wszBuffer, sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
+	wstrNormalPath = wszBuffer;
+
+	CloseHandle(hFile);
+	// 파티클 텍스처 시트 구현해!
+	return S_OK;
+}
+void TEXTURE_SHEET_ANIMATION::Action(PARTICLE_IT& _particle_iter, _float fTimeDelta)
+{
+	if (false == isActivate)
+		return;
+
+	fTimeAcc += fTimeDelta;
+	if (fTimeAcc <= fUpdateInterval)
+		return;
+
+	fTimeAcc = 0.f;
+	++_particle_iter->iCurIndex;
+	if (_particle_iter->iCurIndex > iMaxIndex)
+		_particle_iter->iCurIndex = 0;
+}
+void TEXTURE_SHEET_ANIMATION::Reset(PARTICLE_IT& _particle_iter)
+{
+	if (false == isActivate)
+		return;
+
+	_particle_iter->iCurIndex = 0;
+}
+void TEXTURE_SHEET_ANIMATION::Restart()
+{
+	if (false == isActivate)
+		return;
+
+	fTimeAcc = 0.f;
+}
+
+void TEXTURE_SHEET_ANIMATION::CalculateMaxSize()
+{
+	iMaxIndex = iWidthLength * iHeightLength - 1;
 }
