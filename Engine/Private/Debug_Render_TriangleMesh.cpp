@@ -23,9 +23,9 @@ HRESULT CDebug_Render_TriangleMesh::Initialize(void* pArg)
 	m_iNumVertexBuffers = { 1 };
 	m_iStride = { sizeof(VTXPOS) };
 	m_iNumVertices = { TriangleMeshDesc.iNumVertices };
-	m_iIndexStride = { sizeof(_ushort) };
+	m_iIndexStride = { sizeof(_ulong) };
 	m_iNumIndices = { TriangleMeshDesc.iNumIndices };
-	m_eFormat = DXGI_FORMAT_R16_UINT;
+	m_eFormat = DXGI_FORMAT_R32_UINT;
 	m_eTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
 
@@ -70,8 +70,8 @@ HRESULT CDebug_Render_TriangleMesh::Initialize(void* pArg)
 	m_BufferDesc.CPUAccessFlags = { 0 };
 	m_BufferDesc.MiscFlags = { 0 };
 
-	_ushort* pIndices = new _ushort[m_iNumIndices];
-	ZeroMemory(pIndices, sizeof(_ushort) * m_iNumIndices);
+	_ulong* pIndices = new _ulong[m_iNumIndices];
+	ZeroMemory(pIndices, sizeof(_ulong) * m_iNumIndices);
 
 	for (_uint i = 0; i < m_iNumIndices; ++i)
 	{

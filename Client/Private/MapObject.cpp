@@ -124,21 +124,28 @@ HRESULT CMapObject::Add_Components(MAPOBJECTDESC* pMapObjectDesc)
 	RigidBodyDesc.fDynamicFriction = 0.5f;
 	RigidBodyDesc.fRestitution = 0.f;
 	RigidBodyDesc.pOwnerObject = this;
-	RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 0.f, 1.f);
+	RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 1.f, 1.f);
 	RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
 	RigidBodyDesc.vInitRotation = m_pTransform->Get_Quaternion();
 
 	vector<CMesh*> Meshes = *m_pModel->Get_MeshesVec();
 	vector<_float3> Vertices;
-	vector<_ushort> Indices;
+	vector<PxU32> Indices;
+	_uint iIndex = { 0 };
 	for (auto& pMesh : Meshes)
 	{
 		vector<_float3> MeshVertices = *pMesh->Get_VerticesPositionVec();
 		// 버텍스 벡터에 벡터를 삽입하는 함수
 		Vertices.insert(Vertices.end(), MeshVertices.begin(), MeshVertices.end());
 
-		vector<_uint> MeshIndices = *pMesh->Get_IndicesVec();
-		Indices.insert(Indices.end(), MeshIndices.begin(), MeshIndices.end());
+		vector<PxU32> MeshIndices = *pMesh->Get_IndicesVec();
+
+		for (size_t i = 0; i < MeshIndices.size(); ++i)
+		{
+			Indices.push_back(MeshIndices[i] + iIndex);
+		}
+
+		iIndex += Vertices.size();
 	}
 	
 	// 피직스 메쉬 생성
@@ -148,9 +155,8 @@ HRESULT CMapObject::Add_Components(MAPOBJECTDESC* pMapObjectDesc)
 	TriangleMeshDesc.points.data = Vertices.data();
 
 	TriangleMeshDesc.triangles.count = Indices.size() / 3;
-	TriangleMeshDesc.triangles.stride = 3 * sizeof(_ushort);
+	TriangleMeshDesc.triangles.stride = 3 * sizeof(PxU32);
 	TriangleMeshDesc.triangles.data = Indices.data();
-	TriangleMeshDesc.flags = PxMeshFlag::e16_BIT_INDICES;
 
 	PxTolerancesScale PxScale;
 	PxCookingParams PxParams(PxScale);

@@ -45,7 +45,7 @@ void CTest_Player::Tick(_float fTimeDelta)
 
 	Key_Input(fTimeDelta);
 
-	m_pModelCom->Set_WindVelocity(PhysXConverter::ToXMFLOAT3(m_pRigidBody->Get_RigidBodyActor()->getLinearVelocity()) * m_fWindPower * -1.f);
+	m_pModelCom->Set_WindVelocity(PhysXConverter::ToXMFLOAT3(m_pRigidBody->Get_RigidBodyActor()->getLinearVelocity()) * m_fWindPower);
 
 	m_pModelCom->Tick(CCustomModel::ROBE, 2, fTimeDelta);
 }
@@ -103,6 +103,8 @@ HRESULT CTest_Player::Render()
 					throw TEXT("Bind_BoneMatrices");
 
 				if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", iParts, i, DIFFUSE)))
+					throw TEXT("Bind_Material Diffuse");
+				if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_NormalTexture", iParts, i, DIFFUSE)))
 					throw TEXT("Bind_Material Diffuse");
 
 				if (FAILED(m_pShaderCom->Begin("AnimMeshNonCull")))
@@ -185,7 +187,7 @@ HRESULT CTest_Player::Add_Components()
 		return E_FAIL;
 	}
 
-	m_pModelCom->Add_MeshParts(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshPart_Robe01"), CCustomModel::ROBE, TEXT("../../Resources/GameData/ClothData/2circle.cloth"));
+	m_pModelCom->Add_MeshParts(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshPart_Robe01"), CCustomModel::ROBE, TEXT("../../Resources/GameData/ClothData/Test.cloth"));
 
 	return S_OK;
 }
