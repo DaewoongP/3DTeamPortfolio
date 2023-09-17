@@ -1,18 +1,18 @@
-#include "Levioso.h"
+#include "Confringo.h"
 #include "GameInstance.h"
 #include "Engine_Function.h"
 
-CLevioso::CLevioso(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CConfringo::CConfringo(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CMagicBall(pDevice, pContext)
 {
 }
 
-CLevioso::CLevioso(const CLevioso& rhs)
+CConfringo::CConfringo(const CConfringo& rhs)
 	: CMagicBall(rhs)
 {
 }
 
-HRESULT CLevioso::Initialize_Prototype()
+HRESULT CConfringo::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
@@ -20,7 +20,7 @@ HRESULT CLevioso::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CLevioso::Initialize(void* pArg)
+HRESULT CConfringo::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 	{
@@ -66,120 +66,113 @@ HRESULT CLevioso::Initialize(void* pArg)
 		//이거 근데 몹의 발위치로 지금 설정돼있을듯함.
 		m_vTargetPosition = m_pTarget->Get_Position();
 	}
+
+	// 플레이어가 타겟을 보는 vector를 구함.
+	_float3 vDir = XMVector3Normalize(m_vTargetPosition - m_MagicBallDesc.vStartPosition);
+	// 임의의 축을 구함.
+	_float3 tempAxis = _float3(1, 1, 1);
+	// 외적
+	_float3	normal = XMVector3Cross(vDir, tempAxis);
+	
+	//진행 경로만큼 뒤로 이동한 뒤
+	m_vLerpWeight[0] = m_MagicBallDesc.vStartPosition - vDir;
+	//임의의 랜덤 값을 구하고
+	_float fRandom = Random_Generator(-20.f, 20.f);
+	// 외적 방향으로 튄다.
+	m_vLerpWeight[0] += _float3(normal.x * fRandom, normal.y  * fRandom, normal.z * fRandom);
+
+	//진행 경로만큼 뒤로 이동한 뒤
+	m_vLerpWeight[1] = m_MagicBallDesc.vStartPosition + vDir;
+	//임의의 랜덤 값을 구하고
+	fRandom = Random_Generator(-20.f, 20.f);
+	// 외적 방향으로 튄다.
+	m_vLerpWeight[1] += _float3(normal.x * fRandom, normal.y * fRandom, normal.z * fRandom);
+
 	return S_OK;
 }
 
-void CLevioso::Tick(_float fTimeDelta)
+void CConfringo::Tick(_float fTimeDelta)
 {
 	if (m_MagicBallDesc.fLifeTime > 0)
 	{
 		// 이동시켜주는 로직임.
 		// 여기서 뻉뻉이 돌려주자.
 		m_fLerpAcc += fTimeDelta / m_MagicBallDesc.fInitLifeTime;
-		m_pEffect->Spin_Move(m_MagicBallDesc.vStartPosition, m_vTargetPosition, m_fLerpAcc);
+		m_pEffect->Spline_Move(m_vLerpWeight[0],m_MagicBallDesc.vStartPosition, m_vTargetPosition, m_vLerpWeight[1], m_fLerpAcc);
 	}
 	else 
 	{
-		//이동이 끝났고 윙가가 발동 안했다면?
-		if (!m_bWingardiumActionTrigger)
-		{
-			//윙가 발동
-			m_bWingardiumActionTrigger = true;
-			m_pWingardiumEffect->SetActionTrigger(m_bWingardiumActionTrigger);
-			dynamic_cast<CGameObject*>(m_pTarget->Get_Owner())->On_Maigc_Throw_Data(&m_CollisionDesc);
-		}
-		else 
-		{
-			m_MagicTimer -= fTimeDelta;
-			m_pWingardiumEffect->TrailAction(fTimeDelta);
-			m_pWingardiumEffectTrans->Set_Position(m_pTarget->Get_Position());
-		}
 	}
 	__super::Tick(fTimeDelta);
 }
 
-void CLevioso::Late_Tick(_float fTimeDelta)
+void CConfringo::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 }
 
-void CLevioso::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
+void CConfringo::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
 	__super::OnCollisionEnter(CollisionEventDesc);
 }
 
-void CLevioso::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)
+void CConfringo::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)
 {
 	__super::OnCollisionStay(CollisionEventDesc);
 }
 
-void CLevioso::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
+void CConfringo::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 {
 	__super::OnCollisionExit(CollisionEventDesc);
 }
 
-HRESULT CLevioso::Add_Components()
+HRESULT CConfringo::Add_Components()
 {
 	return S_OK;
 }
 
-HRESULT CLevioso::Add_Effect()
+HRESULT CConfringo::Add_Effect()
 {
-	_float3 vInitPosition = m_MagicBallDesc.vStartPosition;
 	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Default_MagicTraill_Effect"), 
-		TEXT("Com_Effect"), reinterpret_cast<CComponent**>(&m_pEffect),&vInitPosition)))
+		TEXT("Com_Effect"), reinterpret_cast<CComponent**>(&m_pEffect))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Default_MagicTraill_Effect)");
 		return E_FAIL;
 	}
 
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Wingardium_Effect"),
-		TEXT("Com_WingradiumEffect"), reinterpret_cast<CComponent**>(&m_pWingardiumEffect))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Wingardium_Effect)");
-		return E_FAIL;
-	}
-
-	m_pWingardiumEffectTrans = m_pWingardiumEffect->Get_Transform();
-	Safe_AddRef(m_pWingardiumEffectTrans);
-
 	return S_OK;
 }
 
-CLevioso* CLevioso::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CConfringo* CConfringo::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CLevioso* pInstance = new CLevioso(pDevice, pContext);
+	CConfringo* pInstance = new CConfringo(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Created CLevioso");
+		MSG_BOX("Failed to Created CConfringo");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject* CLevioso::Clone(void* pArg)
+CGameObject* CConfringo::Clone(void* pArg)
 {
-	CLevioso* pInstance = new CLevioso(*this);
+	CConfringo* pInstance = new CConfringo(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned CLevioso");
+		MSG_BOX("Failed to Cloned CConfringo");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-void CLevioso::Free()
+void CConfringo::Free()
 {
 	__super::Free();
 	if (true == m_isCloned)
 	{
 		Safe_Release(m_pEffect);
-
-		Safe_Release(m_pWingardiumEffectTrans);
-		Safe_Release(m_pWingardiumEffect);
 	}
-	
 }
