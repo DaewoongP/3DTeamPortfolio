@@ -5,6 +5,7 @@ matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
 texture2D		g_Texture;
 texture2D		g_ClipTexture;
+texture2D		g_GradientTexture;
 float			g_fClipThreshold = 0.33f;
 int				g_iClipChannel;
 
