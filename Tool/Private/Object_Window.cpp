@@ -1483,58 +1483,43 @@ HRESULT CObject_Window::Load_MapObject_Ins(const _tchar* wszMapDataPath)
 		
 		ws += wszNumber; // 여기까지 오면 Prototype_Component_Model_Instance_모델명_번호 이런식으로 이름이 붙음	
 
-		// 최초 1회 push_back 해줌
-		if (0 == m_vecInsObjectTag.size())
-		{
-			m_vecInsObjectTag.push_back(ws);
-		}
+		m_vecInsObjectTag.push_back(ws);
+		++j;
 
-		else
-		{
-			// 비교할 문자열 생성
-			wstring wsCompare = TEXT("Prototype_Component_Model_Instance_");
-			wsCompare += wsModelName;
-			wsCompare += TEXT("_");
-			_tchar wszNumber[MAX_PATH];
-			_itow_s(j, wszNumber, 10);
-			wsCompare += wszNumber;
-
-			// 이미 생성된 인스턴스 모델인지 체크
-			for (auto& iter : m_vecInsObjectTag)
-			{				
-				if (iter == wsCompare)
-				{
-					++j;
-					wstring wsCompare2 = TEXT("Prototype_Component_Model_Instance_");
-					wsCompare2 += wsModelName;
-					wsCompare2 += TEXT("_");
-					_tchar wszNumber2[MAX_PATH];
-					_itow_s(j, wszNumber2, 10);
-					wsCompare2 += wszNumber2;
-
-					ws = wsCompare2;
-					m_vecInsObjectTag.push_back(ws);
-				}
-			}
-		}	
-
-		//if (0 == j)
+		//// 최초 1회 push_back 해줌
+		//if (0 == m_vecInsObjectTag.size())
 		//{
 		//	m_vecInsObjectTag.push_back(ws);
 		//}
 
-		//// 이미 생성된 인스턴스 모델이라면 넘버링을 붙여 새롭게 생성
 		//else
 		//{
-		//	ws += TEXT("_");
-		//	
+		//	// 비교할 문자열 생성
+		//	wstring wsCompare = TEXT("Prototype_Component_Model_Instance_");
+		//	wsCompare += wsModelName;
+		//	wsCompare += TEXT("_");
 		//	_tchar wszNumber[MAX_PATH];
 		//	_itow_s(j, wszNumber, 10);
+		//	wsCompare += wszNumber;
 
-		//	ws += wszNumber;
+		//	// 이미 생성된 인스턴스 모델인지 체크
+		//	for (auto& iter : m_vecInsObjectTag)
+		//	{				
+		//		if (iter == wsCompare)
+		//		{
+		//			++j;
+		//			wstring wsCompare2 = TEXT("Prototype_Component_Model_Instance_");
+		//			wsCompare2 += wsModelName;
+		//			wsCompare2 += TEXT("_");
+		//			_tchar wszNumber2[MAX_PATH];
+		//			_itow_s(j, wszNumber2, 10);
+		//			wsCompare2 += wszNumber2;
 
-		//	m_vecInsObjectTag.push_back(ws);
-		//}
+		//			ws = wsCompare2;
+		//			m_vecInsObjectTag.push_back(ws);
+		//		}
+		//	}
+		//}	
 
 		wstring wsPath = TEXT("../../Resources/Models/MapObject/NonAnims/");
 		wsPath += wsModelName;
