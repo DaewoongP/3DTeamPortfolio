@@ -23,12 +23,8 @@ _uint WINAPI Thread_SeamlessTest(void* pArg)
 
 HRESULT CSeamless_Loader::Initialize()
 {
-	// 크리티컬 섹션 변수 초기화
 	InitializeCriticalSection(&m_Critical_Section);
-	
-	// 쓰레드 시작 함수 호출
-	// 3번째 인자로 시작할 함수포인터 대입.
-	// 4번째 인자로 시작할 함수의 매개변수로 넣어줄 값 대입.
+
 	m_hThread = (HANDLE)_beginthreadex(nullptr, 0, Thread_SeamlessTest, this, 0, nullptr);
 
 	if (0 == m_hThread)
@@ -66,16 +62,15 @@ HRESULT CSeamless_Loader::Ready_Layer_Debug(const _tchar* pLayerTag)
 {
 	std::lock_guard<std::mutex> lock(mtx);
 
-	// 로딩할 객체 생성
-	if (FAILED(m_pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Player"), pLayerTag, TEXT("GameObject_Test1"))))
+	if (FAILED(m_pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Golem_Combat"), pLayerTag, TEXT("GameObject_Golem_Combat0"))))
 	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Test1)");
+		MSG_BOX("Failed Add_GameObject : (GameObject_Golem_Combat)");
 		return E_FAIL;
 	}
 
-	if (FAILED(m_pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Player"), pLayerTag, TEXT("GameObject_Test2"))))
+	if (FAILED(m_pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Golem_Merlin"), pLayerTag, TEXT("GameObject_Golem_Merlin0"))))
 	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Test1)");
+		MSG_BOX("Failed Add_GameObject : (GameObject_Golem_Merlin)");
 		return E_FAIL;
 	}
 

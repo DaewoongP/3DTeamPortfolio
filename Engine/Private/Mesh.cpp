@@ -96,6 +96,8 @@ HRESULT CMesh::Initialize(void* pArg)
 
 HRESULT CMesh::Ready_VertexBuffer_NonAnim(const Engine::MESH Mesh, _float4x4 PivotMatrix)
 {
+	std::lock_guard<std::mutex> lock(mtx);
+
 	m_iStride = { sizeof(VTXMESH) };
 
 	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
@@ -140,6 +142,8 @@ HRESULT CMesh::Ready_VertexBuffer_NonAnim(const Engine::MESH Mesh, _float4x4 Piv
 
 HRESULT CMesh::Ready_VertexBuffer_Anim(const Engine::MESH Mesh, const CModel::BONES& Bones)
 {
+	std::lock_guard<std::mutex> lock(mtx);
+
 	m_iStride = { sizeof(VTXANIMMESH) };
 
 	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);

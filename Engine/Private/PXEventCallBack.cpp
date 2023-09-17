@@ -21,6 +21,10 @@ void CPXEventCallBack::onContact(const PxContactPairHeader& pairHeader, const Px
 		CGameObject* pSourObject = static_cast<CGameObject*>(pairHeader.actors[0]->userData);
 		CGameObject* pDestObject = static_cast<CGameObject*>(pairHeader.actors[1]->userData);
 
+		if (nullptr == pSourObject ||
+			nullptr == pDestObject)
+			continue;
+
 		SourDesc.pOtherObjectTag = pDestObject->Get_Tag();
 		SourDesc.pOtherOwner = pDestObject;
 		SourDesc.pOtherTransform = pDestObject->Get_Transform();
@@ -30,10 +34,6 @@ void CPXEventCallBack::onContact(const PxContactPairHeader& pairHeader, const Px
 		DestDesc.pOtherOwner = pSourObject;
 		DestDesc.pOtherTransform = pSourObject->Get_Transform();
 		DestDesc.pArg = pSourObject->Get_CollisionData();
-
-		if (nullptr == pSourObject ||
-			nullptr == pDestObject)
-			continue;
 
 		if (pairs[i].events.isSet(PxPairFlag::eNOTIFY_TOUCH_FOUND))
 		{
@@ -77,10 +77,12 @@ void CPXEventCallBack::onTrigger(PxTriggerPair* pairs, PxU32 count)
 			continue;
 		
 		COLLEVENTDESC SourDesc, DestDesc;
-
-		
 		CGameObject* pSourObject = static_cast<CGameObject*>(pairs->triggerActor->userData);
 		CGameObject* pDestObject = static_cast<CGameObject*>(pairs->otherActor->userData);
+		
+		if (nullptr == pSourObject ||
+			nullptr == pDestObject)
+			continue;
 
 		SourDesc.pOtherObjectTag = pDestObject->Get_Tag();
 		SourDesc.pOtherOwner = pDestObject;
@@ -92,10 +94,6 @@ void CPXEventCallBack::onTrigger(PxTriggerPair* pairs, PxU32 count)
 		DestDesc.pOtherTransform = pSourObject->Get_Transform();
 		DestDesc.pArg = pSourObject->Get_CollisionData();
 
-		if (nullptr == pSourObject ||
-			nullptr == pDestObject)
-			continue;
-		
 		if (pairs->status == PxPairFlag::eNOTIFY_TOUCH_FOUND)
 		{
 			pSourObject->OnCollisionEnter(SourDesc);

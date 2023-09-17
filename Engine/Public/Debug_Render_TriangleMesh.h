@@ -8,9 +8,10 @@ class ENGINE_DLL CDebug_Render_TriangleMesh final : public CVIBuffer
 public:
 	typedef struct tagTriangleMeshDesc
 	{
-		_uint iNumTriangles = { 0 };
-		const _float3* pTriangles = { nullptr };
-		//const _uint* pIndices = { nullptr };
+		_uint iNumVertices = { 0 };
+		_uint iNumIndices = { 0 };
+		const _float3* pVertices = { nullptr };
+		const _ushort* pIndices = { nullptr };
 		_float3 vOffsetPosition;
 		_float4 vOffsetRotation;
 	}TRIANGLEMESHDESC;

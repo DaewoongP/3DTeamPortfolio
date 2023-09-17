@@ -163,21 +163,7 @@ HRESULT CTest_Player::Add_Components()
 		MSG_BOX("Failed CTest_Player Add_Component : (Com_RigidBody)");
 		return E_FAIL;
 	}
-	// 추가 콜라이더 만드는방법
-	/*RigidBodyDesc.pOwnerObject = this;
-	RigidBodyDesc.isStatic = true;
-	RigidBodyDesc.isTrigger = true;
-	RigidBodyDesc.vOffsetPosition = _float3(-5.f, 3.f, 5.f);
-	RigidBodyDesc.vOffsetRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	RigidBodyDesc.fStaticFriction = 0.5f;
-	RigidBodyDesc.fDynamicFriction = 0.5f;
-	RigidBodyDesc.fRestitution = 0.f;
-	PxBoxGeometry BoxGeometry = PxBoxGeometry(3.f, 1.f, 1.f);
-	RigidBodyDesc.pGeometry = &BoxGeometry;
-	RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 0.f, 1.f);
-	m_pRigidBody->Create_Collider(&RigidBodyDesc);*/
-	// 리지드바디 액터 옵션 추가
-	
+
 	PxRigidBody* Rigid = m_pRigidBody->Get_RigidBodyActor();
 	Rigid->setAngularDamping(10.f);
 	Rigid->setMaxLinearVelocity(1000.f);

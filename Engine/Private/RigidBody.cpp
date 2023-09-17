@@ -500,6 +500,7 @@ HRESULT CRigidBody::Add_Components(PxGeometry* pPxValues, PxShape* pShape)
 				Positions[iIndex] = _float3((_float)j, pHeightField->getHeight(_float(j), _float(i)), (_float)i);
 			}
 		}
+
 		HeightFieldDesc.pPositions = Positions.data();
 		HeightFieldDesc.vOffsetPosition = vOffsetPos;
 		HeightFieldDesc.vOffsetRotation = vOffsetRot;
@@ -522,17 +523,23 @@ HRESULT CRigidBody::Add_Components(PxGeometry* pPxValues, PxShape* pShape)
 		_uint iNumVertices = pTriangleMesh->getNbVertices();
 		_uint iNumTriangles = pTriangleMesh->getNbTriangles();
 		
-		TriangleMeshDesc.iNumTriangles = iNumTriangles;
+		TriangleMeshDesc.iNumVertices = iNumVertices;
+		TriangleMeshDesc.iNumIndices = iNumTriangles * 3;
 		TriangleMeshDesc.vOffsetPosition = vOffsetPos;
 		TriangleMeshDesc.vOffsetRotation = vOffsetRot;
-		vector<_float3> Triangles;
-		Triangles.reserve(iNumVertices);
+		vector<_float3> Vertices;
+		vector<_ushort> Indices;
+		Vertices.reserve(iNumVertices);
+		Indices.resize(TriangleMeshDesc.iNumIndices);
 		for (_uint i = 0; i < iNumVertices; ++i)
 		{
-			Triangles.push_back(PhysXConverter::ToXMFLOAT3(pVertices[i]));
+			Vertices.push_back(PhysXConverter::ToXMFLOAT3(pVertices[i]));
 		}
 
-		TriangleMeshDesc.pTriangles = Triangles.data();
+		// 피직스 내부적으로 16비트로 저장함
+		memcpy(Indices.data(), pTriangles, sizeof(_ushort) * TriangleMeshDesc.iNumIndices);
+		TriangleMeshDesc.pIndices = Indices.data();
+		TriangleMeshDesc.pVertices = Vertices.data();
 		
 		/* For.Com_Debug_Render_TriangleMesh */
 		if (FAILED(CComposite::Add_Component(0, TEXT("Prototype_Component_RigidBody_Debug_Render_TriangleMesh"),
