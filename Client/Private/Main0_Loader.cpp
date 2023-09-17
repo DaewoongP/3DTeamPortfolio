@@ -221,9 +221,9 @@ HRESULT CMain0_Loader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_Finisher_Icon"),
 			CUI_Group_Finisher_Icon::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_UI_Group_Finisher_Icon");
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_MiniMap"),
+		/*if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_MiniMap"),
 			CUI_Group_MiniMap::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_UI_Group_MiniMap");
+			throw TEXT("Prototype_GameObject_UI_Group_MiniMap");*/
 
 		/* --------------Debug-------------- */
 #ifdef _DEBUG

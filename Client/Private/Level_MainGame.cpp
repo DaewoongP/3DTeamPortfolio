@@ -43,12 +43,12 @@ HRESULT CLevel_MainGame::Initialize()
 
 		return E_FAIL;
 	}
-	/*if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
+	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
 	{
 		MSG_BOX("Failed Ready_Layer_UI");
 
 		return E_FAIL;
-	}*/
+	}
 	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
 	{
 		MSG_BOX("Failed Ready_Layer_Effect");
@@ -351,6 +351,13 @@ HRESULT CLevel_MainGame::Ready_Layer_Effect(const _tchar* pLayerTag)
 HRESULT CLevel_MainGame::Ready_Layer_UI(const _tchar* pLayerTag)
 {
 	BEGININSTANCE;
+
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
+	{
+		MSG_BOX("Failed Add Scene : (Scene_Main)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
 
 	_tchar szFilePath[MAX_PATH] = TEXT("");
 	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_HP.uidata"));

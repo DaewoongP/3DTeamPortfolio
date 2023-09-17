@@ -22,9 +22,9 @@ HRESULT CDebug_Render_TriangleMesh::Initialize(void* pArg)
 
 	m_iNumVertexBuffers = { 1 };
 	m_iStride = { sizeof(VTXPOS) };
-	m_iNumVertices = { TriangleMeshDesc.iNum * 3 };
+	m_iNumVertices = { TriangleMeshDesc.iNumTriangles * 3 };
 	m_iIndexStride = { sizeof(_ushort) };
-	m_iNumIndices = { TriangleMeshDesc.iNum * 3 };
+	m_iNumIndices = { TriangleMeshDesc.iNumTriangles * 3 };
 	m_eFormat = DXGI_FORMAT_R16_UINT;
 	m_eTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
@@ -42,13 +42,13 @@ HRESULT CDebug_Render_TriangleMesh::Initialize(void* pArg)
 	VTXPOS* pVertices = new VTXPOS[m_iNumVertices];
 	ZeroMemory(pVertices, sizeof(VTXPOS) * m_iNumVertices);
 
-	for (_uint i = 0; i < m_iNumVertices; ++i)
+	/*for (_uint i = 0; i < m_iNumVertices; ++i)
 	{
 		pVertices[i].vPosition = TriangleMeshDesc.pTriangles[i];
 
 		XMStoreFloat3(&pVertices[i].vPosition, XMVector3TransformCoord(XMLoadFloat3(&pVertices[i].vPosition),
 			XMMatrixRotationQuaternion(TriangleMeshDesc.vOffsetRotation)) + XMLoadFloat3(&TriangleMeshDesc.vOffsetPosition));
-	}
+	}*/
 
 	ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
 	m_SubResourceData.pSysMem = pVertices;

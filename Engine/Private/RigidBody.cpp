@@ -518,19 +518,22 @@ HRESULT CRigidBody::Add_Components(PxGeometry* pPxValues, PxShape* pShape)
 		CDebug_Render_TriangleMesh::TRIANGLEMESHDESC TriangleMeshDesc;
 		PxTriangleMesh* pTriangleMesh = reinterpret_cast<PxTriangleMeshGeometry*>(pPxValues)->triangleMesh;
 		const PxVec3* pVertices = pTriangleMesh->getVertices();
+		const void* pTriangles = pTriangleMesh->getTriangles();
 		_uint iNumVertices = pTriangleMesh->getNbVertices();
+		_uint iNumTriangles = pTriangleMesh->getNbTriangles();
 		
-		TriangleMeshDesc.iNum = iNumVertices / 3;
+		TriangleMeshDesc.iNumTriangles = iNumTriangles;
 		TriangleMeshDesc.vOffsetPosition = vOffsetPos;
 		TriangleMeshDesc.vOffsetRotation = vOffsetRot;
 		vector<_float3> Triangles;
-		Triangles.reserve(TriangleMeshDesc.iNum);
+		Triangles.reserve(iNumVertices);
 		for (_uint i = 0; i < iNumVertices; ++i)
 		{
 			Triangles.push_back(PhysXConverter::ToXMFLOAT3(pVertices[i]));
 		}
 
 		TriangleMeshDesc.pTriangles = Triangles.data();
+		
 		/* For.Com_Debug_Render_TriangleMesh */
 		if (FAILED(CComposite::Add_Component(0, TEXT("Prototype_Component_RigidBody_Debug_Render_TriangleMesh"),
 			TEXT("Com_Debug_Render_TriangleMesh"), reinterpret_cast<CComponent**>(&pComponent), &TriangleMeshDesc)))
