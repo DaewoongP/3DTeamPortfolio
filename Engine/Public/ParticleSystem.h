@@ -103,11 +103,6 @@ protected:
 	void Action_By_Age();
 	void Action_By_Duration();
 	void Action_By_StopOption();
-	void Action_By_RateOverTime();
-	void Action_By_Distance();
-	void Action_By_Bursts();
-	void Action_By_RotationOverLifeTime(PARTICLE_IT& _particle_iter, _float fTimeDelta);
-	void Action_By_ColorOverLifeTime(PARTICLE_IT& _particle_iter, _float fTimeDelta);
 
 protected:
 	HRESULT Add_Components();
@@ -143,6 +138,8 @@ public:
 	static CParticleSystem* Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, const _tchar* _pDirectoryPath, _uint iLevel = 0);
 	virtual CGameObject* Clone(void* _pArg) override;
 	virtual void Free() override;
+
+	friend struct EMISSION_MODULE;
 };
 
 END

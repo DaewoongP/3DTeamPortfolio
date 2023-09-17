@@ -110,14 +110,8 @@ void CParticleSystem::Tick(_float _fTimeDelta)
 	// 파티클 나이 처리
 	Action_By_Age();
 
-	// 파티클 초당 생성
-	Action_By_RateOverTime();
-
-	// 파티클 이동 거리에 따른 생성
-	Action_By_Distance();
-
 	// Burst옵션에 따른 파티클 생성
-	Action_By_Bursts();
+	m_EmissionModuleDesc.Action(this, _fTimeDelta);
 	
 	// 카메라가 파티클 시스템의 로컬 포지션으로 감.
 	_float4 vCamPosition;
@@ -149,13 +143,12 @@ void CParticleSystem::Tick(_float _fTimeDelta)
 		// 위치 갱신
 		Particle_iter->WorldMatrix.Translation(vPos);
 
-		// 모듈
-		Action_By_RotationOverLifeTime(Particle_iter, _fTimeDelta);
+		// LifeTime 관련모듈
+		m_SizeOverLifeTimeModuleDesc.Action(Particle_iter, _fTimeDelta);
+		m_RotationOverLifetimeModuleDesc.Action(Particle_iter, _fTimeDelta);
+		m_ColorOverLifeTimeModuleDesc.Action(Particle_iter, _fTimeDelta);
 
-		// 모듈
-		Action_By_ColorOverLifeTime(Particle_iter, _fTimeDelta);
-
-		//  모듈
+		// 텍스처 시트 모듈
 		m_TextureSheetAnimationModuleDesc.Action(Particle_iter, _fTimeDelta);
 
 		// SRT 연산
@@ -404,105 +397,7 @@ void CParticleSystem::Action_By_StopOption()
 		Restart();
 	}
 }
-void CParticleSystem::Action_By_RateOverTime()
-{
-	if (m_EmissionModuleDesc.fRateOverTime <= 0.001f)
-		return;
 
-	// 초당 N개씩 생성하는 코드
-	_float fTimePerParticle = 1.f / m_EmissionModuleDesc.fRateOverTime;
-	while (m_EmissionModuleDesc.fRateOverTimeAcc >= fTimePerParticle)
-	{
-		Wating_One_Particle();
-		m_EmissionModuleDesc.fRateOverTimeAcc -= fTimePerParticle;
-	}
-}
-void CParticleSystem::Action_By_Distance()
-{
-	_float fPositionDelta = { _float3(m_EmissionModuleDesc.vCurPos - m_EmissionModuleDesc.vPrevPos).Length() };
-	if (fPositionDelta < 0.01f)
-		return;
-	_float fTotalParticles = fPositionDelta * m_EmissionModuleDesc.fRateOverDistance + m_EmissionModuleDesc.fAccumulatedError;
-	_uint iParticleCount = (_uint)fTotalParticles;
-
-	m_EmissionModuleDesc.fAccumulatedError = fTotalParticles - iParticleCount;
-
-	for (_uint i = 0; i < iParticleCount; ++i)
-	{
-		Wating_One_Particle();
-	}
-}
-void CParticleSystem::Action_By_Bursts()
-{
-	for (auto& Burst : m_EmissionModuleDesc.Bursts)
-	{
-		if (false == Burst.isTrigger && Burst.fTriggerTimeAcc >= Burst.fTime && 0 == Burst.iCycleCount)
-		{
-			if (RandomBool(Burst.fProbability))
-			{
-				Burst.isTrigger = true;
-				Burst.iCycleCount = 0;
-			}
-		}
-
-		if (true == Burst.isTrigger)
-		{
-			// 일정한 간격으로 파티클을 발생시키는 코드.
-			if (Burst.fIntervalTimeAcc >= Burst.fInterval)
-			{
-				for (_uint i = 0; i < Burst.iCount.x; ++i)
-				{
-					Wating_One_Particle();
-				}
-				Burst.fIntervalTimeAcc = 0.f;
-				++Burst.iCycleCount;
-			}
-
-			// 모든 사이클을 돌면 Trigger을 비활성화
-			if (Burst.iCycleCount >= Burst.iCycles)
-			{
-				Burst.isTrigger = false;
-			}
-		}
-	}
-}
-void CParticleSystem::Action_By_RotationOverLifeTime(PARTICLE_IT& _particle_iter, _float fTimeDelta)
-{
-	if (false == m_RotationOverLifetimeModuleDesc.isActivate)
-		return;
-}
-void CParticleSystem::Action_By_ColorOverLifeTime(PARTICLE_IT& _particle_iter, _float fTimeDelta)
-{
-	if (false == m_ColorOverLifeTimeModuleDesc.isActivate)
-		return;
-	_float4 changeAmount = m_ColorOverLifeTimeModuleDesc.vEndColor - m_ColorOverLifeTimeModuleDesc.vStartColor;
-
-	_particle_iter->vColor.x = CEase::Ease(m_ColorOverLifeTimeModuleDesc.eEase, _particle_iter->fAge
-		, m_ColorOverLifeTimeModuleDesc.vStartColor.x
-		, changeAmount.x
-		, _particle_iter->fLifeTime);
-
-	_particle_iter->vColor.y = CEase::Ease(m_ColorOverLifeTimeModuleDesc.eEase, _particle_iter->fAge
-		, m_ColorOverLifeTimeModuleDesc.vStartColor.y
-		, changeAmount.y
-		, _particle_iter->fLifeTime);
-
-	_particle_iter->vColor.z = CEase::Ease(m_ColorOverLifeTimeModuleDesc.eEase, _particle_iter->fAge
-		, m_ColorOverLifeTimeModuleDesc.vStartColor.z
-		, changeAmount.z
-		, _particle_iter->fLifeTime);
-
-	_particle_iter->vColor.w = CEase::Ease(m_ColorOverLifeTimeModuleDesc.eEase, _particle_iter->fAge
-		, m_ColorOverLifeTimeModuleDesc.vStartColor.w
-		, changeAmount.w
-		, _particle_iter->fLifeTime);
-
-	//_particle_iter->vColor = m_MainModuleDesc.vStartColor * _float3::Lerp(m_ColorOverLifeTimeModuleDesc.vStartColor.xyz()
-	//	, m_ColorOverLifeTimeModuleDesc.vEndColor.xyz(), _particle_iter->fAge / _particle_iter->fLifeTime).TransCoord();
-
-	// 레이어에서 빼고, 세이프 릴리즈도 해주고,
-	// 풀매니저 -> 레퍼런스 카운트를 1을 가지고 있어서.
-}
 void CParticleSystem::ResetStartPosition(PARTICLE_IT& _particle_iter)
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
@@ -742,24 +637,6 @@ void CParticleSystem::Sum_TimeDelta(const _float& _fTimeDelta)
 		Particle.fAge += _fTimeDelta;
 	for (auto& Particle : m_Particles[DELAY])
 		Particle.fAge += _fTimeDelta;
-
-	// EmissionModuel
-	for (auto& Burst : m_EmissionModuleDesc.Bursts)
-	{
-		if (true == Burst.isTrigger)
-		{
-			Burst.fIntervalTimeAcc += _fTimeDelta;
-		}
-
-		Burst.fTriggerTimeAcc += _fTimeDelta;
-	}
-	m_EmissionModuleDesc.fRateOverTimeAcc += _fTimeDelta;
-
-	// TextureSheetAnimationModuel
-	if (true == m_TextureSheetAnimationModuleDesc.isActivate)
-	{
-		m_TextureSheetAnimationModuleDesc.fTimeAcc += _fTimeDelta;
-	}
 }
 void CParticleSystem::Reset_Particle(PARTICLE_IT& _particle_iter)
 {

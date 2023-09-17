@@ -5,6 +5,7 @@
 
 // 객체 : 모든 파티클을 돌리는 ParticleSystem의 인스턴스를 뜻함.
 // 파티클 : 각 입자들을 의미함.
+BEGIN(Engine)
 typedef struct tagParticle
 {
 	_float		fAge = { 0.f };
@@ -19,7 +20,9 @@ typedef struct tagParticle
 	_float3		vScale = { 1.f, 1.f, 1.f };
 	_uint		iCurIndex = { 0 };
 }PARTICLE;
+class CParticleSystem;
 typedef list<PARTICLE>::iterator PARTICLE_IT;
+
 
 struct ENGINE_DLL MODULE
 {
@@ -80,6 +83,7 @@ struct ENGINE_DLL EMISSION_MODULE : public MODULE
 	
 	HRESULT Save(const _tchar* _pDirectoyPath);
 	HRESULT Load(const _tchar* _pDirectoyPath);
+	void Action(CParticleSystem* pParticleSystem, _float _fTimeDelta);
 	void Restart();
 
 	typedef struct tagBurst
@@ -185,6 +189,7 @@ struct ENGINE_DLL ROTATION_OVER_LIFETIME_MODULE : public MODULE
 
 	HRESULT Save(const _tchar* _pDirectoyPath);
 	HRESULT Load(const _tchar* _pDirectoyPath);
+	void Action(PARTICLE_IT& _particle_iter, _float _fTimeDelta);
 	void Restart();
 
 	// 자체 회전에 사용할 값들
@@ -243,3 +248,4 @@ struct ENGINE_DLL TEXTURE_SHEET_ANIMATION : public MODULE
 	_bool isUseNormalTexture = { false };
 	wstring wstrNormalPath = TEXT("../../Resources/Effects/Textures/Flipbooks/VFX_T_Dust_8x8_N.png");
 };
+END

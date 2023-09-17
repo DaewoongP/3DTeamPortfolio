@@ -1,5 +1,5 @@
 #include "..\Public\Modules.h"
-
+#include "ParticleSystem.h"
 void MODULE::Save(HANDLE hFile, _ulong& dwByte)
 {
 	WriteFile(hFile, &isActivate, sizeof isActivate, &dwByte, nullptr);
@@ -220,6 +220,81 @@ HRESULT EMISSION_MODULE::Load(const _tchar* _pDirectoyPath)
 	CloseHandle(hFile);
 	return S_OK;
 }
+void EMISSION_MODULE::Action(CParticleSystem* pParticleSystem, _float _fTimeDelta)
+{
+	if (false == isActivate)
+		return;
+
+	// EmissionModuel
+	for (auto& Burst : Bursts)
+	{
+		if (true == Burst.isTrigger)
+		{
+			Burst.fIntervalTimeAcc += _fTimeDelta;
+		}
+
+		Burst.fTriggerTimeAcc += _fTimeDelta;
+	}
+	fRateOverTimeAcc += _fTimeDelta;
+
+	for (auto& Burst : Bursts)
+	{
+		if (false == Burst.isTrigger && Burst.fTriggerTimeAcc >= Burst.fTime && 0 == Burst.iCycleCount)
+		{
+			if (RandomBool(Burst.fProbability))
+			{
+				Burst.isTrigger = true;
+				Burst.iCycleCount = 0;
+			}
+		}
+
+		if (true == Burst.isTrigger)
+		{
+			// 일정한 간격으로 파티클을 발생시키는 코드.
+			if (Burst.fIntervalTimeAcc >= Burst.fInterval)
+			{
+				for (_uint i = 0; i < Burst.iCount.x; ++i)
+				{
+					pParticleSystem->Wating_One_Particle();
+				}
+				Burst.fIntervalTimeAcc = 0.f;
+				++Burst.iCycleCount;
+			}
+
+			// 모든 사이클을 돌면 Trigger을 비활성화
+			if (Burst.iCycleCount >= Burst.iCycles)
+			{
+				Burst.isTrigger = false;
+			}
+		}
+	}
+
+	// 시간에 따른 생성
+	if (fRateOverTime >= 0.001f)
+	{
+		// 초당 N개씩 생성하는 코드
+		_float fTimePerParticle = 1.f / fRateOverTime;
+		while (fRateOverTimeAcc >= fTimePerParticle)
+		{
+			pParticleSystem->Wating_One_Particle();
+			fRateOverTimeAcc -= fTimePerParticle;
+		}
+	}
+
+	// 거리 따른 생성
+	_float fPositionDelta = { _float3(vCurPos - vPrevPos).Length() };
+	if (fPositionDelta < 0.01f)
+		return;
+	_float fTotalParticles = fPositionDelta * fRateOverDistance + fAccumulatedError;
+	_uint iParticleCount = (_uint)fTotalParticles;
+
+	fAccumulatedError = fTotalParticles - iParticleCount;
+
+	for (_uint i = 0; i < iParticleCount; ++i)
+	{
+		pParticleSystem->Wating_One_Particle();
+	}
+}
 void EMISSION_MODULE::Restart()
 {
 	for (auto& Burst : Bursts)
@@ -290,7 +365,7 @@ HRESULT SHAPE_MODULE::Save(const _tchar* _pDirectoyPath)
 	WriteFile(hFile, &fBaseRadius, sizeof(fBaseRadius), &dwByte, nullptr);
 	WriteFile(hFile, &fConeLength, sizeof(fConeLength), &dwByte, nullptr);
 	WriteFile(hFile, &isChase, sizeof(isChase), &dwByte, nullptr);
-	
+
 	CloseHandle(hFile);
 	return S_OK;
 }
@@ -503,6 +578,11 @@ HRESULT ROTATION_OVER_LIFETIME_MODULE::Load(const _tchar* _pDirectoyPath)
 
 	return S_OK;
 }
+void ROTATION_OVER_LIFETIME_MODULE::Action(PARTICLE_IT& _particle_iter, _float _fTimeDelta)
+{
+	if (false == isActivate)
+		return;
+}
 void ROTATION_OVER_LIFETIME_MODULE::Restart()
 {
 }
@@ -517,7 +597,35 @@ HRESULT COLOR_OVER_LIFETIME::Load(const _tchar* _pDirectoyPath)
 }
 void COLOR_OVER_LIFETIME::Action(PARTICLE_IT& _particle_iter, _float _fTimeDelta)
 {
+	if (false == isActivate)
+		return;
+	_float4 changeAmount = vEndColor - vStartColor;
 
+	_particle_iter->vColor.x = CEase::Ease(eEase, _particle_iter->fAge
+		, vStartColor.x
+		, changeAmount.x
+		, _particle_iter->fLifeTime);
+
+	_particle_iter->vColor.y = CEase::Ease(eEase, _particle_iter->fAge
+		, vStartColor.y
+		, changeAmount.y
+		, _particle_iter->fLifeTime);
+
+	_particle_iter->vColor.z = CEase::Ease(eEase, _particle_iter->fAge
+		, vStartColor.z
+		, changeAmount.z
+		, _particle_iter->fLifeTime);
+
+	_particle_iter->vColor.w = CEase::Ease(eEase, _particle_iter->fAge
+		, vStartColor.w
+		, changeAmount.w
+		, _particle_iter->fLifeTime);
+
+	//_particle_iter->vColor = m_MainModuleDesc.vStartColor * _float3::Lerp(vStartColor.xyz()
+	//	, vEndColor.xyz(), _particle_iter->fAge / _particle_iter->fLifeTime).TransCoord();
+
+	// 레이어에서 빼고, 세이프 릴리즈도 해주고,
+	// 풀매니저 -> 레퍼런스 카운트를 1을 가지고 있어서.
 }
 void COLOR_OVER_LIFETIME::Restart()
 {
@@ -538,7 +646,6 @@ void SIZE_OVER_LIFETIME::Action(PARTICLE_IT& _particle_iter, _float _fTimeDelta)
 void SIZE_OVER_LIFETIME::Restart()
 {
 }
-
 
 HRESULT TEXTURE_SHEET_ANIMATION::Save(const _tchar* _pDirectoyPath)
 {
