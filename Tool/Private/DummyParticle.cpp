@@ -85,11 +85,11 @@ void CDummyParticle::Tick_Imgui(_float _fTimeDelta)
 	ImGui::Separator();
 	RotationOverLifetimeModule_TreeNode(pEffectWindow);
 	ImGui::Separator();
-	RendererModule_TreeNode(pEffectWindow);
-	ImGui::Separator();
 	ColorOverLifeTime_TreeNode(pEffectWindow);
 	ImGui::Separator();
 	TextureSheetAnimationModule_TreeNode(pEffectWindow);
+	ImGui::Separator();
+	RendererModule_TreeNode(pEffectWindow);
 	ImGui::Separator();
 	Save_FileDialog();
 	Load_FileDialog();
@@ -569,7 +569,11 @@ void CDummyParticle::TextureSheetAnimationModule_TreeNode(CEffect_Window* pEffec
 {
 	TEXTURE_SHEET_ANIMATION& TSAModule = m_TextureSheetAnimationModuleDesc;
 
-	ImGui::Checkbox("##TextureSheetAnimationModule_CheckBox", &TSAModule.isActivate);
+	if (ImGui::Checkbox("##TextureSheetAnimationModule_CheckBox", &TSAModule.isActivate))
+	{
+		TSAModule.iWidthLength = 1;
+		TSAModule.iHeightLength = 1;
+	}
 
 	if (false == TSAModule.isActivate)
 	{
@@ -618,6 +622,7 @@ void CDummyParticle::TextureSheetAnimationModule_TreeNode(CEffect_Window* pEffec
 				}
 			}
 
+			pEffectWindow->Table_CheckBox("LoopOption", "ckjvidjf93sdf", &TSAModule.isLoopOption);
 			ImGui::EndTable();
 		}
 		ImGui::TreePop();

@@ -238,8 +238,8 @@ struct ENGINE_DLL TEXTURE_SHEET_ANIMATION : public MODULE
 	void Restart();
 
 	_uint iMaxIndex = { 0 };
-	_uint iWidthLength = { 0 };
-	_uint iHeightLength = { 0 };
+	_uint iWidthLength = { 1 };
+	_uint iHeightLength = { 1 };
 	_bool isStartFrameRange = { false };
 	_float2 vStartFrameRange = { 0.f, 1.f };
 	_float fStartFrame = { 0.f }; // [0, 1]
@@ -247,5 +247,6 @@ struct ENGINE_DLL TEXTURE_SHEET_ANIMATION : public MODULE
 	_float fTimeAcc = { 0.f };
 	_bool isUseNormalTexture = { false };
 	wstring wstrNormalPath = TEXT("../../Resources/Effects/Textures/Flipbooks/VFX_T_Dust_8x8_N.png");
+	_bool isLoopOption = { false };
 };
 END

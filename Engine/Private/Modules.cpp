@@ -676,6 +676,7 @@ HRESULT TEXTURE_SHEET_ANIMATION::Save(const _tchar* _pDirectoyPath)
 	WriteFile(hFile, &fUpdateInterval, sizeof(fUpdateInterval), &dwByte, nullptr);
 	WriteFile(hFile, &isUseNormalTexture, sizeof(isUseNormalTexture), &dwByte, nullptr);
 	WriteFile(hFile, wstrNormalPath.data(), sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
+	WriteFile(hFile, &isLoopOption, sizeof(isLoopOption), &dwByte, nullptr);
 
 	CloseHandle(hFile);
 	return S_OK;
@@ -683,7 +684,7 @@ HRESULT TEXTURE_SHEET_ANIMATION::Save(const _tchar* _pDirectoyPath)
 HRESULT TEXTURE_SHEET_ANIMATION::Load(const _tchar* _pDirectoyPath)
 {
 	fs::path fsFilePath = _pDirectoyPath;
-	fsFilePath = fsFilePath / TEXT("RendererModule.ptc");
+	fsFilePath = fsFilePath / TEXT("TextureSheetAnimationModule.ptc");
 
 	HANDLE hFile = CreateFile(fsFilePath.wstring().data()
 		, GENERIC_READ
@@ -711,6 +712,7 @@ HRESULT TEXTURE_SHEET_ANIMATION::Load(const _tchar* _pDirectoyPath)
 	ReadFile(hFile, &isUseNormalTexture, sizeof(isUseNormalTexture), &dwByte, nullptr);
 	ReadFile(hFile, wszBuffer, sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
 	wstrNormalPath = wszBuffer;
+	ReadFile(hFile, &isLoopOption, sizeof(isLoopOption), &dwByte, nullptr);
 
 	CloseHandle(hFile);
 	// 파티클 텍스처 시트 구현해!
@@ -728,14 +730,22 @@ void TEXTURE_SHEET_ANIMATION::Action(PARTICLE_IT& _particle_iter, _float fTimeDe
 	fTimeAcc = 0.f;
 	++_particle_iter->iCurIndex;
 	if (_particle_iter->iCurIndex > iMaxIndex)
-		_particle_iter->iCurIndex = 0;
+	{
+		if (false == isLoopOption)
+			_particle_iter->fLifeTime = 0.f;
+		else
+			_particle_iter->iCurIndex = 0;
+	}
 }
 void TEXTURE_SHEET_ANIMATION::Reset(PARTICLE_IT& _particle_iter)
 {
 	if (false == isActivate)
 		return;
 
-	_particle_iter->iCurIndex = 0;
+	if (true == isStartFrameRange)
+		fStartFrame = Random_Generator(vStartFrameRange.x, vStartFrameRange.y);
+
+	_particle_iter->iCurIndex = iMaxIndex * fStartFrame;
 }
 void TEXTURE_SHEET_ANIMATION::Restart()
 {

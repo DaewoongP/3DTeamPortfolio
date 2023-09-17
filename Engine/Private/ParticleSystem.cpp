@@ -324,10 +324,13 @@ HRESULT CParticleSystem::Save(const _tchar* _pDirectoryPath)
 		return E_FAIL;
 	if (FAILED(m_ShapeModuleDesc.Save(_pDirectoryPath)))
 		return E_FAIL;
-	if (FAILED(m_RendererModuleDesc.Save(_pDirectoryPath)))
+	if (FAILED(m_TextureSheetAnimationModuleDesc.Save(_pDirectoryPath)))
 		return E_FAIL;
 	if (FAILED(m_RotationOverLifetimeModuleDesc.Save(_pDirectoryPath)))
 		return E_FAIL;
+	if (FAILED(m_RendererModuleDesc.Save(_pDirectoryPath)))
+		return E_FAIL;
+	
 	return S_OK;
 }
 HRESULT CParticleSystem::Load(const _tchar* _pDirectoryPath)
@@ -338,10 +341,13 @@ HRESULT CParticleSystem::Load(const _tchar* _pDirectoryPath)
 		return E_FAIL;
 	if (FAILED(m_ShapeModuleDesc.Load(_pDirectoryPath)))
 		return E_FAIL;
-	if (FAILED(m_RendererModuleDesc.Load(_pDirectoryPath)))
+	if (FAILED(m_TextureSheetAnimationModuleDesc.Load(_pDirectoryPath)))
 		return E_FAIL;
 	if (FAILED(m_RotationOverLifetimeModuleDesc.Load(_pDirectoryPath)))
 		return E_FAIL;
+	if (FAILED(m_RendererModuleDesc.Load(_pDirectoryPath)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -707,10 +713,7 @@ void CParticleSystem::Reset_Particle(PARTICLE_IT& _particle_iter)
 	}
 
 	// 시작 회전
-
-
 	//_particle_iter->WorldMatrix = 
-
 
 	// 시작 위치
 	ResetStartPosition(_particle_iter);
@@ -719,9 +722,9 @@ void CParticleSystem::Reset_Particle(PARTICLE_IT& _particle_iter)
 	_particle_iter->vColor = m_MainModuleDesc.vStartColor;
 	//_particle_iter->fAngle = m_MainModuleDesc.f
 
-
 	_particle_iter->fGravityAccel = { 0.f };
 
+	m_TextureSheetAnimationModuleDesc.Reset(_particle_iter);
 }
 
 void CParticleSystem::Reset_AllParticles()
