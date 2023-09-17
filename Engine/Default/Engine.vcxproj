@@ -23,6 +23,7 @@
     <ClInclude Include="..\Public\Base.h" />
     <ClInclude Include="..\Public\Behavior.h" />
     <ClInclude Include="..\Public\BlackBoard.h" />
+    <ClInclude Include="..\Public\Bloom.h" />
     <ClInclude Include="..\public\Blur.h" />
     <ClInclude Include="..\Public\Bone.h" />
     <ClInclude Include="..\public\Bounding.h" />
@@ -146,6 +147,7 @@
     <ClCompile Include="..\Private\Base.cpp" />
     <ClCompile Include="..\Private\Behavior.cpp" />
     <ClCompile Include="..\Private\BlackBoard.cpp" />
+    <ClCompile Include="..\Private\Bloom.cpp" />
     <ClCompile Include="..\private\Blur.cpp" />
     <ClCompile Include="..\Private\Bone.cpp" />
     <ClCompile Include="..\private\Bounding.cpp" />
@@ -257,6 +259,7 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_AfterShade.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Bloom.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Blur.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Debug.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_DefaultEffect.hlsl" />

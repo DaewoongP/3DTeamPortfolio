@@ -29,13 +29,6 @@ float BlurWeights[23] =
 
 float total = 11.4776f;
 
-sampler BlurSampler = sampler_state
-{
-    Filter = MIN_MAG_MIP_LINEAR;
-    AddressU = clamp;
-    AddressV = clamp;
-};
-
 struct VS_IN
 {
     float3 vPosition : POSITION;
@@ -78,20 +71,22 @@ PS_OUT PS_MAIN_BLURX(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
     
-    float dx = 1.0f / (1280.f / 4.f);
-    
+    float dx = 1.0f / 1280.f;
+    int Count = 0;
     float2 UV = 0;
     
     for (int i = -11; i < 11; ++i)
     {
-
         UV = In.vTexUV + float2(dx * i, 0.f);
         vector SSAO = g_Texture.Sample(BlurSampler, UV);
         
         Out.vColor += BlurWeights[11 + i] * SSAO;
+        Count+=1;
     }
-
+   //if(Count>0)
     Out.vColor /= total;
+    //else
+    //    Out.vColor = vector(1.f, 1.f, 1.f, 1.f);
     
     return Out;
 }

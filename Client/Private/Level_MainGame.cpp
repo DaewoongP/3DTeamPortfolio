@@ -169,7 +169,7 @@ HRESULT CLevel_MainGame::Ready_Layer_BackGround(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	//Load_MapObject();
+	Load_MapObject();
 
 	Safe_Release(pGameInstance);
 
@@ -256,7 +256,7 @@ HRESULT CLevel_MainGame::Load_MapObject()
 	//_tchar dataFile[MAX_PATH] = { 0 };
 	//_stprintf_s(dataFile, TEXT("../../Resources/GameData/MapData/MapData%d.ddd"), (Num));
 
-	_tchar dataFile[MAX_PATH] = TEXT("../../Resources/GameData/MapData/MapData.ddd");
+	_tchar dataFile[MAX_PATH] = TEXT("../../Resources/GameData/MapData/new2.ddd");
 
 	HANDLE hFile = CreateFile(dataFile, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 

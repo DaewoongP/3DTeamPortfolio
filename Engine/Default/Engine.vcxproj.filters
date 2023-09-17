@@ -355,6 +355,15 @@
     <Filter Include="01. Utility\03. Components\02. Renderer\Blur">
       <UniqueIdentifier>{799ecc2a-624c-4be1-893f-cc68859512b0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\03. Components\02. Renderer\Bloom">
+      <UniqueIdentifier>{fc80dd6c-eb34-49d4-957d-fb35b941d43c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\02. Renderer\Glow">
+      <UniqueIdentifier>{44645e54-ea4c-469c-be94-9021413642f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\02. Renderer\Distortion">
+      <UniqueIdentifier>{8f07d4c3-cba6-4826-8064-c6c2886c4414}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -720,6 +729,9 @@
     <ClInclude Include="..\Public\UI.h">
       <Filter>01. Utility\03. Components\19. UI</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Bloom.h">
+      <Filter>01. Utility\03. Components\02. Renderer\Bloom</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -1052,6 +1064,9 @@
     <ClCompile Include="..\Private\UI.cpp">
       <Filter>01. Utility\03. Components\19. UI</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Bloom.cpp">
+      <Filter>01. Utility\03. Components\02. Renderer\Bloom</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Navigation.hlsl">
@@ -1092,6 +1107,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Blur.hlsl">
       <Filter>01. Utility\03. Components\02. Renderer\Blur</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Bloom.hlsl">
+      <Filter>01. Utility\03. Components\02. Renderer\Bloom</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
