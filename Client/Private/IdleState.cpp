@@ -61,24 +61,24 @@ void CIdleState::Go_Turn()
 		if (m_f135Angle < (*m_pOwnerLookAngle))
 		{
 			//180도를 실행
-			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Idle_Turn_Rht_180_anm"));
+			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Idle_Turn_Rht_135_anm"));
 		}
 		else if (m_f45Angle < (*m_pOwnerLookAngle))
 		{
 			//90도를 실행
-			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Idle_Turn_Rht_90_anm"));
+			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Idle_Turn_Rht_45_anm"));
 		}
 
 		//음수 왼쪽
 		if (-m_f135Angle > (*m_pOwnerLookAngle))
 		{
 			//180도를 실행
-			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Idle_Turn_Lft_180_anm"));
+			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Idle_Turn_Lft_135_anm"));
 		}
 		else if (-m_f45Angle > (*m_pOwnerLookAngle))
 		{
 			//90도를 실행
-			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Idle_Turn_Lft_90_anm"));
+			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Idle_Turn_Lft_45_anm"));
 		}
 
 		Set_StateMachine(TEXT("Move Turn"));

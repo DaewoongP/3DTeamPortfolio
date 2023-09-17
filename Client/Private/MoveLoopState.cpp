@@ -51,7 +51,7 @@ void CMoveLoopState::OnStateTick()
 
 	if (m_pOwnerModel->Is_Finish_Animation())
 	{
-		//m_pOwnerModel->Reset();
+		m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_anm"));
 	}
 }
 
@@ -83,13 +83,13 @@ void CMoveLoopState::Over_135()
 	if (m_f135Angle < (*m_pOwnerLookAngle))
 	{
 		//180도를 실행
-		m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Turn_Start_Rht_180_anm"));
+		m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Turn_Start_Rht_135_anm"));
 	}
 	//135보다 작다면 왼쪽
 	if (-m_f135Angle > (*m_pOwnerLookAngle))
 	{
 		//180도를 실행
-		m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Turn_Start_Lft_180_anm"));
+		m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Turn_Start_Lft_135_anm"));
 	}
 }
 

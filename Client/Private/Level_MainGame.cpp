@@ -57,6 +57,12 @@ HRESULT CLevel_MainGame::Initialize()
 		return E_FAIL;
 	}
 
+	if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/0916123.ddd"))))
+	{
+		MSG_BOX("Failed Load Map Object");
+
+		return E_FAIL;
+	}
 #ifdef _DEBUG
 	if (FAILED(Ready_Layer_Debug(TEXT("Layer_Debug"))))
 	{
@@ -170,8 +176,6 @@ HRESULT CLevel_MainGame::Ready_Layer_BackGround(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	//Load_MapObject();
-
 	Safe_Release(pGameInstance);
 
 	return S_OK;
@@ -248,18 +252,14 @@ HRESULT CLevel_MainGame::Ready_Layer_NPC(const _tchar* pLayerTag)
 
 	ENDINSTANCE;
 
-	return E_NOTIMPL;
+	return S_OK;
 }
 
-HRESULT CLevel_MainGame::Load_MapObject()
+HRESULT CLevel_MainGame::Load_MapObject(const _tchar* pObjectFilePath)
 {
-	// 데이터 파일 이름 선택
-	//_tchar dataFile[MAX_PATH] = { 0 };
-	//_stprintf_s(dataFile, TEXT("../../Resources/GameData/MapData/MapData%d.ddd"), (Num));
+	std::lock_guard<std::mutex> lock(mtx);
 
-	_tchar dataFile[MAX_PATH] = TEXT("../../Resources/GameData/MapData/MapData.ddd");
-
-	HANDLE hFile = CreateFile(dataFile, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+	HANDLE hFile = CreateFile(pObjectFilePath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
 	if (INVALID_HANDLE_VALUE == hFile)
 	{
@@ -269,27 +269,25 @@ HRESULT CLevel_MainGame::Load_MapObject()
 
 	// 맵 오브젝트 번호
 	_uint iObjectNum = 0;
-	vector<const _tchar*> wszModelName;
 
-	DWORD	dwByte = 0;
+	DWORD    dwByte = 0;
 
 	while (true)
 	{
-		LOADOBJECTDESC LoadDesc;
-		ZEROMEM(&LoadDesc);
-
-		if (!ReadFile(hFile, &LoadDesc.matTransform, sizeof(_float4x4), &dwByte, nullptr))
+		CMapObject::MAPOBJECTDESC MapObjectDesc;
+		
+		if (!ReadFile(hFile, &MapObjectDesc.WorldMatrix, sizeof(_float4x4), &dwByte, nullptr))
 		{
 			MSG_BOX("Failed to Read m_vecSaveObject.vPos");
 			return E_FAIL;
 		}
 
-		if (!ReadFile(hFile, &LoadDesc.iTagLen, sizeof(_uint), &dwByte, nullptr))
+		if (!ReadFile(hFile, &MapObjectDesc.iTagLen, sizeof(_uint), &dwByte, nullptr))
 		{
 			MSG_BOX("Failed to Read m_vecSaveObject.iTagLen");
 		}
 
-		if (!ReadFile(hFile, &LoadDesc.wszTag, LoadDesc.iTagLen, &dwByte, nullptr))
+		if (!ReadFile(hFile, &MapObjectDesc.wszTag, MapObjectDesc.iTagLen, &dwByte, nullptr))
 		{
 			MSG_BOX("Failed to Read m_vecSaveObject.wszTag");
 			return E_FAIL;
@@ -299,42 +297,7 @@ HRESULT CLevel_MainGame::Load_MapObject()
 		{
 			break;
 		}
-
-		_uint iCount = 0;
-
-		// 이미 생성된 프로토타입이 아니어야 생성
-		BEGININSTANCE; for (auto& iter : wszModelName)
-		{
-			if (!lstrcmp(iter, LoadDesc.wszTag))
-			{
-				++iCount;
-			}
-		}
-
-		if (0 == iCount)
-		{
-			wszModelName.push_back(LoadDesc.wszTag);
-
-			// 프로토타입 생성 부분
-			wstring ws(LoadDesc.wszTag);
-			size_t findIndex = ws.find(TEXT("Model_")) + 6;
-
-			wstring modelName = ws.substr(findIndex);
-
-			wstring modelPath(TEXT("../../Resources/Models/MapObject/NonAnims/"));
-			modelPath += modelName;
-			modelPath += TEXT("/");
-			modelPath += modelName;
-			modelPath += TEXT(".dat");
-
-			// 프로토타입 생성
-			_float4x4 PivotMatrix = XMMatrixIdentity();
-			if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAINGAME, LoadDesc.wszTag,
-				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, modelPath.c_str(), PivotMatrix))))
-			{
-				MSG_BOX("Failed to Create New Model Prototype");
-			}
-		}
+		BEGININSTANCE;
 
 		// 맵 오브젝트에 번호 붙여줌
 		_tchar wszobjName[MAX_PATH] = { 0 };
@@ -343,20 +306,12 @@ HRESULT CLevel_MainGame::Load_MapObject()
 		// 번호를 붙인 태그로 MapObject 등록
 		if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME,
 			TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_BackGround"),
-			wszobjName, &LoadDesc.matTransform)))
+			wszobjName, &MapObjectDesc)))
 		{
 			MSG_BOX("Failed to Install MapObject");
 			ENDINSTANCE;
 			return E_FAIL;
 		}
-
-		// 마지막에 설치한 맵 오브젝트 주소 가져옴
-		CMapObject* pObject = static_cast<CMapObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME,
-			TEXT("Layer_BackGround"), wszobjName));
-
-		pObject->Add_Model_Component(LoadDesc.wszTag);
-		pObject->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMesh"));
-		pObject->Set_Color(iObjectNum); // 고유한 색깔 값을 넣어줌
 
 		++iObjectNum; ENDINSTANCE;
 	}
@@ -397,6 +352,13 @@ HRESULT CLevel_MainGame::Ready_Layer_Effect(const _tchar* pLayerTag)
 HRESULT CLevel_MainGame::Ready_Layer_UI(const _tchar* pLayerTag)
 {
 	BEGININSTANCE;
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
+	{
+		MSG_BOX("Failed Add Scene : (Scene_Main)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
 	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
 	{
 		MSG_BOX("Failed Add Scene : (Scene_Main)");

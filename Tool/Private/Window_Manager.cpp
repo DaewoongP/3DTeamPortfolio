@@ -105,6 +105,23 @@ void CWindow_Manager::Tick(_float fTimeDelta)
 		m_eLoadingFlag |= OBJECT_LOAD;
 	}
 
+	if (ImGui::RadioButton("Monster", iCurMenuList, MONSTER_WINDOW))
+	{
+		if (0 == (m_eLoadingFlag & MONSTER_LOAD))
+		{
+			if (FAILED(Add_Window(TEXT("Monster_Window"),
+				CMonster_Window::Create(m_pDevice, m_pContext,
+					ImVec2(_float(g_iWinSizeX + 8), _float(0.f)), ImVec2(446.f, 768.f)))))
+			{
+				MSG_BOX("Failed Create Monster_Window");
+				return;
+			}
+		}
+
+		Setup_Current_Window(TEXT("Monster_Window"));
+		m_eLoadingFlag |= MONSTER_LOAD;
+	}
+
 	if (ImGui::RadioButton("TriangleCollider", iCurMenuList, TRIANGLECOLLIDER_WINDOW))
 	{
 		if (0 == (m_eLoadingFlag & TRIANGLECOLLIDER_LOAD))

@@ -355,6 +355,9 @@
     <Filter Include="01. Utility\03. Components\02. Renderer\Blur">
       <UniqueIdentifier>{799ecc2a-624c-4be1-893f-cc68859512b0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\03. Components\14. RigidBody\DebugRender\TriangleMesh">
+      <UniqueIdentifier>{db7e9bcc-84db-49bb-a143-fda5a29a42c9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -720,6 +723,12 @@
     <ClInclude Include="..\Public\UI.h">
       <Filter>01. Utility\03. Components\19. UI</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Texture_Filpbook.h">
+      <Filter>01. Utility\03. Components\06. Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Debug_Render_TriangleMesh.h">
+      <Filter>01. Utility\03. Components\14. RigidBody\DebugRender\TriangleMesh</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -1051,6 +1060,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI.cpp">
       <Filter>01. Utility\03. Components\19. UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Texture_Filpbook.cpp">
+      <Filter>01. Utility\03. Components\06. Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Debug_Render_TriangleMesh.cpp">
+      <Filter>01. Utility\03. Components\14. RigidBody\DebugRender\TriangleMesh</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

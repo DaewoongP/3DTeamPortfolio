@@ -110,7 +110,7 @@ HRESULT CMesh::Ready_VertexBuffer_NonAnim(const Engine::MESH Mesh, _float4x4 Piv
 	VTXMESH* pVertices = new VTXMESH[m_iNumVertices];
 	ZeroMemory(pVertices, sizeof(VTXMESH) * m_iNumVertices);
 
-	for (size_t i = 0; i < m_iNumVertices; i++)
+	for (_uint i = 0; i < m_iNumVertices; ++i)
 	{
 		memcpy(&pVertices[i].vPosition, &Mesh.vPositions[i], sizeof(_float3));
 		XMStoreFloat3(&pVertices[i].vPosition,

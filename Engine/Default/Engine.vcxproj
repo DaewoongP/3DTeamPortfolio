@@ -30,6 +30,7 @@
     <ClInclude Include="..\Public\Bounding_OBB.h" />
     <ClInclude Include="..\public\Bounding_Sphere.h" />
     <ClInclude Include="..\Public\ConvexMesh.h" />
+    <ClInclude Include="..\public\Debug_Render_TriangleMesh.h" />
     <ClInclude Include="..\public\Ease.h" />
     <ClInclude Include="..\Public\Debug_Functions.h" />
     <ClInclude Include="..\public\Debug_Render_Box.h" />
@@ -62,6 +63,7 @@
     <ClInclude Include="..\Public\CustomModel.h" />
     <ClInclude Include="..\Public\Modules.h" />
     <ClInclude Include="..\Public\Status.h" />
+    <ClInclude Include="..\Public\Texture_Filpbook.h" />
     <ClInclude Include="..\public\Trail.h" />
     <ClInclude Include="..\Public\TriangleMesh.h" />
     <ClInclude Include="..\Public\UI.h" />
@@ -153,6 +155,7 @@
     <ClCompile Include="..\Private\Bounding_OBB.cpp" />
     <ClCompile Include="..\private\Bounding_Sphere.cpp" />
     <ClCompile Include="..\Private\ConvexMesh.cpp" />
+    <ClCompile Include="..\private\Debug_Render_TriangleMesh.cpp" />
     <ClCompile Include="..\Private\Ease.cpp" />
     <ClCompile Include="..\private\Debug_Render_Box.cpp" />
     <ClCompile Include="..\private\Debug_Render_Capsule.cpp" />
@@ -184,6 +187,7 @@
     <ClCompile Include="..\Private\CustomModel.cpp" />
     <ClCompile Include="..\Private\Modules.cpp" />
     <ClCompile Include="..\Private\Status.cpp" />
+    <ClCompile Include="..\Private\Texture_Filpbook.cpp" />
     <ClCompile Include="..\private\Trail.cpp" />
     <ClCompile Include="..\Private\TriangleMesh.cpp" />
     <ClCompile Include="..\Private\UI.cpp" />

@@ -8,6 +8,7 @@
 #ifdef _DEBUG
 #include "Shader.h"
 #include "Debug_Render_HeightField.h"
+#include "Debug_Render_TriangleMesh.h"
 #include "Debug_Render_Box.h"
 #include "Debug_Render_Sphere.h"
 #include "Debug_Render_Capsule.h"
@@ -187,6 +188,14 @@ HRESULT CRigidBody::Initialize_Prototype()
 		return E_FAIL;
 	}
 
+	if (FAILED(pComponent_Manager->Add_Prototype(0, TEXT("Prototype_Component_RigidBody_Debug_Render_TriangleMesh"),
+		CDebug_Render_TriangleMesh::Create(m_pDevice, m_pContext), true)))
+	{
+		MSG_BOX("Failed Create Prototype : RigidBody DebugRender TriangleMesh");
+		Safe_Release(pComponent_Manager);
+		return E_FAIL;
+	}
+
 	Safe_Release(pComponent_Manager);
 #endif // _DEBUG
 
@@ -296,7 +305,8 @@ HRESULT CRigidBody::Create_Collider(RIGIDBODYDESC* pRigidBodyDesc)
 	// 32비트 데이터라 총 8개로 플래그값 설정 가능 (word3 까지 포함하면 총 32개 옵션 설정가능.)
 	// 구조체에 옵션값으로 설정하게 해줘야함.
 	PxFilterData FilterData;
-	if (PxGeometryType::eHEIGHTFIELD == pRigidBodyDesc->pGeometry->getType())
+	if (PxGeometryType::eHEIGHTFIELD == pRigidBodyDesc->pGeometry->getType() ||
+		PxGeometryType::eTRIANGLEMESH == pRigidBodyDesc->pGeometry->getType())
 		FilterData.word0 = 0;
 	else
 		FilterData.word0 = 0x1111; // 이데이터는 일단 고정.
@@ -502,6 +512,35 @@ HRESULT CRigidBody::Add_Components(PxGeometry* pPxValues, PxShape* pShape)
 		}
 
 		pHeightField->release();
+	}
+	else if (PxGeometryType::eTRIANGLEMESH == pPxValues->getType())
+	{
+		CDebug_Render_TriangleMesh::TRIANGLEMESHDESC TriangleMeshDesc;
+		PxTriangleMesh* pTriangleMesh = reinterpret_cast<PxTriangleMeshGeometry*>(pPxValues)->triangleMesh;
+		const PxVec3* pVertices = pTriangleMesh->getVertices();
+		const void* pTriangles = pTriangleMesh->getTriangles();
+		_uint iNumVertices = pTriangleMesh->getNbVertices();
+		_uint iNumTriangles = pTriangleMesh->getNbTriangles();
+		
+		TriangleMeshDesc.iNumTriangles = iNumTriangles;
+		TriangleMeshDesc.vOffsetPosition = vOffsetPos;
+		TriangleMeshDesc.vOffsetRotation = vOffsetRot;
+		vector<_float3> Triangles;
+		Triangles.reserve(iNumVertices);
+		for (_uint i = 0; i < iNumVertices; ++i)
+		{
+			Triangles.push_back(PhysXConverter::ToXMFLOAT3(pVertices[i]));
+		}
+
+		TriangleMeshDesc.pTriangles = Triangles.data();
+		
+		/* For.Com_Debug_Render_TriangleMesh */
+		if (FAILED(CComposite::Add_Component(0, TEXT("Prototype_Component_RigidBody_Debug_Render_TriangleMesh"),
+			TEXT("Com_Debug_Render_TriangleMesh"), reinterpret_cast<CComponent**>(&pComponent), &TriangleMeshDesc)))
+		{
+			MSG_BOX("Failed CRigidBody Add_Component : (Com_Debug_Render_TriangleMesh)");
+			return E_FAIL;
+		}
 	}
 
 	if (nullptr == pComponent)
