@@ -127,7 +127,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>../../Reference/Librarys/</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Engine_d.lib;DirectXTKd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Engine_d.lib\;DirectXTKd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <FxCompile>
       <ShaderType>Effect</ShaderType>
@@ -168,6 +168,7 @@
     <ClInclude Include="..\public\Main3_Loader.h" />
     <ClInclude Include="..\Public\Check_Distance.h" />
     <ClInclude Include="..\Public\UI_Font.h" />
+    <ClInclude Include="..\Public\UI_Group_Cursor.h" />
     <ClInclude Include="..\Public\UI_Group_Enemy_HP.h" />
     <ClInclude Include="..\public\Main0_Loader.h" />
     <ClInclude Include="..\Public\MoveLoopState.h" />
@@ -190,7 +191,6 @@
     <ClInclude Include="..\public\Main2_Loader.h" />
     <ClInclude Include="..\Public\UI_Back.h" />
     <ClInclude Include="..\Public\UI_Effect_Back.h" />
-    <ClInclude Include="..\Public\UI_Enemy_HP.h" />
     <ClInclude Include="..\Public\UI_Finisher.h" />
     <ClInclude Include="..\Public\UI_Finisher_Icon.h" />
     <ClInclude Include="..\Public\UI_Group_Finisher.h" />
@@ -301,6 +301,7 @@
     <ClCompile Include="..\private\Main3_Loader.cpp" />
     <ClCompile Include="..\Private\Check_Distance.cpp" />
     <ClCompile Include="..\Private\UI_Font.cpp" />
+    <ClCompile Include="..\Private\UI_Group_Cursor.cpp" />
     <ClCompile Include="..\Private\UI_Group_Enemy_HP.cpp" />
     <ClCompile Include="..\private\Main0_Loader.cpp" />
     <ClCompile Include="..\Private\MoveLoopState.cpp" />
@@ -323,7 +324,6 @@
     <ClCompile Include="..\private\Main2_Loader.cpp" />
     <ClCompile Include="..\Private\UI_Back.cpp" />
     <ClCompile Include="..\Private\UI_Effect_Back.cpp" />
-    <ClCompile Include="..\Private\UI_Enemy_HP.cpp" />
     <ClCompile Include="..\Private\UI_Finisher.cpp" />
     <ClCompile Include="..\Private\UI_Finisher_Icon.cpp" />
     <ClCompile Include="..\Private\UI_Group_Finisher.cpp" />
@@ -443,6 +443,7 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxCube.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxMesh.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTex.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTexRotation.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Bin\ShaderFiles\Shader_Client_Defines.hlsli" />

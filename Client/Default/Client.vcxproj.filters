@@ -292,6 +292,9 @@
     <Filter Include="01. Levels\99. Loading\Loader">
       <UniqueIdentifier>{5d7f902a-4002-432f-8bd9-34922b397410}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_Cursor">
+      <UniqueIdentifier>{a63a6343-ce45-4b8e-a9d3-a44f48775b53}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -609,8 +612,8 @@
     <ClInclude Include="..\public\Main0_Loader.h">
       <Filter>01. Levels\99. Loading\Loader</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\UI_Enemy_HP.h">
-      <Filter>02. GameObject\05. UI\UI</Filter>
+    <ClInclude Include="..\Public\UI_Group_Cursor.h">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Cursor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -899,8 +902,8 @@
     <ClCompile Include="..\private\Main0_Loader.cpp">
       <Filter>01. Levels\99. Loading\Loader</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\UI_Enemy_HP.cpp">
-      <Filter>02. GameObject\05. UI\UI</Filter>
+    <ClCompile Include="..\Private\UI_Group_Cursor.cpp">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Cursor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -945,6 +948,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Protego.hlsl">
       <Filter>97. ShaderFiles\Magic\Protego</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTexRotation.hlsl">
+      <Filter>97. ShaderFiles\Textures</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

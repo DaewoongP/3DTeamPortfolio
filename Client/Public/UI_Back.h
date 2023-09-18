@@ -19,6 +19,7 @@ private:
 
 public:
 	void Set_Rotation(_float3 vAxis, _float fRadian);
+	void Set_RemoveBlack(_bool isRemove = true) { m_isRemoveBlack = isRemove; }
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -35,6 +36,9 @@ private:
 private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
+
+private:
+	_bool		m_isRemoveBlack = { false };
 
 public:
 	static CUI_Back* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
