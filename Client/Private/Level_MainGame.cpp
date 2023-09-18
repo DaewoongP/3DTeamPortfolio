@@ -96,7 +96,7 @@ HRESULT CLevel_MainGame::Initialize()
 	}
 
 	
-	/* ���� �ʱ�ȭ�� �Բ� ����ð� �ʱ�ȭ */
+	/* ���� �ʱ�ȭ�� �Բ� ����ð�?�ʱ�ȭ */
 	pGameInstance->Reset_World_TimeAcc();
 	// ���� �� ����.
 	pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
@@ -310,7 +310,7 @@ HRESULT CLevel_MainGame::Load_MapObject(const _tchar* pObjectFilePath)
 		_tchar wszobjName[MAX_PATH] = { 0 };
 		_stprintf_s(wszobjName, TEXT("GameObject_MapObject_%d"), (iObjectNum));
 
-		// ��ȣ�� ���� �±׷� MapObject ���
+		// ��ȣ�� ���� �±׷� MapObject ���?
 		if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME,
 			TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_BackGround"),
 			wszobjName, &MapObjectDesc)))

@@ -537,9 +537,9 @@ HRESULT RENDERER_MODULE::Load(const _tchar* _pDirectoyPath)
 	ReadFile(hFile, &isDeleteY, sizeof(isDeleteY), &dwByte, nullptr);
 	ReadFile(hFile, &isUseGradientTexture, sizeof(isUseGradientTexture), &dwByte, nullptr);
 	ReadFile(hFile, wszBuffer, sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
-	wstrGraientTexture = wszBuffer;
-	ReadFile(hFile, szBuffer, sizeof(_char) * MAX_PATH, &dwByte, nullptr);
-	strPass = szBuffer;
+	/*wstrGraientTexture = wszBuffer;
+	ReadFile(hFile, szBuffer, sizeof(_char) * MAX_PATH, &dwByte, nullptr);*/
+	//strPass = szBuffer;
 	CloseHandle(hFile);
 	return S_OK;
 }
