@@ -115,11 +115,11 @@ protected:
 	MAIN_MODULE						m_MainModuleDesc;
 	EMISSION_MODULE					m_EmissionModuleDesc;
 	SHAPE_MODULE					m_ShapeModuleDesc;
-	RENDERER_MODULE					m_RendererModuleDesc;
 	COLOR_OVER_LIFETIME				m_ColorOverLifeTimeModuleDesc;
 	SIZE_OVER_LIFETIME				m_SizeOverLifeTimeModuleDesc;
 	ROTATION_OVER_LIFETIME_MODULE	m_RotationOverLifetimeModuleDesc;
 	TEXTURE_SHEET_ANIMATION			m_TextureSheetAnimationModuleDesc;
+	RENDERER_MODULE					m_RendererModuleDesc;
 
 protected: 
 	//CVIBuffer_Geometry* m_pShapeBuffer = { nullptr };

@@ -253,9 +253,6 @@
     <Filter Include="01. Utility\02. GameObjects\01. Geometry">
       <UniqueIdentifier>{1384f4d7-749c-4868-b059-bcaf61a52b4f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\03. Components\07. VIBuffer\Geometry\Shader">
-      <UniqueIdentifier>{e399c3da-b65d-48dc-965f-f4a2aaed7461}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Utility\98. ShaderFiles">
       <UniqueIdentifier>{33f1a79f-231a-4c0f-99eb-1faf844badeb}</UniqueIdentifier>
     </Filter>
@@ -375,6 +372,9 @@
     </Filter>
     <Filter Include="01. Utility\03. Components\07. VIBuffer\Instance\Default\Point">
       <UniqueIdentifier>{39a6cb73-73c3-40a8-8cb7-ff0bd90b75f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\07. VIBuffer\Geometry\UVSphere">
+      <UniqueIdentifier>{4fbe0763-4afb-4294-8604-4ae722abab15}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -750,6 +750,9 @@
     <ClInclude Include="..\public\VIBuffer_Rect_Color_Index_Instance.h">
       <Filter>01. Utility\03. Components\07. VIBuffer\Instance\ColorIndex\Rect</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\VIBuffer_UVSphere.h">
+      <Filter>01. Utility\03. Components\07. VIBuffer\Geometry\UVSphere</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -1090,6 +1093,9 @@
     </ClCompile>
     <ClCompile Include="..\private\VIBuffer_Rect_Color_Index_Instance.cpp">
       <Filter>01. Utility\03. Components\07. VIBuffer\Instance\ColorIndex\Rect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\VIBuffer_UVSphere.cpp">
+      <Filter>01. Utility\03. Components\07. VIBuffer\Geometry\UVSphere</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -14,6 +14,8 @@
 #include "Font_Manager.h"
 #endif // _DEBUG
 
+const _char* CRenderer::pRenderGroup[RENDER_END] = { "Render_Priority", "Render_Depth", "Render_Nonblend"
+, "Render_NonLight", "Render_Blend", "Render_Picking", "Render_Brushing", "Render_UI", "Render_UITexture" };
 
 CRenderer::CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CComponent(pDevice, pContext)
@@ -815,7 +817,6 @@ HRESULT CRenderer::Render_Bloom()
 
 HRESULT CRenderer::Render_Distortion()
 {
-
 	m_pTexture->Bind_ShaderResource(m_pAfterShader, "g_vDistortionTexture");
 	m_pTexture2->Bind_ShaderResource(m_pAfterShader, "g_vAlphaTexture");
 	m_pTexture3->Bind_ShaderResource(m_pAfterShader, "g_PostProcessingTexture");

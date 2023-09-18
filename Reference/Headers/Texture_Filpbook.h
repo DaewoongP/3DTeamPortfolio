@@ -29,6 +29,14 @@ protected:
 public:
 	void Set_Position(_float3 vPos);
 
+	// For. Binding
+	HRESULT Bind_DiffuseTexture(CShader* pShader, const _char* pConstantName);
+	HRESULT Bind_NormalTexture(CShader* pShader, const _char* pConstantName);
+	HRESULT Bind_FilpbookMaterialTexture(CShader* pShader, const _char* pConstantName);
+	const _uint* Get_WidthLengthPtr() { return &m_iWidthLength; }
+	const _uint* Get_HeightLengthPtr() { return &m_iHeightLength; }
+	const _uint* Get_CurIndexPtr() { return &m_iCurIndex; }
+
 public:
 	virtual HRESULT Initialize_Prototype(_uint iLevel, const _tchar* pFilePath);
 	virtual HRESULT Initialize(void* pArg) override;
@@ -54,6 +62,7 @@ protected: /* For. Component */
 	CShader* m_pShader = { nullptr };
 	CTexture* m_pDiffuseTexture = { nullptr };
 	CTexture* m_pNormalTexture = { nullptr };
+	CTexture* m_pFlipbookMaterialTexture = { nullptr };
 	CRenderer* m_pRenderer = { nullptr };
 	CVIBuffer_Rect* m_pBuffer = { nullptr };
 
@@ -64,9 +73,9 @@ protected:
 
 	// Row, Col
 	_uint m_iCurIndex = { 0 };
-	_uint m_iMaxIndex = { 0 };
-	_uint m_iWidthLength = { 0 };
-	_uint m_iHeightLength = { 0 };
+	_uint m_iMaxIndex = { 1 };
+	_uint m_iWidthLength = { 1 };
+	_uint m_iHeightLength = { 1 };
 
 	// ClipChannel
 	string m_strClipChannel = { "Red" };
@@ -92,6 +101,9 @@ protected:
 	// Update Interval
 	_float m_fUpdateInterval = { 0.0159f };
 	_float m_fTimeAcc = { 0.f };
+
+	_bool m_isUseFlipbookMaterialTexture = { false };
+	wstring m_wstrFlipbookMaterialPath = TEXT("../../Resources/Effects/Textures/Flipbooks/VFX_T_Fireball_Dir_01_D_FM.png");
 
 protected:
 	HRESULT Add_Components();

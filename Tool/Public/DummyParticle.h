@@ -97,7 +97,15 @@ private:
 	class CComboBox* m_pMeshTypeCombo = { nullptr };
 	class CComboBox* m_pStopActionCombo = { nullptr };
 	class CComboBox* m_pClipChannelCombo = { nullptr };
+	class CComboBox* m_pColorEaseCombo = { nullptr };
+	class CComboBox* m_pPassComboBox = { nullptr };
 	vector<CComboBox*> m_pEaseCombo;
+	class CComboBox* m_pSizeXEaseCombo = { nullptr };
+	class CComboBox* m_pSizeYEaseCombo = { nullptr };
+	class CComboBox* m_pSizeZEaseCombo = { nullptr };
+	class CComboBox* m_pAngularVelocityXEaseCombo = { nullptr };
+	class CComboBox* m_pAngularVelocityYEaseCombo = { nullptr };
+	class CComboBox* m_pAngularVelocityZEaseCombo = { nullptr };
 
 	class CImageFileDialog* m_pMaterialTextureIFD = { nullptr };
 	class CImageFileDialog* m_pAlphaTextureIFD = { nullptr };
