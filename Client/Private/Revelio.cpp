@@ -50,19 +50,19 @@ void CRevelio::Late_Tick(_float fTimeDelta)
 void CRevelio::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
 	__super::OnCollisionEnter(CollisionEventDesc);
-	cout << "Player Enter" << endl;
+	//cout << "Player Enter" << endl;
 }
 
 void CRevelio::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)
 {
 	__super::OnCollisionStay(CollisionEventDesc);
-	cout << "stay" << endl;
+	//cout << "stay" << endl;
 }
 
 void CRevelio::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 {
 	__super::OnCollisionExit(CollisionEventDesc);
-	cout << "Exit" << endl;
+	//cout << "Exit" << endl;
 }
 
 HRESULT CRevelio::Add_Components()

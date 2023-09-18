@@ -95,11 +95,20 @@ HRESULT CMonster_Window::Render()
 
 void CMonster_Window::Picking_Menu()
 {
+	if (true == m_pGameInstance->Get_DIKeyState(DIK_U, CInput_Device::KEY_DOWN))
+		m_isLockMouseMove = !m_isLockMouseMove;
+
 	_float3 vPos = Find_PickingPos();
 
 	// 현재 피킹 위치 표시
 	ImGui::Text("Picking Position");
 	ImGui::Text("Pressing LShift : Rounding the value");
+	ImGui::Text("Follow Mouse Position Mode : "); ImGui::SameLine();
+	if (true == m_isLockMouseMove)
+		ImGui::Text("Disable");
+	else
+		ImGui::Text("Enable");
+
 	ImGui::Text("%.1f /", vPos.x);
 	ImGui::SameLine();
 	ImGui::Text("%.1f /", vPos.y);
@@ -116,7 +125,7 @@ void CMonster_Window::Picking_Menu()
 	ImGui::DragFloat3("Rotation", m_vDummyMatrix[DUMMY_ROT], 5.f, 0.f, 360.f);
 	ImGui::SameLine(); CHelpMaker::HelpMarker("0.f ~ 360.f");
 
-	ImGui::DragFloat3("Translation", m_vDummyMatrix[DUMMY_TRANS], 1.f, -50.f, 50.f);
+	ImGui::DragFloat3("Translation", m_vDummyMatrix[DUMMY_TRANS], 0.1f, -50.f, 50.f);
 	ImGui::SameLine(); CHelpMaker::HelpMarker("-50.f ~ 50.f");
 
 	// 상태 행렬 초기화
@@ -467,12 +476,6 @@ _float3 CMonster_Window::Find_PickingPos()
 	_float4 vRayPos = { 0.f, 0.f, 0.f, 1.f };
 	_float4 vRayDir = { 0.f, 0.f, 0.f, 0.f };
 
-	// shift키를 누르고 있으면 격자에 딱 맞게 위치가 반올림됨
-	if (true == m_pGameInstance->Get_DIKeyState(DIK_U, CInput_Device::KEY_DOWN))
-	{
-		m_isLockMouseMove = !m_isLockMouseMove;
-	}
-
 	if (true == m_isLockMouseMove)
 	{
 		return m_vLockingMousePos;
@@ -555,6 +558,8 @@ HRESULT CMonster_Window::Create_Dummy()
 
 	if (m_pGameInstance->Get_DIKeyState(DIK_H, CInput_Device::KEY_PRESSING))
 	{
+		m_isLockMouseMove = false;
+
 		if(_float3(-1.f, -1.f, -1.f) != vPos && 
 			m_pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN))
 		{
@@ -588,6 +593,8 @@ HRESULT CMonster_Window::Create_Dummy()
 			Safe_AddRef(MonsterData.pDummy);
 		}
 	}
+	else
+		m_isLockMouseMove = true;
 
 	if (ImGui::Button("Exit Create Monster"))
 		m_isCreateMonster = false;

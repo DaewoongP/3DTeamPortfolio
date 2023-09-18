@@ -96,17 +96,17 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 
 void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
-	cout << "Player Enter" << endl;
+	//cout << "Player Enter" << endl;
 }
 
 void CPlayer::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)
 {
-	cout << "stay" << endl;
+	//cout << "stay" << endl;
 }
 
 void CPlayer::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 {
-	cout << "Exit" << endl;
+	//cout << "Exit" << endl;
 }
 
 HRESULT CPlayer::Render()
@@ -422,7 +422,7 @@ HRESULT CPlayer::Ready_Camera()
 
 void CPlayer::MagicTestTextOutput()
 {
-	cout << "마법 발동" << endl;
+	//cout << "마법 발동" << endl;
 }
 
 #ifdef _DEBUG

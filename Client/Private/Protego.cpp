@@ -51,19 +51,19 @@ void CProtego::Late_Tick(_float fTimeDelta)
 void CProtego::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
 	__super::OnCollisionEnter(CollisionEventDesc);
-	cout << "Player Enter" << endl;
+	//cout << "Player Enter" << endl;
 }
 
 void CProtego::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)
 {
 	__super::OnCollisionStay(CollisionEventDesc);
-	cout << "stay" << endl;
+	//cout << "stay" << endl;
 }
 
 void CProtego::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 {
 	__super::OnCollisionExit(CollisionEventDesc);
-	cout << "Exit" << endl;
+	//cout << "Exit" << endl;
 }
 
 HRESULT CProtego::Add_Components()

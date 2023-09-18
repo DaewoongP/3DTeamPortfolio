@@ -522,7 +522,7 @@
     <ClInclude Include="..\Public\Default_MagicTraill_Effect.h">
       <Filter>02. GameObject\03. Effect\Default_MagicTraill_Effect</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Random_Attack.h">
+    <ClInclude Include="..\Public\Random_Select.h">
       <Filter>03. Behaviors\03. RandomChoose</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Action_Deflect.h">
@@ -596,6 +596,9 @@
     </ClInclude>
     <ClInclude Include="..\public\Main0_Loader.h">
       <Filter>01. Levels\99. Loading\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Sequence_Levitated.h">
+      <Filter>03. Behaviors\02. Sequences</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -803,7 +806,7 @@
     <ClCompile Include="..\Private\Default_MagicTraill_Effect.cpp">
       <Filter>02. GameObject\03. Effect\Default_MagicTraill_Effect</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Random_Attack.cpp">
+    <ClCompile Include="..\Private\Random_Select.cpp">
       <Filter>03. Behaviors\03. RandomChoose</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Action_Deflect.cpp">
@@ -877,6 +880,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Main0_Loader.cpp">
       <Filter>01. Levels\99. Loading\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Sequence_Levitated.cpp">
+      <Filter>03. Behaviors\02. Sequences</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

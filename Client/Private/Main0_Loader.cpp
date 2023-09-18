@@ -271,7 +271,6 @@ HRESULT CMain0_Loader::Loading_For_MainGame()
 		wstring wstrErrorMSG = TEXT("Failed Add_Prototype : ");
 		wstrErrorMSG += pErrorTag;
 		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
-
 		return E_FAIL;
 	}
 

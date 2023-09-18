@@ -66,6 +66,7 @@ HRESULT CComponent_Manager::Add_Component(_uint iLevelIndex, const _tchar* pProt
 	CComponent* pComponent = nullptr;
 	pComponent = pPrototype->Clone(pArg);
 
+
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 
 	CLayer* pLayer = Find_Layer(iLevelIndex, pLayerTag);

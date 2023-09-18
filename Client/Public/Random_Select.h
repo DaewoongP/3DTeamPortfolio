@@ -1,7 +1,7 @@
 #pragma once
 
 /* =============================================== */
-//	[CRandom_Attack]
+//	[CRandom_Select]
 //	
 //	정 : 주성환
 //	부 : 
@@ -21,12 +21,12 @@ END
 
 BEGIN(Client)
 
-class CRandom_Attack final : public CRandomChoose
+class CRandom_Select final : public CRandomChoose
 {
 private:
-	explicit CRandom_Attack(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	explicit CRandom_Attack(const CRandom_Attack& rhs);
-	virtual ~CRandom_Attack() = default;
+	explicit CRandom_Select(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	explicit CRandom_Select(const CRandom_Select& rhs);
+	virtual ~CRandom_Select() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype() override { return S_OK; }
@@ -34,16 +34,18 @@ public:
 	virtual HRESULT Tick(const _float& fTimeDelta);
 
 public:
-	virtual HRESULT Assemble_Behavior(const wstring& BehaviorTag, CBehavior* pBehavior, const _float& fWeight) override;
 	virtual void Reset_Behavior(HRESULT result) override;
+	void Set_Option(const _float& fCoolTime) {
+		m_fLimit = fCoolTime;
+	}
 
 private:
 	_float m_fLimit = { 0.f };
 	_float m_fPreWorldTimeAcc = { 0.f };
 
 public:
-	static CRandom_Attack* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CRandom_Attack* Clone(void* pArg) override;
+	static CRandom_Select* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	virtual CRandom_Select* Clone(void* pArg) override;
 	virtual void Free() override;
 };
 

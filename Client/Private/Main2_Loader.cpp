@@ -107,107 +107,117 @@ HRESULT CMain2_Loader::Loading_For_MainGame()
 	if (nullptr == m_pGameInstance)
 		return E_FAIL;
 
-	_float4x4 PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f));
-	
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Model_Sky"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/SkySphere/SkySphere.dat")))))
-		throw TEXT("Prototype_Component_Model_Sky");
+	try
+	{
+		_float4x4 PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f));
 
-	/* For.Weapon Models */
-	/* For.Prototype_Component_Model_Weopon_Armored_Troll */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Weopon_Armored_Troll"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Troll_Armored_Club/Troll_Armored_Club.dat"), PivotMatrix))))
-		throw TEXT("Prototype_Component_Model_Weopon_Armored_Troll");
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Model_Sky"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/SkySphere/SkySphere.dat")))))
+			throw TEXT("Prototype_Component_Model_Sky");
 
-	/* For.Prototype_Component_Model_Weopon_Forest_Troll */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Weopon_Forest_Troll"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Troll_Forest_Club/Troll_Forest_Club.dat"), PivotMatrix))))
-		throw TEXT("Prototype_Component_Model_Weopon_Forest_Troll");
+		/* For.Weapon Models */
+		/* For.Prototype_Component_Model_Weopon_Armored_Troll */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Weopon_Armored_Troll"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Troll_Armored_Club/Troll_Armored_Club.dat"), PivotMatrix))))
+			throw TEXT("Prototype_Component_Model_Weopon_Armored_Troll");
 
-	/* For.Prototype_Component_Model_Weopon_Golem_Combat */
-	PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f));
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Weopon_Golem_Combat"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Golem_Combat_Sword/Golem_Combat_Sword.dat"), PivotMatrix))))
-		throw TEXT("Prototype_Component_Model_Weopon_Golem_Combat");
+		/* For.Prototype_Component_Model_Weopon_Forest_Troll */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Weopon_Forest_Troll"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Troll_Forest_Club/Troll_Forest_Club.dat"), PivotMatrix))))
+			throw TEXT("Prototype_Component_Model_Weopon_Forest_Troll");
 
-	/* For.Prototype_Component_Model_Weopon_Golem_Merlin */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Weopon_Golem_Merlin"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Golem_Combat_Mace/Golem_Combat_Mace.dat"), PivotMatrix))))
-		throw TEXT("Prototype_Component_Model_Weopon_Golem_Merlin");
+		/* For.Prototype_Component_Model_Weopon_Golem_Combat */
+		PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f));
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Weopon_Golem_Combat"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Golem_Combat_Sword/Golem_Combat_Sword.dat"), PivotMatrix))))
+			throw TEXT("Prototype_Component_Model_Weopon_Golem_Combat");
 
-	///* For.Prototype_Component_Model_Weopon_Pensive */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Weopon_Pensive"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Pensive_Flail/Pensive_Flail.dat"), PivotMatrix))))
-		throw TEXT("Prototype_Component_Model_Weopon_Pensive");
+		/* For.Prototype_Component_Model_Weopon_Golem_Merlin */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Weopon_Golem_Merlin"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Golem_Combat_Mace/Golem_Combat_Mace.dat"), PivotMatrix))))
+			throw TEXT("Prototype_Component_Model_Weopon_Golem_Merlin");
 
-	/* For.Prototype_Component_Model_Weopon_Player_Wand */
-	PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f)) * XMMatrixScaling(5, 5, 5);
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Weopon_Player_Wand"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/gaechul/gaechul.dat"), PivotMatrix))))
-		throw TEXT("Prototype_Component_Model_Weopon_Player_Wand");
+		///* For.Prototype_Component_Model_Weopon_Pensive */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Weopon_Pensive"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Pensive_Flail/Pensive_Flail.dat"), PivotMatrix))))
+			throw TEXT("Prototype_Component_Model_Weopon_Pensive");
 
-	/* For.Monster Models */
+		/* For.Prototype_Component_Model_Weopon_Player_Wand */
+		PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f)) * XMMatrixScaling(5, 5, 5);
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Weopon_Player_Wand"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/gaechul/gaechul.dat"), PivotMatrix))))
+			throw TEXT("Prototype_Component_Model_Weopon_Player_Wand");
 
-	PivotMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
-	/* For.Prototype_Component_Model_Golem_Combat */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Golem_Combat"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/Golem_CombatGrunt/Golem_CombatGrunt.gcm"), PivotMatrix))))
-		throw TEXT("Prototype_Component_Model_Golem_Combat");
+		/* For.Monster Models */
 
-	/* For.Prototype_Component_Model_Golem_Merlin */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Golem_Merlin"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/Golem_MerlinGrunt/Golem_MerlinGrunt.gcm"), PivotMatrix))))
-		throw TEXT("Prototype_Component_Model_Golem_Merlin");
+		PivotMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
+		/* For.Prototype_Component_Model_Golem_Combat */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Golem_Combat"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/Golem_CombatGrunt/Golem_CombatGrunt.gcm"), PivotMatrix))))
+			throw TEXT("Prototype_Component_Model_Golem_Combat");
 
-	/* For.Prototype_GameObject_Armored_Troll */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Armored_Troll"),
-		CArmored_Troll::Create(m_pDevice, m_pContext))))
-		throw TEXT("Prototype_GameObject_Armored_Troll");
+		/* For.Prototype_Component_Model_Golem_Merlin */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Golem_Merlin"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/Golem_MerlinGrunt/Golem_MerlinGrunt.gcm"), PivotMatrix))))
+			throw TEXT("Prototype_Component_Model_Golem_Merlin");
 
-	/* For.Prototype_GameObject_Forest_Troll */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Forest_Troll"),
-		CForest_Troll::Create(m_pDevice, m_pContext))))
-		throw TEXT("Prototype_GameObject_Forest_Troll");
+		/* For.Prototype_GameObject_Armored_Troll */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Armored_Troll"),
+			CArmored_Troll::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Armored_Troll");
 
-	/* For.Prototype_GameObject_Dugbog */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Dugbog"),
-		CDugbog::Create(m_pDevice, m_pContext))))
-		throw TEXT("Prototype_GameObject_Dugbog");
+		/* For.Prototype_GameObject_Forest_Troll */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Forest_Troll"),
+			CForest_Troll::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Forest_Troll");
 
-	/* For.Prototype_GameObject_Golem_CombatGrunt */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Golem_CombatGrunt"),
-		CGolem_Combat::Create(m_pDevice, m_pContext))))
-		throw TEXT("Prototype_GameObject_Golem_CombatGrunt");
+		/* For.Prototype_GameObject_Dugbog */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Dugbog"),
+			CDugbog::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Dugbog");
 
-	/* For.Prototype_GameObject_Golem_Merlin */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Golem_Merlin"),
-		CGolem_Merlin::Create(m_pDevice, m_pContext))))
-		throw TEXT("Prototype_GameObject_Golem_Merlin");
+		/* For.Prototype_GameObject_Golem_CombatGrunt */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Golem_CombatGrunt"),
+			CGolem_Combat::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Golem_CombatGrunt");
 
-	/* For.Prototype_Component_Weapon_Armored_Troll */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Weapon_Armored_Troll"),
-		CWeapon_Armored_Troll::Create(m_pDevice, m_pContext))))
-		throw TEXT("Prototype_Component_Weapon_Armored_Troll");
+		/* For.Prototype_GameObject_Golem_MerlinGrunt */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Golem_MerlinGrunt"),
+			CGolem_Merlin::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Golem_MerlinGrunt");
 
-	/* For.Prototype_Component_Weapon_Forest_Troll */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Weapon_Forest_Troll"),
-		CWeapon_Forest_Troll::Create(m_pDevice, m_pContext))))
-		throw TEXT("Prototype_Component_Weapon_Forest_Troll");
+		/* For.Prototype_Component_Weapon_Armored_Troll */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Weapon_Armored_Troll"),
+			CWeapon_Armored_Troll::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Weapon_Armored_Troll");
 
-	/* For.Prototype_Component_Weapon_Golem_Combat */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Weapon_Golem_Combat"),
-		CWeapon_Golem_Combat::Create(m_pDevice, m_pContext))))
-		throw TEXT("Prototype_Component_Weapon_Golem_Combat");
+		/* For.Prototype_Component_Weapon_Forest_Troll */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Weapon_Forest_Troll"),
+			CWeapon_Forest_Troll::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Weapon_Forest_Troll");
 
-	/* For.Prototype_Component_Weapon_Golem_Merlin */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Weapon_Golem_Merlin"),
-		CWeapon_Golem_Merlin::Create(m_pDevice, m_pContext))))
-		throw TEXT("Prototype_Component_Weapon_Golem_Merlin");
+		/* For.Prototype_Component_Weapon_Golem_Combat */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Weapon_Golem_Combat"),
+			CWeapon_Golem_Combat::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Weapon_Golem_Combat");
 
-	/* For.Prototype_Component_Weapon_Pensive */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Weapon_Pensive"),
-		CWeapon_Golem_Merlin::Create(m_pDevice, m_pContext))))
-		throw TEXT("Prototype_Component_Weapon_Pensive");
+		/* For.Prototype_Component_Weapon_Golem_Merlin */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Weapon_Golem_Merlin"),
+			CWeapon_Golem_Merlin::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Weapon_Golem_Merlin");
+
+		/* For.Prototype_Component_Weapon_Pensive */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Weapon_Pensive"),
+			CWeapon_Golem_Merlin::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Weapon_Pensive");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("Failed Add_Prototype : ");
+		wstrErrorMSG += pErrorTag;
+		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+		return E_FAIL;
+	}
 
 	m_isFinished = true;
 

@@ -1,4 +1,4 @@
-#include "Random_Attack.h"
+#include "Random_Select.h"
 
 #include "GameInstance.h"
 #include "BlackBoard.h"
@@ -10,17 +10,17 @@
 #include "Check_Distance.h"
 #include "Sequence_Attack.h"
 
-CRandom_Attack::CRandom_Attack(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CRandom_Select::CRandom_Select(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CRandomChoose(pDevice, pContext)
 {
 }
 
-CRandom_Attack::CRandom_Attack(const CRandom_Attack& rhs)
+CRandom_Select::CRandom_Select(const CRandom_Select& rhs)
 	: CRandomChoose(rhs)
 {
 }
 
-HRESULT CRandom_Attack::Initialize(void* pArg)
+HRESULT CRandom_Select::Initialize(void* pArg)
 {
 	/* ÄðÅ¸ÀÓ */
 	Add_Decoration([&](CBlackBoard* pBlackBoard)->_bool
@@ -38,30 +38,26 @@ HRESULT CRandom_Attack::Initialize(void* pArg)
 	return S_OK;
 }
 
-HRESULT CRandom_Attack::Tick(const _float& fTimeDelta)
+HRESULT CRandom_Select::Tick(const _float& fTimeDelta)
 {
 	HRESULT hr = __super::Tick(fTimeDelta);
 
 	if (BEHAVIOR_RUNNING != hr)
 	{
 		Set_Random_Behavior();
+
+		if (BEHAVIOR_SUCCESS == hr)
+		{
+			BEGININSTANCE;
+			m_fPreWorldTimeAcc = pGameInstance->Get_World_TimeAcc();
+			ENDINSTANCE;
+		}
 	}
 
 	return hr;
 }
 
-HRESULT CRandom_Attack::Assemble_Behavior(const wstring& BehaviorTag, CBehavior* pBehavior, const _float& fWeight)
-{
-	if (nullptr == dynamic_cast<CSequence_Attack*>(pBehavior))
-	{
-		MSG_BOX("[CRandom_Attack] Failed Assemble_Behavior : Behavior is not CSequence_Attack");
-		return E_FAIL;
-	}
-	
-	return __super::Assemble_Behavior(BehaviorTag, pBehavior, fWeight);
-}
-
-void CRandom_Attack::Reset_Behavior(HRESULT result)
+void CRandom_Select::Reset_Behavior(HRESULT result)
 {
 	_uint* pICurrentSpell = { nullptr };
 	if (FAILED(m_pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
@@ -71,12 +67,16 @@ void CRandom_Attack::Reset_Behavior(HRESULT result)
 	if (CMagic::BUFF_NONE != *pICurrentSpell)
 	{
 		Set_Random_Behavior();
+
+		BEGININSTANCE;
+		m_fPreWorldTimeAcc = pGameInstance->Get_World_TimeAcc();
+		ENDINSTANCE;
 	}
 }
 
-CRandom_Attack* CRandom_Attack::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CRandom_Select* CRandom_Select::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CRandom_Attack* pInstance = new CRandom_Attack(pDevice, pContext);
+	CRandom_Select* pInstance = new CRandom_Select(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -87,9 +87,9 @@ CRandom_Attack* CRandom_Attack::Create(ID3D11Device* pDevice, ID3D11DeviceContex
 	return pInstance;
 }
 
-CRandom_Attack* CRandom_Attack::Clone(void* pArg)
+CRandom_Select* CRandom_Select::Clone(void* pArg)
 {
-	CRandom_Attack* pInstance = new CRandom_Attack(*this);
+	CRandom_Select* pInstance = new CRandom_Select(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
@@ -100,7 +100,7 @@ CRandom_Attack* CRandom_Attack::Clone(void* pArg)
 	return pInstance;
 }
 
-void CRandom_Attack::Free()
+void CRandom_Select::Free()
 {
 	__super::Free();
 }
