@@ -34,7 +34,7 @@ public:
 	virtual HRESULT Render() override;
 
 public:
-	_float3		Get_Wand_Point_Offset() { return m_WandPointOffset; }
+	_float4x4		Get_Wand_Point_OffsetMatrix() { return m_WandPointOffsetMatrix; }
 
 private:
 	CModel* m_pModelCom = { nullptr };
@@ -42,7 +42,7 @@ private:
 	CRenderer* m_pRendererCom = { nullptr };
 
 private:
-	_float3			m_WandPointOffset = {};
+	_float4x4			m_WandPointOffsetMatrix = {};
 
 private:
 	HRESULT Add_Components(void* pArg);
