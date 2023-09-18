@@ -87,21 +87,34 @@ HRESULT CConfringo::Initialize(void* pArg)
 	fRandom = Random_Generator(-20.f, 20.f);
 	// 외적 방향으로 튄다.
 	m_vLerpWeight[1] += _float3(normal.x * fRandom, normal.y * fRandom, normal.z * fRandom);
+	m_pExplosiveEffect->ResetParticle();
+	m_fTimeScalePerDistance = m_MagicBallDesc.fDistance / _float3(m_vTargetPosition - m_MagicBallDesc.vStartPosition).Length();
 
 	return S_OK;
 }
 
 void CConfringo::Tick(_float fTimeDelta)
 {
-	if (m_MagicBallDesc.fLifeTime > 0)
+	if (m_fLerpAcc < 1)
 	{
-		// 이동시켜주는 로직임.
 		// 여기서 뻉뻉이 돌려주자.
-		m_fLerpAcc += fTimeDelta / m_MagicBallDesc.fInitLifeTime;
-		m_pEffect->Spline_Move(m_vLerpWeight[0],m_MagicBallDesc.vStartPosition, m_vTargetPosition, m_vLerpWeight[1], m_fLerpAcc);
+		m_fLerpAcc += fTimeDelta / m_MagicBallDesc.fInitLifeTime * m_fTimeScalePerDistance;
+		if (m_fLerpAcc > 1)
+			m_fLerpAcc = 1;
+		m_pTrailEffect->Spline_Move(m_vLerpWeight[0],m_MagicBallDesc.vStartPosition, m_vTargetPosition, m_vLerpWeight[1], m_fLerpAcc);
 	}
 	else 
 	{
+		//터지는 효과임.
+		if (!m_isExplosiveTrigger)
+		{
+			m_pExplosiveEffect->Play_Particle(m_vTargetPosition);
+			m_isExplosiveTrigger = true;
+
+			if(m_pExplosiveEffect->Get_Particle_State_End())
+				Set_ObjEvent(OBJ_DEAD);
+		}
+		
 	}
 	__super::Tick(fTimeDelta);
 }
@@ -133,13 +146,29 @@ HRESULT CConfringo::Add_Components()
 
 HRESULT CConfringo::Add_Effect()
 {
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Default_MagicTraill_Effect"), 
-		TEXT("Com_Effect"), reinterpret_cast<CComponent**>(&m_pEffect))))
+	CDefault_MagicTraill_Effect::INITDESC initDesc;
+	initDesc.vInitPosition = m_MagicBallDesc.vStartPosition;
+	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_MagicTraill_Confringo_Effect"), 
+		TEXT("Com_TrailEffect"), reinterpret_cast<CComponent**>(&m_pTrailEffect),&initDesc)))
 	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Default_MagicTraill_Effect)");
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_MagicTraill_Confringo_Effect)");
 		return E_FAIL;
 	}
 
+	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Confringo_Explosive_Effect"),
+		TEXT("Com_ExplosiveEffect"), reinterpret_cast<CComponent**>(&m_pExplosiveEffect))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Confringo_Explosive_Effect)");
+		return E_FAIL;
+	}
+
+	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Confringo_WandDust_Effect"),
+		TEXT("Com_WandDustEffect"), reinterpret_cast<CComponent**>(&m_pWandDustEffect))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Confringo_WandDust_Effect)");
+		return E_FAIL;
+	}
+	
 	return S_OK;
 }
 
@@ -173,6 +202,8 @@ void CConfringo::Free()
 	__super::Free();
 	if (true == m_isCloned)
 	{
-		Safe_Release(m_pEffect);
+		Safe_Release(m_pTrailEffect);
+		Safe_Release(m_pExplosiveEffect);
+		Safe_Release(m_pWandDustEffect);
 	}
 }

@@ -15,6 +15,8 @@
 #include "Protego_Effect.h"
 #include "Default_MagicTraill_Effect.h"
 #include "Wingardium_Effect.h"
+#include "Confringo_Explosive_Effect.h"
+#include "Confringo_WandDust_Effect.h"
 #pragma endregion Effects
 
 #pragma region Magic
@@ -230,9 +232,29 @@ HRESULT CMain1_Loader::Loading_For_MainGame()
 			throw TEXT("Prototype_GameObject_Wingardium_Effect");
 
 		/* For.Prototype_GameObject_Wingardium_Effect*/
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Default_MagicTraill_Effect"),
-			CDefault_MagicTraill_Effect::Create(m_pDevice, m_pContext, LEVEL_MAINGAME))))
-			throw TEXT("Prototype_GameObject_Default_MagicTraill_Effect");
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_MagicTraill_Confringo_Effect"),
+			CDefault_MagicTraill_Effect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/Confringo/Confringo.trail"), LEVEL_MAINGAME))))
+			throw TEXT("Prototype_GameObject_MagicTraill_Confringo_Effect");
+
+		/* For.Prototype_GameObject_Wingardium_Effect*/
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_MagicTraill_Winga_Effect"),
+			CDefault_MagicTraill_Effect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/Wingardium/Wingardium.trail"), LEVEL_MAINGAME))))
+			throw TEXT("Prototype_GameObject_Default_MagicTraill_Winga_Effect");
+
+		/* For.Prototype_GameObject_Wingardium_Effect*/
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_MagicTraill_Levioso_Effect"),
+			CDefault_MagicTraill_Effect::Create(m_pDevice, m_pContext, TEXT(""), LEVEL_MAINGAME))))
+			throw TEXT("Prototype_GameObject_Default_MagicTraill_Levioso_Effect");
+
+		/* For.Prototype_GameObject_Confringo_Explosive_Effect*/
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Confringo_Explosive_Effect"),
+			CConfringo_Explosive_Effect::Create(m_pDevice, m_pContext, LEVEL_MAINGAME))))
+			throw TEXT("Prototype_GameObject_Confringo_Explosive_Effect");
+
+		/* For.Prototype_GameObject_Confringo_WandDust_Effect*/
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Confringo_WandDust_Effect"),
+			CConfringo_WandDust_Effect::Create(m_pDevice, m_pContext, LEVEL_MAINGAME))))
+			throw TEXT("Prototype_GameObject_Confringo_WandDust_Effect");
 		
 #pragma endregion
 

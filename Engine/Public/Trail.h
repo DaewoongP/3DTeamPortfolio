@@ -66,6 +66,7 @@ protected: /* For. Component */
 	_uint m_iLevel = { 0 };
 	string	m_strPass = "Default";
 	//wstring m_wstrPath = { TEXT("../../Resources/Effects/Textures/Default_Particle.png") };
+	//wstring m_wstrPath = { TEXT("../../Resources/Effects/Textures/Trails/Winga.png") };
 	wstring m_wstrPath = { TEXT("../../Resources/Effects/Textures/Trails/Winga.png") };
 	_bool m_isEnable = { true };
 

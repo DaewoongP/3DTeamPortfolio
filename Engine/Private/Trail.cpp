@@ -16,6 +16,10 @@ CTrail::CTrail(const CTrail& rhs)
 	, m_HighLocalMatrix(rhs.m_HighLocalMatrix)
 	, m_LowLocalMatrix(rhs.m_LowLocalMatrix)
 	, m_isEnable(rhs.m_isEnable)
+	, m_vHeadColor(rhs.m_vHeadColor)
+	, m_vTailColor(rhs.m_vTailColor)
+	, m_fWidth(rhs.m_fWidth)
+	, m_fTailDuration(rhs.m_fTailDuration)
 {
 
 }

@@ -42,6 +42,7 @@ HRESULT CLevioso::Initialize(void* pArg)
 
 		return E_FAIL;
 	}
+	m_CollisionDesc.Action = bind(&CWingardium_Effect::TrailAction, m_pWingardiumEffect, placeholders::_1, placeholders::_2);
 
 	if (m_pTarget == nullptr)
 	{
@@ -66,16 +67,21 @@ HRESULT CLevioso::Initialize(void* pArg)
 		//이거 근데 몹의 발위치로 지금 설정돼있을듯함.
 		m_vTargetPosition = m_pTarget->Get_Position();
 	}
+
+	m_fTimeScalePerDistance = m_MagicBallDesc.fDistance / _float3(m_vTargetPosition - m_MagicBallDesc.vStartPosition).Length();
 	return S_OK;
 }
 
 void CLevioso::Tick(_float fTimeDelta)
 {
-	if (m_MagicBallDesc.fLifeTime > 0)
+	if (m_fLerpAcc < 1)
 	{
 		// 이동시켜주는 로직임.
 		// 여기서 뻉뻉이 돌려주자.
-		m_fLerpAcc += fTimeDelta / m_MagicBallDesc.fInitLifeTime;
+		// lerpacc를 감소된 거리만큼 가속해주자.
+		m_fLerpAcc += fTimeDelta / m_MagicBallDesc.fInitLifeTime * m_fTimeScalePerDistance;
+		if (m_fLerpAcc > 1)
+			m_fLerpAcc = 1;
 		m_pEffect->Spin_Move(m_MagicBallDesc.vStartPosition, m_vTargetPosition, m_fLerpAcc);
 	}
 	else 
@@ -83,7 +89,6 @@ void CLevioso::Tick(_float fTimeDelta)
 		//이동이 끝났고 윙가가 발동 안했다면?
 		if (!m_bWingardiumActionTrigger)
 		{
-			//윙가 발동
 			m_bWingardiumActionTrigger = true;
 			m_pWingardiumEffect->SetActionTrigger(m_bWingardiumActionTrigger);
 			dynamic_cast<CGameObject*>(m_pTarget->Get_Owner())->On_Maigc_Throw_Data(&m_CollisionDesc);
@@ -91,8 +96,7 @@ void CLevioso::Tick(_float fTimeDelta)
 		else 
 		{
 			m_MagicTimer -= fTimeDelta;
-			m_pWingardiumEffect->TrailAction(fTimeDelta);
-			m_pWingardiumEffectTrans->Set_Position(m_pTarget->Get_Position());
+			m_pWingardiumEffect->TrailAction(m_pTarget->Get_Position(),fTimeDelta);
 		}
 	}
 	__super::Tick(fTimeDelta);
@@ -125,11 +129,12 @@ HRESULT CLevioso::Add_Components()
 
 HRESULT CLevioso::Add_Effect()
 {
-	_float3 vInitPosition = m_MagicBallDesc.vStartPosition;
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Default_MagicTraill_Effect"), 
-		TEXT("Com_Effect"), reinterpret_cast<CComponent**>(&m_pEffect),&vInitPosition)))
+	CDefault_MagicTraill_Effect::INITDESC initDesc;
+	initDesc.vInitPosition = m_MagicBallDesc.vStartPosition;
+	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_MagicTraill_Winga_Effect"), 
+		TEXT("Com_Effect"), reinterpret_cast<CComponent**>(&m_pEffect),&initDesc)))
 	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Default_MagicTraill_Effect)");
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_MagicTraill_Winga_Effect)");
 		return E_FAIL;
 	}
 
@@ -139,9 +144,6 @@ HRESULT CLevioso::Add_Effect()
 		MSG_BOX("Failed Add_GameObject : (GameObject_Wingardium_Effect)");
 		return E_FAIL;
 	}
-
-	m_pWingardiumEffectTrans = m_pWingardiumEffect->Get_Transform();
-	Safe_AddRef(m_pWingardiumEffectTrans);
 
 	return S_OK;
 }
@@ -177,9 +179,6 @@ void CLevioso::Free()
 	if (true == m_isCloned)
 	{
 		Safe_Release(m_pEffect);
-
-		Safe_Release(m_pWingardiumEffectTrans);
 		Safe_Release(m_pWingardiumEffect);
 	}
-	
 }

@@ -25,9 +25,7 @@ public:
 
 private:
 	CDefault_MagicTraill_Effect* m_pEffect = { nullptr };
-	
 	CWingardium_Effect* m_pWingardiumEffect = { nullptr };
-	CTransform* m_pWingardiumEffectTrans = { nullptr };
 
 private:
 	_float3				m_vTargetPosition = {};
@@ -41,6 +39,9 @@ private:
 
 	_bool				m_isDeadTrigger = { false };
 	_float				m_fDeadTimer = { 1.0f };
+
+	_float				m_fTimeScalePerDistance = { 1.0f };
+
 private:
 	HRESULT Add_Components();
 	virtual HRESULT Add_Effect();

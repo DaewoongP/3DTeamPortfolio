@@ -12,8 +12,11 @@ CParticleSystem::CParticleSystem(const CParticleSystem& _rhs)
 	, m_MainModuleDesc(_rhs.m_MainModuleDesc)
 	, m_EmissionModuleDesc(_rhs.m_EmissionModuleDesc)
 	, m_ShapeModuleDesc(_rhs.m_ShapeModuleDesc)
+	, m_ColorOverLifeTimeModuleDesc(_rhs.m_ColorOverLifeTimeModuleDesc)
+	, m_SizeOverLifeTimeModuleDesc(_rhs.m_SizeOverLifeTimeModuleDesc)
+	, m_RotationOverLifetimeModuleDesc(_rhs.m_RotationOverLifetimeModuleDesc)
+	, m_TextureSheetAnimationModuleDesc(_rhs.m_TextureSheetAnimationModuleDesc)
 	, m_RendererModuleDesc(_rhs.m_RendererModuleDesc)
-	, m_ParticleMatrices(_rhs.m_ParticleMatrices)
 	, m_StopAction(_rhs.m_StopAction)
 	, m_iLevel(_rhs.m_iLevel)
 {
@@ -566,8 +569,8 @@ void CParticleSystem::ResetStartPosition(PARTICLE_IT& _particle_iter)
 
 		_float3 vLook = _float3(0.f, 0.f, 1.f);
 		vDirection = XMVector3TransformCoord(ResultMatrix.Right(), _float4x4::MatrixRotationAxis(ResultMatrix.Look(), fTheta));
-
-		(*_particle_iter).WorldMatrix.Translation(fLength * vDirection);
+		vPosition = fLength * vDirection;
+		//(*_particle_iter).WorldMatrix.Translation();
 	}
 	else if ("Cone" == m_ShapeModuleDesc.strShape)
 	{
