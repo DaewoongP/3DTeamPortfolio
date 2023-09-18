@@ -40,7 +40,7 @@ HRESULT CDebug_Render_Ring::Initialize(void* pArg)
 	m_BufferDesc.CPUAccessFlags = { 0 };
 	m_BufferDesc.MiscFlags = { 0 };
 
-	VTXPOS* pVertices = new VTXPOS[m_iNumVertices];
+	VTXPOS* pVertices = New VTXPOS[m_iNumVertices];
 	ZeroMemory(pVertices, sizeof(VTXPOS) * m_iNumVertices);
 
 	/* Init */
@@ -94,7 +94,7 @@ HRESULT CDebug_Render_Ring::Initialize(void* pArg)
 	m_BufferDesc.CPUAccessFlags = { 0 };
 	m_BufferDesc.MiscFlags = { 0 };
 
-	_ushort* pIndices = new _ushort[m_iNumIndices];
+	_ushort* pIndices = New _ushort[m_iNumIndices];
 	ZeroMemory(pIndices, sizeof(_ushort) * m_iNumIndices);
 
 	for (_uint i = 0; i < m_iNumIndices; ++i)
@@ -115,7 +115,7 @@ HRESULT CDebug_Render_Ring::Initialize(void* pArg)
 
 CDebug_Render_Ring* CDebug_Render_Ring::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CDebug_Render_Ring* pInstance = new CDebug_Render_Ring(pDevice, pContext);
+	CDebug_Render_Ring* pInstance = New CDebug_Render_Ring(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -127,7 +127,7 @@ CDebug_Render_Ring* CDebug_Render_Ring::Create(ID3D11Device* pDevice, ID3D11Devi
 
 CComponent* CDebug_Render_Ring::Clone(void* pArg)
 {
-	CDebug_Render_Ring* pInstance = new CDebug_Render_Ring(*this);
+	CDebug_Render_Ring* pInstance = New CDebug_Render_Ring(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

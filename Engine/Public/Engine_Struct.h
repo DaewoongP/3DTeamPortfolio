@@ -165,6 +165,7 @@ namespace Engine
 	typedef struct tagCollisionEventDesc
 	{
 		const _tchar*				pOtherObjectTag = { nullptr };
+		const _tchar*				pOtherCollisionTag = { nullptr };
 		const class CGameObject*	pOtherOwner = { nullptr };
 		const class CTransform*		pOtherTransform = { nullptr };
 		void*						pArg = { nullptr };
@@ -314,4 +315,20 @@ namespace Engine
 		static const D3D11_INPUT_ELEMENT_DESC	Elements[iNumElements];
 	}VTXPOINTCOLORINSTANCE_DECL;
 
+	//
+	typedef struct tagVertex_Color_Index_Instance
+	{
+		XMFLOAT4		vRight;
+		XMFLOAT4		vUp;
+		XMFLOAT4		vLook;
+		XMFLOAT4		vTranslation;
+		XMFLOAT4		vColor;
+		UINT			iCurrentIndex;
+	}VTXCOLIDXINSTANCE;
+
+	typedef struct ENGINE_DLL tagVertex_Rect_Color_Index_Instance_Declaration
+	{
+		static const unsigned int				iNumElements = { 8 };
+		static const D3D11_INPUT_ELEMENT_DESC	Elements[iNumElements];
+	}VTXRECTCOLIDXINSTANCE_DECL;
 }

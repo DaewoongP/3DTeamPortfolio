@@ -1,4 +1,3 @@
-
 #include "Default_Magic_Effect.h"
 #include "GameInstance.h"
 
@@ -73,7 +72,7 @@ HRESULT CDefault_Magic_Effect::Initialize(void* pArg)
 
 	m_pTransform->Set_Position(_float3(0.f, 0.f, 0.f));
 	m_pTransform->Set_Speed(20.f);
-	
+
 	m_pParticleTransform = m_pParticleSystem->Get_Transform();
 	Safe_AddRef(m_pParticleTransform);
 
@@ -92,6 +91,9 @@ HRESULT CDefault_Magic_Effect::Initialize(void* pArg)
 void CDefault_Magic_Effect::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+	SHAPE_MODULE& ShapeModule = m_pTraceParticle->Get_ShapeModuleRef();
+	if (XMVectorGetX(XMVector3Length(m_pTransform->Get_Position() - m_vPrevPos)))
+		ShapeModule.ShapeMatrix.MatrixLookAt(m_pTransform->Get_Position(), m_vPrevPos, _float3(0.f, 1.f, 0.f));
 }
 
 void CDefault_Magic_Effect::Late_Tick(_float fTimeDelta)
@@ -130,8 +132,8 @@ HRESULT CDefault_Magic_Effect::Reset_Trail()
 		MSG_BOX("Failed to Reset_Trail");
 		return S_OK;
 	}
-		
-	return   m_pTrail->Reset_Trail(); 
+
+	return   m_pTrail->Reset_Trail();
 }
 void CDefault_Magic_Effect::Enable_TraceParticle(_bool _isEnable)
 {
@@ -155,7 +157,7 @@ HRESULT CDefault_Magic_Effect::Add_Components()
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_DefaultConeEmit_Particle")
 		, TEXT("Com_DefaultConeEmit_Particle"), (CComponent**)&m_pConeEmitParticle)))
 		return E_FAIL;
-	
+
 	return S_OK;
 }
 

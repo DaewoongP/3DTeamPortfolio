@@ -111,7 +111,7 @@ HRESULT CTerrain::Add_Components()
 		{
 			_uint iIndex = j + HeightFieldDesc.nbRows * i;
 			_uint iTest = i + HeightFieldDesc.nbColumns * j;
-			pSample[iTest].height = pPosArray[iIndex].y;
+			pSample[iTest].height = PxI16(pPosArray[iIndex].y);
 		}
 	}
 

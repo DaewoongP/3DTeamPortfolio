@@ -90,7 +90,7 @@ HRESULT CUI_Group_R::Add_ProtoType()
 
 CUI_Group_R* CUI_Group_R::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CUI_Group_R* pInstance = new CUI_Group_R(pDevice, pContext);
+	CUI_Group_R* pInstance = New CUI_Group_R(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -103,7 +103,7 @@ CUI_Group_R* CUI_Group_R::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
 
 CGameObject* CUI_Group_R::Clone(void* pArg)
 {
-	CUI_Group_R* pInstance = new CUI_Group_R(*this);
+	CUI_Group_R* pInstance = New CUI_Group_R(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

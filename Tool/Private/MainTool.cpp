@@ -131,8 +131,8 @@ HRESULT CMainTool::Initialize_ImGui()
 	io.Fonts->AddFontFromFileTTF("../../Resources/Fonts/NEXONLv1GothicBold.ttf", 15.0f, NULL, io.Fonts->GetGlyphRangesKorean());
 
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
-	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
+	//io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
+	//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
 
 	ImGui::StyleColorsDark();
 	ImGuiStyle& style = ImGui::GetStyle();
@@ -396,7 +396,7 @@ HRESULT CMainTool::Ready_Prototype_Object()
 		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyFlipbook"),
-		CDummyFlipBook::Create(m_pDevice, m_pContext, LEVEL_TOOL, TEXT("../../Resources/Effects/Textures/Flipbooks/T_FX_Oceansplash_D.png"), 8, 8))))
+		CDummyFlipBook::Create(m_pDevice, m_pContext, LEVEL_TOOL, nullptr))))
 		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyEffect"),

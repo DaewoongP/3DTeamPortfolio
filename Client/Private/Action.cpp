@@ -120,7 +120,7 @@ void CAction::Reset_Behavior(HRESULT result)
 
 CAction* CAction::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CAction* pInstance = new CAction(pDevice, pContext);
+	CAction* pInstance = New CAction(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -133,7 +133,7 @@ CAction* CAction::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 CAction* CAction::Clone(void* pArg)
 {
-	CAction* pInstance = new CAction(*this);
+	CAction* pInstance = New CAction(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

@@ -27,26 +27,6 @@ HRESULT CVIBuffer_Point_Color_Instance::Initialize(void* pArg)
 
 	m_iNumInstance = *reinterpret_cast<_uint*>(pArg);
 
-	if (FAILED(Make_Buffers()))
-		return E_FAIL;
-
-	vector<_float4x4> InitializeMatrices;
-
-	for (_uint i = 0; i < m_iNumInstance; ++i)
-	{
-		_float4x4 InitMatrix = XMMatrixIdentity();
-
-		InitializeMatrices.push_back(InitMatrix);
-	}
-
-	if (FAILED(__super::Initialize(InitializeMatrices.data())))
-		return E_FAIL;
-
-	return S_OK;
-}
-
-HRESULT CVIBuffer_Point_Color_Instance::Make_Buffers()
-{
 	m_iIndexCountPerInstance = 1;
 	m_iNumVertexBuffers = { 2 };
 	m_iStride = { sizeof(VTXPOINT) };
@@ -67,7 +47,7 @@ HRESULT CVIBuffer_Point_Color_Instance::Make_Buffers()
 	m_BufferDesc.CPUAccessFlags = { 0 };
 	m_BufferDesc.MiscFlags = { 0 };
 
-	VTXPOINT* pVertices = new VTXPOINT;
+	VTXPOINT* pVertices = New VTXPOINT;
 	ZeroMemory(pVertices, sizeof(VTXPOINT));
 
 	pVertices->vPosition = _float3(0.f, 0.f, 0.f);
@@ -93,7 +73,7 @@ HRESULT CVIBuffer_Point_Color_Instance::Make_Buffers()
 	m_BufferDesc.CPUAccessFlags = { 0 };
 	m_BufferDesc.MiscFlags = { 0 };
 
-	_ushort* pIndices = new _ushort[m_iNumIndices];
+	_ushort* pIndices = New _ushort[m_iNumIndices];
 	ZeroMemory(pIndices, sizeof(_ushort) * m_iNumIndices);
 
 	ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
@@ -104,12 +84,24 @@ HRESULT CVIBuffer_Point_Color_Instance::Make_Buffers()
 	Safe_Delete_Array(pIndices);
 #pragma endregion
 
+	vector<_float4x4> InitializeMatrices;
+
+	for (_uint i = 0; i < m_iNumInstance; ++i)
+	{
+		_float4x4 InitMatrix = XMMatrixIdentity();
+
+		InitializeMatrices.push_back(InitMatrix);
+	}
+
+	if (FAILED(__super::Initialize(InitializeMatrices.data())))
+		return E_FAIL;
+
 	return S_OK;
 }
 
 CVIBuffer_Point_Color_Instance* CVIBuffer_Point_Color_Instance::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CVIBuffer_Point_Color_Instance* pInstance = new CVIBuffer_Point_Color_Instance(pDevice, pContext);
+	CVIBuffer_Point_Color_Instance* pInstance = New CVIBuffer_Point_Color_Instance(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -122,7 +114,7 @@ CVIBuffer_Point_Color_Instance* CVIBuffer_Point_Color_Instance::Create(ID3D11Dev
 
 CComponent* CVIBuffer_Point_Color_Instance::Clone(void* pArg)
 {
-	CVIBuffer_Point_Color_Instance* pInstance = new CVIBuffer_Point_Color_Instance(*this);
+	CVIBuffer_Point_Color_Instance* pInstance = New CVIBuffer_Point_Color_Instance(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

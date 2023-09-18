@@ -81,7 +81,6 @@ HRESULT CProtego::Add_Components()
 		MSG_BOX(strErrorMessage.data());
 	}
 
-
 	return S_OK;
 }
 
@@ -92,7 +91,7 @@ HRESULT CProtego::Add_Effect()
 
 CProtego* CProtego::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CProtego* pInstance = new CProtego(pDevice, pContext);
+	CProtego* pInstance = New CProtego(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -105,7 +104,7 @@ CProtego* CProtego::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 CGameObject* CProtego::Clone(void* pArg)
 {
-	CProtego* pInstance = new CProtego(*this);
+	CProtego* pInstance = New CProtego(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

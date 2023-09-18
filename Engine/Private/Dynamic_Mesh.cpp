@@ -62,7 +62,7 @@ HRESULT CDynamic_Mesh::Initialize_Prototype(CModel::TYPE eType, const CModel::BO
 	m_BufferDesc.CPUAccessFlags = { 0 };
 	m_BufferDesc.MiscFlags = { 0 };
 
-	_ulong* pIndices = new _ulong[m_iNumIndices];
+	_ulong* pIndices = New _ulong[m_iNumIndices];
 	ZeroMemory(pIndices, sizeof(_ulong) * m_iNumIndices);
 
 	_uint		iNumFaces = { 0 };
@@ -223,7 +223,7 @@ HRESULT CDynamic_Mesh::Ready_VertexBuffer_NonAnim(const Engine::MESH Mesh, _floa
 	m_BufferDesc.CPUAccessFlags = { D3D11_CPU_ACCESS_WRITE };
 	m_BufferDesc.MiscFlags = { 0 };
 
-	VTXMESH* pVertices = new VTXMESH[m_iNumVertices];
+	VTXMESH* pVertices = New VTXMESH[m_iNumVertices];
 	ZeroMemory(pVertices, sizeof(VTXMESH) * m_iNumVertices);
 	m_VertexPositions.reserve(m_iNumVertices);
 
@@ -272,7 +272,7 @@ HRESULT CDynamic_Mesh::Ready_VertexBuffer_Anim(const Engine::MESH Mesh, const CM
 	m_BufferDesc.MiscFlags = { 0 };
 
 
-	VTXANIMMESH* pVertices = new VTXANIMMESH[m_iNumVertices];
+	VTXANIMMESH* pVertices = New VTXANIMMESH[m_iNumVertices];
 	ZeroMemory(pVertices, sizeof(VTXANIMMESH) * m_iNumVertices);
 	m_VertexPositions.reserve(m_iNumVertices);
 
@@ -656,7 +656,7 @@ HRESULT CDynamic_Mesh::Read_ClothData(HANDLE hFile)
 CDynamic_Mesh* CDynamic_Mesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,
 	CModel::TYPE eType, const CModel::BONES& Bones, const Engine::MESH Mesh, _float4x4 PivotMatrix, HANDLE hFile)
 {
-	CDynamic_Mesh* pInstance = new CDynamic_Mesh(pDevice, pContext);
+	CDynamic_Mesh* pInstance = New CDynamic_Mesh(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(eType, Bones, Mesh, PivotMatrix, hFile)))
 	{
@@ -669,7 +669,7 @@ CDynamic_Mesh* CDynamic_Mesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext*
 
 CComponent* CDynamic_Mesh::Clone(void* pArg)
 {
-	CDynamic_Mesh* pInstance = new CDynamic_Mesh(*this);
+	CDynamic_Mesh* pInstance = New CDynamic_Mesh(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

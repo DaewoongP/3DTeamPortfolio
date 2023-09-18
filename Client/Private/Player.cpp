@@ -71,12 +71,10 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	//m_pStateContext->Tick(fTimeDelta);
 
-	m_pCustomModel->Set_WindVelocity(_float3(10.f, 0.f, 10.f));
-
 	m_pCustomModel->Tick(CCustomModel::ROBE, 2, fTimeDelta);
 
-	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
-	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UNDERBODY);
+	/*m_pCustomModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);*/
+	/*m_pCustomModel->Play_Animation(fTimeDelta, CModel::UNDERBODY);*/
 }
 
 void CPlayer::Late_Tick(_float fTimeDelta)
@@ -214,12 +212,12 @@ HRESULT CPlayer::Add_Components()
 	magicInitDesc.eBuffType = CMagic::BUFF_SHILED;
 	magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 	magicInitDesc.eMagicType = CMagic::MT_ALL;
-	magicInitDesc.eMagicTag = PROTEGO;
+	magicInitDesc.eMagicTag = CONFRINGO;
 	magicInitDesc.fCoolTime = 1.f;
 	magicInitDesc.fDamage = 0.f;
 	magicInitDesc.fCastDistance = 1000;
 	magicInitDesc.fBallDistance = 30;
-	magicInitDesc.fLifeTime = 5.f;
+	magicInitDesc.fLifeTime = 0.2f;
 
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Magic"),
 		TEXT("Com_Magic"), reinterpret_cast<CComponent**>(&m_pMagic), &magicInitDesc)))
@@ -337,10 +335,10 @@ void CPlayer::Key_Input(_float fTimeDelta)
 	{
 		if (m_pMagic != nullptr)
 		{
-			// ∏Ò«•¿« transform∞˙ Ω√¿€ ¿ßƒ°∏¶ ∞°¡ÆøÕæﬂ«’¥œ¥Ÿ.
-			// æ∆¡˜ ≈∏∞Ÿ º≥¡§«œ¥¬∞‘ æ¯æÓº≠ ≥Œ∑Œ ≥÷æ˙¿Ω.
-			// ¡ˆ∆Œ¿Ã ¿ßƒ°∏¶ 2π¯¬∞ ¿Œ¿⁄ pos∑Œ ≥÷æÓæﬂ«œ¥¬µ• ¡ˆ∆Œ¿Ãµµ æ¯æÓº≠ ±◊≥… pTransform->Get_Position()∑Œ ≥÷¿Ω.
-			// ¿”¿«∑Œ æ∆π´∞≈≥™ ¡˝æÓø¿∞⁄¿Ω.
+			// Î™©ÌëúÏùò transformÍ≥º ÏãúÏûë ÏúÑÏπòÎ•º Í∞ÄÏ†∏ÏôÄÏïºÌï©ÎãàÎã§.
+			// ÏïÑÏßÅ ÌÉÄÍ≤ü ÏÑ§Ï†ïÌïòÎäîÍ≤å ÏóÜÏñ¥ÏÑú ÎÑêÎ°ú ÎÑ£ÏóàÏùå.
+			// ÏßÄÌå°Ïù¥ ÏúÑÏπòÎ•º 2Î≤àÏß∏ Ïù∏Ïûê posÎ°ú ÎÑ£Ïñ¥ÏïºÌïòÎäîÎç∞ ÏßÄÌå°Ïù¥ÎèÑ ÏóÜÏñ¥ÏÑú Í∑∏ÎÉ• pTransform->Get_Position()Î°ú ÎÑ£Ïùå.
+			// ÏûÑÏùòÎ°ú ÏïÑÎ¨¥Í±∞ÎÇò ÏßëÏñ¥Ïò§Í≤†Ïùå.
 			
 			/* ¿Ã∞≈¥¬ ≈◊Ω∫∆Æ øÎ¿∏∑Œ ¥ıπÃ≈¨∑°Ω∫ √£¿∏∑¡∞Ì ≥÷¿∫ ƒ⁄µÂ∏¶ »…√ƒø¬∞≈¿” */
 			CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
@@ -438,7 +436,7 @@ HRESULT CPlayer::Ready_MeshParts()
 
 HRESULT CPlayer::Ready_Camera()
 {
-	//æÓ∂≤ ª¿ø° ∫Ÿ¿œ ∞Õ¿Œ∞°.
+	//Ïñ¥Îñ§ ÎºàÏóê Î∂ôÏùº Í≤ÉÏù∏Í∞Ä.
 	_uint iBoneIndex{ 0 };
 
 	m_pCustomModel->Find_BoneIndex(TEXT("SKT_HeadCamera"), &iBoneIndex);
@@ -476,7 +474,7 @@ HRESULT CPlayer::Ready_Camera()
 
 void CPlayer::MagicTestTextOutput()
 {
-	cout << "∏∂π˝ πﬂµø" << endl;
+	cout << "ÎßàÎ≤ï Î∞úÎèô" << endl;
 }
 
 #ifdef _DEBUG
@@ -496,32 +494,32 @@ void CPlayer::UpdateLookAngle()
 	
 	m_isDirectionKeyPressed = false;
 
-	//≈∞ ¿‘∑¬ø° µ˚∂Û ∫Ò±≥ ∞¢¿Ã πŸ≤Ô¥Ÿ.
+	//ÌÇ§ ÏûÖÎ†•Ïóê Îî∞Îùº ÎπÑÍµê Í∞ÅÏù¥ Î∞îÎÄêÎã§.
 
 	_float3 vNextLook{};
 
-	//æ’ ≈∞ > ∑Ë
+	//Ïïû ÌÇ§ > Î£©
 	if (pGameInstance->Get_DIKeyState(DIK_W, CInput_Device::KEY_PRESSING) || 
 		pGameInstance->Get_DIKeyState(DIK_W,CInput_Device::KEY_DOWN))
 	{
 		vNextLook = m_pPlayer_Camera->Get_CamLookXZ();
 		m_isDirectionKeyPressed = true;
 	}
-	//µﬁ ≈∞ > -∑Ë
+	//Îí∑ ÌÇ§ > -Î£©
 	else if (pGameInstance->Get_DIKeyState(DIK_S, CInput_Device::KEY_PRESSING) ||
 		pGameInstance->Get_DIKeyState(DIK_S, CInput_Device::KEY_DOWN))
 	{
 		vNextLook = -m_pPlayer_Camera->Get_CamLookXZ();
 		m_isDirectionKeyPressed = true;
 	}
-	//ø¿∏•¬  ≈∞ > ∂Û¿Ã∆Æ
+	//Ïò§Î•∏Ï™Ω ÌÇ§ > ÎùºÏù¥Ìä∏
 	else if (pGameInstance->Get_DIKeyState(DIK_D, CInput_Device::KEY_PRESSING) ||
 		pGameInstance->Get_DIKeyState(DIK_D, CInput_Device::KEY_DOWN))
 	{
 		vNextLook = m_pPlayer_Camera->Get_CamRightXZ();
 		m_isDirectionKeyPressed = true;
 	}
-	//øﬁ¬  ≈∞ > -∂Û¿Ã∆Æ
+	//ÏôºÏ™Ω ÌÇ§ > -ÎùºÏù¥Ìä∏
 	else if (pGameInstance->Get_DIKeyState(DIK_A, CInput_Device::KEY_PRESSING) ||
 		pGameInstance->Get_DIKeyState(DIK_A, CInput_Device::KEY_DOWN))
 	{
@@ -529,21 +527,21 @@ void CPlayer::UpdateLookAngle()
 		m_isDirectionKeyPressed = true;
 	}
 
-	//«√∑π¿ÃæÓ¿« ∑Ë¿ª ∞°¡ˆ∞Ì ø¬¥Ÿ.
+	//ÌîåÎ†àÏù¥Ïñ¥Ïùò Î£©ÏùÑ Í∞ÄÏßÄÍ≥† Ïò®Îã§.
 	_float3 vPlayerLook = m_pTransform->Get_Look();
 
-	//y∞™ ¡ˆøÏ∞Ì
+	//yÍ∞í ÏßÄÏö∞Í≥†
 	vPlayerLook = XMVectorSetY(vPlayerLook, 0.0f);
 
 	vPlayerLook.Normalize();
 
-	//≥ª¿˚«—¥Ÿ.cos(-1 ~ 1)
+	//ÎÇ¥Ï†ÅÌïúÎã§.cos(-1 ~ 1)
 	_float fLookAngle = vPlayerLook.Dot(vNextLook);
 
-	//∂Ûµæ» »≠
+	//ÎùºÎîîÏïà Ìôî
 	m_fLookAngle = acosf(fLookAngle);
 
-	//¡¬øÏ ±∏∫–¿ª ¿ß«— ø‹¿˚
+	//Ï¢åÏö∞ Íµ¨Î∂ÑÏùÑ ÏúÑÌïú Ïô∏Ï†Å
 	if (0.0f > vPlayerLook.Cross(vNextLook).y)
 	{
 		m_fLookAngle *= -1;

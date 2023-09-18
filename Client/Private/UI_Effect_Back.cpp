@@ -28,6 +28,18 @@ void CUI_Effect_Back::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
+	if (m_pButtonCom->Collision_Rect(g_hWnd, m_vCombinedXY, _float2(m_fSizeX, m_fSizeY)))
+	{
+
+	}
+
+#ifdef _DEBUG
+
+	m_fRadian += fTimeDelta * 2.f;
+
+#endif // _DEBUG
+
+
 }
 
 void CUI_Effect_Back::Late_Tick(_float fTimeDelta)
@@ -45,8 +57,20 @@ HRESULT CUI_Effect_Back::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Begin("UI")))
-		return E_FAIL;	
+	switch (m_eEffecttype)
+	{
+	case Client::CUI_Effect_Back::CURSOR:
+		if (FAILED(m_pShaderCom->Begin("Cursor")))
+			return E_FAIL;
+		break;
+	case Client::CUI_Effect_Back::EFFECTTYPE_END:
+		if (FAILED(m_pShaderCom->Begin("UI")))
+			return E_FAIL;
+		break;
+	default:
+		break;
+	}
+
 
 	if (FAILED(m_pVIBufferCom->Render()))
 		return E_FAIL;
@@ -95,6 +119,13 @@ HRESULT CUI_Effect_Back::Add_Components()
 		return E_FAIL;
 	}
 
+	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_UI_Button"),
+		TEXT("Com_Button"), reinterpret_cast<CComponent**>(&m_pButtonCom))))
+	{
+		MSG_BOX("Failed CUI_Effect_Back Add_Component : (Com_Button)");
+		return E_FAIL;
+	}
+
 	return S_OK;
 }
 
@@ -111,6 +142,24 @@ HRESULT CUI_Effect_Back::SetUp_ShaderResources()
 
 	if (FAILED(m_Textures[m_iTextureIndex]->Bind_ShaderResources(m_pShaderCom, "g_Texture")))
 		return E_FAIL;
+
+
+	if (m_eEffecttype == CURSOR)
+	{
+#ifdef _DEBUG
+		ImGui::Begin("Cursor");
+
+		if (ImGui::DragFloat("Cursor Control", &m_fRadian))
+		{
+
+		}
+
+		ImGui::End();
+#endif // _DEBUG
+
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_fRadian", &m_fRadian, sizeof(_float))))
+			return E_FAIL;
+	}
 
 	return S_OK;
 }
@@ -130,10 +179,14 @@ void CUI_Effect_Back::Set_Rotation(_float3 vAxis, _float fRadian)
 	m_pTransform->Rotation(vAxis, fRadian);
 }
 
+void CUI_Effect_Back::Set_Effecttype(EFFECTTYPE eType)
+{
+		m_eEffecttype = eType;
+}
 
 CUI_Effect_Back* CUI_Effect_Back::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CUI_Effect_Back* pInstance = new CUI_Effect_Back(pDevice, pContext);
+	CUI_Effect_Back* pInstance = New CUI_Effect_Back(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -146,7 +199,7 @@ CUI_Effect_Back* CUI_Effect_Back::Create(ID3D11Device* pDevice, ID3D11DeviceCont
 
 CGameObject* CUI_Effect_Back::Clone(void* pArg)
 {
-	CUI_Effect_Back* pInstance = new CUI_Effect_Back(*this);
+	CUI_Effect_Back* pInstance = New CUI_Effect_Back(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
@@ -165,4 +218,5 @@ void CUI_Effect_Back::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pImageCom);
+	Safe_Release(m_pButtonCom);
 }

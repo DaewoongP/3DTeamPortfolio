@@ -489,7 +489,7 @@ HRESULT CModel::Ready_File(TYPE eType, const _tchar* pModelFilePath)
 		ReadFile(hFile, &(Node.iNumChildren), sizeof(_uint), &dwByte, nullptr);
 
 		// Node Children (array)
-		Node.iChildrens = new _uint[Node.iNumChildren];
+		Node.iChildrens = New _uint[Node.iNumChildren];
 		ZeroMemory(Node.iChildrens, sizeof(_uint) * (Node.iNumChildren));
 		ReadFile(hFile, Node.iChildrens, sizeof(_uint) * (Node.iNumChildren), &dwByte, nullptr);
 
@@ -524,7 +524,7 @@ HRESULT CModel::Ready_File(TYPE eType, const _tchar* pModelFilePath)
 		// Mesh NumFaces
 		ReadFile(hFile, &(Mesh.iNumFaces), sizeof(_uint), &dwByte, nullptr);
 
-		Mesh.Faces = new FACE[Mesh.iNumFaces];
+		Mesh.Faces = New FACE[Mesh.iNumFaces];
 		ZeroMemory(Mesh.Faces, sizeof(FACE) * (Mesh.iNumFaces));
 
 		for (_uint j = 0; j < Mesh.iNumFaces; ++j)
@@ -536,7 +536,7 @@ HRESULT CModel::Ready_File(TYPE eType, const _tchar* pModelFilePath)
 			ReadFile(hFile, &(Face.iNumIndices), sizeof(_uint), &dwByte, nullptr);
 
 			// Face Indices
-			Face.iIndices = new _uint[Face.iNumIndices];
+			Face.iIndices = New _uint[Face.iNumIndices];
 			ZeroMemory(Face.iIndices, sizeof(_uint) * (Face.iNumIndices));
 			ReadFile(hFile, Face.iIndices, sizeof(_uint) * (Face.iNumIndices), &dwByte, nullptr);
 
@@ -544,29 +544,29 @@ HRESULT CModel::Ready_File(TYPE eType, const _tchar* pModelFilePath)
 		}
 
 		// Mesh Positions
-		Mesh.vPositions = new _float3[Mesh.iNumVertices];
+		Mesh.vPositions = New _float3[Mesh.iNumVertices];
 		ZeroMemory(Mesh.vPositions, sizeof(_float3) * (Mesh.iNumVertices));
 		ReadFile(hFile, Mesh.vPositions, sizeof(_float3) * (Mesh.iNumVertices), &dwByte, nullptr);
 
 		// Mesh Normals
-		Mesh.vNormals = new _float3[Mesh.iNumVertices];
+		Mesh.vNormals = New _float3[Mesh.iNumVertices];
 		ZeroMemory(Mesh.vNormals, sizeof(_float3) * (Mesh.iNumVertices));
 		ReadFile(hFile, Mesh.vNormals, sizeof(_float3) * (Mesh.iNumVertices), &dwByte, nullptr);
 
 		// Mesh TexCoords
-		Mesh.vTexCoords = new _float2[Mesh.iNumVertices];
+		Mesh.vTexCoords = New _float2[Mesh.iNumVertices];
 		ZeroMemory(Mesh.vTexCoords, sizeof(_float2) * (Mesh.iNumVertices));
 		ReadFile(hFile, Mesh.vTexCoords, sizeof(_float2) * (Mesh.iNumVertices), &dwByte, nullptr);
 
 		// Mesh Tangents
-		Mesh.vTangents = new _float3[Mesh.iNumVertices];
+		Mesh.vTangents = New _float3[Mesh.iNumVertices];
 		ZeroMemory(Mesh.vTangents, sizeof(_float3) * (Mesh.iNumVertices));
 		ReadFile(hFile, Mesh.vTangents, sizeof(_float3) * (Mesh.iNumVertices), &dwByte, nullptr);
 
 		// Mesh NumBones
 		ReadFile(hFile, &(Mesh.iNumBones), sizeof(_uint), &dwByte, nullptr);
 
-		Mesh.Bones = new BONE[Mesh.iNumBones];
+		Mesh.Bones = New BONE[Mesh.iNumBones];
 		ZeroMemory(Mesh.Bones, sizeof(BONE) * (Mesh.iNumBones));
 
 		// Write Bones
@@ -590,7 +590,7 @@ HRESULT CModel::Ready_File(TYPE eType, const _tchar* pModelFilePath)
 			// Mesh NumWeights
 			ReadFile(hFile, &(Bone.iNumWeights), sizeof(_uint), &dwByte, nullptr);
 
-			Bone.Weights = new WEIGHT[Bone.iNumWeights];
+			Bone.Weights = New WEIGHT[Bone.iNumWeights];
 			ZeroMemory(Bone.Weights, sizeof(WEIGHT) * (Bone.iNumWeights));
 
 			// Write Weights
@@ -659,7 +659,7 @@ HRESULT CModel::Ready_File(TYPE eType, const _tchar* pModelFilePath)
 			// Animation NumChannels
 			ReadFile(hFile, &(Animation.iNumChannels), sizeof(_uint), &dwByte, nullptr);
 
-			Animation.Channels = new CHANNEL[Animation.iNumChannels];
+			Animation.Channels = New CHANNEL[Animation.iNumChannels];
 			ZeroMemory(Animation.Channels, sizeof(CHANNEL) * (Animation.iNumChannels));
 
 			for (_uint j = 0; j < Animation.iNumChannels; ++j)
@@ -680,7 +680,7 @@ HRESULT CModel::Ready_File(TYPE eType, const _tchar* pModelFilePath)
 				ReadFile(hFile, &(Channel.iNumScalingKeys), sizeof(_uint), &dwByte, nullptr);
 
 				// Channel ScalingKeys
-				Channel.ScalingKeys = new VECTORKEY[Channel.iNumScalingKeys];
+				Channel.ScalingKeys = New VECTORKEY[Channel.iNumScalingKeys];
 				ZeroMemory(Channel.ScalingKeys, sizeof(VECTORKEY) * (Channel.iNumScalingKeys));
 				ReadFile(hFile, Channel.ScalingKeys, sizeof(VECTORKEY) * (Channel.iNumScalingKeys), &dwByte, nullptr);
 
@@ -688,7 +688,7 @@ HRESULT CModel::Ready_File(TYPE eType, const _tchar* pModelFilePath)
 				ReadFile(hFile, &(Channel.iNumRotationKeys), sizeof(_uint), &dwByte, nullptr);
 
 				// Channel RotationKeys
-				Channel.RotationKeys = new QUATERNIONKEY[Channel.iNumRotationKeys];
+				Channel.RotationKeys = New QUATERNIONKEY[Channel.iNumRotationKeys];
 				ZeroMemory(Channel.RotationKeys, sizeof(QUATERNIONKEY) * (Channel.iNumRotationKeys));
 				ReadFile(hFile, Channel.RotationKeys, sizeof(QUATERNIONKEY) * (Channel.iNumRotationKeys), &dwByte, nullptr);
 
@@ -696,7 +696,7 @@ HRESULT CModel::Ready_File(TYPE eType, const _tchar* pModelFilePath)
 				ReadFile(hFile, &(Channel.iNumPositionKeys), sizeof(_uint), &dwByte, nullptr);
 
 				// Channel PositionKeys
-				Channel.PositionKeys = new VECTORKEY[Channel.iNumPositionKeys];
+				Channel.PositionKeys = New VECTORKEY[Channel.iNumPositionKeys];
 				ZeroMemory(Channel.PositionKeys, sizeof(VECTORKEY) * (Channel.iNumPositionKeys));
 				ReadFile(hFile, Channel.PositionKeys, sizeof(VECTORKEY) * (Channel.iNumPositionKeys), &dwByte, nullptr);
 
@@ -822,10 +822,10 @@ HRESULT CModel::Convert_Animations_GCM()
 	m_ModelGCM.iNumNodes = m_NodeDatas.size();
 	m_ModelGCM.iNumMaterials = m_iNumMeshes;
 	m_ModelGCM.iNumMeshes = m_iNumMaterials;
-	m_ModelGCM.iNumAnimations = new _uint[m_iAnimationPartCount];
+	m_ModelGCM.iNumAnimations = New _uint[m_iAnimationPartCount];
 	m_ModelGCM.iRootBoneIndex = m_iRootBoneIndex;
 
-	m_ModelGCM.iAffectBones = new vector<unsigned int>[m_iAnimationPartCount]();
+	m_ModelGCM.iAffectBones = New vector<unsigned int>[m_iAnimationPartCount]();
 	for (_uint partCnt = 0; partCnt < m_iAnimationPartCount; partCnt++)
 	{
 		for (int i = 0; i < m_tAnimationDesc[partCnt].AffectBoneVec.size(); i++)
@@ -857,7 +857,7 @@ HRESULT CModel::Convert_Animations_GCM()
 			Animation.vOffsetPosition = pAnimation->Get_OffsetPosition();
 
 			// 채널만들기
-			Animation.Channels = new CHANNEL_GCM[pAnimation->Get_NumChannels()];
+			Animation.Channels = New CHANNEL_GCM[pAnimation->Get_NumChannels()];
 			ZeroMemory(Animation.Channels, sizeof(CHANNEL_GCM) * pAnimation->Get_NumChannels());
 			for (_uint j = 0; j < pAnimation->Get_NumChannels(); ++j)
 			{
@@ -870,7 +870,7 @@ HRESULT CModel::Convert_Animations_GCM()
 
 				// 채널의 스케일 키 저장
 				Channel.iNumMartixKeys = pChannel->Get_NumKeyFrames();
-				Channel.iMatrixFrame = new MATRIXFRAME_GCM[pChannel->Get_NumKeyFrames()];
+				Channel.iMatrixFrame = New MATRIXFRAME_GCM[pChannel->Get_NumKeyFrames()];
 				ZeroMemory(Channel.iMatrixFrame, sizeof(MATRIXFRAME_GCM) * pChannel->Get_NumKeyFrames());
 
 				vector<MATRIXFRAME>* pMatrixVec = pChannel->Get_MarixFrame();
@@ -885,7 +885,7 @@ HRESULT CModel::Convert_Animations_GCM()
 				Animation.Channels[j] = Channel;
 			}
 			// 노티파이 만들기
-			Animation.Notify = new NOTIFY_GCM;
+			Animation.Notify = New NOTIFY_GCM;
 			//노티파이 프레임 만들기
 			Animation.Notify->iNumKeyFrames = pAnimation->Get_Notify_Point()->Get_NotifyFrameCount();
 			//원래값 가져오기
@@ -900,7 +900,7 @@ HRESULT CModel::Convert_Animations_GCM()
 				{
 				case KEYFRAME_GCM::KF_SPEED:
 				{
-					SPEEDFRAME_GCM* Notify_Frame = new SPEEDFRAME_GCM();
+					SPEEDFRAME_GCM* Notify_Frame = New SPEEDFRAME_GCM();
 
 					lstrcpy(Notify_Frame->szName, keyframe.first.data());
 					Notify_Frame->eKeyFrameType = *reinterpret_cast<KEYFRAME_GCM::KEYFRAMETYPE*>(&keyframe.second->eKeyFrameType);
@@ -914,7 +914,7 @@ HRESULT CModel::Convert_Animations_GCM()
 
 				case KEYFRAME_GCM::KF_SOUND:
 				{
-					SOUNDFRAME_GCM* Notify_Frame = new SOUNDFRAME_GCM();
+					SOUNDFRAME_GCM* Notify_Frame = New SOUNDFRAME_GCM();
 
 					lstrcpy(Notify_Frame->szName, keyframe.first.data());
 					Notify_Frame->eKeyFrameType = *reinterpret_cast<KEYFRAME_GCM::KEYFRAMETYPE*>(&keyframe.second->eKeyFrameType);
@@ -927,7 +927,7 @@ HRESULT CModel::Convert_Animations_GCM()
 				}
 				case KEYFRAME_GCM::KF_NOTIFY:
 				{
-					NOTIFYFRAME_GCM* Notify_Frame = new NOTIFYFRAME_GCM();
+					NOTIFYFRAME_GCM* Notify_Frame = New NOTIFYFRAME_GCM();
 
 					lstrcpy(Notify_Frame->szName, keyframe.first.data());
 					Notify_Frame->eKeyFrameType = *reinterpret_cast<KEYFRAME_GCM::KEYFRAMETYPE*>(&keyframe.second->eKeyFrameType);
@@ -994,7 +994,7 @@ HRESULT CModel::Ready_File_GCM(TYPE eType, const _tchar* pModelFilePath)
 		ReadFile(hFile, &(Node.iNumChildren), sizeof(_uint), &dwByte, nullptr);
 
 		// Node Children (array)
-		Node.iChildrens = new _uint[Node.iNumChildren];
+		Node.iChildrens = New _uint[Node.iNumChildren];
 		ZeroMemory(Node.iChildrens, sizeof(_uint) * (Node.iNumChildren));
 		ReadFile(hFile, Node.iChildrens, sizeof(_uint) * (Node.iNumChildren), &dwByte, nullptr);
 
@@ -1029,7 +1029,7 @@ HRESULT CModel::Ready_File_GCM(TYPE eType, const _tchar* pModelFilePath)
 		// Mesh NumFaces
 		ReadFile(hFile, &(Mesh.iNumFaces), sizeof(_uint), &dwByte, nullptr);
 
-		Mesh.Faces = new FACE[Mesh.iNumFaces];
+		Mesh.Faces = New FACE[Mesh.iNumFaces];
 		ZeroMemory(Mesh.Faces, sizeof(FACE) * (Mesh.iNumFaces));
 
 		for (_uint j = 0; j < Mesh.iNumFaces; ++j)
@@ -1041,7 +1041,7 @@ HRESULT CModel::Ready_File_GCM(TYPE eType, const _tchar* pModelFilePath)
 			ReadFile(hFile, &(Face.iNumIndices), sizeof(_uint), &dwByte, nullptr);
 
 			// Face Indices
-			Face.iIndices = new _uint[Face.iNumIndices];
+			Face.iIndices = New _uint[Face.iNumIndices];
 			ZeroMemory(Face.iIndices, sizeof(_uint) * (Face.iNumIndices));
 			ReadFile(hFile, Face.iIndices, sizeof(_uint) * (Face.iNumIndices), &dwByte, nullptr);
 
@@ -1049,29 +1049,29 @@ HRESULT CModel::Ready_File_GCM(TYPE eType, const _tchar* pModelFilePath)
 		}
 
 		// Mesh Positions
-		Mesh.vPositions = new _float3[Mesh.iNumVertices];
+		Mesh.vPositions = New _float3[Mesh.iNumVertices];
 		ZeroMemory(Mesh.vPositions, sizeof(_float3) * (Mesh.iNumVertices));
 		ReadFile(hFile, Mesh.vPositions, sizeof(_float3) * (Mesh.iNumVertices), &dwByte, nullptr);
 
 		// Mesh Normals
-		Mesh.vNormals = new _float3[Mesh.iNumVertices];
+		Mesh.vNormals = New _float3[Mesh.iNumVertices];
 		ZeroMemory(Mesh.vNormals, sizeof(_float3) * (Mesh.iNumVertices));
 		ReadFile(hFile, Mesh.vNormals, sizeof(_float3) * (Mesh.iNumVertices), &dwByte, nullptr);
 
 		// Mesh TexCoords
-		Mesh.vTexCoords = new _float2[Mesh.iNumVertices];
+		Mesh.vTexCoords = New _float2[Mesh.iNumVertices];
 		ZeroMemory(Mesh.vTexCoords, sizeof(_float2) * (Mesh.iNumVertices));
 		ReadFile(hFile, Mesh.vTexCoords, sizeof(_float2) * (Mesh.iNumVertices), &dwByte, nullptr);
 
 		// Mesh Tangents
-		Mesh.vTangents = new _float3[Mesh.iNumVertices];
+		Mesh.vTangents = New _float3[Mesh.iNumVertices];
 		ZeroMemory(Mesh.vTangents, sizeof(_float3) * (Mesh.iNumVertices));
 		ReadFile(hFile, Mesh.vTangents, sizeof(_float3) * (Mesh.iNumVertices), &dwByte, nullptr);
 
 		// Mesh NumBones
 		ReadFile(hFile, &(Mesh.iNumBones), sizeof(_uint), &dwByte, nullptr);
 
-		Mesh.Bones = new BONE[Mesh.iNumBones];
+		Mesh.Bones = New BONE[Mesh.iNumBones];
 		ZeroMemory(Mesh.Bones, sizeof(BONE) * (Mesh.iNumBones));
 
 		// Write Bones
@@ -1095,7 +1095,7 @@ HRESULT CModel::Ready_File_GCM(TYPE eType, const _tchar* pModelFilePath)
 			// Mesh NumWeights
 			ReadFile(hFile, &(Bone.iNumWeights), sizeof(_uint), &dwByte, nullptr);
 
-			Bone.Weights = new WEIGHT[Bone.iNumWeights];
+			Bone.Weights = New WEIGHT[Bone.iNumWeights];
 			ZeroMemory(Bone.Weights, sizeof(WEIGHT) * (Bone.iNumWeights));
 
 			// Write Weights
@@ -1143,7 +1143,7 @@ HRESULT CModel::Ready_File_GCM(TYPE eType, const _tchar* pModelFilePath)
 		// Animation NumAnimations
 		ReadFile(hFile, &(m_ModelGCM.iAnimationPartCount), sizeof(_uint), &dwByte, nullptr);
 
-		m_ModelGCM.iAffectBones = new vector<unsigned int>[m_ModelGCM.iAnimationPartCount];
+		m_ModelGCM.iAffectBones = New vector<unsigned int>[m_ModelGCM.iAnimationPartCount];
 		for (_uint partCnt = 0; partCnt < m_ModelGCM.iAnimationPartCount; partCnt++)
 		{
 			_uint size = 0;
@@ -1157,7 +1157,7 @@ HRESULT CModel::Ready_File_GCM(TYPE eType, const _tchar* pModelFilePath)
 
 
 
-		m_ModelGCM.iNumAnimations = new unsigned int[m_ModelGCM.iAnimationPartCount];
+		m_ModelGCM.iNumAnimations = New unsigned int[m_ModelGCM.iAnimationPartCount];
 		for (_uint animPartIndex = 0; animPartIndex < m_ModelGCM.iAnimationPartCount; animPartIndex++)
 		{
 			ReadFile(hFile, &(m_ModelGCM.iNumAnimations[animPartIndex]), sizeof(_uint), &dwByte, nullptr);
@@ -1191,7 +1191,7 @@ HRESULT CModel::Ready_File_GCM(TYPE eType, const _tchar* pModelFilePath)
 				// Animation NumChannels
 				ReadFile(hFile, &(Animation.iNumChannels), sizeof(_uint), &dwByte, nullptr);
 
-				Animation.Channels = new CHANNEL_GCM[Animation.iNumChannels];
+				Animation.Channels = New CHANNEL_GCM[Animation.iNumChannels];
 				ZeroMemory(Animation.Channels, sizeof(CHANNEL_GCM) * (Animation.iNumChannels));
 
 				//채널만큼 반복
@@ -1213,7 +1213,7 @@ HRESULT CModel::Ready_File_GCM(TYPE eType, const _tchar* pModelFilePath)
 					ReadFile(hFile, &(Channel.iNumMartixKeys), sizeof(_uint), &dwByte, nullptr);
 
 					// Channel ScalingKeys
-					Channel.iMatrixFrame = new MATRIXFRAME_GCM[Channel.iNumMartixKeys];
+					Channel.iMatrixFrame = New MATRIXFRAME_GCM[Channel.iNumMartixKeys];
 					ZeroMemory(Channel.iMatrixFrame, sizeof(MATRIXFRAME_GCM) * (Channel.iNumMartixKeys));
 					ReadFile(hFile, Channel.iMatrixFrame, sizeof(MATRIXFRAME_GCM) * (Channel.iNumMartixKeys), &dwByte, nullptr);
 
@@ -1221,7 +1221,7 @@ HRESULT CModel::Ready_File_GCM(TYPE eType, const _tchar* pModelFilePath)
 				}
 
 				// Animation NumNotify
-				Animation.Notify = new NOTIFY_GCM{};
+				Animation.Notify = New NOTIFY_GCM{};
 				//ZeroMemory(Animation.Notify, sizeof(NOTIFY_GCM));
 
 				ReadFile(hFile, &(Animation.Notify->iNumKeyFrames), sizeof(_uint), &dwByte, nullptr);
@@ -1245,7 +1245,7 @@ HRESULT CModel::Ready_File_GCM(TYPE eType, const _tchar* pModelFilePath)
 					{
 					case KEYFRAME_GCM::KF_SPEED:
 					{
-						SPEEDFRAME_GCM* NotifyFrame = new SPEEDFRAME_GCM;
+						SPEEDFRAME_GCM* NotifyFrame = New SPEEDFRAME_GCM;
 
 						lstrcpy(NotifyFrame->szName, szFrameName);
 						NotifyFrame->eKeyFrameType = *reinterpret_cast<KEYFRAME_GCM::KEYFRAMETYPE*>(&iType);
@@ -1257,7 +1257,7 @@ HRESULT CModel::Ready_File_GCM(TYPE eType, const _tchar* pModelFilePath)
 					}
 					case KEYFRAME_GCM::KF_NOTIFY:
 					{
-						NOTIFYFRAME_GCM* NotifyFrame = new NOTIFYFRAME_GCM;
+						NOTIFYFRAME_GCM* NotifyFrame = New NOTIFYFRAME_GCM;
 
 						lstrcpy(NotifyFrame->szName, szFrameName);
 						NotifyFrame->eKeyFrameType = *reinterpret_cast<KEYFRAME_GCM::KEYFRAMETYPE*>(&iType);
@@ -1267,7 +1267,7 @@ HRESULT CModel::Ready_File_GCM(TYPE eType, const _tchar* pModelFilePath)
 					}
 					case KEYFRAME_GCM::KF_SOUND:
 					{
-						SOUNDFRAME_GCM* NotifyFrame = new SOUNDFRAME_GCM;
+						SOUNDFRAME_GCM* NotifyFrame = New SOUNDFRAME_GCM;
 
 						lstrcpy(NotifyFrame->szName, szFrameName);
 						NotifyFrame->eKeyFrameType = *reinterpret_cast<KEYFRAME_GCM::KEYFRAMETYPE*>(&iType);
@@ -1438,7 +1438,7 @@ HRESULT CModel::Ready_File_Animation(ANIMTYPE eType, const _tchar* pAnimationFil
 		// Animation NumChannels
 		ReadFile(hFile, &(Animation.iNumChannels), sizeof(_uint), &dwByte, nullptr);
 
-		Animation.Channels = new CHANNEL[Animation.iNumChannels];
+		Animation.Channels = New CHANNEL[Animation.iNumChannels];
 		ZeroMemory(Animation.Channels, sizeof(CHANNEL) * (Animation.iNumChannels));
 
 		for (_uint j = 0; j < Animation.iNumChannels; ++j)
@@ -1459,7 +1459,7 @@ HRESULT CModel::Ready_File_Animation(ANIMTYPE eType, const _tchar* pAnimationFil
 			ReadFile(hFile, &(Channel.iNumScalingKeys), sizeof(_uint), &dwByte, nullptr);
 
 			// Channel ScalingKeys
-			Channel.ScalingKeys = new VECTORKEY[Channel.iNumScalingKeys];
+			Channel.ScalingKeys = New VECTORKEY[Channel.iNumScalingKeys];
 			ZeroMemory(Channel.ScalingKeys, sizeof(VECTORKEY) * (Channel.iNumScalingKeys));
 			ReadFile(hFile, Channel.ScalingKeys, sizeof(VECTORKEY) * (Channel.iNumScalingKeys), &dwByte, nullptr);
 
@@ -1467,7 +1467,7 @@ HRESULT CModel::Ready_File_Animation(ANIMTYPE eType, const _tchar* pAnimationFil
 			ReadFile(hFile, &(Channel.iNumRotationKeys), sizeof(_uint), &dwByte, nullptr);
 
 			// Channel RotationKeys
-			Channel.RotationKeys = new QUATERNIONKEY[Channel.iNumRotationKeys];
+			Channel.RotationKeys = New QUATERNIONKEY[Channel.iNumRotationKeys];
 			ZeroMemory(Channel.RotationKeys, sizeof(QUATERNIONKEY) * (Channel.iNumRotationKeys));
 			ReadFile(hFile, Channel.RotationKeys, sizeof(QUATERNIONKEY) * (Channel.iNumRotationKeys), &dwByte, nullptr);
 
@@ -1475,7 +1475,7 @@ HRESULT CModel::Ready_File_Animation(ANIMTYPE eType, const _tchar* pAnimationFil
 			ReadFile(hFile, &(Channel.iNumPositionKeys), sizeof(_uint), &dwByte, nullptr);
 
 			// Channel PositionKeys
-			Channel.PositionKeys = new VECTORKEY[Channel.iNumPositionKeys];
+			Channel.PositionKeys = New VECTORKEY[Channel.iNumPositionKeys];
 			ZeroMemory(Channel.PositionKeys, sizeof(VECTORKEY) * (Channel.iNumPositionKeys));
 			ReadFile(hFile, Channel.PositionKeys, sizeof(VECTORKEY) * (Channel.iNumPositionKeys), &dwByte, nullptr);
 
@@ -1893,7 +1893,7 @@ void CModel::Reset_Animation(ANIMTYPE eType)
 
 CModel* CModel::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, TYPE eType, const _tchar* pModelFilePath, _float4x4 PivotMatrix)
 {
-	CModel* pInstance = new CModel(pDevice, pContext);
+	CModel* pInstance = New CModel(pDevice, pContext);
 	if (FAILED(pInstance->Initialize_Prototype(eType, pModelFilePath, PivotMatrix)))
 	{
 		MSG_BOX("Failed to Created CModel");
@@ -1905,7 +1905,7 @@ CModel* CModel::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, TYP
 
 CComponent* CModel::Clone(void* pArg)
 {
-	CModel* pInstance = new CModel(*this);
+	CModel* pInstance = New CModel(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

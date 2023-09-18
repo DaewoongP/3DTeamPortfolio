@@ -9,6 +9,7 @@
 
 #include "GameObject.h"
 #include "VIBuffer_Rect_Color_Instance.h"
+#include "VIBuffer_Color_Index_Instance.h"
 #include "Modules.h"
 
 BEGIN(Engine)
@@ -24,8 +25,9 @@ BEGIN(Engine)
 class ENGINE_DLL CParticleSystem : public CGameObject
 {
 public:
-	typedef VTXCOLINSTANCE COL_INSTANCE;
-	typedef list<PARTICLE>::iterator PARTICLE_IT;
+	typedef VTXCOLIDXINSTANCE INSTANCE;
+	typedef CVIBuffer_Color_Index_Instance CBuffer;
+	// CVIBuffer_Rect_Color_Index_Instance;
 
 public:
 	// ALIVE : 업데이트 되고 있는 파티클
@@ -104,11 +106,6 @@ protected:
 	void Action_By_Age();
 	void Action_By_Duration();
 	void Action_By_StopOption();
-	void Action_By_RateOverTime();
-	void Action_By_Distance();
-	void Action_By_Bursts();
-	void Action_By_RotationOverLifeTime(PARTICLE_IT& _particle_iter, _float fTimeDelta);
-	void Action_By_ColorOverLifeTime(PARTICLE_IT& _particle_iter, _float fTimeDelta);
 
 protected:
 	HRESULT Add_Components();
@@ -118,23 +115,26 @@ protected:
 	MAIN_MODULE						m_MainModuleDesc;
 	EMISSION_MODULE					m_EmissionModuleDesc;
 	SHAPE_MODULE					m_ShapeModuleDesc;
-	RENDERER_MODULE					m_RendererModuleDesc;
 	COLOR_OVER_LIFETIME				m_ColorOverLifeTimeModuleDesc;
 	SIZE_OVER_LIFETIME				m_SizeOverLifeTimeModuleDesc;
 	ROTATION_OVER_LIFETIME_MODULE	m_RotationOverLifetimeModuleDesc;
+	TEXTURE_SHEET_ANIMATION			m_TextureSheetAnimationModuleDesc;
+	RENDERER_MODULE					m_RendererModuleDesc;
 
 protected: 
 	//CVIBuffer_Geometry* m_pShapeBuffer = { nullptr };
 	CRenderer* m_pRenderer = { nullptr };
 	CTexture* m_pMainTexture = { nullptr }; // 출력에 사용 될 텍스처
 	CTexture* m_pClipTexture = { nullptr }; // 알파테스트에 사용될 텍스처
-	CVIBuffer_Rect_Color_Instance* m_pBuffer = { nullptr };
+	CTexture* m_pGradientTexture = { nullptr }; // 알파테스트에 사용될 텍스처
+	CTexture* m_pNormalTexture = { nullptr }; // 텍스처시트에 사용될 텍스처
+	CBuffer* m_pBuffer = { nullptr };
 	CShader* m_pShader = { nullptr };
 	CModel* m_pModel = { nullptr };
 
 protected:
 	list<PARTICLE> m_Particles[STATE_END];
-	vector<COL_INSTANCE>  m_ParticleMatrices;
+	vector<INSTANCE>  m_ParticleMatrices;
 	function<void()> m_StopAction;
 	_uint m_iLevel = { 0 };
 
@@ -142,6 +142,8 @@ public:
 	static CParticleSystem* Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, const _tchar* _pDirectoryPath, _uint iLevel = 0);
 	virtual CGameObject* Clone(void* _pArg) override;
 	virtual void Free() override;
+
+	friend struct EMISSION_MODULE;
 };
 
 END

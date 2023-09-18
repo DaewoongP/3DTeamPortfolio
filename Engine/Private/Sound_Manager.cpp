@@ -202,7 +202,7 @@ HRESULT CSound_Manager::Load_SoundFile(const _tchar* pSoundFile)
 		{
 			_int iLength = lstrlen(FindDataValue.name) + 1;
 
-			_tchar* szSoundKey = new _tchar[iLength];
+			_tchar* szSoundKey = New _tchar[iLength];
 			ZeroMemory(szSoundKey, sizeof(_tchar) * iLength);
 
 			lstrcpy(szSoundKey, FindDataValue.name);

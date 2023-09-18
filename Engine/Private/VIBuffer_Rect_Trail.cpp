@@ -98,7 +98,7 @@ HRESULT CVIBuffer_Rect_Trail::Initialize(void* pArg)
 	m_BufferDesc.CPUAccessFlags = { D3D11_CPU_ACCESS_WRITE };
 	m_BufferDesc.MiscFlags = { 0 };
 
-	VTXPOSTEX* pVertices = new VTXPOSTEX[m_iNumVertices];
+	VTXPOSTEX* pVertices = New VTXPOSTEX[m_iNumVertices];
 	ZeroMemory(pVertices, sizeof(VTXPOSTEX) * m_iNumVertices);
 
 	// Local Position
@@ -148,7 +148,7 @@ HRESULT CVIBuffer_Rect_Trail::Initialize(void* pArg)
 	m_BufferDesc.CPUAccessFlags = { 0 };
 	m_BufferDesc.MiscFlags = { 0 };
 
-	_ushort* pIndices = new _ushort[m_iNumIndices];
+	_ushort* pIndices = New _ushort[m_iNumIndices];
 	ZeroMemory(pIndices, sizeof(_ushort) * m_iNumIndices);
 	/*
 	9 7 5 3 1
@@ -269,7 +269,7 @@ HRESULT CVIBuffer_Rect_Trail::Setup_ShaderResources(class CShader* pShader)
 
 CVIBuffer_Rect_Trail* CVIBuffer_Rect_Trail::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CVIBuffer_Rect_Trail* pInstance = new CVIBuffer_Rect_Trail(pDevice, pContext);
+	CVIBuffer_Rect_Trail* pInstance = New CVIBuffer_Rect_Trail(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -282,7 +282,7 @@ CVIBuffer_Rect_Trail* CVIBuffer_Rect_Trail::Create(ID3D11Device* pDevice, ID3D11
 
 CComponent* CVIBuffer_Rect_Trail::Clone(void* pArg)
 {
-	CVIBuffer_Rect_Trail* pInstance = new CVIBuffer_Rect_Trail(*this);
+	CVIBuffer_Rect_Trail* pInstance = New CVIBuffer_Rect_Trail(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

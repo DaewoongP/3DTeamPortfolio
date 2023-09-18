@@ -278,6 +278,12 @@ void CObject_Window::Install_Object(_float3 vPos)
 		m_pObject = static_cast<CMapObject*>(m_pGameInstance->Find_Component_In_Layer(LEVEL_TOOL,
 			TEXT("Layer_MapObject"), wszobjName));
 
+		if (nullptr == m_pObject)
+		{
+			MSG_BOX("Failed to Find MapObject with Tag 5");
+			return;
+		}
+
 		m_pObject->Add_Model_Component(m_vecModelList_t.at(m_iModelIndex));
 		m_pObject->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMesh"));
 		m_pObject->Set_Color(m_iModelCnt); // 고유한 색깔 값을 넣어줌
@@ -327,6 +333,12 @@ void CObject_Window::Install_Continuous_Object(_float3 vPos)
 		// 마지막에 설치한 맵 오브젝트 주소 가져옴
 		m_pObject = static_cast<CMapObject*>(m_pGameInstance->Find_Component_In_Layer(LEVEL_TOOL,
 			TEXT("Layer_MapObject"), wszobjName));
+
+		if (nullptr == m_pObject)
+		{
+			MSG_BOX("Failed to Find MapObject with Tag 4");
+			return;
+		}
 
 		m_pObject->Add_Model_Component(m_vecModelList_t.at(m_iModelIndex));
 		m_pObject->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMesh"));
@@ -403,6 +415,12 @@ void CObject_Window::Install_Random_Object(_float3 vPos)
 				m_pObject = static_cast<CMapObject*>(m_pGameInstance->Find_Component_In_Layer(LEVEL_TOOL,
 					TEXT("Layer_MapObject"), wszobjName));
 
+				if (nullptr == m_pObject)
+				{
+					MSG_BOX("Failed to Find MapObject with Tag 3");
+					return;
+				}
+
 				m_pObject->Add_Model_Component(m_vecModelList_t.at(m_iModelIndex));
 				m_pObject->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMesh"));
 				m_pObject->Set_Color(m_iModelCnt); // 고유한 색깔 값을 넣어줌
@@ -436,7 +454,7 @@ void CObject_Window::Install_Multi_Object(_float3 vPos)
 	{
 		// 맵 오브젝트에 번호 붙여줌
 		_tchar wszobjName[MAX_PATH] = { 0 };
-		_stprintf_s(wszobjName, TEXT("GameObject_MapObject_%d"), (m_iModelCnt));
+		_stprintf_s(wszobjName, TEXT("GameObject_InsMapObject_%d"), (m_iModelCnt));
 		Deep_Copy_Tag(wszobjName);
 		++m_iModelCnt;
 
@@ -454,6 +472,12 @@ void CObject_Window::Install_Multi_Object(_float3 vPos)
 		// 마지막에 설치한 맵 오브젝트 주소 가져옴
 		m_pObject = static_cast<CMapObject*>(m_pGameInstance->Find_Component_In_Layer(LEVEL_TOOL,
 			TEXT("Layer_MapObject"), wszobjName));
+
+		if (nullptr == m_pObject)
+		{
+			MSG_BOX("Failed to Find MapObject with Tag 1");
+			return;
+		}
 
 		m_pObject->Add_Model_Component(m_vecModelList_t.at(m_iModelIndex));
 		m_pObject->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMesh"));
@@ -476,6 +500,12 @@ void CObject_Window::Install_Multi_Object(_float3 vPos)
 
 			CMapObject* pObject = static_cast<CMapObject*>(m_pGameInstance->Find_Component_In_Layer(LEVEL_TOOL,
 				TEXT("Layer_MapObject"), wszobjName));
+
+			if (nullptr == pObject)
+			{
+				MSG_BOX("Failed to Find MapObject with Tag 2");
+				return;
+			}
 
 			vecWorldMatrix.push_back(pObject->Get_Transform()->Get_WorldMatrix());
 		}
@@ -1184,7 +1214,7 @@ HRESULT CObject_Window::Save_MapObject(string szMapDataPath)
 		{
 			MSG_BOX("Failed to Write m_vecSaveObject.vPos");
 			return E_FAIL;
-		}			
+		}
 
 		if (!WriteFile(hFile, &iter.iTagLen, sizeof(_uint), &dwByte, nullptr))
 		{ 
@@ -1348,7 +1378,6 @@ HRESULT CObject_Window::Save_MapObject_Ins(string szMapDataPath)
 	}
 
 	m_iInsObjectCnt = 0;
-	m_vecSaveInsObject.clear();
 
 	MSG_BOX("Save Success");
 
@@ -1426,6 +1455,9 @@ HRESULT CObject_Window::Load_MapObject_Ins(const _tchar* wszMapDataPath)
 
 	CloseHandle(hFile);
 
+	// 모델 중복 체크 비교 변수
+	_uint j = 0;
+
 	// 로드한 데이터를 적용시켜 주는 부분
 	for (size_t i = 0; i < m_vecSaveInsObject.size(); i++)
 	{
@@ -1444,26 +1476,15 @@ HRESULT CObject_Window::Load_MapObject_Ins(const _tchar* wszMapDataPath)
 		wstring wsModelName = wsSave.substr(iLength);
 		ws += wsModelName;
 
-		// 이미 생성된 인스턴스 모델인지 체크
-		_uint j = 0;
+		ws += TEXT("_");
 
-		for (auto& iter : m_vecInsObjectTag)
-		{
-			if (iter == ws)
-				++j;
-		}
+		_tchar wszNumber[MAX_PATH];
+		_itow_s(j, wszNumber, 10);
+		
+		ws += wszNumber; // 여기까지 오면 Prototype_Component_Model_Instance_모델명_번호 이런식으로 이름이 붙음	
 
-		if (0 == j)
-		{
-			m_vecInsObjectTag.push_back(ws);
-		}
-
-		else
-		{
-			ws += TEXT("_");
-			ws += j;
-			m_vecInsObjectTag.push_back(ws);
-		}
+		m_vecInsObjectTag.push_back(ws);
+		++j;
 
 		wstring wsPath = TEXT("../../Resources/Models/MapObject/NonAnims/");
 		wsPath += wsModelName;
@@ -1618,7 +1639,7 @@ _float3 CObject_Window::Find_PickingPos()
 	_float4 vRayPos = { 0.f, 0.f, 0.f, 1.f };
 	_float4 vRayDir = { 0.f, 0.f, 0.f, 0.f };
 
-	// shift키를 누르고 있으면 격자에 딱 맞게 위치가 반올림됨
+	// U키를 누르면 마우스 움직임 봉쇄
 	if (true == m_pGameInstance->Get_DIKeyState(DIK_U, CInput_Device::KEY_DOWN))
 	{
 		m_isLockMouseMove = !m_isLockMouseMove;
