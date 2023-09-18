@@ -128,7 +128,7 @@ HRESULT CMain1_Loader::Loading_For_MainGame()
 			CTerrain::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Terrain");
 
-		if (FAILED(Loading_Map_Object(TEXT("../../Resources/GameData/MapData/0916123.ddd"))))
+		if (FAILED(Loading_Map_Object(TEXT("../../Resources/GameData/MapData/MapData6.ddd"))))
 			throw TEXT("Map Object");
 
 		/* For.Prototype_Component_CharacterController*/
