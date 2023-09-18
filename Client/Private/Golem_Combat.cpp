@@ -310,7 +310,7 @@ HRESULT CGolem_Combat::Add_Components()
 		RigidBodyDesc.isStatic = false;
 		RigidBodyDesc.isTrigger = false;
 		RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
-		RigidBodyDesc.vOffsetPosition = _float3(0.f, 1.f, 0.f);
+		RigidBodyDesc.vOffsetPosition = _float3(0.f,2.2f, 0.f);
 		RigidBodyDesc.vOffsetRotation = XMQuaternionRotationRollPitchYaw(0.f, 0.f, XMConvertToRadians(90.f));
 		RigidBodyDesc.fStaticFriction = 0.f;
 		RigidBodyDesc.fDynamicFriction = 1.f;

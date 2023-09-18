@@ -289,11 +289,11 @@ HRESULT CRigidBody::Create_Collider(RIGIDBODYDESC* pRigidBodyDesc)
 	// 트리거 설정
 	if (true == pRigidBodyDesc->isTrigger)
 	{
-		ePxFlag = PxShapeFlag::eSCENE_QUERY_SHAPE | PxShapeFlag::eTRIGGER_SHAPE;
+		ePxFlag = PxShapeFlag::eSCENE_QUERY_SHAPE | PxShapeFlag::eTRIGGER_SHAPE;// | PxShapeFlag::eVISUALIZATION;
 	}
 	else
 	{
-		ePxFlag = PxShapeFlag::eSCENE_QUERY_SHAPE | PxShapeFlag::eSIMULATION_SHAPE;
+		ePxFlag = PxShapeFlag::eSCENE_QUERY_SHAPE | PxShapeFlag::eSIMULATION_SHAPE;// | PxShapeFlag::eVISUALIZATION;
 	}
 
 	m_pGeometry = pRigidBodyDesc->pGeometry;
@@ -323,6 +323,11 @@ HRESULT CRigidBody::Create_Collider(RIGIDBODYDESC* pRigidBodyDesc)
 	// AttachShape로 콜라이더 여러개 바인딩 가능.
 	// 씬도 일단 한개만 처리하게 해둬서 신경 안써도 될듯.
 	m_pActor->attachShape(*pShape);
+
+	if (false == pRigidBodyDesc->isGravity)
+	{
+		m_pActor->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, true);
+	}
 
 #ifdef _DEBUG
 	// 렌더링용 쉐이더, 버퍼
