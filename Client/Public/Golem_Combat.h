@@ -62,6 +62,7 @@ private:
 	_bool m_isSpawn = { false };
 	_bool m_isParring = { false };
 	_bool m_isRangeInEnemy = { false };
+	_bool m_isChangeAnimation = { false };
 
 	// 범위 안에 들어온 몬스터 리스트
 	list<pair<wstring, const CGameObject*>> m_RangeInEnemies;

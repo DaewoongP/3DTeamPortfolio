@@ -10,6 +10,8 @@ class CSequence;
 class CRenderer;
 class CRigidBody;
 class CRootBehavior;
+
+class CAnimation;
 END
 
 BEGIN(Client)
@@ -44,6 +46,7 @@ private:
 	// 범위 안에 들어온 몬스터 리스트
 	list<pair<wstring, const CGameObject*>> m_RangeInEnemies;
 
+	_bool m_isChangeAnimation = { false };
 	_bool m_isRangeInEnemy = { false };
 
 private:
@@ -67,6 +70,11 @@ private: /* 행동 묶음들 */
 	HRESULT Make_Combat(_Inout_ CSelector* pSelector); // 전투
 
 	HRESULT Make_Attack_Combo1(_Inout_ CSequence* pSequence);
+
+private: /* Notify Functions */
+	void Change_Animation() {
+		m_isChangeAnimation = true;
+	}
 
 public:
 	static CProfessor_Fig* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

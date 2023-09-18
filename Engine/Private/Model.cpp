@@ -59,7 +59,7 @@ CModel::CModel(const CModel& rhs)
 			Safe_AddRef(pTexture);
 	}
 
-	for (int i =0;i<ANIM_END;i++)
+	for (int i = 0; i < ANIM_END; i++)
 	{
 		m_AnimationDatasGCM[i] = rhs.m_AnimationDatasGCM[i];
 	}
@@ -85,7 +85,7 @@ CBone* CModel::Get_Bone_Index(_uint iIndex)
 {
 	auto	iter = find_if(m_Bones.begin(), m_Bones.end(), [&](CBone* pBone)
 		{
-			if (iIndex==pBone->Get_Index())
+			if (iIndex == pBone->Get_Index())
 				return true;
 			else
 				return false;
@@ -142,7 +142,7 @@ HRESULT CModel::Initialize_Prototype(TYPE eType, const _tchar* pModelFilePath, _
 				return E_FAIL;
 		}
 	}
-	else 
+	else
 	{
 		m_isCreatedByGCM = true;
 		if (FAILED(Ready_File_GCM(eType, pModelFilePath)))
@@ -204,7 +204,7 @@ void CModel::Play_Animation(_float fTimeDelta, ANIMTYPE eType, CTransform* pTran
 	if (m_tAnimationDesc[eType].iNumAnimations == 0)
 		return;
 
-	
+
 	CAnimation* currentAnimation = m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex];
 	if (currentAnimation->Invalidate_AccTime(fTimeDelta) || m_tAnimationDesc[eType].isResetAnimTrigger)
 	{
@@ -234,8 +234,8 @@ void CModel::Play_Animation(_float fTimeDelta, ANIMTYPE eType, CTransform* pTran
 			Do_Root_Animation(fTimeDelta, pTransform, m_isFirstFrame);
 			m_isFirstFrame = false;
 		}
-			
-		
+
+
 	}
 	// 애니메이션 종료 체크 ( 루프 일 경우 계속 false )
 	m_isFinishAnimation = currentAnimation->Get_Duration() <=
@@ -260,7 +260,7 @@ void CModel::Play_Animation(_float fTimeDelta, ANIMTYPE eType, CTransform* pTran
 	else
 		//러프설정이 돼있는데 시간이 다됐으면? 러프설정 꺼줘.
 		m_tAnimationDesc[eType].isAnimChangeLerp = false;
-	
+
 	for (auto& pBone : m_Bones)
 	{
 		_int iFindIndex = pBone->Get_Index();
@@ -274,9 +274,9 @@ void CModel::Play_Animation(_float fTimeDelta, ANIMTYPE eType, CTransform* pTran
 		{
 			continue;
 		}
-			
+
 		//설정할 뼈가 루트본에 직접연결돼있다면? 그리고 루트애니메이션이 설정돼있다면?
-		if (m_iRootBoneIndex == pBone->Get_ParentNodeIndex()&& m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Get_RootAnim_State())
+		if (m_iRootBoneIndex == pBone->Get_ParentNodeIndex() && m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Get_RootAnim_State())
 		{
 			//이 뼈는 루트본에 영향을 받지않아야함.(루트의 matrix는 transform에 직접적으로 연결해줄거기 때문에.)
 			pBone->Invalidate_CombinedTransformationMatrix_Basic(m_Bones);
@@ -311,13 +311,13 @@ HRESULT CModel::Find_BoneIndex(const _tchar* pBoneName, _Inout_ _uint* iIndex)
 }
 
 void CModel::Set_CurrentAnimIndex(_uint iIndex, ANIMTYPE eType)
-{ 
+{
 	m_tAnimationDesc[eType].iCurrentAnimIndex = iIndex;
 	m_tAnimationDesc[eType].isAnimChangeLerp = true;
 	m_tAnimationDesc[eType].fAnimChangeTimer = ANIMATIONLERPTIME;
 }
 
-void CModel::Do_Root_Animation(_float fTimeDelta,CTransform* pTransform,_bool isFirstFrame)
+void CModel::Do_Root_Animation(_float fTimeDelta, CTransform* pTransform, _bool isFirstFrame)
 {
 	if (pTransform != nullptr)
 	{
@@ -328,7 +328,7 @@ void CModel::Do_Root_Animation(_float fTimeDelta,CTransform* pTransform,_bool is
 		if (isFirstFrame)
 			m_PostRootMatrix = current_Matrix;
 		post_Matirx = m_PostRootMatrix;
-		
+
 		_float3 vCurrent_Look = current_Matrix.Look();
 		_float3 vPost_Look = post_Matirx.Look();
 
@@ -337,11 +337,11 @@ void CModel::Do_Root_Animation(_float fTimeDelta,CTransform* pTransform,_bool is
 		vCurrent_Look.Normalize();
 		vPost_Look.Normalize();
 
-		if (vCurrent_Look != vPost_Look && fabsf(vCurrent_Look.x - vPost_Look.x) >0.0001f && fabsf(vCurrent_Look.z - vPost_Look.z) > 0.0001f)
+		if (vCurrent_Look != vPost_Look && fabsf(vCurrent_Look.x - vPost_Look.x) > 0.0001f && fabsf(vCurrent_Look.z - vPost_Look.z) > 0.0001f)
 		{
 			_float dot = XMVectorGetX(XMVector3Dot(vPost_Look, vCurrent_Look));
 			_float radian = acosf(dot);
-			
+
 			if (XMVectorGetY(XMVector3Cross(vCurrent_Look, vPost_Look)) > 0)
 				radian = 2 * XMVectorGetX(g_XMPi) - radian;
 
@@ -350,7 +350,7 @@ void CModel::Do_Root_Animation(_float fTimeDelta,CTransform* pTransform,_bool is
 
 		_float3 vCurrent_Position = current_Matrix.Translation();
 		_float3 vPost_Position = post_Matirx.Translation();
-		
+
 		_float4x4 vPivotOutPosScale = m_PivotMatrix;
 		vPivotOutPosScale.MatrixScale(_float3(1, 1, 1));
 		vPivotOutPosScale._41 = 0;
@@ -366,7 +366,7 @@ void CModel::Do_Root_Animation(_float fTimeDelta,CTransform* pTransform,_bool is
 
 		_float3 vOffsetVector = m_tAnimationDesc[0].Animations[m_tAnimationDesc[0].iCurrentAnimIndex]->Get_OffsetPosition();
 		_float4x4 offsetPositionMatrix = XMMatrixTranslation(vOffsetVector.x, vOffsetVector.y, vOffsetVector.z);
-		
+
 		pTransform->Set_WorldMatrix(offsetPositionMatrix * player_Matrix_Override * PositionMatrix * pTransform->Get_WorldMatrix());
 		m_PostRootMatrix = m_Bones[m_iRootBoneIndex]->Get_CombinedTransformationMatrix();
 	}
@@ -391,7 +391,7 @@ HRESULT CModel::Separate_Animation(_int iFromIndex, _int iToIndex, ANIMTYPE eTyp
 	{
 		m_tAnimationDesc[m_iAnimationPartCount].AffectBoneVec.push_back(i + iFromIndex);
 	}
-	
+
 	//애니메이션을 복사해줍니다.
 	m_tAnimationDesc[m_iAnimationPartCount].iNumAnimations = m_Model.iNumAnimations;
 	for (_uint i = 0; i < m_Model.iNumAnimations; ++i)
@@ -413,8 +413,35 @@ void CModel::Delete_Animation(_uint iAnimIndex, ANIMTYPE eType)
 	m_tAnimationDesc[eType].Animations.erase(m_tAnimationDesc[eType].Animations.begin() + iAnimIndex);
 	m_tAnimationDesc[eType].iNumAnimations--;
 
-	if (m_tAnimationDesc[eType].iCurrentAnimIndex >= m_tAnimationDesc[eType].iNumAnimations && m_tAnimationDesc[eType].iNumAnimations!=0)
+	if (m_tAnimationDesc[eType].iCurrentAnimIndex >= m_tAnimationDesc[eType].iNumAnimations && m_tAnimationDesc[eType].iNumAnimations != 0)
 		m_tAnimationDesc[eType].iCurrentAnimIndex--;
+}
+
+HRESULT CModel::Bind_Notify(const _uint& iAnimIndex, const wstring& wstrNotifyTag, function<void()>& Func, ANIMTYPE eType)
+{
+	if (0 > iAnimIndex || m_tAnimationDesc[eType].Animations.size() <= iAnimIndex ||
+		0 > eType || ANIM_END <= eType || nullptr == Func)
+		return E_FAIL;
+
+	CAnimation* pAnimation = m_tAnimationDesc[eType].Animations[iAnimIndex];
+	if (nullptr == pAnimation)
+		return E_FAIL;
+
+	Engine::KEYFRAME* pKeyFrame = pAnimation->Find_NotifyFrame(wstrNotifyTag.c_str());
+	if (nullptr == pKeyFrame)
+		return E_FAIL;
+
+	static_cast<NOTIFYFRAME*>(pKeyFrame)->Action = Func;
+
+	return S_OK;
+}
+
+HRESULT CModel::Bind_Notify(const wstring& wstrAnimIndex, const wstring& wstrNotifyTag, function<void()>& Func, ANIMTYPE eType)
+{
+	_uint iAnimationIndex = { 0 };
+	iAnimationIndex = Find_Animation_Index(wstrAnimIndex);
+
+	return Bind_Notify(iAnimationIndex, wstrNotifyTag, Func, eType);
 }
 
 HRESULT CModel::Bind_Material(CShader* pShader, const char* pConstantName, _uint iMeshIndex, Engine::TextureType MaterialType)
@@ -791,7 +818,7 @@ HRESULT CModel::Ready_Animations()
 	{
 		m_tAnimationDesc[0].AffectBoneVec.push_back(i);
 	}
-	
+
 	m_iAnimationPartCount++;
 	m_tAnimationDesc[0].iNumAnimations = m_Model.iNumAnimations;
 	for (_uint i = 0; i < m_Model.iNumAnimations; ++i)
@@ -810,7 +837,7 @@ HRESULT CModel::Convert_Animations_GCM()
 {
 	if (m_isExportedTool)
 		Release_FileDatas_GCM();
-	else 
+	else
 	{
 		ZEROMEM(&m_ModelGCM);
 		for (int i = 0; i < ANIM_END; i++)
@@ -823,7 +850,7 @@ HRESULT CModel::Convert_Animations_GCM()
 	m_ModelGCM.iNumMeshes = m_iNumMaterials;
 	m_ModelGCM.iNumAnimations = new _uint[m_iAnimationPartCount];
 	m_ModelGCM.iRootBoneIndex = m_iRootBoneIndex;
-	
+
 	m_ModelGCM.iAffectBones = new vector<unsigned int>[m_iAnimationPartCount]();
 	for (_uint partCnt = 0; partCnt < m_iAnimationPartCount; partCnt++)
 	{
@@ -832,7 +859,7 @@ HRESULT CModel::Convert_Animations_GCM()
 			m_ModelGCM.iAffectBones[partCnt].push_back(m_tAnimationDesc[partCnt].AffectBoneVec[i]);
 		}
 	}
-	
+
 	for (_uint partCnt = 0; partCnt < m_iAnimationPartCount; partCnt++)
 	{
 		m_ModelGCM.iNumAnimations[partCnt] = m_tAnimationDesc[partCnt].iNumAnimations;
@@ -889,7 +916,7 @@ HRESULT CModel::Convert_Animations_GCM()
 			Animation.Notify->iNumKeyFrames = pAnimation->Get_Notify_Point()->Get_NotifyFrameCount();
 			//원래값 가져오기
 			vector<pair<wstring, KEYFRAME*>>* pNotifyVec = pAnimation->Get_Notify_Point()->Get_NotifyFrame();
-			
+
 			//원래값을 새로운곳에 만들어주는 로직임.
 			for (_uint j = 0; j < pAnimation->Get_Notify_Point()->Get_NotifyFrameCount(); ++j)
 			{
@@ -910,7 +937,7 @@ HRESULT CModel::Convert_Animations_GCM()
 					Animation.Notify->tKeyFrame.push_back(Notify_Frame);
 					break;
 				}
-					
+
 				case KEYFRAME_GCM::KF_SOUND:
 				{
 					SOUNDFRAME_GCM* Notify_Frame = new SOUNDFRAME_GCM();
@@ -1133,7 +1160,7 @@ HRESULT CModel::Ready_File_GCM(TYPE eType, const _tchar* pModelFilePath)
 
 		m_MaterialDatas.push_back(Material);
 	}
-	
+
 	ReadFile(hFile, &(m_ModelGCM.iRootBoneIndex), sizeof(_uint), &dwByte, nullptr);
 
 	// Read Animations
@@ -1207,7 +1234,7 @@ HRESULT CModel::Ready_File_GCM(TYPE eType, const _tchar* pModelFilePath)
 						MSG_BOX("Failed Read String Data");
 						return E_FAIL;
 					}
-					
+
 					// Channel NumScalingKeys
 					ReadFile(hFile, &(Channel.iNumMartixKeys), sizeof(_uint), &dwByte, nullptr);
 
@@ -1286,7 +1313,7 @@ HRESULT CModel::Ready_File_GCM(TYPE eType, const _tchar* pModelFilePath)
 				m_AnimationDatasGCM[animPartIndex].push_back(Animation);
 			}
 		}
-		
+
 	}
 	else // NonAnim
 	{
@@ -1630,7 +1657,7 @@ HRESULT CModel::Write_File_GCM(TYPE eType, const _tchar* pModelFilePath)
 				}
 			}
 		}
-		
+
 	}
 
 	CloseHandle(hFile);
@@ -1692,7 +1719,7 @@ void CModel::Release_FileDatas_GCM()
 {
 	//파츠만큼 반복
 	Safe_Delete_Array(m_ModelGCM.iAffectBones);
-	
+
 	for (auto& AnimDataGCM : m_AnimationDatasGCM)
 	{
 		//애니메이션만큼 반복
@@ -1790,12 +1817,12 @@ void CModel::Free()
 	if (!m_isCloned)
 	{
 		Release_FileDatas();
-		if(m_isCreatedByGCM)
+		if (m_isCreatedByGCM)
 			Release_FileDatas_GCM();
 	}
 
 	//익스포트한 경우에는 본체가 아닌 클론에 gcm이 갱신되므로 제거해줘야함.
-	if(m_isExportedTool/*&&!m_isCreatedByGCM*/)
+	if (m_isExportedTool/*&&!m_isCreatedByGCM*/)
 		Release_FileDatas_GCM();
 
 	for (auto& pBone : m_Bones)

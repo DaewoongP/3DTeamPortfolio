@@ -194,6 +194,8 @@ HRESULT CGolem_Combat::Make_AI()
 			throw TEXT("Failed Add_Type pTransform");
 		if (FAILED(m_pRootBehavior->Add_Type("pModel", m_pModelCom)))
 			throw TEXT("Failed Add_Type pModel");
+		if (FAILED(m_pRootBehavior->Add_Type("isChangeAnimation", &m_isChangeAnimation)))
+			throw TEXT("Failed Add_Type isChangeAnimation");
 
 		if (FAILED(m_pRootBehavior->Add_Type("fTargetDistance", _float())))
 			throw TEXT("Failed Add_Type fTargetDistance");

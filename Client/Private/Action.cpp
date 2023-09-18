@@ -93,9 +93,17 @@ HRESULT CAction::Tick(const _float& fTimeDelta)
 #endif // _DEBUG
 	}
 
+	_bool* pIsChangeAnimation = { nullptr };
+	if (FAILED(m_pBlackBoard->Get_Type("isChangeAnimation", pIsChangeAnimation)))
+	{
+		MSG_BOX("isChangeAnimation is nullptr");
+		return E_FAIL;
+	}
+
 	_bool bCheck = { false };
 
-	if (true == m_pModel->Is_Finish_Animation() ||					// 애니메이션이 끝났거나
+	if (true == *pIsChangeAnimation ||								// 애니메이션을 변경하라는 노티파이가 울렸거나
+		true == m_pModel->Is_Finish_Animation() ||					// 애니메이션이 끝났거나
 		(true == m_isCheckBehavior && true == m_isFinishBehaviors)) // 행동체크를 할건데 모든 행동이 끝났으면
 	{
 		m_isEndFirstPlay = true;
@@ -112,6 +120,14 @@ void CAction::Reset_Behavior(HRESULT result)
 {
 	m_isFirst = true;
 	m_isFinishBehaviors = false;
+
+	_bool* pIsChangeAnimation = { nullptr };
+	if (FAILED(m_pBlackBoard->Get_Type("isChangeAnimation", pIsChangeAnimation)))
+	{
+		MSG_BOX("isChangeAnimation is nullptr");
+		return;
+	}
+	*pIsChangeAnimation = false;
 
 	BEGININSTANCE;
 	m_fPreWorldTimeAcc = pGameInstance->Get_World_TimeAcc();
