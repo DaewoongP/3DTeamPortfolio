@@ -126,7 +126,6 @@ protected:
 	CRenderer* m_pRenderer = { nullptr };
 	CTexture* m_pMainTexture = { nullptr }; // 출력에 사용 될 텍스처
 	CTexture* m_pClipTexture = { nullptr }; // 알파테스트에 사용될 텍스처
-	CTexture* m_pGradientTexture = { nullptr }; // 알파테스트에 사용될 텍스처
 	CTexture* m_pNormalTexture = { nullptr }; // 텍스처시트에 사용될 텍스처
 	CBuffer* m_pBuffer = { nullptr };
 	CShader* m_pShader = { nullptr };

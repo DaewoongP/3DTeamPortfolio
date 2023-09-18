@@ -500,8 +500,6 @@ HRESULT RENDERER_MODULE::Save(const _tchar* _pDirectoyPath)
 	WriteFile(hFile, wstrShaderTag.data(), sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
 	WriteFile(hFile, wstrMaterialPath.data(), sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
 	WriteFile(hFile, &isDeleteY, sizeof(isDeleteY), &dwByte, nullptr);
-	WriteFile(hFile, &isUseGradientTexture, sizeof(isUseGradientTexture), &dwByte, nullptr);
-	WriteFile(hFile, wstrGraientTexture.data(), sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
 	WriteFile(hFile, strPass.data(), sizeof(_char) * MAX_PATH, &dwByte, nullptr);
 
 	CloseHandle(hFile);
@@ -535,9 +533,6 @@ HRESULT RENDERER_MODULE::Load(const _tchar* _pDirectoyPath)
 	ReadFile(hFile, wszBuffer, sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
 	wstrMaterialPath = wszBuffer;
 	ReadFile(hFile, &isDeleteY, sizeof(isDeleteY), &dwByte, nullptr);
-	ReadFile(hFile, &isUseGradientTexture, sizeof(isUseGradientTexture), &dwByte, nullptr);
-	ReadFile(hFile, wszBuffer, sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
-	wstrGraientTexture = wszBuffer;
 	ReadFile(hFile, szBuffer, sizeof(_char) * MAX_PATH, &dwByte, nullptr);
 	strPass = szBuffer;
 	CloseHandle(hFile);

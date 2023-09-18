@@ -61,16 +61,7 @@ HRESULT CParticleSystem::Initialize_Prototype(const _tchar* _pDirectoryPath, _ui
 			, CTexture::Create(m_pDevice, m_pContext, m_TextureSheetAnimationModuleDesc.wstrNormalPath.c_str()))))
 			return E_FAIL;
 	}
-	
-	ProtoTag = ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_RendererModuleDesc.wstrGraientTexture.c_str());
-	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, ProtoTag.data()))
-	{
-		if (FAILED(pGameInstance->Add_Prototype(m_iLevel
-			, ProtoTag.data()
-			, CTexture::Create(m_pDevice, m_pContext, m_RendererModuleDesc.wstrGraientTexture.c_str()))))
-			return E_FAIL;
-	}
-
+														     
 	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_Component_Shader_VtxRectColIdxInstance")))
 	{
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel
@@ -304,9 +295,6 @@ HRESULT CParticleSystem::Setup_ShaderResources()
 			if (FAILED(m_pNormalTexture->Bind_ShaderResource(m_pShader, "g_NormalTexture")))
 				throw "g_NormalTexture";
 		}
-		if (FAILED(m_pGradientTexture->Bind_ShaderResource(m_pShader, "g_GradientTexture")))
-			throw "g_GradientTexture";
-
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -641,12 +629,6 @@ HRESULT CParticleSystem::Add_Components()
 			, reinterpret_cast<CComponent**>(&m_pNormalTexture))))
 			throw(TEXT("Com_NormalTexture"));
 
-		if (FAILED(CComposite::Add_Component(m_iLevel
-			, ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_RendererModuleDesc.wstrGraientTexture.c_str()).c_str()
-			, TEXT("Com_GradientTexture")
-			, reinterpret_cast<CComponent**>(&m_pGradientTexture))))
-			throw(TEXT("Com_GradientTexture"));
-
 		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_Component_Shader_VtxRectColIdxInstance")
 			, TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
 			throw(TEXT("Com_Shader"));
@@ -823,7 +805,7 @@ void CParticleSystem::Restart()
 }
 CParticleSystem* CParticleSystem::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, const _tchar* _pDirectoryPath, _uint m_iLevel)
 {
-	CParticleSystem* pInstance = New CParticleSystem(_pDevice, _pContext);
+	CParticleSystem* pInstance = new CParticleSystem(_pDevice, _pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(_pDirectoryPath, m_iLevel)))
 	{
@@ -835,7 +817,7 @@ CParticleSystem* CParticleSystem::Create(ID3D11Device* _pDevice, ID3D11DeviceCon
 }
 CGameObject* CParticleSystem::Clone(void* _pArg)
 {
-	CParticleSystem* pInstance = New CParticleSystem(*this);
+	CParticleSystem* pInstance = new CParticleSystem(*this);
 
 	if (FAILED(pInstance->Initialize(_pArg)))
 	{
@@ -854,7 +836,6 @@ void CParticleSystem::Free()
 		Safe_Release(m_pMainTexture);
 		Safe_Release(m_pClipTexture);
 		Safe_Release(m_pNormalTexture);
-		Safe_Release(m_pGradientTexture);
 		Safe_Release(m_pBuffer);
 		Safe_Release(m_pShader);
 		Safe_Release(m_pModel);
