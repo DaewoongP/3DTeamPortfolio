@@ -1041,7 +1041,7 @@ _bool CRenderer::Is_Render_Distortion()
 #endif // _DEBUG
 CRenderer* CRenderer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CRenderer* pInstance = new CRenderer(pDevice, pContext);
+	CRenderer* pInstance = New CRenderer(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{

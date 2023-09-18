@@ -233,7 +233,7 @@ HRESULT CNavigation::SetUp_Neighbors()
 
 CNavigation* CNavigation::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pNavigationDataFiles)
 {
-	CNavigation* pInstance = new CNavigation(pDevice, pContext);
+	CNavigation* pInstance = New CNavigation(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pNavigationDataFiles)))
 	{
@@ -245,7 +245,7 @@ CNavigation* CNavigation::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
 
 CComponent* CNavigation::Clone(void* pArg)
 {
-	CNavigation* pInstance = new CNavigation(*this);
+	CNavigation* pInstance = New CNavigation(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

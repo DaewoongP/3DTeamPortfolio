@@ -145,7 +145,7 @@ HRESULT CWeapon_Armored_Troll::Set_Shader_Resources()
 
 CWeapon_Armored_Troll* CWeapon_Armored_Troll::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CWeapon_Armored_Troll* pInstance = new CWeapon_Armored_Troll(pDevice, pContext);
+	CWeapon_Armored_Troll* pInstance = New CWeapon_Armored_Troll(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -157,7 +157,7 @@ CWeapon_Armored_Troll* CWeapon_Armored_Troll::Create(ID3D11Device* pDevice, ID3D
 
 CWeapon_Armored_Troll* CWeapon_Armored_Troll::Clone(void* pArg)
 {
-	CWeapon_Armored_Troll* pInstance = new CWeapon_Armored_Troll(*this);
+	CWeapon_Armored_Troll* pInstance = New CWeapon_Armored_Troll(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

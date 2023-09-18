@@ -131,7 +131,7 @@ HRESULT CMagic::Add_Component()
 
 CMagic* CMagic::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CMagic* pInstance = new CMagic(pDevice, pContext);
+	CMagic* pInstance = New CMagic(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -144,7 +144,7 @@ CMagic* CMagic::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 CMagic* CMagic::Clone(void* pArg)
 {
-	CMagic* pInstance = new CMagic(*this);
+	CMagic* pInstance = New CMagic(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

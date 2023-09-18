@@ -172,7 +172,7 @@ CUI::UIDESC CUI_Group_HP::Load_File(const HANDLE hFile)
 
 CUI_Group_HP* CUI_Group_HP::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CUI_Group_HP* pInstance = new CUI_Group_HP(pDevice, pContext);
+	CUI_Group_HP* pInstance = New CUI_Group_HP(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -185,7 +185,7 @@ CUI_Group_HP* CUI_Group_HP::Create(ID3D11Device* pDevice, ID3D11DeviceContext* p
 
 CGameObject* CUI_Group_HP::Clone(void* pArg)
 {
-	CUI_Group_HP* pInstance = new CUI_Group_HP(*this);
+	CUI_Group_HP* pInstance = New CUI_Group_HP(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

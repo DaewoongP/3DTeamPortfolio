@@ -124,14 +124,14 @@ HRESULT CMapObject::Add_Components(MAPOBJECTDESC* pMapObjectDesc)
 	RigidBodyDesc.fDynamicFriction = 0.5f;
 	RigidBodyDesc.fRestitution = 0.f;
 	RigidBodyDesc.pOwnerObject = this;
-	RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 0.f, 1.f);
+	RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 1.f, 1.f);
 	RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
 	RigidBodyDesc.vInitRotation = m_pTransform->Get_Quaternion();
 
 	vector<CMesh*> Meshes = *m_pModel->Get_MeshesVec();
 	vector<_float3> Vertices;
 	vector<PxU32> Indices;
-
+	_uint iIndex = { 0 };
 	for (auto& pMesh : Meshes)
 	{
 		vector<_float3> MeshVertices = *pMesh->Get_VerticesPositionVec();
@@ -139,8 +139,13 @@ HRESULT CMapObject::Add_Components(MAPOBJECTDESC* pMapObjectDesc)
 		Vertices.insert(Vertices.end(), MeshVertices.begin(), MeshVertices.end());
 
 		vector<PxU32> MeshIndices = *pMesh->Get_IndicesVec();
-		Indices.insert(Indices.end(), MeshIndices.begin(), MeshIndices.end());
-		break;
+
+		for (size_t i = 0; i < MeshIndices.size(); ++i)
+		{
+			Indices.push_back(MeshIndices[i] + iIndex);
+		}
+
+		iIndex += Vertices.size();
 	}
 	
 	// 피직스 메쉬 생성

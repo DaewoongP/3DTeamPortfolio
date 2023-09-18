@@ -1,6 +1,7 @@
 #include "..\Public\RigidBody.h"
 #include "PipeLine.h"
 #include "Transform.h"
+#include "String_Manager.h"
 #include "PhysX_Manager.h"
 #include "PhysXConverter.h"
 #include "CharacterController.h"
@@ -286,7 +287,6 @@ HRESULT CRigidBody::Create_Collider(RIGIDBODYDESC* pRigidBodyDesc)
 	
 	PxShapeFlags ePxFlag;
 	// 트리거 설정
-	// Query : 레이캐스트 처리
 	if (true == pRigidBodyDesc->isTrigger)
 	{
 		ePxFlag = PxShapeFlag::eSCENE_QUERY_SHAPE | PxShapeFlag::eTRIGGER_SHAPE;
@@ -311,6 +311,10 @@ HRESULT CRigidBody::Create_Collider(RIGIDBODYDESC* pRigidBodyDesc)
 	else
 		FilterData.word0 = 0x1111; // 이데이터는 일단 고정.
 	pShape->setSimulationFilterData(FilterData);
+	CString_Manager* pString_Manager = CString_Manager::GetInstance();
+	Safe_AddRef(pString_Manager);
+	pShape->userData = pString_Manager->Make_WChar(pRigidBodyDesc->szCollisionTag);
+	Safe_Release(pString_Manager);
 
 	PxTransform OffsetTransform(PhysXConverter::ToPxVec3(pRigidBodyDesc->vOffsetPosition), PhysXConverter::ToPxQuat(pRigidBodyDesc->vOffsetRotation));
 	pShape->setLocalPose(OffsetTransform);
@@ -500,6 +504,7 @@ HRESULT CRigidBody::Add_Components(PxGeometry* pPxValues, PxShape* pShape)
 				Positions[iIndex] = _float3((_float)j, pHeightField->getHeight(_float(j), _float(i)), (_float)i);
 			}
 		}
+
 		HeightFieldDesc.pPositions = Positions.data();
 		HeightFieldDesc.vOffsetPosition = vOffsetPos;
 		HeightFieldDesc.vOffsetRotation = vOffsetRot;
@@ -522,17 +527,23 @@ HRESULT CRigidBody::Add_Components(PxGeometry* pPxValues, PxShape* pShape)
 		_uint iNumVertices = pTriangleMesh->getNbVertices();
 		_uint iNumTriangles = pTriangleMesh->getNbTriangles();
 		
-		TriangleMeshDesc.iNumTriangles = iNumTriangles;
+		TriangleMeshDesc.iNumVertices = iNumVertices;
+		TriangleMeshDesc.iNumIndices = iNumTriangles * 3;
 		TriangleMeshDesc.vOffsetPosition = vOffsetPos;
 		TriangleMeshDesc.vOffsetRotation = vOffsetRot;
-		vector<_float3> Triangles;
-		Triangles.reserve(iNumVertices);
+		vector<_float3> Vertices;
+		vector<_ushort> Indices;
+		Vertices.reserve(iNumVertices);
+		Indices.resize(TriangleMeshDesc.iNumIndices);
 		for (_uint i = 0; i < iNumVertices; ++i)
 		{
-			Triangles.push_back(PhysXConverter::ToXMFLOAT3(pVertices[i]));
+			Vertices.push_back(PhysXConverter::ToXMFLOAT3(pVertices[i]));
 		}
 
-		TriangleMeshDesc.pTriangles = Triangles.data();
+		// 피직스 내부적으로 16비트로 저장함
+		memcpy(Indices.data(), pTriangles, sizeof(_ushort) * TriangleMeshDesc.iNumIndices);
+		TriangleMeshDesc.pIndices = Indices.data();
+		TriangleMeshDesc.pVertices = Vertices.data();
 		
 		/* For.Com_Debug_Render_TriangleMesh */
 		if (FAILED(CComposite::Add_Component(0, TEXT("Prototype_Component_RigidBody_Debug_Render_TriangleMesh"),
@@ -579,7 +590,7 @@ HRESULT CRigidBody::SetUp_ShaderResources(_uint iColliderIndex)
 
 CRigidBody* CRigidBody::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CRigidBody* pInstance = new CRigidBody(pDevice, pContext);
+	CRigidBody* pInstance = New CRigidBody(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -592,7 +603,7 @@ CRigidBody* CRigidBody::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
 
 CComponent* CRigidBody::Clone(void* pArg)
 {
-	CRigidBody* pInstance = new CRigidBody(*this);
+	CRigidBody* pInstance = New CRigidBody(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

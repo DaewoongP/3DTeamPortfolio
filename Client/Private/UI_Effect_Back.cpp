@@ -186,7 +186,7 @@ void CUI_Effect_Back::Set_Effecttype(EFFECTTYPE eType)
 
 CUI_Effect_Back* CUI_Effect_Back::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CUI_Effect_Back* pInstance = new CUI_Effect_Back(pDevice, pContext);
+	CUI_Effect_Back* pInstance = New CUI_Effect_Back(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -199,7 +199,7 @@ CUI_Effect_Back* CUI_Effect_Back::Create(ID3D11Device* pDevice, ID3D11DeviceCont
 
 CGameObject* CUI_Effect_Back::Clone(void* pArg)
 {
-	CUI_Effect_Back* pInstance = new CUI_Effect_Back(*this);
+	CUI_Effect_Back* pInstance = New CUI_Effect_Back(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

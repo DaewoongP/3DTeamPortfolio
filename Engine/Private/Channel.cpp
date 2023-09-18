@@ -264,7 +264,7 @@ void CChannel::Invalidate_TransformationMatrix_Lerp(CModel::BONES& Bones, _float
 
 CChannel* CChannel::Create(const Engine::CHANNEL& Channel, const CModel::BONES& Bones)
 {
-	CChannel* pInstance = new CChannel();
+	CChannel* pInstance = New CChannel();
 
 	if (FAILED(pInstance->Initialize(Channel, Bones)))
 	{
@@ -276,7 +276,7 @@ CChannel* CChannel::Create(const Engine::CHANNEL& Channel, const CModel::BONES& 
 
 CChannel* CChannel::Create(const Engine::CHANNEL_GCM& Channel, const CModel::BONES& Bones)
 {
-	CChannel* pInstance = new CChannel();
+	CChannel* pInstance = New CChannel();
 
 	if (FAILED(pInstance->Initialize(Channel, Bones)))
 	{

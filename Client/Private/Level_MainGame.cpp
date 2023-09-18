@@ -63,12 +63,13 @@ HRESULT CLevel_MainGame::Initialize()
 		return E_FAIL;
 	}
 
-	//if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/0916123.ddd"))))
-	//{
-	//	MSG_BOX("Failed Load Map Object");
+	if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/MapData6.ddd"))))
+	{
+		MSG_BOX("Failed Load Map Object");
 
-	//	return E_FAIL;
-	//}
+		return E_FAIL;
+	}
+	
 #ifdef _DEBUG
 	if (FAILED(Ready_Layer_Debug(TEXT("Layer_Debug"))))
 	{
@@ -496,15 +497,15 @@ HRESULT CLevel_MainGame::Ready_Layer_Debug(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Professor_Fig"), pLayerTag, TEXT("GameObject_Professor_Fig"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Professor_Fig)");
-		return E_FAIL;
-	}
-	
 	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_LoadTrigger"), pLayerTag, TEXT("GameObject_LoadTrigger"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_LoadTrigger)");
+		return E_FAIL;
+	}
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Professor_Fig"), pLayerTag, TEXT("GameObject_Professor_Fig"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Professor_Fig)");
 		return E_FAIL;
 	}
 
@@ -542,7 +543,7 @@ HRESULT CLevel_MainGame::Ready_Layer_SceneTest(const _tchar* pLayerTag)
 
 CLevel_MainGame* CLevel_MainGame::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CLevel_MainGame* pInstance = new CLevel_MainGame(pDevice, pContext);
+	CLevel_MainGame* pInstance = New CLevel_MainGame(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize()))
 	{

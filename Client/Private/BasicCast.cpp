@@ -159,7 +159,7 @@ HRESULT CBasicCast::Add_Effect()
 
 CBasicCast* CBasicCast::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CBasicCast* pInstance = new CBasicCast(pDevice, pContext);
+	CBasicCast* pInstance = New CBasicCast(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -172,7 +172,7 @@ CBasicCast* CBasicCast::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
 
 CGameObject* CBasicCast::Clone(void* pArg)
 {
-	CBasicCast* pInstance = new CBasicCast(*this);
+	CBasicCast* pInstance = New CBasicCast(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

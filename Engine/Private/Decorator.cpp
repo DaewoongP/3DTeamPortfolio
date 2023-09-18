@@ -26,7 +26,7 @@ _bool CDecorator::Is_Execute(CBlackBoard* pBlackBoard)
 
 CDecorator* CDecorator::Create(function<_bool(class CBlackBoard*)> Func)
 {
-	CDecorator* pInstance = new CDecorator();
+	CDecorator* pInstance = New CDecorator();
 
 	if (FAILED(pInstance->Initialize(Func)))
 	{

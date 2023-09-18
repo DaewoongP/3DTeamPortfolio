@@ -61,6 +61,7 @@
 
 // physx
 #include <PxPhysicsAPI.h>
+#include <PxShape.h>
 
 // nvcloth
 #include <Factory.h>

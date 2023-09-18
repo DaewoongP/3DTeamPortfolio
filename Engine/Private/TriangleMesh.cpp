@@ -74,7 +74,7 @@ HRESULT CTriangleMesh::Read_File_MeshCol(_tchar* pModelFilePath)
 		// Mesh NumFaces
 		ReadFile(hFile, &(Mesh.iNumFaces), sizeof(_uint), &dwByte, nullptr);
 
-		Mesh.Faces = new FACE[Mesh.iNumFaces];
+		Mesh.Faces = New FACE[Mesh.iNumFaces];
 		ZeroMemory(Mesh.Faces, sizeof(FACE) * (Mesh.iNumFaces));
 
 		for (_uint j = 0; j < Mesh.iNumFaces; ++j)
@@ -86,7 +86,7 @@ HRESULT CTriangleMesh::Read_File_MeshCol(_tchar* pModelFilePath)
 			ReadFile(hFile, &(Face.iNumIndices), sizeof(_uint), &dwByte, nullptr);
 
 			// Face Indices
-			Face.iIndices = new _uint[Face.iNumIndices];
+			Face.iIndices = New _uint[Face.iNumIndices];
 			ZeroMemory(Face.iIndices, sizeof(_uint) * (Face.iNumIndices));
 			ReadFile(hFile, Face.iIndices, sizeof(_uint) * (Face.iNumIndices), &dwByte, nullptr);
 
@@ -94,7 +94,7 @@ HRESULT CTriangleMesh::Read_File_MeshCol(_tchar* pModelFilePath)
 		}
 
 		// Mesh Positions
-		Mesh.vPositions = new _float3[Mesh.iNumVertices];
+		Mesh.vPositions = New _float3[Mesh.iNumVertices];
 		ZeroMemory(Mesh.vPositions, sizeof(_float3) * (Mesh.iNumVertices));
 		ReadFile(hFile, Mesh.vPositions, sizeof(_float3) * (Mesh.iNumVertices), &dwByte, nullptr);
 		
@@ -117,10 +117,10 @@ HRESULT CTriangleMesh::Create_ConvexMeshActor(COLMESH* PMesh)
 
 	//그걸 이용해 정점과 인덱스를 만들어줍니다.
 	_uint verticesCount = PMesh->iNumVertices;
-	PxVec3* vertices = new PxVec3[verticesCount]{};
+	PxVec3* vertices = New PxVec3[verticesCount]{};
 
 	_uint indicesCount = PMesh->iNumFaces*3;
-	PxU32* indices = new PxU32[indicesCount]{};
+	PxU32* indices = New PxU32[indicesCount]{};
 
 	//vertices에 정점을 채워줍니다.
 	for (int i = 0; i < verticesCount; i++)
@@ -188,7 +188,7 @@ HRESULT CTriangleMesh::Release_Mesh(COLMESH* Mesh)
 
 CTriangleMesh* CTriangleMesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CTriangleMesh* pInstance = new CTriangleMesh(pDevice, pContext);
+	CTriangleMesh* pInstance = New CTriangleMesh(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -201,7 +201,7 @@ CTriangleMesh* CTriangleMesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext*
 
 CComponent* CTriangleMesh::Clone(void* pArg)
 {
-	CTriangleMesh* pInstance = new CTriangleMesh(*this);
+	CTriangleMesh* pInstance = New CTriangleMesh(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

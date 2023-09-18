@@ -358,6 +358,12 @@
     <Filter Include="01. Utility\03. Components\14. RigidBody\DebugRender\TriangleMesh">
       <UniqueIdentifier>{db7e9bcc-84db-49bb-a143-fda5a29a42c9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\03. Components\13. CharacterController\ReportCallBack">
+      <UniqueIdentifier>{dbe9bb42-5e47-44e6-9232-17e3132c7246}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\13. CharacterController\BehaviorCallBack">
+      <UniqueIdentifier>{b79eca32-ceed-4ae7-a293-cc8d06325dc0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -633,9 +639,6 @@
     <ClInclude Include="..\Public\Parts.h">
       <Filter>01. Utility\02. GameObjects\00. Parts</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\PXEventCallBack.h">
-      <Filter>01. Utility\11. Physics\EventCallBack</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Component_Manager.h">
       <Filter>01. Utility\03. Components\00. Manager</Filter>
     </ClInclude>
@@ -728,6 +731,15 @@
     </ClInclude>
     <ClInclude Include="..\public\Debug_Render_TriangleMesh.h">
       <Filter>01. Utility\03. Components\14. RigidBody\DebugRender\TriangleMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ReportCallBack.h">
+      <Filter>01. Utility\03. Components\13. CharacterController\ReportCallBack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BehaviorCallBack.h">
+      <Filter>01. Utility\03. Components\13. CharacterController\BehaviorCallBack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PXEventCallBack.h">
+      <Filter>01. Utility\11. Physics\EventCallBack</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -974,9 +986,6 @@
     <ClCompile Include="..\Private\Parts.cpp">
       <Filter>01. Utility\02. GameObjects\00. Parts</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\PXEventCallBack.cpp">
-      <Filter>01. Utility\11. Physics\EventCallBack</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\MeshEffect.cpp">
       <Filter>01. Utility\03. Components\16. MeshEffect</Filter>
     </ClCompile>
@@ -1066,6 +1075,15 @@
     </ClCompile>
     <ClCompile Include="..\private\Debug_Render_TriangleMesh.cpp">
       <Filter>01. Utility\03. Components\14. RigidBody\DebugRender\TriangleMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ReportCallBack.cpp">
+      <Filter>01. Utility\03. Components\13. CharacterController\ReportCallBack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BehaviorCallBack.cpp">
+      <Filter>01. Utility\03. Components\13. CharacterController\BehaviorCallBack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PXEventCallBack.cpp">
+      <Filter>01. Utility\11. Physics\EventCallBack</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

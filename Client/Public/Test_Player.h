@@ -36,7 +36,7 @@ private:
 	CRigidBody*				m_pRigidBody = { nullptr };
 	CCustomModel*			m_pModelCom = { nullptr };
 	
-	CCharacterController*	m_pController = { nullptr };
+	CCharacterController*	m_pCharacterController = { nullptr };
 
 private:
 	_float					m_fWindPower = { 0.f };

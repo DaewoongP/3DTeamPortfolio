@@ -22,10 +22,10 @@ HRESULT CDebug_Render_TriangleMesh::Initialize(void* pArg)
 
 	m_iNumVertexBuffers = { 1 };
 	m_iStride = { sizeof(VTXPOS) };
-	m_iNumVertices = { TriangleMeshDesc.iNumTriangles * 3 };
-	m_iIndexStride = { sizeof(_ushort) };
-	m_iNumIndices = { TriangleMeshDesc.iNumTriangles * 3 };
-	m_eFormat = DXGI_FORMAT_R16_UINT;
+	m_iNumVertices = { TriangleMeshDesc.iNumVertices };
+	m_iIndexStride = { sizeof(_ulong) };
+	m_iNumIndices = { TriangleMeshDesc.iNumIndices };
+	m_eFormat = DXGI_FORMAT_R32_UINT;
 	m_eTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
 
@@ -39,16 +39,16 @@ HRESULT CDebug_Render_TriangleMesh::Initialize(void* pArg)
 	m_BufferDesc.CPUAccessFlags = { 0 };
 	m_BufferDesc.MiscFlags = { 0 };
 
-	VTXPOS* pVertices = new VTXPOS[m_iNumVertices];
+	VTXPOS* pVertices = New VTXPOS[m_iNumVertices];
 	ZeroMemory(pVertices, sizeof(VTXPOS) * m_iNumVertices);
 
-	/*for (_uint i = 0; i < m_iNumVertices; ++i)
+	for (_uint i = 0; i < m_iNumVertices; ++i)
 	{
-		pVertices[i].vPosition = TriangleMeshDesc.pTriangles[i];
+		pVertices[i].vPosition = TriangleMeshDesc.pVertices[i];
 
 		XMStoreFloat3(&pVertices[i].vPosition, XMVector3TransformCoord(XMLoadFloat3(&pVertices[i].vPosition),
 			XMMatrixRotationQuaternion(TriangleMeshDesc.vOffsetRotation)) + XMLoadFloat3(&TriangleMeshDesc.vOffsetPosition));
-	}*/
+	}
 
 	ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
 	m_SubResourceData.pSysMem = pVertices;
@@ -70,12 +70,12 @@ HRESULT CDebug_Render_TriangleMesh::Initialize(void* pArg)
 	m_BufferDesc.CPUAccessFlags = { 0 };
 	m_BufferDesc.MiscFlags = { 0 };
 
-	_ushort* pIndices = new _ushort[m_iNumIndices];
-	ZeroMemory(pIndices, sizeof(_ushort) * m_iNumIndices);
+	_ulong* pIndices = New _ulong[m_iNumIndices];
+	ZeroMemory(pIndices, sizeof(_ulong) * m_iNumIndices);
 
 	for (_uint i = 0; i < m_iNumIndices; ++i)
 	{
-		pIndices[i] = i;
+		pIndices[i] = TriangleMeshDesc.pIndices[i];
 	}
 
 	ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
@@ -91,7 +91,7 @@ HRESULT CDebug_Render_TriangleMesh::Initialize(void* pArg)
 
 CDebug_Render_TriangleMesh* CDebug_Render_TriangleMesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CDebug_Render_TriangleMesh* pInstance = new CDebug_Render_TriangleMesh(pDevice, pContext);
+	CDebug_Render_TriangleMesh* pInstance = New CDebug_Render_TriangleMesh(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -103,7 +103,7 @@ CDebug_Render_TriangleMesh* CDebug_Render_TriangleMesh::Create(ID3D11Device* pDe
 
 CComponent* CDebug_Render_TriangleMesh::Clone(void* pArg)
 {
-	CDebug_Render_TriangleMesh* pInstance = new CDebug_Render_TriangleMesh(*this);
+	CDebug_Render_TriangleMesh* pInstance = New CDebug_Render_TriangleMesh(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

@@ -1,6 +1,8 @@
 #include "..\Public\Test_Player.h"
 #include "GameInstance.h"
 #include "PhysXConverter.h"
+#include "ReportCallBack.h"
+#include "BehaviorCallBack.h"
 
 CTest_Player::CTest_Player(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -28,9 +30,12 @@ HRESULT CTest_Player::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-	m_pTransform->Set_Speed(50.f);
+	m_pTransform->Set_Speed(15.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
-	m_pTransform->Set_RigidBody(m_pRigidBody);
+	//m_pTransform->Set_RigidBody(m_pRigidBody);
+	m_pTransform->Set_CharacterController(m_pCharacterController);
+	
+	m_pCharacterController->Set_Position(_float3(10.f, 0.f, 2.f));
 
 	m_pModelCom->Play_Animation(0.f);
 
@@ -43,11 +48,17 @@ void CTest_Player::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
+	m_pCharacterController->Move(_float3(0.f, -9.81f, 0.f), fTimeDelta);
+
 	Key_Input(fTimeDelta);
 
-	m_pModelCom->Set_WindVelocity(PhysXConverter::ToXMFLOAT3(m_pRigidBody->Get_RigidBodyActor()->getLinearVelocity()) * m_fWindPower * -1.f);
+	if (nullptr != m_pModelCom &&
+		nullptr != m_pRigidBody)
+	{
+		m_pModelCom->Set_WindVelocity(PhysXConverter::ToXMFLOAT3(m_pRigidBody->Get_RigidBodyActor()->getLinearVelocity()) * m_fWindPower);
 
-	m_pModelCom->Tick(CCustomModel::ROBE, 2, fTimeDelta);
+		m_pModelCom->Tick(CCustomModel::ROBE, 2, fTimeDelta);
+	}
 }
 
 void CTest_Player::Late_Tick(_float fTimeDelta)
@@ -59,12 +70,12 @@ void CTest_Player::Late_Tick(_float fTimeDelta)
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 #ifdef _DEBUG
 		m_pRenderer->Add_DebugGroup(m_pRigidBody);
-		m_pRenderer->Add_DebugGroup(m_pController);
+		m_pRenderer->Add_DebugGroup(m_pCharacterController);
 #endif // _DEBUG
 	}
 
 #ifdef _DEBUG
-	Tick_ImGui();
+	//Tick_ImGui();
 #endif // _DEBUG
 }
 
@@ -103,6 +114,8 @@ HRESULT CTest_Player::Render()
 					throw TEXT("Bind_BoneMatrices");
 
 				if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", iParts, i, DIFFUSE)))
+					throw TEXT("Bind_Material Diffuse");
+				if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_NormalTexture", iParts, i, NORMALS)))
 					throw TEXT("Bind_Material Diffuse");
 
 				if (FAILED(m_pShaderCom->Begin("AnimMeshNonCull")))
@@ -155,6 +168,7 @@ HRESULT CTest_Player::Add_Components()
 	RigidBodyDesc.eConstraintFlag = CRigidBody::AllRot; // 움직임을 제한할 값을 넣어주면 됩니다. (ex allrot의 경우 로테이션을 하지않습니다.)
 	RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 0.f, 1.f); // 디버그 컬러
 	RigidBodyDesc.pOwnerObject = this; // 디스포인터 넣ㄹ어주셔야 안터집니다 !!
+	lstrcpy(RigidBodyDesc.szCollisionTag, TEXT("충돌 판단을 위한 CollisionTag입니다. 여기에 값을 대입하시면 다른 콜라이더에서 이 태그값을 통해 판단이 가능합니다."));
 
 	/* Com_RigidBody */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
@@ -163,21 +177,7 @@ HRESULT CTest_Player::Add_Components()
 		MSG_BOX("Failed CTest_Player Add_Component : (Com_RigidBody)");
 		return E_FAIL;
 	}
-	// 추가 콜라이더 만드는방법
-	/*RigidBodyDesc.pOwnerObject = this;
-	RigidBodyDesc.isStatic = true;
-	RigidBodyDesc.isTrigger = true;
-	RigidBodyDesc.vOffsetPosition = _float3(-5.f, 3.f, 5.f);
-	RigidBodyDesc.vOffsetRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	RigidBodyDesc.fStaticFriction = 0.5f;
-	RigidBodyDesc.fDynamicFriction = 0.5f;
-	RigidBodyDesc.fRestitution = 0.f;
-	PxBoxGeometry BoxGeometry = PxBoxGeometry(3.f, 1.f, 1.f);
-	RigidBodyDesc.pGeometry = &BoxGeometry;
-	RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 0.f, 1.f);
-	m_pRigidBody->Create_Collider(&RigidBodyDesc);*/
-	// 리지드바디 액터 옵션 추가
-	
+
 	PxRigidBody* Rigid = m_pRigidBody->Get_RigidBodyActor();
 	Rigid->setAngularDamping(10.f);
 	Rigid->setMaxLinearVelocity(1000.f);
@@ -199,7 +199,38 @@ HRESULT CTest_Player::Add_Components()
 		return E_FAIL;
 	}
 
-	m_pModelCom->Add_MeshParts(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshPart_Robe01"), CCustomModel::ROBE, TEXT("../../Resources/GameData/ClothData/2circle.cloth"));
+	m_pModelCom->Add_MeshParts(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshPart_Robe01"), CCustomModel::ROBE, TEXT("../../Resources/GameData/ClothData/Test.cloth"));
+	
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	PxBoxControllerDesc CapsuleControllerDesc;
+	CapsuleControllerDesc.setToDefault();
+	CapsuleControllerDesc.halfForwardExtent = 1.f;
+	CapsuleControllerDesc.halfHeight = 1.f;
+	CapsuleControllerDesc.halfSideExtent = 1.f;
+	CapsuleControllerDesc.material = pGameInstance->Get_Physics()->createMaterial(0.5f, 0.5f, 0.5f);
+	CapsuleControllerDesc.density = 10.f;
+	CapsuleControllerDesc.stepOffset = 0.5f;
+	CapsuleControllerDesc.contactOffset = 0.1f;
+	CapsuleControllerDesc.upDirection = PxVec3(0.f, 1.f, 0.f);
+	CapsuleControllerDesc.userData = this;
+	
+	Safe_Release(pGameInstance);
+
+	if (false == CapsuleControllerDesc.isValid())
+	{
+		MSG_BOX("Failed Create Character Controller");
+		return E_FAIL;
+	}
+	
+	/* For.Com_Controller */
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_CharacterController"),
+		TEXT("Com_CharacterController"), reinterpret_cast<CComponent**>(&m_pCharacterController), &CapsuleControllerDesc)))
+	{
+		MSG_BOX("Failed CTest_Player Add_Component : (Com_CharacterController)");
+		return E_FAIL;
+	}
 
 	return S_OK;
 }
@@ -229,21 +260,25 @@ void CTest_Player::Key_Input(_float fTimeDelta)
 
 	if (pGameInstance->Get_DIKeyState(DIK_UP))
 	{
+		m_pCharacterController->Move(m_pTransform->Get_Look() * m_pTransform->Get_Speed(), fTimeDelta, 0.1f);
 		m_pRigidBody->Add_Force(m_pTransform->Get_Look() * m_pTransform->Get_Speed(), PxForceMode::eFORCE);
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_DOWN))
 	{
+		m_pCharacterController->Move(-m_pTransform->Get_Look() * m_pTransform->Get_Speed(), fTimeDelta, 0.1f);
 		m_pRigidBody->Add_Force(m_pTransform->Get_Look() * -m_pTransform->Get_Speed(), PxForceMode::eFORCE);
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_LEFT))
 	{
+		m_pCharacterController->Move(-m_pTransform->Get_Right() * m_pTransform->Get_Speed(), fTimeDelta, 0.1f);
 		m_pRigidBody->Add_Force(m_pTransform->Get_Right() * -m_pTransform->Get_Speed(), PxForceMode::eFORCE);
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_RIGHT))
 	{
+		m_pCharacterController->Move(m_pTransform->Get_Right() * m_pTransform->Get_Speed(), fTimeDelta, 0.1f);
 		m_pRigidBody->Add_Force(m_pTransform->Get_Right() * m_pTransform->Get_Speed(), PxForceMode::eFORCE);
 	}
 
@@ -346,7 +381,7 @@ void CTest_Player::Free()
 		Safe_Release(m_pModelCom);
 		Safe_Release(m_pShaderCom);
 		Safe_Release(m_pRenderer);
-		Safe_Release(m_pController);
+		Safe_Release(m_pCharacterController);
 		Safe_Release(m_pRigidBody);
 	}
 }
