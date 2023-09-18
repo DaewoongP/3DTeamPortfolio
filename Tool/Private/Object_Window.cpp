@@ -168,8 +168,8 @@ void CObject_Window::Picking_Menu()
 	ImGui::Text("");
 
 	// imGui에서 값을 조정해서 변환 행렬을 만들어줌.
-	ImGui::DragFloat3("Scale", m_vDummyMatrix[DUMMY_SCALE], 0.1f, 0.1f, 10.f);
-	ImGui::SameLine(); CHelpMaker::HelpMarker("0.1f ~ 10.f");
+	ImGui::DragFloat3("Scale", m_vDummyMatrix[DUMMY_SCALE], 0.1f, -10.f, 10.f);
+	ImGui::SameLine(); CHelpMaker::HelpMarker("-10.f ~ 10.f");
 
 	ImGui::DragFloat3("Rotation", m_vDummyMatrix[DUMMY_ROT], 5.f, 0.f, 360.f);
 	ImGui::SameLine(); CHelpMaker::HelpMarker("0.f ~ 360.f");
@@ -216,7 +216,7 @@ void CObject_Window::Picking_Menu()
 		{ vPos.x + m_vDummyMatrix[DUMMY_TRANS][0], vPos.y + m_vDummyMatrix[DUMMY_TRANS][1], vPos.z + m_vDummyMatrix[DUMMY_TRANS][2] };
 
 		m_pDummy->Get_Transform()->Set_Scale_No_Zero(vScale);
-		m_pDummy->Get_Transform()->Set_Quaternion(m_pDummy->Get_Transform()->Get_QuaternionVector_RollPitchYaw(vRotation));
+		m_pDummy->Get_Transform()->Set_Quaternion_With_Negative(m_pDummy->Get_Transform()->Get_QuaternionVector_RollPitchYaw(vRotation));
 		m_pDummy->Get_Transform()->Set_Position(vTranslation);
 	}
 
