@@ -756,6 +756,7 @@ void CProfessor_Fig::Free()
 	if (true == m_isCloned)
 	{
 		Safe_Release(m_pMagic);
+		Safe_Release(m_pWeapon);
 		Safe_Release(m_pModelCom);
 		Safe_Release(m_pShaderCom);
 		Safe_Release(m_pRenderer);
