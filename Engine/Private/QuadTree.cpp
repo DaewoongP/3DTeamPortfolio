@@ -266,7 +266,7 @@ _bool CQuadTree::isDraw(const _float3 * pVerticesPos)
 
 CQuadTree * CQuadTree::Create(_uint iLT, _uint iRT, _uint iRB, _uint iLB)
 {
-	CQuadTree*	pInstance = new CQuadTree();
+	CQuadTree*	pInstance = New CQuadTree();
 
 	if (FAILED(pInstance->Initialize(iLT, iRT, iRB, iLB)))
 	{

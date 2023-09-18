@@ -31,7 +31,7 @@ HRESULT CVIBuffer_Cube::Initialize_Prototype()
 	m_BufferDesc.MiscFlags = { 0 };
 
 
-	VTXPOSCUBE* pVertices = new VTXPOSCUBE[m_iNumVertices];
+	VTXPOSCUBE* pVertices = New VTXPOSCUBE[m_iNumVertices];
 	ZeroMemory(pVertices, sizeof(VTXPOSCUBE) * m_iNumVertices);
 
 	pVertices[0].vPosition = _float3(-0.5f, 0.5f, -0.5f);
@@ -78,7 +78,7 @@ HRESULT CVIBuffer_Cube::Initialize_Prototype()
 	m_BufferDesc.CPUAccessFlags = { 0 };
 	m_BufferDesc.MiscFlags = { 0 };
 
-	_ushort* pIndices = new _ushort[m_iNumIndices];
+	_ushort* pIndices = New _ushort[m_iNumIndices];
 	ZeroMemory(pIndices, sizeof(_ushort) * m_iNumIndices);
 
 	/* +X */
@@ -123,7 +123,7 @@ HRESULT CVIBuffer_Cube::Initialize(void* pArg)
 
 CVIBuffer_Cube* CVIBuffer_Cube::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CVIBuffer_Cube* pInstance = new CVIBuffer_Cube(pDevice, pContext);
+	CVIBuffer_Cube* pInstance = New CVIBuffer_Cube(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -135,7 +135,7 @@ CVIBuffer_Cube* CVIBuffer_Cube::Create(ID3D11Device* pDevice, ID3D11DeviceContex
 
 CComponent* CVIBuffer_Cube::Clone(void* pArg)
 {
-	CVIBuffer_Cube* pInstance = new CVIBuffer_Cube(*this);
+	CVIBuffer_Cube* pInstance = New CVIBuffer_Cube(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

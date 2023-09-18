@@ -79,7 +79,7 @@ HRESULT CSeamless_Loader::Ready_Layer_Debug(const _tchar* pLayerTag)
 
 CSeamless_Loader* CSeamless_Loader::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CSeamless_Loader* pInstance = new CSeamless_Loader(pDevice, pContext);
+	CSeamless_Loader* pInstance = New CSeamless_Loader(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize()))
 	{

@@ -88,7 +88,7 @@ HRESULT CWingardiumleviosa::Add_Effect()
 
 CWingardiumleviosa* CWingardiumleviosa::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CWingardiumleviosa* pInstance = new CWingardiumleviosa(pDevice, pContext);
+	CWingardiumleviosa* pInstance = New CWingardiumleviosa(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -101,7 +101,7 @@ CWingardiumleviosa* CWingardiumleviosa::Create(ID3D11Device* pDevice, ID3D11Devi
 
 CGameObject* CWingardiumleviosa::Clone(void* pArg)
 {
-	CWingardiumleviosa* pInstance = new CWingardiumleviosa(*this);
+	CWingardiumleviosa* pInstance = New CWingardiumleviosa(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

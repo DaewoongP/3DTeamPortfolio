@@ -57,7 +57,7 @@ private:
 
 public:
 	static CBlackBoard* Create() {
-		return new CBlackBoard();
+		return New CBlackBoard();
 	}
 	virtual void Free() override {}
 };

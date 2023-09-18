@@ -39,7 +39,7 @@ HRESULT CDebug_Render_Box::Initialize(void* pArg)
 	m_BufferDesc.CPUAccessFlags = { 0 };
 	m_BufferDesc.MiscFlags = { 0 };
 
-	VTXPOS* pVertices = new VTXPOS[m_iNumVertices];
+	VTXPOS* pVertices = New VTXPOS[m_iNumVertices];
 	ZeroMemory(pVertices, sizeof(VTXPOS) * m_iNumVertices);
 
 	pVertices[0].vPosition = _float3(-BoxDesc.vExtents.x, BoxDesc.vExtents.y, -BoxDesc.vExtents.z);
@@ -77,7 +77,7 @@ HRESULT CDebug_Render_Box::Initialize(void* pArg)
 	m_BufferDesc.CPUAccessFlags = { 0 };
 	m_BufferDesc.MiscFlags = { 0 };
 
-	_ushort* pIndices = new _ushort[m_iNumIndices];
+	_ushort* pIndices = New _ushort[m_iNumIndices];
 	ZeroMemory(pIndices, sizeof(_ushort) * m_iNumIndices);
 
 	pIndices[0] = 1;
@@ -141,7 +141,7 @@ HRESULT CDebug_Render_Box::Initialize(void* pArg)
 
 CDebug_Render_Box* CDebug_Render_Box::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CDebug_Render_Box* pInstance = new CDebug_Render_Box(pDevice, pContext);
+	CDebug_Render_Box* pInstance = New CDebug_Render_Box(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -153,7 +153,7 @@ CDebug_Render_Box* CDebug_Render_Box::Create(ID3D11Device* pDevice, ID3D11Device
 
 CComponent* CDebug_Render_Box::Clone(void* pArg)
 {
-	CDebug_Render_Box* pInstance = new CDebug_Render_Box(*this);
+	CDebug_Render_Box* pInstance = New CDebug_Render_Box(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

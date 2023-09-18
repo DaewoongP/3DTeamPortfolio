@@ -9,8 +9,8 @@ CBounding_AABB::CBounding_AABB(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
 
 CBounding_AABB::CBounding_AABB(const CBounding_AABB& rhs)
 	: CBounding(rhs)
-	, m_pAABB_Original(new DirectX::BoundingBox(*rhs.m_pAABB_Original))
-	, m_pAABB(new DirectX::BoundingBox(*m_pAABB_Original))
+	, m_pAABB_Original(New DirectX::BoundingBox(*rhs.m_pAABB_Original))
+	, m_pAABB(New DirectX::BoundingBox(*m_pAABB_Original))
 {
 }
 
@@ -30,7 +30,7 @@ HRESULT CBounding_AABB::Initialize_Prototype()
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
 
-	m_pAABB_Original = new DirectX::BoundingBox(_float3(0.f, 0.f, 0.f), _float3(0.5f, 0.5f, 0.5f));
+	m_pAABB_Original = New DirectX::BoundingBox(_float3(0.f, 0.f, 0.f), _float3(0.5f, 0.5f, 0.5f));
 
 	return S_OK;
 }
@@ -119,7 +119,7 @@ _bool CBounding_AABB::IntersectAABB(CBounding* pOtherBounding, _float3* pCollisi
 
 CBounding_AABB* CBounding_AABB::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CBounding_AABB* pInstance = new CBounding_AABB(pDevice, pContext);
+	CBounding_AABB* pInstance = New CBounding_AABB(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -132,7 +132,7 @@ CBounding_AABB* CBounding_AABB::Create(ID3D11Device* pDevice, ID3D11DeviceContex
 
 CBounding* CBounding_AABB::Clone(void* pBoundingDesc)
 {
-	CBounding_AABB* pInstance = new CBounding_AABB(*this);
+	CBounding_AABB* pInstance = New CBounding_AABB(*this);
 
 	if (FAILED(pInstance->Initialize(pBoundingDesc)))
 	{

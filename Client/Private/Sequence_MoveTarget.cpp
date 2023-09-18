@@ -118,7 +118,7 @@ void CSequence_MoveTarget::Set_Action_Options(const wstring& _wstrAnimationTag, 
 
 CSequence_MoveTarget* CSequence_MoveTarget::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CSequence_MoveTarget* pInstance = new CSequence_MoveTarget(pDevice, pContext);
+	CSequence_MoveTarget* pInstance = New CSequence_MoveTarget(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -131,7 +131,7 @@ CSequence_MoveTarget* CSequence_MoveTarget::Create(ID3D11Device* pDevice, ID3D11
 
 CSequence_MoveTarget* CSequence_MoveTarget::Clone(void* pArg)
 {
-	CSequence_MoveTarget* pInstance = new CSequence_MoveTarget(*this);
+	CSequence_MoveTarget* pInstance = New CSequence_MoveTarget(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

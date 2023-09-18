@@ -51,7 +51,7 @@ HRESULT CMagicSlot::Add_Components()
 
 CMagicSlot* CMagicSlot::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CMagicSlot* pInstance = new CMagicSlot(pDevice, pContext);
+	CMagicSlot* pInstance = New CMagicSlot(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -64,7 +64,7 @@ CMagicSlot* CMagicSlot::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
 
 CGameObject* CMagicSlot::Clone(void* pArg)
 {
-	CMagicSlot* pInstance = new CMagicSlot(*this);
+	CMagicSlot* pInstance = New CMagicSlot(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

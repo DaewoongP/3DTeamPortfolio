@@ -62,7 +62,7 @@ HRESULT CMesh::Initialize_Prototype(CModel::TYPE eType, const CModel::BONES& Bon
 	m_BufferDesc.CPUAccessFlags = { 0 };
 	m_BufferDesc.MiscFlags = { 0 };
 
-	_ulong* pIndices = new _ulong[m_iNumIndices];
+	_ulong* pIndices = New _ulong[m_iNumIndices];
 	ZeroMemory(pIndices, sizeof(_ulong) * m_iNumIndices);
 
 	_uint		iNumFaces = { 0 };
@@ -109,7 +109,7 @@ HRESULT CMesh::Ready_VertexBuffer_NonAnim(const Engine::MESH Mesh, _float4x4 Piv
 	m_BufferDesc.CPUAccessFlags = { 0 };
 	m_BufferDesc.MiscFlags = { 0 };
 
-	VTXMESH* pVertices = new VTXMESH[m_iNumVertices];
+	VTXMESH* pVertices = New VTXMESH[m_iNumVertices];
 	ZeroMemory(pVertices, sizeof(VTXMESH) * m_iNumVertices);
 
 	for (_uint i = 0; i < m_iNumVertices; ++i)
@@ -156,7 +156,7 @@ HRESULT CMesh::Ready_VertexBuffer_Anim(const Engine::MESH Mesh, const CModel::BO
 	m_BufferDesc.MiscFlags = { 0 };
 
 
-	VTXANIMMESH* pVertices = new VTXANIMMESH[m_iNumVertices];
+	VTXANIMMESH* pVertices = New VTXANIMMESH[m_iNumVertices];
 	ZeroMemory(pVertices, sizeof(VTXANIMMESH) * m_iNumVertices);
 
 	for (size_t i = 0; i < m_iNumVertices; i++)
@@ -252,7 +252,7 @@ HRESULT CMesh::Ready_VertexBuffer_Anim(const Engine::MESH Mesh, const CModel::BO
 
 CMesh* CMesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CModel::TYPE eType, const CModel::BONES& Bones, const Engine::MESH Mesh, _float4x4 PivotMatrix)
 {
-	CMesh* pInstance = new CMesh(pDevice, pContext);
+	CMesh* pInstance = New CMesh(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(eType, Bones, Mesh, PivotMatrix)))
 	{
@@ -264,7 +264,7 @@ CMesh* CMesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CMode
 
 CComponent* CMesh::Clone(void* pArg)
 {
-	CMesh* pInstance = new CMesh(*this);
+	CMesh* pInstance = New CMesh(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

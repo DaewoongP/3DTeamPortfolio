@@ -127,11 +127,12 @@ void CPXEventCallBack::onTrigger(PxTriggerPair* pairs, PxU32 count)
 
 void CPXEventCallBack::onAdvance(const PxRigidBody* const* bodyBuffer, const PxTransform* poseBuffer, const PxU32 count)
 {
+	cout << "설마 여기냐" << endl;
 }
 
 CPXEventCallBack* CPXEventCallBack::Create()
 {
-	CPXEventCallBack* pInstance = new CPXEventCallBack;
+	CPXEventCallBack* pInstance = New CPXEventCallBack;
 
 	return pInstance;
 }

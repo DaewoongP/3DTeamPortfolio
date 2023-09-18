@@ -139,7 +139,7 @@ void CAction_Deflect::Reset_Behavior(HRESULT result)
 
 CAction_Deflect* CAction_Deflect::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CAction_Deflect* pInstance = new CAction_Deflect(pDevice, pContext);
+	CAction_Deflect* pInstance = New CAction_Deflect(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -152,7 +152,7 @@ CAction_Deflect* CAction_Deflect::Create(ID3D11Device* pDevice, ID3D11DeviceCont
 
 CAction_Deflect* CAction_Deflect::Clone(void* pArg)
 {
-	CAction_Deflect* pInstance = new CAction_Deflect(*this);
+	CAction_Deflect* pInstance = New CAction_Deflect(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

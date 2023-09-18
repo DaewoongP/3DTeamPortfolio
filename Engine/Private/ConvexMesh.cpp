@@ -54,9 +54,9 @@ HRESULT CConvexMesh::Create_ConvexMeshActor(void* pArg)
 		vector<PxU32>* meshIndices = mesh->Get_IndicesVec();
 		//그걸 이용해 정점을 만들어줍니다.
 		_uint verticesCount = mesh->Get_NumVertices();
-		PxVec3* vertices = new PxVec3[verticesCount]{};
+		PxVec3* vertices = New PxVec3[verticesCount]{};
 		_uint indicesCount = meshIndices->size();
-		PxU32* indices = new PxU32[indicesCount]{};
+		PxU32* indices = New PxU32[indicesCount]{};
 		//vertices에 정점을 채워줍니다.
 		for (int i = 0; i < verticesCount; i++)
 		{
@@ -175,7 +175,7 @@ HRESULT CConvexMesh::Create_ConvexMeshActor(void* pArg)
 
 CConvexMesh* CConvexMesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CConvexMesh* pInstance = new CConvexMesh(pDevice, pContext);
+	CConvexMesh* pInstance = New CConvexMesh(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -188,7 +188,7 @@ CConvexMesh* CConvexMesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
 
 CComponent* CConvexMesh::Clone(void* pArg)
 {
-	CConvexMesh* pInstance = new CConvexMesh(*this);
+	CConvexMesh* pInstance = New CConvexMesh(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

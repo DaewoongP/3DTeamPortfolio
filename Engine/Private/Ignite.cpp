@@ -28,7 +28,7 @@ void CIgnite::Tick(_float fTimeDelta)
 
 CIgnite* CIgnite::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CIgnite* pInstance = new CIgnite(pDevice, pContext);
+	CIgnite* pInstance = New CIgnite(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -41,7 +41,7 @@ CIgnite* CIgnite::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 CIgnite* CIgnite::Clone(void* pArg)
 {
-	CIgnite* pInstance = new CIgnite(*this);
+	CIgnite* pInstance = New CIgnite(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

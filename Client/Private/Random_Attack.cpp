@@ -76,7 +76,7 @@ void CRandom_Attack::Reset_Behavior(HRESULT result)
 
 CRandom_Attack* CRandom_Attack::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CRandom_Attack* pInstance = new CRandom_Attack(pDevice, pContext);
+	CRandom_Attack* pInstance = New CRandom_Attack(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -89,7 +89,7 @@ CRandom_Attack* CRandom_Attack::Create(ID3D11Device* pDevice, ID3D11DeviceContex
 
 CRandom_Attack* CRandom_Attack::Clone(void* pArg)
 {
-	CRandom_Attack* pInstance = new CRandom_Attack(*this);
+	CRandom_Attack* pInstance = New CRandom_Attack(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

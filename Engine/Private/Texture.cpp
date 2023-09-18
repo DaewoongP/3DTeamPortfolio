@@ -142,7 +142,7 @@ HRESULT CTexture::Bind_ShaderResources(CShader* pShader, const _char* pContantNa
 
 CTexture* CTexture::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pTextureFilePath, _uint iNumTextures)
 {
-	CTexture* pInstance = new CTexture(pDevice, pContext);
+	CTexture* pInstance = New CTexture(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pTextureFilePath, iNumTextures)))
 	{
@@ -155,7 +155,7 @@ CTexture* CTexture::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,
 
 CComponent* CTexture::Clone(void* pArg)
 {
- 	CTexture* pInstance = new CTexture(*this);
+ 	CTexture* pInstance = New CTexture(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

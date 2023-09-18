@@ -68,7 +68,7 @@ HRESULT CRootBehavior::Add_Type(const string& strTypename, any Type)
 
 CRootBehavior* CRootBehavior::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CRootBehavior* pInstance = new CRootBehavior(pDevice, pContext);
+	CRootBehavior* pInstance = New CRootBehavior(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -81,7 +81,7 @@ CRootBehavior* CRootBehavior::Create(ID3D11Device* pDevice, ID3D11DeviceContext*
 
 CRootBehavior* CRootBehavior::Clone(void* pArg)
 {
-	CRootBehavior* pInstance = new CRootBehavior(*this);
+	CRootBehavior* pInstance = New CRootBehavior(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

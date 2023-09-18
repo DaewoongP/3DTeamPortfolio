@@ -193,12 +193,12 @@ HRESULT CLevel_MainGame::Ready_Layer_Player(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Player"), pLayerTag, TEXT("GameObject_Player"))))
+	/*if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Player"), pLayerTag, TEXT("GameObject_Player"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Player)");
 		ENDINSTANCE;
 		return E_FAIL;
-	}
+	}*/
 
 	ENDINSTANCE;
 
@@ -216,7 +216,7 @@ HRESULT CLevel_MainGame::Ready_Layer_Monster(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Golem_Combat"), pLayerTag, TEXT("GameObject_Golem_Combat"))))
+	/*if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Golem_Combat"), pLayerTag, TEXT("GameObject_Golem_Combat"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Golem_Combat)");
 		return E_FAIL;
@@ -226,7 +226,7 @@ HRESULT CLevel_MainGame::Ready_Layer_Monster(const _tchar* pLayerTag)
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Golem_Merlin)");
 		return E_FAIL;
-	}
+	}*/
 
 	ENDINSTANCE;
 
@@ -453,15 +453,15 @@ HRESULT CLevel_MainGame::Ready_Layer_Debug(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Professor_Fig"), pLayerTag, TEXT("GameObject_Professor_Fig"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Professor_Fig)");
-		return E_FAIL;
-	}
-	
 	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_LoadTrigger"), pLayerTag, TEXT("GameObject_LoadTrigger"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_LoadTrigger)");
+		return E_FAIL;
+	}
+
+	/*if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Professor_Fig"), pLayerTag, TEXT("GameObject_Professor_Fig"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Professor_Fig)");
 		return E_FAIL;
 	}
 
@@ -469,7 +469,7 @@ HRESULT CLevel_MainGame::Ready_Layer_Debug(const _tchar* pLayerTag)
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Dummy)");
 		return E_FAIL;
-	}
+	}*/
 
 	Safe_Release(pGameInstance);
 
@@ -499,7 +499,7 @@ HRESULT CLevel_MainGame::Ready_Layer_SceneTest(const _tchar* pLayerTag)
 
 CLevel_MainGame* CLevel_MainGame::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CLevel_MainGame* pInstance = new CLevel_MainGame(pDevice, pContext);
+	CLevel_MainGame* pInstance = New CLevel_MainGame(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize()))
 	{

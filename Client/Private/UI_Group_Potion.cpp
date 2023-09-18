@@ -157,7 +157,7 @@ CUI::UIDESC CUI_Group_Potion::Load_File(const HANDLE hFile)
 
 CUI_Group_Potion* CUI_Group_Potion::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CUI_Group_Potion* pInstance = new CUI_Group_Potion(pDevice, pContext);
+	CUI_Group_Potion* pInstance = New CUI_Group_Potion(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -170,7 +170,7 @@ CUI_Group_Potion* CUI_Group_Potion::Create(ID3D11Device* pDevice, ID3D11DeviceCo
 
 CGameObject* CUI_Group_Potion::Clone(void* pArg)
 {
-	CUI_Group_Potion* pInstance = new CUI_Group_Potion(*this);
+	CUI_Group_Potion* pInstance = New CUI_Group_Potion(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

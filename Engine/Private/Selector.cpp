@@ -57,7 +57,7 @@ HRESULT CSelector::Tick(const _float& fTimeDelta)
 
 CSelector* CSelector::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CSelector* pInstance = new CSelector(pDevice, pContext);
+	CSelector* pInstance = New CSelector(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -70,7 +70,7 @@ CSelector* CSelector::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 
 CSelector* CSelector::Clone(void* pArg)
 {
-	CSelector* pInstance = new CSelector(*this);
+	CSelector* pInstance = New CSelector(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

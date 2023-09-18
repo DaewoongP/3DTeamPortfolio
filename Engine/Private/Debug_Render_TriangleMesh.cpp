@@ -39,7 +39,7 @@ HRESULT CDebug_Render_TriangleMesh::Initialize(void* pArg)
 	m_BufferDesc.CPUAccessFlags = { 0 };
 	m_BufferDesc.MiscFlags = { 0 };
 
-	VTXPOS* pVertices = new VTXPOS[m_iNumVertices];
+	VTXPOS* pVertices = New VTXPOS[m_iNumVertices];
 	ZeroMemory(pVertices, sizeof(VTXPOS) * m_iNumVertices);
 
 	for (_uint i = 0; i < m_iNumVertices; ++i)
@@ -70,7 +70,7 @@ HRESULT CDebug_Render_TriangleMesh::Initialize(void* pArg)
 	m_BufferDesc.CPUAccessFlags = { 0 };
 	m_BufferDesc.MiscFlags = { 0 };
 
-	_ulong* pIndices = new _ulong[m_iNumIndices];
+	_ulong* pIndices = New _ulong[m_iNumIndices];
 	ZeroMemory(pIndices, sizeof(_ulong) * m_iNumIndices);
 
 	for (_uint i = 0; i < m_iNumIndices; ++i)
@@ -91,7 +91,7 @@ HRESULT CDebug_Render_TriangleMesh::Initialize(void* pArg)
 
 CDebug_Render_TriangleMesh* CDebug_Render_TriangleMesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CDebug_Render_TriangleMesh* pInstance = new CDebug_Render_TriangleMesh(pDevice, pContext);
+	CDebug_Render_TriangleMesh* pInstance = New CDebug_Render_TriangleMesh(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -103,7 +103,7 @@ CDebug_Render_TriangleMesh* CDebug_Render_TriangleMesh::Create(ID3D11Device* pDe
 
 CComponent* CDebug_Render_TriangleMesh::Clone(void* pArg)
 {
-	CDebug_Render_TriangleMesh* pInstance = new CDebug_Render_TriangleMesh(*this);
+	CDebug_Render_TriangleMesh* pInstance = New CDebug_Render_TriangleMesh(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

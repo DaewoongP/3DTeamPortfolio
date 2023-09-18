@@ -71,7 +71,7 @@
 		CLASSNAME*	CLASSNAME::m_pInstance = nullptr;			\
 		CLASSNAME*	CLASSNAME::GetInstance( void )	{			\
 			if(nullptr == m_pInstance) {						\
-				m_pInstance = new CLASSNAME;					\
+				m_pInstance = New CLASSNAME;					\
 			}													\
 			return m_pInstance;									\
 		}														\

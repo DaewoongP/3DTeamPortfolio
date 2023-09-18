@@ -41,7 +41,7 @@ HRESULT CVIBuffer_Triangle::Initialize(void* pArg)
 	m_BufferDesc.CPUAccessFlags = { D3D11_CPU_ACCESS_WRITE };
 	m_BufferDesc.MiscFlags = { 0 };
 
-	VTXPOS* pVertices = new VTXPOS[m_iNumVertices];
+	VTXPOS* pVertices = New VTXPOS[m_iNumVertices];
 	ZeroMemory(pVertices, sizeof(VTXPOS) * m_iNumVertices);
 
 	for (_uint i = 0; i < m_iNumVertices; ++i)
@@ -66,7 +66,7 @@ HRESULT CVIBuffer_Triangle::Initialize(void* pArg)
 	m_BufferDesc.CPUAccessFlags = { 0 };
 	m_BufferDesc.MiscFlags = { 0 };
 
-	_ulong* pIndices = new _ulong[m_iNumIndices];
+	_ulong* pIndices = New _ulong[m_iNumIndices];
 	ZeroMemory(pIndices, sizeof(_ulong) * m_iNumIndices);
 
 	for (_uint i = 0; i < m_iNumIndices; ++i)
@@ -100,7 +100,7 @@ void CVIBuffer_Triangle::Tick(TRIANGLEDESC TriangleDesc)
 
 CVIBuffer_Triangle* CVIBuffer_Triangle::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CVIBuffer_Triangle* pInstance = new CVIBuffer_Triangle(pDevice, pContext);
+	CVIBuffer_Triangle* pInstance = New CVIBuffer_Triangle(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -112,7 +112,7 @@ CVIBuffer_Triangle* CVIBuffer_Triangle::Create(ID3D11Device* pDevice, ID3D11Devi
 
 CComponent* CVIBuffer_Triangle::Clone(void* pArg)
 {
-	CVIBuffer_Triangle* pInstance = new CVIBuffer_Triangle(*this);
+	CVIBuffer_Triangle* pInstance = New CVIBuffer_Triangle(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

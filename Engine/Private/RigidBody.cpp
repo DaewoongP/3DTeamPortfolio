@@ -286,7 +286,6 @@ HRESULT CRigidBody::Create_Collider(RIGIDBODYDESC* pRigidBodyDesc)
 	
 	PxShapeFlags ePxFlag;
 	// 트리거 설정
-	// Query : 레이캐스트 처리
 	if (true == pRigidBodyDesc->isTrigger)
 	{
 		ePxFlag = PxShapeFlag::eSCENE_QUERY_SHAPE | PxShapeFlag::eTRIGGER_SHAPE;
@@ -586,7 +585,7 @@ HRESULT CRigidBody::SetUp_ShaderResources(_uint iColliderIndex)
 
 CRigidBody* CRigidBody::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CRigidBody* pInstance = new CRigidBody(pDevice, pContext);
+	CRigidBody* pInstance = New CRigidBody(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -599,7 +598,7 @@ CRigidBody* CRigidBody::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
 
 CComponent* CRigidBody::Clone(void* pArg)
 {
-	CRigidBody* pInstance = new CRigidBody(*this);
+	CRigidBody* pInstance = New CRigidBody(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
