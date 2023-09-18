@@ -7,12 +7,22 @@
 
 #include "Player.h"
 #include "Weapon_Player_Wand.h"
+
+#include "Professor_FIg.h"
+
+#pragma region Player State
+
 #include "StateContext.h"
 #include "IdleState.h"
 #include "MoveTurnState.h"
 #include "MoveStartState.h"
 #include "MoveLoopState.h"
-#include "Professor_FIg.h"
+#include "RollState.h"
+#include "JumpState.h"
+#include "HardLandState.h"
+
+#pragma endregion
+
 
 CMain3_Loader::CMain3_Loader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice(pDevice)
@@ -104,7 +114,7 @@ HRESULT CMain3_Loader::Loading_For_MainGame()
 			throw TEXT("Prototype_GameObject_Player");
 
 		_float4x4 PivotMatrix;
-		PivotMatrix = XMMatrixRotationAxis(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f), XMConvertToRadians(180.0f));
+		PivotMatrix = XMMatrixRotationQuaternion(XMQuaternionRotationRollPitchYaw(0.f, XMConvertToRadians(180.f), 0.f));
 		/* For.Prototype_Component_Model_CustomModel_Player */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_CustomModel_Player"),
 			CCustomModel::Create(m_pDevice, m_pContext, CCustomModel::TYPE_ANIM, L"../../Resources/Models/Anims/Biped_Skeleton_jog_idle_face/Biped_Skeleton_jog_idle_face.gcm", PivotMatrix))))
@@ -178,6 +188,21 @@ HRESULT CMain3_Loader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_State_Move_Loop"),
 			CMoveLoopState::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_State_Move_Loop");
+
+		/* For.Prototype_Component_State_Roll */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_State_Roll"),
+			CRollState::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_State_Roll");
+
+		/* For.Prototype_Component_State_Jump */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_State_Jump"),
+			CJumpState::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_State_Jump");
+
+		/* For.Prototype_Component_State_Hard_Land */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_State_Hard_Land"),
+			CHardLandState::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_State_Hard_Land");
 
 #pragma endregion
 

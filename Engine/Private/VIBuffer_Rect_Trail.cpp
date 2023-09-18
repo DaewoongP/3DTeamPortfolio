@@ -16,6 +16,7 @@ CVIBuffer_Rect_Trail::CVIBuffer_Rect_Trail(const CVIBuffer_Rect_Trail& rhs)
 
 HRESULT CVIBuffer_Rect_Trail::Reset_Trail()
 {
+	std::lock_guard<std::mutex> lock(mtx);
 	// Local Position
 	_float3 vHighPos = ((*m_TrailDesc.pHighLocalMatrix) * (*m_TrailDesc.pPivotMatrix)).Translation();
 	_float3 vLowPos = ((*m_TrailDesc.pLowLocalMatrix) * (*m_TrailDesc.pPivotMatrix)).Translation();
@@ -26,7 +27,7 @@ HRESULT CVIBuffer_Rect_Trail::Reset_Trail()
 	
 	D3D11_MAPPED_SUBRESOURCE	MappedSubResource;
 
-	m_pContext->Map(m_pVB, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &MappedSubResource);
+	m_pContext->Map(m_pVB, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedSubResource);
 
 	VTXPOSTEX* pData = static_cast<VTXPOSTEX*>(MappedSubResource.pData);
 
@@ -45,9 +46,11 @@ HRESULT CVIBuffer_Rect_Trail::Reset_Trail()
 
 HRESULT CVIBuffer_Rect_Trail::Reset_Trail(_float3 vHighPos, _float3 vLowPos)
 {
+	std::lock_guard<std::mutex> lock(mtx);
+
 	D3D11_MAPPED_SUBRESOURCE	MappedSubResource;
 
-	m_pContext->Map(m_pVB, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &MappedSubResource);
+	m_pContext->Map(m_pVB, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedSubResource);
 
 	VTXPOSTEX* pData = static_cast<VTXPOSTEX*>(MappedSubResource.pData);
 
@@ -98,7 +101,7 @@ HRESULT CVIBuffer_Rect_Trail::Initialize(void* pArg)
 	m_BufferDesc.CPUAccessFlags = { D3D11_CPU_ACCESS_WRITE };
 	m_BufferDesc.MiscFlags = { 0 };
 
-	VTXPOSTEX* pVertices = new VTXPOSTEX[m_iNumVertices];
+	VTXPOSTEX* pVertices = New VTXPOSTEX[m_iNumVertices];
 	ZeroMemory(pVertices, sizeof(VTXPOSTEX) * m_iNumVertices);
 
 	// Local Position
@@ -148,7 +151,7 @@ HRESULT CVIBuffer_Rect_Trail::Initialize(void* pArg)
 	m_BufferDesc.CPUAccessFlags = { 0 };
 	m_BufferDesc.MiscFlags = { 0 };
 
-	_ushort* pIndices = new _ushort[m_iNumIndices];
+	_ushort* pIndices = New _ushort[m_iNumIndices];
 	ZeroMemory(pIndices, sizeof(_ushort) * m_iNumIndices);
 	/*
 	9 7 5 3 1
@@ -185,6 +188,8 @@ HRESULT CVIBuffer_Rect_Trail::Initialize(void* pArg)
 
 void CVIBuffer_Rect_Trail::Tick()
 {
+	std::lock_guard<std::mutex> lock(mtx);
+
 	// Local Position
 	_float3 vHighPos = ((*m_TrailDesc.pHighLocalMatrix) * (*m_TrailDesc.pPivotMatrix)).Translation();
 	_float3 vLowPos = ((*m_TrailDesc.pLowLocalMatrix) * (*m_TrailDesc.pPivotMatrix)).Translation();
@@ -269,7 +274,7 @@ HRESULT CVIBuffer_Rect_Trail::Setup_ShaderResources(class CShader* pShader)
 
 CVIBuffer_Rect_Trail* CVIBuffer_Rect_Trail::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CVIBuffer_Rect_Trail* pInstance = new CVIBuffer_Rect_Trail(pDevice, pContext);
+	CVIBuffer_Rect_Trail* pInstance = New CVIBuffer_Rect_Trail(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -282,7 +287,7 @@ CVIBuffer_Rect_Trail* CVIBuffer_Rect_Trail::Create(ID3D11Device* pDevice, ID3D11
 
 CComponent* CVIBuffer_Rect_Trail::Clone(void* pArg)
 {
-	CVIBuffer_Rect_Trail* pInstance = new CVIBuffer_Rect_Trail(*this);
+	CVIBuffer_Rect_Trail* pInstance = New CVIBuffer_Rect_Trail(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

@@ -40,7 +40,8 @@ private:
 	CShader*		m_pShader = { nullptr };
 	CRenderer*		m_pRenderer = { nullptr };
 	CCustomModel*	m_pCustomModel = { nullptr };
-	
+	CRigidBody*		m_pRigidBody = { nullptr };
+
 private:
 	CPlayer_Camera* m_pPlayer_Camera = { nullptr };
 

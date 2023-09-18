@@ -69,7 +69,7 @@ HRESULT CTerrain::Render()
 	//// 일반 그리기
 	//if (RT_NORMAL == m_eRenderCount)
 	//{
-		m_pShader->Begin("Terrain_Brush");
+		m_pShader->Begin("Terrain");
 
 		if (FAILED(m_pBuffer->Render()))
 			return E_FAIL;
@@ -206,11 +206,11 @@ HRESULT CTerrain::SetUp_ShaderResources()
 
 	ENDINSTANCE;
 
-	if (FAILED(m_pTexture->Bind_ShaderResource(m_pShader, "g_DiffuseTexture", m_iDiffuseTextureIndex)))
-		return E_FAIL;
+	//if (FAILED(m_pTexture->Bind_ShaderResource(m_pShader, "g_DiffuseTexture", m_iDiffuseTextureIndex)))
+	//	return E_FAIL;
 
-	if (FAILED(m_pTexture->Bind_ShaderResources(m_pShader, "g_BrushTexture")))
-		return E_FAIL;
+	//if (FAILED(m_pTexture->Bind_ShaderResources(m_pShader, "g_BrushTexture")))
+	//	return E_FAIL;
 
 	return S_OK;
 }

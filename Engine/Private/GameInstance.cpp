@@ -120,6 +120,14 @@ void CGameInstance::Clear_LevelResources(_uint iLevelIndex)
 	m_pComponent_Manager->Clear_LevelResources(iLevelIndex);
 }
 
+_float2 CGameInstance::Get_ViewPortSize(ID3D11DeviceContext* pContext)
+{
+	_uint iNumViewport = 1;
+	D3D11_VIEWPORT Viewport;
+	pContext->RSGetViewports(&iNumViewport, &Viewport);
+	return _float2(Viewport.Width, Viewport.Height);
+}
+
 HRESULT CGameInstance::Clear_BackBuffer_View(_float4 vClearColor)
 {
 	NULL_CHECK_RETURN_MSG(m_pGraphic_Device, E_FAIL, TEXT("Graphic_Device NULL"));

@@ -30,8 +30,8 @@ CBounding::CBounding(const CBounding& rhs)
 HRESULT CBounding::Initialize_Prototype()
 {
 #ifdef _DEBUG
-	m_pPrimitiveBatch = new PrimitiveBatch<DirectX::VertexPositionColor>(m_pContext);
-	m_pEffect = new DirectX::BasicEffect(m_pDevice);
+	m_pPrimitiveBatch = New PrimitiveBatch<DirectX::VertexPositionColor>(m_pContext);
+	m_pEffect = New DirectX::BasicEffect(m_pDevice);
 
 	NULL_CHECK_RETURN_MSG(m_pPrimitiveBatch, E_FAIL, TEXT("Failed Create PrimitiveBatch"));
 	NULL_CHECK_RETURN_MSG(m_pEffect, E_FAIL, TEXT("Failed Create DirectX::BasicEffect"));

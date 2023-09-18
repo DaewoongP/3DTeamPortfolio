@@ -76,7 +76,7 @@ void CRandom_Select::Reset_Behavior(HRESULT result)
 
 CRandom_Select* CRandom_Select::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CRandom_Select* pInstance = new CRandom_Select(pDevice, pContext);
+	CRandom_Select* pInstance = New CRandom_Select(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -89,7 +89,7 @@ CRandom_Select* CRandom_Select::Create(ID3D11Device* pDevice, ID3D11DeviceContex
 
 CRandom_Select* CRandom_Select::Clone(void* pArg)
 {
-	CRandom_Select* pInstance = new CRandom_Select(*this);
+	CRandom_Select* pInstance = New CRandom_Select(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

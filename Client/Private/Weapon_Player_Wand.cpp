@@ -163,7 +163,7 @@ HRESULT CWeapon_Player_Wand::Set_Shader_Resources()
 
 CWeapon_Player_Wand* CWeapon_Player_Wand::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CWeapon_Player_Wand* pInstance = new CWeapon_Player_Wand(pDevice, pContext);
+	CWeapon_Player_Wand* pInstance = New CWeapon_Player_Wand(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -175,7 +175,7 @@ CWeapon_Player_Wand* CWeapon_Player_Wand::Create(ID3D11Device* pDevice, ID3D11De
 
 CWeapon_Player_Wand* CWeapon_Player_Wand::Clone(void* pArg)
 {
-	CWeapon_Player_Wand* pInstance = new CWeapon_Player_Wand(*this);
+	CWeapon_Player_Wand* pInstance = New CWeapon_Player_Wand(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

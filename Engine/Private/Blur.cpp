@@ -24,9 +24,15 @@ HRESULT CBlur::Initialize_Prototype(const _tchar* pTargetTag, BLUR eBlurOption)
 	if (FAILED(pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_Blur"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
+	if (FAILED(pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
+		TEXT("Target_BlurY"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
+		return E_FAIL;
 
 	if (FAILED(pRenderTarget_Manager->Add_MRT(TEXT("MRT_Blur"), TEXT("Target_Blur"))))
 		return E_FAIL;
+	if (FAILED(pRenderTarget_Manager->Add_MRT(TEXT("MRT_BlurY"), TEXT("Target_BlurY"))))
+		return E_FAIL;
+
 
 	XMStoreFloat4x4(&m_WorldMatrix, XMMatrixIdentity());
 	m_WorldMatrix._11 = ViewportDesc.Width;
@@ -73,11 +79,24 @@ HRESULT CBlur::Render()
 		if (FAILED(m_pBuffer->Render()))
 			return E_FAIL;
 	}
+	else if (BLUR_XY == m_eBlurOption)
+	{
+		if (FAILED(m_pShader->Begin("BlurX")))
+			return E_FAIL;
+		if (FAILED(m_pBuffer->Render()))
+			return E_FAIL;
+		if (FAILED(pRenderTarget_Manager->End_MRT(m_pContext)))
+			return E_FAIL;
+		if (FAILED(pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_BlurY"))))
+			return E_FAIL;
+		if (FAILED(pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Blur"), m_pShader, "g_Texture")))
+			return E_FAIL;
+
+	}
 	else
 	{
 		MSG_BOX("Blur Option is Null");
 	}
-
 	if (FAILED(pRenderTarget_Manager->End_MRT(m_pContext)))
 		return E_FAIL;
 

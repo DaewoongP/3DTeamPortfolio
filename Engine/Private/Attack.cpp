@@ -24,7 +24,7 @@ HRESULT CAttack::Initialize(void* pArg)
 
 CAttack* CAttack::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CAttack* pInstance = new CAttack(pDevice, pContext);
+	CAttack* pInstance = New CAttack(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -37,7 +37,7 @@ CAttack* CAttack::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 CAttack* CAttack::Clone(void* pArg)
 {
-	CAttack* pInstance = new CAttack(*this);
+	CAttack* pInstance = New CAttack(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

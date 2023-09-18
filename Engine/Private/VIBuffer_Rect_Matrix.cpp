@@ -38,7 +38,7 @@ HRESULT CVIBuffer_Rect_Matrix::Initialize_Prototype(const INSTANCEDESC* pInstanc
 	m_BufferDesc.MiscFlags = { 0 };
 
 
-	VTXPOSTEX* pVertices = new VTXPOSTEX[4];
+	VTXPOSTEX* pVertices = New VTXPOSTEX[4];
 	ZeroMemory(pVertices, sizeof(VTXPOSTEX) * 4);
 
 	pVertices[0].vPosition = _float3(-0.5f, 0.5f, 0.f);
@@ -73,7 +73,7 @@ HRESULT CVIBuffer_Rect_Matrix::Initialize_Prototype(const INSTANCEDESC* pInstanc
 	m_BufferDesc.CPUAccessFlags = { 0 };
 	m_BufferDesc.MiscFlags = { 0 };
 
-	_ushort* pIndices = new _ushort[m_iNumIndices];
+	_ushort* pIndices = New _ushort[m_iNumIndices];
 	ZeroMemory(pIndices, sizeof(_ushort) * m_iNumIndices);
 
 	_uint		iNumIndices = { 0 };
@@ -118,17 +118,6 @@ HRESULT CVIBuffer_Rect_Matrix::Initialize(void* pArg)
 	return S_OK;
 }
 
-void CVIBuffer_Rect_Matrix::Tick(_float fTimeDelta)
-{
-	D3D11_MAPPED_SUBRESOURCE	MappedSubResource;
-
-	m_pContext->Map(m_pVBInstance, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &MappedSubResource);
-
-
-	
-	m_pContext->Unmap(m_pVBInstance, 0);
-}
-
 HRESULT CVIBuffer_Rect_Matrix::Make_InstanceLogic(const INSTANCEDESC* pInstanceDesc)
 {
 	return S_OK;
@@ -136,7 +125,7 @@ HRESULT CVIBuffer_Rect_Matrix::Make_InstanceLogic(const INSTANCEDESC* pInstanceD
 
 CVIBuffer_Rect_Matrix* CVIBuffer_Rect_Matrix::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const INSTANCEDESC* pInstanceDesc, _uint iNumInstance)
 {
-	CVIBuffer_Rect_Matrix* pInstance = new CVIBuffer_Rect_Matrix(pDevice, pContext);
+	CVIBuffer_Rect_Matrix* pInstance = New CVIBuffer_Rect_Matrix(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pInstanceDesc, iNumInstance)))
 	{
@@ -149,7 +138,7 @@ CVIBuffer_Rect_Matrix* CVIBuffer_Rect_Matrix::Create(ID3D11Device* pDevice, ID3D
 
 CComponent* CVIBuffer_Rect_Matrix::Clone(void* pArg)
 {
-	CVIBuffer_Rect_Matrix* pInstance = new CVIBuffer_Rect_Matrix(*this);
+	CVIBuffer_Rect_Matrix* pInstance = New CVIBuffer_Rect_Matrix(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

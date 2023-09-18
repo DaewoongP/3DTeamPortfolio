@@ -283,8 +283,35 @@
     <Filter Include="05. Scene">
       <UniqueIdentifier>{1a46706e-474c-4231-a7ba-2c809467d7a9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_Enemy_HP">
+      <UniqueIdentifier>{bb8be488-5c9d-472c-a62d-2b3677e0ed72}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\Font">
+      <UniqueIdentifier>{8567ad8d-0151-4dca-83f9-c0b84f96b3d6}</UniqueIdentifier>
+    </Filter>
     <Filter Include="01. Levels\99. Loading\Loader">
       <UniqueIdentifier>{5d7f902a-4002-432f-8bd9-34922b397410}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\02. JumpState">
+      <UniqueIdentifier>{f11b9425-7729-4257-9b90-f2a7b314e762}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\03. RollState">
+      <UniqueIdentifier>{021389fc-ab85-4d15-9673-ffdd6778c8aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\04. HardLandState">
+      <UniqueIdentifier>{10f19527-0a06-4f20-977a-2fdb651f7263}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Magic\MagicBall\06. Confringo">
+      <UniqueIdentifier>{f2eb1727-1265-443b-960c-a8800034b231}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. Effect\Confringo_Explosive_Effect">
+      <UniqueIdentifier>{32fad4a1-4b2a-457d-91d8-ba6a2ad841cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. Effect\Confringo_WandDust_Effect">
+      <UniqueIdentifier>{9cd4f3c5-0e60-4d99-8478-7c20c152ebf8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_Cursor">
+      <UniqueIdentifier>{a63a6343-ce45-4b8e-a9d3-a44f48775b53}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -585,6 +612,12 @@
     <ClInclude Include="..\public\Info_Main.h">
       <Filter>05. Scene</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_Group_Enemy_HP.h">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Enemy_HP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Font.h">
+      <Filter>02. GameObject\05. UI\Font</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\Main1_Loader.h">
       <Filter>01. Levels\99. Loading\Loader</Filter>
     </ClInclude>
@@ -599,6 +632,27 @@
     </ClInclude>
     <ClInclude Include="..\Public\Sequence_Levitated.h">
       <Filter>03. Behaviors\02. Sequences</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\RollState.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\03. RollState</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\JumpState.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\02. JumpState</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\HardLandState.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\04. HardLandState</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Confringo.h">
+      <Filter>04. Magic\MagicBall\06. Confringo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Confringo_Explosive_Effect.h">
+      <Filter>02. GameObject\03. Effect\Confringo_Explosive_Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Confringo_WandDust_Effect.h">
+      <Filter>02. GameObject\03. Effect\Confringo_WandDust_Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Group_Cursor.h">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Cursor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -869,6 +923,12 @@
     <ClCompile Include="..\Private\UI_Group_Skill.cpp">
       <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Skill</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\UI_Group_Enemy_HP.cpp">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Enemy_HP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Font.cpp">
+      <Filter>02. GameObject\05. UI\Font</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\Main1_Loader.cpp">
       <Filter>01. Levels\99. Loading\Loader</Filter>
     </ClCompile>
@@ -883,6 +943,27 @@
     </ClCompile>
     <ClCompile Include="..\Private\Sequence_Levitated.cpp">
       <Filter>03. Behaviors\02. Sequences</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\RollState.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\03. RollState</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\JumpState.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\02. JumpState</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\HardLandState.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\04. HardLandState</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Confringo.cpp">
+      <Filter>04. Magic\MagicBall\06. Confringo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Confringo_Explosive_Effect.cpp">
+      <Filter>02. GameObject\03. Effect\Confringo_Explosive_Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Confringo_WandDust_Effect.cpp">
+      <Filter>02. GameObject\03. Effect\Confringo_WandDust_Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Group_Cursor.cpp">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Cursor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -927,6 +1008,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Protego.hlsl">
       <Filter>97. ShaderFiles\Magic\Protego</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTexRotation.hlsl">
+      <Filter>97. ShaderFiles\Textures</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

@@ -15,6 +15,8 @@
 #include "Protego_Effect.h"
 #include "Default_MagicTraill_Effect.h"
 #include "Wingardium_Effect.h"
+#include "Confringo_Explosive_Effect.h"
+#include "Confringo_WandDust_Effect.h"
 #pragma endregion Effects
 
 #pragma region Magic
@@ -25,6 +27,7 @@
 #include "Protego.h"
 #include "Revelio.h"
 #include "Levioso.h"
+#include "Confringo.h"
 #include "Wingardiumleviosa.h"
 #pragma endregion Magic
 
@@ -128,8 +131,8 @@ HRESULT CMain1_Loader::Loading_For_MainGame()
 			CTerrain::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Terrain");
 
-		/*if (FAILED(Loading_Map_Object(TEXT("../../Resources/GameData/MapData/0916123.ddd"))))
-			throw TEXT("Map Object");*/
+		if (FAILED(Loading_Map_Object(TEXT("../../Resources/GameData/MapData/MapData6.ddd"))))
+			throw TEXT("Map Object");
 
 		/* For.Prototype_Component_CharacterController*/
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_CharacterController"),
@@ -242,6 +245,31 @@ HRESULT CMain1_Loader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Default_MagicTraill_Effect"),
 			CDefault_MagicTraill_Effect::Create(m_pDevice, m_pContext, LEVEL_MAINGAME))))
 			throw TEXT("Prototype_GameObject_Default_MagicTraill_Effect");
+			
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_MagicTraill_Confringo_Effect"),
+			CDefault_MagicTraill_Effect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/Confringo/Confringo.trail"), LEVEL_MAINGAME))))
+			throw TEXT("Prototype_GameObject_MagicTraill_Confringo_Effect");
+
+		/* For.Prototype_GameObject_Wingardium_Effect*/
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_MagicTraill_Winga_Effect"),
+			CDefault_MagicTraill_Effect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/Wingardium/Wingardium.trail"), LEVEL_MAINGAME))))
+			throw TEXT("Prototype_GameObject_Default_MagicTraill_Winga_Effect");
+
+		/* For.Prototype_GameObject_Wingardium_Effect*/
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_MagicTraill_Levioso_Effect"),
+			CDefault_MagicTraill_Effect::Create(m_pDevice, m_pContext, TEXT(""), LEVEL_MAINGAME))))
+			throw TEXT("Prototype_GameObject_Default_MagicTraill_Levioso_Effect");
+
+		/* For.Prototype_GameObject_Confringo_Explosive_Effect*/
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Confringo_Explosive_Effect"),
+			CConfringo_Explosive_Effect::Create(m_pDevice, m_pContext, LEVEL_MAINGAME))))
+			throw TEXT("Prototype_GameObject_Confringo_Explosive_Effect");
+
+		/* For.Prototype_GameObject_Confringo_WandDust_Effect*/
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Confringo_WandDust_Effect"),
+			CConfringo_WandDust_Effect::Create(m_pDevice, m_pContext, LEVEL_MAINGAME))))
+			throw TEXT("Prototype_GameObject_Confringo_WandDust_Effect");
+		
 #pragma endregion
 
 #pragma region Magic
@@ -269,6 +297,12 @@ HRESULT CMain1_Loader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Levioso"),
 			CLevioso::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Levioso");
+
+		/* For.Prototype_GameObject_Confringo */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Confringo"),
+			CConfringo::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Confringo");
+
 #pragma endregion
 
 		/* For.Prototype_GameObject_Protego_Effect*/

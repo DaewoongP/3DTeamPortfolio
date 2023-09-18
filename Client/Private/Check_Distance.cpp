@@ -54,7 +54,7 @@ HRESULT CCheck_Distance::Tick(const _float& fTimeDelta)
 
 CCheck_Distance* CCheck_Distance::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CCheck_Distance* pInstance = new CCheck_Distance(pDevice, pContext);
+	CCheck_Distance* pInstance = New CCheck_Distance(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -67,7 +67,7 @@ CCheck_Distance* CCheck_Distance::Create(ID3D11Device* pDevice, ID3D11DeviceCont
 
 CCheck_Distance* CCheck_Distance::Clone(void* pArg)
 {
-	CCheck_Distance* pInstance = new CCheck_Distance(*this);
+	CCheck_Distance* pInstance = New CCheck_Distance(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

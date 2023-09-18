@@ -8,7 +8,6 @@ texture2D		g_ClipTexture;
 float			g_fClipThreshold = 0.33f;
 int				g_iClipChannel;
 
-
 vector			g_vColor = vector(1.f, 1.f, 1.f, 1.f);
 
 struct VS_IN
@@ -73,15 +72,16 @@ PS_OUT	PS_MAIN(PS_IN In)
 	PS_OUT		Out = (PS_OUT)0;
 
 	Out.vColor = g_Texture.Sample(LinearSampler, In.vTexUV);
+	vector vClipTexture = g_ClipTexture.Sample(LinearSampler, In.vTexUV);
 
 	if (0 == g_iClipChannel)
-		Out.vColor.a = g_ClipTexture.Sample(LinearSampler, In.vTexUV).r;
+		Out.vColor.a = vClipTexture.r;
 	else if (1 == g_iClipChannel)
-		Out.vColor.a = g_ClipTexture.Sample(LinearSampler, In.vTexUV).g;
+		Out.vColor.a = vClipTexture.g;
 	else if (2 == g_iClipChannel)
-		Out.vColor.a = g_ClipTexture.Sample(LinearSampler, In.vTexUV).b;
+		Out.vColor.a = vClipTexture.b;
 	else if (3 == g_iClipChannel)
-		Out.vColor.a = g_ClipTexture.Sample(LinearSampler, In.vTexUV).a;
+		Out.vColor.a = vClipTexture.a;
 
 	Out.vColor *= (In.vColor);
 

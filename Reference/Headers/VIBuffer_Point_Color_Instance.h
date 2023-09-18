@@ -22,9 +22,6 @@ public:
 	virtual HRESULT Initialize(void* pArg) override;
 
 public:
-	HRESULT Make_Buffers();
-
-public:
 	static CVIBuffer_Point_Color_Instance* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);
 	virtual CComponent* Clone(void* pArg) override;
 	virtual void Free() override;

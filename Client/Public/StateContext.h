@@ -15,6 +15,22 @@ class CStateContext :
     public CComposite
 {
 public:
+    enum JOGINGANDSPRINT
+    {
+        JOGING,
+        SPRINT,
+        JS_END
+    };
+
+    enum ACTIONTYPE
+    {
+        ACTION_NONE,
+        ACTION_CASUAL,
+        ACTION_CMBT,
+        ACTION_END
+    };
+
+public:
     typedef struct tagStateContextDesc
     {
         CModel* pOwnerModel = { nullptr };
@@ -46,6 +62,12 @@ private:
     CTransform* m_pPlayerTransform = { nullptr };
 
     CStateMachine* m_pCurrentStateMachine = { nullptr };
+
+    //달리기와 전력질주 구분용
+    _bool m_isSprint = { (_bool)JOGING };
+
+    //액션 구분용
+    _uint m_iActionSwitch = { 0 };
 
     unordered_map<const _tchar*, CStateMachine*> m_pStateMachines;
 

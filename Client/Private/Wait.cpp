@@ -44,7 +44,7 @@ void CWait::Reset_Behavior(HRESULT result)
 
 CWait* CWait::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CWait* pInstance = new CWait(pDevice, pContext);
+	CWait* pInstance = New CWait(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -57,7 +57,7 @@ CWait* CWait::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 CWait* CWait::Clone(void* pArg)
 {
-	CWait* pInstance = new CWait(*this);
+	CWait* pInstance = New CWait(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

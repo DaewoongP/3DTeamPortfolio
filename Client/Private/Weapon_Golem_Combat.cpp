@@ -145,7 +145,7 @@ HRESULT CWeapon_Golem_Combat::Set_Shader_Resources()
 
 CWeapon_Golem_Combat* CWeapon_Golem_Combat::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CWeapon_Golem_Combat* pInstance = new CWeapon_Golem_Combat(pDevice, pContext);
+	CWeapon_Golem_Combat* pInstance = New CWeapon_Golem_Combat(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -157,7 +157,7 @@ CWeapon_Golem_Combat* CWeapon_Golem_Combat::Create(ID3D11Device* pDevice, ID3D11
 
 CWeapon_Golem_Combat* CWeapon_Golem_Combat::Clone(void* pArg)
 {
-	CWeapon_Golem_Combat* pInstance = new CWeapon_Golem_Combat(*this);
+	CWeapon_Golem_Combat* pInstance = New CWeapon_Golem_Combat(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

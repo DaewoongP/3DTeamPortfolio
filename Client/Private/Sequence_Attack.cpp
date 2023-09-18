@@ -133,7 +133,7 @@ void CSequence_Attack::Reset_Behavior(HRESULT result)
 
 CSequence_Attack* CSequence_Attack::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CSequence_Attack* pInstance = new CSequence_Attack(pDevice, pContext);
+	CSequence_Attack* pInstance = New CSequence_Attack(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -146,7 +146,7 @@ CSequence_Attack* CSequence_Attack::Create(ID3D11Device* pDevice, ID3D11DeviceCo
 
 CSequence_Attack* CSequence_Attack::Clone(void* pArg)
 {
-	CSequence_Attack* pInstance = new CSequence_Attack(*this);
+	CSequence_Attack* pInstance = New CSequence_Attack(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

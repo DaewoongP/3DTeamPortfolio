@@ -42,7 +42,7 @@ HRESULT CVIBuffer_Cell::Initialize_Prototype(const _float3* pPoints)
 	m_BufferDesc.CPUAccessFlags = { D3D11_CPU_ACCESS_WRITE };
 	m_BufferDesc.MiscFlags = { 0 };
 
-	VTXPOS* pVertices = new VTXPOS[m_iNumVertices];
+	VTXPOS* pVertices = New VTXPOS[m_iNumVertices];
 	ZeroMemory(pVertices, sizeof(VTXPOS) * m_iNumVertices);
 
 	m_pOriginSphere = CBounding_Sphere::Create(m_pDevice, m_pContext);
@@ -78,7 +78,7 @@ HRESULT CVIBuffer_Cell::Initialize_Prototype(const _float3* pPoints)
 	m_BufferDesc.CPUAccessFlags = { D3D11_CPU_ACCESS_WRITE };
 	m_BufferDesc.MiscFlags = { 0 };
 
-	_ushort* pIndices = new _ushort[m_iNumIndices];
+	_ushort* pIndices = New _ushort[m_iNumIndices];
 	ZeroMemory(pIndices, sizeof(_ushort) * m_iNumIndices);
 
 	// Line Strip
@@ -144,7 +144,7 @@ HRESULT CVIBuffer_Cell::End()
 
 CVIBuffer_Cell* CVIBuffer_Cell::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _float3* pPoints)
 {
-	CVIBuffer_Cell* pInstance = new CVIBuffer_Cell(pDevice, pContext);
+	CVIBuffer_Cell* pInstance = New CVIBuffer_Cell(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pPoints)))
 	{
@@ -157,7 +157,7 @@ CVIBuffer_Cell* CVIBuffer_Cell::Create(ID3D11Device* pDevice, ID3D11DeviceContex
 
 CComponent* CVIBuffer_Cell::Clone(void* pArg)
 {
-	CVIBuffer_Cell* pInstance = new CVIBuffer_Cell(*this);
+	CVIBuffer_Cell* pInstance = New CVIBuffer_Cell(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

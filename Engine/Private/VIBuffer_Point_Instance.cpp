@@ -45,66 +45,6 @@ HRESULT CVIBuffer_Point_Instance::Initialize(void * pArg)
 	return S_OK;
 }
 
-void CVIBuffer_Point_Instance::Tick(_float4x4* pInstanceMatrix, _bool isAlphaBlend, _float4x4 AlphaBlendObjectWorldMatrixInverse)
-{
-	if (true == isAlphaBlend)
-	{
-		// 알파블렌딩 객체는 소팅 필수.
-		// 다른객체들은 렌더러에서 소팅하면 되지만, 인스턴스객체는 각 인스턴스들의 소팅을 진행해야함.
-		// 소팅하는 위치 -> 월드공간 (카메라 위치, 인스턴싱객체 실제 위치.)
-		Sort_AlphaBlend(pInstanceMatrix, AlphaBlendObjectWorldMatrixInverse);
-	}
-
-	D3D11_MAPPED_SUBRESOURCE	MappedSubResource;
-
-	m_pContext->Map(m_pVBInstance, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &MappedSubResource);
-
-	VTXINSTANCE* pVtxInstance = static_cast<VTXINSTANCE*>(MappedSubResource.pData);
-
-	for (_uint i = 0; i < m_iNumInstance; ++i)
-	{
-		memcpy(&pVtxInstance[i].vRight, &pInstanceMatrix[i].m[0], sizeof(_float4));
-		memcpy(&pVtxInstance[i].vUp, &pInstanceMatrix[i].m[1], sizeof(_float4));
-		memcpy(&pVtxInstance[i].vLook, &pInstanceMatrix[i].m[2], sizeof(_float4));
-		memcpy(&pVtxInstance[i].vTranslation, &pInstanceMatrix[i].m[3], sizeof(_float4));
-	}
-
-	m_pContext->Unmap(m_pVBInstance, 0);
-}
-
-void CVIBuffer_Point_Instance::Sort_AlphaBlend(_float4x4* pInstanceMatrix, _float4x4 AlphaBlendObjectWorldMatrixInverse)
-{
-	CPipeLine* pPipeLine = CPipeLine::GetInstance();
-	Safe_AddRef(pPipeLine);
-
-	_float4 vCamPos = XMLoadFloat4(pPipeLine->Get_CamPosition());
-	_float4 vCamLocalPos = XMVector3TransformCoord(vCamPos, AlphaBlendObjectWorldMatrixInverse);
-	
-	Safe_Release(pPipeLine);
-
-	vector<_float4x4> InstanceLocalMatrices;
-	InstanceLocalMatrices.resize(m_iNumInstance);
-
-	memcpy(InstanceLocalMatrices.data(), pInstanceMatrix, sizeof(_float4x4) * m_iNumInstance);
-
-	sort(InstanceLocalMatrices.begin(), InstanceLocalMatrices.end(), [vCamLocalPos](_float4x4 SourInstanceMatrix, _float4x4 DestInstanceMatrix) {
-		_float4 vSourLocalPos, vDestLocalPos;
-		memcpy(&vSourLocalPos, SourInstanceMatrix.m[3], sizeof(_float4));
-		memcpy(&vDestLocalPos, DestInstanceMatrix.m[3], sizeof(_float4));
-
-		_float4 vSour = vSourLocalPos - vCamLocalPos;
-		_float4 vDest = vDestLocalPos - vCamLocalPos;
-
-		// 내림차순 (멀리있는거부터 그림.)
-		if (vSour.Length() > vDest.Length())
-			return true;
-
-		return false;
-		});
-
-	memcpy(pInstanceMatrix, InstanceLocalMatrices.data(), sizeof(_float4x4) * m_iNumInstance);
-}
-
 HRESULT CVIBuffer_Point_Instance::Make_Buffers()
 {
 	m_iIndexCountPerInstance = 1;
@@ -127,7 +67,7 @@ HRESULT CVIBuffer_Point_Instance::Make_Buffers()
 	m_BufferDesc.CPUAccessFlags = { 0 };
 	m_BufferDesc.MiscFlags = { 0 };
 
-	VTXPOINT* pVertices = new VTXPOINT;
+	VTXPOINT* pVertices = New VTXPOINT;
 	ZeroMemory(pVertices, sizeof(VTXPOINT));
 
 	pVertices->vPosition = _float3(0.f, 0.f, 0.f);
@@ -153,7 +93,7 @@ HRESULT CVIBuffer_Point_Instance::Make_Buffers()
 	m_BufferDesc.CPUAccessFlags = { 0 };
 	m_BufferDesc.MiscFlags = { 0 };
 
-	_ushort* pIndices = new _ushort[m_iNumIndices];
+	_ushort* pIndices = New _ushort[m_iNumIndices];
 	ZeroMemory(pIndices, sizeof(_ushort) * m_iNumIndices);
 
 	ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
@@ -169,7 +109,7 @@ HRESULT CVIBuffer_Point_Instance::Make_Buffers()
 
 CVIBuffer_Point_Instance * CVIBuffer_Point_Instance::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {
-	CVIBuffer_Point_Instance*	pInstance = new CVIBuffer_Point_Instance(pDevice, pContext);
+	CVIBuffer_Point_Instance*	pInstance = New CVIBuffer_Point_Instance(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -182,7 +122,7 @@ CVIBuffer_Point_Instance * CVIBuffer_Point_Instance::Create(ID3D11Device * pDevi
 
 CComponent * CVIBuffer_Point_Instance::Clone(void * pArg)
 {
-	CVIBuffer_Point_Instance*	pInstance = new CVIBuffer_Point_Instance(*this);
+	CVIBuffer_Point_Instance*	pInstance = New CVIBuffer_Point_Instance(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

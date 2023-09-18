@@ -24,7 +24,7 @@ HRESULT CHealth::Initialize(void* pArg)
 
 CHealth* CHealth::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CHealth* pInstance = new CHealth(pDevice, pContext);
+	CHealth* pInstance = New CHealth(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -37,7 +37,7 @@ CHealth* CHealth::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 CHealth* CHealth::Clone(void* pArg)
 {
-	CHealth* pInstance = new CHealth(*this);
+	CHealth* pInstance = New CHealth(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

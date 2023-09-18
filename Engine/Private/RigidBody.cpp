@@ -1,6 +1,7 @@
 #include "..\Public\RigidBody.h"
 #include "PipeLine.h"
 #include "Transform.h"
+#include "String_Manager.h"
 #include "PhysX_Manager.h"
 #include "PhysXConverter.h"
 #include "CharacterController.h"
@@ -8,6 +9,7 @@
 #ifdef _DEBUG
 #include "Shader.h"
 #include "Debug_Render_HeightField.h"
+#include "Debug_Render_TriangleMesh.h"
 #include "Debug_Render_Box.h"
 #include "Debug_Render_Sphere.h"
 #include "Debug_Render_Capsule.h"
@@ -187,6 +189,14 @@ HRESULT CRigidBody::Initialize_Prototype()
 		return E_FAIL;
 	}
 
+	if (FAILED(pComponent_Manager->Add_Prototype(0, TEXT("Prototype_Component_RigidBody_Debug_Render_TriangleMesh"),
+		CDebug_Render_TriangleMesh::Create(m_pDevice, m_pContext), true)))
+	{
+		MSG_BOX("Failed Create Prototype : RigidBody DebugRender TriangleMesh");
+		Safe_Release(pComponent_Manager);
+		return E_FAIL;
+	}
+
 	Safe_Release(pComponent_Manager);
 #endif // _DEBUG
 
@@ -277,7 +287,6 @@ HRESULT CRigidBody::Create_Collider(RIGIDBODYDESC* pRigidBodyDesc)
 	
 	PxShapeFlags ePxFlag;
 	// 트리거 설정
-	// Query : 레이캐스트 처리
 	if (true == pRigidBodyDesc->isTrigger)
 	{
 		ePxFlag = PxShapeFlag::eSCENE_QUERY_SHAPE | PxShapeFlag::eTRIGGER_SHAPE;
@@ -296,11 +305,16 @@ HRESULT CRigidBody::Create_Collider(RIGIDBODYDESC* pRigidBodyDesc)
 	// 32비트 데이터라 총 8개로 플래그값 설정 가능 (word3 까지 포함하면 총 32개 옵션 설정가능.)
 	// 구조체에 옵션값으로 설정하게 해줘야함.
 	PxFilterData FilterData;
-	if (PxGeometryType::eHEIGHTFIELD == pRigidBodyDesc->pGeometry->getType())
+	if (PxGeometryType::eHEIGHTFIELD == pRigidBodyDesc->pGeometry->getType() ||
+		PxGeometryType::eTRIANGLEMESH == pRigidBodyDesc->pGeometry->getType())
 		FilterData.word0 = 0;
 	else
 		FilterData.word0 = 0x1111; // 이데이터는 일단 고정.
 	pShape->setSimulationFilterData(FilterData);
+	CString_Manager* pString_Manager = CString_Manager::GetInstance();
+	Safe_AddRef(pString_Manager);
+	pShape->userData = pString_Manager->Make_WChar(pRigidBodyDesc->szCollisionTag);
+	Safe_Release(pString_Manager);
 
 	PxTransform OffsetTransform(PhysXConverter::ToPxVec3(pRigidBodyDesc->vOffsetPosition), PhysXConverter::ToPxQuat(pRigidBodyDesc->vOffsetRotation));
 	pShape->setLocalPose(OffsetTransform);
@@ -490,6 +504,7 @@ HRESULT CRigidBody::Add_Components(PxGeometry* pPxValues, PxShape* pShape)
 				Positions[iIndex] = _float3((_float)j, pHeightField->getHeight(_float(j), _float(i)), (_float)i);
 			}
 		}
+
 		HeightFieldDesc.pPositions = Positions.data();
 		HeightFieldDesc.vOffsetPosition = vOffsetPos;
 		HeightFieldDesc.vOffsetRotation = vOffsetRot;
@@ -502,6 +517,41 @@ HRESULT CRigidBody::Add_Components(PxGeometry* pPxValues, PxShape* pShape)
 		}
 
 		pHeightField->release();
+	}
+	else if (PxGeometryType::eTRIANGLEMESH == pPxValues->getType())
+	{
+		CDebug_Render_TriangleMesh::TRIANGLEMESHDESC TriangleMeshDesc;
+		PxTriangleMesh* pTriangleMesh = reinterpret_cast<PxTriangleMeshGeometry*>(pPxValues)->triangleMesh;
+		const PxVec3* pVertices = pTriangleMesh->getVertices();
+		const void* pTriangles = pTriangleMesh->getTriangles();
+		_uint iNumVertices = pTriangleMesh->getNbVertices();
+		_uint iNumTriangles = pTriangleMesh->getNbTriangles();
+		
+		TriangleMeshDesc.iNumVertices = iNumVertices;
+		TriangleMeshDesc.iNumIndices = iNumTriangles * 3;
+		TriangleMeshDesc.vOffsetPosition = vOffsetPos;
+		TriangleMeshDesc.vOffsetRotation = vOffsetRot;
+		vector<_float3> Vertices;
+		vector<_ushort> Indices;
+		Vertices.reserve(iNumVertices);
+		Indices.resize(TriangleMeshDesc.iNumIndices);
+		for (_uint i = 0; i < iNumVertices; ++i)
+		{
+			Vertices.push_back(PhysXConverter::ToXMFLOAT3(pVertices[i]));
+		}
+
+		// 피직스 내부적으로 16비트로 저장함
+		memcpy(Indices.data(), pTriangles, sizeof(_ushort) * TriangleMeshDesc.iNumIndices);
+		TriangleMeshDesc.pIndices = Indices.data();
+		TriangleMeshDesc.pVertices = Vertices.data();
+		
+		/* For.Com_Debug_Render_TriangleMesh */
+		if (FAILED(CComposite::Add_Component(0, TEXT("Prototype_Component_RigidBody_Debug_Render_TriangleMesh"),
+			TEXT("Com_Debug_Render_TriangleMesh"), reinterpret_cast<CComponent**>(&pComponent), &TriangleMeshDesc)))
+		{
+			MSG_BOX("Failed CRigidBody Add_Component : (Com_Debug_Render_TriangleMesh)");
+			return E_FAIL;
+		}
 	}
 
 	if (nullptr == pComponent)
@@ -540,7 +590,7 @@ HRESULT CRigidBody::SetUp_ShaderResources(_uint iColliderIndex)
 
 CRigidBody* CRigidBody::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CRigidBody* pInstance = new CRigidBody(pDevice, pContext);
+	CRigidBody* pInstance = New CRigidBody(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -553,7 +603,7 @@ CRigidBody* CRigidBody::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
 
 CComponent* CRigidBody::Clone(void* pArg)
 {
-	CRigidBody* pInstance = new CRigidBody(*this);
+	CRigidBody* pInstance = New CRigidBody(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

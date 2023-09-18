@@ -21,17 +21,26 @@ HRESULT CMapObject::Initialize_Prototype()
 
 HRESULT CMapObject::Initialize(void* pArg)
 {
+	if (nullptr == pArg)
+	{
+		MSG_BOX("CMapObject Argument is NULL");
+		return E_FAIL;
+	}
+
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	if (FAILED(Add_Components()))
-		return E_FAIL;
+	MAPOBJECTDESC* pMapObjectDesc = reinterpret_cast<MAPOBJECTDESC*>(pArg);
+	m_pTransform->Set_WorldMatrix((*pMapObjectDesc).WorldMatrix);
 
-	if (nullptr != pArg)
+	if (nullptr == pMapObjectDesc)
 	{
-		_float4x4* vWorldMatrix = (_float4x4*)pArg;
-		m_pTransform->Set_WorldMatrix(*vWorldMatrix);
+		MSG_BOX("Object Desc is NULL");
+		return E_FAIL;
 	}
+
+	if (FAILED(Add_Components(pMapObjectDesc)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -47,11 +56,10 @@ void CMapObject::Late_Tick(_float fTimeDelta)
 
 	if (nullptr != m_pRenderer)
 	{
-		m_eRenderCount = RT_NORMAL;
-
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+
 #ifdef _DEBUG
-		//m_pRenderer->Add_RenderGroup(CRenderer::RENDER_PICKING, this);
+		m_pRenderer->Add_DebugGroup(m_pRigidBody);
 #endif // _DEBUG
 	}
 }
@@ -61,57 +69,25 @@ HRESULT CMapObject::Render()
 	if (FAILED(__super::Render()))
 		return E_FAIL;
 
-	if (nullptr == m_pShader ||
-		nullptr == m_pModel)
-		return S_OK;
-
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	// 일반 그리기
-	if (RT_NORMAL == m_eRenderCount)
+	_uint		iNumMeshes = m_pModel->Get_NumMeshes();
+
+	for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; iMeshCount++)
 	{
-		_uint		iNumMeshes = m_pModel->Get_NumMeshes();
+		m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", iMeshCount, DIFFUSE);
 
-		for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; iMeshCount++)
-		{
-			m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", iMeshCount, DIFFUSE);
+		m_pShader->Begin("Mesh");
 
-			m_pShader->Begin("Mesh");
-
-			if (FAILED(m_pModel->Render(iMeshCount)))
-				return E_FAIL;
-		}
-
-		m_eRenderCount = RT_PICKING;
+		if (FAILED(m_pModel->Render(iMeshCount)))
+			return E_FAIL;
 	}
 
 	return S_OK;
 }
 
-HRESULT CMapObject::Add_Model_Component(const _tchar* wszModelTag)
-{
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, wszModelTag,
-		TEXT("Com_Buffer"), reinterpret_cast<CComponent**>(&m_pModel))))
-	{
-		MSG_BOX("Failed CMapObject Add_Component : (Com_Buffer)");
-		return E_FAIL;
-	}
-	return S_OK;
-}
-
-HRESULT CMapObject::Add_Shader_Component(const _tchar* wszShaderTag)
-{
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, wszShaderTag,
-		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
-	{
-		MSG_BOX("Failed CMapObject Add_Component : (Com_Shader)");
-		return E_FAIL;
-	}
-	return S_OK;
-}
-
-HRESULT CMapObject::Add_Components()
+HRESULT CMapObject::Add_Components(MAPOBJECTDESC* pMapObjectDesc)
 {
 	/* Com_Renderer */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"),
@@ -120,6 +96,93 @@ HRESULT CMapObject::Add_Components()
 		MSG_BOX("Failed CMapObject Add_Component : (Com_Renderer)");
 		return E_FAIL;
 	}
+
+	/* Com_Shader */
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxMesh"),
+		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
+	{
+		MSG_BOX("Failed CMapObject Add_Component : (Com_Shader)");
+		return E_FAIL;
+	}
+
+	/* Com_Model */
+	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, pMapObjectDesc->wszTag,
+		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModel))))
+	{
+		MSG_BOX("Failed CMapObject Add_Component : (Com_Model)");
+		return E_FAIL;
+	}
+
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	// 리지드 바디 초기화
+	CRigidBody::RIGIDBODYDESC RigidBodyDesc;
+	RigidBodyDesc.isStatic = true;
+	RigidBodyDesc.isTrigger = false;
+	RigidBodyDesc.eConstraintFlag = CRigidBody::All;
+	RigidBodyDesc.fStaticFriction = 0.5f;
+	RigidBodyDesc.fDynamicFriction = 0.5f;
+	RigidBodyDesc.fRestitution = 0.f;
+	RigidBodyDesc.pOwnerObject = this;
+	RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 1.f, 1.f);
+	RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
+	RigidBodyDesc.vInitRotation = m_pTransform->Get_Quaternion();
+
+	vector<CMesh*> Meshes = *m_pModel->Get_MeshesVec();
+	vector<_float3> Vertices;
+	vector<PxU32> Indices;
+	_uint iIndex = { 0 };
+	for (auto& pMesh : Meshes)
+	{
+		vector<_float3> MeshVertices = *pMesh->Get_VerticesPositionVec();
+		// 버텍스 벡터에 벡터를 삽입하는 함수
+		Vertices.insert(Vertices.end(), MeshVertices.begin(), MeshVertices.end());
+
+		vector<PxU32> MeshIndices = *pMesh->Get_IndicesVec();
+
+		for (size_t i = 0; i < MeshIndices.size(); ++i)
+		{
+			Indices.push_back(MeshIndices[i] + iIndex);
+		}
+
+		iIndex += Vertices.size();
+	}
+	
+	// 피직스 메쉬 생성
+	PxTriangleMeshDesc TriangleMeshDesc;
+	TriangleMeshDesc.points.count = Vertices.size();
+	TriangleMeshDesc.points.stride = sizeof(_float3);
+	TriangleMeshDesc.points.data = Vertices.data();
+
+	TriangleMeshDesc.triangles.count = Indices.size() / 3;
+	TriangleMeshDesc.triangles.stride = 3 * sizeof(PxU32);
+	TriangleMeshDesc.triangles.data = Indices.data();
+
+	PxTolerancesScale PxScale;
+	PxCookingParams PxParams(PxScale);
+	PxDefaultMemoryOutputStream DefaultWriteBuffer;
+	if (!PxCookTriangleMesh(PxParams, TriangleMeshDesc, DefaultWriteBuffer))
+	{
+		MSG_BOX("Failed Create Triangle Mesh");
+		return E_FAIL;
+	}
+
+	PxPhysics* pPhysX = pGameInstance->Get_Physics();
+
+	PxDefaultMemoryInputData DefaultReadBuffer(DefaultWriteBuffer.getData(), DefaultWriteBuffer.getSize());
+	PxTriangleMeshGeometry TriangleMeshGeoMetry = PxTriangleMeshGeometry(pPhysX->createTriangleMesh(DefaultReadBuffer));
+	RigidBodyDesc.pGeometry = &TriangleMeshGeoMetry;
+
+	Safe_Release(pGameInstance);
+	
+	/* Com_RigidBody */
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
+		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
+	{
+		MSG_BOX("Failed CMapObject Add_Component : (Com_RigidBody)");
+		return E_FAIL;
+	}
+
 	return S_OK;
 }
 
@@ -165,6 +228,8 @@ CGameObject* CMapObject::Clone(void* pArg)
 void CMapObject::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_pRigidBody);
 	Safe_Release(m_pTransform);
 	Safe_Release(m_pShader);
 	Safe_Release(m_pModel);

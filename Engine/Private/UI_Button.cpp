@@ -79,7 +79,7 @@ _bool CUI_Button::Click(HWND hWnd, _float2 vPos, _float2 vSize)
 
 CUI_Button* CUI_Button::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CUI_Button* pInstance = new CUI_Button(pDevice, pContext);
+	CUI_Button* pInstance = New CUI_Button(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -92,7 +92,7 @@ CUI_Button* CUI_Button::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
 
 CComponent* CUI_Button::Clone(void* pArg)
 {
-	CUI_Button* pInstance = new CUI_Button(*this);
+	CUI_Button* pInstance = New CUI_Button(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

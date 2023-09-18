@@ -102,7 +102,8 @@ void CDummyTrail::Tick_Imgui(_float _fTimeDelta)
 
 		ImGui::EndTable();
 	}
-
+	Save_FileDialog();
+	Load_FileDialog();
 	// 왼쪽 아래로 고정
 	RECT clientRect;
 	GetClientRect(g_hWnd, &clientRect);

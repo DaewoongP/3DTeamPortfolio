@@ -139,7 +139,7 @@ void CMagicBallPool::Create_InitMagic(CGameInstance* pGameInstance, SPELL tag,co
 
 CMagicBallPool* CMagicBallPool::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-    CMagicBallPool* pInstance = new CMagicBallPool(pDevice, pContext);
+    CMagicBallPool* pInstance = New CMagicBallPool(pDevice, pContext);
 
     if (FAILED(pInstance->Initialize_Prototype()))
     {

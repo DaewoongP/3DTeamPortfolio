@@ -32,7 +32,7 @@ HRESULT CVIBuffer_Rect_Dynamic::Initialize_Prototype()
 	m_BufferDesc.CPUAccessFlags = { D3D11_CPU_ACCESS_WRITE };
 	m_BufferDesc.MiscFlags = { 0 };
 
-	VTXPOSTEX* pVertices = new VTXPOSTEX[m_iNumVertices];
+	VTXPOSTEX* pVertices = New VTXPOSTEX[m_iNumVertices];
 	ZeroMemory(pVertices, sizeof(VTXPOSTEX) * m_iNumVertices);
 
 	pVertices[0].vPosition = _float3(-0.5f, 0.5f, 0.f);
@@ -67,7 +67,7 @@ HRESULT CVIBuffer_Rect_Dynamic::Initialize_Prototype()
 	m_BufferDesc.CPUAccessFlags = { 0 };
 	m_BufferDesc.MiscFlags = { 0 };
 
-	_ushort* pIndices = new _ushort[m_iNumIndices];
+	_ushort* pIndices = New _ushort[m_iNumIndices];
 	ZeroMemory(pIndices, sizeof(_ushort) * m_iNumIndices);
 
 	pIndices[0] = 0;
@@ -132,7 +132,7 @@ HRESULT CVIBuffer_Rect_Dynamic::Change_TexCoord(const _float& fLeft, const _floa
 
 CVIBuffer_Rect_Dynamic* CVIBuffer_Rect_Dynamic::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CVIBuffer_Rect_Dynamic* pInstance = new CVIBuffer_Rect_Dynamic(pDevice, pContext);
+	CVIBuffer_Rect_Dynamic* pInstance = New CVIBuffer_Rect_Dynamic(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -145,7 +145,7 @@ CVIBuffer_Rect_Dynamic* CVIBuffer_Rect_Dynamic::Create(ID3D11Device* pDevice, ID
 
 CComponent* CVIBuffer_Rect_Dynamic::Clone(void* pArg)
 {
-	CVIBuffer_Rect_Dynamic* pInstance = new CVIBuffer_Rect_Dynamic(*this);
+	CVIBuffer_Rect_Dynamic* pInstance = New CVIBuffer_Rect_Dynamic(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

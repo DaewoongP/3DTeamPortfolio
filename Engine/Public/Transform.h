@@ -10,6 +10,10 @@
 
 BEGIN(Engine)
 class CRigidBody;
+class CCharacterController;
+END
+
+BEGIN(Engine)
 
 class ENGINE_DLL CTransform final : public CComponent
 {
@@ -73,6 +77,11 @@ public:
 		m_pRigidBody = pRigidBody;
 		Safe_AddRef(m_pRigidBody);
 	}
+	void Set_CharacterController(CCharacterController* pCharacterController)
+	{
+		m_pCharacterController = pCharacterController;
+		Safe_AddRef(m_pCharacterController);
+	}
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -103,7 +112,8 @@ private:
 	_ubyte			m_ubTransformChanged = { 0 };
 
 private:
-	CRigidBody*		m_pRigidBody = { nullptr };
+	CRigidBody*					m_pRigidBody = { nullptr };
+	CCharacterController*		m_pCharacterController = { nullptr };
 
 private:
 	void Update_Components(_float fTimeDelta);

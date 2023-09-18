@@ -20,9 +20,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Animation.h" />
+    <ClInclude Include="..\public\VIBuffer_UVSphere.h" />
+    <ClInclude Include="..\public\VIBuffer_Rect_Color_Index_Instance.h" />
     <ClInclude Include="..\Public\Base.h" />
     <ClInclude Include="..\Public\Behavior.h" />
+    <ClInclude Include="..\public\BehaviorCallBack.h" />
     <ClInclude Include="..\Public\BlackBoard.h" />
+    <ClInclude Include="..\Public\Bloom.h" />
     <ClInclude Include="..\public\Blur.h" />
     <ClInclude Include="..\Public\Bone.h" />
     <ClInclude Include="..\public\Bounding.h" />
@@ -30,6 +34,8 @@
     <ClInclude Include="..\Public\Bounding_OBB.h" />
     <ClInclude Include="..\public\Bounding_Sphere.h" />
     <ClInclude Include="..\Public\ConvexMesh.h" />
+    <ClInclude Include="..\Public\Distortion.h" />
+    <ClInclude Include="..\public\Debug_Render_TriangleMesh.h" />
     <ClInclude Include="..\public\Ease.h" />
     <ClInclude Include="..\Public\Debug_Functions.h" />
     <ClInclude Include="..\public\Debug_Render_Box.h" />
@@ -37,10 +43,13 @@
     <ClInclude Include="..\public\Debug_Render_HeightField.h" />
     <ClInclude Include="..\public\Debug_Render_Ring.h" />
     <ClInclude Include="..\public\Debug_Render_Sphere.h" />
+    <ClInclude Include="..\Public\Glow.h" />
     <ClInclude Include="..\Public\Mesh_Instance.h" />
     <ClInclude Include="..\Public\Model_Instance.h" />
     <ClInclude Include="..\public\Model_LOD.h" />
     <ClInclude Include="..\Public\RandomChoose.h" />
+    <ClInclude Include="..\public\VIBuffer_Color_Index_Instance.h" />
+    <ClInclude Include="..\public\ReportCallBack.h" />
     <ClInclude Include="..\Public\Shape_GeoSphere.h" />
     <ClInclude Include="..\public\Dynamic_Mesh.h" />
     <ClInclude Include="..\Public\JobManager.h" />
@@ -62,6 +71,7 @@
     <ClInclude Include="..\Public\CustomModel.h" />
     <ClInclude Include="..\Public\Modules.h" />
     <ClInclude Include="..\Public\Status.h" />
+    <ClInclude Include="..\Public\Texture_Filpbook.h" />
     <ClInclude Include="..\public\Trail.h" />
     <ClInclude Include="..\Public\TriangleMesh.h" />
     <ClInclude Include="..\Public\UI.h" />
@@ -143,9 +153,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Animation.cpp" />
+    <ClCompile Include="..\private\VIBuffer_UVSphere.cpp" />
+    <ClCompile Include="..\private\VIBuffer_Rect_Color_Index_Instance.cpp" />
     <ClCompile Include="..\Private\Base.cpp" />
     <ClCompile Include="..\Private\Behavior.cpp" />
+    <ClCompile Include="..\private\BehaviorCallBack.cpp" />
     <ClCompile Include="..\Private\BlackBoard.cpp" />
+    <ClCompile Include="..\Private\Bloom.cpp" />
     <ClCompile Include="..\private\Blur.cpp" />
     <ClCompile Include="..\Private\Bone.cpp" />
     <ClCompile Include="..\private\Bounding.cpp" />
@@ -153,17 +167,22 @@
     <ClCompile Include="..\Private\Bounding_OBB.cpp" />
     <ClCompile Include="..\private\Bounding_Sphere.cpp" />
     <ClCompile Include="..\Private\ConvexMesh.cpp" />
+    <ClCompile Include="..\Private\Distortion.cpp" />
+    <ClCompile Include="..\private\Debug_Render_TriangleMesh.cpp" />
     <ClCompile Include="..\Private\Ease.cpp" />
     <ClCompile Include="..\private\Debug_Render_Box.cpp" />
     <ClCompile Include="..\private\Debug_Render_Capsule.cpp" />
     <ClCompile Include="..\private\Debug_Render_HeightField.cpp" />
     <ClCompile Include="..\private\Debug_Render_Ring.cpp" />
     <ClCompile Include="..\private\Debug_Render_Sphere.cpp" />
+    <ClCompile Include="..\Private\Glow.cpp" />
     <ClCompile Include="..\Private\Mesh_Instance.cpp" />
     <ClCompile Include="..\private\Model_LOD.cpp">
       <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</IncludeInUnityFile>
     </ClCompile>
     <ClCompile Include="..\Private\RandomChoose.cpp" />
+    <ClCompile Include="..\private\VIBuffer_Color_Index_Instance.cpp" />
+    <ClCompile Include="..\private\ReportCallBack.cpp" />
     <ClCompile Include="..\Private\Shape_GeoSphere.cpp" />
     <ClCompile Include="..\private\Dynamic_Mesh.cpp" />
     <ClCompile Include="..\Private\JobManager.cpp" />
@@ -184,6 +203,7 @@
     <ClCompile Include="..\Private\CustomModel.cpp" />
     <ClCompile Include="..\Private\Modules.cpp" />
     <ClCompile Include="..\Private\Status.cpp" />
+    <ClCompile Include="..\Private\Texture_Filpbook.cpp" />
     <ClCompile Include="..\private\Trail.cpp" />
     <ClCompile Include="..\Private\TriangleMesh.cpp" />
     <ClCompile Include="..\Private\UI.cpp" />
@@ -257,11 +277,15 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_AfterShade.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Bloom.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Blur.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Debug.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_DefaultEffect.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Flipbook.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Distortion.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Geometry.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Glow.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Navigation.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_PostProcessing.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_SSAO.hlsl">
@@ -270,6 +294,7 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Trail.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Type.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointColInstance.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxRectColIdxInstance.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxRectColInstance.hlsl" />
   </ItemGroup>
   <ItemGroup>
