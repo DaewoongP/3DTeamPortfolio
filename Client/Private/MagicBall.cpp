@@ -46,15 +46,16 @@ HRESULT CMagicBall::Initialize(void* pArg)
 	m_MagicBallDesc.fDistance = initDesc->fDistance;
 	m_MagicBallDesc.fInitLifeTime = initDesc->fLifeTime;
 
-	m_pWeapon = initDesc->pWeapon;
-	Safe_AddRef(m_pWeapon);
+	m_pWeaponMatrix = initDesc->pWeaponMatrix;
+	m_WeaponOffsetMatrix = initDesc->offsetMatrix;
+
 	m_pTarget = initDesc->pTarget;
 	Safe_AddRef(m_pTarget);
 
 	m_MagicBallDesc.fLifeTime = m_MagicBallDesc.fInitLifeTime;
 	m_pTransform->Set_Position(m_MagicBallDesc.vStartPosition);
 
-	m_MagicBallDesc.vStartPosition = m_pWeapon->Get_Transform()->Get_Position() + m_pWeapon->Get_Wand_Point_Offset();
+	m_MagicBallDesc.vStartPosition = _float4x4((*m_pWeaponMatrix) * m_WeaponOffsetMatrix).Translation();
 	
 	m_CollisionDesc.eMagicGroup = m_MagicBallDesc.eMagicGroup;
 	m_CollisionDesc.eMagicType = m_MagicBallDesc.eMagicType;
@@ -78,6 +79,10 @@ void CMagicBall::Tick(_float fTimeDelta)
 void CMagicBall::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
+
+#ifdef _DEBUG
+	m_pRenderer->Add_DebugGroup(m_pRigidBody);
+#endif // _DEBUG
 }
 
 void CMagicBall::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
@@ -123,6 +128,14 @@ HRESULT CMagicBall::Add_Components()
 	Rigid->setMass(10.f);
 	Rigid->setAngularDamping(0.7f);
 
+	/* Com_Renderer */
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"),
+		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
+	{
+		MSG_BOX("Failed CMagicBall Add_Component : (Com_Renderer)");
+		return E_FAIL;
+	}
+
 	return S_OK;
 }
 
@@ -131,8 +144,8 @@ void CMagicBall::Free()
 	__super::Free();
 	if (true == m_isCloned)
 	{
+		Safe_Release(m_pRenderer);
 		Safe_Release(m_pRigidBody);
 		Safe_Release(m_pTarget);
-		Safe_Release(m_pWeapon);
 	}
 }
