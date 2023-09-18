@@ -51,6 +51,8 @@ HRESULT CTrail::Save(const _tchar* pFilePath)
 	WriteFile(hFile, &m_vTailColor, sizeof(m_vTailColor), &dwByte, nullptr);
 	WriteFile(hFile, &m_fWidth, sizeof(m_fWidth), &dwByte, nullptr);
 
+	CloseHandle(hFile);
+
 	return S_OK;
 }
 
@@ -91,6 +93,9 @@ HRESULT CTrail::Load(const _tchar* pFilePath)
 	ReadFile(hFile, &m_fWidth, sizeof(m_fWidth), &dwByte, nullptr);
 
 	Safe_Release(pGameInstance);
+
+	CloseHandle(hFile);
+
 	return S_OK;
 }
 

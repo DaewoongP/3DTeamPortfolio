@@ -95,10 +95,7 @@ HRESULT CLevel_MainGame::Initialize()
 		return E_FAIL;
 	}
 
-	
-	/* ���� �ʱ�ȭ�� �Բ� ����ð�?�ʱ�ȭ */
 	pGameInstance->Reset_World_TimeAcc();
-	// ���� �� ����.
 	pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
 	ENDINSTANCE;
 
@@ -111,7 +108,6 @@ void CLevel_MainGame::Tick(_float fTimeDelta)
 
 	BEGININSTANCE;
 
-	// ������ �׽�Ʈ
 	if (pGameInstance->Get_DIKeyState(DIK_T, CInput_Device::KEY_DOWN))
 	{
 		pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
@@ -124,7 +120,7 @@ void CLevel_MainGame::Tick(_float fTimeDelta)
 	ENDINSTANCE;
 
 #ifdef _DEBUG
-	SetWindowText(g_hWnd, TEXT("���ΰ��ӷ����Դϴ�."));
+	SetWindowText(g_hWnd, TEXT("���� ����"));
 #endif //_DEBUG
 }
 
@@ -274,7 +270,6 @@ HRESULT CLevel_MainGame::Load_MapObject(const _tchar* pObjectFilePath)
 		return E_FAIL;
 	}
 
-	// �� ������Ʈ ��ȣ
 	_uint iObjectNum = 0;
 
 	DWORD    dwByte = 0;
@@ -306,11 +301,9 @@ HRESULT CLevel_MainGame::Load_MapObject(const _tchar* pObjectFilePath)
 		}
 		BEGININSTANCE;
 
-		// �� ������Ʈ�� ��ȣ �ٿ���
 		_tchar wszobjName[MAX_PATH] = { 0 };
 		_stprintf_s(wszobjName, TEXT("GameObject_MapObject_%d"), (iObjectNum));
 
-		// ��ȣ�� ���� �±׷� MapObject ���?
 		if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME,
 			TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_BackGround"),
 			wszobjName, &MapObjectDesc)))

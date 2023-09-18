@@ -202,7 +202,7 @@ HRESULT CCharacterController::SetUp_ShaderResources()
 	CPipeLine* pPipeLine = CPipeLine::GetInstance();
 	Safe_AddRef(pPipeLine);
 
-	_float4x4 WorldMatrix = XMMatrixTranslation(m_pController->getPosition().x, m_pController->getPosition().y, m_pController->getPosition().z);
+	_float4x4 WorldMatrix = XMMatrixTranslation(_float(m_pController->getPosition().x), _float(m_pController->getPosition().y), _float(m_pController->getPosition().z));
 
 	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", &WorldMatrix)))
 		return E_FAIL;

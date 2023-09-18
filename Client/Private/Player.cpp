@@ -73,8 +73,8 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	m_pCustomModel->Tick(CCustomModel::ROBE, 2, fTimeDelta);
 
-	/*m_pCustomModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);*/
-	/*m_pCustomModel->Play_Animation(fTimeDelta, CModel::UNDERBODY);*/
+	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
+	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UNDERBODY);
 }
 
 void CPlayer::Late_Tick(_float fTimeDelta)
@@ -335,11 +335,6 @@ void CPlayer::Key_Input(_float fTimeDelta)
 	{
 		if (m_pMagic != nullptr)
 		{
-			// 목표의 transform과 시작 위치를 가져와야합니다.
-			// 아직 타겟 설정하는게 없어서 널로 넣었음.
-			// 지팡이 위치를 2번째 인자 pos로 넣어야하는데 지팡이도 없어서 그냥 pTransform->Get_Position()로 넣음.
-			// 임의로 아무거나 집어오겠음.
-			
 			/* �̰Ŵ� �׽�Ʈ ������ ����Ŭ���� ã������ ���� �ڵ带 ���Ŀ°��� */
 			CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
 			if (nullptr == pTestTarget)
@@ -436,7 +431,7 @@ HRESULT CPlayer::Ready_MeshParts()
 
 HRESULT CPlayer::Ready_Camera()
 {
-	//어떤 뼈에 붙일 것인가.
+	//?�떤 뼈에 붙일 것인가.
 	_uint iBoneIndex{ 0 };
 
 	m_pCustomModel->Find_BoneIndex(TEXT("SKT_HeadCamera"), &iBoneIndex);
@@ -474,7 +469,6 @@ HRESULT CPlayer::Ready_Camera()
 
 void CPlayer::MagicTestTextOutput()
 {
-	cout << "마법 발동" << endl;
 }
 
 #ifdef _DEBUG
@@ -494,32 +488,32 @@ void CPlayer::UpdateLookAngle()
 	
 	m_isDirectionKeyPressed = false;
 
-	//키 입력에 따라 비교 각이 바뀐다.
+	//???�력???�라 비교 각이 바뀐다.
 
 	_float3 vNextLook{};
 
-	//앞 키 > 룩
+	//????> �?
 	if (pGameInstance->Get_DIKeyState(DIK_W, CInput_Device::KEY_PRESSING) || 
 		pGameInstance->Get_DIKeyState(DIK_W,CInput_Device::KEY_DOWN))
 	{
 		vNextLook = m_pPlayer_Camera->Get_CamLookXZ();
 		m_isDirectionKeyPressed = true;
 	}
-	//뒷 키 > -룩
+	//????> -�?
 	else if (pGameInstance->Get_DIKeyState(DIK_S, CInput_Device::KEY_PRESSING) ||
 		pGameInstance->Get_DIKeyState(DIK_S, CInput_Device::KEY_DOWN))
 	{
 		vNextLook = -m_pPlayer_Camera->Get_CamLookXZ();
 		m_isDirectionKeyPressed = true;
 	}
-	//오른쪽 키 > 라이트
+	//?�른�???> ?�이??
 	else if (pGameInstance->Get_DIKeyState(DIK_D, CInput_Device::KEY_PRESSING) ||
 		pGameInstance->Get_DIKeyState(DIK_D, CInput_Device::KEY_DOWN))
 	{
 		vNextLook = m_pPlayer_Camera->Get_CamRightXZ();
 		m_isDirectionKeyPressed = true;
 	}
-	//왼쪽 키 > -라이트
+	//?�쪽 ??> -?�이??
 	else if (pGameInstance->Get_DIKeyState(DIK_A, CInput_Device::KEY_PRESSING) ||
 		pGameInstance->Get_DIKeyState(DIK_A, CInput_Device::KEY_DOWN))
 	{
@@ -527,21 +521,21 @@ void CPlayer::UpdateLookAngle()
 		m_isDirectionKeyPressed = true;
 	}
 
-	//플레이어의 룩을 가지고 온다.
+	//?�레?�어??룩을 가지�??�다.
 	_float3 vPlayerLook = m_pTransform->Get_Look();
 
-	//y값 지우고
+	//y�?지?�고
 	vPlayerLook = XMVectorSetY(vPlayerLook, 0.0f);
 
 	vPlayerLook.Normalize();
 
-	//내적한다.cos(-1 ~ 1)
+	//?�적?�다.cos(-1 ~ 1)
 	_float fLookAngle = vPlayerLook.Dot(vNextLook);
 
-	//라디안 화
+	//?�디????
 	m_fLookAngle = acosf(fLookAngle);
 
-	//좌우 구분을 위한 외적
+	//좌우 구분???�한 ?�적
 	if (0.0f > vPlayerLook.Cross(vNextLook).y)
 	{
 		m_fLookAngle *= -1;
