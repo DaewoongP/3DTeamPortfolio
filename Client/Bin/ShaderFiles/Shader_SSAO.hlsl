@@ -10,7 +10,7 @@ float g_fCamFar;
 
 texture2D g_PostProcessingTexture;
 //SSAO
-float g_fRadius = 0.01f;
+float g_fRadius = 0.0001f;
 float g_fFar = 100.f;
 float g_fFalloff = 0.000002f;
 float g_fStrength = 0.0007f;
@@ -195,8 +195,7 @@ float3 RandNormal(float2 vTexUV)
 PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
-   if(g_fCamFar<15.f)
-        discard;
+
     vector vDepthDesc = g_DepthTexture.Sample(LinearSampler, In.vTexUV);
     vector vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
     
@@ -205,24 +204,26 @@ PS_OUT PS_MAIN(PS_IN In)
         Out.vColor = vector(1.f, 1.f, 1.f, 1.f);
         return Out;
     }
-      vNormalDesc = normalize(vNormalDesc * 0.5f +0.5f);
+     // vNormalDesc = normalize(vNormalDesc * 0.5f +0.5f);
    // vector vNormal = vector(vNormalDesc.xyz * 2.f - 1.f, 1.f);
+    vNormalDesc = normalize(vNormalDesc * 2.f - 1.f);
+  
     float fViewZ = vDepthDesc.x * g_fCamFar; //뷰포트에서의 깊이
     float vDepth = vDepthDesc.y * g_fCamFar * fViewZ; // 월드에서의 실제깊이
-    
+    if (fViewZ < 850.f)
+        discard;
     float3 vRay;
     float3 vReflect;
     float2 vRandomUV;
     float fOccNorm;
     
     int iColor = 0;
-    
     for (int i = 0; i < 29; i++)
     {
         vRay = reflect(RandNormal(In.vTexUV), g_Ran[i]);
         vReflect = normalize(reflect(normalize(vRay), normalize(vNormalDesc.rgb))) * g_fRadius;
-        vReflect.y *= -1.f;
-        vRandomUV = In.vTexUV + vReflect.yx;
+        vReflect.x *= -1.f;
+        vRandomUV = In.vTexUV + vReflect.xy;
         fOccNorm = g_DepthTexture.Sample(LinearSampler, vRandomUV).g * g_fCamFar * fViewZ;
         if (fOccNorm <= vDepth + 0.0003f)
             ++iColor; 

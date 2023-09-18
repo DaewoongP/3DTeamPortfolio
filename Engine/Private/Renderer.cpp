@@ -9,6 +9,8 @@
 
 #include "Blur.h"
 #include"Bloom.h"
+#include"Distortion.h"
+#include"Glow.h"
 
 #ifdef _DEBUG
 #include "Input_Device.h"
@@ -63,15 +65,15 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_Shadow"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
+
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_SoftShadow"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
+
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_SSAO"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
-		TEXT("Target_Distortion"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
-		return E_FAIL;
+
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_FinBloom"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
@@ -113,9 +115,6 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_FinBloom"), TEXT("Target_FinBloom"))))
 		return E_FAIL;
-
-	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Distortion"), TEXT("Target_Distortion"))))
-		return E_FAIL;
 	
 #ifdef _DEBUG
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Picking"), TEXT("Target_Picking"))))
@@ -148,7 +147,7 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Shadow"), 240.f, 400.f, 160.f, 160.f)))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_FinBloom"), 80.f, 560.f, 160.f, 160.f)))
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Glow"), 80.f, 560.f, 160.f, 160.f)))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_SSAO"), 240.f, 560.f, 160.f, 160.f)))
 		return E_FAIL;
@@ -157,10 +156,8 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Blur"), 900.f, 300.f, 600.f, 600.f)))
 		return E_FAIL;*/
-
-
-		/*if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_PostProcessing"), 240.f, 560.f, 160.f, 160.f)))
-			return E_FAIL;*/
+	/*if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_PostProcessing"), 240.f, 560.f, 160.f, 160.f)))
+		return E_FAIL;*/
 
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Picking"), 1200.f, 80.f, 160.f, 160.f)))
 		return E_FAIL; // ¸Ê ¿ÀºêÁ§ÅÍ Fast PickingÀ» À§ÇÑ ·»´õ Å¸°Ù
@@ -228,15 +225,17 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 	if (FAILED(Render_BlurShadow()))
 		return E_FAIL;
+	if (FAILED(m_pSSAOBlur->Render()))
+		return E_FAIL;
 	if (FAILED(Render_Deferred()))
 		return E_FAIL;
 
 	if (FAILED(Render_SSAO()))
 		return E_FAIL;
 	
-	if (FAILED(m_pSSAOBlur->Render()))
-		return E_FAIL;
 	
+	if (FAILED(m_pGlow->Render()))
+		return E_FAIL;
 		
 	if (FAILED(Render_NonLight()))
 		return E_FAIL;
@@ -730,35 +729,35 @@ HRESULT CRenderer::Render_Bloom()
 
 HRESULT CRenderer::Render_Distortion()
 {
+	m_pDistortion->Render();
+	//m_pTexture->Bind_ShaderResource(m_pAfterShader, "g_NoiseTexture");
+	//m_pTexture2->Bind_ShaderResource(m_pAfterShader, "g_vAlphaTexture");
+	//m_pTexture3->Bind_ShaderResource(m_pAfterShader, "g_PostProcessingTexture");
 
-	m_pTexture->Bind_ShaderResource(m_pAfterShader, "g_vDistortionTexture");
-	m_pTexture2->Bind_ShaderResource(m_pAfterShader, "g_vAlphaTexture");
-	m_pTexture3->Bind_ShaderResource(m_pAfterShader, "g_PostProcessingTexture");
-
-	/*if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_PostProcessing"), m_pAfterShader, "g_PostProcessingTexture")))
-		return E_FAIL;*/
+	///*if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_PostProcessing"), m_pAfterShader, "g_PostProcessingTexture")))
+	//	return E_FAIL;*/
 
 
-	if (FAILED(m_pAfterShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
-		return E_FAIL;
-	if (FAILED(m_pAfterShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
-		return E_FAIL;
-	if (FAILED(m_pAfterShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
-		return E_FAIL;
-	m_fFrameTime += 0.01f;
-	if (m_fFrameTime > 1000.f)
-		m_fFrameTime = 0.f;
-	if (FAILED(m_pAfterShader->Bind_RawValue("g_FrameTime", &m_fFrameTime, sizeof(_float))))
-		return E_FAIL;
-	_float3 Speed = { 1.3f, 2.1f, 2.3f };
-	if (FAILED(m_pAfterShader->Bind_RawValue("g_ScrollSpeed", &Speed, sizeof(_float3))))
-		return E_FAIL;
-	_float3 Scale = { 1.f, 2.f, 3.f };
-	if (FAILED(m_pAfterShader->Bind_RawValue("g_Scales", &Scale, sizeof(_float3))))
-		return E_FAIL;
-	m_pAfterShader->Begin("Distortion");
+	//if (FAILED(m_pAfterShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+	//	return E_FAIL;
+	//if (FAILED(m_pAfterShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+	//	return E_FAIL;
+	//if (FAILED(m_pAfterShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
+	//	return E_FAIL;
+	//m_fFrameTime += 0.01f;
+	//if (m_fFrameTime > 1000.f)
+	//	m_fFrameTime = 0.f;
+	//if (FAILED(m_pAfterShader->Bind_RawValue("g_FrameTime", &m_fFrameTime, sizeof(_float))))
+	//	return E_FAIL;
+	//_float3 Speed = { 1.3f, 2.1f, 2.3f };
+	//if (FAILED(m_pAfterShader->Bind_RawValue("g_ScrollSpeed", &Speed, sizeof(_float3))))
+	//	return E_FAIL;
+	//_float3 Scale = { 1.f, 2.f, 3.f };
+	//if (FAILED(m_pAfterShader->Bind_RawValue("g_Scales", &Scale, sizeof(_float3))))
+	//	return E_FAIL;
+	//m_pAfterShader->Begin("Distortion");
 
-	m_pAfterShaderBuffer->Render();
+	//m_pAfterShaderBuffer->Render();
 
 	return S_OK;
 }
@@ -844,7 +843,7 @@ HRESULT CRenderer::Sort_UI()
 }
 
 HRESULT CRenderer::Add_Components()
-{
+{	
 	m_pDeferredShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Deferred.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements);
 	if (nullptr == m_pDeferredShader)
 		return E_FAIL;
@@ -892,9 +891,16 @@ HRESULT CRenderer::Add_Components()
 	//if (nullptr == m_pShadowBlur)
 	//	return E_FAIL;
 
-
 	m_pBloom = CBloom::Create(m_pDevice, m_pContext, TEXT("Target_FinBloom"));
 	if (nullptr == m_pBloom)
+		return E_FAIL;
+
+	m_pDistortion = CDistortion::Create(m_pDevice, m_pContext, TEXT("Target_Distortion"));
+	if (nullptr == m_pDistortion)
+		return E_FAIL;
+
+	m_pGlow = CGlow::Create(m_pDevice, m_pContext, TEXT("Target_Glow"));
+	if (nullptr == m_pGlow)
 		return E_FAIL;
 	return S_OK;
 }
@@ -1047,4 +1053,6 @@ void CRenderer::Free()
 
 	Safe_Release(m_pBloom);
 	Safe_Release(m_pSSAOBlur);
+	Safe_Release(m_pDistortion);
+	Safe_Release(m_pGlow);
 }

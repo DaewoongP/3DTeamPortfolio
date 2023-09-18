@@ -53,6 +53,7 @@ private:
 	HRESULT Render_PostProcessing();
 	HRESULT Render_Bloom();
 	HRESULT Render_Distortion();
+	//HRESULT Render_Glow();
 	HRESULT Render_UI();
 
 #ifdef _DEBUG
@@ -115,9 +116,9 @@ private: /* AfterShader*/
 private:
 	class CBlur*					m_pSSAOBlur = { nullptr };
 	//class CBlur* m_pShadowBlur = { nullptr };
-	class CBloom* m_pBloom = { nullptr };
-	//class CGlow* m_pGlow = {nullptr};
-	//class CDistortion* m_pDistortion ={nullptr};
+	class CBloom*					m_pBloom = { nullptr };
+	class CGlow*					m_pGlow = {nullptr};
+	class CDistortion*				m_pDistortion ={nullptr};
 
 
 
@@ -125,8 +126,8 @@ private:
 	_float m_fFrameTime = 0.f;
 
 	class CTexture*					 m_pTexture = { nullptr };
-	class CTexture* m_pTexture2 = { nullptr };
-	class CTexture* m_pTexture3 = { nullptr };
+	class CTexture*					 m_pTexture2 = { nullptr };
+	class CTexture*					 m_pTexture3 = { nullptr };
 
 public:
 	static CRenderer* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);

@@ -31,6 +31,7 @@
     <ClInclude Include="..\Public\Bounding_OBB.h" />
     <ClInclude Include="..\public\Bounding_Sphere.h" />
     <ClInclude Include="..\Public\ConvexMesh.h" />
+    <ClInclude Include="..\Public\Distortion.h" />
     <ClInclude Include="..\public\Ease.h" />
     <ClInclude Include="..\Public\Debug_Functions.h" />
     <ClInclude Include="..\public\Debug_Render_Box.h" />
@@ -38,6 +39,7 @@
     <ClInclude Include="..\public\Debug_Render_HeightField.h" />
     <ClInclude Include="..\public\Debug_Render_Ring.h" />
     <ClInclude Include="..\public\Debug_Render_Sphere.h" />
+    <ClInclude Include="..\Public\Glow.h" />
     <ClInclude Include="..\Public\Mesh_Instance.h" />
     <ClInclude Include="..\Public\Model_Instance.h" />
     <ClInclude Include="..\public\Model_LOD.h" />
@@ -155,12 +157,14 @@
     <ClCompile Include="..\Private\Bounding_OBB.cpp" />
     <ClCompile Include="..\private\Bounding_Sphere.cpp" />
     <ClCompile Include="..\Private\ConvexMesh.cpp" />
+    <ClCompile Include="..\Private\Distortion.cpp" />
     <ClCompile Include="..\Private\Ease.cpp" />
     <ClCompile Include="..\private\Debug_Render_Box.cpp" />
     <ClCompile Include="..\private\Debug_Render_Capsule.cpp" />
     <ClCompile Include="..\private\Debug_Render_HeightField.cpp" />
     <ClCompile Include="..\private\Debug_Render_Ring.cpp" />
     <ClCompile Include="..\private\Debug_Render_Sphere.cpp" />
+    <ClCompile Include="..\Private\Glow.cpp" />
     <ClCompile Include="..\Private\Mesh_Instance.cpp" />
     <ClCompile Include="..\private\Model_LOD.cpp">
       <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</IncludeInUnityFile>
@@ -264,7 +268,9 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Debug.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_DefaultEffect.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Distortion.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Geometry.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Glow.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Navigation.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_PostProcessing.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_SSAO.hlsl">

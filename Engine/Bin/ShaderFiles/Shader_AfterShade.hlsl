@@ -9,7 +9,7 @@ float g_fCamFar;
 texture2D g_SSAOTexture;
 texture2D g_BlurTexture;
 texture2D g_PostProcessingTexture;
-texture2D g_vDistortionTexture;
+texture2D g_NoiseTexture;
 texture2D g_vAlphaTexture;
 texture2D g_DoBlurTexture;
 texture2D g_WhiteBloomTexture;
@@ -270,9 +270,9 @@ PS_OUT PS_MAIN_DISTORTION(PS_IN In)
 
     
     
-    vector noise1 = g_vDistortionTexture.Sample(LinearSampler, In.texCoords1);
-    vector noise2 = g_vDistortionTexture.Sample(LinearSampler, In.texCoords2);
-    vector noise3 = g_vDistortionTexture.Sample(LinearSampler, In.texCoords3);
+    vector noise1 = g_NoiseTexture.Sample(LinearSampler, In.texCoords1);
+    vector noise2 = g_NoiseTexture.Sample(LinearSampler, In.texCoords2);
+    vector noise3 = g_NoiseTexture.Sample(LinearSampler, In.texCoords3);
    // Out.vColor = noise1;
     //return Out;
     
