@@ -21,18 +21,19 @@ void CPXEventCallBack::onContact(const PxContactPairHeader& pairHeader, const Px
 		CGameObject* pSourObject = static_cast<CGameObject*>(pairHeader.actors[0]->userData);
 		CGameObject* pDestObject = static_cast<CGameObject*>(pairHeader.actors[1]->userData);
 		//pairHeader.flags == PxContactPairHeaderFlag::eREMOVED_ACTOR_0;
-		pairs[i].shapes[0];
-		pairs[i].shapes[1];
+
 		if (nullptr == pSourObject ||
 			nullptr == pDestObject)
 			continue;
 
 		SourDesc.pOtherObjectTag = pDestObject->Get_Tag();
+		SourDesc.pOtherCollisionTag = static_cast<_tchar*>(pairs[i].shapes[1]->userData);
 		SourDesc.pOtherOwner = pDestObject;
 		SourDesc.pOtherTransform = pDestObject->Get_Transform();
 		SourDesc.pArg = pDestObject->Get_CollisionData();
 
 		DestDesc.pOtherObjectTag = pSourObject->Get_Tag();
+		SourDesc.pOtherCollisionTag = static_cast<_tchar*>(pairs[i].shapes[0]->userData);
 		DestDesc.pOtherOwner = pSourObject;
 		DestDesc.pOtherTransform = pSourObject->Get_Transform();
 		DestDesc.pArg = pSourObject->Get_CollisionData();
