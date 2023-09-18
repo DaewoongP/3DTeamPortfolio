@@ -599,17 +599,17 @@ HRESULT CLevel_MainGame::Ready_Layer_Debug(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Professor_Fig"), pLayerTag, TEXT("GameObject_Professor_Fig"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Professor_Fig)");
-		return E_FAIL;
-	}
-
 	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Dummy"), pLayerTag, TEXT("GameObject_Dummy"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Dummy)");
 		return E_FAIL;
 	}
+
+	/*if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_PhysxRenderer"), pLayerTag, TEXT("GameObject_PhysxRenderer"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_PhysxRenderer)");
+		return E_FAIL;
+	}*/
 
 	/*if (FAILED(Load_Monsters(TEXT("../../Resources/GameData/MonsterData/Test.mon"))))
 	{
