@@ -547,8 +547,8 @@ void CParticleSystem::ResetStartPosition(PARTICLE_IT& _particle_iter)
 
 		_float3 vLook = _float3(0.f, 0.f, 1.f);
 		vDirection = XMVector3TransformCoord(ResultMatrix.Right(), _float4x4::MatrixRotationAxis(ResultMatrix.Look(), fTheta));
-
-		(*_particle_iter).WorldMatrix.Translation(fLength * vDirection);
+		vPosition = fLength * vDirection;
+		//(*_particle_iter).WorldMatrix.Translation();
 	}
 	else if ("Cone" == m_ShapeModuleDesc.strShape)
 	{
