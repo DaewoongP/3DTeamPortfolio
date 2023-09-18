@@ -40,7 +40,7 @@ HRESULT CVIBuffer_Rect_Instance::Initialize_Prototype(const INSTANCEDESC* pInsta
 	m_BufferDesc.MiscFlags = { 0 };
 
 
-	VTXPOSTEX* pVertices = new VTXPOSTEX[4];
+	VTXPOSTEX* pVertices = New VTXPOSTEX[4];
 	ZeroMemory(pVertices, sizeof(VTXPOSTEX) * 4);
 
 	pVertices[0].vPosition = _float3(-0.5f, 0.5f, 0.f);
@@ -75,7 +75,7 @@ HRESULT CVIBuffer_Rect_Instance::Initialize_Prototype(const INSTANCEDESC* pInsta
 	m_BufferDesc.CPUAccessFlags = { 0 };
 	m_BufferDesc.MiscFlags = { 0 };
 
-	_ushort* pIndices = new _ushort[m_iNumIndices];
+	_ushort* pIndices = New _ushort[m_iNumIndices];
 	ZeroMemory(pIndices, sizeof(_ushort) * m_iNumIndices);
 
 	_uint		iNumIndices = { 0 };
@@ -145,8 +145,8 @@ HRESULT CVIBuffer_Rect_Instance::Make_InstanceLogic(const INSTANCEDESC* pInstanc
 	m_InstanceDesc = *pInstanceDesc;
 
 	// 어떤 '객체'에서든 동일한 형태로 그려주기 위해 동적할당하여 포인터를 공유하는 형태로 복사 (얕은복사 처리.).
-	m_pInstanceSpeed = new _float[m_iNumInstance];
-	m_pInstancePos = new _float4[m_iNumInstance];
+	m_pInstanceSpeed = New _float[m_iNumInstance];
+	m_pInstancePos = New _float4[m_iNumInstance];
 
 	for (_uint i = 0; i < m_iNumInstance; ++i)
 	{
@@ -162,7 +162,7 @@ HRESULT CVIBuffer_Rect_Instance::Make_InstanceLogic(const INSTANCEDESC* pInstanc
 
 CVIBuffer_Rect_Instance* CVIBuffer_Rect_Instance::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const INSTANCEDESC* pInstanceDesc, _uint iNumInstance)
 {
-	CVIBuffer_Rect_Instance* pInstance = new CVIBuffer_Rect_Instance(pDevice, pContext);
+	CVIBuffer_Rect_Instance* pInstance = New CVIBuffer_Rect_Instance(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pInstanceDesc, iNumInstance)))
 	{
@@ -175,7 +175,7 @@ CVIBuffer_Rect_Instance* CVIBuffer_Rect_Instance::Create(ID3D11Device* pDevice, 
 
 CComponent* CVIBuffer_Rect_Instance::Clone(void* pArg)
 {
-	CVIBuffer_Rect_Instance* pInstance = new CVIBuffer_Rect_Instance(*this);
+	CVIBuffer_Rect_Instance* pInstance = New CVIBuffer_Rect_Instance(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

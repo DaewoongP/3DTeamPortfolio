@@ -2,6 +2,7 @@
 #include "GameInstance.h"
 #include "Seamless_Loader.h"
 #include "MapObject.h"
+#include "UI_Group_Enemy_HP.h"
 
 CLevel_MainGame::CLevel_MainGame(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CLevel(pDevice, pContext)
@@ -43,12 +44,18 @@ HRESULT CLevel_MainGame::Initialize()
 
 		return E_FAIL;
 	}
-	/*if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
+	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
 	{
 		MSG_BOX("Failed Ready_Layer_UI");
 
 		return E_FAIL;
-	}*/
+	}
+	if (FAILED(Ready_Layer_Info_UI(TEXT("Layer_Info_UI"))))
+	{
+		MSG_BOX("Failed Ready_Layer_UI");
+
+		return E_FAIL;
+	}
 	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
 	{
 		MSG_BOX("Failed Ready_Layer_Effect");
@@ -56,6 +63,13 @@ HRESULT CLevel_MainGame::Initialize()
 		return E_FAIL;
 	}
 
+	if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/MapData6.ddd"))))
+	{
+		MSG_BOX("Failed Load Map Object");
+
+		return E_FAIL;
+	}
+	
 #ifdef _DEBUG
 	if (FAILED(Ready_Layer_Debug(TEXT("Layer_Debug"))))
 	{
@@ -169,8 +183,6 @@ HRESULT CLevel_MainGame::Ready_Layer_BackGround(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	//Load_MapObject();
-
 	Safe_Release(pGameInstance);
 
 	return S_OK;
@@ -247,18 +259,14 @@ HRESULT CLevel_MainGame::Ready_Layer_NPC(const _tchar* pLayerTag)
 
 	ENDINSTANCE;
 
-	return E_NOTIMPL;
+	return S_OK;
 }
 
-HRESULT CLevel_MainGame::Load_MapObject()
+HRESULT CLevel_MainGame::Load_MapObject(const _tchar* pObjectFilePath)
 {
-	// 데이터 파일 이름 선택
-	//_tchar dataFile[MAX_PATH] = { 0 };
-	//_stprintf_s(dataFile, TEXT("../../Resources/GameData/MapData/MapData%d.ddd"), (Num));
+	std::lock_guard<std::mutex> lock(mtx);
 
-	_tchar dataFile[MAX_PATH] = TEXT("../../Resources/GameData/MapData/new2.ddd");
-
-	HANDLE hFile = CreateFile(dataFile, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+	HANDLE hFile = CreateFile(pObjectFilePath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
 	if (INVALID_HANDLE_VALUE == hFile)
 	{
@@ -268,27 +276,25 @@ HRESULT CLevel_MainGame::Load_MapObject()
 
 	// 맵 오브젝트 번호
 	_uint iObjectNum = 0;
-	vector<const _tchar*> wszModelName;
 
-	DWORD	dwByte = 0;
+	DWORD    dwByte = 0;
 
 	while (true)
 	{
-		LOADOBJECTDESC LoadDesc;
-		ZEROMEM(&LoadDesc);
-
-		if (!ReadFile(hFile, &LoadDesc.matTransform, sizeof(_float4x4), &dwByte, nullptr))
+		CMapObject::MAPOBJECTDESC MapObjectDesc;
+		
+		if (!ReadFile(hFile, &MapObjectDesc.WorldMatrix, sizeof(_float4x4), &dwByte, nullptr))
 		{
 			MSG_BOX("Failed to Read m_vecSaveObject.vPos");
 			return E_FAIL;
 		}
 
-		if (!ReadFile(hFile, &LoadDesc.iTagLen, sizeof(_uint), &dwByte, nullptr))
+		if (!ReadFile(hFile, &MapObjectDesc.iTagLen, sizeof(_uint), &dwByte, nullptr))
 		{
 			MSG_BOX("Failed to Read m_vecSaveObject.iTagLen");
 		}
 
-		if (!ReadFile(hFile, &LoadDesc.wszTag, LoadDesc.iTagLen, &dwByte, nullptr))
+		if (!ReadFile(hFile, &MapObjectDesc.wszTag, MapObjectDesc.iTagLen, &dwByte, nullptr))
 		{
 			MSG_BOX("Failed to Read m_vecSaveObject.wszTag");
 			return E_FAIL;
@@ -298,42 +304,7 @@ HRESULT CLevel_MainGame::Load_MapObject()
 		{
 			break;
 		}
-
-		_uint iCount = 0;
-
-		// 이미 생성된 프로토타입이 아니어야 생성
-		BEGININSTANCE; for (auto& iter : wszModelName)
-		{
-			if (!lstrcmp(iter, LoadDesc.wszTag))
-			{
-				++iCount;
-			}
-		}
-
-		if (0 == iCount)
-		{
-			wszModelName.push_back(LoadDesc.wszTag);
-
-			// 프로토타입 생성 부분
-			wstring ws(LoadDesc.wszTag);
-			size_t findIndex = ws.find(TEXT("Model_")) + 6;
-
-			wstring modelName = ws.substr(findIndex);
-
-			wstring modelPath(TEXT("../../Resources/Models/MapObject/NonAnims/"));
-			modelPath += modelName;
-			modelPath += TEXT("/");
-			modelPath += modelName;
-			modelPath += TEXT(".dat");
-
-			// 프로토타입 생성
-			_float4x4 PivotMatrix = XMMatrixIdentity();
-			if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAINGAME, LoadDesc.wszTag,
-				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, modelPath.c_str(), PivotMatrix))))
-			{
-				MSG_BOX("Failed to Create New Model Prototype");
-			}
-		}
+		BEGININSTANCE;
 
 		// 맵 오브젝트에 번호 붙여줌
 		_tchar wszobjName[MAX_PATH] = { 0 };
@@ -342,20 +313,12 @@ HRESULT CLevel_MainGame::Load_MapObject()
 		// 번호를 붙인 태그로 MapObject 등록
 		if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME,
 			TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_BackGround"),
-			wszobjName, &LoadDesc.matTransform)))
+			wszobjName, &MapObjectDesc)))
 		{
 			MSG_BOX("Failed to Install MapObject");
 			ENDINSTANCE;
 			return E_FAIL;
 		}
-
-		// 마지막에 설치한 맵 오브젝트 주소 가져옴
-		CMapObject* pObject = static_cast<CMapObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME,
-			TEXT("Layer_BackGround"), wszobjName));
-
-		pObject->Add_Model_Component(LoadDesc.wszTag);
-		pObject->Add_Shader_Component(TEXT("Prototype_Component_Shader_VtxMesh"));
-		pObject->Set_Color(iObjectNum); // 고유한 색깔 값을 넣어줌
 
 		++iObjectNum; ENDINSTANCE;
 	}
@@ -396,8 +359,15 @@ HRESULT CLevel_MainGame::Ready_Layer_Effect(const _tchar* pLayerTag)
 HRESULT CLevel_MainGame::Ready_Layer_UI(const _tchar* pLayerTag)
 {
 	BEGININSTANCE;
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
+	{
+		MSG_BOX("Failed Add Scene : (Scene_Main)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
 
 	_tchar szFilePath[MAX_PATH] = TEXT("");
+
 	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_HP.uidata"));
 	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_HP"),
 		pLayerTag, TEXT("GameObject_UI_Group_HP"), szFilePath)))
@@ -444,7 +414,59 @@ HRESULT CLevel_MainGame::Ready_Layer_UI(const _tchar* pLayerTag)
 	//	return E_FAIL;
 	//}
 
+	CUI_Group_Enemy_HP::ENEMYHPDESC  Desc;
+	_tchar szLevel[MAX_PATH] = TEXT("77");
+	_tchar szName[MAX_PATH] = TEXT("개철민");
+
+	Desc.eType = CUI_Group_Enemy_HP::ENEMYTYPE::MONSTER;
+	lstrcpy(Desc.wszObjectLevel, szLevel);
+	lstrcpy(Desc.wszObjectName, szName);
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_Enemy_HP"),
+		pLayerTag, TEXT("GameObject_UI_Enemy_HP"), &Desc)))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_UI_Enemy_HP)");
+		return E_FAIL;
+	}
+
+	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Cursor.uidata"));
+	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_Cursor"),
+		pLayerTag, TEXT("GameObject_UI_Group_Cursor"), szFilePath)))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_Cursor)");
+		return E_FAIL;
+	}
+
 	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CLevel_MainGame::Ready_Layer_Info_UI(const _tchar* pLayerTag)
+{
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Info"), pLayerTag)))
+	{
+		MSG_BOX("Failed Add Scene : (Scene_Info)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	_tchar szFilePath[MAX_PATH] = TEXT("");
+
+	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Gear5.uidata"));
+	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Info_Main"),
+		pLayerTag, TEXT("Prototype_GameObject_Info_Main"), szFilePath)))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Info_Main)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	Safe_Release(pGameInstance);
 
 	return S_OK;
 }
@@ -475,15 +497,15 @@ HRESULT CLevel_MainGame::Ready_Layer_Debug(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Professor_Fig"), pLayerTag, TEXT("GameObject_Professor_Fig"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Professor_Fig)");
-		return E_FAIL;
-	}
-	
 	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_LoadTrigger"), pLayerTag, TEXT("GameObject_LoadTrigger"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_LoadTrigger)");
+		return E_FAIL;
+	}
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Professor_Fig"), pLayerTag, TEXT("GameObject_Professor_Fig"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Professor_Fig)");
 		return E_FAIL;
 	}
 
@@ -521,7 +543,7 @@ HRESULT CLevel_MainGame::Ready_Layer_SceneTest(const _tchar* pLayerTag)
 
 CLevel_MainGame* CLevel_MainGame::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CLevel_MainGame* pInstance = new CLevel_MainGame(pDevice, pContext);
+	CLevel_MainGame* pInstance = New CLevel_MainGame(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize()))
 	{

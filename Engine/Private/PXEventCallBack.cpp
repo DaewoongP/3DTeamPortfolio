@@ -20,20 +20,23 @@ void CPXEventCallBack::onContact(const PxContactPairHeader& pairHeader, const Px
 		COLLEVENTDESC SourDesc, DestDesc;
 		CGameObject* pSourObject = static_cast<CGameObject*>(pairHeader.actors[0]->userData);
 		CGameObject* pDestObject = static_cast<CGameObject*>(pairHeader.actors[1]->userData);
+		//pairHeader.flags == PxContactPairHeaderFlag::eREMOVED_ACTOR_0;
+
+		if (nullptr == pSourObject ||
+			nullptr == pDestObject)
+			continue;
 
 		SourDesc.pOtherObjectTag = pDestObject->Get_Tag();
+		SourDesc.pOtherCollisionTag = static_cast<_tchar*>(pairs[i].shapes[1]->userData);
 		SourDesc.pOtherOwner = pDestObject;
 		SourDesc.pOtherTransform = pDestObject->Get_Transform();
 		SourDesc.pArg = pDestObject->Get_CollisionData();
 
 		DestDesc.pOtherObjectTag = pSourObject->Get_Tag();
+		SourDesc.pOtherCollisionTag = static_cast<_tchar*>(pairs[i].shapes[0]->userData);
 		DestDesc.pOtherOwner = pSourObject;
 		DestDesc.pOtherTransform = pSourObject->Get_Transform();
 		DestDesc.pArg = pSourObject->Get_CollisionData();
-
-		if (nullptr == pSourObject ||
-			nullptr == pDestObject)
-			continue;
 
 		if (pairs[i].events.isSet(PxPairFlag::eNOTIFY_TOUCH_FOUND))
 		{
@@ -70,32 +73,33 @@ void CPXEventCallBack::onContact(const PxContactPairHeader& pairHeader, const Px
 
 void CPXEventCallBack::onTrigger(PxTriggerPair* pairs, PxU32 count)
 {
+	std::lock_guard<std::mutex> lock(mtx);
+
 	for (PxU32 i = 0; i < count; i++)
 	{
-		// ignore pairs when shapes have been deleted
 		if (pairs[i].flags & (PxTriggerPairFlag::eREMOVED_SHAPE_TRIGGER | PxTriggerPairFlag::eREMOVED_SHAPE_OTHER))
 			continue;
 		
 		COLLEVENTDESC SourDesc, DestDesc;
-
-		
 		CGameObject* pSourObject = static_cast<CGameObject*>(pairs->triggerActor->userData);
 		CGameObject* pDestObject = static_cast<CGameObject*>(pairs->otherActor->userData);
+		
+		if (nullptr == pSourObject ||
+			nullptr == pDestObject)
+			continue;
 
 		SourDesc.pOtherObjectTag = pDestObject->Get_Tag();
+		SourDesc.pOtherCollisionTag = static_cast<_tchar*>(pairs[i].otherShape->userData);
 		SourDesc.pOtherOwner = pDestObject;
 		SourDesc.pOtherTransform = pDestObject->Get_Transform();
 		SourDesc.pArg = pDestObject->Get_CollisionData();
 
 		DestDesc.pOtherObjectTag = pSourObject->Get_Tag();
+		DestDesc.pOtherCollisionTag = static_cast<_tchar*>(pairs[i].triggerShape->userData);
 		DestDesc.pOtherOwner = pSourObject;
 		DestDesc.pOtherTransform = pSourObject->Get_Transform();
 		DestDesc.pArg = pSourObject->Get_CollisionData();
 
-		if (nullptr == pSourObject ||
-			nullptr == pDestObject)
-			continue;
-		
 		if (pairs->status == PxPairFlag::eNOTIFY_TOUCH_FOUND)
 		{
 			pSourObject->OnCollisionEnter(SourDesc);
@@ -133,7 +137,7 @@ void CPXEventCallBack::onAdvance(const PxRigidBody* const* bodyBuffer, const PxT
 
 CPXEventCallBack* CPXEventCallBack::Create()
 {
-	CPXEventCallBack* pInstance = new CPXEventCallBack;
+	CPXEventCallBack* pInstance = New CPXEventCallBack;
 
 	return pInstance;
 }

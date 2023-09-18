@@ -66,15 +66,18 @@ void CMoveTurnState::Go_Idle()
 	//방향키가 눌리지 않았을 경우
 	if (true != *m_pIsDirectionKeyPressed)
 	{
-		m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Turn_Stop_Fwd_RU_anm"));
 		Set_StateMachine(TEXT("Idle"));
 	}
 }
 
 void CMoveTurnState::Go_Start()
 {
+	_float fAngle = *m_pOwnerLookAngle;
+
 	//키가 눌려있고 애니메이션이 끝났다면
-	if (true == *m_pIsDirectionKeyPressed && m_pOwnerModel->Is_Finish_Animation())
+	if (true == *m_pIsDirectionKeyPressed &&
+		m_f45Angle > fAngle &&
+		-m_f45Angle < fAngle)
 	{
 		m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Start_Fwd_anm"));
 
@@ -103,13 +106,13 @@ void CMoveTurnState::Over_135()
 	if (m_f135Angle < (*m_pOwnerLookAngle))
 	{
 		//180도를 실행
-		m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Turn_Start_Rht_180_anm"));
+		m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Idle_Turn_Rht_135_anm"));
 	}
 	//135보다 작다면 왼쪽
 	if (-m_f135Angle > (*m_pOwnerLookAngle))
 	{
 		//180도를 실행
-		m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Turn_Start_Lft_180_anm"));
+		m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Idle_Turn_Lft_135_anm"));
 	}
 }
 

@@ -30,9 +30,9 @@ HRESULT CModel_Converter::Convert_Model(_uint iType, const _char* pModelFilePath
 		MSG_BOX("Failed (Convert_Bones)");
 		return E_FAIL;
 	}
-	
+
 	Sort_Bones();
-	
+
 	cout << "Convert Meshes..." << endl;
 	if (FAILED(Convert_Meshes()))
 	{
@@ -66,7 +66,7 @@ HRESULT CModel_Converter::Convert_Model(_uint iType, const _char* pModelFilePath
 		fs::create_directory(szPath);
 	}
 	// Write NonAnim
-	else if(TYPE_NONANIM == eType)
+	else if (TYPE_NONANIM == eType)
 	{
 		lstrcat(szPath, TEXT("NonAnims/"));
 		lstrcat(szPath, szSubFileName.c_str());
@@ -94,7 +94,7 @@ HRESULT CModel_Converter::Convert_Model(_uint iType, const _char* pModelFilePath
 		{
 			lstrcat(szPath, TEXT("/"));
 			fs::create_directory(szPath);
-		}		
+		}
 	}
 
 
@@ -105,7 +105,7 @@ HRESULT CModel_Converter::Convert_Model(_uint iType, const _char* pModelFilePath
 		return E_FAIL;
 	}
 
-	if (TYPE_ANIM == eType)
+	if (TYPE_ANIM == eType || TYPE_ONLYANIM == eType)
 	{
 		// 애니메이션 파일일경우에만 실행.
 		cout << "Convert Animations..." << endl;
@@ -125,7 +125,11 @@ HRESULT CModel_Converter::Convert_Model(_uint iType, const _char* pModelFilePath
 	size_t fileNameLength = wcslen(fileName);
 	const wchar_t* suffix = L"_COL";
 
-	if ((fileNameLength >= wcslen(suffix) && wcscmp(fileName + fileNameLength - wcslen(suffix), suffix) == 0) ? FAILED(Write_File_COL(eType, szPath, szFileName)) :FAILED(Write_File(eType, szPath, szFileName)))
+	if ((fileNameLength >= wcslen(suffix) && wcscmp(fileName + fileNameLength - wcslen(suffix), suffix) == 0) ?
+		FAILED(Write_File_COL(eType, szPath, szFileName)) :
+		(eType == TYPE_ONLYANIM) ?
+		FAILED(Write_File_Anim(eType, szPath, szFileName)) :
+		FAILED(Write_File(eType, szPath, szFileName)))
 	{
 		MSG_BOX("Failed (Write_File)");
 		return E_FAIL;
@@ -408,7 +412,7 @@ HRESULT CModel_Converter::Convert_Materials(TYPE eType, const char* pModelFilePa
 
 			// 가공된 경로들 strcat
 			string FullPath = DrivePath + ModelDirPath + TexturePath;
-			
+
 			std::error_code ec;
 			// skip_existing, overwrite_existing, update_existing 
 			// 같은 파일이 존재할경우 오류가 나므로 옵션 줘야함.
@@ -418,7 +422,7 @@ HRESULT CModel_Converter::Convert_Materials(TYPE eType, const char* pModelFilePa
 			_char strFileName[MAX_PATH] = "";
 			_char strFileExt[MAX_PATH] = "";
 			_splitpath_s(FullPath.c_str(), nullptr, 0, nullptr, 0, strFileName, MAX_PATH, strFileExt, MAX_PATH);
-			
+
 			strcat_s(strFileName, strFileExt);
 			_tchar	szTextureName[MAX_PATH] = TEXT("");
 			_tchar	szTexturePath[MAX_PATH] = TEXT("");
@@ -447,7 +451,7 @@ HRESULT CModel_Converter::Convert_Materials(TYPE eType, const char* pModelFilePa
 
 				lstrcpy(Material.MaterialTexture[j].szTexPath, szNewTexturePath);
 				Material.MaterialTexture[j].TexType = TEXTYPE(j);
-			}			
+			}
 		}
 
 		// 머테리얼 저장
@@ -779,6 +783,77 @@ HRESULT CModel_Converter::Write_File_COL(TYPE eType, const _tchar* pSaveDirector
 
 		// Mesh Positions
 		WriteFile(hFile, Mesh.vPositions, sizeof(_float3) * Mesh.iNumVertices, &dwByte, nullptr);
+	}
+
+	CloseHandle(hFile);
+
+	return S_OK;
+}
+
+HRESULT CModel_Converter::Write_File_Anim(TYPE eType, const _tchar* pSaveDirectory, const _tchar* pFileName)
+{
+	_tchar szPath[MAX_PATH] = TEXT("");
+	lstrcpy(szPath, pSaveDirectory);
+
+	lstrcat(szPath, pFileName);
+	lstrcat(szPath, TEXT("_Anim.dat"));
+
+	HANDLE hFile = CreateFile(szPath, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+	if (INVALID_HANDLE_VALUE == hFile)
+		return E_FAIL;
+
+	_ulong	dwByte = 0;
+	_ulong	dwStrByte = 0;
+
+	// Write Animations
+		// Animation NumAnimations
+	WriteFile(hFile, &(m_Model.iNumAnimations), sizeof(_uint), &dwByte, nullptr);
+
+	for (_uint i = 0; i < m_Model.iNumAnimations; ++i)
+	{
+		ANIMATION Animation = m_pAnimation[i];
+
+		// Animation Name
+		dwStrByte = (_ulong)sizeof(_tchar) * (lstrlen(Animation.szName) + 1);
+		WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
+		WriteFile(hFile, Animation.szName, dwStrByte, &dwByte, nullptr);
+
+		// Animation Duration
+		WriteFile(hFile, &(Animation.fDuration), sizeof(_float), &dwByte, nullptr);
+
+		// Animation TickPerSecond
+		WriteFile(hFile, &(Animation.fTickPerSecond), sizeof(_float), &dwByte, nullptr);
+
+		// Animation NumChannels
+		WriteFile(hFile, &(Animation.iNumChannels), sizeof(_uint), &dwByte, nullptr);
+
+		for (_uint j = 0; j < Animation.iNumChannels; ++j)
+		{
+			CHANNEL Channel = Animation.Channels[j];
+
+			// Channel Name
+			dwStrByte = (_ulong)sizeof(_tchar) * (lstrlen(Channel.szName) + 1);
+			WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
+			WriteFile(hFile, Channel.szName, dwStrByte, &dwByte, nullptr);
+
+			// Channel NumScalingKeys
+			WriteFile(hFile, &(Channel.iNumScalingKeys), sizeof(_uint), &dwByte, nullptr);
+
+			// Channel ScalingKeys
+			WriteFile(hFile, Channel.ScalingKeys, sizeof(VECTORKEY) * (Channel.iNumScalingKeys), &dwByte, nullptr);
+
+			// Channel NumRotationKeys
+			WriteFile(hFile, &(Channel.iNumRotationKeys), sizeof(_uint), &dwByte, nullptr);
+
+			// Channel RotationKeys
+			WriteFile(hFile, Channel.RotationKeys, sizeof(QUATERNIONKEY) * (Channel.iNumRotationKeys), &dwByte, nullptr);
+
+			// Channel NumPositionKeys
+			WriteFile(hFile, &(Channel.iNumPositionKeys), sizeof(_uint), &dwByte, nullptr);
+
+			// Channel PositionKeys
+			WriteFile(hFile, Channel.PositionKeys, sizeof(VECTORKEY) * (Channel.iNumPositionKeys), &dwByte, nullptr);
+		}
 	}
 
 	CloseHandle(hFile);

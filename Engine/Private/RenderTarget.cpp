@@ -133,7 +133,7 @@ HRESULT CRenderTarget::Bind_ShaderResourceView(CShader* pShader, const _char* pC
 
 CRenderTarget* CRenderTarget::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iSizeX, _uint iSizeY, DXGI_FORMAT eFormat, const _float4& vClearColor,_bool isShadow)
 {
-	CRenderTarget* pInstance = new CRenderTarget(pDevice, pContext);
+	CRenderTarget* pInstance = New CRenderTarget(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize(iSizeX, iSizeY, eFormat, vClearColor,isShadow)))
 	{

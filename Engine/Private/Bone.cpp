@@ -63,7 +63,7 @@ void CBone::Reset_CombinedTransformationMatrix()
 
 CBone* CBone::Create(Engine::NODE Node)
 {
-	CBone* pInstance = new CBone();
+	CBone* pInstance = New CBone();
 
 	if (FAILED(pInstance->Initialize(Node)))
 	{
@@ -76,7 +76,7 @@ CBone* CBone::Create(Engine::NODE Node)
 
 CBone* CBone::Clone()
 {
-	return new CBone(*this);
+	return New CBone(*this);
 }
 
 void CBone::Free()

@@ -47,15 +47,16 @@ HRESULT CPlayer::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
-	if (FAILED(Ready_Camera()))
+	/*if (FAILED(Ready_Camera()))
 	{
 		MSG_BOX("Failed Ready Player Caemra");
 
 		return E_FAIL;
-	}
+	}*/
 
 	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
+
 
 	return S_OK;
 }
@@ -70,8 +71,10 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	m_pStateContext->Tick(fTimeDelta);
 
-	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
-	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UNDERBODY);
+	m_pCustomModel->Tick(CCustomModel::ROBE, 2, fTimeDelta);
+
+	/*m_pCustomModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);*/
+	/*m_pCustomModel->Play_Animation(fTimeDelta, CModel::UNDERBODY);*/
 }
 
 void CPlayer::Late_Tick(_float fTimeDelta)
@@ -324,7 +327,7 @@ HRESULT CPlayer::Ready_MeshParts()
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_MAINGAME,
 		TEXT("Prototype_Component_MeshPart_Robe01"),
-		CCustomModel::ROBE)))
+		CCustomModel::ROBE, TEXT("../../Resources/GameData/ClothData/Test.cloth"))))
 	{
 		MSG_BOX("Failed Add MeshPart Robe");
 	

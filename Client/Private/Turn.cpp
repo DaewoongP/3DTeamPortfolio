@@ -83,7 +83,7 @@ HRESULT CTurn::Assemble_Childs()
 
 CTurn* CTurn::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CTurn* pInstance = new CTurn(pDevice, pContext);
+	CTurn* pInstance = New CTurn(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -96,7 +96,7 @@ CTurn* CTurn::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 CTurn* CTurn::Clone(void* pArg)
 {
-	CTurn* pInstance = new CTurn(*this);
+	CTurn* pInstance = New CTurn(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

@@ -255,7 +255,6 @@ HRESULT CRenderer::Draw_RenderGroup()
 	if (FAILED(Render_PostProcessing()))
 		return E_FAIL;
 	
-	
 	if (FAILED(m_pBloom->Render()))
 		return E_FAIL;
 	if (FAILED(Render_UI()))
@@ -995,7 +994,7 @@ _bool CRenderer::Is_Render_Distortion()
 #endif // _DEBUG
 CRenderer* CRenderer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CRenderer* pInstance = new CRenderer(pDevice, pContext);
+	CRenderer* pInstance = New CRenderer(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{

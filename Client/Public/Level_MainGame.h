@@ -6,13 +6,6 @@ BEGIN(Client)
 
 class CLevel_MainGame final : public CLevel
 {
-	typedef struct LoadObjectDesc
-	{
-		_float4x4 matTransform; // 상태 행렬
-		_uint iTagLen; // 문자열 길이
-		_tchar wszTag[MAX_PATH]; // 오브젝트 종류(모델 컴포넌트 이름)
-	}LOADOBJECTDESC;
-
 private:
 	explicit CLevel_MainGame(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual ~CLevel_MainGame() = default;
@@ -30,8 +23,10 @@ private:
 	HRESULT Ready_Layer_NPC(const _tchar* pLayerTag);
 	HRESULT Ready_Layer_Effect(const _tchar* pLayerTag);
 	HRESULT Ready_Layer_UI(const _tchar* pLayerTag);
+	HRESULT Ready_Layer_Info_UI(const _tchar* pLayerTag);
+
 private:
-	HRESULT Load_MapObject();
+	HRESULT Load_MapObject(const _tchar* pObjectFilePath);
 
 #ifdef _DEBUG
 private:

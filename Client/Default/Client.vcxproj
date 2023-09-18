@@ -127,7 +127,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>../../Reference/Librarys/</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Engine_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Engine_d.lib;DirectXTKd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <FxCompile>
       <ShaderType>Effect</ShaderType>
@@ -153,7 +153,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>../../Reference/Librarys/</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Engine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Engine.lib;DirectXTK.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <FxCompile>
       <ShaderType>Effect</ShaderType>
@@ -165,7 +165,12 @@
   <ItemGroup>
     <ClInclude Include="..\Public\Action.h" />
     <ClInclude Include="..\Public\Action_Deflect.h" />
+    <ClInclude Include="..\public\Main3_Loader.h" />
     <ClInclude Include="..\Public\Check_Distance.h" />
+    <ClInclude Include="..\Public\UI_Font.h" />
+    <ClInclude Include="..\Public\UI_Group_Cursor.h" />
+    <ClInclude Include="..\Public\UI_Group_Enemy_HP.h" />
+    <ClInclude Include="..\public\Main0_Loader.h" />
     <ClInclude Include="..\Public\MoveLoopState.h" />
     <ClInclude Include="..\public\MoveStartState.h" />
     <ClInclude Include="..\Public\MoveTurnState.h" />
@@ -183,6 +188,7 @@
     <ClInclude Include="..\Public\StateContext.h" />
     <ClInclude Include="..\public\StateMachine.h" />
     <ClInclude Include="..\public\IdleState.h" />
+    <ClInclude Include="..\public\Main2_Loader.h" />
     <ClInclude Include="..\Public\UI_Back.h" />
     <ClInclude Include="..\Public\UI_Effect_Back.h" />
     <ClInclude Include="..\Public\UI_Finisher.h" />
@@ -232,7 +238,7 @@
     <ClInclude Include="..\Public\Level_Loading.h" />
     <ClInclude Include="..\Public\Level_Logo.h" />
     <ClInclude Include="..\public\Level_MainGame.h" />
-    <ClInclude Include="..\Public\Loader.h" />
+    <ClInclude Include="..\Public\Main1_Loader.h" />
     <ClInclude Include="..\public\Logo_BackGround.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
@@ -292,7 +298,12 @@
   <ItemGroup>
     <ClCompile Include="..\Private\Action.cpp" />
     <ClCompile Include="..\Private\Action_Deflect.cpp" />
+    <ClCompile Include="..\private\Main3_Loader.cpp" />
     <ClCompile Include="..\Private\Check_Distance.cpp" />
+    <ClCompile Include="..\Private\UI_Font.cpp" />
+    <ClCompile Include="..\Private\UI_Group_Cursor.cpp" />
+    <ClCompile Include="..\Private\UI_Group_Enemy_HP.cpp" />
+    <ClCompile Include="..\private\Main0_Loader.cpp" />
     <ClCompile Include="..\Private\MoveLoopState.cpp" />
     <ClCompile Include="..\private\MoveStartState.cpp" />
     <ClCompile Include="..\Private\MoveTurnState.cpp" />
@@ -310,6 +321,7 @@
     <ClCompile Include="..\private\StateMachine.cpp" />
     <ClCompile Include="..\Private\IdleState.cpp" />
     <ClCompile Include="..\private\StateContext.cpp" />
+    <ClCompile Include="..\private\Main2_Loader.cpp" />
     <ClCompile Include="..\Private\UI_Back.cpp" />
     <ClCompile Include="..\Private\UI_Effect_Back.cpp" />
     <ClCompile Include="..\Private\UI_Finisher.cpp" />
@@ -356,7 +368,7 @@
     <ClCompile Include="..\Private\Level_Loading.cpp" />
     <ClCompile Include="..\Private\Level_Logo.cpp" />
     <ClCompile Include="..\private\Level_MainGame.cpp" />
-    <ClCompile Include="..\Private\Loader.cpp">
+    <ClCompile Include="..\Private\Main1_Loader.cpp">
       <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</IncludeInUnityFile>
     </ClCompile>
     <ClCompile Include="..\private\Logo_BackGround.cpp">
@@ -431,6 +443,7 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxCube.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxMesh.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTex.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTexRotation.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Bin\ShaderFiles\Shader_Client_Defines.hlsli" />

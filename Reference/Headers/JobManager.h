@@ -111,7 +111,7 @@ public:
 	JobManager()
 	{
 		mWorkerCount = 8;
-		mWorkerThreads = new std::thread[mWorkerCount];
+		mWorkerThreads = New std::thread[mWorkerCount];
 		mQuit = false;
 
 		for(int i = 0; i < mWorkerCount; i++)

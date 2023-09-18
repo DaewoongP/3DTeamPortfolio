@@ -36,7 +36,7 @@ HRESULT CVIBuffer_Sprite::Initialize_Prototype()
 	m_BufferDesc.CPUAccessFlags = { D3D11_CPU_ACCESS_WRITE };
 	m_BufferDesc.MiscFlags = { 0 };
 
-	VTXPOSTEX* pVertices = new VTXPOSTEX[m_iNumVertices];
+	VTXPOSTEX* pVertices = New VTXPOSTEX[m_iNumVertices];
 
 	pVertices[0].vPosition = _float3(-0.5f, 0.5f, 0.f);
 	pVertices[0].vTexCoord = _float2(0.f, 0.f);
@@ -71,7 +71,7 @@ HRESULT CVIBuffer_Sprite::Initialize_Prototype()
 	m_BufferDesc.CPUAccessFlags = { 0 };
 	m_BufferDesc.MiscFlags = { 0 };
 
-	_ushort* pIndices = new _ushort[m_iNumIndices];
+	_ushort* pIndices = New _ushort[m_iNumIndices];
 
 	pIndices[0] = 0;
 	pIndices[1] = 1;
@@ -167,7 +167,7 @@ void CVIBuffer_Sprite::Tick(const _float& fTimeDelta)
 
 CVIBuffer_Sprite* CVIBuffer_Sprite::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CVIBuffer_Sprite* pInstance = new CVIBuffer_Sprite(pDevice, pContext);
+	CVIBuffer_Sprite* pInstance = New CVIBuffer_Sprite(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -180,7 +180,7 @@ CVIBuffer_Sprite* CVIBuffer_Sprite::Create(ID3D11Device* pDevice, ID3D11DeviceCo
 
 CVIBuffer_Sprite* CVIBuffer_Sprite::Clone(void* pArg)
 {
-	CVIBuffer_Sprite* pInstance = new CVIBuffer_Sprite(*this);
+	CVIBuffer_Sprite* pInstance = New CVIBuffer_Sprite(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

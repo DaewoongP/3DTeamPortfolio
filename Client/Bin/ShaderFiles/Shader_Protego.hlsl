@@ -48,8 +48,8 @@ VS_OUT VS_MAIN(VS_IN In)
 
     Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);
     Out.vTexUV = In.vTexUV;
-    Out.vWorldPos = mul(vector(In.vPosition, 1.f), g_WorldMatrix);
-    Out.vWorldNormal = mul(vector(In.vNormal, 1.f), g_WorldMatrix);
+    Out.vWorldPos = mul(vector(In.vPosition, 1.f), g_WorldMatrix).xyz;
+    Out.vWorldNormal = mul(vector(In.vNormal, 1.f), g_WorldMatrix).xyz;
 
     return Out;
 }
@@ -104,7 +104,7 @@ PS_OUT PS_MAIN(PS_IN In)
     Out.vColor = lerp(g_vColor1, g_vColor2, vNoise04.r);
 
     // ¿Ü°û¼± µû±â
-    vViewDir = normalize(g_vCamPos - In.vWorldPos);
+    vViewDir = normalize(g_vCamPos.xyz - In.vWorldPos);
     FresnelEffect_float(In.vWorldNormal, vViewDir, g_fRimPower, fFresnel);
     Out.vColor.a = fFresnel;
 

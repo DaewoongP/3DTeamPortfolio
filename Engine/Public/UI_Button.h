@@ -3,7 +3,7 @@
 
 BEGIN(Engine)
 
-class CUI_Button final : public CComponent
+class ENGINE_DLL CUI_Button final : public CComponent
 {
 protected:
 	explicit CUI_Button(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

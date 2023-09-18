@@ -43,7 +43,7 @@ HRESULT CMesh_Instance::Initialize_Prototype(const Engine::MESH Mesh, _float4x4 
 	m_BufferDesc.CPUAccessFlags = { 0 };
 	m_BufferDesc.MiscFlags = { 0 };
 
-	_ulong* pIndices = new _ulong[m_iNumIndices];
+	_ulong* pIndices = New _ulong[m_iNumIndices];
 	ZeroMemory(pIndices, sizeof(_ulong) * m_iNumIndices);
 
 	_uint		iNumFaces = { 0 };
@@ -121,7 +121,7 @@ HRESULT CMesh_Instance::Ready_VertexBuffer_NonAnim(const Engine::MESH Mesh, _flo
 		BufferDesc.CPUAccessFlags = { D3D11_CPU_ACCESS_WRITE };
 		BufferDesc.MiscFlags = { 0 };
 
-		VTXINSTANCE* pVertices = new VTXINSTANCE[m_iNumInstance];
+		VTXINSTANCE* pVertices = New VTXINSTANCE[m_iNumInstance];
 
 		for (size_t i = 0; i < m_iNumInstance; ++i)
 		{
@@ -156,7 +156,7 @@ HRESULT CMesh_Instance::Ready_VertexBuffer_NonAnim(const Engine::MESH Mesh, _flo
 		m_BufferDesc.CPUAccessFlags = { 0 };
 		m_BufferDesc.MiscFlags = { 0 };
 
-		VTXMESH* pVertices = new VTXMESH[m_iNumVertices];
+		VTXMESH* pVertices = New VTXMESH[m_iNumVertices];
 		ZeroMemory(pVertices, sizeof(VTXMESH) * m_iNumVertices);
 
 		for (size_t i = 0; i < m_iNumVertices; i++)
@@ -189,7 +189,7 @@ HRESULT CMesh_Instance::Ready_VertexBuffer_NonAnim(const Engine::MESH Mesh, _flo
 
 CMesh_Instance* CMesh_Instance::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const Engine::MESH Mesh, _float4x4* pInstanceMatrix, _uint iNumInstance, _float4x4 PivotMatrix)
 {
-	CMesh_Instance* pInstance = new CMesh_Instance(pDevice, pContext);
+	CMesh_Instance* pInstance = New CMesh_Instance(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(Mesh, PivotMatrix, pInstanceMatrix, iNumInstance)))
 	{
@@ -201,7 +201,7 @@ CMesh_Instance* CMesh_Instance::Create(ID3D11Device* pDevice, ID3D11DeviceContex
 
 CComponent* CMesh_Instance::Clone(void* pArg)
 {
-	CMesh_Instance* pInstance = new CMesh_Instance(*this);
+	CMesh_Instance* pInstance = New CMesh_Instance(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

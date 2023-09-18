@@ -57,7 +57,7 @@ HRESULT CSequence::Tick(const _float& fTimeDelta)
 
 CSequence* CSequence::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CSequence* pInstance = new CSequence(pDevice, pContext);
+	CSequence* pInstance = New CSequence(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -70,7 +70,7 @@ CSequence* CSequence::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 
 CSequence* CSequence::Clone(void* pArg)
 {
-	CSequence* pInstance = new CSequence(*this);
+	CSequence* pInstance = New CSequence(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
