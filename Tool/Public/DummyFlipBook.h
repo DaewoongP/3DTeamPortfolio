@@ -48,6 +48,7 @@ public:
 private:
 	class CImageFileDialog* m_pTextureIFD = { nullptr };
 	class CImageFileDialog* m_pNormalTextureIFD = { nullptr };
+	class CImageFileDialog* m_pFlipbookMaterialTextureIFD = { nullptr };
 	
 	class CComboBox* m_pClipChannelCombo = { nullptr };
 	class CComboBox* m_pLoopOption = { nullptr };

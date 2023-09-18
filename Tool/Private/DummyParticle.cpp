@@ -44,8 +44,9 @@ HRESULT CDummyParticle::Initialize(void* _pArg)
 	m_pStopActionCombo = CComboBox::Create(Generate_Hashtag(true).data(), "Stop Action", { "None", "Disable", "Destroy", "Callback" }, "None");
 	m_pClipChannelCombo = CComboBox::Create(Generate_Hashtag(true).data(), "ClipChannel", { "Red", "Green", "Blue", "Alpha" }, "Alpha");
 	m_pClipChannelCombo->Set_StartTag(m_ShapeModuleDesc.strClipChannel.data());
-
-	m_pEaseCombo.push_back(CComboBox::Create(Generate_Hashtag(true).data(), "Easing", CEase::pEases, CEase::EASE_END, CEase::pEases[0]));
+	m_pColorEaseCombo = CComboBox::Create(Generate_Hashtag(true).data(), "Easing", CEase::pEases, CEase::EASE_END, CEase::pEases[0]);
+	vector<string> Passes = m_pShader->Get_PassList();
+	m_pPassComboBox = CComboBox::Create(Generate_Hashtag(true).data(), "Pass", Passes, Passes.front().data());
 	//CComboBox::Create(Generate_Hashtag(true).data(), "xvclk", CEase::asdfED, "vsd");
 
 	m_pAlphaTextureIFD = CImageFileDialog::Create(m_pDevice, "SelectTexture2D");
@@ -63,6 +64,8 @@ HRESULT CDummyParticle::Initialize(void* _pArg)
 	m_pNormalTextureIFD = CImageFileDialog::Create(m_pDevice, "NormalTextureDialog");
 	m_pNormalTextureIFD->m_strStartPath = "../../Resources/Effects/Textures/Flipbooks/";
 	m_pNormalTextureIFD->m_iImageButtonWidth = 32;
+
+	
 
 	Load_After();
 	return S_OK;
@@ -472,6 +475,8 @@ void CDummyParticle::RendererModule_TreeNode(CEffect_Window* pEffectWindow)
 
 			pEffectWindow->Table_CheckBox("Billboard DeleteY", "CJCJV8389kdjd", &m_RendererModuleDesc.isDeleteY);
 
+			m_pPassComboBox->Tick(CComboBox::TABLE);
+
 			ImGui::EndTable();
 		}
 		ImGui::TreePop();
@@ -499,8 +504,13 @@ void CDummyParticle::ColorOverLifeTime_TreeNode(CEffect_Window* pEffectWindow)
 			pEffectWindow->Table_ColorEdit4("Start Color", "xcvkljo8234", &m_ColorOverLifeTimeModuleDesc.vStartColor);
 			pEffectWindow->Table_ColorEdit4("End Color", "dlkjiv993kdkc", &m_ColorOverLifeTimeModuleDesc.vEndColor);
 
+			m_pColorEaseCombo->Tick(CComboBox::TABLE);
+			if (m_pColorEaseCombo->IsUpdated())
+				m_ColorOverLifeTimeModuleDesc.eEase = static_cast<CEase::EASE>(m_pColorEaseCombo->Get_Current_Item_Index());
+
 			ImGui::EndTable();
 		}
+
 		ImGui::TreePop();
 	}
 }
@@ -812,11 +822,13 @@ void CDummyParticle::Free(void)
 	Safe_Release(m_pSpriteTextureIFD);
 	Safe_Release(m_pMaterialTextureIFD);
 	Safe_Release(m_pNormalTextureIFD);
+	Safe_Release(m_pColorEaseCombo);
+	Safe_Release(m_pPassComboBox);
 
-	for (auto& EaseComboBox : m_pEaseCombo)
-	{
-		Safe_Release(EaseComboBox);
-	}
+	//for (auto& EaseComboBox : m_pColorEase)
+	//{
+	//	Safe_Release(EaseComboBox);
+	//}
 
 	for (auto& pTag : m_pTags)
 		Safe_Delete_Array(pTag);

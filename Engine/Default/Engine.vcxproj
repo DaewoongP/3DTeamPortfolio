@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Animation.h" />
+    <ClInclude Include="..\public\VIBuffer_UVSphere.h" />
     <ClInclude Include="..\public\VIBuffer_Rect_Color_Index_Instance.h" />
     <ClInclude Include="..\Public\Base.h" />
     <ClInclude Include="..\Public\Behavior.h" />
@@ -146,6 +147,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Animation.cpp" />
+    <ClCompile Include="..\private\VIBuffer_UVSphere.cpp" />
     <ClCompile Include="..\private\VIBuffer_Rect_Color_Index_Instance.cpp" />
     <ClCompile Include="..\Private\Base.cpp" />
     <ClCompile Include="..\Private\Behavior.cpp" />

@@ -12,8 +12,11 @@ CParticleSystem::CParticleSystem(const CParticleSystem& _rhs)
 	, m_MainModuleDesc(_rhs.m_MainModuleDesc)
 	, m_EmissionModuleDesc(_rhs.m_EmissionModuleDesc)
 	, m_ShapeModuleDesc(_rhs.m_ShapeModuleDesc)
+	, m_ColorOverLifeTimeModuleDesc(_rhs.m_ColorOverLifeTimeModuleDesc)
+	, m_SizeOverLifeTimeModuleDesc(_rhs.m_SizeOverLifeTimeModuleDesc)
+	, m_RotationOverLifetimeModuleDesc(_rhs.m_RotationOverLifetimeModuleDesc)
+	, m_TextureSheetAnimationModuleDesc(_rhs.m_TextureSheetAnimationModuleDesc)
 	, m_RendererModuleDesc(_rhs.m_RendererModuleDesc)
-	, m_ParticleMatrices(_rhs.m_ParticleMatrices)
 	, m_StopAction(_rhs.m_StopAction)
 	, m_iLevel(_rhs.m_iLevel)
 {
@@ -129,7 +132,7 @@ void CParticleSystem::Tick(_float _fTimeDelta)
 	{
 		INSTANCE colInstDesc;
 		_float3 vPos;
-		
+
 		// 이전프레임의 값들을 가져옴.
 		vPos = Particle_iter->WorldMatrix.Translation();
 		_float3 vPrevPos = vPos;
@@ -146,38 +149,33 @@ void CParticleSystem::Tick(_float _fTimeDelta)
 		// LifeTime 관련모듈
 		m_SizeOverLifeTimeModuleDesc.Action(Particle_iter, _fTimeDelta);
 		m_RotationOverLifetimeModuleDesc.Action(Particle_iter, _fTimeDelta);
-		m_ColorOverLifeTimeModuleDesc.Action(Particle_iter, _fTimeDelta);
+		m_ColorOverLifeTimeModuleDesc.Action(Particle_iter, m_MainModuleDesc.vStartColor, _fTimeDelta);
 
 		// 텍스처 시트 모듈
 		m_TextureSheetAnimationModuleDesc.Action(Particle_iter, _fTimeDelta);
 
 		// SRT 연산
 		_float4x4 ScaleMatrix = _float4x4::MatrixScale(Particle_iter->vScale);
-		_float4x4 BillBoardMatrix = LookAt(vPos, vCamPosition.xyz(), m_RendererModuleDesc.isDeleteY);
-		_float4x4 RotationMatrix;
+		_float4x4 BillBoardMatrix = _float4x4();
+		_float4x4 RotationMatrix = _float4x4();
 		_float4x4 DirectionMatrix = _float4x4();
 		if (true == m_MainModuleDesc.isDirectionRotation) // 진행 방향으로 회전
 		{
 			DirectionMatrix = LookAt(vPrevPos, vPos);
-			//_float3 vLook = BillBoardMatrix.Look();
-			//_float3 vUp = BillBoardMatrix.Up();
-			//_float3 vDirection = Particle_iter->vVelocity.xyz();
-			//vDirection.Normalize();
-			//_float fRadian = XMVectorGetX(XMVector3AngleBetweenVectors(vDirection, vUp));
-			//if (vUp.Cross(vDirection).y <= 0.f)
-			//	fRadian *= -1.f;
-			//RotationMatrix = _float4x4::MatrixRotationAxis(vLook, fRadian);
-		}
-
-		if (true == m_MainModuleDesc.is3DStartRotation)
-		{
-			RotationMatrix = _float4x4::MatrixFromQuaternion(XMQuaternionRotationRollPitchYaw(
-				XMConvertToRadians(m_MainModuleDesc.v3DRotationXYZ.x),
-				XMConvertToRadians(m_MainModuleDesc.v3DRotationXYZ.y),
-				XMConvertToRadians(m_MainModuleDesc.v3DRotationXYZ.z)));
 		}
 		else
-			RotationMatrix = _float4x4::MatrixRotationAxis(_float3(vPos - vCamPosition), XMConvertToRadians(Particle_iter->fAngle));
+		{
+			BillBoardMatrix = LookAt(vPos, vCamPosition.xyz(), m_RendererModuleDesc.isDeleteY);
+			if (true == m_MainModuleDesc.is3DStartRotation)
+			{
+				RotationMatrix = _float4x4::MatrixFromQuaternion(XMQuaternionRotationRollPitchYaw(
+					XMConvertToRadians(m_MainModuleDesc.v3DRotationXYZ.x),
+					XMConvertToRadians(m_MainModuleDesc.v3DRotationXYZ.y),
+					XMConvertToRadians(m_MainModuleDesc.v3DRotationXYZ.z)));
+			}
+			else
+				RotationMatrix = _float4x4::MatrixRotationAxis(_float3(vCamPosition - vPos), XMConvertToRadians(Particle_iter->fAngle));
+		}
 
 		_float4x4 TranslationMatrix = _float4x4::MatrixTranslation(vPos);
 		_float4x4 TransfomationMatrix = ScaleMatrix * BillBoardMatrix * DirectionMatrix * RotationMatrix * TranslationMatrix;
@@ -188,7 +186,6 @@ void CParticleSystem::Tick(_float _fTimeDelta)
 		colInstDesc.vTranslation = TransfomationMatrix.Translation().TransCoord();
 		colInstDesc.vColor = Particle_iter->vColor;
 		colInstDesc.iCurrentIndex = Particle_iter->iCurIndex;
-		
 
 		m_ParticleMatrices.push_back(colInstDesc);
 		++Particle_iter;
@@ -215,11 +212,7 @@ HRESULT CParticleSystem::Render()
 	if (FAILED(Setup_ShaderResources()))
 		return E_FAIL;
 
-	string strPass = "Default";
-	if (true == m_TextureSheetAnimationModuleDesc.isActivate)
-		strPass = "TextureSheetAnimation";
-
-	if (FAILED(m_pShader->Begin(strPass.data())))
+	if (FAILED(m_pShader->Begin(m_RendererModuleDesc.strPass.data())))
 		return E_FAIL;
 
 	if (FAILED(m_pBuffer->Render()))

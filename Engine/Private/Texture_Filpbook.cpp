@@ -24,6 +24,8 @@ CTexture_Flipbook::CTexture_Flipbook(const CTexture_Flipbook& rhs)
 	, m_wstrNormalPath(rhs.m_wstrNormalPath)
 	, m_isDeleteY(rhs.m_isDeleteY)
 	, m_fUpdateInterval(rhs.m_fUpdateInterval)
+	, m_isUseFlipbookMaterialTexture(rhs.m_isUseFlipbookMaterialTexture)
+	, m_wstrFlipbookMaterialPath(rhs.m_wstrFlipbookMaterialPath)
 {
 }
 
@@ -57,6 +59,15 @@ HRESULT CTexture_Flipbook::Initialize_Prototype(_uint iLevel, const _tchar* pFil
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel
 			, ProtoTag.data()
 			, CTexture::Create(m_pDevice, m_pContext, m_wstrNormalPath.c_str()))))
+			return E_FAIL;
+	}
+
+	ProtoTag = ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_wstrFlipbookMaterialPath.c_str());
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, ProtoTag.data()))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel
+			, ProtoTag.data()
+			, CTexture::Create(m_pDevice, m_pContext, m_wstrFlipbookMaterialPath.c_str()))))
 			return E_FAIL;
 	}
 
@@ -160,6 +171,21 @@ void CTexture_Flipbook::Set_Position(_float3 vPos)
 	m_pTransform->Set_Position(vPos);
 }
 
+HRESULT CTexture_Flipbook::Bind_DiffuseTexture(CShader* pShader, const _char* pConstantName)
+{
+	return m_pDiffuseTexture->Bind_ShaderResource(pShader, pConstantName);
+}
+
+HRESULT CTexture_Flipbook::Bind_NormalTexture(CShader* pShader, const _char* pConstantName)
+{
+	return m_pNormalTexture->Bind_ShaderResource(pShader, pConstantName);
+}
+
+HRESULT CTexture_Flipbook::Bind_FilpbookMaterialTexture(CShader* pShader, const _char* pConstantName)
+{
+	return m_pFlipbookMaterialTexture->Bind_ShaderResource(pShader, pConstantName);
+}
+
 void CTexture_Flipbook::Play(_float3 vPos)
 {
 	Set_Position(vPos);
@@ -221,6 +247,8 @@ HRESULT CTexture_Flipbook::Save(const _tchar* pFilePath)
 	WriteFile(hFile, m_wstrNormalPath.data(), sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
 	WriteFile(hFile, &m_isDeleteY, sizeof(m_isDeleteY), &dwByte, nullptr);
 	WriteFile(hFile, &m_fUpdateInterval, sizeof(m_fUpdateInterval), &dwByte, nullptr);
+	WriteFile(hFile, &m_isUseFlipbookMaterialTexture, sizeof(m_fUpdateInterval), &dwByte, nullptr);
+	WriteFile(hFile, m_wstrFlipbookMaterialPath.data(), sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
 	CloseHandle(hFile);
 
 }
@@ -263,6 +291,9 @@ HRESULT CTexture_Flipbook::Load(const _tchar* pFilePath)
 	m_wstrNormalPath = wszBuffer;
 	ReadFile(hFile, &m_isDeleteY, sizeof(m_isDeleteY), &dwByte, nullptr);
 	ReadFile(hFile, &m_fUpdateInterval, sizeof(m_fUpdateInterval), &dwByte, nullptr);
+	ReadFile(hFile, &m_isUseFlipbookMaterialTexture, sizeof(m_isUseFlipbookMaterialTexture), &dwByte, nullptr);
+	ReadFile(hFile, wszBuffer, sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
+	m_wstrFlipbookMaterialPath = wszBuffer;
 
 	CloseHandle(hFile);
 }
@@ -337,6 +368,11 @@ HRESULT CTexture_Flipbook::Add_Components()
 			TEXT("Com_NormalTexture"), reinterpret_cast<CComponent**>(&m_pNormalTexture))))
 			throw(TEXT("Com_NormalTexture"));
 
+		/* Com_FlipbookMaterialTexture */
+		if (FAILED(CComposite::Add_Component(m_iLevel, ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_wstrFlipbookMaterialPath.c_str()).c_str(),
+			TEXT("Com_FlipbookMaterialTexture"), reinterpret_cast<CComponent**>(&m_pFlipbookMaterialTexture))))
+			throw(TEXT("Com_FlipbookMaterialTexture"));
+
 		/* Com_Buffer */
 		if (FAILED(CComposite::Add_Component(0, TEXT("Prototype_Component_VIBuffer_Rect"),
 			TEXT("Com_Buffer"), reinterpret_cast<CComponent**>(&m_pBuffer))))
@@ -365,14 +401,16 @@ HRESULT CTexture_Flipbook::SetUp_ShaderResources()
 	// Textures
 	if (nullptr != m_pDiffuseTexture)
 		FAILED_CHECK_RETURN(m_pDiffuseTexture->Bind_ShaderResource(m_pShader, "g_DiffuseTexture"), E_FAIL);
-	if (true == m_isUseNormalTexture && nullptr != m_pNormalTexture)
+	if (true == m_isUseNormalTexture)
 		FAILED_CHECK_RETURN(m_pNormalTexture->Bind_ShaderResource(m_pShader, "g_NormalTexture"), E_FAIL);
-
+	if (true == m_isUseFlipbookMaterialTexture)
+		FAILED_CHECK_RETURN(m_pFlipbookMaterialTexture->Bind_ShaderResource(m_pShader, "g_FlipbookMaterialTexture"), E_FAIL);
 	// Raw Values
 	FAILED_CHECK_RETURN(m_pShader->Bind_RawValue("g_iCurIndex", &m_iCurIndex, sizeof m_iCurIndex), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShader->Bind_RawValue("g_iWidthLength", &m_iWidthLength, sizeof m_iWidthLength), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShader->Bind_RawValue("g_iHeightLength", &m_iHeightLength, sizeof m_iHeightLength), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShader->Bind_RawValue("g_isUseNormalTexture", &m_isUseNormalTexture, sizeof(m_isUseNormalTexture)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShader->Bind_RawValue("g_isUseFlipbookMaterialTexture", &m_isUseNormalTexture, sizeof(m_isUseNormalTexture)), E_FAIL);
 
 	_int iClipChannel = { 3 };
 	if (m_strClipChannel == "Red") { iClipChannel = 0; }
@@ -422,6 +460,7 @@ void CTexture_Flipbook::Free()
 	Safe_Release(m_pRenderer);
 	Safe_Release(m_pDiffuseTexture);
 	Safe_Release(m_pNormalTexture);
+	Safe_Release(m_pFlipbookMaterialTexture);
 	Safe_Release(m_pShader);
 	Safe_Release(m_pBuffer);
 }

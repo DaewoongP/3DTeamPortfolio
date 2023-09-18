@@ -595,28 +595,29 @@ HRESULT COLOR_OVER_LIFETIME::Load(const _tchar* _pDirectoyPath)
 {
 	return S_OK;
 }
-void COLOR_OVER_LIFETIME::Action(PARTICLE_IT& _particle_iter, _float _fTimeDelta)
+void COLOR_OVER_LIFETIME::Action(PARTICLE_IT& _particle_iter, _float4 vMainColor, _float fTimeDelta)
 {
 	if (false == isActivate)
 		return;
-	_float4 changeAmount = vEndColor - vStartColor;
 
-	_particle_iter->vColor.x = CEase::Ease(eEase, _particle_iter->fAge
+	_float4 changeAmount = vEndColor - vStartColor;
+	
+	_particle_iter->vColor.x = vMainColor.x * CEase::Ease(eEase, _particle_iter->fAge
 		, vStartColor.x
 		, changeAmount.x
 		, _particle_iter->fLifeTime);
 
-	_particle_iter->vColor.y = CEase::Ease(eEase, _particle_iter->fAge
+	_particle_iter->vColor.y = vMainColor.y * CEase::Ease(eEase, _particle_iter->fAge
 		, vStartColor.y
 		, changeAmount.y
 		, _particle_iter->fLifeTime);
 
-	_particle_iter->vColor.z = CEase::Ease(eEase, _particle_iter->fAge
+	_particle_iter->vColor.z = vMainColor.z * CEase::Ease(eEase, _particle_iter->fAge
 		, vStartColor.z
 		, changeAmount.z
 		, _particle_iter->fLifeTime);
 
-	_particle_iter->vColor.w = CEase::Ease(eEase, _particle_iter->fAge
+	_particle_iter->vColor.w = vMainColor.w * CEase::Ease(eEase, _particle_iter->fAge
 		, vStartColor.w
 		, changeAmount.w
 		, _particle_iter->fLifeTime);
@@ -732,9 +733,14 @@ void TEXTURE_SHEET_ANIMATION::Action(PARTICLE_IT& _particle_iter, _float fTimeDe
 	if (_particle_iter->iCurIndex > iMaxIndex)
 	{
 		if (false == isLoopOption)
+		{
 			_particle_iter->fLifeTime = 0.f;
+			_particle_iter->iCurIndex = iMaxIndex; // 마지막 1프레임 살아나는거 잡는 코드
+		}
 		else
+		{
 			_particle_iter->iCurIndex = 0;
+		}
 	}
 }
 void TEXTURE_SHEET_ANIMATION::Reset(PARTICLE_IT& _particle_iter)

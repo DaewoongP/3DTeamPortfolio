@@ -815,7 +815,6 @@ HRESULT CRenderer::Render_Bloom()
 
 HRESULT CRenderer::Render_Distortion()
 {
-
 	m_pTexture->Bind_ShaderResource(m_pAfterShader, "g_vDistortionTexture");
 	m_pTexture2->Bind_ShaderResource(m_pAfterShader, "g_vAlphaTexture");
 	m_pTexture3->Bind_ShaderResource(m_pAfterShader, "g_PostProcessingTexture");

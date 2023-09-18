@@ -157,7 +157,7 @@ struct ENGINE_DLL SHAPE_MODULE : public MODULE
 
 	wstring wstrClipTexturePath = { TEXT("../../Resources/Effects/Textures/Default_Particle.png") }; // 아래 인자의 채널에 사용할 텍스처
 	string strClipChannel = { "Red" }; // Red, Greend, Blue, Alpha // 클립 채널(클립 : 알파테스트로 discard)
-	_float fClipThreshold = { 0.33f }; // [0, 1], 이것보다 작은 값들은 알파테스트 실패함.
+	_float fClipThreshold = { 0.f }; // [0, 1], 이것보다 작은 값들은 알파테스트 실패함.
 	_bool isColorAffectsParticles = { true };
 	_bool isAlphaAffectsParticles = { true };
 	_bool isBilinearFiltering = { false };
@@ -182,6 +182,7 @@ struct ENGINE_DLL RENDERER_MODULE : public MODULE
 	wstring wstrShaderTag = { TEXT("Shader_VtxRectColInstance") };
 	wstring wstrMaterialPath = { TEXT("../../Resources/Effects/Textures/Default_Particle.png") };
 	_bool isDeleteY = { false };
+	string strPass = { "Default" };
 };
 struct ENGINE_DLL ROTATION_OVER_LIFETIME_MODULE : public MODULE
 {
@@ -202,12 +203,11 @@ struct ENGINE_DLL COLOR_OVER_LIFETIME : public MODULE
 
 	HRESULT Save(const _tchar* _pDirectoyPath);
 	HRESULT Load(const _tchar* _pDirectoyPath);
-	void Action(PARTICLE_IT& _particle_iter, _float _fTimeDelta);
+	void Action(PARTICLE_IT& _particle_iter, _float4 vMainColor, _float fTimeDelta);
 	void Restart();
 
 	_float4 vStartColor = { 0.f, 0.f, 0.f, 1.f };
 	_float4 vEndColor = { 1.f, 1.f, 1.f, 1.f };
-
 	CEase::EASE eEase = { CEase::OUT_QUINT };
 };
 struct ENGINE_DLL SIZE_OVER_LIFETIME : public MODULE
