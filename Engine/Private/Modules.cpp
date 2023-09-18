@@ -914,7 +914,7 @@ void TEXTURE_SHEET_ANIMATION::Reset(PARTICLE_IT& _particle_iter)
 	if (true == isStartFrameRange)
 		fStartFrame = Random_Generator(vStartFrameRange.x, vStartFrameRange.y);
 
-	_particle_iter->iCurIndex = iMaxIndex * fStartFrame;
+	_particle_iter->iCurIndex = _uint(iMaxIndex * fStartFrame);
 }
 void TEXTURE_SHEET_ANIMATION::Restart()
 {

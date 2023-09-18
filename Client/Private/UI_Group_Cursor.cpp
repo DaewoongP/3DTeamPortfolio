@@ -58,7 +58,7 @@ void CUI_Group_Cursor::Set_CursorPos()
 
 	ScreenToClient(g_hWnd, &ptMouse);
 
-	m_pUI_Effect_Back->Set_XY(_float2(ptMouse.x, ptMouse.y));
+	m_pUI_Effect_Back->Set_XY(_float2(_float(ptMouse.x), _float(ptMouse.y)));
 }
 
 HRESULT CUI_Group_Cursor::Add_Prototype()

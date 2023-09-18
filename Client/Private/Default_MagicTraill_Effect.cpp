@@ -1,5 +1,6 @@
 #include "Default_MagicTraill_Effect.h"
 #include "GameInstance.h"
+#include "Trail.h"
 
 CDefault_MagicTraill_Effect::CDefault_MagicTraill_Effect(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -117,6 +118,16 @@ void CDefault_MagicTraill_Effect::Spline_Move(_float3 vWeight0, _float3 vStartPo
 {
 	_float3 movedPos = XMVectorCatmullRom(vWeight0, vStartPos, vEndPos, vWeight1, fTimeAcc);
 	m_pTransform->Set_Position(movedPos);
+}
+
+void CDefault_MagicTraill_Effect::Set_Trail_HeadColor(_float3 vColor)
+{
+	m_pTrail->Set_Trail_HeadColor(vColor);
+}
+
+void CDefault_MagicTraill_Effect::Set_Trail_TailColor(_float3 vColor)
+{
+	m_pTrail->Set_Trail_TailColor(vColor);
 }
 
 HRESULT CDefault_MagicTraill_Effect::Add_Components()

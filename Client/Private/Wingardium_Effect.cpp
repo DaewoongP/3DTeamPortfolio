@@ -47,6 +47,8 @@ HRESULT CWingardium_Effect::Initialize(void* pArg)
 	
 	for (int i = 0; i < TrailCount; i++)
 	{
+		_float3 vHigh, vLow;
+		m_pTrail[i]->Set_LocalSpace(m_pTransform->Get_WorldMatrixPtr());
 		m_pTrailTransform[i] = m_pTrail[i]->Get_Transform();
 		Safe_AddRef(m_pTrailTransform[i]);
 		m_TrailDesc[i].isFlip = ((i % 2 == 0) ? (true) : (false));
@@ -62,6 +64,7 @@ HRESULT CWingardium_Effect::Initialize(void* pArg)
 
 	for (int i = 0; i < TrailCount/2; i++)
 	{
+		m_pTrailToOrigin[i]->Set_LocalSpace(m_pTransform->Get_WorldMatrixPtr());
 		m_TrailToOriginDesc[i].isEnable = true;
 		m_pTrailToOriginTransform[i] = m_pTrailToOrigin[i]->Get_Transform();
 		Safe_AddRef(m_pTrailToOriginTransform[i]);
@@ -103,6 +106,11 @@ void CWingardium_Effect::TrailAction(_float3 pos, _float fTimeDelta)
 	}
 	else 
 	{
+		_float3 vHigh, vLow;
+		vHigh = _float3(0, 0.5f, 0);
+		vLow = _float3(0, -0.5f, 0);
+		//m_pTrail[m_iCurrentActionParticle]->Reset_Trail(vHigh, vLow);
+
 		m_TrailDesc[m_iCurrentActionParticle].fAnimStart_Y = 0;
 		m_TrailDesc[m_iCurrentActionParticle++].isEnable = true;
 		m_TrailDesc[m_iCurrentActionParticle].isEnable = true;
@@ -123,6 +131,11 @@ void CWingardium_Effect::TrailAction(_float3 pos, _float fTimeDelta)
 				m_TrailDesc[i].fDeadTimer -= fTimeDelta;
 				if (m_TrailDesc[i].fDeadTimer < 0)
 				{
+					//오브제의 영점
+					_float3 vHigh, vLow;
+					vHigh = _float3(0,0.5f,0);
+					vLow =  _float3(0, -0.5f, 0);
+					//m_pTrail[i]->Reset_Trail(vHigh, vLow);
 					m_TrailDesc[i].fSettingLifeTime = Random_Generator(6.f, 10.f);
 					m_TrailDesc[i].fCurrnetLifeTime = m_TrailDesc[i].fSettingLifeTime;
 					m_TrailDesc[i].fToY = Random_Generator(1.f, 2.f);
@@ -146,7 +159,6 @@ void CWingardium_Effect::TrailAction(_float3 pos, _float fTimeDelta)
 			// 설정된 y를 이용해 반지름 설정
 			m_TrailDesc[i].fRadius = CEase::InOutBack(fEase_Y - m_TrailDesc[i].fAnimStart_Y,0, m_TrailDesc[i].fToRadius, m_TrailDesc[i].fToY - m_TrailDesc[i].fAnimStart_Y);
 		
-			// 반지름만큼 trail의 x를 이동
 			_float4x4 parentMatrix = m_pTransform->Get_WorldMatrix();
 			vTrailPos.x = m_TrailDesc[i].fRadius;
 			
@@ -155,7 +167,7 @@ void CWingardium_Effect::TrailAction(_float3 pos, _float fTimeDelta)
 
 			//공전
 			_float4x4 rotationMatrix = XMMatrixRotationY(m_TrailDesc[i].fSpeed * fElapsedTime);
-			m_pTrailTransform[i]->Set_WorldMatrix(m_pTrailTransform[i]->Get_WorldMatrix() * rotationMatrix  * parentMatrix);
+			m_pTrailTransform[i]->Set_WorldMatrix(m_pTrailTransform[i]->Get_WorldMatrix() * rotationMatrix);
 		}
 	}
 
@@ -206,7 +218,7 @@ void CWingardium_Effect::TrailAction(_float3 pos, _float fTimeDelta)
 
 			//공전
 			_float4x4 rotationMatrix = XMMatrixRotationY(m_TrailToOriginDesc[i].fSpeed * fElapsedTime);
-			m_pTrailToOriginTransform[i]->Set_WorldMatrix(m_pTrailToOriginTransform[i]->Get_WorldMatrix() * rotationMatrix * parentMatrix);
+			m_pTrailToOriginTransform[i]->Set_WorldMatrix(m_pTrailToOriginTransform[i]->Get_WorldMatrix() * rotationMatrix);
 		}
 	}
 

@@ -82,7 +82,7 @@ void CLevioso::Tick(_float fTimeDelta)
 		m_fLerpAcc += fTimeDelta / m_MagicBallDesc.fInitLifeTime * m_fTimeScalePerDistance;
 		if (m_fLerpAcc > 1)
 			m_fLerpAcc = 1;
-		m_pEffect->Spin_Move(m_MagicBallDesc.vStartPosition, m_vTargetPosition, m_fLerpAcc, fTimeDelta);
+		m_pEffect->Spin_Move(m_MagicBallDesc.vStartPosition, m_vTargetPosition, m_fLerpAcc);
 	}
 	else 
 	{
@@ -150,7 +150,7 @@ HRESULT CLevioso::Add_Effect()
 
 CLevioso* CLevioso::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CLevioso* pInstance = New CLevioso(pDevice, pContext);
+	CLevioso* pInstance = new CLevioso(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -163,7 +163,7 @@ CLevioso* CLevioso::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 CGameObject* CLevioso::Clone(void* pArg)
 {
-	CLevioso* pInstance = New CLevioso(*this);
+	CLevioso* pInstance = new CLevioso(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
