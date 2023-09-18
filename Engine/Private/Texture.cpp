@@ -73,7 +73,8 @@ _int CTexture::Get_TextureIndex_By_Path(const _tchar* pPath)
 
 HRESULT CTexture::Initialize_Prototype(const _tchar* pTextureFilePath, _uint iNumTextures)
 {
-	//FAILED_CHECK_RETURN(CoInitializeEx(nullptr, 0), E_FAIL);
+	// 여기서 터질경우 아래코드 주석걸고 일단 진행하세요.
+	FAILED_CHECK_RETURN(CoInitializeEx(nullptr, 0), E_FAIL);
 
 	_tchar			szTextureFilePath[MAX_PATH] = TEXT("");
 	
@@ -146,7 +147,7 @@ CTexture* CTexture::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,
 
 	if (FAILED(pInstance->Initialize_Prototype(pTextureFilePath, iNumTextures)))
 	{
-		//MSG_BOX("Failed to Created CTexture");
+		MSG_BOX("Failed to Created CTexture");
 		Safe_Release(pInstance);
 	}
 

@@ -639,9 +639,6 @@
     <ClInclude Include="..\Public\Parts.h">
       <Filter>01. Utility\02. GameObjects\00. Parts</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\PXEventCallBack.h">
-      <Filter>01. Utility\11. Physics\EventCallBack</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Component_Manager.h">
       <Filter>01. Utility\03. Components\00. Manager</Filter>
     </ClInclude>
@@ -740,6 +737,9 @@
     </ClInclude>
     <ClInclude Include="..\public\BehaviorCallBack.h">
       <Filter>01. Utility\03. Components\13. CharacterController\BehaviorCallBack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PXEventCallBack.h">
+      <Filter>01. Utility\11. Physics\EventCallBack</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -986,9 +986,6 @@
     <ClCompile Include="..\Private\Parts.cpp">
       <Filter>01. Utility\02. GameObjects\00. Parts</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\PXEventCallBack.cpp">
-      <Filter>01. Utility\11. Physics\EventCallBack</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\MeshEffect.cpp">
       <Filter>01. Utility\03. Components\16. MeshEffect</Filter>
     </ClCompile>
@@ -1084,6 +1081,9 @@
     </ClCompile>
     <ClCompile Include="..\private\BehaviorCallBack.cpp">
       <Filter>01. Utility\03. Components\13. CharacterController\BehaviorCallBack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PXEventCallBack.cpp">
+      <Filter>01. Utility\11. Physics\EventCallBack</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
