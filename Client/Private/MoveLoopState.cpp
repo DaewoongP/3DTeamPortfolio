@@ -3,6 +3,8 @@
 #include "GameInstance.h"
 #include "Client_Defines.h"
 
+#include "StateContext.h"
+
 CMoveLoopState::CMoveLoopState(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
 	:CStateMachine(_pDevice, _pContext)
 {
@@ -45,14 +47,38 @@ void CMoveLoopState::OnStateTick()
 {
 	LookFront();
 
-	Over_135();
+	//Over_135();
 
 	Go_Idle();
 
+	Go_Roll();
+
+	Go_Jump();
+
+	Switch_Joging_Sprint();
+
 	if (m_pOwnerModel->Is_Finish_Animation())
 	{
-		m_pOwnerModel->Change_Animation(TEXT("Hu_BM_Jog_Loop_Fwd_anm"));
+		switch (*m_pIsSprint)
+		{
+		case CStateContext::JOGING:
+		{
+			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_Jog_Loop_Fwd_anm"));
+		}
+		break;
+
+		case CStateContext::SPRINT:
+		{
+			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_Sprint_Loop_Fwd_anm"));
+		}
+		break;
+
+		default:
+			break;
+		}
 	}
+
+	
 }
 
 void CMoveLoopState::OnStateExit()
@@ -98,66 +124,83 @@ void CMoveLoopState::Go_Idle()
 	//방향키가 눌리지 않았을 경우
 	if (true != *m_pIsDirectionKeyPressed)
 	{
-		m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_anm"));
+		switch (*m_pIsSprint)
+		{
+		case CStateContext::JOGING:
+		{
+			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_anm"));
+		}
+		break;
+
+		case CStateContext::SPRINT:
+		{
+			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Sprint_Stop_Fwd_anm"));
+		}
+		break;
+
+		default:
+			break;
+		}
 		Set_StateMachine(TEXT("Idle"));
 	}
 }
 
-
-void CMoveLoopState::None_Angle()
+void CMoveLoopState::Go_Roll()
 {
-	//상태에 따라 걸을지, 뛸지, 전력 질주 할지 정해야 할수도 있다.
-	//일단 뛰는것만 처리한다.
 	BEGININSTANCE;
 
-	if (pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON))
+	if (pGameInstance->Get_DIKeyState(DIK_LCONTROL, CInput_Device::KEY_DOWN))
 	{
-		m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Idle2Cmbt_RF_Wand_Equip_anm"));
-	}
-
-	if (true == *m_pIsDirectionKeyPressed)
-	{
-		m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Start_Fwd_anm"));
+		Set_StateMachine(TEXT("Roll"));
 	}
 
 	ENDINSTANCE;
 }
 
-void CMoveLoopState::Right_Angle()
+void CMoveLoopState::Go_Jump()
 {
-	//각도에 따른 처리만 한다.
+	BEGININSTANCE;
 
-	//135보다 적다면
-	if (m_f135Angle < (*m_pOwnerLookAngle))
+	if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
 	{
-		//180도를 실행
-		m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Idle_Turn_Rht_180_anm"));
+		Set_StateMachine(TEXT("Jump"));
 	}
-	//이외라면
-	else if (m_f45Angle < (*m_pOwnerLookAngle))
-	{
-		//90도를 실행
-		m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Idle_Turn_Rht_90_anm"));
-	}
+
+	ENDINSTANCE;
 }
 
-void CMoveLoopState::Left_Angle()
+void CMoveLoopState::Switch_Joging_Sprint()
 {
-	//각도에 따른 처리만 한다.
+	BEGININSTANCE;
 
-	//135보다 적다면
-	if (-m_f135Angle > (*m_pOwnerLookAngle))
+	//키를 눌렀을때
+	if (pGameInstance->Get_DIKeyState(DIK_LSHIFT, CInput_Device::KEY_DOWN))
 	{
-		//180도를 실행
-		m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Idle_Turn_Lft_180_anm"));
+		*m_pIsSprint = !(*m_pIsSprint);
+
+		switch (*m_pIsSprint)
+		{
+		case CStateContext::JOGING:
+		{
+			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_Sprint2Jog_RU_anm"));
+		}
+		break;
+
+		case CStateContext::SPRINT:
+		{
+			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_Jog2Sprint_RU_anm"));
+		}
+		break;
+
+		default:
+			break;
+		}
 	}
-	//이외라면
-	else if (-m_f45Angle > (*m_pOwnerLookAngle))
-	{
-		//90도를 실행
-		m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Idle_Turn_Lft_90_anm"));
-	}
+
+	ENDINSTANCE;
 }
+
+
 
 
 CMoveLoopState* CMoveLoopState::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

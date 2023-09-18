@@ -111,6 +111,8 @@ HRESULT CStateContext::Add_StateMachine(const _tchar* _pTag, CStateMachine* _pSt
 	_pState->Set_OwnerLookAngle(m_pOwnerLookAngle);
 	_pState->Set_IsDirectionKeyPressed(m_pIsDirectionPressed);
 	_pState->Set_PlayerTransform(m_pPlayerTransform);
+	_pState->Set_IsSprint(&m_isSprint);
+	_pState->Set_ActionSwitch(&m_iActionSwitch);
 
 	m_pStateMachines.emplace(_pTag, _pState);
 
@@ -161,6 +163,42 @@ HRESULT CStateContext::Ready_StateMachine()
 		static_cast<CStateMachine*>
 		(pGameInstance->Clone_Component(LEVEL_MAINGAME,
 			TEXT("Prototype_Component_State_Move_Loop"))))))
+	{
+		ENDINSTANCE;
+
+		MSG_BOX("Failed Ready_StateMachine");
+
+		return E_FAIL;
+	};
+
+	if (FAILED(Add_StateMachine(TEXT("Roll"),
+		static_cast<CStateMachine*>
+		(pGameInstance->Clone_Component(LEVEL_MAINGAME,
+			TEXT("Prototype_Component_State_Roll"))))))
+	{
+		ENDINSTANCE;
+
+		MSG_BOX("Failed Ready_StateMachine");
+
+		return E_FAIL;
+	};
+
+	if (FAILED(Add_StateMachine(TEXT("Jump"),
+		static_cast<CStateMachine*>
+		(pGameInstance->Clone_Component(LEVEL_MAINGAME,
+			TEXT("Prototype_Component_State_Jump"))))))
+	{
+		ENDINSTANCE;
+
+		MSG_BOX("Failed Ready_StateMachine");
+
+		return E_FAIL;
+	};
+
+	if (FAILED(Add_StateMachine(TEXT("Hard Land"),
+		static_cast<CStateMachine*>
+		(pGameInstance->Clone_Component(LEVEL_MAINGAME,
+			TEXT("Prototype_Component_State_Hard_Land"))))))
 	{
 		ENDINSTANCE;
 

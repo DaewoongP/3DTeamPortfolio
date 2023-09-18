@@ -32,7 +32,8 @@ public:
     void Set_OwnerLookAngle(_float* _pOwnerLookAngle);
     void Set_IsDirectionKeyPressed(_bool* _pIsDirectionKeyPressed);
     void Set_PlayerTransform(CTransform* _pPlayerTransform);
-
+    void Set_IsSprint(_bool* _pIsSprint) { m_pIsSprint = _pIsSprint; }
+    void Set_ActionSwitch(_uint* _pIActionSwitch) { m_pIActionSwitch = _pIActionSwitch; }
 
 public:
     virtual HRESULT Initialize_Prototype();
@@ -54,6 +55,10 @@ protected:
     _float m_f45Angle = { XMConvertToRadians(45.0f) };
     _float m_f135Angle = { XMConvertToRadians(135.0f) };
     
+    _bool* m_pIsSprint = { nullptr };
+    _uint* m_pIActionSwitch = { nullptr };
+
+
 public:
     static CStateMachine* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
     virtual CComposite* Clone(void* pArg) override;
