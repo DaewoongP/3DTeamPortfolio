@@ -164,7 +164,7 @@ HRESULT CLevel_MainGame::Ready_Layer_BackGround(const _tchar* pLayerTag)
 	Safe_AddRef(pGameInstance);
 
 	/* Add Scene : Main */
-	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
+ 	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
 	{
 		MSG_BOX("Failed Add Scene : (Scene_Main)");
 		ENDINSTANCE;

@@ -1,20 +1,17 @@
+#include "Shader_EngineHeader.hlsli"
 
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
-matrix g_ViewMatrixInv, g_ProjMatrixInv;
 
 texture2D g_Texture;
 vector g_vCamPosition;
 float g_fCamFar;
 
-texture2D g_SSAOTexture;
-texture2D g_BlurTexture;
-texture2D g_PostProcessingTexture;
-texture2D g_NoiseTexture;
-texture2D g_vAlphaTexture;
+
 texture2D g_DoBlurTexture;
 texture2D g_WhiteBloomTexture;
 texture2D g_GlowTexture;
 texture2D g_OriTexture;
+texture2D g_PostProcessingTexture;
 
 vector g_vLightDiffuse;
 vector g_vLightAmbient;
@@ -31,130 +28,6 @@ float BlurWeights[23] =
 };
 float total = 11.4776f;
 
-/* Sampler State */
-sampler LinearSampler = sampler_state
-{
-    Filter = MIN_MAG_MIP_LINEAR;
-    AddressU = WRAP;
-    AddressV = WRAP;
-};
-
-sampler PointSampler = sampler_state
-{
-    Filter = MIN_MAG_MIP_POINT;
-    AddressU = WRAP;
-    AddressV = WRAP;
-};
-sampler BlurSampler = sampler_state
-{
-    Filter = MIN_MAG_MIP_LINEAR;
-    AddressU = clamp;
-    AddressV = clamp;
-};
-
-sampler BloomSampler = sampler_state
-{
-    Filter = MIN_MAG_MIP_POINT;
-    AddressU = clamp;
-    AddressV = clamp;
-};
-sampler DistortionSampler = sampler_state
-{
-    Filter = MIN_MAG_MIP_LINEAR;
-    AddressU = clamp;
-    AddressV = clamp;
-};
-/* Raterizer State */
-RasterizerState RS_Default
-{
-    FillMode = Solid;
-    CullMode = Back;
-    FrontCounterClockwise = false;
-};
-
-RasterizerState RS_Cull_CW
-{
-    FillMode = Solid;
-    CullMode = front;
-    FrontCounterClockwise = false;
-};
-
-RasterizerState RS_Cull_None
-{
-    FillMode = Solid;
-    CullMode = None;
-    FrontCounterClockwise = false;
-};
-
-/* Depth_Stencil State */
-
-DepthStencilState DSS_Default
-{
-    DepthEnable = true;
-    DepthWriteMask = all;
-    DepthFunc = less_equal;
-};
-
-DepthStencilState DSS_Depth_Disable
-{
-    DepthEnable = false;
-    DepthWriteMask = zero;
-};
-
-/* Blend State */
-BlendState BS_Default
-{
-    BlendEnable[0] = false;
-};
-
-BlendState BS_AlphaBlend
-{
-    BlendEnable[0] = true;
-
-    SrcBlend = Src_Alpha;
-    DestBlend = Inv_Src_Alpha;
-    BlendOp = Add;
-};
-
-BlendState BS_BlendOne
-{
-// 렌더타겟 두개를 합칠 것이므로 0번, 1번 둘다 처리해줘야한다.
-    BlendEnable[0] = true;
-    BlendEnable[1] = true;
-
-    SrcBlend = one;
-    DestBlend = one;
-    BlendOp = Add;
-};
-
-matrix MyMatrixLookAtLH(float4 vEye, float4 vAt)
-{
-    matrix ViewMatrix = matrix(
-    1.f, 0.f, 0.f, 0.f,
-    0.f, 1.f, 0.f, 0.f,
-    0.f, 0.f, 1.f, 0.f,
-    0.f, 0.f, 0.f, 1.f);
-    
-    vector vLook = float4(normalize(vAt.xyz - vEye.xyz), 0.f);
-    vector vRight = float4(normalize(cross(float3(0.f, 1.f, 0.f), vLook.xyz)), 0.f);
-    vector vUp = float4(normalize(cross(vLook.xyz, vRight.xyz)), 0.f);
-    
-    ViewMatrix = matrix(vRight, vUp, vLook, float4(0.f, 0.f, 0.f, 1.f));
-    matrix TransposeViewMatrix = transpose(ViewMatrix);
-    
-    vector vPosition = float4(
-    -1.f * dot(vEye, vRight),
-    -1.f * dot(vEye, vUp),
-    -1.f * dot(vEye, vLook),
-    1.f);
-    
-    TransposeViewMatrix._41 = vPosition.x;
-    TransposeViewMatrix._42 = vPosition.y;
-    TransposeViewMatrix._43 = vPosition.z;
-    TransposeViewMatrix._44 = vPosition.w;
-
-    return TransposeViewMatrix;
-}
 
 struct VS_IN
 {
@@ -264,41 +137,7 @@ struct PS_OUT
 //    return Out;
 //}
 
-PS_OUT PS_MAIN_DISTORTION(PS_IN In)
-{
-    PS_OUT Out = (PS_OUT) 0;
 
-    
-    
-    vector noise1 = g_NoiseTexture.Sample(LinearSampler, In.texCoords1);
-    vector noise2 = g_NoiseTexture.Sample(LinearSampler, In.texCoords2);
-    vector noise3 = g_NoiseTexture.Sample(LinearSampler, In.texCoords3);
-   // Out.vColor = noise1;
-    //return Out;
-    
-    noise1.x = (noise1.x - 0.5f) * 2.0f;
-    noise2.x = (noise2.x - 0.5f) * 2.0f;
-    noise3.x = (noise3.x - 0.5f) * 2.0f;
-
-    noise1.xy = noise1.xy * float2(0.1f, 0.2f);
-    noise2.xy = noise2.xy * float2(0.1f, 0.3f);
-    noise3.xy = noise3.xy * float2(0.1f, 0.1f);
-    
-    vector FinalNoise = noise1 + noise2 + noise3;
-    float perturb = ((1.f - In.vTexUV.y) * 0.8f) + 0.5f;
-    
-    float2 newUV;
-    newUV.xy = (FinalNoise.xy * perturb) + In.vTexUV.xy;
-    
-    vector vPost = g_PostProcessingTexture.Sample(DistortionSampler, newUV.xy);
-    vector vAlpha = g_vAlphaTexture.Sample(DistortionSampler, newUV.xy);
-    
-    Out.vColor = vPost;
-    
-    Out.vColor *= vAlpha;
-    
-    return Out;
-}
 PS_OUT PS_MAIN_BLURX(PS_IN_POSTEX In)
 {
     PS_OUT Out = (PS_OUT) 0;
@@ -400,18 +239,7 @@ PS_OUT PS_MAIN_GLOW(PS_IN_POSTEX In)
 }
 technique11 DefaultTechnique
 {
-   
-    pass Distortion
-    {
-        SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_Depth_Disable, 0);
-        SetBlendState(BS_BlendOne, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN();
-        GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
-        HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
-        DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
-        PixelShader = compile ps_5_0 PS_MAIN_DISTORTION();
-    }
+  
 
     pass Bloom
     {
