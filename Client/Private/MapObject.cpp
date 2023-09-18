@@ -125,18 +125,21 @@ HRESULT CMapObject::Add_Components(MAPOBJECTDESC* pMapObjectDesc)
 	RigidBodyDesc.fRestitution = 0.f;
 	RigidBodyDesc.pOwnerObject = this;
 	RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 1.f, 1.f);
-	RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
-	RigidBodyDesc.vInitRotation = m_pTransform->Get_Quaternion();
-
+	
 	vector<CMesh*> Meshes = *m_pModel->Get_MeshesVec();
 	vector<_float3> Vertices;
 	vector<PxU32> Indices;
 	_uint iIndex = { 0 };
+	
 	for (auto& pMesh : Meshes)
 	{
 		vector<_float3> MeshVertices = *pMesh->Get_VerticesPositionVec();
 		// ¹öÅØ½º º¤ÅÍ¿¡ º¤ÅÍ¸¦ »ðÀÔÇÏ´Â ÇÔ¼ö
-		Vertices.insert(Vertices.end(), MeshVertices.begin(), MeshVertices.end());
+		
+		for (auto& MeshVetex : MeshVertices)
+		{
+			Vertices.push_back(XMVector3TransformCoord(MeshVetex, pMapObjectDesc->WorldMatrix));
+		}
 
 		vector<PxU32> MeshIndices = *pMesh->Get_IndicesVec();
 

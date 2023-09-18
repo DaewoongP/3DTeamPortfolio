@@ -106,7 +106,6 @@ private:
 	class CComboBox* m_pAngularVelocityXEaseCombo = { nullptr };
 	class CComboBox* m_pAngularVelocityYEaseCombo = { nullptr };
 	class CComboBox* m_pAngularVelocityZEaseCombo = { nullptr };
-
 	class CImageFileDialog* m_pMaterialTextureIFD = { nullptr };
 	class CImageFileDialog* m_pAlphaTextureIFD = { nullptr };
 	class CImageFileDialog* m_pSpriteTextureIFD = { nullptr };

@@ -101,6 +101,7 @@ HRESULT CCharacterController::Initialize(void* pArg)
 	Safe_Release(pPhysX_Manager);
 
 	PxRigidDynamic* m_pActor = m_pController->getActor();
+	m_pActor->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, false);
 	_uint iNumShapes = m_pActor->getNbShapes();
 
 	vector<PxShape*> Shapes(iNumShapes);
