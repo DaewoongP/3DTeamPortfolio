@@ -165,7 +165,6 @@
   <ItemGroup>
     <ClInclude Include="..\Public\Action.h" />
     <ClInclude Include="..\Public\Action_Deflect.h" />
-    <ClInclude Include="..\Public\Confringo.h" />
     <ClInclude Include="..\public\Main3_Loader.h" />
     <ClInclude Include="..\Public\Check_Distance.h" />
     <ClInclude Include="..\public\Main0_Loader.h" />
@@ -296,7 +295,6 @@
   <ItemGroup>
     <ClCompile Include="..\Private\Action.cpp" />
     <ClCompile Include="..\Private\Action_Deflect.cpp" />
-    <ClCompile Include="..\Private\Confringo.cpp" />
     <ClCompile Include="..\private\Main3_Loader.cpp" />
     <ClCompile Include="..\Private\Check_Distance.cpp" />
     <ClCompile Include="..\private\Main0_Loader.cpp" />

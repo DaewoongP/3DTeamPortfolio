@@ -76,7 +76,7 @@ void CLevioso::Tick(_float fTimeDelta)
 		// 이동시켜주는 로직임.
 		// 여기서 뻉뻉이 돌려주자.
 		m_fLerpAcc += fTimeDelta / m_MagicBallDesc.fInitLifeTime;
-		m_pEffect->Spin_Move(m_MagicBallDesc.vStartPosition, m_vTargetPosition, m_fLerpAcc);
+		m_pEffect->Action_Magic(CDefault_MagicTraill_Effect::TRAILACTION_STRIGHT, m_MagicBallDesc.vStartPosition, m_vTargetPosition, m_fLerpAcc, fTimeDelta);
 	}
 	else 
 	{
@@ -90,7 +90,6 @@ void CLevioso::Tick(_float fTimeDelta)
 		}
 		else 
 		{
-			m_MagicTimer -= fTimeDelta;
 			m_pWingardiumEffect->TrailAction(fTimeDelta);
 			m_pWingardiumEffectTrans->Set_Position(m_pTarget->Get_Position());
 		}
@@ -125,9 +124,8 @@ HRESULT CLevioso::Add_Components()
 
 HRESULT CLevioso::Add_Effect()
 {
-	_float3 vInitPosition = m_MagicBallDesc.vStartPosition;
 	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Default_MagicTraill_Effect"), 
-		TEXT("Com_Effect"), reinterpret_cast<CComponent**>(&m_pEffect),&vInitPosition)))
+		TEXT("Com_Effect"), reinterpret_cast<CComponent**>(&m_pEffect))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Default_MagicTraill_Effect)");
 		return E_FAIL;

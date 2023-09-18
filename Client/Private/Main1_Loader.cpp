@@ -25,7 +25,6 @@
 #include "Protego.h"
 #include "Revelio.h"
 #include "Levioso.h"
-#include "Confringo.h"
 #include "Wingardiumleviosa.h"
 #pragma endregion Magic
 
@@ -261,12 +260,6 @@ HRESULT CMain1_Loader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Levioso"),
 			CLevioso::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Levioso");
-
-		/* For.Prototype_GameObject_Confringo */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Confringo"),
-			CConfringo::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_Confringo");
-
 #pragma endregion
 
 		/* For.Prototype_GameObject_Protego_Effect*/

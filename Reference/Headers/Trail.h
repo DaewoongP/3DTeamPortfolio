@@ -48,15 +48,11 @@ public:
 public:
 	void Enable() { m_isEnable = true; }
 	void Disable() { m_isEnable = false; }
-	HRESULT Reset_Trail(_float3 vHighPos, _float3 vLowPos) { return m_pBuffer->Reset_Trail(vHighPos, vLowPos); }
 	HRESULT Reset_Trail() {
 		if (m_pBuffer != nullptr)
 			return m_pBuffer->Reset_Trail();
 		return E_FAIL;
 	}
-	void Set_Trail_HeadColor(_float3 vColor) {	m_vHeadColor = vColor;}
-	void Set_Trail_TailColor(_float3 vColor) { m_vTailColor = vColor; }
-	void Set_LocalSpace(const _float4x4* matrix) { m_LocalSpace = matrix; }
 
 protected:
 	HRESULT Save(const _tchar* pFilePath);
@@ -85,10 +81,6 @@ protected: /* For. Component */
 	// 꼬리 지속시간
 	_float m_fTailDuration = { 0.032f };
 	_float m_fTimeAcc = { 0.f };
-	
-	//로컬스페이스용
-	const _float4x4* m_LocalSpace = { nullptr };
-	_float4x4		 m_CombineMatrix;
 
 protected:
 	CRenderer* m_pRenderer = { nullptr };
