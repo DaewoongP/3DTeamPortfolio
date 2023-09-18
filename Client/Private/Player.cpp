@@ -216,7 +216,7 @@ HRESULT CPlayer::Add_Components()
 	magicInitDesc.fDamage = 0.f;
 	magicInitDesc.fCastDistance = 1000;
 	magicInitDesc.fBallDistance = 30;
-	magicInitDesc.fLifeTime = 5.f;
+	magicInitDesc.fLifeTime = 3.f;
 
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Magic"),
 		TEXT("Com_Magic"), reinterpret_cast<CComponent**>(&m_pMagic), &magicInitDesc)))
@@ -282,12 +282,12 @@ void CPlayer::Key_Input(_float fTimeDelta)
 	{
 		if (m_pMagic != nullptr)
 		{
-			// ¸ñÇ¥ÀÇ transform°ú ½ÃÀÛ À§Ä¡¸¦ °¡Á®¿Í¾ßÇÕ´Ï´Ù.
-			// ¾ÆÁ÷ Å¸°Ù ¼³Á¤ÇÏ´Â°Ô ¾ø¾î¼­ ³Î·Î ³Ö¾úÀ½.
-			// ÁöÆÎÀÌ À§Ä¡¸¦ 2¹øÂ° ÀÎÀÚ pos·Î ³Ö¾î¾ßÇÏ´Âµ¥ ÁöÆÎÀÌµµ ¾ø¾î¼­ ±×³É pTransform->Get_Position()·Î ³ÖÀ½.
-			// ÀÓÀÇ·Î ¾Æ¹«°Å³ª Áı¾î¿À°ÚÀ½.
+			// ëª©í‘œì˜ transformê³¼ ì‹œì‘ ìœ„ì¹˜ë¥¼ ê°€ì ¸ì™€ì•¼í•©ë‹ˆë‹¤.
+			// ì•„ì§ íƒ€ê²Ÿ ì„¤ì •í•˜ëŠ”ê²Œ ì—†ì–´ì„œ ë„ë¡œ ë„£ì—ˆìŒ.
+			// ì§€íŒ¡ì´ ìœ„ì¹˜ë¥¼ 2ë²ˆì§¸ ì¸ì posë¡œ ë„£ì–´ì•¼í•˜ëŠ”ë° ì§€íŒ¡ì´ë„ ì—†ì–´ì„œ ê·¸ëƒ¥ pTransform->Get_Position()ë¡œ ë„£ìŒ.
+			// ì„ì˜ë¡œ ì•„ë¬´ê±°ë‚˜ ì§‘ì–´ì˜¤ê² ìŒ.
 			
-			/* ÀÌ°Å´Â Å×½ºÆ® ¿ëÀ¸·Î ´õ¹ÌÅ¬·¡½º Ã£À¸·Á°í ³ÖÀº ÄÚµå¸¦ ÈÉÃÄ¿Â°ÅÀÓ */
+			/* ì´ê±°ëŠ” í…ŒìŠ¤íŠ¸ ìš©ìœ¼ë¡œ ë”ë¯¸í´ë˜ìŠ¤ ì°¾ìœ¼ë ¤ê³  ë„£ì€ ì½”ë“œë¥¼ í›”ì³ì˜¨ê±°ì„ */
 			CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Debug"), TEXT("GameObject_Dummy")));
 			if (nullptr == pTestTarget)
 				throw TEXT("pTestTarget is nullptr");
@@ -383,7 +383,7 @@ HRESULT CPlayer::Ready_MeshParts()
 
 HRESULT CPlayer::Ready_Camera()
 {
-	//¾î¶² »À¿¡ ºÙÀÏ °ÍÀÎ°¡.
+	//ì–´ë–¤ ë¼ˆì— ë¶™ì¼ ê²ƒì¸ê°€.
 	_uint iBoneIndex{ 0 };
 
 	m_pCustomModel->Find_BoneIndex(TEXT("SKT_HeadCamera"), &iBoneIndex);
@@ -421,7 +421,7 @@ HRESULT CPlayer::Ready_Camera()
 
 void CPlayer::MagicTestTextOutput()
 {
-	cout << "¸¶¹ı ¹ßµ¿" << endl;
+	cout << "ë§ˆë²• ë°œë™" << endl;
 }
 
 #ifdef _DEBUG
@@ -441,32 +441,32 @@ void CPlayer::UpdateLookAngle()
 	
 	m_isDirectionKeyPressed = false;
 
-	//Å° ÀÔ·Â¿¡ µû¶ó ºñ±³ °¢ÀÌ ¹Ù²ï´Ù.
+	//í‚¤ ì…ë ¥ì— ë”°ë¼ ë¹„êµ ê°ì´ ë°”ë€ë‹¤.
 
 	_float3 vNextLook{};
 
-	//¾Õ Å° > ·è
+	//ì• í‚¤ > ë£©
 	if (pGameInstance->Get_DIKeyState(DIK_W, CInput_Device::KEY_PRESSING) || 
 		pGameInstance->Get_DIKeyState(DIK_W,CInput_Device::KEY_DOWN))
 	{
 		vNextLook = m_pPlayer_Camera->Get_CamLookXZ();
 		m_isDirectionKeyPressed = true;
 	}
-	//µŞ Å° > -·è
+	//ë’· í‚¤ > -ë£©
 	else if (pGameInstance->Get_DIKeyState(DIK_S, CInput_Device::KEY_PRESSING) ||
 		pGameInstance->Get_DIKeyState(DIK_S, CInput_Device::KEY_DOWN))
 	{
 		vNextLook = -m_pPlayer_Camera->Get_CamLookXZ();
 		m_isDirectionKeyPressed = true;
 	}
-	//¿À¸¥ÂÊ Å° > ¶óÀÌÆ®
+	//ì˜¤ë¥¸ìª½ í‚¤ > ë¼ì´íŠ¸
 	else if (pGameInstance->Get_DIKeyState(DIK_D, CInput_Device::KEY_PRESSING) ||
 		pGameInstance->Get_DIKeyState(DIK_D, CInput_Device::KEY_DOWN))
 	{
 		vNextLook = m_pPlayer_Camera->Get_CamRightXZ();
 		m_isDirectionKeyPressed = true;
 	}
-	//¿ŞÂÊ Å° > -¶óÀÌÆ®
+	//ì™¼ìª½ í‚¤ > -ë¼ì´íŠ¸
 	else if (pGameInstance->Get_DIKeyState(DIK_A, CInput_Device::KEY_PRESSING) ||
 		pGameInstance->Get_DIKeyState(DIK_A, CInput_Device::KEY_DOWN))
 	{
@@ -474,21 +474,21 @@ void CPlayer::UpdateLookAngle()
 		m_isDirectionKeyPressed = true;
 	}
 
-	//ÇÃ·¹ÀÌ¾îÀÇ ·èÀ» °¡Áö°í ¿Â´Ù.
+	//í”Œë ˆì´ì–´ì˜ ë£©ì„ ê°€ì§€ê³  ì˜¨ë‹¤.
 	_float3 vPlayerLook = m_pTransform->Get_Look();
 
-	//y°ª Áö¿ì°í
+	//yê°’ ì§€ìš°ê³ 
 	vPlayerLook = XMVectorSetY(vPlayerLook, 0.0f);
 
 	vPlayerLook.Normalize();
 
-	//³»ÀûÇÑ´Ù.cos(-1 ~ 1)
+	//ë‚´ì í•œë‹¤.cos(-1 ~ 1)
 	_float fLookAngle = vPlayerLook.Dot(vNextLook);
 
-	//¶óµğ¾È È­
+	//ë¼ë””ì•ˆ í™”
 	m_fLookAngle = acosf(fLookAngle);
 
-	//ÁÂ¿ì ±¸ºĞÀ» À§ÇÑ ¿ÜÀû
+	//ì¢Œìš° êµ¬ë¶„ì„ ìœ„í•œ ì™¸ì 
 	if (0.0f > vPlayerLook.Cross(vNextLook).y)
 	{
 		m_fLookAngle *= -1;

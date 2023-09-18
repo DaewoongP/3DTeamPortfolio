@@ -286,6 +286,9 @@
     <Filter Include="01. Levels\99. Loading\Loader">
       <UniqueIdentifier>{5d7f902a-4002-432f-8bd9-34922b397410}</UniqueIdentifier>
     </Filter>
+    <Filter Include="04. Magic\MagicBall\06. Confringo">
+      <UniqueIdentifier>{f2eb1727-1265-443b-960c-a8800034b231}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -597,6 +600,9 @@
     <ClInclude Include="..\public\Main0_Loader.h">
       <Filter>01. Levels\99. Loading\Loader</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Confringo.h">
+      <Filter>04. Magic\MagicBall\06. Confringo</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -877,6 +883,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Main0_Loader.cpp">
       <Filter>01. Levels\99. Loading\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Confringo.cpp">
+      <Filter>04. Magic\MagicBall\06. Confringo</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

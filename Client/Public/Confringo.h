@@ -2,17 +2,18 @@
 #include "GameObject.h"
 #include "Client_Defines.h"
 #include "MagicBall.h"
-//삥삥 도는 트레일 하나
+
+//스플라인 트레일 파티클
 #include "Default_MagicTraill_Effect.h"
-#include "Wingardium_Effect.h"
+//팡!!
 
 BEGIN(Client)
-class CLevioso final : public CMagicBall
+class CConfringo final : public CMagicBall
 {
 private:
-	explicit CLevioso(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	explicit CLevioso(const CLevioso& rhs);
-	virtual ~CLevioso() = default;
+	explicit CConfringo(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	explicit CConfringo(const CConfringo& rhs);
+	virtual ~CConfringo() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -25,28 +26,19 @@ public:
 
 private:
 	CDefault_MagicTraill_Effect* m_pEffect = { nullptr };
-	
-	CWingardium_Effect* m_pWingardiumEffect = { nullptr };
-	CTransform* m_pWingardiumEffectTrans = { nullptr };
 
 private:
 	_float3				m_vTargetPosition = {};
+	_float3				m_vLerpWeight[2] = {};
+
 	_float				m_fLerpAcc = { 0.f };
-	_bool				m_bWingardiumActionTrigger = { false };
 
-	_float				m_fSettingTimer = { 0.2f };
-	_float				m_fTimerForSearch = { 0.f };
-
-	_float				m_MagicTimer = { 8.0f };
-
-	_bool				m_isDeadTrigger = { false };
-	_float				m_fDeadTimer = { 1.0f };
 private:
 	HRESULT Add_Components();
 	virtual HRESULT Add_Effect();
 
 public:
-	static CLevioso* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CConfringo* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg);
 	virtual void Free() override;
 };
