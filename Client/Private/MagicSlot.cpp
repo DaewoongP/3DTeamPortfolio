@@ -28,7 +28,7 @@ void CMagicSlot::Late_Tick(_float fTimeDelta)
 {
 }
 
-HRESULT CMagicSlot::Create_Magic(CMagic::MAGICDESC _MagicDesc, std::function<void()> func)
+HRESULT CMagicSlot::Add_Magic(_uint iSlotNum, SPELL eMagicTag)
 {
 	if (4 == m_MagicSlots.size())
 		return E_FAIL;
@@ -46,7 +46,25 @@ HRESULT CMagicSlot::Create_Magic(CMagic::MAGICDESC _MagicDesc, std::function<voi
 
 HRESULT CMagicSlot::Add_Components()
 {
-	return E_NOTIMPL;
+	CMagic::MAGICDESC magicInitDesc;
+	magicInitDesc.eBuffType = CMagic::BUFF_SHILED;
+	magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
+	magicInitDesc.eMagicType = CMagic::MT_ALL;
+	magicInitDesc.eMagicTag = PROTEGO;
+	magicInitDesc.fCoolTime = 1.f;
+	magicInitDesc.fDamage = 0.f;
+	magicInitDesc.fCastDistance = 1000;
+	magicInitDesc.fBallDistance = 30;
+	magicInitDesc.fLifeTime = 5.f;
+	
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Magic"),
+		TEXT("Com_Magic_Protego"), reinterpret_cast<CComponent**>(&m_Magics[magicInitDesc.eMagicTag]), &magicInitDesc)))
+	{
+		MSG_BOX("Failed CMagicSlot Add_Component : (Com_Magic_Protego)");
+		return E_FAIL;
+	}
+
+	return S_OK;
 }
 
 CMagicSlot* CMagicSlot::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

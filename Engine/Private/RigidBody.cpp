@@ -1,6 +1,7 @@
 #include "..\Public\RigidBody.h"
 #include "PipeLine.h"
 #include "Transform.h"
+#include "String_Manager.h"
 #include "PhysX_Manager.h"
 #include "PhysXConverter.h"
 #include "CharacterController.h"
@@ -310,6 +311,10 @@ HRESULT CRigidBody::Create_Collider(RIGIDBODYDESC* pRigidBodyDesc)
 	else
 		FilterData.word0 = 0x1111; // 이데이터는 일단 고정.
 	pShape->setSimulationFilterData(FilterData);
+	CString_Manager* pString_Manager = CString_Manager::GetInstance();
+	Safe_AddRef(pString_Manager);
+	pShape->userData = pString_Manager->Make_WChar(pRigidBodyDesc->szCollisionTag);
+	Safe_Release(pString_Manager);
 
 	PxTransform OffsetTransform(PhysXConverter::ToPxVec3(pRigidBodyDesc->vOffsetPosition), PhysXConverter::ToPxQuat(pRigidBodyDesc->vOffsetRotation));
 	pShape->setLocalPose(OffsetTransform);

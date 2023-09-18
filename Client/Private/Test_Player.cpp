@@ -168,6 +168,7 @@ HRESULT CTest_Player::Add_Components()
 	RigidBodyDesc.eConstraintFlag = CRigidBody::AllRot; // 움직임을 제한할 값을 넣어주면 됩니다. (ex allrot의 경우 로테이션을 하지않습니다.)
 	RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 0.f, 1.f); // 디버그 컬러
 	RigidBodyDesc.pOwnerObject = this; // 디스포인터 넣ㄹ어주셔야 안터집니다 !!
+	lstrcpy(RigidBodyDesc.szCollisionTag, TEXT("충돌 판단을 위한 CollisionTag입니다. 여기에 값을 대입하시면 다른 콜라이더에서 이 태그값을 통해 판단이 가능합니다."));
 
 	/* Com_RigidBody */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
@@ -260,30 +261,30 @@ void CTest_Player::Key_Input(_float fTimeDelta)
 	if (pGameInstance->Get_DIKeyState(DIK_UP))
 	{
 		m_pCharacterController->Move(m_pTransform->Get_Look() * m_pTransform->Get_Speed(), fTimeDelta, 0.1f);
-		//m_pRigidBody->Add_Force(m_pTransform->Get_Look() * m_pTransform->Get_Speed(), PxForceMode::eFORCE);
+		m_pRigidBody->Add_Force(m_pTransform->Get_Look() * m_pTransform->Get_Speed(), PxForceMode::eFORCE);
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_DOWN))
 	{
 		m_pCharacterController->Move(-m_pTransform->Get_Look() * m_pTransform->Get_Speed(), fTimeDelta, 0.1f);
-		//m_pRigidBody->Add_Force(m_pTransform->Get_Look() * -m_pTransform->Get_Speed(), PxForceMode::eFORCE);
+		m_pRigidBody->Add_Force(m_pTransform->Get_Look() * -m_pTransform->Get_Speed(), PxForceMode::eFORCE);
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_LEFT))
 	{
 		m_pCharacterController->Move(-m_pTransform->Get_Right() * m_pTransform->Get_Speed(), fTimeDelta, 0.1f);
-		//m_pRigidBody->Add_Force(m_pTransform->Get_Right() * -m_pTransform->Get_Speed(), PxForceMode::eFORCE);
+		m_pRigidBody->Add_Force(m_pTransform->Get_Right() * -m_pTransform->Get_Speed(), PxForceMode::eFORCE);
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_RIGHT))
 	{
 		m_pCharacterController->Move(m_pTransform->Get_Right() * m_pTransform->Get_Speed(), fTimeDelta, 0.1f);
-		//m_pRigidBody->Add_Force(m_pTransform->Get_Right() * m_pTransform->Get_Speed(), PxForceMode::eFORCE);
+		m_pRigidBody->Add_Force(m_pTransform->Get_Right() * m_pTransform->Get_Speed(), PxForceMode::eFORCE);
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
 	{
-		//m_pRigidBody->Add_Force(m_pTransform->Get_Up() * 30.f, PxForceMode::eIMPULSE);
+		m_pRigidBody->Add_Force(m_pTransform->Get_Up() * 30.f, PxForceMode::eIMPULSE);
 	}
 
 	ENDINSTANCE;

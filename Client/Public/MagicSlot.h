@@ -19,10 +19,13 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 
 public:
-	HRESULT Create_Magic(CMagic::MAGICDESC _MagicDesc, std::function<void()> func);
+	HRESULT Add_Magic(_uint iSlotNum, SPELL eMagicTag);
 
 private:
-	array<class CMagic*, 4>			m_MagicSlots = { nullptr };
+	array<class CMagic*, 4>						m_MagicSlots = { nullptr };
+
+private:
+	array<class CMagic*, SPELL::SPELL_END>		m_Magics;
 
 private:
 	HRESULT Add_Components();
