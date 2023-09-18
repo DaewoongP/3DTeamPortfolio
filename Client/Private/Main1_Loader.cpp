@@ -241,11 +241,6 @@ HRESULT CMain1_Loader::Loading_For_MainGame()
 			CWingardium_Effect::Create(m_pDevice, m_pContext, LEVEL_MAINGAME))))
 			throw TEXT("Prototype_GameObject_Wingardium_Effect");
 
-		/* For.Prototype_GameObject_Wingardium_Effect*/
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Default_MagicTraill_Effect"),
-			CDefault_MagicTraill_Effect::Create(m_pDevice, m_pContext, LEVEL_MAINGAME))))
-			throw TEXT("Prototype_GameObject_Default_MagicTraill_Effect");
-			
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_MagicTraill_Confringo_Effect"),
 			CDefault_MagicTraill_Effect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/Confringo/Confringo.trail"), LEVEL_MAINGAME))))
 			throw TEXT("Prototype_GameObject_MagicTraill_Confringo_Effect");
