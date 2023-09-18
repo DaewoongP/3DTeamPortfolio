@@ -8,6 +8,7 @@
 #include "Check_Distance.h"
 #include "Selector_Degree.h"
 #include "Sequence_Attack.h"
+#include "Weapon_Fig_Wand.h"
 
 CProfessor_Fig::CProfessor_Fig(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -286,6 +287,21 @@ HRESULT CProfessor_Fig::Add_Components()
 
 		m_pRigidBody->Create_Collider(&RigidBodyDesc);
 
+		/* For.Com_Weapon */
+		const CBone* pBone = m_pModelCom->Get_Bone(TEXT("SKT_RightHand"));
+		if (nullptr == pBone)
+			throw TEXT("pBone is nullptr");
+
+		CWeapon_Fig_Wand::PARENTMATRIXDESC ParentMatrixDesc;
+		ParentMatrixDesc.OffsetMatrix = pBone->Get_OffsetMatrix();
+		ParentMatrixDesc.PivotMatrix = m_pModelCom->Get_PivotFloat4x4();
+		ParentMatrixDesc.pCombindTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
+		ParentMatrixDesc.pParentWorldMatrix = m_pTransform->Get_WorldMatrixPtr();
+
+		if (FAILED(Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Weapon_Fig_Wand"),
+			TEXT("Com_Weapon"), reinterpret_cast<CComponent**>(&m_pWeapon), &ParentMatrixDesc)))
+			throw TEXT("Com_Weapon");
+
 		/* For.Magic */
 		CMagic::MAGICDESC magicInitDesc;
 		magicInitDesc.eBuffType = CMagic::BUFF_NONE;
@@ -305,7 +321,7 @@ HRESULT CProfessor_Fig::Add_Components()
 			return E_FAIL;
 		}
 
-		m_pMagic->Add_ActionFunc([&] {(*this).MagicTestTextOutput(); });
+		//m_pMagic->Add_ActionFunc([&] {(*this).MagicTestTextOutput(); });
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -693,12 +709,18 @@ HRESULT CProfessor_Fig::Make_Attack_Combo1(_Inout_ CSequence* pSequence)
 
 void CProfessor_Fig::Attack_Light()
 {
-	cout << "Call Light Attack" << endl;
+	if (nullptr == m_pTarget)
+		return;
+
+	//m_pMagic->Magic_Cast(m_pTarget->Get_Transform(), m_pWeapon);
 }
 
 void CProfessor_Fig::Attack_Heavy()
 {
-	cout << "Call Heavy Attack" << endl;
+	if (nullptr == m_pTarget)
+		return;
+
+	//m_pMagic->Magic_Cast(m_pTarget->Get_Transform(), m_pWeapon);
 }
 
 CProfessor_Fig* CProfessor_Fig::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -733,6 +755,7 @@ void CProfessor_Fig::Free()
 
 	if (true == m_isCloned)
 	{
+		Safe_Release(m_pMagic);
 		Safe_Release(m_pModelCom);
 		Safe_Release(m_pShaderCom);
 		Safe_Release(m_pRenderer);

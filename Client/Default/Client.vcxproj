@@ -253,6 +253,7 @@
     <ClInclude Include="..\public\Sky.h" />
     <ClInclude Include="..\public\Terrain.h" />
     <ClInclude Include="..\public\Test_Player.h" />
+    <ClInclude Include="..\Public\Weapon_Fig_Wand.h" />
     <ClInclude Include="..\Public\Weapon_Forest_Troll.h" />
     <ClInclude Include="..\Public\Weapon_Golem_Combat.h" />
     <ClInclude Include="..\Public\Weapon_Golem_Grunt.h" />
@@ -392,6 +393,7 @@
     <ClCompile Include="..\private\Sky.cpp" />
     <ClCompile Include="..\private\Terrain.cpp" />
     <ClCompile Include="..\private\Test_Player.cpp" />
+    <ClCompile Include="..\Private\Weapon_Fig_Wand.cpp" />
     <ClCompile Include="..\Private\Weapon_Forest_Troll.cpp" />
     <ClCompile Include="..\Private\Weapon_Golem_Combat.cpp" />
     <ClCompile Include="..\Private\Weapon_Golem_Grunt.cpp" />

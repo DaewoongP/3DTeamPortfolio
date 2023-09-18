@@ -14,6 +14,7 @@ END
 
 BEGIN(Client)
 class CMagic;
+class CWeapon_Fig_Wand;
 END
 
 BEGIN(Client)
@@ -42,6 +43,8 @@ private:
 	CRenderer* m_pRenderer = { nullptr };
 	CRigidBody* m_pRigidBody = { nullptr };
 	CRootBehavior* m_pRootBehavior = { nullptr };
+
+	CWeapon_Fig_Wand* m_pWeapon = { nullptr };
 
 private:
 	// 리스트 내에 들어있는 오브젝트 중 가장 가까운 객체 포인터

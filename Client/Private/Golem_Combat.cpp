@@ -62,26 +62,28 @@ HRESULT CGolem_Combat::Initialize(void* pArg)
 void CGolem_Combat::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
-	// ���� �ൿ �׽�Ʈ�� �ڵ�
+	
+	// Test Code 
 	BEGININSTANCE;
 
 	if (pGameInstance->Get_DIKeyState(DIK_LCONTROL, CInput_Device::KEY_PRESSING))
 	{
-		if (pGameInstance->Get_DIKeyState(DIK_5, CInput_Device::KEY_DOWN)) // ���� �׽�Ʈ
+		if (pGameInstance->Get_DIKeyState(DIK_5, CInput_Device::KEY_DOWN))
 			m_isSpawn = true;
-		if (pGameInstance->Get_DIKeyState(DIK_4, CInput_Device::KEY_DOWN)) // �и� �׽�Ʈ
+		if (pGameInstance->Get_DIKeyState(DIK_4, CInput_Device::KEY_DOWN))
 			m_isParring = true;
-		if (pGameInstance->Get_DIKeyState(DIK_3, CInput_Device::KEY_DOWN)) // ���������� �׽�Ʈ
+		if (pGameInstance->Get_DIKeyState(DIK_3, CInput_Device::KEY_DOWN))
 			m_iCurrentSpell |= CMagic::BUFF_STUN;
-		if (pGameInstance->Get_DIKeyState(DIK_2, CInput_Device::KEY_DOWN)) // ������� �׽�Ʈ
+		if (pGameInstance->Get_DIKeyState(DIK_2, CInput_Device::KEY_DOWN))
 			m_iCurrentSpell |= CMagic::BUFF_UNGRAVITY;
-		if (pGameInstance->Get_DIKeyState(DIK_1, CInput_Device::KEY_DOWN)) // �𼾵� �׽�Ʈ
+		if (pGameInstance->Get_DIKeyState(DIK_1, CInput_Device::KEY_DOWN))
 			m_iCurrentSpell |= CMagic::BUFF_CONTROL;
 	}
 
 	ENDINSTANCE;
 	////////////////////////////
+
+	Set_Current_Target();
 
 	if (nullptr != m_pRootBehavior)
 		m_pRootBehavior->Tick(fTimeDelta);
@@ -213,14 +215,12 @@ HRESULT CGolem_Combat::Make_AI()
 		if (FAILED(m_pRootBehavior->Add_Type("iCurrentSpell", &m_iCurrentSpell)))
 			throw TEXT("Failed Add_Type iCurrentSpell");
 
-		/* �̰Ŵ� �׽�Ʈ ������ ���� �ڵ��� */
 		m_pTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Player"), TEXT("GameObject_Player")));
 		
 		if (nullptr == m_pTarget)
 			throw TEXT("m_pTarget is nullptr");
 		if (FAILED(m_pRootBehavior->Add_Type("cppTarget", &m_pTarget)))
 			throw TEXT("Failed Add_Type cppTarget");
-		///////////////////////////////////////
 #pragma endregion //Add_Types
 
 		/* Make Child Behaviors */
@@ -422,8 +422,9 @@ void CGolem_Combat::Set_Current_Target()
 
 	if (false == m_isRangeInEnemy)
 	{
-
-		m_pTarget = { nullptr };
+		BEGININSTANCE;
+		m_pTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Player"), TEXT("GameObject_Player")));
+		ENDINSTANCE;
 	}
 }
 
