@@ -94,7 +94,7 @@ void CWingardium_Effect::Set_Position(_float3 vPos)
 }
 
 //트레일의 실제 움직임 설정부.
-void CWingardium_Effect::TrailAction(_float fTimeDelta)
+void CWingardium_Effect::TrailAction(_float3 pos, _float fTimeDelta)
 {
 	// 딜레이 시간이 지났으면 트레일 동작시켜줘.
 	if (m_TrailCurrentDelay > 0)
@@ -209,6 +209,8 @@ void CWingardium_Effect::TrailAction(_float fTimeDelta)
 			m_pTrailToOriginTransform[i]->Set_WorldMatrix(m_pTrailToOriginTransform[i]->Get_WorldMatrix() * rotationMatrix * parentMatrix);
 		}
 	}
+
+	m_pTransform->Set_Position(pos);
 }
 
 HRESULT CWingardium_Effect::Add_Components()

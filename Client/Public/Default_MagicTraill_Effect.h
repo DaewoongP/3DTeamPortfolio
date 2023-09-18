@@ -13,7 +13,10 @@ BEGIN(Client)
 class CDefault_MagicTraill_Effect final : public CGameObject
 {
 public:
-	enum TRAILACTIONTYPE {	TRAILACTION_STRIGHT,TRAILACTION_SPIN,TRAILACTION_END };
+	typedef struct InitDesc {
+		_float3 vInitPosition;
+	}INITDESC;
+	
 private:
 	CDefault_MagicTraill_Effect(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CDefault_MagicTraill_Effect(const CDefault_MagicTraill_Effect& rhs);
@@ -25,7 +28,7 @@ public:
 	void Action_Magic(TRAILACTIONTYPE eType,_float3 vStartPos,_float3 vEndPos,_float fTimeAcc, _float fTimeDelta);
 
 public:
-	virtual HRESULT Initialize_Prototype(_uint iLevel);
+	virtual HRESULT Initialize_Prototype(const _tchar* wszFilePath,_uint iLevel);
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
@@ -38,6 +41,7 @@ private:
 	
 private:
 	_uint m_iLevel = { 0 };
+	_tchar	m_wszName[MAX_PATH] = {};
 
 private:
 	void	Stright_Move(_float3 vStartPos, _float3 vEndPos, _float fTimeAcc, _float fTimeDelta);
@@ -46,7 +50,7 @@ private:
 	HRESULT Add_Components();
 
 public:
-	static CDefault_MagicTraill_Effect* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel);
+	static CDefault_MagicTraill_Effect* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* wszFilePath, _uint iLevel);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free(void) override;
 };

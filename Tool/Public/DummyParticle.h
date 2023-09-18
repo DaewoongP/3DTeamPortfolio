@@ -111,6 +111,7 @@ private:
 	class CImageFileDialog* m_pAlphaTextureIFD = { nullptr };
 	class CImageFileDialog* m_pSpriteTextureIFD = { nullptr };
 	class CImageFileDialog* m_pNormalTextureIFD = { nullptr };
+	class CImageFileDialog* m_pGradientTextureIFD = { nullptr };
 	_bool m_isPrevLooping = { false };
 	list<_tchar*> m_pTags;
 

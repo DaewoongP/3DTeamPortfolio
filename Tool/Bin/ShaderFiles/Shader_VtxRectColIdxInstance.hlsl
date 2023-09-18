@@ -5,6 +5,7 @@ matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
 texture2D		g_Texture;
 texture2D		g_ClipTexture;
+texture2D		g_GradientTexture;
 float			g_fClipThreshold = 0.33f;
 int				g_iClipChannel;
 
@@ -100,8 +101,12 @@ struct PS_OUT
 PS_OUT	PS_MAIN(PS_IN In)
 {
 	PS_OUT		Out = (PS_OUT)0;
-
-	Out.vColor = g_Texture.Sample(LinearSampler, In.vTexUV);
+    float4 vNormalColor = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+    float2 vGradientUV = float2(vNormalColor.r,0);
+    float4 vGradientColor = g_GradientTexture.Sample(LinearSampler, vGradientUV);
+    
+	
+    Out.vColor = g_Texture.Sample(LinearSampler, In.vTexUV);
 	vector vClipTexture = g_ClipTexture.Sample(LinearSampler, In.vTexUV);
 
 	if (0 == g_iClipChannel)
@@ -112,9 +117,14 @@ PS_OUT	PS_MAIN(PS_IN In)
 		Out.vColor.a = vClipTexture.b;
 	else if (3 == g_iClipChannel)
 		Out.vColor.a = vClipTexture.a;
-
+	
 	Out.vColor *= (In.vColor);
-
+    // r는 색상 피킹용도
+	Out.vColor *= (vGradientColor);
+    // g는 세기용도
+	Out.vColor *= 1 / (1 - vNormalColor.g);
+	// b는 모르
+	
 	if (Out.vColor.a < g_fClipThreshold)
 		discard;
 

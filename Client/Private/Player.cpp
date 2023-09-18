@@ -211,12 +211,12 @@ HRESULT CPlayer::Add_Components()
 	magicInitDesc.eBuffType = CMagic::BUFF_SHILED;
 	magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 	magicInitDesc.eMagicType = CMagic::MT_ALL;
-	magicInitDesc.eMagicTag = PROTEGO;
+	magicInitDesc.eMagicTag = CONFRINGO;
 	magicInitDesc.fCoolTime = 1.f;
 	magicInitDesc.fDamage = 0.f;
 	magicInitDesc.fCastDistance = 1000;
 	magicInitDesc.fBallDistance = 30;
-	magicInitDesc.fLifeTime = 5.f;
+	magicInitDesc.fLifeTime = 0.2f;
 
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Magic"),
 		TEXT("Com_Magic"), reinterpret_cast<CComponent**>(&m_pMagic), &magicInitDesc)))
