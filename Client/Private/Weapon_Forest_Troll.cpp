@@ -145,7 +145,7 @@ HRESULT CWeapon_Forest_Troll::Set_Shader_Resources()
 
 CWeapon_Forest_Troll* CWeapon_Forest_Troll::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CWeapon_Forest_Troll* pInstance = new CWeapon_Forest_Troll(pDevice, pContext);
+	CWeapon_Forest_Troll* pInstance = New CWeapon_Forest_Troll(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -157,7 +157,7 @@ CWeapon_Forest_Troll* CWeapon_Forest_Troll::Create(ID3D11Device* pDevice, ID3D11
 
 CWeapon_Forest_Troll* CWeapon_Forest_Troll::Clone(void* pArg)
 {
-	CWeapon_Forest_Troll* pInstance = new CWeapon_Forest_Troll(*this);
+	CWeapon_Forest_Troll* pInstance = New CWeapon_Forest_Troll(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

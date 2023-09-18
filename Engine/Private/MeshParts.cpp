@@ -167,7 +167,7 @@ HRESULT CMeshParts::Ready_File(const _tchar* _pMeshPartsFilePath)
 		ReadFile(hFile, &(Node.iNumChildren), sizeof(_uint), &dwByte, nullptr);
 
 		// Node Children (array)
-		Node.iChildrens = new _uint[Node.iNumChildren];
+		Node.iChildrens = New _uint[Node.iNumChildren];
 		ZeroMemory(Node.iChildrens, sizeof(_uint) * (Node.iNumChildren));
 		ReadFile(hFile, Node.iChildrens, sizeof(_uint) * (Node.iNumChildren), &dwByte, nullptr);
 
@@ -202,7 +202,7 @@ HRESULT CMeshParts::Ready_File(const _tchar* _pMeshPartsFilePath)
 		// Mesh NumFaces
 		ReadFile(hFile, &(Mesh.iNumFaces), sizeof(_uint), &dwByte, nullptr);
 
-		Mesh.Faces = new FACE[Mesh.iNumFaces];
+		Mesh.Faces = New FACE[Mesh.iNumFaces];
 		ZeroMemory(Mesh.Faces, sizeof(FACE) * (Mesh.iNumFaces));
 
 		for (_uint j = 0; j < Mesh.iNumFaces; ++j)
@@ -214,7 +214,7 @@ HRESULT CMeshParts::Ready_File(const _tchar* _pMeshPartsFilePath)
 			ReadFile(hFile, &(Face.iNumIndices), sizeof(_uint), &dwByte, nullptr);
 
 			// Face Indices
-			Face.iIndices = new _uint[Face.iNumIndices];
+			Face.iIndices = New _uint[Face.iNumIndices];
 			ZeroMemory(Face.iIndices, sizeof(_uint) * (Face.iNumIndices));
 			ReadFile(hFile, Face.iIndices, sizeof(_uint) * (Face.iNumIndices), &dwByte, nullptr);
 
@@ -222,29 +222,29 @@ HRESULT CMeshParts::Ready_File(const _tchar* _pMeshPartsFilePath)
 		}
 
 		// Mesh Positions
-		Mesh.vPositions = new _float3[Mesh.iNumVertices];
+		Mesh.vPositions = New _float3[Mesh.iNumVertices];
 		ZeroMemory(Mesh.vPositions, sizeof(_float3) * (Mesh.iNumVertices));
 		ReadFile(hFile, Mesh.vPositions, sizeof(_float3) * (Mesh.iNumVertices), &dwByte, nullptr);
 
 		// Mesh Normals
-		Mesh.vNormals = new _float3[Mesh.iNumVertices];
+		Mesh.vNormals = New _float3[Mesh.iNumVertices];
 		ZeroMemory(Mesh.vNormals, sizeof(_float3) * (Mesh.iNumVertices));
 		ReadFile(hFile, Mesh.vNormals, sizeof(_float3) * (Mesh.iNumVertices), &dwByte, nullptr);
 
 		// Mesh TexCoords
-		Mesh.vTexCoords = new _float2[Mesh.iNumVertices];
+		Mesh.vTexCoords = New _float2[Mesh.iNumVertices];
 		ZeroMemory(Mesh.vTexCoords, sizeof(_float2) * (Mesh.iNumVertices));
 		ReadFile(hFile, Mesh.vTexCoords, sizeof(_float2) * (Mesh.iNumVertices), &dwByte, nullptr);
 
 		// Mesh Tangents
-		Mesh.vTangents = new _float3[Mesh.iNumVertices];
+		Mesh.vTangents = New _float3[Mesh.iNumVertices];
 		ZeroMemory(Mesh.vTangents, sizeof(_float3) * (Mesh.iNumVertices));
 		ReadFile(hFile, Mesh.vTangents, sizeof(_float3) * (Mesh.iNumVertices), &dwByte, nullptr);
 
 		// Mesh NumBones
 		ReadFile(hFile, &(Mesh.iNumBones), sizeof(_uint), &dwByte, nullptr);
 
-		Mesh.Bones = new BONE[Mesh.iNumBones];
+		Mesh.Bones = New BONE[Mesh.iNumBones];
 		ZeroMemory(Mesh.Bones, sizeof(BONE) * (Mesh.iNumBones));
 
 		// Write Bones
@@ -268,7 +268,7 @@ HRESULT CMeshParts::Ready_File(const _tchar* _pMeshPartsFilePath)
 			// Mesh NumWeights
 			ReadFile(hFile, &(Bone.iNumWeights), sizeof(_uint), &dwByte, nullptr);
 
-			Bone.Weights = new WEIGHT[Bone.iNumWeights];
+			Bone.Weights = New WEIGHT[Bone.iNumWeights];
 			ZeroMemory(Bone.Weights, sizeof(WEIGHT) * (Bone.iNumWeights));
 
 			// Write Weights
@@ -335,7 +335,7 @@ HRESULT CMeshParts::Ready_File(const _tchar* _pMeshPartsFilePath)
 		// Animation NumChannels
 		ReadFile(hFile, &(Animation.iNumChannels), sizeof(_uint), &dwByte, nullptr);
 
-		Animation.Channels = new CHANNEL[Animation.iNumChannels];
+		Animation.Channels = New CHANNEL[Animation.iNumChannels];
 		ZeroMemory(Animation.Channels, sizeof(CHANNEL) * (Animation.iNumChannels));
 
 		for (_uint j = 0; j < Animation.iNumChannels; ++j)
@@ -356,7 +356,7 @@ HRESULT CMeshParts::Ready_File(const _tchar* _pMeshPartsFilePath)
 			ReadFile(hFile, &(Channel.iNumScalingKeys), sizeof(_uint), &dwByte, nullptr);
 
 			// Channel ScalingKeys
-			Channel.ScalingKeys = new VECTORKEY[Channel.iNumScalingKeys];
+			Channel.ScalingKeys = New VECTORKEY[Channel.iNumScalingKeys];
 			ZeroMemory(Channel.ScalingKeys, sizeof(VECTORKEY) * (Channel.iNumScalingKeys));
 			ReadFile(hFile, Channel.ScalingKeys, sizeof(VECTORKEY) * (Channel.iNumScalingKeys), &dwByte, nullptr);
 
@@ -364,7 +364,7 @@ HRESULT CMeshParts::Ready_File(const _tchar* _pMeshPartsFilePath)
 			ReadFile(hFile, &(Channel.iNumRotationKeys), sizeof(_uint), &dwByte, nullptr);
 
 			// Channel RotationKeys
-			Channel.RotationKeys = new QUATERNIONKEY[Channel.iNumRotationKeys];
+			Channel.RotationKeys = New QUATERNIONKEY[Channel.iNumRotationKeys];
 			ZeroMemory(Channel.RotationKeys, sizeof(QUATERNIONKEY) * (Channel.iNumRotationKeys));
 			ReadFile(hFile, Channel.RotationKeys, sizeof(QUATERNIONKEY) * (Channel.iNumRotationKeys), &dwByte, nullptr);
 
@@ -372,7 +372,7 @@ HRESULT CMeshParts::Ready_File(const _tchar* _pMeshPartsFilePath)
 			ReadFile(hFile, &(Channel.iNumPositionKeys), sizeof(_uint), &dwByte, nullptr);
 
 			// Channel PositionKeys
-			Channel.PositionKeys = new VECTORKEY[Channel.iNumPositionKeys];
+			Channel.PositionKeys = New VECTORKEY[Channel.iNumPositionKeys];
 			ZeroMemory(Channel.PositionKeys, sizeof(VECTORKEY) * (Channel.iNumPositionKeys));
 			ReadFile(hFile, Channel.PositionKeys, sizeof(VECTORKEY) * (Channel.iNumPositionKeys), &dwByte, nullptr);
 
@@ -547,7 +547,7 @@ HANDLE CMeshParts::Read_ClothIndexData(const _tchar* szClothDataFilePath, _uint 
 CMeshParts* CMeshParts::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, 
 	const wstring& _wstrMeshPartsFilePath, const wstring& _wstrMeshPartsTag)
 {
-	CMeshParts* pInstance = new CMeshParts(_pDevice, _pContext);
+	CMeshParts* pInstance = New CMeshParts(_pDevice, _pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(_wstrMeshPartsFilePath, _wstrMeshPartsTag)))
 	{
@@ -560,7 +560,7 @@ CMeshParts* CMeshParts::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pCo
 
 CMeshParts* CMeshParts::Clone(void* _pArg)
 {
-	CMeshParts* pInstance = new CMeshParts(*this);
+	CMeshParts* pInstance = New CMeshParts(*this);
 
 	if (FAILED(pInstance->Initialize(_pArg)))
 	{

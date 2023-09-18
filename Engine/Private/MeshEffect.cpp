@@ -230,7 +230,7 @@ HRESULT CMeshEffect::Setup_ShaderResources()
 }
 CMeshEffect* CMeshEffect::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, const _tchar* pFilePath, _uint _iLevel)
 {
-	CMeshEffect* pInstance = new CMeshEffect(_pDevice, _pContext);
+	CMeshEffect* pInstance = New CMeshEffect(_pDevice, _pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pFilePath, _iLevel)))
 	{
@@ -242,7 +242,7 @@ CMeshEffect* CMeshEffect::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _p
 }
 CGameObject* CMeshEffect::Clone(void* _pArg)
 {
-	CMeshEffect* pInstance = new CMeshEffect(*this);
+	CMeshEffect* pInstance = New CMeshEffect(*this);
 
 	if (FAILED(pInstance->Initialize(_pArg)))
 	{

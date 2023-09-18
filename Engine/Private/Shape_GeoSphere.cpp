@@ -100,7 +100,7 @@ HRESULT CShape_GeoSphere::SetUp_ShaderResources()
 
 CShape_GeoSphere* CShape_GeoSphere::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CShape_GeoSphere* pInstance = new CShape_GeoSphere(pDevice, pContext);
+	CShape_GeoSphere* pInstance = New CShape_GeoSphere(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -113,7 +113,7 @@ CShape_GeoSphere* CShape_GeoSphere::Create(ID3D11Device* pDevice, ID3D11DeviceCo
 
 CGameObject* CShape_GeoSphere::Clone(void* pArg)
 {
-	CShape_GeoSphere* pInstance = new CShape_GeoSphere(*this);
+	CShape_GeoSphere* pInstance = New CShape_GeoSphere(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

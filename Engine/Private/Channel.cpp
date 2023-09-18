@@ -40,6 +40,8 @@ HRESULT CChannel::Initialize(const Engine::CHANNEL& Channel, const CModel::BONES
 	m_iNumKeyFrames = max(Channel.iNumScalingKeys, Channel.iNumRotationKeys);
 	m_iNumKeyFrames = max(m_iNumKeyFrames, Channel.iNumPositionKeys);
 
+	m_iNumKeyFrames -= 1;
+
 	_float3	vScale;
 	ZEROMEM(&vScale);
 	_float4	vRotation;
@@ -262,7 +264,7 @@ void CChannel::Invalidate_TransformationMatrix_Lerp(CModel::BONES& Bones, _float
 
 CChannel* CChannel::Create(const Engine::CHANNEL& Channel, const CModel::BONES& Bones)
 {
-	CChannel* pInstance = new CChannel();
+	CChannel* pInstance = New CChannel();
 
 	if (FAILED(pInstance->Initialize(Channel, Bones)))
 	{
@@ -274,7 +276,7 @@ CChannel* CChannel::Create(const Engine::CHANNEL& Channel, const CModel::BONES& 
 
 CChannel* CChannel::Create(const Engine::CHANNEL_GCM& Channel, const CModel::BONES& Bones)
 {
-	CChannel* pInstance = new CChannel();
+	CChannel* pInstance = New CChannel();
 
 	if (FAILED(pInstance->Initialize(Channel, Bones)))
 	{

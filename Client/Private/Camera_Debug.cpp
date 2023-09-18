@@ -60,7 +60,7 @@ void CCamera_Debug::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 #ifdef _DEBUG
-	//Debug_ImGui(fTimeDelta);
+	Debug_ImGui(fTimeDelta);
 #endif // _DEBUG	
 }
 

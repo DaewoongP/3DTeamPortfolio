@@ -658,7 +658,7 @@ void CObject_Window::Save_Load_Menu()
 
 	string s = ("../../Resources/GameData/MapData/");
 	s += m_strPath;
-	s += (".ddd");
+	s += (".mon");
 
 	// 현재 세이브 경로 표시
 	ImGui::TextColored(ImVec4(1, 0, 0, 1), "Save Path");

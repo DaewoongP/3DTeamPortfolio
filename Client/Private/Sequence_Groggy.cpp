@@ -144,7 +144,7 @@ void CSequence_Groggy::Reset_Behavior(HRESULT result)
 
 CSequence_Groggy* CSequence_Groggy::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CSequence_Groggy* pInstance = new CSequence_Groggy(pDevice, pContext);
+	CSequence_Groggy* pInstance = New CSequence_Groggy(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -157,7 +157,7 @@ CSequence_Groggy* CSequence_Groggy::Create(ID3D11Device* pDevice, ID3D11DeviceCo
 
 CSequence_Groggy* CSequence_Groggy::Clone(void* pArg)
 {
-	CSequence_Groggy* pInstance = new CSequence_Groggy(*this);
+	CSequence_Groggy* pInstance = New CSequence_Groggy(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

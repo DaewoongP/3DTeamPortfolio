@@ -234,7 +234,7 @@ HRESULT CSelector_Degree::Assemble_Childs(DEGREES eType, CBehavior* pBehavior)
 
 CSelector_Degree* CSelector_Degree::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CSelector_Degree* pInstance = new CSelector_Degree(pDevice, pContext);
+	CSelector_Degree* pInstance = New CSelector_Degree(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -247,7 +247,7 @@ CSelector_Degree* CSelector_Degree::Create(ID3D11Device* pDevice, ID3D11DeviceCo
 
 CSelector_Degree* CSelector_Degree::Clone(void* pArg)
 {
-	CSelector_Degree* pInstance = new CSelector_Degree(*this);
+	CSelector_Degree* pInstance = New CSelector_Degree(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

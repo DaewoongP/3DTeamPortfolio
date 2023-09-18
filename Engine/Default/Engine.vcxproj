@@ -22,6 +22,7 @@
     <ClInclude Include="..\Public\Animation.h" />
     <ClInclude Include="..\Public\Base.h" />
     <ClInclude Include="..\Public\Behavior.h" />
+    <ClInclude Include="..\public\BehaviorCallBack.h" />
     <ClInclude Include="..\Public\BlackBoard.h" />
     <ClInclude Include="..\public\Blur.h" />
     <ClInclude Include="..\Public\Bone.h" />
@@ -30,6 +31,7 @@
     <ClInclude Include="..\Public\Bounding_OBB.h" />
     <ClInclude Include="..\public\Bounding_Sphere.h" />
     <ClInclude Include="..\Public\ConvexMesh.h" />
+    <ClInclude Include="..\public\Debug_Render_TriangleMesh.h" />
     <ClInclude Include="..\public\Ease.h" />
     <ClInclude Include="..\Public\Debug_Functions.h" />
     <ClInclude Include="..\public\Debug_Render_Box.h" />
@@ -41,6 +43,7 @@
     <ClInclude Include="..\Public\Model_Instance.h" />
     <ClInclude Include="..\public\Model_LOD.h" />
     <ClInclude Include="..\Public\RandomChoose.h" />
+    <ClInclude Include="..\public\ReportCallBack.h" />
     <ClInclude Include="..\Public\Shape_GeoSphere.h" />
     <ClInclude Include="..\public\Dynamic_Mesh.h" />
     <ClInclude Include="..\Public\JobManager.h" />
@@ -62,6 +65,7 @@
     <ClInclude Include="..\Public\CustomModel.h" />
     <ClInclude Include="..\Public\Modules.h" />
     <ClInclude Include="..\Public\Status.h" />
+    <ClInclude Include="..\Public\Texture_Filpbook.h" />
     <ClInclude Include="..\public\Trail.h" />
     <ClInclude Include="..\Public\TriangleMesh.h" />
     <ClInclude Include="..\Public\UI.h" />
@@ -145,6 +149,7 @@
     <ClCompile Include="..\Private\Animation.cpp" />
     <ClCompile Include="..\Private\Base.cpp" />
     <ClCompile Include="..\Private\Behavior.cpp" />
+    <ClCompile Include="..\private\BehaviorCallBack.cpp" />
     <ClCompile Include="..\Private\BlackBoard.cpp" />
     <ClCompile Include="..\private\Blur.cpp" />
     <ClCompile Include="..\Private\Bone.cpp" />
@@ -153,6 +158,7 @@
     <ClCompile Include="..\Private\Bounding_OBB.cpp" />
     <ClCompile Include="..\private\Bounding_Sphere.cpp" />
     <ClCompile Include="..\Private\ConvexMesh.cpp" />
+    <ClCompile Include="..\private\Debug_Render_TriangleMesh.cpp" />
     <ClCompile Include="..\Private\Ease.cpp" />
     <ClCompile Include="..\private\Debug_Render_Box.cpp" />
     <ClCompile Include="..\private\Debug_Render_Capsule.cpp" />
@@ -164,6 +170,7 @@
       <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</IncludeInUnityFile>
     </ClCompile>
     <ClCompile Include="..\Private\RandomChoose.cpp" />
+    <ClCompile Include="..\private\ReportCallBack.cpp" />
     <ClCompile Include="..\Private\Shape_GeoSphere.cpp" />
     <ClCompile Include="..\private\Dynamic_Mesh.cpp" />
     <ClCompile Include="..\Private\JobManager.cpp" />
@@ -184,6 +191,7 @@
     <ClCompile Include="..\Private\CustomModel.cpp" />
     <ClCompile Include="..\Private\Modules.cpp" />
     <ClCompile Include="..\Private\Status.cpp" />
+    <ClCompile Include="..\Private\Texture_Filpbook.cpp" />
     <ClCompile Include="..\private\Trail.cpp" />
     <ClCompile Include="..\Private\TriangleMesh.cpp" />
     <ClCompile Include="..\Private\UI.cpp" />

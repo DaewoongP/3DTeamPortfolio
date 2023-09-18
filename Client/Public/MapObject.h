@@ -3,23 +3,29 @@
 #include "Client_Defines.h"
 
 BEGIN(Engine)
-class CShader;
-class CTexture;
-class CRenderer;
+class CMesh;
 class CModel;
+class CShader;
+class CRenderer;
+class CRigidBody;
 END
 
 BEGIN(Client)
 
 class CMapObject final : public CGameObject
 {
+public:
+	typedef struct tagMapObjectDesc
+	{
+		_float4x4 WorldMatrix; // 상태 행렬
+		_uint iTagLen = { 0 }; // 문자열 길이
+		_tchar wszTag[MAX_PATH] = TEXT(""); // 오브젝트 종류(모델 컴포넌트 이름)
+	}MAPOBJECTDESC;
+
 private:
 	explicit CMapObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CMapObject(const CMapObject& rhs);
 	virtual ~CMapObject() = default;
-
-public:
-	void	Set_Pos(_float3 vPos) { m_pTransform->Set_Position(vPos); }
 
 public:
 	virtual HRESULT Initialize_Prototype();
@@ -28,18 +34,14 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
-public:
-	HRESULT Add_Model_Component(const _tchar* wszModelTag);
-	HRESULT Add_Shader_Component(const _tchar* wszShaderTag);
+private:
+	CShader*		m_pShader = { nullptr };
+	CRigidBody*		m_pRigidBody = { nullptr };
+	CRenderer*		m_pRenderer = { nullptr };
+	CModel*			m_pModel = { nullptr };
 
 private:
-	CShader* m_pShader = { nullptr };
-	CTexture* m_pTexture = { nullptr };
-	CRenderer* m_pRenderer = { nullptr };
-	CModel* m_pModel = { nullptr };
-
-private:
-	HRESULT Add_Components();
+	HRESULT Add_Components(MAPOBJECTDESC* pMapObjectDesc);
 	HRESULT SetUp_ShaderResources();
 
 public:

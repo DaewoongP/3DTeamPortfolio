@@ -131,6 +131,7 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_FinBloom"), TEXT("Target_FinBloom"))))
 		return E_FAIL;
+	
 #ifdef _DEBUG
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Picking"), TEXT("Target_Picking"))))
 		return E_FAIL;
@@ -266,7 +267,7 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 	/*if (FAILED(Render_Bloom()))
 		return E_FAIL;*/
-
+	
 	if (FAILED(Render_UI()))
 		return E_FAIL;
 
@@ -1040,7 +1041,7 @@ _bool CRenderer::Is_Render_Distortion()
 #endif // _DEBUG
 CRenderer* CRenderer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CRenderer* pInstance = new CRenderer(pDevice, pContext);
+	CRenderer* pInstance = New CRenderer(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{

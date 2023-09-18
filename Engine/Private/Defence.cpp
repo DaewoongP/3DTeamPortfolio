@@ -23,7 +23,7 @@ HRESULT CDefence::Initialize(void* pArg)
 
 CDefence* CDefence::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CDefence* pInstance = new CDefence(pDevice, pContext);
+	CDefence* pInstance = New CDefence(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -36,7 +36,7 @@ CDefence* CDefence::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 CDefence* CDefence::Clone(void* pArg)
 {
-	CDefence* pInstance = new CDefence(*this);
+	CDefence* pInstance = New CDefence(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

@@ -7,6 +7,7 @@
 #include "ImageFileDialog.h"
 #include "DummyMeshEffect.h"
 #include "DummyTrail.h"
+#include "DummyFlipBook.h"
 #include "Dummy_Effect.h"
 CEffect_Window::CEffect_Window(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
 	: CImWindow(_pDevice, _pContext)
@@ -33,6 +34,7 @@ HRESULT CEffect_Window::Initialize(ImVec2 _vWindowPos, ImVec2 _vWindowSize)
 	m_pDummyParticle = dynamic_cast<CDummyParticle*>(pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyParticle")));
 	m_pDummyMeshEffect = dynamic_cast<CDummyMeshEffect*>(pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyMeshEffect")));
 	m_pDummyTrail = dynamic_cast<CDummyTrail*>(pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyTrail")));
+	m_pDummyFlipbook = dynamic_cast<CDummyFlipBook*>(pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyFlipbook")));
 	m_pDummyEffect = dynamic_cast<CDummy_Effect*>(pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_DummyEffect")));
 
 	ENDINSTANCE;
@@ -47,11 +49,13 @@ void CEffect_Window::Tick(_float _fTimeDelta)
 	ImGui::RadioButton("Particle", &m_iChooseRadio, 0);
 	ImGui::RadioButton("MeshEffect", &m_iChooseRadio, 1);
 	ImGui::RadioButton("Trail", &m_iChooseRadio, 2);
-	ImGui::RadioButton("DummyEffect", &m_iChooseRadio, 3);
+	ImGui::RadioButton("Flipbook", &m_iChooseRadio, 3);
+	ImGui::RadioButton("DummyEffect", &m_iChooseRadio, 4);
 
 	switch (m_iChooseRadio)
 	{
 	case 0:
+	{
 		ImGui::Begin("Particle", nullptr, m_WindowFlag);
 		if (nullptr != m_pDummyParticle)
 		{
@@ -60,45 +64,57 @@ void CEffect_Window::Tick(_float _fTimeDelta)
 			m_pDummyParticle->Late_Tick(_fTimeDelta);
 		}
 		ImGui::End();
-		break;
+	}
+	break;
 	case 1:
 	{
-		if (nullptr != m_pDummyParticle)
+		ImGui::Begin("MeshEffect", nullptr, m_WindowFlag);
+		if (nullptr != m_pDummyMeshEffect)
 		{
-			ImGui::Begin("MeshEffect", nullptr, m_WindowFlag);
 			m_pDummyMeshEffect->Tick_Imgui(_fTimeDelta);
 			m_pDummyMeshEffect->Tick(_fTimeDelta);
 			m_pDummyMeshEffect->Late_Tick(_fTimeDelta);
 		}
 		ImGui::End();
 	}
+	break;
 	case 2:
 	{
+		ImGui::Begin("Trail", nullptr, m_WindowFlag);
 		if (nullptr != m_pDummyTrail)
 		{
-			ImGui::Begin("Trail", nullptr, m_WindowFlag);
 			m_pDummyTrail->Tick_Imgui(_fTimeDelta);
 			m_pDummyTrail->Tick(_fTimeDelta);
 			m_pDummyTrail->Late_Tick(_fTimeDelta);
 		}
 		ImGui::End();
 	}
+	break;
 	case 3:
 	{
-		if (nullptr != m_pDummyTrail)
+		ImGui::Begin("Flipbook", nullptr, m_WindowFlag);
+		if (nullptr != m_pDummyFlipbook)
 		{
-			ImGui::Begin("DummyEffect", nullptr, m_WindowFlag);
+			m_pDummyFlipbook->Tick_Imgui(_fTimeDelta);
+			m_pDummyFlipbook->Tick(_fTimeDelta);
+			m_pDummyFlipbook->Late_Tick(_fTimeDelta);
+		}
+		ImGui::End();
+	}
+	break;
+	case 4:
+	{
+		ImGui::Begin("DummyEffect", nullptr, m_WindowFlag);
+		if (nullptr != m_pDummyEffect)
+		{
 			m_pDummyEffect->Tick_Imgui(_fTimeDelta);
 			m_pDummyEffect->Tick(_fTimeDelta);
 			m_pDummyEffect->Late_Tick(_fTimeDelta);
 		}
 		ImGui::End();
 	}
-		break;
-	default:
-		break;
+	break;
 	}
-
 	//MeshEffect(_fTimeDelta);
 	//ImGui::ShowDemoWindow();
 }
@@ -238,7 +254,7 @@ _bool CEffect_Window::Table_DragFloatWithOption(string _strName, string _strTag,
 		string strFloatTag = strTag + "Float";
 		isResult = ImGui::DragFloat(strTag.data(), _pValue, _fDragSpeed, _fMin, _fMax);
 	}
-		
+
 	ImGui::SameLine(); ImGui::Checkbox(strCheckBoxTag.data(), _pCheckBox);
 	ImGui::PopItemWidth();
 	ImGui::TableNextRow();
@@ -317,5 +333,6 @@ void CEffect_Window::Free(void)
 	Safe_Release(m_pDummyParticle);
 	Safe_Release(m_pDummyMeshEffect);
 	Safe_Release(m_pDummyTrail);
+	Safe_Release(m_pDummyFlipbook);
 	Safe_Release(m_pDummyEffect);
 }
