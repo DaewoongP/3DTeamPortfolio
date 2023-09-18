@@ -1,8 +1,6 @@
 #include "Wait.h"
 
-#include "GameObject.h"
-#include "BlackBoard.h"
-#include "Transform.h"
+#include "GameInstance.h"
 
 CWait::CWait(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CBehavior(pDevice, pContext)
@@ -27,15 +25,21 @@ HRESULT CWait::Tick(const _float& fTimeDelta)
 		return BEHAVIOR_FAIL;
 	}
 
-	m_fTimeAcc += fTimeDelta;
+	BEGININSTANCE;
+	_float fInterval = pGameInstance->Get_World_TimeAcc() - m_fPreWorldTimeAcc;
+	ENDINSTANCE;
 
-	if (m_fTimeAcc >= m_fLimit)
-	{
-		m_fTimeAcc = 0.f;
+	if (fInterval >= m_fLimit)
 		return BEHAVIOR_SUCCESS;
-	}
 
 	return BEHAVIOR_RUNNING;
+}
+
+void CWait::Reset_Behavior(HRESULT result)
+{
+	BEGININSTANCE;
+	m_fPreWorldTimeAcc = pGameInstance->Get_World_TimeAcc();
+	ENDINSTANCE;
 }
 
 CWait* CWait::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

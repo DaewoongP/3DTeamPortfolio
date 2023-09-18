@@ -27,6 +27,7 @@ private:
 
 private:
 	HRESULT Load_MapObject(const _tchar* pObjectFilePath);
+	HRESULT Load_Monsters(const wstring& wstrMonsterFilePath);
 
 #ifdef _DEBUG
 private:

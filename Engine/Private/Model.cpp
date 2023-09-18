@@ -324,7 +324,7 @@ void CModel::Do_Root_Animation(_float fTimeDelta, CTransform* pTransform, _bool 
 		//애니메이션을 적용시키기 전 matrix를 보관해보자.
 		_float4x4 current_Matrix = m_Bones[m_iRootBoneIndex]->Get_CombinedTransformationMatrix();
 		//애니메이션 변경 후 첫 프레임이면
-		_float4x4 post_Matirx = {};
+		_float4x4 post_Matirx = _float4x4();
 		if (isFirstFrame)
 			m_PostRootMatrix = current_Matrix;
 		post_Matirx = m_PostRootMatrix;
@@ -366,8 +366,7 @@ void CModel::Do_Root_Animation(_float fTimeDelta, CTransform* pTransform, _bool 
 
 		_float3 vOffsetVector = m_tAnimationDesc[0].Animations[m_tAnimationDesc[0].iCurrentAnimIndex]->Get_OffsetPosition();
 		_float4x4 offsetPositionMatrix = XMMatrixTranslation(vOffsetVector.x, vOffsetVector.y, vOffsetVector.z);
-
-
+		
 		pTransform->Set_WorldMatrix(offsetPositionMatrix * player_Matrix_Override * PositionMatrix * pTransform->Get_WorldMatrix());
 		m_PostRootMatrix = m_Bones[m_iRootBoneIndex]->Get_CombinedTransformationMatrix();
 	}
@@ -1896,6 +1895,7 @@ CModel* CModel::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, TYP
 	CModel* pInstance = New CModel(pDevice, pContext);
 	if (FAILED(pInstance->Initialize_Prototype(eType, pModelFilePath, PivotMatrix)))
 	{
+		__debugbreak();
 		MSG_BOX("Failed to Created CModel");
 		Safe_Release(pInstance);
 	}

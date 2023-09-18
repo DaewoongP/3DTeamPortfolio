@@ -206,9 +206,10 @@ HRESULT CMain3_Loader::Loading_For_MainGame()
 
 #pragma endregion
 
+		PivotMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
 		/* For.Prototype_Component_Model_Professor_Fig */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Professor_Fig"),
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/Professor_Fig/Professor_Fig.dat")))))
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/Professor_Fig/Professor_Fig.gcm"), PivotMatrix))))
 			throw TEXT("Prototype_Component_Model_Professor_Fig");
 
 		/* For.Prototype_GameObject_Professor_Fig */
@@ -221,7 +222,6 @@ HRESULT CMain3_Loader::Loading_For_MainGame()
 		wstring wstrErrorMSG = TEXT("Failed Add_Prototype : ");
 		wstrErrorMSG += pErrorTag;
 		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
-
 		return E_FAIL;
 	}
 

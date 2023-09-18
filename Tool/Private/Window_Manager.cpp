@@ -67,6 +67,13 @@ HRESULT CWindow_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* 
 		return E_FAIL;
 	}
 
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Tool"), TEXT("Layer_Monster"))))
+	{
+		MSG_BOX("Failed Add Scene : (Scene_Tool)");
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	}
+
 	return S_OK;
 }
 

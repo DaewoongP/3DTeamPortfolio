@@ -5,7 +5,7 @@
 
 #include "Turn.h"
 #include "Action.h"
-#include "Random_Attack.h"
+#include "Random_Select.h"
 #include "Check_Distance.h"
 
 CSequence_Attack::CSequence_Attack(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

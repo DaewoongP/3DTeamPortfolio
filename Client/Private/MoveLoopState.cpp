@@ -39,7 +39,7 @@ void CMoveLoopState::Late_Tick(_float fTimeDelta)
 void CMoveLoopState::OnStateEnter()
 {
 #ifdef _DEBUG
-	cout << "Loop Enter" << endl;
+	//cout << "Loop Enter" << endl;
 #endif // _DEBUG
 }
 
@@ -84,7 +84,7 @@ void CMoveLoopState::OnStateTick()
 void CMoveLoopState::OnStateExit()
 {
 #ifdef _DEBUG
-	cout << "Loop Exit" << endl;
+	//cout << "Loop Exit" << endl;
 #endif // _DEBUG
 }
 

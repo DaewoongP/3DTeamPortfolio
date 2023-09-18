@@ -39,7 +39,7 @@ HRESULT CSequence_Groggy::Initialize(void* pArg)
 			if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
 				return false;
 
-			if (CMagic::BUFF_CONTROL & *pICurrentSpell)
+			if (CMagic::BUFF_STUN & *pICurrentSpell)
 				return true;
 
 			return false;
@@ -58,8 +58,8 @@ HRESULT CSequence_Groggy::Tick(const _float& fTimeDelta)
 		if (FAILED(m_pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
 			return E_FAIL;
 
-		if(*pICurrentSpell & CMagic::BUFF_CONTROL)
-			*pICurrentSpell ^= CMagic::BUFF_CONTROL;
+		if(*pICurrentSpell & CMagic::BUFF_STUN)
+			*pICurrentSpell ^= CMagic::BUFF_STUN;
 	}
 
 	return hr;
@@ -136,6 +136,17 @@ HRESULT CSequence_Groggy::Assemble_Childs()
 void CSequence_Groggy::Reset_Behavior(HRESULT result)
 {
 	(*m_iterCurBehavior)->Reset_Behavior(result);
+
+	if (BEHAVIOR_RUNNING == m_ReturnData &&	//현재 기절 상태가 진행중이었는데
+		BEHAVIOR_RUNNING != result)			//상위 노드에서 상태가 바뀐경우
+	{
+		_uint* pICurrentSpell = { nullptr };
+		if (FAILED(m_pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
+			return;
+
+		if (*pICurrentSpell & CMagic::BUFF_STUN)
+			*pICurrentSpell ^= CMagic::BUFF_STUN;
+	}
 
 	BEGININSTANCE;
 	m_fPreWorldTimeAcc = pGameInstance->Get_World_TimeAcc();

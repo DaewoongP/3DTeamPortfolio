@@ -27,14 +27,19 @@ HRESULT CCheck_Distance::Tick(const _float& fTimeDelta)
 		return BEHAVIOR_FAIL;
 	}
 
-	CGameObject* pTarget = { nullptr };
-	if (FAILED(m_pBlackBoard->Get_Type("pTarget", pTarget)))
+	const CGameObject** ppTarget = { nullptr };
+	if (FAILED(m_pBlackBoard->Get_Type("cppTarget", ppTarget)))
 	{
-		MSG_BOX("[CCheck_Distance] Failed Get_Type pTarget");
+		MSG_BOX("[CCheck_Distance] Failed Get_Type cppTarget");
 		return E_FAIL;
 	}
+	if (nullptr == *ppTarget)
+	{
+		m_ReturnData = BEHAVIOR_FAIL;
+		return BEHAVIOR_FAIL;
+	}
 
-	_float3 vTargetPosition = pTarget->Get_Transform()->Get_Position();
+	_float3 vTargetPosition = (*ppTarget)->Get_Transform()->Get_Position();
 	_float3 vPosition = m_pOwnerTransform->Get_Position();
 	_float fTargetDistance = _float3::Distance(vPosition, vTargetPosition);
 

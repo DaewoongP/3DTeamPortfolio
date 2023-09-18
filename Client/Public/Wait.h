@@ -22,8 +22,11 @@ public:
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual HRESULT Tick(const _float& fTimeDelta) override;
 
+public:
+	virtual void Reset_Behavior(HRESULT result) override;
+
 private:
-	_float m_fTimeAcc = { 0.f };
+	_float m_fPreWorldTimeAcc = { 0.f };
 	_float m_fLimit = { 0.f };
 
 public:

@@ -32,12 +32,12 @@ HRESULT CLevel_MainGame::Initialize()
 
 		return E_FAIL;
 	}
-	/*if (FAILED(Ready_Layer_NPC(TEXT("Layer_NPC"))))
+	if (FAILED(Ready_Layer_NPC(TEXT("Layer_NPC"))))
 	{
 		MSG_BOX("Failed Ready_Layer_NPC");
 
 		return E_FAIL;
-	}*/
+	}
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 	{
 		MSG_BOX("Failed Ready_Layer_BackGround");
@@ -219,17 +219,19 @@ HRESULT CLevel_MainGame::Ready_Layer_Monster(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Golem_Combat"), pLayerTag, TEXT("GameObject_Golem_Combat"))))
+	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Golem_CombatGrunt"), pLayerTag, TEXT("GameObject_Golem_Combat"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Golem_Combat)");
+		ENDINSTANCE;
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Golem_Merlin"), pLayerTag, TEXT("GameObject_Golem_Merlin"))))
+	/*if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Golem_MerlinGrunt"), pLayerTag, TEXT("GameObject_Golem_Merlin"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Golem_Merlin)");
+		ENDINSTANCE;
 		return E_FAIL;
-	}
+	}*/
 
 	ENDINSTANCE;
 
@@ -250,6 +252,7 @@ HRESULT CLevel_MainGame::Ready_Layer_NPC(const _tchar* pLayerTag)
 	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Professor_Fig"), pLayerTag, TEXT("GameObject_Professor_Fig"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Professor_Fig)");
+		ENDINSTANCE;
 		return E_FAIL;
 	}
 
@@ -314,6 +317,106 @@ HRESULT CLevel_MainGame::Load_MapObject(const _tchar* pObjectFilePath)
 		}
 
 		++iObjectNum; ENDINSTANCE;
+	}
+
+	CloseHandle(hFile);
+
+	return S_OK;
+}
+
+HRESULT CLevel_MainGame::Load_Monsters(const wstring& wstrMonsterFilePath)
+{
+	HANDLE hFile = CreateFile(wstrMonsterFilePath.c_str(), GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+	{
+		MSG_BOX("Failed to Create MapObject File for Load MapObject");
+		return E_FAIL;
+	}
+
+	_uint iMonsterNum = 0;
+	_ulong dwByte = { 0 };
+
+	while (true)
+	{
+		_float4x4 WorldMatrix = _float4x4();
+		wstring wstrMonsterTag = { TEXT("") };
+		wstring wstrModelFilePath = { TEXT("") };
+		wstring wstrPrototypeModelTag = { TEXT("") };
+
+		/* Read Monster WorldMatrix */
+		if (!ReadFile(hFile, &WorldMatrix, sizeof(_float4x4), &dwByte, nullptr))
+		{
+			MSG_BOX("Failed to Read WorldMatrix");
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+
+		/* Read Monster Tag */
+		_uint iLength = { 0 };
+		if (!ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr))
+		{
+			MSG_BOX("Failed to Read iLength");
+			CloseHandle(hFile);
+		}
+		_tchar szTag[MAX_PATH] = { TEXT("") };
+		if (!ReadFile(hFile, szTag, sizeof(_tchar) * iLength, &dwByte, nullptr))
+		{
+			MSG_BOX("Failed to Read m_vecSaveObject.wszTag");
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+		wstrMonsterTag = szTag;
+
+		/* Read Monster PrototypeModelTag */
+		iLength = { 0 };
+		if (!ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr))
+		{
+			MSG_BOX("Failed to Read m_vecSaveObject.iLength");
+			CloseHandle(hFile);
+		}
+		ZEROMEM(szTag);
+		if (!ReadFile(hFile, szTag, sizeof(_tchar) * iLength, &dwByte, nullptr))
+		{
+			MSG_BOX("Failed to Read m_vecSaveObject.wszTag");
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+		wstrPrototypeModelTag = szTag;
+
+		/* Read Monster ModelFilePath */
+		iLength = { 0 };
+		if (!ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr))
+		{
+			MSG_BOX("Failed to Read m_vecSaveObject.iLength");
+			CloseHandle(hFile);
+		}
+		ZEROMEM(szTag);
+		if (!ReadFile(hFile, szTag, sizeof(_tchar) * iLength, &dwByte, nullptr))
+		{
+			MSG_BOX("Failed to Read m_vecSaveObject.wszTag");
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+		wstrModelFilePath = szTag;
+
+		if (dwByte == 0)
+		{
+			break;
+		}
+
+		wstring wstrPrototypeTag = TEXT("Prototype_GameObject_");
+		wstrPrototypeTag += wstrMonsterTag;
+		wstring wstrComponentTag = TEXT("Monster_") + to_wstring(iMonsterNum++);
+		BEGININSTANCE;
+		if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, wstrPrototypeTag.c_str(),
+			TEXT("Layer_Monster"), wstrComponentTag.c_str(), &WorldMatrix)))
+		{
+			MSG_BOX("[Load_Monsters] Failed Load Monster");
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+		ENDINSTANCE;
 	}
 
 	CloseHandle(hFile);
@@ -484,11 +587,11 @@ HRESULT CLevel_MainGame::Ready_Layer_Debug(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Player"), pLayerTag, TEXT("GameObject_Test_Player"))))
+	/*if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Player"), pLayerTag, TEXT("GameObject_Test_Player"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Player)");
 		return E_FAIL;
-	}
+	}*/
 
 	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_LoadTrigger"), pLayerTag, TEXT("GameObject_LoadTrigger"))))
 	{
@@ -507,6 +610,12 @@ HRESULT CLevel_MainGame::Ready_Layer_Debug(const _tchar* pLayerTag)
 		MSG_BOX("Failed Add_GameObject : (GameObject_Dummy)");
 		return E_FAIL;
 	}
+
+	/*if (FAILED(Load_Monsters(TEXT("../../Resources/GameData/MonsterData/Test.mon"))))
+	{
+		MSG_BOX("Failed Load_Monsters");
+		return E_FAIL;
+	}*/
 
 	Safe_Release(pGameInstance);
 

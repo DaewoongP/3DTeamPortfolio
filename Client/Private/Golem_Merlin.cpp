@@ -6,7 +6,7 @@
 #include "Magic.h"
 #include "Action.h"
 #include "Check_Degree.h"
-#include "Random_Attack.h"
+#include "Random_Select.h"
 #include "Action_Deflect.h"
 #include "Selector_Degree.h"
 #include "Sequence_Groggy.h"
@@ -36,7 +36,13 @@ HRESULT CGolem_Merlin::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	m_pTransform->Set_Position(_float3(5.f, 0.f, 5.f));
+	if (nullptr != pArg)
+	{
+		_float4x4* pWorldMatric = reinterpret_cast<_float4x4*>(pArg);
+		m_pTransform->Set_WorldMatrix(*pWorldMatric);
+	}
+	else
+		m_pTransform->Set_Position(_float3(5.f, 0.f, 5.f));
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
@@ -72,7 +78,7 @@ void CGolem_Merlin::Tick(_float fTimeDelta)
 		m_pRootBehavior->Tick(fTimeDelta);
 
 	if (nullptr != m_pModelCom)
-		m_pModelCom->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
+		m_pModelCom->Play_Animation(fTimeDelta);//, CModel::UPPERBODY, m_pTransform);
 }
 
 void CGolem_Merlin::Late_Tick(_float fTimeDelta)
@@ -164,11 +170,11 @@ HRESULT CGolem_Merlin::Make_AI()
 #pragma endregion //Add_Types
 
 		/* 이거는 테스트 용으로 넣은 코드임 */
-		CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Player"), TEXT("GameObject_Player")));
+		const CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Player"), TEXT("GameObject_Player")));
 		if (nullptr == pTestTarget)
 			throw TEXT("pTestTarget is nullptr");
-		if (FAILED(m_pRootBehavior->Add_Type("pTarget", pTestTarget)))
-			throw TEXT("Failed Add_Type pTarget");
+		if (FAILED(m_pRootBehavior->Add_Type("cppTarget", &pTestTarget)))
+			throw TEXT("Failed Add_Type cppTarget");
 		///////////////////////////////////////
 
 		/* Make Child Behaviors */
@@ -452,7 +458,7 @@ HRESULT CGolem_Merlin::Make_Attack(_Inout_ CSelector* pSelector)
 		if (nullptr == pSelector)
 			throw TEXT("Parameter pSelector is nullptr");
 
-		CRandom_Attack* pRandom_Attack = dynamic_cast<CRandom_Attack*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Random_Attack")));
+		CRandom_Select* pRandom_Attack = dynamic_cast<CRandom_Select*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Random_Select")));
 		if (nullptr == pRandom_Attack)
 			throw TEXT("pRandom_Attack is nullptr");
 

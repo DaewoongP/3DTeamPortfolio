@@ -62,17 +62,17 @@ void CTest_Stair::Late_Tick(_float fTimeDelta)
 
 void CTest_Stair::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
-	cout << "Stair Enter" << endl;
+	//cout << "Stair Enter" << endl;
 }
 
 void CTest_Stair::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)
 {
-	cout << "Stair Stay" << endl;
+	//cout << "Stair Stay" << endl;
 }
 
 void CTest_Stair::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 {
-	cout << "Stair Exit" << endl;
+	//cout << "Stair Exit" << endl;
 }
 
 HRESULT CTest_Stair::Render()

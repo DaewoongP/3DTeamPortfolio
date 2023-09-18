@@ -22,6 +22,7 @@ END
 
 BEGIN(Client)
 class CAction;
+class CRandom_Select;
 class CWeapon_Golem_Combat;
 END
 
@@ -40,7 +41,6 @@ public:
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual void OnCollisionEnter(COLLEVENTDESC CollisionEventDesc) override;
-	virtual void OnCollisionStay(COLLEVENTDESC CollisionEventDesc) override;
 	virtual void OnCollisionExit(COLLEVENTDESC CollisionEventDesc) override;
 	virtual HRESULT Render() override;
 	virtual HRESULT Render_Depth() override;
@@ -56,16 +56,25 @@ private:
 	CWeapon_Golem_Combat* m_pWeapon = { nullptr };
 	
 private:
+	const CGameObject* m_pTarget = { nullptr };
 	_uint m_iCurrentSpell = { 0 };
-	_uint m_iPreviousSpell = { 0 };
 
-	_bool m_isParring = { false };
 	_bool m_isSpawn = { false };
+	_bool m_isParring = { false };
+	_bool m_isRangeInEnemy = { false };
+
+	// 범위 안에 들어온 몬스터 리스트
+	list<pair<wstring, const CGameObject*>> m_RangeInEnemies;
 
 private:
 	HRESULT Make_AI();
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
+
+private:
+	// 가까운 적을 타겟으로 세팅
+	void Set_Current_Target();
+	HRESULT Remove_GameObject(const wstring& wstrObjectTag);
 
 #ifdef _DEBUG
 	_int m_iIndex = { 0 };
@@ -78,6 +87,7 @@ private: /* 행동 묶음들 */
 	HRESULT Make_NormalAttack(_Inout_ CSelector* pSelector);
 	HRESULT Make_Check_Spell(_Inout_ CSelector* pSelector);
 	HRESULT Make_Descendo(_Inout_ CSequence* pSequence);
+	HRESULT Make_Random_Idle_Move(_Inout_ CRandom_Select* pRandomSelect);
 
 public:
 	static CGolem_Combat* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

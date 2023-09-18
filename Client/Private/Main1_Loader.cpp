@@ -149,11 +149,34 @@ HRESULT CMain1_Loader::Loading_For_MainGame()
 			CRootBehavior::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_RootBehavior");
 
+		/* For.Prototype_Component_Action */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Action"),
+			CAction::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Action");
+
+		/* For.Prototype_Component_Action_Deflect */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Action_Deflect"),
+			CAction_Deflect::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Action_Deflect");
+
+		/* For.Prototype_Component_Random_Select */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Random_Select"),
+			CRandom_Select::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Random_Select");
+
+#pragma region Behavior_Selectors
 		/* For.Prototype_Component_Selector */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Selector"),
 			CSelector::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Selector");
 
+		/* For.Prototype_Component_Selector_Degree */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Selector_Degree"),
+			CSelector_Degree::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Selector_Degree");
+#pragma endregion Behavior_Selectors
+
+#pragma region Behavior_Sequences
 		/* For.Prototype_Component_Sequence */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sequence"),
 			CSequence::Create(m_pDevice, m_pContext))))
@@ -164,21 +187,23 @@ HRESULT CMain1_Loader::Loading_For_MainGame()
 			CSequence_Groggy::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Sequence_Groggy");
 
-		/* For.Prototype_Component_Random_Attack */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Random_Attack"),
-			CRandom_Attack::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_Random_Attack");
+		/* For.Prototype_Component_Sequence_Levitated */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sequence_Levitated"),
+			CSequence_Levitated::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Sequence_Levitated");
 
-		/* For.Prototype_Component_Action_Deflect */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Action_Deflect"),
-			CAction_Deflect::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_Action_Deflect");
+		/* For.Prototype_Component_Sequence_Attack */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sequence_Attack"),
+			CSequence_Attack::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Sequence_Attack");
 
-		/* For.Prototype_Component_Action */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Action"),
-			CAction::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_Action");
+		/* For.Prototype_Component_Sequence_MoveTarget */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sequence_MoveTarget"),
+			CSequence_MoveTarget::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Sequence_MoveTarget");
+#pragma endregion Behavior_Sequences
 
+#pragma region Behavior_Movements
 		/* For.Prototype_Component_Wait */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Wait"),
 			CWait::Create(m_pDevice, m_pContext))))
@@ -198,21 +223,7 @@ HRESULT CMain1_Loader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Check_Distance"),
 			CCheck_Distance::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Check_Distance");
-
-		/* For.Prototype_Component_Selector_Degree */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Selector_Degree"),
-			CSelector_Degree::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_Selector_Degree");
-		
-		/* For.Prototype_Component_Sequence_Attack */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sequence_Attack"),
-			CSequence_Attack::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_Sequence_Attack");
-
-		/* For.Prototype_Component_Sequence_MoveTarget */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sequence_MoveTarget"),
-			CSequence_MoveTarget::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_Sequence_MoveTarget");
+#pragma endregion Behavior_Movements
 
 		/* For. Prototype_Component_Magic*/
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Magic"),
@@ -220,7 +231,6 @@ HRESULT CMain1_Loader::Loading_For_MainGame()
 			throw TEXT("Prototype_Component_Magic");
 
 #pragma region Magic_Effect
-
 		/* For.Prototype_GameObject_Default_Magic_Effect*/
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Default_Magic_Effect"),
 			CDefault_Magic_Effect::Create(m_pDevice, m_pContext, LEVEL_MAINGAME))))
@@ -232,6 +242,10 @@ HRESULT CMain1_Loader::Loading_For_MainGame()
 			throw TEXT("Prototype_GameObject_Wingardium_Effect");
 
 		/* For.Prototype_GameObject_Wingardium_Effect*/
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Default_MagicTraill_Effect"),
+			CDefault_MagicTraill_Effect::Create(m_pDevice, m_pContext, LEVEL_MAINGAME))))
+			throw TEXT("Prototype_GameObject_Default_MagicTraill_Effect");
+			
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_MagicTraill_Confringo_Effect"),
 			CDefault_MagicTraill_Effect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/Confringo/Confringo.trail"), LEVEL_MAINGAME))))
 			throw TEXT("Prototype_GameObject_MagicTraill_Confringo_Effect");
@@ -301,7 +315,6 @@ HRESULT CMain1_Loader::Loading_For_MainGame()
 		wstring wstrErrorMSG = TEXT("Failed Add_Prototype : ");
 		wstrErrorMSG += pErrorTag;
 		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
-
 		return E_FAIL;
 	}
 

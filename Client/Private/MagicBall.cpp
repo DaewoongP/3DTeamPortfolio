@@ -82,17 +82,17 @@ void CMagicBall::Late_Tick(_float fTimeDelta)
 
 void CMagicBall::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
-	cout << "Player Enter" << endl;
+	//cout << "Player Enter" << endl;
 }
 
 void CMagicBall::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)
 {
-	cout << "stay" << endl;
+	//cout << "stay" << endl;
 }
 
 void CMagicBall::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 {
-	cout << "Exit" << endl;
+	//cout << "Exit" << endl;
 }
 
 HRESULT CMagicBall::Add_Components()
