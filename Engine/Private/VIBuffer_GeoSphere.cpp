@@ -89,10 +89,12 @@ HRESULT CVIBuffer_GeoSphere::Initialize_Prototype()
 
 	memcpy(pVertices, &vertices[0], sizeof(VTXPOSNORTEX) * m_iNumVertices);
 
+	// Normal
 	for (_uint i = 0; i < m_iNumVertices; ++i)
 	{
-		pVertices->vNormal = (pVertices->vPosition - _float3(0.f, 0.f, 0.f));
-		XMStoreFloat3(&pVertices->vNormal, XMVector3Normalize(XMLoadFloat3(&pVertices->vNormal)));
+		XMVECTOR direction = XMLoadFloat3(&pVertices[i].vPosition);
+		XMVECTOR normal = XMVector3Normalize(direction);
+		XMStoreFloat3(&pVertices[i].vNormal, normal);
 	}
 
 	ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);

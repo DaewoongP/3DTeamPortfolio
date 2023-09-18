@@ -1,5 +1,4 @@
 #include "ImageFileDialog.h"
-#include "ImGuiFileDialog.h"
 
 HRESULT CImageFileDialog::Initialize(ID3D11Device* _pDevice, const _char* _pTag)
 {

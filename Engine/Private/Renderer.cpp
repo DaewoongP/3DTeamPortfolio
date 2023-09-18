@@ -17,6 +17,8 @@
 #include "Font_Manager.h"
 #endif // _DEBUG
 
+const _char* CRenderer::pRenderGroup[RENDER_END] = { "Render_Priority", "Render_Depth", "Render_Nonblend"
+, "Render_NonLight", "Render_Blend", "Render_Picking", "Render_Brushing", "Render_UI", "Render_UITexture" };
 
 CRenderer::CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CComponent(pDevice, pContext)
@@ -213,6 +215,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 	if (FAILED(Render_NonBlend()))
 		return E_FAIL;
+	if (FAILED(Render_PostBlend()))
+		return E_FAIL;
 	if (FAILED(Render_Lights()))
 		return E_FAIL;
 	if (FAILED(Render_Bloom()))
@@ -354,6 +358,30 @@ HRESULT CRenderer::Render_NonBlend()
 
 	return S_OK;
 }
+HRESULT CRenderer::Render_PostBlend()
+{
+	if (nullptr == m_pRenderTarget_Manager)
+		return E_FAIL;
+
+	//if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_GameObjects"))))
+	//	return E_FAIL;
+
+	//for (auto& pGameObject : m_RenderObjects[RENDER_POST_BLEND])
+	//{
+	//	if (nullptr != pGameObject)
+	//		pGameObject->Render();
+
+	//	Safe_Release(pGameObject);
+	//}
+
+	//m_RenderObjects[RENDER_POST_BLEND].clear();
+
+	//if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext)))
+	//	return E_FAIL;
+
+	return S_OK;
+}
+
 #ifdef _DEBUG
 HRESULT CRenderer::Render_Picking()
 {

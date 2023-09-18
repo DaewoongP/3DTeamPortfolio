@@ -14,8 +14,8 @@ BEGIN(Engine)
 class ENGINE_DLL CRenderer final : public CComponent
 {
 public:
-	enum RENDERGROUP {RENDER_PRIORITY, RENDER_DEPTH,RENDER_NONBLEND, RENDER_NONLIGHT, RENDER_BLEND,
-					  RENDER_BLUR,RENDER_BLOOM, RENDER_DISTORTION,RENDER_GLOW,//셰이딩처리를 해줄애들
+	enum RENDERGROUP {RENDER_PRIORITY, RENDER_DEPTH, RENDER_NONBLEND, RENDER_NONLIGHT, RENDER_BLEND,
+					  RENDER_BLUR,RENDER_BLOOM, RENDER_DISTORTION, RENDER_GLOW,//셰이딩처리를 해줄애들
 					  RENDER_PICKING, RENDER_BRUSHING, RENDER_UI, RENDER_UITEXTURE, RENDER_END };
 
 private:
@@ -37,6 +37,7 @@ public:
 private:
 	HRESULT Render_Priority();
 	HRESULT Render_NonBlend();
+	HRESULT Render_PostBlend();
 #ifdef _DEBUG
 	HRESULT Render_Picking();
 	HRESULT Render_Brushing();
@@ -130,6 +131,7 @@ private:
 	class CTexture*					 m_pTexture3 = { nullptr };
 
 public:
+	static const _char* pRenderGroup[RENDER_END];
 	static CRenderer* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);
 	virtual CComponent* Clone(void* pArg) override;
 	virtual void Free() override;

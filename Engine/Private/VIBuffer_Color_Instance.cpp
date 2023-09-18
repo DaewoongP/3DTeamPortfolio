@@ -1,4 +1,4 @@
-#include "..\Public\VIBuffer_Color_Instance.h"
+#include "../Public/VIBuffer_Color_Instance.h"
 #include "PipeLine.h"
 
 CVIBuffer_Color_Instance::CVIBuffer_Color_Instance(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -11,6 +11,7 @@ CVIBuffer_Color_Instance::CVIBuffer_Color_Instance(const CVIBuffer_Color_Instanc
 	, m_iInstanceStride(rhs.m_iInstanceStride)
 	, m_iIndexCountPerInstance(rhs.m_iIndexCountPerInstance)
 	, m_iNumInstance(rhs.m_iNumInstance)
+	, m_iDrawNum(rhs.m_iDrawNum)
 {
 }
 
@@ -29,8 +30,8 @@ HRESULT CVIBuffer_Color_Instance::Initialize(void* pArg)
 
 	vector<_float4x4> InitializeMatrix;
 	InitializeMatrix.resize(m_iNumInstance);
-	Set_DrawNum(m_iNumInstance);
 	memcpy(InitializeMatrix.data(), pArg, sizeof(_float4x4) * m_iNumInstance);
+	m_iDrawNum = m_iNumInstance;
 
 	D3D11_BUFFER_DESC BufferDesc;
 	ZEROMEM(&BufferDesc);
@@ -51,7 +52,7 @@ HRESULT CVIBuffer_Color_Instance::Initialize(void* pArg)
 		memcpy(&pVertices[i].vUp, InitializeMatrix[i].m[1], sizeof(_float4));
 		memcpy(&pVertices[i].vLook, InitializeMatrix[i].m[2], sizeof(_float4));
 		memcpy(&pVertices[i].vTranslation, InitializeMatrix[i].m[3], sizeof(_float4));
-		pVertices[i].vColor = _float4(1.f, 1.f, 1.f, 1.f);
+		pVertices->vColor = { 1.f, 1.f, 1.f, 1.f };
 	}
 
 	D3D11_SUBRESOURCE_DATA		SubResourceData;
@@ -91,15 +92,15 @@ void CVIBuffer_Color_Instance::Tick(VTXCOLINSTANCE* pInstances, _int iRenderedPa
 
 	m_pContext->Map(m_pVBInstance, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &MappedSubResource);
 
-	VTXCOLINSTANCE* pVtxInstance = static_cast<VTXCOLINSTANCE*>(MappedSubResource.pData);
+	VTXCOLINSTANCE* pVTXCOLINSTANCE = static_cast<VTXCOLINSTANCE*>(MappedSubResource.pData);
 
 	for (_uint i = 0; i < iRenderedParticleNum; ++i)
 	{
-		memcpy(&pVtxInstance[i].vRight, &pInstances[i].vRight, sizeof(_float4));
-		memcpy(&pVtxInstance[i].vUp, &pInstances[i].vUp, sizeof(_float4));
-		memcpy(&pVtxInstance[i].vLook, &pInstances[i].vLook, sizeof(_float4));
-		memcpy(&pVtxInstance[i].vTranslation, &pInstances[i].vTranslation, sizeof(_float4));
-		memcpy(&pVtxInstance[i].vColor, &pInstances[i].vColor, sizeof(_float4));
+		memcpy(&pVTXCOLINSTANCE[i].vRight, &pInstances[i].vRight, sizeof(_float4));
+		memcpy(&pVTXCOLINSTANCE[i].vUp, &pInstances[i].vUp, sizeof(_float4));
+		memcpy(&pVTXCOLINSTANCE[i].vLook, &pInstances[i].vLook, sizeof(_float4));
+		memcpy(&pVTXCOLINSTANCE[i].vTranslation, &pInstances[i].vTranslation, sizeof(_float4));
+		memcpy(&pVTXCOLINSTANCE[i].vColor, &pInstances[i].vColor, sizeof(_float4));
 	}
 
 	m_pContext->Unmap(m_pVBInstance, 0);
@@ -156,7 +157,7 @@ HRESULT CVIBuffer_Color_Instance::Render()
 	if (nullptr == m_pContext)
 		return E_FAIL;
 
-	ID3D11Buffer*			pBuffers[] = {
+	ID3D11Buffer* pBuffers[] = {
 		m_pVB,
 		m_pVBInstance,
 	};

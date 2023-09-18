@@ -96,9 +96,9 @@ HRESULT CLevel_MainGame::Initialize()
 	}
 
 	
-	/* °ÔÀÓ ÃÊ±âÈ­¿Í ÇÔ²² ¿ùµå½Ã°£ ÃÊ±âÈ­ */
+	/* ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­ï¿½ï¿½ ï¿½Ô²ï¿½ ï¿½ï¿½ï¿½ï¿½Ã°ï¿½ ï¿½Ê±ï¿½È­ */
 	pGameInstance->Reset_World_TimeAcc();
-	// ÇöÀç ¾À ¼³Á¤.
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
 	pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
 	ENDINSTANCE;
 
@@ -111,7 +111,7 @@ void CLevel_MainGame::Tick(_float fTimeDelta)
 
 	BEGININSTANCE;
 
-	// ¾Àº¯°æ Å×½ºÆ®
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½×½ï¿½Æ®
 	if (pGameInstance->Get_DIKeyState(DIK_T, CInput_Device::KEY_DOWN))
 	{
 		pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
@@ -124,7 +124,7 @@ void CLevel_MainGame::Tick(_float fTimeDelta)
 	ENDINSTANCE;
 
 #ifdef _DEBUG
-	SetWindowText(g_hWnd, TEXT("¸ÞÀÎ°ÔÀÓ·¹º§ÀÔ´Ï´Ù."));
+	SetWindowText(g_hWnd, TEXT("ï¿½ï¿½ï¿½Î°ï¿½ï¿½Ó·ï¿½ï¿½ï¿½ï¿½Ô´Ï´ï¿½."));
 #endif //_DEBUG
 }
 
@@ -274,7 +274,7 @@ HRESULT CLevel_MainGame::Load_MapObject(const _tchar* pObjectFilePath)
 		return E_FAIL;
 	}
 
-	// ¸Ê ¿ÀºêÁ§Æ® ¹øÈ£
+	// ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½È£
 	_uint iObjectNum = 0;
 
 	DWORD    dwByte = 0;
@@ -306,11 +306,11 @@ HRESULT CLevel_MainGame::Load_MapObject(const _tchar* pObjectFilePath)
 		}
 		BEGININSTANCE;
 
-		// ¸Ê ¿ÀºêÁ§Æ®¿¡ ¹øÈ£ ºÙ¿©ÁÜ
+		// ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½È£ ï¿½Ù¿ï¿½ï¿½ï¿½
 		_tchar wszobjName[MAX_PATH] = { 0 };
 		_stprintf_s(wszobjName, TEXT("GameObject_MapObject_%d"), (iObjectNum));
 
-		// ¹øÈ£¸¦ ºÙÀÎ ÅÂ±×·Î MapObject µî·Ï
+		// ï¿½ï¿½È£ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Â±×·ï¿½ MapObject ï¿½ï¿½ï¿½
 		if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME,
 			TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_BackGround"),
 			wszobjName, &MapObjectDesc)))

@@ -118,17 +118,6 @@ HRESULT CVIBuffer_Rect_Matrix::Initialize(void* pArg)
 	return S_OK;
 }
 
-void CVIBuffer_Rect_Matrix::Tick(_float fTimeDelta)
-{
-	D3D11_MAPPED_SUBRESOURCE	MappedSubResource;
-
-	m_pContext->Map(m_pVBInstance, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &MappedSubResource);
-
-
-	
-	m_pContext->Unmap(m_pVBInstance, 0);
-}
-
 HRESULT CVIBuffer_Rect_Matrix::Make_InstanceLogic(const INSTANCEDESC* pInstanceDesc)
 {
 	return S_OK;

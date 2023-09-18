@@ -20,6 +20,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Animation.h" />
+    <ClInclude Include="..\public\VIBuffer_UVSphere.h" />
+    <ClInclude Include="..\public\VIBuffer_Rect_Color_Index_Instance.h" />
     <ClInclude Include="..\Public\Base.h" />
     <ClInclude Include="..\Public\Behavior.h" />
     <ClInclude Include="..\public\BehaviorCallBack.h" />
@@ -46,6 +48,7 @@
     <ClInclude Include="..\Public\Model_Instance.h" />
     <ClInclude Include="..\public\Model_LOD.h" />
     <ClInclude Include="..\Public\RandomChoose.h" />
+    <ClInclude Include="..\public\VIBuffer_Color_Index_Instance.h" />
     <ClInclude Include="..\public\ReportCallBack.h" />
     <ClInclude Include="..\Public\Shape_GeoSphere.h" />
     <ClInclude Include="..\public\Dynamic_Mesh.h" />
@@ -150,6 +153,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Animation.cpp" />
+    <ClCompile Include="..\private\VIBuffer_UVSphere.cpp" />
+    <ClCompile Include="..\private\VIBuffer_Rect_Color_Index_Instance.cpp" />
     <ClCompile Include="..\Private\Base.cpp" />
     <ClCompile Include="..\Private\Behavior.cpp" />
     <ClCompile Include="..\private\BehaviorCallBack.cpp" />
@@ -176,6 +181,7 @@
       <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</IncludeInUnityFile>
     </ClCompile>
     <ClCompile Include="..\Private\RandomChoose.cpp" />
+    <ClCompile Include="..\private\VIBuffer_Color_Index_Instance.cpp" />
     <ClCompile Include="..\private\ReportCallBack.cpp" />
     <ClCompile Include="..\Private\Shape_GeoSphere.cpp" />
     <ClCompile Include="..\private\Dynamic_Mesh.cpp" />
@@ -276,6 +282,7 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Debug.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_DefaultEffect.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Flipbook.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Distortion.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Geometry.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Glow.hlsl" />
@@ -287,6 +294,7 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Trail.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Type.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointColInstance.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxRectColIdxInstance.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxRectColInstance.hlsl" />
   </ItemGroup>
   <ItemGroup>

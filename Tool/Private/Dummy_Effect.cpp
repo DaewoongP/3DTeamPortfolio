@@ -43,7 +43,7 @@ HRESULT CDummy_Effect::Initialize_Prototype()
 	{
 		/* Prototype_Component_Texture_Ground */
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_TestTexture_Flipbook"),
-			CDummyFlipBook::Create(m_pDevice, m_pContext, LEVEL_TOOL, TEXT("../../Resources/Effects/Textures/Flipbooks/VFX_T_Dust_8x8_D.png"), 8, 8))))
+			CDummyFlipBook::Create(m_pDevice, m_pContext, LEVEL_TOOL, nullptr))))
 			return E_FAIL;
 	}
 
@@ -101,38 +101,11 @@ void CDummy_Effect::Tick(_float fTimeDelta)
 	}
 
 
-	// // / //////////////
-
-	//CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	//Safe_AddRef(pGameInstance);
-
-	//_float3 vLook = pGameInstance->Get_CamPosition()->xyz() - _particle_iter->WorldMatrix.Translation();
-	//vLook.Normalize();
-	//_float3 vUp = { 0.f, 1.f, 0.f };
-	//_float3 vRight = vUp.Cross(vLook);
-	//vUp = vLook.Cross(vRight);
-
-	//_particle_iter->fCircularMotionAngle += m_RotationOverLifetimeModuleDesc.fSpeed * fTimeDelta;
-
-	//_float fX = m_RotationOverLifetimeModuleDesc.fRadius * cos(_particle_iter->fCircularMotionAngle);
-	//_float fY = m_RotationOverLifetimeModuleDesc.fRadius * sin(_particle_iter->fCircularMotionAngle);
-
-	//if (true == m_RotationOverLifetimeModuleDesc.isFlipOption)
-	//{
-	//	if (RandomBool(m_RotationOverLifetimeModuleDesc.fFlipProperty))
-	//	{
-	//		fX = -fX;
-	//		fY = -fY;
-	//	}
-	//}
-
-	//_float3 vPos = _particle_iter->WorldMatrix.Translation();
-	//vPos += fX * vRight + fY * vUp;
-
-	//_particle_iter->WorldMatrix.Translation(vPos);
-	//Safe_Release(pGameInstance);
-
-
+	SHAPE_MODULE& ShapeModule = m_pParticleSystem->Get_ShapeModuleRef();
+	float fLength = _float3(m_vPrevPos - m_pTransform->Get_Position()).Length();
+	if(fLength >= 0.001f)
+		ShapeModule.ShapeMatrix.MatrixLookAt(m_pTransform->Get_Position(), m_vPrevPos, _float3(0.f, 1.f, 0.f));
+	m_vPrevPos = m_pTransform->Get_Position();
 	ENDINSTANCE;
 }
 

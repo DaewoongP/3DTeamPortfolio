@@ -35,6 +35,7 @@ public:
 		CMagic::BUFF_TYPE		eBuffType = { CMagic::BUFF_NONE };
 		SPELL					eMagicTag = { SPELL_END };
 		_float					fDamage = { 0 };
+		function<void(_float3,_float)>		Action = { nullptr };
 	}COLLSIONREQUESTDESC;
 
 	typedef struct tagMagicBallDesc

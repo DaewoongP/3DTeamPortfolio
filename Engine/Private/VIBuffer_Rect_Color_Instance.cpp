@@ -32,26 +32,6 @@ HRESULT CVIBuffer_Rect_Color_Instance::Initialize(void* pArg)
 
 	m_iNumInstance = *reinterpret_cast<_uint*>(pArg);
 
-	if (FAILED(Make_Buffers()))
-		return E_FAIL;
-
-	vector<_float4x4> InitializeMatrices;
-
-	for (_uint i = 0; i < m_iNumInstance; ++i)
-	{
-		_float4x4 InitMatrix = XMMatrixIdentity();
-
-		InitializeMatrices.push_back(InitMatrix);
-	}
-
-	if (FAILED(__super::Initialize(InitializeMatrices.data())))
-		return E_FAIL;
-
-	return S_OK;
-}
-
-HRESULT CVIBuffer_Rect_Color_Instance::Make_Buffers()
-{
 	m_iIndexCountPerInstance = 6;
 	m_iNumVertexBuffers = { 2 };
 	m_iStride = { sizeof(VTXPOSTEX) };
@@ -131,8 +111,22 @@ HRESULT CVIBuffer_Rect_Color_Instance::Make_Buffers()
 	Safe_Delete_Array(pIndices);
 #pragma endregion
 
+	vector<_float4x4> InitializeMatrices;
+
+	for (_uint i = 0; i < m_iNumInstance; ++i)
+	{
+		_float4x4 InitMatrix = XMMatrixIdentity();
+
+		InitializeMatrices.push_back(InitMatrix);
+	}
+
+	if (FAILED(__super::Initialize(InitializeMatrices.data())))
+		return E_FAIL;
+
 	return S_OK;
 }
+
+
 
 CVIBuffer_Rect_Color_Instance* CVIBuffer_Rect_Color_Instance::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
