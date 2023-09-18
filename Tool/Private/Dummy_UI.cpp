@@ -30,7 +30,7 @@ HRESULT CDummy_UI::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	/*if (nullptr != pArg && m_isSave == false)
+	if (nullptr != pArg && m_isSave == false)
 	{
 		CUI_Window::UI_DATA* UIDesc = (CUI_Window::UI_DATA*)pArg;
 
@@ -39,7 +39,7 @@ HRESULT CDummy_UI::Initialize(void* pArg)
 
 		lstrcpy(m_wszTextureName, UIDesc->m_wszTextureName);
 		lstrcpy(m_wszTexturePath, UIDesc->m_wszTexturePath);
-	}*/
+	}
 
 	
 	if (FAILED(Ready_Texture()))

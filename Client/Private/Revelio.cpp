@@ -77,7 +77,7 @@ HRESULT CRevelio::Add_Effect()
 
 CRevelio* CRevelio::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CRevelio* pInstance = new CRevelio(pDevice, pContext);
+	CRevelio* pInstance = New CRevelio(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -90,7 +90,7 @@ CRevelio* CRevelio::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 CGameObject* CRevelio::Clone(void* pArg)
 {
-	CRevelio* pInstance = new CRevelio(*this);
+	CRevelio* pInstance = New CRevelio(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

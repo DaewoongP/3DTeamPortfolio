@@ -126,7 +126,7 @@ HRESULT CUI_Finisher::SetUp_ShaderResources()
 
 CUI_Finisher* CUI_Finisher::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CUI_Finisher* pInstance = new CUI_Finisher(pDevice, pContext);
+	CUI_Finisher* pInstance = New CUI_Finisher(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -139,7 +139,7 @@ CUI_Finisher* CUI_Finisher::Create(ID3D11Device* pDevice, ID3D11DeviceContext* p
 
 CGameObject* CUI_Finisher::Clone(void* pArg)
 {
-	CUI_Finisher* pInstance = new CUI_Finisher(*this);
+	CUI_Finisher* pInstance = New CUI_Finisher(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

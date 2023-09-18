@@ -14,8 +14,10 @@ BEGIN(Engine)
 class ENGINE_DLL CRenderer final : public CComponent
 {
 public:
-	enum RENDERGROUP {RENDER_PRIORITY, RENDER_DEPTH, RENDER_NONBLEND, RENDER_NONLIGHT, RENDER_BLEND, RENDER_PICKING, RENDER_BRUSHING, RENDER_UI, RENDER_UITEXTURE, RENDER_END };
-	
+	enum RENDERGROUP {RENDER_PRIORITY, RENDER_DEPTH,RENDER_NONBLEND, RENDER_NONLIGHT, RENDER_BLEND,
+					  RENDER_BLUR,RENDER_BLOOM, RENDER_DISTORTION,RENDER_GLOW,//셰이딩처리를 해줄애들
+					  RENDER_PICKING, RENDER_BRUSHING, RENDER_UI, RENDER_UITEXTURE, RENDER_END };
+
 private:
 	explicit CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual ~CRenderer() = default;
@@ -35,7 +37,6 @@ public:
 private:
 	HRESULT Render_Priority();
 	HRESULT Render_NonBlend();
-	HRESULT Render_PostBlend();
 #ifdef _DEBUG
 	HRESULT Render_Picking();
 	HRESULT Render_Brushing();
@@ -52,6 +53,7 @@ private:
 	HRESULT Render_PostProcessing();
 	HRESULT Render_Bloom();
 	HRESULT Render_Distortion();
+	//HRESULT Render_Glow();
 	HRESULT Render_UI();
 
 #ifdef _DEBUG
@@ -113,16 +115,21 @@ private: /* AfterShader*/
 
 private:
 	class CBlur*					m_pSSAOBlur = { nullptr };
+	//class CBlur* m_pShadowBlur = { nullptr };
+	class CBloom*					m_pBloom = { nullptr };
+	class CGlow*					m_pGlow = {nullptr};
+	class CDistortion*				m_pDistortion ={nullptr};
+
+
 
 private:
 	_float m_fFrameTime = 0.f;
 
 	class CTexture*					 m_pTexture = { nullptr };
-	class CTexture* m_pTexture2 = { nullptr };
-	class CTexture* m_pTexture3 = { nullptr };
+	class CTexture*					 m_pTexture2 = { nullptr };
+	class CTexture*					 m_pTexture3 = { nullptr };
 
 public:
-	static const _char* pRenderGroup[RENDER_END];
 	static CRenderer* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);
 	virtual CComponent* Clone(void* pArg) override;
 	virtual void Free() override;

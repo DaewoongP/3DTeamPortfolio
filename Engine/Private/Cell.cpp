@@ -127,7 +127,7 @@ HRESULT CCell::Render()
 
 CCell* CCell::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _float3* pPoints, _int iIndex)
 {
-	CCell* pInstance = new CCell(pDevice, pContext);
+	CCell* pInstance = New CCell(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize(pPoints, iIndex)))
 	{

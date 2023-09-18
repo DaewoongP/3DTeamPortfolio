@@ -405,7 +405,7 @@ HRESULT CUI_Group_Skill::Add_SpellTexture()
 
 CUI_Group_Skill* CUI_Group_Skill::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CUI_Group_Skill* pInstance = new CUI_Group_Skill(pDevice, pContext);
+	CUI_Group_Skill* pInstance = New CUI_Group_Skill(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -418,7 +418,7 @@ CUI_Group_Skill* CUI_Group_Skill::Create(ID3D11Device* pDevice, ID3D11DeviceCont
 
 CGameObject* CUI_Group_Skill::Clone(void* pArg)
 {
-	CUI_Group_Skill* pInstance = new CUI_Group_Skill(*this);
+	CUI_Group_Skill* pInstance = New CUI_Group_Skill(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

@@ -9,8 +9,8 @@ CBounding_OBB::CBounding_OBB(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 
 CBounding_OBB::CBounding_OBB(const CBounding_OBB& rhs)
 	: CBounding(rhs)
-	, m_pOBB_Original(new DirectX::BoundingOrientedBox(*rhs.m_pOBB_Original))
-	, m_pOBB(new DirectX::BoundingOrientedBox(*m_pOBB_Original))
+	, m_pOBB_Original(New DirectX::BoundingOrientedBox(*rhs.m_pOBB_Original))
+	, m_pOBB(New DirectX::BoundingOrientedBox(*m_pOBB_Original))
 {
 }
 
@@ -35,7 +35,7 @@ HRESULT CBounding_OBB::Initialize_Prototype()
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
 
-	m_pOBB_Original = new DirectX::BoundingOrientedBox(_float3(0.f, 0.f, 0.f), _float3(0.5f, 0.5f, 0.5f), _float4(0.f, 0.f, 0.f, 1.f));
+	m_pOBB_Original = New DirectX::BoundingOrientedBox(_float3(0.f, 0.f, 0.f), _float3(0.5f, 0.5f, 0.5f), _float4(0.f, 0.f, 0.f, 1.f));
 
 	return S_OK;
 }
@@ -91,7 +91,7 @@ HRESULT CBounding_OBB::Render(_float4 vColor)
 
 CBounding_OBB* CBounding_OBB::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CBounding_OBB* pInstance = new CBounding_OBB(pDevice, pContext);
+	CBounding_OBB* pInstance = New CBounding_OBB(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -104,7 +104,7 @@ CBounding_OBB* CBounding_OBB::Create(ID3D11Device* pDevice, ID3D11DeviceContext*
 
 CBounding* CBounding_OBB::Clone(void* pBoundingDesc)
 {
-	CBounding_OBB* pInstance = new CBounding_OBB(*this);
+	CBounding_OBB* pInstance = New CBounding_OBB(*this);
 
 	if (FAILED(pInstance->Initialize(pBoundingDesc)))
 	{

@@ -153,7 +153,7 @@ HRESULT CCustomModel::Add_MeshParts(const _uint& _iLevelIndex, const wstring& _w
 
 CCustomModel* CCustomModel::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, TYPE eType, const wstring& _wstrModelFilePath, _float4x4 _PivotMatrix)
 {
-	CCustomModel* pInstance = new CCustomModel(_pDevice, _pContext);
+	CCustomModel* pInstance = New CCustomModel(_pDevice, _pContext);
 	if (FAILED(pInstance->Initialize_Prototype(eType, _wstrModelFilePath, _PivotMatrix)))
 	{
 		MSG_BOX("Failed to Created CCustomModel");
@@ -165,7 +165,7 @@ CCustomModel* CCustomModel::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* 
 
 CComponent* CCustomModel::Clone(void* pArg)
 {
-	CCustomModel* pInstance = new CCustomModel(*this);
+	CCustomModel* pInstance = New CCustomModel(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

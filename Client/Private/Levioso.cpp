@@ -150,7 +150,7 @@ HRESULT CLevioso::Add_Effect()
 
 CLevioso* CLevioso::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CLevioso* pInstance = new CLevioso(pDevice, pContext);
+	CLevioso* pInstance = New CLevioso(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -163,7 +163,7 @@ CLevioso* CLevioso::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 CGameObject* CLevioso::Clone(void* pArg)
 {
-	CLevioso* pInstance = new CLevioso(*this);
+	CLevioso* pInstance = New CLevioso(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

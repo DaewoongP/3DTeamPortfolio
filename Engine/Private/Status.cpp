@@ -27,7 +27,7 @@ void CStatus::Late_Tick(_float fTimeDelta)
 
 CStatus* CStatus::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CStatus* pInstance = new CStatus(pDevice, pContext);
+	CStatus* pInstance = New CStatus(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -40,7 +40,7 @@ CStatus* CStatus::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 CStatus* CStatus::Clone(void* pArg)
 {
-	CStatus* pInstance = new CStatus(*this);
+	CStatus* pInstance = New CStatus(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

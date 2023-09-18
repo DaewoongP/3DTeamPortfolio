@@ -153,7 +153,7 @@ CUI::UIDESC CUI_Group_Finisher_Icon::Load_File(const HANDLE hFile)
 
 CUI_Group_Finisher_Icon* CUI_Group_Finisher_Icon::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CUI_Group_Finisher_Icon* pInstance = new CUI_Group_Finisher_Icon(pDevice, pContext);
+	CUI_Group_Finisher_Icon* pInstance = New CUI_Group_Finisher_Icon(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -166,7 +166,7 @@ CUI_Group_Finisher_Icon* CUI_Group_Finisher_Icon::Create(ID3D11Device* pDevice, 
 
 CGameObject* CUI_Group_Finisher_Icon::Clone(void* pArg)
 {
-	CUI_Group_Finisher_Icon* pInstance = new CUI_Group_Finisher_Icon(*this);
+	CUI_Group_Finisher_Icon* pInstance = New CUI_Group_Finisher_Icon(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

@@ -147,7 +147,7 @@ HRESULT CDebug_Render_Capsule::Render()
 
 CDebug_Render_Capsule* CDebug_Render_Capsule::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CDebug_Render_Capsule* pInstance = new CDebug_Render_Capsule(pDevice, pContext);
+	CDebug_Render_Capsule* pInstance = New CDebug_Render_Capsule(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -160,7 +160,7 @@ CDebug_Render_Capsule* CDebug_Render_Capsule::Create(ID3D11Device* pDevice, ID3D
 
 CComponent* CDebug_Render_Capsule::Clone(void* pArg)
 {
-	CDebug_Render_Capsule* pInstance = new CDebug_Render_Capsule(*this);
+	CDebug_Render_Capsule* pInstance = New CDebug_Render_Capsule(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

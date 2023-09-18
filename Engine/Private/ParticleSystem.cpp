@@ -823,7 +823,7 @@ void CParticleSystem::Restart()
 }
 CParticleSystem* CParticleSystem::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, const _tchar* _pDirectoryPath, _uint m_iLevel)
 {
-	CParticleSystem* pInstance = new CParticleSystem(_pDevice, _pContext);
+	CParticleSystem* pInstance = New CParticleSystem(_pDevice, _pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(_pDirectoryPath, m_iLevel)))
 	{
@@ -835,7 +835,7 @@ CParticleSystem* CParticleSystem::Create(ID3D11Device* _pDevice, ID3D11DeviceCon
 }
 CGameObject* CParticleSystem::Clone(void* _pArg)
 {
-	CParticleSystem* pInstance = new CParticleSystem(*this);
+	CParticleSystem* pInstance = New CParticleSystem(*this);
 
 	if (FAILED(pInstance->Initialize(_pArg)))
 	{

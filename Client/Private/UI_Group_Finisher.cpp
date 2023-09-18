@@ -231,7 +231,7 @@ HRESULT CUI_Group_Finisher::Create_Back(const _tchar* pFIlePath)
 
 CUI_Group_Finisher* CUI_Group_Finisher::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CUI_Group_Finisher* pInstance = new CUI_Group_Finisher(pDevice, pContext);
+	CUI_Group_Finisher* pInstance = New CUI_Group_Finisher(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -244,7 +244,7 @@ CUI_Group_Finisher* CUI_Group_Finisher::Create(ID3D11Device* pDevice, ID3D11Devi
 
 CGameObject* CUI_Group_Finisher::Clone(void* pArg)
 {
-	CUI_Group_Finisher* pInstance = new CUI_Group_Finisher(*this);
+	CUI_Group_Finisher* pInstance = New CUI_Group_Finisher(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

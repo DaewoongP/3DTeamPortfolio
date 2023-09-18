@@ -157,10 +157,10 @@ HRESULT CTexture_Flipbook::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	if (FAILED(m_pShader->Begin("Default"), E_FAIL))
+	if (FAILED(m_pShader->Begin("Flipbook")))
 		return E_FAIL;
 
-	if (FAILED(m_pBuffer->Render(), E_FAIL))
+	if (FAILED(m_pBuffer->Render()))
 		return E_FAIL;
 
 	return S_OK;

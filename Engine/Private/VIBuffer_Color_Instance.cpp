@@ -44,7 +44,7 @@ HRESULT CVIBuffer_Color_Instance::Initialize(void* pArg)
 	BufferDesc.CPUAccessFlags = { D3D11_CPU_ACCESS_WRITE };
 	BufferDesc.MiscFlags = { 0 };
 
-	VTXCOLINSTANCE* pVertices = new VTXCOLINSTANCE[m_iNumInstance];
+	VTXCOLINSTANCE* pVertices = New VTXCOLINSTANCE[m_iNumInstance];
 
 	for (size_t i = 0; i < m_iNumInstance; ++i)
 	{

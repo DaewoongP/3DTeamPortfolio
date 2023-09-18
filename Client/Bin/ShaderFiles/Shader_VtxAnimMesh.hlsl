@@ -106,6 +106,30 @@ PS_OUT PS_MAIN(PS_IN In)
     return Out;
 }
 
+PS_OUT PS_MAIN_TEST(PS_IN In)
+{
+    PS_OUT Out = (PS_OUT) 0;
+
+    vector vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+    
+    vector vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+    
+    float3 vNormal = vNormalDesc.xyz * 2.f - 1.f;
+
+    float3x3 WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal.xyz, In.vNormal.xyz);
+
+    vNormal = mul(vNormal, WorldMatrix);
+    
+    if (vDiffuse.a < 0.1f)
+        discard;
+
+    Out.vDiffuse = vDiffuse * 0.2f;
+    Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
+    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fCamFar, 0.f, 0.f);
+    
+    return Out;
+}
+
 // DAO ÅØ½ºÃ³ ³Ö¾îÁà¾ßµÊ
 PS_OUT PS_MAIN_HAIR(PS_IN In)
 {
@@ -174,6 +198,6 @@ technique11 DefaultTechnique
 		GeometryShader	= NULL /*compile gs_5_0 GS_MAIN()*/;
 		HullShader		= NULL /*compile hs_5_0 HS_MAIN()*/;
 		DomainShader	= NULL /*compile ds_5_0 DS_MAIN()*/;
-		PixelShader		= compile ps_5_0 PS_MAIN();
+		PixelShader		= compile ps_5_0 PS_MAIN_TEST();
 	}
 }

@@ -327,7 +327,7 @@ HRESULT CPlayer::Ready_MeshParts()
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_MAINGAME,
 		TEXT("Prototype_Component_MeshPart_Robe01"),
-		CCustomModel::ROBE), TEXT("../../Resources/GameData/ClothData/Test.cloth")))
+		CCustomModel::ROBE, TEXT("../../Resources/GameData/ClothData/Test.cloth"))))
 	{
 		MSG_BOX("Failed Add MeshPart Robe");
 	

@@ -284,7 +284,7 @@ void CAnimation::Invalidate_Frame(_float fTimeDelta)
 
 CAnimation* CAnimation::Create(Engine::ANIMATION Animation, const CModel::BONES& Bones)
 {
-	CAnimation* pInstance = new CAnimation();
+	CAnimation* pInstance = New CAnimation();
 
 	if (FAILED(pInstance->Initialize(Animation, Bones)))
 	{
@@ -296,7 +296,7 @@ CAnimation* CAnimation::Create(Engine::ANIMATION Animation, const CModel::BONES&
 
 CAnimation* CAnimation::Create(Engine::ANIMATION_GCM Animation, const CModel::BONES& Bones)
 {
-	CAnimation* pInstance = new CAnimation();
+	CAnimation* pInstance = New CAnimation();
 
 	if (FAILED(pInstance->Initialize(Animation, Bones)))
 	{
@@ -308,7 +308,7 @@ CAnimation* CAnimation::Create(Engine::ANIMATION_GCM Animation, const CModel::BO
 
 CAnimation* CAnimation::Clone()
 {
-	return new CAnimation(*this);
+	return New CAnimation(*this);
 }
 
 void CAnimation::Free()
