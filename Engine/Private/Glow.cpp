@@ -55,8 +55,8 @@ HRESULT CGlow::Render()
 		return E_FAIL;
 
 	
-	m_pTexture->Bind_ShaderResource(m_pShader, "g_vAlphaTexture");
-	m_pTexture2->Bind_ShaderResource(m_pShader, "g_GlowTexture");
+	m_pTexture2->Bind_ShaderResource(m_pShader, "g_vAlphaTexture");
+	m_pTexture->Bind_ShaderResource(m_pShader, "g_GlowTexture");
 
 
 	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
