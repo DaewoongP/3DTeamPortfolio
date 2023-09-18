@@ -15,19 +15,22 @@ public:
 	typedef struct InitDesc {
 		_float3 vInitPosition;
 	}INITDESC;
-	
 private:
 	CDefault_MagicTraill_Effect(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CDefault_MagicTraill_Effect(const CDefault_MagicTraill_Effect& rhs);
 	virtual ~CDefault_MagicTraill_Effect() = default;
 
 public:
-	void Set_Position(_float3 vPos);
-	//상위에서 틱마다 불러주는 함수로 시작과 끝지점을 넣으면 알아서 행동개시
-	void Action_Magic(TRAILACTIONTYPE eType,_float3 vStartPos,_float3 vEndPos,_float fTimeAcc, _float fTimeDelta);
+	void    Set_Position(_float3 vPos);
+	void    Stright_Move(_float3 vStartPos, _float3 vEndPos, _float fTimeAcc);
+	void    Spin_Move(_float3 vStartPos, _float3 vEndPos, _float fTimeAcc);
+	void    Spline_Move(_float3 vWeight0, _float3 vStartPos, _float3 vEndPos, _float3 vWeight1, _float fTimeAcc);
+
+	void    Set_Trail_HeadColor(_float3 vColor) { m_pTrail->Set_Trail_HeadColor(vColor); }
+	void    Set_Trail_TailColor(_float3 vColor) { m_pTrail->Set_Trail_TailColor(vColor); }
 
 public:
-	virtual HRESULT Initialize_Prototype(const _tchar* wszFilePath,_uint iLevel);
+	virtual HRESULT Initialize_Prototype(const _tchar* wszFilePath, _uint iLevel);
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
@@ -37,15 +40,12 @@ private: /* For. Component */
 
 private:
 	CTransform* m_pTrailTransform = { nullptr };
-	
+
 private:
 	_uint m_iLevel = { 0 };
-	_tchar	m_wszName[MAX_PATH] = {};
+	_tchar    m_wszName[MAX_PATH] = {};
 
 private:
-	void	Stright_Move(_float3 vStartPos, _float3 vEndPos, _float fTimeAcc, _float fTimeDelta);
-	void	Spin_Move(_float3 vStartPos, _float3 vEndPos, _float fTimeAcc, _float fTimeDelta);
-
 	HRESULT Add_Components();
 
 public:
@@ -55,4 +55,3 @@ public:
 };
 
 END
-

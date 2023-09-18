@@ -82,7 +82,7 @@ void CLevioso::Tick(_float fTimeDelta)
 		m_fLerpAcc += fTimeDelta / m_MagicBallDesc.fInitLifeTime * m_fTimeScalePerDistance;
 		if (m_fLerpAcc > 1)
 			m_fLerpAcc = 1;
-		m_pEffect->Spin_Move(m_MagicBallDesc.vStartPosition, m_vTargetPosition, m_fLerpAcc);
+		m_pEffect->Spin_Move(m_MagicBallDesc.vStartPosition, m_vTargetPosition, m_fLerpAcc, fTimeDelta);
 	}
 	else 
 	{
