@@ -38,6 +38,10 @@ HRESULT CDummyFlipBook::Initialize(void* pArg)
 	m_pNormalTextureIFD->m_strStartPath = "../../Resources/Effects/Textures/Flipbooks/";
 	m_pNormalTextureIFD->m_iImageButtonWidth = 32;
 
+	m_pFlipbookMaterialTextureIFD = CImageFileDialog::Create(m_pDevice, Generate_Hashtag(true).data());
+	m_pFlipbookMaterialTextureIFD->m_strStartPath = "../../Resources/Effects/Textures/Flipbooks/";
+	m_pFlipbookMaterialTextureIFD->m_iImageButtonWidth = 32;
+
 	m_pClipChannelCombo = CComboBox::Create(Generate_Hashtag(true).data(), "ClipChannel", { "Red", "Green", "Blue", "Alpha" }, "Alpha");
 	m_pClipChannelCombo->Set_StartTag(m_strClipChannel.data());
 	m_pLoopOption = CComboBox::Create(Generate_Hashtag(true).data(), "Loop Option", { "Once", "Loop", "Ping-Pong", }, "Loop");
@@ -229,6 +233,20 @@ void CDummyFlipBook::Tick_Imgui(_float _fTimeDelta)
 		pEffectWindow->Table_CheckBox("BillBoard DeleteY", "dkjiucjvicvxcve", &m_isDeleteY);
 		pEffectWindow->Table_DragFloat("Update Interval", "ckk99djjjejded", &m_fUpdateInterval, 0.001f, 0.015f);
 
+		// 노말 텍스처 쓸건지 여부
+		pEffectWindow->Table_CheckBox("Use Flipbook Material Texture", "xcvbnmuirty", &m_isUseFlipbookMaterialTexture);
+		if (true == m_isUseFlipbookMaterialTexture)
+		{
+			pEffectWindow->Table_ImageButton("Flipbook Material Texture", "flkdsjfi3ij3", m_pFlipbookMaterialTextureIFD);
+			// 노말 텍스처 교체
+			if (m_pFlipbookMaterialTextureIFD->IsOk())
+			{
+				fs::path fsFilePath = m_pFlipbookMaterialTextureIFD->Get_FilePathName();
+				ChangeTexture(&m_pFlipbookMaterialTexture, m_wstrFlipbookMaterialPath, ToRelativePath(fsFilePath.wstring().data()).c_str());
+				m_iCurIndex = 0;
+			}
+		}
+
 		ImGui::EndTable();
 	}
 
@@ -282,6 +300,7 @@ void CDummyFlipBook::Free()
 
 	Safe_Release(m_pTextureIFD);
 	Safe_Release(m_pNormalTextureIFD);
+	Safe_Release(m_pFlipbookMaterialTextureIFD);
 	
 	Safe_Release(m_pClipChannelCombo);
 	Safe_Release(m_pLoopOption);

@@ -1,10 +1,12 @@
 #include "Shader_EngineHeader.hlsli"
 #include "Shader_Functions.hlsli"
 
-matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
+matrix		g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
+
 
 texture2D g_DiffuseTexture;
 texture2D g_NormalTexture;
+texture2D g_FlipbookMaterialTexture;
 
 int g_iCurIndex;
 int g_iWidthLength;
@@ -12,6 +14,7 @@ int g_iHeightLength;
 int g_iClipChannel;
 
 bool g_isUseNormalTexture = false;
+bool g_isUseFlipbookMaterialTexture = false;
 bool g_isMixColor = false;
 
 vector g_vColor;
@@ -122,17 +125,5 @@ technique11		DefaultTechnique
 		HullShader = NULL/*compile hs_5_0 HS_MAIN()*/;
 		DomainShader = NULL/*compile ds_5_0 DS_MAIN()*/;
 		PixelShader = compile ps_5_0 PS_MAIN();
-	}
-
-	pass PostBlend
-	{
-		SetRasterizerState(RS_Cull_None);
-		SetDepthStencilState(DSS_Default, 0);
-		SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-		VertexShader = compile vs_5_0 VS_MAIN();
-		GeometryShader = NULL/*compile gs_5_0 GS_MAIN()*/;
-		HullShader = NULL/*compile hs_5_0 HS_MAIN()*/;
-		DomainShader = NULL/*compile ds_5_0 DS_MAIN()*/;
-		PixelShader = compile ps_5_0 PS_POST_BLEND();
 	}
 }

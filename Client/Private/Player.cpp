@@ -211,7 +211,7 @@ HRESULT CPlayer::Add_Components()
 	magicInitDesc.eBuffType = CMagic::BUFF_SHILED;
 	magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 	magicInitDesc.eMagicType = CMagic::MT_ALL;
-	magicInitDesc.eMagicTag = BASICCAST;
+	magicInitDesc.eMagicTag = PROTEGO;
 	magicInitDesc.fCoolTime = 1.f;
 	magicInitDesc.fDamage = 0.f;
 	magicInitDesc.fCastDistance = 1000;

@@ -71,7 +71,8 @@ HRESULT MAIN_MODULE::Load(const _tchar* _pDirectoyPath)
 {
 	fs::path fsFilePath = _pDirectoyPath;
 	fsFilePath = fsFilePath / TEXT("MainModule.ptc");
-
+	if (false == fs::exists(fsFilePath))
+		return S_OK;
 	HANDLE hFile = CreateFile(fsFilePath.wstring().data()
 		, GENERIC_READ
 		, 0
@@ -179,7 +180,8 @@ HRESULT EMISSION_MODULE::Load(const _tchar* _pDirectoyPath)
 {
 	fs::path fsFilePath = _pDirectoyPath;
 	fsFilePath = fsFilePath / TEXT("EmissionModule.ptc");
-
+	if (false == fs::exists(fsFilePath))
+		return S_OK;
 	HANDLE hFile = CreateFile(fsFilePath.wstring().data()
 		, GENERIC_READ
 		, 0
@@ -365,6 +367,9 @@ HRESULT SHAPE_MODULE::Save(const _tchar* _pDirectoyPath)
 	WriteFile(hFile, &fBaseRadius, sizeof(fBaseRadius), &dwByte, nullptr);
 	WriteFile(hFile, &fConeLength, sizeof(fConeLength), &dwByte, nullptr);
 	WriteFile(hFile, &isChase, sizeof(isChase), &dwByte, nullptr);
+	WriteFile(hFile, &isLengthRange, sizeof(isLengthRange), &dwByte, nullptr);
+	WriteFile(hFile, &fLoopPhi, sizeof(fLoopPhi), &dwByte, nullptr);
+	WriteFile(hFile, &fLoopTheta, sizeof(fLoopTheta), &dwByte, nullptr);
 
 	CloseHandle(hFile);
 	return S_OK;
@@ -373,7 +378,8 @@ HRESULT SHAPE_MODULE::Load(const _tchar* _pDirectoyPath)
 {
 	fs::path fsFilePath = _pDirectoyPath;
 	fsFilePath = fsFilePath / TEXT("ShapeModule.ptc");
-
+	if (false == fs::exists(fsFilePath))
+		return S_OK;
 	HANDLE hFile = CreateFile(fsFilePath.wstring().data()
 		, GENERIC_READ
 		, 0
@@ -439,6 +445,10 @@ HRESULT SHAPE_MODULE::Load(const _tchar* _pDirectoyPath)
 	ReadFile(hFile, &fConeLength, sizeof(fConeLength), &dwByte, nullptr);
 
 	ReadFile(hFile, &isChase, sizeof(isChase), &dwByte, nullptr);
+
+	ReadFile(hFile, &isLengthRange, sizeof(isLengthRange), &dwByte, nullptr);
+	ReadFile(hFile, &fLoopPhi, sizeof(fLoopPhi), &dwByte, nullptr);
+	ReadFile(hFile, &fLoopTheta, sizeof(fLoopTheta), &dwByte, nullptr);
 	CloseHandle(hFile);
 	return S_OK;
 }
@@ -490,6 +500,8 @@ HRESULT RENDERER_MODULE::Save(const _tchar* _pDirectoyPath)
 	WriteFile(hFile, wstrShaderTag.data(), sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
 	WriteFile(hFile, wstrMaterialPath.data(), sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
 	WriteFile(hFile, &isDeleteY, sizeof(isDeleteY), &dwByte, nullptr);
+	WriteFile(hFile, strPass.data(), sizeof(_char) * MAX_PATH, &dwByte, nullptr);
+
 	CloseHandle(hFile);
 	return S_OK;
 }
@@ -497,7 +509,8 @@ HRESULT RENDERER_MODULE::Load(const _tchar* _pDirectoyPath)
 {
 	fs::path fsFilePath = _pDirectoyPath;
 	fsFilePath = fsFilePath / TEXT("RendererModule.ptc");
-
+	if (false == fs::exists(fsFilePath))
+		return S_OK;
 	HANDLE hFile = CreateFile(fsFilePath.wstring().data()
 		, GENERIC_READ
 		, 0
@@ -512,6 +525,7 @@ HRESULT RENDERER_MODULE::Load(const _tchar* _pDirectoyPath)
 	_ulong dwByte = 0;
 
 	_tchar wszBuffer[MAX_PATH];
+	_char szBuffer[MAX_PATH];
 	__super::Load(hFile, dwByte);
 
 	ReadFile(hFile, wszBuffer, sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
@@ -519,6 +533,8 @@ HRESULT RENDERER_MODULE::Load(const _tchar* _pDirectoyPath)
 	ReadFile(hFile, wszBuffer, sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
 	wstrMaterialPath = wszBuffer;
 	ReadFile(hFile, &isDeleteY, sizeof(isDeleteY), &dwByte, nullptr);
+	ReadFile(hFile, szBuffer, sizeof(_char) * MAX_PATH, &dwByte, nullptr);
+	strPass = szBuffer;
 	CloseHandle(hFile);
 	return S_OK;
 }
@@ -546,8 +562,13 @@ HRESULT ROTATION_OVER_LIFETIME_MODULE::Save(const _tchar* _pDirectoyPath)
 
 	__super::Save(hFile, dwByte);
 
-	WriteFile(hFile, &isSeperateAxes, sizeof isSeperateAxes, &dwByte, nullptr);
-	WriteFile(hFile, &AngularVelocityXYZ, sizeof AngularVelocityXYZ, &dwByte, nullptr);
+	WriteFile(hFile, &isSeparateAxes, sizeof(isSeparateAxes), &dwByte, nullptr);
+	WriteFile(hFile, &vAngularVelocityX, sizeof(vAngularVelocityX), &dwByte, nullptr);
+	WriteFile(hFile, &vAngularVelocityY, sizeof(vAngularVelocityY), &dwByte, nullptr);
+	WriteFile(hFile, &vAngularVelocityZ, sizeof(vAngularVelocityZ), &dwByte, nullptr);
+	WriteFile(hFile, &eEaseX, sizeof(eEaseX), &dwByte, nullptr);
+	WriteFile(hFile, &eEaseY, sizeof(eEaseY), &dwByte, nullptr);
+	WriteFile(hFile, &eEaseZ, sizeof(eEaseZ), &dwByte, nullptr);
 
 	CloseHandle(hFile);
 	return S_OK;
@@ -556,7 +577,8 @@ HRESULT ROTATION_OVER_LIFETIME_MODULE::Load(const _tchar* _pDirectoyPath)
 {
 	fs::path fsFilePath = _pDirectoyPath;
 	fsFilePath = fsFilePath / TEXT("RotationOverLifeTimeModule.ptc");
-
+	if (false == fs::exists(fsFilePath))
+		return S_OK;
 	HANDLE hFile = CreateFile(fsFilePath.wstring().data()
 		, GENERIC_READ
 		, 0
@@ -571,8 +593,13 @@ HRESULT ROTATION_OVER_LIFETIME_MODULE::Load(const _tchar* _pDirectoyPath)
 	_ulong dwByte = 0;
 	__super::Load(hFile, dwByte);
 
-	ReadFile(hFile, &isSeperateAxes, sizeof isSeperateAxes, &dwByte, nullptr);
-	ReadFile(hFile, &AngularVelocityXYZ, sizeof AngularVelocityXYZ, &dwByte, nullptr);
+	ReadFile(hFile, &isSeparateAxes, sizeof(isSeparateAxes), &dwByte, nullptr);
+	ReadFile(hFile, &vAngularVelocityX, sizeof(vAngularVelocityX), &dwByte, nullptr);
+	ReadFile(hFile, &vAngularVelocityY, sizeof(vAngularVelocityY), &dwByte, nullptr);
+	ReadFile(hFile, &vAngularVelocityZ, sizeof(vAngularVelocityZ), &dwByte, nullptr);
+	ReadFile(hFile, &eEaseX, sizeof(eEaseX), &dwByte, nullptr);
+	ReadFile(hFile, &eEaseY, sizeof(eEaseY), &dwByte, nullptr);
+	ReadFile(hFile, &eEaseZ, sizeof(eEaseZ), &dwByte, nullptr);
 
 	CloseHandle(hFile);
 
@@ -589,34 +616,80 @@ void ROTATION_OVER_LIFETIME_MODULE::Restart()
 
 HRESULT COLOR_OVER_LIFETIME::Save(const _tchar* _pDirectoyPath)
 {
+	fs::path fsFilePath = _pDirectoyPath;
+	fsFilePath = fsFilePath / TEXT("ColorOverLifeTimeModule.ptc");
+
+	HANDLE hFile = CreateFile(fsFilePath.wstring().data()
+		, GENERIC_WRITE
+		, 0
+		, 0
+		, CREATE_ALWAYS
+		, FILE_ATTRIBUTE_NORMAL
+		, 0);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+		return E_FAIL;
+
+	_ulong dwByte = 0;
+
+	__super::Save(hFile, dwByte);
+
+	WriteFile(hFile, &vStartColor, sizeof(vStartColor), &dwByte, nullptr);
+	WriteFile(hFile, &vEndColor, sizeof(vEndColor), &dwByte, nullptr);
+	WriteFile(hFile, &eEase, sizeof(eEase), &dwByte, nullptr);
+
 	return S_OK;
 }
 HRESULT COLOR_OVER_LIFETIME::Load(const _tchar* _pDirectoyPath)
 {
+	fs::path fsFilePath = _pDirectoyPath;
+	fsFilePath = fsFilePath / TEXT("ColorOverLifeTimeModule.ptc");
+	if (false == fs::exists(fsFilePath))
+		return S_OK;
+	HANDLE hFile = CreateFile(fsFilePath.wstring().data()
+		, GENERIC_READ
+		, 0
+		, 0
+		, OPEN_EXISTING
+		, FILE_ATTRIBUTE_NORMAL
+		, 0);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+		return E_FAIL;
+
+	_ulong dwByte = 0;
+
+	__super::Load(hFile, dwByte);
+
+	ReadFile(hFile, &vStartColor, sizeof(vStartColor), &dwByte, nullptr);
+	ReadFile(hFile, &vEndColor, sizeof(vEndColor), &dwByte, nullptr);
+	ReadFile(hFile, &eEase, sizeof(eEase), &dwByte, nullptr);
+
 	return S_OK;
 }
-void COLOR_OVER_LIFETIME::Action(PARTICLE_IT& _particle_iter, _float _fTimeDelta)
+void COLOR_OVER_LIFETIME::Action(PARTICLE_IT& _particle_iter, _float4 vMainColor, _float fTimeDelta)
 {
 	if (false == isActivate)
 		return;
-	_float4 changeAmount = vEndColor - vStartColor;
 
-	_particle_iter->vColor.x = CEase::Ease(eEase, _particle_iter->fAge
+	_float4 changeAmount = vEndColor - vStartColor;
+	
+	_particle_iter->vColor.x = vMainColor.x * CEase::Ease(eEase, _particle_iter->fAge
 		, vStartColor.x
 		, changeAmount.x
 		, _particle_iter->fLifeTime);
 
-	_particle_iter->vColor.y = CEase::Ease(eEase, _particle_iter->fAge
+	_particle_iter->vColor.y = vMainColor.y * CEase::Ease(eEase, _particle_iter->fAge
 		, vStartColor.y
 		, changeAmount.y
 		, _particle_iter->fLifeTime);
 
-	_particle_iter->vColor.z = CEase::Ease(eEase, _particle_iter->fAge
+	_particle_iter->vColor.z = vMainColor.z * CEase::Ease(eEase, _particle_iter->fAge
 		, vStartColor.z
 		, changeAmount.z
 		, _particle_iter->fLifeTime);
 
-	_particle_iter->vColor.w = CEase::Ease(eEase, _particle_iter->fAge
+	_particle_iter->vColor.w = vMainColor.w * CEase::Ease(eEase, _particle_iter->fAge
 		, vStartColor.w
 		, changeAmount.w
 		, _particle_iter->fLifeTime);
@@ -633,15 +706,99 @@ void COLOR_OVER_LIFETIME::Restart()
 
 HRESULT SIZE_OVER_LIFETIME::Save(const _tchar* _pDirectoyPath)
 {
+	fs::path fsFilePath = _pDirectoyPath;
+	fsFilePath = fsFilePath / TEXT("SizeOverLifeTimeModule.ptc");
+
+	HANDLE hFile = CreateFile(fsFilePath.wstring().data()
+		, GENERIC_WRITE
+		, 0
+		, 0
+		, CREATE_ALWAYS
+		, FILE_ATTRIBUTE_NORMAL
+		, 0);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+		return E_FAIL;
+
+	_ulong dwByte = 0;
+
+	__super::Save(hFile, dwByte);
+
+	WriteFile(hFile, &isSeparateAxes, sizeof(isSeparateAxes), &dwByte, nullptr);
+	WriteFile(hFile, &vSizeX, sizeof(vSizeX), &dwByte, nullptr);
+	WriteFile(hFile, &vSizeY, sizeof(vSizeY), &dwByte, nullptr);
+	WriteFile(hFile, &vSizeZ, sizeof(vSizeZ), &dwByte, nullptr);
+	WriteFile(hFile, &eEaseX, sizeof(eEaseX), &dwByte, nullptr);
+	WriteFile(hFile, &eEaseY, sizeof(eEaseY), &dwByte, nullptr);
+	WriteFile(hFile, &eEaseZ, sizeof(eEaseZ), &dwByte, nullptr);
+
 	return S_OK;
 }
 HRESULT SIZE_OVER_LIFETIME::Load(const _tchar* _pDirectoyPath)
 {
+	fs::path fsFilePath = _pDirectoyPath;
+	fsFilePath = fsFilePath / TEXT("SizeOverLifeTimeModule.ptc");
+	if (false == fs::exists(fsFilePath))
+		return S_OK;
+	HANDLE hFile = CreateFile(fsFilePath.wstring().data()
+		, GENERIC_READ
+		, 0
+		, 0
+		, OPEN_EXISTING
+		, FILE_ATTRIBUTE_NORMAL
+		, 0);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+		return E_FAIL;
+
+	_ulong dwByte = 0;
+
+	__super::Load(hFile, dwByte);
+
+	ReadFile(hFile, &isSeparateAxes, sizeof(isSeparateAxes), &dwByte, nullptr);
+	ReadFile(hFile, &vSizeX, sizeof(vSizeX), &dwByte, nullptr);
+	ReadFile(hFile, &vSizeY, sizeof(vSizeY), &dwByte, nullptr);
+	ReadFile(hFile, &vSizeZ, sizeof(vSizeZ), &dwByte, nullptr);
+	ReadFile(hFile, &eEaseX, sizeof(eEaseX), &dwByte, nullptr);
+	ReadFile(hFile, &eEaseY, sizeof(eEaseY), &dwByte, nullptr);
+	ReadFile(hFile, &eEaseZ, sizeof(eEaseZ), &dwByte, nullptr);
+
 	return S_OK;
 }
-void SIZE_OVER_LIFETIME::Action(PARTICLE_IT& _particle_iter, _float _fTimeDelta)
+void SIZE_OVER_LIFETIME::Action(_float3 vStartSize, PARTICLE_IT& _particle_iter, _float _fTimeDelta)
 {
+	if (false == isActivate)
+		return;
 
+	{
+		_float changeAmount = vSizeX.x - vSizeX.y;
+
+		_particle_iter->vScale.x = vStartSize.x * CEase::Ease(eEaseX, _particle_iter->fAge
+			, vSizeX.x
+			, changeAmount
+			, _particle_iter->fLifeTime);
+	}
+
+	if (true == isSeparateAxes)
+	{
+		{
+			_float changeAmount = vSizeY.x - vSizeY.y;
+
+			_particle_iter->vScale.y = vStartSize.y * CEase::Ease(eEaseY, _particle_iter->fAge
+				, vSizeY.x
+				, changeAmount
+				, _particle_iter->fLifeTime);
+		}
+
+		{
+			_float changeAmount = vSizeZ.x - vSizeZ.y;
+
+			_particle_iter->vScale.z = vStartSize.z * CEase::Ease(eEaseZ, _particle_iter->fAge
+				, vSizeZ.x
+				, changeAmount
+				, _particle_iter->fLifeTime);
+		}
+	}
 }
 void SIZE_OVER_LIFETIME::Restart()
 {
@@ -685,6 +842,8 @@ HRESULT TEXTURE_SHEET_ANIMATION::Load(const _tchar* _pDirectoyPath)
 {
 	fs::path fsFilePath = _pDirectoyPath;
 	fsFilePath = fsFilePath / TEXT("TextureSheetAnimationModule.ptc");
+	if (false == fs::exists(fsFilePath))
+		return S_OK;
 
 	HANDLE hFile = CreateFile(fsFilePath.wstring().data()
 		, GENERIC_READ
@@ -732,9 +891,14 @@ void TEXTURE_SHEET_ANIMATION::Action(PARTICLE_IT& _particle_iter, _float fTimeDe
 	if (_particle_iter->iCurIndex > iMaxIndex)
 	{
 		if (false == isLoopOption)
+		{
 			_particle_iter->fLifeTime = 0.f;
+			_particle_iter->iCurIndex = iMaxIndex; // 마지막 1프레임 살아나는거 잡는 코드
+		}
 		else
+		{
 			_particle_iter->iCurIndex = 0;
+		}
 	}
 }
 void TEXTURE_SHEET_ANIMATION::Reset(PARTICLE_IT& _particle_iter)

@@ -61,7 +61,9 @@ HRESULT CComponent_Manager::Add_Prototype(_uint iLevelIndex, const _tchar* pProt
 HRESULT CComponent_Manager::Add_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, const _tchar* pLayerTag, const _tchar* pComponentTag, void* pArg)
 {
 	CComponent* pPrototype = Find_Prototype(iLevelIndex, pPrototypeTag);
-	NULL_CHECK_RETURN(pPrototype, E_FAIL);
+
+ 
+ 	NULL_CHECK_RETURN(pPrototype, E_FAIL);
 
 	CComponent* pComponent = nullptr;
 	pComponent = pPrototype->Clone(pArg);

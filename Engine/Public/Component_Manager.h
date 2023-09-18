@@ -56,6 +56,7 @@
 #include "VIBuffer_Geometry.h"
 #include "VIBuffer_Instance.h"
 #include "Debug_Render_Ring.h"
+#include "VIBuffer_UVSphere.h"
 #include "VIBuffer_GeoSphere.h"
 #include "VIBuffer_Rect_Trail.h"
 #include "CharacterController.h"

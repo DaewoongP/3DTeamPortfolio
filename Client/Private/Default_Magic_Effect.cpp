@@ -92,8 +92,8 @@ HRESULT CDefault_Magic_Effect::Initialize(void* pArg)
 void CDefault_Magic_Effect::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-	SHAPE_MODULE& ShapeModule = m_pTraceParticle->Get_ShapeModuleRef();
-	ShapeModule.ShapeMatrix.MatrixLookAt(m_pTransform->Get_Position(), m_vPrevPos, _float3(0.f, 1.f, 0.f));
+	//SHAPE_MODULE& ShapeModule = m_pTraceParticle->Get_ShapeModuleRef();
+	//ShapeModule.ShapeMatrix.MatrixLookAt(m_pTransform->Get_Position(), m_vPrevPos, _float3(0.f, 1.f, 0.f));
 }
 
 void CDefault_Magic_Effect::Late_Tick(_float fTimeDelta)

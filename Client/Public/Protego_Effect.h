@@ -16,6 +16,7 @@ class CCollider;
 class CNavigation;
 class CModel;
 class CVIBuffer_GeoSphere;
+class CVIBuffer_UVSphere;
 class CVIBuffer_Rect;
 class CParticleSystem;
 class CTexture_Flipbook;
@@ -63,9 +64,10 @@ private: /* For. Component */
 	CShader* m_pShader = { nullptr };
 	CRenderer* m_pRenderer = { nullptr };
 	CTexture* m_pTexture[5] = {};
-	CVIBuffer_GeoSphere* m_pBuffer = { nullptr };
+	CVIBuffer_UVSphere* m_pBuffer = { nullptr };
 	CParticleSystem* m_pDefaultConeBoom_Particle = { nullptr };
-	CTexture_Flipbook* m_pTextureFlipbook = { nullptr };
+	CTexture_Flipbook* m_pFlameBlastFlipbook = { nullptr };
+
 private: // 파티클 Transform
 
 private: // Protego의 정보
@@ -78,9 +80,12 @@ private:
 	_float4 m_vColor2 = { 1.f, 1.f, 1.f, 1.f };
 	_float m_fScale = { 0.1f };
 	_float m_fTimeAcc = { 0.f };
+	_float m_fHitTimeAcc = { 0.f };
 	_float m_fEnterDuration = { 0.1f };
 	_float m_fExitDuration = { 0.1f };
 	_float m_fRimPower = { 4.7f };
+	_float3 m_vCollisionPoint = { _float3() };
+	_bool m_isHitEffect = { false };
 
 private:
 	HRESULT Add_Components();

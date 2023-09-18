@@ -81,7 +81,6 @@ HRESULT CProtego::Add_Components()
 		MSG_BOX(strErrorMessage.data());
 	}
 
-
 	return S_OK;
 }
 
