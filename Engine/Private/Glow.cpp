@@ -49,10 +49,10 @@ HRESULT CGlow::Initialize_Prototype(const _tchar* pTargetTag)
 
 HRESULT CGlow::Render()
 {
-	/*CRenderTarget_Manager* pRenderTarget_Manager = CRenderTarget_Manager::GetInstance();
+	CRenderTarget_Manager* pRenderTarget_Manager = CRenderTarget_Manager::GetInstance();
 	Safe_AddRef(pRenderTarget_Manager);
 	if (FAILED(pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Glow"))))
-		return E_FAIL;*/
+		return E_FAIL;
 
 	
 	m_pTexture->Bind_ShaderResource(m_pShader, "g_AlphaTexture");
@@ -66,6 +66,35 @@ HRESULT CGlow::Render()
 	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
 
+	/*if (FAILED(m_pShader->Render()))
+		return E_FAIL;
+
+	if (FAILED(pRenderTarget_Manager->End_MRT(m_pContext)))
+		return E_FAIL;
+
+	if (FAILED(pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Blur_Bloom"))))
+		return E_FAIL;
+
+	if (FAILED(pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Bloom"), m_pShader, "g_DoBlurTexture")))
+		return E_FAIL;
+
+	if (FAILED(m_pShader->Begin("BlurX")))
+		return E_FAIL;
+	if (FAILED(m_pBuffer->Render()))
+		return E_FAIL;
+
+	if (FAILED(pRenderTarget_Manager->End_MRT(m_pContext)))
+		return E_FAIL;
+
+	if (FAILED(pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_WhiteBloom"))))
+		return E_FAIL;
+
+	if (FAILED(pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Blur_Bloom"), m_pShader, "g_DoBlurTexture")))
+		return E_FAIL;
+	if (FAILED(m_pShader->Begin("BlurY")))
+		return E_FAIL;*/
+
+
 
 
 	if (FAILED(m_pShader->Bind_RawValue("g_fGlowPower", &m_fGlowPower, sizeof(_float))))
@@ -75,10 +104,10 @@ HRESULT CGlow::Render()
 
 	m_pBuffer->Render();
 	
-	/*if (FAILED(pRenderTarget_Manager->End_MRT(m_pContext)))
+	if (FAILED(pRenderTarget_Manager->End_MRT(m_pContext)))
 		return E_FAIL;
 	
-	Safe_Release(pRenderTarget_Manager);*/
+	Safe_Release(pRenderTarget_Manager);
 
 
 	return S_OK;

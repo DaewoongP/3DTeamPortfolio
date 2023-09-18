@@ -20,7 +20,6 @@ texture2D g_GlowTexture;
 texture2D g_OriTexture;
 texture2D g_NoiseTexture;
 
-
 vector g_vLightDiffuse;
 vector g_vLightAmbient;
 vector g_vLightSpecular;
@@ -109,11 +108,52 @@ PS_OUT PS_MAIN_GLOW(PS_IN In)
     vector vAlpha = g_vAlphaTexture.Sample(DistortionSampler, In.vTexUV);
     
     
-    Out.vColor = GlowColor; //saturate(GlowColor + (vAlpha * g_fGlowPower));
+    Out.vColor = saturate(GlowColor + (vAlpha * g_fGlowPower));
     return Out;
 }
 
+PS_OUT PS_MAIN_BLURX(PS_IN In)
+{
+    PS_OUT Out = (PS_OUT) 0;
+    
+    float dx = 1.0f / 1280.f;
+    int Count = 0;
+    float2 UV = 0;
+    
+    for (int i = -11; i < 11; ++i)
+    {
+        UV = In.vTexUV + float2(dx * i, 0.f);
+        vector SSAO = g_Texture.Sample(BlurSampler, UV);
+        
+        Out.vColor += BlurWeights[11 + i] * SSAO;
+        Count += 1;
+    }
+   //if(Count>0)
+    Out.vColor /= total;
+    //else
+    //    Out.vColor = vector(1.f, 1.f, 1.f, 1.f);
+    
+    return Out;
+}
 
+PS_OUT PS_MAIN_BLURY(PS_IN In)
+{
+    PS_OUT Out = (PS_OUT) 0;
+
+    float dy = 1.0f / (720.f / 2.f);
+    
+    float2 UV = 0;
+   
+    for (int i = -11; i < 11; ++i)
+    {
+        UV = In.vTexUV + float2(0, dy * i);
+        vector SSAO = g_Texture.Sample(BlurSampler, UV);
+        Out.vColor += BlurWeights[11 + i] * SSAO;
+    }
+    Out.vColor /= total;
+
+    return Out;
+}
 
 
 
@@ -143,5 +183,26 @@ technique11 DefaultTechnique
         DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
         PixelShader = compile ps_5_0 PS_MAIN_GLOW();
     }
-
+    pass BlurX
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Depth_Disable, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
+        HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
+        DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
+        PixelShader = compile ps_5_0 PS_MAIN_BLURX();
+    }
+    pass BlurY
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Depth_Disable, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
+        HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
+        DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
+        PixelShader = compile ps_5_0 PS_MAIN_BLURY();
+    }
 }
