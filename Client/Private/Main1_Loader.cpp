@@ -283,12 +283,12 @@ HRESULT CMain1_Loader::Loading_For_MainGame()
 			CRevelio::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Revelio");
 
-		/* For.Prototype_GameObject_Revelio */
+		/* For.Prototype_GameObject_Wingardiumleviosa */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Wingardiumleviosa"),
 			CWingardiumleviosa::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Wingardiumleviosa");
 
-		/* For.Prototype_GameObject_Revelio */
+		/* For.Prototype_GameObject_Levioso */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Levioso"),
 			CLevioso::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Levioso");

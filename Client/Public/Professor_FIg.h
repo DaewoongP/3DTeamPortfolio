@@ -10,8 +10,10 @@ class CSequence;
 class CRenderer;
 class CRigidBody;
 class CRootBehavior;
+END
 
-class CAnimation;
+BEGIN(Client)
+class CMagic;
 END
 
 BEGIN(Client)
@@ -34,6 +36,7 @@ public:
 	virtual HRESULT Render_Depth() override;
 
 private:
+	CMagic* m_pMagic = { nullptr };
 	CModel* m_pModelCom = { nullptr };
 	CShader* m_pShaderCom = { nullptr };
 	CRenderer* m_pRenderer = { nullptr };
@@ -75,6 +78,8 @@ private: /* Notify Functions */
 	void Change_Animation() {
 		m_isChangeAnimation = true;
 	}
+	void Attack_Light();
+	void Attack_Heavy();
 
 public:
 	static CProfessor_Fig* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

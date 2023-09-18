@@ -2,6 +2,7 @@
 #include "GameInstance.h"
 #include "PhysXConverter.h"
 
+#include "Magic.h"
 #include "Action.h"
 #include "Check_Degree.h"
 #include "Check_Distance.h"
@@ -50,6 +51,18 @@ HRESULT CProfessor_Fig::Initialize(void* pArg)
 	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Front_2"), TEXT("Change_Animation"), Func)))
 		return E_FAIL;
 	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Front_3"), TEXT("Change_Animation"), Func)))
+		return E_FAIL;
+
+	Func = [&] {(*this).Attack_Light(); };
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Front_1"), TEXT("Attack_Light"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Front_2"), TEXT("Attack_Light"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Front_3"), TEXT("Attack_Light"), Func)))
+		return E_FAIL;
+
+	Func = [&] {(*this).Attack_Heavy(); };
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Heavy_Front_2"), TEXT("Attack_Heavy"), Func)))
 		return E_FAIL;
 
 	return S_OK;
@@ -272,6 +285,27 @@ HRESULT CProfessor_Fig::Add_Components()
 		RigidBodyDesc.pGeometry = &pSphereGeomatry;
 
 		m_pRigidBody->Create_Collider(&RigidBodyDesc);
+
+		/* For.Magic */
+		CMagic::MAGICDESC magicInitDesc;
+		magicInitDesc.eBuffType = CMagic::BUFF_NONE;
+		magicInitDesc.eMagicGroup = CMagic::MG_DAMAGE;
+		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicTag = BASICCAST;
+		magicInitDesc.fCoolTime = 0.f;
+		magicInitDesc.fDamage = 0.f;
+		magicInitDesc.fCastDistance = 1000;
+		magicInitDesc.fBallDistance = 30;
+		magicInitDesc.fLifeTime = 0.2f;
+
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Magic"),
+			TEXT("Com_Magic"), reinterpret_cast<CComponent**>(&m_pMagic), &magicInitDesc)))
+		{
+			MSG_BOX("Failed CTest_Player Add_Component : (Com_Magic)");
+			return E_FAIL;
+		}
+
+		m_pMagic->Add_ActionFunc([&] {(*this).MagicTestTextOutput(); });
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -655,6 +689,16 @@ HRESULT CProfessor_Fig::Make_Attack_Combo1(_Inout_ CSequence* pSequence)
 	ENDINSTANCE;
 
 	return S_OK;
+}
+
+void CProfessor_Fig::Attack_Light()
+{
+	cout << "Call Light Attack" << endl;
+}
+
+void CProfessor_Fig::Attack_Heavy()
+{
+	cout << "Call Heavy Attack" << endl;
 }
 
 CProfessor_Fig* CProfessor_Fig::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
