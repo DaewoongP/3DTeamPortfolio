@@ -61,8 +61,6 @@ HRESULT CGolem_Combat::Initialize(void* pArg)
 
 void CGolem_Combat::Tick(_float fTimeDelta)
 {
-	__super::Tick(fTimeDelta);
-
 	// 몬스터 행동 테스트용 코드
 	BEGININSTANCE;
 
@@ -88,6 +86,8 @@ void CGolem_Combat::Tick(_float fTimeDelta)
 
 	if (nullptr != m_pModelCom)
 		m_pModelCom->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
+
+	__super::Tick(fTimeDelta);
 }
 
 void CGolem_Combat::Late_Tick(_float fTimeDelta)

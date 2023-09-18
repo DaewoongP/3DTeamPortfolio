@@ -32,8 +32,8 @@ HRESULT CTest_Player::Initialize(void* pArg)
 
 	m_pTransform->Set_Speed(15.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
-	//m_pTransform->Set_RigidBody(m_pRigidBody);
-	m_pTransform->Set_CharacterController(m_pCharacterController);
+	m_pTransform->Set_RigidBody(m_pRigidBody);
+	//m_pTransform->Set_CharacterController(m_pCharacterController);
 	
 	m_pCharacterController->Set_Position(_float3(10.f, 0.f, 2.f));
 
@@ -204,11 +204,10 @@ HRESULT CTest_Player::Add_Components()
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	PxBoxControllerDesc CapsuleControllerDesc;
+	PxCapsuleControllerDesc CapsuleControllerDesc;
 	CapsuleControllerDesc.setToDefault();
-	CapsuleControllerDesc.halfForwardExtent = 1.f;
-	CapsuleControllerDesc.halfHeight = 1.f;
-	CapsuleControllerDesc.halfSideExtent = 1.f;
+	CapsuleControllerDesc.height = 1.f;
+	CapsuleControllerDesc.radius = 0.5f;
 	CapsuleControllerDesc.material = pGameInstance->Get_Physics()->createMaterial(0.5f, 0.5f, 0.5f);
 	CapsuleControllerDesc.density = 10.f;
 	CapsuleControllerDesc.stepOffset = 0.5f;
