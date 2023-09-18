@@ -44,6 +44,13 @@ HRESULT CUI_Font::Initialize(void* pArg)
 		m_vScale = pDesc->m_vScale;
 	}
 
+	_float4 textSize = m_pFont->MeasureString(m_pText);
+	_float textWidth = XMVectorGetX(textSize) * m_vScale.x; // 텍스트의 너비
+	_float textHeight = XMVectorGetY(textSize) * m_vScale.y; // 텍스트의 높이
+
+	m_vPos.x -= (textWidth / 2.0f); // 중앙 위치에서 왼쪽으로 텍스트의 반 너비만큼 이동
+//	m_vPos.y -= (textHeight / 2.0f); // 중앙 위치에서 위로 텍스트의 반 높이만큼 이동
+
 	/* Com_Renderer */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"),
 		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRendererCom))))

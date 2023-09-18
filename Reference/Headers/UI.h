@@ -26,6 +26,11 @@ protected:
 
 
 public:
+	void	Set_XY(_float2 vXY)
+	{
+		m_fX = vXY.x;
+		m_fY = vXY.y;
+	}
 	void Set_Parent(CUI* pUIParent);
 
 public:

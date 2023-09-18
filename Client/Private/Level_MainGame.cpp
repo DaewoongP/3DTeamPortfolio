@@ -50,6 +50,12 @@ HRESULT CLevel_MainGame::Initialize()
 
 		return E_FAIL;
 	}
+	if (FAILED(Ready_Layer_Info_UI(TEXT("Layer_Info_UI"))))
+	{
+		MSG_BOX("Failed Ready_Layer_UI");
+
+		return E_FAIL;
+	}
 	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
 	{
 		MSG_BOX("Failed Ready_Layer_Effect");
@@ -57,12 +63,12 @@ HRESULT CLevel_MainGame::Initialize()
 		return E_FAIL;
 	}
 
-	if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/0916123.ddd"))))
-	{
-		MSG_BOX("Failed Load Map Object");
+	//if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/0916123.ddd"))))
+	//{
+	//	MSG_BOX("Failed Load Map Object");
 
-		return E_FAIL;
-	}
+	//	return E_FAIL;
+	//}
 #ifdef _DEBUG
 	if (FAILED(Ready_Layer_Debug(TEXT("Layer_Debug"))))
 	{
@@ -408,8 +414,8 @@ HRESULT CLevel_MainGame::Ready_Layer_UI(const _tchar* pLayerTag)
 	//}
 
 	CUI_Group_Enemy_HP::ENEMYHPDESC  Desc;
-	_tchar szLevel[MAX_PATH] = TEXT("7");
-	_tchar szName[MAX_PATH] = TEXT("¹«ÀåÇÑ Æ®·Ñ");
+	_tchar szLevel[MAX_PATH] = TEXT("77");
+	_tchar szName[MAX_PATH] = TEXT("°³Ã¶¹Î");
 
 	Desc.eType = CUI_Group_Enemy_HP::ENEMYTYPE::MONSTER;
 	lstrcpy(Desc.wszObjectLevel, szLevel);
@@ -422,7 +428,44 @@ HRESULT CLevel_MainGame::Ready_Layer_UI(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
+	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Cursor.uidata"));
+	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_Cursor"),
+		pLayerTag, TEXT("GameObject_UI_Group_Cursor"), szFilePath)))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_Cursor)");
+		return E_FAIL;
+	}
+
 	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CLevel_MainGame::Ready_Layer_Info_UI(const _tchar* pLayerTag)
+{
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Info"), pLayerTag)))
+	{
+		MSG_BOX("Failed Add Scene : (Scene_Info)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	_tchar szFilePath[MAX_PATH] = TEXT("");
+
+	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Gear5.uidata"));
+	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Info_Main"),
+		pLayerTag, TEXT("Prototype_GameObject_Info_Main"), szFilePath)))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Info_Main)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	Safe_Release(pGameInstance);
 
 	return S_OK;
 }

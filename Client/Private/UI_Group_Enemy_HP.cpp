@@ -51,7 +51,7 @@ HRESULT CUI_Group_Enemy_HP::Initialize(void* pArg)
 			return E_FAIL;
 		break;
 	case Client::CUI_Group_Enemy_HP::BOSS:
-		if (FAILED(Read_File(TEXT("../../Resources/GameData/UIData/UI_Group_Boss_HP.uidata"))))
+		if (FAILED(Read_File(TEXT("../../Resources/GameData/UIData/UI_Group_Boss_HP3.uidata"))))
 			return E_FAIL;
 		break;
 	case Client::CUI_Group_Enemy_HP::ENEMYTYPE_END:
@@ -185,6 +185,15 @@ CUI::UIDESC CUI_Group_Enemy_HP::Load_File(const HANDLE hFile)
 	ReadFile(hFile, &eID, sizeof(_int), &dwByte, nullptr);
 	ReadFile(hFile, &isSave, sizeof(_bool), &dwByte, nullptr);
 
+	fs::path fsPath = UIDesc.szTexturePath;
+
+	std::wstring wszExtension = fsPath.extension();
+	if (wszExtension == TEXT(".png"))
+	{
+		fsPath.replace_extension(L".dds");
+		lstrcpy(UIDesc.szTexturePath, fsPath.c_str());
+	}
+
 	return UIDesc;
 }
 
@@ -196,29 +205,23 @@ HRESULT CUI_Group_Enemy_HP::Add_Fonts(void* pArg)
 	CUI_Font* pLevel = nullptr;
 
 	CUI_Font::FONTDESC Desc;
-
 	lstrcpy(Desc.m_pText, m_wszObjectLevel);
-	Desc.m_vPos		 = { 500.f, 72.f };
-	Desc.m_vColor	= _float4(0.f, 1.f, 0.f, 1.f);
-	Desc.m_fRotation = { 0.f };
-	Desc.m_vOrigin	= { 0.f, 0.f };
-	Desc.m_vScale= { 0.4f, 0.4f };
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Font"),
-		TEXT("Com_UI_Font_Name"), reinterpret_cast<CComponent**>(&pName), &Desc)))
+	if (eEnemyType == MONSTER)
 	{
-		MSG_BOX("CUI_Group_Enemy_HP : Failed Clone Component (Com_UI_Font_Name)");
-		ENDINSTANCE;
-		return E_FAIL;
+		Desc.m_vPos = { 511.f, 73.f };
+		Desc.m_vColor = _float4(0.f, 1.f, 0.f, 1.f);
+		Desc.m_fRotation = { 0.f };
+		Desc.m_vOrigin = { 0.f, 0.f };
+		Desc.m_vScale = { 0.4f, 0.4f };
 	}
-	m_Fonts.push_back(pName);
-
-	ZeroMemory(&Desc, sizeof(CUI_Font::FONTDESC));
-	lstrcpy(Desc.m_pText, m_wszObjectName);
-	Desc.m_vPos	 = { 600.f, 50.f };
-	Desc.m_vColor = _float4(1.f, 1.f, 1.f, 1.f);
-	Desc.m_fRotation = { 0.f };
-	Desc.m_vOrigin = { 0.f, 0.f };
-	Desc.m_vScale = { 0.5f, 0.5f };
+	else
+	{
+		Desc.m_vPos = { 435.f, 73.f };
+		Desc.m_vColor = _float4(0.f, 1.f, 0.f, 1.f);
+		Desc.m_fRotation = { 0.f };
+		Desc.m_vOrigin = { 0.f, 0.f };
+		Desc.m_vScale = { 0.4f, 0.4f };
+	}
 
 	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Font"),
 		TEXT("Com_UI_Font_Level"), reinterpret_cast<CComponent**>(&pLevel), &Desc)))
@@ -228,6 +231,26 @@ HRESULT CUI_Group_Enemy_HP::Add_Fonts(void* pArg)
 		return E_FAIL;
 	}
 	m_Fonts.push_back(pLevel);
+
+
+
+	ZeroMemory(&Desc, sizeof(CUI_Font::FONTDESC));
+	lstrcpy(Desc.m_pText, m_wszObjectName);
+	Desc.m_vPos = { 640.f, 50.f };
+	Desc.m_vColor = _float4(1.f, 1.f, 1.f, 1.f);
+	Desc.m_fRotation = { 0.f };
+	Desc.m_vOrigin = { 0.f, 0.f };
+	Desc.m_vScale = { 0.5f, 0.5f };
+
+	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Font"),
+		TEXT("Com_UI_Font_Name"), reinterpret_cast<CComponent**>(&pName), &Desc)))
+	{
+		MSG_BOX("CUI_Group_Enemy_HP : Failed Clone Component (Com_UI_Font_Name)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+	m_Fonts.push_back(pName);
+
 
 	ENDINSTANCE;
 

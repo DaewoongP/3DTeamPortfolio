@@ -52,8 +52,16 @@ HRESULT CUI_Back::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 	
-	if (FAILED(m_pShaderCom->Begin("UI")))
-		return E_FAIL;
+	if (m_isRemoveBlack)
+	{
+		if (FAILED(m_pShaderCom->Begin("UI_Remove_Black")))
+			return E_FAIL;
+	}
+	else
+	{
+		if (FAILED(m_pShaderCom->Begin("UI")))
+			return E_FAIL;
+	}
 
 	if (FAILED(m_pVIBufferCom->Render()))
 		return E_FAIL;
