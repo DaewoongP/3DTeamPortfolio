@@ -33,6 +33,10 @@ private:
 
     void LookFront();
 
+    void Go_Roll();
+
+    void Go_Jump();
+
     void Over_135();
 
 public:

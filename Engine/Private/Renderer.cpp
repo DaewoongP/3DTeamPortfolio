@@ -258,7 +258,7 @@ HRESULT CRenderer::Draw_RenderGroup()
 
 	if (FAILED(Render_PostProcessing()))
 		return E_FAIL;
-	
+
 	if (FAILED(m_pBloom->Render()))
 		return E_FAIL;
 	if (FAILED(Render_UI()))

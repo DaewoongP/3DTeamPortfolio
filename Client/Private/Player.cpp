@@ -47,16 +47,16 @@ HRESULT CPlayer::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
-	/*if (FAILED(Ready_Camera()))
+	if (FAILED(Ready_Camera()))
 	{
 		MSG_BOX("Failed Ready Player Caemra");
 
 		return E_FAIL;
-	}*/
+	}
 
 	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
-
+	m_pTransform->Set_RigidBody(m_pRigidBody);
 
 	return S_OK;
 }
@@ -69,7 +69,7 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	UpdateLookAngle();
 
-	m_pStateContext->Tick(fTimeDelta);
+	//m_pStateContext->Tick(fTimeDelta);
 
 	m_pCustomModel->Tick(CCustomModel::ROBE, 2, fTimeDelta);
 
@@ -89,6 +89,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	}
 
 #ifdef _DEBUG
+	m_pRenderer->Add_DebugGroup(m_pRigidBody);
 	Tick_ImGui();
 #endif // _DEBUG
 }
@@ -226,6 +227,58 @@ HRESULT CPlayer::Add_Components()
 	}
 	m_pMagic->Add_ActionFunc([&] {(*this).MagicTestTextOutput(); });
 
+
+	//CRigidBody::RIGIDBODYDESC RigidBodyDesc;
+
+	//RigidBodyDesc.isStatic = false; // static - °íÁ¤µÈ ¹°Ã¼ (true -> °íÁ¤) (false -> ¿òÁ÷ÀÓ)
+	//RigidBodyDesc.isTrigger = false; // Æ®¸®°ÅÀÓ ¿ø·¡ Äİ¶óÀÌ´õ »ı°¢ÇÏ½Ã¸éµË´Ï´Ù.
+	//RigidBodyDesc.vInitPosition = _float3(1024.0f, 1024.0f, 1024.0f); // -> Æ®·£½ºÆû¿¡´Ù°¡ ÃÊ±â Æ÷Áö¼Ç Áàµµ Àû¿ë ¾ÈµË´Ï´Ù !! / ¿ä±â´Ù ÁÖ¼Å¾ß ÇÕ´Ï´Ù (¸®Áöµå ¹Ùµğ°¡ ÀÖ´Â °æ¿ì¸¸ ÇØ´ç)
+	//RigidBodyDesc.vOffsetRotation = XMQuaternionRotationRollPitchYaw(0.f, 0.f, 0.0f);
+	//RigidBodyDesc.fStaticFriction = 0.5f; // °¡¸¸È÷ ÀÖÀ»¶§ ¿òÁ÷ÀÌ±â À§ÇÑ ÃÖ¼Ò ÈûÀÇ ¼öÄ¡ 0~1		//½Ãµ¿ ¼Óµµ
+	//RigidBodyDesc.fDynamicFriction = 0.5f; // ¿òÁ÷ÀÏ¶§ ¸ØÃß±âÀ§ÇÑ ¸¶Âû·Â? 0~1					//ºê·¹ÀÌÅ© °­µµ
+	//RigidBodyDesc.fRestitution = 0.f; // Åº¼º°ªÀÌ ¾ó¸¶³ª µé¾î°¥ °ÍÀÎ°¡ 0~1 -> 1·ÎÁÖ¸é Á¸³ªÆ§´Ï´Ù º¸Åë 0À¸·ÎÁİ´Ï´Ù.	
+	//PxCapsuleGeometry GeoMetry = PxCapsuleGeometry(1.f, 2.f); // Px~Geometry				//Ä¸½¶ Å©±â
+	////PxSphereGeometry
+	////PxBoxGeometry
+	//RigidBodyDesc.pGeometry = &GeoMetry; // À§¿¡¼­ ¸¸µç°Å ³Ö¾îÁÖ½Ã¸éµË´Ï´Ù.
+	//RigidBodyDesc.eConstraintFlag = CRigidBody::AllRot; // ¿òÁ÷ÀÓÀ» Á¦ÇÑÇÒ °ªÀ» ³Ö¾îÁÖ¸é µË´Ï´Ù. (ex allrotÀÇ °æ¿ì ·ÎÅ×ÀÌ¼ÇÀ» ÇÏÁö¾Ê½À´Ï´Ù.)
+	//RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 0.f, 1.f); // µğ¹ö±× ÄÃ·¯
+	//RigidBodyDesc.pOwnerObject = this; // µğ½ºÆ÷ÀÎÅÍ ³Ö¤©¾îÁÖ¼Å¾ß ¾ÈÅÍÁı´Ï´Ù !!
+
+	///* Com_RigidBody */
+	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
+	//	TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
+	//{
+	//	MSG_BOX("Failed Player Add_Component : (Com_RigidBody)");
+	//	return E_FAIL;
+	//}
+
+	////°¡Áú³ğ
+	//RigidBodyDesc.pOwnerObject = this;
+	////°íÁ¤
+	//RigidBodyDesc.isStatic = true;
+	////³­ Äİ¶óÀÌ´õ´Ù
+	//RigidBodyDesc.isTrigger = true;
+	////À§Ä¡Á» ¹Ù²ãÁà¶ó
+	//RigidBodyDesc.vOffsetPosition = _float3(-5.f, 3.f, 5.f);
+	////È¸ÀüÁ» Áà¶ó
+	//RigidBodyDesc.vOffsetRotation = _float4(0.f, 0.f, 0.f, 1.f);
+	////½Ãµ¿°É¶§ ÆÄ¿ö´Ù
+	//RigidBodyDesc.fStaticFriction = 0.0f;
+	////ºê·¹ÀÌÅ©´Ù
+	//RigidBodyDesc.fDynamicFriction = 0.0f;
+	////Åº¼ºÀÌ »ı±ä´Ù.
+	//RigidBodyDesc.fRestitution = 0.f;
+	////Äİ¶óÀÌ´õ´Â ÀÌ·¸°Ô »ı°å´Ù.
+	//PxBoxGeometry BoxGeometry = PxBoxGeometry(3.f, 1.f, 1.f);
+	//RigidBodyDesc.pGeometry = &BoxGeometry;
+	////»öÀÌ´Ù.
+	//RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 0.f, 1.f);
+	////À§ ³»¿ë´ë·Î »ı¼º ÇÒ°Å´Ù.
+	//m_pRigidBody->Create_Collider(&RigidBodyDesc);
+
+
+
 	return S_OK;
 }
 
@@ -287,8 +340,8 @@ void CPlayer::Key_Input(_float fTimeDelta)
 			// ì§€íŒ¡ì´ ìœ„ì¹˜ë¥¼ 2ë²ˆì§¸ ì¸ì posë¡œ ë„£ì–´ì•¼í•˜ëŠ”ë° ì§€íŒ¡ì´ë„ ì—†ì–´ì„œ ê·¸ëƒ¥ pTransform->Get_Position()ë¡œ ë„£ìŒ.
 			// ì„ì˜ë¡œ ì•„ë¬´ê±°ë‚˜ ì§‘ì–´ì˜¤ê² ìŒ.
 			
-			/* ì´ê±°ëŠ” í…ŒìŠ¤íŠ¸ ìš©ìœ¼ë¡œ ë”ë¯¸í´ë˜ìŠ¤ ì°¾ìœ¼ë ¤ê³  ë„£ì€ ì½”ë“œë¥¼ í›”ì³ì˜¨ê±°ì„ */
-			CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Debug"), TEXT("GameObject_Dummy")));
+			/* ÀÌ°Å´Â Å×½ºÆ® ¿ëÀ¸·Î ´õ¹ÌÅ¬·¡½º Ã£À¸·Á°í ³ÖÀº ÄÚµå¸¦ ÈÉÃÄ¿Â°ÅÀÓ */
+			CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
 			if (nullptr == pTestTarget)
 				throw TEXT("pTestTarget is nullptr");
 

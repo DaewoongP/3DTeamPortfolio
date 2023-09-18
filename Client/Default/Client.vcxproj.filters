@@ -292,6 +292,15 @@
     <Filter Include="01. Levels\99. Loading\Loader">
       <UniqueIdentifier>{5d7f902a-4002-432f-8bd9-34922b397410}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\02. JumpState">
+      <UniqueIdentifier>{f11b9425-7729-4257-9b90-f2a7b314e762}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\03. RollState">
+      <UniqueIdentifier>{021389fc-ab85-4d15-9673-ffdd6778c8aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\04. HardLandState">
+      <UniqueIdentifier>{10f19527-0a06-4f20-977a-2fdb651f7263}</UniqueIdentifier>
+    </Filter>
     <Filter Include="04. Magic\MagicBall\06. Confringo">
       <UniqueIdentifier>{f2eb1727-1265-443b-960c-a8800034b231}</UniqueIdentifier>
     </Filter>
@@ -621,6 +630,15 @@
     <ClInclude Include="..\public\Main0_Loader.h">
       <Filter>01. Levels\99. Loading\Loader</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\RollState.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\03. RollState</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\JumpState.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\02. JumpState</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\HardLandState.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\04. HardLandState</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\Confringo.h">
       <Filter>04. Magic\MagicBall\06. Confringo</Filter>
     </ClInclude>
@@ -919,6 +937,15 @@
     </ClCompile>
     <ClCompile Include="..\private\Main0_Loader.cpp">
       <Filter>01. Levels\99. Loading\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\RollState.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\03. RollState</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\JumpState.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\02. JumpState</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\HardLandState.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\04. HardLandState</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Confringo.cpp">
       <Filter>04. Magic\MagicBall\06. Confringo</Filter>

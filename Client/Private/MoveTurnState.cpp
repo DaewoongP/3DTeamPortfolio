@@ -51,6 +51,11 @@ void CMoveTurnState::OnStateTick()
 	Go_Start();
 
 	Over_135();
+
+	Go_Roll();
+
+	Go_Jump();
+
 }
 
 void CMoveTurnState::OnStateExit()
@@ -95,6 +100,30 @@ void CMoveTurnState::LookFront()
 	{
 		//지속적으로 회전
 		m_pPlayerTransform->Turn(_float3(0.0f, 1.0f, 0.0f), fAngle * pGameInstance->Get_World_Tick());
+	}
+
+	ENDINSTANCE;
+}
+
+void CMoveTurnState::Go_Roll()
+{
+	BEGININSTANCE;
+
+	if (pGameInstance->Get_DIKeyState(DIK_LCONTROL, CInput_Device::KEY_DOWN))
+	{
+		Set_StateMachine(TEXT("Roll"));
+	}
+
+	ENDINSTANCE;
+}
+
+void CMoveTurnState::Go_Jump()
+{
+	BEGININSTANCE;
+
+	if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
+	{
+		Set_StateMachine(TEXT("Jump"));
 	}
 
 	ENDINSTANCE;
