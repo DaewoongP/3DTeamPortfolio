@@ -184,6 +184,8 @@ struct ENGINE_DLL RENDERER_MODULE : public MODULE
 	wstring wstrShaderTag = { TEXT("Shader_VtxRectColInstance") };
 	wstring wstrMaterialPath = { TEXT("../../Resources/Effects/Textures/Default_Particle.png") };
 	_bool isDeleteY = { false };
+	_bool isUseGradientTexture = { false };
+	wstring wstrGraientTexture = { TEXT("../../Resources/Effects/Textures/Gradients/VFX_T_Gradient_Fire_D.png") };
 	string strPass = { "Default" };
 };
 struct ENGINE_DLL ROTATION_OVER_LIFETIME_MODULE : public MODULE

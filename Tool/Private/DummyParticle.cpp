@@ -71,6 +71,9 @@ HRESULT CDummyParticle::Initialize(void* _pArg)
 	m_pNormalTextureIFD->m_strStartPath = "../../Resources/Effects/Textures/Flipbooks/";
 	m_pNormalTextureIFD->m_iImageButtonWidth = 32;
 
+	m_pGradientTextureIFD = CImageFileDialog::Create(m_pDevice, "GradientTextureDialog");
+	m_pGradientTextureIFD->m_strStartPath = "../../Resources/Effects/Textures/Gradients/";
+	m_pGradientTextureIFD->m_iImageButtonWidth = 32;
 	
 
 	Load_After();
@@ -482,6 +485,20 @@ void CDummyParticle::RendererModule_TreeNode(CEffect_Window* pEffectWindow)
 			}
 
 			pEffectWindow->Table_CheckBox("Billboard DeleteY", "CJCJV8389kdjd", &m_RendererModuleDesc.isDeleteY);
+
+			pEffectWindow->Table_CheckBox("Use Gradient Texture", "lkcxvjjlef8", &m_RendererModuleDesc.isUseGradientTexture);
+			if (true == m_RendererModuleDesc.isUseGradientTexture)
+			{
+				pEffectWindow->Table_ImageButton("Gradient", "jksdfkjlvioife", m_pGradientTextureIFD);
+				if (m_pGradientTextureIFD->IsOk())
+				{
+					string strFilePath = m_pGradientTextureIFD->Get_FilePathName();
+					fs::path fsFilePath = ToRelativePath(strFilePath.data());
+					ChangeTexture(&m_pGradientTexture, m_RendererModuleDesc.wstrGraientTexture, fsFilePath.wstring().data());
+					// ../../Resources/Effect/Default_Particle.png;
+					////////
+				}
+			}
 
 			m_RendererModuleDesc.strPass = m_pPassComboBox->Tick(CComboBox::TABLE);
 
