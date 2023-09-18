@@ -1,7 +1,7 @@
 #include "..\Public\Player.h"
 #include "GameInstance.h"
 #include "Player_Camera.h"
-#include "Magic.h"
+#include "MagicSlot.h"
 #include "Weapon_Player_Wand.h"
 #include "StateContext.h"
 #include "IdleState.h"
@@ -196,36 +196,12 @@ HRESULT CPlayer::Add_Components()
 		TEXT("Com_Weapon"), reinterpret_cast<CComponent**>(&m_pWeapon), &ParentMatrixDesc)))
 		throw TEXT("Com_Weapon");
 
-	/* For.Com_Magic*/
-	//CMagic::MAGICDESC magicInitDesc;
-	//magicInitDesc.eBuffType = CMagic::BUFF_NONE;
-	//magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
-	//magicInitDesc.eMagicType = CMagic::MT_NOTHING;
-	//magicInitDesc.eMagicTag = BASICCAST;
-	//magicInitDesc.fCoolTime = 1.f;
-	//magicInitDesc.fDamage = 10.f;
-	//magicInitDesc.fCastDistance = 1000;
-	//magicInitDesc.fBallDistance = 30;
-	//magicInitDesc.fLifeTime = 0.1f;
-
-	CMagic::MAGICDESC magicInitDesc;
-	magicInitDesc.eBuffType = CMagic::BUFF_SHILED;
-	magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
-	magicInitDesc.eMagicType = CMagic::MT_ALL;
-	magicInitDesc.eMagicTag = CONFRINGO;
-	magicInitDesc.fCoolTime = 1.f;
-	magicInitDesc.fDamage = 0.f;
-	magicInitDesc.fCastDistance = 1000;
-	magicInitDesc.fBallDistance = 30;
-	magicInitDesc.fLifeTime = 0.2f;
-
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Magic"),
-		TEXT("Com_Magic"), reinterpret_cast<CComponent**>(&m_pMagic), &magicInitDesc)))
+	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_MagicSlot"),
+		TEXT("Com_MagicSlot"), reinterpret_cast<CComponent**>(&m_pMagicSlot))))
 	{
-		MSG_BOX("Failed CTest_Player Add_Component : (Com_Magic)");
+		MSG_BOX("Failed CTest_Player Add_Component : (Com_MagicSlot)");
 		return E_FAIL;
 	}
-	m_pMagic->Add_ActionFunc([&] {(*this).MagicTestTextOutput(); });
 
 
 	//CRigidBody::RIGIDBODYDESC RigidBodyDesc;
@@ -333,15 +309,12 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 	if (pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN))
 	{
-		if (m_pMagic != nullptr)
-		{
-			/* 이거는 테스트 용으로 더미클래스 찾으려고 넣은 코드를 훔쳐온거임 */
-			CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
-			if (nullptr == pTestTarget)
-				throw TEXT("pTestTarget is nullptr");
+		/* 이거는 테스트 용으로 더미클래스 찾으려고 넣은 코드를 훔쳐온거임 */
+		CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
+		if (nullptr == pTestTarget)
+			throw TEXT("pTestTarget is nullptr");
 
-			m_pMagic->Magic_Cast(pTestTarget->Get_Transform(), m_pWeapon);
-		}
+		m_pMagicSlot->Action_Magic_Basic(0, pTestTarget->Get_Transform(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
 	}
 
 	ENDINSTANCE;
@@ -580,7 +553,7 @@ void CPlayer::Free()
 		Safe_Release(m_pRenderer);
 		Safe_Release(m_pCustomModel);
 		Safe_Release(m_pPlayer_Camera);
-		Safe_Release(m_pMagic);
+		Safe_Release(m_pMagicSlot);
 		Safe_Release(m_pWeapon);
 		Safe_Release(m_pStateContext);
 

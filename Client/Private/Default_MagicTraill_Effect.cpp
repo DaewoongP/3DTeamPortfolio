@@ -56,7 +56,7 @@ HRESULT CDefault_MagicTraill_Effect::Initialize(void* pArg)
 	m_pTransform->Set_Position(initDesc->vInitPosition);
 	m_pTrailTransform = m_pTrail->Get_Transform();
 	Safe_AddRef(m_pTrailTransform);
-	//m_pTrailTransform->Set_Position(initDesc->vInitPosition);
+	m_pTrailTransform->Set_Position(initDesc->vInitPosition);
 
 	m_pTrail->Reset_Trail(initDesc->vInitPosition, initDesc->vInitPosition);
 

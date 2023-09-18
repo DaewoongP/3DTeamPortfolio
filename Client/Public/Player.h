@@ -53,8 +53,8 @@ private:
 
 	CStateContext* m_pStateContext = { nullptr };
 	
-	/* 마법을 위한 공간 */
-	class CMagic*	m_pMagic = { nullptr };
+	//평타, 실드가 이미 탑재된 마법 슬롯 
+	class CMagicSlot*	m_pMagicSlot = { nullptr };
 	CWeapon_Player_Wand*	m_pWeapon = { nullptr };
 
 

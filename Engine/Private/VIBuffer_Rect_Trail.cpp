@@ -34,9 +34,9 @@ HRESULT CVIBuffer_Rect_Trail::Reset_Trail()
 	for (_uint i = 0; i < m_iNumVertices; ++i)
 	{
 		if (1 == i % 2)
-			pData->vPosition = vHighWorldPos;
+			pData[i].vPosition = vHighPos;
 		else
-			pData->vPosition = vLowWorldPos;
+			pData[i].vPosition = vLowPos;
 	}
 
 	m_pContext->Unmap(m_pVB, 0);
@@ -57,9 +57,9 @@ HRESULT CVIBuffer_Rect_Trail::Reset_Trail(_float3 vHighPos, _float3 vLowPos)
 	for (_uint i = 0; i < m_iNumVertices; ++i)
 	{
 		if (1 == i % 2)
-			pData->vPosition = vHighPos;
+			pData[i].vPosition = vHighPos;
 		else
-			pData->vPosition = vLowPos;
+			pData[i].vPosition = vLowPos;
 	}
 
 	m_pContext->Unmap(m_pVB, 0);

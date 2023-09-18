@@ -306,7 +306,6 @@ HRESULT CParticleSystem::Setup_ShaderResources()
 		}
 		if (FAILED(m_pGradientTexture->Bind_ShaderResource(m_pShader, "g_GradientTexture")))
 			throw "g_GradientTexture";
-
 	}
 	catch (const _tchar* pErrorTag)
 	{
