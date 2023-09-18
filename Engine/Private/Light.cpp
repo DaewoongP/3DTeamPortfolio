@@ -66,7 +66,7 @@ HRESULT CLight::Render(CShader* pShader, CVIBuffer_Rect* pVIBuffer)
 
 CLight * CLight::Create(const LIGHTDESC & LightDesc)
 {
-	CLight*	pInstance = new CLight();
+	CLight*	pInstance = New CLight();
 
 	if (FAILED(pInstance->Initialize(LightDesc)))
 	{

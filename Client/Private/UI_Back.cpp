@@ -52,8 +52,16 @@ HRESULT CUI_Back::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 	
-	if (FAILED(m_pShaderCom->Begin("UI")))
-		return E_FAIL;
+	if (m_isRemoveBlack)
+	{
+		if (FAILED(m_pShaderCom->Begin("UI_Remove_Black")))
+			return E_FAIL;
+	}
+	else
+	{
+		if (FAILED(m_pShaderCom->Begin("UI")))
+			return E_FAIL;
+	}
 
 	if (FAILED(m_pVIBufferCom->Render()))
 		return E_FAIL;
@@ -114,7 +122,7 @@ void CUI_Back::Set_Rotation(_float3 vAxis, _float fRadian)
 
 CUI_Back* CUI_Back::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CUI_Back* pInstance = new CUI_Back(pDevice, pContext);
+	CUI_Back* pInstance = New CUI_Back(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -127,7 +135,7 @@ CUI_Back* CUI_Back::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 CGameObject* CUI_Back::Clone(void* pArg)
 {
-	CUI_Back* pInstance = new CUI_Back(*this);
+	CUI_Back* pInstance = New CUI_Back(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

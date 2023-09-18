@@ -291,7 +291,7 @@ ID3D11InputLayout* CShader::Find_InputLayout(const _char* pPassName)
 
 CShader* CShader::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pShaderFilePath, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements)
 {
-	CShader* pInstance = new CShader(pDevice, pContext);
+	CShader* pInstance = New CShader(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pShaderFilePath, pElements, iNumElements)))
 	{
@@ -304,7 +304,7 @@ CShader* CShader::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, c
 
 CComponent* CShader::Clone(void* pArg)
 {
-	CShader* pInstance = new CShader(*this);
+	CShader* pInstance = New CShader(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

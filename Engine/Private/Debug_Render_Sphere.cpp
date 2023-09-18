@@ -96,7 +96,7 @@ HRESULT CDebug_Render_Sphere::Render()
 
 CDebug_Render_Sphere* CDebug_Render_Sphere::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CDebug_Render_Sphere* pInstance = new CDebug_Render_Sphere(pDevice, pContext);
+	CDebug_Render_Sphere* pInstance = New CDebug_Render_Sphere(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -108,7 +108,7 @@ CDebug_Render_Sphere* CDebug_Render_Sphere::Create(ID3D11Device* pDevice, ID3D11
 
 CComponent* CDebug_Render_Sphere::Clone(void* pArg)
 {
-	CDebug_Render_Sphere* pInstance = new CDebug_Render_Sphere(*this);
+	CDebug_Render_Sphere* pInstance = New CDebug_Render_Sphere(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

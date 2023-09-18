@@ -9,7 +9,7 @@
 #define			ZEROMEMSIZE(_ptr, _size)		ZeroMemory(_ptr, sizeof _size)
 #define			CharToWChar(_pChar, _pWchar)	MultiByteToWideChar(CP_ACP, 0, _pChar, (int)strlen(_pChar), _pWchar, MAX_PATH);
 #define         WCharToChar(_pWchar, _pChar)    WideCharToMultiByte(CP_ACP, 0, _pWchar, -1, _pChar, MAX_PATH, nullptr, nullptr);
-static const unsigned int MAX_PARTICLE_NUM = 300;
+#define			MAX_PARTICLE_NUM				300
 
 ///////////////////////// default Macros /////////////////////////////
 #ifndef			MSG_BOX
@@ -71,7 +71,7 @@ static const unsigned int MAX_PARTICLE_NUM = 300;
 		CLASSNAME*	CLASSNAME::m_pInstance = nullptr;			\
 		CLASSNAME*	CLASSNAME::GetInstance( void )	{			\
 			if(nullptr == m_pInstance) {						\
-				m_pInstance = new CLASSNAME;					\
+				m_pInstance = New CLASSNAME;					\
 			}													\
 			return m_pInstance;									\
 		}														\

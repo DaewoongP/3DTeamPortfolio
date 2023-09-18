@@ -27,7 +27,7 @@ HRESULT CVIBuffer_Cloth::Initialize(void* pArg)
 
 #pragma region VERTEX_BUFFER
 
-	VTXPOSTEX* pVertices = new VTXPOSTEX[m_iNumVertices];
+	VTXPOSTEX* pVertices = New VTXPOSTEX[m_iNumVertices];
 	ZeroMemory(pVertices, sizeof(VTXPOSTEX) * m_iNumVertices);
 
 	for (_uint i = 0; i < m_iNumVerticesZ; ++i)
@@ -47,7 +47,7 @@ HRESULT CVIBuffer_Cloth::Initialize(void* pArg)
 
 #pragma region INDEX_BUFFER
 
-	_ulong* pIndices = new _ulong[m_iNumIndices];
+	_ulong* pIndices = New _ulong[m_iNumIndices];
 	ZeroMemory(pIndices, sizeof(_ulong) * m_iNumIndices);
 
 	_uint		iNumIndices = { 0 };
@@ -278,7 +278,7 @@ HRESULT CVIBuffer_Cloth::Initialize_ClothMesh()
 
 CVIBuffer_Cloth* CVIBuffer_Cloth::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CVIBuffer_Cloth* pInstance = new CVIBuffer_Cloth(pDevice, pContext);
+	CVIBuffer_Cloth* pInstance = New CVIBuffer_Cloth(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -291,7 +291,7 @@ CVIBuffer_Cloth* CVIBuffer_Cloth::Create(ID3D11Device* pDevice, ID3D11DeviceCont
 
 CComponent* CVIBuffer_Cloth::Clone(void* pArg)
 {
-	CVIBuffer_Cloth* pInstance = new CVIBuffer_Cloth(*this);
+	CVIBuffer_Cloth* pInstance = New CVIBuffer_Cloth(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

@@ -43,7 +43,7 @@ HRESULT CVIBuffer_Instance::Initialize(void* pArg)
 	BufferDesc.CPUAccessFlags = { D3D11_CPU_ACCESS_WRITE };
 	BufferDesc.MiscFlags = { 0 };
 
-	VTXINSTANCE* pVertices = new VTXINSTANCE[m_iNumInstance];
+	VTXINSTANCE* pVertices = New VTXINSTANCE[m_iNumInstance];
 
 	for (size_t i = 0; i < m_iNumInstance; ++i)
 	{

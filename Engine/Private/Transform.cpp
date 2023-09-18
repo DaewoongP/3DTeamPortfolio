@@ -1,5 +1,6 @@
 #include "..\Public\Transform.h"
 #include "RigidBody.h"
+#include "CharacterController.h"
 
 CTransform::CTransform(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CComponent(pDevice, pContext)
@@ -288,40 +289,47 @@ void CTransform::LookAt(_float3 _vTarget, _bool _isDeleteY)
 
 void CTransform::Update_Components(_float fTimeDelta)
 {
-	if (nullptr == m_pRigidBody)
-		return;
-
-	if (m_ubTransformChanged & CHANGEFLAG::TRANSLATION)
+	/* Rigid Body */
+	if (nullptr != m_pRigidBody)
 	{
-		m_pRigidBody->Set_Position(Get_Position());
-	}
-	else
-	{
-		Set_Position(m_pRigidBody->Get_Position());
+		if (m_ubTransformChanged & CHANGEFLAG::TRANSLATION)
+		{
+			m_pRigidBody->Set_Position(Get_Position());
+		}
+		else
+		{
+			Set_Position(m_pRigidBody->Get_Position());
+		}
+
+		if (m_ubTransformChanged & CHANGEFLAG::ROTATION)
+		{
+			m_pRigidBody->Set_Rotation(Get_Quaternion());
+		}
+		else
+		{
+			Set_Quaternion(m_pRigidBody->Get_Rotation());
+		}
 	}
 
-	if (m_ubTransformChanged & CHANGEFLAG::ROTATION)
+	/* Character Controller */
+	if (nullptr != m_pCharacterController)
 	{
-		m_pRigidBody->Set_Rotation(Get_Quaternion());
+		if (m_ubTransformChanged & CHANGEFLAG::TRANSLATION)
+		{
+			m_pCharacterController->Set_Position(Get_Position());
+		}
+		else
+		{
+			Set_Position(m_pCharacterController->Get_Position());
+		}
 	}
-	else
-	{
-		Set_Quaternion(m_pRigidBody->Get_Rotation());
-	}
-
-	// Controller
-	/*if (m_ubTransformChanged & CHANGEFLAG::TRANSLATION)
-		controller->Translate(Get_Position());
-	else
-		m_Position = controller->GetPosition();*/
-
 
 	m_ubTransformChanged = CHANGEFLAG::NONE;
 }
 
 CTransform* CTransform::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CTransform* pInstance = new CTransform(pDevice, pContext);
+	CTransform* pInstance = New CTransform(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -334,7 +342,7 @@ CTransform* CTransform::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
 
 CComponent* CTransform::Clone(void* pArg)
 {
-	CTransform* pInstance = new CTransform(*this);
+	CTransform* pInstance = New CTransform(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
@@ -350,4 +358,5 @@ void CTransform::Free()
 	__super::Free();
 
 	Safe_Release(m_pRigidBody);
+	Safe_Release(m_pCharacterController);
 }

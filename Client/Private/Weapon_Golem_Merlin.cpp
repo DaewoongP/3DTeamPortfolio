@@ -145,7 +145,7 @@ HRESULT CWeapon_Golem_Merlin::Set_Shader_Resources()
 
 CWeapon_Golem_Merlin* CWeapon_Golem_Merlin::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CWeapon_Golem_Merlin* pInstance = new CWeapon_Golem_Merlin(pDevice, pContext);
+	CWeapon_Golem_Merlin* pInstance = New CWeapon_Golem_Merlin(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -157,7 +157,7 @@ CWeapon_Golem_Merlin* CWeapon_Golem_Merlin::Create(ID3D11Device* pDevice, ID3D11
 
 CWeapon_Golem_Merlin* CWeapon_Golem_Merlin::Clone(void* pArg)
 {
-	CWeapon_Golem_Merlin* pInstance = new CWeapon_Golem_Merlin(*this);
+	CWeapon_Golem_Merlin* pInstance = New CWeapon_Golem_Merlin(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

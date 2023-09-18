@@ -37,7 +37,7 @@ HRESULT CDebug_Render_HeightField::Initialize(void* pArg)
 	m_BufferDesc.CPUAccessFlags = { 0 };
 	m_BufferDesc.MiscFlags = { 0 };
 
-	VTXPOS* pVertices = new VTXPOS[m_iNumVertices];
+	VTXPOS* pVertices = New VTXPOS[m_iNumVertices];
 	ZeroMemory(pVertices, sizeof(VTXPOS) * m_iNumVertices);
 
 	vector<_float3> Positions;
@@ -64,7 +64,7 @@ HRESULT CDebug_Render_HeightField::Initialize(void* pArg)
 	m_BufferDesc.CPUAccessFlags = { 0 };
 	m_BufferDesc.MiscFlags = { 0 };
 
-	_uint* pIndices = new _uint[m_iNumIndices];
+	_uint* pIndices = New _uint[m_iNumIndices];
 	ZeroMemory(pIndices, sizeof(_uint) * m_iNumIndices);
 
 	_uint		iNumIndices = { 0 };
@@ -106,7 +106,7 @@ HRESULT CDebug_Render_HeightField::Initialize(void* pArg)
 
 CDebug_Render_HeightField* CDebug_Render_HeightField::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CDebug_Render_HeightField* pInstance = new CDebug_Render_HeightField(pDevice, pContext);
+	CDebug_Render_HeightField* pInstance = New CDebug_Render_HeightField(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -118,7 +118,7 @@ CDebug_Render_HeightField* CDebug_Render_HeightField::Create(ID3D11Device* pDevi
 
 CComponent* CDebug_Render_HeightField::Clone(void* pArg)
 {
-	CDebug_Render_HeightField* pInstance = new CDebug_Render_HeightField(*this);
+	CDebug_Render_HeightField* pInstance = New CDebug_Render_HeightField(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

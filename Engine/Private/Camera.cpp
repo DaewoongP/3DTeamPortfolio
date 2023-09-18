@@ -34,7 +34,7 @@ void CCamera::Tick(const _float& fTimeDelta)
 
 CCamera* CCamera::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const CAMERADESC& CameraDesc)
 {
-	CCamera* pInstance = new CCamera(pDevice, pContext);
+	CCamera* pInstance = New CCamera(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize(CameraDesc)))
 	{

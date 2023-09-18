@@ -91,7 +91,7 @@ CComponent* CLayer::Find_Component(const _tchar* pComponentTag)
 
 CLayer* CLayer::Create()
 {
-	return new CLayer();
+	return New CLayer();
 }
 
 void CLayer::Free()

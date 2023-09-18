@@ -157,10 +157,10 @@ HRESULT CTexture_Flipbook::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	if (FAILED(m_pShader->Begin("Default"), E_FAIL))
+	if (FAILED(m_pShader->Begin("Flipbook")))
 		return E_FAIL;
 
-	if (FAILED(m_pBuffer->Render(), E_FAIL))
+	if (FAILED(m_pBuffer->Render()))
 		return E_FAIL;
 
 	return S_OK;
@@ -227,10 +227,12 @@ HRESULT CTexture_Flipbook::Save(const _tchar* pFilePath)
 		, 0);
 
 	if (INVALID_HANDLE_VALUE == hFile)
+	{
+		CloseHandle(hFile);
 		return E_FAIL;
+	}
 
 	_ulong dwByte = 0;
-
 
 	WriteFile(hFile, &m_iLevel, sizeof(m_iLevel), &dwByte, nullptr);
 	WriteFile(hFile, m_wstrPath.data(), sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
@@ -249,8 +251,10 @@ HRESULT CTexture_Flipbook::Save(const _tchar* pFilePath)
 	WriteFile(hFile, &m_fUpdateInterval, sizeof(m_fUpdateInterval), &dwByte, nullptr);
 	WriteFile(hFile, &m_isUseFlipbookMaterialTexture, sizeof(m_fUpdateInterval), &dwByte, nullptr);
 	WriteFile(hFile, m_wstrFlipbookMaterialPath.data(), sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
+
 	CloseHandle(hFile);
 
+	return S_OK;
 }
 
 HRESULT CTexture_Flipbook::Load(const _tchar* pFilePath)
@@ -265,8 +269,11 @@ HRESULT CTexture_Flipbook::Load(const _tchar* pFilePath)
 		, 0);
 
 	if (INVALID_HANDLE_VALUE == hFile)
+	{
+		CloseHandle(hFile);
 		return E_FAIL;
-
+	}
+	
 	_ulong dwByte = 0;
 
 	_tchar wszBuffer[MAX_PATH];
@@ -296,6 +303,8 @@ HRESULT CTexture_Flipbook::Load(const _tchar* pFilePath)
 	m_wstrFlipbookMaterialPath = wszBuffer;
 
 	CloseHandle(hFile);
+
+	return S_OK;
 }
 
 void CTexture_Flipbook::Tick_Once(_float fTimeDelta)

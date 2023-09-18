@@ -59,9 +59,10 @@ VS_OUT VS_MAIN(VS_IN In)
 
 	Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);
 	Out.vTexUV = In.vTexUV;
-	Out.vWorldPos = mul(vector(In.vPosition, 1.f), g_WorldMatrix);
-	Out.vWorldNormal = mul(vector(In.vNormal, 1.f), g_WorldMatrix);
+	Out.vWorldPos = mul(vector(In.vPosition, 1.f), g_WorldMatrix).xyz;
+	Out.vWorldNormal = mul(vector(In.vNormal, 1.f), g_WorldMatrix).xyz;
 	Out.vFlipbookUV = In.vTexUV;
+	
 	return Out;
 }
 

@@ -145,7 +145,7 @@ HRESULT CWeapon_Pensive::Set_Shader_Resources()
 
 CWeapon_Pensive* CWeapon_Pensive::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CWeapon_Pensive* pInstance = new CWeapon_Pensive(pDevice, pContext);
+	CWeapon_Pensive* pInstance = New CWeapon_Pensive(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -157,7 +157,7 @@ CWeapon_Pensive* CWeapon_Pensive::Create(ID3D11Device* pDevice, ID3D11DeviceCont
 
 CWeapon_Pensive* CWeapon_Pensive::Clone(void* pArg)
 {
-	CWeapon_Pensive* pInstance = new CWeapon_Pensive(*this);
+	CWeapon_Pensive* pInstance = New CWeapon_Pensive(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

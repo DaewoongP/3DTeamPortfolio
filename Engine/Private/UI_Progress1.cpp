@@ -95,7 +95,7 @@ void CUI_Progress::Initailize_Gauge(_float fMin, _float fMax, _float fCurrent)
 
 CUI_Progress* CUI_Progress::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CUI_Progress* pInstance = new CUI_Progress(pDevice, pContext);
+	CUI_Progress* pInstance = New CUI_Progress(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -108,7 +108,7 @@ CUI_Progress* CUI_Progress::Create(ID3D11Device* pDevice, ID3D11DeviceContext* p
 
 CComponent* CUI_Progress::Clone(void* pArg)
 {
-	CUI_Progress* pInstance = new CUI_Progress(*this);
+	CUI_Progress* pInstance = New CUI_Progress(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

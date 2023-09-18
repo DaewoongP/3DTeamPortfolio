@@ -13,8 +13,13 @@
 #include "UI_Group_Finisher_Icon.h"
 #include "UI_Group_Skill.h"
 #include "UI_Group_MiniMap.h"
+#include "UI_Group_Enemy_HP.h"
+#include "UI_Group_Cursor.h"
 #include "UI_Progress1.h"
 #include "UI_Image.h"
+#include "UI_Button.h"
+#include "UI_Font.h"
+#include "Info_Main.h"
 #pragma endregion UI
 
 #ifdef _DEBUG
@@ -215,15 +220,32 @@ HRESULT CMain0_Loader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_Skill"),
 			CUI_Group_Skill::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_UI_Group_Skill");
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_UI_Image"),
-			CUI_Image::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_UI_Image");
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_Finisher_Icon"),
 			CUI_Group_Finisher_Icon::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_UI_Group_Finisher_Icon");
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_MiniMap"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_Enemy_HP"),
+			CUI_Group_Enemy_HP::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_UI_Group_Enemy_HP");
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Font"),
+			CUI_Font::Create(m_pDevice, m_pContext, TEXT("../../Resources/Fonts/NexonGothic.spritefont")))))
+			throw TEXT("Prototype_GameObject_UI_Font"); 
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_Cursor"),
+			CUI_Group_Cursor::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_UI_Group_Cursor");
+		/*if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_MiniMap"),
 			CUI_Group_MiniMap::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_UI_Group_MiniMap");
+			throw TEXT("Prototype_GameObject_UI_Group_MiniMap");*/
+
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_UI_Image"),
+			CUI_Image::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_UI_Image");
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_UI_Button"),
+			CUI_Button::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_UI_Button");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Info_Main"),
+			CInfo_Main::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Info_Main");
 
 		/* --------------Debug-------------- */
 #ifdef _DEBUG

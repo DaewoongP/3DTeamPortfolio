@@ -13,9 +13,9 @@ HRESULT CCustomFont::Initialize(const _tchar* pFontFilePath)
 	if (false == fs::exists(pFontFilePath))
 		return E_FAIL;
 
-	m_pBatch = new SpriteBatch(m_pContext);
+	m_pBatch = New SpriteBatch(m_pContext);
 
-	m_pFont = new SpriteFont(m_pDevice, pFontFilePath);
+	m_pFont = New SpriteFont(m_pDevice, pFontFilePath);
 
 	return S_OK;
 }
@@ -39,7 +39,7 @@ HRESULT CCustomFont::Render(const _tchar* pText, const _float2& Position, _float
 
 CCustomFont* CCustomFont::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFontFilePath)
 {
-	CCustomFont* pInstance = new CCustomFont(pDevice, pContext);
+	CCustomFont* pInstance = New CCustomFont(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize(pFontFilePath)))
 	{

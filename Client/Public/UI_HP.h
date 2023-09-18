@@ -13,6 +13,14 @@ BEGIN(Client)
 
 class CUI_HP final : public CUI
 {
+public:
+	enum HPTYPE
+	{
+		PLAYER,
+		MONSTER,
+		HPTYPE_END
+	};
+
 private:
 	explicit CUI_HP(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CUI_HP(const CUI_HP& rhs);
@@ -37,6 +45,9 @@ private:
 #ifdef _DEBUG
 	HRESULT Debug_UI(_float fTimeDelta);
 #endif // _DEBUG
+
+private:
+	HPTYPE		m_eHPType;
 
 public:
 	static CUI_HP* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
