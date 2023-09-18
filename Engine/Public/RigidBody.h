@@ -44,6 +44,9 @@ public:
 		// Trigger 옵션
 		// ****** Enter와 exit만 처리됩니다. ******
 		_bool isTrigger = { false };
+		// 중력 옵션
+		// true : 중력영향 O, false : 중력영향 X
+		_bool isGravity = { true };
 		// ******* RigidBody Clone이 아닌 새로 콜라이더 세팅할경우 필요 없는 옵션입니다 *******
 		// 객체의 초기 포지션 세팅 (객체의 포지션 Transform Pos)
 		// 지면과 붙어있을 경우 튕겨져 나갈 수 있습니다.

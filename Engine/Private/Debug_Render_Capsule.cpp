@@ -51,7 +51,7 @@ HRESULT CDebug_Render_Capsule::Initialize(void* pArg)
 	SphereDesc.fRadius = CapsuleDesc.fRadius;
 	_float3 vHighCenter = _float3(CapsuleDesc.fHalfHeight, 0.f, 0.f);
 	vHighCenter = XMVector3TransformCoord(vHighCenter, XMMatrixRotationQuaternion(CapsuleDesc.vOffsetRotation)) + XMLoadFloat3(&CapsuleDesc.vOffsetPosition);
-	SphereDesc.vOffsetPosition = vHighCenter + CapsuleDesc.vOffsetPosition;
+	SphereDesc.vOffsetPosition = vHighCenter;
 	SphereDesc.vOffsetRotation = CapsuleDesc.vOffsetRotation;
 
 	/* For.Com_HighSphere */
@@ -64,7 +64,7 @@ HRESULT CDebug_Render_Capsule::Initialize(void* pArg)
 
 	_float3 vLowCenter = _float3(-1.f * CapsuleDesc.fHalfHeight, 0.f, 0.f);
 	vLowCenter = XMVector3TransformCoord(vLowCenter, XMMatrixRotationQuaternion(CapsuleDesc.vOffsetRotation)) + XMLoadFloat3(&CapsuleDesc.vOffsetPosition);
-	SphereDesc.vOffsetPosition = vLowCenter + CapsuleDesc.vOffsetPosition;
+	SphereDesc.vOffsetPosition = vLowCenter;
 	SphereDesc.vOffsetRotation = CapsuleDesc.vOffsetRotation;
 
 	/* For.Com_LowSphere */
@@ -84,37 +84,37 @@ HRESULT CDebug_Render_Capsule::Initialize(void* pArg)
 
 	// 오른쪽 라인
 	_float3 vRight = _float3(1.f, 0.f, 0.f) * fRadius;
-	vRight = XMVector3TransformCoord(vRight, XMMatrixRotationQuaternion(CapsuleDesc.vOffsetRotation)) + XMLoadFloat3(&CapsuleDesc.vOffsetPosition);
+	vRight = XMVector3TransformCoord(vRight, XMMatrixRotationQuaternion(CapsuleDesc.vOffsetRotation));
 	Lines[0] = vHighCenter + vRight;
 	Lines[1] = vLowCenter + vRight;
 
 	// 왼쪽 라인
 	_float3 vLeft = _float3(-1.f, 0.f, 0.f) * fRadius;
-	vLeft = XMVector3TransformCoord(vLeft, XMMatrixRotationQuaternion(CapsuleDesc.vOffsetRotation)) + XMLoadFloat3(&CapsuleDesc.vOffsetPosition);
+	vLeft = XMVector3TransformCoord(vLeft, XMMatrixRotationQuaternion(CapsuleDesc.vOffsetRotation));
 	Lines[2] = vHighCenter + vLeft;
 	Lines[3] = vLowCenter + vLeft;
 
 	// 앞쪽 라인
 	_float3 vFront = _float3(0.f, 0.f, 1.f) * fRadius;
-	vFront = XMVector3TransformCoord(vFront, XMMatrixRotationQuaternion(CapsuleDesc.vOffsetRotation)) + XMLoadFloat3(&CapsuleDesc.vOffsetPosition);
+	vFront = XMVector3TransformCoord(vFront, XMMatrixRotationQuaternion(CapsuleDesc.vOffsetRotation));
 	Lines[4] = vHighCenter + vFront;
 	Lines[5] = vLowCenter + vFront;
 
 	// 뒤쪽 라인
 	_float3 vBack = _float3(0.f, 0.f, -1.f) * fRadius;
-	vBack = XMVector3TransformCoord(vBack, XMMatrixRotationQuaternion(CapsuleDesc.vOffsetRotation)) + XMLoadFloat3(&CapsuleDesc.vOffsetPosition);
+	vBack = XMVector3TransformCoord(vBack, XMMatrixRotationQuaternion(CapsuleDesc.vOffsetRotation));
 	Lines[6] = vHighCenter + vBack;
 	Lines[7] = vLowCenter + vBack;
 
 	// 위쪽 라인
 	_float3 vUp = _float3(0.f, 1.f, 0.f) * fRadius;
-	vUp = XMVector3TransformCoord(vUp, XMMatrixRotationQuaternion(CapsuleDesc.vOffsetRotation)) + XMLoadFloat3(&CapsuleDesc.vOffsetPosition);
+	vUp = XMVector3TransformCoord(vUp, XMMatrixRotationQuaternion(CapsuleDesc.vOffsetRotation));
 	Lines[8] = vHighCenter + vUp;
 	Lines[9] = vLowCenter + vUp;
 
 	// 아래쪽 라인
 	_float3 vDown = _float3(0.f, -1.f, 0.f) * fRadius;
-	vDown = XMVector3TransformCoord(vDown, XMMatrixRotationQuaternion(CapsuleDesc.vOffsetRotation)) + XMLoadFloat3(&CapsuleDesc.vOffsetPosition);
+	vDown = XMVector3TransformCoord(vDown, XMMatrixRotationQuaternion(CapsuleDesc.vOffsetRotation));
 	Lines[10] = vHighCenter + vDown;
 	Lines[11] = vLowCenter + vDown;
 
