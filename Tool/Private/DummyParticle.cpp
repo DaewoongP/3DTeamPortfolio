@@ -44,9 +44,15 @@ HRESULT CDummyParticle::Initialize(void* _pArg)
 	m_pStopActionCombo = CComboBox::Create(Generate_Hashtag(true).data(), "Stop Action", { "None", "Disable", "Destroy", "Callback" }, "None");
 	m_pClipChannelCombo = CComboBox::Create(Generate_Hashtag(true).data(), "ClipChannel", { "Red", "Green", "Blue", "Alpha" }, "Alpha");
 	m_pClipChannelCombo->Set_StartTag(m_ShapeModuleDesc.strClipChannel.data());
-	m_pColorEaseCombo = CComboBox::Create(Generate_Hashtag(true).data(), "Easing", CEase::pEases, CEase::EASE_END, CEase::pEases[0]);
 	vector<string> Passes = m_pShader->Get_PassList();
 	m_pPassComboBox = CComboBox::Create(Generate_Hashtag(true).data(), "Pass", Passes, Passes.front().data());
+	m_pColorEaseCombo = CComboBox::Create(Generate_Hashtag(true).data(), "Easing", CEase::pEases, CEase::EASE_END, CEase::pEases[0]);
+	m_pSizeXEaseCombo = CComboBox::Create(Generate_Hashtag(true).data(), "EasingX", CEase::pEases, CEase::EASE_END, CEase::pEases[0]);
+	m_pSizeYEaseCombo = CComboBox::Create(Generate_Hashtag(true).data(), "EasingY", CEase::pEases, CEase::EASE_END, CEase::pEases[0]);
+	m_pSizeZEaseCombo = CComboBox::Create(Generate_Hashtag(true).data(), "EasingZ", CEase::pEases, CEase::EASE_END, CEase::pEases[0]);
+	m_pAngularVelocityXEaseCombo = CComboBox::Create(Generate_Hashtag(true).data(), "EasingX", CEase::pEases, CEase::EASE_END, CEase::pEases[0]);
+	m_pAngularVelocityYEaseCombo = CComboBox::Create(Generate_Hashtag(true).data(), "EasingY", CEase::pEases, CEase::EASE_END, CEase::pEases[0]);
+	m_pAngularVelocityZEaseCombo = CComboBox::Create(Generate_Hashtag(true).data(), "EasingZ", CEase::pEases, CEase::EASE_END, CEase::pEases[0]);
 	//CComboBox::Create(Generate_Hashtag(true).data(), "xvclk", CEase::asdfED, "vsd");
 
 	m_pAlphaTextureIFD = CImageFileDialog::Create(m_pDevice, "SelectTexture2D");
@@ -89,6 +95,8 @@ void CDummyParticle::Tick_Imgui(_float _fTimeDelta)
 	RotationOverLifetimeModule_TreeNode(pEffectWindow);
 	ImGui::Separator();
 	ColorOverLifeTime_TreeNode(pEffectWindow);
+	ImGui::Separator();
+	SizeOverLifeTime_TreeNode(pEffectWindow);
 	ImGui::Separator();
 	TextureSheetAnimationModule_TreeNode(pEffectWindow);
 	ImGui::Separator();
@@ -327,7 +335,7 @@ void CDummyParticle::ShapeModule_TreeNode(CEffect_Window* pEffectWindow)
 
 			if (strShape == "Sphere" || strShape == "Circle")
 			{
-				pEffectWindow->Table_DragFloatWithOption("Length", "vxckeiic93dk", &m_ShapeModuleDesc.vLength.y, &m_ShapeModuleDesc.vLength, &m_ShapeModuleDesc.isfLengthRange);
+				pEffectWindow->Table_DragFloatWithOption("Length", "vxckeiic93dk", &m_ShapeModuleDesc.vLength.y, &m_ShapeModuleDesc.vLength, &m_ShapeModuleDesc.isLengthRange);
 			}
 
 			if (strShape == "Sphere")
@@ -475,7 +483,7 @@ void CDummyParticle::RendererModule_TreeNode(CEffect_Window* pEffectWindow)
 
 			pEffectWindow->Table_CheckBox("Billboard DeleteY", "CJCJV8389kdjd", &m_RendererModuleDesc.isDeleteY);
 
-			m_pPassComboBox->Tick(CComboBox::TABLE);
+			m_RendererModuleDesc.strPass = m_pPassComboBox->Tick(CComboBox::TABLE);
 
 			ImGui::EndTable();
 		}
@@ -534,7 +542,23 @@ void CDummyParticle::SizeOverLifeTime_TreeNode(CEffect_Window* pEffectWindow)
 			ImGui::TableNextRow();
 			pEffectWindow->Table_CheckBox("Separate Axes", "xcvklj3909di", &m_SizeOverLifeTimeModuleDesc.isSeparateAxes);
 
+			pEffectWindow->Table_DragFloat2Range("SizeX", "XCVPIJDFKLJ983", &m_SizeOverLifeTimeModuleDesc.vSizeX, 0.01f);
+			m_pSizeXEaseCombo->Tick(CComboBox::TABLE);
+			if (m_pSizeXEaseCombo->IsUpdated())
+				m_SizeOverLifeTimeModuleDesc.eEaseX = static_cast<CEase::EASE>(m_pSizeXEaseCombo->Get_Current_Item_Index());
 
+			if (true == m_SizeOverLifeTimeModuleDesc.isSeparateAxes)
+			{
+				pEffectWindow->Table_DragFloat2Range("SizeY", "cvikj838jdfsdfsdf", &m_SizeOverLifeTimeModuleDesc.vSizeY, 0.01f);
+				m_pSizeYEaseCombo->Tick(CComboBox::TABLE);
+				if (m_pSizeYEaseCombo->IsUpdated())
+					m_SizeOverLifeTimeModuleDesc.eEaseY = static_cast<CEase::EASE>(m_pSizeYEaseCombo->Get_Current_Item_Index());
+
+				pEffectWindow->Table_DragFloat2Range("SizeZ", "zxcvhjyuwesfdwsd", &m_SizeOverLifeTimeModuleDesc.vSizeZ, 0.01f);
+				m_pSizeZEaseCombo->Tick(CComboBox::TABLE);
+				if (m_pSizeZEaseCombo->IsUpdated())
+					m_SizeOverLifeTimeModuleDesc.eEaseZ = static_cast<CEase::EASE>(m_pSizeZEaseCombo->Get_Current_Item_Index());
+			}
 
 			ImGui::EndTable();
 		}
@@ -560,14 +584,24 @@ void CDummyParticle::RotationOverLifetimeModule_TreeNode(CEffect_Window* pEffect
 		{
 			ImGui::TableNextRow();
 
-			pEffectWindow->Table_CheckBox("SeperateAxes", "zxcvtbynynumei", &m_RotationOverLifetimeModuleDesc.isSeperateAxes);
-			if (false == m_RotationOverLifetimeModuleDesc.isSeperateAxes)
+			pEffectWindow->Table_CheckBox("Separate Axes", "ujkujweddcf", &m_RotationOverLifetimeModuleDesc.isSeparateAxes);
+
+			pEffectWindow->Table_DragFloat2Range("SizeX", "asdcfefg345twef", &m_RotationOverLifetimeModuleDesc.vAngularVelocityX, 0.01f);
+			m_pAngularVelocityXEaseCombo->Tick(CComboBox::TABLE);
+			if (m_pAngularVelocityXEaseCombo->IsUpdated())
+				m_RotationOverLifetimeModuleDesc.eEaseX = static_cast<CEase::EASE>(m_pAngularVelocityXEaseCombo->Get_Current_Item_Index());
+
+			if (true == m_RotationOverLifetimeModuleDesc.isSeparateAxes)
 			{
-				pEffectWindow->Table_DragFloat("AngularVelocity", "xcvojiueu", &m_RotationOverLifetimeModuleDesc.AngularVelocityXYZ.z, 0.9f, FLT_MIN, FLT_MAX);
-			}
-			else
-			{
-				pEffectWindow->Table_DragXYZ("AngularVelocityXYZ", "VSDKvoije4", &m_RotationOverLifetimeModuleDesc.AngularVelocityXYZ, 0.9f, FLT_MIN, FLT_MAX, false);
+				pEffectWindow->Table_DragFloat2Range("AngularVelocityY", "sdfvdrtyet7er6a", &m_RotationOverLifetimeModuleDesc.vAngularVelocityY, 0.01f);
+				m_pAngularVelocityYEaseCombo->Tick(CComboBox::TABLE);
+				if (m_pAngularVelocityYEaseCombo->IsUpdated())
+					m_RotationOverLifetimeModuleDesc.eEaseY = static_cast<CEase::EASE>(m_pAngularVelocityYEaseCombo->Get_Current_Item_Index());
+
+				pEffectWindow->Table_DragFloat2Range("AngularVelocityZ", "evbfc3ra2QX3ER5GY", &m_RotationOverLifetimeModuleDesc.vAngularVelocityZ, 0.01f);
+				m_pAngularVelocityZEaseCombo->Tick(CComboBox::TABLE);
+				if (m_pAngularVelocityZEaseCombo->IsUpdated())
+					m_RotationOverLifetimeModuleDesc.eEaseZ = static_cast<CEase::EASE>(m_pAngularVelocityZEaseCombo->Get_Current_Item_Index());
 			}
 
 			ImGui::EndTable();
@@ -714,10 +748,22 @@ void CDummyParticle::Load_After()
 	m_pPhiModeCombo->Update_Current_Item(m_ShapeModuleDesc.strPhiMode);
 	m_pThetaModeCombo->Update_Current_Item(m_ShapeModuleDesc.strThetaMode);
 	m_pClipChannelCombo->Update_Current_Item(m_ShapeModuleDesc.strClipChannel);
+	m_pPassComboBox->Update_Current_Item(m_RendererModuleDesc.strPass);
+	//m_pColorEaseCombo->Update_Current_Item(M_)
+	//m_pSizeXEaseCombo = CComboBox::Create(Generate_Hashtag(true).data(), "EasingX", CEase::pEases, CEase::EASE_END, CEase::pEases[0]);
+	//m_pSizeYEaseCombo = CComboBox::Create(Generate_Hashtag(true).data(), "EasingY", CEase::pEases, CEase::EASE_END, CEase::pEases[0]);
+	//m_pSizeZEaseCombo = CComboBox::Create(Generate_Hashtag(true).data(), "EasingZ", CEase::pEases, CEase::EASE_END, CEase::pEases[0]);
+	//m_pAngularVelocityXEaseCombo = CComboBox::Create(Generate_Hashtag(true).data(), "EasingX", CEase::pEases, CEase::EASE_END, CEase::pEases[0]);
+	//m_pAngularVelocityYEaseCombo = CComboBox::Create(Generate_Hashtag(true).data(), "EasingY", CEase::pEases, CEase::EASE_END, CEase::pEases[0]);
+	//m_pAngularVelocityZEaseCombo = CComboBox::Create(Generate_Hashtag(true).data(), "EasingZ", CEase::pEases, CEase::EASE_END, CEase::pEases[0]);
+
+
 	ChangeTexture(&m_pMainTexture, m_RendererModuleDesc.wstrMaterialPath, ToRelativePath(m_RendererModuleDesc.wstrMaterialPath.c_str()).c_str());
 	ChangeTexture(&m_pClipTexture, m_ShapeModuleDesc.wstrClipTexturePath, ToRelativePath(m_ShapeModuleDesc.wstrClipTexturePath.c_str()).c_str());
 	ChangeTexture(&m_pNormalTexture, m_TextureSheetAnimationModuleDesc.wstrNormalPath, ToRelativePath(m_TextureSheetAnimationModuleDesc.wstrNormalPath.c_str()).c_str());
 	m_TextureSheetAnimationModuleDesc.CalculateMaxSize();
+
+
 	//m_pMaterialTextureIFD->ChangeTexture(wstrToStr(m_RendererModuleDesc.wstrMaterialPath).data());
 //m_pAlphaTextureIFD->ChangeTexture(wstrToStr(m_ShapeModuleDesc.wstrClipTexturePath).data());
 //m_pSpriteTypeCombo->Update_Current_Item(m_ShapeModuleDesc.str);
@@ -823,6 +869,13 @@ void CDummyParticle::Free(void)
 	Safe_Release(m_pMaterialTextureIFD);
 	Safe_Release(m_pNormalTextureIFD);
 	Safe_Release(m_pColorEaseCombo);
+	Safe_Release(m_pSizeXEaseCombo);
+	Safe_Release(m_pSizeYEaseCombo);
+	Safe_Release(m_pSizeZEaseCombo);
+	Safe_Release(m_pAngularVelocityXEaseCombo);
+	Safe_Release(m_pAngularVelocityYEaseCombo);
+	Safe_Release(m_pAngularVelocityZEaseCombo);
+
 	Safe_Release(m_pPassComboBox);
 
 	//for (auto& EaseComboBox : m_pColorEase)

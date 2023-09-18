@@ -147,7 +147,14 @@ void CParticleSystem::Tick(_float _fTimeDelta)
 		Particle_iter->WorldMatrix.Translation(vPos);
 
 		// LifeTime 관련모듈
-		m_SizeOverLifeTimeModuleDesc.Action(Particle_iter, _fTimeDelta);
+		if (true == m_MainModuleDesc.is3DStartSize)
+			m_SizeOverLifeTimeModuleDesc.Action(m_MainModuleDesc.v3DSizeXYZ, Particle_iter, _fTimeDelta);
+		else
+		{
+			_float3 vSize = _float3(m_MainModuleDesc.fStartSize, m_MainModuleDesc.fStartSize, m_MainModuleDesc.fStartSize);
+			m_SizeOverLifeTimeModuleDesc.Action(vSize, Particle_iter, _fTimeDelta);
+		}
+
 		m_RotationOverLifetimeModuleDesc.Action(Particle_iter, _fTimeDelta);
 		m_ColorOverLifeTimeModuleDesc.Action(Particle_iter, m_MainModuleDesc.vStartColor, _fTimeDelta);
 
@@ -319,6 +326,10 @@ HRESULT CParticleSystem::Save(const _tchar* _pDirectoryPath)
 		return E_FAIL;
 	if (FAILED(m_TextureSheetAnimationModuleDesc.Save(_pDirectoryPath)))
 		return E_FAIL;
+	if (FAILED(m_ColorOverLifeTimeModuleDesc.Save(_pDirectoryPath)))
+		return E_FAIL;
+	if (FAILED(m_SizeOverLifeTimeModuleDesc.Save(_pDirectoryPath)))
+		return E_FAIL;
 	if (FAILED(m_RotationOverLifetimeModuleDesc.Save(_pDirectoryPath)))
 		return E_FAIL;
 	if (FAILED(m_RendererModuleDesc.Save(_pDirectoryPath)))
@@ -335,6 +346,10 @@ HRESULT CParticleSystem::Load(const _tchar* _pDirectoryPath)
 	if (FAILED(m_ShapeModuleDesc.Load(_pDirectoryPath)))
 		return E_FAIL;
 	if (FAILED(m_TextureSheetAnimationModuleDesc.Load(_pDirectoryPath)))
+		return E_FAIL;
+	if (FAILED(m_ColorOverLifeTimeModuleDesc.Load(_pDirectoryPath)))
+		return E_FAIL;
+	if (FAILED(m_SizeOverLifeTimeModuleDesc.Load(_pDirectoryPath)))
 		return E_FAIL;
 	if (FAILED(m_RotationOverLifetimeModuleDesc.Load(_pDirectoryPath)))
 		return E_FAIL;
@@ -449,7 +464,7 @@ void CParticleSystem::ResetStartPosition(PARTICLE_IT& _particle_iter)
 		_float fMaxTheta = 360.f;
 
 		// 길이 정함
-		if (true == m_ShapeModuleDesc.isfLengthRange)
+		if (true == m_ShapeModuleDesc.isLengthRange)
 		{
 			fMinLength = m_ShapeModuleDesc.vLength.x;
 			fMaxLength = m_ShapeModuleDesc.vLength.y;
@@ -512,7 +527,7 @@ void CParticleSystem::ResetStartPosition(PARTICLE_IT& _particle_iter)
 		_float fMaxTheta = 360.f;
 
 		// 길이 정함
-		if (true == m_ShapeModuleDesc.isfLengthRange)
+		if (true == m_ShapeModuleDesc.isLengthRange)
 		{
 			fMinLength = m_ShapeModuleDesc.vLength.x;
 			fMaxLength = m_ShapeModuleDesc.vLength.y;

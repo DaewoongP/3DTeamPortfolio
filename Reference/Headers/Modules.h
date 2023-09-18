@@ -42,7 +42,6 @@ struct ENGINE_DLL MAIN_MODULE : public MODULE
 	void Restart();
 
 	_bool isEnable = { true };
-	_float fParticleSystemAge = { 0.f };
 	_float fDuration = { 30.0f }; // 객체의 수명
 	_bool isLooping = { false }; // 파티클의 반복
 	_bool isPrewarm = { false }; // Loop활성화 시 사용 가능, Stop <-> Play 전환 시 파티클이 초기화 되지 않음.
@@ -75,6 +74,8 @@ struct ENGINE_DLL MAIN_MODULE : public MODULE
 	_bool isAutoRandomSeed = { true }; // 파티클 수명 주기마다 랜덤 값을 매번 바뀌게하는 용도.
 	string strStopAction = {"None"}; // None, Disable, Destroy, Callback // 객체 수명이 다하거나 파티클의 모든 재생이 완료됐을 때 옵션에 따라 행동이 달라진다.
 	_bool isDirectionRotation = { false };
+
+	_float fParticleSystemAge = { 0.f };
 };
 struct ENGINE_DLL EMISSION_MODULE : public MODULE
 {
@@ -115,6 +116,7 @@ struct ENGINE_DLL SHAPE_MODULE : public MODULE
 	HRESULT Load(const _tchar* _pDirectoyPath);
 	void Restart();
 	void Set_ShapeLook(_float3 vSourPos, _float3 vDestPos);
+
 	string strShape = { "Sphere" }; // Shpere, Box, Mesh, Sprite, Rectangle
 	string strBoxEmitFrom = { "Volume" }; // Volume, Sheel, Edge
 
@@ -128,7 +130,7 @@ struct ENGINE_DLL SHAPE_MODULE : public MODULE
 	_float fNormalOffset = { 0.f }; // 0인 경우 메쉬의 노말벡터의 꼬리에서 시작, 오프셋 값 만큼 시작위치는 노말 벡터 방향으로 이동한다.
 	
 
-	_bool isfLengthRange = { false };
+	_bool isLengthRange = { false }; //--------
 	_float2 vLength = { 0.f, 5.f };
 
 	_bool isPhiRange = { true };
@@ -141,8 +143,8 @@ struct ENGINE_DLL SHAPE_MODULE : public MODULE
 	   string strThetaMode = { "Random" }; // Random, Loop, Ping-Pong, Burst_Spread
 	  _float fThetaSpread = { 0.f }; // [0, 1] 1에 가까울수록 전 지점에서 터짐.
 
-	_float fLoopPhi = { 0.f };
-	_float fLoopTheta = { 0.f };
+	_float fLoopPhi = { 0.f }; // ---------
+	_float fLoopTheta = { 0.f }; // -------
 	_float fPhiInterval = { 1.f };
 	_float fThetaInterval = { 1.f };
 
@@ -194,8 +196,13 @@ struct ENGINE_DLL ROTATION_OVER_LIFETIME_MODULE : public MODULE
 	void Restart();
 
 	// 자체 회전에 사용할 값들
-	_bool isSeperateAxes = { false }; // 비 활성화시 기본 Z축사용
-	_float3 AngularVelocityXYZ = { 0.f, 0.f, 0.f };
+	_bool isSeparateAxes = { false };
+	_float2 vAngularVelocityX = { 1.f, 1.f };
+	_float2 vAngularVelocityY = { 1.f, 1.f };
+	_float2 vAngularVelocityZ = { 1.f, 1.f };
+	CEase::EASE eEaseX = { CEase::OUT_QUINT };
+	CEase::EASE eEaseY = { CEase::OUT_QUINT };
+	CEase::EASE eEaseZ = { CEase::OUT_QUINT };
 };
 struct ENGINE_DLL COLOR_OVER_LIFETIME : public MODULE
 {
@@ -216,13 +223,18 @@ struct ENGINE_DLL SIZE_OVER_LIFETIME : public MODULE
 
 	HRESULT Save(const _tchar* _pDirectoyPath);
 	HRESULT Load(const _tchar* _pDirectoyPath);
-	void Action(PARTICLE_IT& _particle_iter, _float _fTimeDelta);
+	void Action(_float3 vStartSize, PARTICLE_IT& _particle_iter, _float _fTimeDelta);
 	void Restart();
 
+	enum OPTION { OPTION_UNIT, OPTION_3D, OPTION_RANGE};
+	
 	_bool isSeparateAxes = { false };
-	_float3 vSizeXYZ = { 1.f, 1.f, 1.f };
-	_float fSize = { 1.f };
-	_float2 vSizeRange = { 0.f, 1.f };
+	_float2 vSizeX = { 1.f, 1.f };
+	_float2 vSizeY = { 1.f, 1.f };
+	_float2 vSizeZ = { 1.f, 1.f };
+	CEase::EASE eEaseX = { CEase::OUT_QUINT };
+	CEase::EASE eEaseY = { CEase::OUT_QUINT };
+	CEase::EASE eEaseZ = { CEase::OUT_QUINT };
 
 	_float fSizeTimeAcc = { 0.f };
 };
@@ -244,9 +256,10 @@ struct ENGINE_DLL TEXTURE_SHEET_ANIMATION : public MODULE
 	_float2 vStartFrameRange = { 0.f, 1.f };
 	_float fStartFrame = { 0.f }; // [0, 1]
 	_float fUpdateInterval = { 0.0159f };
-	_float fTimeAcc = { 0.f };
 	_bool isUseNormalTexture = { false };
 	wstring wstrNormalPath = TEXT("../../Resources/Effects/Textures/Flipbooks/VFX_T_Dust_8x8_N.png");
 	_bool isLoopOption = { false };
+
+	_float fTimeAcc = { 0.f };
 };
 END
