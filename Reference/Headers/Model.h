@@ -59,6 +59,8 @@ public:
 	void	Do_Root_Animation(_float fTimeDelta, CTransform* pTransform = nullptr, _bool isFirstFrame = false);
 	HRESULT Separate_Animation(_int iFromIndex, _int iToIndex, ANIMTYPE eType);
 	void	Delete_Animation(_uint iAnimIndex, ANIMTYPE eType = UPPERBODY);
+	HRESULT Bind_Notify(const _uint& iAnimIndex, const wstring& wstrNotifyTag, function<void()>& Func, ANIMTYPE eType = UPPERBODY);
+	HRESULT Bind_Notify(const wstring& wstrAnimIndex, const wstring& wstrNotifyTag, function<void()>& Func, ANIMTYPE eType = UPPERBODY);
 
 public:
 	virtual HRESULT Bind_Material(class CShader* pShader, const char* pConstantName, _uint iMeshIndex, Engine::TextureType MaterialType);

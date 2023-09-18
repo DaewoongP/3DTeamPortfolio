@@ -43,6 +43,15 @@ HRESULT CProfessor_Fig::Initialize(void* pArg)
 	m_pTransform->Set_RigidBody(m_pRigidBody);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
 
+	// Notify
+	function<void()> Func = [&] {(*this).Change_Animation(); };
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Front_1"), TEXT("Change_Animation"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Front_2"), TEXT("Change_Animation"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Front_3"), TEXT("Change_Animation"), Func)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -160,6 +169,8 @@ HRESULT CProfessor_Fig::Make_AI()
 			throw TEXT("Failed Add_Type pModel");
 		if (FAILED(m_pRootBehavior->Add_Type("isRangeInEnemy", &m_isRangeInEnemy)))
 			throw TEXT("Failed Add_Type pModel");
+		if (FAILED(m_pRootBehavior->Add_Type("isChangeAnimation", &m_isChangeAnimation)))
+			throw TEXT("Failed Add_Type isChangeAnimation");
 
 		if (FAILED(m_pRootBehavior->Add_Type("fTargetDistance", _float())))
 			throw TEXT("Failed Add_Type fTargetDistance");
@@ -617,7 +628,7 @@ HRESULT CProfessor_Fig::Make_Attack_Combo1(_Inout_ CSequence* pSequence)
 		pAttack_Combo2->Set_Attack_Option(10.f);
 		pAttack_Combo3->Set_Attack_Action_Options(TEXT("Attack_Cast_Light_Front_3"), m_pModelCom);
 		pAttack_Combo3->Set_Attack_Option(10.f);
-		pAttack_Combo4->Set_Attack_Action_Options(TEXT("Attack_Cast_Light_Front_4"), m_pModelCom);
+		pAttack_Combo4->Set_Attack_Action_Options(TEXT("Attack_Cast_Heavy_Front_2"), m_pModelCom);
 		pAttack_Combo4->Set_Attack_Option(10.f);
 
 		/* Assemble Behaviors */
