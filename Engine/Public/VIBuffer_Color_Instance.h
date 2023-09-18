@@ -6,7 +6,7 @@
 //
 /* =============================================== */
 
-#include "VIBuffer.h"
+#include "VIBuffer_Instance.h"
 
 BEGIN(Engine)
 
@@ -23,7 +23,7 @@ public:
 	virtual void Tick(VTXCOLINSTANCE * pInstances, _int iRenderedParticleNum = -1, _bool isAlphaBlend = false, _float4x4 AlphaBlendObjectWorldMatrixInverse = XMMatrixIdentity());
 
 public:
-	void Sort_AlphaBlend(VTXCOLINSTANCE * pInstances, _int iRenderedParticleNum, _float4x4 AlphaBlendObjectWorldMatrixInverse);
+	virtual void Sort_AlphaBlend(VTXCOLINSTANCE * pInstances, _int iRenderedParticleNum, _float4x4 AlphaBlendObjectWorldMatrixInverse);
 
 public:
 	void Set_DrawNum(_uint iDrawNum);

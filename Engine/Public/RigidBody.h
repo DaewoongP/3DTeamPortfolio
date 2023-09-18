@@ -33,6 +33,8 @@ public:
 
 	typedef struct tagRigidBodyDesc
 	{
+		// 충돌일어났을때 다른콜리전함수에 넘겨주는 tag변수입니다.
+		_tchar szCollisionTag[MAX_PATH] = TEXT("");
 		// this포인터 대입하면 됩니다.
 		// 내부적으로 레퍼런스 카운트 관리
 		class CGameObject* pOwnerObject = { nullptr };

@@ -195,7 +195,7 @@ HRESULT CUI_Image::Change_Scale(_float fX, _float fY)
 
 CUI_Image* CUI_Image::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CUI_Image* pInstance = new CUI_Image(pDevice, pContext);
+	CUI_Image* pInstance = New CUI_Image(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -208,7 +208,7 @@ CUI_Image* CUI_Image::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 
 CUI_Image* CUI_Image::Clone(void* pArg)
 {
-	CUI_Image* pInstance = new CUI_Image(*this);
+	CUI_Image* pInstance = New CUI_Image(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

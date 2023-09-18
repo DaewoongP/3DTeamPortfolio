@@ -16,6 +16,10 @@ CTrail::CTrail(const CTrail& rhs)
 	, m_HighLocalMatrix(rhs.m_HighLocalMatrix)
 	, m_LowLocalMatrix(rhs.m_LowLocalMatrix)
 	, m_isEnable(rhs.m_isEnable)
+	, m_vHeadColor(rhs.m_vHeadColor)
+	, m_vTailColor(rhs.m_vTailColor)
+	, m_fWidth(rhs.m_fWidth)
+	, m_fTailDuration(rhs.m_fTailDuration)
 {
 
 }
@@ -46,6 +50,8 @@ HRESULT CTrail::Save(const _tchar* pFilePath)
 	WriteFile(hFile, &m_vHeadColor, sizeof(m_vHeadColor), &dwByte, nullptr);
 	WriteFile(hFile, &m_vTailColor, sizeof(m_vTailColor), &dwByte, nullptr);
 	WriteFile(hFile, &m_fWidth, sizeof(m_fWidth), &dwByte, nullptr);
+
+	CloseHandle(hFile);
 
 	return S_OK;
 }
@@ -87,6 +93,9 @@ HRESULT CTrail::Load(const _tchar* pFilePath)
 	ReadFile(hFile, &m_fWidth, sizeof(m_fWidth), &dwByte, nullptr);
 
 	Safe_Release(pGameInstance);
+
+	CloseHandle(hFile);
+
 	return S_OK;
 }
 
@@ -168,6 +177,7 @@ void CTrail::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 	if (nullptr != m_pBuffer)
 		m_pBuffer->Tick();
+
 }
 
 void CTrail::Late_Tick(_float fTimeDelta)
@@ -252,7 +262,7 @@ HRESULT CTrail::SetUp_ShaderResources()
 	_float4x4 WorldMatrix = _float4x4();
 	try
 	{
-		if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", &WorldMatrix)))
+		if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", (m_LocalSpace==nullptr)? &WorldMatrix : m_LocalSpace)))
 			throw "g_WorldMatrix";
 
 		if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW))))

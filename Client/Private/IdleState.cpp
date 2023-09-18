@@ -1,6 +1,7 @@
 #include "..\Public\IdleState.h"
 #include "GameInstance.h"
 #include "Client_Defines.h"
+#include "StateContext.h"
 
 CIdleState::CIdleState(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
 	:CStateMachine(_pDevice,_pContext)
@@ -35,7 +36,9 @@ void CIdleState::Late_Tick(_float fTimeDelta)
 
 void CIdleState::OnStateEnter()
 {
-
+#ifdef _DEBUG
+	cout << "Idle Enter" << endl;
+#endif // _DEBUG
 }
 
 void CIdleState::OnStateTick()
@@ -44,11 +47,64 @@ void CIdleState::OnStateTick()
 
 	Go_Start();
 
+	Go_Roll();
+
+	Go_Jump();
+
+	switch (*m_pIActionSwitch)
+	{
+	case CStateContext::ACTION_NONE:
+	{
+
+
+	}
+	break;
+	case CStateContext::ACTION_CASUAL:
+	{
+
+
+	}
+	break;
+	case CStateContext::ACTION_CMBT:
+	{
+
+
+	}
+	break;
+	case CStateContext::ACTION_END:
+	{
+
+
+	}
+	break;
+
+	default:
+		break;
+	}
+
 }
 
 void CIdleState::OnStateExit()
 {
+#ifdef _DEBUG
+	cout << "Idle Exit" << endl;
+#endif // _DEBUG
+}
 
+void CIdleState::Action_None_Tick()
+{
+	if (m_pOwnerModel->Is_Finish_Animation())
+	{
+		m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Idle_anm"));
+	}
+}
+
+void CIdleState::Action_Casual_Tick()
+{
+}
+
+void CIdleState::Action_Cmbt_Tick()
+{
 }
 
 void CIdleState::Go_Turn()
@@ -61,24 +117,24 @@ void CIdleState::Go_Turn()
 		if (m_f135Angle < (*m_pOwnerLookAngle))
 		{
 			//180도를 실행
-			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Idle_Turn_Rht_180_anm"));
+			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Idle_Turn_Rht_135_anm"));
 		}
 		else if (m_f45Angle < (*m_pOwnerLookAngle))
 		{
 			//90도를 실행
-			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Idle_Turn_Rht_90_anm"));
+			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Idle_Turn_Rht_45_anm"));
 		}
 
 		//음수 왼쪽
 		if (-m_f135Angle > (*m_pOwnerLookAngle))
 		{
 			//180도를 실행
-			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Idle_Turn_Lft_180_anm"));
+			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Idle_Turn_Lft_135_anm"));
 		}
 		else if (-m_f45Angle > (*m_pOwnerLookAngle))
 		{
 			//90도를 실행
-			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Idle_Turn_Lft_90_anm"));
+			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Idle_Turn_Lft_45_anm"));
 		}
 
 		Set_StateMachine(TEXT("Move Turn"));
@@ -98,6 +154,30 @@ void CIdleState::Go_Start()
 
 		Set_StateMachine(TEXT("Move Start"));
 	}
+}
+
+void CIdleState::Go_Roll()
+{
+	BEGININSTANCE;
+	
+	if (pGameInstance->Get_DIKeyState(DIK_LCONTROL,CInput_Device::KEY_DOWN))
+	{
+		Set_StateMachine(TEXT("Roll"));
+	}
+	
+	ENDINSTANCE;
+}
+
+void CIdleState::Go_Jump()
+{
+	BEGININSTANCE;
+
+	if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
+	{
+		Set_StateMachine(TEXT("Jump"));
+	}
+
+	ENDINSTANCE;
 }
 
 CIdleState* CIdleState::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

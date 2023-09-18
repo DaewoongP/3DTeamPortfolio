@@ -32,13 +32,11 @@ public:
 
     void Go_Idle();
 
+    void Go_Roll();
 
+    void Go_Jump();
 
-    void None_Angle();
-
-    void Right_Angle();
-
-    void Left_Angle();
+    void Switch_Joging_Sprint();
 
 public:
     static CMoveLoopState* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

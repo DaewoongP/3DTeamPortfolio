@@ -45,6 +45,7 @@ private:
 	CModel* m_pModel = { nullptr };
 	class CDummyMeshEffect* m_pDummyMeshEffect = { nullptr };
 	class CDummyTrail* m_pDummyTrail = { nullptr };
+	class CDummyFlipBook* m_pDummyFlipbook = { nullptr };
 	class CDummy_Effect* m_pDummyEffect= { nullptr };
 
 	_int m_iChooseRadio = { 0 };

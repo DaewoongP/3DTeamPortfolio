@@ -172,7 +172,7 @@ void CCollider::IsExitCollision()
 
 CCollider* CCollider::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, TYPE eColliderType)
 {
-	CCollider* pInstance = new CCollider(pDevice, pContext);
+	CCollider* pInstance = New CCollider(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(eColliderType)))
 	{
@@ -185,7 +185,7 @@ CCollider* CCollider::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 
 CComponent* CCollider::Clone(void* pArg)
 {
-	CCollider* pInstance = new CCollider(*this);
+	CCollider* pInstance = New CCollider(*this);
 
 	if (FAILED(pInstance->Initialize(m_pBounding, pArg)))
 	{

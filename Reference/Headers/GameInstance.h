@@ -36,6 +36,8 @@ public:
 	// 레벨 리소스 초기화 함수
 	void Clear_LevelResources(_uint iLevelIndex);
 
+	_float2 Get_ViewPortSize(ID3D11DeviceContext * pContext);
+
 public: /* For. Graphic_Device */
 	HRESULT Clear_BackBuffer_View(_float4 vClearColor);
 	HRESULT Clear_DepthStencil_View();

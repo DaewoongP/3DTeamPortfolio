@@ -221,7 +221,7 @@ HRESULT CUI_Group_MiniMap::Add_MapTexture()
 
 CUI_Group_MiniMap* CUI_Group_MiniMap::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CUI_Group_MiniMap* pInstance = new CUI_Group_MiniMap(pDevice, pContext);
+	CUI_Group_MiniMap* pInstance = New CUI_Group_MiniMap(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -234,7 +234,7 @@ CUI_Group_MiniMap* CUI_Group_MiniMap::Create(ID3D11Device* pDevice, ID3D11Device
 
 CGameObject* CUI_Group_MiniMap::Clone(void* pArg)
 {
-	CUI_Group_MiniMap* pInstance = new CUI_Group_MiniMap(*this);
+	CUI_Group_MiniMap* pInstance = New CUI_Group_MiniMap(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

@@ -26,10 +26,18 @@ public:
     virtual void OnStateExit();
 
 private:
+    void Action_None_Tick();
+    void Action_Casual_Tick();
+    void Action_Cmbt_Tick();
+
+
     void Go_Turn();
 
     void Go_Start();
 
+    void Go_Roll();
+
+    void Go_Jump();
 
 public:
     static CIdleState* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);

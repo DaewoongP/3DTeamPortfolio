@@ -82,17 +82,19 @@ HRESULT CVIBuffer_GeoSphere::Initialize_Prototype()
 	m_BufferDesc.CPUAccessFlags = { 0 };
 	m_BufferDesc.MiscFlags = { 0 };
 
-	VTXPOSNORTEX* pVertices = new VTXPOSNORTEX[m_iNumVertices];
-	_ushort* pIndices = new _ushort[m_iNumIndices];
+	VTXPOSNORTEX* pVertices = New VTXPOSNORTEX[m_iNumVertices];
+	_ushort* pIndices = New _ushort[m_iNumIndices];
 
 	ZeroMemory(pVertices, sizeof(VTXPOSNORTEX) * m_iNumVertices);
 
 	memcpy(pVertices, &vertices[0], sizeof(VTXPOSNORTEX) * m_iNumVertices);
 
+	// Normal
 	for (_uint i = 0; i < m_iNumVertices; ++i)
 	{
-		pVertices->vNormal = (pVertices->vPosition - _float3(0.f, 0.f, 0.f));
-		XMStoreFloat3(&pVertices->vNormal, XMVector3Normalize(XMLoadFloat3(&pVertices->vNormal)));
+		XMVECTOR direction = XMLoadFloat3(&pVertices[i].vPosition);
+		XMVECTOR normal = XMVector3Normalize(direction);
+		XMStoreFloat3(&pVertices[i].vNormal, normal);
 	}
 
 	ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
@@ -202,7 +204,7 @@ void CVIBuffer_GeoSphere::Subdivide(vector<Vertex>& vertices, vector<Triangle>& 
 
 CVIBuffer_GeoSphere* CVIBuffer_GeoSphere::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
 {
-	CVIBuffer_GeoSphere* pInstance = new CVIBuffer_GeoSphere(_pDevice, _pContext);
+	CVIBuffer_GeoSphere* pInstance = New CVIBuffer_GeoSphere(_pDevice, _pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -214,7 +216,7 @@ CVIBuffer_GeoSphere* CVIBuffer_GeoSphere::Create(ID3D11Device* _pDevice, ID3D11D
 
 CVIBuffer* CVIBuffer_GeoSphere::Clone(void* _pArg)
 {
-	CVIBuffer_GeoSphere* pInstance = new CVIBuffer_GeoSphere(*this);
+	CVIBuffer_GeoSphere* pInstance = New CVIBuffer_GeoSphere(*this);
 
 	if (FAILED(pInstance->Initialize(_pArg)))
 	{

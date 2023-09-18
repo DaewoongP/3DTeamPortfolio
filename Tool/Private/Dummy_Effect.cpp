@@ -2,6 +2,7 @@
 #include "DummyTrail.h"
 #include "DummyParticle.h"
 #include "DummyMeshEffect.h"
+#include "DummyFlipBook.h"
 #include "GameInstance.h"
 #include "Modules.h"
 CDummy_Effect::CDummy_Effect(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -37,6 +38,15 @@ HRESULT CDummy_Effect::Initialize_Prototype()
 		pGameInstance->Add_Prototype(0, TEXT("Prototype_GameObject_TestMeshEffect")
 			, CDummyMeshEffect::Create(m_pDevice, m_pContext, TEXT("")));
 	}
+
+	if (nullptr == pGameInstance->Find_Prototype(0, TEXT("Prototype_GameObject_TestTexture_Flipbook")))
+	{
+		/* Prototype_Component_Texture_Ground */
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_GameObject_TestTexture_Flipbook"),
+			CDummyFlipBook::Create(m_pDevice, m_pContext, LEVEL_TOOL, nullptr))))
+			return E_FAIL;
+	}
+
 	ENDINSTANCE;
 
 	return S_OK;
@@ -66,7 +76,7 @@ void CDummy_Effect::Tick(_float fTimeDelta)
 	m_pTrail->Tick(fTimeDelta);
 	m_pParticleSystem->Tick(fTimeDelta);
 	m_pMeshEffect->Tick(fTimeDelta);
-
+	m_pTextureFlipbook->Tick(fTimeDelta);
 	BEGININSTANCE;
 
 	if (pGameInstance->Get_DIKeyState(DIK_UPARROW))
@@ -91,38 +101,11 @@ void CDummy_Effect::Tick(_float fTimeDelta)
 	}
 
 
-	// // / //////////////
-
-	//CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	//Safe_AddRef(pGameInstance);
-
-	//_float3 vLook = pGameInstance->Get_CamPosition()->xyz() - _particle_iter->WorldMatrix.Translation();
-	//vLook.Normalize();
-	//_float3 vUp = { 0.f, 1.f, 0.f };
-	//_float3 vRight = vUp.Cross(vLook);
-	//vUp = vLook.Cross(vRight);
-
-	//_particle_iter->fCircularMotionAngle += m_RotationOverLifetimeModuleDesc.fSpeed * fTimeDelta;
-
-	//_float fX = m_RotationOverLifetimeModuleDesc.fRadius * cos(_particle_iter->fCircularMotionAngle);
-	//_float fY = m_RotationOverLifetimeModuleDesc.fRadius * sin(_particle_iter->fCircularMotionAngle);
-
-	//if (true == m_RotationOverLifetimeModuleDesc.isFlipOption)
-	//{
-	//	if (RandomBool(m_RotationOverLifetimeModuleDesc.fFlipProperty))
-	//	{
-	//		fX = -fX;
-	//		fY = -fY;
-	//	}
-	//}
-
-	//_float3 vPos = _particle_iter->WorldMatrix.Translation();
-	//vPos += fX * vRight + fY * vUp;
-
-	//_particle_iter->WorldMatrix.Translation(vPos);
-	//Safe_Release(pGameInstance);
-
-
+	SHAPE_MODULE& ShapeModule = m_pParticleSystem->Get_ShapeModuleRef();
+	float fLength = _float3(m_vPrevPos - m_pTransform->Get_Position()).Length();
+	if(fLength >= 0.001f)
+		ShapeModule.ShapeMatrix.MatrixLookAt(m_pTransform->Get_Position(), m_vPrevPos, _float3(0.f, 1.f, 0.f));
+	m_vPrevPos = m_pTransform->Get_Position();
 	ENDINSTANCE;
 }
 
@@ -131,7 +114,7 @@ void CDummy_Effect::Late_Tick(_float fTimeDelta)
 	//m_pTrail->Late_Tick(fTimeDelta);
 	m_pParticleSystem->Late_Tick(fTimeDelta);
 	//m_pMeshEffect->Late_Tick(fTimeDelta);
-
+	m_pTextureFlipbook->Late_Tick(fTimeDelta);
 	m_vPrevPos = m_pTransform->Get_Position();
 }
 
@@ -158,6 +141,11 @@ HRESULT CDummy_Effect::Add_Components()
 		if (FAILED(CComposite::Add_Component(0, TEXT("Prototype_GameObject_TestMeshEffect"),
 			TEXT("Com_MeshEffect"), reinterpret_cast<CComponent**>(&m_pMeshEffect))))
 			throw "Com_MeshEffect";
+
+		/* Com_Texture_Flipbook */
+		if (FAILED(CComposite::Add_Component(0, TEXT("Prototype_GameObject_TestTexture_Flipbook"),
+			TEXT("Com_Flipbook"), reinterpret_cast<CComponent**>(&m_pTextureFlipbook))))
+			throw "Com_Flipbook";
 	}
 	catch (const _char* pErrorMessage)
 	{
@@ -204,6 +192,8 @@ void CDummy_Effect::Free()
 		Safe_Release(m_pTrail);
 		Safe_Release(m_pParticleSystem);
 		Safe_Release(m_pMeshEffect);
+		Safe_Release(m_pTextureFlipbook);
+
 		Safe_Release(m_pTrailTransform);
 		Safe_Release(m_pParticleSystemTransform);
 		Safe_Release(m_pMeshEffectTransform);

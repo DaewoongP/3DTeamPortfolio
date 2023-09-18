@@ -48,7 +48,7 @@ public:
 	void Enable_Trail(_bool _isEnable);
 	HRESULT Reset_Trail();
 	void SetActionTrigger(_bool value) {m_bActionTrigger = value;}
-	void TrailAction(_float fTimeDelta);
+	void TrailAction(_float3 pos,_float fTimeDelta);
 
 private:
 	//회전하는 트레일

@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "GameObject.h"
@@ -37,7 +36,7 @@ public:
 	HRESULT Reset_Trail();
 	_bool IsEnable() {
 		_bool value = { false };
-		if(m_pParticleSystem!=nullptr)
+		if (m_pParticleSystem != nullptr)
 			value = m_pParticleSystem->IsEnable();
 		return value;
 	}
@@ -54,7 +53,7 @@ private:
 	CTransform* m_pTraceParticleTransform = { nullptr };
 	CTransform* m_pTrailTransform = { nullptr };
 	CTransform* m_pConeEmitTransform = { nullptr };
-	
+
 private:
 	_uint m_iLevel = { 0 };
 	_float3 m_vPrevPos = { _float3() };
@@ -69,4 +68,3 @@ public:
 };
 
 END
-

@@ -84,7 +84,7 @@ HRESULT CCheck_Degree::Tick(const _float& fTimeDelta)
 
 CCheck_Degree* CCheck_Degree::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CCheck_Degree* pInstance = new CCheck_Degree(pDevice, pContext);
+	CCheck_Degree* pInstance = New CCheck_Degree(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -97,7 +97,7 @@ CCheck_Degree* CCheck_Degree::Create(ID3D11Device* pDevice, ID3D11DeviceContext*
 
 CCheck_Degree* CCheck_Degree::Clone(void* pArg)
 {
-	CCheck_Degree* pInstance = new CCheck_Degree(*this);
+	CCheck_Degree* pInstance = New CCheck_Degree(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

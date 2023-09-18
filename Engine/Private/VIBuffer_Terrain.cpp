@@ -35,7 +35,7 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMap)
 	m_iTerrainSizeX = iNumVerticesX;
 	m_iTerrainSizeZ = iNumVerticesZ;
 
-	_ulong* pPixel = new _ulong[iNumVerticesX * iNumVerticesZ];
+	_ulong* pPixel = New _ulong[iNumVerticesX * iNumVerticesZ];
 	ZeroMemory(pPixel, sizeof(_ulong) * iNumVerticesX * iNumVerticesZ);
 
 	ReadFile(hFile, pPixel, sizeof(_ulong) * iNumVerticesX * iNumVerticesZ, &dwByte, nullptr);
@@ -52,10 +52,10 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMap)
 
 #pragma region VERTEX_BUFFER
 
-	VTXPOSNORTEX* pVertices = new VTXPOSNORTEX[m_iNumVertices];
+	VTXPOSNORTEX* pVertices = New VTXPOSNORTEX[m_iNumVertices];
 	ZeroMemory(pVertices, sizeof(VTXPOSNORTEX) * m_iNumVertices);
 
-	m_pPos = new _float3[m_iNumVertices];
+	m_pPos = New _float3[m_iNumVertices];
 	ZeroMemory(m_pPos, sizeof(_float3) * m_iNumVertices);
 
 	// Bmp ·Îµå
@@ -95,10 +95,10 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMap)
 
 #pragma region INDEX_BUFFER
 
-	_ulong* pIndices = new _ulong[m_iNumIndices];
+	_ulong* pIndices = New _ulong[m_iNumIndices];
 	ZeroMemory(pIndices, sizeof(_ulong) * m_iNumIndices);
 
-	m_pIndex = new _uint[m_iNumIndices];
+	m_pIndex = New _uint[m_iNumIndices];
 	ZeroMemory(m_pIndex, sizeof(_uint) * m_iNumIndices);
 	//memcpy(m_pIndex, pIndices, sizeof(_uint) * m_iNumIndices);
 
@@ -229,10 +229,10 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(_uint iTerrainSizeX, _uint iTerr
 	m_BufferDesc.CPUAccessFlags = { 0 };
 	m_BufferDesc.MiscFlags = { 0 };
 
-	VTXPOSNORTEX* pVertices = new VTXPOSNORTEX[m_iNumVertices];
+	VTXPOSNORTEX* pVertices = New VTXPOSNORTEX[m_iNumVertices];
 	ZeroMemory(pVertices, sizeof(VTXPOSNORTEX) * m_iNumVertices);
 
-	m_pPos = new _float3[m_iNumVertices];
+	m_pPos = New _float3[m_iNumVertices];
 	
 	for (_uint iVertexY = 0; iVertexY < iTerrainSizeY + 1; ++iVertexY)
 	{
@@ -267,7 +267,7 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(_uint iTerrainSizeX, _uint iTerr
 	m_BufferDesc.CPUAccessFlags = { D3D11_CPU_ACCESS_WRITE };
 	m_BufferDesc.MiscFlags = { 0 };
 
-	_uint* pIndices = new _uint[m_iNumIndices];
+	_uint* pIndices = New _uint[m_iNumIndices];
 	ZeroMemory(pIndices, sizeof(_uint) * m_iNumIndices);
 
 	_uint		iNumIndices = { 0 };
@@ -295,7 +295,7 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(_uint iTerrainSizeX, _uint iTerr
 		}
 	}
 
-	m_pIndex = new _uint[m_iNumIndices];
+	m_pIndex = New _uint[m_iNumIndices];
 	memcpy(m_pIndex, pIndices, sizeof(_uint) * m_iNumIndices);
 	
 
@@ -477,7 +477,7 @@ _bool CVIBuffer_Terrain::isInFourPoint(_float3 LT, _float3 RT, _float3 RB, _floa
 
 CVIBuffer_Terrain* CVIBuffer_Terrain::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pHeightMap)
 {
-	CVIBuffer_Terrain* pInstance = new CVIBuffer_Terrain(pDevice, pContext);
+	CVIBuffer_Terrain* pInstance = New CVIBuffer_Terrain(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pHeightMap)))
 	{
@@ -489,7 +489,7 @@ CVIBuffer_Terrain* CVIBuffer_Terrain::Create(ID3D11Device* pDevice, ID3D11Device
 
 CVIBuffer_Terrain* CVIBuffer_Terrain::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iTerrainSizeX, _uint iTerrainSizeY)
 {
-	CVIBuffer_Terrain* pInstance = new CVIBuffer_Terrain(pDevice, pContext);
+	CVIBuffer_Terrain* pInstance = New CVIBuffer_Terrain(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(iTerrainSizeX, iTerrainSizeY)))
 	{
@@ -501,7 +501,7 @@ CVIBuffer_Terrain* CVIBuffer_Terrain::Create(ID3D11Device* pDevice, ID3D11Device
 
 CComponent* CVIBuffer_Terrain::Clone(void* pArg)
 {
-	CVIBuffer_Terrain* pInstance = new CVIBuffer_Terrain(*this);
+	CVIBuffer_Terrain* pInstance = New CVIBuffer_Terrain(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

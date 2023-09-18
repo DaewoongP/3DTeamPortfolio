@@ -10,6 +10,9 @@ float g_fPercent;
 float2 g_vMiniMapSize;
 float3 g_vPlayerPos;
 
+// For Rotation
+float g_fRadian;
+
 SamplerState g_Sampler
 {
 	AddressU = CLAMP;
@@ -82,6 +85,20 @@ float4 PS_MAIN_UI(PS_IN In) : SV_TARGET0
 	return vColor;
 }
 
+float4 PS_MAIN_UI_REMOVE_BLACK(PS_IN In) : SV_TARGET0
+{
+	float4 vColor = (float4) 0;
+
+	vColor = g_Texture.Sample(PointSampler, In.vTexUV);
+
+	if (vColor.r < 0.2 && vColor.g < 0.2 && vColor.b < 0.2)
+	{
+		discard;
+	}
+
+	return vColor;
+}
+
 float4 PS_MAIN_HP_PROGRESS(PS_IN In) : SV_TARGET0
 {
 	float4 vColor = g_Texture.Sample(PointSampler, In.vTexUV);
@@ -134,6 +151,46 @@ float4 PS_MAIN_MINIMAP(PS_IN In) : SV_TARGET0
 	return vColor;
 }
 
+float4 PS_MAIN_CURSOR(PS_IN In) : SV_TARGET0
+{
+	float4 vColor = g_Texture.Sample(g_Sampler, In.vTexUV);
+	
+	float fCos = cos(g_fRadian);
+	float fSin = sin(g_fRadian);
+
+	float2x2 fRot = float2x2(fCos, -fSin, fSin, fCos);
+
+	float2 fCenter = float2(0.5f, 0.5f);
+	float fLength = length(In.vTexUV - fCenter);
+
+	if (fLength < 0.38f)
+	{
+		In.vTexUV -= 0.5f;
+		In.vTexUV = mul(In.vTexUV, fRot);
+		In.vTexUV += 0.5f;
+		vColor = g_Texture.Sample(g_Sampler, In.vTexUV);
+	}
+	else
+	{
+		In.vTexUV -= 0.5f;
+		In.vTexUV = mul(In.vTexUV, float2x2(fCos, fSin, -fSin, fCos));
+		In.vTexUV += 0.5f;
+		vColor = g_Texture.Sample(g_Sampler, In.vTexUV);
+	}
+
+	if (vColor.r < 0.3 && vColor.g < 0.3 && vColor.b < 0.3)
+	{
+		discard;
+	}
+	else
+	{
+		vColor.rgb = float3(1.f, 1.f, 1.f);
+	}
+
+
+	return vColor;
+}
+
 technique11 DefaultTechnique
 {
 	pass BackGround
@@ -162,6 +219,19 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_MAIN_UI();
 	}
 
+	pass UI_Remove_Black
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DSS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
+		HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
+		DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
+		PixelShader = compile ps_5_0 PS_MAIN_UI_REMOVE_BLACK();
+	}
+
 	pass HP_Progress
 	{
 		SetRasterizerState(RS_Default);
@@ -188,7 +258,6 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_MAIN_FINISHER_PROGRESS();
 	}
 
-
 	pass MiniMap
 	{
 		SetRasterizerState(RS_Default);
@@ -200,5 +269,18 @@ technique11 DefaultTechnique
 		HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
 		DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
 		PixelShader = compile ps_5_0 PS_MAIN_MINIMAP();
+	}
+
+	pass Cursor
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DSS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
+		HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
+		DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
+		PixelShader = compile ps_5_0 PS_MAIN_CURSOR();
 	}
 }

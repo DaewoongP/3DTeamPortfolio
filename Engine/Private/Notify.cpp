@@ -163,7 +163,7 @@ HRESULT CNotify::AddFrame(KEYFRAME_GCM* data)
 	{
 	case KEYFRAME::KF_SPEED:
 	{
-		SPEEDFRAME* speedFrameDesc = new SPEEDFRAME();
+		SPEEDFRAME* speedFrameDesc = New SPEEDFRAME();
 		speedFrameDesc->eKeyFrameType = KEYFRAME::KF_SPEED;
 		speedFrameDesc->fTime = data->fTime;
 		speedFrameDesc->fSpeed = reinterpret_cast<SPEEDFRAME_GCM*>(data)->fSpeed;
@@ -176,7 +176,7 @@ HRESULT CNotify::AddFrame(KEYFRAME_GCM* data)
 	}
 	case KEYFRAME::KF_NOTIFY:
 	{
-		NOTIFYFRAME* notifyFrameDesc = new NOTIFYFRAME();
+		NOTIFYFRAME* notifyFrameDesc = New NOTIFYFRAME();
 		notifyFrameDesc->eKeyFrameType = KEYFRAME::KF_NOTIFY;
 		notifyFrameDesc->fTime = data->fTime;
 		notifyFrameDesc->isEnable = true;
@@ -189,7 +189,7 @@ HRESULT CNotify::AddFrame(KEYFRAME_GCM* data)
 	}
 	case KEYFRAME::KF_SOUND:
 	{
-		SOUNDFRAME* soundFrameDesc = new SOUNDFRAME();
+		SOUNDFRAME* soundFrameDesc = New SOUNDFRAME();
 		soundFrameDesc->eKeyFrameType = KEYFRAME::KF_SOUND;
 		soundFrameDesc->fTime = data->fTime;
 		soundFrameDesc->isEnable = true;
@@ -217,7 +217,7 @@ void CNotify::Notify_NULL_WarningAlam()
 }
 CNotify* CNotify::Create()
 {
-	CNotify* pInstance = new CNotify();
+	CNotify* pInstance = New CNotify();
 
 	if (FAILED(pInstance->Initialize()))
 	{

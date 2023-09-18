@@ -136,7 +136,7 @@ HRESULT CUI_HP::Debug_UI(_float fTimeDelta)
 
 CUI_HP* CUI_HP::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CUI_HP* pInstance = new CUI_HP(pDevice, pContext);
+	CUI_HP* pInstance = New CUI_HP(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -149,7 +149,7 @@ CUI_HP* CUI_HP::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 CGameObject* CUI_HP::Clone(void* pArg)
 {
-	CUI_HP* pInstance = new CUI_HP(*this);
+	CUI_HP* pInstance = New CUI_HP(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

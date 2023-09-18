@@ -16,11 +16,11 @@ HRESULT CAnimation_Window::Initialize(ImVec2 vWindowPos, ImVec2 vWindowSize)
 	if (FAILED(__super::Initialize(vWindowPos, vWindowSize)))
 		return E_FAIL;
 
-	BEGININSTANCE; 
+	BEGININSTANCE;
 
 	CCamera_Point::CAMERAPOINTDESC CameraPointDesc;
 
-	CameraPointDesc.vPosition = _float4(0,0,0,1);
+	CameraPointDesc.vPosition = _float4(0, 0, 0, 1);
 	m_pCameraPoint =
 		dynamic_cast<CCamera_Point*>(
 			pGameInstance->Clone_Component(LEVEL_TOOL,
@@ -53,13 +53,13 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 		ImGui::End();
 		return;
 	}
-	
+
 	if (m_pDummyModel == nullptr)
 	{
 		ImGui::End();
 		return;
 	}
-	
+
 	ImGui::Separator();
 	ImGui::Text("AnimationOffset");
 
@@ -82,18 +82,20 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 
 	for (_uint partCnt = 0; partCnt < m_pDummyModel->Get_AnimationPartCount(); partCnt++)
 	{
-		
+
 		ImGui::Separator();
 		ImGui::Text("AnimationSetting");
 
 		CModel::ANIMTYPE ePartCnt = static_cast<CModel::ANIMTYPE>(partCnt);
 
-		Animation_ChildFrame(ePartCnt,m_szCurrentItem[ePartCnt], m_pDummyModel);
-		Animation_Action_Button(ePartCnt,m_pDummyModel, &m_fNotifyActionTime);
+		Animation_ChildFrame(ePartCnt, m_szCurrentItem[ePartCnt], m_pDummyModel);
+		Animation_Action_Button(ePartCnt, m_pDummyModel, &m_fNotifyActionTime);
 
 		_char szUIName[MAX_PATH] = "Animation##";
 		if (m_pDummyModel->Get_NumAnimations(ePartCnt) != 0)
 		{
+
+			Add_Animation_To_Model(ePartCnt, m_pDummyModel);
 			sprintf_s(szUIName, "%s%d", "AnimationTag##", ePartCnt);
 			WCharToChar(m_pDummyModel->Get_Animation(ePartCnt)->Get_AnimationName(), m_szAnimationTag[ePartCnt]);
 			if (ImGui::InputText(szUIName, m_szAnimationTag[ePartCnt], 32))
@@ -137,7 +139,7 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 			sprintf_s(szUIName, "Seprate##%d", ePartCnt);
 			if (ImGui::Button(szUIName))
 			{
-				m_pDummyModel->Separate_Animation(m_iFromBone[ePartCnt], m_iToBone[ePartCnt],ePartCnt);
+				m_pDummyModel->Separate_Animation(m_iFromBone[ePartCnt], m_iToBone[ePartCnt], ePartCnt);
 			}
 		}
 	}
@@ -145,7 +147,7 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 	if (ImGui::Button("Delete_Dummy##Animation"))
 	{
 		BEGININSTANCE;
-		
+
 		if (FAILED(pGameInstance->Delete_Component(LEVEL_TOOL,
 			TEXT("Layer_Tool"), TEXT("Dummy_Animation"))))
 		{
@@ -168,7 +170,7 @@ void CAnimation_Window::Create_Dummy_Button()
 {
 	if (ImGui::Button("Create Dummy"))
 	{
-		if(m_pDummyObject!=nullptr)
+		if (m_pDummyObject != nullptr)
 		{
 			MSG_BOX("Failed because of Dummy is Not Null");
 			return;
@@ -189,9 +191,14 @@ void CAnimation_Window::Create_Dummy_Button()
 
 void CAnimation_Window::OpenFile_Button()
 {
+	ImGui::Checkbox("AnimAdd", &m_isAnimationAdd);
+	ImGui::SameLine();
+	ImGui::InputInt("AnimPartNum", &m_iAnimationPartNum);
 	// open Dialog Simple
 	if (ImGui::Button("Open File Dialog"))
 		ImGuiFileDialog::Instance()->OpenDialog("ChooseModel", "Choose File", ".dat,.gcm", "../../Resources/Models/");
+
+	//체크박스 하나 두고 
 
 	// display
 	if (ImGuiFileDialog::Instance()->Display("ChooseModel"))
@@ -199,33 +206,43 @@ void CAnimation_Window::OpenFile_Button()
 		// action if OK
 		if (ImGuiFileDialog::Instance()->IsOk())
 		{
-			std::string strFilePathName = ImGuiFileDialog::Instance()->GetFilePathName();
-			_char fileName[MAX_PATH] = "";
-			_splitpath_s(strFilePathName.c_str(), nullptr, 0, nullptr, 0, fileName, MAX_PATH, nullptr, 0);
-
-			_tchar wszfilePath[MAX_PATH] = {};
-			_tchar wszfileName[MAX_PATH] = {};
-			CharToWChar(strFilePathName.c_str(), wszfilePath);
-			CharToWChar(fileName, wszfileName);
-			_tchar wszModelTag[MAX_PATH] = TEXT("Prototype_Component_Model_");
-			char szModelTag[MAX_PATH] = {};
-			lstrcat(wszModelTag, wszfileName);
-			WCharToChar(wszModelTag, szModelTag);
-
-			//모델이름 저장
-			m_vecModelList_t.push_back(wszModelTag);
-			m_vecModelList.push_back(szModelTag);
-
-			_float4x4 PivotMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
-			CGameInstance* pGameInstance = CGameInstance::GetInstance();
-			Safe_AddRef(pGameInstance);
-			if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, m_vecModelList_t[m_iMaxModelIndex].c_str(),
-				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, wszfilePath, PivotMatrix))))
+			if (!m_isAnimationAdd)
 			{
-				MSG_BOX("Failed to Create Model");
+				std::string strFilePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+				_char fileName[MAX_PATH] = "";
+				_splitpath_s(strFilePathName.c_str(), nullptr, 0, nullptr, 0, fileName, MAX_PATH, nullptr, 0);
+
+				_tchar wszfilePath[MAX_PATH] = {};
+				_tchar wszfileName[MAX_PATH] = {};
+				CharToWChar(strFilePathName.c_str(), wszfilePath);
+				CharToWChar(fileName, wszfileName);
+				_tchar wszModelTag[MAX_PATH] = TEXT("Prototype_Component_Model_");
+				char szModelTag[MAX_PATH] = {};
+				lstrcat(wszModelTag, wszfileName);
+				WCharToChar(wszModelTag, szModelTag);
+
+				//모델이름 저장
+				m_vecModelList_t.push_back(wszModelTag);
+				m_vecModelList.push_back(szModelTag);
+
+				_float4x4 PivotMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
+				CGameInstance* pGameInstance = CGameInstance::GetInstance();
+				Safe_AddRef(pGameInstance);
+				if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, m_vecModelList_t[m_iMaxModelIndex].c_str(),
+					CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, wszfilePath, PivotMatrix))))
+				{
+					MSG_BOX("Failed to Create Model");
+				}
+				Safe_Release(pGameInstance);
+				m_iMaxModelIndex++;
 			}
-			Safe_Release(pGameInstance);
-			m_iMaxModelIndex++;
+			else
+			{
+				std::string strFilePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+				_tchar wszPath[MAX_PATH] = {};
+				CharToWChar(strFilePathName.c_str(), wszPath);
+				m_pDummyModel->Ready_File_Animation((CModel::ANIMTYPE)m_iAnimationPartNum, wszPath);
+			}
 		}
 		ImGuiFileDialog::Instance()->Close();
 	}
@@ -288,7 +305,7 @@ void CAnimation_Window::Animation_ComboBox(CModel::ANIMTYPE ePartCnt, _char* szC
 			}
 
 			ImGui::SameLine();
-			sprintf_s(szUIName, "Delete##_Anim%d%s" ,ePartCnt, szAnimationName);
+			sprintf_s(szUIName, "Delete##_Anim%d%s", ePartCnt, szAnimationName);
 			if (ImGui::SmallButton(szUIName))
 			{
 				m_pDummyModel->Delete_Animation(i, ePartCnt);
@@ -303,7 +320,7 @@ void CAnimation_Window::Animation_ChildFrame(CModel::ANIMTYPE ePartCnt, _char* s
 	_char szUIName[MAX_PATH] = "AnimChildFrame##";
 	sprintf_s(szUIName, "%s%d", szUIName, ePartCnt);
 	const auto  draw_childframe_size = ImVec2(400, 260);
-	ImGui::BeginChildFrame(ImGui::GetID(szUIName), draw_childframe_size,ImGuiWindowFlags_AlwaysHorizontalScrollbar);
+	ImGui::BeginChildFrame(ImGui::GetID(szUIName), draw_childframe_size, ImGuiWindowFlags_AlwaysHorizontalScrollbar);
 	{
 		_char szAnimationName[MAX_PATH] = "";
 		_tchar wszAnimationName[MAX_PATH] = {};
@@ -314,10 +331,10 @@ void CAnimation_Window::Animation_ChildFrame(CModel::ANIMTYPE ePartCnt, _char* s
 
 			lstrcpy(wszAnimationName, m_pDummyModel->Get_Animation(i, ePartCnt)->Get_AnimationName());
 			WCharToChar(wszAnimationName, szAnimationName);
-		
-			if (strstr(szAnimationName,m_szAnimationSearch[ePartCnt]) == nullptr)
+
+			if (strstr(szAnimationName, m_szAnimationSearch[ePartCnt]) == nullptr)
 				continue;
-			
+
 			bool is_selected = (!strcmp(szCurrentItem, szAnimationName));
 			ImGui::Text(szAnimationName);
 
@@ -356,7 +373,7 @@ void CAnimation_Window::Animation_Table(CModel::ANIMTYPE ePartCnt, _char* szCurr
 		| ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY
 		| ImGuiTableFlags_SizingFixedFit;
 
-	ImGui::BeginTable(szUIName, 4, flags, ImVec2(0, 300),0.f);
+	ImGui::BeginTable(szUIName, 4, flags, ImVec2(0, 300), 0.f);
 	{
 		ImGui::TableSetupColumn("Index", ImGuiTableColumnFlags_NoSort | ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_NoHide, 0.0f, ImGui::GetID(szUIName));
 		ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_NoSort | ImGuiTableColumnFlags_WidthFixed, 0.0f);
@@ -371,12 +388,12 @@ void CAnimation_Window::Animation_Table(CModel::ANIMTYPE ePartCnt, _char* szCurr
 		{
 			ZEROMEM(szAnimationName);
 			ZEROMEM(wszAnimationName);
-			
+
 			ImGui::TableNextRow();
 			ImGui::TableSetColumnIndex(0);
 			sprintf_s(szUIName, "%d", i);
 			ImGui::Text(szUIName);
-			
+
 			ImGui::TableSetColumnIndex(1);
 			lstrcpy(wszAnimationName, m_pDummyModel->Get_Animation(i, ePartCnt)->Get_AnimationName());
 			WCharToChar(wszAnimationName, szAnimationName);
@@ -402,7 +419,7 @@ void CAnimation_Window::Animation_Table(CModel::ANIMTYPE ePartCnt, _char* szCurr
 		}
 		ImGui::EndTable();
 	}
-	
+
 }
 
 void CAnimation_Window::Animation_Action_Button(CModel::ANIMTYPE ePartCnt, CModel* m_pDummyModel, _float* fNotifyActionTime)
@@ -411,7 +428,7 @@ void CAnimation_Window::Animation_Action_Button(CModel::ANIMTYPE ePartCnt, CMode
 	if (iAnimCnt == 0)
 		return;
 	_char szUIName[MAX_PATH] = "";
-	if(m_pDummyModel->Get_Animation(ePartCnt)->Get_Paused_State())
+	if (m_pDummyModel->Get_Animation(ePartCnt)->Get_Paused_State())
 		sprintf_s(szUIName, "Stop##%d", ePartCnt);
 	else
 		sprintf_s(szUIName, "Play##%d", ePartCnt);
@@ -473,8 +490,8 @@ void CAnimation_Window::Add_Notify_Button(CModel::ANIMTYPE ePartCnt, _char* szNo
 	{
 		_tchar  wszNotifyName[MAX_PATH] = {};
 		CharToWChar(szNotifyName, wszNotifyName);
-		
-		
+
+
 
 		switch (*eNotifyKeyFrameType)
 		{
@@ -542,6 +559,27 @@ void CAnimation_Window::Select_Model()
 	ImGui::ListBox("##AnimModelListBox", &m_iModelIndex, VectorGetter, static_cast<void*>(&m_vecModelList), (_int)m_vecModelList.size(), 3);
 }
 
+void CAnimation_Window::Add_Animation_To_Model(CModel::ANIMTYPE ePartCnt, CModel* m_pDummyModel)
+{
+	_char szUIName[MAX_PATH] = "Add_Animation_Dialog##";
+	sprintf_s(szUIName, "%s%d", szUIName, ePartCnt);
+	if (ImGui::Button(szUIName))
+	{
+		sprintf_s(szUIName, "%s%d", "ChooseAnimation_Model##", ePartCnt);
+		ImGuiFileDialog::Instance()->OpenDialog(szUIName, "Choose Anim File", ".dat", "../../Resources/Models/");
+	}
+
+	if (ImGuiFileDialog::Instance()->Display(szUIName))
+	{
+		if (ImGuiFileDialog::Instance()->IsOk())
+		{
+			//현재 모델의 n번째 파츠에 애니메이션 추가임.
+
+		}
+		ImGuiFileDialog::Instance()->Close();
+	}
+}
+
 void CAnimation_Window::Export_Model()
 {
 	if (ImGui::Button("Export_Model"))
@@ -557,7 +595,7 @@ void CAnimation_Window::Export_Model()
 			return;
 		}
 		dynamic_cast<CModel*>(m_pDummyObject->Find_Component(TEXT("Com_Model")))->Convert_Animations_GCM();
-		
+
 		wchar_t temp[MAX_PATH] = {};
 		wcscpy_s(temp, m_wszCurrentDummyModelTag);
 		const wchar_t* found = wcsstr(temp, TEXT("Prototype_Component_Model_"));
@@ -576,7 +614,7 @@ void CAnimation_Window::OffsetVectorSetting(CModel* m_pDummyModel)
 	_float data[3] = {};
 	_float3 pos = m_pDummyModel->Get_Animation()->Get_OffsetPosition();
 	memcpy(data, &pos, sizeof(_float) * 3);
-	if (ImGui::DragFloat3("#OffsetVectorSetting", data,0.01f))
+	if (ImGui::DragFloat3("#OffsetVectorSetting", data, 0.01f))
 	{
 		m_pDummyModel->Get_Animation()->Set_OffsetPosition(data);
 	}
@@ -584,11 +622,11 @@ void CAnimation_Window::OffsetVectorSetting(CModel* m_pDummyModel)
 	if (m_pCameraPoint == nullptr)
 		return;
 
-	_float4 vCombinedPosition = { data[0],data[1],data[2],1};
+	_float4 vCombinedPosition = { data[0],data[1],data[2],1 };
 	vCombinedPosition = XMVector3TransformCoord(vCombinedPosition.xyz(), m_pDummyObject->Get_Transform()->Get_WorldMatrix());
 	m_pCameraPoint->Set_Position(vCombinedPosition);
 	BEGININSTANCE
-	m_pCameraPoint->Tick(pGameInstance->Get_QueryTimeDelta(TEXT("MainTimer")));
+		m_pCameraPoint->Tick(pGameInstance->Get_QueryTimeDelta(TEXT("MainTimer")));
 	ENDINSTANCE
 }
 
@@ -720,7 +758,7 @@ void CAnimation_Window::Bone_Tree(CBone* bone, CModel* m_pDummyModel)
 	_char szBone_Name[MAX_PATH] = "";
 	WCharToChar(bone->Get_Name(), szBone_Name);
 
-	sprintf_s(szUIName, "%s##%d", szBone_Name,0);
+	sprintf_s(szUIName, "%s##%d", szBone_Name, 0);
 	if (ImGui::TreeNode(szUIName))
 	{
 		for (auto child : *m_pDummyModel->Get_Bone_Vector_Point())
@@ -732,7 +770,7 @@ void CAnimation_Window::Bone_Tree(CBone* bone, CModel* m_pDummyModel)
 		}
 		ImGui::TreePop();
 	}
-	else 
+	else
 	{
 		ImGui::SameLine();
 		sprintf_s(szUIName, "Set_Root##%d##%s", 0, szBone_Name);

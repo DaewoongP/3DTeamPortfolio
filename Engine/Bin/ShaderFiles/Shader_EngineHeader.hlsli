@@ -12,7 +12,25 @@ sampler PointSampler = sampler_state
 	AddressU = WRAP;
 	AddressV = WRAP;
 };
+sampler BlurSampler = sampler_state
+{
+    Filter = MIN_MAG_MIP_LINEAR;
+    AddressU = clamp;
+    AddressV = clamp;
+};
 
+sampler BloomSampler = sampler_state
+{
+    Filter = MIN_MAG_MIP_POINT;
+    AddressU = clamp;
+    AddressV = clamp;
+};
+sampler DistortionSampler = sampler_state
+{
+    Filter = MIN_MAG_MIP_LINEAR;
+    AddressU = clamp;
+    AddressV = clamp;
+};
 /* Raterizer State */
 RasterizerState RS_Default
 {

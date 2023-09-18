@@ -66,9 +66,9 @@ public:
 	{
 		for (auto& iCurrentKeyFrame : m_ChannelCurrentKeyFrames)
 			iCurrentKeyFrame = 0;
-		m_fTimeAcc = 0.0;
+		m_fTimeAcc = 0.0f;
 	}
-	void TimeAccReset() { m_fTimeAcc = 0.0; }
+	void TimeAccReset() { m_fTimeAcc = 0.0f; }
 	void Delete_Translation();
 	void Delete_Rotation();
 	

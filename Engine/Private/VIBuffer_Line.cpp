@@ -41,7 +41,7 @@ HRESULT CVIBuffer_Line::Initialize(void* pArg)
 	m_BufferDesc.CPUAccessFlags = { D3D11_CPU_ACCESS_WRITE };
 	m_BufferDesc.MiscFlags = { 0 };
 
-	VTXPOS* pVertices = new VTXPOS[m_iNumVertices];
+	VTXPOS* pVertices = New VTXPOS[m_iNumVertices];
 	ZeroMemory(pVertices, sizeof(VTXPOS) * m_iNumVertices);
 
 	for (_uint i = 0; i < m_iNumVertices; ++i)
@@ -66,7 +66,7 @@ HRESULT CVIBuffer_Line::Initialize(void* pArg)
 	m_BufferDesc.CPUAccessFlags = { 0 };
 	m_BufferDesc.MiscFlags = { 0 };
 
-	_ulong* pIndices = new _ulong[m_iNumIndices];
+	_ulong* pIndices = New _ulong[m_iNumIndices];
 	ZeroMemory(pIndices, sizeof(_ulong) * m_iNumIndices);
 
 	for (_uint i = 0; i < m_iNumIndices; ++i)
@@ -100,7 +100,7 @@ void CVIBuffer_Line::Tick(LINEDESC LineDesc)
 
 CVIBuffer_Line* CVIBuffer_Line::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CVIBuffer_Line* pInstance = new CVIBuffer_Line(pDevice, pContext);
+	CVIBuffer_Line* pInstance = New CVIBuffer_Line(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -113,7 +113,7 @@ CVIBuffer_Line* CVIBuffer_Line::Create(ID3D11Device* pDevice, ID3D11DeviceContex
 
 CComponent* CVIBuffer_Line::Clone(void* pArg)
 {
-	CVIBuffer_Line* pInstance = new CVIBuffer_Line(*this);
+	CVIBuffer_Line* pInstance = New CVIBuffer_Line(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
