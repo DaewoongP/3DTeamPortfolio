@@ -26,8 +26,9 @@ BEGIN(Client)
 class CProtego_Effect final : public CGameObject
 {
 	typedef CMagicBall::MAGICBALLDESC MAGICBALLDESC;
+
 private:
-	enum STATE { ENTER, STAY, EXIT, STATE_END};
+	enum STATE { ENTER, STAY, EXIT, STATE_END };
 
 private:
 	CProtego_Effect(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -42,7 +43,7 @@ public:
 	virtual HRESULT Render() override;
 
 public:
-	void Play_ForceField();
+	void Play_ForceField(_float fScale = 0.5f);
 	void Exit_ForceField();
 	void Hit_Effect(_float3 vPosition);
 
@@ -50,6 +51,7 @@ private:
 	void Tick_Enter(const _float& fTimeDelta);
 	void Tick_Stay(const _float& fTimeDelta);
 	void Tick_Exit(const _float& fTimeDelta);
+
 private:
 	void Late_Tick_Enter(const _float& fTimeDelta);
 	void Late_Tick_Stay(const _float& fTimeDelta);
@@ -78,15 +80,15 @@ private:
 	STATE m_eCurState = { ENTER };
 	_float4 m_vColor1 = { 1.f, 1.f, 1.f, 1.f };
 	_float4 m_vColor2 = { 1.f, 1.f, 1.f, 1.f };
-	_float m_fScale = { 0.1f };
-	_float m_fTimeAcc = { 0.f };
-	_float m_fHitTimeAcc = { 0.f };
+	_float m_fScale = { 2.f };
 	_float m_fEnterDuration = { 0.1f };
 	_float m_fExitDuration = { 0.1f };
 	_float m_fRimPower = { 4.7f };
-	_float3 m_vCollisionPoint = { _float3() };
 	_bool m_isHitEffect = { false };
 
+	_float m_fTimeAcc = { 0.f };
+	_float m_fHitTimeAcc = { 0.f };
+	_float3 m_vCollisionPoint = { _float3() };
 private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();

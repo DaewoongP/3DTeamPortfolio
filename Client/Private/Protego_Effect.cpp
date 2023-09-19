@@ -9,6 +9,17 @@ CProtego_Effect::CProtego_Effect(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
 CProtego_Effect::CProtego_Effect(const CProtego_Effect& rhs)
 	: CGameObject(rhs)
 	, m_iLevel(rhs.m_iLevel)
+	, m_eCurState(rhs.m_eCurState)
+	, m_vColor1(rhs.m_vColor1)
+	, m_vColor2(rhs.m_vColor2)
+	, m_fScale(rhs.m_fScale)
+	, m_fTimeAcc(rhs.m_fTimeAcc)
+	, m_fHitTimeAcc(rhs.m_fHitTimeAcc)
+	, m_fEnterDuration(rhs.m_fEnterDuration)
+	, m_fExitDuration(rhs.m_fExitDuration)
+	, m_fRimPower(rhs.m_fRimPower)
+	, m_isHitEffect(rhs.m_isHitEffect)
+	, m_vCollisionPoint(rhs.m_vCollisionPoint)
 {
 }
 
@@ -92,14 +103,15 @@ HRESULT CProtego_Effect::Initialize(void* pArg)
 	}
 
 	m_pTransform->Set_Position(_float3(0.f, 0.f, 0.f));
-	m_pTransform->Set_Scale(_float3(m_fScale, m_fScale, m_fScale));
 	m_pFlameBlastFlipbook->Get_Transform()->Set_Scale(_float3(3.f, 3.f, 1.f));
+
 	return S_OK;
 }
 
 void CProtego_Effect::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+	
 	//Tick_Imgui();
 	m_fHitTimeAcc += fTimeDelta;
 	if (m_fHitTimeAcc >= 0.5f)
@@ -179,7 +191,6 @@ HRESULT CProtego_Effect::Render()
 #ifdef _DEBUG
 	// Tick_ImGui();
 #endif // _DEBUG
-
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
@@ -188,11 +199,11 @@ HRESULT CProtego_Effect::Render()
 	return S_OK;
 }
 
-void CProtego_Effect::Play_ForceField()
+void CProtego_Effect::Play_ForceField(_float fScale)
 {
+	m_fScale = fScale;
 	m_eCurState = ENTER;
 	m_fTimeAcc = 0.f;
-	m_pTransform->Set_Scale(_float3(0.f, 0.f, 0.f));
 }
 
 void CProtego_Effect::Exit_ForceField()
@@ -220,11 +231,10 @@ void CProtego_Effect::Hit_Effect(_float3 vPosition)
 void CProtego_Effect::Tick_Enter(const _float& fTimeDelta)
 {
 	_float fRatio = m_fTimeAcc / m_fEnterDuration;
-	m_fScale = fRatio * 3.f;
 	m_vColor1.w = fRatio;
 	m_vColor2.w = fRatio;
 
-	m_pTransform->Set_Scale(_float3(m_fScale, m_fScale, m_fScale));
+	m_pTransform->Set_Scale(_float3(m_fScale * fRatio, m_fScale * fRatio, m_fScale * fRatio));
 
 	if (fRatio > 1.f)
 		m_eCurState = STAY;

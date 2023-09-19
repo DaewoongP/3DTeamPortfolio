@@ -44,9 +44,6 @@ void CProtego::Tick(_float fTimeDelta)
 	m_pTransform->Set_Position(m_pTarget->Get_Position());
 	m_pProtegoEffect->Get_Transform()->Set_Position(m_pTarget->Get_Position());
 	__super::Tick(fTimeDelta);
-
-	m_pTransform->Set_Position(m_pTarget->Get_Position());
-	m_pProtegoEffect->Get_Transform()->Set_Position(m_pTarget->Get_Position());
 }
 
 void CProtego::Late_Tick(_float fTimeDelta)
