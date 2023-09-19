@@ -252,6 +252,11 @@ HRESULT CMain1_Loader::Loading_For_MainGame()
 			throw TEXT("Prototype_GameObject_Default_MagicTraill_Winga_Effect");
 
 		/* For.Prototype_GameObject_Wingardium_Effect*/
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_MagicTraill_BasicCast_Effect"),
+			CDefault_MagicTraill_Effect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/BasicCast/BasicCast.trail"), LEVEL_MAINGAME))))
+			throw TEXT("Prototype_GameObject_MagicTraill_BasicCast_Effect");
+
+		/* For.Prototype_GameObject_Wingardium_Effect*/
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_MagicTraill_Levioso_Effect"),
 			CDefault_MagicTraill_Effect::Create(m_pDevice, m_pContext, TEXT(""), LEVEL_MAINGAME))))
 			throw TEXT("Prototype_GameObject_Default_MagicTraill_Levioso_Effect");
