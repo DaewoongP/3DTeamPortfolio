@@ -173,22 +173,7 @@ struct ENGINE_DLL SHAPE_MODULE : public MODULE
 
 	_bool isChase = { false };
 };
-struct ENGINE_DLL RENDERER_MODULE : public MODULE
-{
-	RENDERER_MODULE() : MODULE() { __super::isActivate = true; };
 
-	HRESULT Save(const _tchar* _pDirectoyPath);
-	HRESULT Load(const _tchar* _pDirectoyPath);
-	void Restart();
-
-	wstring wstrShaderTag = { TEXT("Shader_VtxRectColInstance") };
-	wstring wstrMaterialPath = { TEXT("../../Resources/Effects/Textures/Default_Particle.png") };
-	_bool isDeleteY = { false };
-	_bool isUseGradientTexture = { false };
-	wstring wstrGraientTexture = { TEXT("../../Resources/Effects/Textures/Gradients/Default_Gradient.png") };
-	string strPass = { "Default" };
-	_bool isBloom = { false };
-};
 struct ENGINE_DLL ROTATION_OVER_LIFETIME_MODULE : public MODULE
 {
 	ROTATION_OVER_LIFETIME_MODULE() : MODULE() { };
@@ -265,4 +250,22 @@ struct ENGINE_DLL TEXTURE_SHEET_ANIMATION : public MODULE
 
 	_float fTimeAcc = { 0.f };
 };
+
+struct ENGINE_DLL RENDERER_MODULE : public MODULE
+{
+	RENDERER_MODULE() : MODULE() { __super::isActivate = true; };
+
+	HRESULT Save(const _tchar* _pDirectoyPath);
+	HRESULT Load(const _tchar* _pDirectoyPath);
+	void Restart();
+
+	wstring wstrShaderTag = { TEXT("Shader_VtxRectColInstance") };
+	wstring wstrMaterialPath = { TEXT("../../Resources/Effects/Textures/Default_Particle.png") };
+	_bool isDeleteY = { false };
+	_bool isUseGradientTexture = { false };
+	wstring wstrGraientTexture = { TEXT("../../Resources/Effects/Textures/Gradients/Default_Gradient.png") };
+	string strPass = { "Default" };
+	_bool isBloom = { false };
+};
+
 END

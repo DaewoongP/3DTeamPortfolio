@@ -522,9 +522,6 @@
     <ClInclude Include="..\Public\MoveLoopState.h">
       <Filter>02. GameObject\01. Player\01. StateMachine\01. MoveState\02. LoopState</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Protego_Effect.h">
-      <Filter>02. GameObject\03. Effect\Protego_Effect</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Wingardium_Effect.h">
       <Filter>02. GameObject\03. Effect\Wingardium_Effect</Filter>
     </ClInclude>
@@ -829,9 +826,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\MoveLoopState.cpp">
       <Filter>02. GameObject\01. Player\01. StateMachine\01. MoveState\02. LoopState</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Protego_Effect.cpp">
-      <Filter>02. GameObject\03. Effect\Protego_Effect</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Wingardium_Effect.cpp">
       <Filter>02. GameObject\03. Effect\Wingardium_Effect</Filter>

@@ -20,6 +20,7 @@ vector g_vCamPos;
 float g_fCamFar;
 float g_fTime;
 float g_fRimPower;
+float g_fScale;
 float g_fHitTimeAcc = 0.f;
 float3 g_vSphereWorldPos;
 float3 g_vCollisionPoint = float3(0.f, 0.f, 0.f);
@@ -109,7 +110,7 @@ PS_OUT PS_MAIN(PS_IN In)
 		// 사각형의 방향과 크기 정의
 		float3 vRelativePos = In.vWorldPos - g_vCollisionPoint; // 충돌 지점으로부터의 상대적인 위치
 		float3 vDirection = normalize(g_vCollisionPoint - g_vSphereWorldPos);
-		float2 fSize = float2(1.f, 1.f);
+		float2 fSize = float2(g_fScale * 0.2f, g_fScale * 0.2f);
 		float3 vUp = float3(0.f, 1.f, 0.f);
 		float3 vDirectionX, vDirectionZ;
 		vDirectionX = normalize(cross(vUp, vDirection));  // 정규화 추가
@@ -126,7 +127,7 @@ PS_OUT PS_MAIN(PS_IN In)
 
 			Out.vColor = g_Collision_Texture.Sample(LinearSampler, In.vFlipbookUV);
 			Out.vColor.a = Out.vColor.r;
-			Out.vColor.rgb += float3(1.f, 1.f, 1.f);
+			Out.vColor.rgb = g_vColor1.rgb;
 			return Out;
 		}
 	}

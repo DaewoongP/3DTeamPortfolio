@@ -12,7 +12,6 @@
 #include "Trail.h"
 #include "MeshEffect.h"
 #include "Default_Magic_Effect.h"
-#include "Protego_Effect.h"
 #include "Default_MagicTraill_Effect.h"
 #include "Wingardium_Effect.h"
 #include "Confringo_Explosive_Effect.h"
@@ -276,7 +275,7 @@ HRESULT CMain1_Loader::Loading_For_MainGame()
 
 		/* For.Prototype_GameObject_Protego */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Protego"),
-			CProtego::Create(m_pDevice, m_pContext))))
+			CProtego::Create(m_pDevice, m_pContext, LEVEL_MAINGAME))))
 			throw TEXT("Prototype_GameObject_Protego");
 
 		/* For.Prototype_GameObject_Revelio */
@@ -305,11 +304,6 @@ HRESULT CMain1_Loader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MagicSlot"),
 			CMagicSlot::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_MagicSlot");
-		
-		/* For.Prototype_GameObject_Protego_Effect*/
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Protego_Effect"),
-			CProtego_Effect::Create(m_pDevice, m_pContext, LEVEL_MAINGAME))))
-			throw TEXT("Prototype_GameObject_Protego_Effect");
 	}
 	catch (const _tchar* pErrorTag)
 	{
