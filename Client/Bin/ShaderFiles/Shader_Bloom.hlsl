@@ -168,23 +168,27 @@ PS_OUT PS_MAIN_BLOOM(PS_IN_POSTEX In)
 
     
     vector vBloom = g_OriTexture.Sample(BloomSampler, In.vTexUV); //vBloom은 하얀부분을뽑아낼 텍스쳐
-    vector vSpecular = g_SpecularTexture.Sample(BloomSampler, In.vTexUV);
-    vBloom = vBloom * vSpecular;
-    
-    
-    float BrightColor = 0.f;
-    float Brigtness = dot(vBloom.rgb, float3(0.2126f, 0.7152f, 0.0722f));
+    //vector vSpecular = g_SpecularTexture.Sample(BloomSampler, In.vTexUV);
+    //vBloom = vBloom * vSpecular;
+    //
+    //
+    //float BrightColor = 0.f;
+    ////float Brigtness = dot(vBloom.rgb, float3(0.2126f, 0.7152f, 0.0722f));
+    //float Brigtness = dot(vBloom.rgb, float3(1.f, 1.f, 1.f));
    
-    if (Brigtness > 0.99f)
-    {
-        BrightColor = vector(vBloom.rgb, 1.f);
-        Out.vColor = BrightColor;
-    }
-    else
+    //if (Brigtness > 0.99f)
+    //{
+    //    BrightColor = vector(vBloom.rgb, 1.f);
+    //    Out.vColor = BrightColor;
+    //}
+    //else
+    //    discard;
+    //
+    
+    Out.vColor = vBloom;
+    if(Out.vColor.a <= 0.1f)
         discard;
-    
-    
-    
+
     return Out;
 }
 
