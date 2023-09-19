@@ -204,7 +204,45 @@ void CVIBuffer_Rect_Trail::Tick()
 
 	VTXPOSTEX* pData = static_cast<VTXPOSTEX*>(MappedSubResource.pData);
 
+	//자르기
+	_int iHeadIndex, iTailIndex,iBodyCount = { 0 };
+	iHeadIndex = 0;
+	iTailIndex = 0;
+
+	//꼬리 찾을
+	for (_uint i = m_iNumVertices - 1; i >= 2; i-=2)
+	{
+		if (!XMVector3Equal(_float3(pData[i].vPosition), _float3(pData[i - 2].vPosition)))
+		{
+			iTailIndex = i;
+			break;
+		}
+		pData[i].vTexCoord = { 1.f ,0.f };
+		pData[i-1].vTexCoord = { 1.f ,1.f };
+	}
 	
+	//머릴 찾을
+	for (_uint i = 1; i < m_iNumVertices -2 ; i+=2)
+	{
+		if (!XMVector3Equal(_float3(pData[i].vPosition), _float3(pData[i + 2].vPosition)))
+		{
+			iHeadIndex = i;
+			break;
+		}
+		pData[i].vTexCoord = { 0.f ,0.f };
+		pData[i-1].vTexCoord = { 0.f ,1.f };
+	}
+
+	iBodyCount = iTailIndex - iHeadIndex;
+	if (iBodyCount != 0)
+	{
+		for (_int i = iTailIndex; i >= iHeadIndex-1; i-=2)
+		{
+			float t = static_cast<float>(i - iHeadIndex) / static_cast<float>(iBodyCount);
+			pData[i].vTexCoord = { t ,0.f };
+			pData[i-1].vTexCoord = { t ,1.f };
+		}
+	}
 
 	for (_uint i = m_iNumVertices - 1; i >= 2 ; --i)
 	{
