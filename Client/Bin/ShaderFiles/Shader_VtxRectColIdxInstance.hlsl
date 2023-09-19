@@ -118,12 +118,12 @@ PS_OUT	PS_MAIN(PS_IN In)
 	else if (3 == g_iClipChannel)
 		Out.vColor.a = vClipTexture.a;
 	
-	Out.vColor *= (In.vColor);
-    // r는 색상 피킹용도
-	Out.vColor *= (vGradientColor);
-    // g는 세기용도
-	Out.vColor *= 1 / (1 - vNormalColor.g);
-	// b는 모르
+	//Out.vColor *= (In.vColor);
+ //   // r는 색상 피킹용도
+	//Out.vColor *= (vGradientColor);
+ //   // g는 세기용도
+	//Out.vColor *= 1 / (1 - vNormalColor.g);
+	//// b는 모르
 	
 	if (Out.vColor.a < g_fClipThreshold)
 		discard;
