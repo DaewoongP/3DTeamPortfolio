@@ -118,15 +118,6 @@
     <Filter Include="02. GameObject\02. Enemy\03. Golem\99. Weapons">
       <UniqueIdentifier>{fde3512d-c9d7-4f98-baac-ed8650da6e1a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\99. Debug\Cloth">
-      <UniqueIdentifier>{3f5e0d18-9b63-46c6-b1ee-b4c3d0a446b1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\99. Debug\Dummy">
-      <UniqueIdentifier>{e99ebc87-1600-4442-9e2b-694280aad8c2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\99. Debug\Stair">
-      <UniqueIdentifier>{9ea51d67-5f15-45a3-ae58-2fbf7f6f12bd}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\99. Debug\PhysxRender">
       <UniqueIdentifier>{ffbc88f7-a780-4e66-87b7-7baf68d24ed3}</UniqueIdentifier>
     </Filter>
@@ -450,15 +441,6 @@
     <ClInclude Include="..\Public\Action.h">
       <Filter>03. Behaviors\00. Action</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Test_Cloth.h">
-      <Filter>02. GameObject\99. Debug\Cloth</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Dummy.h">
-      <Filter>02. GameObject\99. Debug\Dummy</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Test_Stair.h">
-      <Filter>02. GameObject\99. Debug\Stair</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\PhysXRender.h">
       <Filter>02. GameObject\99. Debug\PhysxRender</Filter>
     </ClInclude>
@@ -766,15 +748,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\Action.cpp">
       <Filter>03. Behaviors\00. Action</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Test_Cloth.cpp">
-      <Filter>02. GameObject\99. Debug\Cloth</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Dummy.cpp">
-      <Filter>02. GameObject\99. Debug\Dummy</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Test_Stair.cpp">
-      <Filter>02. GameObject\99. Debug\Stair</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\PhysXRender.cpp">
       <Filter>02. GameObject\99. Debug\PhysxRender</Filter>

@@ -30,7 +30,7 @@ HRESULT CTest_Player::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-	m_pTransform->Set_Speed(15.f);
+	m_pTransform->Set_Speed(30.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
 	m_pTransform->Set_RigidBody(m_pRigidBody);
 	//m_pTransform->Set_CharacterController(m_pCharacterController);
@@ -178,11 +178,6 @@ HRESULT CTest_Player::Add_Components()
 		return E_FAIL;
 	}
 
-	PxRigidBody* Rigid = m_pRigidBody->Get_RigidBodyActor();
-	Rigid->setAngularDamping(10.f);
-	Rigid->setMaxLinearVelocity(1000.f);
-	Rigid->setMass(10.f);
-	
 	/* Com_CustomModel */
 	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_CustomModel_Player"),
 		TEXT("Com_CustomModel"), reinterpret_cast<CComponent**>(&m_pModelCom))))
@@ -283,7 +278,7 @@ void CTest_Player::Key_Input(_float fTimeDelta)
 
 	if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
 	{
-		m_pRigidBody->Add_Force(m_pTransform->Get_Up() * 30.f, PxForceMode::eIMPULSE);
+		m_pRigidBody->Add_Force(m_pTransform->Get_Up() * 50.f, PxForceMode::eIMPULSE);
 	}
 
 	ENDINSTANCE;

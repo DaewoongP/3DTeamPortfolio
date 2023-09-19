@@ -64,6 +64,9 @@ HRESULT CMagicBall::Initialize(void* pArg)
 	m_CollisionDesc.fDamage = m_MagicBallDesc.fDamage;
 
 	Set_CollisionData(&m_CollisionDesc);
+
+	m_pTransform->Set_RigidBody(m_pRigidBody);
+
 	return S_OK;
 }
 

@@ -8,7 +8,7 @@ class CShader;
 class CRenderer;
 class CCollider;
 class CCustomModel;
-
+class CCharacterController;
 END
 
 BEGIN(Client)
@@ -41,6 +41,7 @@ private:
 	CRenderer*		m_pRenderer = { nullptr };
 	CCustomModel*	m_pCustomModel = { nullptr };
 	CRigidBody*		m_pRigidBody = { nullptr };
+	CCharacterController*	m_pCharacterController = { nullptr };
 
 private:
 	CPlayer_Camera* m_pPlayer_Camera = { nullptr };

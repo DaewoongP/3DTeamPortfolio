@@ -75,20 +75,20 @@ HRESULT CBasicCast::Initialize(void* pArg)
 	_float3 vDir = m_vTargetPosition - m_MagicBallDesc.vStartPosition;
 	_float3 vDirNormalize = XMVector3Normalize(vDir);
 
-	// 그 vector를 플레이어 기준 반대방향으로 1만큼 이동한 뒤 랜덤값을 잡아줌
-	while (m_vLerpWeight[0].Length() < vDir.Length())
-	{
-		m_vLerpWeight[0] = m_MagicBallDesc.vStartPosition - vDirNormalize;
-		m_vLerpWeight[0] += _float3(Random_Generator(-20.f, 20.f), Random_Generator(-20.f, 20.f), Random_Generator(-20.f, 20.f));
-	}
-	
+	//// 그 vector를 플레이어 기준 반대방향으로 1만큼 이동한 뒤 랜덤값을 잡아줌
+	//while (m_vLerpWeight[0].Length() < vDir.Length())
+	//{
+	//	m_vLerpWeight[0] = m_MagicBallDesc.vStartPosition - vDirNormalize;
+	//	m_vLerpWeight[0] += _float3(Random_Generator(-20.f, 20.f), Random_Generator(-20.f, 20.f), Random_Generator(-20.f, 20.f));
+	//}
+	//
 
-	// 그 vector를 타겟 기준 정방향으로 1만큼 이동한 뒤 랜덤값을 잡아줌
-	while (m_vLerpWeight[1].Length() < vDir.Length())
-	{
-		m_vLerpWeight[1] = m_vTargetPosition + vDirNormalize;
-		m_vLerpWeight[1] += _float3(Random_Generator(-20.f, 20.f), Random_Generator(-20.f, 20.f), Random_Generator(-20.f, 20.f));
-	}
+	//// 그 vector를 타겟 기준 정방향으로 1만큼 이동한 뒤 랜덤값을 잡아줌
+	//while (m_vLerpWeight[1].Length() < vDir.Length())
+	//{
+	//	m_vLerpWeight[1] = m_vTargetPosition + vDirNormalize;
+	//	m_vLerpWeight[1] += _float3(Random_Generator(-20.f, 20.f), Random_Generator(-20.f, 20.f), Random_Generator(-20.f, 20.f));
+	//}
 
 	return S_OK;
 }
