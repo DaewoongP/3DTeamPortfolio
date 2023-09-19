@@ -57,7 +57,7 @@ HRESULT CLevel_MainGame::Initialize()
 		return E_FAIL;
 	}
 
-	if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/MapData6.ddd"))))
+	if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/new3.ddd"))))
 	{
 		MSG_BOX("Failed Load Map Object");
 
@@ -66,13 +66,6 @@ HRESULT CLevel_MainGame::Initialize()
 	
 #ifdef _DEBUG
 	if (FAILED(Ready_Layer_Debug(TEXT("Layer_Debug"))))
-	{
-		MSG_BOX("Failed Ready_Layer_Debug");
-
-		return E_FAIL;
-	}
-
-	if (FAILED(Ready_Layer_SceneTest(TEXT("Layer_SceneTest"))))
 	{
 		MSG_BOX("Failed Ready_Layer_Debug");
 
@@ -579,25 +572,6 @@ HRESULT CLevel_MainGame::Ready_Layer_Debug(const _tchar* pLayerTag)
 	return S_OK;
 }
 
-HRESULT CLevel_MainGame::Ready_Layer_SceneTest(const _tchar* pLayerTag)
-{
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
-
-	/* Add Scene : Main */
-	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Info"), pLayerTag)))
-	{
-		MSG_BOX("Failed Add Scene : (Scene_Main)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
-
-
-
-	Safe_Release(pGameInstance);
-
-	return S_OK;
-}
 #endif // _DEBUG
 
 CLevel_MainGame* CLevel_MainGame::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

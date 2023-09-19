@@ -228,11 +228,12 @@ PS_OUT PS_MAIN(PS_IN In)
         if (fOccNorm <= vDepth + 0.0003f)
             ++iColor; 
     }
-      float4 vAmbient = abs((iColor /29.f) - 1);
+    float4 vAmbient = abs((iColor /29.f) - 1);
    
     Out.vColor = 1.f - vAmbient;
    
     // Out.vColor = vector(1.f, 1.f, 1.f, 1.f);
+    
     return Out;
 }
 
@@ -353,8 +354,8 @@ PS_OUT PS_MAIN_SHADOW(PS_IN In)
         Out.vColor = float4(fLit, fLit, fLit, fLit);
     }
     
-        return Out;
-    }
+    return Out;
+}
 
 technique11 DefaultTechnique
 {

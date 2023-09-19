@@ -79,8 +79,7 @@ HRESULT CMain1_Loader::Initialize(LEVELID eNextLevel)
 
 HRESULT CMain1_Loader::Loading()
 {
-	if (FAILED(CoInitializeEx(nullptr, 0)))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(CoInitializeEx(nullptr, COINIT_MULTITHREADED), E_FAIL);
 
 	// 크리티컬 섹션 시작해서 다른 쓰레드가 이 안에 있는 동안 값을 변경하지 못하게 처리.
 	EnterCriticalSection(&m_Critical_Section);
@@ -132,7 +131,7 @@ HRESULT CMain1_Loader::Loading_For_MainGame()
 			CTerrain::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Terrain");
 
-		if (FAILED(Loading_Map_Object(TEXT("../../Resources/GameData/MapData/MapData6.ddd"))))
+		if (FAILED(Loading_Map_Object(TEXT("../../Resources/GameData/MapData/new3.ddd"))))
 			throw TEXT("Map Object");
 
 		/* For.Prototype_Component_CharacterController*/

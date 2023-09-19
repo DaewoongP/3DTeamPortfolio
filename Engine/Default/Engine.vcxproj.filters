@@ -391,6 +391,9 @@
     <Filter Include="01. Utility\03. Components\13. CharacterController\ReportCallBack">
       <UniqueIdentifier>{dbe9bb42-5e47-44e6-9232-17e3132c7246}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\03. Components\02. Renderer\MotionBlur">
+      <UniqueIdentifier>{50bb8723-6c2a-45e6-a66c-2b1024726999}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -780,6 +783,9 @@
     <ClInclude Include="..\public\PXEventCallBack.h">
       <Filter>01. Utility\11. Physics\EventCallBack</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\MotionBlur.h">
+      <Filter>01. Utility\03. Components\02. Renderer\MotionBlur</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -1136,6 +1142,10 @@
     <ClCompile Include="..\private\PXEventCallBack.cpp">
       <Filter>01. Utility\11. Physics\EventCallBack</Filter>
     </ClCompile>
+    <ClCompile Include="..\Public\PxDeviceAllocator.h" />
+    <ClCompile Include="..\private\MotionBlur.cpp">
+      <Filter>01. Utility\03. Components\02. Renderer\MotionBlur</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Navigation.hlsl">
@@ -1191,6 +1201,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Glow.hlsl">
       <Filter>01. Utility\03. Components\02. Renderer\Glow</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_MotionBlur.hlsl">
+      <Filter>01. Utility\03. Components\02. Renderer\MotionBlur</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

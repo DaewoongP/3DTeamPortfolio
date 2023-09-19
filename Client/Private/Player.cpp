@@ -135,6 +135,7 @@ HRESULT CPlayer::Render()
 			m_pCustomModel->Bind_BoneMatrices(m_pShader, "g_BoneMatrices", iPartsIndex, i);
 
 			m_pCustomModel->Bind_Material(m_pShader, "g_DiffuseTexture", iPartsIndex, i, DIFFUSE);
+			m_pCustomModel->Bind_Material(m_pShader, "g_NormalTexture", iPartsIndex, i, NORMALS);
 
 			m_pShader->Begin("AnimMeshNonCull");
 
@@ -511,9 +512,15 @@ void CPlayer::MagicTestTextOutput()
 
 void CPlayer::Tick_ImGui()
 {
-	//ImGui::Begin("Player");
+	ImGui::Begin("Player");
 	
-	//ImGui::End();
+	
+	if (ImGui::Checkbox("Gravity", &m_isGravity))
+	{
+		m_pRigidBody->Set_Gravity(m_isGravity);
+	}
+
+	ImGui::End();
 }
 
 #endif // _DEBUG

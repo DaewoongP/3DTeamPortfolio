@@ -72,8 +72,7 @@ HRESULT CMain0_Loader::Initialize(LEVELID eNextLevel)
 
 HRESULT CMain0_Loader::Loading()
 {
-	if (FAILED(CoInitializeEx(nullptr, 0)))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(CoInitializeEx(nullptr, COINIT_MULTITHREADED), E_FAIL);
 
 	EnterCriticalSection(&m_Critical_Section);
 

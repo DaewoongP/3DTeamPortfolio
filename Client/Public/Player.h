@@ -78,6 +78,7 @@ public:
 #ifdef _DEBUG
 private:
 	void Tick_ImGui();
+	_bool	m_isGravity;
 #endif // _DEBUG
 
 private:

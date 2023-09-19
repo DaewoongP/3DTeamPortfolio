@@ -310,6 +310,9 @@
     <Filter Include="02. GameObject\07. NPC\Weapons">
       <UniqueIdentifier>{469a34a9-d8a0-49f7-8077-04a0e0c53e16}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\99. Debug\SeamLess">
+      <UniqueIdentifier>{846ab9f8-ca54-4c10-bd34-f738c2ec2301}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -546,9 +549,6 @@
     <ClInclude Include="..\Public\Sequence_Groggy.h">
       <Filter>03. Behaviors\02. Sequences</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Seamless_Loader.h">
-      <Filter>01. Levels\99. Loading</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\MagicSlot.h">
       <Filter>04. Magic\MagicSlot</Filter>
     </ClInclude>
@@ -647,6 +647,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\Weapon_Fig_Wand.h">
       <Filter>02. GameObject\07. NPC\Weapons</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Seamless_Loader.h">
+      <Filter>02. GameObject\99. Debug\SeamLess</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -854,9 +857,6 @@
     <ClCompile Include="..\Private\Sequence_Groggy.cpp">
       <Filter>03. Behaviors\02. Sequences</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Seamless_Loader.cpp">
-      <Filter>01. Levels\99. Loading</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\MagicSlot.cpp">
       <Filter>04. Magic\MagicSlot</Filter>
     </ClCompile>
@@ -955,6 +955,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Weapon_Fig_Wand.cpp">
       <Filter>02. GameObject\07. NPC\Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Seamless_Loader.cpp">
+      <Filter>02. GameObject\99. Debug\SeamLess</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
