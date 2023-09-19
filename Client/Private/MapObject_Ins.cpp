@@ -31,10 +31,6 @@ HRESULT CMapObject_Ins::Initialize(void* pArg)
 		return E_FAIL;
 
 	MAPOJBECTINSDESC* pMapObjectInsDesc = reinterpret_cast<MAPOJBECTINSDESC*>(pArg);
-	//m_pTransform->Set_WorldMatrix((*pMapObjectInsDesc).WorldMatrix);
-
-	//// 해제를 위해 넣어둠
-	//m_pMatrix = pMapObjectInsDesc->pMatTransform;
 
 	if (nullptr == pMapObjectInsDesc)
 	{
@@ -160,11 +156,6 @@ CGameObject* CMapObject_Ins::Clone(void* pArg)
 
 void CMapObject_Ins::Free()
 {
-	/*if (nullptr != m_pMatrix)
-	{
-		Safe_Delete_Array(m_pMatrix);
-	}	*/
-
 	__super::Free();
 	Safe_Release(m_pRigidBody);
 	Safe_Release(m_pTransform);

@@ -46,9 +46,6 @@ private:
 	CModel_Instance* m_pModel = { nullptr };
 
 private:
-	_float4x4*		m_pMatrix; // 동적 할당 해제 용도
-
-private:
 	HRESULT Add_Components(MAPOJBECTINSDESC* pMapObjectInsDesc);
 	HRESULT SetUp_ShaderResources();
 

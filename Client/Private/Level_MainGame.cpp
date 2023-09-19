@@ -358,14 +358,13 @@ HRESULT CLevel_MainGame::Load_MapObject_Ins(const _tchar* pObjectFilePath)
 			return E_FAIL;
 		}
 
-		// 저장되어있던 인스턴스 개수만큼 동적할당
 		if (0 != MapObjectInsDesc.iInstanceCnt)
 		{
-			MapObjectInsDesc.pMatTransform = New _float4x4[MapObjectInsDesc.iInstanceCnt];
+			_float4x4 Matrix; // 동적 할당 안하고 지역 변수로 날림
 
 			for (size_t i = 0; i < MapObjectInsDesc.iInstanceCnt; i++)
 			{
-				if (!ReadFile(hFile, &MapObjectInsDesc.pMatTransform[i], sizeof(_float4x4), &dwByte, nullptr))
+				if (!ReadFile(hFile, &Matrix, sizeof(_float4x4), &dwByte, nullptr))
 				{
 					MSG_BOX("Failed to Read MapObject_Ins pMatTransform");
 					return E_FAIL;
