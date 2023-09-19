@@ -63,12 +63,12 @@ HRESULT CLevel_MainGame::Initialize()
 		return E_FAIL;
 	}
 
-	if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/MapData6.ddd"))))
+	/*if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/MapData6.ddd"))))
 	{
 		MSG_BOX("Failed Load Map Object");
 
 		return E_FAIL;
-	}
+	}*/
 	
 #ifdef _DEBUG
 	if (FAILED(Ready_Layer_Debug(TEXT("Layer_Debug"))))

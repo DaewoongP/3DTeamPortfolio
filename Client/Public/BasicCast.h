@@ -26,8 +26,11 @@ public:
 	virtual void OnCollisionExit(COLLEVENTDESC CollisionEventDesc) override;
 
 private:
+	// 트레일을 만드는 친구.
 	CDefault_MagicTraill_Effect* m_pTrailEffect = { nullptr };
+	// 터지는 이펙트 친구.
 	CDefault_Magic_Effect*		 m_pEffect = { nullptr };
+	// 터지는 이펙트의 위치.
 	CTransform* m_pEffectTrans = { nullptr };
 
 private:

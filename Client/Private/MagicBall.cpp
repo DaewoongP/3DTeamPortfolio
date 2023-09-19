@@ -55,7 +55,7 @@ HRESULT CMagicBall::Initialize(void* pArg)
 	m_MagicBallDesc.fLifeTime = m_MagicBallDesc.fInitLifeTime;
 	m_pTransform->Set_Position(m_MagicBallDesc.vStartPosition);
 
-	m_MagicBallDesc.vStartPosition = _float4x4((*m_pWeaponMatrix) * m_WeaponOffsetMatrix).Translation();
+	m_MagicBallDesc.vStartPosition = _float4x4(m_WeaponOffsetMatrix * (*m_pWeaponMatrix)).Translation();
 	
 	m_CollisionDesc.eMagicGroup = m_MagicBallDesc.eMagicGroup;
 	m_CollisionDesc.eMagicType = m_MagicBallDesc.eMagicType;
