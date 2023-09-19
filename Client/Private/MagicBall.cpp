@@ -55,7 +55,7 @@ HRESULT CMagicBall::Initialize(void* pArg)
 	m_MagicBallDesc.fLifeTime = m_MagicBallDesc.fInitLifeTime;
 	m_pTransform->Set_Position(m_MagicBallDesc.vStartPosition);
 
-	m_MagicBallDesc.vStartPosition = _float4x4((*m_pWeaponMatrix) * m_WeaponOffsetMatrix).Translation();
+	m_MagicBallDesc.vStartPosition = _float4x4(m_WeaponOffsetMatrix * (*m_pWeaponMatrix)).Translation();
 	
 	m_CollisionDesc.eMagicGroup = m_MagicBallDesc.eMagicGroup;
 	m_CollisionDesc.eMagicType = m_MagicBallDesc.eMagicType;
@@ -64,6 +64,9 @@ HRESULT CMagicBall::Initialize(void* pArg)
 	m_CollisionDesc.fDamage = m_MagicBallDesc.fDamage;
 
 	Set_CollisionData(&m_CollisionDesc);
+
+	m_pTransform->Set_RigidBody(m_pRigidBody);
+
 	return S_OK;
 }
 
@@ -81,12 +84,16 @@ void CMagicBall::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 #ifdef _DEBUG
-	m_pRenderer->Add_DebugGroup(m_pRigidBody);
+	if (m_pRigidBody != nullptr)
+	{
+		m_pRenderer->Add_DebugGroup(m_pRigidBody);
+	}
 #endif // _DEBUG
 }
 
 void CMagicBall::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
+	_int i = 0;
 	//cout << "Player Enter" << endl;
 }
 
@@ -102,33 +109,6 @@ void CMagicBall::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 
 HRESULT CMagicBall::Add_Components()
 {
-	CRigidBody::RIGIDBODYDESC RigidBodyDesc;
-	RigidBodyDesc.isStatic = false;
-	RigidBodyDesc.isTrigger = true;
-	RigidBodyDesc.fStaticFriction = 0.f;
-	RigidBodyDesc.fDynamicFriction = 0.f;
-	RigidBodyDesc.fRestitution = 0.f;
-	PxSphereGeometry SphereGeometry = PxSphereGeometry(1.f);
-	RigidBodyDesc.pGeometry = &SphereGeometry;
-	RigidBodyDesc.eConstraintFlag = CRigidBody::AllRot;
-	RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 0.f, 1.f);
-	RigidBodyDesc.vInitPosition = _float3(0.f, 0.f, 0.f);
-	RigidBodyDesc.isGravity = false;
-	RigidBodyDesc.pOwnerObject = this;
-
-	/* Com_RigidBody */
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
-		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
-	{
-		MSG_BOX("Failed CTest_Player Add_Component : (Com_RigidBody)");
-		return E_FAIL;
-	}
-	// 리지드바디 액터 설정
-	PxRigidBody* Rigid = m_pRigidBody->Get_RigidBodyActor();
-	Rigid->setMaxLinearVelocity(1000.f);
-	Rigid->setMass(10.f);
-	Rigid->setAngularDamping(0.7f);
-
 	/* Com_Renderer */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"),
 		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
@@ -137,6 +117,40 @@ HRESULT CMagicBall::Add_Components()
 		return E_FAIL;
 	}
 
+	if (FAILED(Add_RigidBody()))
+	{
+		MSG_BOX("Failed CMagicBall SettingRigidBody : (Com_RigidBody)");
+		return E_FAIL;
+	}
+
+	return S_OK;
+}
+
+HRESULT CMagicBall::Add_RigidBody()
+{
+	CRigidBody::RIGIDBODYDESC RigidBodyDesc;
+	RigidBodyDesc.isStatic = false;
+	RigidBodyDesc.isTrigger = true;
+	RigidBodyDesc.fStaticFriction = 0.f;
+	RigidBodyDesc.fDynamicFriction = 0.f;
+	RigidBodyDesc.fRestitution = 0.f;
+	PxSphereGeometry SphereGeometry = PxSphereGeometry(0.2f);
+	RigidBodyDesc.pGeometry = &SphereGeometry;
+	RigidBodyDesc.eConstraintFlag = CRigidBody::AllRot;
+	RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 0.f, 1.f);
+	RigidBodyDesc.vInitPosition = _float3(0.f, 0.f, 0.f);
+	RigidBodyDesc.isGravity = false;
+	RigidBodyDesc.pOwnerObject = this;
+	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Magic_Ball");
+
+	/* Com_RigidBody */
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
+		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
+	{
+		MSG_BOX("Failed CTest_Player Add_Component : (Com_RigidBody)");
+		return E_FAIL;
+	}
+	
 	return S_OK;
 }
 

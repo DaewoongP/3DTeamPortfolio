@@ -156,7 +156,7 @@ struct ENGINE_DLL SHAPE_MODULE : public MODULE
 	_float fBaseRadius = { 0.5f };
 	_float fConeLength = { 1.f }; // Volume에서 Length로 활용됨..
 	///////////////////////////
-
+	
 	wstring wstrClipTexturePath = { TEXT("../../Resources/Effects/Textures/Default_Particle.png") }; // 아래 인자의 채널에 사용할 텍스처
 	string strClipChannel = { "Red" }; // Red, Greend, Blue, Alpha // 클립 채널(클립 : 알파테스트로 discard)
 	_float fClipThreshold = { 0.f }; // [0, 1], 이것보다 작은 값들은 알파테스트 실패함.

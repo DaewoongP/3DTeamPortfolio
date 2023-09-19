@@ -338,7 +338,7 @@ HRESULT CGolem_Combat::Add_Components()
 		RigidBodyDesc.eConstraintFlag = CRigidBody::RotX | CRigidBody::RotY | CRigidBody::RotZ;
 		RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 0.f, 1.f);
 		RigidBodyDesc.pOwnerObject = this;
-		lstrcpy(RigidBodyDesc.szCollisionTag, TEXT("Enemy_Body"));
+		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Body");
 
 		/* For.Com_RigidBody */
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
@@ -350,7 +350,7 @@ HRESULT CGolem_Combat::Add_Components()
 		RigidBodyDesc.isTrigger = true;
 		PxSphereGeometry pSphereGeomatry = PxSphereGeometry(15.f);
 		RigidBodyDesc.pGeometry = &pSphereGeomatry;
-		lstrcpy(RigidBodyDesc.szCollisionTag, TEXT("Enemy_Range"));
+		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Range");
 
 		m_pRigidBody->Create_Collider(&RigidBodyDesc);
 

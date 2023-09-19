@@ -30,8 +30,8 @@ void CImageFileDialog::ChangeTexture(const _char* pFilePathName)
 {
     _int iTemp1;
     _int iTemp2;
-    Safe_Release(m_pTexture);
-    LoadTextureFromFile(pFilePathName, &m_pTexture, &iTemp1, &iTemp2);
+    //Safe_Release(m_pTexture);
+    //LoadTextureFromFile(pFilePathName, &m_pTexture, &iTemp1, &iTemp2);
 }
 
 void CImageFileDialog::Tick()

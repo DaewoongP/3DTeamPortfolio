@@ -63,12 +63,12 @@ HRESULT CLevel_MainGame::Initialize()
 		return E_FAIL;
 	}
 
-	if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/MapData6.ddd"))))
+	/*if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/MapData6.ddd"))))
 	{
 		MSG_BOX("Failed Load Map Object");
 
 		return E_FAIL;
-	}
+	}*/
 	
 #ifdef _DEBUG
 	if (FAILED(Ready_Layer_Debug(TEXT("Layer_Debug"))))
@@ -599,24 +599,12 @@ HRESULT CLevel_MainGame::Ready_Layer_Debug(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Dummy"), pLayerTag, TEXT("GameObject_Dummy"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Dummy)");
-		return E_FAIL;
-	}
-
 	// 키지마세요 터집니다
-	/*if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_PhysxRenderer"), pLayerTag, TEXT("GameObject_PhysxRenderer"))))
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_PhysxRenderer"), pLayerTag, TEXT("GameObject_PhysxRenderer"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_PhysxRenderer)");
 		return E_FAIL;
-	}*/
-
-	/*if (FAILED(Load_Monsters(TEXT("../../Resources/GameData/MonsterData/Test.mon"))))
-	{
-		MSG_BOX("Failed Load_Monsters");
-		return E_FAIL;
-	}*/
+	}
 
 	Safe_Release(pGameInstance);
 

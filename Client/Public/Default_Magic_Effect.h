@@ -5,7 +5,6 @@
 #include "Default_Magic_Effect.h"
 
 BEGIN(Engine)
-class CTrail;
 class CParticleSystem;
 END
 
@@ -43,7 +42,6 @@ public:
 	void Enable_TraceParticle(_bool _isEnable);
 
 private: /* For. Component */
-	CTrail* m_pTrail = { nullptr };
 	CParticleSystem* m_pParticleSystem = { nullptr };
 	CParticleSystem* m_pTraceParticle = { nullptr };
 	CParticleSystem* m_pConeEmitParticle = { nullptr };
@@ -51,7 +49,6 @@ private: /* For. Component */
 private:
 	CTransform* m_pParticleTransform = { nullptr };
 	CTransform* m_pTraceParticleTransform = { nullptr };
-	CTransform* m_pTrailTransform = { nullptr };
 	CTransform* m_pConeEmitTransform = { nullptr };
 
 private:

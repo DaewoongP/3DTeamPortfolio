@@ -7,8 +7,6 @@
 #include "Modules.h"
 #include <effects.h>
 
-
-
 CDummy_Effect::CDummy_Effect(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
