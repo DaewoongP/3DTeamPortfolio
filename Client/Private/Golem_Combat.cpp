@@ -45,7 +45,7 @@ HRESULT CGolem_Combat::Initialize(void* pArg)
 		m_pTransform->Set_WorldMatrix(*pWorldMatric);
 	}
 	else
-		m_pTransform->Set_Position(_float3(5.f, 2.f, 5.f));
+		m_pTransform->Set_Position(_float3(15.f, 2.f, 15.f));
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
@@ -110,7 +110,7 @@ void CGolem_Combat::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		wstrCollisionTag = CollisionEventDesc.pOtherCollisionTag;
 
 	/* Collision Magic */
-	if (wstring::npos != wstrObjectTag.find(TEXT("MagicBall")))
+	/*if (wstring::npos != wstrObjectTag.find(TEXT("MagicBall")))
 	{
 		cout << "Hit Magic" << endl;
 		CMagicBall::COLLSIONREQUESTDESC* pCollisionMagicBallDesc = static_cast<CMagicBall::COLLSIONREQUESTDESC*>(CollisionEventDesc.pArg);
@@ -123,7 +123,7 @@ void CGolem_Combat::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			m_CurrentTickSpells.emplace(eSpell, Action);
 
 		m_iCurrentSpell |= eSpell;
-	}
+	}*/
 
 	/* Collision Player Fig */
 	if (wstring::npos != wstrCollisionTag.find(TEXT("Body")))

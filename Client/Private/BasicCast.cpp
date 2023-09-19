@@ -56,6 +56,7 @@ HRESULT CBasicCast::Initialize(void* pArg)
 		if (FAILED(pGameInstance->Get_WorldMouseRay(m_pContext, g_hWnd, &vMouseOrigin, &vMouseDirection)))
 		{
 			Safe_Release(pGameInstance);
+			ENDINSTANCE;
 			return false;
 		}
 		ENDINSTANCE;

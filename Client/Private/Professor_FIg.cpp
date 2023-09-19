@@ -359,7 +359,7 @@ HRESULT CProfessor_Fig::Add_Components()
 		RigidBodyDesc.vOffsetRotation = XMQuaternionRotationRollPitchYaw(0.f, 0.f, XMConvertToRadians(90.f));
 		PxCapsuleGeometry pCapsuleGeomatry = PxCapsuleGeometry(0.25f, 0.6f);
 		RigidBodyDesc.pGeometry = &pCapsuleGeomatry;
-		lstrcpy(RigidBodyDesc.szCollisionTag, TEXT("Body"));
+		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Body");
 
 		/* Com_RigidBody */
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
@@ -370,7 +370,7 @@ HRESULT CProfessor_Fig::Add_Components()
 		RigidBodyDesc.isTrigger = true;
 		PxSphereGeometry pSphereGeomatry = PxSphereGeometry(10.f);
 		RigidBodyDesc.pGeometry = &pSphereGeomatry;
-		lstrcpy(RigidBodyDesc.szCollisionTag, TEXT("Range"));
+		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Range");
 
 		m_pRigidBody->Create_Collider(&RigidBodyDesc);
 
@@ -896,8 +896,8 @@ void CProfessor_Fig::Attack_Light()
 	if (nullptr == m_pTarget)
 		return;
 
-	m_pMagicSlot->Action_Magic_Basic(0, m_pTarget->Get_Transform(), 
-		m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), 
+	m_pMagicSlot->Action_Magic_Basic(0, m_pTarget->Get_Transform(),
+		m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(),
 		m_pWeapon->Get_Wand_Point_OffsetMatrix());
 }
 
@@ -926,7 +926,7 @@ void CProfessor_Fig::Cast_Protego()
 	if (nullptr == m_pTarget)
 		return;
 
-	m_pMagicSlot->Action_Magic_Basic(1, m_pTarget->Get_Transform(),
+	m_pMagicSlot->Action_Magic_Basic(1, m_pTransform,
 		m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(),
 		m_pWeapon->Get_Wand_Point_OffsetMatrix());
 }
