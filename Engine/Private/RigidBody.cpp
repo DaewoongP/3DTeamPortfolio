@@ -128,7 +128,7 @@ void CRigidBody::Set_Kinematic(_bool isKinematic)
 	// static 객체는 kinematic 옵션 없음.
 	if (true == m_isStatic)
 		return;
-
+	
 	m_isKinematic = isKinematic;
 	reinterpret_cast<PxRigidDynamic*>(m_pActor)->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, isKinematic);
 }
@@ -238,7 +238,7 @@ HRESULT CRigidBody::Initialize(void* pArg)
 		return E_FAIL;
 	
 	m_pScene->addActor(*m_pActor);
-
+		
 	return S_OK;
 }
 
@@ -311,18 +311,21 @@ HRESULT CRigidBody::Create_Collider(RIGIDBODYDESC* pRigidBodyDesc)
 	else
 		FilterData.word0 = 0x1111; // 이데이터는 일단 고정.
 	pShape->setSimulationFilterData(FilterData);
-	CString_Manager* pString_Manager = CString_Manager::GetInstance();
-	Safe_AddRef(pString_Manager);
-	pShape->userData = pString_Manager->Make_WChar(pRigidBodyDesc->szCollisionTag);
-	Safe_Release(pString_Manager);
 
 	PxTransform OffsetTransform(PhysXConverter::ToPxVec3(pRigidBodyDesc->vOffsetPosition), PhysXConverter::ToPxQuat(pRigidBodyDesc->vOffsetRotation));
 	pShape->setLocalPose(OffsetTransform);
+
+
+	CString_Manager* pString_Manager = CString_Manager::GetInstance();
+	Safe_AddRef(pString_Manager);
+	pShape->setName(pString_Manager->Make_Char(pRigidBodyDesc->szCollisionTag));
+	Safe_Release(pString_Manager);
 	
 	// 액터와 씬 처리.
 	// AttachShape로 콜라이더 여러개 바인딩 가능.
 	// 씬도 일단 한개만 처리하게 해둬서 신경 안써도 될듯.
 	m_pActor->attachShape(*pShape);
+	m_Shapes.emplace(pShape->getName(), pShape);
 
 	if (false == pRigidBodyDesc->isGravity)
 	{

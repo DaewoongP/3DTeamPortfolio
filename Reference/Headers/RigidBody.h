@@ -34,7 +34,7 @@ public:
 
 	typedef struct tagRigidBodyDesc
 	{
-		_tchar		szCollisionTag[MAX_PATH] = TEXT("");
+		_char		szCollisionTag[MAX_PATH] = "";
 		class CGameObject* pOwnerObject = { nullptr };
 		_bool		isStatic = { false };
 		_bool		isTrigger = { false };
@@ -68,7 +68,7 @@ public:
 	void Set_Kinematic(_bool _isKinematic);
 	void Set_Density(_float _fDensity) const;
 	void Set_AngularDamping(_float _fAngualrDamping) const;
-
+	
 #ifdef _DEBUG
 	void Set_DebugColor(_uint iColliderIndex, _float4 _vColor) { m_Colors[iColliderIndex] = _vColor; }
 #endif // _DEBUG
@@ -102,6 +102,7 @@ private:
 	PxMaterial*				m_pMaterial = { nullptr };
 	PxGeometry*				m_pGeometry = { nullptr };
 	PxScene*				m_pScene = { nullptr };
+	unordered_map<const _char*, PxShape*>	m_Shapes;
 
 private:
 	_bool					m_isStatic = { false };
