@@ -304,6 +304,9 @@
     <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_Cursor">
       <UniqueIdentifier>{a63a6343-ce45-4b8e-a9d3-a44f48775b53}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\05. MagicCastingState">
+      <UniqueIdentifier>{ddb0a962-a92a-4544-9b8a-d6aa212b6f34}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\07. NPC\Weapons">
       <UniqueIdentifier>{469a34a9-d8a0-49f7-8077-04a0e0c53e16}</UniqueIdentifier>
     </Filter>
@@ -639,6 +642,9 @@
     <ClInclude Include="..\Public\UI_Group_Cursor.h">
       <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Cursor</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\MagicCastingState.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\05. MagicCastingState</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\Weapon_Fig_Wand.h">
       <Filter>02. GameObject\07. NPC\Weapons</Filter>
     </ClInclude>
@@ -943,6 +949,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_Group_Cursor.cpp">
       <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Cursor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MagicCastingState.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\05. MagicCastingState</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Weapon_Fig_Wand.cpp">
       <Filter>02. GameObject\07. NPC\Weapons</Filter>

@@ -3,6 +3,7 @@
 
 #include "GameInstance.h"
 #include "Client_Defines.h"
+#include "StateContext.h"
 
 CMoveTurnState::CMoveTurnState(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
 	:CStateMachine(_pDevice, _pContext)
@@ -55,6 +56,8 @@ void CMoveTurnState::OnStateTick()
 	Go_Roll();
 
 	Go_Jump();
+
+	Go_Magic_Cast();
 
 }
 
@@ -143,6 +146,25 @@ void CMoveTurnState::Over_135()
 		//180도를 실행
 		m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Idle_Turn_Lft_135_anm"));
 	}
+}
+
+void CMoveTurnState::Go_Magic_Cast()
+{
+	BEGININSTANCE;
+
+	if (pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN))
+	{
+		if (CStateContext::ACTION_NONE == *m_pIActionSwitch)
+		{
+			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_LF_Idle2Cmbt_RF_Wand_Equip_anm"));
+		}
+		//일단 전투로 보냄
+		//포착 기능 생기면 그때 캐주얼이랑 분기
+		*m_pIActionSwitch = CStateContext::ACTION_CMBT;
+		Set_StateMachine(TEXT("Magic_Cast"));
+	}
+
+	ENDINSTANCE;
 }
 
 CMoveTurnState* CMoveTurnState::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

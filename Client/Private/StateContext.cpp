@@ -113,6 +113,8 @@ HRESULT CStateContext::Add_StateMachine(const _tchar* _pTag, CStateMachine* _pSt
 	_pState->Set_PlayerTransform(m_pPlayerTransform);
 	_pState->Set_IsSprint(&m_isSprint);
 	_pState->Set_ActionSwitch(&m_iActionSwitch);
+	
+	_pState->Bind_Notify();
 
 	m_pStateMachines.emplace(_pTag, _pState);
 
@@ -206,6 +208,20 @@ HRESULT CStateContext::Ready_StateMachine()
 
 		return E_FAIL;
 	};
+
+	if (FAILED(Add_StateMachine(TEXT("Magic_Cast"),
+		static_cast<CStateMachine*>
+		(pGameInstance->Clone_Component(LEVEL_MAINGAME,
+			TEXT("Prototype_Component_State_Magic_Casting"))))))
+	{
+		ENDINSTANCE;
+
+		MSG_BOX("Failed Ready_StateMachine");
+
+		return E_FAIL;
+	};
+
+	
 
 	Set_StateMachine(TEXT("Idle"));
 
