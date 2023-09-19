@@ -440,7 +440,7 @@ HRESULT CMain1_Loader::Loading_Map_Object_Ins(const _tchar* pMapObjectInsPath)
 				}
 			}
 
-			//m_vecFreeMatrix.push_back(LoadDesc.pMatTransform);
+			m_vecFreeMatrix.push_back(LoadDesc.pMatTransform);
 		}
 
 		if (!ReadFile(hFile, &LoadDesc.WorldMatrix, sizeof(_float4x4), &dwByte, nullptr))
@@ -525,6 +525,12 @@ void CMain1_Loader::Free()
 
 	DeleteCriticalSection(&m_Critical_Section);
 	CloseHandle(m_hThread);
+
+	// MapObject_Ins를 불러오는 동안 생긴 동적할당 해제 처리
+	for (auto& iter : m_vecFreeMatrix)
+	{
+		Safe_Delete_Array(iter);
+	}
 
 	Safe_Release(m_pGameInstance);
 	Safe_Release(m_pDevice);

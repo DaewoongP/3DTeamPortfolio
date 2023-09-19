@@ -52,6 +52,9 @@ private:
 	_bool					m_isFinished = { false };
 
 private:
+	vector<_float4x4*>		m_vecFreeMatrix;
+
+private:
 	HRESULT Loading_For_Logo();
 	HRESULT Loading_For_MainGame();
 	

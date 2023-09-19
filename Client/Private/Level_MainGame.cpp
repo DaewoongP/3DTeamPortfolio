@@ -2,6 +2,7 @@
 #include "GameInstance.h"
 #include "Seamless_Loader.h"
 #include "MapObject.h"
+#include "MapObject_Ins.h"
 #include "UI_Group_Enemy_HP.h"
 
 CLevel_MainGame::CLevel_MainGame(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -66,6 +67,13 @@ HRESULT CLevel_MainGame::Initialize()
 	if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/MapData6.ddd"))))
 	{
 		MSG_BOX("Failed Load Map Object");
+
+		return E_FAIL;
+	}
+
+	if (FAILED(Load_MapObject_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins6.ddd"))))
+	{
+		MSG_BOX("Failed Load Map Object_Ins");
 
 		return E_FAIL;
 	}
@@ -318,6 +326,24 @@ HRESULT CLevel_MainGame::Load_MapObject(const _tchar* pObjectFilePath)
 
 		++iObjectNum; ENDINSTANCE;
 	}
+
+	CloseHandle(hFile);
+
+	return S_OK;
+}
+
+HRESULT CLevel_MainGame::Load_MapObject_Ins(const _tchar* pObjectFilePath)
+{
+	std::lock_guard<std::mutex> lock(mtx);
+
+	HANDLE hFile = CreateFile(pObjectFilePath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+	{
+		MSG_BOX("Failed to Create MapObject_Ins File for Load MapObject_Ins");
+		return E_FAIL;
+	}
+
 
 	CloseHandle(hFile);
 
