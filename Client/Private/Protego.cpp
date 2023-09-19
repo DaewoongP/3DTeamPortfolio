@@ -36,12 +36,13 @@ HRESULT CProtego::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
-
 	return S_OK;
 }
 
 void CProtego::Tick(_float fTimeDelta)
 {
+	m_pTransform->Set_Position(m_pTarget->Get_Position());
+	m_pProtegoEffect->Get_Transform()->Set_Position(m_pTarget->Get_Position());
 	__super::Tick(fTimeDelta);
 
 	m_pTransform->Set_Position(m_pTarget->Get_Position());
@@ -55,20 +56,18 @@ void CProtego::Late_Tick(_float fTimeDelta)
 
 void CProtego::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
+	//출돌된게 있습니다.
 	__super::OnCollisionEnter(CollisionEventDesc);
-	//cout << "Player Enter" << endl;
 }
 
 void CProtego::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)
 {
 	__super::OnCollisionStay(CollisionEventDesc);
-	//cout << "stay" << endl;
 }
 
 void CProtego::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 {
 	__super::OnCollisionExit(CollisionEventDesc);
-	//cout << "Exit" << endl;
 }
 
 HRESULT CProtego::Add_Components()
@@ -91,6 +90,34 @@ HRESULT CProtego::Add_Components()
 
 HRESULT CProtego::Add_Effect()
 {
+	return S_OK;
+}
+
+HRESULT CProtego::Add_RigidBody()
+{
+	CRigidBody::RIGIDBODYDESC RigidBodyDesc;
+	RigidBodyDesc.isStatic = false;
+	RigidBodyDesc.isTrigger = true;
+	RigidBodyDesc.fStaticFriction = 0.f;
+	RigidBodyDesc.fDynamicFriction = 0.f;
+	RigidBodyDesc.fRestitution = 0.f;
+	PxSphereGeometry SphereGeometry = PxSphereGeometry(2.3f);
+	RigidBodyDesc.pGeometry = &SphereGeometry;
+	RigidBodyDesc.eConstraintFlag = CRigidBody::AllRot;
+	RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 0.f, 1.f);
+	RigidBodyDesc.vInitPosition = _float3(0.f, 0.f, 0.f);
+	RigidBodyDesc.isGravity = false;
+	RigidBodyDesc.pOwnerObject = this;
+	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Magic_Ball");
+
+	/* Com_RigidBody */
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
+		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
+	{
+		MSG_BOX("Failed CTest_Player Add_Component : (Com_RigidBody)");
+		return E_FAIL;
+	}
+
 	return S_OK;
 }
 

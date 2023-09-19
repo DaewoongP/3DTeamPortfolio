@@ -62,6 +62,7 @@ private:
 private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
+	HRESULT Add_Magic();
 
 private:
 	void Key_Input(_float fTimeDelta);

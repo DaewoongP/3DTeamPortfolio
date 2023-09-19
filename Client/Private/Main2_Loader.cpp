@@ -143,7 +143,7 @@ HRESULT CMain2_Loader::Loading_For_MainGame()
 			throw TEXT("Prototype_Component_Model_Weopon_Pensive");
 
 		/* For.Prototype_Component_Model_Weopon_Player_Wand */
-		PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f)) * XMMatrixScaling(5, 5, 5);
+		PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f));
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Weopon_Player_Wand"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/gaechul/gaechul.dat"), PivotMatrix))))
 			throw TEXT("Prototype_Component_Model_Weopon_Player_Wand");

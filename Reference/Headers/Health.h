@@ -19,7 +19,6 @@ public:
 	typedef struct tagHealthDesc
 	{
 		_int iMaxHP;
-		_int iHP;
 	}HEALTHDESC;
 
 private:

@@ -67,24 +67,14 @@ HRESULT CLevioso::Initialize(void* pArg)
 		//이거 근데 몹의 발위치로 지금 설정돼있을듯함.
 		m_vTargetPosition = m_pTarget->Get_Position();
 	}
-
-	m_fTimeScalePerDistance = m_MagicBallDesc.fDistance / _float3(m_vTargetPosition - m_MagicBallDesc.vStartPosition).Length();
+	
+	m_pEffect->Ready_Spin(m_vTargetPosition, m_MagicBallDesc.vStartPosition, m_MagicBallDesc.fLifeTime, m_MagicBallDesc.fDistance);
 	return S_OK;
 }
 
 void CLevioso::Tick(_float fTimeDelta)
 {
-	if (m_fLerpAcc < 1)
-	{
-		// 이동시켜주는 로직임.
-		// 여기서 뻉뻉이 돌려주자.
-		// lerpacc를 감소된 거리만큼 가속해주자.
-		m_fLerpAcc += fTimeDelta / m_MagicBallDesc.fInitLifeTime * m_fTimeScalePerDistance;
-		if (m_fLerpAcc > 1)
-			m_fLerpAcc = 1;
-		m_pEffect->Spin_Move(m_MagicBallDesc.vStartPosition, m_vTargetPosition, m_fLerpAcc);
-	}
-	else 
+	if (m_pEffect->Spin_Move(fTimeDelta))
 	{
 		//이동이 끝났고 윙가가 발동 안했다면?
 		if (!m_bWingardiumActionTrigger)
@@ -93,10 +83,10 @@ void CLevioso::Tick(_float fTimeDelta)
 			m_pWingardiumEffect->SetActionTrigger(m_bWingardiumActionTrigger);
 			dynamic_cast<CGameObject*>(m_pTarget->Get_Owner())->On_Maigc_Throw_Data(&m_CollisionDesc);
 		}
-		else 
+		else
 		{
 			m_MagicTimer -= fTimeDelta;
-			m_pWingardiumEffect->TrailAction(m_pTarget->Get_Position(),fTimeDelta);
+			m_pWingardiumEffect->TrailAction(m_pTarget->Get_Position(), fTimeDelta);
 		}
 	}
 	__super::Tick(fTimeDelta);

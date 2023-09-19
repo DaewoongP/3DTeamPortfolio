@@ -15,7 +15,8 @@ CAction::CAction(const CAction& rhs)
 
 void CAction::Set_Options(const wstring& _wstrAnimationTag, CModel* _pModel,
 	_bool _isCheckBehavior, const _float& _fCoolTime,
-	_bool _isOneTimeAction, _bool _isLerp)
+	_bool _isOneTimeAction, _bool _isLerp,
+	CModel::ANIMTYPE eType)
 {
 	if (nullptr == _pModel)
 	{
@@ -32,6 +33,7 @@ void CAction::Set_Options(const wstring& _wstrAnimationTag, CModel* _pModel,
 	m_isCheckBehavior = _isCheckBehavior;
 
 	m_pModel->Get_Animation(m_wstrAnimationTag)->Set_LerpAnim(_isLerp);
+	m_eAnimationType = eType;
 }
 
 HRESULT CAction::Initialize(void* pArg)
@@ -77,7 +79,7 @@ HRESULT CAction::Tick(const _float& fTimeDelta)
 	if (true == m_isFirst)
 	{
 		m_isFirst = false;
-		m_pModel->Change_Animation(m_wstrAnimationTag);
+		m_pModel->Change_Animation(m_wstrAnimationTag, m_eAnimationType);
 	}
 
 	/* 행동 체크 */
@@ -129,9 +131,12 @@ void CAction::Reset_Behavior(HRESULT result)
 	}
 	*pIsChangeAnimation = false;
 
-	BEGININSTANCE;
-	m_fPreWorldTimeAcc = pGameInstance->Get_World_TimeAcc();
-	ENDINSTANCE;
+	if (BEHAVIOR_SUCCESS == result)
+	{
+		BEGININSTANCE;
+		m_fPreWorldTimeAcc = pGameInstance->Get_World_TimeAcc();
+		ENDINSTANCE;
+	}
 }
 
 CAction* CAction::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

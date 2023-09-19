@@ -40,6 +40,13 @@ HRESULT CPlayer::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
+	if (FAILED(Add_Magic()))
+	{
+		MSG_BOX("Failed Ready Player Magic");
+
+		return E_FAIL;
+	}
+
 	if (FAILED(Ready_MeshParts()))
 	{
 		MSG_BOX("Failed Ready Player Mesh Parts");
@@ -254,6 +261,43 @@ HRESULT CPlayer::SetUp_ShaderResources()
 	return S_OK;
 }
 
+HRESULT CPlayer::Add_Magic()
+{
+	CMagic::MAGICDESC magicInitDesc;
+	// 레비오소
+	{
+		magicInitDesc.eBuffType = CMagic::BUFF_UNGRAVITY;
+		magicInitDesc.eMagicGroup = CMagic::MG_CONTROL;
+		magicInitDesc.eMagicType = CMagic::MT_YELLOW;
+		magicInitDesc.eMagicTag = LEVIOSO;
+		magicInitDesc.fCoolTime = 1.f;
+		magicInitDesc.fDamage = 0.f;
+		magicInitDesc.fCastDistance = 1000;
+		magicInitDesc.fBallDistance = 30;
+		magicInitDesc.fLifeTime = 1.2f;
+		m_pMagicSlot->Add_Magics(magicInitDesc);
+	}
+
+	// 콘프링고
+	{
+		magicInitDesc.eBuffType = CMagic::BUFF_FIRE;
+		magicInitDesc.eMagicGroup = CMagic::MG_DAMAGE;
+		magicInitDesc.eMagicType = CMagic::MT_RED;
+		magicInitDesc.eMagicTag = CONFRINGO;
+		magicInitDesc.fCoolTime = 1.f;
+		magicInitDesc.fDamage = 50.f;
+		magicInitDesc.fCastDistance = 1000;
+		magicInitDesc.fBallDistance = 30;
+		magicInitDesc.fLifeTime = 0.8f;
+		m_pMagicSlot->Add_Magics(magicInitDesc);
+	}
+	
+	m_pMagicSlot->Add_Magic_To_Skill_Slot(0, CONFRINGO);
+	m_pMagicSlot->Add_Magic_To_Skill_Slot(1, LEVIOSO);
+	
+	return S_OK;
+}
+
 void CPlayer::Key_Input(_float fTimeDelta)
 {
 	BEGININSTANCE;
@@ -299,6 +343,44 @@ void CPlayer::Key_Input(_float fTimeDelta)
 			throw TEXT("pTestTarget is nullptr");
 
 		m_pMagicSlot->Action_Magic_Basic(0, pTestTarget->Get_Transform(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_Q, CInput_Device::KEY_DOWN))
+	{
+		//포르테고는 타켓이 생성 객체임
+		m_pMagicSlot->Action_Magic_Basic(1, m_pTransform, m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_1, CInput_Device::KEY_DOWN))
+	{
+		CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
+		if (nullptr == pTestTarget)
+			throw TEXT("pTestTarget is nullptr");
+		m_pMagicSlot->Action_Magic_Skill(0, pTestTarget->Get_Transform(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_2, CInput_Device::KEY_DOWN))
+	{
+		CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
+		if (nullptr == pTestTarget)
+			throw TEXT("pTestTarget is nullptr");
+		m_pMagicSlot->Action_Magic_Skill(1, pTestTarget->Get_Transform(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_3, CInput_Device::KEY_DOWN))
+	{
+		CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
+		if (nullptr == pTestTarget)
+			throw TEXT("pTestTarget is nullptr");
+		m_pMagicSlot->Action_Magic_Skill(2, pTestTarget->Get_Transform(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_4, CInput_Device::KEY_DOWN))
+	{
+		CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
+		if (nullptr == pTestTarget)
+			throw TEXT("pTestTarget is nullptr");
+		m_pMagicSlot->Action_Magic_Skill(3, pTestTarget->Get_Transform(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
 	}
 
 	ENDINSTANCE;

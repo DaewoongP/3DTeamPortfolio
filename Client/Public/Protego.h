@@ -32,6 +32,7 @@ public:
 private:
 	HRESULT Add_Components();
 	virtual HRESULT Add_Effect();
+	virtual HRESULT Add_RigidBody() override;
 
 private:
 	CProtego_Effect* m_pProtegoEffect = { nullptr };

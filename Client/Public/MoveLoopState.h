@@ -38,6 +38,9 @@ public:
 
     void Switch_Joging_Sprint();
 
+    void Go_Magic_Cast();
+
+
 public:
     static CMoveLoopState* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
     virtual CComposite* Clone(void* pArg) override;

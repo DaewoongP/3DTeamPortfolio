@@ -34,11 +34,7 @@ private:
 
 private:
 	_float3				m_vTargetPosition = {};
-	_float3				m_vLerpWeight[2] = {};
-
-	_float				m_fLerpAcc = { 0.f };
 	_bool				m_isExplosiveTrigger = { false };
-	_float				m_fTimeScalePerDistance = { 1.0f };
 
 private:
 	HRESULT Add_Components();

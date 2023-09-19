@@ -13,7 +13,7 @@ class CRootBehavior;
 END
 
 BEGIN(Client)
-class CMagic;
+class CMagicSlot;
 class CWeapon_Fig_Wand;
 END
 
@@ -37,10 +37,10 @@ public:
 	virtual HRESULT Render_Depth() override;
 
 private:
-	CMagic* m_pMagic = { nullptr };
 	CModel* m_pModelCom = { nullptr };
 	CShader* m_pShaderCom = { nullptr };
 	CRenderer* m_pRenderer = { nullptr };
+	CMagicSlot* m_pMagicSlot = { nullptr };
 	CRigidBody* m_pRigidBody = { nullptr };
 	CRootBehavior* m_pRootBehavior = { nullptr };
 
@@ -57,6 +57,8 @@ private:
 
 private:
 	HRESULT Make_AI();
+	HRESULT Make_Magics();
+	HRESULT Make_Notifies();
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
 
@@ -76,6 +78,7 @@ private: /* 행동 묶음들 */
 	HRESULT Make_Combat(_Inout_ CSelector* pSelector); // 전투
 
 	HRESULT Make_Attack_Combo1(_Inout_ CSequence* pSequence);
+	HRESULT Make_Attack_Degree(_Inout_ CSequence* pSequence);
 
 private: /* Notify Functions */
 	void Change_Animation() {
@@ -83,6 +86,8 @@ private: /* Notify Functions */
 	}
 	void Attack_Light();
 	void Attack_Heavy();
+	void Cast_Levioso();
+	void Cast_Protego();
 
 public:
 	static CProfessor_Fig* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

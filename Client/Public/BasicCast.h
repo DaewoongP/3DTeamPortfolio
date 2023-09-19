@@ -2,7 +2,11 @@
 #include "GameObject.h"
 #include "Client_Defines.h"
 #include "MagicBall.h"
+
+//기본 파티클
 #include "Default_Magic_Effect.h"
+//스플라인 트레일 파티클
+#include "Default_MagicTraill_Effect.h"
 
 BEGIN(Client)
 class CBasicCast final : public CMagicBall
@@ -22,17 +26,17 @@ public:
 	virtual void OnCollisionExit(COLLEVENTDESC CollisionEventDesc) override;
 
 private:
-	CDefault_Magic_Effect* m_pEffect = { nullptr };
+	// 트레일을 만드는 친구.
+	CDefault_MagicTraill_Effect* m_pTrailEffect = { nullptr };
+	// 터지는 이펙트 친구.
+	CDefault_Magic_Effect*		 m_pEffect = { nullptr };
+	// 터지는 이펙트의 위치.
 	CTransform* m_pEffectTrans = { nullptr };
 
 private:
 	_float3				m_vTargetPosition = {};
-	_float3				m_vLerpWeight[2] = {};
-	_float				m_fLerpAcc = { 0.f };
 	_bool				m_bDeadTrigger = { false };
-
 	_float				m_fSettingTimer = { 0.2f };
-	_float				m_fTimerForSearch = { 0.f };
 private:
 	HRESULT Add_Components();
 	virtual HRESULT Add_Effect();
