@@ -9,13 +9,47 @@ CBasicCast::CBasicCast(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 CBasicCast::CBasicCast(const CBasicCast& rhs)
 	: CMagicBall(rhs)
+	, m_iLevel(rhs.m_iLevel)
 {
 }
 
-HRESULT CBasicCast::Initialize_Prototype()
+HRESULT CBasicCast::Initialize_Prototype(_uint iLevel)
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
+	m_iLevel = iLevel;
+	BEGININSTANCE;
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Default_Spell_Particle")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Default_Spell_Particle")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Default_Spell"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Default_SphereTrace_Particle")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Default_SphereTrace_Particle")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Default_SphereTrace"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_DefaultConeEmit_Particle")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_DefaultConeEmit_Particle")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/DefaultConeEmit"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+	ENDINSTANCE;
+
 
 	return S_OK;
 }
@@ -83,10 +117,14 @@ void CBasicCast::Tick(_float fTimeDelta)
 	if (m_bDeadTrigger)
 	{
 		//파티클 끝나면 없애줘.
-		if (!m_pEffect->IsEnable())
+		if (!m_pHitEffect->IsEnable())
 			Set_ObjEvent(OBJ_DEAD);
 		return;
 	}
+
+	_float3 vWandPosition = _float4x4(m_WeaponOffsetMatrix * (*m_pWeaponMatrix)).Translation();
+	m_pWandEffect->Get_Transform()->Set_Position(vWandPosition);
+	m_pWandEffect->Enable();
 	
 	if (m_pTrailEffect->Spline_Move(fTimeDelta))
 	{
@@ -94,10 +132,10 @@ void CBasicCast::Tick(_float fTimeDelta)
 		if (!m_bDeadTrigger)
 		{
 			m_bDeadTrigger = true;
-			m_pEffect->Play_Particle(m_pTrailEffect->Get_Transform()->Get_Position());
+			m_pHitEffect->Get_Transform()->Set_Position(m_pTrailEffect->Get_Transform()->Get_Position());
+			m_pHitEffect->Play();
 		}
 	}
-	//m_pEffect->Play_ConeEmit()
 	m_pTransform->Set_Position(m_pTrailEffect->Get_Transform()->Get_Position());
 }
 
@@ -113,7 +151,8 @@ void CBasicCast::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 	{
 		//사망처리 드갑니다.
 		m_bDeadTrigger = true;
-		m_pEffect->Play_Particle(m_pTrailEffect->Get_Transform()->Get_Position());
+		m_pHitEffect->Get_Transform()->Set_Position(m_pTrailEffect->Get_Transform()->Get_Position());
+		m_pHitEffect->Play();
 	}
 	__super::OnCollisionEnter(CollisionEventDesc);
 }
@@ -130,6 +169,18 @@ void CBasicCast::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 
 HRESULT CBasicCast::Add_Components()
 {
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Default_Spell_Particle")
+		, TEXT("Com_Default_Spell_Particle"), (CComponent**)&m_pHitEffect)))
+		return E_FAIL;
+
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Default_SphereTrace_Particle")
+		, TEXT("Com_Default_SphereTrace_Particle"), (CComponent**)&m_pWandEffect)))
+		return E_FAIL;
+
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_DefaultConeEmit_Particle")
+		, TEXT("Com_DefaultConeEmit_Particle"), (CComponent**)&m_pFinalAttackEffect)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -143,24 +194,14 @@ HRESULT CBasicCast::Add_Effect()
 		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_MagicTraill_BasicCast_Effect)");
 		return E_FAIL;
 	}
-
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Default_Magic_Effect"), 
-		TEXT("Com_DefaultEffect"), reinterpret_cast<CComponent**>(&m_pEffect))))
-	{
-		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Default_Magic_Effect)");
-		return E_FAIL;
-	}
-
-	m_pEffectTrans = m_pEffect->Get_Transform();
-	Safe_AddRef(m_pEffectTrans);
 	return S_OK;
 }
 
-CBasicCast* CBasicCast::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CBasicCast* CBasicCast::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,_uint iLevel)
 {
 	CBasicCast* pInstance = New CBasicCast(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize_Prototype()))
+	if (FAILED(pInstance->Initialize_Prototype(iLevel)))
 	{
 		MSG_BOX("Failed to Created CBasicCast");
 		Safe_Release(pInstance);
@@ -187,8 +228,9 @@ void CBasicCast::Free()
 	if (true == m_isCloned)
 	{
 		Safe_Release(m_pTrailEffect);
-		Safe_Release(m_pEffectTrans);
-		Safe_Release(m_pEffect);
+		Safe_Release(m_pHitEffect);
+		Safe_Release(m_pWandEffect);
+		Safe_Release(m_pFinalAttackEffect);
 	}
 	
 }

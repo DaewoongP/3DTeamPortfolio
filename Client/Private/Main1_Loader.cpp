@@ -274,7 +274,7 @@ HRESULT CMain1_Loader::Loading_For_MainGame()
 #pragma region Magic
 		/* For.Prototype_GameObject_BasicCast */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_BasicCast"),
-			CBasicCast::Create(m_pDevice, m_pContext))))
+			CBasicCast::Create(m_pDevice, m_pContext, LEVEL_MAINGAME))))
 			throw TEXT("Prototype_GameObject_BasicCast");
 
 		/* For.Prototype_GameObject_Protego */
