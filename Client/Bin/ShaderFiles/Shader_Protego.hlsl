@@ -142,7 +142,7 @@ PS_OUT PS_MAIN(PS_IN In)
 	Out.vColor = lerp(g_vColor1, g_vColor2, vNoise04.r);
 
 	// ¿Ü°û¼± µû±â
-	vViewDir = normalize(g_vCamPos - In.vWorldPos);
+	vViewDir = normalize(g_vCamPos.xyz - In.vWorldPos);
 	FresnelEffect_float(In.vWorldNormal, vViewDir, g_fRimPower, fFresnel);
 	Out.vColor.a = fFresnel;
 
