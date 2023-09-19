@@ -170,6 +170,7 @@
     <ClInclude Include="..\Public\Confringo.h" />
     <ClInclude Include="..\Public\Confringo_Explosive_Effect.h" />
     <ClInclude Include="..\Public\Confringo_WandDust_Effect.h" />
+    <ClInclude Include="..\Public\MagicCastingState.h" />
     <ClInclude Include="..\public\Main3_Loader.h" />
     <ClInclude Include="..\Public\Check_Distance.h" />
     <ClInclude Include="..\Public\UI_Font.h" />
@@ -310,6 +311,7 @@
     <ClCompile Include="..\Private\Confringo.cpp" />
     <ClCompile Include="..\Private\Confringo_Explosive_Effect.cpp" />
     <ClCompile Include="..\Private\Confringo_WandDust_Effect.cpp" />
+    <ClCompile Include="..\Private\MagicCastingState.cpp" />
     <ClCompile Include="..\private\Main3_Loader.cpp" />
     <ClCompile Include="..\Private\Check_Distance.cpp" />
     <ClCompile Include="..\Private\UI_Font.cpp" />
