@@ -385,11 +385,11 @@
     <Filter Include="01. Utility\03. Components\14. RigidBody\DebugRender\TriangleMesh">
       <UniqueIdentifier>{db7e9bcc-84db-49bb-a143-fda5a29a42c9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\03. Components\13. CharacterController\ReportCallBack">
-      <UniqueIdentifier>{dbe9bb42-5e47-44e6-9232-17e3132c7246}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Utility\03. Components\13. CharacterController\BehaviorCallBack">
       <UniqueIdentifier>{b79eca32-ceed-4ae7-a293-cc8d06325dc0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\13. CharacterController\ReportCallBack">
+      <UniqueIdentifier>{dbe9bb42-5e47-44e6-9232-17e3132c7246}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

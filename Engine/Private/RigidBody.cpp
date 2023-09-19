@@ -151,6 +151,15 @@ void CRigidBody::Set_AngularDamping(_float _fAngualrDamping) const
 	}
 }
 
+void CRigidBody::Set_Gravity(_bool _isGravity)
+{
+	if (nullptr != m_pActor &&
+		nullptr != m_pActor->is<PxRigidBody>())
+	{
+		m_pActor->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, !_isGravity);
+	}
+}
+
 HRESULT CRigidBody::Initialize_Prototype()
 {
 #ifdef _DEBUG

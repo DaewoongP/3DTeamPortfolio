@@ -93,27 +93,29 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	if (nullptr != m_pRenderer)
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+
+#ifdef _DEBUG
+		m_pRenderer->Add_DebugGroup(m_pRigidBody);
+#endif // _DEBUG
 	}
 
 #ifdef _DEBUG
-	m_pRenderer->Add_DebugGroup(m_pRigidBody);
 	Tick_ImGui();
 #endif // _DEBUG
 }
 
 void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
-	//cout << "Player Enter" << endl;
 }
 
 void CPlayer::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)
 {
-	//cout << "stay" << endl;
+	// ÅÍ·¹ÀÎ ÆÇ´Ü ±¸¹®ÀÔ´Ï´Ù.
+	//if (wcswcs(CollisionEventDesc.pOtherCollisionTag, L"Terrain"))
 }
 
 void CPlayer::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 {
-	//cout << "Exit" << endl;
 }
 
 HRESULT CPlayer::Render()
@@ -206,37 +208,33 @@ HRESULT CPlayer::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_MagicSlot"),
 		TEXT("Com_MagicSlot"), reinterpret_cast<CComponent**>(&m_pMagicSlot))))
 	{
-		MSG_BOX("Failed CTest_Player Add_Component : (Com_MagicSlot)");
+		MSG_BOX("Failed CPlayer Add_Component : (Com_MagicSlot)");
 		return E_FAIL;
 	}
 
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
+	CRigidBody::RIGIDBODYDESC RigidBodyDesc;
+	RigidBodyDesc.isStatic = false;
+	RigidBodyDesc.isTrigger = false;
+	RigidBodyDesc.isGravity = true;
+	RigidBodyDesc.vInitPosition = _float3(2.f, 0.f, 2.f);
+	RigidBodyDesc.vInitRotation = m_pTransform->Get_Quaternion();
+	RigidBodyDesc.fStaticFriction = 0.f;
+	RigidBodyDesc.fDynamicFriction = 0.f;
+	RigidBodyDesc.fRestitution = 0.f;
+	PxCapsuleGeometry MyGeometry = PxCapsuleGeometry(0.5f, 0.5f);
+	RigidBodyDesc.pGeometry = &MyGeometry;
+	RigidBodyDesc.vOffsetPosition = _float3(0.f, MyGeometry.halfHeight + MyGeometry.radius, 0.f);
+	RigidBodyDesc.vOffsetRotation = XMQuaternionRotationRollPitchYaw(0.f, 0.f, XMConvertToRadians(90.f));
+	RigidBodyDesc.eConstraintFlag = CRigidBody::RotX | CRigidBody::RotZ;
+	RigidBodyDesc.vDebugColor = _float4(1.f, 105 / 255.f, 180 / 255.f, 1.f); // hot pink
+	RigidBodyDesc.pOwnerObject = this;
+	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Player_Default");
 
-	PxCapsuleControllerDesc CapsuleControllerDesc;
-	CapsuleControllerDesc.setToDefault();
-	CapsuleControllerDesc.height = 1.f;
-	CapsuleControllerDesc.radius = 0.5f;
-	CapsuleControllerDesc.material = pGameInstance->Get_Physics()->createMaterial(0.5f, 0.5f, 0.5f);
-	CapsuleControllerDesc.density = 10.f;
-	CapsuleControllerDesc.stepOffset = 0.5f;
-	CapsuleControllerDesc.contactOffset = 1.f;
-	CapsuleControllerDesc.upDirection = PxVec3(0.f, 1.f, 0.f);
-	CapsuleControllerDesc.userData = this;
-
-	Safe_Release(pGameInstance);
-
-	if (false == CapsuleControllerDesc.isValid())
+	/* Com_RigidBody */
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
+		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
 	{
-		MSG_BOX("Failed Create Character Controller");
-		return E_FAIL;
-	}
-
-	/* For.Com_Controller */
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_CharacterController"),
-		TEXT("Com_CharacterController"), reinterpret_cast<CComponent**>(&m_pCharacterController), &CapsuleControllerDesc)))
-	{
-		MSG_BOX("Failed CTest_Player Add_Component : (Com_CharacterController)");
+		MSG_BOX("Failed CPlayer Add_Component : (Com_RigidBody)");
 		return E_FAIL;
 	}
 
@@ -470,7 +468,6 @@ HRESULT CPlayer::Ready_MeshParts()
 
 HRESULT CPlayer::Ready_Camera()
 {
-	//?´ë–¤ ë¼ˆì— ë¶™ì¼ ê²ƒì¸ê°€.
 	_uint iBoneIndex{ 0 };
 
 	m_pCustomModel->Find_BoneIndex(TEXT("SKT_HeadCamera"), &iBoneIndex);
@@ -527,32 +524,28 @@ void CPlayer::UpdateLookAngle()
 	
 	m_isDirectionKeyPressed = false;
 
-	//???…ë ¥???°ë¼ ë¹„êµ ê°ì´ ë°”ë€ë‹¤.
-
 	_float3 vNextLook{};
 
-	//????> ë£?
 	if (pGameInstance->Get_DIKeyState(DIK_W, CInput_Device::KEY_PRESSING) || 
 		pGameInstance->Get_DIKeyState(DIK_W,CInput_Device::KEY_DOWN))
 	{
 		vNextLook = m_pPlayer_Camera->Get_CamLookXZ();
 		m_isDirectionKeyPressed = true;
 	}
-	//????> -ë£?
 	else if (pGameInstance->Get_DIKeyState(DIK_S, CInput_Device::KEY_PRESSING) ||
 		pGameInstance->Get_DIKeyState(DIK_S, CInput_Device::KEY_DOWN))
 	{
 		vNextLook = -m_pPlayer_Camera->Get_CamLookXZ();
 		m_isDirectionKeyPressed = true;
 	}
-	//?¤ë¥¸ìª???> ?¼ì´??
+
 	else if (pGameInstance->Get_DIKeyState(DIK_D, CInput_Device::KEY_PRESSING) ||
 		pGameInstance->Get_DIKeyState(DIK_D, CInput_Device::KEY_DOWN))
 	{
 		vNextLook = m_pPlayer_Camera->Get_CamRightXZ();
 		m_isDirectionKeyPressed = true;
 	}
-	//?¼ìª½ ??> -?¼ì´??
+
 	else if (pGameInstance->Get_DIKeyState(DIK_A, CInput_Device::KEY_PRESSING) ||
 		pGameInstance->Get_DIKeyState(DIK_A, CInput_Device::KEY_DOWN))
 	{
@@ -560,21 +553,16 @@ void CPlayer::UpdateLookAngle()
 		m_isDirectionKeyPressed = true;
 	}
 
-	//?Œë ˆ?´ì–´??ë£©ì„ ê°€ì§€ê³??¨ë‹¤.
 	_float3 vPlayerLook = m_pTransform->Get_Look();
 
-	//yê°?ì§€?°ê³ 
 	vPlayerLook = XMVectorSetY(vPlayerLook, 0.0f);
 
 	vPlayerLook.Normalize();
 
-	//?´ì ?œë‹¤.cos(-1 ~ 1)
 	_float fLookAngle = vPlayerLook.Dot(vNextLook);
 
-	//?¼ë””????
 	m_fLookAngle = acosf(fLookAngle);
 
-	//ì¢Œìš° êµ¬ë¶„???„í•œ ?¸ì 
 	if (0.0f > vPlayerLook.Cross(vNextLook).y)
 	{
 		m_fLookAngle *= -1;
@@ -622,7 +610,7 @@ void CPlayer::Free()
 		Safe_Release(m_pMagicSlot);
 		Safe_Release(m_pWeapon);
 		Safe_Release(m_pStateContext);
-		Safe_Release(m_pCharacterController);
+		Safe_Release(m_pRigidBody);
 
 	}
 }
