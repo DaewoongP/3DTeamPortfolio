@@ -52,7 +52,7 @@ private:
 	_bool					m_isFinished = { false };
 
 private:
-	vector<_float4x4*>		m_vecFreeMatrix;
+	vector<_float4x4*>		m_vecFreeMatrix; // 동적 할당 해제 용도
 
 private:
 	HRESULT Loading_For_Logo();

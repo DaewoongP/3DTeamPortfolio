@@ -31,7 +31,10 @@ HRESULT CMapObject_Ins::Initialize(void* pArg)
 		return E_FAIL;
 
 	MAPOJBECTINSDESC* pMapObjectInsDesc = reinterpret_cast<MAPOJBECTINSDESC*>(pArg);
-	m_pTransform->Set_WorldMatrix((*pMapObjectInsDesc).WorldMatrix);
+	//m_pTransform->Set_WorldMatrix((*pMapObjectInsDesc).WorldMatrix);
+
+	//// 해제를 위해 넣어둠
+	//m_pMatrix = pMapObjectInsDesc->pMatTransform;
 
 	if (nullptr == pMapObjectInsDesc)
 	{
@@ -98,7 +101,7 @@ HRESULT CMapObject_Ins::Add_Components(MAPOJBECTINSDESC* pMapObjectInsDesc)
 	}
 
 	/* Com_Shader */
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxMesh"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxMeshInstance"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
 	{
 		MSG_BOX("Failed CMapObject_Ins Add_Component : (Com_Shader)");
@@ -118,8 +121,6 @@ HRESULT CMapObject_Ins::Add_Components(MAPOJBECTINSDESC* pMapObjectInsDesc)
 
 HRESULT CMapObject_Ins::SetUp_ShaderResources()
 {
-	_float4x4 vMat = m_pTransform->Get_WorldMatrix();
-
 	BEGININSTANCE; if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
 		return E_FAIL;
 
@@ -159,6 +160,11 @@ CGameObject* CMapObject_Ins::Clone(void* pArg)
 
 void CMapObject_Ins::Free()
 {
+	/*if (nullptr != m_pMatrix)
+	{
+		Safe_Delete_Array(m_pMatrix);
+	}	*/
+
 	__super::Free();
 	Safe_Release(m_pRigidBody);
 	Safe_Release(m_pTransform);

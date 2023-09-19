@@ -344,6 +344,93 @@ HRESULT CLevel_MainGame::Load_MapObject_Ins(const _tchar* pObjectFilePath)
 		return E_FAIL;
 	}
 
+	DWORD	dwByte = 0;
+	_uint	iCount = 0; // 모델 인스턴스 넘버링 변수
+
+	while (true)
+	{
+		CMapObject_Ins::MAPOJBECTINSDESC MapObjectInsDesc;
+		ZEROMEM(&MapObjectInsDesc);
+
+		if (!ReadFile(hFile, &MapObjectInsDesc.iInstanceCnt, sizeof(_uint), &dwByte, nullptr))
+		{
+			MSG_BOX("Failed to Read MapObject_Ins iInstanceCnt");
+			return E_FAIL;
+		}
+
+		// 저장되어있던 인스턴스 개수만큼 동적할당
+		if (0 != MapObjectInsDesc.iInstanceCnt)
+		{
+			MapObjectInsDesc.pMatTransform = New _float4x4[MapObjectInsDesc.iInstanceCnt];
+
+			for (size_t i = 0; i < MapObjectInsDesc.iInstanceCnt; i++)
+			{
+				if (!ReadFile(hFile, &MapObjectInsDesc.pMatTransform[i], sizeof(_float4x4), &dwByte, nullptr))
+				{
+					MSG_BOX("Failed to Read MapObject_Ins pMatTransform");
+					return E_FAIL;
+				}
+			}
+		}
+
+		if (!ReadFile(hFile, &MapObjectInsDesc.WorldMatrix, sizeof(_float4x4), &dwByte, nullptr))
+		{
+			MSG_BOX("Failed to Read MapObject_Ins matTransform");
+			return E_FAIL;
+		}
+
+		if (!ReadFile(hFile, &MapObjectInsDesc.iTagLen, sizeof(_uint), &dwByte, nullptr))
+		{
+			MSG_BOX("Failed to Read MapObject_Ins iTagLen");
+			return E_FAIL;
+		}
+
+		if (!ReadFile(hFile, &MapObjectInsDesc.wszTag, MapObjectInsDesc.iTagLen, &dwByte, nullptr))
+		{
+			MSG_BOX("Failed to Read MapObject_Ins wszTag");
+			return E_FAIL;
+		}
+
+		if (dwByte == 0)
+		{
+			break;
+		}
+
+		BEGININSTANCE;
+
+		// 여기서 프로토타입 태그 문자열 가공해줘야함
+		wstring ws = TEXT("Prototype_Component_Model_Instance_");
+		wstring wsTag = TEXT("Prototype_Component_Model_");
+		wstring wsSave(MapObjectInsDesc.wszTag);
+		_uint iLength = wsTag.size();
+
+		// 모델 이름
+		wstring wsModelName = wsSave.substr(iLength);
+		ws += wsModelName;
+
+		ws += TEXT("_");
+
+		_tchar wszNumber[MAX_PATH];
+		_itow_s(iCount, wszNumber, 10);
+
+		ws += wszNumber; // 여기까지 오면 Prototype_Component_Model_Instance_모델명_번호 이런식으로 이름이 붙음	
+
+		lstrcpy(MapObjectInsDesc.wszTag, ws.c_str()); // 가공한 모델 인스턴스 이름을 넣어줌
+
+		_tchar wszobjName[MAX_PATH] = { 0 };
+		_stprintf_s(wszobjName, TEXT("GameObject_InsMapObject_%d"), (iCount));
+
+		// 번호를 붙인 태그로 MapObject_Ins 등록
+		if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME,
+			TEXT("Prototype_GameObject_MapObject_Ins"), TEXT("Layer_BackGround"),
+			wszobjName, &MapObjectInsDesc)))
+		{
+			MSG_BOX("Failed to Install MapObject_Ins");
+			return E_FAIL;
+		}
+
+		++iCount; ENDINSTANCE;
+	}
 
 	CloseHandle(hFile);
 

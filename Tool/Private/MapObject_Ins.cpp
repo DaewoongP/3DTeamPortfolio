@@ -148,8 +148,6 @@ HRESULT CMapObject_Ins::Add_Components()
 
 HRESULT CMapObject_Ins::SetUp_ShaderResources()
 {
-	_float4x4 vMat = m_pTransform->Get_WorldMatrix();
-
 	BEGININSTANCE; if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
 		return E_FAIL;
 
