@@ -121,7 +121,7 @@ technique11 DefaultTechnique
 
     pass Mesh_No_Cull
     {
-        SetRasterizerState(RS_Cull_None);
+        SetRasterizerState(RS_Cull_CW);
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 

@@ -41,6 +41,9 @@ private:
 	CModel*			m_pModel = { nullptr };
 
 private:
+	_bool			m_isCull = { true }; // 스케일 값에 따라 어떤 Cull 방식을 선택할지 정하는 변수
+
+private:
 	HRESULT Add_Components(MAPOBJECTDESC* pMapObjectDesc);
 	HRESULT SetUp_ShaderResources();
 
