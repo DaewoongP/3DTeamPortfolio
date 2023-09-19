@@ -12,6 +12,13 @@ CLevioso::CLevioso(const CLevioso& rhs)
 {
 }
 
+void CLevioso::TrailAction(_float3 vPosition, _float fTimeDelta)
+{
+	m_MagicTimer -= fTimeDelta;
+	m_pWingardiumEffect->TrailAction(vPosition, fTimeDelta);
+	m_fWingardiumEffectDeadTimer = 0.3f;
+}
+
 HRESULT CLevioso::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
@@ -85,8 +92,12 @@ void CLevioso::Tick(_float fTimeDelta)
 		}
 		else
 		{
-			m_MagicTimer -= fTimeDelta;
-			m_pWingardiumEffect->TrailAction(m_pTarget->Get_Position(), fTimeDelta);
+			m_fWingardiumEffectDeadTimer -= fTimeDelta;
+			if (m_fWingardiumEffectDeadTimer < 0)
+			{
+				Set_ObjEvent(OBJ_DEAD);
+			}
+			//TrailAction(m_pTarget->Get_Position(), fTimeDelta);
 		}
 	}
 	__super::Tick(fTimeDelta);

@@ -187,15 +187,14 @@ void CWingardium_Effect::TrailAction(_float3 pos, _float fTimeDelta)
 				m_TrailToOriginDesc[i].fSpeed = Random_Generator(XMConvertToRadians(40), XMConvertToRadians(180));
 				_float fScale = Random_Generator(0.01f, 0.2f);
 				m_pTrailToOriginTransform[i]->Set_Scale(_float3(fScale, fScale, fScale));
-				m_pTrailToOriginTransform[m_iCurrentActionParticle]->Set_Position(_float3(0, 0, 0));
-				m_pTrailToOrigin[m_iCurrentActionParticle]->Reset_Trail(vHigh, vLow);
+				m_pTrailToOriginTransform[i]->Set_Position(_float3(0, 0, 0));
+				m_pTrailToOrigin[i]->Reset_Trail(vHigh, vLow);
 
 			}
 
 			BEGININSTANCE;
 			if (pGameInstance->RayCast(m_pTransform->Get_Position(), m_pTransform->Get_Up() * -1, 100, &m_vBottom))
 			{
-				_uint i = 0;
 			}
 			ENDINSTANCE;
 

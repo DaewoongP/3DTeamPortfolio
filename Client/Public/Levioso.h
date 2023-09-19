@@ -15,6 +15,10 @@ private:
 	virtual ~CLevioso() = default;
 
 public:
+	//윙가를 돌리는 함수임. 안부른지 0.3초 이상 지나면 죽음.
+	void TrailAction(_float3 vPosition, _float fTimeDelta);
+
+public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;
@@ -36,6 +40,9 @@ private:
 
 	_bool				m_isDeadTrigger = { false };
 	_float				m_fDeadTimer = { 1.0f };
+
+	//레비오소 사망처리용임.
+	_float				m_fWingardiumEffectDeadTimer = { 0.3f };
 
 private:
 	HRESULT Add_Components();

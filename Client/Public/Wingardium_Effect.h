@@ -62,8 +62,6 @@ private:
 	//윙가르디움의 발동 트리거
 	_bool	m_bActionTrigger = { false };
 	
-	//바닥에서 나오는 파티클
-
 private:
 	_uint			m_iLevel = { 0 };
 

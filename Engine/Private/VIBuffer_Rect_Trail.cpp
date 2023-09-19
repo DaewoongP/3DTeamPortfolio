@@ -204,6 +204,8 @@ void CVIBuffer_Rect_Trail::Tick()
 
 	VTXPOSTEX* pData = static_cast<VTXPOSTEX*>(MappedSubResource.pData);
 
+	
+
 	for (_uint i = m_iNumVertices - 1; i >= 2 ; --i)
 	{
 		pData[i].vPosition = pData[i - 2].vPosition;

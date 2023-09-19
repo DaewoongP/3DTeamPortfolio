@@ -160,8 +160,6 @@ _bool CDefault_MagicTraill_Effect::Stright_Move(_float fTimeDelta)
 	m_fLerpAcc += fTimeDelta / m_fTrailLifeTime * m_fTimeScalePerDitance;
 	_float3 movedPos = XMVectorLerp(m_vStartPostion, m_vEndPostion, m_fLerpAcc);
 	m_pTransform->Set_Position(movedPos);
-
-	
 	return m_isEnd;
 }
 
