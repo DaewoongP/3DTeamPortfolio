@@ -106,6 +106,7 @@ HRESULT CProtego::Add_RigidBody()
 	RigidBodyDesc.vInitPosition = _float3(0.f, 0.f, 0.f);
 	RigidBodyDesc.isGravity = false;
 	RigidBodyDesc.pOwnerObject = this;
+	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Magic_Ball");
 
 	/* Com_RigidBody */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
