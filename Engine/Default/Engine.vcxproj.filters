@@ -229,9 +229,6 @@
     <Filter Include="01. Utility\03. Components\11. Status\02. Defence">
       <UniqueIdentifier>{6b004c01-c864-470b-b278-e400cb119e26}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\03. Components\11. Status\03. Ignite">
-      <UniqueIdentifier>{1181c3a3-d95e-4eab-b1e6-b175481b2152}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Utility\03. Components\12. CustomModel">
       <UniqueIdentifier>{123c13cc-5f31-459d-8cbc-5a6c0f6df715}</UniqueIdentifier>
     </Filter>
@@ -612,14 +609,8 @@
     <ClInclude Include="..\Public\VIBuffer_Sprite.h">
       <Filter>01. Utility\03. Components\07. VIBuffer\Sprite</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Ignite.h">
-      <Filter>01. Utility\03. Components\11. Status\03. Ignite</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Notify.h">
       <Filter>01. Utility\03. Components\04. Model\Animation\Notify</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Status.h">
-      <Filter>01. Utility\03. Components\11. Status</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\CustomModel.h">
       <Filter>01. Utility\03. Components\12. CustomModel</Filter>
@@ -983,14 +974,8 @@
     <ClCompile Include="..\Private\VIBuffer_Sprite.cpp">
       <Filter>01. Utility\03. Components\07. VIBuffer\Sprite</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Ignite.cpp">
-      <Filter>01. Utility\03. Components\11. Status\03. Ignite</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Notify.cpp">
       <Filter>01. Utility\03. Components\04. Model\Animation\Notify</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Status.cpp">
-      <Filter>01. Utility\03. Components\11. Status</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\CustomModel.cpp">
       <Filter>01. Utility\03. Components\12. CustomModel</Filter>

@@ -33,7 +33,7 @@ void CPXEventCallBack::onContact(const PxContactPairHeader& pairHeader, const Px
 		SourDesc.pArg = pDestObject->Get_CollisionData();
 
 		DestDesc.pOtherObjectTag = pSourObject->Get_Tag();
-		SourDesc.pOtherCollisionTag = static_cast<_tchar*>(pairs[i].shapes[0]->userData);
+		DestDesc.pOtherCollisionTag = static_cast<_tchar*>(pairs[i].shapes[0]->userData);
 		DestDesc.pOtherOwner = pSourObject;
 		DestDesc.pOtherTransform = pSourObject->Get_Transform();
 		DestDesc.pArg = pSourObject->Get_CollisionData();

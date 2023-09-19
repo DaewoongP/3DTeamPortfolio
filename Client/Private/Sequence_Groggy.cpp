@@ -3,7 +3,6 @@
 #include "GameInstance.h"
 
 #include "Wait.h"
-#include "Magic.h"
 #include "Action.h"
 #include "Check_Distance.h"
 
@@ -39,7 +38,7 @@ HRESULT CSequence_Groggy::Initialize(void* pArg)
 			if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
 				return false;
 
-			if (CMagic::BUFF_STUN & *pICurrentSpell)
+			if (STUPEFY & *pICurrentSpell)
 				return true;
 
 			return false;
@@ -58,8 +57,8 @@ HRESULT CSequence_Groggy::Tick(const _float& fTimeDelta)
 		if (FAILED(m_pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
 			return E_FAIL;
 
-		if(*pICurrentSpell & CMagic::BUFF_STUN)
-			*pICurrentSpell ^= CMagic::BUFF_STUN;
+		if(*pICurrentSpell & STUPEFY)
+			*pICurrentSpell ^= STUPEFY;
 	}
 
 	return hr;
@@ -144,8 +143,8 @@ void CSequence_Groggy::Reset_Behavior(HRESULT result)
 		if (FAILED(m_pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
 			return;
 
-		if (*pICurrentSpell & CMagic::BUFF_STUN)
-			*pICurrentSpell ^= CMagic::BUFF_STUN;
+		if (*pICurrentSpell & STUPEFY)
+			*pICurrentSpell ^= STUPEFY;
 	}
 
 	BEGININSTANCE;

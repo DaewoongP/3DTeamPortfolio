@@ -8,12 +8,9 @@
 //
 /* =============================================== */
 
+#include "Model.h"
 #include "Behavior.h"
 #include "Client_Defines.h"
-
-BEGIN(Engine)
-class CModel;
-END
 
 BEGIN(Client)
 
@@ -33,10 +30,12 @@ public:
 		4. 쿨타임
 		5. 한번만 실행 할 행동인지
 		6. 애니메이션 러프 유무
+		7. 상하체 분할한 경우) 상체애니메이션인지 하체애니메이션인지
 	*/
 	void Set_Options(const wstring& _wstrAnimationTag, CModel* _pModel,
 		_bool _isCheckBehavior = false, const _float& _fCoolTime = 0.f,
-		_bool _isOneTimeAction = false, _bool _isLerp = true);
+		_bool _isOneTimeAction = false, _bool _isLerp = true,
+		CModel::ANIMTYPE eType = CModel::UPPERBODY);
 
 public:
 	virtual HRESULT Initialize_Prototype() override { return S_OK; }
@@ -60,6 +59,7 @@ private:
 
 private:
 	CModel* m_pModel = { nullptr };
+	CModel::ANIMTYPE m_eAnimationType = { CModel::ANIM_END };
 
 public:
 	static CAction* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

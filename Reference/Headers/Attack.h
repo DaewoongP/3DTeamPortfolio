@@ -19,7 +19,6 @@ public:
 	typedef struct tagAttackDesc
 	{
 		_int iDamage;
-		_int iSkillDamage;
 		_bool isIgnoreDeffence;
 	}ATTACKDESC;
 

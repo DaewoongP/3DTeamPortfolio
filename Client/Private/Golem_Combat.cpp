@@ -6,6 +6,7 @@
 #include "Wait.h"
 #include "Magic.h"
 #include "Action.h"
+#include "MagicBall.h"
 #include "Check_Degree.h"
 #include "Random_Select.h"
 #include "Action_Deflect.h"
@@ -72,10 +73,6 @@ void CGolem_Combat::Tick(_float fTimeDelta)
 			m_isSpawn = true;
 		if (pGameInstance->Get_DIKeyState(DIK_4, CInput_Device::KEY_DOWN))
 			m_isParring = true;
-		if (pGameInstance->Get_DIKeyState(DIK_3, CInput_Device::KEY_DOWN))
-			m_iCurrentSpell |= CMagic::BUFF_STUN;
-		if (pGameInstance->Get_DIKeyState(DIK_2, CInput_Device::KEY_DOWN))
-			m_iCurrentSpell |= CMagic::BUFF_UNGRAVITY;
 		if (pGameInstance->Get_DIKeyState(DIK_1, CInput_Device::KEY_DOWN))
 			m_iCurrentSpell |= CMagic::BUFF_CONTROL;
 	}
@@ -108,33 +105,54 @@ void CGolem_Combat::Late_Tick(_float fTimeDelta)
 void CGolem_Combat::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
-	/* ������ �¾��� ��� */
+	wstring wstrCollisionTag = { TEXT("") };
+	if (nullptr != CollisionEventDesc.pOtherCollisionTag)
+		wstrCollisionTag = CollisionEventDesc.pOtherCollisionTag;
+
+	/* Collision Magic */
 	if (wstring::npos != wstrObjectTag.find(TEXT("MagicBall")))
 	{
-		//static_cast<>(CollisionEventDesc.pArg);
-		// ���� ���⿡ �߰� �ؾߵǴµ�
+		cout << "Hit Magic" << endl;
+		CMagicBall::COLLSIONREQUESTDESC* pCollisionMagicBallDesc = static_cast<CMagicBall::COLLSIONREQUESTDESC*>(CollisionEventDesc.pArg);
+		SPELL eSpell = pCollisionMagicBallDesc->eMagicTag;
+		auto Action = pCollisionMagicBallDesc->Action;
+		_float fDamage = pCollisionMagicBallDesc->fDamage;
+
+		auto iter = m_CurrentTickSpells.find(eSpell);
+		if (iter == m_CurrentTickSpells.end())
+			m_CurrentTickSpells.emplace(eSpell, Action);
+
+		m_iCurrentSpell |= eSpell;
 	}
 
-	/* ���� �ȿ� �÷��̾ npc�� ���� ��� */
-	if (wstring::npos != wstrObjectTag.find(TEXT("Player")) ||
-		wstring::npos != wstrObjectTag.find(TEXT("Fig")))
+	/* Collision Player Fig */
+	if (wstring::npos != wstrCollisionTag.find(TEXT("Body")))
 	{
-		cout << "Enter Object" << endl;
-		m_RangeInEnemies.push_back({ wstrObjectTag, CollisionEventDesc.pOtherOwner });
+		if (wstring::npos != wstrObjectTag.find(TEXT("Player")) ||
+			wstring::npos != wstrObjectTag.find(TEXT("Fig")))
+		{
+			m_RangeInEnemies.push_back({ wstrObjectTag, CollisionEventDesc.pOtherOwner });
+		}
 	}
 }
 
 void CGolem_Combat::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 {
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
-	if (wstring::npos != wstrObjectTag.find(TEXT("Player")) ||
-		wstring::npos != wstrObjectTag.find(TEXT("Fig")))
+	wstring wstrCollisionTag = { TEXT("") };
+	if (nullptr != CollisionEventDesc.pOtherCollisionTag)
+		wstrCollisionTag = CollisionEventDesc.pOtherCollisionTag;
+
+	if (wstring::npos != wstrCollisionTag.find(TEXT("Body")))
 	{
-		cout << "Exit Object" << endl;
-		if (FAILED(Remove_GameObject(wstrObjectTag)))
+		if (wstring::npos != wstrObjectTag.find(TEXT("Player")) ||
+			wstring::npos != wstrObjectTag.find(TEXT("Fig")))
 		{
-			MSG_BOX("[CGolem_Combat] Failed OnCollisionExit : \nFailed Remove_GameObject");
-			return;
+			if (FAILED(Remove_GameObject(wstrObjectTag)))
+			{
+				MSG_BOX("[CGolem_Combat] Failed OnCollisionExit : \nFailed Remove_GameObject");
+				return;
+			}
 		}
 	}
 }
@@ -320,6 +338,7 @@ HRESULT CGolem_Combat::Add_Components()
 		RigidBodyDesc.eConstraintFlag = CRigidBody::RotX | CRigidBody::RotY | CRigidBody::RotZ;
 		RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 0.f, 1.f);
 		RigidBodyDesc.pOwnerObject = this;
+		lstrcpy(RigidBodyDesc.szCollisionTag, TEXT("Enemy_Body"));
 
 		/* For.Com_RigidBody */
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
@@ -331,6 +350,7 @@ HRESULT CGolem_Combat::Add_Components()
 		RigidBodyDesc.isTrigger = true;
 		PxSphereGeometry pSphereGeomatry = PxSphereGeometry(15.f);
 		RigidBodyDesc.pGeometry = &pSphereGeomatry;
+		lstrcpy(RigidBodyDesc.szCollisionTag, TEXT("Enemy_Range"));
 
 		m_pRigidBody->Create_Collider(&RigidBodyDesc);
 
