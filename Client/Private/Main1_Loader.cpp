@@ -34,6 +34,7 @@
 #include "Sky.h"
 #include "Terrain.h"
 #include "MapObject.h"
+#include "MapObject_Ins.h"
 
 CMain1_Loader::CMain1_Loader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice(pDevice)
@@ -133,6 +134,9 @@ HRESULT CMain1_Loader::Loading_For_MainGame()
 
 		if (FAILED(Loading_Map_Object(TEXT("../../Resources/GameData/MapData/MapData6.ddd"))))
 			throw TEXT("Map Object");
+
+		if (FAILED(Loading_Map_Object_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins6.ddd"))))
+			throw TEXT("Map Object_Ins");
 
 		/* For.Prototype_Component_CharacterController*/
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_CharacterController"),
@@ -352,6 +356,7 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath)
 		if (!ReadFile(hFile, &LoadDesc.iTagLen, sizeof(_uint), &dwByte, nullptr))
 		{
 			MSG_BOX("Failed to Read m_vecSaveObject.iTagLen");
+			return E_FAIL;
 		}
 
 		if (!ReadFile(hFile, &LoadDesc.wszTag, LoadDesc.iTagLen, &dwByte, nullptr))
@@ -389,6 +394,114 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath)
 	}
 
 	CloseHandle(hFile);
+	return S_OK;
+}
+
+HRESULT CMain1_Loader::Loading_Map_Object_Ins(const _tchar* pMapObjectInsPath)
+{
+	/* For.Prototype_GameObject_MapObject_Ins */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_MapObject_Ins"),
+		CMapObject_Ins::Create(m_pDevice, m_pContext))))
+		throw TEXT("Prototype_GameObject_MapObject_Ins");
+
+	HANDLE hFile = CreateFile(pMapObjectInsPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+	{
+		MSG_BOX("Failed to Create MapObject_Ins File for Load MapObject_Ins");
+		return E_FAIL;
+	}
+
+	DWORD	dwByte = 0;
+	_uint	iCount = 0; // 모델 인스턴스 넘버링 변수
+
+	while (true)
+	{
+		LOADOJBECTINSDESC LoadDesc;
+		ZEROMEM(&LoadDesc);
+
+		if (!ReadFile(hFile, &LoadDesc.iInstanceCnt, sizeof(_uint), &dwByte, nullptr))
+		{
+			MSG_BOX("Failed to Read MapObject_Ins iInstanceCnt");
+			return E_FAIL;
+		}
+
+		// 저장되어있던 인스턴스 개수만큼 동적할당
+		if (0 != LoadDesc.iInstanceCnt)
+		{
+			LoadDesc.pMatTransform = New _float4x4[LoadDesc.iInstanceCnt];
+
+			for (size_t i = 0; i < LoadDesc.iInstanceCnt; i++)
+			{
+				if (!ReadFile(hFile, &LoadDesc.pMatTransform[i], sizeof(_float4x4), &dwByte, nullptr))
+				{
+					MSG_BOX("Failed to Read MapObject_Ins pMatTransform");
+					return E_FAIL;
+				}
+			}
+
+			//m_vecFreeMatrix.push_back(LoadDesc.pMatTransform);
+		}
+
+		if (!ReadFile(hFile, &LoadDesc.WorldMatrix, sizeof(_float4x4), &dwByte, nullptr))
+		{
+			MSG_BOX("Failed to Read MapObject_Ins matTransform");
+			return E_FAIL;
+		}
+
+		if (!ReadFile(hFile, &LoadDesc.iTagLen, sizeof(_uint), &dwByte, nullptr))
+		{
+			MSG_BOX("Failed to Read MapObject_Ins iTagLen");
+		}
+
+		if (!ReadFile(hFile, &LoadDesc.wszTag, LoadDesc.iTagLen, &dwByte, nullptr))
+		{
+			MSG_BOX("Failed to Read MapObject_Ins wszTag");
+			return E_FAIL;
+		}
+
+		if (dwByte == 0)
+		{
+			break;
+		}
+
+		// 여기서 프로토타입 태그 문자열 가공해줘야함
+		wstring ws = TEXT("Prototype_Component_Model_Instance_");
+		wstring wsTag = TEXT("Prototype_Component_Model_");
+		wstring wsSave(LoadDesc.wszTag);
+		_uint iLength = wsTag.size();
+
+		// 모델 이름
+		wstring wsModelName = wsSave.substr(iLength);
+		ws += wsModelName;
+
+		ws += TEXT("_");
+
+		_tchar wszNumber[MAX_PATH];
+		_itow_s(iCount, wszNumber, 10);
+
+		ws += wszNumber; // 여기까지 오면 Prototype_Component_Model_Instance_모델명_번호 이런식으로 이름이 붙음	
+
+		++iCount;
+
+		wstring wsPath = TEXT("../../Resources/Models/MapObject/NonAnims/");
+		wsPath += wsModelName;
+		wsPath += TEXT("/");
+		wsPath += wsModelName;
+		wsPath += TEXT(".dat");
+
+		// 인스턴스 모델 프로토타입 생성
+		_float4x4 PivotMatrix = XMMatrixIdentity();
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, ws.c_str(),
+			CModel_Instance::Create(m_pDevice, m_pContext, CModel_Instance::TYPE_NONANIM, wsPath.c_str(),
+				LoadDesc.pMatTransform, LoadDesc.iInstanceCnt, PivotMatrix), true)))
+		{
+			MSG_BOX("Failed to Create New CModel_Instance Prototype");
+		}
+	}
+
+	CloseHandle(hFile);
+
 	return S_OK;
 }
 

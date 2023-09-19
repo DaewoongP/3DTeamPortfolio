@@ -35,7 +35,7 @@ HRESULT CMapObject_Ins::Initialize(void* pArg)
 
 	if (nullptr == pMapObjectInsDesc)
 	{
-		MSG_BOX("Object Desc is NULL");
+		MSG_BOX("Object_Ins Desc is NULL");
 		return E_FAIL;
 	}
 
@@ -93,7 +93,7 @@ HRESULT CMapObject_Ins::Add_Components(MAPOJBECTINSDESC* pMapObjectInsDesc)
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"),
 		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
 	{
-		MSG_BOX("Failed CMapObject Add_Component : (Com_Renderer)");
+		MSG_BOX("Failed CMapObject_Ins Add_Component : (Com_Renderer)");
 		return E_FAIL;
 	}
 
@@ -101,7 +101,7 @@ HRESULT CMapObject_Ins::Add_Components(MAPOJBECTINSDESC* pMapObjectInsDesc)
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
 	{
-		MSG_BOX("Failed CMapObject Add_Component : (Com_Shader)");
+		MSG_BOX("Failed CMapObject_Ins Add_Component : (Com_Shader)");
 		return E_FAIL;
 	}
 
@@ -109,7 +109,7 @@ HRESULT CMapObject_Ins::Add_Components(MAPOJBECTINSDESC* pMapObjectInsDesc)
 	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, pMapObjectInsDesc->wszTag,
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModel))))
 	{
-		MSG_BOX("Failed CMapObject Add_Component : (Com_Model)");
+		MSG_BOX("Failed CMapObject_Ins Add_Component : (Com_Model)");
 		return E_FAIL;
 	}
 

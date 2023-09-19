@@ -1412,7 +1412,7 @@ HRESULT CObject_Window::Load_MapObject_Ins(const _tchar* wszMapDataPath)
 		// 저장되어있던 인스턴스 개수만큼 동적할당
 		if (0 != SaveDesc.iInstanceCnt)
 		{
-			SaveDesc.pMatTransform = new _float4x4[SaveDesc.iInstanceCnt];
+			SaveDesc.pMatTransform = New _float4x4[SaveDesc.iInstanceCnt];
 
 			for (size_t i = 0; i < SaveDesc.iInstanceCnt; i++)
 			{
