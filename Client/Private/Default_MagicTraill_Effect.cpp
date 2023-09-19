@@ -191,7 +191,7 @@ _bool CDefault_MagicTraill_Effect::Spin_Move(_float fTimeDelta)
 	_float4x4 offsetMatirx = XMMatrixTranslation(normal.x, normal.y, normal.z);
 
 	//회전 행렬 생성
-	_float4x4 rotationMatrix = XMMatrixRotationAxis(axis, m_fLerpAcc * 100);
+	_float4x4 rotationMatrix = XMMatrixRotationAxis(axis, m_fLerpAcc * 20);
 
 	//offset matrix를 transMatrix로 돌림
 	_float4x4 CombineMatrix = offsetMatirx * rotationMatrix * transMatirx;
