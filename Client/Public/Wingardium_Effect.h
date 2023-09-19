@@ -23,8 +23,6 @@ private:
 		_float fToY = { 0 };
 		_float fToRadius = { 0 };
 		_float fSpeed = { 0 };
-		_float fDeadTimer = { 0.5f };
-		_float fSettingDeadTimer = { 0.5f };
 		_bool isEnable = { false };
 
 		_bool isFlip = { false };

@@ -20,6 +20,7 @@ void CDefault_MagicTraill_Effect::Ready_Stright(_float3 vTargerPosition, _float3
 	m_vEndPostion = vTargerPosition;
 	m_fTrailLifeTime = fTrailLifeTime;
 	m_fLerpAcc = 0.f;
+	m_fTimeScalePerDitance = fDistance / _float3(m_vEndPostion - m_vStartPostion).Length();
 	m_pTrail->Reset_Trail(vStartPosition + _float3(0, 0.5f, 0), vStartPosition - _float3(0, 0.5f, 0));
 }
 
@@ -60,6 +61,7 @@ void CDefault_MagicTraill_Effect::Ready_Spin(_float3 vTargerPosition, _float3 vS
 	m_vEndPostion = vTargerPosition;
 	m_fTrailLifeTime = fTrailLifeTime;
 	m_fLerpAcc = 0.f;
+	m_fTimeScalePerDitance = fDistance / _float3(m_vEndPostion - m_vStartPostion).Length();
 	m_pTrail->Reset_Trail(vStartPosition + _float3(0, 0.5f, 0), vStartPosition - _float3(0, 0.5f, 0));
 }
 
@@ -89,6 +91,17 @@ HRESULT CDefault_MagicTraill_Effect::Initialize_Prototype(const _tchar* wszFileP
 			return E_FAIL;
 		}
 	}
+
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Default_Magic_Ball_Particle")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Default_Magic_Ball_Particle")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Basic_GlowBall"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+
 	ENDINSTANCE;
 	return S_OK;
 }
@@ -103,9 +116,16 @@ HRESULT CDefault_MagicTraill_Effect::Initialize(void* pArg)
 		return E_FAIL;
 
 	m_pTransform->Set_Position(initDesc->vInitPosition);
+	
+	//trail Setting
 	m_pTrailTransform = m_pTrail->Get_Transform();
 	Safe_AddRef(m_pTrailTransform);
 	m_pTrailTransform->Set_Position(initDesc->vInitPosition);
+
+	//glowBall Setting
+	m_pGlowBallTransform = m_pGlowBall->Get_Transform();
+	Safe_AddRef(m_pGlowBallTransform);
+	m_pGlowBallTransform->Set_Position(initDesc->vInitPosition);
 
 	m_pTrail->Reset_Trail(initDesc->vInitPosition, initDesc->vInitPosition);
 
@@ -121,6 +141,7 @@ void CDefault_MagicTraill_Effect::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 	m_pTrailTransform->Set_Position(m_pTransform->Get_Position());
+	m_pGlowBallTransform->Set_Position(m_pTransform->Get_Position());
 }
 
 void CDefault_MagicTraill_Effect::Set_Position(_float3 vPos)
@@ -205,6 +226,17 @@ void CDefault_MagicTraill_Effect::Set_Trail_TailColor(_float3 vColor)
 	m_pTrail->Set_Trail_TailColor(vColor);
 }
 
+void CDefault_MagicTraill_Effect::Set_Glow_BallColor(_float3 vColor)
+{
+	MAIN_MODULE& MainModule = m_pGlowBall->Get_MainModuleRef();
+	MainModule.vStartColor = _float4(vColor.x, vColor.y, vColor.z,1.f);
+}
+
+void CDefault_MagicTraill_Effect::GlowBall_Dead()
+{
+	m_pGlowBall->Disable();
+}
+
 HRESULT CDefault_MagicTraill_Effect::Add_Components()
 {
 	_tchar protoTag[MAX_PATH] = TEXT("Prototype_GameObject_Default_Magic_Trail");
@@ -212,6 +244,10 @@ HRESULT CDefault_MagicTraill_Effect::Add_Components()
 
 	if (FAILED(CComposite::Add_Component(m_iLevel, protoTag
 		, TEXT("Com_Trail"), (CComponent**)&m_pTrail)))
+		return E_FAIL;
+
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Default_Magic_Ball_Particle")
+		, TEXT("Com_BloomBall"), (CComponent**)&m_pGlowBall)))
 		return E_FAIL;
 
 	return S_OK;
@@ -250,5 +286,8 @@ void CDefault_MagicTraill_Effect::Free()
 	{
 		Safe_Release(m_pTrail);
 		Safe_Release(m_pTrailTransform);
+
+		Safe_Release(m_pGlowBall);
+		Safe_Release(m_pGlowBallTransform);
 	}
 }

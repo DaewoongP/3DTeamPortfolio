@@ -188,7 +188,11 @@ void CTrail::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 	if (nullptr != m_pRenderer)
+	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BLEND, this);
+		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BLOOM, this);
+	}
+		
 }
 
 HRESULT CTrail::Render()
