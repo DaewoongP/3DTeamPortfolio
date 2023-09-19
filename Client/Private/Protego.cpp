@@ -115,12 +115,6 @@ HRESULT CProtego::Add_RigidBody()
 		MSG_BOX("Failed CTest_Player Add_Component : (Com_RigidBody)");
 		return E_FAIL;
 	}
-	// 리지드바디 액터 설정
-	PxRigidBody* Rigid = m_pRigidBody->Get_RigidBodyActor();
-	m_pTransform->Set_RigidBody(m_pRigidBody);
-	Rigid->setMaxLinearVelocity(1000.f);
-	Rigid->setMass(10.f);
-	Rigid->setAngularDamping(0.7f);
 
 	return S_OK;
 }
