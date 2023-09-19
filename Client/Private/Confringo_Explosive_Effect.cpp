@@ -111,7 +111,6 @@ void CConfringo_Explosive_Effect::Play_Particle(_float3 vPos)
 		m_pExplosiveTransform[i]->Set_Position(vPos);
 		m_pExplosiveParticle[i]->Play();
 	}
-
 	m_pParticleSystem->Play();
 }
 

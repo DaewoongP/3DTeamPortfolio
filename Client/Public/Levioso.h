@@ -29,18 +29,13 @@ private:
 
 private:
 	_float3				m_vTargetPosition = {};
-	_float				m_fLerpAcc = { 0.f };
 	_bool				m_bWingardiumActionTrigger = { false };
-
 	_float				m_fSettingTimer = { 0.2f };
-	_float				m_fTimerForSearch = { 0.f };
 
 	_float				m_MagicTimer = { 8.0f };
 
 	_bool				m_isDeadTrigger = { false };
 	_float				m_fDeadTimer = { 1.0f };
-
-	_float				m_fTimeScalePerDistance = { 1.0f };
 
 private:
 	HRESULT Add_Components();

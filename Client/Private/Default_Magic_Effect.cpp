@@ -19,16 +19,6 @@ HRESULT CDefault_Magic_Effect::Initialize_Prototype(_uint iLevel)
 	m_iLevel = iLevel;
 
 	BEGININSTANCE;
-	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Default_Magic_Trail")))
-	{
-		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Default_Magic_Trail")
-			, CTrail::Create(m_pDevice, m_pContext, TEXT("../"), m_iLevel))))
-		{
-			ENDINSTANCE;
-			return E_FAIL;
-		}
-	}
-
 	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Default_Magic_Boom_Particle")))
 	{
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Default_Magic_Boom_Particle")
@@ -76,9 +66,6 @@ HRESULT CDefault_Magic_Effect::Initialize(void* pArg)
 	m_pParticleTransform = m_pParticleSystem->Get_Transform();
 	Safe_AddRef(m_pParticleTransform);
 
-	m_pTrailTransform = m_pTrail->Get_Transform();
-	Safe_AddRef(m_pTrailTransform);
-
 	m_pTraceParticleTransform = m_pTraceParticle->Get_Transform();
 	Safe_AddRef(m_pTraceParticleTransform);
 
@@ -99,7 +86,6 @@ void CDefault_Magic_Effect::Tick(_float fTimeDelta)
 void CDefault_Magic_Effect::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
-	m_pTrailTransform->Set_Position(m_pTransform->Get_Position());
 	m_vPrevPos = m_pTransform->Get_Position();
 }
 
@@ -120,21 +106,6 @@ void CDefault_Magic_Effect::Set_Position(_float3 vPos)
 	m_pTransform->Set_Position(vPos);
 }
 
-void CDefault_Magic_Effect::Enable_Trail(_bool _isEnable)
-{
-	(true == _isEnable) ? m_pTrail->Enable() : m_pTrail->Disable();
-}
-
-HRESULT CDefault_Magic_Effect::Reset_Trail()
-{
-	if (m_pTrail == nullptr)
-	{
-		MSG_BOX("Failed to Reset_Trail");
-		return S_OK;
-	}
-
-	return   m_pTrail->Reset_Trail();
-}
 void CDefault_Magic_Effect::Enable_TraceParticle(_bool _isEnable)
 {
 	(true == _isEnable) ? m_pTraceParticle->Enable() : m_pTraceParticle->Disable();
@@ -142,10 +113,6 @@ void CDefault_Magic_Effect::Enable_TraceParticle(_bool _isEnable)
 
 HRESULT CDefault_Magic_Effect::Add_Components()
 {
-	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Default_Magic_Trail")
-		, TEXT("Com_Trail"), (CComponent**)&m_pTrail)))
-		return E_FAIL;
-
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Default_Magic_Boom_Particle")
 		, TEXT("Com_Boom_Particle"), (CComponent**)&m_pParticleSystem)))
 		return E_FAIL;
@@ -192,13 +159,11 @@ void CDefault_Magic_Effect::Free()
 	__super::Free();
 	if (true == m_isCloned)
 	{
-		Safe_Release(m_pTrail);
 		Safe_Release(m_pParticleSystem);
 		Safe_Release(m_pTraceParticle);
 		Safe_Release(m_pConeEmitParticle);
 
 		Safe_Release(m_pParticleTransform);
-		Safe_Release(m_pTrailTransform);
 		Safe_Release(m_pTraceParticleTransform);
 		Safe_Release(m_pConeEmitTransform);
 	}
