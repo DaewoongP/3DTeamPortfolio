@@ -72,26 +72,32 @@ HRESULT CBasicCast::Initialize(void* pArg)
 	}
 
 	m_pTrailEffect->Ready_Spline(m_vTargetPosition, m_MagicBallDesc.vStartPosition, m_MagicBallDesc.fLifeTime, m_MagicBallDesc.fDistance);
-
 	return S_OK;
 }
 
 void CBasicCast::Tick(_float fTimeDelta)
 {
-	//스플라인을 이용해 날라가는 평타
+	__super::Tick(fTimeDelta);
+	//사망처리 걸리면 재생
+	if (m_bDeadTrigger)
+	{
+		//파티클 끝나면 없애줘.
+		if (!m_pEffect->IsEnable())
+			Set_ObjEvent(OBJ_DEAD);
+		return;
+	}
+	
 	if (m_pTrailEffect->Spline_Move(fTimeDelta))
 	{
-		//평타가 도달완료하고 첫번째 트리거
+		//사망처리
 		if (!m_bDeadTrigger)
 		{
-			//이펙트의 도달완료 위치에서 파티클 재생
 			m_bDeadTrigger = true;
 			m_pEffect->Play_Particle(m_pTrailEffect->Get_Transform()->Get_Position());
 		}
-		if (!m_pEffect->IsEnable())
-			Set_ObjEvent(OBJ_DEAD);
 	}
-	__super::Tick(fTimeDelta);
+	//m_pEffect->Play_ConeEmit()
+	m_pTransform->Set_Position(m_pTrailEffect->Get_Transform()->Get_Position());
 }
 
 void CBasicCast::Late_Tick(_float fTimeDelta)
@@ -101,6 +107,13 @@ void CBasicCast::Late_Tick(_float fTimeDelta)
 
 void CBasicCast::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
+	//몹이랑 충돌했으면?
+	if (wcsstr(CollisionEventDesc.pOtherCollisionTag,TEXT("Enemy_Body")) != nullptr)
+	{
+		//사망처리 드갑니다.
+		m_bDeadTrigger = true;
+		m_pEffect->Play_Particle(m_pTrailEffect->Get_Transform()->Get_Position());
+	}
 	__super::OnCollisionEnter(CollisionEventDesc);
 }
 

@@ -69,12 +69,22 @@ HRESULT CConfringo::Initialize(void* pArg)
 
 	//Ready for Spline Lerp
 	m_pTrailEffect->Ready_Spline(m_vTargetPosition, m_MagicBallDesc.vStartPosition, m_MagicBallDesc.fLifeTime, m_MagicBallDesc.fDistance);
+	m_pWandDustEffect->Set_Position(m_vTargetPosition);
 	m_pExplosiveEffect->ResetParticle();
 	return S_OK;
 }
 
 void CConfringo::Tick(_float fTimeDelta)
 {
+	__super::Tick(fTimeDelta);
+	//사망처리 걸리면 재생
+	if (m_isExplosiveTrigger)
+	{
+		//파티클 끝나면 없애줘.
+		//if (m_pExplosiveEffect->Get_Particle_State_End())
+		Set_ObjEvent(OBJ_DEAD);
+		return;
+	}
 	//이동이 끝나면 true를 리턴해줄거임.
 	if (m_pTrailEffect->Spline_Move(fTimeDelta))
 	{
@@ -83,12 +93,9 @@ void CConfringo::Tick(_float fTimeDelta)
 		{
 			m_pExplosiveEffect->Play_Particle(m_vTargetPosition);
 			m_isExplosiveTrigger = true;
-
-			if (m_pExplosiveEffect->Get_Particle_State_End())
-				Set_ObjEvent(OBJ_DEAD);
 		}
 	}
-	__super::Tick(fTimeDelta);
+	m_pTransform->Set_Position(m_pTrailEffect->Get_Transform()->Get_Position());
 }
 
 void CConfringo::Late_Tick(_float fTimeDelta)
@@ -98,6 +105,13 @@ void CConfringo::Late_Tick(_float fTimeDelta)
 
 void CConfringo::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
+	//몹이랑 충돌했으면?
+	if (wcsstr(CollisionEventDesc.pOtherCollisionTag, TEXT("Enemy_Body")) != nullptr)
+	{
+		//사망처리 드갑니다.
+		m_isExplosiveTrigger = true;
+		m_pExplosiveEffect->Play_Particle(m_pTrailEffect->Get_Transform()->Get_Position());
+	}
 	__super::OnCollisionEnter(CollisionEventDesc);
 }
 
