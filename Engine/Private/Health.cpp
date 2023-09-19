@@ -15,8 +15,7 @@ HRESULT CHealth::Initialize(void* pArg)
 	if (nullptr != pArg)
 	{
 		tagHealthDesc Desc = *static_cast<tagHealthDesc*>(pArg);
-		m_iMaxHP = Desc.iMaxHP;
-		m_iHP = Desc.iHP;
+		m_iHP = m_iMaxHP = Desc.iMaxHP;
 	}
 
 	return S_OK;
