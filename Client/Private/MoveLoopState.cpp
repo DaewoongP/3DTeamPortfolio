@@ -72,9 +72,6 @@ void CMoveLoopState::OnStateTick()
 			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_Sprint_Loop_Fwd_anm"));
 		}
 		break;
-
-		default:
-			break;
 		}
 	}
 
@@ -141,8 +138,6 @@ void CMoveLoopState::Go_Idle()
 				m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Sprint_Stop_Fwd_anm"));
 			}
 			break;
-			default:
-				break;
 			}
 		}
 		break;
@@ -160,8 +155,6 @@ void CMoveLoopState::Go_Idle()
 				m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Sprint_Stop_Fwd_anm"));
 			}
 			break;
-			default:
-				break;
 			}
 		}
 		break;
@@ -179,8 +172,6 @@ void CMoveLoopState::Go_Idle()
 				m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Sprint_Stop_Fwd_Cmbt_anm"));
 			}
 			break;
-			default:
-				break;
 			}
 		}
 		break;
@@ -239,9 +230,6 @@ void CMoveLoopState::Switch_Joging_Sprint()
 			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_Jog2Sprint_RU_anm"));
 		}
 		break;
-
-		default:
-			break;
 		}
 	}
 

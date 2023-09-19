@@ -56,19 +56,13 @@ HRESULT CLevel_MainGame::Initialize()
 
 		return E_FAIL;
 	}
-	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
-	{
-		MSG_BOX("Failed Ready_Layer_Effect");
 
-		return E_FAIL;
-	}
-
-	/*if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/MapData6.ddd"))))
+	if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/MapData6.ddd"))))
 	{
 		MSG_BOX("Failed Load Map Object");
 
 		return E_FAIL;
-	}*/
+	}
 	
 #ifdef _DEBUG
 	if (FAILED(Ready_Layer_Debug(TEXT("Layer_Debug"))))
@@ -424,34 +418,6 @@ HRESULT CLevel_MainGame::Load_Monsters(const wstring& wstrMonsterFilePath)
 	return S_OK;
 }
 
-HRESULT CLevel_MainGame::Ready_Layer_Effect(const _tchar* pLayerTag)
-{
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
-
-#ifdef _DEBUG
-	/*if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Particle"), pLayerTag, TEXT("GameObject_Test_Particle"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Particle)");
-		return E_FAIL;
-	}*/
-
-	/*if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Default_Magic_Effect"), pLayerTag, TEXT("GameObject_Default_Magic_Effect"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Default_Magic_Effect)");
-		return E_FAIL;
-	}*/
-
-	/*if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Wingardium_Effect"), pLayerTag, TEXT("GameObject_Wingardium_Effect"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Wingardium_Effect)");
-		return E_FAIL;
-	}*/
-#endif _DEBUG
-	Safe_Release(pGameInstance);
-
-	return S_OK;
-}
 HRESULT CLevel_MainGame::Ready_Layer_UI(const _tchar* pLayerTag)
 {
 	BEGININSTANCE;

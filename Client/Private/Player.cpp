@@ -54,12 +54,12 @@ HRESULT CPlayer::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
-	//if (FAILED(Ready_Camera()))
-	//{
-	//	MSG_BOX("Failed Ready Player Caemra");
+	if (FAILED(Ready_Camera()))
+	{
+		MSG_BOX("Failed Ready Player Camera");
 
-	//	return E_FAIL;
-	//}
+		return E_FAIL;
+	}
 
 	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
@@ -414,7 +414,7 @@ HRESULT CPlayer::Ready_MeshParts()
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_MAINGAME,
 		TEXT("Prototype_Component_MeshPart_Robe01"),
-		CCustomModel::ROBE), TEXT("../../Resources/GameData/ClothData/Test.cloth")))
+		CCustomModel::ROBE, TEXT("../../Resources/GameData/ClothData/Test.cloth"))))
 	{
 		MSG_BOX("Failed Add MeshPart Robe");
 	
