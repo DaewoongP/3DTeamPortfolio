@@ -54,14 +54,12 @@ HRESULT CPlayer::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
-	
-	
-	/*if (FAILED(Ready_Camera()))
+	if (FAILED(Ready_Camera()))
 	{
 		MSG_BOX("Failed Ready Player Caemra");
 
 		return E_FAIL;
-	}*/
+	}
 
 	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
@@ -212,57 +210,35 @@ HRESULT CPlayer::Add_Components()
 		return E_FAIL;
 	}
 
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
 
-	//CRigidBody::RIGIDBODYDESC RigidBodyDesc;
+	PxCapsuleControllerDesc CapsuleControllerDesc;
+	CapsuleControllerDesc.setToDefault();
+	CapsuleControllerDesc.height = 1.f;
+	CapsuleControllerDesc.radius = 0.5f;
+	CapsuleControllerDesc.material = pGameInstance->Get_Physics()->createMaterial(0.5f, 0.5f, 0.5f);
+	CapsuleControllerDesc.density = 10.f;
+	CapsuleControllerDesc.stepOffset = 0.5f;
+	CapsuleControllerDesc.contactOffset = 1.f;
+	CapsuleControllerDesc.upDirection = PxVec3(0.f, 1.f, 0.f);
+	CapsuleControllerDesc.userData = this;
 
-	//RigidBodyDesc.isStatic = false; // static - 고정된 물체 (true -> 고정) (false -> 움직임)
-	//RigidBodyDesc.isTrigger = false; // 트리거임 원래 콜라이더 생각하시면됩니다.
-	//RigidBodyDesc.vInitPosition = _float3(1024.0f, 1024.0f, 1024.0f); // -> 트랜스폼에다가 초기 포지션 줘도 적용 안됩니다 !! / 요기다 주셔야 합니다 (리지드 바디가 있는 경우만 해당)
-	//RigidBodyDesc.vOffsetRotation = XMQuaternionRotationRollPitchYaw(0.f, 0.f, 0.0f);
-	//RigidBodyDesc.fStaticFriction = 0.5f; // 가만히 있을때 움직이기 위한 최소 힘의 수치 0~1		//시동 속도
-	//RigidBodyDesc.fDynamicFriction = 0.5f; // 움직일때 멈추기위한 마찰력? 0~1					//브레이크 강도
-	//RigidBodyDesc.fRestitution = 0.f; // 탄성값이 얼마나 들어갈 것인가 0~1 -> 1로주면 존나튑니다 보통 0으로줍니다.	
-	//PxCapsuleGeometry GeoMetry = PxCapsuleGeometry(1.f, 2.f); // Px~Geometry				//캡슐 크기
-	////PxSphereGeometry
-	////PxBoxGeometry
-	//RigidBodyDesc.pGeometry = &GeoMetry; // 위에서 만든거 넣어주시면됩니다.
-	//RigidBodyDesc.eConstraintFlag = CRigidBody::AllRot; // 움직임을 제한할 값을 넣어주면 됩니다. (ex allrot의 경우 로테이션을 하지않습니다.)
-	//RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 0.f, 1.f); // 디버그 컬러
-	//RigidBodyDesc.pOwnerObject = this; // 디스포인터 넣ㄹ어주셔야 안터집니다 !!
+	Safe_Release(pGameInstance);
 
-	///* Com_RigidBody */
-	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
-	//	TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
-	//{
-	//	MSG_BOX("Failed Player Add_Component : (Com_RigidBody)");
-	//	return E_FAIL;
-	//}
+	if (false == CapsuleControllerDesc.isValid())
+	{
+		MSG_BOX("Failed Create Character Controller");
+		return E_FAIL;
+	}
 
-	////가질놈
-	//RigidBodyDesc.pOwnerObject = this;
-	////고정
-	//RigidBodyDesc.isStatic = true;
-	////난 콜라이더다
-	//RigidBodyDesc.isTrigger = true;
-	////위치좀 바꿔줘라
-	//RigidBodyDesc.vOffsetPosition = _float3(-5.f, 3.f, 5.f);
-	////회전좀 줘라
-	//RigidBodyDesc.vOffsetRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	////시동걸때 파워다
-	//RigidBodyDesc.fStaticFriction = 0.0f;
-	////브레이크다
-	//RigidBodyDesc.fDynamicFriction = 0.0f;
-	////탄성이 생긴다.
-	//RigidBodyDesc.fRestitution = 0.f;
-	////콜라이더는 이렇게 생겼다.
-	//PxBoxGeometry BoxGeometry = PxBoxGeometry(3.f, 1.f, 1.f);
-	//RigidBodyDesc.pGeometry = &BoxGeometry;
-	////색이다.
-	//RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 0.f, 1.f);
-	////위 내용대로 생성 할거다.
-	//m_pRigidBody->Create_Collider(&RigidBodyDesc);
-
-
+	/* For.Com_Controller */
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_CharacterController"),
+		TEXT("Com_CharacterController"), reinterpret_cast<CComponent**>(&m_pCharacterController), &CapsuleControllerDesc)))
+	{
+		MSG_BOX("Failed CTest_Player Add_Component : (Com_CharacterController)");
+		return E_FAIL;
+	}
 
 	return S_OK;
 }
@@ -640,6 +616,7 @@ void CPlayer::Free()
 		Safe_Release(m_pMagicSlot);
 		Safe_Release(m_pWeapon);
 		Safe_Release(m_pStateContext);
+		Safe_Release(m_pCharacterController);
 
 	}
 }

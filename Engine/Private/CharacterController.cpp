@@ -5,6 +5,7 @@
 #include <characterkinematic/PxController.h>
 #include "ReportCallBack.h"
 #include "BehaviorCallBack.h"
+#include "GameInstance.h"
 
 #ifdef _DEBUG
 #include "Shader.h"
@@ -36,7 +37,6 @@ void CCharacterController::Move(_float3 _vVelocity, _float _fTimeDelta, _float _
 
 	PxControllerCollisionFlags collisionFlags = 
 		m_pController->move(PhysXConverter::ToPxVec3(_vVelocity * _fTimeDelta), _fMinDist, 0, nullptr, nullptr);
-
 }
 
 CCharacterController::CCharacterController(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -118,8 +118,11 @@ HRESULT CCharacterController::Initialize(void* pArg)
 	}
 
 #ifdef _DEBUG
+	m_vColor = _float4(1.f, 105 / 255.f, 180 / 255.f, 1.f);
+
 	if (FAILED(Add_Components(pControllerDesc)))
 		return E_FAIL;
+	
 #endif // _DEBUG
 
 	return S_OK;
@@ -173,9 +176,9 @@ HRESULT CCharacterController::Add_Components(PxControllerDesc* pControllerDesc)
 
 		CDebug_Render_Capsule::CAPSULEDESC CapsuleDesc;
 		CapsuleDesc.fRadius = pCapsuleControllerDesc->radius;
-		CapsuleDesc.fHalfHeight = pCapsuleControllerDesc->height;
+		CapsuleDesc.fHalfHeight = pCapsuleControllerDesc->height / 2;
 		CapsuleDesc.vOffsetPosition = _float3(0.f, 0.f, 0.f);
-		CapsuleDesc.vOffsetRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		CapsuleDesc.vOffsetRotation = XMQuaternionRotationRollPitchYaw(0.f, 0.f, XMConvertToRadians(90.f));
 		/* For.Com_Debug_Render_Capsule */
 		if (FAILED(CComposite::Add_Component(0, TEXT("Prototype_Component_RigidBody_Debug_Render_Capsule"),
 			TEXT("Com_Debug_Render_Capsule"), reinterpret_cast<CComponent**>(&m_pDebug_Render), &CapsuleDesc)))

@@ -165,7 +165,7 @@ namespace Engine
 	typedef struct tagCollisionEventDesc
 	{
 		const _tchar*				pOtherObjectTag = { nullptr };
-		const _tchar*				pOtherCollisionTag = { nullptr };
+		_tchar						pOtherCollisionTag[MAX_PATH] = TEXT("");
 		const class CGameObject*	pOtherOwner = { nullptr };
 		const class CTransform*		pOtherTransform = { nullptr };
 		void*						pArg = { nullptr };

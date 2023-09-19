@@ -64,6 +64,9 @@ HRESULT CMagicBall::Initialize(void* pArg)
 	m_CollisionDesc.fDamage = m_MagicBallDesc.fDamage;
 
 	Set_CollisionData(&m_CollisionDesc);
+
+	m_pTransform->Set_RigidBody(m_pRigidBody);
+
 	return S_OK;
 }
 
@@ -138,6 +141,7 @@ HRESULT CMagicBall::Add_RigidBody()
 	RigidBodyDesc.vInitPosition = _float3(0.f, 0.f, 0.f);
 	RigidBodyDesc.isGravity = false;
 	RigidBodyDesc.pOwnerObject = this;
+	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Magic_Ball");
 
 	/* Com_RigidBody */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
