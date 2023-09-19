@@ -503,6 +503,7 @@ HRESULT RENDERER_MODULE::Save(const _tchar* _pDirectoyPath)
 	WriteFile(hFile, &isUseGradientTexture, sizeof(isUseGradientTexture), &dwByte, nullptr);
 	WriteFile(hFile, wstrGraientTexture.data(), sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
 	WriteFile(hFile, strPass.data(), sizeof(_char) * MAX_PATH, &dwByte, nullptr);
+	WriteFile(hFile, &isBloom, sizeof(isBloom), &dwByte, nullptr);
 
 	CloseHandle(hFile);
 	return S_OK;
@@ -527,6 +528,7 @@ HRESULT RENDERER_MODULE::Load(const _tchar* _pDirectoyPath)
 	_ulong dwByte = 0;
 
 	_tchar wszBuffer[MAX_PATH];
+	_char szBuffer[MAX_PATH];
 
 	__super::Load(hFile, dwByte);
 
@@ -537,9 +539,12 @@ HRESULT RENDERER_MODULE::Load(const _tchar* _pDirectoyPath)
 	ReadFile(hFile, &isDeleteY, sizeof(isDeleteY), &dwByte, nullptr);
 	ReadFile(hFile, &isUseGradientTexture, sizeof(isUseGradientTexture), &dwByte, nullptr);
 	ReadFile(hFile, wszBuffer, sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
-	/*wstrGraientTexture = wszBuffer;
-	ReadFile(hFile, szBuffer, sizeof(_char) * MAX_PATH, &dwByte, nullptr);*/
-	//strPass = szBuffer;
+	if(true == isUseGradientTexture)
+		wstrGraientTexture = wszBuffer;
+	ReadFile(hFile, szBuffer, sizeof(_char) * MAX_PATH, &dwByte, nullptr);
+	strPass = szBuffer;
+	ReadFile(hFile, &isBloom, sizeof(isBloom), &dwByte, nullptr);
+
 	CloseHandle(hFile);
 	return S_OK;
 }
@@ -643,6 +648,8 @@ HRESULT COLOR_OVER_LIFETIME::Save(const _tchar* _pDirectoyPath)
 	WriteFile(hFile, &vEndColor, sizeof(vEndColor), &dwByte, nullptr);
 	WriteFile(hFile, &eEase, sizeof(eEase), &dwByte, nullptr);
 
+	CloseHandle(hFile);
+
 	return S_OK;
 }
 HRESULT COLOR_OVER_LIFETIME::Load(const _tchar* _pDirectoyPath)
@@ -670,6 +677,7 @@ HRESULT COLOR_OVER_LIFETIME::Load(const _tchar* _pDirectoyPath)
 	ReadFile(hFile, &vEndColor, sizeof(vEndColor), &dwByte, nullptr);
 	ReadFile(hFile, &eEase, sizeof(eEase), &dwByte, nullptr);
 
+	CloseHandle(hFile);
 	return S_OK;
 }
 void COLOR_OVER_LIFETIME::Action(PARTICLE_IT& _particle_iter, _float4 vMainColor, _float fTimeDelta)
@@ -737,6 +745,8 @@ HRESULT SIZE_OVER_LIFETIME::Save(const _tchar* _pDirectoyPath)
 	WriteFile(hFile, &eEaseY, sizeof(eEaseY), &dwByte, nullptr);
 	WriteFile(hFile, &eEaseZ, sizeof(eEaseZ), &dwByte, nullptr);
 
+	CloseHandle(hFile);
+
 	return S_OK;
 }
 HRESULT SIZE_OVER_LIFETIME::Load(const _tchar* _pDirectoyPath)
@@ -768,6 +778,7 @@ HRESULT SIZE_OVER_LIFETIME::Load(const _tchar* _pDirectoyPath)
 	ReadFile(hFile, &eEaseY, sizeof(eEaseY), &dwByte, nullptr);
 	ReadFile(hFile, &eEaseZ, sizeof(eEaseZ), &dwByte, nullptr);
 
+	CloseHandle(hFile);
 	return S_OK;
 }
 void SIZE_OVER_LIFETIME::Action(_float3 vStartSize, PARTICLE_IT& _particle_iter, _float _fTimeDelta)
@@ -875,7 +886,8 @@ HRESULT TEXTURE_SHEET_ANIMATION::Load(const _tchar* _pDirectoyPath)
 	ReadFile(hFile, &fUpdateInterval, sizeof(fUpdateInterval), &dwByte, nullptr);
 	ReadFile(hFile, &isUseNormalTexture, sizeof(isUseNormalTexture), &dwByte, nullptr);
 	ReadFile(hFile, wszBuffer, sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
-	wstrNormalPath = wszBuffer;
+	if(true == isUseNormalTexture)
+		wstrNormalPath = wszBuffer;
 	ReadFile(hFile, &isLoopOption, sizeof(isLoopOption), &dwByte, nullptr);
 
 	CloseHandle(hFile);

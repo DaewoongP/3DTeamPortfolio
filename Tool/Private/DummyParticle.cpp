@@ -732,7 +732,7 @@ void CDummyParticle::Load_FileDialog()
 			std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
 			fs::path fsFilePathName = filePathName;
 			fs::path fsFilePath = filePath;
-
+			fsFilePath = ToRelativePath(fsFilePath.wstring().data());
 			_ulong dwByte = 0;
 
 			if (FAILED(Load(fsFilePath.wstring().c_str())))
