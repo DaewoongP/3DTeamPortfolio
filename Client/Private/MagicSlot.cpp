@@ -40,7 +40,7 @@ HRESULT CMagicSlot::Initialize(void* pArg)
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
 		magicInitDesc.eMagicTag = BASICCAST;
-		magicInitDesc.fCoolTime = 1.f;
+		magicInitDesc.fCoolTime = 0.f;
 		magicInitDesc.fDamage = 10.f;
 		magicInitDesc.fCastDistance = 1000;
 		magicInitDesc.fBallDistance = 30;

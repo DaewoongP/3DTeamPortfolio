@@ -5,6 +5,7 @@
 
 BEGIN(Engine)
 class CTrail;
+class CParticleSystem;
 END
 
 BEGIN(Client)
@@ -35,6 +36,9 @@ public:
 	void	Set_Trail_HeadColor(_float3 vColor);
 	void	Set_Trail_TailColor(_float3 vColor);
 
+	void	Set_Glow_BallColor(_float3 vColor);
+	void	GlowBall_Dead();
+
 public:
 	virtual HRESULT Initialize_Prototype(const _tchar* wszFilePath,_uint iLevel);
 	virtual HRESULT Initialize(void* pArg) override;
@@ -43,9 +47,11 @@ public:
 
 private: /* For. Component */
 	CTrail* m_pTrail = { nullptr };
+	CParticleSystem* m_pGlowBall = { nullptr };
 
 private:
 	CTransform* m_pTrailTransform = { nullptr };
+	CTransform* m_pGlowBallTransform = { nullptr };
 	
 private:
 	_uint m_iLevel = { 0 };
