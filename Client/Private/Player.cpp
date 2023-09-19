@@ -1,7 +1,7 @@
 #include "..\Public\Player.h"
 #include "GameInstance.h"
 #include "Player_Camera.h"
-#include "Magic.h"
+#include "MagicSlot.h"
 #include "Weapon_Player_Wand.h"
 #include "StateContext.h"
 #include "IdleState.h"
@@ -36,6 +36,13 @@ HRESULT CPlayer::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 	{
 		MSG_BOX("Failed Player Add_Components");
+
+		return E_FAIL;
+	}
+
+	if (FAILED(Add_Magic()))
+	{
+		MSG_BOX("Failed Ready Player Magic");
 
 		return E_FAIL;
 	}
@@ -196,88 +203,42 @@ HRESULT CPlayer::Add_Components()
 		TEXT("Com_Weapon"), reinterpret_cast<CComponent**>(&m_pWeapon), &ParentMatrixDesc)))
 		throw TEXT("Com_Weapon");
 
-	/* For.Com_Magic*/
-	//CMagic::MAGICDESC magicInitDesc;
-	//magicInitDesc.eBuffType = CMagic::BUFF_NONE;
-	//magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
-	//magicInitDesc.eMagicType = CMagic::MT_NOTHING;
-	//magicInitDesc.eMagicTag = BASICCAST;
-	//magicInitDesc.fCoolTime = 1.f;
-	//magicInitDesc.fDamage = 10.f;
-	//magicInitDesc.fCastDistance = 1000;
-	//magicInitDesc.fBallDistance = 30;
-	//magicInitDesc.fLifeTime = 0.1f;
-
-	CMagic::MAGICDESC magicInitDesc;
-	magicInitDesc.eBuffType = CMagic::BUFF_SHILED;
-	magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
-	magicInitDesc.eMagicType = CMagic::MT_ALL;
-	magicInitDesc.eMagicTag = CONFRINGO;
-	magicInitDesc.fCoolTime = 1.f;
-	magicInitDesc.fDamage = 0.f;
-	magicInitDesc.fCastDistance = 1000;
-	magicInitDesc.fBallDistance = 30;
-	magicInitDesc.fLifeTime = 0.2f;
-
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Magic"),
-		TEXT("Com_Magic"), reinterpret_cast<CComponent**>(&m_pMagic), &magicInitDesc)))
+	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_MagicSlot"),
+		TEXT("Com_MagicSlot"), reinterpret_cast<CComponent**>(&m_pMagicSlot))))
 	{
-		MSG_BOX("Failed CTest_Player Add_Component : (Com_Magic)");
+		MSG_BOX("Failed CTest_Player Add_Component : (Com_MagicSlot)");
 		return E_FAIL;
 	}
-	m_pMagic->Add_ActionFunc([&] {(*this).MagicTestTextOutput(); });
 
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
 
-	//CRigidBody::RIGIDBODYDESC RigidBodyDesc;
+	PxCapsuleControllerDesc CapsuleControllerDesc;
+	CapsuleControllerDesc.setToDefault();
+	CapsuleControllerDesc.height = 1.f;
+	CapsuleControllerDesc.radius = 0.5f;
+	CapsuleControllerDesc.material = pGameInstance->Get_Physics()->createMaterial(0.5f, 0.5f, 0.5f);
+	CapsuleControllerDesc.density = 10.f;
+	CapsuleControllerDesc.stepOffset = 0.5f;
+	CapsuleControllerDesc.contactOffset = 1.f;
+	CapsuleControllerDesc.upDirection = PxVec3(0.f, 1.f, 0.f);
+	CapsuleControllerDesc.userData = this;
 
-	//RigidBodyDesc.isStatic = false; // static - 고정된 물체 (true -> 고정) (false -> 움직임)
-	//RigidBodyDesc.isTrigger = false; // 트리거임 원래 콜라이더 생각하시면됩니다.
-	//RigidBodyDesc.vInitPosition = _float3(1024.0f, 1024.0f, 1024.0f); // -> 트랜스폼에다가 초기 포지션 줘도 적용 안됩니다 !! / 요기다 주셔야 합니다 (리지드 바디가 있는 경우만 해당)
-	//RigidBodyDesc.vOffsetRotation = XMQuaternionRotationRollPitchYaw(0.f, 0.f, 0.0f);
-	//RigidBodyDesc.fStaticFriction = 0.5f; // 가만히 있을때 움직이기 위한 최소 힘의 수치 0~1		//시동 속도
-	//RigidBodyDesc.fDynamicFriction = 0.5f; // 움직일때 멈추기위한 마찰력? 0~1					//브레이크 강도
-	//RigidBodyDesc.fRestitution = 0.f; // 탄성값이 얼마나 들어갈 것인가 0~1 -> 1로주면 존나튑니다 보통 0으로줍니다.	
-	//PxCapsuleGeometry GeoMetry = PxCapsuleGeometry(1.f, 2.f); // Px~Geometry				//캡슐 크기
-	////PxSphereGeometry
-	////PxBoxGeometry
-	//RigidBodyDesc.pGeometry = &GeoMetry; // 위에서 만든거 넣어주시면됩니다.
-	//RigidBodyDesc.eConstraintFlag = CRigidBody::AllRot; // 움직임을 제한할 값을 넣어주면 됩니다. (ex allrot의 경우 로테이션을 하지않습니다.)
-	//RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 0.f, 1.f); // 디버그 컬러
-	//RigidBodyDesc.pOwnerObject = this; // 디스포인터 넣ㄹ어주셔야 안터집니다 !!
+	Safe_Release(pGameInstance);
 
-	///* Com_RigidBody */
-	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
-	//	TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
-	//{
-	//	MSG_BOX("Failed Player Add_Component : (Com_RigidBody)");
-	//	return E_FAIL;
-	//}
+	if (false == CapsuleControllerDesc.isValid())
+	{
+		MSG_BOX("Failed Create Character Controller");
+		return E_FAIL;
+	}
 
-	////가질놈
-	//RigidBodyDesc.pOwnerObject = this;
-	////고정
-	//RigidBodyDesc.isStatic = true;
-	////난 콜라이더다
-	//RigidBodyDesc.isTrigger = true;
-	////위치좀 바꿔줘라
-	//RigidBodyDesc.vOffsetPosition = _float3(-5.f, 3.f, 5.f);
-	////회전좀 줘라
-	//RigidBodyDesc.vOffsetRotation = _float4(0.f, 0.f, 0.f, 1.f);
-	////시동걸때 파워다
-	//RigidBodyDesc.fStaticFriction = 0.0f;
-	////브레이크다
-	//RigidBodyDesc.fDynamicFriction = 0.0f;
-	////탄성이 생긴다.
-	//RigidBodyDesc.fRestitution = 0.f;
-	////콜라이더는 이렇게 생겼다.
-	//PxBoxGeometry BoxGeometry = PxBoxGeometry(3.f, 1.f, 1.f);
-	//RigidBodyDesc.pGeometry = &BoxGeometry;
-	////색이다.
-	//RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 0.f, 1.f);
-	////위 내용대로 생성 할거다.
-	//m_pRigidBody->Create_Collider(&RigidBodyDesc);
-
-
+	/* For.Com_Controller */
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_CharacterController"),
+		TEXT("Com_CharacterController"), reinterpret_cast<CComponent**>(&m_pCharacterController), &CapsuleControllerDesc)))
+	{
+		MSG_BOX("Failed CTest_Player Add_Component : (Com_CharacterController)");
+		return E_FAIL;
+	}
 
 	return S_OK;
 }
@@ -297,6 +258,43 @@ HRESULT CPlayer::SetUp_ShaderResources()
 
 	ENDINSTANCE;
 
+	return S_OK;
+}
+
+HRESULT CPlayer::Add_Magic()
+{
+	CMagic::MAGICDESC magicInitDesc;
+	// 레비오소
+	{
+		magicInitDesc.eBuffType = CMagic::BUFF_UNGRAVITY;
+		magicInitDesc.eMagicGroup = CMagic::MG_CONTROL;
+		magicInitDesc.eMagicType = CMagic::MT_YELLOW;
+		magicInitDesc.eMagicTag = LEVIOSO;
+		magicInitDesc.fCoolTime = 1.f;
+		magicInitDesc.fDamage = 0.f;
+		magicInitDesc.fCastDistance = 1000;
+		magicInitDesc.fBallDistance = 30;
+		magicInitDesc.fLifeTime = 1.2f;
+		m_pMagicSlot->Add_Magics(magicInitDesc);
+	}
+
+	// 콘프링고
+	{
+		magicInitDesc.eBuffType = CMagic::BUFF_FIRE;
+		magicInitDesc.eMagicGroup = CMagic::MG_DAMAGE;
+		magicInitDesc.eMagicType = CMagic::MT_RED;
+		magicInitDesc.eMagicTag = CONFRINGO;
+		magicInitDesc.fCoolTime = 1.f;
+		magicInitDesc.fDamage = 50.f;
+		magicInitDesc.fCastDistance = 1000;
+		magicInitDesc.fBallDistance = 30;
+		magicInitDesc.fLifeTime = 0.8f;
+		m_pMagicSlot->Add_Magics(magicInitDesc);
+	}
+	
+	m_pMagicSlot->Add_Magic_To_Skill_Slot(0, CONFRINGO);
+	m_pMagicSlot->Add_Magic_To_Skill_Slot(1, LEVIOSO);
+	
 	return S_OK;
 }
 
@@ -333,15 +331,50 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 	if (pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN))
 	{
-		if (m_pMagic != nullptr)
-		{
-			/* 이거는 테스트 용으로 더미클래스 찾으려고 넣은 코드를 훔쳐온거임 */
-			CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
-			if (nullptr == pTestTarget)
-				throw TEXT("pTestTarget is nullptr");
+		/* 이거는 테스트 용으로 더미클래스 찾으려고 넣은 코드를 훔쳐온거임 */
+		CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
+		if (nullptr == pTestTarget)
+			throw TEXT("pTestTarget is nullptr");
 
-			m_pMagic->Magic_Cast(pTestTarget->Get_Transform(), m_pWeapon);
-		}
+		m_pMagicSlot->Action_Magic_Basic(0, pTestTarget->Get_Transform(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_Q, CInput_Device::KEY_DOWN))
+	{
+		//포르테고는 타켓이 생성 객체임
+		m_pMagicSlot->Action_Magic_Basic(1, m_pTransform, m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_1, CInput_Device::KEY_DOWN))
+	{
+		CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
+		if (nullptr == pTestTarget)
+			throw TEXT("pTestTarget is nullptr");
+		m_pMagicSlot->Action_Magic_Skill(0, pTestTarget->Get_Transform(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_2, CInput_Device::KEY_DOWN))
+	{
+		CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
+		if (nullptr == pTestTarget)
+			throw TEXT("pTestTarget is nullptr");
+		m_pMagicSlot->Action_Magic_Skill(1, pTestTarget->Get_Transform(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_3, CInput_Device::KEY_DOWN))
+	{
+		CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
+		if (nullptr == pTestTarget)
+			throw TEXT("pTestTarget is nullptr");
+		m_pMagicSlot->Action_Magic_Skill(2, pTestTarget->Get_Transform(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_4, CInput_Device::KEY_DOWN))
+	{
+		CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
+		if (nullptr == pTestTarget)
+			throw TEXT("pTestTarget is nullptr");
+		m_pMagicSlot->Action_Magic_Skill(3, pTestTarget->Get_Transform(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
 	}
 
 	ENDINSTANCE;
@@ -580,9 +613,10 @@ void CPlayer::Free()
 		Safe_Release(m_pRenderer);
 		Safe_Release(m_pCustomModel);
 		Safe_Release(m_pPlayer_Camera);
-		Safe_Release(m_pMagic);
+		Safe_Release(m_pMagicSlot);
 		Safe_Release(m_pWeapon);
 		Safe_Release(m_pStateContext);
+		Safe_Release(m_pCharacterController);
 
 	}
 }

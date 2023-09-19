@@ -10,8 +10,11 @@ class CSequence;
 class CRenderer;
 class CRigidBody;
 class CRootBehavior;
+END
 
-class CAnimation;
+BEGIN(Client)
+class CMagic;
+class CWeapon_Fig_Wand;
 END
 
 BEGIN(Client)
@@ -34,11 +37,14 @@ public:
 	virtual HRESULT Render_Depth() override;
 
 private:
+	CMagic* m_pMagic = { nullptr };
 	CModel* m_pModelCom = { nullptr };
 	CShader* m_pShaderCom = { nullptr };
 	CRenderer* m_pRenderer = { nullptr };
 	CRigidBody* m_pRigidBody = { nullptr };
 	CRootBehavior* m_pRootBehavior = { nullptr };
+
+	CWeapon_Fig_Wand* m_pWeapon = { nullptr };
 
 private:
 	// 리스트 내에 들어있는 오브젝트 중 가장 가까운 객체 포인터
@@ -75,6 +81,8 @@ private: /* Notify Functions */
 	void Change_Animation() {
 		m_isChangeAnimation = true;
 	}
+	void Attack_Light();
+	void Attack_Heavy();
 
 public:
 	static CProfessor_Fig* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

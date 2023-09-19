@@ -1,22 +1,22 @@
-#include "Weapon_Player_Wand.h"
+#include "Weapon_Fig_Wand.h"
 #include "GameInstance.h"
 
-CWeapon_Player_Wand::CWeapon_Player_Wand(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CWeapon_Fig_Wand::CWeapon_Fig_Wand(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CParts(pDevice, pContext)
 {
 }
 
-CWeapon_Player_Wand::CWeapon_Player_Wand(const CWeapon_Player_Wand& rhs)
+CWeapon_Fig_Wand::CWeapon_Fig_Wand(const CWeapon_Fig_Wand& rhs)
 	: CParts(rhs)
 {
 }
 
-HRESULT CWeapon_Player_Wand::Initialize_Prototype()
+HRESULT CWeapon_Fig_Wand::Initialize_Prototype()
 {
 	return __super::Initialize_Prototype();
 }
 
-HRESULT CWeapon_Player_Wand::Initialize(void* pArg)
+HRESULT CWeapon_Fig_Wand::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -27,37 +27,34 @@ HRESULT CWeapon_Player_Wand::Initialize(void* pArg)
 	//매쉬에서 원점과 가장 먼 지점을 찾는 로직.(지팡이 끝 지점을 얻어내기 위함임.)
 	vector<class CMesh*>* meshVec = m_pModelCom->Get_MeshesVec();
 
-	_float dist = 0;
+	_float dist = 1000;
 	_float sub = 0;
-	// 모든 매쉬들을 순회하면서
 	for (auto mesh : (*meshVec))
 	{
-		// 모든 정점들을 순회하면서
 		vector<_float3>* pointVec = mesh->Get_VerticesPositionVec();
 		for (auto point : (*pointVec))
 		{
-			// 완드의 원점에서 제일 먼 점을 찾는다.
-			sub = point.Length();
-			if (sub > dist)
+			sub = XMVectorGetX(point - _float3(0, 0, 0));
+			if (sub < dist)
 			{
 				dist = sub;
-				m_WandPointOffsetMatrix = _float4x4(XMMatrixTranslation(point.x, point.y, point.z)) * m_pModelCom->Get_PivotFloat4x4();
+				m_WandPointOffset = point;
 			}
 		}
 	}
 
- 	m_pTransform->Set_Speed(10.f);
+	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
 
 	return S_OK;
 }
 
-void CWeapon_Player_Wand::Tick(_float fTimeDelta)
+void CWeapon_Fig_Wand::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 }
 
-void CWeapon_Player_Wand::Late_Tick(_float fTimeDelta)
+void CWeapon_Fig_Wand::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
@@ -65,7 +62,7 @@ void CWeapon_Player_Wand::Late_Tick(_float fTimeDelta)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 }
 
-HRESULT CWeapon_Player_Wand::Render()
+HRESULT CWeapon_Fig_Wand::Render()
 {
 	if (FAILED(Set_Shader_Resources()))
 		return E_FAIL;
@@ -87,7 +84,7 @@ HRESULT CWeapon_Player_Wand::Render()
 		}
 		catch (const _tchar* pErrorTag)
 		{
-			wstring wstrErrorMSG = TEXT("[CWeapon_Player_Wand] Failed Render : \n");
+			wstring wstrErrorMSG = TEXT("[CWeapon_Fig_Wand] Failed Render : \n");
 			wstrErrorMSG += pErrorTag;
 			MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
 			__debugbreak();
@@ -99,11 +96,11 @@ HRESULT CWeapon_Player_Wand::Render()
 	return __super::Render();
 }
 
-HRESULT CWeapon_Player_Wand::Add_Components(void* pArg)
+HRESULT CWeapon_Fig_Wand::Add_Components(void* pArg)
 {
 	try /* Check Add_Components */
 	{
-		if (FAILED(Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Weopon_Player_Wand"), L"Com_Model",
+		if (FAILED(Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Weopon_Fig_Wand"), L"Com_Model",
 			(CComponent**)&m_pModelCom, this)))
 			throw TEXT("Failed Add_Component : Com_Model");
 
@@ -117,7 +114,7 @@ HRESULT CWeapon_Player_Wand::Add_Components(void* pArg)
 	}
 	catch (const _tchar* pErrorTag)
 	{
-		wstring wstrErrorMSG = TEXT("[CWeapon_Player_Wand] Failed Add_Components : \n");
+		wstring wstrErrorMSG = TEXT("[CWeapon_Fig_Wand] Failed Add_Components : \n");
 		wstrErrorMSG += pErrorTag;
 		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
 
@@ -127,7 +124,7 @@ HRESULT CWeapon_Player_Wand::Add_Components(void* pArg)
 	return S_OK;
 }
 
-HRESULT CWeapon_Player_Wand::Set_Shader_Resources()
+HRESULT CWeapon_Fig_Wand::Set_Shader_Resources()
 {
 	BEGININSTANCE;
 
@@ -150,7 +147,7 @@ HRESULT CWeapon_Player_Wand::Set_Shader_Resources()
 	}
 	catch (const _tchar* pErrorTag)
 	{
-		wstring wstrErrorMSG = TEXT("[CWeapon_Player_Wand] Failed SetUp_ShaderResources : \n");
+		wstring wstrErrorMSG = TEXT("[CWeapon_Fig_Wand] Failed SetUp_ShaderResources : \n");
 		wstrErrorMSG += pErrorTag;
 		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
 
@@ -164,31 +161,31 @@ HRESULT CWeapon_Player_Wand::Set_Shader_Resources()
 	return S_OK;
 }
 
-CWeapon_Player_Wand* CWeapon_Player_Wand::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CWeapon_Fig_Wand* CWeapon_Fig_Wand::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CWeapon_Player_Wand* pInstance = New CWeapon_Player_Wand(pDevice, pContext);
+	CWeapon_Fig_Wand* pInstance = New CWeapon_Fig_Wand(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Created CWeapon_Player_Wand");
+		MSG_BOX("Failed to Created CWeapon_Fig_Wand");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-CWeapon_Player_Wand* CWeapon_Player_Wand::Clone(void* pArg)
+CWeapon_Fig_Wand* CWeapon_Fig_Wand::Clone(void* pArg)
 {
-	CWeapon_Player_Wand* pInstance = New CWeapon_Player_Wand(*this);
+	CWeapon_Fig_Wand* pInstance = New CWeapon_Fig_Wand(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned CWeapon_Player_Wand");
+		MSG_BOX("Failed to Cloned CWeapon_Fig_Wand");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-void CWeapon_Player_Wand::Free()
+void CWeapon_Fig_Wand::Free()
 {
 	__super::Free();
 

@@ -221,7 +221,10 @@ void CParticleSystem::Late_Tick(_float _fTimeDelta)
 		return;
 
 	if (nullptr != m_pRenderer)
+	{
+		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BLOOM, this);
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BLEND, this);
+	}
 }
 HRESULT CParticleSystem::Render()
 {
@@ -306,7 +309,6 @@ HRESULT CParticleSystem::Setup_ShaderResources()
 		}
 		if (FAILED(m_pGradientTexture->Bind_ShaderResource(m_pShader, "g_GradientTexture")))
 			throw "g_GradientTexture";
-
 	}
 	catch (const _tchar* pErrorTag)
 	{

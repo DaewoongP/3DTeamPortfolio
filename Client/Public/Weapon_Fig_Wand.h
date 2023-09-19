@@ -1,30 +1,30 @@
 #pragma once
+
 /* =============================================== */
-//	[CDummy]
-//	: 몬스터 비헤비어 테스트용 더미인형
+//	[CWeapon_Fig_Wand]
+// 
 //	정 : 주성환
 //	부 :
 //
 /* =============================================== */
 
-#include "GameObject.h"
+#include "Parts.h"
 #include "Client_Defines.h"
 
 BEGIN(Engine)
 class CModel;
 class CShader;
 class CRenderer;
-class CRigidBody;
 END
 
 BEGIN(Client)
 
-class CDummy final : public CGameObject
+class CWeapon_Fig_Wand : public CParts
 {
 private:
-	explicit CDummy(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	explicit CDummy(const CDummy& rhs);
-	virtual ~CDummy() = default;
+	explicit CWeapon_Fig_Wand(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	explicit CWeapon_Fig_Wand(const CWeapon_Fig_Wand& rhs);
+	virtual ~CWeapon_Fig_Wand() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -32,21 +32,25 @@ public:
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
-	virtual HRESULT Render_Depth() override;
+
+public:
+	_float3		Get_Wand_Point_Offset() { return m_WandPointOffset; }
 
 private:
 	CModel* m_pModelCom = { nullptr };
 	CShader* m_pShaderCom = { nullptr };
-	CRenderer* m_pRenderer = { nullptr };
+	CRenderer* m_pRendererCom = { nullptr };
 
 private:
-	void Key_Input(_float fTimeDelta);
-	HRESULT Add_Components();
-	HRESULT SetUp_ShaderResources();
+	_float3			m_WandPointOffset = {};
+
+private:
+	HRESULT Add_Components(void* pArg);
+	HRESULT Set_Shader_Resources();
 
 public:
-	static CDummy* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CGameObject* Clone(void* pArg) override;
+	static CWeapon_Fig_Wand* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	virtual CWeapon_Fig_Wand* Clone(void* pArg) override;
 	virtual void Free() override;
 };
 

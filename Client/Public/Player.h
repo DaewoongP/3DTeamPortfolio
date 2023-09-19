@@ -8,7 +8,7 @@ class CShader;
 class CRenderer;
 class CCollider;
 class CCustomModel;
-
+class CCharacterController;
 END
 
 BEGIN(Client)
@@ -41,6 +41,7 @@ private:
 	CRenderer*		m_pRenderer = { nullptr };
 	CCustomModel*	m_pCustomModel = { nullptr };
 	CRigidBody*		m_pRigidBody = { nullptr };
+	CCharacterController*	m_pCharacterController = { nullptr };
 
 private:
 	CPlayer_Camera* m_pPlayer_Camera = { nullptr };
@@ -53,14 +54,15 @@ private:
 
 	CStateContext* m_pStateContext = { nullptr };
 	
-	/* 마법을 위한 공간 */
-	class CMagic*	m_pMagic = { nullptr };
+	//평타, 실드가 이미 탑재된 마법 슬롯 
+	class CMagicSlot*	m_pMagicSlot = { nullptr };
 	CWeapon_Player_Wand*	m_pWeapon = { nullptr };
 
 
 private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
+	HRESULT Add_Magic();
 
 private:
 	void Key_Input(_float fTimeDelta);

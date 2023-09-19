@@ -885,6 +885,7 @@ void CDummyParticle::Free(void)
 	Safe_Release(m_pSpriteTextureIFD);
 	Safe_Release(m_pMaterialTextureIFD);
 	Safe_Release(m_pNormalTextureIFD);
+	Safe_Release(m_pGradientTextureIFD);
 	Safe_Release(m_pColorEaseCombo);
 	Safe_Release(m_pSizeXEaseCombo);
 	Safe_Release(m_pSizeYEaseCombo);
@@ -892,9 +893,9 @@ void CDummyParticle::Free(void)
 	Safe_Release(m_pAngularVelocityXEaseCombo);
 	Safe_Release(m_pAngularVelocityYEaseCombo);
 	Safe_Release(m_pAngularVelocityZEaseCombo);
-
 	Safe_Release(m_pPassComboBox);
-
+	for (auto& pEaseCombo : m_pEaseCombo)
+		Safe_Release(pEaseCombo);
 	//for (auto& EaseComboBox : m_pColorEase)
 	//{
 	//	Safe_Release(EaseComboBox);

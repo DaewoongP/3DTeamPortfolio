@@ -24,11 +24,7 @@
 
 #ifdef _DEBUG
 #include "Test_Player.h"
-#include "Test_NPC.h"
-#include "Test_Cloth.h"
 #include "Camera_Debug.h"
-#include "Dummy.h"
-#include "Test_Stair.h"
 #include "PhysXRender.h"
 #include "LoadTrigger.h"
 #endif // _DEBUG
@@ -155,7 +151,7 @@ HRESULT CMain0_Loader::Loading_For_MainGame()
 
 		/* Prototype_Component_VIBuffer_Terrain */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Terrain"),
-			CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Terrain/Height.bmp")))))
+			CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Terrain/DT.bmp")))))
 			throw TEXT("Prototype_Component_VIBuffer_Terrain");
 
 		/* For.Prototype_Component_VIBuffer_Cloth */
@@ -249,10 +245,6 @@ HRESULT CMain0_Loader::Loading_For_MainGame()
 
 		/* --------------Debug-------------- */
 #ifdef _DEBUG
-		/* For.Prototype_GameObject_Dummy */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Dummy"),
-			CDummy::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_Dummy");
 
 		/* For.Prototype_GameObject_Camera_Debug*/
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Camera_Debug"),
@@ -268,15 +260,6 @@ HRESULT CMain0_Loader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Particle"),
 			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Test/"), LEVEL_STATIC))))
 			throw TEXT("Prototype_GameObject_Test_Particle");
-
-		/* For.Prototype_GameObject_Test_Cloth*/
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Cloth"),
-			CTest_Cloth::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_Test_Cloth");
-
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Stair"),
-			CTest_Stair::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_Test_Stair");
 
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_PhysxRenderer"),
 			CPhysXRender::Create(m_pDevice, m_pContext))))

@@ -9,6 +9,7 @@
 #include "Weapon_Player_Wand.h"
 
 #include "Professor_FIg.h"
+#include "Weapon_Fig_Wand.h"
 
 #pragma region Player State
 
@@ -125,6 +126,11 @@ HRESULT CMain3_Loader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Weapon_Player_Wand"),
 			CWeapon_Player_Wand::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Weapon_Player_Wand");
+
+		/* For.Prototype_Component_Weapon_Fig_Wand */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Weapon_Fig_Wand"),
+			CWeapon_Fig_Wand::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Weapon_Fig_Wand");
 #pragma region Player Parts
 
 		/* For.Prototype_Component_MeshPart_Player_Head */

@@ -62,26 +62,28 @@ HRESULT CGolem_Combat::Initialize(void* pArg)
 void CGolem_Combat::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
-	// ¸ó½ºÅÍ Çàµ¿ Å×½ºÆ®¿ë ÄÚµå
+	
+	// Test Code 
 	BEGININSTANCE;
 
 	if (pGameInstance->Get_DIKeyState(DIK_LCONTROL, CInput_Device::KEY_PRESSING))
 	{
-		if (pGameInstance->Get_DIKeyState(DIK_5, CInput_Device::KEY_DOWN)) // ½ºÆù Å×½ºÆ®
+		if (pGameInstance->Get_DIKeyState(DIK_5, CInput_Device::KEY_DOWN))
 			m_isSpawn = true;
-		if (pGameInstance->Get_DIKeyState(DIK_4, CInput_Device::KEY_DOWN)) // ÆÐ¸µ Å×½ºÆ®
+		if (pGameInstance->Get_DIKeyState(DIK_4, CInput_Device::KEY_DOWN))
 			m_isParring = true;
-		if (pGameInstance->Get_DIKeyState(DIK_3, CInput_Device::KEY_DOWN)) // ½ºÅõÆäÆÄÀÌ Å×½ºÆ®
+		if (pGameInstance->Get_DIKeyState(DIK_3, CInput_Device::KEY_DOWN))
 			m_iCurrentSpell |= CMagic::BUFF_STUN;
-		if (pGameInstance->Get_DIKeyState(DIK_2, CInput_Device::KEY_DOWN)) // ·¹ºñ¿À¼Ò Å×½ºÆ®
+		if (pGameInstance->Get_DIKeyState(DIK_2, CInput_Device::KEY_DOWN))
 			m_iCurrentSpell |= CMagic::BUFF_UNGRAVITY;
-		if (pGameInstance->Get_DIKeyState(DIK_1, CInput_Device::KEY_DOWN)) // µð¼¾µµ Å×½ºÆ®
+		if (pGameInstance->Get_DIKeyState(DIK_1, CInput_Device::KEY_DOWN))
 			m_iCurrentSpell |= CMagic::BUFF_CONTROL;
 	}
 
 	ENDINSTANCE;
 	////////////////////////////
+
+	Set_Current_Target();
 
 	if (nullptr != m_pRootBehavior)
 		m_pRootBehavior->Tick(fTimeDelta);
@@ -106,14 +108,14 @@ void CGolem_Combat::Late_Tick(_float fTimeDelta)
 void CGolem_Combat::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
-	/* ¸¶¹ýÀ» ¸Â¾ÒÀ» °æ¿ì */
+	/* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Â¾ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ */
 	if (wstring::npos != wstrObjectTag.find(TEXT("MagicBall")))
 	{
 		//static_cast<>(CollisionEventDesc.pArg);
-		// ½½½½ ¿©±â¿¡ Ãß°¡ ÇØ¾ßµÇ´Âµ¥
+		// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½â¿¡ ï¿½ß°ï¿½ ï¿½Ø¾ßµÇ´Âµï¿½
 	}
 
-	/* ¹üÀ§ ¾È¿¡ ÇÃ·¹ÀÌ¾î³ª npc°¡ µé¾î¿Â °æ¿ì */
+	/* ï¿½ï¿½ï¿½ï¿½ ï¿½È¿ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾î³ª npcï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ */
 	if (wstring::npos != wstrObjectTag.find(TEXT("Player")) ||
 		wstring::npos != wstrObjectTag.find(TEXT("Fig")))
 	{
@@ -213,14 +215,12 @@ HRESULT CGolem_Combat::Make_AI()
 		if (FAILED(m_pRootBehavior->Add_Type("iCurrentSpell", &m_iCurrentSpell)))
 			throw TEXT("Failed Add_Type iCurrentSpell");
 
-		/* ÀÌ°Å´Â Å×½ºÆ® ¿ëÀ¸·Î ³ÖÀº ÄÚµåÀÓ */
 		m_pTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Player"), TEXT("GameObject_Player")));
 		
 		if (nullptr == m_pTarget)
 			throw TEXT("m_pTarget is nullptr");
 		if (FAILED(m_pRootBehavior->Add_Type("cppTarget", &m_pTarget)))
 			throw TEXT("Failed Add_Type cppTarget");
-		///////////////////////////////////////
 #pragma endregion //Add_Types
 
 		/* Make Child Behaviors */
@@ -310,7 +310,7 @@ HRESULT CGolem_Combat::Add_Components()
 		RigidBodyDesc.isStatic = false;
 		RigidBodyDesc.isTrigger = false;
 		RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
-		RigidBodyDesc.vOffsetPosition = _float3(0.f, 1.f, 0.f);
+		RigidBodyDesc.vOffsetPosition = _float3(0.f, 2.2f, 0.f);
 		RigidBodyDesc.vOffsetRotation = XMQuaternionRotationRollPitchYaw(0.f, 0.f, XMConvertToRadians(90.f));
 		RigidBodyDesc.fStaticFriction = 0.f;
 		RigidBodyDesc.fDynamicFriction = 1.f;
@@ -320,6 +320,7 @@ HRESULT CGolem_Combat::Add_Components()
 		RigidBodyDesc.eConstraintFlag = CRigidBody::RotX | CRigidBody::RotY | CRigidBody::RotZ;
 		RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 0.f, 1.f);
 		RigidBodyDesc.pOwnerObject = this;
+		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Body");
 
 		/* For.Com_RigidBody */
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
@@ -331,6 +332,7 @@ HRESULT CGolem_Combat::Add_Components()
 		RigidBodyDesc.isTrigger = true;
 		PxSphereGeometry pSphereGeomatry = PxSphereGeometry(15.f);
 		RigidBodyDesc.pGeometry = &pSphereGeomatry;
+		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Range");
 
 		m_pRigidBody->Create_Collider(&RigidBodyDesc);
 
@@ -422,8 +424,9 @@ void CGolem_Combat::Set_Current_Target()
 
 	if (false == m_isRangeInEnemy)
 	{
-
-		m_pTarget = { nullptr };
+		BEGININSTANCE;
+		m_pTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Player"), TEXT("GameObject_Player")));
+		ENDINSTANCE;
 	}
 }
 
@@ -920,13 +923,13 @@ HRESULT CGolem_Combat::Make_Check_Spell(_Inout_ CSelector* pSelector)
 		/* Set_Options */
 		pSequence_Groggy->Set_LoopTime(3.f);
 
-		/* ½ºÅõÆäÆÄÀÌ */
+		/* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
 		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Groggy"), pSequence_Groggy)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Groggy");
-		/* ·¹ºñ¿À¼Ò */
+		/* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
 		if(FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Levitated"), pSequence_Levitated)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Levitated");
-		/* µð¼¾µµ */
+		/* ï¿½ð¼¾µï¿½ */
 		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Descendo"), pSequence_Descendo)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Descendo");
 

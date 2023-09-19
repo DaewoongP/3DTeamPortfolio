@@ -5,6 +5,7 @@
 //	부 :
 //
 /* =============================================== */
+// https://github.com/DaewoongP/3DTeamPortfolio/wiki/Rigid-Body
 #include "Composite.h"
 
 BEGIN(Engine)
@@ -33,64 +34,20 @@ public:
 
 	typedef struct tagRigidBodyDesc
 	{
-		// 충돌일어났을때 다른콜리전함수에 넘겨주는 tag변수입니다.
-		_tchar szCollisionTag[MAX_PATH] = TEXT("");
-		// this포인터 대입하면 됩니다.
-		// 내부적으로 레퍼런스 카운트 관리
+		_char		szCollisionTag[MAX_PATH] = "";
 		class CGameObject* pOwnerObject = { nullptr };
-		// static(true) : 움직이지 않는 물체 (다른 객체의 충돌에 의해 움직일 수도 있음.)
-		// dynamic(false) : 움직이는 물체
-		_bool isStatic = { false };
-		// Trigger 옵션
-		// ****** Enter와 exit만 처리됩니다. ******
-		_bool isTrigger = { false };
-		// ******* RigidBody Clone이 아닌 새로 콜라이더 세팅할경우 필요 없는 옵션입니다 *******
-		// 객체의 초기 포지션 세팅 (객체의 포지션 Transform Pos)
-		// 지면과 붙어있을 경우 튕겨져 나갈 수 있습니다.
-		_float3 vInitPosition = _float3(0.f, 0.f, 0.f);
-		// ******* RigidBody Clone이 아닌 새로 콜라이더 세팅할경우 필요 없는 옵션입니다 *******
-		// 객체의 초기 쿼터니언 로테이션 세팅 (객체의 쿼터니언 로테이션 값 Get_Quaternion)
-		// 초기값은 (0,0,0,1) 입니다.
-		_float4 vInitRotation = _float4(0.f, 0.f, 0.f, 1.f);
-		// 오프셋 포지션
-		// 초기 포지션과의 오프셋을 통한 콜라이더 포지션 위치를 세팅합니다.
-		_float3 vOffsetPosition = _float3(0.f, 0.f, 0.f);
-		// 오프셋 쿼터니언 로테이션
-		// 초기 로테이션과의 오프셋을 통한 콜라이더 포지션 위치를 세팅합니다.
-		// 초기값은 (0,0,0,1) 입니다.
-		_float4 vOffsetRotation = _float4(0.f, 0.f, 0.f, 1.f);
-		// 정지 상태에서의 마찰계수
-		// 멈춰있을때 동작할때까지의 힘이 얼마나 많이 드는지에 대한 변수입니다.
-		// default : 0.5f
-		// 0일수록 힘이 덜들어서 빠르게 치고나가고
-		// 1일수록 힘이 많이들어서 느리게 치고나갑니다.
-		// 1에 가까운데 maxvelocity가 작을경우 움직이지 않을 수도 있습니다.
-		_float fStaticFriction = { 0.f };
-		// 움직이는 상태에서의 마찰계수
-		// 움직일때 멈출때까지의 힘이 얼마나 드는지에 대한 변수입니다.
-		// default = 0.5f
-		// 0일수록 미끄러짐이 심하고
-		// 1일수록 미끄러짐이 없어 빠르게 정지합니다.
-		// 0일경우 멈추지 않고 계속 미끄러질 수도 있습니다.
-		_float fDynamicFriction = { 0.f };
-		// 탄성계수
-		// 무언가 충돌하였을때 튕겨져 나가는 정도에 대한 변수입니다.
-		// default = 0.f
-		// 0일수록 부딪혀도 튕겨나가지 않고
-		// 1일수록 부딪히면 멀리 튕겨나갑니다.
-		_float fRestitution = { 0.f };
-		// GeometryType과 같은 형태로 대입해줍니다.
-		// ex) eSphere, PxSphereGeometry
-		// 구조체 형태로써 선언하고 멤버변수를 채워 주시면 됩니다.
-		// ex) PxSphereGeometry Sphere;
-		// Sphere.radius = 5.f;
+		_bool		isStatic = { false };
+		_bool		isTrigger = { false };
+		_bool		isGravity = { true };
+		_float3		vInitPosition = _float3(0.f, 0.f, 0.f);
+		_float4		vInitRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		_float3		vOffsetPosition = _float3(0.f, 0.f, 0.f);
+		_float4		vOffsetRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		_float		fStaticFriction = { 0.5f };
+		_float		fDynamicFriction = { 0.5f };
+		_float		fRestitution = { 0.f };
 		PxGeometry* pGeometry = { nullptr };
-		// ******** Dynamic Rigid Body를 위한 옵션입니다 ********
-		// 콜라이더를 움직이지 않을 방향 또는 회전을 선택합니다.
-		// 어느방향으로도 회전하지 않으려면 아래와같이 처리하면 됩니다.
-		// ex) Constraint = RotX | RotY | RotZ;
-		_uint eConstraintFlag;
-		// 디버그 컬러
+		_uint		eConstraintFlag;
 		_float4		vDebugColor = _float4(0.f, 1.f, 0.f, 1.f);
 	}RIGIDBODYDESC;
 
@@ -111,11 +68,10 @@ public:
 	void Set_Kinematic(_bool _isKinematic);
 	void Set_Density(_float _fDensity) const;
 	void Set_AngularDamping(_float _fAngualrDamping) const;
-
+	
 #ifdef _DEBUG
 	void Set_DebugColor(_uint iColliderIndex, _float4 _vColor) { m_Colors[iColliderIndex] = _vColor; }
 #endif // _DEBUG
-
 
 	_bool Is_Static()  const { return m_isStatic; }
 	_bool Is_Dynamic()  const { return !m_isStatic; }
@@ -146,6 +102,7 @@ private:
 	PxMaterial*				m_pMaterial = { nullptr };
 	PxGeometry*				m_pGeometry = { nullptr };
 	PxScene*				m_pScene = { nullptr };
+	unordered_map<const _char*, PxShape*>	m_Shapes;
 
 private:
 	_bool					m_isStatic = { false };

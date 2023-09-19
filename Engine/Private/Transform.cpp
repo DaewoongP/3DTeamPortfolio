@@ -1,6 +1,7 @@
 #include "..\Public\Transform.h"
 #include "RigidBody.h"
 #include "CharacterController.h"
+#include "GameInstance.h"
 
 CTransform::CTransform(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CComponent(pDevice, pContext)
@@ -109,11 +110,30 @@ void CTransform::Set_Look(_float3 _vLook)
 void CTransform::Set_Position(_float3 _vPosition)
 {
 	memcpy(&m_WorldMatrix.m[3][0], &_vPosition, sizeof(_float3));
+	
+	m_ubTransformChanged |= CHANGEFLAG::TRANSLATION;
 }
 
 void CTransform::Set_WorldMatrix(_float4x4 _WorldMatrix)
 {
 	m_WorldMatrix = _WorldMatrix;
+
+	if (nullptr != m_pRigidBody)
+	{
+		CPhysX_Manager* pPhysX_Manager = CPhysX_Manager::GetInstance();
+		Safe_AddRef(pPhysX_Manager);
+
+		m_pRigidBody->Set_Position(Get_Position());
+		m_pRigidBody->Set_Rotation(Get_Quaternion());
+
+		pPhysX_Manager->Tick(1 / 60.f);
+
+		Set_Position(m_pRigidBody->Get_Position());
+		Set_Quaternion(m_pRigidBody->Get_Rotation());
+
+		Safe_Release(pPhysX_Manager);
+	}
+	
 	m_ubTransformChanged |= CHANGEFLAG::ROTATION | CHANGEFLAG::TRANSLATION;
 }
 
@@ -132,7 +152,7 @@ HRESULT CTransform::Initialize(void* pArg)
 
 void CTransform::Tick(_float fTimeDelta)
 {
-	Update_Components(fTimeDelta);
+	Update_Components();
 }
 
 void CTransform::Move_Direction(_float3 vDirection, _float fTimeDelta)
@@ -287,7 +307,7 @@ void CTransform::LookAt(_float3 _vTarget, _bool _isDeleteY)
 	m_ubTransformChanged |= CHANGEFLAG::ROTATION;
 }
 
-void CTransform::Update_Components(_float fTimeDelta)
+void CTransform::Update_Components()
 {
 	/* Rigid Body */
 	if (nullptr != m_pRigidBody)

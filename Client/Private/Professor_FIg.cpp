@@ -2,11 +2,13 @@
 #include "GameInstance.h"
 #include "PhysXConverter.h"
 
+#include "Magic.h"
 #include "Action.h"
 #include "Check_Degree.h"
 #include "Check_Distance.h"
 #include "Selector_Degree.h"
 #include "Sequence_Attack.h"
+#include "Weapon_Fig_Wand.h"
 
 CProfessor_Fig::CProfessor_Fig(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -50,6 +52,18 @@ HRESULT CProfessor_Fig::Initialize(void* pArg)
 	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Front_2"), TEXT("Change_Animation"), Func)))
 		return E_FAIL;
 	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Front_3"), TEXT("Change_Animation"), Func)))
+		return E_FAIL;
+
+	Func = [&] {(*this).Attack_Light(); };
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Front_1"), TEXT("Attack_Light"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Front_2"), TEXT("Attack_Light"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Front_3"), TEXT("Attack_Light"), Func)))
+		return E_FAIL;
+
+	Func = [&] {(*this).Attack_Heavy(); };
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Heavy_Front_2"), TEXT("Attack_Heavy"), Func)))
 		return E_FAIL;
 
 	return S_OK;
@@ -272,6 +286,42 @@ HRESULT CProfessor_Fig::Add_Components()
 		RigidBodyDesc.pGeometry = &pSphereGeomatry;
 
 		m_pRigidBody->Create_Collider(&RigidBodyDesc);
+
+		/* For.Com_Weapon */
+		const CBone* pBone = m_pModelCom->Get_Bone(TEXT("SKT_RightHand"));
+		if (nullptr == pBone)
+			throw TEXT("pBone is nullptr");
+
+		CWeapon_Fig_Wand::PARENTMATRIXDESC ParentMatrixDesc;
+		ParentMatrixDesc.OffsetMatrix = pBone->Get_OffsetMatrix();
+		ParentMatrixDesc.PivotMatrix = m_pModelCom->Get_PivotFloat4x4();
+		ParentMatrixDesc.pCombindTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
+		ParentMatrixDesc.pParentWorldMatrix = m_pTransform->Get_WorldMatrixPtr();
+
+		if (FAILED(Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Weapon_Fig_Wand"),
+			TEXT("Com_Weapon"), reinterpret_cast<CComponent**>(&m_pWeapon), &ParentMatrixDesc)))
+			throw TEXT("Com_Weapon");
+
+		/* For.Magic */
+		CMagic::MAGICDESC magicInitDesc;
+		magicInitDesc.eBuffType = CMagic::BUFF_NONE;
+		magicInitDesc.eMagicGroup = CMagic::MG_DAMAGE;
+		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicTag = BASICCAST;
+		magicInitDesc.fCoolTime = 0.f;
+		magicInitDesc.fDamage = 0.f;
+		magicInitDesc.fCastDistance = 1000;
+		magicInitDesc.fBallDistance = 30;
+		magicInitDesc.fLifeTime = 0.2f;
+
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Magic"),
+			TEXT("Com_Magic"), reinterpret_cast<CComponent**>(&m_pMagic), &magicInitDesc)))
+		{
+			MSG_BOX("Failed CTest_Player Add_Component : (Com_Magic)");
+			return E_FAIL;
+		}
+
+		//m_pMagic->Add_ActionFunc([&] {(*this).MagicTestTextOutput(); });
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -657,6 +707,22 @@ HRESULT CProfessor_Fig::Make_Attack_Combo1(_Inout_ CSequence* pSequence)
 	return S_OK;
 }
 
+void CProfessor_Fig::Attack_Light()
+{
+	if (nullptr == m_pTarget)
+		return;
+
+	//m_pMagic->Magic_Cast(m_pTarget->Get_Transform(), m_pWeapon);
+}
+
+void CProfessor_Fig::Attack_Heavy()
+{
+	if (nullptr == m_pTarget)
+		return;
+
+	//m_pMagic->Magic_Cast(m_pTarget->Get_Transform(), m_pWeapon);
+}
+
 CProfessor_Fig* CProfessor_Fig::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CProfessor_Fig* pInstance = New CProfessor_Fig(pDevice, pContext);
@@ -689,6 +755,8 @@ void CProfessor_Fig::Free()
 
 	if (true == m_isCloned)
 	{
+		Safe_Release(m_pMagic);
+		Safe_Release(m_pWeapon);
 		Safe_Release(m_pModelCom);
 		Safe_Release(m_pShaderCom);
 		Safe_Release(m_pRenderer);

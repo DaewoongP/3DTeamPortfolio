@@ -23,6 +23,7 @@
 #include "Magic.h"
 #include "MagicBallPool.h"
 
+#include "MagicSlot.h"
 #include "BasicCast.h"
 #include "Protego.h"
 #include "Revelio.h"
@@ -283,12 +284,12 @@ HRESULT CMain1_Loader::Loading_For_MainGame()
 			CRevelio::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Revelio");
 
-		/* For.Prototype_GameObject_Revelio */
+		/* For.Prototype_GameObject_Wingardiumleviosa */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Wingardiumleviosa"),
 			CWingardiumleviosa::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Wingardiumleviosa");
 
-		/* For.Prototype_GameObject_Revelio */
+		/* For.Prototype_GameObject_Levioso */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Levioso"),
 			CLevioso::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Levioso");
@@ -300,6 +301,11 @@ HRESULT CMain1_Loader::Loading_For_MainGame()
 
 #pragma endregion
 
+		/* For.Prototype_GameObject_MagicSlot */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MagicSlot"),
+			CMagicSlot::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_MagicSlot");
+		
 		/* For.Prototype_GameObject_Protego_Effect*/
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Protego_Effect"),
 			CProtego_Effect::Create(m_pDevice, m_pContext, LEVEL_MAINGAME))))

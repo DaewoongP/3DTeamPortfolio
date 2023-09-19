@@ -223,7 +223,6 @@
     <ClInclude Include="..\Public\Behavior_Includes.h" />
     <ClInclude Include="..\public\Camera_Debug.h" />
     <ClInclude Include="..\public\Default_Magic_Effect.h" />
-    <ClInclude Include="..\Public\Dummy.h" />
     <ClInclude Include="..\Public\Golem_Combat.h" />
     <ClInclude Include="..\Public\Client_Defines.h" />
     <ClInclude Include="..\Public\Client_Includes.h" />
@@ -237,8 +236,6 @@
     <ClInclude Include="..\public\Player_Camera.h" />
     <ClInclude Include="..\Public\Check_Degree.h" />
     <ClInclude Include="..\Public\Player.h" />
-    <ClInclude Include="..\public\Test_Cloth.h" />
-    <ClInclude Include="..\Public\Test_Stair.h" />
     <ClInclude Include="..\Public\Turn.h" />
     <ClInclude Include="..\Public\UI_Image.h" />
     <ClInclude Include="..\Public\Wait.h" />
@@ -254,6 +251,7 @@
     <ClInclude Include="..\public\Sky.h" />
     <ClInclude Include="..\public\Terrain.h" />
     <ClInclude Include="..\public\Test_Player.h" />
+    <ClInclude Include="..\Public\Weapon_Fig_Wand.h" />
     <ClInclude Include="..\Public\Weapon_Forest_Troll.h" />
     <ClInclude Include="..\Public\Weapon_Golem_Combat.h" />
     <ClInclude Include="..\Public\Weapon_Golem_Grunt.h" />
@@ -364,7 +362,6 @@
     <ClCompile Include="..\private\Camera_Debug.cpp" />
     <ClCompile Include="..\private\Default_Magic_Effect.cpp" />
     <ClCompile Include="..\private\Player_Camera.cpp" />
-    <ClCompile Include="..\Private\Dummy.cpp" />
     <ClCompile Include="..\Private\Golem_Combat.cpp" />
     <ClCompile Include="..\Private\Dugbog.cpp" />
     <ClCompile Include="..\Private\Forest_Troll.cpp" />
@@ -375,8 +372,6 @@
     <ClCompile Include="..\Private\PhysXRender.cpp" />
     <ClCompile Include="..\Private\Check_Degree.cpp" />
     <ClCompile Include="..\Private\Player.cpp" />
-    <ClCompile Include="..\private\Test_Cloth.cpp" />
-    <ClCompile Include="..\Private\Test_Stair.cpp" />
     <ClCompile Include="..\Private\Turn.cpp" />
     <ClCompile Include="..\Private\UI_Image.cpp" />
     <ClCompile Include="..\Private\Wait.cpp" />
@@ -394,6 +389,7 @@
     <ClCompile Include="..\private\Sky.cpp" />
     <ClCompile Include="..\private\Terrain.cpp" />
     <ClCompile Include="..\private\Test_Player.cpp" />
+    <ClCompile Include="..\Private\Weapon_Fig_Wand.cpp" />
     <ClCompile Include="..\Private\Weapon_Forest_Troll.cpp" />
     <ClCompile Include="..\Private\Weapon_Golem_Combat.cpp" />
     <ClCompile Include="..\Private\Weapon_Golem_Grunt.cpp" />
