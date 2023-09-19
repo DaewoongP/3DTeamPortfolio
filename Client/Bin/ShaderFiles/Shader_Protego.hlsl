@@ -47,7 +47,6 @@ struct VS_OUT
 	float2 vFlipbookUV : TEXCOORD3;
 };
 
-/* 정점을 받고 변환하고 정점을 리턴한다. */
 VS_OUT VS_MAIN(VS_IN In)
 {
 	VS_OUT Out = (VS_OUT)0;
@@ -60,11 +59,16 @@ VS_OUT VS_MAIN(VS_IN In)
 	Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);
 	Out.vTexUV = In.vTexUV;
 	Out.vWorldPos = mul(vector(In.vPosition, 1.f), g_WorldMatrix).xyz;
-	Out.vWorldNormal = mul(vector(In.vNormal, 1.f), g_WorldMatrix).xyz;
+
+	// Use only the 3x3 part of the world matrix to transform the normal
+	float3x3 matWorld3x3 = (float3x3)g_WorldMatrix; // Assuming your HLSL version supports matrix3x3. If not, you can extract the top-left 3x3 manually.
+	Out.vWorldNormal = mul(In.vNormal, matWorld3x3);
+
 	Out.vFlipbookUV = In.vTexUV;
-	
+
 	return Out;
 }
+
 
 struct PS_IN
 {

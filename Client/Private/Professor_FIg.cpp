@@ -51,6 +51,27 @@ HRESULT CProfessor_Fig::Initialize(void* pArg)
 	m_pTransform->Set_RigidBody(m_pRigidBody);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
 
+	// Notify
+	function<void()> Func = [&] {(*this).Change_Animation(); };
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Front_1"), TEXT("Change_Animation"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Front_2"), TEXT("Change_Animation"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Front_3"), TEXT("Change_Animation"), Func)))
+		return E_FAIL;
+
+	//Func = [&] {(*this).Attack_Light(); };
+	//if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Front_1"), TEXT("Attack_Light"), Func)))
+	//	return E_FAIL;
+	//if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Front_2"), TEXT("Attack_Light"), Func)))
+	//	return E_FAIL;
+	//if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Front_3"), TEXT("Attack_Light"), Func)))
+	//	return E_FAIL;
+
+	//Func = [&] {(*this).Attack_Heavy(); };
+	//if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Heavy_Front_2"), TEXT("Attack_Heavy"), Func)))
+	//	return E_FAIL;
+
 	return S_OK;
 }
 

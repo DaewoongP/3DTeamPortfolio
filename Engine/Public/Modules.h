@@ -185,8 +185,9 @@ struct ENGINE_DLL RENDERER_MODULE : public MODULE
 	wstring wstrMaterialPath = { TEXT("../../Resources/Effects/Textures/Default_Particle.png") };
 	_bool isDeleteY = { false };
 	_bool isUseGradientTexture = { false };
-	wstring wstrGraientTexture = { TEXT("../../Resources/Effects/Textures/Gradients/VFX_T_Gradient_Fire_D.png") };
+	wstring wstrGraientTexture = { TEXT("../../Resources/Effects/Textures/Gradients/Default_Gradient.png") };
 	string strPass = { "Default" };
+	_bool isBloom = { false };
 };
 struct ENGINE_DLL ROTATION_OVER_LIFETIME_MODULE : public MODULE
 {
@@ -259,7 +260,7 @@ struct ENGINE_DLL TEXTURE_SHEET_ANIMATION : public MODULE
 	_float fStartFrame = { 0.f }; // [0, 1]
 	_float fUpdateInterval = { 0.0159f };
 	_bool isUseNormalTexture = { false };
-	wstring wstrNormalPath = TEXT("../../Resources/Effects/Textures/Flipbooks/VFX_T_Dust_8x8_N.png");
+	wstring wstrNormalPath = TEXT("../../Resources/Effects/Textures/Default_Normal.png");
 	_bool isLoopOption = { false };
 
 	_float fTimeAcc = { 0.f };

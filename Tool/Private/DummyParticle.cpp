@@ -501,7 +501,7 @@ void CDummyParticle::RendererModule_TreeNode(CEffect_Window* pEffectWindow)
 			}
 
 			m_RendererModuleDesc.strPass = m_pPassComboBox->Tick(CComboBox::TABLE);
-
+			pEffectWindow->Table_CheckBox("Bloom", "ckvj99vji4jfj", &m_RendererModuleDesc.isBloom);
 			ImGui::EndTable();
 		}
 		ImGui::TreePop();

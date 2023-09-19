@@ -54,12 +54,12 @@ HRESULT CPlayer::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
-	if (FAILED(Ready_Camera()))
-	{
-		MSG_BOX("Failed Ready Player Caemra");
+	//if (FAILED(Ready_Camera()))
+	//{
+	//	MSG_BOX("Failed Ready Player Caemra");
 
-		return E_FAIL;
-	}
+	//	return E_FAIL;
+	//}
 
 	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
@@ -301,6 +301,12 @@ HRESULT CPlayer::Add_Magic()
 void CPlayer::Key_Input(_float fTimeDelta)
 {
 	BEGININSTANCE;
+
+	if (pGameInstance->Get_DIKeyState(DIK_Q, CInput_Device::KEY_DOWN))
+	{
+		//포르테고는 타켓 없어도 됨.
+		m_pMagicSlot->Action_Magic_Basic(1, m_pTransform, m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
+	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_UP))
 	{
