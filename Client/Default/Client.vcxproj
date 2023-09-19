@@ -172,6 +172,7 @@
     <ClInclude Include="..\Public\Confringo_WandDust_Effect.h" />
     <ClInclude Include="..\public\Main3_Loader.h" />
     <ClInclude Include="..\Public\Check_Distance.h" />
+    <ClInclude Include="..\Public\MapObject_Ins.h" />
     <ClInclude Include="..\Public\UI_Font.h" />
     <ClInclude Include="..\Public\UI_Group_Cursor.h" />
     <ClInclude Include="..\Public\UI_Group_Enemy_HP.h" />
@@ -312,6 +313,7 @@
     <ClCompile Include="..\Private\Confringo_WandDust_Effect.cpp" />
     <ClCompile Include="..\private\Main3_Loader.cpp" />
     <ClCompile Include="..\Private\Check_Distance.cpp" />
+    <ClCompile Include="..\Private\MapObject_Ins.cpp" />
     <ClCompile Include="..\Private\UI_Font.cpp" />
     <ClCompile Include="..\Private\UI_Group_Cursor.cpp" />
     <ClCompile Include="..\Private\UI_Group_Enemy_HP.cpp" />

@@ -658,7 +658,7 @@ void CObject_Window::Save_Load_Menu()
 
 	string s = ("../../Resources/GameData/MapData/");
 	s += m_strPath;
-	s += (".mon");
+	s += (".ddd");
 
 	// 현재 세이브 경로 표시
 	ImGui::TextColored(ImVec4(1, 0, 0, 1), "Save Path");
@@ -1315,7 +1315,7 @@ HRESULT CObject_Window::Load_MapObject(const _tchar* wszMapDataPath)
 		m_pObject->Set_Color(m_iModelCnt); // 고유한 색깔 값을 넣어줌
 
 		++m_iMapObjectIndex;
-	}	
+	}
 
 	return S_OK;
 }

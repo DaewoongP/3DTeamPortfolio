@@ -313,6 +313,9 @@
     <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_Cursor">
       <UniqueIdentifier>{a63a6343-ce45-4b8e-a9d3-a44f48775b53}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\04. MapObject\MapObject_Ins">
+      <UniqueIdentifier>{f13444ba-2393-4bce-95bb-afa19568f604}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -654,6 +657,9 @@
     <ClInclude Include="..\Public\UI_Group_Cursor.h">
       <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Cursor</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\MapObject_Ins.h">
+      <Filter>02. GameObject\04. MapObject\MapObject_Ins</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -964,6 +970,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_Group_Cursor.cpp">
       <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Cursor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MapObject_Ins.cpp">
+      <Filter>02. GameObject\04. MapObject\MapObject_Ins</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
