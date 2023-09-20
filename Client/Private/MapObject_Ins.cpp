@@ -76,8 +76,9 @@ HRESULT CMapObject_Ins::Render()
 	for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; iMeshCount++)
 	{
 		m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", iMeshCount, DIFFUSE);
+		m_pModel->Bind_Material(m_pShader, "g_NormalTexture", iMeshCount, NORMALS);
 
-		m_pShader->Begin("Default");
+		m_pShader->Begin("Mesh_No_Cull");
 
 		if (FAILED(m_pModel->Render(iMeshCount)))
 			return E_FAIL;

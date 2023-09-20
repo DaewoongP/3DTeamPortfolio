@@ -261,9 +261,9 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 
 #ifdef _DEBUG
-	if (FAILED(Render_Picking())) 	// �� �������� Fast Picking�� ���� ���� Ÿ��
+	if (FAILED(Render_Picking()))
 		return E_FAIL;
-	//if (FAILED(Render_Brushing())) 	// �� �귯�� ��� ������ ���� ���� Ÿ��
+	//if (FAILED(Render_Brushing()))
 	//	return E_FAIL;
 #endif // _DEBUG
 

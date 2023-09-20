@@ -165,7 +165,9 @@ void CProtego::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
+#ifdef _DEBUG
 	this->Tick_Imgui();
+#endif // _DEBUG
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);

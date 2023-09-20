@@ -337,7 +337,10 @@ void CModel::Do_Root_Animation(_float fTimeDelta, CTransform* pTransform, _bool 
 		vCurrent_Look.Normalize();
 		vPost_Look.Normalize();
 
-		if (vCurrent_Look != vPost_Look && fabsf(vCurrent_Look.x - vPost_Look.x) > 0.0001f && fabsf(vCurrent_Look.z - vPost_Look.z) > 0.0001f)
+		if (vCurrent_Look != vPost_Look &&
+			(fabsf(vCurrent_Look.x - vPost_Look.x) > 0.0001f &&
+				fabsf(vCurrent_Look.z - vPost_Look.z) > 0.0001f &&
+				fabsf(vCurrent_Look.y - vPost_Look.y) > 0.0001f))
 		{
 			_float dot = XMVectorGetX(XMVector3Dot(vPost_Look, vCurrent_Look));
 			_float radian = acosf(dot);

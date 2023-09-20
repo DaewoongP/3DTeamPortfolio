@@ -78,7 +78,7 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	//m_pStateContext->Tick(fTimeDelta);
 
-	m_pCustomModel->Tick(CCustomModel::ROBE, 2, fTimeDelta);
+	//m_pCustomModel->Tick(CCustomModel::ROBE, 2, fTimeDelta);
 
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UNDERBODY);
@@ -309,12 +309,12 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 	if (pGameInstance->Get_DIKeyState(DIK_UP))
 	{
-		m_pTransform->Go_Straight(fTimeDelta);
+		m_pTransform->Go_Straight(fTimeDelta * 100);
 	}
 	
 	if (pGameInstance->Get_DIKeyState(DIK_DOWN))
 	{
-		m_pTransform->Go_Backward(fTimeDelta);
+		m_pTransform->Go_Backward(fTimeDelta * 100);
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_LEFT))

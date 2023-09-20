@@ -64,12 +64,12 @@ HRESULT CLevel_MainGame::Initialize()
 		return E_FAIL;
 	}
 
-	/*if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/MapData6.ddd"))))
+	if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/MapData6.ddd"))))
 	{
 		MSG_BOX("Failed Load Map Object");
 
 		return E_FAIL;
-	}*/
+	}
 
 	if (FAILED(Load_MapObject_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins6.ddd"))))
 	{
@@ -591,7 +591,7 @@ HRESULT CLevel_MainGame::Ready_Layer_UI(const _tchar* pLayerTag)
 	_tchar szLevel[MAX_PATH] = TEXT("77");
 	_tchar szName[MAX_PATH] = TEXT("°³Ã¶¹Î");
 
-	Desc.eType = CUI_Group_Enemy_HP::ENEMYTYPE::MONSTER;
+	Desc.eType = CUI_Group_Enemy_HP::ENEMYTYPE::BOSS;
 	lstrcpy(Desc.wszObjectLevel, szLevel);
 	lstrcpy(Desc.wszObjectName, szName);
 
