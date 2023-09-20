@@ -38,8 +38,6 @@ void CImageFileDialog::Tick()
 {
     // 텍스처가 없으면 기본 텍스처 출력
     m_isOk = false;
-    _int iTemp1;
-    _int iTemp2;
 
     // 빈 텍스처면 기본 텍스처 출력
     if (nullptr == m_pTexture)
