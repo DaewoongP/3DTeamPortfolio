@@ -251,6 +251,52 @@ struct ENGINE_DLL TEXTURE_SHEET_ANIMATION : public MODULE
 	_float fTimeAcc = { 0.f };
 };
 
+struct ENGINE_DLL NOISE_MODULE : public MODULE
+{
+	NOISE_MODULE() : MODULE() {  };
+
+	HRESULT Save(const _tchar* _pDirectoyPath);
+	HRESULT Load(const _tchar* _pDirectoyPath);
+	void Reset(PARTICLE_IT& _particle_iter);
+	void Restart();
+
+	enum OPTION { CONSTANT, RANGE, CURVE, OPTION_END };
+	_bool isSeparateAxes = { false }; 
+	string strStrengthOption = "Constant"; // Constant, Range, Curve
+	_float2 vStrengthX = { 1.f, 1.f }; // 노이즈에 미치는 영향력
+	_float2 vStrengthY = { 1.f, 1.f }; // 높을수록 빠르고 멀리간다.
+	_float2 vStrengthZ = { 1.f, 1.f };
+	CEase::EASE eStrengthEaseX = { CEase::OUT_QUINT };
+	CEase::EASE eStrengthEaseY = { CEase::OUT_QUINT };
+	CEase::EASE eStrengthEaseZ = { CEase::OUT_QUINT };
+
+	_float fFrequency = { 0.5f }; // 낮을수록 부드러운 노이즈 높을수록 급격한 변화
+
+	string strScrollSpeedOption = "Constant"; // Constant, Curve
+	_float fScrollSpeed = { 0.5f }; // 노이즈 필드를 시간에 흐름에 따라 움직이는 속도.
+	CEase::EASE eScrollSpeedEase = { CEase::OUT_QUINT };
+
+	_bool isDamping = { true }; // 활성화하면 세기가 빈도에 비례합니다. 두 값을 묶으면 파티클의 동작을 그대로 유지하면서 크기는 달라지도록 노이즈 필드를 스케일할 수 있습니다.
+	_uint iOctaves = { 1 }; // 노이즈 레이어를 얼마나 많이 생성할지 결정
+	_float fOctaveMultiplier = { 0.5f }; // [0, 1]
+	_uint iOctaveScale = { 1 }; // [1, )
+
+	_bool isRemap = { false }; // 최종 노이즈값을 다시 매핑
+	CEase::EASE eRemapEase = { CEase::OUT_QUINT };
+
+	string strPositionAmountOption = "Constant"; // Constant, Range, Curve
+	_float2 vPositionAmount = { 0.f, 0.f };
+	CEase::EASE ePositionAmountEase = { CEase::OUT_QUINT };
+
+	string strRotationAmountOption = "Constant"; // Constant, Range, Curve
+	_float2 vRotationAmount = { 0.f, 0.f }; // 단위는 초당 도
+	CEase::EASE eRotationAmountEase = { CEase::OUT_QUINT };
+
+	string strSizeAmountOption = "Constant"; // Constant, Range, Curve
+	_float2 vSizeAmount = { 0.f, 0.f };
+	CEase::EASE eSizeAmountEase = { CEase::OUT_QUINT };
+};
+
 struct ENGINE_DLL RENDERER_MODULE : public MODULE
 {
 	RENDERER_MODULE() : MODULE() { __super::isActivate = true; };
@@ -267,5 +313,7 @@ struct ENGINE_DLL RENDERER_MODULE : public MODULE
 	string strPass = { "Default" };
 	_bool isBloom = { false };
 };
+
+
 
 END
