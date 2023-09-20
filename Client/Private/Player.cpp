@@ -77,12 +77,9 @@ void CPlayer::Tick(_float fTimeDelta)
 	UpdateLookAngle();
 
 	//m_pStateContext->Tick(fTimeDelta);
+
+	Update_Cloth(fTimeDelta);
 	
-	// 나중에 함수로 변경하겠습니다
-	m_pCustomModel->Set_WindVelocity(XMVector3TransformCoord(7.f * m_pTransform->Get_Velocity(), XMMatrixInverse(nullptr, XMMatrixRotationQuaternion(m_pTransform->Get_Quaternion()))));
-
-	m_pCustomModel->Tick(CCustomModel::ROBE, 2, fTimeDelta);
-
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UNDERBODY);
 }
@@ -241,7 +238,7 @@ HRESULT CPlayer::Add_Components()
 		MSG_BOX("Failed CPlayer Add_Component : (Com_RigidBody)");
 		return E_FAIL;
 	}
-
+	m_pRigidBody->Get_RigidBodyActor()->setAngularDamping(1.f);
 	return S_OK;
 }
 
@@ -328,7 +325,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 	if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
 	{
-		m_pRigidBody->Add_Force(m_pTransform->Get_Up() * 30.f, PxForceMode::eFORCE);
+		m_pRigidBody->Add_Force(m_pTransform->Get_Up() * 10.f, PxForceMode::eIMPULSE);
 	}
 
 	if (pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN))
@@ -587,6 +584,17 @@ void CPlayer::UpdateLookAngle()
 	}
 
 	ENDINSTANCE;
+}
+
+void CPlayer::Update_Cloth(_float fTimeDelta)
+{
+	// 현재 y값이 반대임
+	_float3 vVelocity = m_pTransform->Get_Velocity();
+	vVelocity.y *= -1.f;
+	m_pCustomModel->Set_WindVelocity(XMVector3TransformCoord(7.f * vVelocity,
+		XMMatrixInverse(nullptr, XMMatrixRotationQuaternion(m_pTransform->Get_Quaternion()))));
+
+	m_pCustomModel->Tick(CCustomModel::ROBE, 2, fTimeDelta);
 }
 
 CPlayer* CPlayer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

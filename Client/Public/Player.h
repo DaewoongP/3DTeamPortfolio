@@ -84,6 +84,7 @@ private:
 private:
 	//카메라와 플레이어의 각을 검사해서 저장한다.
 	void UpdateLookAngle();
+	void Update_Cloth(_float fTimeDelta);
 
 public:
 	static CPlayer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
