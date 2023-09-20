@@ -263,7 +263,7 @@ HRESULT CTrail::Add_Components()
 		m_HighLocalMatrix.Translation(_float3(0.f, m_fWidth * 0.5f, 0.f));
 		m_LowLocalMatrix.Translation(_float3(0.f, -m_fWidth * 0.5f, 0.f));
 
-		trailDesc.iTrailNum = m_iTrailNum;
+		trailDesc.iTrailNum = 20;
 		trailDesc.pHighLocalMatrix = &m_HighLocalMatrix;
 		trailDesc.pLowLocalMatrix = &m_LowLocalMatrix;
 		trailDesc.pPivotMatrix = &m_PivotMatrix;

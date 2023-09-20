@@ -918,6 +918,7 @@ void CProfessor_Fig::Attack_Light()
 		return;
 
 	m_pMagicSlot->Action_Magic_Basic(0, m_pTarget->Get_Transform(),
+		XMMatrixIdentity(),
 		m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(),
 		m_pWeapon->Get_Wand_Point_OffsetMatrix());
 }
@@ -928,6 +929,7 @@ void CProfessor_Fig::Attack_Heavy()
 		return;
 
 	m_pMagicSlot->Action_Magic_Basic(0, m_pTarget->Get_Transform(),
+		XMMatrixIdentity(),
 		m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(),
 		m_pWeapon->Get_Wand_Point_OffsetMatrix());
 }
@@ -938,6 +940,7 @@ void CProfessor_Fig::Cast_Levioso()
 		return;
 
 	m_pMagicSlot->Action_Magic_Skill(0, m_pTarget->Get_Transform(),
+		XMMatrixIdentity(),
 		m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(),
 		m_pWeapon->Get_Wand_Point_OffsetMatrix());
 }
@@ -948,6 +951,7 @@ void CProfessor_Fig::Cast_Protego()
 		return;
 
 	m_pMagicSlot->Action_Magic_Basic(1, m_pTransform,
+		XMMatrixIdentity(),
 		m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(),
 		m_pWeapon->Get_Wand_Point_OffsetMatrix());
 }

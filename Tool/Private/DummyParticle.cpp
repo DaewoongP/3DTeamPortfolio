@@ -460,7 +460,7 @@ void CDummyParticle::ShapeModule_TreeNode(CEffect_Window* pEffectWindow)
 }
 void CDummyParticle::RendererModule_TreeNode(CEffect_Window* pEffectWindow)
 {
-	if (ImGui::Checkbox("##ShapeModule_CheckBox", &m_RendererModuleDesc.isActivate))
+	if (ImGui::Checkbox("##RendererModule_CheckBox", &m_RendererModuleDesc.isActivate))
 	{
 		// 렌더러 노드는 항상 참이어야 함.
 		m_RendererModuleDesc.isActivate = true;

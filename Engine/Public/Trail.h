@@ -71,7 +71,7 @@ protected:
 	wstring m_wstrPath = { TEXT("../../Resources/Effects/Textures/Trails/Winga.png") };
 	_bool m_isEnable = { true };
 
-	_uint     m_iTrailNum = { 50 };
+	_uint     m_iTrailNum = { 20 };
 	_float4x4 m_PivotMatrix = _float4x4();
 	_float4x4 m_HighLocalMatrix = _float4x4();
 	_float4x4 m_LowLocalMatrix = _float4x4();
