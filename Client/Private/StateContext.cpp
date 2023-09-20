@@ -39,6 +39,11 @@ HRESULT CStateContext::Initialize(void* pArg)
 
 	m_pfuncFinishAnimation = [&] {(*this).FinishAnimation(); };
 
+	m_fRotaionSpeed = 2.0f;
+
+
+
+
 	if (FAILED(Ready_StateMachine()))
 	{
 		MSG_BOX(TEXT("Failed Ready StateMachine"));
@@ -124,7 +129,8 @@ HRESULT CStateContext::Add_StateMachine(const _tchar* _pTag, CStateMachine* _pSt
 	_pState->Set_ActionSwitch(&m_iActionSwitch);
 	_pState->Set_IsFnishAnimation(&m_isFinishAnimation);
 	_pState->Set_FuncFinishAnimation(m_pfuncFinishAnimation);
-	
+	_pState->Set_RotationSpeed(&m_fRotaionSpeed);
+
 	_pState->Bind_Notify();
 
 	m_pStateMachines.emplace(_pTag, _pState);

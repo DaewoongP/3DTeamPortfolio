@@ -337,21 +337,24 @@ void CModel::Do_Root_Animation(_float fTimeDelta, CTransform* pTransform, _bool 
 		vCurrent_Look.Normalize();
 		vPost_Look.Normalize();
 
-		if (vCurrent_Look != vPost_Look &&
-			fabsf(vCurrent_Look.x - vPost_Look.x) > 0.0001f &&
-			fabsf(vCurrent_Look.z - vPost_Look.z) > 0.0001f &&
-			fabsf(vCurrent_Look.y - vPost_Look.y) > 0.0001f &&
-			_float3(vCurrent_Look - vPost_Look).Length() > 0)
-		{
 			_float dot = XMVectorGetX(XMVector3Dot(vPost_Look, vCurrent_Look));
 			_float radian = acosf(dot);
+
+			if (!isnan(radian))
+			{
+				
 
 			if (XMVectorGetY(XMVector3Cross(vCurrent_Look, vPost_Look)) > 0)
 				radian = 2 * XMVectorGetX(g_XMPi) - radian;
 
 			player_Matrix_Override = XMMatrixRotationY(radian);
-		}
 
+			}
+			else
+			{
+				cout << fixed << setprecision(6) << "Radian : " << radian << endl;
+				cout << fixed << setprecision(6) << "Dot : " << dot << endl;
+			}
 		_float3 vCurrent_Position = current_Matrix.Translation();
 		_float3 vPost_Position = post_Matirx.Translation();
 

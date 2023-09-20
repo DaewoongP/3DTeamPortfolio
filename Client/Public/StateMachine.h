@@ -36,6 +36,7 @@ public:
     void Set_ActionSwitch(_uint* _pIActionSwitch) { m_pIActionSwitch = _pIActionSwitch; }
     void Set_IsFnishAnimation(_bool* _pIsFinishAnimation) { m_pIsFinishAnimation = _pIsFinishAnimation; }
     void Set_FuncFinishAnimation(function<void()>& _funcFinishAnimation) { m_pFuncFinishAnimation = _funcFinishAnimation; }
+    void Set_RotationSpeed(_float* _pFRotationSpeed) { m_pFRotationSpeed = _pFRotationSpeed; }
 public:
     virtual HRESULT Initialize_Prototype();
     virtual HRESULT Initialize(void* pArg);
@@ -63,6 +64,8 @@ protected:
 
     _bool* m_pIsFinishAnimation = { nullptr };
     function<void()> m_pFuncFinishAnimation = { nullptr };
+
+    _float* m_pFRotationSpeed = { nullptr };
 
 protected:
     

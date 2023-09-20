@@ -62,7 +62,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 	}
 
 	m_pTransform->Set_Speed(1.f);
-	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
+	m_pTransform->Set_RotationSpeed(XMConvertToRadians(180.f));
 	m_pTransform->Set_RigidBody(m_pRigidBody);
 
 	return S_OK;
@@ -573,6 +573,11 @@ void CPlayer::UpdateLookAngle()
 	vPlayerLook.Normalize();
 
 	_float fLookAngle = vPlayerLook.Dot(vNextLook);
+
+	if (1.0f < fLookAngle)
+	{
+		fLookAngle = 1.0f;
+	}
 
 	m_fLookAngle = acosf(fLookAngle);
 

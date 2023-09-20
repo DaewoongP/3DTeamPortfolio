@@ -76,6 +76,9 @@ private:
 
     function<void()> m_pfuncFinishAnimation = { nullptr };  //  FinishAnimation();
 
+    //회전 배율
+    _float m_fRotaionSpeed = { 0.0f };
+
     unordered_map<const _tchar*, CStateMachine*> m_pStateMachines;
 
 private:
