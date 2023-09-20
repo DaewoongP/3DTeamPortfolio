@@ -61,7 +61,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
-	m_pTransform->Set_Speed(10.f);
+	m_pTransform->Set_Speed(1.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
 	m_pTransform->Set_RigidBody(m_pRigidBody);
 
@@ -88,7 +88,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	m_pStateContext->Late_Tick(fTimeDelta);
+	//m_pStateContext->Late_Tick(fTimeDelta);
 
 	if (nullptr != m_pRenderer)
 	{

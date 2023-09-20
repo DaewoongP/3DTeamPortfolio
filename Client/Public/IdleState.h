@@ -35,6 +35,8 @@ private:
     void Action_Casual_Tick();
     void Action_Cmbt_Tick();
 
+    void Bind_Notify();
+
     void Go_Turn();
 
     void Go_Start();

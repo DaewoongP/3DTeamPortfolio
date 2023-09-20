@@ -25,6 +25,8 @@ public:
     virtual void OnStateTick();
     virtual void OnStateExit();
 
+    virtual void Bind_Notify();
+
 private:
     void Go_Idle();
 

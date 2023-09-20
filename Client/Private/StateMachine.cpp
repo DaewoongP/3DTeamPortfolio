@@ -1,4 +1,5 @@
 #include "StateMachine.h"
+#include "GameInstance.h"
 #include "Client_Defines.h"
 #include "StateContext.h"
 
@@ -73,6 +74,7 @@ void CStateMachine::Set_PlayerTransform(CTransform* _pPlayerTransform)
 
 	Safe_AddRef(m_pPlayerTransform);
 }
+
 
 CStateMachine* CStateMachine::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {

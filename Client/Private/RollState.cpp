@@ -1,6 +1,7 @@
 #include "RollState.h"
 #include "GameInstance.h"
 #include "Client_Defines.h"
+#include "StateContext.h"
 
 CRollState::CRollState(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
 	:CStateMachine(_pDevice,_pContext)
@@ -37,6 +38,8 @@ void CRollState::OnStateEnter()
 {
 
 	//전투 상태가 되어야 한다.
+	*m_pIActionSwitch = CStateContext::ACTION_CMBT;
+
 	m_pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_DdgeRll_Fwd_anm"));
 
 #ifdef _DEBUG
@@ -46,10 +49,11 @@ void CRollState::OnStateEnter()
 
 void CRollState::OnStateTick()
 {
-	if (m_pOwnerModel->Is_Finish_Animation())
+	if (true == *m_pIsFinishAnimation)
 	{
 		m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Idle_anm"));
 		Set_StateMachine(TEXT("Idle"));
+		*m_pIsFinishAnimation = false;
 	}
 }
 
@@ -60,9 +64,18 @@ void CRollState::OnStateExit()
 #endif // _DEBUG
 }
 
+void CRollState::Bind_Notify()
+{
+	m_pOwnerModel->Bind_Notify(TEXT("Hu_Cmbt_DdgeRll_Fwd_anm"), TEXT("End_Animation"), m_pFuncFinishAnimation);
+}
+
 void CRollState::Go_Idle()
 {
-	Set_StateMachine(TEXT("Idle"));
+	if (true == *m_pIsFinishAnimation)
+	{
+		m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Idle_anm"));
+		Set_StateMachine(TEXT("Idle"));
+	}
 }
 
 CRollState* CRollState::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

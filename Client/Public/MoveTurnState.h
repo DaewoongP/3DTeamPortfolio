@@ -26,8 +26,12 @@ public:
     virtual void OnStateTick();
     virtual void OnStateExit();
 
+
 private:
-    
+    _float m_fEnterAngle;
+
+private:
+    virtual void Bind_Notify() override;
 
     void Go_Idle();
 
@@ -42,6 +46,8 @@ private:
     void Over_135();
 
     void Go_Magic_Cast();
+
+    void EnterAngle();
 
 public:
     static CMoveTurnState* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

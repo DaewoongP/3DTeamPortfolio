@@ -24,12 +24,27 @@ HRESULT CMoveLoopState::Initialize_Prototype()
 
 HRESULT CMoveLoopState::Initialize(void* pArg)
 {
+	BEGININSTANCE;
+
+	pGameInstance->Add_Timer(TEXT("Meter per Sconde"), true, 1.0f);
+
+	ENDINSTANCE;
+
 	return S_OK;
 }
 
 void CMoveLoopState::Tick(_float fTimeDelta)
 {
 	OnStateTick();
+
+	BEGININSTANCE;
+
+	if (pGameInstance->Check_Timer(TEXT("Meter per Sconde")))
+	{
+		cout << m_pPlayerTransform->Get_Position().z << endl;
+	}
+
+	ENDINSTANCE;
 }
 
 void CMoveLoopState::Late_Tick(_float fTimeDelta)
@@ -39,7 +54,7 @@ void CMoveLoopState::Late_Tick(_float fTimeDelta)
 void CMoveLoopState::OnStateEnter()
 {
 #ifdef _DEBUG
-	//cout << "Loop Enter" << endl;
+	cout << "Loop Enter" << endl;
 #endif // _DEBUG
 }
 
@@ -55,24 +70,25 @@ void CMoveLoopState::OnStateTick()
 
 	Go_Jump();
 
-	Switch_Joging_Sprint();
+	Switch_MoveType();
 
-	if (m_pOwnerModel->Is_Finish_Animation())
+	if (true == *m_pIsFinishAnimation)
 	{
-		switch (*m_pIsSprint)
+		switch (*m_pIMoveSwitch)
 		{
-		case CStateContext::JOGING:
+		case CStateContext::MOVETYPE_JOGING:
 		{
 			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_Jog_Loop_Fwd_anm"));
 		}
 		break;
 
-		case CStateContext::SPRINT:
+		case CStateContext::MOVETYPE_SPRINT:
 		{
 			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_Sprint_Loop_Fwd_anm"));
 		}
 		break;
 		}
+		*m_pIsFinishAnimation = false;
 	}
 
 	Go_Magic_Cast();
@@ -82,8 +98,16 @@ void CMoveLoopState::OnStateTick()
 void CMoveLoopState::OnStateExit()
 {
 #ifdef _DEBUG
-	//cout << "Loop Exit" << endl;
+	cout << "Loop Exit" << endl;
 #endif // _DEBUG
+}
+
+void CMoveLoopState::Bind_Notify()
+{
+	m_pOwnerModel->Bind_Notify(TEXT("Hu_BM_Sprint_Loop_Fwd_anm"), TEXT("End_Animation"), m_pFuncFinishAnimation);
+	m_pOwnerModel->Bind_Notify(TEXT("Hu_BM_Jog_Loop_Fwd_anm"), TEXT("End_Animation"), m_pFuncFinishAnimation);
+	m_pOwnerModel->Bind_Notify(TEXT("Hu_BM_Sprint2Jog_RU_anm"), TEXT("End_Animation"), m_pFuncFinishAnimation);
+	m_pOwnerModel->Bind_Notify(TEXT("Hu_BM_Jog2Sprint_RU_anm"), TEXT("End_Animation"), m_pFuncFinishAnimation);
 }
 
 void CMoveLoopState::LookFront()
@@ -126,14 +150,14 @@ void CMoveLoopState::Go_Idle()
 		{
 		case CStateContext::ACTION_NONE:
 		{
-			switch (*m_pIsSprint)
+			switch (*m_pIMoveSwitch)
 			{
-			case CStateContext::JOGING:
+			case CStateContext::MOVETYPE_JOGING:
 			{
 				m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_anm"));
 			}
 			break;
-			case CStateContext::SPRINT:
+			case CStateContext::MOVETYPE_SPRINT:
 			{
 				m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Sprint_Stop_Fwd_anm"));
 			}
@@ -143,14 +167,14 @@ void CMoveLoopState::Go_Idle()
 		break;
 		case CStateContext::ACTION_CASUAL:
 		{
-			switch (*m_pIsSprint)
+			switch (*m_pIMoveSwitch)
 			{
-			case CStateContext::JOGING:
+			case CStateContext::MOVETYPE_JOGING:
 			{
 				m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_anm"));
 			}
 			break;
-			case CStateContext::SPRINT:
+			case CStateContext::MOVETYPE_SPRINT:
 			{
 				m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Sprint_Stop_Fwd_anm"));
 			}
@@ -160,14 +184,14 @@ void CMoveLoopState::Go_Idle()
 		break;
 		case CStateContext::ACTION_CMBT:
 		{
-			switch (*m_pIsSprint)
+			switch (*m_pIMoveSwitch)
 			{
-			case CStateContext::JOGING:
+			case CStateContext::MOVETYPE_JOGING:
 			{
 				m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_2Cmbt_anm"));
 			}
 			break;
-			case CStateContext::SPRINT:
+			case CStateContext::MOVETYPE_SPRINT:
 			{
 				m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Sprint_Stop_Fwd_Cmbt_anm"));
 			}
@@ -208,26 +232,29 @@ void CMoveLoopState::Go_Jump()
 	ENDINSTANCE;
 }
 
-void CMoveLoopState::Switch_Joging_Sprint()
+void CMoveLoopState::Switch_MoveType()
 {
 	BEGININSTANCE;
 
-	//키를 눌렀을때
+	//Sprint키
 	if (pGameInstance->Get_DIKeyState(DIK_LSHIFT, CInput_Device::KEY_DOWN))
 	{
-		*m_pIsSprint = !(*m_pIsSprint);
-
-		switch (*m_pIsSprint)
+		switch (*m_pIMoveSwitch)
 		{
-		case CStateContext::JOGING:
+		case CStateContext::MOVETYPE_WALK:
+		case CStateContext::MOVETYPE_JOGING:
 		{
-			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_Sprint2Jog_RU_anm"));
+			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_Jog2Sprint_RU_anm"));
+			
+			*m_pIMoveSwitch = CStateContext::MOVETYPE_SPRINT;
 		}
 		break;
 
-		case CStateContext::SPRINT:
+		case CStateContext::MOVETYPE_SPRINT:
 		{
-			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_Jog2Sprint_RU_anm"));
+			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_Sprint2Jog_RU_anm"));
+			
+			*m_pIMoveSwitch = CStateContext::MOVETYPE_JOGING;
 		}
 		break;
 		}

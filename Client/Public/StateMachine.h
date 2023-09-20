@@ -32,9 +32,10 @@ public:
     void Set_OwnerLookAngle(_float* _pOwnerLookAngle);
     void Set_IsDirectionKeyPressed(_bool* _pIsDirectionKeyPressed);
     void Set_PlayerTransform(CTransform* _pPlayerTransform);
-    void Set_IsSprint(_bool* _pIsSprint) { m_pIsSprint = _pIsSprint; }
+    void Set_MoveSwitch(_uint* _pIMoveSwitch) { m_pIMoveSwitch = _pIMoveSwitch; }
     void Set_ActionSwitch(_uint* _pIActionSwitch) { m_pIActionSwitch = _pIActionSwitch; }
-
+    void Set_IsFnishAnimation(_bool* _pIsFinishAnimation) { m_pIsFinishAnimation = _pIsFinishAnimation; }
+    void Set_FuncFinishAnimation(function<void()>& _funcFinishAnimation) { m_pFuncFinishAnimation = _funcFinishAnimation; }
 public:
     virtual HRESULT Initialize_Prototype();
     virtual HRESULT Initialize(void* pArg);
@@ -57,9 +58,14 @@ protected:
     _float m_f45Angle = { XMConvertToRadians(45.0f) };
     _float m_f135Angle = { XMConvertToRadians(135.0f) };
     
-    _bool* m_pIsSprint = { nullptr };
+    _uint* m_pIMoveSwitch = { nullptr };
     _uint* m_pIActionSwitch = { nullptr };
 
+    _bool* m_pIsFinishAnimation = { nullptr };
+    function<void()> m_pFuncFinishAnimation = { nullptr };
+
+protected:
+    
 
 public:
     static CStateMachine* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

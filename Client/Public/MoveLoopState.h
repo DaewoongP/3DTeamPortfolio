@@ -26,6 +26,8 @@ public:
     virtual void OnStateTick();
     virtual void OnStateExit();
 
+    virtual void Bind_Notify();
+
     void LookFront();
 
     void Over_135();
@@ -36,7 +38,7 @@ public:
 
     void Go_Jump();
 
-    void Switch_Joging_Sprint();
+    void Switch_MoveType();
 
     void Go_Magic_Cast();
 
