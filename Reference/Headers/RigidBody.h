@@ -81,7 +81,7 @@ public:
 public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg) override;
-
+	virtual void Tick(_float fTimeDelta) override;
 #ifdef _DEBUG
 	virtual HRESULT Render() override;
 #endif // _DEBUG

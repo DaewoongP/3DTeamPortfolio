@@ -348,6 +348,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 	{
 		//포르테고는 타켓이 생성 객체임
 		m_pMagicSlot->Action_Magic_Basic(1, m_pTransform, m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
+		m_pRigidBody->Disable_Collision("Player_Default");
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_1, CInput_Device::KEY_DOWN))
@@ -519,6 +520,12 @@ void CPlayer::Tick_ImGui()
 	{
 		m_pRigidBody->Set_Gravity(m_isGravity);
 	}
+
+	if (ImGui::Button("Go to 0"))
+	{
+		m_pRigidBody->Set_Position(_float3(1.f, 1.f, 1.f));
+	}
+
 
 	ImGui::End();
 }

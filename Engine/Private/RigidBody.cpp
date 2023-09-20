@@ -251,6 +251,14 @@ HRESULT CRigidBody::Initialize(void* pArg)
 	return S_OK;
 }
 
+void CRigidBody::Tick(_float fTimeDelta)
+{
+	if (CGameObject::OBJ_DEAD == m_pOwner->Get_ObjEvent())
+	{
+		m_pActor->userData = nullptr;
+	}
+}
+
 #ifdef _DEBUG
 HRESULT CRigidBody::Render()
 {
@@ -453,10 +461,8 @@ void CRigidBody::Enable_Collision(const _char* szColliderTag)
 	if (nullptr == pShape)
 		return;
 
-	PxFilterData FilterData;
-	FilterData.word0 = 0x1111;
 	m_pActor->detachShape(*pShape);
-	pShape->setQueryFilterData(FilterData);
+	pShape->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, true);
 	m_pActor->attachShape(*pShape);
 }
 
@@ -467,10 +473,8 @@ void CRigidBody::Disable_Collision(const _char* szColliderTag)
 	if (nullptr == pShape)
 		return;
 
-	PxFilterData FilterData;
-	FilterData.word0 = 0;
 	m_pActor->detachShape(*pShape);
-	pShape->setQueryFilterData(FilterData);
+	pShape->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, false);
 	m_pActor->attachShape(*pShape);
 }
 
