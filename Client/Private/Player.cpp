@@ -520,6 +520,12 @@ void CPlayer::Tick_ImGui()
 		m_pRigidBody->Set_Gravity(m_isGravity);
 	}
 
+	if (ImGui::Button("Go to 0"))
+	{
+		m_pRigidBody->Set_Position(_float3(1.f, 1.f, 1.f));
+	}
+
+
 	ImGui::End();
 }
 

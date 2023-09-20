@@ -26,6 +26,10 @@ void CPXEventCallBack::onContact(const PxContactPairHeader& pairHeader, const Px
 			nullptr == pDestObject)
 			continue;
 
+		if (nullptr == pairHeader.actors[0]->userData ||
+			nullptr == pairHeader.actors[1]->userData)
+			continue;
+
 		SourDesc.pOtherObjectTag = pDestObject->Get_Tag();
 		CharToWChar(pairs[i].shapes[1]->getName(), SourDesc.pOtherCollisionTag);
 		SourDesc.pOtherOwner = pDestObject;
@@ -86,6 +90,10 @@ void CPXEventCallBack::onTrigger(PxTriggerPair* pairs, PxU32 count)
 		
 		if (nullptr == pSourObject ||
 			nullptr == pDestObject)
+			continue;
+
+		if (nullptr == pairs->triggerActor->userData ||
+			nullptr == pairs->otherActor->userData)
 			continue;
 
 		SourDesc.pOtherObjectTag = pDestObject->Get_Tag();

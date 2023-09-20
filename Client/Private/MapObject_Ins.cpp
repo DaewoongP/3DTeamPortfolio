@@ -21,17 +21,25 @@ HRESULT CMapObject_Ins::Initialize_Prototype()
 
 HRESULT CMapObject_Ins::Initialize(void* pArg)
 {
+	if (nullptr == pArg)
+	{
+		MSG_BOX("CMapObject_Ins Argument is NULL");
+		return E_FAIL;
+	}
+
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	if (FAILED(Add_Components()))
-		return E_FAIL;
+	MAPOJBECTINSDESC* pMapObjectInsDesc = reinterpret_cast<MAPOJBECTINSDESC*>(pArg);
 
-	if (nullptr != pArg)
+	if (nullptr == pMapObjectInsDesc)
 	{
-		_float4x4* vWorldMatrix = (_float4x4*)pArg;
-		m_pTransform->Set_WorldMatrix(*vWorldMatrix);
+		MSG_BOX("Object_Ins Desc is NULL");
+		return E_FAIL;
 	}
+
+	if (FAILED(Add_Components(pMapObjectInsDesc)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -47,12 +55,7 @@ void CMapObject_Ins::Late_Tick(_float fTimeDelta)
 
 	if (nullptr != m_pRenderer)
 	{
-		m_eRenderCount = RT_NORMAL;
-
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
-#ifdef _DEBUG
-		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_PICKING, this);
-#endif // _DEBUG
 	}
 }
 
@@ -68,78 +71,44 @@ HRESULT CMapObject_Ins::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	// 일반 그리기
-	if (RT_NORMAL == m_eRenderCount)
+	_uint		iNumMeshes = m_pModel->Get_NumMeshes();
+
+	for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; iMeshCount++)
 	{
-		_uint		iNumMeshes = m_pModel->Get_NumMeshes();
+		m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", iMeshCount, DIFFUSE);
 
-		for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; iMeshCount++)
-		{
-			m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", iMeshCount, DIFFUSE);
+		m_pShader->Begin("Default");
 
-			m_pShader->Begin("Default");
-
-			if (FAILED(m_pModel->Render(iMeshCount)))
-				return E_FAIL;
-		}
-
-		m_eRenderCount = RT_PICKING;
-
-		return S_OK;
+		if (FAILED(m_pModel->Render(iMeshCount)))
+			return E_FAIL;
 	}
-
-#ifdef _DEBUG
-	// 피킹용 그리기
-	else if (RT_PICKING == m_eRenderCount)
-	{
-		m_pShader->Bind_RawValue("g_vColor", &m_vColor, sizeof(_float4));
-
-		_uint		iNumMeshes = m_pModel->Get_NumMeshes();
-
-		for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; iMeshCount++)
-		{
-			m_pShader->Begin("Picking");
-
-			if (FAILED(m_pModel->Render(iMeshCount)))
-				return E_FAIL;
-		}
-
-		m_eRenderCount = RT_END;
-	}
-#endif // _DEBUG	
 
 	return S_OK;
 }
 
-HRESULT CMapObject_Ins::Add_Model_Component(const _tchar* wszModelTag)
-{
-	if (FAILED(CComposite::Add_Component(LEVEL_TOOL, wszModelTag,
-		TEXT("Com_Buffer"), reinterpret_cast<CComponent**>(&m_pModel))))
-	{
-		MSG_BOX("Failed CMapObject Add_Component : (Com_Buffer)");
-		return E_FAIL;
-	}
-	return S_OK;
-}
-
-HRESULT CMapObject_Ins::Add_Shader_Component(const _tchar* wszShaderTag)
-{
-	if (FAILED(CComposite::Add_Component(LEVEL_TOOL, wszShaderTag,
-		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
-	{
-		MSG_BOX("Failed CMapObject Add_Component : (Com_Shader)");
-		return E_FAIL;
-	}
-	return S_OK;
-}
-
-HRESULT CMapObject_Ins::Add_Components()
+HRESULT CMapObject_Ins::Add_Components(MAPOJBECTINSDESC* pMapObjectInsDesc)
 {
 	/* Com_Renderer */
-	if (FAILED(CComposite::Add_Component(LEVEL_TOOL, TEXT("Prototype_Component_Renderer"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"),
 		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
 	{
-		MSG_BOX("Failed CMapObject Add_Component : (Com_Renderer)");
+		MSG_BOX("Failed CMapObject_Ins Add_Component : (Com_Renderer)");
+		return E_FAIL;
+	}
+
+	/* Com_Shader */
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxMeshInstance"),
+		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
+	{
+		MSG_BOX("Failed CMapObject_Ins Add_Component : (Com_Shader)");
+		return E_FAIL;
+	}
+
+	/* Com_Model */
+	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, pMapObjectInsDesc->wszTag,
+		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModel))))
+	{
+		MSG_BOX("Failed CMapObject_Ins Add_Component : (Com_Model)");
 		return E_FAIL;
 	}
 
@@ -188,6 +157,8 @@ CGameObject* CMapObject_Ins::Clone(void* pArg)
 void CMapObject_Ins::Free()
 {
 	__super::Free();
+	Safe_Release(m_pRigidBody);
+	Safe_Release(m_pTransform);
 	Safe_Release(m_pShader);
 	Safe_Release(m_pModel);
 	Safe_Release(m_pRenderer);

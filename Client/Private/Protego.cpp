@@ -398,6 +398,8 @@ HRESULT CProtego::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pShader->Bind_RawValue("g_isHitEffect", &m_isHitEffect, sizeof(_bool)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShader->Bind_RawValue("g_fScale", &m_fScale, sizeof(_float)), E_FAIL);
 	Safe_Release(pGameInstance);
+
+	return S_OK;
 }
 
 HRESULT CProtego::Add_Effect()

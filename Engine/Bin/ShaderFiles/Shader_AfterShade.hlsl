@@ -1,3 +1,4 @@
+#include "Shader_EngineHeader.hlsli"
 
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix g_ViewMatrixInv, g_ProjMatrixInv;
@@ -10,7 +11,7 @@ texture2D g_SSAOTexture;
 texture2D g_BlurTexture;
 texture2D g_PostProcessingTexture;
 texture2D g_NoiseTexture;
-texture2D g_vAlphaTexture;
+texture2D g_AlphaTexture;
 texture2D g_DoBlurTexture;
 texture2D g_WhiteBloomTexture;
 texture2D g_GlowTexture;
@@ -31,130 +32,6 @@ float BlurWeights[23] =
 };
 float total = 11.4776f;
 
-/* Sampler State */
-sampler LinearSampler = sampler_state
-{
-    Filter = MIN_MAG_MIP_LINEAR;
-    AddressU = WRAP;
-    AddressV = WRAP;
-};
-
-sampler PointSampler = sampler_state
-{
-    Filter = MIN_MAG_MIP_POINT;
-    AddressU = WRAP;
-    AddressV = WRAP;
-};
-sampler BlurSampler = sampler_state
-{
-    Filter = MIN_MAG_MIP_LINEAR;
-    AddressU = clamp;
-    AddressV = clamp;
-};
-
-sampler BloomSampler = sampler_state
-{
-    Filter = MIN_MAG_MIP_POINT;
-    AddressU = clamp;
-    AddressV = clamp;
-};
-sampler DistortionSampler = sampler_state
-{
-    Filter = MIN_MAG_MIP_LINEAR;
-    AddressU = clamp;
-    AddressV = clamp;
-};
-/* Raterizer State */
-RasterizerState RS_Default
-{
-    FillMode = Solid;
-    CullMode = Back;
-    FrontCounterClockwise = false;
-};
-
-RasterizerState RS_Cull_CW
-{
-    FillMode = Solid;
-    CullMode = front;
-    FrontCounterClockwise = false;
-};
-
-RasterizerState RS_Cull_None
-{
-    FillMode = Solid;
-    CullMode = None;
-    FrontCounterClockwise = false;
-};
-
-/* Depth_Stencil State */
-
-DepthStencilState DSS_Default
-{
-    DepthEnable = true;
-    DepthWriteMask = all;
-    DepthFunc = less_equal;
-};
-
-DepthStencilState DSS_Depth_Disable
-{
-    DepthEnable = false;
-    DepthWriteMask = zero;
-};
-
-/* Blend State */
-BlendState BS_Default
-{
-    BlendEnable[0] = false;
-};
-
-BlendState BS_AlphaBlend
-{
-    BlendEnable[0] = true;
-
-    SrcBlend = Src_Alpha;
-    DestBlend = Inv_Src_Alpha;
-    BlendOp = Add;
-};
-
-BlendState BS_BlendOne
-{
-// 렌더타겟 두개를 합칠 것이므로 0번, 1번 둘다 처리해줘야한다.
-    BlendEnable[0] = true;
-    BlendEnable[1] = true;
-
-    SrcBlend = one;
-    DestBlend = one;
-    BlendOp = Add;
-};
-
-matrix MyMatrixLookAtLH(float4 vEye, float4 vAt)
-{
-    matrix ViewMatrix = matrix(
-    1.f, 0.f, 0.f, 0.f,
-    0.f, 1.f, 0.f, 0.f,
-    0.f, 0.f, 1.f, 0.f,
-    0.f, 0.f, 0.f, 1.f);
-    
-    vector vLook = float4(normalize(vAt.xyz - vEye.xyz), 0.f);
-    vector vRight = float4(normalize(cross(float3(0.f, 1.f, 0.f), vLook.xyz)), 0.f);
-    vector vUp = float4(normalize(cross(vLook.xyz, vRight.xyz)), 0.f);
-    
-    ViewMatrix = matrix(vRight, vUp, vLook, float4(0.f, 0.f, 0.f, 1.f));
-    matrix TransposeViewMatrix = transpose(ViewMatrix);
-    
-    vector vPosition = float4(
-    -1.f * dot(vEye, vRight),
-    -1.f * dot(vEye, vUp),
-    -1.f * dot(vEye, vLook),
-    1.f);
-    
-    TransposeViewMatrix._41 = vPosition.x;
-    TransposeViewMatrix._42 = vPosition.y;
-    TransposeViewMatrix._43 = vPosition.z;
-    TransposeViewMatrix._44 = vPosition.w;
-
-    return TransposeViewMatrix;
-}
 
 struct VS_IN
 {
@@ -291,7 +168,7 @@ PS_OUT PS_MAIN_DISTORTION(PS_IN In)
     newUV.xy = (FinalNoise.xy * perturb) + In.vTexUV.xy;
     
     vector vPost = g_PostProcessingTexture.Sample(DistortionSampler, newUV.xy);
-    vector vAlpha = g_vAlphaTexture.Sample(DistortionSampler, newUV.xy);
+    vector vAlpha = g_AlphaTexture.Sample(DistortionSampler, newUV.xy);
     
     Out.vColor = vPost;
     
@@ -385,19 +262,41 @@ PS_OUT PS_MAIN_BLOOM_AFTER(PS_IN_POSTEX In)
     return Out;
     
 }
-
-PS_OUT PS_MAIN_GLOW(PS_IN_POSTEX In)
+PS_OUT PS_MAIN_RADIALBLUR(PS_IN_POSTEX In)
 {
     PS_OUT Out = (PS_OUT) 0;
+   
+    vector vRadialTex = g_PostProcessingTexture.Sample(PointSampler, In.vTexUV); 
     
-    vector vTextureColor = g_OriTexture.Sample(LinearSampler, In.vTexUV);
-    vector vPixelColor = g_GlowTexture.Sample(LinearSampler, In.vTexUV);
+    float2 CenterUV = (0.5f, 0.5f);
+    float Raidus = 0.02f;
+  
+        float4 blurredColor = float4(0.0, 0.0, 0.0, 0.0); // 초기화
     
+    // 라디얼 블러를 위한 루프
+        for (int i = 0; i < 360; i++)
+        {
+            float angle = radians(i);
+        float2 offset = float2(cos(angle), sin(angle)) * Raidus;
+        
+        // 현재 픽셀 주변의 텍스처 샘플 좌표 계산
+        float2 sampleCoord = CenterUV + offset;
+        
+        // 텍스처에서 샘플
+            float4 sampleColor = vRadialTex;
+        
+        // 샘플된 색상을 블러 결과에 누적
+            blurredColor += sampleColor;
+        }
     
-   // Out.vColor = saturate(vTextureColor)
-    return Out;
+    // 블러된 색상을 평균화
+        blurredColor /= 360.0;
     
+    Out.vColor = blurredColor;
+    
+        return Out;
 }
+
 technique11 DefaultTechnique
 {
    
@@ -458,7 +357,8 @@ technique11 DefaultTechnique
         DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
         PixelShader = compile ps_5_0 PS_MAIN_BLOOM_AFTER();
     }
-    pass Glow
+
+    pass RadialBlur
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Depth_Disable, 0);
@@ -467,7 +367,7 @@ technique11 DefaultTechnique
         GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
         HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
         DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
-        PixelShader = compile ps_5_0 PS_MAIN_GLOW();
+        PixelShader = compile ps_5_0 PS_MAIN_RADIALBLUR();
     }
 
 

@@ -72,14 +72,11 @@ HRESULT CMainApp::Render()
 	if (nullptr == m_pGameInstance)
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Clear_BackBuffer_View(_float4(0.f, 0.f, 1.f, 1.f))))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Clear_DepthStencil_View()))
-		return E_FAIL;
-	if (FAILED(m_pRenderer->Draw_RenderGroup()))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Render_Level()))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(m_pGameInstance->Clear_BackBuffer_View(_float4(0.f, 0.f, 1.f, 1.f)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pGameInstance->Clear_DepthStencil_View(), E_FAIL);
+	FAILED_CHECK_RETURN(m_pRenderer->Draw_RenderGroup(), E_FAIL);
+	FAILED_CHECK_RETURN(m_pGameInstance->Render_Level(), E_FAIL);
+
 #ifdef _DEBUG
 	if (FAILED(m_pGameInstance->Render_Font(TEXT("Font_135"), m_szFPS, _float2(0.f, 680.f))))
 		return E_FAIL;
@@ -87,8 +84,7 @@ HRESULT CMainApp::Render()
 	if (FAILED(Render_ImGui()))
 		return E_FAIL;
 #endif // _DEBUG
-	if (FAILED(m_pGameInstance->Present()))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(m_pGameInstance->Present(), E_FAIL);
 
 	return S_OK;
 }
@@ -122,6 +118,12 @@ HRESULT CMainApp::Ready_Prototype_Component_For_Static()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxRectColInstance"),
 			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxRectColInstance.hlsl"),
 				VTXRECTCOLORINSTANCE_DECL::Elements, VTXRECTCOLORINSTANCE_DECL::iNumElements))))
+			return E_FAIL;
+
+		/* For.Prototype_Component_Shader_MeshInstance */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxMeshInstance"),
+			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxMeshInstance.hlsl"),
+				VTXMESHINSTANCE_DECL::Elements, VTXMESHINSTANCE_DECL::iNumElements))))
 			return E_FAIL;
 
 		/* Prototype_Component_VIBuffer_Point_Color_Instance*/

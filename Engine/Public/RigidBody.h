@@ -69,7 +69,7 @@ public:
 	void Set_Density(_float _fDensity) const;
 	void Set_AngularDamping(_float _fAngualrDamping) const;
 	void Set_Gravity(_bool _isGravity);
-	
+		
 #ifdef _DEBUG
 	void Set_DebugColor(_uint iColliderIndex, _float4 _vColor) { m_Colors[iColliderIndex] = _vColor; }
 #endif // _DEBUG
@@ -81,7 +81,7 @@ public:
 public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg) override;
-	virtual void Tick(_float fTimeDelta);
+	virtual void Tick(_float fTimeDelta) override;
 #ifdef _DEBUG
 	virtual HRESULT Render() override;
 #endif // _DEBUG
@@ -97,6 +97,9 @@ public:
 
 	void Translate(_float3 _vPosition) const;
 	void Rotate(_float4 _vRotation) const;
+
+	void Enable_Collision(const _char* szColliderTag);
+	void Disable_Collision(const _char* szColliderTag);
 
 private:
 	PxRigidActor*			m_pActor = { nullptr };
@@ -116,6 +119,8 @@ private:
 	vector<_float4>					m_Colors;
 #endif // _DEBUG
 
+private:
+	PxShape* Find_Shape(const _char* szShapeTag);
 
 #ifdef _DEBUG
 private:

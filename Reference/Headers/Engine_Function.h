@@ -114,10 +114,9 @@ namespace Engine
 			return physx::PxFilterFlag::eDEFAULT;
 		}
 
-		if (filterData0.word0 & filterData1.word0)
+		if (0 == (filterData0.word0 & filterData1.word0))
 		{
-			if (0 == filterData0.word0)
-				pairFlags = PxPairFlag::eCONTACT_DEFAULT;
+			pairFlags = PxPairFlag::eCONTACT_DEFAULT;
 			return physx::PxFilterFlag::eDEFAULT;
 		}
 		

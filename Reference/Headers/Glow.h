@@ -13,7 +13,7 @@ private:
 	virtual ~CGlow() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype(const _tchar* pTargetTag);
+	virtual HRESULT Initialize_Prototype(const _tchar* pTargetTag,_float LightPower);
 	virtual HRESULT Render() override;
 
 private:
@@ -25,12 +25,8 @@ private:
 private:
 	HRESULT Add_Components();
 
-private:
-	class CTexture* m_pTexture = { nullptr };
-	class CTexture* m_pTexture2 = { nullptr };
-
 public:
-	static CGlow* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pTargetTag);
+	static CGlow* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pTargetTag,_float LightPower = 0.f);
 	virtual CComponent* Clone(void* pArg) { return nullptr; }
 	virtual void Free() override;
 };

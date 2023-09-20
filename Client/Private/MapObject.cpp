@@ -39,6 +39,14 @@ HRESULT CMapObject::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
+	// 음수 값이 있을 경우 Cull 모드를 None로 바꾼다.
+	if (0.f >= m_pTransform->Get_Scale_With_Negative().x ||
+		0.f >= m_pTransform->Get_Scale_With_Negative().y ||
+		0.f >= m_pTransform->Get_Scale_With_Negative().z)
+	{
+		m_isCull = false;
+	}
+
 	if (FAILED(Add_Components(pMapObjectDesc)))
 		return E_FAIL;
 
@@ -78,7 +86,10 @@ HRESULT CMapObject::Render()
 	{
 		m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", iMeshCount, DIFFUSE);
 
-		m_pShader->Begin("Mesh");
+		if(true == m_isCull)
+			m_pShader->Begin("Mesh");
+		else
+			m_pShader->Begin("Mesh_No_Cull");		
 
 		if (FAILED(m_pModel->Render(iMeshCount)))
 			return E_FAIL;

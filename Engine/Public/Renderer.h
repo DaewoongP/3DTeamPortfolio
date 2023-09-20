@@ -27,6 +27,7 @@ public:
 
 public:
 	void	Add_RenderGroup(RENDERGROUP eRenderGroup, class CGameObject* pGameObject);
+	void	Add_RenderGroup(RENDERGROUP eRenderGroup, class CGameObject* pGameObject, _tchar* pShaderPass, CTexture* pOriTexture = nullptr, CTexture*  pNoisetexture = nullptr,CTexture* pAlphaTexture = nullptr);
 	HRESULT Draw_RenderGroup();
 
 #ifdef _DEBUG
@@ -37,7 +38,6 @@ public:
 private:
 	HRESULT Render_Priority();
 	HRESULT Render_NonBlend();
-	HRESULT Render_PostBlend();
 #ifdef _DEBUG
 	HRESULT Render_Picking();
 	HRESULT Render_Brushing();
@@ -52,10 +52,12 @@ private:
 	HRESULT Render_Blend();
 	HRESULT Render_BlurShadow();
 	HRESULT Render_PostProcessing();
-	HRESULT Render_Bloom();
+	HRESULT Render_EffectType();
 	HRESULT Render_Distortion();
 	//HRESULT Render_Glow();
 	HRESULT Render_UI();
+
+	
 
 #ifdef _DEBUG
 	HRESULT Render_UITexture();
@@ -125,6 +127,7 @@ private:
 
 private:
 	_float m_fFrameTime = 0.f;
+	class CTexture*					 m_pNoiseTexture = { nullptr };
 
 	class CTexture*					 m_pTexture = { nullptr };
 	class CTexture*					 m_pTexture2 = { nullptr };

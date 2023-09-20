@@ -332,7 +332,6 @@ HRESULT CRigidBody::Create_Collider(RIGIDBODYDESC* pRigidBodyDesc)
 	PxTransform OffsetTransform(PhysXConverter::ToPxVec3(pRigidBodyDesc->vOffsetPosition), PhysXConverter::ToPxQuat(pRigidBodyDesc->vOffsetRotation));
 	pShape->setLocalPose(OffsetTransform);
 
-
 	CString_Manager* pString_Manager = CString_Manager::GetInstance();
 	Safe_AddRef(pString_Manager);
 	pShape->setName(pString_Manager->Make_Char(pRigidBodyDesc->szCollisionTag));
@@ -453,6 +452,30 @@ void CRigidBody::Rotate(_float4 _vRotation) const
 			PxTransform(PhysXConverter::ToPxVec3(Get_Position()), 
 				PhysXConverter::ToPxQuat(_vRotation)));
 	}
+}
+
+void CRigidBody::Enable_Collision(const _char* szColliderTag)
+{
+	PxShape* pShape = Find_Shape(szColliderTag);
+
+	if (nullptr == pShape)
+		return;
+
+	m_pActor->detachShape(*pShape);
+	pShape->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, true);
+	m_pActor->attachShape(*pShape);
+}
+
+void CRigidBody::Disable_Collision(const _char* szColliderTag)
+{
+	PxShape* pShape = Find_Shape(szColliderTag);
+
+	if (nullptr == pShape)
+		return;
+
+	m_pActor->detachShape(*pShape);
+	pShape->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, false);
+	m_pActor->attachShape(*pShape);
 }
 
 #ifdef _DEBUG
@@ -612,6 +635,20 @@ HRESULT CRigidBody::SetUp_ShaderResources(_uint iColliderIndex)
 	return S_OK;
 }
 #endif // _DEBUG
+
+PxShape* CRigidBody::Find_Shape(const _char* szShapeTag)
+{
+	auto	iter = find_if(m_Shapes.begin(), m_Shapes.end(), [&](auto& Pair) {
+		if (!strcmp(Pair.first, szShapeTag))
+			return true;
+		return false;
+		});
+
+	if (iter == m_Shapes.end())
+		return nullptr;
+
+	return iter->second;
+}
 
 CRigidBody* CRigidBody::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
