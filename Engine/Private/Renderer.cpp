@@ -603,8 +603,6 @@ HRESULT CRenderer::Render_SSAO()
 
 	m_pNoiseTexture->Bind_ShaderResource(m_pSSAOShader, "g_NoiseTexture");
 
-
-
 	CPipeLine* pPipeLine = CPipeLine::GetInstance();
 	Safe_AddRef(pPipeLine);
 

@@ -29,7 +29,7 @@ void SplitUV(float2 In, int iWidthLength, int iHeightLength, int iCurIndex, out 
 
 float g_fPersistence;
 float g_fOctaves;
-
+float g_fFrequency;
 float Noise1(int x)
 {
 	int n = x * 57;
@@ -63,10 +63,10 @@ float PerlinNoise_1D(float x)
 
 	for (int i = 0; i <= n; i++)
 	{
-		float frequency = pow(2.0, i);
+		float g_fFrequency = pow(2.0, i);
 		float amplitude = pow(p, i);
 
-		total += InterpolateNoise_1(x * frequency) * amplitude;
+		total += InterpolateNoise_1(x * g_fFrequency) * amplitude;
 	}
 
 	return total;
@@ -115,10 +115,10 @@ float PerlinNoise_2D(float x, float y)
 
 	for (int i = 0; i <= n; i++)
 	{
-		float frequency = pow(2.0, i);
+		float g_fFrequency = pow(2.0, i);
 		float amplitude = pow(p, i);
 
-		total += InterpolateNoise_2(x * frequency, y * frequency) * amplitude;
+		total += InterpolateNoise_2(x * g_fFrequency, y * g_fFrequency) * amplitude;
 	}
 
 	return total;
@@ -187,10 +187,10 @@ float PerlinNoise_3D(float x, float y, float z)
 
 	for (int i = 0; i <= n; i++)
 	{
-		float frequency = pow(2.0, i);
+		float g_fFrequency = pow(2.0, i);
 		float amplitude = pow(p, i);
 
-		total += InterpolateNoise_3(x * frequency, y * frequency, z * frequency) * amplitude;
+		total += InterpolateNoise_3(x * g_fFrequency, y * g_fFrequency, z * g_fFrequency) * amplitude;
 	}
 
 	return total;
