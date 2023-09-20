@@ -12,6 +12,13 @@ BEGIN(Client)
 
 class CUI_Back final : public CUI
 {
+public:
+	enum BACKTYPE
+	{
+		FONT,
+		BACKTYPE_END
+	};
+
 private:
 	explicit CUI_Back(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CUI_Back(const CUI_Back& rhs);

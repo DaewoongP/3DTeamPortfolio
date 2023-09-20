@@ -129,12 +129,14 @@ HRESULT CUI_Group_Cursor::Read_File(const _tchar* pFilePath)
 
 	m_pUI_Effect_Back->Load(Load_File(hFile));
 	m_pUI_Effect_Back->Set_Effecttype(CUI_Effect_Back::EFFECTTYPE::CURSOR);
+	m_pUI_Effect_Back->Set_Z(0.f);
 	_uint iSize = { 0 };
 	ReadFile(hFile, &iSize, sizeof(_uint), &dwByte, nullptr);
 
 	m_pUI_Back->Load(Load_File(hFile));
 	m_pUI_Back->Set_Parent(m_pUI_Effect_Back);
 	m_pUI_Back->Set_RemoveBlack();
+	m_pUI_Back->Set_Z(0.f);
 
 	CloseHandle(hFile);
 

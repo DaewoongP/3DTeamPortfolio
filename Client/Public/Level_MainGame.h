@@ -23,7 +23,8 @@ private:
 	HRESULT Ready_Layer_NPC(const _tchar* pLayerTag);
 	HRESULT Ready_Layer_Effect(const _tchar* pLayerTag);
 	HRESULT Ready_Layer_UI(const _tchar* pLayerTag);
-	HRESULT Ready_Layer_Info_UI(const _tchar* pLayerTag);
+	HRESULT Ready_Layer_FieldGuide_UI(const _tchar* pLayerTag);
+	HRESULT Ready_Layer_Menu_UI(const _tchar* pLayerTag);
 
 private:
 	HRESULT Load_MapObject(const _tchar* pObjectFilePath);

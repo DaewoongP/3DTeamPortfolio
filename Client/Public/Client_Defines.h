@@ -47,6 +47,22 @@ namespace Client
 	};
 }
 
+#pragma region UI Scene
+	enum MENU
+	{
+		GEAR,
+		INVENTORY,
+		//TALENT,
+		//COLLECTION,
+		//ACTION,
+		//MAP,
+		QUEST,
+		//OWLMAIL,
+		SETTING,
+		MENU_END
+	};
+#pragma endregion
+
 extern HINSTANCE g_hInst;
 extern HWND g_hWnd;
 

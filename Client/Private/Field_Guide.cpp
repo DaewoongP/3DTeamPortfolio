@@ -1,33 +1,33 @@
-#include "..\Public\Info_Main.h"
+#include "Field_Guide.h"
 #include "GameInstance.h"
 #include "UI_Effect_Back.h"
 #include "UI_Back.h"
+#include "Main_Menu.h"
 
-CInfo_Main::CInfo_Main(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CField_Guide::CField_Guide(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
 }
 
-CInfo_Main::CInfo_Main(const CInfo_Main& rhs)
+CField_Guide::CField_Guide(const CField_Guide& rhs)
 	:CGameObject(rhs)
 {
 }
 
-HRESULT CInfo_Main::Initialize_Prototype()
+HRESULT CField_Guide::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 
 	if (FAILED(Add_Prototype()))
 	{
-		MSG_BOX("Failed CInfo_Main Add ProtoType");
+		MSG_BOX("Failed CField_Guide Add ProtoType");
 		return E_FAIL;
 	}
-
 
 	return S_OK;
 }
 
-HRESULT CInfo_Main::Initialize(void* pArg)
+HRESULT CField_Guide::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -43,34 +43,51 @@ HRESULT CInfo_Main::Initialize(void* pArg)
 	wstring MapTag = TEXT("Map");
 
 	Create_First(pArg); // GEAR
-	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Inventory5.uidata"), InventoryTag, INVENTORY);
+	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Inventory_Alpha.uidata"), InventoryTag, INVENTORY);
+	//Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Talent.uidata"), TalentTag, TALENT);
+	//Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Collection.uidata"), CollectionTag, COLLECTION);
+	//Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Action.uidata"), ActionTag, ACTION);
+	//Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_OwlMail.uidata"), InventoryTag, OWLMAIL);
+	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Quest_Alpha.uidata"), QuestTag, QUEST);
+	//Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Map.uidata"), MapTag, MAP);
+	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Setting_Alpha.uidata"), SettingTag, SETTING);
 
-	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Collection5.uidata"), CollectionTag, COLLECTION);
-	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Action.uidata"), ActionTag, ACTION);
-	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Setting5.uidata"), SettingTag, SETTING);
-	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_OwlMail5.uidata"), InventoryTag, OWLMAIL);
-	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Quest5.uidata"), QuestTag, QUEST);
-	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Map5.uidata"), MapTag, MAP);
+	Create_BackGround();
 
 	return S_OK;
 }
 
-void CInfo_Main::Tick(_float fTimeDelta)
+void CField_Guide::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-}
 
-void CInfo_Main::Late_Tick(_float fTimeDelta)
+	if (m_pMenu == nullptr)
+	{
+		CGameInstance* pGameInstance = CGameInstance::GetInstance();
+		Safe_AddRef(pGameInstance);
+
+		m_pMenu = dynamic_cast<CMain_Menu*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Menu_UI"), TEXT("GameObject_UI_Main_Menu")));
+		Safe_AddRef(m_pMenu);
+
+		Safe_Release(pGameInstance);
+	}
+	else
+	{
+		Set_SelectedText();
+	}	
+} 
+
+void CField_Guide::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 }
 
-HRESULT CInfo_Main::Render()
+HRESULT CField_Guide::Render()
 {
 	return S_OK;
 }
 
-HRESULT CInfo_Main::Add_Prototype()
+HRESULT CField_Guide::Add_Prototype()
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
@@ -78,14 +95,14 @@ HRESULT CInfo_Main::Add_Prototype()
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Effect_Back"),
 		CUI_Effect_Back::Create(m_pDevice, m_pContext), true)))
 	{
-		ENDINSTANCE;
+		Safe_Release(pGameInstance);
 		return E_FAIL;
 	}
 
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Back"),
 		CUI_Back::Create(m_pDevice, m_pContext), true)))
 	{
-		ENDINSTANCE;
+		Safe_Release(pGameInstance);
 		return E_FAIL;
 	}
 
@@ -94,7 +111,7 @@ HRESULT CInfo_Main::Add_Prototype()
 	return S_OK;
 }
 
-HRESULT CInfo_Main::Add_Components(wstring wszTag)
+HRESULT CField_Guide::Add_Components(wstring wszTag)
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
@@ -109,7 +126,7 @@ HRESULT CInfo_Main::Add_Components(wstring wszTag)
 	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Effect_Back"),
 		frame.c_str(), reinterpret_cast<CComponent**>(&pFrame))))
 	{
-		MSG_BOX("Com_Info_Main : Failed Clone Component (Com_UI_Effect_Back_Frame)");
+		MSG_BOX("Com_FieldGuide : Failed Clone Component (Com_UI_Effect_Back_Frame)");
 		ENDINSTANCE;
 		return E_FAIL;
 	}
@@ -121,7 +138,7 @@ HRESULT CInfo_Main::Add_Components(wstring wszTag)
 	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Effect_Back"),
 		main.c_str(), reinterpret_cast<CComponent**>(&pMain))))
 	{
-		MSG_BOX("Com_Info_Main : Failed Clone Component (Com_UI_Back_Frame)");
+		MSG_BOX("Com_FieldGuide : Failed Clone Component (Com_UI_Back_Frame)");
 		ENDINSTANCE;
 		return E_FAIL;
 	}
@@ -133,7 +150,7 @@ HRESULT CInfo_Main::Add_Components(wstring wszTag)
 	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Back"),
 		back.c_str(), reinterpret_cast<CComponent**>(&pBack))))
 	{
-		MSG_BOX("Com_Info_Main : Failed Clone Component (Com_UI_Back_Number)");
+		MSG_BOX("Com_FieldGuide : Failed Clone Component (Com_UI_Back_Number)");
 		ENDINSTANCE;
 		return E_FAIL;
 	}
@@ -144,7 +161,7 @@ HRESULT CInfo_Main::Add_Components(wstring wszTag)
 	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Back"),
 		line.c_str(), reinterpret_cast<CComponent**>(&pLine))))
 	{
-		MSG_BOX("Com_Info_Main : Failed Clone Component (Com_UI_Back_Number)");
+		MSG_BOX("Com_FieldGuide : Failed Clone Component (Com_UI_Back_Number)");
 		ENDINSTANCE;
 		return E_FAIL;
 	}
@@ -155,10 +172,10 @@ HRESULT CInfo_Main::Add_Components(wstring wszTag)
 	return S_OK;
 }
 
-HRESULT CInfo_Main::Read_File(const _tchar* pFilePath, INFOLIST iIndex)
+HRESULT CField_Guide::Read_File(const _tchar* pFilePath, MENU iIndex)
 {
 	if (nullptr == m_pFrames[iIndex] || nullptr == m_pMains[iIndex] || nullptr == m_pBacks[iIndex] || nullptr == m_pLines[iIndex] ||
-		iIndex >= INFOLIST_END)
+		iIndex >= MENU_END)
 	{
 		MSG_BOX("Failed Load");
 		return E_FAIL;
@@ -188,9 +205,12 @@ HRESULT CInfo_Main::Read_File(const _tchar* pFilePath, INFOLIST iIndex)
 
 	m_pMains[iIndex]->Load(Load_File(hFile));
 	m_pMains[iIndex]->Set_Parent(m_pFrames[iIndex]);
+	m_pMains[iIndex]->Set_Effecttype(CUI_Effect_Back::ALPHA);
+	
 
 	m_pBacks[iIndex]->Load(Load_File(hFile));
 	m_pBacks[iIndex]->Set_Parent(m_pFrames[iIndex]);
+
 
 	m_pLines[iIndex]->Load(Load_File(hFile));
 	m_pLines[iIndex]->Set_Parent(m_pFrames[iIndex]);
@@ -200,7 +220,7 @@ HRESULT CInfo_Main::Read_File(const _tchar* pFilePath, INFOLIST iIndex)
 	return S_OK;
 }
 
-CUI::UIDESC CInfo_Main::Load_File(const HANDLE hFile)
+CUI::UIDESC CField_Guide::Load_File(const HANDLE hFile)
 {
 	CUI::UIDESC UIDesc;
 	ZEROMEM(&UIDesc);
@@ -231,8 +251,34 @@ CUI::UIDESC CInfo_Main::Load_File(const HANDLE hFile)
 	return UIDesc;
 }
 
-HRESULT CInfo_Main::Create_First(void* pArg)
+HRESULT CField_Guide::Create_First(void* pArg)
 {
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Back"), TEXT("Layer_FieldGuide_UI"), TEXT("Com_UI_Effect_Back_FieldGuide_Back"))))
+	{
+		MSG_BOX("Com_FieldGuide : Failed Clone Component (Com_UI_Effect_Back_FieldGuide_Back)");
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	}
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Effect_Back"), TEXT("Layer_FieldGuide_UI"), TEXT("Com_UI_Effect_Back_FieldGuide_House"))))
+	{
+		MSG_BOX("Com_FieldGuide : Failed Clone Component (Com_UI_Effect_Back_FieldGuide_House)");
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	}
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Effect_Back"), TEXT("Layer_FieldGuide_UI"), TEXT("Com_UI_Effect_Back_FieldGuide_Rayburst"))))
+	{
+		MSG_BOX("Com_FieldGuide : Failed Clone Component (Com_UI_Effect_Back_FieldGuide_Rayburst");
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	}
+
+	Safe_Release(pGameInstance);
+
 	//_tchar FirstTag[MAX_PATH] = TEXT("First");
 	wstring wstrTag = TEXT("Gear");
 	if (FAILED(Add_Components(wstrTag)))
@@ -244,9 +290,8 @@ HRESULT CInfo_Main::Create_First(void* pArg)
 	return S_OK;
 }
 
-HRESULT CInfo_Main::Create_Component(const _tchar* pFIlePath, wstring wszTag, INFOLIST eType)
+HRESULT CField_Guide::Create_Component(const _tchar* pFIlePath, wstring wszTag, MENU eType)
 {
-
 	if (FAILED(Add_Components(wszTag)))
 		return E_FAIL;
 
@@ -256,38 +301,106 @@ HRESULT CInfo_Main::Create_Component(const _tchar* pFIlePath, wstring wszTag, IN
 	return S_OK;
 }
 
-CInfo_Main* CInfo_Main::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+HRESULT CField_Guide::Create_BackGround()
 {
-	CInfo_Main* pInstance = new CInfo_Main(pDevice, pContext);
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	_ulong dwByte = 0;
+	DWORD dwStrByte = 0;
+
+	HANDLE hFile = CreateFile(TEXT("../../Resources/GameData/UIData/UI_Group_FieldGuide_Back.uidata"), GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+	if (hFile == INVALID_HANDLE_VALUE)
+	{
+		MSG_BOX("Failed Load");
+		CloseHandle(hFile);
+		return E_FAIL;
+	}
+	
+	_tchar szGroupName[MAX_PATH] = TEXT("");
+
+	ReadFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
+	ReadFile(hFile, szGroupName, dwStrByte, &dwByte, nullptr);
+
+	CUI_Back* pBack = dynamic_cast<CUI_Back*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_FieldGuide_UI"), TEXT("Com_UI_Effect_Back_FieldGuide_Back")));
+	pBack->Load(Load_File(hFile));
+
+	_uint iSize = { 0 };
+	ReadFile(hFile, &iSize, sizeof(_uint), &dwByte, nullptr);
+
+	CUI_Effect_Back* pHouse = dynamic_cast<CUI_Effect_Back*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_FieldGuide_UI"), TEXT("Com_UI_Effect_Back_FieldGuide_House")));
+	pHouse->Load(Load_File(hFile));
+	pHouse->Set_Parent(pBack);
+	pHouse->Set_Effecttype(CUI_Effect_Back::ALPHA);
+
+	CUI_Effect_Back* pRayburst = dynamic_cast<CUI_Effect_Back*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_FieldGuide_UI"), TEXT("Com_UI_Effect_Back_FieldGuide_Rayburst")));
+	pRayburst->Load(Load_File(hFile));
+	pRayburst->Set_Parent(pBack);
+	pRayburst->Set_Effecttype(CUI_Effect_Back::ALPHA);
+
+	CloseHandle(hFile);
+
+	Safe_Release(pGameInstance);
+	return S_OK;
+}
+
+
+void CField_Guide::Set_SelectedText()
+{
+	_int iIndex = 0;
+	for (auto& pFrame : m_pFrames)
+	{
+		if (pFrame->Get_Clicked())
+		{
+			FieldGuide_To_Menu(iIndex);
+		}
+		iIndex++;
+	}
+}
+
+void CField_Guide::FieldGuide_To_Menu(_uint iIndex)
+{
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	pGameInstance->Set_CurrentScene(TEXT("Scene_Menu"), false);
+	m_pMenu->Set_Menu(iIndex);
+
+	Safe_Release(pGameInstance);
+}
+
+CField_Guide* CField_Guide::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+{
+	CField_Guide* pInstance = new CField_Guide(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Created CInfo_Main");
+		MSG_BOX("Failed to Created CField_Guide");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject* CInfo_Main::Clone(void* pArg)
+CGameObject* CField_Guide::Clone(void* pArg)
 {
-	CInfo_Main* pInstance = new CInfo_Main(*this);
+	CField_Guide* pInstance = new CField_Guide(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned CInfo_Main");
+		MSG_BOX("Failed to Cloned CField_Guide");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CInfo_Main::Free()
+void CField_Guide::Free()
 {
 	__super::Free();
 
 	for (auto& Frame : m_pFrames)
-	{
+{
 		Safe_Release(Frame);
 	}
 	m_pFrames.clear();
@@ -314,4 +427,5 @@ void CInfo_Main::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pTexture);
+	Safe_Release(m_pMenu);
 }

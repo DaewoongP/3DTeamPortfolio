@@ -313,6 +313,24 @@
     <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_Cursor">
       <UniqueIdentifier>{a63a6343-ce45-4b8e-a9d3-a44f48775b53}</UniqueIdentifier>
     </Filter>
+    <Filter Include="05. Scene\Field_Guide">
+      <UniqueIdentifier>{0830a1af-837d-437b-8222-61a3830a3f13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Scene\Main_Menu">
+      <UniqueIdentifier>{2af2e2df-59af-4b37-8ef4-d02fdf00f156}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Scene\Main_Menu\Gear">
+      <UniqueIdentifier>{a94fd666-69cf-4e38-ab76-d42069fcdbe3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Scene\Main_Menu\Inventory">
+      <UniqueIdentifier>{30d76204-27e0-46f1-8f3c-4db0fd57b841}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Scene\Main_Menu\Setting">
+      <UniqueIdentifier>{cfeaefdd-8cd5-43e7-ae2d-c678e5202aa3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Scene\Main_Menu\Quest">
+      <UniqueIdentifier>{7f6be9ff-3769-4fe7-8798-91aa092a8af5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -609,9 +627,6 @@
     <ClInclude Include="..\Public\UI_Group_MiniMap.h">
       <Filter>02. GameObject\05. UI\UI_Group\UI_Group_MiniMap</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Info_Main.h">
-      <Filter>05. Scene</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\UI_Group_Enemy_HP.h">
       <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Enemy_HP</Filter>
     </ClInclude>
@@ -653,6 +668,24 @@
     </ClInclude>
     <ClInclude Include="..\Public\UI_Group_Cursor.h">
       <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Cursor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Main_Menu.h">
+      <Filter>05. Scene\Main_Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Field_Guide.h">
+      <Filter>05. Scene\Field_Guide</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Menu_Gear.h">
+      <Filter>05. Scene\Main_Menu\Gear</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Menu_Invectory.h">
+      <Filter>05. Scene\Main_Menu\Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Menu_Quest.h">
+      <Filter>05. Scene\Main_Menu\Quest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Menu_Setting.h">
+      <Filter>05. Scene\Main_Menu\Setting</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -917,9 +950,6 @@
     <ClCompile Include="..\Private\UI_Group_T.cpp">
       <Filter>02. GameObject\05. UI\UI_Group\UI_Group_T</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Info_Main.cpp">
-      <Filter>05. Scene</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\UI_Group_Skill.cpp">
       <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Skill</Filter>
     </ClCompile>
@@ -964,6 +994,24 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_Group_Cursor.cpp">
       <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Cursor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Main_Menu.cpp">
+      <Filter>05. Scene\Main_Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Field_Guide.cpp">
+      <Filter>05. Scene\Field_Guide</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Menu_Gear.cpp">
+      <Filter>05. Scene\Main_Menu\Gear</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Menu_Invectory.cpp">
+      <Filter>05. Scene\Main_Menu\Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Menu_Quest.cpp">
+      <Filter>05. Scene\Main_Menu\Quest</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Menu_Setting.cpp">
+      <Filter>05. Scene\Main_Menu\Setting</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

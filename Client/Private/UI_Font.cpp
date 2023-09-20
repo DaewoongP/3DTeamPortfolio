@@ -51,13 +51,6 @@ HRESULT CUI_Font::Initialize(void* pArg)
 	m_vPos.x -= (textWidth / 2.0f); // 중앙 위치에서 왼쪽으로 텍스트의 반 너비만큼 이동
 //	m_vPos.y -= (textHeight / 2.0f); // 중앙 위치에서 위로 텍스트의 반 높이만큼 이동
 
-	/* Com_Renderer */
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"),
-		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRendererCom))))
-	{
-		MSG_BOX("Failed CDummy_UI Add_Component : (Com_Renderer)");
-		return E_FAIL;
-	}
 
 	return S_OK;
 }
@@ -94,6 +87,18 @@ HRESULT CUI_Font::Render()
 
 	m_pBatch->End();
 
+	return S_OK;
+}
+
+HRESULT CUI_Font::Add_Component()
+{	
+	/* Com_Renderer */
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"),
+		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRendererCom))))
+	{
+		MSG_BOX("Failed CDummy_UI Add_Component : (Com_Renderer)");
+		return E_FAIL;
+	}
 	return S_OK;
 }
 
