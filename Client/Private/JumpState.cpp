@@ -54,6 +54,10 @@ void CJumpState::OnStateTick()
 
 		Go_HardLand();
 	}
+	JumpMoveSpeed();
+	LookFront();
+
+	
 }
 
 void CJumpState::OnStateExit()
@@ -63,14 +67,23 @@ void CJumpState::OnStateExit()
 #endif // _DEBUG
 }
 
+void CJumpState::Bind_Notify()
+{
+	m_pOwnerModel->Bind_Notify(TEXT("Hu_BM_Land_2Jog_RU_anm"), TEXT("End_Animation"), m_pFuncFinishAnimation);
+	m_pOwnerModel->Bind_Notify(TEXT("Hu_BM_Land_2Sprint_v2_anm"), TEXT("End_Animation"), m_pFuncFinishAnimation);
+	m_pOwnerModel->Bind_Notify(TEXT("Hu_BM_Land_Hard_v2_anm"), TEXT("End_Animation"), m_pFuncFinishAnimation);
+	m_pOwnerModel->Bind_Notify(TEXT("Hu_BM_Land_Hard_2Jog_v2_anm"), TEXT("End_Animation"), m_pFuncFinishAnimation);
+}
+
 void CJumpState::Go_Idle()
 {
 	//방향키를 땠다면 Idle로
 	if (false == *m_pIsDirectionKeyPressed)
 	{
 		m_pOwnerModel->Change_Animation(TEXT("Hu_BM_Land_Soft_v2_anm"));
+		Set_StateMachine(TEXT("Idle"));
 	}
-	Set_StateMachine(TEXT("Idle"));
+	
 }
 
 void CJumpState::Go_Loop()
@@ -78,12 +91,12 @@ void CJumpState::Go_Loop()
 	//방향키를 누르고 있다면 Loop로
 	if (true == *m_pIsDirectionKeyPressed)
 	{
-		switch (*m_pIsSprint)
+		switch (*m_pIMoveSwitch)
 		{
-		case CStateContext::JOGING:
+		case CStateContext::MOVETYPE_JOGING:
 			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_Land_2Jog_RU_anm"));
 			break;
-		case CStateContext::SPRINT:
+		case CStateContext::MOVETYPE_SPRINT:
 			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_Land_2Sprint_v2_anm"));
 			break;
 		}
@@ -105,6 +118,52 @@ void CJumpState::Go_HardLand()
 			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_Land_Hard_2Jog_v2_anm"));
 		}
 		Set_StateMachine(TEXT("Hard Land"));
+	}
+}
+
+void CJumpState::LookFront()
+{
+	_float fAngle = *m_pOwnerLookAngle;
+
+	BEGININSTANCE;
+
+	if (true == *m_pIsDirectionKeyPressed)
+	{
+		//지속적으로 회전
+		m_pPlayerTransform->Turn(_float3(0.0f, 1.0f, 0.0f), fAngle * pGameInstance->Get_World_Tick());
+		//지속적인 힘으로 이동(일단 깡 이동)
+		m_pPlayerTransform->Go_Straight(m_fJumpMoveSpeed * pGameInstance->Get_World_Tick());
+	}
+
+	ENDINSTANCE;
+}
+
+void CJumpState::JumpMoveSpeed()
+{
+	switch (*m_pIMoveSwitch)
+	{
+	case CStateContext::MOVETYPE_NONE:
+	{
+		m_fJumpMoveSpeed = 0.0f;
+	}
+	break;
+	case CStateContext::MOVETYPE_WALK:
+	{
+		m_fJumpMoveSpeed = 0.0f;
+	}
+	break;
+	case CStateContext::MOVETYPE_JOGING:
+	{
+		m_fJumpMoveSpeed = 4.75f;
+	}
+	break;
+	case CStateContext::MOVETYPE_SPRINT:
+	{
+		m_fJumpMoveSpeed = 7.0f;
+	}
+	break;
+	default:
+		break;
 	}
 }
 

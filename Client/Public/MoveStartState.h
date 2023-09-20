@@ -28,6 +28,8 @@ public:
 
 
 private:
+    virtual void Bind_Notify();
+
     void LookFront();
 
     void Go_Idle();

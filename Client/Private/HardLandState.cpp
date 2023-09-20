@@ -74,7 +74,7 @@ void CHardLandState::Go_Loop()
 		//Loop
 		if (true == *m_pIsDirectionKeyPressed)
 		{
-			*m_pIsSprint = CStateContext::JOGING;
+			*m_pIMoveSwitch = CStateContext::MOVETYPE_JOGING;
 			Set_StateMachine(TEXT("Move Loop"));
 		}
 		//idle

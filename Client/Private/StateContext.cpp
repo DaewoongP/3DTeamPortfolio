@@ -37,12 +37,16 @@ HRESULT CStateContext::Initialize(void* pArg)
 
 	Safe_AddRef(m_pPlayerTransform);
 
+	m_pfuncFinishAnimation = [&] {(*this).FinishAnimation(); };
+
 	if (FAILED(Ready_StateMachine()))
 	{
 		MSG_BOX(TEXT("Failed Ready StateMachine"));
 
 		return E_FAIL;
 	}
+
+	
 
 	return S_OK;
 }
@@ -89,6 +93,11 @@ HRESULT CStateContext::Set_StateMachine(const _tchar* _pTag)
 	return S_OK;
 }
 
+void CStateContext::FinishAnimation()
+{
+	m_isFinishAnimation = true;
+}
+
 CStateMachine* CStateContext::Find_StateMachine(const _tchar* _pTag)
 {
 	auto iter = find_if(
@@ -111,8 +120,10 @@ HRESULT CStateContext::Add_StateMachine(const _tchar* _pTag, CStateMachine* _pSt
 	_pState->Set_OwnerLookAngle(m_pOwnerLookAngle);
 	_pState->Set_IsDirectionKeyPressed(m_pIsDirectionPressed);
 	_pState->Set_PlayerTransform(m_pPlayerTransform);
-	_pState->Set_IsSprint(&m_isSprint);
+	_pState->Set_MoveSwitch(&m_iMoveSwitch);
 	_pState->Set_ActionSwitch(&m_iActionSwitch);
+	_pState->Set_IsFnishAnimation(&m_isFinishAnimation);
+	_pState->Set_FuncFinishAnimation(m_pfuncFinishAnimation);
 	
 	_pState->Bind_Notify();
 

@@ -25,12 +25,21 @@ public:
     virtual void OnStateTick();
     virtual void OnStateExit();
 
+    virtual void Bind_Notify();
+
+private:
+    _float m_fJumpMoveSpeed = { 0.0f };
+
 private:
     void Go_Idle();
 
     void Go_Loop();
 
     void Go_HardLand();
+
+    void LookFront();
+
+    void JumpMoveSpeed();
 
 public:
     static CJumpState* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);

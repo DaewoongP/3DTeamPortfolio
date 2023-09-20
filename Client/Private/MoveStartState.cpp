@@ -30,6 +30,8 @@ HRESULT CMoveStartState::Initialize(void* pArg)
 void CMoveStartState::Tick(_float fTimeDelta)
 {
 	OnStateTick();
+
+	
 }
 
 void CMoveStartState::Late_Tick(_float fTimeDelta)
@@ -39,11 +41,11 @@ void CMoveStartState::Late_Tick(_float fTimeDelta)
 void CMoveStartState::OnStateEnter()
 {
 	//무조건 jog 부터
-	*m_pIsSprint = false;
+	*m_pIMoveSwitch = CStateContext::MOVETYPE_JOGING;
 
 
 #ifdef _DEBUG
-	//cout << "Start Enter" << endl;
+	cout << "Start Enter" << endl;
 #endif // _DEBUG
 }
 
@@ -51,8 +53,6 @@ void CMoveStartState::OnStateTick()
 {
 	LookFront();
 
-	//Over_135();
-	
 	Go_Idle();
 
 	Go_Loop();
@@ -70,10 +70,18 @@ void CMoveStartState::OnStateTick()
 void CMoveStartState::OnStateExit()
 {
 #ifdef _DEBUG
-	//cout << "Start Exit" << endl;
+	cout << "Start Exit" << endl;
 #endif // _DEBUG
 }
 
+
+void CMoveStartState::Bind_Notify()
+{
+	m_pOwnerModel->Bind_Notify(TEXT("Hu_BM_RF_Jog_Start_Fwd_anm"), TEXT("End_Animation"), m_pFuncFinishAnimation);
+	m_pOwnerModel->Bind_Notify(TEXT("Hu_BM_Jog_Loop_Fwd_anm"), TEXT("End_Animation"), m_pFuncFinishAnimation);
+	m_pOwnerModel->Bind_Notify(TEXT("Hu_BM_Sprint_Loop_Fwd_anm"), TEXT("End_Animation"), m_pFuncFinishAnimation);
+	m_pOwnerModel->Bind_Notify(TEXT("Hu_BM_Jog2Sprint_RU_anm"), TEXT("End_Animation"), m_pFuncFinishAnimation);
+}
 
 void CMoveStartState::LookFront()
 {
@@ -99,14 +107,14 @@ void CMoveStartState::Go_Idle()
 		{
 		case CStateContext::ACTION_NONE:
 		{
-			switch (*m_pIsSprint)
+			switch (*m_pIMoveSwitch)
 			{
-			case CStateContext::JOGING:
+			case CStateContext::MOVETYPE_JOGING:
 			{
 				m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_anm"));
 			}
 			break;
-			case CStateContext::SPRINT:
+			case CStateContext::MOVETYPE_SPRINT:
 			{
 				m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Sprint_Stop_Fwd_anm"));
 			}
@@ -116,14 +124,14 @@ void CMoveStartState::Go_Idle()
 		break;
 		case CStateContext::ACTION_CASUAL:
 		{
-			switch (*m_pIsSprint)
+			switch (*m_pIMoveSwitch)
 			{
-			case CStateContext::JOGING:
+			case CStateContext::MOVETYPE_JOGING:
 			{
 				m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_anm"));
 			}
 			break;
-			case CStateContext::SPRINT:
+			case CStateContext::MOVETYPE_SPRINT:
 			{
 				m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Sprint_Stop_Fwd_anm"));
 			}
@@ -133,14 +141,14 @@ void CMoveStartState::Go_Idle()
 		break;
 		case CStateContext::ACTION_CMBT:
 		{
-			switch (*m_pIsSprint)
+			switch (*m_pIMoveSwitch)
 			{
-			case CStateContext::JOGING:
+			case CStateContext::MOVETYPE_JOGING:
 			{
 				m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_2Cmbt_anm"));
 			}
 			break;
-			case CStateContext::SPRINT:
+			case CStateContext::MOVETYPE_SPRINT:
 			{
 				m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Sprint_Stop_Fwd_Cmbt_anm"));
 			}
@@ -160,23 +168,24 @@ void CMoveStartState::Go_Idle()
 void CMoveStartState::Go_Loop()
 {
 	//키가 눌려있고 애니메이션이 끝났다면
-	if (true == *m_pIsDirectionKeyPressed && m_pOwnerModel->Is_Finish_Animation())
+	if (true == *m_pIsFinishAnimation)
 	{
-		switch (*m_pIsSprint)
+		switch (*m_pIMoveSwitch)
 		{
-		case CStateContext::JOGING:
+		case CStateContext::MOVETYPE_JOGING:
 		{
 			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_Jog_Loop_Fwd_anm"));
 		}
 		break;
 
-		case CStateContext::SPRINT:
+		case CStateContext::MOVETYPE_SPRINT:
 		{
 			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_Sprint_Loop_Fwd_anm"));
 		}
 		break;
 		}
 		Set_StateMachine(TEXT("Move Loop"));
+		*m_pIsFinishAnimation = false;
 	}
 }
 
@@ -212,9 +221,9 @@ void CMoveStartState::Switch_Sprint()
 	if (pGameInstance->Get_DIKeyState(DIK_LSHIFT, CInput_Device::KEY_DOWN))
 	{
 		//조깅중이라면
-		if (*m_pIsSprint == (_bool)CStateContext::JOGING)
+		if (*m_pIMoveSwitch == (_uint)CStateContext::MOVETYPE_JOGING)
 		{
-			*m_pIsSprint = !(*m_pIsSprint);
+			*m_pIMoveSwitch = (_uint)CStateContext::MOVETYPE_SPRINT;
 			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_Jog2Sprint_RU_anm"));
 		}
 	}

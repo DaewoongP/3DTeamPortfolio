@@ -15,11 +15,13 @@ class CStateContext :
     public CComposite
 {
 public:
-    enum JOGINGANDSPRINT
+    enum MOVETYPE
     {
-        JOGING,
-        SPRINT,
-        JS_END
+        MOVETYPE_NONE,
+        MOVETYPE_WALK,
+        MOVETYPE_JOGING,
+        MOVETYPE_SPRINT,
+        MOVETYPE_END
     };
 
     enum ACTIONTYPE
@@ -64,12 +66,20 @@ private:
     CStateMachine* m_pCurrentStateMachine = { nullptr };
 
     //달리기와 전력질주 구분용
-    _bool m_isSprint = { (_bool)JOGING };
+    _uint m_iMoveSwitch = { (_uint)MOVETYPE_JOGING };
 
     //액션 구분용
     _uint m_iActionSwitch = { 0 };
 
+    //애니메이션 끝난것을 확인
+    _bool m_isFinishAnimation = { false };
+
+    function<void()> m_pfuncFinishAnimation = { nullptr };  //  FinishAnimation();
+
     unordered_map<const _tchar*, CStateMachine*> m_pStateMachines;
+
+private:
+    void FinishAnimation();
 
 private:
     CStateMachine* Find_StateMachine(const _tchar* _pTag);

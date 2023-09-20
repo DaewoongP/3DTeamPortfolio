@@ -36,6 +36,7 @@ HRESULT CIdleState::Initialize(void* pArg)
 void CIdleState::Tick(_float fTimeDelta)
 {
 	OnStateTick();
+	
 }
 
 void CIdleState::Late_Tick(_float fTimeDelta)
@@ -107,26 +108,37 @@ void CIdleState::OnStateExit()
 
 void CIdleState::Action_None_Tick()
 {
-	if (m_pOwnerModel->Is_Finish_Animation())
+	if (true == *m_pIsFinishAnimation)
 	{
 		m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Idle_anm"));
+
+		*m_pIsFinishAnimation = false;
 	}
 }
 
 void CIdleState::Action_Casual_Tick()
 {
-	if (m_pOwnerModel->Is_Finish_Animation())
+	if (true == *m_pIsFinishAnimation)
 	{
 		m_pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Idle_Casual_anm"));
+
+		*m_pIsFinishAnimation = false;
 	}
 }
 
 void CIdleState::Action_Cmbt_Tick()
 {
-	if (m_pOwnerModel->Is_Finish_Animation())
+	if (true == *m_pIsFinishAnimation)
 	{
 		m_pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_RF_Idle_anm"));
+
+		*m_pIsFinishAnimation = false;
 	}
+}
+
+void CIdleState::Bind_Notify()
+{
+	m_pOwnerModel->Bind_Notify(TEXT("Hu_BM_RF_Jog_Start_Fwd_anm"), TEXT("End_Animation"), m_pFuncFinishAnimation);
 }
 
 void CIdleState::Go_Turn()

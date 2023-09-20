@@ -30,6 +30,7 @@ HRESULT CMoveTurnState::Initialize(void* pArg)
 void CMoveTurnState::Tick(_float fTimeDelta)
 {
 	OnStateTick();
+	
 }
 
 void CMoveTurnState::Late_Tick(_float fTimeDelta)
@@ -39,7 +40,7 @@ void CMoveTurnState::Late_Tick(_float fTimeDelta)
 void CMoveTurnState::OnStateEnter()
 {
 #ifdef _DEBUG
-	//cout << "Turn Enter" << endl;
+	cout << "Turn Enter" << endl;
 #endif // _DEBUG
 }
 
@@ -51,7 +52,7 @@ void CMoveTurnState::OnStateTick()
 
 	Go_Start();
 
-	Over_135();
+	//Over_135();
 
 	Go_Roll();
 
@@ -64,10 +65,15 @@ void CMoveTurnState::OnStateTick()
 void CMoveTurnState::OnStateExit()
 {
 #ifdef _DEBUG
-	//cout << "Turn Exit" << endl;
+	cout << "Turn Exit" << endl;
 #endif // _DEBUG
 }
 
+
+void CMoveTurnState::Bind_Notify()
+{
+	m_pOwnerModel->Bind_Notify(TEXT("Hu_BM_RF_Jog_Start_Fwd_anm"), TEXT("End_Animation"), m_pFuncFinishAnimation);
+}
 
 void CMoveTurnState::Go_Idle()
 {
@@ -102,7 +108,7 @@ void CMoveTurnState::LookFront()
 	if (true == *m_pIsDirectionKeyPressed)
 	{
 		//지속적으로 회전
-		m_pPlayerTransform->Turn(_float3(0.0f, 1.0f, 0.0f), fAngle * pGameInstance->Get_World_Tick());
+		m_pPlayerTransform->Turn(_float3(0.0f, 1.0f, 0.0f), fAngle * pGameInstance->Get_World_Tick() * 0.1f);
 	}
 
 	ENDINSTANCE;
