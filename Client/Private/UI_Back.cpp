@@ -63,6 +63,13 @@ HRESULT CUI_Back::Render()
 			return E_FAIL;
 	}
 
+	if (m_AlphaTextures.size() > 0)
+	{
+		if (FAILED(m_pShaderCom->Begin("Alpha")))
+			return E_FAIL;
+	}
+
+
 	if (FAILED(m_pVIBufferCom->Render()))
 		return E_FAIL;
 
@@ -111,6 +118,12 @@ HRESULT CUI_Back::SetUp_ShaderResources()
 
 	if (FAILED(m_Textures[m_iTextureIndex]->Bind_ShaderResources(m_pShaderCom, "g_Texture")))
 		return E_FAIL;
+
+	if (m_AlphaTextures.size() > 0)
+	{
+		if (FAILED(m_AlphaTextures[m_iTextureIndex]->Bind_ShaderResources(m_pShaderCom, "g_AlphaTexture")))
+			return E_FAIL;
+	}
 
 	return S_OK;
 }

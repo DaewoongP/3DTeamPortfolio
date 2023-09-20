@@ -51,7 +51,13 @@ HRESULT CLevel_MainGame::Initialize()
 
 		return E_FAIL;
 	}
-	if (FAILED(Ready_Layer_Info_UI(TEXT("Layer_Info_UI"))))
+	if (FAILED(Ready_Layer_FieldGuide_UI(TEXT("Layer_FieldGuide_UI"))))
+	{
+		MSG_BOX("Failed Ready_Layer_UI");
+
+		return E_FAIL;
+	}
+	if (FAILED(Ready_Layer_Menu_UI(TEXT("Layer_Menu_UI"))))
 	{
 		MSG_BOX("Failed Ready_Layer_UI");
 
@@ -109,7 +115,7 @@ void CLevel_MainGame::Tick(_float fTimeDelta)
 	}
 	if (pGameInstance->Get_DIKeyState(DIK_Y, CInput_Device::KEY_DOWN))
 	{
-		pGameInstance->Set_CurrentScene(TEXT("Scene_Info"), false);
+		pGameInstance->Set_CurrentScene(TEXT("Scene_FieldGuide"), false);
 	}
 	
 	ENDINSTANCE;
@@ -609,32 +615,77 @@ HRESULT CLevel_MainGame::Ready_Layer_UI(const _tchar* pLayerTag)
 	return S_OK;
 }
 
-HRESULT CLevel_MainGame::Ready_Layer_Info_UI(const _tchar* pLayerTag)
+HRESULT CLevel_MainGame::Ready_Layer_FieldGuide_UI(const _tchar* pLayerTag)
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
 
-	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Info"), pLayerTag)))
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_FieldGuide"), pLayerTag)))
 	{
-		MSG_BOX("Failed Add Scene : (Scene_Info)");
-		ENDINSTANCE;
+		MSG_BOX("Failed Add Scene : (Scene_FieldGuide)");
+		Safe_Release(pGameInstance);
 		return E_FAIL;
 	}
 
 	_tchar szFilePath[MAX_PATH] = TEXT("");
-
-	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Gear5.uidata"));
-	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Info_Main"),
-		pLayerTag, TEXT("Prototype_GameObject_Info_Main"), szFilePath)))
+	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Cursor.uidata"));
+	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_Cursor"),
+		pLayerTag, TEXT("GameObject_UI_Group_Info_Cursor"), szFilePath)))
 	{
-		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Info_Main)");
-		ENDINSTANCE;
+		MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_Cursor)");
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	}	
+	
+	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Gear_Alpha3.uidata"));
+	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Field_Guide"),
+		pLayerTag, TEXT("GameObject_UI_Field_Guide"), szFilePath)))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Field_Guide)");
+		Safe_Release(pGameInstance);
 		return E_FAIL;
 	}
 
 	Safe_Release(pGameInstance);
 
+	return S_OK;
+}
+
+HRESULT CLevel_MainGame::Ready_Layer_Menu_UI(const _tchar* pLayerTag)
+{
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Menu"), pLayerTag)))
+	{
+		MSG_BOX("Failed Add Scene : (Scene_Menu)");
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	}
+
+	_tchar szFilePath[MAX_PATH] = TEXT("");
+	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Cursor.uidata"));
+	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_Cursor"),
+		pLayerTag, TEXT("GameObject_UI_Group_Info_Cursor"), szFilePath)))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_Cursor)");
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	}
+
+
+	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Menu_Frame_Edit.uidata"));
+	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Main_Menu"),
+		pLayerTag, TEXT("GameObject_UI_Main_Menu"), szFilePath)))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_Cursor)");
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	}
+
+	Safe_Release(pGameInstance);
 	return S_OK;
 }
 

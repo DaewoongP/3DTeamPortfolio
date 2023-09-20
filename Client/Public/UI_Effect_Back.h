@@ -21,8 +21,18 @@ public:
 	{
 		CURSOR,
 		FILEDGUIDE,
+		TEXT,
+		ALPHA,
 		EFFECTTYPE_END
 	};
+
+public:
+	void Set_Effecttype(EFFECTTYPE eType);
+	void Set_Clicked(_bool isClicked = false);
+	void Set_Texture(CTexture* pTexture);
+	void Set_ImageCom(CUI_Image::IMAGEDESC desc);
+	void Set_Rotation(_float3 vAxis, _float fRadian);
+
 
 private:
 	explicit CUI_Effect_Back(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -30,17 +40,17 @@ private:
 	virtual ~CUI_Effect_Back() = default;
 
 public:
-	void Set_Texture(CTexture* pTexture);
-	void Set_ImageCom(CUI_Image::IMAGEDESC desc);
-	void Set_Rotation(_float3 vAxis, _float fRadian);
-
-	void Set_Effecttype(EFFECTTYPE eType);
+	_bool	Get_Clicked();
 
 public:
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void	Tick(_float fTimeDelta) override;
 	virtual void	Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
+
+public:
+
+
 
 private:
 	CShader*			m_pShaderCom = { nullptr };
@@ -61,6 +71,9 @@ private:
 
 private:
 	_float			m_fRadian = { 0.f };
+
+private:
+	_bool			m_isClicked = { false };
 
 public:
 	static CUI_Effect_Back* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

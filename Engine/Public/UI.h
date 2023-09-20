@@ -31,7 +31,8 @@ public:
 		m_fX = vXY.x;
 		m_fY = vXY.y;
 	}
-	void Set_Parent(CUI* pUIParent);
+	void	Set_Z(_float fZ) { m_fZ = fZ; }
+	void	Set_Parent(CUI* pUIParent);
 
 public:
 	void Set_Texture(_uint iIndex) { m_iTextureIndex = iIndex; }

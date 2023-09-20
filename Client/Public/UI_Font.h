@@ -4,6 +4,7 @@
 
 BEGIN(Engine)
 class CRenderer;
+class CUI_Button;
 END
 
 BEGIN(Client)
@@ -46,7 +47,8 @@ protected:
 	_float2 		m_vScale = { 1.f, 1.f };
 
 private:
-	_bool	Is_In_Rect();
+	HRESULT		Add_Component();
+	_bool		Is_In_Rect();
 
 private:
 	SpriteBatch* m_pBatch = { nullptr };

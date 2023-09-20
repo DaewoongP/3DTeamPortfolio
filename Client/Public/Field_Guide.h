@@ -12,27 +12,13 @@ END
 
 BEGIN(Client)
 
-class CInfo_Main final : public CGameObject
+class CMain_Menu;
+class CField_Guide final : public CGameObject
 {
-public:
-	enum INFOLIST
-	{
-		GEAR,
-		INVENTORY,
-		//TALENT,
-		COLLECTION,
-		ACTION,
-		SETTING,
-		OWLMAIL,
-		QUEST,
-		MAP,
-		INFOLIST_END
-	};
-
 private:
-	explicit CInfo_Main(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	explicit CInfo_Main(const CInfo_Main& rhs);
-	virtual ~CInfo_Main() = default;
+	explicit CField_Guide(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	explicit CField_Guide(const CField_Guide& rhs);
+	virtual ~CField_Guide() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -46,13 +32,13 @@ private:
 	//	HRESULT Add_Components(const _tchar* wszTag);
 	HRESULT Add_Components(wstring wszTag);
 
-	HRESULT Read_File(const _tchar* pFilePath, INFOLIST iIndex);
+	HRESULT Read_File(const _tchar* pFilePath, MENU iIndex);
 	CUI::UIDESC Load_File(const HANDLE hFile);
 
 private:
 	HRESULT Create_First(void* pArg);
-	//	HRESULT Create_Component(const _tchar* pFIlePath, const _tchar* wszTag, KEYLIST eType);
-	HRESULT Create_Component(const _tchar* pFIlePath, wstring wszTag, INFOLIST eType);
+	HRESULT Create_Component(const _tchar* pFIlePath, wstring wszTag, MENU eType);
+	HRESULT Create_BackGround();
 
 private:
 	CShader*			m_pShaderCom = { nullptr };
@@ -66,8 +52,18 @@ private:
 	vector<class CUI_Back*>			m_pBacks;
 	vector<class CUI_Back*>			m_pLines;
 
+private:
+	CMain_Menu* m_pMenu = { nullptr };
+
+private:
+	MENU	m_eMenu = { MENU_END };
+
+private:
+	void	Set_SelectedText();
+	void	FieldGuide_To_Menu(_uint iIndex);
+
 public:
-	static CInfo_Main* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CField_Guide* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;
 };

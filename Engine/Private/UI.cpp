@@ -75,7 +75,7 @@ HRESULT CUI::Load(UIDESC UIDesc)
 		m_Textures.push_back(CTexture::Create(m_pDevice, m_pContext, UIDesc.szTexturePath));
 	if (lstrcmp(TEXT(""), UIDesc.szAlphaTexturePath))
 		m_AlphaTextures.push_back(CTexture::Create(m_pDevice, m_pContext, UIDesc.szAlphaTexturePath));
-
+	
 	return S_OK;
 }
 

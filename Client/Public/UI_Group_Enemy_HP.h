@@ -23,19 +23,7 @@ public:
 		_tchar wszObjectName[MAX_PATH] = TEXT("");
 		_tchar wszObjectLevel[MAX_PATH] = TEXT("");
 
-		////for Font
-		//_float2			vLevelPos = { 640.f, 360.f };
-		//XMVECTOR		vLevelColor = _float4(1.f, 1.f, 1.f, 1.f);
-		//_float			fLevelRotation = { 0.f };
-		//_float2			vLevelOrigin = { 0.f, 0.f };
-		//_float2 		vLevelScale = { 1.f, 1.f };
 
-
-		//_float2			vNamePos = { 640.f, 360.f };
-		//XMVECTOR		vNameColor = _float4(1.f, 1.f, 1.f, 1.f);
-		//_float			fNameRotation = { 0.f };
-		//_float2			vNameOrigin = { 0.f, 0.f };
-		//_float2 		vNameScale = { 1.f, 1.f };
 	};
 
 private:

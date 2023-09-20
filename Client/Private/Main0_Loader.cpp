@@ -19,7 +19,8 @@
 #include "UI_Image.h"
 #include "UI_Button.h"
 #include "UI_Font.h"
-#include "Info_Main.h"
+#include "Field_Guide.h"
+#include "Main_Menu.h"
 #pragma endregion UI
 
 #ifdef _DEBUG
@@ -238,9 +239,12 @@ HRESULT CMain0_Loader::Loading_For_MainGame()
 			CUI_Button::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_UI_Button");
 
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Info_Main"),
-			CInfo_Main::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_Info_Main");
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Field_Guide"),
+			CField_Guide::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Field_Guide");
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Main_Menu"),
+			CMain_Menu::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Main_Menu");
 
 		/* --------------Debug-------------- */
 #ifdef _DEBUG

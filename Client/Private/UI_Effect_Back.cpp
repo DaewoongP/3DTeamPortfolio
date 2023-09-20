@@ -28,18 +28,9 @@ void CUI_Effect_Back::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	if (m_pButtonCom->Collision_Rect(g_hWnd, m_vCombinedXY, _float2(m_fSizeX, m_fSizeY)))
-	{
-
-	}
-
 #ifdef _DEBUG
-
 	m_fRadian += fTimeDelta * 2.f;
-
 #endif // _DEBUG
-
-
 }
 
 void CUI_Effect_Back::Late_Tick(_float fTimeDelta)
@@ -67,16 +58,24 @@ HRESULT CUI_Effect_Back::Render()
 		if (FAILED(m_pShaderCom->Begin("UI")))
 			return E_FAIL;
 		break;
+	case Client::CUI_Effect_Back::TEXT:
+		if (FAILED(m_pShaderCom->Begin("Text")))
+			return E_FAIL;
+		break;
+	case Client::CUI_Effect_Back::ALPHA:
+		if (FAILED(m_pShaderCom->Begin("Alpha")))
+			return E_FAIL;
+		break;
 	default:
 		break;
 	}
-
 
 	if (FAILED(m_pVIBufferCom->Render()))
 		return E_FAIL;
 
 	return S_OK;
 }
+
 
 HRESULT CUI_Effect_Back::Add_Components()
 {
@@ -143,25 +142,38 @@ HRESULT CUI_Effect_Back::SetUp_ShaderResources()
 	if (FAILED(m_Textures[m_iTextureIndex]->Bind_ShaderResources(m_pShaderCom, "g_Texture")))
 		return E_FAIL;
 
-
-	if (m_eEffecttype == CURSOR)
+	if (0 < m_AlphaTextures.size() && m_eEffecttype == ALPHA)
 	{
-#ifdef _DEBUG
-		ImGui::Begin("Cursor");
-
-		if (ImGui::DragFloat("Cursor Control", &m_fRadian))
-		{
-
-		}
-
-		ImGui::End();
-#endif // _DEBUG
-
-		if (FAILED(m_pShaderCom->Bind_RawValue("g_fRadian", &m_fRadian, sizeof(_float))))
+		if (FAILED(m_AlphaTextures[m_iTextureIndex]->Bind_ShaderResources(m_pShaderCom, "g_AlphaTexture")))
 			return E_FAIL;
 	}
 
+	switch (m_eEffecttype)
+	{
+	case Client::CUI_Effect_Back::CURSOR:
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_fRadian", &m_fRadian, sizeof(_float))))
+			return E_FAIL;
+		break;
+	case Client::CUI_Effect_Back::FILEDGUIDE:
+		break;
+	case Client::CUI_Effect_Back::TEXT:
+	{
+		_bool isCollision = m_pButtonCom->Collision_Rect(g_hWnd, m_vCombinedXY, _float2(m_fSizeX, m_fSizeY));
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_isOnCollision", &isCollision, sizeof(_bool))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_isClicked", &m_isClicked, sizeof(_bool))))
+			return E_FAIL;
+	}
+		break;
+	}
+
 	return S_OK;
+}
+
+
+_bool CUI_Effect_Back::Get_Clicked()
+{
+	return 	m_pButtonCom->Click(g_hWnd, m_vCombinedXY, _float2(m_fSizeX, m_fSizeY));
 }
 
 void CUI_Effect_Back::Set_Texture(CTexture* pTexture)
@@ -181,7 +193,12 @@ void CUI_Effect_Back::Set_Rotation(_float3 vAxis, _float fRadian)
 
 void CUI_Effect_Back::Set_Effecttype(EFFECTTYPE eType)
 {
-		m_eEffecttype = eType;
+	m_eEffecttype = eType;
+}
+
+void CUI_Effect_Back::Set_Clicked(_bool isClicked)
+{
+	m_isClicked = isClicked;
 }
 
 CUI_Effect_Back* CUI_Effect_Back::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

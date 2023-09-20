@@ -66,7 +66,9 @@ float4 PS_MAIN_UI_ALPHA(PS_IN In) : SV_TARGET0
     vAlpha = g_AlphaTexture.Sample(LinearSampler, In.vTexUV);
    
     vColor = g_Texture.Sample(LinearSampler, In.vTexUV);
-    vColor.a = vAlpha.r;
+
+    vColor.a *= vAlpha.r;
+    
 
     return vColor;
 }

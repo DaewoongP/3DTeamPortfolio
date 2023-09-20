@@ -220,6 +220,15 @@ HRESULT CDummy_UI::Save(HANDLE hFile, _ulong& dwByte)
 		lstrcpy(m_wszTexturePath, result.c_str());
 	}
 
+	wstring AstrPath = L"3DTeamPortfolio";
+	wstring AstrFullPath = m_wszAlphaTextureFilePath;
+
+	if (AstrFullPath.find(AstrPath) != std::wstring::npos)
+	{
+		std::wstring result = TEXT("..\\..") + AstrFullPath.substr(AstrFullPath.find(AstrPath) + AstrPath.length());
+		lstrcpy(m_wszAlphaTextureFilePath, result.c_str());
+	}
+
 	WriteFile(hFile, &m_vCombinedXY, sizeof m_vCombinedXY, &dwByte, nullptr);
 	WriteFile(hFile, &m_fX, sizeof m_fX, &dwByte, nullptr);
 	WriteFile(hFile, &m_fY, sizeof m_fY, &dwByte, nullptr);
@@ -284,7 +293,7 @@ HRESULT CDummy_UI::Add_Components()
 	if (m_isAlpha)
 	{
 		if (FAILED(CComposite::Add_Component(LEVEL_TOOL, m_wszAlphaTexturePrototypeTag,
-			TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTextureCom))))
+			TEXT("Com_AlphaTexture"), reinterpret_cast<CComponent**>(&m_pAlphaTextureCom))))
 		{
 			MSG_BOX("Failed CDummy_UI Add_Component : (Com_Texture)");
 			return E_FAIL;
@@ -351,8 +360,8 @@ HRESULT CDummy_UI::SetUp_ShaderResources()
 		if (FAILED(m_pAlphaTextureCom->Bind_ShaderResources(m_pShaderCom, "g_AlphaTexture")))
 			return E_FAIL;
 
-		if (FAILED(m_pShaderCom->Bind_RawValue("g_vColor", &m_vColor, sizeof(_float4))))
-			return E_FAIL;
+		//if (FAILED(m_pShaderCom->Bind_RawValue("g_vColor", &m_vColor, sizeof(_float4))))
+		//	return E_FAIL;
 
 	}
 

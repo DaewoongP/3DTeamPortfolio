@@ -47,11 +47,11 @@ HRESULT CUI_Group_Enemy_HP::Initialize(void* pArg)
 	switch (eEnemyType)
 	{
 	case Client::CUI_Group_Enemy_HP::MONSTER:
-		if (FAILED(Read_File(TEXT("../../Resources/GameData/UIData/UI_Group_Monster_HP2.uidata"))))
+		if (FAILED(Read_File(TEXT("../../Resources/GameData/UIData/UI_Group_Monster_HP.uidata"))))
 			return E_FAIL;
 		break;
 	case Client::CUI_Group_Enemy_HP::BOSS:
-		if (FAILED(Read_File(TEXT("../../Resources/GameData/UIData/UI_Group_Boss_HP3.uidata"))))
+		if (FAILED(Read_File(TEXT("../../Resources/GameData/UIData/UI_Group_Boss_HP.uidata"))))
 			return E_FAIL;
 		break;
 	case Client::CUI_Group_Enemy_HP::ENEMYTYPE_END:
