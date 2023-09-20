@@ -228,8 +228,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 	if (FAILED(Render_BlurShadow()))
 		return E_FAIL;
-	if (FAILED(m_pSSAOBlur->Render()))
-		return E_FAIL;
+	/*if (FAILED(m_pSSAOBlur->Render()))
+		return E_FAIL;*/
 	if (FAILED(Render_Deferred()))
 		return E_FAIL;
 

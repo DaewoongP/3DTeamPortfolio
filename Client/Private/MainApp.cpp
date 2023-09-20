@@ -120,6 +120,12 @@ HRESULT CMainApp::Ready_Prototype_Component_For_Static()
 				VTXRECTCOLORINSTANCE_DECL::Elements, VTXRECTCOLORINSTANCE_DECL::iNumElements))))
 			return E_FAIL;
 
+		/* For.Prototype_Component_Shader_MeshInstance */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxMeshInstance"),
+			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxMeshInstance.hlsl"),
+				VTXMESHINSTANCE_DECL::Elements, VTXMESHINSTANCE_DECL::iNumElements))))
+			return E_FAIL;
+
 		/* Prototype_Component_VIBuffer_Point_Color_Instance*/
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Point_Color_Instance"),
 			CVIBuffer_Point_Color_Instance::Create(m_pDevice, m_pContext))))
