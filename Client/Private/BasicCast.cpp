@@ -134,6 +134,7 @@ void CBasicCast::Tick(_float fTimeDelta)
 			m_bDeadTrigger = true;
 			m_pHitEffect->Get_Transform()->Set_Position(m_pTrailEffect->Get_Transform()->Get_Position());
 			m_pHitEffect->Play();
+			m_pHitEffect->Enable();
 		}
 	}
 	m_pTransform->Set_Position(m_pTrailEffect->Get_Transform()->Get_Position());
@@ -153,6 +154,7 @@ void CBasicCast::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		m_bDeadTrigger = true;
 		m_pHitEffect->Get_Transform()->Set_Position(m_pTrailEffect->Get_Transform()->Get_Position());
 		m_pHitEffect->Play();
+		m_pHitEffect->Enable();
 	}
 	__super::OnCollisionEnter(CollisionEventDesc);
 }
