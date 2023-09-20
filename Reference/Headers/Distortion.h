@@ -14,13 +14,14 @@ private:
 
 public:
 	virtual HRESULT Initialize_Prototype(const _tchar* pTargetTag);
-	virtual HRESULT Render() override;
-
+	virtual HRESULT Render();
+	void Set_Textures(_tchar* pShaderPass, CTexture* pOriTexture, CTexture* pNoisetexture, CTexture* pAlphaTexture);
 private:
 	CShader* m_pShader = { nullptr };
 	CVIBuffer_Rect* m_pBuffer = { nullptr };
 	_float4x4			m_WorldMatrix, m_ViewMatrix, m_ProjMatrix;
 	_tchar				m_szTargetTag[MAX_PATH] = TEXT("");
+	_tchar				ShaderPass[MAX_PATH] = TEXT("");
 	_float m_fFrameTime = { 0.f };
 
 
@@ -28,9 +29,9 @@ private:
 	HRESULT Add_Components();
 
 private:
-	class CTexture* m_pTexture = { nullptr };
-	class CTexture* m_pTexture2 = { nullptr };
-	class CTexture* m_pTexture3 = { nullptr };
+	class CTexture* m_pOriginTexture = { nullptr };//디스토션을먹일 원본텍스쳐
+	class CTexture* m_pNoiseTexture = { nullptr }; //디스토션먹일 노이즈 텍스쳐
+	class CTexture* m_pAlphaTexture = { nullptr };// 디스토션먹인 후 알파값으로 잘라낼 텍스쳐
 	
 	
 

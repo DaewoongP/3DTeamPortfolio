@@ -78,6 +78,7 @@ HRESULT CMapObject::Render()
 		for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; iMeshCount++)
 		{
 			m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", iMeshCount, DIFFUSE);
+			m_pModel->Bind_Material(m_pShader, "g_NormalTexture", iMeshCount, NORMALS);
 
 			m_pShader->Begin("Default");
 
@@ -141,7 +142,6 @@ HRESULT CMapObject::Render_Depth()
 
 	for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; iMeshCount++)
 	{
-		m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", iMeshCount, DIFFUSE);
 
 		m_pShader->Begin("Shadow");
 
