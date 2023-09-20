@@ -51,6 +51,7 @@ public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick();
+	//virtual void Tick_Spline();
 
 	// 쉐이더 컬러 변수이름, 컬러값, 쉐이더 변수, 패스 인덱스
 	virtual HRESULT Render(const _char* pConstantName, _float4 vColor, class CShader* pShader, const _char* pPassName);
@@ -61,7 +62,6 @@ public:
 
 private:
 	TRAILDESC			m_TrailDesc;
-	_uint				m_iUvEditingIndex = { 0 };
 	//_float				m_fMinVertexDistance = 0.1f;
 	//_float				m_fTime = 1.f;
     //	vector<TRAIL_DATA>	m_TrailDatas[GROUP_END];

@@ -18,6 +18,7 @@ public:
 	typedef struct MagicBallInitDesc
 	{
 		CTransform*				pTarget = { nullptr };
+		_float4x4				TargetOffsetMatrix = {};
 		CMagic::MAGIC_GROUP		eMagicGroup = { CMagic::MG_END };
 		CMagic::MAGIC_TYPE		eMagicType = { CMagic::MT_END };
 		CMagic::BUFF_TYPE		eBuffType = { CMagic::BUFF_NONE };
@@ -26,7 +27,7 @@ public:
 		_float					fDistance = { 0 };
 		_float					fLifeTime = { 1.0f };
 		const _float4x4*		pWeaponMatrix = {nullptr};
-		_float4x4				offsetMatrix = {};
+		_float4x4				WeaponOffsetMatrix = {};
 	}MAGICBALLINITDESC;
 
 	typedef struct CollsionRequestDesc
@@ -72,6 +73,7 @@ protected:
 	CRenderer*		m_pRenderer = { nullptr };
 	//타겟에 대한 트랜스폼임.
 	CTransform*		m_pTarget = { nullptr };
+	_float4x4		m_TargetOffsetMatrix = {};
 	
 	//무기의 현재 위치, 오프셋임
 	const _float4x4*			m_pWeaponMatrix = { nullptr };

@@ -75,7 +75,7 @@ HRESULT CMagic::ResetMagicDesc(MAGICDESC SkillDesc)
 	return S_OK;
 }
 
-_bool CMagic::Magic_Cast(CTransform* pTarget, const _float4x4* pWeaponMatrix, _float4x4 offsetMatrix)
+_bool CMagic::Magic_Cast(CTransform* pTarget, _float4x4 targetOffsetMatrix, const _float4x4* pWeaponMatrix, _float4x4 WeaponOffsetMatrix)
 {
 	if (m_fCurrentCoolTime <= 0)
 	{
@@ -88,9 +88,10 @@ _bool CMagic::Magic_Cast(CTransform* pTarget, const _float4x4* pWeaponMatrix, _f
 		ballInit.fDamage = m_fDamage;
 		ballInit.fDistance = m_fBallDistance;
 		ballInit.pTarget = pTarget;
+		ballInit.TargetOffsetMatrix = targetOffsetMatrix;
 		ballInit.fLifeTime = m_fLifeTime;
 		ballInit.pWeaponMatrix = pWeaponMatrix;
-		ballInit.offsetMatrix = offsetMatrix;
+		ballInit.WeaponOffsetMatrix = WeaponOffsetMatrix;
 		BEGININSTANCE;
 
 		//타입별 생성을 위한 태그지정임.

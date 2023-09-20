@@ -45,9 +45,9 @@ HRESULT CMagicBall::Initialize(void* pArg)
 	m_MagicBallDesc.fDamage = initDesc->fDamage;
 	m_MagicBallDesc.fDistance = initDesc->fDistance;
 	m_MagicBallDesc.fInitLifeTime = initDesc->fLifeTime;
-
+	m_TargetOffsetMatrix = initDesc->TargetOffsetMatrix;
 	m_pWeaponMatrix = initDesc->pWeaponMatrix;
-	m_WeaponOffsetMatrix = initDesc->offsetMatrix;
+	m_WeaponOffsetMatrix = initDesc->WeaponOffsetMatrix;
 
 	m_pTarget = initDesc->pTarget;
 	Safe_AddRef(m_pTarget);
@@ -93,7 +93,6 @@ void CMagicBall::Late_Tick(_float fTimeDelta)
 
 void CMagicBall::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
-	_int i = 0;
 	//cout << "Player Enter" << endl;
 }
 

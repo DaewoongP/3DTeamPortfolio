@@ -228,7 +228,7 @@ void CParticleSystem::Late_Tick(_float _fTimeDelta)
 	{
 		if (true == m_RendererModuleDesc.isBloom)
 		{
-			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BLOOM, this);
+			//m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BLOOM, this);
 		}
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BLEND, this);
 	}

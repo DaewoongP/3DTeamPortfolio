@@ -251,6 +251,14 @@ HRESULT CRigidBody::Initialize(void* pArg)
 	return S_OK;
 }
 
+void CRigidBody::Tick(_float fTimeDelta)
+{
+	if (CGameObject::OBJ_DEAD == m_pOwner->Get_ObjEvent())
+	{
+		m_pActor->userData = nullptr;
+	}
+}
+
 #ifdef _DEBUG
 HRESULT CRigidBody::Render()
 {

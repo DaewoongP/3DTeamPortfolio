@@ -34,9 +34,9 @@ public:
 
 public:
 	//Skill Action
-	void Action_Magic_Skill(_uint iIndex, CTransform* pTarget, const _float4x4* pWeaponMatrix, _float4x4 offsetMatrix);
+	void Action_Magic_Skill(_uint iIndex, CTransform* pTarget,_float4x4 TargetOffsetMatrix, const _float4x4* pWeaponMatrix, _float4x4 WeaponOffsetMatrix);
 	//Basic Skill Action
-	void Action_Magic_Basic(_uint iIndex, CTransform* pTarget, const _float4x4* pWeaponMatrix, _float4x4 offsetMatrix);
+	void Action_Magic_Basic(_uint iIndex, CTransform* pTarget, _float4x4 TargetOffsetMatrix, const _float4x4* pWeaponMatrix, _float4x4 WeaponOffsetMatrix);
 
 private:
 	//4 Slot To Skill

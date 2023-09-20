@@ -71,6 +71,8 @@ HRESULT CConfringo::Initialize(void* pArg)
 	m_pTrailEffect->Ready_Spline(m_vTargetPosition, m_MagicBallDesc.vStartPosition, m_MagicBallDesc.fLifeTime, m_MagicBallDesc.fDistance);
 	m_pWandDustEffect->Set_Position(m_vTargetPosition);
 	m_pExplosiveEffect->ResetParticle();
+	m_pTrailEffect->Set_Trail_HeadColor(_float3(1, 0, 0));
+	m_pTrailEffect->Set_Trail_TailColor(_float3(1, 1, 0));
 	return S_OK;
 }
 
@@ -105,6 +107,7 @@ void CConfringo::Late_Tick(_float fTimeDelta)
 
 void CConfringo::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
+	__super::OnCollisionEnter(CollisionEventDesc);
 	//¸÷ÀÌ¶û Ãæµ¹ÇßÀ¸¸é?
 	if (wcsstr(CollisionEventDesc.pOtherCollisionTag, TEXT("Enemy_Body")) != nullptr)
 	{
@@ -112,7 +115,7 @@ void CConfringo::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		m_isExplosiveTrigger = true;
 		m_pExplosiveEffect->Play_Particle(m_pTrailEffect->Get_Transform()->Get_Position());
 	}
-	__super::OnCollisionEnter(CollisionEventDesc);
+	
 }
 
 void CConfringo::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)

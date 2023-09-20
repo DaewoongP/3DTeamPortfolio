@@ -19,10 +19,10 @@ HRESULT CBasicCast::Initialize_Prototype(_uint iLevel)
 		return E_FAIL;
 	m_iLevel = iLevel;
 	BEGININSTANCE;
-	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Default_Spell_Particle")))
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_DefaultConeBoom_Particle")))
 	{
-		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Default_Spell_Particle")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Default_Spell"), m_iLevel))))
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_DefaultConeBoom_Particle")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/DefaultConeBoom"), m_iLevel))))
 		{
 			ENDINSTANCE;
 			return E_FAIL;
@@ -118,7 +118,9 @@ void CBasicCast::Tick(_float fTimeDelta)
 	{
 		//파티클 끝나면 없애줘.
 		if (!m_pHitEffect->IsEnable())
+		{
 			Set_ObjEvent(OBJ_DEAD);
+		}
 		return;
 	}
 
@@ -134,7 +136,6 @@ void CBasicCast::Tick(_float fTimeDelta)
 			m_bDeadTrigger = true;
 			m_pHitEffect->Get_Transform()->Set_Position(m_pTrailEffect->Get_Transform()->Get_Position());
 			m_pHitEffect->Play();
-			m_pHitEffect->Enable();
 		}
 	}
 	m_pTransform->Set_Position(m_pTrailEffect->Get_Transform()->Get_Position());
@@ -154,7 +155,6 @@ void CBasicCast::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		m_bDeadTrigger = true;
 		m_pHitEffect->Get_Transform()->Set_Position(m_pTrailEffect->Get_Transform()->Get_Position());
 		m_pHitEffect->Play();
-		m_pHitEffect->Enable();
 	}
 	__super::OnCollisionEnter(CollisionEventDesc);
 }
@@ -171,8 +171,8 @@ void CBasicCast::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 
 HRESULT CBasicCast::Add_Components()
 {
-	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Default_Spell_Particle")
-		, TEXT("Com_Default_Spell_Particle"), (CComponent**)&m_pHitEffect)))
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_DefaultConeBoom_Particle")
+		, TEXT("Com_DefaultConeBoom_Particle"), (CComponent**)&m_pHitEffect)))
 		return E_FAIL;
 
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Default_SphereTrace_Particle")
