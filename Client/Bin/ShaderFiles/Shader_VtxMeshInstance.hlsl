@@ -2,6 +2,7 @@
 
 matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 texture2D		g_DiffuseTexture;
+texture2D		g_NormalTexture;
 
 struct VS_IN
 {
@@ -68,16 +69,11 @@ struct PS_IN
 	float4		vProjPos : TEXCOORD2;
 };
 
-//struct PS_OUT
-//{
-//	vector		vDiffuse : SV_TARGET0;
-//	vector		vNormal : SV_TARGET1;
-//	float4		vDepth : SV_TARGET2;
-//};
-
 struct PS_OUT
 {
-	float4 vColor : SV_TARGET0;
+	vector		vDiffuse : SV_TARGET0;
+	vector		vNormal : SV_TARGET1;
+	float4		vDepth : SV_TARGET2;
 };
 
 /* 픽셀을 받고 픽셀의 색을 결정하여 리턴한다. */
@@ -86,15 +82,14 @@ PS_OUT	PS_MAIN(PS_IN In)
 	PS_OUT		Out = (PS_OUT)0;
 
 	vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+    vector		vNormal = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
 
 	if (vDiffuse.a < 0.1f)
 		discard;
 
-	/*Out.vDiffuse = vDiffuse;
+	Out.vDiffuse = vDiffuse;
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.f, 0.f, 0.f);*/
-
-	Out.vColor = vDiffuse;
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 1000.f, 0.f, 0.f);
 
 	return Out;
 }

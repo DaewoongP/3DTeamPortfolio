@@ -41,11 +41,11 @@ HRESULT CGolem_Combat::Initialize(void* pArg)
 
 	if (nullptr != pArg)
 	{
-		_float4x4* pWorldMatric = reinterpret_cast<_float4x4*>(pArg);
-		m_pTransform->Set_WorldMatrix(*pWorldMatric);
+		_float4x4* pWorldMatrix = reinterpret_cast<_float4x4*>(pArg);
+		m_pTransform->Set_WorldMatrix(*pWorldMatrix);
 	}
 	else
-		m_pTransform->Set_Position(_float3(15.f, 2.f, 15.f));
+		m_pTransform->Set_Position(_float3(_float(rand() % 5) + 15.f, 2.f, _float(rand() % 5) + 15.f));
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
@@ -150,7 +150,7 @@ void CGolem_Combat::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 		{
 			if (FAILED(Remove_GameObject(wstrObjectTag)))
 			{
-				MSG_BOX("[CGolem_Combat] Failed OnCollisionExit : \nFailed Remove_GameObject");
+				//MSG_BOX("[CGolem_Combat] Failed OnCollisionExit : \nFailed Remove_GameObject");
 				return;
 			}
 		}
