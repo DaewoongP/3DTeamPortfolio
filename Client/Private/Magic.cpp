@@ -77,61 +77,59 @@ HRESULT CMagic::ResetMagicDesc(MAGICDESC SkillDesc)
 
 _bool CMagic::Magic_Cast(CTransform* pTarget, _float4x4 targetOffsetMatrix, const _float4x4* pWeaponMatrix, _float4x4 WeaponOffsetMatrix)
 {
-	if (m_fCurrentCoolTime <= 0)
+	if (m_fCurrentCoolTime > 0)
+		return false;
+	//마법을 생성 합니다.
+	CMagicBall::MAGICBALLINITDESC ballInit;
+	ballInit.eBuffType = m_eBuffType;
+	ballInit.eMagicGroup = m_eMagicGroup;
+	ballInit.eMagicTag = m_eMagicTag;
+	ballInit.eMagicType = m_eMagicType;
+	ballInit.fDamage = m_fDamage;
+	ballInit.fDistance = m_fBallDistance;
+	ballInit.pTarget = pTarget;
+	ballInit.TargetOffsetMatrix = targetOffsetMatrix;
+	ballInit.fLifeTime = m_fLifeTime;
+	ballInit.pWeaponMatrix = pWeaponMatrix;
+	ballInit.WeaponOffsetMatrix = WeaponOffsetMatrix;
+	BEGININSTANCE;
+
+	//타입별 생성을 위한 태그지정임.
+	_tchar objTag[MAX_PATH] = TEXT("GameObject_MagicBall_");
+	swprintf_s(objTag, TEXT("%s%s"), objTag, Generate_HashtagW().c_str());
+
+	_tchar componentTag[MAX_PATH] = TEXT("Prototype_GameObject_");
+	swprintf_s(componentTag, TEXT("%s%s"), componentTag, m_szTagArray[m_eMagicTag]);
+
+	_char msgBoxText[MAX_PATH] = "Failed Add_GameObject : GameObject_";
+	_char objName[MAX_PATH] = "";
+	WCharToChar(m_szTagArray[m_eMagicTag], objName);
+	sprintf_s(msgBoxText, "%s%s", msgBoxText, objName);
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, componentTag, TEXT("Layer_Magic"), objTag, &ballInit)))
 	{
-		//마법을 생성 합니다.
-		CMagicBall::MAGICBALLINITDESC ballInit;
-		ballInit.eBuffType = m_eBuffType;
-		ballInit.eMagicGroup = m_eMagicGroup;
-		ballInit.eMagicTag = m_eMagicTag;
-		ballInit.eMagicType = m_eMagicType;
-		ballInit.fDamage = m_fDamage;
-		ballInit.fDistance = m_fBallDistance;
-		ballInit.pTarget = pTarget;
-		ballInit.TargetOffsetMatrix = targetOffsetMatrix;
-		ballInit.fLifeTime = m_fLifeTime;
-		ballInit.pWeaponMatrix = pWeaponMatrix;
-		ballInit.WeaponOffsetMatrix = WeaponOffsetMatrix;
-		BEGININSTANCE;
-
-		//타입별 생성을 위한 태그지정임.
-		_tchar objTag[MAX_PATH] = TEXT("GameObject_MagicBall_");
-		swprintf_s(objTag, TEXT("%s%s"), objTag, Generate_HashtagW().c_str());
-
-		_tchar componentTag[MAX_PATH] = TEXT("Prototype_GameObject_");
-		swprintf_s(componentTag, TEXT("%s%s"), componentTag, m_szTagArray[m_eMagicTag]);
-
-		_char msgBoxText[MAX_PATH] = "Failed Add_GameObject : GameObject_";
-		_char objName[MAX_PATH] = "";
-		WCharToChar(m_szTagArray[m_eMagicTag], objName);
-		sprintf_s(msgBoxText, "%s%s", msgBoxText, objName);
-
-		if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, componentTag, TEXT("Layer_Magic"), objTag, &ballInit)))
-		{
-			MSG_BOX(msgBoxText);
-			return false;
-		}
-
-		pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
-
-		ENDINSTANCE;
-
-		for (_uint i = 0; i < m_ActionVec.size(); i++)
-		{
-			m_ActionVec[i]();
-		}
-
-		if (pTarget == nullptr)
-		{
-			m_fCurrentCoolTime = 1.f;
-		}
-		else
-		{
-			m_fCurrentCoolTime = m_fInitCoolTime;
-		}
-		return true;
+		MSG_BOX(msgBoxText);
+		return false;
 	}
-	return false;
+
+	pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
+
+	ENDINSTANCE;
+
+	for (_uint i = 0; i < m_ActionVec.size(); i++)
+	{
+		m_ActionVec[i]();
+	}
+
+	if (pTarget == nullptr)
+	{
+		m_fCurrentCoolTime = 1.f;
+	}
+	else
+	{
+		m_fCurrentCoolTime = m_fInitCoolTime;
+	}
+	return true;
 }
 
 HRESULT CMagic::Add_ActionFunc(function<void()> func)

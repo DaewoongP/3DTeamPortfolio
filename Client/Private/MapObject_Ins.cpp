@@ -56,6 +56,7 @@ void CMapObject_Ins::Late_Tick(_float fTimeDelta)
 	if (nullptr != m_pRenderer)
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
 	}
 }
 

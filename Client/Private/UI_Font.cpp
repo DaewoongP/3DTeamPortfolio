@@ -32,6 +32,9 @@ HRESULT CUI_Font::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
+	if (FAILED(Add_Component()))
+		return E_FAIL;
+
 	if (nullptr != pArg)
 	{
 		FONTDESC* pDesc = (FONTDESC*)pArg;

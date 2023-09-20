@@ -44,6 +44,7 @@
 #include "VIBuffer_Line.h"
 #include "VIBuffer_Cube.h"
 #include "VIBuffer_Cell.h"
+#include "Mesh_Instance.h"
 #include "Model_Instance.h"
 #include "VIBuffer_Cloth.h"
 #include "ParticleSystem.h"

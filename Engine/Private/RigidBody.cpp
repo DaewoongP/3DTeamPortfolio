@@ -259,6 +259,14 @@ void CRigidBody::Tick(_float fTimeDelta)
 	}
 }
 
+void CRigidBody::Late_Tick(_float fTimeDelta)
+{
+	if (CGameObject::OBJ_DEAD == m_pOwner->Get_ObjEvent())
+	{
+		m_pActor->userData = nullptr;
+	}
+}
+
 #ifdef _DEBUG
 HRESULT CRigidBody::Render()
 {

@@ -328,6 +328,8 @@ HRESULT CMain1_Loader::Loading_For_MainGame()
 
 HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath)
 {
+	std::lock_guard<std::mutex> lock(mtx);
+
 	/* For.Prototype_GameObject_MapObject */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_MapObject"),
 		CMapObject::Create(m_pDevice, m_pContext))))
@@ -403,6 +405,8 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath)
 
 HRESULT CMain1_Loader::Loading_Map_Object_Ins(const _tchar* pMapObjectInsPath)
 {
+	std::lock_guard<std::mutex> lock(mtx);
+
 	/* For.Prototype_GameObject_MapObject_Ins */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_MapObject_Ins"),
 		CMapObject_Ins::Create(m_pDevice, m_pContext))))

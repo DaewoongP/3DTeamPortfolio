@@ -81,6 +81,11 @@ _float4 CTransform::Get_QuaternionVector_Yaw(_float fRadian)
 	return XMQuaternionRotationRollPitchYaw(0.f, 0.f, fRadian);
 }
 
+_float3 CTransform::Get_Velocity()
+{
+	return m_vVelocity;
+}
+
 void CTransform::Set_Scale(_float3 _vScale)
 {
 	_float3 vRight = Get_Right();
@@ -185,6 +190,9 @@ HRESULT CTransform::Initialize(void* pArg)
 
 void CTransform::Tick(_float fTimeDelta)
 {
+	m_vVelocity = (Get_Position() - m_vPrePosition) * 60.f; // 60frame 기준 고정 속도처리
+	m_vPrePosition = Get_Position();
+
 	Update_Components();
 }
 
@@ -387,7 +395,6 @@ void CTransform::Update_Components()
 		controller->Translate(Get_Position());
 	else
 		m_Position = controller->GetPosition();*/
-
 
 	m_ubTransformChanged = CHANGEFLAG::NONE;
 }

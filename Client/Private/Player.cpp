@@ -77,8 +77,11 @@ void CPlayer::Tick(_float fTimeDelta)
 	UpdateLookAngle();
 
 	//m_pStateContext->Tick(fTimeDelta);
+	
+	// 나중에 함수로 변경하겠습니다
+	m_pCustomModel->Set_WindVelocity(XMVector3TransformCoord(7.f * m_pTransform->Get_Velocity(), XMMatrixInverse(nullptr, XMMatrixRotationQuaternion(m_pTransform->Get_Quaternion()))));
 
-	//m_pCustomModel->Tick(CCustomModel::ROBE, 2, fTimeDelta);
+	m_pCustomModel->Tick(CCustomModel::ROBE, 2, fTimeDelta);
 
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UNDERBODY);
@@ -217,7 +220,7 @@ HRESULT CPlayer::Add_Components()
 	RigidBodyDesc.isStatic = false;
 	RigidBodyDesc.isTrigger = false;
 	RigidBodyDesc.isGravity = true;
-	RigidBodyDesc.vInitPosition = _float3(2.f, 0.f, 2.f);
+	RigidBodyDesc.vInitPosition = _float3(2.f, 2.f, 2.f);
 	RigidBodyDesc.vInitRotation = m_pTransform->Get_Quaternion();
 	RigidBodyDesc.fStaticFriction = 0.f;
 	RigidBodyDesc.fDynamicFriction = 0.f;
@@ -301,12 +304,6 @@ void CPlayer::Key_Input(_float fTimeDelta)
 {
 	BEGININSTANCE;
 
-	if (pGameInstance->Get_DIKeyState(DIK_Q, CInput_Device::KEY_DOWN))
-	{
-		//포르테고는 타켓 없어도 됨.
-		m_pMagicSlot->Action_Magic_Basic(1, m_pTransform, XMMatrixIdentity(),m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
-	}
-
 	if (pGameInstance->Get_DIKeyState(DIK_UP))
 	{
 		m_pTransform->Go_Straight(fTimeDelta * 100);
@@ -331,7 +328,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 	if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
 	{
-		//m_pRigidBody->Add_Force(m_pTransform->Get_Up() * 30.f, PxForceMode::eIMPULSE);
+		m_pRigidBody->Add_Force(m_pTransform->Get_Up() * 10.f, PxForceMode::eIMPULSE);
 	}
 
 	if (pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN))
@@ -347,7 +344,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 	if (pGameInstance->Get_DIKeyState(DIK_Q, CInput_Device::KEY_DOWN))
 	{
 		//포르테고는 타켓이 생성 객체임
-		m_pMagicSlot->Action_Magic_Basic(1, m_pTransform, XMMatrixIdentity(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
+		m_pMagicSlot->Action_Magic_Basic(1, m_pTransform, XMMatrixTranslation(0.f, 1.f, 0.f), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_1, CInput_Device::KEY_DOWN))
@@ -525,6 +522,9 @@ void CPlayer::Tick_ImGui()
 		m_pRigidBody->Set_Position(_float3(1.f, 1.f, 1.f));
 	}
 
+	_float3 vVelocity = m_pTransform->Get_Velocity();
+	ImGui::InputFloat3("Velocity", reinterpret_cast<_float*>(&vVelocity));
+
 
 	ImGui::End();
 }
@@ -573,6 +573,11 @@ void CPlayer::UpdateLookAngle()
 	vPlayerLook.Normalize();
 
 	_float fLookAngle = vPlayerLook.Dot(vNextLook);
+
+	if (1.0f < fLookAngle)
+	{
+		fLookAngle = 1.0f;
+	}
 
 	m_fLookAngle = acosf(fLookAngle);
 
