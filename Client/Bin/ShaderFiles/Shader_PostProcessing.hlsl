@@ -3,6 +3,7 @@ matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
 texture2D g_PostProcessingTexture;
 texture2D g_BloomTexture;
+texture2D g_GlowTexture;
 // 가우시안 필터 1차원 배열형태
 float BlurWeights[23] =
 {
@@ -123,6 +124,7 @@ PS_OUT PS_MAIN(PS_IN In)
 
     Out.vColor = g_PostProcessingTexture.Sample(LinearSampler, In.vTexUV);
     vector Bloom = g_BloomTexture.Sample(LinearSampler, In.vTexUV);
+    vector Glow = g_GlowTexture.Sample(LinearSampler, In.vTexUV);
     Out.vColor += Bloom;
     return Out;
 }

@@ -8,9 +8,16 @@ CDistortion::CDistortion(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
 {
 }
 
+void CDistortion::Set_Textures(_tchar* pShaderPass, CTexture* pOriTexture, CTexture* pNoisetexture, CTexture* pAlphaTexture)
+{
+	lstrcpy(ShaderPass, pShaderPass);
+	m_pOriginTexture = pOriTexture;
+	m_pNoiseTexture = pNoisetexture;
+	m_pAlphaTexture = pAlphaTexture;
+}
+
 HRESULT CDistortion::Initialize_Prototype(const _tchar* pTargetTag)
 {
-	
 
 	lstrcpy(m_szTargetTag, pTargetTag);
 
@@ -24,11 +31,6 @@ HRESULT CDistortion::Initialize_Prototype(const _tchar* pTargetTag)
 	D3D11_VIEWPORT		ViewportDesc;
 
 	m_pContext->RSGetViewports(&iNumViews, &ViewportDesc);
-
-	m_pTexture = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/noise01.dds"));
-	m_pTexture2 = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/alpha01.dds"));
-	m_pTexture3 = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/fire01.dds"));
-
 
 
 	if (FAILED(pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
@@ -52,15 +54,12 @@ HRESULT CDistortion::Initialize_Prototype(const _tchar* pTargetTag)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-
 	return S_OK;
 }
 
 HRESULT CDistortion::Render()
 {
-	m_pTexture->Bind_ShaderResource(m_pShader, "g_NoiseTexture");
-	m_pTexture2->Bind_ShaderResource(m_pShader, "g_vAlphaTexture");
-	m_pTexture3->Bind_ShaderResource(m_pShader, "g_PostProcessingTexture");
+	
 
 
 	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
@@ -121,9 +120,9 @@ void CDistortion::Free()
 {
 	__super::Free();
 
-	Safe_Release(m_pTexture);
-	Safe_Release(m_pTexture2);
-	Safe_Release(m_pTexture3);
+	Safe_Release(m_pOriginTexture);
+	Safe_Release(m_pNoiseTexture);
+	Safe_Release(m_pAlphaTexture);
 
 
 	Safe_Release(m_pShader);

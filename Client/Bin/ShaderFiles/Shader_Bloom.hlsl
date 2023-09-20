@@ -266,7 +266,7 @@ technique11 DefaultTechnique
     pass FinBloom
     {
         SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_Depth_Disable, 0);
+        SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_BlendOne, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN_POSTEX();
         GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
