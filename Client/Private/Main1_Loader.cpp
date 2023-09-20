@@ -12,7 +12,6 @@
 #include "Trail.h"
 #include "MeshEffect.h"
 #include "Default_Magic_Effect.h"
-#include "Protego_Effect.h"
 #include "Default_MagicTraill_Effect.h"
 #include "Wingardium_Effect.h"
 #include "Confringo_Explosive_Effect.h"
@@ -23,6 +22,7 @@
 #include "Magic.h"
 #include "MagicBallPool.h"
 
+#include "MagicSlot.h"
 #include "BasicCast.h"
 #include "Protego.h"
 #include "Revelio.h"
@@ -79,8 +79,7 @@ HRESULT CMain1_Loader::Initialize(LEVELID eNextLevel)
 
 HRESULT CMain1_Loader::Loading()
 {
-	if (FAILED(CoInitializeEx(nullptr, 0)))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(CoInitializeEx(nullptr, COINIT_MULTITHREADED), E_FAIL);
 
 	// 크리티컬 섹션 시작해서 다른 쓰레드가 이 안에 있는 동안 값을 변경하지 못하게 처리.
 	EnterCriticalSection(&m_Critical_Section);
@@ -255,6 +254,11 @@ HRESULT CMain1_Loader::Loading_For_MainGame()
 			throw TEXT("Prototype_GameObject_Default_MagicTraill_Winga_Effect");
 
 		/* For.Prototype_GameObject_Wingardium_Effect*/
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_MagicTraill_BasicCast_Effect"),
+			CDefault_MagicTraill_Effect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/BasicCast/BasicCast.trail"), LEVEL_MAINGAME))))
+			throw TEXT("Prototype_GameObject_MagicTraill_BasicCast_Effect");
+
+		/* For.Prototype_GameObject_Wingardium_Effect*/
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_MagicTraill_Levioso_Effect"),
 			CDefault_MagicTraill_Effect::Create(m_pDevice, m_pContext, TEXT(""), LEVEL_MAINGAME))))
 			throw TEXT("Prototype_GameObject_Default_MagicTraill_Levioso_Effect");
@@ -279,7 +283,7 @@ HRESULT CMain1_Loader::Loading_For_MainGame()
 
 		/* For.Prototype_GameObject_Protego */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Protego"),
-			CProtego::Create(m_pDevice, m_pContext))))
+			CProtego::Create(m_pDevice, m_pContext, LEVEL_MAINGAME))))
 			throw TEXT("Prototype_GameObject_Protego");
 
 		/* For.Prototype_GameObject_Revelio */
@@ -287,12 +291,12 @@ HRESULT CMain1_Loader::Loading_For_MainGame()
 			CRevelio::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Revelio");
 
-		/* For.Prototype_GameObject_Revelio */
+		/* For.Prototype_GameObject_Wingardiumleviosa */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Wingardiumleviosa"),
 			CWingardiumleviosa::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Wingardiumleviosa");
 
-		/* For.Prototype_GameObject_Revelio */
+		/* For.Prototype_GameObject_Levioso */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Levioso"),
 			CLevioso::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Levioso");
@@ -304,10 +308,10 @@ HRESULT CMain1_Loader::Loading_For_MainGame()
 
 #pragma endregion
 
-		/* For.Prototype_GameObject_Protego_Effect*/
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Protego_Effect"),
-			CProtego_Effect::Create(m_pDevice, m_pContext, LEVEL_MAINGAME))))
-			throw TEXT("Prototype_GameObject_Protego_Effect");
+		/* For.Prototype_GameObject_MagicSlot */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MagicSlot"),
+			CMagicSlot::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_MagicSlot");
 	}
 	catch (const _tchar* pErrorTag)
 	{

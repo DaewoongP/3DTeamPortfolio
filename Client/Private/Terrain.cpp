@@ -127,6 +127,7 @@ HRESULT CTerrain::Add_Components()
 	RigidBodyDesc.eConstraintFlag = CRigidBody::All;
 	RigidBodyDesc.vDebugColor = _float4(0.f, 1.f, 0.f, 1.f);
 	RigidBodyDesc.pOwnerObject = this;
+	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Terrain");
 
 	/* Com_RigidBody */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),

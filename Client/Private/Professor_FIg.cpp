@@ -3,10 +3,12 @@
 #include "PhysXConverter.h"
 
 #include "Action.h"
+#include "MagicSlot.h"
 #include "Check_Degree.h"
 #include "Check_Distance.h"
 #include "Selector_Degree.h"
 #include "Sequence_Attack.h"
+#include "Weapon_Fig_Wand.h"
 
 CProfessor_Fig::CProfessor_Fig(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -39,6 +41,12 @@ HRESULT CProfessor_Fig::Initialize(void* pArg)
 	if (FAILED(Make_AI()))
 		return E_FAIL;
 
+	if (FAILED(Make_Magics()))
+		return E_FAIL;
+
+	if (FAILED(Make_Notifies()))
+		return E_FAIL;
+
 	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RigidBody(m_pRigidBody);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
@@ -47,9 +55,21 @@ HRESULT CProfessor_Fig::Initialize(void* pArg)
 	function<void()> Func = [&] {(*this).Change_Animation(); };
 	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Front_1"), TEXT("Change_Animation"), Func)))
 		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Front_2"), TEXT("Change_Animation"), Func)))
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Step_Back_2"), TEXT("Change_Animation"), Func)))
 		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Front_3"), TEXT("Change_Animation"), Func)))
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Step_Back_3"), TEXT("Change_Animation"), Func)))
+		return E_FAIL;
+
+	Func = [&] {(*this).Attack_Light(); };
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Front_1"), TEXT("Attack_Light"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Step_Back_2"), TEXT("Attack_Light"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Step_Back_3"), TEXT("Attack_Light"), Func)))
+		return E_FAIL;
+
+	Func = [&] {(*this).Attack_Heavy(); };
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Heavy_Front_2"), TEXT("Attack_Heavy"), Func)))
 		return E_FAIL;
 
 	return S_OK;
@@ -84,20 +104,35 @@ void CProfessor_Fig::Late_Tick(_float fTimeDelta)
 void CProfessor_Fig::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
-	if (wstring::npos != wstrObjectTag.find(TEXT("Golem")))
-		m_RangeInEnemies.push_back({ wstrObjectTag, CollisionEventDesc.pOtherOwner });
+	wstring wstrCollisionTag = { TEXT("") };
+	if (nullptr != CollisionEventDesc.pOtherCollisionTag)
+		wstrCollisionTag = CollisionEventDesc.pOtherCollisionTag;
+
+	if (wstring::npos != wstrCollisionTag.find(TEXT("Body")))
+	{
+		if (wstring::npos != wstrObjectTag.find(TEXT("Golem")))
+			m_RangeInEnemies.push_back({ wstrObjectTag, CollisionEventDesc.pOtherOwner });
+	}
+	
 	//Safe_AddRef(CollisionEventDesc.pOtherOwner);
 }
 
 void CProfessor_Fig::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 {
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
-	if (wstring::npos != wstrObjectTag.find(TEXT("Golem")))
+	wstring wstrCollisionTag = { TEXT("") };
+	if (nullptr != CollisionEventDesc.pOtherCollisionTag)
+		wstrCollisionTag = CollisionEventDesc.pOtherCollisionTag;
+
+	if (wstring::npos != wstrCollisionTag.find(TEXT("Body")))
 	{
-		if (FAILED(Remove_GameObject(wstrObjectTag)))
+		if (wstring::npos != wstrObjectTag.find(TEXT("Golem")))
 		{
-			MSG_BOX("[CProfessor_Fig] Failed OnCollisionExit : \nFailed Remove_GameObject");
-			return;
+			if (FAILED(Remove_GameObject(wstrObjectTag)))
+			{
+				MSG_BOX("[CProfessor_Fig] Failed OnCollisionExit : \nFailed Remove_GameObject");
+				return;
+			}
 		}
 	}
 }
@@ -223,6 +258,90 @@ HRESULT CProfessor_Fig::Make_AI()
 	return S_OK;
 }
 
+HRESULT CProfessor_Fig::Make_Magics()
+{
+	//Basic Magic BasicCast
+	{
+		CMagic::MAGICDESC magicInitDesc;
+		magicInitDesc.eBuffType = CMagic::BUFF_NONE;
+		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
+		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicTag = BASICCAST;
+		magicInitDesc.fCoolTime = 0.f;
+		magicInitDesc.fDamage = 10.f;
+		magicInitDesc.fCastDistance = 1000;
+		magicInitDesc.fBallDistance = 30;
+		magicInitDesc.fLifeTime = 0.8f;
+		m_pMagicSlot->Add_Magics(magicInitDesc);
+	}
+
+	//Skill Magic LEVIOSO
+	{
+		CMagic::MAGICDESC magicInitDesc;
+		magicInitDesc.eBuffType = CMagic::BUFF_UNGRAVITY;
+		magicInitDesc.eMagicGroup = CMagic::MG_CONTROL;
+		magicInitDesc.eMagicType = CMagic::MT_YELLOW;
+		magicInitDesc.eMagicTag = LEVIOSO;
+		magicInitDesc.fCoolTime = 0.f;
+		magicInitDesc.fDamage = 10.f;
+		magicInitDesc.fCastDistance = 1000;
+		magicInitDesc.fBallDistance = 30;
+		magicInitDesc.fLifeTime = 0.8f;
+		m_pMagicSlot->Add_Magics(magicInitDesc);
+	}
+
+	m_pMagicSlot->Add_Magic_To_Skill_Slot(0, LEVIOSO);
+
+	return S_OK;
+}
+
+HRESULT CProfessor_Fig::Make_Notifies()
+{
+	function<void()> Func = [&] {(*this).Change_Animation(); };
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Front_1"), TEXT("Change_Animation"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Step_Back_2"), TEXT("Change_Animation"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Step_Back_3"), TEXT("Change_Animation"), Func)))
+		return E_FAIL;
+
+	Func = [&] {(*this).Attack_Light(); };
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Front_1"), TEXT("Attack_Light"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Step_Back_2"), TEXT("Attack_Light"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Step_Back_3"), TEXT("Attack_Light"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Left_45"), TEXT("Attack_Light"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Left_90"), TEXT("Attack_Light"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Left_135"), TEXT("Attack_Light"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Right_45"), TEXT("Attack_Light"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Right_90"), TEXT("Attack_Light"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Right_135"), TEXT("Attack_Light"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Right_180"), TEXT("Attack_Light"), Func)))
+		return E_FAIL;
+
+	Func = [&] {(*this).Attack_Heavy(); };
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Heavy_Front_2"), TEXT("Attack_Heavy"), Func)))
+		return E_FAIL;
+
+	Func = [&] {(*this).Cast_Levioso(); };
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Levioso"), TEXT("Cast_Levioso"), Func)))
+		return E_FAIL;
+
+	Func = [&] {(*this).Cast_Protego(); };
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Cast_Protego"), TEXT("Cast_Protego"), Func)))
+		return E_FAIL;
+
+	return S_OK;
+}
+
 HRESULT CProfessor_Fig::Add_Components()
 {
 	try /* Check Add_Components */
@@ -261,6 +380,8 @@ HRESULT CProfessor_Fig::Add_Components()
 		RigidBodyDesc.vOffsetRotation = XMQuaternionRotationRollPitchYaw(0.f, 0.f, XMConvertToRadians(90.f));
 		PxCapsuleGeometry pCapsuleGeomatry = PxCapsuleGeometry(0.25f, 0.6f);
 		RigidBodyDesc.pGeometry = &pCapsuleGeomatry;
+		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Body");
+
 		/* Com_RigidBody */
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
 			TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
@@ -270,8 +391,32 @@ HRESULT CProfessor_Fig::Add_Components()
 		RigidBodyDesc.isTrigger = true;
 		PxSphereGeometry pSphereGeomatry = PxSphereGeometry(10.f);
 		RigidBodyDesc.pGeometry = &pSphereGeomatry;
+		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Range");
 
 		m_pRigidBody->Create_Collider(&RigidBodyDesc);
+
+		/* For.Com_Weapon */
+		const CBone* pBone = m_pModelCom->Get_Bone(TEXT("SKT_RightHand"));
+		if (nullptr == pBone)
+			throw TEXT("pBone is nullptr");
+
+		CWeapon_Fig_Wand::PARENTMATRIXDESC ParentMatrixDesc;
+		ParentMatrixDesc.OffsetMatrix = pBone->Get_OffsetMatrix();
+		ParentMatrixDesc.PivotMatrix = m_pModelCom->Get_PivotFloat4x4();
+		ParentMatrixDesc.pCombindTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
+		ParentMatrixDesc.pParentWorldMatrix = m_pTransform->Get_WorldMatrixPtr();
+
+		if (FAILED(Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Weapon_Fig_Wand"),
+			TEXT("Com_Weapon"), reinterpret_cast<CComponent**>(&m_pWeapon), &ParentMatrixDesc)))
+			throw TEXT("Com_Weapon");
+
+		/* For.MagicSlot */
+		if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_MagicSlot"),
+			TEXT("Com_MagicSlot"), reinterpret_cast<CComponent**>(&m_pMagicSlot))))
+		{
+			MSG_BOX("Failed CTest_Player Add_Component : (Com_MagicSlot)");
+			return E_FAIL;
+		}
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -556,9 +701,18 @@ HRESULT CProfessor_Fig::Make_Combat(_Inout_ CSelector* pSelector)
 			throw TEXT("Parameter pSelector is nullptr");
 
 		/* Make Child Behaviors */
+		CSequence* pSequence_Attack_Degree = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
+		if (nullptr == pSequence_Attack_Degree)
+			throw TEXT("pSequence_Attack_Degree is nullptr");
 		CSequence* pSequence_Attack_Combo1 = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
 		if (nullptr == pSequence_Attack_Combo1)
 			throw TEXT("pSequence_Attack_Combo1 is nullptr");
+		CAction* pAction_Levioso = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		if (nullptr == pAction_Levioso)
+			throw TEXT("pAction_Levioso is nullptr");
+		CAction* pAction_Protego = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		if (nullptr == pAction_Protego)
+			throw TEXT("pAction_Protego is nullptr");
 
 		/* Set Decorations */
 		pSelector->Add_Decoration([&](CBlackBoard* pBlackBoard)->_bool
@@ -572,11 +726,21 @@ HRESULT CProfessor_Fig::Make_Combat(_Inout_ CSelector* pSelector)
 			});
 
 		/* Set Options */
+		pAction_Levioso->Set_Options(TEXT("Attack_Cast_Levioso"), m_pModelCom, false, 10.f);
+		pAction_Protego->Set_Options(TEXT("Cast_Protego"), m_pModelCom, false, 10.f);
 
 		/* Assemble Behaviors */
+		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Attack_Degree"), pSequence_Attack_Degree)))
+			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Degree");
+		if (FAILED(pSelector->Assemble_Behavior(TEXT("Action_Levioso"), pAction_Levioso)))
+			throw TEXT("Failed Assemble_Behavior Action_Levioso");
+		if (FAILED(pSelector->Assemble_Behavior(TEXT("Action_Protego"), pAction_Protego)))
+			throw TEXT("Failed Assemble_Behavior Action_Protego");
 		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Attack_Combo1"), pSequence_Attack_Combo1)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Combo1");
 
+		if (FAILED(Make_Attack_Degree(pSequence_Attack_Degree)))
+			throw TEXT("Failed Make_Attack_Degree");
 		if (FAILED(Make_Attack_Combo1(pSequence_Attack_Combo1)))
 			throw TEXT("Failed Make_Attack_Combo1");
 	}
@@ -624,9 +788,9 @@ HRESULT CProfessor_Fig::Make_Attack_Combo1(_Inout_ CSequence* pSequence)
 		/* Set Options */
 		pAttack_Combo1->Set_Attack_Action_Options(TEXT("Attack_Cast_Light_Front_1"), m_pModelCom);
 		pAttack_Combo1->Set_Attack_Option(10.f);
-		pAttack_Combo2->Set_Attack_Action_Options(TEXT("Attack_Cast_Light_Front_2"), m_pModelCom);
+		pAttack_Combo2->Set_Attack_Action_Options(TEXT("Attack_Cast_Light_Step_Back_2"), m_pModelCom);
 		pAttack_Combo2->Set_Attack_Option(10.f);
-		pAttack_Combo3->Set_Attack_Action_Options(TEXT("Attack_Cast_Light_Front_3"), m_pModelCom);
+		pAttack_Combo3->Set_Attack_Action_Options(TEXT("Attack_Cast_Light_Step_Back_3"), m_pModelCom);
 		pAttack_Combo3->Set_Attack_Option(10.f);
 		pAttack_Combo4->Set_Attack_Action_Options(TEXT("Attack_Cast_Heavy_Front_2"), m_pModelCom);
 		pAttack_Combo4->Set_Attack_Option(10.f);
@@ -655,6 +819,137 @@ HRESULT CProfessor_Fig::Make_Attack_Combo1(_Inout_ CSequence* pSequence)
 	ENDINSTANCE;
 
 	return S_OK;
+}
+
+HRESULT CProfessor_Fig::Make_Attack_Degree(_Inout_ CSequence* pSequence)
+{
+	BEGININSTANCE;
+
+	try /* Failed Check Make_Attack_Degree */
+	{
+		/* Make Child Behaviors */
+		CCheck_Degree* pTsk_Check_Degree = dynamic_cast<CCheck_Degree*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Check_Degree")));
+		if (nullptr == pTsk_Check_Degree)
+			throw TEXT("pTsk_Check_Degree is nullptr");
+		CSelector_Degree* pSelector_Degree = dynamic_cast<CSelector_Degree*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Selector_Degree")));
+		if (nullptr == pSelector_Degree)
+			throw TEXT("pSelector_Choose_Degree is nullptr");
+
+		CAction* pAction_Right_45 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		if (nullptr == pAction_Right_45)
+			throw TEXT("pAction_Right_45 is nullptr");
+		CAction* pAction_Left_45 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		if (nullptr == pAction_Left_45)
+			throw TEXT("pAction_Left_45 is nullptr");
+		CAction* pAction_Left_90 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		if (nullptr == pAction_Left_90)
+			throw TEXT("pAction_Left_90 is nullptr");
+		CAction* pAction_Right_90 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		if (nullptr == pAction_Right_90)
+			throw TEXT("pAction_Right_90 is nullptr");
+		CAction* pAction_Left_135 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		if (nullptr == pAction_Left_135)
+			throw TEXT("pAction_Left_135 is nullptr");
+		CAction* pAction_Right_135 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		if (nullptr == pAction_Right_135)
+			throw TEXT("pAction_Right_135 is nullptr");
+		CAction* pAction_Left_180 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		if (nullptr == pAction_Left_180)
+			throw TEXT("pAction_Left_180 is nullptr");
+		CAction* pAction_Right_180 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		if (nullptr == pAction_Right_180)
+			throw TEXT("pAction_Right_180 is nullptr");
+		/* Set Decorations */
+
+		/* Set Options */
+		pAction_Left_45->Set_Options(TEXT("Attack_Cast_Light_Left_45"), m_pModelCom);
+		pAction_Right_45->Set_Options(TEXT("Attack_Cast_Light_Right_45"), m_pModelCom);
+		pAction_Left_90->Set_Options(TEXT("Attack_Cast_Light_Left_90"), m_pModelCom);
+		pAction_Right_90->Set_Options(TEXT("Attack_Cast_Light_Right_90"), m_pModelCom);
+		pAction_Left_135->Set_Options(TEXT("Attack_Cast_Light_Left_135"), m_pModelCom);
+		pAction_Right_135->Set_Options(TEXT("Attack_Cast_Light_Right_135"), m_pModelCom);
+		pAction_Left_180->Set_Options(TEXT("Attack_Cast_Light_Right_180"), m_pModelCom);
+		pAction_Right_180->Set_Options(TEXT("Attack_Cast_Light_Right_180"), m_pModelCom);
+
+		pTsk_Check_Degree->Set_Transform(m_pTransform);
+
+		/* Assemble Behaviors */
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Tsk_Check_Degree"), pTsk_Check_Degree)))
+			throw TEXT("Failed Assemble_Behavior Tsk_Check_Degree");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Selector_Degree"), pSelector_Degree)))
+			throw TEXT("Failed Assemble_Behavior Selector_Degree");
+
+		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::LEFT_45, pAction_Left_45)))
+			throw TEXT("Failed Assemble_Childs pSelector_Degree LEFT_45");
+		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::RIGHT_45, pAction_Right_45)))
+			throw TEXT("Failed Assemble_Childs pSelector_Degree RIGHT_45");
+		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::LEFT_90, pAction_Left_90)))
+			throw TEXT("Failed Assemble_Childs pSelector_Degree LEFT_90");
+		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::RIGHT_90, pAction_Right_90)))
+			throw TEXT("Failed Assemble_Childs pSelector_Degree RIGHT_90");
+		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::LEFT_135, pAction_Left_135)))
+			throw TEXT("Failed Assemble_Childs pSelector_Degree LEFT_135");
+		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::RIGHT_135, pAction_Right_135)))
+			throw TEXT("Failed Assemble_Childs pSelector_Degree RIGHT_135");
+		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::RIGHT_BACK, pAction_Right_180)))
+			throw TEXT("Failed Assemble_Childs pSelector_Degree RIGHT_BACK");
+		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::LEFT_BACK, pAction_Left_180)))
+			throw TEXT("Failed Assemble_Childs pSelector_Degree LEFT_BACK");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CGolem_Combat] Failed Make_Turns : \n");
+		wstrErrorMSG += pErrorTag;
+		MSG_BOX(wstrErrorMSG.c_str());
+
+		ENDINSTANCE;
+
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+void CProfessor_Fig::Attack_Light()
+{
+	if (nullptr == m_pTarget)
+		return;
+
+	m_pMagicSlot->Action_Magic_Basic(0, m_pTarget->Get_Transform(),
+		m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(),
+		m_pWeapon->Get_Wand_Point_OffsetMatrix());
+}
+
+void CProfessor_Fig::Attack_Heavy()
+{
+	if (nullptr == m_pTarget)
+		return;
+
+	m_pMagicSlot->Action_Magic_Basic(0, m_pTarget->Get_Transform(),
+		m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(),
+		m_pWeapon->Get_Wand_Point_OffsetMatrix());
+}
+
+void CProfessor_Fig::Cast_Levioso()
+{
+	if (nullptr == m_pTarget)
+		return;
+
+	m_pMagicSlot->Action_Magic_Skill(0, m_pTarget->Get_Transform(),
+		m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(),
+		m_pWeapon->Get_Wand_Point_OffsetMatrix());
+}
+
+void CProfessor_Fig::Cast_Protego()
+{
+	if (nullptr == m_pTarget)
+		return;
+
+	m_pMagicSlot->Action_Magic_Basic(1, m_pTransform,
+		m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(),
+		m_pWeapon->Get_Wand_Point_OffsetMatrix());
 }
 
 CProfessor_Fig* CProfessor_Fig::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -689,10 +984,12 @@ void CProfessor_Fig::Free()
 
 	if (true == m_isCloned)
 	{
+		Safe_Release(m_pWeapon);
 		Safe_Release(m_pModelCom);
-		Safe_Release(m_pShaderCom);
 		Safe_Release(m_pRenderer);
+		Safe_Release(m_pShaderCom);
 		Safe_Release(m_pRigidBody);
+		Safe_Release(m_pMagicSlot);
 		Safe_Release(m_pRootBehavior);
 
 		/*for (auto& Pair : m_RangeInEnemies)

@@ -501,7 +501,7 @@ void CDummyParticle::RendererModule_TreeNode(CEffect_Window* pEffectWindow)
 			}
 
 			m_RendererModuleDesc.strPass = m_pPassComboBox->Tick(CComboBox::TABLE);
-
+			pEffectWindow->Table_CheckBox("Bloom", "ckvj99vji4jfj", &m_RendererModuleDesc.isBloom);
 			ImGui::EndTable();
 		}
 		ImGui::TreePop();
@@ -732,7 +732,7 @@ void CDummyParticle::Load_FileDialog()
 			std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
 			fs::path fsFilePathName = filePathName;
 			fs::path fsFilePath = filePath;
-
+			fsFilePath = ToRelativePath(fsFilePath.wstring().data());
 			_ulong dwByte = 0;
 
 			if (FAILED(Load(fsFilePath.wstring().c_str())))
@@ -885,6 +885,7 @@ void CDummyParticle::Free(void)
 	Safe_Release(m_pSpriteTextureIFD);
 	Safe_Release(m_pMaterialTextureIFD);
 	Safe_Release(m_pNormalTextureIFD);
+	Safe_Release(m_pGradientTextureIFD);
 	Safe_Release(m_pColorEaseCombo);
 	Safe_Release(m_pSizeXEaseCombo);
 	Safe_Release(m_pSizeYEaseCombo);
@@ -892,9 +893,9 @@ void CDummyParticle::Free(void)
 	Safe_Release(m_pAngularVelocityXEaseCombo);
 	Safe_Release(m_pAngularVelocityYEaseCombo);
 	Safe_Release(m_pAngularVelocityZEaseCombo);
-
 	Safe_Release(m_pPassComboBox);
-
+	for (auto& pEaseCombo : m_pEaseCombo)
+		Safe_Release(pEaseCombo);
 	//for (auto& EaseComboBox : m_pColorEase)
 	//{
 	//	Safe_Release(EaseComboBox);

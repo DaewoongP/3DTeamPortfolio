@@ -34,9 +34,9 @@ HRESULT CVIBuffer_Rect_Trail::Reset_Trail()
 	for (_uint i = 0; i < m_iNumVertices; ++i)
 	{
 		if (1 == i % 2)
-			pData->vPosition = vHighWorldPos;
+			pData[i].vPosition = vHighPos;
 		else
-			pData->vPosition = vLowWorldPos;
+			pData[i].vPosition = vLowPos;
 	}
 
 	m_pContext->Unmap(m_pVB, 0);
@@ -57,9 +57,9 @@ HRESULT CVIBuffer_Rect_Trail::Reset_Trail(_float3 vHighPos, _float3 vLowPos)
 	for (_uint i = 0; i < m_iNumVertices; ++i)
 	{
 		if (1 == i % 2)
-			pData->vPosition = vHighPos;
+			pData[i].vPosition = vHighPos;
 		else
-			pData->vPosition = vLowPos;
+			pData[i].vPosition = vLowPos;
 	}
 
 	m_pContext->Unmap(m_pVB, 0);
@@ -203,6 +203,46 @@ void CVIBuffer_Rect_Trail::Tick()
 	m_pContext->Map(m_pVB, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &MappedSubResource);
 
 	VTXPOSTEX* pData = static_cast<VTXPOSTEX*>(MappedSubResource.pData);
+
+	//자르기
+	_int iHeadIndex, iTailIndex,iBodyCount = { 0 };
+	iHeadIndex = 0;
+	iTailIndex = 0;
+
+	//꼬리 찾을
+	for (_uint i = m_iNumVertices - 1; i >= 2; i-=2)
+	{
+		if (!XMVector3Equal(_float3(pData[i].vPosition), _float3(pData[i - 2].vPosition)))
+		{
+			iTailIndex = i;
+			break;
+		}
+		pData[i].vTexCoord = { 1.f ,0.f };
+		pData[i-1].vTexCoord = { 1.f ,1.f };
+	}
+	
+	//머릴 찾을
+	for (_uint i = 1; i < m_iNumVertices -2 ; i+=2)
+	{
+		if (!XMVector3Equal(_float3(pData[i].vPosition), _float3(pData[i + 2].vPosition)))
+		{
+			iHeadIndex = i;
+			break;
+		}
+		pData[i].vTexCoord = { 0.f ,0.f };
+		pData[i-1].vTexCoord = { 0.f ,1.f };
+	}
+
+	iBodyCount = iTailIndex - iHeadIndex;
+	if (iBodyCount != 0)
+	{
+		for (_int i = iTailIndex; i >= iHeadIndex-1; i-=2)
+		{
+			float t = static_cast<float>(i - iHeadIndex) / static_cast<float>(iBodyCount);
+			pData[i].vTexCoord = { t ,0.f };
+			pData[i-1].vTexCoord = { t ,1.f };
+		}
+	}
 
 	for (_uint i = m_iNumVertices - 1; i >= 2 ; --i)
 	{

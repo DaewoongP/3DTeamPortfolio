@@ -62,6 +62,9 @@ void CMoveStartState::OnStateTick()
 	Go_Jump();
 
 	Switch_Sprint();
+
+	Go_Magic_Cast();
+
 }
 
 void CMoveStartState::OnStateExit()
@@ -70,6 +73,7 @@ void CMoveStartState::OnStateExit()
 	//cout << "Start Exit" << endl;
 #endif // _DEBUG
 }
+
 
 void CMoveStartState::LookFront()
 {
@@ -91,7 +95,64 @@ void CMoveStartState::Go_Idle()
 	//방향키가 눌리지 않았을 경우
 	if (true != *m_pIsDirectionKeyPressed)
 	{
-		m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_anm"));
+		switch (*m_pIActionSwitch)
+		{
+		case CStateContext::ACTION_NONE:
+		{
+			switch (*m_pIsSprint)
+			{
+			case CStateContext::JOGING:
+			{
+				m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_anm"));
+			}
+			break;
+			case CStateContext::SPRINT:
+			{
+				m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Sprint_Stop_Fwd_anm"));
+			}
+			break;
+			}
+		}
+		break;
+		case CStateContext::ACTION_CASUAL:
+		{
+			switch (*m_pIsSprint)
+			{
+			case CStateContext::JOGING:
+			{
+				m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_anm"));
+			}
+			break;
+			case CStateContext::SPRINT:
+			{
+				m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Sprint_Stop_Fwd_anm"));
+			}
+			break;
+			}
+		}
+		break;
+		case CStateContext::ACTION_CMBT:
+		{
+			switch (*m_pIsSprint)
+			{
+			case CStateContext::JOGING:
+			{
+				m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_2Cmbt_anm"));
+			}
+			break;
+			case CStateContext::SPRINT:
+			{
+				m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Sprint_Stop_Fwd_Cmbt_anm"));
+			}
+			break;
+			}
+		}
+		break;
+
+		default:
+			break;
+		}
+
 		Set_StateMachine(TEXT("Idle"));
 	}
 }
@@ -114,9 +175,6 @@ void CMoveStartState::Go_Loop()
 			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_Sprint_Loop_Fwd_anm"));
 		}
 		break;
-
-		default:
-			break;
 		}
 		Set_StateMachine(TEXT("Move Loop"));
 	}
@@ -181,7 +239,24 @@ void CMoveStartState::Over_135()
 }
 
 
+void CMoveStartState::Go_Magic_Cast()
+{
+	BEGININSTANCE;
 
+	if (pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN))
+	{
+		if (CStateContext::ACTION_NONE == *m_pIActionSwitch)
+		{
+			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_LF_Idle2Cmbt_RF_Wand_Equip_anm"));
+		}
+		//일단 전투로 보냄
+		//포착 기능 생기면 그때 캐주얼이랑 분기
+		*m_pIActionSwitch = CStateContext::ACTION_CMBT;
+		Set_StateMachine(TEXT("Magic_Cast"));
+	}
+
+	ENDINSTANCE;
+}
 
 CMoveStartState* CMoveStartState::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {

@@ -173,18 +173,22 @@ PS_OUT PS_MAIN_BLOOM(PS_IN_POSTEX In)
     
     
     float BrightColor = 0.f;
-    float Brigtness = dot(vBloom.rgb, float3(0.2126f, 0.7152f, 0.0722f));
+    //float Brigtness = dot(vBloom.rgb, float3(0.2126f, 0.7152f, 0.0722f));
+    float Brigtness = dot(vBloom.rgb, float3(1.f, 1.f, 1.f));
    
     if (Brigtness > 0.99f)
     {
         BrightColor = vector(vBloom.rgb, 1.f);
-        Out.vColor = BrightColor;
+        Out.vColor = BrightColor*2;
     }
     else
         discard;
     
     
-    
+    //Out.vColor = vBloom;
+    if(Out.vColor.a <= 0.1f)
+        discard;
+
     return Out;
 }
 

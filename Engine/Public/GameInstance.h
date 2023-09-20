@@ -177,6 +177,7 @@ public: /* For.PhysX_Manager */
 	// 6. iMaxHits : 레이를 맞을 수 있는 최대 개수 7. RaycastFlag : dynamic / static / all 중에 레이와 충돌할 객체 타입 (static에 하이트맵도 현재 포함중인거 생각해야합니다.)
 	// 반환 : 충돌 했을 시 true
 	_bool Mouse_RayCast(HWND hWnd, ID3D11DeviceContext* pContext, _float fMaxDist = PX_MAX_F32, _Inout_ _float3* pHitPosition = nullptr, _Inout_ _float* pDist = nullptr, _uint iMaxHits = 1, CPhysX_Manager::RayCastQueryFlag RaycastFlag = CPhysX_Manager::RAY_ALL);
+	void Update_PhysxScene();
 
 public:	/* For.Camera_Manager */
 	//컷씬 카메라 데이터를 담는다.

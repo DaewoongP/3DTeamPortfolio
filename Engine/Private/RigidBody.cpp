@@ -128,7 +128,7 @@ void CRigidBody::Set_Kinematic(_bool isKinematic)
 	// static 객체는 kinematic 옵션 없음.
 	if (true == m_isStatic)
 		return;
-
+	
 	m_isKinematic = isKinematic;
 	reinterpret_cast<PxRigidDynamic*>(m_pActor)->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, isKinematic);
 }
@@ -148,6 +148,15 @@ void CRigidBody::Set_AngularDamping(_float _fAngualrDamping) const
 		nullptr != m_pActor->is<PxRigidBody>())
 	{
 		reinterpret_cast<PxRigidDynamic*>(m_pActor)->setAngularDamping(_fAngualrDamping);
+	}
+}
+
+void CRigidBody::Set_Gravity(_bool _isGravity)
+{
+	if (nullptr != m_pActor &&
+		nullptr != m_pActor->is<PxRigidBody>())
+	{
+		m_pActor->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, !_isGravity);
 	}
 }
 
@@ -238,8 +247,16 @@ HRESULT CRigidBody::Initialize(void* pArg)
 		return E_FAIL;
 	
 	m_pScene->addActor(*m_pActor);
-
+		
 	return S_OK;
+}
+
+void CRigidBody::Tick(_float fTimeDelta)
+{
+	if (CGameObject::OBJ_DEAD == m_pOwner->Get_ObjEvent())
+	{
+		m_pActor->userData = nullptr;
+	}
 }
 
 #ifdef _DEBUG
@@ -289,11 +306,11 @@ HRESULT CRigidBody::Create_Collider(RIGIDBODYDESC* pRigidBodyDesc)
 	// 트리거 설정
 	if (true == pRigidBodyDesc->isTrigger)
 	{
-		ePxFlag = PxShapeFlag::eSCENE_QUERY_SHAPE | PxShapeFlag::eTRIGGER_SHAPE;
+		ePxFlag = PxShapeFlag::eSCENE_QUERY_SHAPE | PxShapeFlag::eTRIGGER_SHAPE;// | PxShapeFlag::eVISUALIZATION;
 	}
 	else
 	{
-		ePxFlag = PxShapeFlag::eSCENE_QUERY_SHAPE | PxShapeFlag::eSIMULATION_SHAPE;
+		ePxFlag = PxShapeFlag::eSCENE_QUERY_SHAPE | PxShapeFlag::eSIMULATION_SHAPE;// | PxShapeFlag::eVISUALIZATION;
 	}
 
 	m_pGeometry = pRigidBodyDesc->pGeometry;
@@ -311,18 +328,25 @@ HRESULT CRigidBody::Create_Collider(RIGIDBODYDESC* pRigidBodyDesc)
 	else
 		FilterData.word0 = 0x1111; // 이데이터는 일단 고정.
 	pShape->setSimulationFilterData(FilterData);
-	CString_Manager* pString_Manager = CString_Manager::GetInstance();
-	Safe_AddRef(pString_Manager);
-	pShape->userData = pString_Manager->Make_WChar(pRigidBodyDesc->szCollisionTag);
-	Safe_Release(pString_Manager);
 
 	PxTransform OffsetTransform(PhysXConverter::ToPxVec3(pRigidBodyDesc->vOffsetPosition), PhysXConverter::ToPxQuat(pRigidBodyDesc->vOffsetRotation));
 	pShape->setLocalPose(OffsetTransform);
 
+	CString_Manager* pString_Manager = CString_Manager::GetInstance();
+	Safe_AddRef(pString_Manager);
+	pShape->setName(pString_Manager->Make_Char(pRigidBodyDesc->szCollisionTag));
+	Safe_Release(pString_Manager);
+	
 	// 액터와 씬 처리.
 	// AttachShape로 콜라이더 여러개 바인딩 가능.
 	// 씬도 일단 한개만 처리하게 해둬서 신경 안써도 될듯.
 	m_pActor->attachShape(*pShape);
+	m_Shapes.emplace(pShape->getName(), pShape);
+
+	if (false == pRigidBodyDesc->isGravity)
+	{
+		m_pActor->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, true);
+	}
 
 #ifdef _DEBUG
 	// 렌더링용 쉐이더, 버퍼
@@ -428,6 +452,30 @@ void CRigidBody::Rotate(_float4 _vRotation) const
 			PxTransform(PhysXConverter::ToPxVec3(Get_Position()), 
 				PhysXConverter::ToPxQuat(_vRotation)));
 	}
+}
+
+void CRigidBody::Enable_Collision(const _char* szColliderTag)
+{
+	PxShape* pShape = Find_Shape(szColliderTag);
+
+	if (nullptr == pShape)
+		return;
+
+	m_pActor->detachShape(*pShape);
+	pShape->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, true);
+	m_pActor->attachShape(*pShape);
+}
+
+void CRigidBody::Disable_Collision(const _char* szColliderTag)
+{
+	PxShape* pShape = Find_Shape(szColliderTag);
+
+	if (nullptr == pShape)
+		return;
+
+	m_pActor->detachShape(*pShape);
+	pShape->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, false);
+	m_pActor->attachShape(*pShape);
 }
 
 #ifdef _DEBUG
@@ -587,6 +635,20 @@ HRESULT CRigidBody::SetUp_ShaderResources(_uint iColliderIndex)
 	return S_OK;
 }
 #endif // _DEBUG
+
+PxShape* CRigidBody::Find_Shape(const _char* szShapeTag)
+{
+	auto	iter = find_if(m_Shapes.begin(), m_Shapes.end(), [&](auto& Pair) {
+		if (!strcmp(Pair.first, szShapeTag))
+			return true;
+		return false;
+		});
+
+	if (iter == m_Shapes.end())
+		return nullptr;
+
+	return iter->second;
+}
 
 CRigidBody* CRigidBody::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {

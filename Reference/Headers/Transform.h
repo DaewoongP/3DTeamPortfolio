@@ -118,7 +118,7 @@ private:
 	CCharacterController*		m_pCharacterController = { nullptr };
 
 private:
-	void Update_Components(_float fTimeDelta);
+	void Update_Components();
 
 public:
 	static CTransform* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);

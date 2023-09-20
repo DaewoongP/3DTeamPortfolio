@@ -113,6 +113,12 @@ namespace Engine
 			pairFlags |= physx::PxPairFlag::eTRIGGER_DEFAULT;
 			return physx::PxFilterFlag::eDEFAULT;
 		}
+
+		if (0 == (filterData0.word0 & filterData1.word0))
+		{
+			pairFlags = PxPairFlag::eCONTACT_DEFAULT;
+			return physx::PxFilterFlag::eDEFAULT;
+		}
 		
 		pairFlags = PxPairFlag::eCONTACT_DEFAULT
 			| PxPairFlag::eNOTIFY_TOUCH_FOUND

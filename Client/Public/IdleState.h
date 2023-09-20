@@ -25,11 +25,15 @@ public:
     virtual void OnStateTick();
     virtual void OnStateExit();
 
+
+private:
+    _float m_fAction_Change_Duration{ 0.0f };
+
+
 private:
     void Action_None_Tick();
     void Action_Casual_Tick();
     void Action_Cmbt_Tick();
-
 
     void Go_Turn();
 
@@ -38,6 +42,10 @@ private:
     void Go_Roll();
 
     void Go_Jump();
+
+    void Go_Magic_Cast();
+
+    void ActionType_Change();
 
 public:
     static CIdleState* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);

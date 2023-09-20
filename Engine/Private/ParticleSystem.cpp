@@ -28,7 +28,11 @@ HRESULT CParticleSystem::Initialize_Prototype(const _tchar* _pDirectoryPath, _ui
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
 
-	this->Load(_pDirectoryPath);
+	if (FAILED(this->Load(_pDirectoryPath)))
+	{
+		MSG_BOX("Failed to Load ParticleSystem but You can progress");
+	}
+
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
@@ -221,7 +225,13 @@ void CParticleSystem::Late_Tick(_float _fTimeDelta)
 		return;
 
 	if (nullptr != m_pRenderer)
+	{
+		if (true == m_RendererModuleDesc.isBloom)
+		{
+			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BLOOM, this);
+		}
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BLEND, this);
+	}
 }
 HRESULT CParticleSystem::Render()
 {
@@ -306,7 +316,6 @@ HRESULT CParticleSystem::Setup_ShaderResources()
 		}
 		if (FAILED(m_pGradientTexture->Bind_ShaderResource(m_pShader, "g_GradientTexture")))
 			throw "g_GradientTexture";
-
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -752,7 +761,6 @@ void CParticleSystem::Reset_Particle(PARTICLE_IT& _particle_iter)
 
 	m_TextureSheetAnimationModuleDesc.Reset(_particle_iter);
 }
-
 void CParticleSystem::Reset_AllParticles()
 {
 	for (_uint i = 0; i < STATE_END; ++i)

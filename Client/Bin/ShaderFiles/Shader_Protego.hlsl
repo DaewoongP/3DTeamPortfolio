@@ -20,6 +20,7 @@ vector g_vCamPos;
 float g_fCamFar;
 float g_fTime;
 float g_fRimPower;
+float g_fScale;
 float g_fHitTimeAcc = 0.f;
 float3 g_vSphereWorldPos;
 float3 g_vCollisionPoint = float3(0.f, 0.f, 0.f);
@@ -47,7 +48,6 @@ struct VS_OUT
 	float2 vFlipbookUV : TEXCOORD3;
 };
 
-/* 정점을 받고 변환하고 정점을 리턴한다. */
 VS_OUT VS_MAIN(VS_IN In)
 {
 	VS_OUT Out = (VS_OUT)0;
@@ -60,11 +60,16 @@ VS_OUT VS_MAIN(VS_IN In)
 	Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);
 	Out.vTexUV = In.vTexUV;
 	Out.vWorldPos = mul(vector(In.vPosition, 1.f), g_WorldMatrix).xyz;
-	Out.vWorldNormal = mul(vector(In.vNormal, 1.f), g_WorldMatrix).xyz;
+
+	// Use only the 3x3 part of the world matrix to transform the normal
+	float3x3 matWorld3x3 = (float3x3)g_WorldMatrix; // Assuming your HLSL version supports matrix3x3. If not, you can extract the top-left 3x3 manually.
+	Out.vWorldNormal = mul(In.vNormal, matWorld3x3);
+
 	Out.vFlipbookUV = In.vTexUV;
-	
+
 	return Out;
 }
+
 
 struct PS_IN
 {
@@ -105,7 +110,7 @@ PS_OUT PS_MAIN(PS_IN In)
 		// 사각형의 방향과 크기 정의
 		float3 vRelativePos = In.vWorldPos - g_vCollisionPoint; // 충돌 지점으로부터의 상대적인 위치
 		float3 vDirection = normalize(g_vCollisionPoint - g_vSphereWorldPos);
-		float2 fSize = float2(1.f, 1.f);
+		float2 fSize = float2(g_fScale * 0.2f, g_fScale * 0.2f);
 		float3 vUp = float3(0.f, 1.f, 0.f);
 		float3 vDirectionX, vDirectionZ;
 		vDirectionX = normalize(cross(vUp, vDirection));  // 정규화 추가
@@ -122,7 +127,7 @@ PS_OUT PS_MAIN(PS_IN In)
 
 			Out.vColor = g_Collision_Texture.Sample(LinearSampler, In.vFlipbookUV);
 			Out.vColor.a = Out.vColor.r;
-			Out.vColor.rgb += float3(1.f, 1.f, 1.f);
+			Out.vColor.rgb = g_vColor1.rgb;
 			return Out;
 		}
 	}
@@ -137,7 +142,7 @@ PS_OUT PS_MAIN(PS_IN In)
 	Out.vColor = lerp(g_vColor1, g_vColor2, vNoise04.r);
 
 	// 외곽선 따기
-	vViewDir = normalize(g_vCamPos - In.vWorldPos);
+	vViewDir = normalize(g_vCamPos.xyz - In.vWorldPos);
 	FresnelEffect_float(In.vWorldNormal, vViewDir, g_fRimPower, fFresnel);
 	Out.vColor.a = fFresnel;
 

@@ -80,6 +80,27 @@ void CHardLandState::Go_Loop()
 		//idle
 		if (false == *m_pIsDirectionKeyPressed)
 		{
+			switch (*m_pIActionSwitch)
+			{
+			case CStateContext::ACTION_NONE:
+			{
+				m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_anm"));
+			}
+			break;
+			case CStateContext::ACTION_CASUAL:
+			{
+				m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_anm"));
+			}
+			break;
+			case CStateContext::ACTION_CMBT:
+			{
+				m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_2Cmbt_anm"));
+			}
+			break;
+
+			default:
+				break;
+			}
 			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_anm"));
 			Set_StateMachine(TEXT("Idle"));
 		}

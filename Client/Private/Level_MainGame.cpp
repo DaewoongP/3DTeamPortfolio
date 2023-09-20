@@ -57,12 +57,6 @@ HRESULT CLevel_MainGame::Initialize()
 
 		return E_FAIL;
 	}
-	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
-	{
-		MSG_BOX("Failed Ready_Layer_Effect");
-
-		return E_FAIL;
-	}
 
 	if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/MapData6.ddd"))))
 	{
@@ -80,13 +74,6 @@ HRESULT CLevel_MainGame::Initialize()
 	
 #ifdef _DEBUG
 	if (FAILED(Ready_Layer_Debug(TEXT("Layer_Debug"))))
-	{
-		MSG_BOX("Failed Ready_Layer_Debug");
-
-		return E_FAIL;
-	}
-
-	if (FAILED(Ready_Layer_SceneTest(TEXT("Layer_SceneTest"))))
 	{
 		MSG_BOX("Failed Ready_Layer_Debug");
 
@@ -536,34 +523,6 @@ HRESULT CLevel_MainGame::Load_Monsters(const wstring& wstrMonsterFilePath)
 	return S_OK;
 }
 
-HRESULT CLevel_MainGame::Ready_Layer_Effect(const _tchar* pLayerTag)
-{
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
-
-#ifdef _DEBUG
-	/*if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Particle"), pLayerTag, TEXT("GameObject_Test_Particle"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Particle)");
-		return E_FAIL;
-	}*/
-
-	/*if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Default_Magic_Effect"), pLayerTag, TEXT("GameObject_Default_Magic_Effect"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Default_Magic_Effect)");
-		return E_FAIL;
-	}*/
-
-	/*if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Wingardium_Effect"), pLayerTag, TEXT("GameObject_Wingardium_Effect"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Wingardium_Effect)");
-		return E_FAIL;
-	}*/
-#endif _DEBUG
-	Safe_Release(pGameInstance);
-
-	return S_OK;
-}
 HRESULT CLevel_MainGame::Ready_Layer_UI(const _tchar* pLayerTag)
 {
 	BEGININSTANCE;
@@ -705,54 +664,26 @@ HRESULT CLevel_MainGame::Ready_Layer_Debug(const _tchar* pLayerTag)
 		return E_FAIL;
 	}*/
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_LoadTrigger"), pLayerTag, TEXT("GameObject_LoadTrigger"))))
+	// 심리스방식 로딩트리거 객체
+	/*if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_LoadTrigger"), pLayerTag, TEXT("GameObject_LoadTrigger"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_LoadTrigger)");
 		return E_FAIL;
-	}
+	}*/
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Dummy"), pLayerTag, TEXT("GameObject_Dummy"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Dummy)");
-		return E_FAIL;
-	}
-
+	// 키지마세요 터집니다
+	// 피직스 디버그 렌더링용 객체
 	/*if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_PhysxRenderer"), pLayerTag, TEXT("GameObject_PhysxRenderer"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_PhysxRenderer)");
 		return E_FAIL;
 	}*/
 
-	/*if (FAILED(Load_Monsters(TEXT("../../Resources/GameData/MonsterData/Test.mon"))))
-	{
-		MSG_BOX("Failed Load_Monsters");
-		return E_FAIL;
-	}*/
-
 	Safe_Release(pGameInstance);
 
 	return S_OK;
 }
 
-HRESULT CLevel_MainGame::Ready_Layer_SceneTest(const _tchar* pLayerTag)
-{
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
-
-	/* Add Scene : Main */
-	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Info"), pLayerTag)))
-	{
-		MSG_BOX("Failed Add Scene : (Scene_Main)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
-
-
-
-	Safe_Release(pGameInstance);
-
-	return S_OK;
-}
 #endif // _DEBUG
 
 CLevel_MainGame* CLevel_MainGame::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

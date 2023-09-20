@@ -156,7 +156,7 @@ struct ENGINE_DLL SHAPE_MODULE : public MODULE
 	_float fBaseRadius = { 0.5f };
 	_float fConeLength = { 1.f }; // Volume에서 Length로 활용됨..
 	///////////////////////////
-
+	
 	wstring wstrClipTexturePath = { TEXT("../../Resources/Effects/Textures/Default_Particle.png") }; // 아래 인자의 채널에 사용할 텍스처
 	string strClipChannel = { "Red" }; // Red, Greend, Blue, Alpha // 클립 채널(클립 : 알파테스트로 discard)
 	_float fClipThreshold = { 0.f }; // [0, 1], 이것보다 작은 값들은 알파테스트 실패함.
@@ -173,21 +173,7 @@ struct ENGINE_DLL SHAPE_MODULE : public MODULE
 
 	_bool isChase = { false };
 };
-struct ENGINE_DLL RENDERER_MODULE : public MODULE
-{
-	RENDERER_MODULE() : MODULE() { __super::isActivate = true; };
 
-	HRESULT Save(const _tchar* _pDirectoyPath);
-	HRESULT Load(const _tchar* _pDirectoyPath);
-	void Restart();
-
-	wstring wstrShaderTag = { TEXT("Shader_VtxRectColInstance") };
-	wstring wstrMaterialPath = { TEXT("../../Resources/Effects/Textures/Default_Particle.png") };
-	_bool isDeleteY = { false };
-	_bool isUseGradientTexture = { false };
-	wstring wstrGraientTexture = { TEXT("../../Resources/Effects/Textures/Gradients/VFX_T_Gradient_Fire_D.png") };
-	string strPass = { "Default" };
-};
 struct ENGINE_DLL ROTATION_OVER_LIFETIME_MODULE : public MODULE
 {
 	ROTATION_OVER_LIFETIME_MODULE() : MODULE() { };
@@ -259,9 +245,27 @@ struct ENGINE_DLL TEXTURE_SHEET_ANIMATION : public MODULE
 	_float fStartFrame = { 0.f }; // [0, 1]
 	_float fUpdateInterval = { 0.0159f };
 	_bool isUseNormalTexture = { false };
-	wstring wstrNormalPath = TEXT("../../Resources/Effects/Textures/Flipbooks/VFX_T_Dust_8x8_N.png");
+	wstring wstrNormalPath = TEXT("../../Resources/Effects/Textures/Default_Normal.png");
 	_bool isLoopOption = { false };
 
 	_float fTimeAcc = { 0.f };
 };
+
+struct ENGINE_DLL RENDERER_MODULE : public MODULE
+{
+	RENDERER_MODULE() : MODULE() { __super::isActivate = true; };
+
+	HRESULT Save(const _tchar* _pDirectoyPath);
+	HRESULT Load(const _tchar* _pDirectoyPath);
+	void Restart();
+
+	wstring wstrShaderTag = { TEXT("Shader_VtxRectColInstance") };
+	wstring wstrMaterialPath = { TEXT("../../Resources/Effects/Textures/Default_Particle.png") };
+	_bool isDeleteY = { false };
+	_bool isUseGradientTexture = { false };
+	wstring wstrGraientTexture = { TEXT("../../Resources/Effects/Textures/Gradients/Default_Gradient.png") };
+	string strPass = { "Default" };
+	_bool isBloom = { false };
+};
+
 END

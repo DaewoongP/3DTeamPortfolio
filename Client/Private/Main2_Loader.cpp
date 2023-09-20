@@ -64,8 +64,7 @@ HRESULT CMain2_Loader::Initialize(LEVELID eNextLevel)
 
 HRESULT CMain2_Loader::Loading()
 {
-	if (FAILED(CoInitializeEx(nullptr, 0)))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(CoInitializeEx(nullptr, COINIT_MULTITHREADED), E_FAIL);
 
 	EnterCriticalSection(&m_Critical_Section);
 
@@ -143,10 +142,16 @@ HRESULT CMain2_Loader::Loading_For_MainGame()
 			throw TEXT("Prototype_Component_Model_Weopon_Pensive");
 
 		/* For.Prototype_Component_Model_Weopon_Player_Wand */
-		PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f)) * XMMatrixScaling(5, 5, 5);
+		PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f));
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Weopon_Player_Wand"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/gaechul/gaechul.dat"), PivotMatrix))))
 			throw TEXT("Prototype_Component_Model_Weopon_Player_Wand");
+
+		/* For.Prototype_Component_Model_Weopon_Fig_Wand */
+		PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f));
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Weopon_Fig_Wand"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Wand_Fig/Wand_Fig.dat"), PivotMatrix))))
+			throw TEXT("Prototype_Component_Model_Weopon_Fig_Wand");
 
 		/* For.Monster Models */
 

@@ -3,7 +3,6 @@
 #include "GameInstance.h"
 
 #include "Wait.h"
-#include "Magic.h"
 #include "Action.h"
 #include "Random_Select.h"
 #include "Check_Distance.h"
@@ -40,7 +39,7 @@ HRESULT CSequence_Levitated::Initialize(void* pArg)
 			if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
 				return false;
 
-			if (CMagic::BUFF_UNGRAVITY & *pICurrentSpell)
+			if (LEVIOSO & *pICurrentSpell)
 				return true;
 
 			return false;
@@ -59,8 +58,8 @@ HRESULT CSequence_Levitated::Tick(const _float& fTimeDelta)
 		if (FAILED(m_pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
 			return E_FAIL;
 
-		if (*pICurrentSpell & CMagic::BUFF_UNGRAVITY)
-			*pICurrentSpell ^= CMagic::BUFF_UNGRAVITY;
+		if (*pICurrentSpell & LEVIOSO)
+			*pICurrentSpell ^= LEVIOSO;
 	}
 
 	return hr;
@@ -195,8 +194,8 @@ void CSequence_Levitated::Reset_Behavior(HRESULT result)
 		if (FAILED(m_pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
 			return;
 
-		if (*pICurrentSpell & CMagic::BUFF_UNGRAVITY)
-			*pICurrentSpell ^= CMagic::BUFF_UNGRAVITY;
+		if (*pICurrentSpell & LEVIOSO)
+			*pICurrentSpell ^= LEVIOSO;
 	}
 
 	BEGININSTANCE;

@@ -148,9 +148,9 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Shadow"), 240.f, 400.f, 160.f, 160.f)))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Glow"), 80.f, 560.f, 160.f, 160.f)))
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_FinBloom"), 80.f, 560.f, 160.f, 160.f)))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_SSAO"), 240.f, 560.f, 160.f, 160.f)))
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Bloom"), 240.f, 560.f, 160.f, 160.f)))
 		return E_FAIL;
 
 	/*if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_SSAO"), 300.f, 300.f, 600.f, 600.f)))
@@ -161,9 +161,9 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;*/
 
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Picking"), 1200.f, 80.f, 160.f, 160.f)))
-		return E_FAIL; // �� �������� Fast Picking�� ���� ���� Ÿ��
+		return E_FAIL;
 	//if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_MapBrushing"), 1040.f, 80.f, 160.f, 160.f)))
-	//	return E_FAIL; // �� �귯�� ��� ������ ���� ���� Ÿ��
+	//	return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_UI"), 1200.f, 300.f, 160.f, 160.f)))
 		return E_FAIL;
 
@@ -244,6 +244,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 	if (FAILED(Render_Blend()))
 		return E_FAIL;
+	if (FAILED(m_pBloom->Render()))
+		return E_FAIL;
 	
 	if (FAILED(m_pRenderTarget_Manager->End_PostProcessingRenderTarget(m_pContext)))
 		return E_FAIL;
@@ -258,8 +260,7 @@ HRESULT CRenderer::Draw_RenderGroup()
 	if (FAILED(Render_PostProcessing()))
 		return E_FAIL;
 
-	if (FAILED(m_pBloom->Render()))
-		return E_FAIL;
+	
 	if (FAILED(Render_UI()))
 		return E_FAIL;
 
@@ -674,6 +675,9 @@ HRESULT CRenderer::Render_NonLight()
 
 HRESULT CRenderer::Render_Blend()
 {
+	if (FAILED(Sort_Blend()))
+		return E_FAIL;
+
 	for (auto& pGameObject : m_RenderObjects[RENDER_BLEND])
 	{
 		if (nullptr != pGameObject)
@@ -721,7 +725,8 @@ HRESULT CRenderer::Render_PostProcessing()
 		return E_FAIL;
 	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
-
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_FinBloom"), m_pPostProcessingShader, "g_BloomTexture")))
+		return E_FAIL;
 	m_pPostProcessingShader->Begin("PostProcessing");
 
 	m_pPostProcessingBuffer->Render();

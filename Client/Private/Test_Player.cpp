@@ -30,10 +30,10 @@ HRESULT CTest_Player::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-	m_pTransform->Set_Speed(15.f);
+	m_pTransform->Set_Speed(30.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
-	//m_pTransform->Set_RigidBody(m_pRigidBody);
-	m_pTransform->Set_CharacterController(m_pCharacterController);
+	m_pTransform->Set_RigidBody(m_pRigidBody);
+	//m_pTransform->Set_CharacterController(m_pCharacterController);
 	
 	m_pCharacterController->Set_Position(_float3(10.f, 0.f, 2.f));
 
@@ -168,7 +168,7 @@ HRESULT CTest_Player::Add_Components()
 	RigidBodyDesc.eConstraintFlag = CRigidBody::AllRot; // 움직임을 제한할 값을 넣어주면 됩니다. (ex allrot의 경우 로테이션을 하지않습니다.)
 	RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 0.f, 1.f); // 디버그 컬러
 	RigidBodyDesc.pOwnerObject = this; // 디스포인터 넣ㄹ어주셔야 안터집니다 !!
-	lstrcpy(RigidBodyDesc.szCollisionTag, TEXT("충돌 판단을 위한 CollisionTag입니다. 여기에 값을 대입하시면 다른 콜라이더에서 이 태그값을 통해 판단이 가능합니다."));
+	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Test_Player_Default");
 
 	/* Com_RigidBody */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
@@ -178,11 +178,6 @@ HRESULT CTest_Player::Add_Components()
 		return E_FAIL;
 	}
 
-	PxRigidBody* Rigid = m_pRigidBody->Get_RigidBodyActor();
-	Rigid->setAngularDamping(10.f);
-	Rigid->setMaxLinearVelocity(1000.f);
-	Rigid->setMass(10.f);
-	
 	/* Com_CustomModel */
 	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_CustomModel_Player"),
 		TEXT("Com_CustomModel"), reinterpret_cast<CComponent**>(&m_pModelCom))))
@@ -204,11 +199,10 @@ HRESULT CTest_Player::Add_Components()
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	PxBoxControllerDesc CapsuleControllerDesc;
+	PxCapsuleControllerDesc CapsuleControllerDesc;
 	CapsuleControllerDesc.setToDefault();
-	CapsuleControllerDesc.halfForwardExtent = 1.f;
-	CapsuleControllerDesc.halfHeight = 1.f;
-	CapsuleControllerDesc.halfSideExtent = 1.f;
+	CapsuleControllerDesc.height = 1.f;
+	CapsuleControllerDesc.radius = 0.5f;
 	CapsuleControllerDesc.material = pGameInstance->Get_Physics()->createMaterial(0.5f, 0.5f, 0.5f);
 	CapsuleControllerDesc.density = 10.f;
 	CapsuleControllerDesc.stepOffset = 0.5f;
@@ -284,7 +278,7 @@ void CTest_Player::Key_Input(_float fTimeDelta)
 
 	if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
 	{
-		m_pRigidBody->Add_Force(m_pTransform->Get_Up() * 30.f, PxForceMode::eIMPULSE);
+		m_pRigidBody->Add_Force(m_pTransform->Get_Up() * 10.f, PxForceMode::eIMPULSE);
 	}
 
 	ENDINSTANCE;
