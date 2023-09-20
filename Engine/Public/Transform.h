@@ -34,6 +34,7 @@ private:
 
 public:
 	_float3 Get_Scale() const { return _float3(Get_Right().Length(), Get_Up().Length(), Get_Look().Length()); }
+	_float3 Get_Scale_With_Negative() const;
 	_float3 Get_Right() const { return m_WorldMatrix.Right(); }
 	_float3 Get_Up() const { return m_WorldMatrix.Up(); }
 	_float3 Get_Look() const { return m_WorldMatrix.Look(); }
@@ -68,6 +69,7 @@ public:
 	void Set_Position(_float3 _vPosition);
 	// 쿼터니언 벡터 로테이션
 	void Set_Quaternion(_float4 vQuaternion);
+	void Set_Quaternion_With_Negative(_float4 vQuaternion);
 	void Set_WorldMatrix(_float4x4 _WorldMatrix);
 
 	void Set_Speed(_float _fSpeed) { m_fSpeed = _fSpeed; }
@@ -116,7 +118,7 @@ private:
 	CCharacterController*		m_pCharacterController = { nullptr };
 
 private:
-	void Update_Components(_float fTimeDelta);
+	void Update_Components();
 
 public:
 	static CTransform* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);

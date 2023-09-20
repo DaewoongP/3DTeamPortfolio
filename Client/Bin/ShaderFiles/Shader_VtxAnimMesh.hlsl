@@ -198,6 +198,6 @@ technique11 DefaultTechnique
 		GeometryShader	= NULL /*compile gs_5_0 GS_MAIN()*/;
 		HullShader		= NULL /*compile hs_5_0 HS_MAIN()*/;
 		DomainShader	= NULL /*compile ds_5_0 DS_MAIN()*/;
-		PixelShader		= compile ps_5_0 PS_MAIN_TEST();
-	}
+        PixelShader     = compile ps_5_0 PS_MAIN();
+    }
 }

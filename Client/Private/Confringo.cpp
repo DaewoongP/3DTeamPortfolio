@@ -67,56 +67,37 @@ HRESULT CConfringo::Initialize(void* pArg)
 		m_vTargetPosition = m_pTarget->Get_Position();
 	}
 
-	// 플레이어가 타겟을 보는 vector를 구함.
-	_float3 vDir = XMVector3Normalize(m_vTargetPosition - m_MagicBallDesc.vStartPosition);
-	// 임의의 축을 구함.
-	_float3 tempAxis = _float3(1, 1, 1);
-	// 외적
-	_float3	normal = XMVector3Cross(vDir, tempAxis);
-	
-	//진행 경로만큼 뒤로 이동한 뒤
-	m_vLerpWeight[0] = m_MagicBallDesc.vStartPosition - vDir;
-	//임의의 랜덤 값을 구하고
-	_float fRandom = Random_Generator(-20.f, 20.f);
-	// 외적 방향으로 튄다.
-	m_vLerpWeight[0] += _float3(normal.x * fRandom, normal.y  * fRandom, normal.z * fRandom);
-
-	//진행 경로만큼 뒤로 이동한 뒤
-	m_vLerpWeight[1] = m_MagicBallDesc.vStartPosition + vDir;
-	//임의의 랜덤 값을 구하고
-	fRandom = Random_Generator(-20.f, 20.f);
-	// 외적 방향으로 튄다.
-	m_vLerpWeight[1] += _float3(normal.x * fRandom, normal.y * fRandom, normal.z * fRandom);
+	//Ready for Spline Lerp
+	m_pTrailEffect->Ready_Spline(m_vTargetPosition, m_MagicBallDesc.vStartPosition, m_MagicBallDesc.fLifeTime, m_MagicBallDesc.fDistance);
+	m_pWandDustEffect->Set_Position(m_vTargetPosition);
 	m_pExplosiveEffect->ResetParticle();
-	m_fTimeScalePerDistance = m_MagicBallDesc.fDistance / _float3(m_vTargetPosition - m_MagicBallDesc.vStartPosition).Length();
-
+	m_pTrailEffect->Set_Trail_HeadColor(_float3(1, 0, 0));
+	m_pTrailEffect->Set_Trail_TailColor(_float3(1, 1, 0));
 	return S_OK;
 }
 
 void CConfringo::Tick(_float fTimeDelta)
 {
-	if (m_fLerpAcc < 1)
+	__super::Tick(fTimeDelta);
+	//사망처리 걸리면 재생
+	if (m_isExplosiveTrigger)
 	{
-		// 여기서 뻉뻉이 돌려주자.
-		m_fLerpAcc += fTimeDelta / m_MagicBallDesc.fInitLifeTime * m_fTimeScalePerDistance;
-		if (m_fLerpAcc > 1)
-			m_fLerpAcc = 1;
-		m_pTrailEffect->Spline_Move(m_vLerpWeight[0],m_MagicBallDesc.vStartPosition, m_vTargetPosition, m_vLerpWeight[1], m_fLerpAcc);
+		//파티클 끝나면 없애줘.
+		//if (m_pExplosiveEffect->Get_Particle_State_End())
+		Set_ObjEvent(OBJ_DEAD);
+		return;
 	}
-	else 
+	//이동이 끝나면 true를 리턴해줄거임.
+	if (m_pTrailEffect->Spline_Move(fTimeDelta))
 	{
 		//터지는 효과임.
 		if (!m_isExplosiveTrigger)
 		{
 			m_pExplosiveEffect->Play_Particle(m_vTargetPosition);
 			m_isExplosiveTrigger = true;
-
-			if(m_pExplosiveEffect->Get_Particle_State_End())
-				Set_ObjEvent(OBJ_DEAD);
 		}
-		
 	}
-	__super::Tick(fTimeDelta);
+	m_pTransform->Set_Position(m_pTrailEffect->Get_Transform()->Get_Position());
 }
 
 void CConfringo::Late_Tick(_float fTimeDelta)
@@ -127,6 +108,14 @@ void CConfringo::Late_Tick(_float fTimeDelta)
 void CConfringo::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
 	__super::OnCollisionEnter(CollisionEventDesc);
+	//몹이랑 충돌했으면?
+	if (wcsstr(CollisionEventDesc.pOtherCollisionTag, TEXT("Enemy_Body")) != nullptr)
+	{
+		//사망처리 드갑니다.
+		m_isExplosiveTrigger = true;
+		m_pExplosiveEffect->Play_Particle(m_pTrailEffect->Get_Transform()->Get_Position());
+	}
+	
 }
 
 void CConfringo::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)

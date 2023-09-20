@@ -2,6 +2,7 @@
 #include "GameInstance.h"
 #include "Seamless_Loader.h"
 #include "MapObject.h"
+#include "MapObject_Ins.h"
 #include "UI_Group_Enemy_HP.h"
 
 CLevel_MainGame::CLevel_MainGame(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -62,29 +63,23 @@ HRESULT CLevel_MainGame::Initialize()
 
 		return E_FAIL;
 	}
-	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
-	{
-		MSG_BOX("Failed Ready_Layer_Effect");
 
-		return E_FAIL;
-	}
-
-	if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/MapData6.ddd"))))
+	/*if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/MapData6.ddd"))))
 	{
 		MSG_BOX("Failed Load Map Object");
+
+		return E_FAIL;
+	}*/
+
+	if (FAILED(Load_MapObject_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins6.ddd"))))
+	{
+		MSG_BOX("Failed Load Map Object_Ins");
 
 		return E_FAIL;
 	}
 	
 #ifdef _DEBUG
 	if (FAILED(Ready_Layer_Debug(TEXT("Layer_Debug"))))
-	{
-		MSG_BOX("Failed Ready_Layer_Debug");
-
-		return E_FAIL;
-	}
-
-	if (FAILED(Ready_Layer_SceneTest(TEXT("Layer_SceneTest"))))
 	{
 		MSG_BOX("Failed Ready_Layer_Debug");
 
@@ -330,6 +325,110 @@ HRESULT CLevel_MainGame::Load_MapObject(const _tchar* pObjectFilePath)
 	return S_OK;
 }
 
+HRESULT CLevel_MainGame::Load_MapObject_Ins(const _tchar* pObjectFilePath)
+{
+	std::lock_guard<std::mutex> lock(mtx);
+
+	HANDLE hFile = CreateFile(pObjectFilePath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+	{
+		MSG_BOX("Failed to Create MapObject_Ins File for Load MapObject_Ins");
+		return E_FAIL;
+	}
+
+	DWORD	dwByte = 0;
+	_uint	iCount = 0; // 모델 인스턴스 넘버링 변수
+
+	while (true)
+	{
+		CMapObject_Ins::MAPOJBECTINSDESC MapObjectInsDesc;
+		ZEROMEM(&MapObjectInsDesc);
+
+		if (!ReadFile(hFile, &MapObjectInsDesc.iInstanceCnt, sizeof(_uint), &dwByte, nullptr))
+		{
+			MSG_BOX("Failed to Read MapObject_Ins iInstanceCnt");
+			return E_FAIL;
+		}
+
+		if (0 != MapObjectInsDesc.iInstanceCnt)
+		{
+			_float4x4 Matrix; // 동적 할당 안하고 지역 변수로 날림
+
+			for (size_t i = 0; i < MapObjectInsDesc.iInstanceCnt; i++)
+			{
+				if (!ReadFile(hFile, &Matrix, sizeof(_float4x4), &dwByte, nullptr))
+				{
+					MSG_BOX("Failed to Read MapObject_Ins pMatTransform");
+					return E_FAIL;
+				}
+			}
+		}
+
+		if (!ReadFile(hFile, &MapObjectInsDesc.WorldMatrix, sizeof(_float4x4), &dwByte, nullptr))
+		{
+			MSG_BOX("Failed to Read MapObject_Ins matTransform");
+			return E_FAIL;
+		}
+
+		if (!ReadFile(hFile, &MapObjectInsDesc.iTagLen, sizeof(_uint), &dwByte, nullptr))
+		{
+			MSG_BOX("Failed to Read MapObject_Ins iTagLen");
+			return E_FAIL;
+		}
+
+		if (!ReadFile(hFile, &MapObjectInsDesc.wszTag, MapObjectInsDesc.iTagLen, &dwByte, nullptr))
+		{
+			MSG_BOX("Failed to Read MapObject_Ins wszTag");
+			return E_FAIL;
+		}
+
+		if (dwByte == 0)
+		{
+			break;
+		}
+
+		BEGININSTANCE;
+
+		// 여기서 프로토타입 태그 문자열 가공해줘야함
+		wstring ws = TEXT("Prototype_Component_Model_Instance_");
+		wstring wsTag = TEXT("Prototype_Component_Model_");
+		wstring wsSave(MapObjectInsDesc.wszTag);
+		_uint iLength = wsTag.size();
+
+		// 모델 이름
+		wstring wsModelName = wsSave.substr(iLength);
+		ws += wsModelName;
+
+		ws += TEXT("_");
+
+		_tchar wszNumber[MAX_PATH];
+		_itow_s(iCount, wszNumber, 10);
+
+		ws += wszNumber; // 여기까지 오면 Prototype_Component_Model_Instance_모델명_번호 이런식으로 이름이 붙음	
+
+		lstrcpy(MapObjectInsDesc.wszTag, ws.c_str()); // 가공한 모델 인스턴스 이름을 넣어줌
+
+		_tchar wszobjName[MAX_PATH] = { 0 };
+		_stprintf_s(wszobjName, TEXT("GameObject_InsMapObject_%d"), (iCount));
+
+		// 번호를 붙인 태그로 MapObject_Ins 등록
+		if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME,
+			TEXT("Prototype_GameObject_MapObject_Ins"), TEXT("Layer_BackGround"),
+			wszobjName, &MapObjectInsDesc)))
+		{
+			MSG_BOX("Failed to Install MapObject_Ins");
+			return E_FAIL;
+		}
+
+		++iCount; ENDINSTANCE;
+	}
+
+	CloseHandle(hFile);
+
+	return S_OK;
+}
+
 HRESULT CLevel_MainGame::Load_Monsters(const wstring& wstrMonsterFilePath)
 {
 	HANDLE hFile = CreateFile(wstrMonsterFilePath.c_str(), GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
@@ -430,34 +529,6 @@ HRESULT CLevel_MainGame::Load_Monsters(const wstring& wstrMonsterFilePath)
 	return S_OK;
 }
 
-HRESULT CLevel_MainGame::Ready_Layer_Effect(const _tchar* pLayerTag)
-{
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
-
-#ifdef _DEBUG
-	/*if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Particle"), pLayerTag, TEXT("GameObject_Test_Particle"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Particle)");
-		return E_FAIL;
-	}*/
-
-	/*if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Default_Magic_Effect"), pLayerTag, TEXT("GameObject_Default_Magic_Effect"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Default_Magic_Effect)");
-		return E_FAIL;
-	}*/
-
-	/*if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Wingardium_Effect"), pLayerTag, TEXT("GameObject_Wingardium_Effect"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Wingardium_Effect)");
-		return E_FAIL;
-	}*/
-#endif _DEBUG
-	Safe_Release(pGameInstance);
-
-	return S_OK;
-}
 HRESULT CLevel_MainGame::Ready_Layer_UI(const _tchar* pLayerTag)
 {
 	BEGININSTANCE;
@@ -644,54 +715,26 @@ HRESULT CLevel_MainGame::Ready_Layer_Debug(const _tchar* pLayerTag)
 		return E_FAIL;
 	}*/
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_LoadTrigger"), pLayerTag, TEXT("GameObject_LoadTrigger"))))
+	// 심리스방식 로딩트리거 객체
+	/*if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_LoadTrigger"), pLayerTag, TEXT("GameObject_LoadTrigger"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_LoadTrigger)");
 		return E_FAIL;
-	}
+	}*/
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Dummy"), pLayerTag, TEXT("GameObject_Dummy"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Dummy)");
-		return E_FAIL;
-	}
-
+	// 키지마세요 터집니다
+	// 피직스 디버그 렌더링용 객체
 	/*if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_PhysxRenderer"), pLayerTag, TEXT("GameObject_PhysxRenderer"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_PhysxRenderer)");
 		return E_FAIL;
 	}*/
 
-	/*if (FAILED(Load_Monsters(TEXT("../../Resources/GameData/MonsterData/Test.mon"))))
-	{
-		MSG_BOX("Failed Load_Monsters");
-		return E_FAIL;
-	}*/
-
 	Safe_Release(pGameInstance);
 
 	return S_OK;
 }
 
-HRESULT CLevel_MainGame::Ready_Layer_SceneTest(const _tchar* pLayerTag)
-{
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
-
-	/* Add Scene : Main */
-	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Info"), pLayerTag)))
-	{
-		MSG_BOX("Failed Add Scene : (Scene_Main)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
-
-
-
-	Safe_Release(pGameInstance);
-
-	return S_OK;
-}
 #endif // _DEBUG
 
 CLevel_MainGame* CLevel_MainGame::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

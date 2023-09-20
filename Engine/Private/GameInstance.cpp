@@ -90,13 +90,13 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 	NULL_CHECK_RETURN_MSG(m_pInput_Device, , TEXT("Input_Device NULL"));
 	NULL_CHECK_RETURN_MSG(m_pCollision_Manager, , TEXT("Collsion_Manager NULL"));
 
+	m_pPhysX_Manager->Tick(fTimeDelta);
+
 	m_pTimer_Manager->Tick(fTimeDelta);
 
 	m_pInput_Device->Tick();
 
 	m_pComponent_Manager->Tick(fTimeDelta);
-
-	m_pPhysX_Manager->Tick(fTimeDelta);
 
 	m_pCamera_Manager->Tick(fTimeDelta);
 
@@ -696,6 +696,13 @@ _bool CGameInstance::Mouse_RayCast(HWND hWnd, ID3D11DeviceContext* pContext, _fl
 	NULL_CHECK_RETURN_MSG(m_pPhysX_Manager, false, TEXT("PhysX_Manager NULL"));
 
 	return m_pPhysX_Manager->Mouse_RayCast(hWnd, pContext, fMaxDist, pHitPosition, pDist, iMaxHits, RaycastFlag);
+}
+
+void CGameInstance::Update_PhysxScene()
+{
+	NULL_CHECK_RETURN_MSG(m_pPhysX_Manager, , TEXT("PhysX_Manager NULL"));
+
+	m_pPhysX_Manager->Tick(1 / 60.f);
 }
 
 HRESULT CGameInstance::Read_CutSceneCamera(const _tchar* _CutSceneTag, const _tchar* _CutScenePath)

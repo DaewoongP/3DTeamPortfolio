@@ -38,8 +38,6 @@ void CImageFileDialog::Tick()
 {
     // 텍스처가 없으면 기본 텍스처 출력
     m_isOk = false;
-    _int iTemp1;
-    _int iTemp2;
 
     // 빈 텍스처면 기본 텍스처 출력
     if (nullptr == m_pTexture)
@@ -79,8 +77,7 @@ void CImageFileDialog::Tick()
         if (m_strPrevFilePathName != m_pInstance.GetFilePathName())
         {
             string strCurrentFilePathName = m_pInstance.GetFilePathName();
-            Safe_Release(m_pTexture);
-            LoadTextureFromFile(strCurrentFilePathName.data(), &m_pTexture, &iTemp1, &iTemp2);
+            ChangeTexture(strCurrentFilePathName.data());
             m_strPrevFilePathName = strCurrentFilePathName;
         }
 

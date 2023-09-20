@@ -81,18 +81,10 @@ void CJumpState::Go_Loop()
 		switch (*m_pIsSprint)
 		{
 		case CStateContext::JOGING:
-		{
 			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_Land_2Jog_RU_anm"));
-		}
-		break;
-
+			break;
 		case CStateContext::SPRINT:
-		{
 			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_Land_2Sprint_v2_anm"));
-		}
-		break;
-
-		default:
 			break;
 		}
 		Set_StateMachine(TEXT("Move Loop"));

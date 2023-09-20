@@ -11,7 +11,7 @@ texture2D g_SSAOTexture;
 texture2D g_BlurTexture;
 texture2D g_PostProcessingTexture;
 texture2D g_vDistortionTexture;
-texture2D g_vAlphaTexture;
+texture2D g_AlphaTexture;
 texture2D g_DoBlurTexture;
 texture2D g_WhiteBloomTexture;
 texture2D g_GlowTexture;
@@ -182,7 +182,7 @@ PS_OUT PS_MAIN_DISTORTION(PS_IN In)
     newUV.xy = (FinalNoise.xy * perturb) + In.vTexUV.xy;
     
     vector vPost = g_PostProcessingTexture.Sample(DistortionSampler, newUV.xy);
-    vector vAlpha = g_vAlphaTexture.Sample(DistortionSampler, newUV.xy);
+    vector vAlpha = g_AlphaTexture.Sample(DistortionSampler, newUV.xy);
     
     Out.vColor = vPost;
     

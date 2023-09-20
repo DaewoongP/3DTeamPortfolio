@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Animation.h" />
+    <ClInclude Include="..\public\MotionBlur.h" />
     <ClInclude Include="..\public\VIBuffer_UVSphere.h" />
     <ClInclude Include="..\public\VIBuffer_Rect_Color_Index_Instance.h" />
     <ClInclude Include="..\Public\Base.h" />
@@ -70,7 +71,6 @@
     <ClInclude Include="..\Public\MeshParts.h" />
     <ClInclude Include="..\Public\CustomModel.h" />
     <ClInclude Include="..\Public\Modules.h" />
-    <ClInclude Include="..\Public\Status.h" />
     <ClInclude Include="..\Public\Texture_Filpbook.h" />
     <ClInclude Include="..\public\Trail.h" />
     <ClInclude Include="..\Public\TriangleMesh.h" />
@@ -82,7 +82,6 @@
     <ClInclude Include="..\public\VIBuffer_Cloth.h" />
     <ClInclude Include="..\public\VIBuffer_Rect_Color_Instance.h" />
     <ClInclude Include="..\Public\VIBuffer_Sprite.h" />
-    <ClInclude Include="..\Public\Ignite.h" />
     <ClInclude Include="..\Public\Defence.h" />
     <ClInclude Include="..\public\Cell.h" />
     <ClInclude Include="..\Public\Channel.h" />
@@ -153,6 +152,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Animation.cpp" />
+    <ClCompile Include="..\private\MotionBlur.cpp" />
     <ClCompile Include="..\private\VIBuffer_UVSphere.cpp" />
     <ClCompile Include="..\private\VIBuffer_Rect_Color_Index_Instance.cpp" />
     <ClCompile Include="..\Private\Base.cpp" />
@@ -202,7 +202,6 @@
     <ClCompile Include="..\Private\MeshParts.cpp" />
     <ClCompile Include="..\Private\CustomModel.cpp" />
     <ClCompile Include="..\Private\Modules.cpp" />
-    <ClCompile Include="..\Private\Status.cpp" />
     <ClCompile Include="..\Private\Texture_Filpbook.cpp" />
     <ClCompile Include="..\private\Trail.cpp" />
     <ClCompile Include="..\Private\TriangleMesh.cpp" />
@@ -214,7 +213,6 @@
     <ClCompile Include="..\private\VIBuffer_Cloth.cpp" />
     <ClCompile Include="..\Private\VIBuffer_Rect_Color_Instance.cpp" />
     <ClCompile Include="..\Private\VIBuffer_Sprite.cpp" />
-    <ClCompile Include="..\Private\Ignite.cpp" />
     <ClCompile Include="..\Private\Defence.cpp" />
     <ClCompile Include="..\private\Cell.cpp" />
     <ClCompile Include="..\Private\Channel.cpp" />
@@ -286,6 +284,7 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Distortion.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Geometry.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Glow.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_MotionBlur.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Navigation.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_PostProcessing.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_SSAO.hlsl">

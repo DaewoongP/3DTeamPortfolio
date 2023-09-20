@@ -14,7 +14,7 @@ HRESULT CVIBuffer_UVSphere::Initialize_Prototype()
 {
 	_uint iStacks = 30; // 위도
 	_uint iSlices = 30; // 경도
-	_float fRadius = 1.f;
+	_float fRadius = 0.5f;
 
 	m_iNumVertices = (iStacks + 1) * (iSlices + 1);
 	m_iNumIndices = iStacks * iSlices * 6;

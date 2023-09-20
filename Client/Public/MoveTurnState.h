@@ -27,6 +27,8 @@ public:
     virtual void OnStateExit();
 
 private:
+    
+
     void Go_Idle();
 
     void Go_Start();
@@ -38,6 +40,8 @@ private:
     void Go_Jump();
 
     void Over_135();
+
+    void Go_Magic_Cast();
 
 public:
     static CMoveTurnState* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

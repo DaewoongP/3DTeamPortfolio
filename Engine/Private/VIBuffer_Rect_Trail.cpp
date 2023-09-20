@@ -34,9 +34,9 @@ HRESULT CVIBuffer_Rect_Trail::Reset_Trail()
 	for (_uint i = 0; i < m_iNumVertices; ++i)
 	{
 		if (1 == i % 2)
-			pData->vPosition = vHighWorldPos;
+			pData[i].vPosition = vHighPos;
 		else
-			pData->vPosition = vLowWorldPos;
+			pData[i].vPosition = vLowPos;
 	}
 
 	m_pContext->Unmap(m_pVB, 0);
@@ -57,9 +57,9 @@ HRESULT CVIBuffer_Rect_Trail::Reset_Trail(_float3 vHighPos, _float3 vLowPos)
 	for (_uint i = 0; i < m_iNumVertices; ++i)
 	{
 		if (1 == i % 2)
-			pData->vPosition = vHighPos;
+			pData[i].vPosition = vHighPos;
 		else
-			pData->vPosition = vLowPos;
+			pData[i].vPosition = vLowPos;
 	}
 
 	m_pContext->Unmap(m_pVB, 0);
@@ -204,6 +204,46 @@ void CVIBuffer_Rect_Trail::Tick()
 
 	VTXPOSTEX* pData = static_cast<VTXPOSTEX*>(MappedSubResource.pData);
 
+	//자르기
+	_int iHeadIndex, iTailIndex,iBodyCount = { 0 };
+	iHeadIndex = 0;
+	iTailIndex = 0;
+
+	//꼬리 찾을
+	for (_uint i = m_iNumVertices - 1; i >= 2; i-=2)
+	{
+		if (!XMVector3Equal(_float3(pData[i].vPosition), _float3(pData[i - 2].vPosition)))
+		{
+			iTailIndex = i;
+			break;
+		}
+		pData[i].vTexCoord = { 1.f ,0.f };
+		pData[i-1].vTexCoord = { 1.f ,1.f };
+	}
+	
+	//머릴 찾을
+	for (_uint i = 1; i < m_iNumVertices -2 ; i+=2)
+	{
+		if (!XMVector3Equal(_float3(pData[i].vPosition), _float3(pData[i + 2].vPosition)))
+		{
+			iHeadIndex = i;
+			break;
+		}
+		pData[i].vTexCoord = { 0.f ,0.f };
+		pData[i-1].vTexCoord = { 0.f ,1.f };
+	}
+
+	iBodyCount = iTailIndex - iHeadIndex;
+	if (iBodyCount != 0)
+	{
+		for (_int i = iTailIndex; i >= iHeadIndex-1; i-=2)
+		{
+			float t = static_cast<float>(i - iHeadIndex) / static_cast<float>(iBodyCount);
+			pData[i].vTexCoord = { t ,0.f };
+			pData[i-1].vTexCoord = { t ,1.f };
+		}
+	}
+
 	for (_uint i = m_iNumVertices - 1; i >= 2 ; --i)
 	{
 		pData[i].vPosition = pData[i - 2].vPosition;
@@ -216,6 +256,86 @@ void CVIBuffer_Rect_Trail::Tick()
 
 	m_pContext->Unmap(m_pVB, 0);
 }
+
+//void CVIBuffer_Rect_Trail::Tick_Spline()
+//{
+//	std::lock_guard<std::mutex> lock(mtx);
+//
+//	// Local Position
+//	_float3 vHighPos = ((*m_TrailDesc.pHighLocalMatrix) * (*m_TrailDesc.pPivotMatrix)).Translation();
+//	_float3 vLowPos = ((*m_TrailDesc.pLowLocalMatrix) * (*m_TrailDesc.pPivotMatrix)).Translation();
+//
+//	// World Position
+//	_float3 vHighWorldPos = XMVector3TransformCoord(vHighPos, *m_TrailDesc.pWorldMatrix);
+//	_float3 vLowWorldPos = XMVector3TransformCoord(vLowPos, *m_TrailDesc.pWorldMatrix);
+//
+//	D3D11_MAPPED_SUBRESOURCE	MappedSubResource;
+//
+//	m_pContext->Map(m_pVB, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &MappedSubResource);
+//
+//	VTXPOSTEX* pData = static_cast<VTXPOSTEX*>(MappedSubResource.pData);
+//
+//
+//	//몸통의 크기를 구함.
+//	_int iHeadIndex = { 0 };
+//	_int iTailIndex = { 0 };
+//	_int iBodyCount = { 0 };
+//
+//	//꼬리 찾을
+//	for (_uint i = m_iNumVertices - 1; i >= 2; i -= 2)
+//	{
+//		if (!XMVector3Equal(_float3(pData[i].vPosition), _float3(pData[i - 2].vPosition)))
+//		{
+//			iTailIndex = i;
+//			break;
+//		}
+//	}
+//	//머릴 찾을
+//	for (_uint i = 1; i < m_iNumVertices - 2; i += 2)
+//	{
+//		if (!XMVector3Equal(_float3(pData[i].vPosition), _float3(pData[i + 2].vPosition)))
+//		{
+//			iHeadIndex = i;
+//			break;
+//		}
+//	}
+//
+//	iBodyCount = iTailIndex - iHeadIndex;
+//
+//	//정점보다 바디가 작으면(무조건 첫 이동임.)
+//	if (iBodyCount < m_iNumVertices)
+//	{
+//		//그냥 전체 러프
+//		for (_uint i = 0; i < m_iNumVertices; i += 2)
+//		{
+//			pData[i].vPosition = _float3(XMVectorLerp(_float3(pData[i].vPosition), vLowWorldPos, (_float)(m_iNumVertices - i)/ (_float)m_iNumVertices));
+//			pData[i+1].vPosition = _float3(XMVectorLerp(_float3(pData[i+1].vPosition), vHighWorldPos, (_float)(m_iNumVertices - (i + 1)) / (_float)m_iNumVertices));
+//		}
+//	}
+//	else
+//	{
+//		//아니면, 꼬리부터 한칸씩 땡겨서 이동하고, 남은 친구들은 내가 써먹을거임.
+//		_uint iIndex = 0;
+//		for (_uint i = m_iNumVertices - 1; i >= 2; i-=2)
+//		{
+//			if (m_iNumVertices / 2 < iIndex)
+//				break;
+//			pData[i].vPosition = pData[i - 2 - iIndex].vPosition;
+//			pData[i-1].vPosition = pData[(i - 1) - 2 - iIndex].vPosition;
+//			iIndex += 2;
+//		}
+//
+//		_uint iCnt = 0;
+//		for(_uint i = iIndex; i < m_iNumVertices;i += 2)
+//		{
+//			_float fValue = ((m_iNumVertices - iIndex) - iCnt) / (m_iNumVertices - iIndex);
+//			pData[i].vPosition = _float3(XMVectorCatmullRom(_float3(pData[iIndex-2].vPosition), _float3(pData[iIndex].vPosition), _float3(pData[0].vPosition), vLowWorldPos, fValue));
+//			pData[i + 1].vPosition = _float3(XMVectorCatmullRom(_float3(pData[iIndex - 2].vPosition), _float3(pData[iIndex].vPosition), _float3(pData[1].vPosition), vLowWorldPos, fValue));
+//			iCnt++;
+//		}
+//	}
+//	m_pContext->Unmap(m_pVB, 0);
+//}
 
 HRESULT CVIBuffer_Rect_Trail::Render(const _char* pConstantName, _float4 vColor, CShader* pShader, const _char* pPassName)
 {

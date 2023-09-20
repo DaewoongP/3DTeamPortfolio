@@ -1,6 +1,6 @@
 #include "..\Public\Transform.h"
 #include "RigidBody.h"
-#include "CharacterController.h"
+#include "GameInstance.h"
 
 CTransform::CTransform(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CComponent(pDevice, pContext)
@@ -11,6 +11,28 @@ CTransform::CTransform(const CTransform& rhs)
 	: CComponent(rhs)
 	, m_WorldMatrix(rhs.m_WorldMatrix)
 {
+}
+
+_float3 CTransform::Get_Scale_With_Negative() const
+{
+	_float3 vScale = { 1.f, 1.f, 1.f };
+
+	if (0.f > m_WorldMatrix.m[0][0])
+		vScale.x = Get_Right().Length() * -1.f;
+	else
+		vScale.x = Get_Right().Length();
+
+	if (0.f > m_WorldMatrix.m[1][1])
+		vScale.y = Get_Up().Length() * -1.f;
+	else
+		vScale.y = Get_Up().Length();
+
+	if (0.f > m_WorldMatrix.m[2][2])
+		vScale.z = Get_Look().Length() * -1.f;
+	else
+		vScale.z = Get_Look().Length();
+
+	return vScale;
 }
 
 _float4 CTransform::Get_Quaternion()
@@ -73,18 +95,30 @@ void CTransform::Set_Scale(_float3 _vScale)
 void CTransform::Set_Scale_No_Zero(_float3 _vScale)
 {
 	/* Tool에서 맵 오브젝트를 설치할 때 실수로 0의 값을 집어넣는
-	경우를 막기위한 함수*/
+	경우를 막기위한 함수 */
+	/* 추가로 음수값도 잘 받도록 조절 */
 
 	_float3 vRight = Get_Right();
 	_float3 vUp = Get_Up();
 	_float3 vLook = Get_Look();
 
+	// 값이 0이 안되도록 막음
 	if (0.f == _vScale.x)
 		_vScale.x = 0.1f;
 	if (0.f == _vScale.y)
 		_vScale.y = 0.1f;
 	if (0.f == _vScale.z)
 		_vScale.z = 0.1f;
+
+	// 스케일 부호 고정
+	if (0.f > vRight.x)
+		_vScale.x *= -1.f;
+
+	if (0.f > vUp.y)
+		_vScale.y *= -1.f;
+
+	if (0.f > vLook.z)
+		_vScale.z *= -1.f;
 
 	Set_Right(XMVector3Normalize(vRight) * _vScale.x);
 	Set_Up(XMVector3Normalize(vUp) * _vScale.y);
@@ -109,11 +143,30 @@ void CTransform::Set_Look(_float3 _vLook)
 void CTransform::Set_Position(_float3 _vPosition)
 {
 	memcpy(&m_WorldMatrix.m[3][0], &_vPosition, sizeof(_float3));
+	
+	m_ubTransformChanged |= CHANGEFLAG::TRANSLATION;
 }
 
 void CTransform::Set_WorldMatrix(_float4x4 _WorldMatrix)
 {
 	m_WorldMatrix = _WorldMatrix;
+
+	if (nullptr != m_pRigidBody)
+	{
+		CPhysX_Manager* pPhysX_Manager = CPhysX_Manager::GetInstance();
+		Safe_AddRef(pPhysX_Manager);
+
+		m_pRigidBody->Set_Position(Get_Position());
+		m_pRigidBody->Set_Rotation(Get_Quaternion());
+
+		pPhysX_Manager->Tick(1 / 60.f);
+
+		Set_Position(m_pRigidBody->Get_Position());
+		Set_Quaternion(m_pRigidBody->Get_Rotation());
+
+		Safe_Release(pPhysX_Manager);
+	}
+	
 	m_ubTransformChanged |= CHANGEFLAG::ROTATION | CHANGEFLAG::TRANSLATION;
 }
 
@@ -132,7 +185,7 @@ HRESULT CTransform::Initialize(void* pArg)
 
 void CTransform::Tick(_float fTimeDelta)
 {
-	Update_Components(fTimeDelta);
+	Update_Components();
 }
 
 void CTransform::Move_Direction(_float3 vDirection, _float fTimeDelta)
@@ -267,6 +320,25 @@ void CTransform::Set_Quaternion(_float4 vQuaternion)
 	m_ubTransformChanged |= CHANGEFLAG::ROTATION;
 }
 
+void CTransform::Set_Quaternion_With_Negative(_float4 vQuaternion)
+{
+	_float3 vScale = Get_Scale_With_Negative();
+
+	_float3 vRight, vUp, vLook;
+
+	vRight = XMVectorSet(1.f, 0.f, 0.f, 0.f) * vScale.x;
+	vUp = XMVectorSet(0.f, 1.f, 0.f, 0.f) * vScale.y;
+	vLook = XMVectorSet(0.f, 0.f, 1.f, 0.f) * vScale.z;
+
+	_float4x4 RotationMatrix = XMMatrixRotationQuaternion(vQuaternion);
+
+	Set_Right(XMVector3TransformNormal(vRight, RotationMatrix));
+	Set_Up(XMVector3TransformNormal(vUp, RotationMatrix));
+	Set_Look(XMVector3TransformNormal(vLook, RotationMatrix));
+
+	m_ubTransformChanged |= CHANGEFLAG::ROTATION;
+}
+
 void CTransform::LookAt(_float3 _vTarget, _bool _isDeleteY)
 {
 	_float3 vPosition = Get_Position();
@@ -287,49 +359,42 @@ void CTransform::LookAt(_float3 _vTarget, _bool _isDeleteY)
 	m_ubTransformChanged |= CHANGEFLAG::ROTATION;
 }
 
-void CTransform::Update_Components(_float fTimeDelta)
+void CTransform::Update_Components()
 {
-	/* Rigid Body */
-	if (nullptr != m_pRigidBody)
-	{
-		if (m_ubTransformChanged & CHANGEFLAG::TRANSLATION)
-		{
-			m_pRigidBody->Set_Position(Get_Position());
-		}
-		else
-		{
-			Set_Position(m_pRigidBody->Get_Position());
-		}
+	if (nullptr == m_pRigidBody)
+		return;
 
-		if (m_ubTransformChanged & CHANGEFLAG::ROTATION)
-		{
-			m_pRigidBody->Set_Rotation(Get_Quaternion());
-		}
-		else
-		{
-			Set_Quaternion(m_pRigidBody->Get_Rotation());
-		}
+	if (m_ubTransformChanged & CHANGEFLAG::TRANSLATION)
+	{
+		m_pRigidBody->Set_Position(Get_Position());
+	}
+	else
+	{
+		Set_Position(m_pRigidBody->Get_Position());
 	}
 
-	/* Character Controller */
-	if (nullptr != m_pCharacterController)
+	if (m_ubTransformChanged & CHANGEFLAG::ROTATION)
 	{
-		if (m_ubTransformChanged & CHANGEFLAG::TRANSLATION)
-		{
-			m_pCharacterController->Set_Position(Get_Position());
-		}
-		else
-		{
-			Set_Position(m_pCharacterController->Get_Position());
-		}
+		m_pRigidBody->Set_Rotation(Get_Quaternion());
 	}
+	else
+	{
+		Set_Quaternion(m_pRigidBody->Get_Rotation());
+	}
+
+	// Controller
+	/*if (m_ubTransformChanged & CHANGEFLAG::TRANSLATION)
+		controller->Translate(Get_Position());
+	else
+		m_Position = controller->GetPosition();*/
+
 
 	m_ubTransformChanged = CHANGEFLAG::NONE;
 }
 
 CTransform* CTransform::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CTransform* pInstance = New CTransform(pDevice, pContext);
+	CTransform* pInstance = new CTransform(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -342,7 +407,7 @@ CTransform* CTransform::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
 
 CComponent* CTransform::Clone(void* pArg)
 {
-	CTransform* pInstance = New CTransform(*this);
+	CTransform* pInstance = new CTransform(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
@@ -358,5 +423,4 @@ void CTransform::Free()
 	__super::Free();
 
 	Safe_Release(m_pRigidBody);
-	Safe_Release(m_pCharacterController);
 }

@@ -27,23 +27,26 @@ HRESULT CWeapon_Player_Wand::Initialize(void* pArg)
 	//매쉬에서 원점과 가장 먼 지점을 찾는 로직.(지팡이 끝 지점을 얻어내기 위함임.)
 	vector<class CMesh*>* meshVec = m_pModelCom->Get_MeshesVec();
 
-	_float dist = 1000;
+	_float dist = 0;
 	_float sub = 0;
+	// 모든 매쉬들을 순회하면서
 	for (auto mesh : (*meshVec))
 	{
+		// 모든 정점들을 순회하면서
 		vector<_float3>* pointVec = mesh->Get_VerticesPositionVec();
 		for (auto point : (*pointVec))
 		{
-			sub = XMVectorGetX(point - _float3(0, 0, 0));
-			if (sub < dist)
+			// 완드의 원점에서 제일 먼 점을 찾는다.
+			sub = point.Length();
+			if (sub > dist)
 			{
 				dist = sub;
-				m_WandPointOffset = point;
+				m_WandPointOffsetMatrix = _float4x4(XMMatrixTranslation(point.x, point.y, point.z)) * m_pModelCom->Get_PivotFloat4x4();
 			}
 		}
 	}
 
-	m_pTransform->Set_Speed(10.f);
+ 	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
 
 	return S_OK;

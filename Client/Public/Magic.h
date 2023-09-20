@@ -79,8 +79,12 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 
 public:
+	//구조체 재설정부임.
+	virtual HRESULT ResetMagicDesc(MAGICDESC SkillDesc);
+
+public:
 	//목표와 시작 위치를 설정해줌. 지팡이에서 파티클 재생을 해주기위해 지팡이도 던져줌.
-	virtual _bool Magic_Cast(class CTransform* pTarget,class CWeapon_Player_Wand* pWeapon);
+	virtual _bool Magic_Cast(class CTransform* pTarget, _float4x4 targetOffsetMatrix, const _float4x4* pWeaponMatrix, _float4x4 offsetMatrix);
 	virtual HRESULT Add_ActionFunc(function<void()> func);
 
 protected:

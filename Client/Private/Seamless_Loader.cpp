@@ -62,7 +62,7 @@ HRESULT CSeamless_Loader::Ready_Layer_Debug(const _tchar* pLayerTag)
 {
 	std::lock_guard<std::mutex> lock(mtx);
 
-	if (FAILED(m_pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Golem_Combat"), pLayerTag, TEXT("GameObject_Golem_Combat0"))))
+	/*if (FAILED(m_pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Golem_Combat"), pLayerTag, TEXT("GameObject_Golem_Combat0"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Golem_Combat)");
 		return E_FAIL;
@@ -72,7 +72,7 @@ HRESULT CSeamless_Loader::Ready_Layer_Debug(const _tchar* pLayerTag)
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Golem_Merlin)");
 		return E_FAIL;
-	}
+	}*/
 
 	return S_OK;
 }

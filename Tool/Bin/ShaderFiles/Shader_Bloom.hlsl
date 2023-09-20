@@ -173,18 +173,22 @@ PS_OUT PS_MAIN_BLOOM(PS_IN_POSTEX In)
     
     
     float BrightColor = 0.f;
-    float Brigtness = dot(vBloom.rgb, float3(0.2126f, 0.7152f, 0.0722f));
+    //float Brigtness = dot(vBloom.rgb, float3(0.2126f, 0.7152f, 0.0722f));
+    float Brigtness = dot(vBloom.rgb, float3(1.f, 1.f, 1.f));
    
     if (Brigtness > 0.99f)
     {
         BrightColor = vector(vBloom.rgb, 1.f);
-        Out.vColor = BrightColor;
+        Out.vColor = BrightColor*2;
     }
     else
         discard;
     
     
-    
+    //Out.vColor = vBloom;
+    if(Out.vColor.a <= 0.1f)
+        discard;
+
     return Out;
 }
 
@@ -262,7 +266,7 @@ technique11 DefaultTechnique
     pass FinBloom
     {
         SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_Depth_Disable, 0);
+        SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_BlendOne, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN_POSTEX();
         GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;

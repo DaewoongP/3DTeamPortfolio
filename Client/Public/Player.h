@@ -8,7 +8,7 @@ class CShader;
 class CRenderer;
 class CCollider;
 class CCustomModel;
-
+class CRigidBody;
 END
 
 BEGIN(Client)
@@ -53,14 +53,15 @@ private:
 
 	CStateContext* m_pStateContext = { nullptr };
 	
-	/* 마법을 위한 공간 */
-	class CMagic*	m_pMagic = { nullptr };
+	//평타, 실드가 이미 탑재된 마법 슬롯 
+	class CMagicSlot*	m_pMagicSlot = { nullptr };
 	CWeapon_Player_Wand*	m_pWeapon = { nullptr };
 
 
 private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
+	HRESULT Add_Magic();
 
 private:
 	void Key_Input(_float fTimeDelta);
@@ -77,6 +78,7 @@ public:
 #ifdef _DEBUG
 private:
 	void Tick_ImGui();
+	_bool	m_isGravity;
 #endif // _DEBUG
 
 private:

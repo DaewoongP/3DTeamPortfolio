@@ -31,8 +31,6 @@ public:
 		_float fLifetime;
 	}TRAIL_POINT;
 
-
-
 protected:
 	CTrail(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CTrail(const CTrail& rhs);
@@ -58,19 +56,22 @@ public:
 	void Set_Trail_TailColor(_float3 vColor) { m_vTailColor = vColor; }
 	void Set_LocalSpace(const _float4x4* matrix) { m_LocalSpace = matrix; }
 
+public:/* For. Moving*/
+	void	Stright_Move(_float3 vTargerPosition, _float3 vStartPosition, _float fLerpAcc);
+	void	Spin_Move(_float3 vTargerPosition, _float3 vStartPosition, _float fLerpAcc);
+	void	Spline_Move(_float3 vSpline01, _float3 vTargerPosition, _float3 vStartPosition, _float3 vSpline02, _float fLerpAcc);
+
 protected:
 	HRESULT Save(const _tchar* pFilePath);
 	HRESULT Load(const _tchar* pFilePath);
 
-protected: /* For. Component */
+protected: 
 	_uint m_iLevel = { 0 };
 	string	m_strPass = "Default";
-	//wstring m_wstrPath = { TEXT("../../Resources/Effects/Textures/Default_Particle.png") };
-	//wstring m_wstrPath = { TEXT("../../Resources/Effects/Textures/Trails/Winga.png") };
 	wstring m_wstrPath = { TEXT("../../Resources/Effects/Textures/Trails/Winga.png") };
 	_bool m_isEnable = { true };
 
-	_uint     m_iTrailNum = { 50 };
+	_uint     m_iTrailNum = { 20 };
 	_float4x4 m_PivotMatrix = _float4x4();
 	_float4x4 m_HighLocalMatrix = _float4x4();
 	_float4x4 m_LowLocalMatrix = _float4x4();
@@ -89,7 +90,6 @@ protected: /* For. Component */
 	
 	//로컬스페이스용
 	const _float4x4* m_LocalSpace = { nullptr };
-	_float4x4		 m_CombineMatrix;
 
 protected:
 	CRenderer* m_pRenderer = { nullptr };

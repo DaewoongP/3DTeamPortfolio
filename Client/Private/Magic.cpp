@@ -60,7 +60,22 @@ void CMagic::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 }
 
-_bool CMagic::Magic_Cast(CTransform* pTarget, class CWeapon_Player_Wand* pWeapon)
+HRESULT CMagic::ResetMagicDesc(MAGICDESC SkillDesc)
+{
+	m_eMagicGroup = SkillDesc.eMagicGroup;
+	m_eMagicType = SkillDesc.eMagicType;
+	m_eBuffType = SkillDesc.eBuffType;
+	m_fInitCoolTime = SkillDesc.fCoolTime;
+	m_fDamage = SkillDesc.fDamage;
+	m_fCastDistance = SkillDesc.fCastDistance;
+	m_fBallDistance = SkillDesc.fBallDistance;
+	m_eMagicTag = SkillDesc.eMagicTag;
+	m_fLifeTime = SkillDesc.fLifeTime;
+
+	return S_OK;
+}
+
+_bool CMagic::Magic_Cast(CTransform* pTarget, _float4x4 targetOffsetMatrix, const _float4x4* pWeaponMatrix, _float4x4 WeaponOffsetMatrix)
 {
 	if (m_fCurrentCoolTime <= 0)
 	{
@@ -73,9 +88,10 @@ _bool CMagic::Magic_Cast(CTransform* pTarget, class CWeapon_Player_Wand* pWeapon
 		ballInit.fDamage = m_fDamage;
 		ballInit.fDistance = m_fBallDistance;
 		ballInit.pTarget = pTarget;
+		ballInit.TargetOffsetMatrix = targetOffsetMatrix;
 		ballInit.fLifeTime = m_fLifeTime;
-		ballInit.pWeapon = pWeapon;
-
+		ballInit.pWeaponMatrix = pWeaponMatrix;
+		ballInit.WeaponOffsetMatrix = WeaponOffsetMatrix;
 		BEGININSTANCE;
 
 		//타입별 생성을 위한 태그지정임.
