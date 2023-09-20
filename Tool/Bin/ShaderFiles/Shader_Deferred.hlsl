@@ -337,7 +337,7 @@ PS_OUT PS_MAIN_DEFERRED(PS_IN In)
     //vector vSoftShadow = g_SoftShadowTexuture.Sample(LinearSampler, In.vTexUV);
     vector vSSAO = g_SSAOTexture.Sample(LinearSampler, In.vTexUV);
 
-    Out.vColor = vDiffuse * vShadow * vShade * vBlur;
+    Out.vColor = vDiffuse /** vShadow*/ * vShade * vBlur;
     //+0.5f * vSpecular;
 
     return Out;

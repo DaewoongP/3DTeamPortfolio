@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Animation.h" />
+    <ClInclude Include="..\Public\FlowMap.h" />
     <ClInclude Include="..\public\MotionBlur.h" />
     <ClInclude Include="..\public\VIBuffer_UVSphere.h" />
     <ClInclude Include="..\public\VIBuffer_Rect_Color_Index_Instance.h" />
@@ -152,6 +153,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Animation.cpp" />
+    <ClCompile Include="..\Private\FlowMap.cpp" />
     <ClCompile Include="..\private\MotionBlur.cpp" />
     <ClCompile Include="..\private\VIBuffer_UVSphere.cpp" />
     <ClCompile Include="..\private\VIBuffer_Rect_Color_Index_Instance.cpp" />
@@ -282,6 +284,7 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Flipbook.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Distortion.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_FlowMap.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Geometry.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Glow.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_MotionBlur.hlsl" />

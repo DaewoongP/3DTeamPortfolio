@@ -394,6 +394,9 @@
     <Filter Include="01. Utility\03. Components\02. Renderer\MotionBlur">
       <UniqueIdentifier>{50bb8723-6c2a-45e6-a66c-2b1024726999}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\03. Components\02. Renderer\FlowMap">
+      <UniqueIdentifier>{bda6b89d-6c62-4ec2-8788-194e69c46dc7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -786,6 +789,9 @@
     <ClInclude Include="..\public\MotionBlur.h">
       <Filter>01. Utility\03. Components\02. Renderer\MotionBlur</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\FlowMap.h">
+      <Filter>01. Utility\03. Components\02. Renderer\FlowMap</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -1142,9 +1148,11 @@
     <ClCompile Include="..\private\PXEventCallBack.cpp">
       <Filter>01. Utility\11. Physics\EventCallBack</Filter>
     </ClCompile>
-    <ClCompile Include="..\Public\PxDeviceAllocator.h" />
     <ClCompile Include="..\private\MotionBlur.cpp">
       <Filter>01. Utility\03. Components\02. Renderer\MotionBlur</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\FlowMap.cpp">
+      <Filter>01. Utility\03. Components\02. Renderer\FlowMap</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1204,6 +1212,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_MotionBlur.hlsl">
       <Filter>01. Utility\03. Components\02. Renderer\MotionBlur</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_FlowMap.hlsl">
+      <Filter>01. Utility\03. Components\02. Renderer\FlowMap</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

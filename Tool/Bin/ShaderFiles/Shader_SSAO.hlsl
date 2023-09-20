@@ -436,23 +436,35 @@ PS_OUT PS_MAIN_BLURX(PS_IN In)
     PS_OUT Out = (PS_OUT) 0;
     
     
-    float dx = 1.0f / 1280.f/2.f;
-    
+    float dx = 1.0f / 1280.f;
+    float dy = 1.f / (720.f / 2.f);
     float2 UV = 0;
+    float Color = g_SSAOTexture.Sample(BlurSampler, In.vTexUV).x;
     
-    for (int i = -15; i < 15; ++i)
+    //if(Color>0.9f)
+    //{
+    //    Out.vColor = 1.f;
+    //    return Out;
+    //}
+       
+    
+   // for (int j = -15; j < 15;++j)
     {
+        for (int i = -15; i < 15; ++i)
+        {
 
-        UV = In.vTexUV + float2(dx * i, 0.f);
-        vector SSAO = g_SSAOTexture.Sample(BlurSampler, UV);
+            UV = In.vTexUV + float2(dx * i,0);
+            vector SSAO = g_SSAOTexture.Sample(BlurSampler, UV);
         
-        Out.vColor += BlurWeights[15 + i] * SSAO;
+            Out.vColor += BlurWeights[15 + i] * SSAO;
+        }
     }
-    Out.vColor /= total;
-    //Out.vColor = (SSAO.xyz, 0.f);
+        Out.vColor /= total;
+     
     return Out;
-}
-PS_OUT PS_MAIN_BLURY(PS_IN In)
+ }
+
+    PS_OUT PS_MAIN_BLURY(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
     
