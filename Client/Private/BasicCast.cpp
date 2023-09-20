@@ -56,6 +56,7 @@ HRESULT CBasicCast::Initialize(void* pArg)
 		if (FAILED(pGameInstance->Get_WorldMouseRay(m_pContext, g_hWnd, &vMouseOrigin, &vMouseDirection)))
 		{
 			Safe_Release(pGameInstance);
+			ENDINSTANCE;
 			return false;
 		}
 		ENDINSTANCE;
@@ -71,51 +72,33 @@ HRESULT CBasicCast::Initialize(void* pArg)
 		m_vTargetPosition = m_pTarget->Get_Position();
 	}
 
-	// 플레이어가 타겟을 보는 vector를 구함.
-	_float3 vDir = m_vTargetPosition - m_MagicBallDesc.vStartPosition;
-	_float3 vDirNormalize = XMVector3Normalize(vDir);
-
-	//// 그 vector를 플레이어 기준 반대방향으로 1만큼 이동한 뒤 랜덤값을 잡아줌
-	//while (m_vLerpWeight[0].Length() < vDir.Length())
-	//{
-	//	m_vLerpWeight[0] = m_MagicBallDesc.vStartPosition - vDirNormalize;
-	//	m_vLerpWeight[0] += _float3(Random_Generator(-20.f, 20.f), Random_Generator(-20.f, 20.f), Random_Generator(-20.f, 20.f));
-	//}
-	//
-
-	//// 그 vector를 타겟 기준 정방향으로 1만큼 이동한 뒤 랜덤값을 잡아줌
-	//while (m_vLerpWeight[1].Length() < vDir.Length())
-	//{
-	//	m_vLerpWeight[1] = m_vTargetPosition + vDirNormalize;
-	//	m_vLerpWeight[1] += _float3(Random_Generator(-20.f, 20.f), Random_Generator(-20.f, 20.f), Random_Generator(-20.f, 20.f));
-	//}
-
+	m_pTrailEffect->Ready_Spline(m_vTargetPosition, m_MagicBallDesc.vStartPosition, m_MagicBallDesc.fLifeTime, m_MagicBallDesc.fDistance);
 	return S_OK;
 }
 
 void CBasicCast::Tick(_float fTimeDelta)
 {
-	if (m_MagicBallDesc.fLifeTime > 0)
+	__super::Tick(fTimeDelta);
+	//사망처리 걸리면 재생
+	if (m_bDeadTrigger)
 	{
-		m_fLerpAcc += fTimeDelta / m_MagicBallDesc.fInitLifeTime;
-		_float3 movedPos = XMVectorCatmullRom(m_vLerpWeight[0], m_MagicBallDesc.vStartPosition, m_vTargetPosition, m_vLerpWeight[1], m_fLerpAcc);
-		if (m_pTransform != nullptr)
-			m_pTransform->Set_Position(movedPos);
-
-		if (m_pEffectTrans != nullptr)
-			m_pEffectTrans->Set_Position(m_pTransform->Get_Position());
+		//파티클 끝나면 없애줘.
+		if (!m_pEffect->IsEnable())
+			Set_ObjEvent(OBJ_DEAD);
+		return;
 	}
-	else 
+	
+	if (m_pTrailEffect->Spline_Move(fTimeDelta))
 	{
+		//사망처리
 		if (!m_bDeadTrigger)
 		{
 			m_bDeadTrigger = true;
-			m_pEffect->Play_Particle(m_pTransform->Get_Position());
+			m_pEffect->Play_Particle(m_pTrailEffect->Get_Transform()->Get_Position());
 		}
-		if(!m_pEffect->IsEnable())
-			Set_ObjEvent(OBJ_DEAD);
 	}
-	__super::Tick(fTimeDelta);
+	//m_pEffect->Play_ConeEmit()
+	m_pTransform->Set_Position(m_pTrailEffect->Get_Transform()->Get_Position());
 }
 
 void CBasicCast::Late_Tick(_float fTimeDelta)
@@ -125,6 +108,13 @@ void CBasicCast::Late_Tick(_float fTimeDelta)
 
 void CBasicCast::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
+	//몹이랑 충돌했으면?
+	if (wcsstr(CollisionEventDesc.pOtherCollisionTag,TEXT("Enemy_Body")) != nullptr)
+	{
+		//사망처리 드갑니다.
+		m_bDeadTrigger = true;
+		m_pEffect->Play_Particle(m_pTrailEffect->Get_Transform()->Get_Position());
+	}
 	__super::OnCollisionEnter(CollisionEventDesc);
 }
 
@@ -145,10 +135,19 @@ HRESULT CBasicCast::Add_Components()
 
 HRESULT CBasicCast::Add_Effect()
 {
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Default_Magic_Effect"), 
-		TEXT("Layer_Effect"), reinterpret_cast<CComponent**>(&m_pEffect))))
+	CDefault_MagicTraill_Effect::INITDESC initDesc;
+	initDesc.vInitPosition = m_MagicBallDesc.vStartPosition;
+	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_MagicTraill_BasicCast_Effect"),
+		TEXT("Com_TrailEffect"), reinterpret_cast<CComponent**>(&m_pTrailEffect), &initDesc)))
 	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Default_Magic_Effect)");
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_MagicTraill_BasicCast_Effect)");
+		return E_FAIL;
+	}
+
+	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Default_Magic_Effect"), 
+		TEXT("Com_DefaultEffect"), reinterpret_cast<CComponent**>(&m_pEffect))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Default_Magic_Effect)");
 		return E_FAIL;
 	}
 
@@ -187,6 +186,7 @@ void CBasicCast::Free()
 	__super::Free();
 	if (true == m_isCloned)
 	{
+		Safe_Release(m_pTrailEffect);
 		Safe_Release(m_pEffectTrans);
 		Safe_Release(m_pEffect);
 	}

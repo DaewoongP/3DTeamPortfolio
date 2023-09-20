@@ -40,6 +40,13 @@ HRESULT CPlayer::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
+	if (FAILED(Add_Magic()))
+	{
+		MSG_BOX("Failed Ready Player Magic");
+
+		return E_FAIL;
+	}
+
 	if (FAILED(Ready_MeshParts()))
 	{
 		MSG_BOX("Failed Ready Player Mesh Parts");
@@ -49,7 +56,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 	if (FAILED(Ready_Camera()))
 	{
-		MSG_BOX("Failed Ready Player Caemra");
+		MSG_BOX("Failed Ready Player Camera");
 
 		return E_FAIL;
 	}
@@ -86,27 +93,29 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	if (nullptr != m_pRenderer)
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+
+#ifdef _DEBUG
+		m_pRenderer->Add_DebugGroup(m_pRigidBody);
+#endif // _DEBUG
 	}
 
 #ifdef _DEBUG
-	m_pRenderer->Add_DebugGroup(m_pRigidBody);
 	Tick_ImGui();
 #endif // _DEBUG
 }
 
 void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
-	//cout << "Player Enter" << endl;
 }
 
 void CPlayer::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)
 {
-	//cout << "stay" << endl;
+	// ÅÍ·¹ÀÎ ÆÇ´Ü ±¸¹®ÀÔ´Ï´Ù.
+	//if (wcswcs(CollisionEventDesc.pOtherCollisionTag, L"Terrain"))
 }
 
 void CPlayer::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 {
-	//cout << "Exit" << endl;
 }
 
 HRESULT CPlayer::Render()
@@ -126,6 +135,7 @@ HRESULT CPlayer::Render()
 			m_pCustomModel->Bind_BoneMatrices(m_pShader, "g_BoneMatrices", iPartsIndex, i);
 
 			m_pCustomModel->Bind_Material(m_pShader, "g_DiffuseTexture", iPartsIndex, i, DIFFUSE);
+			m_pCustomModel->Bind_Material(m_pShader, "g_NormalTexture", iPartsIndex, i, NORMALS);
 
 			m_pShader->Begin("AnimMeshNonCull");
 
@@ -199,37 +209,33 @@ HRESULT CPlayer::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_MagicSlot"),
 		TEXT("Com_MagicSlot"), reinterpret_cast<CComponent**>(&m_pMagicSlot))))
 	{
-		MSG_BOX("Failed CTest_Player Add_Component : (Com_MagicSlot)");
+		MSG_BOX("Failed CPlayer Add_Component : (Com_MagicSlot)");
 		return E_FAIL;
 	}
 
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
+	CRigidBody::RIGIDBODYDESC RigidBodyDesc;
+	RigidBodyDesc.isStatic = false;
+	RigidBodyDesc.isTrigger = false;
+	RigidBodyDesc.isGravity = true;
+	RigidBodyDesc.vInitPosition = _float3(2.f, 0.f, 2.f);
+	RigidBodyDesc.vInitRotation = m_pTransform->Get_Quaternion();
+	RigidBodyDesc.fStaticFriction = 0.f;
+	RigidBodyDesc.fDynamicFriction = 0.f;
+	RigidBodyDesc.fRestitution = 0.f;
+	PxCapsuleGeometry MyGeometry = PxCapsuleGeometry(0.5f, 0.5f);
+	RigidBodyDesc.pGeometry = &MyGeometry;
+	RigidBodyDesc.vOffsetPosition = _float3(0.f, MyGeometry.halfHeight + MyGeometry.radius, 0.f);
+	RigidBodyDesc.vOffsetRotation = XMQuaternionRotationRollPitchYaw(0.f, 0.f, XMConvertToRadians(90.f));
+	RigidBodyDesc.eConstraintFlag = CRigidBody::RotX | CRigidBody::RotZ;
+	RigidBodyDesc.vDebugColor = _float4(1.f, 105 / 255.f, 180 / 255.f, 1.f); // hot pink
+	RigidBodyDesc.pOwnerObject = this;
+	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Player_Default");
 
-	PxCapsuleControllerDesc CapsuleControllerDesc;
-	CapsuleControllerDesc.setToDefault();
-	CapsuleControllerDesc.height = 1.f;
-	CapsuleControllerDesc.radius = 0.5f;
-	CapsuleControllerDesc.material = pGameInstance->Get_Physics()->createMaterial(0.5f, 0.5f, 0.5f);
-	CapsuleControllerDesc.density = 10.f;
-	CapsuleControllerDesc.stepOffset = 0.5f;
-	CapsuleControllerDesc.contactOffset = 1.f;
-	CapsuleControllerDesc.upDirection = PxVec3(0.f, 1.f, 0.f);
-	CapsuleControllerDesc.userData = this;
-
-	Safe_Release(pGameInstance);
-
-	if (false == CapsuleControllerDesc.isValid())
+	/* Com_RigidBody */
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
+		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
 	{
-		MSG_BOX("Failed Create Character Controller");
-		return E_FAIL;
-	}
-
-	/* For.Com_Controller */
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_CharacterController"),
-		TEXT("Com_CharacterController"), reinterpret_cast<CComponent**>(&m_pCharacterController), &CapsuleControllerDesc)))
-	{
-		MSG_BOX("Failed CTest_Player Add_Component : (Com_CharacterController)");
+		MSG_BOX("Failed CPlayer Add_Component : (Com_RigidBody)");
 		return E_FAIL;
 	}
 
@@ -254,9 +260,52 @@ HRESULT CPlayer::SetUp_ShaderResources()
 	return S_OK;
 }
 
+HRESULT CPlayer::Add_Magic()
+{
+	CMagic::MAGICDESC magicInitDesc;
+	// ·¹ºñ¿À¼Ò
+	{
+		magicInitDesc.eBuffType = CMagic::BUFF_UNGRAVITY;
+		magicInitDesc.eMagicGroup = CMagic::MG_CONTROL;
+		magicInitDesc.eMagicType = CMagic::MT_YELLOW;
+		magicInitDesc.eMagicTag = LEVIOSO;
+		magicInitDesc.fCoolTime = 1.f;
+		magicInitDesc.fDamage = 0.f;
+		magicInitDesc.fCastDistance = 1000;
+		magicInitDesc.fBallDistance = 30;
+		magicInitDesc.fLifeTime = 1.2f;
+		m_pMagicSlot->Add_Magics(magicInitDesc);
+	}
+
+	// ÄÜÇÁ¸µ°í
+	{
+		magicInitDesc.eBuffType = CMagic::BUFF_FIRE;
+		magicInitDesc.eMagicGroup = CMagic::MG_DAMAGE;
+		magicInitDesc.eMagicType = CMagic::MT_RED;
+		magicInitDesc.eMagicTag = CONFRINGO;
+		magicInitDesc.fCoolTime = 1.f;
+		magicInitDesc.fDamage = 50.f;
+		magicInitDesc.fCastDistance = 1000;
+		magicInitDesc.fBallDistance = 30;
+		magicInitDesc.fLifeTime = 0.8f;
+		m_pMagicSlot->Add_Magics(magicInitDesc);
+	}
+	
+	m_pMagicSlot->Add_Magic_To_Skill_Slot(0, CONFRINGO);
+	m_pMagicSlot->Add_Magic_To_Skill_Slot(1, LEVIOSO);
+	
+	return S_OK;
+}
+
 void CPlayer::Key_Input(_float fTimeDelta)
 {
 	BEGININSTANCE;
+
+	if (pGameInstance->Get_DIKeyState(DIK_Q, CInput_Device::KEY_DOWN))
+	{
+		//Æ÷¸£Å×°í´Â Å¸ÄÏ ¾ø¾îµµ µÊ.
+		m_pMagicSlot->Action_Magic_Basic(1, m_pTransform, m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
+	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_UP))
 	{
@@ -295,6 +344,45 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		m_pMagicSlot->Action_Magic_Basic(0, pTestTarget->Get_Transform(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
 	}
 
+	if (pGameInstance->Get_DIKeyState(DIK_Q, CInput_Device::KEY_DOWN))
+	{
+		//Æ÷¸£Å×°í´Â Å¸ÄÏÀÌ »ý¼º °´Ã¼ÀÓ
+		m_pMagicSlot->Action_Magic_Basic(1, m_pTransform, m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
+		m_pRigidBody->Disable_Collision("Player_Default");
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_1, CInput_Device::KEY_DOWN))
+	{
+		CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
+		if (nullptr == pTestTarget)
+			throw TEXT("pTestTarget is nullptr");
+		m_pMagicSlot->Action_Magic_Skill(0, pTestTarget->Get_Transform(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_2, CInput_Device::KEY_DOWN))
+	{
+		CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
+		if (nullptr == pTestTarget)
+			throw TEXT("pTestTarget is nullptr");
+		m_pMagicSlot->Action_Magic_Skill(1, pTestTarget->Get_Transform(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_3, CInput_Device::KEY_DOWN))
+	{
+		CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
+		if (nullptr == pTestTarget)
+			throw TEXT("pTestTarget is nullptr");
+		m_pMagicSlot->Action_Magic_Skill(2, pTestTarget->Get_Transform(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_4, CInput_Device::KEY_DOWN))
+	{
+		CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
+		if (nullptr == pTestTarget)
+			throw TEXT("pTestTarget is nullptr");
+		m_pMagicSlot->Action_Magic_Skill(3, pTestTarget->Get_Transform(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
+	}
+
 	ENDINSTANCE;
 }
 
@@ -326,7 +414,7 @@ HRESULT CPlayer::Ready_MeshParts()
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_MAINGAME,
 		TEXT("Prototype_Component_MeshPart_Robe01"),
-		CCustomModel::ROBE), TEXT("../../Resources/GameData/ClothData/Test.cloth")))
+		CCustomModel::ROBE, TEXT("../../Resources/GameData/ClothData/Test.cloth"))))
 	{
 		MSG_BOX("Failed Add MeshPart Robe");
 	
@@ -382,7 +470,6 @@ HRESULT CPlayer::Ready_MeshParts()
 
 HRESULT CPlayer::Ready_Camera()
 {
-	//?´ë–¤ ë¼ˆì— ë¶™ì¼ ê²ƒì¸ê°€.
 	_uint iBoneIndex{ 0 };
 
 	m_pCustomModel->Find_BoneIndex(TEXT("SKT_HeadCamera"), &iBoneIndex);
@@ -426,9 +513,21 @@ void CPlayer::MagicTestTextOutput()
 
 void CPlayer::Tick_ImGui()
 {
-	//ImGui::Begin("Player");
+	ImGui::Begin("Player");
 	
-	//ImGui::End();
+	
+	if (ImGui::Checkbox("Gravity", &m_isGravity))
+	{
+		m_pRigidBody->Set_Gravity(m_isGravity);
+	}
+
+	if (ImGui::Button("Go to 0"))
+	{
+		m_pRigidBody->Set_Position(_float3(1.f, 1.f, 1.f));
+	}
+
+
+	ImGui::End();
 }
 
 #endif // _DEBUG
@@ -439,32 +538,28 @@ void CPlayer::UpdateLookAngle()
 	
 	m_isDirectionKeyPressed = false;
 
-	//???…ë ¥???°ë¼ ë¹„êµ ê°ì´ ë°”ë€ë‹¤.
-
 	_float3 vNextLook{};
 
-	//????> ë£?
 	if (pGameInstance->Get_DIKeyState(DIK_W, CInput_Device::KEY_PRESSING) || 
 		pGameInstance->Get_DIKeyState(DIK_W,CInput_Device::KEY_DOWN))
 	{
 		vNextLook = m_pPlayer_Camera->Get_CamLookXZ();
 		m_isDirectionKeyPressed = true;
 	}
-	//????> -ë£?
 	else if (pGameInstance->Get_DIKeyState(DIK_S, CInput_Device::KEY_PRESSING) ||
 		pGameInstance->Get_DIKeyState(DIK_S, CInput_Device::KEY_DOWN))
 	{
 		vNextLook = -m_pPlayer_Camera->Get_CamLookXZ();
 		m_isDirectionKeyPressed = true;
 	}
-	//?¤ë¥¸ìª???> ?¼ì´??
+
 	else if (pGameInstance->Get_DIKeyState(DIK_D, CInput_Device::KEY_PRESSING) ||
 		pGameInstance->Get_DIKeyState(DIK_D, CInput_Device::KEY_DOWN))
 	{
 		vNextLook = m_pPlayer_Camera->Get_CamRightXZ();
 		m_isDirectionKeyPressed = true;
 	}
-	//?¼ìª½ ??> -?¼ì´??
+
 	else if (pGameInstance->Get_DIKeyState(DIK_A, CInput_Device::KEY_PRESSING) ||
 		pGameInstance->Get_DIKeyState(DIK_A, CInput_Device::KEY_DOWN))
 	{
@@ -472,21 +567,16 @@ void CPlayer::UpdateLookAngle()
 		m_isDirectionKeyPressed = true;
 	}
 
-	//?Œë ˆ?´ì–´??ë£©ì„ ê°€ì§€ê³??¨ë‹¤.
 	_float3 vPlayerLook = m_pTransform->Get_Look();
 
-	//yê°?ì§€?°ê³ 
 	vPlayerLook = XMVectorSetY(vPlayerLook, 0.0f);
 
 	vPlayerLook.Normalize();
 
-	//?´ì ?œë‹¤.cos(-1 ~ 1)
 	_float fLookAngle = vPlayerLook.Dot(vNextLook);
 
-	//?¼ë””????
 	m_fLookAngle = acosf(fLookAngle);
 
-	//ì¢Œìš° êµ¬ë¶„???„í•œ ?¸ì 
 	if (0.0f > vPlayerLook.Cross(vNextLook).y)
 	{
 		m_fLookAngle *= -1;
@@ -534,7 +624,7 @@ void CPlayer::Free()
 		Safe_Release(m_pMagicSlot);
 		Safe_Release(m_pWeapon);
 		Safe_Release(m_pStateContext);
-		Safe_Release(m_pCharacterController);
+		Safe_Release(m_pRigidBody);
 
 	}
 }

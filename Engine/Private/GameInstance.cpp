@@ -90,13 +90,13 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 	NULL_CHECK_RETURN_MSG(m_pInput_Device, , TEXT("Input_Device NULL"));
 	NULL_CHECK_RETURN_MSG(m_pCollision_Manager, , TEXT("Collsion_Manager NULL"));
 
+	m_pPhysX_Manager->Tick(fTimeDelta);
+
 	m_pTimer_Manager->Tick(fTimeDelta);
 
 	m_pInput_Device->Tick();
 
 	m_pComponent_Manager->Tick(fTimeDelta);
-
-	m_pPhysX_Manager->Tick(fTimeDelta);
 
 	m_pCamera_Manager->Tick(fTimeDelta);
 

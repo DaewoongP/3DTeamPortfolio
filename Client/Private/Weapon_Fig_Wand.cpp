@@ -38,7 +38,7 @@ HRESULT CWeapon_Fig_Wand::Initialize(void* pArg)
 			if (sub < dist)
 			{
 				dist = sub;
-				m_WandPointOffset = point;
+				m_WandPointOffsetMatrix = XMMatrixTranslation(point.x, point.y, point.z);
 			}
 		}
 	}

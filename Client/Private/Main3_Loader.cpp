@@ -21,6 +21,7 @@
 #include "RollState.h"
 #include "JumpState.h"
 #include "HardLandState.h"
+#include "MagicCastingState.h"
 
 #pragma endregion
 
@@ -65,8 +66,7 @@ HRESULT CMain3_Loader::Initialize(LEVELID eNextLevel)
 
 HRESULT CMain3_Loader::Loading()
 {
-	if (FAILED(CoInitializeEx(nullptr, 0)))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(CoInitializeEx(nullptr, COINIT_MULTITHREADED), E_FAIL);
 
 	EnterCriticalSection(&m_Critical_Section);
 
@@ -118,7 +118,7 @@ HRESULT CMain3_Loader::Loading_For_MainGame()
 		PivotMatrix = XMMatrixRotationQuaternion(XMQuaternionRotationRollPitchYaw(0.f, XMConvertToRadians(180.f), 0.f));
 		/* For.Prototype_Component_Model_CustomModel_Player */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_CustomModel_Player"),
-			CCustomModel::Create(m_pDevice, m_pContext, CCustomModel::TYPE_ANIM, L"../../Resources/Models/Anims/Biped_Skeleton_jog_idle_face/Biped_Skeleton_jog_idle_face.gcm", PivotMatrix))))
+			CCustomModel::Create(m_pDevice, m_pContext, CCustomModel::TYPE_ANIM, L"../../Resources/Models/Anims/Biped_Skeleton_jog_Idle/Biped_Skeleton_jog_Idle.gcm", PivotMatrix))))
 			throw TEXT("Prototype_Component_Model_CustomModel_Player");
 
 		/* For.Prototype_Component_Weapon_Player_Wand */
@@ -209,6 +209,11 @@ HRESULT CMain3_Loader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_State_Hard_Land"),
 			CHardLandState::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_State_Hard_Land");
+
+		/* For.Prototype_Component_State_Magic_Casting */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_State_Magic_Casting"),
+			CMagicCastingState::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_State_Magic_Casting");
 
 #pragma endregion
 

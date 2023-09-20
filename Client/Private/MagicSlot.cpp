@@ -40,7 +40,7 @@ HRESULT CMagicSlot::Initialize(void* pArg)
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
 		magicInitDesc.eMagicTag = BASICCAST;
-		magicInitDesc.fCoolTime = 1.f;
+		magicInitDesc.fCoolTime = 0.f;
 		magicInitDesc.fDamage = 10.f;
 		magicInitDesc.fCastDistance = 1000;
 		magicInitDesc.fBallDistance = 30;
@@ -127,7 +127,7 @@ HRESULT CMagicSlot::Add_Magic_To_Basic_Slot(_uint iSlotIndex, SPELL eSpellType)
 void CMagicSlot::Action_Magic_Skill(_uint iIndex, CTransform* pTarget, const _float4x4* pWeaponMatrix, _float4x4 offsetMatrix)
 {
 	//if Size over = MSG / if Index Slot is nullptr, nothing
-	if (iIndex > m_MagicSlots.size() - 1)
+	if (iIndex < m_MagicSlots.size())
 	{
 		m_MagicSlots[iIndex]->Magic_Cast(pTarget, pWeaponMatrix, offsetMatrix);
 	}
@@ -142,7 +142,7 @@ void CMagicSlot::Action_Magic_Skill(_uint iIndex, CTransform* pTarget, const _fl
 void CMagicSlot::Action_Magic_Basic(_uint iIndex, CTransform* pTarget,const _float4x4* pWeaponMatrix, _float4x4 offsetMatrix)
 {
 	//if Size over = MSG / if Index Slot is nullptr, nothing
-	if (iIndex < m_MagicEssentialSlots.size() - 1)
+	if (iIndex < m_MagicEssentialSlots.size())
 	{
 		m_MagicEssentialSlots[iIndex]->Magic_Cast(pTarget, pWeaponMatrix, offsetMatrix);
 	}

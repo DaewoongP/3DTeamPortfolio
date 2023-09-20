@@ -22,6 +22,14 @@ HRESULT CIdleState::Initialize_Prototype()
 
 HRESULT CIdleState::Initialize(void* pArg)
 {
+	BEGININSTANCE;
+
+	m_fAction_Change_Duration = 10.0f;
+
+	pGameInstance->Add_Timer(TEXT("Action_Change"), true, m_fAction_Change_Duration);
+
+	ENDINSTANCE;
+
 	return S_OK;
 }
 
@@ -39,6 +47,13 @@ void CIdleState::OnStateEnter()
 #ifdef _DEBUG
 	cout << "Idle Enter" << endl;
 #endif // _DEBUG
+
+	BEGININSTANCE;
+
+	pGameInstance->Reset_Timer(TEXT("Action_Change"));
+
+	ENDINSTANCE;
+
 }
 
 void CIdleState::OnStateTick()
@@ -55,25 +70,23 @@ void CIdleState::OnStateTick()
 	{
 	case CStateContext::ACTION_NONE:
 	{
-
-
+		Action_None_Tick();
 	}
 	break;
 	case CStateContext::ACTION_CASUAL:
 	{
-
-
+		Action_Casual_Tick();
+		ActionType_Change();
 	}
 	break;
 	case CStateContext::ACTION_CMBT:
 	{
-
-
+		Action_Cmbt_Tick();
+		ActionType_Change();
 	}
 	break;
 	case CStateContext::ACTION_END:
 	{
-
 
 	}
 	break;
@@ -82,6 +95,7 @@ void CIdleState::OnStateTick()
 		break;
 	}
 
+	Go_Magic_Cast();
 }
 
 void CIdleState::OnStateExit()
@@ -101,10 +115,18 @@ void CIdleState::Action_None_Tick()
 
 void CIdleState::Action_Casual_Tick()
 {
+	if (m_pOwnerModel->Is_Finish_Animation())
+	{
+		m_pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Idle_Casual_anm"));
+	}
 }
 
 void CIdleState::Action_Cmbt_Tick()
 {
+	if (m_pOwnerModel->Is_Finish_Animation())
+	{
+		m_pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_RF_Idle_anm"));
+	}
 }
 
 void CIdleState::Go_Turn()
@@ -175,6 +197,37 @@ void CIdleState::Go_Jump()
 	if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
 	{
 		Set_StateMachine(TEXT("Jump"));
+	}
+
+	ENDINSTANCE;
+}
+
+void CIdleState::Go_Magic_Cast()
+{
+	BEGININSTANCE;
+
+	if (pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN))
+	{
+		if (CStateContext::ACTION_NONE == *m_pIActionSwitch)
+		{
+			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_LF_Idle2Cmbt_RF_Wand_Equip_anm"));
+		}
+		//일단 전투로 보냄
+		//포착 기능 생기면 그때 캐주얼이랑 분기
+		*m_pIActionSwitch = CStateContext::ACTION_CMBT;
+		Set_StateMachine(TEXT("Magic_Cast"));
+	}
+
+	ENDINSTANCE;
+}
+
+void CIdleState::ActionType_Change()
+{
+	BEGININSTANCE;
+
+	if (pGameInstance->Check_Timer(TEXT("Action_Change")))
+	{
+		--(*m_pIActionSwitch);
 	}
 
 	ENDINSTANCE;

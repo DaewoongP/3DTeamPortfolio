@@ -39,6 +39,14 @@ HRESULT CMapObject::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
+	// 음수 값이 있을 경우 Cull 모드를 None로 바꾼다.
+	if (0.f >= m_pTransform->Get_Scale_With_Negative().x ||
+		0.f >= m_pTransform->Get_Scale_With_Negative().y ||
+		0.f >= m_pTransform->Get_Scale_With_Negative().z)
+	{
+		m_isCull = false;
+	}
+
 	if (FAILED(Add_Components(pMapObjectDesc)))
 		return E_FAIL;
 
@@ -78,7 +86,10 @@ HRESULT CMapObject::Render()
 	{
 		m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", iMeshCount, DIFFUSE);
 
-		m_pShader->Begin("Mesh");
+		if(true == m_isCull)
+			m_pShader->Begin("Mesh");
+		else
+			m_pShader->Begin("Mesh_No_Cull");		
 
 		if (FAILED(m_pModel->Render(iMeshCount)))
 			return E_FAIL;
@@ -125,17 +136,17 @@ HRESULT CMapObject::Add_Components(MAPOBJECTDESC* pMapObjectDesc)
 	RigidBodyDesc.fRestitution = 0.f;
 	RigidBodyDesc.pOwnerObject = this;
 	RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 1.f, 1.f);
+	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "MapObject");
 	
 	vector<CMesh*> Meshes = *m_pModel->Get_MeshesVec();
 	vector<_float3> Vertices;
 	vector<PxU32> Indices;
 	_uint iIndex = { 0 };
-	
+
 	for (auto& pMesh : Meshes)
 	{
 		vector<_float3> MeshVertices = *pMesh->Get_VerticesPositionVec();
-		// 버텍스 벡터에 벡터를 삽입하는 함수
-		
+
 		for (auto& MeshVetex : MeshVertices)
 		{
 			Vertices.push_back(XMVector3TransformCoord(MeshVetex, pMapObjectDesc->WorldMatrix));
@@ -150,7 +161,7 @@ HRESULT CMapObject::Add_Components(MAPOBJECTDESC* pMapObjectDesc)
 
 		iIndex += Vertices.size();
 	}
-	
+
 	// 피직스 메쉬 생성
 	PxTriangleMeshDesc TriangleMeshDesc;
 	TriangleMeshDesc.points.count = Vertices.size();

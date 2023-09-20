@@ -26,6 +26,8 @@ public:
     virtual void OnStateTick();
     virtual void OnStateExit();
 
+
+private:
     void LookFront();
 
     void Go_Idle();
@@ -41,6 +43,7 @@ public:
 
     void Over_135();
 
+    void Go_Magic_Cast();
 
    
 

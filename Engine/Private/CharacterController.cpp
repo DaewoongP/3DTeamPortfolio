@@ -5,6 +5,7 @@
 #include <characterkinematic/PxController.h>
 #include "ReportCallBack.h"
 #include "BehaviorCallBack.h"
+#include "GameInstance.h"
 
 #ifdef _DEBUG
 #include "Shader.h"
@@ -36,7 +37,6 @@ void CCharacterController::Move(_float3 _vVelocity, _float _fTimeDelta, _float _
 
 	PxControllerCollisionFlags collisionFlags = 
 		m_pController->move(PhysXConverter::ToPxVec3(_vVelocity * _fTimeDelta), _fMinDist, 0, nullptr, nullptr);
-
 }
 
 CCharacterController::CCharacterController(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

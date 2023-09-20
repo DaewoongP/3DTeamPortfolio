@@ -14,6 +14,57 @@ CDefault_MagicTraill_Effect::CDefault_MagicTraill_Effect(const CDefault_MagicTra
 	lstrcpy(m_wszName, rhs.m_wszName);
 }
 
+void CDefault_MagicTraill_Effect::Ready_Stright(_float3 vTargerPosition, _float3 vStartPosition, _float fTrailLifeTime, _float fDistance)
+{
+	m_vStartPostion = vStartPosition;
+	m_vEndPostion = vTargerPosition;
+	m_fTrailLifeTime = fTrailLifeTime;
+	m_fLerpAcc = 0.f;
+	m_fTimeScalePerDitance = fDistance / _float3(m_vEndPostion - m_vStartPostion).Length();
+	m_pTrail->Reset_Trail(vStartPosition + _float3(0, 0.5f, 0), vStartPosition - _float3(0, 0.5f, 0));
+}
+
+void CDefault_MagicTraill_Effect::Ready_Spline(_float3 vTargerPosition, _float3 vStartPosition, _float fTrailLifeTime,_float fDistance, _float3 vAxis)
+{
+	m_vStartPostion = vStartPosition;
+	m_vEndPostion = vTargerPosition;
+	m_fTrailLifeTime = fTrailLifeTime;
+	m_fLerpAcc = 0.f;
+
+	// 플레이어가 타겟을 보는 vector를 구함.
+	_float3 vDir = XMVector3Normalize(m_vEndPostion - m_vStartPostion);
+	// 임의의 축을 구함.
+	_float3 tempAxis = _float3(1, 1, 1);
+	// 외적
+	_float3	normal = XMVector3Cross(vDir, tempAxis);
+
+	//진행 경로만큼 뒤로 이동한 뒤
+	m_vSplineLerp[0] = m_vStartPostion - vDir;
+	//임의의 랜덤 값을 구하고
+	_float fRandom = Random_Generator(-20.f, 20.f);
+	// 외적 방향으로 튄다.
+	m_vSplineLerp[0] += _float3(normal.x * fRandom, normal.y * fRandom, normal.z * fRandom);
+
+	//진행 경로만큼 뒤로 이동한 뒤
+	m_vSplineLerp[1] = m_vStartPostion + vDir;
+	//임의의 랜덤 값을 구하고
+	fRandom = Random_Generator(-20.f, 20.f);
+	// 외적 방향으로 튄다.
+	m_vSplineLerp[1] += _float3(normal.x * fRandom, normal.y * fRandom, normal.z * fRandom);
+	m_fTimeScalePerDitance = fDistance / _float3(m_vEndPostion - m_vStartPostion).Length();
+	m_pTrail->Reset_Trail(vStartPosition + _float3(0,0.5f,0), vStartPosition - _float3(0, 0.5f, 0));
+}
+
+void CDefault_MagicTraill_Effect::Ready_Spin(_float3 vTargerPosition, _float3 vStartPosition, _float fTrailLifeTime, _float fDistance)
+{
+	m_vStartPostion = vStartPosition;
+	m_vEndPostion = vTargerPosition;
+	m_fTrailLifeTime = fTrailLifeTime;
+	m_fLerpAcc = 0.f;
+	m_fTimeScalePerDitance = fDistance / _float3(m_vEndPostion - m_vStartPostion).Length();
+	m_pTrail->Reset_Trail(vStartPosition + _float3(0, 0.5f, 0), vStartPosition - _float3(0, 0.5f, 0));
+}
+
 HRESULT CDefault_MagicTraill_Effect::Initialize_Prototype(const _tchar* wszFilePath, _uint iLevel)
 {
 	if (FAILED(__super::Initialize_Prototype()))
@@ -40,6 +91,17 @@ HRESULT CDefault_MagicTraill_Effect::Initialize_Prototype(const _tchar* wszFileP
 			return E_FAIL;
 		}
 	}
+
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Default_Magic_Ball_Particle")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Default_Magic_Ball_Particle")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Basic_GlowBall"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+
 	ENDINSTANCE;
 	return S_OK;
 }
@@ -54,9 +116,16 @@ HRESULT CDefault_MagicTraill_Effect::Initialize(void* pArg)
 		return E_FAIL;
 
 	m_pTransform->Set_Position(initDesc->vInitPosition);
+	
+	//trail Setting
 	m_pTrailTransform = m_pTrail->Get_Transform();
 	Safe_AddRef(m_pTrailTransform);
 	m_pTrailTransform->Set_Position(initDesc->vInitPosition);
+
+	//glowBall Setting
+	m_pGlowBallTransform = m_pGlowBall->Get_Transform();
+	Safe_AddRef(m_pGlowBallTransform);
+	m_pGlowBallTransform->Set_Position(initDesc->vInitPosition);
 
 	m_pTrail->Reset_Trail(initDesc->vInitPosition, initDesc->vInitPosition);
 
@@ -72,6 +141,7 @@ void CDefault_MagicTraill_Effect::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 	m_pTrailTransform->Set_Position(m_pTransform->Get_Position());
+	m_pGlowBallTransform->Set_Position(m_pTransform->Get_Position());
 }
 
 void CDefault_MagicTraill_Effect::Set_Position(_float3 vPos)
@@ -79,22 +149,37 @@ void CDefault_MagicTraill_Effect::Set_Position(_float3 vPos)
 	m_pTransform->Set_Position(vPos);
 }
 
-void CDefault_MagicTraill_Effect::Stright_Move(_float3 vStartPos, _float3 vEndPos, _float fTimeAcc)
+_bool CDefault_MagicTraill_Effect::Stright_Move(_float fTimeDelta)
 {
-	_float3 movedPos = XMVectorLerp(vStartPos, vEndPos, fTimeAcc);
+	if(m_fLerpAcc > 1)
+	{
+		m_isEnd = true;
+		return m_isEnd;
+	}
+		
+	m_fLerpAcc += fTimeDelta / m_fTrailLifeTime * m_fTimeScalePerDitance;
+	_float3 movedPos = XMVectorLerp(m_vStartPostion, m_vEndPostion, m_fLerpAcc);
 	m_pTransform->Set_Position(movedPos);
+	return m_isEnd;
 }
 
-void CDefault_MagicTraill_Effect::Spin_Move(_float3 vStartPos, _float3 vEndPos, _float fTimeAcc)
+_bool CDefault_MagicTraill_Effect::Spin_Move(_float fTimeDelta)
 {
+	if (m_fLerpAcc > 1)
+	{
+		m_isEnd = true;
+		return m_isEnd;
+	}
+	m_fLerpAcc += fTimeDelta / m_fTrailLifeTime * m_fTimeScalePerDitance;
+
 	//직선상으로 이동시 위치해야할 position
-	_float3 movedPos = XMVectorLerp(vStartPos, vEndPos, fTimeAcc);
+	_float3 movedPos = XMVectorLerp(m_vStartPostion, m_vEndPostion, m_fLerpAcc);
 
 	//pos 기준으로 transmatrix를 만든다.
 	_float4x4 transMatirx = XMMatrixTranslation(movedPos.x, movedPos.y, movedPos.z);
 
 	//방향벡터
-	_float3 axis = XMVector3Normalize(vEndPos - vStartPos);
+	_float3 axis = XMVector3Normalize(m_vEndPostion - m_vStartPostion);
 
 	//임의로 잡은 수직 벡터
 	_float3 tempAxis = _float3(0, 1, 0);
@@ -106,18 +191,27 @@ void CDefault_MagicTraill_Effect::Spin_Move(_float3 vStartPos, _float3 vEndPos, 
 	_float4x4 offsetMatirx = XMMatrixTranslation(normal.x, normal.y, normal.z);
 
 	//회전 행렬 생성
-	_float4x4 rotationMatrix = XMMatrixRotationAxis(axis, fTimeAcc * 100);
+	_float4x4 rotationMatrix = XMMatrixRotationAxis(axis, m_fLerpAcc * 20);
 
 	//offset matrix를 transMatrix로 돌림
 	_float4x4 CombineMatrix = offsetMatirx * rotationMatrix * transMatirx;
 	// 위치 세팅
 	m_pTransform->Set_Position(_float3(CombineMatrix.m[3][0], CombineMatrix.m[3][1], CombineMatrix.m[3][2]));
+	return m_isEnd;
 }
 
-void CDefault_MagicTraill_Effect::Spline_Move(_float3 vWeight0, _float3 vStartPos, _float3 vEndPos, _float3 vWeight1, _float fTimeAcc)
+_bool CDefault_MagicTraill_Effect::Spline_Move(_float fTimeDelta)
 {
-	_float3 movedPos = XMVectorCatmullRom(vWeight0, vStartPos, vEndPos, vWeight1, fTimeAcc);
+	if (m_fLerpAcc > 1)
+	{
+		m_isEnd = true;
+		return m_isEnd;
+	}
+
+	m_fLerpAcc += fTimeDelta / m_fTrailLifeTime * m_fTimeScalePerDitance;
+	_float3 movedPos = XMVectorCatmullRom(m_vSplineLerp[0], m_vStartPostion, m_vEndPostion, m_vSplineLerp[1], m_fLerpAcc);
 	m_pTransform->Set_Position(movedPos);
+	return m_isEnd;
 }
 
 void CDefault_MagicTraill_Effect::Set_Trail_HeadColor(_float3 vColor)
@@ -130,6 +224,17 @@ void CDefault_MagicTraill_Effect::Set_Trail_TailColor(_float3 vColor)
 	m_pTrail->Set_Trail_TailColor(vColor);
 }
 
+void CDefault_MagicTraill_Effect::Set_Glow_BallColor(_float3 vColor)
+{
+	MAIN_MODULE& MainModule = m_pGlowBall->Get_MainModuleRef();
+	MainModule.vStartColor = _float4(vColor.x, vColor.y, vColor.z,1.f);
+}
+
+void CDefault_MagicTraill_Effect::GlowBall_Dead()
+{
+	m_pGlowBall->Disable();
+}
+
 HRESULT CDefault_MagicTraill_Effect::Add_Components()
 {
 	_tchar protoTag[MAX_PATH] = TEXT("Prototype_GameObject_Default_Magic_Trail");
@@ -137,6 +242,10 @@ HRESULT CDefault_MagicTraill_Effect::Add_Components()
 
 	if (FAILED(CComposite::Add_Component(m_iLevel, protoTag
 		, TEXT("Com_Trail"), (CComponent**)&m_pTrail)))
+		return E_FAIL;
+
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Default_Magic_Ball_Particle")
+		, TEXT("Com_BloomBall"), (CComponent**)&m_pGlowBall)))
 		return E_FAIL;
 
 	return S_OK;
@@ -175,5 +284,8 @@ void CDefault_MagicTraill_Effect::Free()
 	{
 		Safe_Release(m_pTrail);
 		Safe_Release(m_pTrailTransform);
+
+		Safe_Release(m_pGlowBall);
+		Safe_Release(m_pGlowBallTransform);
 	}
 }

@@ -163,9 +163,9 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;*/
 
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Picking"), 1200.f, 80.f, 160.f, 160.f)))
-		return E_FAIL; // �� �������� Fast Picking�� ���� ���� Ÿ��
+		return E_FAIL;
 	//if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_MapBrushing"), 1040.f, 80.f, 160.f, 160.f)))
-	//	return E_FAIL; // �� �귯�� ��� ������ ���� ���� Ÿ��
+	//	return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_UI"), 1200.f, 300.f, 160.f, 160.f)))
 		return E_FAIL;
 
@@ -678,6 +678,9 @@ HRESULT CRenderer::Render_NonLight()
 
 HRESULT CRenderer::Render_Blend()
 {
+	if (FAILED(Sort_Blend()))
+		return E_FAIL;
+
 	for (auto& pGameObject : m_RenderObjects[RENDER_BLEND])
 	{
 		if (nullptr != pGameObject)

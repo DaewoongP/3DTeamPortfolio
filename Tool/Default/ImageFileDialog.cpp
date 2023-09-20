@@ -30,8 +30,8 @@ void CImageFileDialog::ChangeTexture(const _char* pFilePathName)
 {
     _int iTemp1;
     _int iTemp2;
-    //Safe_Release(m_pTexture);
-    //LoadTextureFromFile(pFilePathName, &m_pTexture, &iTemp1, &iTemp2);
+    Safe_Release(m_pTexture);
+    LoadTextureFromFile(pFilePathName, &m_pTexture, &iTemp1, &iTemp2);
 }
 
 void CImageFileDialog::Tick()
@@ -79,8 +79,7 @@ void CImageFileDialog::Tick()
         if (m_strPrevFilePathName != m_pInstance.GetFilePathName())
         {
             string strCurrentFilePathName = m_pInstance.GetFilePathName();
-            Safe_Release(m_pTexture);
-            LoadTextureFromFile(strCurrentFilePathName.data(), &m_pTexture, &iTemp1, &iTemp2);
+            ChangeTexture(strCurrentFilePathName.data());
             m_strPrevFilePathName = strCurrentFilePathName;
         }
 

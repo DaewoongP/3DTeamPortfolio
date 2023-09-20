@@ -501,7 +501,7 @@ void CDummyParticle::RendererModule_TreeNode(CEffect_Window* pEffectWindow)
 			}
 
 			m_RendererModuleDesc.strPass = m_pPassComboBox->Tick(CComboBox::TABLE);
-
+			pEffectWindow->Table_CheckBox("Bloom", "ckvj99vji4jfj", &m_RendererModuleDesc.isBloom);
 			ImGui::EndTable();
 		}
 		ImGui::TreePop();
@@ -732,7 +732,7 @@ void CDummyParticle::Load_FileDialog()
 			std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
 			fs::path fsFilePathName = filePathName;
 			fs::path fsFilePath = filePath;
-
+			fsFilePath = ToRelativePath(fsFilePath.wstring().data());
 			_ulong dwByte = 0;
 
 			if (FAILED(Load(fsFilePath.wstring().c_str())))

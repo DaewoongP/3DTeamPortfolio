@@ -57,9 +57,10 @@ HRESULT CWingardium_Effect::Initialize(void* pArg)
 		m_TrailDesc[i].fToY = Random_Generator(1.f, 2.f);
 		m_TrailDesc[i].fToRadius = Random_Generator(0.1f, 0.5f);
 		m_TrailDesc[i].fSpeed = Random_Generator(XMConvertToRadians(90), XMConvertToRadians(720));
-		m_TrailDesc[i].fDeadTimer = m_TrailDesc[i].fSettingDeadTimer;
+		m_TrailDesc[i].isEnable = true;
 		_float fScale = Random_Generator(0.1f, 0.5f);
 		m_pTrailTransform[i]->Set_Scale(_float3(fScale, fScale, fScale));
+		m_pTrail[i]->Reset_Trail(_float3(0, 0.5f, 0), _float3(0, 0.5f, 0));
 	}
 
 	for (int i = 0; i < TrailCount/2; i++)
@@ -73,11 +74,11 @@ HRESULT CWingardium_Effect::Initialize(void* pArg)
 		m_TrailToOriginDesc[i].fCurrnetLifeTime = m_TrailToOriginDesc[i].fSettingLifeTime;
 		m_TrailToOriginDesc[i].fToRadius = Random_Generator(0.1f, 0.2f);
 		m_TrailToOriginDesc[i].fSpeed = Random_Generator(XMConvertToRadians(40), XMConvertToRadians(180));
-		m_TrailToOriginDesc[i].fDeadTimer = m_TrailToOriginDesc[i].fSettingDeadTimer;
 		_float fScale = Random_Generator(0.01f, 0.1f);
 		m_pTrailToOriginTransform[i]->Set_Scale(_float3(fScale, fScale, fScale));
+		m_pTrailToOrigin[i]->Reset_Trail(_float3(0, 0.5f, 0), _float3(0, 0.5f, 0));
 	}
-
+	
 	return S_OK;
 }
 
@@ -109,8 +110,10 @@ void CWingardium_Effect::TrailAction(_float3 pos, _float fTimeDelta)
 		_float3 vHigh, vLow;
 		vHigh = _float3(0, 0.5f, 0);
 		vLow = _float3(0, -0.5f, 0);
-		//m_pTrail[m_iCurrentActionParticle]->Reset_Trail(vHigh, vLow);
+		m_pTrailTransform[m_iCurrentActionParticle]->Set_Position(_float3(0, 0, 0));
+		m_pTrail[m_iCurrentActionParticle]->Reset_Trail(vHigh, vLow);
 
+		m_pTrail[m_iCurrentActionParticle]->Reset_Trail(m_pTransform->Get_Position(), m_pTransform->Get_Position());
 		m_TrailDesc[m_iCurrentActionParticle].fAnimStart_Y = 0;
 		m_TrailDesc[m_iCurrentActionParticle++].isEnable = true;
 		m_TrailDesc[m_iCurrentActionParticle].isEnable = true;
@@ -128,24 +131,21 @@ void CWingardium_Effect::TrailAction(_float3 pos, _float fTimeDelta)
 			m_TrailDesc[i].fCurrnetLifeTime -= fTimeDelta;
 			if (m_TrailDesc[i].fCurrnetLifeTime < 0)
 			{
-				m_TrailDesc[i].fDeadTimer -= fTimeDelta;
-				if (m_TrailDesc[i].fDeadTimer < 0)
-				{
-					//오브제의 영점
-					_float3 vHigh, vLow;
-					vHigh = _float3(0,0.5f,0);
-					vLow =  _float3(0, -0.5f, 0);
-					//m_pTrail[i]->Reset_Trail(vHigh, vLow);
-					m_TrailDesc[i].fSettingLifeTime = Random_Generator(6.f, 10.f);
-					m_TrailDesc[i].fCurrnetLifeTime = m_TrailDesc[i].fSettingLifeTime;
-					m_TrailDesc[i].fToY = Random_Generator(1.f, 2.f);
-					m_TrailDesc[i].fToRadius = Random_Generator(0.1f, 0.5f);
-					m_TrailDesc[i].fSpeed = Random_Generator(XMConvertToRadians(90), XMConvertToRadians(720));
-					m_TrailDesc[i].fDeadTimer = m_TrailDesc[i].fSettingDeadTimer;
-					_float fScale = Random_Generator(0.1f, 0.5f);
-					m_pTrailTransform[i]->Set_Scale(_float3(fScale, fScale, fScale));
-				}
-				return;
+				//오브제의 영점
+				_float3 vHigh, vLow;
+				vHigh = _float3(0,0.5f,0);
+				vLow =  _float3(0, -0.5f, 0);
+					
+				m_TrailDesc[i].fSettingLifeTime = Random_Generator(6.f, 10.f);
+				m_TrailDesc[i].fCurrnetLifeTime = m_TrailDesc[i].fSettingLifeTime;
+				m_TrailDesc[i].fToY = Random_Generator(1.f, 2.f);
+				m_TrailDesc[i].fToRadius = Random_Generator(0.1f, 0.5f);
+				m_TrailDesc[i].fSpeed = Random_Generator(XMConvertToRadians(90), XMConvertToRadians(720));
+				_float fScale = Random_Generator(0.1f, 0.5f);
+				m_pTrailTransform[i]->Set_Scale(_float3(fScale, fScale, fScale));
+
+				m_pTrailTransform[i]->Set_Position(_float3(0,0,0));
+				m_pTrail[i]->Reset_Trail(vHigh, vLow);
 			}
 			
 			//y를 올려줌.
@@ -158,8 +158,6 @@ void CWingardium_Effect::TrailAction(_float3 pos, _float fTimeDelta)
 			
 			// 설정된 y를 이용해 반지름 설정
 			m_TrailDesc[i].fRadius = CEase::InOutBack(fEase_Y - m_TrailDesc[i].fAnimStart_Y,0, m_TrailDesc[i].fToRadius, m_TrailDesc[i].fToY - m_TrailDesc[i].fAnimStart_Y);
-		
-			_float4x4 parentMatrix = m_pTransform->Get_WorldMatrix();
 			vTrailPos.x = m_TrailDesc[i].fRadius;
 			
 			// 포지션에 값 대입
@@ -179,24 +177,24 @@ void CWingardium_Effect::TrailAction(_float3 pos, _float fTimeDelta)
 			m_TrailToOriginDesc[i].fCurrnetLifeTime -= fTimeDelta;
 			if (m_TrailToOriginDesc[i].fCurrnetLifeTime < 0)
 			{
-				m_TrailToOriginDesc[i].fDeadTimer -= fTimeDelta;
-				if (m_TrailToOriginDesc[i].fDeadTimer < 0)
-				{
-					m_TrailDesc[i].fSettingLifeTime = Random_Generator(6.f, 10.f);
-					m_TrailToOriginDesc[i].fCurrnetLifeTime = m_TrailToOriginDesc[i].fSettingLifeTime;
-					m_TrailToOriginDesc[i].fToRadius = Random_Generator(0.1f, 0.2f);
-					m_TrailToOriginDesc[i].fSpeed = Random_Generator(XMConvertToRadians(40), XMConvertToRadians(180));
-					m_TrailToOriginDesc[i].fDeadTimer = m_TrailToOriginDesc[i].fSettingDeadTimer;
-					_float fScale = Random_Generator(0.01f, 0.2f);
-					m_pTrailToOriginTransform[i]->Set_Scale(_float3(fScale, fScale, fScale));
-				}
-				return;
+				//오브제의 영점
+				_float3 vHigh, vLow;
+				vHigh = _float3(0, 0.5f, 0);
+				vLow = _float3(0, -0.5f, 0);
+				m_TrailDesc[i].fSettingLifeTime = Random_Generator(6.f, 10.f);
+				m_TrailToOriginDesc[i].fCurrnetLifeTime = m_TrailToOriginDesc[i].fSettingLifeTime;
+				m_TrailToOriginDesc[i].fToRadius = Random_Generator(0.1f, 0.2f);
+				m_TrailToOriginDesc[i].fSpeed = Random_Generator(XMConvertToRadians(40), XMConvertToRadians(180));
+				_float fScale = Random_Generator(0.01f, 0.2f);
+				m_pTrailToOriginTransform[i]->Set_Scale(_float3(fScale, fScale, fScale));
+				m_pTrailToOriginTransform[i]->Set_Position(_float3(0, 0, 0));
+				m_pTrailToOrigin[i]->Reset_Trail(vHigh, vLow);
+
 			}
 
 			BEGININSTANCE;
 			if (pGameInstance->RayCast(m_pTransform->Get_Position(), m_pTransform->Get_Up() * -1, 100, &m_vBottom))
 			{
-				_uint i = 0;
 			}
 			ENDINSTANCE;
 

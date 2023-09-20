@@ -547,8 +547,8 @@ PS_OUT PS_MAIN_SHADOW(PS_IN In)
         Out.vColor = float4(fLit, fLit, fLit, fLit);
     }
     
-        return Out;
-    }
+    return Out;
+}
 
 technique11 DefaultTechnique
 {

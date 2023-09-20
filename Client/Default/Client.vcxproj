@@ -170,8 +170,10 @@
     <ClInclude Include="..\Public\Confringo.h" />
     <ClInclude Include="..\Public\Confringo_Explosive_Effect.h" />
     <ClInclude Include="..\Public\Confringo_WandDust_Effect.h" />
+    <ClInclude Include="..\Public\MagicCastingState.h" />
     <ClInclude Include="..\public\Main3_Loader.h" />
     <ClInclude Include="..\Public\Check_Distance.h" />
+    <ClInclude Include="..\Public\MapObject_Ins.h" />
     <ClInclude Include="..\Public\UI_Font.h" />
     <ClInclude Include="..\Public\UI_Group_Cursor.h" />
     <ClInclude Include="..\Public\UI_Group_Enemy_HP.h" />
@@ -179,7 +181,6 @@
     <ClInclude Include="..\Public\MoveLoopState.h" />
     <ClInclude Include="..\public\MoveStartState.h" />
     <ClInclude Include="..\Public\MoveTurnState.h" />
-    <ClInclude Include="..\public\Protego_Effect.h" />
     <ClInclude Include="..\Public\Default_MagicTraill_Effect.h" />
     <ClInclude Include="..\Public\Levioso.h" />
     <ClInclude Include="..\Public\Random_Select.h" />
@@ -308,8 +309,10 @@
     <ClCompile Include="..\Private\Confringo.cpp" />
     <ClCompile Include="..\Private\Confringo_Explosive_Effect.cpp" />
     <ClCompile Include="..\Private\Confringo_WandDust_Effect.cpp" />
+    <ClCompile Include="..\Private\MagicCastingState.cpp" />
     <ClCompile Include="..\private\Main3_Loader.cpp" />
     <ClCompile Include="..\Private\Check_Distance.cpp" />
+    <ClCompile Include="..\Private\MapObject_Ins.cpp" />
     <ClCompile Include="..\Private\UI_Font.cpp" />
     <ClCompile Include="..\Private\UI_Group_Cursor.cpp" />
     <ClCompile Include="..\Private\UI_Group_Enemy_HP.cpp" />
@@ -317,7 +320,6 @@
     <ClCompile Include="..\Private\MoveLoopState.cpp" />
     <ClCompile Include="..\private\MoveStartState.cpp" />
     <ClCompile Include="..\Private\MoveTurnState.cpp" />
-    <ClCompile Include="..\private\Protego_Effect.cpp" />
     <ClCompile Include="..\Private\Default_MagicTraill_Effect.cpp" />
     <ClCompile Include="..\Private\Levioso.cpp" />
     <ClCompile Include="..\Private\Random_Select.cpp" />
@@ -452,6 +454,7 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMesh.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxCube.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxMesh.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxMeshInstance.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTex.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTexRotation.hlsl" />
   </ItemGroup>
