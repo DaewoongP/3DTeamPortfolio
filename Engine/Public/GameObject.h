@@ -23,6 +23,10 @@ public:
 	CTransform* Get_Transform() const { return m_pTransform; }
 	void* Get_CollisionData() { return m_pCollisionArg; }
 	void Set_CollisionData(void* pArg) { m_pCollisionArg = pArg; }
+	
+	//모델의 영점이 발이기 때문에 Offset을 두어 중점으로 올리려 합니다.
+	void Set_Offset_Matrix(_float4x4 matrix) { m_OffsetMatrix = matrix; }
+	_float4x4 Get_Offset_Matrix() { return m_OffsetMatrix; }
 
 public:
 	virtual HRESULT Initialize_Prototype();
@@ -40,6 +44,9 @@ public:
 
 protected:
 	CTransform*		m_pTransform = { nullptr };
+
+protected:
+	_float4x4	m_OffsetMatrix = {};
 
 private:
 	void*		m_pCollisionArg = { nullptr };

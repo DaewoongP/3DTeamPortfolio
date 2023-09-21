@@ -34,21 +34,23 @@ public:
 
 	typedef struct tagRigidBodyDesc
 	{
-		_char		szCollisionTag[MAX_PATH] = "";
+		_char			szCollisionTag[MAX_PATH] = "";
 		class CGameObject* pOwnerObject = { nullptr };
-		_bool		isStatic = { false };
-		_bool		isTrigger = { false };
-		_bool		isGravity = { true };
-		_float3		vInitPosition = _float3(0.f, 0.f, 0.f);
-		_float4		vInitRotation = _float4(0.f, 0.f, 0.f, 1.f);
-		_float3		vOffsetPosition = _float3(0.f, 0.f, 0.f);
-		_float4		vOffsetRotation = _float4(0.f, 0.f, 0.f, 1.f);
-		_float		fStaticFriction = { 0.5f };
-		_float		fDynamicFriction = { 0.5f };
-		_float		fRestitution = { 0.f };
-		PxGeometry* pGeometry = { nullptr };
-		_uint		eConstraintFlag;
-		_float4		vDebugColor = _float4(0.f, 1.f, 0.f, 1.f);
+		_bool			isStatic = { false };
+		_bool			isTrigger = { false };
+		_bool			isGravity = { true };
+		_float3			vInitPosition = _float3(0.f, 0.f, 0.f);
+		_float4			vInitRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		_float3			vOffsetPosition = _float3(0.f, 0.f, 0.f);
+		_float4			vOffsetRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		_float			fStaticFriction = { 0.5f };
+		_float			fDynamicFriction = { 0.5f };
+		_float			fRestitution = { 0.f };
+		PxGeometry*		pGeometry = { nullptr };
+		_uint			eConstraintFlag;
+		COLLISIONFLAG	eThisCollsion;
+		PxU32			eCollisionFlag;
+		_float4			vDebugColor = _float4(0.f, 1.f, 0.f, 1.f);
 	}RIGIDBODYDESC;
 
 private:
@@ -82,6 +84,7 @@ public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;
+	virtual void Late_Tick(_float fTimeDelta) override;
 #ifdef _DEBUG
 	virtual HRESULT Render() override;
 #endif // _DEBUG
@@ -121,6 +124,7 @@ private:
 
 private:
 	PxShape* Find_Shape(const _char* szShapeTag);
+	_bool IsValid(RIGIDBODYDESC* pRigidBodyDesc);
 
 #ifdef _DEBUG
 private:

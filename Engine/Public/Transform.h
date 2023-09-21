@@ -42,7 +42,7 @@ public:
 	// 월드행렬에서 쿼터니언 벡터를 추출하는 함수입니다.
 	_float4 Get_Quaternion();
 	_float2 Get_Trnaslation_To_UI_fXY() const;
-	_float4x4 Get_WorldMatrix() const { return m_WorldMatrix; }
+	_float4x4 Get_WorldMatrix() { return m_WorldMatrix; }
 	const _float4x4* Get_WorldMatrixPtr() const { return &m_WorldMatrix; }
 	_float4x4 Get_WorldMatrix_Inverse() const { return m_WorldMatrix.Inverse(); }
 	_float Get_Speed() const { return m_fSpeed; }
@@ -60,6 +60,8 @@ public:
 	_float4 Get_QuaternionVector_Pitch(_float fRadian);
 	// Z 축 기준 회전
 	_float4 Get_QuaternionVector_Yaw(_float fRadian);
+	
+	_float3 Get_Velocity();
 
 	void Set_Scale(_float3 _vScale);
 	void Set_Scale_No_Zero(_float3 _vScale);
@@ -112,6 +114,8 @@ private:
 	_float			m_fRotationSpeed = { XMConvertToRadians(90.f) };
 
 	_ubyte			m_ubTransformChanged = { 0 };
+	_float3			m_vPrePosition;
+	_float3			m_vVelocity;
 
 private:
 	CRigidBody*					m_pRigidBody = { nullptr };

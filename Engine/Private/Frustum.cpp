@@ -61,8 +61,6 @@ void CFrustum::Transform_ToLocalSpace(_float4x4 WorldMatrix)
 
 _bool CFrustum::isIn_WorldFrustum(_float4 vWorldPos, _float fRange)
 {
-	_float4 vCulledPos;
-
 	for (_uint i = 0; i < 6; ++i)
 	{
 		if (fRange < XMVectorGetX(XMPlaneDotCoord(XMLoadFloat4(&m_vWorldPlanes[i]), vWorldPos)))

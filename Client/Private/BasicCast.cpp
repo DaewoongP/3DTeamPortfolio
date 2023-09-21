@@ -102,8 +102,7 @@ HRESULT CBasicCast::Initialize(void* pArg)
 	}
 	else 
 	{
-		//이거 근데 몹의 발위치로 지금 설정돼있을듯함.
-		m_vTargetPosition = m_pTarget->Get_Position();
+		m_vTargetPosition = m_pTarget->Get_Position() + m_TargetOffsetMatrix.Translation();
 	}
 
 	m_pTrailEffect->Ready_Spline(m_vTargetPosition, m_MagicBallDesc.vStartPosition, m_MagicBallDesc.fLifeTime, m_MagicBallDesc.fDistance);

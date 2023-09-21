@@ -98,7 +98,7 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 			Add_Animation_To_Model(ePartCnt, m_pDummyModel);
 			sprintf_s(szUIName, "%s%d", "AnimationTag##", ePartCnt);
 			WCharToChar(m_pDummyModel->Get_Animation(ePartCnt)->Get_AnimationName(), m_szAnimationTag[ePartCnt]);
-			if (ImGui::InputText(szUIName, m_szAnimationTag[ePartCnt], 32))
+			if (ImGui::InputText(szUIName, m_szAnimationTag[ePartCnt], 64))
 			{
 				_tchar wsaAnimationTag[MAX_PATH] = {};
 				CharToWChar(m_szAnimationTag[ePartCnt], wsaAnimationTag);

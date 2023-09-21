@@ -81,6 +81,11 @@ _float4 CTransform::Get_QuaternionVector_Yaw(_float fRadian)
 	return XMQuaternionRotationRollPitchYaw(0.f, 0.f, fRadian);
 }
 
+_float3 CTransform::Get_Velocity()
+{
+	return m_vVelocity;
+}
+
 void CTransform::Set_Scale(_float3 _vScale)
 {
 	_float3 vRight = Get_Right();
@@ -151,23 +156,9 @@ void CTransform::Set_WorldMatrix(_float4x4 _WorldMatrix)
 {
 	m_WorldMatrix = _WorldMatrix;
 
-	if (nullptr != m_pRigidBody)
-	{
-		CPhysX_Manager* pPhysX_Manager = CPhysX_Manager::GetInstance();
-		Safe_AddRef(pPhysX_Manager);
-
-		m_pRigidBody->Set_Position(Get_Position());
-		m_pRigidBody->Set_Rotation(Get_Quaternion());
-
-		pPhysX_Manager->Tick(1 / 60.f);
-
-		Set_Position(m_pRigidBody->Get_Position());
-		Set_Quaternion(m_pRigidBody->Get_Rotation());
-
-		Safe_Release(pPhysX_Manager);
-	}
-	
 	m_ubTransformChanged |= CHANGEFLAG::ROTATION | CHANGEFLAG::TRANSLATION;
+
+	Update_Components();
 }
 
 HRESULT CTransform::Initialize_Prototype()
@@ -185,6 +176,9 @@ HRESULT CTransform::Initialize(void* pArg)
 
 void CTransform::Tick(_float fTimeDelta)
 {
+	m_vVelocity = (Get_Position() - m_vPrePosition) * 60.f; // 60frame 기준 고정 속도처리
+	m_vPrePosition = Get_Position();
+
 	Update_Components();
 }
 
@@ -387,7 +381,6 @@ void CTransform::Update_Components()
 		controller->Translate(Get_Position());
 	else
 		m_Position = controller->GetPosition();*/
-
 
 	m_ubTransformChanged = CHANGEFLAG::NONE;
 }

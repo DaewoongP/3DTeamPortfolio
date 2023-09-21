@@ -7,7 +7,7 @@
 CMeshEffect::CMeshEffect(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
 	: CGameObject(_pDevice, _pContext)
 {
-	m_Path[TEXTURE_PATH] = TEXT("../../Resources/NonAnims/SM_SpherePrimitiveRegularNormals_01/T_Default_Material_Grid_M.png");
+	m_Path[TEXTURE_PATH] = TEXT("../../Resources/Effects/Textures/T_Repairo_Wisp_04_A.png");
 	m_Path[ALPHA_CLIP_TEXTURE_PATH] = TEXT("");
 	m_Path[MODEL_PATH] = TEXT("../../Resources/NonAnims/SM_SpherePrimitiveRegularNormals_01/SM_SpherePrimitiveRegularNormals_01.dat");
 	m_Path[SHADER_PATH] = TEXT("../Bin/ShaderFiles/Shader_DefaultEffect.hlsl");
@@ -96,7 +96,7 @@ void CMeshEffect::Tick(_float _fTimeDelta)
 {
 	//if(nullptr != m_pModel)
 		//m_pModel->Play_Animation(_fTimeDelta);
-	//m_eMeshEffectDesc.vOffset.x += 1.f * _fTimeDelta;
+	m_vOffset.x += 1.f * _fTimeDelta;
 }
 
 void CMeshEffect::Late_Tick(_float _fTimeDelta)

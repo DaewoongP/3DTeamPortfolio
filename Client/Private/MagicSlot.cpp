@@ -22,7 +22,7 @@ HRESULT CMagicSlot::Initialize(void* pArg)
 	//Basic Magic Shield
 	{
 		CMagic::MAGICDESC magicInitDesc;
-		magicInitDesc.eBuffType = CMagic::BUFF_SHILED;
+		magicInitDesc.eBuffType = BUFF_NONE;
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 		magicInitDesc.eMagicType = CMagic::MT_ALL;
 		magicInitDesc.eMagicTag = PROTEGO;
@@ -36,7 +36,7 @@ HRESULT CMagicSlot::Initialize(void* pArg)
 	//Basic Magic BasicCast
 	{
 		CMagic::MAGICDESC magicInitDesc;
-		magicInitDesc.eBuffType = CMagic::BUFF_NONE;
+		magicInitDesc.eBuffType = BUFF_NONE;
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
 		magicInitDesc.eMagicTag = BASICCAST;
@@ -131,7 +131,7 @@ void CMagicSlot::Action_Magic_Skill(_uint iIndex, CTransform* pTarget, _float4x4
 	{
 		if (m_MagicSlots[iIndex] == nullptr)
 		{
-
+			return;
 		}
 		m_MagicSlots[iIndex]->Magic_Cast(pTarget, TargetOffsetMatrix, pWeaponMatrix, WeaponOffsetMatrix);
 	}
@@ -150,7 +150,7 @@ void CMagicSlot::Action_Magic_Basic(_uint iIndex, CTransform* pTarget, _float4x4
 	{
 		if (m_MagicEssentialSlots[iIndex] == nullptr)
 		{
-
+			return;
 		}
 		m_MagicEssentialSlots[iIndex]->Magic_Cast(pTarget, TargetOffsetMatrix, pWeaponMatrix, WeaponOffsetMatrix);
 	}

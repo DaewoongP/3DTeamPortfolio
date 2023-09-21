@@ -21,7 +21,7 @@ public:
 		_float4x4				TargetOffsetMatrix = {};
 		CMagic::MAGIC_GROUP		eMagicGroup = { CMagic::MG_END };
 		CMagic::MAGIC_TYPE		eMagicType = { CMagic::MT_END };
-		CMagic::BUFF_TYPE		eBuffType = { CMagic::BUFF_NONE };
+		BUFF_TYPE				eBuffType = { BUFF_NONE };
 		SPELL					eMagicTag = { SPELL_END };
 		_float					fDamage = { 0 };
 		_float					fDistance = { 0 };
@@ -34,7 +34,7 @@ public:
 	{
 		CMagic::MAGIC_GROUP		eMagicGroup = { CMagic::MG_END };
 		CMagic::MAGIC_TYPE		eMagicType = { CMagic::MT_END };
-		CMagic::BUFF_TYPE		eBuffType = { CMagic::BUFF_NONE };
+		BUFF_TYPE				eBuffType = { BUFF_NONE };
 		SPELL					eMagicTag = { SPELL_END };
 		_float					fDamage = { 0 };
 		function<void(_float3,_float)>		Action = { nullptr };
@@ -44,7 +44,7 @@ public:
 	{
 		CMagic::MAGIC_GROUP		eMagicGroup = { CMagic::MG_END };
 		CMagic::MAGIC_TYPE		eMagicType = { CMagic::MT_END };
-		CMagic::BUFF_TYPE		eBuffType = { CMagic::BUFF_NONE };
+		BUFF_TYPE				eBuffType = { BUFF_NONE };
 		SPELL					eMagicTag = { SPELL_END };
 		_float3					vStartPosition = {};
 		_float					fDamage = { 0 };

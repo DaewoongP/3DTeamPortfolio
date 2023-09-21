@@ -32,12 +32,14 @@ void CPXEventCallBack::onContact(const PxContactPairHeader& pairHeader, const Px
 
 		SourDesc.pOtherObjectTag = pDestObject->Get_Tag();
 		CharToWChar(pairs[i].shapes[1]->getName(), SourDesc.pOtherCollisionTag);
+		CharToWChar(pairs[i].shapes[0]->getName(), SourDesc.pThisCollisionTag);
 		SourDesc.pOtherOwner = pDestObject;
 		SourDesc.pOtherTransform = pDestObject->Get_Transform();
 		SourDesc.pArg = pDestObject->Get_CollisionData();
 
 		DestDesc.pOtherObjectTag = pSourObject->Get_Tag();
 		CharToWChar(pairs[i].shapes[0]->getName(), DestDesc.pOtherCollisionTag);
+		CharToWChar(pairs[i].shapes[1]->getName(), DestDesc.pThisCollisionTag);
 		DestDesc.pOtherOwner = pSourObject;
 		DestDesc.pOtherTransform = pSourObject->Get_Transform();
 		DestDesc.pArg = pSourObject->Get_CollisionData();
@@ -98,12 +100,14 @@ void CPXEventCallBack::onTrigger(PxTriggerPair* pairs, PxU32 count)
 
 		SourDesc.pOtherObjectTag = pDestObject->Get_Tag();
 		CharToWChar(pairs[i].otherShape->getName(), SourDesc.pOtherCollisionTag);
+		CharToWChar(pairs[i].triggerShape->getName(), SourDesc.pThisCollisionTag);
 		SourDesc.pOtherOwner = pDestObject;
 		SourDesc.pOtherTransform = pDestObject->Get_Transform();
 		SourDesc.pArg = pDestObject->Get_CollisionData();
 
 		DestDesc.pOtherObjectTag = pSourObject->Get_Tag();
 		CharToWChar(pairs[i].triggerShape->getName(), DestDesc.pOtherCollisionTag);
+		CharToWChar(pairs[i].otherShape->getName(), DestDesc.pThisCollisionTag);
 		DestDesc.pOtherOwner = pSourObject;
 		DestDesc.pOtherTransform = pSourObject->Get_Transform();
 		DestDesc.pArg = pSourObject->Get_CollisionData();

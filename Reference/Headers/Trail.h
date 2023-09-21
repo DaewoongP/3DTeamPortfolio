@@ -37,7 +37,7 @@ protected:
 	virtual ~CTrail() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype(const _tchar* _pFilePath, _uint _iLevel);
+	virtual HRESULT Initialize_Prototype(const _tchar* _pFilePath, const _tchar* _pGradientTexturePath, _uint _iLevel);
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
@@ -55,11 +55,12 @@ public:
 	void Set_Trail_HeadColor(_float3 vColor) {	m_vHeadColor = vColor;}
 	void Set_Trail_TailColor(_float3 vColor) { m_vTailColor = vColor; }
 	void Set_LocalSpace(const _float4x4* matrix) { m_LocalSpace = matrix; }
+	void Set_Pass(string str) { m_strPass = str; }
 
 public:/* For. Moving*/
 	void	Stright_Move(_float3 vTargerPosition, _float3 vStartPosition, _float fLerpAcc);
 	void	Spin_Move(_float3 vTargerPosition, _float3 vStartPosition, _float fLerpAcc);
-	void	Spline_Move(_float3 vSpline01, _float3 vTargerPosition, _float3 vStartPosition, _float3 vSpline02, _float fLerpAcc);
+	void	Spline_Move(_float3 vSpline01, _float3 vStartPosition, _float3 vTargerPosition, _float3 vSpline02, _float fLerpAcc);
 
 protected:
 	HRESULT Save(const _tchar* pFilePath);
@@ -69,6 +70,7 @@ protected:
 	_uint m_iLevel = { 0 };
 	string	m_strPass = "Default";
 	wstring m_wstrPath = { TEXT("../../Resources/Effects/Textures/Trails/Winga.png") };
+	wstring m_wstrGradientTextureName = {};
 	_bool m_isEnable = { true };
 
 	_uint     m_iTrailNum = { 20 };
@@ -103,7 +105,8 @@ protected:
 	HRESULT SetUp_ShaderResources();
 
 public:
-	static CTrail* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* _pDirectoryPath, _uint _iLevel = 0);
+	static CTrail* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* _pDirectoryPath, _uint _iLevel = 0,
+		const _tchar* _pGradientTexturePath  = TEXT("../../Resources/Effects/Textures/Gradients/CustomLinearGradient.png"));
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free(void) override;
 };

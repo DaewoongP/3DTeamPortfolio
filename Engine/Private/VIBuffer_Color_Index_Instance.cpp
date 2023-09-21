@@ -90,7 +90,7 @@ void CVIBuffer_Color_Index_Instance::Tick(VTXCOLIDXINSTANCE* pInstances, _int iR
 
 	D3D11_MAPPED_SUBRESOURCE	MappedSubResource;
 
-	m_pContext->Map(m_pVBInstance, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &MappedSubResource);
+	m_pContext->Map(m_pVBInstance, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedSubResource);
 
 	VTXCOLIDXINSTANCE* pVTXCOLIDXINSTANCE = static_cast<VTXCOLIDXINSTANCE*>(MappedSubResource.pData);
 

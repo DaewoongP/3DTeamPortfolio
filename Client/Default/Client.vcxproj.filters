@@ -295,9 +295,6 @@
     <Filter Include="04. Magic\MagicBall\06. Confringo">
       <UniqueIdentifier>{f2eb1727-1265-443b-960c-a8800034b231}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\03. Effect\Confringo_Explosive_Effect">
-      <UniqueIdentifier>{32fad4a1-4b2a-457d-91d8-ba6a2ad841cb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\03. Effect\Confringo_WandDust_Effect">
       <UniqueIdentifier>{9cd4f3c5-0e60-4d99-8478-7c20c152ebf8}</UniqueIdentifier>
     </Filter>
@@ -339,6 +336,9 @@
     </Filter>
     <Filter Include="02. GameObject\01. Player\01. StateMachine\07. Hit">
       <UniqueIdentifier>{8100d76b-abc1-4a05-a149-ea58ea807be8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\04. MapObject\MapEffect">
+      <UniqueIdentifier>{3d2f0c96-2d67-4229-a119-7e41208b82b3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -654,9 +654,6 @@
     <ClInclude Include="..\Public\Confringo.h">
       <Filter>04. Magic\MagicBall\06. Confringo</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Confringo_Explosive_Effect.h">
-      <Filter>02. GameObject\03. Effect\Confringo_Explosive_Effect</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Confringo_WandDust_Effect.h">
       <Filter>02. GameObject\03. Effect\Confringo_WandDust_Effect</Filter>
     </ClInclude>
@@ -698,6 +695,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\HitState.h">
       <Filter>02. GameObject\01. Player\01. StateMachine\07. Hit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MapEffect.h">
+      <Filter>02. GameObject\04. MapObject\MapEffect</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -983,9 +983,6 @@
     <ClCompile Include="..\Private\Confringo.cpp">
       <Filter>04. Magic\MagicBall\06. Confringo</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Confringo_Explosive_Effect.cpp">
-      <Filter>02. GameObject\03. Effect\Confringo_Explosive_Effect</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Confringo_WandDust_Effect.cpp">
       <Filter>02. GameObject\03. Effect\Confringo_WandDust_Effect</Filter>
     </ClCompile>
@@ -1027,6 +1024,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\HitState.cpp">
       <Filter>02. GameObject\01. Player\01. StateMachine\07. Hit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MapEffect.cpp">
+      <Filter>02. GameObject\04. MapObject\MapEffect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

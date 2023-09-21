@@ -76,14 +76,16 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	Key_Input(fTimeDelta);
 
+	Fix_Mouse();
+
 	UpdateLookAngle();
 
 	Update_Target_Angle();
 
 	//m_pStateContext->Tick(fTimeDelta);
 
-	//m_pCustomModel->Tick(CCustomModel::ROBE, 2, fTimeDelta);
-
+	Update_Cloth(fTimeDelta);
+	
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UNDERBODY);
 }
@@ -110,6 +112,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 
 void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
+	cout << "Hi" << endl;
 }
 
 void CPlayer::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)
@@ -222,7 +225,7 @@ HRESULT CPlayer::Add_Components()
 	RigidBodyDesc.isStatic = false;
 	RigidBodyDesc.isTrigger = false;
 	RigidBodyDesc.isGravity = true;
-	RigidBodyDesc.vInitPosition = _float3(2.f, 0.f, 2.f);
+	RigidBodyDesc.vInitPosition = _float3(2.f, 2.f, 2.f);
 	RigidBodyDesc.vInitRotation = m_pTransform->Get_Quaternion();
 	RigidBodyDesc.fStaticFriction = 0.f;
 	RigidBodyDesc.fDynamicFriction = 0.f;
@@ -234,6 +237,8 @@ HRESULT CPlayer::Add_Components()
 	RigidBodyDesc.eConstraintFlag = CRigidBody::RotX | CRigidBody::RotZ;
 	RigidBodyDesc.vDebugColor = _float4(1.f, 105 / 255.f, 180 / 255.f, 1.f); // hot pink
 	RigidBodyDesc.pOwnerObject = this;
+	RigidBodyDesc.eThisCollsion = COL_PLAYER;
+	RigidBodyDesc.eCollisionFlag = COL_ENEMY;
 	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Player_Default");
 
 	/* Com_RigidBody */
@@ -244,6 +249,8 @@ HRESULT CPlayer::Add_Components()
 		return E_FAIL;
 	}
 
+	m_OffsetMatrix = XMMatrixTranslation(RigidBodyDesc.vOffsetPosition.x, RigidBodyDesc.vOffsetPosition.y, RigidBodyDesc.vOffsetPosition.z);
+	m_pRigidBody->Get_RigidBodyActor()->setAngularDamping(1.f);
 	return S_OK;
 }
 
@@ -270,7 +277,7 @@ HRESULT CPlayer::Add_Magic()
 	CMagic::MAGICDESC magicInitDesc;
 	// 레비오소
 	{
-		magicInitDesc.eBuffType = CMagic::BUFF_UNGRAVITY;
+		magicInitDesc.eBuffType = BUFF_LEVIOSO;
 		magicInitDesc.eMagicGroup = CMagic::MG_CONTROL;
 		magicInitDesc.eMagicType = CMagic::MT_YELLOW;
 		magicInitDesc.eMagicTag = LEVIOSO;
@@ -284,7 +291,7 @@ HRESULT CPlayer::Add_Magic()
 
 	// 콘프링고
 	{
-		magicInitDesc.eBuffType = CMagic::BUFF_FIRE;
+		magicInitDesc.eBuffType = BUFF_FIRE;
 		magicInitDesc.eMagicGroup = CMagic::MG_DAMAGE;
 		magicInitDesc.eMagicType = CMagic::MT_RED;
 		magicInitDesc.eMagicTag = CONFRINGO;
@@ -306,17 +313,19 @@ void CPlayer::Key_Input(_float fTimeDelta)
 {
 	BEGININSTANCE;
 
-	//if (pGameInstance->Get_DIKeyState(DIK_Q, CInput_Device::KEY_DOWN))
-	//{
-	//	//포르테고는 타켓 없어도 됨.
-	//	m_pMagicSlot->Action_Magic_Basic(1, m_pTransform, XMMatrixIdentity(),m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
-	//}
+	if (pGameInstance->Get_DIKeyState(DIK_GRAVE, CInput_Device::KEY_DOWN))
+	{
+		if (true == m_isFixMouse)
+			m_isFixMouse = false;
+		else
+			m_isFixMouse = true;
+	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_UP))
 	{
 		m_pTransform->Go_Straight(fTimeDelta * 100);
 	}
-	
+
 	if (pGameInstance->Get_DIKeyState(DIK_DOWN))
 	{
 		m_pTransform->Go_Backward(fTimeDelta * 100);
@@ -336,7 +345,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 	if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
 	{
-		//m_pRigidBody->Add_Force(m_pTransform->Get_Up() * 30.f, PxForceMode::eIMPULSE);
+		//m_pRigidBody->Add_Force(m_pTransform->Get_Up() * 20.f, PxForceMode::eIMPULSE);
 	}
 
 	//if (pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN))
@@ -360,7 +369,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
 		if (nullptr == pTestTarget)
 			throw TEXT("pTestTarget is nullptr");
-		m_pMagicSlot->Action_Magic_Skill(0, pTestTarget->Get_Transform(), XMMatrixIdentity(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
+		m_pMagicSlot->Action_Magic_Skill(0, pTestTarget->Get_Transform(), pTestTarget->Get_Offset_Matrix(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_2, CInput_Device::KEY_DOWN))
@@ -368,7 +377,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
 		if (nullptr == pTestTarget)
 			throw TEXT("pTestTarget is nullptr");
-		m_pMagicSlot->Action_Magic_Skill(1, pTestTarget->Get_Transform(), XMMatrixIdentity(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
+		m_pMagicSlot->Action_Magic_Skill(1, pTestTarget->Get_Transform(), pTestTarget->Get_Offset_Matrix(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_3, CInput_Device::KEY_DOWN))
@@ -376,7 +385,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
 		if (nullptr == pTestTarget)
 			throw TEXT("pTestTarget is nullptr");
-		m_pMagicSlot->Action_Magic_Skill(2, pTestTarget->Get_Transform(), XMMatrixIdentity(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
+		m_pMagicSlot->Action_Magic_Skill(2, pTestTarget->Get_Transform(), pTestTarget->Get_Offset_Matrix(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_4, CInput_Device::KEY_DOWN))
@@ -384,10 +393,21 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
 		if (nullptr == pTestTarget)
 			throw TEXT("pTestTarget is nullptr");
-		m_pMagicSlot->Action_Magic_Skill(3, pTestTarget->Get_Transform(), XMMatrixIdentity(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
+		m_pMagicSlot->Action_Magic_Skill(3, pTestTarget->Get_Transform(), pTestTarget->Get_Offset_Matrix(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
 	}
 
 	ENDINSTANCE;
+}
+
+void CPlayer::Fix_Mouse()
+{
+	if (false == m_isFixMouse)
+		return;
+
+	POINT	ptMouse{ g_iWinSizeX >> 1, g_iWinSizeY >> 1 };
+
+	ClientToScreen(g_hWnd, &ptMouse);
+	SetCursorPos(ptMouse.x, ptMouse.y);
 }
 
 HRESULT CPlayer::Ready_MeshParts()
@@ -529,6 +549,9 @@ void CPlayer::Tick_ImGui()
 	{
 		m_pRigidBody->Set_Position(_float3(1.f, 1.f, 1.f));
 	}
+
+	_float3 vVelocity = m_pTransform->Get_Velocity();
+	ImGui::InputFloat3("Velocity", reinterpret_cast<_float*>(&vVelocity));
 
 
 	ImGui::End();
@@ -735,6 +758,17 @@ HRESULT CPlayer::Bind_Notify()
 		return E_FAIL;
 	}
 	return S_OK;
+}
+
+void CPlayer::Update_Cloth(_float fTimeDelta)
+{
+	// 현재 y값이 반대임
+	_float3 vVelocity = m_pTransform->Get_Velocity();
+	vVelocity.y *= -1.f;
+	m_pCustomModel->Set_WindVelocity(XMVector3TransformCoord(7.f * vVelocity,
+		XMMatrixInverse(nullptr, XMMatrixRotationQuaternion(m_pTransform->Get_Quaternion()))));
+
+	m_pCustomModel->Tick(CCustomModel::ROBE, 2, fTimeDelta);
 }
 
 CPlayer* CPlayer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

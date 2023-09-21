@@ -210,7 +210,6 @@ void CModel::Play_Animation(_float fTimeDelta, ANIMTYPE eType, CTransform* pTran
 	{
 		//�ִϸ��̼� ��������
 		currentAnimation->Reset();
-		m_BeginRootMatrix = pTransform->Get_WorldMatrix();
 		//������ ������������ ������ ��������.
 		if (currentAnimation->Get_LerpAnim())
 		{
@@ -321,42 +320,66 @@ void CModel::Do_Root_Animation(_float fTimeDelta, CTransform* pTransform, _bool 
 {
 	if (pTransform != nullptr)
 	{
-		//�ִϸ��̼��� �����Ű�� �� matrix�� �����غ���.
+		//루트 애니메이션을위한 현재와 과거
 		_float4x4 current_Matrix = m_Bones[m_iRootBoneIndex]->Get_CombinedTransformationMatrix();
-		//�ִϸ��̼� ���� �� ù �������̸�
-		_float4x4 post_Matirx = _float4x4();
-		if (isFirstFrame)
-			m_PostRootMatrix = current_Matrix;
-		post_Matirx = m_PostRootMatrix;
+		_float4x4 post_Matirx = XMMatrixIdentity();
 
+		//이번 애니메이션 첫 프레임이라면? 과거루트위치는 지금 뼈의 위치
+		if (isFirstFrame)
+		{
+			//시작 당시의 루트 뼈의 매트릭스( 중간에 바뀜 )
+			m_PostRootMatrix = current_Matrix;
+			//시작 당시의 루트 뼈의 매트릭스( 안바꿀거임 )
+			m_BeginRootAnimRootMatrix = current_Matrix;
+		}
+
+		post_Matirx = m_PostRootMatrix;
+		
+		//회전값 추출
 		_float3 vCurrent_Look = current_Matrix.Look();
 		_float3 vPost_Look = post_Matirx.Look();
+		_float3 vFirst_Look = m_BeginRootAnimRootMatrix.Look();
 
 		_float4x4 player_Matrix_Override = XMMatrixIdentity();
+		_float4x4 FirstFrameToCurrentRotation = XMMatrixIdentity();
 
 		vCurrent_Look.Normalize();
 		vPost_Look.Normalize();
+		vFirst_Look.Normalize();
 
+		//과거 / 현재 회전값 추출
+		{
 			_float dot = XMVectorGetX(XMVector3Dot(vPost_Look, vCurrent_Look));
 			_float radian = acosf(dot);
 
 			if (!isnan(radian))
 			{
-				
+				if (XMVectorGetY(XMVector3Cross(vCurrent_Look, vPost_Look)) > 0)
+					radian = 2 * XMVectorGetX(g_XMPi) - radian;
 
-			if (XMVectorGetY(XMVector3Cross(vCurrent_Look, vPost_Look)) > 0)
-				radian = 2 * XMVectorGetX(g_XMPi) - radian;
-
-			player_Matrix_Override = XMMatrixRotationY(radian);
-
+				player_Matrix_Override = XMMatrixRotationY(radian);
 			}
-			else
+		}
+
+		//첫프레임 / 현재 회전값 추출
+		{
+			_float dot = XMVectorGetX(XMVector3Dot(vFirst_Look, vCurrent_Look));
+			_float radian = acosf(dot);
+
+			if (!isnan(radian))
 			{
-				cout << fixed << setprecision(6) << "Radian : " << radian << endl;
-				cout << fixed << setprecision(6) << "Dot : " << dot << endl;
+				if (XMVectorGetY(XMVector3Cross(vCurrent_Look, vFirst_Look)) > 0)
+					radian = 2 * XMVectorGetX(g_XMPi) - radian;
+
+				FirstFrameToCurrentRotation = XMMatrixRotationY(radian);
 			}
+		}
+		
 		_float3 vCurrent_Position = current_Matrix.Translation();
 		_float3 vPost_Position = post_Matirx.Translation();
+
+		//시작점 기준 회전값 추출
+		
 
 		_float4x4 vPivotOutPosScale = m_PivotMatrix;
 		vPivotOutPosScale.MatrixScale(_float3(1, 1, 1));
@@ -364,10 +387,9 @@ void CModel::Do_Root_Animation(_float fTimeDelta, CTransform* pTransform, _bool 
 		vPivotOutPosScale._42 = 0;
 		vPivotOutPosScale._43 = 0;
 
-		//vPivotOutPosScale_float4x4 temp = XMMatrixInverse(nullptr, player_Matrix_Override);
-
+		//이건 영점기준 애니메이션의 이동값입니다. 이 이동값을 돌려줌.
 		_float3 Calculated_Position = (vCurrent_Position - vPost_Position);
-
+		Calculated_Position = XMVector3TransformNormal(Calculated_Position, XMMatrixInverse(nullptr,FirstFrameToCurrentRotation));
 		Calculated_Position = XMVector3TransformNormal(Calculated_Position, vPivotOutPosScale);
 		_float4x4 PositionMatrix = XMMatrixTranslation(Calculated_Position.x, Calculated_Position.y, Calculated_Position.z);
 
