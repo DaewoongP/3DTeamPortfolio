@@ -54,12 +54,12 @@ HRESULT CPlayer::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
-	if (FAILED(Ready_Camera()))
+	/*if (FAILED(Ready_Camera()))
 	{
 		MSG_BOX("Failed Ready Player Camera");
 
 		return E_FAIL;
-	}
+	}*/
 
 	m_pTransform->Set_Speed(1.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));

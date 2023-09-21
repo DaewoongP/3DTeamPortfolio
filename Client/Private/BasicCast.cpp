@@ -126,7 +126,7 @@ void CBasicCast::Tick(_float fTimeDelta)
 
 	_float3 vWandPosition = _float4x4(m_WeaponOffsetMatrix * (*m_pWeaponMatrix)).Translation();
 	m_pWandEffect->Get_Transform()->Set_Position(vWandPosition);
-	m_pWandEffect->Enable();
+	m_pWandEffect->Disable();
 	
 	if (m_pTrailEffect->Spline_Move(fTimeDelta))
 	{
