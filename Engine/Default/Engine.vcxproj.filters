@@ -397,6 +397,9 @@
     <Filter Include="01. Utility\03. Components\02. Renderer\FlowMap">
       <UniqueIdentifier>{bda6b89d-6c62-4ec2-8788-194e69c46dc7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\03. Components\02. Renderer\Fog">
+      <UniqueIdentifier>{0715a8bd-6d7c-44e5-8ab4-f1ffb439192d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -792,6 +795,9 @@
     <ClInclude Include="..\Public\FlowMap.h">
       <Filter>01. Utility\03. Components\02. Renderer\FlowMap</Filter>
     </ClInclude>
+    <ClInclude Include="Fog.h">
+      <Filter>01. Utility\03. Components\02. Renderer\Fog</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -1153,6 +1159,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\FlowMap.cpp">
       <Filter>01. Utility\03. Components\02. Renderer\FlowMap</Filter>
+    </ClCompile>
+    <ClCompile Include="Fog.cpp">
+      <Filter>01. Utility\03. Components\02. Renderer\Fog</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

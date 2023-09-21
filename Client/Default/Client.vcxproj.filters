@@ -334,6 +334,9 @@
     <Filter Include="02. GameObject\99. Debug\SeamLess">
       <UniqueIdentifier>{846ab9f8-ca54-4c10-bd34-f738c2ec2301}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\04. MapObject\MapEffect">
+      <UniqueIdentifier>{3d2f0c96-2d67-4229-a119-7e41208b82b3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
