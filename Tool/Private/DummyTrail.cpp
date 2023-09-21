@@ -13,9 +13,9 @@ CDummyTrail::CDummyTrail(const CDummyTrail& _rhs)
 	: CTrail(_rhs)
 {
 }
-HRESULT CDummyTrail::Initialize_Prototype(const _tchar* _pDirectoryPath, _uint _iLevel)
+HRESULT CDummyTrail::Initialize_Prototype(const _tchar* _pDirectoryPath, const _tchar* _pGradientTexturePath, _uint _iLevel)
 {
-	if (FAILED(__super::Initialize_Prototype(_pDirectoryPath, _iLevel)))
+	if (FAILED(__super::Initialize_Prototype(_pDirectoryPath, _pGradientTexturePath, _iLevel)))
 		return E_FAIL;
 
 	return S_OK;
@@ -247,11 +247,11 @@ void CDummyTrail::Load_FileDialog()
 	}
 }
 
-CDummyTrail* CDummyTrail::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, const _tchar* _pDirectoryPath, _uint _iLevel)
+CDummyTrail* CDummyTrail::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* _pDirectoryPath, _uint _iLevel, const _tchar* _pGradientTexturePath)
 {
-	CDummyTrail* pInstance = New CDummyTrail(_pDevice, _pContext);
+	CDummyTrail* pInstance = New CDummyTrail(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize_Prototype(_pDirectoryPath, _iLevel)))
+	if (FAILED(pInstance->Initialize_Prototype(_pDirectoryPath, _pGradientTexturePath,_iLevel)))
 	{
 		MSG_BOX("Faild to Created CDummyTrail");
 		Safe_Release(pInstance);

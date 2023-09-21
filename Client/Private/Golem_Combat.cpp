@@ -345,6 +345,8 @@ HRESULT CGolem_Combat::Add_Components()
 			TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
 			throw TEXT("Com_RigidBody");
 
+		m_OffsetMatrix = XMMatrixTranslation(RigidBodyDesc.vOffsetPosition.x, RigidBodyDesc.vOffsetPosition.y, RigidBodyDesc.vOffsetPosition.z);
+
 		/* For.Collider_Range */
 		RigidBodyDesc.isStatic = true;
 		RigidBodyDesc.isTrigger = true;

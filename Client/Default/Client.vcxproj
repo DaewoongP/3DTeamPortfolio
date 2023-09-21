@@ -169,7 +169,6 @@
     <ClInclude Include="..\Public\HardLandState.h" />
     <ClInclude Include="..\Public\JumpState.h" />
     <ClInclude Include="..\Public\Confringo.h" />
-    <ClInclude Include="..\Public\Confringo_Explosive_Effect.h" />
     <ClInclude Include="..\Public\Confringo_WandDust_Effect.h" />
     <ClInclude Include="..\Public\MagicCastingState.h" />
     <ClInclude Include="..\public\Main3_Loader.h" />
@@ -313,7 +312,6 @@
     <ClCompile Include="..\Private\HardLandState.cpp" />
     <ClCompile Include="..\Private\JumpState.cpp" />
     <ClCompile Include="..\Private\Confringo.cpp" />
-    <ClCompile Include="..\Private\Confringo_Explosive_Effect.cpp" />
     <ClCompile Include="..\Private\Confringo_WandDust_Effect.cpp" />
     <ClCompile Include="..\Private\MagicCastingState.cpp" />
     <ClCompile Include="..\private\Main3_Loader.cpp" />

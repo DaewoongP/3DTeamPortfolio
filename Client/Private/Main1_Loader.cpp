@@ -14,7 +14,6 @@
 #include "Default_Magic_Effect.h"
 #include "Default_MagicTraill_Effect.h"
 #include "Wingardium_Effect.h"
-#include "Confringo_Explosive_Effect.h"
 #include "Confringo_WandDust_Effect.h"
 #pragma endregion Effects
 
@@ -244,9 +243,10 @@ HRESULT CMain1_Loader::Loading_For_MainGame()
 			CWingardium_Effect::Create(m_pDevice, m_pContext, LEVEL_MAINGAME))))
 			throw TEXT("Prototype_GameObject_Wingardium_Effect");
 
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_MagicTraill_Confringo_Effect"),
-			CDefault_MagicTraill_Effect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/Confringo/Confringo.trail"), LEVEL_MAINGAME))))
-			throw TEXT("Prototype_GameObject_MagicTraill_Confringo_Effect");
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Traill_Confringo_Effect"),
+			CTrail::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/Confringo/Confringo.trail"), LEVEL_MAINGAME,
+				TEXT("../../Resources/Effects/Textures/Gradients/VFX_T_Gradient_Fire_D.png")))))
+			throw TEXT("Prototype_GameObject_Traill_Confringo_Effect");
 
 		/* For.Prototype_GameObject_Wingardium_Effect*/
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_MagicTraill_Winga_Effect"),
@@ -262,11 +262,6 @@ HRESULT CMain1_Loader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_MagicTraill_Levioso_Effect"),
 			CDefault_MagicTraill_Effect::Create(m_pDevice, m_pContext, TEXT(""), LEVEL_MAINGAME))))
 			throw TEXT("Prototype_GameObject_Default_MagicTraill_Levioso_Effect");
-
-		/* For.Prototype_GameObject_Confringo_Explosive_Effect*/
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Confringo_Explosive_Effect"),
-			CConfringo_Explosive_Effect::Create(m_pDevice, m_pContext, LEVEL_MAINGAME))))
-			throw TEXT("Prototype_GameObject_Confringo_Explosive_Effect");
 
 		/* For.Prototype_GameObject_Confringo_WandDust_Effect*/
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Confringo_WandDust_Effect"),
@@ -303,7 +298,7 @@ HRESULT CMain1_Loader::Loading_For_MainGame()
 
 		/* For.Prototype_GameObject_Confringo */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Confringo"),
-			CConfringo::Create(m_pDevice, m_pContext))))
+			CConfringo::Create(m_pDevice, m_pContext, LEVEL_MAINGAME))))
 			throw TEXT("Prototype_GameObject_Confringo");
 
 #pragma endregion
@@ -328,8 +323,6 @@ HRESULT CMain1_Loader::Loading_For_MainGame()
 
 HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath)
 {
-	std::lock_guard<std::mutex> lock(mtx);
-
 	/* For.Prototype_GameObject_MapObject */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_MapObject"),
 		CMapObject::Create(m_pDevice, m_pContext))))
@@ -405,8 +398,6 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath)
 
 HRESULT CMain1_Loader::Loading_Map_Object_Ins(const _tchar* pMapObjectInsPath)
 {
-	std::lock_guard<std::mutex> lock(mtx);
-
 	/* For.Prototype_GameObject_MapObject_Ins */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_MapObject_Ins"),
 		CMapObject_Ins::Create(m_pDevice, m_pContext))))
