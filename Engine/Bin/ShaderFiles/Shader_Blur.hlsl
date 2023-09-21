@@ -79,14 +79,14 @@ PS_OUT PS_MAIN_BLURX(PS_IN In)
     {
         UV = In.vTexUV + float2(dx * i, 0.f);
         vector SSAO = g_Texture.Sample(BlurSampler, UV);
-        
+        if(SSAO.x>0.9f)
+        {
+            Out.vColor = (1.f, 1.f, 1.f, 1.f);
+            return Out;
+        }
         Out.vColor += BlurWeights[11 + i] * SSAO;
-        Count+=1;
     }
-   //if(Count>0)
     Out.vColor /= total;
-    //else
-    //    Out.vColor = vector(1.f, 1.f, 1.f, 1.f);
     
     return Out;
 }
