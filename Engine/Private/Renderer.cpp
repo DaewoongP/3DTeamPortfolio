@@ -11,6 +11,7 @@
 #include"Bloom.h"
 #include"Distortion.h"
 #include"Glow.h"
+#include"MotionBlur.h"
 
 #ifdef _DEBUG
 #include "Input_Device.h"
@@ -75,7 +76,9 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_SSAO"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
-	
+	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
+		TEXT("Target_SSAOBluring"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
+		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_FinBloom"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
@@ -115,6 +118,8 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_SSAO"), TEXT("Target_SSAO"))))
 		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_SSAOBluring"), TEXT("Target_SSAOBluring"))))
+		return E_FAIL;
 	
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_FinBloom"), TEXT("Target_FinBloom"))))
 		return E_FAIL;
@@ -148,16 +153,16 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Specular"), 240.f, 240.f, 160.f, 160.f)))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Shadow"), 240.f, 400.f, 160.f, 160.f)))
+	/*if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Shadow"), 240.f, 400.f, 160.f, 160.f)))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_FinGlow"), 80.f, 560.f, 160.f, 160.f)))
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Blur"), 80.f, 560.f, 160.f, 160.f)))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Glow"), 240.f, 560.f, 160.f, 160.f)))
-		return E_FAIL;
+		return E_FAIL;*/
 
-	/*if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_SSAO"), 300.f, 300.f, 600.f, 600.f)))
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_SSAO"), 300.f, 300.f, 600.f, 600.f)))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Blur"), 900.f, 300.f, 600.f, 600.f)))
+	/*if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Blur"), 900.f, 300.f, 600.f, 600.f)))
 		return E_FAIL;*/
 	/*if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_PostProcessing"), 240.f, 560.f, 160.f, 160.f)))
 		return E_FAIL;*/
@@ -188,6 +193,21 @@ void CRenderer::Add_RenderGroup(RENDERGROUP eRenderGroup, CGameObject* pGameObje
 	m_RenderObjects[eRenderGroup].push_back(pGameObject);
 
 	Safe_AddRef(pGameObject);
+}
+
+void CRenderer::Add_RenderGroup(RENDERGROUP eRenderGroup, CGameObject* pGameObject, _float LightPower)
+{
+	if (eRenderGroup < RENDERGROUP::RENDER_PRIORITY ||
+		eRenderGroup >= RENDERGROUP::RENDER_END ||
+		nullptr == pGameObject)
+	{
+		MSG_BOX("Failed Add RenderGroup");
+		return;
+	}
+	m_RenderObjects[eRenderGroup].push_back(pGameObject);
+	m_fGlowPower = LightPower;
+	Safe_AddRef(pGameObject);
+
 }
 
 void CRenderer::Add_RenderGroup(RENDERGROUP eRenderGroup, CGameObject* pGameObject, _tchar* pShaderPass, CTexture* pOriTexture, CTexture*  pNoisetexture, CTexture* pAlphaTexture)
@@ -606,11 +626,6 @@ HRESULT CRenderer::Render_SSAO()
 	CPipeLine* pPipeLine = CPipeLine::GetInstance();
 	Safe_AddRef(pPipeLine);
 
-
-	if (FAILED(m_pSSAOShader->Bind_Matrix("g_ProjMatrixInv", pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
-
-
 	if (FAILED(m_pSSAOShader->Bind_RawValue("g_vCamPosition", pPipeLine->Get_CamPosition(), sizeof(_float4))))
 		return E_FAIL;
 	Safe_Release(pPipeLine);
@@ -624,6 +639,20 @@ HRESULT CRenderer::Render_SSAO()
 	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext)))
 		return E_FAIL;
 
+	/*if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_SSAOBluring"))))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_SSAO"), m_pSSAOShader, "g_SSAOTexture")))
+		return E_FAIL;
+
+
+	if (FAILED(m_pSSAOShader->Begin("BlurX")))
+		return E_FAIL;
+
+	if (FAILED(m_pSSAOBuffer->Render()))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext)))
+		return E_FAIL;*/
+
 	return S_OK;
 }
 
@@ -633,7 +662,7 @@ HRESULT CRenderer::Render_Deferred()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Shade"), m_pDeferredShader, "g_ShadeTexture")))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Blur"), m_pDeferredShader, "g_BlurTexture")))
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_BlurY"), m_pDeferredShader, "g_BlurTexture")))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Shadow"), m_pDeferredShader, "g_ShadowTexture")))
 		return E_FAIL;
@@ -790,6 +819,21 @@ HRESULT CRenderer::Render_EffectType()
 	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext)))
 		return E_FAIL;
 
+	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_MotionBlur"))))
+		return E_FAIL;
+
+	for (auto& pGameObject : m_RenderObjects[RENDER_MOTIONBLUR])
+	{
+		if (nullptr != pGameObject)
+			pGameObject->Render();
+
+		Safe_Release(pGameObject);
+	}
+
+	m_RenderObjects[RENDER_MOTIONBLUR].clear();
+
+	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -969,6 +1013,11 @@ HRESULT CRenderer::Add_Components()
 	m_pGlow = CGlow::Create(m_pDevice, m_pContext, TEXT("Target_FinGlow"), 1.f);//파티클이 갖고있는 정보하나주면 힘을 변경하도록 하면될것같음
 	if (nullptr == m_pGlow)
 		return E_FAIL;
+
+	m_pMotionBlur = CMotionBlur::Create(m_pDevice, m_pContext, TEXT("Target_FinGlow"));
+	if (nullptr == m_pMotionBlur)
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -1107,9 +1156,11 @@ void CRenderer::Free()
 	Safe_Release(m_pTexture3);
 	Safe_Release(m_pNoiseTexture);
 
+
 	Safe_Release(m_pAfterShaderBuffer);
 	Safe_Release(m_pAfterShader);
 
+	Safe_Release(m_pMotionBlur);
 	Safe_Release(m_pSSAOBuffer);
 	Safe_Release(m_pSSAOShader);
 	Safe_Release(m_pShadeTypeShader);

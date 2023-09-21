@@ -60,7 +60,7 @@ public:
 	_float4 Get_QuaternionVector_Pitch(_float fRadian);
 	// Z 축 기준 회전
 	_float4 Get_QuaternionVector_Yaw(_float fRadian);
-
+	
 	_float3 Get_Velocity();
 
 	void Set_Scale(_float3 _vScale);

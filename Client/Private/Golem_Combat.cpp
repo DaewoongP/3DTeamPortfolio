@@ -40,11 +40,11 @@ HRESULT CGolem_Combat::Initialize(void* pArg)
 
 	if (nullptr != pArg)
 	{
-		_float4x4* pWorldMatric = reinterpret_cast<_float4x4*>(pArg);
-		m_pTransform->Set_WorldMatrix(*pWorldMatric);
+		_float4x4* pWorldMatrix = reinterpret_cast<_float4x4*>(pArg);
+		m_pTransform->Set_WorldMatrix(*pWorldMatrix);
 	}
 	else
-		m_pTransform->Set_Position(_float3(15.f, 2.f, 15.f));
+		m_pTransform->Set_Position(_float3(_float(rand() % 5) + 15.f, 2.f, _float(rand() % 5) + 15.f));
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
@@ -162,7 +162,7 @@ void CGolem_Combat::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 		{
 			if (FAILED(Remove_GameObject(wstrObjectTag)))
 			{
-				MSG_BOX("[CGolem_Combat] Failed OnCollisionExit : \nFailed Remove_GameObject");
+				//MSG_BOX("[CGolem_Combat] Failed OnCollisionExit : \nFailed Remove_GameObject");
 				return;
 			}
 		}
@@ -349,12 +349,16 @@ HRESULT CGolem_Combat::Add_Components()
 		RigidBodyDesc.eConstraintFlag = CRigidBody::RotX | CRigidBody::RotY | CRigidBody::RotZ;
 		RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 0.f, 1.f);
 		RigidBodyDesc.pOwnerObject = this;
+		RigidBodyDesc.eThisCollsion = COL_ENEMY;
+		RigidBodyDesc.eCollisionFlag = COL_PLAYER;
 		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Body");
 
 		/* For.Com_RigidBody */
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
 			TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
 			throw TEXT("Com_RigidBody");
+
+		m_OffsetMatrix = XMMatrixTranslation(RigidBodyDesc.vOffsetPosition.x, RigidBodyDesc.vOffsetPosition.y, RigidBodyDesc.vOffsetPosition.z);
 
 		/* For.Collider_Range */
 		RigidBodyDesc.isStatic = true;

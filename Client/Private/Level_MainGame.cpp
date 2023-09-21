@@ -312,17 +312,42 @@ HRESULT CLevel_MainGame::Load_MapObject(const _tchar* pObjectFilePath)
 		}
 		BEGININSTANCE;
 
-		_tchar wszobjName[MAX_PATH] = { 0 };
-		_stprintf_s(wszobjName, TEXT("GameObject_MapObject_%d"), (iObjectNum));
+		wstring ws(MapObjectDesc.wszTag);
+		size_t findIndex = ws.find(TEXT("Model_")) + 6;
 
-		if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME,
-			TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_BackGround"),
-			wszobjName, &MapObjectDesc)))
+		wstring modelName = ws.substr(findIndex);
+		wstring wsMapEffectName(TEXT("Cylinder_Long"));
+
+		// MapEffect 클래스로 만들어야 할 경우
+		if (0 == lstrcmp(modelName.c_str(), wsMapEffectName.c_str()))
 		{
-			MSG_BOX("Failed to Install MapObject");
-			ENDINSTANCE;
-			return E_FAIL;
+			_tchar wszobjName[MAX_PATH] = { 0 };
+			_stprintf_s(wszobjName, TEXT("GameObject_MapEffect_%d"), (iObjectNum));
+
+			if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME,
+				TEXT("Prototype_GameObject_MapEffect"), TEXT("Layer_BackGround"),
+				wszobjName, &MapObjectDesc)))
+			{
+				MSG_BOX("Failed to Clone MapEffect");
+				ENDINSTANCE;
+				return E_FAIL;
+			}
 		}
+
+		else
+		{
+			_tchar wszobjName[MAX_PATH] = { 0 };
+			_stprintf_s(wszobjName, TEXT("GameObject_MapObject_%d"), (iObjectNum));
+
+			if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME,
+				TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_BackGround"),
+				wszobjName, &MapObjectDesc)))
+			{
+				MSG_BOX("Failed to Clone MapObject");
+				ENDINSTANCE;
+				return E_FAIL;
+			}
+		}		
 
 		++iObjectNum; ENDINSTANCE;
 	}
@@ -710,11 +735,11 @@ HRESULT CLevel_MainGame::Ready_Layer_Debug(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Camera_Debug"), pLayerTag, TEXT("GameObject_Camera_Debug"))))
+	/*if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Camera_Debug"), pLayerTag, TEXT("GameObject_Camera_Debug"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Camera_Debug)");
 		return E_FAIL;
-	}
+	}*/
 
 	/*if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Player"), pLayerTag, TEXT("GameObject_Test_Player"))))
 	{
@@ -723,11 +748,11 @@ HRESULT CLevel_MainGame::Ready_Layer_Debug(const _tchar* pLayerTag)
 	}*/
 
 	// 심리스방식 로딩트리거 객체
-	/*if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_LoadTrigger"), pLayerTag, TEXT("GameObject_LoadTrigger"))))
+	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_LoadTrigger"), pLayerTag, TEXT("GameObject_LoadTrigger"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_LoadTrigger)");
 		return E_FAIL;
-	}*/
+	}
 
 	// 키지마세요 터집니다
 	// 피직스 디버그 렌더링용 객체

@@ -273,6 +273,8 @@ HRESULT CGolem_Merlin::Add_Components()
 			TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
 			throw TEXT("Com_RigidBody");
 
+		m_OffsetMatrix = XMMatrixTranslation(RigidBodyDesc.vOffsetPosition.x, RigidBodyDesc.vOffsetPosition.y, RigidBodyDesc.vOffsetPosition.z);
+
 		const CBone* pBone = m_pModelCom->Get_Bone(TEXT("SKT_RightHand"));
 		if (nullptr == pBone)
 			throw TEXT("pBone is nullptr");

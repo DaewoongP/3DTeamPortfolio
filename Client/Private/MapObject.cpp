@@ -62,7 +62,11 @@ void CMapObject::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	if (nullptr != m_pRenderer)
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	
+	if (nullptr != m_pRenderer &&
+		true == pGameInstance->isIn_WorldFrustum(m_vCenterPoint.TransCoord(), m_fRadius))
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
@@ -71,6 +75,8 @@ void CMapObject::Late_Tick(_float fTimeDelta)
 		m_pRenderer->Add_DebugGroup(m_pRigidBody);
 #endif // _DEBUG
 	}
+
+	Safe_Release(pGameInstance);
 }
 
 HRESULT CMapObject::Render()
@@ -141,6 +147,9 @@ HRESULT CMapObject::Add_Components(MAPOBJECTDESC* pMapObjectDesc)
 	vector<_float3> Vertices;
 	vector<PxU32> Indices;
 	_uint iIndex = { 0 };
+	
+	m_vMaxPoint = _float3(-9999999.f, -9999999.f, -9999999.f);
+	m_vMinPoint = _float3(9999999.f, 9999999.f, 9999999.f);
 
 	for (auto& pMesh : Meshes)
 	{
@@ -148,7 +157,9 @@ HRESULT CMapObject::Add_Components(MAPOBJECTDESC* pMapObjectDesc)
 
 		for (auto& MeshVetex : MeshVertices)
 		{
-			Vertices.push_back(XMVector3TransformCoord(MeshVetex, pMapObjectDesc->WorldMatrix));
+			_float3 vWorldVertex = XMVector3TransformCoord(MeshVetex, pMapObjectDesc->WorldMatrix);
+			Vertices.push_back(vWorldVertex);
+			Check_MinMaxPoint(vWorldVertex);
 		}
 
 		vector<PxU32> MeshIndices = *pMesh->Get_IndicesVec();
@@ -160,6 +171,9 @@ HRESULT CMapObject::Add_Components(MAPOBJECTDESC* pMapObjectDesc)
 
 		iIndex += Vertices.size();
 	}
+
+	m_vCenterPoint = (m_vMaxPoint + m_vMinPoint) * 0.5f;
+	m_fRadius = Vector3::Distance(m_vMaxPoint, m_vCenterPoint);
 
 	// 피직스 메쉬 생성
 	PxTriangleMeshDesc TriangleMeshDesc;
@@ -211,6 +225,23 @@ HRESULT CMapObject::SetUp_ShaderResources()
 		return E_FAIL; ENDINSTANCE;
 
 	return S_OK;
+}
+
+void CMapObject::Check_MinMaxPoint(_float3 vPoint)
+{
+	if (m_vMinPoint.x > vPoint.x)
+		m_vMinPoint.x = vPoint.x;
+	if (m_vMinPoint.y > vPoint.y)
+		m_vMinPoint.y = vPoint.y;
+	if (m_vMinPoint.z > vPoint.z)
+		m_vMinPoint.z = vPoint.z;
+
+	if (m_vMaxPoint.x < vPoint.x)
+		m_vMaxPoint.x = vPoint.x;
+	if (m_vMaxPoint.y < vPoint.y)
+		m_vMaxPoint.y = vPoint.y;
+	if (m_vMaxPoint.z < vPoint.z)
+		m_vMaxPoint.z = vPoint.z;
 }
 
 CMapObject* CMapObject::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

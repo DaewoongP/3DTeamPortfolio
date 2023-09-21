@@ -126,7 +126,13 @@ HRESULT CMapObject_Ins::SetUp_ShaderResources()
 		return E_FAIL;
 
 	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL; ENDINSTANCE;
+		return E_FAIL;
+
+	if (FAILED(m_pShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
+		return E_FAIL;
+	
+	
+	ENDINSTANCE;
 
 	return S_OK;
 }

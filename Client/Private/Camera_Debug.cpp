@@ -33,7 +33,7 @@ HRESULT CCamera_Debug::Initialize(void* pArg)
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
 	m_pTransform->Set_Position(_float3(0.f, 2.f, 0.f));
 
-	m_fCameraNear = 1.f;
+	m_fCameraNear = 0.1f;
 
 	return S_OK;
 }

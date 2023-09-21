@@ -26,7 +26,7 @@ public:
 private:
 	void		Key_Input(const _float& fTimeDelta);
 	void		Mouse_Move(_float fTimeDelta);
-	void		Fix_Mouse(void);
+	void		Fix_Mouse();
 
 #ifdef _DEBUG
 private:

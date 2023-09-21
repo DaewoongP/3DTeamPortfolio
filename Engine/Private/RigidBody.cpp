@@ -222,6 +222,12 @@ HRESULT CRigidBody::Initialize(void* pArg)
 
 	RIGIDBODYDESC* pRigidBodyDesc = reinterpret_cast<RIGIDBODYDESC*>(pArg);
 
+	if (false == IsValid(pRigidBodyDesc))
+	{
+		MSG_BOX("Invalid RigidBody Description");
+		return E_FAIL;
+	}
+
 	CPhysX_Manager* pPhysX_Manager = CPhysX_Manager::GetInstance();
 	Safe_AddRef(pPhysX_Manager);
 
@@ -325,16 +331,16 @@ HRESULT CRigidBody::Create_Collider(RIGIDBODYDESC* pRigidBodyDesc)
 	PxShape* pShape = pPhysX->createShape(*pRigidBodyDesc->pGeometry,
 		*m_pMaterial, false, ePxFlag);
 
-	// 충돌처리에 필요한 유저 데이터값 바인딩
-	// 나중에 충돌 타입 정해서 처리할거임.
-	// 32비트 데이터라 총 8개로 플래그값 설정 가능 (word3 까지 포함하면 총 32개 옵션 설정가능.)
-	// 구조체에 옵션값으로 설정하게 해줘야함.
+	// filterdata
+	// 충돌처리를 할 데이터 값을 처리해주는 값 (유저가 직접 모든 충돌 처리)
+	// word0 -> 내 충돌값
+	// word1 -> 내가 충돌할 객체값
+	// word2 -> bool값 처럼 처리하여 값이 없으면 충돌 X 있으면 충돌 O
 	PxFilterData FilterData;
-	if (PxGeometryType::eHEIGHTFIELD == pRigidBodyDesc->pGeometry->getType() ||
-		PxGeometryType::eTRIANGLEMESH == pRigidBodyDesc->pGeometry->getType())
-		FilterData.word0 = 0;
-	else
-		FilterData.word0 = 0x1111; // 이데이터는 일단 고정.
+	FilterData.word0 = pRigidBodyDesc->eThisCollsion;
+	FilterData.word1 = pRigidBodyDesc->eCollisionFlag;
+	FilterData.word2 = USE_COL;
+
 	pShape->setSimulationFilterData(FilterData);
 
 	PxTransform OffsetTransform(PhysXConverter::ToPxVec3(pRigidBodyDesc->vOffsetPosition), PhysXConverter::ToPxQuat(pRigidBodyDesc->vOffsetRotation));
@@ -469,8 +475,10 @@ void CRigidBody::Enable_Collision(const _char* szColliderTag)
 	if (nullptr == pShape)
 		return;
 
+	PxFilterData FilterData = pShape->getSimulationFilterData();
 	m_pActor->detachShape(*pShape);
-	pShape->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, true);
+	FilterData.word2 = USE_COL;
+	pShape->setSimulationFilterData(FilterData);
 	m_pActor->attachShape(*pShape);
 }
 
@@ -481,8 +489,10 @@ void CRigidBody::Disable_Collision(const _char* szColliderTag)
 	if (nullptr == pShape)
 		return;
 
+	PxFilterData FilterData = pShape->getSimulationFilterData();
 	m_pActor->detachShape(*pShape);
-	pShape->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, false);
+	FilterData.word2 = END_COL;
+	pShape->setSimulationFilterData(FilterData);
 	m_pActor->attachShape(*pShape);
 }
 
@@ -656,6 +666,32 @@ PxShape* CRigidBody::Find_Shape(const _char* szShapeTag)
 		return nullptr;
 
 	return iter->second;
+}
+
+_bool CRigidBody::IsValid(RIGIDBODYDESC* pRigidBodyDesc)
+{
+	// 콜리전 태그 없음
+	if (!strcmp(pRigidBodyDesc->szCollisionTag, ""))
+	{
+		__debugbreak();
+		return false;
+	}
+		
+	// 오브젝트 this 포인터 없음
+	if (nullptr == pRigidBodyDesc->pOwnerObject)
+	{
+		__debugbreak();
+		return false;
+	}
+
+	// 피직스 Geometry 객체 없음
+	if (nullptr == pRigidBodyDesc->pGeometry)
+	{
+		__debugbreak();
+		return false;
+	}
+	
+	return true;
 }
 
 CRigidBody* CRigidBody::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

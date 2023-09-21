@@ -156,23 +156,9 @@ void CTransform::Set_WorldMatrix(_float4x4 _WorldMatrix)
 {
 	m_WorldMatrix = _WorldMatrix;
 
-	if (nullptr != m_pRigidBody)
-	{
-		CPhysX_Manager* pPhysX_Manager = CPhysX_Manager::GetInstance();
-		Safe_AddRef(pPhysX_Manager);
-
-		m_pRigidBody->Set_Position(Get_Position());
-		m_pRigidBody->Set_Rotation(Get_Quaternion());
-
-		pPhysX_Manager->Tick(1 / 60.f);
-
-		Set_Position(m_pRigidBody->Get_Position());
-		Set_Quaternion(m_pRigidBody->Get_Rotation());
-
-		Safe_Release(pPhysX_Manager);
-	}
-	
 	m_ubTransformChanged |= CHANGEFLAG::ROTATION | CHANGEFLAG::TRANSLATION;
+
+	Update_Components();
 }
 
 HRESULT CTransform::Initialize_Prototype()
