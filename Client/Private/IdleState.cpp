@@ -59,14 +59,6 @@ void CIdleState::OnStateEnter()
 
 void CIdleState::OnStateTick()
 {
-	Go_Turn();
-
-	Go_Start();
-
-	Go_Roll();
-
-	Go_Jump();
-
 	switch (*m_pIActionSwitch)
 	{
 	case CStateContext::ACTION_NONE:
@@ -96,7 +88,17 @@ void CIdleState::OnStateTick()
 		break;
 	}
 
+	Go_Turn();
+
+	Go_Start();
+
+	Go_Roll();
+
+	Go_Jump();
+
 	Go_Magic_Cast();
+
+	Go_Protego();
 }
 
 void CIdleState::OnStateExit()
@@ -139,6 +141,11 @@ void CIdleState::Action_Cmbt_Tick()
 void CIdleState::Bind_Notify()
 {
 	m_pOwnerModel->Bind_Notify(TEXT("Hu_BM_RF_Jog_Start_Fwd_anm"), TEXT("End_Animation"), m_pFuncFinishAnimation);
+	m_pOwnerModel->Bind_Notify(TEXT("Hu_BM_RF_Idle_anm"), TEXT("End_Animation"), m_pFuncFinishAnimation);
+	m_pOwnerModel->Bind_Notify(TEXT("Hu_Cmbt_Idle_Casual_anm"), TEXT("End_Animation"), m_pFuncFinishAnimation);
+	m_pOwnerModel->Bind_Notify(TEXT("Hu_Cmbt_RF_Idle_anm"), TEXT("End_Animation"), m_pFuncFinishAnimation);
+	m_pOwnerModel->Bind_Notify(TEXT("Hu_Cmbt_Idle_RF_2Cmbt_Idle_Casual_anm"), TEXT("End_Animation"), m_pFuncFinishAnimation);
+	m_pOwnerModel->Bind_Notify(TEXT("Hu_Cmbt_Idle_Casual_2BM_Idle_RF_anm"), TEXT("End_Animation"), m_pFuncFinishAnimation);
 }
 
 void CIdleState::Go_Turn()
@@ -239,7 +246,21 @@ void CIdleState::ActionType_Change()
 
 	if (pGameInstance->Check_Timer(TEXT("Action_Change")))
 	{
+		switch (*m_pIActionSwitch)
+		{
+		case CStateContext::ACTION_CMBT:
+		{
+			m_pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Idle_RF_2Cmbt_Idle_Casual_anm"));
+		}
+		break;
+		case CStateContext::ACTION_CASUAL:
+		{
+			m_pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Idle_Casual_2BM_Idle_RF_anm"));
+		}
+		break;
+		}
 		--(*m_pIActionSwitch);
+
 	}
 
 	ENDINSTANCE;

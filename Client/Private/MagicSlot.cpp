@@ -26,11 +26,11 @@ HRESULT CMagicSlot::Initialize(void* pArg)
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 		magicInitDesc.eMagicType = CMagic::MT_ALL;
 		magicInitDesc.eMagicTag = PROTEGO;
-		magicInitDesc.fCoolTime = 1.f;
+		magicInitDesc.fCoolTime = 0.f;
 		magicInitDesc.fDamage = 0.f;
 		magicInitDesc.fCastDistance = 1000;
 		magicInitDesc.fBallDistance = 30;
-		magicInitDesc.fLifeTime = 5.f;
+		magicInitDesc.fLifeTime = 3.f;
 		Add_Magics(magicInitDesc);
 	}
 	//Basic Magic BasicCast

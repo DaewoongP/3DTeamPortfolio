@@ -76,6 +76,7 @@ void CMoveTurnState::OnStateTick()
 
 	Go_Magic_Cast();
 
+	Go_Protego();
 }
 
 void CMoveTurnState::OnStateExit()

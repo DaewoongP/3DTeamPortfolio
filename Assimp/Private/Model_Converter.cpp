@@ -476,7 +476,7 @@ HRESULT CModel_Converter::Convert_Animations()
 		ANIMATION Animation;
 		ZEROMEM(&Animation);
 		// 애니메이션 이름
-		_tchar AnimName[256] = TEXT("");
+		_tchar AnimName[MAX_PATH] = TEXT("");
 		CharToWChar(pAIAnimation->mName.data, AnimName);
 		lstrcpy(Animation.szName, AnimName);
 
@@ -496,7 +496,7 @@ HRESULT CModel_Converter::Convert_Animations()
 			CHANNEL Channel;
 			ZEROMEM(&Channel);
 			// 채널 이름
-			_tchar ChannelName[256] = TEXT("");
+			_tchar ChannelName[MAX_PATH] = TEXT("");
 			CharToWChar(pAIChannel->mNodeName.data, ChannelName);
 			lstrcpy(Channel.szName, ChannelName);
 

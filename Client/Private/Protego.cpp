@@ -122,7 +122,7 @@ HRESULT CProtego::Initialize(void* pArg)
 
 void CProtego::Tick(_float fTimeDelta)
 {
-	m_pTransform->Set_Position(m_pTarget->Get_Position());
+	m_pTransform->Set_Position(m_pTarget->Get_Position() + m_TargetOffsetMatrix.Translation());
 	__super::Tick(fTimeDelta);
 
 	//Tick_Imgui();

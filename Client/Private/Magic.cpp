@@ -121,14 +121,8 @@ _bool CMagic::Magic_Cast(CTransform* pTarget, _float4x4 targetOffsetMatrix, cons
 			m_ActionVec[i]();
 		}
 
-		if (pTarget == nullptr)
-		{
-			m_fCurrentCoolTime = 1.f;
-		}
-		else
-		{
-			m_fCurrentCoolTime = m_fInitCoolTime;
-		}
+		m_fCurrentCoolTime = m_fInitCoolTime;
+		
 		return true;
 	}
 	return false;

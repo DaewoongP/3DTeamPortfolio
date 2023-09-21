@@ -91,8 +91,15 @@ void CMoveLoopState::OnStateTick()
 		*m_pIsFinishAnimation = false;
 	}
 
+	BEGININSTANCE;
+
+	//m_pPlayerTransform->Go_Straight(7.0f * pGameInstance->Get_World_Tick());
+
+	ENDINSTANCE;
+
 	Go_Magic_Cast();
 
+	Go_Protego();
 }
 
 void CMoveLoopState::OnStateExit()

@@ -65,6 +65,8 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(180.f));
 	m_pTransform->Set_RigidBody(m_pRigidBody);
 
+	Bind_Notify();
+
 	return S_OK;
 }
 
@@ -75,6 +77,8 @@ void CPlayer::Tick(_float fTimeDelta)
 	Key_Input(fTimeDelta);
 
 	UpdateLookAngle();
+
+	Update_Target_Angle();
 
 	//m_pStateContext->Tick(fTimeDelta);
 
@@ -183,6 +187,7 @@ HRESULT CPlayer::Add_Components()
 	StateContextDesc.pOwnerLookAngle = &m_fLookAngle;
 	StateContextDesc.pIsDirectionPressed = &m_isDirectionKeyPressed;
 	StateContextDesc.pPlayerTransform = m_pTransform;
+	StateContextDesc.pTargetAngle = &m_fTargetAngle;
 
 	/* For.Com_StateContext */
 	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_StateContext"),
@@ -301,11 +306,11 @@ void CPlayer::Key_Input(_float fTimeDelta)
 {
 	BEGININSTANCE;
 
-	if (pGameInstance->Get_DIKeyState(DIK_Q, CInput_Device::KEY_DOWN))
-	{
-		//포르테고는 타켓 없어도 됨.
-		m_pMagicSlot->Action_Magic_Basic(1, m_pTransform, XMMatrixIdentity(),m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
-	}
+	//if (pGameInstance->Get_DIKeyState(DIK_Q, CInput_Device::KEY_DOWN))
+	//{
+	//	//포르테고는 타켓 없어도 됨.
+	//	m_pMagicSlot->Action_Magic_Basic(1, m_pTransform, XMMatrixIdentity(),m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
+	//}
 
 	if (pGameInstance->Get_DIKeyState(DIK_UP))
 	{
@@ -334,21 +339,21 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		//m_pRigidBody->Add_Force(m_pTransform->Get_Up() * 30.f, PxForceMode::eIMPULSE);
 	}
 
-	if (pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN))
-	{
-		/* 이거는 테스트 용으로 더미클래스 찾으려고 넣은 코드를 훔쳐온거임 */
-		CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
-		if (nullptr == pTestTarget)
-			throw TEXT("pTestTarget is nullptr");
+	//if (pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN))
+	//{
+	//	/* 이거는 테스트 용으로 더미클래스 찾으려고 넣은 코드를 훔쳐온거임 */
+	//	CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
+	//	if (nullptr == pTestTarget)
+	//		throw TEXT("pTestTarget is nullptr");
+	//
+	//	m_pMagicSlot->Action_Magic_Basic(0, pTestTarget->Get_Transform(),XMMatrixIdentity(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
+	//}
 
-		m_pMagicSlot->Action_Magic_Basic(0, pTestTarget->Get_Transform(),XMMatrixIdentity(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
-	}
-
-	if (pGameInstance->Get_DIKeyState(DIK_Q, CInput_Device::KEY_DOWN))
-	{
-		//포르테고는 타켓이 생성 객체임
-		m_pMagicSlot->Action_Magic_Basic(1, m_pTransform, XMMatrixIdentity(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
-	}
+	//if (pGameInstance->Get_DIKeyState(DIK_Q, CInput_Device::KEY_DOWN))
+	//{
+	//	//포르테고는 타켓이 생성 객체임
+	//	m_pMagicSlot->Action_Magic_Basic(1, m_pTransform, XMMatrixIdentity(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
+	//}
 
 	if (pGameInstance->Get_DIKeyState(DIK_1, CInput_Device::KEY_DOWN))
 	{
@@ -587,6 +592,149 @@ void CPlayer::UpdateLookAngle()
 	}
 
 	ENDINSTANCE;
+}
+
+void CPlayer::Update_Target_Angle()
+{
+	//나에서 타겟을 향한 벡터
+	_float3 vDirTarget{};
+	
+	if (nullptr == m_pTargetTransform)
+	{
+		vDirTarget = m_pPlayer_Camera->Get_CamLookXZ();
+	}
+	else
+	{
+		vDirTarget = m_pTargetTransform->Get_Position() - m_pTransform->Get_Position();
+
+		vDirTarget = XMVectorSetY(vDirTarget, 0.0f);
+
+		vDirTarget.Normalize();
+	}
+	
+	//내 룩 벡터
+	_float3 vLook{};
+
+	vLook = m_pTransform->Get_Look();
+
+	vLook = XMVectorSetY(vLook, 0.0f);
+
+	vLook.Normalize();
+	
+	_float fTargetAngle = vLook.Dot(vDirTarget);
+
+	if (1.0f < fTargetAngle)
+	{
+		fTargetAngle = 1.0f;
+	}
+
+	m_fTargetAngle = acosf(fTargetAngle);
+
+	if (0.0f > vLook.Cross(vDirTarget).y)
+	{
+		m_fTargetAngle *= -1;
+	}
+	
+}
+
+void CPlayer::Shot_Basic_Spell()
+{
+	m_pMagicSlot->Action_Magic_Basic(0, m_pTargetTransform, XMMatrixIdentity(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
+}
+
+void CPlayer::Protego()
+{
+	m_pMagicSlot->Action_Magic_Basic(1, m_pTransform, XMMatrixTranslation(0.0f, 1.0f, 0.0f), m_pTransform->Get_WorldMatrixPtr(), XMMatrixIdentity());
+}
+
+HRESULT CPlayer::Bind_Notify()
+{
+	function<void()> funcNotify = [&] {(*this).Shot_Basic_Spell(); };
+
+	//Shot_Spell
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_BM_RF_Cast_Casual_Fwd_01_anm"), TEXT("Shot_Spell"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_BM_RF_Cast_Casual_Fwd_02_anm"), TEXT("Shot_Spell"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_BM_RF_Cast_Casual_Fwd_03_anm"), TEXT("Shot_Spell"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_BM_RF_Cast_Casual_Fwd_04_anm"), TEXT("Shot_Spell"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_01_anm"), TEXT("Shot_Spell"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_02_anm"), TEXT("Shot_Spell"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_03_anm"), TEXT("Shot_Spell"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Hvy_frmLft_anm"), TEXT("Shot_Spell"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_StepBwd_01_anm"), TEXT("Shot_Spell"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_StepBwd_02_anm"), TEXT("Shot_Spell"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_StepBwd_03_anm"), TEXT("Shot_Spell"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_StepBwd_04_anm"), TEXT("Shot_Spell"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
+
+	funcNotify = [&] {(*this).Protego(); };
+
+	//Protego
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Protego_Start_anm"), TEXT("Protego"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
+	return S_OK;
 }
 
 CPlayer* CPlayer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

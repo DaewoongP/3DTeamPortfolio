@@ -65,6 +65,7 @@ void CMoveStartState::OnStateTick()
 
 	Go_Magic_Cast();
 
+	Go_Protego();
 }
 
 void CMoveStartState::OnStateExit()
