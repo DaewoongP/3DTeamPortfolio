@@ -33,7 +33,7 @@ HRESULT CProfessor_Fig::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	m_pTransform->Set_Position(_float3(30.f, 0.f, 10.f));
+	m_pTransform->Set_Position(_float3(_float(rand() % 5) + 30.f, 0.f, _float(rand() % 5) + 10.f));
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
@@ -130,7 +130,7 @@ void CProfessor_Fig::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 		{
 			if (FAILED(Remove_GameObject(wstrObjectTag)))
 			{
-				MSG_BOX("[CProfessor_Fig] Failed OnCollisionExit : \nFailed Remove_GameObject");
+				//MSG_BOX("[CProfessor_Fig] Failed OnCollisionExit : \nFailed Remove_GameObject");
 				return;
 			}
 		}

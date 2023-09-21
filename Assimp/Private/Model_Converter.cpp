@@ -250,7 +250,7 @@ HRESULT CModel_Converter::Store_Mesh(const aiMesh* pAIMesh, MESH* outMesh)
 	outMesh->iMaterialIndex = pAIMesh->mMaterialIndex;
 
 	// 메쉬 이름
-	_tchar MeshName[256] = TEXT("");
+	_tchar MeshName[MAX_PATH] = TEXT("");
 	CharToWChar(pAIMesh->mName.data, MeshName);
 	lstrcpy(outMesh->szName, MeshName);
 
@@ -313,7 +313,7 @@ HRESULT CModel_Converter::Store_Mesh(const aiMesh* pAIMesh, MESH* outMesh)
 		BONE	Bone;
 		ZEROMEM(&Bone);
 		// 해당하는 뼈의 이름
-		_tchar BoneName[256] = TEXT("");
+		_tchar BoneName[MAX_PATH] = TEXT("");
 		CharToWChar(pAIBone->mName.data, BoneName);
 		lstrcpy(Bone.szName, BoneName);
 

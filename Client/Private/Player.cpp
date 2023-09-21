@@ -74,15 +74,14 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	Key_Input(fTimeDelta);
 
+	Fix_Mouse();
+
 	UpdateLookAngle();
 
 	//m_pStateContext->Tick(fTimeDelta);
+
+	Update_Cloth(fTimeDelta);
 	
-	// 나중에 함수로 변경하겠습니다
-	m_pCustomModel->Set_WindVelocity(XMVector3TransformCoord(7.f * m_pTransform->Get_Velocity(), XMMatrixInverse(nullptr, XMMatrixRotationQuaternion(m_pTransform->Get_Quaternion()))));
-
-	m_pCustomModel->Tick(CCustomModel::ROBE, 2, fTimeDelta);
-
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UNDERBODY);
 }
@@ -109,6 +108,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 
 void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
+	cout << "Hi" << endl;
 }
 
 void CPlayer::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)
@@ -232,6 +232,8 @@ HRESULT CPlayer::Add_Components()
 	RigidBodyDesc.eConstraintFlag = CRigidBody::RotX | CRigidBody::RotZ;
 	RigidBodyDesc.vDebugColor = _float4(1.f, 105 / 255.f, 180 / 255.f, 1.f); // hot pink
 	RigidBodyDesc.pOwnerObject = this;
+	RigidBodyDesc.eThisCollsion = COL_PLAYER;
+	RigidBodyDesc.eCollisionFlag = COL_ENEMY;
 	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Player_Default");
 
 	/* Com_RigidBody */
@@ -243,6 +245,7 @@ HRESULT CPlayer::Add_Components()
 	}
 
 	m_OffsetMatrix = XMMatrixTranslation(RigidBodyDesc.vOffsetPosition.x, RigidBodyDesc.vOffsetPosition.y, RigidBodyDesc.vOffsetPosition.z);
+	m_pRigidBody->Get_RigidBodyActor()->setAngularDamping(1.f);
 	return S_OK;
 }
 
@@ -305,11 +308,19 @@ void CPlayer::Key_Input(_float fTimeDelta)
 {
 	BEGININSTANCE;
 
+	if (pGameInstance->Get_DIKeyState(DIK_GRAVE, CInput_Device::KEY_DOWN))
+	{
+		if (true == m_isFixMouse)
+			m_isFixMouse = false;
+		else
+			m_isFixMouse = true;
+	}
+
 	if (pGameInstance->Get_DIKeyState(DIK_UP))
 	{
 		m_pTransform->Go_Straight(fTimeDelta * 100);
 	}
-	
+
 	if (pGameInstance->Get_DIKeyState(DIK_DOWN))
 	{
 		m_pTransform->Go_Backward(fTimeDelta * 100);
@@ -329,7 +340,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 	if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
 	{
-		m_pRigidBody->Add_Force(m_pTransform->Get_Up() * 10.f, PxForceMode::eIMPULSE);
+		//m_pRigidBody->Add_Force(m_pTransform->Get_Up() * 20.f, PxForceMode::eIMPULSE);
 	}
 
 	if (pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN))
@@ -381,6 +392,17 @@ void CPlayer::Key_Input(_float fTimeDelta)
 	}
 
 	ENDINSTANCE;
+}
+
+void CPlayer::Fix_Mouse()
+{
+	if (false == m_isFixMouse)
+		return;
+
+	POINT	ptMouse{ g_iWinSizeX >> 1, g_iWinSizeY >> 1 };
+
+	ClientToScreen(g_hWnd, &ptMouse);
+	SetCursorPos(ptMouse.x, ptMouse.y);
 }
 
 HRESULT CPlayer::Ready_MeshParts()
@@ -588,6 +610,17 @@ void CPlayer::UpdateLookAngle()
 	}
 
 	ENDINSTANCE;
+}
+
+void CPlayer::Update_Cloth(_float fTimeDelta)
+{
+	// 현재 y값이 반대임
+	_float3 vVelocity = m_pTransform->Get_Velocity();
+	vVelocity.y *= -1.f;
+	m_pCustomModel->Set_WindVelocity(XMVector3TransformCoord(7.f * vVelocity,
+		XMMatrixInverse(nullptr, XMMatrixRotationQuaternion(m_pTransform->Get_Quaternion()))));
+
+	m_pCustomModel->Tick(CCustomModel::ROBE, 2, fTimeDelta);
 }
 
 CPlayer* CPlayer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

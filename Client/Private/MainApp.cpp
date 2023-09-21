@@ -81,8 +81,7 @@ HRESULT CMainApp::Render()
 	if (FAILED(m_pGameInstance->Render_Font(TEXT("Font_135"), m_szFPS, _float2(0.f, 680.f))))
 		return E_FAIL;
 
-	if (FAILED(Render_ImGui()))
-		return E_FAIL;
+	Render_ImGui();
 #endif // _DEBUG
 	FAILED_CHECK_RETURN(m_pGameInstance->Present(), E_FAIL);
 

@@ -331,6 +331,9 @@
     <Filter Include="02. GameObject\99. Debug\SeamLess">
       <UniqueIdentifier>{846ab9f8-ca54-4c10-bd34-f738c2ec2301}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\04. MapObject\MapEffect">
+      <UniqueIdentifier>{7c98dd2f-9c09-4b58-a038-813d2758d7a3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -681,6 +684,9 @@
     <ClInclude Include="..\public\Seamless_Loader.h">
       <Filter>02. GameObject\99. Debug\SeamLess</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\MapEffect.h">
+      <Filter>02. GameObject\04. MapObject\MapEffect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1000,6 +1006,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Seamless_Loader.cpp">
       <Filter>02. GameObject\99. Debug\SeamLess</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MapEffect.cpp">
+      <Filter>02. GameObject\04. MapObject\MapEffect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
