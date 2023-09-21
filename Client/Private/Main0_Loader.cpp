@@ -21,6 +21,7 @@
 #include "UI_Font.h"
 #include "Field_Guide.h"
 #include "Main_Menu.h"
+#include "Menu_Gear.h"
 #pragma endregion UI
 
 #ifdef _DEBUG
@@ -245,6 +246,10 @@ HRESULT CMain0_Loader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Main_Menu"),
 			CMain_Menu::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Main_Menu");
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Menu_Gear"),
+			CMenu_Gear::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Menu_Gear");
+
 
 		/* --------------Debug-------------- */
 #ifdef _DEBUG

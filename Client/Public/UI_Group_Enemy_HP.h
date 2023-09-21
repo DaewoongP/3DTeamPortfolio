@@ -22,8 +22,6 @@ public:
 		ENEMYTYPE eType;
 		_tchar wszObjectName[MAX_PATH] = TEXT("");
 		_tchar wszObjectLevel[MAX_PATH] = TEXT("");
-
-
 	};
 
 private:

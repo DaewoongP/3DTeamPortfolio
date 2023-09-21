@@ -52,6 +52,13 @@ HRESULT CWindow_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* 
 		Safe_Release(pGameInstance);
 		return E_FAIL;
 	}
+
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Tool"), TEXT("Layer_Tool_Font"))))
+	{
+		MSG_BOX("Failed Add Scene : (Scene_Tool)");
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	}
 	
 	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Tool"), TEXT("Layer_MapObject"))))
 	{

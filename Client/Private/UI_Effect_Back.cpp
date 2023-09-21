@@ -223,7 +223,6 @@ CGameObject* CUI_Effect_Back::Clone(void* pArg)
 		MSG_BOX("Failed to Cloned CUI_Progress");
 		Safe_Release(pInstance);
 	}
-
 	return pInstance;
 }
 

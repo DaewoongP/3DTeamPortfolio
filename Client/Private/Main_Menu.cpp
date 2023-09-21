@@ -3,6 +3,11 @@
 #include "UI_Effect_Back.h"
 #include "UI_Back.h"
 
+#include "Menu_Gear.h"
+#include "Menu_Invectory.h"
+#include "Menu_Quest.h"
+#include "Menu_Setting.h"
+
 CMain_Menu::CMain_Menu(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
@@ -36,6 +41,9 @@ HRESULT CMain_Menu::Initialize(void* pArg)
 	if (FAILED(Read_File(reinterpret_cast<const _tchar*>(pArg))))
 		return E_FAIL;
 
+
+	Ready_Menus();
+
 	return S_OK;
 }
 
@@ -43,12 +51,46 @@ void CMain_Menu::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
+	switch (m_eCurMenu)
+	{
+	case GEAR:
+		m_pGear->Tick(fTimeDelta);
+		break;
+	case INVENTORY:
+		break;
+	case QUEST:
+		break;
+	case SETTING:
+		break;
+	case MENU_END:
+		break;
+	default:
+		break;
+	}
+
 	Set_SelectedText();
 }
 
 void CMain_Menu::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
+
+	switch (m_eCurMenu)
+	{
+	case GEAR:
+		m_pGear->Late_Tick(fTimeDelta);
+		break;
+	case INVENTORY:
+		break;
+	case QUEST:
+		break;
+	case SETTING:
+		break;
+	case MENU_END:
+		break;
+	default:
+		break;
+	}
 }
 
 HRESULT CMain_Menu::Render()
@@ -306,12 +348,14 @@ void CMain_Menu::Set_SelectedText()
 			if (m_iSelectedText == -1)
 			{
 				m_iSelectedText = iIndex;
+				m_eCurMenu = (MENU)m_iSelectedText;
 				m_pTexts[m_iSelectedText]->Set_Clicked(true);
 				return;
 			}
 
 			m_pTexts[m_iSelectedText]->Set_Clicked(false);
 			m_iSelectedText = iIndex;
+			m_eCurMenu = (MENU)m_iSelectedText;
 			m_pTexts[m_iSelectedText]->Set_Clicked(true);
 
 #ifdef _DEBUG
@@ -320,6 +364,20 @@ void CMain_Menu::Set_SelectedText()
 		}
 		iIndex++;
 	}
+}
+
+HRESULT CMain_Menu::Ready_Menus()
+{
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	
+	m_pGear = dynamic_cast<CMenu_Gear*>(pGameInstance->Clone_Component(LEVEL_MAINGAME,
+		TEXT("Prototype_GameObject_Menu_Gear")));
+	//Safe_AddRef(m_pGear);
+
+	Safe_Release(pGameInstance);
+
+	return S_OK;
 }
 
 CMain_Menu* CMain_Menu::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -363,4 +421,5 @@ void CMain_Menu::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pTexture);
+	Safe_Release(m_pGear);	
 }

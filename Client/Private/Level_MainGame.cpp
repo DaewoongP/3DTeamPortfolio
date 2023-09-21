@@ -53,13 +53,13 @@ HRESULT CLevel_MainGame::Initialize()
 	}
 	if (FAILED(Ready_Layer_FieldGuide_UI(TEXT("Layer_FieldGuide_UI"))))
 	{
-		MSG_BOX("Failed Ready_Layer_UI");
+		MSG_BOX("Failed Ready_Layer_FieldGuide_UI");
 
 		return E_FAIL;
 	}
 	if (FAILED(Ready_Layer_Menu_UI(TEXT("Layer_Menu_UI"))))
 	{
-		MSG_BOX("Failed Ready_Layer_UI");
+		MSG_BOX("Failed Ready_Layer_Menu_UI");
 
 		return E_FAIL;
 	}
@@ -676,14 +676,22 @@ HRESULT CLevel_MainGame::Ready_Layer_Menu_UI(const _tchar* pLayerTag)
 	}
 
 
-	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Menu_Frame_Edit.uidata"));
+	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Menu_Frame.uidata"));
 	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Main_Menu"),
 		pLayerTag, TEXT("GameObject_UI_Main_Menu"), szFilePath)))
 	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_Cursor)");
+		MSG_BOX("Failed Add_GameObject : (GameObject_Main_Menu)");
 		Safe_Release(pGameInstance);
 		return E_FAIL;
 	}
+
+	//if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Menu_Gear"),
+	//	pLayerTag, TEXT("GameObject_UI_Menu_Gear"))))
+	//{
+	//	MSG_BOX("Failed Add_GameObject : (GameObject_Menu_Gear)");
+	//	Safe_Release(pGameInstance);
+	//	return E_FAIL;
+	//}
 
 	Safe_Release(pGameInstance);
 	return S_OK;
