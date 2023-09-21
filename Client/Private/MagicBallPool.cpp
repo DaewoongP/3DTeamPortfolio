@@ -99,10 +99,6 @@ CMagicBall* CMagicBallPool::Create_Magic(SPELL tag)
     case Client::REVELIO:
         magicBall = dynamic_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Protego")));
         break;
-    case Client::TRANSFORMATION:
-        break;
-    case Client::TRANSFORMATIONOVERLAND:
-        break;
     case Client::WINGARDIUMLEVIOSA:
         break;
     case Client::BASICCAST:

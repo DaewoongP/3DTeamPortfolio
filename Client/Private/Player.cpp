@@ -272,7 +272,7 @@ HRESULT CPlayer::Add_Magic()
 	CMagic::MAGICDESC magicInitDesc;
 	// 레비오소
 	{
-		magicInitDesc.eBuffType = CMagic::BUFF_UNGRAVITY;
+		magicInitDesc.eBuffType = BUFF_LEVIOSO;
 		magicInitDesc.eMagicGroup = CMagic::MG_CONTROL;
 		magicInitDesc.eMagicType = CMagic::MT_YELLOW;
 		magicInitDesc.eMagicTag = LEVIOSO;
@@ -286,7 +286,7 @@ HRESULT CPlayer::Add_Magic()
 
 	// 콘프링고
 	{
-		magicInitDesc.eBuffType = CMagic::BUFF_FIRE;
+		magicInitDesc.eBuffType = BUFF_FIRE;
 		magicInitDesc.eMagicGroup = CMagic::MG_DAMAGE;
 		magicInitDesc.eMagicType = CMagic::MT_RED;
 		magicInitDesc.eMagicTag = CONFRINGO;

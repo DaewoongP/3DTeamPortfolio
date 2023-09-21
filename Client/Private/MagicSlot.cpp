@@ -22,7 +22,7 @@ HRESULT CMagicSlot::Initialize(void* pArg)
 	//Basic Magic Shield
 	{
 		CMagic::MAGICDESC magicInitDesc;
-		magicInitDesc.eBuffType = CMagic::BUFF_SHILED;
+		magicInitDesc.eBuffType = BUFF_NONE;
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 		magicInitDesc.eMagicType = CMagic::MT_ALL;
 		magicInitDesc.eMagicTag = PROTEGO;
@@ -36,7 +36,7 @@ HRESULT CMagicSlot::Initialize(void* pArg)
 	//Basic Magic BasicCast
 	{
 		CMagic::MAGICDESC magicInitDesc;
-		magicInitDesc.eBuffType = CMagic::BUFF_NONE;
+		magicInitDesc.eBuffType = BUFF_NONE;
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
 		magicInitDesc.eMagicTag = BASICCAST;
