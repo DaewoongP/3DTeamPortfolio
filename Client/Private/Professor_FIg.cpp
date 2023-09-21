@@ -608,21 +608,21 @@ HRESULT CProfessor_Fig::Make_Turns(_Inout_ CSequence* pSequence)
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Selector_Degree"), pSelector_Degree)))
 			throw TEXT("Failed Assemble_Behavior Selector_Degree");
 
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::LEFT_45, pAction_Left_45)))
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::LEFT_45, pAction_Left_45)))
 			throw TEXT("Failed Assemble_Childs pSelector_Degree LEFT_45");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::RIGHT_45, pAction_Right_45)))
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::RIGHT_45, pAction_Right_45)))
 			throw TEXT("Failed Assemble_Childs pSelector_Degree RIGHT_45");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::LEFT_90, pAction_Left_90)))
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::LEFT_90, pAction_Left_90)))
 			throw TEXT("Failed Assemble_Childs pSelector_Degree LEFT_90");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::RIGHT_90, pAction_Right_90)))
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::RIGHT_90, pAction_Right_90)))
 			throw TEXT("Failed Assemble_Childs pSelector_Degree RIGHT_90");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::LEFT_135, pAction_Left_135)))
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::LEFT_135, pAction_Left_135)))
 			throw TEXT("Failed Assemble_Childs pSelector_Degree LEFT_135");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::RIGHT_135, pAction_Right_135)))
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::RIGHT_135, pAction_Right_135)))
 			throw TEXT("Failed Assemble_Childs pSelector_Degree RIGHT_135");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::RIGHT_BACK, pAction_Right_180)))
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::RIGHT_BACK, pAction_Right_180)))
 			throw TEXT("Failed Assemble_Childs pSelector_Degree RIGHT_BACK");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::LEFT_BACK, pAction_Left_180)))
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::LEFT_BACK, pAction_Left_180)))
 			throw TEXT("Failed Assemble_Childs pSelector_Degree LEFT_BACK");
 	}
 	catch (const _tchar* pErrorTag)
@@ -879,22 +879,22 @@ HRESULT CProfessor_Fig::Make_Attack_Degree(_Inout_ CSequence* pSequence)
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Selector_Degree"), pSelector_Degree)))
 			throw TEXT("Failed Assemble_Behavior Selector_Degree");
 
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::LEFT_45, pAction_Left_45)))
-			throw TEXT("Failed Assemble_Childs pSelector_Degree LEFT_45");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::RIGHT_45, pAction_Right_45)))
-			throw TEXT("Failed Assemble_Childs pSelector_Degree RIGHT_45");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::LEFT_90, pAction_Left_90)))
-			throw TEXT("Failed Assemble_Childs pSelector_Degree LEFT_90");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::RIGHT_90, pAction_Right_90)))
-			throw TEXT("Failed Assemble_Childs pSelector_Degree RIGHT_90");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::LEFT_135, pAction_Left_135)))
-			throw TEXT("Failed Assemble_Childs pSelector_Degree LEFT_135");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::RIGHT_135, pAction_Right_135)))
-			throw TEXT("Failed Assemble_Childs pSelector_Degree RIGHT_135");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::RIGHT_BACK, pAction_Right_180)))
-			throw TEXT("Failed Assemble_Childs pSelector_Degree RIGHT_BACK");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::LEFT_BACK, pAction_Left_180)))
-			throw TEXT("Failed Assemble_Childs pSelector_Degree LEFT_BACK");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::LEFT_45, pAction_Left_45)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree LEFT_45");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::RIGHT_45, pAction_Right_45)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree RIGHT_45");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::LEFT_90, pAction_Left_90)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree LEFT_90");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::RIGHT_90, pAction_Right_90)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree RIGHT_90");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::LEFT_135, pAction_Left_135)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree LEFT_135");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::RIGHT_135, pAction_Right_135)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree RIGHT_135");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::RIGHT_BACK, pAction_Right_180)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree RIGHT_BACK");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::LEFT_BACK, pAction_Left_180)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree LEFT_BACK");
 	}
 	catch (const _tchar* pErrorTag)
 	{

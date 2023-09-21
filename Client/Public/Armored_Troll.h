@@ -14,6 +14,8 @@ BEGIN(Engine)
 class CModel;
 class CShader;
 class CRenderer;
+class CSequence;
+class CSelector;
 class CRigidBody;
 class CRootBehavior;
 END
@@ -81,11 +83,10 @@ private:// 가까운 적을 타겟으로 세팅
 private: /* 행동 묶음들 */
 	HRESULT Make_Turns(_Inout_ CSequence* pSequence);
 	HRESULT Make_Turn_Run(_Inout_ CSequence* pSequence);
-	HRESULT Make_Attack(_Inout_ CSelector* pSelector);
+	HRESULT Make_Attack_Degree(_Inout_ CSequence* pSequence);
+	HRESULT Make_Attack_Left_90(_Inout_ CSequence* pSequence);
 	HRESULT Make_Charge(_Inout_ CSequence* pSequence);
-	HRESULT Make_NormalAttack(_Inout_ CSelector* pSelector);
 	HRESULT Make_Check_Spell(_Inout_ CSelector* pSelector);
-	HRESULT Make_Random_Idle_Move(_Inout_ CRandom_Select* pRandomSelect);
 
 public:
 	static CArmored_Troll* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

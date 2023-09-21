@@ -2,6 +2,7 @@
 #include "GameInstance.h"
 #include "Weapon_Armored_Troll.h"
 
+#include "Turn.h"
 #include "Wait.h"
 #include "Action.h"
 #include "MagicBall.h"
@@ -346,7 +347,7 @@ void CArmored_Troll::Set_Current_Target()
 
 	if (false == m_isRangeInEnemy)
 	{
-		m_pTarget = nullptr;
+		//m_pTarget = nullptr;
 	}
 }
 
@@ -460,22 +461,22 @@ HRESULT CArmored_Troll::Make_Turns(_Inout_ CSequence* pSequence)
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Selector_Degree"), pSelector_Degree)))
 			throw TEXT("Failed Assemble_Behavior Selector_Degree");
 
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::LEFT_45, pAction_Left_45)))
-			throw TEXT("Failed Assemble_Childs pSelector_Degree LEFT_45");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::RIGHT_45, pAction_Right_45)))
-			throw TEXT("Failed Assemble_Childs pSelector_Degree RIGHT_45");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::LEFT_90, pAction_Left_90)))
-			throw TEXT("Failed Assemble_Childs pSelector_Degree LEFT_90");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::RIGHT_90, pAction_Right_90)))
-			throw TEXT("Failed Assemble_Childs pSelector_Degree RIGHT_90");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::LEFT_135, pAction_Left_135)))
-			throw TEXT("Failed Assemble_Childs pSelector_Degree LEFT_135");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::RIGHT_135, pAction_Right_135)))
-			throw TEXT("Failed Assemble_Childs pSelector_Degree RIGHT_135");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::LEFT_BACK, pAction_Left_180)))
-			throw TEXT("Failed Assemble_Childs pSelector_Degree LEFT_BACK");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::RIGHT_BACK, pAction_Right_180)))
-			throw TEXT("Failed Assemble_Childs pSelector_Degree RIGHT_BACK");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::LEFT_45, pAction_Left_45)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree LEFT_45");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::RIGHT_45, pAction_Right_45)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree RIGHT_45");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::LEFT_90, pAction_Left_90)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree LEFT_90");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::RIGHT_90, pAction_Right_90)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree RIGHT_90");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::LEFT_135, pAction_Left_135)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree LEFT_135");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::RIGHT_135, pAction_Right_135)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree RIGHT_135");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::LEFT_BACK, pAction_Left_180)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree LEFT_BACK");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::RIGHT_BACK, pAction_Right_180)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree RIGHT_BACK");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -554,22 +555,22 @@ HRESULT CArmored_Troll::Make_Turn_Run(_Inout_ CSequence* pSequence)
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Selector_Degree"), pSelector_Degree)))
 			throw TEXT("Failed Assemble_Behavior Selector_Degree");
 
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::LEFT_45, pAction_Left_45)))
-			throw TEXT("Failed Assemble_Childs pSelector_Degree LEFT_45");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::RIGHT_45, pAction_Right_45)))
-			throw TEXT("Failed Assemble_Childs pSelector_Degree RIGHT_45");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::LEFT_90, pAction_Left_90)))
-			throw TEXT("Failed Assemble_Childs pSelector_Degree LEFT_90");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::RIGHT_90, pAction_Right_90)))
-			throw TEXT("Failed Assemble_Childs pSelector_Degree RIGHT_90");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::LEFT_135, pAction_Left_135)))
-			throw TEXT("Failed Assemble_Childs pSelector_Degree LEFT_135");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::RIGHT_135, pAction_Right_135)))
-			throw TEXT("Failed Assemble_Childs pSelector_Degree RIGHT_135");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::LEFT_BACK, pAction_Left_180)))
-			throw TEXT("Failed Assemble_Childs pSelector_Degree LEFT_BACK");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::RIGHT_BACK, pAction_Right_180)))
-			throw TEXT("Failed Assemble_Childs pSelector_Degree RIGHT_BACK");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::LEFT_45, pAction_Left_45)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree LEFT_45");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::RIGHT_45, pAction_Right_45)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree RIGHT_45");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::LEFT_90, pAction_Left_90)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree LEFT_90");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::RIGHT_90, pAction_Right_90)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree RIGHT_90");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::LEFT_135, pAction_Left_135)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree LEFT_135");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::RIGHT_135, pAction_Right_135)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree RIGHT_135");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::LEFT_BACK, pAction_Left_180)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree LEFT_BACK");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::RIGHT_BACK, pAction_Right_180)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree RIGHT_BACK");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -583,11 +584,120 @@ HRESULT CArmored_Troll::Make_Turn_Run(_Inout_ CSequence* pSequence)
 	}
 
 	ENDINSTANCE;
-	return E_NOTIMPL;
+
+	return S_OK;
 }
 
-HRESULT CArmored_Troll::Make_Attack(_Inout_ CSelector* pSelector)
+HRESULT CArmored_Troll::Make_Attack_Degree(_Inout_ CSequence* pSequence)
+{
+	BEGININSTANCE;
+
+	try /* Failed Check Make_Attack_Degree */
+	{
+		if (nullptr == pSequence)
+			throw TEXT("Parameter pSequence is nullptr");
+
+		/* Make Child Behaviors */
+		CCheck_Degree* pTsk_Check_Degree = dynamic_cast<CCheck_Degree*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Check_Degree")));
+		if (nullptr == pTsk_Check_Degree)
+			throw TEXT("pTsk_Check_Degree is nullptr");
+		CSelector_Degree* pSelector_Degree = dynamic_cast<CSelector_Degree*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Selector_Degree")));
+		if (nullptr == pSelector_Degree)
+			throw TEXT("pSelector_Choose_Degree is nullptr");
+
+		CSequence* pSequence_Attack_Left_90 = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
+		if (nullptr == pSequence_Attack_Left_90)
+			throw TEXT("Sequence_Attack_Left_90 is nullptr");
+
+		/* Set Decorations */
+
+		/* Set Options */
+
+		/* Assemble Behaviors */
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Tsk_Check_Degree"), pTsk_Check_Degree)))
+			throw TEXT("Failed Assemble_Behavior Tsk_Check_Degree");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Selector_Degree"), pSelector_Degree)))
+			throw TEXT("Failed Assemble_Behavior Selector_Degree");
+
+		if(FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::LEFT_90, pSequence_Attack_Left_90)))
+			throw TEXT("Failed Assemble_Behavior LEFT_90");
+
+		if (FAILED(Make_Attack_Left_90(pSequence_Attack_Left_90)))
+			throw TEXT("Failed Make_Attack_Left_90");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed Make_Attack_Degree : \n");
+		wstrErrorMSG += pErrorTag;
+		MSG_BOX(wstrErrorMSG.c_str());
+
+		ENDINSTANCE;
+
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CArmored_Troll::Make_Attack_Left_90(_Inout_ CSequence* pSequence)
 { 
+	BEGININSTANCE;
+
+	try /* Failed Check Make_Attack */
+	{
+		if (nullptr == pSequence)
+			throw TEXT("Parameter pSequence is nullptr");
+
+		/* Make Child Behaviors */
+		CCheck_Degree* pTsk_Check_Degree = dynamic_cast<CCheck_Degree*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Check_Degree")));
+		if (nullptr == pTsk_Check_Degree)
+			throw TEXT("pTsk_Check_Degree is nullptr");
+		CRandom_Select* pRandom_Select = dynamic_cast<CRandom_Select*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Random_Select")));
+		if (nullptr == pRandom_Select)
+			throw TEXT("pRandom_Select is nullptr");
+
+
+		CAction* pAction_Attack_Overhead = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		if (nullptr == pAction_Attack_Overhead)
+			throw TEXT("pAction_Attack_Overhead is nullptr");
+		CAction* pAction_Attack_BackHnd = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		if (nullptr == pAction_Attack_BackHnd)
+			throw TEXT("pAction_Attack_BackHnd is nullptr");
+		CAction* pAction_Attack_ForHnd = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		if (nullptr == pAction_Attack_ForHnd)
+			throw TEXT("pAction_Attack_ForHnd is nullptr");
+
+		/* Set Decorations */
+
+		/* Set Options */
+		pAction_Attack_Overhead->Set_Options(TEXT("Attack_Overhead_Slam_Left_90"), m_pModelCom);
+		pAction_Attack_BackHnd->Set_Options(TEXT("Attack_Step_Swing_Left_90_BackHnd"), m_pModelCom);
+		pAction_Attack_ForHnd->Set_Options(TEXT("Attack_Swing_Left_90_ForHnd"), m_pModelCom);
+		
+		/* Assemble Behaviors */
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Tsk_Check_Degree"), pTsk_Check_Degree)))
+			throw TEXT("Failed Assemble_Behavior Tsk_Check_Degree");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Random_Select"), pRandom_Select)))
+			throw TEXT("Failed Assemble_Behavior Random_Select");
+
+		if (FAILED(pRandom_Select->Assemble_Behavior(TEXT("Action_Attack_Overhead"), pAction_Attack_Overhead, 0.1f)))
+			throw TEXT("Failed Assemble_Behavior Action_Attack_Overhead");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed Make_Attack_Left_90 : \n");
+		wstrErrorMSG += pErrorTag;
+		MSG_BOX(wstrErrorMSG.c_str());
+
+		ENDINSTANCE;
+
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
 	return S_OK;
 }
 
@@ -611,6 +721,9 @@ HRESULT CArmored_Troll::Make_Charge(_Inout_ CSequence* pSequence)
 		if (nullptr == pAction_Charge_End)
 			throw TEXT("pAction_Charge_End is nullptr");
 
+		CTurn* pTsk_Turn = dynamic_cast<CTurn*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Turn")));
+		if (nullptr == pTsk_Turn)
+			throw TEXT("pTsk_Turn is nullptr");
 		CWait* pTsk_Wait = dynamic_cast<CWait*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Wait")));
 		if (nullptr == pTsk_Wait)
 			throw TEXT("pTsk_Wait is nullptr");
@@ -622,9 +735,13 @@ HRESULT CArmored_Troll::Make_Charge(_Inout_ CSequence* pSequence)
 		pAction_Charge_Loop->Set_Options(TEXT("Attack_Charge_Loop"), m_pModelCom, true);
 		pAction_Charge_End->Set_Options(TEXT("Attack_Charge_End_Turn_Left_180"), m_pModelCom);
 
-		pTsk_Wait->Set_Timer(2.f);
+		pTsk_Turn->Set_Option(45.f, 3.f);
+		pTsk_Turn->Set_Transform(m_pTransform);
+		pTsk_Wait->Set_Timer(1.f);
 
 		/* Assemble Behaviors */
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Tsk_Turn"), pTsk_Turn)))
+			throw TEXT("Failed Assemble_Behavior Tsk_Turn");
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Charge_Enter"), pAction_Charge_Enter)))
 			throw TEXT("Failed Assemble_Childs Action_Charge_Enter");
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Charge_Loop"), pAction_Charge_Loop)))
@@ -632,6 +749,7 @@ HRESULT CArmored_Troll::Make_Charge(_Inout_ CSequence* pSequence)
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Charge_End"), pAction_Charge_End)))
 			throw TEXT("Failed Assemble_Childs Action_Charge_End");
 
+		
 		if (FAILED(pAction_Charge_Loop->Assemble_Behavior(TEXT("Tsk_Wait"), pTsk_Wait)))
 			throw TEXT("Failed Assemble_Behavior Tsk_Wait");
 	}
@@ -651,17 +769,7 @@ HRESULT CArmored_Troll::Make_Charge(_Inout_ CSequence* pSequence)
 	return S_OK;
 }
 
-HRESULT CArmored_Troll::Make_NormalAttack(_Inout_ CSelector* pSelector)
-{
-	return S_OK;
-}
-
 HRESULT CArmored_Troll::Make_Check_Spell(_Inout_ CSelector* pSelector)
-{
-	return S_OK;
-}
-
-HRESULT CArmored_Troll::Make_Random_Idle_Move(CRandom_Select* pRandomSelect)
 {
 	return S_OK;
 }
