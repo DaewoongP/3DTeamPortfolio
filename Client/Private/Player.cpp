@@ -54,12 +54,12 @@ HRESULT CPlayer::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
-	/*if (FAILED(Ready_Camera()))
+	if (FAILED(Ready_Camera()))
 	{
 		MSG_BOX("Failed Ready Player Camera");
 
 		return E_FAIL;
-	}*/
+	}
 
 	m_pTransform->Set_Speed(1.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
@@ -73,6 +73,8 @@ void CPlayer::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	Key_Input(fTimeDelta);
+
+	Fix_Mouse();
 
 	UpdateLookAngle();
 
@@ -304,11 +306,19 @@ void CPlayer::Key_Input(_float fTimeDelta)
 {
 	BEGININSTANCE;
 
+	if (pGameInstance->Get_DIKeyState(DIK_GRAVE))
+	{
+		if (true == m_isFixMouse)
+			m_isFixMouse = false;
+		else
+			m_isFixMouse = true;
+	}
+
 	if (pGameInstance->Get_DIKeyState(DIK_UP))
 	{
 		m_pTransform->Go_Straight(fTimeDelta * 100);
 	}
-	
+
 	if (pGameInstance->Get_DIKeyState(DIK_DOWN))
 	{
 		m_pTransform->Go_Backward(fTimeDelta * 100);
@@ -380,6 +390,17 @@ void CPlayer::Key_Input(_float fTimeDelta)
 	}
 
 	ENDINSTANCE;
+}
+
+void CPlayer::Fix_Mouse()
+{
+	if (false == m_isFixMouse)
+		return;
+
+	POINT	ptMouse{ g_iWinSizeX >> 1, g_iWinSizeY >> 1 };
+
+	ClientToScreen(g_hWnd, &ptMouse);
+	SetCursorPos(ptMouse.x, ptMouse.y);
 }
 
 HRESULT CPlayer::Ready_MeshParts()
