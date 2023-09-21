@@ -134,8 +134,8 @@ HRESULT CMain1_Loader::Loading_For_MainGame()
 		if (FAILED(Loading_Map_Object(TEXT("../../Resources/GameData/MapData/MapData6.ddd"))))
 			throw TEXT("Map Object");
 
-		/*if (FAILED(Loading_Map_Object_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins6.ddd"))))
-			throw TEXT("Map Object_Ins");*/
+		if (FAILED(Loading_Map_Object_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins6.ddd"))))
+			throw TEXT("Map Object_Ins");
 
 		/* For.Prototype_Component_CharacterController*/
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_CharacterController"),
