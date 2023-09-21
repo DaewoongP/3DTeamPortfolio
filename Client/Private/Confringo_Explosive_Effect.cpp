@@ -20,19 +20,19 @@ HRESULT CConfringo_Explosive_Effect::Initialize_Prototype(_uint iLevel)
 	m_iLevel = iLevel;
 
 	BEGININSTANCE;
-	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Confringo_Explosive_Particle01")))
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_FireBallDir_Effect")))
 	{
-		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Confringo_Explosive_Particle01")
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_FireBallDir_Effect")
 			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/FireBallDir"), m_iLevel))))
 		{
 			ENDINSTANCE;
 			return E_FAIL;
 		}
 	}
-	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Confringo_Explosive_Particle02")))
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_FireBallB_Effect")))
 	{
-		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Confringo_Explosive_Particle02")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/FireExplosive"), m_iLevel))))
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_FireBallB_Effect")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/FireBallB"), m_iLevel))))
 		{
 			ENDINSTANCE;
 			return E_FAIL;
