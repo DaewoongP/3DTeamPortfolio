@@ -41,6 +41,8 @@ HRESULT CMapEffect::Initialize(void* pArg)
 
 	if (FAILED(Add_Components(pMapObjectDesc)))
 		return E_FAIL;
+
+	return S_OK;
 }
 
 void CMapEffect::Tick(_float _fTimeDelta)
