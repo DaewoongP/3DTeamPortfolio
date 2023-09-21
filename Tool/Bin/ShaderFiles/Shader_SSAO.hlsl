@@ -306,18 +306,6 @@ PS_OUT PS_MAIN(PS_IN In)
     // ºäÀÇ z°ª
     float fViewZ = vDepthDesc.y * g_fCamFar;
 
-    float4 vDepth;
-    
-    vDepth.x = In.vTexUV.x * 2.f - 1.f;
-    vDepth.y = In.vTexUV.y * -2.f + 1.f;
-    vDepth.z = vDepthDesc.x;
-    vDepth.w = 1.f;
-
-    vDepth = vDepth * fViewZ;
-    vDepth = mul(vDepth, g_ProjMatrixInv);
-    
-    vDepth = mul(vDepth, g_ViewMatrixInv);
-
     float3 vRay;
     float3 vReflect;
     float2 vRandomUV;
