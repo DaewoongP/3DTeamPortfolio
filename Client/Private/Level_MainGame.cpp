@@ -227,12 +227,12 @@ HRESULT CLevel_MainGame::Ready_Layer_Monster(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Armored_Troll"), pLayerTag, TEXT("GameObject_Armored_Troll"))))
+	/*if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Armored_Troll"), pLayerTag, TEXT("GameObject_Armored_Troll"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Armored_Troll)");
 		ENDINSTANCE;
 		return E_FAIL;
-	}
+	}*/
 
 	/*if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Golem_MerlinGrunt"), pLayerTag, TEXT("GameObject_Golem_Merlin"))))
 	{

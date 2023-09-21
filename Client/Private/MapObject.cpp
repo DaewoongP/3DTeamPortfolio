@@ -103,6 +103,24 @@ HRESULT CMapObject::Render()
 	return S_OK;
 }
 
+HRESULT CMapObject::Render_Depth()
+{
+	if (FAILED(SetUp_ShaderResources()))
+		return E_FAIL;
+
+	_uint		iNumMeshes = m_pModel->Get_NumMeshes();
+
+	for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; iMeshCount++)
+	{
+		m_pShadowShader->Begin("Mesh_No_Cull");
+
+		if (FAILED(m_pModel->Render(iMeshCount)))
+			return E_FAIL;
+	}
+
+	return S_OK;
+}
+
 HRESULT CMapObject::Add_Components(MAPOBJECTDESC* pMapObjectDesc)
 {
 	/* Com_Renderer */
@@ -118,6 +136,14 @@ HRESULT CMapObject::Add_Components(MAPOBJECTDESC* pMapObjectDesc)
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
 	{
 		MSG_BOX("Failed CMapObject Add_Component : (Com_Shader)");
+		return E_FAIL;
+	}
+	
+	/* Com_ShadowShader */
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_ShadowMesh"),
+		TEXT("Com_ShadowShader"), reinterpret_cast<CComponent**>(&m_pShadowShader))))
+	{
+		MSG_BOX("Failed CMapObject Add_Component : (Com_ShadowShader)");
 		return E_FAIL;
 	}
 
@@ -215,14 +241,36 @@ HRESULT CMapObject::Add_Components(MAPOBJECTDESC* pMapObjectDesc)
 
 HRESULT CMapObject::SetUp_ShaderResources()
 {
-	BEGININSTANCE; if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
+	BEGININSTANCE; 
+	
+	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
 		return E_FAIL;
 
 	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
 
 	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL; ENDINSTANCE;
+		return E_FAIL; 
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CMapObject::SetUp_ShadowShaderResources()
+{
+	BEGININSTANCE;
+
+	if (FAILED(m_pShadowShader->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
+		return E_FAIL;
+	if (FAILED(m_pShadowShader->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_LightTransformMatrix(CPipeLine::D3DTS_VIEW))))
+		return E_FAIL;
+	if (FAILED(m_pShadowShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_LightTransformMatrix(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+	if (FAILED(m_pShadowShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
+		return E_FAIL;
+
+	ENDINSTANCE;
 
 	return S_OK;
 }
@@ -276,6 +324,7 @@ void CMapObject::Free()
 	Safe_Release(m_pRigidBody);
 	Safe_Release(m_pTransform);
 	Safe_Release(m_pShader);
+	Safe_Release(m_pShadowShader);
 	Safe_Release(m_pModel);
 	Safe_Release(m_pRenderer);
 }

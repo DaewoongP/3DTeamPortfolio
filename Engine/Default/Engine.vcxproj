@@ -22,6 +22,7 @@
     <ClInclude Include="..\Public\Animation.h" />
     <ClInclude Include="..\Public\FlowMap.h" />
     <ClInclude Include="..\public\MotionBlur.h" />
+    <ClInclude Include="..\public\Shadow.h" />
     <ClInclude Include="..\public\VIBuffer_UVSphere.h" />
     <ClInclude Include="..\public\VIBuffer_Rect_Color_Index_Instance.h" />
     <ClInclude Include="..\Public\Base.h" />
@@ -156,6 +157,7 @@
     <ClCompile Include="..\Private\Animation.cpp" />
     <ClCompile Include="..\Private\FlowMap.cpp" />
     <ClCompile Include="..\private\MotionBlur.cpp" />
+    <ClCompile Include="..\private\Shadow.cpp" />
     <ClCompile Include="..\private\VIBuffer_UVSphere.cpp" />
     <ClCompile Include="..\private\VIBuffer_Rect_Color_Index_Instance.cpp" />
     <ClCompile Include="..\Private\Base.cpp" />
@@ -292,6 +294,7 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_MotionBlur.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Navigation.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_PostProcessing.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Shadow.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_SSAO.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </FxCompile>

@@ -1,11 +1,6 @@
-
+#include "Shader_EngineHeader.hlsli"
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix g_ViewMatrixInv, g_ProjMatrixInv;
-matrix g_vLightView;
-matrix g_vLightProj;
-vector g_LightPos;
-
-vector g_vCamPosition;
 
 float g_fCamFar;
 
@@ -27,9 +22,6 @@ texture2D g_DepthTexture;
 texture2D g_NormalTexture;
 texture2D g_SSAOTexture;
 texture2D g_BlurTexture;
-texture2D g_ShadeTexture;
-texture2D g_ShadowTexture;
-texture2D g_vLightDepthTexture;
 texture2D g_NoiseTexture;
 
 //ray를 뻗어나가면서 무작위로판단하기위해 rand값이 필요함 같이던져줘야할듯
@@ -108,79 +100,6 @@ float OcclusionFunction(float distZ)
     return occlusion;
 }
 
-/* Sampler State */
-sampler LinearSampler = sampler_state
-{
-    Filter = MIN_MAG_MIP_LINEAR;
-    AddressU = WRAP;
-    AddressV = WRAP;
-};
-
-sampler PointSampler = sampler_state
-{
-    Filter = MIN_MAG_MIP_POINT;
-    AddressU = WRAP;
-    AddressV = WRAP;
-};
-sampler BlurSampler = sampler_state
-{
-    Filter = MIN_MAG_MIP_LINEAR;
-    AddressU = clamp;
-    AddressV = clamp;
-};
-/* Raterizer State */
-RasterizerState RS_Default
-{
-    FillMode = Solid;
-    CullMode = Back;
-    FrontCounterClockwise = false;
-};
-
-RasterizerState RS_Cull_CW
-{
-    FillMode = Solid;
-    CullMode = front;
-    FrontCounterClockwise = false;
-};
-
-RasterizerState RS_Cull_None
-{
-    FillMode = Solid;
-    CullMode = None;
-    FrontCounterClockwise = false;
-};
-
-/* Depth_Stencil State */
-
-DepthStencilState DSS_Default
-{
-    DepthEnable = true;
-    DepthWriteMask = all;
-    DepthFunc = less_equal;
-};
-
-DepthStencilState DSS_Depth_Disable
-{
-    DepthEnable = false;
-    DepthWriteMask = zero;
-};
-
-/* Blend State */
-BlendState BS_Default
-{
-    BlendEnable[0] = false;
-};
-
-BlendState BS_AlphaBlend
-{
-    BlendEnable[0] = true;
-
-    SrcBlend = Src_Alpha;
-    DestBlend = Inv_Src_Alpha;
-    BlendOp = Add;
-};
-
-
 struct VS_IN
 {
     float3 vPosition : POSITION;
@@ -207,7 +126,6 @@ VS_OUT VS_MAIN(VS_IN In)
 
     return Out;
 }
-
 
 struct PS_IN
 {
@@ -292,8 +210,6 @@ float LinearDepth(in float zBufferSample, in float A, in float B)
 //    Out.vColor = pow(occlusion, 3);
 //    return Out; 
 //}
-
-
 
 PS_OUT PS_MAIN(PS_IN In)
 {
@@ -475,82 +391,6 @@ PS_OUT PS_MAIN_BLURX(PS_IN In)
     return Out;
 }
 
-PS_OUT PS_MAIN_SHADOW(PS_IN In)
-{
-    PS_OUT Out = (PS_OUT) 0;
-
-    vector vDepthDesc = g_DepthTexture.Sample(LinearSampler, In.vTexUV);
-
-	//depthdesc y 는 rgba값이라고 생각하면된다.
-    float fViewZ = vDepthDesc.y * g_fCamFar;
-    vector vPosition;
-    if (fViewZ == 0)
-        discard;
-	/* 투영스페이스 상의 위치 */
-    vPosition.x = In.vTexUV.x * 2.f - 1.f;
-    vPosition.y = In.vTexUV.y * -2.f + 1.f;
-    vPosition.z = vDepthDesc.x;
-    vPosition.w = 1.f;
-
-	/* 뷰스페이스 상의 위치. */
-    vPosition = vPosition * fViewZ;
-    
-    vPosition = mul(vPosition, g_ProjMatrixInv);
-
-	/* 월드스페이스 상의 위치. */
-    vPosition = mul(vPosition, g_ViewMatrixInv);
-
-    vPosition = mul(vPosition, g_vLightView);
-
-    vector vUVPos = mul(vPosition, g_vLightProj);
-    float2 vLightUV;
-    vLightUV.x = (vUVPos.x / vUVPos.w) * 0.5f + 0.5f;
-    vLightUV.y = (vUVPos.y / vUVPos.w) * -0.5f + 0.5f;
-
-    vector vLightDepth = g_vLightDepthTexture.Sample(BlurSampler, vLightUV);
-    
-    float3 vProjTest = vUVPos.xyz / vUVPos.w;
-    if (-1.f > vProjTest.x ||
-		1.f < vProjTest.x ||
-		-1.f > vProjTest.y ||
-		1.f < vProjTest.y ||
-        0.f > vProjTest.z ||
-		1.f < vProjTest.z)
-        Out.vColor = vector(1.f, 1.f, 1.f, 1.f);
-    // 투영행렬의 far를 다시곱해주어 포지션과 연산
-    // 현재 픽셀의 깊이값과 해당하는 픽셀이 존재하는 빛기준의 텍스처 UV좌표 깊이값과 비교하여 처리한다.
-    else if (vPosition.z - 0.01f < vLightDepth.y * g_fCamFar)
-    {
-        Out.vColor = vector(1.f, 1.f, 1.f, 1.f);
-    
-        float2 moments = g_vLightDepthTexture.Sample(BlurSampler, In.vTexUV).xz;
-        
-        float CamDepth = vPosition.z - 0.01f / g_fCamFar;
-
-        float fragDepth = CamDepth;
-    
-        float fLit = 1.0f;
-    
-        float E_x2 = moments.y;
-        float Ex_2 = moments.x * moments.x;
-        float variance = (E_x2 - Ex_2);
-        variance = max(variance, 0.00005f);
-
-        float mD = (fragDepth - moments.x);
-        float mD_2 = mD * mD;
-        float p = (variance / (variance + mD_2));
-
-        fLit = max(p, fragDepth <= moments.x);
-        fLit = (1 - fLit) + 0.5f;
-        if (fLit > 1.f)
-            fLit = 1.f;
-    
-        Out.vColor = float4(fLit, fLit, fLit, fLit);
-    }
-    
-    return Out;
-}
-
 technique11 DefaultTechnique
 {
     pass SSAO
@@ -587,28 +427,4 @@ technique11 DefaultTechnique
         DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
         PixelShader = compile ps_5_0 PS_MAIN_BLURY();
     }
-    pass Shadow
-    {
-        SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_Depth_Disable, 0);
-        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN();
-        GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
-        HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
-        DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
-        PixelShader = compile ps_5_0 PS_MAIN_SHADOW();
-    }
-    pass SoftShadow
-    {
-        SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_Depth_Disable, 0);
-        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN();
-        GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
-        HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
-        DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
-        PixelShader = compile ps_5_0 PS_MAIN_SHADOW();
-    }
-
-
 }

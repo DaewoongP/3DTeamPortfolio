@@ -99,6 +99,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	if (nullptr != m_pRenderer)
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
 
 #ifdef _DEBUG
 		m_pRenderer->Add_DebugGroup(m_pRigidBody);
@@ -112,7 +113,6 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 
 void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
-	cout << "Hi" << endl;
 }
 
 void CPlayer::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)
@@ -155,6 +155,23 @@ HRESULT CPlayer::Render()
 
 HRESULT CPlayer::Render_Depth()
 {
+	if (FAILED(SetUp_ShadowShaderResources()))
+		return E_FAIL;
+
+	for (_uint iPartsIndex = 0; iPartsIndex < CCustomModel::MESH_END; ++iPartsIndex)
+	{
+		_uint		iNumMeshes = m_pCustomModel->Get_NumMeshes(iPartsIndex);
+
+		for (_uint i = 0; i < iNumMeshes; ++i)
+		{
+			m_pCustomModel->Bind_BoneMatrices(m_pShadowShader, "g_BoneMatrices", iPartsIndex, i);
+
+			m_pShadowShader->Begin("Shadow");
+
+			m_pCustomModel->Render(iPartsIndex, i);
+		}
+	}
+
 	return S_OK;
 }
 
@@ -173,6 +190,14 @@ HRESULT CPlayer::Add_Components()
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
 	{
 		MSG_BOX("Failed CPlayer Add_Component : (Com_Shader)");
+		return E_FAIL;
+	}
+	
+	/* For.Com_ShadowShader */
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_ShadowAnimMesh"),
+		TEXT("Com_ShadowShader"), reinterpret_cast<CComponent**>(&m_pShadowShader))))
+	{
+		MSG_BOX("Failed CPlayer Add_Component : (Com_ShadowShader)");
 		return E_FAIL;
 	}
 
@@ -265,6 +290,24 @@ HRESULT CPlayer::SetUp_ShaderResources()
 	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 	if (FAILED(m_pShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
+		return E_FAIL;
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CPlayer::SetUp_ShadowShaderResources()
+{
+	BEGININSTANCE;
+
+	if (FAILED(m_pShadowShader->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
+		return E_FAIL;
+	if (FAILED(m_pShadowShader->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_LightTransformMatrix(CPipeLine::D3DTS_VIEW))))
+		return E_FAIL;
+	if (FAILED(m_pShadowShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_LightTransformMatrix(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+	if (FAILED(m_pShadowShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
 		return E_FAIL;
 
 	ENDINSTANCE;
@@ -804,6 +847,7 @@ void CPlayer::Free()
 	if (true == m_isCloned)
 	{
 		Safe_Release(m_pShader);
+		Safe_Release(m_pShadowShader);
 		Safe_Release(m_pRenderer);
 		Safe_Release(m_pCustomModel);
 		Safe_Release(m_pPlayer_Camera);
@@ -811,6 +855,5 @@ void CPlayer::Free()
 		Safe_Release(m_pWeapon);
 		Safe_Release(m_pStateContext);
 		Safe_Release(m_pRigidBody);
-
 	}
 }

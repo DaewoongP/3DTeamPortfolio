@@ -46,8 +46,6 @@ private:
 #endif // _DEBUG
 	HRESULT Render_Lights();
 	HRESULT Render_Depth();
-	HRESULT Render_Shadow();
-	HRESULT Render_SoftShadow();
 	HRESULT Render_SSAO();
 	HRESULT Render_Deferred();
 	HRESULT Render_NonLight();
@@ -121,7 +119,7 @@ private:
 	class CBlur*					m_pSSAOBlur = { nullptr };
 	//class CBlur* m_pShadowBlur = { nullptr };
 	class CBloom*					m_pBloom = { nullptr };
-
+	class CShadow*					m_pShadow = { nullptr };
 	class CGlow*					m_pGlow = {nullptr};
 	_float							m_fGlowPower = { 0.f };
 

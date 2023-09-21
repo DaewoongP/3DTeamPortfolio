@@ -41,6 +41,7 @@ public:
 
 private:
 	CShader*		m_pShader = { nullptr };
+	CShader*		m_pShadowShader = { nullptr };
 	CRenderer*		m_pRenderer = { nullptr };
 	CCustomModel*	m_pCustomModel = { nullptr };
 	CRigidBody*		m_pRigidBody = { nullptr };
@@ -68,6 +69,7 @@ private:
 private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
+	HRESULT SetUp_ShadowShaderResources();
 	HRESULT Add_Magic();
 
 private:
