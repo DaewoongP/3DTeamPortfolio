@@ -43,6 +43,7 @@ private:
 
 	//레비오소 사망처리용임.
 	_float				m_fWingardiumEffectDeadTimer = { 0.3f };
+	_float				m_fWingardiumEffectAccTime = { 0 };
 
 private:
 	HRESULT Add_Components();

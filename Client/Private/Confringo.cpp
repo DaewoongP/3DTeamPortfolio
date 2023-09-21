@@ -38,6 +38,16 @@ HRESULT CConfringo::Initialize_Prototype(_uint iLevel)
 			return E_FAIL;
 		}
 	}
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Fire_Torch_Effect")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Fire_Torch_Effect")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Fire_Torch"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+	
 	ENDINSTANCE;
 	return S_OK;
 }
@@ -123,6 +133,8 @@ HRESULT CConfringo::Initialize(void* pArg)
 void CConfringo::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+	_float3 vWandPosition = _float4x4(m_WeaponOffsetMatrix * (*m_pWeaponMatrix)).Translation();
+	m_pWandTouchffect->Get_Transform()->Set_Position(vWandPosition);
 	//사망처리 걸리면 재생
 	if (m_isExplosiveTrigger)
 	{
@@ -151,9 +163,10 @@ void CConfringo::Tick(_float fTimeDelta)
 		if (m_fLerpAcc > 1)
 			m_fLerpAcc = 1;
 		m_pTrail->Tick(fTimeDelta);
-		m_pTrail->Spline_Move(m_vSplineLerp[0],m_vStartPostion, m_vTargetPosition, m_vSplineLerp[1], m_fLerpAcc);
+		m_pTrail->Spline_Spin_Move(m_vSplineLerp[0],m_vStartPostion, m_vTargetPosition, m_vSplineLerp[1], m_fLerpAcc);
 		m_pTransform->Set_Position(m_pTrail->Get_Transform()->Get_Position());
 	}
+	
 }
 
 void CConfringo::Late_Tick(_float fTimeDelta)
@@ -208,6 +221,10 @@ HRESULT CConfringo::Add_Effect()
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_FireBallB_Effect")
 		, TEXT("Com_Explosive_Particle02"), (CComponent**)&m_pExplosiveEffect[1])))
 		return E_FAIL;
+
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Fire_Torch_Effect")
+		, TEXT("Com_Fire_Torch"), (CComponent**)&m_pWandTouchffect)))
+		return E_FAIL;
 	
 	return S_OK;
 }
@@ -245,6 +262,7 @@ void CConfringo::Free()
 		Safe_Release(m_pTrail);
 		Safe_Release(m_pExplosiveEffect[0]);
 		Safe_Release(m_pExplosiveEffect[1]);
+		Safe_Release(m_pWandTouchffect);
 		Safe_Release(m_pWandDustEffect);
 	}
 }

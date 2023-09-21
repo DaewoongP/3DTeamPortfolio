@@ -110,7 +110,7 @@ void CGolem_Combat::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		wstrCollisionTag = CollisionEventDesc.pOtherCollisionTag;
 
 	/* Collision Magic */
-	/*if (wstring::npos != wstrObjectTag.find(TEXT("MagicBall")))
+	if (wstring::npos != wstrObjectTag.find(TEXT("MagicBall")))
 	{
 		cout << "Hit Magic" << endl;
 		CMagicBall::COLLSIONREQUESTDESC* pCollisionMagicBallDesc = static_cast<CMagicBall::COLLSIONREQUESTDESC*>(CollisionEventDesc.pArg);
@@ -123,7 +123,7 @@ void CGolem_Combat::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			m_CurrentTickSpells.emplace(eSpell, Action);
 
 		m_iCurrentSpell |= eSpell;
-	}*/
+	}
 
 	/* Collision Player Fig */
 	if (wstring::npos != wstrCollisionTag.find(TEXT("Body")))
@@ -339,7 +339,8 @@ HRESULT CGolem_Combat::Add_Components()
 		RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 0.f, 1.f);
 		RigidBodyDesc.pOwnerObject = this;
 		RigidBodyDesc.eThisCollsion = COL_ENEMY;
-		RigidBodyDesc.eCollisionFlag = COL_PLAYER;
+		RigidBodyDesc.eThisCollsion = COL_ENEMY;
+		RigidBodyDesc.eCollisionFlag= COL_ALL;
 		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Body");
 
 		/* For.Com_RigidBody */

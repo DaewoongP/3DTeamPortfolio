@@ -244,10 +244,35 @@ void CVIBuffer_Rect_Trail::Tick()
 		}
 	}
 
-	for (_uint i = m_iNumVertices - 1; i >= 2 ; --i)
+	/*if (iHeadIndex > 1 && iBodyCount != m_iNumVertices)
 	{
-		pData[i].vPosition = pData[i - 2].vPosition;
+		for (_uint i = m_iNumVertices - 1; i >= 2; i-=2)
+		{
+			if (iTailIndex > i && iHeadIndex < i)
+			{
+				pData[i].vPosition = pData[i - 2].vPosition;
+				pData[i - 1].vPosition = pData[(i - 1) - 2].vPosition;
+			}
+			else if(iHeadIndex*2 > i)
+			{
+				pData[i].vPosition = pData[iHeadIndex*2].vPosition;
+				pData[i - 1].vPosition = pData[iHeadIndex*2-1].vPosition;
+			}
+			else if (iTailIndex*2 < i)
+			{
+				pData[i].vPosition = pData[iTailIndex*2].vPosition;
+				pData[i - 1].vPosition = pData[iTailIndex*2 - 1].vPosition;
+			}
+		}
 	}
+	else */
+	{
+		for (_uint i = m_iNumVertices - 1; i >= 2; --i)
+		{
+			pData[i].vPosition = pData[i - 2].vPosition;
+		}
+	}
+	
 
 	// 0번에 Low 월드 포지션을 대입한다
 	pData[0].vPosition = vLowWorldPos;

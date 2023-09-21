@@ -62,6 +62,8 @@ public:/* For. Moving*/
 	void	Spin_Move(_float3 vTargerPosition, _float3 vStartPosition, _float fLerpAcc);
 	void	Spline_Move(_float3 vSpline01, _float3 vStartPosition, _float3 vTargerPosition, _float3 vSpline02, _float fLerpAcc);
 
+	void	Spline_Spin_Move(_float3 vSpline01, _float3 vStartPosition, _float3 vTargerPosition, _float3 vSpline02, _float fLerpAcc);
+
 protected:
 	HRESULT Save(const _tchar* pFilePath);
 	HRESULT Load(const _tchar* pFilePath);

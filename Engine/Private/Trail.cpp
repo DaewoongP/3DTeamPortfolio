@@ -49,6 +49,21 @@ void CTrail::Spline_Move(_float3 vSpline01, _float3 vStartPosition, _float3 vTar
 	m_pTransform->Set_Position(movedPos);
 }
 
+void CTrail::Spline_Spin_Move(_float3 vSpline01, _float3 vStartPosition, _float3 vTargerPosition, _float3 vSpline02, _float fLerpAcc)
+{
+	_float3 movedPos = XMVectorCatmullRom(vSpline01, vStartPosition, vTargerPosition, vSpline02, fLerpAcc);
+
+	_float4x4 transMatirx = XMMatrixTranslation(movedPos.x, movedPos.y, movedPos.z);
+	_float3 axis = XMVector3Normalize(vTargerPosition - vStartPosition);
+	_float3 tempAxis = _float3(0, 1, 0);
+	_float3	normal = XMVector3Normalize(XMVector3Cross(axis, tempAxis))*0.1f;
+	_float4x4 offsetMatirx = XMMatrixTranslation(normal.x, normal.y, normal.z);
+	_float4x4 rotationMatrix = XMMatrixRotationAxis(axis, m_fTimeAcc * 30);
+	_float4x4 CombineMatrix = offsetMatirx * rotationMatrix * transMatirx;
+
+	m_pTransform->Set_Position(_float3(CombineMatrix.m[3][0], CombineMatrix.m[3][1], CombineMatrix.m[3][2]));
+}
+
 HRESULT CTrail::Save(const _tchar* pFilePath)
 {
 	HANDLE hFile = CreateFile(pFilePath
@@ -206,6 +221,7 @@ void CTrail::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 	if (nullptr != m_pBuffer)
 		m_pBuffer->Tick();
+	m_fTimeAcc += fTimeDelta;
 
 }
 
