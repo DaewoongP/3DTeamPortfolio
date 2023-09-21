@@ -130,7 +130,7 @@ void CJumpState::LookFront()
 	if (true == *m_pIsDirectionKeyPressed)
 	{
 		//지속적으로 회전
-		m_pPlayerTransform->Turn(_float3(0.0f, 1.0f, 0.0f), fAngle * pGameInstance->Get_World_Tick());
+		m_pPlayerTransform->Turn(_float3(0.0f, 1.0f, 0.0f), fAngle * pGameInstance->Get_World_Tick() * (*m_pFRotationSpeed));
 		//지속적인 힘으로 이동(일단 깡 이동)
 		m_pPlayerTransform->Go_Straight(m_fJumpMoveSpeed * pGameInstance->Get_World_Tick());
 	}

@@ -76,6 +76,18 @@ void CStateMachine::Set_PlayerTransform(CTransform* _pPlayerTransform)
 }
 
 
+void CStateMachine::Go_Protego()
+{
+	BEGININSTANCE;
+
+	if (pGameInstance->Get_DIKeyState(DIK_Q, CInput_Device::KEY_DOWN))
+	{
+		Set_StateMachine(TEXT("Protego"));
+	}
+
+	ENDINSTANCE;
+}
+
 CStateMachine* CStateMachine::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CStateMachine* pInstance = New CStateMachine(pDevice, pContext);

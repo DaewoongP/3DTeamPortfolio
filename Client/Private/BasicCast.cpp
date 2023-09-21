@@ -95,10 +95,10 @@ HRESULT CBasicCast::Initialize(void* pArg)
 		}
 		ENDINSTANCE;
 
-		vMouseWorldPickPosition = vMouseOrigin.xyz() + vMouseDirection.xyz() * 10000;
+		vMouseWorldPickPosition = vMouseOrigin.xyz() + vMouseDirection.xyz() * 100;
 		vDirStartToPicked = (vMouseWorldPickPosition - m_MagicBallDesc.vStartPosition);
 		vDirStartToPicked.Normalize();
-		m_vTargetPosition = vDirStartToPicked * m_MagicBallDesc.fDistance;
+		m_vTargetPosition = m_MagicBallDesc.vStartPosition + vDirStartToPicked * m_MagicBallDesc.fDistance;
 	}
 	else 
 	{

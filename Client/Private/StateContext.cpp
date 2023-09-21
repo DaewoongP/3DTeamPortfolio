@@ -39,14 +39,16 @@ HRESULT CStateContext::Initialize(void* pArg)
 
 	m_pfuncFinishAnimation = [&] {(*this).FinishAnimation(); };
 
+	m_fRotaionSpeed = 2.0f;
+
+	m_pTargetAngle = StateContextDesc->pTargetAngle;
+
 	if (FAILED(Ready_StateMachine()))
 	{
 		MSG_BOX(TEXT("Failed Ready StateMachine"));
 
 		return E_FAIL;
 	}
-
-	
 
 	return S_OK;
 }
@@ -124,7 +126,9 @@ HRESULT CStateContext::Add_StateMachine(const _tchar* _pTag, CStateMachine* _pSt
 	_pState->Set_ActionSwitch(&m_iActionSwitch);
 	_pState->Set_IsFnishAnimation(&m_isFinishAnimation);
 	_pState->Set_FuncFinishAnimation(m_pfuncFinishAnimation);
-	
+	_pState->Set_RotationSpeed(&m_fRotaionSpeed);
+	_pState->Set_TarGetAngle(m_pTargetAngle);
+
 	_pState->Bind_Notify();
 
 	m_pStateMachines.emplace(_pTag, _pState);
@@ -231,6 +235,18 @@ HRESULT CStateContext::Ready_StateMachine()
 
 		return E_FAIL;
 	};
+	
+	if (FAILED(Add_StateMachine(TEXT("Protego"),
+		static_cast<CStateMachine*>
+		(pGameInstance->Clone_Component(LEVEL_MAINGAME,
+			TEXT("Prototype_Component_State_ProtegoState"))))))
+	{
+		ENDINSTANCE;
+
+		MSG_BOX("Failed Ready_StateMachine");
+
+		return E_FAIL;
+	};
 
 	
 
@@ -240,6 +256,7 @@ HRESULT CStateContext::Ready_StateMachine()
 
 	return S_OK;
 }
+
 
 CStateContext* CStateContext::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {

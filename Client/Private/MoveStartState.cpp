@@ -65,6 +65,7 @@ void CMoveStartState::OnStateTick()
 
 	Go_Magic_Cast();
 
+	Go_Protego();
 }
 
 void CMoveStartState::OnStateExit()
@@ -92,7 +93,7 @@ void CMoveStartState::LookFront()
 	if (true == *m_pIsDirectionKeyPressed)
 	{
 		//지속적으로 회전
-		m_pPlayerTransform->Turn(_float3(0.0f, 1.0f, 0.0f), fAngle * pGameInstance->Get_World_Tick());
+		m_pPlayerTransform->Turn(_float3(0.0f, 1.0f, 0.0f), fAngle * pGameInstance->Get_World_Tick() * (*m_pFRotationSpeed));
 	}
 
 	ENDINSTANCE;

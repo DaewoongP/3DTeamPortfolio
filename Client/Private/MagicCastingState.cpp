@@ -22,6 +22,16 @@ HRESULT CMagicCastingState::Initialize_Prototype()
 
 HRESULT CMagicCastingState::Initialize(void* pArg)
 {
+	BEGININSTANCE;
+
+	pGameInstance->Add_Timer(TEXT("Fix_Angle_Magic_Cast"), false, 0.2f);
+
+	pGameInstance->Add_Timer(TEXT("Go_Idle_Key_Delay"), false, 0.2f);
+
+	m_fFixAngleSpeed = 5.0f;
+
+	ENDINSTANCE;
+
 	return S_OK;
 }
 
@@ -36,6 +46,14 @@ void CMagicCastingState::Late_Tick(_float fTimeDelta)
 
 void CMagicCastingState::OnStateEnter()
 {
+	BEGININSTANCE;
+
+	pGameInstance->Reset_Timer(TEXT("Fix_Angle_Magic_Cast"));
+
+	ENDINSTANCE;
+
+
+
 	switch (*m_pIActionSwitch)
 	{
 	case CStateContext::ACTION_CASUAL:
@@ -65,11 +83,14 @@ void CMagicCastingState::OnStateEnter()
 
 void CMagicCastingState::OnStateTick()
 {
-	Go_Idle();
+	Fix_Angle();
 
 	BasicSpell_Tick();
 
-	Initialize_BasicSpell_Combo();
+	Go_Idle();
+
+
+	Go_Protego();
 }
 
 void CMagicCastingState::OnStateExit()
@@ -77,6 +98,8 @@ void CMagicCastingState::OnStateExit()
 #ifdef _DEBUG
 	cout << "Hard Land Exit" << endl;
 #endif // _DEBUG
+
+	*m_pIsFinishAnimation = true;
 }
 
 void CMagicCastingState::Bind_Notify()
@@ -98,6 +121,11 @@ void CMagicCastingState::Bind_Notify()
 	m_pOwnerModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_03_anm"), TEXT("BasicSpell_Ready"), Notify_Pointer);
 	m_pOwnerModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Hvy_frmLft_anm"), TEXT("BasicSpell_Ready"), Notify_Pointer);
 	
+	m_pOwnerModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_StepBwd_01_anm"), TEXT("BasicSpell_Ready"), Notify_Pointer);
+	m_pOwnerModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_StepBwd_02_anm"), TEXT("BasicSpell_Ready"), Notify_Pointer);
+	m_pOwnerModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_StepBwd_03_anm"), TEXT("BasicSpell_Ready"), Notify_Pointer);
+	m_pOwnerModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_StepBwd_04_anm"), TEXT("BasicSpell_Ready"), Notify_Pointer);
+
 	
 }
 
@@ -115,6 +143,18 @@ void CMagicCastingState::BasicSpell_Ready()
 	++m_iBasicSpellCombo;
 	//준비 변수 초기화
 	m_isReadySpell = true;
+
+	BEGININSTANCE;
+
+	pGameInstance->Reset_Timer(TEXT("Go_Idle_Key_Delay"));
+
+	ENDINSTANCE;
+
+	if (BASICSPELL_END <= m_iBasicSpellCombo)
+	{
+		m_iBasicSpellCombo = BASICSPELL_START;
+		m_iBasicSpellRandom = rand() % BASICSPELL_RANDOM_END;
+	}
 }
 
 void CMagicCastingState::BasicSpell_Tick()
@@ -129,6 +169,8 @@ void CMagicCastingState::BasicSpell_Tick()
 				CInput_Device::DIMK_LBUTTON,
 				CInput_Device::KEY_DOWN))
 		{
+			Initialize_Spell();
+
 			switch (*m_pIActionSwitch)
 			{
 			case CStateContext::ACTION_CASUAL:
@@ -138,7 +180,27 @@ void CMagicCastingState::BasicSpell_Tick()
 			break;
 			case CStateContext::ACTION_CMBT:
 			{
-				m_pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_01_anm"));
+				switch (m_iBasicSpellRandom)
+				{
+				case BASICSPELL_RANDOM_FRONT:
+				{
+					m_pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_01_anm"));
+				}
+				break;
+				case BASICSPELL_RANDOM_BACK:
+				{
+					m_pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_StepBwd_01_anm"));
+				}
+				break;
+				case BASICSPELL_RANDOM_END:
+				{
+
+				}
+				break;
+
+				default:
+					break;
+				}
 			}
 			break;
 			default:
@@ -155,6 +217,8 @@ void CMagicCastingState::BasicSpell_Tick()
 				CInput_Device::DIMK_LBUTTON,
 				CInput_Device::KEY_DOWN))
 		{
+			Initialize_Spell();
+
 			switch (*m_pIActionSwitch)
 			{
 			case CStateContext::ACTION_CASUAL:
@@ -164,7 +228,27 @@ void CMagicCastingState::BasicSpell_Tick()
 			break;
 			case CStateContext::ACTION_CMBT:
 			{
-				m_pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_02_anm"));
+				switch (m_iBasicSpellRandom)
+				{
+				case BASICSPELL_RANDOM_FRONT:
+				{
+					m_pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_02_anm"));
+				}
+				break;
+				case BASICSPELL_RANDOM_BACK:
+				{
+					m_pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_StepBwd_02_anm"));
+				}
+				break;
+				case BASICSPELL_RANDOM_END:
+				{
+
+				}
+				break;
+
+				default:
+					break;
+				}
 			}
 			break;
 			default:
@@ -181,6 +265,8 @@ void CMagicCastingState::BasicSpell_Tick()
 				CInput_Device::DIMK_LBUTTON,
 				CInput_Device::KEY_DOWN))
 		{
+			Initialize_Spell();
+
 			switch (*m_pIActionSwitch)
 			{
 			case CStateContext::ACTION_CASUAL:
@@ -190,7 +276,27 @@ void CMagicCastingState::BasicSpell_Tick()
 			break;
 			case CStateContext::ACTION_CMBT:
 			{
-				m_pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_03_anm"));
+				switch (m_iBasicSpellRandom)
+				{
+				case BASICSPELL_RANDOM_FRONT:
+				{
+					m_pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_StepBwd_03_anm"));
+				}
+				break;
+				case BASICSPELL_RANDOM_BACK:
+				{
+					m_pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_03_anm"));
+				}
+				break;
+				case BASICSPELL_RANDOM_END:
+				{
+
+				}
+				break;
+
+				default:
+					break;
+				}
 			}
 			break;
 			default:
@@ -207,6 +313,8 @@ void CMagicCastingState::BasicSpell_Tick()
 				CInput_Device::DIMK_LBUTTON,
 				CInput_Device::KEY_DOWN))
 		{
+			Initialize_Spell();
+
 			switch (*m_pIActionSwitch)
 			{
 			case CStateContext::ACTION_CASUAL:
@@ -216,7 +324,27 @@ void CMagicCastingState::BasicSpell_Tick()
 			break;
 			case CStateContext::ACTION_CMBT:
 			{
-				m_pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Hvy_frmLft_anm"));
+				switch (m_iBasicSpellRandom)
+				{
+				case BASICSPELL_RANDOM_FRONT:
+				{
+					m_pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Hvy_frmLft_anm"));
+				}
+				break;
+				case BASICSPELL_RANDOM_BACK:
+				{
+					m_pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_StepBwd_04_anm"));
+				}
+				break;
+				case BASICSPELL_RANDOM_END:
+				{
+
+				}
+				break;
+
+				default:
+					break;
+				}
 			}
 			break;
 			default:
@@ -236,16 +364,49 @@ void CMagicCastingState::Action_Casual_Tick()
 {
 }
 
+void CMagicCastingState::Fix_Angle()
+{
+	BEGININSTANCE;
+
+	//타이머가 전부 돌지 않았다면
+	if (false == pGameInstance->Check_Timer(TEXT("Fix_Angle_Magic_Cast")))
+	{
+		_float fAngle = *m_pFTargetAngle;
+
+		//지속적으로 회전
+		m_pPlayerTransform->Turn(_float3(0.0f, 1.0f, 0.0f), fAngle * pGameInstance->Get_World_Tick() * m_fFixAngleSpeed);
+	}
+
+	ENDINSTANCE;
+}
+
+void CMagicCastingState::Initialize_Spell()
+{
+	BEGININSTANCE;
+
+	pGameInstance->Reset_Timer(TEXT("Fix_Angle_Magic_Cast"));
+
+	ENDINSTANCE;
+}
+
 void CMagicCastingState::Action_Cmbt_Tick()
 {
 }
 
 void CMagicCastingState::Go_Idle()
 {
-	if (m_pOwnerModel->Is_Finish_Animation())
+	BEGININSTANCE;
+
+	if (m_pOwnerModel->Is_Finish_Animation()
+		||
+		(true == m_isReadySpell && 
+			true == *m_pIsDirectionKeyPressed && 
+			true == pGameInstance->Check_Timer(TEXT("Go_Idle_Key_Delay"))))
 	{
 		Set_StateMachine(TEXT("Idle"));
 	}
+
+	ENDINSTANCE;
 }
 
 CMagicCastingState* CMagicCastingState::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

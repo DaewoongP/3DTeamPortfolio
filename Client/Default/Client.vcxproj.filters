@@ -331,6 +331,12 @@
     <Filter Include="02. GameObject\99. Debug\SeamLess">
       <UniqueIdentifier>{846ab9f8-ca54-4c10-bd34-f738c2ec2301}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\06. Protego">
+      <UniqueIdentifier>{80263d30-d536-457d-baca-c468c1fa3fd7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\07. Hit">
+      <UniqueIdentifier>{8100d76b-abc1-4a05-a149-ea58ea807be8}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\04. MapObject\MapEffect">
       <UniqueIdentifier>{3d2f0c96-2d67-4229-a119-7e41208b82b3}</UniqueIdentifier>
     </Filter>
@@ -684,6 +690,12 @@
     <ClInclude Include="..\public\Seamless_Loader.h">
       <Filter>02. GameObject\99. Debug\SeamLess</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\ProtegoState.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\06. Protego</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\HitState.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\07. Hit</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\MapEffect.h">
       <Filter>02. GameObject\04. MapObject\MapEffect</Filter>
     </ClInclude>
@@ -1006,6 +1018,12 @@
     </ClCompile>
     <ClCompile Include="..\private\Seamless_Loader.cpp">
       <Filter>02. GameObject\99. Debug\SeamLess</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ProtegoState.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\06. Protego</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\HitState.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\07. Hit</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MapEffect.cpp">
       <Filter>02. GameObject\04. MapObject\MapEffect</Filter>

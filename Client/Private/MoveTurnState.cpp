@@ -24,6 +24,12 @@ HRESULT CMoveTurnState::Initialize_Prototype()
 
 HRESULT CMoveTurnState::Initialize(void* pArg)
 {
+	BEGININSTANCE;
+
+	pGameInstance->Add_Timer(TEXT("Turn to Start Delay"), false, 0.1f);
+
+	ENDINSTANCE;
+
 	return S_OK;
 }
 
@@ -42,6 +48,16 @@ void CMoveTurnState::OnStateEnter()
 #ifdef _DEBUG
 	cout << "Turn Enter" << endl;
 #endif // _DEBUG
+
+	BEGININSTANCE;
+
+	if (FAILED(pGameInstance->Reset_Timer(TEXT("Turn to Start Delay"))))
+	{
+		MSG_BOX("Failed Reset Player");
+	}
+
+	ENDINSTANCE;
+
 }
 
 void CMoveTurnState::OnStateTick()
@@ -60,6 +76,7 @@ void CMoveTurnState::OnStateTick()
 
 	Go_Magic_Cast();
 
+	Go_Protego();
 }
 
 void CMoveTurnState::OnStateExit()
@@ -78,7 +95,7 @@ void CMoveTurnState::Bind_Notify()
 void CMoveTurnState::Go_Idle()
 {
 	//방향키가 눌리지 않았을 경우
-	if (true != *m_pIsDirectionKeyPressed)
+	if (false == *m_pIsDirectionKeyPressed)
 	{
 		Set_StateMachine(TEXT("Idle"));
 	}
@@ -88,15 +105,20 @@ void CMoveTurnState::Go_Start()
 {
 	_float fAngle = *m_pOwnerLookAngle;
 
+	BEGININSTANCE;
+
 	//키가 눌려있고 애니메이션이 끝났다면
-	if (true == *m_pIsDirectionKeyPressed &&
+	if (true == *m_pIsDirectionKeyPressed/* &&
 		m_f45Angle > fAngle &&
-		-m_f45Angle < fAngle)
+		-m_f45Angle < fAngle*/
+		&& pGameInstance->Check_Timer(TEXT("Turn to Start Delay")))
 	{
 		m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Start_Fwd_anm"));
 
 		Set_StateMachine(TEXT("Move Start"));
 	}
+
+	ENDINSTANCE;
 }
 
 void CMoveTurnState::LookFront()
@@ -108,7 +130,7 @@ void CMoveTurnState::LookFront()
 	if (true == *m_pIsDirectionKeyPressed)
 	{
 		//지속적으로 회전
-		m_pPlayerTransform->Turn(_float3(0.0f, 1.0f, 0.0f), fAngle * pGameInstance->Get_World_Tick() * 0.1f);
+		m_pPlayerTransform->Turn(_float3(0.0f, 1.0f, 0.0f), fAngle * pGameInstance->Get_World_Tick());
 	}
 
 	ENDINSTANCE;
