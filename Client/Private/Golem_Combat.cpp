@@ -453,9 +453,10 @@ void CGolem_Combat::Set_Current_Target()
 
 	if (false == m_isRangeInEnemy)
 	{
-		BEGININSTANCE;
+		m_pTarget = nullptr;
+		/*BEGININSTANCE;
 		m_pTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Player"), TEXT("GameObject_Player")));
-		ENDINSTANCE;
+		ENDINSTANCE;*/
 	}
 }
 

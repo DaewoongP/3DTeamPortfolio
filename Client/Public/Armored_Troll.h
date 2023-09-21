@@ -61,10 +61,17 @@ private:
 	_bool m_isRangeInEnemy = { false };
 	_bool m_isChangeAnimation = { false };
 
+	// 범위 안에 들어온 몬스터 리스트
+	list<pair<wstring, const CGameObject*>> m_RangeInEnemies;
+
 private:
 	HRESULT Make_AI();
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
+
+private:// 가까운 적을 타겟으로 세팅
+	void Set_Current_Target();
+	HRESULT Remove_GameObject(const wstring& wstrObjectTag);
 
 #ifdef _DEBUG
 	_int m_iIndex = { 0 };
@@ -73,7 +80,9 @@ private:
 
 private: /* 행동 묶음들 */
 	HRESULT Make_Turns(_Inout_ CSequence* pSequence);
+	HRESULT Make_Turn_Run(_Inout_ CSequence* pSequence);
 	HRESULT Make_Attack(_Inout_ CSelector* pSelector);
+	HRESULT Make_Charge(_Inout_ CSequence* pSequence);
 	HRESULT Make_NormalAttack(_Inout_ CSelector* pSelector);
 	HRESULT Make_Check_Spell(_Inout_ CSelector* pSelector);
 	HRESULT Make_Random_Idle_Move(_Inout_ CRandom_Select* pRandomSelect);
