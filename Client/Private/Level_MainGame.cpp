@@ -64,19 +64,19 @@ HRESULT CLevel_MainGame::Initialize()
 		return E_FAIL;
 	}
 
-	if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/MapData6.ddd"))))
+	if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/MapData0.ddd"))))
 	{
 		MSG_BOX("Failed Load Map Object");
 
 		return E_FAIL;
 	}
 
-	if (FAILED(Load_MapObject_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins6.ddd"))))
+	/*if (FAILED(Load_MapObject_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins6.ddd"))))
 	{
 		MSG_BOX("Failed Load Map Object_Ins");
 
 		return E_FAIL;
-	}
+	}*/
 	
 #ifdef _DEBUG
 	if (FAILED(Ready_Layer_Debug(TEXT("Layer_Debug"))))
@@ -305,17 +305,42 @@ HRESULT CLevel_MainGame::Load_MapObject(const _tchar* pObjectFilePath)
 		}
 		BEGININSTANCE;
 
-		_tchar wszobjName[MAX_PATH] = { 0 };
-		_stprintf_s(wszobjName, TEXT("GameObject_MapObject_%d"), (iObjectNum));
+		wstring ws(MapObjectDesc.wszTag);
+		size_t findIndex = ws.find(TEXT("Model_")) + 6;
 
-		if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME,
-			TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_BackGround"),
-			wszobjName, &MapObjectDesc)))
+		wstring modelName = ws.substr(findIndex);
+		wstring wsMapEffectName(TEXT("Cylinder_Long"));
+
+		// MapEffect 클래스로 만들어야 할 경우
+		if (0 == lstrcmp(modelName.c_str(), wsMapEffectName.c_str()))
 		{
-			MSG_BOX("Failed to Install MapObject");
-			ENDINSTANCE;
-			return E_FAIL;
+			_tchar wszobjName[MAX_PATH] = { 0 };
+			_stprintf_s(wszobjName, TEXT("GameObject_MapEffect_%d"), (iObjectNum));
+
+			if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME,
+				TEXT("Prototype_GameObject_MapEffect"), TEXT("Layer_BackGround"),
+				wszobjName, &MapObjectDesc)))
+			{
+				MSG_BOX("Failed to Clone MapEffect");
+				ENDINSTANCE;
+				return E_FAIL;
+			}
 		}
+
+		else
+		{
+			_tchar wszobjName[MAX_PATH] = { 0 };
+			_stprintf_s(wszobjName, TEXT("GameObject_MapObject_%d"), (iObjectNum));
+
+			if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME,
+				TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_BackGround"),
+				wszobjName, &MapObjectDesc)))
+			{
+				MSG_BOX("Failed to Clone MapObject");
+				ENDINSTANCE;
+				return E_FAIL;
+			}
+		}		
 
 		++iObjectNum; ENDINSTANCE;
 	}
