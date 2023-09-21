@@ -131,7 +131,7 @@ void CMagicSlot::Action_Magic_Skill(_uint iIndex, CTransform* pTarget, _float4x4
 	{
 		if (m_MagicSlots[iIndex] == nullptr)
 		{
-
+			return;
 		}
 		m_MagicSlots[iIndex]->Magic_Cast(pTarget, TargetOffsetMatrix, pWeaponMatrix, WeaponOffsetMatrix);
 	}
@@ -150,7 +150,7 @@ void CMagicSlot::Action_Magic_Basic(_uint iIndex, CTransform* pTarget, _float4x4
 	{
 		if (m_MagicEssentialSlots[iIndex] == nullptr)
 		{
-
+			return;
 		}
 		m_MagicEssentialSlots[iIndex]->Magic_Cast(pTarget, TargetOffsetMatrix, pWeaponMatrix, WeaponOffsetMatrix);
 	}

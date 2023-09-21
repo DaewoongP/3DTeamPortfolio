@@ -50,7 +50,7 @@ private:
 	_float m_fLookAngle{};
 	//방향키 입력이 들어왔는지 확인하는 변수
 	_bool m_isDirectionKeyPressed { false };
-
+	_bool		m_isFixMouse = { false };
 	CStateContext* m_pStateContext = { nullptr };
 	
 	//평타, 실드가 이미 탑재된 마법 슬롯 
@@ -65,6 +65,7 @@ private:
 
 private:
 	void Key_Input(_float fTimeDelta);
+	void Fix_Mouse();
 
 private:
 	HRESULT Ready_MeshParts();
@@ -84,6 +85,7 @@ private:
 private:
 	//카메라와 플레이어의 각을 검사해서 저장한다.
 	void UpdateLookAngle();
+	void Update_Cloth(_float fTimeDelta);
 
 public:
 	static CPlayer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

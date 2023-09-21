@@ -106,31 +106,31 @@ namespace Engine
 		PX_UNUSED(constantBlockSize);
 		PX_UNUSED(constantBlock);
 
-		// Trigger
-		if ((attribute0 & physx::PxFilterObjectFlag::eTRIGGER) != 0 || 
-			(attribute1 & physx::PxFilterObjectFlag::eTRIGGER) != 0)
+		// 콜리전플래그가 맞지 않을경우 기본적인 피직스 처리만 하고 리턴
+		// 충돌을 하고싶지 않을경우도 리턴처리
+		if (0 == (filterData0.word0 & filterData1.word1) ||
+			0 == (filterData0.word1 & filterData1.word0) ||
+			END_COL == filterData0.word2 ||
+			END_COL == filterData1.word2)
 		{
-			pairFlags |= physx::PxPairFlag::eTRIGGER_DEFAULT;
+			pairFlags = PxPairFlag::eCONTACT_DEFAULT;
+
 			return physx::PxFilterFlag::eDEFAULT;
 		}
 
-		if (0 == (filterData0.word0 & filterData1.word0))
+		// 둘중 하나가 트리거일경우 트리거 처리로 변경
+		if ((attribute0 & physx::PxFilterObjectFlag::eTRIGGER) != 0 ||
+			(attribute1 & physx::PxFilterObjectFlag::eTRIGGER) != 0)
 		{
-			pairFlags = PxPairFlag::eCONTACT_DEFAULT;
+			pairFlags = physx::PxPairFlag::eTRIGGER_DEFAULT;
 			return physx::PxFilterFlag::eDEFAULT;
 		}
-		
+
+		// 충돌처리 Enter, Stay, Exit
 		pairFlags = PxPairFlag::eCONTACT_DEFAULT
 			| PxPairFlag::eNOTIFY_TOUCH_FOUND
 			| PxPairFlag::eNOTIFY_TOUCH_PERSISTS
 			| PxPairFlag::eNOTIFY_TOUCH_LOST;
-
-		if (PxFilterObjectType::eRIGID_STATIC == PxGetFilterObjectType(attribute0) ||
-			PxFilterObjectType::eRIGID_STATIC == PxGetFilterObjectType(attribute1))
-		{
-			if (0 == filterData0.word0)
-				pairFlags = PxPairFlag::eCONTACT_DEFAULT;
-		}
 		
 		return PxFilterFlag::eDEFAULT;
 	}

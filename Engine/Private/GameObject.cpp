@@ -24,6 +24,7 @@ HRESULT CGameObject::Initialize_Prototype()
 
 HRESULT CGameObject::Initialize(void* pArg)
 {
+	m_OffsetMatrix = XMMatrixIdentity();
 	m_pTransform->Set_Owner(this);
 
 	m_Components.emplace(TEXT("Com_Transform"), m_pTransform);

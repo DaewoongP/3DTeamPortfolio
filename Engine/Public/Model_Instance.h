@@ -19,6 +19,7 @@ private:
 
 public:
 	_uint						Get_NumMeshes() const { return m_iNumMeshes; }
+	vector<class CMesh_Instance*> Get_Meshes() { return m_Meshes; }
 
 public:
 	virtual HRESULT Initialize_Prototype(TYPE eType, const _tchar* pModelFilePath, _float4x4* pInstanceMatrix, _uint iInstanceCnt, _float4x4 PivotMatrix);

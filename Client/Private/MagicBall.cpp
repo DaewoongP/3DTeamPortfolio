@@ -130,6 +130,8 @@ HRESULT CMagicBall::Add_RigidBody()
 	CRigidBody::RIGIDBODYDESC RigidBodyDesc;
 	RigidBodyDesc.isStatic = false;
 	RigidBodyDesc.isTrigger = true;
+	RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
+	RigidBodyDesc.vOffsetPosition = _float3(0.f, 0.0f, 0.f);
 	RigidBodyDesc.fStaticFriction = 0.f;
 	RigidBodyDesc.fDynamicFriction = 0.f;
 	RigidBodyDesc.fRestitution = 0.f;
@@ -137,7 +139,6 @@ HRESULT CMagicBall::Add_RigidBody()
 	RigidBodyDesc.pGeometry = &SphereGeometry;
 	RigidBodyDesc.eConstraintFlag = CRigidBody::AllRot;
 	RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 0.f, 1.f);
-	RigidBodyDesc.vInitPosition = _float3(0.f, 0.f, 0.f);
 	RigidBodyDesc.isGravity = false;
 	RigidBodyDesc.pOwnerObject = this;
 	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Magic_Ball");

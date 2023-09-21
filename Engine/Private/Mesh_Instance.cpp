@@ -55,6 +55,10 @@ HRESULT CMesh_Instance::Initialize_Prototype(const Engine::MESH Mesh, _float4x4 
 			pIndices[iNumFaces++] = Mesh.Faces[i].iIndices[0];
 			pIndices[iNumFaces++] = Mesh.Faces[i].iIndices[1];
 			pIndices[iNumFaces++] = Mesh.Faces[i].iIndices[2];
+
+			m_IndicesVec.push_back(Mesh.Faces[i].iIndices[0]);
+			m_IndicesVec.push_back(Mesh.Faces[i].iIndices[1]);
+			m_IndicesVec.push_back(Mesh.Faces[i].iIndices[2]);
 		}		
 	}
 
@@ -129,6 +133,18 @@ HRESULT CMesh_Instance::Ready_VertexBuffer_NonAnim(const Engine::MESH Mesh, _flo
 			pVertices[i].vUp = XMFLOAT4(pInstanceMatrix[i].m[1][0], pInstanceMatrix[i].m[1][1], pInstanceMatrix[i].m[1][2], pInstanceMatrix[i].m[1][3]);
 			pVertices[i].vLook = XMFLOAT4(pInstanceMatrix[i].m[2][0], pInstanceMatrix[i].m[2][1], pInstanceMatrix[i].m[2][2], pInstanceMatrix[i].m[2][3]);
 			pVertices[i].vTranslation = XMFLOAT4(pInstanceMatrix[i].m[3][0], pInstanceMatrix[i].m[3][1], pInstanceMatrix[i].m[3][2], pInstanceMatrix[i].m[3][3]);
+
+			_float4x4 InstanceMatrix;
+			_float4 vRight = pVertices[i].vRight;
+			InstanceMatrix.Right(vRight.xyz());
+			_float4 vUp = pVertices[i].vUp;
+			InstanceMatrix.Right(vUp.xyz());
+			_float4 vLook = pVertices[i].vLook;
+			InstanceMatrix.Right(vLook.xyz());
+			_float4 vPos = pVertices[i].vTranslation;
+			InstanceMatrix.Right(vPos.xyz());
+
+			m_InstanceMatrixVec.push_back(InstanceMatrix);
 		}
 
 		D3D11_SUBRESOURCE_DATA		SubResourceData;
@@ -164,6 +180,8 @@ HRESULT CMesh_Instance::Ready_VertexBuffer_NonAnim(const Engine::MESH Mesh, _flo
 			memcpy(&pVertices[i].vPosition, &Mesh.vPositions[i], sizeof(_float3));
 			XMStoreFloat3(&pVertices[i].vPosition,
 				XMVector3TransformCoord(XMLoadFloat3(&pVertices[i].vPosition), PivotMatrix));
+
+			m_VerticesPositionVec.push_back(Mesh.vPositions[i]);
 
 			memcpy(&pVertices[i].vNormal, &Mesh.vNormals[i], sizeof(_float3));
 			XMStoreFloat3(&pVertices[i].vNormal,

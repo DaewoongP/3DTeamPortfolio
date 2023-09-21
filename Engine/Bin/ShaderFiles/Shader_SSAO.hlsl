@@ -17,7 +17,6 @@ float gSurfaceEpsilon = 0.05f;
 texture2D g_PostProcessingTexture;
 //SSAO
 float g_fRadius = 0.001f;
-float g_fFar = 100.f;
 float g_fFalloff = 0.000002f;
 float g_fStrength = 0.0007f;
 float g_fTotStrength = 1.38f;
@@ -303,21 +302,10 @@ PS_OUT PS_MAIN(PS_IN In)
     vector vDepthDesc = g_DepthTexture.Sample(LinearSampler, In.vTexUV);
     vector vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
     
-    if (vNormalDesc.a != 0.f)
-    {
-        Out.vColor = vector(1.f, 1.f, 1.f, 1.f);
-        return Out;
-    }
-     //vNormalDesc = normalize(vNormalDesc * 0.5f +0.5f);
-   // vector vNormal = vector(vNormalDesc.xyz * 2.f - 1.f, 1.f);
     vNormalDesc = normalize(vNormalDesc * 2.f - 1.f);
-  
-   // vNormalDesc = normalize(mul(vNormalDesc, g_ViewMatrix));
-    
-    float fViewZ = vDepthDesc.x * g_fFar; //ºäÆ÷Æ®¿¡¼­ÀÇ ±íÀÌ
-    
-    float vDepth = vDepthDesc.y * g_fFar * fViewZ; // ¿ùµå¿¡¼­ÀÇ ½ÇÁ¦±íÀÌ
- 
+    // ºäÀÇ z°ª
+    float fViewZ = vDepthDesc.y * g_fCamFar;
+
     float3 vRay;
     float3 vReflect;
     float2 vRandomUV;
@@ -328,12 +316,13 @@ PS_OUT PS_MAIN(PS_IN In)
     {
         vRay = normalize(reflect(RandNormal(In.vTexUV), g_Ran[i]));
         vReflect = normalize(reflect(normalize(vRay), normalize(vNormalDesc.rgb))) * g_fRadius;
-       // vReflect.x *= -1.f;
+        vReflect.x *= -1.f;
         vRandomUV = In.vTexUV + vReflect.xy;
-        fOccNorm = g_DepthTexture.Sample(LinearSampler, vRandomUV).g * g_fFar * fViewZ;
-        if (fOccNorm <= vDepth + 0.02f)
+        fOccNorm = g_DepthTexture.Sample(LinearSampler, vRandomUV).y * g_fCamFar;
+        if (fOccNorm <= fViewZ + 0.1f)
             ++iColor;
     }
+    
     float4 vAmbient = abs((iColor / 29.f) - 1);
    
     Out.vColor = 1.f - vAmbient;
