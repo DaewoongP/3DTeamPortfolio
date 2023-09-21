@@ -141,14 +141,14 @@ HRESULT CModel_Converter::Convert_Model(_uint iType, const _char* pModelFilePath
 	return S_OK;
 }
 
-HRESULT CModel_Converter::Convert_Bones(aiNode* pNode, _uint iParentIndex, _uint* iChildIndex, _bool isRoot)
+HRESULT CModel_Converter::Convert_Bones(aiNode* pNode, _uint iParentIndex, _Inout_ _uint* iChildIndex, _bool isRoot)
 {
 	// 파일에 저장할 노드 구조체
 	NODE Node;
 	ZEROMEM(&Node);
 
 	// 뼈 이름
-	_tchar BoneName[256] = TEXT("");
+	_tchar BoneName[MAX_PATH] = TEXT("");
 	CharToWChar(pNode->mName.data, BoneName);
 	lstrcpy(Node.szName, BoneName);
 
@@ -250,7 +250,7 @@ HRESULT CModel_Converter::Store_Mesh(const aiMesh* pAIMesh, MESH* outMesh)
 	outMesh->iMaterialIndex = pAIMesh->mMaterialIndex;
 
 	// 메쉬 이름
-	_tchar MeshName[256] = TEXT("");
+	_tchar MeshName[MAX_PATH] = TEXT("");
 	CharToWChar(pAIMesh->mName.data, MeshName);
 	lstrcpy(outMesh->szName, MeshName);
 
@@ -313,7 +313,7 @@ HRESULT CModel_Converter::Store_Mesh(const aiMesh* pAIMesh, MESH* outMesh)
 		BONE	Bone;
 		ZEROMEM(&Bone);
 		// 해당하는 뼈의 이름
-		_tchar BoneName[256] = TEXT("");
+		_tchar BoneName[MAX_PATH] = TEXT("");
 		CharToWChar(pAIBone->mName.data, BoneName);
 		lstrcpy(Bone.szName, BoneName);
 
@@ -476,7 +476,7 @@ HRESULT CModel_Converter::Convert_Animations()
 		ANIMATION Animation;
 		ZEROMEM(&Animation);
 		// 애니메이션 이름
-		_tchar AnimName[256] = TEXT("");
+		_tchar AnimName[MAX_PATH] = TEXT("");
 		CharToWChar(pAIAnimation->mName.data, AnimName);
 		lstrcpy(Animation.szName, AnimName);
 
@@ -496,7 +496,7 @@ HRESULT CModel_Converter::Convert_Animations()
 			CHANNEL Channel;
 			ZEROMEM(&Channel);
 			// 채널 이름
-			_tchar ChannelName[256] = TEXT("");
+			_tchar ChannelName[MAX_PATH] = TEXT("");
 			CharToWChar(pAIChannel->mNodeName.data, ChannelName);
 			lstrcpy(Channel.szName, ChannelName);
 

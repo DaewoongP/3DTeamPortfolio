@@ -4,7 +4,6 @@
 #include "Weapon_Golem_Combat.h"
 
 #include "Wait.h"
-#include "Magic.h"
 #include "Action.h"
 #include "MagicBall.h"
 #include "Check_Degree.h"
@@ -66,15 +65,17 @@ void CGolem_Combat::Tick(_float fTimeDelta)
 	
 	// Test Code 
 	BEGININSTANCE;
-
+	
 	if (pGameInstance->Get_DIKeyState(DIK_LCONTROL, CInput_Device::KEY_PRESSING))
 	{
 		if (pGameInstance->Get_DIKeyState(DIK_5, CInput_Device::KEY_DOWN))
 			m_isSpawn = true;
 		if (pGameInstance->Get_DIKeyState(DIK_4, CInput_Device::KEY_DOWN))
 			m_isParring = true;
+		if (pGameInstance->Get_DIKeyState(DIK_2, CInput_Device::KEY_DOWN))
+			m_iCurrentSpell |= BUFF_LEVIOSO;
 		if (pGameInstance->Get_DIKeyState(DIK_1, CInput_Device::KEY_DOWN))
-			m_iCurrentSpell |= CMagic::BUFF_CONTROL;
+			m_iCurrentSpell |= BUFF_STUPEFY;
 	}
 
 	ENDINSTANCE;
@@ -84,6 +85,18 @@ void CGolem_Combat::Tick(_float fTimeDelta)
 
 	if (nullptr != m_pRootBehavior)
 		m_pRootBehavior->Tick(fTimeDelta);
+
+	_float3 vPosition = m_pTransform->Get_Position();
+	for (auto iter = m_CurrentTickSpells.begin(); iter != m_CurrentTickSpells.end(); )
+	{
+		if (iter->first & m_iCurrentSpell)
+		{
+			//iter->second(vPosition, fTimeDelta);
+			++iter;
+		}
+		else
+			iter = m_CurrentTickSpells.erase(iter);
+	}
 
 	if (nullptr != m_pModelCom)
 		m_pModelCom->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
@@ -110,20 +123,19 @@ void CGolem_Combat::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		wstrCollisionTag = CollisionEventDesc.pOtherCollisionTag;
 
 	/* Collision Magic */
-	/*if (wstring::npos != wstrObjectTag.find(TEXT("MagicBall")))
+	if (wstring::npos != wstrObjectTag.find(TEXT("MagicBall")))
 	{
-		cout << "Hit Magic" << endl;
 		CMagicBall::COLLSIONREQUESTDESC* pCollisionMagicBallDesc = static_cast<CMagicBall::COLLSIONREQUESTDESC*>(CollisionEventDesc.pArg);
-		SPELL eSpell = pCollisionMagicBallDesc->eMagicTag;
+		BUFF_TYPE eBuff = pCollisionMagicBallDesc->eBuffType;
 		auto Action = pCollisionMagicBallDesc->Action;
 		_float fDamage = pCollisionMagicBallDesc->fDamage;
 
-		auto iter = m_CurrentTickSpells.find(eSpell);
+		auto iter = m_CurrentTickSpells.find(eBuff);
 		if (iter == m_CurrentTickSpells.end())
-			m_CurrentTickSpells.emplace(eSpell, Action);
+			m_CurrentTickSpells.emplace(eBuff, Action);
 
-		m_iCurrentSpell |= eSpell;
-	}*/
+		m_iCurrentSpell |= eBuff;
+	}
 
 	/* Collision Player Fig */
 	if (wstring::npos != wstrCollisionTag.find(TEXT("Body")))
@@ -209,7 +221,6 @@ HRESULT CGolem_Combat::Make_AI()
 	try /* Failed Check Make_AI */
 	{
 #pragma region Add_Types
-		/* Add Types */
 		if (FAILED(m_pRootBehavior->Add_Type("pTransform", m_pTransform)))
 			throw TEXT("Failed Add_Type pTransform");
 		if (FAILED(m_pRootBehavior->Add_Type("pModel", m_pModelCom)))
@@ -810,7 +821,7 @@ HRESULT CGolem_Combat::Make_NormalAttack(_Inout_ CSelector* pSelector)
 				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
 					return false;
 
-				if (CMagic::BUFF_NONE != *pICurrentSpell)
+				if (BUFF_NONE != *pICurrentSpell)
 					return false;
 
 				return true;
@@ -932,7 +943,7 @@ HRESULT CGolem_Combat::Make_Check_Spell(_Inout_ CSelector* pSelector)
 				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
 					return false;
 
-				if (CMagic::BUFF_NONE == *pICurrentSpell)
+				if (BUFF_NONE == *pICurrentSpell)
 					return false;
 
 				return true;
@@ -941,13 +952,13 @@ HRESULT CGolem_Combat::Make_Check_Spell(_Inout_ CSelector* pSelector)
 		/* Set_Options */
 		pSequence_Groggy->Set_LoopTime(3.f);
 
-		/* ���������� */
+		/* Stupefy */
 		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Groggy"), pSequence_Groggy)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Groggy");
-		/* ������� */
+		/* Levioso */
 		if(FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Levitated"), pSequence_Levitated)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Levitated");
-		/* �𼾵� */
+		/* Descendo */
 		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Descendo"), pSequence_Descendo)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Descendo");
 

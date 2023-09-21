@@ -263,7 +263,7 @@ HRESULT CProfessor_Fig::Make_Magics()
 	//Basic Magic BasicCast
 	{
 		CMagic::MAGICDESC magicInitDesc;
-		magicInitDesc.eBuffType = CMagic::BUFF_NONE;
+		magicInitDesc.eBuffType = BUFF_NONE;
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
 		magicInitDesc.eMagicTag = BASICCAST;
@@ -278,7 +278,7 @@ HRESULT CProfessor_Fig::Make_Magics()
 	//Skill Magic LEVIOSO
 	{
 		CMagic::MAGICDESC magicInitDesc;
-		magicInitDesc.eBuffType = CMagic::BUFF_UNGRAVITY;
+		magicInitDesc.eBuffType = BUFF_LEVIOSO;
 		magicInitDesc.eMagicGroup = CMagic::MG_CONTROL;
 		magicInitDesc.eMagicType = CMagic::MT_YELLOW;
 		magicInitDesc.eMagicTag = LEVIOSO;

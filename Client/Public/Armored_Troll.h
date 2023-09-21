@@ -19,6 +19,7 @@ class CRootBehavior;
 END
 
 BEGIN(Client)
+class CRandom_Select;
 class CWeapon_Armored_Troll;
 END
 
@@ -51,6 +52,16 @@ private:
 	CWeapon_Armored_Troll* m_pWeapon = { nullptr };
 
 private:
+	const CGameObject* m_pTarget = { nullptr };
+	_uint m_iCurrentSpell = { 0 };
+	unordered_map<BUFF_TYPE, function<void(_float3, _float)>> m_CurrentTickSpells;
+
+	_bool m_isSpawn = { false };
+	_bool m_isParring = { false };
+	_bool m_isRangeInEnemy = { false };
+	_bool m_isChangeAnimation = { false };
+
+private:
 	HRESULT Make_AI();
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
@@ -59,6 +70,13 @@ private:
 	_int m_iIndex = { 0 };
 	void Tick_ImGui();
 #endif // _DEBUG
+
+private: /* Çàµ¿ ¹­À½µé */
+	HRESULT Make_Turns(_Inout_ CSequence* pSequence);
+	HRESULT Make_Attack(_Inout_ CSelector* pSelector);
+	HRESULT Make_NormalAttack(_Inout_ CSelector* pSelector);
+	HRESULT Make_Check_Spell(_Inout_ CSelector* pSelector);
+	HRESULT Make_Random_Idle_Move(_Inout_ CRandom_Select* pRandomSelect);
 
 public:
 	static CArmored_Troll* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
