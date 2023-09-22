@@ -50,13 +50,10 @@ private:
 	HRESULT Render_Deferred();
 	HRESULT Render_NonLight();
 	HRESULT Render_Blend();
-	HRESULT Render_BlurShadow();
 	HRESULT Render_PostProcessing();
 	HRESULT Render_EffectType();
 	HRESULT Render_Distortion();
 	HRESULT Render_UI();
-
-	
 
 #ifdef _DEBUG
 	HRESULT Render_UITexture();
@@ -68,6 +65,7 @@ private:
 	HRESULT Sort_Blend();
 	HRESULT Sort_UI();
 	HRESULT Add_Components();
+	HRESULT Create_DepthTexture(_uint iSizeX, _uint iSizeY);
 
 #ifdef _DEBUG
 private:
