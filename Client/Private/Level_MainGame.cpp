@@ -64,7 +64,7 @@ HRESULT CLevel_MainGame::Initialize()
 		return E_FAIL;
 	}
 
-	if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/MapData2.ddd"))))
+	if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/newmap5.ddd"))))
 	{
 		MSG_BOX("Failed Load Map Object");
 
@@ -121,7 +121,7 @@ void CLevel_MainGame::Tick(_float fTimeDelta)
 	ENDINSTANCE;
 
 #ifdef _DEBUG
-	SetWindowText(g_hWnd, TEXT("°ÔÀÓ ·¹º§"));
+	SetWindowText(g_hWnd, TEXT("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½"));
 #endif //_DEBUG
 }
 
@@ -318,7 +318,7 @@ HRESULT CLevel_MainGame::Load_MapObject(const _tchar* pObjectFilePath)
 		wstring modelName = ws.substr(findIndex);
 		wstring wsMapEffectName(TEXT("Cylinder_Long"));
 
-		// MapEffect Å¬·¡½º·Î ¸¸µé¾î¾ß ÇÒ °æ¿ì
+		// MapEffect Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½
 		if (0 == lstrcmp(modelName.c_str(), wsMapEffectName.c_str()))
 		{
 			_tchar wszobjName[MAX_PATH] = { 0 };
@@ -370,7 +370,7 @@ HRESULT CLevel_MainGame::Load_MapObject_Ins(const _tchar* pObjectFilePath)
 	}
 
 	DWORD	dwByte = 0;
-	_uint	iCount = 0; // ¸ðµ¨ ÀÎ½ºÅÏ½º ³Ñ¹ö¸µ º¯¼ö
+	_uint	iCount = 0; // ï¿½ï¿½ ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½Ñ¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
 	while (true)
 	{
@@ -385,7 +385,7 @@ HRESULT CLevel_MainGame::Load_MapObject_Ins(const _tchar* pObjectFilePath)
 
 		if (0 != MapObjectInsDesc.iInstanceCnt)
 		{
-			_float4x4 Matrix; // µ¿Àû ÇÒ´ç ¾ÈÇÏ°í Áö¿ª º¯¼ö·Î ³¯¸²
+			_float4x4 Matrix; // ï¿½ï¿½ï¿½ï¿½ ï¿½Ò´ï¿½ ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
 			for (size_t i = 0; i < MapObjectInsDesc.iInstanceCnt; i++)
 			{
@@ -422,13 +422,13 @@ HRESULT CLevel_MainGame::Load_MapObject_Ins(const _tchar* pObjectFilePath)
 
 		BEGININSTANCE;
 
-		// ¿©±â¼­ ÇÁ·ÎÅäÅ¸ÀÔ ÅÂ±× ¹®ÀÚ¿­ °¡°øÇØÁà¾ßÇÔ
+		// ï¿½ï¿½ï¿½â¼­ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å¸ï¿½ï¿½ ï¿½Â±ï¿½ ï¿½ï¿½ï¿½Ú¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		wstring ws = TEXT("Prototype_Component_Model_Instance_");
 		wstring wsTag = TEXT("Prototype_Component_Model_");
 		wstring wsSave(MapObjectInsDesc.wszTag);
 		_uint iLength = wsTag.size();
 
-		// ¸ðµ¨ ÀÌ¸§
+		// ï¿½ï¿½ ï¿½Ì¸ï¿½
 		wstring wsModelName = wsSave.substr(iLength);
 		ws += wsModelName;
 
@@ -437,14 +437,14 @@ HRESULT CLevel_MainGame::Load_MapObject_Ins(const _tchar* pObjectFilePath)
 		_tchar wszNumber[MAX_PATH];
 		_itow_s(iCount, wszNumber, 10);
 
-		ws += wszNumber; // ¿©±â±îÁö ¿À¸é Prototype_Component_Model_Instance_¸ðµ¨¸í_¹øÈ£ ÀÌ·±½ÄÀ¸·Î ÀÌ¸§ÀÌ ºÙÀ½	
+		ws += wszNumber; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Prototype_Component_Model_Instance_ï¿½ðµ¨¸ï¿½_ï¿½ï¿½È£ ï¿½Ì·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½	
 
-		lstrcpy(MapObjectInsDesc.wszTag, ws.c_str()); // °¡°øÇÑ ¸ðµ¨ ÀÎ½ºÅÏ½º ÀÌ¸§À» ³Ö¾îÁÜ
+		lstrcpy(MapObjectInsDesc.wszTag, ws.c_str()); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½Ì¸ï¿½ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ï¿½
 
 		_tchar wszobjName[MAX_PATH] = { 0 };
 		_stprintf_s(wszobjName, TEXT("GameObject_InsMapObject_%d"), (iCount));
 
-		// ¹øÈ£¸¦ ºÙÀÎ ÅÂ±×·Î MapObject_Ins µî·Ï
+		// ï¿½ï¿½È£ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Â±×·ï¿½ MapObject_Ins ï¿½ï¿½ï¿½
 		if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME,
 			TEXT("Prototype_GameObject_MapObject_Ins"), TEXT("Layer_BackGround"),
 			wszobjName, &MapObjectInsDesc)))
@@ -621,7 +621,7 @@ HRESULT CLevel_MainGame::Ready_Layer_UI(const _tchar* pLayerTag)
 
 	CUI_Group_Enemy_HP::ENEMYHPDESC  Desc;
 	_tchar szLevel[MAX_PATH] = TEXT("77");
-	_tchar szName[MAX_PATH] = TEXT("°³Ã¶¹Î");
+	_tchar szName[MAX_PATH] = TEXT("ï¿½ï¿½Ã¶ï¿½ï¿½");
 
 	Desc.eType = CUI_Group_Enemy_HP::ENEMYTYPE::BOSS;
 	lstrcpy(Desc.wszObjectLevel, szLevel);
@@ -747,15 +747,15 @@ HRESULT CLevel_MainGame::Ready_Layer_Debug(const _tchar* pLayerTag)
 		return E_FAIL;
 	}*/
 
-	// ½É¸®½º¹æ½Ä ·ÎµùÆ®¸®°Å °´Ã¼
+	// ï¿½É¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼
 	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_LoadTrigger"), pLayerTag, TEXT("GameObject_LoadTrigger"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_LoadTrigger)");
 		return E_FAIL;
 	}
 
-	// Å°Áö¸¶¼¼¿ä ÅÍÁý´Ï´Ù
-	// ÇÇÁ÷½º µð¹ö±× ·»´õ¸µ¿ë °´Ã¼
+	// Å°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼
 	/*if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_PhysxRenderer"), pLayerTag, TEXT("GameObject_PhysxRenderer"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_PhysxRenderer)");
