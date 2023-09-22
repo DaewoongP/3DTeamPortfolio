@@ -6,6 +6,7 @@ texture2D g_NormalTexture;
 matrix g_LightViewMatrix, g_LightProjMatrix;
 
 float g_fCamFar;
+float2 g_vOffset;
 
 struct VS_IN
 {
@@ -90,18 +91,19 @@ PS_OUT PS_MAIN(PS_IN In)
 PS_OUT PS_MAIN_EFFECT(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
+    
+    vector vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV + g_vOffset);
+    vector vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+    float3 vNormal = vNormalDesc.xyz * 2.f - 1.f; // 0 ~ 1 -> -1 ~ 1
 
-    vector vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
-    
     float3x3 WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal.xyz, In.vNormal.xyz);
-    
+    vNormal = mul(vNormal, WorldMatrix);
+
     if (vDiffuse.a < 0.1f)
         discard;
 
     Out.vDiffuse = vDiffuse;
-
-	/* Out.vNormal unorm : 0 ~ 1 */
-	/* In.vNormal.xyz : -1 ~ 1 */
+    Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, g_fCamFar, 0.f, 0.f);
 
     return Out;
@@ -151,7 +153,7 @@ technique11 DefaultTechnique
     {
         SetRasterizerState(RS_Cull_CW);
         SetDepthStencilState(DSS_Default, 0);
-        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
