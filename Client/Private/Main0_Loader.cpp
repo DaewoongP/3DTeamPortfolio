@@ -2,7 +2,7 @@
 #include "GameInstance.h"
 
 /////////////////////////////////////////////
-// 로고화면 / UI / Texture / Buffer / Debug //
+// UI / Texture / Buffer / Debug / Shader ///
 /////////////////////////////////////////////
 #include "Logo_BackGround.h"
 
@@ -184,6 +184,16 @@ HRESULT CMain0_Loader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxMesh"),
 			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxMesh.hlsl"), VTXMESH_DECL::Elements, VTXMESH_DECL::iNumElements))))
 			throw TEXT("Prototype_Component_Shader_VtxMesh");
+		
+		/* For.Prototype_Component_Shader_ShadowAnimMesh */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_ShadowAnimMesh"),
+			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_ShadowAnimMesh.hlsl"), VTXANIMMESH_DECL::Elements, VTXANIMMESH_DECL::iNumElements))))
+			throw TEXT("Prototype_Component_Shader_ShadowAnimMesh");
+
+		/* For.Prototype_Component_Shader_ShadowMesh */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_ShadowMesh"),
+			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_ShadowMesh.hlsl"), VTXMESH_DECL::Elements, VTXMESH_DECL::iNumElements))))
+			throw TEXT("Prototype_Component_Shader_ShadowMesh");
 
 		/* For.Prototype_Component_Shader_Terrain */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_Terrain"),

@@ -18,13 +18,15 @@ private:
 
 public:
 	ID3D11RenderTargetView* Get_RTV() { return m_pRTV; }
+	ID3D11DepthStencilView* Get_DSV() { return m_pShadowMapDSV; }
 	ID3D11Texture2D*		Get_Texture2D() { return m_pTexture2D; }
+	D3D11_VIEWPORT			Get_ViewPort() { return m_ShadowMapViewPortDesc; }
 
 public:
 	HRESULT Initialize(_uint iSizeX, _uint iSizeY, DXGI_FORMAT eFormat, const _float4& vClearColor,_bool isShadow);
 	HRESULT Initialize_Depth(_uint iSizeX, _uint iSizeY, DXGI_FORMAT eFormat, const _float4& vClearColor);
 
-	HRESULT Clear();
+	HRESULT Clear(_bool isShadow = false);
 	HRESULT Bind_ShaderResourceView(class CShader* pShader, const _char* pConstantName);
 
 #ifdef _DEBUG
@@ -39,11 +41,12 @@ private:
 
 private:
 	ID3D11Texture2D*			m_pTexture2D = { nullptr };
-	ID3D11Texture2D*			m_pShadow2D = nullptr;
+	ID3D11Texture2D*			m_pShadowMapTexture2D = { nullptr };
 	
 	ID3D11RenderTargetView*		m_pRTV = { nullptr };
 	ID3D11ShaderResourceView*	m_pSRV = { nullptr };
-	ID3D11DepthStencilView*		m_pShadowView = { nullptr };
+	ID3D11DepthStencilView*		m_pShadowMapDSV = { nullptr };
+	D3D11_VIEWPORT				m_ShadowMapViewPortDesc;
 
 	_float4						m_vClearColor;
 

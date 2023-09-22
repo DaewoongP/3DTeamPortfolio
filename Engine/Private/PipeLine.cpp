@@ -19,6 +19,11 @@ void CPipeLine::Set_Transform(D3DTRANSFORMSTATE eTransformState, _float4x4 Trans
 	m_TransformMatrix[eTransformState] = TransformStateMatrix;
 }
 
+void CPipeLine::Set_LightTransform(D3DTRANSFORMSTATE eLightState, _float4x4 LightStateMatrix)
+{
+	m_LightTransformMatrix[eLightState] = LightStateMatrix;
+}
+
 const _float4x4* CPipeLine::Get_TransformMatrix(D3DTRANSFORMSTATE eTransformState)
 {	
 	return &m_TransformMatrix[eTransformState];
@@ -68,9 +73,7 @@ void CPipeLine::Tick()
 	{
 		m_TransformMatrix_Inverse[i] = XMMatrixInverse(nullptr, *Get_TransformMatrix(static_cast<D3DTRANSFORMSTATE>(i)));
 		m_LightTransformMatrix_Inverse[i] = XMMatrixInverse(nullptr, *Get_TransformMatrix(static_cast<D3DTRANSFORMSTATE>(i)));
-
 	}
-	
 
 	memcpy(&m_vCameraRight, &m_TransformMatrix_Inverse[D3DTS_VIEW].m[0][0], sizeof m_vCameraRight);
 	memcpy(&m_vCameraUp, &m_TransformMatrix_Inverse[D3DTS_VIEW].m[1][0], sizeof m_vCameraUp);

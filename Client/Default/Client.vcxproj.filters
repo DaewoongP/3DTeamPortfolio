@@ -1078,6 +1078,12 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxMeshInstance.hlsl">
       <Filter>97. ShaderFiles\Meshes</Filter>
     </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_ShadowAnimMesh.hlsl">
+      <Filter>97. ShaderFiles\Meshes</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_ShadowMesh.hlsl">
+      <Filter>97. ShaderFiles\Meshes</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="ImGui\misc\debuggers\imgui.natvis">

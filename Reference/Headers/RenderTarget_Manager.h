@@ -22,17 +22,15 @@ public:
 	HRESULT Add_MRT(const _tchar* pMRTTag, const _tchar* pTargetTag);
 
 	/* pMRTTag에 추가되어있는 렌더타겟들을 장치에 바인딩한다. */
-	HRESULT Begin_MRT(ID3D11DeviceContext* pContext, const _tchar* pMRTTag, _bool Shadow=false);
+	HRESULT Begin_MRT(ID3D11DeviceContext* pContext, const _tchar* pMRTTag, _bool isShadow = false);
 	// 백버퍼를 저장하고 포스트 프로세싱을 진행할 렌더타겟을 바인딩함.
 	HRESULT Begin_PostProcessingRenderTarget(ID3D11DeviceContext* pContext, const _tchar* pMRTTag);
 
 	/* 원래상태로 복구한다. (0번째에 백버퍼가 바인딩 된 상태로 돌려준다.) */
-	HRESULT End_MRT(ID3D11DeviceContext* pContext,_bool Shadow=false);
+	HRESULT End_MRT(ID3D11DeviceContext* pContext, _bool isShadow = false);
 	HRESULT End_PostProcessingRenderTarget(ID3D11DeviceContext* pContext);
 
 	HRESULT Bind_ShaderResourceView(const _tchar* pTargetTag, class CShader* pShader, const _char* pConstantName);
-	HRESULT Change_DepthStencil(ID3D11DeviceContext* pContext, _float4 vClearColor);
-	HRESULT End_Depthstencil(ID3D11DeviceContext* pContext);
 	class CRenderTarget* Find_RenderTarget(const _tchar* pTargetTag);
 
 #ifdef _DEBUG
@@ -52,7 +50,10 @@ private:
 	// Post Processing을 위한 렌더타겟
 	ID3D11RenderTargetView* m_pPostRenderTargetView = { nullptr };
 	ID3D11DepthStencilView* m_pDepthStencilView = { nullptr };
-	ID3D11DepthStencilView* m_pShadowView = { nullptr };
+	ID3D11DepthStencilView* m_pShadowMapDepthStencilView = { nullptr };
+
+private:
+	D3D11_VIEWPORT				m_OriginViewPortDesc;
 
 private:
 	list<class CRenderTarget*>* Find_MRT(const _tchar* pMRTTag);

@@ -52,6 +52,9 @@ private:
 	vector<VTXMESH>			m_NonAnimVertices;
 
 private:
+	_bool					m_isDownFrame = { false };
+
+private:
 	virtual HRESULT Ready_VertexBuffer_NonAnim(const Engine::MESH Mesh, _float4x4 PivotMatrix) override;
 	virtual HRESULT Ready_VertexBuffer_Anim(const Engine::MESH Mesh, const CModel::BONES & Bones) override;
 	HRESULT Initialize_ClothMesh();
