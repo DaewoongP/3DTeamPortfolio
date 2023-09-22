@@ -108,7 +108,6 @@ protected:
 	_bool m_isLightning = { false };
 	vector<_float3> m_vSplineLerpPostion;
 	vector<_float3> m_vSplineDir;
-	_float3 m_vWeight[2] = {};
 
 protected:
 	CRenderer* m_pRenderer = { nullptr };

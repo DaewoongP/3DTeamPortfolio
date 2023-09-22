@@ -10,7 +10,7 @@ HRESULT CModel_Converter::Convert_Model(_uint iType, const _char* pModelFilePath
 	TYPE eType = TYPE(iType);
 	_uint		iFlag = 0;
 
-	if (TYPE_ANIM == eType)
+	if (TYPE_ANIM == eType|| TYPE_ONLYANIM == eType)
 		iFlag = aiProcess_GlobalScale | aiProcess_ConvertToLeftHanded | aiProcessPreset_TargetRealtime_Fast;
 	else
 		iFlag = aiProcess_PreTransformVertices | aiProcess_GlobalScale | aiProcess_ConvertToLeftHanded | aiProcessPreset_TargetRealtime_Fast;
@@ -806,7 +806,7 @@ HRESULT CModel_Converter::Write_File_Anim(TYPE eType, const _tchar* pSaveDirecto
 	_ulong	dwStrByte = 0;
 
 	// Write Animations
-		// Animation NumAnimations
+	// Animation NumAnimations
 	WriteFile(hFile, &(m_Model.iNumAnimations), sizeof(_uint), &dwByte, nullptr);
 
 	for (_uint i = 0; i < m_Model.iNumAnimations; ++i)

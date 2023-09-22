@@ -31,6 +31,20 @@ private:
 	//Lightning Streak
 	CTrail* m_pTrail[3] = { nullptr };
 
+	//Lightning Spark
+	CParticleSystem* m_LightningSparkEffect_Green = { nullptr };
+	CParticleSystem* m_LightningSparkEffect_Blue = { nullptr };
+	CParticleSystem* m_LightningSparkEffect_Red = { nullptr };
+
+	//Line Particle
+	CParticleSystem* m_LineParticle= { nullptr };
+
+	//Flare Center Particle
+	CParticleSystem* m_FlareCenterParticle = { nullptr };
+
+	//Flare Spread Particle
+	CParticleSystem* m_FlareSpreadParticle = { nullptr };
+
 private:
 	// For. Lightining Trails
 	_float3 m_vSplineLerpPostion[3][10] = {};
