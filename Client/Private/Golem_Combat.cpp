@@ -118,9 +118,8 @@ void CGolem_Combat::Late_Tick(_float fTimeDelta)
 void CGolem_Combat::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
-	wstring wstrCollisionTag = { TEXT("") };
-	if (nullptr != CollisionEventDesc.pOtherCollisionTag)
-		wstrCollisionTag = CollisionEventDesc.pOtherCollisionTag;
+	wstring wstrCollisionTag = CollisionEventDesc.pOtherCollisionTag;
+	wstring wstrMyCollisionTag = CollisionEventDesc.pThisCollisionTag;
 
 	/* Collision Magic */
 	if (wstring::npos != wstrObjectTag.find(TEXT("MagicBall")))
@@ -138,7 +137,7 @@ void CGolem_Combat::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 	}
 
 	/* Collision Player Fig */
-	if (wstring::npos != wstrCollisionTag.find(TEXT("Body")))
+	if (wstring::npos != wstrMyCollisionTag.find(TEXT("Range")))
 	{
 		if (wstring::npos != wstrObjectTag.find(TEXT("Player")) ||
 			wstring::npos != wstrObjectTag.find(TEXT("Fig")))
@@ -151,11 +150,10 @@ void CGolem_Combat::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 void CGolem_Combat::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 {
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
-	wstring wstrCollisionTag = { TEXT("") };
-	if (nullptr != CollisionEventDesc.pOtherCollisionTag)
-		wstrCollisionTag = CollisionEventDesc.pOtherCollisionTag;
+	wstring wstrCollisionTag = CollisionEventDesc.pOtherCollisionTag;
+	wstring wstrMyCollisionTag = CollisionEventDesc.pThisCollisionTag;
 
-	if (wstring::npos != wstrCollisionTag.find(TEXT("Body")))
+	if (wstring::npos != wstrMyCollisionTag.find(TEXT("Range")))
 	{
 		if (wstring::npos != wstrObjectTag.find(TEXT("Player")) ||
 			wstring::npos != wstrObjectTag.find(TEXT("Fig")))
@@ -350,7 +348,7 @@ HRESULT CGolem_Combat::Add_Components()
 		RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 0.f, 1.f);
 		RigidBodyDesc.pOwnerObject = this;
 		RigidBodyDesc.eThisCollsion = COL_ENEMY;
-		RigidBodyDesc.eCollisionFlag = COL_PLAYER;
+		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC | COL_NPC_RANGE;
 		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Body");
 
 		/* For.Com_RigidBody */
@@ -366,6 +364,7 @@ HRESULT CGolem_Combat::Add_Components()
 		PxSphereGeometry pSphereGeomatry = PxSphereGeometry(15.f);
 		RigidBodyDesc.pGeometry = &pSphereGeomatry;
 		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Range");
+		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC;
 
 		m_pRigidBody->Create_Collider(&RigidBodyDesc);
 

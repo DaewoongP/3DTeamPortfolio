@@ -16,12 +16,38 @@ CSelector_Degree::CSelector_Degree(const CSelector_Degree& rhs)
 
 HRESULT CSelector_Degree::Initialize(void* pArg)
 {
+	/* ÄðÅ¸ÀÓ */
+	Add_Decoration([&](CBlackBoard* pBlackBoard)->_bool
+		{
+			BEGININSTANCE;
+			_float fInterval = pGameInstance->Get_World_TimeAcc() - m_fPreWorldTimeAcc;
+			ENDINSTANCE;
+
+			if (m_fLimit > fInterval)
+				return false;
+
+			return true;
+		});
+
 	return S_OK;
 }
 
 HRESULT CSelector_Degree::Tick(const _float& fTimeDelta)
 {
-	return __super::Tick(fTimeDelta);
+	HRESULT hr = __super::Tick(fTimeDelta);
+
+	BEGININSTANCE;
+	_float fdata = pGameInstance->Get_World_TimeAcc() - m_fPreWorldTimeAcc;
+	cout << fdata << endl;
+	ENDINSTANCE;
+	if (BEHAVIOR_SUCCESS == hr)
+	{
+		BEGININSTANCE;
+		m_fPreWorldTimeAcc = pGameInstance->Get_World_TimeAcc();
+		ENDINSTANCE;
+	}
+
+	return hr;
 }
 
 HRESULT CSelector_Degree::Assemble_Behavior(DEGREES eType, CBehavior* pBehavior)

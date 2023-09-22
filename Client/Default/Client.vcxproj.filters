@@ -256,9 +256,6 @@
     <Filter Include="03. Behaviors\04. Movement">
       <UniqueIdentifier>{d95f3888-ed91-44de-bed2-7ee502737efa}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Behaviors\05. Function">
-      <UniqueIdentifier>{11282af5-bac7-4061-9441-81c0be48d567}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03. Behaviors\03. RandomChoose">
       <UniqueIdentifier>{68fa3644-0ca1-4bca-844f-2fc72e090f6d}</UniqueIdentifier>
     </Filter>
@@ -339,6 +336,9 @@
     </Filter>
     <Filter Include="02. GameObject\04. MapObject\MapEffect">
       <UniqueIdentifier>{3d2f0c96-2d67-4229-a119-7e41208b82b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Behaviors\05. Function">
+      <UniqueIdentifier>{779d067f-c7a3-4f48-944c-fb03090c91d3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -480,9 +480,6 @@
     <ClInclude Include="..\Public\Player.h">
       <Filter>02. GameObject\01. Player</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Check_Degree.h">
-      <Filter>03. Behaviors\05. Function</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Turn.h">
       <Filter>03. Behaviors\04. Movement</Filter>
     </ClInclude>
@@ -521,9 +518,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\Sequence_Attack.h">
       <Filter>03. Behaviors\02. Sequences</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Check_Distance.h">
-      <Filter>03. Behaviors\05. Function</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Sequence_MoveTarget.h">
       <Filter>03. Behaviors\02. Sequences</Filter>
@@ -699,6 +693,15 @@
     <ClInclude Include="..\Public\MapEffect.h">
       <Filter>02. GameObject\04. MapObject\MapEffect</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\LookAt.h">
+      <Filter>03. Behaviors\04. Movement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Check_Degree.h">
+      <Filter>03. Behaviors\05. Function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Check_Distance.h">
+      <Filter>03. Behaviors\05. Function</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -812,9 +815,6 @@
     <ClCompile Include="..\Private\Player.cpp">
       <Filter>02. GameObject\01. Player</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Check_Degree.cpp">
-      <Filter>03. Behaviors\05. Function</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Turn.cpp">
       <Filter>03. Behaviors\04. Movement</Filter>
     </ClCompile>
@@ -853,9 +853,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\Sequence_Attack.cpp">
       <Filter>03. Behaviors\02. Sequences</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Check_Distance.cpp">
-      <Filter>03. Behaviors\05. Function</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Sequence_MoveTarget.cpp">
       <Filter>03. Behaviors\02. Sequences</Filter>
@@ -1027,6 +1024,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\MapEffect.cpp">
       <Filter>02. GameObject\04. MapObject\MapEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\LookAt.cpp">
+      <Filter>03. Behaviors\04. Movement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Check_Degree.cpp">
+      <Filter>03. Behaviors\05. Function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Check_Distance.cpp">
+      <Filter>03. Behaviors\05. Function</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

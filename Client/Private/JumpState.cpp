@@ -39,7 +39,7 @@ void CJumpState::OnStateEnter()
 	m_pOwnerModel->Change_Animation(TEXT("Hu_BM_Jump_RF_anm"));
 
 #ifdef _DEBUG
-	cout << "Jump Enter" << endl;
+	//cout << "Jump Enter" << endl;
 #endif // _DEBUG
 }
 
@@ -63,7 +63,7 @@ void CJumpState::OnStateTick()
 void CJumpState::OnStateExit()
 {
 #ifdef _DEBUG
-	cout << "Jump Exit" << endl;
+	//cout << "Jump Exit" << endl;
 #endif // _DEBUG
 }
 

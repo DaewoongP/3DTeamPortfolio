@@ -217,6 +217,11 @@ HRESULT CMain1_Loader::Loading_For_MainGame()
 			CTurn::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Turn");
 
+		/* For.Prototype_Component_LookAt */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_LookAt"),
+			CLookAt::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_LookAt");
+
 		/* For.Prototype_Component_Check_Degree */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Check_Degree"),
 			CCheck_Degree::Create(m_pDevice, m_pContext))))

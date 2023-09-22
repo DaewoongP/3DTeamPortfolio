@@ -43,7 +43,7 @@ void CRollState::OnStateEnter()
 	m_pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_DdgeRll_Fwd_anm"));
 
 #ifdef _DEBUG
-	cout << "Roll Enter" << endl;
+	//cout << "Roll Enter" << endl;
 #endif // _DEBUG
 }
 
@@ -60,7 +60,7 @@ void CRollState::OnStateTick()
 void CRollState::OnStateExit()
 {
 #ifdef _DEBUG
-	cout << "Roll Exit" << endl;
+	//cout << "Roll Exit" << endl;
 #endif // _DEBUG
 }
 

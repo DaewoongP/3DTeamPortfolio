@@ -42,15 +42,24 @@ HRESULT CRandom_Select::Tick(const _float& fTimeDelta)
 {
 	HRESULT hr = __super::Tick(fTimeDelta);
 
-	if (BEHAVIOR_RUNNING != hr)
+	if (BEHAVIOR_SUCCESS == hr)
 	{
+		cout << "change_random success" << endl;
 		Set_Random_Behavior();
 
-		if (BEHAVIOR_SUCCESS == hr)
+		BEGININSTANCE;
+		m_fPreWorldTimeAcc = pGameInstance->Get_World_TimeAcc();
+		ENDINSTANCE;
+	}
+	else if (BEHAVIOR_FAIL == hr)
+	{
+		_bool* pIsParring = { nullptr };
+		if (FAILED(m_pBlackBoard->Get_Type("isParring", pIsParring)))
+			return hr;
+
+		if (true == *pIsParring)
 		{
-			BEGININSTANCE;
-			m_fPreWorldTimeAcc = pGameInstance->Get_World_TimeAcc();
-			ENDINSTANCE;
+			Set_Random_Behavior();
 		}
 	}
 
