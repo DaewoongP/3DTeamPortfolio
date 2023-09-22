@@ -162,7 +162,6 @@ void CConfringo::Tick(_float fTimeDelta)
 		m_fLerpAcc += fTimeDelta / m_MagicBallDesc.fInitLifeTime * m_fTimeScalePerDitance;
 		if (m_fLerpAcc > 1)
 			m_fLerpAcc = 1;
-		m_pTrail->Tick(fTimeDelta);
 		m_pTrail->Spline_Spin_Move(m_vSplineLerp[0],m_vStartPostion, m_vTargetPosition, m_vSplineLerp[1], m_fLerpAcc);
 		m_pTransform->Set_Position(m_pTrail->Get_Transform()->Get_Position());
 	}

@@ -64,6 +64,32 @@ void CTrail::Spline_Spin_Move(_float3 vSpline01, _float3 vStartPosition, _float3
 	m_pTransform->Set_Position(_float3(CombineMatrix.m[3][0], CombineMatrix.m[3][1], CombineMatrix.m[3][2]));
 }
 
+void CTrail::Ready_LightningStrike(_float3 vStartPosition, _float3 vEndPosition, _float3 vWeight[2], _uint iCount)
+{
+	m_isLightning = true;
+	for (_uint i = 0; i < iCount; i++)
+	{
+		_float3 vPos = vStartPosition;
+		vPos.y = Lerp(vStartPosition.y, vEndPosition.y, (_float)i / (iCount - 1));
+		m_vSplineLerpPostion.push_back(vPos);
+
+		_float3 vDir = _float3(
+			Random_Generator(vWeight[0].x, vWeight[1].x),
+			Random_Generator(vWeight[0].y, vWeight[1].y),
+			Random_Generator(vWeight[0].z, vWeight[1].z));
+		m_vSplineDir.push_back(vDir);
+	}
+}
+
+void CTrail::Tick_LightningStrike(_float fTimeDelta)
+{
+	for (_uint i = 0; i < m_vSplineLerpPostion.size(); i++)
+	{
+		m_vSplineLerpPostion[i] = m_vSplineLerpPostion[i] + m_vSplineDir[i];
+	}
+	m_fClipThreshold += fTimeDelta*2.f;
+}
+
 HRESULT CTrail::Save(const _tchar* pFilePath)
 {
 	HANDLE hFile = CreateFile(pFilePath
@@ -220,7 +246,18 @@ void CTrail::Tick(_float fTimeDelta)
 		return;
 	__super::Tick(fTimeDelta);
 	if (nullptr != m_pBuffer)
-		m_pBuffer->Tick();
+	{
+		if (m_isLightning)
+		{
+			Tick_LightningStrike(fTimeDelta);
+			m_pBuffer->Tick_Lightning(&m_vSplineLerpPostion);
+		}
+		else 
+		{
+			m_pBuffer->Tick();
+		}
+	}
+		
 	m_fTimeAcc += fTimeDelta;
 
 }
@@ -283,7 +320,7 @@ HRESULT CTrail::Add_Components()
 		m_HighLocalMatrix.Translation(_float3(0.f, m_fWidth * 0.5f, 0.f));
 		m_LowLocalMatrix.Translation(_float3(0.f, -m_fWidth * 0.5f, 0.f));
 
-		trailDesc.iTrailNum = 50;
+		trailDesc.iTrailNum = m_iTrailNum;
 		trailDesc.pHighLocalMatrix = &m_HighLocalMatrix;
 		trailDesc.pLowLocalMatrix = &m_LowLocalMatrix;
 		trailDesc.pPivotMatrix = &m_PivotMatrix;
@@ -331,6 +368,9 @@ HRESULT CTrail::SetUp_ShaderResources()
 
 		if (FAILED(m_pShader->Bind_RawValue("g_vTailColor", &m_vTailColor, sizeof m_vTailColor)))
 			throw "g_vTailColor";
+
+		if (FAILED(m_pShader->Bind_RawValue("g_fClipThreshold", &m_fClipThreshold, sizeof(_float))))
+			throw "g_fClipThreshold";
 	}
 	catch (const _tchar* pErrorTag)
 	{

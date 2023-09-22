@@ -44,7 +44,7 @@ HRESULT CMagicSlot::Initialize(void* pArg)
 		magicInitDesc.fDamage = 10.f;
 		magicInitDesc.fCastDistance = 1000;
 		magicInitDesc.fBallDistance = 30;
-		magicInitDesc.fLifeTime = 0.8f;
+		magicInitDesc.fLifeTime = 0.6f;
 		Add_Magics(magicInitDesc);
 	}
 

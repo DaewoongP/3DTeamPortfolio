@@ -21,7 +21,7 @@ class ENGINE_DLL CTrail : public CGameObject
 {
 protected:
 	typedef CVIBuffer_Rect_Trail::TRAILDESC TRAILDESC;
-	
+
 private:
 	typedef list<VTXPOSTEX>::iterator TRAIL_IT;
 
@@ -52,30 +52,36 @@ public:
 			return m_pBuffer->Reset_Trail();
 		return E_FAIL;
 	}
-	void Set_Trail_HeadColor(_float3 vColor) {	m_vHeadColor = vColor;}
+	void Set_Trail_HeadColor(_float3 vColor) { m_vHeadColor = vColor; }
 	void Set_Trail_TailColor(_float3 vColor) { m_vTailColor = vColor; }
 	void Set_LocalSpace(const _float4x4* matrix) { m_LocalSpace = matrix; }
 	void Set_Pass(string str) { m_strPass = str; }
-
-public:/* For. Moving*/
+	void Set_Threshold(_float value) { m_fClipThreshold = value; }
+public:
+	/* For. Moving*/
 	void	Stright_Move(_float3 vTargerPosition, _float3 vStartPosition, _float fLerpAcc);
 	void	Spin_Move(_float3 vTargerPosition, _float3 vStartPosition, _float fLerpAcc);
 	void	Spline_Move(_float3 vSpline01, _float3 vStartPosition, _float3 vTargerPosition, _float3 vSpline02, _float fLerpAcc);
 
 	void	Spline_Spin_Move(_float3 vSpline01, _float3 vStartPosition, _float3 vTargerPosition, _float3 vSpline02, _float fLerpAcc);
 
+public:
+	/* For. Lightning*/
+	void	Ready_LightningStrike(_float3 vStartPosition, _float3 vEndPosition, _float3 vWeight[2], _uint iCount);
+	void	Tick_LightningStrike(_float fTimeDelta);
 protected:
 	HRESULT Save(const _tchar* pFilePath);
 	HRESULT Load(const _tchar* pFilePath);
 
-protected: 
+protected:
+	// For. Default Trail Setting
 	_uint m_iLevel = { 0 };
 	string	m_strPass = "Default";
 	wstring m_wstrPath = { TEXT("../../Resources/Effects/Textures/Trails/Winga.png") };
 	wstring m_wstrGradientTextureName = {};
 	_bool m_isEnable = { true };
 
-	_uint     m_iTrailNum = { 20 };
+	_uint     m_iTrailNum = { 50 };
 	_float4x4 m_PivotMatrix = _float4x4();
 	_float4x4 m_HighLocalMatrix = _float4x4();
 	_float4x4 m_LowLocalMatrix = _float4x4();
@@ -91,9 +97,17 @@ protected:
 	// 꼬리 지속시간
 	_float m_fTailDuration = { 0.032f };
 	_float m_fTimeAcc = { 0.f };
-	
+
+	//스레스 홀드
+	_float m_fClipThreshold = { 0.0f };
+
 	//로컬스페이스용
 	const _float4x4* m_LocalSpace = { nullptr };
+
+	// For. Lightning Trail
+	_bool m_isLightning = { false };
+	vector<_float3> m_vSplineLerpPostion;
+	vector<_float3> m_vSplineDir;
 
 protected:
 	CRenderer* m_pRenderer = { nullptr };

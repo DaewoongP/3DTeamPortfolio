@@ -334,6 +334,9 @@
     <Filter Include="02. GameObject\04. MapObject\MapEffect">
       <UniqueIdentifier>{7c98dd2f-9c09-4b58-a038-813d2758d7a3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="04. Magic\MagicBall\07. Finisher">
+      <UniqueIdentifier>{b47e170c-04d6-4c0c-89b8-452eb34296b4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -687,6 +690,9 @@
     <ClInclude Include="..\Public\MapEffect.h">
       <Filter>02. GameObject\04. MapObject\MapEffect</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Finisher.h">
+      <Filter>04. Magic\MagicBall\07. Finisher</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1009,6 +1015,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\MapEffect.cpp">
       <Filter>02. GameObject\04. MapObject\MapEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Finisher.cpp">
+      <Filter>04. Magic\MagicBall\07. Finisher</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
