@@ -265,7 +265,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 
 	if (FAILED(m_pSSAOBlur->Render()))
 		return E_FAIL;
-
+	if (FAILED(m_pDistortion->Render()))
+		return E_FAIL;
 	if (FAILED(Render_Deferred()))
 		return E_FAIL;
 
@@ -278,8 +279,7 @@ HRESULT CRenderer::Draw_RenderGroup()
 	if (FAILED(m_pBloom->Render()))
 		return E_FAIL;
 
-	if (FAILED(m_pDistortion->Render()))
-		return E_FAIL;
+	
 
 	if (FAILED(m_pGlow->Render()))
 		return E_FAIL;
@@ -766,6 +766,7 @@ HRESULT CRenderer::Render_PostProcessing()
 		return E_FAIL; 
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_FinGlow"), m_pPostProcessingShader, "g_GlowTexture")))
 		return E_FAIL;
+	
 	m_pPostProcessingShader->Begin("PostProcessing");
 
 	m_pPostProcessingBuffer->Render();
@@ -1013,7 +1014,7 @@ HRESULT CRenderer::Add_Components()
 	if (nullptr == m_pBloom)
 		return E_FAIL;
 
-	m_pDistortion = CDistortion::Create(m_pDevice, m_pContext, TEXT("Target_Distortion"));
+	m_pDistortion = CDistortion::Create(m_pDevice, m_pContext, TEXT("Target_MapEffect"));
 	if (nullptr == m_pDistortion)
 		return E_FAIL;
 

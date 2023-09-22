@@ -54,7 +54,7 @@ HRESULT CDistortion::Initialize_Prototype(const _tchar* pTargetTag)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-	m_pNoiseTexture = CTexture::Create(m_pDevice, m_pContext, (TEXT("../../Resources/effects/Textures/T_Repairo_Wisp_09_D.png")));
+	m_pNoiseTexture = CTexture::Create(m_pDevice, m_pContext, (TEXT("../../Resources/effects/Textures/T_Repairo_Wisp_05_D.png")));
 
 
 	return S_OK;
@@ -67,7 +67,7 @@ HRESULT CDistortion::Render()
 		if (FAILED(pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_MapEffect"))))
 			return E_FAIL;
 		
-		if (FAILED(pRenderTarget_Manager->Bind_ShaderResourceView(m_szTargetTag, m_pShader, "g_OriTexture")))
+		if (FAILED(pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Diffuse"), m_pShader, "g_OriTexture")))
 			return E_FAIL;
 		if (FAILED(m_pNoiseTexture->Bind_ShaderResource(m_pShader, "g_NoiseTexture")))
 			return E_FAIL;
@@ -94,7 +94,7 @@ HRESULT CDistortion::Render()
 	if (FAILED(m_pShader->Bind_RawValue("g_Scales", &Scale, sizeof(_float3))))
 		return E_FAIL;
 
-	m_pShader->Begin("Distortion");
+	m_pShader->Begin("DistortionX");
 
 	m_pBuffer->Render();
 	if (FAILED(pRenderTarget_Manager->End_MRT(m_pContext)))
