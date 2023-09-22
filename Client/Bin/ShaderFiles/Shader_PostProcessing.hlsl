@@ -48,9 +48,9 @@ PS_OUT PS_MAIN(PS_IN In)
     PS_OUT Out = (PS_OUT) 0;
 
     Out.vColor = g_PostProcessingTexture.Sample(LinearSampler, In.vTexUV);
-    //vector Bloom = g_BloomTexture.Sample(LinearSampler, In.vTexUV);
-    //vector Glow = g_GlowTexture.Sample(LinearSampler, In.vTexUV);
-    //Out.vColor += Bloom;
+    vector Bloom = g_BloomTexture.Sample(LinearSampler, In.vTexUV);
+    vector Glow = g_GlowTexture.Sample(LinearSampler, In.vTexUV);
+    Out.vColor += (Bloom) ;
     return Out;
 }
 
