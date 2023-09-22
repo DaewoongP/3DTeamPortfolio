@@ -61,7 +61,6 @@ HRESULT CMenu_Gear::Initialize(void* pArg)
 void CMenu_Gear::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
 }
 
 void CMenu_Gear::Late_Tick(_float fTimeDelta)
@@ -71,8 +70,7 @@ void CMenu_Gear::Late_Tick(_float fTimeDelta)
 
 HRESULT CMenu_Gear::Render()
 {
-	
-		return S_OK;
+	return S_OK;
 }
 
 HRESULT CMenu_Gear::Add_Prototype()
@@ -235,17 +233,17 @@ HRESULT CMenu_Gear::Add_Components_Slot(wstring wszTag)
 	pSlotFrames.push_back(pSlot);
 
 
-	CUI_Back* pIcon = nullptr;
+	CUI_Effect_Back* pIcon = nullptr;
 	wstring Icon = TEXT("Com_UI_Back_Gear_SlotIcon_");
 	Icon += wszTag;
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Back"),
+	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Effect_Back"),
 		Icon.c_str(), reinterpret_cast<CComponent**>(&pIcon))))
 	{
 		MSG_BOX("Com_Info_Main : Failed Clone Component (Com_UI_Effect_Back_Gear_SlotFrame)");
 		Safe_Release(pGameInstance);
 		return E_FAIL;
 	}
-	pComponents.push_back(pIcon);
+	pSlotIcons.push_back(pIcon);
 	
 	CUI_Back* pBack = nullptr;
 	wstring Back = TEXT("Com_UI_Back_Gear_SlotBack_");
@@ -293,7 +291,7 @@ HRESULT CMenu_Gear::Read_File_Slot(const _tchar* pFilePath, wstring wszTag, GEAR
 
 	wstring Icon = TEXT("Com_UI_Back_Gear_SlotIcon_");
 	Icon += wszTag;
-	CUI_Back* pIcon = dynamic_cast<CUI_Back*>(Find_Component(Icon.c_str()));
+	CUI_Effect_Back* pIcon = dynamic_cast<CUI_Effect_Back*>(Find_Component(Icon.c_str()));
 	pIcon->Load(Load_File(hFile));
 	pIcon->Set_Parent(pSlotFrames[eType]);
 
@@ -484,6 +482,11 @@ void CMenu_Gear::Free()
 	for(auto& pSlotFrame : pSlotFrames)
 	{
 		Safe_Release(pSlotFrame);
+	}
+
+	for (auto& pIcon : pSlotIcons)
+	{
+		Safe_Release(pIcon);
 	}
 
 	for(auto& pStatus : pStatuses)

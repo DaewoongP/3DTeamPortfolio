@@ -43,10 +43,10 @@ private:
 	HRESULT Add_Prototype();
 
 
+
 	HRESULT Ready_Gear_Frame();
 	HRESULT Add_Components_Frame();
 	HRESULT Read_File_Frame(const _tchar* pFilePath);
-
 
 	HRESULT Ready_Gear_Slot(const _tchar* pFilePath, wstring wszTag, GEARSLOT eType);
 	HRESULT Add_Components_Slot(wstring wszTag);
@@ -55,8 +55,6 @@ private:
 	HRESULT Ready_Gear_Status();
 	HRESULT Add_Components_Status();
 	HRESULT Read_File_Statust(const _tchar* pFilePath);
-
-
 
 private:
 	CUI::UIDESC Load_File(const HANDLE hFile);
@@ -68,6 +66,8 @@ private:
 
 private:
 	vector<CUI_Effect_Back*> pSlotFrames;
+	vector<CUI_Effect_Back*> pSlotIcons;
+
 	vector<CUI_Effect_Back*> pStatuses;
 	vector<CUI*> pComponents;
 

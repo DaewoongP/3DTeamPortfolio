@@ -692,6 +692,9 @@ HRESULT CLevel_MainGame::Ready_Layer_Menu_UI(const _tchar* pLayerTag)
 	//	Safe_Release(pGameInstance);
 	//	return E_FAIL;
 	//}
+	
+
+
 
 	Safe_Release(pGameInstance);
 	return S_OK;

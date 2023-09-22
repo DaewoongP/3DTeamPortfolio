@@ -11,20 +11,17 @@ class CTexture;
 END
 
 BEGIN(Client)
-class CUI_Effect_Back;
 
 class CMenu_Inventory final : public CGameObject
 {
 public:
-	enum GEARSLOT
+	enum INVENTORY
 	{
-		HAND,
-		FACE,
-		HEAD,
-		NECK,
-		BACK,
-		OUTFIT,
-		GEARSLOT_END
+		BEAST,
+		QUEST,
+		NOTE,
+		RESOURCE,
+		INVENTORY_END
 	};
 
 private:
@@ -39,33 +36,26 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
-private:
+public:
 	HRESULT Add_Prototype();
-
-	HRESULT Ready_Gear_Frame();
-	HRESULT Add_Components_Frame();
-	HRESULT Read_File_Frame(const _tchar* pFilePath);
-
-	HRESULT Ready_Gear_Slot(const _tchar* pFilePath, wstring wszTag, GEARSLOT eType);
-	HRESULT Add_Components_Slot(wstring wszTag);
-	HRESULT Read_File_Slot(const _tchar* pFilePath, wstring wszTag, GEARSLOT eType);
-
-	HRESULT Ready_Gear_Status();
-	HRESULT Add_Components_Status();
-	HRESULT Read_File_Statust(const _tchar* pFilePath);
 
 private:
 	CUI::UIDESC Load_File(const HANDLE hFile);
 
 private:
-	CShader* m_pShaderCom = { nullptr };
-	CRenderer* m_pRendererCom = { nullptr };
+	HRESULT Ready_Offset();
+	HRESULT	Add_ItemTexture();
+
+private:
+	CShader*		m_pShaderCom = { nullptr };
+	CRenderer*		m_pRendererCom = { nullptr };
 	CVIBuffer_Rect* m_pVIBufferCom = { nullptr };
 
 private:
-	vector<CUI_Effect_Back*> pSlotFrames;
-	vector<CUI_Effect_Back*> pStatuses;
-	vector<CUI*> pComponents;
+	vector<_float2>				m_fOffset;
+	vector<class CTexture*>		m_ItemTextures;
+
+	vector<CUI*>				m_pUIs;
 
 private:
 	_bool		m_isOpen = { false };

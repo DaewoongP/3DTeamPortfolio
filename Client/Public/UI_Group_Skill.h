@@ -50,7 +50,6 @@ public:
 
 private:
 	HRESULT Add_Prototype();
-//	HRESULT Add_Components(const _tchar* wszTag);
 	HRESULT Add_Components(wstring wszTag);
 
 	HRESULT Read_File(const _tchar* pFilePath, KEYLIST iIndex);
@@ -58,13 +57,11 @@ private:
 
 private:
 	HRESULT Create_First(void* pArg);
-//	HRESULT Create_Component(const _tchar* pFIlePath, const _tchar* wszTag, KEYLIST eType);
 	HRESULT Create_Component(const _tchar* pFIlePath, wstring wszTag, KEYLIST eType);
 
 	void	Add_SpellProtoTypeTag();
 	HRESULT Add_SpellProtoType();
 	HRESULT Add_SpellTexture();
-
 
 private:
 	vector<_tchar*> m_ProtoTypeTags;

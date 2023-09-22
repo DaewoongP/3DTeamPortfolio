@@ -1,37 +1,35 @@
-#include "Menu_Invectory.h"
+#include "CInventory_Quest.h"
 #include "GameInstance.h"
 #include "UI_Effect_Back.h"
 #include "UI_Back.h"
 
-CMenu_Inventory::CMenu_Inventory(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CInventory_Quest::CInventory_Quest(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
 }
 
-CMenu_Inventory::CMenu_Inventory(const CMenu_Inventory& rhs)
+CInventory_Quest::CInventory_Quest(const CInventory_Quest& rhs)
 	: CGameObject(rhs)
 {
 }
 
-HRESULT CMenu_Inventory::Initialize_Prototype()
+HRESULT CInventory_Quest::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 
 	if (FAILED(Add_Prototype()))
 	{
-		MSG_BOX("Failed CMenu_Inventory Add ProtoType");
+		MSG_BOX("Failed CInventory_Quest Add ProtoType");
 		return E_FAIL;
 	}
 
 	return S_OK;
 }
 
-HRESULT CMenu_Inventory::Initialize(void* pArg)
+HRESULT CInventory_Quest::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
-
-	
 
 	Ready_Offset();
 
@@ -49,7 +47,7 @@ HRESULT CMenu_Inventory::Initialize(void* pArg)
 		return E_FAIL;
 	}
 	m_pUIs.push_back(pBack);
-	
+
 	CUI::UIDESC UIDesc;
 	UIDesc.vCombinedXY = { 0.f, 0.f };
 	UIDesc.fX = { 640.f };
@@ -57,31 +55,31 @@ HRESULT CMenu_Inventory::Initialize(void* pArg)
 	UIDesc.fZ = { 0.8f };
 	UIDesc.fSizeX = { 1280.f };
 	UIDesc.fSizeY = { 720.f };
-	_tchar szTexturePath[MAX_PATH] = TEXT("../../Resources/UI/Game/UI_Edit/Inventory_Default_Edit.png");
-	lstrcpy(UIDesc.szTexturePath, szTexturePath);
+	_tchar szAlphaTexturePath[MAX_PATH] = TEXT("../../Resources/UI/Game/UI_Edit/Inventory_Default_Edit.png");
+	lstrcpy(UIDesc.szTexturePath, szAlphaTexturePath);
 	pBack->Load(UIDesc);
 
 	Safe_Release(pGameInstance);
 	return S_OK;
 }
 
-void CMenu_Inventory::Tick(_float fTimeDelta)
+void CInventory_Quest::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 }
 
-void CMenu_Inventory::Late_Tick(_float fTimeDelta)
+void CInventory_Quest::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 }
 
-HRESULT CMenu_Inventory::Render()
+HRESULT CInventory_Quest::Render()
 {
 
 	return S_OK;
 }
 
-HRESULT CMenu_Inventory::Add_Prototype()
+HRESULT CInventory_Quest::Add_Prototype()
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
@@ -105,10 +103,11 @@ HRESULT CMenu_Inventory::Add_Prototype()
 	return S_OK;
 }
 
-CUI::UIDESC CMenu_Inventory::Load_File(const HANDLE hFile)
+CUI::UIDESC CInventory_Quest::Load_File(const HANDLE hFile)
 {
 	CUI::UIDESC UIDesc;
 	ZEROMEM(&UIDesc);
+
 	_ulong dwByte = 0;
 	DWORD dwStrByte = 0;
 	_tchar szTextureName[MAX_PATH] = TEXT("");
@@ -135,7 +134,7 @@ CUI::UIDESC CMenu_Inventory::Load_File(const HANDLE hFile)
 	return UIDesc;
 }
 
-HRESULT CMenu_Inventory::Ready_Offset()
+HRESULT CInventory_Quest::Ready_Offset()
 {
 	_float2 fOffSet = _float2(-350.f, 90.f);
 
@@ -151,7 +150,7 @@ HRESULT CMenu_Inventory::Ready_Offset()
 	return S_OK;
 }
 
-HRESULT CMenu_Inventory::Add_ItemTexture()
+HRESULT CInventory_Quest::Add_ItemTexture()
 {
 	CGameInstance* pGameInstace = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstace);
@@ -168,33 +167,33 @@ HRESULT CMenu_Inventory::Add_ItemTexture()
 	return S_OK;
 }
 
-CMenu_Inventory* CMenu_Inventory::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CInventory_Quest* CInventory_Quest::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CMenu_Inventory* pInstance = new CMenu_Inventory(pDevice, pContext);
+	CInventory_Quest* pInstance = new CInventory_Quest(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Created CMenu_Inventory");
+		MSG_BOX("Failed to Created CInventory_Quest");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject* CMenu_Inventory::Clone(void* pArg)
+CGameObject* CInventory_Quest::Clone(void* pArg)
 {
-	CMenu_Inventory* pInstance = new CMenu_Inventory(*this);
+	CInventory_Quest* pInstance = new CInventory_Quest(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned CMenu_Inventory");
+		MSG_BOX("Failed to Cloned CInventory_Quest");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CMenu_Inventory::Free()
+void CInventory_Quest::Free()
 {
 	__super::Free();
 

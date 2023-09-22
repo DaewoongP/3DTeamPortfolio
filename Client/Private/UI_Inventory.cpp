@@ -1,87 +1,97 @@
-#include "Menu_Invectory.h"
+#include "UI_Inventory.h"
 #include "GameInstance.h"
 #include "UI_Effect_Back.h"
 #include "UI_Back.h"
 
-CMenu_Inventory::CMenu_Inventory(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CUI_Inventory::CUI_Inventory(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
 }
 
-CMenu_Inventory::CMenu_Inventory(const CMenu_Inventory& rhs)
+CUI_Inventory::CUI_Inventory(const CUI_Inventory& rhs)
 	: CGameObject(rhs)
 {
 }
 
-HRESULT CMenu_Inventory::Initialize_Prototype()
+HRESULT CUI_Inventory::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 
 	if (FAILED(Add_Prototype()))
 	{
-		MSG_BOX("Failed CMenu_Inventory Add ProtoType");
+		MSG_BOX("Failed CUI_Inventory Add ProtoType");
 		return E_FAIL;
 	}
 
 	return S_OK;
 }
 
-HRESULT CMenu_Inventory::Initialize(void* pArg)
+HRESULT CUI_Inventory::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	
+	if (nullptr != pArg)
+	{
+		INVENDESC* pDesc = (INVENDESC*)pArg;
+
+		CUI::UIDESC UIDesc;
+
+		CGameInstance* pGameInstance = CGameInstance::GetInstance();
+		Safe_AddRef(pGameInstance);
+
+		wstring tag;
+		CUI_Back* pBack = nullptr;
+
+		tag = TEXT("Com_UI_Back_Gear_Frame") + Generate_HashtagW(true);
+		if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Back"), TEXT("Com_UI_Back_Inventory_Frame"), reinterpret_cast<CComponent**>(&pBack))))
+		{
+			MSG_BOX("Com_Info_Main : Failed Clone Component (Com_UI_Effect_Back_Gear_SlotFrame)");
+			Safe_Release(pGameInstance);
+			return E_FAIL;
+		}
+
+		m_pUIs.push_back(pBack);
+
+		UIDesc.vCombinedXY = pDesc->UIDesc.vCombinedXY;
+		UIDesc.fX = pDesc->UIDesc.fX;
+		UIDesc.fY = pDesc->UIDesc.fY;
+		UIDesc.fZ = pDesc->UIDesc.fZ;
+		UIDesc.fSizeX = pDesc->UIDesc.fSizeX;
+		UIDesc.fSizeY = pDesc->UIDesc.fSizeY;
+		lstrcpy(UIDesc.szTexturePath, pDesc->UIDesc.szTexturePath);
+		pBack->Load(UIDesc);
+
+		m_fOffset = pDesc->fOffset;
+		m_fWidth = pDesc->fWidth;
+		m_fHeight = pDesc->fHeight;
+		m_iHorizontal = pDesc->iHorizontal;
+		m_iVertical = pDesc->iVertical;
+
+		Safe_Release(pGameInstance);
+	}
 
 	Ready_Offset();
-
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
-
-	wstring tag;
-	CUI_Back* pBack = nullptr;
-
-	tag = TEXT("Com_UI_Back_Gear_Frame") + Generate_HashtagW(true);
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Back"), TEXT("Com_UI_Back_Inventory_Frame"), reinterpret_cast<CComponent**>(&pBack))))
-	{
-		MSG_BOX("Com_Info_Main : Failed Clone Component (Com_UI_Effect_Back_Gear_SlotFrame)");
-		Safe_Release(pGameInstance);
-		return E_FAIL;
-	}
-	m_pUIs.push_back(pBack);
-	
-	CUI::UIDESC UIDesc;
-	UIDesc.vCombinedXY = { 0.f, 0.f };
-	UIDesc.fX = { 640.f };
-	UIDesc.fY = { 360.f };
-	UIDesc.fZ = { 0.8f };
-	UIDesc.fSizeX = { 1280.f };
-	UIDesc.fSizeY = { 720.f };
-	_tchar szTexturePath[MAX_PATH] = TEXT("../../Resources/UI/Game/UI_Edit/Inventory_Default_Edit.png");
-	lstrcpy(UIDesc.szTexturePath, szTexturePath);
-	pBack->Load(UIDesc);
-
-	Safe_Release(pGameInstance);
 	return S_OK;
 }
 
-void CMenu_Inventory::Tick(_float fTimeDelta)
+void CUI_Inventory::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 }
 
-void CMenu_Inventory::Late_Tick(_float fTimeDelta)
+void CUI_Inventory::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 }
 
-HRESULT CMenu_Inventory::Render()
+HRESULT CUI_Inventory::Render()
 {
 
 	return S_OK;
 }
 
-HRESULT CMenu_Inventory::Add_Prototype()
+HRESULT CUI_Inventory::Add_Prototype()
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
@@ -105,7 +115,7 @@ HRESULT CMenu_Inventory::Add_Prototype()
 	return S_OK;
 }
 
-CUI::UIDESC CMenu_Inventory::Load_File(const HANDLE hFile)
+CUI::UIDESC CUI_Inventory::Load_File(const HANDLE hFile)
 {
 	CUI::UIDESC UIDesc;
 	ZEROMEM(&UIDesc);
@@ -135,23 +145,23 @@ CUI::UIDESC CMenu_Inventory::Load_File(const HANDLE hFile)
 	return UIDesc;
 }
 
-HRESULT CMenu_Inventory::Ready_Offset()
+HRESULT CUI_Inventory::Ready_Offset()
 {
-	_float2 fOffSet = _float2(-350.f, 90.f);
+	_float2 fOffSet = m_fOffset;
 
-	for (size_t y = 0; y < 5; y++)
+	for (size_t y = 0; y < m_iVertical; y++)
 	{
-		for (size_t x = 0; x < 6; x++)
+		for (size_t x = 0; x < m_iHorizontal; x++)
 		{
-			_float2 fPos = _float2(fOffSet.x + x * 80, fOffSet.y - y * 80);
-			m_fOffset.push_back(fPos);
+			_float2 fPos = _float2(fOffSet.x + x * m_fWidth, fOffSet.y - y * m_fHeight);
+			m_fPosition.push_back(fPos);
 		}
 	}
 
 	return S_OK;
 }
 
-HRESULT CMenu_Inventory::Add_ItemTexture()
+HRESULT CUI_Inventory::Add_ItemTexture()
 {
 	CGameInstance* pGameInstace = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstace);
@@ -168,33 +178,33 @@ HRESULT CMenu_Inventory::Add_ItemTexture()
 	return S_OK;
 }
 
-CMenu_Inventory* CMenu_Inventory::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CUI_Inventory* CUI_Inventory::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CMenu_Inventory* pInstance = new CMenu_Inventory(pDevice, pContext);
+	CUI_Inventory* pInstance = new CUI_Inventory(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Created CMenu_Inventory");
+		MSG_BOX("Failed to Created CUI_Inventory");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject* CMenu_Inventory::Clone(void* pArg)
+CGameObject* CUI_Inventory::Clone(void* pArg)
 {
-	CMenu_Inventory* pInstance = new CMenu_Inventory(*this);
+	CUI_Inventory* pInstance = new CUI_Inventory(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned CMenu_Inventory");
+		MSG_BOX("Failed to Cloned CUI_Inventory");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CMenu_Inventory::Free()
+void CUI_Inventory::Free()
 {
 	__super::Free();
 

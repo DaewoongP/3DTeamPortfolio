@@ -56,7 +56,7 @@ private: // Main Frame
 	MENU						m_eCurMenu = MENU_END;
 
 private: // Main Group
-	CMenu_Gear* m_pGear = { nullptr };
+	CMenu_Gear*			m_pGear = { nullptr };
 	CMenu_Inventory*	m_pInventory = { nullptr };
 	CMenu_Quest*		m_pQuest = { nullptr };
 	CMenu_Setting*		m_pSetting = { nullptr };
@@ -65,7 +65,7 @@ private:
 	void		Set_SelectedText();
 	HRESULT		Ready_Menus();
 
-public:
+public: 
 	static CMain_Menu* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;

@@ -41,6 +41,7 @@ private:
 
 	vector<class CUI_Font*>			m_Fonts;
 
+
 private:
 	_tchar			m_wszObjectLevel[MAX_PATH] = TEXT("");
 	_tchar			m_wszObjectName[MAX_PATH] = TEXT("");

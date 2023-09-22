@@ -91,6 +91,11 @@ HRESULT CUI_Font::Render()
 	return S_OK;
 }
 
+void CUI_Font::Set_Text(wstring wText)
+{
+	lstrcpy(m_pText, wText.c_str());
+}
+
 HRESULT CUI_Font::Add_Component()
 {	
 	/* Com_Renderer */

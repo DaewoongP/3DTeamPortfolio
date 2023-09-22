@@ -22,6 +22,7 @@
 #include "Field_Guide.h"
 #include "Main_Menu.h"
 #include "Menu_Gear.h"
+#include "Menu_Invectory.h"
 #pragma endregion UI
 
 #ifdef _DEBUG
@@ -249,7 +250,9 @@ HRESULT CMain0_Loader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Menu_Gear"),
 			CMenu_Gear::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Menu_Gear");
-
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Menu_Inventory"),
+			CMenu_Inventory::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Menu_Inventory");
 
 		/* --------------Debug-------------- */
 #ifdef _DEBUG

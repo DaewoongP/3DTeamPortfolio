@@ -51,12 +51,18 @@ void CMain_Menu::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
+	Set_SelectedText();
+
+
 	switch (m_eCurMenu)
 	{
 	case GEAR:
-		m_pGear->Tick(fTimeDelta);
+		if (nullptr != m_pGear)
+			m_pGear->Tick(fTimeDelta);
 		break;
 	case INVENTORY:
+		if (nullptr != m_pInventory)
+		m_pInventory->Tick(fTimeDelta);
 		break;
 	case QUEST:
 		break;
@@ -67,8 +73,6 @@ void CMain_Menu::Tick(_float fTimeDelta)
 	default:
 		break;
 	}
-
-	Set_SelectedText();
 }
 
 void CMain_Menu::Late_Tick(_float fTimeDelta)
@@ -78,9 +82,12 @@ void CMain_Menu::Late_Tick(_float fTimeDelta)
 	switch (m_eCurMenu)
 	{
 	case GEAR:
-		m_pGear->Late_Tick(fTimeDelta);
+		if (nullptr != m_pGear)
+			m_pGear->Late_Tick(fTimeDelta);
 		break;
 	case INVENTORY:
+		if (nullptr != m_pInventory)
+			m_pInventory->Late_Tick(fTimeDelta);
 		break;
 	case QUEST:
 		break;
@@ -152,18 +159,8 @@ HRESULT CMain_Menu::Add_Components()
 	Add_TextComponent(text);
 	text = TEXT("Inventory");
 	Add_TextComponent(text);
-	//text = TEXT("Talent");
-	//Add_TextComponent(text);
-	//text = TEXT("Collection");
-	//Add_TextComponent(text);
-	//text = TEXT("Action");
-	//Add_TextComponent(text);
-	//text = TEXT("Map");
-	//Add_TextComponent(text);
 	text = TEXT("Quest");
 	Add_TextComponent(text);
-	//text = TEXT("OwlMail");
-	//Add_TextComponent(text);
 	text = TEXT("Setting");
 	Add_TextComponent(text);
 
@@ -246,24 +243,9 @@ HRESULT CMain_Menu::Read_File(const _tchar* pFilePath)
 	m_pTexts[INVENTORY]->Set_Parent(pFrame);
 	m_pTexts[INVENTORY]->Set_Effecttype(CUI_Effect_Back::EFFECTTYPE::TEXT);
 
-	//m_pTexts[TALENT]->Load(Load_File(hFile));
-	//m_pTexts[TALENT]->Set_Parent(pFrame);
-
-	//m_pTexts[COLLECTION]->Load(Load_File(hFile));
-	//m_pTexts[COLLECTION]->Set_Parent(pFrame);
-
-	//m_pTexts[ACTION]->Load(Load_File(hFile));
-	//m_pTexts[ACTION]->Set_Parent(pFrame);
-
-	//m_pTexts[MAP]->Load(Load_File(hFile));
-	//m_pTexts[MAP]->Set_Parent(pFrame);
-
 	m_pTexts[QUEST]->Load(Load_File(hFile));
 	m_pTexts[QUEST]->Set_Parent(pFrame);
 	m_pTexts[QUEST]->Set_Effecttype(CUI_Effect_Back::EFFECTTYPE::TEXT);
-
-	//m_pTexts[OWLMAIL]->Load(Load_File(hFile));
-	//m_pTexts[OWLMAIL]->Set_Parent(pFrame);
 
 	m_pTexts[SETTING]->Load(Load_File(hFile));
 	m_pTexts[SETTING]->Set_Parent(pFrame);
@@ -287,7 +269,6 @@ HRESULT CMain_Menu::Read_File(const _tchar* pFilePath)
 	CUI_Back* pBack = dynamic_cast<CUI_Back*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Menu_UI"), TEXT("Com_UI_Effect_Back_Menu_Back")));
 	pBack->Load(Load_File(hFile2));
 	CloseHandle(hFile2);
-
 
 	Safe_Release(pGameInstance);
 	return S_OK;
@@ -329,12 +310,14 @@ void CMain_Menu::Set_Menu(_uint iIndex)
 	if (m_iSelectedText < 0)
 	{
 		m_iSelectedText = iIndex;
+		m_eCurMenu = (MENU)m_iSelectedText;
 		m_pTexts[m_iSelectedText]->Set_Clicked(true);
 		return;
 	}
 
 	m_pTexts[m_iSelectedText]->Set_Clicked(false);
 	m_iSelectedText = iIndex;
+	m_eCurMenu = (MENU)m_iSelectedText;
 	m_pTexts[m_iSelectedText]->Set_Clicked(true);
 }
 
@@ -374,6 +357,10 @@ HRESULT CMain_Menu::Ready_Menus()
 	m_pGear = dynamic_cast<CMenu_Gear*>(pGameInstance->Clone_Component(LEVEL_MAINGAME,
 		TEXT("Prototype_GameObject_Menu_Gear")));
 	//Safe_AddRef(m_pGear);
+
+
+	m_pInventory = dynamic_cast<CMenu_Inventory*>(pGameInstance->Clone_Component(LEVEL_MAINGAME,
+		TEXT("Prototype_GameObject_Menu_Inventory")));
 
 	Safe_Release(pGameInstance);
 
@@ -421,5 +408,8 @@ void CMain_Menu::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pTexture);
+
 	Safe_Release(m_pGear);	
+	Safe_Release(m_pInventory);
+
 }
