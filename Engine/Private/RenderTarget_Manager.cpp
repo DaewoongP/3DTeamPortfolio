@@ -75,6 +75,10 @@ HRESULT CRenderTarget_Manager::Begin_MRT(ID3D11DeviceContext* pContext, const _t
 	}
 	else
 	{
+		// 뎁스스텐실뷰 자체가 한번에 무조건 한개만 바인딩 가능하기 때문에
+		// for문을 여러번 돌아줄 필요가 없다.
+		// 따라서 0번 iterator로 처리.
+
 		list<CRenderTarget*>* pMRTList = Find_MRT(pMRTTag);
 
 		if (nullptr == pMRTList)
@@ -84,25 +88,21 @@ HRESULT CRenderTarget_Manager::Begin_MRT(ID3D11DeviceContext* pContext, const _t
 		
 		ID3D11RenderTargetView* pRenderTargets[8] = { nullptr };
 		ID3D11DepthStencilView* pDepthStencilView = { nullptr };
-		_uint		iNumViews = 0;
-
 		
+		CRenderTarget* pRenderTarget = (*pMRTList).front();
+		// 렌더타겟 및 뎁스스텐실 초기화
+		pRenderTarget->Clear(isShadow);
+		pRenderTargets[0] = pRenderTarget->Get_RTV();
+		pDepthStencilView = pRenderTarget->Get_DSV();
 
-		for (auto& pRenderTarget : *pMRTList)
-		{
-			pRenderTarget->Clear(isShadow);
-			pRenderTargets[iNumViews++] = pRenderTarget->Get_RTV();
-			pDepthStencilView = pRenderTarget->Get_DSV();
+		D3D11_VIEWPORT CurrentRenderViewPort = pRenderTarget->Get_ViewPort();
 
-			D3D11_VIEWPORT VP = pRenderTarget->Get_ViewPort();
-			_uint iViewports = 1;
-			pContext->RSGetViewports(&iViewports, &m_OriginViewPortDesc);
-			pContext->RSSetViewports(1, &VP);
+		_uint iViewports = 1;
+		pContext->RSGetViewports(&iViewports, &m_OriginViewPortDesc);
+		pContext->RSSetViewports(1, &CurrentRenderViewPort);
 
-			break;
-		}
-
-		pContext->OMSetRenderTargets(iNumViews, pRenderTargets, pDepthStencilView);
+		// 뎁스스텐실만 적용할 것이므로 1개만 처리.
+		pContext->OMSetRenderTargets(1, pRenderTargets, pDepthStencilView);
 	}
 	
 	return S_OK;
@@ -149,7 +149,7 @@ HRESULT CRenderTarget_Manager::End_MRT(ID3D11DeviceContext* pContext, _bool isSh
 	}
 	else
 	{
-		
+		// 원본값으로 다시 변경
 		ID3D11RenderTargetView* pRenderTargets[8] = { m_pPostRenderTargetView };
 
 		pContext->OMSetRenderTargets(8, pRenderTargets, m_pDepthStencilView);

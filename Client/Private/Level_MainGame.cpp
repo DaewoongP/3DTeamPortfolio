@@ -64,14 +64,14 @@ HRESULT CLevel_MainGame::Initialize()
 		return E_FAIL;
 	}
 
-	if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/MapData1.ddd"))))
+	if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/MapData2.ddd"))))
 	{
 		MSG_BOX("Failed Load Map Object");
 
 		return E_FAIL;
 	}
 
-	if (FAILED(Load_MapObject_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins1.ddd"))))
+	if (FAILED(Load_MapObject_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins2.ddd"))))
 	{
 		MSG_BOX("Failed Load Map Object_Ins");
 

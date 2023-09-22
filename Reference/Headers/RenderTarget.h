@@ -21,6 +21,7 @@ public:
 	ID3D11DepthStencilView* Get_DSV() { return m_pShadowMapDSV; }
 	ID3D11Texture2D*		Get_Texture2D() { return m_pTexture2D; }
 	D3D11_VIEWPORT			Get_ViewPort() { return m_ShadowMapViewPortDesc; }
+
 public:
 	HRESULT Initialize(_uint iSizeX, _uint iSizeY, DXGI_FORMAT eFormat, const _float4& vClearColor,_bool isShadow);
 	HRESULT Initialize_Depth(_uint iSizeX, _uint iSizeY, DXGI_FORMAT eFormat, const _float4& vClearColor);

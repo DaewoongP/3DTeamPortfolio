@@ -42,10 +42,12 @@ HRESULT CRenderTarget::Initialize(_uint iSizeX, _uint iSizeY, DXGI_FORMAT eForma
 		return E_FAIL;
 
 	m_vClearColor = vClearColor;
+	
 	if (isShadow)
 	{
 		Initialize_Depth(iSizeX, iSizeY, eFormat, vClearColor);
 	}
+
 	return S_OK;
 }
 
@@ -76,7 +78,7 @@ HRESULT CRenderTarget::Initialize_Depth(_uint iSizeX, _uint iSizeY, DXGI_FORMAT 
 	DepthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 	DepthStencilViewDesc.Texture2D.MipSlice = 0;
 
-	
+	/* ViewPort */
 	m_ShadowMapViewPortDesc.TopLeftX = 0;
 	m_ShadowMapViewPortDesc.TopLeftY = 0;
 	m_ShadowMapViewPortDesc.Width = static_cast<_float>(iSizeX);
