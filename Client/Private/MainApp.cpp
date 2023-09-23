@@ -24,37 +24,26 @@ HRESULT CMainApp::Initialize()
 	GraphicDesc.iViewportSizeY = g_iWinSizeY;
 	GraphicDesc.eWinMode = GRAPHICDESC::WINMODE::WM_WIN;
 	
-	if (FAILED(m_pGameInstance->Initialize_Engine(g_hInst, LEVEL_END, GraphicDesc, &m_pDevice, &m_pContext)))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(m_pGameInstance->Initialize_Engine(g_hInst, LEVEL_END, GraphicDesc, &m_pDevice, &m_pContext), E_FAIL);
 
 #ifdef _DEBUG
-	if (FAILED(Initialize_ImGui()))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(Initialize_ImGui(), E_FAIL);
 #endif // _DEBUG
 
-	if (FAILED(Ready_Prototype_Component_For_Static()))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(Ready_Prototype_Component_For_Static(), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_Prototype_Object_For_Loading(), E_FAIL);
 
-	if (FAILED(Ready_Prototype_Object_For_Loading()))
-		return E_FAIL;
-
-	if (FAILED(Ready_Fonts()))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(Ready_Fonts(), E_FAIL);
 	
-	if (FAILED(Open_Level(LEVEL_LOGO)))
-	{
-		MSG_BOX("Failed Open LEVEL_LOGO");
-		return E_FAIL;
-	}
-
+	FAILED_CHECK_RETURN_MSG(Open_Level(LEVEL_LOGO), E_FAIL, TEXT("Failed Open LEVEL_LOGO"));
+	
 	return S_OK;
 }
 
 void CMainApp::Tick(_float fTimeDelta)
 {
-	if (nullptr == m_pGameInstance)
-		return;
-
+	NULL_CHECK_RETURN(m_pGameInstance, );
+	
 #ifdef _DEBUG
 	Tick_ImGui();
 #endif // _DEBUG
@@ -78,8 +67,7 @@ HRESULT CMainApp::Render()
 	FAILED_CHECK_RETURN(m_pGameInstance->Render_Level(), E_FAIL);
 
 #ifdef _DEBUG
-	if (FAILED(m_pGameInstance->Render_Font(TEXT("Font_135"), m_szFPS, _float2(0.f, 680.f))))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(m_pGameInstance->Render_Font(TEXT("Font_135"), m_szFPS, _float2(0.f, 680.f)), E_FAIL);
 
 	Render_ImGui();
 #endif // _DEBUG
@@ -184,6 +172,7 @@ HRESULT CMainApp::Ready_Prototype_Component_For_Static()
 	{
 		wstring wstrErrorMSG = TEXT("Failed Ready_Prototype_Component_For_Static : ");
 		wstrErrorMSG += pErrorTag;
+		__debugbreak();
 		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
 
 		return E_FAIL;
@@ -200,17 +189,15 @@ HRESULT CMainApp::Ready_Prototype_Object_For_Loading()
 
 HRESULT CMainApp::Ready_Fonts()
 {
-	if (FAILED(m_pGameInstance->Add_Fonts(m_pDevice, m_pContext, TEXT("Font_135"), TEXT("../../Resources/Default/Fonts/135ex.spritefont"))))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(m_pGameInstance->Add_Fonts(m_pDevice, m_pContext, TEXT("Font_135"), TEXT("../../Resources/Default/Fonts/135ex.spritefont")), E_FAIL);
 
 	return S_OK;
 }
 
 HRESULT CMainApp::Open_Level(LEVELID eLevelIndex)
 {
-	if (nullptr == m_pGameInstance)
-		return E_FAIL;
-
+	NULL_CHECK_RETURN(m_pGameInstance, E_FAIL);
+	
 	return m_pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, eLevelIndex));
 }
 
@@ -228,6 +215,7 @@ void CMainApp::Tick_FPS(_float fTimeDelta)
 		m_fFpsTime = 0.f;
 	}
 }
+
 HRESULT CMainApp::Initialize_ImGui()
 {
 	// Show the window
@@ -271,22 +259,22 @@ HRESULT CMainApp::Initialize_ImGui()
 	TextureDesc.CPUAccessFlags = 0;
 	TextureDesc.MiscFlags = 0;
 
-	if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &m_pTexture2D)))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &m_pTexture2D), E_FAIL);
 
-	if (FAILED(m_pDevice->CreateRenderTargetView(m_pTexture2D, nullptr, &m_pImGuiRTV)))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(m_pDevice->CreateRenderTargetView(m_pTexture2D, nullptr, &m_pImGuiRTV), E_FAIL);
 
 	m_vImGuiClearColor = _float4(0.f, 0.f, 1.f, 1.f);
 
 	return S_OK;
 }
+
 void CMainApp::Tick_ImGui()
 {
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 }
+
 HRESULT CMainApp::Render_ImGui()
 {
 	// 여기서 내 백버퍼를 빼고 무슨 작업을 쳐놓고 그렸는데,
@@ -298,8 +286,7 @@ HRESULT CMainApp::Render_ImGui()
 	ImGui::RenderPlatformWindowsDefault();
 
 	// 원래의 백버퍼를 다시 장치에 바인딩 해준다.
-	if (FAILED(m_pGameInstance->Bind_BackBuffer()))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(m_pGameInstance->Bind_BackBuffer(), E_FAIL);
 
 	return S_OK;
 }

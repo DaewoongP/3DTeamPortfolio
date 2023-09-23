@@ -31,6 +31,7 @@ public:
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
+	virtual HRESULT Initialize_Level(_uint iCurrentLevelIndex) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual void OnCollisionEnter(COLLEVENTDESC CollisionEventDesc) override;
@@ -41,6 +42,7 @@ public:
 
 private:
 	CShader*		m_pShader = { nullptr };
+	CShader*		m_pShadowShader = { nullptr };
 	CRenderer*		m_pRenderer = { nullptr };
 	CCustomModel*	m_pCustomModel = { nullptr };
 	CRigidBody*		m_pRigidBody = { nullptr };
@@ -68,6 +70,7 @@ private:
 private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
+	HRESULT SetUp_ShadowShaderResources();
 	HRESULT Add_Magic();
 
 private:

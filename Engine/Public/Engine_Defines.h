@@ -90,6 +90,9 @@
 #include <tchar.h>
 #include <mutex>
 #include <thread>
+#include <condition_variable>
+#include <future>
+#include <ctime>
 static std::mutex mtx;
 
 // file system - c++ 17

@@ -35,6 +35,7 @@ public:
 	void Tick_Engine(_float fTimeDelta);
 	// 레벨 리소스 초기화 함수
 	void Clear_LevelResources(_uint iLevelIndex);
+	void Clear_Resources();
 
 	_float2 Get_ViewPortSize(ID3D11DeviceContext * pContext);
 
@@ -71,7 +72,6 @@ public: /* For.Timer_Manager */
 
 public: /* For.Level_Manager */
 	HRESULT Open_Level(_uint iLevelIndex, class CLevel * pNewLevel);
-	_uint Get_CurrentLevelIndex() const;
 	class CLevel* Get_CurrentLevel();
 	HRESULT Render_Level();
 	HRESULT Add_Scene(const _tchar * pSceneTag, const _tchar * pLayerTag);
@@ -79,7 +79,7 @@ public: /* For.Level_Manager */
 public: /* For.Component_Manager*/
 	class CComponent* Find_Prototype(_uint iLevelIndex, const _tchar * pPrototypeTag);
 	HRESULT Add_Prototype(_uint iLevelIndex, const _tchar * pPrototypeTag, class CComponent* pPrototype, _bool isFailedSkip = false);
-	HRESULT Add_Component(_uint iLevelIndex, const _tchar * pPrototypeTag, const _tchar * pLayerTag, const _tchar * pComponentTag, void* pArg = nullptr);
+	HRESULT Add_Component(_uint iPrototypeLevelIndex, _uint iLevelIndex, const _tchar * pPrototypeTag, const _tchar * pLayerTag, const _tchar * pComponentTag, void* pArg = nullptr);
 	class CComponent* Clone_Component(_uint iLevelIndex, const _tchar * pPrototypeTag, void* pArg = nullptr);
 	class CComponent* Find_Component_In_Layer(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pComponentTag);
 	class CLayer* Find_Layer(_uint iLevelIndex, const _tchar * pLayerTag);
@@ -100,6 +100,7 @@ public: /* For.PipeLine*/
 	// 카메라에서 Far 값 세팅.
 	void Set_CameraFar(_float fCamFar);
 	const _float4x4* Get_TransformMatrix(CPipeLine::D3DTRANSFORMSTATE eTransformState);
+	const _float4x4* Get_LightTransformMatrix(CPipeLine::D3DTRANSFORMSTATE eTransformState);
 	const _float4x4* Get_TransformMatrix_Inverse(CPipeLine::D3DTRANSFORMSTATE eTransformState);
 	const _float4* Get_CamPosition();
 	const _float3* Get_CamUp();

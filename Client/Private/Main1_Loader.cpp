@@ -27,6 +27,7 @@
 #include "Revelio.h"
 #include "Levioso.h"
 #include "Confringo.h"
+#include "Finisher.h"
 #include "Wingardiumleviosa.h"
 #pragma endregion Magic
 
@@ -60,12 +61,8 @@ HRESULT CMain1_Loader::Initialize(LEVELID eNextLevel)
 {
 	m_eNextLevelID = eNextLevel;
 
-	// Å©¸®Æ¼ÄÃ ¼½¼Ç º¯¼ö ÃÊ±âÈ­
 	InitializeCriticalSection(&m_Critical_Section);
 
-	// ¾²·¹µå ½ÃÀÛ ÇÔ¼ö È£Ãâ
-	// 3¹øÂ° ÀÎÀÚ·Î ½ÃÀÛÇÒ ÇÔ¼öÆ÷ÀÎÅÍ ´ëÀÔ.
-	// 4¹øÂ° ÀÎÀÚ·Î ½ÃÀÛÇÒ ÇÔ¼öÀÇ ¸Å°³º¯¼ö·Î ³Ö¾îÁÙ °ª ´ëÀÔ.
 	m_hThread = (HANDLE)_beginthreadex(nullptr, 0, Thread_Main1, this, 0, nullptr);
 
 	if (0 == m_hThread)
@@ -81,7 +78,6 @@ HRESULT CMain1_Loader::Loading()
 {
 	FAILED_CHECK_RETURN(CoInitializeEx(nullptr, COINIT_MULTITHREADED), E_FAIL);
 
-	// Å©¸®Æ¼ÄÃ ¼½¼Ç ½ÃÀÛÇØ¼­ ´Ù¸¥ ¾²·¹µå°¡ ÀÌ ¾È¿¡ ÀÖ´Â µ¿¾È °ªÀ» º¯°æÇÏÁö ¸øÇÏ°Ô Ã³¸®.
 	EnterCriticalSection(&m_Critical_Section);
 
 	HRESULT		hr = { 0 };
@@ -91,8 +87,11 @@ HRESULT CMain1_Loader::Loading()
 	case LEVEL_LOGO:
 		hr = Loading_For_Logo();
 		break;
-	case LEVEL_MAINGAME:
-		hr = Loading_For_MainGame();
+	case LEVEL_CLIFFSIDE:
+		hr = Loading_For_Cliffside();
+		break;
+	case LEVEL_VAULT:
+		hr = Loading_For_Vault();
 		break;
 	default:
 		MSG_BOX("Failed Load Next Level");
@@ -114,7 +113,7 @@ HRESULT CMain1_Loader::Loading_For_Logo()
 	return S_OK;
 }
 
-HRESULT CMain1_Loader::Loading_For_MainGame()
+HRESULT CMain1_Loader::Loading_For_Cliffside()
 {
 	if (nullptr == m_pGameInstance)
 		return E_FAIL;
@@ -131,11 +130,11 @@ HRESULT CMain1_Loader::Loading_For_MainGame()
 			CTerrain::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Terrain");
 
-		if (FAILED(Loading_Map_Object(TEXT("../../Resources/GameData/MapData/MapData6.ddd"))))
+		if (FAILED(Loading_Map_Object(TEXT("../../Resources/GameData/MapData/MapData0.ddd"))))
 			throw TEXT("Map Object");
 
-		if (FAILED(Loading_Map_Object_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins6.ddd"))))
-			throw TEXT("Map Object_Ins");
+		/*if (FAILED(Loading_Map_Object_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins1.ddd"))))
+			throw TEXT("Map Object_Ins");*/
 
 		/* For.Prototype_Component_CharacterController*/
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_CharacterController"),
@@ -240,77 +239,87 @@ HRESULT CMain1_Loader::Loading_For_MainGame()
 
 #pragma region Magic_Effect
 		/* For.Prototype_GameObject_Default_Magic_Effect*/
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Default_Magic_Effect"),
-			CDefault_Magic_Effect::Create(m_pDevice, m_pContext, LEVEL_MAINGAME))))
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Default_Magic_Effect"),
+			CDefault_Magic_Effect::Create(m_pDevice, m_pContext, LEVEL_CLIFFSIDE))))
 			throw TEXT("Prototype_GameObject_Default_Magic_Effect");
 
 		/* For.Prototype_GameObject_Wingardium_Effect*/
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Wingardium_Effect"),
-			CWingardium_Effect::Create(m_pDevice, m_pContext, LEVEL_MAINGAME))))
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Wingardium_Effect"),
+			CWingardium_Effect::Create(m_pDevice, m_pContext, LEVEL_CLIFFSIDE))))
 			throw TEXT("Prototype_GameObject_Wingardium_Effect");
 
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Traill_Confringo_Effect"),
-			CTrail::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/Confringo/Confringo.trail"), LEVEL_MAINGAME,
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Traill_Confringo_Effect"),
+			CTrail::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/Confringo/Confringo.trail"), LEVEL_CLIFFSIDE,
 				TEXT("../../Resources/Effects/Textures/Gradients/VFX_T_Gradient_Fire_D.png")))))
 			throw TEXT("Prototype_GameObject_Traill_Confringo_Effect");
 
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Traill_Lightning_Effect"),
+			CTrail::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/Lightning/Lightning.trail"), LEVEL_CLIFFSIDE))))
+			throw TEXT("Prototype_GameObject_Traill_Lightning_Effect");
+
 		/* For.Prototype_GameObject_Wingardium_Effect*/
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_MagicTraill_Winga_Effect"),
-			CDefault_MagicTraill_Effect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/Wingardium/Wingardium.trail"), LEVEL_MAINGAME))))
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_MagicTraill_Winga_Effect"),
+			CDefault_MagicTraill_Effect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/Wingardium/Wingardium.trail"), LEVEL_CLIFFSIDE))))
 			throw TEXT("Prototype_GameObject_Default_MagicTraill_Winga_Effect");
 
 		/* For.Prototype_GameObject_Wingardium_Effect*/
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_MagicTraill_BasicCast_Effect"),
-			CDefault_MagicTraill_Effect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/BasicCast/BasicCast.trail"), LEVEL_MAINGAME))))
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_MagicTraill_BasicCast_Effect"),
+			CDefault_MagicTraill_Effect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/BasicCast/BasicCast.trail"), LEVEL_CLIFFSIDE))))
 			throw TEXT("Prototype_GameObject_MagicTraill_BasicCast_Effect");
 
 		/* For.Prototype_GameObject_Wingardium_Effect*/
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_MagicTraill_Levioso_Effect"),
-			CDefault_MagicTraill_Effect::Create(m_pDevice, m_pContext, TEXT(""), LEVEL_MAINGAME))))
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_MagicTraill_Levioso_Effect"),
+			CDefault_MagicTraill_Effect::Create(m_pDevice, m_pContext, TEXT(""), LEVEL_CLIFFSIDE))))
 			throw TEXT("Prototype_GameObject_Default_MagicTraill_Levioso_Effect");
 
 		/* For.Prototype_GameObject_Confringo_WandDust_Effect*/
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Confringo_WandDust_Effect"),
-			CConfringo_WandDust_Effect::Create(m_pDevice, m_pContext, LEVEL_MAINGAME))))
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Confringo_WandDust_Effect"),
+			CConfringo_WandDust_Effect::Create(m_pDevice, m_pContext, LEVEL_CLIFFSIDE))))
 			throw TEXT("Prototype_GameObject_Confringo_WandDust_Effect");
-		
+
 #pragma endregion
 
 #pragma region Magic
 		/* For.Prototype_GameObject_BasicCast */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_BasicCast"),
-			CBasicCast::Create(m_pDevice, m_pContext, LEVEL_MAINGAME))))
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_BasicCast"),
+			CBasicCast::Create(m_pDevice, m_pContext, LEVEL_CLIFFSIDE))))
 			throw TEXT("Prototype_GameObject_BasicCast");
 
 		/* For.Prototype_GameObject_Protego */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Protego"),
-			CProtego::Create(m_pDevice, m_pContext, LEVEL_MAINGAME))))
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Protego"),
+			CProtego::Create(m_pDevice, m_pContext, LEVEL_CLIFFSIDE))))
 			throw TEXT("Prototype_GameObject_Protego");
 
 		/* For.Prototype_GameObject_Revelio */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Revelio"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Revelio"),
 			CRevelio::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Revelio");
 
 		/* For.Prototype_GameObject_Wingardiumleviosa */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Wingardiumleviosa"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Wingardiumleviosa"),
 			CWingardiumleviosa::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Wingardiumleviosa");
 
 		/* For.Prototype_GameObject_Levioso */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Levioso"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Levioso"),
 			CLevioso::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Levioso");
 
 		/* For.Prototype_GameObject_Confringo */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Confringo"),
-			CConfringo::Create(m_pDevice, m_pContext, LEVEL_MAINGAME))))
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Confringo"),
+			CConfringo::Create(m_pDevice, m_pContext, LEVEL_CLIFFSIDE))))
 			throw TEXT("Prototype_GameObject_Confringo");
+
+		/* For.Prototype_GameObject_Finisher */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Finisher"),
+			CFinisher::Create(m_pDevice, m_pContext, LEVEL_CLIFFSIDE))))
+			throw TEXT("Prototype_GameObject_Finisher");
+		
 
 #pragma endregion
 
 		/* For.Prototype_GameObject_MagicSlot */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MagicSlot"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_MagicSlot"),
 			CMagicSlot::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_MagicSlot");
 	}
@@ -327,15 +336,22 @@ HRESULT CMain1_Loader::Loading_For_MainGame()
 	return S_OK;
 }
 
+HRESULT CMain1_Loader::Loading_For_Vault()
+{
+	m_isFinished = true;
+
+	return S_OK;
+}
+
 HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath)
 {
 	/* For.Prototype_GameObject_MapObject */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_MapObject"),
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_MapObject"),
 		CMapObject::Create(m_pDevice, m_pContext))))
 		throw TEXT("Prototype_GameObject_MapObject");
 
 	/* For.Prototype_GameObject_MapEffect */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_MapEffect"),
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_MapEffect"),
 		CMapEffect::Create(m_pDevice, m_pContext))))
 		throw TEXT("Prototype_GameObject_MapEffect");
 
@@ -347,7 +363,7 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath)
 		return E_FAIL;
 	}
 
-	// ¸Ê ¿ÀºêÁ§Æ® ¹øÈ£
+	// ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½È£
 	_uint iObjectNum = 0;
 
 	DWORD    dwByte = 0;
@@ -381,7 +397,6 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath)
 		}
 		BEGININSTANCE;
 
-		// ÇÁ·ÎÅäÅ¸ÀÔ »ý¼º ºÎºÐ
 		wstring ws(LoadDesc.wszTag);
 		size_t findIndex = ws.find(TEXT("Model_")) + 6;
 
@@ -390,16 +405,17 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath)
 		wstring modelPath(TEXT("../../Resources/Models/MapObject/NonAnims/"));
 		modelPath += modelName;
 		modelPath += TEXT("/");
+
+		wstring szDirectoryPath = modelPath;
 		modelPath += modelName;
 		modelPath += TEXT(".dat");
-
-		// ÇÁ·ÎÅäÅ¸ÀÔ »ý¼º
-		_float4x4 PivotMatrix = XMMatrixIdentity();
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAINGAME, LoadDesc.wszTag,
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, modelPath.c_str(), PivotMatrix), true)))
+		
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, LoadDesc.wszTag,
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, modelPath.c_str()), true)))
 		{
 			MSG_BOX("Failed to Create New Model Prototype");
 		}
+
 		++iObjectNum; ENDINSTANCE;
 	}
 
@@ -410,7 +426,7 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath)
 HRESULT CMain1_Loader::Loading_Map_Object_Ins(const _tchar* pMapObjectInsPath)
 {
 	/* For.Prototype_GameObject_MapObject_Ins */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_MapObject_Ins"),
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_MapObject_Ins"),
 		CMapObject_Ins::Create(m_pDevice, m_pContext))))
 		throw TEXT("Prototype_GameObject_MapObject_Ins");
 
@@ -423,7 +439,7 @@ HRESULT CMain1_Loader::Loading_Map_Object_Ins(const _tchar* pMapObjectInsPath)
 	}
 
 	DWORD	dwByte = 0;
-	_uint	iCount = 0; // ¸ðµ¨ ÀÎ½ºÅÏ½º ³Ñ¹ö¸µ º¯¼ö
+	_uint	iCount = 0; // ï¿½ï¿½ ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½Ñ¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
 	while (true)
 	{
@@ -436,7 +452,7 @@ HRESULT CMain1_Loader::Loading_Map_Object_Ins(const _tchar* pMapObjectInsPath)
 			return E_FAIL;
 		}
 
-		// ÀúÀåµÇ¾îÀÖ´ø ÀÎ½ºÅÏ½º °³¼ö¸¸Å­ µ¿ÀûÇÒ´ç
+		// ï¿½ï¿½ï¿½ï¿½Ç¾ï¿½ï¿½Ö´ï¿½ ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å­ ï¿½ï¿½ï¿½ï¿½ï¿½Ò´ï¿½
 		if (0 != LoadDesc.iInstanceCnt)
 		{
 			LoadDesc.pMatTransform = New _float4x4[LoadDesc.iInstanceCnt];
@@ -475,13 +491,13 @@ HRESULT CMain1_Loader::Loading_Map_Object_Ins(const _tchar* pMapObjectInsPath)
 			break;
 		}
 
-		// ¿©±â¼­ ÇÁ·ÎÅäÅ¸ÀÔ ÅÂ±× ¹®ÀÚ¿­ °¡°øÇØÁà¾ßÇÔ
+		// ï¿½ï¿½ï¿½â¼­ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å¸ï¿½ï¿½ ï¿½Â±ï¿½ ï¿½ï¿½ï¿½Ú¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		wstring ws = TEXT("Prototype_Component_Model_Instance_");
 		wstring wsTag = TEXT("Prototype_Component_Model_");
 		wstring wsSave(LoadDesc.wszTag);
 		_uint iLength = wsTag.size();
 
-		// ¸ðµ¨ ÀÌ¸§
+		// ï¿½ï¿½ ï¿½Ì¸ï¿½
 		wstring wsModelName = wsSave.substr(iLength);
 		ws += wsModelName;
 
@@ -490,7 +506,7 @@ HRESULT CMain1_Loader::Loading_Map_Object_Ins(const _tchar* pMapObjectInsPath)
 		_tchar wszNumber[MAX_PATH];
 		_itow_s(iCount, wszNumber, 10);
 
-		ws += wszNumber; // ¿©±â±îÁö ¿À¸é Prototype_Component_Model_Instance_¸ðµ¨¸í_¹øÈ£ ÀÌ·±½ÄÀ¸·Î ÀÌ¸§ÀÌ ºÙÀ½	
+		ws += wszNumber; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Prototype_Component_Model_Instance_ï¿½ðµ¨¸ï¿½_ï¿½ï¿½È£ ï¿½Ì·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½	
 
 		++iCount;
 
@@ -500,9 +516,9 @@ HRESULT CMain1_Loader::Loading_Map_Object_Ins(const _tchar* pMapObjectInsPath)
 		wsPath += wsModelName;
 		wsPath += TEXT(".dat");
 
-		// ÀÎ½ºÅÏ½º ¸ðµ¨ ÇÁ·ÎÅäÅ¸ÀÔ »ý¼º
+		// ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		_float4x4 PivotMatrix = XMMatrixIdentity();
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, ws.c_str(),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, ws.c_str(),
 			CModel_Instance::Create(m_pDevice, m_pContext, CModel_Instance::TYPE_NONANIM, wsPath.c_str(),
 				LoadDesc.pMatTransform, LoadDesc.iInstanceCnt, PivotMatrix), true)))
 		{
@@ -530,13 +546,13 @@ CMain1_Loader* CMain1_Loader::Create(ID3D11Device* pDevice, ID3D11DeviceContext*
 
 void CMain1_Loader::Free()
 {
-	// ·ÎµùÀÌ ³¡³¯¶§±îÁö ±â´Ù·Á¾ß ÇÏ¹Ç·Î infinite ¿É¼ÇÀ» ÁÖ¾î ·ÎµùÀÌ ³¡³¯¶§±îÁö ¾²·¹µå ´ë±â.
+	// ï¿½Îµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ù·ï¿½ï¿½ï¿½ ï¿½Ï¹Ç·ï¿½ infinite ï¿½É¼ï¿½ï¿½ï¿½ ï¿½Ö¾ï¿½ ï¿½Îµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½.
 	WaitForSingleObject(m_hThread, INFINITE);
 
 	DeleteCriticalSection(&m_Critical_Section);
 	CloseHandle(m_hThread);
 
-	// MapObject_Ins¸¦ ºÒ·¯¿À´Â µ¿¾È »ý±ä µ¿ÀûÇÒ´ç ÇØÁ¦ Ã³¸®
+	// MapObject_Insï¿½ï¿½ ï¿½Ò·ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ò´ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½
 	for (auto& iter : m_vecFreeMatrix)
 	{
 		Safe_Delete_Array(iter);

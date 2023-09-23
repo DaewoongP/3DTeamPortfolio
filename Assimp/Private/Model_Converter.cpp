@@ -806,7 +806,7 @@ HRESULT CModel_Converter::Write_File_Anim(TYPE eType, const _tchar* pSaveDirecto
 	_ulong	dwStrByte = 0;
 
 	// Write Animations
-		// Animation NumAnimations
+	// Animation NumAnimations
 	WriteFile(hFile, &(m_Model.iNumAnimations), sizeof(_uint), &dwByte, nullptr);
 
 	for (_uint i = 0; i < m_Model.iNumAnimations; ++i)

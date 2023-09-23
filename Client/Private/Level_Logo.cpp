@@ -9,16 +9,13 @@ CLevel_Logo::CLevel_Logo(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 HRESULT CLevel_Logo::Initialize()
 {
-	if (FAILED(__super::Initialize()))
-		return E_FAIL;
-
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 		return E_FAIL;
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 	// 현재 씬 설정.
-	pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
+	pGameInstance->Set_CurrentScene(TEXT("Scene_Logo"), true);
 	Safe_Release(pGameInstance);
 
 	return S_OK;
@@ -34,7 +31,7 @@ void CLevel_Logo::Tick(_float fTimeDelta)
 	// 스테이지 이동
 	if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
 	{
-		if (FAILED(pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVELID::LEVEL_MAINGAME))))
+		if (FAILED(pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVELID::LEVEL_CLIFFSIDE))))
 		{
 			MSG_BOX("Failed Open LEVEL_LOGO to LEVEL_MAIN");
 			Safe_Release(pGameInstance);
@@ -62,7 +59,15 @@ HRESULT CLevel_Logo::Ready_Layer_BackGround(const _tchar* pLayerTag)
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_LOGO, TEXT("Prototype_GameObject_Logo_BackGround"), pLayerTag, TEXT("GameObject_Logo_BackGround"))))
+	/* Add Scene : Main */
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Logo"), pLayerTag)))
+	{
+		MSG_BOX("Failed Add Scene : (Scene_Logo)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_LOGO, LEVEL_LOGO, TEXT("Prototype_GameObject_Logo_BackGround"), pLayerTag, TEXT("GameObject_Logo_BackGround"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Logo_BackGround)");
 		return E_FAIL;

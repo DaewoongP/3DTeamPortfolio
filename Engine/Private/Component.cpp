@@ -27,6 +27,11 @@ HRESULT CComponent::Initialize(void* pArg)
 	return S_OK;
 }
 
+HRESULT CComponent::Initialize_Level(_uint iCurrentLevelIndex)
+{
+	return S_OK;
+}
+
 void CComponent::Tick(_float fTimeDelta)
 {
 }

@@ -79,7 +79,7 @@ HRESULT CBlur::Render()
 		if (FAILED(m_pBuffer->Render()))
 			return E_FAIL;
 	}
-	else if (BLUR_XY == m_eBlurOption)
+	/*else if (BLUR_XY == m_eBlurOption)
 	{
 		if (FAILED(m_pShader->Begin("BlurX")))
 			return E_FAIL;
@@ -96,7 +96,8 @@ HRESULT CBlur::Render()
 	else
 	{
 		MSG_BOX("Blur Option is Null");
-	}
+	}*/
+
 	if (FAILED(pRenderTarget_Manager->End_MRT(m_pContext)))
 		return E_FAIL;
 

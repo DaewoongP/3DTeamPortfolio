@@ -48,11 +48,11 @@ HRESULT CRenderTarget_Manager::Add_MRT(const _tchar* pMRTTag, const _tchar* pTar
 	return S_OK;
 }
 
-HRESULT CRenderTarget_Manager::Begin_MRT(ID3D11DeviceContext* pContext, const _tchar* pMRTTag,_bool Shadow)
+HRESULT CRenderTarget_Manager::Begin_MRT(ID3D11DeviceContext* pContext, const _tchar* pMRTTag, _bool isShadow)
 {
 	std::lock_guard<std::mutex> lock(mtx);
 
-	if(Shadow)
+	if (false == isShadow) /* 원래 렌더타겟 바인딩 */
 	{
 		list<CRenderTarget*>* pMRTList = Find_MRT(pMRTTag);
 
@@ -60,7 +60,6 @@ HRESULT CRenderTarget_Manager::Begin_MRT(ID3D11DeviceContext* pContext, const _t
 			return E_FAIL;
 
 		pContext->OMGetRenderTargets(1, &m_pPostRenderTargetView, &m_pDepthStencilView);
-		pContext->OMSetRenderTargets(1, &m_pPostRenderTargetView, m_pShadowView);
 
 		ID3D11RenderTargetView* pRenderTargets[8] = { nullptr };
 
@@ -68,36 +67,44 @@ HRESULT CRenderTarget_Manager::Begin_MRT(ID3D11DeviceContext* pContext, const _t
 
 		for (auto& pRenderTarget : *pMRTList)
 		{
-			pRenderTarget->Clear();
+			pRenderTarget->Clear(isShadow);
 			pRenderTargets[iNumViews++] = pRenderTarget->Get_RTV();
 		}
 
-		_float4 Color = { 1.f, 1.f, 1.f, 1.f };
-		Change_DepthStencil(pContext, _float4(1.f, 1.f, 1.f, 1.f));
-
-		return S_OK;
+		pContext->OMSetRenderTargets(iNumViews, pRenderTargets, m_pDepthStencilView);
 	}
-
-	list<CRenderTarget*>* pMRTList = Find_MRT(pMRTTag);
-
-	if (nullptr == pMRTList)
-		return E_FAIL;
-	
-	pContext->OMGetRenderTargets(1, &m_pPostRenderTargetView, &m_pDepthStencilView);
-
-	ID3D11RenderTargetView* pRenderTargets[8] = { nullptr };
-
-	_uint		iNumViews = 0;
-
-	for (auto& pRenderTarget : *pMRTList)
+	else
 	{
-		pRenderTarget->Clear();
-		pRenderTargets[iNumViews++] = pRenderTarget->Get_RTV();
+		// 뎁스스텐실뷰 자체가 한번에 무조건 한개만 바인딩 가능하기 때문에
+		// for문을 여러번 돌아줄 필요가 없다.
+		// 따라서 0번 iterator로 처리.
+
+		list<CRenderTarget*>* pMRTList = Find_MRT(pMRTTag);
+
+		if (nullptr == pMRTList)
+			return E_FAIL;
+
+		pContext->OMGetRenderTargets(1, &m_pPostRenderTargetView, &m_pDepthStencilView);
+		
+		ID3D11RenderTargetView* pRenderTargets[8] = { nullptr };
+		ID3D11DepthStencilView* pDepthStencilView = { nullptr };
+		
+		CRenderTarget* pRenderTarget = (*pMRTList).front();
+		// 렌더타겟 및 뎁스스텐실 초기화
+		pRenderTarget->Clear(isShadow);
+		pRenderTargets[0] = pRenderTarget->Get_RTV();
+		pDepthStencilView = pRenderTarget->Get_DSV();
+
+		D3D11_VIEWPORT CurrentRenderViewPort = pRenderTarget->Get_ViewPort();
+
+		_uint iViewports = 1;
+		pContext->RSGetViewports(&iViewports, &m_OriginViewPortDesc);
+		pContext->RSSetViewports(1, &CurrentRenderViewPort);
+
+		// 뎁스스텐실만 적용할 것이므로 1개만 처리.
+		pContext->OMSetRenderTargets(1, pRenderTargets, pDepthStencilView);
 	}
-
-	pContext->OMSetRenderTargets(iNumViews, pRenderTargets, m_pDepthStencilView);
-
-
+	
 	return S_OK;
 }
 
@@ -127,27 +134,29 @@ HRESULT CRenderTarget_Manager::Begin_PostProcessingRenderTarget(ID3D11DeviceCont
 	return S_OK;
 }
 
-HRESULT CRenderTarget_Manager::End_MRT(ID3D11DeviceContext* pContext,_bool Shadow)
+HRESULT CRenderTarget_Manager::End_MRT(ID3D11DeviceContext* pContext, _bool isShadow)
 {
 	std::lock_guard<std::mutex> lock(mtx);
 
-	if (Shadow)
+	if (false == isShadow)
 	{
 		ID3D11RenderTargetView* pRenderTargets[8] = { m_pPostRenderTargetView };
-		pContext->OMGetRenderTargets(8, pRenderTargets, &m_pShadowView);
+
+		pContext->OMSetRenderTargets(8, pRenderTargets, m_pDepthStencilView);
 
 		Safe_Release(m_pPostRenderTargetView);
-		Safe_Release(m_pShadowView);
-
-		return S_OK;
+		Safe_Release(m_pDepthStencilView);
 	}
+	else
+	{
+		// 원본값으로 다시 변경
+		ID3D11RenderTargetView* pRenderTargets[8] = { m_pPostRenderTargetView };
 
-	ID3D11RenderTargetView* pRenderTargets[8] = { m_pPostRenderTargetView };
-
-	pContext->OMSetRenderTargets(8, pRenderTargets, m_pDepthStencilView);
-
-	Safe_Release(m_pPostRenderTargetView);
-	Safe_Release(m_pDepthStencilView);
+		pContext->OMSetRenderTargets(8, pRenderTargets, m_pDepthStencilView);
+		pContext->RSSetViewports(1, &m_OriginViewPortDesc);
+		Safe_Release(m_pPostRenderTargetView);
+		Safe_Release(m_pDepthStencilView);
+	}
 
 	return S_OK;
 }
@@ -174,23 +183,6 @@ HRESULT CRenderTarget_Manager::Bind_ShaderResourceView(const _tchar* pTargetTag,
 		return E_FAIL;
 
 	return pRenderTarget->Bind_ShaderResourceView(pShader, pConstantName);
-}
-
-HRESULT CRenderTarget_Manager::Change_DepthStencil(ID3D11DeviceContext* pContext,_float4 vClearColor)
-{
-	pContext->OMGetRenderTargets(1, &m_pPostRenderTargetView, &m_pShadowView);
-	pContext->OMSetRenderTargets(1, &m_pPostRenderTargetView, m_pDepthStencilView);
-	 
-	//pContext->ClearDepthStencilView(m_pDepthStencilView,D3D11_CLEAR_DEPTH,)
-	pContext->ClearRenderTargetView(m_pPostRenderTargetView,(_float*)&vClearColor);
-	return S_OK;
-}
-
-HRESULT CRenderTarget_Manager::End_Depthstencil(ID3D11DeviceContext* pContext)
-{
-	pContext->OMSetRenderTargets(1, &m_pPostRenderTargetView, m_pDepthStencilView);
-	Safe_Release(m_pDepthStencilView);
-	return S_OK;
 }
 
 #ifdef _DEBUG
@@ -253,6 +245,8 @@ void CRenderTarget_Manager::Free()
 
 	for (auto& Pair : m_RenderTargets)
 		Safe_Release(Pair.second);
-	Safe_Release(m_pShadowView);
+	
 	m_RenderTargets.clear();
+
+	Safe_Release(m_pShadowMapDepthStencilView);
 }

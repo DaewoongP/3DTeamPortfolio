@@ -77,8 +77,11 @@ HRESULT CMain3_Loader::Loading()
 	case LEVEL_LOGO:
 		hr = Loading_For_Logo();
 		break;
-	case LEVEL_MAINGAME:
-		hr = Loading_For_MainGame();
+	case LEVEL_CLIFFSIDE:
+		hr = Loading_For_Cliffside();
+		break;
+	case LEVEL_VAULT:
+		hr = Loading_For_Vault();
 		break;
 	default:
 		MSG_BOX("Failed Load Next Level");
@@ -103,67 +106,67 @@ HRESULT CMain3_Loader::Loading_For_Logo()
 	return S_OK;
 }
 
-HRESULT CMain3_Loader::Loading_For_MainGame()
+HRESULT CMain3_Loader::Loading_For_Cliffside()
 {
 	if (nullptr == m_pGameInstance)
 		return E_FAIL;
 	try /* Failed Check Add_Prototype*/
 	{
 		/* For.Prototype_GameObject_Player*/
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Player"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Player"),
 			CPlayer::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Player");
 
 		_float4x4 PivotMatrix;
 		PivotMatrix = XMMatrixRotationQuaternion(XMQuaternionRotationRollPitchYaw(0.f, XMConvertToRadians(180.f), 0.f));
 		/* For.Prototype_Component_Model_CustomModel_Player */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_CustomModel_Player"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Model_CustomModel_Player"),
 			CCustomModel::Create(m_pDevice, m_pContext, CCustomModel::TYPE_ANIM, L"../../Resources/Models/Anims/Biped_Skeleton_jog_Idle/Biped_Skeleton_jog_Idle.gcm", PivotMatrix))))
 			throw TEXT("Prototype_Component_Model_CustomModel_Player");
 
 		/* For.Prototype_Component_Weapon_Player_Wand */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Weapon_Player_Wand"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Weapon_Player_Wand"),
 			CWeapon_Player_Wand::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Weapon_Player_Wand");
 
 		/* For.Prototype_Component_Weapon_Fig_Wand */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Weapon_Fig_Wand"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_Weapon_Fig_Wand"),
 			CWeapon_Fig_Wand::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Weapon_Fig_Wand");
 #pragma region Player Parts
 
 		/* For.Prototype_Component_MeshPart_Player_Head */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshPart_Player_Head"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_MeshPart_Player_Head"),
 			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Player_Head/Player_Head.dat"), TEXT("Player_Head")))))
 			throw TEXT("Prototype_Component_MeshPart_Player_Head");
 
 		/* For.Prototype_Component_MeshPart_Player_Arm */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshPart_Player_Arm"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_MeshPart_Player_Arm"),
 			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Player_Arm/Player_Arm.dat"), TEXT("Player_Arm")))))
 			throw TEXT("Prototype_Component_MeshPart_Player_Arm");
 
 		/* For.Prototype_Component_MeshPart_Robe01 */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshPart_Robe01"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_MeshPart_Robe01"),
 			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Robe_Student/Robe_Student.dat"), TEXT("Robe01")))))
 			throw TEXT("Prototype_Component_MeshPart_Robe01");
 
 		/* For.Prototype_Component_MeshPart_Player_Top */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshPart_Player_Top"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_MeshPart_Player_Top"),
 			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Player_Top/Player_Top.dat"), TEXT("Player_Top")))))
 			throw TEXT("Prototype_Component_MeshPart_Player_Top");
 
 		/* For.Prototype_Component_MeshPart_Player_Pants */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshPart_Player_Pants"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_MeshPart_Player_Pants"),
 			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Player_Pants/Player_Pants.dat"), TEXT("Player_Pants")))))
 			throw TEXT("Prototype_Component_MeshPart_Player_Pants");
 
 		/* For.Prototype_Component_MeshPart_Player_Socks */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshPart_Player_Socks"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_MeshPart_Player_Socks"),
 			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Player_Socks/Player_Socks.dat"), TEXT("Player_Socks")))))
 			throw TEXT("Prototype_Component_MeshPart_Player_Socks");
 
 		/* For.Prototype_Component_MeshPart_Player_Shoes */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_MeshPart_Player_Shoes"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_MeshPart_Player_Shoes"),
 			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Player_Shoes/Player_Shoes.dat"), TEXT("Player_Shoes")))))
 			throw TEXT("Prototype_Component_MeshPart_Player_Shoes");
 
@@ -171,52 +174,52 @@ HRESULT CMain3_Loader::Loading_For_MainGame()
 
 #pragma region Player State
 		/* For.Prototype_Component_StateContext */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_StateContext"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_StateContext"),
 			CStateContext::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_StateContext");
 
 		/* For.Prototype_Component_State_Idle */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_State_Idle"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_State_Idle"),
 			CIdleState::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_State_Idle");
 
 		/* For.Prototype_Component_State_Move_Turn */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_State_Move_Turn"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_State_Move_Turn"),
 			CMoveTurnState::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_State_Move_Turn");
 
 		/* For.Prototype_Component_State_Move_Start */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_State_Move_Start"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_State_Move_Start"),
 			CMoveStartState::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_State_Move_Start");
 
 		/* For.Prototype_Component_State_Move_Loop */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_State_Move_Loop"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_State_Move_Loop"),
 			CMoveLoopState::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_State_Move_Loop");
 
 		/* For.Prototype_Component_State_Roll */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_State_Roll"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_State_Roll"),
 			CRollState::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_State_Roll");
 
 		/* For.Prototype_Component_State_Jump */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_State_Jump"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_State_Jump"),
 			CJumpState::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_State_Jump");
 
 		/* For.Prototype_Component_State_Hard_Land */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_State_Hard_Land"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_State_Hard_Land"),
 			CHardLandState::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_State_Hard_Land");
 
 		/* For.Prototype_Component_State_Magic_Casting */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_State_Magic_Casting"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_State_Magic_Casting"),
 			CMagicCastingState::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_State_Magic_Casting");
 
 		/* For.Prototype_Component_State_ProtegoState */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_State_ProtegoState"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_State_ProtegoState"),
 			CProtegoState::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_State_ProtegoState");
 
@@ -224,12 +227,12 @@ HRESULT CMain3_Loader::Loading_For_MainGame()
 
 		PivotMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
 		/* For.Prototype_Component_Model_Professor_Fig */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Professor_Fig"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_Model_Professor_Fig"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/Professor_Fig/Professor_Fig.gcm"), PivotMatrix))))
 			throw TEXT("Prototype_Component_Model_Professor_Fig");
 
 		/* For.Prototype_GameObject_Professor_Fig */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Professor_Fig"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Professor_Fig"),
 			CProfessor_Fig::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Professor_Fig");
 	}
@@ -241,6 +244,13 @@ HRESULT CMain3_Loader::Loading_For_MainGame()
 		return E_FAIL;
 	}
 
+	m_isFinished = true;
+
+	return S_OK;
+}
+
+HRESULT CMain3_Loader::Loading_For_Vault()
+{
 	m_isFinished = true;
 
 	return S_OK;
