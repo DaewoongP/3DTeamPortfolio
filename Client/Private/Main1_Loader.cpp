@@ -248,7 +248,7 @@ HRESULT CMain1_Loader::Loading_For_Cliffside()
 			CWingardium_Effect::Create(m_pDevice, m_pContext, LEVEL_CLIFFSIDE))))
 			throw TEXT("Prototype_GameObject_Wingardium_Effect");
 
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Traill_Lightning_Effect"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Traill_Lightning_Effect"),
 			CTrail::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/Lightning/Lightning.trail"), LEVEL_CLIFFSIDE))))
 			throw TEXT("Prototype_GameObject_Traill_Lightning_Effect");
 
@@ -257,8 +257,8 @@ HRESULT CMain1_Loader::Loading_For_Cliffside()
 			CDefault_MagicTraill_Effect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/Wingardium/Wingardium.trail"), LEVEL_CLIFFSIDE))))
 			throw TEXT("Prototype_GameObject_Default_MagicTraill_Winga_Effect");
 
-		/* For.Prototype_GameObject_Wingardium_Effect*/
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_MagicTrail_BasicCast_Effect"),
+		/* For.Prototype_GameObject_MagicTrail_BasicCast_Effect*/
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_MagicTrail_BasicCast_Effect"),
 			CDefault_MagicTraill_Effect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/BasicCast/BasicCast.trail"), LEVEL_CLIFFSIDE))))
 			throw TEXT("Prototype_GameObject_MagicTrail_BasicCast_Effect");
 
