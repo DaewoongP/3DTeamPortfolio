@@ -44,7 +44,6 @@ HRESULT CRandom_Select::Tick(const _float& fTimeDelta)
 
 	if (BEHAVIOR_SUCCESS == hr)
 	{
-		cout << "change_random success" << endl;
 		Set_Random_Behavior();
 
 		BEGININSTANCE;

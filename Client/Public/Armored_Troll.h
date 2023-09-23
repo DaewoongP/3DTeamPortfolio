@@ -29,6 +29,14 @@ BEGIN(Client)
 
 class CArmored_Troll final : public CGameObject
 {
+public:
+	enum ATTACKTYPE { ATTACK_NONE, ATTACK_LIGHT, ATTACK_HEAVY, ATTACK_BODY, ATTACKTYPE_END };
+	typedef struct tagCollisionRequestDesc
+	{
+		ATTACKTYPE eType = { ATTACKTYPE_END };
+		_float fDamage = { 0.f };
+	}COLLISIONREQUESTDESC;
+
 private:
 	explicit CArmored_Troll(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CArmored_Troll(const CArmored_Troll& rhs);
@@ -62,6 +70,8 @@ private:
 	_bool m_isParring = { false };
 	_bool m_isRangeInEnemy = { false };
 	_bool m_isChangeAnimation = { false };
+
+	COLLISIONREQUESTDESC m_CollisionRequestDesc;
 
 	// 범위 안에 들어온 몬스터 리스트
 	list<pair<wstring, const CGameObject*>> m_RangeInEnemies;
@@ -109,6 +119,10 @@ private: /* Notify Func */
 	void Change_Animation() {
 		m_isChangeAnimation = true;
 	}
+	void Enter_Light_Attack();
+	void Enter_Heavy_Attack();
+	void Enter_Body_Attack();
+	void Exit_Attack();
 
 public:
 	static CArmored_Troll* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

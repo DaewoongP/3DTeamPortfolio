@@ -38,7 +38,7 @@ HRESULT CSelector_Degree::Tick(const _float& fTimeDelta)
 
 	BEGININSTANCE;
 	_float fdata = pGameInstance->Get_World_TimeAcc() - m_fPreWorldTimeAcc;
-	cout << fdata << endl;
+	
 	ENDINSTANCE;
 	if (BEHAVIOR_SUCCESS == hr)
 	{

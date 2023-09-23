@@ -6,6 +6,8 @@
 #include "StateContext.h"
 #include "IdleState.h"
 
+#include "Armored_Troll.h"
+
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
@@ -112,6 +114,14 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 
 void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
+	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
+
+	if (wstring::npos != wstrObjectTag.find(TEXT("Weapon")))
+	{
+		CArmored_Troll::COLLISIONREQUESTDESC* pDesc = static_cast<CArmored_Troll::COLLISIONREQUESTDESC*>(CollisionEventDesc.pArg);
+		pDesc;
+		int i = 0;
+	}
 	//cout << "Hi" << endl;
 }
 
@@ -238,7 +248,7 @@ HRESULT CPlayer::Add_Components()
 	RigidBodyDesc.vDebugColor = _float4(1.f, 105 / 255.f, 180 / 255.f, 1.f); // hot pink
 	RigidBodyDesc.pOwnerObject = this;
 	RigidBodyDesc.eThisCollsion = COL_PLAYER;
-	RigidBodyDesc.eCollisionFlag = COL_ENEMY | COL_ENEMY_RANGE;
+	RigidBodyDesc.eCollisionFlag = COL_ENEMY_RANGE | COL_WEAPON;
 	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Player_Default");
 
 	/* Com_RigidBody */
