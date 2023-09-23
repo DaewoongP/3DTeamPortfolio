@@ -80,15 +80,15 @@ HRESULT CParticleSystem::Initialize_Prototype(const _tchar* _pDirectoryPath, _ui
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel
 			, TEXT("Prototype_Component_Shader_VtxRectColIdxInstance")
 			, CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxRectColIdxInstance.hlsl")
-			, VTXRECTCOLIDXINSTANCE_DECL::Elements, VTXRECTCOLIDXINSTANCE_DECL::iNumElements))))
+			, VTXPARTICLE_DECL::Elements, VTXPARTICLE_DECL::iNumElements))))
 			return E_FAIL;
 	}
-
-	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_Component_VIBuffer_Rect_Color_Index_Instance")))
+	
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_Component_VIBuffer_Rect_Particle_Instance")))
 	{
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel
-			, TEXT("Prototype_Component_VIBuffer_Rect_Color_Index_Instance")
-			, CVIBuffer_Rect_Color_Index_Instance::Create(m_pDevice, m_pContext))))
+			, TEXT("Prototype_Component_VIBuffer_Rect_Particle_Instance")
+			, CVIBuffer_Rect_Particle_Instance::Create(m_pDevice, m_pContext))))
 			return E_FAIL;
 	}
 
@@ -117,11 +117,13 @@ void CParticleSystem::Tick(_float _fTimeDelta)
 
 	m_EmissionModuleDesc.vCurPos = m_pTransform->Get_Position();
 	m_ParticleMatrices.clear();
+
 	// 재생속도에 따른 TimeDelta 연산
 	Simulation_Speed(_fTimeDelta);
 
-	// 모듈에 필요한 TimeDelta 처리.
-	Sum_TimeDelta(_fTimeDelta);
+	m_MainModuleDesc.fParticleSystemAge += _fTimeDelta;
+	for (auto& Particle : m_Particles[DELAY])
+		Particle.fAge += _fTimeDelta;
 
 	// 파티클 나이 처리
 	Action_By_Age();
@@ -132,23 +134,25 @@ void CParticleSystem::Tick(_float _fTimeDelta)
 	// 카메라가 파티클 시스템의 로컬 포지션으로 감.
 	_float4 vCamPosition;
 	if (true == m_ShapeModuleDesc.isChase)
-	{
 		vCamPosition = XMVector3TransformCoord(*pGameInstance->Get_CamPosition(), m_pTransform->Get_WorldMatrix_Inverse());
-	}
 	else
-	{
 		vCamPosition = *pGameInstance->Get_CamPosition();
-	}
 
 	// 파티클 연산 시작
 	for (auto Particle_iter = m_Particles[ALIVE].begin(); Particle_iter != m_Particles[ALIVE].end();)
 	{
-		INSTANCE colInstDesc;
+		VTXPARTICLEINSTANCE InstDesc;
 		_float3 vPos;
+
+		// 파티클 나이 처리
+		Particle_iter->fAge += _fTimeDelta;
+		if (Particle_iter->fAge >= Particle_iter->fLifeTime)
+			Particle_iter->isAlive = false;
 
 		// 이전프레임의 값들을 가져옴.
 		vPos = Particle_iter->WorldMatrix.Translation();
 		_float3 vPrevPos = vPos;
+
 		// 위치에 속도를 더해서 최종 위치를 정함.
 		vPos = vPos + Particle_iter->vVelocity * _fTimeDelta;
 		
@@ -215,14 +219,15 @@ void CParticleSystem::Tick(_float _fTimeDelta)
 		_float4x4 TranslationMatrix = _float4x4::MatrixTranslation(vPos);
 		_float4x4 TransfomationMatrix = ScaleMatrix * BillBoardMatrix * DirectionMatrix * RotationMatrix * TranslationMatrix;
 
-		colInstDesc.vRight = TransfomationMatrix.Right().TransNorm();
-		colInstDesc.vUp = TransfomationMatrix.Up().TransNorm();
-		colInstDesc.vLook = TransfomationMatrix.Look().TransNorm();
-		colInstDesc.vTranslation = TransfomationMatrix.Translation().TransCoord();
-		colInstDesc.vColor = Particle_iter->vColor;
-		colInstDesc.iCurrentIndex = Particle_iter->iCurIndex;
-
-		m_ParticleMatrices.push_back(colInstDesc);
+		InstDesc.vRight = TransfomationMatrix.Right().TransNorm();
+		InstDesc.vUp = TransfomationMatrix.Up().TransNorm();
+		InstDesc.vLook = TransfomationMatrix.Look().TransNorm();
+		InstDesc.vTranslation = TransfomationMatrix.Translation().TransCoord();
+		InstDesc.vColor = Particle_iter->vColor;
+		InstDesc.iCurrentIndex = Particle_iter->iCurIndex;
+		InstDesc.vVelocity = Particle_iter->vVelocity;
+		PlayEvent(Particle_iter);
+		m_ParticleMatrices.push_back(InstDesc);
 		++Particle_iter;
 	}
 
@@ -233,6 +238,8 @@ void CParticleSystem::Tick(_float _fTimeDelta)
 
 	// 객체 수명 처리
 	Action_By_Duration();
+
+	
 }
 void CParticleSystem::Late_Tick(_float _fTimeDelta)
 {
@@ -241,16 +248,15 @@ void CParticleSystem::Late_Tick(_float _fTimeDelta)
 
 	if (nullptr != m_pRenderer)
 	{
-		if (true == m_RendererModuleDesc.isBloom)
+		if (true == m_RendererModuleDesc.isGlow)
 		{
-			//m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BLOOM, this);
 			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_GLOW, this);
-			//m_pRenderer->Add_RenderGroup(CRenderer::RENDER_MOTIONBLUR, this);
-
 		}
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BLEND, this);
+		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_MOTIONBLUR, this);
 	}
 }
+
 HRESULT CParticleSystem::Render()
 {
 	if (FAILED(Setup_ShaderResources()))
@@ -264,6 +270,7 @@ HRESULT CParticleSystem::Render()
 
 	return S_OK;
 }
+
 void CParticleSystem::Play()
 {
 	if (true == IsEnable())
@@ -405,7 +412,39 @@ void CParticleSystem::Simulation_Speed(_float& fTimeDelta)
 	// 재생 속도에 따른 타임델타 값 변경.
 	fTimeDelta *= m_MainModuleDesc.fSimulationSpeed;
 }
+void CParticleSystem::Add_Notify(PT_NOTIFY PTNotify)
+{
+	for (_uint i = 0; i < STATE_END; ++i)
+	{
+		for (auto iter = m_Particles[i].begin(); iter != m_Particles[i].end(); ++iter)
+		{
+			iter->Add_Notify(PTNotify);
+		}
+	}
+}
+void CParticleSystem::PlayEvent(const PARTICLE_IT& Particle_iter)
+{
+	for (auto iter = Particle_iter->Events.begin(); iter != Particle_iter->Events.end();)
+	{
+		if (false == iter->CanPlay)
+		{
+			++iter;
+			continue;
+		}
 
+		if (iter->StartCondition(Particle_iter))
+		{
+			iter->Event();
+
+			if (true == iter->isPlayOnce)
+			{
+				iter->CanPlay = false;
+			}
+		}
+
+		++iter;
+	}
+}
 void CParticleSystem::Action_By_Age()
 {
 	// DELAY시간 완료된 애들은 ALIVE로 이동
@@ -422,7 +461,7 @@ void CParticleSystem::Action_By_Age()
 	// 루프 옵션에 따른 수명 처리
 	for (auto iter = m_Particles[ALIVE].begin(); iter != m_Particles[ALIVE].end();)
 	{
-		if (iter->fAge > iter->fLifeTime)
+		if (false == iter->isAlive)
 		{
 			Reset_Particle(iter);
 			// 루프 활성화 시 Wait으로 이동
@@ -595,14 +634,22 @@ void CParticleSystem::ResetStartPosition(PARTICLE_IT& _particle_iter)
 			fTheta = m_ShapeModuleDesc.fLoopTheta;
 		}
 
-		_float3 vCamPos = pGameInstance->Get_CamPosition()->xyz();
-		_float4x4 ResultMatrix = pGameInstance->RightUpLook_In_Vectors(vPosition, vCamPos);
-
-		// 위치 설정
+		// 각도 결정
 		fTheta = XMConvertToRadians(fTheta);
 
-		_float3 vLook = _float3(0.f, 0.f, 1.f);
-		vDirection = XMVector3TransformCoord(ResultMatrix.Right(), _float4x4::MatrixRotationAxis(ResultMatrix.Look(), fTheta));
+		// 카메라 기준 퍼지는 모양
+		if (true == m_ShapeModuleDesc.isCameraAxis)
+		{
+			_float3 vCamPos = pGameInstance->Get_CamPosition()->xyz();
+			_float4x4 RULMatrix = pGameInstance->RightUpLook_In_Vectors(vPosition, vCamPos);
+			vDirection = XMVector3TransformCoord(RULMatrix.Right(), _float4x4::MatrixRotationAxis(RULMatrix.Look(), fTheta));
+		}
+		else // xz평면 기준 퍼지는 모양
+		{
+			vDirection = XMVector3TransformCoord(_float3(0.f,0.f, 1.f), _float4x4::MatrixRotationY(fTheta));
+		}
+
+		// 위치 설정
 		vPosition = fLength * vDirection;
 		//(*_particle_iter).WorldMatrix.Translation();
 	}
@@ -680,13 +727,14 @@ HRESULT CParticleSystem::Add_Components()
 			, TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
 			throw(TEXT("Com_Shader"));
 
-		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_Component_VIBuffer_Rect_Color_Index_Instance")
+		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_Component_VIBuffer_Rect_Particle_Instance")
 			, TEXT("Com_Buffer"), reinterpret_cast<CComponent**>(&m_pBuffer), &m_MainModuleDesc.iMaxParticles)))
 			throw(TEXT("Com_Buffer"));
+
 	}
 	catch (const _tchar* pErrorTag)
 	{
-		wstring wstrErrorMSG = TEXT("Failed Add_Component in CParticleSystem: ");
+		wstring wstrErrorMSG = TEXT("Failed Add_Component in CParticleSystem : ");
 		wstrErrorMSG += pErrorTag;
 		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
 		Safe_Release(pGameInstance);
@@ -710,18 +758,9 @@ void CParticleSystem::Resize_Container(_uint iNumMaxParticle)
 	m_Particles[WAIT].resize(iNumMaxParticle);
 	m_Particles[DEAD].clear();
 }
-void CParticleSystem::Sum_TimeDelta(const _float& _fTimeDelta)
-{
-	// 수명처리
-	// MainModule
-	m_MainModuleDesc.fParticleSystemAge += _fTimeDelta;
-	for (auto& Particle : m_Particles[ALIVE])
-		Particle.fAge += _fTimeDelta;
-	for (auto& Particle : m_Particles[DELAY])
-		Particle.fAge += _fTimeDelta;
-}
 void CParticleSystem::Reset_Particle(PARTICLE_IT& _particle_iter)
 {
+	_particle_iter->isAlive = true;
 	_particle_iter->fAge = 0.f;
 
 	// Delay 결정
@@ -780,6 +819,9 @@ void CParticleSystem::Reset_Particle(PARTICLE_IT& _particle_iter)
 	_particle_iter->fGravityAccel = { 0.f };
 
 	m_TextureSheetAnimationModuleDesc.Reset(_particle_iter);
+
+	for (auto& Event : _particle_iter->Events)
+		Event.Reset();
 }
 void CParticleSystem::Reset_AllParticles()
 {
@@ -791,22 +833,22 @@ void CParticleSystem::Reset_AllParticles()
 		}
 	}
 }
-_bool CParticleSystem::Wating_One_Particle()
+PARTICLE_IT CParticleSystem::Wating_One_Particle()
 {
 	if (m_Particles[WAIT].empty())
 	{
-		return false;
+		return m_Particles[WAIT].end();
 	}
 
 	if (m_Particles[ALIVE].size() >= m_MainModuleDesc.iMaxParticles)
 	{
-		return false;
+		return m_Particles[WAIT].end();
 	}
-
+	
 	PARTICLE_IT particle_iter = m_Particles[WAIT].begin();
 	Reset_Particle(particle_iter);
 	::TransitionTo(particle_iter, m_Particles[WAIT], m_Particles[DELAY]);
-	return true;
+	return particle_iter;
 }
 _float4x4 CParticleSystem::LookAt(_float3 vPos, _float3 _vTarget, _bool _isDeleteY)
 {

@@ -1,4 +1,5 @@
 #include "..\Public\Renderer.h"
+#include "GameInstance.h"
 #include "GameObject.h"
 #include "RenderTarget_Manager.h"
 #include "Light_Manager.h"
@@ -24,7 +25,7 @@ const _char* CRenderer::pRenderGroup[RENDER_END] = { "Render_Priority", "Render_
 , "Render_NonLight", "Render_Blend", "Render_Picking", "Render_Brushing", "Render_UI", "Render_UITexture" };
 
 CRenderer::CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CComponent(pDevice, pContext)
+	: CGameObject(pDevice, pContext)
 	, m_pRenderTarget_Manager(CRenderTarget_Manager::GetInstance())
 	, m_pLight_Manager(CLight_Manager::GetInstance())
 {
@@ -37,7 +38,6 @@ HRESULT CRenderer::Initialize_Prototype()
 {
 	if (nullptr == m_pRenderTarget_Manager)
 		return E_FAIL;
-
 	_uint				iNumViews = { 1 };
 	D3D11_VIEWPORT		ViewportDesc;
 
@@ -235,6 +235,9 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 
 	if (FAILED(Render_Deferred()))
+		return E_FAIL;
+
+	if (FAILED(Render_MotionBlurInst()))
 		return E_FAIL;
 
 	if (FAILED(Render_NonLight()))
@@ -525,6 +528,30 @@ HRESULT CRenderer::Render_Deferred()
 	return S_OK;
 }
 
+HRESULT CRenderer::Render_MotionBlurInst()
+{
+	if (nullptr == m_pRenderTarget_Manager)
+		return E_FAIL;
+
+	//if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Blend"))))
+	//	return E_FAIL;
+
+	//for (auto& pGameObject : m_RenderObjects[RENDER_MOTIONBLUR])
+	//{
+	//	if (nullptr != pGameObject)
+	//		pGameObject->Render();
+
+	//	Safe_Release(pGameObject);
+	//}
+
+	//m_RenderObjects[RENDER_MOTIONBLUR].clear();
+
+	//if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext)))
+	//	return E_FAIL;
+
+	return S_OK;
+}
+
 HRESULT CRenderer::Render_NonLight()
 {
 	for (auto& pGameObject : m_RenderObjects[RENDER_NONLIGHT])
@@ -544,7 +571,7 @@ HRESULT CRenderer::Render_Blend()
 {
 	if (FAILED(Sort_Blend()))
 		return E_FAIL;
-
+	
 	for (auto& pGameObject : m_RenderObjects[RENDER_BLEND])
 	{
 		if (nullptr != pGameObject)
@@ -652,6 +679,18 @@ HRESULT CRenderer::Render_EffectType()
 
 	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext)))
 		return E_FAIL;
+
+	m_pMotionBlurInstance->Begin_MRT();
+	for (auto& pGameObject : m_RenderObjects[RENDER_MOTIONBLUR])
+	{
+		if (nullptr != pGameObject)
+			pGameObject->Render();
+
+		Safe_Release(pGameObject);
+	}
+
+	m_RenderObjects[RENDER_MOTIONBLUR].clear();
+	m_pMotionBlurInstance->End_MRT();
 
 	return S_OK;
 }
@@ -773,6 +812,11 @@ HRESULT CRenderer::Sort_UI()
 
 HRESULT CRenderer::Add_Components()
 {	
+
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+
 	m_pDeferredShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Deferred.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements);
 	if (nullptr == m_pDeferredShader)
 		return E_FAIL;
@@ -828,10 +872,12 @@ HRESULT CRenderer::Add_Components()
 	if (nullptr == m_pDistortion)
 		return E_FAIL;
 
+	m_pMotionBlurInstance = CMotionBlurInstance::Create(m_pDevice, m_pContext, 0);
+	if (nullptr == m_pMotionBlurInstance)
+		return E_FAIL;
 	m_pGlow = CGlow::Create(m_pDevice, m_pContext, TEXT("Target_Glow"), 1.f);//파티클이 갖고있는 정보하나주면 힘을 변경하도록 하면될것같음
 	if (nullptr == m_pGlow)
 		return E_FAIL;
-
 	m_pMotionBlur = CMotionBlur::Create(m_pDevice, m_pContext, TEXT("Target_FinGlow"));
 	if (nullptr == m_pMotionBlur)
 		return E_FAIL;
@@ -843,12 +889,11 @@ HRESULT CRenderer::Add_Components()
 	m_pFlowMap = CFlowMap::Create(m_pDevice, m_pContext,TEXT("Target_FlowMap"));
 	if (nullptr == m_pFlowMap)
 		return E_FAIL;
-
-
+		
+	Safe_Release(pGameInstance);
 	return S_OK;
 }
 
-#ifdef _DEBUG
 HRESULT CRenderer::Render_Debug()
 {
 	for (auto& pDebugCom : m_DebugObject)
@@ -949,7 +994,7 @@ CRenderer* CRenderer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 	return pInstance;
 }
 
-CComponent* CRenderer::Clone(void* pArg)
+CGameObject* CRenderer::Clone(void* pArg)
 {
 	AddRef();
 
@@ -1002,5 +1047,6 @@ void CRenderer::Free()
 	Safe_Release(m_pSSAOBlur);
 	Safe_Release(m_pDistortion);
 	Safe_Release(m_pGlow);
+	Safe_Release(m_pMotionBlurInstance);
 	Safe_Release(m_pFlowMap);
 }

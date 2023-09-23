@@ -18,6 +18,8 @@ class CTexture;
 class CShader;
 class CModel;
 class CTransform;
+class CMotionBlurInstance;
+class CVIBuffer_Rect_Particle_Instance;
 END
 
 BEGIN(Engine)
@@ -25,14 +27,9 @@ BEGIN(Engine)
 class ENGINE_DLL CParticleSystem : public CGameObject
 {
 public:
-	typedef VTXCOLIDXINSTANCE INSTANCE;
-	typedef CVIBuffer_Color_Index_Instance CBuffer;
-	// CVIBuffer_Rect_Color_Index_Instance;
-
-public:
 	// ALIVE : 업데이트 되고 있는 파티클
 	// DELAY : 대기시간이 채워지면 ALIVE로 넘어감
-	// WAIT : 파티클 풀 장소
+	// WAIT : 파티클 풀 장소(루프on일 경우 파티클이 죽었을 때 여기로 온다.)
 	// DEAD : 죽은 파티클 부활 할 수 없음.
 	enum STATE { ALIVE, DELAY, WAIT, DEAD, STATE_END };
 
@@ -46,6 +43,11 @@ public:
 	_bool Is_AllDead() { return (m_Particles[ALIVE].empty() && m_Particles[DELAY].empty()); }
 	_bool IsEnable() { return m_MainModuleDesc.isEnable; }
 	_bool Is_AliveEmpty() { return m_Particles[ALIVE].empty(); }
+	void Add_Notify(PT_NOTIFY PTNotify);
+
+	list<PARTICLE>::iterator Begin(STATE eState) { return m_Particles[eState].begin(); }
+	list<PARTICLE>::iterator End(STATE eState) { return m_Particles[eState].end(); }		
+	void PlayEvent(const PARTICLE_IT& Particle_iter);
 
 public:
 	virtual HRESULT Initialize_Prototype(const _tchar* _pDirectoryPath, _uint iLevel);
@@ -84,7 +86,7 @@ public:
 
 protected:
 	// WAIT->DELAY로 이동.
-	_bool Wating_One_Particle();
+	PARTICLE_IT Wating_One_Particle();
 
 	// 빌보드
 	_float4x4 LookAt(_float3 vPos, _float3 _vTarget, _bool _isDeleteY = false);
@@ -98,9 +100,6 @@ protected:
 
 	// 인스턴스 수에 따라 resize, reserve함수로 메모리 할당.
 	void Resize_Container(_uint iNumInstance);
-
-	// 나이 및 시간 누적값 처리.
-	void Sum_TimeDelta(const _float& _fTimeDelta);
 
 protected:
 	void Action_By_Age();
@@ -119,6 +118,7 @@ protected:
 	SIZE_OVER_LIFETIME				m_SizeOverLifeTimeModuleDesc;
 	ROTATION_OVER_LIFETIME_MODULE	m_RotationOverLifetimeModuleDesc;
 	TEXTURE_SHEET_ANIMATION			m_TextureSheetAnimationModuleDesc;
+	NOISE_MODULE					m_NoiseModuleDesc;
 	RENDERER_MODULE					m_RendererModuleDesc;
 
 protected: 
@@ -128,13 +128,14 @@ protected:
 	CTexture* m_pClipTexture = { nullptr }; // 알파테스트에 사용될 텍스처
 	CTexture* m_pGradientTexture = { nullptr }; // 알파테스트에 사용될 텍스처
 	CTexture* m_pNormalTexture = { nullptr }; // 텍스처시트에 사용될 텍스처
-	CBuffer* m_pBuffer = { nullptr };
+	CVIBuffer_Rect_Particle_Instance* m_pBuffer = { nullptr };
 	CShader* m_pShader = { nullptr };
 	CModel* m_pModel = { nullptr };
+	//CMotionBlurInstance* m_pMotionBlurInstance = { nullptr };
 
 protected:
 	list<PARTICLE> m_Particles[STATE_END];
-	vector<INSTANCE>  m_ParticleMatrices;
+	vector<VTXPARTICLEINSTANCE>  m_ParticleMatrices;
 	function<void()> m_StopAction;
 	_uint m_iLevel = { 0 };
 

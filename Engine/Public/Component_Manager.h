@@ -46,6 +46,7 @@
 #include "VIBuffer_Cell.h"
 #include "Mesh_Instance.h"
 #include "Model_Instance.h"
+#include "MotionBlurInst.h"
 #include "VIBuffer_Cloth.h"
 #include "ParticleSystem.h"
 #include "Bounding_Sphere.h"
@@ -68,9 +69,8 @@
 #include "VIBuffer_Point_Instance.h"
 #include "VIBuffer_Rect_Color_Instance.h"
 #include "VIBuffer_Point_Color_Instance.h"
+#include "VIBuffer_Rect_Particle_Instance.h"
 #include "VIBuffer_Rect_Color_Index_Instance.h"
-
-
 //---------------------- ´«Ä¡ Ã¬°Ü!!
 #include "ConvexMesh.h"
 #include "TriangleMesh.h"

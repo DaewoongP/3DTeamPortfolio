@@ -25,105 +25,6 @@ void SplitUV(float2 In, int iWidthLength, int iHeightLength, int iCurIndex, out 
 	Out.y = In.y * fUnitHeight + vStartUV.y;	// y * 0.2f + 0.2f
 }
 
-///////////////// ∆ﬁ∏∞ ≥Î¿Ã¡Ó 1D //////////////////
-
-float g_fPersistence;
-float g_fOctaves;
-float g_fFrequency;
-float Noise1(int x)
-{
-	int n = x * 57;
-	n = (n << 13) ^ n;
-	return (1.0 - (float)((n * (n * n * 15731 + 789221) + 1376312589) & 0x7fffffff) / 1073741824.0);
-}
-
-float SmoothNoise_1(float x)
-{
-	float corners = (Noise1(int(x - 1)) + Noise1(int(x + 1))) / 4.0;
-	float center = Noise1(int(x)) / 2.0;
-	return corners + center;
-}
-
-float InterpolateNoise_1(float x)
-{
-	int integer_X = int(x);
-	float fractional_X = x - integer_X;
-
-	float v1 = SmoothNoise_1(integer_X);
-	float v2 = SmoothNoise_1(integer_X + 1);
-
-	return lerp(v1, v2, fractional_X);
-}
-
-float PerlinNoise_1D(float x)
-{
-	float total = 0.0;
-	float p = g_fPersistence; // Assuming persistence is a global variable or constant
-	int n = g_fOctaves - 1;
-
-	for (int i = 0; i <= n; i++)
-	{
-		float g_fFrequency = pow(2.0, i);
-		float amplitude = pow(p, i);
-
-		total += InterpolateNoise_1(x * g_fFrequency) * amplitude;
-	}
-
-	return total;
-}
-////////////////////////////////////////////////////
-////////////////// ∆ﬁ∏∞ ≥Î¿Ã¡Ó 2D //////////////////
-float Noise2(int x, int y)
-{
-	int n = x + y * 57;
-	n = (n << 13) ^ n;
-	return (1.0 - (float)((n * (n * n * 15731 + 789221) + 1376312589) & 0x7fffffff) / 1073741824.0);
-}
-
-float SmoothNoise_2(float x, float y)
-{
-	float corners = (Noise2(x - 1, y - 1) + Noise2(x + 1, y - 1) + Noise2(x - 1, y + 1) + Noise2(x + 1, y + 1)) / 16.0;
-	float sides = (Noise2(x - 1, y) + Noise2(x + 1, y) + Noise2(x, y - 1) + Noise2(x, y + 1)) / 8.0;
-	float center = Noise2(x, y) / 4.0;
-	return corners + sides + center;
-}
-
-float InterpolateNoise_2(float x, float y)
-{
-	int integer_X = int(x);
-	float fractional_X = x - integer_X;
-
-	int integer_Y = int(y);
-	float fractional_Y = y - integer_Y;
-
-	float v1 = SmoothNoise_2(integer_X, integer_Y);
-	float v2 = SmoothNoise_2(integer_X + 1, integer_Y);
-	float v3 = SmoothNoise_2(integer_X, integer_Y + 1);
-	float v4 = SmoothNoise_2(integer_X + 1, integer_Y + 1);
-
-	float i1 = lerp(v1, v2, fractional_X);
-	float i2 = lerp(v3, v4, fractional_X);
-
-	return lerp(i1, i2, fractional_Y);
-}
-
-float PerlinNoise_2D(float x, float y)
-{
-	float total = 0.0;
-	float p = g_fPersistence; // Assuming persistence is a global variable or constant
-	int n = g_fOctaves - 1;
-
-	for (int i = 0; i <= n; i++)
-	{
-		float g_fFrequency = pow(2.0, i);
-		float amplitude = pow(p, i);
-
-		total += InterpolateNoise_2(x * g_fFrequency, y * g_fFrequency) * amplitude;
-	}
-
-	return total;
-}
-////////////////////////////////////////////////////
 ///////////////// ∆ﬁ∏∞≥Î¿Ã¡Ó 3D /////////////////////
 
 float Noise3(int x, int y, int z)
@@ -179,21 +80,39 @@ float InterpolateNoise_3(float x, float y, float z)
 	return lerp(j1, j2, fractional_Z);
 }
 
-float PerlinNoise_3D(float x, float y, float z)
+
+void Remap_float4(float4 In, float2 InMinMax, float2 OutMinMax, out float4 Out)
+{
+	Out = OutMinMax.x + (In - InMinMax.x) * (OutMinMax.y - OutMinMax.x) / (InMinMax.y - InMinMax.x);
+}
+
+float PerlinNoise_3D(float x, float y, float z, float fFrequency, float fPersistence
+	, float fOctavesScale, float fOctavesMultiplier, unsigned int fOctaves)
 {
 	float total = 0.0;
-	float p = g_fPersistence;
-	int n = g_fOctaves - 1;
+	float p = fPersistence;
+	int n = fOctaves - 1;
+
+	if (fOctaves > 1)
+	{
+		x *= fOctavesScale;
+		y *= fOctavesScale;
+		z *= fOctavesScale;
+	}
 
 	for (int i = 0; i <= n; i++)
 	{
-		float g_fFrequency = pow(2.0, i);
+		float fFrequency = pow(2.0, i);
 		float amplitude = pow(p, i);
 
-		total += InterpolateNoise_3(x * g_fFrequency, y * g_fFrequency, z * g_fFrequency) * amplitude;
+		total += InterpolateNoise_3(x * fFrequency, y * fFrequency, z * fFrequency) * amplitude;
 	}
-
-	return total;
+	if (fOctaves > 1)
+	{
+		return total * fOctavesMultiplier;
+	}
+	else
+		return total;
 }
 
 ////////////////////////////////////////////////////

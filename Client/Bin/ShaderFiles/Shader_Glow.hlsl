@@ -38,7 +38,6 @@ struct VS_OUT
 {
     float4 vPosition : SV_POSITION;
     float2 vTexUV : TEXCOORD0;
-
 };
 
 VS_OUT VS_MAIN(VS_IN In)

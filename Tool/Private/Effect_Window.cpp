@@ -299,6 +299,17 @@ _bool CEffect_Window::Table_DragXYZ(string _strName, string _strTag, _float3* pV
 
 	return false;
 }
+_bool CEffect_Window::Table_DragXYZRange(string _strName, string _strTag, _float3* pValueMin, _float3* pValueMax, _float _fDragSpeed, _float _fMin, _float _fMax, _bool isImplement)
+{
+	_bool isMinResult = { false };
+	_bool isMaxResult = { false };
+	string strMinName = _strName + " Min";
+	string strMaxName = _strName + " Max";
+
+	//isMinResult = Table_DragXYZ(_strName.data());
+	//isMaxResult = Table_DragXYZ(_strName.data());
+	return _bool();
+}
 _bool CEffect_Window::Table_DragInt(string _strName, string _strTag, _int* _pValue, _float _fDragSpeed, _int _iMin, _int _iMax)
 {
 	_bool isResult = false;

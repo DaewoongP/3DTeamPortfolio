@@ -44,11 +44,12 @@ public:
 	void MainMoudle_TreeNode(CEffect_Window* pEffectWindow);
 	void EmissionModule_TreeNode(CEffect_Window* pEffectWindow);
 	void ShapeModule_TreeNode(CEffect_Window* pEffectWindow);
-	void RendererModule_TreeNode(CEffect_Window* pEffectWindow);
 	void ColorOverLifeTime_TreeNode(CEffect_Window* pEffectWindow);
 	void SizeOverLifeTime_TreeNode(CEffect_Window* pEffectWindow);
 	void RotationOverLifetimeModule_TreeNode(CEffect_Window* pEffectWindow);
 	void TextureSheetAnimationModule_TreeNode(CEffect_Window* pEffectWindow);
+	void NoiseModule_TreeNode(CEffect_Window* pEffectWindow);
+	void RendererModule_TreeNode(CEffect_Window* pEffectWindow);
 	void Save_FileDialog();
 	void Load_FileDialog();
 	void Load_After();
@@ -106,6 +107,9 @@ private:
 	class CComboBox* m_pAngularVelocityXEaseCombo = { nullptr };
 	class CComboBox* m_pAngularVelocityYEaseCombo = { nullptr };
 	class CComboBox* m_pAngularVelocityZEaseCombo = { nullptr };
+	class CComboBox* m_pNoiseStrengthOptionComboBox = { nullptr };
+	class CComboBox* m_pNoiseStrengthCurveEaseCombo = { nullptr };
+
 	class CImageFileDialog* m_pMaterialTextureIFD = { nullptr };
 	class CImageFileDialog* m_pAlphaTextureIFD = { nullptr };
 	class CImageFileDialog* m_pSpriteTextureIFD = { nullptr };

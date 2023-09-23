@@ -70,6 +70,17 @@ HRESULT CDummy_Effect::Initialize(void* pArg)
 	Safe_AddRef(m_pTrailTransform);
 	Safe_AddRef(m_pParticleSystemTransform);
 	Safe_AddRef(m_pMeshEffectTransform);
+
+	PT_NOTIFY ptNotify;
+	ptNotify.isPlayOnce = true;
+	ptNotify.StartCondition = [&](const PARTICLE_IT& iter)->_bool {
+		return false == iter->isAlive;
+	};
+	ptNotify.Event = [&]() {
+		cout << "데스이벤트 발생" << endl;
+	};
+	m_pParticleSystem->Add_Notify(ptNotify);
+
 	return S_OK;
 }
 
