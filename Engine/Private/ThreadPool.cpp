@@ -33,7 +33,7 @@ void CThreadPool::Initialize(_uint iNumThreads)
 template<class T, class ...Args>
 inline auto CThreadPool::Thread_Enqueue(T&& t, Args && ...args) -> std::future<typename std::invoke_result<T, Args ...>::type>
 {
-	using return_type = typename std::result_of<F(Args...)>::type;
+	using return_type = typename std::invoke_result <T, Args...>::type;
 
 	auto task = std::make_shared< std::packaged_task<return_type()> >(
 		std::bind(std::forward<T>(t), std::forward<Args>(args)...)

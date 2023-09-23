@@ -916,9 +916,9 @@ HRESULT CGameInstance::Delete_WChar(_tchar* pWChar)
 template<class T, class ...Args>
 inline auto CGameInstance::Thread_Enqueue(T&& t, Args && ...args) -> std::future<typename std::invoke_result<T, Args ...>::type>
 {
-	NULL_CHECK_RETURN_MSG(m_pThread_Pool, , TEXT("Thread Pool NULL"));
+	NULL_CHECK_MSG(m_pThread_Pool, TEXT("Thread Pool NULL"));
 
-	return m_pThread_Pool->Thread_Enqueue(t, args);
+	return m_pThread_Pool->Thread_Enqueue(std::forward<T>(t), std::forward<Args>(args)...);
 }
 
 void CGameInstance::Release_Engine()
