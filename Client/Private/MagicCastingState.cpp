@@ -26,6 +26,8 @@ HRESULT CMagicCastingState::Initialize(void* pArg)
 
 	pGameInstance->Add_Timer(TEXT("Fix_Angle_Magic_Cast"), false, 0.2f);
 
+	pGameInstance->Add_Timer(TEXT("Fix_Angle_Magic_Cast_Last"), false, 0.4f);
+
 	pGameInstance->Add_Timer(TEXT("Go_Idle_Key_Delay"), false, 0.2f);
 
 	m_fFixAngleSpeed = 5.0f;
@@ -49,6 +51,7 @@ void CMagicCastingState::OnStateEnter()
 	BEGININSTANCE;
 
 	pGameInstance->Reset_Timer(TEXT("Fix_Angle_Magic_Cast"));
+	pGameInstance->Reset_Timer(TEXT("Fix_Angle_Magic_Cast_Last"));
 
 	ENDINSTANCE;
 
@@ -77,7 +80,7 @@ void CMagicCastingState::OnStateEnter()
 	m_iBasicSpellCombo = BASICSPELL_START;
 
 #ifdef _DEBUG
-	cout << "Hard Land Enter" << endl;
+	//cout << "Hard Land Enter" << endl;
 #endif // _DEBUG
 }
 
@@ -91,12 +94,14 @@ void CMagicCastingState::OnStateTick()
 
 
 	Go_Protego();
+
+	Go_Roll();
 }
 
 void CMagicCastingState::OnStateExit()
 {
 #ifdef _DEBUG
-	cout << "Hard Land Exit" << endl;
+	//cout << "Hard Land Exit" << endl;
 #endif // _DEBUG
 
 	*m_pIsFinishAnimation = true;
@@ -369,14 +374,24 @@ void CMagicCastingState::Fix_Angle()
 	BEGININSTANCE;
 
 	//타이머가 전부 돌지 않았다면
-	if (false == pGameInstance->Check_Timer(TEXT("Fix_Angle_Magic_Cast")))
+	if (false == pGameInstance->Check_Timer(TEXT("Fix_Angle_Magic_Cast")) && BASICSPELL_LAST != m_iBasicSpellCombo)
 	{
 		_float fAngle = *m_pFTargetAngle;
 
 		//지속적으로 회전
 		m_pPlayerTransform->Turn(_float3(0.0f, 1.0f, 0.0f), fAngle * pGameInstance->Get_World_Tick() * m_fFixAngleSpeed);
-	}
 
+		m_isLastBasicSpellBack = false;
+	}
+	else if (true == m_isLastBasicSpellBack && BASICSPELL_RANDOM_BACK == m_iBasicSpellRandom && BASICSPELL_LAST == m_iBasicSpellCombo)
+	{
+		_float fAngle = *m_pFTargetAngle;
+
+		//지속적으로 회전
+		m_pPlayerTransform->Turn(_float3(0.0f, 1.0f, 0.0f), fAngle/* * pGameInstance->Get_World_Tick() * m_fFixAngleSpeed*/);
+
+		m_isLastBasicSpellBack = true;
+	}
 	ENDINSTANCE;
 }
 
@@ -385,6 +400,7 @@ void CMagicCastingState::Initialize_Spell()
 	BEGININSTANCE;
 
 	pGameInstance->Reset_Timer(TEXT("Fix_Angle_Magic_Cast"));
+	pGameInstance->Reset_Timer(TEXT("Fix_Angle_Magic_Cast_Last"));
 
 	ENDINSTANCE;
 }
@@ -404,6 +420,18 @@ void CMagicCastingState::Go_Idle()
 			true == pGameInstance->Check_Timer(TEXT("Go_Idle_Key_Delay"))))
 	{
 		Set_StateMachine(TEXT("Idle"));
+	}
+
+	ENDINSTANCE;
+}
+
+void CMagicCastingState::Go_Roll()
+{
+	BEGININSTANCE;
+
+	if (pGameInstance->Get_DIKeyState(DIK_LCONTROL,CInput_Device::KEY_DOWN))
+	{
+		Set_StateMachine(TEXT("Roll"));
 	}
 
 	ENDINSTANCE;

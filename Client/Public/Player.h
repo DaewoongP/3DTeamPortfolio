@@ -15,6 +15,7 @@ BEGIN(Client)
 class CPlayer_Camera;
 class CWeapon_Player_Wand;
 class CStateContext;
+class CPlayer_Information;
 END
 
 BEGIN(Client)
@@ -31,6 +32,7 @@ public:
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
+	virtual HRESULT Initialize_Level(_uint iCurrentLevelIndex) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual void OnCollisionEnter(COLLEVENTDESC CollisionEventDesc) override;
@@ -48,6 +50,9 @@ private:
 
 private:
 	CPlayer_Camera* m_pPlayer_Camera = { nullptr };
+	CPlayer_Information* m_pPlayer_Information = { nullptr };
+
+
 
 private:
 	//카메라룩과 플레이어룩의 차이 각을 담기위한 변수(음수일 경우 오른쪽, 양수일 경우 왼쪽)
@@ -64,7 +69,11 @@ private:
 	class CMagicSlot*	m_pMagicSlot = { nullptr };
 	CWeapon_Player_Wand*	m_pWeapon = { nullptr };
 
+	//절두체 타겟 설정 완료되면 사용
 	CTransform* m_pTargetTransform = { nullptr };
+
+	_float		m_fClothPower = { 0.f };
+	_float		m_fClothPowerPlus = { 0.0f };
 
 private:
 	HRESULT Add_Components();
@@ -101,9 +110,15 @@ private:
 
 	void Protego();
 
+	void Gravity_On();
+	void Gravity_Off();
+
 	HRESULT Bind_Notify();
 
 	void Update_Cloth(_float fTimeDelta);
+
+	//타겟을 정하기 위한 함수 (임시 용)
+	void Find_Target();
 
 public:
 	static CPlayer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

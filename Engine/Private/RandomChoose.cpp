@@ -49,7 +49,7 @@ HRESULT CRandomChoose::Assemble_Behavior(const wstring& BehaviorTag, CBehavior* 
 
 	if (-1 == iIndex)
 		return E_FAIL;
-
+	
 	while (0 < iIndex--)
 		++m_iterCurBehavior;
 
@@ -69,7 +69,7 @@ void CRandomChoose::Set_Random_Behavior()
 
 	if (-1 == iIndex)
 		return;
-
+	
 	while (0 < iIndex--)
 		++m_iterCurBehavior;
 }

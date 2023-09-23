@@ -286,7 +286,7 @@ HRESULT CConfringo::Add_Components()
 
 HRESULT CConfringo::Add_Effect()
 {
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Confringo_Trail"), 
+	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Confringo_Trail"), 
 		TEXT("Com_Trail"), reinterpret_cast<CComponent**>(&m_pTrail))))
 	{
 		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Confringo_Trail)");

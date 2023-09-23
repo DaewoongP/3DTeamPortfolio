@@ -250,9 +250,6 @@
     <Filter Include="03. Behaviors\04. Movement">
       <UniqueIdentifier>{d95f3888-ed91-44de-bed2-7ee502737efa}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Behaviors\05. Function">
-      <UniqueIdentifier>{11282af5-bac7-4061-9441-81c0be48d567}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03. Behaviors\03. RandomChoose">
       <UniqueIdentifier>{68fa3644-0ca1-4bca-844f-2fc72e090f6d}</UniqueIdentifier>
     </Filter>
@@ -331,6 +328,12 @@
     <Filter Include="02. GameObject\04. MapObject\MapEffect">
       <UniqueIdentifier>{3d2f0c96-2d67-4229-a119-7e41208b82b3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\01. Player\03. PlayerInformation">
+      <UniqueIdentifier>{32c19ffc-fb69-42ca-ba81-07c40b9b305f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Behaviors\05. Function">
+      <UniqueIdentifier>{779d067f-c7a3-4f48-944c-fb03090c91d3}</UniqueIdentifier>
+    </Filter>
     <Filter Include="01. Levels\02. Vault">
       <UniqueIdentifier>{0cc40b5b-ca2a-4eb4-a4df-e1f5dbb77a1d}</UniqueIdentifier>
     </Filter>
@@ -399,7 +402,7 @@
     <ClInclude Include="..\public\Logo_BackGround.h">
       <Filter>02. GameObject\05. UI\Logo</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Level_MainGame.h">
+    <ClInclude Include="..\public\Level_Cliffside.h">
       <Filter>01. Levels\01. Cliffside</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Terrain.h">
@@ -504,9 +507,6 @@
     <ClInclude Include="..\Public\Player.h">
       <Filter>02. GameObject\01. Player</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Check_Degree.h">
-      <Filter>03. Behaviors\05. Function</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Turn.h">
       <Filter>03. Behaviors\04. Movement</Filter>
     </ClInclude>
@@ -545,9 +545,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\Sequence_Attack.h">
       <Filter>03. Behaviors\02. Sequences</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Check_Distance.h">
-      <Filter>03. Behaviors\05. Function</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Sequence_MoveTarget.h">
       <Filter>03. Behaviors\02. Sequences</Filter>
@@ -723,8 +720,32 @@
     <ClInclude Include="..\Public\MapEffect.h">
       <Filter>02. GameObject\04. MapObject\MapEffect</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Player_Information.h">
+      <Filter>02. GameObject\01. Player\03. PlayerInformation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\LookAt.h">
+      <Filter>03. Behaviors\04. Movement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Check_Degree.h">
+      <Filter>03. Behaviors\05. Function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Check_Distance.h">
+      <Filter>03. Behaviors\05. Function</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\Finisher.h">
       <Filter>04. Magic\MagicBall\07. Finisher</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Level_Vault.h">
+      <Filter>01. Levels\02. Vault</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Level_GreatHall.h">
+      <Filter>01. Levels\03. GreatHall</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Level_Smith.h">
+      <Filter>01. Levels\04. Smith</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Client_Enum.h">
+      <Filter>99. Headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -746,7 +767,7 @@
     <ClCompile Include="..\private\Logo_BackGround.cpp">
       <Filter>02. GameObject\05. UI\Logo</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Level_MainGame.cpp">
+    <ClCompile Include="..\private\Level_Cliffside.cpp">
       <Filter>01. Levels\01. Cliffside</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Terrain.cpp">
@@ -839,9 +860,6 @@
     <ClCompile Include="..\Private\Player.cpp">
       <Filter>02. GameObject\01. Player</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Check_Degree.cpp">
-      <Filter>03. Behaviors\05. Function</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Turn.cpp">
       <Filter>03. Behaviors\04. Movement</Filter>
     </ClCompile>
@@ -880,9 +898,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\Sequence_Attack.cpp">
       <Filter>03. Behaviors\02. Sequences</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Check_Distance.cpp">
-      <Filter>03. Behaviors\05. Function</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Sequence_MoveTarget.cpp">
       <Filter>03. Behaviors\02. Sequences</Filter>
@@ -1055,8 +1070,29 @@
     <ClCompile Include="..\Private\MapEffect.cpp">
       <Filter>02. GameObject\04. MapObject\MapEffect</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Player_Information.cpp">
+      <Filter>02. GameObject\01. Player\03. PlayerInformation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\LookAt.cpp">
+      <Filter>03. Behaviors\04. Movement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Check_Degree.cpp">
+      <Filter>03. Behaviors\05. Function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Check_Distance.cpp">
+      <Filter>03. Behaviors\05. Function</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\Finisher.cpp">
       <Filter>04. Magic\MagicBall\07. Finisher</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Level_Vault.cpp">
+      <Filter>01. Levels\02. Vault</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Level_GreatHall.cpp">
+      <Filter>01. Levels\03. GreatHall</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Level_Smith.cpp">
+      <Filter>01. Levels\04. Smith</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1079,7 +1115,6 @@
     <None Include="ImGui\misc\debuggers\imgui.natstepfilter">
       <Filter>98. Default\ImGui_Defaults</Filter>
     </None>
-    <None Include=".editorconfig" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTex.hlsl">

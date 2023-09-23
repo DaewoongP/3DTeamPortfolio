@@ -19,7 +19,7 @@ private:
 
 public:
 	HRESULT		Add_Component(const _tchar* pComponentTag, class CComponent* pComponent);
-	const unordered_map<const _tchar*, class CComponent*> Get_Components() const { return m_Components; }
+	const unordered_map<const _tchar*, class CComponent*>* Get_Components() const { return &m_Components; }
 	// 레이어 클리어
 	HRESULT			Clear_Layer();
 	HRESULT			Delete_Component(const _tchar* pComponentTag);

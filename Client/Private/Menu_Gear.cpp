@@ -62,14 +62,14 @@
 //	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 //	Safe_AddRef(pGameInstance);
 //
-//	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Back"),
+//	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Back"),
 //		CUI_Back::Create(m_pDevice, m_pContext), true)))
 //	{
 //		Safe_Release(pGameInstance);
 //		return E_FAIL;
 //	}
 //
-//	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Effect_Back"),
+//	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Effect_Back"),
 //		CUI_Effect_Back::Create(m_pDevice, m_pContext), true)))
 //	{
 //		Safe_Release(pGameInstance);
@@ -86,21 +86,21 @@
 //	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 //	Safe_AddRef(pGameInstance);
 //
-//	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Back"), TEXT("Layer_Menu_UI"), TEXT("Com_UI_Effect_Back_Menu_Frame"))))
+//	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Back"), TEXT("Layer_Menu_UI"), TEXT("Com_UI_Effect_Back_Menu_Frame"))))
 //	{
 //		MSG_BOX("Com_Menu : Failed Clone Component (Com_UI_Effect_Back_Menu_Frame)");
 //		Safe_Release(pGameInstance);
 //		return E_FAIL;
 //	}
 //
-//	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Back"), TEXT("Layer_Menu_UI"), TEXT("Com_UI_Effect_Back_Menu_Q"))))
+//	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Back"), TEXT("Layer_Menu_UI"), TEXT("Com_UI_Effect_Back_Menu_Q"))))
 //	{
 //		MSG_BOX("Com_Menu : Failed Clone Component (Com_UI_Effect_Back_Menu_Keys)");
 //		Safe_Release(pGameInstance);
 //		return E_FAIL;
 //	}
 //
-//	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Back"), TEXT("Layer_Menu_UI"), TEXT("Com_UI_Effect_Back_Menu_E"))))
+//	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Back"), TEXT("Layer_Menu_UI"), TEXT("Com_UI_Effect_Back_Menu_E"))))
 //	{
 //		MSG_BOX("Com_Menu : Failed Clone Component (Com_UI_Effect_Back_Menu_Keys)");
 //		Safe_Release(pGameInstance);
@@ -116,7 +116,7 @@
 //	text = TEXT("Setting");
 //	Add_TextComponent(text);
 //
-//	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Back"), TEXT("Layer_Menu_UI"), TEXT("Com_UI_Effect_Back_Menu_Back"))))
+//	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Back"), TEXT("Layer_Menu_UI"), TEXT("Com_UI_Effect_Back_Menu_Back"))))
 //	{
 //		MSG_BOX("Com_Info_Main : Failed Clone Component (Com_UI_Effect_Back_Menu_Back)");
 //		Safe_Release(pGameInstance);
@@ -137,7 +137,7 @@
 //
 //	wstring text = TEXT("Com_UI_Effect_Back_Text_");
 //	text += wszTag;
-//	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Effect_Back"),
+//	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Effect_Back"),
 //		text.c_str(), reinterpret_cast<CComponent**>(&pText))))
 //	{
 //		MSG_BOX("Com_Info_Main : Failed Clone Component (Com_UI_Effect_Back_Text)");

@@ -10,7 +10,7 @@ HRESULT CModel_Converter::Convert_Model(_uint iType, const _char* pModelFilePath
 	TYPE eType = TYPE(iType);
 	_uint		iFlag = 0;
 
-	if (TYPE_ANIM == eType|| TYPE_ONLYANIM == eType)
+	if (TYPE_ANIM == eType || TYPE_ONLYANIM == eType)
 		iFlag = aiProcess_GlobalScale | aiProcess_ConvertToLeftHanded | aiProcessPreset_TargetRealtime_Fast;
 	else
 		iFlag = aiProcess_PreTransformVertices | aiProcess_GlobalScale | aiProcess_ConvertToLeftHanded | aiProcessPreset_TargetRealtime_Fast;
