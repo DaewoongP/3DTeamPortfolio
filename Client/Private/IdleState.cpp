@@ -46,7 +46,7 @@ void CIdleState::Late_Tick(_float fTimeDelta)
 void CIdleState::OnStateEnter()
 {
 #ifdef _DEBUG
-	cout << "Idle Enter" << endl;
+	//cout << "Idle Enter" << endl;
 #endif // _DEBUG
 
 	BEGININSTANCE;
@@ -106,7 +106,7 @@ void CIdleState::OnStateTick()
 void CIdleState::OnStateExit()
 {
 #ifdef _DEBUG
-	cout << "Idle Exit" << endl;
+	//cout << "Idle Exit" << endl;
 #endif // _DEBUG
 }
 

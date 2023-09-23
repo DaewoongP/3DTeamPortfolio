@@ -43,8 +43,6 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 
 public:
-	void Enable_Trail(_bool _isEnable);
-	HRESULT Reset_Trail();
 	void SetActionTrigger(_bool value) {m_bActionTrigger = value;}
 	void TrailAction(_float3 pos,_float fTimeDelta);
 

@@ -20,11 +20,11 @@ HRESULT CVIBuffer_Rect_Trail::Reset_Trail()
 	// Local Position
 	_float3 vHighPos = ((*m_TrailDesc.pHighLocalMatrix) * (*m_TrailDesc.pPivotMatrix)).Translation();
 	_float3 vLowPos = ((*m_TrailDesc.pLowLocalMatrix) * (*m_TrailDesc.pPivotMatrix)).Translation();
-	
+
 	// World Position
 	_float3 vHighWorldPos = XMVector3TransformCoord(vHighPos, *m_TrailDesc.pWorldMatrix);
 	_float3 vLowWorldPos = XMVector3TransformCoord(vLowPos, *m_TrailDesc.pWorldMatrix);
-	
+
 	D3D11_MAPPED_SUBRESOURCE	MappedSubResource;
 
 	m_pContext->Map(m_pVB, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedSubResource);
@@ -193,7 +193,7 @@ void CVIBuffer_Rect_Trail::Tick()
 	// Local Position
 	_float3 vHighPos = ((*m_TrailDesc.pHighLocalMatrix) * (*m_TrailDesc.pPivotMatrix)).Translation();
 	_float3 vLowPos = ((*m_TrailDesc.pLowLocalMatrix) * (*m_TrailDesc.pPivotMatrix)).Translation();
-	
+
 	// World Position
 	_float3 vHighWorldPos = XMVector3TransformCoord(vHighPos, *m_TrailDesc.pWorldMatrix);
 	_float3 vLowWorldPos = XMVector3TransformCoord(vLowPos, *m_TrailDesc.pWorldMatrix);
@@ -205,12 +205,12 @@ void CVIBuffer_Rect_Trail::Tick()
 	VTXPOSTEX* pData = static_cast<VTXPOSTEX*>(MappedSubResource.pData);
 
 	//자르기
-	_int iHeadIndex, iTailIndex,iBodyCount = { 0 };
+	_int iHeadIndex, iTailIndex, iBodyCount = { 0 };
 	iHeadIndex = 0;
 	iTailIndex = 0;
 
 	//꼬리 찾을
-	for (_uint i = m_iNumVertices - 1; i >= 2; i-=2)
+	for (_uint i = m_iNumVertices - 1; i >= 2; i -= 2)
 	{
 		if (!XMVector3Equal(_float3(pData[i].vPosition), _float3(pData[i - 2].vPosition)))
 		{
@@ -218,11 +218,11 @@ void CVIBuffer_Rect_Trail::Tick()
 			break;
 		}
 		pData[i].vTexCoord = { 1.f ,0.f };
-		pData[i-1].vTexCoord = { 1.f ,1.f };
+		pData[i - 1].vTexCoord = { 1.f ,1.f };
 	}
-	
+
 	//머릴 찾을
-	for (_uint i = 1; i < m_iNumVertices -2 ; i+=2)
+	for (_uint i = 1; i < m_iNumVertices - 2; i += 2)
 	{
 		if (!XMVector3Equal(_float3(pData[i].vPosition), _float3(pData[i + 2].vPosition)))
 		{
@@ -230,23 +230,48 @@ void CVIBuffer_Rect_Trail::Tick()
 			break;
 		}
 		pData[i].vTexCoord = { 0.f ,0.f };
-		pData[i-1].vTexCoord = { 0.f ,1.f };
+		pData[i - 1].vTexCoord = { 0.f ,1.f };
 	}
 
 	iBodyCount = iTailIndex - iHeadIndex;
 	if (iBodyCount != 0)
 	{
-		for (_int i = iTailIndex; i >= iHeadIndex-1; i-=2)
+		for (_int i = iTailIndex; i >= iHeadIndex - 1; i -= 2)
 		{
 			float t = static_cast<float>(i - iHeadIndex) / static_cast<float>(iBodyCount);
 			pData[i].vTexCoord = { t ,0.f };
-			pData[i-1].vTexCoord = { t ,1.f };
+			pData[i - 1].vTexCoord = { t ,1.f };
 		}
 	}
 
-	for (_uint i = m_iNumVertices - 1; i >= 2 ; --i)
+	//헤드가 움직였고, 몸체가 있다면?
+	if (iHeadIndex > 1 && iBodyCount != m_iNumVertices)
 	{
-		pData[i].vPosition = pData[i - 2].vPosition;
+		for (_uint i = m_iNumVertices - 1; i >= 2; i -= 2)
+		{
+			if (iTailIndex < i) // 꼬리보다 뒤라면?(지금 안움직이는 꼬리)
+			{
+				//현재 꼬리의 위치 - 2 (뒤 프레임과 위치가 다른 친구) 위치로 맞춰준다.
+				pData[i].vPosition = pData[iTailIndex - 2].vPosition;
+				pData[i - 1].vPosition = pData[iTailIndex - 3].vPosition;
+			}
+			else
+			{
+				// 머리보다 작으면? (뭉쳐있는 거니까 굳이 계산 안해도 됨)
+				if (i < iHeadIndex)
+					break;
+				// 머리보다 작지 않으면, 몸통부분이니까 앞프레임으로 땡겨줌.
+				pData[i].vPosition = pData[i - 2].vPosition;
+				pData[i - 1].vPosition = pData[(i - 1) - 2].vPosition;
+			}
+		}
+	}
+	else
+	{
+		for (_uint i = m_iNumVertices - 1; i >= 2; --i)
+		{
+			pData[i].vPosition = pData[i - 2].vPosition;
+		}
 	}
 
 	// 0번에 Low 월드 포지션을 대입한다
@@ -257,85 +282,107 @@ void CVIBuffer_Rect_Trail::Tick()
 	m_pContext->Unmap(m_pVB, 0);
 }
 
-//void CVIBuffer_Rect_Trail::Tick_Spline()
-//{
-//	std::lock_guard<std::mutex> lock(mtx);
-//
-//	// Local Position
-//	_float3 vHighPos = ((*m_TrailDesc.pHighLocalMatrix) * (*m_TrailDesc.pPivotMatrix)).Translation();
-//	_float3 vLowPos = ((*m_TrailDesc.pLowLocalMatrix) * (*m_TrailDesc.pPivotMatrix)).Translation();
-//
-//	// World Position
-//	_float3 vHighWorldPos = XMVector3TransformCoord(vHighPos, *m_TrailDesc.pWorldMatrix);
-//	_float3 vLowWorldPos = XMVector3TransformCoord(vLowPos, *m_TrailDesc.pWorldMatrix);
-//
-//	D3D11_MAPPED_SUBRESOURCE	MappedSubResource;
-//
-//	m_pContext->Map(m_pVB, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &MappedSubResource);
-//
-//	VTXPOSTEX* pData = static_cast<VTXPOSTEX*>(MappedSubResource.pData);
-//
-//
-//	//몸통의 크기를 구함.
-//	_int iHeadIndex = { 0 };
-//	_int iTailIndex = { 0 };
-//	_int iBodyCount = { 0 };
-//
-//	//꼬리 찾을
-//	for (_uint i = m_iNumVertices - 1; i >= 2; i -= 2)
-//	{
-//		if (!XMVector3Equal(_float3(pData[i].vPosition), _float3(pData[i - 2].vPosition)))
-//		{
-//			iTailIndex = i;
-//			break;
-//		}
-//	}
-//	//머릴 찾을
-//	for (_uint i = 1; i < m_iNumVertices - 2; i += 2)
-//	{
-//		if (!XMVector3Equal(_float3(pData[i].vPosition), _float3(pData[i + 2].vPosition)))
-//		{
-//			iHeadIndex = i;
-//			break;
-//		}
-//	}
-//
-//	iBodyCount = iTailIndex - iHeadIndex;
-//
-//	//정점보다 바디가 작으면(무조건 첫 이동임.)
-//	if (iBodyCount < m_iNumVertices)
-//	{
-//		//그냥 전체 러프
-//		for (_uint i = 0; i < m_iNumVertices; i += 2)
-//		{
-//			pData[i].vPosition = _float3(XMVectorLerp(_float3(pData[i].vPosition), vLowWorldPos, (_float)(m_iNumVertices - i)/ (_float)m_iNumVertices));
-//			pData[i+1].vPosition = _float3(XMVectorLerp(_float3(pData[i+1].vPosition), vHighWorldPos, (_float)(m_iNumVertices - (i + 1)) / (_float)m_iNumVertices));
-//		}
-//	}
-//	else
-//	{
-//		//아니면, 꼬리부터 한칸씩 땡겨서 이동하고, 남은 친구들은 내가 써먹을거임.
-//		_uint iIndex = 0;
-//		for (_uint i = m_iNumVertices - 1; i >= 2; i-=2)
-//		{
-//			if (m_iNumVertices / 2 < iIndex)
-//				break;
-//			pData[i].vPosition = pData[i - 2 - iIndex].vPosition;
-//			pData[i-1].vPosition = pData[(i - 1) - 2 - iIndex].vPosition;
-//			iIndex += 2;
-//		}
-//
-//		_uint iCnt = 0;
-//		for(_uint i = iIndex; i < m_iNumVertices;i += 2)
-//		{
-//			_float fValue = ((m_iNumVertices - iIndex) - iCnt) / (m_iNumVertices - iIndex);
-//			pData[i].vPosition = _float3(XMVectorCatmullRom(_float3(pData[iIndex-2].vPosition), _float3(pData[iIndex].vPosition), _float3(pData[0].vPosition), vLowWorldPos, fValue));
-//			pData[i + 1].vPosition = _float3(XMVectorCatmullRom(_float3(pData[iIndex - 2].vPosition), _float3(pData[iIndex].vPosition), _float3(pData[1].vPosition), vLowWorldPos, fValue));
-//			iCnt++;
-//		}
-//	}
-//	m_pContext->Unmap(m_pVB, 0);
-//}
+void CVIBuffer_Rect_Trail::Tick_Spline()
+{
+	std::lock_guard<std::mutex> lock(mtx);
+
+	// Local Position
+	_float3 vHighPos = ((*m_TrailDesc.pHighLocalMatrix) * (*m_TrailDesc.pPivotMatrix)).Translation();
+	_float3 vLowPos = ((*m_TrailDesc.pLowLocalMatrix) * (*m_TrailDesc.pPivotMatrix)).Translation();
+
+	// World Position
+	_float3 vHighWorldPos = XMVector3TransformCoord(vHighPos, *m_TrailDesc.pWorldMatrix);
+	_float3 vLowWorldPos = XMVector3TransformCoord(vLowPos, *m_TrailDesc.pWorldMatrix);
+
+	D3D11_MAPPED_SUBRESOURCE	MappedSubResource;
+
+	m_pContext->Map(m_pVB, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &MappedSubResource);
+
+	VTXPOSTEX* pData = static_cast<VTXPOSTEX*>(MappedSubResource.pData);
+
+	_int iHeadIndex, iTailIndex, iBodyCount = { 0 };
+	iHeadIndex = 0;
+	iTailIndex = 0;
+
+	for (_uint i = m_iNumVertices - 1; i >= 2; i -= 2)
+	{
+		if (!XMVector3Equal(_float3(pData[i].vPosition), _float3(pData[i - 2].vPosition)))
+		{
+			iTailIndex = i;
+			break;
+		}
+	}
+
+	for (_uint i = 1; i < m_iNumVertices - 2; i += 2)
+	{
+		if (!XMVector3Equal(_float3(pData[i].vPosition), _float3(pData[i + 2].vPosition)))
+		{
+			iHeadIndex = i;
+			break;
+		}
+	}
+
+	iBodyCount = iTailIndex - iHeadIndex;
+
+	//얼만큼 이동했는지 이동값을 받아옵니다.
+	_float fDist = _float3(pData[0].vPosition - vLowWorldPos).Length();
+	//거리별 땅겨줄 프레임임.
+	_float fDistPer = 0.1f;
+	//얼만큼 땅길건지 정하는거임.
+	_uint HeadFallowIdx = _uint(fDist / fDistPer) * 2;
+
+	//미리 그만큼 땡겨놓을거임.
+	for (_uint i = m_iNumVertices - 1; i >= HeadFallowIdx + 2; --i)
+	{
+		pData[i].vPosition = pData[i - 2 - HeadFallowIdx].vPosition;
+	}
+	//0번부터 땅길 인덱스까지 데꼬오는거임,
+	for (_uint i = 0; i < HeadFallowIdx; i += 2)
+	{
+		XMVectorCatmullRom(_float3(pData[i + 2].vPosition), _float3(pData[0].vPosition),
+			vLowWorldPos, vLowWorldPos, (fDistPer * i) / (fDist));
+		XMVectorCatmullRom(_float3(pData[(i + 1) + 2].vPosition), _float3(pData[1].vPosition),
+			vHighWorldPos, vHighWorldPos, (fDistPer * i) / (fDist));
+	}
+	m_pContext->Unmap(m_pVB, 0);
+}
+
+void CVIBuffer_Rect_Trail::Tick_Lightning(vector<_float3>* posVec)
+{
+	std::lock_guard<std::mutex> lock(mtx);
+
+	D3D11_MAPPED_SUBRESOURCE	MappedSubResource;
+
+	m_pContext->Map(m_pVB, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &MappedSubResource);
+
+	VTXPOSTEX* pData = static_cast<VTXPOSTEX*>(MappedSubResource.pData);
+
+	_uint iConunt = m_iNumVertices / (posVec->size()-1);
+	_uint iVectorSize = posVec->size()-1;
+	_uint iPositionNum = { 0 };
+
+	//모든 정점을 순회하며 위치를 변경해줍니다.
+	for (_uint i = 0; i < m_iNumVertices; i+=2)
+	{
+		// idx = i(현재 정점) / icount(pos당 감당하는 정점의 수)
+		_uint idx = i/(iConunt);
+		_float t = (i % (iConunt))/ (_float)iConunt;
+
+		pData[i].vPosition = 
+			_float3(XMVectorCatmullRom(posVec->data()[(idx ==0)?(0):(idx -1)],
+				posVec->data()[idx], 
+				posVec->data()[idx +1], 
+				posVec->data()[((idx +2)> iVectorSize - 2)? (iVectorSize-1): (idx +2)] - _float3(0,0,1),
+				t)) + (*m_TrailDesc.pHighLocalMatrix).Translation();
+		pData[i + 1].vPosition =
+			_float3(XMVectorCatmullRom(posVec->data()[(idx == 0) ? (0) : (idx - 1)],
+				posVec->data()[idx],
+				posVec->data()[idx + 1],
+				posVec->data()[((idx + 2) > iVectorSize - 2) ? (iVectorSize - 1) : (idx + 2)] - _float3(0, 0, 1),
+				t))+ (*m_TrailDesc.pLowLocalMatrix).Translation();
+	}
+	m_pContext->Unmap(m_pVB, 0);
+}
 
 HRESULT CVIBuffer_Rect_Trail::Render(const _char* pConstantName, _float4 vColor, CShader* pShader, const _char* pPassName)
 {

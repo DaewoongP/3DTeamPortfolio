@@ -1,16 +1,16 @@
-#include "..\Public\Level_MainGame.h"
+ï»¿#include "..\Public\Level_Cliffside.h"
 #include "GameInstance.h"
-#include "Seamless_Loader.h"
+#include "Level_Loading.h"
 #include "MapObject.h"
 #include "MapObject_Ins.h"
 #include "UI_Group_Enemy_HP.h"
 
-CLevel_MainGame::CLevel_MainGame(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CLevel_Cliffside::CLevel_Cliffside(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CLevel(pDevice, pContext)
 {
 }
 
-HRESULT CLevel_MainGame::Initialize()
+HRESULT CLevel_Cliffside::Initialize()
 {
 	if (FAILED(__super::Initialize()))
 		return E_FAIL;
@@ -64,19 +64,19 @@ HRESULT CLevel_MainGame::Initialize()
 		return E_FAIL;
 	}
 
-	if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/MapData6.ddd"))))
+	if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/MapData0.ddd"))))
 	{
 		MSG_BOX("Failed Load Map Object");
 
 		return E_FAIL;
 	}
 
-	if (FAILED(Load_MapObject_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins6.ddd"))))
+	/*if (FAILED(Load_MapObject_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins1.ddd"))))
 	{
 		MSG_BOX("Failed Load Map Object_Ins");
 
 		return E_FAIL;
-	}
+	}*/
 	
 #ifdef _DEBUG
 	if (FAILED(Ready_Layer_Debug(TEXT("Layer_Debug"))))
@@ -103,7 +103,7 @@ HRESULT CLevel_MainGame::Initialize()
 	return S_OK;
 }
 
-void CLevel_MainGame::Tick(_float fTimeDelta)
+void CLevel_Cliffside::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
@@ -117,15 +117,26 @@ void CLevel_MainGame::Tick(_float fTimeDelta)
 	{
 		pGameInstance->Set_CurrentScene(TEXT("Scene_FieldGuide"), false);
 	}
+
+	// ìŠ¤í…Œì´ì§€ ì´ë™
+	if (pGameInstance->Get_DIKeyState(DIK_BACKSPACE, CInput_Device::KEY_DOWN))
+	{
+		if (FAILED(pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVELID::LEVEL_VAULT))))
+		{
+			MSG_BOX("Failed Open LEVEL_CLIFFSIDE to LEVEL_VAULT");
+			Safe_Release(pGameInstance);
+			return;
+		}
+	}
 	
 	ENDINSTANCE;
 
 #ifdef _DEBUG
-	SetWindowText(g_hWnd, TEXT("°ÔÀÓ ·¹º§"));
+	SetWindowText(g_hWnd, TEXT("Cliffside"));
 #endif //_DEBUG
 }
 
-HRESULT CLevel_MainGame::Render()
+HRESULT CLevel_Cliffside::Render()
 {
 	if (FAILED(__super::Render()))
 		return E_FAIL;
@@ -133,7 +144,7 @@ HRESULT CLevel_MainGame::Render()
 	return S_OK;
 }
 
-HRESULT CLevel_MainGame::Ready_Lights()
+HRESULT CLevel_Cliffside::Ready_Lights()
 {
 	BEGININSTANCE;
 
@@ -155,7 +166,7 @@ HRESULT CLevel_MainGame::Ready_Lights()
 	return S_OK;
 }
 
-HRESULT CLevel_MainGame::Ready_Layer_BackGround(const _tchar* pLayerTag)
+HRESULT CLevel_Cliffside::Ready_Layer_BackGround(const _tchar* pLayerTag)
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
@@ -168,13 +179,13 @@ HRESULT CLevel_MainGame::Ready_Layer_BackGround(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Sky"), pLayerTag, TEXT("GameObject_Sky"))))
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Sky"), pLayerTag, TEXT("GameObject_Sky"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Sky)");
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Terrain"), pLayerTag, TEXT("GameObject_Terrain"))))
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Terrain"), pLayerTag, TEXT("GameObject_Terrain"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Terrain)");
 		return E_FAIL;
@@ -185,7 +196,7 @@ HRESULT CLevel_MainGame::Ready_Layer_BackGround(const _tchar* pLayerTag)
 	return S_OK;
 }
 
-HRESULT CLevel_MainGame::Ready_Layer_Player(const _tchar* pLayerTag)
+HRESULT CLevel_Cliffside::Ready_Layer_Player(const _tchar* pLayerTag)
 {
 	BEGININSTANCE;
 
@@ -197,7 +208,7 @@ HRESULT CLevel_MainGame::Ready_Layer_Player(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Player"), pLayerTag, TEXT("GameObject_Player"))))
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Player"), pLayerTag, TEXT("GameObject_Player"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Player)");
 		ENDINSTANCE;
@@ -209,7 +220,7 @@ HRESULT CLevel_MainGame::Ready_Layer_Player(const _tchar* pLayerTag)
 	return S_OK;
 }
 
-HRESULT CLevel_MainGame::Ready_Layer_Monster(const _tchar* pLayerTag)
+HRESULT CLevel_Cliffside::Ready_Layer_Monster(const _tchar* pLayerTag)
 {
 	BEGININSTANCE;
 	/* Add Scene : Main */
@@ -220,21 +231,21 @@ HRESULT CLevel_MainGame::Ready_Layer_Monster(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Golem_CombatGrunt"), pLayerTag, TEXT("GameObject_Golem_Combat"))))
+	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Golem_CombatGrunt"), pLayerTag, TEXT("GameObject_Golem_Combat"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Golem_Combat)");
 		ENDINSTANCE;
 		return E_FAIL;
 	}
 
-	/*if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Armored_Troll"), pLayerTag, TEXT("GameObject_Armored_Troll"))))
+	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Armored_Troll"), pLayerTag, TEXT("GameObject_Armored_Troll"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Armored_Troll)");
 		ENDINSTANCE;
 		return E_FAIL;
-	}*/
+	}
 
-	/*if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Golem_MerlinGrunt"), pLayerTag, TEXT("GameObject_Golem_Merlin"))))
+	/*if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Golem_MerlinGrunt"), pLayerTag, TEXT("GameObject_Golem_Merlin"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Golem_Merlin)");
 		ENDINSTANCE;
@@ -246,7 +257,7 @@ HRESULT CLevel_MainGame::Ready_Layer_Monster(const _tchar* pLayerTag)
 	return S_OK;
 }
 
-HRESULT CLevel_MainGame::Ready_Layer_NPC(const _tchar* pLayerTag)
+HRESULT CLevel_Cliffside::Ready_Layer_NPC(const _tchar* pLayerTag)
 {
 	BEGININSTANCE;
 	/* Add Scene : Main */
@@ -257,7 +268,7 @@ HRESULT CLevel_MainGame::Ready_Layer_NPC(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Professor_Fig"), pLayerTag, TEXT("GameObject_Professor_Fig"))))
+	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Professor_Fig"), pLayerTag, TEXT("GameObject_Professor_Fig"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Professor_Fig)");
 		ENDINSTANCE;
@@ -269,7 +280,7 @@ HRESULT CLevel_MainGame::Ready_Layer_NPC(const _tchar* pLayerTag)
 	return S_OK;
 }
 
-HRESULT CLevel_MainGame::Load_MapObject(const _tchar* pObjectFilePath)
+HRESULT CLevel_Cliffside::Load_MapObject(const _tchar* pObjectFilePath)
 {
 	std::lock_guard<std::mutex> lock(mtx);
 
@@ -318,13 +329,12 @@ HRESULT CLevel_MainGame::Load_MapObject(const _tchar* pObjectFilePath)
 		wstring modelName = ws.substr(findIndex);
 		wstring wsMapEffectName(TEXT("Cylinder_Long"));
 
-		// MapEffect Å¬·¡½º·Î ¸¸µé¾î¾ß ÇÒ °æ¿ì
 		if (0 == lstrcmp(modelName.c_str(), wsMapEffectName.c_str()))
 		{
 			_tchar wszobjName[MAX_PATH] = { 0 };
 			_stprintf_s(wszobjName, TEXT("GameObject_MapEffect_%d"), (iObjectNum));
 
-			if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME,
+			if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE,
 				TEXT("Prototype_GameObject_MapEffect"), TEXT("Layer_BackGround"),
 				wszobjName, &MapObjectDesc)))
 			{
@@ -339,7 +349,7 @@ HRESULT CLevel_MainGame::Load_MapObject(const _tchar* pObjectFilePath)
 			_tchar wszobjName[MAX_PATH] = { 0 };
 			_stprintf_s(wszobjName, TEXT("GameObject_MapObject_%d"), (iObjectNum));
 
-			if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME,
+			if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE,
 				TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_BackGround"),
 				wszobjName, &MapObjectDesc)))
 			{
@@ -357,7 +367,7 @@ HRESULT CLevel_MainGame::Load_MapObject(const _tchar* pObjectFilePath)
 	return S_OK;
 }
 
-HRESULT CLevel_MainGame::Load_MapObject_Ins(const _tchar* pObjectFilePath)
+HRESULT CLevel_Cliffside::Load_MapObject_Ins(const _tchar* pObjectFilePath)
 {
 	std::lock_guard<std::mutex> lock(mtx);
 
@@ -370,7 +380,7 @@ HRESULT CLevel_MainGame::Load_MapObject_Ins(const _tchar* pObjectFilePath)
 	}
 
 	DWORD	dwByte = 0;
-	_uint	iCount = 0; // ¸ðµ¨ ÀÎ½ºÅÏ½º ³Ñ¹ö¸µ º¯¼ö
+	_uint	iCount = 0; // ï¿½ï¿½ ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½Ñ¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
 	while (true)
 	{
@@ -385,7 +395,7 @@ HRESULT CLevel_MainGame::Load_MapObject_Ins(const _tchar* pObjectFilePath)
 
 		if (0 != MapObjectInsDesc.iInstanceCnt)
 		{
-			_float4x4 Matrix; // µ¿Àû ÇÒ´ç ¾ÈÇÏ°í Áö¿ª º¯¼ö·Î ³¯¸²
+			_float4x4 Matrix; // ï¿½ï¿½ï¿½ï¿½ ï¿½Ò´ï¿½ ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
 			for (size_t i = 0; i < MapObjectInsDesc.iInstanceCnt; i++)
 			{
@@ -422,13 +432,13 @@ HRESULT CLevel_MainGame::Load_MapObject_Ins(const _tchar* pObjectFilePath)
 
 		BEGININSTANCE;
 
-		// ¿©±â¼­ ÇÁ·ÎÅäÅ¸ÀÔ ÅÂ±× ¹®ÀÚ¿­ °¡°øÇØÁà¾ßÇÔ
+		// ï¿½ï¿½ï¿½â¼­ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å¸ï¿½ï¿½ ï¿½Â±ï¿½ ï¿½ï¿½ï¿½Ú¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		wstring ws = TEXT("Prototype_Component_Model_Instance_");
 		wstring wsTag = TEXT("Prototype_Component_Model_");
 		wstring wsSave(MapObjectInsDesc.wszTag);
 		_uint iLength = wsTag.size();
 
-		// ¸ðµ¨ ÀÌ¸§
+		// ï¿½ï¿½ ï¿½Ì¸ï¿½
 		wstring wsModelName = wsSave.substr(iLength);
 		ws += wsModelName;
 
@@ -437,15 +447,14 @@ HRESULT CLevel_MainGame::Load_MapObject_Ins(const _tchar* pObjectFilePath)
 		_tchar wszNumber[MAX_PATH];
 		_itow_s(iCount, wszNumber, 10);
 
-		ws += wszNumber; // ¿©±â±îÁö ¿À¸é Prototype_Component_Model_Instance_¸ðµ¨¸í_¹øÈ£ ÀÌ·±½ÄÀ¸·Î ÀÌ¸§ÀÌ ºÙÀ½	
+		ws += wszNumber; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Prototype_Component_Model_Instance_ï¿½ðµ¨¸ï¿½_ï¿½ï¿½È£ ï¿½Ì·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½	
 
-		lstrcpy(MapObjectInsDesc.wszTag, ws.c_str()); // °¡°øÇÑ ¸ðµ¨ ÀÎ½ºÅÏ½º ÀÌ¸§À» ³Ö¾îÁÜ
+		lstrcpy(MapObjectInsDesc.wszTag, ws.c_str()); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½Ì¸ï¿½ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ï¿½
 
 		_tchar wszobjName[MAX_PATH] = { 0 };
 		_stprintf_s(wszobjName, TEXT("GameObject_InsMapObject_%d"), (iCount));
 
-		// ¹øÈ£¸¦ ºÙÀÎ ÅÂ±×·Î MapObject_Ins µî·Ï
-		if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME,
+		if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE,
 			TEXT("Prototype_GameObject_MapObject_Ins"), TEXT("Layer_BackGround"),
 			wszobjName, &MapObjectInsDesc)))
 		{
@@ -461,7 +470,7 @@ HRESULT CLevel_MainGame::Load_MapObject_Ins(const _tchar* pObjectFilePath)
 	return S_OK;
 }
 
-HRESULT CLevel_MainGame::Load_Monsters(const wstring& wstrMonsterFilePath)
+HRESULT CLevel_Cliffside::Load_Monsters(const wstring& wstrMonsterFilePath)
 {
 	HANDLE hFile = CreateFile(wstrMonsterFilePath.c_str(), GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
@@ -546,7 +555,7 @@ HRESULT CLevel_MainGame::Load_Monsters(const wstring& wstrMonsterFilePath)
 		wstrPrototypeTag += wstrMonsterTag;
 		wstring wstrComponentTag = TEXT("Monster_") + to_wstring(iMonsterNum++);
 		BEGININSTANCE;
-		if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, wstrPrototypeTag.c_str(),
+		if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, wstrPrototypeTag.c_str(),
 			TEXT("Layer_Monster"), wstrComponentTag.c_str(), &WorldMatrix)))
 		{
 			MSG_BOX("[Load_Monsters] Failed Load Monster");
@@ -561,7 +570,7 @@ HRESULT CLevel_MainGame::Load_Monsters(const wstring& wstrMonsterFilePath)
 	return S_OK;
 }
 
-HRESULT CLevel_MainGame::Ready_Layer_UI(const _tchar* pLayerTag)
+HRESULT CLevel_Cliffside::Ready_Layer_UI(const _tchar* pLayerTag)
 {
 	BEGININSTANCE;
 	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
@@ -574,7 +583,7 @@ HRESULT CLevel_MainGame::Ready_Layer_UI(const _tchar* pLayerTag)
 	_tchar szFilePath[MAX_PATH] = TEXT("");
 
 	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_HP.uidata"));
-	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_HP"),
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_HP"),
 		pLayerTag, TEXT("GameObject_UI_Group_HP"), szFilePath)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_HP)");
@@ -582,7 +591,7 @@ HRESULT CLevel_MainGame::Ready_Layer_UI(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Potion.uidata"));
-	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_Potion"),
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_Potion"),
 		pLayerTag, TEXT("GameObject_UI_Group_Potion"), szFilePath)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_Potion)");
@@ -590,7 +599,7 @@ HRESULT CLevel_MainGame::Ready_Layer_UI(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Finisher_Front.uidata"));
-	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_Finisher"),
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_Finisher"),
 		pLayerTag, TEXT("GameObject_UI_Group_Finisher"), szFilePath)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_Finisher)");
@@ -598,21 +607,21 @@ HRESULT CLevel_MainGame::Ready_Layer_UI(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Skill_1.uidata"));
-	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_Skill"),
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_Skill"),
 		pLayerTag, TEXT("Prototype_GameObject_UI_Group_Skill"), szFilePath)))
 	{
 		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_UI_Group_Skill)");
 		return E_FAIL;
 	}
 	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Finisher_Icon.uidata"));
-	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_Finisher_Icon"),
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_Finisher_Icon"),
 		pLayerTag, TEXT("GameObject_UI_Group_Finisher_Icon"), szFilePath)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_Finisher_Icon)");
 		return E_FAIL;
 	}
 	//lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_MiniMap.uidata"));
-	//if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_MiniMap"),
+	//if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_MiniMap"),
 	//	pLayerTag, TEXT("GameObject_UI_Group_MiniMap"), szFilePath)))
 	//{
 	//	MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_MiniMap)");
@@ -620,14 +629,12 @@ HRESULT CLevel_MainGame::Ready_Layer_UI(const _tchar* pLayerTag)
 	//}
 
 	CUI_Group_Enemy_HP::ENEMYHPDESC  Desc;
-	_tchar szLevel[MAX_PATH] = TEXT("77");
-	_tchar szName[MAX_PATH] = TEXT("°³Ã¶¹Î");
-
+	
 	Desc.eType = CUI_Group_Enemy_HP::ENEMYTYPE::BOSS;
-	lstrcpy(Desc.wszObjectLevel, szLevel);
-	lstrcpy(Desc.wszObjectName, szName);
+	lstrcpy(Desc.wszObjectLevel, TEXT("77"));
+	lstrcpy(Desc.wszObjectName, TEXT("ê°œì² ë¯¼"));
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_Enemy_HP"),
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_Enemy_HP"),
 		pLayerTag, TEXT("GameObject_UI_Enemy_HP"), &Desc)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_UI_Enemy_HP)");
@@ -635,7 +642,7 @@ HRESULT CLevel_MainGame::Ready_Layer_UI(const _tchar* pLayerTag)
 	}
 
 	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Cursor.uidata"));
-	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_Cursor"),
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_Cursor"),
 		pLayerTag, TEXT("GameObject_UI_Group_Cursor"), szFilePath)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_Cursor)");
@@ -647,7 +654,7 @@ HRESULT CLevel_MainGame::Ready_Layer_UI(const _tchar* pLayerTag)
 	return S_OK;
 }
 
-HRESULT CLevel_MainGame::Ready_Layer_FieldGuide_UI(const _tchar* pLayerTag)
+HRESULT CLevel_Cliffside::Ready_Layer_FieldGuide_UI(const _tchar* pLayerTag)
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
@@ -662,7 +669,7 @@ HRESULT CLevel_MainGame::Ready_Layer_FieldGuide_UI(const _tchar* pLayerTag)
 
 	_tchar szFilePath[MAX_PATH] = TEXT("");
 	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Cursor.uidata"));
-	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_Cursor"),
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_Cursor"),
 		pLayerTag, TEXT("GameObject_UI_Group_Info_Cursor"), szFilePath)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_Cursor)");
@@ -671,7 +678,7 @@ HRESULT CLevel_MainGame::Ready_Layer_FieldGuide_UI(const _tchar* pLayerTag)
 	}	
 	
 	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Gear_Alpha3.uidata"));
-	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Field_Guide"),
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Field_Guide"),
 		pLayerTag, TEXT("GameObject_UI_Field_Guide"), szFilePath)))
 	{
 		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Field_Guide)");
@@ -684,7 +691,7 @@ HRESULT CLevel_MainGame::Ready_Layer_FieldGuide_UI(const _tchar* pLayerTag)
 	return S_OK;
 }
 
-HRESULT CLevel_MainGame::Ready_Layer_Menu_UI(const _tchar* pLayerTag)
+HRESULT CLevel_Cliffside::Ready_Layer_Menu_UI(const _tchar* pLayerTag)
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
@@ -699,7 +706,7 @@ HRESULT CLevel_MainGame::Ready_Layer_Menu_UI(const _tchar* pLayerTag)
 
 	_tchar szFilePath[MAX_PATH] = TEXT("");
 	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Cursor.uidata"));
-	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_Cursor"),
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_Cursor"),
 		pLayerTag, TEXT("GameObject_UI_Group_Info_Cursor"), szFilePath)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_Cursor)");
@@ -709,7 +716,7 @@ HRESULT CLevel_MainGame::Ready_Layer_Menu_UI(const _tchar* pLayerTag)
 
 
 	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Menu_Frame_Edit.uidata"));
-	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Main_Menu"),
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Main_Menu"),
 		pLayerTag, TEXT("GameObject_UI_Main_Menu"), szFilePath)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_Cursor)");
@@ -722,7 +729,7 @@ HRESULT CLevel_MainGame::Ready_Layer_Menu_UI(const _tchar* pLayerTag)
 }
 
 #ifdef _DEBUG
-HRESULT CLevel_MainGame::Ready_Layer_Debug(const _tchar* pLayerTag)
+HRESULT CLevel_Cliffside::Ready_Layer_Debug(const _tchar* pLayerTag)
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
@@ -734,33 +741,11 @@ HRESULT CLevel_MainGame::Ready_Layer_Debug(const _tchar* pLayerTag)
 		ENDINSTANCE;
 		return E_FAIL;
 	}
-
-	/*if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Camera_Debug"), pLayerTag, TEXT("GameObject_Camera_Debug"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Camera_Debug)");
-		return E_FAIL;
-	}*/
-
-	/*if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Player"), pLayerTag, TEXT("GameObject_Test_Player"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Test_Player)");
-		return E_FAIL;
-	}*/
-
-	// ½É¸®½º¹æ½Ä ·ÎµùÆ®¸®°Å °´Ã¼
-	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_LoadTrigger"), pLayerTag, TEXT("GameObject_LoadTrigger"))))
+	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_LoadTrigger"), pLayerTag, TEXT("GameObject_LoadTrigger"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_LoadTrigger)");
 		return E_FAIL;
 	}
-
-	// Å°Áö¸¶¼¼¿ä ÅÍÁý´Ï´Ù
-	// ÇÇÁ÷½º µð¹ö±× ·»´õ¸µ¿ë °´Ã¼
-	/*if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_PhysxRenderer"), pLayerTag, TEXT("GameObject_PhysxRenderer"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_PhysxRenderer)");
-		return E_FAIL;
-	}*/
 
 	Safe_Release(pGameInstance);
 
@@ -769,20 +754,20 @@ HRESULT CLevel_MainGame::Ready_Layer_Debug(const _tchar* pLayerTag)
 
 #endif // _DEBUG
 
-CLevel_MainGame* CLevel_MainGame::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CLevel_Cliffside* CLevel_Cliffside::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CLevel_MainGame* pInstance = New CLevel_MainGame(pDevice, pContext);
+	CLevel_Cliffside* pInstance = New CLevel_Cliffside(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize()))
 	{
-		MSG_BOX("Failed to Created CLevel_MainGame");
+		MSG_BOX("Failed to Created CLevel_Cliffside");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CLevel_MainGame::Free()
+void CLevel_Cliffside::Free()
 {
 	__super::Free();
 }

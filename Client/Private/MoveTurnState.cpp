@@ -46,7 +46,7 @@ void CMoveTurnState::Late_Tick(_float fTimeDelta)
 void CMoveTurnState::OnStateEnter()
 {
 #ifdef _DEBUG
-	cout << "Turn Enter" << endl;
+	//cout << "Turn Enter" << endl;
 #endif // _DEBUG
 
 	BEGININSTANCE;
@@ -82,7 +82,7 @@ void CMoveTurnState::OnStateTick()
 void CMoveTurnState::OnStateExit()
 {
 #ifdef _DEBUG
-	cout << "Turn Exit" << endl;
+	//cout << "Turn Exit" << endl;
 #endif // _DEBUG
 }
 

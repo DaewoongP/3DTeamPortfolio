@@ -118,9 +118,8 @@ void CGolem_Combat::Late_Tick(_float fTimeDelta)
 void CGolem_Combat::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
-	wstring wstrCollisionTag = { TEXT("") };
-	if (nullptr != CollisionEventDesc.pOtherCollisionTag)
-		wstrCollisionTag = CollisionEventDesc.pOtherCollisionTag;
+	wstring wstrCollisionTag = CollisionEventDesc.pOtherCollisionTag;
+	wstring wstrMyCollisionTag = CollisionEventDesc.pThisCollisionTag;
 
 	/* Collision Magic */
 	if (wstring::npos != wstrObjectTag.find(TEXT("MagicBall")))
@@ -138,7 +137,7 @@ void CGolem_Combat::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 	}
 
 	/* Collision Player Fig */
-	if (wstring::npos != wstrCollisionTag.find(TEXT("Body")))
+	if (wstring::npos != wstrMyCollisionTag.find(TEXT("Range")))
 	{
 		if (wstring::npos != wstrObjectTag.find(TEXT("Player")) ||
 			wstring::npos != wstrObjectTag.find(TEXT("Fig")))
@@ -151,11 +150,10 @@ void CGolem_Combat::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 void CGolem_Combat::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 {
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
-	wstring wstrCollisionTag = { TEXT("") };
-	if (nullptr != CollisionEventDesc.pOtherCollisionTag)
-		wstrCollisionTag = CollisionEventDesc.pOtherCollisionTag;
+	wstring wstrCollisionTag = CollisionEventDesc.pOtherCollisionTag;
+	wstring wstrMyCollisionTag = CollisionEventDesc.pThisCollisionTag;
 
-	if (wstring::npos != wstrCollisionTag.find(TEXT("Body")))
+	if (wstring::npos != wstrMyCollisionTag.find(TEXT("Range")))
 	{
 		if (wstring::npos != wstrObjectTag.find(TEXT("Player")) ||
 			wstring::npos != wstrObjectTag.find(TEXT("Fig")))
@@ -244,7 +242,8 @@ HRESULT CGolem_Combat::Make_AI()
 		if (FAILED(m_pRootBehavior->Add_Type("iCurrentSpell", &m_iCurrentSpell)))
 			throw TEXT("Failed Add_Type iCurrentSpell");
 
-		m_pTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Player"), TEXT("GameObject_Player")));
+		
+		m_pTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Player"), TEXT("GameObject_Player")));
 		
 		if (nullptr == m_pTarget)
 			throw TEXT("m_pTarget is nullptr");
@@ -321,7 +320,7 @@ HRESULT CGolem_Combat::Add_Components()
 			throw TEXT("Com_Renderer");
 
 		/* For.Com_Model */
-		if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Golem_Combat"),
+		if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_Model_Golem_Combat"),
 			TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 			throw TEXT("Com_Model");
 
@@ -350,7 +349,7 @@ HRESULT CGolem_Combat::Add_Components()
 		RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 0.f, 1.f);
 		RigidBodyDesc.pOwnerObject = this;
 		RigidBodyDesc.eThisCollsion = COL_ENEMY;
-		RigidBodyDesc.eCollisionFlag = COL_PLAYER;
+		RigidBodyDesc.eCollisionFlag = COL_NPC_RANGE;
 		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Body");
 
 		/* For.Com_RigidBody */
@@ -366,6 +365,7 @@ HRESULT CGolem_Combat::Add_Components()
 		PxSphereGeometry pSphereGeomatry = PxSphereGeometry(15.f);
 		RigidBodyDesc.pGeometry = &pSphereGeomatry;
 		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Range");
+		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC;
 
 		m_pRigidBody->Create_Collider(&RigidBodyDesc);
 
@@ -380,7 +380,7 @@ HRESULT CGolem_Combat::Add_Components()
 		ParentMatrixDesc.pCombindTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
 		ParentMatrixDesc.pParentWorldMatrix = m_pTransform->Get_WorldMatrixPtr();
 
-		if (FAILED(Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Weapon_Golem_Combat"),
+		if (FAILED(Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_Weapon_Golem_Combat"),
 			TEXT("Com_Weapon"), reinterpret_cast<CComponent**>(&m_pWeapon), &ParentMatrixDesc)))
 			throw TEXT("Com_Weapon");
 	}
@@ -459,7 +459,7 @@ void CGolem_Combat::Set_Current_Target()
 	{
 		m_pTarget = nullptr;
 		/*BEGININSTANCE;
-		m_pTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Player"), TEXT("GameObject_Player")));
+		m_pTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Player"), TEXT("GameObject_Player")));
 		ENDINSTANCE;*/
 	}
 }

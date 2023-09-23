@@ -60,10 +60,10 @@ HRESULT CComponent_Manager::Add_Prototype(_uint iLevelIndex, const _tchar* pProt
 	return S_OK;
 }
 
-HRESULT CComponent_Manager::Add_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, const _tchar* pLayerTag, const _tchar* pComponentTag, void* pArg)
+HRESULT CComponent_Manager::Add_Component(_uint iPrototypeLevelIndex, _uint iLevelIndex, const _tchar* pPrototypeTag, const _tchar* pLayerTag, const _tchar* pComponentTag, void* pArg)
 {
-	CComponent* pPrototype = Find_Prototype(iLevelIndex, pPrototypeTag);
- 
+	CComponent* pPrototype = Find_Prototype(iPrototypeLevelIndex, pPrototypeTag);
+
  	NULL_CHECK_RETURN(pPrototype, E_FAIL);
 
 	CComponent* pComponent = nullptr;
@@ -74,6 +74,8 @@ HRESULT CComponent_Manager::Add_Component(_uint iLevelIndex, const _tchar* pProt
 	CLayer* pLayer = Find_Layer(iLevelIndex, pLayerTag);
 
 	pComponent->Set_Tag(pComponentTag);
+
+	FAILED_CHECK_RETURN(pComponent->Initialize_Level(iLevelIndex), E_FAIL);
 
 	if (nullptr == pLayer)
 	{
@@ -120,6 +122,12 @@ CComponent* CComponent_Manager::Clone_Component(_uint iLevelIndex, const _tchar*
 		return nullptr;
 	}
 
+	if (FAILED(pComponent->Initialize_Level(iLevelIndex)))
+	{
+		Safe_Release(pComponent);
+		return nullptr;
+	}
+		
 	return pComponent;
 }
 

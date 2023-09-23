@@ -18,8 +18,7 @@ public:
 	typedef struct tagPlayerCameraDesc
 	{
 		CAMERADESC CameraDesc{};
-		const _float4x4* pFollowTargetMatrix;
-		const _float4x4* pFollowTargetBoneMatrix;
+		CTransform* pPlayerTransform = { nullptr };
 	}PLAYERCAMERADESC;
 
 private:
@@ -44,8 +43,7 @@ public:
 
 private:
 	CTransform* m_pTransform = { nullptr };
-	const _float4x4* m_pFollowTargetMatrix = { nullptr };
-	const _float4x4* m_pFollowTargetBoneMatrix = { nullptr };
+	CTransform* m_pPlayerTransform = { nullptr };
 	_float m_fFollowLimit = { 0.0f };
 
 	//카메라 위치 기준 축

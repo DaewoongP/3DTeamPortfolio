@@ -75,14 +75,14 @@ HRESULT CUI_Group_Finisher::Add_Prototype()
 {
 	BEGININSTANCE;
 
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Back"),
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Back"),
 		CUI_Back::Create(m_pDevice, m_pContext), true)))
 	{
 		ENDINSTANCE;
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Finisher"),
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Finisher"),
 		CUI_Finisher::Create(m_pDevice, m_pContext), true)))
 	{
 		ENDINSTANCE;
@@ -102,7 +102,7 @@ HRESULT CUI_Group_Finisher::Add_Components(wstring wszTag)
 
 	wstring wszFrameTag = TEXT("Com_UI_Back_Frame_");
 	wszFrameTag += wszTag;
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Back"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Back"),
 		wszFrameTag.c_str(), reinterpret_cast<CComponent**>(&pBack))))
 	{
 		MSG_BOX("Com_UI_Finisher : Failed Clone Component (Com_UI_Finisher_Frame)");
@@ -113,7 +113,7 @@ HRESULT CUI_Group_Finisher::Add_Components(wstring wszTag)
 
 	wstring wszFinisherTag = TEXT("Com_UI_Finisher_");
 	wszFinisherTag += wszTag;
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Finisher"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Finisher"),
 		wszFinisherTag.c_str(), reinterpret_cast<CComponent**>(&pFinisher))))
 	{
 		MSG_BOX("Com_UI_Finisher : Failed Clone Component (Com_UI_Finisher)");

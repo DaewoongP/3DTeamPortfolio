@@ -266,7 +266,7 @@ void CObject_Window::Install_Object(_float3 vPos)
 		_float4x4 vWorldMatrix = m_pDummy->Get_Transform()->Get_WorldMatrix();
 
 		// 번호를 붙인 태그로 MapObject 등록
-		if (FAILED(m_pGameInstance->Add_Component(LEVEL_TOOL,
+		if (FAILED(m_pGameInstance->Add_Component(LEVEL_TOOL, LEVEL_TOOL,
 			TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_MapObject"), 
 			m_vecMapObjectTag.back().c_str(), &vWorldMatrix)))
 		{
@@ -322,7 +322,7 @@ void CObject_Window::Install_Continuous_Object(_float3 vPos)
 		_float4x4 vWorldMatrix = m_pDummy->Get_Transform()->Get_WorldMatrix();
 
 		// 번호를 붙인 태그로 MapObject 등록
-		if (FAILED(m_pGameInstance->Add_Component(LEVEL_TOOL,
+		if (FAILED(m_pGameInstance->Add_Component(LEVEL_TOOL, LEVEL_TOOL,
 			TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_MapObject"),
 			m_vecMapObjectTag.back().c_str(), &vWorldMatrix)))
 		{
@@ -403,7 +403,7 @@ void CObject_Window::Install_Random_Object(_float3 vPos)
 				vWorldMatrix._43 = fB + (rand() % (_uint)(fT - fB));
 
 				// 번호를 붙인 태그로 MapObject 등록
-				if (FAILED(m_pGameInstance->Add_Component(LEVEL_TOOL,
+				if (FAILED(m_pGameInstance->Add_Component(LEVEL_TOOL, LEVEL_TOOL,
 					TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_MapObject"),
 					m_vecMapObjectTag.back().c_str(), &vWorldMatrix)))
 				{
@@ -461,7 +461,7 @@ void CObject_Window::Install_Multi_Object(_float3 vPos)
 		_float4x4 vWorldMatrix = m_pDummy->Get_Transform()->Get_WorldMatrix();
 
 		// 번호를 붙인 태그로 MapObject 등록
-		if (FAILED(m_pGameInstance->Add_Component(LEVEL_TOOL,
+		if (FAILED(m_pGameInstance->Add_Component(LEVEL_TOOL, LEVEL_TOOL,
 			TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_MapObject"),
 			m_vecMapObjectTag.back().c_str(), &vWorldMatrix)))
 		{
@@ -1298,7 +1298,7 @@ HRESULT CObject_Window::Load_MapObject(const _tchar* wszMapDataPath)
 		++m_iModelCnt;
 
 		// 번호를 붙인 태그로 MapObject 등록
-		if (FAILED(m_pGameInstance->Add_Component(LEVEL_TOOL,
+		if (FAILED(m_pGameInstance->Add_Component(LEVEL_TOOL, LEVEL_TOOL,
 			TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_MapObject"),
 			m_vecMapObjectTag.back().c_str(), &m_vecSaveObject[i].matTransform)))
 		{
@@ -1502,7 +1502,7 @@ HRESULT CObject_Window::Load_MapObject_Ins(const _tchar* wszMapDataPath)
 		}
 
 		// 번호를 붙인 태그로 MapObject_Ins 등록
-		if (FAILED(m_pGameInstance->Add_Component(LEVEL_TOOL,
+		if (FAILED(m_pGameInstance->Add_Component(LEVEL_TOOL, LEVEL_TOOL,
 			TEXT("Prototype_GameObject_MapObject_Ins"), TEXT("Layer_MapObject"),
 			m_vecMapObjectTag.at(m_iMapObjectIndex).c_str(), &m_vecSaveInsObject[i].matTransform)))
 		{
@@ -1698,7 +1698,7 @@ HRESULT CObject_Window::Create_Dummy()
 
 	_float3 vPos = { 5.f, 0.f, 5.f };
 
-	if (FAILED(m_pGameInstance->Add_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_MapDummy"),
+	if (FAILED(m_pGameInstance->Add_Component(LEVEL_TOOL, LEVEL_TOOL, TEXT("Prototype_GameObject_MapDummy"),
 		TEXT("Layer_Tool"), TEXT("Map_Dummy"), &vPos)))
 	{
 		MSG_BOX("Failed to GameObject Map_Dummy");

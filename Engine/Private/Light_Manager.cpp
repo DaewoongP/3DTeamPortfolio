@@ -44,12 +44,11 @@ CLight* CLight_Manager::Add_Lights(ID3D11Device* pDevice, ID3D11DeviceContext* p
 
 	if (LightDesc.eType == CLight::TYPE_DIRECTIONAL)
 	{
-		pTransform->Set_Position(_float3(-10.f, 10.f, -10.f));
-		pTransform->LookAt(_float3(0.f, 0.f, 0.f));
-		m_ProjLight = XMMatrixPerspectiveFovLH(XMConvertToRadians(90.f), ViewportDesc.Width / ViewportDesc.Height, 0.1f, 1000.f);
+		m_ViewLight = XMMatrixLookAtLH(_float4(0.f, 50.f, 0.f, 1.f), _float4(50.f, 0.f, 50.f, 1.f), _float4(0.f, 1.f, 0.f, 0.f));
+		m_ProjLight = XMMatrixPerspectiveFovLH(XMConvertToRadians(90.f), ViewportDesc.Width / ViewportDesc.Height, 1.f, 1000.f);
 	}
 
-	m_ViewLight = pTransform->Get_WorldMatrix_Inverse();
+	//m_ViewLight = pTransform->Get_WorldMatrix_Inverse();
 	Safe_Release(pTransform);
 
 	CPipeLine* pPipeLine = CPipeLine::GetInstance();

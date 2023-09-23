@@ -67,9 +67,9 @@ HRESULT CPlayer_Camera::Initialize(void* pArg)
 	m_pTransform->Set_RotationSpeed(1.0f);
 
 	
-	m_pFollowTargetMatrix = pCameraDesc->pFollowTargetMatrix;
-	//m_pFollowTargetBoneMatrix = pCameraDesc->pFollowTargetBoneMatrix;
-
+	m_pPlayerTransform = pCameraDesc->pPlayerTransform;
+	Safe_AddRef(m_pPlayerTransform);
+	
 	//위치 초기화
 	//Update_FollowMatrix();
 
@@ -174,17 +174,9 @@ void CPlayer_Camera::Mouse_Input(_float _TimeDelta)
 
 void CPlayer_Camera::Update_FollowMatrix()
 {
-	if (nullptr != m_pFollowTargetBoneMatrix && nullptr != m_pFollowTargetMatrix)
+	if (nullptr != m_pPlayerTransform)
 	{
-		m_FollowTargetMatrix = (*m_pFollowTargetBoneMatrix) * (*m_pFollowTargetMatrix);
-	}
-	else if (nullptr != m_pFollowTargetMatrix)
-	{
-		m_FollowTargetMatrix = (*m_pFollowTargetMatrix);
-	}
-	else
-	{
-		MSG_BOX("Do not have FollowMatrix");
+		m_FollowTargetMatrix = *m_pPlayerTransform->Get_WorldMatrixPtr();
 	}
 }
 
@@ -328,4 +320,5 @@ void CPlayer_Camera::Free()
 	CCamera::Free();
 
 	Safe_Release(m_pTransform);
+	Safe_Release(m_pPlayerTransform);
 }

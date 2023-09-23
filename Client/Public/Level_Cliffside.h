@@ -4,11 +4,11 @@
 
 BEGIN(Client)
 
-class CLevel_MainGame final : public CLevel
+class CLevel_Cliffside final : public CLevel
 {
 private:
-	explicit CLevel_MainGame(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual ~CLevel_MainGame() = default;
+	explicit CLevel_Cliffside(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	virtual ~CLevel_Cliffside() = default;
 
 public:
 	virtual HRESULT Initialize();
@@ -36,7 +36,7 @@ private:
 #endif // _DEBUG
 
 public:
-	static CLevel_MainGame* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CLevel_Cliffside* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual void Free() override;
 };
 

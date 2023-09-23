@@ -53,14 +53,6 @@ void CCamera_Manager::Tick(_float _TimeDelta)
 	}
 }
 
-void CCamera_Manager::Late_Tick(_float _TimeDelta)
-{
-	if (nullptr == m_pCurrentCamera)
-	{
-		return;
-	}
-}
-
 HRESULT CCamera_Manager::Initialize_CameraManager()
 {
 	m_pPipeLine = CPipeLine::GetInstance();
@@ -237,6 +229,24 @@ void CCamera_Manager::Stop_CutScene()
 	m_SplineData.clear();
 
 	m_fCutSceneTimeAcc = 0.0f;
+}
+
+HRESULT CCamera_Manager::Clear()
+{
+	Safe_Release(m_pCurrentCamera);
+
+	for (auto& iter : m_Cameras)
+	{
+		Safe_Release(iter.second);
+	}
+
+	m_Cameras.clear();
+
+	m_SplineData.clear();
+
+	m_SplineDataIndexAccess.clear();
+
+	return S_OK;
 }
 
 void CCamera_Manager::Play_CutScene(_float _TimeDelta)
@@ -626,12 +636,6 @@ void CCamera_Manager::CutScene_Lerp_Update(CUTSCENECAMERADESC _CutSceneCameraDes
 void CCamera_Manager::Free()
 {
 	Safe_Release(m_pPipeLine);
-	Safe_Release(m_pCurrentCamera);
-
-	for (auto& iter : m_Cameras)
-	{
-		Safe_Release(iter.second);
-	}
-
-	m_Cameras.clear();
+	
+	Clear();
 }

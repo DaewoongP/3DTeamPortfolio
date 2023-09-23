@@ -165,8 +165,16 @@
   <ItemGroup>
     <ClInclude Include="..\Public\Action.h" />
     <ClInclude Include="..\Public\Action_Deflect.h" />
+    <ClInclude Include="..\Public\Check_Degree.h" />
+    <ClInclude Include="..\Public\Check_Distance.h" />
     <ClInclude Include="..\Public\HitState.h" />
     <ClInclude Include="..\Public\Player_Information.h" />
+    <ClInclude Include="..\Public\LookAt.h" />
+    <ClInclude Include="..\Public\Client_Enum.h" />
+    <ClInclude Include="..\Public\Finisher.h" />
+    <ClInclude Include="..\public\Level_GreatHall.h" />
+    <ClInclude Include="..\public\Level_Smith.h" />
+    <ClInclude Include="..\public\Level_Vault.h" />
     <ClInclude Include="..\Public\ProtegoState.h" />
     <ClInclude Include="..\Public\MapEffect.h" />
     <ClInclude Include="..\Public\Menu_Gear.h" />
@@ -176,7 +184,6 @@
     <ClInclude Include="..\Public\Confringo_WandDust_Effect.h" />
     <ClInclude Include="..\Public\MagicCastingState.h" />
     <ClInclude Include="..\public\Main3_Loader.h" />
-    <ClInclude Include="..\Public\Check_Distance.h" />
     <ClInclude Include="..\Public\Main_Menu.h" />
     <ClInclude Include="..\Public\Menu_Invectory.h" />
     <ClInclude Include="..\Public\Menu_Quest.h" />
@@ -242,7 +249,6 @@
     <ClInclude Include="..\Public\Pensive.h" />
     <ClInclude Include="..\Public\PhysXRender.h" />
     <ClInclude Include="..\public\Player_Camera.h" />
-    <ClInclude Include="..\Public\Check_Degree.h" />
     <ClInclude Include="..\Public\Player.h" />
     <ClInclude Include="..\Public\Turn.h" />
     <ClInclude Include="..\Public\UI_Image.h" />
@@ -250,7 +256,7 @@
     <ClInclude Include="..\Public\Weapon_Armored_Troll.h" />
     <ClInclude Include="..\Public\Level_Loading.h" />
     <ClInclude Include="..\Public\Level_Logo.h" />
-    <ClInclude Include="..\public\Level_MainGame.h" />
+    <ClInclude Include="..\public\Level_Cliffside.h" />
     <ClInclude Include="..\Public\Main1_Loader.h" />
     <ClInclude Include="..\public\Logo_BackGround.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
@@ -312,8 +318,15 @@
   <ItemGroup>
     <ClCompile Include="..\Private\Action.cpp" />
     <ClCompile Include="..\Private\Action_Deflect.cpp" />
+    <ClCompile Include="..\Private\Check_Degree.cpp" />
+    <ClCompile Include="..\Private\Check_Distance.cpp" />
     <ClCompile Include="..\Private\HitState.cpp" />
     <ClCompile Include="..\Private\Player_Information.cpp" />
+    <ClCompile Include="..\Private\LookAt.cpp" />
+    <ClCompile Include="..\Private\Finisher.cpp" />
+    <ClCompile Include="..\private\Level_GreatHall.cpp" />
+    <ClCompile Include="..\private\Level_Smith.cpp" />
+    <ClCompile Include="..\private\Level_Vault.cpp" />
     <ClCompile Include="..\Private\ProtegoState.cpp" />
     <ClCompile Include="..\Private\MapEffect.cpp" />
     <ClCompile Include="..\Private\Menu_Gear.cpp" />
@@ -323,7 +336,6 @@
     <ClCompile Include="..\Private\Confringo_WandDust_Effect.cpp" />
     <ClCompile Include="..\Private\MagicCastingState.cpp" />
     <ClCompile Include="..\private\Main3_Loader.cpp" />
-    <ClCompile Include="..\Private\Check_Distance.cpp" />
     <ClCompile Include="..\Private\Main_Menu.cpp" />
     <ClCompile Include="..\Private\Menu_Invectory.cpp" />
     <ClCompile Include="..\Private\Menu_Quest.cpp" />
@@ -386,7 +398,6 @@
     <ClCompile Include="..\Private\MapObject.cpp" />
     <ClCompile Include="..\Private\Pensive.cpp" />
     <ClCompile Include="..\Private\PhysXRender.cpp" />
-    <ClCompile Include="..\Private\Check_Degree.cpp" />
     <ClCompile Include="..\Private\Player.cpp" />
     <ClCompile Include="..\Private\Turn.cpp" />
     <ClCompile Include="..\Private\UI_Image.cpp" />
@@ -394,7 +405,7 @@
     <ClCompile Include="..\Private\Weapon_Armored_Troll.cpp" />
     <ClCompile Include="..\Private\Level_Loading.cpp" />
     <ClCompile Include="..\Private\Level_Logo.cpp" />
-    <ClCompile Include="..\private\Level_MainGame.cpp" />
+    <ClCompile Include="..\private\Level_Cliffside.cpp" />
     <ClCompile Include="..\Private\Main1_Loader.cpp">
       <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</IncludeInUnityFile>
     </ClCompile>

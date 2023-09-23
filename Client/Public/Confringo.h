@@ -33,6 +33,9 @@ private:
 
 	//죄다 파티클로 바꾸기로 했음.
 	CParticleSystem* m_pExplosiveEffect[2] = { nullptr };
+
+	//완드에 붙일거임
+	CParticleSystem* m_pWandTouchffect = { nullptr };
 	CParticleSystem* m_pWandDustEffect = { nullptr };
 
 private:

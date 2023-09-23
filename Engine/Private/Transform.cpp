@@ -148,7 +148,7 @@ void CTransform::Set_Look(_float3 _vLook)
 void CTransform::Set_Position(_float3 _vPosition)
 {
 	memcpy(&m_WorldMatrix.m[3][0], &_vPosition, sizeof(_float3));
-	
+
 	m_ubTransformChanged |= CHANGEFLAG::TRANSLATION;
 }
 
@@ -343,6 +343,37 @@ void CTransform::LookAt(_float3 _vTarget, _bool _isDeleteY)
 
 	_float3 vRight = XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook);
 	_float3 vUp = XMVector3Cross(vLook, vRight);
+
+	_float3 vScale = Get_Scale();
+
+	Set_Right(XMVector3Normalize(vRight) * vScale.x);
+	Set_Up(XMVector3Normalize(vUp) * vScale.y);
+	Set_Look(XMVector3Normalize(vLook) * vScale.z);
+
+	m_ubTransformChanged |= CHANGEFLAG::ROTATION;
+}
+
+void CTransform::LookAt_Lerp(_float3 _vTarget, const _float& fTimeDelta, _bool _isDeleteY)
+{
+	_float3 vPosition = Get_Position();
+	_float3 vLook = Get_Look();
+	_float3 vDir = _vTarget - vPosition;
+
+	if (true == _isDeleteY)
+	{
+		vLook.y = 0.f;
+		vDir.y = 0.f;
+	}
+	vLook.Normalize();
+	vDir.Normalize();
+
+	vLook = XMVectorLerp(vLook, vDir, fTimeDelta * m_fRotationSpeed);
+	vLook.Normalize();
+
+	_float3 vRight = XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook);
+	vRight.Normalize();
+	_float3 vUp = XMVector3Cross(vLook, vRight);
+	vUp.Normalize();
 
 	_float3 vScale = Get_Scale();
 

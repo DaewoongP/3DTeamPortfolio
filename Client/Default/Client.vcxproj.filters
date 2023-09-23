@@ -46,9 +46,6 @@
     <Filter Include="02. GameObject\05. UI\Logo">
       <UniqueIdentifier>{0126ba42-5a20-40d6-a1fb-a9781cbccd8c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Levels\01. MainGame">
-      <UniqueIdentifier>{1bc6cbc7-4c2b-4ad9-9e0c-6724a4c369f3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\99. Debug">
       <UniqueIdentifier>{286ee9a6-b9ef-449f-9303-ba3e8913d1f9}</UniqueIdentifier>
     </Filter>
@@ -69,9 +66,6 @@
     </Filter>
     <Filter Include="98. Default\ImGui_Defaults">
       <UniqueIdentifier>{628cd336-ebfe-4860-bfac-014e7bec45d3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Levels\99. Loading">
-      <UniqueIdentifier>{884f056e-8693-460c-8907-198be0f4c197}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\02. Enemy\00. Troll">
       <UniqueIdentifier>{fe57efd1-c79a-4107-82a4-00502f3125f8}</UniqueIdentifier>
@@ -256,9 +250,6 @@
     <Filter Include="03. Behaviors\04. Movement">
       <UniqueIdentifier>{d95f3888-ed91-44de-bed2-7ee502737efa}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Behaviors\05. Function">
-      <UniqueIdentifier>{11282af5-bac7-4061-9441-81c0be48d567}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03. Behaviors\03. RandomChoose">
       <UniqueIdentifier>{68fa3644-0ca1-4bca-844f-2fc72e090f6d}</UniqueIdentifier>
     </Filter>
@@ -279,9 +270,6 @@
     </Filter>
     <Filter Include="02. GameObject\05. UI\Font">
       <UniqueIdentifier>{8567ad8d-0151-4dca-83f9-c0b84f96b3d6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Levels\99. Loading\Loader">
-      <UniqueIdentifier>{5d7f902a-4002-432f-8bd9-34922b397410}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\01. Player\01. StateMachine\02. JumpState">
       <UniqueIdentifier>{f11b9425-7729-4257-9b90-f2a7b314e762}</UniqueIdentifier>
@@ -343,6 +331,42 @@
     <Filter Include="02. GameObject\01. Player\03. PlayerInformation">
       <UniqueIdentifier>{32c19ffc-fb69-42ca-ba81-07c40b9b305f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Behaviors\05. Function">
+      <UniqueIdentifier>{779d067f-c7a3-4f48-944c-fb03090c91d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Levels\02. Vault">
+      <UniqueIdentifier>{0cc40b5b-ca2a-4eb4-a4df-e1f5dbb77a1d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Levels\01. Cliffside">
+      <UniqueIdentifier>{1bc6cbc7-4c2b-4ad9-9e0c-6724a4c369f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Levels\03. GreatHall">
+      <UniqueIdentifier>{6547d751-b0f6-4c08-bb0f-9c0040437448}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Levels\04. Smith">
+      <UniqueIdentifier>{93532b46-fcf5-4814-9232-b40f168761fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Levels\05. MiniGame">
+      <UniqueIdentifier>{8daaa0f5-8eda-4c23-b5f9-f4ec1e89c6c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Levels\06. PVP">
+      <UniqueIdentifier>{886e8ea5-bbc0-4458-a2a8-792fe81d6d45}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Levels\07. Sky">
+      <UniqueIdentifier>{3416e37f-418a-468c-a94c-b7fb178d4e82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Levels\08. Dragon">
+      <UniqueIdentifier>{a3441117-6109-46b1-8071-26b05cc98d52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Levels\99. Loading">
+      <UniqueIdentifier>{884f056e-8693-460c-8907-198be0f4c197}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Levels\99. Loading\Loader">
+      <UniqueIdentifier>{5d7f902a-4002-432f-8bd9-34922b397410}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Magic\MagicBall\07. Finisher">
+      <UniqueIdentifier>{b47e170c-04d6-4c0c-89b8-452eb34296b4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -378,8 +402,8 @@
     <ClInclude Include="..\public\Logo_BackGround.h">
       <Filter>02. GameObject\05. UI\Logo</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Level_MainGame.h">
-      <Filter>01. Levels\01. MainGame</Filter>
+    <ClInclude Include="..\public\Level_Cliffside.h">
+      <Filter>01. Levels\01. Cliffside</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Terrain.h">
       <Filter>02. GameObject\06. Terrain</Filter>
@@ -483,9 +507,6 @@
     <ClInclude Include="..\Public\Player.h">
       <Filter>02. GameObject\01. Player</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Check_Degree.h">
-      <Filter>03. Behaviors\05. Function</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Turn.h">
       <Filter>03. Behaviors\04. Movement</Filter>
     </ClInclude>
@@ -524,9 +545,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\Sequence_Attack.h">
       <Filter>03. Behaviors\02. Sequences</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Check_Distance.h">
-      <Filter>03. Behaviors\05. Function</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Sequence_MoveTarget.h">
       <Filter>03. Behaviors\02. Sequences</Filter>
@@ -705,6 +723,30 @@
     <ClInclude Include="..\Public\Player_Information.h">
       <Filter>02. GameObject\01. Player\03. PlayerInformation</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\LookAt.h">
+      <Filter>03. Behaviors\04. Movement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Check_Degree.h">
+      <Filter>03. Behaviors\05. Function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Check_Distance.h">
+      <Filter>03. Behaviors\05. Function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Finisher.h">
+      <Filter>04. Magic\MagicBall\07. Finisher</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Level_Vault.h">
+      <Filter>01. Levels\02. Vault</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Level_GreatHall.h">
+      <Filter>01. Levels\03. GreatHall</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Level_Smith.h">
+      <Filter>01. Levels\04. Smith</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Client_Enum.h">
+      <Filter>99. Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -725,8 +767,8 @@
     <ClCompile Include="..\private\Logo_BackGround.cpp">
       <Filter>02. GameObject\05. UI\Logo</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Level_MainGame.cpp">
-      <Filter>01. Levels\01. MainGame</Filter>
+    <ClCompile Include="..\private\Level_Cliffside.cpp">
+      <Filter>01. Levels\01. Cliffside</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Terrain.cpp">
       <Filter>02. GameObject\06. Terrain</Filter>
@@ -818,9 +860,6 @@
     <ClCompile Include="..\Private\Player.cpp">
       <Filter>02. GameObject\01. Player</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Check_Degree.cpp">
-      <Filter>03. Behaviors\05. Function</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Turn.cpp">
       <Filter>03. Behaviors\04. Movement</Filter>
     </ClCompile>
@@ -859,9 +898,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\Sequence_Attack.cpp">
       <Filter>03. Behaviors\02. Sequences</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Check_Distance.cpp">
-      <Filter>03. Behaviors\05. Function</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Sequence_MoveTarget.cpp">
       <Filter>03. Behaviors\02. Sequences</Filter>
@@ -1036,6 +1072,27 @@
     </ClCompile>
     <ClCompile Include="..\Private\Player_Information.cpp">
       <Filter>02. GameObject\01. Player\03. PlayerInformation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\LookAt.cpp">
+      <Filter>03. Behaviors\04. Movement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Check_Degree.cpp">
+      <Filter>03. Behaviors\05. Function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Check_Distance.cpp">
+      <Filter>03. Behaviors\05. Function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Finisher.cpp">
+      <Filter>04. Magic\MagicBall\07. Finisher</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Level_Vault.cpp">
+      <Filter>01. Levels\02. Vault</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Level_GreatHall.cpp">
+      <Filter>01. Levels\03. GreatHall</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Level_Smith.cpp">
+      <Filter>01. Levels\04. Smith</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

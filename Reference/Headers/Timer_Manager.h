@@ -62,6 +62,9 @@ public:
 	// !!! 주의 (등록시킨 타이머가 아님) 주의 !!!
 	void		Tick_QueryTimer(const _tchar* pTimerTag);
 
+	// 타이머 레벨 클리어
+	HRESULT		Clear();
+
 private:
 	_float m_fWorldTimeAcc = { 0.f };
 	_float m_fWorldTick = { 0.f };

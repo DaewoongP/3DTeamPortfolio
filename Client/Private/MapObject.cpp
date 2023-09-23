@@ -65,8 +65,7 @@ void CMapObject::Late_Tick(_float fTimeDelta)
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 	
-	if (nullptr != m_pRenderer &&
-		true == pGameInstance->isIn_WorldFrustum(m_vCenterPoint.TransCoord(), m_fRadius))
+	if (nullptr != m_pRenderer)
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
@@ -105,14 +104,15 @@ HRESULT CMapObject::Render()
 
 HRESULT CMapObject::Render_Depth()
 {
-	if (FAILED(SetUp_ShaderResources()))
+	if (FAILED(SetUp_ShadowShaderResources()))
 		return E_FAIL;
 
 	_uint		iNumMeshes = m_pModel->Get_NumMeshes();
 
 	for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; iMeshCount++)
 	{
-		m_pShadowShader->Begin("Mesh_No_Cull");
+		if (FAILED(m_pShadowShader->Begin("Shadow")))
+			return E_FAIL;
 
 		if (FAILED(m_pModel->Render(iMeshCount)))
 			return E_FAIL;
@@ -148,7 +148,7 @@ HRESULT CMapObject::Add_Components(MAPOBJECTDESC* pMapObjectDesc)
 	}
 
 	/* Com_Model */
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, pMapObjectDesc->wszTag,
+	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, pMapObjectDesc->wszTag,
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModel))))
 	{
 		MSG_BOX("Failed CMapObject Add_Component : (Com_Model)");
