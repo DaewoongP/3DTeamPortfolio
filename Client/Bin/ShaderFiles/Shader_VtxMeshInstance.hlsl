@@ -4,6 +4,8 @@ matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 texture2D		g_DiffuseTexture;
 texture2D		g_NormalTexture;
 
+float g_fCamFar;
+
 struct VS_IN
 {
 	/* 그리기 위한 정점정보 */
@@ -88,8 +90,8 @@ PS_OUT	PS_MAIN(PS_IN In)
 		discard;
 
 	Out.vDiffuse = vDiffuse;
-	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 1000.f, 0.f, 0.f);
+    Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
+    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fCamFar, 0.f, 0.f);
 
 	return Out;
 }

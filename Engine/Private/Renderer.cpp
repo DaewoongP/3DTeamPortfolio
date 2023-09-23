@@ -8,9 +8,11 @@
 #include "Texture.h"
 
 #include "Blur.h"
-#include"Bloom.h"
-#include"Distortion.h"
-#include"Glow.h"
+#include "Bloom.h"
+#include "Distortion.h"
+#include "Glow.h"
+#include "Shadow.h"
+#include "MotionBlur.h"
 
 #ifdef _DEBUG
 #include "Input_Device.h"
@@ -61,21 +63,18 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
-		TEXT("Target_Shadow_Depth"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f))))
-		return E_FAIL;
-
-	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
-		TEXT("Target_Shadow"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
-		return E_FAIL;
-
-	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
-		TEXT("Target_SoftShadow"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
+		TEXT("Target_Shadow_Depth"), (_uint)ViewportDesc.Width * 12, (_uint)ViewportDesc.Height * 12, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f), true)))
 		return E_FAIL;
 
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_SSAO"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
-	
+	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
+		TEXT("Target_Distortion"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
+		TEXT("Target_SSAOBluring"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
+		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_FinBloom"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
@@ -84,11 +83,7 @@ HRESULT CRenderer::Initialize_Prototype()
 #ifdef _DEBUG
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_Picking"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
-		return E_FAIL; // �� �������� Fast Picking�� ���� ���� Ÿ��
-	//if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
-	//	TEXT("Target_MapBrushing"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
-	//	return E_FAIL; // �� �귯�� ��� ������ ���� ���� Ÿ��
-
+		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_UI"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
@@ -109,16 +104,15 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Shadow_Depth"), TEXT("Target_Shadow_Depth"))))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Shadow"), TEXT("Target_Shadow"))))
-		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_SoftShadow"), TEXT("Target_SoftShadow"))))
-		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_SSAO"), TEXT("Target_SSAO"))))
 		return E_FAIL;
-	
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_FinBloom"), TEXT("Target_FinBloom"))))
 		return E_FAIL;
 	
+	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Distortion"), TEXT("Target_Distortion"))))
+		return E_FAIL;
+
+
 #ifdef _DEBUG
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Picking"), TEXT("Target_Picking"))))
 		return E_FAIL;
@@ -146,31 +140,27 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Shade"), 240.f, 80.f, 160.f, 160.f)))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Specular"), 240.f, 240.f, 160.f, 160.f)))
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Shadow_Depth"), 240.f, 240.f, 160.f, 160.f)))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Shadow"), 240.f, 400.f, 160.f, 160.f)))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_FinGlow"), 80.f, 560.f, 160.f, 160.f)))
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_SSAO"), 240.f, 560.f, 160.f, 160.f)))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Glow"), 240.f, 560.f, 160.f, 160.f)))
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Distortion"), 240.f, 560.f, 160.f, 160.f)))
 		return E_FAIL;
 
-	/*if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_SSAO"), 300.f, 300.f, 600.f, 600.f)))
-		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Blur"), 900.f, 300.f, 600.f, 600.f)))
+	/*if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Blur"), 900.f, 300.f, 600.f, 600.f)))
 		return E_FAIL;*/
 	/*if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_PostProcessing"), 240.f, 560.f, 160.f, 160.f)))
 		return E_FAIL;*/
 
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Picking"), 1200.f, 80.f, 160.f, 160.f)))
-		return E_FAIL;
 	//if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_MapBrushing"), 1040.f, 80.f, 160.f, 160.f)))
 	//	return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_UI"), 1200.f, 300.f, 160.f, 160.f)))
-		return E_FAIL;
+	/*if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_UI"), 1200.f, 300.f, 160.f, 160.f)))
+		return E_FAIL;*/
 
 #endif // _DEBUG
-	m_pNoiseTexture=CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/whitenoise.png"));
+	m_pNoiseTexture = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/whitenoise.png"));
 
 	return S_OK;
 }
@@ -187,6 +177,21 @@ void CRenderer::Add_RenderGroup(RENDERGROUP eRenderGroup, CGameObject* pGameObje
 
 	m_RenderObjects[eRenderGroup].push_back(pGameObject);
 
+	Safe_AddRef(pGameObject);
+}
+
+void CRenderer::Add_RenderGroup(RENDERGROUP eRenderGroup, CGameObject* pGameObject, _float LightPower)
+{
+	if (eRenderGroup < RENDERGROUP::RENDER_PRIORITY ||
+		eRenderGroup >= RENDERGROUP::RENDER_END ||
+		nullptr == pGameObject)
+	{
+		MSG_BOX("Failed Add RenderGroup");
+		return;
+	}
+
+	m_RenderObjects[eRenderGroup].push_back(pGameObject);
+	m_fGlowPower = LightPower;
 	Safe_AddRef(pGameObject);
 }
 
@@ -218,19 +223,11 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 	if (FAILED(Render_NonBlend()))
 		return E_FAIL;
-	
 	if (FAILED(Render_Lights()))
-		return E_FAIL;
+		return E_FAIL; 
 	if (FAILED(Render_EffectType()))
 		return E_FAIL;
-	if (FAILED(Render_Shadow()))
-		return E_FAIL;
-	//if (FAILED(m_pShadowBlur->Render()))
-	//	return E_FAIL;
-	if (FAILED(Render_SoftShadow()))
-		return E_FAIL;
-
-	if (FAILED(Render_BlurShadow()))
+	if (FAILED(m_pShadow->Render()))
 		return E_FAIL;
 
 	if (FAILED(Render_SSAO()))
@@ -238,7 +235,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 
 	if (FAILED(m_pSSAOBlur->Render()))
 		return E_FAIL;
-
+	if (FAILED(m_pDistortion->Render()))
+		return E_FAIL;
 	if (FAILED(Render_Deferred()))
 		return E_FAIL;
 
@@ -248,21 +246,20 @@ HRESULT CRenderer::Draw_RenderGroup()
 	if (FAILED(Render_Blend()))
 		return E_FAIL;
 
-	if (FAILED(m_pBloom->Render()))
+	/*if (FAILED(m_pBloom->Render()))
 		return E_FAIL;
 
-	if (FAILED(m_pDistortion->Render()))
-		return E_FAIL;
+	
 
 	if (FAILED(m_pGlow->Render()))
-		return E_FAIL;
+		return E_FAIL;*/
 
 	if (FAILED(m_pRenderTarget_Manager->End_PostProcessingRenderTarget(m_pContext)))
 		return E_FAIL;
 
 #ifdef _DEBUG
-	if (FAILED(Render_Picking()))
-		return E_FAIL;
+	/*if (FAILED(Render_Picking()))
+		return E_FAIL;*/
 	//if (FAILED(Render_Brushing()))
 	//	return E_FAIL;
 #endif // _DEBUG
@@ -270,13 +267,12 @@ HRESULT CRenderer::Draw_RenderGroup()
 	if (FAILED(Render_PostProcessing()))
 		return E_FAIL;
 
-	
 	if (FAILED(Render_UI()))
 		return E_FAIL;
 
 #ifdef _DEBUG
-	if (FAILED(Render_UITexture()))
-		return E_FAIL;
+	/*if (FAILED(Render_UITexture()))
+		return E_FAIL;*/
 #endif // _DEBUG
 
 #ifdef _DEBUG
@@ -329,20 +325,22 @@ HRESULT CRenderer::Render_Depth()
 	if (nullptr == m_pRenderTarget_Manager)
 		return E_FAIL;
 
-	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Shadow_Depth"))))
+	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Shadow_Depth"), true)))
 		return E_FAIL;
 
 	for (auto& pGameObject : m_RenderObjects[RENDER_DEPTH])
 	{
 		if (nullptr != pGameObject)
 			pGameObject->Render_Depth();
+
 		Safe_Release(pGameObject);
 	}
 
 	m_RenderObjects[RENDER_DEPTH].clear();
 
-	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext)))
+	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, true)))
 		return E_FAIL;
+
 	return S_OK;
 }
 HRESULT CRenderer::Render_NonBlend()
@@ -458,129 +456,6 @@ HRESULT CRenderer::Render_Lights()
 	return S_OK;
 }
 
-
-
-HRESULT CRenderer::Render_Shadow()
-{
-	if (nullptr == m_pRenderTarget_Manager)
-		return E_FAIL;
-
-	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Shadow"))))
-		return E_FAIL;
-
-	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Depth"), m_pSSAOShader, "g_DepthTexture")))
-		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Shadow_Depth"), m_pSSAOShader, "g_vLightDepthTexture")))
-		return E_FAIL;
-
-	CPipeLine* pPipeLine = CPipeLine::GetInstance();
-	Safe_AddRef(pPipeLine);
-
-	if (FAILED(m_pSSAOShader->Bind_Matrix("g_ViewMatrixInv", pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_VIEW))))
-		return E_FAIL;
-
-	if (FAILED(m_pSSAOShader->Bind_Matrix("g_ProjMatrixInv", pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
-
-	if (FAILED(m_pSSAOShader->Bind_RawValue("g_fCamFar", pPipeLine->Get_CamFar(), sizeof(_float))))
-		return E_FAIL;
-
-	_float4x4	ViewMatrix, ProjMatrix;
-	//if (!m_pLight_Manager->Light_NullCheck())
-	{
-		//_float4* Pos = m_pLight_Manager->Get_LightPosition();
-		ViewMatrix = XMMatrixLookAtLH(_float4(0.f,10.f,0.f,1.f), _float4(3.f, 0.f, 3.f, 1.f), _float4(0.f, 1.f, 0.f, 0.f));
-		ProjMatrix = XMMatrixPerspectiveFovLH(XMConvertToRadians(90.f), _float(1280) / 720.f, 1.f, 100.f);
-	}
-	/*else
-	{
-		_float4* LightPos = m_pLight_Manager->Get_LightPosition();
-
-		_float4 LightDir = m_pLight_Manager->Get_Light(1)->vDir;
-		ViewMatrix = XMMatrixLookAtLH(*LightPos, _float4(3.f, 0.f, 3.f, 1.f), LightDir);
-		ProjMatrix = XMMatrixPerspectiveFovLH(XMConvertToRadians(90.f), _float(1280) / 720.f, 1.f, 100.f);
-	}*/
-
-
-
-
-	if (FAILED(m_pSSAOShader->Bind_Matrix("g_vLightView", &ViewMatrix)))
-		return E_FAIL;
-	if (FAILED(m_pSSAOShader->Bind_Matrix("g_vLightProj", &ProjMatrix)))
-		return E_FAIL;
-	//���ǰ��� �����ֱ�
-	/*if (FAILED(m_pSSAOShader->Bind_Matrix("g_vLightView", m_pLight_Manager->Get_LightView())))
-		return E_FAIL;
-	if (FAILED(m_pSSAOShader->Bind_Matrix("g_vLightProj", m_pLight_Manager->Get_LightProj())))
-		return E_FAIL;*/
-
-	Safe_Release(pPipeLine);
-
-
-	m_pSSAOShader->Begin("Shadow");
-
-	m_pSSAOBuffer->Render();
-
-
-
-	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext)))
-		return E_FAIL;
-
-	return S_OK;
-}
-
-HRESULT CRenderer::Render_SoftShadow()
-{
-	if (nullptr == m_pRenderTarget_Manager)
-		return E_FAIL;
-
-	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_SoftShadow"))))
-		return E_FAIL;
-
-	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Shade"), m_pShadeTypeShader, "g_ShadeTexture")))
-		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Shadow_Depth"), m_pShadeTypeShader, "g_ShadowTexture")))
-		return E_FAIL;
-
-	CPipeLine* pPipeLine = CPipeLine::GetInstance();
-	Safe_AddRef(pPipeLine);
-
-	if (FAILED(m_pShadeTypeShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
-		return E_FAIL;
-	if (FAILED(m_pShadeTypeShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
-		return E_FAIL;
-	if (FAILED(m_pShadeTypeShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
-		return E_FAIL;
-
-	if (FAILED(m_pShadeTypeShader->Bind_RawValue("g_fCamFar", pPipeLine->Get_CamFar(), sizeof(_float))))
-		return E_FAIL;
-
-	_float4x4	ViewMatrix, ProjMatrix;
-	ViewMatrix = XMMatrixLookAtLH(_float4(0.f, 10.f, 0.f, 1.f), _float4(3.f, 0.f, 3.f, 1.f), _float4(0.f, 1.f, 0.f, 0.f));
-	ProjMatrix = XMMatrixPerspectiveFovLH(XMConvertToRadians(90.f), _float(1280) / 720.f, 1.f, 100.f);
-	if (FAILED(m_pShadeTypeShader->Bind_Matrix("g_vLightView", &ViewMatrix)))
-		return E_FAIL;
-	if (FAILED(m_pShadeTypeShader->Bind_Matrix("g_vLightProj", &ProjMatrix)))
-		return E_FAIL;
-
-	_float4 Position = _float4(0.f, 10.f, 0.f, 1.f);
-	if (FAILED(m_pShadeTypeShader->Bind_RawValue("g_vLightPos", &Position, sizeof(_float4))))
-		return E_FAIL;
-
-
-	Safe_Release(pPipeLine);
-
-
-	m_pShadeTypeShader->Begin("Softshadow");
-
-	m_pShadeTypeBuffer->Render();
-
-	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext)))
-		return E_FAIL;
-
-	return S_OK;
-}
-
 HRESULT CRenderer::Render_SSAO()
 {
 	if (nullptr == m_pRenderTarget_Manager)
@@ -601,19 +476,15 @@ HRESULT CRenderer::Render_SSAO()
 	if (FAILED(m_pSSAOShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
 
-	m_pNoiseTexture->Bind_ShaderResource(m_pSSAOShader, "g_NoiseTexture");
-
 	CPipeLine* pPipeLine = CPipeLine::GetInstance();
 	Safe_AddRef(pPipeLine);
 
-
-	if (FAILED(m_pSSAOShader->Bind_Matrix("g_ProjMatrixInv", pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_PROJ))))
+	if (FAILED(m_pSSAOShader->Bind_RawValue("g_fCamFar", pPipeLine->Get_CamFar(), sizeof(_float))))
 		return E_FAIL;
 
-
-	if (FAILED(m_pSSAOShader->Bind_RawValue("g_vCamPosition", pPipeLine->Get_CamPosition(), sizeof(_float4))))
-		return E_FAIL;
 	Safe_Release(pPipeLine);
+
+	m_pNoiseTexture->Bind_ShaderResource(m_pSSAOShader, "g_NoiseTexture");
 
 	if (FAILED(m_pSSAOShader->Begin("SSAO")))
 		return E_FAIL;
@@ -633,13 +504,11 @@ HRESULT CRenderer::Render_Deferred()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Shade"), m_pDeferredShader, "g_ShadeTexture")))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Blur"), m_pDeferredShader, "g_BlurTexture")))
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_SSAO"), m_pDeferredShader, "g_SSAOTexture")))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Shadow"), m_pDeferredShader, "g_ShadowTexture")))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Specular"), m_pDeferredShader, "g_SpecularTexture")))
-		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_SoftShadow"), m_pDeferredShader, "g_SoftShadowTexuture")))
 		return E_FAIL;
 
 
@@ -692,34 +561,14 @@ HRESULT CRenderer::Render_Blend()
 	return S_OK;
 }
 
-HRESULT CRenderer::Render_BlurShadow()
-{
-	if (nullptr == m_pRenderTarget_Manager)
-		return E_FAIL;
-
-	/*if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Blur"))))
-		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Shadow"), m_pSSAOShader, "g_SSAOTexture")))
-		return E_FAIL;
-	if (FAILED(m_pSSAOShader->Begin("BlurX")))
-		return E_FAIL;
-	if (FAILED(m_pSSAOBuffer->Render()))
-		return E_FAIL;
-	if (FAILED(m_pSSAOShader->Begin("BlurY")))
-		return E_FAIL;
-	if (FAILED(m_pSSAOBuffer->Render()))
-		return E_FAIL;
-
-	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext)))
-		return E_FAIL;*/
-	return S_OK;
-}
-
 HRESULT CRenderer::Render_PostProcessing()
 {
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_PostProcessing"), m_pPostProcessingShader, "g_PostProcessingTexture")))
 		return E_FAIL;
-
+	/*if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_FinBloom"), m_pPostProcessingShader, "g_BloomTexture")))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_FinGlow"), m_pPostProcessingShader, "g_GlowTexture")))
+		return E_FAIL;*/
 	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
 	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
@@ -730,6 +579,7 @@ HRESULT CRenderer::Render_PostProcessing()
 		return E_FAIL; 
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_FinGlow"), m_pPostProcessingShader, "g_GlowTexture")))
 		return E_FAIL;
+	
 	m_pPostProcessingShader->Begin("PostProcessing");
 
 	m_pPostProcessingBuffer->Render();
@@ -790,6 +640,21 @@ HRESULT CRenderer::Render_EffectType()
 	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext)))
 		return E_FAIL;
 
+	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_MotionBlur"))))
+		return E_FAIL;
+
+	for (auto& pGameObject : m_RenderObjects[RENDER_MOTIONBLUR])
+	{
+		if (nullptr != pGameObject)
+			pGameObject->Render();
+
+		Safe_Release(pGameObject);
+	}
+
+	m_RenderObjects[RENDER_MOTIONBLUR].clear();
+
+	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -962,13 +827,22 @@ HRESULT CRenderer::Add_Components()
 	if (nullptr == m_pBloom)
 		return E_FAIL;
 
-	m_pDistortion = CDistortion::Create(m_pDevice, m_pContext, TEXT("Target_Distortion"));
+	m_pDistortion = CDistortion::Create(m_pDevice, m_pContext, TEXT("Target_MapEffect"));
 	if (nullptr == m_pDistortion)
 		return E_FAIL;
 
 	m_pGlow = CGlow::Create(m_pDevice, m_pContext, TEXT("Target_FinGlow"), 0.5f);//파티클이 갖고있는 정보하나주면 힘을 변경하도록 하면될것같음
 	if (nullptr == m_pGlow)
 		return E_FAIL;
+
+	m_pMotionBlur = CMotionBlur::Create(m_pDevice, m_pContext, TEXT("Target_FinGlow"));
+	if (nullptr == m_pMotionBlur)
+		return E_FAIL;
+
+	m_pShadow = CShadow::Create(m_pDevice, m_pContext);
+	if (nullptr == m_pShadow)
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -1107,9 +981,11 @@ void CRenderer::Free()
 	Safe_Release(m_pTexture3);
 	Safe_Release(m_pNoiseTexture);
 
+
 	Safe_Release(m_pAfterShaderBuffer);
 	Safe_Release(m_pAfterShader);
 
+	Safe_Release(m_pMotionBlur);
 	Safe_Release(m_pSSAOBuffer);
 	Safe_Release(m_pSSAOShader);
 	Safe_Release(m_pShadeTypeShader);
@@ -1119,6 +995,7 @@ void CRenderer::Free()
 	Safe_Release(m_pPostProcessingShader);
 	Safe_Release(m_pPostProcessingBuffer);
 
+	Safe_Release(m_pShadow);
 	Safe_Release(m_pBloom);
 	Safe_Release(m_pSSAOBlur);
 	Safe_Release(m_pDistortion);

@@ -73,16 +73,20 @@ HRESULT CModel_LOD::Initialize_Prototype(LODDESC& LodDesc, const _tchar* szModel
 		lstrcat(pModelPrototypeName, LodDesc.szPrototypeName);
 		lstrcat(pModelPrototypeName, wszModelIndex);
 		
-		if (0 == i)
+		if (0 != i)
 		{
-			wstring wstr = szLodModelFilePath;
-			lstrcpy(szLodModelFilePath, wstr.substr(0, wstr.size() - 9).c_str());
-			lstrcat(szLodModelFilePath, TEXT(".dat"));
+			wstring wstrPath = szLodModelFilePath;
+			wstrPath = wstrPath.substr(0, wstrPath.size() - 4);
+			wstrPath += TEXT("_Lod");
+			wstrPath += wszModelIndex;
+			wstrPath += TEXT(".dat");
+			ZeroMemory(szLodModelFilePath, sizeof(_tchar) * MAX_STR);
+			lstrcpy(szLodModelFilePath, wstrPath.c_str());
 		}
 
  		if (FAILED(pComponent_Manager->Add_Prototype(LodDesc.iLevelIndex, pModelPrototypeName,
 			CModel::Create(m_pDevice, m_pContext,
-				LodDesc.eModelType, szLodModelFilePath, LodDesc.PivotMatrix))))
+				LodDesc.eModelType, szLodModelFilePath, LodDesc.PivotMatrix), true)))
 		{
 			MSG_BOX("Failed Create Prototype Lods");
 			Safe_Release(pComponent_Manager);
@@ -174,6 +178,12 @@ HRESULT CModel_LOD::Add_Components()
 		m_ModelComponentTags.push_back(wszComponentName);
 
 		Safe_Release(pModel);
+
+		if (iModelIndex == m_LodPrototypes.size())
+		{
+			m_pCurrentModel = pModel;
+			Safe_AddRef(m_pCurrentModel);
+		}
 	}
 	
 	return S_OK;

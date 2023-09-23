@@ -24,7 +24,7 @@ HRESULT CSelector_Degree::Tick(const _float& fTimeDelta)
 	return __super::Tick(fTimeDelta);
 }
 
-HRESULT CSelector_Degree::Assemble_Childs(DEGREES eType, CBehavior* pBehavior)
+HRESULT CSelector_Degree::Assemble_Behavior(DEGREES eType, CBehavior* pBehavior)
 {
 	BEGININSTANCE;
 
@@ -213,12 +213,12 @@ HRESULT CSelector_Degree::Assemble_Childs(DEGREES eType, CBehavior* pBehavior)
 			throw TEXT("Invalid Degree Type");
 		}
 
-		if (FAILED(Assemble_Behavior(wstrBehaviorTag, pBehavior)))
+		if (FAILED(__super::Assemble_Behavior(wstrBehaviorTag, pBehavior)))
 			throw wstrBehaviorTag;
 	}
 	catch (const _tchar* pErrorTag)
 	{
-		wstring wstrErrorMSG = TEXT("[Selector_Degree] Failed Assemble_Childs : \n");
+		wstring wstrErrorMSG = TEXT("[Selector_Degree] Failed Assemble_Behavior : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
 
@@ -226,7 +226,7 @@ HRESULT CSelector_Degree::Assemble_Childs(DEGREES eType, CBehavior* pBehavior)
 
 		return E_FAIL;
 	}
-	
+
 	ENDINSTANCE;
 
 	return S_OK;

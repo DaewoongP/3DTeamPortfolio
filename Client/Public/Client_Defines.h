@@ -7,45 +7,67 @@ namespace Client
 
 	const float g_fFrame = 60.f;
 
-	enum LEVELID { LEVEL_STATIC, LEVEL_LOGO, LEVEL_MAINGAME, LEVEL_LOADING, LEVEL_END };
+	enum LEVELID { LEVEL_STATIC, LEVEL_LOGO, 
+		LEVEL_MAINGAME, LEVEL_CLIFFSIDE, LEVEL_VAULT, 
+		LEVEL_GREATHALL, LEVEL_SMITH, 
+		LEVEL_MINIGAME, LEVEL_PVP, 
+		LEVEL_SKY, LEVEL_DRAGON, 
+		LEVEL_LOADING, LEVEL_END };
 
 	enum SPELL
 	{
-		ACCIO					,//= 0,
-		ALOHOMORA				,//= 1 << 0,
-		ALTERATION				,//= 1 << 1,
-		ARRESTOMOMENTUM			,//= 1 << 2,
-		AVADAKEDAVRA			,//= 1 << 3,
-		BOMBARDA				,//= 1 << 4,
-		CONFRINGO				,//= 1 << 5,
-		CONJURATION				,//= 1 << 6,
-		CRUCIO					,//= 1 << 7,
-		DEPULSO					,//= 1 << 8,
-		DESCENDO				,//= 1 << 9,
-		DIFFINDO				,//= 1 << 10,
-		DISILLUSIONMENT			,//= 1 << 11,
-		EVAESCO					,//= 1 << 12,
-		EXPELLIARMUS			,//= 1 << 13,
-		FLIPENDO				,//= 1 << 14,
-		GLACIUS					,//= 1 << 15,
-		IMPERIO					,//= 1 << 16,
-		NCENDIO					,//= 1 << 17,
-		LEVIOSO					,//= 1 << 18,
-		LUMOS					,//= 1 << 19,
-		PROTEGO					,//= 1 << 20,
-		REPARO					,//= 1 << 21,
-		REVELIO					,//= 1 << 22,
-		TRANSFORMATION			,//= 1 << 23,
-		TRANSFORMATIONOVERLAND	,//= 1 << 24,
-		WINGARDIUMLEVIOSA		,//= 1 << 25,
-		BASICCAST				,//= 1 << 26,
-		STUPEFY					,//= 1 << 27,
-		PETRIFICUSTOTALUS		,//= 1 << 28,
-		MAGICTHROW				,//= 1 << 29,
-		FINISHER				,//= 1 << 30,
-		SPELL_END				
+		ACCIO,
+		ALOHOMORA,
+		ALTERATION,
+		ARRESTOMOMENTUM,
+		AVADAKEDAVRA,
+		BOMBARDA,
+		CONFRINGO,
+		CONJURATION,
+		CRUCIO,
+		DEPULSO,
+		DESCENDO,
+		DIFFINDO,
+		DISILLUSIONMENT,
+		EVAESCO,
+		EXPELLIARMUS,
+		FLIPENDO,
+		GLACIUS,
+		IMPERIO,
+		NCENDIO,
+		LEVIOSO,
+		LUMOS,
+		PROTEGO,
+		REPARO,
+		REVELIO,
+		TRANSFORMATION,
+		TRANSFORMATIONOVERLAND,
+		WINGARDIUMLEVIOSA,
+		BASICCAST,
+		STUPEFY,
+		PETRIFICUSTOTALUS,
+		MAGICTHROW,
+		FINISHER,
+		SPELL_END
 	};
-}
+
+	// WITH MONSTER
+	// 사용할 경우 주성환한테 얘기해주세요.
+	enum BUFF_TYPE
+	{
+		BUFF_NONE			= 0,		// 아무 디버프 없음.( 평타 )
+		BUFF_SLOW			= 1 << 0,
+		BUFF_FROZEN			= 1 << 1,
+		BUFF_CHANGE			= 1 << 2,
+		BUFF_WEAPONLOSS		= 1 << 3,
+		BUFF_FIRE			= 1 << 4,
+		BUFF_LEVIOSO		= 1 << 5,
+		BUFF_PUSH			= 1 << 6,
+		BUFF_CURSE			= 1 << 7,
+		BUFF_STUPEFY		= 1 << 8,
+		BUFF_DESCENDO		= 1 << 9,
+		BUFF_END			= 12
+	};
 
 #pragma region UI Scene
 	enum MENU
@@ -62,6 +84,7 @@ namespace Client
 		MENU_END
 	};
 #pragma endregion
+}
 
 extern HINSTANCE g_hInst;
 extern HWND g_hWnd;

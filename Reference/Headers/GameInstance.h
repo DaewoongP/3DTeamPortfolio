@@ -100,6 +100,7 @@ public: /* For.PipeLine*/
 	// 카메라에서 Far 값 세팅.
 	void Set_CameraFar(_float fCamFar);
 	const _float4x4* Get_TransformMatrix(CPipeLine::D3DTRANSFORMSTATE eTransformState);
+	const _float4x4* Get_LightTransformMatrix(CPipeLine::D3DTRANSFORMSTATE eTransformState);
 	const _float4x4* Get_TransformMatrix_Inverse(CPipeLine::D3DTRANSFORMSTATE eTransformState);
 	const _float4* Get_CamPosition();
 	const _float3* Get_CamUp();

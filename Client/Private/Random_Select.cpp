@@ -64,7 +64,7 @@ void CRandom_Select::Reset_Behavior(HRESULT result)
 		return;
 
 	(*m_iterCurBehavior)->Reset_Behavior(result);
-	if (CMagic::BUFF_NONE != *pICurrentSpell)
+	if (BUFF_NONE != *pICurrentSpell)
 	{
 		Set_Random_Behavior();
 

@@ -91,8 +91,15 @@ void CMoveLoopState::OnStateTick()
 		*m_pIsFinishAnimation = false;
 	}
 
+	BEGININSTANCE;
+
+	//m_pPlayerTransform->Go_Straight(7.0f * pGameInstance->Get_World_Tick());
+
+	ENDINSTANCE;
+
 	Go_Magic_Cast();
 
+	Go_Protego();
 }
 
 void CMoveLoopState::OnStateExit()
@@ -119,7 +126,7 @@ void CMoveLoopState::LookFront()
 	if (true == *m_pIsDirectionKeyPressed)
 	{
 		//지속적으로 회전
-		m_pPlayerTransform->Turn(_float3(0.0f, 1.0f, 0.0f), fAngle * pGameInstance->Get_World_Tick());
+		m_pPlayerTransform->Turn(_float3(0.0f, 1.0f, 0.0f), fAngle * pGameInstance->Get_World_Tick() * (*m_pFRotationSpeed));
 	}
 
 	ENDINSTANCE;

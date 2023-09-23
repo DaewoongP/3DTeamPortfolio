@@ -15,7 +15,7 @@ class ENGINE_DLL CRenderer final : public CComponent
 {
 public:
 	enum RENDERGROUP {RENDER_PRIORITY, RENDER_DEPTH, RENDER_NONBLEND, RENDER_NONLIGHT, RENDER_BLEND,
-					  RENDER_BLUR,RENDER_BLOOM, RENDER_DISTORTION, RENDER_GLOW,//셰이딩처리를 해줄애들
+					  RENDER_BLUR,RENDER_BLOOM, RENDER_DISTORTION, RENDER_GLOW,RENDER_MOTIONBLUR,//셰이딩처리를 해줄애들
 					  RENDER_PICKING, RENDER_BRUSHING, RENDER_UI, RENDER_UITEXTURE, RENDER_END };
 
 private:
@@ -27,7 +27,9 @@ public:
 
 public:
 	void	Add_RenderGroup(RENDERGROUP eRenderGroup, class CGameObject* pGameObject);
+	void	Add_RenderGroup(RENDERGROUP eRenderGroup, class CGameObject* pGameObject,_float LightPower);
 	void	Add_RenderGroup(RENDERGROUP eRenderGroup, class CGameObject* pGameObject, _tchar* pShaderPass, CTexture* pOriTexture = nullptr, CTexture*  pNoisetexture = nullptr,CTexture* pAlphaTexture = nullptr);
+	
 	HRESULT Draw_RenderGroup();
 
 #ifdef _DEBUG
@@ -44,20 +46,14 @@ private:
 #endif // _DEBUG
 	HRESULT Render_Lights();
 	HRESULT Render_Depth();
-	HRESULT Render_Shadow();
-	HRESULT Render_SoftShadow();
 	HRESULT Render_SSAO();
 	HRESULT Render_Deferred();
 	HRESULT Render_NonLight();
 	HRESULT Render_Blend();
-	HRESULT Render_BlurShadow();
 	HRESULT Render_PostProcessing();
 	HRESULT Render_EffectType();
 	HRESULT Render_Distortion();
-	//HRESULT Render_Glow();
 	HRESULT Render_UI();
-
-	
 
 #ifdef _DEBUG
 	HRESULT Render_UITexture();
@@ -69,6 +65,7 @@ private:
 	HRESULT Sort_Blend();
 	HRESULT Sort_UI();
 	HRESULT Add_Components();
+	HRESULT Create_DepthTexture(_uint iSizeX, _uint iSizeY);
 
 #ifdef _DEBUG
 private:
@@ -120,10 +117,13 @@ private:
 	class CBlur*					m_pSSAOBlur = { nullptr };
 	//class CBlur* m_pShadowBlur = { nullptr };
 	class CBloom*					m_pBloom = { nullptr };
+	class CShadow*					m_pShadow = { nullptr };
 	class CGlow*					m_pGlow = {nullptr};
+	_float							m_fGlowPower = { 0.f };
+
 	class CDistortion*				m_pDistortion ={nullptr};
 
-
+	class CMotionBlur* m_pMotionBlur = { nullptr };
 
 private:
 	_float m_fFrameTime = 0.f;

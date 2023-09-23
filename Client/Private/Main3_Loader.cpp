@@ -22,7 +22,7 @@
 #include "JumpState.h"
 #include "HardLandState.h"
 #include "MagicCastingState.h"
-
+#include "ProtegoState.h"
 #pragma endregion
 
 
@@ -214,6 +214,11 @@ HRESULT CMain3_Loader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_State_Magic_Casting"),
 			CMagicCastingState::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_State_Magic_Casting");
+
+		/* For.Prototype_Component_State_ProtegoState */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_State_ProtegoState"),
+			CProtegoState::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_State_ProtegoState");
 
 #pragma endregion
 

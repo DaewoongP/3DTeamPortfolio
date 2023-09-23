@@ -24,6 +24,9 @@ private:
 	explicit CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CPlayer(const CPlayer& rhs);
 	virtual ~CPlayer() = default;
+	
+public:
+	void Set_TargetTransform(CTransform* _pTargetTransform = nullptr) { m_pTargetTransform = _pTargetTransform; }
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -38,6 +41,7 @@ public:
 
 private:
 	CShader*		m_pShader = { nullptr };
+	CShader*		m_pShadowShader = { nullptr };
 	CRenderer*		m_pRenderer = { nullptr };
 	CCustomModel*	m_pCustomModel = { nullptr };
 	CRigidBody*		m_pRigidBody = { nullptr };
@@ -50,6 +54,9 @@ private:
 	_float m_fLookAngle{};
 	//방향키 입력이 들어왔는지 확인하는 변수
 	_bool m_isDirectionKeyPressed { false };
+	//타겟을 향하기위한 각 변수
+	_float m_fTargetAngle{};
+
 	_bool		m_isFixMouse = { false };
 	CStateContext* m_pStateContext = { nullptr };
 	
@@ -57,10 +64,12 @@ private:
 	class CMagicSlot*	m_pMagicSlot = { nullptr };
 	CWeapon_Player_Wand*	m_pWeapon = { nullptr };
 
+	CTransform* m_pTargetTransform = { nullptr };
 
 private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
+	HRESULT SetUp_ShadowShaderResources();
 	HRESULT Add_Magic();
 
 private:
@@ -85,6 +94,15 @@ private:
 private:
 	//카메라와 플레이어의 각을 검사해서 저장한다.
 	void UpdateLookAngle();
+	//타겟과의 각을 구하기 위한함수
+	void Update_Target_Angle();
+
+	void Shot_Basic_Spell();
+
+	void Protego();
+
+	HRESULT Bind_Notify();
+
 	void Update_Cloth(_float fTimeDelta);
 
 public:

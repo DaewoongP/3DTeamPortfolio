@@ -4,7 +4,6 @@
 #include "Weapon_Golem_Combat.h"
 
 #include "Wait.h"
-#include "Magic.h"
 #include "Action.h"
 #include "MagicBall.h"
 #include "Check_Degree.h"
@@ -66,15 +65,17 @@ void CGolem_Combat::Tick(_float fTimeDelta)
 	
 	// Test Code 
 	BEGININSTANCE;
-
+	
 	if (pGameInstance->Get_DIKeyState(DIK_LCONTROL, CInput_Device::KEY_PRESSING))
 	{
 		if (pGameInstance->Get_DIKeyState(DIK_5, CInput_Device::KEY_DOWN))
 			m_isSpawn = true;
 		if (pGameInstance->Get_DIKeyState(DIK_4, CInput_Device::KEY_DOWN))
 			m_isParring = true;
+		if (pGameInstance->Get_DIKeyState(DIK_2, CInput_Device::KEY_DOWN))
+			m_iCurrentSpell |= BUFF_LEVIOSO;
 		if (pGameInstance->Get_DIKeyState(DIK_1, CInput_Device::KEY_DOWN))
-			m_iCurrentSpell |= CMagic::BUFF_CONTROL;
+			m_iCurrentSpell |= BUFF_STUPEFY;
 	}
 
 	ENDINSTANCE;
@@ -84,6 +85,18 @@ void CGolem_Combat::Tick(_float fTimeDelta)
 
 	if (nullptr != m_pRootBehavior)
 		m_pRootBehavior->Tick(fTimeDelta);
+
+	_float3 vPosition = m_pTransform->Get_Position();
+	for (auto iter = m_CurrentTickSpells.begin(); iter != m_CurrentTickSpells.end(); )
+	{
+		if (iter->first & m_iCurrentSpell)
+		{
+			//iter->second(vPosition, fTimeDelta);
+			++iter;
+		}
+		else
+			iter = m_CurrentTickSpells.erase(iter);
+	}
 
 	if (nullptr != m_pModelCom)
 		m_pModelCom->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
@@ -112,17 +125,16 @@ void CGolem_Combat::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 	/* Collision Magic */
 	if (wstring::npos != wstrObjectTag.find(TEXT("MagicBall")))
 	{
-		cout << "Hit Magic" << endl;
 		CMagicBall::COLLSIONREQUESTDESC* pCollisionMagicBallDesc = static_cast<CMagicBall::COLLSIONREQUESTDESC*>(CollisionEventDesc.pArg);
-		SPELL eSpell = pCollisionMagicBallDesc->eMagicTag;
+		BUFF_TYPE eBuff = pCollisionMagicBallDesc->eBuffType;
 		auto Action = pCollisionMagicBallDesc->Action;
 		_float fDamage = pCollisionMagicBallDesc->fDamage;
 
-		auto iter = m_CurrentTickSpells.find(eSpell);
+		auto iter = m_CurrentTickSpells.find(eBuff);
 		if (iter == m_CurrentTickSpells.end())
-			m_CurrentTickSpells.emplace(eSpell, Action);
+			m_CurrentTickSpells.emplace(eBuff, Action);
 
-		m_iCurrentSpell |= eSpell;
+		m_iCurrentSpell |= eBuff;
 	}
 
 	/* Collision Player Fig */
@@ -209,7 +221,6 @@ HRESULT CGolem_Combat::Make_AI()
 	try /* Failed Check Make_AI */
 	{
 #pragma region Add_Types
-		/* Add Types */
 		if (FAILED(m_pRootBehavior->Add_Type("pTransform", m_pTransform)))
 			throw TEXT("Failed Add_Type pTransform");
 		if (FAILED(m_pRootBehavior->Add_Type("pModel", m_pModelCom)))
@@ -447,9 +458,10 @@ void CGolem_Combat::Set_Current_Target()
 
 	if (false == m_isRangeInEnemy)
 	{
-		BEGININSTANCE;
+		m_pTarget = nullptr;
+		/*BEGININSTANCE;
 		m_pTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Player"), TEXT("GameObject_Player")));
-		ENDINSTANCE;
+		ENDINSTANCE;*/
 	}
 }
 
@@ -672,18 +684,18 @@ HRESULT CGolem_Combat::Make_Turns(_Inout_ CSequence* pSequence)
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Selector_Degree"), pSelector_Degree)))
 			throw TEXT("Failed Assemble_Behavior Selector_Degree");
 
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::RIGHT_BACK, pAction_Right_Back)))
-			throw TEXT("Failed Assemble_Childs pSelector_Degree RIGHT_BACK");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::LEFT_BACK, pAction_Left_Back)))
-			throw TEXT("Failed Assemble_Childs pSelector_Degree LEFT_BACK");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::LEFT_90, pAction_Left90)))
-			throw TEXT("Failed Assemble_Childs pSelector_Degree LEFT_90");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::LEFT_135, pAction_Left135)))
-			throw TEXT("Failed Assemble_Childs pSelector_Degree LEFT_135");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::RIGHT_90, pAction_Right90)))
-			throw TEXT("Failed Assemble_Childs pSelector_Degree RIGHT_90");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::RIGHT_135, pAction_Right135)))
-			throw TEXT("Failed Assemble_Childs pSelector_Degree RIGHT_135");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::RIGHT_BACK, pAction_Right_Back)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree RIGHT_BACK");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::LEFT_BACK, pAction_Left_Back)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree LEFT_BACK");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::LEFT_90, pAction_Left90)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree LEFT_90");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::LEFT_135, pAction_Left135)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree LEFT_135");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::RIGHT_90, pAction_Right90)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree RIGHT_90");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::RIGHT_135, pAction_Right135)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree RIGHT_135");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -815,7 +827,7 @@ HRESULT CGolem_Combat::Make_NormalAttack(_Inout_ CSelector* pSelector)
 				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
 					return false;
 
-				if (CMagic::BUFF_NONE != *pICurrentSpell)
+				if (BUFF_NONE != *pICurrentSpell)
 					return false;
 
 				return true;
@@ -937,7 +949,7 @@ HRESULT CGolem_Combat::Make_Check_Spell(_Inout_ CSelector* pSelector)
 				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
 					return false;
 
-				if (CMagic::BUFF_NONE == *pICurrentSpell)
+				if (BUFF_NONE == *pICurrentSpell)
 					return false;
 
 				return true;
@@ -946,13 +958,13 @@ HRESULT CGolem_Combat::Make_Check_Spell(_Inout_ CSelector* pSelector)
 		/* Set_Options */
 		pSequence_Groggy->Set_LoopTime(3.f);
 
-		/* ���������� */
+		/* Stupefy */
 		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Groggy"), pSequence_Groggy)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Groggy");
-		/* ������� */
+		/* Levioso */
 		if(FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Levitated"), pSequence_Levitated)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Levitated");
-		/* �𼾵� */
+		/* Descendo */
 		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Descendo"), pSequence_Descendo)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Descendo");
 

@@ -112,6 +112,18 @@ HRESULT CDynamic_Mesh::Initialize(void* pArg)
 
 void CDynamic_Mesh::Tick(_float fTimeDelta)
 {
+	if (false == m_isDownFrame)
+	{
+		m_isDownFrame = true;
+	}
+	else
+	{
+		m_isDownFrame = false;
+	}
+
+	if (false == m_isDownFrame)
+		return;
+
 	if (nullptr == m_pCloth ||
 		nullptr == m_pSolver)
 		return;
@@ -554,7 +566,7 @@ HRESULT CDynamic_Mesh::Initialize_ClothMesh()
 	m_pSolver = pClothFactory->createSolver();
 
 	/* 크게 건드릴게 없는 고정 옵션 값 */
-	m_pCloth->setSolverFrequency(10.f);
+	m_pCloth->setSolverFrequency(300.f);
 	m_pCloth->setTetherConstraintScale(1.f);
 	m_pCloth->setDragCoefficient(0.5f);
 	m_pCloth->setLiftCoefficient(0.6f);

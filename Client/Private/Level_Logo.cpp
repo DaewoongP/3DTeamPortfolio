@@ -18,7 +18,7 @@ HRESULT CLevel_Logo::Initialize()
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 	// ÇöÀç ¾À ¼³Á¤.
-	pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
+	pGameInstance->Set_CurrentScene(TEXT("Scene_Logo"), true);
 	Safe_Release(pGameInstance);
 
 	return S_OK;
@@ -61,6 +61,14 @@ HRESULT CLevel_Logo::Ready_Layer_BackGround(const _tchar* pLayerTag)
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
+
+	/* Add Scene : Main */
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Logo"), pLayerTag)))
+	{
+		MSG_BOX("Failed Add Scene : (Scene_Logo)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
 
 	if (FAILED(pGameInstance->Add_Component(LEVEL_LOGO, TEXT("Prototype_GameObject_Logo_BackGround"), pLayerTag, TEXT("GameObject_Logo_BackGround"))))
 	{

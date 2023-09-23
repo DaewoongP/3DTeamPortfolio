@@ -380,6 +380,13 @@ const _float4x4* CGameInstance::Get_TransformMatrix(CPipeLine::D3DTRANSFORMSTATE
 	return m_pPipeLine->Get_TransformMatrix(eTransformState);
 }
 
+const _float4x4* CGameInstance::Get_LightTransformMatrix(CPipeLine::D3DTRANSFORMSTATE eTransformState)
+{
+	NULL_CHECK_RETURN_MSG(m_pPipeLine, nullptr, TEXT("PipeLine NULL"));
+
+	return m_pPipeLine->Get_LightTransformMatrix(eTransformState);
+}
+
 const _float4x4* CGameInstance::Get_TransformMatrix_Inverse(CPipeLine::D3DTRANSFORMSTATE eTransformState)
 {
 	NULL_CHECK_RETURN_MSG(m_pPipeLine, nullptr, TEXT("PipeLine NULL"));
