@@ -126,9 +126,9 @@ void CInventory::Delete_Item(ITEMTYPE eType, _uint iIndex)
 	{
 		if (Index == iIndex)
 		{
-			Safe_Release(iter);
-			*iter = nullptr;
+			Safe_Release(*iter);
 			iter = m_pItems[eType].erase(iter);
+			break;
 		}
 		++Index;
 	}

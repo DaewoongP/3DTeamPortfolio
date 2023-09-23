@@ -197,7 +197,7 @@ void CUI_Inventory::Free()
 		Safe_Release(pTexture);
 	}
 
-	for (auto& pUI : m_pUIs)
+	for (auto& pUI : m_pSlots)
 	{
 		Safe_Release(pUI);
 	}

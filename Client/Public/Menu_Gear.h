@@ -12,6 +12,7 @@ END
 
 BEGIN(Client)
 class CUI_Effect_Back;
+class CUI_Back;
 
 class CMenu_Gear final : public CGameObject
 {
@@ -68,7 +69,7 @@ private:
 	vector<CUI_Effect_Back*> pSlotFrames;
 	vector<CUI_Effect_Back*> pSlotIcons;
 
-	vector<CUI_Effect_Back*> pStatuses;
+	vector<CUI_Back*> pStatuses;
 	vector<CUI*> pComponents;
 
 private:
