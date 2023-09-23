@@ -38,12 +38,16 @@ protected:
 	HRESULT Add_Components();
 	HRESULT Setup_ShaderResources();
 
+	HRESULT Save(const _tchar* pFilePath);
+	HRESULT Load(const _tchar* pFilePath);
+
 protected:
 	_uint m_iLevel = { 0 };
 	_float2 m_vOffset = { 0.f, 0.f, };
 	_float2 m_vTililing = { 1.f, 1.f };
 
 protected:
+	CModel::TYPE m_eAnimType;
 	string m_strPassName = { "Default" };
 	wstring m_Path[PATH_END];
 	_bool m_isAlphaClipTexture = { false };

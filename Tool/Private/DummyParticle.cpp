@@ -53,6 +53,8 @@ HRESULT CDummyParticle::Initialize(void* _pArg)
 	m_pAngularVelocityXEaseCombo = CComboBox::Create(Generate_Hashtag(true).data(), "EasingX", CEase::pEases, CEase::EASE_END, CEase::pEases[0]);
 	m_pAngularVelocityYEaseCombo = CComboBox::Create(Generate_Hashtag(true).data(), "EasingY", CEase::pEases, CEase::EASE_END, CEase::pEases[0]);
 	m_pAngularVelocityZEaseCombo = CComboBox::Create(Generate_Hashtag(true).data(), "EasingZ", CEase::pEases, CEase::EASE_END, CEase::pEases[0]);
+	m_pNoiseStrengthOptionComboBox = CComboBox::Create(Generate_Hashtag(true).data(), "Strength Option", { "Constant", "Range", "Curve"}, "Constant");
+	m_pNoiseStrengthCurveEaseCombo = CComboBox::Create(Generate_Hashtag(true).data(), "Easing", CEase::pEases, CEase::EASE_END, CEase::pEases[0]);
 	//CComboBox::Create(Generate_Hashtag(true).data(), "xvclk", CEase::asdfED, "vsd");
 
 	m_pAlphaTextureIFD = CImageFileDialog::Create(m_pDevice, "SelectTexture2D");
@@ -261,7 +263,7 @@ void CDummyParticle::EmissionModule_TreeNode(CEffect_Window* pEffectWindow)
 					, &m_EmissionModuleDesc.Bursts[i].iCount.y, 0.1f, 0, INT_MAX);
 
 				ImGui::TableSetColumnIndex(2);
-				ImGui::DragInt(strTag[2].data(), &m_EmissionModuleDesc.Bursts[i].iCycles, 0.1f, 0, INT_MAX);
+				ImGui::DragInt(strTag[2].data(), &m_EmissionModuleDesc.Bursts[i].iCycles, 0.1f, 1, INT_MAX);
 
 				ImGui::TableSetColumnIndex(3);
 				ImGui::DragFloat(strTag[3].data(), &m_EmissionModuleDesc.Bursts[i].fInterval, 0.1f, 0.f, m_EmissionModuleDesc.Bursts[i].fTime - 0.001f);
@@ -388,6 +390,11 @@ void CDummyParticle::ShapeModule_TreeNode(CEffect_Window* pEffectWindow)
 			if ("Sphere" == strShape || "Cone" == strShape || "Circle" == strShape)
 				pEffectWindow->Table_DragFloat("Theta Interval", "sxcdjmim85", &m_ShapeModuleDesc.fThetaInterval);
 
+			if ("Circle" == strShape)
+			{
+				pEffectWindow->Table_CheckBox("CameraAxis", "ckjv939jdjcvcsxv", &m_ShapeModuleDesc.isCameraAxis);
+			}
+
 			// ---------------------------------------------------------------
 			pEffectWindow->Table_Void();
 
@@ -501,7 +508,7 @@ void CDummyParticle::RendererModule_TreeNode(CEffect_Window* pEffectWindow)
 			}
 
 			m_RendererModuleDesc.strPass = m_pPassComboBox->Tick(CComboBox::TABLE);
-			pEffectWindow->Table_CheckBox("Bloom", "ckvj99vji4jfj", &m_RendererModuleDesc.isBloom);
+			pEffectWindow->Table_CheckBox("GLOW", "KCXK939DJJZZZ", &m_RendererModuleDesc.isGlow);
 			ImGui::EndTable();
 		}
 		ImGui::TreePop();
@@ -684,6 +691,67 @@ void CDummyParticle::TextureSheetAnimationModule_TreeNode(CEffect_Window* pEffec
 			}
 
 			pEffectWindow->Table_CheckBox("LoopOption", "ckjvidjf93sdf", &TSAModule.isLoopOption);
+			ImGui::EndTable();
+		}
+		ImGui::TreePop();
+	}
+}
+void CDummyParticle::NoiseModule_TreeNode(CEffect_Window* pEffectWindow)
+{
+	ImGui::Checkbox("##NoiseModule_CheckBox", &m_NoiseModuleDesc.isActivate);
+
+	if (false == m_NoiseModuleDesc.isActivate)
+	{
+		ImGui::SameLine();
+		ImGui::Text("     NoiseLifetimeModule");
+		return;
+	}
+
+	ImGui::SameLine();
+
+	if (ImGui::TreeNode("NoiseLifetimeModule"))
+	{
+		if (ImGui::BeginTable("NoiseLifetimeTable", 2))
+		{
+			ImGui::TableNextRow();
+
+			pEffectWindow->Table_CheckBox("Separate Axes", "IVJ89IVJ99K3F9", &m_NoiseModuleDesc.isSeparateAxes);
+			m_NoiseModuleDesc.strStrengthOption = m_pNoiseStrengthOptionComboBox->Tick(CComboBox::TABLE);
+			if (false == m_NoiseModuleDesc.isSeparateAxes)
+			{
+				if ("Constant" == m_NoiseModuleDesc.strStrengthOption)
+				{
+					pEffectWindow->Table_DragFloat("Strength", "lxckjvm8939dxcxv", &m_NoiseModuleDesc.fStrength);
+				}
+				else if ("Range" == m_NoiseModuleDesc.strStrengthOption)
+				{
+					pEffectWindow->Table_DragFloat2Range("Strength", "iopjlkcj9923", &m_NoiseModuleDesc.vStrengthRange, 0.01f, -FLT_MAX);
+				}
+				else if ("Curve" == m_NoiseModuleDesc.strStrengthOption)
+				{
+					//m_pNoiseStrengthCurveEaseCombo->Tick(CComboBox::TABLE);
+					//if (m_pNoiseStrengthCurveEaseCombo->IsUpdated())
+					//	m_NoiseModuleDesc.eStrengthEaseX = m_pNoiseStrengthCurveEaseCombo->Get_Current_Item_Index();
+				}
+			}
+			else
+			{
+				if ("Constant" == m_NoiseModuleDesc.strStrengthOption)
+				{
+					pEffectWindow->Table_DragXYZ("Strength", "v9c9cvk2kci", &m_NoiseModuleDesc.vStrength3DMax);
+				}
+				else if ("Range" == m_NoiseModuleDesc.strStrengthOption)
+				{
+					pEffectWindow->Table_DragXYZ("Strength", "v9c9cvk2kci", &m_NoiseModuleDesc.vStrength3DMin);
+					pEffectWindow->Table_DragXYZ("Strength", "v9c9cvk2kci", &m_NoiseModuleDesc.vStrength3DMax);
+				}
+				else if ("Curve" == m_NoiseModuleDesc.strStrengthOption)
+				{
+					//m_pNoiseStrengthCurveEaseCombo->Tick(CComboBox::TABLE);
+					//if (m_pNoiseStrengthCurveEaseCombo->IsUpdated())
+					//	m_NoiseModuleDesc.eStrengthEaseX = m_pNoiseStrengthCurveEaseCombo->Get_Current_Item_Index();
+				}
+			}
 			ImGui::EndTable();
 		}
 		ImGui::TreePop();
@@ -893,6 +961,8 @@ void CDummyParticle::Free(void)
 	Safe_Release(m_pAngularVelocityXEaseCombo);
 	Safe_Release(m_pAngularVelocityYEaseCombo);
 	Safe_Release(m_pAngularVelocityZEaseCombo);
+	Safe_Release(m_pNoiseStrengthOptionComboBox);
+	Safe_Release(m_pNoiseStrengthCurveEaseCombo);
 	Safe_Release(m_pPassComboBox);
 	for (auto& pEaseCombo : m_pEaseCombo)
 		Safe_Release(pEaseCombo);

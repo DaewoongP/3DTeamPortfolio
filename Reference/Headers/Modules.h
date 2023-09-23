@@ -5,9 +5,30 @@
 
 // 객체 : 모든 파티클을 돌리는 ParticleSystem의 인스턴스를 뜻함.
 // 파티클 : 각 입자들을 의미함.
+
+
 BEGIN(Engine)
-typedef struct tagParticle
+struct PARTICLE;
+typedef list<PARTICLE>::iterator PARTICLE_IT;
+
+struct ENGINE_DLL PT_NOTIFY
 {
+	void Reset() { CanPlay = true; }
+
+	function<bool(const PARTICLE_IT&) > StartCondition;
+	function<void()> Event;
+	_bool isPlayOnce = { true };
+	_bool CanPlay = { true };
+};
+
+struct PARTICLE
+{
+public:
+	void Add_Notify(PT_NOTIFY ptNotify) {
+		Events.push_back(ptNotify); 
+	}
+
+public:
 	_float		fAge = { 0.f };
 	_float		fGravityAccel = { 0.f };
 	_float4     vAccel = _float4();
@@ -19,9 +40,18 @@ typedef struct tagParticle
 	_float4		vColor = { 1.f, 1.f, 1.f, 1.f };
 	_float3		vScale = { 1.f, 1.f, 1.f };
 	_uint		iCurIndex = { 0 };
-}PARTICLE;
+	_bool		isAlive = { false };
+	list<PT_NOTIFY>	Events;
+
+public:
+	void PlayEvent(const PARTICLE_IT&);
+
+	friend class CParticleSystem;
+};
 class CParticleSystem;
-typedef list<PARTICLE>::iterator PARTICLE_IT;
+
+
+
 
 
 struct ENGINE_DLL MODULE
@@ -172,6 +202,7 @@ struct ENGINE_DLL SHAPE_MODULE : public MODULE
 	_float fRandomizePosition = { 0.f };
 
 	_bool isChase = { false };
+	_bool isCameraAxis = { false };
 };
 
 struct ENGINE_DLL ROTATION_OVER_LIFETIME_MODULE : public MODULE
@@ -263,9 +294,10 @@ struct ENGINE_DLL NOISE_MODULE : public MODULE
 	enum OPTION { CONSTANT, RANGE, CURVE, OPTION_END };
 	_bool isSeparateAxes = { false }; 
 	string strStrengthOption = "Constant"; // Constant, Range, Curve
-	_float2 vStrengthX = { 1.f, 1.f }; // 노이즈에 미치는 영향력
-	_float2 vStrengthY = { 1.f, 1.f }; // 높을수록 빠르고 멀리간다.
-	_float2 vStrengthZ = { 1.f, 1.f };
+	_float fStrength = { 1.f };
+	_float2 vStrengthRange = { 1.f, 1.f };
+	_float3 vStrength3DMin = { 1.f, 1.f, 1.f }; // 노이즈에 미치는 영향력
+	_float3 vStrength3DMax = { 1.f, 1.f, 1.f }; // 노이즈에 미치는 영향력
 	CEase::EASE eStrengthEaseX = { CEase::OUT_QUINT };
 	CEase::EASE eStrengthEaseY = { CEase::OUT_QUINT };
 	CEase::EASE eStrengthEaseZ = { CEase::OUT_QUINT };
@@ -311,9 +343,7 @@ struct ENGINE_DLL RENDERER_MODULE : public MODULE
 	_bool isUseGradientTexture = { false };
 	wstring wstrGraientTexture = { TEXT("../../Resources/Effects/Textures/Gradients/Default_Gradient.png") };
 	string strPass = { "Default" };
-	_bool isBloom = { false };
+	_bool isGlow = { false };
 };
-
-
 
 END

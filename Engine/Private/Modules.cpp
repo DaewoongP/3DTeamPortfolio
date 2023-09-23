@@ -370,6 +370,7 @@ HRESULT SHAPE_MODULE::Save(const _tchar* _pDirectoyPath)
 	WriteFile(hFile, &isLengthRange, sizeof(isLengthRange), &dwByte, nullptr);
 	WriteFile(hFile, &fLoopPhi, sizeof(fLoopPhi), &dwByte, nullptr);
 	WriteFile(hFile, &fLoopTheta, sizeof(fLoopTheta), &dwByte, nullptr);
+	WriteFile(hFile, &isCameraAxis, sizeof(isCameraAxis), &dwByte, nullptr);
 
 	CloseHandle(hFile);
 	return S_OK;
@@ -449,6 +450,7 @@ HRESULT SHAPE_MODULE::Load(const _tchar* _pDirectoyPath)
 	ReadFile(hFile, &isLengthRange, sizeof(isLengthRange), &dwByte, nullptr);
 	ReadFile(hFile, &fLoopPhi, sizeof(fLoopPhi), &dwByte, nullptr);
 	ReadFile(hFile, &fLoopTheta, sizeof(fLoopTheta), &dwByte, nullptr);
+	ReadFile(hFile, &isCameraAxis, sizeof(isCameraAxis), &dwByte, nullptr);
 	CloseHandle(hFile);
 	return S_OK;
 }
@@ -503,7 +505,7 @@ HRESULT RENDERER_MODULE::Save(const _tchar* _pDirectoyPath)
 	WriteFile(hFile, &isUseGradientTexture, sizeof(isUseGradientTexture), &dwByte, nullptr);
 	WriteFile(hFile, wstrGraientTexture.data(), sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
 	WriteFile(hFile, strPass.data(), sizeof(_char) * MAX_PATH, &dwByte, nullptr);
-	WriteFile(hFile, &isBloom, sizeof(isBloom), &dwByte, nullptr);
+	WriteFile(hFile, &isGlow, sizeof(isGlow), &dwByte, nullptr);
 
 	CloseHandle(hFile);
 	return S_OK;
@@ -543,7 +545,7 @@ HRESULT RENDERER_MODULE::Load(const _tchar* _pDirectoyPath)
 		wstrGraientTexture = wszBuffer;
 	ReadFile(hFile, szBuffer, sizeof(_char) * MAX_PATH, &dwByte, nullptr);
 	strPass = szBuffer;
-	ReadFile(hFile, &isBloom, sizeof(isBloom), &dwByte, nullptr);
+	ReadFile(hFile, &isGlow, sizeof(isGlow), &dwByte, nullptr);
 
 	CloseHandle(hFile);
 	return S_OK;

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -20,7 +20,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Animation.h" />
+    <ClInclude Include="..\public\MotionBlurInst.h" />
     <ClInclude Include="..\public\MotionBlur.h" />
+    <ClInclude Include="..\public\VIBuffer_Particle_Instance.h" />
+    <ClInclude Include="..\public\VIBuffer_Rect_Particle_Instance.h" />
     <ClInclude Include="..\public\VIBuffer_UVSphere.h" />
     <ClInclude Include="..\public\VIBuffer_Rect_Color_Index_Instance.h" />
     <ClInclude Include="..\Public\Base.h" />
@@ -152,7 +155,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Animation.cpp" />
+    <ClCompile Include="..\private\MotionBlurInst.cpp" />
     <ClCompile Include="..\private\MotionBlur.cpp" />
+    <ClCompile Include="..\private\VIBuffer_Particle_Instance.cpp" />
+    <ClCompile Include="..\private\VIBuffer_Rect_Particle_Instance.cpp" />
     <ClCompile Include="..\private\VIBuffer_UVSphere.cpp" />
     <ClCompile Include="..\private\VIBuffer_Rect_Color_Index_Instance.cpp" />
     <ClCompile Include="..\Private\Base.cpp" />
@@ -292,6 +298,7 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Trail.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Type.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VelocityMapInst.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointColInstance.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxRectColIdxInstance.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxRectColInstance.hlsl" />

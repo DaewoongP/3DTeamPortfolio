@@ -1,23 +1,23 @@
-#include "..\Public\VIBuffer_Rect_Color_Index_Instance.h"
+#include "..\Public\VIBuffer_Rect_Particle_Instance.h"
 #include "Texture.h"
 #include "PipeLine.h"
 
-CVIBuffer_Rect_Color_Index_Instance::CVIBuffer_Rect_Color_Index_Instance(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CVIBuffer_Color_Index_Instance(pDevice, pContext)
+CVIBuffer_Rect_Particle_Instance::CVIBuffer_Rect_Particle_Instance(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+	: CVIBuffer_Particle_Instance(pDevice, pContext)
 {
 }
 
-CVIBuffer_Rect_Color_Index_Instance::CVIBuffer_Rect_Color_Index_Instance(const CVIBuffer_Rect_Color_Index_Instance& rhs)
-	: CVIBuffer_Color_Index_Instance(rhs)
+CVIBuffer_Rect_Particle_Instance::CVIBuffer_Rect_Particle_Instance(const CVIBuffer_Rect_Particle_Instance& rhs)
+	: CVIBuffer_Particle_Instance(rhs)
 {
 }
 
-HRESULT CVIBuffer_Rect_Color_Index_Instance::Initialize_Prototype()
+HRESULT CVIBuffer_Rect_Particle_Instance::Initialize_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CVIBuffer_Rect_Color_Index_Instance::Initialize(void* pArg)
+HRESULT CVIBuffer_Rect_Particle_Instance::Initialize(void* pArg)
 {
 	if (nullptr == pArg)
 	{
@@ -127,33 +127,33 @@ HRESULT CVIBuffer_Rect_Color_Index_Instance::Initialize(void* pArg)
 	return S_OK;
 }
 
-CVIBuffer_Rect_Color_Index_Instance* CVIBuffer_Rect_Color_Index_Instance::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CVIBuffer_Rect_Particle_Instance* CVIBuffer_Rect_Particle_Instance::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CVIBuffer_Rect_Color_Index_Instance* pInstance = new CVIBuffer_Rect_Color_Index_Instance(pDevice, pContext);
+	CVIBuffer_Rect_Particle_Instance* pInstance = new CVIBuffer_Rect_Particle_Instance(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Created CVIBuffer_Rect_Color_Index_Instance");
+		MSG_BOX("Failed to Created CVIBuffer_Rect_Particle_Instance");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CComponent* CVIBuffer_Rect_Color_Index_Instance::Clone(void* pArg)
+CComponent* CVIBuffer_Rect_Particle_Instance::Clone(void* pArg)
 {
-	CVIBuffer_Rect_Color_Index_Instance* pInstance = new CVIBuffer_Rect_Color_Index_Instance(*this);
+	CVIBuffer_Rect_Particle_Instance* pInstance = new CVIBuffer_Rect_Particle_Instance(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned CVIBuffer_Rect_Color_Index_Instance");
+		MSG_BOX("Failed to Cloned CVIBuffer_Rect_Particle_Instance");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CVIBuffer_Rect_Color_Index_Instance::Free()
+void CVIBuffer_Rect_Particle_Instance::Free()
 {
 	__super::Free();
 

@@ -331,4 +331,21 @@ namespace Engine
 		static const unsigned int				iNumElements = { 8 };
 		static const D3D11_INPUT_ELEMENT_DESC	Elements[iNumElements];
 	}VTXRECTCOLIDXINSTANCE_DECL;
+
+	typedef struct tagVertex_Particle_Instance
+	{
+		XMFLOAT4		vRight;
+		XMFLOAT4		vUp;
+		XMFLOAT4		vLook;
+		XMFLOAT4		vTranslation;
+		XMFLOAT4		vColor;
+		XMFLOAT4		vVelocity;
+		UINT			iCurrentIndex;
+	}VTXPARTICLEINSTANCE;
+
+	typedef struct ENGINE_DLL tagVertex_Velocity_Instance_Declartion
+	{
+		static const unsigned int				iNumElements = { 9 };
+		static const D3D11_INPUT_ELEMENT_DESC	Elements[iNumElements];
+	}VTXPARTICLE_DECL;
 }

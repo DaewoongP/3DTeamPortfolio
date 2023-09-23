@@ -1,11 +1,11 @@
-#include "..\Public\VIBuffer_Color_Index_Instance.h"
+#include "..\Public\VIBuffer_Particle_Instance.h"
 #include "PipeLine.h"
-CVIBuffer_Color_Index_Instance::CVIBuffer_Color_Index_Instance(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CVIBuffer_Particle_Instance::CVIBuffer_Particle_Instance(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CVIBuffer(pDevice, pContext)
 {
 }
 
-CVIBuffer_Color_Index_Instance::CVIBuffer_Color_Index_Instance(const CVIBuffer_Color_Index_Instance& rhs)
+CVIBuffer_Particle_Instance::CVIBuffer_Particle_Instance(const CVIBuffer_Particle_Instance& rhs)
 	: CVIBuffer(rhs)
 	, m_iInstanceStride(rhs.m_iInstanceStride)
 	, m_iIndexCountPerInstance(rhs.m_iIndexCountPerInstance)
@@ -14,12 +14,12 @@ CVIBuffer_Color_Index_Instance::CVIBuffer_Color_Index_Instance(const CVIBuffer_C
 {
 }
 
-HRESULT CVIBuffer_Color_Index_Instance::Initialize_Prototype()
+HRESULT CVIBuffer_Particle_Instance::Initialize_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CVIBuffer_Color_Index_Instance::Initialize(void* pArg)
+HRESULT CVIBuffer_Particle_Instance::Initialize(void* pArg)
 {
 	if (nullptr == pArg)
 	{
@@ -34,8 +34,8 @@ HRESULT CVIBuffer_Color_Index_Instance::Initialize(void* pArg)
 
 	D3D11_BUFFER_DESC BufferDesc;
 	ZEROMEM(&BufferDesc);
-
-	m_iInstanceStride = sizeof(VTXCOLIDXINSTANCE);
+	
+	m_iInstanceStride = sizeof(VTXPARTICLEINSTANCE);
 	BufferDesc.ByteWidth = { m_iInstanceStride * m_iNumInstance };
 	BufferDesc.Usage = { D3D11_USAGE_DYNAMIC };
 	BufferDesc.BindFlags = { D3D11_BIND_VERTEX_BUFFER };
@@ -43,7 +43,7 @@ HRESULT CVIBuffer_Color_Index_Instance::Initialize(void* pArg)
 	BufferDesc.CPUAccessFlags = { D3D11_CPU_ACCESS_WRITE };
 	BufferDesc.MiscFlags = { 0 };
 
-	VTXCOLIDXINSTANCE* pVertices = new VTXCOLIDXINSTANCE[m_iNumInstance];
+	VTXPARTICLEINSTANCE* pVertices = new VTXPARTICLEINSTANCE[m_iNumInstance];
 
 	for (size_t i = 0; i < m_iNumInstance; ++i)
 	{
@@ -53,6 +53,7 @@ HRESULT CVIBuffer_Color_Index_Instance::Initialize(void* pArg)
 		memcpy(&pVertices[i].vTranslation, InitializeMatrix[i].m[3], sizeof(_float4));
 		pVertices->vColor = { 1.f, 1.f, 1.f, 1.f };
 		pVertices->iCurrentIndex = { 0 };
+		
 	}
 
 	D3D11_SUBRESOURCE_DATA		SubResourceData;
@@ -68,7 +69,7 @@ HRESULT CVIBuffer_Color_Index_Instance::Initialize(void* pArg)
 	return S_OK;
 }
 
-void CVIBuffer_Color_Index_Instance::Tick(VTXCOLIDXINSTANCE* pInstances, _int iRenderedParticleNum, _bool isAlphaBlend, _float4x4 AlphaBlendObjectWorldMatrixInverse)
+void CVIBuffer_Particle_Instance::Tick(VTXPARTICLEINSTANCE* pInstances, _int iRenderedParticleNum, _bool isAlphaBlend, _float4x4 AlphaBlendObjectWorldMatrixInverse)
 {
 	if (nullptr == pInstances)
 		return;
@@ -90,25 +91,14 @@ void CVIBuffer_Color_Index_Instance::Tick(VTXCOLIDXINSTANCE* pInstances, _int iR
 
 	D3D11_MAPPED_SUBRESOURCE	MappedSubResource;
 
-	m_pContext->Map(m_pVBInstance, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &MappedSubResource);
+	m_pContext->Map(m_pVBInstance, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedSubResource);
 
-	VTXCOLIDXINSTANCE* pVtxColInstance = static_cast<VTXCOLIDXINSTANCE*>(MappedSubResource.pData);
-	
-	memcpy(pVtxColInstance, pInstances, sizeof(VTXCOLIDXINSTANCE) * iRenderedParticleNum);
-	/*for (_uint i = 0; i < iRenderedParticleNum; ++i)
-	{
-		memcpy(&pVtxColInstance[i].vRight, &pInstances[i].vRight, sizeof(_float4));
-		memcpy(&pVtxColInstance[i].vUp, &pInstances[i].vUp, sizeof(_float4));
-		memcpy(&pVtxColInstance[i].vLook, &pInstances[i].vLook, sizeof(_float4));
-		memcpy(&pVtxColInstance[i].vTranslation, &pInstances[i].vTranslation, sizeof(_float4));
-		memcpy(&pVtxColInstance[i].vColor, &pInstances[i].vColor, sizeof(_float4));
-		memcpy(&pVtxColInstance[i].iCurrentIndex, &pInstances[i].iCurrentIndex, sizeof(_uint));
-	}*/
-
+	VTXPARTICLEINSTANCE* pVtxColInstance = static_cast<VTXPARTICLEINSTANCE*>(MappedSubResource.pData);
+	memcpy(pVtxColInstance, pInstances, sizeof(VTXPARTICLEINSTANCE) * iRenderedParticleNum);
 	m_pContext->Unmap(m_pVBInstance, 0);
 }
 
-void CVIBuffer_Color_Index_Instance::Sort_AlphaBlend(VTXCOLIDXINSTANCE* pInstances, _int iRenderedParticleNum, _float4x4 AlphaBlendObjectWorldMatrixInverse)
+void CVIBuffer_Particle_Instance::Sort_AlphaBlend(VTXPARTICLEINSTANCE* pInstances, _int iRenderedParticleNum, _float4x4 AlphaBlendObjectWorldMatrixInverse)
 {
 	CPipeLine* pPipeLine = CPipeLine::GetInstance();
 	Safe_AddRef(pPipeLine);
@@ -118,12 +108,12 @@ void CVIBuffer_Color_Index_Instance::Sort_AlphaBlend(VTXCOLIDXINSTANCE* pInstanc
 
 	Safe_Release(pPipeLine);
 
-	vector<VTXCOLIDXINSTANCE> ColorInstances;
+	vector<VTXPARTICLEINSTANCE> ColorInstances;
 	ColorInstances.resize(iRenderedParticleNum);
 
-	memcpy(ColorInstances.data(), pInstances, sizeof(VTXCOLIDXINSTANCE) * iRenderedParticleNum);
+	memcpy(ColorInstances.data(), pInstances, sizeof(VTXPARTICLEINSTANCE) * iRenderedParticleNum);
 
-	sort(ColorInstances.begin(), ColorInstances.end(), [vCamLocalPos](VTXCOLIDXINSTANCE SourInstance, VTXCOLIDXINSTANCE DestInstance) {
+	sort(ColorInstances.begin(), ColorInstances.end(), [vCamLocalPos](VTXPARTICLEINSTANCE SourInstance, VTXPARTICLEINSTANCE DestInstance) {
 		_float4 vSourLocalPos, vDestLocalPos;
 		memcpy(&vSourLocalPos, &SourInstance.vTranslation, sizeof(_float4));
 		memcpy(&vDestLocalPos, &DestInstance.vTranslation, sizeof(_float4));
@@ -138,10 +128,10 @@ void CVIBuffer_Color_Index_Instance::Sort_AlphaBlend(VTXCOLIDXINSTANCE* pInstanc
 		return false;
 		});
 
-	memcpy(pInstances, ColorInstances.data(), sizeof(VTXCOLIDXINSTANCE) * iRenderedParticleNum);
+	memcpy(pInstances, ColorInstances.data(), sizeof(VTXPARTICLEINSTANCE) * iRenderedParticleNum);
 }
 
-void CVIBuffer_Color_Index_Instance::Set_DrawNum(_uint iDrawNum)
+void CVIBuffer_Particle_Instance::Set_DrawNum(_uint iDrawNum)
 {
 	if (iDrawNum > m_iNumInstance)
 		return;
@@ -149,12 +139,12 @@ void CVIBuffer_Color_Index_Instance::Set_DrawNum(_uint iDrawNum)
 	m_iDrawNum = iDrawNum;
 }
 
-_uint CVIBuffer_Color_Index_Instance::Get_DrawNum()
+_uint CVIBuffer_Particle_Instance::Get_DrawNum()
 {
 	return m_iDrawNum;
 }
 
-HRESULT CVIBuffer_Color_Index_Instance::Render()
+HRESULT CVIBuffer_Particle_Instance::Render()
 {
 	if (nullptr == m_pContext)
 		return E_FAIL;
@@ -182,7 +172,7 @@ HRESULT CVIBuffer_Color_Index_Instance::Render()
 	return S_OK;
 }
 
-void CVIBuffer_Color_Index_Instance::Free()
+void CVIBuffer_Particle_Instance::Free()
 {
 	__super::Free();
 

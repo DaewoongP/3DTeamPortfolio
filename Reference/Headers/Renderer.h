@@ -11,12 +11,12 @@
 
 BEGIN(Engine)
 
-class ENGINE_DLL CRenderer final : public CComponent
+class ENGINE_DLL CRenderer final : public CGameObject
 {
 public:
 	enum RENDERGROUP {RENDER_PRIORITY, RENDER_DEPTH, RENDER_NONBLEND, RENDER_NONLIGHT, RENDER_BLEND,
 					  RENDER_BLUR,RENDER_BLOOM, RENDER_DISTORTION, RENDER_GLOW,//셰이딩처리를 해줄애들
-					  RENDER_PICKING, RENDER_BRUSHING, RENDER_UI, RENDER_UITEXTURE, RENDER_END };
+					  RENDER_PICKING, RENDER_BRUSHING, RENDER_UI, RENDER_UITEXTURE, RENDER_MOTIONBLUR, RENDER_END };
 
 private:
 	explicit CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -48,6 +48,7 @@ private:
 	HRESULT Render_SoftShadow();
 	HRESULT Render_SSAO();
 	HRESULT Render_Deferred();
+	HRESULT Render_MotionBlurInst();
 	HRESULT Render_NonLight();
 	HRESULT Render_Blend();
 	HRESULT Render_BlurShadow();
@@ -56,7 +57,6 @@ private:
 	HRESULT Render_Distortion();
 	//HRESULT Render_Glow();
 	HRESULT Render_UI();
-
 	
 
 #ifdef _DEBUG
@@ -123,6 +123,7 @@ private:
 	class CGlow*					m_pGlow = {nullptr};
 	class CDistortion*				m_pDistortion ={nullptr};
 
+	class CMotionBlurInstance*		m_pMotionBlurInstance = { nullptr };
 
 
 private:
@@ -136,7 +137,7 @@ private:
 public:
 	static const _char* pRenderGroup[RENDER_END];
 	static CRenderer* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);
-	virtual CComponent* Clone(void* pArg) override;
+	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;
 };
 

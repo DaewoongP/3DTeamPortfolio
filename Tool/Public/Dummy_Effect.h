@@ -31,6 +31,7 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 	void Tick_Imgui(_float fTimeDelta);
 
+
 private: /* For. Component */
 	CDummyTrail* m_pTrail = { nullptr };
 	CDummyParticle* m_pParticleSystem = { nullptr };
