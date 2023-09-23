@@ -248,7 +248,20 @@ HRESULT CStateContext::Ready_StateMachine()
 		return E_FAIL;
 	};
 
-	
+	if (FAILED(Add_StateMachine(TEXT("Hit"),
+		static_cast<CStateMachine*>
+		(pGameInstance->Clone_Component(LEVEL_MAINGAME,
+			TEXT("Prototype_Component_State_Hit"))))))
+	{
+		ENDINSTANCE;
+
+		MSG_BOX("Failed Ready_StateMachine");
+
+		return E_FAIL;
+	};
+
+
+
 
 	Set_StateMachine(TEXT("Idle"));
 

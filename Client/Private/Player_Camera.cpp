@@ -71,7 +71,7 @@ HRESULT CPlayer_Camera::Initialize(void* pArg)
 	Safe_AddRef(m_pPlayerTransform);
 	
 	//위치 초기화
-	Update_FollowMatrix();
+	//Update_FollowMatrix();
 
 	_float3 vPos = m_FollowTargetMatrix.Translation();
 	m_pTransform->Set_Position(vPos);
@@ -197,8 +197,10 @@ void CPlayer_Camera::Follow_Transform()
 		//거리 만큼이동
 		m_pTransform->Set_Speed((_float)vTargetDir.Length() * m_fTimeSpeed);
 
+		_float fTick = pGameInstance->Get_World_Tick();
+
 		//이동
-		m_pTransform->Move_Direction(vTargetDir, pGameInstance->Get_World_Tick());
+		m_pTransform->Move_Direction(vTargetDir, fTick);
 	}
 
 	ENDINSTANCE;

@@ -99,6 +99,8 @@ void CIdleState::OnStateTick()
 	Go_Magic_Cast();
 
 	Go_Protego();
+
+	Go_Hit();
 }
 
 void CIdleState::OnStateExit()

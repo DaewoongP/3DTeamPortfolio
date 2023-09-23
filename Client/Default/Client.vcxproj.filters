@@ -328,6 +328,9 @@
     <Filter Include="02. GameObject\04. MapObject\MapEffect">
       <UniqueIdentifier>{3d2f0c96-2d67-4229-a119-7e41208b82b3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\01. Player\03. PlayerInformation">
+      <UniqueIdentifier>{32c19ffc-fb69-42ca-ba81-07c40b9b305f}</UniqueIdentifier>
+    </Filter>
     <Filter Include="03. Behaviors\05. Function">
       <UniqueIdentifier>{779d067f-c7a3-4f48-944c-fb03090c91d3}</UniqueIdentifier>
     </Filter>
@@ -717,6 +720,9 @@
     <ClInclude Include="..\Public\MapEffect.h">
       <Filter>02. GameObject\04. MapObject\MapEffect</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Player_Information.h">
+      <Filter>02. GameObject\01. Player\03. PlayerInformation</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\LookAt.h">
       <Filter>03. Behaviors\04. Movement</Filter>
     </ClInclude>
@@ -1063,6 +1069,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\MapEffect.cpp">
       <Filter>02. GameObject\04. MapObject\MapEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_Information.cpp">
+      <Filter>02. GameObject\01. Player\03. PlayerInformation</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\LookAt.cpp">
       <Filter>03. Behaviors\04. Movement</Filter>

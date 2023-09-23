@@ -31,6 +31,8 @@ private:
     void Go_Idle();
 
     void Stupefy();
+    void Powerful_Stupefy();
+
 
 public:
     static CProtegoState* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);

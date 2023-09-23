@@ -71,6 +71,7 @@ protected:
 
 protected:
     void Go_Protego();
+    void Go_Hit();
 
 public:
     static CStateMachine* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

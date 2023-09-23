@@ -168,6 +168,7 @@
     <ClInclude Include="..\Public\Check_Degree.h" />
     <ClInclude Include="..\Public\Check_Distance.h" />
     <ClInclude Include="..\Public\HitState.h" />
+    <ClInclude Include="..\Public\Player_Information.h" />
     <ClInclude Include="..\Public\LookAt.h" />
     <ClInclude Include="..\Public\Client_Enum.h" />
     <ClInclude Include="..\Public\Finisher.h" />
@@ -320,6 +321,7 @@
     <ClCompile Include="..\Private\Check_Degree.cpp" />
     <ClCompile Include="..\Private\Check_Distance.cpp" />
     <ClCompile Include="..\Private\HitState.cpp" />
+    <ClCompile Include="..\Private\Player_Information.cpp" />
     <ClCompile Include="..\Private\LookAt.cpp" />
     <ClCompile Include="..\Private\Finisher.cpp" />
     <ClCompile Include="..\private\Level_GreatHall.cpp" />

@@ -40,6 +40,7 @@ public:
         _bool* pIsDirectionPressed = { nullptr };
         CTransform* pPlayerTransform = { nullptr };
         _float* pTargetAngle = { nullptr };
+        _float* pClothPowerPlus = { nullptr };
     }STATECONTEXTDESC;
 private:
     explicit CStateContext(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext);

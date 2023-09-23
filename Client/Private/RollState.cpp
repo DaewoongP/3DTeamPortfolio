@@ -42,6 +42,11 @@ void CRollState::OnStateEnter()
 
 	m_pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_DdgeRll_Fwd_anm"));
 
+	//m_isEnterTick = true;
+
+	
+
+
 #ifdef _DEBUG
 	//cout << "Roll Enter" << endl;
 #endif // _DEBUG
@@ -49,6 +54,13 @@ void CRollState::OnStateEnter()
 
 void CRollState::OnStateTick()
 {
+	////방향키가 눌려있다면 방향키 방향으로 회전 시켜준다.
+	//if (true == m_isEnterTick && true == *m_pIsDirectionKeyPressed)
+	//{
+	//	m_pPlayerTransform->Turn(_float3(0.0f, 1.0f, 0.0f), *m_pOwnerLookAngle);
+	//	m_isEnterTick = false;
+	//}
+	
 	if (true == *m_pIsFinishAnimation)
 	{
 		m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Idle_anm"));

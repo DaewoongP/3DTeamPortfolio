@@ -23,7 +23,11 @@
 #include "HardLandState.h"
 #include "MagicCastingState.h"
 #include "ProtegoState.h"
+#include "HitState.h"
 #pragma endregion
+
+
+#include "Player_Information.h"
 
 
 CMain3_Loader::CMain3_Loader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -223,7 +227,27 @@ HRESULT CMain3_Loader::Loading_For_Cliffside()
 			CProtegoState::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_State_ProtegoState");
 
+		/* For.Prototype_Component_State_Hit */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_State_Hit"),
+			CHitState::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_State_Hit");
+
 #pragma endregion
+
+#pragma region Player_Information
+
+		/* For.Prototype_Component_Player_Health */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Player_Health"),
+			CHealth::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Player_Health");
+
+		/* For.Prototype_Component_Player_Information */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Player_Information"),
+			CPlayer_Information::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Player_Information");
+
+#pragma endregion
+
 
 		PivotMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
 		/* For.Prototype_Component_Model_Professor_Fig */

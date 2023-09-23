@@ -88,6 +88,18 @@ void CStateMachine::Go_Protego()
 	ENDINSTANCE;
 }
 
+void CStateMachine::Go_Hit()
+{
+	BEGININSTANCE;
+
+	if (pGameInstance->Get_DIKeyState(DIK_H,CInput_Device::KEY_DOWN))
+	{
+		Set_StateMachine(TEXT("Hit"));
+	}
+
+	ENDINSTANCE;
+}
+
 CStateMachine* CStateMachine::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CStateMachine* pInstance = New CStateMachine(pDevice, pContext);
