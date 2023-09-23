@@ -893,7 +893,7 @@ HRESULT CRenderer::Add_Components()
 	Safe_Release(pGameInstance);
 	return S_OK;
 }
-
+#ifdef _DEBUG
 HRESULT CRenderer::Render_Debug()
 {
 	for (auto& pDebugCom : m_DebugObject)

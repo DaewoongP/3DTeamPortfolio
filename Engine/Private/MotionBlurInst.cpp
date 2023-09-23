@@ -120,6 +120,8 @@ HRESULT CMotionBlurInstance::Begin_MRT()
 	}
 
 	Safe_Release(pRenderTarget_Manager);
+
+	return S_OK;
 }
 
 HRESULT CMotionBlurInstance::End_MRT()

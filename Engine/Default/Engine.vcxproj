@@ -25,7 +25,6 @@
     <ClInclude Include="..\public\VIBuffer_Particle_Instance.h" />
     <ClInclude Include="..\public\VIBuffer_Rect_Particle_Instance.h" />
     <ClInclude Include="..\Public\FlowMap.h" />
-    <ClInclude Include="..\public\MotionBlur.h" />
     <ClInclude Include="..\public\Shadow.h" />
     <ClInclude Include="..\public\ThreadPool.h" />
     <ClInclude Include="..\public\VIBuffer_UVSphere.h" />
@@ -165,7 +164,6 @@
     <ClCompile Include="..\private\VIBuffer_Particle_Instance.cpp" />
     <ClCompile Include="..\private\VIBuffer_Rect_Particle_Instance.cpp" />
     <ClCompile Include="..\Private\FlowMap.cpp" />
-    <ClCompile Include="..\private\MotionBlur.cpp" />
     <ClCompile Include="..\private\Shadow.cpp" />
     <ClCompile Include="..\private\ThreadPool.cpp" />
     <ClCompile Include="..\private\VIBuffer_UVSphere.cpp" />
