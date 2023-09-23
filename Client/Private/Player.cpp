@@ -67,6 +67,9 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 	Bind_Notify();
 
+	m_fClothPower = 3.0f;
+	m_fClothPowerPlus = 1.0f;
+
 	return S_OK;
 }
 
@@ -276,6 +279,16 @@ HRESULT CPlayer::Add_Components()
 
 	m_OffsetMatrix = XMMatrixTranslation(RigidBodyDesc.vOffsetPosition.x, RigidBodyDesc.vOffsetPosition.y, RigidBodyDesc.vOffsetPosition.z);
 	m_pRigidBody->Get_RigidBodyActor()->setAngularDamping(1.f);
+
+
+	/* Com_Player_Information */
+	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Player_Information"),
+		TEXT("Com_Player_Information"), reinterpret_cast<CComponent**>(&m_pPlayer_Information))))
+	{
+		MSG_BOX("Failed CPlayer Add_Component : (Com_Player_Information)");
+		return E_FAIL;
+	}
+
 	return S_OK;
 }
 
@@ -402,7 +415,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 	//}
 
 	//if (pGameInstance->Get_DIKeyState(DIK_Q, CInput_Device::KEY_DOWN))
-	//{
+	//{DIK_1
 	//	//포르테고는 타켓이 생성 객체임
 	//	m_pMagicSlot->Action_Magic_Basic(1, m_pTransform, XMMatrixIdentity(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
 	//}
@@ -713,6 +726,17 @@ void CPlayer::Protego()
 	m_pMagicSlot->Action_Magic_Basic(1, m_pTransform, XMMatrixTranslation(0.0f, 1.0f, 0.0f), m_pTransform->Get_WorldMatrixPtr(), XMMatrixIdentity());
 }
 
+void CPlayer::Gravity_On()
+{
+	m_pRigidBody->Set_Gravity(true);
+}
+
+void CPlayer::Gravity_Off()
+{
+	m_pRigidBody->Set_Gravity(false);
+	//m_pRigidBody->Add_Force(m_pTransform->Get_Up()/* * 20.f*/, PxForceMode::eIMPULSE);
+}
+
 HRESULT CPlayer::Bind_Notify()
 {
 	function<void()> funcNotify = [&] {(*this).Shot_Basic_Spell(); };
@@ -800,6 +824,55 @@ HRESULT CPlayer::Bind_Notify()
 
 		return E_FAIL;
 	}
+
+	funcNotify = [&] {(*this).Gravity_On(); };
+
+	//Gravity_On
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_BM_Jump_RF_anm"), TEXT("Gravity_On"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Rct_KnckDn_Hvy_Fwd_01_anm"), TEXT("Gravity_On"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Rct_KnckDn_Hvy_01_anm"), TEXT("Gravity_On"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
+
+	funcNotify = [&] {(*this).Gravity_Off(); };
+
+	//Gravity_OFF
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_BM_Jump_RF_anm"), TEXT("Gravity_Off"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Rct_KnckDn_Hvy_Fwd_01_anm"), TEXT("Gravity_Off"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Rct_KnckDn_Hvy_01_anm"), TEXT("Gravity_Off"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
+
 	return S_OK;
 }
 
@@ -808,10 +881,14 @@ void CPlayer::Update_Cloth(_float fTimeDelta)
 	// 현재 y값이 반대임
 	_float3 vVelocity = m_pTransform->Get_Velocity();
 	vVelocity.y *= -1.f;
-	m_pCustomModel->Set_WindVelocity(XMVector3TransformCoord(7.f * vVelocity,
+	m_pCustomModel->Set_WindVelocity(XMVector3TransformCoord(m_fClothPower * vVelocity,
 		XMMatrixInverse(nullptr, XMMatrixRotationQuaternion(m_pTransform->Get_Quaternion()))));
 
 	m_pCustomModel->Tick(CCustomModel::ROBE, 2, fTimeDelta);
+}
+
+void CPlayer::Find_Target()
+{
 }
 
 CPlayer* CPlayer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -855,5 +932,6 @@ void CPlayer::Free()
 		Safe_Release(m_pWeapon);
 		Safe_Release(m_pStateContext);
 		Safe_Release(m_pRigidBody);
+		Safe_Release(m_pPlayer_Information);
 	}
 }

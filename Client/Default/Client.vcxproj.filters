@@ -340,6 +340,9 @@
     <Filter Include="02. GameObject\04. MapObject\MapEffect">
       <UniqueIdentifier>{3d2f0c96-2d67-4229-a119-7e41208b82b3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\01. Player\03. PlayerInformation">
+      <UniqueIdentifier>{32c19ffc-fb69-42ca-ba81-07c40b9b305f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -699,6 +702,9 @@
     <ClInclude Include="..\Public\MapEffect.h">
       <Filter>02. GameObject\04. MapObject\MapEffect</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Player_Information.h">
+      <Filter>02. GameObject\01. Player\03. PlayerInformation</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1027,6 +1033,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\MapEffect.cpp">
       <Filter>02. GameObject\04. MapObject\MapEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_Information.cpp">
+      <Filter>02. GameObject\01. Player\03. PlayerInformation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
