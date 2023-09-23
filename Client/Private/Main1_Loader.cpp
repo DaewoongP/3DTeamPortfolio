@@ -131,10 +131,10 @@ HRESULT CMain1_Loader::Loading_For_MainGame()
 			CTerrain::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Terrain");
 
-		if (FAILED(Loading_Map_Object(TEXT("../../Resources/GameData/MapData/MapData2.ddd"))))
+		if (FAILED(Loading_Map_Object(TEXT("../../Resources/GameData/MapData/MapData1.ddd"))))
 			throw TEXT("Map Object");
 
-		if (FAILED(Loading_Map_Object_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins2.ddd"))))
+		if (FAILED(Loading_Map_Object_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins1.ddd"))))
 			throw TEXT("Map Object_Ins");
 
 		/* For.Prototype_Component_CharacterController*/
@@ -268,7 +268,7 @@ HRESULT CMain1_Loader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Confringo_WandDust_Effect"),
 			CConfringo_WandDust_Effect::Create(m_pDevice, m_pContext, LEVEL_MAINGAME))))
 			throw TEXT("Prototype_GameObject_Confringo_WandDust_Effect");
-		
+
 #pragma endregion
 
 #pragma region Magic
@@ -385,16 +385,33 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath)
 		wstring modelPath(TEXT("../../Resources/Models/MapObject/NonAnims/"));
 		modelPath += modelName;
 		modelPath += TEXT("/");
+
+		wstring szDirectoryPath = modelPath;
 		modelPath += modelName;
 		modelPath += TEXT(".dat");
 
-		// 프로토타입 생성
-		_float4x4 PivotMatrix = XMMatrixIdentity();
+
+		_uint iNumLods = 0;
+
+		for (const auto& entry : fs::directory_iterator(szDirectoryPath)) {
+			if (entry.exists() &&
+				(!lstrcmp(entry.path().extension().c_str(), TEXT(".dat"))))
+			{
+				++iNumLods;
+			}
+		}
+
+		CModel_LOD::LODDESC LodDesc;
+		LodDesc.eModelType = CModel::TYPE_NONANIM;
+		LodDesc.iLevelIndex = LEVEL_MAINGAME;
+		lstrcpy(LodDesc.szPrototypeName, LoadDesc.wszTag);
+		LodDesc.PivotMatrix = XMMatrixIdentity();
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAINGAME, LoadDesc.wszTag,
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, modelPath.c_str(), PivotMatrix), true)))
+			CModel_LOD::Create(m_pDevice, m_pContext, LodDesc, modelPath.c_str(), iNumLods), true)))
 		{
 			MSG_BOX("Failed to Create New Model Prototype");
 		}
+
 		++iObjectNum; ENDINSTANCE;
 	}
 
