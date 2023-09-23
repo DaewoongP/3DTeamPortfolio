@@ -54,13 +54,15 @@ HRESULT CTurn::Tick(const _float& fTimeDelta)
 	m_pOwnerTransform->Turn(_float3(0.f, 1.f, 0.f), fRadian * 2.f, fTimeDelta);
 
 	//cout << "Call In Turn Class" << endl;
+	//cout << fDegree << endl;
 	// 목표 각도 설정시 목표 각도가 달성될때까지 running한다.
 	if (0.f < m_fTargetDegree)
 	{
 		m_pCheckDegree->Tick(fTimeDelta);
+
 		if (FAILED(m_pBlackBoard->Get_Type("fTargetToDegree", fDegree)))
 			return E_FAIL;
-
+		
 		if (fDegree > m_fTargetDegree)
 			return BEHAVIOR_RUNNING;
 	}

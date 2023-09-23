@@ -5,7 +5,6 @@
 
 #include "Magic.h"
 #include "Action.h"
-#include "Check_Degree.h"
 #include "Random_Select.h"
 #include "Action_Deflect.h"
 #include "Selector_Degree.h"
@@ -146,75 +145,16 @@ HRESULT CGolem_Merlin::Make_AI()
 	try /* Failed Check Make_AI */
 	{
 #pragma region Add_Types
-		/* Add Types */
-		if (FAILED(m_pRootBehavior->Add_Type("pTransform", m_pTransform)))
-			throw TEXT("Failed Add_Type pTransform");
-		if (FAILED(m_pRootBehavior->Add_Type("pModel", m_pModelCom)))
-			throw TEXT("Failed Add_Type pModel");
 
-		if (FAILED(m_pRootBehavior->Add_Type("fTargetDistance", _float())))
-			throw TEXT("Failed Add_Type fTargetDistance");
-		if (FAILED(m_pRootBehavior->Add_Type("fAttackRange", _float())))
-			throw TEXT("Failed Add_Type fAttackRange");
-		if (FAILED(m_pRootBehavior->Add_Type("fTargetToDegree", _float())))
-			throw TEXT("Failed Add_Type fTargetToDegree");
-		if (FAILED(m_pRootBehavior->Add_Type("isTargetToLeft", _bool())))
-			throw TEXT("Failed Add_Type isTargetToLeft");
-
-		if (FAILED(m_pRootBehavior->Add_Type("isParring", &m_isParring)))
-			throw TEXT("Failed Add_Type isParring");
-		if (FAILED(m_pRootBehavior->Add_Type("isSpawn", &m_isSpawn)))
-			throw TEXT("Failed Add_Type isSpawn");
-		if (FAILED(m_pRootBehavior->Add_Type("iCurrentSpell", &m_iCurrentSpell)))
-			throw TEXT("Failed Add_Type iCurrentSpell");
 #pragma endregion //Add_Types
 
-		/* 이거는 테스트 용으로 넣은 코드임 */
-		const CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Player"), TEXT("GameObject_Player")));
-		if (nullptr == pTestTarget)
-			throw TEXT("pTestTarget is nullptr");
-		if (FAILED(m_pRootBehavior->Add_Type("cppTarget", &pTestTarget)))
-			throw TEXT("Failed Add_Type cppTarget");
-		///////////////////////////////////////
-
 		/* Make Child Behaviors */
-		CSelector* pSelector = dynamic_cast<CSelector*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Selector")));
-		if (nullptr == pSelector)
-			throw TEXT("pSelector is nullptr");
-
-		CAction* pAction_Spawn = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Spawn)
-			throw TEXT("pAction_Spawn is nullptr");
-		CSelector* pSelector_NormalAttack = dynamic_cast<CSelector*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Selector")));
-		if (nullptr == pSelector_NormalAttack)
-			throw TEXT("pSelector_NormalAttack is nullptr");
-		CSelector* pSelector_CheckSpell = dynamic_cast<CSelector*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Selector")));
-		if (nullptr == pSelector_CheckSpell)
-			throw TEXT("pSelector_CheckSpell is nullptr");
 
 		/* Set Decorations */
-		pSelector->Add_Decoration([&](CBlackBoard* pBlackBoard)->_bool
-			{
-				_bool* pIsSpawn = { nullptr };
-				if (FAILED(pBlackBoard->Get_Type("isSpawn", pIsSpawn)))
-					return false;
-
-				return *pIsSpawn;
-			});
 
 		/* Set Options */
-		pAction_Spawn->Set_Options(TEXT("Spawn_Fall_1"), m_pModelCom, false, 0.f, true, true);
 
 		/* Assemble Behaviors */
-		if (FAILED(m_pRootBehavior->Assemble_Behavior(TEXT("Selector"), pSelector)))
-			throw TEXT("Failed Assemble_Behavior Selector");
-
-		if (FAILED(pSelector->Assemble_Behavior(TEXT("Action_Spawn"), pAction_Spawn)))
-			throw TEXT("Failed Assemble_Behavior Action_Spawn");
-		if (FAILED(pSelector->Assemble_Behavior(TEXT("Selector_NormalAttack"), pSelector_NormalAttack)))
-			throw TEXT("Failed Assemble_Behavior Selector_NormalAttack");
-		if (FAILED(pSelector->Assemble_Behavior(TEXT("Selector_CheckSpell"), pSelector_CheckSpell)))
-			throw TEXT("Failed Assemble_Behavior Selector_CheckSpell");
 	}
 	catch (const _tchar* pErrorTag)
 	{

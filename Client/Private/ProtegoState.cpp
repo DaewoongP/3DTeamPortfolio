@@ -37,7 +37,7 @@ void CProtegoState::Late_Tick(_float fTimeDelta)
 void CProtegoState::OnStateEnter()
 {
 #ifdef _DEBUG
-	cout << "Protego Enter" << endl;
+	//cout << "Protego Enter" << endl;
 #endif // _DEBUG
 
 	//시작 애니메이션
@@ -60,7 +60,7 @@ void CProtegoState::OnStateTick()
 void CProtegoState::OnStateExit()
 {
 #ifdef _DEBUG
-	cout << "Protego Exit" << endl;
+	//cout << "Protego Exit" << endl;
 #endif // _DEBUG
 }
 

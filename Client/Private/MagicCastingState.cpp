@@ -77,7 +77,7 @@ void CMagicCastingState::OnStateEnter()
 	m_iBasicSpellCombo = BASICSPELL_START;
 
 #ifdef _DEBUG
-	cout << "Hard Land Enter" << endl;
+	//cout << "Hard Land Enter" << endl;
 #endif // _DEBUG
 }
 
@@ -96,7 +96,7 @@ void CMagicCastingState::OnStateTick()
 void CMagicCastingState::OnStateExit()
 {
 #ifdef _DEBUG
-	cout << "Hard Land Exit" << endl;
+	//cout << "Hard Land Exit" << endl;
 #endif // _DEBUG
 
 	*m_pIsFinishAnimation = true;

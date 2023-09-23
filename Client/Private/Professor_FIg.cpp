@@ -104,33 +104,32 @@ void CProfessor_Fig::Late_Tick(_float fTimeDelta)
 void CProfessor_Fig::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
-	wstring wstrCollisionTag = { TEXT("") };
-	if (nullptr != CollisionEventDesc.pOtherCollisionTag)
-		wstrCollisionTag = CollisionEventDesc.pOtherCollisionTag;
+	wstring wstrCollisionTag = CollisionEventDesc.pOtherCollisionTag;
+	wstring wstrMyCollisionTag = CollisionEventDesc.pThisCollisionTag;
 
-	if (wstring::npos != wstrCollisionTag.find(TEXT("Body")))
+	if (wstring::npos != wstrMyCollisionTag.find(TEXT("Range")))
 	{
-		if (wstring::npos != wstrObjectTag.find(TEXT("Golem")))
+		if (wstring::npos != wstrObjectTag.find(TEXT("Golem")) ||
+			wstring::npos != wstrObjectTag.find(TEXT("Troll")))
+		{
 			m_RangeInEnemies.push_back({ wstrObjectTag, CollisionEventDesc.pOtherOwner });
+		}
 	}
-	
-	//Safe_AddRef(CollisionEventDesc.pOtherOwner);
 }
 
 void CProfessor_Fig::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 {
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
-	wstring wstrCollisionTag = { TEXT("") };
-	if (nullptr != CollisionEventDesc.pOtherCollisionTag)
-		wstrCollisionTag = CollisionEventDesc.pOtherCollisionTag;
+	wstring wstrCollisionTag = CollisionEventDesc.pOtherCollisionTag;
+	wstring wstrMyCollisionTag = CollisionEventDesc.pThisCollisionTag;
 
-	if (wstring::npos != wstrCollisionTag.find(TEXT("Body")))
+	if (wstring::npos != wstrMyCollisionTag.find(TEXT("Range")))
 	{
 		if (wstring::npos != wstrObjectTag.find(TEXT("Golem")))
 		{
 			if (FAILED(Remove_GameObject(wstrObjectTag)))
 			{
-				//MSG_BOX("[CProfessor_Fig] Failed OnCollisionExit : \nFailed Remove_GameObject");
+				MSG_BOX("[CProfessor_Fig] Failed OnCollisionExit : \nFailed Remove_GameObject");
 				return;
 			}
 		}
@@ -140,7 +139,7 @@ void CProfessor_Fig::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 HRESULT CProfessor_Fig::Render()
 {
 #ifdef _DEBUG
-	Tick_ImGui();
+	//Tick_ImGui();
 #endif // _DEBUG
 
 	if (FAILED(SetUp_ShaderResources()))
@@ -297,7 +296,7 @@ HRESULT CProfessor_Fig::Make_Magics()
 
 HRESULT CProfessor_Fig::Make_Notifies()
 {
-	function<void()> Func = [&] {(*this).Change_Animation(); };
+	function<void()> Func = [&] { (*this).Change_Animation(); };
 	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Front_1"), TEXT("Change_Animation"), Func)))
 		return E_FAIL;
 	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Step_Back_2"), TEXT("Change_Animation"), Func)))
@@ -381,6 +380,8 @@ HRESULT CProfessor_Fig::Add_Components()
 		PxCapsuleGeometry pCapsuleGeomatry = PxCapsuleGeometry(0.25f, 0.6f);
 		RigidBodyDesc.pGeometry = &pCapsuleGeomatry;
 		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Body");
+		RigidBodyDesc.eThisCollsion = COL_NPC;
+		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_ENEMY | COL_ENEMY_RANGE;
 
 		/* Com_RigidBody */
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
@@ -394,6 +395,8 @@ HRESULT CProfessor_Fig::Add_Components()
 		PxSphereGeometry pSphereGeomatry = PxSphereGeometry(10.f);
 		RigidBodyDesc.pGeometry = &pSphereGeomatry;
 		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Range");
+		RigidBodyDesc.eThisCollsion = COL_NPC_RANGE;
+		RigidBodyDesc.eCollisionFlag = COL_ENEMY;
 
 		m_pRigidBody->Create_Collider(&RigidBodyDesc);
 
