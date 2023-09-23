@@ -41,6 +41,10 @@ private:
 	CParticleSystem* m_FlareSpreadParticle = { nullptr };
 	CParticleSystem* m_DustParticle = { nullptr };
 
+	//Wand Effect
+	CParticleSystem* m_pWandLightningParticle = { nullptr };
+	CTrail*			 m_pWandTrail = { nullptr };
+
 private:
 	// For. Lightining Trails
 	_float3 m_vSplineLerpPostion[3][10] = {};

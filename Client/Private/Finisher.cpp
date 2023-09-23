@@ -21,6 +21,15 @@ HRESULT CFinisher::Initialize_Prototype(_uint iLevel)
 	m_iLevel = iLevel;
 
 	BEGININSTANCE;
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Traill_Lightning_Effect")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Traill_Lightning_Effect")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/Lightning/Lightning.trail"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
 	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Spark_Blue_Effect")))
 	{
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Spark_Blue_Effect")
@@ -84,7 +93,24 @@ HRESULT CFinisher::Initialize_Prototype(_uint iLevel)
 			return E_FAIL;
 		}
 	}
-
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Wand_Lightning_Effect")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Wand_Lightning_Effect")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Lightning/Wand_Lightning"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_BasicCast_Wand_Trail_Effect")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_BasicCast_Wand_Trail_Effect")
+			, CTrail::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/BasicTrail/BasicTrail.trail"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
 	ENDINSTANCE;
 
 
@@ -199,6 +225,20 @@ void CFinisher::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 
 void CFinisher::Ready_Begin()
 {
+	for (int i = 0; i < 3; i++)
+	{
+		m_pTrail[i]->Disable();
+	}
+
+	 m_LightningSparkEffect_Green->Disable();
+	 m_LightningSparkEffect_Blue->Disable();
+	 m_LightningSparkEffect_Red->Disable();
+
+	 m_LineParticle->Disable();
+	 m_FlareCenterParticle->Disable();
+	 m_FlareSpreadParticle->Disable();
+	 m_DustParticle->Disable();
+
 }
 
 void CFinisher::Ready_DrawMagic()
@@ -285,6 +325,14 @@ HRESULT CFinisher::Add_Effect()
 		, TEXT("Com_Dust_Effect"), (CComponent**)&m_DustParticle)))
 		return E_FAIL;
 
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Wand_Lightning_Effect")
+		, TEXT("Com_Wand_Lightning"), (CComponent**)&m_pWandLightningParticle)))
+		return E_FAIL;
+
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_BasicCast_Wand_Trail_Effect")
+		, TEXT("Com_Wand_Trail"), (CComponent**)&m_pWandTrail)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -330,5 +378,8 @@ void CFinisher::Free()
 		Safe_Release(m_FlareCenterParticle);
 		Safe_Release(m_FlareSpreadParticle);
 		Safe_Release(m_DustParticle);
+
+		Safe_Release(m_pWandLightningParticle);
+		Safe_Release(m_pWandTrail);
 	}
 }
