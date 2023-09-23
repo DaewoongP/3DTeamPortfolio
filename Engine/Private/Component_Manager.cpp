@@ -197,7 +197,7 @@ const unordered_map<const _tchar*, class CComponent*>* CComponent_Manager::Find_
 	if (nullptr == pLayer)
 		return nullptr;
 
-	return pLayer->Get_Components();
+	return &pLayer->Get_Components();
 }
 
 CLayer* CComponent_Manager::Find_Layer(_uint iLevelIndex, const _tchar* pLayerTag)

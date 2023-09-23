@@ -918,6 +918,26 @@ void CPlayer::Update_Cloth(_float fTimeDelta)
 
 void CPlayer::Find_Target()
 {
+	BEGININSTANCE;
+
+	unordered_map<const _tchar*, CComponent*>* pLayer = pGameInstance->Find_Components_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Monster"));
+
+	_float fMinDistance = { 1000.0f };
+
+
+
+	for (unordered_map<const _tchar*, CComponent*>::iterator iter = (*pLayer).begin(); iter != (*pLayer).end(); iter++)
+	{
+		_float3 vPlayerPos = m_pTransform->Get_Position();
+
+		_float3 vMonsterPos = dynamic_cast<CGameObject*>((*iter).second())
+	}
+
+
+
+	ENDINSTANCE;
+
+
 }
 
 CPlayer* CPlayer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
