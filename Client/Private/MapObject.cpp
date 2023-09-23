@@ -62,14 +62,20 @@ void CMapObject::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	
 	if (nullptr != m_pRenderer)
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
 
 #ifdef _DEBUG
 		m_pRenderer->Add_DebugGroup(m_pRigidBody);
 #endif // _DEBUG
 	}
+
+	Safe_Release(pGameInstance);
 }
 
 HRESULT CMapObject::Render()
@@ -96,6 +102,25 @@ HRESULT CMapObject::Render()
 	return S_OK;
 }
 
+HRESULT CMapObject::Render_Depth()
+{
+	if (FAILED(SetUp_ShadowShaderResources()))
+		return E_FAIL;
+
+	_uint		iNumMeshes = m_pModel->Get_NumMeshes();
+
+	for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; iMeshCount++)
+	{
+		if (FAILED(m_pShadowShader->Begin("Shadow")))
+			return E_FAIL;
+
+		if (FAILED(m_pModel->Render(iMeshCount)))
+			return E_FAIL;
+	}
+
+	return S_OK;
+}
+
 HRESULT CMapObject::Add_Components(MAPOBJECTDESC* pMapObjectDesc)
 {
 	/* Com_Renderer */
@@ -113,9 +138,17 @@ HRESULT CMapObject::Add_Components(MAPOBJECTDESC* pMapObjectDesc)
 		MSG_BOX("Failed CMapObject Add_Component : (Com_Shader)");
 		return E_FAIL;
 	}
+	
+	/* Com_ShadowShader */
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_ShadowMesh"),
+		TEXT("Com_ShadowShader"), reinterpret_cast<CComponent**>(&m_pShadowShader))))
+	{
+		MSG_BOX("Failed CMapObject Add_Component : (Com_ShadowShader)");
+		return E_FAIL;
+	}
 
 	/* Com_Model */
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, pMapObjectDesc->wszTag,
+	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, pMapObjectDesc->wszTag,
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModel))))
 	{
 		MSG_BOX("Failed CMapObject Add_Component : (Com_Model)");
@@ -140,6 +173,9 @@ HRESULT CMapObject::Add_Components(MAPOBJECTDESC* pMapObjectDesc)
 	vector<_float3> Vertices;
 	vector<PxU32> Indices;
 	_uint iIndex = { 0 };
+	
+	m_vMaxPoint = _float3(-9999999.f, -9999999.f, -9999999.f);
+	m_vMinPoint = _float3(9999999.f, 9999999.f, 9999999.f);
 
 	for (auto& pMesh : Meshes)
 	{
@@ -147,7 +183,9 @@ HRESULT CMapObject::Add_Components(MAPOBJECTDESC* pMapObjectDesc)
 
 		for (auto& MeshVetex : MeshVertices)
 		{
-			Vertices.push_back(XMVector3TransformCoord(MeshVetex, pMapObjectDesc->WorldMatrix));
+			_float3 vWorldVertex = XMVector3TransformCoord(MeshVetex, pMapObjectDesc->WorldMatrix);
+			Vertices.push_back(vWorldVertex);
+			Check_MinMaxPoint(vWorldVertex);
 		}
 
 		vector<PxU32> MeshIndices = *pMesh->Get_IndicesVec();
@@ -159,6 +197,9 @@ HRESULT CMapObject::Add_Components(MAPOBJECTDESC* pMapObjectDesc)
 
 		iIndex += Vertices.size();
 	}
+
+	m_vCenterPoint = (m_vMaxPoint + m_vMinPoint) * 0.5f;
+	m_fRadius = Vector3::Distance(m_vMaxPoint, m_vCenterPoint);
 
 	// 피직스 메쉬 생성
 	PxTriangleMeshDesc TriangleMeshDesc;
@@ -200,16 +241,55 @@ HRESULT CMapObject::Add_Components(MAPOBJECTDESC* pMapObjectDesc)
 
 HRESULT CMapObject::SetUp_ShaderResources()
 {
-	BEGININSTANCE; if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
+	BEGININSTANCE; 
+	
+	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
 		return E_FAIL;
 
 	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
 
 	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL; ENDINSTANCE;
+		return E_FAIL; 
+
+	ENDINSTANCE;
 
 	return S_OK;
+}
+
+HRESULT CMapObject::SetUp_ShadowShaderResources()
+{
+	BEGININSTANCE;
+
+	if (FAILED(m_pShadowShader->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
+		return E_FAIL;
+	if (FAILED(m_pShadowShader->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_LightTransformMatrix(CPipeLine::D3DTS_VIEW))))
+		return E_FAIL;
+	if (FAILED(m_pShadowShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_LightTransformMatrix(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+	if (FAILED(m_pShadowShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
+		return E_FAIL;
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+void CMapObject::Check_MinMaxPoint(_float3 vPoint)
+{
+	if (m_vMinPoint.x > vPoint.x)
+		m_vMinPoint.x = vPoint.x;
+	if (m_vMinPoint.y > vPoint.y)
+		m_vMinPoint.y = vPoint.y;
+	if (m_vMinPoint.z > vPoint.z)
+		m_vMinPoint.z = vPoint.z;
+
+	if (m_vMaxPoint.x < vPoint.x)
+		m_vMaxPoint.x = vPoint.x;
+	if (m_vMaxPoint.y < vPoint.y)
+		m_vMaxPoint.y = vPoint.y;
+	if (m_vMaxPoint.z < vPoint.z)
+		m_vMaxPoint.z = vPoint.z;
 }
 
 CMapObject* CMapObject::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -244,6 +324,7 @@ void CMapObject::Free()
 	Safe_Release(m_pRigidBody);
 	Safe_Release(m_pTransform);
 	Safe_Release(m_pShader);
+	Safe_Release(m_pShadowShader);
 	Safe_Release(m_pModel);
 	Safe_Release(m_pRenderer);
 }

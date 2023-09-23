@@ -1,11 +1,6 @@
-
+#include "Shader_EngineHeader.hlsli"
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix g_ViewMatrixInv, g_ProjMatrixInv;
-matrix g_vLightView;
-matrix g_vLightProj;
-vector g_LightPos;
-
-vector g_vCamPosition;
 
 float g_fCamFar;
 
@@ -17,7 +12,6 @@ float gSurfaceEpsilon = 0.05f;
 texture2D g_PostProcessingTexture;
 //SSAO
 float g_fRadius = 0.001f;
-float g_fFar = 100.f;
 float g_fFalloff = 0.000002f;
 float g_fStrength = 0.0007f;
 float g_fTotStrength = 1.38f;
@@ -28,12 +22,9 @@ texture2D g_DepthTexture;
 texture2D g_NormalTexture;
 texture2D g_SSAOTexture;
 texture2D g_BlurTexture;
-texture2D g_ShadeTexture;
-texture2D g_ShadowTexture;
-texture2D g_vLightDepthTexture;
 texture2D g_NoiseTexture;
 
-//ray¸¦ »¸¾î³ª°¡¸é¼­ ¹«ÀÛÀ§·ÎÆÇ´ÜÇÏ±âÀ§ÇØ rand°ªÀÌ ÇÊ¿äÇÔ °°ÀÌ´øÁ®Áà¾ßÇÒµí
+//rayï¿½ï¿½ ï¿½ï¿½ï¿½î³ªï¿½ï¿½ï¿½é¼­ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç´ï¿½ï¿½Ï±ï¿½ï¿½ï¿½ï¿½ï¿½ randï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òµï¿½
 
 float3 g_Ran[29] =
 {
@@ -109,79 +100,6 @@ float OcclusionFunction(float distZ)
     return occlusion;
 }
 
-/* Sampler State */
-sampler LinearSampler = sampler_state
-{
-    Filter = MIN_MAG_MIP_LINEAR;
-    AddressU = WRAP;
-    AddressV = WRAP;
-};
-
-sampler PointSampler = sampler_state
-{
-    Filter = MIN_MAG_MIP_POINT;
-    AddressU = WRAP;
-    AddressV = WRAP;
-};
-sampler BlurSampler = sampler_state
-{
-    Filter = MIN_MAG_MIP_LINEAR;
-    AddressU = clamp;
-    AddressV = clamp;
-};
-/* Raterizer State */
-RasterizerState RS_Default
-{
-    FillMode = Solid;
-    CullMode = Back;
-    FrontCounterClockwise = false;
-};
-
-RasterizerState RS_Cull_CW
-{
-    FillMode = Solid;
-    CullMode = front;
-    FrontCounterClockwise = false;
-};
-
-RasterizerState RS_Cull_None
-{
-    FillMode = Solid;
-    CullMode = None;
-    FrontCounterClockwise = false;
-};
-
-/* Depth_Stencil State */
-
-DepthStencilState DSS_Default
-{
-    DepthEnable = true;
-    DepthWriteMask = all;
-    DepthFunc = less_equal;
-};
-
-DepthStencilState DSS_Depth_Disable
-{
-    DepthEnable = false;
-    DepthWriteMask = zero;
-};
-
-/* Blend State */
-BlendState BS_Default
-{
-    BlendEnable[0] = false;
-};
-
-BlendState BS_AlphaBlend
-{
-    BlendEnable[0] = true;
-
-    SrcBlend = Src_Alpha;
-    DestBlend = Inv_Src_Alpha;
-    BlendOp = Add;
-};
-
-
 struct VS_IN
 {
     float3 vPosition : POSITION;
@@ -209,7 +127,6 @@ VS_OUT VS_MAIN(VS_IN In)
     return Out;
 }
 
-
 struct PS_IN
 {
     float4 vPosition : SV_POSITION;
@@ -229,72 +146,6 @@ float3 RandNormal(float2 vTexUV)
     
     return normalize(float3(x, y, z));
 }
-float3 ViewSpacePosition(in const float nonLinearDepth, const in float2 uv, const in matrix invProjection)
-{
-
-    const float x = uv.x * 2 - 1; // [-1, 1]
-    const float y = (1.0f - uv.y) * 2 - 1; // [-1, 1]
-    const float z = nonLinearDepth; // [ 0, 1]
-
-    float4 projectedPosition = float4(x, y, z, 1);
-    float4 viewSpacePosition = mul(invProjection, projectedPosition);
-    return viewSpacePosition.xyz / viewSpacePosition.w;
-}
-float LinearDepth(in float zBufferSample, in float A, in float B)
-{
-    return A / (zBufferSample - B);
-}
-//PS_OUT PS_MAIN(PS_IN In)
-//{
-//    PS_OUT Out = (PS_OUT) 0;
-    
-//    float3 N = g_NormalTexture.Sample(PointSampler, In.vTexUV).xyz;
-//    if (dot(N, N) < 0.00001)
-//    {
-//        Out.vColor = 1.f;
-//        return Out;
-//    }
-        
-//    N = normalize(N);
-    
-//    const float zbufferSample = g_DepthTexture.Sample(PointSampler, In.vTexUV).x;
-    
-//    const float3 P = ViewSpacePosition(zbufferSample, In.vTexUV, g_ProjMatrixInv);
-
-    
-    
-//    const float2 noiseScale = 1280 / 4.f;
-//    const float3 noise = float3(g_NoiseTexture.Sample(PointSampler, In.vTexUV * noiseScale).xy, 0.f);
-//    const float3 T = normalize(noise - N * dot(noise, N));
-//    const float3 B = cross(T, N);
-//    const float3x3 TBN = float3x3(T, B, N);
-
-//    float occlusion = 0.0;
-    
-//    for (int i = 0; i < 29; ++i)
-//    {
-//        float3 kernelSample = P + mul(g_Ran[i], TBN) * g_fRadius;
-//        float4 offset = float4(kernelSample, 1.f);
-//        offset = mul(g_ProjMatrix, offset);
-//        offset.xy = ((offset.xy / offset.w) * float2(1.f, -1.f)) * 0.5f + 0.5f;
-//        const float sampleDepth = LinearDepth(g_DepthTexture.Sample(PointSampler, offset.xy).r, g_ProjMatrix[2][3], g_ProjMatrix[2][2]);
-//        if (smoothstep(0.f, 1.f, g_fRadius / abs(P.z - sampleDepth))>0)
-//        {
-//            if(sampleDepth<kernelSample.r - 0.001f)
-//            {
-//                occlusion += 1.f;
-//            }
-//        }
-//        occlusion = 1.f - (occlusion / 29);
-        
-      
-        
-//    }
-//    Out.vColor = pow(occlusion, 3);
-//    return Out; 
-//}
-
-
 
 PS_OUT PS_MAIN(PS_IN In)
 {
@@ -303,21 +154,10 @@ PS_OUT PS_MAIN(PS_IN In)
     vector vDepthDesc = g_DepthTexture.Sample(LinearSampler, In.vTexUV);
     vector vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
     
-    if (vNormalDesc.a != 0.f)
-    {
-        Out.vColor = vector(1.f, 1.f, 1.f, 1.f);
-        return Out;
-    }
-     //vNormalDesc = normalize(vNormalDesc * 0.5f +0.5f);
-   // vector vNormal = vector(vNormalDesc.xyz * 2.f - 1.f, 1.f);
     vNormalDesc = normalize(vNormalDesc * 2.f - 1.f);
-  
-   // vNormalDesc = normalize(mul(vNormalDesc, g_ViewMatrix));
-    
-    float fViewZ = vDepthDesc.x * g_fFar; //ºäÆ÷Æ®¿¡¼­ÀÇ ±íÀÌ
-    
-    float vDepth = vDepthDesc.y * g_fFar * fViewZ; // ¿ùµå¿¡¼­ÀÇ ½ÇÁ¦±íÀÌ
- 
+    // ï¿½ï¿½ï¿½ï¿½ zï¿½ï¿½
+    float fViewZ = vDepthDesc.y * g_fCamFar;
+
     float3 vRay;
     float3 vReflect;
     float2 vRandomUV;
@@ -328,131 +168,47 @@ PS_OUT PS_MAIN(PS_IN In)
     {
         vRay = normalize(reflect(RandNormal(In.vTexUV), g_Ran[i]));
         vReflect = normalize(reflect(normalize(vRay), normalize(vNormalDesc.rgb))) * g_fRadius;
-       // vReflect.x *= -1.f;
+        vReflect.x *= -1.f;
         vRandomUV = In.vTexUV + vReflect.xy;
-        fOccNorm = g_DepthTexture.Sample(LinearSampler, vRandomUV).g * g_fFar * fViewZ;
-        if (fOccNorm <= vDepth + 0.02f)
+        fOccNorm = g_DepthTexture.Sample(LinearSampler, vRandomUV).y * g_fCamFar;
+        if (fOccNorm <= fViewZ + 0.1f)
             ++iColor;
     }
+    
     float4 vAmbient = abs((iColor / 29.f) - 1);
    
     Out.vColor = 1.f - vAmbient;
    
     return Out;
 }
-//PS_OUT PS_MAIN(PS_IN In)
-//{
-//    PS_OUT Out = (PS_OUT) 0;
 
-//    vector vDepthDesc = g_DepthTexture.Sample(LinearSampler, In.vTexUV);
-//    vector vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
-  
-//    if (vNormalDesc.a != 0.f)
-//    {
-//        Out.vColor = vector(1.f, 1.f, 1.f, 1.f);
-//        return Out;
-//    }
-//     //vNormalDesc = normalize(vNormalDesc * 0.5f +0.5f);
-//   // vector vNormal = vector(vNormalDesc.xyz * 2.f - 1.f, 1.f);
-//    vNormalDesc = normalize(vNormalDesc * 2.f - 1.f);
-    //}
-    
-    
-//PS_OUT PS_MAIN(PS_IN In)
-//{
-//    PS_OUT Out = (PS_OUT) 0;
-//	// p -- the point we are computing the ambient occlusion for.
-//	// n -- normal vector at p.
-//	// q -- a random offset from p.
-//	// r -- a potential occluder that might occlude p.
-
-//	// Get viewspace normal and z-coord of this pixel.  The tex-coords for
-//	// the fullscreen quad we drew are already in uv-space.
-//    float4 normalDepth = g_DepthTexture.Sample(LinearSampler,In.vTexUV);
-//    vector Normal = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
-    
-//    float3 n = normalDepth.xyz;
-//    float pz = normalDepth.w;
-
-//	//
-//	// Reconstruct full view space position (x,y,z).
-//	// Find t such that p = t*pin.ToFarPlane.
-//	// p.z = t*pin.ToFarPlane.z
-//	// t = p.z / pin.ToFarPlane.z
-//	//
-//    float3 p = (pz / Normal.x) * Normal.xyz;
-	
-//	// Extract random vector and map from [0,1] --> [-1, +1].
-//    float3 randVec = 2.0f * g_NormalTexture.Sample(LinearSampler, 4.0f * In.vTexUV).rgb - 1.0f;
-
-//    float occlusionSum = 0.0f;
-	
-//	// Sample neighboring points about p in the hemisphere oriented by n.
-
-//    for (int i = 0; i < 29; ++i)
-//    {
-//		// Are offset vectors are fixed and uniformly distributed (so that our offset vectors
-//		// do not clump in the same direction).  If we reflect them about a random vector
-//		// then we get a random uniform distribution of offset vectors.
-//        float3 offset = reflect(g_Ran[i].xyz, randVec);
-	
-//		// Flip offset vector if it is behind the plane defined by (p, n).
-//        float flip = sign(dot(offset, n));
-		
-//		// Sample a point near p within the occlusion radius.
-//        float3 q = p + flip * gOcclusionRadius * offset;
-		
-//		// Project q and generate projective tex-coords.  
-//        float4 projQ = mul(float4(q, 1.0f), g_ProjMatrix);
-//        projQ /= projQ.w;
-
-//        float rz = g_DepthTexture.Sample(LinearSampler, projQ.xy).a;
-
-//		// Reconstruct full view space position r = (rx,ry,rz).  We know r
-//		// lies on the ray of q, so there exists a t such that r = t*q.
-//		// r.z = t*q.z ==> t = r.z / q.z
-
-//        float3 r = (rz / q.z) * q;
-
-//        float distZ = p.z - r.z;
-//        float dp = max(dot(n, normalize(r - p)), 0.0f);
-//        float occlusion = dp * OcclusionFunction(distZ);
-		
-//        occlusionSum += occlusion;
-//    }
-	
-//    occlusionSum /= 29;
-	
-//    float access = 1.0f - occlusionSum;
-
-//	// Sharpen the contrast of the SSAO map to make the SSAO affect more dramatic.
-//    Out.vColor = saturate(pow(access, 4.0f));
-//    return Out;
-//}
-    
 
 PS_OUT PS_MAIN_BLURX(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
     
     
-    float dx = 1.0f / 1280.f/2.f;
-    
+    float dx = 1.0f / 1280.f;
+    float dy = 1.f / (720.f / 2.f);
     float2 UV = 0;
+    float Color = g_SSAOTexture.Sample(BlurSampler, In.vTexUV).x;
     
-    for (int i = -15; i < 15; ++i)
     {
+        for (int i = -15; i < 15; ++i)
+        {
 
-        UV = In.vTexUV + float2(dx * i, 0.f);
-        vector SSAO = g_SSAOTexture.Sample(BlurSampler, UV);
+            UV = In.vTexUV + float2(dx * i,0);
+            vector SSAO = g_SSAOTexture.Sample(BlurSampler, UV);
         
-        Out.vColor += BlurWeights[15 + i] * SSAO;
+            Out.vColor += BlurWeights[15 + i] * SSAO;
+        }
     }
-    Out.vColor /= total;
-    //Out.vColor = (SSAO.xyz, 0.f);
+        Out.vColor /= total;
+     
     return Out;
-}
-PS_OUT PS_MAIN_BLURY(PS_IN In)
+ }
+
+    PS_OUT PS_MAIN_BLURY(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
     
@@ -470,82 +226,6 @@ PS_OUT PS_MAIN_BLURY(PS_IN In)
     Out.vColor /= total;
     
     
-    
-    return Out;
-}
-
-PS_OUT PS_MAIN_SHADOW(PS_IN In)
-{
-    PS_OUT Out = (PS_OUT) 0;
-
-    vector vDepthDesc = g_DepthTexture.Sample(LinearSampler, In.vTexUV);
-
-	//depthdesc y ´Â rgba°ªÀÌ¶ó°í »ý°¢ÇÏ¸éµÈ´Ù.
-    float fViewZ = vDepthDesc.y * g_fCamFar;
-    vector vPosition;
-    if (fViewZ == 0)
-        discard;
-	/* Åõ¿µ½ºÆäÀÌ½º »óÀÇ À§Ä¡ */
-    vPosition.x = In.vTexUV.x * 2.f - 1.f;
-    vPosition.y = In.vTexUV.y * -2.f + 1.f;
-    vPosition.z = vDepthDesc.x;
-    vPosition.w = 1.f;
-
-	/* ºä½ºÆäÀÌ½º »óÀÇ À§Ä¡. */
-    vPosition = vPosition * fViewZ;
-    
-    vPosition = mul(vPosition, g_ProjMatrixInv);
-
-	/* ¿ùµå½ºÆäÀÌ½º »óÀÇ À§Ä¡. */
-    vPosition = mul(vPosition, g_ViewMatrixInv);
-
-    vPosition = mul(vPosition, g_vLightView);
-
-    vector vUVPos = mul(vPosition, g_vLightProj);
-    float2 vLightUV;
-    vLightUV.x = (vUVPos.x / vUVPos.w) * 0.5f + 0.5f;
-    vLightUV.y = (vUVPos.y / vUVPos.w) * -0.5f + 0.5f;
-
-    vector vLightDepth = g_vLightDepthTexture.Sample(BlurSampler, vLightUV);
-    
-    float3 vProjTest = vUVPos.xyz / vUVPos.w;
-    if (-1.f > vProjTest.x ||
-		1.f < vProjTest.x ||
-		-1.f > vProjTest.y ||
-		1.f < vProjTest.y ||
-        0.f > vProjTest.z ||
-		1.f < vProjTest.z)
-        Out.vColor = vector(1.f, 1.f, 1.f, 1.f);
-    // Åõ¿µÇà·ÄÀÇ far¸¦ ´Ù½Ã°öÇØÁÖ¾î Æ÷Áö¼Ç°ú ¿¬»ê
-    // ÇöÀç ÇÈ¼¿ÀÇ ±íÀÌ°ª°ú ÇØ´çÇÏ´Â ÇÈ¼¿ÀÌ Á¸ÀçÇÏ´Â ºû±âÁØÀÇ ÅØ½ºÃ³ UVÁÂÇ¥ ±íÀÌ°ª°ú ºñ±³ÇÏ¿© Ã³¸®ÇÑ´Ù.
-    else if (vPosition.z - 0.01f < vLightDepth.y * g_fCamFar)
-    {
-        Out.vColor = vector(1.f, 1.f, 1.f, 1.f);
-    
-        float2 moments = g_vLightDepthTexture.Sample(BlurSampler, In.vTexUV).xz;
-        
-        float CamDepth = vPosition.z - 0.01f / g_fCamFar;
-
-        float fragDepth = CamDepth;
-    
-        float fLit = 1.0f;
-    
-        float E_x2 = moments.y;
-        float Ex_2 = moments.x * moments.x;
-        float variance = (E_x2 - Ex_2);
-        variance = max(variance, 0.00005f);
-
-        float mD = (fragDepth - moments.x);
-        float mD_2 = mD * mD;
-        float p = (variance / (variance + mD_2));
-
-        fLit = max(p, fragDepth <= moments.x);
-        fLit = (1 - fLit) + 0.5f;
-        if (fLit > 1.f)
-            fLit = 1.f;
-    
-        Out.vColor = float4(fLit, fLit, fLit, fLit);
-    }
     
     return Out;
 }
@@ -586,28 +266,4 @@ technique11 DefaultTechnique
         DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
         PixelShader = compile ps_5_0 PS_MAIN_BLURY();
     }
-    pass Shadow
-    {
-        SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_Depth_Disable, 0);
-        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN();
-        GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
-        HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
-        DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
-        PixelShader = compile ps_5_0 PS_MAIN_SHADOW();
-    }
-    pass SoftShadow
-    {
-        SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_Depth_Disable, 0);
-        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN();
-        GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
-        HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
-        DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
-        PixelShader = compile ps_5_0 PS_MAIN_SHADOW();
-    }
-
-
 }

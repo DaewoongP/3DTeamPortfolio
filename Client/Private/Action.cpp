@@ -80,6 +80,8 @@ HRESULT CAction::Tick(const _float& fTimeDelta)
 	{
 		m_isFirst = false;
 		m_pModel->Change_Animation(m_wstrAnimationTag, m_eAnimationType);
+		for (auto& pBehavior : m_Behaviors)
+			pBehavior->Reset_Behavior(BEHAVIOR_END);
 	}
 
 	/* 행동 체크 */

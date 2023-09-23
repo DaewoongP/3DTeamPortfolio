@@ -67,6 +67,7 @@ HRESULT CVIBuffer_Rect_Color_Index_Instance::Initialize(void* pArg)
 	pVertices[3].vPosition = _float3(-0.5f, -0.5f, 0.f);
 	pVertices[3].vTexCoord = _float2(0.f, 1.f);
 
+
 	ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
 	m_SubResourceData.pSysMem = pVertices;
 
@@ -125,8 +126,6 @@ HRESULT CVIBuffer_Rect_Color_Index_Instance::Initialize(void* pArg)
 
 	return S_OK;
 }
-
-
 
 CVIBuffer_Rect_Color_Index_Instance* CVIBuffer_Rect_Color_Index_Instance::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {

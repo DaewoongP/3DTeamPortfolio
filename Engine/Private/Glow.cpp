@@ -60,7 +60,6 @@ HRESULT CGlow::Render()
 	CRenderTarget_Manager* pRenderTarget_Manager = CRenderTarget_Manager::GetInstance();
 	Safe_AddRef(pRenderTarget_Manager);
 	
-	
 	if (FAILED(pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Glow"))))
 		return E_FAIL;
 	if (FAILED(pRenderTarget_Manager->Bind_ShaderResourceView(m_szTargetTag, m_pShader, "g_GlowTexture")))
@@ -87,7 +86,7 @@ HRESULT CGlow::Render()
 	if (FAILED(pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Glow_Blur"))))
 		return E_FAIL;
 
-	if (FAILED(pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Glow"), m_pShader, "g_DoBlurTexture")))
+	if (FAILED(pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_FinGlow"), m_pShader, "g_DoBlurTexture")))
 		return E_FAIL;
 
 	if (FAILED(m_pShader->Begin("Blur")))

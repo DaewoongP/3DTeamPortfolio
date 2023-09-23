@@ -28,6 +28,7 @@ public: // À§Á¬ °ü·Ã
 	_bool Table_DragFloat2(string _strName, string _strTag, _float2* _pValue, _float _fDragSpeed = 0.01f, _float _fMin = 0.f, _float _fMax = FLT_MAX);
 	_bool Table_DragFloat2Range(string _strName, string _strTag, _float2* _pValue, _float _fDragSpeed = 0.01f, _float _fMin = 0.f, _float _fMax = FLT_MAX);
 	_bool Table_DragXYZ(string _strName, string _strTag, _float3* pValue, _float _fDragSpeed = 0.1f, _float _fMin = -FLT_MAX, _float _fMax = FLT_MAX, _bool isImplement = true);
+	_bool Table_DragXYZRange(string _strName, string _strTag, _float3* pValueMin, _float3* pValueMax, _float _fDragSpeed = 0.1f, _float _fMin = -FLT_MAX, _float _fMax = FLT_MAX, _bool isImplement = true);
 	_bool Table_DragInt(string _strName, string _strTag, _int* _pValue, _float _fDragSpeed = 0.1f, _int _iMin = 0.f, _int _iMax = INT_MAX);
 	_bool Table_CheckBox(string _strName, string _strTag, _bool* _pValue, _bool isImplement = true);
 	_bool Table_ColorEdit4(string _strName, string _strTag, _float4* pValue);

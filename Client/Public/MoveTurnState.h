@@ -47,7 +47,6 @@ private:
 
     void Go_Magic_Cast();
 
-    void EnterAngle();
 
 public:
     static CMoveTurnState* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

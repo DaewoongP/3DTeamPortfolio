@@ -24,12 +24,8 @@ HRESULT CDummyMeshEffect::Initialize(void* pArg)
 	__super::Initialize(pArg);
 
 	m_pTextureIFD = CImageFileDialog::Create(m_pDevice, Generate_Hashtag(true).data());
-	m_pTextureIFD->m_strStartPath = "../../Resources/UI/UI/Game/VFX/Textures";
+	m_pTextureIFD->m_strStartPath = "../../Resources/Effects/Textures/";
 	m_pTextureIFD->m_iImageButtonWidth = 32;
-
-	m_pAlphaClipTextureIFD = CImageFileDialog::Create(m_pDevice, Generate_Hashtag(true).data());
-	m_pAlphaClipTextureIFD->m_strStartPath = "../../Resources/UI/UI/Game/VFX/Textures";
-	m_pAlphaClipTextureIFD->m_iImageButtonWidth = 32;
 
 	vector<string> Passes = m_pShader->Get_PassList();
 	m_pPassComboBox = CComboBox::Create(Generate_Hashtag(true).data(), "Pass", Passes, Passes.front().data());
@@ -53,14 +49,6 @@ void CDummyMeshEffect::Tick_Imgui(_float _fTimeDelta)
 			fs::path fsFilePath = m_pTextureIFD->Get_FilePathName();
 			ChangeTexture(&m_pTexture, m_Path[TEXTURE_PATH], ToRelativePath(fsFilePath.wstring().data()).c_str());
 		}
-
-		pEffectWindow->Table_ImageButton("Change AlphaClipTexture", "xcvljii23458", m_pAlphaClipTextureIFD);
-		// 클립 텍스처 교체
-		if (m_pAlphaClipTextureIFD->IsOk())
-		{
-			fs::path fsFilePath = m_pAlphaClipTextureIFD->Get_FilePathName();
-			ChangeTexture(&m_pTexture, m_Path[ALPHA_CLIP_TEXTURE_PATH], ToRelativePath(fsFilePath.wstring().data()).c_str());
-		}
 		
 		// 모델 교체
 		ImGui::TableSetColumnIndex(0);
@@ -69,10 +57,9 @@ void CDummyMeshEffect::Tick_Imgui(_float _fTimeDelta)
 		if (ImGui::Button(strModelButtonName.data()))
 			ImGuiFileDialog::Instance()->OpenDialog("ChagneModelFileDialog", "Load Model", ".dat", "../../Resources/Models/");
 		ImGui::TableNextRow();
-		// display
+
 		if (ImGuiFileDialog::Instance()->Display("ChagneModelFileDialog"))
 		{
-			// action if OK
 			if (ImGuiFileDialog::Instance()->IsOk())
 			{
 				fs::path fsFilePathName = ImGuiFileDialog::Instance()->GetFilePathName();
@@ -80,7 +67,6 @@ void CDummyMeshEffect::Tick_Imgui(_float _fTimeDelta)
 				ChangeModel(&m_pModel, m_Path[MODEL_PATH], ToRelativePath(fsFilePathName.wstring().data()).c_str());
 			}
 
-			// close
 			ImGuiFileDialog::Instance()->Close();
 		}
 
@@ -91,10 +77,8 @@ void CDummyMeshEffect::Tick_Imgui(_float _fTimeDelta)
 		if (ImGui::Button(strShaderButtonName.data()))
 			ImGuiFileDialog::Instance()->OpenDialog("ChagneShaderFileDialog", "Load Shader", ".hlsl", "../Bin/ShaderFiles/");
 		ImGui::TableNextRow();
-		// display
 		if (ImGuiFileDialog::Instance()->Display("ChagneShaderFileDialog"))
 		{
-			// action if OK
 			if (ImGuiFileDialog::Instance()->IsOk())
 			{
 				fs::path fsFilePathName = ImGuiFileDialog::Instance()->GetFilePathName();
@@ -107,18 +91,24 @@ void CDummyMeshEffect::Tick_Imgui(_float _fTimeDelta)
 				m_pPassComboBox->Change_Items(m_pShader->Get_PassList());
 			}
 
-			// close
 			ImGuiFileDialog::Instance()->Close();
 		}
 
-		// 현재 셰이더 파일의 패스 교체
+		// 패스 교체
 		m_strPassName = m_pPassComboBox->Tick(CComboBox::TABLE, true);
-		pEffectWindow->Table_DragFloat2Range("Offset", "dfvrpije48dic", &m_vOffset);
-		pEffectWindow->Table_DragFloat2Range("Tililing", "dfvrpv8348e48dic", &m_vTililing);
+		pEffectWindow->Table_DragFloat2("Offset", "dfvrpije48dic", &m_vOffset, 0.1f, -FLT_MAX);
+		pEffectWindow->Table_DragFloat2("Tililing", "dfvrpver234v8348e48dic", &m_vTililing, 0.1f, -FLT_MAX);
+
+		ImGui::Separator();
+
 		ImGui::EndTable();
 	}
 
-	// 왼쪽 아래로 고정
+	// 세이브 로드
+	Save_FileDialog();
+	Load_FileDialog();
+
+	// 트랜스폼 노드
 	RECT clientRect;
 	GetClientRect(g_hWnd, &clientRect);
 	POINT leftTop = { clientRect.left, clientRect.top };
@@ -179,6 +169,51 @@ void CDummyMeshEffect::ChangeTexture(CTexture** _pTexture, wstring& _wstrOriginP
 	ENDINSTANCE;
 }
 
+void CDummyMeshEffect::ChangeShader(CShader** _pShader, wstring& _wstrOriginPath, const _tchar* _pDestPath)
+{
+	// 소유하고 있는 컴포넌트를 지운다.
+	_tchar wszTag[MAX_STR];
+	lstrcpy(wszTag, (*_pShader)->Get_Tag());
+
+	if (FAILED(CComposite::Delete_Component(wszTag)))
+	{
+		MSG_BOX("Failed to Delete");
+		E_FAIL;
+	}
+
+	Safe_Release(*_pShader);
+
+	BEGININSTANCE;
+	// 찾는 컴포넌트가 없으면 원본을 만들어준다.
+	wstring tempTag = ToPrototypeTag(TEXT("Prototype_Component"), _pDestPath).data();
+	_tchar* pTag = { nullptr };
+	m_pTags.push_back(pTag = new _tchar[tempTag.length() + 1]);
+	lstrcpy(pTag, tempTag.c_str());
+
+	// 기존에 컴포넌트가 존재하는지 확인
+	if (nullptr == pGameInstance->Find_Prototype(LEVEL_TOOL, pTag))
+	{
+		// 없다면 새로운 프로토타입 컴포넌트 생성
+		//if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, pTag, CShader::Create(m_pDevice
+		//	, m_pContext, _pDestPath))))
+		{
+			MSG_BOX("Failed to Create Prototype : Change Shader");
+		}
+	}
+
+	// 새로운 텍스처 컴포넌트를 클론한다.
+
+	_wstrOriginPath = _pDestPath;
+	if (FAILED(CComposite::Add_Component(LEVEL_TOOL, pTag
+		, wszTag, reinterpret_cast<CComponent**>(_pShader))))
+	{
+		MSG_BOX("Failed to Add Component");
+		ENDINSTANCE;
+		return;
+	}
+	ENDINSTANCE;
+}
+
 void CDummyMeshEffect::ChangeModel(CModel** _pModel, wstring& _wstrOriginPath, const _tchar* _pDestPath, CModel::TYPE _eAnimType)
 {
 	// 소유하고 있는 컴포넌트를 지운다.
@@ -223,6 +258,73 @@ void CDummyMeshEffect::ChangeModel(CModel** _pModel, wstring& _wstrOriginPath, c
 	ENDINSTANCE;
 }
 
+HRESULT CDummyMeshEffect::Save_FileDialog()
+{
+	if (ImGui::Button("Save MeshEffect"))
+		ImGuiFileDialog::Instance()->OpenDialog("CooseSaveFileMeshEffectKey", "Save File", ".ME", "../../Resources/GameData/MeshEffectData/");
+
+	// display
+	if (ImGuiFileDialog::Instance()->Display("CooseSaveFileMeshEffectKey"))
+	{
+		// action if OK
+		if (ImGuiFileDialog::Instance()->IsOk())
+		{
+			std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+			std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
+
+			fs::path fsFilePathName = ToRelativePath(filePathName.data());
+			if (FAILED(__super::Save(fsFilePathName.wstring().data())))
+			{
+				MSG_BOX("Failed to Saved CDummyTrail");
+				return E_FAIL;
+			}
+
+			MSG_BOX("Success to Saved CDummyTrail");
+		}
+
+		// close
+		ImGuiFileDialog::Instance()->Close();
+	}
+	return S_OK;
+}
+
+HRESULT CDummyMeshEffect::Load_FileDialog()
+{
+	if (ImGui::Button("Load MeshEffect"))
+		ImGuiFileDialog::Instance()->OpenDialog("CooseLoadFileMeshEffectKey", "Load File", ".ME", "../../Resources/GameData/MeshEffectData/");
+
+	// display
+	if (ImGuiFileDialog::Instance()->Display("CooseLoadFileMeshEffectKey"))
+	{
+		// action if OK
+		if (ImGuiFileDialog::Instance()->IsOk())
+		{
+			std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+			std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
+			fs::path fsFilePathName = filePathName;
+			fs::path fsFilePath = filePath;
+
+			_ulong dwByte = 0;
+
+			if (FAILED(__super::Load(fsFilePathName.wstring().c_str())))
+			{
+				MSG_BOX("Failed to loaded file");
+			}
+			else
+			{
+				ChangeTexture(&m_pTexture, m_Path[TEXTURE_PATH], m_Path[TEXTURE_PATH].c_str());
+				m_pTextureIFD->ChangeTexture(wstrToStr(m_Path[TEXTURE_PATH]).c_str());
+				
+				MSG_BOX("The file has been loaded successfully");
+			}
+		}
+
+		// close
+		ImGuiFileDialog::Instance()->Close();
+	}
+	return S_OK;
+}
+
 CDummyMeshEffect* CDummyMeshEffect::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, const _tchar* pFilePath, _uint _iLevel)
 {
 	CDummyMeshEffect* pInstance = new CDummyMeshEffect(_pDevice, _pContext);
@@ -254,7 +356,6 @@ void CDummyMeshEffect::Free()
 	__super::Free();
 
 	Safe_Release(m_pTextureIFD);
-	Safe_Release(m_pAlphaClipTextureIFD);
 	Safe_Release(m_pPassComboBox);
 
 	for (auto& pTag : m_pTags)

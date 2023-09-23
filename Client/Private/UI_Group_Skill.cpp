@@ -95,14 +95,14 @@ HRESULT CUI_Group_Skill::Add_Prototype()
 {
 	BEGININSTANCE;
 
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Effect_Back"),
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Effect_Back"),
 		CUI_Effect_Back::Create(m_pDevice, m_pContext), true)))
 	{
 		ENDINSTANCE;
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Back"),
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Back"),
 		CUI_Back::Create(m_pDevice, m_pContext), true)))
 	{
 		ENDINSTANCE;
@@ -127,7 +127,7 @@ HRESULT CUI_Group_Skill::Add_Components(wstring wszTag)
 	//_tchar* pmainTag = pGameInstance->Make_WChar(main);
 	wstring main = TEXT("Com_UI_Effect_Back_Main_");
 	main += wszTag;
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Effect_Back"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Effect_Back"),
 		main.c_str(), reinterpret_cast<CComponent**>(&pMain))))
 	{
 		MSG_BOX("Com_UI_Group_Skill : Failed Clone Component (Com_UI_Effect_Back_Main_)");
@@ -142,7 +142,7 @@ HRESULT CUI_Group_Skill::Add_Components(wstring wszTag)
 	//_tchar* pframeTag = pGameInstance->Make_WChar(main);
 	wstring frame = TEXT("Com_UI_Back_Frame_");
 	frame += wszTag;
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Back"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Back"),
 		frame.c_str(), reinterpret_cast<CComponent**>(&pFrame))))
 	{
 		MSG_BOX("Com_UI_Group_Skill : Failed Clone Component (Com_UI_Back_Frame)");
@@ -157,7 +157,7 @@ HRESULT CUI_Group_Skill::Add_Components(wstring wszTag)
 	//_tchar* pnumberTag = pGameInstance->Make_WChar(main);
 	wstring number = TEXT("Com_UI_Back_Number_");
 	number += wszTag;
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Back"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Back"),
 		number.c_str(), reinterpret_cast<CComponent**>(&pNumber))))
 	{
 		MSG_BOX("Com_UI_Group_Skill : Failed Clone Component (Com_UI_Back_Number)");
@@ -350,7 +350,7 @@ HRESULT CUI_Group_Skill::Add_SpellProtoType()
 
 	for (size_t i = 0; i < BASICCAST; i++)
 	{
-		CComponent* pComponenet = pGameInstance->Find_Prototype(LEVEL_MAINGAME, m_SpellProtoTypeTags[i]);
+		CComponent* pComponenet = pGameInstance->Find_Prototype(LEVEL_STATIC, m_SpellProtoTypeTags[i]);
 
 		if (pComponenet == nullptr)
 		{
@@ -364,7 +364,7 @@ HRESULT CUI_Group_Skill::Add_SpellProtoType()
 				wstring strFilePath = TEXT("../../Resources/UI/Game/UI/Icons/Spells/SpellMeters/");
 				strFilePath = strFilePath + result + TEXT(".png");
 				lstrcpy(wszPath, strFilePath.c_str());
-				if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAINGAME, m_SpellProtoTypeTags[i],
+				if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, m_SpellProtoTypeTags[i],
 					CTexture::Create(m_pDevice, m_pContext, wszPath))))
 				{
 					MSG_BOX("Failed Create Texture Component");
@@ -388,7 +388,7 @@ HRESULT CUI_Group_Skill::Add_SpellTexture()
 	{
 		CTexture* pTexture = nullptr;
 
-		if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, m_SpellProtoTypeTags[i],
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, m_SpellProtoTypeTags[i],
 			TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&pTexture))))
 		{
 			MSG_BOX("Failed CUI_Image Add_Component : (Com_Texture)");

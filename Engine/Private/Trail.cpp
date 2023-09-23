@@ -21,7 +21,7 @@ CTrail::CTrail(const CTrail& rhs)
 	, m_fWidth(rhs.m_fWidth)
 	, m_fTailDuration(rhs.m_fTailDuration)
 {
-
+	m_wstrGradientTextureName = rhs.m_wstrGradientTextureName;
 }
 
 void CTrail::Stright_Move(_float3 vTargerPosition, _float3 vStartPosition, _float fLerpAcc)
@@ -43,10 +43,51 @@ void CTrail::Spin_Move(_float3 vTargerPosition, _float3 vStartPosition, _float f
 	m_pTransform->Set_Position(_float3(CombineMatrix.m[3][0], CombineMatrix.m[3][1], CombineMatrix.m[3][2]));
 }
 
-void CTrail::Spline_Move(_float3 vSpline01, _float3 vTargerPosition, _float3 vStartPosition,  _float3 vSpline02,_float fLerpAcc)
+void CTrail::Spline_Move(_float3 vSpline01, _float3 vStartPosition, _float3 vTargerPosition,  _float3 vSpline02,_float fLerpAcc)
 {
 	_float3 movedPos = XMVectorCatmullRom(vSpline01, vStartPosition, vTargerPosition, vSpline02, fLerpAcc);
 	m_pTransform->Set_Position(movedPos);
+}
+
+void CTrail::Spline_Spin_Move(_float3 vSpline01, _float3 vStartPosition, _float3 vTargerPosition, _float3 vSpline02, _float fLerpAcc)
+{
+	_float3 movedPos = XMVectorCatmullRom(vSpline01, vStartPosition, vTargerPosition, vSpline02, fLerpAcc);
+
+	_float4x4 transMatirx = XMMatrixTranslation(movedPos.x, movedPos.y, movedPos.z);
+	_float3 axis = XMVector3Normalize(vTargerPosition - vStartPosition);
+	_float3 tempAxis = _float3(0, 1, 0);
+	_float3	normal = XMVector3Normalize(XMVector3Cross(axis, tempAxis))*0.1f;
+	_float4x4 offsetMatirx = XMMatrixTranslation(normal.x, normal.y, normal.z);
+	_float4x4 rotationMatrix = XMMatrixRotationAxis(axis, m_fTimeAcc * 30);
+	_float4x4 CombineMatrix = offsetMatirx * rotationMatrix * transMatirx;
+
+	m_pTransform->Set_Position(_float3(CombineMatrix.m[3][0], CombineMatrix.m[3][1], CombineMatrix.m[3][2]));
+}
+
+void CTrail::Ready_LightningStrike(_float3 vStartPosition, _float3 vEndPosition, _float3 vWeight[2], _uint iCount)
+{
+	m_isLightning = true;
+	for (_uint i = 0; i < iCount; i++)
+	{
+		_float3 vPos = vStartPosition;
+		vPos.y = Lerp(vStartPosition.y, vEndPosition.y, (_float)i / (iCount - 1));
+		m_vSplineLerpPostion.push_back(vPos);
+
+		_float3 vDir = _float3(
+			Random_Generator(vWeight[0].x, vWeight[1].x),
+			Random_Generator(vWeight[0].y, vWeight[1].y),
+			Random_Generator(vWeight[0].z, vWeight[1].z));
+		m_vSplineDir.push_back(vDir);
+	}
+}
+
+void CTrail::Tick_LightningStrike(_float fTimeDelta)
+{
+	for (_uint i = 0; i < m_vSplineLerpPostion.size(); i++)
+	{
+		m_vSplineLerpPostion[i] = m_vSplineLerpPostion[i] + m_vSplineDir[i];
+	}
+	m_fClipThreshold += fTimeDelta*2.f;
 }
 
 HRESULT CTrail::Save(const _tchar* pFilePath)
@@ -124,7 +165,7 @@ HRESULT CTrail::Load(const _tchar* pFilePath)
 	return S_OK;
 }
 
-HRESULT CTrail::Initialize_Prototype(const _tchar* _pFilePath, _uint _iLevel)
+HRESULT CTrail::Initialize_Prototype(const _tchar* _pFilePath, const _tchar* _pGradientTexturePath, _uint _iLevel)
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
@@ -150,13 +191,17 @@ HRESULT CTrail::Initialize_Prototype(const _tchar* _pFilePath, _uint _iLevel)
 	}
 
 	// 필요한 텍스처가 없을 시에 컴포넌트 매니저에 원본 추가.
-	ProtoTag = TEXT("Prototype_Component_Texture_CustomLinearGradient");
+	_tchar wszFileName[MAX_PATH] = {};
+	_wsplitpath_s(_pGradientTexturePath, nullptr, 0, nullptr, 0, wszFileName, MAX_PATH, nullptr, 0);
+	ProtoTag = TEXT("Prototype_Component_Texture_");
+	ProtoTag += wszFileName;
+	m_wstrGradientTextureName = ProtoTag;
 	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, ProtoTag.data()))
 	{
 		// 없으면 원본을 추가한다.
 		pGameInstance->Add_Prototype(m_iLevel
 			, ProtoTag.data()
-			, CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Textures/Gradients/CustomLinearGradient.png")));
+			, CTexture::Create(m_pDevice, m_pContext, _pGradientTexturePath));
 	}
 
 	// 필요한 원본 텍스처가 없을 시에 컴포넌트 매니저에 원본 추가.
@@ -201,7 +246,19 @@ void CTrail::Tick(_float fTimeDelta)
 		return;
 	__super::Tick(fTimeDelta);
 	if (nullptr != m_pBuffer)
-		m_pBuffer->Tick();
+	{
+		if (m_isLightning)
+		{
+			Tick_LightningStrike(fTimeDelta);
+			m_pBuffer->Tick_Lightning(&m_vSplineLerpPostion);
+		}
+		else 
+		{
+			m_pBuffer->Tick();
+		}
+	}
+		
+	m_fTimeAcc += fTimeDelta;
 
 }
 
@@ -215,7 +272,7 @@ void CTrail::Late_Tick(_float fTimeDelta)
 	if (nullptr != m_pRenderer)
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BLEND, this);
-		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BLOOM, this);
+		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_GLOW, this);
 	}
 		
 }
@@ -254,7 +311,7 @@ HRESULT CTrail::Add_Components()
 			throw(TEXT("Com_Texture"));
 
 		/* Com_GradientTexture */
-		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_Component_Texture_CustomLinearGradient"),
+		if (FAILED(CComposite::Add_Component(m_iLevel, m_wstrGradientTextureName.data(),
 			TEXT("Com_GradientTexture"), reinterpret_cast<CComponent**>(&m_pGradientTexture))))
 			throw(TEXT("Com_GradientTexture"));
 
@@ -263,7 +320,7 @@ HRESULT CTrail::Add_Components()
 		m_HighLocalMatrix.Translation(_float3(0.f, m_fWidth * 0.5f, 0.f));
 		m_LowLocalMatrix.Translation(_float3(0.f, -m_fWidth * 0.5f, 0.f));
 
-		trailDesc.iTrailNum = 20;
+		trailDesc.iTrailNum = m_iTrailNum;
 		trailDesc.pHighLocalMatrix = &m_HighLocalMatrix;
 		trailDesc.pLowLocalMatrix = &m_LowLocalMatrix;
 		trailDesc.pPivotMatrix = &m_PivotMatrix;
@@ -311,6 +368,9 @@ HRESULT CTrail::SetUp_ShaderResources()
 
 		if (FAILED(m_pShader->Bind_RawValue("g_vTailColor", &m_vTailColor, sizeof m_vTailColor)))
 			throw "g_vTailColor";
+
+		if (FAILED(m_pShader->Bind_RawValue("g_fClipThreshold", &m_fClipThreshold, sizeof(_float))))
+			throw "g_fClipThreshold";
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -326,11 +386,11 @@ HRESULT CTrail::SetUp_ShaderResources()
 	return S_OK;
 }
 
-CTrail* CTrail::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* _pDirectoryPath, _uint _iLevel)
+CTrail* CTrail::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* _pDirectoryPath, _uint _iLevel, const _tchar* _pGradientTexturePath)
 {
 	CTrail* pInstance = New CTrail(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize_Prototype(_pDirectoryPath, _iLevel)))
+	if (FAILED(pInstance->Initialize_Prototype(_pDirectoryPath, _pGradientTexturePath, _iLevel)))
 	{
 		MSG_BOX("Failed to Created CTrail");
 		Safe_Release(pInstance);

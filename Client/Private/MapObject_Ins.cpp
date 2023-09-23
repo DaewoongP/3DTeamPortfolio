@@ -56,6 +56,7 @@ void CMapObject_Ins::Late_Tick(_float fTimeDelta)
 	if (nullptr != m_pRenderer)
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
 	}
 }
 
@@ -106,7 +107,7 @@ HRESULT CMapObject_Ins::Add_Components(MAPOJBECTINSDESC* pMapObjectInsDesc)
 	}
 
 	/* Com_Model */
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, pMapObjectInsDesc->wszTag,
+	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, pMapObjectInsDesc->wszTag,
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModel))))
 	{
 		MSG_BOX("Failed CMapObject_Ins Add_Component : (Com_Model)");
@@ -125,7 +126,13 @@ HRESULT CMapObject_Ins::SetUp_ShaderResources()
 		return E_FAIL;
 
 	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL; ENDINSTANCE;
+		return E_FAIL;
+
+	if (FAILED(m_pShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
+		return E_FAIL;
+	
+	
+	ENDINSTANCE;
 
 	return S_OK;
 }

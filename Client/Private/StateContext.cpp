@@ -39,14 +39,16 @@ HRESULT CStateContext::Initialize(void* pArg)
 
 	m_pfuncFinishAnimation = [&] {(*this).FinishAnimation(); };
 
+	m_fRotaionSpeed = 2.0f;
+
+	m_pTargetAngle = StateContextDesc->pTargetAngle;
+
 	if (FAILED(Ready_StateMachine()))
 	{
 		MSG_BOX(TEXT("Failed Ready StateMachine"));
 
 		return E_FAIL;
 	}
-
-	
 
 	return S_OK;
 }
@@ -124,7 +126,9 @@ HRESULT CStateContext::Add_StateMachine(const _tchar* _pTag, CStateMachine* _pSt
 	_pState->Set_ActionSwitch(&m_iActionSwitch);
 	_pState->Set_IsFnishAnimation(&m_isFinishAnimation);
 	_pState->Set_FuncFinishAnimation(m_pfuncFinishAnimation);
-	
+	_pState->Set_RotationSpeed(&m_fRotaionSpeed);
+	_pState->Set_TarGetAngle(m_pTargetAngle);
+
 	_pState->Bind_Notify();
 
 	m_pStateMachines.emplace(_pTag, _pState);
@@ -138,7 +142,7 @@ HRESULT CStateContext::Ready_StateMachine()
 
 	if (FAILED(Add_StateMachine(TEXT("Idle"),
 		static_cast<CStateMachine*>
-		(pGameInstance->Clone_Component(LEVEL_MAINGAME,
+		(pGameInstance->Clone_Component(LEVEL_STATIC,
 			TEXT("Prototype_Component_State_Idle"))))))
 	{
 		ENDINSTANCE;
@@ -150,7 +154,7 @@ HRESULT CStateContext::Ready_StateMachine()
 
 	if (FAILED(Add_StateMachine(TEXT("Move Turn"),
 		static_cast<CStateMachine*>
-		(pGameInstance->Clone_Component(LEVEL_MAINGAME,
+		(pGameInstance->Clone_Component(LEVEL_STATIC,
 			TEXT("Prototype_Component_State_Move_Turn"))))))
 	{
 		ENDINSTANCE;
@@ -162,7 +166,7 @@ HRESULT CStateContext::Ready_StateMachine()
 
 	if (FAILED(Add_StateMachine(TEXT("Move Start"),
 		static_cast<CStateMachine*>
-		(pGameInstance->Clone_Component(LEVEL_MAINGAME,
+		(pGameInstance->Clone_Component(LEVEL_STATIC,
 			TEXT("Prototype_Component_State_Move_Start"))))))
 	{
 		ENDINSTANCE;
@@ -174,7 +178,7 @@ HRESULT CStateContext::Ready_StateMachine()
 
 	if (FAILED(Add_StateMachine(TEXT("Move Loop"),
 		static_cast<CStateMachine*>
-		(pGameInstance->Clone_Component(LEVEL_MAINGAME,
+		(pGameInstance->Clone_Component(LEVEL_STATIC,
 			TEXT("Prototype_Component_State_Move_Loop"))))))
 	{
 		ENDINSTANCE;
@@ -186,7 +190,7 @@ HRESULT CStateContext::Ready_StateMachine()
 
 	if (FAILED(Add_StateMachine(TEXT("Roll"),
 		static_cast<CStateMachine*>
-		(pGameInstance->Clone_Component(LEVEL_MAINGAME,
+		(pGameInstance->Clone_Component(LEVEL_STATIC,
 			TEXT("Prototype_Component_State_Roll"))))))
 	{
 		ENDINSTANCE;
@@ -198,7 +202,7 @@ HRESULT CStateContext::Ready_StateMachine()
 
 	if (FAILED(Add_StateMachine(TEXT("Jump"),
 		static_cast<CStateMachine*>
-		(pGameInstance->Clone_Component(LEVEL_MAINGAME,
+		(pGameInstance->Clone_Component(LEVEL_STATIC,
 			TEXT("Prototype_Component_State_Jump"))))))
 	{
 		ENDINSTANCE;
@@ -210,7 +214,7 @@ HRESULT CStateContext::Ready_StateMachine()
 
 	if (FAILED(Add_StateMachine(TEXT("Hard Land"),
 		static_cast<CStateMachine*>
-		(pGameInstance->Clone_Component(LEVEL_MAINGAME,
+		(pGameInstance->Clone_Component(LEVEL_STATIC,
 			TEXT("Prototype_Component_State_Hard_Land"))))))
 	{
 		ENDINSTANCE;
@@ -222,7 +226,7 @@ HRESULT CStateContext::Ready_StateMachine()
 
 	if (FAILED(Add_StateMachine(TEXT("Magic_Cast"),
 		static_cast<CStateMachine*>
-		(pGameInstance->Clone_Component(LEVEL_MAINGAME,
+		(pGameInstance->Clone_Component(LEVEL_STATIC,
 			TEXT("Prototype_Component_State_Magic_Casting"))))))
 	{
 		ENDINSTANCE;
@@ -231,8 +235,33 @@ HRESULT CStateContext::Ready_StateMachine()
 
 		return E_FAIL;
 	};
-
 	
+	if (FAILED(Add_StateMachine(TEXT("Protego"),
+		static_cast<CStateMachine*>
+		(pGameInstance->Clone_Component(LEVEL_STATIC,
+			TEXT("Prototype_Component_State_ProtegoState"))))))
+	{
+		ENDINSTANCE;
+
+		MSG_BOX("Failed Ready_StateMachine");
+
+		return E_FAIL;
+	};
+
+	if (FAILED(Add_StateMachine(TEXT("Hit"),
+		static_cast<CStateMachine*>
+		(pGameInstance->Clone_Component(LEVEL_STATIC,
+			TEXT("Prototype_Component_State_Hit"))))))
+	{
+		ENDINSTANCE;
+
+		MSG_BOX("Failed Ready_StateMachine");
+
+		return E_FAIL;
+	};
+
+
+
 
 	Set_StateMachine(TEXT("Idle"));
 
@@ -240,6 +269,7 @@ HRESULT CStateContext::Ready_StateMachine()
 
 	return S_OK;
 }
+
 
 CStateContext* CStateContext::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {

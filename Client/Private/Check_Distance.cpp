@@ -49,7 +49,22 @@ HRESULT CCheck_Distance::Tick(const _float& fTimeDelta)
 		return E_FAIL;
 	}
 
-	return BEHAVIOR_SUCCESS;
+	// 거리를 비교할건데
+	if (true == m_isCompareDistance)
+	{
+		if (true == m_isCloseDistance)
+		{
+			// 현재 타겟과의 거리가 목표치 보다 가까워진 경우 성공을 반환한다.
+			return (m_fTargetDistance > fTargetDistance) ? BEHAVIOR_SUCCESS : BEHAVIOR_RUNNING;
+		}
+		else
+		{
+			// 현재 타겟과의 거리가 목표치 보다 멀어진 경우 성공을 반환한다.
+			return (m_fTargetDistance < fTargetDistance) ? BEHAVIOR_SUCCESS : BEHAVIOR_RUNNING;
+		}
+	}
+	else // 거리 비교 안할 거면 무조건 성공
+		return BEHAVIOR_SUCCESS;
 }
 
 CCheck_Distance* CCheck_Distance::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

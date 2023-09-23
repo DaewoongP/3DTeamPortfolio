@@ -33,11 +33,15 @@ public:
 	void Tick_Imgui(_float fTimeDelta);
 	
 	void ChangeTexture(CTexture** _pTexture, wstring& _wstrOriginPath, const _tchar* _pDestPath);
+	void ChangeShader(CShader** _pShader, wstring& _wstrOriginPath, const _tchar* _pDestPath);
 	void ChangeModel(CModel** _pModel, wstring& _wstrOriginPath, const _tchar* _pDestPath, CModel::TYPE _eAnimType = CModel::TYPE_NONANIM);
+
+public:
+	HRESULT Save_FileDialog();
+	HRESULT Load_FileDialog();
 
 private:
 	CImageFileDialog* m_pTextureIFD = { nullptr };
-	CImageFileDialog* m_pAlphaClipTextureIFD = { nullptr };
 	CComboBox* m_pPassComboBox = { nullptr };
 
 	list<_tchar*> m_pTags;

@@ -90,19 +90,20 @@ void CVIBuffer_Color_Index_Instance::Tick(VTXCOLIDXINSTANCE* pInstances, _int iR
 
 	D3D11_MAPPED_SUBRESOURCE	MappedSubResource;
 
-	m_pContext->Map(m_pVBInstance, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &MappedSubResource);
+	m_pContext->Map(m_pVBInstance, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedSubResource);
 
-	VTXCOLIDXINSTANCE* pVTXCOLIDXINSTANCE = static_cast<VTXCOLIDXINSTANCE*>(MappedSubResource.pData);
-
-	for (_uint i = 0; i < iRenderedParticleNum; ++i)
+	VTXCOLIDXINSTANCE* pVtxColInstance = static_cast<VTXCOLIDXINSTANCE*>(MappedSubResource.pData);
+	
+	memcpy(pVtxColInstance, pInstances, sizeof(VTXCOLIDXINSTANCE) * iRenderedParticleNum);
+	/*for (_uint i = 0; i < iRenderedParticleNum; ++i)
 	{
-		memcpy(&pVTXCOLIDXINSTANCE[i].vRight, &pInstances[i].vRight, sizeof(_float4));
-		memcpy(&pVTXCOLIDXINSTANCE[i].vUp, &pInstances[i].vUp, sizeof(_float4));
-		memcpy(&pVTXCOLIDXINSTANCE[i].vLook, &pInstances[i].vLook, sizeof(_float4));
-		memcpy(&pVTXCOLIDXINSTANCE[i].vTranslation, &pInstances[i].vTranslation, sizeof(_float4));
-		memcpy(&pVTXCOLIDXINSTANCE[i].vColor, &pInstances[i].vColor, sizeof(_float4));
-		memcpy(&pVTXCOLIDXINSTANCE[i].iCurrentIndex, &pInstances[i].iCurrentIndex, sizeof(_uint));
-	}
+		memcpy(&pVtxColInstance[i].vRight, &pInstances[i].vRight, sizeof(_float4));
+		memcpy(&pVtxColInstance[i].vUp, &pInstances[i].vUp, sizeof(_float4));
+		memcpy(&pVtxColInstance[i].vLook, &pInstances[i].vLook, sizeof(_float4));
+		memcpy(&pVtxColInstance[i].vTranslation, &pInstances[i].vTranslation, sizeof(_float4));
+		memcpy(&pVtxColInstance[i].vColor, &pInstances[i].vColor, sizeof(_float4));
+		memcpy(&pVtxColInstance[i].iCurrentIndex, &pInstances[i].iCurrentIndex, sizeof(_uint));
+	}*/
 
 	m_pContext->Unmap(m_pVBInstance, 0);
 }

@@ -33,7 +33,7 @@ HRESULT CProfessor_Fig::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	m_pTransform->Set_Position(_float3(30.f, 0.f, 10.f));
+	m_pTransform->Set_Position(_float3(_float(rand() % 5) + 30.f, 0.f, _float(rand() % 5) + 10.f));
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
@@ -104,27 +104,26 @@ void CProfessor_Fig::Late_Tick(_float fTimeDelta)
 void CProfessor_Fig::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
-	wstring wstrCollisionTag = { TEXT("") };
-	if (nullptr != CollisionEventDesc.pOtherCollisionTag)
-		wstrCollisionTag = CollisionEventDesc.pOtherCollisionTag;
+	wstring wstrCollisionTag = CollisionEventDesc.pOtherCollisionTag;
+	wstring wstrMyCollisionTag = CollisionEventDesc.pThisCollisionTag;
 
-	if (wstring::npos != wstrCollisionTag.find(TEXT("Body")))
+	if (wstring::npos != wstrMyCollisionTag.find(TEXT("Range")))
 	{
-		if (wstring::npos != wstrObjectTag.find(TEXT("Golem")))
+		if (wstring::npos != wstrObjectTag.find(TEXT("Golem")) ||
+			wstring::npos != wstrObjectTag.find(TEXT("Troll")))
+		{
 			m_RangeInEnemies.push_back({ wstrObjectTag, CollisionEventDesc.pOtherOwner });
+		}
 	}
-	
-	//Safe_AddRef(CollisionEventDesc.pOtherOwner);
 }
 
 void CProfessor_Fig::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 {
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
-	wstring wstrCollisionTag = { TEXT("") };
-	if (nullptr != CollisionEventDesc.pOtherCollisionTag)
-		wstrCollisionTag = CollisionEventDesc.pOtherCollisionTag;
+	wstring wstrCollisionTag = CollisionEventDesc.pOtherCollisionTag;
+	wstring wstrMyCollisionTag = CollisionEventDesc.pThisCollisionTag;
 
-	if (wstring::npos != wstrCollisionTag.find(TEXT("Body")))
+	if (wstring::npos != wstrMyCollisionTag.find(TEXT("Range")))
 	{
 		if (wstring::npos != wstrObjectTag.find(TEXT("Golem")))
 		{
@@ -140,7 +139,7 @@ void CProfessor_Fig::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 HRESULT CProfessor_Fig::Render()
 {
 #ifdef _DEBUG
-	Tick_ImGui();
+	//Tick_ImGui();
 #endif // _DEBUG
 
 	if (FAILED(SetUp_ShaderResources()))
@@ -263,7 +262,7 @@ HRESULT CProfessor_Fig::Make_Magics()
 	//Basic Magic BasicCast
 	{
 		CMagic::MAGICDESC magicInitDesc;
-		magicInitDesc.eBuffType = CMagic::BUFF_NONE;
+		magicInitDesc.eBuffType = BUFF_NONE;
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
 		magicInitDesc.eMagicTag = BASICCAST;
@@ -278,7 +277,7 @@ HRESULT CProfessor_Fig::Make_Magics()
 	//Skill Magic LEVIOSO
 	{
 		CMagic::MAGICDESC magicInitDesc;
-		magicInitDesc.eBuffType = CMagic::BUFF_UNGRAVITY;
+		magicInitDesc.eBuffType = BUFF_LEVIOSO;
 		magicInitDesc.eMagicGroup = CMagic::MG_CONTROL;
 		magicInitDesc.eMagicType = CMagic::MT_YELLOW;
 		magicInitDesc.eMagicTag = LEVIOSO;
@@ -297,7 +296,7 @@ HRESULT CProfessor_Fig::Make_Magics()
 
 HRESULT CProfessor_Fig::Make_Notifies()
 {
-	function<void()> Func = [&] {(*this).Change_Animation(); };
+	function<void()> Func = [&] { (*this).Change_Animation(); };
 	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Front_1"), TEXT("Change_Animation"), Func)))
 		return E_FAIL;
 	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Step_Back_2"), TEXT("Change_Animation"), Func)))
@@ -352,7 +351,7 @@ HRESULT CProfessor_Fig::Add_Components()
 			throw TEXT("Com_Renderer");
 
 		/* For.Com_Model */
-		if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Professor_Fig"),
+		if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_Model_Professor_Fig"),
 			TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 			throw TEXT("Com_Model");
 
@@ -381,17 +380,23 @@ HRESULT CProfessor_Fig::Add_Components()
 		PxCapsuleGeometry pCapsuleGeomatry = PxCapsuleGeometry(0.25f, 0.6f);
 		RigidBodyDesc.pGeometry = &pCapsuleGeomatry;
 		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Body");
+		RigidBodyDesc.eThisCollsion = COL_NPC;
+		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_ENEMY | COL_ENEMY_RANGE;
 
 		/* Com_RigidBody */
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
 			TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
 			throw TEXT("Com_RigidBody");
 
+		m_OffsetMatrix = XMMatrixTranslation(RigidBodyDesc.vOffsetPosition.x, RigidBodyDesc.vOffsetPosition.y, RigidBodyDesc.vOffsetPosition.z);
+
 		RigidBodyDesc.isStatic = true;
 		RigidBodyDesc.isTrigger = true;
 		PxSphereGeometry pSphereGeomatry = PxSphereGeometry(10.f);
 		RigidBodyDesc.pGeometry = &pSphereGeomatry;
 		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Range");
+		RigidBodyDesc.eThisCollsion = COL_NPC_RANGE;
+		RigidBodyDesc.eCollisionFlag = COL_ENEMY;
 
 		m_pRigidBody->Create_Collider(&RigidBodyDesc);
 
@@ -406,12 +411,12 @@ HRESULT CProfessor_Fig::Add_Components()
 		ParentMatrixDesc.pCombindTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
 		ParentMatrixDesc.pParentWorldMatrix = m_pTransform->Get_WorldMatrixPtr();
 
-		if (FAILED(Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Weapon_Fig_Wand"),
+		if (FAILED(Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_Weapon_Fig_Wand"),
 			TEXT("Com_Weapon"), reinterpret_cast<CComponent**>(&m_pWeapon), &ParentMatrixDesc)))
 			throw TEXT("Com_Weapon");
 
 		/* For.MagicSlot */
-		if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_MagicSlot"),
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_MagicSlot"),
 			TEXT("Com_MagicSlot"), reinterpret_cast<CComponent**>(&m_pMagicSlot))))
 		{
 			MSG_BOX("Failed CTest_Player Add_Component : (Com_MagicSlot)");
@@ -608,21 +613,21 @@ HRESULT CProfessor_Fig::Make_Turns(_Inout_ CSequence* pSequence)
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Selector_Degree"), pSelector_Degree)))
 			throw TEXT("Failed Assemble_Behavior Selector_Degree");
 
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::LEFT_45, pAction_Left_45)))
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::LEFT_45, pAction_Left_45)))
 			throw TEXT("Failed Assemble_Childs pSelector_Degree LEFT_45");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::RIGHT_45, pAction_Right_45)))
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::RIGHT_45, pAction_Right_45)))
 			throw TEXT("Failed Assemble_Childs pSelector_Degree RIGHT_45");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::LEFT_90, pAction_Left_90)))
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::LEFT_90, pAction_Left_90)))
 			throw TEXT("Failed Assemble_Childs pSelector_Degree LEFT_90");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::RIGHT_90, pAction_Right_90)))
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::RIGHT_90, pAction_Right_90)))
 			throw TEXT("Failed Assemble_Childs pSelector_Degree RIGHT_90");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::LEFT_135, pAction_Left_135)))
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::LEFT_135, pAction_Left_135)))
 			throw TEXT("Failed Assemble_Childs pSelector_Degree LEFT_135");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::RIGHT_135, pAction_Right_135)))
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::RIGHT_135, pAction_Right_135)))
 			throw TEXT("Failed Assemble_Childs pSelector_Degree RIGHT_135");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::RIGHT_BACK, pAction_Right_180)))
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::RIGHT_BACK, pAction_Right_180)))
 			throw TEXT("Failed Assemble_Childs pSelector_Degree RIGHT_BACK");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::LEFT_BACK, pAction_Left_180)))
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::LEFT_BACK, pAction_Left_180)))
 			throw TEXT("Failed Assemble_Childs pSelector_Degree LEFT_BACK");
 	}
 	catch (const _tchar* pErrorTag)
@@ -879,22 +884,22 @@ HRESULT CProfessor_Fig::Make_Attack_Degree(_Inout_ CSequence* pSequence)
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Selector_Degree"), pSelector_Degree)))
 			throw TEXT("Failed Assemble_Behavior Selector_Degree");
 
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::LEFT_45, pAction_Left_45)))
-			throw TEXT("Failed Assemble_Childs pSelector_Degree LEFT_45");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::RIGHT_45, pAction_Right_45)))
-			throw TEXT("Failed Assemble_Childs pSelector_Degree RIGHT_45");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::LEFT_90, pAction_Left_90)))
-			throw TEXT("Failed Assemble_Childs pSelector_Degree LEFT_90");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::RIGHT_90, pAction_Right_90)))
-			throw TEXT("Failed Assemble_Childs pSelector_Degree RIGHT_90");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::LEFT_135, pAction_Left_135)))
-			throw TEXT("Failed Assemble_Childs pSelector_Degree LEFT_135");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::RIGHT_135, pAction_Right_135)))
-			throw TEXT("Failed Assemble_Childs pSelector_Degree RIGHT_135");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::RIGHT_BACK, pAction_Right_180)))
-			throw TEXT("Failed Assemble_Childs pSelector_Degree RIGHT_BACK");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::LEFT_BACK, pAction_Left_180)))
-			throw TEXT("Failed Assemble_Childs pSelector_Degree LEFT_BACK");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::LEFT_45, pAction_Left_45)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree LEFT_45");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::RIGHT_45, pAction_Right_45)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree RIGHT_45");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::LEFT_90, pAction_Left_90)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree LEFT_90");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::RIGHT_90, pAction_Right_90)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree RIGHT_90");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::LEFT_135, pAction_Left_135)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree LEFT_135");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::RIGHT_135, pAction_Right_135)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree RIGHT_135");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::RIGHT_BACK, pAction_Right_180)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree RIGHT_BACK");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::LEFT_BACK, pAction_Left_180)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree LEFT_BACK");
 	}
 	catch (const _tchar* pErrorTag)
 	{

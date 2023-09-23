@@ -15,13 +15,16 @@ BEGIN(Client)
 class CMagicBall : public CGameObject
 {
 public:
+	//매직볼의 상태임.		시작->트레일->발사->사망->종료
+	enum MAGICBALL_STATE { MAGICBALL_STATE_BEGIN, MAGICBALL_STATE_DRAWTRAIL, MAGICBALL_STATE_CASTMAGIC, MAGICBALL_STATE_DYING, MAGICBALL_STATE_END};
+public:
 	typedef struct MagicBallInitDesc
 	{
 		CTransform*				pTarget = { nullptr };
 		_float4x4				TargetOffsetMatrix = {};
 		CMagic::MAGIC_GROUP		eMagicGroup = { CMagic::MG_END };
 		CMagic::MAGIC_TYPE		eMagicType = { CMagic::MT_END };
-		CMagic::BUFF_TYPE		eBuffType = { CMagic::BUFF_NONE };
+		BUFF_TYPE				eBuffType = { BUFF_NONE };
 		SPELL					eMagicTag = { SPELL_END };
 		_float					fDamage = { 0 };
 		_float					fDistance = { 0 };
@@ -34,7 +37,7 @@ public:
 	{
 		CMagic::MAGIC_GROUP		eMagicGroup = { CMagic::MG_END };
 		CMagic::MAGIC_TYPE		eMagicType = { CMagic::MT_END };
-		CMagic::BUFF_TYPE		eBuffType = { CMagic::BUFF_NONE };
+		BUFF_TYPE				eBuffType = { BUFF_NONE };
 		SPELL					eMagicTag = { SPELL_END };
 		_float					fDamage = { 0 };
 		function<void(_float3,_float)>		Action = { nullptr };
@@ -44,7 +47,7 @@ public:
 	{
 		CMagic::MAGIC_GROUP		eMagicGroup = { CMagic::MG_END };
 		CMagic::MAGIC_TYPE		eMagicType = { CMagic::MT_END };
-		CMagic::BUFF_TYPE		eBuffType = { CMagic::BUFF_NONE };
+		BUFF_TYPE				eBuffType = { BUFF_NONE };
 		SPELL					eMagicTag = { SPELL_END };
 		_float3					vStartPosition = {};
 		_float					fDamage = { 0 };
@@ -57,6 +60,18 @@ protected:
 	explicit CMagicBall(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CMagicBall(const CMagicBall& rhs);
 	virtual ~CMagicBall() = default;
+
+public:
+	// 매직볼의 상태를 강제로 세팅합니다.
+	void Set_MagicBallState(MAGICBALL_STATE eState) { m_eMagicBallState = eState; m_isFirstFrameInState = true;}
+	// 매직볼의 상태를 자연스레 다음으로 세팅합니다.
+	void Do_MagicBallState_To_Next() { 
+		if (m_eMagicBallState != MAGICBALL_STATE_END)
+		{
+			m_eMagicBallState = static_cast<MAGICBALL_STATE>(m_eMagicBallState + 1);
+			m_isFirstFrameInState = true;
+		}
+	}
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -76,13 +91,26 @@ protected:
 	_float4x4		m_TargetOffsetMatrix = {};
 	
 	//무기의 현재 위치, 오프셋임
-	const _float4x4*			m_pWeaponMatrix = { nullptr };
+	const _float4x4*	m_pWeaponMatrix = { nullptr };
 	_float4x4			m_WeaponOffsetMatrix = {};
 
 protected:
 	MAGICBALLDESC			m_MagicBallDesc;
-
 	COLLSIONREQUESTDESC		m_CollisionDesc = {};
+
+	//행동 계산용임.
+	MAGICBALL_STATE			m_eMagicBallState = { MAGICBALL_STATE_BEGIN };
+	_bool					m_isFirstFrameInState = { true };
+protected:
+	virtual void Ready_Begin() {};
+	virtual void Ready_DrawMagic() {};
+	virtual void Ready_CastMagic() {};
+	virtual void Ready_Dying() {};
+
+	virtual void Tick_Begin(_float fTimeDelta) {};
+	virtual void Tick_DrawMagic(_float fTimeDelta) {};
+	virtual void Tick_CastMagic(_float fTimeDelta) {};
+	virtual void Tick_Dying(_float fTimeDelta) {};
 
 protected:
 	HRESULT Add_Components();

@@ -39,7 +39,7 @@ HRESULT CSequence_Levitated::Initialize(void* pArg)
 			if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
 				return false;
 
-			if (LEVIOSO & *pICurrentSpell)
+			if (BUFF_LEVIOSO & *pICurrentSpell)
 				return true;
 
 			return false;
@@ -58,8 +58,8 @@ HRESULT CSequence_Levitated::Tick(const _float& fTimeDelta)
 		if (FAILED(m_pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
 			return E_FAIL;
 
-		if (*pICurrentSpell & LEVIOSO)
-			*pICurrentSpell ^= LEVIOSO;
+		if (*pICurrentSpell & BUFF_LEVIOSO)
+			*pICurrentSpell ^= BUFF_LEVIOSO;
 	}
 
 	return hr;
@@ -131,11 +131,11 @@ HRESULT CSequence_Levitated::Assemble_Childs()
 		pAction_Levitated_Loop4->Set_Options(TEXT("Levitated_Loop_4"), pModel, true);
 		pAction_Levitated_Loop5->Set_Options(TEXT("Levitated_Loop_5"), pModel, true);
 		pAction_Levitated_Land->Set_Options(TEXT("Levitated_Land"), pModel);
-		pTsk_Wait_Loop1->Set_Timer(2.f);
-		pTsk_Wait_Loop2->Set_Timer(2.f);
-		pTsk_Wait_Loop3->Set_Timer(2.f);
-		pTsk_Wait_Loop4->Set_Timer(2.f);
-		pTsk_Wait_Loop5->Set_Timer(2.f);
+		pTsk_Wait_Loop1->Set_Timer(4.f);
+		pTsk_Wait_Loop2->Set_Timer(4.f);
+		pTsk_Wait_Loop3->Set_Timer(4.f);
+		pTsk_Wait_Loop4->Set_Timer(4.f);
+		pTsk_Wait_Loop5->Set_Timer(4.f);
 
 		/* Assemble Behaviors */
 		if (FAILED(Assemble_Behavior(TEXT("Action_Levitated_Enter"), pAction_Levitated_Enter)))
@@ -194,8 +194,8 @@ void CSequence_Levitated::Reset_Behavior(HRESULT result)
 		if (FAILED(m_pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
 			return;
 
-		if (*pICurrentSpell & LEVIOSO)
-			*pICurrentSpell ^= LEVIOSO;
+		if (*pICurrentSpell & BUFF_LEVIOSO)
+			*pICurrentSpell ^= BUFF_LEVIOSO;
 	}
 
 	BEGININSTANCE;

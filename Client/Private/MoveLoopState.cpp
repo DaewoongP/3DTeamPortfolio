@@ -41,7 +41,7 @@ void CMoveLoopState::Tick(_float fTimeDelta)
 
 	if (pGameInstance->Check_Timer(TEXT("Meter per Sconde")))
 	{
-		cout << m_pPlayerTransform->Get_Position().z << endl;
+		//cout << m_pPlayerTransform->Get_Position().z << endl;
 	}
 
 	ENDINSTANCE;
@@ -54,7 +54,7 @@ void CMoveLoopState::Late_Tick(_float fTimeDelta)
 void CMoveLoopState::OnStateEnter()
 {
 #ifdef _DEBUG
-	cout << "Loop Enter" << endl;
+	//cout << "Loop Enter" << endl;
 #endif // _DEBUG
 }
 
@@ -91,14 +91,21 @@ void CMoveLoopState::OnStateTick()
 		*m_pIsFinishAnimation = false;
 	}
 
+	BEGININSTANCE;
+
+	//m_pPlayerTransform->Go_Straight(7.0f * pGameInstance->Get_World_Tick());
+
+	ENDINSTANCE;
+
 	Go_Magic_Cast();
 
+	Go_Protego();
 }
 
 void CMoveLoopState::OnStateExit()
 {
 #ifdef _DEBUG
-	cout << "Loop Exit" << endl;
+	//cout << "Loop Exit" << endl;
 #endif // _DEBUG
 }
 
@@ -119,7 +126,7 @@ void CMoveLoopState::LookFront()
 	if (true == *m_pIsDirectionKeyPressed)
 	{
 		//지속적으로 회전
-		m_pPlayerTransform->Turn(_float3(0.0f, 1.0f, 0.0f), fAngle * pGameInstance->Get_World_Tick());
+		m_pPlayerTransform->Turn(_float3(0.0f, 1.0f, 0.0f), fAngle * pGameInstance->Get_World_Tick() * (*m_pFRotationSpeed));
 	}
 
 	ENDINSTANCE;

@@ -20,7 +20,6 @@ private:
 	virtual ~CLevel_Manager() = default;
 
 public:
-	_uint Get_CurrentLevelIndex() const { return m_iLevelIndex; }
 	class CLevel* Get_CurrentLevel() { return m_pCurrentLevel; }
 	list<const _tchar*> Get_Layers(const _tchar* pSceneTag);
 	

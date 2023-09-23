@@ -38,7 +38,7 @@ HRESULT CSequence_Groggy::Initialize(void* pArg)
 			if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
 				return false;
 
-			if (STUPEFY & *pICurrentSpell)
+			if (BUFF_STUPEFY & *pICurrentSpell)
 				return true;
 
 			return false;
@@ -57,8 +57,8 @@ HRESULT CSequence_Groggy::Tick(const _float& fTimeDelta)
 		if (FAILED(m_pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
 			return E_FAIL;
 
-		if(*pICurrentSpell & STUPEFY)
-			*pICurrentSpell ^= STUPEFY;
+		if(*pICurrentSpell & BUFF_STUPEFY)
+			*pICurrentSpell ^= BUFF_STUPEFY;
 	}
 
 	return hr;
@@ -143,8 +143,8 @@ void CSequence_Groggy::Reset_Behavior(HRESULT result)
 		if (FAILED(m_pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
 			return;
 
-		if (*pICurrentSpell & STUPEFY)
-			*pICurrentSpell ^= STUPEFY;
+		if (*pICurrentSpell & BUFF_STUPEFY)
+			*pICurrentSpell ^= BUFF_STUPEFY;
 	}
 
 	BEGININSTANCE;

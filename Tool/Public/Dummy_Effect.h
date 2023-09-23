@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "GameObject.h"
@@ -7,16 +6,14 @@
 
 
 BEGIN(Tool)
-
 class CDummyTrail;
 class CDummyParticle;
 class CDummyMeshEffect;
 class CDummyFlipBook;
 END
 
-
-
 BEGIN(Tool)
+
 class CDummy_Effect final : public CGameObject
 {
 private:
@@ -30,6 +27,7 @@ public:
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	void Tick_Imgui(_float fTimeDelta);
+
 
 private: /* For. Component */
 	CDummyTrail* m_pTrail = { nullptr };

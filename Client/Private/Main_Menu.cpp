@@ -110,14 +110,14 @@ HRESULT CMain_Menu::Add_Prototype()
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Back"),
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Back"),
 		CUI_Back::Create(m_pDevice, m_pContext), true)))
 	{
 		Safe_Release(pGameInstance);
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Effect_Back"),
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Effect_Back"),
 		CUI_Effect_Back::Create(m_pDevice, m_pContext), true)))
 	{
 		Safe_Release(pGameInstance);
@@ -134,21 +134,21 @@ HRESULT CMain_Menu::Add_Components()
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Back"), TEXT("Layer_Menu_UI"), TEXT("Com_UI_Effect_Back_Menu_Frame"))))
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Back"), TEXT("Layer_Menu_UI"), TEXT("Com_UI_Effect_Back_Menu_Frame"))))
 	{
 		MSG_BOX("Com_Menu : Failed Clone Component (Com_UI_Effect_Back_Menu_Frame)");
 		Safe_Release(pGameInstance);
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Back"), TEXT("Layer_Menu_UI"), TEXT("Com_UI_Effect_Back_Menu_Q"))))
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Back"), TEXT("Layer_Menu_UI"), TEXT("Com_UI_Effect_Back_Menu_Q"))))
 	{
 		MSG_BOX("Com_Menu : Failed Clone Component (Com_UI_Effect_Back_Menu_Keys)");
 		Safe_Release(pGameInstance);
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Back"), TEXT("Layer_Menu_UI"), TEXT("Com_UI_Effect_Back_Menu_E"))))
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Back"), TEXT("Layer_Menu_UI"), TEXT("Com_UI_Effect_Back_Menu_E"))))
 	{
 		MSG_BOX("Com_Menu : Failed Clone Component (Com_UI_Effect_Back_Menu_Keys)");
 		Safe_Release(pGameInstance);
@@ -164,7 +164,7 @@ HRESULT CMain_Menu::Add_Components()
 	text = TEXT("Setting");
 	Add_TextComponent(text);
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Back"), TEXT("Layer_Menu_UI"), TEXT("Com_UI_Effect_Back_Menu_Back"))))
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Back"), TEXT("Layer_Menu_UI"), TEXT("Com_UI_Effect_Back_Menu_Back"))))
 	{
 		MSG_BOX("Com_Info_Main : Failed Clone Component (Com_UI_Effect_Back_Menu_Back)");
 		Safe_Release(pGameInstance);
@@ -185,7 +185,7 @@ HRESULT CMain_Menu::Add_TextComponent(wstring wszTag)
 
 	wstring text = TEXT("Com_UI_Effect_Back_Text_");
 	text += wszTag;
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Effect_Back"),
+	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Effect_Back"),
 		text.c_str(), reinterpret_cast<CComponent**>(&pText))))
 	{
 		MSG_BOX("Com_Info_Main : Failed Clone Component (Com_UI_Effect_Back_Text)");
@@ -221,17 +221,17 @@ HRESULT CMain_Menu::Read_File(const _tchar* pFilePath)
 	ReadFile(hFile, szGroupName, dwStrByte, &dwByte, nullptr);
 
 
-	CUI_Back* pFrame = dynamic_cast<CUI_Back*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Menu_UI"), TEXT("Com_UI_Effect_Back_Menu_Frame")));
+	CUI_Back* pFrame = dynamic_cast<CUI_Back*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Menu_UI"), TEXT("Com_UI_Effect_Back_Menu_Frame")));
 	pFrame->Load(Load_File(hFile));
 
 	_uint iSize = { 0 };
 	ReadFile(hFile, &iSize, sizeof(_uint), &dwByte, nullptr);
 
-	CUI_Back* pQ = dynamic_cast<CUI_Back*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Menu_UI"), TEXT("Com_UI_Effect_Back_Menu_Q")));
+	CUI_Back* pQ = dynamic_cast<CUI_Back*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Menu_UI"), TEXT("Com_UI_Effect_Back_Menu_Q")));
 	pQ->Load(Load_File(hFile));
 	pQ->Set_Parent(pFrame);
 
-	CUI_Back* pE= dynamic_cast<CUI_Back*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Menu_UI"), TEXT("Com_UI_Effect_Back_Menu_E")));
+	CUI_Back* pE= dynamic_cast<CUI_Back*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Menu_UI"), TEXT("Com_UI_Effect_Back_Menu_E")));
 	pE->Load(Load_File(hFile));
 	pE->Set_Parent(pFrame);
 
@@ -266,7 +266,7 @@ HRESULT CMain_Menu::Read_File(const _tchar* pFilePath)
 	ReadFile(hFile, szGroupName, dwStrByte, &dwByte, nullptr);
 
 
-	CUI_Back* pBack = dynamic_cast<CUI_Back*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Menu_UI"), TEXT("Com_UI_Effect_Back_Menu_Back")));
+	CUI_Back* pBack = dynamic_cast<CUI_Back*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Menu_UI"), TEXT("Com_UI_Effect_Back_Menu_Back")));
 	pBack->Load(Load_File(hFile2));
 	CloseHandle(hFile2);
 
@@ -342,7 +342,7 @@ void CMain_Menu::Set_SelectedText()
 			m_pTexts[m_iSelectedText]->Set_Clicked(true);
 
 #ifdef _DEBUG
-			cout << m_iSelectedText << endl;
+			//cout << m_iSelectedText << endl;
 #endif // _DEBUG
 		}
 		iIndex++;

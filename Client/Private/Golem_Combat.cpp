@@ -4,7 +4,6 @@
 #include "Weapon_Golem_Combat.h"
 
 #include "Wait.h"
-#include "Magic.h"
 #include "Action.h"
 #include "MagicBall.h"
 #include "Check_Degree.h"
@@ -41,11 +40,11 @@ HRESULT CGolem_Combat::Initialize(void* pArg)
 
 	if (nullptr != pArg)
 	{
-		_float4x4* pWorldMatric = reinterpret_cast<_float4x4*>(pArg);
-		m_pTransform->Set_WorldMatrix(*pWorldMatric);
+		_float4x4* pWorldMatrix = reinterpret_cast<_float4x4*>(pArg);
+		m_pTransform->Set_WorldMatrix(*pWorldMatrix);
 	}
 	else
-		m_pTransform->Set_Position(_float3(15.f, 2.f, 15.f));
+		m_pTransform->Set_Position(_float3(_float(rand() % 5) + 15.f, 2.f, _float(rand() % 5) + 15.f));
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
@@ -66,15 +65,17 @@ void CGolem_Combat::Tick(_float fTimeDelta)
 	
 	// Test Code 
 	BEGININSTANCE;
-
+	
 	if (pGameInstance->Get_DIKeyState(DIK_LCONTROL, CInput_Device::KEY_PRESSING))
 	{
 		if (pGameInstance->Get_DIKeyState(DIK_5, CInput_Device::KEY_DOWN))
 			m_isSpawn = true;
 		if (pGameInstance->Get_DIKeyState(DIK_4, CInput_Device::KEY_DOWN))
 			m_isParring = true;
+		if (pGameInstance->Get_DIKeyState(DIK_2, CInput_Device::KEY_DOWN))
+			m_iCurrentSpell |= BUFF_LEVIOSO;
 		if (pGameInstance->Get_DIKeyState(DIK_1, CInput_Device::KEY_DOWN))
-			m_iCurrentSpell |= CMagic::BUFF_CONTROL;
+			m_iCurrentSpell |= BUFF_STUPEFY;
 	}
 
 	ENDINSTANCE;
@@ -84,6 +85,18 @@ void CGolem_Combat::Tick(_float fTimeDelta)
 
 	if (nullptr != m_pRootBehavior)
 		m_pRootBehavior->Tick(fTimeDelta);
+
+	_float3 vPosition = m_pTransform->Get_Position();
+	for (auto iter = m_CurrentTickSpells.begin(); iter != m_CurrentTickSpells.end(); )
+	{
+		if (iter->first & m_iCurrentSpell)
+		{
+			//iter->second(vPosition, fTimeDelta);
+			++iter;
+		}
+		else
+			iter = m_CurrentTickSpells.erase(iter);
+	}
 
 	if (nullptr != m_pModelCom)
 		m_pModelCom->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
@@ -105,28 +118,26 @@ void CGolem_Combat::Late_Tick(_float fTimeDelta)
 void CGolem_Combat::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
-	wstring wstrCollisionTag = { TEXT("") };
-	if (nullptr != CollisionEventDesc.pOtherCollisionTag)
-		wstrCollisionTag = CollisionEventDesc.pOtherCollisionTag;
+	wstring wstrCollisionTag = CollisionEventDesc.pOtherCollisionTag;
+	wstring wstrMyCollisionTag = CollisionEventDesc.pThisCollisionTag;
 
 	/* Collision Magic */
-	/*if (wstring::npos != wstrObjectTag.find(TEXT("MagicBall")))
+	if (wstring::npos != wstrObjectTag.find(TEXT("MagicBall")))
 	{
-		cout << "Hit Magic" << endl;
 		CMagicBall::COLLSIONREQUESTDESC* pCollisionMagicBallDesc = static_cast<CMagicBall::COLLSIONREQUESTDESC*>(CollisionEventDesc.pArg);
-		SPELL eSpell = pCollisionMagicBallDesc->eMagicTag;
+		BUFF_TYPE eBuff = pCollisionMagicBallDesc->eBuffType;
 		auto Action = pCollisionMagicBallDesc->Action;
 		_float fDamage = pCollisionMagicBallDesc->fDamage;
 
-		auto iter = m_CurrentTickSpells.find(eSpell);
+		auto iter = m_CurrentTickSpells.find(eBuff);
 		if (iter == m_CurrentTickSpells.end())
-			m_CurrentTickSpells.emplace(eSpell, Action);
+			m_CurrentTickSpells.emplace(eBuff, Action);
 
-		m_iCurrentSpell |= eSpell;
-	}*/
+		m_iCurrentSpell |= eBuff;
+	}
 
 	/* Collision Player Fig */
-	if (wstring::npos != wstrCollisionTag.find(TEXT("Body")))
+	if (wstring::npos != wstrMyCollisionTag.find(TEXT("Range")))
 	{
 		if (wstring::npos != wstrObjectTag.find(TEXT("Player")) ||
 			wstring::npos != wstrObjectTag.find(TEXT("Fig")))
@@ -139,18 +150,17 @@ void CGolem_Combat::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 void CGolem_Combat::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 {
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
-	wstring wstrCollisionTag = { TEXT("") };
-	if (nullptr != CollisionEventDesc.pOtherCollisionTag)
-		wstrCollisionTag = CollisionEventDesc.pOtherCollisionTag;
+	wstring wstrCollisionTag = CollisionEventDesc.pOtherCollisionTag;
+	wstring wstrMyCollisionTag = CollisionEventDesc.pThisCollisionTag;
 
-	if (wstring::npos != wstrCollisionTag.find(TEXT("Body")))
+	if (wstring::npos != wstrMyCollisionTag.find(TEXT("Range")))
 	{
 		if (wstring::npos != wstrObjectTag.find(TEXT("Player")) ||
 			wstring::npos != wstrObjectTag.find(TEXT("Fig")))
 		{
 			if (FAILED(Remove_GameObject(wstrObjectTag)))
 			{
-				MSG_BOX("[CGolem_Combat] Failed OnCollisionExit : \nFailed Remove_GameObject");
+				//MSG_BOX("[CGolem_Combat] Failed OnCollisionExit : \nFailed Remove_GameObject");
 				return;
 			}
 		}
@@ -209,7 +219,6 @@ HRESULT CGolem_Combat::Make_AI()
 	try /* Failed Check Make_AI */
 	{
 #pragma region Add_Types
-		/* Add Types */
 		if (FAILED(m_pRootBehavior->Add_Type("pTransform", m_pTransform)))
 			throw TEXT("Failed Add_Type pTransform");
 		if (FAILED(m_pRootBehavior->Add_Type("pModel", m_pModelCom)))
@@ -233,7 +242,8 @@ HRESULT CGolem_Combat::Make_AI()
 		if (FAILED(m_pRootBehavior->Add_Type("iCurrentSpell", &m_iCurrentSpell)))
 			throw TEXT("Failed Add_Type iCurrentSpell");
 
-		m_pTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Player"), TEXT("GameObject_Player")));
+		
+		m_pTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Player"), TEXT("GameObject_Player")));
 		
 		if (nullptr == m_pTarget)
 			throw TEXT("m_pTarget is nullptr");
@@ -310,7 +320,7 @@ HRESULT CGolem_Combat::Add_Components()
 			throw TEXT("Com_Renderer");
 
 		/* For.Com_Model */
-		if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Golem_Combat"),
+		if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_Model_Golem_Combat"),
 			TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 			throw TEXT("Com_Model");
 
@@ -338,6 +348,8 @@ HRESULT CGolem_Combat::Add_Components()
 		RigidBodyDesc.eConstraintFlag = CRigidBody::RotX | CRigidBody::RotY | CRigidBody::RotZ;
 		RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 0.f, 1.f);
 		RigidBodyDesc.pOwnerObject = this;
+		RigidBodyDesc.eThisCollsion = COL_ENEMY;
+		RigidBodyDesc.eCollisionFlag = COL_NPC_RANGE;
 		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Body");
 
 		/* For.Com_RigidBody */
@@ -345,12 +357,15 @@ HRESULT CGolem_Combat::Add_Components()
 			TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
 			throw TEXT("Com_RigidBody");
 
+		m_OffsetMatrix = XMMatrixTranslation(RigidBodyDesc.vOffsetPosition.x, RigidBodyDesc.vOffsetPosition.y, RigidBodyDesc.vOffsetPosition.z);
+
 		/* For.Collider_Range */
 		RigidBodyDesc.isStatic = true;
 		RigidBodyDesc.isTrigger = true;
 		PxSphereGeometry pSphereGeomatry = PxSphereGeometry(15.f);
 		RigidBodyDesc.pGeometry = &pSphereGeomatry;
 		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Range");
+		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC;
 
 		m_pRigidBody->Create_Collider(&RigidBodyDesc);
 
@@ -365,7 +380,7 @@ HRESULT CGolem_Combat::Add_Components()
 		ParentMatrixDesc.pCombindTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
 		ParentMatrixDesc.pParentWorldMatrix = m_pTransform->Get_WorldMatrixPtr();
 
-		if (FAILED(Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Weapon_Golem_Combat"),
+		if (FAILED(Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_Weapon_Golem_Combat"),
 			TEXT("Com_Weapon"), reinterpret_cast<CComponent**>(&m_pWeapon), &ParentMatrixDesc)))
 			throw TEXT("Com_Weapon");
 	}
@@ -442,9 +457,10 @@ void CGolem_Combat::Set_Current_Target()
 
 	if (false == m_isRangeInEnemy)
 	{
-		BEGININSTANCE;
-		m_pTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Player"), TEXT("GameObject_Player")));
-		ENDINSTANCE;
+		m_pTarget = nullptr;
+		/*BEGININSTANCE;
+		m_pTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Player"), TEXT("GameObject_Player")));
+		ENDINSTANCE;*/
 	}
 }
 
@@ -667,18 +683,18 @@ HRESULT CGolem_Combat::Make_Turns(_Inout_ CSequence* pSequence)
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Selector_Degree"), pSelector_Degree)))
 			throw TEXT("Failed Assemble_Behavior Selector_Degree");
 
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::RIGHT_BACK, pAction_Right_Back)))
-			throw TEXT("Failed Assemble_Childs pSelector_Degree RIGHT_BACK");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::LEFT_BACK, pAction_Left_Back)))
-			throw TEXT("Failed Assemble_Childs pSelector_Degree LEFT_BACK");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::LEFT_90, pAction_Left90)))
-			throw TEXT("Failed Assemble_Childs pSelector_Degree LEFT_90");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::LEFT_135, pAction_Left135)))
-			throw TEXT("Failed Assemble_Childs pSelector_Degree LEFT_135");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::RIGHT_90, pAction_Right90)))
-			throw TEXT("Failed Assemble_Childs pSelector_Degree RIGHT_90");
-		if (FAILED(pSelector_Degree->Assemble_Childs(CSelector_Degree::RIGHT_135, pAction_Right135)))
-			throw TEXT("Failed Assemble_Childs pSelector_Degree RIGHT_135");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::RIGHT_BACK, pAction_Right_Back)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree RIGHT_BACK");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::LEFT_BACK, pAction_Left_Back)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree LEFT_BACK");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::LEFT_90, pAction_Left90)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree LEFT_90");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::LEFT_135, pAction_Left135)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree LEFT_135");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::RIGHT_90, pAction_Right90)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree RIGHT_90");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::RIGHT_135, pAction_Right135)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree RIGHT_135");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -810,7 +826,7 @@ HRESULT CGolem_Combat::Make_NormalAttack(_Inout_ CSelector* pSelector)
 				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
 					return false;
 
-				if (CMagic::BUFF_NONE != *pICurrentSpell)
+				if (BUFF_NONE != *pICurrentSpell)
 					return false;
 
 				return true;
@@ -932,7 +948,7 @@ HRESULT CGolem_Combat::Make_Check_Spell(_Inout_ CSelector* pSelector)
 				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
 					return false;
 
-				if (CMagic::BUFF_NONE == *pICurrentSpell)
+				if (BUFF_NONE == *pICurrentSpell)
 					return false;
 
 				return true;
@@ -941,13 +957,13 @@ HRESULT CGolem_Combat::Make_Check_Spell(_Inout_ CSelector* pSelector)
 		/* Set_Options */
 		pSequence_Groggy->Set_LoopTime(3.f);
 
-		/* ���������� */
+		/* Stupefy */
 		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Groggy"), pSequence_Groggy)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Groggy");
-		/* ������� */
+		/* Levioso */
 		if(FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Levitated"), pSequence_Levitated)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Levitated");
-		/* �𼾵� */
+		/* Descendo */
 		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Descendo"), pSequence_Descendo)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Descendo");
 

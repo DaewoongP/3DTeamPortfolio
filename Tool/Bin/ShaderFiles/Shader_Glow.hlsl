@@ -8,17 +8,10 @@ vector g_vCamPosition;
 float g_fCamFar;
 float g_fGlowPower;
 
-
-texture2D g_SSAOTexture;
-texture2D g_BlurTexture;
-texture2D g_PostProcessingTexture;
-texture2D g_vDistortionTexture;
 texture2D g_AlphaTexture;
 texture2D g_DoBlurTexture;
-texture2D g_WhiteBloomTexture;
 texture2D g_GlowTexture;
-texture2D g_OriTexture;
-texture2D g_NoiseTexture;
+
 
 vector g_vLightDiffuse;
 vector g_vLightAmbient;
@@ -45,7 +38,6 @@ struct VS_OUT
 {
     float4 vPosition : SV_POSITION;
     float2 vTexUV : TEXCOORD0;
-
 };
 
 VS_OUT VS_MAIN(VS_IN In)
@@ -91,7 +83,6 @@ PS_OUT PS_MAIN(PS_IN In)
     {
         Out.vColor = GlowColor;
     }
-    
     return Out;
 }
 
@@ -121,11 +112,11 @@ PS_OUT PS_MAIN_BLUR(PS_IN In)
     float dy = 1.f / (720.f / 2.f);
     int Count = 0;
     float2 UV = 0;
-    for (int j = -5; j < 5;++j)
+  //  for (int j = -5; j < 5;++j)
     {
         for (int i = -5; i < 5; ++i)
         {
-            UV = In.vTexUV + float2(dx * i, dy*j);
+            UV = In.vTexUV + float2(dx * i, 0.f);
             vector SSAO = g_DoBlurTexture.Sample(BlurSampler, UV);
         
             Out.vColor += BlurWeights[5 + i] * SSAO;

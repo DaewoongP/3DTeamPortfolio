@@ -306,7 +306,7 @@ void CUI_Window::Object_List()
 		return;
 	}
 
-	const unordered_map<const _tchar*, CComponent*> Components = m_pUILayer->Get_Components();
+	const unordered_map<const _tchar*, CComponent*> Components = *m_pUILayer->Get_Components();
 
 	m_pUIVector.clear();
 
@@ -492,7 +492,7 @@ void CUI_Window::Create_UI(UI_Tree* pTree)
 	_int iSize = 0;
 	if (nullptr != m_pUILayer)
 	{
-		iSize = _int(m_pUILayer->Get_Components().size());
+		iSize = _int((*m_pUILayer->Get_Components()).size());
 	}
 
 	string strFimeName = szFileName;
@@ -509,7 +509,7 @@ void CUI_Window::Create_UI(UI_Tree* pTree)
 	lstrcpy(UIDesc.m_wszTexturePath, pTree->m_wstrName.c_str());
 
 	// Dummy UI Object »ý¼º.
-	if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, TEXT("ProtoType_GameObject_Dummy_UI"),
+	if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, LEVEL_TOOL, TEXT("ProtoType_GameObject_Dummy_UI"),
 		TEXT("Layer_Tool_UI"), wszGameObjectTag, &UIDesc)))
 	{
 		MSG_BOX("Failed to Created CDummy_UI Clone");
@@ -528,7 +528,7 @@ void CUI_Window::Interaction_UI()
 		return;
 
 
-	const unordered_map<const _tchar*, CComponent*> Components = m_pUILayer->Get_Components();
+	const unordered_map<const _tchar*, CComponent*> Components = *m_pUILayer->Get_Components();
 
 	vector <CGameObject*> pGameObejctVector;
 
@@ -697,7 +697,7 @@ void CUI_Window::Open_Font_List()
 		return;
 	}
 
-	const unordered_map<const _tchar*, CComponent*> Components = m_pFontLayer->Get_Components();
+	const unordered_map<const _tchar*, CComponent*> Components = *m_pFontLayer->Get_Components();
 
 	m_pFontVector.clear();
 
@@ -865,7 +865,7 @@ void CUI_Window::Create_UI_Gruop(string _strGroupName)
 	_int iSize = 0;
 	if (nullptr != m_pUIGroupLayer)
 	{
-		iSize = _int(m_pUIGroupLayer->Get_Components().size());
+		iSize = _int((*m_pUIGroupLayer->Get_Components()).size());
 	}
 
 	string strGameObjectTag = strGroupName;
@@ -873,7 +873,7 @@ void CUI_Window::Create_UI_Gruop(string _strGroupName)
 
 	CharToWChar(strGameObjectTag.c_str(), wszGameObjectTag);
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, TEXT("ProtoType_Component_Dummy_UI_Gruop"),
+	if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, LEVEL_TOOL, TEXT("ProtoType_Component_Dummy_UI_Gruop"),
 		TEXT("Layer_Tool_UI_Group"), wszGameObjectTag, wszGroupName)))
 	{
 		MSG_BOX("Failed to Created CDummy_UI Clone");
@@ -912,7 +912,7 @@ void CUI_Window::UI_Gruop_Combo()
 	if (nullptr == m_pUIGroupLayer)
 		return;
 
-	const unordered_map<const _tchar*, CComponent*> GameObjects = m_pUIGroupLayer->Get_Components();
+	const unordered_map<const _tchar*, CComponent*> GameObjects = *m_pUIGroupLayer->Get_Components();
 
 	m_pGroupVector.clear();
 
@@ -1237,7 +1237,7 @@ HRESULT CUI_Window::Load(_tchar* pFilePath)
 	_int iSize = 0;
 	if (nullptr != m_pUIGroupLayer)
 	{
-		iSize = _int(m_pUIGroupLayer->Get_Components().size());
+		iSize = _int((*m_pUIGroupLayer->Get_Components()).size());
 	}
 
 	_char szGameObjectName[MAX_PATH] = "";
@@ -1250,7 +1250,7 @@ HRESULT CUI_Window::Load(_tchar* pFilePath)
 
 	BEGININSTANCE
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, TEXT("ProtoType_Component_Dummy_UI_Gruop"),
+	if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, LEVEL_TOOL, TEXT("ProtoType_Component_Dummy_UI_Gruop"),
 		TEXT("Layer_Tool_UI_Group"), wszGameObjectTag, wszGroupName)))
 	{
 		MSG_BOX("Failed to Created CDummy_UI_Group Clone");
@@ -1263,7 +1263,7 @@ HRESULT CUI_Window::Load(_tchar* pFilePath)
 	ZeroMemory(wszGameObjectTag, sizeof(_tchar) * MAX_PATH);
 	CharToWChar(GameObjectTag.c_str(), wszGameObjectTag);
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, TEXT("ProtoType_GameObject_Dummy_UI"),
+	if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, LEVEL_TOOL, TEXT("ProtoType_GameObject_Dummy_UI"),
 		TEXT("Layer_Tool_UI"), wszGameObjectTag, hFile)))
 	{
 		MSG_BOX("Failed to Created CDummy_UI Clone");
@@ -1278,14 +1278,14 @@ HRESULT CUI_Window::Load(_tchar* pFilePath)
 		iSize = 0;
 		if (nullptr != m_pUILayer)
 		{
-			iSize = _int(m_pUILayer->Get_Components().size());
+			iSize = _int((*m_pUILayer->Get_Components()).size());
 		}
 
 		string GameObjectTag = "UI_" + Generate_Hashtag(true);
 		_tchar wszGameObjectTag[MAX_PATH] = TEXT("");
 		CharToWChar(GameObjectTag.c_str(), wszGameObjectTag);
 
-		if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, TEXT("ProtoType_GameObject_Dummy_UI"),
+		if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, LEVEL_TOOL, TEXT("ProtoType_GameObject_Dummy_UI"),
 			TEXT("Layer_Tool_UI"), wszGameObjectTag, hFile)))
 		{
 			MSG_BOX("Failed to Created CDummy_UI Clone");
@@ -1328,7 +1328,7 @@ HRESULT CUI_Window::Load_Data(_tchar* pFilePath)
 		_int iSize = 0;
 		if (nullptr != m_pUIGroupLayer)
 		{
-			iSize = _int(m_pUIGroupLayer->Get_Components().size());
+			iSize = _int((*m_pUIGroupLayer->Get_Components()).size());
 		}
 
 		_char szGameObjectName[MAX_PATH] = "";
@@ -1339,7 +1339,7 @@ HRESULT CUI_Window::Load_Data(_tchar* pFilePath)
 		_tchar wszGameObjectTag[MAX_PATH] = TEXT("");
 		CharToWChar(GameObjectTag.c_str(), wszGameObjectTag);
 
-		if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, TEXT("ProtoType_Component_Dummy_UI_Gruop"),
+		if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, LEVEL_TOOL, TEXT("ProtoType_Component_Dummy_UI_Gruop"),
 			TEXT("Layer_Tool_UI_Group"), wszGameObjectTag, wszGroupName)))
 		{
 			MSG_BOX("Failed to Created CDummy_UI Clone");
@@ -1401,7 +1401,7 @@ HRESULT CUI_Window::Load_Data(_tchar* pFilePath)
 		iSize = 0;
 		if (nullptr != m_pUILayer)
 		{
-			iSize = _int(m_pUILayer->Get_Components().size());
+			iSize = _int((*m_pUILayer->Get_Components()).size());
 		}
 
 		WCharToChar(m_UIDesc.m_wszTextureName, szGameObjectName);
@@ -1411,7 +1411,7 @@ HRESULT CUI_Window::Load_Data(_tchar* pFilePath)
 		CharToWChar(GameObjectTag.c_str(), wszGameObjectTag);
 
 
-		if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, TEXT("ProtoType_GameObject_Dummy_UI"),
+		if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, LEVEL_TOOL, TEXT("ProtoType_GameObject_Dummy_UI"),
 			TEXT("Layer_Tool_UI"), wszGameObjectTag, &m_UIDesc)))
 		{
 			MSG_BOX("Failed to Created CDummy_UI Clone");
@@ -1485,7 +1485,7 @@ HRESULT CUI_Window::Load_Data(_tchar* pFilePath)
 			iSize = 0;
 			if (nullptr != m_pUILayer)
 			{
-				iSize = _int(m_pUILayer->Get_Components().size());
+				iSize = _int((*m_pUILayer->Get_Components()).size());
 			}
 
 			_char szGameObjectName[MAX_PATH] = "";
@@ -1497,7 +1497,7 @@ HRESULT CUI_Window::Load_Data(_tchar* pFilePath)
 			CharToWChar(GameObjectTag.c_str(), wszGameObjectTag);
 
 
-			if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, TEXT("ProtoType_GameObject_Dummy_UI"),
+			if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, LEVEL_TOOL, TEXT("ProtoType_GameObject_Dummy_UI"),
 				TEXT("Layer_Tool_UI"), wszGameObjectTag, &m_UIDesc)))
 			{
 				MSG_BOX("Failed to Created CDummy_UI Clone");
@@ -1760,7 +1760,7 @@ void CUI_Window::Create_Font()
 			_int iSize = 0;
 			if (nullptr != m_pFontLayer)
 			{
-				iSize = _int(m_pFontLayer->Get_Components().size());
+				iSize = _int((*m_pFontLayer->Get_Components()).size());
 			}
 
 			string strFont = "Font_" + to_string(iSize);
@@ -1768,7 +1768,7 @@ void CUI_Window::Create_Font()
 			CharToWChar(strFont.c_str(), wszFontTag);
 
 			BEGININSTANCE
-			if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, TEXT("ProtoType_Component_NexonGothic"),
+			if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, LEVEL_TOOL, TEXT("ProtoType_Component_NexonGothic"),
 				TEXT("Layer_Tool_Font"), wszFontTag, m_wszFontText)))
 			{
 				MSG_BOX("Failed to Created CDummy_Font Clone");
