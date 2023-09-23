@@ -148,7 +148,7 @@ HRESULT CMapObject::Add_Components(MAPOBJECTDESC* pMapObjectDesc)
 	}
 
 	/* Com_Model */
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, pMapObjectDesc->wszTag,
+	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, pMapObjectDesc->wszTag,
 		TEXT("Com_Model_LOD"), reinterpret_cast<CComponent**>(&m_pModel))))
 	{
 		MSG_BOX("Failed CMapObject Add_Component : (Com_Model_LOD)");

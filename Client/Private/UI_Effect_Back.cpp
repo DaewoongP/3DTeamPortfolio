@@ -111,14 +111,14 @@ HRESULT CUI_Effect_Back::Add_Components()
 	pDesc.fSizeX = m_fSizeX;
 	pDesc.fSizeY = m_fSizeY;
 	/* Com_Image */
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_UI_Image"),
+	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_UI_Image"),
 		TEXT("Com_Image"), reinterpret_cast<CComponent**>(&m_pImageCom), &pDesc)))
 	{
 		MSG_BOX("Failed CUI_Effect_Back Add_Component : (Com_Image)");
 		return E_FAIL;
 	}
 
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_UI_Button"),
+	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_UI_Button"),
 		TEXT("Com_Button"), reinterpret_cast<CComponent**>(&m_pButtonCom))))
 	{
 		MSG_BOX("Failed CUI_Effect_Back Add_Component : (Com_Button)");

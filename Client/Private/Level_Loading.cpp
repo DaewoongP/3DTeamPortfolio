@@ -6,7 +6,7 @@
 
 #include "Level_Logo.h"
 #include "GameInstance.h"
-#include "Level_MainGame.h"
+#include "Level_CliffSide.h"
 
 CLevel_Loading::CLevel_Loading(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CLevel(pDevice, pContext)
@@ -29,7 +29,7 @@ HRESULT CLevel_Loading::Initialize(LEVELID eNextLevelID)
 			return E_FAIL;
 		}
 		break;
-	case LEVEL_MAINGAME:
+	case LEVEL_CLIFFSIDE:
 		if (FAILED(Loading_MainGame(TEXT("Layer_MainGame"))))
 		{
 			MSG_BOX("Failed Loading MainGame Object");
@@ -99,8 +99,8 @@ void CLevel_Loading::Tick(_float fTimeDelta)
 		case LEVEL_LOGO:
 			pLevel = CLevel_Logo::Create(m_pDevice, m_pContext);
 			break;
-		case LEVEL_MAINGAME:
-			pLevel = CLevel_MainGame::Create(m_pDevice, m_pContext);
+		case LEVEL_CLIFFSIDE:
+			pLevel = CLevel_Cliffside::Create(m_pDevice, m_pContext);
 			break;
 		default:
 			MSG_BOX("Failed Create Next Level");

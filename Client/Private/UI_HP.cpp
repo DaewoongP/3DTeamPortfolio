@@ -85,7 +85,7 @@ HRESULT CUI_HP::Add_Components()
 
 	_float3 vProgress = _float3(0.f, 100.f, 100.f);
 	/* Com_Progress */
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_UI_Progress"),
+	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_UI_Progress"),
 		TEXT("Com_Progress"), reinterpret_cast<CComponent**>(&m_pProgressCom), &vProgress)))
 	{
 		MSG_BOX("Failed CUI_HP Add_Component : (Com_Progress)");

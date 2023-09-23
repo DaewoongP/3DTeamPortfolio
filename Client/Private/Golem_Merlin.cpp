@@ -170,7 +170,7 @@ HRESULT CGolem_Merlin::Make_AI()
 #pragma endregion //Add_Types
 
 		/* 이거는 테스트 용으로 넣은 코드임 */
-		const CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Player"), TEXT("GameObject_Player")));
+		const CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Player"), TEXT("GameObject_Player")));
 		if (nullptr == pTestTarget)
 			throw TEXT("pTestTarget is nullptr");
 		if (FAILED(m_pRootBehavior->Add_Type("cppTarget", &pTestTarget)))
@@ -241,7 +241,7 @@ HRESULT CGolem_Merlin::Add_Components()
 			throw TEXT("Com_Renderer");
 
 		/* For.Com_Model */
-		if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Golem_Merlin"),
+		if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_Model_Golem_Merlin"),
 			TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 			throw TEXT("Com_Model");
 
@@ -285,7 +285,7 @@ HRESULT CGolem_Merlin::Add_Components()
 		ParentMatrixDesc.pCombindTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
 		ParentMatrixDesc.pParentWorldMatrix = m_pTransform->Get_WorldMatrixPtr();
 
-		if (FAILED(Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Weapon_Golem_Merlin"),
+		if (FAILED(Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_Weapon_Golem_Merlin"),
 			TEXT("Com_Weapon"), reinterpret_cast<CComponent**>(&m_pWeapon), &ParentMatrixDesc)))
 			throw TEXT("Com_Weapon");
 	}

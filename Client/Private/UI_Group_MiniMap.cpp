@@ -81,14 +81,14 @@ HRESULT CUI_Group_MiniMap::Add_Prototype()
 {
 	BEGININSTANCE;
 
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Effect_Back"),
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Effect_Back"),
 		CUI_Effect_Back::Create(m_pDevice, m_pContext), true)))
 	{
 		ENDINSTANCE;
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Back"),
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Back"),
 		CUI_Back::Create(m_pDevice, m_pContext), true)))
 	{
 		ENDINSTANCE;
@@ -104,7 +104,7 @@ HRESULT CUI_Group_MiniMap::Add_Components()
 {
 	BEGININSTANCE;
 
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Effect_Back"),
+	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Effect_Back"),
 		TEXT("Com_UI_MiniMap_Frame"), reinterpret_cast<CComponent**>(&m_pUI_Effect_Back))))
 	{
 		MSG_BOX("CUI_Group_MiniMap : Failed Clone Component (Com_UI_MiniMap_Frame)");
@@ -112,7 +112,7 @@ HRESULT CUI_Group_MiniMap::Add_Components()
 		return E_FAIL;
 	}
 
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Back"),
+	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Back"),
 		TEXT("Com_UI_MiniMap_Player"), reinterpret_cast<CComponent**>(&m_pUI_Back))))
 	{
 		MSG_BOX("CUI_Group_MiniMap : Failed Clone Component (Com_UI_MiniMap_Player)");

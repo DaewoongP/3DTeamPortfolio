@@ -165,7 +165,7 @@ HRESULT CArmored_Troll::Make_AI()
 		if (FAILED(m_pRootBehavior->Add_Type("iCurrentSpell", &m_iCurrentSpell)))
 			throw TEXT("Failed Add_Type iCurrentSpell");
 
-		m_pTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Player"), TEXT("GameObject_Player")));
+		m_pTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Player"), TEXT("GameObject_Player")));
 
 		if (nullptr == m_pTarget)
 			throw TEXT("m_pTarget is nullptr");
@@ -225,7 +225,7 @@ HRESULT CArmored_Troll::Add_Components()
 			throw TEXT("Com_Renderer");
 
 		/* For.Com_Model */
-		if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Armored_Troll"),
+		if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_Model_Armored_Troll"),
 			TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 			throw TEXT("Com_Model");
 
@@ -270,7 +270,7 @@ HRESULT CArmored_Troll::Add_Components()
 		ParentMatrixDesc.pCombindTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
 		ParentMatrixDesc.pParentWorldMatrix = m_pTransform->Get_WorldMatrixPtr();
 
-		if (FAILED(Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Weapon_Armored_Troll"),
+		if (FAILED(Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_Weapon_Armored_Troll"),
 			TEXT("Com_Weapon"), reinterpret_cast<CComponent**>(&m_pWeapon), &ParentMatrixDesc)))
 			throw TEXT("Com_Weapon");
 	}

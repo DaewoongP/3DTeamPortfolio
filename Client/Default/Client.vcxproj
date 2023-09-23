@@ -165,8 +165,12 @@
   <ItemGroup>
     <ClInclude Include="..\Public\Action.h" />
     <ClInclude Include="..\Public\Action_Deflect.h" />
+    <ClInclude Include="..\Public\Client_Enum.h" />
     <ClInclude Include="..\Public\Finisher.h" />
     <ClInclude Include="..\Public\HitState.h" />
+    <ClInclude Include="..\public\Level_GreatHall.h" />
+    <ClInclude Include="..\public\Level_Smith.h" />
+    <ClInclude Include="..\public\Level_Vault.h" />
     <ClInclude Include="..\Public\ProtegoState.h" />
     <ClInclude Include="..\Public\MapEffect.h" />
     <ClInclude Include="..\Public\Menu_Gear.h" />
@@ -250,7 +254,7 @@
     <ClInclude Include="..\Public\Weapon_Armored_Troll.h" />
     <ClInclude Include="..\Public\Level_Loading.h" />
     <ClInclude Include="..\Public\Level_Logo.h" />
-    <ClInclude Include="..\public\Level_MainGame.h" />
+    <ClInclude Include="..\public\Level_Cliffside.h" />
     <ClInclude Include="..\Public\Main1_Loader.h" />
     <ClInclude Include="..\public\Logo_BackGround.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
@@ -314,6 +318,9 @@
     <ClCompile Include="..\Private\Action_Deflect.cpp" />
     <ClCompile Include="..\Private\Finisher.cpp" />
     <ClCompile Include="..\Private\HitState.cpp" />
+    <ClCompile Include="..\private\Level_GreatHall.cpp" />
+    <ClCompile Include="..\private\Level_Smith.cpp" />
+    <ClCompile Include="..\private\Level_Vault.cpp" />
     <ClCompile Include="..\Private\ProtegoState.cpp" />
     <ClCompile Include="..\Private\MapEffect.cpp" />
     <ClCompile Include="..\Private\Menu_Gear.cpp" />
@@ -394,7 +401,7 @@
     <ClCompile Include="..\Private\Weapon_Armored_Troll.cpp" />
     <ClCompile Include="..\Private\Level_Loading.cpp" />
     <ClCompile Include="..\Private\Level_Logo.cpp" />
-    <ClCompile Include="..\private\Level_MainGame.cpp" />
+    <ClCompile Include="..\private\Level_Cliffside.cpp" />
     <ClCompile Include="..\Private\Main1_Loader.cpp">
       <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</IncludeInUnityFile>
     </ClCompile>
@@ -478,7 +485,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Bin\ShaderFiles\Shader_Client_Defines.hlsli" />
-    <None Include=".editorconfig" />
     <None Include="ImGui\misc\debuggers\imgui.natstepfilter">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </None>
