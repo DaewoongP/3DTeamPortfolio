@@ -11,6 +11,7 @@ class CTexture;
 END
 
 BEGIN(Client)
+class CUI_Slot;
 
 class CUI_Inventory final : public CGameObject
 {
@@ -63,10 +64,7 @@ private:
 private:
 	vector<_float2>					m_fPosition;
 	vector<class CTexture*>			m_ItemTextures;
-
-	vector<class CUI_Effect_Back*>	m_pEffect_Backs;
-
-	vector<CUI*>				m_pUIs;
+	vector<CUI_Slot*>				m_pSlots;
 
 private:
 	_bool		m_isOpen = { false };

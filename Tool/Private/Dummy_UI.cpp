@@ -267,7 +267,6 @@ HRESULT CDummy_UI::Load(HANDLE hFile, _ulong& dwByte)
 	ReadFile(hFile, m_wszAlphaTextureFilePath, sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
 	ReadFile(hFile, &m_eUIType, sizeof(UI_ID), &dwByte, nullptr);
 	ReadFile(hFile, &m_isSave, sizeof(_bool), &dwByte, nullptr);
-
 	return S_OK;
 }
 

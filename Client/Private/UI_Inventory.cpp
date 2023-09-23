@@ -36,23 +36,6 @@ HRESULT CUI_Inventory::Initialize(void* pArg)
 		INVENDESC* pDesc = (INVENDESC*)pArg;
 
 		CUI::UIDESC UIDesc;
-
-		CGameInstance* pGameInstance = CGameInstance::GetInstance();
-		Safe_AddRef(pGameInstance);
-
-		wstring tag;
-		CUI_Back* pBack = nullptr;
-
-		tag = TEXT("Com_UI_Back_Gear_Frame") + Generate_HashtagW(true);
-		if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Back"), TEXT("Com_UI_Back_Inventory_Frame"), reinterpret_cast<CComponent**>(&pBack))))
-		{
-			MSG_BOX("Com_Info_Main : Failed Clone Component (Com_UI_Effect_Back_Gear_SlotFrame)");
-			Safe_Release(pGameInstance);
-			return E_FAIL;
-		}
-
-		m_pUIs.push_back(pBack);
-
 		UIDesc.vCombinedXY = pDesc->UIDesc.vCombinedXY;
 		UIDesc.fX = pDesc->UIDesc.fX;
 		UIDesc.fY = pDesc->UIDesc.fY;
@@ -60,7 +43,6 @@ HRESULT CUI_Inventory::Initialize(void* pArg)
 		UIDesc.fSizeX = pDesc->UIDesc.fSizeX;
 		UIDesc.fSizeY = pDesc->UIDesc.fSizeY;
 		lstrcpy(UIDesc.szTexturePath, pDesc->UIDesc.szTexturePath);
-		pBack->Load(UIDesc);
 
 		m_fOffset = pDesc->fOffset;
 		m_fWidth = pDesc->fWidth;
@@ -68,7 +50,6 @@ HRESULT CUI_Inventory::Initialize(void* pArg)
 		m_iHorizontal = pDesc->iHorizontal;
 		m_iVertical = pDesc->iVertical;
 
-		Safe_Release(pGameInstance);
 	}
 
 	Ready_Offset();
@@ -87,7 +68,6 @@ void CUI_Inventory::Late_Tick(_float fTimeDelta)
 
 HRESULT CUI_Inventory::Render()
 {
-
 	return S_OK;
 }
 

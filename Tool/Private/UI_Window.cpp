@@ -1628,10 +1628,10 @@ HRESULT CUI_Window::Initialize_Font()
 void CUI_Window::Select_AlphaTexture(CDummy_UI* pDummyUI)
 {
 	// open Dialog Simple
-	ImGuiFileDialog::Instance()->OpenDialog("Alpha_texture", "Choose File", ".png, .dds", "");
+	ImGuiFileDialog::Instance()->OpenDialog("Alphatexture", "Choose", ".png, .dds", "");
 
 	// display
-	if (ImGuiFileDialog::Instance()->Display("Alpha_texture"))
+	if (ImGuiFileDialog::Instance()->Display("Alphatexture"))
 	{
 		// action if OK
 		if (ImGuiFileDialog::Instance()->IsOk())

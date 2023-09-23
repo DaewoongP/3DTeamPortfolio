@@ -361,6 +361,9 @@
     <Filter Include="02. GameObject\08. Inventory">
       <UniqueIdentifier>{121cb925-396f-4fe8-bc1e-353a51babe27}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\05. UI\UI\UI_Slot">
+      <UniqueIdentifier>{d0607139-8865-4a93-8350-450642f3cb31}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -720,6 +723,9 @@
     <ClInclude Include="..\Public\Inventory.h">
       <Filter>02. GameObject\08. Inventory</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_Slot.h">
+      <Filter>02. GameObject\05. UI\UI\UI_Slot</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1048,6 +1054,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Inventory.cpp">
       <Filter>02. GameObject\08. Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Slot.cpp">
+      <Filter>02. GameObject\05. UI\UI\UI_Slot</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
