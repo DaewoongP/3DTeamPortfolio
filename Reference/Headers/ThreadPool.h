@@ -12,16 +12,16 @@ private:
 	virtual ~CThreadPool() = default;
 
 public:
-	HRESULT Initialize(_uint iNumThreads);
+	void Initialize(_uint iNumThreads);
 	template<class T, class... Args>
-	auto enqueue(T&& t, Args&&... args)
+	auto Thread_Enqueue(T&& t, Args&&... args)
 		->std::future<typename std::invoke_result<T, Args...>::type>;
 
 private:
 	vector<thread>			m_Workers;
 	queue<function<void()>> m_Tasks;
 
-	mutex					m_Queue_mutex;
+	std::mutex				m_Queue_mutex;
 	condition_variable		m_Condition;
 	_bool					m_isStop = { false };
 

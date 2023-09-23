@@ -213,6 +213,11 @@ public: /* For. String_Manager */
 	HRESULT Delete_Char(_char* pChar);
 	HRESULT Delete_WChar(_tchar* pWChar);
 
+public: /* For.Thread_Pool*/
+	template<class T, class... Args>
+	auto Thread_Enqueue(T&& t, Args&&... args)
+		->std::future<typename std::invoke_result<T, Args...>::type>;
+
 private:
 	class CGraphic_Device*			m_pGraphic_Device = { nullptr };
 	class CInput_Device*			m_pInput_Device = { nullptr };
@@ -230,6 +235,7 @@ private:
 	class CPhysX_Manager*			m_pPhysX_Manager = { nullptr };
 	class CCamera_Manager*			m_pCamera_Manager = { nullptr };
 	class CString_Manager*			m_pString_Manager = { nullptr };
+	class CThreadPool*				m_pThread_Pool = { nullptr };
 	
 public:
 	
