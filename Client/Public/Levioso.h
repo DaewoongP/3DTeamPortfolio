@@ -28,13 +28,22 @@ public:
 	virtual void OnCollisionExit(COLLEVENTDESC CollisionEventDesc) override;
 
 private:
+	// 트레일 
 	CDefault_MagicTraill_Effect* m_pEffect = { nullptr };
+	// 피격 트레일
 	CWingardium_Effect* m_pWingardiumEffect = { nullptr };
+	// 피격 이펙트
+	CParticleSystem* m_pHitEffect = { nullptr };
+
+	//완드 
+	CTrail* m_pWandTrail = { nullptr };
+	//완드 글로우
+	CParticleSystem* m_pWandGlow = { nullptr };
+
 
 private:
 	_float3				m_vTargetPosition = {};
 
-	_float				m_fDeadTimer = { 1.0f };
 	_float				m_fWingardiumEffectDeadTimer = { 0.3f };
 
 private:

@@ -51,56 +51,17 @@ HRESULT CLevioso::Initialize(void* pArg)
 	}
 	m_CollisionDesc.Action = bind(&CLevioso::TrailAction, this, placeholders::_1, placeholders::_2);
 
-	if (m_pTarget == nullptr)
-	{
-		//마우스 피킹 지점으로 발사
-		BEGININSTANCE;
-		_float4 vMouseOrigin, vMouseDirection;
-		_float3 vMouseWorldPickPosition, vDirStartToPicked;
-		if (FAILED(pGameInstance->Get_WorldMouseRay(m_pContext, g_hWnd, &vMouseOrigin, &vMouseDirection)))
-		{
-			Safe_Release(pGameInstance);
-			return false;
-		}
-		ENDINSTANCE;
 
-		vMouseWorldPickPosition = vMouseOrigin.xyz() + vMouseDirection.xyz() * 10000;
-		vDirStartToPicked = (vMouseWorldPickPosition - m_MagicBallDesc.vStartPosition);
-		vDirStartToPicked.Normalize();
-		m_vTargetPosition = vDirStartToPicked * m_MagicBallDesc.fDistance;
-	}
-	else 
-	{
-		m_vTargetPosition = m_pTarget->Get_Position() + m_TargetOffsetMatrix.Translation();
-	}
-	
-	m_pEffect->Ready_Spin(m_vTargetPosition, m_MagicBallDesc.vStartPosition, m_MagicBallDesc.fLifeTime, m_MagicBallDesc.fDistance);
 	return S_OK;
 }
 
 void CLevioso::Tick(_float fTimeDelta)
 {
-	if (m_pEffect->Spin_Move(fTimeDelta))
-	{
-		//이동이 끝났고 윙가가 발동 안했다면?
-		//if (!m_bWingardiumActionTrigger)
-		//{
-		//	m_bWingardiumActionTrigger = true;
-		//	m_pWingardiumEffect->SetActionTrigger(m_bWingardiumActionTrigger);
-		//	dynamic_cast<CGameObject*>(m_pTarget->Get_Owner())->On_Maigc_Throw_Data(&m_CollisionDesc);
-		//}
-		//else
-		//{
-		//	m_fWingardiumEffectDeadTimer -= fTimeDelta;
-		//	if (m_fWingardiumEffectDeadTimer < 0)
-		//	{
-		//		Set_ObjEvent(OBJ_DEAD);
-		//	}
-		//	//TrailAction(m_pTarget->Get_Position(), fTimeDelta);
-		//}
-	}
-	m_pTransform->Set_Position(m_pEffect->Get_Transform()->Get_Position());
 	__super::Tick(fTimeDelta);
+
+	_float3 vWandPosition = _float4x4(m_WeaponOffsetMatrix * (*m_pWeaponMatrix)).Translation();
+	m_pWandTrail->Get_Transform()->Set_Position(vWandPosition);
+	m_pWandGlow->Get_Transform()->Set_Position(vWandPosition);
 }
 
 void CLevioso::Late_Tick(_float fTimeDelta)
@@ -110,6 +71,13 @@ void CLevioso::Late_Tick(_float fTimeDelta)
 
 void CLevioso::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
+	//몹이랑 충돌했으면?
+	if (wcsstr(CollisionEventDesc.pOtherCollisionTag, TEXT("Enemy_Body")) != nullptr)
+	{
+		//dynamic_cast<CGameObject*>(m_pTarget->Get_Owner())->On_Maigc_Throw_Data(&m_CollisionDesc);
+		Set_MagicBallState(MAGICBALL_STATE_DYING);
+	}
+
 	__super::OnCollisionEnter(CollisionEventDesc);
 }
 
@@ -123,6 +91,94 @@ void CLevioso::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 	__super::OnCollisionExit(CollisionEventDesc);
 }
 
+void CLevioso::Ready_Begin()
+{
+	m_pEffect->Disable();
+	m_pWingardiumEffect->Disable();
+	m_pHitEffect->Disable();
+	m_pWandTrail->Disable();
+	m_pWandGlow->Disable();
+}
+
+void CLevioso::Ready_DrawMagic()
+{
+	m_pWandTrail->Enable();
+	m_pWandGlow->Enable();
+
+	_float3 vWandPosition = _float4x4(m_WeaponOffsetMatrix * (*m_pWeaponMatrix)).Translation();
+	m_pWandTrail->Get_Transform()->Set_Position(vWandPosition);
+	m_pWandGlow->Get_Transform()->Set_Position(vWandPosition);
+	m_pWandTrail->Reset_Trail(_float3(vWandPosition) + _float3(0, 0.5f, 0), _float3(vWandPosition) + _float3(0, -0.5f, 0));
+}
+
+void CLevioso::Ready_CastMagic()
+{
+	m_pEffect->Enable();
+	if (m_pTarget == nullptr)
+	{
+		//마우스 피킹 지점으로 발사
+		BEGININSTANCE;
+		_float4 vMouseOrigin, vMouseDirection;
+		_float3 vMouseWorldPickPosition, vDirStartToPicked;
+		if (FAILED(pGameInstance->Get_WorldMouseRay(m_pContext, g_hWnd, &vMouseOrigin, &vMouseDirection)))
+		{
+			ENDINSTANCE;
+			return;
+		}
+		ENDINSTANCE;
+
+		vMouseWorldPickPosition = vMouseOrigin.xyz() + vMouseDirection.xyz() * 10000;
+		vDirStartToPicked = (vMouseWorldPickPosition - m_MagicBallDesc.vStartPosition);
+		vDirStartToPicked.Normalize();
+		m_vTargetPosition = vDirStartToPicked * m_MagicBallDesc.fDistance;
+	}
+	else
+	{
+		m_vTargetPosition = m_pTarget->Get_Position() + m_TargetOffsetMatrix.Translation();
+	}
+	m_pEffect->Ready_Spin(m_vTargetPosition, m_MagicBallDesc.vStartPosition, m_MagicBallDesc.fLifeTime, m_MagicBallDesc.fDistance);
+}
+
+void CLevioso::Ready_Dying()
+{
+	m_pWandTrail->Disable();
+	m_pWandGlow->Disable();
+	m_pEffect->Disable();
+
+	m_pWingardiumEffect->Enable();
+	m_pHitEffect->Enable();
+
+	m_pWingardiumEffect->SetActionTrigger(true);
+}
+
+void CLevioso::Tick_Begin(_float fTimeDelta)
+{
+	Do_MagicBallState_To_Next();
+}
+
+void CLevioso::Tick_DrawMagic(_float fTimeDelta)
+{
+	Do_MagicBallState_To_Next();
+}
+
+void CLevioso::Tick_CastMagic(_float fTimeDelta)
+{
+	if (m_pEffect->Spin_Move(fTimeDelta))
+	{
+		Do_MagicBallState_To_Next();
+	}
+	m_pTransform->Set_Position(m_pEffect->Get_Transform()->Get_Position());
+}
+
+void CLevioso::Tick_Dying(_float fTimeDelta)
+{
+	m_fWingardiumEffectDeadTimer -= fTimeDelta;
+	if (m_fWingardiumEffectDeadTimer < 0)
+	{
+		Set_ObjEvent(OBJ_DEAD);
+	}
+}
+
 HRESULT CLevioso::Add_Components()
 {
 	return S_OK;
@@ -132,8 +188,8 @@ HRESULT CLevioso::Add_Effect()
 {
 	CDefault_MagicTraill_Effect::INITDESC initDesc;
 	initDesc.vInitPosition = m_MagicBallDesc.vStartPosition;
-	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_MagicTraill_Winga_Effect"), 
-		TEXT("Com_Effect"), reinterpret_cast<CComponent**>(&m_pEffect),&initDesc)))
+	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_MagicTraill_Winga_Effect"),
+		TEXT("Com_Effect"), reinterpret_cast<CComponent**>(&m_pEffect), &initDesc)))
 	{
 		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_MagicTraill_Winga_Effect)");
 		return E_FAIL;
@@ -181,37 +237,8 @@ void CLevioso::Free()
 	{
 		Safe_Release(m_pEffect);
 		Safe_Release(m_pWingardiumEffect);
+		Safe_Release(m_pHitEffect);
+		Safe_Release(m_pWandTrail);
+		Safe_Release(m_pWandGlow);
 	}
-}
-
-void CLevioso::Ready_Begin()
-{
-}
-
-void CLevioso::Ready_DrawMagic()
-{
-}
-
-void CLevioso::Ready_CastMagic()
-{
-}
-
-void CLevioso::Ready_Dying()
-{
-}
-
-void CLevioso::Tick_Begin(_float fTimeDelta)
-{
-}
-
-void CLevioso::Tick_DrawMagic(_float fTimeDelta)
-{
-}
-
-void CLevioso::Tick_CastMagic(_float fTimeDelta)
-{
-}
-
-void CLevioso::Tick_Dying(_float fTimeDelta)
-{
 }

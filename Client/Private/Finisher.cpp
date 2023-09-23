@@ -132,7 +132,7 @@ HRESULT CFinisher::Initialize(void* pArg)
 		vDirStartToPicked.Normalize();
 		m_vTargetPosition = vDirStartToPicked * m_MagicBallDesc.fDistance;
 	}
-	else 
+	else
 	{
 		m_vTargetPosition = m_pTarget->Get_Position() + m_TargetOffsetMatrix.Translation();
 	}
@@ -154,7 +154,7 @@ HRESULT CFinisher::Initialize(void* pArg)
 	m_LightningSparkEffect_Red->Get_Transform()->Set_Position(m_pTarget->Get_Position());
 	m_LineParticle->Get_Transform()->Set_Position(m_pTarget->Get_Position());
 	m_FlareCenterParticle->Get_Transform()->Set_Position(m_pTarget->Get_Position());
-	m_FlareSpreadParticle->Get_Transform()->Set_Position(m_pTarget->Get_Position() + _float3(0,0.5f,0));
+	m_FlareSpreadParticle->Get_Transform()->Set_Position(m_pTarget->Get_Position() + _float3(0, 0.5f, 0));
 	//m_DustParticle->Get_Transform()->Set_Position(m_pTarget->Get_Position());
 
 	m_LightningSparkEffect_Blue->Play();
@@ -184,7 +184,7 @@ void CFinisher::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 	if (wcsstr(CollisionEventDesc.pOtherCollisionTag, TEXT("Enemy_Body")) != nullptr)
 	{
 	}
-	
+
 }
 
 void CFinisher::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)
@@ -197,6 +197,38 @@ void CFinisher::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 	__super::OnCollisionExit(CollisionEventDesc);
 }
 
+void CFinisher::Ready_Begin()
+{
+}
+
+void CFinisher::Ready_DrawMagic()
+{
+}
+
+void CFinisher::Ready_CastMagic()
+{
+}
+
+void CFinisher::Ready_Dying()
+{
+}
+
+void CFinisher::Tick_Begin(_float fTimeDelta)
+{
+}
+
+void CFinisher::Tick_DrawMagic(_float fTimeDelta)
+{
+}
+
+void CFinisher::Tick_CastMagic(_float fTimeDelta)
+{
+}
+
+void CFinisher::Tick_Dying(_float fTimeDelta)
+{
+}
+
 HRESULT CFinisher::Add_Components()
 {
 	return S_OK;
@@ -204,7 +236,7 @@ HRESULT CFinisher::Add_Components()
 
 HRESULT CFinisher::Add_Effect()
 {
-	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Traill_Lightning_Effect"), 
+	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Traill_Lightning_Effect"),
 		TEXT("Com_LightningTrail01"), reinterpret_cast<CComponent**>(&m_pTrail[0]))))
 	{
 		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Traill_Lightning_Effect)");
@@ -240,25 +272,23 @@ HRESULT CFinisher::Add_Effect()
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Lightning_Line_Effect")
 		, TEXT("Com_Line_Effect"), (CComponent**)&m_LineParticle)))
 		return E_FAIL;
-	
+
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Lightning_Flare_Center_Effect")
 		, TEXT("Com_FlareCenter_Effect"), (CComponent**)&m_FlareCenterParticle)))
 		return E_FAIL;
-	
+
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Lightning_Flare_Spread_Effect")
 		, TEXT("Com_FlareSpread_Effect"), (CComponent**)&m_FlareSpreadParticle)))
 		return E_FAIL;
 
-	/*if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Lightning_Dust_Effect")
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Lightning_Dust_Effect")
 		, TEXT("Com_Dust_Effect"), (CComponent**)&m_DustParticle)))
-		return E_FAIL;*/
-
-	
+		return E_FAIL;
 
 	return S_OK;
 }
 
-CFinisher* CFinisher::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,_uint iLevel)
+CFinisher* CFinisher::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel)
 {
 	CFinisher* pInstance = new CFinisher(pDevice, pContext);
 
