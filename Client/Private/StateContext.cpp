@@ -250,7 +250,7 @@ HRESULT CStateContext::Ready_StateMachine()
 
 	if (FAILED(Add_StateMachine(TEXT("Hit"),
 		static_cast<CStateMachine*>
-		(pGameInstance->Clone_Component(LEVEL_MAINGAME,
+		(pGameInstance->Clone_Component(LEVEL_STATIC,
 			TEXT("Prototype_Component_State_Hit"))))))
 	{
 		ENDINSTANCE;

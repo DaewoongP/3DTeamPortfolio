@@ -41,7 +41,7 @@ HRESULT CPlayer_Information::Add_Components()
 	HealthDesc.iMaxHP = 100;
 
 	/* Com_Health */
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Health"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Health"),
 		TEXT("Com_Health"), reinterpret_cast<CComponent**>(&m_pHealth), &HealthDesc)))
 	{
 		MSG_BOX("Failed CPlayer Add_Component : (Com_Health)");
@@ -51,7 +51,7 @@ HRESULT CPlayer_Information::Add_Components()
 	HealthDesc.iMaxHP = 100;
 
 	/* Com_Finisher */
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Health"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Health"),
 		TEXT("Com_Finisher"), reinterpret_cast<CComponent**>(&m_pFinisher), &HealthDesc)))
 	{
 		MSG_BOX("Failed CPlayer Add_Component : (Com_Finisher)");

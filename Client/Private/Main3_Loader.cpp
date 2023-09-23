@@ -228,7 +228,7 @@ HRESULT CMain3_Loader::Loading_For_Cliffside()
 			throw TEXT("Prototype_Component_State_ProtegoState");
 
 		/* For.Prototype_Component_State_Hit */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_State_Hit"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_State_Hit"),
 			CHitState::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_State_Hit");
 
@@ -237,12 +237,12 @@ HRESULT CMain3_Loader::Loading_For_Cliffside()
 #pragma region Player_Information
 
 		/* For.Prototype_Component_Player_Health */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Player_Health"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Player_Health"),
 			CHealth::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Player_Health");
 
 		/* For.Prototype_Component_Player_Information */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_Component_Player_Information"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Player_Information"),
 			CPlayer_Information::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Player_Information");
 

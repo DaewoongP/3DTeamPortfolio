@@ -297,7 +297,7 @@ HRESULT CPlayer::Add_Components()
 
 
 	/* Com_Player_Information */
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Player_Information"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Player_Information"),
 		TEXT("Com_Player_Information"), reinterpret_cast<CComponent**>(&m_pPlayer_Information))))
 	{
 		MSG_BOX("Failed CPlayer Add_Component : (Com_Player_Information)");
