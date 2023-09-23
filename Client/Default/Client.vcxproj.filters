@@ -1079,6 +1079,7 @@
     <None Include="ImGui\misc\debuggers\imgui.natstepfilter">
       <Filter>98. Default\ImGui_Defaults</Filter>
     </None>
+    <None Include=".editorconfig" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTex.hlsl">

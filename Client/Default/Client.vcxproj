@@ -478,6 +478,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Bin\ShaderFiles\Shader_Client_Defines.hlsli" />
+    <None Include=".editorconfig" />
     <None Include="ImGui\misc\debuggers\imgui.natstepfilter">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </None>

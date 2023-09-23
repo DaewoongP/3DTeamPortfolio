@@ -1,4 +1,4 @@
-#include "..\Public\Level_MainGame.h"
+﻿#include "..\Public\Level_MainGame.h"
 #include "GameInstance.h"
 #include "Seamless_Loader.h"
 #include "MapObject.h"
@@ -121,7 +121,7 @@ void CLevel_MainGame::Tick(_float fTimeDelta)
 	ENDINSTANCE;
 
 #ifdef _DEBUG
-	SetWindowText(g_hWnd, TEXT("���� ����"));
+	SetWindowText(g_hWnd, TEXT("메인 게임 레벨"));
 #endif //_DEBUG
 }
 
@@ -620,12 +620,10 @@ HRESULT CLevel_MainGame::Ready_Layer_UI(const _tchar* pLayerTag)
 	//}
 
 	CUI_Group_Enemy_HP::ENEMYHPDESC  Desc;
-	_tchar szLevel[MAX_PATH] = TEXT("77");
-	_tchar szName[MAX_PATH] = TEXT("개철민");
-
+	
 	Desc.eType = CUI_Group_Enemy_HP::ENEMYTYPE::BOSS;
-	lstrcpy(Desc.wszObjectLevel, szLevel);
-	lstrcpy(Desc.wszObjectName, szName);
+	lstrcpy(Desc.wszObjectLevel, TEXT("77"));
+	lstrcpy(Desc.wszObjectName, TEXT("개철민"));
 
 	if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Group_Enemy_HP"),
 		pLayerTag, TEXT("GameObject_UI_Enemy_HP"), &Desc)))

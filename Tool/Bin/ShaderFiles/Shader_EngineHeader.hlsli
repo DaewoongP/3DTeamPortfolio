@@ -77,7 +77,9 @@ DepthStencilState DSS_Depth_Disable
 
 DepthStencilState DSS_Alpha
 {
+	// Z test On
 	DepthEnable = true;
+	// Z Write Off
 	DepthWriteMask = zero;
 };
 
