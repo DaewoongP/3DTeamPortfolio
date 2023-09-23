@@ -54,8 +54,6 @@ HRESULT CUI_Font::Initialize(void* pArg)
 	m_vPos.x -= (textWidth / 2.0f); // 중앙 위치에서 왼쪽으로 텍스트의 반 너비만큼 이동
 //	m_vPos.y -= (textHeight / 2.0f); // 중앙 위치에서 위로 텍스트의 반 높이만큼 이동
 
-	Add_Component();
-
 	return S_OK;
 }
 

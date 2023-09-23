@@ -4,11 +4,6 @@
 
 #include "UI.h"
 
-BEGIN(Engine)
-class CTexture;
-END
-
-
 BEGIN(Client)
 
 class CUI_Group_Enemy_HP final : public CGameObject

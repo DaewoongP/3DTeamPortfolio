@@ -82,7 +82,7 @@ HRESULT CInventory::Add_Components()
 			pDesc.iVertical = 5;
 		}
 
-		if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Inventory"),
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Inventory"),
 			TEXT("Com_UI_Inventory"), reinterpret_cast<CComponent**>(&m_pInventory[i]), &pDesc)))
 		{
 			MSG_BOX("Com_Info_Main : Failed Clone Component (Com_UI_Inventory )");

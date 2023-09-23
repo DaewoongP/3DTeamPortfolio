@@ -4,7 +4,6 @@
 
 BEGIN(Engine)
 class CRenderer;
-class CUI_Button;
 END
 
 BEGIN(Client)

@@ -354,12 +354,12 @@ HRESULT CMain_Menu::Ready_Menus()
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 	
-	m_pGear = dynamic_cast<CMenu_Gear*>(pGameInstance->Clone_Component(LEVEL_MAINGAME,
+	m_pGear = dynamic_cast<CMenu_Gear*>(pGameInstance->Clone_Component(LEVEL_STATIC,
 		TEXT("Prototype_GameObject_Menu_Gear")));
 	//Safe_AddRef(m_pGear);
 
 
-	m_pInventory = dynamic_cast<CMenu_Inventory*>(pGameInstance->Clone_Component(LEVEL_MAINGAME,
+	m_pInventory = dynamic_cast<CMenu_Inventory*>(pGameInstance->Clone_Component(LEVEL_STATIC,
 		TEXT("Prototype_GameObject_Menu_Inventory")));
 
 	Safe_Release(pGameInstance);

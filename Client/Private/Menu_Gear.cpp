@@ -78,14 +78,14 @@ HRESULT CMenu_Gear::Add_Prototype()
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Back"),
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Back"),
 		CUI_Back::Create(m_pDevice, m_pContext), true)))
 	{
 		Safe_Release(pGameInstance);
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Effect_Back"),
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Effect_Back"),
 		CUI_Effect_Back::Create(m_pDevice, m_pContext), true)))
 	{
 		Safe_Release(pGameInstance);
@@ -113,7 +113,7 @@ HRESULT CMenu_Gear::Add_Components_Frame()
 
 	CUI_Back* pBack = nullptr;
 	wstring tag = TEXT("Com_UI_Back_Gear_Frame") + Generate_HashtagW(true);
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Back"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Back"),
 		TEXT("Com_UI_Back_Gear_Frame1"), reinterpret_cast<CComponent**>(&pBack))))
 	{
 		MSG_BOX("Com_Info_Main : Failed Clone Component (Com_UI_Effect_Back_Gear_SlotFrame)");
@@ -125,7 +125,7 @@ HRESULT CMenu_Gear::Add_Components_Frame()
 
 	pBack = nullptr;
 	tag = TEXT("Com_UI_Back_Gear_Frame") + Generate_HashtagW(true);
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Back"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Back"),
 		TEXT("Com_UI_Back_Gear_Frame1"), reinterpret_cast<CComponent**>(&pBack))))
 	{
 		MSG_BOX("Com_Info_Main : Failed Clone Component (Com_UI_Effect_Back_Gear_SlotFrame)");
@@ -137,7 +137,7 @@ HRESULT CMenu_Gear::Add_Components_Frame()
 
 	pBack = nullptr;
 	tag = TEXT("Com_UI_Back_Gear_Frame") + Generate_HashtagW(true);
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Back"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Back"),
 		TEXT("Com_UI_Back_Gear_Frame1"), reinterpret_cast<CComponent**>(&pBack))))
 	{
 		MSG_BOX("Com_Info_Main : Failed Clone Component (Com_UI_Effect_Back_Gear_SlotFrame)");
@@ -149,7 +149,7 @@ HRESULT CMenu_Gear::Add_Components_Frame()
 
 	pBack = nullptr;
 	tag = TEXT("Com_UI_Back_Gear_Frame") + Generate_HashtagW(true);
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Back"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Back"),
 		TEXT("Com_UI_Back_Gear_Frame1"), reinterpret_cast<CComponent**>(&pBack))))
 	{
 		MSG_BOX("Com_Info_Main : Failed Clone Component (Com_UI_Effect_Back_Gear_SlotFrame)");
@@ -223,7 +223,7 @@ HRESULT CMenu_Gear::Add_Components_Slot(wstring wszTag)
 
 	wstring Frame = TEXT("Com_UI_Effect_Back_Gear_SlotFrame_");
 	Frame += wszTag;
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Effect_Back"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Effect_Back"),
 		Frame.c_str(), reinterpret_cast<CComponent**>(&pSlot))))
 	{
 		MSG_BOX("Com_Info_Main : Failed Clone Component (Com_UI_Effect_Back_Gear_SlotFrame)");
@@ -236,7 +236,7 @@ HRESULT CMenu_Gear::Add_Components_Slot(wstring wszTag)
 	CUI_Effect_Back* pIcon = nullptr;
 	wstring Icon = TEXT("Com_UI_Back_Gear_SlotIcon_");
 	Icon += wszTag;
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Effect_Back"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Effect_Back"),
 		Icon.c_str(), reinterpret_cast<CComponent**>(&pIcon))))
 	{
 		MSG_BOX("Com_Info_Main : Failed Clone Component (Com_UI_Effect_Back_Gear_SlotFrame)");
@@ -248,7 +248,7 @@ HRESULT CMenu_Gear::Add_Components_Slot(wstring wszTag)
 	CUI_Back* pBack = nullptr;
 	wstring Back = TEXT("Com_UI_Back_Gear_SlotBack_");
 	Back += wszTag;
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Back"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Back"),
 		Back.c_str(), reinterpret_cast<CComponent**>(&pBack))))
 	{
 		MSG_BOX("Com_Info_Main : Failed Clone Component (Com_UI_Effect_Back_Gear_SlotFrame)");
@@ -324,7 +324,7 @@ HRESULT CMenu_Gear::Add_Components_Status()
 	Safe_AddRef(pGameInstance);
 
 	CUI_Back* pUI = nullptr;
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Back"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Back"),
 		TEXT("Com_UI_Back_Gear_Status_Text"), reinterpret_cast<CComponent**>(&pUI))))
 	{
 		MSG_BOX("Com_Info_Main : Failed Clone Component (Com_UI_Effect_Back_Gear_SlotFrame)");
@@ -338,7 +338,7 @@ HRESULT CMenu_Gear::Add_Components_Status()
 	CUI_Back* pSTAT = nullptr;
 
 	wstring HP = TEXT("Com_UI_Effect_Back_Gear_Status_HP");
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Back"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Back"),
 		HP.c_str(), reinterpret_cast<CComponent**>(&pHP))))
 	{
 		MSG_BOX("Com_Info_Main : Failed Clone Component (Com_UI_Effect_Back_Gear_SlotFrame)");
@@ -348,7 +348,7 @@ HRESULT CMenu_Gear::Add_Components_Status()
 	pStatuses.push_back(pHP);
 
 	wstring DEF = TEXT("Com_UI_Effect_Back_Gear_SlotFrame_");
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Back"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Back"),
 		DEF.c_str(), reinterpret_cast<CComponent**>(&pDEF))))
 	{
 		MSG_BOX("Com_Info_Main : Failed Clone Component (Com_UI_Effect_Back_Gear_SlotFrame)");
@@ -358,7 +358,7 @@ HRESULT CMenu_Gear::Add_Components_Status()
 	pStatuses.push_back(pDEF);
 
 	wstring ATT = TEXT("Com_UI_Effect_Back_Gear_SlotFrame_");
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Back"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Back"),
 		ATT.c_str(), reinterpret_cast<CComponent**>(&pSTAT))))
 	{
 		MSG_BOX("Com_Info_Main : Failed Clone Component (Com_UI_Effect_Back_Gear_SlotFrame)");

@@ -239,7 +239,7 @@ HRESULT CMain0_Loader::Loading_For_Cliffside()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Cursor"),
 			CUI_Group_Cursor::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_UI_Group_Cursor");
-		/*if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_MiniMap"),
+		/*if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_MiniMap"),
 			CUI_Group_MiniMap::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_UI_Group_MiniMap");*/
 
@@ -256,10 +256,10 @@ HRESULT CMain0_Loader::Loading_For_Cliffside()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Main_Menu"),
 			CMain_Menu::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Main_Menu");
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Menu_Gear"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Menu_Gear"),
 			CMenu_Gear::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Menu_Gear");
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Menu_Inventory"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Menu_Inventory"),
 			CMenu_Inventory::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Menu_Inventory");
 

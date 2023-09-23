@@ -208,24 +208,6 @@
     <Filter Include="02. GameObject\99. Debug\SeamLess">
       <UniqueIdentifier>{846ab9f8-ca54-4c10-bd34-f738c2ec2301}</UniqueIdentifier>
     </Filter>
-    <Filter Include="05. Scene\Main_Menu\Gear\Hand">
-      <UniqueIdentifier>{692cb2d0-95fc-4535-bb89-7c59052e9c33}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="05. Scene\Main_Menu\Gear\Face">
-      <UniqueIdentifier>{93da78ec-fa9c-4df4-8495-06acb4f6cfff}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="05. Scene\Main_Menu\Gear\Head">
-      <UniqueIdentifier>{8e36fc91-e604-4a86-b5f9-04ba843acfe9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="05. Scene\Main_Menu\Gear\Neck">
-      <UniqueIdentifier>{a1b80c74-5317-4ed2-821a-f16aeaf7a72a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="05. Scene\Main_Menu\Gear\Back">
-      <UniqueIdentifier>{79e45b78-bbad-4c56-9c0e-ec3e18e23fb4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="05. Scene\Main_Menu\Gear\Outfit">
-      <UniqueIdentifier>{312866fd-1317-48da-8156-2b8ef78d4e2b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\05. UI\UI_Composite\UI_Image">
       <UniqueIdentifier>{6a99be75-1048-4b77-8a00-10a58f385e62}</UniqueIdentifier>
     </Filter>
@@ -711,9 +693,6 @@
     <ClInclude Include="..\public\Field_Guide.h">
       <Filter>06. Scene\Field_Guide</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Menu_Gear.h">
-      <Filter>06. Scene\Main_Menu\Gear</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Menu_Invectory.h">
       <Filter>06. Scene\Main_Menu\Inventory</Filter>
     </ClInclude>
@@ -794,6 +773,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\LookAt.h">
       <Filter>03. Behaviors\04. Movement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Menu_Gear.h">
+      <Filter>06. Scene\Main_Menu\Gear</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

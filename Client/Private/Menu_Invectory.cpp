@@ -42,7 +42,7 @@ HRESULT CMenu_Inventory::Initialize(void* pArg)
 	CUI_Back* pBack = nullptr;
 
 	tag = TEXT("Com_UI_Back_Gear_Frame") + Generate_HashtagW(true);
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Back"), TEXT("Com_UI_Back_Inventory_Frame"), reinterpret_cast<CComponent**>(&pBack))))
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Back"), TEXT("Com_UI_Back_Inventory_Frame"), reinterpret_cast<CComponent**>(&pBack))))
 	{
 		MSG_BOX("Com_Info_Main : Failed Clone Component (Com_UI_Effect_Back_Gear_SlotFrame)");
 		Safe_Release(pGameInstance);
@@ -86,14 +86,14 @@ HRESULT CMenu_Inventory::Add_Prototype()
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Back"),
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Back"),
 		CUI_Back::Create(m_pDevice, m_pContext), true)))
 	{
 		Safe_Release(pGameInstance);
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Effect_Back"),
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Effect_Back"),
 		CUI_Effect_Back::Create(m_pDevice, m_pContext), true)))
 	{
 		Safe_Release(pGameInstance);
@@ -157,7 +157,7 @@ HRESULT CMenu_Inventory::Add_ItemTexture()
 	Safe_AddRef(pGameInstace);
 
 	CTexture* pTexture = nullptr;
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("../../Resources/"), TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&pTexture))))
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("../../Resources/"), TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&pTexture))))
 	{
 		MSG_BOX("Failed CUI_Image Add_Component : (Com_Texture)");
 		return E_FAIL;
