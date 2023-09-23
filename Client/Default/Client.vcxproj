@@ -171,7 +171,6 @@
     <ClInclude Include="..\Public\LookAt.h" />
     <ClInclude Include="..\Public\Client_Enum.h" />
     <ClInclude Include="..\Public\Finisher.h" />
-    <ClInclude Include="..\Public\HitState.h" />
     <ClInclude Include="..\public\Level_GreatHall.h" />
     <ClInclude Include="..\public\Level_Smith.h" />
     <ClInclude Include="..\public\Level_Vault.h" />
@@ -323,7 +322,6 @@
     <ClCompile Include="..\Private\HitState.cpp" />
     <ClCompile Include="..\Private\LookAt.cpp" />
     <ClCompile Include="..\Private\Finisher.cpp" />
-    <ClCompile Include="..\Private\HitState.cpp" />
     <ClCompile Include="..\private\Level_GreatHall.cpp" />
     <ClCompile Include="..\private\Level_Smith.cpp" />
     <ClCompile Include="..\private\Level_Vault.cpp" />
