@@ -24,7 +24,8 @@ HRESULT CThreadPool::Initialize(_uint iNumThreads)
 				}
 			}
 			);*/
-	return E_NOTIMPL;
+
+	return S_OK;
 }
 
 template<class T, class ...Args>
