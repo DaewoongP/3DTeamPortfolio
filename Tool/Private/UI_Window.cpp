@@ -987,7 +987,7 @@ void CUI_Window::Capture()
 		{
 			_tchar wszFilePath[MAX_PATH] = {};
 
-			string strPath = "../../Resources/UIData/";
+			string strPath = "../../Resources/UI/Game/UI_Edit/";
 			string strDDS = ".dds";
 
 			string strText = strPath + m_szCaptureText +strDDS;
@@ -1014,7 +1014,8 @@ void CUI_Window::Capture()
 			{
 				MSG_BOX("Capture Success");
 				SaveDDSTextureToFile(m_pContext, pTexture, wszFilePath);
-
+			//	SaveWICTextureToFile(m_pContext, pTexture, GUID_ContainerFormatPng, wszFilePath);
+				
 				ZeroMemory(m_szCaptureText, MAX_PATH);
 				m_isEnterGroupName = false;
 			}
@@ -1022,7 +1023,6 @@ void CUI_Window::Capture()
 
 		ImGui::End();
 	}
-
 }
 
 HRESULT CUI_Window::Save_Data(_tchar* pFilePath)
@@ -1259,7 +1259,7 @@ HRESULT CUI_Window::Load(_tchar* pFilePath)
 	ENDINSTANCE
 
 	
-	GameObjectTag = "UI_" + Generate_Hashtag(true);
+	GameObjectTag = "UI_" + strFimeName + Generate_Hashtag(true);
 	ZeroMemory(wszGameObjectTag, sizeof(_tchar) * MAX_PATH);
 	CharToWChar(GameObjectTag.c_str(), wszGameObjectTag);
 
@@ -1628,10 +1628,10 @@ HRESULT CUI_Window::Initialize_Font()
 void CUI_Window::Select_AlphaTexture(CDummy_UI* pDummyUI)
 {
 	// open Dialog Simple
-	ImGuiFileDialog::Instance()->OpenDialog("Alpha_texture", "Choose File", ".png, .dds", "");
+	ImGuiFileDialog::Instance()->OpenDialog("Alphatexture", "Choose", ".png, .dds", "");
 
 	// display
-	if (ImGuiFileDialog::Instance()->Display("Alpha_texture"))
+	if (ImGuiFileDialog::Instance()->Display("Alphatexture"))
 	{
 		// action if OK
 		if (ImGuiFileDialog::Instance()->IsOk())

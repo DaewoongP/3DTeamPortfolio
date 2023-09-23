@@ -37,6 +37,7 @@ public:
 	void Set_vPos(_float2 vPos) { m_vPos = vPos; }
 	void Set_vScale(_float2 vScale) { m_vScale = vScale; }
 	void Set_vColor(_float4 vColor) { m_vColor = vColor; }
+	void Set_Text(wstring wText);
 
 protected:
 	_tchar			m_pText[MAX_PATH] = TEXT("");
