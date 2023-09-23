@@ -24,20 +24,19 @@ HRESULT CLookAt::Tick(const _float& fTimeDelta)
 	if (false == Check_Decorations())
 		return BEHAVIOR_FAIL;
 
-	_bool isLeft = { false };
-	if (FAILED(m_pBlackBoard->Get_Type("isTargetToLeft", isLeft)))
+	const CGameObject** ppTarget = { nullptr };
+	if (FAILED(m_pBlackBoard->Get_Type("cppTarget", ppTarget)))
+	{
+		MSG_BOX("[CCheck_Distance] Failed Get_Type cppTarget");
 		return E_FAIL;
+	}
+	if (nullptr == *ppTarget)
+	{
+		m_ReturnData = BEHAVIOR_FAIL;
+		return BEHAVIOR_FAIL;
+	}
 
-	_float fDegree = { 0.f };
-	if (FAILED(m_pBlackBoard->Get_Type("fTargetToDegree", fDegree)))
-		return E_FAIL;
-
-	_float fRadian = XMConvertToRadians(fDegree);
-	if (true == isLeft)
-		fRadian *= -1.f;
-
-	// 미구현 사용금지 
-	//m_pOwnerTransform->LookAt(_float3(0.f, 1.f, 0.f), fRadian * 2.f, fTimeDelta);
+	m_pOwnerTransform->LookAt_Lerp((*ppTarget)->Get_Transform()->Get_Position(), fTimeDelta, true);
 
 	return BEHAVIOR_SUCCESS;
 }

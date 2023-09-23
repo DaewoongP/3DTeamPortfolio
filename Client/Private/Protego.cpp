@@ -231,7 +231,10 @@ void CProtego::Tick_Exit(const _float& fTimeDelta)
 	m_pTransform->Set_Scale(_float3(m_fScale, m_fScale, m_fScale));
 
 	if (fRatio >= 1.f)
+	{
 		m_eCurState = STATE_END;
+		Set_ObjEvent(OBJ_DEAD);
+	}
 }
 
 void CProtego::Late_Tick_Enter(const _float& fTimeDelta)

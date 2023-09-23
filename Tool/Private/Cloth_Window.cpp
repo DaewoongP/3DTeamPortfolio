@@ -31,7 +31,7 @@ HRESULT CCloth_Window::Initialize(ImVec2 _vWindowPos, ImVec2 _vWindowSize)
 		return E_FAIL;
 	}
 
-	if (FAILED(m_pGameInstance->Add_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_Dummy_Cloth"),
+	if (FAILED(m_pGameInstance->Add_Component(LEVEL_TOOL, LEVEL_TOOL, TEXT("Prototype_GameObject_Dummy_Cloth"),
 		TEXT("Layer_Dummy_Cloth"), TEXT("Com_Dummy"))))
 	{
 		MSG_BOX("Failed Clone Dummy_Cloth");

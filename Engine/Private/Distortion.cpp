@@ -37,11 +37,8 @@ HRESULT CDistortion::Initialize_Prototype(const _tchar* pTargetTag)
 		TEXT("Target_MapEffect"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
 
-
 	if (FAILED(pRenderTarget_Manager->Add_MRT(TEXT("MRT_MapEffect"), TEXT("Target_MapEffect"))))
 		return E_FAIL;
-
-
 
 	XMStoreFloat4x4(&m_WorldMatrix, XMMatrixIdentity());
 	m_WorldMatrix._11 = ViewportDesc.Width;
@@ -89,7 +86,6 @@ HRESULT CDistortion::Render()
 
 	if (FAILED(m_pShader->Bind_RawValue("g_FrameTime", &m_fFrameTime, sizeof(_float))))
 		return E_FAIL;
-
 	_float3 Speed = { 1.3f, 2.1f, 2.3f };
 	if (FAILED(m_pShader->Bind_RawValue("g_ScrollSpeed", &Speed, sizeof(_float3))))
 		return E_FAIL;

@@ -179,7 +179,7 @@ void CAnimation_Window::Create_Dummy_Button()
 		CGameInstance* pGameInstance = CGameInstance::GetInstance();
 		Safe_AddRef(pGameInstance);
 
-		if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_Dummy"), TEXT("Layer_Tool"), TEXT("Dummy_Animation"), nullptr)))
+		if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, LEVEL_TOOL, TEXT("Prototype_GameObject_Dummy"), TEXT("Layer_Tool"), TEXT("Dummy_Animation"), nullptr)))
 		{
 			MSG_BOX("Failed to Created Dummy Clone");
 		}

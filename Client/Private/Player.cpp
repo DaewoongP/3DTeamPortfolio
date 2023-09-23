@@ -6,6 +6,8 @@
 #include "StateContext.h"
 #include "IdleState.h"
 
+#include "Armored_Troll.h"
+
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
@@ -67,6 +69,14 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 	Bind_Notify();
 
+	m_fClothPower = 3.0f;
+	m_fClothPowerPlus = 1.0f;
+
+	return S_OK;
+}
+
+HRESULT CPlayer::Initialize_Level(_uint iCurrentLevelIndex)
+{
 	return S_OK;
 }
 
@@ -113,6 +123,14 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 
 void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
+	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
+
+	if (wstring::npos != wstrObjectTag.find(TEXT("Weapon")))
+	{
+		CArmored_Troll::COLLISIONREQUESTDESC* pDesc = static_cast<CArmored_Troll::COLLISIONREQUESTDESC*>(CollisionEventDesc.pArg);
+		pDesc;
+		int i = 0;
+	}
 }
 
 void CPlayer::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)
@@ -202,7 +220,7 @@ HRESULT CPlayer::Add_Components()
 	}
 
 	/* For.Com_Model_CustomModel_Player */
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_CustomModel_Player"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Model_CustomModel_Player"),
 		TEXT("Com_Model_CustomModel_Player"), reinterpret_cast<CComponent**>(&m_pCustomModel))))
 	{
 		MSG_BOX("Failed CPlayer Add_Component : (Com_Model_CustomModel_Player)");
@@ -218,7 +236,7 @@ HRESULT CPlayer::Add_Components()
 	StateContextDesc.pTargetAngle = &m_fTargetAngle;
 
 	/* For.Com_StateContext */
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_StateContext"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_StateContext"),
 		TEXT("Com_StateContext"), reinterpret_cast<CComponent**>(&m_pStateContext),&StateContextDesc)))
 	{
 		MSG_BOX("Failed CPlayer Add_Component : (Com_StateContext)");
@@ -235,11 +253,11 @@ HRESULT CPlayer::Add_Components()
 	ParentMatrixDesc.pCombindTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
 	ParentMatrixDesc.pParentWorldMatrix = m_pTransform->Get_WorldMatrixPtr();
 
-	if (FAILED(Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Weapon_Player_Wand"),
+	if (FAILED(Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Weapon_Player_Wand"),
 		TEXT("Com_Weapon"), reinterpret_cast<CComponent**>(&m_pWeapon), &ParentMatrixDesc)))
 		throw TEXT("Com_Weapon");
 
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_MagicSlot"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_MagicSlot"),
 		TEXT("Com_MagicSlot"), reinterpret_cast<CComponent**>(&m_pMagicSlot))))
 	{
 		MSG_BOX("Failed CPlayer Add_Component : (Com_MagicSlot)");
@@ -263,7 +281,7 @@ HRESULT CPlayer::Add_Components()
 	RigidBodyDesc.vDebugColor = _float4(1.f, 105 / 255.f, 180 / 255.f, 1.f); // hot pink
 	RigidBodyDesc.pOwnerObject = this;
 	RigidBodyDesc.eThisCollsion = COL_PLAYER;
-	RigidBodyDesc.eCollisionFlag = COL_ENEMY;
+	RigidBodyDesc.eCollisionFlag = COL_ENEMY_RANGE | COL_WEAPON;
 	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Player_Default");
 
 	/* Com_RigidBody */
@@ -276,6 +294,16 @@ HRESULT CPlayer::Add_Components()
 
 	m_OffsetMatrix = XMMatrixTranslation(RigidBodyDesc.vOffsetPosition.x, RigidBodyDesc.vOffsetPosition.y, RigidBodyDesc.vOffsetPosition.z);
 	m_pRigidBody->Get_RigidBodyActor()->setAngularDamping(1.f);
+
+
+	/* Com_Player_Information */
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Player_Information"),
+		TEXT("Com_Player_Information"), reinterpret_cast<CComponent**>(&m_pPlayer_Information))))
+	{
+		MSG_BOX("Failed CPlayer Add_Component : (Com_Player_Information)");
+		return E_FAIL;
+	}
+
 	return S_OK;
 }
 
@@ -345,9 +373,24 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.fLifeTime = 0.8f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
+
+	// 피니셔
+	{
+		magicInitDesc.eBuffType = BUFF_NONE;
+		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
+		magicInitDesc.eMagicType = CMagic::MT_ALL;
+		magicInitDesc.eMagicTag = FINISHER;
+		magicInitDesc.fCoolTime = 1.f;
+		magicInitDesc.fDamage = 500.f;
+		magicInitDesc.fCastDistance = 1000;
+		magicInitDesc.fBallDistance = 3000;
+		magicInitDesc.fLifeTime = 3.f;
+		m_pMagicSlot->Add_Magics(magicInitDesc);
+	}
 	
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(0, CONFRINGO);
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(1, LEVIOSO);
+	m_pMagicSlot->Add_Magic_To_Skill_Slot(2, FINISHER);
 	
 	return S_OK;
 }
@@ -388,13 +431,13 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 	if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
 	{
-		//m_pRigidBody->Add_Force(m_pTransform->Get_Up() * 20.f, PxForceMode::eIMPULSE);
+		m_pRigidBody->Add_Force(m_pTransform->Get_Up() * 10.f, PxForceMode::eIMPULSE);
 	}
 
 	//if (pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN))
 	//{
 	//	/* 이거는 테스트 용으로 더미클래스 찾으려고 넣은 코드를 훔쳐온거임 */
-	//	CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
+	//	CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
 	//	if (nullptr == pTestTarget)
 	//		throw TEXT("pTestTarget is nullptr");
 	//
@@ -402,14 +445,14 @@ void CPlayer::Key_Input(_float fTimeDelta)
 	//}
 
 	//if (pGameInstance->Get_DIKeyState(DIK_Q, CInput_Device::KEY_DOWN))
-	//{
+	//{DIK_1
 	//	//포르테고는 타켓이 생성 객체임
 	//	m_pMagicSlot->Action_Magic_Basic(1, m_pTransform, XMMatrixIdentity(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
 	//}
 	
 	if (pGameInstance->Get_DIKeyState(DIK_1, CInput_Device::KEY_DOWN))
 	{
-		CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
+		CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
 		if (nullptr == pTestTarget)
 			throw TEXT("pTestTarget is nullptr");
 		m_pMagicSlot->Action_Magic_Skill(0, pTestTarget->Get_Transform(), pTestTarget->Get_Offset_Matrix(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
@@ -417,7 +460,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 	if (pGameInstance->Get_DIKeyState(DIK_2, CInput_Device::KEY_DOWN))
 	{
-		CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
+		CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
 		if (nullptr == pTestTarget)
 			throw TEXT("pTestTarget is nullptr");
 		m_pMagicSlot->Action_Magic_Skill(1, pTestTarget->Get_Transform(), pTestTarget->Get_Offset_Matrix(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
@@ -425,7 +468,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 	if (pGameInstance->Get_DIKeyState(DIK_3, CInput_Device::KEY_DOWN))
 	{
-		CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
+		CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
 		if (nullptr == pTestTarget)
 			throw TEXT("pTestTarget is nullptr");
 		m_pMagicSlot->Action_Magic_Skill(2, pTestTarget->Get_Transform(), pTestTarget->Get_Offset_Matrix(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
@@ -433,7 +476,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 	if (pGameInstance->Get_DIKeyState(DIK_4, CInput_Device::KEY_DOWN))
 	{
-		CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_MAINGAME, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
+		CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
 		if (nullptr == pTestTarget)
 			throw TEXT("pTestTarget is nullptr");
 		m_pMagicSlot->Action_Magic_Skill(3, pTestTarget->Get_Transform(), pTestTarget->Get_Offset_Matrix(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
@@ -457,7 +500,7 @@ HRESULT CPlayer::Ready_MeshParts()
 {
 	//Head
 	if (FAILED(m_pCustomModel->Add_MeshParts(
-		LEVEL_MAINGAME,
+		LEVEL_STATIC,
 		TEXT("Prototype_Component_MeshPart_Player_Head"),
 		CCustomModel::HEAD)))
 	{
@@ -468,7 +511,7 @@ HRESULT CPlayer::Ready_MeshParts()
 
 	//Arm
 	if (FAILED(m_pCustomModel->Add_MeshParts(
-		LEVEL_MAINGAME, 
+		LEVEL_STATIC,
 		TEXT("Prototype_Component_MeshPart_Player_Arm"),
 		CCustomModel::ARM)))
 	{
@@ -479,7 +522,7 @@ HRESULT CPlayer::Ready_MeshParts()
 
 	//Robe
 	if (FAILED(m_pCustomModel->Add_MeshParts(
-		LEVEL_MAINGAME,
+		LEVEL_STATIC,
 		TEXT("Prototype_Component_MeshPart_Robe01"),
 		CCustomModel::ROBE, TEXT("../../Resources/GameData/ClothData/Test.cloth"))))
 	{
@@ -490,7 +533,7 @@ HRESULT CPlayer::Ready_MeshParts()
 
 	//Top
 	if (FAILED(m_pCustomModel->Add_MeshParts(
-		LEVEL_MAINGAME,
+		LEVEL_STATIC,
 		TEXT("Prototype_Component_MeshPart_Player_Top"),
 		CCustomModel::TOP)))
 	{
@@ -501,7 +544,7 @@ HRESULT CPlayer::Ready_MeshParts()
 
 	//Pants
 	if (FAILED(m_pCustomModel->Add_MeshParts(
-		LEVEL_MAINGAME,
+		LEVEL_STATIC,
 		TEXT("Prototype_Component_MeshPart_Player_Pants"),
 		CCustomModel::PANTS)))
 	{
@@ -512,7 +555,7 @@ HRESULT CPlayer::Ready_MeshParts()
 
 	//Socks
 	if (FAILED(m_pCustomModel->Add_MeshParts(
-		LEVEL_MAINGAME,
+		LEVEL_STATIC,
 		TEXT("Prototype_Component_MeshPart_Player_Socks"),
 		CCustomModel::SOCKS)))
 	{
@@ -523,7 +566,7 @@ HRESULT CPlayer::Ready_MeshParts()
 
 	//Shoes
 	if (FAILED(m_pCustomModel->Add_MeshParts(
-		LEVEL_MAINGAME,
+		LEVEL_STATIC,
 		TEXT("Prototype_Component_MeshPart_Player_Shoes"),
 		CCustomModel::SHOES)))
 	{
@@ -551,8 +594,7 @@ HRESULT CPlayer::Ready_Camera()
 	CPlayer_Camera::PLAYERCAMERADESC PlayerCameraDesc;
 
 	PlayerCameraDesc.CameraDesc = CameraDesc;
-	//PlayerCameraDesc.pFollowTargetBoneMatrix = m_pCustomModel->Get_BoneCombinedTransformationMatrixPtr(iBoneIndex);
-	PlayerCameraDesc.pFollowTargetMatrix = m_pTransform->Get_WorldMatrixPtr();
+	PlayerCameraDesc.pPlayerTransform = m_pTransform;
 
 	m_pPlayer_Camera = CPlayer_Camera::Create(m_pDevice,m_pContext, &PlayerCameraDesc);
 
@@ -713,6 +755,17 @@ void CPlayer::Protego()
 	m_pMagicSlot->Action_Magic_Basic(1, m_pTransform, XMMatrixTranslation(0.0f, 1.0f, 0.0f), m_pTransform->Get_WorldMatrixPtr(), XMMatrixIdentity());
 }
 
+void CPlayer::Gravity_On()
+{
+	m_pRigidBody->Set_Gravity(true);
+}
+
+void CPlayer::Gravity_Off()
+{
+	m_pRigidBody->Set_Gravity(false);
+	//m_pRigidBody->Add_Force(m_pTransform->Get_Up()/* * 20.f*/, PxForceMode::eIMPULSE);
+}
+
 HRESULT CPlayer::Bind_Notify()
 {
 	function<void()> funcNotify = [&] {(*this).Shot_Basic_Spell(); };
@@ -800,6 +853,55 @@ HRESULT CPlayer::Bind_Notify()
 
 		return E_FAIL;
 	}
+
+	funcNotify = [&] {(*this).Gravity_On(); };
+
+	//Gravity_On
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_BM_Jump_RF_anm"), TEXT("Gravity_On"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Rct_KnckDn_Hvy_Fwd_01_anm"), TEXT("Gravity_On"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Rct_KnckDn_Hvy_01_anm"), TEXT("Gravity_On"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
+
+	funcNotify = [&] {(*this).Gravity_Off(); };
+
+	//Gravity_OFF
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_BM_Jump_RF_anm"), TEXT("Gravity_Off"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Rct_KnckDn_Hvy_Fwd_01_anm"), TEXT("Gravity_Off"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Rct_KnckDn_Hvy_01_anm"), TEXT("Gravity_Off"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
+
 	return S_OK;
 }
 
@@ -808,10 +910,14 @@ void CPlayer::Update_Cloth(_float fTimeDelta)
 	// 현재 y값이 반대임
 	_float3 vVelocity = m_pTransform->Get_Velocity();
 	vVelocity.y *= -1.f;
-	m_pCustomModel->Set_WindVelocity(XMVector3TransformCoord(7.f * vVelocity,
+	m_pCustomModel->Set_WindVelocity(XMVector3TransformCoord(m_fClothPower * vVelocity,
 		XMMatrixInverse(nullptr, XMMatrixRotationQuaternion(m_pTransform->Get_Quaternion()))));
 
 	m_pCustomModel->Tick(CCustomModel::ROBE, 2, fTimeDelta);
+}
+
+void CPlayer::Find_Target()
+{
 }
 
 CPlayer* CPlayer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -855,5 +961,6 @@ void CPlayer::Free()
 		Safe_Release(m_pWeapon);
 		Safe_Release(m_pStateContext);
 		Safe_Release(m_pRigidBody);
+		Safe_Release(m_pPlayer_Information);
 	}
 }

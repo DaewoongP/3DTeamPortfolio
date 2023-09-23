@@ -67,6 +67,7 @@ void CNotify::Invalidate_Frame(_float fTimeAcc, _Inout_ _uint* pCurrentKeyFrameI
 				{
 				case KEYFRAME::KF_NOTIFY:
 				{
+					m_iCurrentKeyFramesIndex = (*pCurrentKeyFrameIndex);
 					static_cast<NOTIFYFRAME*>(pKeyFrame)->Action();
 				}
 					
@@ -213,13 +214,17 @@ HRESULT CNotify::AddFrame(KEYFRAME_GCM* data)
 }
 void CNotify::Notify_NULL_WarningAlam()
 {
-	cout << "Please Input Notify Action" << endl;
+	_char szName[MAX_PATH]="";
+
+	WCharToChar(m_KeyFrames[m_iCurrentKeyFramesIndex].first.c_str(), szName);
+
+	cout << szName << " : Please Input Notify Action" << endl;
 }
 CNotify* CNotify::Create()
 {
 	CNotify* pInstance = New CNotify();
-
 	if (FAILED(pInstance->Initialize()))
+
 	{
 		MSG_BOX("Failed to Created CNotify");
 		Safe_Release(pInstance);

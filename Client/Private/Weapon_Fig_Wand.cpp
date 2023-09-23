@@ -100,7 +100,7 @@ HRESULT CWeapon_Fig_Wand::Add_Components(void* pArg)
 {
 	try /* Check Add_Components */
 	{
-		if (FAILED(Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Weopon_Fig_Wand"), L"Com_Model",
+		if (FAILED(Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_Model_Weopon_Fig_Wand"), L"Com_Model",
 			(CComponent**)&m_pModelCom, this)))
 			throw TEXT("Failed Add_Component : Com_Model");
 

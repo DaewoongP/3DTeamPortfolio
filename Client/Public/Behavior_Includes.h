@@ -2,6 +2,7 @@
 
 #include "Wait.h"
 #include "Turn.h"
+#include "LookAt.h"
 #include "Action.h"
 #include "Check_Degree.h"
 #include "Random_Select.h"

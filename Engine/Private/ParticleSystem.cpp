@@ -328,12 +328,14 @@ HRESULT CParticleSystem::Setup_ShaderResources()
 
 			if (FAILED(m_pShader->Bind_RawValue("g_isUseNormalTexture", &m_TextureSheetAnimationModuleDesc.isUseNormalTexture, sizeof(_bool))))
 				throw "g_isUseNormalTexture";
-
-			if (FAILED(m_pNormalTexture->Bind_ShaderResource(m_pShader, "g_NormalTexture")))
-				throw "g_NormalTexture";
 		}
+		if (FAILED(m_pNormalTexture->Bind_ShaderResource(m_pShader, "g_NormalTexture")))
+			throw "g_NormalTexture";
 		if (FAILED(m_pGradientTexture->Bind_ShaderResource(m_pShader, "g_GradientTexture")))
 			throw "g_GradientTexture";
+
+		if (FAILED(m_pShader->Bind_RawValue("g_isUseGradientTexture", &m_RendererModuleDesc.isUseGradientTexture, sizeof(_bool))))
+			throw "g_isUseGradientTexture";
 	}
 	catch (const _tchar* pErrorTag)
 	{

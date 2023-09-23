@@ -134,11 +134,16 @@ HRESULT CDefault_MagicTraill_Effect::Initialize(void* pArg)
 
 void CDefault_MagicTraill_Effect::Tick(_float fTimeDelta)
 {
+	if (!m_isEnable)
+		return;
 	__super::Tick(fTimeDelta);
 }
 
 void CDefault_MagicTraill_Effect::Late_Tick(_float fTimeDelta)
 {
+	if (!m_isEnable)
+		return;
+
 	__super::Late_Tick(fTimeDelta);
 	m_pTrailTransform->Set_Position(m_pTransform->Get_Position());
 	m_pGlowBallTransform->Set_Position(m_pTransform->Get_Position());
@@ -173,7 +178,7 @@ _bool CDefault_MagicTraill_Effect::Spin_Move(_float fTimeDelta)
 		m_isEnd = true;
 		return m_isEnd;
 	}
-	m_fLerpAcc += fTimeDelta / m_fTrailLifeTime * m_fTimeScalePerDitance;
+	m_fLerpAcc += fTimeDelta / m_fTrailLifeTime *m_fTimeScalePerDitance;
 	if (m_fLerpAcc >= 1.0f)
 		m_fLerpAcc = 1.0f;
 	//직선상으로 이동시 위치해야할 position
@@ -215,7 +220,6 @@ _bool CDefault_MagicTraill_Effect::Spline_Move(_float fTimeDelta)
 	if (m_fLerpAcc > 1.0f)
 		m_fLerpAcc = 1.0f;
 
-	m_fLerpAcc += fTimeDelta / m_fTrailLifeTime * m_fTimeScalePerDitance;
 	_float3 movedPos = XMVectorCatmullRom(m_vSplineLerp[0], m_vStartPostion, m_vEndPostion, m_vSplineLerp[1], m_fLerpAcc);
 	m_pTransform->Set_Position(movedPos);
 	return m_isEnd;

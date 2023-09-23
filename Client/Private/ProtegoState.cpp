@@ -37,7 +37,7 @@ void CProtegoState::Late_Tick(_float fTimeDelta)
 void CProtegoState::OnStateEnter()
 {
 #ifdef _DEBUG
-	cout << "Protego Enter" << endl;
+	//cout << "Protego Enter" << endl;
 #endif // _DEBUG
 
 	//시작 애니메이션
@@ -60,7 +60,7 @@ void CProtegoState::OnStateTick()
 void CProtegoState::OnStateExit()
 {
 #ifdef _DEBUG
-	cout << "Protego Exit" << endl;
+	//cout << "Protego Exit" << endl;
 #endif // _DEBUG
 }
 
@@ -68,12 +68,15 @@ void CProtegoState::Bind_Notify()
 {
 	m_pOwnerModel->Bind_Notify(TEXT("Hu_Cmbt_Protego_Start_anm"), TEXT("End_Animation"), m_pFuncFinishAnimation);
 	m_pOwnerModel->Bind_Notify(TEXT("Hu_Cmbt_Protego_Loop_anm"), TEXT("End_Animation"), m_pFuncFinishAnimation);
+	m_pOwnerModel->Bind_Notify(TEXT("Hu_Cmbt_Protego_Parry_Fwd_AOE_Slide_anm"), TEXT("End_Animation"), m_pFuncFinishAnimation);
 }
 
 void CProtegoState::Go_Idle()
 {
-	if (true == *m_pIsFinishAnimation &&
-		!wcscmp(m_pOwnerModel->Get_Animation()->Get_AnimationName(), TEXT("Hu_Cmbt_Protego_Loop_anm")))
+	if (true == *m_pIsFinishAnimation &&(
+		!wcscmp(m_pOwnerModel->Get_Animation()->Get_AnimationName(), TEXT("Hu_Cmbt_Protego_Loop_anm")) ||
+		!wcscmp(m_pOwnerModel->Get_Animation()->Get_AnimationName(), TEXT("Hu_Cmbt_Protego_Parry_Fwd_AOE_Slide_anm")))
+		)
 	{
 		Set_StateMachine(TEXT("Idle"));
 	}
@@ -83,11 +86,28 @@ void CProtegoState::Stupefy()
 {
 	BEGININSTANCE;
 	
-	//맞았을때
-	if (true &&
+	//맞았을때 && 약 공격 && 키를 누르고 있었다면
+	if (true && true &&
 		pGameInstance->Get_DIKeyState(DIK_Q,CInput_Device::KEY_PRESSING))
 	{
-		//스투페파이 발사~
+		//스투페파이 발사~ 이건 플레이어에서 처리해야 할지도
+	}
+	//맞았을때 && 강 공격 이라면(스투페파이는 노티파이로 처리)
+	else if (true && true)
+	{
+		m_pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Protego_Parry_Fwd_AOE_Slide_anm"));
+	}
+
+	ENDINSTANCE;
+}
+
+void CProtegoState::Powerful_Stupefy()
+{
+	BEGININSTANCE;
+
+	if (pGameInstance->Get_DIKeyState(DIK_Q, CInput_Device::KEY_PRESSING))
+	{
+		//스투페파이 발사~ 이건 플레이어에서 처리해야 할지도
 	}
 
 	ENDINSTANCE;

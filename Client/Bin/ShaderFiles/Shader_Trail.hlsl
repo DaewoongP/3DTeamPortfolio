@@ -7,6 +7,7 @@ texture2D		g_AlphaTexture;
 // 그라디언트 색상을 잡기 위함.
 texture2D		g_GradientTexture;
 // 그라디언트 색상잡기용 
+float g_fClipThreshold = 0.00f;
 
 float3			g_vHeadColor = float3(1.f, 1.f, 1.f);
 float3			g_vTailColor = float3(1.f, 1.f, 1.f);
@@ -63,7 +64,7 @@ PS_OUT	PS_MAIN(PS_IN In)
     Out.vColor.xyz = lerp(g_vHeadColor, g_vTailColor, fGradient).xyz;
 	Out.vColor.a = vAlpha.r;
 
-	if (Out.vColor.a < 0.1f)
+    if (Out.vColor.a < g_fClipThreshold)
 		discard;
 
 	return Out;

@@ -29,12 +29,18 @@ public:
 	virtual void OnCollisionExit(COLLEVENTDESC CollisionEventDesc) override;
 
 private:
+	// 불 트레일 
 	CTrail* m_pTrail = { nullptr };
-
-	//죄다 파티클로 바꾸기로 했음.
+	//터지는거
 	CParticleSystem* m_pExplosiveEffect[2] = { nullptr };
+	// 완드 불
+	CParticleSystem* m_pWandTouchEffect = { nullptr };
+	// 완드 먼지
 	CParticleSystem* m_pWandDustEffect = { nullptr };
-
+	// 완드 트윙클
+	CParticleSystem* m_pWandTwinklEffect = { nullptr };
+	// 완드 트레일
+	CTrail* m_pWandTrailEffect = { nullptr };
 private:
 	//For. Trail
 	_float3 m_vStartPostion = {};
@@ -44,9 +50,19 @@ private:
 	//For. Spline
 	_float3 m_vSplineLerp[2] = {};
 	_float  m_fTimeScalePerDitance = { 0.f };
-	
-	_bool	m_isExplosiveTrigger = { false };
 	_uint	m_iLevel = { 0 };
+
+private:
+	virtual void Ready_Begin() override;
+	virtual void Ready_DrawMagic() override;
+	virtual void Ready_CastMagic() override;
+	virtual void Ready_Dying() override;
+
+	virtual void Tick_Begin(_float fTimeDelta) override;
+	virtual void Tick_DrawMagic(_float fTimeDelta) override;
+	virtual void Tick_CastMagic(_float fTimeDelta) override;
+	virtual void Tick_Dying(_float fTimeDelta) override;
+
 private:
 	HRESULT Add_Components();
 	virtual HRESULT Add_Effect();

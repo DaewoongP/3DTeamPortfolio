@@ -26,20 +26,33 @@ public:
 	virtual void OnCollisionExit(COLLEVENTDESC CollisionEventDesc) override;
 
 private:
-	// 트레일을 만드는 친구.
+	// 지팡이 트레일
+	CTrail*						 m_WandTrail = { nullptr };
+	//지팡이 움직임 이펙트
+	CParticleSystem*			m_pWandEffect = { nullptr };
+
+	// 기본공격 트레일
 	CDefault_MagicTraill_Effect* m_pTrailEffect = { nullptr };
-	CParticleSystem*			m_pTraceEffect = { nullptr };
 	//피격 이펙트
 	CParticleSystem* m_pHitEffect = { nullptr };
-	//지팡이 움직임 이펙트
-	CParticleSystem* m_pWandEffect = { nullptr };
+	
 	//지팡이 3타 터지는 이펙트
 	CParticleSystem* m_pFinalAttackEffect = { nullptr };
 private:
 	_float3				m_vTargetPosition = {};
-	_bool				m_bDeadTrigger = { false };
-	_float				m_fSettingTimer = { 0.2f };
 	_uint				m_iLevel = {};
+
+private:
+	virtual void Ready_Begin() override;
+	virtual void Ready_DrawMagic() override;
+	virtual void Ready_CastMagic() override;
+	virtual void Ready_Dying() override;
+
+	virtual void Tick_Begin(_float fTimeDelta) override;
+	virtual void Tick_DrawMagic(_float fTimeDelta) override;
+	virtual void Tick_CastMagic(_float fTimeDelta) override;
+	virtual void Tick_Dying(_float fTimeDelta) override;
+
 private:
 	HRESULT Add_Components();
 	virtual HRESULT Add_Effect();

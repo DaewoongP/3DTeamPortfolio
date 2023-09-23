@@ -12,9 +12,10 @@ int				g_iClipChannel;
 vector			g_vColor = vector(1.f, 1.f, 1.f, 1.f);
 
 /// For.TextureSheetAnimation //
+bool g_isUseNormalTexture = false;
+bool g_isUseGradientTexture = false;
 unsigned int g_iWidthLength = 1;
 unsigned int g_iHeightLength = 1;
-bool g_isUseNormalTexture = false;
 texture2D g_NormalTexture;
 ////////////////////////////////
 
@@ -101,6 +102,7 @@ struct PS_OUT
 PS_OUT	PS_MAIN(PS_IN In)
 {
 	PS_OUT		Out = (PS_OUT)0;
+
     float4 vNormalColor = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
     float2 vGradientUV = float2(vNormalColor.r,0);
     float4 vGradientColor = g_GradientTexture.Sample(LinearSampler, vGradientUV);
@@ -119,11 +121,18 @@ PS_OUT	PS_MAIN(PS_IN In)
 		Out.vColor.a = vClipTexture.a;
 	
 	Out.vColor *= (In.vColor);
-    // r는 색상 피킹용도
-	Out.vColor *= (vGradientColor);
-    // g는 세기용도
-	Out.vColor *= 1 / (1 - vNormalColor.g);
-	// b는 모르
+	
+    if (g_isUseGradientTexture)
+    {
+		 // r는 색상 피킹용도
+        Out.vColor *= (vGradientColor);
+    }
+	
+    if (g_isUseGradientTexture)
+    {
+		// g는 세기용도
+        Out.vColor *= 1 / (1 - vNormalColor.g);
+    }
 	
 	if (Out.vColor.a < g_fClipThreshold)
 		discard;
@@ -136,7 +145,7 @@ technique11		DefaultTechnique
 	pass Default
 	{
 		SetRasterizerState(RS_Cull_None);
-		SetDepthStencilState(DSS_Default, 0);
+		SetDepthStencilState(DSS_Alpha, 0);
 		SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		VertexShader = compile vs_5_0 VS_MAIN();
 		GeometryShader = NULL;

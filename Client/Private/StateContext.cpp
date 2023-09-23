@@ -142,7 +142,7 @@ HRESULT CStateContext::Ready_StateMachine()
 
 	if (FAILED(Add_StateMachine(TEXT("Idle"),
 		static_cast<CStateMachine*>
-		(pGameInstance->Clone_Component(LEVEL_MAINGAME,
+		(pGameInstance->Clone_Component(LEVEL_STATIC,
 			TEXT("Prototype_Component_State_Idle"))))))
 	{
 		ENDINSTANCE;
@@ -154,7 +154,7 @@ HRESULT CStateContext::Ready_StateMachine()
 
 	if (FAILED(Add_StateMachine(TEXT("Move Turn"),
 		static_cast<CStateMachine*>
-		(pGameInstance->Clone_Component(LEVEL_MAINGAME,
+		(pGameInstance->Clone_Component(LEVEL_STATIC,
 			TEXT("Prototype_Component_State_Move_Turn"))))))
 	{
 		ENDINSTANCE;
@@ -166,7 +166,7 @@ HRESULT CStateContext::Ready_StateMachine()
 
 	if (FAILED(Add_StateMachine(TEXT("Move Start"),
 		static_cast<CStateMachine*>
-		(pGameInstance->Clone_Component(LEVEL_MAINGAME,
+		(pGameInstance->Clone_Component(LEVEL_STATIC,
 			TEXT("Prototype_Component_State_Move_Start"))))))
 	{
 		ENDINSTANCE;
@@ -178,7 +178,7 @@ HRESULT CStateContext::Ready_StateMachine()
 
 	if (FAILED(Add_StateMachine(TEXT("Move Loop"),
 		static_cast<CStateMachine*>
-		(pGameInstance->Clone_Component(LEVEL_MAINGAME,
+		(pGameInstance->Clone_Component(LEVEL_STATIC,
 			TEXT("Prototype_Component_State_Move_Loop"))))))
 	{
 		ENDINSTANCE;
@@ -190,7 +190,7 @@ HRESULT CStateContext::Ready_StateMachine()
 
 	if (FAILED(Add_StateMachine(TEXT("Roll"),
 		static_cast<CStateMachine*>
-		(pGameInstance->Clone_Component(LEVEL_MAINGAME,
+		(pGameInstance->Clone_Component(LEVEL_STATIC,
 			TEXT("Prototype_Component_State_Roll"))))))
 	{
 		ENDINSTANCE;
@@ -202,7 +202,7 @@ HRESULT CStateContext::Ready_StateMachine()
 
 	if (FAILED(Add_StateMachine(TEXT("Jump"),
 		static_cast<CStateMachine*>
-		(pGameInstance->Clone_Component(LEVEL_MAINGAME,
+		(pGameInstance->Clone_Component(LEVEL_STATIC,
 			TEXT("Prototype_Component_State_Jump"))))))
 	{
 		ENDINSTANCE;
@@ -214,7 +214,7 @@ HRESULT CStateContext::Ready_StateMachine()
 
 	if (FAILED(Add_StateMachine(TEXT("Hard Land"),
 		static_cast<CStateMachine*>
-		(pGameInstance->Clone_Component(LEVEL_MAINGAME,
+		(pGameInstance->Clone_Component(LEVEL_STATIC,
 			TEXT("Prototype_Component_State_Hard_Land"))))))
 	{
 		ENDINSTANCE;
@@ -226,7 +226,7 @@ HRESULT CStateContext::Ready_StateMachine()
 
 	if (FAILED(Add_StateMachine(TEXT("Magic_Cast"),
 		static_cast<CStateMachine*>
-		(pGameInstance->Clone_Component(LEVEL_MAINGAME,
+		(pGameInstance->Clone_Component(LEVEL_STATIC,
 			TEXT("Prototype_Component_State_Magic_Casting"))))))
 	{
 		ENDINSTANCE;
@@ -238,7 +238,7 @@ HRESULT CStateContext::Ready_StateMachine()
 	
 	if (FAILED(Add_StateMachine(TEXT("Protego"),
 		static_cast<CStateMachine*>
-		(pGameInstance->Clone_Component(LEVEL_MAINGAME,
+		(pGameInstance->Clone_Component(LEVEL_STATIC,
 			TEXT("Prototype_Component_State_ProtegoState"))))))
 	{
 		ENDINSTANCE;
@@ -248,7 +248,20 @@ HRESULT CStateContext::Ready_StateMachine()
 		return E_FAIL;
 	};
 
-	
+	if (FAILED(Add_StateMachine(TEXT("Hit"),
+		static_cast<CStateMachine*>
+		(pGameInstance->Clone_Component(LEVEL_STATIC,
+			TEXT("Prototype_Component_State_Hit"))))))
+	{
+		ENDINSTANCE;
+
+		MSG_BOX("Failed Ready_StateMachine");
+
+		return E_FAIL;
+	};
+
+
+
 
 	Set_StateMachine(TEXT("Idle"));
 

@@ -17,6 +17,7 @@ public:
 
 public:
 	_uint Get_NumMeshes() const;
+	vector<CMesh*>* Get_MeshesVec() { return m_pCurrentModel->Get_MeshesVec(); }
 	HRESULT Bind_BoneMatrices(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex);
 	HRESULT Bind_Material(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex, Engine::TextureType MaterialType);
 	void Set_MaxLodDistance(_float fMaxDistance) { m_fMaxLodDistance = fMaxDistance; }

@@ -34,8 +34,6 @@ private:
 
 public:
 	void Tick(_float _TimeDelta);
-	void Late_Tick(_float _TimeDelta);
-
 
 public:
 	//엔진 초기화
@@ -68,6 +66,8 @@ public:
 	//중지
 	void Stop_CutScene();
 
+	//카메라, 컷씬 초기화
+	HRESULT Clear();
 
 
 	//for.protected

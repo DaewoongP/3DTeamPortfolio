@@ -13,9 +13,13 @@ namespace Engine
 
 	enum COLLISIONFLAG
 	{
-		COL_PLAYER = 1 << 0,
-		COL_ENEMY = 1 << 1,
-		// COL~~ = 1 << 2,
+		COL_PLAYER			= 1 << 0,
+		COL_ENEMY			= 1 << 1,
+		COL_ENEMY_RANGE		= 1 << 2,
+		COL_NPC				= 1 << 3,
+		COL_NPC_RANGE		= 1	<< 4,
+		COL_WEAPON			= 1 << 5,
+		// COL~~ = 1 << 6,
 		// ... 계속 추가해주시면 됩니다!! 숫자만 계속 증가시켜주세요
 
 		COL_TEST = 1 << 29, // 충돌 가능한 최대치입니다. 지우고 추가하셔도 됩니다.

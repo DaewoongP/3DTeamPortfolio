@@ -48,6 +48,8 @@ private:
 
     _uint m_iBasicSpellRandom{ 0 };
 
+    _bool m_isLastBasicSpellBack = { false };
+
 private:
     void Initialize_BasicSpell_Combo();
 
@@ -69,6 +71,8 @@ private:
     
 
     void Go_Idle();
+
+    void Go_Roll();
 
 
 public:

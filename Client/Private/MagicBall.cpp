@@ -77,6 +77,65 @@ void CMagicBall::Tick(_float fTimeDelta)
 	//시간이 흐름.
 	if (m_MagicBallDesc.fLifeTime > 0)
 		m_MagicBallDesc.fLifeTime -= fTimeDelta;
+
+	//매직볼 상태에 따른 처리
+	switch (m_eMagicBallState)
+	{
+		case Client::CMagicBall::MAGICBALL_STATE_BEGIN:
+		{
+			if (m_isFirstFrameInState)
+			{
+				Ready_Begin();
+				m_isFirstFrameInState = false;
+			}
+				
+			Tick_Begin(fTimeDelta);
+			break;
+		}
+		
+		case Client::CMagicBall::MAGICBALL_STATE_DRAWTRAIL:
+		{
+			if (m_isFirstFrameInState)
+			{
+				Ready_DrawMagic();
+				m_isFirstFrameInState = false;
+			}
+				
+			Tick_DrawMagic(fTimeDelta);
+			break;
+		}
+		
+		case Client::CMagicBall::MAGICBALL_STATE_CASTMAGIC:
+		{
+			if (m_isFirstFrameInState)
+			{
+				Ready_CastMagic();
+				m_isFirstFrameInState = false;
+			}
+				
+			Tick_CastMagic(fTimeDelta);
+			break;
+		}
+		
+		case Client::CMagicBall::MAGICBALL_STATE_DYING:
+		{
+			if (m_isFirstFrameInState)
+			{
+				Ready_Dying();
+				m_isFirstFrameInState = false;
+			}
+				
+			Tick_Dying(fTimeDelta);
+			break;
+		}
+		
+		case Client::CMagicBall::MAGICBALL_STATE_END:
+		{
+			cout << "마법 죽어요" << endl;
+			Set_ObjEvent(OBJ_DEAD);
+			break;
+		}
+	}
 }
 
 void CMagicBall::Late_Tick(_float fTimeDelta)
@@ -141,6 +200,7 @@ HRESULT CMagicBall::Add_RigidBody()
 	RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 0.f, 1.f);
 	RigidBodyDesc.isGravity = false;
 	RigidBodyDesc.pOwnerObject = this;
+	RigidBodyDesc.eCollisionFlag = COL_ALL;
 	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Magic_Ball");
 
 	/* Com_RigidBody */
