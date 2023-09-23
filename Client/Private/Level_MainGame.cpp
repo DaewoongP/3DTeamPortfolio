@@ -621,7 +621,7 @@ HRESULT CLevel_MainGame::Ready_Layer_UI(const _tchar* pLayerTag)
 
 	CUI_Group_Enemy_HP::ENEMYHPDESC  Desc;
 	_tchar szLevel[MAX_PATH] = TEXT("77");
-	_tchar szName[MAX_PATH] = TEXT("��ö��");
+	_tchar szName[MAX_PATH] = TEXT("개철민");
 
 	Desc.eType = CUI_Group_Enemy_HP::ENEMYTYPE::BOSS;
 	lstrcpy(Desc.wszObjectLevel, szLevel);
