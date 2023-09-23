@@ -256,21 +256,21 @@ HRESULT CField_Guide::Create_First(void* pArg)
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Back"), TEXT("Layer_FieldGuide_UI"), TEXT("Com_UI_Effect_Back_FieldGuide_Back"))))
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Back"), TEXT("Layer_FieldGuide_UI"), TEXT("Com_UI_Effect_Back_FieldGuide_Back"))))
 	{
 		MSG_BOX("Com_FieldGuide : Failed Clone Component (Com_UI_Effect_Back_FieldGuide_Back)");
 		Safe_Release(pGameInstance);
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Effect_Back"), TEXT("Layer_FieldGuide_UI"), TEXT("Com_UI_Effect_Back_FieldGuide_House"))))
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Effect_Back"), TEXT("Layer_FieldGuide_UI"), TEXT("Com_UI_Effect_Back_FieldGuide_House"))))
 	{
 		MSG_BOX("Com_FieldGuide : Failed Clone Component (Com_UI_Effect_Back_FieldGuide_House)");
 		Safe_Release(pGameInstance);
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Effect_Back"), TEXT("Layer_FieldGuide_UI"), TEXT("Com_UI_Effect_Back_FieldGuide_Rayburst"))))
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Effect_Back"), TEXT("Layer_FieldGuide_UI"), TEXT("Com_UI_Effect_Back_FieldGuide_Rayburst"))))
 	{
 		MSG_BOX("Com_FieldGuide : Failed Clone Component (Com_UI_Effect_Back_FieldGuide_Rayburst");
 		Safe_Release(pGameInstance);
@@ -322,18 +322,18 @@ HRESULT CField_Guide::Create_BackGround()
 	ReadFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
 	ReadFile(hFile, szGroupName, dwStrByte, &dwByte, nullptr);
 
-	CUI_Back* pBack = dynamic_cast<CUI_Back*>(pGameInstance->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_FieldGuide_UI"), TEXT("Com_UI_Effect_Back_FieldGuide_Back")));
+	CUI_Back* pBack = dynamic_cast<CUI_Back*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_FieldGuide_UI"), TEXT("Com_UI_Effect_Back_FieldGuide_Back")));
 	pBack->Load(Load_File(hFile));
 
 	_uint iSize = { 0 };
 	ReadFile(hFile, &iSize, sizeof(_uint), &dwByte, nullptr);
 
-	CUI_Effect_Back* pHouse = dynamic_cast<CUI_Effect_Back*>(pGameInstance->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_FieldGuide_UI"), TEXT("Com_UI_Effect_Back_FieldGuide_House")));
+	CUI_Effect_Back* pHouse = dynamic_cast<CUI_Effect_Back*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_FieldGuide_UI"), TEXT("Com_UI_Effect_Back_FieldGuide_House")));
 	pHouse->Load(Load_File(hFile));
 	pHouse->Set_Parent(pBack);
 	pHouse->Set_Effecttype(CUI_Effect_Back::ALPHA);
 
-	CUI_Effect_Back* pRayburst = dynamic_cast<CUI_Effect_Back*>(pGameInstance->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_FieldGuide_UI"), TEXT("Com_UI_Effect_Back_FieldGuide_Rayburst")));
+	CUI_Effect_Back* pRayburst = dynamic_cast<CUI_Effect_Back*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_FieldGuide_UI"), TEXT("Com_UI_Effect_Back_FieldGuide_Rayburst")));
 	pRayburst->Load(Load_File(hFile));
 	pRayburst->Set_Parent(pBack);
 	pRayburst->Set_Effecttype(CUI_Effect_Back::ALPHA);

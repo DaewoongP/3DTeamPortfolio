@@ -34,22 +34,19 @@ HRESULT CUI_Group_R::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	BEGININSTANCE
+	BEGININSTANCE;
 
-		_tchar wszGroupName[MAX_PATH] = TEXT("");
+	_tchar wszGroupName[MAX_PATH] = TEXT("");
 	DWORD dwStrByte;
 	DWORD dwByte = 0;
 	ReadFile(pArg, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
 	ReadFile(pArg, wszGroupName, dwStrByte, &dwByte, nullptr);
 
-	pGameInstance->Add_Component(LEVEL_CLIFFSIDE, m_ProtoTypeTags[0], TEXT("Layer_UI"),
+	pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_STATIC, m_ProtoTypeTags[0], TEXT("Layer_UI"),
 		TEXT("GameObject_UI_Potion"), pArg);
 
-	CUI* pUI = dynamic_cast<CUI*>(pGameInstance->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_UI"), TEXT("GameObject_UI_HP_Potion")));
-	//m_pParent = pUI;
-	//Safe_AddRef(m_pParent);
+	CUI* pUI = dynamic_cast<CUI*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_UI"), TEXT("GameObject_UI_HP_Potion")));
 	pUI = nullptr;
-
 
 	ENDINSTANCE;
 
@@ -69,23 +66,23 @@ void CUI_Group_R::Late_Tick(_float fTimeDelta)
 
 HRESULT CUI_Group_R::Add_ProtoType()
 {
-	BEGININSTANCE
+	BEGININSTANCE;
 
-		_tchar pName[MAX_PATH] = TEXT("");
+	_tchar pName[MAX_PATH] = TEXT("");
 	lstrcpy(pName, TEXT("Prototype_GameObject_UI_Back"));
 
-	CComponent* pComponent = pGameInstance->Find_Prototype(LEVEL_CLIFFSIDE, pName);
+	CComponent* pComponent = pGameInstance->Find_Prototype(LEVEL_STATIC, pName);
 
 	if (nullptr == pComponent)
 	{
-		pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, pName, CUI_Back::Create(m_pDevice, m_pContext));
+		pGameInstance->Add_Prototype(LEVEL_STATIC, pName, CUI_Back::Create(m_pDevice, m_pContext));
 	}
 
 	m_ProtoTypeTags.push_back(pGameInstance->Make_WChar(pName));
 
-	ENDINSTANCE
+	ENDINSTANCE;
 
-		return S_OK;
+	return S_OK;
 }
 
 CUI_Group_R* CUI_Group_R::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

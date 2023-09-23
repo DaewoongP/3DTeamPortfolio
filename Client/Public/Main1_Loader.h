@@ -56,7 +56,8 @@ private:
 
 private:
 	HRESULT Loading_For_Logo();
-	HRESULT Loading_For_MainGame();
+	HRESULT Loading_For_Cliffside();
+	HRESULT Loading_For_Vault();
 	
 private:
 	HRESULT Loading_Map_Object(const _tchar* pMapObjectPath);

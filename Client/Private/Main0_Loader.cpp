@@ -81,7 +81,10 @@ HRESULT CMain0_Loader::Loading()
 		hr = Loading_For_Logo();
 		break;
 	case LEVEL_CLIFFSIDE:
-		hr = Loading_For_MainGame();
+		hr = Loading_For_Cliffside();
+		break;
+	case LEVEL_VAULT:
+		hr = Loading_For_Vault();
 		break;
 	default:
 		MSG_BOX("Failed Load Next Level");
@@ -122,7 +125,7 @@ HRESULT CMain0_Loader::Loading_For_Logo()
 	return S_OK;
 }
 
-HRESULT CMain0_Loader::Loading_For_MainGame()
+HRESULT CMain0_Loader::Loading_For_Cliffside()
 {
 	if (nullptr == m_pGameInstance)
 		return E_FAIL;
@@ -207,48 +210,48 @@ HRESULT CMain0_Loader::Loading_For_MainGame()
 			throw TEXT("Prototype_Component_Shader_DefaultEffect");
 
 		/* --------------UI-------------- */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_HP"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_HP"),
 			CUI_Group_HP::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_UI_Group_HP");
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_UI_Progress"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_UI_Progress"),
 			CUI_Progress::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_UI_Progress");
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_Potion"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Potion"),
 			CUI_Group_Potion::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_UI_Group_Potion");
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_Finisher"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Finisher"),
 			CUI_Group_Finisher::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_UI_Group_Finisher");
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_Skill"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Skill"),
 			CUI_Group_Skill::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_UI_Group_Skill");
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_Finisher_Icon"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Finisher_Icon"),
 			CUI_Group_Finisher_Icon::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_UI_Group_Finisher_Icon");
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_Enemy_HP"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Enemy_HP"),
 			CUI_Group_Enemy_HP::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_UI_Group_Enemy_HP");
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Font"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Font"),
 			CUI_Font::Create(m_pDevice, m_pContext, TEXT("../../Resources/Fonts/NexonGothic.spritefont")))))
 			throw TEXT("Prototype_GameObject_UI_Font"); 
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_Cursor"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Cursor"),
 			CUI_Group_Cursor::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_UI_Group_Cursor");
 		/*if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_MiniMap"),
 			CUI_Group_MiniMap::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_UI_Group_MiniMap");*/
 
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_UI_Image"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_UI_Image"),
 			CUI_Image::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_UI_Image");
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_UI_Button"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_UI_Button"),
 			CUI_Button::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_UI_Button");
 
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Field_Guide"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Field_Guide"),
 			CField_Guide::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Field_Guide");
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Main_Menu"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Main_Menu"),
 			CMain_Menu::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Main_Menu");
 
@@ -290,6 +293,13 @@ HRESULT CMain0_Loader::Loading_For_MainGame()
 
 	m_isFinished = true;
 
+	return S_OK;
+}
+
+HRESULT CMain0_Loader::Loading_For_Vault()
+{
+
+	m_isFinished = true;
 	return S_OK;
 }
 

@@ -4,7 +4,7 @@
 
 BEGIN(Engine)
 class CMesh;
-class CModel_LOD;
+class CModel;
 class CShader;
 class CRenderer;
 class CRigidBody;
@@ -40,7 +40,7 @@ private:
 	CShader*		m_pShadowShader = { nullptr };
 	CRigidBody*		m_pRigidBody = { nullptr };
 	CRenderer*		m_pRenderer = { nullptr };
-	CModel_LOD*		m_pModel = { nullptr };
+	CModel*			m_pModel = { nullptr };
 
 private:
 	_bool			m_isCull = { true }; // 스케일 값에 따라 어떤 Cull 방식을 선택할지 정하는 변수

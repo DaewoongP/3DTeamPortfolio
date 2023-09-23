@@ -88,7 +88,10 @@ HRESULT CMain1_Loader::Loading()
 		hr = Loading_For_Logo();
 		break;
 	case LEVEL_CLIFFSIDE:
-		hr = Loading_For_MainGame();
+		hr = Loading_For_Cliffside();
+		break;
+	case LEVEL_VAULT:
+		hr = Loading_For_Vault();
 		break;
 	default:
 		MSG_BOX("Failed Load Next Level");
@@ -110,7 +113,7 @@ HRESULT CMain1_Loader::Loading_For_Logo()
 	return S_OK;
 }
 
-HRESULT CMain1_Loader::Loading_For_MainGame()
+HRESULT CMain1_Loader::Loading_For_Cliffside()
 {
 	if (nullptr == m_pGameInstance)
 		return E_FAIL;
@@ -127,11 +130,11 @@ HRESULT CMain1_Loader::Loading_For_MainGame()
 			CTerrain::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Terrain");
 
-		if (FAILED(Loading_Map_Object(TEXT("../../Resources/GameData/MapData/MapData1.ddd"))))
+		if (FAILED(Loading_Map_Object(TEXT("../../Resources/GameData/MapData/MapData0.ddd"))))
 			throw TEXT("Map Object");
 
-		if (FAILED(Loading_Map_Object_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins1.ddd"))))
-			throw TEXT("Map Object_Ins");
+		/*if (FAILED(Loading_Map_Object_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins1.ddd"))))
+			throw TEXT("Map Object_Ins");*/
 
 		/* For.Prototype_Component_CharacterController*/
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_CharacterController"),
@@ -311,7 +314,7 @@ HRESULT CMain1_Loader::Loading_For_MainGame()
 #pragma endregion
 
 		/* For.Prototype_GameObject_MagicSlot */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_MagicSlot"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_MagicSlot"),
 			CMagicSlot::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_MagicSlot");
 	}
@@ -323,6 +326,13 @@ HRESULT CMain1_Loader::Loading_For_MainGame()
 		return E_FAIL;
 	}
 
+	m_isFinished = true;
+
+	return S_OK;
+}
+
+HRESULT CMain1_Loader::Loading_For_Vault()
+{
 	m_isFinished = true;
 
 	return S_OK;
@@ -382,7 +392,6 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath)
 		}
 		BEGININSTANCE;
 
-		// ������Ÿ�� ���� �κ�
 		wstring ws(LoadDesc.wszTag);
 		size_t findIndex = ws.find(TEXT("Model_")) + 6;
 
@@ -395,25 +404,9 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath)
 		wstring szDirectoryPath = modelPath;
 		modelPath += modelName;
 		modelPath += TEXT(".dat");
-
-
-		_uint iNumLods = 0;
-
-		for (const auto& entry : fs::directory_iterator(szDirectoryPath)) {
-			if (entry.exists() &&
-				(!lstrcmp(entry.path().extension().c_str(), TEXT(".dat"))))
-			{
-				++iNumLods;
-			}
-		}
-
-		CModel_LOD::LODDESC LodDesc;
-		LodDesc.eModelType = CModel::TYPE_NONANIM;
-		LodDesc.iLevelIndex = LEVEL_CLIFFSIDE;
-		lstrcpy(LodDesc.szPrototypeName, LoadDesc.wszTag);
-		LodDesc.PivotMatrix = XMMatrixIdentity();
+		
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, LoadDesc.wszTag,
-			CModel_LOD::Create(m_pDevice, m_pContext, LodDesc, modelPath.c_str(), iNumLods), true)))
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, modelPath.c_str()), true)))
 		{
 			MSG_BOX("Failed to Create New Model Prototype");
 		}

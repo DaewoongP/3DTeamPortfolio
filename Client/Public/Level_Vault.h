@@ -16,6 +16,9 @@ public:
 	virtual HRESULT Render();
 
 public:
+	HRESULT Ready_Layer_Player(const _tchar* pLayerTag);
+
+public:
 	static CLevel_Vault* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual void Free() override;
 };

@@ -106,8 +106,6 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 
 	m_pComponent_Manager->Late_Tick(fTimeDelta);
 
-	m_pCamera_Manager->Late_Tick(fTimeDelta);
-
 	m_pCollision_Manager->Tick();
 
 	m_pLevel_Manager->Tick(fTimeDelta);
@@ -118,6 +116,15 @@ void CGameInstance::Clear_LevelResources(_uint iLevelIndex)
 	NULL_CHECK_RETURN_MSG(m_pComponent_Manager, , TEXT("Component_Manager NULL"));
 
 	m_pComponent_Manager->Clear_LevelResources(iLevelIndex);
+}
+
+void CGameInstance::Clear_Resources()
+{
+	NULL_CHECK_RETURN_MSG(m_pCamera_Manager, , TEXT("Camera_Manager NULL"));
+	NULL_CHECK_RETURN_MSG(m_pTimer_Manager, , TEXT("Timer_Manager NULL"));
+
+	m_pCamera_Manager->Clear();
+	m_pTimer_Manager->Clear();
 }
 
 _float2 CGameInstance::Get_ViewPortSize(ID3D11DeviceContext* pContext)
@@ -240,13 +247,6 @@ HRESULT CGameInstance::Open_Level(_uint iLevelIndex, CLevel* pNewLevel)
 	return m_pLevel_Manager->Open_Level(iLevelIndex, pNewLevel);
 }
 
-_uint CGameInstance::Get_CurrentLevelIndex() const
-{
-	NULL_CHECK_RETURN_MSG(m_pLevel_Manager, 0, TEXT("Level_Manager NULL"));
-
-	return m_pLevel_Manager->Get_CurrentLevelIndex();
-}
-
 CLevel* CGameInstance::Get_CurrentLevel()
 {
 	NULL_CHECK_RETURN_MSG(m_pLevel_Manager, nullptr, TEXT("Level_Manager NULL"));
@@ -282,11 +282,11 @@ HRESULT CGameInstance::Add_Prototype(_uint iLevelIndex, const _tchar* pPrototype
 	return m_pComponent_Manager->Add_Prototype(iLevelIndex, pPrototypeTag, pPrototype, isFailedSkip);
 }
 
-HRESULT CGameInstance::Add_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, const _tchar* pLayerTag, const _tchar* pComponentTag, void* pArg)
+HRESULT CGameInstance::Add_Component(_uint iPrototypeLevelIndex, _uint iLevelIndex, const _tchar* pPrototypeTag, const _tchar* pLayerTag, const _tchar* pComponentTag, void* pArg)
 {
 	NULL_CHECK_RETURN_MSG(m_pComponent_Manager, E_FAIL, TEXT("Component_Manager NULL"));
 
-	return m_pComponent_Manager->Add_Component(iLevelIndex, pPrototypeTag, pLayerTag, pComponentTag, pArg);
+	return m_pComponent_Manager->Add_Component(iPrototypeLevelIndex, iLevelIndex, pPrototypeTag, pLayerTag, pComponentTag, pArg);
 }
 
 CComponent* CGameInstance::Clone_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, void* pArg)

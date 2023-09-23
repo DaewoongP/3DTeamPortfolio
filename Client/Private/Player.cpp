@@ -70,6 +70,11 @@ HRESULT CPlayer::Initialize(void* pArg)
 	return S_OK;
 }
 
+HRESULT CPlayer::Initialize_Level(_uint iCurrentLevelIndex)
+{
+	return S_OK;
+}
+
 void CPlayer::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
@@ -202,7 +207,7 @@ HRESULT CPlayer::Add_Components()
 	}
 
 	/* For.Com_Model_CustomModel_Player */
-	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_Model_CustomModel_Player"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Model_CustomModel_Player"),
 		TEXT("Com_Model_CustomModel_Player"), reinterpret_cast<CComponent**>(&m_pCustomModel))))
 	{
 		MSG_BOX("Failed CPlayer Add_Component : (Com_Model_CustomModel_Player)");
@@ -218,7 +223,7 @@ HRESULT CPlayer::Add_Components()
 	StateContextDesc.pTargetAngle = &m_fTargetAngle;
 
 	/* For.Com_StateContext */
-	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_StateContext"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_StateContext"),
 		TEXT("Com_StateContext"), reinterpret_cast<CComponent**>(&m_pStateContext),&StateContextDesc)))
 	{
 		MSG_BOX("Failed CPlayer Add_Component : (Com_StateContext)");
@@ -235,11 +240,11 @@ HRESULT CPlayer::Add_Components()
 	ParentMatrixDesc.pCombindTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
 	ParentMatrixDesc.pParentWorldMatrix = m_pTransform->Get_WorldMatrixPtr();
 
-	if (FAILED(Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_Weapon_Player_Wand"),
+	if (FAILED(Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Weapon_Player_Wand"),
 		TEXT("Com_Weapon"), reinterpret_cast<CComponent**>(&m_pWeapon), &ParentMatrixDesc)))
 		throw TEXT("Com_Weapon");
 
-	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_MagicSlot"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_MagicSlot"),
 		TEXT("Com_MagicSlot"), reinterpret_cast<CComponent**>(&m_pMagicSlot))))
 	{
 		MSG_BOX("Failed CPlayer Add_Component : (Com_MagicSlot)");
@@ -276,6 +281,7 @@ HRESULT CPlayer::Add_Components()
 
 	m_OffsetMatrix = XMMatrixTranslation(RigidBodyDesc.vOffsetPosition.x, RigidBodyDesc.vOffsetPosition.y, RigidBodyDesc.vOffsetPosition.z);
 	m_pRigidBody->Get_RigidBodyActor()->setAngularDamping(1.f);
+
 	return S_OK;
 }
 
@@ -403,7 +409,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 	if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
 	{
-		//m_pRigidBody->Add_Force(m_pTransform->Get_Up() * 20.f, PxForceMode::eIMPULSE);
+		m_pRigidBody->Add_Force(m_pTransform->Get_Up() * 10.f, PxForceMode::eIMPULSE);
 	}
 
 	//if (pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN))
@@ -472,7 +478,7 @@ HRESULT CPlayer::Ready_MeshParts()
 {
 	//Head
 	if (FAILED(m_pCustomModel->Add_MeshParts(
-		LEVEL_CLIFFSIDE,
+		LEVEL_STATIC,
 		TEXT("Prototype_Component_MeshPart_Player_Head"),
 		CCustomModel::HEAD)))
 	{
@@ -483,7 +489,7 @@ HRESULT CPlayer::Ready_MeshParts()
 
 	//Arm
 	if (FAILED(m_pCustomModel->Add_MeshParts(
-		LEVEL_CLIFFSIDE, 
+		LEVEL_STATIC,
 		TEXT("Prototype_Component_MeshPart_Player_Arm"),
 		CCustomModel::ARM)))
 	{
@@ -494,7 +500,7 @@ HRESULT CPlayer::Ready_MeshParts()
 
 	//Robe
 	if (FAILED(m_pCustomModel->Add_MeshParts(
-		LEVEL_CLIFFSIDE,
+		LEVEL_STATIC,
 		TEXT("Prototype_Component_MeshPart_Robe01"),
 		CCustomModel::ROBE, TEXT("../../Resources/GameData/ClothData/Test.cloth"))))
 	{
@@ -505,7 +511,7 @@ HRESULT CPlayer::Ready_MeshParts()
 
 	//Top
 	if (FAILED(m_pCustomModel->Add_MeshParts(
-		LEVEL_CLIFFSIDE,
+		LEVEL_STATIC,
 		TEXT("Prototype_Component_MeshPart_Player_Top"),
 		CCustomModel::TOP)))
 	{
@@ -516,7 +522,7 @@ HRESULT CPlayer::Ready_MeshParts()
 
 	//Pants
 	if (FAILED(m_pCustomModel->Add_MeshParts(
-		LEVEL_CLIFFSIDE,
+		LEVEL_STATIC,
 		TEXT("Prototype_Component_MeshPart_Player_Pants"),
 		CCustomModel::PANTS)))
 	{
@@ -527,7 +533,7 @@ HRESULT CPlayer::Ready_MeshParts()
 
 	//Socks
 	if (FAILED(m_pCustomModel->Add_MeshParts(
-		LEVEL_CLIFFSIDE,
+		LEVEL_STATIC,
 		TEXT("Prototype_Component_MeshPart_Player_Socks"),
 		CCustomModel::SOCKS)))
 	{
@@ -538,7 +544,7 @@ HRESULT CPlayer::Ready_MeshParts()
 
 	//Shoes
 	if (FAILED(m_pCustomModel->Add_MeshParts(
-		LEVEL_CLIFFSIDE,
+		LEVEL_STATIC,
 		TEXT("Prototype_Component_MeshPart_Player_Shoes"),
 		CCustomModel::SHOES)))
 	{
@@ -566,8 +572,7 @@ HRESULT CPlayer::Ready_Camera()
 	CPlayer_Camera::PLAYERCAMERADESC PlayerCameraDesc;
 
 	PlayerCameraDesc.CameraDesc = CameraDesc;
-	//PlayerCameraDesc.pFollowTargetBoneMatrix = m_pCustomModel->Get_BoneCombinedTransformationMatrixPtr(iBoneIndex);
-	PlayerCameraDesc.pFollowTargetMatrix = m_pTransform->Get_WorldMatrixPtr();
+	PlayerCameraDesc.pPlayerTransform = m_pTransform;
 
 	m_pPlayer_Camera = CPlayer_Camera::Create(m_pDevice,m_pContext, &PlayerCameraDesc);
 

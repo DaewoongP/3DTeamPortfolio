@@ -413,7 +413,7 @@ HRESULT CProfessor_Fig::Add_Components()
 			throw TEXT("Com_Weapon");
 
 		/* For.MagicSlot */
-		if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_MagicSlot"),
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_MagicSlot"),
 			TEXT("Com_MagicSlot"), reinterpret_cast<CComponent**>(&m_pMagicSlot))))
 		{
 			MSG_BOX("Failed CTest_Player Add_Component : (Com_MagicSlot)");

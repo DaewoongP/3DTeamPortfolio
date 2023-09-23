@@ -11,6 +11,19 @@ HRESULT CLevel_Vault::Initialize()
     if (FAILED(__super::Initialize()))
         return E_FAIL;
 
+	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
+	{
+		MSG_BOX("Failed Ready_Layer_Player");
+
+		return E_FAIL;
+	}
+
+	BEGININSTANCE;
+
+	pGameInstance->Reset_World_TimeAcc();
+	pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
+	ENDINSTANCE;
+
     return S_OK;
 }
 
@@ -40,6 +53,22 @@ HRESULT CLevel_Vault::Render()
 {
 	if (FAILED(__super::Render()))
 		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CLevel_Vault::Ready_Layer_Player(const _tchar* pLayerTag)
+{
+	BEGININSTANCE;
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_VAULT, TEXT("Prototype_GameObject_Player"), pLayerTag, TEXT("GameObject_Player"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Player)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
 
 	return S_OK;
 }

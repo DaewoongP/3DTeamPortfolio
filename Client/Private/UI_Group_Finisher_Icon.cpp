@@ -57,7 +57,7 @@ HRESULT CUI_Group_Finisher_Icon::Add_Prototype()
 {
 	BEGININSTANCE;
 
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Back"),
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Back"),
 		CUI_Back::Create(m_pDevice, m_pContext), true)))
 	{
 		ENDINSTANCE;
@@ -73,7 +73,7 @@ HRESULT CUI_Group_Finisher_Icon::Add_Components()
 {
 	BEGININSTANCE;
 
-	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Back"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Back"),
 		TEXT("Com_UI_Finisher_Icon"), reinterpret_cast<CComponent**>(&m_pUI_Back))))
 	{
 		MSG_BOX("Com_UI_Group_Finisher_Icon : Failed Clone Component (Com_UI_Finisher_Icon)");

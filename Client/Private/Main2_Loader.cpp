@@ -76,7 +76,10 @@ HRESULT CMain2_Loader::Loading()
 		hr = Loading_For_Logo();
 		break;
 	case LEVEL_CLIFFSIDE:
-		hr = Loading_For_MainGame();
+		hr = Loading_For_Cliffside();
+		break;
+	case LEVEL_VAULT:
+		hr = Loading_For_Vault();
 		break;
 	default:
 		MSG_BOX("Failed Load Next Level");
@@ -101,7 +104,7 @@ HRESULT CMain2_Loader::Loading_For_Logo()
 	return S_OK;
 }
 
-HRESULT CMain2_Loader::Loading_For_MainGame()
+HRESULT CMain2_Loader::Loading_For_Cliffside()
 {
 	if (nullptr == m_pGameInstance)
 		return E_FAIL;
@@ -141,11 +144,11 @@ HRESULT CMain2_Loader::Loading_For_MainGame()
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Pensive_Flail/Pensive_Flail.dat"), PivotMatrix))))
 			throw TEXT("Prototype_Component_Model_Weopon_Pensive");
 
-		/* For.Prototype_Component_Model_Weopon_Player_Wand */
+		/* For.Prototype_Component_Model_Weapon_Player_Wand */
 		PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f));
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_Model_Weopon_Player_Wand"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Model_Weapon_Player_Wand"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/gaechul/gaechul.dat"), PivotMatrix))))
-			throw TEXT("Prototype_Component_Model_Weopon_Player_Wand");
+			throw TEXT("Prototype_Component_Model_Weapon_Player_Wand");
 
 		/* For.Prototype_Component_Model_Weopon_Fig_Wand */
 		PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f));
@@ -229,6 +232,13 @@ HRESULT CMain2_Loader::Loading_For_MainGame()
 		return E_FAIL;
 	}
 
+	m_isFinished = true;
+
+	return S_OK;
+}
+
+HRESULT CMain2_Loader::Loading_For_Vault()
+{
 	m_isFinished = true;
 
 	return S_OK;

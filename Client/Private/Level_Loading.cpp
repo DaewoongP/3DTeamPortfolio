@@ -1,12 +1,13 @@
 #include "..\Public\Level_Loading.h"
+#include "GameInstance.h"
 #include "Main0_Loader.h"
 #include "Main1_Loader.h"
 #include "Main2_Loader.h"
 #include "Main3_Loader.h"
 
 #include "Level_Logo.h"
-#include "GameInstance.h"
 #include "Level_CliffSide.h"
+#include "Level_Vault.h"
 
 CLevel_Loading::CLevel_Loading(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CLevel(pDevice, pContext)
@@ -30,7 +31,14 @@ HRESULT CLevel_Loading::Initialize(LEVELID eNextLevelID)
 		}
 		break;
 	case LEVEL_CLIFFSIDE:
-		if (FAILED(Loading_MainGame(TEXT("Layer_MainGame"))))
+		if (FAILED(Loading_Cliffside(TEXT("Layer_CliffSide"))))
+		{
+			MSG_BOX("Failed Loading MainGame Object");
+			return E_FAIL;
+		}
+		break;
+	case LEVEL_VAULT:
+		if (FAILED(Loading_Vault(TEXT("Layer_Vault"))))
 		{
 			MSG_BOX("Failed Loading MainGame Object");
 			return E_FAIL;
@@ -92,6 +100,11 @@ void CLevel_Loading::Tick(_float fTimeDelta)
 			false == m_pMain3_Loader->Get_Finished())
 			return;
 
+		CGameInstance* pGameInstance = CGameInstance::GetInstance();
+		Safe_AddRef(pGameInstance);
+
+		pGameInstance->Clear_Resources();
+
 		CLevel* pLevel = { nullptr };
 
 		switch (m_eNextLevelID)
@@ -102,16 +115,20 @@ void CLevel_Loading::Tick(_float fTimeDelta)
 		case LEVEL_CLIFFSIDE:
 			pLevel = CLevel_Cliffside::Create(m_pDevice, m_pContext);
 			break;
+		case LEVEL_VAULT:
+			pLevel = CLevel_Vault::Create(m_pDevice, m_pContext);
+			break;
 		default:
 			MSG_BOX("Failed Create Next Level");
+			__debugbreak();
 			break;
 		}
 
 		if (nullptr == pLevel)
+		{
+			Safe_Release(pGameInstance);
 			return;
-
-		CGameInstance* pGameInstance = CGameInstance::GetInstance();
-		Safe_AddRef(pGameInstance);
+		}
 
 		if (FAILED(pGameInstance->Open_Level(m_eNextLevelID, pLevel)))
 		{
@@ -145,13 +162,13 @@ HRESULT CLevel_Loading::Loading_Logo(const _tchar* pLayerTag)
 	return S_OK;
 }
 
-HRESULT CLevel_Loading::Loading_MainGame(const _tchar* pLayerTag)
+HRESULT CLevel_Loading::Loading_Cliffside(const _tchar* pLayerTag)
 {
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
+	return S_OK;
+}
 
-	Safe_Release(pGameInstance);
-
+HRESULT CLevel_Loading::Loading_Vault(const _tchar* pLayerTag)
+{
 	return S_OK;
 }
 

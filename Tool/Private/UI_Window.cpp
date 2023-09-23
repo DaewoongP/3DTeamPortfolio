@@ -509,7 +509,7 @@ void CUI_Window::Create_UI(UI_Tree* pTree)
 	lstrcpy(UIDesc.m_wszTexturePath, pTree->m_wstrName.c_str());
 
 	// Dummy UI Object »ý¼º.
-	if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, TEXT("ProtoType_GameObject_Dummy_UI"),
+	if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, LEVEL_TOOL, TEXT("ProtoType_GameObject_Dummy_UI"),
 		TEXT("Layer_Tool_UI"), wszGameObjectTag, &UIDesc)))
 	{
 		MSG_BOX("Failed to Created CDummy_UI Clone");
@@ -873,7 +873,7 @@ void CUI_Window::Create_UI_Gruop(string _strGroupName)
 
 	CharToWChar(strGameObjectTag.c_str(), wszGameObjectTag);
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, TEXT("ProtoType_Component_Dummy_UI_Gruop"),
+	if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, LEVEL_TOOL, TEXT("ProtoType_Component_Dummy_UI_Gruop"),
 		TEXT("Layer_Tool_UI_Group"), wszGameObjectTag, wszGroupName)))
 	{
 		MSG_BOX("Failed to Created CDummy_UI Clone");
@@ -1250,7 +1250,7 @@ HRESULT CUI_Window::Load(_tchar* pFilePath)
 
 	BEGININSTANCE
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, TEXT("ProtoType_Component_Dummy_UI_Gruop"),
+	if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, LEVEL_TOOL, TEXT("ProtoType_Component_Dummy_UI_Gruop"),
 		TEXT("Layer_Tool_UI_Group"), wszGameObjectTag, wszGroupName)))
 	{
 		MSG_BOX("Failed to Created CDummy_UI_Group Clone");
@@ -1263,7 +1263,7 @@ HRESULT CUI_Window::Load(_tchar* pFilePath)
 	ZeroMemory(wszGameObjectTag, sizeof(_tchar) * MAX_PATH);
 	CharToWChar(GameObjectTag.c_str(), wszGameObjectTag);
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, TEXT("ProtoType_GameObject_Dummy_UI"),
+	if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, LEVEL_TOOL, TEXT("ProtoType_GameObject_Dummy_UI"),
 		TEXT("Layer_Tool_UI"), wszGameObjectTag, hFile)))
 	{
 		MSG_BOX("Failed to Created CDummy_UI Clone");
@@ -1285,7 +1285,7 @@ HRESULT CUI_Window::Load(_tchar* pFilePath)
 		_tchar wszGameObjectTag[MAX_PATH] = TEXT("");
 		CharToWChar(GameObjectTag.c_str(), wszGameObjectTag);
 
-		if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, TEXT("ProtoType_GameObject_Dummy_UI"),
+		if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, LEVEL_TOOL, TEXT("ProtoType_GameObject_Dummy_UI"),
 			TEXT("Layer_Tool_UI"), wszGameObjectTag, hFile)))
 		{
 			MSG_BOX("Failed to Created CDummy_UI Clone");
@@ -1339,7 +1339,7 @@ HRESULT CUI_Window::Load_Data(_tchar* pFilePath)
 		_tchar wszGameObjectTag[MAX_PATH] = TEXT("");
 		CharToWChar(GameObjectTag.c_str(), wszGameObjectTag);
 
-		if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, TEXT("ProtoType_Component_Dummy_UI_Gruop"),
+		if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, LEVEL_TOOL, TEXT("ProtoType_Component_Dummy_UI_Gruop"),
 			TEXT("Layer_Tool_UI_Group"), wszGameObjectTag, wszGroupName)))
 		{
 			MSG_BOX("Failed to Created CDummy_UI Clone");
@@ -1411,7 +1411,7 @@ HRESULT CUI_Window::Load_Data(_tchar* pFilePath)
 		CharToWChar(GameObjectTag.c_str(), wszGameObjectTag);
 
 
-		if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, TEXT("ProtoType_GameObject_Dummy_UI"),
+		if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, LEVEL_TOOL, TEXT("ProtoType_GameObject_Dummy_UI"),
 			TEXT("Layer_Tool_UI"), wszGameObjectTag, &m_UIDesc)))
 		{
 			MSG_BOX("Failed to Created CDummy_UI Clone");
@@ -1497,7 +1497,7 @@ HRESULT CUI_Window::Load_Data(_tchar* pFilePath)
 			CharToWChar(GameObjectTag.c_str(), wszGameObjectTag);
 
 
-			if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, TEXT("ProtoType_GameObject_Dummy_UI"),
+			if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, LEVEL_TOOL, TEXT("ProtoType_GameObject_Dummy_UI"),
 				TEXT("Layer_Tool_UI"), wszGameObjectTag, &m_UIDesc)))
 			{
 				MSG_BOX("Failed to Created CDummy_UI Clone");
@@ -1768,7 +1768,7 @@ void CUI_Window::Create_Font()
 			CharToWChar(strFont.c_str(), wszFontTag);
 
 			BEGININSTANCE
-			if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, TEXT("ProtoType_Component_NexonGothic"),
+			if (FAILED(pGameInstance->Add_Component(LEVEL_TOOL, LEVEL_TOOL, TEXT("ProtoType_Component_NexonGothic"),
 				TEXT("Layer_Tool_Font"), wszFontTag, m_wszFontText)))
 			{
 				MSG_BOX("Failed to Created CDummy_Font Clone");

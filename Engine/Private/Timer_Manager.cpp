@@ -143,6 +143,13 @@ CTimer* CTimer_Manager::Find_Timer(const _tchar* pTimerTag)
 	return iter->second;
 }
 
+HRESULT	CTimer_Manager::Clear()
+{
+	m_Timers.clear();
+
+	return S_OK;
+}
+
 void CTimer_Manager::Free(void)
 {
 	for (auto& Pair : m_umapTimers)

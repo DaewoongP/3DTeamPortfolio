@@ -106,7 +106,7 @@ _bool CMagic::Magic_Cast(CTransform* pTarget, _float4x4 targetOffsetMatrix, cons
 	WCharToChar(m_szTagArray[m_eMagicTag], objName);
 	sprintf_s(msgBoxText, "%s%s", msgBoxText, objName);
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, componentTag, TEXT("Layer_Magic"), objTag, &ballInit)))
+	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, componentTag, TEXT("Layer_Magic"), objTag, &ballInit)))
 	{
 		MSG_BOX(msgBoxText);
 		return false;

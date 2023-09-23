@@ -80,14 +80,14 @@ HRESULT CUI_Group_Enemy_HP::Add_Prototype()
 {
 	BEGININSTANCE;
 
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Effect_Back"),
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Effect_Back"),
 		CUI_Effect_Back::Create(m_pDevice, m_pContext), true)))
 	{
 		ENDINSTANCE;
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_HP"),
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_HP"),
 		CUI_HP::Create(m_pDevice, m_pContext), true)))
 	{
 		ENDINSTANCE;
@@ -103,7 +103,7 @@ HRESULT CUI_Group_Enemy_HP::Add_Components()
 {
 	BEGININSTANCE;
 
-	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Effect_Back"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Effect_Back"),
 		TEXT("Com_UI_Enemy_HP_Frame"), reinterpret_cast<CComponent**>(&m_pUI_Effect_Back))))
 	{
 		MSG_BOX("CUI_Group_Enemy_HP : Failed Clone Component (Com_UI_MiniMap_Frame)");
@@ -112,7 +112,7 @@ HRESULT CUI_Group_Enemy_HP::Add_Components()
 	}
 
 	CUI_HP::HPTYPE eType = CUI_HP::HPTYPE::MONSTER;
-	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_HP"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_HP"),
 		TEXT("Com_UI_Enemy_HP"), reinterpret_cast<CComponent**>(&m_pUI_HP), &eType)))
 	{
 		MSG_BOX("CUI_Group_Enemy_HP : Failed Clone Component (Com_UI_MiniMap_Player)");
@@ -223,7 +223,7 @@ HRESULT CUI_Group_Enemy_HP::Add_Fonts(void* pArg)
 		Desc.m_vScale = { 0.4f, 0.4f };
 	}
 
-	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Font"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Font"),
 		TEXT("Com_UI_Font_Level"), reinterpret_cast<CComponent**>(&pLevel), &Desc)))
 	{
 		MSG_BOX("CUI_Group_Enemy_HP : Failed Clone Component (Com_UI_Font_Level)");
@@ -242,7 +242,7 @@ HRESULT CUI_Group_Enemy_HP::Add_Fonts(void* pArg)
 	Desc.m_vOrigin = { 0.f, 0.f };
 	Desc.m_vScale = { 0.5f, 0.5f };
 
-	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Font"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Font"),
 		TEXT("Com_UI_Font_Name"), reinterpret_cast<CComponent**>(&pName), &Desc)))
 	{
 		MSG_BOX("CUI_Group_Enemy_HP : Failed Clone Component (Com_UI_Font_Name)");
