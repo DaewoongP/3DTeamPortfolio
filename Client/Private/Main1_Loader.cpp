@@ -60,12 +60,12 @@ HRESULT CMain1_Loader::Initialize(LEVELID eNextLevel)
 {
 	m_eNextLevelID = eNextLevel;
 
-	// Å©¸®Æ¼ÄÃ ¼½¼Ç º¯¼ö ÃÊ±âÈ­
+	// Å©ï¿½ï¿½Æ¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­
 	InitializeCriticalSection(&m_Critical_Section);
 
-	// ¾²·¹µå ½ÃÀÛ ÇÔ¼ö È£Ãâ
-	// 3¹øÂ° ÀÎÀÚ·Î ½ÃÀÛÇÒ ÇÔ¼öÆ÷ÀÎÅÍ ´ëÀÔ.
-	// 4¹øÂ° ÀÎÀÚ·Î ½ÃÀÛÇÒ ÇÔ¼öÀÇ ¸Å°³º¯¼ö·Î ³Ö¾îÁÙ °ª ´ëÀÔ.
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½ È£ï¿½ï¿½
+	// 3ï¿½ï¿½Â° ï¿½ï¿½ï¿½Ú·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
+	// 4ï¿½ï¿½Â° ï¿½ï¿½ï¿½Ú·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½ï¿½ï¿½ ï¿½Å°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
 	m_hThread = (HANDLE)_beginthreadex(nullptr, 0, Thread_Main1, this, 0, nullptr);
 
 	if (0 == m_hThread)
@@ -81,7 +81,7 @@ HRESULT CMain1_Loader::Loading()
 {
 	FAILED_CHECK_RETURN(CoInitializeEx(nullptr, COINIT_MULTITHREADED), E_FAIL);
 
-	// Å©¸®Æ¼ÄÃ ¼½¼Ç ½ÃÀÛÇØ¼­ ´Ù¸¥ ¾²·¹µå°¡ ÀÌ ¾È¿¡ ÀÖ´Â µ¿¾È °ªÀ» º¯°æÇÏÁö ¸øÇÏ°Ô Ã³¸®.
+	// Å©ï¿½ï¿½Æ¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½å°¡ ï¿½ï¿½ ï¿½È¿ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ï°ï¿½ Ã³ï¿½ï¿½.
 	EnterCriticalSection(&m_Critical_Section);
 
 	HRESULT		hr = { 0 };
@@ -342,7 +342,7 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath)
 		return E_FAIL;
 	}
 
-	// ¸Ê ¿ÀºêÁ§Æ® ¹øÈ£
+	// ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½È£
 	_uint iObjectNum = 0;
 
 	DWORD    dwByte = 0;
@@ -376,7 +376,7 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath)
 		}
 		BEGININSTANCE;
 
-		// ÇÁ·ÎÅäÅ¸ÀÔ »ý¼º ºÎºÐ
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Îºï¿½
 		wstring ws(LoadDesc.wszTag);
 		size_t findIndex = ws.find(TEXT("Model_")) + 6;
 
@@ -435,7 +435,7 @@ HRESULT CMain1_Loader::Loading_Map_Object_Ins(const _tchar* pMapObjectInsPath)
 	}
 
 	DWORD	dwByte = 0;
-	_uint	iCount = 0; // ¸ðµ¨ ÀÎ½ºÅÏ½º ³Ñ¹ö¸µ º¯¼ö
+	_uint	iCount = 0; // ï¿½ï¿½ ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½Ñ¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
 	while (true)
 	{
@@ -448,7 +448,7 @@ HRESULT CMain1_Loader::Loading_Map_Object_Ins(const _tchar* pMapObjectInsPath)
 			return E_FAIL;
 		}
 
-		// ÀúÀåµÇ¾îÀÖ´ø ÀÎ½ºÅÏ½º °³¼ö¸¸Å­ µ¿ÀûÇÒ´ç
+		// ï¿½ï¿½ï¿½ï¿½Ç¾ï¿½ï¿½Ö´ï¿½ ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å­ ï¿½ï¿½ï¿½ï¿½ï¿½Ò´ï¿½
 		if (0 != LoadDesc.iInstanceCnt)
 		{
 			LoadDesc.pMatTransform = New _float4x4[LoadDesc.iInstanceCnt];
@@ -487,13 +487,13 @@ HRESULT CMain1_Loader::Loading_Map_Object_Ins(const _tchar* pMapObjectInsPath)
 			break;
 		}
 
-		// ¿©±â¼­ ÇÁ·ÎÅäÅ¸ÀÔ ÅÂ±× ¹®ÀÚ¿­ °¡°øÇØÁà¾ßÇÔ
+		// ï¿½ï¿½ï¿½â¼­ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å¸ï¿½ï¿½ ï¿½Â±ï¿½ ï¿½ï¿½ï¿½Ú¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		wstring ws = TEXT("Prototype_Component_Model_Instance_");
 		wstring wsTag = TEXT("Prototype_Component_Model_");
 		wstring wsSave(LoadDesc.wszTag);
 		_uint iLength = wsTag.size();
 
-		// ¸ðµ¨ ÀÌ¸§
+		// ï¿½ï¿½ ï¿½Ì¸ï¿½
 		wstring wsModelName = wsSave.substr(iLength);
 		ws += wsModelName;
 
@@ -502,7 +502,7 @@ HRESULT CMain1_Loader::Loading_Map_Object_Ins(const _tchar* pMapObjectInsPath)
 		_tchar wszNumber[MAX_PATH];
 		_itow_s(iCount, wszNumber, 10);
 
-		ws += wszNumber; // ¿©±â±îÁö ¿À¸é Prototype_Component_Model_Instance_¸ðµ¨¸í_¹øÈ£ ÀÌ·±½ÄÀ¸·Î ÀÌ¸§ÀÌ ºÙÀ½	
+		ws += wszNumber; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Prototype_Component_Model_Instance_ï¿½ðµ¨¸ï¿½_ï¿½ï¿½È£ ï¿½Ì·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½	
 
 		++iCount;
 
@@ -512,7 +512,7 @@ HRESULT CMain1_Loader::Loading_Map_Object_Ins(const _tchar* pMapObjectInsPath)
 		wsPath += wsModelName;
 		wsPath += TEXT(".dat");
 
-		// ÀÎ½ºÅÏ½º ¸ðµ¨ ÇÁ·ÎÅäÅ¸ÀÔ »ý¼º
+		// ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		_float4x4 PivotMatrix = XMMatrixIdentity();
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, ws.c_str(),
 			CModel_Instance::Create(m_pDevice, m_pContext, CModel_Instance::TYPE_NONANIM, wsPath.c_str(),
@@ -542,13 +542,13 @@ CMain1_Loader* CMain1_Loader::Create(ID3D11Device* pDevice, ID3D11DeviceContext*
 
 void CMain1_Loader::Free()
 {
-	// ·ÎµùÀÌ ³¡³¯¶§±îÁö ±â´Ù·Á¾ß ÇÏ¹Ç·Î infinite ¿É¼ÇÀ» ÁÖ¾î ·ÎµùÀÌ ³¡³¯¶§±îÁö ¾²·¹µå ´ë±â.
+	// ï¿½Îµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ù·ï¿½ï¿½ï¿½ ï¿½Ï¹Ç·ï¿½ infinite ï¿½É¼ï¿½ï¿½ï¿½ ï¿½Ö¾ï¿½ ï¿½Îµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½.
 	WaitForSingleObject(m_hThread, INFINITE);
 
 	DeleteCriticalSection(&m_Critical_Section);
 	CloseHandle(m_hThread);
 
-	// MapObject_Ins¸¦ ºÒ·¯¿À´Â µ¿¾È »ý±ä µ¿ÀûÇÒ´ç ÇØÁ¦ Ã³¸®
+	// MapObject_Insï¿½ï¿½ ï¿½Ò·ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ò´ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½
 	for (auto& iter : m_vecFreeMatrix)
 	{
 		Safe_Delete_Array(iter);

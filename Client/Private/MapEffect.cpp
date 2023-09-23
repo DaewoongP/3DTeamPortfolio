@@ -53,7 +53,7 @@ void CMapEffect::Tick(_float _fTimeDelta)
 void CMapEffect::Late_Tick(_float _fTimeDelta)
 {
 	if (nullptr != m_pRenderer)
-		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONLIGHT, this);
+		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 }
 
 HRESULT CMapEffect::Render()
@@ -71,7 +71,7 @@ HRESULT CMapEffect::Render()
 		m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", iMeshCount, DIFFUSE);
 		m_pModel->Bind_Material(m_pShader, "g_NormalTexture", iMeshCount, NORMALS);
 
-		m_pShader->Begin("Mesh");
+		m_pShader->Begin("Effect_Mesh");
 
 		if (FAILED(m_pModel->Render(iMeshCount)))
 			return E_FAIL;
@@ -120,10 +120,10 @@ HRESULT CMapEffect::Setup_ShaderResources()
 	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
-	/*if (FAILED(m_pShader->Bind_RawValue("g_vOffset", &m_vOffset, sizeof m_vOffset)))
+	if (FAILED(m_pShader->Bind_RawValue("g_vOffset", &m_vOffset, sizeof m_vOffset)))
 		return E_FAIL;
 
-	if (FAILED(m_pShader->Bind_RawValue("g_vTililing", &m_vTililing, sizeof m_vTililing)))
+	/*if (FAILED(m_pShader->Bind_RawValue("g_vTililing", &m_vTililing, sizeof m_vTililing)))
 		return E_FAIL;*/
 
 	ENDINSTANCE

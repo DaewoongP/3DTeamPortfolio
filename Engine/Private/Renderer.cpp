@@ -69,7 +69,12 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_SSAO"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
-
+	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
+		TEXT("Target_Distortion"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
+		TEXT("Target_SSAOBluring"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
+		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_FinBloom"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
@@ -104,6 +109,10 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_FinBloom"), TEXT("Target_FinBloom"))))
 		return E_FAIL;
 	
+	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Distortion"), TEXT("Target_Distortion"))))
+		return E_FAIL;
+
+
 #ifdef _DEBUG
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Picking"), TEXT("Target_Picking"))))
 		return E_FAIL;
@@ -137,14 +146,14 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_SSAO"), 240.f, 560.f, 160.f, 160.f)))
 		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Distortion"), 240.f, 560.f, 160.f, 160.f)))
+		return E_FAIL;
 
 	/*if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Blur"), 900.f, 300.f, 600.f, 600.f)))
 		return E_FAIL;*/
 	/*if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_PostProcessing"), 240.f, 560.f, 160.f, 160.f)))
 		return E_FAIL;*/
 
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Specular"), 1200.f, 80.f, 160.f, 160.f)))
-		return E_FAIL;
 	//if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_MapBrushing"), 1040.f, 80.f, 160.f, 160.f)))
 	//	return E_FAIL;
 	/*if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_UI"), 1200.f, 300.f, 160.f, 160.f)))
@@ -224,9 +233,10 @@ HRESULT CRenderer::Draw_RenderGroup()
 	if (FAILED(Render_SSAO()))
 		return E_FAIL;
 
-	/*if (FAILED(m_pSSAOBlur->Render()))
-		return E_FAIL;*/
-
+	if (FAILED(m_pSSAOBlur->Render()))
+		return E_FAIL;
+	if (FAILED(m_pDistortion->Render()))
+		return E_FAIL;
 	if (FAILED(Render_Deferred()))
 		return E_FAIL;
 
@@ -239,8 +249,7 @@ HRESULT CRenderer::Draw_RenderGroup()
 	/*if (FAILED(m_pBloom->Render()))
 		return E_FAIL;
 
-	if (FAILED(m_pDistortion->Render()))
-		return E_FAIL;
+	
 
 	if (FAILED(m_pGlow->Render()))
 		return E_FAIL;*/
@@ -566,6 +575,10 @@ HRESULT CRenderer::Render_PostProcessing()
 		return E_FAIL;
 	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_FinBloom"), m_pPostProcessingShader, "g_BloomTexture")))
+		return E_FAIL; 
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_FinGlow"), m_pPostProcessingShader, "g_GlowTexture")))
+		return E_FAIL;
 	
 	m_pPostProcessingShader->Begin("PostProcessing");
 
@@ -814,7 +827,7 @@ HRESULT CRenderer::Add_Components()
 	if (nullptr == m_pBloom)
 		return E_FAIL;
 
-	m_pDistortion = CDistortion::Create(m_pDevice, m_pContext, TEXT("Target_Distortion"));
+	m_pDistortion = CDistortion::Create(m_pDevice, m_pContext, TEXT("Target_MapEffect"));
 	if (nullptr == m_pDistortion)
 		return E_FAIL;
 
