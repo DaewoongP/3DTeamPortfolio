@@ -149,8 +149,8 @@ PS_OUT PS_MAIN_DISTORTION(PS_IN In)
     noise2.x = (noise2.x - 0.5f) * 2.0f;
     noise3.x = (noise3.x - 0.5f) * 2.0f;
 
-    noise1.xy = noise1.xy * float2(0.1f, 0.2f); // float2값들을 글로벌로 받아와서 던져주는걸로 표현가능
-    noise2.xy = noise2.xy * float2(0.1f, 0.3f);
+    noise1.xy = noise1.xy * float2(0.2f, 0.1f); // float2값들을 글로벌로 받아와서 던져주는걸로 표현가능
+    noise2.xy = noise2.xy * float2(0.3f, 0.1f);
     noise3.xy = noise3.xy * float2(0.1f, 0.1f);
     
     vector FinalNoise = noise1 + noise2 + noise3;
@@ -163,8 +163,8 @@ PS_OUT PS_MAIN_DISTORTION(PS_IN In)
     vector vAlpha = g_AlphaTexture.Sample(DistortionSampler, newUV.xy);
     
     Out.vColor = vOrigin;
-    
-  //  Out.vColor *= vAlpha;//알파텍스쳐합성
+    if(vAlpha.x>1.f)
+    discard;//알파텍스쳐합성
     
     return Out;
 }

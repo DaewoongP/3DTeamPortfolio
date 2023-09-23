@@ -67,8 +67,11 @@ HRESULT CDistortion::Render()
 	if (FAILED(pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_MapEffect"))))
 		return E_FAIL;
 
-	if (FAILED(pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Diffuse"), m_pShader, "g_OriTexture")))
+	if (FAILED(pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Distortion"), m_pShader, "g_OriTexture")))
 		return E_FAIL;
+	if (FAILED(pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Diffuse"), m_pShader, "g_AlphaTexture")))
+		return E_FAIL;
+
 	if (FAILED(m_pNoiseTexture->Bind_ShaderResource(m_pShader, "g_NoiseTexture")))
 		return E_FAIL;
 
