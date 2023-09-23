@@ -348,7 +348,7 @@ HRESULT CPlayer::Add_Magic()
 
 	// ÇÇ´Ï¼Å
 	{
-		magicInitDesc.eBuffType = CMagic::BUFF_NONE;
+		magicInitDesc.eBuffType = BUFF_NONE;
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 		magicInitDesc.eMagicType = CMagic::MT_ALL;
 		magicInitDesc.eMagicTag = FINISHER;
