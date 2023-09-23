@@ -140,7 +140,6 @@ void CConfringo::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 	{
 		Set_MagicBallState(MAGICBALL_STATE_DYING);
 	}
-	
 }
 
 void CConfringo::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)

@@ -193,6 +193,7 @@ HRESULT CMagicBall::Add_RigidBody()
 	RigidBodyDesc.vOffsetPosition = _float3(0.f, 0.0f, 0.f);
 	RigidBodyDesc.fStaticFriction = 0.f;
 	RigidBodyDesc.fDynamicFriction = 0.f;
+	RigidBodyDesc.eThisCollsion = COL_MAGIC;
 	RigidBodyDesc.fRestitution = 0.f;
 	PxSphereGeometry SphereGeometry = PxSphereGeometry(0.2f);
 	RigidBodyDesc.pGeometry = &SphereGeometry;

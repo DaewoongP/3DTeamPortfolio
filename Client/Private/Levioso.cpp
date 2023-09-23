@@ -74,7 +74,6 @@ void CLevioso::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 	//¸÷ÀÌ¶û Ãæµ¹ÇßÀ¸¸é?
 	if (wcsstr(CollisionEventDesc.pOtherCollisionTag, TEXT("Enemy_Body")) != nullptr)
 	{
-		//dynamic_cast<CGameObject*>(m_pTarget->Get_Owner())->On_Maigc_Throw_Data(&m_CollisionDesc);
 		Set_MagicBallState(MAGICBALL_STATE_DYING);
 	}
 
@@ -175,7 +174,7 @@ void CLevioso::Tick_Dying(_float fTimeDelta)
 	m_fWingardiumEffectDeadTimer -= fTimeDelta;
 	if (m_fWingardiumEffectDeadTimer < 0)
 	{
-		Set_ObjEvent(OBJ_DEAD);
+		Do_MagicBallState_To_Next();
 	}
 }
 
