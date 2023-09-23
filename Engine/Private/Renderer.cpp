@@ -13,6 +13,7 @@
 #include "Glow.h"
 #include "Shadow.h"
 #include "MotionBlur.h"
+#include"FlowMap.h"	
 
 #ifdef _DEBUG
 #include "Input_Device.h"
@@ -76,6 +77,9 @@ HRESULT CRenderer::Initialize_Prototype()
 		TEXT("Target_FinBloom"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
 
+	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
+		TEXT("Target_Distortion"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
+		return E_FAIL;
 
 #ifdef _DEBUG
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
@@ -105,11 +109,8 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_FinBloom"), TEXT("Target_FinBloom"))))
 		return E_FAIL;
-	
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Distortion"), TEXT("Target_Distortion"))))
 		return E_FAIL;
-
-
 #ifdef _DEBUG
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Picking"), TEXT("Target_Picking"))))
 		return E_FAIL;
@@ -139,9 +140,9 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Shadow_Depth"), 240.f, 240.f, 160.f, 160.f)))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Shadow"), 240.f, 400.f, 160.f, 160.f)))
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Glow"), 240.f, 400.f, 160.f, 160.f)))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_SSAO"), 240.f, 560.f, 160.f, 160.f)))
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_FlowMap"), 240.f, 560.f, 160.f, 160.f)))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Distortion"), 240.f, 560.f, 160.f, 160.f)))
 		return E_FAIL;
@@ -151,6 +152,8 @@ HRESULT CRenderer::Initialize_Prototype()
 	/*if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_PostProcessing"), 240.f, 560.f, 160.f, 160.f)))
 		return E_FAIL;*/
 
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Distortion"), 600.f, 600.f, 400.f, 400.f)))
+		return E_FAIL;
 	//if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_MapBrushing"), 1040.f, 80.f, 160.f, 160.f)))
 	//	return E_FAIL;
 	/*if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_UI"), 1200.f, 300.f, 160.f, 160.f)))
@@ -186,7 +189,7 @@ void CRenderer::Add_RenderGroup(RENDERGROUP eRenderGroup, CGameObject* pGameObje
 		MSG_BOX("Failed Add RenderGroup");
 		return;
 	}
-
+	
 	m_RenderObjects[eRenderGroup].push_back(pGameObject);
 	m_fGlowPower = LightPower;
 	Safe_AddRef(pGameObject);
@@ -226,14 +229,15 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 	if (FAILED(m_pShadow->Render()))
 		return E_FAIL;
-
-	if (FAILED(Render_SSAO()))
+	if(FAILED(m_pFlowMap->Render()))
 		return E_FAIL;
-
-	if (FAILED(m_pSSAOBlur->Render()))
+	if (FAILED(Render_SSAO()))
 		return E_FAIL;
 	if (FAILED(m_pDistortion->Render()))
 		return E_FAIL;
+	if (FAILED(m_pSSAOBlur->Render()))
+		return E_FAIL;
+
 	if (FAILED(Render_Deferred()))
 		return E_FAIL;
 
@@ -243,13 +247,11 @@ HRESULT CRenderer::Draw_RenderGroup()
 	if (FAILED(Render_Blend()))
 		return E_FAIL;
 
-	/*if (FAILED(m_pBloom->Render()))
+	if (FAILED(m_pBloom->Render()))
 		return E_FAIL;
 
-	
-
 	if (FAILED(m_pGlow->Render()))
-		return E_FAIL;*/
+		return E_FAIL;
 
 	if (FAILED(m_pRenderTarget_Manager->End_PostProcessingRenderTarget(m_pContext)))
 		return E_FAIL;
@@ -507,6 +509,8 @@ HRESULT CRenderer::Render_Deferred()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Specular"), m_pDeferredShader, "g_SpecularTexture")))
 		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_MapEffect"), m_pDeferredShader, "g_MapEffectTexture")))
+		return E_FAIL;
 
 
 	if (FAILED(m_pDeferredShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
@@ -621,7 +625,7 @@ HRESULT CRenderer::Render_EffectType()
 	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext)))
 		return E_FAIL;
 
-	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_FinGlow"))))
+	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Glow"))))
 		return E_FAIL;
 
 	for (auto& pGameObject : m_RenderObjects[RENDER_GLOW])
@@ -828,7 +832,7 @@ HRESULT CRenderer::Add_Components()
 	if (nullptr == m_pDistortion)
 		return E_FAIL;
 
-	m_pGlow = CGlow::Create(m_pDevice, m_pContext, TEXT("Target_FinGlow"), 0.5f);//파티클이 갖고있는 정보하나주면 힘을 변경하도록 하면될것같음
+	m_pGlow = CGlow::Create(m_pDevice, m_pContext, TEXT("Target_Glow"), 1.f);//파티클이 갖고있는 정보하나주면 힘을 변경하도록 하면될것같음
 	if (nullptr == m_pGlow)
 		return E_FAIL;
 
@@ -839,6 +843,11 @@ HRESULT CRenderer::Add_Components()
 	m_pShadow = CShadow::Create(m_pDevice, m_pContext);
 	if (nullptr == m_pShadow)
 		return E_FAIL;
+
+	m_pFlowMap = CFlowMap::Create(m_pDevice, m_pContext,TEXT("Target_FlowMap"));
+	if (nullptr == m_pFlowMap)
+		return E_FAIL;
+
 
 	return S_OK;
 }
@@ -997,4 +1006,5 @@ void CRenderer::Free()
 	Safe_Release(m_pSSAOBlur);
 	Safe_Release(m_pDistortion);
 	Safe_Release(m_pGlow);
+	Safe_Release(m_pFlowMap);
 }

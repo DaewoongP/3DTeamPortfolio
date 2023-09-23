@@ -79,13 +79,13 @@ VS_OUT VS_MAINX(VS_IN In)
     
     //Out.texCoords1 = In.vTexUV;
     Out.texCoords1 = Out.texCoords1.x + (g_FrameTime * g_ScrollSpeed.x);
-    Out.texCoords1.y = (In.vTexUV);// * g_Scales.x);
+    Out.texCoords1.y = (In.vTexUV); // * g_Scales.x);
    
     Out.texCoords2 = Out.texCoords2.y + (g_FrameTime * g_ScrollSpeed.y);
-    Out.texCoords2.y = (In.vTexUV);// * g_Scales.y);
+    Out.texCoords2.y = (In.vTexUV); // * g_Scales.y);
 
     Out.texCoords3 = Out.texCoords3.y + (g_FrameTime * g_ScrollSpeed.z);
-    Out.texCoords3.y = (In.vTexUV);// * g_Scales.z);
+    Out.texCoords3.y = (In.vTexUV); // * g_Scales.z);
     
    
     
@@ -149,7 +149,44 @@ PS_OUT PS_MAIN_DISTORTION(PS_IN In)
     noise2.x = (noise2.x - 0.5f) * 2.0f;
     noise3.x = (noise3.x - 0.5f) * 2.0f;
 
-    noise1.xy = noise1.xy * float2(0.1f, 0.2f);// float2값들을 글로벌로 받아와서 던져주는걸로 표현가능
+    noise1.xy = noise1.xy * float2(0.2f, 0.1f); // float2값들을 글로벌로 받아와서 던져주는걸로 표현가능
+    noise2.xy = noise2.xy * float2(0.3f, 0.1f);
+    noise3.xy = noise3.xy * float2(0.1f, 0.1f);
+    
+    vector FinalNoise = noise1 + noise2 + noise3;
+    float perturb = ((1.f - In.vTexUV.x) * 0.8f) + 0.5f;
+    
+    float2 newUV;
+    newUV.xy = (FinalNoise.xy * perturb) + In.vTexUV.xy;
+    
+    vector vOrigin = g_OriTexture.Sample(DistortionSampler, newUV.xy);
+    vector vAlpha = g_AlphaTexture.Sample(DistortionSampler, newUV.xy);
+    
+    Out.vColor = vOrigin;
+    if(vAlpha.x>1.f)
+    discard;//알파텍스쳐합성
+    
+    return Out;
+}
+
+
+PS_OUT PS_MAIN_DISTORTIONX(PS_IN In)
+{
+    PS_OUT Out = (PS_OUT) 0;
+
+    
+    
+    vector noise1 = g_NoiseTexture.Sample(LinearSampler, In.texCoords1);
+    vector noise2 = g_NoiseTexture.Sample(LinearSampler, In.texCoords2);
+    vector noise3 = g_NoiseTexture.Sample(LinearSampler, In.texCoords3);
+   // Out.vColor = noise1;
+    //return Out;
+    
+    noise1.x = (noise1.x - 0.5f) * 2.0f;
+    noise2.x = (noise2.x - 0.5f) * 2.0f;
+    noise3.x = (noise3.x - 0.5f) * 2.0f;
+
+    noise1.xy = noise1.xy * float2(0.1f, 0.2f); // float2값들을 글로벌로 받아와서 던져주는걸로 표현가능
     noise2.xy = noise2.xy * float2(0.1f, 0.3f);
     noise3.xy = noise3.xy * float2(0.1f, 0.1f);
     

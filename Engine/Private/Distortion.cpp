@@ -4,7 +4,7 @@
 #include "VIBuffer_Rect.h"
 #include"Texture.h"
 
-CDistortion::CDistortion(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) : CComponent(pDevice,pContext)
+CDistortion::CDistortion(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) : CComponent(pDevice, pContext)
 {
 }
 
@@ -36,12 +36,9 @@ HRESULT CDistortion::Initialize_Prototype(const _tchar* pTargetTag)
 	if (FAILED(pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_MapEffect"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
-	
 
 	if (FAILED(pRenderTarget_Manager->Add_MRT(TEXT("MRT_MapEffect"), TEXT("Target_MapEffect"))))
 		return E_FAIL;
-	
-
 
 	XMStoreFloat4x4(&m_WorldMatrix, XMMatrixIdentity());
 	m_WorldMatrix._11 = ViewportDesc.Width;
@@ -64,13 +61,16 @@ HRESULT CDistortion::Render()
 {
 	CRenderTarget_Manager* pRenderTarget_Manager = CRenderTarget_Manager::GetInstance();
 	Safe_AddRef(pRenderTarget_Manager);
-		if (FAILED(pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_MapEffect"))))
-			return E_FAIL;
-		
-		if (FAILED(pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Diffuse"), m_pShader, "g_OriTexture")))
-			return E_FAIL;
-		if (FAILED(m_pNoiseTexture->Bind_ShaderResource(m_pShader, "g_NoiseTexture")))
-			return E_FAIL;
+	if (FAILED(pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_MapEffect"))))
+		return E_FAIL;
+
+	if (FAILED(pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Distortion"), m_pShader, "g_OriTexture")))
+		return E_FAIL;
+	if (FAILED(pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Diffuse"), m_pShader, "g_AlphaTexture")))
+		return E_FAIL;
+
+	if (FAILED(m_pNoiseTexture->Bind_ShaderResource(m_pShader, "g_NoiseTexture")))
+		return E_FAIL;
 
 	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
@@ -86,7 +86,6 @@ HRESULT CDistortion::Render()
 
 	if (FAILED(m_pShader->Bind_RawValue("g_FrameTime", &m_fFrameTime, sizeof(_float))))
 		return E_FAIL;
-	
 	_float3 Speed = { 1.3f, 2.1f, 2.3f };
 	if (FAILED(m_pShader->Bind_RawValue("g_ScrollSpeed", &Speed, sizeof(_float3))))
 		return E_FAIL;
@@ -115,7 +114,7 @@ HRESULT CDistortion::Add_Components()
 	m_pBuffer = CVIBuffer_Rect::Create(m_pDevice, m_pContext);
 	if (nullptr == m_pBuffer)
 		return E_FAIL;
-	
+
 	return S_OK;
 }
 

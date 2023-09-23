@@ -127,15 +127,6 @@
     <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_Finisher">
       <UniqueIdentifier>{e81ad826-eb83-476b-b1aa-59c061bddf73}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Behaviors">
-      <UniqueIdentifier>{68f60c2e-b68f-4392-b9de-da48723e2496}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Behaviors\01. Selectors">
-      <UniqueIdentifier>{71a935c5-d66c-42f6-b634-774235c64530}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Behaviors\02. Sequences">
-      <UniqueIdentifier>{d6997012-3cb3-41af-a953-a7da969ed441}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_Finisher_Icon">
       <UniqueIdentifier>{fcbbd145-242a-4b88-9a6d-b01139b69406}</UniqueIdentifier>
     </Filter>
@@ -180,9 +171,6 @@
     </Filter>
     <Filter Include="02. GameObject\05. UI\UI\UI_Effect_Back">
       <UniqueIdentifier>{6f63ec72-3503-4230-9a92-5c2bd38a636e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Behaviors\00. Action">
-      <UniqueIdentifier>{22de2c6d-33c0-405e-880a-8329dd7ffd58}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\01. Player\01. StateMachine">
       <UniqueIdentifier>{80131a04-5be6-4f74-b2ac-09649853f473}</UniqueIdentifier>
@@ -328,6 +316,27 @@
     <Filter Include="02. GameObject\04. MapObject\MapEffect">
       <UniqueIdentifier>{3d2f0c96-2d67-4229-a119-7e41208b82b3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\99. Debug\03. Behaviors">
+      <UniqueIdentifier>{68f60c2e-b68f-4392-b9de-da48723e2496}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\99. Debug\03. Behaviors\01. Selectors">
+      <UniqueIdentifier>{71a935c5-d66c-42f6-b634-774235c64530}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\99. Debug\03. Behaviors\02. Sequences">
+      <UniqueIdentifier>{d6997012-3cb3-41af-a953-a7da969ed441}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\99. Debug\03. Behaviors\00. Action">
+      <UniqueIdentifier>{22de2c6d-33c0-405e-880a-8329dd7ffd58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\99. Debug\03. Behaviors\04. Movement">
+      <UniqueIdentifier>{d95f3888-ed91-44de-bed2-7ee502737efa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\99. Debug\03. Behaviors\05. Function">
+      <UniqueIdentifier>{11282af5-bac7-4061-9441-81c0be48d567}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\99. Debug\03. Behaviors\03. RandomChoose">
+      <UniqueIdentifier>{68fa3644-0ca1-4bca-844f-2fc72e090f6d}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\01. Player\03. PlayerInformation">
       <UniqueIdentifier>{32c19ffc-fb69-42ca-ba81-07c40b9b305f}</UniqueIdentifier>
     </Filter>
@@ -469,7 +478,7 @@
       <Filter>99. Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Wait.h">
-      <Filter>03. Behaviors\04. Movement</Filter>
+      <Filter>02. GameObject\99. Debug\03. Behaviors\04. Movement</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Dugbog.h">
       <Filter>02. GameObject\02. Enemy\02. Dugbog</Filter>
@@ -499,7 +508,7 @@
       <Filter>02. GameObject\04. MapObject</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Action.h">
-      <Filter>03. Behaviors\00. Action</Filter>
+      <Filter>02. GameObject\99. Debug\03. Behaviors\00. Action</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\PhysXRender.h">
       <Filter>02. GameObject\99. Debug\PhysxRender</Filter>
@@ -507,11 +516,14 @@
     <ClInclude Include="..\Public\Player.h">
       <Filter>02. GameObject\01. Player</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Check_Degree.h">
+      <Filter>02. GameObject\99. Debug\03. Behaviors\05. Function</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\Turn.h">
-      <Filter>03. Behaviors\04. Movement</Filter>
+      <Filter>02. GameObject\99. Debug\03. Behaviors\04. Movement</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Selector_Degree.h">
-      <Filter>03. Behaviors\01. Selectors</Filter>
+      <Filter>02. GameObject\99. Debug\03. Behaviors\01. Selectors</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Magic.h">
       <Filter>04. Magic</Filter>
@@ -544,10 +556,13 @@
       <Filter>02. GameObject\03. Effect\Default_Magic_Effect</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Sequence_Attack.h">
-      <Filter>03. Behaviors\02. Sequences</Filter>
+      <Filter>02. GameObject\99. Debug\03. Behaviors\02. Sequences</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Check_Distance.h">
+      <Filter>02. GameObject\99. Debug\03. Behaviors\05. Function</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Sequence_MoveTarget.h">
-      <Filter>03. Behaviors\02. Sequences</Filter>
+      <Filter>02. GameObject\99. Debug\03. Behaviors\02. Sequences</Filter>
     </ClInclude>
     <ClInclude Include="..\public\StateMachine.h">
       <Filter>02. GameObject\01. Player\01. StateMachine</Filter>
@@ -586,13 +601,13 @@
       <Filter>02. GameObject\03. Effect\Default_MagicTraill_Effect</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Random_Select.h">
-      <Filter>03. Behaviors\03. RandomChoose</Filter>
+      <Filter>02. GameObject\99. Debug\03. Behaviors\03. RandomChoose</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Action_Deflect.h">
-      <Filter>03. Behaviors\00. Action</Filter>
+      <Filter>02. GameObject\99. Debug\03. Behaviors\00. Action</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Sequence_Groggy.h">
-      <Filter>03. Behaviors\02. Sequences</Filter>
+      <Filter>02. GameObject\99. Debug\03. Behaviors\02. Sequences</Filter>
     </ClInclude>
     <ClInclude Include="..\public\MagicSlot.h">
       <Filter>04. Magic\MagicSlot</Filter>
@@ -661,7 +676,7 @@
       <Filter>01. Levels\99. Loading\Loader</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Sequence_Levitated.h">
-      <Filter>03. Behaviors\02. Sequences</Filter>
+      <Filter>02. GameObject\99. Debug\03. Behaviors\02. Sequences</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\RollState.h">
       <Filter>02. GameObject\01. Player\01. StateMachine\03. RollState</Filter>
@@ -819,7 +834,7 @@
       <Filter>02. GameObject\02. Enemy\00. Troll\01. Forest_Troll\Weapon</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Wait.cpp">
-      <Filter>03. Behaviors\04. Movement</Filter>
+      <Filter>02. GameObject\99. Debug\03. Behaviors\04. Movement</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Dugbog.cpp">
       <Filter>02. GameObject\02. Enemy\02. Dugbog</Filter>
@@ -852,7 +867,7 @@
       <Filter>02. GameObject\04. MapObject</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Action.cpp">
-      <Filter>03. Behaviors\00. Action</Filter>
+      <Filter>02. GameObject\99. Debug\03. Behaviors\00. Action</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\PhysXRender.cpp">
       <Filter>02. GameObject\99. Debug\PhysxRender</Filter>
@@ -860,11 +875,14 @@
     <ClCompile Include="..\Private\Player.cpp">
       <Filter>02. GameObject\01. Player</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Check_Degree.cpp">
+      <Filter>02. GameObject\99. Debug\03. Behaviors\05. Function</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\Turn.cpp">
-      <Filter>03. Behaviors\04. Movement</Filter>
+      <Filter>02. GameObject\99. Debug\03. Behaviors\04. Movement</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Selector_Degree.cpp">
-      <Filter>03. Behaviors\01. Selectors</Filter>
+      <Filter>02. GameObject\99. Debug\03. Behaviors\01. Selectors</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Magic.cpp">
       <Filter>04. Magic</Filter>
@@ -897,10 +915,13 @@
       <Filter>02. GameObject\03. Effect\Default_Magic_Effect</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Sequence_Attack.cpp">
-      <Filter>03. Behaviors\02. Sequences</Filter>
+      <Filter>02. GameObject\99. Debug\03. Behaviors\02. Sequences</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Check_Distance.cpp">
+      <Filter>02. GameObject\99. Debug\03. Behaviors\05. Function</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Sequence_MoveTarget.cpp">
-      <Filter>03. Behaviors\02. Sequences</Filter>
+      <Filter>02. GameObject\99. Debug\03. Behaviors\02. Sequences</Filter>
     </ClCompile>
     <ClCompile Include="..\private\StateMachine.cpp">
       <Filter>02. GameObject\01. Player\01. StateMachine</Filter>
@@ -936,13 +957,13 @@
       <Filter>02. GameObject\03. Effect\Default_MagicTraill_Effect</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Random_Select.cpp">
-      <Filter>03. Behaviors\03. RandomChoose</Filter>
+      <Filter>02. GameObject\99. Debug\03. Behaviors\03. RandomChoose</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Action_Deflect.cpp">
-      <Filter>03. Behaviors\00. Action</Filter>
+      <Filter>02. GameObject\99. Debug\03. Behaviors\00. Action</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Sequence_Groggy.cpp">
-      <Filter>03. Behaviors\02. Sequences</Filter>
+      <Filter>02. GameObject\99. Debug\03. Behaviors\02. Sequences</Filter>
     </ClCompile>
     <ClCompile Include="..\private\MagicSlot.cpp">
       <Filter>04. Magic\MagicSlot</Filter>
@@ -1011,7 +1032,7 @@
       <Filter>01. Levels\99. Loading\Loader</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Sequence_Levitated.cpp">
-      <Filter>03. Behaviors\02. Sequences</Filter>
+      <Filter>02. GameObject\99. Debug\03. Behaviors\02. Sequences</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\RollState.cpp">
       <Filter>02. GameObject\01. Player\01. StateMachine\03. RollState</Filter>

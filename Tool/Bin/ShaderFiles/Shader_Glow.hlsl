@@ -8,17 +8,9 @@ vector g_vCamPosition;
 float g_fCamFar;
 float g_fGlowPower;
 
-
-texture2D g_SSAOTexture;
-texture2D g_BlurTexture;
-texture2D g_PostProcessingTexture;
-texture2D g_vDistortionTexture;
 texture2D g_AlphaTexture;
 texture2D g_DoBlurTexture;
-texture2D g_WhiteBloomTexture;
 texture2D g_GlowTexture;
-texture2D g_OriTexture;
-texture2D g_NoiseTexture;
 
 
 vector g_vLightDiffuse;
@@ -92,7 +84,6 @@ PS_OUT PS_MAIN(PS_IN In)
     {
         Out.vColor = GlowColor;
     }
-    
     return Out;
 }
 

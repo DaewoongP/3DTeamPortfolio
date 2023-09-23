@@ -103,7 +103,8 @@ PS_OUT PS_MAIN_EFFECT(PS_IN In)
         discard;
 
     Out.vDiffuse = vDiffuse;
-    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fCamFar, 0.f, 0.f);
+    Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
+    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, g_fCamFar, 0.f, 0.f);
 
     return Out;
 }
