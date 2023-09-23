@@ -75,7 +75,15 @@ HRESULT CFinisher::Initialize_Prototype(_uint iLevel)
 			return E_FAIL;
 		}
 	}
-	
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Lightning_Dust_Effect")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Lightning_Dust_Effect")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Lightning/Dust"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
 
 	ENDINSTANCE;
 
@@ -147,6 +155,7 @@ HRESULT CFinisher::Initialize(void* pArg)
 	m_LineParticle->Get_Transform()->Set_Position(m_pTarget->Get_Position());
 	m_FlareCenterParticle->Get_Transform()->Set_Position(m_pTarget->Get_Position());
 	m_FlareSpreadParticle->Get_Transform()->Set_Position(m_pTarget->Get_Position() + _float3(0,0.5f,0));
+	//m_DustParticle->Get_Transform()->Set_Position(m_pTarget->Get_Position());
 
 	m_LightningSparkEffect_Blue->Play();
 	m_LightningSparkEffect_Green->Play();
@@ -154,6 +163,7 @@ HRESULT CFinisher::Initialize(void* pArg)
 	m_LineParticle->Play();
 	m_FlareCenterParticle->Play();
 	m_FlareSpreadParticle->Play();
+	//m_DustParticle->Play();
 	return S_OK;
 }
 
@@ -239,6 +249,12 @@ HRESULT CFinisher::Add_Effect()
 		, TEXT("Com_FlareSpread_Effect"), (CComponent**)&m_FlareSpreadParticle)))
 		return E_FAIL;
 
+	/*if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Lightning_Dust_Effect")
+		, TEXT("Com_Dust_Effect"), (CComponent**)&m_DustParticle)))
+		return E_FAIL;*/
+
+	
+
 	return S_OK;
 }
 
@@ -283,5 +299,6 @@ void CFinisher::Free()
 		Safe_Release(m_LineParticle);
 		Safe_Release(m_FlareCenterParticle);
 		Safe_Release(m_FlareSpreadParticle);
+		Safe_Release(m_DustParticle);
 	}
 }

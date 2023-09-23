@@ -14,13 +14,9 @@ CLevioso::CLevioso(const CLevioso& rhs)
 
 void CLevioso::TrailAction(_float3 vPosition, _float fTimeDelta)
 {
-	m_MagicTimer -= fTimeDelta;
 	m_pWingardiumEffect->TrailAction(vPosition, fTimeDelta);
 	m_fWingardiumEffectDeadTimer = 0.3f;
 
-	m_fWingardiumEffectAccTime += fTimeDelta;
-	if (m_fWingardiumEffectAccTime > 6.0f)
-		m_fWingardiumEffectDeadTimer = -1;
 }
 
 HRESULT CLevioso::Initialize_Prototype()
@@ -87,21 +83,21 @@ void CLevioso::Tick(_float fTimeDelta)
 	if (m_pEffect->Spin_Move(fTimeDelta))
 	{
 		//이동이 끝났고 윙가가 발동 안했다면?
-		if (!m_bWingardiumActionTrigger)
-		{
-			m_bWingardiumActionTrigger = true;
-			m_pWingardiumEffect->SetActionTrigger(m_bWingardiumActionTrigger);
-			dynamic_cast<CGameObject*>(m_pTarget->Get_Owner())->On_Maigc_Throw_Data(&m_CollisionDesc);
-		}
-		else
-		{
-			m_fWingardiumEffectDeadTimer -= fTimeDelta;
-			if (m_fWingardiumEffectDeadTimer < 0)
-			{
-				Set_ObjEvent(OBJ_DEAD);
-			}
-			//TrailAction(m_pTarget->Get_Position(), fTimeDelta);
-		}
+		//if (!m_bWingardiumActionTrigger)
+		//{
+		//	m_bWingardiumActionTrigger = true;
+		//	m_pWingardiumEffect->SetActionTrigger(m_bWingardiumActionTrigger);
+		//	dynamic_cast<CGameObject*>(m_pTarget->Get_Owner())->On_Maigc_Throw_Data(&m_CollisionDesc);
+		//}
+		//else
+		//{
+		//	m_fWingardiumEffectDeadTimer -= fTimeDelta;
+		//	if (m_fWingardiumEffectDeadTimer < 0)
+		//	{
+		//		Set_ObjEvent(OBJ_DEAD);
+		//	}
+		//	//TrailAction(m_pTarget->Get_Position(), fTimeDelta);
+		//}
 	}
 	m_pTransform->Set_Position(m_pEffect->Get_Transform()->Get_Position());
 	__super::Tick(fTimeDelta);
@@ -186,4 +182,36 @@ void CLevioso::Free()
 		Safe_Release(m_pEffect);
 		Safe_Release(m_pWingardiumEffect);
 	}
+}
+
+void CLevioso::Ready_Begin()
+{
+}
+
+void CLevioso::Ready_DrawMagic()
+{
+}
+
+void CLevioso::Ready_CastMagic()
+{
+}
+
+void CLevioso::Ready_Dying()
+{
+}
+
+void CLevioso::Tick_Begin(_float fTimeDelta)
+{
+}
+
+void CLevioso::Tick_DrawMagic(_float fTimeDelta)
+{
+}
+
+void CLevioso::Tick_CastMagic(_float fTimeDelta)
+{
+}
+
+void CLevioso::Tick_Dying(_float fTimeDelta)
+{
 }

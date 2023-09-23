@@ -33,17 +33,20 @@ private:
 
 private:
 	_float3				m_vTargetPosition = {};
-	_bool				m_bWingardiumActionTrigger = { false };
-	_float				m_fSettingTimer = { 0.2f };
 
-	_float				m_MagicTimer = { 8.0f };
-
-	_bool				m_isDeadTrigger = { false };
 	_float				m_fDeadTimer = { 1.0f };
-
-	//레비오소 사망처리용임.
 	_float				m_fWingardiumEffectDeadTimer = { 0.3f };
-	_float				m_fWingardiumEffectAccTime = { 0 };
+
+private:
+	virtual void Ready_Begin() override;
+	virtual void Ready_DrawMagic() override;
+	virtual void Ready_CastMagic() override;
+	virtual void Ready_Dying() override;
+
+	virtual void Tick_Begin(_float fTimeDelta) override;
+	virtual void Tick_DrawMagic(_float fTimeDelta) override;
+	virtual void Tick_CastMagic(_float fTimeDelta) override;
+	virtual void Tick_Dying(_float fTimeDelta) override;
 
 private:
 	HRESULT Add_Components();

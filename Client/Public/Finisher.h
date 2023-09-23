@@ -36,14 +36,10 @@ private:
 	CParticleSystem* m_LightningSparkEffect_Blue = { nullptr };
 	CParticleSystem* m_LightningSparkEffect_Red = { nullptr };
 
-	//Line Particle
 	CParticleSystem* m_LineParticle= { nullptr };
-
-	//Flare Center Particle
 	CParticleSystem* m_FlareCenterParticle = { nullptr };
-
-	//Flare Spread Particle
 	CParticleSystem* m_FlareSpreadParticle = { nullptr };
+	CParticleSystem* m_DustParticle = { nullptr };
 
 private:
 	// For. Lightining Trails

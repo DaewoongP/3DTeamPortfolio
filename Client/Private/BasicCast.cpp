@@ -22,7 +22,7 @@ HRESULT CBasicCast::Initialize_Prototype(_uint iLevel)
 	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_DefaultConeBoom_Particle")))
 	{
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_DefaultConeBoom_Particle")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/DefaultConeBoom"), m_iLevel))))
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BasicCast/DefaultConeBoom"), m_iLevel))))
 		{
 			ENDINSTANCE;
 			return E_FAIL;
@@ -32,7 +32,7 @@ HRESULT CBasicCast::Initialize_Prototype(_uint iLevel)
 	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Default_SphereTrace_Particle")))
 	{
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Default_SphereTrace_Particle")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Default_SphereTrace"), m_iLevel))))
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BasicCast/Default_SphereTrace"), m_iLevel))))
 		{
 			ENDINSTANCE;
 			return E_FAIL;
@@ -42,7 +42,17 @@ HRESULT CBasicCast::Initialize_Prototype(_uint iLevel)
 	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_DefaultConeEmit_Particle")))
 	{
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_DefaultConeEmit_Particle")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/DefaultConeEmit"), m_iLevel))))
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BasicCast/DefaultConeEmit"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_BasicCast_Wand_Trail_Effect")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_BasicCast_Wand_Trail_Effect")
+			, CTrail::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/BasicTrail/BasicTrail.trail"), m_iLevel))))
 		{
 			ENDINSTANCE;
 			return E_FAIL;
@@ -77,67 +87,17 @@ HRESULT CBasicCast::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
-	//만약 타겟이 존재하지 않는다면?
-	if (m_pTarget == nullptr)
-	{
-		// 마우스가 찍는 방향이 곧 마법 발사 방향이다.
-		// 마우스origin,dir을 가져와 origin에서 dir만큼 마우스 origin 기준 dist의 크기로 이동.
-		// 플레이어가 그 점을 보는 방향벡터를 만들어 플레이어 기준 dist의 크기로 이동.
-
-		BEGININSTANCE;
-		_float4 vMouseOrigin, vMouseDirection;
-		_float3 vMouseWorldPickPosition, vDirStartToPicked;
-		if (FAILED(pGameInstance->Get_WorldMouseRay(m_pContext, g_hWnd, &vMouseOrigin, &vMouseDirection)))
-		{
-			Safe_Release(pGameInstance);
-			ENDINSTANCE;
-			return false;
-		}
-		ENDINSTANCE;
-
-		vMouseWorldPickPosition = vMouseOrigin.xyz() + vMouseDirection.xyz() * 100;
-		vDirStartToPicked = (vMouseWorldPickPosition - m_MagicBallDesc.vStartPosition);
-		vDirStartToPicked.Normalize();
-		m_vTargetPosition = m_MagicBallDesc.vStartPosition + vDirStartToPicked * m_MagicBallDesc.fDistance;
-	}
-	else 
-	{
-		m_vTargetPosition = m_pTarget->Get_Position() + m_TargetOffsetMatrix.Translation();
-	}
-
-	m_pTrailEffect->Ready_Spline(m_vTargetPosition, m_MagicBallDesc.vStartPosition, m_MagicBallDesc.fLifeTime, m_MagicBallDesc.fDistance);
+	
 	return S_OK;
 }
 
 void CBasicCast::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-	//사망처리 걸리면 재생
-	if (m_bDeadTrigger)
-	{
-		//파티클 끝나면 없애줘.
-		if (!m_pHitEffect->IsEnable())
-		{
-			Set_ObjEvent(OBJ_DEAD);
-		}
-		return;
-	}
 
 	_float3 vWandPosition = _float4x4(m_WeaponOffsetMatrix * (*m_pWeaponMatrix)).Translation();
 	m_pWandEffect->Get_Transform()->Set_Position(vWandPosition);
-	m_pWandEffect->Enable();
-	
-	if (m_pTrailEffect->Spline_Move(fTimeDelta))
-	{
-		//사망처리
-		if (!m_bDeadTrigger)
-		{
-			m_bDeadTrigger = true;
-			m_pHitEffect->Get_Transform()->Set_Position(m_pTrailEffect->Get_Transform()->Get_Position());
-			m_pHitEffect->Play();
-		}
-	}
-	m_pTransform->Set_Position(m_pTrailEffect->Get_Transform()->Get_Position());
+	m_WandTrail->Get_Transform()->Set_Position(vWandPosition);
 }
 
 void CBasicCast::Late_Tick(_float fTimeDelta)
@@ -150,10 +110,7 @@ void CBasicCast::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 	//몹이랑 충돌했으면?
 	if (wcsstr(CollisionEventDesc.pOtherCollisionTag,TEXT("Enemy_Body")) != nullptr)
 	{
-		//사망처리 드갑니다.
-		m_bDeadTrigger = true;
-		m_pHitEffect->Get_Transform()->Set_Position(m_pTrailEffect->Get_Transform()->Get_Position());
-		m_pHitEffect->Play();
+		Set_MagicBallState(MAGICBALL_STATE_DYING);
 	}
 	__super::OnCollisionEnter(CollisionEventDesc);
 }
@@ -166,6 +123,94 @@ void CBasicCast::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)
 void CBasicCast::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 {
 	__super::OnCollisionExit(CollisionEventDesc);
+}
+
+void CBasicCast::Ready_Begin()
+{
+	m_pHitEffect->Disable();
+	m_pWandEffect->Disable();
+	m_pFinalAttackEffect->Disable();
+	m_pTrailEffect->Disable();
+	m_WandTrail->Disable();
+}
+
+void CBasicCast::Ready_DrawMagic()
+{
+	m_WandTrail->Enable();
+	m_pWandEffect->Enable();
+
+	_float3 vWandPosition = _float4x4(m_WeaponOffsetMatrix * (*m_pWeaponMatrix)).Translation();
+	m_WandTrail->Get_Transform()->Set_Position(vWandPosition);
+	m_pWandEffect->Get_Transform()->Set_Position(vWandPosition);
+	m_WandTrail->Reset_Trail(_float3(vWandPosition) + _float3(0, 0.5f, 0), _float3(vWandPosition) + _float3(0, -0.5f, 0));
+}
+
+void CBasicCast::Ready_CastMagic()
+{
+	m_pTrailEffect->Enable();
+	if (m_pTarget == nullptr)
+	{
+		BEGININSTANCE;
+		_float4 vMouseOrigin, vMouseDirection;
+		_float3 vMouseWorldPickPosition, vDirStartToPicked;
+		if (FAILED(pGameInstance->Get_WorldMouseRay(m_pContext, g_hWnd, &vMouseOrigin, &vMouseDirection)))
+		{
+			Safe_Release(pGameInstance);
+			ENDINSTANCE;
+			return;
+		}
+		ENDINSTANCE;
+
+		vMouseWorldPickPosition = vMouseOrigin.xyz() + vMouseDirection.xyz() * 100;
+		vDirStartToPicked = (vMouseWorldPickPosition - m_MagicBallDesc.vStartPosition);
+		vDirStartToPicked.Normalize();
+		m_vTargetPosition = m_MagicBallDesc.vStartPosition + vDirStartToPicked * m_MagicBallDesc.fDistance;
+	}
+	else
+	{
+		m_vTargetPosition = m_pTarget->Get_Position() + m_TargetOffsetMatrix.Translation();
+	}
+	m_pTrailEffect->Ready_Spline(m_vTargetPosition, m_MagicBallDesc.vStartPosition, m_MagicBallDesc.fInitLifeTime, m_MagicBallDesc.fDistance);
+}
+
+void CBasicCast::Ready_Dying()
+{
+	m_WandTrail->Disable();
+	m_pWandEffect->Disable();
+
+	m_pHitEffect->Get_Transform()->Set_Position(m_pTrailEffect->Get_Transform()->Get_Position());
+	m_pHitEffect->Enable();
+	m_pHitEffect->Play();
+}
+
+void CBasicCast::Tick_Begin(_float fTimeDelta)
+{
+	//베이직 캐스트는 비긴 없습니다.
+	Do_MagicBallState_To_Next();
+}
+
+void CBasicCast::Tick_DrawMagic(_float fTimeDelta)
+{
+	Do_MagicBallState_To_Next();
+}
+
+void CBasicCast::Tick_CastMagic(_float fTimeDelta)
+{
+	//스플라인 움직임이 끝나면 터지는 이펙트 재생하겠습니다.
+	if (m_pTrailEffect->Spline_Move(fTimeDelta))
+	{
+		Do_MagicBallState_To_Next();
+	}
+	m_pTransform->Set_Position(m_pTrailEffect->Get_Transform()->Get_Position());
+}
+
+void CBasicCast::Tick_Dying(_float fTimeDelta)
+{
+	//사망하러 가겠습니다.
+	if (!m_pHitEffect->IsEnable())
+	{
+		Do_MagicBallState_To_Next();
+	}
 }
 
 HRESULT CBasicCast::Add_Components()
@@ -189,12 +234,20 @@ HRESULT CBasicCast::Add_Effect()
 {
 	CDefault_MagicTraill_Effect::INITDESC initDesc;
 	initDesc.vInitPosition = m_MagicBallDesc.vStartPosition;
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_MagicTraill_BasicCast_Effect"),
+	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_MagicTrail_BasicCast_Effect"),
 		TEXT("Com_TrailEffect"), reinterpret_cast<CComponent**>(&m_pTrailEffect), &initDesc)))
 	{
-		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_MagicTraill_BasicCast_Effect)");
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_MagicTrail_BasicCast_Effect)");
 		return E_FAIL;
 	}
+
+	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_BasicCast_Wand_Trail_Effect"),
+		TEXT("Com_Wand_Trail"), reinterpret_cast<CComponent**>(&m_WandTrail))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_BasicCast_Wand_Trail_Effect)");
+		return E_FAIL;
+	}
+
 	return S_OK;
 }
 
@@ -228,6 +281,7 @@ void CBasicCast::Free()
 	__super::Free();
 	if (true == m_isCloned)
 	{
+		Safe_Release(m_WandTrail);
 		Safe_Release(m_pTrailEffect);
 		Safe_Release(m_pHitEffect);
 		Safe_Release(m_pWandEffect);

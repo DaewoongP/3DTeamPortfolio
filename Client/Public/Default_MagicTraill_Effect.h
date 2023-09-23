@@ -39,6 +39,9 @@ public:
 	void	Set_Glow_BallColor(_float3 vColor);
 	void	GlowBall_Dead();
 
+	void	Disable() { m_isEnable = false; }
+	void	Enable() { m_isEnable = true; }
+
 public:
 	virtual HRESULT Initialize_Prototype(const _tchar* wszFilePath,_uint iLevel);
 	virtual HRESULT Initialize(void* pArg) override;
@@ -69,6 +72,8 @@ private:
 
 	//For. Detect
 	_bool	m_isEnd = { false };
+
+	_bool	m_isEnable = { true };
 
 private:
 	HRESULT Add_Components();
