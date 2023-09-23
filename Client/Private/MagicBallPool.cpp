@@ -92,21 +92,17 @@ CMagicBall* CMagicBallPool::Create_Magic(SPELL tag)
     case Client::LUMOS:
         break;
     case Client::PROTEGO:
-        magicBall = dynamic_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Revelio")));
+        magicBall = dynamic_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Revelio")));
         break;
     case Client::REPARO:
         break;
     case Client::REVELIO:
-        magicBall = dynamic_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Protego")));
-        break;
-    case Client::TRANSFORMATION:
-        break;
-    case Client::TRANSFORMATIONOVERLAND:
+        magicBall = dynamic_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Protego")));
         break;
     case Client::WINGARDIUMLEVIOSA:
         break;
     case Client::BASICCAST:
-        magicBall = dynamic_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_BaseAttack")));
+        magicBall = dynamic_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_BaseAttack")));
         break;
     case Client::STUPEFY:
         break;
@@ -130,7 +126,7 @@ void CMagicBallPool::Create_InitMagic(CGameInstance* pGameInstance, SPELL tag,co
     CComponent* magic = nullptr;
     for (_uint i = 0; i < 10; i++)
     {
-        magic = pGameInstance->Clone_Component(LEVEL_MAINGAME, tagName);
+        magic = pGameInstance->Clone_Component(LEVEL_CLIFFSIDE, tagName);
         m_MagicPoolVec[tag].push_back(dynamic_cast<CMagicBall*>(magic));
     }
     return;

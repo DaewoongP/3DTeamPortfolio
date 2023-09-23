@@ -121,8 +121,6 @@ void CWingardium_Effect::TrailAction(_float3 pos, _float fTimeDelta)
 		m_TrailCurrentDelay = m_TrailPerfDelay;
 	}
 
-	// 트레일의 실질적인 움직임을 생성해줘.
-
 	for (_uint i = 0; i < TrailCount; i++)
 	{
 		//동작이 가능한 파티클이라면?

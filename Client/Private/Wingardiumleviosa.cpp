@@ -74,7 +74,7 @@ HRESULT CWingardiumleviosa::Add_Components()
 
 HRESULT CWingardiumleviosa::Add_Effect()
 {
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Wingardium_Effect"), 
+	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Wingardium_Effect"), 
 		TEXT("Com_Effect"), reinterpret_cast<CComponent**>(&m_pEffect))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Wingardium_Effect)");

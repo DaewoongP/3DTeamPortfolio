@@ -183,11 +183,7 @@ void CParticleSystem::Tick(_float _fTimeDelta)
 		_float4x4 BillBoardMatrix = _float4x4();
 		_float4x4 RotationMatrix = _float4x4();
 		_float4x4 DirectionMatrix = _float4x4();
-		if (true == m_MainModuleDesc.isDirectionRotation) // 진행 방향으로 회전
-		{
-			DirectionMatrix = LookAt(vPrevPos, vPos);
-		}
-		else
+
 		{
 			BillBoardMatrix = LookAt(vPos, vCamPosition.xyz(), m_RendererModuleDesc.isDeleteY);
 			if (true == m_MainModuleDesc.is3DStartRotation)
@@ -200,6 +196,25 @@ void CParticleSystem::Tick(_float _fTimeDelta)
 			else
 				RotationMatrix = _float4x4::MatrixRotationAxis(_float3(vCamPosition - vPos), XMConvertToRadians(Particle_iter->fAngle));
 		}
+
+		if (true == m_MainModuleDesc.isDirectionRotation) // 진행 방향으로 회전
+		{
+			_float3 vDir = vPos - vPrevPos;
+			vDir.z = 0;
+			vDir.Normalize();
+
+			_float fDot = XMVectorGetX(XMVector3Dot(vDir, Particle_iter->WorldMatrix.Up()));
+			_float fRadian = acosf(fDot);
+			
+			if (XMVectorGetY(XMVector3Cross(vDir, BillBoardMatrix.Look())) < 0)
+				fRadian = 2 * XMVectorGetX(g_XMPi) - fRadian;
+
+			_float4x4 rotationMatrix = XMMatrixRotationAxis(BillBoardMatrix.Look(),fRadian);
+			DirectionMatrix = rotationMatrix;
+		}
+
+		//else
+		
 
 		_float4x4 TranslationMatrix = _float4x4::MatrixTranslation(vPos);
 		_float4x4 TransfomationMatrix = ScaleMatrix * BillBoardMatrix * DirectionMatrix * RotationMatrix * TranslationMatrix;
@@ -320,12 +335,14 @@ HRESULT CParticleSystem::Setup_ShaderResources()
 
 			if (FAILED(m_pShader->Bind_RawValue("g_isUseNormalTexture", &m_TextureSheetAnimationModuleDesc.isUseNormalTexture, sizeof(_bool))))
 				throw "g_isUseNormalTexture";
-
-			if (FAILED(m_pNormalTexture->Bind_ShaderResource(m_pShader, "g_NormalTexture")))
-				throw "g_NormalTexture";
 		}
+		if (FAILED(m_pNormalTexture->Bind_ShaderResource(m_pShader, "g_NormalTexture")))
+			throw "g_NormalTexture";
 		if (FAILED(m_pGradientTexture->Bind_ShaderResource(m_pShader, "g_GradientTexture")))
 			throw "g_GradientTexture";
+
+		if (FAILED(m_pShader->Bind_RawValue("g_isUseGradientTexture", &m_RendererModuleDesc.isUseGradientTexture, sizeof(_bool))))
+			throw "g_isUseGradientTexture";
 	}
 	catch (const _tchar* pErrorTag)
 	{

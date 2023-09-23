@@ -3,14 +3,14 @@
 
 BEGIN(Client)
 
-class CHardLandState :
+class CProtegoState :
     public CStateMachine
 {
 
 private:
-    explicit CHardLandState(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext);
-    explicit CHardLandState(const CHardLandState& rhs);
-    virtual ~CHardLandState() = default;
+    explicit CProtegoState(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext);
+    explicit CProtegoState(const CProtegoState& rhs);
+    virtual ~CProtegoState() = default;
 
 public:
     //Get,Set
@@ -25,13 +25,17 @@ public:
     virtual void OnStateTick();
     virtual void OnStateExit();
 
+    virtual void Bind_Notify();
+
 private:
     void Go_Idle();
 
-    void Go_Loop();
+    void Stupefy();
+    void Powerful_Stupefy();
+
 
 public:
-    static CHardLandState* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);
+    static CProtegoState* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);
     virtual CComposite* Clone(void* pArg) override;
     virtual void Free() override;
 };

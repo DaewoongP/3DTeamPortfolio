@@ -27,6 +27,10 @@ public:
 
     virtual void Bind_Notify();
 
+
+private:
+    //_bool m_isEnterTick = { true };
+
 private:
     void Go_Idle();
 

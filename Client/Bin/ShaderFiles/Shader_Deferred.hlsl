@@ -1,4 +1,4 @@
-
+#include "Shader_EngineHeader.hlsli"
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix g_ViewMatrixInv, g_ProjMatrixInv;
 
@@ -13,8 +13,7 @@ texture2D g_DepthTexture;
 texture2D g_ShadowTexture;
 texture2D g_SpecularTexture;
 texture2D g_SSAOTexture;
-texture2D g_BlurTexture;
-texture2D g_SoftShadowTexuture;
+texture2D g_MapEffectTexture;
 
 vector g_vLightDir;
 vector g_vLightPos;
@@ -25,115 +24,8 @@ vector g_vLightDiffuse;
 vector g_vLightAmbient;
 vector g_vLightSpecular;
 
-vector g_vMtrlAmbient = vector(1.f, 1.f, 1.f, 1.f);
+vector g_vMtrlAmbient = vector(0.5f, 0.5f, 0.5f, 1.f);
 vector g_vMtrlSpecular = vector(1.f, 1.f, 1.f, 1.f);
-
-/* Sampler State */
-sampler LinearSampler = sampler_state
-{
-    Filter = MIN_MAG_MIP_LINEAR;
-    AddressU = WRAP;
-    AddressV = WRAP;
-};
-
-sampler PointSampler = sampler_state
-{
-    Filter = MIN_MAG_MIP_POINT;
-    AddressU = WRAP;
-    AddressV = WRAP;
-};
-
-/* Raterizer State */
-RasterizerState RS_Default
-{
-    FillMode = Solid;
-    CullMode = Back;
-    FrontCounterClockwise = false;
-};
-
-RasterizerState RS_Cull_CW
-{
-    FillMode = Solid;
-    CullMode = front;
-    FrontCounterClockwise = false;
-};
-
-RasterizerState RS_Cull_None
-{
-    FillMode = Solid;
-    CullMode = None;
-    FrontCounterClockwise = false;
-};
-
-/* Depth_Stencil State */
-
-DepthStencilState DSS_Default
-{
-    DepthEnable = true;
-    DepthWriteMask = all;
-    DepthFunc = less_equal;
-};
-
-DepthStencilState DSS_Depth_Disable
-{
-    DepthEnable = false;
-    DepthWriteMask = zero;
-};
-
-/* Blend State */
-BlendState BS_Default
-{
-    BlendEnable[0] = false;
-};
-
-BlendState BS_AlphaBlend
-{
-    BlendEnable[0] = true;
-
-    SrcBlend = Src_Alpha;
-    DestBlend = Inv_Src_Alpha;
-    BlendOp = Add;
-};
-
-BlendState BS_BlendOne
-{
-// 렌더타겟 두개를 합칠 것이므로 0번, 1번 둘다 처리해줘야한다.
-    BlendEnable[0] = true;
-    BlendEnable[1] = true;
-
-    SrcBlend = one;
-    DestBlend = one;
-    BlendOp = Add;
-};
-
-matrix MyMatrixLookAtLH(float4 vEye, float4 vAt)
-{
-    matrix ViewMatrix = matrix(
-    1.f, 0.f, 0.f, 0.f, 
-    0.f, 1.f, 0.f, 0.f, 
-    0.f, 0.f, 1.f, 0.f, 
-    0.f, 0.f, 0.f, 1.f);
-    
-    vector vLook = float4(normalize(vAt.xyz - vEye.xyz), 0.f);
-    vector vRight = float4(normalize(cross(float3(0.f, 1.f, 0.f), vLook.xyz)), 0.f);
-    vector vUp = float4(normalize(cross(vLook.xyz, vRight.xyz)), 0.f);
-    
-    ViewMatrix = matrix(vRight, vUp, vLook, float4(0.f, 0.f, 0.f, 1.f));
-    matrix TransposeViewMatrix = transpose(ViewMatrix);
-    
-    vector vPosition = float4(
-    -1.f * dot(vEye, vRight),
-    -1.f * dot(vEye, vUp),
-    -1.f * dot(vEye, vLook),
-    1.f);
-    
-    TransposeViewMatrix._41 = vPosition.x;
-    TransposeViewMatrix._42 = vPosition.y;
-    TransposeViewMatrix._43 = vPosition.z;
-    TransposeViewMatrix._44 = vPosition.w;
-
-    return TransposeViewMatrix;
-}
 
 struct VS_IN
 {
@@ -323,22 +215,22 @@ PS_OUT PS_MAIN_DEFERRED(PS_IN In)
     PS_OUT Out = (PS_OUT) 0;
 
     vector vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
-    
     if (vDiffuse.a == 0.f)
         discard;
+    
     vector vShade = g_ShadeTexture.Sample(LinearSampler, In.vTexUV);
     
     vector vSpecular = g_SpecularTexture.Sample(LinearSampler, In.vTexUV);
     
-    vector vBlur = g_BlurTexture.Sample(LinearSampler, In.vTexUV);
+    vector vSSAO = g_SSAOTexture.Sample(LinearSampler, In.vTexUV);
     
     vector vShadow = g_ShadowTexture.Sample(LinearSampler, In.vTexUV);
    
-    //vector vSoftShadow = g_SoftShadowTexuture.Sample(LinearSampler, In.vTexUV);
-    vector vSSAO = g_SSAOTexture.Sample(LinearSampler, In.vTexUV);
-
-    Out.vColor = vDiffuse * vShadow * vShade * vBlur;
-    //+0.5f * vSpecular;
+   
+    if(vShadow.x<0.6f)
+        vShade *= 0.2f;
+    
+    Out.vColor = vDiffuse * vShade * vSSAO  + vSpecular ;
 
     return Out;
 }

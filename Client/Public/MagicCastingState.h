@@ -14,6 +14,13 @@ class CMagicCastingState :
         BASICSPELL_LAST = 3,
         BASICSPELL_END
     };
+
+    enum BASICSPELLRANDOM
+    {
+        BASICSPELL_RANDOM_FRONT,
+        BASICSPELL_RANDOM_BACK,
+        BASICSPELL_RANDOM_END     
+    };
 private:
     explicit CMagicCastingState(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext);
     explicit CMagicCastingState(const CMagicCastingState& rhs);
@@ -37,6 +44,11 @@ public:
 private:
     _uint m_iBasicSpellCombo{ 0 };
     _bool m_isReadySpell{ true };
+    _float m_fFixAngleSpeed{ 0.0f };
+
+    _uint m_iBasicSpellRandom{ 0 };
+
+    _bool m_isLastBasicSpellBack = { false };
 
 private:
     void Initialize_BasicSpell_Combo();
@@ -46,7 +58,11 @@ private:
     //클릭시 콤보(막타 후 아이들로 돌아가는 것은 노티파이의 역활)
     void BasicSpell_Tick();
 
-   
+    //주문 시전시 나를 회전 시킨다.
+    void Fix_Angle();
+
+    //주문 시전시 초기화 할것 
+    void Initialize_Spell();
 
 private:
     void Action_Casual_Tick();
@@ -55,6 +71,8 @@ private:
     
 
     void Go_Idle();
+
+    void Go_Roll();
 
 
 public:

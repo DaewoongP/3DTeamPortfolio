@@ -21,7 +21,6 @@ class CRootBehavior;
 END
 
 BEGIN(Client)
-class CAction;
 class CRandom_Select;
 class CWeapon_Golem_Combat;
 END
@@ -58,7 +57,7 @@ private:
 private:
 	const CGameObject* m_pTarget = { nullptr };
 	_uint m_iCurrentSpell = { 0 };
-	unordered_map<SPELL, function<void(_float3, _float)>> m_CurrentTickSpells;
+	unordered_map<BUFF_TYPE, function<void(_float3, _float)>> m_CurrentTickSpells;
 
 	_bool m_isSpawn = { false };
 	_bool m_isParring = { false };

@@ -106,7 +106,7 @@ HRESULT CAssassin_Goblin::Add_Components()
 	}
 
 	/* For.Com_Model */
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_TestModel"),
+	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_Model_TestModel"),
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 	{
 		MSG_BOX("[CAssassin_Goblin] Failed Add_Components : (Com_Model)");
@@ -134,7 +134,7 @@ HRESULT CAssassin_Goblin::Add_Components()
 	//ParentMatrixDesc.pCombindTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
 	//ParentMatrixDesc.pParentWorldMatrix = m_pTransform->Get_WorldMatrixPtr();
 
-	//if (FAILED(Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Weapon_Armored_Troll"),
+	//if (FAILED(Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_Weapon_Armored_Troll"),
 	//	TEXT("Com_Weapon"), reinterpret_cast<CComponent**>(&m_pWeapon), &ParentMatrixDesc)))
 	//{
 	//	MSG_BOX("[CAssassin_Goblin] Failed Add_Components : (Com_Weapon)");

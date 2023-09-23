@@ -54,14 +54,14 @@ HRESULT CUI_Group_Potion::Add_Prototype()
 {
 	BEGININSTANCE;
 
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Back"),
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Back"),
 		CUI_Back::Create(m_pDevice, m_pContext), true)))
 	{
 		ENDINSTANCE;
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_HP"),
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_HP"),
 		CUI_HP::Create(m_pDevice, m_pContext), true)))
 	{
 		ENDINSTANCE;
@@ -77,7 +77,7 @@ HRESULT CUI_Group_Potion::Add_Components()
 {
 	BEGININSTANCE;
 
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_UI_Back"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Back"),
 		TEXT("Com_UI_Potion"), reinterpret_cast<CComponent**>(&m_pUI_Back))))
 	{
 		MSG_BOX("CUI_Group_Potion : Failed Clone Component (Com_UI_Potion)");

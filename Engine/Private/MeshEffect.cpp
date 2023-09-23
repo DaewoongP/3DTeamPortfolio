@@ -92,6 +92,7 @@ void CMeshEffect::Tick(_float _fTimeDelta)
 {
 	if (nullptr != m_pModel && CModel::TYPE_ANIM == m_eAnimType)
 		m_pModel->Play_Animation(_fTimeDelta);
+	m_vOffset.x += 1.f * _fTimeDelta;
 }
 
 void CMeshEffect::Late_Tick(_float _fTimeDelta)

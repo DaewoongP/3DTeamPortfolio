@@ -14,9 +14,9 @@ CLevioso::CLevioso(const CLevioso& rhs)
 
 void CLevioso::TrailAction(_float3 vPosition, _float fTimeDelta)
 {
-	m_MagicTimer -= fTimeDelta;
 	m_pWingardiumEffect->TrailAction(vPosition, fTimeDelta);
 	m_fWingardiumEffectDeadTimer = 0.3f;
+
 }
 
 HRESULT CLevioso::Initialize_Prototype()
@@ -49,7 +49,7 @@ HRESULT CLevioso::Initialize(void* pArg)
 
 		return E_FAIL;
 	}
-	m_CollisionDesc.Action = bind(&CWingardium_Effect::TrailAction, m_pWingardiumEffect, placeholders::_1, placeholders::_2);
+	m_CollisionDesc.Action = bind(&CLevioso::TrailAction, this, placeholders::_1, placeholders::_2);
 
 	if (m_pTarget == nullptr)
 	{
@@ -71,8 +71,7 @@ HRESULT CLevioso::Initialize(void* pArg)
 	}
 	else 
 	{
-		//이거 근데 몹의 발위치로 지금 설정돼있을듯함.
-		m_vTargetPosition = m_pTarget->Get_Position();
+		m_vTargetPosition = m_pTarget->Get_Position() + m_TargetOffsetMatrix.Translation();
 	}
 	
 	m_pEffect->Ready_Spin(m_vTargetPosition, m_MagicBallDesc.vStartPosition, m_MagicBallDesc.fLifeTime, m_MagicBallDesc.fDistance);
@@ -84,22 +83,23 @@ void CLevioso::Tick(_float fTimeDelta)
 	if (m_pEffect->Spin_Move(fTimeDelta))
 	{
 		//이동이 끝났고 윙가가 발동 안했다면?
-		if (!m_bWingardiumActionTrigger)
-		{
-			m_bWingardiumActionTrigger = true;
-			m_pWingardiumEffect->SetActionTrigger(m_bWingardiumActionTrigger);
-			dynamic_cast<CGameObject*>(m_pTarget->Get_Owner())->On_Maigc_Throw_Data(&m_CollisionDesc);
-		}
-		else
-		{
-			m_fWingardiumEffectDeadTimer -= fTimeDelta;
-			if (m_fWingardiumEffectDeadTimer < 0)
-			{
-				Set_ObjEvent(OBJ_DEAD);
-			}
-			//TrailAction(m_pTarget->Get_Position(), fTimeDelta);
-		}
+		//if (!m_bWingardiumActionTrigger)
+		//{
+		//	m_bWingardiumActionTrigger = true;
+		//	m_pWingardiumEffect->SetActionTrigger(m_bWingardiumActionTrigger);
+		//	dynamic_cast<CGameObject*>(m_pTarget->Get_Owner())->On_Maigc_Throw_Data(&m_CollisionDesc);
+		//}
+		//else
+		//{
+		//	m_fWingardiumEffectDeadTimer -= fTimeDelta;
+		//	if (m_fWingardiumEffectDeadTimer < 0)
+		//	{
+		//		Set_ObjEvent(OBJ_DEAD);
+		//	}
+		//	//TrailAction(m_pTarget->Get_Position(), fTimeDelta);
+		//}
 	}
+	m_pTransform->Set_Position(m_pEffect->Get_Transform()->Get_Position());
 	__super::Tick(fTimeDelta);
 }
 
@@ -132,14 +132,14 @@ HRESULT CLevioso::Add_Effect()
 {
 	CDefault_MagicTraill_Effect::INITDESC initDesc;
 	initDesc.vInitPosition = m_MagicBallDesc.vStartPosition;
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_MagicTraill_Winga_Effect"), 
+	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_MagicTraill_Winga_Effect"), 
 		TEXT("Com_Effect"), reinterpret_cast<CComponent**>(&m_pEffect),&initDesc)))
 	{
 		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_MagicTraill_Winga_Effect)");
 		return E_FAIL;
 	}
 
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Wingardium_Effect"),
+	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Wingardium_Effect"),
 		TEXT("Com_WingradiumEffect"), reinterpret_cast<CComponent**>(&m_pWingardiumEffect))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Wingardium_Effect)");
@@ -182,4 +182,36 @@ void CLevioso::Free()
 		Safe_Release(m_pEffect);
 		Safe_Release(m_pWingardiumEffect);
 	}
+}
+
+void CLevioso::Ready_Begin()
+{
+}
+
+void CLevioso::Ready_DrawMagic()
+{
+}
+
+void CLevioso::Ready_CastMagic()
+{
+}
+
+void CLevioso::Ready_Dying()
+{
+}
+
+void CLevioso::Tick_Begin(_float fTimeDelta)
+{
+}
+
+void CLevioso::Tick_DrawMagic(_float fTimeDelta)
+{
+}
+
+void CLevioso::Tick_CastMagic(_float fTimeDelta)
+{
+}
+
+void CLevioso::Tick_Dying(_float fTimeDelta)
+{
 }

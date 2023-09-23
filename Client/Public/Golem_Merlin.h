@@ -70,11 +70,6 @@ private:
 #endif // _DEBUG
 
 private: /* Çàµ¿ ¹­À½µé */
-	HRESULT Make_Turns(_Inout_ CSequence* pSequence);
-	HRESULT Make_Attack(_Inout_ CSelector* pSelector);
-	HRESULT Make_NormalAttack(_Inout_ CSelector* pSelector);
-	HRESULT Make_Check_Spell(_Inout_ CSelector* pSelector);
-	HRESULT Make_Descendo(_Inout_ CSequence* pSequence);
 
 public:
 	static CGolem_Merlin* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

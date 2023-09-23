@@ -54,6 +54,7 @@ HRESULT CLoadTrigger::Add_Components()
 	RigidBodyDesc.pOwnerObject = this;
 	PxSphereGeometry SphereGeometry = PxSphereGeometry(10.f);
 	RigidBodyDesc.pGeometry = &SphereGeometry;
+	strcpy_s(RigidBodyDesc.szCollisionTag, "LoadTrigger");
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
 		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
 	{

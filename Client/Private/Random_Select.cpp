@@ -42,15 +42,23 @@ HRESULT CRandom_Select::Tick(const _float& fTimeDelta)
 {
 	HRESULT hr = __super::Tick(fTimeDelta);
 
-	if (BEHAVIOR_RUNNING != hr)
+	if (BEHAVIOR_SUCCESS == hr)
 	{
 		Set_Random_Behavior();
 
-		if (BEHAVIOR_SUCCESS == hr)
+		BEGININSTANCE;
+		m_fPreWorldTimeAcc = pGameInstance->Get_World_TimeAcc();
+		ENDINSTANCE;
+	}
+	else if (BEHAVIOR_FAIL == hr)
+	{
+		_bool* pIsParring = { nullptr };
+		if (FAILED(m_pBlackBoard->Get_Type("isParring", pIsParring)))
+			return hr;
+
+		if (true == *pIsParring)
 		{
-			BEGININSTANCE;
-			m_fPreWorldTimeAcc = pGameInstance->Get_World_TimeAcc();
-			ENDINSTANCE;
+			Set_Random_Behavior();
 		}
 	}
 
@@ -64,7 +72,7 @@ void CRandom_Select::Reset_Behavior(HRESULT result)
 		return;
 
 	(*m_iterCurBehavior)->Reset_Behavior(result);
-	if (CMagic::BUFF_NONE != *pICurrentSpell)
+	if (BUFF_NONE != *pICurrentSpell)
 	{
 		Set_Random_Behavior();
 

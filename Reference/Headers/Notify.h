@@ -45,6 +45,7 @@ public:
 private:
 	vector<pair<wstring, KEYFRAME*>>	m_KeyFrames;
 	_uint				m_iNumKeyFrames = { 0 };
+	_uint				m_iCurrentKeyFramesIndex = { 0 };
 
 public:
 	static CNotify* Create();

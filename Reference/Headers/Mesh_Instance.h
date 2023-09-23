@@ -7,7 +7,7 @@
 
 BEGIN(Engine)
 
-class CMesh_Instance final : public CVIBuffer
+class ENGINE_DLL CMesh_Instance final : public CVIBuffer
 {
 private:
 	explicit CMesh_Instance(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -16,6 +16,9 @@ private:
 
 public:
 	_uint	Get_MaterialIndex() const { return m_iMaterialIndex; }
+	vector<_float4x4>			Get_InstanceMatrices() { return m_InstanceMatrixVec; }
+	vector<_float3>				Get_VertexPositions() { return m_VerticesPositionVec; }
+	vector<PxU32>				Get_Indices() { return m_IndicesVec; };
 
 public:
 	virtual HRESULT Initialize_Prototype(const Engine::MESH Mesh, _float4x4 PivotMatrix, _float4x4* pInstanceMatrix, _uint iNumInstance);
@@ -29,6 +32,11 @@ private:
 	_uint						m_iIndexCountPerInstance = { 0 };	
 	_uint						m_iNumInstance = { 0 };
 	_uint						m_iMaterialIndex = { 0 };
+
+private:
+	vector<_float4x4>			m_InstanceMatrixVec;
+	vector<_float3>				m_VerticesPositionVec;
+	vector<PxU32>				m_IndicesVec;
 
 private:
 	HRESULT Ready_VertexBuffer_NonAnim(const Engine::MESH Mesh, _float4x4* pInstanceMatrix, _float4x4 PivotMatrix);

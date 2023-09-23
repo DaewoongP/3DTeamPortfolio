@@ -44,6 +44,7 @@
 #include "VIBuffer_Line.h"
 #include "VIBuffer_Cube.h"
 #include "VIBuffer_Cell.h"
+#include "Mesh_Instance.h"
 #include "Model_Instance.h"
 #include "MotionBlurInst.h"
 #include "VIBuffer_Cloth.h"
@@ -101,12 +102,13 @@ public:
 	// 프로토타입 생성
 	HRESULT				Add_Prototype(_uint iLevelIndex, const _tchar* pPrototypeTag, class CComponent* pPrototype, _bool isFailedSkip = false);
 	// Tick에 컴포넌트가 돌아가게끔 clone 처리
-	HRESULT				Add_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, const _tchar* pLayerTag, const _tchar* pComponentTag, void* pArg);
+	HRESULT				Add_Component(_uint iPrototypeLevelIndex, _uint iLevelIndex, const _tchar* pPrototypeTag, const _tchar* pLayerTag, const _tchar* pComponentTag, void* pArg);
 	class CComponent* Clone_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, void* pArg);
 	void				Clear_LevelResources(_uint iLevelIndex);
 	HRESULT				Delete_Component(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pComponentTag);
 
 	class CComponent* Find_Component_In_Layer(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pComponentTag);
+	const unordered_map<const _tchar*, class CComponent*>* Find_Components_In_Layer(_uint iLevelIndex, const _tchar* pLayerTag);
 	class CComponent* Find_Prototype(_uint iLevelIndex, const _tchar* pPrototypeTag);
 	class CLayer* Find_Layer(_uint iLevelIndex, const _tchar* pLayerTag);
 	HRESULT				Clear_Layer(_uint iLevelIndex, const _tchar* pLayerTag);

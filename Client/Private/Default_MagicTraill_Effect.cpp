@@ -43,14 +43,14 @@ void CDefault_MagicTraill_Effect::Ready_Spline(_float3 vTargerPosition, _float3 
 	//임의의 랜덤 값을 구하고
 	_float fRandom = Random_Generator(-20.f, 20.f);
 	// 외적 방향으로 튄다.
-	m_vSplineLerp[0] += _float3(normal.x * fRandom, normal.y * fRandom, normal.z * fRandom);
+	m_vSplineLerp[0] += _float3(normal.x * fRandom, normal.y * fabsf(fRandom), normal.z * fRandom);
 
 	//진행 경로만큼 뒤로 이동한 뒤
 	m_vSplineLerp[1] = m_vStartPostion + vDir;
 	//임의의 랜덤 값을 구하고
 	fRandom = Random_Generator(-20.f, 20.f);
 	// 외적 방향으로 튄다.
-	m_vSplineLerp[1] += _float3(normal.x * fRandom, normal.y * fRandom, normal.z * fRandom);
+	m_vSplineLerp[1] += _float3(normal.x * fRandom, normal.y * fabsf(fRandom), normal.z * fRandom);
 	m_fTimeScalePerDitance = fDistance / _float3(m_vEndPostion - m_vStartPostion).Length();
 	m_pTrail->Reset_Trail(vStartPosition + _float3(0,0.5f,0), vStartPosition - _float3(0, 0.5f, 0));
 }
@@ -134,11 +134,16 @@ HRESULT CDefault_MagicTraill_Effect::Initialize(void* pArg)
 
 void CDefault_MagicTraill_Effect::Tick(_float fTimeDelta)
 {
+	if (!m_isEnable)
+		return;
 	__super::Tick(fTimeDelta);
 }
 
 void CDefault_MagicTraill_Effect::Late_Tick(_float fTimeDelta)
 {
+	if (!m_isEnable)
+		return;
+
 	__super::Late_Tick(fTimeDelta);
 	m_pTrailTransform->Set_Position(m_pTransform->Get_Position());
 	m_pGlowBallTransform->Set_Position(m_pTransform->Get_Position());
@@ -151,11 +156,14 @@ void CDefault_MagicTraill_Effect::Set_Position(_float3 vPos)
 
 _bool CDefault_MagicTraill_Effect::Stright_Move(_float fTimeDelta)
 {
-	if(m_fLerpAcc > 1)
+	if (m_fLerpAcc >= 1.0f)
 	{
 		m_isEnd = true;
 		return m_isEnd;
 	}
+	m_fLerpAcc += fTimeDelta / m_fTrailLifeTime * m_fTimeScalePerDitance;
+	if (m_fLerpAcc > 1.0f)
+		m_fLerpAcc = 1.0f;
 		
 	m_fLerpAcc += fTimeDelta / m_fTrailLifeTime * m_fTimeScalePerDitance;
 	_float3 movedPos = XMVectorLerp(m_vStartPostion, m_vEndPostion, m_fLerpAcc);
@@ -165,13 +173,14 @@ _bool CDefault_MagicTraill_Effect::Stright_Move(_float fTimeDelta)
 
 _bool CDefault_MagicTraill_Effect::Spin_Move(_float fTimeDelta)
 {
-	if (m_fLerpAcc > 1)
+	if (m_fLerpAcc >= 1.0f)
 	{
 		m_isEnd = true;
 		return m_isEnd;
 	}
-	m_fLerpAcc += fTimeDelta / m_fTrailLifeTime * m_fTimeScalePerDitance;
-
+	m_fLerpAcc += fTimeDelta / m_fTrailLifeTime *m_fTimeScalePerDitance;
+	if (m_fLerpAcc >= 1.0f)
+		m_fLerpAcc = 1.0f;
 	//직선상으로 이동시 위치해야할 position
 	_float3 movedPos = XMVectorLerp(m_vStartPostion, m_vEndPostion, m_fLerpAcc);
 
@@ -185,7 +194,7 @@ _bool CDefault_MagicTraill_Effect::Spin_Move(_float fTimeDelta)
 	_float3 tempAxis = _float3(0, 1, 0);
 
 	//방향에 수직인 벡터
-	_float3	normal = XMVector3Cross(axis, tempAxis);
+	_float3	normal = XMVector3Normalize(XMVector3Cross(axis, tempAxis))*0.5f;
 
 	//영점에서 normal만큼 이동한 matrix
 	_float4x4 offsetMatirx = XMMatrixTranslation(normal.x, normal.y, normal.z);
@@ -202,13 +211,15 @@ _bool CDefault_MagicTraill_Effect::Spin_Move(_float fTimeDelta)
 
 _bool CDefault_MagicTraill_Effect::Spline_Move(_float fTimeDelta)
 {
-	if (m_fLerpAcc > 1)
+	if (m_fLerpAcc >= 1.0f)
 	{
 		m_isEnd = true;
 		return m_isEnd;
 	}
-
 	m_fLerpAcc += fTimeDelta / m_fTrailLifeTime * m_fTimeScalePerDitance;
+	if (m_fLerpAcc > 1.0f)
+		m_fLerpAcc = 1.0f;
+
 	_float3 movedPos = XMVectorCatmullRom(m_vSplineLerp[0], m_vStartPostion, m_vEndPostion, m_vSplineLerp[1], m_fLerpAcc);
 	m_pTransform->Set_Position(movedPos);
 	return m_isEnd;

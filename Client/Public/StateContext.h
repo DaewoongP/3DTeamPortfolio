@@ -39,6 +39,8 @@ public:
         _float* pOwnerLookAngle = { nullptr };
         _bool* pIsDirectionPressed = { nullptr };
         CTransform* pPlayerTransform = { nullptr };
+        _float* pTargetAngle = { nullptr };
+        _float* pClothPowerPlus = { nullptr };
     }STATECONTEXTDESC;
 private:
     explicit CStateContext(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext);
@@ -62,6 +64,7 @@ private:
     _float* m_pOwnerLookAngle = { nullptr };
     _bool*  m_pIsDirectionPressed = { nullptr };
     CTransform* m_pPlayerTransform = { nullptr };
+    _float* m_pTargetAngle = { nullptr };
 
     CStateMachine* m_pCurrentStateMachine = { nullptr };
 
@@ -75,6 +78,12 @@ private:
     _bool m_isFinishAnimation = { false };
 
     function<void()> m_pfuncFinishAnimation = { nullptr };  //  FinishAnimation();
+
+    //회전 배율
+    _float m_fRotaionSpeed = { 0.0f };
+
+
+
 
     unordered_map<const _tchar*, CStateMachine*> m_pStateMachines;
 

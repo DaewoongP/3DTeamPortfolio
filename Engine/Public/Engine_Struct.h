@@ -166,6 +166,7 @@ namespace Engine
 	{
 		const _tchar*				pOtherObjectTag = { nullptr };
 		_tchar						pOtherCollisionTag[MAX_PATH] = TEXT("");
+		_tchar						pThisCollisionTag[MAX_PATH] = TEXT("");
 		const class CGameObject*	pOtherOwner = { nullptr };
 		const class CTransform*		pOtherTransform = { nullptr };
 		void*						pArg = { nullptr };

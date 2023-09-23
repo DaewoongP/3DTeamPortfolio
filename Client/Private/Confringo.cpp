@@ -9,14 +9,85 @@ CConfringo::CConfringo(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 CConfringo::CConfringo(const CConfringo& rhs)
 	: CMagicBall(rhs)
+	, m_iLevel(rhs.m_iLevel)
 {
 }
 
-HRESULT CConfringo::Initialize_Prototype()
+HRESULT CConfringo::Initialize_Prototype(_uint iLevel)
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
 
+	m_iLevel = iLevel;
+	BEGININSTANCE;
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Confringo_Trail")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Confringo_Trail")
+			, CTrail::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/Confringo/Confringo.trail"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_FireBallDir_Effect")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_FireBallDir_Effect")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Confringo/FireBallDir"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_FireBallB_Effect")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_FireBallB_Effect")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Confringo/FireBallB"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Fire_Torch_Effect")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Fire_Torch_Effect")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Confringo/Fire_Torch"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Confringo_Dust_Effect")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Confringo_Dust_Effect")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Confringo/Dust"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+	
+	//베이직 캐스트꺼 가져온거임.
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_BasicCast_Wand_Traill_Effect")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_BasicCast_Wand_Traill_Effect")
+			, CTrail::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/BasicTrail/BasicCast/BasicTrail.trail"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Default_SphereTrace_Particle")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Default_SphereTrace_Particle")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BasicCast/Default_SphereTrace"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+
+	ENDINSTANCE;
 	return S_OK;
 }
 
@@ -42,62 +113,18 @@ HRESULT CConfringo::Initialize(void* pArg)
 
 		return E_FAIL;
 	}
-
-	if (m_pTarget == nullptr)
-	{
-		//마우스 피킹 지점으로 발사
-		BEGININSTANCE;
-		_float4 vMouseOrigin, vMouseDirection;
-		_float3 vMouseWorldPickPosition, vDirStartToPicked;
-		if (FAILED(pGameInstance->Get_WorldMouseRay(m_pContext, g_hWnd, &vMouseOrigin, &vMouseDirection)))
-		{
-			Safe_Release(pGameInstance);
-			return false;
-		}
-		ENDINSTANCE;
-
-		vMouseWorldPickPosition = vMouseOrigin.xyz() + vMouseDirection.xyz() * 10000;
-		vDirStartToPicked = (vMouseWorldPickPosition - m_MagicBallDesc.vStartPosition);
-		vDirStartToPicked.Normalize();
-		m_vTargetPosition = vDirStartToPicked * m_MagicBallDesc.fDistance;
-	}
-	else 
-	{
-		//이거 근데 몹의 발위치로 지금 설정돼있을듯함.
-		m_vTargetPosition = m_pTarget->Get_Position();
-	}
-
-	//Ready for Spline Lerp
-	m_pTrailEffect->Ready_Spline(m_vTargetPosition, m_MagicBallDesc.vStartPosition, m_MagicBallDesc.fLifeTime, m_MagicBallDesc.fDistance);
-	m_pWandDustEffect->Set_Position(m_vTargetPosition);
-	m_pExplosiveEffect->ResetParticle();
-	m_pTrailEffect->Set_Trail_HeadColor(_float3(1, 0, 0));
-	m_pTrailEffect->Set_Trail_TailColor(_float3(1, 1, 0));
 	return S_OK;
 }
 
 void CConfringo::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-	//사망처리 걸리면 재생
-	if (m_isExplosiveTrigger)
-	{
-		//파티클 끝나면 없애줘.
-		//if (m_pExplosiveEffect->Get_Particle_State_End())
-		Set_ObjEvent(OBJ_DEAD);
-		return;
-	}
-	//이동이 끝나면 true를 리턴해줄거임.
-	if (m_pTrailEffect->Spline_Move(fTimeDelta))
-	{
-		//터지는 효과임.
-		if (!m_isExplosiveTrigger)
-		{
-			m_pExplosiveEffect->Play_Particle(m_vTargetPosition);
-			m_isExplosiveTrigger = true;
-		}
-	}
-	m_pTransform->Set_Position(m_pTrailEffect->Get_Transform()->Get_Position());
+
+	_float3 vWandPosition = _float4x4(m_WeaponOffsetMatrix * (*m_pWeaponMatrix)).Translation();
+	m_pWandTouchEffect->Get_Transform()->Set_Position(vWandPosition);
+	m_pWandDustEffect->Get_Transform()->Set_Position(vWandPosition);
+	m_pWandTwinklEffect->Get_Transform()->Set_Position(vWandPosition);
+	m_pWandTrailEffect->Get_Transform()->Set_Position(vWandPosition);
 }
 
 void CConfringo::Late_Tick(_float fTimeDelta)
@@ -111,9 +138,7 @@ void CConfringo::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 	//몹이랑 충돌했으면?
 	if (wcsstr(CollisionEventDesc.pOtherCollisionTag, TEXT("Enemy_Body")) != nullptr)
 	{
-		//사망처리 드갑니다.
-		m_isExplosiveTrigger = true;
-		m_pExplosiveEffect->Play_Particle(m_pTrailEffect->Get_Transform()->Get_Position());
+		Set_MagicBallState(MAGICBALL_STATE_DYING);
 	}
 	
 }
@@ -128,6 +153,132 @@ void CConfringo::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 	__super::OnCollisionExit(CollisionEventDesc);
 }
 
+void CConfringo::Ready_Begin()
+{
+	m_pTrail->Disable();
+	m_pExplosiveEffect[0]->Disable();
+	m_pExplosiveEffect[1]->Disable();
+	m_pWandTouchEffect->Disable();
+	m_pWandDustEffect->Disable();
+	m_pWandTwinklEffect->Disable();
+	m_pWandTrailEffect->Disable();
+}
+
+void CConfringo::Ready_DrawMagic()
+{
+	m_pWandTouchEffect->Enable();
+	m_pWandDustEffect->Enable();
+	m_pWandTwinklEffect->Enable();
+	m_pWandTrailEffect->Enable();
+}
+
+void CConfringo::Ready_CastMagic()
+{
+	if (m_pTarget == nullptr)
+	{
+		//마우스 피킹 지점으로 발사
+		BEGININSTANCE;
+		_float4 vMouseOrigin, vMouseDirection;
+		_float3 vMouseWorldPickPosition, vDirStartToPicked;
+		if (FAILED(pGameInstance->Get_WorldMouseRay(m_pContext, g_hWnd, &vMouseOrigin, &vMouseDirection)))
+		{
+			ENDINSTANCE;
+			return;
+		}
+		ENDINSTANCE;
+
+		vMouseWorldPickPosition = vMouseOrigin.xyz() + vMouseDirection.xyz() * 10000;
+		vDirStartToPicked = (vMouseWorldPickPosition - m_MagicBallDesc.vStartPosition);
+		vDirStartToPicked.Normalize();
+		m_vTargetPosition = vDirStartToPicked * m_MagicBallDesc.fDistance;
+	}
+	else
+	{
+		m_vTargetPosition = m_pTarget->Get_Position() + m_TargetOffsetMatrix.Translation();
+	}
+
+	//Ready for Spline Lerp
+	m_vStartPostion = m_MagicBallDesc.vStartPosition;
+	m_fLerpAcc = 0.f;
+
+	// 플레이어가 타겟을 보는 vector를 구함.
+	_float3 vDir = XMVector3Normalize(m_vTargetPosition - m_vStartPostion);
+	// 임의의 축을 구함.
+	_float3 tempAxis = _float3(1, 1, 1);
+	// 외적
+	_float3	normal = XMVector3Cross(vDir, tempAxis);
+
+	//진행 경로만큼 뒤로 이동한 뒤
+	m_vSplineLerp[0] = m_vStartPostion - vDir;
+	//임의의 랜덤 값을 구하고
+	_float fRandom = Random_Generator(-20.f, 20.f);
+	// 외적 방향으로 튄다.
+	m_vSplineLerp[0] += _float3(normal.x * fRandom, normal.y * fabsf(fRandom), normal.z * fRandom);
+
+	//진행 경로만큼 뒤로 이동한 뒤
+	m_vSplineLerp[1] = m_vStartPostion + vDir;
+	//임의의 랜덤 값을 구하고
+	fRandom = Random_Generator(-20.f, 20.f);
+	// 외적 방향으로 튄다.
+	m_vSplineLerp[1] += _float3(normal.x * fRandom, normal.y * fabsf(fRandom), normal.z * fRandom);
+	m_fTimeScalePerDitance = m_MagicBallDesc.fDistance / _float3(m_vTargetPosition - m_vStartPostion).Length();
+
+	m_pTrail->Reset_Trail(_float3(m_vStartPostion) + _float3(0, 0.5f, 0), _float3(m_vStartPostion) + _float3(0, -0.5f, 0));
+	m_pTrail->Get_Transform()->Set_Position(m_vStartPostion);
+
+	m_pTrail->Enable();
+}
+
+void CConfringo::Ready_Dying()
+{
+	m_pWandTouchEffect->Disable();
+	m_pWandDustEffect->Disable();
+	m_pWandTwinklEffect->Disable();
+	m_pWandTrailEffect->Disable();
+
+	m_pExplosiveEffect[0]->Enable();
+	m_pExplosiveEffect[1]->Enable();
+	m_pExplosiveEffect[0]->Get_Transform()->Set_Position(m_pTrail->Get_Transform()->Get_Position());
+	m_pExplosiveEffect[1]->Get_Transform()->Set_Position(m_pTrail->Get_Transform()->Get_Position());
+	m_pExplosiveEffect[0]->Play();
+	m_pExplosiveEffect[1]->Play();
+}
+
+void CConfringo::Tick_Begin(_float fTimeDelta)
+{
+	//콘프링고는 비긴 없습니다.
+	Do_MagicBallState_To_Next();
+}
+
+void CConfringo::Tick_DrawMagic(_float fTimeDelta)
+{
+	Do_MagicBallState_To_Next();
+}
+
+void CConfringo::Tick_CastMagic(_float fTimeDelta)
+{
+	if (m_fLerpAcc != 1)
+	{
+		m_fLerpAcc += fTimeDelta / m_MagicBallDesc.fInitLifeTime * m_fTimeScalePerDitance;
+		if (m_fLerpAcc > 1)
+			m_fLerpAcc = 1;
+		m_pTrail->Spline_Spin_Move(m_vSplineLerp[0], m_vStartPostion, m_vTargetPosition, m_vSplineLerp[1], m_fLerpAcc);
+		m_pTransform->Set_Position(m_pTrail->Get_Transform()->Get_Position());
+	}
+	else 
+	{
+		Do_MagicBallState_To_Next();
+	}
+}
+
+void CConfringo::Tick_Dying(_float fTimeDelta)
+{
+	if (!m_pExplosiveEffect[0]->IsEnable() &&
+		!m_pExplosiveEffect[1]->IsEnable())
+		Do_MagicBallState_To_Next();
+}
+
+
 HRESULT CConfringo::Add_Components()
 {
 	return S_OK;
@@ -135,37 +286,45 @@ HRESULT CConfringo::Add_Components()
 
 HRESULT CConfringo::Add_Effect()
 {
-	CDefault_MagicTraill_Effect::INITDESC initDesc;
-	initDesc.vInitPosition = m_MagicBallDesc.vStartPosition;
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_MagicTraill_Confringo_Effect"), 
-		TEXT("Com_TrailEffect"), reinterpret_cast<CComponent**>(&m_pTrailEffect),&initDesc)))
+	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Confringo_Trail"), 
+		TEXT("Com_Trail"), reinterpret_cast<CComponent**>(&m_pTrail))))
 	{
-		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_MagicTraill_Confringo_Effect)");
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Confringo_Trail)");
 		return E_FAIL;
 	}
 
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Confringo_Explosive_Effect"),
-		TEXT("Com_ExplosiveEffect"), reinterpret_cast<CComponent**>(&m_pExplosiveEffect))))
-	{
-		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Confringo_Explosive_Effect)");
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_FireBallDir_Effect")
+		, TEXT("Com_Explosive_Particle01"), (CComponent**)&m_pExplosiveEffect[0])))
 		return E_FAIL;
-	}
 
-	if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Confringo_WandDust_Effect"),
-		TEXT("Com_WandDustEffect"), reinterpret_cast<CComponent**>(&m_pWandDustEffect))))
-	{
-		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Confringo_WandDust_Effect)");
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_FireBallB_Effect")
+		, TEXT("Com_Explosive_Particle02"), (CComponent**)&m_pExplosiveEffect[1])))
 		return E_FAIL;
-	}
-	
+
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Fire_Torch_Effect")
+		, TEXT("Com_Fire_Torch"), (CComponent**)&m_pWandTouchEffect)))
+		return E_FAIL;
+
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Confringo_Dust_Effect")
+		, TEXT("Com_Dust_Effect"), (CComponent**)&m_pWandDustEffect)))
+		return E_FAIL;
+
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Default_SphereTrace_Particle")
+		, TEXT("Com_Twinkle_Effect"), (CComponent**)&m_pWandTwinklEffect)))
+		return E_FAIL;
+
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_BasicCast_Wand_Traill_Effect")
+		, TEXT("Com_Wand_Trail_Effect"), (CComponent**)&m_pWandTrailEffect)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
-CConfringo* CConfringo::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CConfringo* CConfringo::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,_uint iLevel)
 {
 	CConfringo* pInstance = new CConfringo(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize_Prototype()))
+	if (FAILED(pInstance->Initialize_Prototype(iLevel)))
 	{
 		MSG_BOX("Failed to Created CConfringo");
 		Safe_Release(pInstance);
@@ -191,8 +350,13 @@ void CConfringo::Free()
 	__super::Free();
 	if (true == m_isCloned)
 	{
-		Safe_Release(m_pTrailEffect);
-		Safe_Release(m_pExplosiveEffect);
+		Safe_Release(m_pTrail);
+		Safe_Release(m_pExplosiveEffect[0]);
+		Safe_Release(m_pExplosiveEffect[1]);
+		Safe_Release(m_pWandTouchEffect);
 		Safe_Release(m_pWandDustEffect);
+		Safe_Release(m_pWandTwinklEffect);
+		Safe_Release(m_pWandTrailEffect);
 	}
 }
+

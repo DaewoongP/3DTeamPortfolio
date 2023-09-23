@@ -445,7 +445,7 @@ HRESULT CMonster_Window::Load_Monsters(const wstring& wstrMapDataPath)
 		wstrName += Data.wstrTag + to_wstring(iIndex++);
 
 		// 번호를 붙인 태그로 MapObject 등록
-		if (FAILED(m_pGameInstance->Add_Component(LEVEL_TOOL,
+		if (FAILED(m_pGameInstance->Add_Component(LEVEL_TOOL, LEVEL_TOOL,
 			TEXT("Prototype_GameObject_Dummy"), TEXT("Layer_Monster"),
 			wstrName.c_str())))
 		{
@@ -566,7 +566,7 @@ HRESULT CMonster_Window::Create_Dummy()
 			wstring wstrComponentTag = { TEXT("GameObject_Monster_") };
 			wstrComponentTag += m_wstrMonsterTags[m_iPrototypeTableIndex] + to_wstring(m_iCountIndex++);
 
-			if (FAILED(m_pGameInstance->Add_Component(LEVEL_TOOL, TEXT("Prototype_GameObject_Dummy"),
+			if (FAILED(m_pGameInstance->Add_Component(LEVEL_TOOL, LEVEL_TOOL, TEXT("Prototype_GameObject_Dummy"),
 				TEXT("Layer_Monster"), wstrComponentTag.c_str())))
 			{
 				MSG_BOX("[CMonster_Window] Failed Add_Component");

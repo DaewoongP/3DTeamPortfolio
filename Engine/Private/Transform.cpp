@@ -81,6 +81,11 @@ _float4 CTransform::Get_QuaternionVector_Yaw(_float fRadian)
 	return XMQuaternionRotationRollPitchYaw(0.f, 0.f, fRadian);
 }
 
+_float3 CTransform::Get_Velocity()
+{
+	return m_vVelocity;
+}
+
 void CTransform::Set_Scale(_float3 _vScale)
 {
 	_float3 vRight = Get_Right();
@@ -143,7 +148,7 @@ void CTransform::Set_Look(_float3 _vLook)
 void CTransform::Set_Position(_float3 _vPosition)
 {
 	memcpy(&m_WorldMatrix.m[3][0], &_vPosition, sizeof(_float3));
-	
+
 	m_ubTransformChanged |= CHANGEFLAG::TRANSLATION;
 }
 
@@ -151,23 +156,9 @@ void CTransform::Set_WorldMatrix(_float4x4 _WorldMatrix)
 {
 	m_WorldMatrix = _WorldMatrix;
 
-	if (nullptr != m_pRigidBody)
-	{
-		CPhysX_Manager* pPhysX_Manager = CPhysX_Manager::GetInstance();
-		Safe_AddRef(pPhysX_Manager);
-
-		m_pRigidBody->Set_Position(Get_Position());
-		m_pRigidBody->Set_Rotation(Get_Quaternion());
-
-		pPhysX_Manager->Tick(1 / 60.f);
-
-		Set_Position(m_pRigidBody->Get_Position());
-		Set_Quaternion(m_pRigidBody->Get_Rotation());
-
-		Safe_Release(pPhysX_Manager);
-	}
-	
 	m_ubTransformChanged |= CHANGEFLAG::ROTATION | CHANGEFLAG::TRANSLATION;
+
+	Update_Components();
 }
 
 HRESULT CTransform::Initialize_Prototype()
@@ -185,6 +176,9 @@ HRESULT CTransform::Initialize(void* pArg)
 
 void CTransform::Tick(_float fTimeDelta)
 {
+	m_vVelocity = (Get_Position() - m_vPrePosition) * 60.f; // 60frame 기준 고정 속도처리
+	m_vPrePosition = Get_Position();
+
 	Update_Components();
 }
 
@@ -359,6 +353,37 @@ void CTransform::LookAt(_float3 _vTarget, _bool _isDeleteY)
 	m_ubTransformChanged |= CHANGEFLAG::ROTATION;
 }
 
+void CTransform::LookAt_Lerp(_float3 _vTarget, const _float& fTimeDelta, _bool _isDeleteY)
+{
+	_float3 vPosition = Get_Position();
+	_float3 vLook = Get_Look();
+	_float3 vDir = _vTarget - vPosition;
+
+	if (true == _isDeleteY)
+	{
+		vLook.y = 0.f;
+		vDir.y = 0.f;
+	}
+	vLook.Normalize();
+	vDir.Normalize();
+
+	vLook = XMVectorLerp(vLook, vDir, fTimeDelta * m_fRotationSpeed);
+	vLook.Normalize();
+
+	_float3 vRight = XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook);
+	vRight.Normalize();
+	_float3 vUp = XMVector3Cross(vLook, vRight);
+	vUp.Normalize();
+
+	_float3 vScale = Get_Scale();
+
+	Set_Right(XMVector3Normalize(vRight) * vScale.x);
+	Set_Up(XMVector3Normalize(vUp) * vScale.y);
+	Set_Look(XMVector3Normalize(vLook) * vScale.z);
+
+	m_ubTransformChanged |= CHANGEFLAG::ROTATION;
+}
+
 void CTransform::Update_Components()
 {
 	if (nullptr == m_pRigidBody)
@@ -387,7 +412,6 @@ void CTransform::Update_Components()
 		controller->Translate(Get_Position());
 	else
 		m_Position = controller->GetPosition();*/
-
 
 	m_ubTransformChanged = CHANGEFLAG::NONE;
 }

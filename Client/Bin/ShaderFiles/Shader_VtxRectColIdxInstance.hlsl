@@ -13,9 +13,10 @@ vector			g_vColor = vector(1.f, 1.f, 1.f, 1.f);
 
 /// For.TextureSheetAnimation //
 bool g_isTextureSheetAnimationActivated = false;
+bool g_isUseNormalTexture = false;
+bool g_isUseGradientTexture = false;
 unsigned int g_iWidthLength = 1;
 unsigned int g_iHeightLength = 1;
-bool g_isUseNormalTexture = false;
 texture2D g_NormalTexture;
 ////////////////////////////////
 
@@ -136,7 +137,7 @@ technique11		DefaultTechnique
 	pass Default
 	{
 		SetRasterizerState(RS_Cull_None);
-		SetDepthStencilState(DSS_Depth_Disable, 0);
+		SetDepthStencilState(DSS_Alpha, 0);
 		SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		VertexShader = compile vs_5_0 VS_MAIN();
 		GeometryShader = NULL;
@@ -147,7 +148,7 @@ technique11		DefaultTechnique
 	pass TextureSheetAnimation
 	{
 		SetRasterizerState(RS_Cull_None);
-		SetDepthStencilState(DSS_Depth_Disable, 0);
+		SetDepthStencilState(DSS_Alpha, 0);
 		SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		VertexShader = compile vs_5_0 VS_TS_MAIN();
 		GeometryShader = NULL;
@@ -158,7 +159,7 @@ technique11		DefaultTechnique
 	pass MotionBlur
 	{
 		SetRasterizerState(RS_Cull_None);
-		SetDepthStencilState(DSS_Depth_Disable, 0);
+		SetDepthStencilState(DSS_Alpha, 0);
 		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		VertexShader = compile vs_5_0 VS_MAIN();
 		GeometryShader = NULL;

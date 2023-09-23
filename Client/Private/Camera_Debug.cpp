@@ -33,7 +33,7 @@ HRESULT CCamera_Debug::Initialize(void* pArg)
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
 	m_pTransform->Set_Position(_float3(0.f, 2.f, 0.f));
 
-	m_fCameraNear = 1.f;
+	m_fCameraNear = 0.1f;
 
 	return S_OK;
 }
@@ -59,9 +59,6 @@ void CCamera_Debug::Tick(_float fTimeDelta)
 
 	__super::Tick(fTimeDelta);
 
-#ifdef _DEBUG
-	Debug_ImGui(fTimeDelta);
-#endif // _DEBUG	
 }
 
 void CCamera_Debug::Key_Input(const _float& fTimeDelta)
@@ -142,73 +139,7 @@ void CCamera_Debug::Fix_Mouse(void)
 	ClientToScreen(g_hWnd, &ptMouse);
 	SetCursorPos(ptMouse.x, ptMouse.y);
 }
-#ifdef _DEBUG
-void CCamera_Debug::Debug_ImGui(_float fTimeDelta)
-{
-	ImGui::Begin("Camera Debug");
 
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
-
-	CCamera_Debug* pCam = static_cast<CCamera_Debug*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Debug"), TEXT("GameObject_Camera_Debug")));
-
-	_float fSpeed = pCam->Get_Speed();
-
-	ImGui::Checkbox("Fix Mouse : ~ ", pCam->Get_FixMouse());
-
-	ImGui::SameLine();
-	ImGui::SetNextItemWidth(200.f);
-	if (ImGui::SliderFloat("Camera Speed", &fSpeed, 0.f, 250.f, "%.1f"))
-	{
-		pCam->Set_Speed(fSpeed);
-	}
-
-	CTest_Player* pTest_Player = static_cast<CTest_Player*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Debug"), TEXT("GameObject_Test_Player")));
-
-	if (ImGui::Checkbox("3rd Camera", &m_is3rdCam))
-	{
-		CTransform* pTransform = pTest_Player->Get_Transform();
-		m_v3rdCamOffset -= pTransform->Get_Look() * 5.f;
-		m_v3rdCamOffset += pTransform->Get_Up() * 5.f;
-	}
-	if (true == m_is3rdCam)
-	{
-		ImGui::SameLine();
-		ImGui::Checkbox("Fix Camera Move", &m_isFix3rdCam);
-		_float3 vPlayerPos = pTest_Player->Get_Transform()->Get_Position();
-		if (true == m_isFix3rdCam)
-		{
-			pCam->LookAt(vPlayerPos);
-		}
-
-		ImGui::SameLine();
-		ImGui::SetNextItemWidth(150.f);
-		ImGui::InputFloat3("3rd Cam Offset", reinterpret_cast<_float*>(&m_v3rdCamOffset), "%.1f");
-		pCam->Set_Position(vPlayerPos + m_v3rdCamOffset);
-	}
-
-	if (ImGui::InputFloat("Cam near", &m_fCameraNear, 0.1f))
-	{
-		if (m_fCameraNear < 0.1f)
-		{
-			m_fCameraNear = 0.1f;
-		}
-	}
-
-	if (ImGui::Button("Goto 0"))
-	{
-		pCam->Set_Position(_float3(0.5f, 5.f, -5.f));
-		pCam->LookAt(_float3(0.f, 0.f, 0.f));
-		
-	}
-
-	
-
-	Safe_Release(pGameInstance);
-
-	ImGui::End();
-}
-#endif //_DEBUG
 CCamera_Debug* CCamera_Debug::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CCamera_Debug* pInstance = New CCamera_Debug(pDevice, pContext);

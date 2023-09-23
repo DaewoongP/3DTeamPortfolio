@@ -125,7 +125,7 @@ HRESULT CDugbog::Add_Components()
 			throw TEXT("Com_RigidBody");
 
 		/* For.Com_Model */
-		if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_Model_Dugbog"),
+		if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_Model_Dugbog"),
 			TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 			throw TEXT("Com_Model");
 
