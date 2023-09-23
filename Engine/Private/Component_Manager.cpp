@@ -182,6 +182,16 @@ CComponent* CComponent_Manager::Find_Component_In_Layer(_uint iLevelIndex, const
 	return pComponent;
 }
 
+const unordered_map<const _tchar*, class CComponent*>* CComponent_Manager::Find_Components_In_Layer(_uint iLevelIndex, const _tchar* pLayerTag)
+{
+	CLayer* pLayer = Find_Layer(iLevelIndex, pLayerTag);
+
+	if (nullptr == pLayer)
+		return nullptr;
+
+	return pLayer->Get_Components();
+}
+
 CLayer* CComponent_Manager::Find_Layer(_uint iLevelIndex, const _tchar* pLayerTag)
 {
 	auto	iter = find_if(m_pLayers[iLevelIndex].begin(), m_pLayers[iLevelIndex].end(), CTag_Finder(pLayerTag));

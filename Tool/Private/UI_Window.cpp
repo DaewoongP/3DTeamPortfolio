@@ -306,7 +306,7 @@ void CUI_Window::Object_List()
 		return;
 	}
 
-	const unordered_map<const _tchar*, CComponent*> Components = m_pUILayer->Get_Components();
+	const unordered_map<const _tchar*, CComponent*> Components = *m_pUILayer->Get_Components();
 
 	m_pUIVector.clear();
 
@@ -492,7 +492,7 @@ void CUI_Window::Create_UI(UI_Tree* pTree)
 	_int iSize = 0;
 	if (nullptr != m_pUILayer)
 	{
-		iSize = _int(m_pUILayer->Get_Components().size());
+		iSize = _int((*m_pUILayer->Get_Components()).size());
 	}
 
 	string strFimeName = szFileName;
@@ -528,7 +528,7 @@ void CUI_Window::Interaction_UI()
 		return;
 
 
-	const unordered_map<const _tchar*, CComponent*> Components = m_pUILayer->Get_Components();
+	const unordered_map<const _tchar*, CComponent*> Components = *m_pUILayer->Get_Components();
 
 	vector <CGameObject*> pGameObejctVector;
 
@@ -697,7 +697,7 @@ void CUI_Window::Open_Font_List()
 		return;
 	}
 
-	const unordered_map<const _tchar*, CComponent*> Components = m_pFontLayer->Get_Components();
+	const unordered_map<const _tchar*, CComponent*> Components = *m_pFontLayer->Get_Components();
 
 	m_pFontVector.clear();
 
@@ -865,7 +865,7 @@ void CUI_Window::Create_UI_Gruop(string _strGroupName)
 	_int iSize = 0;
 	if (nullptr != m_pUIGroupLayer)
 	{
-		iSize = _int(m_pUIGroupLayer->Get_Components().size());
+		iSize = _int((*m_pUIGroupLayer->Get_Components()).size());
 	}
 
 	string strGameObjectTag = strGroupName;
@@ -912,7 +912,7 @@ void CUI_Window::UI_Gruop_Combo()
 	if (nullptr == m_pUIGroupLayer)
 		return;
 
-	const unordered_map<const _tchar*, CComponent*> GameObjects = m_pUIGroupLayer->Get_Components();
+	const unordered_map<const _tchar*, CComponent*> GameObjects = *m_pUIGroupLayer->Get_Components();
 
 	m_pGroupVector.clear();
 
@@ -1237,7 +1237,7 @@ HRESULT CUI_Window::Load(_tchar* pFilePath)
 	_int iSize = 0;
 	if (nullptr != m_pUIGroupLayer)
 	{
-		iSize = _int(m_pUIGroupLayer->Get_Components().size());
+		iSize = _int((*m_pUIGroupLayer->Get_Components()).size());
 	}
 
 	_char szGameObjectName[MAX_PATH] = "";
@@ -1278,7 +1278,7 @@ HRESULT CUI_Window::Load(_tchar* pFilePath)
 		iSize = 0;
 		if (nullptr != m_pUILayer)
 		{
-			iSize = _int(m_pUILayer->Get_Components().size());
+			iSize = _int((*m_pUILayer->Get_Components()).size());
 		}
 
 		string GameObjectTag = "UI_" + Generate_Hashtag(true);
@@ -1328,7 +1328,7 @@ HRESULT CUI_Window::Load_Data(_tchar* pFilePath)
 		_int iSize = 0;
 		if (nullptr != m_pUIGroupLayer)
 		{
-			iSize = _int(m_pUIGroupLayer->Get_Components().size());
+			iSize = _int((*m_pUIGroupLayer->Get_Components()).size());
 		}
 
 		_char szGameObjectName[MAX_PATH] = "";
@@ -1401,7 +1401,7 @@ HRESULT CUI_Window::Load_Data(_tchar* pFilePath)
 		iSize = 0;
 		if (nullptr != m_pUILayer)
 		{
-			iSize = _int(m_pUILayer->Get_Components().size());
+			iSize = _int((*m_pUILayer->Get_Components()).size());
 		}
 
 		WCharToChar(m_UIDesc.m_wszTextureName, szGameObjectName);
@@ -1485,7 +1485,7 @@ HRESULT CUI_Window::Load_Data(_tchar* pFilePath)
 			iSize = 0;
 			if (nullptr != m_pUILayer)
 			{
-				iSize = _int(m_pUILayer->Get_Components().size());
+				iSize = _int((*m_pUILayer->Get_Components()).size());
 			}
 
 			_char szGameObjectName[MAX_PATH] = "";
@@ -1760,7 +1760,7 @@ void CUI_Window::Create_Font()
 			_int iSize = 0;
 			if (nullptr != m_pFontLayer)
 			{
-				iSize = _int(m_pFontLayer->Get_Components().size());
+				iSize = _int((*m_pFontLayer->Get_Components()).size());
 			}
 
 			string strFont = "Font_" + to_string(iSize);
