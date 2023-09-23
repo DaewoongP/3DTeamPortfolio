@@ -345,9 +345,24 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.fLifeTime = 0.8f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
+
+	// ÇÇ´Ï¼Å
+	{
+		magicInitDesc.eBuffType = CMagic::BUFF_NONE;
+		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
+		magicInitDesc.eMagicType = CMagic::MT_ALL;
+		magicInitDesc.eMagicTag = FINISHER;
+		magicInitDesc.fCoolTime = 1.f;
+		magicInitDesc.fDamage = 500.f;
+		magicInitDesc.fCastDistance = 1000;
+		magicInitDesc.fBallDistance = 3000;
+		magicInitDesc.fLifeTime = 3.f;
+		m_pMagicSlot->Add_Magics(magicInitDesc);
+	}
 	
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(0, CONFRINGO);
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(1, LEVIOSO);
+	m_pMagicSlot->Add_Magic_To_Skill_Slot(2, FINISHER);
 	
 	return S_OK;
 }

@@ -27,6 +27,7 @@
 #include "Revelio.h"
 #include "Levioso.h"
 #include "Confringo.h"
+#include "Finisher.h"
 #include "Wingardiumleviosa.h"
 #pragma endregion Magic
 
@@ -249,6 +250,10 @@ HRESULT CMain1_Loader::Loading_For_MainGame()
 				TEXT("../../Resources/Effects/Textures/Gradients/VFX_T_Gradient_Fire_D.png")))))
 			throw TEXT("Prototype_GameObject_Traill_Confringo_Effect");
 
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Traill_Lightning_Effect"),
+			CTrail::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/Lightning/Lightning.trail"), LEVEL_MAINGAME))))
+			throw TEXT("Prototype_GameObject_Traill_Lightning_Effect");
+
 		/* For.Prototype_GameObject_Wingardium_Effect*/
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_MagicTraill_Winga_Effect"),
 			CDefault_MagicTraill_Effect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/Wingardium/Wingardium.trail"), LEVEL_MAINGAME))))
@@ -301,6 +306,12 @@ HRESULT CMain1_Loader::Loading_For_MainGame()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Confringo"),
 			CConfringo::Create(m_pDevice, m_pContext, LEVEL_MAINGAME))))
 			throw TEXT("Prototype_GameObject_Confringo");
+
+		/* For.Prototype_GameObject_Finisher */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Finisher"),
+			CFinisher::Create(m_pDevice, m_pContext, LEVEL_MAINGAME))))
+			throw TEXT("Prototype_GameObject_Finisher");
+		
 
 #pragma endregion
 

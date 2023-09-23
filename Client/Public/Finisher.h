@@ -3,7 +3,6 @@
 #include "Client_Defines.h"
 #include "MagicBall.h"
 
-//트레일
 #include "Trail.h"
 #include "ParticleSystem.h"
 
@@ -12,12 +11,12 @@ class CParticleSystem;
 END
 
 BEGIN(Client)
-class CConfringo final : public CMagicBall
+class CFinisher final : public CMagicBall
 {
 private:
-	explicit CConfringo(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	explicit CConfringo(const CConfringo& rhs);
-	virtual ~CConfringo() = default;
+	explicit CFinisher(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	explicit CFinisher(const CFinisher& rhs);
+	virtual ~CFinisher() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype(_uint iLevel);
@@ -29,33 +28,37 @@ public:
 	virtual void OnCollisionExit(COLLEVENTDESC CollisionEventDesc) override;
 
 private:
-	CTrail* m_pTrail = { nullptr };
+	//Lightning Streak
+	CTrail* m_pTrail[3] = { nullptr };
 
-	//죄다 파티클로 바꾸기로 했음.
-	CParticleSystem* m_pExplosiveEffect[2] = { nullptr };
+	//Lightning Spark
+	CParticleSystem* m_LightningSparkEffect_Green = { nullptr };
+	CParticleSystem* m_LightningSparkEffect_Blue = { nullptr };
+	CParticleSystem* m_LightningSparkEffect_Red = { nullptr };
 
-	//완드에 붙일거임
-	CParticleSystem* m_pWandTouchffect = { nullptr };
-	CParticleSystem* m_pWandDustEffect = { nullptr };
+	//Line Particle
+	CParticleSystem* m_LineParticle= { nullptr };
+
+	//Flare Center Particle
+	CParticleSystem* m_FlareCenterParticle = { nullptr };
+
+	//Flare Spread Particle
+	CParticleSystem* m_FlareSpreadParticle = { nullptr };
 
 private:
-	//For. Trail
-	_float3 m_vStartPostion = {};
+	// For. Lightining Trails
+	_float3 m_vSplineLerpPostion[3][10] = {};
 	_float3	m_vTargetPosition = {};
+	_float3 m_vLighiningStartPosition = {};
 	_float	m_fLerpAcc = { 0.f };
 
-	//For. Spline
-	_float3 m_vSplineLerp[2] = {};
-	_float  m_fTimeScalePerDitance = { 0.f };
-	
-	_bool	m_isExplosiveTrigger = { false };
 	_uint	m_iLevel = { 0 };
 private:
 	HRESULT Add_Components();
 	virtual HRESULT Add_Effect();
 
 public:
-	static CConfringo* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel = 0);
+	static CFinisher* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel = 0);
 	virtual CGameObject* Clone(void* pArg);
 	virtual void Free() override;
 };

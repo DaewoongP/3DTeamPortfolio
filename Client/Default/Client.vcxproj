@@ -165,6 +165,7 @@
   <ItemGroup>
     <ClInclude Include="..\Public\Action.h" />
     <ClInclude Include="..\Public\Action_Deflect.h" />
+    <ClInclude Include="..\Public\Finisher.h" />
     <ClInclude Include="..\Public\HitState.h" />
     <ClInclude Include="..\Public\ProtegoState.h" />
     <ClInclude Include="..\Public\MapEffect.h" />
@@ -311,6 +312,7 @@
   <ItemGroup>
     <ClCompile Include="..\Private\Action.cpp" />
     <ClCompile Include="..\Private\Action_Deflect.cpp" />
+    <ClCompile Include="..\Private\Finisher.cpp" />
     <ClCompile Include="..\Private\HitState.cpp" />
     <ClCompile Include="..\Private\ProtegoState.cpp" />
     <ClCompile Include="..\Private\MapEffect.cpp" />
