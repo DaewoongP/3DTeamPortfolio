@@ -38,7 +38,7 @@ public:
 	_float      fLifeTime = { 0.f };
 	_float		fAngle = { 0.f };
 	_float4		vColor = { 1.f, 1.f, 1.f, 1.f };
-	_float3		vStartScale = { 1.f,1.f ,1.f };
+	_float3		vStartScale = { 1.f, 1.f, 1.f };
 	_float3		vScale = { 1.f, 1.f, 1.f };
 	_uint		iCurIndex = { 0 };
 	_bool		isAlive = { false };
@@ -245,6 +245,7 @@ struct ENGINE_DLL SIZE_OVER_LIFETIME : public MODULE
 	HRESULT Save(const _tchar* _pDirectoyPath);
 	HRESULT Load(const _tchar* _pDirectoyPath);
 	void Action(_float3 vStartSize, PARTICLE_IT& _particle_iter, _float _fTimeDelta);
+	void Reset(PARTICLE_IT& _particle_iter);
 	void Restart();
 
 	enum OPTION { OPTION_UNIT, OPTION_3D, OPTION_RANGE};
@@ -329,6 +330,53 @@ struct ENGINE_DLL NOISE_MODULE : public MODULE
 	string strSizeAmountOption = "Constant"; // Constant, Range, Curve
 	_float2 vSizeAmount = { 0.f, 0.f };
 	CEase::EASE eSizeAmountEase = { CEase::OUT_QUINT };
+};
+
+struct ENGINE_DLL VELOCITY_OVER_LIFETIME : public MODULE
+{
+	VELOCITY_OVER_LIFETIME() : MODULE() {};
+
+	HRESULT Save(const _tchar* _pDirectoyPath);
+	HRESULT Load(const _tchar* _pDirectoyPath);
+	void Action(PARTICLE_IT& _particle_iter, _float fTimeDelta);
+	void Reset(PARTICLE_IT& _particle_iter);
+	void Restart();
+
+	string strSpace = { "World" }; // World, Local
+	// Linear
+	_float3 vLinear = { _float3() };
+	_float3 vLinearMin = { _float3() };
+	_float3 vLinearMax = { _float3() };
+	CEase::EASE eLinearEaseX;
+	CEase::EASE eLinearEaseY;
+	CEase::EASE eLinearEaseZ;
+	
+	string strLinearOption = { "Constant" }; // Constant, Range, Curve
+	
+	_float3 vLinearStartCurve3D = { _float3() };
+	_float3 vLinearEndCurve3D = { _float3() };
+
+	// Orbital
+	_float3 vOrbital = { _float3() };
+	_float3 vOrbitalMin = { _float3() };
+	_float3 vOrbitalMax = { _float3() };
+	CEase::EASE eOrbitalEase;
+
+	// Offset
+	_float3 vOffset = { _float3() };
+	_float3 vOffsetMin = { _float3() };
+	_float3 vOffsetMax = { _float3() };
+	CEase::EASE eOffsetEase;
+
+	// Radial
+	_float fRadial;
+	_float2 vRadialRange;
+	CEase::EASE eRadialEase;
+
+	// SpeedModifier
+	_float fSpeedModifier;
+	_float2 vSpeedModifierRange;
+	CEase::EASE eSpeedModifierEase;
 };
 
 struct ENGINE_DLL RENDERER_MODULE : public MODULE

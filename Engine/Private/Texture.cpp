@@ -123,11 +123,6 @@ HRESULT CTexture::Initialize_Prototype(const _tchar* pTextureFilePath, _uint iNu
 	return S_OK;
 }
 
-HRESULT CTexture::Initialize(void* pArg)
-{
-	return S_OK;
-}
-
 HRESULT CTexture::Bind_ShaderResource(CShader* pShader, const _char* pContantName, _uint iTextureIndex)
 {
 	if (iTextureIndex >= m_iNumTextures)
@@ -143,6 +138,26 @@ HRESULT CTexture::Bind_ShaderResources(CShader* pShader, const _char* pContantNa
 
 CTexture* CTexture::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pTextureFilePath, _uint iNumTextures)
 {
+	CTexture* pInstance = { nullptr };
+
+	CTexturePool* pTexturePool = CTexturePool::GetInstance();
+	Safe_AddRef(pTexturePool);
+
+	pInstance = pTexturePool->Reuse_Texture(pDevice, pContext, pTextureFilePath, iNumTextures);
+
+	Safe_Release(pTexturePool);
+
+	if (nullptr == pInstance)
+	{
+		MSG_BOX("Failed to Reuse CTexture");
+		return nullptr;
+	}
+
+	return pInstance;
+}
+
+CTexture* CTexture::Create_Origin(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pTextureFilePath, _uint iNumTextures)
+{
 	CTexture* pInstance = New CTexture(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pTextureFilePath, iNumTextures)))
@@ -156,7 +171,7 @@ CTexture* CTexture::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,
 
 CComponent* CTexture::Clone(void* pArg)
 {
- 	CTexture* pInstance = New CTexture(*this);
+	CTexture* pInstance = New CTexture(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
@@ -166,7 +181,6 @@ CComponent* CTexture::Clone(void* pArg)
 
 	return pInstance;
 }
-
 
 void CTexture::Free()
 {

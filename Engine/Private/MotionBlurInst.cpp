@@ -46,11 +46,13 @@ HRESULT CMotionBlurInstance::Initialize_Prototype(_uint iLevel)
 		TEXT("Target_Fin_MontionBlurInstance"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 1.f))))
 		return E_FAIL;          
 
+#ifdef _DEBUG
 	if (FAILED(pRenderTarget_Manager->Ready_Debug(TEXT("Target_Velocity"), 240.f, 560.f, 160.f, 160.f)))
 		return E_FAIL;
 
 	if (FAILED(pRenderTarget_Manager->Ready_Debug(TEXT("Target_Fin_MontionBlurInstance"), 400.f, 80.f, 160.f, 160.f)))
 		return E_FAIL;
+#endif // _DEBUG
 
 	if (FAILED(pRenderTarget_Manager->Add_MRT(TEXT("MRT_Velocity"), TEXT("Target_Velocity"))))
 		return E_FAIL;

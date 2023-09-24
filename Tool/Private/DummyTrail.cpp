@@ -26,12 +26,12 @@ HRESULT CDummyTrail::Initialize(void* _pArg)
 		return E_FAIL;
 
 	m_pTextureIFD = CImageFileDialog::Create(m_pDevice, Generate_Hashtag(true).data());
-	m_pTextureIFD->m_strStartPath = "../../Resources/UI/UI/Game/VFX/Textures";
+	m_pTextureIFD->m_strStartPath = "../../Resources/Effects/Textures/";
 	m_pTextureIFD->m_iImageButtonWidth = 32;
 
 	vector<string> Passes = m_pShader->Get_PassList();
 	m_pPassComboBox = CComboBox::Create(Generate_Hashtag(true).data(), "Pass", Passes, Passes.front().data());
-
+	m_pClipChannelCombo = CComboBox::Create(Generate_Hashtag(true).data(), "Clip Channel", { "Red", "Blue", "Green", "Alpha" }, "Red");
 	m_pTransform->Set_Position(_float3(0.f, 0.f, 0.f));
 
 	return S_OK;
@@ -67,7 +67,7 @@ void CDummyTrail::Tick_Imgui(_float _fTimeDelta)
 	if (ImGui::BeginTable("CDummyTrailTable", 2))
 	{
 		ImGui::TableNextRow();
-	
+
 		pEffectWindow->Table_ImageButton("Texture", "cjueruwrckqq", m_pTextureIFD);
 		// 메인 텍스처 교체
 		if (m_pTextureIFD->IsOk())
@@ -98,7 +98,13 @@ void CDummyTrail::Tick_Imgui(_float _fTimeDelta)
 
 		// 최소 거리 선택
 
-		
+
+		pEffectWindow->Table_DragFloat("Clip Threshold", "39vmififvme", &m_fClipThreshold, 0.01f, 0.f, 1.f);
+		m_pClipChannelCombo->Tick(CComboBox::FLAG::TABLE);
+		if (m_pClipChannelCombo->IsUpdated())
+			m_strClipChannel = m_pClipChannelCombo->Get_Current_Item();
+
+		pEffectWindow->Table_CheckBox("Use Texture Color", "vii389jijvc", &m_isUseTextureColor);
 
 		ImGui::EndTable();
 	}
@@ -207,11 +213,11 @@ void CDummyTrail::Save_FileDialog()
 
 void CDummyTrail::Load_FileDialog()
 {
-	if (ImGui::Button("Load Particle"))
-		ImGuiFileDialog::Instance()->OpenDialog("CooseLoadFilePtcKey", "Load File", ".ptc", "../../Resources/GameData/ParticleData/");
+	if (ImGui::Button("Load Trail"))
+		ImGuiFileDialog::Instance()->OpenDialog("CooseLoadFileTrailKey", "Load File", ".trail", "../../Resources/GameData/TrailData/");
 
 	// display
-	if (ImGuiFileDialog::Instance()->Display("CooseLoadFilePtcKey"))
+	if (ImGuiFileDialog::Instance()->Display("CooseLoadFileTrailKey"))
 	{
 		// action if OK
 		if (ImGuiFileDialog::Instance()->IsOk())
@@ -251,7 +257,7 @@ CDummyTrail* CDummyTrail::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
 {
 	CDummyTrail* pInstance = New CDummyTrail(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize_Prototype(_pDirectoryPath, _pGradientTexturePath,_iLevel)))
+	if (FAILED(pInstance->Initialize_Prototype(_pDirectoryPath, _pGradientTexturePath, _iLevel)))
 	{
 		MSG_BOX("Faild to Created CDummyTrail");
 		Safe_Release(pInstance);
@@ -275,6 +281,7 @@ void CDummyTrail::Free(void)
 
 	Safe_Release(m_pTextureIFD);
 	Safe_Release(m_pPassComboBox);
+	Safe_Release(m_pClipChannelCombo);
 
 	for (auto& pTag : m_pTags)
 		Safe_Delete_Array(pTag);

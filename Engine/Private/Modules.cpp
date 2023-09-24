@@ -481,6 +481,7 @@ void SHAPE_MODULE::Restart()
 	fLoopTheta = vTheta.x;
 }
 
+
 HRESULT RENDERER_MODULE::Save(const _tchar* _pDirectoyPath)
 {
 	fs::path fsFilePath = _pDirectoyPath;
@@ -554,6 +555,91 @@ HRESULT RENDERER_MODULE::Load(const _tchar* _pDirectoyPath)
 }
 void RENDERER_MODULE::Restart()
 {
+}
+
+
+HRESULT VELOCITY_OVER_LIFETIME::Save(const _tchar* _pDirectoyPath)
+{
+	fs::path fsFilePath = _pDirectoyPath;
+	fsFilePath = fsFilePath / TEXT("VelocityOverLifeTimeModule.ptc");
+
+	HANDLE hFile = CreateFile(fsFilePath.wstring().data()
+		, GENERIC_WRITE
+		, 0
+		, 0
+		, CREATE_ALWAYS
+		, FILE_ATTRIBUTE_NORMAL
+		, 0);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+		return E_FAIL;
+
+	_ulong dwByte = 0;
+
+	__super::Save(hFile, dwByte);
+
+	WriteFile(hFile, &vLinear, sizeof(vLinear), &dwByte, nullptr);
+	WriteFile(hFile, &vLinearMin, sizeof(vLinearMin), &dwByte, nullptr);
+	WriteFile(hFile, &vLinearMax, sizeof(vLinearMax), &dwByte, nullptr);
+	//WriteFile(hFile, &eLinearEase, sizeof(eLinearEase), &dwByte, nullptr);
+
+	
+
+	CloseHandle(hFile);
+	return S_OK;
+}
+HRESULT VELOCITY_OVER_LIFETIME::Load(const _tchar* _pDirectoyPath)
+{
+	return S_OK;
+}
+void VELOCITY_OVER_LIFETIME::Action(PARTICLE_IT& _particle_iter, _float fTimeDelta)
+{
+	if (false == isActivate)
+		return;
+
+
+
+	_particle_iter->vVelocity += vLinear.TransNorm() * fTimeDelta;
+
+
+
+
+	_particle_iter->vVelocity += vLinear.TransNorm() * fTimeDelta;
+}
+void VELOCITY_OVER_LIFETIME::Restart()
+{
+
+
+}
+void VELOCITY_OVER_LIFETIME::Reset(PARTICLE_IT& _particle_iter)
+{
+	_particle_iter->vAccel = { _float4() };
+
+	if ("World" == strSpace)
+	{
+		if ("Constant" == strLinearOption)
+		{
+			//_particle_iter->vVelocity += vLinear.TransNorm();
+		}
+		else if ("Range" == strLinearOption)
+		{
+			_particle_iter->vVelocity.x = Random_Generator(vLinearMin.x, vLinearMax.x);
+			_particle_iter->vVelocity.y = Random_Generator(vLinearMin.y, vLinearMax.y);
+			_particle_iter->vVelocity.z = Random_Generator(vLinearMin.z, vLinearMax.z);
+		}
+		else if ("Curve" == strLinearOption)
+		{
+			{ // X
+				_float changeAmount = vLinearEndCurve3D.x - vLinearStartCurve3D.x;
+				_particle_iter->vAccel.x = vLinearStartCurve3D.x * CEase::Ease(eLinearEaseX, _particle_iter->fAge
+					, vLinearStartCurve3D.x
+					, changeAmount
+					, _particle_iter->fLifeTime);
+			}
+
+		}
+	}
+
 }
 
 HRESULT ROTATION_OVER_LIFETIME_MODULE::Save(const _tchar* _pDirectoyPath)
@@ -821,7 +907,6 @@ void SIZE_OVER_LIFETIME::Action(_float3 vStartSize, PARTICLE_IT& _particle_iter,
 				, _particle_iter->fLifeTime);
 		}
 	}
-
 }
 void SIZE_OVER_LIFETIME::Restart()
 {

@@ -370,6 +370,9 @@
     <Filter Include="06. Scene\Main_Menu\Quest">
       <UniqueIdentifier>{7f6be9ff-3769-4fe7-8798-91aa092a8af5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="05. Magic\MagicBall\08. Ncendio">
+      <UniqueIdentifier>{3ef84178-a7a8-4f3f-9dbe-c88c10fc5a24}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -759,7 +762,9 @@
     <ClInclude Include="..\Public\Menu_Gear.h">
       <Filter>06. Scene\Main_Menu\Gear</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Menu_Gear.h" />
+    <ClInclude Include="..\Public\Ncendio.h">
+      <Filter>05. Magic\MagicBall\08. Ncendio</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1116,6 +1121,9 @@
     <ClCompile Include="..\Private\LookAt.cpp">
       <Filter>03. Behaviors\04. Movement</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Ncendio.cpp">
+      <Filter>05. Magic\MagicBall\08. Ncendio</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1170,6 +1178,9 @@
       <Filter>97. ShaderFiles\Meshes</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_ShadowMesh.hlsl">
+      <Filter>97. ShaderFiles\Meshes</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_ShadowMeshInstance.hlsl">
       <Filter>97. ShaderFiles\Meshes</Filter>
     </FxCompile>
   </ItemGroup>
