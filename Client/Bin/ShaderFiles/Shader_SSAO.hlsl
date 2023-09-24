@@ -24,8 +24,6 @@ texture2D g_SSAOTexture;
 texture2D g_BlurTexture;
 texture2D g_NoiseTexture;
 
-//ray�� ������鼭 ���������Ǵ��ϱ����� rand���� �ʿ��� ���̴�������ҵ�
-
 float3 g_Ran[29] =
 {
     float3(0.2024537f, 0.841204f, -0.9060241f),
@@ -65,40 +63,6 @@ float BlurWeights[31] =
     0.9986, 0.9231, 0.8712, 0.7261, 0.6666, 0.4868, 0.3001, 0.278,0.2312, 0.1353, 0.0864, 0.0561, 0234, 0.0123, 0.0011
 };
 float total = 11.9827f;
-
-float OcclusionFunction(float distZ)
-{
-	//
-	// If depth(q) is "behind" depth(p), then q cannot occlude p.  Moreover, if 
-	// depth(q) and depth(p) are sufficiently close, then we also assume q cannot
-	// occlude p because q needs to be in front of p by Epsilon to occlude p.
-	//
-	// We use the following function to determine the occlusion.  
-	// 
-	//
-	//       1.0     -------------\
-	//               |           |  \
-	//               |           |    \
-	//               |           |      \ 
-	//               |           |        \
-	//               |           |          \
-	//               |           |            \
-	//  ------|------|-----------|-------------|---------|--> zv
-	//        0     Eps          z0            z1        
-	//
-	
-    float occlusion = 0.0f;
-    if (distZ > gSurfaceEpsilon)
-    {
-        float fadeLength = gOcclusionFadeEnd - gOcclusionFadeStart;
-		
-		// Linearly decrease occlusion from 1 to 0 as distZ goes 
-		// from gOcclusionFadeStart to gOcclusionFadeEnd.	
-        occlusion = saturate((gOcclusionFadeEnd - distZ) / fadeLength);
-    }
-	
-    return occlusion;
-}
 
 struct VS_IN
 {
@@ -155,7 +119,7 @@ PS_OUT PS_MAIN(PS_IN In)
     vector vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
     
     vNormalDesc = normalize(vNormalDesc * 2.f - 1.f);
-    // ���� z��
+    
     float fViewZ = vDepthDesc.y * g_fCamFar;
 
     float3 vRay;
@@ -164,7 +128,7 @@ PS_OUT PS_MAIN(PS_IN In)
     float fOccNorm;
     
     int iColor = 0;
-    for (int i = 0; i < 29; i++)
+    for (int i = 0; i < 10; i++)
     {
         vRay = normalize(reflect(RandNormal(In.vTexUV), g_Ran[i]));
         vReflect = normalize(reflect(normalize(vRay), normalize(vNormalDesc.rgb))) * g_fRadius;
@@ -175,7 +139,7 @@ PS_OUT PS_MAIN(PS_IN In)
             ++iColor;
     }
     
-    float4 vAmbient = abs((iColor / 29.f) - 1);
+    float4 vAmbient = abs((iColor / 10.f) - 1);
    
     Out.vColor = 1.f - vAmbient;
    

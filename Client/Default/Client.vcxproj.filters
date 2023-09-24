@@ -714,9 +714,6 @@
     <ClInclude Include="..\public\Seamless_Loader.h">
       <Filter>02. GameObject\99. Debug\SeamLess</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Menu_Gear.h">
-      <Filter>05. Scene\Main_Menu\Gear</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\UI_HP.h">
       <Filter>02. GameObject\05. UI\UI\UI_HP</Filter>
     </ClInclude>
@@ -777,6 +774,7 @@
     <ClInclude Include="..\Public\Menu_Gear.h">
       <Filter>06. Scene\Main_Menu\Gear</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Menu_Gear.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1193,6 +1191,9 @@
       <Filter>97. ShaderFiles\Meshes</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_ShadowMesh.hlsl">
+      <Filter>97. ShaderFiles\Meshes</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_ShadowMeshInstance.hlsl">
       <Filter>97. ShaderFiles\Meshes</Filter>
     </FxCompile>
   </ItemGroup>

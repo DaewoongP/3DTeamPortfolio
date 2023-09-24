@@ -128,7 +128,7 @@ PS_OUT PS_MAIN_BLURX(PS_IN_POSTEX In)
     
     float2 UV = 0;
     
-    for (int i = -11; i < 11; ++i)
+    for (int i = -7; i < 7; ++i)
     {
 
         UV = In.vTexUV + float2(dx * i, 0.f);
@@ -148,7 +148,7 @@ PS_OUT PS_MAIN_BLURY(PS_IN_POSTEX In)
     
     float2 UV = 0;
    
-    for (int i = -11; i < 11; ++i)
+    for (int i = -7; i < 7; ++i)
     {
         UV = In.vTexUV + float2(0, dy * i);
         vector SSAO = g_DoBlurTexture.Sample(BlurSampler, UV);
