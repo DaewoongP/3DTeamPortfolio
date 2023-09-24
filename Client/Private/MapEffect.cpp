@@ -90,6 +90,7 @@ HRESULT CMapEffect::Add_Components(MAPOBJECTDESC* pMapObjectDesc)
 		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
 	{
 		MSG_BOX("Failed CMapObject Add_Component : (Com_Renderer)");
+		__debugbreak;
 		return E_FAIL;
 	}
 
@@ -98,6 +99,7 @@ HRESULT CMapEffect::Add_Components(MAPOBJECTDESC* pMapObjectDesc)
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
 	{
 		MSG_BOX("Failed CMapObject Add_Component : (Com_Shader)");
+		__debugbreak;
 		return E_FAIL;
 	}
 
@@ -106,6 +108,7 @@ HRESULT CMapEffect::Add_Components(MAPOBJECTDESC* pMapObjectDesc)
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModel))))
 	{
 		MSG_BOX("Failed CMapObject Add_Component : (Com_Model)");
+		__debugbreak;
 		return E_FAIL;
 	}
 

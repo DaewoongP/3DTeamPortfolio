@@ -150,6 +150,8 @@ HRESULT CRenderer::Initialize_Prototype()
 
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Distortion"), 600.f, 600.f, 400.f, 400.f)))
 		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Picking"), 1200.f, 80.f, 160.f, 160.f)))
+		return E_FAIL;
 	//if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_MapBrushing"), 1040.f, 80.f, 160.f, 160.f)))
 	//	return E_FAIL;
 	/*if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_UI"), 1200.f, 300.f, 160.f, 160.f)))
@@ -256,8 +258,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 
 #ifdef _DEBUG
-	/*if (FAILED(Render_Picking()))
-		return E_FAIL;*/
+	if (FAILED(Render_Picking()))
+		return E_FAIL;
 	//if (FAILED(Render_Brushing()))
 	//	return E_FAIL;
 #endif // _DEBUG

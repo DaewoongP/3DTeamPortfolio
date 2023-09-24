@@ -1,9 +1,12 @@
 #include "Shader_Tool_Defines.hlsli"
 
 matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
+
 texture2D		g_DiffuseTexture;
+texture2D		g_NormalTexture;
 
 float4			g_vColor;
+float			g_fCamFar;
 
 struct VS_IN
 {
@@ -71,16 +74,11 @@ struct PS_IN
 	float4		vProjPos : TEXCOORD2;
 };
 
-//struct PS_OUT
-//{
-//	vector		vDiffuse : SV_TARGET0;
-//	vector		vNormal : SV_TARGET1;
-//	float4		vDepth : SV_TARGET2;
-//};
-
 struct PS_OUT
 {
 	float4 vColor : SV_TARGET0;
+	float4 vNormal : SV_TARGET1;
+	float4 vDepth : SV_TARGET2;
 };
 
 /* 픽셀을 받고 픽셀의 색을 결정하여 리턴한다. */
@@ -89,15 +87,16 @@ PS_OUT	PS_MAIN(PS_IN In)
 	PS_OUT		Out = (PS_OUT)0;
 
 	vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+
+	float3		vNormal = vNormalDesc.xyz * 2.f - 1.f;
 
 	if (vDiffuse.a < 0.1f)
 		discard;
 
-	/*Out.vDiffuse = vDiffuse;
-	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.f, 0.f, 0.f);*/
-
 	Out.vColor = vDiffuse;
+	Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fCamFar, 0.f, 0.f);
 
 	return Out;
 }
@@ -114,14 +113,29 @@ PS_OUT	PS_MAIN_PICKING(PS_IN In)
 	return Out;
 }
 
+struct PS_OUT_DEPTH
+{
+	float4 vLightDepth : SV_TARGET0;
+};
+
+PS_OUT_DEPTH	PS_MAIN_DEPTH(PS_IN In)
+{
+	PS_OUT_DEPTH Out = (PS_OUT_DEPTH)0;
+
+	// 빛기준의 뷰스페이스 z값 가져옴
+	Out.vLightDepth.r = In.vProjPos.w / g_fCamFar;
+	Out.vLightDepth.a = 1.f; // 렌더타겟에 렌더링 확인을 위함.
+
+	return Out;
+}
+
 technique11		DefaultTechnique
 {
 	pass Default
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DSS_Default, 0);
-		SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-
+		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		VertexShader = compile vs_5_0 VS_MAIN();
 		GeometryShader = NULL/*compile gs_5_0 GS_MAIN()*/;
 		HullShader = NULL/*compile hs_5_0 HS_MAIN()*/;
@@ -139,5 +153,17 @@ technique11		DefaultTechnique
 		HullShader = NULL/*compile hs_5_0 HS_MAIN()*/;
 		DomainShader = NULL/*compile ds_5_0 DS_MAIN()*/;
 		PixelShader = compile ps_5_0 PS_MAIN_PICKING();
+	}
+
+	pass Shadow
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DSS_Depth_Disable, 0);
+		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL/*compile gs_5_0 GS_MAIN()*/;
+		HullShader = NULL/*compile hs_5_0 HS_MAIN()*/;
+		DomainShader = NULL/*compile ds_5_0 DS_MAIN()*/;
+		PixelShader = compile ps_5_0 PS_MAIN_DEPTH();
 	}
 }

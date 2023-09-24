@@ -128,6 +128,7 @@ HRESULT CMapObject::Add_Components(MAPOBJECTDESC* pMapObjectDesc)
 		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
 	{
 		MSG_BOX("Failed CMapObject Add_Component : (Com_Renderer)");
+		__debugbreak;
 		return E_FAIL;
 	}
 
@@ -136,6 +137,7 @@ HRESULT CMapObject::Add_Components(MAPOBJECTDESC* pMapObjectDesc)
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
 	{
 		MSG_BOX("Failed CMapObject Add_Component : (Com_Shader)");
+		__debugbreak;
 		return E_FAIL;
 	}
 	
@@ -144,6 +146,7 @@ HRESULT CMapObject::Add_Components(MAPOBJECTDESC* pMapObjectDesc)
 		TEXT("Com_ShadowShader"), reinterpret_cast<CComponent**>(&m_pShadowShader))))
 	{
 		MSG_BOX("Failed CMapObject Add_Component : (Com_ShadowShader)");
+		__debugbreak;
 		return E_FAIL;
 	}
 
@@ -152,6 +155,7 @@ HRESULT CMapObject::Add_Components(MAPOBJECTDESC* pMapObjectDesc)
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModel))))
 	{
 		MSG_BOX("Failed CMapObject Add_Component : (Com_Model)");
+		__debugbreak;
 		return E_FAIL;
 	}
 
@@ -233,6 +237,7 @@ HRESULT CMapObject::Add_Components(MAPOBJECTDESC* pMapObjectDesc)
 		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
 	{
 		MSG_BOX("Failed CMapObject Add_Component : (Com_RigidBody)");
+		__debugbreak;
 		return E_FAIL;
 	}
 
