@@ -4,6 +4,7 @@ matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 texture2D		g_DiffuseTexture;
 
 float4			g_vColor;
+float4			g_fCamFar;
 
 struct VS_IN
 {
@@ -114,14 +115,29 @@ PS_OUT	PS_MAIN_PICKING(PS_IN In)
 	return Out;
 }
 
+struct PS_OUT_DEPTH
+{
+	float4 vLightDepth : SV_TARGET0;
+};
+
+PS_OUT_DEPTH	PS_MAIN_DEPTH(PS_IN In)
+{
+	PS_OUT_DEPTH Out = (PS_OUT_DEPTH)0;
+
+	// ∫˚±‚¡ÿ¿« ∫‰Ω∫∆‰¿ÃΩ∫ z∞™ ∞°¡Æø»
+	Out.vLightDepth.r = In.vProjPos.w / g_fCamFar;
+	Out.vLightDepth.a = 1.f; // ∑ª¥ı≈∏∞Ÿø° ∑ª¥ı∏µ »Æ¿Œ¿ª ¿ß«‘.
+
+	return Out;
+}
+
 technique11		DefaultTechnique
 {
 	pass Default
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DSS_Default, 0);
-		SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-
+		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		VertexShader = compile vs_5_0 VS_MAIN();
 		GeometryShader = NULL/*compile gs_5_0 GS_MAIN()*/;
 		HullShader = NULL/*compile hs_5_0 HS_MAIN()*/;
@@ -139,5 +155,17 @@ technique11		DefaultTechnique
 		HullShader = NULL/*compile hs_5_0 HS_MAIN()*/;
 		DomainShader = NULL/*compile ds_5_0 DS_MAIN()*/;
 		PixelShader = compile ps_5_0 PS_MAIN_PICKING();
+	}
+
+	pass Shadow
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DSS_Depth_Disable, 0);
+		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL/*compile gs_5_0 GS_MAIN()*/;
+		HullShader = NULL/*compile hs_5_0 HS_MAIN()*/;
+		DomainShader = NULL/*compile ds_5_0 DS_MAIN()*/;
+		PixelShader = compile ps_5_0 PS_MAIN_DEPTH();
 	}
 }

@@ -69,10 +69,6 @@ struct PS_OUT
     float4 vDepth : SV_TARGET2;
 };
 
-struct PS_OUT_DEPTH
-{
-    vector vDepth : SV_TARGET0;
-};
 /* 픽셀을 받고 픽셀의 색을 결정하여 리턴한다. */
 PS_OUT	PS_MAIN(PS_IN In)
 {
@@ -119,12 +115,19 @@ PS_OUT	PS_MAIN_PICKING(PS_IN In)
 	return Out;
 }
 
+struct PS_OUT_DEPTH
+{
+    float4 vLightDepth : SV_TARGET0;
+};
+
 PS_OUT_DEPTH PS_MAIN_DEPTH(PS_IN In)
 {
-    PS_OUT_DEPTH Out = (PS_OUT_DEPTH) 0;
+    PS_OUT_DEPTH Out = (PS_OUT_DEPTH)0;
 
-    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fCamFar, (In.vProjPos.z / In.vProjPos.w * In.vProjPos.z / In.vProjPos.w), 1.f);
-	
+    // 빛기준의 뷰스페이스 z값 가져옴
+    Out.vLightDepth.r = In.vProjPos.w / g_fCamFar;
+    Out.vLightDepth.a = 1.f; // 렌더타겟에 렌더링 확인을 위함.
+
     return Out;
 }
 
