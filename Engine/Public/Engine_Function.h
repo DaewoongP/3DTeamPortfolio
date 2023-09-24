@@ -14,12 +14,6 @@ namespace Engine
 		MessageBox(nullptr, pError, TEXT("System Message"), MB_OK);
 	}
 
-	void Safe_memcpy(void* _Dst, const void* _Src, size_t _Size)
-	{
-		std::lock_guard<std::mutex> lock(mtx);
-		memcpy(_Dst, _Src, _Size);
-	}
-
 	template <typename T>
 	unsigned long Safe_AddRef(T& pointer)
 	{

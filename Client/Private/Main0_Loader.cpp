@@ -224,6 +224,7 @@ HRESULT CMain0_Loader::Loading_For_Cliffside()
 			throw TEXT("Prototype_Component_Shader_DefaultEffect");
 
 		/* --------------UI-------------- */
+
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_HP"),
 			CUI_Group_HP::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_UI_Group_HP");

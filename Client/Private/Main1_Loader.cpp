@@ -358,7 +358,6 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath)
 		return E_FAIL;
 	}
 
-	// �� ������Ʈ ��ȣ
 	_uint iObjectNum = 0;
 
 	DWORD    dwByte = 0;

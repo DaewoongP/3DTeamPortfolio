@@ -75,7 +75,7 @@ PS_OUT PS_MAIN_BLURX(PS_IN In)
     int Count = 0;
     float2 UV = 0;
     
-    for (int i = -7; i < 7; ++i)
+    for (int i = -11; i < 11; ++i)
     {
         UV = In.vTexUV + float2(dx * i, 0.f);
         vector SSAO = g_Texture.Sample(BlurSampler, UV);
@@ -99,7 +99,7 @@ PS_OUT PS_MAIN_BLURY(PS_IN In)
     
     float2 UV = 0;
    
-    for (int i = -7; i < 7; ++i)
+    for (int i = -11; i < 11; ++i)
     {
         UV = In.vTexUV + float2(0, dy * i);
         vector SSAO = g_Texture.Sample(BlurSampler, UV);

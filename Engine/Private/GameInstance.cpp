@@ -2,6 +2,7 @@
 #include "Frustum.h"
 #include "Calculator.h"
 #include "ThreadPool.h"
+#include "TexturePool.h"
 #include "Font_Manager.h"
 #include "Level_Manager.h"
 #include "Timer_Manager.h"
@@ -30,7 +31,9 @@ CGameInstance::CGameInstance()
 	, m_pCamera_Manager{ CCamera_Manager::GetInstance() }
 	, m_pString_Manager{ CString_Manager::GetInstance() }
 	, m_pThread_Pool{ CThreadPool::GetInstance() }
+	, m_pTexture_Pool{ CTexturePool::GetInstance() }
 {
+	Safe_AddRef(m_pTexture_Pool);
 	Safe_AddRef(m_pThread_Pool);
 	Safe_AddRef(m_pFrustum);
 	Safe_AddRef(m_pFont_Manager);
@@ -931,6 +934,9 @@ void CGameInstance::Release_Engine()
 
 	CComponent_Manager::GetInstance()->DestroyInstance();
 
+	//꼭 컴포넌트 매니저 아래에 있어야합니다. 
+	CTexturePool::GetInstance()->DestroyInstance();
+
 	CLevel_Manager::GetInstance()->DestroyInstance();
 
 	CPhysX_Manager::GetInstance()->DestroyInstance();
@@ -962,6 +968,7 @@ void CGameInstance::Release_Engine()
 
 void CGameInstance::Free()
 {
+	Safe_Release(m_pTexture_Pool);
 	Safe_Release(m_pThread_Pool);
 	Safe_Release(m_pString_Manager);
 	Safe_Release(m_pPhysX_Manager);

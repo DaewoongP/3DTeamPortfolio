@@ -771,10 +771,10 @@
     <ClInclude Include="..\Public\LookAt.h">
       <Filter>03. Behaviors\04. Movement</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Menu_Gear.h" />
     <ClInclude Include="..\Public\Menu_Gear.h">
       <Filter>06. Scene\Main_Menu\Gear</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Menu_Gear.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">

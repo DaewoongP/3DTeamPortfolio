@@ -4,10 +4,11 @@ IMPLEMENT_SINGLETON(CString_Manager)
 
 _char* CString_Manager::Make_Char(const _char* pMakeChar)
 {
-	_char* pNewChar = New _char[MAX_PATH];
-	ZeroMemory(pNewChar, MAX_PATH);
+	_uint iStrLen = strlen(pMakeChar) + 1;
+	_char* pNewChar = New _char[iStrLen];
+	ZeroMemory(pNewChar, iStrLen);
 
-	strcpy_s(pNewChar, MAX_PATH, pMakeChar);
+	strcpy_s(pNewChar, iStrLen, pMakeChar);
 
 	m_Characters.push_back(pNewChar);
 
@@ -16,8 +17,9 @@ _char* CString_Manager::Make_Char(const _char* pMakeChar)
 
 _tchar* CString_Manager::Make_WChar(const _tchar* pMakeWChar)
 {
-	_tchar* pNewChar = New _tchar[MAX_PATH];
-	ZeroMemory(pNewChar, MAX_PATH);
+	_uint iStrLen = lstrlen(pMakeWChar) + 1;
+	_tchar* pNewChar = New _tchar[iStrLen];
+	ZeroMemory(pNewChar, iStrLen);
 
 	lstrcpy(pNewChar, pMakeWChar);
 
