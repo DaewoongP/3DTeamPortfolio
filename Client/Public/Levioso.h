@@ -3,7 +3,7 @@
 #include "Client_Defines.h"
 #include "MagicBall.h"
 //삥삥 도는 트레일 하나
-#include "Default_MagicTraill_Effect.h"
+#include "Default_MagicTrail_Effect.h"
 #include "Wingardium_Effect.h"
 
 BEGIN(Client)
@@ -29,7 +29,7 @@ public:
 
 private:
 	// 트레일 
-	CDefault_MagicTraill_Effect* m_pEffect = { nullptr };
+	CDefault_MagicTrail_Effect* m_pEffect = { nullptr };
 	// 피격 트레일
 	CWingardium_Effect* m_pWingardiumEffect = { nullptr };
 

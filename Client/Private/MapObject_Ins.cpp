@@ -62,15 +62,12 @@ void CMapObject_Ins::Late_Tick(_float fTimeDelta)
 
 HRESULT CMapObject_Ins::Render()
 {
-	if (FAILED(__super::Render()))
-		return E_FAIL;
-
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
 	_uint		iNumMeshes = m_pModel->Get_NumMeshes();
 
-	for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; iMeshCount++)
+	for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; ++iMeshCount)
 	{
 		m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", iMeshCount, DIFFUSE);
 		m_pModel->Bind_Material(m_pShader, "g_NormalTexture", iMeshCount, NORMALS);
@@ -110,7 +107,7 @@ HRESULT CMapObject_Ins::Add_Components(MAPOJBECTINSDESC* pMapObjectInsDesc)
 		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
 	{
 		MSG_BOX("Failed CMapObject_Ins Add_Component : (Com_Renderer)");
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 
@@ -119,7 +116,7 @@ HRESULT CMapObject_Ins::Add_Components(MAPOJBECTINSDESC* pMapObjectInsDesc)
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
 	{
 		MSG_BOX("Failed CMapObject_Ins Add_Component : (Com_Shader)");
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 	
@@ -136,7 +133,7 @@ HRESULT CMapObject_Ins::Add_Components(MAPOJBECTINSDESC* pMapObjectInsDesc)
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModel))))
 	{
 		MSG_BOX("Failed CMapObject_Ins Add_Component : (Com_Model)");
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 

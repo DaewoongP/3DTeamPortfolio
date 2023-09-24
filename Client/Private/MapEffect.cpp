@@ -1,7 +1,5 @@
 ﻿#include "MapEffect.h"
-#include"GameInstance.h"
-#include"Texture.h"
-#include"Shader.h"
+#include "GameInstance.h"
 
 CMapEffect::CMapEffect(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext) :CGameObject(_pDevice, _pContext)
 {
@@ -62,9 +60,6 @@ void CMapEffect::Late_Tick(_float _fTimeDelta)
 
 HRESULT CMapEffect::Render()
 {
-	if (FAILED(__super::Render()))
-		return E_FAIL;
-
 	if (FAILED(Setup_ShaderResources()))
 		return E_FAIL;
 
@@ -90,7 +85,7 @@ HRESULT CMapEffect::Add_Components(MAPOBJECTDESC* pMapObjectDesc)
 		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
 	{
 		MSG_BOX("Failed CMapObject Add_Component : (Com_Renderer)");
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 
@@ -99,7 +94,7 @@ HRESULT CMapEffect::Add_Components(MAPOBJECTDESC* pMapObjectDesc)
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
 	{
 		MSG_BOX("Failed CMapObject Add_Component : (Com_Shader)");
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 
@@ -108,7 +103,7 @@ HRESULT CMapEffect::Add_Components(MAPOBJECTDESC* pMapObjectDesc)
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModel))))
 	{
 		MSG_BOX("Failed CMapObject Add_Component : (Com_Model)");
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 
@@ -117,9 +112,10 @@ HRESULT CMapEffect::Add_Components(MAPOBJECTDESC* pMapObjectDesc)
 
 HRESULT CMapEffect::Setup_ShaderResources()
 {
-	BEGININSTANCE
-		if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
-			return E_FAIL;
+	BEGININSTANCE;
+
+	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
+		return E_FAIL;
 
 	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
@@ -130,12 +126,9 @@ HRESULT CMapEffect::Setup_ShaderResources()
 	if (FAILED(m_pShader->Bind_RawValue("g_vOffset", &m_vOffset, sizeof m_vOffset)))
 		return E_FAIL;
 
-	/*if (FAILED(m_pShader->Bind_RawValue("g_vTililing", &m_vTililing, sizeof m_vTililing)))
-		return E_FAIL;*/
+	ENDINSTANCE;
 
-	ENDINSTANCE
-
-		return S_OK;
+	return S_OK;
 }
 
 CMapEffect* CMapEffect::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

@@ -161,7 +161,7 @@ HRESULT CTerrain::Add_Components()
 		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
 	{
 		MSG_BOX("Failed CTerrain Add_Component : (Com_Renderer)");
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 
@@ -170,7 +170,7 @@ HRESULT CTerrain::Add_Components()
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
 	{
 		MSG_BOX("Failed CTerrain Add_Component : (Com_Shader)");
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 
@@ -179,7 +179,7 @@ HRESULT CTerrain::Add_Components()
 		TEXT("Com_Buffer"), reinterpret_cast<CComponent**>(&m_pBuffer))))
 	{
 		MSG_BOX("Failed CTerrain Add_Component : (Com_Buffer)");
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 
@@ -188,7 +188,7 @@ HRESULT CTerrain::Add_Components()
 		TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTexture))))
 	{
 		MSG_BOX("Failed CTerrain Add_Component : (Com_Texture)");
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 

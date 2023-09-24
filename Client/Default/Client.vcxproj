@@ -197,7 +197,7 @@
     <ClInclude Include="..\Public\MoveLoopState.h" />
     <ClInclude Include="..\public\MoveStartState.h" />
     <ClInclude Include="..\Public\MoveTurnState.h" />
-    <ClInclude Include="..\Public\Default_MagicTraill_Effect.h" />
+    <ClInclude Include="..\Public\Default_MagicTrail_Effect.h" />
     <ClInclude Include="..\Public\Levioso.h" />
     <ClInclude Include="..\Public\Random_Select.h" />
     <ClInclude Include="..\public\Field_Guide.h" />
@@ -351,7 +351,7 @@
     <ClCompile Include="..\Private\MoveLoopState.cpp" />
     <ClCompile Include="..\private\MoveStartState.cpp" />
     <ClCompile Include="..\Private\MoveTurnState.cpp" />
-    <ClCompile Include="..\Private\Default_MagicTraill_Effect.cpp" />
+    <ClCompile Include="..\Private\Default_MagicTrail_Effect.cpp" />
     <ClCompile Include="..\Private\Levioso.cpp" />
     <ClCompile Include="..\Private\Random_Select.cpp" />
     <ClCompile Include="..\private\Field_Guide.cpp" />

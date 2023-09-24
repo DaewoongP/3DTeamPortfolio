@@ -63,9 +63,7 @@ public:
 
 private:
 	TRAILDESC			m_TrailDesc;
-	//_float				m_fMinVertexDistance = 0.1f;
-	//_float				m_fTime = 1.f;
-    //	vector<TRAIL_DATA>	m_TrailDatas[GROUP_END];
+	VTXPOSTEX*			m_pVertices = { nullptr };
 
 private:
 	HRESULT Setup_ShaderResources(class CShader* pShader);

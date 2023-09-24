@@ -37,7 +37,7 @@ HRESULT CLevioso::Initialize_Prototype(_uint iLevel)
 	if (nullptr == pGameInstance->Find_Prototype(iLevel, TEXT("Prototype_GameObject_MagicTraill_Winga_Effect")))
 	{
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_MagicTraill_Winga_Effect"),
-			CDefault_MagicTraill_Effect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/Wingardium/Wingardium.trail"), LEVEL_CLIFFSIDE))))
+			CDefault_MagicTrail_Effect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/Wingardium/Wingardium.trail"), LEVEL_CLIFFSIDE))))
 		{
 			ENDINSTANCE;
 			return E_FAIL;
@@ -226,7 +226,7 @@ HRESULT CLevioso::Add_Components()
 
 HRESULT CLevioso::Add_Effect()
 {
-	CDefault_MagicTraill_Effect::INITDESC initDesc;
+	CDefault_MagicTrail_Effect::INITDESC initDesc;
 	initDesc.vInitPosition = m_MagicBallDesc.vStartPosition;
 	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_MagicTraill_Winga_Effect"),
 		TEXT("Com_Effect"), reinterpret_cast<CComponent**>(&m_pEffect), &initDesc)))

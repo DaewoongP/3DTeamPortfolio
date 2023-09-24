@@ -1,20 +1,20 @@
-#include "Default_MagicTraill_Effect.h"
+#include "Default_MagicTrail_Effect.h"
 #include "GameInstance.h"
 #include "Trail.h"
 
-CDefault_MagicTraill_Effect::CDefault_MagicTraill_Effect(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CDefault_MagicTrail_Effect::CDefault_MagicTrail_Effect(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
 }
 
-CDefault_MagicTraill_Effect::CDefault_MagicTraill_Effect(const CDefault_MagicTraill_Effect& rhs)
+CDefault_MagicTrail_Effect::CDefault_MagicTrail_Effect(const CDefault_MagicTrail_Effect& rhs)
 	: CGameObject(rhs)
 	, m_iLevel(rhs.m_iLevel)
 {
 	lstrcpy(m_wszName, rhs.m_wszName);
 }
 
-void CDefault_MagicTraill_Effect::Ready_Stright(_float3 vTargerPosition, _float3 vStartPosition, _float fTrailLifeTime, _float fDistance)
+void CDefault_MagicTrail_Effect::Ready_Stright(_float3 vTargerPosition, _float3 vStartPosition, _float fTrailLifeTime, _float fDistance)
 {
 	m_vStartPostion = vStartPosition;
 	m_vEndPostion = vTargerPosition;
@@ -24,7 +24,7 @@ void CDefault_MagicTraill_Effect::Ready_Stright(_float3 vTargerPosition, _float3
 	m_pTrail->Reset_Trail(vStartPosition + _float3(0, 0.5f, 0), vStartPosition - _float3(0, 0.5f, 0));
 }
 
-void CDefault_MagicTraill_Effect::Ready_Spline(_float3 vTargerPosition, _float3 vStartPosition, _float fTrailLifeTime,_float fDistance, _float3 vAxis)
+void CDefault_MagicTrail_Effect::Ready_Spline(_float3 vTargerPosition, _float3 vStartPosition, _float fTrailLifeTime,_float fDistance, _float3 vAxis)
 {
 	m_vStartPostion = vStartPosition;
 	m_vEndPostion = vTargerPosition;
@@ -55,7 +55,7 @@ void CDefault_MagicTraill_Effect::Ready_Spline(_float3 vTargerPosition, _float3 
 	m_pTrail->Reset_Trail(vStartPosition + _float3(0,0.5f,0), vStartPosition - _float3(0, 0.5f, 0));
 }
 
-void CDefault_MagicTraill_Effect::Ready_Spin(_float3 vTargerPosition, _float3 vStartPosition, _float fTrailLifeTime, _float fDistance)
+void CDefault_MagicTrail_Effect::Ready_Spin(_float3 vTargerPosition, _float3 vStartPosition, _float fTrailLifeTime, _float fDistance)
 {
 	m_vStartPostion = vStartPosition;
 	m_vEndPostion = vTargerPosition;
@@ -65,7 +65,7 @@ void CDefault_MagicTraill_Effect::Ready_Spin(_float3 vTargerPosition, _float3 vS
 	m_pTrail->Reset_Trail(vStartPosition + _float3(0, 0.5f, 0), vStartPosition - _float3(0, 0.5f, 0));
 }
 
-HRESULT CDefault_MagicTraill_Effect::Initialize_Prototype(const _tchar* wszFilePath, _uint iLevel)
+HRESULT CDefault_MagicTrail_Effect::Initialize_Prototype(const _tchar* wszFilePath, _uint iLevel)
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
@@ -106,7 +106,7 @@ HRESULT CDefault_MagicTraill_Effect::Initialize_Prototype(const _tchar* wszFileP
 	return S_OK;
 }
 
-HRESULT CDefault_MagicTraill_Effect::Initialize(void* pArg)
+HRESULT CDefault_MagicTrail_Effect::Initialize(void* pArg)
 {
 	INITDESC* initDesc = static_cast<INITDESC*>(pArg);
 	if (FAILED(__super::Initialize(pArg)))
@@ -132,7 +132,7 @@ HRESULT CDefault_MagicTraill_Effect::Initialize(void* pArg)
 	return S_OK;
 }
 
-void CDefault_MagicTraill_Effect::Tick(_float fTimeDelta)
+void CDefault_MagicTrail_Effect::Tick(_float fTimeDelta)
 {
 	if (!m_isEnable)
 	{
@@ -143,7 +143,7 @@ void CDefault_MagicTraill_Effect::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 }
 
-void CDefault_MagicTraill_Effect::Late_Tick(_float fTimeDelta)
+void CDefault_MagicTrail_Effect::Late_Tick(_float fTimeDelta)
 {
 	if (!m_isEnable)
 		return;
@@ -153,12 +153,12 @@ void CDefault_MagicTraill_Effect::Late_Tick(_float fTimeDelta)
 	m_pGlowBallTransform->Set_Position(m_pTransform->Get_Position());
 }
 
-void CDefault_MagicTraill_Effect::Set_Position(_float3 vPos)
+void CDefault_MagicTrail_Effect::Set_Position(_float3 vPos)
 {
 	m_pTransform->Set_Position(vPos);
 }
 
-_bool CDefault_MagicTraill_Effect::Stright_Move(_float fTimeDelta)
+_bool CDefault_MagicTrail_Effect::Stright_Move(_float fTimeDelta)
 {
 	if (m_fLerpAcc >= 1.0f)
 	{
@@ -175,7 +175,7 @@ _bool CDefault_MagicTraill_Effect::Stright_Move(_float fTimeDelta)
 	return m_isEnd;
 }
 
-_bool CDefault_MagicTraill_Effect::Spin_Move(_float fTimeDelta)
+_bool CDefault_MagicTrail_Effect::Spin_Move(_float fTimeDelta)
 {
 	if (m_fLerpAcc >= 1.0f)
 	{
@@ -213,7 +213,7 @@ _bool CDefault_MagicTraill_Effect::Spin_Move(_float fTimeDelta)
 	return m_isEnd;
 }
 
-_bool CDefault_MagicTraill_Effect::Spline_Move(_float fTimeDelta)
+_bool CDefault_MagicTrail_Effect::Spline_Move(_float fTimeDelta)
 {
 	if (m_fLerpAcc >= 1.0f)
 	{
@@ -229,28 +229,28 @@ _bool CDefault_MagicTraill_Effect::Spline_Move(_float fTimeDelta)
 	return m_isEnd;
 }
 
-void CDefault_MagicTraill_Effect::Set_Trail_HeadColor(_float3 vColor)
+void CDefault_MagicTrail_Effect::Set_Trail_HeadColor(_float3 vColor)
 {
 	m_pTrail->Set_Trail_HeadColor(vColor);
 }
 
-void CDefault_MagicTraill_Effect::Set_Trail_TailColor(_float3 vColor)
+void CDefault_MagicTrail_Effect::Set_Trail_TailColor(_float3 vColor)
 {
 	m_pTrail->Set_Trail_TailColor(vColor);
 }
 
-void CDefault_MagicTraill_Effect::Set_Glow_BallColor(_float3 vColor)
+void CDefault_MagicTrail_Effect::Set_Glow_BallColor(_float3 vColor)
 {
 	MAIN_MODULE& MainModule = m_pGlowBall->Get_MainModuleRef();
 	MainModule.vStartColor = _float4(vColor.x, vColor.y, vColor.z,1.f);
 }
 
-void CDefault_MagicTraill_Effect::GlowBall_Dead()
+void CDefault_MagicTrail_Effect::GlowBall_Dead()
 {
 	m_pGlowBall->Disable();
 }
 
-HRESULT CDefault_MagicTraill_Effect::Add_Components()
+HRESULT CDefault_MagicTrail_Effect::Add_Components()
 {
 	_tchar protoTag[MAX_PATH] = TEXT("Prototype_GameObject_Default_Magic_Trail");
 	wsprintf(protoTag, TEXT("%s%s"), protoTag, m_wszName);
@@ -270,33 +270,33 @@ HRESULT CDefault_MagicTraill_Effect::Add_Components()
 	return S_OK;
 }
 
-CDefault_MagicTraill_Effect* CDefault_MagicTraill_Effect::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* wszFilePath, _uint iLevel)
+CDefault_MagicTrail_Effect* CDefault_MagicTrail_Effect::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* wszFilePath, _uint iLevel)
 {
-	CDefault_MagicTraill_Effect* pInstance = New CDefault_MagicTraill_Effect(pDevice, pContext);
+	CDefault_MagicTrail_Effect* pInstance = New CDefault_MagicTrail_Effect(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(wszFilePath, iLevel)))
 	{
-		MSG_BOX("Failed to Created CDefault_MagicTraill_Effect");
+		MSG_BOX("Failed to Created CDefault_MagicTrail_Effect");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject* CDefault_MagicTraill_Effect::Clone(void* pArg)
+CGameObject* CDefault_MagicTrail_Effect::Clone(void* pArg)
 {
-	CDefault_MagicTraill_Effect* pInstance = New CDefault_MagicTraill_Effect(*this);
+	CDefault_MagicTrail_Effect* pInstance = New CDefault_MagicTrail_Effect(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned CDefault_MagicTraill_Effect");
+		MSG_BOX("Failed to Cloned CDefault_MagicTrail_Effect");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CDefault_MagicTraill_Effect::Free()
+void CDefault_MagicTrail_Effect::Free()
 {
 	__super::Free();
 	if (true == m_isCloned)

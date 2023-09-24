@@ -129,7 +129,6 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 	{
 		CArmored_Troll::COLLISIONREQUESTDESC* pDesc = static_cast<CArmored_Troll::COLLISIONREQUESTDESC*>(CollisionEventDesc.pArg);
 		pDesc;
-		int i = 0;
 	}
 }
 
@@ -145,9 +144,6 @@ void CPlayer::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 
 HRESULT CPlayer::Render()
 {
-	if (FAILED(__super::Render()))
-		return E_FAIL;
-
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 

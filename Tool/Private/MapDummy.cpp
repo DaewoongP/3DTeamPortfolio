@@ -83,7 +83,7 @@ HRESULT CMapDummy::Add_Model_Component(const wchar_t* wszModelTag)
 		TEXT("Com_Buffer"), reinterpret_cast<CComponent**>(&m_pModel))))
 	{
 		MSG_BOX("Failed CMapDummy Add_Component : (Com_Buffer)");
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 	return S_OK;
@@ -95,7 +95,7 @@ HRESULT CMapDummy::Add_Shader_Component(const wchar_t* wszShaderTag)
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
 	{
 		MSG_BOX("Failed CMapDummy Add_Component : (Com_Shader)");
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 	return S_OK;
@@ -115,7 +115,7 @@ HRESULT CMapDummy::Change_Model_Component(const _tchar* pPrototypeTag)
 		TEXT("Com_Buffer"), reinterpret_cast<CComponent**>(&m_pModel))))
 	{
 		MSG_BOX("Failed CMapDummy Change_Component : (Com_Buffer)");
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 
@@ -129,7 +129,7 @@ HRESULT CMapDummy::Add_Components()
 		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
 	{
 		MSG_BOX("Failed CMapDummy Add_Component : (Com_Renderer)");
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 

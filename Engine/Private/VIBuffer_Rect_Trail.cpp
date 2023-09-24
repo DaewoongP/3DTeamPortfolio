@@ -16,7 +16,6 @@ CVIBuffer_Rect_Trail::CVIBuffer_Rect_Trail(const CVIBuffer_Rect_Trail& rhs)
 
 HRESULT CVIBuffer_Rect_Trail::Reset_Trail()
 {
-	std::lock_guard<std::mutex> lock(mtx);
 	// Local Position
 	_float3 vHighPos = ((*m_TrailDesc.pHighLocalMatrix) * (*m_TrailDesc.pPivotMatrix)).Translation();
 	_float3 vLowPos = ((*m_TrailDesc.pLowLocalMatrix) * (*m_TrailDesc.pPivotMatrix)).Translation();
@@ -25,27 +24,14 @@ HRESULT CVIBuffer_Rect_Trail::Reset_Trail()
 	_float3 vHighWorldPos = XMVector3TransformCoord(vHighPos, *m_TrailDesc.pWorldMatrix);
 	_float3 vLowWorldPos = XMVector3TransformCoord(vLowPos, *m_TrailDesc.pWorldMatrix);
 
-	D3D11_MAPPED_SUBRESOURCE	MappedSubResource;
-
-	m_pContext->Map(m_pVB, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedSubResource);
-
-	VTXPOSTEX* pData = static_cast<VTXPOSTEX*>(MappedSubResource.pData);
-
 	for (_uint i = 0; i < m_iNumVertices; ++i)
 	{
 		if (1 == i % 2)
-			pData[i].vPosition = vHighPos;
+			m_pVertices[i].vPosition = vHighPos;
 		else
-			pData[i].vPosition = vLowPos;
+			m_pVertices[i].vPosition = vLowPos;
 	}
 
-	m_pContext->Unmap(m_pVB, 0);
-
-	return S_OK;
-}
-
-HRESULT CVIBuffer_Rect_Trail::Reset_Trail(_float3 vHighPos, _float3 vLowPos)
-{
 	std::lock_guard<std::mutex> lock(mtx);
 
 	D3D11_MAPPED_SUBRESOURCE	MappedSubResource;
@@ -54,13 +40,32 @@ HRESULT CVIBuffer_Rect_Trail::Reset_Trail(_float3 vHighPos, _float3 vLowPos)
 
 	VTXPOSTEX* pData = static_cast<VTXPOSTEX*>(MappedSubResource.pData);
 
+	memcpy(pData, m_pVertices, sizeof(VTXPOSTEX) * m_iNumVertices);
+
+	m_pContext->Unmap(m_pVB, 0);
+
+	return S_OK;
+}
+
+HRESULT CVIBuffer_Rect_Trail::Reset_Trail(_float3 vHighPos, _float3 vLowPos)
+{
 	for (_uint i = 0; i < m_iNumVertices; ++i)
 	{
 		if (1 == i % 2)
-			pData[i].vPosition = vHighPos;
+			m_pVertices[i].vPosition = vHighPos;
 		else
-			pData[i].vPosition = vLowPos;
+			m_pVertices[i].vPosition = vLowPos;
 	}
+
+	std::lock_guard<std::mutex> lock(mtx);
+
+	D3D11_MAPPED_SUBRESOURCE	MappedSubResource;
+
+	m_pContext->Map(m_pVB, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedSubResource);
+
+	VTXPOSTEX* pData = static_cast<VTXPOSTEX*>(MappedSubResource.pData);
+
+	memcpy(pData, m_pVertices, sizeof(VTXPOSTEX) * m_iNumVertices);
 
 	m_pContext->Unmap(m_pVB, 0);
 
@@ -101,8 +106,8 @@ HRESULT CVIBuffer_Rect_Trail::Initialize(void* pArg)
 	m_BufferDesc.CPUAccessFlags = { D3D11_CPU_ACCESS_WRITE };
 	m_BufferDesc.MiscFlags = { 0 };
 
-	VTXPOSTEX* pVertices = New VTXPOSTEX[m_iNumVertices];
-	ZeroMemory(pVertices, sizeof(VTXPOSTEX) * m_iNumVertices);
+	m_pVertices = New VTXPOSTEX[m_iNumVertices];
+	ZeroMemory(m_pVertices, sizeof(VTXPOSTEX) * m_iNumVertices);
 
 	// Local Position
 	_float3 vHighPos = ((*m_TrailDesc.pHighLocalMatrix) * (*m_TrailDesc.pPivotMatrix)).Translation();
@@ -119,25 +124,23 @@ HRESULT CVIBuffer_Rect_Trail::Initialize(void* pArg)
 		if (1 == i % 2)
 		{
 			iVertexIndex = (i - 1) >> 1;
-			pVertices[i].vPosition = vHighWorldPos;
-			pVertices[i].vTexCoord = _float2(1.f * (_float)iVertexIndex / m_TrailDesc.iTrailNum, 1.f);
+			m_pVertices[i].vPosition = vHighWorldPos;
+			m_pVertices[i].vTexCoord = _float2(1.f * (_float)iVertexIndex / m_TrailDesc.iTrailNum, 1.f);
 		}
 		// 짝수 ... 8 6 4 2 0
 		else
 		{
 			iVertexIndex = i >> 1;
-			pVertices[i].vPosition = vLowWorldPos;
-			pVertices[i].vTexCoord = _float2(1.f * (_float)iVertexIndex / m_TrailDesc.iTrailNum, 0.f);
+			m_pVertices[i].vPosition = vLowWorldPos;
+			m_pVertices[i].vTexCoord = _float2(1.f * (_float)iVertexIndex / m_TrailDesc.iTrailNum, 0.f);
 		}
 	}
 
 	ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
-	m_SubResourceData.pSysMem = pVertices;
+	m_SubResourceData.pSysMem = m_pVertices;
 
 	if (FAILED(__super::Create_Buffer(&m_pVB)))
 		return E_FAIL;
-
-	Safe_Delete_Array(pVertices);
 
 #pragma endregion
 
@@ -188,8 +191,6 @@ HRESULT CVIBuffer_Rect_Trail::Initialize(void* pArg)
 
 void CVIBuffer_Rect_Trail::Tick()
 {
-	std::lock_guard<std::mutex> lock(mtx);
-
 	// Local Position
 	_float3 vHighPos = ((*m_TrailDesc.pHighLocalMatrix) * (*m_TrailDesc.pPivotMatrix)).Translation();
 	_float3 vLowPos = ((*m_TrailDesc.pLowLocalMatrix) * (*m_TrailDesc.pPivotMatrix)).Translation();
@@ -197,12 +198,6 @@ void CVIBuffer_Rect_Trail::Tick()
 	// World Position
 	_float3 vHighWorldPos = XMVector3TransformCoord(vHighPos, *m_TrailDesc.pWorldMatrix);
 	_float3 vLowWorldPos = XMVector3TransformCoord(vLowPos, *m_TrailDesc.pWorldMatrix);
-
-	D3D11_MAPPED_SUBRESOURCE	MappedSubResource;
-
-	m_pContext->Map(m_pVB, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &MappedSubResource);
-
-	VTXPOSTEX* pData = static_cast<VTXPOSTEX*>(MappedSubResource.pData);
 
 	//자르기
 	_int iHeadIndex, iTailIndex, iBodyCount = { 0 };
@@ -212,25 +207,25 @@ void CVIBuffer_Rect_Trail::Tick()
 	//꼬리 찾을
 	for (_uint i = m_iNumVertices - 1; i >= 2; i -= 2)
 	{
-		if (!XMVector3Equal(_float3(pData[i].vPosition), _float3(pData[i - 2].vPosition)))
+		if (!XMVector3Equal(_float3(m_pVertices[i].vPosition), _float3(m_pVertices[i - 2].vPosition)))
 		{
 			iTailIndex = i;
 			break;
 		}
-		pData[i].vTexCoord = { 1.f ,0.f };
-		pData[i - 1].vTexCoord = { 1.f ,1.f };
+		m_pVertices[i].vTexCoord = { 1.f ,0.f };
+		m_pVertices[i - 1].vTexCoord = { 1.f ,1.f };
 	}
 
 	//머릴 찾을
 	for (_uint i = 1; i < m_iNumVertices - 2; i += 2)
 	{
-		if (!XMVector3Equal(_float3(pData[i].vPosition), _float3(pData[i + 2].vPosition)))
+		if (!XMVector3Equal(_float3(m_pVertices[i].vPosition), _float3(m_pVertices[i + 2].vPosition)))
 		{
 			iHeadIndex = i;
 			break;
 		}
-		pData[i].vTexCoord = { 0.f ,0.f };
-		pData[i - 1].vTexCoord = { 0.f ,1.f };
+		m_pVertices[i].vTexCoord = { 0.f ,0.f };
+		m_pVertices[i - 1].vTexCoord = { 0.f ,1.f };
 	}
 
 	iBodyCount = iTailIndex - iHeadIndex;
@@ -238,9 +233,9 @@ void CVIBuffer_Rect_Trail::Tick()
 	{
 		for (_int i = iTailIndex; i >= iHeadIndex - 1; i -= 2)
 		{
-			float t = static_cast<float>(i - iHeadIndex) / static_cast<float>(iBodyCount);
-			pData[i].vTexCoord = { t ,0.f };
-			pData[i - 1].vTexCoord = { t ,1.f };
+			_float t = static_cast<_float>(i - iHeadIndex) / static_cast<_float>(iBodyCount);
+			m_pVertices[i].vTexCoord = { t ,0.f };
+			m_pVertices[i - 1].vTexCoord = { t ,1.f };
 		}
 	}
 
@@ -252,8 +247,8 @@ void CVIBuffer_Rect_Trail::Tick()
 			if (iTailIndex < i) // 꼬리보다 뒤라면?(지금 안움직이는 꼬리)
 			{
 				//현재 꼬리의 위치 - 2 (뒤 프레임과 위치가 다른 친구) 위치로 맞춰준다.
-				pData[i].vPosition = pData[iTailIndex - 2].vPosition;
-				pData[i - 1].vPosition = pData[iTailIndex - 3].vPosition;
+				m_pVertices[i].vPosition = m_pVertices[iTailIndex - 2].vPosition;
+				m_pVertices[i - 1].vPosition = m_pVertices[iTailIndex - 3].vPosition;
 			}
 			else
 			{
@@ -261,8 +256,8 @@ void CVIBuffer_Rect_Trail::Tick()
 				if (i < iHeadIndex)
 					break;
 				// 머리보다 작지 않으면, 몸통부분이니까 앞프레임으로 땡겨줌.
-				pData[i].vPosition = pData[i - 2].vPosition;
-				pData[i - 1].vPosition = pData[(i - 1) - 2].vPosition;
+				m_pVertices[i].vPosition = m_pVertices[i - 2].vPosition;
+				m_pVertices[i - 1].vPosition = m_pVertices[(i - 1) - 2].vPosition;
 			}
 		}
 	}
@@ -270,22 +265,30 @@ void CVIBuffer_Rect_Trail::Tick()
 	{
 		for (_uint i = m_iNumVertices - 1; i >= 2; --i)
 		{
-			pData[i].vPosition = pData[i - 2].vPosition;
+			m_pVertices[i].vPosition = m_pVertices[i - 2].vPosition;
 		}
 	}
 
 	// 0번에 Low 월드 포지션을 대입한다
-	pData[0].vPosition = vLowWorldPos;
+	m_pVertices[0].vPosition = vLowWorldPos;
 	// 1번에 High 월드 포지션을 대입한다
-	pData[1].vPosition = vHighWorldPos;
+	m_pVertices[1].vPosition = vHighWorldPos;
+
+	std::lock_guard<std::mutex> lock(mtx);
+
+	D3D11_MAPPED_SUBRESOURCE	MappedSubResource;
+
+	m_pContext->Map(m_pVB, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedSubResource);
+
+	VTXPOSTEX* pData = static_cast<VTXPOSTEX*>(MappedSubResource.pData);
+
+	memcpy(pData, m_pVertices, sizeof(VTXPOSTEX) * m_iNumVertices);
 
 	m_pContext->Unmap(m_pVB, 0);
 }
 
 void CVIBuffer_Rect_Trail::Tick_Spline()
 {
-	std::lock_guard<std::mutex> lock(mtx);
-
 	// Local Position
 	_float3 vHighPos = ((*m_TrailDesc.pHighLocalMatrix) * (*m_TrailDesc.pPivotMatrix)).Translation();
 	_float3 vLowPos = ((*m_TrailDesc.pLowLocalMatrix) * (*m_TrailDesc.pPivotMatrix)).Translation();
@@ -294,19 +297,13 @@ void CVIBuffer_Rect_Trail::Tick_Spline()
 	_float3 vHighWorldPos = XMVector3TransformCoord(vHighPos, *m_TrailDesc.pWorldMatrix);
 	_float3 vLowWorldPos = XMVector3TransformCoord(vLowPos, *m_TrailDesc.pWorldMatrix);
 
-	D3D11_MAPPED_SUBRESOURCE	MappedSubResource;
-
-	m_pContext->Map(m_pVB, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &MappedSubResource);
-
-	VTXPOSTEX* pData = static_cast<VTXPOSTEX*>(MappedSubResource.pData);
-
 	_int iHeadIndex, iTailIndex, iBodyCount = { 0 };
 	iHeadIndex = 0;
 	iTailIndex = 0;
 
 	for (_uint i = m_iNumVertices - 1; i >= 2; i -= 2)
 	{
-		if (!XMVector3Equal(_float3(pData[i].vPosition), _float3(pData[i - 2].vPosition)))
+		if (!XMVector3Equal(_float3(m_pVertices[i].vPosition), _float3(m_pVertices[i - 2].vPosition)))
 		{
 			iTailIndex = i;
 			break;
@@ -315,7 +312,7 @@ void CVIBuffer_Rect_Trail::Tick_Spline()
 
 	for (_uint i = 1; i < m_iNumVertices - 2; i += 2)
 	{
-		if (!XMVector3Equal(_float3(pData[i].vPosition), _float3(pData[i + 2].vPosition)))
+		if (!XMVector3Equal(_float3(m_pVertices[i].vPosition), _float3(m_pVertices[i + 2].vPosition)))
 		{
 			iHeadIndex = i;
 			break;
@@ -325,7 +322,7 @@ void CVIBuffer_Rect_Trail::Tick_Spline()
 	iBodyCount = iTailIndex - iHeadIndex;
 
 	//얼만큼 이동했는지 이동값을 받아옵니다.
-	_float fDist = _float3(pData[0].vPosition - vLowWorldPos).Length();
+	_float fDist = _float3(m_pVertices[0].vPosition - vLowWorldPos).Length();
 	//거리별 땅겨줄 프레임임.
 	_float fDistPer = 0.1f;
 	//얼만큼 땅길건지 정하는거임.
@@ -334,29 +331,32 @@ void CVIBuffer_Rect_Trail::Tick_Spline()
 	//미리 그만큼 땡겨놓을거임.
 	for (_uint i = m_iNumVertices - 1; i >= HeadFallowIdx + 2; --i)
 	{
-		pData[i].vPosition = pData[i - 2 - HeadFallowIdx].vPosition;
+		m_pVertices[i].vPosition = m_pVertices[i - 2 - HeadFallowIdx].vPosition;
 	}
 	//0번부터 땅길 인덱스까지 데꼬오는거임,
 	for (_uint i = 0; i < HeadFallowIdx; i += 2)
 	{
-		XMVectorCatmullRom(_float3(pData[i + 2].vPosition), _float3(pData[0].vPosition),
+		XMVectorCatmullRom(_float3(m_pVertices[i + 2].vPosition), _float3(m_pVertices[0].vPosition),
 			vLowWorldPos, vLowWorldPos, (fDistPer * i) / (fDist));
-		XMVectorCatmullRom(_float3(pData[(i + 1) + 2].vPosition), _float3(pData[1].vPosition),
+		XMVectorCatmullRom(_float3(m_pVertices[(i + 1) + 2].vPosition), _float3(m_pVertices[1].vPosition),
 			vHighWorldPos, vHighWorldPos, (fDistPer * i) / (fDist));
 	}
+
+	std::lock_guard<std::mutex> lock(mtx);
+
+	D3D11_MAPPED_SUBRESOURCE	MappedSubResource;
+
+	m_pContext->Map(m_pVB, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedSubResource);
+
+	VTXPOSTEX* pData = static_cast<VTXPOSTEX*>(MappedSubResource.pData);
+
+	memcpy(pData, m_pVertices, sizeof(VTXPOSTEX) * m_iNumVertices);
+
 	m_pContext->Unmap(m_pVB, 0);
 }
 
 void CVIBuffer_Rect_Trail::Tick_Lightning(vector<_float3>* posVec)
 {
-	std::lock_guard<std::mutex> lock(mtx);
-
-	D3D11_MAPPED_SUBRESOURCE	MappedSubResource;
-
-	m_pContext->Map(m_pVB, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &MappedSubResource);
-
-	VTXPOSTEX* pData = static_cast<VTXPOSTEX*>(MappedSubResource.pData);
-
 	_uint iConunt = m_iNumVertices / (posVec->size()-1);
 	_uint iVectorSize = posVec->size()-1;
 	_uint iPositionNum = { 0 };
@@ -368,19 +368,30 @@ void CVIBuffer_Rect_Trail::Tick_Lightning(vector<_float3>* posVec)
 		_uint idx = i/(iConunt);
 		_float t = (i % (iConunt))/ (_float)iConunt;
 
-		pData[i].vPosition = 
+		m_pVertices[i].vPosition =
 			_float3(XMVectorCatmullRom(posVec->data()[(idx ==0)?(0):(idx -1)],
 				posVec->data()[idx], 
 				posVec->data()[idx +1], 
 				posVec->data()[((idx +2)> iVectorSize - 2)? (iVectorSize-1): (idx +2)] - _float3(0,0,1),
 				t)) + (*m_TrailDesc.pHighLocalMatrix).Translation();
-		pData[i + 1].vPosition =
+		m_pVertices[i + 1].vPosition =
 			_float3(XMVectorCatmullRom(posVec->data()[(idx == 0) ? (0) : (idx - 1)],
 				posVec->data()[idx],
 				posVec->data()[idx + 1],
 				posVec->data()[((idx + 2) > iVectorSize - 2) ? (iVectorSize - 1) : (idx + 2)] - _float3(0, 0, 1),
 				t))+ (*m_TrailDesc.pLowLocalMatrix).Translation();
 	}
+
+	std::lock_guard<std::mutex> lock(mtx);
+
+	D3D11_MAPPED_SUBRESOURCE	MappedSubResource;
+
+	m_pContext->Map(m_pVB, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedSubResource);
+
+	VTXPOSTEX* pData = static_cast<VTXPOSTEX*>(MappedSubResource.pData);
+
+	memcpy(pData, m_pVertices, sizeof(VTXPOSTEX) * m_iNumVertices);
+
 	m_pContext->Unmap(m_pVB, 0);
 }
 
@@ -468,4 +479,8 @@ CComponent* CVIBuffer_Rect_Trail::Clone(void* pArg)
 void CVIBuffer_Rect_Trail::Free()
 {
 	__super::Free();
+
+
+	if (true == m_isCloned)
+		Safe_Delete_Array(m_pVertices);
 }
