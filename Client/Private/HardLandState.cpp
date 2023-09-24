@@ -34,7 +34,7 @@ void CHardLandState::Late_Tick(_float fTimeDelta)
 {
 }
 
-void CHardLandState::OnStateEnter()
+void CHardLandState::OnStateEnter(void* _pArg)
 {
 #ifdef _DEBUG
 	//cout << "Hard Land Enter" << endl;

@@ -17,7 +17,6 @@ class CStateMachine :
     //오너의 모델을 가지고 있다가 변경한다.
 
 public:
-
 protected:
     explicit CStateMachine(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext);
     explicit CStateMachine(const CStateMachine& rhs);
@@ -45,7 +44,7 @@ public:
     virtual void Late_Tick(_float fTimeDelta);
 
 public:
-    virtual void OnStateEnter() {};
+    virtual void OnStateEnter(void * _pArg = nullptr) {};
     virtual void OnStateTick()  {};
     virtual void OnStateExit()  {};
 

@@ -2,6 +2,8 @@
 #include "GameObject.h"
 #include "Client_Defines.h"
 
+#include "HitState.h"
+
 BEGIN(Engine)
 
 class CShader;
@@ -118,7 +120,7 @@ private:
 	void Update_Cloth(_float fTimeDelta);
 
 	//타겟을 정하기 위한 함수 (임시 용)
-	void Find_Target();
+	void Find_Target_For_Distance();
 
 public:
 	static CPlayer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

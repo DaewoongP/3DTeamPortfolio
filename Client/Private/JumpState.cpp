@@ -34,7 +34,7 @@ void CJumpState::Late_Tick(_float fTimeDelta)
 {
 }
 
-void CJumpState::OnStateEnter()
+void CJumpState::OnStateEnter(void* _pArg)
 {
 	m_pOwnerModel->Change_Animation(TEXT("Hu_BM_Jump_RF_anm"));
 

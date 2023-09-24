@@ -108,7 +108,7 @@ public:
 	HRESULT				Delete_Component(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pComponentTag);
 
 	class CComponent* Find_Component_In_Layer(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pComponentTag);
-	const unordered_map<const _tchar*, class CComponent*>* Find_Components_In_Layer(_uint iLevelIndex, const _tchar* pLayerTag);
+	unordered_map<const _tchar*, class CComponent*>* Find_Components_In_Layer(_uint iLevelIndex, const _tchar* pLayerTag);
 	class CComponent* Find_Prototype(_uint iLevelIndex, const _tchar* pPrototypeTag);
 	class CLayer* Find_Layer(_uint iLevelIndex, const _tchar* pLayerTag);
 	HRESULT				Clear_Layer(_uint iLevelIndex, const _tchar* pLayerTag);

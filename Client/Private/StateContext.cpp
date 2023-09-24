@@ -69,7 +69,7 @@ void CStateContext::Late_Tick(_float fTimeDelta)
 	}
 }
 
-HRESULT CStateContext::Set_StateMachine(const _tchar* _pTag)
+HRESULT CStateContext::Set_StateMachine(const _tchar* _pTag, void * _pArg)
 {
 	if (nullptr != m_pCurrentStateMachine)
 	{
@@ -90,7 +90,7 @@ HRESULT CStateContext::Set_StateMachine(const _tchar* _pTag)
 	
 	Safe_AddRef(m_pCurrentStateMachine);
 
-	m_pCurrentStateMachine->OnStateEnter();
+	m_pCurrentStateMachine->OnStateEnter(_pArg);
 
 	return S_OK;
 }
@@ -148,6 +148,7 @@ HRESULT CStateContext::Ready_StateMachine()
 		ENDINSTANCE;
 
 		MSG_BOX("Failed Ready_StateMachine");
+		__debugbreak;
 
 		return E_FAIL;
 	};
@@ -160,6 +161,7 @@ HRESULT CStateContext::Ready_StateMachine()
 		ENDINSTANCE;
 
 		MSG_BOX("Failed Ready_StateMachine");
+		__debugbreak;
 
 		return E_FAIL;
 	};
@@ -172,6 +174,7 @@ HRESULT CStateContext::Ready_StateMachine()
 		ENDINSTANCE;
 
 		MSG_BOX("Failed Ready_StateMachine");
+		__debugbreak;
 
 		return E_FAIL;
 	};
@@ -184,6 +187,7 @@ HRESULT CStateContext::Ready_StateMachine()
 		ENDINSTANCE;
 
 		MSG_BOX("Failed Ready_StateMachine");
+		__debugbreak;
 
 		return E_FAIL;
 	};
@@ -196,6 +200,7 @@ HRESULT CStateContext::Ready_StateMachine()
 		ENDINSTANCE;
 
 		MSG_BOX("Failed Ready_StateMachine");
+		__debugbreak;
 
 		return E_FAIL;
 	};
@@ -208,6 +213,7 @@ HRESULT CStateContext::Ready_StateMachine()
 		ENDINSTANCE;
 
 		MSG_BOX("Failed Ready_StateMachine");
+		__debugbreak;
 
 		return E_FAIL;
 	};
@@ -220,6 +226,7 @@ HRESULT CStateContext::Ready_StateMachine()
 		ENDINSTANCE;
 
 		MSG_BOX("Failed Ready_StateMachine");
+		__debugbreak;
 
 		return E_FAIL;
 	};
@@ -232,6 +239,7 @@ HRESULT CStateContext::Ready_StateMachine()
 		ENDINSTANCE;
 
 		MSG_BOX("Failed Ready_StateMachine");
+		__debugbreak;
 
 		return E_FAIL;
 	};
@@ -245,6 +253,8 @@ HRESULT CStateContext::Ready_StateMachine()
 
 		MSG_BOX("Failed Ready_StateMachine");
 
+		__debugbreak;
+
 		return E_FAIL;
 	};
 
@@ -256,6 +266,8 @@ HRESULT CStateContext::Ready_StateMachine()
 		ENDINSTANCE;
 
 		MSG_BOX("Failed Ready_StateMachine");
+
+		__debugbreak;
 
 		return E_FAIL;
 	};

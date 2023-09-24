@@ -34,7 +34,7 @@ void CProtegoState::Late_Tick(_float fTimeDelta)
 {
 }
 
-void CProtegoState::OnStateEnter()
+void CProtegoState::OnStateEnter(void* _pArg)
 {
 #ifdef _DEBUG
 	//cout << "Protego Enter" << endl;

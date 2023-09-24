@@ -1926,7 +1926,7 @@ void CArmored_Troll::Enter_Heavy_Attack()
 
 void CArmored_Troll::Enter_Body_Attack()
 {
-	m_CollisionRequestDesc.eType = ATTACK_BODY;
+	m_CollisionRequestDesc.eType = ATTACK_HEAVY;
 	m_CollisionRequestDesc.fDamage = 0.f;
 	Set_CollisionData(&m_CollisionRequestDesc);
 }

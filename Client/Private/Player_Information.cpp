@@ -45,6 +45,7 @@ HRESULT CPlayer_Information::Add_Components()
 		TEXT("Com_Health"), reinterpret_cast<CComponent**>(&m_pHealth), &HealthDesc)))
 	{
 		MSG_BOX("Failed CPlayer Add_Component : (Com_Health)");
+		__debugbreak;
 		return E_FAIL;
 	}
 
@@ -55,6 +56,7 @@ HRESULT CPlayer_Information::Add_Components()
 		TEXT("Com_Finisher"), reinterpret_cast<CComponent**>(&m_pFinisher), &HealthDesc)))
 	{
 		MSG_BOX("Failed CPlayer Add_Component : (Com_Finisher)");
+		__debugbreak;
 		return E_FAIL;
 	}
 
