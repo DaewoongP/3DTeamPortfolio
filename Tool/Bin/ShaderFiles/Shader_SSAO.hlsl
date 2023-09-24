@@ -128,7 +128,7 @@ PS_OUT PS_MAIN(PS_IN In)
     float fOccNorm;
     
     int iColor = 0;
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 29; i++)
     {
         vRay = normalize(reflect(RandNormal(In.vTexUV), g_Ran[i]));
         vReflect = normalize(reflect(normalize(vRay), normalize(vNormalDesc.rgb))) * g_fRadius;
@@ -139,7 +139,7 @@ PS_OUT PS_MAIN(PS_IN In)
             ++iColor;
     }
     
-    float4 vAmbient = abs((iColor / 10.f) - 1);
+    float4 vAmbient = abs((iColor / 29.f) - 1);
    
     Out.vColor = 1.f - vAmbient;
    

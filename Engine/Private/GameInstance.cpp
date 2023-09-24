@@ -932,10 +932,9 @@ void CGameInstance::Release_Engine()
 
 	CPipeLine::GetInstance()->DestroyInstance();
 
-	CComponent_Manager::GetInstance()->DestroyInstance();
-
-	//꼭 컴포넌트 매니저 아래에 있어야합니다. 
 	CTexturePool::GetInstance()->DestroyInstance();
+
+	CComponent_Manager::GetInstance()->DestroyInstance();
 
 	CLevel_Manager::GetInstance()->DestroyInstance();
 
