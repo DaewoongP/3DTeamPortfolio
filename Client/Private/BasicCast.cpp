@@ -48,6 +48,16 @@ HRESULT CBasicCast::Initialize_Prototype(_uint iLevel)
 			return E_FAIL;
 		}
 	}
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Basic_Cast_Hit_Glow_Particle")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Basic_Cast_Hit_Glow_Particle")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BasicCast/Hit_Effect"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+	
 
 	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_BasicCast_Wand_Trail_Effect")))
 	{
@@ -128,6 +138,7 @@ void CBasicCast::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 void CBasicCast::Ready_Begin()
 {
 	m_pHitEffect->Disable();
+	m_pHitGlowEffect->Disable();
 	m_pWandEffect->Disable();
 	m_pFinalAttackEffect->Disable();
 	m_pTrailEffect->Disable();
@@ -178,9 +189,11 @@ void CBasicCast::Ready_Dying()
 	m_WandTrail->Disable();
 	m_pWandEffect->Disable();
 
-	m_pHitEffect->Get_Transform()->Set_Position(m_pTrailEffect->Get_Transform()->Get_Position());
+	m_pHitGlowEffect->Enable();
 	m_pHitEffect->Enable();
-	m_pHitEffect->Play();
+
+	m_pHitGlowEffect->Play(m_pTrailEffect->Get_Transform()->Get_Position());
+	m_pHitEffect->Play(m_pTrailEffect->Get_Transform()->Get_Position());
 }
 
 void CBasicCast::Tick_Begin(_float fTimeDelta)
@@ -207,7 +220,8 @@ void CBasicCast::Tick_CastMagic(_float fTimeDelta)
 void CBasicCast::Tick_Dying(_float fTimeDelta)
 {
 	//사망하러 가겠습니다.
-	if (!m_pHitEffect->IsEnable())
+	if (!m_pHitEffect->IsEnable()&&
+		!m_pHitGlowEffect->IsEnable())
 	{
 		Do_MagicBallState_To_Next();
 	}
@@ -222,9 +236,14 @@ HRESULT CBasicCast::Add_Components()
 		return E_FAIL;
 	}
 	
-
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Default_SphereTrace_Particle")
 		, TEXT("Com_Default_SphereTrace_Particle"), (CComponent**)&m_pWandEffect)))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Basic_Cast_Hit_Glow_Particle")
+		, TEXT("Com_Hit_Glow_Particle"), (CComponent**)&m_pHitGlowEffect)))
 	{
 		__debugbreak();
 		return E_FAIL;
@@ -296,6 +315,7 @@ void CBasicCast::Free()
 		Safe_Release(m_WandTrail);
 		Safe_Release(m_pTrailEffect);
 		Safe_Release(m_pHitEffect);
+		Safe_Release(m_pHitGlowEffect);
 		Safe_Release(m_pWandEffect);
 		Safe_Release(m_pFinalAttackEffect);
 	}

@@ -33,8 +33,10 @@ private:
 
 	// 기본공격 트레일
 	CDefault_MagicTraill_Effect* m_pTrailEffect = { nullptr };
-	//피격 이펙트
-	CParticleSystem* m_pHitEffect = { nullptr };
+	// 피격 이펙트
+	CParticleSystem*			m_pHitEffect = { nullptr };
+	// 피격 섬광
+	CParticleSystem*			m_pHitGlowEffect = { nullptr };
 	
 	//지팡이 3타 터지는 이펙트
 	CParticleSystem* m_pFinalAttackEffect = { nullptr };

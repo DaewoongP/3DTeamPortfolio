@@ -176,6 +176,7 @@ void CConfringo::Ready_Begin()
 {
 	_float3 vWandPosition = _float4x4(m_WeaponOffsetMatrix * (*m_pWeaponMatrix)).Translation();
 	m_pWandDustEffect->Get_EmissionModuleRef().Setting_PrevPos(vWandPosition);
+	m_pWandTwinklEffect->Get_EmissionModuleRef().Setting_PrevPos(vWandPosition);
 
 	m_pTrail->Disable();
 	m_pTrailDustEffect->Disable();
@@ -274,20 +275,15 @@ void CConfringo::Ready_Dying()
 	m_pWandTwinklEffect->Disable();
 	m_pWandTrailEffect->Disable();*/
 
-	m_pExplosiveEffect[0]->Get_Transform()->Set_Position(m_pTrail->Get_Transform()->Get_Position());
-	m_pExplosiveEffect[1]->Get_Transform()->Set_Position(m_pTrail->Get_Transform()->Get_Position());
-	m_pExplosiveBigPartEffect->Get_Transform()->Set_Position(m_pTrail->Get_Transform()->Get_Position());
-	m_pExplosiveSmallPartEffect->Get_Transform()->Set_Position(m_pTrail->Get_Transform()->Get_Position());
-
 	m_pExplosiveEffect[0]->Enable();
 	m_pExplosiveEffect[1]->Enable();
 	m_pExplosiveBigPartEffect->Enable();
 	m_pExplosiveSmallPartEffect->Enable();
 
-	m_pExplosiveEffect[0]->Play();
-	m_pExplosiveEffect[1]->Play();
-	m_pExplosiveBigPartEffect->Play();
-	m_pExplosiveSmallPartEffect->Play();
+	m_pExplosiveEffect[0]->Play(m_pTrail->Get_Transform()->Get_Position());
+	m_pExplosiveEffect[1]->Play(m_pTrail->Get_Transform()->Get_Position());
+	m_pExplosiveBigPartEffect->Play(m_pTrail->Get_Transform()->Get_Position());
+	m_pExplosiveSmallPartEffect->Play(m_pTrail->Get_Transform()->Get_Position());
 }
 
 void CConfringo::Tick_Begin(_float fTimeDelta)
@@ -370,7 +366,7 @@ HRESULT CConfringo::Add_Effect()
 		return E_FAIL;
 	}
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Confringo_Small_Expread_Effect")
-		, TEXT("Com_END_Expread"), (CComponent**)&m_pExplosiveSmallPartEffect)))
+		, TEXT("Com_Small_Expread"), (CComponent**)&m_pExplosiveSmallPartEffect)))
 	{
 		__debugbreak();
 		return E_FAIL;

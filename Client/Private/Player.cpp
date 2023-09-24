@@ -762,7 +762,13 @@ void CPlayer::Update_Target_Angle()
 
 void CPlayer::Shot_Basic_Spell()
 {
-	m_pMagicSlot->Action_Magic_Basic(0, m_pTargetTransform, XMMatrixIdentity(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
+
+	BEGININSTANCE
+	CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
+	if (nullptr == pTestTarget)
+		throw TEXT("pTestTarget is nullptr");
+	ENDINSTANCE
+	m_pMagicSlot->Action_Magic_Basic(0, pTestTarget->Get_Transform(), XMMatrixIdentity(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
 }
 
 void CPlayer::Protego()
