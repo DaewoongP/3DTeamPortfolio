@@ -152,17 +152,14 @@ void CMagicBall::Late_Tick(_float fTimeDelta)
 
 void CMagicBall::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
-	//cout << "Player Enter" << endl;
 }
 
 void CMagicBall::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)
 {
-	//cout << "stay" << endl;
 }
 
 void CMagicBall::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 {
-	//cout << "Exit" << endl;
 }
 
 HRESULT CMagicBall::Add_Components()
@@ -172,12 +169,14 @@ HRESULT CMagicBall::Add_Components()
 		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
 	{
 		MSG_BOX("Failed CMagicBall Add_Component : (Com_Renderer)");
+		__debugbreak;
 		return E_FAIL;
 	}
 
 	if (FAILED(Add_RigidBody()))
 	{
 		MSG_BOX("Failed CMagicBall SettingRigidBody : (Com_RigidBody)");
+		__debugbreak;
 		return E_FAIL;
 	}
 
@@ -209,6 +208,7 @@ HRESULT CMagicBall::Add_RigidBody()
 		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
 	{
 		MSG_BOX("Failed CTest_Player Add_Component : (Com_RigidBody)");
+		__debugbreak;
 		return E_FAIL;
 	}
 	

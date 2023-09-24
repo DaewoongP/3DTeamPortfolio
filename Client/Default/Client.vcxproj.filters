@@ -310,20 +310,11 @@
     <Filter Include="04. Effect">
       <UniqueIdentifier>{b30da159-0cae-438f-a468-3cc4137f82aa}</UniqueIdentifier>
     </Filter>
-    <Filter Include="04. Effect\Default_Magic_Effect">
-      <UniqueIdentifier>{8b8055e2-19be-427d-ade6-ac77b13c71b2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="04. Effect\Protego_Effect">
-      <UniqueIdentifier>{5396d56e-27c2-4130-b99f-23fa2a791f02}</UniqueIdentifier>
-    </Filter>
     <Filter Include="04. Effect\Wingardium_Effect">
       <UniqueIdentifier>{2225573b-518b-46cd-b9ba-d1ab1cbfdb7d}</UniqueIdentifier>
     </Filter>
     <Filter Include="04. Effect\Default_MagicTraill_Effect">
       <UniqueIdentifier>{5235bea2-54db-4f3f-b105-e99f462db57b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="04. Effect\Confringo_WandDust_Effect">
-      <UniqueIdentifier>{9cd4f3c5-0e60-4d99-8478-7c20c152ebf8}</UniqueIdentifier>
     </Filter>
     <Filter Include="05. Magic">
       <UniqueIdentifier>{e77db5d2-8ca4-49d3-9854-41ff5a14a55b}</UniqueIdentifier>
@@ -552,9 +543,6 @@
     <ClInclude Include="..\public\Player_Camera.h">
       <Filter>02. GameObject\01. Player\00. Camera</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Default_Magic_Effect.h">
-      <Filter>04. Effect\Default_Magic_Effect</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Sequence_Attack.h">
       <Filter>03. Behaviors\02. Sequences</Filter>
     </ClInclude>
@@ -681,9 +669,6 @@
     <ClInclude Include="..\Public\Confringo.h">
       <Filter>05. Magic\MagicBall\06. Confringo</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Confringo_WandDust_Effect.h">
-      <Filter>04. Effect\Confringo_WandDust_Effect</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\UI_Group_Cursor.h">
       <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Cursor</Filter>
     </ClInclude>
@@ -713,9 +698,6 @@
     </ClInclude>
     <ClInclude Include="..\public\Seamless_Loader.h">
       <Filter>02. GameObject\99. Debug\SeamLess</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Menu_Gear.h">
-      <Filter>05. Scene\Main_Menu\Gear</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_HP.h">
       <Filter>02. GameObject\05. UI\UI\UI_HP</Filter>
@@ -777,6 +759,7 @@
     <ClInclude Include="..\Public\Menu_Gear.h">
       <Filter>06. Scene\Main_Menu\Gear</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Menu_Gear.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -923,9 +906,6 @@
     <ClCompile Include="..\private\Player_Camera.cpp">
       <Filter>02. GameObject\01. Player\00. Camera</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Default_Magic_Effect.cpp">
-      <Filter>04. Effect\Default_Magic_Effect</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Sequence_Attack.cpp">
       <Filter>03. Behaviors\02. Sequences</Filter>
     </ClCompile>
@@ -1051,9 +1031,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\Confringo.cpp">
       <Filter>05. Magic\MagicBall\06. Confringo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Confringo_WandDust_Effect.cpp">
-      <Filter>04. Effect\Confringo_WandDust_Effect</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_Group_Cursor.cpp">
       <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Cursor</Filter>

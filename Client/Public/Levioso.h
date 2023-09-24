@@ -19,7 +19,7 @@ public:
 	void TrailAction(_float3 vPosition, _float fTimeDelta);
 
 public:
-	virtual HRESULT Initialize_Prototype() override;
+	virtual HRESULT Initialize_Prototype(_uint iLevel);
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
@@ -32,19 +32,16 @@ private:
 	CDefault_MagicTraill_Effect* m_pEffect = { nullptr };
 	// 피격 트레일
 	CWingardium_Effect* m_pWingardiumEffect = { nullptr };
-	// 피격 이펙트
-	CParticleSystem* m_pHitEffect = { nullptr };
 
 	//완드 
 	CTrail* m_pWandTrail = { nullptr };
 	//완드 글로우
 	CParticleSystem* m_pWandGlow = { nullptr };
 
-
 private:
 	_float3				m_vTargetPosition = {};
-
 	_float				m_fWingardiumEffectDeadTimer = { 0.3f };
+	_float				m_fGlowTimer = { 5.f };
 
 private:
 	virtual void Ready_Begin() override;
@@ -62,7 +59,7 @@ private:
 	virtual HRESULT Add_Effect();
 
 public:
-	static CLevioso* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CLevioso* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel);
 	virtual CGameObject* Clone(void* pArg);
 	virtual void Free() override;
 };

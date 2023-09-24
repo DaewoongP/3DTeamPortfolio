@@ -21,10 +21,10 @@ HRESULT CFinisher::Initialize_Prototype(_uint iLevel)
 	m_iLevel = iLevel;
 
 	BEGININSTANCE;
-	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Traill_Lightning_Effect")))
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Trail_Lightning_Effect")))
 	{
-		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Traill_Lightning_Effect")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/Lightning/Lightning.trail"), m_iLevel))))
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Trail_Lightning_Effect")
+			, CTrail::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/Lightning/Lightning.trail"), m_iLevel))))
 		{
 			ENDINSTANCE;
 			return E_FAIL;
@@ -287,7 +287,7 @@ void CFinisher::Tick_CastMagic(_float fTimeDelta)
 
 void CFinisher::Tick_Dying(_float fTimeDelta)
 {
-	Do_MagicBallState_To_Next();
+	//Do_MagicBallState_To_Next();
 }
 
 HRESULT CFinisher::Add_Components()
@@ -297,63 +297,84 @@ HRESULT CFinisher::Add_Components()
 
 HRESULT CFinisher::Add_Effect()
 {
-	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Traill_Lightning_Effect"),
+	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Trail_Lightning_Effect"),
 		TEXT("Com_LightningTrail01"), reinterpret_cast<CComponent**>(&m_pTrail[0]))))
 	{
-		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Traill_Lightning_Effect)");
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Trail_Lightning_Effect)");
+		__debugbreak;
 		return E_FAIL;
 	}
 
-	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Traill_Lightning_Effect"),
+	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Trail_Lightning_Effect"),
 		TEXT("Com_LightningTrail02"), reinterpret_cast<CComponent**>(&m_pTrail[1]))))
 	{
-		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Traill_Lightning_Effect)");
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Trail_Lightning_Effect)");
+		__debugbreak;
 		return E_FAIL;
 	}
 
-	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Traill_Lightning_Effect"),
+	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Trail_Lightning_Effect"),
 		TEXT("Com_LightningTrail03"), reinterpret_cast<CComponent**>(&m_pTrail[2]))))
 	{
-		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Traill_Lightning_Effect)");
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Trail_Lightning_Effect)");
+		__debugbreak;
 		return E_FAIL;
 	}
 
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Spark_Blue_Effect")
 		, TEXT("Com_Spark_Blue_Effect"), (CComponent**)&m_LightningSparkEffect_Blue)))
+	{
+		__debugbreak;
 		return E_FAIL;
-
+	}
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Spark_Green_Effect")
 		, TEXT("Com_Spark_Green_Effect"), (CComponent**)&m_LightningSparkEffect_Green)))
+	{
+		__debugbreak;
 		return E_FAIL;
-
+	}
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Spark_Red_Effect")
 		, TEXT("Com_Spark_Red_Effect"), (CComponent**)&m_LightningSparkEffect_Red)))
+	{
+		__debugbreak;
 		return E_FAIL;
-
+	}
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Lightning_Line_Effect")
 		, TEXT("Com_Line_Effect"), (CComponent**)&m_LineParticle)))
+	{
+		__debugbreak;
 		return E_FAIL;
-
+	}
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Lightning_Flare_Center_Effect")
 		, TEXT("Com_FlareCenter_Effect"), (CComponent**)&m_FlareCenterParticle)))
+	{
+		__debugbreak;
 		return E_FAIL;
-
+	}
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Lightning_Flare_Spread_Effect")
 		, TEXT("Com_FlareSpread_Effect"), (CComponent**)&m_FlareSpreadParticle)))
+	{
+		__debugbreak;
 		return E_FAIL;
-
+	}
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Lightning_Dust_Effect")
 		, TEXT("Com_Dust_Effect"), (CComponent**)&m_DustParticle)))
+	{
+		__debugbreak;
 		return E_FAIL;
-
+	}
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Wand_Lightning_Effect")
 		, TEXT("Com_Wand_Lightning"), (CComponent**)&m_pWandLightningParticle)))
+	{
+		__debugbreak;
 		return E_FAIL;
-
+	}
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_BasicCast_Wand_Trail_Effect")
 		, TEXT("Com_Wand_Trail"), (CComponent**)&m_pWandTrail)))
+	{
+		__debugbreak;
 		return E_FAIL;
-
+	}
 	return S_OK;
 }
 

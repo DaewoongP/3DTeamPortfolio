@@ -114,6 +114,7 @@ struct ENGINE_DLL EMISSION_MODULE : public MODULE
 	
 	HRESULT Save(const _tchar* _pDirectoyPath);
 	HRESULT Load(const _tchar* _pDirectoyPath);
+	void Setting_PrevPos(_float3 vPos) { vPrevPos = vPos; }
 	void Action(CParticleSystem* pParticleSystem, _float _fTimeDelta);
 	void Restart();
 

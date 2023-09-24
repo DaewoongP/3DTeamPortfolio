@@ -19,10 +19,49 @@ void CLevioso::TrailAction(_float3 vPosition, _float fTimeDelta)
 
 }
 
-HRESULT CLevioso::Initialize_Prototype()
+HRESULT CLevioso::Initialize_Prototype(_uint iLevel)
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
+
+	BEGININSTANCE;
+	if (nullptr == pGameInstance->Find_Prototype(iLevel, TEXT("Prototype_GameObject_Wingardium_Effect")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(iLevel, TEXT("Prototype_GameObject_Wingardium_Effect"),
+			CWingardium_Effect::Create(m_pDevice, m_pContext, LEVEL_CLIFFSIDE))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+	if (nullptr == pGameInstance->Find_Prototype(iLevel, TEXT("Prototype_GameObject_MagicTraill_Winga_Effect")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_MagicTraill_Winga_Effect"),
+			CDefault_MagicTraill_Effect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/Wingardium/Wingardium.trail"), LEVEL_CLIFFSIDE))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+	if (nullptr == pGameInstance->Find_Prototype(iLevel, TEXT("Prototype_GameObject_BasicCast_Wand_Trail_Effect")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(iLevel, TEXT("Prototype_GameObject_BasicCast_Wand_Trail_Effect")
+			, CTrail::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/BasicTrail/BasicTrail.trail"), iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+	if (nullptr == pGameInstance->Find_Prototype(iLevel, TEXT("Prototype_GameObject_Defatul_Wand_Glow_Effect")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(iLevel, TEXT("Prototype_GameObject_Defatul_Wand_Glow_Effect")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Default/Default_WandGlow/"), iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+	ENDINSTANCE;
 
 	return S_OK;
 }
@@ -62,6 +101,14 @@ void CLevioso::Tick(_float fTimeDelta)
 	_float3 vWandPosition = _float4x4(m_WeaponOffsetMatrix * (*m_pWeaponMatrix)).Translation();
 	m_pWandTrail->Get_Transform()->Set_Position(vWandPosition);
 	m_pWandGlow->Get_Transform()->Set_Position(vWandPosition);
+	m_fGlowTimer -= fTimeDelta;
+	if (m_fGlowTimer < 0)
+	{
+		m_pWandGlow->Disable();
+		m_pWandTrail->Disable();
+		Do_MagicBallState_To_Next();
+	}
+		
 }
 
 void CLevioso::Late_Tick(_float fTimeDelta)
@@ -94,7 +141,6 @@ void CLevioso::Ready_Begin()
 {
 	m_pEffect->Disable();
 	m_pWingardiumEffect->Disable();
-	m_pHitEffect->Disable();
 	m_pWandTrail->Disable();
 	m_pWandGlow->Disable();
 }
@@ -140,13 +186,8 @@ void CLevioso::Ready_CastMagic()
 
 void CLevioso::Ready_Dying()
 {
-	m_pWandTrail->Disable();
-	m_pWandGlow->Disable();
 	m_pEffect->Disable();
-
 	m_pWingardiumEffect->Enable();
-	m_pHitEffect->Enable();
-
 	m_pWingardiumEffect->SetActionTrigger(true);
 }
 
@@ -174,7 +215,7 @@ void CLevioso::Tick_Dying(_float fTimeDelta)
 	m_fWingardiumEffectDeadTimer -= fTimeDelta;
 	if (m_fWingardiumEffectDeadTimer < 0)
 	{
-		Do_MagicBallState_To_Next();
+		m_pWingardiumEffect->Disable();
 	}
 }
 
@@ -191,6 +232,7 @@ HRESULT CLevioso::Add_Effect()
 		TEXT("Com_Effect"), reinterpret_cast<CComponent**>(&m_pEffect), &initDesc)))
 	{
 		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_MagicTraill_Winga_Effect)");
+		__debugbreak;
 		return E_FAIL;
 	}
 
@@ -198,17 +240,31 @@ HRESULT CLevioso::Add_Effect()
 		TEXT("Com_WingradiumEffect"), reinterpret_cast<CComponent**>(&m_pWingardiumEffect))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Wingardium_Effect)");
+		__debugbreak;
 		return E_FAIL;
 	}
-
+	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Defatul_Wand_Glow_Effect"),
+		TEXT("Com_WandGlow"), reinterpret_cast<CComponent**>(&m_pWandGlow))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Defatul_Wand_Glow_Effect)");
+		__debugbreak;
+		return E_FAIL;
+	}
+	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_BasicCast_Wand_Trail_Effect"),
+		TEXT("Com_Wand_Trail"), reinterpret_cast<CComponent**>(&m_pWandTrail))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_BasicCast_Wand_Trail_Effect)");
+		__debugbreak;
+		return E_FAIL;
+	}
 	return S_OK;
 }
 
-CLevioso* CLevioso::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CLevioso* CLevioso::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel)
 {
 	CLevioso* pInstance = new CLevioso(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize_Prototype()))
+	if (FAILED(pInstance->Initialize_Prototype(iLevel)))
 	{
 		MSG_BOX("Failed to Created CLevioso");
 		Safe_Release(pInstance);
@@ -236,7 +292,6 @@ void CLevioso::Free()
 	{
 		Safe_Release(m_pEffect);
 		Safe_Release(m_pWingardiumEffect);
-		Safe_Release(m_pHitEffect);
 		Safe_Release(m_pWandTrail);
 		Safe_Release(m_pWandGlow);
 	}

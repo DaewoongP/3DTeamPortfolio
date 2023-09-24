@@ -238,36 +238,10 @@ HRESULT CMain1_Loader::Loading_For_Cliffside()
 			throw TEXT("Prototype_Component_Magic");
 
 #pragma region Magic_Effect
-		/* For.Prototype_GameObject_Default_Magic_Effect*/
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Default_Magic_Effect"),
-			CDefault_Magic_Effect::Create(m_pDevice, m_pContext, LEVEL_CLIFFSIDE))))
-			throw TEXT("Prototype_GameObject_Default_Magic_Effect");
-
-		/* For.Prototype_GameObject_Wingardium_Effect*/
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Wingardium_Effect"),
-			CWingardium_Effect::Create(m_pDevice, m_pContext, LEVEL_CLIFFSIDE))))
-			throw TEXT("Prototype_GameObject_Wingardium_Effect");
-
-		/* For.Prototype_GameObject_Wingardium_Effect*/
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_MagicTraill_Winga_Effect"),
-			CDefault_MagicTraill_Effect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/Wingardium/Wingardium.trail"), LEVEL_CLIFFSIDE))))
-			throw TEXT("Prototype_GameObject_Default_MagicTraill_Winga_Effect");
-
 		/* For.Prototype_GameObject_MagicTrail_BasicCast_Effect*/
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_MagicTrail_BasicCast_Effect"),
 			CDefault_MagicTraill_Effect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/BasicCast/BasicCast.trail"), LEVEL_CLIFFSIDE))))
 			throw TEXT("Prototype_GameObject_MagicTrail_BasicCast_Effect");
-
-		/* For.Prototype_GameObject_Wingardium_Effect*/
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_MagicTraill_Levioso_Effect"),
-			CDefault_MagicTraill_Effect::Create(m_pDevice, m_pContext, TEXT(""), LEVEL_CLIFFSIDE))))
-			throw TEXT("Prototype_GameObject_Default_MagicTraill_Levioso_Effect");
-
-		/* For.Prototype_GameObject_Confringo_WandDust_Effect*/
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Confringo_WandDust_Effect"),
-			CConfringo_WandDust_Effect::Create(m_pDevice, m_pContext, LEVEL_CLIFFSIDE))))
-			throw TEXT("Prototype_GameObject_Confringo_WandDust_Effect");
-
 #pragma endregion
 
 #pragma region Magic
@@ -293,7 +267,7 @@ HRESULT CMain1_Loader::Loading_For_Cliffside()
 
 		/* For.Prototype_GameObject_Levioso */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Levioso"),
-			CLevioso::Create(m_pDevice, m_pContext))))
+			CLevioso::Create(m_pDevice, m_pContext, LEVEL_CLIFFSIDE))))
 			throw TEXT("Prototype_GameObject_Levioso");
 
 		/* For.Prototype_GameObject_Confringo */

@@ -294,6 +294,8 @@ void EMISSION_MODULE::Action(CParticleSystem* pParticleSystem, _float _fTimeDelt
 
 	for (_uint i = 0; i < iParticleCount; ++i)
 	{
+		_float3 createPosition = _float3::Lerp(vPrevPos, vCurPos, ((_float)i / iParticleCount));
+		pParticleSystem->Get_Transform()->Set_Position(createPosition);
 		pParticleSystem->Wating_One_Particle();
 	}
 }
