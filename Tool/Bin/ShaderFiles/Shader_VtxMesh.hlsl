@@ -1,11 +1,11 @@
 #include "Shader_Tool_Defines.hlsli"
 
 matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
+
 texture2D		g_DiffuseTexture;
 texture2D		g_NormalTexture;
 
-float g_fCamFar;
-
+float           g_fCamFar;
 float4			g_vColor;
 
 struct VS_IN
@@ -65,7 +65,7 @@ struct PS_IN
 struct PS_OUT
 {
 	float4 vColor : SV_TARGET0;
-    float4 vNormal : SV_Target1;
+    float4 vNormal : SV_TARGET1;
     float4 vDepth : SV_TARGET2;
 };
 

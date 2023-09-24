@@ -50,6 +50,7 @@ void CMapObject_Ins::Late_Tick(_float fTimeDelta)
 		m_eRenderCount = RT_NORMAL;
 
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+		//m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
 #ifdef _DEBUG
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_PICKING, this);
 #endif // _DEBUG
@@ -76,6 +77,7 @@ HRESULT CMapObject_Ins::Render()
 		for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; iMeshCount++)
 		{
 			m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", iMeshCount, DIFFUSE);
+			//m_pModel->Bind_Material(m_pShader, "g_NormalTexture", iMeshCount, NORMALS);
 
 			m_pShader->Begin("Default");
 

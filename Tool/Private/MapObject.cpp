@@ -137,7 +137,6 @@ HRESULT CMapObject::Render_Depth()
 
 	for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; iMeshCount++)
 	{
-
 		m_pShader->Begin("Shadow");
 
 		if (FAILED(m_pModel->Render(iMeshCount)))
