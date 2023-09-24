@@ -1,5 +1,7 @@
 #include "MagicBall.h"
 #include "GameInstance.h"
+
+#include "MagicBallPool.h"
 #include "Weapon_Player_Wand.h"
 
 CMagicBall::CMagicBall(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -70,6 +72,14 @@ HRESULT CMagicBall::Initialize(void* pArg)
 	return S_OK;
 }
 
+HRESULT CMagicBall::Initialize_Level(_uint iCurrentLevelIndex)
+{
+	FAILED_CHECK_RETURN(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_MagicBallPool"),
+		TEXT("Com_MagicBallPool"), reinterpret_cast<CComponent**>(&m_MagicBallPool)), E_FAIL);
+
+	return S_OK;
+}
+
 void CMagicBall::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
@@ -124,7 +134,7 @@ void CMagicBall::Tick(_float fTimeDelta)
 				Ready_Dying();
 				m_isFirstFrameInState = false;
 			}
-				
+
 			Tick_Dying(fTimeDelta);
 			break;
 		}
@@ -132,6 +142,7 @@ void CMagicBall::Tick(_float fTimeDelta)
 		case Client::CMagicBall::MAGICBALL_STATE_END:
 		{
 			cout << "¸¶¹ý Á×¾î¿ä" << endl;
+			m_MagicBallPool->Return_Magic(this, m_MagicBallDesc.eMagicTag);
 			Set_ObjEvent(OBJ_DEAD);
 			break;
 		}
@@ -218,10 +229,12 @@ HRESULT CMagicBall::Add_RigidBody()
 void CMagicBall::Free()
 {
 	__super::Free();
+
 	if (true == m_isCloned)
 	{
 		Safe_Release(m_pRenderer);
 		Safe_Release(m_pRigidBody);
 		Safe_Release(m_pTarget);
+		Safe_Release(m_MagicBallPool);
 	}
 }

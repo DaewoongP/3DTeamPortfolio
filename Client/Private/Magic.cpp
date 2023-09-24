@@ -37,7 +37,7 @@ HRESULT CMagic::Initialize(void* pArg)
 	m_eMagicTag = InitDesc->eMagicTag;
 	m_fLifeTime = InitDesc->fLifeTime;
 
-	if (FAILED(Add_Component()))
+	if (FAILED(Add_Components()))
 	{
 		MSG_BOX("Failed to Add Component Magic");
 	}
@@ -79,6 +79,7 @@ _bool CMagic::Magic_Cast(CTransform* pTarget, _float4x4 targetOffsetMatrix, cons
 {
 	if (m_fCurrentCoolTime > 0)
 		return false;
+
 	//마법을 생성 합니다.
 	CMagicBall::MAGICBALLINITDESC ballInit;
 	ballInit.eBuffType = m_eBuffType;
@@ -92,27 +93,24 @@ _bool CMagic::Magic_Cast(CTransform* pTarget, _float4x4 targetOffsetMatrix, cons
 	ballInit.fLifeTime = m_fLifeTime;
 	ballInit.pWeaponMatrix = pWeaponMatrix;
 	ballInit.WeaponOffsetMatrix = WeaponOffsetMatrix;
+
 	BEGININSTANCE;
 
 	//타입별 생성을 위한 태그지정임.
 	_tchar objTag[MAX_PATH] = TEXT("GameObject_MagicBall_");
 	swprintf_s(objTag, TEXT("%s%s"), objTag, Generate_HashtagW().c_str());
 
-	_tchar componentTag[MAX_PATH] = TEXT("Prototype_GameObject_");
-	swprintf_s(componentTag, TEXT("%s%s"), componentTag, m_szTagArray[m_eMagicTag]);
-
 	_char msgBoxText[MAX_PATH] = "Failed Add_GameObject : GameObject_";
 	_char objName[MAX_PATH] = "";
 	WCharToChar(m_szTagArray[m_eMagicTag], objName);
 	sprintf_s(msgBoxText, "%s%s", msgBoxText, objName);
-
-	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, componentTag, TEXT("Layer_Magic"), objTag, &ballInit)))
+	
+	if (FAILED(pGameInstance->Add_Component(m_MagicBallPool->Get_Magic(ballInit), LEVEL_CLIFFSIDE, TEXT("Layer_Magic"), objTag)))
 	{
 		MSG_BOX(msgBoxText);
+		ENDINSTANCE;
 		return false;
 	}
-
-	pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
 
 	ENDINSTANCE;
 
@@ -132,8 +130,11 @@ HRESULT CMagic::Add_ActionFunc(function<void()> func)
 	return S_OK;
 }
 
-HRESULT CMagic::Add_Component()
+HRESULT CMagic::Add_Components()
 {
+	FAILED_CHECK_RETURN(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_MagicBallPool"),
+		TEXT("Com_MagicBallPool"), reinterpret_cast<CComponent**>(&m_MagicBallPool)), E_FAIL);
+
 	return S_OK;
 }
 
@@ -166,4 +167,6 @@ CMagic* CMagic::Clone(void* pArg)
 void CMagic::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_MagicBallPool);
 }

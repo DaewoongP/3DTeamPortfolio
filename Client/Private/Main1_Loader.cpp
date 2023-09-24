@@ -287,6 +287,11 @@ HRESULT CMain1_Loader::Loading_For_Cliffside()
 			throw TEXT("Prototype_GameObject_Ncendio");
 #pragma endregion
 
+		/* For.Prototype_Component_MagicBallPool */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_MagicBallPool"),
+			CMagicBallPool::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_MagicBallPool");
+
 		/* For.Prototype_GameObject_MagicSlot */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_MagicSlot"),
 			CMagicSlot::Create(m_pDevice, m_pContext))))

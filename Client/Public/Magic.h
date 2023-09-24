@@ -86,6 +86,8 @@ protected:
 	_float						m_fLifeTime = { 1.0f };
 	//마법 사용시 같이 불러주고싶은 외부 함수
 	vector<function<void()>>	m_ActionVec;
+	
+	class CMagicBallPool*		m_MagicBallPool = { nullptr };
 
 private:
 	//프로토타입 생성을 위한 enum type 별 이름 지정.
@@ -97,8 +99,8 @@ private:
 		{TEXT("Transformation")} , {TEXT("Transformationoverland")}, {TEXT("Wingardiumleviosa")} , {TEXT("BasicCast")} , {TEXT("Stupefy")} , {TEXT("Petrificustotalus")} ,
 		{TEXT("MagicThrow") }, {TEXT("Finisher")} };
 
-protected:
-	HRESULT Add_Component();
+private:
+	HRESULT Add_Components();
 
 public:
 	static CMagic* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

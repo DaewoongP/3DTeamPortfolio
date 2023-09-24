@@ -297,6 +297,13 @@ HRESULT CGameInstance::Add_Component(_uint iPrototypeLevelIndex, _uint iLevelInd
 	return m_pComponent_Manager->Add_Component(iPrototypeLevelIndex, iLevelIndex, pPrototypeTag, pLayerTag, pComponentTag, pArg);
 }
 
+HRESULT CGameInstance::Add_Component(CComponent* pComponent, _uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pComponentTag)
+{
+	NULL_CHECK_RETURN_MSG(m_pComponent_Manager, E_FAIL, TEXT("Component_Manager NULL"));
+
+	return m_pComponent_Manager->Add_Component(pComponent, iLevelIndex, pLayerTag, pComponentTag);
+}
+
 CComponent* CGameInstance::Clone_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, void* pArg)
 {
 	NULL_CHECK_RETURN_MSG(m_pComponent_Manager, nullptr, TEXT("Component_Manager NULL"));

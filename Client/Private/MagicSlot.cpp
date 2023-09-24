@@ -1,6 +1,8 @@
 #include "..\Public\MagicSlot.h"
 #include "GameInstance.h"
 
+#include "MagicBallPool.h"
+
 CMagicSlot::CMagicSlot(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CComponent(pDevice, pContext)
 {
@@ -48,8 +50,8 @@ HRESULT CMagicSlot::Initialize(void* pArg)
 		Add_Magics(magicInitDesc);
 	}
 
-	Add_Magic_To_Basic_Slot(0,BASICCAST);
-	Add_Magic_To_Basic_Slot(1,PROTEGO);
+	Add_Magic_To_Basic_Slot(0, BASICCAST);
+	Add_Magic_To_Basic_Slot(1, PROTEGO);
 
 	return S_OK;
 }
@@ -60,6 +62,7 @@ void CMagicSlot::Tick(_float fTimeDelta)
 	{
 		if (magic == nullptr)
 			continue;
+
 		magic->Tick(fTimeDelta);
 	}
 
@@ -67,6 +70,7 @@ void CMagicSlot::Tick(_float fTimeDelta)
 	{
 		if (magic == nullptr)
 			continue;
+
 		magic->Tick(fTimeDelta);
 	}
 }
@@ -84,17 +88,21 @@ HRESULT CMagicSlot::Add_Magics(CMagic::MAGICDESC SkillDesc)
 	else
 	{
 		BEGININSTANCE;
+
 		m_Magics[SkillDesc.eMagicTag] = (dynamic_cast<CMagic*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Magic"), &SkillDesc)));
-		if(m_Magics[SkillDesc.eMagicTag]==nullptr)
+		if(m_Magics[SkillDesc.eMagicTag] == nullptr)
 			__debugbreak();
+
 		ENDINSTANCE;
 	}
+
 	return S_OK;
 }
 
 HRESULT CMagicSlot::Add_Function_To_Magic(function<void()> func, SPELL eSpellType)
 {
 	m_Magics[eSpellType]->Add_ActionFunc(func);
+
 	return S_OK;
 }
 
@@ -109,6 +117,7 @@ HRESULT CMagicSlot::Add_Magic_To_Skill_Slot(_uint iSlotIndex, SPELL eSpellType)
 
 	m_MagicSlots[iSlotIndex] = m_Magics[eSpellType];
 	Safe_AddRef(m_MagicSlots[iSlotIndex]);
+
 	return S_OK;
 }
 
@@ -123,6 +132,7 @@ HRESULT CMagicSlot::Add_Magic_To_Basic_Slot(_uint iSlotIndex, SPELL eSpellType)
 
 	m_MagicEssentialSlots[iSlotIndex] = m_Magics[eSpellType];
 	Safe_AddRef(m_MagicEssentialSlots[iSlotIndex]);
+
 	return S_OK;
 }
 
@@ -135,6 +145,7 @@ void CMagicSlot::Action_Magic_Skill(_uint iIndex, CTransform* pTarget, _float4x4
 		{
 			return;
 		}
+
 		m_MagicSlots[iIndex]->Magic_Cast(pTarget, TargetOffsetMatrix, pWeaponMatrix, WeaponOffsetMatrix);
 	}
 	else if (m_MagicSlots[iIndex] == nullptr)
@@ -154,6 +165,7 @@ void CMagicSlot::Action_Magic_Basic(_uint iIndex, CTransform* pTarget, _float4x4
 		{
 			return;
 		}
+
 		m_MagicEssentialSlots[iIndex]->Magic_Cast(pTarget, TargetOffsetMatrix, pWeaponMatrix, WeaponOffsetMatrix);
 	}
 	else if (m_MagicEssentialSlots[iIndex] == nullptr)
@@ -206,5 +218,6 @@ void CMagicSlot::Free()
 	{
 		Safe_Release(magic);
 	}
+
 	__super::Free();
 }

@@ -81,6 +81,7 @@ public: /* For.Component_Manager*/
 	class CComponent* Find_Prototype(_uint iLevelIndex, const _tchar * pPrototypeTag);
 	HRESULT Add_Prototype(_uint iLevelIndex, const _tchar * pPrototypeTag, class CComponent* pPrototype, _bool isFailedSkip = false);
 	HRESULT Add_Component(_uint iPrototypeLevelIndex, _uint iLevelIndex, const _tchar * pPrototypeTag, const _tchar * pLayerTag, const _tchar * pComponentTag, void* pArg = nullptr);
+	HRESULT	Add_Component(class CComponent* pComponent, _uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pComponentTag);
 	class CComponent* Clone_Component(_uint iLevelIndex, const _tchar * pPrototypeTag, void* pArg = nullptr);
 	class CComponent* Find_Component_In_Layer(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pComponentTag);
 	class CLayer* Find_Layer(_uint iLevelIndex, const _tchar * pLayerTag);

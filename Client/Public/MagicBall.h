@@ -9,6 +9,7 @@ END
 
 BEGIN(Client)
 class CWeapon_Player_Wand;
+class CMagicBallPool;
 END
 
 BEGIN(Client)
@@ -76,16 +77,19 @@ public:
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
+	virtual HRESULT Initialize_Level(_uint iCurrentLevelIndex) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual void OnCollisionEnter(COLLEVENTDESC CollisionEventDesc) override;
 	virtual void OnCollisionStay(COLLEVENTDESC CollisionEventDesc) override;
 	virtual void OnCollisionExit(COLLEVENTDESC CollisionEventDesc) override;
+	virtual HRESULT Reset() PURE;
 
 protected:
 	// 충돌을 위한 리지드바디 입니다.
 	CRigidBody*		m_pRigidBody = { nullptr };
 	CRenderer*		m_pRenderer = { nullptr };
+	CMagicBallPool* m_MagicBallPool = { nullptr };
 	//타겟에 대한 트랜스폼임.
 	CTransform*		m_pTarget = { nullptr };
 	_float4x4		m_TargetOffsetMatrix = {};

@@ -17,15 +17,15 @@ public:
 public:
 	virtual HRESULT Initialize_Prototype() override;
 
-	CMagicBall* GetMagic(SPELL tag);
-	void ReturnMagic(CMagicBall* magic , SPELL tag);
+	CMagicBall* Get_Magic(CMagicBall::MAGICBALLINITDESC& MagicBallDesc);
+	void Return_Magic(CMagicBall* pMagic , SPELL eSpell);
 
 private:
-	vector<CMagicBall*>	 m_MagicPoolVec[SPELL_END] = {};
+	queue<CMagicBall*>	 m_MagicPoolVec[SPELL_END] = {};
 
 private:
-	CMagicBall* Create_Magic(SPELL tag);
-	void		Create_InitMagic(CGameInstance* pGameInstance, SPELL tag, const _tchar* tagName);
+	CMagicBall* Create_Magic(SPELL eSpell, CMagicBall::MAGICBALLINITDESC& MagicBallDesc);
+	void		Create_InitMagic(SPELL eSpell, const _tchar* szTagName, _uint iNumPool = 10);
 
 public:
 	static CMagicBallPool* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
