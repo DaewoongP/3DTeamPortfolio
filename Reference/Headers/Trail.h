@@ -100,6 +100,8 @@ protected:
 
 	//스레스 홀드
 	_float m_fClipThreshold = { 0.0f };
+	string m_strClipChannel = { "Red" };
+	_bool m_isUseTextureColor = { false };
 
 	//로컬스페이스용
 	const _float4x4* m_LocalSpace = { nullptr };

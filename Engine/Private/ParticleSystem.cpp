@@ -213,9 +213,6 @@ void CParticleSystem::Tick(_float _fTimeDelta)
 			DirectionMatrix = rotationMatrix;
 		}
 
-		//else
-		
-
 		_float4x4 TranslationMatrix = _float4x4::MatrixTranslation(vPos);
 		_float4x4 TransfomationMatrix = ScaleMatrix * BillBoardMatrix * DirectionMatrix * RotationMatrix * TranslationMatrix;
 
@@ -253,7 +250,7 @@ void CParticleSystem::Late_Tick(_float _fTimeDelta)
 			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_GLOW, this);
 		}
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BLEND, this);
-		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_MOTIONBLUR, this);
+		//m_pRenderer->Add_RenderGroup(CRenderer::RENDER_MOTIONBLUR, this);
 	}
 }
 
@@ -271,11 +268,11 @@ HRESULT CParticleSystem::Render()
 	return S_OK;
 }
 
-void CParticleSystem::Play()
+void CParticleSystem::Play(_float3 vPosition)
 {
 	if (true == IsEnable())
 		Restart();
-
+	m_pTransform->Set_Position(vPosition);
 	Enable();
 }
 void CParticleSystem::Stop()
@@ -680,8 +677,10 @@ void CParticleSystem::ResetStartPosition(PARTICLE_IT& _particle_iter)
 	{
 		vPosition += m_pTransform->Get_Position();
 	}
+	// 위치 세팅
 	_particle_iter->WorldMatrix.Translation(vPosition);
 
+	// 속도(방향 * 스피드) 설정
 	_particle_iter->vVelocity = (vDirection * fSpeed).TransNorm();
 	
 	Safe_Release(pGameInstance);
@@ -792,7 +791,8 @@ void CParticleSystem::Reset_Particle(PARTICLE_IT& _particle_iter)
 	// 시작 크기 결정
 	if (true == m_MainModuleDesc.is3DStartSize)
 	{
-		_particle_iter->vScale = _float3(m_MainModuleDesc.v3DSizeXYZ.x, m_MainModuleDesc.v3DSizeXYZ.y, m_MainModuleDesc.v3DSizeXYZ.z);
+		_particle_iter->vStartScale = _float3(m_MainModuleDesc.v3DSizeXYZ.x, m_MainModuleDesc.v3DSizeXYZ.y, m_MainModuleDesc.v3DSizeXYZ.z);
+		_particle_iter->vScale = _particle_iter->vStartScale;
 	}
 	else
 	{
@@ -803,9 +803,10 @@ void CParticleSystem::Reset_Particle(PARTICLE_IT& _particle_iter)
 		else
 			fScale = m_MainModuleDesc.fStartSize;
 
-		_particle_iter->vScale = _float3(fScale, fScale, fScale);
+		_particle_iter->vStartScale = _float3(fScale, fScale, fScale);
+		_particle_iter->vScale = _particle_iter->vStartScale;
 	}
-
+	m_SizeOverLifeTimeModuleDesc.Reset(_particle_iter);
 	// 시작 회전
 	//_particle_iter->WorldMatrix = 
 

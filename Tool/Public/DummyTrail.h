@@ -50,6 +50,7 @@ private:
 	CComboBox* m_pPassComboBox = { nullptr };
 	list<_tchar*> m_pTags;
 
+	CComboBox* m_pClipChannelCombo = { nullptr };
 public:
 	// 툴에서는 매개변수 추가. 클라에는 삭제하기
 	static CDummyTrail* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* _pDirectoryPath, _uint _iLevel = 0,
