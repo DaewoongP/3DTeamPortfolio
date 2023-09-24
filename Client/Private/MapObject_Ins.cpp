@@ -110,7 +110,7 @@ HRESULT CMapObject_Ins::Add_Components(MAPOJBECTINSDESC* pMapObjectInsDesc)
 		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
 	{
 		MSG_BOX("Failed CMapObject_Ins Add_Component : (Com_Renderer)");
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 
@@ -119,7 +119,7 @@ HRESULT CMapObject_Ins::Add_Components(MAPOJBECTINSDESC* pMapObjectInsDesc)
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
 	{
 		MSG_BOX("Failed CMapObject_Ins Add_Component : (Com_Shader)");
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 	
@@ -128,6 +128,7 @@ HRESULT CMapObject_Ins::Add_Components(MAPOJBECTINSDESC* pMapObjectInsDesc)
 		TEXT("Com_ShadowShader"), reinterpret_cast<CComponent**>(&m_pShadowShader))))
 	{
 		MSG_BOX("Failed CMapObject_Ins Add_Component : (Com_ShadowShader)");
+		__debugbreak();
 		return E_FAIL;
 	}
 
@@ -136,7 +137,7 @@ HRESULT CMapObject_Ins::Add_Components(MAPOJBECTINSDESC* pMapObjectInsDesc)
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModel))))
 	{
 		MSG_BOX("Failed CMapObject_Ins Add_Component : (Com_Model)");
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 
