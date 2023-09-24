@@ -2,6 +2,7 @@
 #include "GameInstance.h"
 #include "UI_Effect_Back.h"
 #include "UI_Back.h"
+#include "UI_Slot.h"
 
 CUI_Inventory::CUI_Inventory(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -49,16 +50,18 @@ HRESULT CUI_Inventory::Initialize(void* pArg)
 		m_fHeight = pDesc->fHeight;
 		m_iHorizontal = pDesc->iHorizontal;
 		m_iVertical = pDesc->iVertical;
-
 	}
 
 	Ready_Offset();
+
 	return S_OK;
 }
 
 void CUI_Inventory::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	
 }
 
 void CUI_Inventory::Late_Tick(_float fTimeDelta)
@@ -80,6 +83,7 @@ HRESULT CUI_Inventory::Add_Prototype()
 		CUI_Back::Create(m_pDevice, m_pContext), true)))
 	{
 		Safe_Release(pGameInstance);
+		__debugbreak;
 		return E_FAIL;
 	}
 
@@ -87,6 +91,7 @@ HRESULT CUI_Inventory::Add_Prototype()
 		CUI_Effect_Back::Create(m_pDevice, m_pContext), true)))
 	{
 		Safe_Release(pGameInstance);
+		__debugbreak;
 		return E_FAIL;
 	}
 
@@ -150,12 +155,69 @@ HRESULT CUI_Inventory::Add_ItemTexture()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("../../Resources/"), TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&pTexture))))
 	{
 		MSG_BOX("Failed CUI_Image Add_Component : (Com_Texture)");
+		__debugbreak;
 		return E_FAIL;
 	}
 	m_ItemTextures.push_back(pTexture);
 
 	Safe_Release(pGameInstace);
 	return S_OK;
+}
+
+HRESULT CUI_Inventory::Set_InventoryItem(vector<CGameObject*>& pItems)
+{
+	for (auto& pSlot : m_pSlots)
+		pSlot->Set_IconTexture(nullptr);
+	
+	_uint iSize = pItems.size();
+	_uint iIndex = 0;
+	for (auto& pItem : pItems)
+	{
+		if (nullptr == m_pSlots[iIndex])
+		{
+			wstring wszTag = TEXT("Com_UI_Slot");
+			wszTag += std::to_wstring(iIndex);
+			CUI::UIDESC Desc;
+			ZEROMEM(&Desc);
+			Desc.vCombinedXY = _float2(0.f,0.f);
+			Desc.fX = m_fPosition[iIndex].x;
+			Desc.fY = m_fPosition[iIndex].y;
+			Desc.fZ = 0.5f;
+			Desc.fSizeX = 70.f;
+			Desc.fSizeY = 70.f;
+			
+			//lstrcpy(Desc.szTexturePath, );
+
+			if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Slot"),
+				wszTag.c_str(), reinterpret_cast<CComponent**>(&m_pSlots[iIndex]))))
+			{
+				MSG_BOX("Com_Inventory : Failed Clone Component (Com_UI_Slot)");
+				__debugbreak;
+				return E_FAIL;
+			}
+
+			//	 m_pSlots[iIndex]->Set_IconTexture();
+		}
+		else if (nullptr == m_pSlots[iIndex]->Get_IconTexture())
+		{
+			//	 m_pSlots[iIndex]->Set_IconTexture();
+		}
+		++iIndex;
+	}
+
+}
+
+HRESULT CUI_Inventory::Delete_InventoryItem(_uint iIndex)
+{
+	Safe_Release(m_pSlots[iIndex]);
+	m_pSlots.erase(m_pSlots.begin() + iIndex);
+
+	return S_OK;
+}
+
+HRESULT CUI_Inventory::Swap_InventoryItem()
+{
+	return E_NOTIMPL;
 }
 
 CUI_Inventory* CUI_Inventory::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

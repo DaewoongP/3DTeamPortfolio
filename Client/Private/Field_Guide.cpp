@@ -54,6 +54,8 @@ HRESULT CField_Guide::Initialize(void* pArg)
 
 	Create_BackGround();
 
+	Add_Cursor();
+
 	return S_OK;
 }
 
@@ -169,6 +171,26 @@ HRESULT CField_Guide::Add_Components(wstring wszTag)
 
 	Safe_Release(pGameInstance);
 
+	return S_OK;
+}
+
+HRESULT CField_Guide::Add_Cursor()
+{
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	_tchar szFilePath[MAX_PATH] = TEXT("");
+	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Cursor.uidata"));
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Cursor"),
+		TEXT("Com_UI_Cursor"), reinterpret_cast<CComponent**>(&m_pCursor), szFilePath)))
+	{
+		MSG_BOX("Com_Field_Guide : Failed Clone Component (Com_UI_Group_Cursor)");
+		Safe_Release(pGameInstance);
+		__debugbreak;
+		return E_FAIL;
+	}
+
+	Safe_Release(pGameInstance);
 	return S_OK;
 }
 
@@ -428,4 +450,6 @@ void CField_Guide::Free()
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pTexture);
 	Safe_Release(m_pMenu);
+	Safe_Release(m_pCursor);
+
 }

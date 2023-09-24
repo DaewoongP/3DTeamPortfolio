@@ -48,6 +48,7 @@ void CUI_Group_Cursor::Tick(_float fTimeDelta)
 
 void CUI_Group_Cursor::Late_Tick(_float fTimeDelta)
 {
+
 	__super::Late_Tick(fTimeDelta);
 }
 
@@ -93,6 +94,7 @@ HRESULT CUI_Group_Cursor::Add_Components()
 	{
 		MSG_BOX("CUI_Group_Cursor : Failed Clone Component (Com_UI_Cursor)");
 		ENDINSTANCE;
+		__debugbreak;
 		return E_FAIL;
 	}
 
@@ -101,6 +103,7 @@ HRESULT CUI_Group_Cursor::Add_Components()
 	{
 		MSG_BOX("CUI_Group_Cursor : Failed Clone Component (Com_UI_Cursor_Inner)");
 		ENDINSTANCE;
+		__debugbreak;
 		return E_FAIL;
 	}
 

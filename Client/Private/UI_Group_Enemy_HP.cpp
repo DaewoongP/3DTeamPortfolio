@@ -35,10 +35,14 @@ HRESULT CUI_Group_Enemy_HP::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
+	m_pUI_HP->Set_HPtype(CUI_HP::MONSTER);
+
 	if (nullptr != pArg)
 	{
 		ENEMYHPDESC* hpDesc = static_cast<ENEMYHPDESC*>(pArg);
-
+		
+		m_pHealth = hpDesc->pHealth;
+		Safe_AddRef(m_pHealth);
 		eEnemyType = hpDesc->eType;
 		lstrcpy(m_wszObjectLevel, hpDesc->wszObjectLevel);
 		lstrcpy(m_wszObjectName, hpDesc->wszObjectName);
@@ -73,6 +77,10 @@ void CUI_Group_Enemy_HP::Tick(_float fTimeDelta)
 
 void CUI_Group_Enemy_HP::Late_Tick(_float fTimeDelta)
 {
+	//if (nullptr != m_pUI_HP && nullptr != m_pHealth)
+	//{
+	//	m_pUI_HP->Set_HP(m_pHealth->Get_Current_HP_Percent());
+	//}
 	__super::Late_Tick(fTimeDelta);
 }
 
@@ -108,6 +116,7 @@ HRESULT CUI_Group_Enemy_HP::Add_Components()
 	{
 		MSG_BOX("CUI_Group_Enemy_HP : Failed Clone Component (Com_UI_Enemy_HP_Frame)");
 		ENDINSTANCE;
+		__debugbreak;
 		return E_FAIL;
 	}
 
@@ -117,6 +126,7 @@ HRESULT CUI_Group_Enemy_HP::Add_Components()
 	{
 		MSG_BOX("CUI_Group_Enemy_HP : Failed Clone Component (Com_UI_Enemy_HP)");
 		ENDINSTANCE;
+		__debugbreak;
 		return E_FAIL;
 	}
 
@@ -144,7 +154,6 @@ HRESULT CUI_Group_Enemy_HP::Read_File(const _tchar* pFilePath)
 	ReadFile(hFile, szGroupName, dwStrByte, &dwByte, nullptr);
 
 	m_pUI_Effect_Back->Load(Load_File(hFile));
-
 
 	_uint iSize = { 0 };
 	ReadFile(hFile, &iSize, sizeof(_uint), &dwByte, nullptr);
@@ -229,6 +238,7 @@ HRESULT CUI_Group_Enemy_HP::Add_Fonts(void* pArg)
 	{
 		MSG_BOX("CUI_Group_Enemy_HP : Failed Clone Component (Com_UI_Font_Level)");
 		ENDINSTANCE;
+		__debugbreak;
 		return E_FAIL;
 	}
 	m_Fonts.push_back(pLevel);
@@ -248,6 +258,7 @@ HRESULT CUI_Group_Enemy_HP::Add_Fonts(void* pArg)
 	{
 		MSG_BOX("CUI_Group_Enemy_HP : Failed Clone Component (Com_UI_Font_Name)");
 		ENDINSTANCE;
+		__debugbreak;
 		return E_FAIL;
 	}
 	m_Fonts.push_back(pName);
@@ -290,6 +301,7 @@ void CUI_Group_Enemy_HP::Free()
 
 	Safe_Release(m_pUI_Effect_Back);
 	Safe_Release(m_pUI_HP);
+	Safe_Release(m_pHealth);
 
 	for (auto& pFonts : m_Fonts)
 	{

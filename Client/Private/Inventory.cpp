@@ -25,21 +25,17 @@ HRESULT CInventory::Initialize(void* pArg)
 	__super::Initialize(pArg);
 
 	m_pItems.reserve(ITEMTYPE_END);
+	m_pPlayerCurItems.reserve(RESOURCE);
 
 	return S_OK;
 }
 
 void CInventory::Late_Tick(_float fTimeDelta)
 {
-	//button 클릭딱했어
-	// 그러면 여기 인벤토리 클래스를 버튼눌렀다는걸 알려주는거임
-	// 그러면 이친구가 UI를 렌더링하면서
-	// 기능을 수행하는거임
-
-	if (m_isOpened)
+	if (m_isOpen)
 	{
-		//m_pInventory[m_eCurOpenItemtype]->Set
-		m_pInventory[m_eCurOpenItemtype]->Late_Tick(fTimeDelta);
+		m_pUI_Inventory[m_eCurOpenItemtype]->Set_InventoryItem(m_pItems[m_eCurOpenItemtype]);
+		m_pUI_Inventory[m_eCurOpenItemtype]->Late_Tick(fTimeDelta);
 	}
 }
 
@@ -82,11 +78,14 @@ HRESULT CInventory::Add_Components()
 			pDesc.iVertical = 5;
 		}
 
+		wstring wszTag = TEXT("Com_UI_Inventory");
+		wszTag += std::to_wstring(i);
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Inventory"),
-			TEXT("Com_UI_Inventory"), reinterpret_cast<CComponent**>(&m_pInventory[i]), &pDesc)))
+			wszTag.c_str(), reinterpret_cast<CComponent**>(&m_pUI_Inventory[i]), &pDesc)))
 		{
-			MSG_BOX("Com_Info_Main : Failed Clone Component (Com_UI_Inventory )");
+			MSG_BOX("Com_Inventory : Failed Clone Component (Com_UI_Inventory )");
 			Safe_Release(pGameInstance);
+			__debugbreak;
 			return E_FAIL;
 		}
 	}
@@ -107,6 +106,8 @@ void CInventory::Add_Item(CGameObject* pItem, ITEMTYPE eType)
 
 		m_pItems[eType].push_back(pItem);
 		Safe_AddRef(pItem);
+
+		m_pUI_Inventory[eType]->Set_InventoryItem(m_pItems[eType]);
 	}
 	else
 	{
@@ -115,6 +116,8 @@ void CInventory::Add_Item(CGameObject* pItem, ITEMTYPE eType)
 
 		m_pItems[eType].push_back(pItem);
 		Safe_AddRef(pItem);
+
+		m_pUI_Inventory[eType]->Set_InventoryItem(m_pItems[eType]);
 	}
 }
 
@@ -132,6 +135,12 @@ void CInventory::Delete_Item(ITEMTYPE eType, _uint iIndex)
 		}
 		++Index;
 	}
+
+	m_pUI_Inventory[eType]->Set_InventoryItem(m_pItems[eType]);
+}
+
+void CInventory::Swap_Item(CGameObject* CurItem, CGameObject* pItem, ITEMTYPE eType)
+{
 }
 
 CInventory* CInventory::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

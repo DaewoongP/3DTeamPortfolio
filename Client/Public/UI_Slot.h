@@ -32,8 +32,7 @@ private:
 
 public:
 	void Set_Clicked(_bool isClicked = false);
-	//void Set_Texture(CTexture* pTexture);
-	//void Set_ImageCom(CUI_Image::IMAGEDESC desc);
+	void Set_IconTexture(CTexture* pTexture);
 
 public:
 	virtual HRESULT Initialize(void* pArg) override;
@@ -43,12 +42,14 @@ public:
 
 public:
 	_bool	Get_Clicked();
+	CTexture* Get_IconTexture() { 
+		return m_Textures[ICON]; 
+	}
 
 private:
 	CShader* m_pShaderCom = { nullptr };
 	CRenderer* m_pRendererCom = { nullptr };
 	CVIBuffer_Rect* m_pVIBufferCom = { nullptr };
-	//CUI_Image* m_pImageCom[SLOT_END] = { nullptr };
 	CUI_Button* m_pButtonCom = { nullptr };
 
 private:

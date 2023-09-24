@@ -104,6 +104,7 @@ HRESULT CUI_Font::Add_Component()
 		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRendererCom))))
 	{
 		MSG_BOX("Failed CDummy_UI Add_Component : (Com_Renderer)");
+		__debugbreak;
 		return E_FAIL;
 	}
 	return S_OK;

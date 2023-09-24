@@ -13,6 +13,14 @@ class CUI_Font;
 
 class CUI_Group_HP final : public CGameObject
 {
+public:
+	struct HPDESC
+	{
+		_tchar wszFilePath[MAX_PATH] = TEXT("");
+		_tchar wszNumber[MAX_PATH] = TEXT("");
+		CHealth* pHealth = { nullptr };
+	};
+
 private:
 	explicit CUI_Group_HP(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CUI_Group_HP(const CUI_Group_HP& rhs);
@@ -20,7 +28,7 @@ private:
 
 public:
 	void	Set_Potion(_uint iPotion);
-	void	Set_HP(_float fGauge, CUI_Progress::GAUGE eType);
+	void	Set_HP(_float fGauge);
 
 public:
 	virtual HRESULT Initialize_Prototype();
@@ -32,9 +40,11 @@ private:
 	CUI_Back*			m_pUI_Back = { nullptr };
 	CUI_HP*				m_pUI_HP = { nullptr };
 
+	CHealth*			m_pHealth = { nullptr };
+
 private:
-	CUI_Font*		m_pFont = { nullptr };
-	_tchar			m_wszObjectLevel[MAX_PATH] = TEXT("");
+	CUI_Font*			m_pFont = { nullptr };
+//	_tchar				m_wszObjectLevel[MAX_PATH] = TEXT("");
 
 private:
 	HRESULT Add_Prototype();
@@ -43,7 +53,7 @@ private:
 	CUI::UIDESC Load_File(const HANDLE hFile);
 
 private:
-	HRESULT Add_Fonts(void* pArg);
+	HRESULT Add_Fonts(_tchar* wszLevel);
 
 public:
 	static CUI_Group_HP* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);

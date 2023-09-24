@@ -11,7 +11,7 @@ class CTexture;
 END
 
 BEGIN(Client)
-
+class CUI_Group_Cursor;
 class CMain_Menu;
 class CField_Guide final : public CGameObject
 {
@@ -31,6 +31,8 @@ private:
 	HRESULT Add_Prototype();
 	//	HRESULT Add_Components(const _tchar* wszTag);
 	HRESULT Add_Components(wstring wszTag);
+
+	HRESULT Add_Cursor();
 
 	HRESULT Read_File(const _tchar* pFilePath, MENU iIndex);
 	CUI::UIDESC Load_File(const HANDLE hFile);
@@ -54,6 +56,8 @@ private:
 
 private:
 	CMain_Menu* m_pMenu = { nullptr };
+
+	CUI_Group_Cursor* m_pCursor = { nullptr };
 
 private:
 	MENU	m_eMenu = { MENU_END };

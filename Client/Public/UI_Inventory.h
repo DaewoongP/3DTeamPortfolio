@@ -49,6 +49,11 @@ private:
 	HRESULT Ready_Offset();
 	HRESULT	Add_ItemTexture();
 
+public:
+	HRESULT	Set_InventoryItem(vector<CGameObject*>& pItems);
+	HRESULT	Delete_InventoryItem(_uint iIndex);
+	HRESULT	Swap_InventoryItem();
+
 private:
 	CShader*			m_pShaderCom = { nullptr };
 	CRenderer*			m_pRendererCom = { nullptr };

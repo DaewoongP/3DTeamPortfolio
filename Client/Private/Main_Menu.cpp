@@ -43,6 +43,7 @@ HRESULT CMain_Menu::Initialize(void* pArg)
 
 
 	Ready_Menus();
+	Add_Cursor();
 
 	return S_OK;
 }
@@ -138,6 +139,7 @@ HRESULT CMain_Menu::Add_Components()
 	{
 		MSG_BOX("Com_Menu : Failed Clone Component (Com_UI_Effect_Back_Menu_Frame)");
 		Safe_Release(pGameInstance);
+		__debugbreak;
 		return E_FAIL;
 	}
 
@@ -145,6 +147,7 @@ HRESULT CMain_Menu::Add_Components()
 	{
 		MSG_BOX("Com_Menu : Failed Clone Component (Com_UI_Effect_Back_Menu_Keys)");
 		Safe_Release(pGameInstance);
+		__debugbreak;
 		return E_FAIL;
 	}
 
@@ -152,6 +155,7 @@ HRESULT CMain_Menu::Add_Components()
 	{
 		MSG_BOX("Com_Menu : Failed Clone Component (Com_UI_Effect_Back_Menu_Keys)");
 		Safe_Release(pGameInstance);
+		__debugbreak;
 		return E_FAIL;
 	}
 
@@ -168,9 +172,9 @@ HRESULT CMain_Menu::Add_Components()
 	{
 		MSG_BOX("Com_Info_Main : Failed Clone Component (Com_UI_Effect_Back_Menu_Back)");
 		Safe_Release(pGameInstance);
+		__debugbreak;
 		return E_FAIL;
 	}
-
 	Safe_Release(pGameInstance);
 
 	return S_OK;
@@ -190,10 +194,31 @@ HRESULT CMain_Menu::Add_TextComponent(wstring wszTag)
 	{
 		MSG_BOX("Com_Info_Main : Failed Clone Component (Com_UI_Effect_Back_Text)");
 		Safe_Release(pGameInstance);
+		__debugbreak;
 		return E_FAIL;
 	}
 	m_pTexts.push_back(pText);
 	
+	Safe_Release(pGameInstance);
+	return S_OK;
+}
+
+HRESULT CMain_Menu::Add_Cursor()
+{
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	_tchar szFilePath[MAX_PATH] = TEXT("");
+	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Cursor.uidata"));
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Cursor"),
+		TEXT("Com_UI_Cursor"), reinterpret_cast<CComponent**>(&m_pCursor), szFilePath)))
+	{
+		MSG_BOX("Com_Info_Main : Failed Clone Component (Com_UI_Group_Cursor)");
+		Safe_Release(pGameInstance);
+		__debugbreak;
+		return E_FAIL;
+	}
+
 	Safe_Release(pGameInstance);
 	return S_OK;
 }
@@ -411,5 +436,7 @@ void CMain_Menu::Free()
 
 	Safe_Release(m_pGear);	
 	Safe_Release(m_pInventory);
+	Safe_Release(m_pCursor);
+	
 
 }
