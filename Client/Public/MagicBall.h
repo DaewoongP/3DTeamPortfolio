@@ -5,6 +5,7 @@
 
 BEGIN(Engine)
 class CRigidBody;
+class CRender;
 END
 
 BEGIN(Client)

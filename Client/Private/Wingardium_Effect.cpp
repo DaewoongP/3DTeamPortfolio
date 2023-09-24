@@ -20,9 +20,9 @@ HRESULT CWingardium_Effect::Initialize_Prototype(_uint iLevel)
 	m_iLevel = iLevel;
 
 	BEGININSTANCE;
-	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Default_Magic_Trail")))
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Wingardium_Effect_Trail")))
 	{
-		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Default_Magic_Trail")
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Wingardium_Effect_Trail")
 			, CTrail::Create(m_pDevice, m_pContext, TEXT("../"), m_iLevel))))
 		{
 			ENDINSTANCE;
@@ -232,7 +232,7 @@ HRESULT CWingardium_Effect::Add_Components()
 
 	for (int i = 0; i < TrailCount; i++)
 	{
-		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Default_Magic_Trail")
+		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Wingardium_Effect_Trail")
 			, comTag_trail[i], (CComponent**)&m_pTrail[i])))
 		{
 			__debugbreak();
@@ -243,7 +243,7 @@ HRESULT CWingardium_Effect::Add_Components()
 	_tchar comTag_trailToOrigin[TrailCount / 2][MAX_PATH] = { TEXT("Com_Trail9"), TEXT("Com_Trail10"), TEXT("Com_Trail11"),TEXT("Com_Trail12") };
 	for (int i = 0; i < TrailCount / 2; i++)
 	{
-		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Default_Magic_Trail")
+		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Wingardium_Effect_Trail")
 			, comTag_trailToOrigin[i], (CComponent**)&m_pTrailToOrigin[i])))
 		{
 			__debugbreak();
@@ -275,7 +275,6 @@ CGameObject* CWingardium_Effect::Clone(void* pArg)
 		MSG_BOX("Failed to Cloned CWingardium_Effect");
 		Safe_Release(pInstance);
 	}
-
 	return pInstance;
 }
 

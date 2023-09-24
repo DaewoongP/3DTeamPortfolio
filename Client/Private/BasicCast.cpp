@@ -2,6 +2,9 @@
 #include "GameInstance.h"
 #include "Engine_Function.h"
 
+#include "Trail.h"
+#include "ParticleSystem.h"
+
 CBasicCast::CBasicCast(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CMagicBall(pDevice, pContext)
 {
@@ -19,6 +22,17 @@ HRESULT CBasicCast::Initialize_Prototype(_uint iLevel)
 		return E_FAIL;
 	m_iLevel = iLevel;
 	BEGININSTANCE;
+
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_MagicTrail_BasicCast_Effect")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_MagicTrail_BasicCast_Effect")
+			, CTrail::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/BasicCast/BasicCast.trail"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+
 	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_DefaultConeBoom_Particle")))
 	{
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_DefaultConeBoom_Particle")
@@ -181,7 +195,37 @@ void CBasicCast::Ready_CastMagic()
 	{
 		m_vTargetPosition = m_pTarget->Get_Position() + m_TargetOffsetMatrix.Translation();
 	}
-	m_pTrailEffect->Ready_Spline(m_vTargetPosition, m_MagicBallDesc.vStartPosition, m_MagicBallDesc.fInitLifeTime, m_MagicBallDesc.fDistance);
+
+	//Ready for Spline Lerp
+	m_vStartPostion = m_MagicBallDesc.vStartPosition;
+	m_fLerpAcc = 0.f;
+
+	// 플레이어가 타겟을 보는 vector를 구함.
+	_float3 vDir = XMVector3Normalize(m_vTargetPosition - m_vStartPostion);
+	// 임의의 축을 구함.
+	_float3 tempAxis = _float3(1, 1, 1);
+	// 외적
+	_float3	normal = XMVector3Cross(vDir, tempAxis);
+
+	//진행 경로만큼 뒤로 이동한 뒤
+	m_vSplineLerp[0] = m_vStartPostion - vDir;
+	//임의의 랜덤 값을 구하고
+	_float fRandom = Random_Generator(-20.f, 20.f);
+	// 외적 방향으로 튄다.
+	m_vSplineLerp[0] += _float3(normal.x * fRandom, normal.y * fabsf(fRandom), normal.z * fRandom);
+
+	//진행 경로만큼 뒤로 이동한 뒤
+	m_vSplineLerp[1] = m_vStartPostion + vDir;
+	//임의의 랜덤 값을 구하고
+	fRandom = Random_Generator(-20.f, 20.f);
+	// 외적 방향으로 튄다.
+	m_vSplineLerp[1] += _float3(normal.x * fRandom, normal.y * fabsf(fRandom), normal.z * fRandom);
+	m_fTimeScalePerDitance = m_MagicBallDesc.fDistance / _float3(m_vTargetPosition - m_vStartPostion).Length();
+
+	m_pTrailEffect->Reset_Trail(_float3(m_vStartPostion) + _float3(0, 0.5f, 0), _float3(m_vStartPostion) + _float3(0, -0.5f, 0));
+	m_pTrailEffect->Get_Transform()->Set_Position(m_vStartPostion);
+
+	m_pTrailEffect->Enable();
 }
 
 void CBasicCast::Ready_Dying()
@@ -209,8 +253,15 @@ void CBasicCast::Tick_DrawMagic(_float fTimeDelta)
 
 void CBasicCast::Tick_CastMagic(_float fTimeDelta)
 {
-	//스플라인 움직임이 끝나면 터지는 이펙트 재생하겠습니다.
-	if (m_pTrailEffect->Spline_Move(fTimeDelta))
+	if (m_fLerpAcc != 1)
+	{
+		m_fLerpAcc += fTimeDelta / m_MagicBallDesc.fInitLifeTime * m_fTimeScalePerDitance;
+		if (m_fLerpAcc > 1)
+			m_fLerpAcc = 1;
+		m_pTrailEffect->Spline_Spin_Move(m_vSplineLerp[0], m_vStartPostion, m_vTargetPosition, m_vSplineLerp[1], m_fLerpAcc);
+		m_pTransform->Set_Position(m_pTrailEffect->Get_Transform()->Get_Position());
+	}
+	else
 	{
 		Do_MagicBallState_To_Next();
 	}
@@ -261,10 +312,8 @@ HRESULT CBasicCast::Add_Components()
 
 HRESULT CBasicCast::Add_Effect()
 {
-	CDefault_MagicTraill_Effect::INITDESC initDesc;
-	initDesc.vInitPosition = m_MagicBallDesc.vStartPosition;
 	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_MagicTrail_BasicCast_Effect"),
-		TEXT("Com_TrailEffect"), reinterpret_cast<CComponent**>(&m_pTrailEffect), &initDesc)))
+		TEXT("Com_TrailEffect"), reinterpret_cast<CComponent**>(&m_pTrailEffect))))
 	{
 		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_MagicTrail_BasicCast_Effect)");
 		__debugbreak();

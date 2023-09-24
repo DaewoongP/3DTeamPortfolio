@@ -2,6 +2,9 @@
 #include "GameInstance.h"
 #include "Engine_Function.h"
 
+#include "Trail.h"
+#include "ParticleSystem.h"
+
 CConfringo::CConfringo(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CMagicBall(pDevice, pContext)
 {

@@ -1,6 +1,5 @@
 #include "MagicBall.h"
 #include "GameInstance.h"
-#include "Weapon_Player_Wand.h"
 
 CMagicBall::CMagicBall(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)

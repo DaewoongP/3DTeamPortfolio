@@ -3,10 +3,10 @@
 #include "Client_Defines.h"
 #include "MagicBall.h"
 
-//스플라인 트레일 파티클
-#include "Default_MagicTraill_Effect.h"
-//파티클
-#include "ParticleSystem.h"
+BEGIN(Engine)
+class CParticleSystem;
+class CTrail;
+END
 
 BEGIN(Client)
 class CBasicCast final : public CMagicBall
@@ -32,7 +32,7 @@ private:
 	CParticleSystem*			m_pWandEffect = { nullptr };
 
 	// 기본공격 트레일
-	CDefault_MagicTraill_Effect* m_pTrailEffect = { nullptr };
+	CTrail* m_pTrailEffect = { nullptr };
 	// 피격 이펙트
 	CParticleSystem*			m_pHitEffect = { nullptr };
 	// 피격 섬광
@@ -41,8 +41,14 @@ private:
 	//지팡이 3타 터지는 이펙트
 	CParticleSystem* m_pFinalAttackEffect = { nullptr };
 private:
+	_float3				m_vStartPostion = {};
 	_float3				m_vTargetPosition = {};
-	_uint				m_iLevel = {};
+	_float				m_fLerpAcc = { 0.f };
+
+	//For. Spline
+	_float3				m_vSplineLerp[2] = {};
+	_float				m_fTimeScalePerDitance = { 0.f };
+	_uint				m_iLevel = { 0 };
 
 private:
 	virtual void Ready_Begin() override;

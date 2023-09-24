@@ -313,9 +313,6 @@
     <Filter Include="04. Effect\Wingardium_Effect">
       <UniqueIdentifier>{2225573b-518b-46cd-b9ba-d1ab1cbfdb7d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="04. Effect\Default_MagicTraill_Effect">
-      <UniqueIdentifier>{5235bea2-54db-4f3f-b105-e99f462db57b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="05. Magic">
       <UniqueIdentifier>{e77db5d2-8ca4-49d3-9854-41ff5a14a55b}</UniqueIdentifier>
     </Filter>
@@ -584,9 +581,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\Levioso.h">
       <Filter>05. Magic\MagicBall\04. Levioso</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Default_MagicTraill_Effect.h">
-      <Filter>04. Effect\Default_MagicTraill_Effect</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Random_Select.h">
       <Filter>03. Behaviors\03. RandomChoose</Filter>
@@ -946,9 +940,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\Levioso.cpp">
       <Filter>05. Magic\MagicBall\04. Levioso</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Default_MagicTraill_Effect.cpp">
-      <Filter>04. Effect\Default_MagicTraill_Effect</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Random_Select.cpp">
       <Filter>03. Behaviors\03. RandomChoose</Filter>
