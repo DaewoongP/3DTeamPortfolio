@@ -789,36 +789,39 @@ void SIZE_OVER_LIFETIME::Action(_float3 vStartSize, PARTICLE_IT& _particle_iter,
 {
 	if (false == isActivate)
 		return;
-
 	{
-		_float changeAmount = vSizeX.x - vSizeX.y;
-
-		_particle_iter->vScale.x = vStartSize.x * CEase::Ease(eEaseX, _particle_iter->fAge
-			, vSizeX.x
-			, changeAmount
+		_float min = vSizeX.x;
+		_float max = vSizeX.y;
+		_float fChangeAmount = max - min;
+		_particle_iter->vScale.x = _particle_iter->vStartScale.x * CEase::Ease(eEaseX, _particle_iter->fAge
+			, min
+			, fChangeAmount
 			, _particle_iter->fLifeTime);
 	}
 
 	if (true == isSeparateAxes)
 	{
 		{
-			_float changeAmount = vSizeY.x - vSizeY.y;
-
-			_particle_iter->vScale.y = vStartSize.y * CEase::Ease(eEaseY, _particle_iter->fAge
-				, vSizeY.x
-				, changeAmount
+			_float min = vSizeY.x;
+			_float max = vSizeY.y;
+			_float fChangeAmount = max - min;
+			_particle_iter->vScale.y = _particle_iter->vStartScale.y * CEase::Ease(eEaseY, _particle_iter->fAge
+				, min
+				, fChangeAmount
 				, _particle_iter->fLifeTime);
 		}
 
 		{
-			_float changeAmount = vSizeZ.x - vSizeZ.y;
-
-			_particle_iter->vScale.z = vStartSize.z * CEase::Ease(eEaseZ, _particle_iter->fAge
-				, vSizeZ.x
-				, changeAmount
+			_float min = vSizeZ.x;
+			_float max = vSizeZ.y;
+			_float fChangeAmount = max - min;
+			_particle_iter->vScale.z = _particle_iter->vStartScale.z * CEase::Ease(eEaseZ, _particle_iter->fAge
+				, min
+				, fChangeAmount
 				, _particle_iter->fLifeTime);
 		}
 	}
+
 }
 void SIZE_OVER_LIFETIME::Restart()
 {

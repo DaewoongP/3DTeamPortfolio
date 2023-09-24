@@ -792,7 +792,8 @@ void CParticleSystem::Reset_Particle(PARTICLE_IT& _particle_iter)
 	// 시작 크기 결정
 	if (true == m_MainModuleDesc.is3DStartSize)
 	{
-		_particle_iter->vScale = _float3(m_MainModuleDesc.v3DSizeXYZ.x, m_MainModuleDesc.v3DSizeXYZ.y, m_MainModuleDesc.v3DSizeXYZ.z);
+		_particle_iter->vStartScale = _float3(m_MainModuleDesc.v3DSizeXYZ.x, m_MainModuleDesc.v3DSizeXYZ.y, m_MainModuleDesc.v3DSizeXYZ.z);
+		_particle_iter->vScale = _particle_iter->vStartScale;
 	}
 	else
 	{
@@ -803,7 +804,8 @@ void CParticleSystem::Reset_Particle(PARTICLE_IT& _particle_iter)
 		else
 			fScale = m_MainModuleDesc.fStartSize;
 
-		_particle_iter->vScale = _float3(fScale, fScale, fScale);
+		_particle_iter->vStartScale = _float3(fScale, fScale, fScale);
+		_particle_iter->vScale = _particle_iter->vStartScale;
 	}
 
 	// 시작 회전
