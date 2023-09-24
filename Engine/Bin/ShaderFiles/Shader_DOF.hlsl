@@ -7,6 +7,8 @@ float    g_fFocusDis;
 float    g_fFocusRange;
 float    gMaxBlur;
 float    g_fCamFar;
+vector g_NotifyPosition = vector(10.f, 3.f, 10.f, 1.f);
+float4 vDofParams = float4(1.f, 50.f, 55.f, 0.5f);
 
 float gOcclusionRadius = 0.5f;
 float gOcclusionFadeStart = 0.2f;
@@ -15,7 +17,6 @@ float gSurfaceEpsilon = 0.05f;
 
 texture2D g_PostProcessingTexture;
 float g_fRadius = 0.001f;
-float4 vDofParams;
 
 float2 vMaxCoC = float2(5.f, 10.f);
 float radiusScale = 0.4f;
@@ -23,10 +24,8 @@ float radiusScale = 0.4f;
 
 
 texture2D g_DepthTexture;
-texture2D g_NormalTexture;
-texture2D g_SSAOTexture;
 texture2D g_BlurTexture;
-texture2D g_NoiseTexture;
+texture2D g_Texture;
 
 
 
@@ -64,13 +63,12 @@ float3 g_Ran[29] =
     float3(0.7817636f, -0.9797312f, 0.13523549f),
 };
 
-float BlurWeights[31] =
+float BlurWeights[13] =
 {
-    0.0011, 0.0123, 0.0234, 0.0561, 0.0864, 0.1353, 0.2312, 0.278, 0.3001, 0.4868, 0.6666, 0.7261, 0.8712, 0.9231, 0.9986, 0.9999,
-    0.9986, 0.9231, 0.8712, 0.7261, 0.6666, 0.4868, 0.3001, 0.278,0.2312, 0.1353, 0.0864, 0.0561, 0234, 0.0123, 0.0011
+   0.0561,0.1353,0.278,0.4868,0.7261,0.9231,1,0.9231,0.7261,0.4868,0.278,0.1353,0.0561
 };
-float total = 11.9827f;
-
+//float total6 = 6.2108f;
+float total6 = 4.9108f;
 
 struct VS_IN
 {
@@ -92,8 +90,9 @@ VS_OUT VS_MAIN(VS_IN In)
 
     matWV = mul(g_WorldMatrix, g_ViewMatrix);
     matWVP = mul(matWV, g_ProjMatrix);
-
     Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);
+    Out.vPosition.xy = sign(Out.vPosition.xy);
+
     Out.vTexUV = In.vTexUV;
 
     return Out;
@@ -115,6 +114,7 @@ struct PS_OUT
 float computeDepthBlur(float depth /*in view space*/)
 {
     float f;
+    
     if (depth < vDofParams.y)
     { // scale depth value between near blur distance and focal distance to ]-1,0]range
         f = (depth - vDofParams.y) / (vDofParams.y - vDofParams.x);
@@ -145,11 +145,11 @@ float computeDepthBlur(float depth /*in view space*/)
    
 //    float blurAmount = lerp(0, gMaxBlur, DOF);
    
-//        for (int i = -3; i <= 3; i++)
+//    for (int i = -3; i <= 3; i++)
 //    {
 //        for (int j = -3; j <= 3; j++)
 //        {
-//            float2 offset = float2(i, j) *2.f; // 블러 강도 조절
+//            float2 offset = float2(i, j) * 2.f; // 블러 강도 조절
 //            float2 offsetTexCoord = NewUv + offset * blurAmount;
 //            Out.vColor += g_PostProcessingTexture.Sample(LinearSampler, offsetTexCoord);
 //        }
@@ -162,39 +162,42 @@ float computeDepthBlur(float depth /*in view space*/)
   
 //    return Out;
 //}
+
 PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
     
-    //float discRadius, discRadiusLow, centerDepth;
-    
-    //vector vOutSet = g_DepthTexture.Sample(LinearSampler, In.vTexUV);
-    //centerDepth = vOutSet.a;
-    //discRadius = abs(vOutSet.a * vMaxCoC.y - vMaxCoC.x);
-    //discRadiusLow = discRadius * radiusScale;
-    //float fViewZ = vOutSet.y * g_fCamFar;
-
-    //for (int i = 0; i < 8;++i)
-    //{
-    //    float2 coordlow = In.vTexUV + (1 / 1280.f * i * 0.01 * discRadiusLow);
-    //    float2 coordHigh = In.vTexUV + (1 / 720.f * i * 0.01 * discRadius);
-       
-    //    float4 tapLow = g_PostProcessingTexture.Sample(LinearSampler, coordlow);
-    //    float4 tapHigh = g_PostProcessingTexture.Sample(LinearSampler, coordHigh);
-        
-    //    float tapblur = abs(tapHigh.a * 2.f - 1.f);
-    //    float4 tap = lerp(tapHigh, tapLow, tapblur);
-        
-    //    tap.a = (tap.a >= centerDepth) ? 1.f : abs(tap.aa * 2.f - 1.f);
-    //    Out.vColor.rgb += tap.rgb * tap.a;
-    //    Out.vColor.a += tap.a;
-        
-    //}
+    vector vDepth = g_DepthTexture.Sample(LinearSampler, In.vTexUV);
     vector vPost = g_PostProcessingTexture.Sample(LinearSampler, In.vTexUV);
-    Out.vColor = dot(vPost.rgb, float3(1.f, 1.f, 1.f));
+    vector vPostBlur = g_BlurTexture.Sample(LinearSampler, In.vTexUV);
+   //거리
+    float fViewZ = vDepth.y * g_fCamFar;
+    float fOccNorm;
+   
+    //if (g_fFocusDis < fViewZ)//물체의 깊이값
+    //{
+    //    Out.vColor = vPost;
+    //    return Out;
+    //}
+    //else
+    //    Out.vColor = 0.f;
     
-    if(Out.vColor.a<1.f)
-        Out.vColor *= 0.1f;
+    float f;
+    
+    if (fViewZ < vDofParams.y)
+    { 
+        f = (fViewZ - vDofParams.y) / (vDofParams.y - vDofParams.x);
+    }
+    else
+    {
+        f = (fViewZ - vDofParams.y) / (vDofParams.z - vDofParams.y);
+       
+        f = clamp(f, 0, vDofParams.w);
+    }
+    
+    f = f * 0.5f + 0.5f;
+     
+    Out.vColor = vPost * f;
     
     return Out;
 }
@@ -205,43 +208,49 @@ PS_OUT PS_MAIN_BLURX(PS_IN In)
     
     
     float dx = 1.0f / 1280.f;
-    float dy = 1.f / (720.f / 2.f);
     float2 UV = 0;
-    float Color = g_SSAOTexture.Sample(BlurSampler, In.vTexUV).x;
-    
+    float4 Color = g_Texture.Sample(BlurSampler, In.vTexUV);
+   
     {
-        for (int i = -15; i < 15; ++i)
+        for (int i = -6; i < 6; ++i)
         {
-
-            UV = In.vTexUV + float2(dx * i,0);
-            vector SSAO = g_SSAOTexture.Sample(BlurSampler, UV);
+            UV = In.vTexUV + float2(dx * i, 0.f);
+            Color = g_Texture.Sample(BlurSampler, UV);
         
-            Out.vColor += BlurWeights[15 + i] * SSAO;
+            Out.vColor += BlurWeights[6 + i] * Color;
         }
+  
+        Out.vColor /= total6;
     }
-        Out.vColor /= total;
-     
-    return Out;
- }
+
+        return Out;
+    }
 
     PS_OUT PS_MAIN_BLURY(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
     
+    vector vDepth = g_DepthTexture.Sample(LinearSampler, In.vTexUV);
+    float fViewZ = vDepth.y * g_fCamFar;
+
+    if(vDepth.x<=0.1f)
+        discard;
  
     float dy = 1.0f / (720.f / 2.f);
     
     float2 UV = 0;
-   
-    for (int i = -15; i < 15; ++i)
+   if(g_fFocusDis<fViewZ)
     {
-        UV = In.vTexUV + float2(0,dy * i);
-        vector SSAO = g_SSAOTexture.Sample(BlurSampler, UV);
-        Out.vColor += BlurWeights[15 + i] * SSAO;
+        for (int i = -6; i < 6; ++i)
+        {
+            UV = In.vTexUV + float2(0, dy * i);
+            vector SSAO = g_Texture.Sample(BlurSampler, UV);
+            Out.vColor += BlurWeights[6 + i] * SSAO;
+        }
+        Out.vColor /= total6;
     }
-    Out.vColor /= total;
-    
-    
+    else
+        Out.vColor;
     
     return Out;
 }

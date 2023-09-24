@@ -308,6 +308,9 @@ PS_OUT PS_MAIN_GRAY(PS_IN_POSTEX In)
     vector vPost = g_PostProcessingTexture.Sample(LinearSampler, In.vTexUV);
     Out.vColor = dot(vPost.rgb, float3(0.98f, 0.89f, 0.89f));
     
+    if (Out.vColor.a < 1.f)
+        Out.vColor *= 0.1f;
+    
     return Out;
     
 }

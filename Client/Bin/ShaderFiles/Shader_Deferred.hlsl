@@ -230,7 +230,7 @@ PS_OUT PS_MAIN_DEFERRED(PS_IN In)
     if(vShadow.x<0.6f)
         vShade *= 0.2f;
     
-    Out.vColor = vDiffuse * vShade * vSSAO  + vSpecular ;
+    Out.vColor = vDiffuse * vShade /** vSSAO*/  + vSpecular ;
 
     return Out;
 }

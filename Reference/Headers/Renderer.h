@@ -48,6 +48,7 @@ private:
 	HRESULT Render_Depth();
 	HRESULT Render_SSAO();
 	HRESULT Render_Deferred();
+	HRESULT Render_Combine();
 	HRESULT Render_MotionBlurInst();
 	HRESULT Render_NonLight();
 	HRESULT Render_Blend();

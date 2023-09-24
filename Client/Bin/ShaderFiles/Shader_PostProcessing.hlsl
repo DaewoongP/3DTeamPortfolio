@@ -4,6 +4,7 @@ matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 texture2D g_PostProcessingTexture;
 texture2D g_BloomTexture;
 texture2D g_GlowTexture;
+texture2D g_DOFTexture;
 
 struct VS_IN
 {
@@ -47,10 +48,19 @@ PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
 
-    Out.vColor = g_PostProcessingTexture.Sample(LinearSampler, In.vTexUV);
+   vector vPost = g_PostProcessingTexture.Sample(LinearSampler, In.vTexUV);
     vector Bloom = g_BloomTexture.Sample(LinearSampler, In.vTexUV);
-    vector Glow = g_GlowTexture.Sample(LinearSampler, In.vTexUV);
-    Out.vColor += (Bloom) ;
+    vector DOF = g_DOFTexture.Sample(LinearSampler, In.vTexUV);
+   
+    //if(DOF.x>0.f)
+    //{
+    //    Out.vColor.xyz = (vPost.xyz * DOF.xyz) + Bloom;
+    //}
+    //else
+    //{
+    //    Out.vColor = vPost+Bloom;
+    //}
+     Out.vColor = vPost+Bloom ;
     return Out;
 }
 
