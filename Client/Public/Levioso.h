@@ -31,14 +31,14 @@ public:
 
 private:
 	// 트레일 
-	CTrail*				m_pEffect = { nullptr };
+	CTrail*					  m_pMainTrail = { nullptr };
 	// 피격 트레일
 	class CWingardium_Effect* m_pWingardiumEffect = { nullptr };
 
 	//완드 
-	CTrail* m_pWandTrail = { nullptr };
+	CTrail*					  m_pWandTrail = { nullptr };
 	//완드 글로우
-	CParticleSystem* m_pWandGlow = { nullptr };
+	CParticleSystem*		  m_pWandGlow = { nullptr };
 
 private:
 	_float	m_fLerpAcc = { 0.f };

@@ -147,7 +147,7 @@ void CConfringo::Tick(_float fTimeDelta)
 	m_pWandTouchEffect->Get_Transform()->Set_Position(vWandPosition);
 	m_pWandDustEffect->Get_Transform()->Set_Position(vWandPosition);
 	m_pWandTwinklEffect->Get_Transform()->Set_Position(vWandPosition);
-	m_pWandTrailEffect->Get_Transform()->Set_Position(vWandPosition);
+	m_pWandTrail->Get_Transform()->Set_Position(vWandPosition);
 }
 
 void CConfringo::Late_Tick(_float fTimeDelta)
@@ -181,8 +181,8 @@ void CConfringo::Ready_Begin()
 	m_pWandDustEffect->Get_EmissionModuleRef().Setting_PrevPos(vWandPosition);
 	m_pWandTwinklEffect->Get_EmissionModuleRef().Setting_PrevPos(vWandPosition);
 
-	m_pTrail->Disable();
-	m_pTrailDustEffect->Disable();
+	m_pMainTrail->Disable();
+	m_pWandDustEffect->Disable();
 
 	m_pExplosiveEffect[0]->Disable();
 	m_pExplosiveEffect[1]->Disable();
@@ -192,7 +192,7 @@ void CConfringo::Ready_Begin()
 	m_pWandTouchEffect->Disable();
 	m_pWandDustEffect->Disable();
 	m_pWandTwinklEffect->Disable();
-	m_pWandTrailEffect->Disable();
+	m_pWandTrail->Disable();
 }
 
 void CConfringo::Ready_DrawMagic()
@@ -200,14 +200,18 @@ void CConfringo::Ready_DrawMagic()
 	m_pWandTouchEffect->Enable();
 	m_pWandDustEffect->Enable();
 	m_pWandTwinklEffect->Enable();
-	m_pWandTrailEffect->Enable();
+	m_pWandTrail->Enable();
+
+	m_pWandTwinklEffect->Get_EmissionModuleRef().Setting_PrevPos(m_vStartPostion);
+	m_pWandDustEffect->Get_EmissionModuleRef().Setting_PrevPos(m_vStartPostion);
+
 
 	_float3 vWandPosition = _float4x4(m_WeaponOffsetMatrix * (*m_pWeaponMatrix)).Translation();
 	m_pWandTouchEffect->Get_Transform()->Set_Position(vWandPosition);
 	m_pWandDustEffect->Get_Transform()->Set_Position(vWandPosition);
-	m_pWandTrailEffect->Get_Transform()->Set_Position(vWandPosition);
+	m_pWandTrail->Get_Transform()->Set_Position(vWandPosition);
 	m_pWandTwinklEffect->Get_Transform()->Set_Position(vWandPosition);
-	m_pWandTrailEffect->Reset_Trail(_float3(vWandPosition) + _float3(0, 0.5f, 0), _float3(vWandPosition) + _float3(0, -0.5f, 0));
+	m_pWandTrail->Reset_Trail(_float3(vWandPosition) + _float3(0, 0.5f, 0), _float3(vWandPosition) + _float3(0, -0.5f, 0));
 }
 
 void CConfringo::Ready_CastMagic()
@@ -261,14 +265,14 @@ void CConfringo::Ready_CastMagic()
 	m_vSplineLerp[1] += _float3(normal.x * fRandom, normal.y * fabsf(fRandom), normal.z * fRandom);
 	m_fTimeScalePerDitance = m_MagicBallDesc.fDistance / _float3(m_vTargetPosition - m_vStartPostion).Length();
 
-	m_pTrail->Reset_Trail(_float3(m_vStartPostion) + _float3(0, 0.5f, 0), _float3(m_vStartPostion) + _float3(0, -0.5f, 0));
-	m_pTrail->Get_Transform()->Set_Position(m_vStartPostion);
+	m_pMainTrail->Reset_Trail(_float3(m_vStartPostion) + _float3(0, 0.5f, 0), _float3(m_vStartPostion) + _float3(0, -0.5f, 0));
+	m_pMainTrail->Get_Transform()->Set_Position(m_vStartPostion);
 
-	m_pTrailDustEffect->Get_EmissionModuleRef().Setting_PrevPos(m_vStartPostion);
-	m_pTrailDustEffect->Get_Transform()->Set_Position(m_vStartPostion);
+	m_pWandDustEffect->Get_EmissionModuleRef().Setting_PrevPos(m_vStartPostion);
+	m_pWandDustEffect->Get_Transform()->Set_Position(m_vStartPostion);
 
-	m_pTrail->Enable();
-	m_pTrailDustEffect->Enable();
+	m_pMainTrail->Enable();
+	m_pWandDustEffect->Enable();
 }
 
 void CConfringo::Ready_Dying()
@@ -276,17 +280,17 @@ void CConfringo::Ready_Dying()
 	/*m_pWandTouchEffect->Disable();
 	m_pWandDustEffect->Disable();
 	m_pWandTwinklEffect->Disable();
-	m_pWandTrailEffect->Disable();*/
+	m_pWandTrail->Disable();*/
 
 	m_pExplosiveEffect[0]->Enable();
 	m_pExplosiveEffect[1]->Enable();
 	m_pExplosiveBigPartEffect->Enable();
 	m_pExplosiveSmallPartEffect->Enable();
 
-	m_pExplosiveEffect[0]->Play(m_pTrail->Get_Transform()->Get_Position());
-	m_pExplosiveEffect[1]->Play(m_pTrail->Get_Transform()->Get_Position());
-	m_pExplosiveBigPartEffect->Play(m_pTrail->Get_Transform()->Get_Position());
-	m_pExplosiveSmallPartEffect->Play(m_pTrail->Get_Transform()->Get_Position());
+	m_pExplosiveEffect[0]->Play(m_pMainTrail->Get_Transform()->Get_Position());
+	m_pExplosiveEffect[1]->Play(m_pMainTrail->Get_Transform()->Get_Position());
+	m_pExplosiveBigPartEffect->Play(m_pMainTrail->Get_Transform()->Get_Position());
+	m_pExplosiveSmallPartEffect->Play(m_pMainTrail->Get_Transform()->Get_Position());
 }
 
 void CConfringo::Tick_Begin(_float fTimeDelta)
@@ -307,9 +311,9 @@ void CConfringo::Tick_CastMagic(_float fTimeDelta)
 		m_fLerpAcc += fTimeDelta / m_MagicBallDesc.fInitLifeTime * m_fTimeScalePerDitance;
 		if (m_fLerpAcc > 1)
 			m_fLerpAcc = 1;
-		m_pTrail->Spline_Spin_Move(m_vSplineLerp[0], m_vStartPostion, m_vTargetPosition, m_vSplineLerp[1], m_fLerpAcc);
-		m_pTrailDustEffect->Get_Transform()->Set_Position(m_pTrail->Get_Transform()->Get_Position());
-		m_pTransform->Set_Position(m_pTrail->Get_Transform()->Get_Position());
+		m_pMainTrail->Spline_Spin_Move(m_vSplineLerp[0], m_vStartPostion, m_vTargetPosition, m_vSplineLerp[1], m_fLerpAcc);
+		m_pWandDustEffect->Get_Transform()->Set_Position(m_pMainTrail->Get_Transform()->Get_Position());
+		m_pTransform->Set_Position(m_pMainTrail->Get_Transform()->Get_Position());
 	}
 	else 
 	{
@@ -336,14 +340,14 @@ HRESULT CConfringo::Add_Effect()
 {
 	//메인
 	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Confringo_Trail"), 
-		TEXT("Com_Trail"), reinterpret_cast<CComponent**>(&m_pTrail))))
+		TEXT("Com_Trail"), reinterpret_cast<CComponent**>(&m_pMainTrail))))
 	{
 		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Confringo_Trail)");
 		__debugbreak();
 		return E_FAIL;
 	}
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Confringo_Dust_Effect")
-		, TEXT("Com_Main_Dust"), (CComponent**)&m_pTrailDustEffect)))
+		, TEXT("Com_Main_Dust"), (CComponent**)&m_pWandDustEffect)))
 	{
 		__debugbreak();
 		return E_FAIL;
@@ -395,7 +399,7 @@ HRESULT CConfringo::Add_Effect()
 		return E_FAIL;
 	}
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_BasicCast_Wand_Trail_Effect")
-		, TEXT("Com_Wand_Trail_Effect"), (CComponent**)&m_pWandTrailEffect)))
+		, TEXT("Com_Wand_Trail_Effect"), (CComponent**)&m_pWandTrail)))
 	{
 		__debugbreak();
 		return E_FAIL;
@@ -434,8 +438,8 @@ void CConfringo::Free()
 	if (true == m_isCloned)
 	{
 		//메인
-		Safe_Release(m_pTrail);
-		Safe_Release(m_pTrailDustEffect);
+		Safe_Release(m_pMainTrail);
+		Safe_Release(m_pWandDustEffect);
 		
 		//종료
 		Safe_Release(m_pExplosiveEffect[0]);
@@ -447,7 +451,7 @@ void CConfringo::Free()
 		Safe_Release(m_pWandTouchEffect);
 		Safe_Release(m_pWandDustEffect);
 		Safe_Release(m_pWandTwinklEffect);
-		Safe_Release(m_pWandTrailEffect);
+		Safe_Release(m_pWandTrail);
 	}
 }
 

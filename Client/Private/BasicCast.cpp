@@ -155,7 +155,7 @@ void CBasicCast::Ready_Begin()
 	m_pHitGlowEffect->Disable();
 	m_pWandEffect->Disable();
 	m_pFinalAttackEffect->Disable();
-	m_pTrailEffect->Disable();
+	m_pMainTrail->Disable();
 	m_WandTrail->Disable();
 }
 
@@ -163,6 +163,8 @@ void CBasicCast::Ready_DrawMagic()
 {
 	m_WandTrail->Enable();
 	m_pWandEffect->Enable();
+
+	m_pWandEffect->Get_EmissionModuleRef().Setting_PrevPos(m_vStartPostion);
 
 	_float3 vWandPosition = _float4x4(m_WeaponOffsetMatrix * (*m_pWeaponMatrix)).Translation();
 	m_WandTrail->Get_Transform()->Set_Position(vWandPosition);
@@ -172,7 +174,7 @@ void CBasicCast::Ready_DrawMagic()
 
 void CBasicCast::Ready_CastMagic()
 {
-	m_pTrailEffect->Enable();
+	m_pMainTrail->Enable();
 	if (m_pTarget == nullptr)
 	{
 		BEGININSTANCE;
@@ -222,10 +224,10 @@ void CBasicCast::Ready_CastMagic()
 	m_vSplineLerp[1] += _float3(normal.x * fRandom, normal.y * fabsf(fRandom), normal.z * fRandom);
 	m_fTimeScalePerDitance = m_MagicBallDesc.fDistance / _float3(m_vTargetPosition - m_vStartPostion).Length();
 
-	m_pTrailEffect->Reset_Trail(_float3(m_vStartPostion) + _float3(0, 0.5f, 0), _float3(m_vStartPostion) + _float3(0, -0.5f, 0));
-	m_pTrailEffect->Get_Transform()->Set_Position(m_vStartPostion);
+	m_pMainTrail->Reset_Trail(_float3(m_vStartPostion) + _float3(0, 0.5f, 0), _float3(m_vStartPostion) + _float3(0, -0.5f, 0));
+	m_pMainTrail->Get_Transform()->Set_Position(m_vStartPostion);
 
-	m_pTrailEffect->Enable();
+	m_pMainTrail->Enable();
 }
 
 void CBasicCast::Ready_Dying()
@@ -236,8 +238,8 @@ void CBasicCast::Ready_Dying()
 	m_pHitGlowEffect->Enable();
 	m_pHitEffect->Enable();
 
-	m_pHitGlowEffect->Play(m_pTrailEffect->Get_Transform()->Get_Position());
-	m_pHitEffect->Play(m_pTrailEffect->Get_Transform()->Get_Position());
+	m_pHitGlowEffect->Play(m_pMainTrail->Get_Transform()->Get_Position());
+	m_pHitEffect->Play(m_pMainTrail->Get_Transform()->Get_Position());
 }
 
 void CBasicCast::Tick_Begin(_float fTimeDelta)
@@ -258,14 +260,14 @@ void CBasicCast::Tick_CastMagic(_float fTimeDelta)
 		m_fLerpAcc += fTimeDelta / m_MagicBallDesc.fInitLifeTime * m_fTimeScalePerDitance;
 		if (m_fLerpAcc > 1)
 			m_fLerpAcc = 1;
-		m_pTrailEffect->Spline_Spin_Move(m_vSplineLerp[0], m_vStartPostion, m_vTargetPosition, m_vSplineLerp[1], m_fLerpAcc);
-		m_pTransform->Set_Position(m_pTrailEffect->Get_Transform()->Get_Position());
+		m_pMainTrail->Spline_Spin_Move(m_vSplineLerp[0], m_vStartPostion, m_vTargetPosition, m_vSplineLerp[1], m_fLerpAcc);
+		m_pTransform->Set_Position(m_pMainTrail->Get_Transform()->Get_Position());
 	}
 	else
 	{
 		Do_MagicBallState_To_Next();
 	}
-	m_pTransform->Set_Position(m_pTrailEffect->Get_Transform()->Get_Position());
+	m_pTransform->Set_Position(m_pMainTrail->Get_Transform()->Get_Position());
 }
 
 void CBasicCast::Tick_Dying(_float fTimeDelta)
@@ -313,7 +315,7 @@ HRESULT CBasicCast::Add_Components()
 HRESULT CBasicCast::Add_Effect()
 {
 	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_MagicTrail_BasicCast_Effect"),
-		TEXT("Com_TrailEffect"), reinterpret_cast<CComponent**>(&m_pTrailEffect))))
+		TEXT("Com_TrailEffect"), reinterpret_cast<CComponent**>(&m_pMainTrail))))
 	{
 		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_MagicTrail_BasicCast_Effect)");
 		__debugbreak();
@@ -362,7 +364,7 @@ void CBasicCast::Free()
 	if (true == m_isCloned)
 	{
 		Safe_Release(m_WandTrail);
-		Safe_Release(m_pTrailEffect);
+		Safe_Release(m_pMainTrail);
 		Safe_Release(m_pHitEffect);
 		Safe_Release(m_pHitGlowEffect);
 		Safe_Release(m_pWandEffect);

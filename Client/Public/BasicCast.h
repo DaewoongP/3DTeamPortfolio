@@ -32,7 +32,7 @@ private:
 	CParticleSystem*			m_pWandEffect = { nullptr };
 
 	// 기본공격 트레일
-	CTrail* m_pTrailEffect = { nullptr };
+	CTrail*						m_pMainTrail = { nullptr };
 	// 피격 이펙트
 	CParticleSystem*			m_pHitEffect = { nullptr };
 	// 피격 섬광

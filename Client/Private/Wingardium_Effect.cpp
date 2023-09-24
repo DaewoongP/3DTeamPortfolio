@@ -285,14 +285,14 @@ void CWingardium_Effect::Free()
 	{
 		for (int i = 0; i < TrailCount; i++)
 		{
-			Safe_Release(m_pTrail[i]);
 			Safe_Release(m_pTrailTransform[i]);
+			Safe_Release(m_pTrail[i]);
 		}
 
 		for (int i = 0; i < TrailCount / 2; i++)
 		{
-			Safe_Release(m_pTrailToOrigin[i]);
 			Safe_Release(m_pTrailToOriginTransform[i]);
+			Safe_Release(m_pTrailToOrigin[i]);
 		}
 	}
 }

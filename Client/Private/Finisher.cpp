@@ -203,6 +203,9 @@ void CFinisher::Ready_DrawMagic()
 {
 	m_pWandLightningParticle->Enable();
 	m_pWandTrail->Enable();
+
+	_float3 vWandPosition = _float4x4(m_WeaponOffsetMatrix * (*m_pWeaponMatrix)).Translation();
+	m_pWandTrail->Reset_Trail(_float3(vWandPosition) + _float3(0, 0.5f, 0), _float3(vWandPosition) + _float3(0, -0.5f, 0));
 }
 
 void CFinisher::Ready_CastMagic()

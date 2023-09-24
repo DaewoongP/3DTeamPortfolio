@@ -21,6 +21,7 @@ struct ENGINE_DLL PT_NOTIFY
 	_bool CanPlay = { true };
 };
 
+
 struct PARTICLE
 {
 public:
