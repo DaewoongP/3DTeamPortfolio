@@ -388,9 +388,24 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 	
+	// 인센디오
+	{
+		magicInitDesc.eBuffType = BUFF_FIRE;
+		magicInitDesc.eMagicGroup = CMagic::MG_DAMAGE;
+		magicInitDesc.eMagicType = CMagic::MT_RED;
+		magicInitDesc.eMagicTag = NCENDIO;
+		magicInitDesc.fCoolTime = 1.5f;
+		magicInitDesc.fDamage = 300.f;
+		magicInitDesc.fCastDistance = 1000;
+		magicInitDesc.fBallDistance = 30;
+		magicInitDesc.fLifeTime = 1.f;
+		m_pMagicSlot->Add_Magics(magicInitDesc);
+	}
+
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(0, CONFRINGO);
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(1, LEVIOSO);
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(2, FINISHER);
+	m_pMagicSlot->Add_Magic_To_Skill_Slot(3, NCENDIO);
 	
 	return S_OK;
 }

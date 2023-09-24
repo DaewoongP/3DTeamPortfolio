@@ -29,6 +29,7 @@
 #include "Confringo.h"
 #include "Finisher.h"
 #include "Wingardiumleviosa.h"
+#include "Ncendio.h"
 #pragma endregion Magic
 
 #include "Sky.h"
@@ -310,7 +311,10 @@ HRESULT CMain1_Loader::Loading_For_Cliffside()
 			CFinisher::Create(m_pDevice, m_pContext, LEVEL_CLIFFSIDE))))
 			throw TEXT("Prototype_GameObject_Finisher");
 		
-
+		/* For.Prototype_GameObject_Finisher */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Ncendio"),
+			CNcendio::Create(m_pDevice, m_pContext, LEVEL_CLIFFSIDE))))
+			throw TEXT("Prototype_GameObject_Ncendio");
 #pragma endregion
 
 		/* For.Prototype_GameObject_MagicSlot */
