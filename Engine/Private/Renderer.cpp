@@ -15,6 +15,7 @@
 #include "Shadow.h"
 #include "MotionBlur.h"
 #include"FlowMap.h"	
+#include"DOF.h"
 
 #ifdef _DEBUG
 #include "Input_Device.h"
@@ -148,7 +149,7 @@ HRESULT CRenderer::Initialize_Prototype()
 	/*if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_PostProcessing"), 240.f, 560.f, 160.f, 160.f)))
 		return E_FAIL;*/
 
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Distortion"), 600.f, 600.f, 400.f, 400.f)))
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_DOF"), 600.f, 600.f, 400.f, 400.f)))
 		return E_FAIL;
 	//if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_MapBrushing"), 1040.f, 80.f, 160.f, 160.f)))
 	//	return E_FAIL;
@@ -264,6 +265,9 @@ HRESULT CRenderer::Draw_RenderGroup()
 
 	if (FAILED(Render_PostProcessing()))
 		return E_FAIL;
+	if (FAILED(m_pDOF->Render()))
+		return E_FAIL;
+
 
 	if (FAILED(Render_UI()))
 		return E_FAIL;
@@ -889,7 +893,11 @@ HRESULT CRenderer::Add_Components()
 	m_pFlowMap = CFlowMap::Create(m_pDevice, m_pContext,TEXT("Target_FlowMap"));
 	if (nullptr == m_pFlowMap)
 		return E_FAIL;
-		
+	m_pDOF = CDOF::Create(m_pDevice, m_pContext, TEXT("Target_PostProcessing"));
+	if (nullptr == m_pDOF)
+		return E_FAIL;
+
+
 	Safe_Release(pGameInstance);
 	return S_OK;
 }
@@ -980,7 +988,6 @@ _bool CRenderer::Is_Render_Distortion()
 
 	return m_isDistortion;
 }
-#endif // _DEBUG
 CRenderer* CRenderer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CRenderer* pInstance = New CRenderer(pDevice, pContext);
@@ -1041,7 +1048,10 @@ void CRenderer::Free()
 	Safe_Release(m_pDeferredBuffer);
 	Safe_Release(m_pPostProcessingShader);
 	Safe_Release(m_pPostProcessingBuffer);
-
+	
+	
+	
+	Safe_Release(m_pDOF);
 	Safe_Release(m_pShadow);
 	Safe_Release(m_pBloom);
 	Safe_Release(m_pSSAOBlur);

@@ -131,6 +131,8 @@ private:
 
 	class CFlowMap*					m_pFlowMap = { nullptr };
 
+	class CDOF*						m_pDOF = { nullptr };
+
 private:
 	_float m_fFrameTime = 0.f;
 	class CTexture*					 m_pNoiseTexture = { nullptr };
