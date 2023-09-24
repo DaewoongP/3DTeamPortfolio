@@ -13,24 +13,6 @@ CStateMachine::CStateMachine(const CStateMachine& rhs)
 {
 }
 
-HRESULT CStateMachine::Initialize_Prototype()
-{
-	return S_OK;
-}
-
-HRESULT CStateMachine::Initialize(void* pArg)
-{
-	return S_OK;
-}
-
-void CStateMachine::Tick(_float fTimeDelta)
-{
-}
-
-void CStateMachine::Late_Tick(_float fTimeDelta)
-{
-}
-
 HRESULT CStateMachine::Set_StateMachine(const _tchar* _pTag)
 {
 	if (dynamic_cast<CStateContext*>(m_pOwner)->Set_StateMachine(_pTag))

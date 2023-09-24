@@ -15,11 +15,6 @@ CIdleState::CIdleState(const CIdleState& rhs)
 
 }
 
-HRESULT CIdleState::Initialize_Prototype()
-{
-	return S_OK;
-}
-
 HRESULT CIdleState::Initialize(void* pArg)
 {
 	BEGININSTANCE;
