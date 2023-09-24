@@ -83,6 +83,8 @@ HRESULT CTexture::Initialize_Prototype(const _tchar* pTextureFilePath, _uint iNu
 	m_Textures.reserve(m_iNumTextures);
 	m_szTextureFilePathes.reserve(m_iNumTextures);
 
+	lstrcpy(m_szTextureFilePath, pTextureFilePath);
+
 	// 텍스처들을 순회하면서 SRV를 생성하여 처리
 	for (_uint i = 0; i < m_iNumTextures; ++i)
 	{
@@ -171,15 +173,7 @@ CTexture* CTexture::Create_Origin(ID3D11Device* pDevice, ID3D11DeviceContext* pC
 
 CComponent* CTexture::Clone(void* pArg)
 {
-	CTexture* pInstance = New CTexture(*this);
-
-	if (FAILED(pInstance->Initialize(pArg)))
-	{
-		MSG_BOX("Failed to Cloned CTexture");
-		Safe_Release(pInstance);
-	}
-
-	return pInstance;
+	return CTexture::Create(m_pDevice, m_pContext, m_szTextureFilePath, m_iNumTextures);
 }
 
 void CTexture::Free()

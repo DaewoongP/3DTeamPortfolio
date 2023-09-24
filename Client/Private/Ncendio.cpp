@@ -199,6 +199,8 @@ HRESULT CNcendio::Add_Components()
 		, TEXT("Com_BurnTarget"), (CComponent**)&m_pBurnTargetEffect), E_FAIL);
 	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_SmokeCloud_Particle")
 		, TEXT("Com_SmokeCloud"), (CComponent**)&m_pSmokeCloudEffect), E_FAIL);
+
+	return S_OK;
 }
 
 HRESULT CNcendio::Add_Effect()

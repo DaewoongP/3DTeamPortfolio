@@ -258,13 +258,13 @@ HRESULT CDefault_MagicTraill_Effect::Add_Components()
 	if (FAILED(CComposite::Add_Component(m_iLevel, protoTag
 		, TEXT("Com_Trail"), (CComponent**)&m_pTrail)))
 	{
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Default_Magic_Ball_Particle")
 		, TEXT("Com_BloomBall"), (CComponent**)&m_pGlowBall)))
 	{
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 	return S_OK;

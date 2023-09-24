@@ -86,7 +86,7 @@ HRESULT CMagicSlot::Add_Magics(CMagic::MAGICDESC SkillDesc)
 		BEGININSTANCE;
 		m_Magics[SkillDesc.eMagicTag] = (dynamic_cast<CMagic*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Magic"), &SkillDesc)));
 		if(m_Magics[SkillDesc.eMagicTag]==nullptr)
-			__debugbreak;
+			__debugbreak();
 		ENDINSTANCE;
 	}
 	return S_OK;

@@ -33,6 +33,7 @@ public:
 	HRESULT Bind_ShaderResources(class CShader* pShader, const _char * pContantName);
 
 private:
+	_tchar								m_szTextureFilePath[MAX_PATH] = TEXT("");
 	_uint								m_iNumTextures = { 0 };
 	vector<ID3D11ShaderResourceView*>	m_Textures;
 	vector<const _tchar*>				m_szTextureFilePathes;

@@ -235,7 +235,7 @@ HRESULT CWingardium_Effect::Add_Components()
 		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Default_Magic_Trail")
 			, comTag_trail[i], (CComponent**)&m_pTrail[i])))
 		{
-			__debugbreak;
+			__debugbreak();
 			return E_FAIL;
 		}
 	}
@@ -246,7 +246,7 @@ HRESULT CWingardium_Effect::Add_Components()
 		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Default_Magic_Trail")
 			, comTag_trailToOrigin[i], (CComponent**)&m_pTrailToOrigin[i])))
 		{
-			__debugbreak;
+			__debugbreak();
 			return E_FAIL;
 		}
 	}

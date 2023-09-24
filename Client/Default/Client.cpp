@@ -121,7 +121,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		pGameInstance->Tick_QueryTimer(TEXT("Timer_Default"));
 		fTimerAcc += pGameInstance->Get_QueryTimeDelta(TEXT("Timer_Default"));
 
-		if (fTimerAcc >= 1.f / g_fFrame)
+		if (1)
 		{
 			pGameInstance->Tick_QueryTimer(TEXT("MainTimer"));
 			pMainApp->Tick(pGameInstance->Get_QueryTimeDelta(TEXT("MainTimer")));

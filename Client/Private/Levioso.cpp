@@ -232,7 +232,7 @@ HRESULT CLevioso::Add_Effect()
 		TEXT("Com_Effect"), reinterpret_cast<CComponent**>(&m_pEffect), &initDesc)))
 	{
 		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_MagicTraill_Winga_Effect)");
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 
@@ -240,21 +240,21 @@ HRESULT CLevioso::Add_Effect()
 		TEXT("Com_WingradiumEffect"), reinterpret_cast<CComponent**>(&m_pWingardiumEffect))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Wingardium_Effect)");
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Defatul_Wand_Glow_Effect"),
 		TEXT("Com_WandGlow"), reinterpret_cast<CComponent**>(&m_pWandGlow))))
 	{
 		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Defatul_Wand_Glow_Effect)");
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_BasicCast_Wand_Trail_Effect"),
 		TEXT("Com_Wand_Trail"), reinterpret_cast<CComponent**>(&m_pWandTrail))))
 	{
 		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_BasicCast_Wand_Trail_Effect)");
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 	return S_OK;

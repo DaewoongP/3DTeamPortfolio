@@ -229,7 +229,7 @@ void CParticleSystem::Tick(_float _fTimeDelta)
 	}
 
 	m_pBuffer->Set_DrawNum(_uint(m_Particles[ALIVE].size()));
-	m_pBuffer->Tick(m_ParticleMatrices.data(), m_pBuffer->Get_DrawNum(), true, m_pTransform->Get_WorldMatrix_Inverse());
+	m_pBuffer->Tick(m_ParticleMatrices.data(), m_pBuffer->Get_DrawNum());
 	m_EmissionModuleDesc.vPrevPos = m_EmissionModuleDesc.vCurPos;
 	Safe_Release(pGameInstance);
 
@@ -806,7 +806,6 @@ void CParticleSystem::Reset_Particle(PARTICLE_IT& _particle_iter)
 		_particle_iter->vStartScale = _float3(fScale, fScale, fScale);
 		_particle_iter->vScale = _particle_iter->vStartScale;
 	}
-	m_SizeOverLifeTimeModuleDesc.Reset(_particle_iter);
 	// 시작 회전
 	//_particle_iter->WorldMatrix = 
 

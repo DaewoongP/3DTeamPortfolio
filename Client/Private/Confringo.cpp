@@ -340,13 +340,13 @@ HRESULT CConfringo::Add_Effect()
 		TEXT("Com_Trail"), reinterpret_cast<CComponent**>(&m_pTrail))))
 	{
 		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Confringo_Trail)");
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Confringo_Dust_Effect")
 		, TEXT("Com_Main_Dust"), (CComponent**)&m_pTrailDustEffect)))
 	{
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 
@@ -354,25 +354,25 @@ HRESULT CConfringo::Add_Effect()
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_FireBallDir_Effect")
 		, TEXT("Com_Explosive_Particle01"), (CComponent**)&m_pExplosiveEffect[0])))
 	{
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_FireBallB_Effect")
 		, TEXT("Com_Explosive_Particle02"), (CComponent**)&m_pExplosiveEffect[1])))
 	{
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Confringo_Expread_Effect")
 		, TEXT("Com_END_Expread"), (CComponent**)&m_pExplosiveBigPartEffect)))
 	{
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Confringo_Small_Expread_Effect")
 		, TEXT("Com_END_Expread"), (CComponent**)&m_pExplosiveSmallPartEffect)))
 	{
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 
@@ -380,25 +380,25 @@ HRESULT CConfringo::Add_Effect()
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Fire_Torch_Effect")
 		, TEXT("Com_Fire_Torch"), (CComponent**)&m_pWandTouchEffect)))
 	{
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Confringo_Dust_Effect")
 		, TEXT("Com_Dust_Effect"), (CComponent**)&m_pWandDustEffect)))
 	{
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Default_SphereTrace_Particle")
 		, TEXT("Com_Twinkle_Effect"), (CComponent**)&m_pWandTwinklEffect)))
 	{
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_BasicCast_Wand_Trail_Effect")
 		, TEXT("Com_Wand_Trail_Effect"), (CComponent**)&m_pWandTrailEffect)))
 	{
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 	return S_OK;

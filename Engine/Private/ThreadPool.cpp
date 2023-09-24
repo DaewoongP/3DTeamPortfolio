@@ -42,8 +42,6 @@ inline auto CThreadPool::Thread_Enqueue(T&& t, Args && ...args) -> std::future<t
 	future<return_type> res = task->get_future();
 	{
 		unique_lock<std::mutex> lock(m_Queue_mutex);
-
-		// don't allow enqueueing after stopping the pool
 		if (m_isStop)
 			throw runtime_error("enqueue on stopped ThreadPool");
 
