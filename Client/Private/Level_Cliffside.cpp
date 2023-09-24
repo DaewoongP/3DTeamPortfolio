@@ -69,7 +69,7 @@ HRESULT CLevel_Cliffside::Initialize()
 		MSG_BOX("Failed Load Map Object");
 
 		return E_FAIL;
-	}
+	}*/
 
 	if (FAILED(Load_MapObject_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins2.ddd"))))
 	{

@@ -38,7 +38,7 @@ public:
 	_float      fLifeTime = { 0.f };
 	_float		fAngle = { 0.f };
 	_float4		vColor = { 1.f, 1.f, 1.f, 1.f };
-	_float3     vStartScale = {1.f, 1.f, 1.f};
+	_float3		vStartScale = { 1.f, 1.f, 1.f };
 	_float3		vScale = { 1.f, 1.f, 1.f };
 	_uint		iCurIndex = { 0 };
 	_bool		isAlive = { false };
@@ -115,6 +115,7 @@ struct ENGINE_DLL EMISSION_MODULE : public MODULE
 	
 	HRESULT Save(const _tchar* _pDirectoyPath);
 	HRESULT Load(const _tchar* _pDirectoyPath);
+	void Setting_PrevPos(_float3 vPos) { vPrevPos = vPos; }
 	void Action(CParticleSystem* pParticleSystem, _float _fTimeDelta);
 	void Restart();
 

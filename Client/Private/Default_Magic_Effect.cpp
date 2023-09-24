@@ -115,16 +115,22 @@ HRESULT CDefault_Magic_Effect::Add_Components()
 {
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Default_Magic_Boom_Particle")
 		, TEXT("Com_Boom_Particle"), (CComponent**)&m_pParticleSystem)))
+	{
+		__debugbreak;
 		return E_FAIL;
-
+	}
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Default_Magic_Trace_Particle")
 		, TEXT("Com_Trace_Particle"), (CComponent**)&m_pTraceParticle)))
+	{
+		__debugbreak;
 		return E_FAIL;
-
+	}
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_DefaultConeEmit_Particle")
 		, TEXT("Com_DefaultConeEmit_Particle"), (CComponent**)&m_pConeEmitParticle)))
+	{
+		__debugbreak;
 		return E_FAIL;
-
+	}
 	return S_OK;
 }
 

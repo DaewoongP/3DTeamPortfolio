@@ -61,6 +61,8 @@ HRESULT CMainApp::Render()
 	if (nullptr == m_pGameInstance)
 		return E_FAIL;
 
+	std::lock_guard<std::mutex> lock(mtx);
+
 	FAILED_CHECK_RETURN(m_pGameInstance->Clear_BackBuffer_View(_float4(0.f, 0.f, 1.f, 1.f)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGameInstance->Clear_DepthStencil_View(), E_FAIL);
 	FAILED_CHECK_RETURN(m_pRenderer->Draw_RenderGroup(), E_FAIL);

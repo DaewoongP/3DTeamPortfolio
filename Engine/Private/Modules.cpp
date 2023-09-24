@@ -294,6 +294,8 @@ void EMISSION_MODULE::Action(CParticleSystem* pParticleSystem, _float _fTimeDelt
 
 	for (_uint i = 0; i < iParticleCount; ++i)
 	{
+		_float3 createPosition = _float3::Lerp(vPrevPos, vCurPos, ((_float)i / iParticleCount));
+		pParticleSystem->Get_Transform()->Set_Position(createPosition);
 		pParticleSystem->Wating_One_Particle();
 	}
 }
@@ -876,7 +878,7 @@ void SIZE_OVER_LIFETIME::Action(_float3 vStartSize, PARTICLE_IT& _particle_iter,
 	{
 		_float min = vSizeX.x;
 		_float max = vSizeX.y;
-		_float fChangeAmount = max-min;
+		_float fChangeAmount = max - min;
 		_particle_iter->vScale.x = _particle_iter->vStartScale.x * CEase::Ease(eEaseX, _particle_iter->fAge
 			, min
 			, fChangeAmount
@@ -899,20 +901,12 @@ void SIZE_OVER_LIFETIME::Action(_float3 vStartSize, PARTICLE_IT& _particle_iter,
 			_float min = vSizeZ.x;
 			_float max = vSizeZ.y;
 			_float fChangeAmount = max - min;
-			 _particle_iter->vScale.z = _particle_iter->vStartScale.z * CEase::Ease(eEaseZ, _particle_iter->fAge
+			_particle_iter->vScale.z = _particle_iter->vStartScale.z * CEase::Ease(eEaseZ, _particle_iter->fAge
 				, min
 				, fChangeAmount
 				, _particle_iter->fLifeTime);
 		}
 	}
-	
-}
-void SIZE_OVER_LIFETIME::Reset(PARTICLE_IT& _particle_iter)
-{
-	if (false == isActivate)
-		return;
-
-	
 }
 void SIZE_OVER_LIFETIME::Restart()
 {

@@ -95,7 +95,7 @@ HRESULT CDefault_MagicTraill_Effect::Initialize_Prototype(const _tchar* wszFileP
 	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Default_Magic_Ball_Particle")))
 	{
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Default_Magic_Ball_Particle")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Basic_GlowBall"), m_iLevel))))
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Default/Default_GlowBall"), m_iLevel))))
 		{
 			ENDINSTANCE;
 			return E_FAIL;
@@ -135,7 +135,11 @@ HRESULT CDefault_MagicTraill_Effect::Initialize(void* pArg)
 void CDefault_MagicTraill_Effect::Tick(_float fTimeDelta)
 {
 	if (!m_isEnable)
+	{
+		GlowBall_Dead();
 		return;
+	}
+		
 	__super::Tick(fTimeDelta);
 }
 
@@ -253,12 +257,16 @@ HRESULT CDefault_MagicTraill_Effect::Add_Components()
 
 	if (FAILED(CComposite::Add_Component(m_iLevel, protoTag
 		, TEXT("Com_Trail"), (CComponent**)&m_pTrail)))
+	{
+		__debugbreak;
 		return E_FAIL;
-
+	}
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Default_Magic_Ball_Particle")
 		, TEXT("Com_BloomBall"), (CComponent**)&m_pGlowBall)))
+	{
+		__debugbreak;
 		return E_FAIL;
-
+	}
 	return S_OK;
 }
 

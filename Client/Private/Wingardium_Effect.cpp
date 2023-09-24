@@ -44,7 +44,7 @@ HRESULT CWingardium_Effect::Initialize(void* pArg)
 
 	m_pTransform->Set_Position(_float3(0.f, 0.f, 0.f));
 	m_pTransform->Set_Speed(20.f);
-	
+
 	for (int i = 0; i < TrailCount; i++)
 	{
 		_float3 vHigh, vLow;
@@ -63,7 +63,7 @@ HRESULT CWingardium_Effect::Initialize(void* pArg)
 		m_pTrail[i]->Reset_Trail(_float3(0, 0.5f, 0), _float3(0, 0.5f, 0));
 	}
 
-	for (int i = 0; i < TrailCount/2; i++)
+	for (int i = 0; i < TrailCount / 2; i++)
 	{
 		m_pTrailToOrigin[i]->Set_LocalSpace(m_pTransform->Get_WorldMatrixPtr());
 		m_TrailToOriginDesc[i].isEnable = true;
@@ -78,17 +78,21 @@ HRESULT CWingardium_Effect::Initialize(void* pArg)
 		m_pTrailToOriginTransform[i]->Set_Scale(_float3(fScale, fScale, fScale));
 		m_pTrailToOrigin[i]->Reset_Trail(_float3(0, 0.5f, 0), _float3(0, 0.5f, 0));
 	}
-	
+
 	return S_OK;
 }
 
 void CWingardium_Effect::Tick(_float fTimeDelta)
 {
+	if (!m_isEnable)
+		return;
 	__super::Tick(fTimeDelta);
 }
 
 void CWingardium_Effect::Late_Tick(_float fTimeDelta)
 {
+	if (!m_isEnable)
+		return;
 	__super::Late_Tick(fTimeDelta);
 }
 
@@ -105,7 +109,7 @@ void CWingardium_Effect::TrailAction(_float3 pos, _float fTimeDelta)
 	{
 		m_TrailCurrentDelay -= fTimeDelta;
 	}
-	else 
+	else
 	{
 		_float3 vHigh, vLow;
 		vHigh = _float3(0, 0.5f, 0);
@@ -117,7 +121,7 @@ void CWingardium_Effect::TrailAction(_float3 pos, _float fTimeDelta)
 		m_TrailDesc[m_iCurrentActionParticle].fAnimStart_Y = 0;
 		m_TrailDesc[m_iCurrentActionParticle++].isEnable = true;
 		m_TrailDesc[m_iCurrentActionParticle].isEnable = true;
-		(m_iCurrentActionParticle < TrailCount-1) ? (m_iCurrentActionParticle++) : (m_iCurrentActionParticle = 0);
+		(m_iCurrentActionParticle < TrailCount - 1) ? (m_iCurrentActionParticle++) : (m_iCurrentActionParticle = 0);
 		m_TrailCurrentDelay = m_TrailPerfDelay;
 	}
 
@@ -131,9 +135,9 @@ void CWingardium_Effect::TrailAction(_float3 pos, _float fTimeDelta)
 			{
 				//오브제의 영점
 				_float3 vHigh, vLow;
-				vHigh = _float3(0,0.5f,0);
-				vLow =  _float3(0, -0.5f, 0);
-					
+				vHigh = _float3(0, 0.5f, 0);
+				vLow = _float3(0, -0.5f, 0);
+
 				m_TrailDesc[i].fSettingLifeTime = Random_Generator(6.f, 10.f);
 				m_TrailDesc[i].fCurrnetLifeTime = m_TrailDesc[i].fSettingLifeTime;
 				m_TrailDesc[i].fToY = Random_Generator(1.f, 2.f);
@@ -142,22 +146,22 @@ void CWingardium_Effect::TrailAction(_float3 pos, _float fTimeDelta)
 				_float fScale = Random_Generator(0.1f, 0.5f);
 				m_pTrailTransform[i]->Set_Scale(_float3(fScale, fScale, fScale));
 
-				m_pTrailTransform[i]->Set_Position(_float3(0,0,0));
+				m_pTrailTransform[i]->Set_Position(_float3(0, 0, 0));
 				m_pTrail[i]->Reset_Trail(vHigh, vLow);
 			}
-			
+
 			//y를 올려줌.
 			_float fElapsedTime = m_TrailDesc[i].fSettingLifeTime - m_TrailDesc[i].fCurrnetLifeTime;
 			// 트레일 자체의 위치를 세팅할거임
 			_float3	vTrailPos = {};
-			_float fEase_Y =CEase::InOutBack(fElapsedTime, m_TrailDesc[i].fAnimStart_Y, m_TrailDesc[i].fToY, m_TrailDesc[i].fSettingLifeTime);
+			_float fEase_Y = CEase::InOutBack(fElapsedTime, m_TrailDesc[i].fAnimStart_Y, m_TrailDesc[i].fToY, m_TrailDesc[i].fSettingLifeTime);
 			// 트레일의 위치는 y
 			vTrailPos.y = fEase_Y;
-			
+
 			// 설정된 y를 이용해 반지름 설정
-			m_TrailDesc[i].fRadius = CEase::InOutBack(fEase_Y - m_TrailDesc[i].fAnimStart_Y,0, m_TrailDesc[i].fToRadius, m_TrailDesc[i].fToY - m_TrailDesc[i].fAnimStart_Y);
+			m_TrailDesc[i].fRadius = CEase::InOutBack(fEase_Y - m_TrailDesc[i].fAnimStart_Y, 0, m_TrailDesc[i].fToRadius, m_TrailDesc[i].fToY - m_TrailDesc[i].fAnimStart_Y);
 			vTrailPos.x = m_TrailDesc[i].fRadius;
-			
+
 			// 포지션에 값 대입
 			m_pTrailTransform[i]->Set_Position(vTrailPos);
 
@@ -167,7 +171,7 @@ void CWingardium_Effect::TrailAction(_float3 pos, _float fTimeDelta)
 		}
 	}
 
-	for (_uint i = 0; i < TrailCount/2; i++)
+	for (_uint i = 0; i < TrailCount / 2; i++)
 	{
 		//동작이 가능한 파티클이라면?
 		if (m_TrailToOriginDesc[i].isEnable)
@@ -225,20 +229,26 @@ HRESULT CWingardium_Effect::Add_Components()
 {
 	_tchar comTag_trail[TrailCount][MAX_PATH] = { TEXT("Com_Trail1"), TEXT("Com_Trail2"), TEXT("Com_Trail3"),TEXT("Com_Trail4"),TEXT("Com_Trail5")
 	,TEXT("Com_Trail6") ,TEXT("Com_Trail7") ,TEXT("Com_Trail8") };
-	
+
 	for (int i = 0; i < TrailCount; i++)
 	{
 		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Default_Magic_Trail")
 			, comTag_trail[i], (CComponent**)&m_pTrail[i])))
+		{
+			__debugbreak;
 			return E_FAIL;
+		}
 	}
 
-	_tchar comTag_trailToOrigin[TrailCount/2][MAX_PATH] = { TEXT("Com_Trail9"), TEXT("Com_Trail10"), TEXT("Com_Trail11"),TEXT("Com_Trail12")};
-	for (int i = 0; i < TrailCount/2; i++)
+	_tchar comTag_trailToOrigin[TrailCount / 2][MAX_PATH] = { TEXT("Com_Trail9"), TEXT("Com_Trail10"), TEXT("Com_Trail11"),TEXT("Com_Trail12") };
+	for (int i = 0; i < TrailCount / 2; i++)
 	{
 		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Default_Magic_Trail")
 			, comTag_trailToOrigin[i], (CComponent**)&m_pTrailToOrigin[i])))
+		{
+			__debugbreak;
 			return E_FAIL;
+		}
 	}
 	return S_OK;
 }
@@ -279,8 +289,8 @@ void CWingardium_Effect::Free()
 			Safe_Release(m_pTrail[i]);
 			Safe_Release(m_pTrailTransform[i]);
 		}
-		
-		for (int i = 0; i < TrailCount/2; i++)
+
+		for (int i = 0; i < TrailCount / 2; i++)
 		{
 			Safe_Release(m_pTrailToOrigin[i]);
 			Safe_Release(m_pTrailToOriginTransform[i]);

@@ -19,6 +19,7 @@ namespace Engine
 		COL_NPC				= 1 << 3,
 		COL_NPC_RANGE		= 1	<< 4,
 		COL_WEAPON			= 1 << 5,
+		COL_MAGIC			= 1 << 6,
 		// COL~~ = 1 << 6,
 		// ... 계속 추가해주시면 됩니다!! 숫자만 계속 증가시켜주세요
 
