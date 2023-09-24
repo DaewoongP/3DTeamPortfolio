@@ -774,6 +774,7 @@
     <ClInclude Include="..\Public\LookAt.h">
       <Filter>03. Behaviors\04. Movement</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Menu_Gear.h" />
     <ClInclude Include="..\Public\Menu_Gear.h">
       <Filter>06. Scene\Main_Menu\Gear</Filter>
     </ClInclude>
@@ -1200,6 +1201,9 @@
       <Filter>97. ShaderFiles\Meshes</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_ShadowMesh.hlsl">
+      <Filter>97. ShaderFiles\Meshes</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_ShadowMeshInstance.hlsl">
       <Filter>97. ShaderFiles\Meshes</Filter>
     </FxCompile>
   </ItemGroup>

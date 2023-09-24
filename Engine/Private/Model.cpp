@@ -824,6 +824,9 @@ HRESULT CModel::Ready_Materials()
 					continue;
 			}
 
+			// 만약 텍스처 풀에 텍스처가 있으면 그포인터를 가져온다
+			// 만약 텍스첲 풅에 텍스처가 없다면 생성해서 풀에 넣어준다.
+
 			MeshMaterial.pMtrlTexture[j] = CTexture::Create(m_pDevice, m_pContext,
 				m_MaterialDatas[i].MaterialTexture[j].szTexPath, 1);
 
