@@ -140,12 +140,15 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
-	wcout << wstrObjectTag << endl;
-	if (wstring::npos != wstrObjectTag.find(TEXT("Weapon")))
+	wstring wstrCollisionTag = CollisionEventDesc.pOtherCollisionTag;
+	wcout << wstrCollisionTag << endl;
+	if (wstring::npos != wstrCollisionTag.find(TEXT("Attack")) ||
+		wstring::npos != wstrCollisionTag.find(TEXT("Enemy_Body")))
 	{
-		CArmored_Troll::COLLISIONREQUESTDESC* pDesc = static_cast<CArmored_Troll::COLLISIONREQUESTDESC*>(CollisionEventDesc.pArg);
+		CEnemy::COLLISIONREQUESTDESC* pDesc = static_cast<CEnemy::COLLISIONREQUESTDESC*>(CollisionEventDesc.pArg);
 
-		if (nullptr == pDesc)
+		if (nullptr == pDesc ||
+			CEnemy::ATTACK_NONE == pDesc->eType)
 		{
 			return;
 		}
@@ -226,10 +229,6 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		}
 
 	}
-
-	
-
-
 }
 
 void CPlayer::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)
