@@ -125,7 +125,7 @@ CMagicBall* CMagicBallPool::Create_Magic(SPELL eSpell, CMagicBall::MAGICBALLINIT
         pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Wingardiumleviosa")));
         break;
     case Client::BASICCAST:
-        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_BaseAttack")));
+        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_BasicCast")));
         break;
     case Client::STUPEFY:
         break;

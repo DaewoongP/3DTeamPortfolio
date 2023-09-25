@@ -261,7 +261,7 @@ void CFinisher::Ready_CastMagic()
 	m_FlareCenterParticle->Play(m_pTarget->Get_Position());
 	m_FlareSpreadParticle->Play(m_pTarget->Get_Position() + _float3(0, 0.5f, 0));
 	m_DustParticle->Play(m_pTarget->Get_Position());
-
+	m_pTransform->Set_Position(m_pTarget->Get_Position());
 }
 
 void CFinisher::Ready_Dying()
@@ -285,7 +285,8 @@ void CFinisher::Tick_CastMagic(_float fTimeDelta)
 
 void CFinisher::Tick_Dying(_float fTimeDelta)
 {
-	//Do_MagicBallState_To_Next();
+	if(!m_DustParticle->IsEnable())
+		Do_MagicBallState_To_Next();
 }
 
 HRESULT CFinisher::Add_Components()
