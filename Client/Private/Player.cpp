@@ -192,7 +192,7 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 				break;
 			}
 
-			ProtegoStateDesc.pTransform = CollisionEventDesc.pOtherTransform;
+			ProtegoStateDesc.pTransform = pDesc->pEnemyTransform;
 
 			m_pStateContext->Set_StateMachine(TEXT("Protego"), &ProtegoStateDesc);
 		}
@@ -234,7 +234,7 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 				break;
 			}
 
-			HitStateDesc.pTransform = CollisionEventDesc.pOtherTransform;
+			HitStateDesc.pTransform = pDesc->pEnemyTransform;
 
 			m_pStateContext->Set_StateMachine(TEXT("Hit"), &HitStateDesc);
 
