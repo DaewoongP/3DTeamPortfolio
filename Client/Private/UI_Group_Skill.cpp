@@ -40,9 +40,6 @@ HRESULT CUI_Group_Skill::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	m_pPlayer = (CPlayer*)pArg;
-	Safe_AddRef(m_pPlayer);
-
 	wstring SecondTag = TEXT("Second");
 	wstring ThirdTag = TEXT("Third");
 	wstring FourthTag = TEXT("Fourth");
@@ -63,15 +60,6 @@ HRESULT CUI_Group_Skill::Initialize(void* pArg)
 void CUI_Group_Skill::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
-	if (nullptr !=  m_pPlayer)
-	{
-		//m_pPlayer->
-	}
-	//for (size_t i = 0; i < KEYLIST_END; i++)
-	//{
-	//	Set_SpellTexture((KEYLIST)i, (SPELL)i);
-	//}
 }
 
 void CUI_Group_Skill::Late_Tick(_float fTimeDelta)
@@ -461,7 +449,5 @@ void CUI_Group_Skill::Free()
 		Safe_Release(iter);
 	}
 	m_SkillTextures.clear();
-
-	Safe_Release(m_pPlayer);
 }
 

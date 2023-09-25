@@ -63,9 +63,6 @@ private:
 	vector<class CTexture*>			m_SkillTextures;
 
 private:
-	CPlayer*		m_pPlayer;
-
-private:
 	SPELL			m_KeyList[KEYLIST_END];
 
 public:
