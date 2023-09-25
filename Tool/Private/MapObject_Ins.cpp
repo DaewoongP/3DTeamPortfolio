@@ -50,7 +50,7 @@ void CMapObject_Ins::Late_Tick(_float fTimeDelta)
 		m_eRenderCount = RT_NORMAL;
 
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
-		//m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
+		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
 #ifdef _DEBUG
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_PICKING, this);
 #endif // _DEBUG
@@ -77,7 +77,7 @@ HRESULT CMapObject_Ins::Render()
 		for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; iMeshCount++)
 		{
 			m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", iMeshCount, DIFFUSE);
-			//m_pModel->Bind_Material(m_pShader, "g_NormalTexture", iMeshCount, NORMALS);
+			m_pModel->Bind_Material(m_pShader, "g_NormalTexture", iMeshCount, NORMALS);
 
 			m_pShader->Begin("Default");
 
@@ -128,8 +128,8 @@ HRESULT CMapObject_Ins::Render_Depth()
 	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_LightTransformMatrix(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL; 
 	
-	if (FAILED(m_pShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float4))))
-		return E_FAIL; 
+	if (FAILED(m_pShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
+		return E_FAIL;
 	
 	ENDINSTANCE;
 

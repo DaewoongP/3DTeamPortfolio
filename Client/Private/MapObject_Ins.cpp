@@ -125,6 +125,7 @@ HRESULT CMapObject_Ins::Add_Components(MAPOJBECTINSDESC* pMapObjectInsDesc)
 		TEXT("Com_ShadowShader"), reinterpret_cast<CComponent**>(&m_pShadowShader))))
 	{
 		MSG_BOX("Failed CMapObject_Ins Add_Component : (Com_ShadowShader)");
+		__debugbreak();
 		return E_FAIL;
 	}
 
@@ -154,8 +155,7 @@ HRESULT CMapObject_Ins::SetUp_ShaderResources()
 		return E_FAIL;
 
 	if (FAILED(m_pShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
-		return E_FAIL;
-	
+		return E_FAIL;	
 	
 	ENDINSTANCE;
 
@@ -177,7 +177,6 @@ HRESULT CMapObject_Ins::SetUp_ShadowShaderResources()
 
 	if (FAILED(m_pShadowShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
 		return E_FAIL;
-
 
 	ENDINSTANCE;
 
@@ -213,8 +212,6 @@ void CMapObject_Ins::Free()
 {
 	__super::Free();
 
-	Safe_Release(m_pRigidBody);
-	Safe_Release(m_pTransform);
 	Safe_Release(m_pShadowShader);
 	Safe_Release(m_pShader);
 	Safe_Release(m_pModel);

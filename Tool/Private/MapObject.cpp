@@ -50,7 +50,7 @@ void CMapObject::Late_Tick(_float fTimeDelta)
 		m_eRenderCount = RT_NORMAL;
 
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
-		//m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
+		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
 
 #ifdef _DEBUG
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_PICKING, this);
@@ -129,6 +129,7 @@ HRESULT CMapObject::Render_Depth()
 
 	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_LightTransformMatrix(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
+
 	if (FAILED(m_pShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
 		return E_FAIL;
 	ENDINSTANCE
