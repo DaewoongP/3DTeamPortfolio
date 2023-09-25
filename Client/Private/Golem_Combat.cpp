@@ -13,6 +13,7 @@
 #include "Selector_Degree.h"
 #include "Sequence_Groggy.h"
 #include "Sequence_Attack.h"
+#include "UI_Group_Enemy_HP.h"
 #include "Sequence_Levitated.h"
 #include "Sequence_MoveTarget.h"
 
@@ -364,6 +365,18 @@ HRESULT CGolem_Combat::Add_Components()
 		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC;
 
 		m_pRigidBody->Create_Collider(&RigidBodyDesc);
+
+		// UI
+		CUI_Group_Enemy_HP::ENEMYHPDESC  Desc;
+
+		Desc.eType = CUI_Group_Enemy_HP::ENEMYTYPE::MONSTER;
+		Desc.pHealth = m_pHealth;
+		lstrcpy(Desc.wszObjectLevel, TEXT("1"));
+		lstrcpy(Desc.wszObjectName, TEXT("°³Ã¶¹Î ÇÏ¼öÀÎ"));
+
+		if (FAILED(Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Enemy_HP"),
+			TEXT("UI_Enemy_HP"), reinterpret_cast<CComponent**>(&m_pUI_HP), &Desc)))
+			throw TEXT("UI_Enemy_HP");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -1423,6 +1436,7 @@ void CGolem_Combat::Free()
 
 	if (true == m_isCloned)
 	{
+		Safe_Release(m_pUI_HP);
 		Safe_Release(m_pWeapon);
 	}
 }

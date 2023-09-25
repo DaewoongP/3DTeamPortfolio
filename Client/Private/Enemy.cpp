@@ -30,7 +30,7 @@ HRESULT CEnemy::Initialize(void* pArg)
 		m_pTransform->Set_WorldMatrix(*pWorldMatric);
 	}
 	else
-		m_pTransform->Set_Position(_float3(20.f, 2.f, 20.f));
+		m_pTransform->Set_Position(_float3(_float(rand() % 5) + 20.f, 2.f, 20.f - _float(rand() % 5)));
 
 	return S_OK;
 }
