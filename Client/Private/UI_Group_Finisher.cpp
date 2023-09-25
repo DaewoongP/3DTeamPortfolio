@@ -52,6 +52,7 @@ HRESULT CUI_Group_Finisher::Initialize(void* pArg)
 void CUI_Group_Finisher::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+	Set_Gauge();
 }
 
 void CUI_Group_Finisher::Late_Tick(_float fTimeDelta)
@@ -69,13 +70,12 @@ _bool CUI_Group_Finisher::Set_Gauge()
 	if (fPercent <= 0.5f)
 	{
 		m_pFinishers[FRONT]->Set_Gauge(0.f);
-		m_pFinishers[BACK]->Set_Gauge(m_pHealth->Get_Current_HP() * 2.f);
+		m_pFinishers[BACK]->Set_Gauge(fPercent);
 	}
 	else if (fPercent > 0.5f)
 	{
-		fPercent * 2.0f;
-		m_pFinishers[FRONT]->Set_Gauge((m_pHealth->Get_Current_HP() - 50.f) * 2.f);
-		m_pFinishers[BACK]->Set_Gauge(1.f);
+		m_pFinishers[FRONT]->Set_Gauge(fPercent / 2.0f);
+		m_pFinishers[BACK]->Set_Gauge(m_pHealth->Get_MaxHP());
 	}
 
 	return true;
