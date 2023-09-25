@@ -192,6 +192,11 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		{
 
 		}
+		//피격중인 상태일 경우 무시
+		else if (m_pStateContext->Is_Current_State(TEXT("Hit")))
+		{
+
+		}
 		//Hit
 		else
 		{
@@ -395,7 +400,7 @@ HRESULT CPlayer::Add_Components()
 	RigidBodyDesc.vInitPosition = _float3(2.f, 2.f, 2.f);
 	RigidBodyDesc.vInitRotation = m_pTransform->Get_Quaternion();
 	RigidBodyDesc.fStaticFriction = 0.f;
-	RigidBodyDesc.fDynamicFriction = 0.f;
+	RigidBodyDesc.fDynamicFriction = 1.f;
 	RigidBodyDesc.fRestitution = 0.f;
 	PxCapsuleGeometry MyGeometry = PxCapsuleGeometry(0.5f, 0.5f);
 	RigidBodyDesc.pGeometry = &MyGeometry;
@@ -905,13 +910,13 @@ void CPlayer::Update_Target_Angle()
 
 void CPlayer::Shot_Basic_Spell()
 {
-	//Find_Target_For_Distance();
+	Find_Target_For_Distance();
 	m_pMagicSlot->Action_Magic_Basic(0, m_pTargetTransform, XMMatrixTranslation(0.f, 2.5f, 0.f), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
 }
 
 void CPlayer::Shot_Basic_Last_Spell()
 {
-	//Find_Target_For_Distance();
+	Find_Target_For_Distance();
 	m_pMagicSlot->Action_Magic_Basic(0, m_pTargetTransform, XMMatrixTranslation(0.f, 2.5f, 0.f), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
 }
 
@@ -1093,7 +1098,13 @@ void CPlayer::Find_Target_For_Distance()
 {
 	BEGININSTANCE;
 
-	unordered_map<const _tchar*, CComponent*>* pLayer = pGameInstance->Find_Components_In_Layer(LEVEL_STATIC, TEXT("Layer_Monster"));
+	unordered_map<const _tchar*, CComponent*>* pLayer = pGameInstance->Find_Components_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Monster"));
+
+	if (nullptr == pLayer)
+	{
+		MSG_BOX("not MonsterLayer");
+		return;
+	}
 
 	_float fMinDistance = { 10000.0f };
 
