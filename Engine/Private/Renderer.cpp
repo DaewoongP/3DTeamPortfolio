@@ -576,7 +576,10 @@ HRESULT CRenderer::Render_Combine()
 	if (FAILED(m_pDeferredBuffer->Render()))
 		return E_FAIL;
 
-	if (m_pRenderTarget_Manager->End_MRT(m_pContext));
+	if (m_pRenderTarget_Manager->End_MRT(m_pContext))
+		return E_FAIL;
+
+	return S_OK;
 }
 
 HRESULT CRenderer::Render_MotionBlurInst()
