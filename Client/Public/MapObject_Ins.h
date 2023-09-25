@@ -38,16 +38,19 @@ public:
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
+	virtual HRESULT Render_Depth() override;
 
 private:
-	CShader* m_pShader = { nullptr };
-	CRenderer* m_pRenderer = { nullptr };
-	CRigidBody* m_pRigidBody = { nullptr };
-	CModel_Instance* m_pModel = { nullptr };
+	CShader*			m_pShader = { nullptr };
+	CShader*			m_pShadowShader = { nullptr };
+	CRenderer*			m_pRenderer = { nullptr };
+	CRigidBody*			m_pRigidBody = { nullptr };
+	CModel_Instance*	m_pModel = { nullptr };
 
 private:
 	HRESULT Add_Components(MAPOJBECTINSDESC* pMapObjectInsDesc);
 	HRESULT SetUp_ShaderResources();
+	HRESULT SetUp_ShadowShaderResources();
 
 public:
 	static CMapObject_Ins* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

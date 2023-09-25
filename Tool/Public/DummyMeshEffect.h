@@ -33,7 +33,6 @@ public:
 	void Tick_Imgui(_float fTimeDelta);
 	
 	void ChangeTexture(CTexture** _pTexture, wstring& _wstrOriginPath, const _tchar* _pDestPath);
-	void ChangeShader(CShader** _pShader, wstring& _wstrOriginPath, const _tchar* _pDestPath);
 	void ChangeModel(CModel** _pModel, wstring& _wstrOriginPath, const _tchar* _pDestPath, CModel::TYPE _eAnimType = CModel::TYPE_NONANIM);
 
 public:
@@ -43,6 +42,10 @@ public:
 private:
 	CImageFileDialog* m_pTextureIFD = { nullptr };
 	CComboBox* m_pPassComboBox = { nullptr };
+	CComboBox* m_pColorEaseCombo = { nullptr };
+	CComboBox* m_pPosEaseCombo = { nullptr };
+	CComboBox* m_pRotEaseCombo = { nullptr };
+	CComboBox* m_pScaleEaseCombo = { nullptr };
 
 	list<_tchar*> m_pTags;
 public:

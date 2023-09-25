@@ -16,6 +16,7 @@
 #include "Component_Manager.h"
 #include "Collision_Manager.h"
 #include "Ease.h"
+
 BEGIN(Engine)
 
 class ENGINE_DLL CGameInstance final : public CBase
@@ -80,6 +81,7 @@ public: /* For.Component_Manager*/
 	class CComponent* Find_Prototype(_uint iLevelIndex, const _tchar * pPrototypeTag);
 	HRESULT Add_Prototype(_uint iLevelIndex, const _tchar * pPrototypeTag, class CComponent* pPrototype, _bool isFailedSkip = false);
 	HRESULT Add_Component(_uint iPrototypeLevelIndex, _uint iLevelIndex, const _tchar * pPrototypeTag, const _tchar * pLayerTag, const _tchar * pComponentTag, void* pArg = nullptr);
+	HRESULT	Add_Component(class CComponent* pComponent, _uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pComponentTag);
 	class CComponent* Clone_Component(_uint iLevelIndex, const _tchar * pPrototypeTag, void* pArg = nullptr);
 	class CComponent* Find_Component_In_Layer(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pComponentTag);
 	unordered_map<const _tchar*, class CComponent*>* Find_Components_In_Layer(_uint iLevelIndex, const _tchar * pLayerTag);
@@ -214,6 +216,11 @@ public: /* For. String_Manager */
 	HRESULT Delete_Char(_char* pChar);
 	HRESULT Delete_WChar(_tchar* pWChar);
 
+public: /* For.Thread_Pool*/
+	template<class T, class... Args>
+	auto Thread_Enqueue(T&& t, Args&&... args)
+		->std::future<typename std::invoke_result<T, Args...>::type>;
+
 private:
 	class CGraphic_Device*			m_pGraphic_Device = { nullptr };
 	class CInput_Device*			m_pInput_Device = { nullptr };
@@ -231,9 +238,10 @@ private:
 	class CPhysX_Manager*			m_pPhysX_Manager = { nullptr };
 	class CCamera_Manager*			m_pCamera_Manager = { nullptr };
 	class CString_Manager*			m_pString_Manager = { nullptr };
+	class CThreadPool*				m_pThread_Pool = { nullptr };
+	class CTexturePool*				m_pTexture_Pool = { nullptr };
 	
 public:
-	
 	HRESULT Add_Prototype_Textures(_uint iLevel, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pPrototypeName, const _tchar* pTargetExtension, const _tchar* pDirectoryPath, _bool isFailedSkip);
 	HRESULT Add_Prototype_Models(_uint iLevel, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CModel::TYPE eType, const _tchar* pPrototypeName, const _tchar* pTargetExtension, const _tchar* pDirectoryPath, _bool isFailedSkip, _float4x4 PivotMatrix = _float4x4());
 	static void Release_Engine();

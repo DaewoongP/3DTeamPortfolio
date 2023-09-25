@@ -28,18 +28,14 @@ void CLoadTrigger::Late_Tick(_float fTimeDelta)
 		m_pRenderer->Add_DebugGroup(m_pRigidBody);
 #endif // _DEBUG
 	}
-	
-	Loading();
 }
 
 void CLoadTrigger::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
 	if (wcswcs(CollisionEventDesc.pOtherObjectTag, TEXT("Player")))
 	{
-		if (nullptr == m_pLoader)
-		{
-			m_pLoader = CSeamless_Loader::Create(m_pDevice, m_pContext);
-		}
+		//생성 같은거 or 뭐 처리하고
+		//Set_ObjEvent(OBJ_DEAD);
 	}
 }
 
@@ -62,45 +58,16 @@ HRESULT CLoadTrigger::Add_Components()
 		return E_FAIL;
 	}
 
+#ifdef _DEBUG
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"),
 		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
 	{
 		MSG_BOX("CLoadTrigger Failed Clone Component : Com_Renderer");
 		return E_FAIL;
 	}
+#endif // _DEBUG
 
 	return S_OK;
-}
-
-void CLoadTrigger::Loading()
-{
-	if (nullptr == m_pLoader)
-		return;
-
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
-
-	_ulong dwData = { 0 };
-
-	if (TRUE == GetExitCodeThread(m_pLoader->Get_Thread(), &dwData))
-	{
-		if (-1 == dwData)
-		{
-			MSG_BOX("Loading Failed");
-			PostQuitMessage(0);
-			Safe_Release(pGameInstance);
-			Safe_Release(m_pLoader);
-			return;
-		}
-	}
-
-	if (m_pLoader->Get_Finished())
-	{
-		pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
-		Set_ObjEvent(CComponent::OBJ_DEAD);
-	}
-	
-	Safe_Release(pGameInstance);
 }
 
 CLoadTrigger* CLoadTrigger::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -133,8 +100,9 @@ void CLoadTrigger::Free()
 {
 	__super::Free();
 
-	// 혹시 불리지 않았을경우에도 만일을 대비해 삭제해야합니다.
-	Safe_Release(m_pLoader);
+#ifdef _DEBUG
 	Safe_Release(m_pRenderer);
+#endif // _DEBUG
+
 	Safe_Release(m_pRigidBody);
 }

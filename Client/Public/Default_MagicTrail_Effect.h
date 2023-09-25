@@ -10,16 +10,16 @@ END
 
 BEGIN(Client)
 
-class CDefault_MagicTraill_Effect final : public CGameObject
+class CDefault_MagicTrail_Effect final : public CGameObject
 {
 public:
 	typedef struct InitDesc {
 		_float3 vInitPosition;
 	}INITDESC;
 private:
-	CDefault_MagicTraill_Effect(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CDefault_MagicTraill_Effect(const CDefault_MagicTraill_Effect& rhs);
-	virtual ~CDefault_MagicTraill_Effect() = default;
+	CDefault_MagicTrail_Effect(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CDefault_MagicTrail_Effect(const CDefault_MagicTrail_Effect& rhs);
+	virtual ~CDefault_MagicTrail_Effect() = default;
 
 public:
 	void	Ready_Stright(_float3 vTargerPosition, _float3 vStartPosition,_float fTrailLifeTime, _float fDistance);
@@ -79,7 +79,7 @@ private:
 	HRESULT Add_Components();
 
 public:
-	static CDefault_MagicTraill_Effect* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* wszFilePath, _uint iLevel);
+	static CDefault_MagicTrail_Effect* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* wszFilePath, _uint iLevel);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free(void) override;
 };

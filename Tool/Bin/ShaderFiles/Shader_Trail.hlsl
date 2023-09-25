@@ -11,7 +11,8 @@ float g_fClipThreshold = 0.00f;
 
 float3			g_vHeadColor = float3(1.f, 1.f, 1.f);
 float3			g_vTailColor = float3(1.f, 1.f, 1.f);
-
+int				g_iClipChannel;
+bool			g_isUseTextureColor = false;
 struct VS_IN
 {
 	float3 vPosition : POSITION;
@@ -59,10 +60,27 @@ PS_OUT	PS_MAIN(PS_IN In)
 	vector		vAlpha = g_AlphaTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vDiffuse = g_AlphaTexture.Sample(LinearSampler, In.vTexUV);
 	float		fGradient = g_GradientTexture.Sample(LinearSampler, In.vTexUV).r;
+	
+	Out.vColor = vector(1.f, 1.f, 1.f, 1.f);
+	if (true == g_isUseTextureColor)
+	{
+		Out.vColor *= vDiffuse;
+	}
+	
+    Out.vColor.xyz *= lerp(g_vHeadColor, g_vTailColor, fGradient).xyz;
 
-	Out.vColor = vDiffuse;
-    Out.vColor.xyz = lerp(g_vHeadColor, g_vTailColor, fGradient).xyz;
+
+	
 	Out.vColor.a = vAlpha.r;
+
+	if (0 == g_iClipChannel)
+		Out.vColor.a = vAlpha.r;
+	else if (1 == g_iClipChannel)
+		Out.vColor.a = vAlpha.g;
+	else if (2 == g_iClipChannel)
+		Out.vColor.a = vAlpha.b;
+	else if (3 == g_iClipChannel)
+		Out.vColor.a = vAlpha.a;
 
     if (Out.vColor.a < g_fClipThreshold)
 		discard;

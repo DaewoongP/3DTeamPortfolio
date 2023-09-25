@@ -62,7 +62,7 @@ public:
 
 public:
 	//목표와 시작 위치를 설정해줌. 지팡이에서 파티클 재생을 해주기위해 지팡이도 던져줌.
-	virtual _bool Magic_Cast(class CTransform* pTarget, _float4x4 targetOffsetMatrix, const _float4x4* pWeaponMatrix, _float4x4 offsetMatrix);
+	virtual _bool Magic_Cast(class CTransform* pTarget, _float4x4 targetOffsetMatrix, const _float4x4* pWeaponMatrix, _float4x4 offsetMatrix, COLLISIONFLAG eCollisionFlag);
 	virtual HRESULT Add_ActionFunc(function<void()> func);
 
 protected:
@@ -96,9 +96,6 @@ private:
 		{TEXT("Ncendio")} , {TEXT("Levioso")} , {TEXT("Lumos")} , {TEXT("Protego")} , {TEXT("Reparo")} , {TEXT("Revelio")} ,
 		{TEXT("Transformation")} , {TEXT("Transformationoverland")}, {TEXT("Wingardiumleviosa")} , {TEXT("BasicCast")} , {TEXT("Stupefy")} , {TEXT("Petrificustotalus")} ,
 		{TEXT("MagicThrow") }, {TEXT("Finisher")} };
-
-protected:
-	HRESULT Add_Component();
 
 public:
 	static CMagic* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

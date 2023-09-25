@@ -42,8 +42,8 @@ HRESULT CArmored_Troll::Initialize(void* pArg)
 
 	if (nullptr != pArg)
 	{
-		_float4x4* pWorldMatric = reinterpret_cast<_float4x4*>(pArg);
-		m_pTransform->Set_WorldMatrix(*pWorldMatric);
+		_float4x4* pWorldMatrix = reinterpret_cast<_float4x4*>(pArg);
+		m_pTransform->Set_WorldMatrix(*pWorldMatrix);
 	}
 	else
 		m_pTransform->Set_Position(_float3(20.f, 2.f, 20.f));

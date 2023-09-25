@@ -48,7 +48,7 @@ public:
 	HRESULT Reset_Trail(_float3 vHighPos, _float3 vLowPos);
 
 public:
-	virtual HRESULT Initialize_Prototype();
+	virtual HRESULT Initialize_Prototype(_uint iTrailNum);
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick();
 	virtual void Tick_Spline();
@@ -63,15 +63,13 @@ public:
 
 private:
 	TRAILDESC			m_TrailDesc;
-	//_float				m_fMinVertexDistance = 0.1f;
-	//_float				m_fTime = 1.f;
-    //	vector<TRAIL_DATA>	m_TrailDatas[GROUP_END];
+	VTXPOSTEX*			m_pVertices = { nullptr };
 
 private:
 	HRESULT Setup_ShaderResources(class CShader* pShader);
 	
 public:
-	static CVIBuffer_Rect_Trail* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);
+	static CVIBuffer_Rect_Trail* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, _uint iTrailNum);
 	virtual CComponent* Clone(void* pArg) override;
 	virtual void Free() override;
 };

@@ -96,14 +96,14 @@ HRESULT CWeapon_Player_Wand::Render()
 		}
 	}
 
-	return __super::Render();
+	return S_OK;
 }
 
 HRESULT CWeapon_Player_Wand::Add_Components(void* pArg)
 {
 	try /* Check Add_Components */
 	{
-		if (FAILED(Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Model_Weapon_Player_Wand"), L"Com_Model",
+		if (FAILED(Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Model_Weapon_Player_Wand"), TEXT("Com_Model"),
 			(CComponent**)&m_pModelCom, this)))
 			throw TEXT("Failed Add_Component : Com_Model");
 
@@ -173,6 +173,7 @@ CWeapon_Player_Wand* CWeapon_Player_Wand::Create(ID3D11Device* pDevice, ID3D11De
 		MSG_BOX("Failed to Created CWeapon_Player_Wand");
 		Safe_Release(pInstance);
 	}
+
 	return pInstance;
 }
 
@@ -185,6 +186,7 @@ CWeapon_Player_Wand* CWeapon_Player_Wand::Clone(void* pArg)
 		MSG_BOX("Failed to Cloned CWeapon_Player_Wand");
 		Safe_Release(pInstance);
 	}
+
 	return pInstance;
 }
 

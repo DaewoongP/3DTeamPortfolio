@@ -1,6 +1,8 @@
 #include "..\Public\GameInstance.h"
 #include "Frustum.h"
 #include "Calculator.h"
+#include "ThreadPool.h"
+#include "TexturePool.h"
 #include "Font_Manager.h"
 #include "Level_Manager.h"
 #include "Timer_Manager.h"
@@ -28,7 +30,11 @@ CGameInstance::CGameInstance()
 	, m_pPhysX_Manager{ CPhysX_Manager::GetInstance() }
 	, m_pCamera_Manager{ CCamera_Manager::GetInstance() }
 	, m_pString_Manager{ CString_Manager::GetInstance() }
+	, m_pThread_Pool{ CThreadPool::GetInstance() }
+	, m_pTexture_Pool{ CTexturePool::GetInstance() }
 {
+	Safe_AddRef(m_pTexture_Pool);
+	Safe_AddRef(m_pThread_Pool);
 	Safe_AddRef(m_pFrustum);
 	Safe_AddRef(m_pFont_Manager);
 	Safe_AddRef(m_pPipeLine);
@@ -71,6 +77,8 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInst, _uint iNumLevels, cons
 
 	if (FAILED(m_pCamera_Manager->Initialize_CameraManager()))
 		return E_FAIL;
+
+	m_pThread_Pool->Initialize(4);
 
 	return S_OK;
 }
@@ -287,6 +295,13 @@ HRESULT CGameInstance::Add_Component(_uint iPrototypeLevelIndex, _uint iLevelInd
 	NULL_CHECK_RETURN_MSG(m_pComponent_Manager, E_FAIL, TEXT("Component_Manager NULL"));
 
 	return m_pComponent_Manager->Add_Component(iPrototypeLevelIndex, iLevelIndex, pPrototypeTag, pLayerTag, pComponentTag, pArg);
+}
+
+HRESULT CGameInstance::Add_Component(CComponent* pComponent, _uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pComponentTag)
+{
+	NULL_CHECK_RETURN_MSG(m_pComponent_Manager, E_FAIL, TEXT("Component_Manager NULL"));
+
+	return m_pComponent_Manager->Add_Component(pComponent, iLevelIndex, pLayerTag, pComponentTag);
 }
 
 CComponent* CGameInstance::Clone_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, void* pArg)
@@ -915,6 +930,14 @@ HRESULT CGameInstance::Delete_WChar(_tchar* pWChar)
 	return m_pString_Manager->Delete_WChar(pWChar);
 }
 
+template<class T, class ...Args>
+inline auto CGameInstance::Thread_Enqueue(T&& t, Args && ...args) -> std::future<typename std::invoke_result<T, Args ...>::type>
+{
+	NULL_CHECK_MSG(m_pThread_Pool, TEXT("Thread Pool NULL"));
+
+	return m_pThread_Pool->Thread_Enqueue(std::forward<T>(t), std::forward<Args>(args)...);
+}
+
 void CGameInstance::Release_Engine()
 {
 	CGameInstance::GetInstance()->DestroyInstance();
@@ -922,6 +945,8 @@ void CGameInstance::Release_Engine()
 	CCamera_Manager::GetInstance()->DestroyInstance();
 
 	CPipeLine::GetInstance()->DestroyInstance();
+
+	CTexturePool::GetInstance()->DestroyInstance();
 
 	CComponent_Manager::GetInstance()->DestroyInstance();
 
@@ -949,11 +974,15 @@ void CGameInstance::Release_Engine()
 
 	CString_Manager::GetInstance()->DestroyInstance();
 
+	CThreadPool::GetInstance()->DestroyInstance();
+
 	CGraphic_Device::GetInstance()->DestroyInstance();
 }
 
 void CGameInstance::Free()
 {
+	Safe_Release(m_pTexture_Pool);
+	Safe_Release(m_pThread_Pool);
 	Safe_Release(m_pString_Manager);
 	Safe_Release(m_pPhysX_Manager);
 	Safe_Release(m_pCalculator);
