@@ -38,7 +38,7 @@ void CIdleState::Late_Tick(_float fTimeDelta)
 {
 }
 
-void CIdleState::OnStateEnter()
+void CIdleState::OnStateEnter(void* _pArg)
 {
 #ifdef _DEBUG
 	//cout << "Idle Enter" << endl;

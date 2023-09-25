@@ -44,6 +44,7 @@ public:
     //현제 피니셔 비율
     _float Get_Finisher_Percent() const { return m_pFinisher->Get_Current_HP_Percent(); }
 
+
 public:
     virtual HRESULT Initialize_Prototype();
     virtual HRESULT Initialize(void* pArg);
@@ -51,18 +52,32 @@ public:
     virtual void Late_Tick(_float fTimeDelta);
 
 public:
+     //피니셔 사용 가능 여부
+    _bool Is_Use_Fnisher();
+
+    //피니셔 사용시 호출(게이지 감소)
+    void Using_Fnisher();
+
+    //피니셔 회복
+    void Stack_Finisher() { m_pFinisher->Set_HP(m_pFinisher->Get_HP() + 1); }
+
+    //체력 변경
+    void fix_HP(_int _iNum);
+
 
 private:
     //체력
     CHealth* m_pHealth = { nullptr };
     //피니셔 게이지
-    CHealth* m_pFinisher= { nullptr };
+    CHealth* m_pFinisher = { nullptr };
     
     //아이템 갯수를 저장
     vector<_uint> m_vecItemCount = {};
 
 private:
     HRESULT Add_Components();
+
+   
 
 public:
     static CPlayer_Information* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);

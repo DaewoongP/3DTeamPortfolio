@@ -318,6 +318,13 @@ CComponent* CGameInstance::Find_Component_In_Layer(_uint iLevelIndex, const _tch
 	return m_pComponent_Manager->Find_Component_In_Layer(iLevelIndex, pLayerTag, pComponentTag);
 }
 
+unordered_map<const _tchar*, class CComponent*>* CGameInstance::Find_Components_In_Layer(_uint iLevelIndex, const _tchar* pLayerTag)
+{
+	NULL_CHECK_RETURN_MSG(m_pComponent_Manager, nullptr, TEXT("Component_Manager NULL"));
+
+	return m_pComponent_Manager->Find_Components_In_Layer(iLevelIndex, pLayerTag);
+}
+
 CLayer* CGameInstance::Find_Layer(_uint iLevelIndex, const _tchar* pLayerTag)
 {
 	NULL_CHECK_RETURN_MSG(m_pComponent_Manager, nullptr, TEXT("Component_Manager NULL"));

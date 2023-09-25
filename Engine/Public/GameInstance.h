@@ -84,6 +84,7 @@ public: /* For.Component_Manager*/
 	HRESULT	Add_Component(class CComponent* pComponent, _uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pComponentTag);
 	class CComponent* Clone_Component(_uint iLevelIndex, const _tchar * pPrototypeTag, void* pArg = nullptr);
 	class CComponent* Find_Component_In_Layer(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pComponentTag);
+	unordered_map<const _tchar*, class CComponent*>* Find_Components_In_Layer(_uint iLevelIndex, const _tchar * pLayerTag);
 	class CLayer* Find_Layer(_uint iLevelIndex, const _tchar * pLayerTag);
 	HRESULT	Clear_Layer(_uint iLevelIndex, const _tchar * pLayerTag);
 	HRESULT	Delete_Component(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pComponentTag);

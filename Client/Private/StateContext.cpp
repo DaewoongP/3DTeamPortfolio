@@ -69,7 +69,7 @@ void CStateContext::Late_Tick(_float fTimeDelta)
 	}
 }
 
-HRESULT CStateContext::Set_StateMachine(const _tchar* _pTag)
+HRESULT CStateContext::Set_StateMachine(const _tchar* _pTag, void * _pArg)
 {
 	if (nullptr != m_pCurrentStateMachine)
 	{
@@ -90,9 +90,29 @@ HRESULT CStateContext::Set_StateMachine(const _tchar* _pTag)
 	
 	Safe_AddRef(m_pCurrentStateMachine);
 
-	m_pCurrentStateMachine->OnStateEnter();
+	m_pCurrentStateMachine->OnStateEnter(_pArg);
 
 	return S_OK;
+}
+
+_bool CStateContext::Is_Current_State(const _tchar* _pTag)
+{
+	auto iter = find_if(
+		m_pStateMachines.begin(),
+		m_pStateMachines.end(),
+		CTag_Finder(_pTag));
+
+	//없다면 빼고
+	if (iter == m_pStateMachines.end())
+		return false;
+
+	//있다면 현재 스테이트와 같은지
+	if (m_pCurrentStateMachine == iter->second)
+	{
+		return true;
+	}
+
+	return false;
 }
 
 void CStateContext::FinishAnimation()
@@ -148,6 +168,7 @@ HRESULT CStateContext::Ready_StateMachine()
 		ENDINSTANCE;
 
 		MSG_BOX("Failed Ready_StateMachine");
+		__debugbreak;
 
 		return E_FAIL;
 	};
@@ -160,6 +181,7 @@ HRESULT CStateContext::Ready_StateMachine()
 		ENDINSTANCE;
 
 		MSG_BOX("Failed Ready_StateMachine");
+		__debugbreak;
 
 		return E_FAIL;
 	};
@@ -172,6 +194,7 @@ HRESULT CStateContext::Ready_StateMachine()
 		ENDINSTANCE;
 
 		MSG_BOX("Failed Ready_StateMachine");
+		__debugbreak;
 
 		return E_FAIL;
 	};
@@ -184,6 +207,7 @@ HRESULT CStateContext::Ready_StateMachine()
 		ENDINSTANCE;
 
 		MSG_BOX("Failed Ready_StateMachine");
+		__debugbreak;
 
 		return E_FAIL;
 	};
@@ -196,6 +220,7 @@ HRESULT CStateContext::Ready_StateMachine()
 		ENDINSTANCE;
 
 		MSG_BOX("Failed Ready_StateMachine");
+		__debugbreak;
 
 		return E_FAIL;
 	};
@@ -208,6 +233,7 @@ HRESULT CStateContext::Ready_StateMachine()
 		ENDINSTANCE;
 
 		MSG_BOX("Failed Ready_StateMachine");
+		__debugbreak;
 
 		return E_FAIL;
 	};
@@ -220,6 +246,7 @@ HRESULT CStateContext::Ready_StateMachine()
 		ENDINSTANCE;
 
 		MSG_BOX("Failed Ready_StateMachine");
+		__debugbreak;
 
 		return E_FAIL;
 	};
@@ -232,6 +259,7 @@ HRESULT CStateContext::Ready_StateMachine()
 		ENDINSTANCE;
 
 		MSG_BOX("Failed Ready_StateMachine");
+		__debugbreak;
 
 		return E_FAIL;
 	};
@@ -245,6 +273,8 @@ HRESULT CStateContext::Ready_StateMachine()
 
 		MSG_BOX("Failed Ready_StateMachine");
 
+		__debugbreak;
+
 		return E_FAIL;
 	};
 
@@ -256,6 +286,8 @@ HRESULT CStateContext::Ready_StateMachine()
 		ENDINSTANCE;
 
 		MSG_BOX("Failed Ready_StateMachine");
+
+		__debugbreak;
 
 		return E_FAIL;
 	};

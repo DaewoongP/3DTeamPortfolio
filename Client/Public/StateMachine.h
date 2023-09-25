@@ -36,7 +36,7 @@ public:
     void Set_TarGetAngle(_float* _pFTargetAngle) { m_pFTargetAngle = _pFTargetAngle; }
 
 public:
-    virtual void OnStateEnter() {};
+    virtual void OnStateEnter(void * _pArg = nullptr) {};
     virtual void OnStateTick()  {};
     virtual void OnStateExit()  {};
 

@@ -42,6 +42,7 @@ public:
         _float* pTargetAngle = { nullptr };
         _float* pClothPowerPlus = { nullptr };
     }STATECONTEXTDESC;
+
 private:
     explicit CStateContext(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext);
     explicit CStateContext(const CStateContext& rhs);
@@ -57,7 +58,9 @@ public:
     virtual void Late_Tick(_float fTimeDelta);
 
 public:
-    HRESULT Set_StateMachine(const _tchar* _pTag);
+    HRESULT Set_StateMachine(const _tchar* _pTag, void * _pArg = nullptr);
+
+    _bool Is_Current_State(const _tchar* _pTag);
 
 private:
     CModel* m_pOwnerModel = { nullptr };
@@ -66,6 +69,7 @@ private:
     CTransform* m_pPlayerTransform = { nullptr };
     _float* m_pTargetAngle = { nullptr };
 
+    //
     CStateMachine* m_pCurrentStateMachine = { nullptr };
 
     //달리기와 전력질주 구분용
@@ -81,9 +85,6 @@ private:
 
     //회전 배율
     _float m_fRotaionSpeed = { 0.0f };
-
-
-
 
     unordered_map<const _tchar*, CStateMachine*> m_pStateMachines;
 

@@ -221,7 +221,7 @@ CComponent* CComponent_Manager::Find_Component_In_Layer(_uint iLevelIndex, const
 	return pComponent;
 }
 
-const unordered_map<const _tchar*, class CComponent*>* CComponent_Manager::Find_Components_In_Layer(_uint iLevelIndex, const _tchar* pLayerTag)
+unordered_map<const _tchar*, class CComponent*>* CComponent_Manager::Find_Components_In_Layer(_uint iLevelIndex, const _tchar* pLayerTag)
 {
 	CLayer* pLayer = Find_Layer(iLevelIndex, pLayerTag);
 

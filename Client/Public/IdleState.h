@@ -17,7 +17,8 @@ public:
     virtual void Tick(_float fTimeDelta);
     virtual void Late_Tick(_float fTimeDelta);
 public:
-    virtual void OnStateEnter();
+    virtual void OnStateEnter(void* _pArg = nullptr);
+
     virtual void OnStateTick();
     virtual void OnStateExit();
 

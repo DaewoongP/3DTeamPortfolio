@@ -6,6 +6,10 @@
 #include "StateContext.h"
 #include "IdleState.h"
 
+#include "Player_Information.h"
+
+#include "ProtegoState.h"
+
 #include "Armored_Troll.h"
 
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -128,8 +132,102 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 	if (wstring::npos != wstrObjectTag.find(TEXT("Weapon")))
 	{
 		CArmored_Troll::COLLISIONREQUESTDESC* pDesc = static_cast<CArmored_Troll::COLLISIONREQUESTDESC*>(CollisionEventDesc.pArg);
-		pDesc;
+
+		if (nullptr == pDesc)
+		{
+			return;
+		}
+
+		//Protego
+		if (m_pStateContext->Is_Current_State(TEXT("Protego")))
+		{
+			CProtegoState::PROTEGOSTATEDESC ProtegoStateDesc;
+
+			ProtegoStateDesc.isHit = true;
+
+			switch (pDesc->eType)
+			{
+			case CArmored_Troll::ATTACK_NONE:
+			{	}
+			break;
+			case CArmored_Troll::ATTACK_LIGHT:
+			{
+				ProtegoStateDesc.iHitType = CProtegoState::HIT_LIGHT;
+			}
+			break;
+			case CArmored_Troll::ATTACK_HEAVY:
+			{
+				ProtegoStateDesc.iHitType = CProtegoState::HIT_HEABY;
+			}
+			break;
+			case CArmored_Troll::ATTACK_BODY:
+			{
+				ProtegoStateDesc.iHitType = CProtegoState::HIT_HEABY;
+			}
+			break;
+			case CArmored_Troll::ATTACKTYPE_END:
+			{	}
+			break;
+
+			default:
+				break;
+			}
+
+			ProtegoStateDesc.pTransform = CollisionEventDesc.pOtherTransform;
+
+			m_pStateContext->Set_StateMachine(TEXT("Protego"), &ProtegoStateDesc);
+		}
+		//회피시 무시
+		else if (m_pStateContext->Is_Current_State(TEXT("Roll")))
+		{
+
+		}
+		//Hit
+		else
+		{
+			CHitState::HITSTATEDESC HitStateDesc;
+
+			switch (pDesc->eType)
+			{
+			case CArmored_Troll::ATTACK_NONE:
+			{	}
+			break;
+			case CArmored_Troll::ATTACK_LIGHT:
+			{
+				HitStateDesc.iHitType = CHitState::HIT_LIGHT;
+			}
+			break;
+			case CArmored_Troll::ATTACK_HEAVY:
+			{
+				HitStateDesc.iHitType = CHitState::HIT_HEABY;
+			}
+			break;
+			case CArmored_Troll::ATTACK_BODY:
+			{
+				HitStateDesc.iHitType = CHitState::HIT_HEABY;
+			}
+			break;
+			case CArmored_Troll::ATTACKTYPE_END:
+			{	}
+			break;
+
+			default:
+				break;
+			}
+
+			HitStateDesc.pTransform = CollisionEventDesc.pOtherTransform;
+
+			m_pStateContext->Set_StateMachine(TEXT("Hit"), &HitStateDesc);
+
+			//체력 수정
+			//m_pPlayer_Information->fix_HP();
+		}
+
 	}
+
+	
+
+
 }
 
 void CPlayer::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)
@@ -196,6 +294,8 @@ HRESULT CPlayer::Add_Components()
 		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
 	{
 		MSG_BOX("Failed CPlayer Add_Component : (Com_Renderer)");
+		__debugbreak;
+
 		return E_FAIL;
 	}
 
@@ -204,14 +304,18 @@ HRESULT CPlayer::Add_Components()
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
 	{
 		MSG_BOX("Failed CPlayer Add_Component : (Com_Shader)");
+		__debugbreak;
+
 		return E_FAIL;
 	}
-	
+
 	/* For.Com_ShadowShader */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_ShadowAnimMesh"),
 		TEXT("Com_ShadowShader"), reinterpret_cast<CComponent**>(&m_pShadowShader))))
 	{
 		MSG_BOX("Failed CPlayer Add_Component : (Com_ShadowShader)");
+		__debugbreak;
+
 		return E_FAIL;
 	}
 
@@ -220,6 +324,8 @@ HRESULT CPlayer::Add_Components()
 		TEXT("Com_Model_CustomModel_Player"), reinterpret_cast<CComponent**>(&m_pCustomModel))))
 	{
 		MSG_BOX("Failed CPlayer Add_Component : (Com_Model_CustomModel_Player)");
+		__debugbreak;
+
 		return E_FAIL;
 	}
 
@@ -233,9 +339,11 @@ HRESULT CPlayer::Add_Components()
 
 	/* For.Com_StateContext */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_StateContext"),
-		TEXT("Com_StateContext"), reinterpret_cast<CComponent**>(&m_pStateContext),&StateContextDesc)))
+		TEXT("Com_StateContext"), reinterpret_cast<CComponent**>(&m_pStateContext), &StateContextDesc)))
 	{
 		MSG_BOX("Failed CPlayer Add_Component : (Com_StateContext)");
+		__debugbreak;
+
 		return E_FAIL;
 	}
 
@@ -257,6 +365,8 @@ HRESULT CPlayer::Add_Components()
 		TEXT("Com_MagicSlot"), reinterpret_cast<CComponent**>(&m_pMagicSlot))))
 	{
 		MSG_BOX("Failed CPlayer Add_Component : (Com_MagicSlot)");
+		__debugbreak;
+
 		return E_FAIL;
 	}
 
@@ -277,7 +387,7 @@ HRESULT CPlayer::Add_Components()
 	RigidBodyDesc.vDebugColor = _float4(1.f, 105 / 255.f, 180 / 255.f, 1.f); // hot pink
 	RigidBodyDesc.pOwnerObject = this;
 	RigidBodyDesc.eThisCollsion = COL_PLAYER;
-	RigidBodyDesc.eCollisionFlag = COL_ENEMY_RANGE | COL_WEAPON;
+	RigidBodyDesc.eCollisionFlag = COL_ENEMY_RANGE | COL_WEAPON | COL_ENEMY;
 	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Player_Default");
 
 	/* Com_RigidBody */
@@ -285,6 +395,8 @@ HRESULT CPlayer::Add_Components()
 		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
 	{
 		MSG_BOX("Failed CPlayer Add_Component : (Com_RigidBody)");
+		__debugbreak;
+
 		return E_FAIL;
 	}
 
@@ -297,6 +409,8 @@ HRESULT CPlayer::Add_Components()
 		TEXT("Com_Player_Information"), reinterpret_cast<CComponent**>(&m_pPlayer_Information))))
 	{
 		MSG_BOX("Failed CPlayer Add_Component : (Com_Player_Information)");
+		__debugbreak;
+
 		return E_FAIL;
 	}
 
@@ -927,8 +1041,68 @@ void CPlayer::Update_Cloth(_float fTimeDelta)
 	m_pCustomModel->Tick(CCustomModel::ROBE, 2, fTimeDelta);
 }
 
-void CPlayer::Find_Target()
+void CPlayer::Find_Target_For_Distance()
 {
+	BEGININSTANCE;
+
+	unordered_map<const _tchar*, CComponent*>* pLayer = pGameInstance->Find_Components_In_Layer(LEVEL_STATIC, TEXT("Layer_Monster"));
+
+	_float fMinDistance = { 10000.0f };
+
+
+	//거리가 낮은 놈을 저장
+	CGameObject* pTarget = { nullptr };
+	
+	for (unordered_map<const _tchar*, CComponent*>::iterator iter = pLayer->begin(); iter != pLayer->end(); iter++)
+	{
+		//플레이어와
+		_float3 vPlayerPos = m_pTransform->Get_Position();
+		
+		//몬스터의 
+		_float3 vMonsterPos = dynamic_cast<CGameObject*>(iter->second)->Get_Transform()->Get_Position();
+
+		//거리를 구하고
+		_float fDistance = XMVectorGetX(XMVector3Length(vPlayerPos - vMonsterPos));
+
+		//기존 값보다 작다면
+		if (fMinDistance > fDistance)
+		{
+			//거리를 갱신하고
+			fMinDistance = fDistance;
+			//객체도 갱신한다.
+			pTarget = dynamic_cast<CGameObject*>(iter->second);
+		}
+	}
+
+	// 객체가 있다면
+	if (nullptr != pTarget)
+	{
+		//기존 객체는 지워주고
+		if (nullptr != m_pTargetTransform)
+		{
+			Safe_Release(m_pTargetTransform);
+		}
+
+		//타겟으로 한다.
+		m_pTargetTransform = pTarget->Get_Transform();
+
+		Safe_AddRef(m_pTargetTransform);
+	}
+
+	//객체가 없다면 
+	else if (nullptr == pTarget)
+	{
+		//기존 객체는 지워주고
+		if (nullptr != m_pTargetTransform)
+		{
+			Safe_Release(m_pTargetTransform);
+		}
+	}
+
+
+	ENDINSTANCE;
+
+
 }
 
 CPlayer* CPlayer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -973,5 +1147,11 @@ void CPlayer::Free()
 		Safe_Release(m_pStateContext);
 		Safe_Release(m_pRigidBody);
 		Safe_Release(m_pPlayer_Information);
+		
+		if (nullptr != m_pTargetTransform)
+		{
+			Safe_Release(m_pTargetTransform);
+		}
+		
 	}
 }
