@@ -61,6 +61,8 @@ HRESULT CMainApp::Render()
 	if (nullptr == m_pGameInstance)
 		return E_FAIL;
 
+	std::lock_guard<std::mutex> lock(mtx);
+
 	FAILED_CHECK_RETURN(m_pGameInstance->Clear_BackBuffer_View(_float4(0.f, 0.f, 1.f, 1.f)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGameInstance->Clear_DepthStencil_View(), E_FAIL);
 	FAILED_CHECK_RETURN(m_pRenderer->Draw_RenderGroup(), E_FAIL);
@@ -172,8 +174,8 @@ HRESULT CMainApp::Ready_Prototype_Component_For_Static()
 	{
 		wstring wstrErrorMSG = TEXT("Failed Ready_Prototype_Component_For_Static : ");
 		wstrErrorMSG += pErrorTag;
-		__debugbreak();
 		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+		__debugbreak();
 
 		return E_FAIL;
 	}

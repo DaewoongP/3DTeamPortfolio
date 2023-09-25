@@ -229,6 +229,7 @@ HRESULT CMain2_Loader::Loading_For_Cliffside()
 		wstring wstrErrorMSG = TEXT("Failed Add_Prototype : ");
 		wstrErrorMSG += pErrorTag;
 		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+		__debugbreak();
 		return E_FAIL;
 	}
 

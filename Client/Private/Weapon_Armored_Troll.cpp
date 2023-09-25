@@ -138,6 +138,7 @@ HRESULT CWeapon_Armored_Troll::Add_Components(void* pArg)
 		wstring wstrErrorMSG = TEXT("[CWeapon_Armored_Troll] Failed Add_Components : \n");
 		wstrErrorMSG += pErrorTag;
 		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+		__debugbreak();
 
 		return E_FAIL;
 	}

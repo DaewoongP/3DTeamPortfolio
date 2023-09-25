@@ -7,36 +7,24 @@
 //
 /* =============================================== */
 
-#include "GameObject.h"
+#include "Enemy.h"
 #include "Client_Defines.h"
 
 BEGIN(Engine)
-class CModel;
-class CShader;
-class CRenderer;
 class CSequence;
 class CSelector;
-class CRigidBody;
-class CRootBehavior;
 END
 
 BEGIN(Client)
 class CRandom_Select;
+class CUI_Group_Enemy_HP;
 class CWeapon_Armored_Troll;
 END
 
 BEGIN(Client)
 
-class CArmored_Troll final : public CGameObject
+class CArmored_Troll final : public CEnemy
 {
-public:
-	enum ATTACKTYPE { ATTACK_NONE, ATTACK_LIGHT, ATTACK_HEAVY, ATTACK_BODY, ATTACKTYPE_END };
-	typedef struct tagCollisionRequestDesc
-	{
-		ATTACKTYPE eType = { ATTACKTYPE_END };
-		_float fDamage = { 0.f };
-	}COLLISIONREQUESTDESC;
-
 private:
 	explicit CArmored_Troll(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CArmored_Troll(const CArmored_Troll& rhs);
@@ -52,39 +40,16 @@ public:
 	virtual HRESULT Render_Depth() override;
 
 private:
-	CModel* m_pModelCom = { nullptr };
-	CShader* m_pShaderCom = { nullptr };
-	CRenderer* m_pRenderer = { nullptr };
-	CRigidBody* m_pRigidBody = { nullptr };
-	CRootBehavior* m_pRootBehavior = { nullptr };
+	CUI_Group_Enemy_HP* m_pUI_HP = { nullptr };
 
 private:
 	CWeapon_Armored_Troll* m_pWeapon = { nullptr };
 
 private:
-	const CGameObject* m_pTarget = { nullptr };
-	_uint m_iCurrentSpell = { 0 };
-	unordered_map<BUFF_TYPE, function<void(_float3, _float)>> m_CurrentTickSpells;
-
-	_bool m_isSpawn = { false };
-	_bool m_isParring = { false };
-	_bool m_isRangeInEnemy = { false };
-	_bool m_isChangeAnimation = { false };
-
-	COLLISIONREQUESTDESC m_CollisionRequestDesc;
-
-	// 범위 안에 들어온 몬스터 리스트
-	list<pair<wstring, const CGameObject*>> m_RangeInEnemies;
-
-private:
-	HRESULT Make_AI();
-	HRESULT Make_Notifies();
-	HRESULT Add_Components();
-	HRESULT SetUp_ShaderResources();
-
-private:// 가까운 적을 타겟으로 세팅
-	void Set_Current_Target();
-	HRESULT Remove_GameObject(const wstring& wstrObjectTag);
+	virtual HRESULT Make_AI() override;
+	virtual HRESULT Make_Notifies() override;
+	virtual HRESULT Add_Components() override;
+	virtual HRESULT SetUp_ShaderResources() override;
 
 #ifdef _DEBUG
 	_int m_iIndex = { 0 };
@@ -116,9 +81,6 @@ private: /* 행동 묶음들 */
 	HRESULT Make_Check_Spell(_Inout_ CSelector* pSelector);
 
 private: /* Notify Func */
-	void Change_Animation() {
-		m_isChangeAnimation = true;
-	}
 	void Enter_Light_Attack();
 	void Enter_Heavy_Attack();
 	void Enter_Body_Attack();

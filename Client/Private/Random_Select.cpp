@@ -3,13 +3,6 @@
 #include "GameInstance.h"
 #include "BlackBoard.h"
 
-#include "Turn.h"
-#include "Magic.h"
-#include "Action.h"
-#include "Check_Degree.h"
-#include "Check_Distance.h"
-#include "Sequence_Attack.h"
-
 CRandom_Select::CRandom_Select(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CRandomChoose(pDevice, pContext)
 {
@@ -23,7 +16,7 @@ CRandom_Select::CRandom_Select(const CRandom_Select& rhs)
 HRESULT CRandom_Select::Initialize(void* pArg)
 {
 	/* ÄðÅ¸ÀÓ */
-	Add_Decoration([&](CBlackBoard* pBlackBoard)->_bool
+	Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 		{
 			BEGININSTANCE;
 			_float fInterval = pGameInstance->Get_World_TimeAcc() - m_fPreWorldTimeAcc;

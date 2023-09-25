@@ -7,17 +7,12 @@
 //
 /* =============================================== */
 
-#include "GameObject.h"
+#include "Enemy.h"
 #include "Client_Defines.h"
 
 BEGIN(Engine)
-class CModel;
-class CShader;
-class CRenderer;
 class CSequence;
 class CSelector;
-class CRigidBody;
-class CRootBehavior;
 END
 
 BEGIN(Client)
@@ -27,7 +22,7 @@ END
 
 BEGIN(Client)
 
-class CGolem_Combat final : public CGameObject
+class CGolem_Combat final : public CEnemy
 {
 private:
 	explicit CGolem_Combat(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -45,54 +40,38 @@ public:
 	virtual HRESULT Render_Depth() override;
 
 private:
-	CModel* m_pModelCom = { nullptr };
-	CShader* m_pShaderCom = { nullptr };
-	CRenderer* m_pRenderer = { nullptr };
-	CRigidBody* m_pRigidBody = { nullptr };
-	CRootBehavior* m_pRootBehavior = { nullptr };
-
-private:
 	CWeapon_Golem_Combat* m_pWeapon = { nullptr };
-	
-private:
-	const CGameObject* m_pTarget = { nullptr };
-	_uint m_iCurrentSpell = { 0 };
-	unordered_map<BUFF_TYPE, function<void(_float3, _float)>> m_CurrentTickSpells;
-
-	_bool m_isSpawn = { false };
-	_bool m_isParring = { false };
-	_bool m_isRangeInEnemy = { false };
-	_bool m_isChangeAnimation = { false };
-
-	// 범위 안에 들어온 몬스터 리스트
-	list<pair<wstring, const CGameObject*>> m_RangeInEnemies;
 
 private:
-	HRESULT Make_AI();
-	HRESULT Add_Components();
-	HRESULT SetUp_ShaderResources();
-
-private:
-	// 가까운 적을 타겟으로 세팅
-	void Set_Current_Target();
-	HRESULT Remove_GameObject(const wstring& wstrObjectTag);
+	virtual HRESULT Make_AI() override;
+	virtual HRESULT Make_Notifies() override;
+	virtual HRESULT Add_Components() override;
+	virtual HRESULT SetUp_ShaderResources() override;
 
 #ifdef _DEBUG
 	_int m_iIndex = { 0 };
 	void Tick_ImGui();
 #endif // _DEBUG
 
+private:
+	_float m_fDeadTimeAcc = { 0.f };
+	void DeathBehavior(const _float& fTimeDelta);
+
 private: /* 행동 묶음들 */
 	HRESULT Make_Turns(_Inout_ CSequence* pSequence);
 	HRESULT Make_Attack(_Inout_ CSelector* pSelector);
 	HRESULT Make_NormalAttack(_Inout_ CSelector* pSelector);
+	HRESULT Make_Hit_Combo(_Inout_ CSelector* pSelector);
 	HRESULT Make_Check_Spell(_Inout_ CSelector* pSelector);
 	HRESULT Make_Descendo(_Inout_ CSequence* pSequence);
+	HRESULT Make_Levioso_Combo(_Inout_ CSelector* pSelector);
+	HRESULT Make_Air_Hit(_Inout_ CSequence* pSequence);
 	HRESULT Make_Random_Idle_Move(_Inout_ CRandom_Select* pRandomSelect);
+	HRESULT Make_Death(_Inout_ CSequence* pSequence);
 
 public:
 	static CGolem_Combat* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CGameObject* Clone(void* pArg) override;
+	virtual CGolem_Combat* Clone(void* pArg) override;
 	virtual void Free() override;
 };
 

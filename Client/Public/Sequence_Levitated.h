@@ -11,13 +11,8 @@
 #include "Sequence.h"
 #include "Client_Defines.h"
 
-BEGIN(Engine)
-class CModel;
-class CTransform;
-END
-
 BEGIN(Client)
-class CAction;
+class CRandom_Select;
 END
 
 BEGIN(Client)
@@ -35,18 +30,14 @@ public:
 	virtual HRESULT Tick(const _float& fTimeDelta);
 
 public:
-	void Set_LoopTime(const _float& fTime) {
-		m_fLoopTime = fTime;
-	}
+	// Random_Select 클래스에 추가할 Action의 가중치 대입
+	HRESULT Assemble_Random_Select_Behavior(const wstring& wstrActionTag, const _float& fWeight, const _float& fLoopTime);
 
 private:
 	virtual HRESULT Assemble_Childs() override;
 
 private:
-	_float m_fLimit = { 0.f };
-	_float m_fPreWorldTimeAcc = { 0.f };
-
-	_float m_fLoopTime = { 0.f };
+	CRandom_Select* m_pRandom_Levitated_Loop = { nullptr };
 
 private:
 	virtual void Reset_Behavior(HRESULT result) override;

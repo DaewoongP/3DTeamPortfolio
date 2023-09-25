@@ -263,6 +263,12 @@ HRESULT CMain0_Loader::Loading_For_Cliffside()
 			CMenu_Inventory::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Menu_Inventory");
 
+		/* --------------ETC-------------- */
+		/* For.Prototype_Component_Health*/
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Health"),
+			CHealth::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Health");
+
 		/* --------------Debug-------------- */
 #ifdef _DEBUG
 
@@ -296,6 +302,7 @@ HRESULT CMain0_Loader::Loading_For_Cliffside()
 		wstring wstrErrorMSG = TEXT("Failed Add_Prototype : ");
 		wstrErrorMSG += pErrorTag;
 		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+		__debugbreak();
 		return E_FAIL;
 	}
 

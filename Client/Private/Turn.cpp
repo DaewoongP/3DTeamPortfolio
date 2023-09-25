@@ -29,7 +29,7 @@ HRESULT CTurn::Initialize(void* pArg)
 
 HRESULT CTurn::Tick(const _float& fTimeDelta)
 {
-	if (false == Check_Decorations())
+	if (false == Check_Decorators())
 	{
 		m_ReturnData = BEHAVIOR_FAIL;
 		return BEHAVIOR_FAIL;

@@ -19,7 +19,8 @@ namespace Engine
 		COL_NPC				= 1 << 3,
 		COL_NPC_RANGE		= 1	<< 4,
 		COL_WEAPON			= 1 << 5,
-		// COL~~ = 1 << 6,
+		COL_MAGIC			= 1 << 6,
+		// COL~~ = 1 << 7,
 		// ... 계속 추가해주시면 됩니다!! 숫자만 계속 증가시켜주세요
 
 		COL_TEST = 1 << 29, // 충돌 가능한 최대치입니다. 지우고 추가하셔도 됩니다.

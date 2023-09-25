@@ -19,7 +19,7 @@ CSequence_Groggy::CSequence_Groggy(const CSequence_Groggy& rhs)
 HRESULT CSequence_Groggy::Initialize(void* pArg)
 {
 	/* ÄðÅ¸ÀÓ */
-	Add_Decoration([&](CBlackBoard* pBlackBoard)->_bool
+	Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 		{
 			BEGININSTANCE;
 			_float fInterval = pGameInstance->Get_World_TimeAcc() - m_fPreWorldTimeAcc;
@@ -32,7 +32,7 @@ HRESULT CSequence_Groggy::Initialize(void* pArg)
 		});
 
 	/* ½ºÆç È®ÀÎ */
-	Add_Decoration([&](CBlackBoard* pBlackBoard)->_bool
+	Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 		{
 			_uint* pICurrentSpell = { nullptr };
 			if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
@@ -121,6 +121,7 @@ HRESULT CSequence_Groggy::Assemble_Childs()
 		wstring wstrErrorMSG = TEXT("[CSequence_Groggy] Failed Assemble_Childs : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
 
 		ENDINSTANCE;
 

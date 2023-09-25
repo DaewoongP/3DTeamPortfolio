@@ -10,20 +10,20 @@
 #include "Check_Degree.h"
 #include "Random_Select.h"
 #include "Check_Distance.h"
-#include "Action_Deflect.h"
 #include "Selector_Degree.h"
 #include "Sequence_Groggy.h"
 #include "Sequence_Attack.h"
+#include "UI_Group_Enemy_HP.h"
 #include "Sequence_Levitated.h"
 #include "Sequence_MoveTarget.h"
 
 CArmored_Troll::CArmored_Troll(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CGameObject(pDevice, pContext)
+	: CEnemy(pDevice, pContext)
 {
 }
 
 CArmored_Troll::CArmored_Troll(const CArmored_Troll& rhs)
-	: CGameObject(rhs)
+	: CEnemy(rhs)
 {
 }
 
@@ -96,6 +96,24 @@ void CArmored_Troll::Late_Tick(_float fTimeDelta)
 
 void CArmored_Troll::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
+	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
+	wstring wstrCollisionTag = CollisionEventDesc.pOtherCollisionTag;
+	wstring wstrMyCollisionTag = CollisionEventDesc.pThisCollisionTag;
+
+	/* Collision Magic */
+	if (wstring::npos != wstrObjectTag.find(TEXT("MagicBall")))
+	{
+		CMagicBall::COLLSIONREQUESTDESC* pCollisionMagicBallDesc = static_cast<CMagicBall::COLLSIONREQUESTDESC*>(CollisionEventDesc.pArg);
+		BUFF_TYPE eBuff = pCollisionMagicBallDesc->eBuffType;
+		auto Action = pCollisionMagicBallDesc->Action;
+		_float fDamage = pCollisionMagicBallDesc->fDamage;
+
+		auto iter = m_CurrentTickSpells.find(eBuff);
+		if (iter == m_CurrentTickSpells.end())
+			m_CurrentTickSpells.emplace(eBuff, Action);
+
+		m_iCurrentSpell |= eBuff;
+	}
 }
 
 HRESULT CArmored_Troll::Render()
@@ -107,32 +125,10 @@ HRESULT CArmored_Troll::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-	for (_uint i = 0; i < iNumMeshes; ++i)
+	if (FAILED(__super::Render()))
 	{
-		try /* Failed Render */
-		{
-			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", i)))
-				throw TEXT("Bind_BoneMatrices");
-
-			if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", i, DIFFUSE)))
-				throw TEXT("Bind_Material Diffuse");
-
-			if (FAILED(m_pShaderCom->Begin("AnimMesh")))
-				throw TEXT("Shader Begin AnimMesh");
-
-			if (FAILED(m_pModelCom->Render(i)))
-				throw TEXT("Model Render");
-		}
-		catch (const _tchar* pErrorTag)
-		{
-			wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed Render : ");
-			wstrErrorMSG += pErrorTag;
-			MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
-
-			return E_FAIL;
-		}
+		MSG_BOX("[CGolem_Combat] Failed Render");
+		return E_FAIL;
 	}
 
 	return S_OK;
@@ -149,37 +145,8 @@ HRESULT CArmored_Troll::Make_AI()
 
 	try
 	{
-#pragma region Add_Types
-		if (FAILED(m_pRootBehavior->Add_Type("pTransform", m_pTransform)))
-			throw TEXT("Failed Add_Type pTransform");
-		if (FAILED(m_pRootBehavior->Add_Type("pModel", m_pModelCom)))
-			throw TEXT("Failed Add_Type pModel");
-		if (FAILED(m_pRootBehavior->Add_Type("isChangeAnimation", &m_isChangeAnimation)))
-			throw TEXT("Failed Add_Type isChangeAnimation");
-
-		if (FAILED(m_pRootBehavior->Add_Type("fTargetDistance", _float())))
-			throw TEXT("Failed Add_Type fTargetDistance");
-		if (FAILED(m_pRootBehavior->Add_Type("fAttackRange", _float())))
-			throw TEXT("Failed Add_Type fAttackRange");
-		if (FAILED(m_pRootBehavior->Add_Type("fTargetToDegree", _float())))
-			throw TEXT("Failed Add_Type fTargetToDegree");
-		if (FAILED(m_pRootBehavior->Add_Type("isTargetToLeft", _bool())))
-			throw TEXT("Failed Add_Type isTargetToLeft");
-
-		if (FAILED(m_pRootBehavior->Add_Type("isParring", &m_isParring)))
-			throw TEXT("Failed Add_Type isParring");
-		if (FAILED(m_pRootBehavior->Add_Type("isSpawn", &m_isSpawn)))
-			throw TEXT("Failed Add_Type isSpawn");
-		if (FAILED(m_pRootBehavior->Add_Type("iCurrentSpell", &m_iCurrentSpell)))
-			throw TEXT("Failed Add_Type iCurrentSpell");
-
-		m_pTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Player"), TEXT("GameObject_Player")));
-
-		if (nullptr == m_pTarget)
-			throw TEXT("m_pTarget is nullptr");
-		if (FAILED(m_pRootBehavior->Add_Type("cppTarget", &m_pTarget)))
-			throw TEXT("Failed Add_Type cppTarget");
-#pragma endregion Add_Types
+		if (FAILED(__super::Make_AI()))
+			throw TEXT("Failed Enemy Make_AI");
 
 		/* Make Childs */
 		CSelector* pSelector = dynamic_cast<CSelector*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Selector")));
@@ -229,6 +196,7 @@ HRESULT CArmored_Troll::Make_AI()
 		wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed Make_AI : ");
 		wstrErrorMSG += pErrorTag;
 		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+		__debugbreak();
 
 		ENDINSTANCE;
 
@@ -365,26 +333,15 @@ HRESULT CArmored_Troll::Add_Components()
 {
 	try /* Check Add_Components */
 	{
-		/* Com_Renderer */
-		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"),
-			TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
-			throw TEXT("Com_Renderer");
+		if (FAILED(__super::Add_Components()))
+			throw TEXT("Failed Enemy Add_Components");
 
 		/* For.Com_Model */
 		if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_Model_Armored_Troll"),
 			TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 			throw TEXT("Com_Model");
 
-		/* For.Com_Shader */
-		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimMesh"),
-			TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
-			throw TEXT("Com_Shader");
-
-		/* For.Com_RootBehavior */
-		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RootBehavior"),
-			TEXT("Com_RootBehavior"), reinterpret_cast<CComponent**>(&m_pRootBehavior))))
-			throw TEXT("Com_RootBehavior");
-
+		/* For.Com_RigidBody */
 		CRigidBody::RIGIDBODYDESC RigidBodyDesc;
 		RigidBodyDesc.isStatic = false;
 		RigidBodyDesc.isTrigger = false;
@@ -400,14 +357,14 @@ HRESULT CArmored_Troll::Add_Components()
 		RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 0.f, 1.f);
 		RigidBodyDesc.pOwnerObject = this;
 		RigidBodyDesc.eThisCollsion = COL_ENEMY;
-		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC | COL_NPC_RANGE;
+		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC | COL_NPC_RANGE | COL_MAGIC;
 		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Body");
 
-		/* For.Com_RigidBody */
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
 			TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
 			throw TEXT("Com_RigidBody");
 
+		/* For.Com_Weapon */
 		const CBone* pBone = m_pModelCom->Get_Bone(TEXT("SKT_RightHand"));
 		if (nullptr == pBone)
 			throw TEXT("pBone is nullptr");
@@ -421,12 +378,24 @@ HRESULT CArmored_Troll::Add_Components()
 		if (FAILED(Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_Weapon_Armored_Troll"),
 			TEXT("Com_Weapon"), reinterpret_cast<CComponent**>(&m_pWeapon), &ParentMatrixDesc)))
 			throw TEXT("Com_Weapon");
+
+		// UI
+		CUI_Group_Enemy_HP::ENEMYHPDESC  Desc;
+
+		Desc.eType = CUI_Group_Enemy_HP::ENEMYTYPE::BOSS;
+		lstrcpy(Desc.wszObjectLevel, TEXT("77"));
+		lstrcpy(Desc.wszObjectName, TEXT("°³Ã¶¹Î"));
+
+		if (FAILED(Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Enemy_HP"),
+			TEXT("UI_Enemy_HP"), reinterpret_cast<CComponent**>(&m_pUI_HP), &Desc)))
+			throw TEXT("UI_Enemy_HP");
 	}
 	catch (const _tchar* pErrorTag)
 	{
 		wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed Add_Components : ");
 		wstrErrorMSG += pErrorTag;
 		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+		__debugbreak();
 
 		return E_FAIL;
 	}
@@ -436,86 +405,7 @@ HRESULT CArmored_Troll::Add_Components()
 
 HRESULT CArmored_Troll::SetUp_ShaderResources()
 {
-	BEGININSTANCE;
-
-	try /* Check SetUp_ShaderResources */
-	{
-		if (nullptr == m_pShaderCom)
-			throw TEXT("m_pShaderCom is nullptr");
-
-		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
-			throw TEXT("Failed Bind_Matrix : g_WorldMatrix");
-
-		if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW))))
-			throw TEXT("Failed Bind_Matrix : g_ViewMatrix");
-
-		if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
-			throw TEXT("Failed Bind_Matrix : g_ProjMatrix");
-
-		if (FAILED(m_pShaderCom->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
-			throw TEXT("Failed Bind_RawValue : g_fCamFar");
-	}
-	catch (const _tchar* pErrorTag)
-	{
-		wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed SetUp_ShaderResources : \n");
-		wstrErrorMSG += pErrorTag;
-		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
-
-		ENDINSTANCE;
-
-		return E_FAIL;
-	}
-
-	ENDINSTANCE;
-
-	return S_OK;
-}
-
-void CArmored_Troll::Set_Current_Target()
-{
-	_float3 vPosition = m_pTransform->Get_Position();
-
-	for (auto& Pair : m_RangeInEnemies)
-	{
-		if (nullptr == m_pTarget)
-			m_pTarget = Pair.second;
-		else
-		{
-			_float3 vSrcTargetPosition = m_pTarget->Get_Transform()->Get_Position();
-			_float3 vDstTargetPosition = Pair.second->Get_Transform()->Get_Position();
-
-			_float vSrcDistance = _float3::Distance(vPosition, vSrcTargetPosition);
-			_float vDstDistance = _float3::Distance(vPosition, vDstTargetPosition);
-
-			m_pTarget = (vSrcDistance < vDstDistance) ? m_pTarget : Pair.second;
-		}
-	}
-
-	m_isRangeInEnemy = (0 < m_RangeInEnemies.size()) ? true : false;
-
-	if (false == m_isRangeInEnemy)
-	{
-		//m_pTarget = nullptr;
-	}
-}
-
-HRESULT CArmored_Troll::Remove_GameObject(const wstring& wstrObjectTag)
-{
-	auto iter = find_if(m_RangeInEnemies.begin(), m_RangeInEnemies.end(), [&](auto& Pair)->_bool
-		{
-			if (wstring::npos != Pair.first.find(wstrObjectTag))
-				return true;
-
-			return false;
-		});
-
-	if (iter == m_RangeInEnemies.end())
-		return E_FAIL;
-
-	//Safe_Release(iter->second);
-	m_RangeInEnemies.erase(iter);
-
-	return S_OK;
+	return __super::SetUp_ShaderResources();
 }
 
 #ifdef _DEBUG
@@ -529,7 +419,7 @@ void CArmored_Troll::Tick_ImGui()
 	ClientToScreen(g_hWnd, &rightBottom);
 	int Left = leftTop.x;
 	int Top = rightBottom.y;
-	ImVec2 vWinpos = { _float(Left + 1280.f), _float(Top - 300.f) };
+	ImVec2 vWinpos = { _float(Left + 1280.f), _float(Top) };
 	ImGui::SetNextWindowPos(vWinpos);
 
 	ImGui::Begin("Test Troll");
@@ -631,6 +521,7 @@ HRESULT CArmored_Troll::Make_Turns(_Inout_ CSequence* pSequence)
 		wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed Make_Turns : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
 
 		ENDINSTANCE;
 
@@ -737,6 +628,7 @@ HRESULT CArmored_Troll::Make_Turn_Run(_Inout_ CSequence* pSequence)
 		wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed Make_Turn_Run : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
 
 		ENDINSTANCE;
 
@@ -800,7 +692,7 @@ HRESULT CArmored_Troll::Make_Attack_Degree(_Inout_ CSequence* pSequence)
 			throw TEXT("pSequence_Attack_Right_180 is nullptr");
 
 		/* Set Decorations */
-		pSequence->Add_Decoration([&](CBlackBoard* pBlackBoard)->_bool
+		pSequence->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 			{
 				_float fAttackRange = { 0.f };
 				_float fTargetDistance = { 0.f };
@@ -880,6 +772,7 @@ HRESULT CArmored_Troll::Make_Attack_Degree(_Inout_ CSequence* pSequence)
 		wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed Make_Attack_Degree : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
 
 		ENDINSTANCE;
 
@@ -977,6 +870,7 @@ HRESULT CArmored_Troll::Make_Pattern_Attack_BackHnd(_Inout_ CSequence* pSequence
 		wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed Make_Pattern_Attack_BackHnd : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
 
 		ENDINSTANCE;
 
@@ -1062,6 +956,7 @@ HRESULT CArmored_Troll::Make_Pattern_Attack_ForHnd(_Inout_ CSequence* pSequence)
 		wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed Make_Pattern_Attack_ForHnd : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
 
 		ENDINSTANCE;
 
@@ -1117,6 +1012,7 @@ HRESULT CArmored_Troll::Make_Attack_Left_45(_Inout_ CSequence* pSequence)
 		wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed Make_Attack_Left_45 : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
 
 		ENDINSTANCE;
 
@@ -1192,6 +1088,7 @@ HRESULT CArmored_Troll::Make_Attack_Left_90(_Inout_ CSequence* pSequence)
 		wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed Make_Attack_Left_90 : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
 
 		ENDINSTANCE;
 
@@ -1231,6 +1128,7 @@ HRESULT CArmored_Troll::Make_Attack_Left_135(_Inout_ CSequence* pSequence)
 		wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed Make_Attack_Left_135 : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
 
 		ENDINSTANCE;
 
@@ -1270,6 +1168,7 @@ HRESULT CArmored_Troll::Make_Attack_Left_180(_Inout_ CSequence* pSequence)
 		wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed Make_Attack_Left_180 : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
 
 		ENDINSTANCE;
 
@@ -1325,6 +1224,7 @@ HRESULT CArmored_Troll::Make_Attack_Right_45(_Inout_ CSequence* pSequence)
 		wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed Make_Attack_Right_45 : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
 
 		ENDINSTANCE;
 
@@ -1384,6 +1284,7 @@ HRESULT CArmored_Troll::Make_Attack_Right_90(_Inout_ CSequence* pSequence)
 		wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed Make_Attack_Right_90 : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
 
 		ENDINSTANCE;
 
@@ -1423,6 +1324,7 @@ HRESULT CArmored_Troll::Make_Attack_Right_135(_Inout_ CSequence* pSequence)
 		wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed Make_Attack_Right_135 : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
 
 		ENDINSTANCE;
 
@@ -1462,6 +1364,7 @@ HRESULT CArmored_Troll::Make_Attack_Right_180(_Inout_ CSequence* pSequence)
 		wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed Make_Attack_Right_180 : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
 
 		ENDINSTANCE;
 
@@ -1510,6 +1413,7 @@ HRESULT CArmored_Troll::Make_Pattern_Attack_Far(_Inout_ CRandom_Select* pRandom_
 		wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed Make_Pattern_Attack_Far : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
 
 		ENDINSTANCE;
 
@@ -1562,7 +1466,7 @@ HRESULT CArmored_Troll::Make_Pattern_Attack_Run(_Inout_ CSequence* pSequence)
 			throw TEXT("pTsk_LookAt is nullptr");
 
 		/* Set Decorations */
-		pSequence_Turn_Run->Add_Decoration([&](CBlackBoard* pBlackBoard)->_bool
+		pSequence_Turn_Run->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 			{
 				_float fAttackRange = { 0.f };
 				_float fTargetDistance = { 0.f };
@@ -1624,6 +1528,7 @@ HRESULT CArmored_Troll::Make_Pattern_Attack_Run(_Inout_ CSequence* pSequence)
 		wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed Make_Pattern_Attack_Run : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
 
 		ENDINSTANCE;
 
@@ -1710,6 +1615,7 @@ HRESULT CArmored_Troll::Make_Pattern_Attack_Charge(_Inout_ CSelector* pSelector)
 		wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed Make_Charge : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
 
 		ENDINSTANCE;
 
@@ -1894,6 +1800,7 @@ HRESULT CArmored_Troll::Make_Taunt_Degree(_Inout_ CSequence* pSequence)
 		wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed Make_Turn_Run : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
 
 		ENDINSTANCE;
 
@@ -1926,7 +1833,7 @@ void CArmored_Troll::Enter_Heavy_Attack()
 
 void CArmored_Troll::Enter_Body_Attack()
 {
-	m_CollisionRequestDesc.eType = ATTACK_BODY;
+	m_CollisionRequestDesc.eType = ATTACK_HEAVY;
 	m_CollisionRequestDesc.fDamage = 0.f;
 	Set_CollisionData(&m_CollisionRequestDesc);
 }
@@ -1970,11 +1877,7 @@ void CArmored_Troll::Free()
 
 	if (true == m_isCloned)
 	{
+		Safe_Release(m_pUI_HP);
 		Safe_Release(m_pWeapon);
-		Safe_Release(m_pModelCom);
-		Safe_Release(m_pRenderer);
-		Safe_Release(m_pShaderCom);
-		Safe_Release(m_pRigidBody);
-		Safe_Release(m_pRootBehavior);
 	}
 }

@@ -36,7 +36,7 @@ HRESULT CMagicSlot::Initialize(void* pArg)
 	//Basic Magic BasicCast
 	{
 		CMagic::MAGICDESC magicInitDesc;
-		magicInitDesc.eBuffType = BUFF_NONE;
+		magicInitDesc.eBuffType = BUFF_ATTACK_LIGHT;
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
 		magicInitDesc.eMagicTag = BASICCAST;

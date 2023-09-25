@@ -112,6 +112,7 @@ void CProfessor_Fig::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		if (wstring::npos != wstrObjectTag.find(TEXT("Golem")) ||
 			wstring::npos != wstrObjectTag.find(TEXT("Troll")))
 		{
+			cout << "In Monster" << endl;
 			m_RangeInEnemies.push_back({ wstrObjectTag, CollisionEventDesc.pOtherOwner });
 		}
 	}
@@ -127,6 +128,7 @@ void CProfessor_Fig::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 	{
 		if (wstring::npos != wstrObjectTag.find(TEXT("Golem")))
 		{
+			cout << "Out Monster" << endl;
 			if (FAILED(Remove_GameObject(wstrObjectTag)))
 			{
 				MSG_BOX("[CProfessor_Fig] Failed OnCollisionExit : \nFailed Remove_GameObject");
@@ -173,7 +175,7 @@ HRESULT CProfessor_Fig::Render()
 		}
 		catch (const _tchar* pErrorTag)
 		{
-			wstring wstrErrorMSG = TEXT("[CGolem_Combat] Failed Render : ");
+			wstring wstrErrorMSG = TEXT("[CProfessor_Fig] Failed Render : ");
 			wstrErrorMSG += pErrorTag;
 			MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
 
@@ -246,6 +248,7 @@ HRESULT CProfessor_Fig::Make_AI()
 		wstring wstrErrorMSG = TEXT("[CProfessor_Fig] Failed Make_AI : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
 
 		ENDINSTANCE;
 
@@ -262,7 +265,7 @@ HRESULT CProfessor_Fig::Make_Magics()
 	//Basic Magic BasicCast
 	{
 		CMagic::MAGICDESC magicInitDesc;
-		magicInitDesc.eBuffType = BUFF_NONE;
+		magicInitDesc.eBuffType = BUFF_ATTACK_LIGHT;
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
 		magicInitDesc.eMagicTag = BASICCAST;
@@ -425,9 +428,10 @@ HRESULT CProfessor_Fig::Add_Components()
 	}
 	catch (const _tchar* pErrorTag)
 	{
-		wstring wstrErrorMSG = TEXT("[CGolem_Combat] Failed Add_Components : \n");
+		wstring wstrErrorMSG = TEXT("[CProfessor_Fig] Failed Add_Components : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
 
 		return E_FAIL;
 	}
@@ -455,10 +459,14 @@ HRESULT CProfessor_Fig::SetUp_ShaderResources()
 
 		if (FAILED(m_pShaderCom->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
 			throw TEXT("Failed Bind_RawValue : g_fCamFar");
+
+		_float3 vHairColor = { 1.f, 1.f, 1.f };
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_fHairColor", &vHairColor, sizeof(_float3))))
+			throw TEXT("Failed Bind_RawValue : g_fHairColor");
 	}
 	catch (const _tchar* pErrorTag)
 	{
-		wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed SetUp_ShaderResources : \n");
+		wstring wstrErrorMSG = TEXT("[CProfessor_Fig] Failed SetUp_ShaderResources : \n");
 		wstrErrorMSG += pErrorTag;
 		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
 
@@ -632,9 +640,10 @@ HRESULT CProfessor_Fig::Make_Turns(_Inout_ CSequence* pSequence)
 	}
 	catch (const _tchar* pErrorTag)
 	{
-		wstring wstrErrorMSG = TEXT("[CGolem_Combat] Failed Make_Turns : \n");
+		wstring wstrErrorMSG = TEXT("[CProfessor_Fig] Failed Make_Turns : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
 
 		ENDINSTANCE;
 
@@ -661,7 +670,7 @@ HRESULT CProfessor_Fig::Make_Non_Combat(_Inout_ CSelector* pSelector)
 			throw TEXT("pSequence_Turns is nullptr");
 
 		/* Set Decorations */
-		pSelector->Add_Decoration([&](CBlackBoard* pBlackBoard)->_bool
+		pSelector->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 			{
 				_bool* pIsRangeInEnemy = { nullptr };
 
@@ -682,9 +691,10 @@ HRESULT CProfessor_Fig::Make_Non_Combat(_Inout_ CSelector* pSelector)
 	}
 	catch (const _tchar* pErrorTag)
 	{
-		wstring wstrErrorMSG = TEXT("[CGolem_Combat] Failed Make_Turns : \n");
+		wstring wstrErrorMSG = TEXT("[CProfessor_Fig] Failed Make_Turns : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
 
 		ENDINSTANCE;
 
@@ -720,7 +730,7 @@ HRESULT CProfessor_Fig::Make_Combat(_Inout_ CSelector* pSelector)
 			throw TEXT("pAction_Protego is nullptr");
 
 		/* Set Decorations */
-		pSelector->Add_Decoration([&](CBlackBoard* pBlackBoard)->_bool
+		pSelector->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 			{
 				_bool* pIsRangeInEnemy = { nullptr };
 
@@ -751,9 +761,10 @@ HRESULT CProfessor_Fig::Make_Combat(_Inout_ CSelector* pSelector)
 	}
 	catch (const _tchar* pErrorTag)
 	{
-		wstring wstrErrorMSG = TEXT("[CGolem_Combat] Failed Make_Turns : \n");
+		wstring wstrErrorMSG = TEXT("[CProfessor_Fig] Failed Make_Turns : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
 
 		ENDINSTANCE;
 
@@ -812,9 +823,10 @@ HRESULT CProfessor_Fig::Make_Attack_Combo1(_Inout_ CSequence* pSequence)
 	}
 	catch (const _tchar* pErrorTag)
 	{
-		wstring wstrErrorMSG = TEXT("[CGolem_Combat] Failed Make_Turns : \n");
+		wstring wstrErrorMSG = TEXT("[CProfessor_Fig] Failed Make_Turns : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
 
 		ENDINSTANCE;
 
@@ -903,9 +915,10 @@ HRESULT CProfessor_Fig::Make_Attack_Degree(_Inout_ CSequence* pSequence)
 	}
 	catch (const _tchar* pErrorTag)
 	{
-		wstring wstrErrorMSG = TEXT("[CGolem_Combat] Failed Make_Turns : \n");
+		wstring wstrErrorMSG = TEXT("[CProfessor_Fig] Failed Make_Turns : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
 
 		ENDINSTANCE;
 

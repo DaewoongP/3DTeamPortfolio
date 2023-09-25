@@ -5,6 +5,7 @@ float4x4 g_BoneMatrices[256];
 texture2D g_DiffuseTexture;
 texture2D g_NormalTexture;
 
+float3 g_fHairColor = float3(1.f, 1.f, 1.f);
 float g_fCamFar;
 
 struct VS_IN
@@ -144,7 +145,7 @@ PS_OUT PS_MAIN_HAIR(PS_IN In)
     if (vDiffuse.g < 0.1f)
         discard;
     
-    vDiffuse.rgb = 1.f - vDiffuse.r - vDiffuse.b;
+    vDiffuse.rgb = g_fHairColor - vDiffuse.r - vDiffuse.b;
 
     Out.vDiffuse = vDiffuse;
 	

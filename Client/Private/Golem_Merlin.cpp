@@ -6,7 +6,6 @@
 #include "Magic.h"
 #include "Action.h"
 #include "Random_Select.h"
-#include "Action_Deflect.h"
 #include "Selector_Degree.h"
 #include "Sequence_Groggy.h"
 #include "Sequence_Attack.h"
@@ -158,9 +157,11 @@ HRESULT CGolem_Merlin::Make_AI()
 	}
 	catch (const _tchar* pErrorTag)
 	{
-		wstring wstrErrorMSG = TEXT("[CGolem_Combat] Failed Make_AI : \n");
+		wstring wstrErrorMSG = TEXT("[CGolem_Merlin] Failed Make_AI : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
+
 		ENDINSTANCE;
 
 		return E_FAIL;
@@ -234,6 +235,7 @@ HRESULT CGolem_Merlin::Add_Components()
 		wstring wstrErrorMSG = TEXT("[CGolem_Merlin] Failed Add_Components : ");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
 
 		return E_FAIL;
 	}
@@ -264,7 +266,7 @@ HRESULT CGolem_Merlin::SetUp_ShaderResources()
 	}
 	catch (const _tchar* pErrorTag)
 	{
-		wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed SetUp_ShaderResources : \n");
+		wstring wstrErrorMSG = TEXT("[CGolem_Merlin] Failed SetUp_ShaderResources : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
 

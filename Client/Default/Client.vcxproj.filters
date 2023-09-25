@@ -600,9 +600,6 @@
     <ClInclude Include="..\Public\Random_Select.h">
       <Filter>03. Behaviors\03. RandomChoose</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Action_Deflect.h">
-      <Filter>03. Behaviors\00. Action</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Sequence_Groggy.h">
       <Filter>03. Behaviors\02. Sequences</Filter>
     </ClInclude>
@@ -714,9 +711,6 @@
     <ClInclude Include="..\public\Seamless_Loader.h">
       <Filter>02. GameObject\99. Debug\SeamLess</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Menu_Gear.h">
-      <Filter>05. Scene\Main_Menu\Gear</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\UI_HP.h">
       <Filter>02. GameObject\05. UI\UI\UI_HP</Filter>
     </ClInclude>
@@ -776,6 +770,19 @@
     </ClInclude>
     <ClInclude Include="..\Public\Menu_Gear.h">
       <Filter>06. Scene\Main_Menu\Gear</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Menu_Gear.h" />
+    <ClInclude Include="..\Public\Sequence_AirHit.h">
+      <Filter>03. Behaviors\02. Sequences</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Random_AirHit.h">
+      <Filter>03. Behaviors\03. RandomChoose</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Death.h">
+      <Filter>03. Behaviors\04. Movement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Enemy.h">
+      <Filter>02. GameObject\02. Enemy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -968,9 +975,6 @@
     <ClCompile Include="..\Private\Random_Select.cpp">
       <Filter>03. Behaviors\03. RandomChoose</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Action_Deflect.cpp">
-      <Filter>03. Behaviors\00. Action</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Sequence_Groggy.cpp">
       <Filter>03. Behaviors\02. Sequences</Filter>
     </ClCompile>
@@ -1138,6 +1142,18 @@
     </ClCompile>
     <ClCompile Include="..\Private\LookAt.cpp">
       <Filter>03. Behaviors\04. Movement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Sequence_AirHit.cpp">
+      <Filter>03. Behaviors\02. Sequences</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Random_AirHit.cpp">
+      <Filter>03. Behaviors\03. RandomChoose</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Death.cpp">
+      <Filter>03. Behaviors\04. Movement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Enemy.cpp">
+      <Filter>02. GameObject\02. Enemy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

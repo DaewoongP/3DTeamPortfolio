@@ -2,11 +2,12 @@
 
 #include "Wait.h"
 #include "Turn.h"
+#include "Death.h"
 #include "LookAt.h"
 #include "Action.h"
 #include "Check_Degree.h"
 #include "Random_Select.h"
-#include "Action_Deflect.h"
+#include "Random_AirHit.h"
 #include "Check_Distance.h"
 #include "Sequence_Groggy.h"
 #include "Selector_Degree.h"

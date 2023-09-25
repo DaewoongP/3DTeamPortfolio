@@ -21,7 +21,7 @@ CSequence_MoveTarget::CSequence_MoveTarget(const CSequence_MoveTarget& rhs)
 HRESULT CSequence_MoveTarget::Initialize(void* pArg)
 {
 	/* ÄðÅ¸ÀÓ */
-	Add_Decoration([&](CBlackBoard* pBlackBoard)->_bool
+	Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 		{
 			BEGININSTANCE;
 			_float fInterval = pGameInstance->Get_World_TimeAcc() - m_fPreWorldTimeAcc;
@@ -90,9 +90,10 @@ HRESULT CSequence_MoveTarget::Assemble_Childs()
 	}
 	catch (const _tchar* pErrorTag)
 	{
-		wstring wstrErrorMSG = TEXT("[CGolem_Combat] Failed Make_Move : \n");
+		wstring wstrErrorMSG = TEXT("[CSequence_MoveTarget] Failed Make_Move : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
 
 		ENDINSTANCE;
 

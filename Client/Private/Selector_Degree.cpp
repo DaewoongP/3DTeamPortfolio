@@ -17,7 +17,7 @@ CSelector_Degree::CSelector_Degree(const CSelector_Degree& rhs)
 HRESULT CSelector_Degree::Initialize(void* pArg)
 {
 	/* ÄðÅ¸ÀÓ */
-	Add_Decoration([&](CBlackBoard* pBlackBoard)->_bool
+	Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 		{
 			BEGININSTANCE;
 			_float fInterval = pGameInstance->Get_World_TimeAcc() - m_fPreWorldTimeAcc;
@@ -60,7 +60,7 @@ HRESULT CSelector_Degree::Assemble_Behavior(DEGREES eType, CBehavior* pBehavior)
 		switch (eType)
 		{
 		case Client::CSelector_Degree::LEFT_FRONT:
-			pBehavior->Add_Decoration([&](CBlackBoard* pBlackBoard)->_bool
+			pBehavior->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 				{
 					_bool isLeft = { false };
 					if (FAILED(pBlackBoard->Get_Type("isTargetToLeft", isLeft)))
@@ -77,7 +77,7 @@ HRESULT CSelector_Degree::Assemble_Behavior(DEGREES eType, CBehavior* pBehavior)
 			break;
 
 		case Client::CSelector_Degree::LEFT_BACK:
-			pBehavior->Add_Decoration([&](CBlackBoard* pBlackBoard)->_bool
+			pBehavior->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 				{
 					_bool isLeft = { false };
 					if (FAILED(pBlackBoard->Get_Type("isTargetToLeft", isLeft)))
@@ -94,7 +94,7 @@ HRESULT CSelector_Degree::Assemble_Behavior(DEGREES eType, CBehavior* pBehavior)
 			break;
 
 		case Client::CSelector_Degree::LEFT_45:
-			pBehavior->Add_Decoration([&](CBlackBoard* pBlackBoard)->_bool
+			pBehavior->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 				{
 					_bool isLeft = { false };
 					if (FAILED(pBlackBoard->Get_Type("isTargetToLeft", isLeft)))
@@ -112,7 +112,7 @@ HRESULT CSelector_Degree::Assemble_Behavior(DEGREES eType, CBehavior* pBehavior)
 			break;
 
 		case Client::CSelector_Degree::LEFT_90:
-			pBehavior->Add_Decoration([&](CBlackBoard* pBlackBoard)->_bool
+			pBehavior->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 				{
 					_bool isLeft = { false };
 					if (FAILED(pBlackBoard->Get_Type("isTargetToLeft", isLeft)))
@@ -130,7 +130,7 @@ HRESULT CSelector_Degree::Assemble_Behavior(DEGREES eType, CBehavior* pBehavior)
 			break;
 
 		case Client::CSelector_Degree::LEFT_135:
-			pBehavior->Add_Decoration([&](CBlackBoard* pBlackBoard)->_bool
+			pBehavior->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 				{
 					_bool isLeft = { false };
 					if (FAILED(pBlackBoard->Get_Type("isTargetToLeft", isLeft)))
@@ -148,7 +148,7 @@ HRESULT CSelector_Degree::Assemble_Behavior(DEGREES eType, CBehavior* pBehavior)
 			break;
 
 		case Client::CSelector_Degree::RIGHT_FRONT:
-			pBehavior->Add_Decoration([&](CBlackBoard* pBlackBoard)->_bool
+			pBehavior->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 				{
 					_bool isLeft = { false };
 					if (FAILED(pBlackBoard->Get_Type("isTargetToLeft", isLeft)))
@@ -165,7 +165,7 @@ HRESULT CSelector_Degree::Assemble_Behavior(DEGREES eType, CBehavior* pBehavior)
 			break;
 
 		case Client::CSelector_Degree::RIGHT_BACK:
-			pBehavior->Add_Decoration([&](CBlackBoard* pBlackBoard)->_bool
+			pBehavior->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 				{
 					_bool isLeft = { false };
 					if (FAILED(pBlackBoard->Get_Type("isTargetToLeft", isLeft)))
@@ -182,7 +182,7 @@ HRESULT CSelector_Degree::Assemble_Behavior(DEGREES eType, CBehavior* pBehavior)
 			break;
 
 		case Client::CSelector_Degree::RIGHT_45:
-			pBehavior->Add_Decoration([&](CBlackBoard* pBlackBoard)->_bool
+			pBehavior->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 				{
 					_bool isLeft = { false };
 					if (FAILED(pBlackBoard->Get_Type("isTargetToLeft", isLeft)))
@@ -200,7 +200,7 @@ HRESULT CSelector_Degree::Assemble_Behavior(DEGREES eType, CBehavior* pBehavior)
 			break;
 
 		case Client::CSelector_Degree::RIGHT_90:
-			pBehavior->Add_Decoration([&](CBlackBoard* pBlackBoard)->_bool
+			pBehavior->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 				{
 					_bool isLeft = { false };
 					if (FAILED(pBlackBoard->Get_Type("isTargetToLeft", isLeft)))
@@ -218,7 +218,7 @@ HRESULT CSelector_Degree::Assemble_Behavior(DEGREES eType, CBehavior* pBehavior)
 			break;
 
 		case Client::CSelector_Degree::RIGHT_135:
-			pBehavior->Add_Decoration([&](CBlackBoard* pBlackBoard)->_bool
+			pBehavior->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 				{
 					_bool isLeft = { false };
 					if (FAILED(pBlackBoard->Get_Type("isTargetToLeft", isLeft)))
@@ -247,6 +247,7 @@ HRESULT CSelector_Degree::Assemble_Behavior(DEGREES eType, CBehavior* pBehavior)
 		wstring wstrErrorMSG = TEXT("[Selector_Degree] Failed Assemble_Behavior : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
 
 		ENDINSTANCE;
 

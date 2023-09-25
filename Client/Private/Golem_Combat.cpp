@@ -4,11 +4,12 @@
 #include "Weapon_Golem_Combat.h"
 
 #include "Wait.h"
+#include "Death.h"
 #include "Action.h"
 #include "MagicBall.h"
 #include "Check_Degree.h"
+#include "Random_AirHit.h"
 #include "Random_Select.h"
-#include "Action_Deflect.h"
 #include "Selector_Degree.h"
 #include "Sequence_Groggy.h"
 #include "Sequence_Attack.h"
@@ -16,12 +17,12 @@
 #include "Sequence_MoveTarget.h"
 
 CGolem_Combat::CGolem_Combat(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CGameObject(pDevice, pContext)
+	: CEnemy(pDevice, pContext)
 {
 }
 
 CGolem_Combat::CGolem_Combat(const CGolem_Combat& rhs)
-	: CGameObject(rhs)
+	: CEnemy(rhs)
 {
 }
 
@@ -37,14 +38,6 @@ HRESULT CGolem_Combat::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
-
-	if (nullptr != pArg)
-	{
-		_float4x4* pWorldMatrix = reinterpret_cast<_float4x4*>(pArg);
-		m_pTransform->Set_WorldMatrix(*pWorldMatrix);
-	}
-	else
-		m_pTransform->Set_Position(_float3(_float(rand() % 5) + 15.f, 2.f, _float(rand() % 5) + 15.f));
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
@@ -62,18 +55,14 @@ HRESULT CGolem_Combat::Initialize(void* pArg)
 void CGolem_Combat::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-	
+
 	// Test Code 
 	BEGININSTANCE;
-	
+
 	if (pGameInstance->Get_DIKeyState(DIK_LCONTROL, CInput_Device::KEY_PRESSING))
 	{
-		if (pGameInstance->Get_DIKeyState(DIK_5, CInput_Device::KEY_DOWN))
-			m_isSpawn = true;
 		if (pGameInstance->Get_DIKeyState(DIK_4, CInput_Device::KEY_DOWN))
 			m_isParring = true;
-		if (pGameInstance->Get_DIKeyState(DIK_2, CInput_Device::KEY_DOWN))
-			m_iCurrentSpell |= BUFF_LEVIOSO;
 		if (pGameInstance->Get_DIKeyState(DIK_1, CInput_Device::KEY_DOWN))
 			m_iCurrentSpell |= BUFF_STUPEFY;
 	}
@@ -87,11 +76,12 @@ void CGolem_Combat::Tick(_float fTimeDelta)
 		m_pRootBehavior->Tick(fTimeDelta);
 
 	_float3 vPosition = m_pTransform->Get_Position();
+
 	for (auto iter = m_CurrentTickSpells.begin(); iter != m_CurrentTickSpells.end(); )
 	{
 		if (iter->first & m_iCurrentSpell)
 		{
-			//iter->second(vPosition, fTimeDelta);
+			iter->second(vPosition, fTimeDelta);
 			++iter;
 		}
 		else
@@ -129,9 +119,20 @@ void CGolem_Combat::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		auto Action = pCollisionMagicBallDesc->Action;
 		_float fDamage = pCollisionMagicBallDesc->fDamage;
 
+		cout << fDamage << endl;
+		m_pHealth->Damaged(fDamage);
+
 		auto iter = m_CurrentTickSpells.find(eBuff);
-		if (iter == m_CurrentTickSpells.end())
+		if (iter == m_CurrentTickSpells.end() && BUFF_LEVIOSO == eBuff)
+		{
 			m_CurrentTickSpells.emplace(eBuff, Action);
+		}
+
+		if (eBuff & m_iCurrentSpell)
+			m_isHitCombo = true;
+
+		if (eBuff & BUFF_ATTACK_LIGHT)
+			m_isHitAttack = true;
 
 		m_iCurrentSpell |= eBuff;
 	}
@@ -142,6 +143,7 @@ void CGolem_Combat::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		if (wstring::npos != wstrObjectTag.find(TEXT("Player")) ||
 			wstring::npos != wstrObjectTag.find(TEXT("Fig")))
 		{
+			m_isSpawn = true;
 			m_RangeInEnemies.push_back({ wstrObjectTag, CollisionEventDesc.pOtherOwner });
 		}
 	}
@@ -170,38 +172,16 @@ void CGolem_Combat::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 HRESULT CGolem_Combat::Render()
 {
 #ifdef _DEBUG
-	//Tick_ImGui();
+	Tick_ImGui();
 #endif // _DEBUG
 
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-	for (_uint i = 0; i < iNumMeshes; ++i)
+	if (FAILED(__super::Render()))
 	{
-		try /* Failed Render */
-		{
-			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", i)))
-				throw TEXT("Bind_BoneMatrices");
-
-			if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", i, DIFFUSE)))
-				throw TEXT("Bind_Material Diffuse");
-
-			if (FAILED(m_pShaderCom->Begin("AnimMesh")))
-				throw TEXT("Shader Begin AnimMesh");
-
-			if (FAILED(m_pModelCom->Render(i)))
-				throw TEXT("Model Render");
-		}
-		catch (const _tchar* pErrorTag)
-		{
-			wstring wstrErrorMSG = TEXT("[CGolem_Combat] Failed Render : ");
-			wstrErrorMSG += pErrorTag;
-			MSG_BOX(wstrErrorMSG.c_str());
-
-			return E_FAIL;
-		}
+		MSG_BOX("[CGolem_Combat] Failed Render");
+		return E_FAIL;
 	}
 
 	return S_OK;
@@ -218,38 +198,8 @@ HRESULT CGolem_Combat::Make_AI()
 
 	try /* Failed Check Make_AI */
 	{
-#pragma region Add_Types
-		if (FAILED(m_pRootBehavior->Add_Type("pTransform", m_pTransform)))
-			throw TEXT("Failed Add_Type pTransform");
-		if (FAILED(m_pRootBehavior->Add_Type("pModel", m_pModelCom)))
-			throw TEXT("Failed Add_Type pModel");
-		if (FAILED(m_pRootBehavior->Add_Type("isChangeAnimation", &m_isChangeAnimation)))
-			throw TEXT("Failed Add_Type isChangeAnimation");
-
-		if (FAILED(m_pRootBehavior->Add_Type("fTargetDistance", _float())))
-			throw TEXT("Failed Add_Type fTargetDistance");
-		if (FAILED(m_pRootBehavior->Add_Type("fAttackRange", _float())))
-			throw TEXT("Failed Add_Type fAttackRange");
-		if (FAILED(m_pRootBehavior->Add_Type("fTargetToDegree", _float())))
-			throw TEXT("Failed Add_Type fTargetToDegree");
-		if (FAILED(m_pRootBehavior->Add_Type("isTargetToLeft", _bool())))
-			throw TEXT("Failed Add_Type isTargetToLeft");
-
-		if (FAILED(m_pRootBehavior->Add_Type("isParring", &m_isParring)))
-			throw TEXT("Failed Add_Type isParring");
-		if (FAILED(m_pRootBehavior->Add_Type("isSpawn", &m_isSpawn)))
-			throw TEXT("Failed Add_Type isSpawn");
-		if (FAILED(m_pRootBehavior->Add_Type("iCurrentSpell", &m_iCurrentSpell)))
-			throw TEXT("Failed Add_Type iCurrentSpell");
-
-		
-		m_pTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Player"), TEXT("GameObject_Player")));
-		
-		if (nullptr == m_pTarget)
-			throw TEXT("m_pTarget is nullptr");
-		if (FAILED(m_pRootBehavior->Add_Type("cppTarget", &m_pTarget)))
-			throw TEXT("Failed Add_Type cppTarget");
-#pragma endregion //Add_Types
+		if (FAILED(__super::Make_AI()))
+			throw TEXT("Failed Enemy Make_AI");
 
 		/* Make Child Behaviors */
 		CSelector* pSelector = dynamic_cast<CSelector*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Selector")));
@@ -259,21 +209,38 @@ HRESULT CGolem_Combat::Make_AI()
 		CAction* pAction_Spawn = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
 		if (nullptr == pAction_Spawn)
 			throw TEXT("pAction_Spawn is nullptr");
-		CSelector* pSelector_NormalAttack = dynamic_cast<CSelector*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Selector")));
-		if (nullptr == pSelector_NormalAttack)
-			throw TEXT("pSelector_NormalAttack is nullptr");
+		CSequence* pSequence_Death = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
+		if (nullptr == pSequence_Death)
+			throw TEXT("pSequence_Death is nullptr");
+		CSelector* pSelector_Alive = dynamic_cast<CSelector*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Selector")));
+		if (nullptr == pSelector_Alive)
+			throw TEXT("pSelector_Alive is nullptr");
+		CSelector* pSelector_Hit_Combo = dynamic_cast<CSelector*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Selector")));
+		if (nullptr == pSelector_Hit_Combo)
+			throw TEXT("pSelector_Hit_Combo is nullptr");
 		CSelector* pSelector_CheckSpell = dynamic_cast<CSelector*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Selector")));
 		if (nullptr == pSelector_CheckSpell)
 			throw TEXT("pSelector_CheckSpell is nullptr");
+		CSelector* pSelector_NormalAttack = dynamic_cast<CSelector*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Selector")));
+		if (nullptr == pSelector_NormalAttack)
+			throw TEXT("pSelector_NormalAttack is nullptr");
 
 		/* Set Decorations */
-		pSelector->Add_Decoration([&](CBlackBoard* pBlackBoard)->_bool
+		pSelector->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 			{
 				_bool* pIsSpawn = { nullptr };
 				if (FAILED(pBlackBoard->Get_Type("isSpawn", pIsSpawn)))
 					return false;
 
 				return *pIsSpawn;
+			});
+		pSelector_Alive->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				CHealth* pHealth = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("pHealth", pHealth)))
+					return false;
+
+				return !(pHealth->isDead());
 			});
 
 		/* Set Options */
@@ -285,11 +252,22 @@ HRESULT CGolem_Combat::Make_AI()
 
 		if (FAILED(pSelector->Assemble_Behavior(TEXT("Action_Spawn"), pAction_Spawn)))
 			throw TEXT("Failed Assemble_Behavior Action_Spawn");
-		if (FAILED(pSelector->Assemble_Behavior(TEXT("Selector_NormalAttack"), pSelector_NormalAttack)))
-			throw TEXT("Failed Assemble_Behavior Selector_NormalAttack");
-		if (FAILED(pSelector->Assemble_Behavior(TEXT("Selector_CheckSpell"), pSelector_CheckSpell)))
-			throw TEXT("Failed Assemble_Behavior Selector_CheckSpell");
+		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Death"), pSequence_Death)))
+			throw TEXT("Failed Assemble_Behavior Sequence_Death");
+		if(FAILED(pSelector->Assemble_Behavior(TEXT("Selector_Alive"), pSelector_Alive)))
+			throw TEXT("Failed Assemble_Behavior Selector_Alive");
 
+		if (FAILED(pSelector_Alive->Assemble_Behavior(TEXT("Selector_Hit_Combo"), pSelector_Hit_Combo)))
+			throw TEXT("Failed Assemble_Behavior Selector_Hit_Combo");
+		if (FAILED(pSelector_Alive->Assemble_Behavior(TEXT("Selector_CheckSpell"), pSelector_CheckSpell)))
+			throw TEXT("Failed Assemble_Behavior Selector_CheckSpell");
+		if (FAILED(pSelector_Alive->Assemble_Behavior(TEXT("Selector_NormalAttack"), pSelector_NormalAttack)))
+			throw TEXT("Failed Assemble_Behavior Selector_NormalAttack");
+
+		if (FAILED(Make_Death(pSequence_Death)))
+			throw TEXT("Failed Make_Death");
+		if (FAILED(Make_Hit_Combo(pSelector_Hit_Combo)))
+			throw TEXT("Failed Make_NormalAttack");
 		if (FAILED(Make_Check_Spell(pSelector_CheckSpell)))
 			throw TEXT("Failed Make_NormalAttack");
 		if (FAILED(Make_NormalAttack(pSelector_NormalAttack)))
@@ -300,6 +278,8 @@ HRESULT CGolem_Combat::Make_AI()
 		wstring wstrErrorMSG = TEXT("[CGolem_Combat] Failed Make_AI : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
+
 		ENDINSTANCE;
 
 		return E_FAIL;
@@ -310,64 +290,29 @@ HRESULT CGolem_Combat::Make_AI()
 	return S_OK;
 }
 
+HRESULT CGolem_Combat::Make_Notifies()
+{
+	return S_OK;
+}
+
 HRESULT CGolem_Combat::Add_Components()
 {
 	try /* Check Add_Components */
 	{
-		/* Com_Renderer */
-		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"),
-			TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
-			throw TEXT("Com_Renderer");
+		if (FAILED(__super::Add_Components()))
+			throw TEXT("Failed Enemy Add_Components");
 
 		/* For.Com_Model */
 		if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_Model_Golem_Combat"),
 			TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 			throw TEXT("Com_Model");
 
-		/* For.Com_Shader */
-		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimMesh"),
-			TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
-			throw TEXT("Com_Shader");
-
-		/* For.Com_RootBehavior */
-		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RootBehavior"),
-			TEXT("Com_RootBehavior"), reinterpret_cast<CComponent**>(&m_pRootBehavior))))
-			throw TEXT("Com_RootBehavior");
-
-		CRigidBody::RIGIDBODYDESC RigidBodyDesc;
-		RigidBodyDesc.isStatic = false;
-		RigidBodyDesc.isTrigger = false;
-		RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
-		RigidBodyDesc.vOffsetPosition = _float3(0.f, 2.2f, 0.f);
-		RigidBodyDesc.vOffsetRotation = XMQuaternionRotationRollPitchYaw(0.f, 0.f, XMConvertToRadians(90.f));
-		RigidBodyDesc.fStaticFriction = 0.f;
-		RigidBodyDesc.fDynamicFriction = 1.f;
-		RigidBodyDesc.fRestitution = 0.f;
-		PxCapsuleGeometry pCapsuleGeomatry = PxCapsuleGeometry(0.7f, 1.5f);
-		RigidBodyDesc.pGeometry = &pCapsuleGeomatry;
-		RigidBodyDesc.eConstraintFlag = CRigidBody::RotX | CRigidBody::RotY | CRigidBody::RotZ;
-		RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 0.f, 1.f);
-		RigidBodyDesc.pOwnerObject = this;
-		RigidBodyDesc.eThisCollsion = COL_ENEMY;
-		RigidBodyDesc.eCollisionFlag = COL_NPC_RANGE;
-		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Body");
-
-		/* For.Com_RigidBody */
-		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
-			TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
-			throw TEXT("Com_RigidBody");
-
-		m_OffsetMatrix = XMMatrixTranslation(RigidBodyDesc.vOffsetPosition.x, RigidBodyDesc.vOffsetPosition.y, RigidBodyDesc.vOffsetPosition.z);
-
-		/* For.Collider_Range */
-		RigidBodyDesc.isStatic = true;
-		RigidBodyDesc.isTrigger = true;
-		PxSphereGeometry pSphereGeomatry = PxSphereGeometry(15.f);
-		RigidBodyDesc.pGeometry = &pSphereGeomatry;
-		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Range");
-		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC;
-
-		m_pRigidBody->Create_Collider(&RigidBodyDesc);
+		/* For.Com_Health */
+		CHealth::HEALTHDESC HealthDesc;
+		HealthDesc.iMaxHP = 200;
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Health"),
+			TEXT("Com_Health"), reinterpret_cast<CComponent**>(&m_pHealth), &HealthDesc)))
+			throw TEXT("Com_Health");
 
 		/* For.Com_Weapon */
 		const CBone* pBone = m_pModelCom->Get_Bone(TEXT("SKT_RightHand"));
@@ -383,12 +328,49 @@ HRESULT CGolem_Combat::Add_Components()
 		if (FAILED(Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_Weapon_Golem_Combat"),
 			TEXT("Com_Weapon"), reinterpret_cast<CComponent**>(&m_pWeapon), &ParentMatrixDesc)))
 			throw TEXT("Com_Weapon");
+
+		/* For.Com_RigidBody */
+		CRigidBody::RIGIDBODYDESC RigidBodyDesc;
+		RigidBodyDesc.isStatic = false;
+		RigidBodyDesc.isTrigger = false;
+		RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
+		RigidBodyDesc.vOffsetPosition = _float3(0.f, 2.2f, 0.f);
+		RigidBodyDesc.vOffsetRotation = XMQuaternionRotationRollPitchYaw(0.f, 0.f, XMConvertToRadians(90.f));
+		RigidBodyDesc.fStaticFriction = 0.f;
+		RigidBodyDesc.fDynamicFriction = 1.f;
+		RigidBodyDesc.fRestitution = 0.f;
+		PxCapsuleGeometry pCapsuleGeomatry = PxCapsuleGeometry(0.7f, 1.5f);
+		RigidBodyDesc.pGeometry = &pCapsuleGeomatry;
+		RigidBodyDesc.eConstraintFlag = CRigidBody::RotX | CRigidBody::RotY | CRigidBody::RotZ;
+		RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 0.f, 1.f);
+		RigidBodyDesc.pOwnerObject = this;
+		RigidBodyDesc.eThisCollsion = COL_ENEMY;
+		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC | COL_NPC_RANGE | COL_MAGIC;
+		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Body");
+
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
+			TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
+			throw TEXT("Com_RigidBody");
+
+		m_OffsetMatrix = XMMatrixTranslation(RigidBodyDesc.vOffsetPosition.x, RigidBodyDesc.vOffsetPosition.y, RigidBodyDesc.vOffsetPosition.z);
+
+		/* For.Collider_Range */
+		RigidBodyDesc.isStatic = true;
+		RigidBodyDesc.isTrigger = true;
+		PxSphereGeometry pSphereGeomatry = PxSphereGeometry(15.f);
+		RigidBodyDesc.pGeometry = &pSphereGeomatry;
+		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Range");
+		RigidBodyDesc.eThisCollsion = COL_ENEMY_RANGE;
+		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC;
+
+		m_pRigidBody->Create_Collider(&RigidBodyDesc);
 	}
 	catch (const _tchar* pErrorTag)
 	{
 		wstring wstrErrorMSG = TEXT("[CGolem_Combat] Failed Add_Components : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
 
 		return E_FAIL;
 	}
@@ -398,89 +380,7 @@ HRESULT CGolem_Combat::Add_Components()
 
 HRESULT CGolem_Combat::SetUp_ShaderResources()
 {
-	BEGININSTANCE;
-
-	try /* Check SetUp_ShaderResources */
-	{
-		if (nullptr == m_pShaderCom)
-			throw TEXT("m_pShaderCom is nullptr");
-
-		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
-			throw TEXT("Failed Bind_Matrix : g_WorldMatrix");
-
-		if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW))))
-			throw TEXT("Failed Bind_Matrix : g_ViewMatrix");
-
-		if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
-			throw TEXT("Failed Bind_Matrix : g_ProjMatrix");
-
-		if (FAILED(m_pShaderCom->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
-			throw TEXT("Failed Bind_RawValue : g_fCamFar");
-	}
-	catch (const _tchar* pErrorTag)
-	{
-		wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed SetUp_ShaderResources : \n");
-		wstrErrorMSG += pErrorTag;
-		MSG_BOX(wstrErrorMSG.c_str());
-
-		ENDINSTANCE;
-
-		return E_FAIL;
-	}
-
-	ENDINSTANCE;
-
-	return S_OK;
-}
-
-void CGolem_Combat::Set_Current_Target()
-{
-	_float3 vPosition = m_pTransform->Get_Position();
-
-	for (auto& Pair : m_RangeInEnemies)
-	{
-		if (nullptr == m_pTarget)
-			m_pTarget = Pair.second;
-		else
-		{
-			_float3 vSrcTargetPosition = m_pTarget->Get_Transform()->Get_Position();
-			_float3 vDstTargetPosition = Pair.second->Get_Transform()->Get_Position();
-
-			_float vSrcDistance = _float3::Distance(vPosition, vSrcTargetPosition);
-			_float vDstDistance = _float3::Distance(vPosition, vDstTargetPosition);
-
-			m_pTarget = (vSrcDistance < vDstDistance) ? m_pTarget : Pair.second;
-		}
-	}
-
-	m_isRangeInEnemy = (0 < m_RangeInEnemies.size()) ? true : false;
-
-	if (false == m_isRangeInEnemy)
-	{
-		m_pTarget = nullptr;
-		/*BEGININSTANCE;
-		m_pTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Player"), TEXT("GameObject_Player")));
-		ENDINSTANCE;*/
-	}
-}
-
-HRESULT CGolem_Combat::Remove_GameObject(const wstring & wstrObjectTag)
-{
-	auto iter = find_if(m_RangeInEnemies.begin(), m_RangeInEnemies.end(), [&](auto& Pair)->_bool
-		{
-			if (wstring::npos != Pair.first.find(wstrObjectTag))
-				return true;
-
-			return false;
-		});
-
-	if (iter == m_RangeInEnemies.end())
-		return E_FAIL;
-
-	//Safe_Release(iter->second);
-	m_RangeInEnemies.erase(iter);
-
-	return S_OK;
+	return __super::SetUp_ShaderResources();
 }
 
 #ifdef _DEBUG
@@ -541,6 +441,19 @@ HRESULT CGolem_Combat::Make_Descendo(_Inout_ CSequence* pSequence)
 		if (nullptr == pAction_GetUp)
 			throw TEXT("pAction_GetUp is nullptr");
 
+		/* Set Decorator */
+		pSequence->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_uint* pCurrentSpell = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pCurrentSpell)))
+					return false;
+
+				if (BUFF_DESCENDO & *pCurrentSpell)
+					return true;
+
+				return false;
+			});
+
 		/* Set Options */
 		pAction_Descendo1->Set_Options(TEXT("Descendo_1"), m_pModelCom);
 		pAction_Descendo2->Set_Options(TEXT("Descendo_2"), m_pModelCom);
@@ -549,22 +462,259 @@ HRESULT CGolem_Combat::Make_Descendo(_Inout_ CSequence* pSequence)
 		pAction_GetUp->Set_Options(TEXT("Get_Up_Send_Front"), m_pModelCom);
 
 		/* Assemble Behaviors */
-		if (FAILED(pSequence->Assemble_Behavior(TEXT("pAction_Descendo1"), pAction_Descendo1)))
-			throw TEXT("Failed Assemble_Behavior pAction_Descendo1");
-		if (FAILED(pSequence->Assemble_Behavior(TEXT("pAction_Descendo2"), pAction_Descendo2)))
-			throw TEXT("Failed Assemble_Behavior pAction_Descendo1");
-		if (FAILED(pSequence->Assemble_Behavior(TEXT("pAction_Descendo3"), pAction_Descendo3)))
-			throw TEXT("Failed Assemble_Behavior pAction_Descendo1");
-		if (FAILED(pSequence->Assemble_Behavior(TEXT("pAction_Descendo4"), pAction_Descendo4)))
-			throw TEXT("Failed Assemble_Behavior pAction_Descendo1");
-		if (FAILED(pSequence->Assemble_Behavior(TEXT("pAction_GetUp"), pAction_GetUp)))
-			throw TEXT("Failed Assemble_Behavior pAction_GetUp");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Descendo1"), pAction_Descendo1)))
+			throw TEXT("Failed Assemble_Behavior Action_Descendo1");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Descendo2"), pAction_Descendo2)))
+			throw TEXT("Failed Assemble_Behavior Action_Descendo1");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Descendo3"), pAction_Descendo3)))
+			throw TEXT("Failed Assemble_Behavior Action_Descendo1");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Descendo4"), pAction_Descendo4)))
+			throw TEXT("Failed Assemble_Behavior Action_Descendo1");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_GetUp"), pAction_GetUp)))
+			throw TEXT("Failed Assemble_Behavior Action_GetUp");
 	}
 	catch (const _tchar* pErrorTag)
 	{
 		wstring wstrErrorMSG = TEXT("[CGolem_Combat] Failed Make_Descendo : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
+
+		ENDINSTANCE;
+
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CGolem_Combat::Make_Levioso_Combo(_Inout_ CSelector* pSelector)
+{
+	BEGININSTANCE;
+
+	try /* Failed Check Make_Descendo */
+	{
+		if (nullptr == pSelector)
+			throw TEXT("Parameter pSelector is nullptr");
+
+		/* Make Child Behaviors */
+		CSequence* pSequence_AirHit = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
+		if (nullptr == pSequence_AirHit)
+			throw TEXT("pSequence_AirHit is nullptr");
+
+		/* Set Decorator */
+		pSelector->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_uint* pIPreviusSpell = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("iPreviusSpell", pIPreviusSpell)))
+					return false;
+
+				if (BUFF_LEVIOSO & *pIPreviusSpell)
+					return true;
+
+				return false;
+			});
+
+		/* Set Options */
+
+		/* Assemble Behaviors */
+		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_AirHit"), pSequence_AirHit)))
+			throw TEXT("Failed Assemble_Behavior Sequence_AirHit");
+
+		if (FAILED(Make_Air_Hit(pSequence_AirHit)))
+			throw TEXT("Failed Make_Air_Hit");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CGolem_Combat] Failed Make_Descendo : \n");
+		wstrErrorMSG += pErrorTag;
+		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
+
+		ENDINSTANCE;
+
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CGolem_Combat::Make_Air_Hit(_Inout_ CSequence* pSequence)
+{
+	BEGININSTANCE;
+
+	try
+	{
+		if (nullptr == pSequence)
+			throw TEXT("Parameter pSequence is nullptr");
+
+		/* Make Child Behaviors */
+		CSelector* pSelector_AirHit = dynamic_cast<CSelector*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Selector")));
+		if (nullptr == pSelector_AirHit)
+			throw TEXT("pSelector_AirHit is nullptr");
+		CAction* pAction_Splat = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		if (nullptr == pAction_Splat)
+			throw TEXT("pAction_Splat is nullptr");
+		CAction* pAction_GetUp = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		if (nullptr == pAction_GetUp)
+			throw TEXT("pAction_GetUp is nullptr");
+
+		/* 평타 맞고 공중에 뜨는 액션 */
+		CRandom_AirHit* pRandom_AirHit = dynamic_cast<CRandom_AirHit*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Random_AirHit")));
+		if (nullptr == pRandom_AirHit)
+			throw TEXT("pRandom_AirHit is nullptr");
+		/* 막타 맞고 날라가는 액션 */
+		CAction* pAction_Knockback = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		if (nullptr == pAction_Knockback)
+			throw TEXT("pAction_Knockback is nullptr");
+
+		CAction* pAction_Hit_1 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		if (nullptr == pAction_Hit_1)
+			throw TEXT("pAction_Hit_1 is nullptr");
+		CAction* pAction_Hit_3 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		if (nullptr == pAction_Hit_3)
+			throw TEXT("pAction_Hit_3 is nullptr");
+		CAction* pAction_Hit_4 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		if (nullptr == pAction_Hit_4)
+			throw TEXT("pAction_Hit_4 is nullptr");
+		CAction* pAction_Hit_5 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		if (nullptr == pAction_Hit_5)
+			throw TEXT("pAction_Hit_5 is nullptr");
+		CAction* pAction_Hit_6 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		if (nullptr == pAction_Hit_6)
+			throw TEXT("pAction_Hit_6 is nullptr");
+		CAction* pAction_Hit_8 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		if (nullptr == pAction_Hit_8)
+			throw TEXT("pAction_Hit_8 is nullptr");
+
+		/* Set Decorator*/
+		pSequence->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_uint* pICurrentSpell = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
+					return false;
+
+				if (BUFF_ATTACK_LIGHT & *pICurrentSpell ||
+					BUFF_ATTACK_HEAVY & *pICurrentSpell)
+				{
+					CRigidBody* pRigidBody = { nullptr };
+					if (FAILED(pBlackBoard->Get_Type("pRigidBody", pRigidBody)))
+						return false;
+
+					pRigidBody->Set_Gravity(false);
+					return true;
+				}
+
+				return false;
+			});
+		pRandom_AirHit->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_uint* pICurrentSpell = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
+					return false;
+
+				if (BUFF_ATTACK_LIGHT & *pICurrentSpell)
+					return true;
+
+				return false;
+			});
+		pRandom_AirHit->Add_Function_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_bool* pIsHitAttack = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("isHitAttack", pIsHitAttack)))
+					return false;
+
+				if (true == *pIsHitAttack)
+				{
+					*pIsHitAttack = false;
+					return true;
+				}
+
+				return false;
+			});
+		pAction_Knockback->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_uint* pICurrentSpell = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
+					return false;
+
+				if (BUFF_ATTACK_HEAVY & *pICurrentSpell)
+					return true;
+
+				return false;
+			});
+		pAction_GetUp->Add_Success_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_bool* pIsHitCombo = { nullptr };
+				_uint* pICurrentSpell = { nullptr };
+				_uint* pIPreviusSpell = { nullptr };
+				CRigidBody* pRigidBody = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("isHitCombo", pIsHitCombo)))
+					return false;
+				if (FAILED(pBlackBoard->Get_Type("iPreviusSpell", pIPreviusSpell)))
+					return false;
+				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
+					return false;
+				if (FAILED(pBlackBoard->Get_Type("pRigidBody", pRigidBody)))
+					return false;
+
+				pRigidBody->Set_Gravity(true);
+
+				*pIPreviusSpell = BUFF_NONE;
+				*pICurrentSpell = BUFF_NONE;
+
+				*pIsHitCombo = false;
+
+				return true;
+			});
+
+		/* Set Options */
+		pAction_Hit_1->Set_Options(TEXT("Air_Hit_1"), m_pModelCom);
+		pAction_Hit_3->Set_Options(TEXT("Air_Hit_3"), m_pModelCom);
+		pAction_Hit_4->Set_Options(TEXT("Air_Hit_4"), m_pModelCom);
+		pAction_Hit_5->Set_Options(TEXT("Air_Hit_5"), m_pModelCom);
+		pAction_Hit_6->Set_Options(TEXT("Air_Hit_6"), m_pModelCom);
+		pAction_Hit_8->Set_Options(TEXT("Air_Hit_8"), m_pModelCom);
+		pAction_Knockback->Set_Options(TEXT("Knockback_Back"), m_pModelCom);
+		pAction_Splat->Set_Options(TEXT("Knockback_Back_Splat"), m_pModelCom);
+		pAction_GetUp->Set_Options(TEXT("Get_Up_Send"), m_pModelCom);
+
+		/* Assemble Childs */
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Selector_AirHit"), pSelector_AirHit)))
+			throw TEXT("Failed Assemble_Behavior Selector_AirHit");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Splat"), pAction_Splat)))
+			throw TEXT("Failed Assemble_Behavior Action_Splat");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_GetUp"), pAction_GetUp)))
+			throw TEXT("Failed Assemble_Behavior Action_GetUp");
+
+		if (FAILED(pSelector_AirHit->Assemble_Behavior(TEXT("Random_AirHit"), pRandom_AirHit)))
+			throw TEXT("Failed Assemble_Behavior Random_AirHit");
+		if (FAILED(pSelector_AirHit->Assemble_Behavior(TEXT("Action_Knockback"), pAction_Knockback)))
+			throw TEXT("Failed Assemble_Behavior Action_Knockback");
+
+		if (FAILED(pRandom_AirHit->Assemble_Behavior(TEXT("Action_Hit_1"), pAction_Hit_1, 0.125f)))
+			throw TEXT("Failed Assemble_Behavior Action_Hit_1");
+		if (FAILED(pRandom_AirHit->Assemble_Behavior(TEXT("Action_Hit_3"), pAction_Hit_3, 0.125f)))
+			throw TEXT("Failed Assemble_Behavior Action_Hit_3");
+		if (FAILED(pRandom_AirHit->Assemble_Behavior(TEXT("Action_Hit_4"), pAction_Hit_4, 0.125f)))
+			throw TEXT("Failed Assemble_Behavior Action_Hit_4");
+		if (FAILED(pRandom_AirHit->Assemble_Behavior(TEXT("Action_Hit_5"), pAction_Hit_5, 0.125f)))
+			throw TEXT("Failed Assemble_Behavior Action_Hit_5");
+		if (FAILED(pRandom_AirHit->Assemble_Behavior(TEXT("Action_Hit_6"), pAction_Hit_6, 0.125f)))
+			throw TEXT("Failed Assemble_Behavior Action_Hit_6");
+		if (FAILED(pRandom_AirHit->Assemble_Behavior(TEXT("Action_Hit_8"), pAction_Hit_8, 0.12f)))
+			throw TEXT("Failed Assemble_Behavior Action_Hit_8");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CGolem_Combat] Failed Make_Descendo : \n");
+		wstrErrorMSG += pErrorTag;
+		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
 
 		ENDINSTANCE;
 
@@ -622,6 +772,7 @@ HRESULT CGolem_Combat::Make_Random_Idle_Move(_Inout_ CRandom_Select* pRandomSele
 		wstring wstrErrorMSG = TEXT("[CGolem_Combat] Failed Make_Random_Idle_Move : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
 
 		ENDINSTANCE;
 
@@ -631,6 +782,149 @@ HRESULT CGolem_Combat::Make_Random_Idle_Move(_Inout_ CRandom_Select* pRandomSele
 	ENDINSTANCE;
 
 	return S_OK;
+}
+
+HRESULT CGolem_Combat::Make_Death(_Inout_ CSequence* pSequence)
+{
+	BEGININSTANCE;
+
+	try
+	{
+		if (nullptr == pSequence)
+			throw TEXT("Parameter pSequence is nullptr");
+
+		CSelector* pSelector_Choose = dynamic_cast<CSelector*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Selector")));
+		if (nullptr == pSelector_Choose)
+			throw TEXT("pSelector_Choose is nullptr");
+
+		CSequence* pSequence_Death_Ground = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
+		if (nullptr == pSequence_Death_Ground)
+			throw TEXT("pSequence_Death_Ground is nullptr");
+		CSequence* pSequence_Death_Air = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
+		if (nullptr == pSequence_Death_Air)
+			throw TEXT("pSequence_Death_Air is nullptr");
+
+		CAction* pAction_Death_Ground = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		if (nullptr == pAction_Death_Ground)
+			throw TEXT("pAction_Death_Ground is nullptr");
+		CAction* pAction_Death_Ground_Loop = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		if (nullptr == pAction_Death_Ground_Loop)
+			throw TEXT("pAction_Death_Ground_Loop is nullptr");
+		CAction* pAction_Knockback = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		if (nullptr == pAction_Knockback)
+			throw TEXT("pAction_Knockback is nullptr");
+		CAction* pAction_Splat = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		if (nullptr == pAction_Splat)
+			throw TEXT("pAction_Splat is nullptr"); 
+		CAction* pAction_Splat_Loop = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		if (nullptr == pAction_Splat_Loop)
+			throw TEXT("pAction_Splat_Loop is nullptr");
+
+		CDeath* pTsk_Death_Ground = dynamic_cast<CDeath*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Death")));
+		if (nullptr == pTsk_Death_Ground)
+			throw TEXT("pTsk_Death_Ground is nullptr");
+		CDeath* pTsk_Death_Air = dynamic_cast<CDeath*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Death")));
+		if (nullptr == pTsk_Death_Air)
+			throw TEXT("pTsk_Death_Air is nullptr");
+		
+		// Set Decorators
+		pSequence->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				CHealth* pHealth = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("pHealth", pHealth)))
+					return false;
+
+				return pHealth->isDead();
+			});
+		pSequence_Death_Ground->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_uint* pIPreviusSpell = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("iPreviusSpell", pIPreviusSpell)))
+					return false;
+
+				if (BUFF_LEVIOSO & *pIPreviusSpell)
+					return false;
+
+				cout << "Ground" << endl;
+				return true;
+			});
+		pSequence_Death_Air->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_uint* pIPreviusSpell = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("iPreviusSpell", pIPreviusSpell)))
+					return false;
+
+				if (BUFF_LEVIOSO & *pIPreviusSpell)
+				{
+					CRigidBody* pRigidBody = { nullptr };
+					if (FAILED(pBlackBoard->Get_Type("pRigidBody", pRigidBody)))
+						return false;
+
+					pRigidBody->Set_Gravity(true);
+
+					cout << "Air" << endl;
+					return true;
+				}
+
+				return false;
+			});
+
+		// Set Options 
+		function<void(const _float&)> Func = [&](const _float& fTimeDelta) {this->DeathBehavior(fTimeDelta); };
+		pTsk_Death_Ground->Set_DeathFunction(Func); 
+		pTsk_Death_Air->Set_DeathFunction(Func);
+		pAction_Knockback->Set_Options(TEXT("Knockback_Back"), m_pModelCom);
+		pAction_Splat->Set_Options(TEXT("Knockback_Back_Splat"), m_pModelCom, true);
+		pAction_Splat_Loop->Set_Options(TEXT("Send_Splat_Loop"), m_pModelCom, true);
+		pAction_Death_Ground->Set_Options(TEXT("Death"), m_pModelCom);
+		pAction_Death_Ground_Loop->Set_Options(TEXT("Send_Splat_Loop"), m_pModelCom, true);
+
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Selector_Choose"), pSelector_Choose)))
+			throw TEXT("Failed Assemble_Behavior Selector_Choose");
+
+		if (FAILED(pSelector_Choose->Assemble_Behavior(TEXT("Sequence_Death_Ground"), pSequence_Death_Ground)))
+			throw TEXT("Failed Assemble_Behavior Sequence_Death_Ground");
+		if (FAILED(pSelector_Choose->Assemble_Behavior(TEXT("Sequence_Death_Air"), pSequence_Death_Air)))
+			throw TEXT("Failed Assemble_Behavior Sequence_Death_Air");
+
+		if (FAILED(pSequence_Death_Ground->Assemble_Behavior(TEXT("Action_Death_Ground"), pAction_Death_Ground)))
+			throw TEXT("Failed Assemble_Behavior Action_Death_Ground");
+		if (FAILED(pSequence_Death_Ground->Assemble_Behavior(TEXT("Action_Death_Ground_Loop"), pAction_Death_Ground_Loop)))
+			throw TEXT("Failed Assemble_Behavior Action_Death_Ground_Loop");
+		if (FAILED(pSequence_Death_Air->Assemble_Behavior(TEXT("Action_Knockback"), pAction_Knockback)))
+			throw TEXT("Failed Assemble_Behavior Action_Knockback");
+		if (FAILED(pSequence_Death_Air->Assemble_Behavior(TEXT("Action_Splat"), pAction_Splat)))
+			throw TEXT("Failed Assemble_Behavior Action_Splat");
+		if (FAILED(pSequence_Death_Air->Assemble_Behavior(TEXT("Action_Splat_Loop"), pAction_Splat_Loop)))
+			throw TEXT("Failed Assemble_Behavior Action_Splat_Loop");
+
+		if (FAILED(pAction_Death_Ground_Loop->Assemble_Behavior(TEXT("Tsk_Death_Ground"), pTsk_Death_Ground)))
+			throw TEXT("Failed Assemble_Behavior Tsk_Death_Ground");
+		if (FAILED(pAction_Splat_Loop->Assemble_Behavior(TEXT("Tsk_Death_Air"), pTsk_Death_Air)))
+			throw TEXT("Failed Assemble_Behavior Tsk_Death_Air");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CGolem_Combat] Failed Make_Random_Idle_Move : \n");
+		wstrErrorMSG += pErrorTag;
+		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
+
+		ENDINSTANCE;
+
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+void CGolem_Combat::DeathBehavior(const _float& fTimeDelta)
+{
+	m_fDeadTimeAcc += fTimeDelta;
+	if (5.f < m_fDeadTimeAcc)
+		Set_ObjEvent(OBJ_DEAD);
 }
 
 HRESULT CGolem_Combat::Make_Turns(_Inout_ CSequence* pSequence)
@@ -701,6 +995,7 @@ HRESULT CGolem_Combat::Make_Turns(_Inout_ CSequence* pSequence)
 		wstring wstrErrorMSG = TEXT("[CGolem_Combat] Failed Make_Turns : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
 
 		ENDINSTANCE;
 
@@ -726,7 +1021,7 @@ HRESULT CGolem_Combat::Make_Attack(_Inout_ CSelector* pSelector)
 		if (nullptr == pRandom_Attack)
 			throw TEXT("pRandom_Attack is nullptr");
 
-		CAction_Deflect* pAction_Protego_Deflect = dynamic_cast<CAction_Deflect*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action_Deflect")));
+		CAction* pAction_Protego_Deflect = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
 		if (nullptr == pAction_Protego_Deflect)
 			throw TEXT("pAction_Protego_Deflect is nullptr");
 
@@ -744,13 +1039,31 @@ HRESULT CGolem_Combat::Make_Attack(_Inout_ CSelector* pSelector)
 			throw TEXT("pSequence_Attack_Jab is nullptr");
 
 		/* Set Decorations */
-		pRandom_Attack->Add_Decoration([&](CBlackBoard* pBlackBoard)->_bool
+		pRandom_Attack->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 			{
 				_bool* pIsParring = { nullptr };
 				if (FAILED(pBlackBoard->Get_Type("isParring", pIsParring)))
 					return false;
 
 				return !*pIsParring;
+			});
+		pAction_Protego_Deflect->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_bool* pIsParring = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("isParring", pIsParring)))
+					return false;
+
+				return *pIsParring;
+			});
+		pAction_Protego_Deflect->Add_End_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_bool* pIsParring = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("isParring", pIsParring)))
+					return false;
+
+				*pIsParring = false;
+
+				return true;
 			});
 
 		/* Set Options */
@@ -786,6 +1099,7 @@ HRESULT CGolem_Combat::Make_Attack(_Inout_ CSelector* pSelector)
 		wstring wstrErrorMSG = TEXT("[CGolem_Combat] Failed Make_Attack : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
 
 		ENDINSTANCE;
 
@@ -803,6 +1117,9 @@ HRESULT CGolem_Combat::Make_NormalAttack(_Inout_ CSelector* pSelector)
 
 	try
 	{
+		if (nullptr == pSelector)
+			throw TEXT("Parameter pSelector is nullptr");
+
 		CSequence* pSequence_Turns = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
 		if (nullptr == pSequence_Turns)
 			throw TEXT("pSequence_Turns is nullptr");
@@ -820,7 +1137,7 @@ HRESULT CGolem_Combat::Make_NormalAttack(_Inout_ CSelector* pSelector)
 			throw TEXT("pRandom_IdleMove is nullptr");
 
 		/* Set Decorations */
-		pSelector->Add_Decoration([&](CBlackBoard* pBlackBoard)->_bool
+		pSelector->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 			{
 				_uint* pICurrentSpell = { nullptr };
 				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
@@ -831,7 +1148,7 @@ HRESULT CGolem_Combat::Make_NormalAttack(_Inout_ CSelector* pSelector)
 
 				return true;
 			});
-		pSequence_MoveTarget->Add_Decoration([&](CBlackBoard* pBlackBoard)->_bool
+		pSequence_MoveTarget->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 			{
 				_float fAttackRange = { 0.f };
 				_float fTargetDistance = { 0.f };
@@ -849,7 +1166,7 @@ HRESULT CGolem_Combat::Make_NormalAttack(_Inout_ CSelector* pSelector)
 
 				return fAttackRange < fTargetDistance;
 			});
-		pSequence_MoveBackTarget->Add_Decoration([&](CBlackBoard* pBlackBoard)->_bool
+		pSequence_MoveBackTarget->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 			{
 				_float fAttackRange = { 0.f };
 				_float fTargetDistance = { 0.f };
@@ -867,7 +1184,7 @@ HRESULT CGolem_Combat::Make_NormalAttack(_Inout_ CSelector* pSelector)
 
 				return (fAttackRange - 1.f) > fTargetDistance;
 			});
-		pSelector_Attacks->Add_Decoration([&](CBlackBoard* pBlackBoard)->_bool
+		pSelector_Attacks->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 			{
 				_float fAttackRange = { 0.f };
 				_float fTargetDistance = { 0.f };
@@ -913,6 +1230,7 @@ HRESULT CGolem_Combat::Make_NormalAttack(_Inout_ CSelector* pSelector)
 		wstring wstrErrorMSG = TEXT("[CGolem_Combat] Failed Make_NormalAttack : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
 
 		ENDINSTANCE;
 
@@ -924,12 +1242,85 @@ HRESULT CGolem_Combat::Make_NormalAttack(_Inout_ CSelector* pSelector)
 	return S_OK;;
 }
 
+HRESULT CGolem_Combat::Make_Hit_Combo(_Inout_ CSelector* pSelector)
+{
+	BEGININSTANCE;
+
+	try
+	{
+		if (nullptr == pSelector)
+			throw TEXT("Parameter pSelector is nullptr");
+
+		/* Make Child Behaviors */
+		CSelector* pSelector_Levioso_Combo = dynamic_cast<CSelector*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Selector")));
+		if (nullptr == pSelector_Levioso_Combo)
+			throw TEXT("pSelector_Levioso_Combo is nullptr");
+
+		/* Set Decorations */
+		pSelector->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_bool* pIsHitCombo = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("isHitCombo", pIsHitCombo)))
+					return false;
+
+				return *pIsHitCombo;
+			});
+		pSelector->Add_Fail_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_bool* pIsHitCombo = { nullptr };
+				_uint* pICurrentSpell = { nullptr };
+				_uint* pIPreviusSpell = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("isHitCombo", pIsHitCombo)))
+					return false;
+				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
+					return false;
+				if (FAILED(pBlackBoard->Get_Type("iPreviusSpell", pIPreviusSpell)))
+					return false;
+
+				// 이부분은 애매한 처리임. 나중에 몬스터에 맞은 마법값이 이상하게 동작할 경우 확인할 것
+				*pICurrentSpell = BUFF_NONE;
+				*pIPreviusSpell = BUFF_NONE;
+
+				*pIsHitCombo = false;
+
+				return true;
+			});
+
+		/* Set Options */
+
+		/* Assemble Behaviors */
+		if (FAILED(pSelector->Assemble_Behavior(TEXT("Selector_Levioso_Combo"), pSelector_Levioso_Combo)))
+			throw TEXT("Failed Assemble_Behavior Selector_Levioso_Combo");
+
+		if (FAILED(Make_Levioso_Combo(pSelector_Levioso_Combo)))
+			throw TEXT("Failed Make_Levioso_Combo");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CGolem_Combat] Failed Make_Hit : \n");
+		wstrErrorMSG += pErrorTag;
+		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
+
+		ENDINSTANCE;
+
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
 HRESULT CGolem_Combat::Make_Check_Spell(_Inout_ CSelector* pSelector)
 {
 	BEGININSTANCE;
 
 	try
 	{
+		if (nullptr == pSelector)
+			throw TEXT("Parameter pSelector is nullptr");
+
 		/* Make Child Behaviors */
 		CSequence_Groggy* pSequence_Groggy = dynamic_cast<CSequence_Groggy*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence_Groggy")));
 		if (nullptr == pSequence_Groggy)
@@ -942,13 +1333,17 @@ HRESULT CGolem_Combat::Make_Check_Spell(_Inout_ CSelector* pSelector)
 			throw TEXT("pSequence_Descendo is nullptr");
 
 		/* Set Decorations */
-		pSelector->Add_Decoration([&](CBlackBoard* pBlackBoard)->_bool
+		pSelector->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 			{
+				_bool* pIsHitCombo = { nullptr };
 				_uint* pICurrentSpell = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("isHitCombo", pIsHitCombo)))
+					return false;
 				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
 					return false;
 
-				if (BUFF_NONE == *pICurrentSpell)
+				if (BUFF_NONE == *pICurrentSpell ||
+					true == *pIsHitCombo)
 					return false;
 
 				return true;
@@ -961,7 +1356,7 @@ HRESULT CGolem_Combat::Make_Check_Spell(_Inout_ CSelector* pSelector)
 		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Groggy"), pSequence_Groggy)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Groggy");
 		/* Levioso */
-		if(FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Levitated"), pSequence_Levitated)))
+		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Levitated"), pSequence_Levitated)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Levitated");
 		/* Descendo */
 		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Descendo"), pSequence_Descendo)))
@@ -969,12 +1364,24 @@ HRESULT CGolem_Combat::Make_Check_Spell(_Inout_ CSelector* pSelector)
 
 		if (FAILED(Make_Descendo(pSequence_Descendo)))
 			throw TEXT("Failed Make_Descendo");
+
+		if (FAILED(pSequence_Levitated->Assemble_Random_Select_Behavior(TEXT("Levitated_Loop_1"), 0.2f, 4.f)))
+			throw TEXT("Failed Assemble_Random_Select_Behavior");
+		if (FAILED(pSequence_Levitated->Assemble_Random_Select_Behavior(TEXT("Levitated_Loop_2"), 0.2f, 4.f)))
+			throw TEXT("Failed Assemble_Random_Select_Behavior");
+		if (FAILED(pSequence_Levitated->Assemble_Random_Select_Behavior(TEXT("Levitated_Loop_3"), 0.2f, 4.f)))
+			throw TEXT("Failed Assemble_Random_Select_Behavior");
+		if (FAILED(pSequence_Levitated->Assemble_Random_Select_Behavior(TEXT("Levitated_Loop_4"), 0.2f, 4.f)))
+			throw TEXT("Failed Assemble_Random_Select_Behavior");
+		if (FAILED(pSequence_Levitated->Assemble_Random_Select_Behavior(TEXT("Levitated_Loop_5"), 0.2f, 4.f)))
+			throw TEXT("Failed Assemble_Random_Select_Behavior");
 	}
 	catch (const _tchar* pErrorTag)
 	{
 		wstring wstrErrorMSG = TEXT("[CGolem_Combat] Failed Make_Check_Spell : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
 
 		ENDINSTANCE;
 
@@ -999,7 +1406,7 @@ CGolem_Combat* CGolem_Combat::Create(ID3D11Device* pDevice, ID3D11DeviceContext*
 	return pInstance;
 }
 
-CGameObject* CGolem_Combat::Clone(void* pArg)
+CGolem_Combat* CGolem_Combat::Clone(void* pArg)
 {
 	CGolem_Combat* pInstance = New CGolem_Combat(*this);
 
@@ -1019,10 +1426,5 @@ void CGolem_Combat::Free()
 	if (true == m_isCloned)
 	{
 		Safe_Release(m_pWeapon);
-		Safe_Release(m_pModelCom);
-		Safe_Release(m_pRenderer);
-		Safe_Release(m_pShaderCom);
-		Safe_Release(m_pRigidBody);
-		Safe_Release(m_pRootBehavior);
 	}
 }

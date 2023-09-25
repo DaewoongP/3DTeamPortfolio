@@ -131,7 +131,7 @@ void CMagicBall::Tick(_float fTimeDelta)
 		
 		case Client::CMagicBall::MAGICBALL_STATE_END:
 		{
-			cout << "¸¶¹ý Á×¾î¿ä" << endl;
+			//cout << "¸¶¹ý Á×¾î¿ä" << endl;
 			Set_ObjEvent(OBJ_DEAD);
 			break;
 		}
@@ -200,7 +200,8 @@ HRESULT CMagicBall::Add_RigidBody()
 	RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 0.f, 1.f);
 	RigidBodyDesc.isGravity = false;
 	RigidBodyDesc.pOwnerObject = this;
-	RigidBodyDesc.eCollisionFlag = COL_ALL;
+	RigidBodyDesc.eThisCollsion = COL_MAGIC;
+	RigidBodyDesc.eCollisionFlag = COL_ENEMY | COL_PLAYER | COL_NPC;
 	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Magic_Ball");
 
 	/* Com_RigidBody */

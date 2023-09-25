@@ -33,12 +33,12 @@ HRESULT CLevel_Cliffside::Initialize()
 
 		return E_FAIL;
 	}
-	if (FAILED(Ready_Layer_NPC(TEXT("Layer_NPC"))))
+	/*if (FAILED(Ready_Layer_NPC(TEXT("Layer_NPC"))))
 	{
 		MSG_BOX("Failed Ready_Layer_NPC");
 
 		return E_FAIL;
-	}
+	}*/
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 	{
 		MSG_BOX("Failed Ready_Layer_BackGround");
@@ -627,20 +627,8 @@ HRESULT CLevel_Cliffside::Ready_Layer_UI(const _tchar* pLayerTag)
 	//	MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_MiniMap)");
 	//	return E_FAIL;
 	//}
-
-	CUI_Group_Enemy_HP::ENEMYHPDESC  Desc;
 	
-	Desc.eType = CUI_Group_Enemy_HP::ENEMYTYPE::BOSS;
-	lstrcpy(Desc.wszObjectLevel, TEXT("77"));
-	lstrcpy(Desc.wszObjectName, TEXT("개철민"));
-
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_Enemy_HP"),
-		pLayerTag, TEXT("GameObject_UI_Enemy_HP"), &Desc)))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_UI_Enemy_HP)");
-		return E_FAIL;
-	}
-
+	
 	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Cursor.uidata"));
 	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_Cursor"),
 		pLayerTag, TEXT("GameObject_UI_Group_Cursor"), szFilePath)))

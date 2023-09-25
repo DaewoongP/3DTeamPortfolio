@@ -33,7 +33,7 @@ void CSequence_Attack::Set_Attack_Action_Options(const wstring& _wstrAnimationTa
 HRESULT CSequence_Attack::Initialize(void* pArg)
 {
 	/* ÄðÅ¸ÀÓ */
-	Add_Decoration([&](CBlackBoard* pBlackBoard)->_bool
+	Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 		{
 			BEGININSTANCE;
 			_float fInterval = pGameInstance->Get_World_TimeAcc() - m_fPreWorldTimeAcc;
@@ -108,6 +108,7 @@ HRESULT CSequence_Attack::Assemble_Childs()
 		wstring wstrErrorMSG = TEXT("[CSequence_Attack] Failed Assemble_Childs : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
 
 		ENDINSTANCE;
 
