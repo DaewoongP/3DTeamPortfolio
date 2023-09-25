@@ -30,6 +30,7 @@ private:
 public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg) override;
+	virtual HRESULT Initialize_Level(_uint iCurrentLevelIndex) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
@@ -49,7 +50,10 @@ private:
 	_float			m_fRadius = { 0.f };
 
 private:
-	HRESULT Add_Components(MAPOBJECTDESC* pMapObjectDesc);
+	MAPOBJECTDESC	m_ObjectDesc;
+
+private:
+	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
 	HRESULT SetUp_ShadowShaderResources();
 	void Check_MinMaxPoint(_float3 vPoint);

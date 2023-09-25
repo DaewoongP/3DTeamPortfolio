@@ -39,6 +39,7 @@ private:
 	HRESULT Loading_For_Logo();
 	HRESULT Loading_For_Cliffside();
 	HRESULT Loading_For_Vault();
+	HRESULT Loading_For_GreatHall();
 
 public:
 	static CMain3_Loader* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVELID eNextLevel);

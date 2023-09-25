@@ -370,6 +370,9 @@
     <Filter Include="04. Effect\Default_MagicTrail_Effect">
       <UniqueIdentifier>{5235bea2-54db-4f3f-b105-e99f462db57b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="07. GameManager">
+      <UniqueIdentifier>{41feed39-b5e2-4b15-99fe-18a8117aafdf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -768,6 +771,9 @@
     <ClInclude Include="..\public\MagicSlot.h">
       <Filter>05. Magic\MagicSlot</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Game_Manager.h">
+      <Filter>07. GameManager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1132,6 +1138,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Ncendio.cpp">
       <Filter>05. Magic\MagicBall\08. Ncendio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Game_Manager.cpp">
+      <Filter>07. GameManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
