@@ -13,6 +13,7 @@ namespace Engine
 
 	enum COLLISIONFLAG
 	{
+		COL_NONE			= 0,
 		COL_PLAYER			= 1 << 0,
 		COL_ENEMY			= 1 << 1,
 		COL_ENEMY_RANGE		= 1 << 2,
@@ -20,6 +21,7 @@ namespace Engine
 		COL_NPC_RANGE		= 1	<< 4,
 		COL_WEAPON			= 1 << 5,
 		COL_MAGIC			= 1 << 6,
+		COL_STATIC			= 1 << 7,
 		// COL~~ = 1 << 7,
 		// ... 계속 추가해주시면 됩니다!! 숫자만 계속 증가시켜주세요
 

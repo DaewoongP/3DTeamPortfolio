@@ -171,6 +171,7 @@ HRESULT CMapObject::Add_Components(MAPOBJECTDESC* pMapObjectDesc)
 	RigidBodyDesc.fRestitution = 0.f;
 	RigidBodyDesc.pOwnerObject = this;
 	RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 1.f, 1.f);
+	RigidBodyDesc.eThisCollsion = COL_STATIC;
 	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "MapObject");
 	
 	vector<CMesh*> Meshes = *m_pModel->Get_MeshesVec();

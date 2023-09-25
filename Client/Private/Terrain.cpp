@@ -99,7 +99,7 @@ HRESULT CTerrain::Add_Components()
 	RigidBodyDesc.fStaticFriction = 0.5f;
 	RigidBodyDesc.fDynamicFriction = 0.5f;
 	RigidBodyDesc.fRestitution = 0.f;
-	RigidBodyDesc.eThisCollsion = COL_TEST;
+	RigidBodyDesc.eThisCollsion = COL_STATIC;
 	
 	PxHeightFieldDesc HeightFieldDesc;
 	HeightFieldDesc.format = PxHeightFieldFormat::eS16_TM;

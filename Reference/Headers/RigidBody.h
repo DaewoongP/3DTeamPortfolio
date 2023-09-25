@@ -47,9 +47,9 @@ public:
 		_float			fDynamicFriction = { 0.5f };
 		_float			fRestitution = { 0.f };
 		PxGeometry*		pGeometry = { nullptr };
-		_uint			eConstraintFlag;
-		COLLISIONFLAG	eThisCollsion;
-		PxU32			eCollisionFlag;
+		_uint			eConstraintFlag = { None };
+		COLLISIONFLAG	eThisCollsion = { COL_NONE };
+		PxU32			eCollisionFlag = { COL_NONE };
 		_float4			vDebugColor = _float4(0.f, 1.f, 0.f, 1.f);
 	}RIGIDBODYDESC;
 
