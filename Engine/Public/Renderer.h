@@ -117,6 +117,7 @@ private: /* AfterShader*/
 
 private:
 	class CBlur*					m_pSSAOBlur = { nullptr };
+	class CBlur*					m_pEffectBlur = { nullptr };
 	//class CBlur* m_pShadowBlur = { nullptr };
 	class CBloom*					m_pBloom = { nullptr };
 	

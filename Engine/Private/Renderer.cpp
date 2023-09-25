@@ -912,6 +912,11 @@ HRESULT CRenderer::Add_Components()
 	m_pSSAOBlur = CBlur::Create(m_pDevice, m_pContext, TEXT("Target_SSAO"), CBlur::BLUR_XY);
 	if (nullptr == m_pSSAOBlur)
 		return E_FAIL;
+	
+	//m_pEffectBlur = CBlur::Create(m_pDevice, m_pContext, TEXT("Target_EffectBlur"), CBlur::BLUR_XY);
+	//if (nullptr == m_pEffectBlur)
+	//	return E_FAIL;
+
 	//m_pShadowBlur= CBlur::Create(m_pDevice, m_pContext, TEXT("Target_Shadow"), CBlur::BLUR_XY);
 	//if (nullptr == m_pShadowBlur)
 	//	return E_FAIL;
@@ -927,7 +932,7 @@ HRESULT CRenderer::Add_Components()
 	m_pMotionBlurInstance = CMotionBlurInstance::Create(m_pDevice, m_pContext, 0);
 	if (nullptr == m_pMotionBlurInstance)
 		return E_FAIL;
-	m_pGlow = CGlow::Create(m_pDevice, m_pContext, TEXT("Target_Glow"), 1.f);//파티클이 갖고있는 정보하나주면 힘을 변경하도록 하면될것같음
+	m_pGlow = CGlow::Create(m_pDevice, m_pContext, TEXT("Target_Glow"), 3.f);//파티클이 갖고있는 정보하나주면 힘을 변경하도록 하면될것같음
 	if (nullptr == m_pGlow)
 		return E_FAIL;
 	m_pMotionBlur = CMotionBlur::Create(m_pDevice, m_pContext, TEXT("Target_FinGlow"));
