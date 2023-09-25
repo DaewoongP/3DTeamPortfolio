@@ -153,6 +153,7 @@ HRESULT CMagicBall::Reset(MAGICBALLINITDESC& InitDesc)
 	m_pWeaponMatrix = InitDesc.pWeaponMatrix;
 	m_WeaponOffsetMatrix = InitDesc.WeaponOffsetMatrix;
 
+	Safe_Release(m_pTarget);
 	m_pTarget = InitDesc.pTarget;
 	Safe_AddRef(m_pTarget);
 

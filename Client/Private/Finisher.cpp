@@ -179,6 +179,13 @@ void CFinisher::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 	__super::OnCollisionExit(CollisionEventDesc);
 }
 
+HRESULT CFinisher::Reset(MAGICBALLINITDESC& InitDesc)
+{
+	__super::Reset(InitDesc);
+	m_fLerpAcc = 0.0f;
+	return S_OK;
+}
+
 void CFinisher::Ready_Begin()
 {
 	for (int i = 0; i < 3; i++)
