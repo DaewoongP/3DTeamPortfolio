@@ -62,7 +62,7 @@ public:
 
 public:
 	//목표와 시작 위치를 설정해줌. 지팡이에서 파티클 재생을 해주기위해 지팡이도 던져줌.
-	virtual _bool Magic_Cast(class CTransform* pTarget, _float4x4 targetOffsetMatrix, const _float4x4* pWeaponMatrix, _float4x4 offsetMatrix);
+	virtual _bool Magic_Cast(class CTransform* pTarget, _float4x4 targetOffsetMatrix, const _float4x4* pWeaponMatrix, _float4x4 offsetMatrix, COLLISIONFLAG eCollisionFlag);
 	virtual HRESULT Add_ActionFunc(function<void()> func);
 
 protected:
@@ -86,8 +86,6 @@ protected:
 	_float						m_fLifeTime = { 1.0f };
 	//마법 사용시 같이 불러주고싶은 외부 함수
 	vector<function<void()>>	m_ActionVec;
-	
-	class CMagicBallPool*		m_MagicBallPool = { nullptr };
 
 private:
 	//프로토타입 생성을 위한 enum type 별 이름 지정.
@@ -98,9 +96,6 @@ private:
 		{TEXT("Ncendio")} , {TEXT("Levioso")} , {TEXT("Lumos")} , {TEXT("Protego")} , {TEXT("Reparo")} , {TEXT("Revelio")} ,
 		{TEXT("Transformation")} , {TEXT("Transformationoverland")}, {TEXT("Wingardiumleviosa")} , {TEXT("BasicCast")} , {TEXT("Stupefy")} , {TEXT("Petrificustotalus")} ,
 		{TEXT("MagicThrow") }, {TEXT("Finisher")} };
-
-private:
-	HRESULT Add_Components();
 
 public:
 	static CMagic* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -37,11 +37,6 @@ HRESULT CMagic::Initialize(void* pArg)
 	m_eMagicTag = InitDesc->eMagicTag;
 	m_fLifeTime = InitDesc->fLifeTime;
 
-	if (FAILED(Add_Components()))
-	{
-		MSG_BOX("Failed to Add Component Magic");
-	}
-
 	return S_OK;
 }
 
@@ -75,7 +70,7 @@ HRESULT CMagic::ResetMagicDesc(MAGICDESC SkillDesc)
 	return S_OK;
 }
 
-_bool CMagic::Magic_Cast(CTransform* pTarget, _float4x4 targetOffsetMatrix, const _float4x4* pWeaponMatrix, _float4x4 WeaponOffsetMatrix)
+_bool CMagic::Magic_Cast(CTransform* pTarget, _float4x4 targetOffsetMatrix, const _float4x4* pWeaponMatrix, _float4x4 WeaponOffsetMatrix, COLLISIONFLAG eCollisionFlag)
 {
 	if (m_fCurrentCoolTime > 0)
 		return false;
@@ -86,6 +81,7 @@ _bool CMagic::Magic_Cast(CTransform* pTarget, _float4x4 targetOffsetMatrix, cons
 	ballInit.eMagicGroup = m_eMagicGroup;
 	ballInit.eMagicTag = m_eMagicTag;
 	ballInit.eMagicType = m_eMagicType;
+	ballInit.eCollisionFlag = eCollisionFlag;
 	ballInit.fDamage = m_fDamage;
 	ballInit.fDistance = m_fBallDistance;
 	ballInit.pTarget = pTarget;
@@ -104,13 +100,19 @@ _bool CMagic::Magic_Cast(CTransform* pTarget, _float4x4 targetOffsetMatrix, cons
 	_char objName[MAX_PATH] = "";
 	WCharToChar(m_szTagArray[m_eMagicTag], objName);
 	sprintf_s(msgBoxText, "%s%s", msgBoxText, objName);
+
+	CMagicBallPool* pMagicBallPool = CMagicBallPool::GetInstance();
+	Safe_AddRef(pMagicBallPool);
 	
-	if (FAILED(pGameInstance->Add_Component(m_MagicBallPool->Get_Magic(ballInit), LEVEL_CLIFFSIDE, TEXT("Layer_Magic"), objTag)))
+	if (FAILED(pGameInstance->Add_Component(pMagicBallPool->Get_Magic(ballInit), LEVEL_CLIFFSIDE, TEXT("Layer_Magic"), objTag)))
 	{
 		MSG_BOX(msgBoxText);
 		ENDINSTANCE;
+		Safe_Release(pMagicBallPool);
 		return false;
 	}
+	Safe_Release(pMagicBallPool);
+	pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
 
 	ENDINSTANCE;
 
@@ -127,14 +129,6 @@ _bool CMagic::Magic_Cast(CTransform* pTarget, _float4x4 targetOffsetMatrix, cons
 HRESULT CMagic::Add_ActionFunc(function<void()> func)
 {
 	m_ActionVec.push_back(func);
-	return S_OK;
-}
-
-HRESULT CMagic::Add_Components()
-{
-	FAILED_CHECK_RETURN(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_MagicBallPool"),
-		TEXT("Com_MagicBallPool"), reinterpret_cast<CComponent**>(&m_MagicBallPool)), E_FAIL);
-
 	return S_OK;
 }
 
@@ -167,6 +161,4 @@ CMagic* CMagic::Clone(void* pArg)
 void CMagic::Free()
 {
 	__super::Free();
-
-	Safe_Release(m_MagicBallPool);
 }

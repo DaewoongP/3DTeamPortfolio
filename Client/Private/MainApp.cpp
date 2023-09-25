@@ -2,6 +2,8 @@
 #include "GameInstance.h"
 #include "Level_Loading.h"
 
+#include "MagicBallPool.h"
+
 CMainApp::CMainApp()
 	: m_pGameInstance{ CGameInstance::GetInstance() }
 {
@@ -311,11 +313,12 @@ void CMainApp::Free()
 	Safe_Release(m_pTexture2D);
 	Safe_Release(m_pImGuiRTV);
 #endif // _DEBUG
-	
+
 	Safe_Release(m_pRenderer);
 	Safe_Release(m_pContext);
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pGameInstance);
 
+	CMagicBallPool::GetInstance()->DestroyInstance();
 	CGameInstance::Release_Engine();
 }

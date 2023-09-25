@@ -38,44 +38,7 @@ HRESULT CMagicBall::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
-	MAGICBALLINITDESC* initDesc = static_cast<MAGICBALLINITDESC*>(pArg);
-
-	m_MagicBallDesc.eMagicGroup = initDesc->eMagicGroup;;
-	m_MagicBallDesc.eMagicType = initDesc->eMagicType;
-	m_MagicBallDesc.eBuffType = initDesc->eBuffType;
-	m_MagicBallDesc.eMagicTag = initDesc->eMagicTag;
-	m_MagicBallDesc.fDamage = initDesc->fDamage;
-	m_MagicBallDesc.fDistance = initDesc->fDistance;
-	m_MagicBallDesc.fInitLifeTime = initDesc->fLifeTime;
-	m_TargetOffsetMatrix = initDesc->TargetOffsetMatrix;
-	m_pWeaponMatrix = initDesc->pWeaponMatrix;
-	m_WeaponOffsetMatrix = initDesc->WeaponOffsetMatrix;
-
-	m_pTarget = initDesc->pTarget;
-	Safe_AddRef(m_pTarget);
-
-	m_MagicBallDesc.fLifeTime = m_MagicBallDesc.fInitLifeTime;
-	m_pTransform->Set_Position(m_MagicBallDesc.vStartPosition);
-
-	m_MagicBallDesc.vStartPosition = _float4x4(m_WeaponOffsetMatrix * (*m_pWeaponMatrix)).Translation();
-	
-	m_CollisionDesc.eMagicGroup = m_MagicBallDesc.eMagicGroup;
-	m_CollisionDesc.eMagicType = m_MagicBallDesc.eMagicType;
-	m_CollisionDesc.eBuffType = m_MagicBallDesc.eBuffType;
-	m_CollisionDesc.eMagicTag = m_MagicBallDesc.eMagicTag;
-	m_CollisionDesc.fDamage = m_MagicBallDesc.fDamage;
-
-	Set_CollisionData(&m_CollisionDesc);
-
 	m_pTransform->Set_RigidBody(m_pRigidBody);
-
-	return S_OK;
-}
-
-HRESULT CMagicBall::Initialize_Level(_uint iCurrentLevelIndex)
-{
-	FAILED_CHECK_RETURN(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_MagicBallPool"),
-		TEXT("Com_MagicBallPool"), reinterpret_cast<CComponent**>(&m_MagicBallPool)), E_FAIL);
 
 	return S_OK;
 }
@@ -142,7 +105,11 @@ void CMagicBall::Tick(_float fTimeDelta)
 		case Client::CMagicBall::MAGICBALL_STATE_END:
 		{
 			cout << "¸¶¹ý Á×¾î¿ä" << endl;
-			m_MagicBallPool->Return_Magic(this, m_MagicBallDesc.eMagicTag);
+			CMagicBallPool* pMagicBallPool = CMagicBallPool::GetInstance();
+			Safe_AddRef(pMagicBallPool);
+			pMagicBallPool->Return_Magic(this, m_MagicBallDesc.eMagicTag);
+
+			Safe_Release(pMagicBallPool);
 			Set_ObjEvent(OBJ_DEAD);
 			break;
 		}
@@ -171,6 +138,39 @@ void CMagicBall::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)
 
 void CMagicBall::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 {
+}
+
+HRESULT CMagicBall::Ready(MAGICBALLINITDESC& InitDesc)
+{
+	m_MagicBallDesc.eMagicGroup = InitDesc.eMagicGroup;
+	m_MagicBallDesc.eMagicType = InitDesc.eMagicType;
+	m_MagicBallDesc.eBuffType = InitDesc.eBuffType;
+	m_MagicBallDesc.eMagicTag = InitDesc.eMagicTag;
+	m_MagicBallDesc.fDamage = InitDesc.fDamage;
+	m_MagicBallDesc.fDistance = InitDesc.fDistance;
+	m_MagicBallDesc.fInitLifeTime = InitDesc.fLifeTime;
+	m_TargetOffsetMatrix = InitDesc.TargetOffsetMatrix;
+	m_pWeaponMatrix = InitDesc.pWeaponMatrix;
+	m_WeaponOffsetMatrix = InitDesc.WeaponOffsetMatrix;
+
+	m_pTarget = InitDesc.pTarget;
+	Safe_AddRef(m_pTarget);
+
+	m_MagicBallDesc.fLifeTime = m_MagicBallDesc.fInitLifeTime;
+	m_pTransform->Set_Position(m_MagicBallDesc.vStartPosition);
+
+	m_MagicBallDesc.vStartPosition = _float4x4(m_WeaponOffsetMatrix * (*m_pWeaponMatrix)).Translation();
+
+	m_CollisionDesc.eMagicGroup = m_MagicBallDesc.eMagicGroup;
+	m_CollisionDesc.eMagicType = m_MagicBallDesc.eMagicType;
+	m_CollisionDesc.eBuffType = m_MagicBallDesc.eBuffType;
+	m_CollisionDesc.eMagicTag = m_MagicBallDesc.eMagicTag;
+	m_CollisionDesc.fDamage = m_MagicBallDesc.fDamage;
+
+	Set_CollisionData(&m_CollisionDesc);
+	m_eCollisionFlag = InitDesc.eCollisionFlag;
+
+	return S_OK;
 }
 
 HRESULT CMagicBall::Add_Components()
@@ -211,7 +211,7 @@ HRESULT CMagicBall::Add_RigidBody()
 	RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 0.f, 1.f);
 	RigidBodyDesc.isGravity = false;
 	RigidBodyDesc.pOwnerObject = this;
-	RigidBodyDesc.eCollisionFlag = COL_ALL;
+	RigidBodyDesc.eCollisionFlag = m_eCollisionFlag;
 	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Magic_Ball");
 
 	/* Com_RigidBody */
@@ -235,6 +235,5 @@ void CMagicBall::Free()
 		Safe_Release(m_pRenderer);
 		Safe_Release(m_pRigidBody);
 		Safe_Release(m_pTarget);
-		Safe_Release(m_MagicBallPool);
 	}
 }

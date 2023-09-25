@@ -10,25 +10,22 @@
 #include "Wingardiumleviosa.h"
 #include "Ncendio.h"
 
-CMagicBallPool::CMagicBallPool(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-    :CComponent(pDevice, pContext)
-{
-}
+IMPLEMENT_SINGLETON(CMagicBallPool)
 
-HRESULT CMagicBallPool::Initialize_Prototype()
+HRESULT CMagicBallPool::Initialize()
 {
     CGameInstance* pGameInstance = CGameInstance::GetInstance();
     Safe_AddRef(pGameInstance);
 
     // default 10°³ »ý¼º
-	Create_InitMagic(Client::BASICCAST, TEXT("Prototype_GameObject_BasicCast"), 30);
-	Create_InitMagic(Client::PROTEGO, TEXT("Prototype_GameObject_Protego"));
-	Create_InitMagic(Client::REVELIO, TEXT("Prototype_GameObject_Revelio"));
-	Create_InitMagic(Client::WINGARDIUMLEVIOSA, TEXT("Prototype_GameObject_Wingardiumleviosa"));
-	Create_InitMagic(Client::LEVIOSO, TEXT("Prototype_GameObject_Levioso"));
-	Create_InitMagic(Client::CONFRINGO, TEXT("Prototype_GameObject_Confringo"));
-	Create_InitMagic(Client::FINISHER, TEXT("Prototype_GameObject_Finisher"));
-	Create_InitMagic(Client::NCENDIO, TEXT("Prototype_GameObject_Ncendio"));
+    Create_InitMagic(Client::BASICCAST, TEXT("Prototype_GameObject_BasicCast"), 30);
+    Create_InitMagic(Client::PROTEGO, TEXT("Prototype_GameObject_Protego"));
+    Create_InitMagic(Client::REVELIO, TEXT("Prototype_GameObject_Revelio"));
+    Create_InitMagic(Client::WINGARDIUMLEVIOSA, TEXT("Prototype_GameObject_Wingardiumleviosa"));
+    Create_InitMagic(Client::LEVIOSO, TEXT("Prototype_GameObject_Levioso"));
+    Create_InitMagic(Client::CONFRINGO, TEXT("Prototype_GameObject_Confringo"));
+    Create_InitMagic(Client::FINISHER, TEXT("Prototype_GameObject_Finisher"));
+    Create_InitMagic(Client::NCENDIO, TEXT("Prototype_GameObject_Ncendio"));
 
     Safe_Release(pGameInstance);
 
@@ -47,6 +44,12 @@ CMagicBall* CMagicBallPool::Get_Magic(CMagicBall::MAGICBALLINITDESC& MagicBallDe
     {
         pMagicball = m_MagicPoolVec[MagicBallDesc.eMagicTag].front();
         m_MagicPoolVec[MagicBallDesc.eMagicTag].pop();
+    }
+
+    if (FAILED(pMagicball->Ready(MagicBallDesc)))
+    {
+        MSG_BOX("Failed Set MagicBall Init Setting");
+        return nullptr;
     }
 
     return pMagicball;
@@ -105,26 +108,26 @@ CMagicBall* CMagicBallPool::Create_Magic(SPELL eSpell, CMagicBall::MAGICBALLINIT
     case Client::IMPERIO:
         break;
     case Client::NCENDIO:
-        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Ncendio"), &MagicBallDesc));
+        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Ncendio")));
         break;
     case Client::LEVIOSO:
-        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Levioso"), &MagicBallDesc));
+        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Levioso")));
         break;
     case Client::LUMOS:
         break;
     case Client::PROTEGO:
-        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Protego"), &MagicBallDesc));
+        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Protego")));
         break;
     case Client::REPARO:
         break;
     case Client::REVELIO:
-        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Revelio"), &MagicBallDesc));
+        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Revelio")));
         break;
     case Client::WINGARDIUMLEVIOSA:
-        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Wingardiumleviosa"), &MagicBallDesc));
+        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Wingardiumleviosa")));
         break;
     case Client::BASICCAST:
-        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_BaseAttack"), &MagicBallDesc));
+        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_BaseAttack")));
         break;
     case Client::STUPEFY:
         break;
@@ -133,7 +136,7 @@ CMagicBall* CMagicBallPool::Create_Magic(SPELL eSpell, CMagicBall::MAGICBALLINIT
     case Client::MAGICTHROW:
         break;
     case Client::FINISHER:
-        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Finisher"), &MagicBallDesc));
+        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Finisher")));
         break;
     case Client::SPELL_END:
         MSG_BOX("Invalid Tag Value");
@@ -164,32 +167,15 @@ void CMagicBallPool::Create_InitMagic(SPELL eTag, const _tchar* szTagName, _uint
     Safe_Release(pGameInstance);
 }
 
-CMagicBallPool* CMagicBallPool::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-{
-    CMagicBallPool* pInstance = New CMagicBallPool(pDevice, pContext);
-
-    if (FAILED(pInstance->Initialize_Prototype()))
-    {
-        MSG_BOX("Failed to Created CMagicBall");
-        Safe_Release(pInstance);
-    }
-
-    return pInstance;
-}
-
-CComponent* CMagicBallPool::Clone(void* pArg)
-{
-    AddRef();
-
-    return this;
-}
-
 void CMagicBallPool::Free()
 {
-    for (auto magicGroup : m_MagicPoolVec)
+    for (auto& MagicQueue : m_MagicPoolVec)
     {
-        Safe_Release(magicGroup.front());
-        magicGroup.pop();
+        while (!MagicQueue.empty())
+        {
+            Safe_Release(MagicQueue.front());
+            MagicQueue.pop();
+        }
     }
 }
 
