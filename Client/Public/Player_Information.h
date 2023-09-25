@@ -9,6 +9,9 @@ END
 
 BEGIN(Client)
 
+class CUI_Group_HP;
+class CUI_Group_Finisher;
+
 class CPlayer_Information :
     public CComposite
 {
@@ -70,6 +73,9 @@ private:
     CHealth* m_pHealth = { nullptr };
     //피니셔 게이지
     CHealth* m_pFinisher = { nullptr };
+
+    CUI_Group_HP* m_pUI_Health;
+    CUI_Group_Finisher* m_pUI_Finisher;
     
     //아이템 갯수를 저장
     vector<_uint> m_vecItemCount = {};

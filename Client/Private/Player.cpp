@@ -87,6 +87,17 @@ HRESULT CPlayer::Initialize_Level(_uint iCurrentLevelIndex)
 
 void CPlayer::Tick(_float fTimeDelta)
 {
+	BEGININSTANCE;
+
+	if (pGameInstance->Get_DIKeyState(DIK_G, CInput_Device::KEY_DOWN))
+	{
+		m_pPlayer_Information->fix_HP(-10);
+		m_pPlayer_Information->Using_Fnisher();
+	}
+
+	ENDINSTANCE;
+
+
 	__super::Tick(fTimeDelta);
 
 	Key_Input(fTimeDelta);
@@ -895,6 +906,13 @@ void CPlayer::Update_Target_Angle()
 
 void CPlayer::Shot_Basic_Spell()
 {
+	//Find_Target_For_Distance();
+	m_pMagicSlot->Action_Magic_Basic(0, m_pTargetTransform, XMMatrixTranslation(0.f, 2.5f, 0.f), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
+}
+
+void CPlayer::Shot_Basic_Last_Spell()
+{
+	//Find_Target_For_Distance();
 	m_pMagicSlot->Action_Magic_Basic(0, m_pTargetTransform, XMMatrixTranslation(0.f, 2.5f, 0.f), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
 }
 
@@ -961,12 +979,6 @@ HRESULT CPlayer::Bind_Notify()
 
 		return E_FAIL;
 	}
-	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Hvy_frmLft_anm"), TEXT("Shot_Spell"), funcNotify)))
-	{
-		MSG_BOX("Failed Bind_Notify");
-
-		return E_FAIL;
-	}
 	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_StepBwd_01_anm"), TEXT("Shot_Spell"), funcNotify)))
 	{
 		MSG_BOX("Failed Bind_Notify");
@@ -985,12 +997,26 @@ HRESULT CPlayer::Bind_Notify()
 
 		return E_FAIL;
 	}
+
+	
+	funcNotify = [&] {(*this).Shot_Basic_Last_Spell(); };
+	
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Hvy_frmLft_anm"), TEXT("Shot_Spell"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
+
 	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_StepBwd_04_anm"), TEXT("Shot_Spell"), funcNotify)))
 	{
 		MSG_BOX("Failed Bind_Notify");
 
 		return E_FAIL;
 	}
+
+
+
 
 	funcNotify = [&] {(*this).Protego(); };
 

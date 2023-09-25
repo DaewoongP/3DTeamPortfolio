@@ -49,9 +49,24 @@ HRESULT CMagicSlot::Initialize(void* pArg)
 		magicInitDesc.fLifeTime = 0.6f;
 		Add_Magics(magicInitDesc);
 	}
+	//Basic Magic BasicCastLast
+	{
+		CMagic::MAGICDESC magicInitDesc;
+		magicInitDesc.eBuffType = BUFF_ATTACK_HEAVY;
+		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
+		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicTag = BASICCAST_LAST;
+		magicInitDesc.fCoolTime = 0.f;
+		magicInitDesc.fDamage = 10.f;
+		magicInitDesc.fCastDistance = 1000;
+		magicInitDesc.fBallDistance = 30;
+		magicInitDesc.fLifeTime = 0.6f;
+		Add_Magics(magicInitDesc);
+	}
 
 	Add_Magic_To_Basic_Slot(0, BASICCAST);
 	Add_Magic_To_Basic_Slot(1, PROTEGO);
+	Add_Magic_To_Basic_Slot(2, BASICCAST_LAST);
 
 	return S_OK;
 }
