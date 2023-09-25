@@ -104,7 +104,7 @@ _bool CMagic::Magic_Cast(CTransform* pTarget, _float4x4 targetOffsetMatrix, cons
 	CMagicBallPool* pMagicBallPool = CMagicBallPool::GetInstance();
 	Safe_AddRef(pMagicBallPool);
 	
-	if (FAILED(pGameInstance->Add_Component(pMagicBallPool->Get_Magic(ballInit), LEVEL_CLIFFSIDE, TEXT("Layer_Magic"), objTag)))
+	if (FAILED(pGameInstance->Add_Component(pMagicBallPool->Get_Magic(ballInit), LEVEL_STATIC, TEXT("Layer_Magic"), objTag)))
 	{
 		MSG_BOX(msgBoxText);
 		ENDINSTANCE;
