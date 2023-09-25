@@ -227,7 +227,7 @@ HRESULT CNcendio::Add_Effect()
 
 CNcendio* CNcendio::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel)
 {
-	CNcendio* pInstance = new CNcendio(pDevice, pContext);
+	CNcendio* pInstance = New CNcendio(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(iLevel)))
 	{
@@ -240,7 +240,7 @@ CNcendio* CNcendio::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,
 
 CGameObject* CNcendio::Clone(void* pArg)
 {
-	CNcendio* pInstance = new CNcendio(*this);
+	CNcendio* pInstance = New CNcendio(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

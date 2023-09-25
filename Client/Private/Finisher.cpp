@@ -261,7 +261,7 @@ void CFinisher::Ready_CastMagic()
 	m_FlareCenterParticle->Play(m_pTarget->Get_Position());
 	m_FlareSpreadParticle->Play(m_pTarget->Get_Position() + _float3(0, 0.5f, 0));
 	m_DustParticle->Play(m_pTarget->Get_Position());
-
+	m_pTransform->Set_Position(m_pTarget->Get_Position());
 }
 
 void CFinisher::Ready_Dying()
@@ -285,7 +285,8 @@ void CFinisher::Tick_CastMagic(_float fTimeDelta)
 
 void CFinisher::Tick_Dying(_float fTimeDelta)
 {
-	//Do_MagicBallState_To_Next();
+	if(!m_DustParticle->IsEnable())
+		Do_MagicBallState_To_Next();
 }
 
 HRESULT CFinisher::Add_Components()
@@ -295,7 +296,7 @@ HRESULT CFinisher::Add_Components()
 
 HRESULT CFinisher::Add_Effect()
 {
-	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Trail_Lightning_Effect"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Trail_Lightning_Effect"),
 		TEXT("Com_LightningTrail01"), reinterpret_cast<CComponent**>(&m_pTrail[0]))))
 	{
 		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Trail_Lightning_Effect)");
@@ -303,7 +304,7 @@ HRESULT CFinisher::Add_Effect()
 		return E_FAIL;
 	}
 
-	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Trail_Lightning_Effect"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Trail_Lightning_Effect"),
 		TEXT("Com_LightningTrail02"), reinterpret_cast<CComponent**>(&m_pTrail[1]))))
 	{
 		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Trail_Lightning_Effect)");
@@ -311,7 +312,7 @@ HRESULT CFinisher::Add_Effect()
 		return E_FAIL;
 	}
 
-	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Trail_Lightning_Effect"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Trail_Lightning_Effect"),
 		TEXT("Com_LightningTrail03"), reinterpret_cast<CComponent**>(&m_pTrail[2]))))
 	{
 		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Trail_Lightning_Effect)");
@@ -378,7 +379,7 @@ HRESULT CFinisher::Add_Effect()
 
 CFinisher* CFinisher::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel)
 {
-	CFinisher* pInstance = new CFinisher(pDevice, pContext);
+	CFinisher* pInstance = New CFinisher(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(iLevel)))
 	{
@@ -391,7 +392,7 @@ CFinisher* CFinisher::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 
 CGameObject* CFinisher::Clone(void* pArg)
 {
-	CFinisher* pInstance = new CFinisher(*this);
+	CFinisher* pInstance = New CFinisher(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

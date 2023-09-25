@@ -741,6 +741,12 @@ void CRigidBody::Free()
 	if (nullptr != m_pActor)
 	{
 		m_pActor->userData = nullptr;
+		for (auto& ShapePair : m_Shapes)
+		{
+			m_pActor->detachShape(*ShapePair.second);
+		}
+		
+		m_pScene->removeActor(*m_pActor);
 		m_pActor->release();
 	}
 	

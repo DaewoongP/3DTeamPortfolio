@@ -23,6 +23,7 @@ public:
 		FILEDGUIDE,
 		TEXT,
 		ALPHA,
+		SKILL,
 		EFFECTTYPE_END
 	};
 
@@ -48,10 +49,6 @@ public:
 	virtual void	Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
-public:
-
-
-
 private:
 	CShader*			m_pShaderCom = { nullptr };
 	CRenderer*			m_pRendererCom = { nullptr };
@@ -65,9 +62,6 @@ private:
 
 private:
 	EFFECTTYPE		m_eEffecttype = { EFFECTTYPE_END };
-
-private:
-	CUI_Group_Skill::UISKILLDESC* m_SkillDesc;
 
 private:
 	_float			m_fRadian = { 0.f };

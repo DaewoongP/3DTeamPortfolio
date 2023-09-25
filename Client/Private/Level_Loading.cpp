@@ -8,6 +8,7 @@
 #include "Level_Logo.h"
 #include "Level_CliffSide.h"
 #include "Level_Vault.h"
+#include "Level_GreatHall.h"
 
 CLevel_Loading::CLevel_Loading(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CLevel(pDevice, pContext)
@@ -39,6 +40,13 @@ HRESULT CLevel_Loading::Initialize(LEVELID eNextLevelID)
 		break;
 	case LEVEL_VAULT:
 		if (FAILED(Loading_Vault(TEXT("Layer_Vault"))))
+		{
+			MSG_BOX("Failed Loading MainGame Object");
+			return E_FAIL;
+		}
+		break;
+	case LEVEL_GREATHALL:
+		if (FAILED(Loading_GreatHall(TEXT("Layer_GreatHall"))))
 		{
 			MSG_BOX("Failed Loading MainGame Object");
 			return E_FAIL;
@@ -118,6 +126,9 @@ void CLevel_Loading::Tick(_float fTimeDelta)
 		case LEVEL_VAULT:
 			pLevel = CLevel_Vault::Create(m_pDevice, m_pContext);
 			break;
+		case LEVEL_GREATHALL:
+			pLevel = CLevel_GreatHall::Create(m_pDevice, m_pContext);
+			break;
 		default:
 			MSG_BOX("Failed Create Next Level");
 			__debugbreak();
@@ -168,6 +179,11 @@ HRESULT CLevel_Loading::Loading_Cliffside(const _tchar* pLayerTag)
 }
 
 HRESULT CLevel_Loading::Loading_Vault(const _tchar* pLayerTag)
+{
+	return S_OK;
+}
+
+HRESULT CLevel_Loading::Loading_GreatHall(const _tchar* pLayerTag)
 {
 	return S_OK;
 }

@@ -83,8 +83,7 @@ public:
 	virtual void OnCollisionEnter(COLLEVENTDESC CollisionEventDesc) override;
 	virtual void OnCollisionStay(COLLEVENTDESC CollisionEventDesc) override;
 	virtual void OnCollisionExit(COLLEVENTDESC CollisionEventDesc) override;
-	virtual HRESULT Ready(MAGICBALLINITDESC& InitDesc);
-	virtual HRESULT Reset() PURE;
+	virtual HRESULT Reset(MAGICBALLINITDESC& InitDesc);
 
 protected:
 	// 충돌을 위한 리지드바디 입니다.

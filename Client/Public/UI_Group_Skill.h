@@ -9,6 +9,7 @@ class CTexture;
 END
 
 BEGIN(Client)
+class CPlayer;
 
 class CUI_Group_Skill final : public CGameObject
 {
@@ -20,18 +21,6 @@ private:
 		THIRD,
 		FOURTH,
 		KEYLIST_END
-	};
-
-public:
-	struct UISKILLDESC
-	{
-		HFILE			hfile;
-		_float2			vCombinedXY = { 0.f, 0.f };
-		_float			fX = { 0.f };
-		_float			fY = { 0.f };
-		_float			fZ = { 0.f };
-		_float			fSizeX = { 0.f };
-		_float			fSizeY = { 0.f };
 	};
 
 private:
@@ -56,7 +45,7 @@ private:
 	CUI::UIDESC Load_File(const HANDLE hFile);
 
 private:
-	HRESULT Create_First(void* pArg);
+	HRESULT Create_First(const _tchar* pFilePath);
 	HRESULT Create_Component(const _tchar* pFIlePath, wstring wszTag, KEYLIST eType);
 
 	void	Add_SpellProtoTypeTag();
@@ -74,10 +63,10 @@ private:
 	vector<class CTexture*>			m_SkillTextures;
 
 private:
-	SPELL			m_KeyList[KEYLIST_END];
-	UISKILLDESC		m_SkillDesc;
+	CPlayer*		m_pPlayer;
 
-	HFILE			m_hFile;
+private:
+	SPELL			m_KeyList[KEYLIST_END];
 
 public:
 	static CUI_Group_Skill* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

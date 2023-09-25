@@ -449,7 +449,7 @@ HRESULT CPlayer::SetUp_ShaderResources()
 	if (FAILED(m_pShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
 		return E_FAIL;
 
-	_float3 vHairColor = { 0.f, 0.f, 0.f };
+	_float3 vHairColor = { 0.f, 0.f, 1.f };
 	if (FAILED(m_pShader->Bind_RawValue("g_fHairColor", &vHairColor, sizeof(_float3))))
 		return E_FAIL;
 
