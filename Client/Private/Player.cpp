@@ -81,6 +81,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 HRESULT CPlayer::Initialize_Level(_uint iCurrentLevelIndex)
 {
+	m_pRigidBody->Set_Position(_float3(15.f, 20.f, 20.f));
 	return S_OK;
 }
 

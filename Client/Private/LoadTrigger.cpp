@@ -22,12 +22,12 @@ HRESULT CLoadTrigger::Initialize(void* pArg)
 
 void CLoadTrigger::Late_Tick(_float fTimeDelta)
 {
+#ifdef _DEBUG
 	if (nullptr != m_pRenderer)
 	{
-#ifdef _DEBUG
 		m_pRenderer->Add_DebugGroup(m_pRigidBody);
-#endif // _DEBUG
 	}
+#endif // _DEBUG
 }
 
 void CLoadTrigger::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
