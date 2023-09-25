@@ -153,6 +153,7 @@ HRESULT CMagicBall::Reset(MAGICBALLINITDESC& InitDesc)
 	m_pWeaponMatrix = InitDesc.pWeaponMatrix;
 	m_WeaponOffsetMatrix = InitDesc.WeaponOffsetMatrix;
 
+	Safe_Release(m_pTarget);
 	m_pTarget = InitDesc.pTarget;
 	Safe_AddRef(m_pTarget);
 
@@ -177,6 +178,7 @@ HRESULT CMagicBall::Reset(MAGICBALLINITDESC& InitDesc)
 	
 	m_pRigidBody->Disable_Collision("Magic_Ball");
 	m_pTransform->Set_WorldMatrix(XMMatrixIdentity());
+
 	return S_OK;
 }
 

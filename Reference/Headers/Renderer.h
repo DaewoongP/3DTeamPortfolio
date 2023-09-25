@@ -67,13 +67,12 @@ private:
 	HRESULT Sort_Blend();
 	HRESULT Sort_UI();
 	HRESULT Add_Components();
-	HRESULT Create_DepthTexture(_uint iSizeX, _uint iSizeY);
 
 #ifdef _DEBUG
 private:
 	HRESULT Render_Debug();
 	HRESULT Render_MRTs();
-	_bool Is_DebugRender();
+	void Is_DebugRender();
 	_bool Is_MRTRender();
 	_bool Is_Render_Distortion();
 
