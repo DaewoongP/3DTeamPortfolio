@@ -171,6 +171,8 @@ HRESULT CMagicBall::Ready(MAGICBALLINITDESC& InitDesc)
 	m_eCollisionFlag = InitDesc.eCollisionFlag;
 
 	m_pRigidBody->Set_CollisionFlag("Magic_Ball", m_eCollisionFlag);
+	Set_ObjEvent(OBJ_NONE);
+
 
 	return S_OK;
 }

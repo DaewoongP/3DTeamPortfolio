@@ -52,13 +52,14 @@ CMagicBall* CMagicBallPool::Get_Magic(CMagicBall::MAGICBALLINITDESC& MagicBallDe
         return nullptr;
     }
 
+    pMagicball->Reset();
     return pMagicball;
 }
 
 void CMagicBallPool::Return_Magic(CMagicBall* pMagic, SPELL eSpell)
 {
     Safe_AddRef(pMagic);
-    pMagic->Reset();
+    
     m_MagicPoolVec[eSpell].push(pMagic);
 }
 
@@ -127,7 +128,7 @@ CMagicBall* CMagicBallPool::Create_Magic(SPELL eSpell, CMagicBall::MAGICBALLINIT
         pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Wingardiumleviosa")));
         break;
     case Client::BASICCAST:
-        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_BaseAttack")));
+        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_BasicCast")));
         break;
     case Client::STUPEFY:
         break;
