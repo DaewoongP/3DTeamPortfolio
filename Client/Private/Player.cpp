@@ -793,7 +793,7 @@ HRESULT CPlayer::Ready_MagicDesc()
 	magicInitDesc.eMagicType = CMagic::MT_NOTHING;
 	magicInitDesc.eMagicTag = BASICCAST;
 	magicInitDesc.fCoolTime = 0.f;
-	magicInitDesc.fDamage = 10.f;
+	magicInitDesc.iDamage = 10.f;
 	magicInitDesc.fCastDistance = 1000;
 	magicInitDesc.fBallDistance = 30;
 	magicInitDesc.fLifeTime = 0.6f;
@@ -805,7 +805,7 @@ HRESULT CPlayer::Ready_MagicDesc()
 	magicInitDesc.eMagicType = CMagic::MT_NOTHING;
 	magicInitDesc.eMagicTag = BASICCAST;
 	magicInitDesc.fCoolTime = 0.f;
-	magicInitDesc.fDamage = 10.f;
+	magicInitDesc.iDamage = 10.f;
 	magicInitDesc.fCastDistance = 1000;
 	magicInitDesc.fBallDistance = 30;
 	magicInitDesc.fLifeTime = 0.6f;
