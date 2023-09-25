@@ -52,15 +52,15 @@ PS_OUT PS_MAIN(PS_IN In)
     vector Bloom = g_BloomTexture.Sample(LinearSampler, In.vTexUV);
     vector DOF = g_DOFTexture.Sample(LinearSampler, In.vTexUV);
    
-    if(DOF.x>0.f)
-    {
-        Out.vColor = (vPost * DOF) + Bloom;
-    }
-    else
-    {
-        Out.vColor = vPost+Bloom;
-    }
-    //  Out.vColor += (Bloom) ;
+    //if(DOF.x>0.f)
+    //{
+    //    Out.vColor = (vPost * DOF) + Bloom;
+    //}
+    //else
+    //{
+    //    Out.vColor = vPost+Bloom;
+    //}
+      Out.vColor += (Bloom) ;
     return Out;
 }
 
