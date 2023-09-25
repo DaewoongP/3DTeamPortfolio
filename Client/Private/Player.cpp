@@ -12,6 +12,8 @@
 
 #include "Armored_Troll.h"
 
+#include "Magic.h"
+
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
@@ -63,6 +65,13 @@ HRESULT CPlayer::Initialize(void* pArg)
 	if (FAILED(Ready_Camera()))
 	{
 		MSG_BOX("Failed Ready Player Camera");
+
+		return E_FAIL;
+	}
+
+	if (FAILED(Ready_MagicDesc()))
+	{
+		MSG_BOX("Failed Ready _MagicDesc");
 
 		return E_FAIL;
 	}
@@ -776,6 +785,36 @@ HRESULT CPlayer::Ready_Camera()
 	return S_OK;
 }
 
+HRESULT CPlayer::Ready_MagicDesc()
+{
+	CMagic::MAGICDESC magicInitDesc;
+	magicInitDesc.eBuffType = BUFF_ATTACK_LIGHT;
+	magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
+	magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+	magicInitDesc.eMagicTag = BASICCAST;
+	magicInitDesc.fCoolTime = 0.f;
+	magicInitDesc.fDamage = 10.f;
+	magicInitDesc.fCastDistance = 1000;
+	magicInitDesc.fBallDistance = 30;
+	magicInitDesc.fLifeTime = 0.6f;
+
+	m_pBasicDesc_Light = New CMagic::MAGICDESC(magicInitDesc);
+
+	magicInitDesc.eBuffType = BUFF_ATTACK_HEAVY;
+	magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
+	magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+	magicInitDesc.eMagicTag = BASICCAST;
+	magicInitDesc.fCoolTime = 0.f;
+	magicInitDesc.fDamage = 10.f;
+	magicInitDesc.fCastDistance = 1000;
+	magicInitDesc.fBallDistance = 30;
+	magicInitDesc.fLifeTime = 0.6f;
+
+	m_pBasicDesc_Heavy = New CMagic::MAGICDESC(magicInitDesc);
+
+	return S_OK;
+}
+
 
 void CPlayer::MagicTestTextOutput()
 {
@@ -911,12 +950,14 @@ void CPlayer::Update_Target_Angle()
 void CPlayer::Shot_Basic_Spell()
 {
 	Find_Target_For_Distance();
+	m_pMagicSlot->Add_Magics(*m_pBasicDesc_Heavy);
 	m_pMagicSlot->Action_Magic_Basic(0, m_pTargetTransform, XMMatrixTranslation(0.f, 2.5f, 0.f), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
 }
 
 void CPlayer::Shot_Basic_Last_Spell()
 {
 	Find_Target_For_Distance();
+	m_pMagicSlot->Add_Magics(*m_pBasicDesc_Heavy);
 	m_pMagicSlot->Action_Magic_Basic(0, m_pTargetTransform, XMMatrixTranslation(0.f, 2.5f, 0.f), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
 }
 
@@ -1106,7 +1147,7 @@ void CPlayer::Find_Target_For_Distance()
 		return;
 	}
 
-	_float fMinDistance = { 10000.0f };
+	_float fMinDistance = { 10.0f };
 
 
 	//°Å¸®°¡ ³·Àº ³ðÀ» ÀúÀå
@@ -1155,6 +1196,7 @@ void CPlayer::Find_Target_For_Distance()
 		if (nullptr != m_pTargetTransform)
 		{
 			Safe_Release(m_pTargetTransform);
+			m_pTargetTransform = nullptr;
 		}
 	}
 
@@ -1211,6 +1253,8 @@ void CPlayer::Free()
 		{
 			Safe_Release(m_pTargetTransform);
 		}
-		
+
+		Safe_Delete(m_pBasicDesc_Heavy);
+		Safe_Delete(m_pBasicDesc_Light);
 	}
 }
