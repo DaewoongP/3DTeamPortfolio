@@ -21,13 +21,11 @@ float3 g_Ran[13] =
     float3(0.2024539f, -0.7101201f, 0.29143293f)
 };
 
-float BlurWeights[23] =
+float BlurWeights[13] =
 {
-    0.0011, 0.0123, 0.0561, 0.1353, 0.278, 0.3001, 0.4868, 0.6666, 0.7261, 0.8712, 0.9231,
-    0.9986, 0.9231, 0.8712, 0.7261, 0.6666, 0.4868, 0.3001, 0.278, 0.1353, 0.0561, 0.0123, 0.0011
+    0.0561, 0.1353, 0.278, 0.4868, 0.7261, 0.9231, 1, 0.9231, 0.7261, 0.4868, 0.278, 0.1353, 0.0561
 };
-
-float total = 11.4776f;
+float total = 6.2108f;
 
 struct VS_IN
 {
@@ -75,19 +73,17 @@ PS_OUT PS_MAIN_BLURX(PS_IN In)
     int Count = 0;
     float2 UV = 0;
     
-    vector SSAO = g_Texture.Sample(BlurSampler, UV);
-    
-    for (int i = -11; i < 11; ++i)
+    for (int i = -6; i < 6; ++i)
     {
         UV = In.vTexUV + float2(dx * i, 0.f);
+        vector Blur = g_Texture.Sample(BlurSampler, UV);
         
-        if(SSAO.x > 0.9f)
+        if (Blur.x > 0.9f)
         {
             Out.vColor = float4(1.f, 1.f, 1.f, 1.f);
             return Out;
         }
-        
-        Out.vColor += BlurWeights[11 + i] * SSAO;
+        Out.vColor += BlurWeights[6 + i] * Blur;
     }
     Out.vColor /= total;
     
@@ -102,11 +98,11 @@ PS_OUT PS_MAIN_BLURY(PS_IN In)
     
     float2 UV = 0;
    
-    for (int i = -11; i < 11; ++i)
+    for (int i = -6; i < 6; ++i)
     {
         UV = In.vTexUV + float2(0, dy * i);
-        vector SSAO = g_Texture.Sample(BlurSampler, UV);
-        Out.vColor += BlurWeights[11 + i] * SSAO;
+        vector Blur = g_Texture.Sample(BlurSampler, UV);
+        Out.vColor += BlurWeights[6 + i] * Blur;
     }
     Out.vColor /= total;
 

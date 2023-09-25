@@ -171,7 +171,6 @@ PS_OUT PS_MAIN_BLOOM(PS_IN_POSTEX In)
     vector vSpecular = g_SpecularTexture.Sample(BloomSampler, In.vTexUV);
     vBloom = vBloom * vSpecular;
     
-    
     float Brigtness = dot(vBloom.rgb, float3(0.2126f, 0.7152f, 0.0722f));
    
     if (Brigtness > 0.99f)
@@ -181,7 +180,7 @@ PS_OUT PS_MAIN_BLOOM(PS_IN_POSTEX In)
     else
         discard;
 
-    if(Out.vColor.a <= 0.1f)
+    if (Out.vColor.a <= 0.1f)
         discard;
 
     return Out;

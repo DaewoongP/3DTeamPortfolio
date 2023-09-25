@@ -48,7 +48,7 @@ VS_OUT VS_MAIN(VS_IN In)
     Out.vProjPos = Out.vPosition;
     Out.vTangent = normalize(mul(vector(In.vTangent, 0.f), g_WorldMatrix));
     Out.vBinormal = vector(normalize(cross(Out.vNormal.xyz, Out.vTangent.xyz)), 0.f);
-
+    
     return Out;
 }
 
