@@ -33,12 +33,12 @@ HRESULT CLevel_Cliffside::Initialize()
 
 		return E_FAIL;
 	}
-	/*if (FAILED(Ready_Layer_NPC(TEXT("Layer_NPC"))))
+	if (FAILED(Ready_Layer_NPC(TEXT("Layer_NPC"))))
 	{
 		MSG_BOX("Failed Ready_Layer_NPC");
 
 		return E_FAIL;
-	}*/
+	}
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 	{
 		MSG_BOX("Failed Ready_Layer_BackGround");
@@ -268,7 +268,7 @@ HRESULT CLevel_Cliffside::Ready_Layer_NPC(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Professor_Fig"), pLayerTag, TEXT("GameObject_Professor_Fig"))))
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Professor_Fig"), pLayerTag, TEXT("GameObject_Professor_Fig"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Professor_Fig)");
 		ENDINSTANCE;

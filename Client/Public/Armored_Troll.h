@@ -56,6 +56,10 @@ private:
 	void Tick_ImGui();
 #endif // _DEBUG
 
+private:
+	_float m_fDeadTimeAcc = { 0.f };
+	void DeathBehavior(const _float& fTimeDelta);
+
 private: /* Çàµ¿ ¹­À½µé */
 	HRESULT Make_Turns(_Inout_ CSequence* pSequence);
 	HRESULT Make_Turn_Run(_Inout_ CSequence* pSequence);
@@ -79,6 +83,8 @@ private: /* Çàµ¿ ¹­À½µé */
 
 	HRESULT Make_Taunt_Degree(_Inout_ CSequence* pSequence);
 	HRESULT Make_Check_Spell(_Inout_ CSelector* pSelector);
+
+	HRESULT Make_Death(_Inout_ CSequence* pSequence);
 
 private: /* Notify Func */
 	void Enter_Light_Attack();

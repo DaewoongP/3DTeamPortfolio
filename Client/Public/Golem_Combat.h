@@ -56,7 +56,7 @@ private:
 	void Tick_ImGui();
 #endif // _DEBUG
 
-private:
+private: /* 사망처리 전용 함수 */
 	_float m_fDeadTimeAcc = { 0.f };
 	void DeathBehavior(const _float& fTimeDelta);
 

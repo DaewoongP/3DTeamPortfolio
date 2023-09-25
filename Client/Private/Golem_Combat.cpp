@@ -693,7 +693,15 @@ HRESULT CGolem_Combat::Make_Air_Hit(_Inout_ CSequence* pSequence)
 					return false;
 
 				if (BUFF_ATTACK_HEAVY & *pICurrentSpell)
+				{
+					CRigidBody* pRigidBody = { nullptr };
+					if (FAILED(pBlackBoard->Get_Type("pRigidBody", pRigidBody)))
+						return false;
+
+					pRigidBody->Set_Gravity(true);
+
 					return true;
+				}
 
 				return false;
 			});

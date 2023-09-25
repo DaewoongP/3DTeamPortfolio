@@ -354,7 +354,7 @@ HRESULT CProfessor_Fig::Add_Components()
 			throw TEXT("Com_Renderer");
 
 		/* For.Com_Model */
-		if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_Model_Professor_Fig"),
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Model_Professor_Fig"),
 			TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 			throw TEXT("Com_Model");
 
@@ -414,7 +414,7 @@ HRESULT CProfessor_Fig::Add_Components()
 		ParentMatrixDesc.pCombindTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
 		ParentMatrixDesc.pParentWorldMatrix = m_pTransform->Get_WorldMatrixPtr();
 
-		if (FAILED(Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_Weapon_Fig_Wand"),
+		if (FAILED(Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Weapon_Fig_Wand"),
 			TEXT("Com_Weapon"), reinterpret_cast<CComponent**>(&m_pWeapon), &ParentMatrixDesc)))
 			throw TEXT("Com_Weapon");
 
@@ -490,6 +490,12 @@ void CProfessor_Fig::Set_Current_Target()
 			m_pTarget = Pair.second;
 		else
 		{
+			if (OBJ_DEAD == Pair.second->Get_ObjEvent())
+			{
+				Remove_GameObject(Pair.first);
+				continue;
+			}
+
 			_float3 vSrcTargetPosition = m_pTarget->Get_Transform()->Get_Position();
 			_float3 vDstTargetPosition = Pair.second->Get_Transform()->Get_Position();
 
