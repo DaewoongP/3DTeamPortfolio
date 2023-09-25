@@ -31,8 +31,6 @@ HRESULT CComponent_Manager::Reserve_Containers(_uint iNumLevels)
 
 HRESULT CComponent_Manager::Add_Prototype(_uint iLevelIndex, const _tchar* pPrototypeTag, CComponent* pPrototype, _bool isFailedSkip)
 {
-	std::lock_guard<std::mutex> lock(mtx);
-
 	if (nullptr != Find_Prototype(iLevelIndex, pPrototypeTag))
 	{
 		if (true == isFailedSkip)
@@ -76,6 +74,39 @@ HRESULT CComponent_Manager::Add_Component(_uint iPrototypeLevelIndex, _uint iLev
 	pComponent->Set_Tag(pComponentTag);
 
 	FAILED_CHECK_RETURN(pComponent->Initialize_Level(iLevelIndex), E_FAIL);
+
+	if (nullptr == pLayer)
+	{
+		pLayer = CLayer::Create();
+
+		if (FAILED(pLayer->Add_Component(pComponent->Get_Tag(), pComponent)))
+		{
+			Safe_Release(pLayer);
+			Safe_Release(pComponent);
+
+			return E_FAIL;
+		}
+
+		m_pLayers[iLevelIndex].emplace(pLayerTag, pLayer);
+	}
+	else
+	{
+		if (FAILED(pLayer->Add_Component(pComponent->Get_Tag(), pComponent)))
+		{
+			Safe_Release(pComponent);
+
+			return E_FAIL;
+		}
+	}
+
+	return S_OK;
+}
+
+HRESULT CComponent_Manager::Add_Component(CComponent* pComponent, _uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pComponentTag)
+{
+	CLayer* pLayer = Find_Layer(iLevelIndex, pLayerTag);
+
+	pComponent->Set_Tag(pComponentTag);
 
 	if (nullptr == pLayer)
 	{

@@ -925,7 +925,8 @@ void CProfessor_Fig::Attack_Light()
 	m_pMagicSlot->Action_Magic_Basic(0, m_pTarget->Get_Transform(),
 		XMMatrixIdentity(),
 		m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(),
-		m_pWeapon->Get_Wand_Point_OffsetMatrix());
+		m_pWeapon->Get_Wand_Point_OffsetMatrix(),
+		COL_ENEMY);
 }
 
 void CProfessor_Fig::Attack_Heavy()
@@ -936,7 +937,8 @@ void CProfessor_Fig::Attack_Heavy()
 	m_pMagicSlot->Action_Magic_Basic(0, m_pTarget->Get_Transform(),
 		XMMatrixIdentity(),
 		m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(),
-		m_pWeapon->Get_Wand_Point_OffsetMatrix());
+		m_pWeapon->Get_Wand_Point_OffsetMatrix(),
+		COL_ENEMY);
 }
 
 void CProfessor_Fig::Cast_Levioso()
@@ -947,7 +949,8 @@ void CProfessor_Fig::Cast_Levioso()
 	m_pMagicSlot->Action_Magic_Skill(0, m_pTarget->Get_Transform(),
 		XMMatrixIdentity(),
 		m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(),
-		m_pWeapon->Get_Wand_Point_OffsetMatrix());
+		m_pWeapon->Get_Wand_Point_OffsetMatrix(),
+		COL_ENEMY);
 }
 
 void CProfessor_Fig::Cast_Protego()
@@ -958,7 +961,8 @@ void CProfessor_Fig::Cast_Protego()
 	m_pMagicSlot->Action_Magic_Basic(1, m_pTransform,
 		XMMatrixIdentity(),
 		m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(),
-		m_pWeapon->Get_Wand_Point_OffsetMatrix());
+		m_pWeapon->Get_Wand_Point_OffsetMatrix(),
+		COL_MAGIC);
 }
 
 CProfessor_Fig* CProfessor_Fig::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

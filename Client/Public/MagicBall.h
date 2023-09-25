@@ -26,6 +26,7 @@ public:
 		CMagic::MAGIC_TYPE		eMagicType = { CMagic::MT_END };
 		BUFF_TYPE				eBuffType = { BUFF_NONE };
 		SPELL					eMagicTag = { SPELL_END };
+		COLLISIONFLAG			eCollisionFlag;
 		_float					fDamage = { 0 };
 		_float					fDistance = { 0 };
 		_float					fLifeTime = { 1.0f };
@@ -81,26 +82,30 @@ public:
 	virtual void OnCollisionEnter(COLLEVENTDESC CollisionEventDesc) override;
 	virtual void OnCollisionStay(COLLEVENTDESC CollisionEventDesc) override;
 	virtual void OnCollisionExit(COLLEVENTDESC CollisionEventDesc) override;
+	virtual HRESULT Ready(MAGICBALLINITDESC& InitDesc);
+	virtual HRESULT Reset() PURE;
 
 protected:
 	// 충돌을 위한 리지드바디 입니다.
-	CRigidBody*		m_pRigidBody = { nullptr };
-	CRenderer*		m_pRenderer = { nullptr };
+	CRigidBody*				m_pRigidBody = { nullptr };
+	CRenderer*				m_pRenderer = { nullptr };
 	//타겟에 대한 트랜스폼임.
-	CTransform*		m_pTarget = { nullptr };
-	_float4x4		m_TargetOffsetMatrix = {};
+	CTransform*				m_pTarget = { nullptr };
+	_float4x4				m_TargetOffsetMatrix = {};
 	
 	//무기의 현재 위치, 오프셋임
-	const _float4x4*	m_pWeaponMatrix = { nullptr };
-	_float4x4			m_WeaponOffsetMatrix = {};
+	const _float4x4*		m_pWeaponMatrix = { nullptr };
+	_float4x4				m_WeaponOffsetMatrix = {};
 
 protected:
 	MAGICBALLDESC			m_MagicBallDesc;
 	COLLSIONREQUESTDESC		m_CollisionDesc = {};
+	COLLISIONFLAG			m_eCollisionFlag;
 
 	//행동 계산용임.
 	MAGICBALL_STATE			m_eMagicBallState = { MAGICBALL_STATE_BEGIN };
 	_bool					m_isFirstFrameInState = { true };
+
 protected:
 	virtual void Ready_Begin() {};
 	virtual void Ready_DrawMagic() {};

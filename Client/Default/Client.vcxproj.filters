@@ -597,9 +597,6 @@
     <ClInclude Include="..\Public\Sequence_Groggy.h">
       <Filter>03. Behaviors\02. Sequences</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\MagicSlot.h">
-      <Filter>05. Magic\MagicSlot</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\LoadTrigger.h">
       <Filter>02. GameObject\99. Debug\LoadTrigger</Filter>
     </ClInclude>
@@ -764,6 +761,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\Ncendio.h">
       <Filter>05. Magic\MagicBall\08. Ncendio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MagicSlot.h">
+      <Filter>05. Magic\MagicSlot</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
