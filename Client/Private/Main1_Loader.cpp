@@ -276,6 +276,15 @@ HRESULT CMain1_Loader::Loading_For_Cliffside()
 			CNcendio::Create(m_pDevice, m_pContext, LEVEL_CLIFFSIDE))))
 			throw TEXT("Prototype_GameObject_Ncendio");
 #pragma endregion
+		{
+			std::lock_guard<std::mutex> lock(mtx);
+
+			CMagicBallPool* pMagicBallPool = CMagicBallPool::GetInstance();
+			Safe_AddRef(pMagicBallPool);
+			if (FAILED(pMagicBallPool->Initialize()))
+				throw TEXT("Magic Ball Pool");
+			Safe_Release(pMagicBallPool);
+		}
 
 		/* For.Prototype_GameObject_MagicSlot */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_MagicSlot"),

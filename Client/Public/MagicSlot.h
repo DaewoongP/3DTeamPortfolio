@@ -9,6 +9,7 @@ BEGIN(Client)
 // 따라서 평타/쉴드 같은 기본 마법만 넣어주고
 // 나머지는 원하는대로 커스터마이징 해서 집어넣는걸로 결정함.
 // add_magic_skill를 이용해 desc와 함께 마법을 추가할것.
+class CMagicBallPool;
 
 class CMagicSlot final : public CComponent
 {
@@ -34,9 +35,9 @@ public:
 
 public:
 	//Skill Action
-	void Action_Magic_Skill(_uint iIndex, CTransform* pTarget,_float4x4 TargetOffsetMatrix, const _float4x4* pWeaponMatrix, _float4x4 WeaponOffsetMatrix);
+	void Action_Magic_Skill(_uint iIndex, CTransform* pTarget,_float4x4 TargetOffsetMatrix, const _float4x4* pWeaponMatrix, _float4x4 WeaponOffsetMatrix, COLLISIONFLAG eCollisionFlag);
 	//Basic Skill Action
-	void Action_Magic_Basic(_uint iIndex, CTransform* pTarget, _float4x4 TargetOffsetMatrix, const _float4x4* pWeaponMatrix, _float4x4 WeaponOffsetMatrix);
+	void Action_Magic_Basic(_uint iIndex, CTransform* pTarget, _float4x4 TargetOffsetMatrix, const _float4x4* pWeaponMatrix, _float4x4 WeaponOffsetMatrix, COLLISIONFLAG eCollisionFlag);
 
 private:
 	//4 Slot To Skill

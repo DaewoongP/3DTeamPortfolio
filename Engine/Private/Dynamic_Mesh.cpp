@@ -112,18 +112,6 @@ HRESULT CDynamic_Mesh::Initialize(void* pArg)
 
 void CDynamic_Mesh::Tick(_float fTimeDelta)
 {
-	if (false == m_isDownFrame)
-	{
-		m_isDownFrame = true;
-	}
-	else
-	{
-		m_isDownFrame = false;
-	}
-
-	if (false == m_isDownFrame)
-		return;
-
 	if (nullptr == m_pCloth ||
 		nullptr == m_pSolver)
 		return;
@@ -138,44 +126,46 @@ void CDynamic_Mesh::Tick(_float fTimeDelta)
 
 	m_pSolver->endSimulation();
 
-	// 동적버퍼 map 전에 미리 값을 옮겨둠.
-	cloth::MappedRange<PxVec4>	Particles = m_pCloth->getCurrentParticles();
-	vector<_float3> Positions;
-	Positions.resize(m_iNumVertices);
-	for (_int i = 0; i < Particles.size(); ++i)
-	{
-		// xyz = 현재 포지션
-		// w = 질량 역수 // 나중에 사용할 예정.
-		Positions[i] = PhysXConverter::ToXMFLOAT3(Particles[i].getXYZ());
-	}
-
 	if (CModel::TYPE_NONANIM == m_eType)
 	{
+		cloth::MappedRange<PxVec4>	Particles = m_pCloth->getCurrentParticles();
+
+		for (_int i = 0; i < Particles.size(); ++i)
+		{
+			// xyz = 현재 포지션
+			// w = 질량 역수 // 나중에 사용할 예정.
+			m_NonAnimVertices[i].vPosition = PhysXConverter::ToXMFLOAT3(Particles[i].getXYZ());
+		}
+		std::lock_guard<std::mutex> lock(mtx);
 		D3D11_MAPPED_SUBRESOURCE	MappedSubResource;
 
-		m_pContext->Map(m_pVB, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &MappedSubResource);
+		m_pContext->Map(m_pVB, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedSubResource);
 
 		VTXMESH* pVertices = static_cast<VTXMESH*>(MappedSubResource.pData);
 
-		for (_uint i = 0; i < m_iNumVertices; ++i)
-		{
-			pVertices[i].vPosition = Positions[i];
-		}
+		memcpy(pVertices, m_NonAnimVertices.data(), sizeof(VTXMESH) * m_iNumVertices);
 
 		m_pContext->Unmap(m_pVB, 0);
 	}
 	else // ANIM
 	{
+		// 동적버퍼 map 전에 미리 값을 옮겨둠.
+		cloth::MappedRange<PxVec4>	Particles = m_pCloth->getCurrentParticles();
+
+		for (_int i = 0; i < Particles.size(); ++i)
+		{
+			// xyz = 현재 포지션
+			// w = 질량 역수 // 나중에 사용할 예정.
+			m_AnimVertices[i].vPosition = PhysXConverter::ToXMFLOAT3(Particles[i].getXYZ());
+		}
+		std::lock_guard<std::mutex> lock(mtx);
 		D3D11_MAPPED_SUBRESOURCE	MappedSubResource;
 
-		m_pContext->Map(m_pVB, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &MappedSubResource);
+		m_pContext->Map(m_pVB, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedSubResource);
 
 		VTXANIMMESH* pVertices = static_cast<VTXANIMMESH*>(MappedSubResource.pData);
 
-		for (_uint i = 0; i < m_iNumVertices; ++i)
-		{
-			pVertices[i].vPosition = Positions[i];
-		}
+		memcpy(pVertices, m_AnimVertices.data(), sizeof(VTXANIMMESH) * m_iNumVertices);
 
 		m_pContext->Unmap(m_pVB, 0);
 	}

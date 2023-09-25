@@ -384,6 +384,42 @@ void CTransform::LookAt_Lerp(_float3 _vTarget, const _float& fTimeDelta, _bool _
 	m_ubTransformChanged |= CHANGEFLAG::ROTATION;
 }
 
+HRESULT CTransform::Write_File(HANDLE hFile, LPDWORD dwByte)
+{
+	if (FAILED(WriteFile(hFile, &m_WorldMatrix, sizeof(_float4x4), dwByte, nullptr)))
+		return E_FAIL;
+	if (FAILED(WriteFile(hFile, &m_fSpeed, sizeof(_float), dwByte, nullptr)))
+		return E_FAIL;
+	if (FAILED(WriteFile(hFile, &m_fRotationSpeed, sizeof(_float), dwByte, nullptr)))
+		return E_FAIL;
+	if (FAILED(WriteFile(hFile, &m_ubTransformChanged, sizeof(_ubyte), dwByte, nullptr)))
+		return E_FAIL;
+	if (FAILED(WriteFile(hFile, &m_vPrePosition, sizeof(_float3), dwByte, nullptr)))
+		return E_FAIL;
+	if (FAILED(WriteFile(hFile, &m_vVelocity, sizeof(_float3), dwByte, nullptr)))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CTransform::Read_File(HANDLE hFile, LPDWORD dwByte)
+{
+	if (FAILED(ReadFile(hFile, &m_WorldMatrix, sizeof(_float4x4), dwByte, nullptr)))
+		return E_FAIL;
+	if (FAILED(ReadFile(hFile, &m_fSpeed, sizeof(_float), dwByte, nullptr)))
+		return E_FAIL;
+	if (FAILED(ReadFile(hFile, &m_fRotationSpeed, sizeof(_float), dwByte, nullptr)))
+		return E_FAIL;
+	if (FAILED(ReadFile(hFile, &m_ubTransformChanged, sizeof(_ubyte), dwByte, nullptr)))
+		return E_FAIL;
+	if (FAILED(ReadFile(hFile, &m_vPrePosition, sizeof(_float3), dwByte, nullptr)))
+		return E_FAIL;
+	if (FAILED(ReadFile(hFile, &m_vVelocity, sizeof(_float3), dwByte, nullptr)))
+		return E_FAIL;
+
+	return S_OK;
+}
+
 void CTransform::Update_Components()
 {
 	if (nullptr == m_pRigidBody)

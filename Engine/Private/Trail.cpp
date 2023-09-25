@@ -216,7 +216,7 @@ HRESULT CTrail::Initialize_Prototype(const _tchar* _pFilePath, const _tchar* _pG
 		// 없으면 원본을 추가한다.
 		pGameInstance->Add_Prototype(m_iLevel
 			, TEXT("Prototype_Component_VIBuffer_Rect_Trail")
-			, CVIBuffer_Rect_Trail::Create(m_pDevice, m_pContext));
+			, CVIBuffer_Rect_Trail::Create(m_pDevice, m_pContext, m_iTrailNum));
 	}
 
 	// 필요한 원본 셰이더가 없을 시에 컴포넌트 매니저에 원본 추가.

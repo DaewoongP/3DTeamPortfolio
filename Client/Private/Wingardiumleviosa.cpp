@@ -78,7 +78,7 @@ HRESULT CWingardiumleviosa::Add_Effect()
 		TEXT("Com_Effect"), reinterpret_cast<CComponent**>(&m_pEffect))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Wingardium_Effect)");
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 

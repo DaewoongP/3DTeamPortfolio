@@ -370,6 +370,9 @@
     <Filter Include="05. Magic\MagicBall\08. Ncendio">
       <UniqueIdentifier>{3ef84178-a7a8-4f3f-9dbe-c88c10fc5a24}</UniqueIdentifier>
     </Filter>
+    <Filter Include="04. Effect\Default_MagicTrail_Effect">
+      <UniqueIdentifier>{5235bea2-54db-4f3f-b105-e99f462db57b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -582,6 +585,9 @@
     <ClInclude Include="..\Public\Levioso.h">
       <Filter>05. Magic\MagicBall\04. Levioso</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Default_MagicTrail_Effect.h">
+      <Filter>04. Effect\Default_MagicTrail_Effect</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\Random_Select.h">
       <Filter>03. Behaviors\03. RandomChoose</Filter>
     </ClInclude>
@@ -590,9 +596,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\Sequence_Groggy.h">
       <Filter>03. Behaviors\02. Sequences</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\MagicSlot.h">
-      <Filter>05. Magic\MagicSlot</Filter>
     </ClInclude>
     <ClInclude Include="..\public\LoadTrigger.h">
       <Filter>02. GameObject\99. Debug\LoadTrigger</Filter>
@@ -758,6 +761,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\Ncendio.h">
       <Filter>05. Magic\MagicBall\08. Ncendio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MagicSlot.h">
+      <Filter>05. Magic\MagicSlot</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -940,6 +946,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Levioso.cpp">
       <Filter>05. Magic\MagicBall\04. Levioso</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Default_MagicTrail_Effect.cpp">
+      <Filter>04. Effect\Default_MagicTrail_Effect</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Random_Select.cpp">
       <Filter>03. Behaviors\03. RandomChoose</Filter>

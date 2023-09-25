@@ -48,6 +48,7 @@ private:
 	HRESULT Render_Depth();
 	HRESULT Render_SSAO();
 	HRESULT Render_Deferred();
+	HRESULT Render_Combine();
 	HRESULT Render_MotionBlurInst();
 	HRESULT Render_NonLight();
 	HRESULT Render_Blend();
@@ -116,6 +117,7 @@ private: /* AfterShader*/
 
 private:
 	class CBlur*					m_pSSAOBlur = { nullptr };
+	class CBlur*					m_pEffectBlur = { nullptr };
 	//class CBlur* m_pShadowBlur = { nullptr };
 	class CBloom*					m_pBloom = { nullptr };
 	
@@ -130,6 +132,8 @@ private:
 	class CMotionBlur*				m_pMotionBlur = { nullptr };
 
 	class CFlowMap*					m_pFlowMap = { nullptr };
+
+	class CDOF*						m_pDOF = { nullptr };
 
 private:
 	_float m_fFrameTime = 0.f;

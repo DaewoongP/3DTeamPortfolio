@@ -22,14 +22,17 @@ public:
 	virtual void OnCollisionEnter(COLLEVENTDESC CollisionEventDesc) override;
 
 private:
-	class CSeamless_Loader*			m_pLoader = { nullptr };
-	CRenderer*						m_pRenderer = { nullptr };
+	//class CSeamless_Loader*			m_pLoader = { nullptr };
 	CRigidBody*						m_pRigidBody = { nullptr };
+
+#ifdef _DEBUG
+private:
+	CRenderer* m_pRenderer = { nullptr };
+#endif // _DEBUG
 
 private:
 	HRESULT Add_Components();
-	void Loading();
-
+	
 public:
 	static CLoadTrigger* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;

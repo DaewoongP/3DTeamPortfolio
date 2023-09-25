@@ -566,19 +566,19 @@ void CDummyParticle::SizeOverLifeTime_TreeNode(CEffect_Window* pEffectWindow)
 			ImGui::TableNextRow();
 			pEffectWindow->Table_CheckBox("Separate Axes", "xcvklj3909di", &m_SizeOverLifeTimeModuleDesc.isSeparateAxes);
 
-			pEffectWindow->Table_DragFloat2Range("SizeX", "XCVPIJDFKLJ983", &m_SizeOverLifeTimeModuleDesc.vSizeX, 0.01f);
+			pEffectWindow->Table_DragFloat2("SizeX", "XCVPIJDFKLJ983", &m_SizeOverLifeTimeModuleDesc.vSizeX, 0.01f);
 			m_pSizeXEaseCombo->Tick(CComboBox::TABLE);
 			if (m_pSizeXEaseCombo->IsUpdated())
 				m_SizeOverLifeTimeModuleDesc.eEaseX = static_cast<CEase::EASE>(m_pSizeXEaseCombo->Get_Current_Item_Index());
 
 			if (true == m_SizeOverLifeTimeModuleDesc.isSeparateAxes)
 			{
-				pEffectWindow->Table_DragFloat2Range("SizeY", "cvikj838jdfsdfsdf", &m_SizeOverLifeTimeModuleDesc.vSizeY, 0.01f);
+				pEffectWindow->Table_DragFloat2("SizeY", "cvikj838jdfsdfsdf", &m_SizeOverLifeTimeModuleDesc.vSizeY, 0.01f);
 				m_pSizeYEaseCombo->Tick(CComboBox::TABLE);
 				if (m_pSizeYEaseCombo->IsUpdated())
 					m_SizeOverLifeTimeModuleDesc.eEaseY = static_cast<CEase::EASE>(m_pSizeYEaseCombo->Get_Current_Item_Index());
 
-				pEffectWindow->Table_DragFloat2Range("SizeZ", "zxcvhjyuwesfdwsd", &m_SizeOverLifeTimeModuleDesc.vSizeZ, 0.01f);
+				pEffectWindow->Table_DragFloat2("SizeZ", "zxcvhjyuwesfdwsd", &m_SizeOverLifeTimeModuleDesc.vSizeZ, 0.01f);
 				m_pSizeZEaseCombo->Tick(CComboBox::TABLE);
 				if (m_pSizeZEaseCombo->IsUpdated())
 					m_SizeOverLifeTimeModuleDesc.eEaseZ = static_cast<CEase::EASE>(m_pSizeZEaseCombo->Get_Current_Item_Index());
