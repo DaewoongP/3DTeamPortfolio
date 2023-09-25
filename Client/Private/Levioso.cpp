@@ -137,7 +137,7 @@ HRESULT CLevioso::Reset(MAGICBALLINITDESC& InitDesc)
 {
 	__super::Reset(InitDesc);
 	m_fWingardiumEffectDeadTimer = 0.3f;
-
+	m_fLerpAcc = 0.0f;
 	return S_OK;
 }
 

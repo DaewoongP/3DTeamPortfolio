@@ -175,6 +175,13 @@ void CConfringo::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 	__super::OnCollisionExit(CollisionEventDesc);
 }
 
+HRESULT CConfringo::Reset(MAGICBALLINITDESC& InitDesc)
+{
+	__super::Reset(InitDesc);
+	m_fLerpAcc = 0.0f;
+	return S_OK;
+}
+
 void CConfringo::Ready_Begin()
 {
 	_float3 vWandPosition = _float4x4(m_WeaponOffsetMatrix * (*m_pWeaponMatrix)).Translation();
