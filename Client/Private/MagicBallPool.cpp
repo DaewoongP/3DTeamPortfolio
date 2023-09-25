@@ -46,19 +46,17 @@ CMagicBall* CMagicBallPool::Get_Magic(CMagicBall::MAGICBALLINITDESC& MagicBallDe
         m_MagicPoolVec[MagicBallDesc.eMagicTag].pop();
     }
 
-    if (FAILED(pMagicball->Ready(MagicBallDesc)))
+    if (FAILED(pMagicball->Reset(MagicBallDesc)))
     {
         MSG_BOX("Failed Set MagicBall Init Setting");
         return nullptr;
     }
-
     return pMagicball;
 }
 
 void CMagicBallPool::Return_Magic(CMagicBall* pMagic, SPELL eSpell)
 {
     Safe_AddRef(pMagic);
-    pMagic->Reset();
     m_MagicPoolVec[eSpell].push(pMagic);
 }
 

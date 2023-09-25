@@ -129,7 +129,7 @@ void CMagicBall::Late_Tick(_float fTimeDelta)
 
 void CMagicBall::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
-	//m_pRigidBody->Disable_Collision("Magic_Ball");
+	m_pRigidBody->Disable_Collision("Magic_Ball");
 }
 
 void CMagicBall::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)
@@ -140,7 +140,7 @@ void CMagicBall::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 {
 }
 
-HRESULT CMagicBall::Ready(MAGICBALLINITDESC& InitDesc)
+HRESULT CMagicBall::Reset(MAGICBALLINITDESC& InitDesc)
 {
 	m_MagicBallDesc.eMagicGroup = InitDesc.eMagicGroup;
 	m_MagicBallDesc.eMagicType = InitDesc.eMagicType;
@@ -172,6 +172,12 @@ HRESULT CMagicBall::Ready(MAGICBALLINITDESC& InitDesc)
 
 	m_pRigidBody->Set_CollisionFlag("Magic_Ball", m_eCollisionFlag);
 
+	//상태 초기화
+	Set_ObjEvent(OBJ_NONE);
+	m_eMagicBallState = MAGICBALL_STATE_BEGIN;
+	
+	m_pRigidBody->Disable_Collision("Magic_Ball");
+	m_pTransform->Set_WorldMatrix(XMMatrixIdentity());
 	return S_OK;
 }
 
