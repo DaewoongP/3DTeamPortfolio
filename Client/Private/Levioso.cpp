@@ -240,7 +240,7 @@ HRESULT CLevioso::Add_Components()
 
 HRESULT CLevioso::Add_Effect()
 {
-	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_MagicTraill_Winga_Effect"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_MagicTraill_Winga_Effect"),
 		TEXT("Com_Effect"), reinterpret_cast<CComponent**>(&m_pMainTrail))))
 	{
 		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_MagicTraill_Winga_Effect)");
@@ -248,21 +248,21 @@ HRESULT CLevioso::Add_Effect()
 		return E_FAIL;
 	}
 
-	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Wingardium_Effect"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Wingardium_Effect"),
 		TEXT("Com_WingradiumEffect"), reinterpret_cast<CComponent**>(&m_pWingardiumEffect))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Wingardium_Effect)");
 		__debugbreak();
 		return E_FAIL;
 	}
-	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Defatul_Wand_Glow_Effect"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Defatul_Wand_Glow_Effect"),
 		TEXT("Com_WandGlow"), reinterpret_cast<CComponent**>(&m_pWandGlow))))
 	{
 		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Defatul_Wand_Glow_Effect)");
 		__debugbreak();
 		return E_FAIL;
 	}
-	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_BasicCast_Wand_Trail_Effect"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_BasicCast_Wand_Trail_Effect"),
 		TEXT("Com_Wand_Trail"), reinterpret_cast<CComponent**>(&m_pWandTrail))))
 	{
 		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_BasicCast_Wand_Trail_Effect)");
@@ -274,7 +274,7 @@ HRESULT CLevioso::Add_Effect()
 
 CLevioso* CLevioso::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel)
 {
-	CLevioso* pInstance = new CLevioso(pDevice, pContext);
+	CLevioso* pInstance = New CLevioso(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(iLevel)))
 	{
@@ -287,7 +287,7 @@ CLevioso* CLevioso::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,
 
 CGameObject* CLevioso::Clone(void* pArg)
 {
-	CLevioso* pInstance = new CLevioso(*this);
+	CLevioso* pInstance = New CLevioso(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
@@ -300,6 +300,7 @@ CGameObject* CLevioso::Clone(void* pArg)
 void CLevioso::Free()
 {
 	__super::Free();
+
 	if (true == m_isCloned)
 	{
 		Safe_Release(m_pMainTrail);
