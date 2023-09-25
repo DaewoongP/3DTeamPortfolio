@@ -15,6 +15,14 @@ class CPlayer_Camera :
 	public CCamera
 {
 public:
+	enum CAMERAACTIONTYPE
+	{
+		CAMERAACTION_NONE,
+		CAMERAACTION_LIGHTNING,
+		CAMERAACTION_END
+	};
+
+public:   
 	typedef struct tagPlayerCameraDesc
 	{
 		CAMERADESC CameraDesc{};

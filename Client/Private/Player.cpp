@@ -6,6 +6,10 @@
 #include "StateContext.h"
 #include "IdleState.h"
 
+#include "Player_Information.h"
+
+#include "ProtegoState.h"
+
 #include "Armored_Troll.h"
 
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -127,49 +131,103 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 
 	if (wstring::npos != wstrObjectTag.find(TEXT("Weapon")))
 	{
-		/*CArmored_Troll::COLLISIONREQUESTDESC* pDesc = static_cast<CArmored_Troll::COLLISIONREQUESTDESC*>(CollisionEventDesc.pArg);
-		
+		CArmored_Troll::COLLISIONREQUESTDESC* pDesc = static_cast<CArmored_Troll::COLLISIONREQUESTDESC*>(CollisionEventDesc.pArg);
+
 		if (nullptr == pDesc)
 		{
 			return;
 		}
 
-		CHitState::HITSTATEDESC HitStateDesc;
+		//Protego
+		if (m_pStateContext->Is_Current_State(TEXT("Protego")))
+		{
+			CProtegoState::PROTEGOSTATEDESC ProtegoStateDesc;
 
-		switch (pDesc->eType)
-		{
-		case CArmored_Troll::ATTACK_NONE:
-		{	}
-		break;
-		case CArmored_Troll::ATTACK_LIGHT:
-		{
-			HitStateDesc.iHitType = CHitState::HIT_LIGHT;
-		}
-		break;
-		case CArmored_Troll::ATTACK_HEAVY:
-		{
-			HitStateDesc.iHitType = CHitState::HIT_HEABY;
-		}
-		break;
-		case CArmored_Troll::ATTACK_BODY:
-		{
-			HitStateDesc.iHitType = CHitState::HIT_HEABY;
-		}
-		break;
-		case CArmored_Troll::ATTACKTYPE_END:
-		{	}
-		break;
+			ProtegoStateDesc.isHit = true;
 
-		default:
+			switch (pDesc->eType)
+			{
+			case CArmored_Troll::ATTACK_NONE:
+			{	}
 			break;
+			case CArmored_Troll::ATTACK_LIGHT:
+			{
+				ProtegoStateDesc.iHitType = CProtegoState::HIT_LIGHT;
+			}
+			break;
+			case CArmored_Troll::ATTACK_HEAVY:
+			{
+				ProtegoStateDesc.iHitType = CProtegoState::HIT_HEABY;
+			}
+			break;
+			case CArmored_Troll::ATTACK_BODY:
+			{
+				ProtegoStateDesc.iHitType = CProtegoState::HIT_HEABY;
+			}
+			break;
+			case CArmored_Troll::ATTACKTYPE_END:
+			{	}
+			break;
+
+			default:
+				break;
+			}
+
+			ProtegoStateDesc.pTransform = CollisionEventDesc.pOtherTransform;
+
+			m_pStateContext->Set_StateMachine(TEXT("Protego"), &ProtegoStateDesc);
 		}
+		//회피시 무시
+		else if (m_pStateContext->Is_Current_State(TEXT("Roll")))
+		{
 
-		HitStateDesc.pTransform = CollisionEventDesc.pOtherTransform;
+		}
+		//Hit
+		else
+		{
+			CHitState::HITSTATEDESC HitStateDesc;
 
-		m_pStateContext->Set_StateMachine(TEXT("Hit"), &HitStateDesc);
-*/
+			switch (pDesc->eType)
+			{
+			case CArmored_Troll::ATTACK_NONE:
+			{	}
+			break;
+			case CArmored_Troll::ATTACK_LIGHT:
+			{
+				HitStateDesc.iHitType = CHitState::HIT_LIGHT;
+			}
+			break;
+			case CArmored_Troll::ATTACK_HEAVY:
+			{
+				HitStateDesc.iHitType = CHitState::HIT_HEABY;
+			}
+			break;
+			case CArmored_Troll::ATTACK_BODY:
+			{
+				HitStateDesc.iHitType = CHitState::HIT_HEABY;
+			}
+			break;
+			case CArmored_Troll::ATTACKTYPE_END:
+			{	}
+			break;
+
+			default:
+				break;
+			}
+
+			HitStateDesc.pTransform = CollisionEventDesc.pOtherTransform;
+
+			m_pStateContext->Set_StateMachine(TEXT("Hit"), &HitStateDesc);
+
+			//체력 수정
+			//m_pPlayer_Information->fix_HP();
+		}
 
 	}
+
+	
+
+
 }
 
 void CPlayer::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)
@@ -332,7 +390,7 @@ HRESULT CPlayer::Add_Components()
 	RigidBodyDesc.vDebugColor = _float4(1.f, 105 / 255.f, 180 / 255.f, 1.f); // hot pink
 	RigidBodyDesc.pOwnerObject = this;
 	RigidBodyDesc.eThisCollsion = COL_PLAYER;
-	RigidBodyDesc.eCollisionFlag = COL_ENEMY_RANGE | COL_WEAPON;
+	RigidBodyDesc.eCollisionFlag = COL_ENEMY_RANGE | COL_WEAPON | COL_ENEMY;
 	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Player_Default");
 
 	/* Com_RigidBody */

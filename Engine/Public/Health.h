@@ -43,6 +43,7 @@ public:
 	_bool isDead() const {
 		return m_iHP <= 0 ? true : false;
 	}
+	const _int& Get_HP() const { return m_iHP; }
 
 public:
 	virtual HRESULT Initialize_Prototype() override { return S_OK; }

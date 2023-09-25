@@ -64,6 +64,26 @@ HRESULT CPlayer_Information::Add_Components()
 	return S_OK;
 }
 
+_bool CPlayer_Information::Is_Use_Fnisher()
+{
+	if (0.5f <= m_pFinisher->Get_Current_HP_Percent())
+	{
+		return true;
+	}
+	
+	return false;
+}
+
+void CPlayer_Information::Using_Fnisher()
+{
+	m_pFinisher->Set_HP(m_pFinisher->Get_HP() - m_pFinisher->Get_MaxHP() * 0.5f);
+}
+
+void CPlayer_Information::fix_HP(_int _iNum)
+{
+	m_pHealth->Set_HP(m_pHealth->Get_HP() + _iNum);
+}
+
 CPlayer_Information* CPlayer_Information::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CPlayer_Information* pInstance = New CPlayer_Information(pDevice, pContext);

@@ -60,6 +60,8 @@ public:
 public:
     HRESULT Set_StateMachine(const _tchar* _pTag, void * _pArg = nullptr);
 
+    _bool Is_Current_State(const _tchar* _pTag);
+
 private:
     CModel* m_pOwnerModel = { nullptr };
     _float* m_pOwnerLookAngle = { nullptr };
