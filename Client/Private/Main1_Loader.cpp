@@ -3,31 +3,9 @@
 #include "Client_Includes.h"
 #include "Behavior_Includes.h"
 
-/////////////////////////////////////////////
-// Behavior / Effect / Magic / MapObject ////
-/////////////////////////////////////////////
-
-#pragma region Effects
-#include "ParticleSystem.h"
-#include "Trail.h"
-#include "MeshEffect.h"
-#include "Wingardium_Effect.h"
-#pragma endregion Effects
-
-#pragma region Magic
-#include "Magic.h"
-#include "MagicBallPool.h"
-
-#include "MagicSlot.h"
-#include "BasicCast.h"
-#include "Protego.h"
-#include "Revelio.h"
-#include "Levioso.h"
-#include "Confringo.h"
-#include "Finisher.h"
-#include "Wingardiumleviosa.h"
-#include "Ncendio.h"
-#pragma endregion Magic
+//////////////////////////////
+// Behavior / MapObject //////
+//////////////////////////////
 
 #include "Sky.h"
 #include "Terrain.h"
@@ -139,11 +117,6 @@ HRESULT CMain1_Loader::Loading_For_Cliffside()
 			CCharacterController::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_CharacterController");
 
-		/* For.Prototype_Component_RigidBody */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
-			CRigidBody::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_RigidBody");
-
 		/* For.Prototype_Component_RootBehavior */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_RootBehavior"),
 			CRootBehavior::Create(m_pDevice, m_pContext))))
@@ -235,66 +208,6 @@ HRESULT CMain1_Loader::Loading_For_Cliffside()
 			throw TEXT("Prototype_Component_Death");
 #pragma endregion Behavior_Movements
 
-		/* For. Prototype_Component_Magic*/
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Magic"),
-			CMagic::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_Magic");
-
-#pragma region Magic
-		/* For.Prototype_GameObject_BasicCast */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_BasicCast"),
-			CBasicCast::Create(m_pDevice, m_pContext, LEVEL_CLIFFSIDE))))
-			throw TEXT("Prototype_GameObject_BasicCast");
-
-		/* For.Prototype_GameObject_Protego */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Protego"),
-			CProtego::Create(m_pDevice, m_pContext, LEVEL_CLIFFSIDE))))
-			throw TEXT("Prototype_GameObject_Protego");
-
-		/* For.Prototype_GameObject_Revelio */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Revelio"),
-			CRevelio::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_Revelio");
-
-		/* For.Prototype_GameObject_Wingardiumleviosa */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Wingardiumleviosa"),
-			CWingardiumleviosa::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_Wingardiumleviosa");
-
-		/* For.Prototype_GameObject_Levioso */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Levioso"),
-			CLevioso::Create(m_pDevice, m_pContext, LEVEL_CLIFFSIDE))))
-			throw TEXT("Prototype_GameObject_Levioso");
-
-		/* For.Prototype_GameObject_Confringo */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Confringo"),
-			CConfringo::Create(m_pDevice, m_pContext, LEVEL_CLIFFSIDE))))
-			throw TEXT("Prototype_GameObject_Confringo");
-
-		/* For.Prototype_GameObject_Finisher */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Finisher"),
-			CFinisher::Create(m_pDevice, m_pContext, LEVEL_CLIFFSIDE))))
-			throw TEXT("Prototype_GameObject_Finisher");
-		
-		/* For.Prototype_GameObject_Ncendio */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Ncendio"),
-			CNcendio::Create(m_pDevice, m_pContext, LEVEL_CLIFFSIDE))))
-			throw TEXT("Prototype_GameObject_Ncendio");
-#pragma endregion
-		{
-			std::lock_guard<std::mutex> lock(mtx);
-
-			CMagicBallPool* pMagicBallPool = CMagicBallPool::GetInstance();
-			Safe_AddRef(pMagicBallPool);
-			if (FAILED(pMagicBallPool->Initialize()))
-				throw TEXT("Magic Ball Pool");
-			Safe_Release(pMagicBallPool);
-		}
-
-		/* For.Prototype_GameObject_MagicSlot */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_MagicSlot"),
-			CMagicSlot::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_MagicSlot");
 	}
 	catch (const _tchar* pErrorTag)
 	{

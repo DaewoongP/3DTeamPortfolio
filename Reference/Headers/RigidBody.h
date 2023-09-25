@@ -71,6 +71,7 @@ public:
 	void Set_Density(_float _fDensity) const;
 	void Set_AngularDamping(_float _fAngualrDamping) const;
 	void Set_Gravity(_bool _isGravity);
+	void Set_CollisionFlag(const _char* szColliderTag, PxU32 eCollisionFlag);
 		
 #ifdef _DEBUG
 	void Set_DebugColor(_uint iColliderIndex, _float4 _vColor) { m_Colors[iColliderIndex] = _vColor; }

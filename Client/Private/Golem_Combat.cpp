@@ -112,7 +112,7 @@ void CGolem_Combat::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 	wstring wstrMyCollisionTag = CollisionEventDesc.pThisCollisionTag;
 
 	/* Collision Magic */
-	if (wstring::npos != wstrObjectTag.find(TEXT("Magic_Ball")))
+	if (wstring::npos != wstrObjectTag.find(TEXT("MagicBall")))
 	{
 		CMagicBall::COLLSIONREQUESTDESC* pCollisionMagicBallDesc = static_cast<CMagicBall::COLLSIONREQUESTDESC*>(CollisionEventDesc.pArg);
 		BUFF_TYPE eBuff = pCollisionMagicBallDesc->eBuffType;
@@ -845,7 +845,6 @@ HRESULT CGolem_Combat::Make_Death(_Inout_ CSequence* pSequence)
 				if (BUFF_LEVIOSO & *pIPreviusSpell)
 					return false;
 
-				cout << "Ground" << endl;
 				return true;
 			});
 		pSequence_Death_Air->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
@@ -862,7 +861,6 @@ HRESULT CGolem_Combat::Make_Death(_Inout_ CSequence* pSequence)
 
 					pRigidBody->Set_Gravity(true);
 
-					cout << "Air" << endl;
 					return true;
 				}
 

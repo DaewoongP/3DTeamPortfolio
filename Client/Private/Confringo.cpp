@@ -347,7 +347,7 @@ HRESULT CConfringo::Add_Effect()
 		return E_FAIL;
 	}
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Confringo_Dust_Effect")
-		, TEXT("Com_Main_Dust"), (CComponent**)&m_pWandDustEffect)))
+		, TEXT("Com_Main_Dust"),  reinterpret_cast<CComponent**>(&m_pTrailDustEffect))))
 	{
 		__debugbreak();
 		return E_FAIL;
@@ -355,25 +355,25 @@ HRESULT CConfringo::Add_Effect()
 
 	//종료
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_FireBallDir_Effect")
-		, TEXT("Com_Explosive_Particle01"), (CComponent**)&m_pExplosiveEffect[0])))
+		, TEXT("Com_Explosive_Particle01"), reinterpret_cast<CComponent**>(&m_pExplosiveEffect[0]))))
 	{
 		__debugbreak();
 		return E_FAIL;
 	}
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_FireBallB_Effect")
-		, TEXT("Com_Explosive_Particle02"), (CComponent**)&m_pExplosiveEffect[1])))
+		, TEXT("Com_Explosive_Particle02"), reinterpret_cast<CComponent**>(&m_pExplosiveEffect[1]))))
 	{
 		__debugbreak();
 		return E_FAIL;
 	}
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Confringo_Expread_Effect")
-		, TEXT("Com_END_Expread"), (CComponent**)&m_pExplosiveBigPartEffect)))
+		, TEXT("Com_END_Expread"), reinterpret_cast<CComponent**>(&m_pExplosiveBigPartEffect))))
 	{
 		__debugbreak();
 		return E_FAIL;
 	}
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Confringo_Small_Expread_Effect")
-		, TEXT("Com_Small_Expread"), (CComponent**)&m_pExplosiveSmallPartEffect)))
+		, TEXT("Com_Small_Expread"), reinterpret_cast<CComponent**>(&m_pExplosiveSmallPartEffect))))
 	{
 		__debugbreak();
 		return E_FAIL;
@@ -381,25 +381,25 @@ HRESULT CConfringo::Add_Effect()
 
 	//완드
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Fire_Torch_Effect")
-		, TEXT("Com_Fire_Torch"), (CComponent**)&m_pWandTouchEffect)))
+		, TEXT("Com_Fire_Torch"), reinterpret_cast<CComponent**>(&m_pWandTouchEffect))))
 	{
 		__debugbreak();
 		return E_FAIL;
 	}
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Confringo_Dust_Effect")
-		, TEXT("Com_Dust_Effect"), (CComponent**)&m_pWandDustEffect)))
+		, TEXT("Com_Dust_Effect"), reinterpret_cast<CComponent**>(&m_pWandDustEffect))))
 	{
 		__debugbreak();
 		return E_FAIL;
 	}
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Default_SphereTrace_Particle")
-		, TEXT("Com_Twinkle_Effect"), (CComponent**)&m_pWandTwinklEffect)))
+		, TEXT("Com_Twinkle_Effect"), reinterpret_cast<CComponent**>(&m_pWandTwinklEffect))))
 	{
 		__debugbreak();
 		return E_FAIL;
 	}
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_BasicCast_Wand_Trail_Effect")
-		, TEXT("Com_Wand_Trail_Effect"), (CComponent**)&m_pWandTrail)))
+		, TEXT("Com_Wand_Trail_Effect"), reinterpret_cast<CComponent**>(&m_pWandTrail))))
 	{
 		__debugbreak();
 		return E_FAIL;

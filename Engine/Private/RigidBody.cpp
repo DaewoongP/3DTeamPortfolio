@@ -160,6 +160,20 @@ void CRigidBody::Set_Gravity(_bool _isGravity)
 	}
 }
 
+void CRigidBody::Set_CollisionFlag(const _char* szColliderTag, PxU32 eCollisionFlag)
+{
+	PxShape* pShape = Find_Shape(szColliderTag);
+
+	if (nullptr == pShape)
+		return;
+
+	PxFilterData FilterData = pShape->getSimulationFilterData();
+	m_pActor->detachShape(*pShape);
+	FilterData.word1 = eCollisionFlag;
+	pShape->setSimulationFilterData(FilterData);
+	m_pActor->attachShape(*pShape);
+}
+
 HRESULT CRigidBody::Initialize_Prototype()
 {
 #ifdef _DEBUG

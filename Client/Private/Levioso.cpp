@@ -162,6 +162,7 @@ void CLevioso::Ready_DrawMagic()
 
 void CLevioso::Ready_CastMagic()
 {
+	m_fTimeScalePerDitance = 1.f;
 	m_pMainTrail->Enable();
 	if (m_pTarget == nullptr)
 	{

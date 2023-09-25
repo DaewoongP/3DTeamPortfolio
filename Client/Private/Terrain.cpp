@@ -96,8 +96,8 @@ HRESULT CTerrain::Add_Components()
 	RigidBodyDesc.isStatic = true;
 	RigidBodyDesc.isTrigger = false;
 	RigidBodyDesc.vInitPosition = _float3(0.f, 0.f, 0.f);
-	RigidBodyDesc.fStaticFriction = 0.f;
-	RigidBodyDesc.fDynamicFriction = 0.f;
+	RigidBodyDesc.fStaticFriction = 0.5f;
+	RigidBodyDesc.fDynamicFriction = 0.5f;
 	RigidBodyDesc.fRestitution = 0.f;
 	RigidBodyDesc.eThisCollsion = COL_TEST;
 	

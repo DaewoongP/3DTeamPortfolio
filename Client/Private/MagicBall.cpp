@@ -170,6 +170,8 @@ HRESULT CMagicBall::Ready(MAGICBALLINITDESC& InitDesc)
 	Set_CollisionData(&m_CollisionDesc);
 	m_eCollisionFlag = InitDesc.eCollisionFlag;
 
+	m_pRigidBody->Set_CollisionFlag("Magic_Ball", m_eCollisionFlag);
+
 	return S_OK;
 }
 
@@ -203,7 +205,6 @@ HRESULT CMagicBall::Add_RigidBody()
 	RigidBodyDesc.vOffsetPosition = _float3(0.f, 0.0f, 0.f);
 	RigidBodyDesc.fStaticFriction = 0.f;
 	RigidBodyDesc.fDynamicFriction = 0.f;
-	RigidBodyDesc.eThisCollsion = COL_MAGIC;
 	RigidBodyDesc.fRestitution = 0.f;
 	PxSphereGeometry SphereGeometry = PxSphereGeometry(0.2f);
 	RigidBodyDesc.pGeometry = &SphereGeometry;
@@ -211,6 +212,7 @@ HRESULT CMagicBall::Add_RigidBody()
 	RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 0.f, 1.f);
 	RigidBodyDesc.isGravity = false;
 	RigidBodyDesc.pOwnerObject = this;
+	RigidBodyDesc.eThisCollsion = COL_MAGIC;
 	RigidBodyDesc.eCollisionFlag = m_eCollisionFlag;
 	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Magic_Ball");
 
