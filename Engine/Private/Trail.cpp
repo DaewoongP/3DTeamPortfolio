@@ -43,7 +43,7 @@ void CTrail::Spin_Move(_float3 vTargerPosition, _float3 vStartPosition, _float f
 	m_pTransform->Set_Position(_float3(CombineMatrix.m[3][0], CombineMatrix.m[3][1], CombineMatrix.m[3][2]));
 }
 
-void CTrail::Spline_Move(_float3 vSpline01, _float3 vStartPosition, _float3 vTargerPosition,  _float3 vSpline02,_float fLerpAcc)
+void CTrail::Spline_Move(_float3 vSpline01, _float3 vStartPosition, _float3 vTargerPosition, _float3 vSpline02, _float fLerpAcc)
 {
 	_float3 movedPos = XMVectorCatmullRom(vSpline01, vStartPosition, vTargerPosition, vSpline02, fLerpAcc);
 	m_pTransform->Set_Position(movedPos);
@@ -56,7 +56,7 @@ void CTrail::Spline_Spin_Move(_float3 vSpline01, _float3 vStartPosition, _float3
 	_float4x4 transMatirx = XMMatrixTranslation(movedPos.x, movedPos.y, movedPos.z);
 	_float3 axis = XMVector3Normalize(vTargerPosition - vStartPosition);
 	_float3 tempAxis = _float3(0, 1, 0);
-	_float3	normal = XMVector3Normalize(XMVector3Cross(axis, tempAxis))*0.1f;
+	_float3	normal = XMVector3Normalize(XMVector3Cross(axis, tempAxis)) * 0.1f;
 	_float4x4 offsetMatirx = XMMatrixTranslation(normal.x, normal.y, normal.z);
 	_float4x4 rotationMatrix = XMMatrixRotationAxis(axis, m_fTimeAcc * 30);
 	_float4x4 CombineMatrix = offsetMatirx * rotationMatrix * transMatirx;
@@ -87,7 +87,7 @@ void CTrail::Tick_LightningStrike(_float fTimeDelta)
 	{
 		m_vSplineLerpPostion[i] = m_vSplineLerpPostion[i] + m_vSplineDir[i];
 	}
-	m_fClipThreshold += fTimeDelta*2.f;
+	m_fClipThreshold += fTimeDelta * 2.f;
 }
 
 HRESULT CTrail::Save(const _tchar* pFilePath)
@@ -116,6 +116,9 @@ HRESULT CTrail::Save(const _tchar* pFilePath)
 	WriteFile(hFile, &m_vHeadColor, sizeof(m_vHeadColor), &dwByte, nullptr);
 	WriteFile(hFile, &m_vTailColor, sizeof(m_vTailColor), &dwByte, nullptr);
 	WriteFile(hFile, &m_fWidth, sizeof(m_fWidth), &dwByte, nullptr);
+	WriteFile(hFile, &m_fClipThreshold, sizeof(m_fClipThreshold), &dwByte, nullptr);
+	WriteFile(hFile, m_strClipChannel.data(), sizeof(_char) * MAX_PATH, &dwByte, nullptr);
+	WriteFile(hFile, &m_isUseTextureColor, sizeof(m_isUseTextureColor), &dwByte, nullptr);
 
 	CloseHandle(hFile);
 
@@ -141,10 +144,10 @@ HRESULT CTrail::Load(const _tchar* pFilePath)
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
-	
+
 	ReadFile(hFile, szBuffer, sizeof(char) * MAX_PATH, &dwByte, nullptr);
 	m_strPass = pGameInstance->Make_Char(szBuffer);
-	
+
 	ReadFile(hFile, wszBuffer, sizeof(wchar_t) * MAX_PATH, &dwByte, nullptr);
 	m_wstrPath = pGameInstance->Make_WChar(wszBuffer);
 
@@ -157,9 +160,12 @@ HRESULT CTrail::Load(const _tchar* pFilePath)
 	ReadFile(hFile, &m_vHeadColor, sizeof(m_vHeadColor), &dwByte, nullptr);
 	ReadFile(hFile, &m_vTailColor, sizeof(m_vTailColor), &dwByte, nullptr);
 	ReadFile(hFile, &m_fWidth, sizeof(m_fWidth), &dwByte, nullptr);
+	ReadFile(hFile, &m_fClipThreshold, sizeof(m_fClipThreshold), &dwByte, nullptr);
+	ReadFile(hFile, szBuffer, sizeof(_char) * MAX_PATH, &dwByte, nullptr);
+	m_strClipChannel = szBuffer;
+	ReadFile(hFile, &m_isUseTextureColor, sizeof(m_isUseTextureColor), &dwByte, nullptr);
 
 	Safe_Release(pGameInstance);
-
 	CloseHandle(hFile);
 
 	return S_OK;
@@ -170,7 +176,7 @@ HRESULT CTrail::Initialize_Prototype(const _tchar* _pFilePath, const _tchar* _pG
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
 
-	 this->Load(_pFilePath);
+	this->Load(_pFilePath);
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
@@ -210,7 +216,7 @@ HRESULT CTrail::Initialize_Prototype(const _tchar* _pFilePath, const _tchar* _pG
 		// 없으면 원본을 추가한다.
 		pGameInstance->Add_Prototype(m_iLevel
 			, TEXT("Prototype_Component_VIBuffer_Rect_Trail")
-			, CVIBuffer_Rect_Trail::Create(m_pDevice, m_pContext));
+			, CVIBuffer_Rect_Trail::Create(m_pDevice, m_pContext, m_iTrailNum));
 	}
 
 	// 필요한 원본 셰이더가 없을 시에 컴포넌트 매니저에 원본 추가.
@@ -252,12 +258,12 @@ void CTrail::Tick(_float fTimeDelta)
 			Tick_LightningStrike(fTimeDelta);
 			m_pBuffer->Tick_Lightning(&m_vSplineLerpPostion);
 		}
-		else 
+		else
 		{
 			m_pBuffer->Tick();
 		}
 	}
-		
+
 	m_fTimeAcc += fTimeDelta;
 
 }
@@ -274,7 +280,7 @@ void CTrail::Late_Tick(_float fTimeDelta)
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BLEND, this);
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_GLOW, this);
 	}
-		
+
 }
 
 HRESULT CTrail::Render()
@@ -293,49 +299,33 @@ HRESULT CTrail::Render()
 
 HRESULT CTrail::Add_Components()
 {
-	try
-	{
-		/* Com_Renderer */
-		if (FAILED(CComposite::Add_Component(0, TEXT("Prototype_Component_Renderer"),
-			TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
-			throw(TEXT("Com_Renderer"));
+	/* Com_Renderer */
+	FAILED_CHECK_RETURN(CComposite::Add_Component(0, TEXT("Prototype_Component_Renderer"),
+		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer)), E_FAIL);
 
-		/* Com_Shader */
-		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_Component_Shader_Trail"),
-			TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
-			throw(TEXT("Com_Shader"));
+	/* Com_Shader */
+	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, TEXT("Prototype_Component_Shader_Trail"),
+		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader)), E_FAIL);
 
-		/* Com_Texture */
-		if (FAILED(CComposite::Add_Component(m_iLevel, ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_wstrPath.c_str()).c_str(),
-			TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTexture))))
-			throw(TEXT("Com_Texture"));
+	/* Com_Texture */
+	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_wstrPath.c_str()).c_str(),
+		TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTexture)), E_FAIL);
 
-		/* Com_GradientTexture */
-		if (FAILED(CComposite::Add_Component(m_iLevel, m_wstrGradientTextureName.data(),
-			TEXT("Com_GradientTexture"), reinterpret_cast<CComponent**>(&m_pGradientTexture))))
-			throw(TEXT("Com_GradientTexture"));
+	/* Com_GradientTexture */
+	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, m_wstrGradientTextureName.data(),
+		TEXT("Com_GradientTexture"), reinterpret_cast<CComponent**>(&m_pGradientTexture)), E_FAIL);
 
-		/* Com_Buffer */
-		CVIBuffer_Rect_Trail::TRAILDESC trailDesc;
-		m_HighLocalMatrix.Translation(_float3(0.f, m_fWidth * 0.5f, 0.f));
-		m_LowLocalMatrix.Translation(_float3(0.f, -m_fWidth * 0.5f, 0.f));
-
-		trailDesc.iTrailNum = m_iTrailNum;
-		trailDesc.pHighLocalMatrix = &m_HighLocalMatrix;
-		trailDesc.pLowLocalMatrix = &m_LowLocalMatrix;
-		trailDesc.pPivotMatrix = &m_PivotMatrix;
-		trailDesc.pWorldMatrix = m_pTransform->Get_WorldMatrixPtr();
-		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_Component_VIBuffer_Rect_Trail"),
-			TEXT("Com_Buffer"), reinterpret_cast<CComponent**>(&m_pBuffer), &trailDesc)))
-			throw(TEXT("Com_Buffer"));
-	}
-	catch (const _tchar* ErrorMessage)
-	{
-		wstring wstrErrorMSG = TEXT("Failed SetupResources : ");
-		wstrErrorMSG += ErrorMessage;
-		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
-		return E_FAIL;
-	}
+	/* Com_Buffer */
+	CVIBuffer_Rect_Trail::TRAILDESC trailDesc;
+	m_HighLocalMatrix.Translation(_float3(0.f, m_fWidth * 0.5f, 0.f));
+	m_LowLocalMatrix.Translation(_float3(0.f, -m_fWidth * 0.5f, 0.f));
+	trailDesc.iTrailNum = m_iTrailNum;
+	trailDesc.pHighLocalMatrix = &m_HighLocalMatrix;
+	trailDesc.pLowLocalMatrix = &m_LowLocalMatrix;
+	trailDesc.pPivotMatrix = &m_PivotMatrix;
+	trailDesc.pWorldMatrix = m_pTransform->Get_WorldMatrixPtr();
+	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, TEXT("Prototype_Component_VIBuffer_Rect_Trail"),
+		TEXT("Com_Buffer"), reinterpret_cast<CComponent**>(&m_pBuffer), &trailDesc), E_FAIL);
 
 	return S_OK;
 }
@@ -348,7 +338,7 @@ HRESULT CTrail::SetUp_ShaderResources()
 	_float4x4 WorldMatrix = _float4x4();
 	try
 	{
-		if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", (m_LocalSpace==nullptr)? &WorldMatrix : m_LocalSpace)))
+		if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", (m_LocalSpace == nullptr) ? &WorldMatrix : m_LocalSpace)))
 			throw "g_WorldMatrix";
 
 		if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW))))
@@ -371,6 +361,18 @@ HRESULT CTrail::SetUp_ShaderResources()
 
 		if (FAILED(m_pShader->Bind_RawValue("g_fClipThreshold", &m_fClipThreshold, sizeof(_float))))
 			throw "g_fClipThreshold";
+
+		_int iClipChannel = { 3 };
+		if (m_strClipChannel == "Red") { iClipChannel = 0; }
+		else if (m_strClipChannel == "Green") { iClipChannel = 1; }
+		else if (m_strClipChannel == "Blue") { iClipChannel = 2; }
+		else if (m_strClipChannel == "Alpha") { iClipChannel = 3; }
+
+		if (FAILED(m_pShader->Bind_RawValue("g_iClipChannel", &iClipChannel, sizeof(_int))))
+			throw "g_iClipChannel";
+
+		if (FAILED(m_pShader->Bind_RawValue("g_isUseTextureColor", &m_isUseTextureColor, sizeof(_bool))))
+			throw "g_isUseTextureColor";
 	}
 	catch (const _tchar* pErrorTag)
 	{

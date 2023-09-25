@@ -116,9 +116,6 @@ HRESULT CMapObject::Render()
 
 HRESULT CMapObject::Render_Depth()
 {
-	if (FAILED(__super::Render_Depth()))
-		return E_FAIL;
-
 	if (nullptr == m_pShader ||
 		nullptr == m_pModel)
 		return S_OK;
@@ -126,14 +123,13 @@ HRESULT CMapObject::Render_Depth()
 	BEGININSTANCE
 	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
 		return E_FAIL;
-	_float4x4	ViewMatrix, ProjMatrix;
-	ViewMatrix = XMMatrixLookAtLH(_float4(0.f, 50.f, 0.f, 1.f), _float4(50.f, 0.f, 50.f, 1.f), _float4(0.f, 1.f, 0.f, 0.f));
-	ProjMatrix = XMMatrixPerspectiveFovLH(XMConvertToRadians(90.f), _float(g_iWinSizeX) / g_iWinSizeY, 1.f, 100.f);
-	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", &ViewMatrix)))
+
+	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_LightTransformMatrix(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
 
-	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", &ProjMatrix)))
+	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_LightTransformMatrix(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
+
 	if (FAILED(m_pShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
 		return E_FAIL;
 	ENDINSTANCE
@@ -142,7 +138,6 @@ HRESULT CMapObject::Render_Depth()
 
 	for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; iMeshCount++)
 	{
-
 		m_pShader->Begin("Shadow");
 
 		if (FAILED(m_pModel->Render(iMeshCount)))
@@ -157,6 +152,7 @@ HRESULT CMapObject::Add_Model_Component(const _tchar* wszModelTag)
 		TEXT("Com_Buffer"), reinterpret_cast<CComponent**>(&m_pModel))))
 	{
 		MSG_BOX("Failed CMapObject Add_Component : (Com_Buffer)");
+		__debugbreak();
 		return E_FAIL;
 	}
 	return S_OK;
@@ -168,6 +164,7 @@ HRESULT CMapObject::Add_Shader_Component(const _tchar* wszShaderTag)
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
 	{
 		MSG_BOX("Failed CMapObject Add_Component : (Com_Shader)");
+		__debugbreak();
 		return E_FAIL;
 	}
 	return S_OK;
@@ -180,6 +177,7 @@ HRESULT CMapObject::Add_Components()
 		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
 	{
 		MSG_BOX("Failed CMapObject Add_Component : (Com_Renderer)");
+		__debugbreak();
 		return E_FAIL;
 	}
 	return S_OK;

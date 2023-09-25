@@ -294,6 +294,8 @@ void EMISSION_MODULE::Action(CParticleSystem* pParticleSystem, _float _fTimeDelt
 
 	for (_uint i = 0; i < iParticleCount; ++i)
 	{
+		_float3 createPosition = _float3::Lerp(vPrevPos, vCurPos, ((_float)i / iParticleCount));
+		pParticleSystem->Get_Transform()->Set_Position(createPosition);
 		pParticleSystem->Wating_One_Particle();
 	}
 }
@@ -479,6 +481,7 @@ void SHAPE_MODULE::Restart()
 	fLoopTheta = vTheta.x;
 }
 
+
 HRESULT RENDERER_MODULE::Save(const _tchar* _pDirectoyPath)
 {
 	fs::path fsFilePath = _pDirectoyPath;
@@ -552,6 +555,91 @@ HRESULT RENDERER_MODULE::Load(const _tchar* _pDirectoyPath)
 }
 void RENDERER_MODULE::Restart()
 {
+}
+
+
+HRESULT VELOCITY_OVER_LIFETIME::Save(const _tchar* _pDirectoyPath)
+{
+	fs::path fsFilePath = _pDirectoyPath;
+	fsFilePath = fsFilePath / TEXT("VelocityOverLifeTimeModule.ptc");
+
+	HANDLE hFile = CreateFile(fsFilePath.wstring().data()
+		, GENERIC_WRITE
+		, 0
+		, 0
+		, CREATE_ALWAYS
+		, FILE_ATTRIBUTE_NORMAL
+		, 0);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+		return E_FAIL;
+
+	_ulong dwByte = 0;
+
+	__super::Save(hFile, dwByte);
+
+	WriteFile(hFile, &vLinear, sizeof(vLinear), &dwByte, nullptr);
+	WriteFile(hFile, &vLinearMin, sizeof(vLinearMin), &dwByte, nullptr);
+	WriteFile(hFile, &vLinearMax, sizeof(vLinearMax), &dwByte, nullptr);
+	//WriteFile(hFile, &eLinearEase, sizeof(eLinearEase), &dwByte, nullptr);
+
+	
+
+	CloseHandle(hFile);
+	return S_OK;
+}
+HRESULT VELOCITY_OVER_LIFETIME::Load(const _tchar* _pDirectoyPath)
+{
+	return S_OK;
+}
+void VELOCITY_OVER_LIFETIME::Action(PARTICLE_IT& _particle_iter, _float fTimeDelta)
+{
+	if (false == isActivate)
+		return;
+
+
+
+	_particle_iter->vVelocity += vLinear.TransNorm() * fTimeDelta;
+
+
+
+
+	_particle_iter->vVelocity += vLinear.TransNorm() * fTimeDelta;
+}
+void VELOCITY_OVER_LIFETIME::Restart()
+{
+
+
+}
+void VELOCITY_OVER_LIFETIME::Reset(PARTICLE_IT& _particle_iter)
+{
+	_particle_iter->vAccel = { _float4() };
+
+	if ("World" == strSpace)
+	{
+		if ("Constant" == strLinearOption)
+		{
+			//_particle_iter->vVelocity += vLinear.TransNorm();
+		}
+		else if ("Range" == strLinearOption)
+		{
+			_particle_iter->vVelocity.x = Random_Generator(vLinearMin.x, vLinearMax.x);
+			_particle_iter->vVelocity.y = Random_Generator(vLinearMin.y, vLinearMax.y);
+			_particle_iter->vVelocity.z = Random_Generator(vLinearMin.z, vLinearMax.z);
+		}
+		else if ("Curve" == strLinearOption)
+		{
+			{ // X
+				_float changeAmount = vLinearEndCurve3D.x - vLinearStartCurve3D.x;
+				_particle_iter->vAccel.x = vLinearStartCurve3D.x * CEase::Ease(eLinearEaseX, _particle_iter->fAge
+					, vLinearStartCurve3D.x
+					, changeAmount
+					, _particle_iter->fLifeTime);
+			}
+
+		}
+	}
+
 }
 
 HRESULT ROTATION_OVER_LIFETIME_MODULE::Save(const _tchar* _pDirectoyPath)
@@ -787,33 +875,35 @@ void SIZE_OVER_LIFETIME::Action(_float3 vStartSize, PARTICLE_IT& _particle_iter,
 {
 	if (false == isActivate)
 		return;
-
 	{
-		_float changeAmount = vSizeX.x - vSizeX.y;
-
-		_particle_iter->vScale.x = vStartSize.x * CEase::Ease(eEaseX, _particle_iter->fAge
-			, vSizeX.x
-			, changeAmount
+		_float min = vSizeX.x;
+		_float max = vSizeX.y;
+		_float fChangeAmount = max - min;
+		_particle_iter->vScale.x = _particle_iter->vStartScale.x * CEase::Ease(eEaseX, _particle_iter->fAge
+			, min
+			, fChangeAmount
 			, _particle_iter->fLifeTime);
 	}
 
 	if (true == isSeparateAxes)
 	{
 		{
-			_float changeAmount = vSizeY.x - vSizeY.y;
-
-			_particle_iter->vScale.y = vStartSize.y * CEase::Ease(eEaseY, _particle_iter->fAge
-				, vSizeY.x
-				, changeAmount
+			_float min = vSizeY.x;
+			_float max = vSizeY.y;
+			_float fChangeAmount = max - min;
+			_particle_iter->vScale.y = _particle_iter->vStartScale.y * CEase::Ease(eEaseY, _particle_iter->fAge
+				, min
+				, fChangeAmount
 				, _particle_iter->fLifeTime);
 		}
 
 		{
-			_float changeAmount = vSizeZ.x - vSizeZ.y;
-
-			_particle_iter->vScale.z = vStartSize.z * CEase::Ease(eEaseZ, _particle_iter->fAge
-				, vSizeZ.x
-				, changeAmount
+			_float min = vSizeZ.x;
+			_float max = vSizeZ.y;
+			_float fChangeAmount = max - min;
+			_particle_iter->vScale.z = _particle_iter->vStartScale.z * CEase::Ease(eEaseZ, _particle_iter->fAge
+				, min
+				, fChangeAmount
 				, _particle_iter->fLifeTime);
 		}
 	}

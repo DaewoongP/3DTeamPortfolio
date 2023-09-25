@@ -44,7 +44,7 @@ CLight* CLight_Manager::Add_Lights(ID3D11Device* pDevice, ID3D11DeviceContext* p
 
 	if (LightDesc.eType == CLight::TYPE_DIRECTIONAL)
 	{
-		m_ViewLight = XMMatrixLookAtLH(_float4(0.f, 50.f, 0.f, 1.f), _float4(50.f, 0.f, 50.f, 1.f), _float4(0.f, 1.f, 0.f, 0.f));
+		m_ViewLight = XMMatrixLookAtLH(_float4(0.f, 50.f, 150.f, 1.f), _float4(25.f, 0.f, 0.f, 1.f), _float4(0.f, 1.f, 0.f, 0.f));
 		m_ProjLight = XMMatrixPerspectiveFovLH(XMConvertToRadians(90.f), ViewportDesc.Width / ViewportDesc.Height, 1.f, 1000.f);
 	}
 

@@ -119,7 +119,7 @@ _bool CUI_Font::Is_In_Rect()
 
 	ScreenToClient(g_hWnd, &ptMouse);
 
-	RECT		rcUI;
+	RECT		rcUI = RECT();
 
 	//SetRect(&rcUI, _int(m_vCombinedXY.x - m_fSizeX * 0.5f), _int(m_vCombinedXY.y - m_fSizeY * 0.5f), _int(m_vCombinedXY.x + m_fSizeX * 0.5f), _int(m_vCombinedXY.y + m_fSizeY * 0.5f));
 
@@ -127,7 +127,6 @@ _bool CUI_Font::Is_In_Rect()
 
 	return isIn;
 }
-
 
 CUI_Font* CUI_Font::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFontFilePath)
 {

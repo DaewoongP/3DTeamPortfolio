@@ -51,7 +51,7 @@ void CMoveLoopState::Late_Tick(_float fTimeDelta)
 {
 }
 
-void CMoveLoopState::OnStateEnter()
+void CMoveLoopState::OnStateEnter(void* _pArg)
 {
 #ifdef _DEBUG
 	//cout << "Loop Enter" << endl;

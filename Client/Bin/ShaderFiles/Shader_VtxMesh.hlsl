@@ -3,7 +3,6 @@
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 texture2D g_DiffuseTexture;
 texture2D g_NormalTexture;
-matrix g_LightViewMatrix, g_LightProjMatrix;
 
 float g_fCamFar;
 float2 g_vOffset;

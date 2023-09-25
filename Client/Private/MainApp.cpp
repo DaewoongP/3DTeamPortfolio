@@ -2,6 +2,8 @@
 #include "GameInstance.h"
 #include "Level_Loading.h"
 
+#include "MagicBallPool.h"
+
 CMainApp::CMainApp()
 	: m_pGameInstance{ CGameInstance::GetInstance() }
 {
@@ -61,6 +63,8 @@ HRESULT CMainApp::Render()
 	if (nullptr == m_pGameInstance)
 		return E_FAIL;
 
+	std::lock_guard<std::mutex> lock(mtx);
+
 	FAILED_CHECK_RETURN(m_pGameInstance->Clear_BackBuffer_View(_float4(0.f, 0.f, 1.f, 1.f)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pGameInstance->Clear_DepthStencil_View(), E_FAIL);
 	FAILED_CHECK_RETURN(m_pRenderer->Draw_RenderGroup(), E_FAIL);
@@ -105,12 +109,6 @@ HRESULT CMainApp::Ready_Prototype_Component_For_Static()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxRectColInstance"),
 			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxRectColInstance.hlsl"),
 				VTXRECTCOLORINSTANCE_DECL::Elements, VTXRECTCOLORINSTANCE_DECL::iNumElements))))
-			return E_FAIL;
-
-		/* For.Prototype_Component_Shader_MeshInstance */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxMeshInstance"),
-			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxMeshInstance.hlsl"),
-				VTXMESHINSTANCE_DECL::Elements, VTXMESHINSTANCE_DECL::iNumElements))))
 			return E_FAIL;
 
 		/* Prototype_Component_VIBuffer_Point_Color_Instance*/
@@ -315,11 +313,12 @@ void CMainApp::Free()
 	Safe_Release(m_pTexture2D);
 	Safe_Release(m_pImGuiRTV);
 #endif // _DEBUG
-	
+
 	Safe_Release(m_pRenderer);
 	Safe_Release(m_pContext);
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pGameInstance);
 
+	CMagicBallPool::GetInstance()->DestroyInstance();
 	CGameInstance::Release_Engine();
 }

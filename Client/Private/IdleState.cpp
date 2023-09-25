@@ -15,11 +15,6 @@ CIdleState::CIdleState(const CIdleState& rhs)
 
 }
 
-HRESULT CIdleState::Initialize_Prototype()
-{
-	return S_OK;
-}
-
 HRESULT CIdleState::Initialize(void* pArg)
 {
 	BEGININSTANCE;
@@ -43,7 +38,7 @@ void CIdleState::Late_Tick(_float fTimeDelta)
 {
 }
 
-void CIdleState::OnStateEnter()
+void CIdleState::OnStateEnter(void* _pArg)
 {
 #ifdef _DEBUG
 	//cout << "Idle Enter" << endl;

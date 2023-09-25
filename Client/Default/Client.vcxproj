@@ -122,6 +122,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>../../Reference/Headers/;../Public/;../../Reference/Headers/PhysX/;../../Reference/Headers/NvCloth/;ImGui/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -165,6 +166,7 @@
   <ItemGroup>
     <ClInclude Include="..\Public\Action.h" />
     <ClInclude Include="..\Public\Action_Deflect.h" />
+    <ClInclude Include="..\Public\Ncendio.h" />
     <ClInclude Include="..\Public\Inventory.h" />
     <ClInclude Include="..\Public\Check_Degree.h" />
     <ClInclude Include="..\Public\Check_Distance.h" />
@@ -182,7 +184,6 @@
     <ClInclude Include="..\Public\HardLandState.h" />
     <ClInclude Include="..\Public\JumpState.h" />
     <ClInclude Include="..\Public\Confringo.h" />
-    <ClInclude Include="..\Public\Confringo_WandDust_Effect.h" />
     <ClInclude Include="..\Public\MagicCastingState.h" />
     <ClInclude Include="..\public\Main3_Loader.h" />
     <ClInclude Include="..\Public\Main_Menu.h" />
@@ -197,7 +198,7 @@
     <ClInclude Include="..\Public\MoveLoopState.h" />
     <ClInclude Include="..\public\MoveStartState.h" />
     <ClInclude Include="..\Public\MoveTurnState.h" />
-    <ClInclude Include="..\Public\Default_MagicTraill_Effect.h" />
+    <ClInclude Include="..\Public\Default_MagicTrail_Effect.h" />
     <ClInclude Include="..\Public\Levioso.h" />
     <ClInclude Include="..\Public\Random_Select.h" />
     <ClInclude Include="..\public\Field_Guide.h" />
@@ -237,7 +238,6 @@
     <ClInclude Include="..\Public\Assasin_Goblin.h" />
     <ClInclude Include="..\Public\Behavior_Includes.h" />
     <ClInclude Include="..\public\Camera_Debug.h" />
-    <ClInclude Include="..\public\Default_Magic_Effect.h" />
     <ClInclude Include="..\Public\Golem_Combat.h" />
     <ClInclude Include="..\Public\Client_Defines.h" />
     <ClInclude Include="..\Public\Client_Includes.h" />
@@ -320,6 +320,7 @@
   <ItemGroup>
     <ClCompile Include="..\Private\Action.cpp" />
     <ClCompile Include="..\Private\Action_Deflect.cpp" />
+    <ClCompile Include="..\Private\Ncendio.cpp" />
     <ClCompile Include="..\Private\Inventory.cpp" />
     <ClCompile Include="..\Private\Check_Degree.cpp" />
     <ClCompile Include="..\Private\Check_Distance.cpp" />
@@ -336,7 +337,6 @@
     <ClCompile Include="..\Private\HardLandState.cpp" />
     <ClCompile Include="..\Private\JumpState.cpp" />
     <ClCompile Include="..\Private\Confringo.cpp" />
-    <ClCompile Include="..\Private\Confringo_WandDust_Effect.cpp" />
     <ClCompile Include="..\Private\MagicCastingState.cpp" />
     <ClCompile Include="..\private\Main3_Loader.cpp" />
     <ClCompile Include="..\Private\Main_Menu.cpp" />
@@ -351,7 +351,7 @@
     <ClCompile Include="..\Private\MoveLoopState.cpp" />
     <ClCompile Include="..\private\MoveStartState.cpp" />
     <ClCompile Include="..\Private\MoveTurnState.cpp" />
-    <ClCompile Include="..\Private\Default_MagicTraill_Effect.cpp" />
+    <ClCompile Include="..\Private\Default_MagicTrail_Effect.cpp" />
     <ClCompile Include="..\Private\Levioso.cpp" />
     <ClCompile Include="..\Private\Random_Select.cpp" />
     <ClCompile Include="..\private\Field_Guide.cpp" />
@@ -390,7 +390,6 @@
     <ClCompile Include="..\Private\Armored_Troll.cpp" />
     <ClCompile Include="..\Private\Assasin_Goblin.cpp" />
     <ClCompile Include="..\private\Camera_Debug.cpp" />
-    <ClCompile Include="..\private\Default_Magic_Effect.cpp" />
     <ClCompile Include="..\private\Player_Camera.cpp" />
     <ClCompile Include="..\Private\Golem_Combat.cpp" />
     <ClCompile Include="..\Private\Dugbog.cpp" />
@@ -483,6 +482,7 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Protego.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_ShadowAnimMesh.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_ShadowMesh.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_ShadowMeshInstance.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Terrain.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMesh.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxCube.hlsl" />

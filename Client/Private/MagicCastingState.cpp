@@ -46,7 +46,7 @@ void CMagicCastingState::Late_Tick(_float fTimeDelta)
 {
 }
 
-void CMagicCastingState::OnStateEnter()
+void CMagicCastingState::OnStateEnter(void* _pArg)
 {
 	BEGININSTANCE;
 

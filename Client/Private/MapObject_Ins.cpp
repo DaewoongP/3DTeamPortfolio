@@ -62,24 +62,36 @@ void CMapObject_Ins::Late_Tick(_float fTimeDelta)
 
 HRESULT CMapObject_Ins::Render()
 {
-	if (FAILED(__super::Render()))
-		return E_FAIL;
-
-	if (nullptr == m_pShader ||
-		nullptr == m_pModel)
-		return S_OK;
-
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
 	_uint		iNumMeshes = m_pModel->Get_NumMeshes();
 
-	for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; iMeshCount++)
+	for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; ++iMeshCount)
 	{
 		m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", iMeshCount, DIFFUSE);
 		m_pModel->Bind_Material(m_pShader, "g_NormalTexture", iMeshCount, NORMALS);
 
 		m_pShader->Begin("Mesh_No_Cull");
+
+		if (FAILED(m_pModel->Render(iMeshCount)))
+			return E_FAIL;
+	}
+
+	return S_OK;
+}
+
+HRESULT CMapObject_Ins::Render_Depth()
+{
+	if (FAILED(SetUp_ShadowShaderResources()))
+		return E_FAIL;
+
+	_uint		iNumMeshes = m_pModel->Get_NumMeshes();
+
+	for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; ++iMeshCount)
+	{
+		if (FAILED(m_pShadowShader->Begin("Shadow")))
+			return E_FAIL;
 
 		if (FAILED(m_pModel->Render(iMeshCount)))
 			return E_FAIL;
@@ -95,6 +107,7 @@ HRESULT CMapObject_Ins::Add_Components(MAPOJBECTINSDESC* pMapObjectInsDesc)
 		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
 	{
 		MSG_BOX("Failed CMapObject_Ins Add_Component : (Com_Renderer)");
+		__debugbreak();
 		return E_FAIL;
 	}
 
@@ -103,6 +116,16 @@ HRESULT CMapObject_Ins::Add_Components(MAPOJBECTINSDESC* pMapObjectInsDesc)
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
 	{
 		MSG_BOX("Failed CMapObject_Ins Add_Component : (Com_Shader)");
+		__debugbreak();
+		return E_FAIL;
+	}
+	
+	/* Com_ShadowShader */
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_ShadowMeshInstance"),
+		TEXT("Com_ShadowShader"), reinterpret_cast<CComponent**>(&m_pShadowShader))))
+	{
+		MSG_BOX("Failed CMapObject_Ins Add_Component : (Com_ShadowShader)");
+		__debugbreak();
 		return E_FAIL;
 	}
 
@@ -111,6 +134,7 @@ HRESULT CMapObject_Ins::Add_Components(MAPOJBECTINSDESC* pMapObjectInsDesc)
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModel))))
 	{
 		MSG_BOX("Failed CMapObject_Ins Add_Component : (Com_Model)");
+		__debugbreak();
 		return E_FAIL;
 	}
 
@@ -119,7 +143,9 @@ HRESULT CMapObject_Ins::Add_Components(MAPOJBECTINSDESC* pMapObjectInsDesc)
 
 HRESULT CMapObject_Ins::SetUp_ShaderResources()
 {
-	BEGININSTANCE; if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
+	BEGININSTANCE; 
+	
+	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
 		return E_FAIL;
 
 	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW))))
@@ -129,9 +155,29 @@ HRESULT CMapObject_Ins::SetUp_ShaderResources()
 		return E_FAIL;
 
 	if (FAILED(m_pShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
+		return E_FAIL;	
+	
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CMapObject_Ins::SetUp_ShadowShaderResources()
+{
+	BEGININSTANCE; 
+	
+	if (FAILED(m_pShadowShader->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
 		return E_FAIL;
-	
-	
+
+	if (FAILED(m_pShadowShader->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_LightTransformMatrix(CPipeLine::D3DTS_VIEW))))
+		return E_FAIL;
+
+	if (FAILED(m_pShadowShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_LightTransformMatrix(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+
+	if (FAILED(m_pShadowShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
+		return E_FAIL;
+
 	ENDINSTANCE;
 
 	return S_OK;
@@ -165,8 +211,8 @@ CGameObject* CMapObject_Ins::Clone(void* pArg)
 void CMapObject_Ins::Free()
 {
 	__super::Free();
-	Safe_Release(m_pRigidBody);
-	Safe_Release(m_pTransform);
+
+	Safe_Release(m_pShadowShader);
 	Safe_Release(m_pShader);
 	Safe_Release(m_pModel);
 	Safe_Release(m_pRenderer);

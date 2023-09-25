@@ -2,6 +2,7 @@
 #include "Shader_Functions.hlsli"
 
 matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
+matrix			g_TransformationMatrix;
 texture2D		g_Texture;
 texture2D		g_DiffuseTexture;
 
@@ -23,21 +24,28 @@ struct VS_OUT
 	float4 vWorldPos : TEXCOORD1;
 };
 
+void MainLogic(VS_IN In, out VS_OUT Out)
+{
+	matrix matTW, matTWV, matTWVP;
+
+	matTW = mul(g_TransformationMatrix, g_WorldMatrix);
+	matTWV = mul(matTW, g_ViewMatrix);
+	matTWVP = mul(matTWV, g_ProjMatrix);
+
+	Out.vPosition = mul(vector(In.vPosition, 1.f), matTWVP);
+	vector vWorldNormal = mul(vector(In.vNormal, 0.f), matTW);
+
+	Out.vNormal = normalize(vWorldNormal);
+	Out.vTexUV = In.vTexUV;
+	Out.vWorldPos = mul(vector(In.vPosition, 1.f), matTW);
+}
+
 /* 정점을 받고 변환하고 정점을 리턴한다. */
 VS_OUT VS_MAIN(VS_IN In)
 {
 	VS_OUT Out = (VS_OUT)0;
 
-	matrix matWV, matWVP;
-
-	matWV = mul(g_WorldMatrix, g_ViewMatrix);
-	matWVP = mul(matWV, g_ProjMatrix);
-
-	Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);
-	vector vWorldNormal = mul(vector(In.vNormal, 0.f), g_WorldMatrix);
-	Out.vNormal = normalize(vWorldNormal);
-	Out.vTexUV = In.vTexUV;
-	Out.vWorldPos = mul(vector(In.vPosition, 1.f), g_WorldMatrix);
+	MainLogic(In, Out);
 
 	return Out;
 }
@@ -63,25 +71,12 @@ PS_OUT	PS_MAIN(PS_IN In)
 	TilingAndOffset_float(In.vTexUV, g_vTililing, g_vOffset, In.vTexUV);
 
 	vector		vDiffuse = g_Texture.Sample(LinearSampler, In.vTexUV);
-	//if (vDiffuse.r == 0.f && vDiffuse.g == 0.f && vDiffuse.b == 0.f)
-	//	vDiffuse.a = 0;
 
 	if (vDiffuse.a < 0.1f)
 		discard;
 
 	Out.vColor = vDiffuse;
-
-	return Out;
-}
-
-PS_OUT	PS_MAIN_PICKING(PS_IN In)
-{
-	PS_OUT		Out = (PS_OUT)0;
-
-	Out.vColor.x = g_vColor.x / 255.f;
-	Out.vColor.y = g_vColor.y / 255.f;
-	Out.vColor.z = g_vColor.z / 255.f;
-	Out.vColor.w = 1.f;
+	Out.vColor *= g_vColor;
 
 	return Out;
 }
@@ -92,7 +87,7 @@ technique11		DefaultTechnique
 	{
 		SetRasterizerState(RS_Cull_None);
 		SetDepthStencilState(DSS_Default, 0);
-		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		VertexShader = compile vs_5_0 VS_MAIN();
 		GeometryShader = NULL/*compile gs_5_0 GS_MAIN()*/;
 		HullShader = NULL/*compile hs_5_0 HS_MAIN()*/;

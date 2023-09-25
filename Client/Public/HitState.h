@@ -6,6 +6,7 @@ BEGIN(Client)
 class CHitState :
     public CStateMachine
 {
+public:
     //임시로 사용(사용할지도 모르고...)
     enum HITDIRSTATE
     {
@@ -21,6 +22,20 @@ class CHitState :
         POWERFULHITDIR_BACK,
         POWERFULHITDIR_END
     };
+    enum LIGHTHIT_HEABYHIT
+    {
+        HIT_LIGHT,
+        HIT_HEABY,
+        HIT_END
+    };
+public:
+
+    typedef struct tagHitStateDesc
+    {
+        _uint iHitType = { 0 };
+        const CTransform* pTransform = { nullptr };
+    }HITSTATEDESC;
+
 private:
     explicit CHitState(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext);
     explicit CHitState(const CHitState& rhs);
@@ -35,7 +50,8 @@ public:
     virtual void Tick(_float fTimeDelta);
     virtual void Late_Tick(_float fTimeDelta);
 public:
-    virtual void OnStateEnter();
+    virtual void OnStateEnter(void* _pArg = nullptr);
+
     virtual void OnStateTick();
     virtual void OnStateExit();
 
@@ -47,6 +63,8 @@ private:
 
     //임시로 만듬
     _bool m_isPowerfulHit = { true };
+
+    CTransform* m_pTargetTransform = { nullptr };
 
 private:
     void Go_Idle();

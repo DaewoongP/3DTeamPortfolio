@@ -226,13 +226,11 @@ PS_OUT PS_MAIN_BLOOM(PS_IN_POSTEX In)
     
     vector vBloom = g_PostProcessingTexture.Sample(BloomSampler, In.vTexUV); //vBloom은 하얀부분을뽑아낼 텍스쳐
    
-    float BrightColor = 0.f;
     float Brigtness = dot(vBloom.rgb, float3(0.2126f, 0.7152f, 0.0722f));
    
     if (Brigtness > 0.99f)
     {
-        BrightColor = vector(vBloom.rgb, 1.f);
-        Out.vColor = BrightColor;
+        Out.vColor = vector(vBloom.rgb, 1.f);
     }
     else
         discard;
@@ -268,7 +266,7 @@ PS_OUT PS_MAIN_RADIALBLUR(PS_IN_POSTEX In)
    
     vector vRadialTex = g_PostProcessingTexture.Sample(PointSampler, In.vTexUV); 
     
-    float2 CenterUV = (0.5f, 0.5f);
+    float2 CenterUV = float2(0.5f, 0.5f);
     float Raidus = 0.02f;
   
         float4 blurredColor = float4(0.0, 0.0, 0.0, 0.0); // 초기화
@@ -295,6 +293,24 @@ PS_OUT PS_MAIN_RADIALBLUR(PS_IN_POSTEX In)
     Out.vColor = blurredColor;
     
         return Out;
+    
+    vector vPost = g_PostProcessingTexture.Sample(LinearSampler, In.vTexUV);
+    Out.vColor = dot(vPost.rgb, float3(0.98f, 0.89f, 0.89f));
+    
+}
+
+PS_OUT PS_MAIN_GRAY(PS_IN_POSTEX In)
+{
+    PS_OUT Out = (PS_OUT) 0;
+  
+    vector vPost = g_PostProcessingTexture.Sample(LinearSampler, In.vTexUV);
+    Out.vColor = dot(vPost.rgb, float3(0.98f, 0.89f, 0.89f));
+    
+    if (Out.vColor.a < 1.f)
+        Out.vColor *= 0.1f;
+    
+    return Out;
+    
 }
 
 technique11 DefaultTechnique
@@ -369,6 +385,16 @@ technique11 DefaultTechnique
         DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
         PixelShader = compile ps_5_0 PS_MAIN_RADIALBLUR();
     }
-
+    pass PS_MAIN_GRAY
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Depth_Disable, 0);
+        SetBlendState(BS_BlendOne, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN_POSTEX();
+        GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
+        HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
+        DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
+        PixelShader = compile ps_5_0 PS_MAIN_GRAY();
+    }
 
 }

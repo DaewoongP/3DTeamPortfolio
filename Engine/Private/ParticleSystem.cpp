@@ -65,7 +65,7 @@ HRESULT CParticleSystem::Initialize_Prototype(const _tchar* _pDirectoryPath, _ui
 			, CTexture::Create(m_pDevice, m_pContext, m_TextureSheetAnimationModuleDesc.wstrNormalPath.c_str()))))
 			return E_FAIL;
 	}
-	
+
 	ProtoTag = ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_RendererModuleDesc.wstrGraientTexture.c_str());
 	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, ProtoTag.data()))
 	{
@@ -80,10 +80,10 @@ HRESULT CParticleSystem::Initialize_Prototype(const _tchar* _pDirectoryPath, _ui
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel
 			, TEXT("Prototype_Component_Shader_VtxRectColIdxInstance")
 			, CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxRectColIdxInstance.hlsl")
-			, VTXPARTICLE_DECL::Elements, VTXPARTICLE_DECL::iNumElements))))
+				, VTXPARTICLE_DECL::Elements, VTXPARTICLE_DECL::iNumElements))))
 			return E_FAIL;
 	}
-	
+
 	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_Component_VIBuffer_Rect_Particle_Instance")))
 	{
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel
@@ -104,7 +104,7 @@ HRESULT CParticleSystem::Initialize(void* _pArg)
 
 	Resize_Container(m_MainModuleDesc.iMaxParticles);
 	Play_On_Awake();
-	
+
 	return S_OK;
 }
 void CParticleSystem::Tick(_float _fTimeDelta)
@@ -130,7 +130,7 @@ void CParticleSystem::Tick(_float _fTimeDelta)
 
 	// Burst옵션에 따른 파티클 생성
 	m_EmissionModuleDesc.Action(this, _fTimeDelta);
-	
+
 	// 카메라가 파티클 시스템의 로컬 포지션으로 감.
 	_float4 vCamPosition;
 	if (true == m_ShapeModuleDesc.isChase)
@@ -155,7 +155,7 @@ void CParticleSystem::Tick(_float _fTimeDelta)
 
 		// 위치에 속도를 더해서 최종 위치를 정함.
 		vPos = vPos + Particle_iter->vVelocity * _fTimeDelta;
-		
+
 		// 중력값 적용
 		Particle_iter->fGravityAccel += m_MainModuleDesc.fGravityModifier * _fTimeDelta;
 		vPos.y -= Particle_iter->fGravityAccel * 0.1f; // 0.1f는 값을 미세하게 조정하기 위한 상수값.
@@ -205,16 +205,13 @@ void CParticleSystem::Tick(_float _fTimeDelta)
 
 			_float fDot = XMVectorGetX(XMVector3Dot(vDir, Particle_iter->WorldMatrix.Up()));
 			_float fRadian = acosf(fDot);
-			
+
 			if (XMVectorGetY(XMVector3Cross(vDir, BillBoardMatrix.Look())) < 0)
 				fRadian = 2 * XMVectorGetX(g_XMPi) - fRadian;
 
-			_float4x4 rotationMatrix = XMMatrixRotationAxis(BillBoardMatrix.Look(),fRadian);
+			_float4x4 rotationMatrix = XMMatrixRotationAxis(BillBoardMatrix.Look(), fRadian);
 			DirectionMatrix = rotationMatrix;
 		}
-
-		//else
-		
 
 		_float4x4 TranslationMatrix = _float4x4::MatrixTranslation(vPos);
 		_float4x4 TransfomationMatrix = ScaleMatrix * BillBoardMatrix * DirectionMatrix * RotationMatrix * TranslationMatrix;
@@ -232,14 +229,14 @@ void CParticleSystem::Tick(_float _fTimeDelta)
 	}
 
 	m_pBuffer->Set_DrawNum(_uint(m_Particles[ALIVE].size()));
-	m_pBuffer->Tick(m_ParticleMatrices.data(), m_pBuffer->Get_DrawNum(), true, m_pTransform->Get_WorldMatrix_Inverse());
+	m_pBuffer->Tick(m_ParticleMatrices.data(), m_pBuffer->Get_DrawNum());
 	m_EmissionModuleDesc.vPrevPos = m_EmissionModuleDesc.vCurPos;
 	Safe_Release(pGameInstance);
 
 	// 객체 수명 처리
 	Action_By_Duration();
 
-	
+
 }
 void CParticleSystem::Late_Tick(_float _fTimeDelta)
 {
@@ -253,7 +250,7 @@ void CParticleSystem::Late_Tick(_float _fTimeDelta)
 			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_GLOW, this);
 		}
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BLEND, this);
-		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_MOTIONBLUR, this);
+		//m_pRenderer->Add_RenderGroup(CRenderer::RENDER_MOTIONBLUR, this);
 	}
 }
 
@@ -271,11 +268,11 @@ HRESULT CParticleSystem::Render()
 	return S_OK;
 }
 
-void CParticleSystem::Play()
+void CParticleSystem::Play(_float3 vPosition)
 {
 	if (true == IsEnable())
 		Restart();
-
+	m_pTransform->Set_Position(vPosition);
 	Enable();
 }
 void CParticleSystem::Stop()
@@ -293,7 +290,7 @@ HRESULT CParticleSystem::Setup_ShaderResources()
 	Safe_AddRef(pGameInstance);
 
 	_float4x4 WorldMatrix;
-	if(true == m_ShapeModuleDesc.isChase)
+	if (true == m_ShapeModuleDesc.isChase)
 		WorldMatrix = m_pTransform->Get_WorldMatrix();
 
 	try
@@ -382,7 +379,7 @@ HRESULT CParticleSystem::Save(const _tchar* _pDirectoryPath)
 		return E_FAIL;
 	if (FAILED(m_RendererModuleDesc.Save(_pDirectoryPath)))
 		return E_FAIL;
-	
+
 	return S_OK;
 }
 HRESULT CParticleSystem::Load(const _tchar* _pDirectoryPath)
@@ -646,7 +643,7 @@ void CParticleSystem::ResetStartPosition(PARTICLE_IT& _particle_iter)
 		}
 		else // xz평면 기준 퍼지는 모양
 		{
-			vDirection = XMVector3TransformCoord(_float3(0.f,0.f, 1.f), _float4x4::MatrixRotationY(fTheta));
+			vDirection = XMVector3TransformCoord(_float3(0.f, 0.f, 1.f), _float4x4::MatrixRotationY(fTheta));
 		}
 
 		// 위치 설정
@@ -669,7 +666,7 @@ void CParticleSystem::ResetStartPosition(PARTICLE_IT& _particle_iter)
 
 		_float fTheta = fAngle; // 원뿔대의 중심축과의 각도
 		_float fPhi = Random_Generator(0.f, 2 * XM_PI); // 원뿔대의 베이스 평면에서의 각도
-		
+
 		vDirection = pGameInstance->PolarToCartesian(1.f, fTheta, fPhi);
 	}
 
@@ -680,68 +677,46 @@ void CParticleSystem::ResetStartPosition(PARTICLE_IT& _particle_iter)
 	{
 		vPosition += m_pTransform->Get_Position();
 	}
+	// 위치 세팅
 	_particle_iter->WorldMatrix.Translation(vPosition);
 
+	// 속도(방향 * 스피드) 설정
 	_particle_iter->vVelocity = (vDirection * fSpeed).TransNorm();
-	
+
 	Safe_Release(pGameInstance);
 }
 
 HRESULT CParticleSystem::Add_Components()
 {
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
+	FAILED_CHECK_RETURN(CComposite::Add_Component(0, TEXT("Prototype_Component_Renderer")
+		, TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer)), E_FAIL);
 
-	wstring wstrTag;
-	try
-	{
-		if (FAILED(CComposite::Add_Component(0, TEXT("Prototype_Component_Renderer")
-			, TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
-			throw(TEXT("Com_Renderer"));
+	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel
+		, ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_RendererModuleDesc.wstrMaterialPath.c_str()).c_str()
+		, TEXT("Com_MainTexture")
+		, reinterpret_cast<CComponent**>(&m_pMainTexture)), E_FAIL);
 
-		if (FAILED(CComposite::Add_Component(m_iLevel
-			, ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_RendererModuleDesc.wstrMaterialPath.c_str()).c_str()
-			, TEXT("Com_MainTexture")
-			, reinterpret_cast<CComponent**>(&m_pMainTexture))))
-			throw(TEXT("Com_MainTexture"));
+	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel
+		, ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_ShapeModuleDesc.wstrClipTexturePath.c_str()).c_str()
+		, TEXT("Com_ClipTexture")
+		, reinterpret_cast<CComponent**>(&m_pClipTexture)), E_FAIL);
 
-		if (FAILED(CComposite::Add_Component(m_iLevel
-			, ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_ShapeModuleDesc.wstrClipTexturePath.c_str()).c_str()
-			, TEXT("Com_ClipTexture")
-			, reinterpret_cast<CComponent**>(&m_pClipTexture))))
-			throw(TEXT("Com_ClipTexture"));
+	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel
+		, ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_TextureSheetAnimationModuleDesc.wstrNormalPath.c_str()).c_str()
+		, TEXT("Com_NormalTexture")
+		, reinterpret_cast<CComponent**>(&m_pNormalTexture)), E_FAIL);
 
-		if (FAILED(CComposite::Add_Component(m_iLevel
-			, ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_TextureSheetAnimationModuleDesc.wstrNormalPath.c_str()).c_str()
-			, TEXT("Com_NormalTexture")
-			, reinterpret_cast<CComponent**>(&m_pNormalTexture))))
-			throw(TEXT("Com_NormalTexture"));
+	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel
+		, ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_RendererModuleDesc.wstrGraientTexture.c_str()).c_str()
+		, TEXT("Com_GradientTexture")
+		, reinterpret_cast<CComponent**>(&m_pGradientTexture)), E_FAIL);
 
-		if (FAILED(CComposite::Add_Component(m_iLevel
-			, ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_RendererModuleDesc.wstrGraientTexture.c_str()).c_str()
-			, TEXT("Com_GradientTexture")
-			, reinterpret_cast<CComponent**>(&m_pGradientTexture))))
-			throw(TEXT("Com_GradientTexture"));
+	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, TEXT("Prototype_Component_Shader_VtxRectColIdxInstance")
+		, TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader)), E_FAIL);
 
-		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_Component_Shader_VtxRectColIdxInstance")
-			, TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
-			throw(TEXT("Com_Shader"));
+	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, TEXT("Prototype_Component_VIBuffer_Rect_Particle_Instance")
+		, TEXT("Com_Buffer"), reinterpret_cast<CComponent**>(&m_pBuffer), &m_MainModuleDesc.iMaxParticles), E_FAIL);
 
-		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_Component_VIBuffer_Rect_Particle_Instance")
-			, TEXT("Com_Buffer"), reinterpret_cast<CComponent**>(&m_pBuffer), &m_MainModuleDesc.iMaxParticles)))
-			throw(TEXT("Com_Buffer"));
-
-	}
-	catch (const _tchar* pErrorTag)
-	{
-		wstring wstrErrorMSG = TEXT("Failed Add_Component in CParticleSystem : ");
-		wstrErrorMSG += pErrorTag;
-		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
-		Safe_Release(pGameInstance);
-		return E_FAIL;
-	}
-
-	Safe_Release(pGameInstance);
 	return S_OK;
 }
 void CParticleSystem::Play_On_Awake()
@@ -792,7 +767,8 @@ void CParticleSystem::Reset_Particle(PARTICLE_IT& _particle_iter)
 	// 시작 크기 결정
 	if (true == m_MainModuleDesc.is3DStartSize)
 	{
-		_particle_iter->vScale = _float3(m_MainModuleDesc.v3DSizeXYZ.x, m_MainModuleDesc.v3DSizeXYZ.y, m_MainModuleDesc.v3DSizeXYZ.z);
+		_particle_iter->vStartScale = _float3(m_MainModuleDesc.v3DSizeXYZ.x, m_MainModuleDesc.v3DSizeXYZ.y, m_MainModuleDesc.v3DSizeXYZ.z);
+		_particle_iter->vScale = _particle_iter->vStartScale;
 	}
 	else
 	{
@@ -803,9 +779,9 @@ void CParticleSystem::Reset_Particle(PARTICLE_IT& _particle_iter)
 		else
 			fScale = m_MainModuleDesc.fStartSize;
 
-		_particle_iter->vScale = _float3(fScale, fScale, fScale);
+		_particle_iter->vStartScale = _float3(fScale, fScale, fScale);
+		_particle_iter->vScale = _particle_iter->vStartScale;
 	}
-
 	// 시작 회전
 	//_particle_iter->WorldMatrix = 
 
@@ -844,7 +820,7 @@ PARTICLE_IT CParticleSystem::Wating_One_Particle()
 	{
 		return m_Particles[WAIT].end();
 	}
-	
+
 	PARTICLE_IT particle_iter = m_Particles[WAIT].begin();
 	Reset_Particle(particle_iter);
 	::TransitionTo(particle_iter, m_Particles[WAIT], m_Particles[DELAY]);
@@ -881,7 +857,7 @@ void CParticleSystem::Restart()
 
 	// 수명리셋
 	for (auto& Particle : m_Particles[ALIVE])
-	 	Particle.fAge = 0.f;
+		Particle.fAge = 0.f;
 	for (auto& Particle : m_Particles[DELAY])
 		Particle.fAge = 0.f;
 

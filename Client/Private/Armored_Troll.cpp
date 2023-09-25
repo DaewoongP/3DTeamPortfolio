@@ -42,8 +42,8 @@ HRESULT CArmored_Troll::Initialize(void* pArg)
 
 	if (nullptr != pArg)
 	{
-		_float4x4* pWorldMatric = reinterpret_cast<_float4x4*>(pArg);
-		m_pTransform->Set_WorldMatrix(*pWorldMatric);
+		_float4x4* pWorldMatrix = reinterpret_cast<_float4x4*>(pArg);
+		m_pTransform->Set_WorldMatrix(*pWorldMatrix);
 	}
 	else
 		m_pTransform->Set_Position(_float3(20.f, 2.f, 20.f));
@@ -1926,7 +1926,7 @@ void CArmored_Troll::Enter_Heavy_Attack()
 
 void CArmored_Troll::Enter_Body_Attack()
 {
-	m_CollisionRequestDesc.eType = ATTACK_BODY;
+	m_CollisionRequestDesc.eType = ATTACK_HEAVY;
 	m_CollisionRequestDesc.fDamage = 0.f;
 	Set_CollisionData(&m_CollisionRequestDesc);
 }

@@ -34,7 +34,7 @@ void CRollState::Late_Tick(_float fTimeDelta)
 {
 }
 
-void CRollState::OnStateEnter()
+void CRollState::OnStateEnter(void* _pArg)
 {
 
 	//전투 상태가 되어야 한다.

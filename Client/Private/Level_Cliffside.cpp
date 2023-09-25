@@ -33,12 +33,12 @@ HRESULT CLevel_Cliffside::Initialize()
 
 		return E_FAIL;
 	}
-	if (FAILED(Ready_Layer_NPC(TEXT("Layer_NPC"))))
+	/*if (FAILED(Ready_Layer_NPC(TEXT("Layer_NPC"))))
 	{
 		MSG_BOX("Failed Ready_Layer_NPC");
 
 		return E_FAIL;
-	}
+	}*/
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 	{
 		MSG_BOX("Failed Ready_Layer_BackGround");
@@ -71,12 +71,12 @@ HRESULT CLevel_Cliffside::Initialize()
 		return E_FAIL;
 	}
 
-	/*if (FAILED(Load_MapObject_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins1.ddd"))))
+	if (FAILED(Load_MapObject_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins0.ddd"))))
 	{
 		MSG_BOX("Failed Load Map Object_Ins");
 
 		return E_FAIL;
-	}*/
+	}
 	
 #ifdef _DEBUG
 	if (FAILED(Ready_Layer_Debug(TEXT("Layer_Debug"))))
@@ -744,11 +744,12 @@ HRESULT CLevel_Cliffside::Ready_Layer_Debug(const _tchar* pLayerTag)
 		ENDINSTANCE;
 		return E_FAIL;
 	}
-	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_LoadTrigger"), pLayerTag, TEXT("GameObject_LoadTrigger"))))
+
+	/*if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_LoadTrigger"), pLayerTag, TEXT("GameObject_LoadTrigger"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_LoadTrigger)");
 		return E_FAIL;
-	}
+	}*/
 
 	Safe_Release(pGameInstance);
 
