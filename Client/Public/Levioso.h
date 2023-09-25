@@ -2,9 +2,11 @@
 #include "GameObject.h"
 #include "Client_Defines.h"
 #include "MagicBall.h"
-//삥삥 도는 트레일 하나
-#include "Default_MagicTrail_Effect.h"
-#include "Wingardium_Effect.h"
+
+BEGIN(Engine)
+class CParticleSystem;
+class CTrail;
+END
 
 BEGIN(Client)
 class CLevioso final : public CMagicBall
@@ -30,16 +32,19 @@ public:
 
 private:
 	// 트레일 
-	CDefault_MagicTrail_Effect* m_pEffect = { nullptr };
+	CTrail*					  m_pMainTrail = { nullptr };
 	// 피격 트레일
-	CWingardium_Effect* m_pWingardiumEffect = { nullptr };
+	class CWingardium_Effect* m_pWingardiumEffect = { nullptr };
 
 	//완드 
-	CTrail* m_pWandTrail = { nullptr };
+	CTrail*					  m_pWandTrail = { nullptr };
 	//완드 글로우
-	CParticleSystem* m_pWandGlow = { nullptr };
+	CParticleSystem*		  m_pWandGlow = { nullptr };
 
 private:
+	_float	m_fLerpAcc = { 0.f };
+	_float  m_fTimeScalePerDitance = { 0.f };
+
 	_float3				m_vTargetPosition = {};
 	_float				m_fWingardiumEffectDeadTimer = { 0.3f };
 	_float				m_fGlowTimer = { 5.f };

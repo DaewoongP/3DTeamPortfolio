@@ -11,10 +11,7 @@
 #include "ParticleSystem.h"
 #include "Trail.h"
 #include "MeshEffect.h"
-#include "Default_Magic_Effect.h"
-#include "Default_MagicTrail_Effect.h"
 #include "Wingardium_Effect.h"
-#include "Confringo_WandDust_Effect.h"
 #pragma endregion Effects
 
 #pragma region Magic
@@ -237,13 +234,6 @@ HRESULT CMain1_Loader::Loading_For_Cliffside()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Magic"),
 			CMagic::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Magic");
-
-#pragma region Magic_Effect
-		/* For.Prototype_GameObject_MagicTrail_BasicCast_Effect*/
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_MagicTrail_BasicCast_Effect"),
-			CDefault_MagicTrail_Effect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/BasicCast/BasicCast.trail"), LEVEL_CLIFFSIDE))))
-			throw TEXT("Prototype_GameObject_MagicTrail_BasicCast_Effect");
-#pragma endregion
 
 #pragma region Magic
 		/* For.Prototype_GameObject_BasicCast */

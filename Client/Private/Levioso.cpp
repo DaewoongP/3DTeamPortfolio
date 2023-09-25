@@ -2,6 +2,10 @@
 #include "GameInstance.h"
 #include "Engine_Function.h"
 
+#include "Trail.h"
+#include "ParticleSystem.h"
+#include "Wingardium_Effect.h"
+
 CLevioso::CLevioso(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CMagicBall(pDevice, pContext)
 {
@@ -28,7 +32,7 @@ HRESULT CLevioso::Initialize_Prototype(_uint iLevel)
 	if (nullptr == pGameInstance->Find_Prototype(iLevel, TEXT("Prototype_GameObject_Wingardium_Effect")))
 	{
 		if (FAILED(pGameInstance->Add_Prototype(iLevel, TEXT("Prototype_GameObject_Wingardium_Effect"),
-			CWingardium_Effect::Create(m_pDevice, m_pContext, LEVEL_CLIFFSIDE))))
+			CWingardium_Effect::Create(m_pDevice, m_pContext, iLevel))))
 		{
 			ENDINSTANCE;
 			return E_FAIL;
@@ -36,8 +40,8 @@ HRESULT CLevioso::Initialize_Prototype(_uint iLevel)
 	}
 	if (nullptr == pGameInstance->Find_Prototype(iLevel, TEXT("Prototype_GameObject_MagicTraill_Winga_Effect")))
 	{
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_MagicTraill_Winga_Effect"),
-			CDefault_MagicTrail_Effect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/Wingardium/Wingardium.trail"), LEVEL_CLIFFSIDE))))
+		if (FAILED(pGameInstance->Add_Prototype(iLevel, TEXT("Prototype_GameObject_MagicTraill_Winga_Effect"),
+			CTrail::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/Wingardium/Wingardium.trail"), iLevel))))
 		{
 			ENDINSTANCE;
 			return E_FAIL;
@@ -139,7 +143,7 @@ void CLevioso::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 
 void CLevioso::Ready_Begin()
 {
-	m_pEffect->Disable();
+	m_pMainTrail->Disable();
 	m_pWingardiumEffect->Disable();
 	m_pWandTrail->Disable();
 	m_pWandGlow->Disable();
@@ -158,7 +162,7 @@ void CLevioso::Ready_DrawMagic()
 
 void CLevioso::Ready_CastMagic()
 {
-	m_pEffect->Enable();
+	m_pMainTrail->Enable();
 	if (m_pTarget == nullptr)
 	{
 		//마우스 피킹 지점으로 발사
@@ -181,12 +185,14 @@ void CLevioso::Ready_CastMagic()
 	{
 		m_vTargetPosition = m_pTarget->Get_Position() + m_TargetOffsetMatrix.Translation();
 	}
-	m_pEffect->Ready_Spin(m_vTargetPosition, m_MagicBallDesc.vStartPosition, m_MagicBallDesc.fLifeTime, m_MagicBallDesc.fDistance);
+	m_pMainTrail->Reset_Trail(_float3(m_MagicBallDesc.vStartPosition) + _float3(0, 0.5f, 0), _float3(m_MagicBallDesc.vStartPosition) + _float3(0, -0.5f, 0));
+	m_pMainTrail->Get_Transform()->Set_Position(m_MagicBallDesc.vStartPosition);
+	m_pMainTrail->Enable();
 }
 
 void CLevioso::Ready_Dying()
 {
-	m_pEffect->Disable();
+	m_pMainTrail->Disable();
 	m_pWingardiumEffect->Enable();
 	m_pWingardiumEffect->SetActionTrigger(true);
 }
@@ -203,11 +209,18 @@ void CLevioso::Tick_DrawMagic(_float fTimeDelta)
 
 void CLevioso::Tick_CastMagic(_float fTimeDelta)
 {
-	if (m_pEffect->Spin_Move(fTimeDelta))
+	if (m_fLerpAcc != 1)
+	{
+		m_fLerpAcc += fTimeDelta / m_MagicBallDesc.fInitLifeTime * m_fTimeScalePerDitance;
+		if (m_fLerpAcc > 1)
+			m_fLerpAcc = 1;
+		m_pMainTrail->Spin_Move(m_vTargetPosition, m_MagicBallDesc.vStartPosition, m_fLerpAcc);
+		m_pTransform->Set_Position(m_pMainTrail->Get_Transform()->Get_Position());
+	}
+	else
 	{
 		Do_MagicBallState_To_Next();
 	}
-	m_pTransform->Set_Position(m_pEffect->Get_Transform()->Get_Position());
 }
 
 void CLevioso::Tick_Dying(_float fTimeDelta)
@@ -226,10 +239,8 @@ HRESULT CLevioso::Add_Components()
 
 HRESULT CLevioso::Add_Effect()
 {
-	CDefault_MagicTrail_Effect::INITDESC initDesc;
-	initDesc.vInitPosition = m_MagicBallDesc.vStartPosition;
 	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_MagicTraill_Winga_Effect"),
-		TEXT("Com_Effect"), reinterpret_cast<CComponent**>(&m_pEffect), &initDesc)))
+		TEXT("Com_Effect"), reinterpret_cast<CComponent**>(&m_pMainTrail))))
 	{
 		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_MagicTraill_Winga_Effect)");
 		__debugbreak();
@@ -290,7 +301,7 @@ void CLevioso::Free()
 	__super::Free();
 	if (true == m_isCloned)
 	{
-		Safe_Release(m_pEffect);
+		Safe_Release(m_pMainTrail);
 		Safe_Release(m_pWingardiumEffect);
 		Safe_Release(m_pWandTrail);
 		Safe_Release(m_pWandGlow);

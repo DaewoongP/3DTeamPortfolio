@@ -2,7 +2,6 @@
 #include "GameInstance.h"
 
 #include "MagicBallPool.h"
-#include "Weapon_Player_Wand.h"
 
 CMagicBall::CMagicBall(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -130,6 +129,7 @@ void CMagicBall::Late_Tick(_float fTimeDelta)
 
 void CMagicBall::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
+	m_pRigidBody->Disable_Collision("Magic_Ball");
 }
 
 void CMagicBall::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)

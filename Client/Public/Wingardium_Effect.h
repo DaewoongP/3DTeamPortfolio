@@ -3,11 +3,11 @@
 
 #include "GameObject.h"
 #include "Client_Defines.h"
+#include "Trail.h"
 
 BEGIN(Engine)
 class CTrail;
 END
-
 
 BEGIN(Client)
 #define TrailCount 8

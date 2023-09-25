@@ -2,6 +2,9 @@
 #include "GameInstance.h"
 #include "Engine_Function.h"
 
+#include "Trail.h"
+#include "ParticleSystem.h"
+
 CFinisher::CFinisher(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CMagicBall(pDevice, pContext)
 {
@@ -200,6 +203,9 @@ void CFinisher::Ready_DrawMagic()
 {
 	m_pWandLightningParticle->Enable();
 	m_pWandTrail->Enable();
+
+	_float3 vWandPosition = _float4x4(m_WeaponOffsetMatrix * (*m_pWeaponMatrix)).Translation();
+	m_pWandTrail->Reset_Trail(_float3(vWandPosition) + _float3(0, 0.5f, 0), _float3(vWandPosition) + _float3(0, -0.5f, 0));
 }
 
 void CFinisher::Ready_CastMagic()
@@ -248,21 +254,13 @@ void CFinisher::Ready_CastMagic()
 	m_FlareSpreadParticle->Enable();
 	m_DustParticle->Enable();
 
-	m_LightningSparkEffect_Blue->Get_Transform()->Set_Position(m_pTarget->Get_Position());
-	m_LightningSparkEffect_Green->Get_Transform()->Set_Position(m_pTarget->Get_Position());
-	m_LightningSparkEffect_Red->Get_Transform()->Set_Position(m_pTarget->Get_Position());
-	m_LineParticle->Get_Transform()->Set_Position(m_pTarget->Get_Position());
-	m_FlareCenterParticle->Get_Transform()->Set_Position(m_pTarget->Get_Position());
-	m_FlareSpreadParticle->Get_Transform()->Set_Position(m_pTarget->Get_Position() + _float3(0, 0.5f, 0));
-	m_DustParticle->Get_Transform()->Set_Position(m_pTarget->Get_Position());
-
-	m_LightningSparkEffect_Blue->Play();
-	m_LightningSparkEffect_Green->Play();
-	m_LightningSparkEffect_Red->Play();
-	m_LineParticle->Play();
-	m_FlareCenterParticle->Play();
-	m_FlareSpreadParticle->Play();
-	m_DustParticle->Play();
+	m_LightningSparkEffect_Blue->Play(m_pTarget->Get_Position());
+	m_LightningSparkEffect_Green->Play(m_pTarget->Get_Position());
+	m_LightningSparkEffect_Red->Play(m_pTarget->Get_Position());
+	m_LineParticle->Play(m_pTarget->Get_Position());
+	m_FlareCenterParticle->Play(m_pTarget->Get_Position());
+	m_FlareSpreadParticle->Play(m_pTarget->Get_Position() + _float3(0, 0.5f, 0));
+	m_DustParticle->Play(m_pTarget->Get_Position());
 
 }
 

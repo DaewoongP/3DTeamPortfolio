@@ -3,12 +3,9 @@
 #include "Client_Defines.h"
 #include "MagicBall.h"
 
-//트레일
-#include "Trail.h"
-#include "ParticleSystem.h"
-
 BEGIN(Engine)
 class CParticleSystem;
+class CTrail;
 END
 
 BEGIN(Client)
@@ -31,7 +28,7 @@ public:
 
 private:
 	// 불 트레일 
-	CTrail* m_pTrail = { nullptr };
+	CTrail* m_pMainTrail = { nullptr };
 	// 불 트레일 파티클
 	CParticleSystem* m_pTrailDustEffect = { nullptr };
 	
@@ -49,7 +46,7 @@ private:
 	// 완드 트윙클
 	CParticleSystem* m_pWandTwinklEffect = { nullptr };
 	// 완드 트레일
-	CTrail* m_pWandTrailEffect = { nullptr };
+	CTrail*			 m_pWandTrail = { nullptr };
 private:
 	//For. Trail
 	_float3 m_vStartPostion = {};
