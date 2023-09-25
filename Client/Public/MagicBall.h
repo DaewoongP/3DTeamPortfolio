@@ -28,7 +28,7 @@ public:
 		BUFF_TYPE				eBuffType = { BUFF_NONE };
 		SPELL					eMagicTag = { SPELL_END };
 		COLLISIONFLAG			eCollisionFlag;
-		_float					fDamage = { 0 };
+		_int					iDamage = { 0 };
 		_float					fDistance = { 0 };
 		_float					fLifeTime = { 1.0f };
 		const _float4x4*		pWeaponMatrix = {nullptr};
@@ -41,7 +41,7 @@ public:
 		CMagic::MAGIC_TYPE		eMagicType = { CMagic::MT_END };
 		BUFF_TYPE				eBuffType = { BUFF_NONE };
 		SPELL					eMagicTag = { SPELL_END };
-		_float					fDamage = { 0 };
+		_int					iDamage = { 0 };
 		function<void(_float3,_float)>		Action = { nullptr };
 	}COLLSIONREQUESTDESC;
 
@@ -52,7 +52,7 @@ public:
 		BUFF_TYPE				eBuffType = { BUFF_NONE };
 		SPELL					eMagicTag = { SPELL_END };
 		_float3					vStartPosition = {};
-		_float					fDamage = { 0 };
+		_int					iDamage = { 0 };
 		_float					fDistance = { 0 };
 		_float					fInitLifeTime = { 1.0f };
 		_float					fLifeTime = { 1.0f };
