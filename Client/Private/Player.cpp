@@ -475,10 +475,10 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicType = CMagic::MT_YELLOW;
 		magicInitDesc.eMagicTag = LEVIOSO;
 		magicInitDesc.fCoolTime = 1.f;
-		magicInitDesc.fDamage = 0.f;
+		magicInitDesc.iDamage = 0;
 		magicInitDesc.fCastDistance = 1000;
 		magicInitDesc.fBallDistance = 30;
-		magicInitDesc.fLifeTime = 1.2f;
+		magicInitDesc.fLifeTime = 1.8f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
@@ -489,7 +489,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicType = CMagic::MT_RED;
 		magicInitDesc.eMagicTag = CONFRINGO;
 		magicInitDesc.fCoolTime = 1.f;
-		magicInitDesc.fDamage = 50.f;
+		magicInitDesc.iDamage = 50;
 		magicInitDesc.fCastDistance = 1000;
 		magicInitDesc.fBallDistance = 30;
 		magicInitDesc.fLifeTime = 0.8f;
@@ -503,7 +503,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicType = CMagic::MT_ALL;
 		magicInitDesc.eMagicTag = FINISHER;
 		magicInitDesc.fCoolTime = 1.f;
-		magicInitDesc.fDamage = 500.f;
+		magicInitDesc.iDamage = 500;
 		magicInitDesc.fCastDistance = 1000;
 		magicInitDesc.fBallDistance = 3000;
 		magicInitDesc.fLifeTime = 3.f;
@@ -517,7 +517,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicType = CMagic::MT_RED;
 		magicInitDesc.eMagicTag = NCENDIO;
 		magicInitDesc.fCoolTime = 1.5f;
-		magicInitDesc.fDamage = 300.f;
+		magicInitDesc.iDamage = 300;
 		magicInitDesc.fCastDistance = 1000;
 		magicInitDesc.fBallDistance = 30;
 		magicInitDesc.fLifeTime = 1.f;

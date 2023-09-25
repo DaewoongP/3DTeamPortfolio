@@ -117,7 +117,7 @@ void CGolem_Combat::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		CMagicBall::COLLSIONREQUESTDESC* pCollisionMagicBallDesc = static_cast<CMagicBall::COLLSIONREQUESTDESC*>(CollisionEventDesc.pArg);
 		BUFF_TYPE eBuff = pCollisionMagicBallDesc->eBuffType;
 		auto Action = pCollisionMagicBallDesc->Action;
-		_float fDamage = pCollisionMagicBallDesc->fDamage;
+		_int fDamage = pCollisionMagicBallDesc->iDamage;
 
 		cout << fDamage << endl;
 		m_pHealth->Damaged(fDamage);
