@@ -1046,6 +1046,7 @@ HRESULT CPlayer::Bind_Notify()
 	
 	funcNotify = [&] {(*this).Shot_Basic_Last_Spell(); };
 	
+	//Basic_Last
 	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Hvy_frmLft_anm"), TEXT("Shot_Spell"), funcNotify)))
 	{
 		MSG_BOX("Failed Bind_Notify");
