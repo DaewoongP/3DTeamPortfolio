@@ -179,6 +179,13 @@ void CFinisher::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 	__super::OnCollisionExit(CollisionEventDesc);
 }
 
+HRESULT CFinisher::Reset(MAGICBALLINITDESC& InitDesc)
+{
+	__super::Reset(InitDesc);
+	m_fLerpAcc = 0.0f;
+	return S_OK;
+}
+
 void CFinisher::Ready_Begin()
 {
 	for (int i = 0; i < 3; i++)
@@ -240,8 +247,8 @@ void CFinisher::Ready_CastMagic()
 	for (int i = 0; i < 3; i++)
 	{
 		m_pTrail[i]->Set_Threshold(0.0f);
+		m_pTrail[i]->Reset_Trail(m_pTarget->Get_Position() + _float3(0, 10, 0) + _float3(0, 2.f, 0), m_pTarget->Get_Position() + _float3(0, 10, 0) + _float3(0, -2.f, 0));
 		m_pTrail[i]->Ready_LightningStrike(m_pTarget->Get_Position() + _float3(0, 10, 0), m_pTarget->Get_Position(), vWeight, 10);
-		m_pTrail[i]->Reset_Trail(m_pTarget->Get_Position() + _float3(0, 10, 0) + _float3(0, 0.5f, 0), m_pTarget->Get_Position() + _float3(0, 10, 0) + _float3(0, -0.5f, 0));
 		m_pTrail[i]->Get_Transform()->Set_Position(m_pTarget->Get_Position() + _float3(0, 10, 0));
 		m_pTrail[i]->Enable();
 	}

@@ -146,7 +146,7 @@ HRESULT CMagicBall::Reset(MAGICBALLINITDESC& InitDesc)
 	m_MagicBallDesc.eMagicType = InitDesc.eMagicType;
 	m_MagicBallDesc.eBuffType = InitDesc.eBuffType;
 	m_MagicBallDesc.eMagicTag = InitDesc.eMagicTag;
-	m_MagicBallDesc.fDamage = InitDesc.fDamage;
+	m_MagicBallDesc.iDamage = InitDesc.iDamage;
 	m_MagicBallDesc.fDistance = InitDesc.fDistance;
 	m_MagicBallDesc.fInitLifeTime = InitDesc.fLifeTime;
 	m_TargetOffsetMatrix = InitDesc.TargetOffsetMatrix;
@@ -166,7 +166,7 @@ HRESULT CMagicBall::Reset(MAGICBALLINITDESC& InitDesc)
 	m_CollisionDesc.eMagicType = m_MagicBallDesc.eMagicType;
 	m_CollisionDesc.eBuffType = m_MagicBallDesc.eBuffType;
 	m_CollisionDesc.eMagicTag = m_MagicBallDesc.eMagicTag;
-	m_CollisionDesc.fDamage = m_MagicBallDesc.fDamage;
+	m_CollisionDesc.iDamage = m_MagicBallDesc.iDamage;
 
 	Set_CollisionData(&m_CollisionDesc);
 	m_eCollisionFlag = InitDesc.eCollisionFlag;

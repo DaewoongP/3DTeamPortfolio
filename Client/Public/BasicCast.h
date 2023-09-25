@@ -31,8 +31,13 @@ private:
 	//지팡이 움직임 이펙트
 	CParticleSystem*			m_pWandEffect = { nullptr };
 
+	// 기본공격 시작 글로우
+	CParticleSystem*			m_pMainGlow = { nullptr };
 	// 기본공격 트레일
 	CTrail*						m_pMainTrail = { nullptr };
+
+	// 피격 팡( 3개짜리 )
+	CParticleSystem*			m_pHitSplashEffect = { nullptr };
 	// 피격 이펙트
 	CParticleSystem*			m_pHitEffect = { nullptr };
 	// 피격 섬광
