@@ -94,6 +94,7 @@ void CMagicBall::Tick(_float fTimeDelta)
 			if (m_isFirstFrameInState)
 			{
 				Ready_Dying();
+				m_pRigidBody->Disable_Collision("Magic_Ball");
 				m_isFirstFrameInState = false;
 			}
 
@@ -129,7 +130,6 @@ void CMagicBall::Late_Tick(_float fTimeDelta)
 
 void CMagicBall::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
-	m_pRigidBody->Disable_Collision("Magic_Ball");
 }
 
 void CMagicBall::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)
