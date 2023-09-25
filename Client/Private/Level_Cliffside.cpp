@@ -71,12 +71,12 @@ HRESULT CLevel_Cliffside::Initialize()
 		return E_FAIL;
 	}
 
-	/*if (FAILED(Load_MapObject_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins1.ddd"))))
+	if (FAILED(Load_MapObject_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins0.ddd"))))
 	{
 		MSG_BOX("Failed Load Map Object_Ins");
 
 		return E_FAIL;
-	}*/
+	}
 	
 #ifdef _DEBUG
 	if (FAILED(Ready_Layer_Debug(TEXT("Layer_Debug"))))
@@ -582,14 +582,14 @@ HRESULT CLevel_Cliffside::Ready_Layer_UI(const _tchar* pLayerTag)
 
 	_tchar szFilePath[MAX_PATH] = TEXT("");
 
-	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_HP.uidata"));
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_HP"),
-		pLayerTag, TEXT("GameObject_UI_Group_HP"), szFilePath)))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_HP)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
+	//lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_HP.uidata"));
+	//if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_HP"),
+	//	pLayerTag, TEXT("GameObject_UI_Group_HP"), szFilePath)))
+	//{
+	//	MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_HP)");
+	//	ENDINSTANCE;
+	//	return E_FAIL;
+	//}
 	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Potion.uidata"));
 	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_Potion"),
 		pLayerTag, TEXT("GameObject_UI_Group_Potion"), szFilePath)))
@@ -598,14 +598,14 @@ HRESULT CLevel_Cliffside::Ready_Layer_UI(const _tchar* pLayerTag)
 		ENDINSTANCE;
 		return E_FAIL;
 	}
-	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Finisher_Front.uidata"));
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_Finisher"),
-		pLayerTag, TEXT("GameObject_UI_Group_Finisher"), szFilePath)))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_Finisher)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
+	//lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Finisher_Front.uidata"));
+	//if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_Finisher"),
+	//	pLayerTag, TEXT("GameObject_UI_Group_Finisher"), szFilePath)))
+	//{
+	//	MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_Finisher)");
+	//	ENDINSTANCE;
+	//	return E_FAIL;
+	//}
 	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Skill_1.uidata"));
 	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_Skill"),
 		pLayerTag, TEXT("Prototype_GameObject_UI_Group_Skill"), szFilePath)))
@@ -627,15 +627,19 @@ HRESULT CLevel_Cliffside::Ready_Layer_UI(const _tchar* pLayerTag)
 	//	MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_MiniMap)");
 	//	return E_FAIL;
 	//}
-	
-	
-	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Cursor.uidata"));
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_Cursor"),
-		pLayerTag, TEXT("GameObject_UI_Group_Cursor"), szFilePath)))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_Cursor)");
-		return E_FAIL;
-	}
+
+	//CUI_Group_Enemy_HP::ENEMYHPDESC  Desc;
+	//
+	//Desc.eType = CUI_Group_Enemy_HP::ENEMYTYPE::BOSS;
+	//lstrcpy(Desc.wszObjectLevel, TEXT("77"));
+	//lstrcpy(Desc.wszObjectName, TEXT("개철민"));
+
+	//if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_Enemy_HP"),
+	//	pLayerTag, TEXT("GameObject_UI_Enemy_HP"), &Desc)))
+	//{
+	//	MSG_BOX("Failed Add_GameObject : (GameObject_UI_Enemy_HP)");
+	//	return E_FAIL;
+	//}
 
 	ENDINSTANCE;
 
@@ -656,14 +660,14 @@ HRESULT CLevel_Cliffside::Ready_Layer_FieldGuide_UI(const _tchar* pLayerTag)
 	}
 
 	_tchar szFilePath[MAX_PATH] = TEXT("");
-	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Cursor.uidata"));
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_Cursor"),
-		pLayerTag, TEXT("GameObject_UI_Group_Info_Cursor"), szFilePath)))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_Cursor)");
-		Safe_Release(pGameInstance);
-		return E_FAIL;
-	}	
+	//lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Cursor.uidata"));
+	//if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_Cursor"),
+	//	pLayerTag, TEXT("GameObject_UI_Group_Info_Cursor"), szFilePath)))
+	//{
+	//	MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_Cursor)");
+	//	Safe_Release(pGameInstance);
+	//	return E_FAIL;
+	//}	
 	
 	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Gear_Alpha3.uidata"));
 	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Field_Guide"),
@@ -693,14 +697,14 @@ HRESULT CLevel_Cliffside::Ready_Layer_Menu_UI(const _tchar* pLayerTag)
 	}
 
 	_tchar szFilePath[MAX_PATH] = TEXT("");
-	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Cursor.uidata"));
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_Cursor"),
-		pLayerTag, TEXT("GameObject_UI_Group_Info_Cursor"), szFilePath)))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_Cursor)");
-		Safe_Release(pGameInstance);
-		return E_FAIL;
-	}
+	//lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Cursor.uidata"));
+	//if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_Cursor"),
+	//	pLayerTag, TEXT("GameObject_UI_Group_Info_Cursor"), szFilePath)))
+	//{
+	//	MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_Cursor)");
+	//	Safe_Release(pGameInstance);
+	//	return E_FAIL;
+	//}
 
 
 	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Menu_Frame.uidata"));
@@ -740,11 +744,12 @@ HRESULT CLevel_Cliffside::Ready_Layer_Debug(const _tchar* pLayerTag)
 		ENDINSTANCE;
 		return E_FAIL;
 	}
-	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_LoadTrigger"), pLayerTag, TEXT("GameObject_LoadTrigger"))))
+
+	/*if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_LoadTrigger"), pLayerTag, TEXT("GameObject_LoadTrigger"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_LoadTrigger)");
 		return E_FAIL;
-	}
+	}*/
 
 	Safe_Release(pGameInstance);
 

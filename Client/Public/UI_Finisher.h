@@ -26,7 +26,8 @@ public:
 	virtual HRESULT Render() override;
 
 public:
-	void Set_Gauge(_float fGauge, CUI_Progress::GAUGE eType);
+	void	 Set_Gauge(_float fGauge, CUI_Progress::GAUGE eType);
+	void	Set_Gauge(_float fGauge);
 
 private:
 	CShader*			m_pShaderCom = { nullptr };
@@ -37,6 +38,8 @@ private:
 private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
+
+	_float		m_fPercent = { 0.f };
 
 #ifdef _DEBUG
 	HRESULT Debug_UI(_float fTimeDelta);

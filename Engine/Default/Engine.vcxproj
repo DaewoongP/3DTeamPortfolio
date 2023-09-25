@@ -20,8 +20,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Animation.h" />
+    <ClInclude Include="..\Public\DOF.h" />
     <ClInclude Include="..\public\MotionBlurInst.h" />
     <ClInclude Include="..\public\MotionBlur.h" />
+    <ClInclude Include="..\public\TexturePool.h" />
     <ClInclude Include="..\public\VIBuffer_Particle_Instance.h" />
     <ClInclude Include="..\public\VIBuffer_Rect_Particle_Instance.h" />
     <ClInclude Include="..\Public\FlowMap.h" />
@@ -159,8 +161,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Animation.cpp" />
+    <ClCompile Include="..\Private\DOF.cpp" />
     <ClCompile Include="..\private\MotionBlurInst.cpp" />
     <ClCompile Include="..\private\MotionBlur.cpp" />
+    <ClCompile Include="..\private\TexturePool.cpp" />
     <ClCompile Include="..\private\VIBuffer_Particle_Instance.cpp" />
     <ClCompile Include="..\private\VIBuffer_Rect_Particle_Instance.cpp" />
     <ClCompile Include="..\Private\FlowMap.cpp" />
@@ -294,6 +298,7 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Debug.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_DefaultEffect.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_DOF.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Flipbook.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Distortion.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_FlowMap.hlsl" />
@@ -427,6 +432,7 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <DisableSpecificWarnings>4828;4204;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

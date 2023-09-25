@@ -15,6 +15,14 @@ class CPlayer_Camera :
 	public CCamera
 {
 public:
+	enum CAMERAACTIONTYPE
+	{
+		CAMERAACTION_NONE,
+		CAMERAACTION_LIGHTNING,
+		CAMERAACTION_END
+	};
+
+public:   
 	typedef struct tagPlayerCameraDesc
 	{
 		CAMERADESC CameraDesc{};
@@ -69,7 +77,7 @@ private:
 	_float m_fCameraHeight{ 0.0f };
 
 private:
-	void	Mouse_Input(_float _TimeDelta);
+	void	Mouse_Input(_float _fTimeDelta);
 	//행렬 갱신
 	void	Update_FollowMatrix();
 

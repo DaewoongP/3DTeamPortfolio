@@ -37,11 +37,6 @@ HRESULT CMagic::Initialize(void* pArg)
 	m_eMagicTag = InitDesc->eMagicTag;
 	m_fLifeTime = InitDesc->fLifeTime;
 
-	if (FAILED(Add_Component()))
-	{
-		MSG_BOX("Failed to Add Component Magic");
-	}
-
 	return S_OK;
 }
 
@@ -75,16 +70,18 @@ HRESULT CMagic::ResetMagicDesc(MAGICDESC SkillDesc)
 	return S_OK;
 }
 
-_bool CMagic::Magic_Cast(CTransform* pTarget, _float4x4 targetOffsetMatrix, const _float4x4* pWeaponMatrix, _float4x4 WeaponOffsetMatrix)
+_bool CMagic::Magic_Cast(CTransform* pTarget, _float4x4 targetOffsetMatrix, const _float4x4* pWeaponMatrix, _float4x4 WeaponOffsetMatrix, COLLISIONFLAG eCollisionFlag)
 {
 	if (m_fCurrentCoolTime > 0)
 		return false;
+
 	//마법을 생성 합니다.
 	CMagicBall::MAGICBALLINITDESC ballInit;
 	ballInit.eBuffType = m_eBuffType;
 	ballInit.eMagicGroup = m_eMagicGroup;
 	ballInit.eMagicTag = m_eMagicTag;
 	ballInit.eMagicType = m_eMagicType;
+	ballInit.eCollisionFlag = eCollisionFlag;
 	ballInit.fDamage = m_fDamage;
 	ballInit.fDistance = m_fBallDistance;
 	ballInit.pTarget = pTarget;
@@ -92,26 +89,29 @@ _bool CMagic::Magic_Cast(CTransform* pTarget, _float4x4 targetOffsetMatrix, cons
 	ballInit.fLifeTime = m_fLifeTime;
 	ballInit.pWeaponMatrix = pWeaponMatrix;
 	ballInit.WeaponOffsetMatrix = WeaponOffsetMatrix;
+
 	BEGININSTANCE;
 
 	//타입별 생성을 위한 태그지정임.
 	_tchar objTag[MAX_PATH] = TEXT("GameObject_MagicBall_");
 	swprintf_s(objTag, TEXT("%s%s"), objTag, Generate_HashtagW().c_str());
 
-	_tchar componentTag[MAX_PATH] = TEXT("Prototype_GameObject_");
-	swprintf_s(componentTag, TEXT("%s%s"), componentTag, m_szTagArray[m_eMagicTag]);
-
 	_char msgBoxText[MAX_PATH] = "Failed Add_GameObject : GameObject_";
 	_char objName[MAX_PATH] = "";
 	WCharToChar(m_szTagArray[m_eMagicTag], objName);
 	sprintf_s(msgBoxText, "%s%s", msgBoxText, objName);
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, componentTag, TEXT("Layer_Magic"), objTag, &ballInit)))
+	CMagicBallPool* pMagicBallPool = CMagicBallPool::GetInstance();
+	Safe_AddRef(pMagicBallPool);
+	
+	if (FAILED(pGameInstance->Add_Component(pMagicBallPool->Get_Magic(ballInit), LEVEL_CLIFFSIDE, TEXT("Layer_Magic"), objTag)))
 	{
 		MSG_BOX(msgBoxText);
+		ENDINSTANCE;
+		Safe_Release(pMagicBallPool);
 		return false;
 	}
-
+	Safe_Release(pMagicBallPool);
 	pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
 
 	ENDINSTANCE;
@@ -129,11 +129,6 @@ _bool CMagic::Magic_Cast(CTransform* pTarget, _float4x4 targetOffsetMatrix, cons
 HRESULT CMagic::Add_ActionFunc(function<void()> func)
 {
 	m_ActionVec.push_back(func);
-	return S_OK;
-}
-
-HRESULT CMagic::Add_Component()
-{
 	return S_OK;
 }
 

@@ -20,13 +20,11 @@ namespace Engine
 		COL_NPC_RANGE		= 1	<< 4,
 		COL_WEAPON			= 1 << 5,
 		COL_MAGIC			= 1 << 6,
-		// COL~~ = 1 << 7,
+		// COL~~ = 1 << 6,
 		// ... 계속 추가해주시면 됩니다!! 숫자만 계속 증가시켜주세요
 
 		COL_TEST = 1 << 29, // 충돌 가능한 최대치입니다. 지우고 추가하셔도 됩니다.
 							// 이 TEST를 지우고 추가하실때는 저한테 말씀해주세요
-
-		COL_ALL = (1 << 30) - 1, // 다른 모든 객체와 충돌
 	};
 
 	enum ISCOLLISION

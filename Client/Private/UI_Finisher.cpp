@@ -63,6 +63,11 @@ void CUI_Finisher::Set_Gauge(_float fGauge, CUI_Progress::GAUGE eType)
 	}
 }
 
+void CUI_Finisher::Set_Gauge(_float fGauge)
+{
+	m_fPercent = fGauge;
+}
+
 
 HRESULT CUI_Finisher::Add_Components()
 {
@@ -71,6 +76,7 @@ HRESULT CUI_Finisher::Add_Components()
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 	{
 		MSG_BOX("Failed CUI_Finisher Add_Component : (Com_Shader)");
+		__debugbreak;
 		return E_FAIL;
 	}
 
@@ -79,6 +85,7 @@ HRESULT CUI_Finisher::Add_Components()
 		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRendererCom))))
 	{
 		MSG_BOX("Failed CUI_Finisher Add_Component : (Com_Renderer)");
+		__debugbreak;
 		return E_FAIL;
 	}
 
@@ -87,15 +94,16 @@ HRESULT CUI_Finisher::Add_Components()
 		TEXT("Com_Buffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
 	{
 		MSG_BOX("Failed CUI_Finisher Add_Component : (Com_Buffer)");
+		__debugbreak;
 		return E_FAIL;
 	}
 
-	_float3 vProgress = _float3(100.f, 100.f, 100.f);
 	/* Com_Progress */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_UI_Progress"),
-		TEXT("Com_Progress"), reinterpret_cast<CComponent**>(&m_pProgressCom), &vProgress)))
+		TEXT("Com_Progress"), reinterpret_cast<CComponent**>(&m_pProgressCom))))
 	{
 		MSG_BOX("Failed CUI_Finisher Add_Component : (Com_Progress)");
+		__debugbreak;
 		return E_FAIL;
 	}
 
@@ -113,8 +121,7 @@ HRESULT CUI_Finisher::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
 
-	_float fPercent = m_pProgressCom->Get_Gauge_Percent();
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_fPercent", &fPercent, sizeof(_float))))
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fPercent", &m_fPercent, sizeof(_float))))
 		return E_FAIL;
 
 	if (FAILED(m_Textures[m_iTextureIndex]->Bind_ShaderResources(m_pShaderCom, "g_Texture")))

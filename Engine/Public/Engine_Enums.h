@@ -25,8 +25,6 @@ namespace Engine
 
 		COL_TEST = 1 << 29, // 충돌 가능한 최대치입니다. 지우고 추가하셔도 됩니다.
 							// 이 TEST를 지우고 추가하실때는 저한테 말씀해주세요
-
-		COL_ALL = (1 << 30) - 1, // 다른 모든 객체와 충돌
 	};
 
 	enum ISCOLLISION

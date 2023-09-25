@@ -83,6 +83,7 @@ HRESULT CUI_Back::Add_Components()
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 	{
 		MSG_BOX("Failed CDummy_UI Add_Component : (Com_Shader)");
+		__debugbreak;
 		return E_FAIL;
 	}
 
@@ -91,6 +92,7 @@ HRESULT CUI_Back::Add_Components()
 		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRendererCom))))
 	{
 		MSG_BOX("Failed CDummy_UI Add_Component : (Com_Renderer)");
+		__debugbreak;
 		return E_FAIL;
 	}
 
@@ -99,6 +101,7 @@ HRESULT CUI_Back::Add_Components()
 		TEXT("Com_Buffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
 	{
 		MSG_BOX("Failed CDummy_UI Add_Component : (Com_Buffer)");
+		__debugbreak;
 		return E_FAIL;
 	}
 

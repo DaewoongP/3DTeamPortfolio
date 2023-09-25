@@ -492,7 +492,7 @@ void CObject_Window::Install_Multi_Object(_float3 vPos)
 	{
 		vector<_float4x4> vecWorldMatrix;
 
-		for (size_t i = m_iMapObjectIndex - m_iInsObjectCnt; i < m_iMapObjectIndex; i++)
+		for (_int i = m_iMapObjectIndex - m_iInsObjectCnt; i < m_iMapObjectIndex; ++i)
 		{
 			// 해당 게임 오브젝트를 찾음
 			_tchar wszobjName[MAX_PATH] = { 0 };
@@ -969,6 +969,12 @@ void CObject_Window::Mesh_Picking_Menu()
 		Delete_Picking_Object();
 	}
 
+	// 메쉬 피킹한 인스턴스 오브젝트 삭제 메뉴
+	if (ImGui::Button("Delete Choice MapObject_Ins"))
+	{
+		Delete_Picking_Object_Ins();
+	}
+
 #endif
 }
 
@@ -1067,6 +1073,10 @@ void CObject_Window::Delete_Picking_Object()
 		m_vecObjectTag_s.erase(m_vecObjectTag_s.begin() + m_iTagIndex);
 		m_vecSaveObject.erase(m_vecSaveObject.begin() + m_iTagIndex);
 	}
+}
+
+void CObject_Window::Delete_Picking_Object_Ins()
+{
 }
 
 void CObject_Window::Map_Brushing_Menu()

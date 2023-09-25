@@ -92,7 +92,6 @@ void CVIBuffer_Particle_Instance::Tick(VTXPARTICLEINSTANCE* pInstances, _int iRe
 	D3D11_MAPPED_SUBRESOURCE	MappedSubResource;
 
 	m_pContext->Map(m_pVBInstance, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedSubResource);
-
 	VTXPARTICLEINSTANCE* pVtxColInstance = static_cast<VTXPARTICLEINSTANCE*>(MappedSubResource.pData);
 	memcpy(pVtxColInstance, pInstances, sizeof(VTXPARTICLEINSTANCE) * iRenderedParticleNum);
 	m_pContext->Unmap(m_pVBInstance, 0);

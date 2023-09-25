@@ -46,6 +46,7 @@ HRESULT CMenu_Inventory::Initialize(void* pArg)
 	{
 		MSG_BOX("Com_Info_Main : Failed Clone Component (Com_UI_Effect_Back_Gear_SlotFrame)");
 		Safe_Release(pGameInstance);
+		__debugbreak;
 		return E_FAIL;
 	}
 	m_pUIs.push_back(pBack);

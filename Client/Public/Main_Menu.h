@@ -12,7 +12,7 @@ END
 
 BEGIN(Client)
 class CUI_Effect_Back;
-
+class CUI_Group_Cursor;
 class CMenu_Gear;
 class CMenu_Inventory;
 class CMenu_Quest;
@@ -40,6 +40,8 @@ private:
 	HRESULT Add_Components();
 	HRESULT Add_TextComponent(wstring wszTag);
 
+	HRESULT Add_Cursor();
+
 private:
 	HRESULT Read_File(const _tchar* pFilePath);
 	CUI::UIDESC Load_File(const HANDLE hFile);
@@ -60,6 +62,9 @@ private: // Main Group
 	CMenu_Inventory*	m_pInventory = { nullptr };
 	CMenu_Quest*		m_pQuest = { nullptr };
 	CMenu_Setting*		m_pSetting = { nullptr };
+
+private:
+	CUI_Group_Cursor* m_pCursor = { nullptr };
 
 private:
 	void		Set_SelectedText();

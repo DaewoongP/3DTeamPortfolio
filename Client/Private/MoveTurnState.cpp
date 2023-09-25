@@ -43,7 +43,7 @@ void CMoveTurnState::Late_Tick(_float fTimeDelta)
 {
 }
 
-void CMoveTurnState::OnStateEnter()
+void CMoveTurnState::OnStateEnter(void* _pArg)
 {
 #ifdef _DEBUG
 	//cout << "Turn Enter" << endl;

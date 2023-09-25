@@ -38,7 +38,7 @@ void CMoveStartState::Late_Tick(_float fTimeDelta)
 {
 }
 
-void CMoveStartState::OnStateEnter()
+void CMoveStartState::OnStateEnter(void* _pArg)
 {
 	//무조건 jog 부터
 	*m_pIMoveSwitch = CStateContext::MOVETYPE_JOGING;

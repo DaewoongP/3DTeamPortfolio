@@ -24,11 +24,11 @@ void CUI_Group_HP::Set_Potion(_uint iPotion)
 	}
 }
 
-void CUI_Group_HP::Set_HP(_float fGauge, CUI_Progress::GAUGE eType)
+void CUI_Group_HP::Set_HP(_float fGauge)
 {
 	if (nullptr != m_pUI_HP)
 	{
-		m_pUI_HP->Set_HP(fGauge, eType);
+		m_pUI_HP->Set_HP(fGauge);
 	}
 }
 
@@ -53,8 +53,17 @@ HRESULT CUI_Group_HP::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-	if (FAILED(Read_File(reinterpret_cast<const _tchar*>(pArg))))
-		return E_FAIL;
+	if (nullptr != pArg)
+	{
+		HPDESC* pDesc = (HPDESC*)pArg;
+
+		m_pHealth = (CHealth*)pDesc->pHealth;
+
+		if (FAILED(Read_File(pDesc->wszFilePath)))
+			return E_FAIL;
+
+		Add_Fonts(pDesc->wszNumber);
+	}
 
 	return S_OK;
 }
@@ -62,12 +71,12 @@ HRESULT CUI_Group_HP::Initialize(void* pArg)
 void CUI_Group_HP::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
 }
 
 void CUI_Group_HP::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
+	m_pUI_HP->Set_HP(m_pHealth->Get_Current_HP_Percent());
 }
 
 HRESULT CUI_Group_HP::Add_Prototype()
@@ -102,6 +111,7 @@ HRESULT CUI_Group_HP::Add_Components()
 	{
 		MSG_BOX("CUI_Group_HP : Failed Clone Component (Com_UI_HP_Frame)");
 		ENDINSTANCE;
+		__debugbreak;
 		return E_FAIL;
 	}
 
@@ -111,6 +121,7 @@ HRESULT CUI_Group_HP::Add_Components()
 	{
 		MSG_BOX("CUI_Group_HP : Failed Clone Component (Com_UI_HP)");
 		ENDINSTANCE;
+		__debugbreak;
 		return E_FAIL;
 	}
 
@@ -191,13 +202,12 @@ CUI::UIDESC CUI_Group_HP::Load_File(const HANDLE hFile)
 	return UIDesc;
 }
 
-HRESULT CUI_Group_HP::Add_Fonts(void* pArg)
+HRESULT CUI_Group_HP::Add_Fonts(_tchar* wszLevel)
 {
-	CUI_Font* pName = nullptr;
-	CUI_Font* pLevel = nullptr;
+	CUI_Font* pNumber = nullptr;
 
 	CUI_Font::FONTDESC Desc;
-	lstrcpy(Desc.m_pText, m_wszObjectLevel);
+	lstrcpy(Desc.m_pText, wszLevel);
 	Desc.m_vPos = { 1260.f, 700.f };
 	Desc.m_vColor = _float4(218.f / 255.f, 165.f / 255.f, 32.f / 255.f, 1.f);
 	Desc.m_fRotation = { 0.f };
@@ -205,9 +215,10 @@ HRESULT CUI_Group_HP::Add_Fonts(void* pArg)
 	Desc.m_vScale = { 0.3f, 0.3f };
 
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Font"),
-		TEXT("Com_UI_Font"), reinterpret_cast<CComponent**>(&pLevel), &m_pFont)))
+		TEXT("Com_UI_Font"), reinterpret_cast<CComponent**>(&pNumber), &m_pFont)))
 	{
 		MSG_BOX("CUI_Group_Enemy_HP : Failed Clone Component (Com_UI_Font_Level)");
+		__debugbreak;
 		return E_FAIL;
 	}
 

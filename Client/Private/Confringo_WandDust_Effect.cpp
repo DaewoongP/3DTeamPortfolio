@@ -93,12 +93,16 @@ HRESULT CConfringo_WandDust_Effect::Add_Components()
 {
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Confringo_DustExpand_Particle")
 		, TEXT("Com_Expand_Particle"), (CComponent**)&m_pParticleDustExpand)))
+	{
+		__debugbreak;
 		return E_FAIL;
-
+	}
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Confringo_DustConcentration_Particle")
 		, TEXT("Com_Concentration_Particle"), (CComponent**)&m_pParticleDustConcentration)))
+	{
+		__debugbreak;
 		return E_FAIL;
-
+	}
 	return S_OK;
 }
 

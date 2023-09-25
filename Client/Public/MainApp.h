@@ -57,6 +57,9 @@ private: /* ImGui */
 	ID3D11RenderTargetView* m_pImGuiRTV = { nullptr };
 #endif // _DEBUG
 
+private: /* Singleton */
+	class CMagicBallPool*	m_pMagicBallPool = { nullptr };
+
 public:
 	static CMainApp* Create();
 	virtual void Free() override;

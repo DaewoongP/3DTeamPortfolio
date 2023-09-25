@@ -31,9 +31,13 @@ public:
 	_float Get_Current_HP_Percent() const {
 		return _float(m_iHP) / _float(m_iMaxHP);
 	}
+	_float Get_Current_HP() const {
+		return _float(m_iHP);
+	}
 	const _int& Get_MaxHP() const {
 		return m_iMaxHP;
 	}
+
 	void Set_HP(const _int& iHP) {
 		m_iHP = iHP;
 	}
@@ -43,6 +47,7 @@ public:
 	_bool isDead() const {
 		return m_iHP <= 0 ? true : false;
 	}
+	const _int& Get_HP() const { return m_iHP; }
 
 public:
 	virtual HRESULT Initialize_Prototype() override { return S_OK; }

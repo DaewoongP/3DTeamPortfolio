@@ -122,6 +122,22 @@ float4 PS_MAIN_HP_PROGRESS(PS_IN In) : SV_TARGET0
 	return vColor;
 }
 
+float4 PS_MAIN_HP_PROGRESS_RED(PS_IN In) : SV_TARGET0
+{
+	float4 vColor = g_Texture.Sample(PointSampler, In.vTexUV);
+
+	vColor = vColor * float4(1.f, 0.f, 0.f, 1.f);
+
+	float HP = g_fPercent;
+
+	if (In.vTexUV.x > HP)
+	{
+		discard;
+	}
+
+	return vColor;
+}
+
 float4 PS_MAIN_FINISHER_PROGRESS(PS_IN In) : SV_TARGET0
 {
 	float4 vColor = g_Texture.Sample(PointSampler, In.vTexUV);
@@ -294,6 +310,19 @@ technique11 DefaultTechnique
 		HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
 		DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
 		PixelShader = compile ps_5_0 PS_MAIN_HP_PROGRESS();
+	}
+
+	pass HP_ProgressRED
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DSS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
+		HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
+		DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
+		PixelShader = compile ps_5_0 PS_MAIN_HP_PROGRESS_RED();
 	}
 
 	pass Finisher_Progress

@@ -34,11 +34,20 @@ void CHitState::Late_Tick(_float fTimeDelta)
 {
 }
 
-void CHitState::OnStateEnter()
+void CHitState::OnStateEnter(void* _pArg)
 {
 #ifdef _DEBUG
 	cout << "Hit Enter" << endl;
 #endif // _DEBUG
+
+	HITSTATEDESC* pHitStateDesc = static_cast<HITSTATEDESC*>(_pArg);
+
+	m_isPowerfulHit = (_bool)pHitStateDesc->iHitType;
+
+	m_pTargetTransform = (CTransform*)pHitStateDesc->pTransform;
+
+	Safe_AddRef(m_pTargetTransform);
+
 
 	Set_Dir();
 }
@@ -64,6 +73,8 @@ void CHitState::OnStateExit()
 #ifdef _DEBUG
 	cout << "Hit Exit" << endl;
 #endif // _DEBUG
+
+	Safe_Release(m_pTargetTransform);
 }
 
 void CHitState::Bind_Notify()
@@ -91,12 +102,7 @@ void CHitState::Go_Idle()
 void CHitState::Set_Dir()
 {
 #pragma region 각구하기
-	//임시
-	/*CTransform* pTargetTransform = { nullptr };
-
-	_float3 vTargetPos = pTargetTransform->Get_Position();*/
-
-	_float3 vTargetPos = { _float3(0.0f, 0.0f, 0.0f) };
+	_float3 vTargetPos = m_pTargetTransform->Get_Position();
 
 	_float3 vPlayerPos = m_pPlayerTransform->Get_Position();
 
@@ -353,4 +359,6 @@ void CHitState::Free()
 	{
 
 	}
+
+	Safe_Release(m_pTargetTransform);
 }

@@ -3,12 +3,9 @@
 #include "Client_Defines.h"
 #include "MagicBall.h"
 
-//트레일
-#include "Trail.h"
-#include "ParticleSystem.h"
-
 BEGIN(Engine)
 class CParticleSystem;
+class CTrail;
 END
 
 BEGIN(Client)
@@ -27,12 +24,21 @@ public:
 	virtual void OnCollisionEnter(COLLEVENTDESC CollisionEventDesc) override;
 	virtual void OnCollisionStay(COLLEVENTDESC CollisionEventDesc) override;
 	virtual void OnCollisionExit(COLLEVENTDESC CollisionEventDesc) override;
+	virtual HRESULT Reset() { return S_OK; }
 
 private:
 	// 불 트레일 
-	CTrail* m_pTrail = { nullptr };
-	//터지는거
+	CTrail* m_pMainTrail = { nullptr };
+	// 불 트레일 파티클
+	CParticleSystem* m_pTrailDustEffect = { nullptr };
+	
+	//종료 이펙트
 	CParticleSystem* m_pExplosiveEffect[2] = { nullptr };
+	//종료 큰 불똥
+	CParticleSystem* m_pExplosiveBigPartEffect = { nullptr };
+	//종료 작은 불똥
+	CParticleSystem* m_pExplosiveSmallPartEffect = { nullptr };
+
 	// 완드 불
 	CParticleSystem* m_pWandTouchEffect = { nullptr };
 	// 완드 먼지
@@ -40,7 +46,7 @@ private:
 	// 완드 트윙클
 	CParticleSystem* m_pWandTwinklEffect = { nullptr };
 	// 완드 트레일
-	CTrail* m_pWandTrailEffect = { nullptr };
+	CTrail*			 m_pWandTrail = { nullptr };
 private:
 	//For. Trail
 	_float3 m_vStartPostion = {};

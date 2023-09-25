@@ -18,8 +18,8 @@ HRESULT CUI_Slot::Initialize(void* pArg)
 
 	if (nullptr != pArg)
 	{
-		m_Textures.reserve(SLOT_END);
-		m_AlphaTextures.reserve(SLOT_END);
+		m_Textures.resize(SLOT_END);
+		m_AlphaTextures.resize(SLOT_END);
 
 
 		UIDESC* pDesc = (UIDESC*)pArg;
@@ -32,27 +32,33 @@ HRESULT CUI_Slot::Initialize(void* pArg)
 		m_fSizeY = pDesc->fSizeY;
 		lstrcpy(m_wszTexturePath, pDesc->szTexturePath);
 		//lstrcpy(m_wszAlphaTexturePath, pDesc->szAlphaTexturePath);
+		m_Textures[BACK] = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/UI_T_ButtonBack.png"));
+		m_Textures[FRAME] = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/FX/UI_T_Goldleaf_Large.png"));
+
 		if (lstrcmp(TEXT(""), m_wszTexturePath))
 		{
-			m_Textures[BACK] = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/UI_T_ButtonBack.png"));
 			m_Textures[ICON] = CTexture::Create(m_pDevice, m_pContext, m_wszTexturePath);
-			m_Textures[FRAME] = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/FX/UI_T_Goldleaf_Large.png"));
 			if (nullptr == m_Textures[BACK] || nullptr == m_Textures[ICON] || nullptr == m_Textures[FRAME])
 			{
 				MSG_BOX("Failed Create UI Slot Texture");
+				__debugbreak;
 				return E_FAIL;
 			}
 		}
-		if (lstrcmp(TEXT(""), m_wszAlphaTexturePath))
+		else
 		{
-			m_AlphaTextures[ICON] = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/MenuAssets/UI_T_DropShadow.png"));
-			m_AlphaTextures[FRAME] = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/FX/Masks/UI_T_IconButtonOutlineMaskGold.png"));
-			if ( nullptr == m_AlphaTextures[ICON] || nullptr == m_AlphaTextures[FRAME])
-			{
-				MSG_BOX("Failed Create UI Slot Texture");
-				return E_FAIL;
-			}
+			m_Textures[ICON] = nullptr;
 		}
+
+		m_AlphaTextures[ICON] = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/MenuAssets/UI_T_DropShadow.png"));
+		m_AlphaTextures[FRAME] = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/FX/Masks/UI_T_IconButtonOutlineMaskGold.png"));
+		if (nullptr == m_AlphaTextures[ICON] || nullptr == m_AlphaTextures[FRAME])
+		{
+			MSG_BOX("Failed Create UI Slot Texture");
+			__debugbreak;
+			return E_FAIL;
+		}
+		
 	}
 
 	if (FAILED(Add_Components()))
@@ -112,10 +118,10 @@ HRESULT CUI_Slot::Render()
 				return E_FAIL;
 		}
 
-		m_iTextureIndex++;
+		// m_iTextureIndex++;
 	}
 
-	m_iTextureIndex = 0;
+	// m_iTextureIndex = 0;
 	return S_OK;
 }
 
@@ -127,6 +133,7 @@ HRESULT CUI_Slot::Add_Components()
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 	{
 		MSG_BOX("Failed CUI_Slot Add_Component : (Com_Shader)");
+		__debugbreak;
 		return E_FAIL;
 	}
 
@@ -135,6 +142,7 @@ HRESULT CUI_Slot::Add_Components()
 		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRendererCom))))
 	{
 		MSG_BOX("Failed CUI_Slot Add_Component : (Com_Renderer)");
+		__debugbreak;
 		return E_FAIL;
 	}
 
@@ -143,44 +151,9 @@ HRESULT CUI_Slot::Add_Components()
 		TEXT("Com_Buffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
 	{
 		MSG_BOX("Failed CUI_Slot Add_Component : (Com_Buffer)");
+		__debugbreak;
 		return E_FAIL;
 	}
-
-	//CUI_Image::IMAGEDESC pDesc;
-	//pDesc.vCombinedXY = m_vCombinedXY;
-	//pDesc.fX = m_fX - m_fX / 23.f;
-	//pDesc.fY = m_fY - m_fY / 23.f;
-	//pDesc.fZ = m_fZ;
-	//pDesc.fSizeX = m_fSizeX;
-	//pDesc.fSizeY = m_fSizeY;
-	///* Com_Image */
-	//if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_UI_Image"),
-	//	TEXT("Com_Image"), reinterpret_cast<CComponent**>(&m_pImageCom[ICON]), &pDesc)))
-	//{
-	//	MSG_BOX("Failed CUI_Slot Add_Component : (Com_Image)");
-	//	return E_FAIL;
-	//}
-
-	//ZEROMEM(&pDesc);
-	//pDesc.vCombinedXY = m_vCombinedXY;
-	//pDesc.fX = m_fX;
-	//pDesc.fY = m_fY;
-	//pDesc.fZ = m_fZ;
-	//pDesc.fSizeX = m_fSizeX;
-	//pDesc.fSizeY = m_fSizeY;
-	//if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_UI_Image"),
-	//	TEXT("Com_Image"), reinterpret_cast<CComponent**>(&m_pImageCom[BACK]), &pDesc)))
-	//{
-	//	MSG_BOX("Failed CUI_Slot Add_Component : (Com_Image)");
-	//	return E_FAIL;
-	//}
-
-	//if (FAILED(CComposite::Add_Component(LEVEL_MAINGAME, TEXT("Prototype_Component_UI_Button"),
-	//	TEXT("Com_Button"), reinterpret_cast<CComponent**>(&m_pButtonCom))))
-	//{
-	//	MSG_BOX("Failed CUI_Slot Add_Component : (Com_Button)");
-	//	return E_FAIL;
-	//}
 
 	return S_OK;
 }
@@ -199,9 +172,15 @@ HRESULT CUI_Slot::SetUp_ShaderResources(_uint iIndex)
 	if (FAILED(m_Textures[iIndex]->Bind_ShaderResources(m_pShaderCom, "g_Texture")))
 		return E_FAIL;
 
-	if (0 < m_AlphaTextures.size() && iIndex == _uint(FRAME))
+	if (nullptr != m_AlphaTextures[FRAME] && iIndex == _uint(FRAME))
 	{
 		if (FAILED(m_AlphaTextures[FRAME]->Bind_ShaderResources(m_pShaderCom, "g_AlphaTexture")))
+			return E_FAIL;
+	}
+
+	if (nullptr != m_AlphaTextures[ICON] && iIndex == _uint(ICON))
+	{
+		if (FAILED(m_AlphaTextures[ICON]->Bind_ShaderResources(m_pShaderCom, "g_AlphaTexture")))
 			return E_FAIL;
 	}
 
@@ -221,19 +200,14 @@ _bool CUI_Slot::Get_Clicked()
 	return 	m_pButtonCom->Click(g_hWnd, m_vCombinedXY, _float2(m_fSizeX, m_fSizeY));
 }
 
-//void CUI_Slot::Set_Texture(CTexture* pTexture)
-//{
-//	m_pImageCom[ICON]->Set_Texture(pTexture);
-//}
-//
-//void CUI_Slot::Set_ImageCom(CUI_Image::IMAGEDESC desc)
-//{
-//	m_pImageCom[BACK]->Set_Desc(desc);
-//}
-//
 void CUI_Slot::Set_Clicked(_bool isClicked)
 {
 	m_isClicked = isClicked;
+}
+
+void CUI_Slot::Set_IconTexture(CTexture* pTexture)
+{
+	m_Textures[ICON] = pTexture;
 }
 
 CUI_Slot* CUI_Slot::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -268,6 +242,5 @@ void CUI_Slot::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pVIBufferCom);
-	//Safe_Release(m_pImageCom);
 	Safe_Release(m_pButtonCom);
 }

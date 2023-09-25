@@ -1,4 +1,3 @@
-#include "..\Public\Logo_BackGround.h"
 #include "Logo_BackGround.h"
 #include "GameInstance.h"
 
@@ -55,9 +54,6 @@ HRESULT CLogo_BackGround::Render()
 
 	m_pVIBufferCom->Render();
 
-	if (FAILED(__super::Render()))
-		return E_FAIL;
-
 	return S_OK;
 }
 
@@ -68,6 +64,7 @@ HRESULT CLogo_BackGround::Add_Components()
 		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRendererCom))))
 	{
 		MSG_BOX("Failed CLogo_BackGround Add_Component : (Com_Renderer)");
+		__debugbreak;
 		return E_FAIL;
 	}
 
@@ -76,6 +73,7 @@ HRESULT CLogo_BackGround::Add_Components()
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 	{
 		MSG_BOX("Failed CLogo_BackGround Add_Component : (Com_Shader)");
+		__debugbreak;
 		return E_FAIL;
 	}
 
@@ -84,6 +82,7 @@ HRESULT CLogo_BackGround::Add_Components()
 		TEXT("Com_VIBuffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
 	{
 		MSG_BOX("Failed CLogo_BackGround Add_Component : (Com_VIBuffer)");
+		__debugbreak;
 		return E_FAIL;
 	}
 
@@ -92,6 +91,7 @@ HRESULT CLogo_BackGround::Add_Components()
 		TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTextureCom))))
 	{
 		MSG_BOX("Failed CLogo_BackGround Add_Component : (Com_Texture)");
+		__debugbreak;
 		return E_FAIL;
 	}
 

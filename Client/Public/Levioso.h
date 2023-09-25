@@ -2,9 +2,11 @@
 #include "GameObject.h"
 #include "Client_Defines.h"
 #include "MagicBall.h"
-//삥삥 도는 트레일 하나
-#include "Default_MagicTraill_Effect.h"
-#include "Wingardium_Effect.h"
+
+BEGIN(Engine)
+class CParticleSystem;
+class CTrail;
+END
 
 BEGIN(Client)
 class CLevioso final : public CMagicBall
@@ -19,23 +21,33 @@ public:
 	void TrailAction(_float3 vPosition, _float fTimeDelta);
 
 public:
-	virtual HRESULT Initialize_Prototype() override;
+	virtual HRESULT Initialize_Prototype(_uint iLevel);
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual void OnCollisionEnter(COLLEVENTDESC CollisionEventDesc) override;
 	virtual void OnCollisionStay(COLLEVENTDESC CollisionEventDesc) override;
 	virtual void OnCollisionExit(COLLEVENTDESC CollisionEventDesc) override;
+	virtual HRESULT Reset() { return S_OK; }
 
 private:
-	CDefault_MagicTraill_Effect* m_pEffect = { nullptr };
-	CWingardium_Effect* m_pWingardiumEffect = { nullptr };
+	// 트레일 
+	CTrail*					  m_pMainTrail = { nullptr };
+	// 피격 트레일
+	class CWingardium_Effect* m_pWingardiumEffect = { nullptr };
+
+	//완드 
+	CTrail*					  m_pWandTrail = { nullptr };
+	//완드 글로우
+	CParticleSystem*		  m_pWandGlow = { nullptr };
 
 private:
+	_float	m_fLerpAcc = { 0.f };
+	_float  m_fTimeScalePerDitance = { 0.f };
+
 	_float3				m_vTargetPosition = {};
-
-	_float				m_fDeadTimer = { 1.0f };
 	_float				m_fWingardiumEffectDeadTimer = { 0.3f };
+	_float				m_fGlowTimer = { 5.f };
 
 private:
 	virtual void Ready_Begin() override;
@@ -53,7 +65,7 @@ private:
 	virtual HRESULT Add_Effect();
 
 public:
-	static CLevioso* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CLevioso* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel);
 	virtual CGameObject* Clone(void* pArg);
 	virtual void Free() override;
 };

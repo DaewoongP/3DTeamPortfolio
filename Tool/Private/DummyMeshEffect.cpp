@@ -26,6 +26,10 @@ HRESULT CDummyMeshEffect::Initialize(void* pArg)
 	m_pTextureIFD = CImageFileDialog::Create(m_pDevice, Generate_Hashtag(true).data());
 	m_pTextureIFD->m_strStartPath = "../../Resources/Effects/Textures/";
 	m_pTextureIFD->m_iImageButtonWidth = 32;
+	m_pColorEaseCombo = CComboBox::Create(Generate_Hashtag(true).data(), "Color Ease", CEase::pEases, CEase::EASE_END, CEase::pEases[0]);
+	m_pPosEaseCombo = CComboBox::Create(Generate_Hashtag(true).data(), "Position Ease", CEase::pEases, CEase::EASE_END, CEase::pEases[0]);
+	m_pRotEaseCombo = CComboBox::Create(Generate_Hashtag(true).data(), "Rotation Ease", CEase::pEases, CEase::EASE_END, CEase::pEases[0]);
+	m_pScaleEaseCombo = CComboBox::Create(Generate_Hashtag(true).data(), "Scale Ease", CEase::pEases, CEase::EASE_END, CEase::pEases[0]);
 
 	vector<string> Passes = m_pShader->Get_PassList();
 	m_pPassComboBox = CComboBox::Create(Generate_Hashtag(true).data(), "Pass", Passes, Passes.front().data());
@@ -70,39 +74,53 @@ void CDummyMeshEffect::Tick_Imgui(_float _fTimeDelta)
 			ImGuiFileDialog::Instance()->Close();
 		}
 
-		// 셰이더 교체
-		ImGui::TableSetColumnIndex(0);
-		ImGui::Text("Change Shader"); ImGui::TableSetColumnIndex(1);
-		string strShaderButtonName = "Select Shader";
-		if (ImGui::Button(strShaderButtonName.data()))
-			ImGuiFileDialog::Instance()->OpenDialog("ChagneShaderFileDialog", "Load Shader", ".hlsl", "../Bin/ShaderFiles/");
-		ImGui::TableNextRow();
-		if (ImGuiFileDialog::Instance()->Display("ChagneShaderFileDialog"))
-		{
-			if (ImGuiFileDialog::Instance()->IsOk())
-			{
-				fs::path fsFilePathName = ImGuiFileDialog::Instance()->GetFilePathName();
-				fs::path fsFilePath = ImGuiFileDialog::Instance()->GetCurrentPath();
-				m_Path[MODEL_PATH] = ToRelativePath(fsFilePath.wstring().data());
-				wstring pTag = ToPrototypeTag(TEXT("Prototype_Component_"), fsFilePathName.wstring().data());
-				Safe_Release(m_pShader);
-				CComposite::Delete_Component(TEXT("Com_Shader"));
-				CComposite::Add_Component(0, pTag.data(), TEXT("Com_Shader"), (CComponent**)&m_pShader);
-				m_pPassComboBox->Change_Items(m_pShader->Get_PassList());
-			}
-
-			ImGuiFileDialog::Instance()->Close();
-		}
-
 		// 패스 교체
 		m_strPassName = m_pPassComboBox->Tick(CComboBox::TABLE, true);
+		pEffectWindow->Table_DragFloat("LifeTime", "dfimiwejf34g", &m_fLifeTime, 0.1f);
+		pEffectWindow->Table_DragFloat2("StartOffset", "xcvlkejic756", &m_vStartOffset, 0.1f, -FLT_MAX);
 		pEffectWindow->Table_DragFloat2("Offset", "dfvrpije48dic", &m_vOffset, 0.1f, -FLT_MAX);
-		pEffectWindow->Table_DragFloat2("Tililing", "dfvrpver234v8348e48dic", &m_vTililing, 0.1f, -FLT_MAX);
+		pEffectWindow->Table_DragFloat2("Delta Offset", "dikfvj349v9jvsdv", &m_vDeltaOffset, 0.1f, -FLT_MAX);
+		pEffectWindow->Table_Void();
+		pEffectWindow->Table_DragFloat2("Start Tiling", "389jcijwec", &m_vStartTiling, 0.1f, -FLT_MAX);
+		pEffectWindow->Table_DragFloat2("Tiling", "dfvrpver234v8348e48dic", &m_vTililing, 0.1f, -FLT_MAX);
+		pEffectWindow->Table_DragFloat2("Delta Tiling", "ovo9049vfji", &m_vDeltaTiling, 0.1f, -FLT_MAX);
+
+		pEffectWindow->Table_Void();
+		 m_pPosEaseCombo->Tick(CComboBox::TABLE);
+		 if (m_pPosEaseCombo->IsUpdated())
+			 m_ePosEase = static_cast<CEase::EASE>(m_pPosEaseCombo->Get_Current_Item_Index());
+		pEffectWindow->Table_DragXYZ("Start Position", "ujmynerfwd", &m_vStartPos, 0.1f);
+		pEffectWindow->Table_DragXYZ("End Position", "ghn35235df ", &m_vEndPos, 0.1f);
+		pEffectWindow->Table_Void();
+		m_pRotEaseCombo->Tick(CComboBox::TABLE);
+		if (m_pRotEaseCombo->IsUpdated())
+			m_eRotEase = static_cast<CEase::EASE>(m_pRotEaseCombo->Get_Current_Item_Index());
+		pEffectWindow->Table_DragXYZ("Start Rotation", "cbvcbnghert", &m_vStartRot, 0.1f);
+		pEffectWindow->Table_DragXYZ("End Rotation", "dcsdcvrf34", &m_vEndRot, 0.1f);
+		pEffectWindow->Table_Void();
+		m_pScaleEaseCombo->Tick(CComboBox::TABLE);
+		if (m_pScaleEaseCombo->IsUpdated())
+			m_eSizeEase = static_cast<CEase::EASE>(m_pScaleEaseCombo->Get_Current_Item_Index());
+		pEffectWindow->Table_DragXYZ("Start Scale", " df3rr5445", &m_vStartSize, 0.1f);
+		pEffectWindow->Table_DragXYZ("End Scale", "bjikuouisd", &m_vEndSize, 0.1f);
+		pEffectWindow->Table_Void();
+		m_pColorEaseCombo->Tick(CComboBox::TABLE);
+		if (m_pColorEaseCombo->IsUpdated())
+			m_eColorEase = static_cast<CEase::EASE>(m_pColorEaseCombo->Get_Current_Item_Index());
+		pEffectWindow->Table_ColorEdit4("Start Color", "cvkjv94efcvxcv", &m_vStartColor);
+		pEffectWindow->Table_ColorEdit4("End Color", "sfgnyn45634fg", &m_vEndColor);
 
 		ImGui::Separator();
 
 		ImGui::EndTable();
 	}
+
+	if (ImGui::Button("Play"))
+		Play(m_pTransform->Get_Position());
+	if (ImGui::Button("Stop"))
+		Stop();
+
+	ImGui::Separator();
 
 	// 세이브 로드
 	Save_FileDialog();
@@ -168,52 +186,6 @@ void CDummyMeshEffect::ChangeTexture(CTexture** _pTexture, wstring& _wstrOriginP
 	}
 	ENDINSTANCE;
 }
-
-void CDummyMeshEffect::ChangeShader(CShader** _pShader, wstring& _wstrOriginPath, const _tchar* _pDestPath)
-{
-	// 소유하고 있는 컴포넌트를 지운다.
-	_tchar wszTag[MAX_STR];
-	lstrcpy(wszTag, (*_pShader)->Get_Tag());
-
-	if (FAILED(CComposite::Delete_Component(wszTag)))
-	{
-		MSG_BOX("Failed to Delete");
-		E_FAIL;
-	}
-
-	Safe_Release(*_pShader);
-
-	BEGININSTANCE;
-	// 찾는 컴포넌트가 없으면 원본을 만들어준다.
-	wstring tempTag = ToPrototypeTag(TEXT("Prototype_Component"), _pDestPath).data();
-	_tchar* pTag = { nullptr };
-	m_pTags.push_back(pTag = new _tchar[tempTag.length() + 1]);
-	lstrcpy(pTag, tempTag.c_str());
-
-	// 기존에 컴포넌트가 존재하는지 확인
-	if (nullptr == pGameInstance->Find_Prototype(LEVEL_TOOL, pTag))
-	{
-		// 없다면 새로운 프로토타입 컴포넌트 생성
-		//if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, pTag, CShader::Create(m_pDevice
-		//	, m_pContext, _pDestPath))))
-		{
-			MSG_BOX("Failed to Create Prototype : Change Shader");
-		}
-	}
-
-	// 새로운 텍스처 컴포넌트를 클론한다.
-
-	_wstrOriginPath = _pDestPath;
-	if (FAILED(CComposite::Add_Component(LEVEL_TOOL, pTag
-		, wszTag, reinterpret_cast<CComponent**>(_pShader))))
-	{
-		MSG_BOX("Failed to Add Component");
-		ENDINSTANCE;
-		return;
-	}
-	ENDINSTANCE;
-}
-
 void CDummyMeshEffect::ChangeModel(CModel** _pModel, wstring& _wstrOriginPath, const _tchar* _pDestPath, CModel::TYPE _eAnimType)
 {
 	// 소유하고 있는 컴포넌트를 지운다.
@@ -313,8 +285,13 @@ HRESULT CDummyMeshEffect::Load_FileDialog()
 			else
 			{
 				ChangeTexture(&m_pTexture, m_Path[TEXTURE_PATH], m_Path[TEXTURE_PATH].c_str());
+				ChangeModel(&m_pModel, m_Path[MODEL_PATH], m_Path[MODEL_PATH].c_str());
 				m_pTextureIFD->ChangeTexture(wstrToStr(m_Path[TEXTURE_PATH]).c_str());
-				
+				m_pColorEaseCombo->Update_Current_Item(m_eColorEase);
+				m_pScaleEaseCombo->Update_Current_Item(m_eSizeEase);
+				m_pRotEaseCombo->Update_Current_Item(m_eRotEase);
+				m_pPosEaseCombo->Update_Current_Item(m_ePosEase);
+
 				MSG_BOX("The file has been loaded successfully");
 			}
 		}
@@ -357,6 +334,10 @@ void CDummyMeshEffect::Free()
 
 	Safe_Release(m_pTextureIFD);
 	Safe_Release(m_pPassComboBox);
+	Safe_Release(m_pColorEaseCombo);
+	Safe_Release(m_pPosEaseCombo);
+	Safe_Release(m_pRotEaseCombo);
+	Safe_Release(m_pScaleEaseCombo);
 
 	for (auto& pTag : m_pTags)
 		Safe_Delete_Array(pTag);
