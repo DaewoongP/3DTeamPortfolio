@@ -50,7 +50,6 @@ VS_OUT VS_MAIN(VS_IN In)
     Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);
     Out.vTexUV = In.vTexUV;
     
-    //Out.texCoords1 = In.vTexUV;
     Out.texCoords1 = (In.vTexUV * g_Scales.x);
     Out.texCoords1.y = Out.texCoords1.y + (g_FrameTime * g_ScrollSpeed.x);
     
@@ -73,22 +72,18 @@ VS_OUT VS_MAINX(VS_IN In)
     matWV = mul(g_WorldMatrix, g_ViewMatrix);
     matWVP = mul(matWV, g_ProjMatrix);
     
-    
     Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);
     Out.vTexUV = In.vTexUV;
     
-    //Out.texCoords1 = In.vTexUV;
-    Out.texCoords1 = Out.texCoords1.x + (g_FrameTime * g_ScrollSpeed.x);
-    Out.texCoords1.y = (In.vTexUV); // * g_Scales.x);
+    //Out.texCoords1 = Out.texCoords1.x + (g_FrameTime * g_ScrollSpeed.x);
+    //Out.texCoords1.y = In.vTexUV; // * g_Scales.x);
    
-    Out.texCoords2 = Out.texCoords2.y + (g_FrameTime * g_ScrollSpeed.y);
-    Out.texCoords2.y = (In.vTexUV); // * g_Scales.y);
+    //Out.texCoords2 = Out.texCoords2.y + (g_FrameTime * g_ScrollSpeed.y);
+    //Out.texCoords2.y = In.vTexUV; // * g_Scales.y);
 
-    Out.texCoords3 = Out.texCoords3.y + (g_FrameTime * g_ScrollSpeed.z);
-    Out.texCoords3.y = (In.vTexUV); // * g_Scales.z);
-    
-   
-    
+    //Out.texCoords3 = Out.texCoords3.y + (g_FrameTime * g_ScrollSpeed.z);
+    //Out.texCoords3.y = In.vTexUV; // * g_Scales.z);
+
     return Out;
 }
 struct PS_IN

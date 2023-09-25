@@ -112,7 +112,7 @@ void CGolem_Combat::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 	wstring wstrMyCollisionTag = CollisionEventDesc.pThisCollisionTag;
 
 	/* Collision Magic */
-	if (wstring::npos != wstrObjectTag.find(TEXT("MagicBall")))
+	if (wstring::npos != wstrObjectTag.find(TEXT("Magic_Ball")))
 	{
 		CMagicBall::COLLSIONREQUESTDESC* pCollisionMagicBallDesc = static_cast<CMagicBall::COLLSIONREQUESTDESC*>(CollisionEventDesc.pArg);
 		BUFF_TYPE eBuff = pCollisionMagicBallDesc->eBuffType;
@@ -154,7 +154,7 @@ void CGolem_Combat::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
 	wstring wstrCollisionTag = CollisionEventDesc.pOtherCollisionTag;
 	wstring wstrMyCollisionTag = CollisionEventDesc.pThisCollisionTag;
-
+	
 	if (wstring::npos != wstrMyCollisionTag.find(TEXT("Range")))
 	{
 		if (wstring::npos != wstrObjectTag.find(TEXT("Player")) ||

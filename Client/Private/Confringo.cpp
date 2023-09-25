@@ -429,6 +429,7 @@ CGameObject* CConfringo::Clone(void* pArg)
 		MSG_BOX("Failed to Cloned CConfringo");
 		Safe_Release(pInstance);
 	}
+
 	return pInstance;
 }
 
@@ -439,7 +440,7 @@ void CConfringo::Free()
 	{
 		//메인
 		Safe_Release(m_pMainTrail);
-		Safe_Release(m_pWandDustEffect);
+		Safe_Release(m_pTrailDustEffect);
 		
 		//종료
 		Safe_Release(m_pExplosiveEffect[0]);
