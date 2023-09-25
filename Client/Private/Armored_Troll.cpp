@@ -106,9 +106,9 @@ void CArmored_Troll::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		CMagicBall::COLLSIONREQUESTDESC* pCollisionMagicBallDesc = static_cast<CMagicBall::COLLSIONREQUESTDESC*>(CollisionEventDesc.pArg);
 		BUFF_TYPE eBuff = pCollisionMagicBallDesc->eBuffType;
 		auto Action = pCollisionMagicBallDesc->Action;
-		_float fDamage = pCollisionMagicBallDesc->fDamage;
+		_float iDamage = pCollisionMagicBallDesc->iDamage;
 
-		m_pHealth->Damaged(fDamage);
+		m_pHealth->Damaged(iDamage);
 
 		auto iter = m_CurrentTickSpells.find(eBuff);
 		if (iter == m_CurrentTickSpells.end())
