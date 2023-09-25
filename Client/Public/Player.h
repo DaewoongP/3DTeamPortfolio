@@ -110,6 +110,8 @@ private:
 
 	void Shot_Basic_Spell();
 
+	void Shot_Basic_Last_Spell();
+
 	void Protego();
 
 	void Gravity_On();

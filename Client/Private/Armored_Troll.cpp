@@ -69,7 +69,6 @@ void CArmored_Troll::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	static _bool testt = { false };
-	Set_Current_Target();
 
 	if (CGameInstance::GetInstance()->Get_DIKeyState(DIK_0, CInput_Device::KEY_DOWN))
 		testt = !testt;
@@ -107,6 +106,8 @@ void CArmored_Troll::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		BUFF_TYPE eBuff = pCollisionMagicBallDesc->eBuffType;
 		auto Action = pCollisionMagicBallDesc->Action;
 		_float fDamage = pCollisionMagicBallDesc->fDamage;
+
+		m_pHealth->Damaged(fDamage);
 
 		auto iter = m_CurrentTickSpells.find(eBuff);
 		if (iter == m_CurrentTickSpells.end())
@@ -147,6 +148,10 @@ HRESULT CArmored_Troll::Make_AI()
 	{
 		if (FAILED(__super::Make_AI()))
 			throw TEXT("Failed Enemy Make_AI");
+
+		m_pTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Player"), TEXT("GameObject_Player")));
+		if (nullptr == m_pTarget)
+			throw TEXT("m_pTarget is nullptr");
 
 		/* Make Childs */
 		CSelector* pSelector = dynamic_cast<CSelector*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Selector")));
@@ -341,6 +346,13 @@ HRESULT CArmored_Troll::Add_Components()
 			TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 			throw TEXT("Com_Model");
 
+		/* For.Com_Health */
+		CHealth::HEALTHDESC HealthDesc;
+		HealthDesc.iMaxHP = 500;
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Health"),
+			TEXT("Com_Health"), reinterpret_cast<CComponent**>(&m_pHealth), &HealthDesc)))
+			throw TEXT("Com_Health");
+
 		/* For.Com_RigidBody */
 		CRigidBody::RIGIDBODYDESC RigidBodyDesc;
 		RigidBodyDesc.isStatic = false;
@@ -383,6 +395,7 @@ HRESULT CArmored_Troll::Add_Components()
 		CUI_Group_Enemy_HP::ENEMYHPDESC  Desc;
 
 		Desc.eType = CUI_Group_Enemy_HP::ENEMYTYPE::BOSS;
+		Desc.pHealth = m_pHealth;
 		lstrcpy(Desc.wszObjectLevel, TEXT("77"));
 		lstrcpy(Desc.wszObjectName, TEXT("°³Ã¶¹Î"));
 
@@ -1821,6 +1834,7 @@ void CArmored_Troll::Enter_Light_Attack()
 {
 	m_CollisionRequestDesc.eType = ATTACK_LIGHT;
 	m_CollisionRequestDesc.fDamage = 0.f;
+	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
 	m_pWeapon->On_Collider_Attack(&m_CollisionRequestDesc);
 }
 
@@ -1828,6 +1842,7 @@ void CArmored_Troll::Enter_Heavy_Attack()
 {
 	m_CollisionRequestDesc.eType = ATTACK_HEAVY;
 	m_CollisionRequestDesc.fDamage = 0.f;
+	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
 	m_pWeapon->On_Collider_Attack(&m_CollisionRequestDesc);
 }
 
@@ -1835,6 +1850,7 @@ void CArmored_Troll::Enter_Body_Attack()
 {
 	m_CollisionRequestDesc.eType = ATTACK_HEAVY;
 	m_CollisionRequestDesc.fDamage = 0.f;
+	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
 	Set_CollisionData(&m_CollisionRequestDesc);
 }
 

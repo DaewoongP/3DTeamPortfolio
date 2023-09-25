@@ -14,12 +14,12 @@ HRESULT CLevel_Vault::Initialize()
     if (FAILED(__super::Initialize()))
         return E_FAIL;
 
-	/*if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
+	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
 	{
 		MSG_BOX("Failed Ready_Layer_Player");
 
 		return E_FAIL;
-	}*/
+	}
 
 	if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/MapData1.ddd"))))
 	{

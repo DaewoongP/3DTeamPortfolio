@@ -33,6 +33,7 @@ public:
 	{
 		ATTACKTYPE eType = { ATTACKTYPE_END };
 		_float fDamage = { 0.f };
+		CTransform* pEnemyTransform = { nullptr };
 	}COLLISIONREQUESTDESC;
 
 protected:

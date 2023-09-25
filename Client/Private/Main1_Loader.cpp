@@ -245,6 +245,23 @@ HRESULT CMain1_Loader::Loading_For_Vault()
 
 HRESULT CMain1_Loader::Loading_For_GreatHall()
 {
+	try
+	{
+		if (FAILED(Loading_Map_Object(TEXT("../../Resources/GameData/MapData/MapData2.ddd"), LEVEL_GREATHALL)))
+			throw TEXT("Map Object");
+
+		if (FAILED(Loading_Map_Object_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins2.ddd"), LEVEL_GREATHALL)))
+			throw TEXT("Map Object_Ins");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("Failed Add_Prototype : ");
+		wstrErrorMSG += pErrorTag;
+		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+		__debugbreak();
+		return E_FAIL;
+	}
+
 	return S_OK;
 }
 
