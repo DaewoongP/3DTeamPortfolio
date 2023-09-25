@@ -228,6 +228,9 @@ void CBasicCast::Ready_CastMagic()
 	m_pMainTrail->Get_Transform()->Set_Position(m_vStartPostion);
 
 	m_pMainTrail->Enable();
+
+	//충돌체를 켜주고
+	m_pRigidBody->Enable_Collision("Magic_Ball");
 }
 
 void CBasicCast::Ready_Dying()
