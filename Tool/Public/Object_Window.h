@@ -52,6 +52,7 @@ private:
 	void Mesh_Picking_Menu(); // 메쉬 피킹 메뉴
 	void Change_Picking_Menu(const _tchar* wszTag, _uint iTagNum); // 피킹한 메쉬 변경
 	void Delete_Picking_Object(); // 피킹한 오브젝트 삭제 메뉴
+	void Delete_Picking_Object_Ins(); // 피킹한 인스턴스 오브젝트 삭제 메뉴
 	void Map_Brushing_Menu(); // 맵 그리기 메뉴
 	void All_Map_Object_Translation(); // 맵 오브젝트 전체 이동
 	HRESULT Save_MapObject(string szMapDataPath); // MapObject 저장
