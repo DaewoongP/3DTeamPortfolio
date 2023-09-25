@@ -23,6 +23,15 @@ public:
 		ITEMTYPE_END
 	};
 
+public:
+	void Set_CurItemtype(ITEMTYPE eType) {
+		m_eCurOpenItemtype = eType;
+	}
+
+	void	Set_Open(_bool isOpen) {
+		m_isOpen = isOpen;
+	}
+
 private:
 	CInventory(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CInventory(const CInventory& rhs);
@@ -34,14 +43,16 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 
 private:
-	_bool			m_isOpened = { false };
+	_bool			m_isOpen = { false };
 	ITEMTYPE		m_eCurOpenItemtype = { ITEMTYPE_END };
 
 private:
 	// UI 컴포넌트
-	CUI_Inventory* m_pInventory[ITEMTYPE_END];
+	CUI_Inventory*					m_pUI_Inventory[ITEMTYPE_END];
 	// 실질적인 아이템 저장소
 	vector<vector<CGameObject*>>	m_pItems;
+	// 현재 플레이어의 장비 포인터
+	vector<CGameObject*>			m_pPlayerCurItems;
 
 private:
 	_uint iGearMax = { 20 };
@@ -53,6 +64,7 @@ private:
 public:
 	void	Add_Item(CGameObject* pItem, ITEMTYPE eType);
 	void	Delete_Item(ITEMTYPE eType, _uint iIndex);
+	void	Swap_Item(_uint Index, ITEMTYPE eType);
 
 public:
 	static CInventory* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

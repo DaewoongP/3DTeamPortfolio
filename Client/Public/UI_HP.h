@@ -27,6 +27,7 @@ private:
 	virtual ~CUI_HP() = default;
 
 public:
+	void	Set_HP(_float fGauge);
 	void	Set_HP(_float fGauge, CUI_Progress::GAUGE eType);
 	void	Set_HPtype(HPTYPE eType) { m_eHPType = eType; }
 
@@ -45,13 +46,18 @@ private:
 private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
+
+private:
+	HRESULT	Initialize_Gauge(_float fMin, _float fMax, _float fCurrent);
 	
 #ifdef _DEBUG
 	HRESULT Debug_UI(_float fTimeDelta);
 #endif // _DEBUG
 
 private:
-	HPTYPE		m_eHPType;
+	HPTYPE				m_eHPType;
+	_float				m_fPercent = { 0.7f };
+
 
 public:
 	static CUI_HP* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

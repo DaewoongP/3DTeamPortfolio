@@ -12,6 +12,7 @@ END
 
 BEGIN(Client)
 class CUI_Slot;
+class CInventory;
 
 class CUI_Inventory final : public CGameObject
 {
@@ -20,11 +21,12 @@ public:
 	{
 		CUI::UIDESC UIDesc;
 
-		_float2 fOffset;
-		_float	fWidth;
-		_float	fHeight;
-		_uint	iHorizontal;
-		_uint	iVertical;
+		_float2					fOffset;
+		_float					fWidth;
+		_float					fHeight;
+		_uint					iHorizontal;
+		_uint					iVertical;
+		CInventory::ITEMTYPE	eItemtype;
 	};
 
 private:
@@ -49,17 +51,23 @@ private:
 	HRESULT Ready_Offset();
 	HRESULT	Add_ItemTexture();
 
+public:
+	HRESULT	Set_InventoryItem(vector<CGameObject*>& pItems);
+	HRESULT	Delete_InventoryItem(_uint iIndex);
+	HRESULT	Swap_InventoryItem();
+
 private:
 	CShader*			m_pShaderCom = { nullptr };
 	CRenderer*			m_pRendererCom = { nullptr };
 	CVIBuffer_Rect*		m_pVIBufferCom = { nullptr };
 
 private:
-	_float2		m_fOffset;
-	_float		m_fWidth;
-	_float		m_fHeight;
-	_uint		m_iHorizontal;
-	_uint		m_iVertical;
+	_float2					m_fOffset;
+	_float					m_fWidth;
+	_float					m_fHeight;
+	_uint					m_iHorizontal;
+	_uint					m_iVertical;
+	CInventory::ITEMTYPE	m_eItemtype;
 
 private:
 	vector<_float2>					m_fPosition;

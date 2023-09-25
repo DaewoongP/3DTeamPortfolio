@@ -109,6 +109,7 @@ HRESULT CUI_Group_MiniMap::Add_Components()
 	{
 		MSG_BOX("CUI_Group_MiniMap : Failed Clone Component (Com_UI_MiniMap_Frame)");
 		ENDINSTANCE;
+		__debugbreak;
 		return E_FAIL;
 	}
 
@@ -117,6 +118,7 @@ HRESULT CUI_Group_MiniMap::Add_Components()
 	{
 		MSG_BOX("CUI_Group_MiniMap : Failed Clone Component (Com_UI_MiniMap_Player)");
 		ENDINSTANCE;
+		__debugbreak;
 		return E_FAIL;
 	}
 

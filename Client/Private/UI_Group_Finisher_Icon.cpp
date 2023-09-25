@@ -61,6 +61,7 @@ HRESULT CUI_Group_Finisher_Icon::Add_Prototype()
 		CUI_Back::Create(m_pDevice, m_pContext), true)))
 	{
 		ENDINSTANCE;
+		__debugbreak;
 		return E_FAIL;
 	}
 
@@ -78,6 +79,7 @@ HRESULT CUI_Group_Finisher_Icon::Add_Components()
 	{
 		MSG_BOX("Com_UI_Group_Finisher_Icon : Failed Clone Component (Com_UI_Finisher_Icon)");
 		ENDINSTANCE;
+		__debugbreak;
 		return E_FAIL;
 	}
 

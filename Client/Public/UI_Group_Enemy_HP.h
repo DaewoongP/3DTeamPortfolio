@@ -4,6 +4,10 @@
 
 #include "UI.h"
 
+BEGIN(Engine)
+class CHealth;
+END
+
 BEGIN(Client)
 
 class CUI_Group_Enemy_HP final : public CGameObject
@@ -14,6 +18,7 @@ public:
 public:
 	struct ENEMYHPDESC
 	{
+		CHealth* pHealth = { nullptr };
 		ENEMYTYPE eType;
 		_tchar wszObjectName[MAX_PATH] = TEXT("");
 		_tchar wszObjectLevel[MAX_PATH] = TEXT("");
@@ -38,11 +43,12 @@ private:
 
 
 private:
-	_tchar			m_wszObjectLevel[MAX_PATH] = TEXT("");
-	_tchar			m_wszObjectName[MAX_PATH] = TEXT("");
+	_tchar				m_wszObjectLevel[MAX_PATH] = TEXT("");
+	_tchar				m_wszObjectName[MAX_PATH] = TEXT("");
 
-	ENEMYTYPE		eEnemyType;
+	ENEMYTYPE			eEnemyType;
 
+	CHealth*			m_pHealth = { nullptr };
 
 private:
 	HRESULT Add_Prototype();

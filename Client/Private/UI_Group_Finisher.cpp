@@ -2,7 +2,7 @@
 #include "GameInstance.h"
 #include "UI_Back.h"
 #include "UI_Finisher.h"
-
+#include "Health.h"
 
 CUI_Group_Finisher::CUI_Group_Finisher(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -35,8 +35,17 @@ HRESULT CUI_Group_Finisher::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	Create_Front(pArg);
-	Create_Back(TEXT("../../Resources/GameData/UIData/UI_Group_Finisher_Back.uidata"));
+	if (nullptr != pArg)
+	{
+		FINISHERDESC* pDesc = (FINISHERDESC*)pArg;
+		
+		Create_Front(pDesc->szFilePath);
+		Create_Back(TEXT("../../Resources/GameData/UIData/UI_Group_Finisher_Back.uidata"));
+
+		m_pHealth = pDesc->pHealth;
+	}
+
+
 	return S_OK;
 }
 
@@ -50,26 +59,27 @@ void CUI_Group_Finisher::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 }
 
-_bool CUI_Group_Finisher::Set_Gauge(_float fMin, _float fMax, _float fCurrent, CUI_Progress::GAUGE eType)
+_bool CUI_Group_Finisher::Set_Gauge()
 {
-	if (nullptr == m_pFinishers[BACK] || nullptr == m_pFinishers[FRONT]
+	if (nullptr == m_pHealth || nullptr == m_pFinishers[BACK] || nullptr == m_pFinishers[FRONT]
 		|| m_pBacks.size() < 2 || m_pFinishers.size() < 2)
 		return false;
 
-	_float fPercent = fCurrent / fMax;
+	_float fPercent = m_pHealth->Get_Current_HP_Percent();
 	if (fPercent <= 0.5f)
 	{
-		m_pFinishers[FRONT]->Set_Gauge(0.f, eType);
-		m_pFinishers[BACK]->Set_Gauge(fCurrent * 2.f, eType);
+		m_pFinishers[FRONT]->Set_Gauge(0.f);
+		m_pFinishers[BACK]->Set_Gauge(m_pHealth->Get_Current_HP() * 2.f);
 	}
 	else if (fPercent > 0.5f)
 	{
-		m_pFinishers[FRONT]->Set_Gauge((fCurrent - 50.f) * 2.f, eType);
-		m_pFinishers[BACK]->Set_Gauge(fMax, eType);
+		m_pFinishers[FRONT]->Set_Gauge((m_pHealth->Get_Current_HP() - 50.f) * 2.f);
+		m_pFinishers[BACK]->Set_Gauge(m_pHealth->Get_MaxHP());
 	}
 
 	return true;
 }
+
 
 HRESULT CUI_Group_Finisher::Add_Prototype()
 {
@@ -79,6 +89,7 @@ HRESULT CUI_Group_Finisher::Add_Prototype()
 		CUI_Back::Create(m_pDevice, m_pContext), true)))
 	{
 		ENDINSTANCE;
+		__debugbreak;
 		return E_FAIL;
 	}
 
@@ -86,6 +97,7 @@ HRESULT CUI_Group_Finisher::Add_Prototype()
 		CUI_Finisher::Create(m_pDevice, m_pContext), true)))
 	{
 		ENDINSTANCE;
+		__debugbreak;
 		return E_FAIL;
 	}
 
@@ -107,6 +119,7 @@ HRESULT CUI_Group_Finisher::Add_Components(wstring wszTag)
 	{
 		MSG_BOX("Com_UI_Finisher : Failed Clone Component (Com_UI_Finisher_Frame)");
 		ENDINSTANCE;
+		__debugbreak;
 		return E_FAIL;
 	}
 	m_pBacks.push_back(pBack);
@@ -118,6 +131,7 @@ HRESULT CUI_Group_Finisher::Add_Components(wstring wszTag)
 	{
 		MSG_BOX("Com_UI_Finisher : Failed Clone Component (Com_UI_Finisher)");
 		ENDINSTANCE;
+		__debugbreak;
 		return E_FAIL;
 	}
 	m_pFinishers.push_back(pFinisher);
@@ -273,6 +287,7 @@ void CUI_Group_Finisher::Free()
 	}
 	m_pFinishers.clear();
 
+	Safe_Release(m_pHealth);
 
 }
 

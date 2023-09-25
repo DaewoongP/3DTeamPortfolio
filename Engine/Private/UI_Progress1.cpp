@@ -24,13 +24,6 @@ HRESULT CUI_Progress::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	if (nullptr != pArg)
-	{
-		_float3* vGauge = (_float3*)pArg;
-
-		Initailize_Gauge(vGauge->x, vGauge->y, vGauge->z);
-	}
-
 	return S_OK;
 }
 
@@ -83,12 +76,11 @@ void CUI_Progress::Set_Gauge(_float fGauge, GAUGE eType)
 		MSG_BOX("Failed Set Gauge");
 		break;
 	}
-
 }
 
 void CUI_Progress::Initailize_Gauge(_float fMin, _float fMax, _float fCurrent)
 {
-	m_fMinGauge = fMin;
+	m_fMinGauge = 0.f;
 	m_fMaxGauge = fMax;
 	m_fCurrentGauge = fCurrent;
 }

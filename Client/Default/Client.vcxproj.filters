@@ -142,9 +142,6 @@
     <Filter Include="02. GameObject\05. UI\UI\UI_Finisher">
       <UniqueIdentifier>{6cda2f04-0443-4bed-b4ca-7039288a3488}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\05. UI\UI\UI_Finisher_Icon">
-      <UniqueIdentifier>{94045f3c-76d0-49d5-8fca-f6edef6c9ea9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\05. UI\UI\UI_Effect_Back">
       <UniqueIdentifier>{6f63ec72-3503-4230-9a92-5c2bd38a636e}</UniqueIdentifier>
     </Filter>
@@ -606,9 +603,6 @@
     <ClInclude Include="..\Public\UI_Finisher.h">
       <Filter>02. GameObject\05. UI\UI\UI_Finisher</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\UI_Finisher_Icon.h">
-      <Filter>02. GameObject\05. UI\UI\UI_Finisher_Icon</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\UI_Back.h">
       <Filter>02. GameObject\05. UI\UI\UI_None</Filter>
     </ClInclude>
@@ -973,9 +967,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_Finisher.cpp">
       <Filter>02. GameObject\05. UI\UI\UI_Finisher</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\UI_Finisher_Icon.cpp">
-      <Filter>02. GameObject\05. UI\UI\UI_Finisher_Icon</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_HP.cpp">
       <Filter>02. GameObject\05. UI\UI\UI_HP</Filter>

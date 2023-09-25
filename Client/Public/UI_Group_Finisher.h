@@ -5,10 +5,21 @@
 #include "UI_Progress1.h"
 #include "UI.h"
 
+BEGIN(Engine)
+class CHealth;
+END
+
 BEGIN(Client)
 
 class CUI_Group_Finisher final : public CGameObject
 {
+public:
+	struct FINISHERDESC
+	{
+		_tchar	szFilePath[MAX_PATH] = TEXT("");
+		CHealth* pHealth = { nullptr };
+	};
+
 private:
 	enum FINISHER
 	{
@@ -29,12 +40,18 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 
 public:
-	_bool	Set_Gauge(_float fMin, _float fMax, _float fCurrent, CUI_Progress::GAUGE eType = CUI_Progress::CURRENT);
+	// 인자없는 set_gauge만 쓰면 됨.
+	// C헬스 꼭 있어야함.
+	_bool	Set_Gauge();
+	void	Set_Gauge(_float fGauge);
 
 private:
 	// 0 = Front, 1 = Back
 	vector<class CUI_Back*>		m_pBacks;
 	vector<class CUI_Finisher*>	m_pFinishers;
+
+private:
+	CHealth*		 m_pHealth = { nullptr };
 
 private:
 	HRESULT Add_Prototype();

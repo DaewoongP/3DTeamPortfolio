@@ -217,7 +217,6 @@
     <ClInclude Include="..\Public\UI_Back.h" />
     <ClInclude Include="..\Public\UI_Effect_Back.h" />
     <ClInclude Include="..\Public\UI_Finisher.h" />
-    <ClInclude Include="..\Public\UI_Finisher_Icon.h" />
     <ClInclude Include="..\Public\UI_Group_Finisher.h" />
     <ClInclude Include="..\Public\UI_Group_Finisher_Icon.h" />
     <ClInclude Include="..\Public\UI_Group_HP.h" />
@@ -371,7 +370,6 @@
     <ClCompile Include="..\Private\UI_Back.cpp" />
     <ClCompile Include="..\Private\UI_Effect_Back.cpp" />
     <ClCompile Include="..\Private\UI_Finisher.cpp" />
-    <ClCompile Include="..\Private\UI_Finisher_Icon.cpp" />
     <ClCompile Include="..\Private\UI_Group_Finisher.cpp" />
     <ClCompile Include="..\Private\UI_Group_Finisher_Icon.cpp" />
     <ClCompile Include="..\Private\UI_Group_HP.cpp" />

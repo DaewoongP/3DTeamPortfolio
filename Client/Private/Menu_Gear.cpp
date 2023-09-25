@@ -118,6 +118,7 @@ HRESULT CMenu_Gear::Add_Components_Frame()
 	{
 		MSG_BOX("Com_Info_Main : Failed Clone Component (Com_UI_Effect_Back_Gear_SlotFrame)");
 		Safe_Release(pGameInstance);
+		__debugbreak;
 		return E_FAIL;
 	}
 	pComponents.push_back(pBack);
@@ -130,6 +131,7 @@ HRESULT CMenu_Gear::Add_Components_Frame()
 	{
 		MSG_BOX("Com_Info_Main : Failed Clone Component (Com_UI_Effect_Back_Gear_SlotFrame)");
 		Safe_Release(pGameInstance);
+		__debugbreak;
 		return E_FAIL;
 	}
 	pComponents.push_back(pBack);
@@ -142,6 +144,7 @@ HRESULT CMenu_Gear::Add_Components_Frame()
 	{
 		MSG_BOX("Com_Info_Main : Failed Clone Component (Com_UI_Effect_Back_Gear_SlotFrame)");
 		Safe_Release(pGameInstance);
+		__debugbreak;
 		return E_FAIL;
 	}
 	pComponents.push_back(pBack);
@@ -154,6 +157,7 @@ HRESULT CMenu_Gear::Add_Components_Frame()
 	{
 		MSG_BOX("Com_Info_Main : Failed Clone Component (Com_UI_Effect_Back_Gear_SlotFrame)");
 		Safe_Release(pGameInstance);
+		__debugbreak;
 		return E_FAIL;
 	}
 	pComponents.push_back(pBack);
@@ -228,6 +232,7 @@ HRESULT CMenu_Gear::Add_Components_Slot(wstring wszTag)
 	{
 		MSG_BOX("Com_Info_Main : Failed Clone Component (Com_UI_Effect_Back_Gear_SlotFrame)");
 		Safe_Release(pGameInstance);
+		__debugbreak;
 		return E_FAIL;
 	}
 	pSlotFrames.push_back(pSlot);
@@ -241,6 +246,7 @@ HRESULT CMenu_Gear::Add_Components_Slot(wstring wszTag)
 	{
 		MSG_BOX("Com_Info_Main : Failed Clone Component (Com_UI_Effect_Back_Gear_SlotFrame)");
 		Safe_Release(pGameInstance);
+		__debugbreak;
 		return E_FAIL;
 	}
 	pSlotIcons.push_back(pIcon);
@@ -253,6 +259,7 @@ HRESULT CMenu_Gear::Add_Components_Slot(wstring wszTag)
 	{
 		MSG_BOX("Com_Info_Main : Failed Clone Component (Com_UI_Effect_Back_Gear_SlotFrame)");
 		Safe_Release(pGameInstance);
+		__debugbreak;
 		return E_FAIL;
 	}
 	pComponents.push_back(pBack);
@@ -329,6 +336,7 @@ HRESULT CMenu_Gear::Add_Components_Status()
 	{
 		MSG_BOX("Com_Info_Main : Failed Clone Component (Com_UI_Effect_Back_Gear_SlotFrame)");
 		Safe_Release(pGameInstance);
+		__debugbreak;
 		return E_FAIL;
 	}
 	pComponents.push_back(pUI);
@@ -343,6 +351,7 @@ HRESULT CMenu_Gear::Add_Components_Status()
 	{
 		MSG_BOX("Com_Info_Main : Failed Clone Component (Com_UI_Effect_Back_Gear_SlotFrame)");
 		Safe_Release(pGameInstance);
+		__debugbreak;
 		return E_FAIL;
 	}
 	pStatuses.push_back(pHP);
@@ -353,6 +362,7 @@ HRESULT CMenu_Gear::Add_Components_Status()
 	{
 		MSG_BOX("Com_Info_Main : Failed Clone Component (Com_UI_Effect_Back_Gear_SlotFrame)");
 		Safe_Release(pGameInstance);
+		__debugbreak;
 		return E_FAIL;
 	}
 	pStatuses.push_back(pDEF);
@@ -363,6 +373,7 @@ HRESULT CMenu_Gear::Add_Components_Status()
 	{
 		MSG_BOX("Com_Info_Main : Failed Clone Component (Com_UI_Effect_Back_Gear_SlotFrame)");
 		Safe_Release(pGameInstance);
+		__debugbreak;
 		return E_FAIL;
 	}
 	pStatuses.push_back(pSTAT);
