@@ -73,8 +73,9 @@ _bool CUI_Group_Finisher::Set_Gauge()
 	}
 	else if (fPercent > 0.5f)
 	{
+		fPercent * 2.0f;
 		m_pFinishers[FRONT]->Set_Gauge((m_pHealth->Get_Current_HP() - 50.f) * 2.f);
-		m_pFinishers[BACK]->Set_Gauge(m_pHealth->Get_MaxHP());
+		m_pFinishers[BACK]->Set_Gauge(1.f);
 	}
 
 	return true;

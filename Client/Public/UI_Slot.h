@@ -57,9 +57,6 @@ private:
 	HRESULT SetUp_ShaderResources(_uint iIndex);
 
 private:
-	CUI_Group_Skill::UISKILLDESC* m_SkillDesc;
-
-private:
 	_bool			m_isClicked = { false };
 
 private:
