@@ -106,7 +106,7 @@ HRESULT CUI_Group_Enemy_HP::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Effect_Back"),
 		TEXT("Com_UI_Enemy_HP_Frame"), reinterpret_cast<CComponent**>(&m_pUI_Effect_Back))))
 	{
-		MSG_BOX("CUI_Group_Enemy_HP : Failed Clone Component (Com_UI_MiniMap_Frame)");
+		MSG_BOX("CUI_Group_Enemy_HP : Failed Clone Component (Com_UI_Enemy_HP_Frame)");
 		ENDINSTANCE;
 		return E_FAIL;
 	}
@@ -115,7 +115,7 @@ HRESULT CUI_Group_Enemy_HP::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_HP"),
 		TEXT("Com_UI_Enemy_HP"), reinterpret_cast<CComponent**>(&m_pUI_HP), &eType)))
 	{
-		MSG_BOX("CUI_Group_Enemy_HP : Failed Clone Component (Com_UI_MiniMap_Player)");
+		MSG_BOX("CUI_Group_Enemy_HP : Failed Clone Component (Com_UI_Enemy_HP)");
 		ENDINSTANCE;
 		return E_FAIL;
 	}
@@ -151,6 +151,7 @@ HRESULT CUI_Group_Enemy_HP::Read_File(const _tchar* pFilePath)
 
 	m_pUI_HP->Load(Load_File(hFile));
 	m_pUI_HP->Set_Parent(m_pUI_Effect_Back);
+	m_pUI_HP->Set_HPtype(CUI_HP::HPTYPE::MONSTER);
 
 	CloseHandle(hFile);
 

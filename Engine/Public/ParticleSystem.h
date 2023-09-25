@@ -62,12 +62,13 @@ public:
 	EMISSION_MODULE&				Get_EmissionModuleRef() { return m_EmissionModuleDesc; }
 	SHAPE_MODULE&					Get_ShapeModuleRef() { return m_ShapeModuleDesc; }
 	RENDERER_MODULE&				Get_RendererModuleRef() { return m_RendererModuleDesc; }
+	VELOCITY_OVER_LIFETIME& Get_VelocityOverLifetimeModuleRer() { return m_VelocityOverLifeTimeModuleDesc; }
 	COLOR_OVER_LIFETIME&			Get_ColorOverLifetimeModuleRef() { return m_ColorOverLifeTimeModuleDesc; }
 	SIZE_OVER_LIFETIME&				Get_SizeOverLifetimeModuleRef() { return m_SizeOverLifeTimeModuleDesc; }
 	ROTATION_OVER_LIFETIME_MODULE&	Get_RotationOverLifetimeModuleRef() { return m_RotationOverLifetimeModuleDesc; }
 
 public:
-	void Play();
+	void Play(_float3 vPosition = _float3());
 	void Stop();
 	virtual void Restart();
 
@@ -114,6 +115,7 @@ protected:
 	MAIN_MODULE						m_MainModuleDesc;
 	EMISSION_MODULE					m_EmissionModuleDesc;
 	SHAPE_MODULE					m_ShapeModuleDesc;
+	VELOCITY_OVER_LIFETIME			m_VelocityOverLifeTimeModuleDesc;
 	COLOR_OVER_LIFETIME				m_ColorOverLifeTimeModuleDesc;
 	SIZE_OVER_LIFETIME				m_SizeOverLifeTimeModuleDesc;
 	ROTATION_OVER_LIFETIME_MODULE	m_RotationOverLifetimeModuleDesc;

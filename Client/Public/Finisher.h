@@ -26,6 +26,7 @@ public:
 	virtual void OnCollisionEnter(COLLEVENTDESC CollisionEventDesc) override;
 	virtual void OnCollisionStay(COLLEVENTDESC CollisionEventDesc) override;
 	virtual void OnCollisionExit(COLLEVENTDESC CollisionEventDesc) override;
+	virtual HRESULT Reset() { return S_OK; }
 
 private:
 	//Lightning Streak
@@ -36,10 +37,14 @@ private:
 	CParticleSystem* m_LightningSparkEffect_Blue = { nullptr };
 	CParticleSystem* m_LightningSparkEffect_Red = { nullptr };
 
-	CParticleSystem* m_LineParticle= { nullptr };
+	CParticleSystem* m_LineParticle = { nullptr };
 	CParticleSystem* m_FlareCenterParticle = { nullptr };
 	CParticleSystem* m_FlareSpreadParticle = { nullptr };
 	CParticleSystem* m_DustParticle = { nullptr };
+
+	//Wand Effect
+	CParticleSystem* m_pWandLightningParticle = { nullptr };
+	CTrail*			 m_pWandTrail = { nullptr };
 
 private:
 	// For. Lightining Trails
@@ -49,6 +54,18 @@ private:
 	_float	m_fLerpAcc = { 0.f };
 
 	_uint	m_iLevel = { 0 };
+
+private:
+	virtual void Ready_Begin() override;
+	virtual void Ready_DrawMagic() override;
+	virtual void Ready_CastMagic() override;
+	virtual void Ready_Dying() override;
+
+	virtual void Tick_Begin(_float fTimeDelta) override;
+	virtual void Tick_DrawMagic(_float fTimeDelta) override;
+	virtual void Tick_CastMagic(_float fTimeDelta) override;
+	virtual void Tick_Dying(_float fTimeDelta) override;
+
 private:
 	HRESULT Add_Components();
 	virtual HRESULT Add_Effect();

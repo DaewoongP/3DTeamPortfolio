@@ -492,7 +492,7 @@ void CObject_Window::Install_Multi_Object(_float3 vPos)
 	{
 		vector<_float4x4> vecWorldMatrix;
 
-		for (size_t i = m_iMapObjectIndex - m_iInsObjectCnt; i < m_iMapObjectIndex; i++)
+		for (_int i = m_iMapObjectIndex - m_iInsObjectCnt; i < m_iMapObjectIndex; ++i)
 		{
 			// 해당 게임 오브젝트를 찾음
 			_tchar wszobjName[MAX_PATH] = { 0 };

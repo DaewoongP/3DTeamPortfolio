@@ -33,12 +33,12 @@ HRESULT CLevel_Cliffside::Initialize()
 
 		return E_FAIL;
 	}
-	if (FAILED(Ready_Layer_NPC(TEXT("Layer_NPC"))))
+	/*if (FAILED(Ready_Layer_NPC(TEXT("Layer_NPC"))))
 	{
 		MSG_BOX("Failed Ready_Layer_NPC");
 
 		return E_FAIL;
-	}
+	}*/
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 	{
 		MSG_BOX("Failed Ready_Layer_BackGround");
@@ -53,30 +53,30 @@ HRESULT CLevel_Cliffside::Initialize()
 	}
 	if (FAILED(Ready_Layer_FieldGuide_UI(TEXT("Layer_FieldGuide_UI"))))
 	{
-		MSG_BOX("Failed Ready_Layer_UI");
+		MSG_BOX("Failed Ready_Layer_FieldGuide_UI");
 
 		return E_FAIL;
 	}
 	if (FAILED(Ready_Layer_Menu_UI(TEXT("Layer_Menu_UI"))))
 	{
-		MSG_BOX("Failed Ready_Layer_UI");
+		MSG_BOX("Failed Ready_Layer_Menu_UI");
 
 		return E_FAIL;
 	}
 
-	if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/MapData0.ddd"))))
+	if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/MapData2.ddd"))))
 	{
 		MSG_BOX("Failed Load Map Object");
 
 		return E_FAIL;
 	}
 
-	/*if (FAILED(Load_MapObject_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins1.ddd"))))
+	if (FAILED(Load_MapObject_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins2.ddd"))))
 	{
 		MSG_BOX("Failed Load Map Object_Ins");
 
 		return E_FAIL;
-	}*/
+	}
 	
 #ifdef _DEBUG
 	if (FAILED(Ready_Layer_Debug(TEXT("Layer_Debug"))))
@@ -715,14 +715,25 @@ HRESULT CLevel_Cliffside::Ready_Layer_Menu_UI(const _tchar* pLayerTag)
 	}
 
 
-	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Menu_Frame_Edit.uidata"));
+	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Menu_Frame.uidata"));
 	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Main_Menu"),
 		pLayerTag, TEXT("GameObject_UI_Main_Menu"), szFilePath)))
 	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_Cursor)");
+		MSG_BOX("Failed Add_GameObject : (GameObject_Main_Menu)");
 		Safe_Release(pGameInstance);
 		return E_FAIL;
 	}
+
+	//if (FAILED(pGameInstance->Add_Component(LEVEL_MAINGAME, TEXT("Prototype_GameObject_Menu_Gear"),
+	//	pLayerTag, TEXT("GameObject_UI_Menu_Gear"))))
+	//{
+	//	MSG_BOX("Failed Add_GameObject : (GameObject_Menu_Gear)");
+	//	Safe_Release(pGameInstance);
+	//	return E_FAIL;
+	//}
+	
+
+
 
 	Safe_Release(pGameInstance);
 	return S_OK;

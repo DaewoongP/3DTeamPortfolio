@@ -114,7 +114,6 @@ HRESULT CUI_Group_Skill::Add_Prototype()
 	return S_OK;
 }
 
-//HRESULT CUI_Group_Skill::Add_Components(const _tchar* wszTag)
 HRESULT CUI_Group_Skill::Add_Components(wstring wszTag)
 {
 	BEGININSTANCE;
@@ -264,7 +263,6 @@ HRESULT CUI_Group_Skill::Create_First(void* pArg)
 	return S_OK;
 }
 
-//HRESULT CUI_Group_Skill::Create_Component(const _tchar* pFIlePath, const _tchar* wszTag, KEYLIST eType)
 HRESULT CUI_Group_Skill::Create_Component(const _tchar* pFIlePath, wstring wszTag, KEYLIST eType)
 {
 

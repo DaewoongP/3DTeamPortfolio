@@ -1,4 +1,3 @@
-#include "..\Public\Logo_BackGround.h"
 #include "Logo_BackGround.h"
 #include "GameInstance.h"
 
@@ -54,9 +53,6 @@ HRESULT CLogo_BackGround::Render()
 	m_pShaderCom->Begin("BackGround");
 
 	m_pVIBufferCom->Render();
-
-	if (FAILED(__super::Render()))
-		return E_FAIL;
 
 	return S_OK;
 }

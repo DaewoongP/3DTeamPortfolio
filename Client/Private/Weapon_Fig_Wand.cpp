@@ -93,7 +93,7 @@ HRESULT CWeapon_Fig_Wand::Render()
 		}
 	}
 
-	return __super::Render();
+	return S_OK;
 }
 
 HRESULT CWeapon_Fig_Wand::Add_Components(void* pArg)

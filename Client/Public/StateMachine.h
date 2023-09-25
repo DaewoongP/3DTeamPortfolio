@@ -16,15 +16,11 @@ class CStateMachine :
     //컴포넌트니까 전부 오너를 가질 수 있다.
     //오너의 모델을 가지고 있다가 변경한다.
 
-public:
-
 protected:
     explicit CStateMachine(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext);
     explicit CStateMachine(const CStateMachine& rhs);
     virtual ~CStateMachine() = default;
 
-public:
-    //Get,Set
 public:
     HRESULT Set_StateMachine(const _tchar* _pTag);
 public:
@@ -38,11 +34,6 @@ public:
     void Set_FuncFinishAnimation(function<void()>& _funcFinishAnimation) { m_pFuncFinishAnimation = _funcFinishAnimation; }
     void Set_RotationSpeed(_float* _pFRotationSpeed) { m_pFRotationSpeed = _pFRotationSpeed; }
     void Set_TarGetAngle(_float* _pFTargetAngle) { m_pFTargetAngle = _pFTargetAngle; }
-public:
-    virtual HRESULT Initialize_Prototype();
-    virtual HRESULT Initialize(void* pArg);
-    virtual void Tick(_float fTimeDelta);
-    virtual void Late_Tick(_float fTimeDelta);
 
 public:
     virtual void OnStateEnter() {};

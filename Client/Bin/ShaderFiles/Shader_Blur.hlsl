@@ -77,6 +77,7 @@ PS_OUT PS_MAIN_BLURX(PS_IN In)
     {
         UV = In.vTexUV + float2(dx * i, 0.f);
         vector Blur = g_Texture.Sample(BlurSampler, UV);
+        
         if (Blur.x > 0.9f)
         {
             Out.vColor = float4(1.f, 1.f, 1.f, 1.f);

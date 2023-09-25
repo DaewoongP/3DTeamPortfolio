@@ -129,7 +129,6 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 	{
 		CArmored_Troll::COLLISIONREQUESTDESC* pDesc = static_cast<CArmored_Troll::COLLISIONREQUESTDESC*>(CollisionEventDesc.pArg);
 		pDesc;
-		int i = 0;
 	}
 }
 
@@ -145,9 +144,6 @@ void CPlayer::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 
 HRESULT CPlayer::Render()
 {
-	if (FAILED(__super::Render()))
-		return E_FAIL;
-
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
@@ -388,9 +384,24 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 	
+	// 인센디오
+	{
+		magicInitDesc.eBuffType = BUFF_FIRE;
+		magicInitDesc.eMagicGroup = CMagic::MG_DAMAGE;
+		magicInitDesc.eMagicType = CMagic::MT_RED;
+		magicInitDesc.eMagicTag = NCENDIO;
+		magicInitDesc.fCoolTime = 1.5f;
+		magicInitDesc.fDamage = 300.f;
+		magicInitDesc.fCastDistance = 1000;
+		magicInitDesc.fBallDistance = 30;
+		magicInitDesc.fLifeTime = 1.f;
+		m_pMagicSlot->Add_Magics(magicInitDesc);
+	}
+
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(0, CONFRINGO);
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(1, LEVIOSO);
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(2, FINISHER);
+	m_pMagicSlot->Add_Magic_To_Skill_Slot(3, NCENDIO);
 	
 	return S_OK;
 }
@@ -455,7 +466,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
 		if (nullptr == pTestTarget)
 			throw TEXT("pTestTarget is nullptr");
-		m_pMagicSlot->Action_Magic_Skill(0, pTestTarget->Get_Transform(), pTestTarget->Get_Offset_Matrix(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
+		m_pMagicSlot->Action_Magic_Skill(0, pTestTarget->Get_Transform(), pTestTarget->Get_Offset_Matrix(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_2, CInput_Device::KEY_DOWN))
@@ -463,7 +474,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
 		if (nullptr == pTestTarget)
 			throw TEXT("pTestTarget is nullptr");
-		m_pMagicSlot->Action_Magic_Skill(1, pTestTarget->Get_Transform(), pTestTarget->Get_Offset_Matrix(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
+		m_pMagicSlot->Action_Magic_Skill(1, pTestTarget->Get_Transform(), pTestTarget->Get_Offset_Matrix(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_3, CInput_Device::KEY_DOWN))
@@ -471,7 +482,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
 		if (nullptr == pTestTarget)
 			throw TEXT("pTestTarget is nullptr");
-		m_pMagicSlot->Action_Magic_Skill(2, pTestTarget->Get_Transform(), pTestTarget->Get_Offset_Matrix(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
+		m_pMagicSlot->Action_Magic_Skill(2, pTestTarget->Get_Transform(), pTestTarget->Get_Offset_Matrix(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_4, CInput_Device::KEY_DOWN))
@@ -479,7 +490,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
 		if (nullptr == pTestTarget)
 			throw TEXT("pTestTarget is nullptr");
-		m_pMagicSlot->Action_Magic_Skill(3, pTestTarget->Get_Transform(), pTestTarget->Get_Offset_Matrix(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
+		m_pMagicSlot->Action_Magic_Skill(3, pTestTarget->Get_Transform(), pTestTarget->Get_Offset_Matrix(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
 	}
 
 	ENDINSTANCE;
@@ -747,12 +758,12 @@ void CPlayer::Update_Target_Angle()
 
 void CPlayer::Shot_Basic_Spell()
 {
-	m_pMagicSlot->Action_Magic_Basic(0, m_pTargetTransform, XMMatrixIdentity(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
+	m_pMagicSlot->Action_Magic_Basic(0, m_pTargetTransform, XMMatrixIdentity(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
 }
 
 void CPlayer::Protego()
 {
-	m_pMagicSlot->Action_Magic_Basic(1, m_pTransform, XMMatrixTranslation(0.0f, 1.0f, 0.0f), m_pTransform->Get_WorldMatrixPtr(), XMMatrixIdentity());
+	m_pMagicSlot->Action_Magic_Basic(1, m_pTransform, XMMatrixTranslation(0.0f, 1.0f, 0.0f), m_pTransform->Get_WorldMatrixPtr(), XMMatrixIdentity(), COL_MAGIC);
 }
 
 void CPlayer::Gravity_On()

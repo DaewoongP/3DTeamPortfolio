@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "GameObject.h"
@@ -7,16 +6,14 @@
 
 
 BEGIN(Tool)
-
 class CDummyTrail;
 class CDummyParticle;
 class CDummyMeshEffect;
 class CDummyFlipBook;
 END
 
-
-
 BEGIN(Tool)
+
 class CDummy_Effect final : public CGameObject
 {
 private:

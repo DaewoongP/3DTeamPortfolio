@@ -2,15 +2,25 @@
 #include "UI.h"
 #include "Client_Defines.h"
 
+BEGIN(Engine)
+class CUI_Progress;
+END
+
 BEGIN(Client)
 class CUI_Back;
 class CUI_HP;
+class CUI_Font;
+
 class CUI_Group_HP final : public CGameObject
 {
 private:
 	explicit CUI_Group_HP(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CUI_Group_HP(const CUI_Group_HP& rhs);
 	virtual ~CUI_Group_HP() = default;
+
+public:
+	void	Set_Potion(_uint iPotion);
+	void	Set_HP(_float fGauge, CUI_Progress::GAUGE eType);
 
 public:
 	virtual HRESULT Initialize_Prototype();
@@ -23,10 +33,17 @@ private:
 	CUI_HP*				m_pUI_HP = { nullptr };
 
 private:
+	CUI_Font*		m_pFont = { nullptr };
+	_tchar			m_wszObjectLevel[MAX_PATH] = TEXT("");
+
+private:
 	HRESULT Add_Prototype();
 	HRESULT Add_Components();
 	HRESULT Read_File(const _tchar* pFilePath);
 	CUI::UIDESC Load_File(const HANDLE hFile);
+
+private:
+	HRESULT Add_Fonts(void* pArg);
 
 public:
 	static CUI_Group_HP* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);

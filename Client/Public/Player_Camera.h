@@ -69,7 +69,7 @@ private:
 	_float m_fCameraHeight{ 0.0f };
 
 private:
-	void	Mouse_Input(_float _TimeDelta);
+	void	Mouse_Input(_float _fTimeDelta);
 	//행렬 갱신
 	void	Update_FollowMatrix();
 

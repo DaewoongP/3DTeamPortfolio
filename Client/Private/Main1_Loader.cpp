@@ -1,4 +1,4 @@
-#include "..\Public\Main1_Loader.h"
+﻿#include "..\Public\Main1_Loader.h"
 #include "GameInstance.h"
 #include "Client_Includes.h"
 #include "Behavior_Includes.h"
@@ -12,7 +12,7 @@
 #include "Trail.h"
 #include "MeshEffect.h"
 #include "Default_Magic_Effect.h"
-#include "Default_MagicTraill_Effect.h"
+#include "Default_MagicTrail_Effect.h"
 #include "Wingardium_Effect.h"
 #include "Confringo_WandDust_Effect.h"
 #pragma endregion Effects
@@ -29,6 +29,7 @@
 #include "Confringo.h"
 #include "Finisher.h"
 #include "Wingardiumleviosa.h"
+#include "Ncendio.h"
 #pragma endregion Magic
 
 #include "Sky.h"
@@ -130,11 +131,11 @@ HRESULT CMain1_Loader::Loading_For_Cliffside()
 			CTerrain::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Terrain");
 
-		if (FAILED(Loading_Map_Object(TEXT("../../Resources/GameData/MapData/MapData0.ddd"))))
+		if (FAILED(Loading_Map_Object(TEXT("../../Resources/GameData/MapData/MapData2.ddd"))))
 			throw TEXT("Map Object");
 
-		/*if (FAILED(Loading_Map_Object_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins1.ddd"))))
-			throw TEXT("Map Object_Ins");*/
+		if (FAILED(Loading_Map_Object_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins2.ddd"))))
+			throw TEXT("Map Object_Ins");
 
 		/* For.Prototype_Component_CharacterController*/
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_CharacterController"),
@@ -238,40 +239,10 @@ HRESULT CMain1_Loader::Loading_For_Cliffside()
 			throw TEXT("Prototype_Component_Magic");
 
 #pragma region Magic_Effect
-		/* For.Prototype_GameObject_Default_Magic_Effect*/
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Default_Magic_Effect"),
-			CDefault_Magic_Effect::Create(m_pDevice, m_pContext, LEVEL_CLIFFSIDE))))
-			throw TEXT("Prototype_GameObject_Default_Magic_Effect");
-
-		/* For.Prototype_GameObject_Wingardium_Effect*/
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Wingardium_Effect"),
-			CWingardium_Effect::Create(m_pDevice, m_pContext, LEVEL_CLIFFSIDE))))
-			throw TEXT("Prototype_GameObject_Wingardium_Effect");
-
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Traill_Lightning_Effect"),
-			CTrail::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/Lightning/Lightning.trail"), LEVEL_CLIFFSIDE))))
-			throw TEXT("Prototype_GameObject_Traill_Lightning_Effect");
-
-		/* For.Prototype_GameObject_Wingardium_Effect*/
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_MagicTraill_Winga_Effect"),
-			CDefault_MagicTraill_Effect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/Wingardium/Wingardium.trail"), LEVEL_CLIFFSIDE))))
-			throw TEXT("Prototype_GameObject_Default_MagicTraill_Winga_Effect");
-
 		/* For.Prototype_GameObject_MagicTrail_BasicCast_Effect*/
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_MagicTrail_BasicCast_Effect"),
-			CDefault_MagicTraill_Effect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/BasicCast/BasicCast.trail"), LEVEL_CLIFFSIDE))))
+			CDefault_MagicTrail_Effect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/BasicCast/BasicCast.trail"), LEVEL_CLIFFSIDE))))
 			throw TEXT("Prototype_GameObject_MagicTrail_BasicCast_Effect");
-
-		/* For.Prototype_GameObject_Wingardium_Effect*/
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_MagicTraill_Levioso_Effect"),
-			CDefault_MagicTraill_Effect::Create(m_pDevice, m_pContext, TEXT(""), LEVEL_CLIFFSIDE))))
-			throw TEXT("Prototype_GameObject_Default_MagicTraill_Levioso_Effect");
-
-		/* For.Prototype_GameObject_Confringo_WandDust_Effect*/
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Confringo_WandDust_Effect"),
-			CConfringo_WandDust_Effect::Create(m_pDevice, m_pContext, LEVEL_CLIFFSIDE))))
-			throw TEXT("Prototype_GameObject_Confringo_WandDust_Effect");
-
 #pragma endregion
 
 #pragma region Magic
@@ -297,7 +268,7 @@ HRESULT CMain1_Loader::Loading_For_Cliffside()
 
 		/* For.Prototype_GameObject_Levioso */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Levioso"),
-			CLevioso::Create(m_pDevice, m_pContext))))
+			CLevioso::Create(m_pDevice, m_pContext, LEVEL_CLIFFSIDE))))
 			throw TEXT("Prototype_GameObject_Levioso");
 
 		/* For.Prototype_GameObject_Confringo */
@@ -310,8 +281,20 @@ HRESULT CMain1_Loader::Loading_For_Cliffside()
 			CFinisher::Create(m_pDevice, m_pContext, LEVEL_CLIFFSIDE))))
 			throw TEXT("Prototype_GameObject_Finisher");
 		
-
+		/* For.Prototype_GameObject_Finisher */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Ncendio"),
+			CNcendio::Create(m_pDevice, m_pContext, LEVEL_CLIFFSIDE))))
+			throw TEXT("Prototype_GameObject_Ncendio");
 #pragma endregion
+		{
+			std::lock_guard<std::mutex> lock(mtx);
+
+			CMagicBallPool* pMagicBallPool = CMagicBallPool::GetInstance();
+			Safe_AddRef(pMagicBallPool);
+			if (FAILED(pMagicBallPool->Initialize()))
+				throw TEXT("Magic Ball Pool");
+			Safe_Release(pMagicBallPool);
+		}
 
 		/* For.Prototype_GameObject_MagicSlot */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_MagicSlot"),
@@ -358,7 +341,6 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath)
 		return E_FAIL;
 	}
 
-	// �� ������Ʈ ��ȣ
 	_uint iObjectNum = 0;
 
 	DWORD    dwByte = 0;

@@ -3,15 +3,15 @@ float2			g_vOffset;
 float2          g_vTililing;
 
 // ex) SplitUV(In.vTexUV, g_iWidthLength, g_iHeightLength, g_iCurIndex, Out.vTexUV);
-void SplitUV(float2 In, int iWidthLength, int iHeightLength, int iCurIndex, out float2 Out)
+void SplitUV(float2 In, uint iWidthLength, uint iHeightLength, uint iCurIndex, out float2 Out)
 {
 	// ex)
 	// g_iCurIndex = 6, 
 	// g_iWidthLength = 4, g_iHeightLenght = 5
 
 	// 비율 계산
-	int iCurWidth = iCurIndex % iWidthLength;		// 6 % 4 = 2
-	int iCurHeight = int(iCurIndex / iWidthLength); // 6 / 4 = int(1)
+	uint iCurWidth = iCurIndex % iWidthLength;		// 6 % 4 = 2
+	uint iCurHeight = uint(iCurIndex / iWidthLength); // 6 / 4 = int(1)
 	float fUnitWidth = 1.f / iWidthLength;			// 1.f / 4 = 0.25f
 	float fUnitHeight = 1.f / iHeightLength;			// 1.f / 5 = 0.2f;
 	float2 vStartUV;

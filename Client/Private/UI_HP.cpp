@@ -11,6 +11,11 @@ CUI_HP::CUI_HP(const CUI_HP& rhs)
 {
 }
 
+void CUI_HP::Set_HP(_float fGauge, CUI_Progress::GAUGE eType)
+{
+	m_pProgressCom->Set_Gauge(fGauge, eType);
+}
+
 HRESULT CUI_HP::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
@@ -127,9 +132,7 @@ HRESULT CUI_HP::Debug_UI(_float fTimeDelta)
 		m_pProgressCom->Set_Gauge(fHp, CUI_Progress::CURRENT);
 	}
 
-
 	ImGui::End();
-
 	return S_OK;
 }
 #endif // _DEBUG

@@ -109,6 +109,11 @@ public:
 	void LookAt(_float3 _vTarget, _bool _isDeleteY = false);
 	void LookAt_Lerp(_float3 _vTarget, const _float& fTimeDelta, _bool _isDeleteY = false);
 
+public:
+	// ex) m_pTransform->Write_File(hFile, &dwByte);
+	HRESULT Write_File(HANDLE hFile, LPDWORD dwByte);
+	HRESULT Read_File(HANDLE hFile, LPDWORD dwByte);
+
 private:
 	_float4x4		m_WorldMatrix;
 	_float			m_fSpeed = { 10.f };

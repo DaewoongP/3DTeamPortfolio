@@ -4,7 +4,7 @@
 #include "MagicBall.h"
 
 //스플라인 트레일 파티클
-#include "Default_MagicTraill_Effect.h"
+#include "Default_MagicTrail_Effect.h"
 //파티클
 #include "ParticleSystem.h"
 
@@ -24,6 +24,7 @@ public:
 	virtual void OnCollisionEnter(COLLEVENTDESC CollisionEventDesc) override;
 	virtual void OnCollisionStay(COLLEVENTDESC CollisionEventDesc) override;
 	virtual void OnCollisionExit(COLLEVENTDESC CollisionEventDesc) override;
+	virtual HRESULT Reset() { return S_OK; }
 
 private:
 	// 지팡이 트레일
@@ -32,7 +33,7 @@ private:
 	CParticleSystem*			m_pWandEffect = { nullptr };
 
 	// 기본공격 트레일
-	CDefault_MagicTraill_Effect* m_pTrailEffect = { nullptr };
+	CDefault_MagicTrail_Effect* m_pTrailEffect = { nullptr };
 	//피격 이펙트
 	CParticleSystem* m_pHitEffect = { nullptr };
 	

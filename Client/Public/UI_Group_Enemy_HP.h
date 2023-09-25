@@ -4,11 +4,6 @@
 
 #include "UI.h"
 
-BEGIN(Engine)
-class CTexture;
-END
-
-
 BEGIN(Client)
 
 class CUI_Group_Enemy_HP final : public CGameObject
@@ -22,8 +17,6 @@ public:
 		ENEMYTYPE eType;
 		_tchar wszObjectName[MAX_PATH] = TEXT("");
 		_tchar wszObjectLevel[MAX_PATH] = TEXT("");
-
-
 	};
 
 private:
@@ -42,6 +35,7 @@ private:
 	class CUI_HP*			m_pUI_HP = { nullptr };
 
 	vector<class CUI_Font*>			m_Fonts;
+
 
 private:
 	_tchar			m_wszObjectLevel[MAX_PATH] = TEXT("");

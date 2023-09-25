@@ -217,27 +217,38 @@ HRESULT CBasicCast::Add_Components()
 {
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_DefaultConeBoom_Particle")
 		, TEXT("Com_DefaultConeBoom_Particle"), (CComponent**)&m_pHitEffect)))
+	{
+		__debugbreak();
 		return E_FAIL;
+	}
+	
 
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Default_SphereTrace_Particle")
 		, TEXT("Com_Default_SphereTrace_Particle"), (CComponent**)&m_pWandEffect)))
+	{
+		__debugbreak();
 		return E_FAIL;
+	}
 
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_DefaultConeEmit_Particle")
 		, TEXT("Com_DefaultConeEmit_Particle"), (CComponent**)&m_pFinalAttackEffect)))
+	{
+		__debugbreak();
 		return E_FAIL;
+	}
 
 	return S_OK;
 }
 
 HRESULT CBasicCast::Add_Effect()
 {
-	CDefault_MagicTraill_Effect::INITDESC initDesc;
+	CDefault_MagicTrail_Effect::INITDESC initDesc;
 	initDesc.vInitPosition = m_MagicBallDesc.vStartPosition;
 	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_MagicTrail_BasicCast_Effect"),
 		TEXT("Com_TrailEffect"), reinterpret_cast<CComponent**>(&m_pTrailEffect), &initDesc)))
 	{
 		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_MagicTrail_BasicCast_Effect)");
+		__debugbreak();
 		return E_FAIL;
 	}
 
@@ -245,6 +256,7 @@ HRESULT CBasicCast::Add_Effect()
 		TEXT("Com_Wand_Trail"), reinterpret_cast<CComponent**>(&m_WandTrail))))
 	{
 		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_BasicCast_Wand_Trail_Effect)");
+		__debugbreak();
 		return E_FAIL;
 	}
 

@@ -418,6 +418,9 @@
     <Filter Include="01. Utility\03. Components\02. Renderer\DOF">
       <UniqueIdentifier>{d5344a9f-ac17-49ff-b54a-ddec71a170ef}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\03. Components\06. Texture\TexturePool">
+      <UniqueIdentifier>{843ee074-c9b8-4fa9-a1dc-cf379e699d41}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -834,6 +837,9 @@
     <ClInclude Include="..\Public\DOF.h">
       <Filter>01. Utility\03. Components\02. Renderer\DOF</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\TexturePool.h">
+      <Filter>01. Utility\03. Components\06. Texture\TexturePool</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -1216,6 +1222,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\DOF.cpp">
       <Filter>01. Utility\03. Components\02. Renderer\DOF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\TexturePool.cpp">
+      <Filter>01. Utility\03. Components\06. Texture\TexturePool</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

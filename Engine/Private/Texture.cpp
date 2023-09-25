@@ -73,15 +73,14 @@ _int CTexture::Get_TextureIndex_By_Path(const _tchar* pPath)
 
 HRESULT CTexture::Initialize_Prototype(const _tchar* pTextureFilePath, _uint iNumTextures)
 {
-	// 여기서 터질경우 아래코드 주석걸고 일단 진행하세요.
-	FAILED_CHECK_RETURN(CoInitializeEx(nullptr, COINIT_MULTITHREADED), E_FAIL);
-
 	_tchar			szTextureFilePath[MAX_PATH] = TEXT("");
 	
 	m_iNumTextures = iNumTextures;
 	
 	m_Textures.reserve(m_iNumTextures);
 	m_szTextureFilePathes.reserve(m_iNumTextures);
+
+	lstrcpy(m_szTextureFilePath, pTextureFilePath);
 
 	// 텍스처들을 순회하면서 SRV를 생성하여 처리
 	for (_uint i = 0; i < m_iNumTextures; ++i)
@@ -123,11 +122,6 @@ HRESULT CTexture::Initialize_Prototype(const _tchar* pTextureFilePath, _uint iNu
 	return S_OK;
 }
 
-HRESULT CTexture::Initialize(void* pArg)
-{
-	return S_OK;
-}
-
 HRESULT CTexture::Bind_ShaderResource(CShader* pShader, const _char* pContantName, _uint iTextureIndex)
 {
 	if (iTextureIndex >= m_iNumTextures)
@@ -143,6 +137,28 @@ HRESULT CTexture::Bind_ShaderResources(CShader* pShader, const _char* pContantNa
 
 CTexture* CTexture::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pTextureFilePath, _uint iNumTextures)
 {
+	CTexture* pInstance = { nullptr };
+
+	CTexturePool* pTexturePool = CTexturePool::GetInstance();
+	Safe_AddRef(pTexturePool);
+
+	pInstance = pTexturePool->Reuse_Texture(pDevice, pContext, pTextureFilePath, iNumTextures);
+
+	Safe_Release(pTexturePool);
+
+	if (nullptr == pInstance)
+	{
+		MSG_BOX("Failed to Reuse CTexture");
+		return nullptr;
+	}
+
+	return pInstance;
+}
+
+CTexture* CTexture::Create_Origin(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pTextureFilePath, _uint iNumTextures)
+{
+	std::lock_guard<std::mutex> lock(mtx);
+
 	CTexture* pInstance = New CTexture(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(pTextureFilePath, iNumTextures)))
@@ -156,17 +172,8 @@ CTexture* CTexture::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,
 
 CComponent* CTexture::Clone(void* pArg)
 {
- 	CTexture* pInstance = New CTexture(*this);
-
-	if (FAILED(pInstance->Initialize(pArg)))
-	{
-		MSG_BOX("Failed to Cloned CTexture");
-		Safe_Release(pInstance);
-	}
-
-	return pInstance;
+	return CTexture::Create(m_pDevice, m_pContext, m_szTextureFilePath, m_iNumTextures);
 }
-
 
 void CTexture::Free()
 {

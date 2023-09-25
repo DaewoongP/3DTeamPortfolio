@@ -54,19 +54,18 @@ void CSky::Late_Tick(_float fTimeDelta)
 
 HRESULT CSky::Render()
 {
-	if (FAILED(__super::Render()))
-		return E_FAIL;
-
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
 	_uint		iNumMeshes = m_pModel->Get_NumMeshes();
 
-	for (_uint i = 0; i < iNumMeshes; i++)
+	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
-		m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", i, DIFFUSE);
+		if (FAILED(m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", i, DIFFUSE)))
+			return E_FAIL;
 
-		m_pShader->Begin("Sky");
+		if (FAILED(m_pShader->Begin("Sky")))
+			return E_FAIL;
 
 		if (FAILED(m_pModel->Render(i)))
 			return E_FAIL;
@@ -156,5 +155,4 @@ void CSky::Free()
 	Safe_Release(m_pModel);
 	Safe_Release(m_pShader);
 	Safe_Release(m_pRenderer);
-
 }

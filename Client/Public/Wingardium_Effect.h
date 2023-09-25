@@ -35,6 +35,9 @@ private:
 
 public:
 	void Set_Position(_float3 vPos);
+	void SetActionTrigger(_bool value) { m_bActionTrigger = value; }
+	void Disable() { m_isEnable = false; }
+	void Enable() { m_isEnable = true; }
 
 public:
 	virtual HRESULT Initialize_Prototype(_uint iLevel);
@@ -43,8 +46,7 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 
 public:
-	void SetActionTrigger(_bool value) {m_bActionTrigger = value;}
-	void TrailAction(_float3 pos,_float fTimeDelta);
+	void TrailAction(_float3 pos, _float fTimeDelta);
 
 private:
 	//회전하는 트레일
@@ -53,13 +55,13 @@ private:
 	TRAILPARTICLEDESC m_TrailDesc[TrailCount] = {};
 
 	//바닥에서 effect위치까지 올 트레일
-	CTrail* m_pTrailToOrigin[TrailCount/2] = { nullptr };
-	CTransform* m_pTrailToOriginTransform[TrailCount/2] = { nullptr };
-	TRAILPARTICLEDESC m_TrailToOriginDesc[TrailCount/2] = {};
-	
+	CTrail* m_pTrailToOrigin[TrailCount / 2] = { nullptr };
+	CTransform* m_pTrailToOriginTransform[TrailCount / 2] = { nullptr };
+	TRAILPARTICLEDESC m_TrailToOriginDesc[TrailCount / 2] = {};
+
 	//윙가르디움의 발동 트리거
 	_bool	m_bActionTrigger = { false };
-	
+
 private:
 	_uint			m_iLevel = { 0 };
 
@@ -70,6 +72,8 @@ private:
 	_float3			m_vBottom = {};
 
 	_uint			m_iCurrentActionParticle = { 0 };
+
+	_bool			m_isEnable = { false };
 
 private:
 	HRESULT Add_Components();

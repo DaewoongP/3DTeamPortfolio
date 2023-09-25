@@ -226,13 +226,11 @@ PS_OUT PS_MAIN_BLOOM(PS_IN_POSTEX In)
     
     vector vBloom = g_PostProcessingTexture.Sample(BloomSampler, In.vTexUV); //vBloom은 하얀부분을뽑아낼 텍스쳐
    
-    float BrightColor = 0.f;
     float Brigtness = dot(vBloom.rgb, float3(0.2126f, 0.7152f, 0.0722f));
    
     if (Brigtness > 0.99f)
     {
-        BrightColor = vector(vBloom.rgb, 1.f);
-        Out.vColor = BrightColor;
+        Out.vColor = vector(vBloom.rgb, 1.f);
     }
     else
         discard;
@@ -268,7 +266,7 @@ PS_OUT PS_MAIN_RADIALBLUR(PS_IN_POSTEX In)
    
     vector vRadialTex = g_PostProcessingTexture.Sample(PointSampler, In.vTexUV); 
     
-    float2 CenterUV = (0.5f, 0.5f);
+    float2 CenterUV = float2(0.5f, 0.5f);
     float Raidus = 0.02f;
   
         float4 blurredColor = float4(0.0, 0.0, 0.0, 0.0); // 초기화

@@ -103,6 +103,7 @@ public:
 	HRESULT				Add_Prototype(_uint iLevelIndex, const _tchar* pPrototypeTag, class CComponent* pPrototype, _bool isFailedSkip = false);
 	// Tick에 컴포넌트가 돌아가게끔 clone 처리
 	HRESULT				Add_Component(_uint iPrototypeLevelIndex, _uint iLevelIndex, const _tchar* pPrototypeTag, const _tchar* pLayerTag, const _tchar* pComponentTag, void* pArg);
+	HRESULT				Add_Component(class CComponent* pComponent, _uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pComponentTag);
 	class CComponent* Clone_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, void* pArg);
 	void				Clear_LevelResources(_uint iLevelIndex);
 	HRESULT				Delete_Component(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pComponentTag);

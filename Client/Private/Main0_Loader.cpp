@@ -21,6 +21,8 @@
 #include "UI_Font.h"
 #include "Field_Guide.h"
 #include "Main_Menu.h"
+#include "Menu_Gear.h"
+#include "Menu_Invectory.h"
 #pragma endregion UI
 
 #ifdef _DEBUG
@@ -194,6 +196,18 @@ HRESULT CMain0_Loader::Loading_For_Cliffside()
 			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_ShadowMesh.hlsl"), VTXMESH_DECL::Elements, VTXMESH_DECL::iNumElements))))
 			throw TEXT("Prototype_Component_Shader_ShadowMesh");
 
+		/* For.Prototype_Component_Shader_MeshInstance */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxMeshInstance"),
+			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxMeshInstance.hlsl"),
+				VTXMESHINSTANCE_DECL::Elements, VTXMESHINSTANCE_DECL::iNumElements))))
+			return E_FAIL;
+		
+		/* For.Prototype_Component_Shader_ShadowMeshInstance */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_ShadowMeshInstance"),
+			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_ShadowMeshInstance.hlsl"),
+				VTXMESHINSTANCE_DECL::Elements, VTXMESHINSTANCE_DECL::iNumElements))))
+			return E_FAIL;
+
 		/* For.Prototype_Component_Shader_Terrain */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_Terrain"),
 			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Terrain.hlsl"), VTXPOSNORTEX_DECL::Elements, VTXPOSNORTEX_DECL::iNumElements))))
@@ -210,6 +224,7 @@ HRESULT CMain0_Loader::Loading_For_Cliffside()
 			throw TEXT("Prototype_Component_Shader_DefaultEffect");
 
 		/* --------------UI-------------- */
+
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_HP"),
 			CUI_Group_HP::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_UI_Group_HP");
@@ -237,7 +252,7 @@ HRESULT CMain0_Loader::Loading_For_Cliffside()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Cursor"),
 			CUI_Group_Cursor::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_UI_Group_Cursor");
-		/*if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_MiniMap"),
+		/*if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_MiniMap"),
 			CUI_Group_MiniMap::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_UI_Group_MiniMap");*/
 
@@ -254,6 +269,12 @@ HRESULT CMain0_Loader::Loading_For_Cliffside()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Main_Menu"),
 			CMain_Menu::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Main_Menu");
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Menu_Gear"),
+			CMenu_Gear::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Menu_Gear");
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Menu_Inventory"),
+			CMenu_Inventory::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Menu_Inventory");
 
 		/* --------------Debug-------------- */
 #ifdef _DEBUG

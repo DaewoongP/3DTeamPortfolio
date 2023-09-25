@@ -190,7 +190,7 @@ void CDummyParticle::MainMoudle_TreeNode(CEffect_Window* pEffectWindow)
 			pEffectWindow->Table_DragFloat("Flip Rotation", "xcv ioiw", &m_MainModuleDesc.fFlipRotation, 0.01f, 0.f, 1.f);
 
 			pEffectWindow->Table_ColorEdit4("Start Color", "ergop805", &m_MainModuleDesc.vStartColor);
-			pEffectWindow->Table_DragFloat("GravityModifier", "g50j8dfbji0", &m_MainModuleDesc.fGravityModifier);
+			pEffectWindow->Table_DragFloat("GravityModifier", "g50j8dfbji0", &m_MainModuleDesc.fGravityModifier, 0.01f, -FLT_MAX, FLT_MAX);
 			pEffectWindow->Table_DragFloat("SimulationSpeed", "a1ip40c854dfg", &m_MainModuleDesc.fSimulationSpeed);
 			pEffectWindow->Table_CheckBox("Play On Awake*", "zxci0pj380uj", &m_MainModuleDesc.isPlayOnAwake);
 			m_MainModuleDesc.strEmmiterVelocity = m_pEmitterVelocity_ComboBox->Tick(CComboBox::FLAG::TABLE, false);
@@ -566,19 +566,19 @@ void CDummyParticle::SizeOverLifeTime_TreeNode(CEffect_Window* pEffectWindow)
 			ImGui::TableNextRow();
 			pEffectWindow->Table_CheckBox("Separate Axes", "xcvklj3909di", &m_SizeOverLifeTimeModuleDesc.isSeparateAxes);
 
-			pEffectWindow->Table_DragFloat2Range("SizeX", "XCVPIJDFKLJ983", &m_SizeOverLifeTimeModuleDesc.vSizeX, 0.01f);
+			pEffectWindow->Table_DragFloat2("SizeX", "XCVPIJDFKLJ983", &m_SizeOverLifeTimeModuleDesc.vSizeX, 0.01f);
 			m_pSizeXEaseCombo->Tick(CComboBox::TABLE);
 			if (m_pSizeXEaseCombo->IsUpdated())
 				m_SizeOverLifeTimeModuleDesc.eEaseX = static_cast<CEase::EASE>(m_pSizeXEaseCombo->Get_Current_Item_Index());
 
 			if (true == m_SizeOverLifeTimeModuleDesc.isSeparateAxes)
 			{
-				pEffectWindow->Table_DragFloat2Range("SizeY", "cvikj838jdfsdfsdf", &m_SizeOverLifeTimeModuleDesc.vSizeY, 0.01f);
+				pEffectWindow->Table_DragFloat2("SizeY", "cvikj838jdfsdfsdf", &m_SizeOverLifeTimeModuleDesc.vSizeY, 0.01f);
 				m_pSizeYEaseCombo->Tick(CComboBox::TABLE);
 				if (m_pSizeYEaseCombo->IsUpdated())
 					m_SizeOverLifeTimeModuleDesc.eEaseY = static_cast<CEase::EASE>(m_pSizeYEaseCombo->Get_Current_Item_Index());
 
-				pEffectWindow->Table_DragFloat2Range("SizeZ", "zxcvhjyuwesfdwsd", &m_SizeOverLifeTimeModuleDesc.vSizeZ, 0.01f);
+				pEffectWindow->Table_DragFloat2("SizeZ", "zxcvhjyuwesfdwsd", &m_SizeOverLifeTimeModuleDesc.vSizeZ, 0.01f);
 				m_pSizeZEaseCombo->Tick(CComboBox::TABLE);
 				if (m_pSizeZEaseCombo->IsUpdated())
 					m_SizeOverLifeTimeModuleDesc.eEaseZ = static_cast<CEase::EASE>(m_pSizeZEaseCombo->Get_Current_Item_Index());

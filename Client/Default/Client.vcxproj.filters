@@ -13,15 +13,6 @@
     <Filter Include="01. Levels\00. Logo">
       <UniqueIdentifier>{741a9b99-aa71-4277-ba9c-505e87d4c3ad}</UniqueIdentifier>
     </Filter>
-    <Filter Include="97. ShaderFiles">
-      <UniqueIdentifier>{776f72a6-a2da-4037-a3c4-4c09ed568945}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97. ShaderFiles\Textures">
-      <UniqueIdentifier>{d201ffbf-6a5d-444c-9436-ca5b9831d457}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97. ShaderFiles\Meshes">
-      <UniqueIdentifier>{458c26bc-3075-44f0-8181-8bf9f722fa27}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject">
       <UniqueIdentifier>{b74fe5a7-7424-471b-8a3d-0dfab0107bd2}</UniqueIdentifier>
     </Filter>
@@ -36,12 +27,6 @@
     </Filter>
     <Filter Include="02. GameObject\05. UI">
       <UniqueIdentifier>{66149634-b2ec-4e71-ba47-a1cf371175b5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\03. Effect">
-      <UniqueIdentifier>{b30da159-0cae-438f-a468-3cc4137f82aa}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\04. MapObject">
-      <UniqueIdentifier>{0671651e-f669-4b5e-82f4-dfb1f4480ca3}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\05. UI\Logo">
       <UniqueIdentifier>{0126ba42-5a20-40d6-a1fb-a9781cbccd8c}</UniqueIdentifier>
@@ -115,9 +100,6 @@
     <Filter Include="02. GameObject\99. Debug\PhysxRender">
       <UniqueIdentifier>{ffbc88f7-a780-4e66-87b7-7baf68d24ed3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="97. ShaderFiles\Debug">
-      <UniqueIdentifier>{1d5583a2-e4a6-4d7c-a4bd-c23fd81f765f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\05. UI\UI_Group">
       <UniqueIdentifier>{7206f782-d4db-4b46-8797-de58df3e32e7}</UniqueIdentifier>
     </Filter>
@@ -145,14 +127,8 @@
     <Filter Include="02. GameObject\05. UI\UI_Composite">
       <UniqueIdentifier>{bcff362f-a7cb-497b-b754-00e1c5101961}</UniqueIdentifier>
     </Filter>
-    <Filter Include="04. Magic">
-      <UniqueIdentifier>{e77db5d2-8ca4-49d3-9854-41ff5a14a55b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\01. Player\00. Camera">
       <UniqueIdentifier>{f3759d26-a3c7-4580-b9e7-a5b9ac3325cb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\03. Effect\Default_Magic_Effect">
-      <UniqueIdentifier>{8b8055e2-19be-427d-ade6-ac77b13c71b2}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\05. UI\UI">
       <UniqueIdentifier>{a0782665-36f6-4fd7-ab5c-79b74a2f4762}</UniqueIdentifier>
@@ -187,30 +163,6 @@
     <Filter Include="02. GameObject\01. Player\01. Weapon\Wand">
       <UniqueIdentifier>{3eacb79d-9519-4b74-935b-b05ac19d8cfc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\03. Effect\Protego_Effect">
-      <UniqueIdentifier>{5396d56e-27c2-4130-b99f-23fa2a791f02}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97. ShaderFiles\Magic">
-      <UniqueIdentifier>{922a952c-44f9-4be5-8a2d-7c9cffdf861d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97. ShaderFiles\Magic\Protego">
-      <UniqueIdentifier>{2b531332-cdaa-4769-a0cb-b4ae97608818}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="04. Magic\MagicBall">
-      <UniqueIdentifier>{7667aa3f-fd7d-47db-b815-b3a9a26ac4c5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="04. Magic\MagicBall\MagicBallPool">
-      <UniqueIdentifier>{9de24398-e881-4455-91ad-ee52934ecab4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="04. Magic\MagicBall\01. Protego">
-      <UniqueIdentifier>{bcd138af-102e-4b5f-b68d-6ea12de5208b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="04. Magic\MagicBall\02. Revelio">
-      <UniqueIdentifier>{35319448-1444-4cfb-8ce5-26aa0f43aca3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="04. Magic\MagicBall\00. BasicCast">
-      <UniqueIdentifier>{753e950f-efbe-4660-a035-8339816dab1b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\01. Player\01. StateMachine\01. MoveState">
       <UniqueIdentifier>{cbccc006-d073-4d19-b0ee-2b3ba8950a41}</UniqueIdentifier>
     </Filter>
@@ -223,35 +175,11 @@
     <Filter Include="02. GameObject\01. Player\01. StateMachine\01. MoveState\02. LoopState">
       <UniqueIdentifier>{18909992-b942-42f4-bf43-2d702d0b39ef}</UniqueIdentifier>
     </Filter>
-    <Filter Include="04. Magic\MagicBall\03. Wingardiumleviosa">
-      <UniqueIdentifier>{679315ef-dd4e-4f8a-8102-42d3e7531140}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="04. Magic\MagicBall\04. Levioso">
-      <UniqueIdentifier>{e6fd5103-b92d-4463-b59d-613d632c8fc3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\03. Effect\Wingardium_Effect">
-      <UniqueIdentifier>{2225573b-518b-46cd-b9ba-d1ab1cbfdb7d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\03. Effect\Default_MagicTraill_Effect">
-      <UniqueIdentifier>{5235bea2-54db-4f3f-b105-e99f462db57b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Behaviors\04. Movement">
-      <UniqueIdentifier>{d95f3888-ed91-44de-bed2-7ee502737efa}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Behaviors\03. RandomChoose">
-      <UniqueIdentifier>{68fa3644-0ca1-4bca-844f-2fc72e090f6d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="04. Magic\MagicSlot">
-      <UniqueIdentifier>{b7435dcb-b46c-4066-a7d4-3545d611ef11}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\99. Debug\LoadTrigger">
       <UniqueIdentifier>{96fc0db4-f307-4049-bde3-38b946932417}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_MiniMap">
       <UniqueIdentifier>{39b3c828-0c33-46d7-9115-ed0078317f4e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="05. Scene">
-      <UniqueIdentifier>{1a46706e-474c-4231-a7ba-2c809467d7a9}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_Enemy_HP">
       <UniqueIdentifier>{bb8be488-5c9d-472c-a62d-2b3677e0ed72}</UniqueIdentifier>
@@ -268,35 +196,8 @@
     <Filter Include="02. GameObject\01. Player\01. StateMachine\04. HardLandState">
       <UniqueIdentifier>{10f19527-0a06-4f20-977a-2fdb651f7263}</UniqueIdentifier>
     </Filter>
-    <Filter Include="04. Magic\MagicBall\06. Confringo">
-      <UniqueIdentifier>{f2eb1727-1265-443b-960c-a8800034b231}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\03. Effect\Confringo_WandDust_Effect">
-      <UniqueIdentifier>{9cd4f3c5-0e60-4d99-8478-7c20c152ebf8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_Cursor">
       <UniqueIdentifier>{a63a6343-ce45-4b8e-a9d3-a44f48775b53}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="05. Scene\Field_Guide">
-      <UniqueIdentifier>{0830a1af-837d-437b-8222-61a3830a3f13}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="05. Scene\Main_Menu">
-      <UniqueIdentifier>{2af2e2df-59af-4b37-8ef4-d02fdf00f156}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="05. Scene\Main_Menu\Gear">
-      <UniqueIdentifier>{a94fd666-69cf-4e38-ab76-d42069fcdbe3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="05. Scene\Main_Menu\Inventory">
-      <UniqueIdentifier>{30d76204-27e0-46f1-8f3c-4db0fd57b841}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="05. Scene\Main_Menu\Setting">
-      <UniqueIdentifier>{cfeaefdd-8cd5-43e7-ae2d-c678e5202aa3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="05. Scene\Main_Menu\Quest">
-      <UniqueIdentifier>{7f6be9ff-3769-4fe7-8798-91aa092a8af5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\04. MapObject\MapObject_Ins">
-      <UniqueIdentifier>{f13444ba-2393-4bce-95bb-afa19568f604}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\01. Player\01. StateMachine\05. MagicCastingState">
       <UniqueIdentifier>{ddb0a962-a92a-4544-9b8a-d6aa212b6f34}</UniqueIdentifier>
@@ -307,41 +208,26 @@
     <Filter Include="02. GameObject\99. Debug\SeamLess">
       <UniqueIdentifier>{846ab9f8-ca54-4c10-bd34-f738c2ec2301}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Composite\UI_Image">
+      <UniqueIdentifier>{6a99be75-1048-4b77-8a00-10a58f385e62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Composite\UI_Inventory">
+      <UniqueIdentifier>{cfd348f8-f70a-4715-9594-2470af08e0a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\08. Inventory">
+      <UniqueIdentifier>{121cb925-396f-4fe8-bc1e-353a51babe27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI\UI_Slot">
+      <UniqueIdentifier>{d0607139-8865-4a93-8350-450642f3cb31}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\01. Player\01. StateMachine\06. Protego">
       <UniqueIdentifier>{80263d30-d536-457d-baca-c468c1fa3fd7}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\01. Player\01. StateMachine\07. Hit">
       <UniqueIdentifier>{8100d76b-abc1-4a05-a149-ea58ea807be8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\04. MapObject\MapEffect">
-      <UniqueIdentifier>{3d2f0c96-2d67-4229-a119-7e41208b82b3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\99. Debug\03. Behaviors">
-      <UniqueIdentifier>{68f60c2e-b68f-4392-b9de-da48723e2496}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\99. Debug\03. Behaviors\01. Selectors">
-      <UniqueIdentifier>{71a935c5-d66c-42f6-b634-774235c64530}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\99. Debug\03. Behaviors\02. Sequences">
-      <UniqueIdentifier>{d6997012-3cb3-41af-a953-a7da969ed441}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\99. Debug\03. Behaviors\00. Action">
-      <UniqueIdentifier>{22de2c6d-33c0-405e-880a-8329dd7ffd58}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\99. Debug\03. Behaviors\04. Movement">
-      <UniqueIdentifier>{d95f3888-ed91-44de-bed2-7ee502737efa}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\99. Debug\03. Behaviors\05. Function">
-      <UniqueIdentifier>{11282af5-bac7-4061-9441-81c0be48d567}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\99. Debug\03. Behaviors\03. RandomChoose">
-      <UniqueIdentifier>{68fa3644-0ca1-4bca-844f-2fc72e090f6d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\01. Player\03. PlayerInformation">
       <UniqueIdentifier>{32c19ffc-fb69-42ca-ba81-07c40b9b305f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Behaviors\05. Function">
-      <UniqueIdentifier>{779d067f-c7a3-4f48-944c-fb03090c91d3}</UniqueIdentifier>
     </Filter>
     <Filter Include="01. Levels\02. Vault">
       <UniqueIdentifier>{0cc40b5b-ca2a-4eb4-a4df-e1f5dbb77a1d}</UniqueIdentifier>
@@ -373,8 +259,119 @@
     <Filter Include="01. Levels\99. Loading\Loader">
       <UniqueIdentifier>{5d7f902a-4002-432f-8bd9-34922b397410}</UniqueIdentifier>
     </Filter>
-    <Filter Include="04. Magic\MagicBall\07. Finisher">
+    <Filter Include="02. GameObject\04. MapObject">
+      <UniqueIdentifier>{0671651e-f669-4b5e-82f4-dfb1f4480ca3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\04. MapObject\MapObject_Ins">
+      <UniqueIdentifier>{f13444ba-2393-4bce-95bb-afa19568f604}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\04. MapObject\MapEffect">
+      <UniqueIdentifier>{3d2f0c96-2d67-4229-a119-7e41208b82b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Behaviors">
+      <UniqueIdentifier>{68f60c2e-b68f-4392-b9de-da48723e2496}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Behaviors\01. Selectors">
+      <UniqueIdentifier>{71a935c5-d66c-42f6-b634-774235c64530}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Behaviors\02. Sequences">
+      <UniqueIdentifier>{d6997012-3cb3-41af-a953-a7da969ed441}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Behaviors\00. Action">
+      <UniqueIdentifier>{22de2c6d-33c0-405e-880a-8329dd7ffd58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Behaviors\04. Movement">
+      <UniqueIdentifier>{d95f3888-ed91-44de-bed2-7ee502737efa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Behaviors\03. RandomChoose">
+      <UniqueIdentifier>{68fa3644-0ca1-4bca-844f-2fc72e090f6d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. ShaderFiles">
+      <UniqueIdentifier>{776f72a6-a2da-4037-a3c4-4c09ed568945}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. ShaderFiles\Textures">
+      <UniqueIdentifier>{d201ffbf-6a5d-444c-9436-ca5b9831d457}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. ShaderFiles\Meshes">
+      <UniqueIdentifier>{458c26bc-3075-44f0-8181-8bf9f722fa27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. ShaderFiles\Debug">
+      <UniqueIdentifier>{1d5583a2-e4a6-4d7c-a4bd-c23fd81f765f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. ShaderFiles\Magic">
+      <UniqueIdentifier>{922a952c-44f9-4be5-8a2d-7c9cffdf861d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. ShaderFiles\Magic\Protego">
+      <UniqueIdentifier>{2b531332-cdaa-4769-a0cb-b4ae97608818}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Behaviors\05. Function">
+      <UniqueIdentifier>{11282af5-bac7-4061-9441-81c0be48d567}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Effect">
+      <UniqueIdentifier>{b30da159-0cae-438f-a468-3cc4137f82aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Effect\Wingardium_Effect">
+      <UniqueIdentifier>{2225573b-518b-46cd-b9ba-d1ab1cbfdb7d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic">
+      <UniqueIdentifier>{e77db5d2-8ca4-49d3-9854-41ff5a14a55b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\MagicBall">
+      <UniqueIdentifier>{7667aa3f-fd7d-47db-b815-b3a9a26ac4c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\MagicBall\MagicBallPool">
+      <UniqueIdentifier>{9de24398-e881-4455-91ad-ee52934ecab4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\MagicBall\01. Protego">
+      <UniqueIdentifier>{bcd138af-102e-4b5f-b68d-6ea12de5208b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\MagicBall\02. Revelio">
+      <UniqueIdentifier>{35319448-1444-4cfb-8ce5-26aa0f43aca3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\MagicBall\00. BasicCast">
+      <UniqueIdentifier>{753e950f-efbe-4660-a035-8339816dab1b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\MagicBall\03. Wingardiumleviosa">
+      <UniqueIdentifier>{679315ef-dd4e-4f8a-8102-42d3e7531140}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\MagicBall\04. Levioso">
+      <UniqueIdentifier>{e6fd5103-b92d-4463-b59d-613d632c8fc3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\MagicBall\06. Confringo">
+      <UniqueIdentifier>{f2eb1727-1265-443b-960c-a8800034b231}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\MagicBall\07. Finisher">
       <UniqueIdentifier>{b47e170c-04d6-4c0c-89b8-452eb34296b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\MagicSlot">
+      <UniqueIdentifier>{b7435dcb-b46c-4066-a7d4-3545d611ef11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. Scene">
+      <UniqueIdentifier>{1a46706e-474c-4231-a7ba-2c809467d7a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. Scene\Field_Guide">
+      <UniqueIdentifier>{0830a1af-837d-437b-8222-61a3830a3f13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. Scene\Main_Menu">
+      <UniqueIdentifier>{2af2e2df-59af-4b37-8ef4-d02fdf00f156}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. Scene\Main_Menu\Gear">
+      <UniqueIdentifier>{a94fd666-69cf-4e38-ab76-d42069fcdbe3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. Scene\Main_Menu\Inventory">
+      <UniqueIdentifier>{30d76204-27e0-46f1-8f3c-4db0fd57b841}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. Scene\Main_Menu\Setting">
+      <UniqueIdentifier>{cfeaefdd-8cd5-43e7-ae2d-c678e5202aa3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. Scene\Main_Menu\Quest">
+      <UniqueIdentifier>{7f6be9ff-3769-4fe7-8798-91aa092a8af5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\MagicBall\08. Ncendio">
+      <UniqueIdentifier>{3ef84178-a7a8-4f3f-9dbe-c88c10fc5a24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Effect\Default_MagicTrail_Effect">
+      <UniqueIdentifier>{5235bea2-54db-4f3f-b105-e99f462db57b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -478,7 +475,7 @@
       <Filter>99. Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Wait.h">
-      <Filter>02. GameObject\99. Debug\03. Behaviors\04. Movement</Filter>
+      <Filter>03. Behaviors\04. Movement</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Dugbog.h">
       <Filter>02. GameObject\02. Enemy\02. Dugbog</Filter>
@@ -508,7 +505,7 @@
       <Filter>02. GameObject\04. MapObject</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Action.h">
-      <Filter>02. GameObject\99. Debug\03. Behaviors\00. Action</Filter>
+      <Filter>03. Behaviors\00. Action</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\PhysXRender.h">
       <Filter>02. GameObject\99. Debug\PhysxRender</Filter>
@@ -516,32 +513,29 @@
     <ClInclude Include="..\Public\Player.h">
       <Filter>02. GameObject\01. Player</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Check_Degree.h">
-      <Filter>02. GameObject\99. Debug\03. Behaviors\05. Function</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Turn.h">
-      <Filter>02. GameObject\99. Debug\03. Behaviors\04. Movement</Filter>
+      <Filter>03. Behaviors\04. Movement</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Selector_Degree.h">
-      <Filter>02. GameObject\99. Debug\03. Behaviors\01. Selectors</Filter>
+      <Filter>03. Behaviors\01. Selectors</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Magic.h">
-      <Filter>04. Magic</Filter>
+      <Filter>05. Magic</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MagicBall.h">
-      <Filter>04. Magic\MagicBall</Filter>
+      <Filter>05. Magic\MagicBall</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MagicBallPool.h">
-      <Filter>04. Magic\MagicBall\MagicBallPool</Filter>
+      <Filter>05. Magic\MagicBall\MagicBallPool</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Protego.h">
-      <Filter>04. Magic\MagicBall\01. Protego</Filter>
+      <Filter>05. Magic\MagicBall\01. Protego</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Revelio.h">
-      <Filter>04. Magic\MagicBall\02. Revelio</Filter>
+      <Filter>05. Magic\MagicBall\02. Revelio</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\BasicCast.h">
-      <Filter>04. Magic\MagicBall\00. BasicCast</Filter>
+      <Filter>05. Magic\MagicBall\00. BasicCast</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Professor_Fig.h">
       <Filter>02. GameObject\07. NPC</Filter>
@@ -552,17 +546,11 @@
     <ClInclude Include="..\public\Player_Camera.h">
       <Filter>02. GameObject\01. Player\00. Camera</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Default_Magic_Effect.h">
-      <Filter>02. GameObject\03. Effect\Default_Magic_Effect</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Sequence_Attack.h">
-      <Filter>02. GameObject\99. Debug\03. Behaviors\02. Sequences</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Check_Distance.h">
-      <Filter>02. GameObject\99. Debug\03. Behaviors\05. Function</Filter>
+      <Filter>03. Behaviors\02. Sequences</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Sequence_MoveTarget.h">
-      <Filter>02. GameObject\99. Debug\03. Behaviors\02. Sequences</Filter>
+      <Filter>03. Behaviors\02. Sequences</Filter>
     </ClInclude>
     <ClInclude Include="..\public\StateMachine.h">
       <Filter>02. GameObject\01. Player\01. StateMachine</Filter>
@@ -589,28 +577,25 @@
       <Filter>02. GameObject\01. Player\01. StateMachine\01. MoveState\02. LoopState</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Wingardium_Effect.h">
-      <Filter>02. GameObject\03. Effect\Wingardium_Effect</Filter>
+      <Filter>04. Effect\Wingardium_Effect</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Wingardiumleviosa.h">
-      <Filter>04. Magic\MagicBall\03. Wingardiumleviosa</Filter>
+      <Filter>05. Magic\MagicBall\03. Wingardiumleviosa</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Levioso.h">
-      <Filter>04. Magic\MagicBall\04. Levioso</Filter>
+      <Filter>05. Magic\MagicBall\04. Levioso</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Default_MagicTraill_Effect.h">
-      <Filter>02. GameObject\03. Effect\Default_MagicTraill_Effect</Filter>
+    <ClInclude Include="..\Public\Default_MagicTrail_Effect.h">
+      <Filter>04. Effect\Default_MagicTrail_Effect</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Random_Select.h">
-      <Filter>02. GameObject\99. Debug\03. Behaviors\03. RandomChoose</Filter>
+      <Filter>03. Behaviors\03. RandomChoose</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Action_Deflect.h">
-      <Filter>02. GameObject\99. Debug\03. Behaviors\00. Action</Filter>
+      <Filter>03. Behaviors\00. Action</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Sequence_Groggy.h">
-      <Filter>02. GameObject\99. Debug\03. Behaviors\02. Sequences</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\MagicSlot.h">
-      <Filter>04. Magic\MagicSlot</Filter>
+      <Filter>03. Behaviors\02. Sequences</Filter>
     </ClInclude>
     <ClInclude Include="..\public\LoadTrigger.h">
       <Filter>02. GameObject\99. Debug\LoadTrigger</Filter>
@@ -624,14 +609,8 @@
     <ClInclude Include="..\Public\UI_Finisher_Icon.h">
       <Filter>02. GameObject\05. UI\UI\UI_Finisher_Icon</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\UI_HP.h">
-      <Filter>02. GameObject\05. UI\UI\UI_HP</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\UI_Back.h">
       <Filter>02. GameObject\05. UI\UI\UI_None</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\UI_Image.h">
-      <Filter>02. GameObject\05. UI\UI_Composite</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_Group_Finisher.h">
       <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Finisher</Filter>
@@ -676,7 +655,7 @@
       <Filter>01. Levels\99. Loading\Loader</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Sequence_Levitated.h">
-      <Filter>02. GameObject\99. Debug\03. Behaviors\02. Sequences</Filter>
+      <Filter>03. Behaviors\02. Sequences</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\RollState.h">
       <Filter>02. GameObject\01. Player\01. StateMachine\03. RollState</Filter>
@@ -688,31 +667,25 @@
       <Filter>02. GameObject\01. Player\01. StateMachine\04. HardLandState</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Confringo.h">
-      <Filter>04. Magic\MagicBall\06. Confringo</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Confringo_WandDust_Effect.h">
-      <Filter>02. GameObject\03. Effect\Confringo_WandDust_Effect</Filter>
+      <Filter>05. Magic\MagicBall\06. Confringo</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_Group_Cursor.h">
       <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Cursor</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Main_Menu.h">
-      <Filter>05. Scene\Main_Menu</Filter>
+      <Filter>06. Scene\Main_Menu</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Field_Guide.h">
-      <Filter>05. Scene\Field_Guide</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Menu_Gear.h">
-      <Filter>05. Scene\Main_Menu\Gear</Filter>
+      <Filter>06. Scene\Field_Guide</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Menu_Invectory.h">
-      <Filter>05. Scene\Main_Menu\Inventory</Filter>
+      <Filter>06. Scene\Main_Menu\Inventory</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Menu_Quest.h">
-      <Filter>05. Scene\Main_Menu\Quest</Filter>
+      <Filter>06. Scene\Main_Menu\Quest</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Menu_Setting.h">
-      <Filter>05. Scene\Main_Menu\Setting</Filter>
+      <Filter>06. Scene\Main_Menu\Setting</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MapObject_Ins.h">
       <Filter>02. GameObject\04. MapObject\MapObject_Ins</Filter>
@@ -726,6 +699,21 @@
     <ClInclude Include="..\public\Seamless_Loader.h">
       <Filter>02. GameObject\99. Debug\SeamLess</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_HP.h">
+      <Filter>02. GameObject\05. UI\UI\UI_HP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Image.h">
+      <Filter>02. GameObject\05. UI\UI_Composite\UI_Image</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Inventory.h">
+      <Filter>02. GameObject\05. UI\UI_Composite\UI_Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Inventory.h">
+      <Filter>02. GameObject\08. Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Slot.h">
+      <Filter>02. GameObject\05. UI\UI\UI_Slot</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\ProtegoState.h">
       <Filter>02. GameObject\01. Player\01. StateMachine\06. Protego</Filter>
     </ClInclude>
@@ -738,9 +726,6 @@
     <ClInclude Include="..\Public\Player_Information.h">
       <Filter>02. GameObject\01. Player\03. PlayerInformation</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\LookAt.h">
-      <Filter>03. Behaviors\04. Movement</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Check_Degree.h">
       <Filter>03. Behaviors\05. Function</Filter>
     </ClInclude>
@@ -748,7 +733,7 @@
       <Filter>03. Behaviors\05. Function</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Finisher.h">
-      <Filter>04. Magic\MagicBall\07. Finisher</Filter>
+      <Filter>05. Magic\MagicBall\07. Finisher</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Level_Vault.h">
       <Filter>01. Levels\02. Vault</Filter>
@@ -761,6 +746,24 @@
     </ClInclude>
     <ClInclude Include="..\Public\Client_Enum.h">
       <Filter>99. Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Check_Degree.h">
+      <Filter>03. Behaviors\05. Function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Check_Distance.h">
+      <Filter>03. Behaviors\05. Function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\LookAt.h">
+      <Filter>03. Behaviors\04. Movement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Menu_Gear.h">
+      <Filter>06. Scene\Main_Menu\Gear</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Ncendio.h">
+      <Filter>05. Magic\MagicBall\08. Ncendio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MagicSlot.h">
+      <Filter>05. Magic\MagicSlot</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -834,7 +837,7 @@
       <Filter>02. GameObject\02. Enemy\00. Troll\01. Forest_Troll\Weapon</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Wait.cpp">
-      <Filter>02. GameObject\99. Debug\03. Behaviors\04. Movement</Filter>
+      <Filter>03. Behaviors\04. Movement</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Dugbog.cpp">
       <Filter>02. GameObject\02. Enemy\02. Dugbog</Filter>
@@ -867,7 +870,7 @@
       <Filter>02. GameObject\04. MapObject</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Action.cpp">
-      <Filter>02. GameObject\99. Debug\03. Behaviors\00. Action</Filter>
+      <Filter>03. Behaviors\00. Action</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\PhysXRender.cpp">
       <Filter>02. GameObject\99. Debug\PhysxRender</Filter>
@@ -875,32 +878,29 @@
     <ClCompile Include="..\Private\Player.cpp">
       <Filter>02. GameObject\01. Player</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Check_Degree.cpp">
-      <Filter>02. GameObject\99. Debug\03. Behaviors\05. Function</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Turn.cpp">
-      <Filter>02. GameObject\99. Debug\03. Behaviors\04. Movement</Filter>
+      <Filter>03. Behaviors\04. Movement</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Selector_Degree.cpp">
-      <Filter>02. GameObject\99. Debug\03. Behaviors\01. Selectors</Filter>
+      <Filter>03. Behaviors\01. Selectors</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Magic.cpp">
-      <Filter>04. Magic</Filter>
+      <Filter>05. Magic</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MagicBall.cpp">
-      <Filter>04. Magic\MagicBall</Filter>
+      <Filter>05. Magic\MagicBall</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Protego.cpp">
-      <Filter>04. Magic\MagicBall\01. Protego</Filter>
+      <Filter>05. Magic\MagicBall\01. Protego</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Revelio.cpp">
-      <Filter>04. Magic\MagicBall\02. Revelio</Filter>
+      <Filter>05. Magic\MagicBall\02. Revelio</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MagicBallPool.cpp">
-      <Filter>04. Magic\MagicBall\MagicBallPool</Filter>
+      <Filter>05. Magic\MagicBall\MagicBallPool</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\BasicCast.cpp">
-      <Filter>04. Magic\MagicBall\00. BasicCast</Filter>
+      <Filter>05. Magic\MagicBall\00. BasicCast</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Professor_Fig.cpp">
       <Filter>02. GameObject\07. NPC</Filter>
@@ -911,17 +911,11 @@
     <ClCompile Include="..\private\Player_Camera.cpp">
       <Filter>02. GameObject\01. Player\00. Camera</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Default_Magic_Effect.cpp">
-      <Filter>02. GameObject\03. Effect\Default_Magic_Effect</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Sequence_Attack.cpp">
-      <Filter>02. GameObject\99. Debug\03. Behaviors\02. Sequences</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Check_Distance.cpp">
-      <Filter>02. GameObject\99. Debug\03. Behaviors\05. Function</Filter>
+      <Filter>03. Behaviors\02. Sequences</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Sequence_MoveTarget.cpp">
-      <Filter>02. GameObject\99. Debug\03. Behaviors\02. Sequences</Filter>
+      <Filter>03. Behaviors\02. Sequences</Filter>
     </ClCompile>
     <ClCompile Include="..\private\StateMachine.cpp">
       <Filter>02. GameObject\01. Player\01. StateMachine</Filter>
@@ -945,28 +939,28 @@
       <Filter>02. GameObject\01. Player\01. StateMachine\01. MoveState\02. LoopState</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Wingardium_Effect.cpp">
-      <Filter>02. GameObject\03. Effect\Wingardium_Effect</Filter>
+      <Filter>04. Effect\Wingardium_Effect</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Wingardiumleviosa.cpp">
-      <Filter>04. Magic\MagicBall\03. Wingardiumleviosa</Filter>
+      <Filter>05. Magic\MagicBall\03. Wingardiumleviosa</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Levioso.cpp">
-      <Filter>04. Magic\MagicBall\04. Levioso</Filter>
+      <Filter>05. Magic\MagicBall\04. Levioso</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Default_MagicTraill_Effect.cpp">
-      <Filter>02. GameObject\03. Effect\Default_MagicTraill_Effect</Filter>
+    <ClCompile Include="..\Private\Default_MagicTrail_Effect.cpp">
+      <Filter>04. Effect\Default_MagicTrail_Effect</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Random_Select.cpp">
-      <Filter>02. GameObject\99. Debug\03. Behaviors\03. RandomChoose</Filter>
+      <Filter>03. Behaviors\03. RandomChoose</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Action_Deflect.cpp">
-      <Filter>02. GameObject\99. Debug\03. Behaviors\00. Action</Filter>
+      <Filter>03. Behaviors\00. Action</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Sequence_Groggy.cpp">
-      <Filter>02. GameObject\99. Debug\03. Behaviors\02. Sequences</Filter>
+      <Filter>03. Behaviors\02. Sequences</Filter>
     </ClCompile>
     <ClCompile Include="..\private\MagicSlot.cpp">
-      <Filter>04. Magic\MagicSlot</Filter>
+      <Filter>05. Magic\MagicSlot</Filter>
     </ClCompile>
     <ClCompile Include="..\private\LoadTrigger.cpp">
       <Filter>02. GameObject\99. Debug\LoadTrigger</Filter>
@@ -985,9 +979,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_HP.cpp">
       <Filter>02. GameObject\05. UI\UI\UI_HP</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\UI_Image.cpp">
-      <Filter>02. GameObject\05. UI\UI_Composite</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_Group_Finisher.cpp">
       <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Finisher</Filter>
@@ -1032,7 +1023,7 @@
       <Filter>01. Levels\99. Loading\Loader</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Sequence_Levitated.cpp">
-      <Filter>02. GameObject\99. Debug\03. Behaviors\02. Sequences</Filter>
+      <Filter>03. Behaviors\02. Sequences</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\RollState.cpp">
       <Filter>02. GameObject\01. Player\01. StateMachine\03. RollState</Filter>
@@ -1044,31 +1035,28 @@
       <Filter>02. GameObject\01. Player\01. StateMachine\04. HardLandState</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Confringo.cpp">
-      <Filter>04. Magic\MagicBall\06. Confringo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Confringo_WandDust_Effect.cpp">
-      <Filter>02. GameObject\03. Effect\Confringo_WandDust_Effect</Filter>
+      <Filter>05. Magic\MagicBall\06. Confringo</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_Group_Cursor.cpp">
       <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Cursor</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Main_Menu.cpp">
-      <Filter>05. Scene\Main_Menu</Filter>
+      <Filter>06. Scene\Main_Menu</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Field_Guide.cpp">
-      <Filter>05. Scene\Field_Guide</Filter>
+      <Filter>06. Scene\Field_Guide</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Menu_Gear.cpp">
-      <Filter>05. Scene\Main_Menu\Gear</Filter>
+      <Filter>06. Scene\Main_Menu\Gear</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Menu_Invectory.cpp">
-      <Filter>05. Scene\Main_Menu\Inventory</Filter>
+      <Filter>06. Scene\Main_Menu\Inventory</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Menu_Quest.cpp">
-      <Filter>05. Scene\Main_Menu\Quest</Filter>
+      <Filter>06. Scene\Main_Menu\Quest</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Menu_Setting.cpp">
-      <Filter>05. Scene\Main_Menu\Setting</Filter>
+      <Filter>06. Scene\Main_Menu\Setting</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MapObject_Ins.cpp">
       <Filter>02. GameObject\04. MapObject\MapObject_Ins</Filter>
@@ -1082,6 +1070,18 @@
     <ClCompile Include="..\private\Seamless_Loader.cpp">
       <Filter>02. GameObject\99. Debug\SeamLess</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\UI_Image.cpp">
+      <Filter>02. GameObject\05. UI\UI_Composite\UI_Image</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Inventory.cpp">
+      <Filter>02. GameObject\05. UI\UI_Composite\UI_Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Inventory.cpp">
+      <Filter>02. GameObject\08. Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Slot.cpp">
+      <Filter>02. GameObject\05. UI\UI\UI_Slot</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\ProtegoState.cpp">
       <Filter>02. GameObject\01. Player\01. StateMachine\06. Protego</Filter>
     </ClCompile>
@@ -1094,9 +1094,6 @@
     <ClCompile Include="..\Private\Player_Information.cpp">
       <Filter>02. GameObject\01. Player\03. PlayerInformation</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\LookAt.cpp">
-      <Filter>03. Behaviors\04. Movement</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Check_Degree.cpp">
       <Filter>03. Behaviors\05. Function</Filter>
     </ClCompile>
@@ -1104,7 +1101,7 @@
       <Filter>03. Behaviors\05. Function</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Finisher.cpp">
-      <Filter>04. Magic\MagicBall\07. Finisher</Filter>
+      <Filter>05. Magic\MagicBall\07. Finisher</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Level_Vault.cpp">
       <Filter>01. Levels\02. Vault</Filter>
@@ -1114,6 +1111,18 @@
     </ClCompile>
     <ClCompile Include="..\private\Level_Smith.cpp">
       <Filter>01. Levels\04. Smith</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Check_Degree.cpp">
+      <Filter>03. Behaviors\05. Function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Check_Distance.cpp">
+      <Filter>03. Behaviors\05. Function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\LookAt.cpp">
+      <Filter>03. Behaviors\04. Movement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Ncendio.cpp">
+      <Filter>05. Magic\MagicBall\08. Ncendio</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1169,6 +1178,9 @@
       <Filter>97. ShaderFiles\Meshes</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_ShadowMesh.hlsl">
+      <Filter>97. ShaderFiles\Meshes</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_ShadowMeshInstance.hlsl">
       <Filter>97. ShaderFiles\Meshes</Filter>
     </FxCompile>
   </ItemGroup>

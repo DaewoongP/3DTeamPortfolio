@@ -156,6 +156,8 @@ HRESULT CRenderer::Initialize_Prototype()
 
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_DOFBlurY"), 600.f, 600.f, 400.f, 400.f)))
 		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Picking"), 1200.f, 80.f, 160.f, 160.f)))
+		return E_FAIL;
 	//if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_MapBrushing"), 1040.f, 80.f, 160.f, 160.f)))
 	//	return E_FAIL;
 	/*if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_UI"), 1200.f, 300.f, 160.f, 160.f)))
@@ -265,8 +267,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 
 #ifdef _DEBUG
-	/*if (FAILED(Render_Picking()))
-		return E_FAIL;*/
+	if (FAILED(Render_Picking()))
+		return E_FAIL;
 	//if (FAILED(Render_Brushing()))
 	//	return E_FAIL;
 #endif // _DEBUG
@@ -700,7 +702,7 @@ HRESULT CRenderer::Render_EffectType()
 	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext)))
 		return E_FAIL;
 
-	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Glow"))))
+	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_FinGlow"))))
 		return E_FAIL;
 
 	for (auto& pGameObject : m_RenderObjects[RENDER_GLOW])
@@ -932,7 +934,7 @@ HRESULT CRenderer::Add_Components()
 	m_pMotionBlurInstance = CMotionBlurInstance::Create(m_pDevice, m_pContext, 0);
 	if (nullptr == m_pMotionBlurInstance)
 		return E_FAIL;
-	m_pGlow = CGlow::Create(m_pDevice, m_pContext, TEXT("Target_Glow"), 3.f);//파티클이 갖고있는 정보하나주면 힘을 변경하도록 하면될것같음
+	m_pGlow = CGlow::Create(m_pDevice, m_pContext, TEXT("Target_FinGlow"), 1.f);//파티클이 갖고있는 정보하나주면 힘을 변경하도록 하면될것같음
 	if (nullptr == m_pGlow)
 		return E_FAIL;
 	m_pMotionBlur = CMotionBlur::Create(m_pDevice, m_pContext, TEXT("Target_FinGlow"));
@@ -954,7 +956,7 @@ HRESULT CRenderer::Add_Components()
 	Safe_Release(pGameInstance);
 	return S_OK;
 }
-
+#ifdef _DEBUG
 HRESULT CRenderer::Render_Debug()
 {
 	for (auto& pDebugCom : m_DebugObject)
