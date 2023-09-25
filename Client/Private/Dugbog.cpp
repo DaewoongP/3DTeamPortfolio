@@ -144,6 +144,7 @@ HRESULT CDugbog::Add_Components()
 		wstring wstrErrorMSG = TEXT("[CDugbog] Failed Add_Components : ");
 		wstrErrorMSG += pErrorTag;
 		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+		__debugbreak();
 
 		return E_FAIL;
 	}
@@ -174,7 +175,7 @@ HRESULT CDugbog::SetUp_ShaderResources()
 	}
 	catch (const _tchar* pErrorTag)
 	{
-		wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed SetUp_ShaderResources : \n");
+		wstring wstrErrorMSG = TEXT("[CDugbog] Failed SetUp_ShaderResources : \n");
 		wstrErrorMSG += pErrorTag;
 		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
 

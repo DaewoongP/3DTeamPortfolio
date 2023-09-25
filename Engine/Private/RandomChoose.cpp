@@ -19,7 +19,7 @@ HRESULT CRandomChoose::Tick(const _float& fTimeDelta)
 		return E_FAIL;
 
 	// 데코레이터 확인
-	if (false == Check_Decorations())
+	if (false == Check_Decorators())
 	{
 		m_ReturnData = BEHAVIOR_FAIL;
 		return BEHAVIOR_FAIL;
@@ -29,6 +29,17 @@ HRESULT CRandomChoose::Tick(const _float& fTimeDelta)
 
 	(*m_iterCurBehavior)->Set_ReturnData(hr);
 	m_ReturnData = hr;
+
+	if (BEHAVIOR_SUCCESS == hr)
+	{
+		Check_End_Decorators();
+		Check_Success_Decorators();
+	}
+	else if (BEHAVIOR_FAIL == hr)
+	{
+		Check_End_Decorators();
+		Check_Fail_Decorators();
+	}
 
 	return hr;
 }

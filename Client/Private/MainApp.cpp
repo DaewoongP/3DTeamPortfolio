@@ -170,8 +170,8 @@ HRESULT CMainApp::Ready_Prototype_Component_For_Static()
 	{
 		wstring wstrErrorMSG = TEXT("Failed Ready_Prototype_Component_For_Static : ");
 		wstrErrorMSG += pErrorTag;
-		__debugbreak();
 		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+		__debugbreak();
 
 		return E_FAIL;
 	}

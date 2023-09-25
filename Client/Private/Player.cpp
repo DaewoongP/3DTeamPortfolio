@@ -128,7 +128,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
-
+	wcout << wstrObjectTag << endl;
 	if (wstring::npos != wstrObjectTag.find(TEXT("Weapon")))
 	{
 		CArmored_Troll::COLLISIONREQUESTDESC* pDesc = static_cast<CArmored_Troll::COLLISIONREQUESTDESC*>(CollisionEventDesc.pArg);
@@ -249,16 +249,33 @@ HRESULT CPlayer::Render()
 	{
 		_uint		iNumMeshes = m_pCustomModel->Get_NumMeshes(iPartsIndex);
 
-		for (_uint i = 0; i < iNumMeshes; ++i)
+		if (CCustomModel::HAIR == iPartsIndex)
 		{
-			m_pCustomModel->Bind_BoneMatrices(m_pShader, "g_BoneMatrices", iPartsIndex, i);
+			for (_uint i = 0; i < iNumMeshes; ++i)
+			{
+				m_pCustomModel->Bind_BoneMatrices(m_pShader, "g_BoneMatrices", iPartsIndex, i);
 
-			m_pCustomModel->Bind_Material(m_pShader, "g_DiffuseTexture", iPartsIndex, i, DIFFUSE);
-			m_pCustomModel->Bind_Material(m_pShader, "g_NormalTexture", iPartsIndex, i, NORMALS);
+				m_pCustomModel->Bind_Material(m_pShader, "g_DiffuseTexture", iPartsIndex, i, DIFFUSE);
+				m_pCustomModel->Bind_Material(m_pShader, "g_NormalTexture", iPartsIndex, i, NORMALS);
 
-			m_pShader->Begin("AnimMeshNonCull");
+				m_pShader->Begin("HairMesh");
 
-			m_pCustomModel->Render(iPartsIndex, i);
+				m_pCustomModel->Render(iPartsIndex, i);
+			}
+		}
+		else
+		{
+			for (_uint i = 0; i < iNumMeshes; ++i)
+			{
+				m_pCustomModel->Bind_BoneMatrices(m_pShader, "g_BoneMatrices", iPartsIndex, i);
+
+				m_pCustomModel->Bind_Material(m_pShader, "g_DiffuseTexture", iPartsIndex, i, DIFFUSE);
+				m_pCustomModel->Bind_Material(m_pShader, "g_NormalTexture", iPartsIndex, i, NORMALS);
+
+				m_pShader->Begin("AnimMeshNonCull");
+
+				m_pCustomModel->Render(iPartsIndex, i);
+			}
 		}
 	}
 
@@ -428,6 +445,10 @@ HRESULT CPlayer::SetUp_ShaderResources()
 	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 	if (FAILED(m_pShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
+		return E_FAIL;
+
+	_float3 vHairColor = { 0.f, 0.f, 0.f };
+	if (FAILED(m_pShader->Bind_RawValue("g_fHairColor", &vHairColor, sizeof(_float3))))
 		return E_FAIL;
 
 	ENDINSTANCE;
@@ -623,6 +644,17 @@ void CPlayer::Fix_Mouse()
 
 HRESULT CPlayer::Ready_MeshParts()
 {
+	//Hair
+	if (FAILED(m_pCustomModel->Add_MeshParts(
+		LEVEL_STATIC,
+		TEXT("Prototype_Component_MeshPart_Player_Hair"),
+		CCustomModel::HAIR)))
+	{
+		MSG_BOX("Failed Add MeshPart Hair");
+
+		return E_FAIL;
+	}
+
 	//Head
 	if (FAILED(m_pCustomModel->Add_MeshParts(
 		LEVEL_STATIC,
@@ -872,7 +904,7 @@ void CPlayer::Update_Target_Angle()
 
 void CPlayer::Shot_Basic_Spell()
 {
-	m_pMagicSlot->Action_Magic_Basic(0, m_pTargetTransform, XMMatrixIdentity(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
+	m_pMagicSlot->Action_Magic_Basic(0, m_pTargetTransform, XMMatrixTranslation(0.f, 2.5f, 0.f), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
 }
 
 void CPlayer::Protego()

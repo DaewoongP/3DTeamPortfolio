@@ -11,14 +11,6 @@
 #include "RandomChoose.h"
 #include "Client_Defines.h"
 
-BEGIN(Engine)
-class CModel;
-END
-
-BEGIN(Client)
-class CAction;
-END
-
 BEGIN(Client)
 
 class CRandom_Select final : public CRandomChoose

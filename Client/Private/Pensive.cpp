@@ -160,6 +160,7 @@ HRESULT CPensive::Add_Components()
 		wstring wstrErrorMSG = TEXT("[CPensive] Failed Add_Components : ");
 		wstrErrorMSG += pErrorTag;
 		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+		__debugbreak();
 
 		return E_FAIL;
 	}

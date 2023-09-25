@@ -17,7 +17,7 @@ class CTransform;
 class ENGINE_DLL CCustomModel : public CModel
 {
 public:
-	enum MESHTYPE { HEAD, ARM, ROBE, TOP, PANTS, SOCKS, SHOES, MESH_END };
+	enum MESHTYPE { HAIR, HEAD, ARM, ROBE, TOP, PANTS, SOCKS, SHOES, MESH_END };
 
 private:
 	explicit CCustomModel(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

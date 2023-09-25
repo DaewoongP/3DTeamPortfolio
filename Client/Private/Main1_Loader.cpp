@@ -154,15 +154,15 @@ HRESULT CMain1_Loader::Loading_For_Cliffside()
 			CAction::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Action");
 
-		/* For.Prototype_Component_Action_Deflect */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Action_Deflect"),
-			CAction_Deflect::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_Action_Deflect");
-
 		/* For.Prototype_Component_Random_Select */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Random_Select"),
 			CRandom_Select::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Random_Select");
+
+		/* For.Prototype_Component_Random_AirHit */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Random_AirHit"),
+			CRandom_AirHit::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Random_AirHit");
 
 #pragma region Behavior_Selectors
 		/* For.Prototype_Component_Selector */
@@ -228,6 +228,11 @@ HRESULT CMain1_Loader::Loading_For_Cliffside()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Check_Distance"),
 			CCheck_Distance::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Check_Distance");
+
+		/* For.Prototype_Component_Death */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Death"),
+			CDeath::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Death");
 #pragma endregion Behavior_Movements
 
 		/* For. Prototype_Component_Magic*/
@@ -296,6 +301,7 @@ HRESULT CMain1_Loader::Loading_For_Cliffside()
 		wstring wstrErrorMSG = TEXT("Failed Add_Prototype : ");
 		wstrErrorMSG += pErrorTag;
 		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+		__debugbreak();
 		return E_FAIL;
 	}
 

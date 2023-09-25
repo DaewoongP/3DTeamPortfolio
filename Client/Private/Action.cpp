@@ -39,7 +39,7 @@ void CAction::Set_Options(const wstring& _wstrAnimationTag, CModel* _pModel,
 HRESULT CAction::Initialize(void* pArg)
 {
 	/* 쿨타임 */
-	Add_Decoration([&](CBlackBoard* pBlackBoard)->_bool
+	Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 		{
 			BEGININSTANCE;
 			_float fInterval = pGameInstance->Get_World_TimeAcc() - m_fPreWorldTimeAcc;
@@ -52,7 +52,7 @@ HRESULT CAction::Initialize(void* pArg)
 		});
 
 	/* 한번만 실행할 액션인지 */
-	Add_Decoration([&](CBlackBoard* pBlackBoard)->_bool
+	Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 		{
 			if (true == m_isOneTimeAction &&
 				true == m_isEndFirstPlay)
@@ -66,9 +66,10 @@ HRESULT CAction::Initialize(void* pArg)
 
 HRESULT CAction::Tick(const _float& fTimeDelta)
 {
-	if (false == Check_Decorations())
+	if (false == Check_Decorators())
 	{
 		m_ReturnData = BEHAVIOR_FAIL;
+		Check_Fail_Decorators();
 		return BEHAVIOR_FAIL;
 	}
 
@@ -113,9 +114,12 @@ HRESULT CAction::Tick(const _float& fTimeDelta)
 		m_isEndFirstPlay = true;
 		bCheck = true;	// 나가
 	}
-
+	
 	if (true == bCheck)
+	{
+		Check_Success_Decorators();
 		return BEHAVIOR_SUCCESS;
+	}
 
 	return BEHAVIOR_RUNNING;
 }

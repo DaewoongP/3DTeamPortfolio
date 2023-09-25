@@ -56,8 +56,16 @@ public:
 	virtual HRESULT Tick(const _float & fTimeDelta) = 0;
 
 public:
-	HRESULT Add_Decoration(function<_bool(class CBlackBoard*)> Func);
-	/* 주의. pBehavior의 AddRef를 진행하지 않는다. */
+	HRESULT Add_Decorator(function<_bool(class CBlackBoard*)> Func);
+	/* 비헤이비어 종료 시 동작하는 함수를 추가한다. */
+	HRESULT Add_End_Decorator(function<_bool(class CBlackBoard*)> Func);
+	/* 비헤이비어 성공 시 동작하는 함수를 추가한다. */
+	HRESULT Add_Success_Decorator(function<_bool(class CBlackBoard*)> Func);
+	/* 비헤이비어 실패 시 동작하는 함수를 추가한다. */
+	HRESULT Add_Fail_Decorator(function<_bool(class CBlackBoard*)> Func);
+	/* 비헤이비어의 특정 함수를 실행하기 위한 기준점을 결정하는 함수를 추가한다. */
+	HRESULT Add_Function_Decorator(function<_bool(class CBlackBoard*)> Func);
+	/* 주의. pBehavior의 AddRef를 진행하지 않지만 SafeRelease를 호출한다. */
 	HRESULT Assemble_Behavior(const wstring & BehaviorTag, CBehavior * pBehavior);
 	virtual void Reset_Behavior(HRESULT result) {};
 
@@ -70,7 +78,11 @@ protected:
 	CBehavior* m_pParentBehavior = { nullptr };
 
 protected:
-	list<class CDecorator*> m_Decorations;
+	list<class CDecorator*> m_Decorators;
+	list<class CDecorator*> m_EndDecorators; // 비헤이비어 종료 시 수행할 작업을 저장할 함수객체리스트
+	list<class CDecorator*> m_SuccessDecorators; // 비헤이비어 성공 반환시 수행할 작업을 저장할 함수객체리스트
+	list<class CDecorator*> m_FailDecorators; // 비헤이비어 실패 반환시 수행할 작업을 저장할 함수객체리스트
+	list<class CDecorator*> m_FunctionDecorators; // 비헤이비어의 특정 함수를 실행하기 위한 기준점을 결정하는 작업을 저장할 함수객체리스트
 	list<CBehavior*> m_Behaviors;
 	list<CBehavior*>::iterator m_iterCurBehavior;
 
@@ -78,7 +90,11 @@ protected:
 	HRESULT m_ReturnData = { 0 };
 
 protected:
-	_bool Check_Decorations();
+	_bool Check_Decorators();
+	_bool Check_End_Decorators();
+	_bool Check_Success_Decorators();
+	_bool Check_Fail_Decorators();
+	_bool Check_Run_Function_Decorators();
 	CBehavior* Find_Behavior(const wstring & BehaviorTag);
 	virtual HRESULT Assemble_Childs() { return S_OK; }
 

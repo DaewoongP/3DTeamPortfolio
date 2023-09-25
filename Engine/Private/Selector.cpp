@@ -15,7 +15,7 @@ HRESULT CSelector::Tick(const _float& fTimeDelta)
 	if (0 == m_Behaviors.size())
 		return E_FAIL;
 
-	if (false == Check_Decorations())
+	if (false == Check_Decorators())
 	{
 		m_ReturnData = BEHAVIOR_FAIL;
 		return BEHAVIOR_FAIL;
@@ -32,11 +32,17 @@ HRESULT CSelector::Tick(const _float& fTimeDelta)
 		return BEHAVIOR_RUNNING;
 
 	case BEHAVIOR_SUCCESS:
+		Check_End_Decorators();
+		Check_Success_Decorators();
+
 		(*m_iterCurBehavior)->Reset_Behavior(hr);
 		m_iterCurBehavior = m_Behaviors.begin();
 		return BEHAVIOR_SUCCESS;
 
 	case BEHAVIOR_FAIL:
+		Check_End_Decorators();
+		Check_Fail_Decorators();
+
 		(*m_iterCurBehavior)->Reset_Behavior(hr);
 		++m_iterCurBehavior;
 

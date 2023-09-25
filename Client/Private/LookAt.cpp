@@ -21,7 +21,7 @@ HRESULT CLookAt::Initialize(void* pArg)
 
 HRESULT CLookAt::Tick(const _float& fTimeDelta)
 {
-	if (false == Check_Decorations())
+	if (false == Check_Decorators())
 		return BEHAVIOR_FAIL;
 
 	const CGameObject** ppTarget = { nullptr };

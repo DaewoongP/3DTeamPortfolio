@@ -138,6 +138,10 @@ HRESULT CMain3_Loader::Loading_For_Cliffside()
 			CWeapon_Fig_Wand::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Weapon_Fig_Wand");
 #pragma region Player Parts
+		/* For.Prototype_Component_MeshPart_Player_Hair */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_MeshPart_Player_Hair"),
+			CMeshParts::Create(m_pDevice, m_pContext, TEXT("../../Resources/Models/Anims/Player_Hair/Player_Hair.dat"), TEXT("Player_Hair")))))
+			throw TEXT("Prototype_Component_MeshPart_Player_Hair");
 
 		/* For.Prototype_Component_MeshPart_Player_Head */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_MeshPart_Player_Head"),
@@ -265,6 +269,7 @@ HRESULT CMain3_Loader::Loading_For_Cliffside()
 		wstring wstrErrorMSG = TEXT("Failed Add_Prototype : ");
 		wstrErrorMSG += pErrorTag;
 		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+		__debugbreak();
 		return E_FAIL;
 	}
 

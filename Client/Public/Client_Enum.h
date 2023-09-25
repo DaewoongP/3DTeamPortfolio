@@ -52,18 +52,20 @@ namespace Client
 	// 사용할 경우 주성환한테 얘기해주세요.
 	enum BUFF_TYPE
 	{
-		BUFF_NONE = 0,		// 아무 디버프 없음.( 평타 )
-		BUFF_SLOW = 1 << 0,
-		BUFF_FROZEN = 1 << 1,
-		BUFF_CHANGE = 1 << 2,
-		BUFF_WEAPONLOSS = 1 << 3,
-		BUFF_FIRE = 1 << 4,
-		BUFF_LEVIOSO = 1 << 5,
-		BUFF_PUSH = 1 << 6,
-		BUFF_CURSE = 1 << 7,
-		BUFF_STUPEFY = 1 << 8,
-		BUFF_DESCENDO = 1 << 9,
-		BUFF_END = 12
+		BUFF_NONE			= 0,		// 아무 디버프 없음
+		BUFF_ATTACK_LIGHT	= 1 << 0,	// 기본공격
+		BUFF_ATTACK_HEAVY	= 1 << 1,	// 마지막 공격
+		BUFF_SLOW			= 1 << 2,
+		BUFF_FROZEN			= 1 << 3,
+		BUFF_UNGRAVITY		= 1 << 4,
+		BUFF_WEAPONLOSS		= 1 << 5,
+		BUFF_FIRE			= 1 << 6,
+		BUFF_LEVIOSO		= 1 << 7,
+		BUFF_PUSH			= 1 << 8,
+		BUFF_CURSE			= 1 << 9,
+		BUFF_STUPEFY		= 1 << 10,
+		BUFF_DESCENDO		= 1 << 11,
+		BUFF_END = 13
 	};
 
 #pragma region UI Scene
