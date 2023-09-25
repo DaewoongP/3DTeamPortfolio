@@ -34,7 +34,7 @@ void CInventory::Late_Tick(_float fTimeDelta)
 {
 	if (m_isOpen)
 	{
-		m_pUI_Inventory[m_eCurOpenItemtype]->Set_InventoryItem(m_pItems[m_eCurOpenItemtype]);
+		//m_pUI_Inventory[m_eCurOpenItemtype]->Set_InventoryItem(m_pItems[m_eCurOpenItemtype]);
 		m_pUI_Inventory[m_eCurOpenItemtype]->Late_Tick(fTimeDelta);
 	}
 }
@@ -66,6 +66,7 @@ HRESULT CInventory::Add_Components()
 			pDesc.fHeight = 80.f;
 			pDesc.iHorizontal = 5;
 			pDesc.iVertical = 6;
+			pDesc.eItemtype = ITEMTYPE(i);
 		}
 		else
 		{
@@ -76,9 +77,10 @@ HRESULT CInventory::Add_Components()
 			pDesc.fHeight = 80.f;
 			pDesc.iHorizontal = 4;
 			pDesc.iVertical = 5;
+			pDesc.eItemtype = ITEMTYPE(i);
 		}
 
-		wstring wszTag = TEXT("Com_UI_Inventory");
+		wstring wszTag = TEXT("Com_UI_Inventory_");
 		wszTag += std::to_wstring(i);
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Inventory"),
 			wszTag.c_str(), reinterpret_cast<CComponent**>(&m_pUI_Inventory[i]), &pDesc)))
@@ -131,16 +133,27 @@ void CInventory::Delete_Item(ITEMTYPE eType, _uint iIndex)
 		{
 			Safe_Release(*iter);
 			iter = m_pItems[eType].erase(iter);
+			m_pUI_Inventory[eType]->Set_InventoryItem(m_pItems[eType]);
 			break;
 		}
 		++Index;
 	}
-
-	m_pUI_Inventory[eType]->Set_InventoryItem(m_pItems[eType]);
 }
 
-void CInventory::Swap_Item(CGameObject* CurItem, CGameObject* pItem, ITEMTYPE eType)
+void CInventory::Swap_Item(_uint Index, ITEMTYPE eType)
 {
+	if (nullptr == m_pPlayerCurItems[eType])
+	{
+		m_pPlayerCurItems[eType] = m_pItems[eType][Index];
+		m_pItems[eType][Index] = nullptr;
+		m_pItems[eType].erase(m_pItems[eType].begin() + Index);
+	}
+
+	CGameObject* SourItem = m_pItems[eType][Index];
+	m_pItems[eType][Index] = m_pPlayerCurItems[eType];
+	m_pPlayerCurItems[eType] = SourItem;
+
+	m_pUI_Inventory[eType]->Set_InventoryItem(m_pItems[eType]);
 }
 
 CInventory* CInventory::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -177,5 +190,15 @@ void CInventory::Free()
 		{
 			Safe_Release(pItem);
 		}
+	}
+
+	for (auto& pUI_Inven : m_pUI_Inventory)
+	{
+		Safe_Release(pUI_Inven);
+	}
+
+	for (auto& pCurItem : m_pPlayerCurItems)
+	{
+		Safe_Release(pCurItem);
 	}
 }

@@ -3,6 +3,7 @@
 #include "UI_Effect_Back.h"
 #include "UI_Back.h"
 #include "UI_Slot.h"
+#include "Inventory.h"
 
 CUI_Inventory::CUI_Inventory(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -50,6 +51,7 @@ HRESULT CUI_Inventory::Initialize(void* pArg)
 		m_fHeight = pDesc->fHeight;
 		m_iHorizontal = pDesc->iHorizontal;
 		m_iVertical = pDesc->iVertical;
+		m_eItemtype = pDesc->eItemtype;
 	}
 
 	Ready_Offset();
@@ -61,7 +63,7 @@ void CUI_Inventory::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	
+	Swap_InventoryItem();
 }
 
 void CUI_Inventory::Late_Tick(_float fTimeDelta)
@@ -195,16 +197,14 @@ HRESULT CUI_Inventory::Set_InventoryItem(vector<CGameObject*>& pItems)
 				__debugbreak;
 				return E_FAIL;
 			}
-
-			//	 m_pSlots[iIndex]->Set_IconTexture();
+			//	 m_pSlots[iIndex]->Set_IconTexture(pItem->Texture);
 		}
-		else if (nullptr == m_pSlots[iIndex]->Get_IconTexture())
+		else if (m_pSlots[iIndex]->Get_IconTexture() && nullptr!= m_pSlots[iIndex])
 		{
-			//	 m_pSlots[iIndex]->Set_IconTexture();
+			//	 m_pSlots[iIndex]->Set_IconTexture(pItem->Texture);
 		}
 		++iIndex;
 	}
-
 }
 
 HRESULT CUI_Inventory::Delete_InventoryItem(_uint iIndex)
@@ -217,7 +217,20 @@ HRESULT CUI_Inventory::Delete_InventoryItem(_uint iIndex)
 
 HRESULT CUI_Inventory::Swap_InventoryItem()
 {
-	return E_NOTIMPL;
+	if (m_eItemtype > CInventory::OUTFIT)
+		return E_FAIL;
+
+	_uint iIndex = 0;
+	for (auto& pSlot : m_pSlots)
+	{
+		if (pSlot->Get_Clicked())
+		{
+			dynamic_cast<CInventory*>(m_pOwner)->Swap_Item(iIndex, m_eItemtype);
+		}
+		++iIndex;
+	}
+
+	return S_OK;
 }
 
 CUI_Inventory* CUI_Inventory::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -229,7 +242,6 @@ CUI_Inventory* CUI_Inventory::Create(ID3D11Device* pDevice, ID3D11DeviceContext*
 		MSG_BOX("Failed to Created CUI_Inventory");
 		Safe_Release(pInstance);
 	}
-
 	return pInstance;
 }
 

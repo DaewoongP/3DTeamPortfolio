@@ -64,7 +64,7 @@ private:
 public:
 	void	Add_Item(CGameObject* pItem, ITEMTYPE eType);
 	void	Delete_Item(ITEMTYPE eType, _uint iIndex);
-	void	Swap_Item(CGameObject* CurItem, CGameObject* pItem, ITEMTYPE eType);
+	void	Swap_Item(_uint Index, ITEMTYPE eType);
 
 public:
 	static CInventory* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
