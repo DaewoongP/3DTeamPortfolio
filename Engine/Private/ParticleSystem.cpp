@@ -112,6 +112,10 @@ void CParticleSystem::Tick(_float _fTimeDelta)
 	if (false == IsEnable())
 		return;
 
+	// Stop버튼을 누른 후 모든 파티클들이 소멸하면 자동으로 Disable이 된다.
+	if (m_isStop == true && Is_AllDead())
+		Disable();
+
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
@@ -249,7 +253,17 @@ void CParticleSystem::Late_Tick(_float _fTimeDelta)
 		{
 			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_GLOW, this);
 		}
-		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BLEND, this);
+
+		if ("Default" == m_RendererModuleDesc.strPass ||
+			"TextureSheetAnimation" == m_RendererModuleDesc.strPass ||
+			"MotionBlur" == m_RendererModuleDesc.strPass)
+		{
+			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BLEND, this);
+		}
+		else
+		{
+			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+		}
 		//m_pRenderer->Add_RenderGroup(CRenderer::RENDER_MOTIONBLUR, this);
 	}
 }
@@ -272,17 +286,15 @@ void CParticleSystem::Play(_float3 vPosition)
 {
 	if (true == IsEnable())
 		Restart();
+
+	m_isStop = false;
+
 	m_pTransform->Set_Position(vPosition);
 	Enable();
 }
 void CParticleSystem::Stop()
 {
-	Disable();
-
-	for (auto iter = m_Particles[ALIVE].begin(); iter != m_Particles[ALIVE].end();)
-	{
-		iter = ::TransitionTo(iter, m_Particles[ALIVE], m_Particles[WAIT]);
-	}
+	m_isStop = true;
 }
 HRESULT CParticleSystem::Setup_ShaderResources()
 {
@@ -313,12 +325,15 @@ HRESULT CParticleSystem::Setup_ShaderResources()
 		if (FAILED(m_pShader->Bind_RawValue("g_fClipThreshold", &m_ShapeModuleDesc.fClipThreshold, sizeof(_float))))
 			throw "g_fClipThreshold";
 
+		if (FAILED(m_pShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
+			throw "g_fCamFar";
+
 		_int iClipChannel = { 3 };
 		if (m_ShapeModuleDesc.strClipChannel == "Red") { iClipChannel = 0; }
 		else if (m_ShapeModuleDesc.strClipChannel == "Green") { iClipChannel = 1; }
 		else if (m_ShapeModuleDesc.strClipChannel == "Blue") { iClipChannel = 2; }
 		else if (m_ShapeModuleDesc.strClipChannel == "Alpha") { iClipChannel = 3; }
-
+		
 		if (FAILED(m_pShader->Bind_RawValue("g_iClipChannel", &iClipChannel, sizeof(_int))))
 			throw "g_iClipChannel";
 
@@ -340,6 +355,9 @@ HRESULT CParticleSystem::Setup_ShaderResources()
 
 		if (FAILED(m_pShader->Bind_RawValue("g_isUseGradientTexture", &m_RendererModuleDesc.isUseGradientTexture, sizeof(_bool))))
 			throw "g_isUseGradientTexture";
+
+		if (FAILED(m_pShader->Bind_RawValue("g_isTextureSheetAnimationActivated", &m_TextureSheetAnimationModuleDesc.isActivate, sizeof(_bool))))
+			throw "g_isTextureSheetAnimationActivated";
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -811,6 +829,9 @@ void CParticleSystem::Reset_AllParticles()
 }
 PARTICLE_IT CParticleSystem::Wating_One_Particle()
 {
+	if (true == m_isStop)
+		return m_Particles[WAIT].end();
+
 	if (m_Particles[WAIT].empty())
 	{
 		return m_Particles[WAIT].end();

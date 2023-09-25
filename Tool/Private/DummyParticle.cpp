@@ -642,7 +642,7 @@ void CDummyParticle::TextureSheetAnimationModule_TreeNode(CEffect_Window* pEffec
 		TSAModule.iWidthLength = 1;
 		TSAModule.iHeightLength = 1;
 	}
-
+	
 	if (false == TSAModule.isActivate)
 	{
 		ImGui::SameLine();
@@ -658,6 +658,8 @@ void CDummyParticle::TextureSheetAnimationModule_TreeNode(CEffect_Window* pEffec
 		{
 			ImGui::TableNextRow();
 
+			pEffectWindow->Table_CheckBox("Animation", "ioivj992djfsdf", &TSAModule.isAnimation);
+
 			// 열 길이
 			if (pEffectWindow->Table_DragInt("Width Length", "cxvkj3999`9kskxk", (_int*)&TSAModule.iWidthLength))
 			{
@@ -670,10 +672,28 @@ void CDummyParticle::TextureSheetAnimationModule_TreeNode(CEffect_Window* pEffec
 				TSAModule.CalculateMaxSize();
 			}
 
-			pEffectWindow->Table_DragFloatWithOption("Start Frame", "vkjicjijsiji3c9", &TSAModule.fStartFrame
-				, &TSAModule.vStartFrameRange, &TSAModule.isStartFrameRange, 0.001f, 0.f, 1.f);
+			if (true == TSAModule.isAnimation)
+			{
+				pEffectWindow->Table_DragFloatWithOption("Start Frame", "vkjicjijsiji3c9", &TSAModule.fStartFrame
+					, &TSAModule.vStartFrameRange, &TSAModule.isStartFrameRange, 0.001f, 0.f, 1.f);
 
-			pEffectWindow->Table_DragFloat("Update Interval", "kjkvic898e", &TSAModule.fUpdateInterval, 0.001f, 0.015f);
+				pEffectWindow->Table_DragFloat("Update Interval", "kjkvic898e", &TSAModule.fUpdateInterval, 0.001f, 0.015f);
+				pEffectWindow->Table_CheckBox("LoopOption", "ckjvidjf93sdf", &TSAModule.isLoopOption);
+
+			}
+			else
+			{
+				pEffectWindow->Table_CheckBox("Random Range", "c99k3kdiicjxv56", &TSAModule.isSeletedIndexRange);
+
+				if (true == TSAModule.isSeletedIndexRange)
+				{
+					pEffectWindow->Table_DragInt2Range("Index Range", "kjcv993jdjjcmxmcv", (_int2*)&TSAModule.vSeletedIndexRange, 0.1f, 0, TSAModule.iMaxIndex);
+				}
+				else
+				{
+					pEffectWindow->Table_DragInt("Current Index", "k993jkdjchjus", (_int*)&TSAModule.iSeletedIndex);
+				}
+			}
 
 			// 노말 텍스처 쓸건지 여부
 			pEffectWindow->Table_CheckBox("Use Normal Texture", "vsavsr55", &TSAModule.isUseNormalTexture);
@@ -690,7 +710,6 @@ void CDummyParticle::TextureSheetAnimationModule_TreeNode(CEffect_Window* pEffec
 				}
 			}
 
-			pEffectWindow->Table_CheckBox("LoopOption", "ckjvidjf93sdf", &TSAModule.isLoopOption);
 			ImGui::EndTable();
 		}
 		ImGui::TreePop();

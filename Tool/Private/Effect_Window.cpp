@@ -324,6 +324,34 @@ _bool CEffect_Window::Table_DragInt(string _strName, string _strTag, _int* _pVal
 
 	return isResult;
 }
+_bool CEffect_Window::Table_DragInt2(string _strName, string _strTag, _int2* _pValue, _float _fDragSpeed, _int _iMin, _int _iMax)
+{
+	_bool isResult = false;
+	ImGui::PushItemWidth(m_fWidgetSize);
+
+	ImGui::TableSetColumnIndex(0);
+	ImGui::Text(_strName.data()); ImGui::TableSetColumnIndex(1);
+	string strTag = "##" + _strTag;
+	isResult = ImGui::DragInt2(strTag.data(), (_int*)_pValue, _fDragSpeed, _iMin, _iMax); ImGui::TableNextRow();
+
+	ImGui::PopItemWidth();
+	return isResult;
+}
+_bool CEffect_Window::Table_DragInt2Range(string _strName, string _strTag, _int2* _pValue, _float _fDragSpeed, _int _iMin, _int _iMax)
+{
+	_bool isResult = false;
+	ImGui::PushItemWidth(m_fWidgetSize);
+
+	ImGui::TableSetColumnIndex(0);
+	ImGui::Text(_strName.data()); ImGui::TableSetColumnIndex(1);
+	string strTag = "##" + _strTag;
+	if(0 == _iMax)
+		_iMax = 1;
+	isResult = ImGui::DragIntRange2(strTag.data(), &_pValue->x, &_pValue->y, _fDragSpeed, _iMin, _iMax); ImGui::TableNextRow();
+
+	ImGui::PopItemWidth();
+	return isResult;
+}
 CEffect_Window* CEffect_Window::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, ImVec2 _vWindowPos, ImVec2 _vWindowSize)
 {
 	CEffect_Window* pInstance = New CEffect_Window(_pDevice, _pContext);

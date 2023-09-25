@@ -942,6 +942,10 @@ HRESULT TEXTURE_SHEET_ANIMATION::Save(const _tchar* _pDirectoyPath)
 	WriteFile(hFile, &isUseNormalTexture, sizeof(isUseNormalTexture), &dwByte, nullptr);
 	WriteFile(hFile, wstrNormalPath.data(), sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
 	WriteFile(hFile, &isLoopOption, sizeof(isLoopOption), &dwByte, nullptr);
+	WriteFile(hFile, &isAnimation, sizeof(isAnimation), &dwByte, nullptr);
+	WriteFile(hFile, &isSeletedIndexRange, sizeof(isSeletedIndexRange), &dwByte, nullptr);
+	WriteFile(hFile, &vSeletedIndexRange, sizeof(vSeletedIndexRange), &dwByte, nullptr);
+	WriteFile(hFile, &iSeletedIndex, sizeof(iSeletedIndex), &dwByte, nullptr);
 
 	CloseHandle(hFile);
 	return S_OK;
@@ -981,7 +985,10 @@ HRESULT TEXTURE_SHEET_ANIMATION::Load(const _tchar* _pDirectoyPath)
 	if(true == isUseNormalTexture)
 		wstrNormalPath = wszBuffer;
 	ReadFile(hFile, &isLoopOption, sizeof(isLoopOption), &dwByte, nullptr);
-
+	ReadFile(hFile, &isAnimation, sizeof(isAnimation), &dwByte, nullptr);
+	ReadFile(hFile, &isSeletedIndexRange, sizeof(isSeletedIndexRange), &dwByte, nullptr);
+	ReadFile(hFile, &vSeletedIndexRange, sizeof(vSeletedIndexRange), &dwByte, nullptr);
+	ReadFile(hFile, &iSeletedIndex, sizeof(iSeletedIndex), &dwByte, nullptr);
 	CloseHandle(hFile);
 	// 파티클 텍스처 시트 구현해!
 	return S_OK;
@@ -991,22 +998,25 @@ void TEXTURE_SHEET_ANIMATION::Action(PARTICLE_IT& _particle_iter, _float fTimeDe
 	if (false == isActivate)
 		return;
 
-	fTimeAcc += fTimeDelta;
-	if (fTimeAcc <= fUpdateInterval)
-		return;
-
-	fTimeAcc = 0.f;
-	++_particle_iter->iCurIndex;
-	if (_particle_iter->iCurIndex > iMaxIndex)
+	if (true == isAnimation)
 	{
-		if (false == isLoopOption)
+		fTimeAcc += fTimeDelta;
+		if (fTimeAcc <= fUpdateInterval)
+			return;
+
+		fTimeAcc = 0.f;
+		++_particle_iter->iCurIndex;
+		if (_particle_iter->iCurIndex > iMaxIndex)
 		{
-			_particle_iter->fLifeTime = 0.f;
-			_particle_iter->iCurIndex = iMaxIndex; // 마지막 1프레임 살아나는거 잡는 코드
-		}
-		else
-		{
-			_particle_iter->iCurIndex = 0;
+			if (false == isLoopOption)
+			{
+				_particle_iter->fLifeTime = 0.f;
+				_particle_iter->iCurIndex = iMaxIndex; // 마지막 1프레임 살아나는거 잡는 코드
+			}
+			else
+			{
+				_particle_iter->iCurIndex = 0;
+			}
 		}
 	}
 }
@@ -1015,10 +1025,22 @@ void TEXTURE_SHEET_ANIMATION::Reset(PARTICLE_IT& _particle_iter)
 	if (false == isActivate)
 		return;
 
-	if (true == isStartFrameRange)
-		fStartFrame = Random_Generator(vStartFrameRange.x, vStartFrameRange.y);
+	if (true == isAnimation) // 텍스처시트 애니메이션
+	{
+		if (true == isStartFrameRange)
+			fStartFrame = Random_Generator(vStartFrameRange.x, vStartFrameRange.y);
 
-	_particle_iter->iCurIndex = _uint(iMaxIndex * fStartFrame);
+		_particle_iter->iCurIndex = _uint(iMaxIndex * fStartFrame);
+	}
+	else // 그냥 uv만 자르기
+	{
+		if (true == isSeletedIndexRange) // 랜덤로직
+			_particle_iter->iCurIndex = static_cast<_uint>(Random_Generator(
+				static_cast<_float>(vSeletedIndexRange.x),
+				static_cast<_float>(vSeletedIndexRange.y + 0.99f))); // 마지막 인덱스도 나오도록 +0.99f를 함
+		else
+			_particle_iter->iCurIndex = iSeletedIndex;
+	}
 }
 void TEXTURE_SHEET_ANIMATION::Restart()
 {

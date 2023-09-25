@@ -192,7 +192,7 @@ struct ENGINE_DLL SHAPE_MODULE : public MODULE
 	
 	wstring wstrClipTexturePath = { TEXT("../../Resources/Effects/Textures/Default_Particle.png") }; // 아래 인자의 채널에 사용할 텍스처
 	string strClipChannel = { "Red" }; // Red, Greend, Blue, Alpha // 클립 채널(클립 : 알파테스트로 discard)
-	_float fClipThreshold = { 0.f }; // [0, 1], 이것보다 작은 값들은 알파테스트 실패함.
+	_float fClipThreshold = { 0.1f }; // [0, 1], 이것보다 작은 값들은 알파테스트 실패함.
 	_bool isColorAffectsParticles = { true };
 	_bool isAlphaAffectsParticles = { true };
 	_bool isBilinearFiltering = { false };
@@ -282,6 +282,11 @@ struct ENGINE_DLL TEXTURE_SHEET_ANIMATION : public MODULE
 	_bool isUseNormalTexture = { false };
 	wstring wstrNormalPath = TEXT("../../Resources/Effects/Textures/Default_Normal.png");
 	_bool isLoopOption = { false };
+
+	_bool isAnimation = { true };
+	_bool isSeletedIndexRange = { true };
+	_uint2 vSeletedIndexRange = { 0, 0 };
+	_uint iSeletedIndex = { 0 };
 
 	_float fTimeAcc = { 0.f };
 };
