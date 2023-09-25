@@ -6,7 +6,6 @@ BEGIN(Engine)
 class CMesh;
 class CShader;
 class CRenderer;
-class CRigidBody;
 class CModel_Instance;
 END
 
@@ -44,7 +43,6 @@ private:
 	CShader*			m_pShader = { nullptr };
 	CShader*			m_pShadowShader = { nullptr };
 	CRenderer*			m_pRenderer = { nullptr };
-	CRigidBody*			m_pRigidBody = { nullptr };
 	CModel_Instance*	m_pModel = { nullptr };
 
 private:

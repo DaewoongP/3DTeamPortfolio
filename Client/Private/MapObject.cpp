@@ -327,7 +327,6 @@ void CMapObject::Free()
 	__super::Free();
 
 	Safe_Release(m_pRigidBody);
-	Safe_Release(m_pTransform);
 	Safe_Release(m_pShader);
 	Safe_Release(m_pShadowShader);
 	Safe_Release(m_pModel);
