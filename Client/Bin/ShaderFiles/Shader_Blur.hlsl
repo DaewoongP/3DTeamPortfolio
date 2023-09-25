@@ -70,14 +70,12 @@ PS_OUT PS_MAIN_BLURX(PS_IN In)
     PS_OUT Out = (PS_OUT) 0;
     
     float dx = 1.0f / 1280.f;
-    int Count = 0;
     float2 UV = 0;
     
     for (int i = -6; i < 6; ++i)
     {
         UV = In.vTexUV + float2(dx * i, 0.f);
         vector Blur = g_Texture.Sample(BlurSampler, UV);
-        
         if (Blur.x > 0.9f)
         {
             Out.vColor = float4(1.f, 1.f, 1.f, 1.f);
@@ -93,9 +91,8 @@ PS_OUT PS_MAIN_BLURX(PS_IN In)
 PS_OUT PS_MAIN_BLURY(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
-
-    float dy = 1.0f / (720.f / 2.f);
     
+    float dy = 1.0f / (720.f / 2.f);
     float2 UV = 0;
    
     for (int i = -6; i < 6; ++i)
@@ -104,6 +101,7 @@ PS_OUT PS_MAIN_BLURY(PS_IN In)
         vector Blur = g_Texture.Sample(BlurSampler, UV);
         Out.vColor += BlurWeights[6 + i] * Blur;
     }
+
     Out.vColor /= total;
 
     return Out;

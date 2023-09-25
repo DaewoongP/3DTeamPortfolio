@@ -180,7 +180,7 @@ PS_OUT PS_MAIN_BLOOM(PS_IN_POSTEX In)
     else
         discard;
 
-    if(Out.vColor.a <= 0.1f)
+    if (Out.vColor.a <= 0.1f)
         discard;
 
     return Out;
