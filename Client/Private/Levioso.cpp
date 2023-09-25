@@ -105,14 +105,6 @@ void CLevioso::Tick(_float fTimeDelta)
 	_float3 vWandPosition = _float4x4(m_WeaponOffsetMatrix * (*m_pWeaponMatrix)).Translation();
 	m_pWandTrail->Get_Transform()->Set_Position(vWandPosition);
 	m_pWandGlow->Get_Transform()->Set_Position(vWandPosition);
-	m_fGlowTimer -= fTimeDelta;
-	if (m_fGlowTimer < 0)
-	{
-		m_pWandGlow->Disable();
-		m_pWandTrail->Disable();
-		Do_MagicBallState_To_Next();
-	}
-		
 }
 
 void CLevioso::Late_Tick(_float fTimeDelta)
@@ -141,6 +133,14 @@ void CLevioso::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 	__super::OnCollisionExit(CollisionEventDesc);
 }
 
+HRESULT CLevioso::Reset(MAGICBALLINITDESC& InitDesc)
+{
+	__super::Reset(InitDesc);
+	m_fWingardiumEffectDeadTimer = 0.3f;
+	m_fLerpAcc = 0.0f;
+	return S_OK;
+}
+
 void CLevioso::Ready_Begin()
 {
 	m_pMainTrail->Disable();
@@ -162,7 +162,6 @@ void CLevioso::Ready_DrawMagic()
 
 void CLevioso::Ready_CastMagic()
 {
-	m_fTimeScalePerDitance = 1.f;
 	m_pMainTrail->Enable();
 	if (m_pTarget == nullptr)
 	{
@@ -186,9 +185,12 @@ void CLevioso::Ready_CastMagic()
 	{
 		m_vTargetPosition = m_pTarget->Get_Position() + m_TargetOffsetMatrix.Translation();
 	}
+	m_fTimeScalePerDitance = m_MagicBallDesc.fDistance / _float3(m_vTargetPosition - m_MagicBallDesc.vStartPosition).Length();
 	m_pMainTrail->Reset_Trail(_float3(m_MagicBallDesc.vStartPosition) + _float3(0, 0.5f, 0), _float3(m_MagicBallDesc.vStartPosition) + _float3(0, -0.5f, 0));
 	m_pMainTrail->Get_Transform()->Set_Position(m_MagicBallDesc.vStartPosition);
 	m_pMainTrail->Enable();
+	//충돌체를 켜주고
+	m_pRigidBody->Enable_Collision("Magic_Ball");
 }
 
 void CLevioso::Ready_Dying()
@@ -229,7 +231,7 @@ void CLevioso::Tick_Dying(_float fTimeDelta)
 	m_fWingardiumEffectDeadTimer -= fTimeDelta;
 	if (m_fWingardiumEffectDeadTimer < 0)
 	{
-		m_pWingardiumEffect->Disable();
+		Do_MagicBallState_To_Next();
 	}
 }
 
