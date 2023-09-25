@@ -1833,7 +1833,7 @@ HRESULT CArmored_Troll::Make_Check_Spell(_Inout_ CSelector* pSelector)
 void CArmored_Troll::Enter_Light_Attack()
 {
 	m_CollisionRequestDesc.eType = ATTACK_LIGHT;
-	m_CollisionRequestDesc.fDamage = 0.f;
+	m_CollisionRequestDesc.iDamage = 0;
 	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
 	m_pWeapon->On_Collider_Attack(&m_CollisionRequestDesc);
 }
@@ -1841,7 +1841,7 @@ void CArmored_Troll::Enter_Light_Attack()
 void CArmored_Troll::Enter_Heavy_Attack()
 {
 	m_CollisionRequestDesc.eType = ATTACK_HEAVY;
-	m_CollisionRequestDesc.fDamage = 0.f;
+	m_CollisionRequestDesc.iDamage = 0;
 	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
 	m_pWeapon->On_Collider_Attack(&m_CollisionRequestDesc);
 }
@@ -1849,7 +1849,7 @@ void CArmored_Troll::Enter_Heavy_Attack()
 void CArmored_Troll::Enter_Body_Attack()
 {
 	m_CollisionRequestDesc.eType = ATTACK_HEAVY;
-	m_CollisionRequestDesc.fDamage = 0.f;
+	m_CollisionRequestDesc.iDamage = 0;
 	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
 	Set_CollisionData(&m_CollisionRequestDesc);
 }
@@ -1857,7 +1857,8 @@ void CArmored_Troll::Enter_Body_Attack()
 void CArmored_Troll::Exit_Attack()
 {
 	m_CollisionRequestDesc.eType = ATTACK_NONE;
-	m_CollisionRequestDesc.fDamage = 0.f;
+	m_CollisionRequestDesc.iDamage = 0;
+	Set_CollisionData(&m_CollisionRequestDesc);
 	m_pWeapon->Off_Collider_Attack(&m_CollisionRequestDesc);
 }
 

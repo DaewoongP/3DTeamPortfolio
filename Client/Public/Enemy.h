@@ -32,7 +32,7 @@ public:
 	typedef struct tagCollisionRequestDesc
 	{
 		ATTACKTYPE eType = { ATTACKTYPE_END };
-		_float fDamage = { 0.f };
+		_uint iDamage = { 0 };
 		CTransform* pEnemyTransform = { nullptr };
 	}COLLISIONREQUESTDESC;
 

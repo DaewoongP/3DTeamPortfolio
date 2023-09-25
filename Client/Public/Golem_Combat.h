@@ -72,6 +72,12 @@ private: /* Çàµ¿ ¹­À½µé */
 	HRESULT Make_Random_Idle_Move(_Inout_ CRandom_Select* pRandomSelect);
 	HRESULT Make_Death(_Inout_ CSequence* pSequence);
 
+private: /* Notify Func */
+	void Enter_Light_Attack();
+	void Enter_Heavy_Attack();
+	void Enter_Body_Attack();
+	void Exit_Attack();
+
 public:
 	static CGolem_Combat* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGolem_Combat* Clone(void* pArg) override;
