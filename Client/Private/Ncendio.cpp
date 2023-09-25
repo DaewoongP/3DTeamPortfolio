@@ -27,6 +27,7 @@ HRESULT CNcendio::Initialize_Prototype(_uint iLevel)
 			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Ncendio/BurnTarget/"), m_iLevel))))
 		{
 			ENDINSTANCE;
+			__debugbreak();
 			return E_FAIL;
 		}
 	}
@@ -37,6 +38,7 @@ HRESULT CNcendio::Initialize_Prototype(_uint iLevel)
 			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Ncendio/FireCircleBoom/"), m_iLevel))))
 		{
 			ENDINSTANCE;
+			__debugbreak();
 			return E_FAIL;
 		}
 	}
@@ -47,6 +49,18 @@ HRESULT CNcendio::Initialize_Prototype(_uint iLevel)
 			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Ncendio/SmokeCloud/"), m_iLevel))))
 		{
 			ENDINSTANCE;
+			__debugbreak();
+			return E_FAIL;
+		}
+	}
+
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_FireRing_MeshEffect")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_FireRing_MeshEffect")
+			, CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/Ncendio/FireRing.ME"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			__debugbreak();
 			return E_FAIL;
 		}
 	}
@@ -163,6 +177,7 @@ void CNcendio::Ready_CastMagic()
 	m_pBurnTargetEffect->Play(m_vTargetPosition + vBurnTargetOffset);
 	m_pFireCircleBoomEffect->Play(vOffsetPosition);
 	m_pSmokeCloudEffect->Play(vOffsetPosition);
+	m_pFireRingMeshEffect->Play(vOffsetPosition);
 }
 
 void CNcendio::Ready_Dying()
@@ -199,6 +214,8 @@ HRESULT CNcendio::Add_Components()
 		, TEXT("Com_BurnTarget"), (CComponent**)&m_pBurnTargetEffect), E_FAIL);
 	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_SmokeCloud_Particle")
 		, TEXT("Com_SmokeCloud"), (CComponent**)&m_pSmokeCloudEffect), E_FAIL);
+	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_FireRing_MeshEffect")
+		, TEXT("Com_FireRing"), (CComponent**)&m_pFireRingMeshEffect), E_FAIL);
 
 	return S_OK;
 }
@@ -241,6 +258,7 @@ void CNcendio::Free()
 		Safe_Release(m_pSmokeCloudEffect);
 		Safe_Release(m_pFireCircleBoomEffect);
 		Safe_Release(m_pBurnTargetEffect);
+		Safe_Release(m_pFireRingMeshEffect);
 	}
 }
 
