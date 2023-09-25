@@ -9,6 +9,7 @@
 #include "Finisher.h"
 #include "Wingardiumleviosa.h"
 #include "Ncendio.h"
+#include "Lumos.h"
 
 IMPLEMENT_SINGLETON(CMagicBallPool)
 
@@ -26,7 +27,7 @@ HRESULT CMagicBallPool::Initialize()
     Create_InitMagic(Client::CONFRINGO, TEXT("Prototype_GameObject_Confringo"));
     Create_InitMagic(Client::FINISHER, TEXT("Prototype_GameObject_Finisher"));
     Create_InitMagic(Client::NCENDIO, TEXT("Prototype_GameObject_Ncendio"));
-
+    Create_InitMagic(Client::LUMOS, TEXT("Prototype_GameObject_Lumos"));
     Safe_Release(pGameInstance);
 
     return S_OK;
@@ -113,6 +114,7 @@ CMagicBall* CMagicBallPool::Create_Magic(SPELL eSpell, CMagicBall::MAGICBALLINIT
         pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Levioso")));
         break;
     case Client::LUMOS:
+        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Lumos")));
         break;
     case Client::PROTEGO:
         pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Protego")));

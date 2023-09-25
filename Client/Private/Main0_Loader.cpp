@@ -45,6 +45,7 @@
 #include "Finisher.h"
 #include "Wingardiumleviosa.h"
 #include "Ncendio.h"
+#include "Lumos.h"
 #pragma endregion Magic
 
 #ifdef _DEBUG
@@ -355,6 +356,12 @@ HRESULT CMain0_Loader::Loading_For_Cliffside()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Ncendio"),
 			CNcendio::Create(m_pDevice, m_pContext, LEVEL_STATIC))))
 			throw TEXT("Prototype_GameObject_Ncendio");
+
+		/* For.Prototype_GameObject_Lumos */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Lumos"),
+			CLumos::Create(m_pDevice, m_pContext, LEVEL_STATIC))))
+			throw TEXT("Prototype_GameObject_Lumos");
+		
 #pragma endregion
 		{
 			std::lock_guard<std::mutex> lock(mtx);

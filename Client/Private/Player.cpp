@@ -548,10 +548,25 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
+	// ·ç¸ð½º
+	{
+		magicInitDesc.eBuffType = BUFF_NONE;
+		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
+		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicTag = LUMOS;
+		magicInitDesc.fCoolTime = 1.5f;
+		magicInitDesc.iDamage = 0;
+		magicInitDesc.fCastDistance = 1000;
+		magicInitDesc.fBallDistance = 0;
+		magicInitDesc.fLifeTime = 30.f;
+		m_pMagicSlot->Add_Magics(magicInitDesc);
+	}
+
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(0, CONFRINGO);
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(1, LEVIOSO);
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(2, FINISHER);
-	m_pMagicSlot->Add_Magic_To_Skill_Slot(3, NCENDIO);
+	//m_pMagicSlot->Add_Magic_To_Skill_Slot(3, NCENDIO);
+	m_pMagicSlot->Add_Magic_To_Skill_Slot(3, LUMOS);
 	
 	return S_OK;
 }
@@ -629,18 +644,20 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 	if (pGameInstance->Get_DIKeyState(DIK_3, CInput_Device::KEY_DOWN))
 	{
-		CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
+		/*CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
 		if (nullptr == pTestTarget)
 			throw TEXT("pTestTarget is nullptr");
-		m_pMagicSlot->Action_Magic_Skill(2, pTestTarget->Get_Transform(), pTestTarget->Get_Offset_Matrix(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
+		m_pMagicSlot->Action_Magic_Skill(2, pTestTarget->Get_Transform(), pTestTarget->Get_Offset_Matrix(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);*/
+		m_pMagicSlot->Action_Magic_Skill(2, this->Get_Transform(), this->Get_Offset_Matrix(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_4, CInput_Device::KEY_DOWN))
 	{
-		CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
-		if (nullptr == pTestTarget)
-			throw TEXT("pTestTarget is nullptr");
-		m_pMagicSlot->Action_Magic_Skill(3, pTestTarget->Get_Transform(), pTestTarget->Get_Offset_Matrix(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
+		//CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
+		//if (nullptr == pTestTarget)
+		//	throw TEXT("pTestTarget is nullptr");
+		//m_pMagicSlot->Action_Magic_Skill(3, pTestTarget->Get_Transform(), pTestTarget->Get_Offset_Matrix(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
+		m_pMagicSlot->Action_Magic_Skill(3, nullptr, XMMatrixIdentity(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_NONE);
 	}
 
 	ENDINSTANCE;

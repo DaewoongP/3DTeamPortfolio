@@ -23,19 +23,19 @@ HRESULT CLumos::Initialize_Prototype(_uint iLevel)
 	m_iLevel = iLevel;
 	BEGININSTANCE;
 
-	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_BasicCast_Hit_Effect_Splash_Particle")))
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Lumos_Wand_Glow_Red_Effect")))
 	{
-		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_BasicCast_Hit_Effect_Splash_Particle")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BasicCast/Ht_Effect_Splash"), m_iLevel))))
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Lumos_Wand_Glow_Red_Effect")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Lumos/Red_Light"), m_iLevel))))
 		{
 			ENDINSTANCE;
 			return E_FAIL;
 		}
 	}
-	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_BasicCast_Glow_Particle")))
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Lumos_Wand_Glow_Effect")))
 	{
-		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_BasicCast_Glow_Particle")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BasicCast/Glow"), m_iLevel))))
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Lumos_Wand_Glow_Effect")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Lumos/Glow"), m_iLevel))))
 		{
 			ENDINSTANCE;
 			return E_FAIL;
@@ -75,6 +75,15 @@ HRESULT CLumos::Initialize(void* pArg)
 void CLumos::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+	m_fEndTimer -= fTimeDelta;
+
+	if(m_fEndTimer<=0)
+		Set_MagicBallState(MAGICBALL_STATE_DYING);
+
+	//위치 동기화
+	_float3 vWandPosition = _float4x4(m_WeaponOffsetMatrix * (*m_pWeaponMatrix)).Translation();
+	m_pWandGlowEffect->Get_Transform()->Set_Position(vWandPosition);
+	m_pWandGlowRedEffect->Get_Transform()->Set_Position(vWandPosition);
 }
 
 void CLumos::Late_Tick(_float fTimeDelta)
@@ -84,12 +93,6 @@ void CLumos::Late_Tick(_float fTimeDelta)
 
 void CLumos::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
-	//몹이랑 충돌했으면?
-	if (wcsstr(CollisionEventDesc.pOtherCollisionTag,TEXT("Enemy_Body")) != nullptr)
-	{
-		Set_MagicBallState(MAGICBALL_STATE_DYING);
-	}
-	__super::OnCollisionEnter(CollisionEventDesc);
 }
 
 void CLumos::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)
@@ -100,6 +103,11 @@ void CLumos::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)
 void CLumos::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 {
 	__super::OnCollisionExit(CollisionEventDesc);
+}
+
+void CLumos::Lumos_Tick(_float fTimeDelta)
+{
+	m_fEndTimer = 0.3f;
 }
 
 void CLumos::Ready_Begin()
@@ -123,18 +131,7 @@ void CLumos::Ready_CastMagic()
 
 void CLumos::Ready_Dying()
 {
-	m_pWandGlowEffect->Get_MainModuleRef().fDuration = 0.2f;
-	m_pWandGlowEffect->Get_MainModuleRef().fParticleSystemAge = 0.2f;
-	m_pWandGlowEffect->Get_MainModuleRef().iMaxParticles = 0;
-	m_pWandGlowEffect->Get_MainModuleRef().fStartLifeTime = 0.2f;
-	m_pWandGlowEffect->Get_MainModuleRef().isLooping = false;
-	//m_pWandGlowEffect->Get_MainModuleRef().
-
-	m_pWandGlowRedEffect->Get_MainModuleRef().fDuration = 0.2f;
-	m_pWandGlowRedEffect->Get_MainModuleRef().fParticleSystemAge = 0.2f;
-	m_pWandGlowRedEffect->Get_MainModuleRef().iMaxParticles = 0;
-	m_pWandGlowRedEffect->Get_MainModuleRef().fStartLifeTime = 0.2f;
-	m_pWandGlowRedEffect->Get_MainModuleRef().isLooping = false;
+	//여기에 자연스레 사라지게 해주기 만들기
 }
 
 void CLumos::Tick_Begin(_float fTimeDelta)

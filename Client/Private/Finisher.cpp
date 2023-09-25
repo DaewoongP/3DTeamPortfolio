@@ -241,8 +241,8 @@ void CFinisher::Ready_CastMagic()
 	}
 
 	_float3 vWeight[2];
-	vWeight[0] = _float3(-0.05f, -0.05f, -0.05f);
-	vWeight[1] = _float3(0.05f, 0.05f, 0.05f);
+	vWeight[0] = _float3(-5.f, -5.f, -5.f);
+	vWeight[1] = _float3(5.f, 5.f, 5.f);
 
 	for (int i = 0; i < 3; i++)
 	{
