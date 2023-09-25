@@ -53,9 +53,7 @@ void CMainApp::Tick(_float fTimeDelta)
 	// 엔진의 Tick 호출
 	m_pGameInstance->Tick_Engine(fTimeDelta);
 
-#ifdef _DEBUG
 	Tick_FPS(fTimeDelta);
-#endif // _DEBUG
 }
 
 HRESULT CMainApp::Render()
@@ -199,7 +197,6 @@ HRESULT CMainApp::Open_Level(LEVELID eLevelIndex)
 	return m_pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, eLevelIndex));
 }
 
-#ifdef _DEBUG
 void CMainApp::Tick_FPS(_float fTimeDelta)
 {
 	m_fFpsTime += fTimeDelta;
@@ -212,8 +209,11 @@ void CMainApp::Tick_FPS(_float fTimeDelta)
 		m_iFps = 0;
 		m_fFpsTime = 0.f;
 	}
+
+	//SetWindowText(g_hWnd, m_szFPS);
 }
 
+#ifdef _DEBUG
 HRESULT CMainApp::Initialize_ImGui()
 {
 	// Show the window
