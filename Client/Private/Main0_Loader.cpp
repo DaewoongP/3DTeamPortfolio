@@ -7,6 +7,7 @@
 #include "Logo_BackGround.h"
 
 #pragma region UI
+#include "UI_Group_Logo.h"
 #include "UI_Group_HP.h"
 #include "UI_Group_Potion.h"
 #include "UI_Group_Finisher.h"
@@ -130,21 +131,61 @@ HRESULT CMain0_Loader::Loading_For_Logo()
 	if (nullptr == m_pGameInstance)
 		return E_FAIL;
 
-	/* For.Prototype_Component_Texture_Logo */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_LOGO, TEXT("Prototype_Component_Texture_Logo"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Default0.jpg")))))
-	{
-		MSG_BOX("Failed Add_Prototype : (Prototype_Component_Texture_Logo)");
-		return E_FAIL;
-	}
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_LOGO, TEXT("Prototype_GameObject_UI_Group_Logo"),
+		CUI_Group_Logo::Create(m_pDevice, m_pContext))))
+		throw TEXT("Prototype_GameObject_UI_Group_Logo");
+	
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_HP"),
+			CUI_Group_HP::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_UI_Group_HP");
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_UI_Progress"),
+		CUI_Progress::Create(m_pDevice, m_pContext))))
+		throw TEXT("Prototype_Component_UI_Progress");
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Potion"),
+		CUI_Group_Potion::Create(m_pDevice, m_pContext))))
+		throw TEXT("Prototype_GameObject_UI_Group_Potion");
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Finisher"),
+		CUI_Group_Finisher::Create(m_pDevice, m_pContext))))
+		throw TEXT("Prototype_GameObject_UI_Group_Finisher");
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Skill"),
+		CUI_Group_Skill::Create(m_pDevice, m_pContext))))
+		throw TEXT("Prototype_GameObject_UI_Group_Skill");
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Finisher_Icon"),
+		CUI_Group_Finisher_Icon::Create(m_pDevice, m_pContext))))
+		throw TEXT("Prototype_GameObject_UI_Group_Finisher_Icon");
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Enemy_HP"),
+		CUI_Group_Enemy_HP::Create(m_pDevice, m_pContext))))
+		throw TEXT("Prototype_GameObject_UI_Group_Enemy_HP");
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Font"),
+		CUI_Font::Create(m_pDevice, m_pContext, TEXT("../../Resources/Fonts/NexonGothic.spritefont")))))
+		throw TEXT("Prototype_GameObject_UI_Font");
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Cursor"),
+		CUI_Group_Cursor::Create(m_pDevice, m_pContext))))
+		throw TEXT("Prototype_GameObject_UI_Group_Cursor");
+	/*if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_MiniMap"),
+		CUI_Group_MiniMap::Create(m_pDevice, m_pContext))))
+		throw TEXT("Prototype_GameObject_UI_Group_MiniMap");*/
 
-	/* For.Prototype_GameObject_Logo_BackGround */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_LOGO, TEXT("Prototype_GameObject_Logo_BackGround"),
-		CLogo_BackGround::Create(m_pDevice, m_pContext))))
-	{
-		MSG_BOX("Failed Add_Prototype : (Prototype_GameObject_Logo_BackGround)");
-		return E_FAIL;
-	}
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_UI_Image"),
+		CUI_Image::Create(m_pDevice, m_pContext))))
+		throw TEXT("Prototype_Component_UI_Image");
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_UI_Button"),
+		CUI_Button::Create(m_pDevice, m_pContext))))
+		throw TEXT("Prototype_Component_UI_Button");
+
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Field_Guide"),
+		CField_Guide::Create(m_pDevice, m_pContext))))
+		throw TEXT("Prototype_GameObject_Field_Guide");
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Main_Menu"),
+		CMain_Menu::Create(m_pDevice, m_pContext))))
+		throw TEXT("Prototype_GameObject_Main_Menu");
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Menu_Gear"),
+		CMenu_Gear::Create(m_pDevice, m_pContext))))
+		throw TEXT("Prototype_GameObject_Menu_Gear");
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Menu_Inventory"),
+		CMenu_Inventory::Create(m_pDevice, m_pContext))))
+		throw TEXT("Prototype_GameObject_Menu_Inventory");
+
 
 	return S_OK;
 }
@@ -247,57 +288,7 @@ HRESULT CMain0_Loader::Loading_For_Cliffside()
 
 		/* --------------UI-------------- */
 
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_HP"),
-			CUI_Group_HP::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_UI_Group_HP");
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_UI_Progress"),
-			CUI_Progress::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_UI_Progress");
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Potion"),
-			CUI_Group_Potion::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_UI_Group_Potion");
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Finisher"),
-			CUI_Group_Finisher::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_UI_Group_Finisher");
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Skill"),
-			CUI_Group_Skill::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_UI_Group_Skill");
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Finisher_Icon"),
-			CUI_Group_Finisher_Icon::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_UI_Group_Finisher_Icon");
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Enemy_HP"),
-			CUI_Group_Enemy_HP::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_UI_Group_Enemy_HP");
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Font"),
-			CUI_Font::Create(m_pDevice, m_pContext, TEXT("../../Resources/Fonts/NexonGothic.spritefont")))))
-			throw TEXT("Prototype_GameObject_UI_Font"); 
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Cursor"),
-			CUI_Group_Cursor::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_UI_Group_Cursor");
-		/*if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_MiniMap"),
-			CUI_Group_MiniMap::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_UI_Group_MiniMap");*/
-
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_UI_Image"),
-			CUI_Image::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_UI_Image");
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_UI_Button"),
-			CUI_Button::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_UI_Button");
-
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Field_Guide"),
-			CField_Guide::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_Field_Guide");
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Main_Menu"),
-			CMain_Menu::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_Main_Menu");
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Menu_Gear"),
-			CMenu_Gear::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_Menu_Gear");
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Menu_Inventory"),
-			CMenu_Inventory::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_Menu_Inventory");
-
+	
 		/* --------------ETC-------------- */
 		/* For.Prototype_Component_Health*/
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Health"),

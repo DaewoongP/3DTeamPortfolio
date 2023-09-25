@@ -373,6 +373,9 @@
     <Filter Include="07. GameManager">
       <UniqueIdentifier>{41feed39-b5e2-4b15-99fe-18a8117aafdf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_Logo">
+      <UniqueIdentifier>{615f137f-89fd-425e-8a34-0692f9d580b5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -774,6 +777,9 @@
     <ClInclude Include="..\public\Game_Manager.h">
       <Filter>07. GameManager</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_Group_Logo.h">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Logo</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1141,6 +1147,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Game_Manager.cpp">
       <Filter>07. GameManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Group_Logo.cpp">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Logo</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

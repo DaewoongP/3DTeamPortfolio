@@ -224,6 +224,7 @@
     <ClInclude Include="..\Public\UI_Group_Finisher.h" />
     <ClInclude Include="..\Public\UI_Group_Finisher_Icon.h" />
     <ClInclude Include="..\Public\UI_Group_HP.h" />
+    <ClInclude Include="..\Public\UI_Group_Logo.h" />
     <ClInclude Include="..\Public\UI_Group_MiniMap.h" />
     <ClInclude Include="..\Public\UI_Group_Potion.h" />
     <ClInclude Include="..\Public\UI_Group_R.h" />
@@ -381,6 +382,7 @@
     <ClCompile Include="..\Private\UI_Group_Finisher.cpp" />
     <ClCompile Include="..\Private\UI_Group_Finisher_Icon.cpp" />
     <ClCompile Include="..\Private\UI_Group_HP.cpp" />
+    <ClCompile Include="..\Private\UI_Group_Logo.cpp" />
     <ClCompile Include="..\Private\UI_Group_MiniMap.cpp" />
     <ClCompile Include="..\Private\UI_Group_Potion.cpp" />
     <ClCompile Include="..\Private\UI_Group_R.cpp" />
