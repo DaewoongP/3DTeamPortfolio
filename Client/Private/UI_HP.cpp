@@ -83,7 +83,7 @@ HRESULT CUI_HP::Add_Components()
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 	{
 		MSG_BOX("Failed CUI_HP Add_Component : (Com_Shader)");
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 
@@ -92,7 +92,7 @@ HRESULT CUI_HP::Add_Components()
 		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRendererCom))))
 	{
 		MSG_BOX("Failed CUI_HP Add_Component : (Com_Renderer)");
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 
@@ -101,7 +101,7 @@ HRESULT CUI_HP::Add_Components()
 		TEXT("Com_Buffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
 	{
 		MSG_BOX("Failed CUI_HP Add_Component : (Com_Buffer)");
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 
@@ -110,7 +110,7 @@ HRESULT CUI_HP::Add_Components()
 		TEXT("Com_Progress"), reinterpret_cast<CComponent**>(&m_pProgressCom))))
 	{
 		MSG_BOX("Failed CUI_HP Add_Component : (Com_Progress)");
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 
@@ -141,11 +141,13 @@ HRESULT CUI_HP::Initialize_Gauge(_float fMin, _float fMax, _float fCurrent)
 {
 	if (nullptr == m_pProgressCom)
 	{
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 
 	m_pProgressCom->Initailize_Gauge(fMin, fMax, fCurrent);	
+
+	return S_OK;
 }
 
 #ifdef _DEBUG

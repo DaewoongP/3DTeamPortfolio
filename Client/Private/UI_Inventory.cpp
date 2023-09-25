@@ -85,7 +85,7 @@ HRESULT CUI_Inventory::Add_Prototype()
 		CUI_Back::Create(m_pDevice, m_pContext), true)))
 	{
 		Safe_Release(pGameInstance);
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 
@@ -93,7 +93,7 @@ HRESULT CUI_Inventory::Add_Prototype()
 		CUI_Effect_Back::Create(m_pDevice, m_pContext), true)))
 	{
 		Safe_Release(pGameInstance);
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 
@@ -157,7 +157,7 @@ HRESULT CUI_Inventory::Add_ItemTexture()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("../../Resources/"), TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&pTexture))))
 	{
 		MSG_BOX("Failed CUI_Image Add_Component : (Com_Texture)");
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 	m_ItemTextures.push_back(pTexture);
@@ -194,7 +194,7 @@ HRESULT CUI_Inventory::Set_InventoryItem(vector<CGameObject*>& pItems)
 				wszTag.c_str(), reinterpret_cast<CComponent**>(&m_pSlots[iIndex]))))
 			{
 				MSG_BOX("Com_Inventory : Failed Clone Component (Com_UI_Slot)");
-				__debugbreak;
+				__debugbreak();
 				return E_FAIL;
 			}
 			//	 m_pSlots[iIndex]->Set_IconTexture(pItem->Texture);
@@ -205,6 +205,8 @@ HRESULT CUI_Inventory::Set_InventoryItem(vector<CGameObject*>& pItems)
 		}
 		++iIndex;
 	}
+
+	return S_OK;
 }
 
 HRESULT CUI_Inventory::Delete_InventoryItem(_uint iIndex)

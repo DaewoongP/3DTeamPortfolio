@@ -111,7 +111,7 @@ HRESULT CUI_Group_HP::Add_Components()
 	{
 		MSG_BOX("CUI_Group_HP : Failed Clone Component (Com_UI_HP_Frame)");
 		ENDINSTANCE;
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 
@@ -121,7 +121,7 @@ HRESULT CUI_Group_HP::Add_Components()
 	{
 		MSG_BOX("CUI_Group_HP : Failed Clone Component (Com_UI_HP)");
 		ENDINSTANCE;
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 
@@ -218,7 +218,7 @@ HRESULT CUI_Group_HP::Add_Fonts(_tchar* wszLevel)
 		TEXT("Com_UI_Font"), reinterpret_cast<CComponent**>(&pNumber), &m_pFont)))
 	{
 		MSG_BOX("CUI_Group_Enemy_HP : Failed Clone Component (Com_UI_Font_Level)");
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 

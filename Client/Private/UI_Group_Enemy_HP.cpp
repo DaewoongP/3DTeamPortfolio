@@ -116,7 +116,7 @@ HRESULT CUI_Group_Enemy_HP::Add_Components()
 	{
 		MSG_BOX("CUI_Group_Enemy_HP : Failed Clone Component (Com_UI_Enemy_HP_Frame)");
 		ENDINSTANCE;
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 
@@ -126,7 +126,7 @@ HRESULT CUI_Group_Enemy_HP::Add_Components()
 	{
 		MSG_BOX("CUI_Group_Enemy_HP : Failed Clone Component (Com_UI_Enemy_HP)");
 		ENDINSTANCE;
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 
@@ -238,7 +238,7 @@ HRESULT CUI_Group_Enemy_HP::Add_Fonts(void* pArg)
 	{
 		MSG_BOX("CUI_Group_Enemy_HP : Failed Clone Component (Com_UI_Font_Level)");
 		ENDINSTANCE;
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 	m_Fonts.push_back(pLevel);
@@ -258,7 +258,7 @@ HRESULT CUI_Group_Enemy_HP::Add_Fonts(void* pArg)
 	{
 		MSG_BOX("CUI_Group_Enemy_HP : Failed Clone Component (Com_UI_Font_Name)");
 		ENDINSTANCE;
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 	m_Fonts.push_back(pName);

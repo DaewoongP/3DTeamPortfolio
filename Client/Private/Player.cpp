@@ -160,11 +160,6 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 				ProtegoStateDesc.iHitType = CProtegoState::HIT_HEABY;
 			}
 			break;
-			case CArmored_Troll::ATTACK_BODY:
-			{
-				ProtegoStateDesc.iHitType = CProtegoState::HIT_HEABY;
-			}
-			break;
 			case CArmored_Troll::ATTACKTYPE_END:
 			{	}
 			break;
@@ -198,11 +193,6 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			}
 			break;
 			case CArmored_Troll::ATTACK_HEAVY:
-			{
-				HitStateDesc.iHitType = CHitState::HIT_HEABY;
-			}
-			break;
-			case CArmored_Troll::ATTACK_BODY:
 			{
 				HitStateDesc.iHitType = CHitState::HIT_HEABY;
 			}
@@ -311,7 +301,7 @@ HRESULT CPlayer::Add_Components()
 		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
 	{
 		MSG_BOX("Failed CPlayer Add_Component : (Com_Renderer)");
-		__debugbreak;
+		__debugbreak();
 
 		return E_FAIL;
 	}
@@ -321,7 +311,7 @@ HRESULT CPlayer::Add_Components()
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
 	{
 		MSG_BOX("Failed CPlayer Add_Component : (Com_Shader)");
-		__debugbreak;
+		__debugbreak();
 
 		return E_FAIL;
 	}
@@ -331,7 +321,7 @@ HRESULT CPlayer::Add_Components()
 		TEXT("Com_ShadowShader"), reinterpret_cast<CComponent**>(&m_pShadowShader))))
 	{
 		MSG_BOX("Failed CPlayer Add_Component : (Com_ShadowShader)");
-		__debugbreak;
+		__debugbreak();
 
 		return E_FAIL;
 	}
@@ -341,7 +331,7 @@ HRESULT CPlayer::Add_Components()
 		TEXT("Com_Model_CustomModel_Player"), reinterpret_cast<CComponent**>(&m_pCustomModel))))
 	{
 		MSG_BOX("Failed CPlayer Add_Component : (Com_Model_CustomModel_Player)");
-		__debugbreak;
+		__debugbreak();
 
 		return E_FAIL;
 	}
@@ -359,7 +349,7 @@ HRESULT CPlayer::Add_Components()
 		TEXT("Com_StateContext"), reinterpret_cast<CComponent**>(&m_pStateContext), &StateContextDesc)))
 	{
 		MSG_BOX("Failed CPlayer Add_Component : (Com_StateContext)");
-		__debugbreak;
+		__debugbreak();
 
 		return E_FAIL;
 	}
@@ -382,7 +372,7 @@ HRESULT CPlayer::Add_Components()
 		TEXT("Com_MagicSlot"), reinterpret_cast<CComponent**>(&m_pMagicSlot))))
 	{
 		MSG_BOX("Failed CPlayer Add_Component : (Com_MagicSlot)");
-		__debugbreak;
+		__debugbreak();
 
 		return E_FAIL;
 	}
@@ -412,7 +402,7 @@ HRESULT CPlayer::Add_Components()
 		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
 	{
 		MSG_BOX("Failed CPlayer Add_Component : (Com_RigidBody)");
-		__debugbreak;
+		__debugbreak();
 
 		return E_FAIL;
 	}
@@ -426,7 +416,7 @@ HRESULT CPlayer::Add_Components()
 		TEXT("Com_Player_Information"), reinterpret_cast<CComponent**>(&m_pPlayer_Information))))
 	{
 		MSG_BOX("Failed CPlayer Add_Component : (Com_Player_Information)");
-		__debugbreak;
+		__debugbreak();
 
 		return E_FAIL;
 	}

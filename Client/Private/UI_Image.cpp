@@ -100,7 +100,7 @@ HRESULT CUI_Image::Add_Components()
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 	{
 		MSG_BOX("Failed CUI_Image Add_Component : (Com_Shader)");
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 
@@ -109,7 +109,7 @@ HRESULT CUI_Image::Add_Components()
 		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRendererCom))))
 	{
 		MSG_BOX("Failed CUI_Image Add_Component : (Com_Renderer)");
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 
@@ -118,7 +118,7 @@ HRESULT CUI_Image::Add_Components()
 		TEXT("Com_Buffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
 	{
 		MSG_BOX("Failed CUI_Image Add_Component : (Com_Buffer)");
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 

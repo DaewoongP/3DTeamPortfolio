@@ -87,7 +87,7 @@ HRESULT CInventory::Add_Components()
 		{
 			MSG_BOX("Com_Inventory : Failed Clone Component (Com_UI_Inventory )");
 			Safe_Release(pGameInstance);
-			__debugbreak;
+			__debugbreak();
 			return E_FAIL;
 		}
 	}

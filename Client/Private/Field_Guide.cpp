@@ -186,7 +186,7 @@ HRESULT CField_Guide::Add_Cursor()
 	{
 		MSG_BOX("Com_Field_Guide : Failed Clone Component (Com_UI_Group_Cursor)");
 		Safe_Release(pGameInstance);
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 

@@ -94,7 +94,7 @@ HRESULT CUI_Group_Cursor::Add_Components()
 	{
 		MSG_BOX("CUI_Group_Cursor : Failed Clone Component (Com_UI_Cursor)");
 		ENDINSTANCE;
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 
@@ -103,7 +103,7 @@ HRESULT CUI_Group_Cursor::Add_Components()
 	{
 		MSG_BOX("CUI_Group_Cursor : Failed Clone Component (Com_UI_Cursor_Inner)");
 		ENDINSTANCE;
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 

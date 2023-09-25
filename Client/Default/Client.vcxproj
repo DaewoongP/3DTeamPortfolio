@@ -167,7 +167,6 @@
     <ClInclude Include="..\Public\Action.h" />
     <ClInclude Include="..\Public\Death.h" />
     <ClInclude Include="..\Public\Enemy.h" />
-    <ClInclude Include="..\Public\Action_Deflect.h" />
     <ClInclude Include="..\Public\Ncendio.h" />
     <ClInclude Include="..\Public\Inventory.h" />
     <ClInclude Include="..\Public\Check_Degree.h" />
@@ -325,7 +324,6 @@
     <ClCompile Include="..\Private\Action.cpp" />
     <ClCompile Include="..\Private\Death.cpp" />
     <ClCompile Include="..\Private\Enemy.cpp" />
-    <ClCompile Include="..\Private\Action_Deflect.cpp" />
     <ClCompile Include="..\Private\Ncendio.cpp" />
     <ClCompile Include="..\Private\Inventory.cpp" />
     <ClCompile Include="..\Private\Check_Degree.cpp" />

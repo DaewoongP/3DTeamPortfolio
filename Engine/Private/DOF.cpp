@@ -52,7 +52,7 @@ HRESULT CDOF::Initialize_Prototype(const _tchar* pTargetTag, _float LightPower)
 	if (FAILED(Add_Components()))
 	{
 		MSG_BOX("Failed to Create CDOF Shader");
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 	return S_OK;

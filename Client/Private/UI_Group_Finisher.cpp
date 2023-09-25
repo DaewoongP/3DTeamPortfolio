@@ -89,7 +89,7 @@ HRESULT CUI_Group_Finisher::Add_Prototype()
 		CUI_Back::Create(m_pDevice, m_pContext), true)))
 	{
 		ENDINSTANCE;
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 
@@ -97,7 +97,7 @@ HRESULT CUI_Group_Finisher::Add_Prototype()
 		CUI_Finisher::Create(m_pDevice, m_pContext), true)))
 	{
 		ENDINSTANCE;
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 
@@ -119,7 +119,7 @@ HRESULT CUI_Group_Finisher::Add_Components(wstring wszTag)
 	{
 		MSG_BOX("Com_UI_Finisher : Failed Clone Component (Com_UI_Finisher_Frame)");
 		ENDINSTANCE;
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 	m_pBacks.push_back(pBack);
@@ -131,7 +131,7 @@ HRESULT CUI_Group_Finisher::Add_Components(wstring wszTag)
 	{
 		MSG_BOX("Com_UI_Finisher : Failed Clone Component (Com_UI_Finisher)");
 		ENDINSTANCE;
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 	m_pFinishers.push_back(pFinisher);

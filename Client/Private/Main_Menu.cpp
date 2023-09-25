@@ -139,7 +139,7 @@ HRESULT CMain_Menu::Add_Components()
 	{
 		MSG_BOX("Com_Menu : Failed Clone Component (Com_UI_Effect_Back_Menu_Frame)");
 		Safe_Release(pGameInstance);
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 
@@ -147,7 +147,7 @@ HRESULT CMain_Menu::Add_Components()
 	{
 		MSG_BOX("Com_Menu : Failed Clone Component (Com_UI_Effect_Back_Menu_Keys)");
 		Safe_Release(pGameInstance);
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 
@@ -155,7 +155,7 @@ HRESULT CMain_Menu::Add_Components()
 	{
 		MSG_BOX("Com_Menu : Failed Clone Component (Com_UI_Effect_Back_Menu_Keys)");
 		Safe_Release(pGameInstance);
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 
@@ -172,7 +172,7 @@ HRESULT CMain_Menu::Add_Components()
 	{
 		MSG_BOX("Com_Info_Main : Failed Clone Component (Com_UI_Effect_Back_Menu_Back)");
 		Safe_Release(pGameInstance);
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 	Safe_Release(pGameInstance);
@@ -194,7 +194,7 @@ HRESULT CMain_Menu::Add_TextComponent(wstring wszTag)
 	{
 		MSG_BOX("Com_Info_Main : Failed Clone Component (Com_UI_Effect_Back_Text)");
 		Safe_Release(pGameInstance);
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 	m_pTexts.push_back(pText);
@@ -215,7 +215,7 @@ HRESULT CMain_Menu::Add_Cursor()
 	{
 		MSG_BOX("Com_Info_Main : Failed Clone Component (Com_UI_Group_Cursor)");
 		Safe_Release(pGameInstance);
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 

@@ -41,7 +41,7 @@ HRESULT CUI_Slot::Initialize(void* pArg)
 			if (nullptr == m_Textures[BACK] || nullptr == m_Textures[ICON] || nullptr == m_Textures[FRAME])
 			{
 				MSG_BOX("Failed Create UI Slot Texture");
-				__debugbreak;
+				__debugbreak();
 				return E_FAIL;
 			}
 		}
@@ -55,7 +55,7 @@ HRESULT CUI_Slot::Initialize(void* pArg)
 		if (nullptr == m_AlphaTextures[ICON] || nullptr == m_AlphaTextures[FRAME])
 		{
 			MSG_BOX("Failed Create UI Slot Texture");
-			__debugbreak;
+			__debugbreak();
 			return E_FAIL;
 		}
 		
@@ -133,7 +133,7 @@ HRESULT CUI_Slot::Add_Components()
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 	{
 		MSG_BOX("Failed CUI_Slot Add_Component : (Com_Shader)");
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 
@@ -142,7 +142,7 @@ HRESULT CUI_Slot::Add_Components()
 		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRendererCom))))
 	{
 		MSG_BOX("Failed CUI_Slot Add_Component : (Com_Renderer)");
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 
@@ -151,7 +151,7 @@ HRESULT CUI_Slot::Add_Components()
 		TEXT("Com_Buffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
 	{
 		MSG_BOX("Failed CUI_Slot Add_Component : (Com_Buffer)");
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 

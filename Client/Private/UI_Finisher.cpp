@@ -76,7 +76,7 @@ HRESULT CUI_Finisher::Add_Components()
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 	{
 		MSG_BOX("Failed CUI_Finisher Add_Component : (Com_Shader)");
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 
@@ -85,7 +85,7 @@ HRESULT CUI_Finisher::Add_Components()
 		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRendererCom))))
 	{
 		MSG_BOX("Failed CUI_Finisher Add_Component : (Com_Renderer)");
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 
@@ -94,7 +94,7 @@ HRESULT CUI_Finisher::Add_Components()
 		TEXT("Com_Buffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
 	{
 		MSG_BOX("Failed CUI_Finisher Add_Component : (Com_Buffer)");
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 
@@ -103,7 +103,7 @@ HRESULT CUI_Finisher::Add_Components()
 		TEXT("Com_Progress"), reinterpret_cast<CComponent**>(&m_pProgressCom))))
 	{
 		MSG_BOX("Failed CUI_Finisher Add_Component : (Com_Progress)");
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 

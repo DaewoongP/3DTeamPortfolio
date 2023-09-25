@@ -82,7 +82,7 @@ HRESULT CUI_Group_Potion::Add_Components()
 	{
 		MSG_BOX("CUI_Group_Potion : Failed Clone Component (Com_UI_Potion)");
 		ENDINSTANCE;
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 

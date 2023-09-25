@@ -45,7 +45,7 @@ HRESULT CPlayer_Information::Add_Components()
 		TEXT("Com_Health"), reinterpret_cast<CComponent**>(&m_pHealth), &HealthDesc)))
 	{
 		MSG_BOX("Failed CPlayer Add_Component : (Com_Health)");
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 
@@ -56,7 +56,7 @@ HRESULT CPlayer_Information::Add_Components()
 		TEXT("Com_Finisher"), reinterpret_cast<CComponent**>(&m_pFinisher), &HealthDesc)))
 	{
 		MSG_BOX("Failed CPlayer Add_Component : (Com_Finisher)");
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 
@@ -76,7 +76,7 @@ _bool CPlayer_Information::Is_Use_Fnisher()
 
 void CPlayer_Information::Using_Fnisher()
 {
-	m_pFinisher->Set_HP(m_pFinisher->Get_HP() - m_pFinisher->Get_MaxHP() * 0.5f);
+	m_pFinisher->Set_HP(m_pFinisher->Get_HP() - m_pFinisher->Get_MaxHP() / 2);
 }
 
 void CPlayer_Information::fix_HP(_int _iNum)

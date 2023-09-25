@@ -168,7 +168,7 @@ HRESULT CStateContext::Ready_StateMachine()
 		ENDINSTANCE;
 
 		MSG_BOX("Failed Ready_StateMachine");
-		__debugbreak;
+		__debugbreak();
 
 		return E_FAIL;
 	};
@@ -181,7 +181,7 @@ HRESULT CStateContext::Ready_StateMachine()
 		ENDINSTANCE;
 
 		MSG_BOX("Failed Ready_StateMachine");
-		__debugbreak;
+		__debugbreak();
 
 		return E_FAIL;
 	};
@@ -194,7 +194,7 @@ HRESULT CStateContext::Ready_StateMachine()
 		ENDINSTANCE;
 
 		MSG_BOX("Failed Ready_StateMachine");
-		__debugbreak;
+		__debugbreak();
 
 		return E_FAIL;
 	};
@@ -207,7 +207,7 @@ HRESULT CStateContext::Ready_StateMachine()
 		ENDINSTANCE;
 
 		MSG_BOX("Failed Ready_StateMachine");
-		__debugbreak;
+		__debugbreak();
 
 		return E_FAIL;
 	};
@@ -220,7 +220,7 @@ HRESULT CStateContext::Ready_StateMachine()
 		ENDINSTANCE;
 
 		MSG_BOX("Failed Ready_StateMachine");
-		__debugbreak;
+		__debugbreak();
 
 		return E_FAIL;
 	};
@@ -233,7 +233,7 @@ HRESULT CStateContext::Ready_StateMachine()
 		ENDINSTANCE;
 
 		MSG_BOX("Failed Ready_StateMachine");
-		__debugbreak;
+		__debugbreak();
 
 		return E_FAIL;
 	};
@@ -246,7 +246,7 @@ HRESULT CStateContext::Ready_StateMachine()
 		ENDINSTANCE;
 
 		MSG_BOX("Failed Ready_StateMachine");
-		__debugbreak;
+		__debugbreak();
 
 		return E_FAIL;
 	};
@@ -259,7 +259,7 @@ HRESULT CStateContext::Ready_StateMachine()
 		ENDINSTANCE;
 
 		MSG_BOX("Failed Ready_StateMachine");
-		__debugbreak;
+		__debugbreak();
 
 		return E_FAIL;
 	};
@@ -273,7 +273,7 @@ HRESULT CStateContext::Ready_StateMachine()
 
 		MSG_BOX("Failed Ready_StateMachine");
 
-		__debugbreak;
+		__debugbreak();
 
 		return E_FAIL;
 	};
@@ -287,7 +287,7 @@ HRESULT CStateContext::Ready_StateMachine()
 
 		MSG_BOX("Failed Ready_StateMachine");
 
-		__debugbreak;
+		__debugbreak();
 
 		return E_FAIL;
 	};

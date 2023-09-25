@@ -131,7 +131,7 @@ HRESULT CUI_Group_Skill::Add_Components(wstring wszTag)
 	{
 		MSG_BOX("Com_UI_Group_Skill : Failed Clone Component (Com_UI_Effect_Back_Main_)");
 		ENDINSTANCE;
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 	m_pMains.push_back(pMain);
@@ -147,7 +147,7 @@ HRESULT CUI_Group_Skill::Add_Components(wstring wszTag)
 	{
 		MSG_BOX("Com_UI_Group_Skill : Failed Clone Component (Com_UI_Back_Frame)");
 		ENDINSTANCE;
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 	m_pFrames.push_back(pFrame);
@@ -163,7 +163,7 @@ HRESULT CUI_Group_Skill::Add_Components(wstring wszTag)
 	{
 		MSG_BOX("Com_UI_Group_Skill : Failed Clone Component (Com_UI_Back_Number)");
 		ENDINSTANCE;
-		__debugbreak;
+		__debugbreak();
 		return E_FAIL;
 	}
 	m_pNumbers.push_back(pNumber);
@@ -369,7 +369,7 @@ HRESULT CUI_Group_Skill::Add_SpellProtoType()
 					CTexture::Create(m_pDevice, m_pContext, wszPath))))
 				{
 					MSG_BOX("Failed Create Texture Component");
-					__debugbreak;
+					__debugbreak();
 				}
 			}
 		}
@@ -394,7 +394,7 @@ HRESULT CUI_Group_Skill::Add_SpellTexture()
 			TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&pTexture))))
 		{
 			MSG_BOX("Failed CUI_Image Add_Component : (Com_Texture)");
-			__debugbreak;
+			__debugbreak();
 			return E_FAIL;
 		}
 
