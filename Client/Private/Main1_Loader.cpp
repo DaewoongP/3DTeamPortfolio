@@ -76,6 +76,8 @@ HRESULT CMain1_Loader::Loading()
 
 	LeaveCriticalSection(&m_Critical_Section);
 
+	m_isFinished = true;
+
 	if (FAILED(hr))
 		return E_FAIL;
 
@@ -84,8 +86,6 @@ HRESULT CMain1_Loader::Loading()
 
 HRESULT CMain1_Loader::Loading_For_Logo()
 {
-	m_isFinished = true;
-
 	return S_OK;
 }
 
@@ -218,8 +218,6 @@ HRESULT CMain1_Loader::Loading_For_Cliffside()
 		return E_FAIL;
 	}
 
-	m_isFinished = true;
-
 	return S_OK;
 }
 
@@ -241,8 +239,12 @@ HRESULT CMain1_Loader::Loading_For_Vault()
 		__debugbreak();
 		return E_FAIL;
 	}
-	m_isFinished = true;
 
+	return S_OK;
+}
+
+HRESULT CMain1_Loader::Loading_For_GreatHall()
+{
 	return S_OK;
 }
 

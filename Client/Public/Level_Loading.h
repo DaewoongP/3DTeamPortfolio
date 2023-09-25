@@ -37,6 +37,7 @@ private:
 	HRESULT Loading_Logo(const _tchar* pLayerTag);
 	HRESULT Loading_Cliffside(const _tchar* pLayerTag);
 	HRESULT Loading_Vault(const _tchar* pLayerTag);
+	HRESULT Loading_GreatHall(const _tchar* pLayerTag);
 
 private:
 	_bool Check_Thread_ExitCode(HANDLE hWnd);

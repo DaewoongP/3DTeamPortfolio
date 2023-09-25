@@ -58,6 +58,7 @@ private:
 	HRESULT Loading_For_Logo();
 	HRESULT Loading_For_Cliffside();
 	HRESULT Loading_For_Vault();
+	HRESULT Loading_For_GreatHall();
 	
 private:
 	HRESULT Loading_Map_Object(const _tchar* pMapObjectPath, LEVELID eID);
