@@ -18,6 +18,7 @@ class CPlayer_Camera;
 class CWeapon_Player_Wand;
 class CStateContext;
 class CPlayer_Information;
+struct CMagic::MAGICDESC;
 END
 
 BEGIN(Client)
@@ -77,6 +78,9 @@ private:
 	_float		m_fClothPower = { 0.f };
 	_float		m_fClothPowerPlus = { 0.0f };
 
+	CMagic::MAGICDESC* m_pBasicDesc_Light = { nullptr };
+	CMagic::MAGICDESC* m_pBasicDesc_Heavy = { nullptr };
+
 private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
@@ -90,6 +94,7 @@ private:
 private:
 	HRESULT Ready_MeshParts();
 	HRESULT Ready_Camera();
+	HRESULT Ready_MagicDesc();
 
 public:
 	// 마법에 함수가 잘 들어가나 테스트용도입니다.

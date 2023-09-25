@@ -12,6 +12,8 @@
 
 #include "Armored_Troll.h"
 
+#include "Magic.h"
+
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
@@ -63,6 +65,13 @@ HRESULT CPlayer::Initialize(void* pArg)
 	if (FAILED(Ready_Camera()))
 	{
 		MSG_BOX("Failed Ready Player Camera");
+
+		return E_FAIL;
+	}
+
+	if (FAILED(Ready_MagicDesc()))
+	{
+		MSG_BOX("Failed Ready _MagicDesc");
 
 		return E_FAIL;
 	}
@@ -183,12 +192,17 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 				break;
 			}
 
-			ProtegoStateDesc.pTransform = CollisionEventDesc.pOtherTransform;
+			ProtegoStateDesc.pTransform = pDesc->pEnemyTransform;
 
 			m_pStateContext->Set_StateMachine(TEXT("Protego"), &ProtegoStateDesc);
 		}
 		//회피시 무시
 		else if (m_pStateContext->Is_Current_State(TEXT("Roll")))
+		{
+
+		}
+		//피격중인 상태일 경우 무시
+		else if (m_pStateContext->Is_Current_State(TEXT("Hit")))
 		{
 
 		}
@@ -220,7 +234,7 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 				break;
 			}
 
-			HitStateDesc.pTransform = CollisionEventDesc.pOtherTransform;
+			HitStateDesc.pTransform = pDesc->pEnemyTransform;
 
 			m_pStateContext->Set_StateMachine(TEXT("Hit"), &HitStateDesc);
 
@@ -395,7 +409,7 @@ HRESULT CPlayer::Add_Components()
 	RigidBodyDesc.vInitPosition = _float3(2.f, 2.f, 2.f);
 	RigidBodyDesc.vInitRotation = m_pTransform->Get_Quaternion();
 	RigidBodyDesc.fStaticFriction = 0.f;
-	RigidBodyDesc.fDynamicFriction = 0.f;
+	RigidBodyDesc.fDynamicFriction = 1.f;
 	RigidBodyDesc.fRestitution = 0.f;
 	PxCapsuleGeometry MyGeometry = PxCapsuleGeometry(0.5f, 0.5f);
 	RigidBodyDesc.pGeometry = &MyGeometry;
@@ -771,6 +785,36 @@ HRESULT CPlayer::Ready_Camera()
 	return S_OK;
 }
 
+HRESULT CPlayer::Ready_MagicDesc()
+{
+	CMagic::MAGICDESC magicInitDesc;
+	magicInitDesc.eBuffType = BUFF_ATTACK_LIGHT;
+	magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
+	magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+	magicInitDesc.eMagicTag = BASICCAST;
+	magicInitDesc.fCoolTime = 0.f;
+	magicInitDesc.fDamage = 10.f;
+	magicInitDesc.fCastDistance = 1000;
+	magicInitDesc.fBallDistance = 30;
+	magicInitDesc.fLifeTime = 0.6f;
+
+	m_pBasicDesc_Light = New CMagic::MAGICDESC(magicInitDesc);
+
+	magicInitDesc.eBuffType = BUFF_ATTACK_HEAVY;
+	magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
+	magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+	magicInitDesc.eMagicTag = BASICCAST;
+	magicInitDesc.fCoolTime = 0.f;
+	magicInitDesc.fDamage = 10.f;
+	magicInitDesc.fCastDistance = 1000;
+	magicInitDesc.fBallDistance = 30;
+	magicInitDesc.fLifeTime = 0.6f;
+
+	m_pBasicDesc_Heavy = New CMagic::MAGICDESC(magicInitDesc);
+
+	return S_OK;
+}
+
 
 void CPlayer::MagicTestTextOutput()
 {
@@ -905,13 +949,15 @@ void CPlayer::Update_Target_Angle()
 
 void CPlayer::Shot_Basic_Spell()
 {
-	//Find_Target_For_Distance();
+	Find_Target_For_Distance();
+	m_pMagicSlot->Add_Magics(*m_pBasicDesc_Light);
 	m_pMagicSlot->Action_Magic_Basic(0, m_pTargetTransform, XMMatrixTranslation(0.f, 2.5f, 0.f), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
 }
 
 void CPlayer::Shot_Basic_Last_Spell()
 {
-	//Find_Target_For_Distance();
+	Find_Target_For_Distance();
+	m_pMagicSlot->Add_Magics(*m_pBasicDesc_Heavy);
 	m_pMagicSlot->Action_Magic_Basic(0, m_pTargetTransform, XMMatrixTranslation(0.f, 2.5f, 0.f), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
 }
 
@@ -1000,6 +1046,7 @@ HRESULT CPlayer::Bind_Notify()
 	
 	funcNotify = [&] {(*this).Shot_Basic_Last_Spell(); };
 	
+	//Basic_Last
 	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Hvy_frmLft_anm"), TEXT("Shot_Spell"), funcNotify)))
 	{
 		MSG_BOX("Failed Bind_Notify");
@@ -1093,9 +1140,15 @@ void CPlayer::Find_Target_For_Distance()
 {
 	BEGININSTANCE;
 
-	unordered_map<const _tchar*, CComponent*>* pLayer = pGameInstance->Find_Components_In_Layer(LEVEL_STATIC, TEXT("Layer_Monster"));
+	unordered_map<const _tchar*, CComponent*>* pLayer = pGameInstance->Find_Components_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Monster"));
 
-	_float fMinDistance = { 10000.0f };
+	if (nullptr == pLayer)
+	{
+		MSG_BOX("not MonsterLayer");
+		return;
+	}
+
+	_float fMinDistance = { 10.0f };
 
 
 	//거리가 낮은 놈을 저장
@@ -1144,6 +1197,7 @@ void CPlayer::Find_Target_For_Distance()
 		if (nullptr != m_pTargetTransform)
 		{
 			Safe_Release(m_pTargetTransform);
+			m_pTargetTransform = nullptr;
 		}
 	}
 
@@ -1200,6 +1254,8 @@ void CPlayer::Free()
 		{
 			Safe_Release(m_pTargetTransform);
 		}
-		
+
+		Safe_Delete(m_pBasicDesc_Heavy);
+		Safe_Delete(m_pBasicDesc_Light);
 	}
 }

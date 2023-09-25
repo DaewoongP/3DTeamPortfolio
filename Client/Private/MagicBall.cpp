@@ -94,6 +94,7 @@ void CMagicBall::Tick(_float fTimeDelta)
 			if (m_isFirstFrameInState)
 			{
 				Ready_Dying();
+				m_pRigidBody->Disable_Collision("Magic_Ball");
 				m_isFirstFrameInState = false;
 			}
 
@@ -129,7 +130,6 @@ void CMagicBall::Late_Tick(_float fTimeDelta)
 
 void CMagicBall::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
-	m_pRigidBody->Disable_Collision("Magic_Ball");
 }
 
 void CMagicBall::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)
@@ -153,6 +153,7 @@ HRESULT CMagicBall::Reset(MAGICBALLINITDESC& InitDesc)
 	m_pWeaponMatrix = InitDesc.pWeaponMatrix;
 	m_WeaponOffsetMatrix = InitDesc.WeaponOffsetMatrix;
 
+	Safe_Release(m_pTarget);
 	m_pTarget = InitDesc.pTarget;
 	Safe_AddRef(m_pTarget);
 
@@ -177,6 +178,7 @@ HRESULT CMagicBall::Reset(MAGICBALLINITDESC& InitDesc)
 	
 	m_pRigidBody->Disable_Collision("Magic_Ball");
 	m_pTransform->Set_WorldMatrix(XMMatrixIdentity());
+
 	return S_OK;
 }
 

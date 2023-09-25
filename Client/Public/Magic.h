@@ -76,7 +76,7 @@ protected:
 	//발동시 적용시켜줄 쿨타임
 	_float						m_fInitCoolTime = { 0 };
 	_float						m_fCurrentCoolTime = { 0 };
-	//데미지
+	//데미지oa
 	_float						m_fDamage = { 0 };
 	// 마법의 사거리
 	_float						m_fCastDistance = { 0 };

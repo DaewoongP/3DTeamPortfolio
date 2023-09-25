@@ -18,7 +18,7 @@ HRESULT CMagicBallPool::Initialize()
     Safe_AddRef(pGameInstance);
 
     // default 10°³ »ý¼º
-    Create_InitMagic(Client::BASICCAST, TEXT("Prototype_GameObject_BasicCast"), 30);
+    Create_InitMagic(Client::BASICCAST, TEXT("Prototype_GameObject_BasicCast"), 3);
     Create_InitMagic(Client::PROTEGO, TEXT("Prototype_GameObject_Protego"));
     Create_InitMagic(Client::REVELIO, TEXT("Prototype_GameObject_Revelio"));
     Create_InitMagic(Client::WINGARDIUMLEVIOSA, TEXT("Prototype_GameObject_Wingardiumleviosa"));
