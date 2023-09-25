@@ -9,12 +9,14 @@
 /* =============================================== */
 
 #include "Parts.h"
+#include "Enemy.h"
 #include "Client_Defines.h"
 
 BEGIN(Engine)
 class CModel;
 class CShader;
 class CRenderer;
+class CRigidBody;
 END
 
 BEGIN(Client)
@@ -33,10 +35,20 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
+public:
+	void On_Collider_Attack(CEnemy::COLLISIONREQUESTDESC* pCollisionRequestDesc) {
+		Set_CollisionData(pCollisionRequestDesc);
+		m_pRigidBody->Enable_Collision("Attack");
+	}
+	void Off_Collider_Attack(CEnemy::COLLISIONREQUESTDESC* pCollisionRequestDesc) {
+		Set_CollisionData(pCollisionRequestDesc);
+		m_pRigidBody->Disable_Collision("Attack");
+	}
 private:
 	CModel* m_pModelCom = { nullptr };
 	CShader* m_pShaderCom = { nullptr };
 	CRenderer* m_pRendererCom = { nullptr };
+	CRigidBody* m_pRigidBody = { nullptr };
 
 private:
 	HRESULT Add_Components(void* pArg);
