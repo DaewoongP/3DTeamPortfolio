@@ -88,7 +88,7 @@ void CMagicCastingState::OnStateEnter(void* _pArg)
 	}
 
 	//스킬(임시... 코드 바꿔야 할 확률 100%)
-	if (nullptr != _pArg && 
+	if (nullptr != _pArg && true == m_isReadySpell &&
 		(
 		pGameInstance->Get_DIKeyState(DIK_1, CInput_Device::KEY_DOWN) ||
 		pGameInstance->Get_DIKeyState(DIK_2, CInput_Device::KEY_DOWN) ||
@@ -102,6 +102,11 @@ void CMagicCastingState::OnStateEnter(void* _pArg)
 		
 		//함수 받아와야 겠다.
 		m_pOwnerModel->Bind_Notify(m_vecSpellActionTextList[m_iSpellActionIndex], TEXT("Shot_Spell"), pMagicCastingStateDesc->pFuncSpell);
+
+		//애니메이션 재생
+		m_pOwnerModel->Change_Animation(m_vecSpellActionTextList[m_iSpellActionIndex]);
+
+		m_isReadySpell = false;
 
 		Spell_Action_Count();
 	}
@@ -162,7 +167,9 @@ void CMagicCastingState::Bind_Notify()
 	m_pOwnerModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_StepBwd_03_anm"), TEXT("BasicSpell_Ready"), Notify_Pointer);
 	m_pOwnerModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_StepBwd_04_anm"), TEXT("BasicSpell_Ready"), Notify_Pointer);
 
-	
+	m_pOwnerModel->Bind_Notify(TEXT("Spell_Action_01"), TEXT("Spell_Ready"), Notify_Pointer);
+	m_pOwnerModel->Bind_Notify(TEXT("Spell_Action_02"), TEXT("Spell_Ready"), Notify_Pointer);
+	m_pOwnerModel->Bind_Notify(TEXT("Spell_Action_03"), TEXT("Spell_Ready"), Notify_Pointer);
 }
 
 void CMagicCastingState::Initialize_BasicSpell_Combo()
