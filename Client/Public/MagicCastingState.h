@@ -21,6 +21,23 @@ class CMagicCastingState :
         BASICSPELL_RANDOM_BACK,
         BASICSPELL_RANDOM_END     
     };
+
+    enum SPELLACTION
+    {
+        SPELL_ACTION_01,
+        SPELL_ACTION_02,
+        SPELL_ACTION_03,
+        SPELL_ACTION_END
+    };
+public:
+    typedef struct tagMagicCastingStateDesc
+    {
+        //노티파이에 넣을 함수포인터
+        function<void()> pFuncSpell = { nullptr };
+    }MAGICCASTINGSTATEDESC;
+
+
+
 private:
     explicit CMagicCastingState(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext);
     explicit CMagicCastingState(const CMagicCastingState& rhs);
@@ -51,6 +68,10 @@ private:
 
     _bool m_isLastBasicSpellBack = { false };
 
+    vector<wstring> m_vecSpellActionTextList;
+
+    _uint m_iSpellActionIndex = { (_uint)SPELL_ACTION_END };
+
 private:
     void Initialize_BasicSpell_Combo();
 
@@ -64,6 +85,9 @@ private:
 
     //주문 시전시 초기화 할것 
     void Initialize_Spell();
+
+
+    void Spell_Action_Count();
 
 private:
     void Action_Casual_Tick();
