@@ -379,6 +379,9 @@
     <Filter Include="98. Default\99. Headers">
       <UniqueIdentifier>{91c3e316-2a51-40fe-a9b3-e3fef6e8989d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_Loading">
+      <UniqueIdentifier>{9aa8f3bd-bbc6-46ed-92e0-477200a4d147}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -771,13 +774,14 @@
     <ClInclude Include="..\Public\UI_Logo.h">
       <Filter>02. GameObject\05. UI\UI\UI_Logo</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\UI_Group_Loading.h" />
-    </ClInclude>
     <ClInclude Include="..\Public\Weapon_Golem_Combat.h">
       <Filter>02. GameObject\02. Enemy\03. Golem\00. Combat\Weapon</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Lumos.h">
       <Filter>05. Magic\MagicBall\05. Lumos</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Group_Loading.h">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Loading</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1138,13 +1142,14 @@
     <ClCompile Include="..\Private\UI_Logo.cpp">
       <Filter>02. GameObject\05. UI\UI\UI_Logo</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\UI_Group_Loading.cpp" />
-    </ClCompile>
     <ClCompile Include="..\Private\Weapon_Golem_Combat.cpp">
       <Filter>02. GameObject\02. Enemy\03. Golem\00. Combat\Weapon</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Lumos.cpp">
       <Filter>05. Magic\MagicBall\05. Lumos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Group_Loading.cpp">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Loading</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
