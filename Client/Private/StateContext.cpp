@@ -92,6 +92,8 @@ HRESULT CStateContext::Set_StateMachine(const _tchar* _pTag, void * _pArg)
 
 	m_pCurrentStateMachine->OnStateEnter(_pArg);
 
+	lstrcpy(m_wszPreStateKey, _pTag);
+
 	return S_OK;
 }
 

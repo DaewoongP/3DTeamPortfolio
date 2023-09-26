@@ -112,6 +112,7 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	ENDINSTANCE;
 
+	Update_Target_Angle();
 
 	__super::Tick(fTimeDelta);
 
@@ -121,7 +122,6 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	UpdateLookAngle();
 
-	Update_Target_Angle();
 
 	//m_pStateContext->Tick(fTimeDelta);
 

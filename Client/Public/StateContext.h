@@ -50,6 +50,7 @@ private:
 
 public:
     //Get,Set
+    const _tchar* Get_PreStateKey() const { return m_wszPreStateKey; }
 
 public:
     virtual HRESULT Initialize_Prototype();
@@ -59,6 +60,7 @@ public:
 
 public:
     HRESULT Set_StateMachine(const _tchar* _pTag, void * _pArg = nullptr);
+
 
     _bool Is_Current_State(const _tchar* _pTag);
 
@@ -87,6 +89,8 @@ private:
     _float m_fRotaionSpeed = { 0.0f };
 
     unordered_map<const _tchar*, CStateMachine*> m_pStateMachines;
+
+    _tchar m_wszPreStateKey[MAX_PATH] = {};
 
 private:
     void FinishAnimation();

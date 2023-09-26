@@ -48,6 +48,7 @@ void CHitState::OnStateEnter(void* _pArg)
 
 	Safe_AddRef(m_pTargetTransform);
 
+	*m_pIsFinishAnimation = false;
 
 	Set_Dir();
 }
@@ -311,17 +312,17 @@ void CHitState::PowerfulHit_Tick()
 			default:
 				break;
 			}
-
+			Go_Idle();
 			*m_pIsFinishAnimation = false;
 		}
 		//기상애니메이션 끝났을 경우 아이들
-		if (true == *m_pIsFinishAnimation && (
+		/*if (true == *m_pIsFinishAnimation && (
 			!wcscmp(m_pOwnerModel->Get_Animation()->Get_AnimationName(), TEXT("Hu_Rct_Knockdown_Fwd_Getup_anm")) ||
 			!wcscmp(m_pOwnerModel->Get_Animation()->Get_AnimationName(), TEXT("Hu_Rct_Knockdown_Bwd_Getup_anm"))))
 		{
 			Go_Idle();
 			*m_pIsFinishAnimation = false;
-		}
+		}*/
 	}
 }
 
