@@ -13,7 +13,7 @@ private:
 
 public:
 	HRESULT Reserve_Particle(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* szParticleTag, const _tchar* szParticleDirectoryPath, _uint iNumReserveParticles);
-	void Play_Particle(const _tchar* szParticleTag);
+	void Play_Particle(const _tchar* szParticleTag, _float3 vWorldPosition);
 	void Return_Particle(const _tchar* szParticleTag, CParticleSystem* pParticle);
 
 private:
