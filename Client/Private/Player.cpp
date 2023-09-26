@@ -15,6 +15,8 @@
 
 #include "Magic.h"
 
+#include "UI_Group_Skill.h"
+
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
@@ -85,6 +87,9 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 	m_fClothPower = 3.0f;
 	m_fClothPowerPlus = 1.0f;
+
+	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::FIRST, CONFRINGO);
+	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::SECOND, LEVIOSO);
 
 	return S_OK;
 }
@@ -448,6 +453,18 @@ HRESULT CPlayer::Add_Components()
 
 		return E_FAIL;
 	}
+
+	/* Com_UI_Group_Skill_1 */
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Skill"),
+		TEXT("Com_UI_Group_Skill_1"), reinterpret_cast<CComponent**>(&m_UI_Group_Skill_01))))
+	{
+		MSG_BOX("Failed CPlayer Add_Component : (Com_UI_Group_Skill_1)");
+		__debugbreak();
+
+		return E_FAIL;
+	}
+
+
 
 	return S_OK;
 }
@@ -1382,6 +1399,8 @@ void CPlayer::Free()
 		Safe_Release(m_pStateContext);
 		Safe_Release(m_pRigidBody);
 		Safe_Release(m_pPlayer_Information);
+		Safe_Release(m_UI_Group_Skill_01);
+
 		
 		if (nullptr != m_pTargetTransform)
 		{
