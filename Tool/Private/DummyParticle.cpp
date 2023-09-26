@@ -110,7 +110,7 @@ void CDummyParticle::Tick_Imgui(_float _fTimeDelta)
 	ImGui::Separator();
 
 	if (ImGui::Button("Play"))
-		Play();
+		Play(m_pTransform->Get_Position());
 	ImGui::SameLine();
 	if (ImGui::Button("Stop"))
 		Stop();
