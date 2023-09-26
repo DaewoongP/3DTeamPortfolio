@@ -315,7 +315,8 @@ void CFinisher::Tick_DrawMagic(_float fTimeDelta)
 
 void CFinisher::Tick_CastMagic(_float fTimeDelta)
 {
-	Do_MagicBallState_To_Next();
+	if (!m_DustParticle->IsEnable())
+		Do_MagicBallState_To_Next();
 }
 
 void CFinisher::Tick_Dying(_float fTimeDelta)

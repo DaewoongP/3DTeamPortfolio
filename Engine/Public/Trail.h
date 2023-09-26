@@ -116,6 +116,9 @@ protected:
 	vector<_float3> m_vSplineLerpPostion;
 	vector<_float3> m_vSplineDir;
 
+	// For. SpinMove
+	_float m_fRotationAcc = { 0.f };
+
 protected:
 	CRenderer* m_pRenderer = { nullptr };
 	CVIBuffer_Rect_Trail* m_pBuffer = { nullptr };
