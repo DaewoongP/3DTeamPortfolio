@@ -664,6 +664,11 @@ void CPlayer::Key_Input(_float fTimeDelta)
 	{
 		m_pRigidBody->Add_Force(m_pTransform->Get_Up() * 10.f, PxForceMode::eIMPULSE);
 	}
+	
+	if (pGameInstance->Get_DIKeyState(DIK_L, CInput_Device::KEY_DOWN))
+	{
+		CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_Dust01"), m_pTransform->Get_Position());
+	}
 
 	ENDINSTANCE;
 }
@@ -1166,7 +1171,7 @@ void CPlayer::Find_Target_For_Distance()
 
 	if (nullptr == pLayer)
 	{
-		MSG_BOX("not MonsterLayer");
+		//MSG_BOX("not MonsterLayer");
 		return;
 	}
 

@@ -1,5 +1,6 @@
 #include "..\Public\ParticleSystemPool.h"
 #include "Component_Manager.h"
+#include "String_Manager.h"
 
 IMPLEMENT_SINGLETON(CParticleSystemPool)
 
@@ -27,7 +28,7 @@ HRESULT CParticleSystemPool::Reserve_Particle(ID3D11Device* pDevice, ID3D11Devic
 	for (_uint i = 0; i < iNumReserveParticles; ++i)
 	{
 		CParticleSystem* pParticle = dynamic_cast<CParticleSystem*>(pComponent_Manager->Clone_Component(0, szPrototypeTag, nullptr));
-		//pParticle->Set_ParticleTag;
+		pParticle->Set_ParticleTag(szParticleTag);
 		pParticleQueue->Push_Back(pParticle);
 	}
 
@@ -49,23 +50,34 @@ void CParticleSystemPool::Play_Particle(const _tchar* szParticleTag, _float3 vWo
 		return;
 
 	_tchar szComponentTag[MAX_PATH] = TEXT("GameObject_");
+	CString_Manager* pString_Manager = CString_Manager::GetInstance();
+	Safe_AddRef(pString_Manager);
+
 	lstrcat(szComponentTag, szParticleTag);
 	lstrcat(szComponentTag, Generate_HashtagW().c_str());
 
 	// 현재 실행중인 레이어에 할당.
 	CParticleSystem* pParticle = pParticleQueue->Pop_Front();
-	pParticle->Get_Transform()->Set_Position(vWorldPosition);
-	pComponent_Manager->Add_Component(pParticle, 0, TEXT("Layer_Particle"), szComponentTag);
+	if (nullptr == pParticle)
+	{
+		_tchar szPrototypeTag[MAX_PATH] = TEXT("Prototype_GameObject_");
+		lstrcat(szPrototypeTag, szParticleTag);
+		pParticle = dynamic_cast<CParticleSystem*>(pComponent_Manager->Clone_Component(0, szPrototypeTag, nullptr));
+		pParticle->Set_ParticleTag(szParticleTag);
+	}
 
+	pParticle->Play(vWorldPosition);
+	pComponent_Manager->Add_Component(pParticle, 0, TEXT("Layer_Particle"), pString_Manager->Make_WChar(szComponentTag));
+
+	Safe_Release(pString_Manager);
 	Safe_Release(pComponent_Manager);
 }
 
-void CParticleSystemPool::Return_Particle(const _tchar* szParticleTag, CParticleSystem* pParticle)
+void CParticleSystemPool::Return_Particle(CParticleSystem* pParticle)
 {
 	// 죽은 파티클을 다시 큐에 담는다
 	Safe_AddRef(pParticle);
-	//pParticle->get_PArticleTag;
-	Find_ParticleQueue(szParticleTag)->Push_Back(pParticle);
+	Find_ParticleQueue((pParticle->Get_ParticleTag()).c_str())->Push_Back(pParticle);
 }
 
 CParticleSystemQueue* CParticleSystemPool::Find_ParticleQueue(const _tchar* szParticleTag)

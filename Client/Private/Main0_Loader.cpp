@@ -27,6 +27,7 @@
 
 #pragma region Effects
 #include "ParticleSystem.h"
+#include "ParticleSystemPool.h"
 #include "Trail.h"
 #include "MeshEffect.h"
 #include "Wingardium_Effect.h"
@@ -377,6 +378,14 @@ HRESULT CMain0_Loader::Loading_For_Cliffside()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_MagicSlot"),
 			CMagicSlot::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_MagicSlot");
+
+		{
+			std::lock_guard<std::mutex> lock(mtx);
+			
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Dust01"),
+				TEXT("../../Resources/GameData/ParticleData/Ncendio/FireCircleBoom/"), 20)))
+				throw TEXT("Reserve Particle : Particle_Dust01");
+		}
 
 		/* --------------Debug-------------- */
 #ifdef _DEBUG
