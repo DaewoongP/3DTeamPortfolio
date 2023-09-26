@@ -68,6 +68,7 @@ void CParticleSystemPool::Play_Particle(const _tchar* szParticleTag, _float3 vWo
 
 	pParticle->Play(vWorldPosition);
 	pComponent_Manager->Add_Component(pParticle, 0, TEXT("Layer_Particle"), pString_Manager->Make_WChar(szComponentTag));
+	pComponent_Manager->Set_CurrentScene(TEXT("Scene_Main"), true);
 
 	Safe_Release(pString_Manager);
 	Safe_Release(pComponent_Manager);
