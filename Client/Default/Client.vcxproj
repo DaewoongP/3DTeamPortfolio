@@ -195,6 +195,7 @@
     <ClInclude Include="..\Public\MapObject_Ins.h" />
     <ClInclude Include="..\Public\Random_AirHit.h" />
     <ClInclude Include="..\Public\Sequence_AirHit.h" />
+    <ClInclude Include="..\Public\StandingState.h" />
     <ClInclude Include="..\Public\UI_Font.h" />
     <ClInclude Include="..\Public\UI_Group_Cursor.h" />
     <ClInclude Include="..\Public\UI_Group_Enemy_HP.h" />
@@ -352,6 +353,7 @@
     <ClCompile Include="..\Private\MapObject_Ins.cpp" />
     <ClCompile Include="..\Private\Random_AirHit.cpp" />
     <ClCompile Include="..\Private\Sequence_AirHit.cpp" />
+    <ClCompile Include="..\Private\StandingState.cpp" />
     <ClCompile Include="..\Private\UI_Font.cpp" />
     <ClCompile Include="..\Private\UI_Group_Cursor.cpp" />
     <ClCompile Include="..\Private\UI_Group_Enemy_HP.cpp" />

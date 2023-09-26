@@ -100,6 +100,11 @@ void CHitState::Go_Idle()
 	Set_StateMachine(TEXT("Idle"));
 }
 
+void CHitState::Go_Standing()
+{
+	Set_StateMachine(TEXT("Standing"));
+}
+
 void CHitState::Set_Dir()
 {
 #pragma region 각구하기
@@ -312,7 +317,7 @@ void CHitState::PowerfulHit_Tick()
 			default:
 				break;
 			}
-			Go_Idle();
+			Go_Standing();
 			*m_pIsFinishAnimation = false;
 		}
 		//기상애니메이션 끝났을 경우 아이들

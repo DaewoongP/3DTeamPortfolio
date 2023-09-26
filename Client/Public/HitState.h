@@ -69,6 +69,8 @@ private:
 private:
     void Go_Idle();
 
+    void Go_Standing();
+
     //임시로 만듬
 
     //방향을 구한다.

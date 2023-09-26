@@ -1252,6 +1252,7 @@ void CPlayer::Shot_Magic_Spell()
 	BEGININSTANCE;
 	//입력 되면 안되는 스테이트
 	if (pGameInstance->Get_DIKeyState(DIK_1, CInput_Device::KEY_DOWN) &&
+		false == m_pStateContext->Is_Current_State(TEXT("Standing")) &&
 		false == m_pStateContext->Is_Current_State(TEXT("Hit")) &&
 		false == m_pStateContext->Is_Current_State(TEXT("Protego")) &&
 		false == m_pStateContext->Is_Current_State(TEXT("Hard Land")) &&
@@ -1267,6 +1268,7 @@ void CPlayer::Shot_Magic_Spell()
 		m_pStateContext->Set_StateMachine(TEXT("Magic_Cast"), &MagicCastingStateDesc);
 	}
 	else if (pGameInstance->Get_DIKeyState(DIK_2, CInput_Device::KEY_DOWN) &&
+		false == m_pStateContext->Is_Current_State(TEXT("Standing")) &&
 		false == m_pStateContext->Is_Current_State(TEXT("Hit")) &&
 		false == m_pStateContext->Is_Current_State(TEXT("Protego")) &&
 		false == m_pStateContext->Is_Current_State(TEXT("Hard Land")) &&
@@ -1281,6 +1283,7 @@ void CPlayer::Shot_Magic_Spell()
 		m_pStateContext->Set_StateMachine(TEXT("Magic_Cast"), &MagicCastingStateDesc);
 	}
 	else if (pGameInstance->Get_DIKeyState(DIK_3, CInput_Device::KEY_DOWN) &&
+		false == m_pStateContext->Is_Current_State(TEXT("Standing")) &&
 		false == m_pStateContext->Is_Current_State(TEXT("Hit")) &&
 		false == m_pStateContext->Is_Current_State(TEXT("Protego")) &&
 		false == m_pStateContext->Is_Current_State(TEXT("Hard Land")) &&
@@ -1295,6 +1298,7 @@ void CPlayer::Shot_Magic_Spell()
 		m_pStateContext->Set_StateMachine(TEXT("Magic_Cast"), &MagicCastingStateDesc);
 	}
 	else if (pGameInstance->Get_DIKeyState(DIK_4, CInput_Device::KEY_DOWN) &&
+		false == m_pStateContext->Is_Current_State(TEXT("Standing")) &&
 		false == m_pStateContext->Is_Current_State(TEXT("Hit")) &&
 		false == m_pStateContext->Is_Current_State(TEXT("Protego")) &&
 		false == m_pStateContext->Is_Current_State(TEXT("Hard Land")) &&

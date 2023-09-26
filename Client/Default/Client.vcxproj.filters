@@ -777,6 +777,9 @@
     <ClInclude Include="..\Public\Weapon_Golem_Combat.h">
       <Filter>02. GameObject\02. Enemy\03. Golem\00. Combat\Weapon</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\StandingState.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\07. Hit</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1144,6 +1147,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Weapon_Golem_Combat.cpp">
       <Filter>02. GameObject\02. Enemy\03. Golem\00. Combat\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\StandingState.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\07. Hit</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
