@@ -102,7 +102,7 @@ public:
 	void Translate(_float3 _vPosition) const;
 	void Rotate(_float4 _vRotation) const;
 
-	void Enable_Collision(const _char* szColliderTag);
+	void Enable_Collision(const _char* szColliderTag, CGameObject* pThisCollision);
 	void Disable_Collision(const _char* szColliderTag);
 
 private:

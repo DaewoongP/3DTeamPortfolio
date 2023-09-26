@@ -255,7 +255,7 @@ void CBasicCast::Ready_CastMagic()
 	m_pMainGlow->Play(vWandPosition);
 
 	//충돌체를 켜주고
-	m_pRigidBody->Enable_Collision("Magic_Ball");
+	m_pRigidBody->Enable_Collision("Magic_Ball", this);
 }
 
 void CBasicCast::Ready_Dying()

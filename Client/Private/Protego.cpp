@@ -138,7 +138,7 @@ void CProtego::Tick(_float fTimeDelta)
 void CProtego::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
-	m_pRigidBody->Enable_Collision("Magic_Ball");
+	m_pRigidBody->Enable_Collision("Magic_Ball", this);
 #ifdef _DEBUG
 	this->Tick_Imgui();
 #endif // _DEBUG

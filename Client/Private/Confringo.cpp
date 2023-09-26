@@ -281,7 +281,7 @@ void CConfringo::Ready_CastMagic()
 	m_pMainTrail->Enable();
 	m_pWandDustEffect->Enable();
 	//충돌체를 켜주고
-	m_pRigidBody->Enable_Collision("Magic_Ball");
+	m_pRigidBody->Enable_Collision("Magic_Ball", this);
 }
 
 void CConfringo::Ready_Dying()

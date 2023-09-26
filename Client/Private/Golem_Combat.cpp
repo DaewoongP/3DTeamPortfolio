@@ -1002,7 +1002,7 @@ void CGolem_Combat::Enter_Body_Attack()
 	m_CollisionRequestDesc.iDamage = 0;
 	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
 	Set_CollisionData(&m_CollisionRequestDesc);
-	m_pRigidBody->Enable_Collision("Enemy_Attack");
+	m_pRigidBody->Enable_Collision("Enemy_Attack", this);
 }
 
 void CGolem_Combat::Exit_Attack()

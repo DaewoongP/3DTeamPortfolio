@@ -190,7 +190,7 @@ void CLevioso::Ready_CastMagic()
 	m_pMainTrail->Get_Transform()->Set_Position(m_MagicBallDesc.vStartPosition);
 	m_pMainTrail->Enable();
 	//충돌체를 켜주고
-	m_pRigidBody->Enable_Collision("Magic_Ball");
+	m_pRigidBody->Enable_Collision("Magic_Ball", this);
 }
 
 void CLevioso::Ready_Dying()
