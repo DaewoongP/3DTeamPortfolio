@@ -15,8 +15,6 @@ CWeapon_Player_Wand::CWeapon_Player_Wand(const CWeapon_Player_Wand& rhs)
 
 HRESULT CWeapon_Player_Wand::Initialize_Prototype()
 {
-	
-
 	return __super::Initialize_Prototype();
 }
 
@@ -79,7 +77,7 @@ void CWeapon_Player_Wand::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	//Do_Lumos(fTimeDelta);
+	Do_Lumos(fTimeDelta);
 }
 
 void CWeapon_Player_Wand::Late_Tick(_float fTimeDelta)
@@ -126,27 +124,35 @@ HRESULT CWeapon_Player_Wand::Render()
 
 void CWeapon_Player_Wand::Do_Lumos(_float fTimeDelta)
 {
-	BEGININSTANCE
-		if (false == m_isLightOn && pGameInstance->Get_DIKeyState(DIK_F4, CInput_Device::KEY_DOWN))
-		{
-			m_isLightOn = true;
-			AccTime = 0.f;
+	BEGININSTANCE;
+	if (false == m_isLightOn && pGameInstance->Get_DIKeyState(DIK_F4, CInput_Device::KEY_DOWN))
+	{
+		m_isLightOn = true;
+		AccTime = 0.f;
 
-		}
-		else if (true == m_isLightOn && pGameInstance->Get_DIKeyState(DIK_F4, CInput_Device::KEY_DOWN))
-		{
-			m_isLightOn = false;
-			AccTime = 0.f;
-		}
+	}
+	else if (true == m_isLightOn && pGameInstance->Get_DIKeyState(DIK_F4, CInput_Device::KEY_DOWN))
+	{
+		m_isLightOn = false;
+		AccTime = 0.f;
+	}
 	if (m_isLightOn)
 	{
 		CLight::LIGHTDESC LightInfo;
 		ZEROMEM(&LightInfo);
-		LightInfo.vPos = _float4((m_WandPointOffsetMatrix * m_pTransform->Get_WorldMatrix()).Translation());
-		CGameObject* Target = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Player"), TEXT("GameObject_Player")));
+		CGameObject* Target = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_VAULT, TEXT("Layer_Player"), TEXT("GameObject_Player")));
+		if (nullptr == Target)
+		{
+			ENDINSTANCE;
+			return;
+		}
+
+		_float3 vPos = Target->Get_Transform()->Get_Position();
+		_float3 vLook = XMVector3Normalize(Target->Get_Transform()->Get_Look()) * 2.f;
 		LightInfo.eType = CLight::TYPE_LUMOS;
-		LightInfo.vLookAt = _float4(Target->Get_Transform()->Get_WorldMatrix().Translation());
-		LightInfo.fRange =15.f;
+		LightInfo.vPos = (vPos + vLook + _float3(0.f, 2.5f, 0.f)).TransCoord();
+		LightInfo.vLookAt = vPos.TransCoord();
+		LightInfo.fRange = 15.f;
 		LightInfo.fSpotPower = 2.f;
 		if (AccTime < 1.f)
 			AccTime += fTimeDelta*3.f;
@@ -160,13 +166,21 @@ void CWeapon_Player_Wand::Do_Lumos(_float fTimeDelta)
 	}
 	else if (false == m_isLightOn)
 	{
-
 		CLight::LIGHTDESC LightInfo;
 		ZEROMEM(&LightInfo);
+
+		CGameObject* Target = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_VAULT, TEXT("Layer_Player"), TEXT("GameObject_Player")));
+		if (nullptr == Target)
+		{
+			ENDINSTANCE;
+			return;
+		}
+
+		_float3 vPos = Target->Get_Transform()->Get_Position();
+		_float3 vLook = XMVector3Normalize(Target->Get_Transform()->Get_Look()) * 2.f;
 		LightInfo.eType = CLight::TYPE_LUMOS;
-		LightInfo.vPos = _float4((m_WandPointOffsetMatrix * m_pTransform->Get_WorldMatrix()).Translation());
-		CGameObject* Target = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Player"), TEXT("GameObject_Player")));
-		LightInfo.vLookAt = _float4(Target->Get_Transform()->Get_WorldMatrix().Translation());
+		LightInfo.vPos = (vPos + vLook + _float3(0.f, 2.5f, 0.f)).TransCoord();
+		LightInfo.vLookAt = vPos.TransCoord();
 		LightInfo.fRange = 15.f;
 		LightInfo.fSpotPower = 0.f;
 		if (AccTime < 1.f)
@@ -180,7 +194,7 @@ void CWeapon_Player_Wand::Do_Lumos(_float fTimeDelta)
 		pGameInstance->Set_Light(CLight::TYPE_LUMOS, LightInfo);
 	}
 
-	ENDINSTANCE
+	ENDINSTANCE;
 }
 
 HRESULT CWeapon_Player_Wand::Add_Components(void* pArg)
