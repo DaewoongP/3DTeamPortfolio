@@ -17,7 +17,6 @@ END
 
 BEGIN(Client)
 class CRandom_Select;
-class CUI_Group_Enemy_HP;
 class CWeapon_Armored_Troll;
 END
 
@@ -38,9 +37,6 @@ public:
 	virtual void OnCollisionEnter(COLLEVENTDESC CollisionEventDesc) override;
 	virtual HRESULT Render() override;
 	virtual HRESULT Render_Depth() override;
-
-private:
-	CUI_Group_Enemy_HP* m_pUI_HP = { nullptr };
 
 private:
 	CWeapon_Armored_Troll* m_pWeapon = { nullptr };
@@ -86,7 +82,7 @@ private: /* Çàµ¿ ¹­À½µé */
 
 	HRESULT Make_Death(_Inout_ CSequence* pSequence);
 
-private: /* Notify Func */
+private: /* Notify Functions */
 	void Enter_Light_Attack();
 	void Enter_Heavy_Attack();
 	void Enter_Body_Attack();

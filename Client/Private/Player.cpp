@@ -9,6 +9,7 @@
 #include "Player_Information.h"
 
 #include "ProtegoState.h"
+#include "MagicCastingState.h"
 
 #include "Armored_Troll.h"
 
@@ -1205,6 +1206,18 @@ void CPlayer::Find_Target_For_Distance()
 		m_pTargetTransform = pTarget->Get_Transform();
 
 		Safe_AddRef(m_pTargetTransform);
+
+
+		//기존 객체는 지워주고
+		if (nullptr != m_pTarget)
+		{
+			Safe_Release(m_pTarget);
+		}
+
+		//타겟으로 한다.
+		m_pTarget = pTarget;
+
+		Safe_AddRef(m_pTarget);
 	}
 
 	//객체가 없다면 
@@ -1216,6 +1229,13 @@ void CPlayer::Find_Target_For_Distance()
 			Safe_Release(m_pTargetTransform);
 			m_pTargetTransform = nullptr;
 		}
+
+		//기존 객체는 지워주고
+		if (nullptr != m_pTarget)
+		{
+			Safe_Release(m_pTarget);
+			m_pTarget = nullptr;
+		}
 	}
 
 
@@ -1223,6 +1243,88 @@ void CPlayer::Find_Target_For_Distance()
 
 
 }
+
+void CPlayer::Shot_Magic_Spell()
+{
+	BEGININSTANCE;
+	//입력 되면 안되는 스테이트
+	if (pGameInstance->Get_DIKeyState(DIK_1, CInput_Device::KEY_DOWN) &&
+		false == m_pStateContext->Is_Current_State(TEXT("Hit")) &&
+		false == m_pStateContext->Is_Current_State(TEXT("Protego")) &&
+		false == m_pStateContext->Is_Current_State(TEXT("Hard Land")) &&
+		false == m_pStateContext->Is_Current_State(TEXT("Jump")) &&
+		false == m_pStateContext->Is_Current_State(TEXT("Roll"))
+		)
+	{
+		//마법 시전 스테이트
+		CMagicCastingState::MAGICCASTINGSTATEDESC MagicCastingStateDesc;
+
+		MagicCastingStateDesc.pFuncSpell = [&] { (*this).Shot_Confringo(); };
+
+		m_pStateContext->Set_StateMachine(TEXT("Magic_Cast"), &MagicCastingStateDesc);
+	}
+	else if (pGameInstance->Get_DIKeyState(DIK_2, CInput_Device::KEY_DOWN) &&
+		false == m_pStateContext->Is_Current_State(TEXT("Hit")) &&
+		false == m_pStateContext->Is_Current_State(TEXT("Protego")) &&
+		false == m_pStateContext->Is_Current_State(TEXT("Hard Land")) &&
+		false == m_pStateContext->Is_Current_State(TEXT("Jump")) &&
+		false == m_pStateContext->Is_Current_State(TEXT("Roll")))
+	{
+		//마법 시전 스테이트
+		CMagicCastingState::MAGICCASTINGSTATEDESC MagicCastingStateDesc;
+
+		MagicCastingStateDesc.pFuncSpell = [&] { (*this).Shot_Levioso(); };
+
+		m_pStateContext->Set_StateMachine(TEXT("Magic_Cast"), &MagicCastingStateDesc);
+	}
+	//else if (pGameInstance->Get_DIKeyState(DIK_3, CInput_Device::KEY_DOWN) &&
+	//	false == m_pStateContext->Is_Current_State(TEXT("Hit")) &&
+	//	false == m_pStateContext->Is_Current_State(TEXT("Protego")) &&
+	//	false == m_pStateContext->Is_Current_State(TEXT("Hard Land")) &&
+	//	false == m_pStateContext->Is_Current_State(TEXT("Jump")) &&
+	//	false == m_pStateContext->Is_Current_State(TEXT("Roll")))
+	//{
+	//	//마법 시전 스테이트
+	//	CMagicCastingState::MAGICCASTINGSTATEDESC MagicCastingStateDesc;
+
+	//	MagicCastingStateDesc.pFuncSpell = [&] { (*this).Shot_Finisher(); };
+
+	//	m_pStateContext->Set_StateMachine(TEXT("Magic_Cast"), &MagicCastingStateDesc);
+	//}
+	
+	//else if (pGameInstance->Get_DIKeyState(DIK_4, CInput_Device::KEY_DOWN) &&
+	//	false == m_pStateContext->Is_Current_State(TEXT("Hit")) &&
+	//	false == m_pStateContext->Is_Current_State(TEXT("Protego")) &&
+	//	false == m_pStateContext->Is_Current_State(TEXT("Hard Land")) &&
+	//	false == m_pStateContext->Is_Current_State(TEXT("Jump")) &&
+	//	false == m_pStateContext->Is_Current_State(TEXT("Roll")))
+	//{
+	//	//마법 시전 스테이트
+	//	CMagicCastingState::MAGICCASTINGSTATEDESC MagicCastingStateDesc;
+
+	//	MagicCastingStateDesc.pFuncSpell = [&] { (*this).Shot_Confringo(); };
+
+	//	m_pStateContext->Set_StateMachine(TEXT("Magic_Cast"), &MagicCastingStateDesc);
+	//}
+
+	ENDINSTANCE;
+}
+
+void CPlayer::Shot_Levioso()
+{
+
+}
+
+void CPlayer::Shot_Confringo()
+{
+	m_pMagicSlot->Action_Magic_Skill(0, m_pTargetTransform, m_pTarget->Get_Offset_Matrix(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
+}
+
+void CPlayer::Shot_Finisher()
+{
+}
+
+
 
 CPlayer* CPlayer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
@@ -1270,6 +1372,10 @@ void CPlayer::Free()
 		if (nullptr != m_pTargetTransform)
 		{
 			Safe_Release(m_pTargetTransform);
+		}
+		if (nullptr != m_pTarget)
+		{
+			Safe_Release(m_pTarget);
 		}
 
 		Safe_Delete(m_pBasicDesc_Heavy);
