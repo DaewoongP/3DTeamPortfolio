@@ -40,9 +40,6 @@ public:
 	virtual HRESULT Render_Depth() override;
 
 private:
-	CUI_Group_Enemy_HP* m_pUI_HP = { nullptr };
-
-private:
 	CWeapon_Golem_Combat* m_pWeapon = { nullptr };
 
 private:

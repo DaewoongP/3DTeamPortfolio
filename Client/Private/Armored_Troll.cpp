@@ -73,7 +73,7 @@ void CArmored_Troll::Tick(_float fTimeDelta)
 
 	if (CGameInstance::GetInstance()->Get_DIKeyState(DIK_0, CInput_Device::KEY_DOWN))
 		testt = !testt;
-	cout << m_pHealth->Get_Current_HP() << endl;
+	
 	if (nullptr != m_pRootBehavior && true == testt)
 		m_pRootBehavior->Tick(fTimeDelta);
 
@@ -462,8 +462,9 @@ void CArmored_Troll::Tick_ImGui()
 
 	ImGui::Begin("Test Troll");
 
-	if (ImGui::InputInt("animIndex##Armored", &m_iIndex))
-		m_pModelCom->Change_Animation(m_iIndex);
+	string strHp = to_string(m_pHealth->Get_HP());
+	ImGui::Text("Current HP");
+	ImGui::Text(strHp.c_str());
 
 	ImGui::SeparatorText("Behavior");
 
@@ -481,6 +482,8 @@ void CArmored_Troll::Tick_ImGui()
 
 void CArmored_Troll::DeathBehavior(const _float& fTimeDelta)
 {
+	m_isDead = true;
+
 	m_fDeadTimeAcc += fTimeDelta;
 	if (3.f < m_fDeadTimeAcc)
 		Set_ObjEvent(OBJ_DEAD);
@@ -1981,7 +1984,6 @@ void CArmored_Troll::Free()
 
 	if (true == m_isCloned)
 	{
-		Safe_Release(m_pUI_HP);
 		Safe_Release(m_pWeapon);
 	}
 }
