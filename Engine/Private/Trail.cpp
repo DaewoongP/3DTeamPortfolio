@@ -30,15 +30,15 @@ void CTrail::Stright_Move(_float3 vTargerPosition, _float3 vStartPosition, _floa
 	m_pTransform->Set_Position(movedPos);
 }
 
-void CTrail::Spin_Move(_float3 vTargerPosition, _float3 vStartPosition, _float fLerpAcc)
+void CTrail::Spin_Move(_float3 vTargerPosition, _float3 vStartPosition, _float2 vStartEndWeight,_float fSpeed,_float fLerpAcc)
 {
 	_float3 movedPos = XMVectorLerp(vStartPosition, vTargerPosition, fLerpAcc);
 	_float4x4 transMatirx = XMMatrixTranslation(movedPos.x, movedPos.y, movedPos.z);
 	_float3 axis = XMVector3Normalize(vTargerPosition - vStartPosition);
 	_float3 tempAxis = _float3(0, 1, 0);
-	_float3	normal = XMVector3Normalize(XMVector3Cross(axis, tempAxis)) * (1 - fLerpAcc);
+	_float3	normal = XMVector3Normalize(XMVector3Cross(axis, tempAxis)) * Lerp(vStartEndWeight.x, vStartEndWeight.y, fLerpAcc);
 	_float4x4 offsetMatirx = XMMatrixTranslation(normal.x, normal.y, normal.z);
-	_float4x4 rotationMatrix = XMMatrixRotationAxis(axis, fLerpAcc * 20);
+	_float4x4 rotationMatrix = XMMatrixRotationAxis(axis, fLerpAcc * fSpeed);
 	_float4x4 CombineMatrix = offsetMatirx * rotationMatrix * transMatirx;
 	m_pTransform->Set_Position(_float3(CombineMatrix.m[3][0], CombineMatrix.m[3][1], CombineMatrix.m[3][2]));
 }
@@ -49,16 +49,16 @@ void CTrail::Spline_Move(_float3 vSpline01, _float3 vStartPosition, _float3 vTar
 	m_pTransform->Set_Position(movedPos);
 }
 
-void CTrail::Spline_Spin_Move(_float3 vSpline01, _float3 vStartPosition, _float3 vTargerPosition, _float3 vSpline02, _float fLerpAcc)
+void CTrail::Spline_Spin_Move(_float3 vSpline01, _float3 vStartPosition, _float3 vTargerPosition, _float3 vSpline02, _float2 vStartEndWeight, _float fSpeed, _float fLerpAcc)
 {
 	_float3 movedPos = XMVectorCatmullRom(vSpline01, vStartPosition, vTargerPosition, vSpline02, fLerpAcc);
 
 	_float4x4 transMatirx = XMMatrixTranslation(movedPos.x, movedPos.y, movedPos.z);
 	_float3 axis = XMVector3Normalize(vTargerPosition - vStartPosition);
 	_float3 tempAxis = _float3(0, 1, 0);
-	_float3	normal = XMVector3Normalize(XMVector3Cross(axis, tempAxis)) * (1.01f-fLerpAcc);
+	_float3	normal = XMVector3Normalize(XMVector3Cross(axis, tempAxis)) * Lerp(vStartEndWeight.x, vStartEndWeight.y, fLerpAcc);
 	_float4x4 offsetMatirx = XMMatrixTranslation(normal.x, normal.y, normal.z);
-	_float4x4 rotationMatrix = XMMatrixRotationAxis(axis, m_fTimeAcc * 30);
+	_float4x4 rotationMatrix = XMMatrixRotationAxis(axis, m_fTimeAcc * fSpeed);
 	_float4x4 CombineMatrix = offsetMatirx * rotationMatrix * transMatirx;
 
 	m_pTransform->Set_Position(_float3(CombineMatrix.m[3][0], CombineMatrix.m[3][1], CombineMatrix.m[3][2]));

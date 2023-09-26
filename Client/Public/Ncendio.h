@@ -46,7 +46,6 @@ private:
 	// For. Spline
 	_float3 m_vSplineLerp[2] = {};
 	_float  m_fTimeScalePerDitance = { 0.f };
-	_uint	m_iLevel = { 0 };
 
 	// For. Particle
 	_bool m_isSmoke = { false };

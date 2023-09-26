@@ -12,7 +12,6 @@ CFinisher::CFinisher(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 CFinisher::CFinisher(const CFinisher& rhs)
 	: CMagicBall(rhs)
-	, m_iLevel(rhs.m_iLevel)
 {
 }
 

@@ -163,34 +163,7 @@ void CLevioso::Ready_DrawMagic()
 void CLevioso::Ready_CastMagic()
 {
 	m_pMainTrail->Enable();
-	if (m_pTarget == nullptr)
-	{
-		//마우스 피킹 지점으로 발사
-		BEGININSTANCE;
-		_float4 vMouseOrigin, vMouseDirection;
-		_float3 vMouseWorldPickPosition, vDirStartToPicked;
-		if (FAILED(pGameInstance->Get_WorldMouseRay(m_pContext, g_hWnd, &vMouseOrigin, &vMouseDirection)))
-		{
-			ENDINSTANCE;
-			return;
-		}
-		ENDINSTANCE;
-
-		vMouseWorldPickPosition = vMouseOrigin.xyz() + vMouseDirection.xyz() * 10000;
-		vDirStartToPicked = (vMouseWorldPickPosition - m_MagicBallDesc.vStartPosition);
-		vDirStartToPicked.Normalize();
-		m_vTargetPosition = vDirStartToPicked * m_MagicBallDesc.fDistance;
-	}
-	else
-	{
-		m_vTargetPosition = m_pTarget->Get_Position() + m_TargetOffsetMatrix.Translation();
-	}
-	m_fTimeScalePerDitance = m_MagicBallDesc.fDistance / _float3(m_vTargetPosition - m_MagicBallDesc.vStartPosition).Length();
-	m_pMainTrail->Reset_Trail(_float3(m_MagicBallDesc.vStartPosition) + _float3(0, 0.5f, 0), _float3(m_MagicBallDesc.vStartPosition) + _float3(0, -0.5f, 0));
-	m_pMainTrail->Get_Transform()->Set_Position(m_MagicBallDesc.vStartPosition);
-	m_pMainTrail->Enable();
-	//충돌체를 켜주고
-	m_pRigidBody->Enable_Collision("Magic_Ball", this);
+	Ready_SpinMove(m_pMainTrail,_float2(1.f,0.f),30.f);
 }
 
 void CLevioso::Ready_Dying()
@@ -217,7 +190,7 @@ void CLevioso::Tick_CastMagic(_float fTimeDelta)
 		m_fLerpAcc += fTimeDelta / m_MagicBallDesc.fInitLifeTime * m_fTimeScalePerDitance;
 		if (m_fLerpAcc > 1)
 			m_fLerpAcc = 1;
-		m_pMainTrail->Spin_Move(m_vTargetPosition, m_MagicBallDesc.vStartPosition, m_fLerpAcc);
+		m_pMainTrail->Spin_Move(m_vTargetPosition, m_MagicBallDesc.vStartPosition,m_vSpinWeight,m_fSpinSpeed, m_fLerpAcc);
 		m_pTransform->Set_Position(m_pMainTrail->Get_Transform()->Get_Position());
 	}
 	else

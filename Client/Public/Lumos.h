@@ -34,7 +34,6 @@ private:
 	// ±Û·Î¿ì »¡°­ ÀÌÆåÆ®
 	CParticleSystem*			m_pWandGlowRedEffect= { nullptr };
 private:
-	_uint				m_iLevel = { 0 };
 	_float				m_fEndTimer = { 0.3f };
 
 private:
