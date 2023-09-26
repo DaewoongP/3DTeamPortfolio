@@ -92,11 +92,6 @@ HRESULT CNcendio::Initialize(void* pArg)
 	m_pFireCircleBoomEffect->Disable();
 	m_pBurnTargetEffect->Disable();
 
-	m_pSmokeCloudEffect->Get_Transform()->Set_Scale(_float3(2.f, 2.f, 2.f));
-	m_pFireCircleBoomEffect->Get_Transform()->Set_Scale(_float3(2.f, 2.f, 2.f));
-	m_pBurnTargetEffect->Get_Transform()->Set_Scale(_float3(2.f, 2.f, 2.f));
-	m_pFireRingMeshEffect->Get_Transform()->Set_Scale(_float3(2.f, 2.f, 2.f));
-
 	return S_OK;
 }
 

@@ -136,15 +136,6 @@ HRESULT CConfringo::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
-	m_pTrailDustEffect->Get_Transform()->Set_Scale(_float3(2.f, 2.f, 2.f));
-	m_pExplosiveEffect[0]->Get_Transform()->Set_Scale(_float3(2.f, 2.f, 2.f));
-	m_pExplosiveEffect[1]->Get_Transform()->Set_Scale(_float3(2.f, 2.f, 2.f));
-	m_pExplosiveBigPartEffect->Get_Transform()->Set_Scale(_float3(2.f, 2.f, 2.f));
-	m_pExplosiveSmallPartEffect->Get_Transform()->Set_Scale(_float3(2.f, 2.f, 2.f));
-	m_pWandTouchEffect->Get_Transform()->Set_Scale(_float3(2.f, 2.f, 2.f));
-	m_pWandDustEffect->Get_Transform()->Set_Scale(_float3(2.f, 2.f, 2.f));
-	m_pWandTwinklEffect->Get_Transform()->Set_Scale(_float3(2.f, 2.f, 2.f));
-
 	m_pMainTrail->Disable();
 	m_pWandDustEffect->Disable();
 

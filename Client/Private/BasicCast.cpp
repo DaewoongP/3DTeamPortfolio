@@ -135,15 +135,6 @@ HRESULT CBasicCast::Initialize(void* pArg)
 	m_WandTrail->Disable();
 	m_pMainGlow->Disable();
 	m_pHitSplashEffect->Disable();
-
-	m_pHitEffect->Get_Transform()->Set_Scale(_float3(2.f, 2.f,2.f));
-	m_pHitGlowEffect->Get_Transform()->Set_Scale(_float3(2.f, 2.f,2.f));
-	m_pWandEffect->Get_Transform()->Set_Scale(_float3(2.f, 2.f,2.f));
-	m_pFinalAttackEffect->Get_Transform()->Set_Scale(_float3(2.f, 2.f,2.f));
-	m_pMainGlow->Get_Transform()->Set_Scale(_float3(2.f, 2.f,2.f));
-	m_pHitSplashEffect->Get_Transform()->Set_Scale(_float3(2.f, 2.f,2.f));
-
-	
 	return S_OK;
 }
 
