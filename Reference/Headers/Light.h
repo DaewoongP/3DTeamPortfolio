@@ -24,6 +24,7 @@ public:
 		_float4	vPos;
 		_float	fRange;
 		_float	fSpotPower;
+	
 
 		_char szName[MAX_PATH];
 		_uint iLightType;

@@ -155,9 +155,9 @@ HRESULT CLevel_Cliffside::Ready_Lights()
 	LightDesc.vLookAt = _float4(20.f, 0.f, 20.f, 1.f);
 	LightDesc.vDir = _float4(0.33f, -0.99f, 0.33f, 0.f);
 
-	LightDesc.vDiffuse = _float4(0.f, 0.f, 0, 1.f);
-	LightDesc.vAmbient = _float4(0.f, 0.f, 0, 1.f);
-	LightDesc.vSpecular = _float4(0.f, 0.f, 0, 1.f);
+	LightDesc.vDiffuse = BLACKDEFAULT;
+	LightDesc.vAmbient = BLACKDEFAULT;
+	LightDesc.vSpecular = BLACKDEFAULT;
 
 	if (nullptr == pGameInstance->Add_Lights(m_pDevice, m_pContext, LightDesc))
 		return E_FAIL;

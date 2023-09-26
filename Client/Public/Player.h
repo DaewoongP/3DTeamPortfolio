@@ -30,6 +30,7 @@ private:
 	
 public:
 	void Set_TargetTransform(CTransform* _pTargetTransform = nullptr) { m_pTargetTransform = _pTargetTransform; }
+	_float3 Get_PlayerPos() { return m_pTransform->Get_Position(); }
 
 public:
 	virtual HRESULT Initialize_Prototype() override;

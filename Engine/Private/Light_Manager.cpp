@@ -25,18 +25,29 @@ void CLight_Manager::Set_Light(_uint iIndex, CLight::LIGHTDESC LightDesc)
 
 	for (size_t i = 0; i < iIndex; ++i)
 		++iter;
-	
-	if (LightDesc.eType == CLight::TYPE_LUMOS)
+	_uint				iNumViews = { 1 };
+	D3D11_VIEWPORT		ViewportDesc;
+
+	m_pContext->RSGetViewports(&iNumViews, &ViewportDesc);
+	if (LightDesc.eType==CLight::TYPE_LUMOS)
 	{
-		_uint				iNumViews = { 1 };
-		D3D11_VIEWPORT		ViewportDesc;
-
-		m_pContext->RSGetViewports(&iNumViews, &ViewportDesc);
-
-		m_ViewLight = XMMatrixLookAtLH(LightDesc.vPos, LightDesc.vLookAt, _float4(0.f, 1.f, 0.f, 0.f));
+		m_ViewLight = XMMatrixLookAtLH(Get_Light(CLight::TYPE_LUMOS)->vPos, Get_Light(CLight::TYPE_LUMOS)->vLookAt, _float4(0.f, 1.f, 0.f, 0.f));
+		m_ProjLight = XMMatrixPerspectiveFovLH(XMConvertToRadians(90.f), ViewportDesc.Width / ViewportDesc.Height, 1.f, 1000.f);
+	}
+	else
+	{	
+		
+		m_ViewLight = XMMatrixLookAtLH(Get_Light(CLight::TYPE_DIRECTIONAL)->vPos, Get_Light(CLight::TYPE_DIRECTIONAL)->vLookAt, _float4(0.f, 1.f, 0.f, 0.f));
 		m_ProjLight = XMMatrixPerspectiveFovLH(XMConvertToRadians(90.f), ViewportDesc.Width / ViewportDesc.Height, 1.f, 1000.f);
 	}
 
+	CPipeLine* pPipeLine = CPipeLine::GetInstance();
+	Safe_AddRef(pPipeLine);
+
+	pPipeLine->Set_LightTransform(CPipeLine::D3DTS_VIEW, m_ViewLight);
+	pPipeLine->Set_LightTransform(CPipeLine::D3DTS_PROJ, m_ProjLight);
+
+	Safe_Release(pPipeLine);
 
 	(*iter)->Set_LightDesc(LightDesc);
 }
@@ -57,7 +68,7 @@ CLight* CLight_Manager::Add_Lights(ID3D11Device* pDevice, ID3D11DeviceContext* p
 	if (LightDesc.eType == CLight::TYPE_DIRECTIONAL)
 	{
 		m_ViewLight = XMMatrixLookAtLH(LightDesc.vPos, LightDesc.vLookAt, _float4(0.f, 1.f, 0.f, 0.f));
-		m_ProjLight = XMMatrixPerspectiveFovLH(XMConvertToRadians(90.f), ViewportDesc.Width / ViewportDesc.Height, 1.f, 1000.f);
+		m_ProjLight = XMMatrixPerspectiveFovLH(XMConvertToRadians(90.f), ViewportDesc.Width / ViewportDesc.Height,1.f, 1000.f);
 	}
 
 	//m_ViewLight = pTransform->Get_WorldMatrix_Inverse();

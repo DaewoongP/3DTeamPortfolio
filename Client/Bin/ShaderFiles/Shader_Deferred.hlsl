@@ -149,14 +149,14 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
     float fDistance = length(vLightDir);
 
     // 빛의 감쇄량을 0~1로 정규화 시켜 처리하기 위함.
-    float fAtt = saturate((g_fLightRange*2 - fDistance) / g_fLightRange);
+    float fAtt = saturate((g_fLightRange - fDistance) / g_fLightRange);
 	
     Out.vShade = g_vLightDiffuse * saturate(max(dot(normalize(vLightDir) * -1.f, vNormal), 0.f) + (g_vLightAmbient * g_vMtrlAmbient)) * fAtt;
 
     vector vReflect = reflect(normalize(vLightDir), vNormal);
     vector vLook = vPosition - g_vCamPosition;
 
-    Out.vSpecular = (g_vLightSpecular) * (g_vMtrlSpecular) * pow(max(dot(normalize(vReflect) * -1.f, normalize(vLook)), 0.f), 10.f) * fAtt;
+    Out.vSpecular = (g_vLightSpecular) * (g_vMtrlSpecular) * pow(max(dot(normalize(vReflect) * -1.f, normalize(vLook)), 0.f), 20.f) * fAtt;
 
     return Out;
 }
