@@ -63,6 +63,10 @@ void CRigidBody::Set_Position(_float3 vPosition)
 		false == reinterpret_cast<PxRigidDynamic*>(m_pActor)->getKinematicTarget(vPose))
 	{
 		vPose = PxTransform(PhysXConverter::ToPxVec3(vPosition), PhysXConverter::ToPxQuat(Get_Rotation()));
+
+		if (false == vPose.isValid())
+			return;
+
 		m_pActor->setGlobalPose(vPose);
 	}
 }
@@ -74,6 +78,10 @@ void CRigidBody::Set_Rotation(_float4 vRotation)
 		false == reinterpret_cast<PxRigidDynamic*>(m_pActor)->getKinematicTarget(vPose))
 	{
 		vPose = PxTransform(PhysXConverter::ToPxVec3(Get_Position()), PhysXConverter::ToPxQuat(vRotation));
+
+		if (false == vPose.isValid())
+			return;
+
 		m_pActor->setGlobalPose(vPose);
 	}
 }
@@ -172,6 +180,11 @@ void CRigidBody::Set_CollisionFlag(const _char* szColliderTag, PxU32 eCollisionF
 	FilterData.word1 = eCollisionFlag;
 	pShape->setSimulationFilterData(FilterData);
 	m_pActor->attachShape(*pShape);
+}
+
+void CRigidBody::Set_ThisCollision(CGameObject* pThisObj)
+{
+	m_pActor->userData = pThisObj;
 }
 
 HRESULT CRigidBody::Initialize_Prototype()
@@ -482,7 +495,7 @@ void CRigidBody::Rotate(_float4 _vRotation) const
 	}
 }
 
-void CRigidBody::Enable_Collision(const _char* szColliderTag)
+void CRigidBody::Enable_Collision(const _char* szColliderTag, CGameObject* pThisCollision)
 {
 	PxShape* pShape = Find_Shape(szColliderTag);
 
@@ -494,6 +507,7 @@ void CRigidBody::Enable_Collision(const _char* szColliderTag)
 	FilterData.word2 = USE_COL;
 	pShape->setSimulationFilterData(FilterData);
 	m_pActor->attachShape(*pShape);
+	m_pActor->userData = pThisCollision;
 }
 
 void CRigidBody::Disable_Collision(const _char* szColliderTag)
@@ -508,6 +522,7 @@ void CRigidBody::Disable_Collision(const _char* szColliderTag)
 	FilterData.word2 = END_COL;
 	pShape->setSimulationFilterData(FilterData);
 	m_pActor->attachShape(*pShape);
+	m_pActor->userData = nullptr;
 }
 
 #ifdef _DEBUG
@@ -741,6 +756,12 @@ void CRigidBody::Free()
 	if (nullptr != m_pActor)
 	{
 		m_pActor->userData = nullptr;
+		for (auto& ShapePair : m_Shapes)
+		{
+			m_pActor->detachShape(*ShapePair.second);
+		}
+		
+		m_pScene->removeActor(*m_pActor);
 		m_pActor->release();
 	}
 	

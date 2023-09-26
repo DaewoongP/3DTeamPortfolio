@@ -30,14 +30,8 @@ HRESULT CMapObject::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	MAPOBJECTDESC* pMapObjectDesc = reinterpret_cast<MAPOBJECTDESC*>(pArg);
-	m_pTransform->Set_WorldMatrix((*pMapObjectDesc).WorldMatrix);
-
-	if (nullptr == pMapObjectDesc)
-	{
-		MSG_BOX("Object Desc is NULL");
-		return E_FAIL;
-	}
+	m_ObjectDesc = *reinterpret_cast<MAPOBJECTDESC*>(pArg);
+	m_pTransform->Set_WorldMatrix(m_ObjectDesc.WorldMatrix);
 
 	// 음수 값이 있을 경우 Cull 모드를 None로 바꾼다.
 	if (0.f >= m_pTransform->Get_Scale_With_Negative().x ||
@@ -47,8 +41,105 @@ HRESULT CMapObject::Initialize(void* pArg)
 		m_isCull = false;
 	}
 
-	if (FAILED(Add_Components(pMapObjectDesc)))
+	if (FAILED(Add_Components()))
 		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CMapObject::Initialize_Level(_uint iCurrentLevelIndex)
+{
+	/* Com_Model */
+	if (FAILED(CComposite::Add_Component(iCurrentLevelIndex, m_ObjectDesc.wszTag,
+		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModel))))
+	{
+		MSG_BOX("Failed CMapObject Add_Component : (Com_Model)");
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	// 리지드 바디 초기화
+	CRigidBody::RIGIDBODYDESC RigidBodyDesc;
+	RigidBodyDesc.isStatic = true;
+	RigidBodyDesc.isTrigger = false;
+	RigidBodyDesc.eConstraintFlag = CRigidBody::All;
+	RigidBodyDesc.fStaticFriction = 0.5f;
+	RigidBodyDesc.fDynamicFriction = 0.5f;
+	RigidBodyDesc.fRestitution = 0.f;
+	RigidBodyDesc.pOwnerObject = this;
+	RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 1.f, 1.f);
+	RigidBodyDesc.eThisCollsion = COL_STATIC;
+	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "MapObject");
+
+	vector<CMesh*> Meshes = *m_pModel->Get_MeshesVec();
+	vector<_float3> Vertices;
+	vector<PxU32> Indices;
+	_uint iIndex = { 0 };
+
+	m_vMaxPoint = _float3(-9999999.f, -9999999.f, -9999999.f);
+	m_vMinPoint = _float3(9999999.f, 9999999.f, 9999999.f);
+
+	for (auto& pMesh : Meshes)
+	{
+		vector<_float3> MeshVertices = *pMesh->Get_VerticesPositionVec();
+
+		for (auto& MeshVetex : MeshVertices)
+		{
+			_float3 vWorldVertex = XMVector3TransformCoord(MeshVetex, m_ObjectDesc.WorldMatrix);
+			Vertices.push_back(vWorldVertex);
+			Check_MinMaxPoint(vWorldVertex);
+		}
+
+		vector<PxU32> MeshIndices = *pMesh->Get_IndicesVec();
+
+		for (size_t i = 0; i < MeshIndices.size(); ++i)
+		{
+			Indices.push_back(MeshIndices[i] + iIndex);
+		}
+
+		iIndex += Vertices.size();
+	}
+
+	m_vCenterPoint = (m_vMaxPoint + m_vMinPoint) * 0.5f;
+	m_fRadius = Vector3::Distance(m_vMaxPoint, m_vCenterPoint);
+
+	// 피직스 메쉬 생성
+	PxTriangleMeshDesc TriangleMeshDesc;
+	TriangleMeshDesc.points.count = Vertices.size();
+	TriangleMeshDesc.points.stride = sizeof(_float3);
+	TriangleMeshDesc.points.data = Vertices.data();
+
+	TriangleMeshDesc.triangles.count = Indices.size() / 3;
+	TriangleMeshDesc.triangles.stride = 3 * sizeof(PxU32);
+	TriangleMeshDesc.triangles.data = Indices.data();
+
+	PxTolerancesScale PxScale;
+	PxCookingParams PxParams(PxScale);
+	PxDefaultMemoryOutputStream DefaultWriteBuffer;
+	if (!PxCookTriangleMesh(PxParams, TriangleMeshDesc, DefaultWriteBuffer))
+	{
+		MSG_BOX("Failed Create Triangle Mesh");
+		return E_FAIL;
+	}
+
+	PxPhysics* pPhysX = pGameInstance->Get_Physics();
+
+	PxDefaultMemoryInputData DefaultReadBuffer(DefaultWriteBuffer.getData(), DefaultWriteBuffer.getSize());
+	PxTriangleMeshGeometry TriangleMeshGeoMetry = PxTriangleMeshGeometry(pPhysX->createTriangleMesh(DefaultReadBuffer));
+	RigidBodyDesc.pGeometry = &TriangleMeshGeoMetry;
+
+	Safe_Release(pGameInstance);
+
+	/* Com_RigidBody */
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
+		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
+	{
+		MSG_BOX("Failed CMapObject Add_Component : (Com_RigidBody)");
+		__debugbreak();
+		return E_FAIL;
+	}
 
 	return S_OK;
 }
@@ -121,7 +212,7 @@ HRESULT CMapObject::Render_Depth()
 	return S_OK;
 }
 
-HRESULT CMapObject::Add_Components(MAPOBJECTDESC* pMapObjectDesc)
+HRESULT CMapObject::Add_Components()
 {
 	/* Com_Renderer */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"),
@@ -146,98 +237,6 @@ HRESULT CMapObject::Add_Components(MAPOBJECTDESC* pMapObjectDesc)
 		TEXT("Com_ShadowShader"), reinterpret_cast<CComponent**>(&m_pShadowShader))))
 	{
 		MSG_BOX("Failed CMapObject Add_Component : (Com_ShadowShader)");
-		__debugbreak();
-		return E_FAIL;
-	}
-
-	/* Com_Model */
-	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, pMapObjectDesc->wszTag,
-		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModel))))
-	{
-		MSG_BOX("Failed CMapObject Add_Component : (Com_Model)");
-		__debugbreak();
-		return E_FAIL;
-	}
-
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
-	// 리지드 바디 초기화
-	CRigidBody::RIGIDBODYDESC RigidBodyDesc;
-	RigidBodyDesc.isStatic = true;
-	RigidBodyDesc.isTrigger = false;
-	RigidBodyDesc.eConstraintFlag = CRigidBody::All;
-	RigidBodyDesc.fStaticFriction = 0.5f;
-	RigidBodyDesc.fDynamicFriction = 0.5f;
-	RigidBodyDesc.fRestitution = 0.f;
-	RigidBodyDesc.pOwnerObject = this;
-	RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 1.f, 1.f);
-	RigidBodyDesc.eThisCollsion = COL_STATIC;
-	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "MapObject");
-	
-	vector<CMesh*> Meshes = *m_pModel->Get_MeshesVec();
-	vector<_float3> Vertices;
-	vector<PxU32> Indices;
-	_uint iIndex = { 0 };
-	
-	m_vMaxPoint = _float3(-9999999.f, -9999999.f, -9999999.f);
-	m_vMinPoint = _float3(9999999.f, 9999999.f, 9999999.f);
-
-	for (auto& pMesh : Meshes)
-	{
-		vector<_float3> MeshVertices = *pMesh->Get_VerticesPositionVec();
-
-		for (auto& MeshVetex : MeshVertices)
-		{
-			_float3 vWorldVertex = XMVector3TransformCoord(MeshVetex, pMapObjectDesc->WorldMatrix);
-			Vertices.push_back(vWorldVertex);
-			Check_MinMaxPoint(vWorldVertex);
-		}
-
-		vector<PxU32> MeshIndices = *pMesh->Get_IndicesVec();
-
-		for (size_t i = 0; i < MeshIndices.size(); ++i)
-		{
-			Indices.push_back(MeshIndices[i] + iIndex);
-		}
-
-		iIndex += Vertices.size();
-	}
-
-	m_vCenterPoint = (m_vMaxPoint + m_vMinPoint) * 0.5f;
-	m_fRadius = Vector3::Distance(m_vMaxPoint, m_vCenterPoint);
-
-	// 피직스 메쉬 생성
-	PxTriangleMeshDesc TriangleMeshDesc;
-	TriangleMeshDesc.points.count = Vertices.size();
-	TriangleMeshDesc.points.stride = sizeof(_float3);
-	TriangleMeshDesc.points.data = Vertices.data();
-
-	TriangleMeshDesc.triangles.count = Indices.size() / 3;
-	TriangleMeshDesc.triangles.stride = 3 * sizeof(PxU32);
-	TriangleMeshDesc.triangles.data = Indices.data();
-
-	PxTolerancesScale PxScale;
-	PxCookingParams PxParams(PxScale);
-	PxDefaultMemoryOutputStream DefaultWriteBuffer;
-	if (!PxCookTriangleMesh(PxParams, TriangleMeshDesc, DefaultWriteBuffer))
-	{
-		MSG_BOX("Failed Create Triangle Mesh");
-		return E_FAIL;
-	}
-
-	PxPhysics* pPhysX = pGameInstance->Get_Physics();
-
-	PxDefaultMemoryInputData DefaultReadBuffer(DefaultWriteBuffer.getData(), DefaultWriteBuffer.getSize());
-	PxTriangleMeshGeometry TriangleMeshGeoMetry = PxTriangleMeshGeometry(pPhysX->createTriangleMesh(DefaultReadBuffer));
-	RigidBodyDesc.pGeometry = &TriangleMeshGeoMetry;
-
-	Safe_Release(pGameInstance);
-	
-	/* Com_RigidBody */
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
-		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
-	{
-		MSG_BOX("Failed CMapObject Add_Component : (Com_RigidBody)");
 		__debugbreak();
 		return E_FAIL;
 	}

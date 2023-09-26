@@ -12,7 +12,6 @@ CConfringo::CConfringo(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 CConfringo::CConfringo(const CConfringo& rhs)
 	: CMagicBall(rhs)
-	, m_iLevel(rhs.m_iLevel)
 {
 }
 
@@ -175,6 +174,13 @@ void CConfringo::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 	__super::OnCollisionExit(CollisionEventDesc);
 }
 
+HRESULT CConfringo::Reset(MAGICBALLINITDESC& InitDesc)
+{
+	__super::Reset(InitDesc);
+	m_fLerpAcc = 0.0f;
+	return S_OK;
+}
+
 void CConfringo::Ready_Begin()
 {
 	_float3 vWandPosition = _float4x4(m_WeaponOffsetMatrix * (*m_pWeaponMatrix)).Translation();
@@ -216,63 +222,15 @@ void CConfringo::Ready_DrawMagic()
 
 void CConfringo::Ready_CastMagic()
 {
-	if (m_pTarget == nullptr)
-	{
-		//마우스 피킹 지점으로 발사
-		BEGININSTANCE;
-		_float4 vMouseOrigin, vMouseDirection;
-		_float3 vMouseWorldPickPosition, vDirStartToPicked;
-		if (FAILED(pGameInstance->Get_WorldMouseRay(m_pContext, g_hWnd, &vMouseOrigin, &vMouseDirection)))
-		{
-			ENDINSTANCE;
-			return;
-		}
-		ENDINSTANCE;
-
-		vMouseWorldPickPosition = vMouseOrigin.xyz() + vMouseDirection.xyz() * 10000;
-		vDirStartToPicked = (vMouseWorldPickPosition - m_MagicBallDesc.vStartPosition);
-		vDirStartToPicked.Normalize();
-		m_vTargetPosition = vDirStartToPicked * m_MagicBallDesc.fDistance;
-	}
-	else
-	{
-		m_vTargetPosition = m_pTarget->Get_Position() + m_TargetOffsetMatrix.Translation();
-	}
-
-	//Ready for Spline Lerp
-	m_vStartPostion = m_MagicBallDesc.vStartPosition;
-	m_fLerpAcc = 0.f;
-
-	// 플레이어가 타겟을 보는 vector를 구함.
-	_float3 vDir = XMVector3Normalize(m_vTargetPosition - m_vStartPostion);
-	// 임의의 축을 구함.
-	_float3 tempAxis = _float3(1, 1, 1);
-	// 외적
-	_float3	normal = XMVector3Cross(vDir, tempAxis);
-
-	//진행 경로만큼 뒤로 이동한 뒤
-	m_vSplineLerp[0] = m_vStartPostion - vDir;
-	//임의의 랜덤 값을 구하고
-	_float fRandom = Random_Generator(-20.f, 20.f);
-	// 외적 방향으로 튄다.
-	m_vSplineLerp[0] += _float3(normal.x * fRandom, normal.y * fabsf(fRandom), normal.z * fRandom);
-
-	//진행 경로만큼 뒤로 이동한 뒤
-	m_vSplineLerp[1] = m_vStartPostion + vDir;
-	//임의의 랜덤 값을 구하고
-	fRandom = Random_Generator(-20.f, 20.f);
-	// 외적 방향으로 튄다.
-	m_vSplineLerp[1] += _float3(normal.x * fRandom, normal.y * fabsf(fRandom), normal.z * fRandom);
-	m_fTimeScalePerDitance = m_MagicBallDesc.fDistance / _float3(m_vTargetPosition - m_vStartPostion).Length();
-
-	m_pMainTrail->Reset_Trail(_float3(m_vStartPostion) + _float3(0, 0.5f, 0), _float3(m_vStartPostion) + _float3(0, -0.5f, 0));
-	m_pMainTrail->Get_Transform()->Set_Position(m_vStartPostion);
+	Ready_SplineSpinMove(m_pMainTrail,_float2(0.2f, 0.20f),10.f);
 
 	m_pWandDustEffect->Get_EmissionModuleRef().Setting_PrevPos(m_vStartPostion);
 	m_pWandDustEffect->Get_Transform()->Set_Position(m_vStartPostion);
 
 	m_pMainTrail->Enable();
 	m_pWandDustEffect->Enable();
+	//충돌체를 켜주고
+	m_pRigidBody->Enable_Collision("Magic_Ball", this);
 }
 
 void CConfringo::Ready_Dying()
@@ -311,7 +269,7 @@ void CConfringo::Tick_CastMagic(_float fTimeDelta)
 		m_fLerpAcc += fTimeDelta / m_MagicBallDesc.fInitLifeTime * m_fTimeScalePerDitance;
 		if (m_fLerpAcc > 1)
 			m_fLerpAcc = 1;
-		m_pMainTrail->Spline_Spin_Move(m_vSplineLerp[0], m_vStartPostion, m_vTargetPosition, m_vSplineLerp[1], m_fLerpAcc);
+		m_pMainTrail->Spline_Spin_Move(m_vSplineLerp[0], m_vStartPostion, m_vTargetPosition, m_vSplineLerp[1], m_vSpinWeight, m_fSpinSpeed, m_fLerpAcc);
 		m_pWandDustEffect->Get_Transform()->Set_Position(m_pMainTrail->Get_Transform()->Get_Position());
 		m_pTransform->Set_Position(m_pMainTrail->Get_Transform()->Get_Position());
 	}
@@ -339,7 +297,7 @@ HRESULT CConfringo::Add_Components()
 HRESULT CConfringo::Add_Effect()
 {
 	//메인
-	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Confringo_Trail"), 
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Confringo_Trail"),
 		TEXT("Com_Trail"), reinterpret_cast<CComponent**>(&m_pMainTrail))))
 	{
 		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Confringo_Trail)");

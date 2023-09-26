@@ -104,9 +104,7 @@ private:
 	class CComboBox* m_pSizeXEaseCombo = { nullptr };
 	class CComboBox* m_pSizeYEaseCombo = { nullptr };
 	class CComboBox* m_pSizeZEaseCombo = { nullptr };
-	class CComboBox* m_pAngularVelocityXEaseCombo = { nullptr };
-	class CComboBox* m_pAngularVelocityYEaseCombo = { nullptr };
-	class CComboBox* m_pAngularVelocityZEaseCombo = { nullptr };
+	class CComboBox* m_pAngularVelocityCombo = { nullptr };
 	class CComboBox* m_pNoiseStrengthOptionComboBox = { nullptr };
 	class CComboBox* m_pNoiseStrengthCurveEaseCombo = { nullptr };
 

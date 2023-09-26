@@ -94,6 +94,8 @@ HRESULT CMain3_Loader::Loading()
 
 	LeaveCriticalSection(&m_Critical_Section);
 
+	m_isFinished = true;
+
 	if (FAILED(hr))
 		return E_FAIL;
 
@@ -104,8 +106,6 @@ HRESULT CMain3_Loader::Loading_For_Logo()
 {
 	if (nullptr == m_pGameInstance)
 		return E_FAIL;
-
-	m_isFinished = true;
 
 	return S_OK;
 }
@@ -134,7 +134,7 @@ HRESULT CMain3_Loader::Loading_For_Cliffside()
 			throw TEXT("Prototype_Component_Weapon_Player_Wand");
 
 		/* For.Prototype_Component_Weapon_Fig_Wand */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_Weapon_Fig_Wand"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Weapon_Fig_Wand"),
 			CWeapon_Fig_Wand::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Weapon_Fig_Wand");
 #pragma region Player Parts
@@ -255,12 +255,12 @@ HRESULT CMain3_Loader::Loading_For_Cliffside()
 
 		PivotMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
 		/* For.Prototype_Component_Model_Professor_Fig */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_Model_Professor_Fig"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Model_Professor_Fig"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/Professor_Fig/Professor_Fig.gcm"), PivotMatrix))))
 			throw TEXT("Prototype_Component_Model_Professor_Fig");
 
 		/* For.Prototype_GameObject_Professor_Fig */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Professor_Fig"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Professor_Fig"),
 			CProfessor_Fig::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Professor_Fig");
 	}
@@ -273,15 +273,16 @@ HRESULT CMain3_Loader::Loading_For_Cliffside()
 		return E_FAIL;
 	}
 
-	m_isFinished = true;
-
 	return S_OK;
 }
 
 HRESULT CMain3_Loader::Loading_For_Vault()
 {
-	m_isFinished = true;
+	return S_OK;
+}
 
+HRESULT CMain3_Loader::Loading_For_GreatHall()
+{
 	return S_OK;
 }
 

@@ -30,7 +30,7 @@ HRESULT CEnemy::Initialize(void* pArg)
 		m_pTransform->Set_WorldMatrix(*pWorldMatric);
 	}
 	else
-		m_pTransform->Set_Position(_float3(20.f, 2.f, 20.f));
+		m_pTransform->Set_Position(_float3(_float(rand() % 5) + 20.f, 2.f, 20.f - _float(rand() % 5)));
 
 	return S_OK;
 }
@@ -274,6 +274,7 @@ void CEnemy::Free()
 
 	if (true == m_isCloned)
 	{
+		Safe_Release(m_pUI_HP);
 		Safe_Release(m_pHealth);
 		Safe_Release(m_pModelCom);
 		Safe_Release(m_pRenderer);

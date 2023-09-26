@@ -37,7 +37,7 @@ public:
 		BUFF_TYPE		eBuffType = { BUFF_NONE };
 		SPELL			eMagicTag = { SPELL_END };
 		_float			fCoolTime = { 0 };
-		_float			fDamage = { 0 };
+		_int			iDamage = { 0 };
 		//마법의 발동 사거리
 		_float			fCastDistance = { 0 };
 		//투사체의 사거리.
@@ -77,7 +77,7 @@ protected:
 	_float						m_fInitCoolTime = { 0 };
 	_float						m_fCurrentCoolTime = { 0 };
 	//데미지
-	_float						m_fDamage = { 0 };
+	_int						m_iDamage = { 0 };
 	// 마법의 사거리
 	_float						m_fCastDistance = { 0 };
 	// 투사체의 사거리

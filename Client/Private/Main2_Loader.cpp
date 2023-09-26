@@ -9,7 +9,6 @@
 #include "Armored_Troll.h"
 #include "Forest_Troll.h"
 #include "Golem_Combat.h"
-#include "Golem_Merlin.h"
 #include "Dugbog.h"
 
 #include "Professor_FIg.h"
@@ -19,7 +18,6 @@
 #include "Weapon_Armored_Troll.h"
 #include "Weapon_Forest_Troll.h"
 #include "Weapon_Golem_Combat.h"
-#include "Weapon_Golem_Merlin.h"
 #include "Weapon_Player_Wand.h"
 #pragma endregion Weapon
 
@@ -88,6 +86,8 @@ HRESULT CMain2_Loader::Loading()
 
 	LeaveCriticalSection(&m_Critical_Section);
 
+	m_isFinished = true;
+
 	if (FAILED(hr))
 		return E_FAIL;
 
@@ -98,8 +98,6 @@ HRESULT CMain2_Loader::Loading_For_Logo()
 {
 	if (nullptr == m_pGameInstance)
 		return E_FAIL;
-
-	m_isFinished = true;
 
 	return S_OK;
 }
@@ -117,7 +115,8 @@ HRESULT CMain2_Loader::Loading_For_Cliffside()
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/SkySphere/SkySphere.dat")))))
 			throw TEXT("Prototype_Component_Model_Sky");
 
-		/* For.Weapon Models */
+		/* ============ Enemy Weapon Models ============ */
+
 		/* For.Prototype_Component_Model_Weopon_Armored_Troll */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_Model_Weopon_Armored_Troll"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Troll_Armored_Club/Troll_Armored_Club.dat"), PivotMatrix))))
@@ -134,15 +133,7 @@ HRESULT CMain2_Loader::Loading_For_Cliffside()
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Golem_Combat_Sword/Golem_Combat_Sword.dat"), PivotMatrix))))
 			throw TEXT("Prototype_Component_Model_Weopon_Golem_Combat");
 
-		/* For.Prototype_Component_Model_Weopon_Golem_Merlin */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_Model_Weopon_Golem_Merlin"),
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Golem_Combat_Mace/Golem_Combat_Mace.dat"), PivotMatrix))))
-			throw TEXT("Prototype_Component_Model_Weopon_Golem_Merlin");
-
-		///* For.Prototype_Component_Model_Weopon_Pensive */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_Model_Weopon_Pensive"),
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Pensive_Flail/Pensive_Flail.dat"), PivotMatrix))))
-			throw TEXT("Prototype_Component_Model_Weopon_Pensive");
+		/* ============ Friendly Weapon Models ============ */
 
 		/* For.Prototype_Component_Model_Weapon_Player_Wand */
 		PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f));
@@ -156,7 +147,7 @@ HRESULT CMain2_Loader::Loading_For_Cliffside()
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Wand_Fig/Wand_Fig.dat"), PivotMatrix))))
 			throw TEXT("Prototype_Component_Model_Weopon_Fig_Wand");
 
-		/* For.Monster Models */
+		/* ============ Enemy Models ============ */
 
 		PivotMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
 		/* For.Prototype_Component_Model_Armored_Troll */
@@ -169,10 +160,12 @@ HRESULT CMain2_Loader::Loading_For_Cliffside()
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/Golem_CombatGrunt/Golem_CombatGrunt.gcm"), PivotMatrix))))
 			throw TEXT("Prototype_Component_Model_Golem_Combat");
 
-		/* For.Prototype_Component_Model_Golem_Merlin */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_Model_Golem_Merlin"),
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/Golem_MerlinGrunt/Golem_MerlinGrunt.gcm"), PivotMatrix))))
-			throw TEXT("Prototype_Component_Model_Golem_Merlin");
+		/* For.Prototype_Component_Model_Dugbog */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_Model_Dugbog"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/Dugbog/Dugbog.gcm"), PivotMatrix))))
+			throw TEXT("Prototype_Component_Model_Dugbog");
+
+		/* ============ Enemies ============ */
 
 		/* For.Prototype_GameObject_Armored_Troll */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Armored_Troll"),
@@ -194,10 +187,7 @@ HRESULT CMain2_Loader::Loading_For_Cliffside()
 			CGolem_Combat::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Golem_CombatGrunt");
 
-		/* For.Prototype_GameObject_Golem_MerlinGrunt */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Golem_MerlinGrunt"),
-			CGolem_Merlin::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_Golem_MerlinGrunt");
+		/* ============ Enemy Models ============ */
 
 		/* For.Prototype_Component_Weapon_Armored_Troll */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_Weapon_Armored_Troll"),
@@ -213,16 +203,6 @@ HRESULT CMain2_Loader::Loading_For_Cliffside()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_Weapon_Golem_Combat"),
 			CWeapon_Golem_Combat::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Weapon_Golem_Combat");
-
-		/* For.Prototype_Component_Weapon_Golem_Merlin */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_Weapon_Golem_Merlin"),
-			CWeapon_Golem_Merlin::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_Weapon_Golem_Merlin");
-
-		/* For.Prototype_Component_Weapon_Pensive */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_Weapon_Pensive"),
-			CWeapon_Golem_Merlin::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_Weapon_Pensive");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -233,15 +213,16 @@ HRESULT CMain2_Loader::Loading_For_Cliffside()
 		return E_FAIL;
 	}
 
-	m_isFinished = true;
-
 	return S_OK;
 }
 
 HRESULT CMain2_Loader::Loading_For_Vault()
 {
-	m_isFinished = true;
+	return S_OK;
+}
 
+HRESULT CMain2_Loader::Loading_For_GreatHall()
+{
 	return S_OK;
 }
 

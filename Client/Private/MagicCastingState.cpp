@@ -32,6 +32,14 @@ HRESULT CMagicCastingState::Initialize(void* pArg)
 
 	m_fFixAngleSpeed = 5.0f;
 
+	m_vecSpellActionTextList.push_back(TEXT("Spell_Action_01"));
+	m_vecSpellActionTextList.push_back(TEXT("Spell_Action_02"));
+	m_vecSpellActionTextList.push_back(TEXT("Spell_Action_03"));
+
+
+
+
+
 	ENDINSTANCE;
 
 	return S_OK;
@@ -53,31 +61,59 @@ void CMagicCastingState::OnStateEnter(void* _pArg)
 	pGameInstance->Reset_Timer(TEXT("Fix_Angle_Magic_Cast"));
 	pGameInstance->Reset_Timer(TEXT("Fix_Angle_Magic_Cast_Last"));
 
-	ENDINSTANCE;
-
-
-
-	switch (*m_pIActionSwitch)
+	//평타
+	if (pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN))
 	{
-	case CStateContext::ACTION_CASUAL:
-	{
-		m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Cast_Casual_Fwd_01_anm"));
-	}
-	break;
-	case CStateContext::ACTION_CMBT:
-	{
-		m_pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_01_anm"));
-	}
-	break;
-	default:
+		switch (*m_pIActionSwitch)
+		{
+		case CStateContext::ACTION_CASUAL:
+		{
+			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Cast_Casual_Fwd_01_anm"));
+		}
 		break;
+		case CStateContext::ACTION_CMBT:
+		{
+			m_pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_01_anm"));
+		}
+		break;
+		default:
+			break;
+		}
+
+		++m_iBasicSpellCombo;
+
+		m_isReadySpell = false;
+
+		m_iBasicSpellCombo = BASICSPELL_START;
 	}
 
-	++m_iBasicSpellCombo;
+	//스킬(임시... 코드 바꿔야 할 확률 100%)
+	if (nullptr != _pArg && true == m_isReadySpell &&
+		(
+		pGameInstance->Get_DIKeyState(DIK_1, CInput_Device::KEY_DOWN) ||
+		pGameInstance->Get_DIKeyState(DIK_2, CInput_Device::KEY_DOWN) ||
+		pGameInstance->Get_DIKeyState(DIK_3, CInput_Device::KEY_DOWN) ||
+		pGameInstance->Get_DIKeyState(DIK_4, CInput_Device::KEY_DOWN)
+		))
+	{
+		MAGICCASTINGSTATEDESC* pMagicCastingStateDesc = static_cast<MAGICCASTINGSTATEDESC*>(_pArg);
 
-	m_isReadySpell = false;
+		//맞는 액션으로 노티파이 바꾸고 실행 애니메이션 실행
+		
+		//함수 받아와야 겠다.
+		m_pOwnerModel->Bind_Notify(m_vecSpellActionTextList[m_iSpellActionIndex], TEXT("Shot_Spell"), pMagicCastingStateDesc->pFuncSpell);
 
-	m_iBasicSpellCombo = BASICSPELL_START;
+		//애니메이션 재생
+		m_pOwnerModel->Change_Animation(m_vecSpellActionTextList[m_iSpellActionIndex]);
+
+		m_isReadySpell = false;
+
+		Spell_Action_Count();
+	}
+
+
+
+	ENDINSTANCE;
 
 #ifdef _DEBUG
 	//cout << "Hard Land Enter" << endl;
@@ -131,7 +167,9 @@ void CMagicCastingState::Bind_Notify()
 	m_pOwnerModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_StepBwd_03_anm"), TEXT("BasicSpell_Ready"), Notify_Pointer);
 	m_pOwnerModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_StepBwd_04_anm"), TEXT("BasicSpell_Ready"), Notify_Pointer);
 
-	
+	m_pOwnerModel->Bind_Notify(TEXT("Spell_Action_01"), TEXT("Spell_Ready"), Notify_Pointer);
+	m_pOwnerModel->Bind_Notify(TEXT("Spell_Action_02"), TEXT("Spell_Ready"), Notify_Pointer);
+	m_pOwnerModel->Bind_Notify(TEXT("Spell_Action_03"), TEXT("Spell_Ready"), Notify_Pointer);
 }
 
 void CMagicCastingState::Initialize_BasicSpell_Combo()
@@ -405,6 +443,16 @@ void CMagicCastingState::Initialize_Spell()
 	ENDINSTANCE;
 }
 
+void CMagicCastingState::Spell_Action_Count()
+{
+	++m_iSpellActionIndex;
+
+	if (SPELL_ACTION_END == m_iSpellActionIndex)
+	{
+		m_iSpellActionIndex = SPELL_ACTION_01;
+	}
+}
+
 void CMagicCastingState::Action_Cmbt_Tick()
 {
 }
@@ -469,6 +517,6 @@ void CMagicCastingState::Free()
 
 	if (true == m_isCloned)
 	{
-
+		m_vecSpellActionTextList.clear();
 	}
 }

@@ -105,14 +105,6 @@ void CLevioso::Tick(_float fTimeDelta)
 	_float3 vWandPosition = _float4x4(m_WeaponOffsetMatrix * (*m_pWeaponMatrix)).Translation();
 	m_pWandTrail->Get_Transform()->Set_Position(vWandPosition);
 	m_pWandGlow->Get_Transform()->Set_Position(vWandPosition);
-	m_fGlowTimer -= fTimeDelta;
-	if (m_fGlowTimer < 0)
-	{
-		m_pWandGlow->Disable();
-		m_pWandTrail->Disable();
-		Do_MagicBallState_To_Next();
-	}
-		
 }
 
 void CLevioso::Late_Tick(_float fTimeDelta)
@@ -141,6 +133,14 @@ void CLevioso::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 	__super::OnCollisionExit(CollisionEventDesc);
 }
 
+HRESULT CLevioso::Reset(MAGICBALLINITDESC& InitDesc)
+{
+	__super::Reset(InitDesc);
+	m_fWingardiumEffectDeadTimer = 0.3f;
+	m_fLerpAcc = 0.0f;
+	return S_OK;
+}
+
 void CLevioso::Ready_Begin()
 {
 	m_pMainTrail->Disable();
@@ -162,33 +162,8 @@ void CLevioso::Ready_DrawMagic()
 
 void CLevioso::Ready_CastMagic()
 {
-	m_fTimeScalePerDitance = 1.f;
 	m_pMainTrail->Enable();
-	if (m_pTarget == nullptr)
-	{
-		//마우스 피킹 지점으로 발사
-		BEGININSTANCE;
-		_float4 vMouseOrigin, vMouseDirection;
-		_float3 vMouseWorldPickPosition, vDirStartToPicked;
-		if (FAILED(pGameInstance->Get_WorldMouseRay(m_pContext, g_hWnd, &vMouseOrigin, &vMouseDirection)))
-		{
-			ENDINSTANCE;
-			return;
-		}
-		ENDINSTANCE;
-
-		vMouseWorldPickPosition = vMouseOrigin.xyz() + vMouseDirection.xyz() * 10000;
-		vDirStartToPicked = (vMouseWorldPickPosition - m_MagicBallDesc.vStartPosition);
-		vDirStartToPicked.Normalize();
-		m_vTargetPosition = vDirStartToPicked * m_MagicBallDesc.fDistance;
-	}
-	else
-	{
-		m_vTargetPosition = m_pTarget->Get_Position() + m_TargetOffsetMatrix.Translation();
-	}
-	m_pMainTrail->Reset_Trail(_float3(m_MagicBallDesc.vStartPosition) + _float3(0, 0.5f, 0), _float3(m_MagicBallDesc.vStartPosition) + _float3(0, -0.5f, 0));
-	m_pMainTrail->Get_Transform()->Set_Position(m_MagicBallDesc.vStartPosition);
-	m_pMainTrail->Enable();
+	Ready_SpinMove(m_pMainTrail,_float2(1.f,0.f),30.f);
 }
 
 void CLevioso::Ready_Dying()
@@ -215,7 +190,7 @@ void CLevioso::Tick_CastMagic(_float fTimeDelta)
 		m_fLerpAcc += fTimeDelta / m_MagicBallDesc.fInitLifeTime * m_fTimeScalePerDitance;
 		if (m_fLerpAcc > 1)
 			m_fLerpAcc = 1;
-		m_pMainTrail->Spin_Move(m_vTargetPosition, m_MagicBallDesc.vStartPosition, m_fLerpAcc);
+		m_pMainTrail->Spin_Move(m_vTargetPosition, m_MagicBallDesc.vStartPosition,m_vSpinWeight,m_fSpinSpeed, m_fLerpAcc);
 		m_pTransform->Set_Position(m_pMainTrail->Get_Transform()->Get_Position());
 	}
 	else
@@ -229,7 +204,7 @@ void CLevioso::Tick_Dying(_float fTimeDelta)
 	m_fWingardiumEffectDeadTimer -= fTimeDelta;
 	if (m_fWingardiumEffectDeadTimer < 0)
 	{
-		m_pWingardiumEffect->Disable();
+		Do_MagicBallState_To_Next();
 	}
 }
 
@@ -240,7 +215,7 @@ HRESULT CLevioso::Add_Components()
 
 HRESULT CLevioso::Add_Effect()
 {
-	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_MagicTraill_Winga_Effect"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_MagicTraill_Winga_Effect"),
 		TEXT("Com_Effect"), reinterpret_cast<CComponent**>(&m_pMainTrail))))
 	{
 		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_MagicTraill_Winga_Effect)");
@@ -248,21 +223,21 @@ HRESULT CLevioso::Add_Effect()
 		return E_FAIL;
 	}
 
-	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Wingardium_Effect"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Wingardium_Effect"),
 		TEXT("Com_WingradiumEffect"), reinterpret_cast<CComponent**>(&m_pWingardiumEffect))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Wingardium_Effect)");
 		__debugbreak();
 		return E_FAIL;
 	}
-	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Defatul_Wand_Glow_Effect"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Defatul_Wand_Glow_Effect"),
 		TEXT("Com_WandGlow"), reinterpret_cast<CComponent**>(&m_pWandGlow))))
 	{
 		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Defatul_Wand_Glow_Effect)");
 		__debugbreak();
 		return E_FAIL;
 	}
-	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_BasicCast_Wand_Trail_Effect"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_BasicCast_Wand_Trail_Effect"),
 		TEXT("Com_Wand_Trail"), reinterpret_cast<CComponent**>(&m_pWandTrail))))
 	{
 		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_BasicCast_Wand_Trail_Effect)");
@@ -274,7 +249,7 @@ HRESULT CLevioso::Add_Effect()
 
 CLevioso* CLevioso::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel)
 {
-	CLevioso* pInstance = new CLevioso(pDevice, pContext);
+	CLevioso* pInstance = New CLevioso(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(iLevel)))
 	{
@@ -287,7 +262,7 @@ CLevioso* CLevioso::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,
 
 CGameObject* CLevioso::Clone(void* pArg)
 {
-	CLevioso* pInstance = new CLevioso(*this);
+	CLevioso* pInstance = New CLevioso(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
@@ -300,6 +275,7 @@ CGameObject* CLevioso::Clone(void* pArg)
 void CLevioso::Free()
 {
 	__super::Free();
+
 	if (true == m_isCloned)
 	{
 		Safe_Release(m_pMainTrail);

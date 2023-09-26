@@ -142,7 +142,7 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Shadow_Depth"), 240.f, 240.f, 160.f, 160.f)))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Glow"), 240.f, 400.f, 160.f, 160.f)))
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_FinGlow"), 240.f, 400.f, 160.f, 160.f)))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_FlowMap"), 240.f, 560.f, 160.f, 160.f)))
 		return E_FAIL;
@@ -290,14 +290,18 @@ HRESULT CRenderer::Draw_RenderGroup()
 	CFont_Manager* pFont_Manager = CFont_Manager::GetInstance();
 	Safe_AddRef(pFont_Manager);
 
-	if (true == Is_DebugRender())
+	Is_DebugRender();
+	
+	if (FAILED(Render_Debug()))
+		return E_FAIL;
+
+	if (true == m_isDebugRender)
 	{
-		if (FAILED(Render_Debug()))
-			return E_FAIL;
 		if (FAILED(pFont_Manager->Render_Font(TEXT("Font_135"), TEXT("Debug Render"), _float2(1120.f, 690.f),
 			_float4(0.f, 1.f, 0.f, 1.f), 0.f, _float2(), 0.5f)))
 			return E_FAIL;
 	}
+	
 	if (true == Is_MRTRender())
 	{
 		if (FAILED(Render_MRTs()))
@@ -839,16 +843,16 @@ HRESULT CRenderer::Sort_Blend()
 
 	m_RenderObjects[RENDER_BLEND].sort([vCamPos](const CGameObject* pSour, const CGameObject* pDest) {
 		_float3 vSourPos = pSour->Get_Transform()->Get_Position();
-	_float3 vDestPos = pDest->Get_Transform()->Get_Position();
+		_float3 vDestPos = pDest->Get_Transform()->Get_Position();
 
-	_float4 vSour = vSourPos - vCamPos;
-	_float4 vDest = vDestPos - vCamPos;
+		_float4 vSour = vSourPos - vCamPos;
+		_float4 vDest = vDestPos - vCamPos;
 
-	// �������� (�ָ��ִ°ź��� �׸�.)
-	if (vSour.Length() > vSour.Length())
-		return true;
-	return false;
-		});
+		if (vSour.Length() > vSour.Length())
+			return true;
+
+		return false;
+	});
 
 	return S_OK;
 }
@@ -857,22 +861,20 @@ HRESULT CRenderer::Sort_UI()
 {
 	m_RenderObjects[RENDER_UI].sort([](const CGameObject* pSour, const CGameObject* pDest) {
 		_float fSourZ = XMVectorGetZ(pSour->Get_Transform()->Get_Position());
-	_float fDestZ = XMVectorGetZ(pDest->Get_Transform()->Get_Position());
-	// �������� (�ָ��ִ°ź��� �׸�.)
-	if (fSourZ > fDestZ)
-		return true;
-	return false;
-		});
+		_float fDestZ = XMVectorGetZ(pDest->Get_Transform()->Get_Position());
+	
+		if (fSourZ > fDestZ)
+			return true;
+		return false;
+	});
 
 	return S_OK;
 }
 
 HRESULT CRenderer::Add_Components()
-{	
-
+{
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
-
 
 	m_pDeferredShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Deferred.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements);
 	if (nullptr == m_pDeferredShader)
@@ -961,7 +963,7 @@ HRESULT CRenderer::Add_Components()
 }
 #ifdef _DEBUG
 HRESULT CRenderer::Render_Debug()
-{
+{	
 	for (auto& pDebugCom : m_DebugObject)
 	{
 		if (nullptr != pDebugCom &&
@@ -996,7 +998,7 @@ HRESULT CRenderer::Render_MRTs()
 	return S_OK;
 }
 
-_bool CRenderer::Is_DebugRender()
+void CRenderer::Is_DebugRender()
 {
 	CInput_Device* pInput_Device = CInput_Device::GetInstance();
 	Safe_AddRef(pInput_Device);
@@ -1009,8 +1011,6 @@ _bool CRenderer::Is_DebugRender()
 			m_isDebugRender = true;
 	}
 	Safe_Release(pInput_Device);
-
-	return m_isDebugRender;
 }
 
 _bool CRenderer::Is_MRTRender()

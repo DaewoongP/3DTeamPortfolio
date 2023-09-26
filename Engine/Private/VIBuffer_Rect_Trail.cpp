@@ -374,15 +374,18 @@ void CVIBuffer_Rect_Trail::Tick_Lightning(vector<_float3>* posVec)
 		m_pVertices[i].vPosition =
 			_float3(XMVectorCatmullRom(posVec->data()[(idx ==0)?(0):(idx -1)],
 				posVec->data()[idx], 
-				posVec->data()[idx +1], 
-				posVec->data()[((idx +2)> iVectorSize - 2)? (iVectorSize-1): (idx +2)] - _float3(0,0,1),
+				posVec->data()[(idx +1> iVectorSize - 2)? (iVectorSize - 2) : (idx + 1)],
+				posVec->data()[((idx +2)> iVectorSize - 2)? (iVectorSize-2): (idx +2)] - _float3(0,0,1),
 				t)) + (*m_TrailDesc.pHighLocalMatrix).Translation();
+		m_pVertices[i].vTexCoord = _float2((_float)(i / 2) * 2 / m_iNumVertices, 1.f);
+		
 		m_pVertices[i + 1].vPosition =
 			_float3(XMVectorCatmullRom(posVec->data()[(idx == 0) ? (0) : (idx - 1)],
 				posVec->data()[idx],
-				posVec->data()[idx + 1],
-				posVec->data()[((idx + 2) > iVectorSize - 2) ? (iVectorSize - 1) : (idx + 2)] - _float3(0, 0, 1),
+				posVec->data()[(idx + 1 > iVectorSize - 2) ? (iVectorSize - 2) : (idx + 1)],
+				posVec->data()[((idx + 2) > iVectorSize - 2) ? (iVectorSize - 2) : (idx + 2)] - _float3(0, 0, 1),
 				t))+ (*m_TrailDesc.pLowLocalMatrix).Translation();
+		m_pVertices[i+1].vTexCoord = _float2((_float)((i+1)/2) * 2/ m_iNumVertices, 0.f);
 	}
 
 	std::lock_guard<std::mutex> lock(mtx);

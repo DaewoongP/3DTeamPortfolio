@@ -9,7 +9,6 @@ CNcendio::CNcendio(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 CNcendio::CNcendio(const CNcendio& rhs)
 	: CMagicBall(rhs)
-	, m_iLevel(rhs.m_iLevel)
 {
 }
 
@@ -227,7 +226,7 @@ HRESULT CNcendio::Add_Effect()
 
 CNcendio* CNcendio::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel)
 {
-	CNcendio* pInstance = new CNcendio(pDevice, pContext);
+	CNcendio* pInstance = New CNcendio(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(iLevel)))
 	{
@@ -240,7 +239,7 @@ CNcendio* CNcendio::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,
 
 CGameObject* CNcendio::Clone(void* pArg)
 {
-	CNcendio* pInstance = new CNcendio(*this);
+	CNcendio* pInstance = New CNcendio(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

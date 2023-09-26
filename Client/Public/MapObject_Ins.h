@@ -34,6 +34,7 @@ public:
 public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg) override;
+	virtual HRESULT Initialize_Level(_uint iCurrentLevelIndex) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
@@ -46,7 +47,10 @@ private:
 	CModel_Instance*	m_pModel = { nullptr };
 
 private:
-	HRESULT Add_Components(MAPOJBECTINSDESC* pMapObjectInsDesc);
+	MAPOJBECTINSDESC	m_ObjectDesc;
+
+private:
+	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
 	HRESULT SetUp_ShadowShaderResources();
 

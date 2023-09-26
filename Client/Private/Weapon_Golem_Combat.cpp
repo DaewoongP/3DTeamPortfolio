@@ -25,6 +25,7 @@ HRESULT CWeapon_Golem_Combat::Initialize(void* pArg)
 	if (FAILED(Add_Components(pArg)))
 		return E_FAIL;
 
+	m_pTransform->Set_RigidBody(m_pRigidBody);
 	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
 
@@ -41,7 +42,12 @@ void CWeapon_Golem_Combat::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 	if (nullptr != m_pRendererCom)
+	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+#ifdef _DEBUG
+		m_pRendererCom->Add_DebugGroup(m_pRigidBody);
+#endif // _DEBUG
+	}
 }
 
 HRESULT CWeapon_Golem_Combat::Render()
@@ -93,6 +99,29 @@ HRESULT CWeapon_Golem_Combat::Add_Components(void* pArg)
 		if (FAILED(Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxMesh"), TEXT("Com_Shader_Mesh"),
 			(CComponent**)&m_pShaderCom, this)))
 			throw TEXT("Failed Add_Component : Com_Shader_Mesh");
+
+		CRigidBody::RIGIDBODYDESC RigidBodyDesc;
+		RigidBodyDesc.isStatic = true;
+		RigidBodyDesc.isTrigger = true;
+		RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
+		RigidBodyDesc.vOffsetPosition = _float3(0.f, 0.f, -1.f);
+		RigidBodyDesc.vOffsetRotation = XMQuaternionRotationRollPitchYaw(0.f, XMConvertToRadians(90.f), 0.f);
+		RigidBodyDesc.fStaticFriction = 0.f;
+		RigidBodyDesc.fDynamicFriction = 1.f;
+		RigidBodyDesc.fRestitution = 0.f;
+		PxCapsuleGeometry pCapsuleGeomatry = PxCapsuleGeometry(0.8f, 0.9f);
+		RigidBodyDesc.pGeometry = &pCapsuleGeomatry;
+		RigidBodyDesc.eConstraintFlag = CRigidBody::None;
+		RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 1.f, 1.f);
+		RigidBodyDesc.pOwnerObject = this;
+		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Attack");
+		RigidBodyDesc.eThisCollsion = COL_WEAPON;
+		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC;
+
+		/* For.Com_RigidBody */
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
+			TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
+			throw TEXT("Com_RigidBody");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -173,6 +202,7 @@ void CWeapon_Golem_Combat::Free()
 
 	if (true == m_isCloned)
 	{
+		Safe_Release(m_pRigidBody);
 		Safe_Release(m_pModelCom);
 		Safe_Release(m_pShaderCom);
 		Safe_Release(m_pRendererCom);

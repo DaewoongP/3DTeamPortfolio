@@ -28,7 +28,7 @@ public:
 		BUFF_TYPE				eBuffType = { BUFF_NONE };
 		SPELL					eMagicTag = { SPELL_END };
 		COLLISIONFLAG			eCollisionFlag;
-		_float					fDamage = { 0 };
+		_int					iDamage = { 0 };
 		_float					fDistance = { 0 };
 		_float					fLifeTime = { 1.0f };
 		const _float4x4*		pWeaponMatrix = {nullptr};
@@ -41,7 +41,7 @@ public:
 		CMagic::MAGIC_TYPE		eMagicType = { CMagic::MT_END };
 		BUFF_TYPE				eBuffType = { BUFF_NONE };
 		SPELL					eMagicTag = { SPELL_END };
-		_float					fDamage = { 0 };
+		_int					iDamage = { 0 };
 		function<void(_float3,_float)>		Action = { nullptr };
 	}COLLSIONREQUESTDESC;
 
@@ -52,7 +52,7 @@ public:
 		BUFF_TYPE				eBuffType = { BUFF_NONE };
 		SPELL					eMagicTag = { SPELL_END };
 		_float3					vStartPosition = {};
-		_float					fDamage = { 0 };
+		_int					iDamage = { 0 };
 		_float					fDistance = { 0 };
 		_float					fInitLifeTime = { 1.0f };
 		_float					fLifeTime = { 1.0f };
@@ -83,8 +83,13 @@ public:
 	virtual void OnCollisionEnter(COLLEVENTDESC CollisionEventDesc) override;
 	virtual void OnCollisionStay(COLLEVENTDESC CollisionEventDesc) override;
 	virtual void OnCollisionExit(COLLEVENTDESC CollisionEventDesc) override;
-	virtual HRESULT Ready(MAGICBALLINITDESC& InitDesc);
-	virtual HRESULT Reset() PURE;
+	virtual HRESULT Reset(MAGICBALLINITDESC& InitDesc);
+
+protected:
+	virtual void Ready_SpinMove(CTrail* pTrail,_float2 vSpinWeight, _float fSpinSpeed);
+	virtual void Ready_SplineMove(CTrail* pTrail);
+	virtual void Ready_StraightMove(CTrail* pTrail);
+	virtual void Ready_SplineSpinMove(CTrail* pTrail , _float2 vSpinWeight, _float fSpinSpeed);
 
 protected:
 	// 충돌을 위한 리지드바디 입니다.
@@ -97,6 +102,22 @@ protected:
 	//무기의 현재 위치, 오프셋임
 	const _float4x4*		m_pWeaponMatrix = { nullptr };
 	_float4x4				m_WeaponOffsetMatrix = {};
+
+protected:
+	//트레일 이동처리 위함.
+	_float3				m_vStartPostion = {};
+	_float3				m_vTargetPosition = {};
+	_float				m_fLerpAcc = { 0.f };
+
+	//For. Spin
+	_float2				m_vSpinWeight = {};
+	_float				m_fSpinSpeed = { 1.f };
+
+	//For. Spline
+	_float3				m_vSplineLerp[2] = {};
+	_float				m_fTimeScalePerDitance = { 0.f };
+	_uint				m_iLevel = { 0 };
+
 
 protected:
 	MAGICBALLDESC			m_MagicBallDesc;

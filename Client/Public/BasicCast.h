@@ -24,7 +24,6 @@ public:
 	virtual void OnCollisionEnter(COLLEVENTDESC CollisionEventDesc) override;
 	virtual void OnCollisionStay(COLLEVENTDESC CollisionEventDesc) override;
 	virtual void OnCollisionExit(COLLEVENTDESC CollisionEventDesc) override;
-	virtual HRESULT Reset() { return S_OK; }
 
 private:
 	// 지팡이 트레일
@@ -32,8 +31,13 @@ private:
 	//지팡이 움직임 이펙트
 	CParticleSystem*			m_pWandEffect = { nullptr };
 
+	// 기본공격 시작 글로우
+	CParticleSystem*			m_pMainGlow = { nullptr };
 	// 기본공격 트레일
 	CTrail*						m_pMainTrail = { nullptr };
+
+	// 피격 팡( 3개짜리 )
+	CParticleSystem*			m_pHitSplashEffect = { nullptr };
 	// 피격 이펙트
 	CParticleSystem*			m_pHitEffect = { nullptr };
 	// 피격 섬광
@@ -41,15 +45,6 @@ private:
 	
 	//지팡이 3타 터지는 이펙트
 	CParticleSystem* m_pFinalAttackEffect = { nullptr };
-private:
-	_float3				m_vStartPostion = {};
-	_float3				m_vTargetPosition = {};
-	_float				m_fLerpAcc = { 0.f };
-
-	//For. Spline
-	_float3				m_vSplineLerp[2] = {};
-	_float				m_fTimeScalePerDitance = { 0.f };
-	_uint				m_iLevel = { 0 };
 
 private:
 	virtual void Ready_Begin() override;

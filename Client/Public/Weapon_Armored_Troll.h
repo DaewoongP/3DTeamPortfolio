@@ -9,7 +9,7 @@
 /* =============================================== */
 
 #include "Parts.h"
-#include "Armored_Troll.h"
+#include "Enemy.h"
 #include "Client_Defines.h"
 
 BEGIN(Engine)
@@ -38,11 +38,11 @@ public:
 	virtual HRESULT Render() override;
 
 public:
-	void On_Collider_Attack(CArmored_Troll::COLLISIONREQUESTDESC* pCollisionRequestDesc) {
+	void On_Collider_Attack(CEnemy::COLLISIONREQUESTDESC* pCollisionRequestDesc) {
 		Set_CollisionData(pCollisionRequestDesc);
-		m_pRigidBody->Enable_Collision("Attack");
+		m_pRigidBody->Enable_Collision("Attack", this);
 	}
-	void Off_Collider_Attack(CArmored_Troll::COLLISIONREQUESTDESC* pCollisionRequestDesc) {
+	void Off_Collider_Attack(CEnemy::COLLISIONREQUESTDESC* pCollisionRequestDesc) {
 		Set_CollisionData(pCollisionRequestDesc);
 		m_pRigidBody->Disable_Collision("Attack");
 	}

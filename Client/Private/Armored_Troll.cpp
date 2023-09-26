@@ -4,6 +4,7 @@
 
 #include "Turn.h"
 #include "Wait.h"
+#include "Death.h"
 #include "LookAt.h"
 #include "Action.h"
 #include "MagicBall.h"
@@ -69,11 +70,10 @@ void CArmored_Troll::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	static _bool testt = { false };
-	Set_Current_Target();
 
 	if (CGameInstance::GetInstance()->Get_DIKeyState(DIK_0, CInput_Device::KEY_DOWN))
 		testt = !testt;
-
+	
 	if (nullptr != m_pRootBehavior && true == testt)
 		m_pRootBehavior->Tick(fTimeDelta);
 
@@ -106,7 +106,9 @@ void CArmored_Troll::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		CMagicBall::COLLSIONREQUESTDESC* pCollisionMagicBallDesc = static_cast<CMagicBall::COLLSIONREQUESTDESC*>(CollisionEventDesc.pArg);
 		BUFF_TYPE eBuff = pCollisionMagicBallDesc->eBuffType;
 		auto Action = pCollisionMagicBallDesc->Action;
-		_float fDamage = pCollisionMagicBallDesc->fDamage;
+		_int iDamage = pCollisionMagicBallDesc->iDamage;
+
+		m_pHealth->Damaged(iDamage);
 
 		auto iter = m_CurrentTickSpells.find(eBuff);
 		if (iter == m_CurrentTickSpells.end())
@@ -148,10 +150,21 @@ HRESULT CArmored_Troll::Make_AI()
 		if (FAILED(__super::Make_AI()))
 			throw TEXT("Failed Enemy Make_AI");
 
+		m_pTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Player"), TEXT("GameObject_Player")));
+		if (nullptr == m_pTarget)
+			throw TEXT("m_pTarget is nullptr");
+
 		/* Make Childs */
 		CSelector* pSelector = dynamic_cast<CSelector*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Selector")));
 		if (nullptr == pSelector)
 			throw TEXT("pSelector is nullptr");
+
+		CSequence* pSequence_Death = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
+		if (nullptr == pSequence_Death)
+			throw TEXT("pSequence_Death is nullptr");
+		CSelector* pSelector_Alive = dynamic_cast<CSelector*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Selector")));
+		if (nullptr == pSelector_Alive)
+			throw TEXT("pSelector_Alive is nullptr");
 
 		CSequence* pSequence_Attacks_Degree = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
 		if (nullptr == pSequence_Attacks_Degree)
@@ -166,6 +179,16 @@ HRESULT CArmored_Troll::Make_AI()
 		if (nullptr == pTsk_Check_Distance)
 			throw TEXT("pTsk_Check_Distance is nullptr");
 
+		/* Set Decorator */
+		pSelector_Alive->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				CHealth* pHealth = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("pHealth", pHealth)))
+					return false;
+
+				return !(pHealth->isDead());
+			});
+
 		/* Set Options */
 		pTsk_Check_Distance->Set_Transform(m_pTransform);
 		pRandom_Select_Attacks_Far->Set_Option(1.f);
@@ -174,15 +197,22 @@ HRESULT CArmored_Troll::Make_AI()
 		if (FAILED(m_pRootBehavior->Assemble_Behavior(TEXT("Selector"), pSelector)))
 			throw TEXT("RootBehavior Assemble pSelector");
 
-		if (FAILED(pSelector->Assemble_Behavior(TEXT("pSequence_Attacks_Degree"), pSequence_Attacks_Degree)))
-			throw TEXT("Failed Selector Assemble Sequence_Attacks_Degree");
-		if (FAILED(pSelector->Assemble_Behavior(TEXT("Random_Select_Attacks_Far"), pRandom_Select_Attacks_Far)))
+		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Death"), pSequence_Death)))
+			throw TEXT("Failed Selector Assemble Sequence_Death");
+		if (FAILED(pSelector->Assemble_Behavior(TEXT("Selector_Alive"), pSelector_Alive)))
+			throw TEXT("Failed Selector Assemble Selector_Alive");
+
+		if (FAILED(pSelector_Alive->Assemble_Behavior(TEXT("Sequence_Attacks_Degree"), pSequence_Attacks_Degree)))
+			throw TEXT("Failed Selector Assemble_Behavior Sequence_Attacks_Degree");
+		if (FAILED(pSelector_Alive->Assemble_Behavior(TEXT("Random_Select_Attacks_Far"), pRandom_Select_Attacks_Far)))
 			throw TEXT("Failed Selector Assemble Random_Select_Attacks_Far");
-		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Taunts"), pSequence_Taunts)))
+		if (FAILED(pSelector_Alive->Assemble_Behavior(TEXT("Sequence_Taunts"), pSequence_Taunts)))
 			throw TEXT("Failed Selector Assemble_Behavior Sequence_Taunts");
-		if (FAILED(pSelector->Assemble_Behavior(TEXT("Tsk_Check_Distance"), pTsk_Check_Distance)))
+		if (FAILED(pSelector_Alive->Assemble_Behavior(TEXT("Tsk_Check_Distance"), pTsk_Check_Distance)))
 			throw TEXT("Failed Selector Assemble Tsk_Check_Distance");
 
+		if (FAILED(Make_Death(pSequence_Death)))
+			throw TEXT("Failed Make_Death");
 		if (FAILED(Make_Attack_Degree(pSequence_Attacks_Degree)))
 			throw TEXT("Failed Make_Attack_Degree");
 		if (FAILED(Make_Pattern_Attack_Far(pRandom_Select_Attacks_Far)))
@@ -341,6 +371,13 @@ HRESULT CArmored_Troll::Add_Components()
 			TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 			throw TEXT("Com_Model");
 
+		/* For.Com_Health */
+		CHealth::HEALTHDESC HealthDesc;
+		HealthDesc.iMaxHP = 500;
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Health"),
+			TEXT("Com_Health"), reinterpret_cast<CComponent**>(&m_pHealth), &HealthDesc)))
+			throw TEXT("Com_Health");
+
 		/* For.Com_RigidBody */
 		CRigidBody::RIGIDBODYDESC RigidBodyDesc;
 		RigidBodyDesc.isStatic = false;
@@ -383,6 +420,7 @@ HRESULT CArmored_Troll::Add_Components()
 		CUI_Group_Enemy_HP::ENEMYHPDESC  Desc;
 
 		Desc.eType = CUI_Group_Enemy_HP::ENEMYTYPE::BOSS;
+		Desc.pHealth = m_pHealth;
 		lstrcpy(Desc.wszObjectLevel, TEXT("77"));
 		lstrcpy(Desc.wszObjectName, TEXT("°³Ã¶¹Î"));
 
@@ -424,8 +462,9 @@ void CArmored_Troll::Tick_ImGui()
 
 	ImGui::Begin("Test Troll");
 
-	if (ImGui::InputInt("animIndex##Armored", &m_iIndex))
-		m_pModelCom->Change_Animation(m_iIndex);
+	string strHp = to_string(m_pHealth->Get_HP());
+	ImGui::Text("Current HP");
+	ImGui::Text(strHp.c_str());
 
 	ImGui::SeparatorText("Behavior");
 
@@ -440,6 +479,15 @@ void CArmored_Troll::Tick_ImGui()
 }
 
 #endif // _DEBUG
+
+void CArmored_Troll::DeathBehavior(const _float& fTimeDelta)
+{
+	m_isDead = true;
+
+	m_fDeadTimeAcc += fTimeDelta;
+	if (3.f < m_fDeadTimeAcc)
+		Set_ObjEvent(OBJ_DEAD);
+}
 
 HRESULT CArmored_Troll::Make_Turns(_Inout_ CSequence* pSequence)
 {
@@ -1817,31 +1865,90 @@ HRESULT CArmored_Troll::Make_Check_Spell(_Inout_ CSelector* pSelector)
 	return S_OK;
 }
 
+HRESULT CArmored_Troll::Make_Death(_Inout_ CSequence* pSequence)
+{
+	BEGININSTANCE;
+
+	try
+	{
+		if (nullptr == pSequence)
+			throw TEXT("Parameter pSequence is nullptr");
+
+		CAction* pAction_Death_Ground = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		if (nullptr == pAction_Death_Ground)
+			throw TEXT("pAction_Death_Ground is nullptr");
+
+		CDeath* pTsk_Death_Ground = dynamic_cast<CDeath*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Death")));
+		if (nullptr == pTsk_Death_Ground)
+			throw TEXT("pTsk_Death_Ground is nullptr");
+
+		// Set Decorators
+		pSequence->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				CHealth* pHealth = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("pHealth", pHealth)))
+					return false;
+
+				return pHealth->isDead();
+			});
+
+		// Set Options 
+		pAction_Death_Ground->Set_Options(TEXT("Death"), m_pModelCom, true);
+		function<void(const _float&)> Func = [&](const _float& fTimeDelta) {this->DeathBehavior(fTimeDelta); };
+		pTsk_Death_Ground->Set_DeathFunction(Func);
+
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Death_Ground"), pAction_Death_Ground)))
+			throw TEXT("Failed Assemble_Behavior Action_Death_Ground");
+
+		if (FAILED(pAction_Death_Ground->Assemble_Behavior(TEXT("Tsk_Death_Ground"), pTsk_Death_Ground)))
+			throw TEXT("Failed Assemble_Behavior Tsk_Death_Ground");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CGolem_Combat] Failed Make_Random_Idle_Move : \n");
+		wstrErrorMSG += pErrorTag;
+		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
+
+		ENDINSTANCE;
+
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
 void CArmored_Troll::Enter_Light_Attack()
 {
 	m_CollisionRequestDesc.eType = ATTACK_LIGHT;
-	m_CollisionRequestDesc.fDamage = 0.f;
+	m_CollisionRequestDesc.iDamage = 0;
+	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
 	m_pWeapon->On_Collider_Attack(&m_CollisionRequestDesc);
 }
 
 void CArmored_Troll::Enter_Heavy_Attack()
 {
 	m_CollisionRequestDesc.eType = ATTACK_HEAVY;
-	m_CollisionRequestDesc.fDamage = 0.f;
+	m_CollisionRequestDesc.iDamage = 0;
+	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
 	m_pWeapon->On_Collider_Attack(&m_CollisionRequestDesc);
 }
 
 void CArmored_Troll::Enter_Body_Attack()
 {
 	m_CollisionRequestDesc.eType = ATTACK_HEAVY;
-	m_CollisionRequestDesc.fDamage = 0.f;
+	m_CollisionRequestDesc.iDamage = 0;
+	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
 	Set_CollisionData(&m_CollisionRequestDesc);
 }
 
 void CArmored_Troll::Exit_Attack()
 {
 	m_CollisionRequestDesc.eType = ATTACK_NONE;
-	m_CollisionRequestDesc.fDamage = 0.f;
+	m_CollisionRequestDesc.iDamage = 0;
+	Set_CollisionData(&m_CollisionRequestDesc);
 	m_pWeapon->Off_Collider_Attack(&m_CollisionRequestDesc);
 }
 
@@ -1877,7 +1984,6 @@ void CArmored_Troll::Free()
 
 	if (true == m_isCloned)
 	{
-		Safe_Release(m_pUI_HP);
 		Safe_Release(m_pWeapon);
 	}
 }

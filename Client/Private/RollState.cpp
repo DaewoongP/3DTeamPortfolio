@@ -44,7 +44,7 @@ void CRollState::OnStateEnter(void* _pArg)
 
 	//m_isEnterTick = true;
 
-	
+	*m_pIsFinishAnimation = false;
 
 
 #ifdef _DEBUG
