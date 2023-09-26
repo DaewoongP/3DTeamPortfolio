@@ -68,6 +68,8 @@ HRESULT CLumos::Initialize(void* pArg)
 
 		return E_FAIL;
 	}
+
+	m_CollisionDesc.Action = bind(&CLumos::Lumos_Tick, this, placeholders::_1, placeholders::_2);
 	return S_OK;
 }
 
@@ -104,13 +106,25 @@ void CLumos::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 	__super::OnCollisionExit(CollisionEventDesc);
 }
 
-void CLumos::Lumos_Tick(_float fTimeDelta)
+HRESULT CLumos::Reset(MAGICBALLINITDESC& InitDesc)
+{
+	__super::Reset(InitDesc);
+
+	m_pWandGlowEffect->Disable();
+	m_pWandGlowRedEffect->Disable();
+	m_fLerpAcc = 0.0f;
+	m_fEndTimer = 0.3f;
+	return S_OK;
+}
+
+void CLumos::Lumos_Tick(_float3 vPos,_float fTimeDelta)
 {
 	m_fEndTimer = 0.3f;
 }
 
 void CLumos::Ready_Begin()
 {
+	dynamic_cast<CGameObject*>(m_pTarget->Get_Owner())->On_Maigc_Throw_Data(&m_CollisionDesc);
 	m_pWandGlowEffect->Disable();
 	m_pWandGlowRedEffect->Disable();
 }
@@ -130,6 +144,9 @@ void CLumos::Ready_CastMagic()
 
 void CLumos::Ready_Dying()
 {
+	m_pWandGlowEffect->Stop();
+	m_pWandGlowRedEffect->Stop();
+
 	//여기에 자연스레 사라지게 해주기 만들기
 }
 

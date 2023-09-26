@@ -45,6 +45,11 @@ public:
 
 public:
 	void Enable() { m_isEnable = true; }
+	void Enable(_float3 vPos) {
+		m_isEnable = true;
+		Reset_Trail(vPos + _float3(0, m_fWidth / 2, 0), vPos + _float3(0, m_fWidth / -2, 0));
+		m_pTransform->Set_Position(vPos);
+	}
 	void Disable() { m_isEnable = false; }
 	HRESULT Reset_Trail(_float3 vHighPos, _float3 vLowPos) { return m_pBuffer->Reset_Trail(vHighPos, vLowPos); }
 	HRESULT Reset_Trail() {
@@ -110,6 +115,9 @@ protected:
 	_bool m_isLightning = { false };
 	vector<_float3> m_vSplineLerpPostion;
 	vector<_float3> m_vSplineDir;
+
+	// For. SpinMove
+	_float m_fRotationAcc = { 0.f };
 
 protected:
 	CRenderer* m_pRenderer = { nullptr };

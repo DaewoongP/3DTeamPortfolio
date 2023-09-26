@@ -81,6 +81,7 @@ public:
 	// Disable : 파티클 객체를 비활성화 시킨다.(Tick과 Late Tick을 강제로 멈춤)
 public:
 	void Enable();
+	void Enable(_float3 vPos);
 	void Disable();
 
 protected:
