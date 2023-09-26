@@ -1,5 +1,7 @@
 #include "Weapon_Player_Wand.h"
 #include "GameInstance.h"
+#include"Light.h"
+#include"Player.h"
 
 CWeapon_Player_Wand::CWeapon_Player_Wand(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CParts(pDevice, pContext)
@@ -13,6 +15,8 @@ CWeapon_Player_Wand::CWeapon_Player_Wand(const CWeapon_Player_Wand& rhs)
 
 HRESULT CWeapon_Player_Wand::Initialize_Prototype()
 {
+	
+
 	return __super::Initialize_Prototype();
 }
 
@@ -46,6 +50,25 @@ HRESULT CWeapon_Player_Wand::Initialize(void* pArg)
 		}
 	}
 
+	BEGININSTANCE
+
+	CLight::LIGHTDESC LightInfo;
+	ZEROMEM(&LightInfo);
+	LightInfo.eType = CLight::TYPE_LUMOS;
+	LightInfo.vPos = _float4(_float4(m_WandPointOffsetMatrix.Translation().x,
+									 m_WandPointOffsetMatrix.Translation().y,
+									 m_WandPointOffsetMatrix.Translation().z, 1.f));
+	
+	LightInfo.fRange = 5.f;
+	LightInfo.fSpotPower = 2.f;
+	LightInfo.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
+	LightInfo.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
+	LightInfo.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+	
+	pGameInstance->Add_Lights(m_pDevice, m_pContext, LightInfo);
+
+	ENDINSTANCE
+
  	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
 
@@ -55,6 +78,11 @@ HRESULT CWeapon_Player_Wand::Initialize(void* pArg)
 void CWeapon_Player_Wand::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	Do_Lumos(fTimeDelta);
+	
+
+
 }
 
 void CWeapon_Player_Wand::Late_Tick(_float fTimeDelta)
@@ -97,6 +125,65 @@ HRESULT CWeapon_Player_Wand::Render()
 	}
 
 	return S_OK;
+}
+
+void CWeapon_Player_Wand::Do_Lumos(_float fTimeDelta)
+{
+	BEGININSTANCE
+		if (false == m_isLightOn && pGameInstance->Get_DIKeyState(DIK_F4, CInput_Device::KEY_DOWN))
+		{
+			m_isLightOn = true;
+			AccTime = 0.f;
+
+		}
+		else if (true == m_isLightOn && pGameInstance->Get_DIKeyState(DIK_F4, CInput_Device::KEY_DOWN))
+		{
+			m_isLightOn = false;
+			AccTime = 0.f;
+		}
+	if (m_isLightOn)
+	{
+		CLight::LIGHTDESC LightInfo;
+		ZEROMEM(&LightInfo);
+		LightInfo.vPos = _float4((m_WandPointOffsetMatrix * m_pTransform->Get_WorldMatrix()).Translation());
+		CGameObject* Target = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Player"), TEXT("GameObject_Player")));
+		LightInfo.eType = CLight::TYPE_LUMOS;
+		LightInfo.vLookAt = _float4(Target->Get_Transform()->Get_WorldMatrix().Translation());
+		LightInfo.fRange =15.f;
+		LightInfo.fSpotPower = 2.f;
+		if (AccTime < 1.f)
+			AccTime += fTimeDelta*3.f;
+
+		m_LightIntensity = XMVectorLerp(BLACKDEFAULT, WHITEDEFAULT, AccTime);
+		LightInfo.vAmbient = m_LightIntensity;
+		LightInfo.vSpecular = m_LightIntensity;
+		LightInfo.vDiffuse = m_LightIntensity;
+
+		pGameInstance->Set_Light(CLight::TYPE_LUMOS, LightInfo);
+	}
+	else if (false == m_isLightOn)
+	{
+
+		CLight::LIGHTDESC LightInfo;
+		ZEROMEM(&LightInfo);
+		LightInfo.eType = CLight::TYPE_LUMOS;
+		LightInfo.vPos = _float4((m_WandPointOffsetMatrix * m_pTransform->Get_WorldMatrix()).Translation());
+		CGameObject* Target = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Player"), TEXT("GameObject_Player")));
+		LightInfo.vLookAt = _float4(Target->Get_Transform()->Get_WorldMatrix().Translation());
+		LightInfo.fRange = 15.f;
+		LightInfo.fSpotPower = 0.f;
+		if (AccTime < 1.f)
+			AccTime += fTimeDelta*3.f;
+
+		m_LightIntensity = XMVectorLerp(WHITEDEFAULT, BLACKDEFAULT, AccTime);
+
+		LightInfo.vAmbient = m_LightIntensity;
+		LightInfo.vSpecular = m_LightIntensity;
+		LightInfo.vDiffuse = m_LightIntensity;
+		pGameInstance->Set_Light(CLight::TYPE_LUMOS, LightInfo);
+	}
+
+	ENDINSTANCE
 }
 
 HRESULT CWeapon_Player_Wand::Add_Components(void* pArg)

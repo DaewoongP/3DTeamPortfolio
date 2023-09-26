@@ -32,7 +32,7 @@ public:
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
-
+	void Do_Lumos(_float fTimeDelta);
 public:
 	_float4x4		Get_Wand_Point_OffsetMatrix() { return m_WandPointOffsetMatrix; }
 
@@ -43,7 +43,9 @@ private:
 
 private:
 	_float4x4			m_WandPointOffsetMatrix = {};
-
+	_bool				m_isLightOn = false;
+	_float4				m_LightIntensity = { 0.f,0.f,0.f,0.f };
+	_float				AccTime = 0.f;
 private:
 	HRESULT Add_Components(void* pArg);
 	HRESULT Set_Shader_Resources();
