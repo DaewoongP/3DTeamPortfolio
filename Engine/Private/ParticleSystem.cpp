@@ -2,6 +2,8 @@
 #include "GameInstance.h"
 #include "Component_Manager.h"
 #include "Ease.h"
+#include "ParticleSystemPool.h"
+
 CParticleSystem::CParticleSystem(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
 	: CGameObject(_pDevice, _pContext)
 {
@@ -375,6 +377,13 @@ void CParticleSystem::Enable()
 {
 	m_MainModuleDesc.isEnable = true;
 }
+void CParticleSystem::Enable(_float3 vPos)
+{
+	m_pTransform->Set_Position(vPos);
+	Get_EmissionModuleRef().Setting_PrevPos(vPos);
+	m_MainModuleDesc.isEnable = true;
+}
+
 void CParticleSystem::Disable()
 {
 	m_MainModuleDesc.isEnable = false;
@@ -525,6 +534,14 @@ void CParticleSystem::Action_By_StopOption()
 		m_StopAction();
 		Stop();
 		Restart();
+	}
+	else if (m_MainModuleDesc.strStopAction == "Pool")
+	{
+		Set_ObjEvent(CGameObject::OBJ_DEAD);
+		CParticleSystemPool* pPool = CParticleSystemPool::GetInstance();
+		Safe_AddRef(pPool);
+		pPool->Return_Particle(this);
+		Safe_Release(pPool);
 	}
 }
 

@@ -10,7 +10,8 @@
 #define			CharToWChar(_pChar, _pWchar)	MultiByteToWideChar(CP_ACP, 0, _pChar, MAX_PATH, _pWchar, MAX_PATH);
 #define         WCharToChar(_pWchar, _pChar)    WideCharToMultiByte(CP_ACP, 0, _pWchar, -1, _pChar, MAX_PATH, nullptr, nullptr);
 #define			MAX_PARTICLE_NUM				300
-
+#define			WHITEDEFAULT					_float4(1.f,1.f,1.f,1.f)
+#define			BLACKDEFAULT					_float4(0.f,0.f,0.f,0.f)
 ///////////////////////// default Macros /////////////////////////////
 #ifndef			MSG_BOX
 #define			MSG_BOX(_message)			Error_Message_Box(_message)

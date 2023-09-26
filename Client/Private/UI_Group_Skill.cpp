@@ -69,7 +69,7 @@ void CUI_Group_Skill::Late_Tick(_float fTimeDelta)
 
 void CUI_Group_Skill::Set_SpellTexture(KEYLIST eKey, SPELL eSpell)
 {
-	if (nullptr == m_pMains[eKey] || eKey >= KEYLIST_END || eSpell >= SPELL_END)
+	if (nullptr == m_pMains[eKey] || eKey >= KEYLIST_END || eSpell >= BASICCAST)
 		return;
 
 	if (m_KeyList[eKey] == eSpell)
@@ -110,9 +110,6 @@ HRESULT CUI_Group_Skill::Add_Components(wstring wszTag)
 	CUI_Back* pFrame= nullptr;
 	CUI_Back* pNumber = nullptr;
 
-	//_tchar main[MAX_PATH] = TEXT("Com_UI_Effect_Back_Main_");
-	//lstrcat(main, wszTag);
-	//_tchar* pmainTag = pGameInstance->Make_WChar(main);
 	wstring main = TEXT("Com_UI_Effect_Back_Main_");
 	main += wszTag;
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Effect_Back"),
@@ -125,10 +122,6 @@ HRESULT CUI_Group_Skill::Add_Components(wstring wszTag)
 	}
 	m_pMains.push_back(pMain);
 
-
-	//_tchar frame[MAX_PATH] = TEXT("Com_UI_Back_Frame_");
-	//lstrcat(main, wszTag);
-	//_tchar* pframeTag = pGameInstance->Make_WChar(main);
 	wstring frame = TEXT("Com_UI_Back_Frame_");
 	frame += wszTag;
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Back"),
@@ -141,10 +134,6 @@ HRESULT CUI_Group_Skill::Add_Components(wstring wszTag)
 	}
 	m_pFrames.push_back(pFrame);
 
-
-	//_tchar number[MAX_PATH] = TEXT("Com_UI_Back_Number_");
-	//lstrcat(main, wszTag);
-	//_tchar* pnumberTag = pGameInstance->Make_WChar(main);
 	wstring number = TEXT("Com_UI_Back_Number_");
 	number += wszTag;
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Back"),

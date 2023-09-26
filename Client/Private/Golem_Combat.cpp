@@ -191,11 +191,6 @@ HRESULT CGolem_Combat::Render()
 	return S_OK;
 }
 
-HRESULT CGolem_Combat::Render_Depth()
-{
-	return S_OK;
-}
-
 HRESULT CGolem_Combat::Make_AI()
 {
 	BEGININSTANCE;

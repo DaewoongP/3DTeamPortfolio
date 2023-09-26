@@ -36,7 +36,6 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual void OnCollisionEnter(COLLEVENTDESC CollisionEventDesc) override;
 	virtual HRESULT Render() override;
-	virtual HRESULT Render_Depth() override;
 
 private:
 	CWeapon_Armored_Troll* m_pWeapon = { nullptr };

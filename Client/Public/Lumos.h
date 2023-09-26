@@ -24,9 +24,10 @@ public:
 	virtual void OnCollisionEnter(COLLEVENTDESC CollisionEventDesc) override;
 	virtual void OnCollisionStay(COLLEVENTDESC CollisionEventDesc) override;
 	virtual void OnCollisionExit(COLLEVENTDESC CollisionEventDesc) override;
+	virtual HRESULT Reset(MAGICBALLINITDESC& InitDesc) override;
 
 public:
-	void	Lumos_Tick(_float fTimeDelta);
+	void	Lumos_Tick(_float3 vPos, _float fTimeDelta);
 
 private:
 	// 글로우 이펙트

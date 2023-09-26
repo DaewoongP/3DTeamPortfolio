@@ -6,6 +6,7 @@ texture2D g_DiffuseTexture;
 texture2D g_NormalTexture;
 
 float3 g_fHairColor = float3(1.f, 1.f, 1.f);
+float4 g_vColor;
 float g_fCamFar;
 
 struct VS_IN
@@ -103,14 +104,14 @@ PS_OUT PS_MAIN(PS_IN In)
     return Out;
 }
 
-PS_OUT PS_MAIN_TEST(PS_IN In)
+PS_OUT PS_MAIN_COLOR(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
 
     vector vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
     
     vector vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
-    
+    // 텍스처의 노말값은 -1~1로 출력을 못하기때문에 0~1로 정규화되어 있다. 따라서 강제적으로 변환해줘야함.
     float3 vNormal = vNormalDesc.xyz * 2.f - 1.f;
 
     float3x3 WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal.xyz, In.vNormal.xyz);
@@ -120,7 +121,7 @@ PS_OUT PS_MAIN_TEST(PS_IN In)
     if (vDiffuse.a < 0.1f)
         discard;
 
-    Out.vDiffuse = vDiffuse * 0.2f;
+    Out.vDiffuse = vDiffuse * g_vColor;
     Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fCamFar, 0.f, 0.f);
     
@@ -142,10 +143,7 @@ PS_OUT PS_MAIN_HAIR(PS_IN In)
 
     vNormal = mul(vNormal, WorldMatrix);
     
-    if (vDiffuse.g < 0.1f)
-        discard;
-    
-    vDiffuse.rgb = g_fHairColor - vDiffuse.r - vDiffuse.b;
+    vDiffuse.rgb = float3(0.2f, 0.2f, 0.2f);
 
     Out.vDiffuse = vDiffuse;
 	
@@ -153,6 +151,30 @@ PS_OUT PS_MAIN_HAIR(PS_IN In)
     Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
     // SV_POSITION으로 설정되지 않았던 투영포지션 값이므로 w나누기를 수행한 z값 (투영스페이스) 값을 r, 
     // 다시 이후 셰이더에서 w를 곱해주기 위해 b에 값을 다시 대입해줌.
+    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fCamFar, 0.f, 0.f);
+    
+    return Out;
+}
+
+PS_OUT PS_MAIN_NONE(PS_IN In)
+{
+    PS_OUT Out = (PS_OUT) 0;
+
+    vector vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+    
+    vector vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+    // 텍스처의 노말값은 -1~1로 출력을 못하기때문에 0~1로 정규화되어 있다. 따라서 강제적으로 변환해줘야함.
+    float3 vNormal = vNormalDesc.xyz * 2.f - 1.f;
+
+    float3x3 WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal.xyz, In.vNormal.xyz);
+
+    vNormal = mul(vNormal, WorldMatrix);
+    
+    if (vDiffuse.a < 0.1f)
+        discard;
+
+    Out.vDiffuse = vDiffuse * 0.2f;
+    Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fCamFar, 0.f, 0.f);
     
     return Out;
@@ -172,6 +194,18 @@ technique11 DefaultTechnique
 		DomainShader	= NULL /*compile ds_5_0 DS_MAIN()*/;
 		PixelShader		= compile ps_5_0 PS_MAIN();
 	}
+    pass AnimMeshColor
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
+        HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
+        DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
+        PixelShader = compile ps_5_0 PS_MAIN_COLOR();
+    }
 
     pass HairMesh
     {
@@ -195,6 +229,6 @@ technique11 DefaultTechnique
 		GeometryShader	= NULL /*compile gs_5_0 GS_MAIN()*/;
 		HullShader		= NULL /*compile hs_5_0 HS_MAIN()*/;
 		DomainShader	= NULL /*compile ds_5_0 DS_MAIN()*/;
-        PixelShader     = compile ps_5_0 PS_MAIN();
+        PixelShader     = compile ps_5_0 PS_MAIN_NONE();
     }
 }

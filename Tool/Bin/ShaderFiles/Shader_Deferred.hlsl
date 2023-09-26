@@ -146,7 +146,6 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
     vPosition = mul(vPosition, g_ViewMatrixInv);
 
     vector vLightDir = vPosition - g_vLightPos;
-
     float fDistance = length(vLightDir);
 
     // 빛의 감쇄량을 0~1로 정규화 시켜 처리하기 위함.
@@ -157,7 +156,7 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
     vector vReflect = reflect(normalize(vLightDir), vNormal);
     vector vLook = vPosition - g_vCamPosition;
 
-    Out.vSpecular = (g_vLightSpecular) * (g_vMtrlSpecular) * pow(max(dot(normalize(vReflect) * -1.f, normalize(vLook)), 0.f), 10.f) * fAtt;
+    Out.vSpecular = (g_vLightSpecular) * (g_vMtrlSpecular) * pow(max(dot(normalize(vReflect) * -1.f, normalize(vLook)), 0.f), 20.f) * fAtt;
 
     return Out;
 }
@@ -225,12 +224,14 @@ PS_OUT PS_MAIN_DEFERRED(PS_IN In)
     vector vSSAO = g_SSAOTexture.Sample(LinearSampler, In.vTexUV);
     
     vector vShadow = g_ShadowTexture.Sample(LinearSampler, In.vTexUV);
-   
-   
-    if(vShadow.x<0.6f)
+
+    if (vShadow.x < 0.6f)
+    {
         vShade *= 0.2f;
+        vSpecular = float4(0.f, 0.f, 0.f, 0.f);
+    }
     
-    Out.vColor = vDiffuse * vShade * vSSAO  + vSpecular ;
+    Out.vColor = vDiffuse * vShade * vSSAO  + vSpecular;
 
     return Out;
 }

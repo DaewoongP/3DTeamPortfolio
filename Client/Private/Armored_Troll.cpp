@@ -136,11 +136,6 @@ HRESULT CArmored_Troll::Render()
 	return S_OK;
 }
 
-HRESULT CArmored_Troll::Render_Depth()
-{
-	return S_OK;
-}
-
 HRESULT CArmored_Troll::Make_AI()
 {
 	BEGININSTANCE;
@@ -754,7 +749,7 @@ HRESULT CArmored_Troll::Make_Attack_Degree(_Inout_ CSequence* pSequence)
 					MSG_BOX("Failed Get_Type fTargetDistance");
 					return false;
 				}
-				//cout << fTargetDistance << endl;
+
 				return 7.f >= fTargetDistance;
 			});
 
