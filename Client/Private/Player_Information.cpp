@@ -92,7 +92,7 @@ HRESULT CPlayer_Information::Add_Components()
 
 	CUI_Group_Finisher::FINISHERDESC FinisherDesc;
 
-	FinisherDesc.pHealth = m_pHealth;
+	FinisherDesc.pHealth = m_pFinisher;
 	lstrcpy(FinisherDesc.szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Finisher_Front.uidata"));
 
 	/* Com_UI_Group_Finisher */

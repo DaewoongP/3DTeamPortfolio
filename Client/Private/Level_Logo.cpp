@@ -67,9 +67,10 @@ HRESULT CLevel_Logo::Ready_Layer_BackGround(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_LOGO, LEVEL_LOGO, TEXT("Prototype_GameObject_Logo_BackGround"), pLayerTag, TEXT("GameObject_Logo_BackGround"))))
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_LOGO, TEXT("Prototype_GameObject_UI_Group_Logo"),
+		pLayerTag, TEXT("Prototype_GameObject_UI_Group_Logo"))))
 	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Logo_BackGround)");
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_UI_Group_Logo)");
 		return E_FAIL;
 	}
 

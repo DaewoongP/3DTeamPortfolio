@@ -114,7 +114,7 @@ HRESULT CLevel_Cliffside::Initialize()
 
 void CLevel_Cliffside::Tick(_float fTimeDelta)
 {
-	__super::Tick(fTimeDelta);
+ 	__super::Tick(fTimeDelta);
 
 	BEGININSTANCE;
 
