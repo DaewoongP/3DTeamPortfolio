@@ -104,7 +104,7 @@ protected:
 
 	// 인스턴스 수에 따라 resize, reserve함수로 메모리 할당.
 	void Resize_Container(_uint iNumInstance);
-
+	
 protected:
 	void Action_By_Age();
 	void Action_By_Duration();

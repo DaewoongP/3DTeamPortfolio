@@ -50,9 +50,7 @@ HRESULT CDummyParticle::Initialize(void* _pArg)
 	m_pSizeXEaseCombo = CComboBox::Create(Generate_Hashtag(true).data(), "EasingX", CEase::pEases, CEase::EASE_END, CEase::pEases[0]);
 	m_pSizeYEaseCombo = CComboBox::Create(Generate_Hashtag(true).data(), "EasingY", CEase::pEases, CEase::EASE_END, CEase::pEases[0]);
 	m_pSizeZEaseCombo = CComboBox::Create(Generate_Hashtag(true).data(), "EasingZ", CEase::pEases, CEase::EASE_END, CEase::pEases[0]);
-	m_pAngularVelocityXEaseCombo = CComboBox::Create(Generate_Hashtag(true).data(), "EasingX", CEase::pEases, CEase::EASE_END, CEase::pEases[0]);
-	m_pAngularVelocityYEaseCombo = CComboBox::Create(Generate_Hashtag(true).data(), "EasingY", CEase::pEases, CEase::EASE_END, CEase::pEases[0]);
-	m_pAngularVelocityZEaseCombo = CComboBox::Create(Generate_Hashtag(true).data(), "EasingZ", CEase::pEases, CEase::EASE_END, CEase::pEases[0]);
+	m_pAngularVelocityCombo = CComboBox::Create(Generate_Hashtag(true).data(), "Option", { "Constant", "Range" }, "Constant");
 	m_pNoiseStrengthOptionComboBox = CComboBox::Create(Generate_Hashtag(true).data(), "Strength Option", { "Constant", "Range", "Curve"}, "Constant");
 	m_pNoiseStrengthCurveEaseCombo = CComboBox::Create(Generate_Hashtag(true).data(), "Easing", CEase::pEases, CEase::EASE_END, CEase::pEases[0]);
 	//CComboBox::Create(Generate_Hashtag(true).data(), "xvclk", CEase::asdfED, "vsd");
@@ -177,17 +175,17 @@ void CDummyParticle::MainMoudle_TreeNode(CEffect_Window* pEffectWindow)
 
 			pEffectWindow->Table_CheckBox("DirectionRotaion", "ckjv8ijie9342", &m_MainModuleDesc.isDirectionRotation);
 
-			pEffectWindow->Table_CheckBox("3D Start Rotation", "vbe088030j45", &m_MainModuleDesc.is3DStartRotation);
-			if (true == m_MainModuleDesc.is3DStartRotation)
+			//pEffectWindow->Table_CheckBox("3D Start Rotation", "vbe088030j45", &m_MainModuleDesc.is3DStartAngle);
+			if (true == m_MainModuleDesc.is3DStartAngle)
 			{
-				pEffectWindow->Table_DragXYZ("3D Rotation", "vwsdovuihe90f834", &m_MainModuleDesc.v3DRotationXYZ, 0.01f, 0.f, 360.f, false);
+				pEffectWindow->Table_DragXYZ("3D Rotation", "vwsdovuihe90f834", &m_MainModuleDesc.vStartAngle3D, 0.01f, 0.f, 360.f, false);
 			}
 			else
 			{
-				pEffectWindow->Table_DragFloatWithOption("Start Rotation", "dfvnko89h712enuo", &m_MainModuleDesc.fStartRotation, &m_MainModuleDesc.vStartRotationRange, &m_MainModuleDesc.isStartRotationRange, 0.1f, 0.f, 360.f);
+				pEffectWindow->Table_DragFloatWithOption("Start Rotation", "dfvnko89h712enuo", &m_MainModuleDesc.fStartAngle, &m_MainModuleDesc.vStartAngleRange, &m_MainModuleDesc.isStartAngleRange, 0.1f, 0.f, 360.f);
 			}
 
-			pEffectWindow->Table_DragFloat("Flip Rotation", "xcv ioiw", &m_MainModuleDesc.fFlipRotation, 0.01f, 0.f, 1.f);
+			pEffectWindow->Table_DragFloat("Flip Rotation", "xcv ioiw", &m_MainModuleDesc.fFlipAngle, 0.01f, 0.f, 1.f);
 
 			pEffectWindow->Table_ColorEdit4("Start Color", "ergop805", &m_MainModuleDesc.vStartColor);
 			pEffectWindow->Table_DragFloat("GravityModifier", "g50j8dfbji0", &m_MainModuleDesc.fGravityModifier, 0.01f, -FLT_MAX, FLT_MAX);
@@ -592,14 +590,14 @@ void CDummyParticle::SizeOverLifeTime_TreeNode(CEffect_Window* pEffectWindow)
 void CDummyParticle::RotationOverLifetimeModule_TreeNode(CEffect_Window* pEffectWindow)
 {
 	ImGui::Checkbox("##RotationOverLifetimeModule_CheckBox", &m_RotationOverLifetimeModuleDesc.isActivate);
-
+	
 	if (false == m_RotationOverLifetimeModuleDesc.isActivate)
 	{
 		ImGui::SameLine();
 		ImGui::Text("     RotationOverLifetimeModule");
 		return;
 	}
-
+	
 	ImGui::SameLine();
 
 	if (ImGui::TreeNode("RotationOverLifetimeModule"))
@@ -608,30 +606,21 @@ void CDummyParticle::RotationOverLifetimeModule_TreeNode(CEffect_Window* pEffect
 		{
 			ImGui::TableNextRow();
 
-			pEffectWindow->Table_CheckBox("Separate Axes", "ujkujweddcf", &m_RotationOverLifetimeModuleDesc.isSeparateAxes);
-
-			pEffectWindow->Table_DragFloat2Range("SizeX", "asdcfefg345twef", &m_RotationOverLifetimeModuleDesc.vAngularVelocityX, 0.01f);
-			m_pAngularVelocityXEaseCombo->Tick(CComboBox::TABLE);
-			if (m_pAngularVelocityXEaseCombo->IsUpdated())
-				m_RotationOverLifetimeModuleDesc.eEaseX = static_cast<CEase::EASE>(m_pAngularVelocityXEaseCombo->Get_Current_Item_Index());
-
-			if (true == m_RotationOverLifetimeModuleDesc.isSeparateAxes)
-			{
-				pEffectWindow->Table_DragFloat2Range("AngularVelocityY", "sdfvdrtyet7er6a", &m_RotationOverLifetimeModuleDesc.vAngularVelocityY, 0.01f);
-				m_pAngularVelocityYEaseCombo->Tick(CComboBox::TABLE);
-				if (m_pAngularVelocityYEaseCombo->IsUpdated())
-					m_RotationOverLifetimeModuleDesc.eEaseY = static_cast<CEase::EASE>(m_pAngularVelocityYEaseCombo->Get_Current_Item_Index());
-
-				pEffectWindow->Table_DragFloat2Range("AngularVelocityZ", "evbfc3ra2QX3ER5GY", &m_RotationOverLifetimeModuleDesc.vAngularVelocityZ, 0.01f);
-				m_pAngularVelocityZEaseCombo->Tick(CComboBox::TABLE);
-				if (m_pAngularVelocityZEaseCombo->IsUpdated())
-					m_RotationOverLifetimeModuleDesc.eEaseZ = static_cast<CEase::EASE>(m_pAngularVelocityZEaseCombo->Get_Current_Item_Index());
-			}
-
+			pEffectWindow->Table_DragFloatWithOption("Angular Velocity", "vj93jf9jdfsd"
+				, &m_RotationOverLifetimeModuleDesc.fAngularVelocity, &m_RotationOverLifetimeModuleDesc.vAngularVelocityRange
+				, &m_RotationOverLifetimeModuleDesc.isAngularVelocityRange, 0.9f, -FLT_MAX);
+			
 			ImGui::EndTable();
 		}
 		ImGui::TreePop();
 	}
+
+	ImGui::Spacing();
+	//ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
+	//ImGui::Text("I recommend enabling the billboard option in the RendererModule.");
+	//ImGui::PopStyleColor();
+
+	
 }
 void CDummyParticle::TextureSheetAnimationModule_TreeNode(CEffect_Window* pEffectWindow)
 {
@@ -977,9 +966,7 @@ void CDummyParticle::Free(void)
 	Safe_Release(m_pSizeXEaseCombo);
 	Safe_Release(m_pSizeYEaseCombo);
 	Safe_Release(m_pSizeZEaseCombo);
-	Safe_Release(m_pAngularVelocityXEaseCombo);
-	Safe_Release(m_pAngularVelocityYEaseCombo);
-	Safe_Release(m_pAngularVelocityZEaseCombo);
+	Safe_Release(m_pAngularVelocityCombo);
 	Safe_Release(m_pNoiseStrengthOptionComboBox);
 	Safe_Release(m_pNoiseStrengthCurveEaseCombo);
 	Safe_Release(m_pPassComboBox);

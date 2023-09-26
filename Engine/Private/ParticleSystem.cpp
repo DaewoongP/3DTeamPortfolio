@@ -190,12 +190,12 @@ void CParticleSystem::Tick(_float _fTimeDelta)
 
 		{
 			BillBoardMatrix = LookAt(vPos, vCamPosition.xyz(), m_RendererModuleDesc.isDeleteY);
-			if (true == m_MainModuleDesc.is3DStartRotation)
+			if (true == m_MainModuleDesc.is3DStartAngle)
 			{
 				RotationMatrix = _float4x4::MatrixFromQuaternion(XMQuaternionRotationRollPitchYaw(
-					XMConvertToRadians(m_MainModuleDesc.v3DRotationXYZ.x),
-					XMConvertToRadians(m_MainModuleDesc.v3DRotationXYZ.y),
-					XMConvertToRadians(m_MainModuleDesc.v3DRotationXYZ.z)));
+					XMConvertToRadians(m_MainModuleDesc.vStartAngle3D.x),
+					XMConvertToRadians(m_MainModuleDesc.vStartAngle3D.y),
+					XMConvertToRadians(m_MainModuleDesc.vStartAngle3D.z)));
 			}
 			else
 				RotationMatrix = _float4x4::MatrixRotationAxis(_float3(vCamPosition - vPos), XMConvertToRadians(Particle_iter->fAngle));
@@ -770,17 +770,29 @@ void CParticleSystem::Reset_Particle(PARTICLE_IT& _particle_iter)
 
 	// 늦게 나온만큼 수명 추가.
 	_particle_iter->fLifeTime += _particle_iter->fGenTime;
-	_particle_iter->vAccel = _float4();
+	_particle_iter->vAccel = _float4(); // 미구현
 
-	if (false == m_MainModuleDesc.is3DStartRotation)
+	// 시작회전 ------------- 안씀
+	if (false == m_MainModuleDesc.is3DStartAngle)
 	{
-		if (true == m_MainModuleDesc.isStartRotationRange)
-			_particle_iter->fAngle = Random_Generator(m_MainModuleDesc.vStartRotationRange.x, m_MainModuleDesc.vStartRotationRange.y);
+		if (true == m_MainModuleDesc.isStartAngleRange)
+			_particle_iter->fAngle = Random_Generator(m_MainModuleDesc.vStartAngleRange.x, m_MainModuleDesc.vStartAngleRange.y);
 		else
-			_particle_iter->fAngle = m_MainModuleDesc.fStartRotation;
+			_particle_iter->fAngle = m_MainModuleDesc.fStartAngle;
 	}
-	if (true == RandomBool(m_MainModuleDesc.fFlipRotation))
+	else
+		_particle_iter->fAngle = m_MainModuleDesc.fStartAngle;
+
+	// 각속도 결정
+	m_RotationOverLifetimeModuleDesc.Reset(_particle_iter);
+
+	// 회전 시 반대방향으로 돌린건지 결정.
+	if (true == RandomBool(m_MainModuleDesc.fFlipAngle))
+	{
 		_particle_iter->fAngle *= -1.f;
+		_particle_iter->fAngularVelocity *= -1.f;
+	}
+		
 
 	// 시작 크기 결정
 	if (true == m_MainModuleDesc.is3DStartSize)
@@ -886,7 +898,6 @@ void CParticleSystem::Restart()
 	m_EmissionModuleDesc.Restart();
 	m_ShapeModuleDesc.Restart();
 	m_RendererModuleDesc.Restart();
-	m_RotationOverLifetimeModuleDesc.Restart();
 }
 CParticleSystem* CParticleSystem::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, const _tchar* _pDirectoryPath, _uint m_iLevel)
 {

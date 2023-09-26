@@ -37,6 +37,7 @@ public:
 	_float4x4   WorldMatrix = _float4x4();
 	_float		fGenTime = { 0.f };
 	_float      fLifeTime = { 0.f };
+	_float		fAngularVelocity = { 0.f };
 	_float		fAngle = { 0.f };
 	_float4		vColor = { 1.f, 1.f, 1.f, 1.f };
 	_float3		vStartScale = { 1.f, 1.f, 1.f };
@@ -50,10 +51,6 @@ public:
 
 	friend class CParticleSystem;
 };
-class CParticleSystem;
-
-
-
 
 
 struct ENGINE_DLL MODULE
@@ -77,26 +74,38 @@ struct ENGINE_DLL MAIN_MODULE : public MODULE
 	_float fDuration = { 30.0f }; // 객체의 수명
 	_bool isLooping = { false }; // 파티클의 반복
 	_bool isPrewarm = { false }; // Loop활성화 시 사용 가능, Stop <-> Play 전환 시 파티클이 초기화 되지 않음.
+
+	// 지연
 	_bool isStartDelayRange = { false };
 	_float2 vStartDelayRange = { 0.f, 0.f };
 	_float fStartDelay = { 0.f }; // 초기화 시 파티클 시작 시간을 정함
+
+	// 수명
 	_bool isStartLifeTimeRange = { false };
 	_float2 vStartLifeTimeRange = { 5.f, 5.f };
 	_float fStartLifeTime = { 5.f }; // 초기화 시 정해지는 파티클의 수명을 정함
+
+	// 속도
 	_bool isStartSpeedRange = { false };
 	_float2 vStartSpeedRange = { 5.f, 5.f };
 	_float fStartSpeed = { 5.f }; // 초기화 시 정해지는 파티클의 속도
+
+	// 크기
 	_bool isStartSizeRange = { false };
 	_float2 vStartSizeRange = { 1.f, 1.f };
 	_float fStartSize = { 1.f }; // 초기화 시 정해지는 파티클 크기.
 	_bool is3DStartSize = { false }; // x,y,z축 회전을 활성화하려면 true.
 	_float3 v3DSizeXYZ = { 1.f, 1.f, 1.f }; // 파티클의 3D 스케일을 정해줍니다
-	_bool is3DStartRotation = { false }; // 초기화 시 정해지는 파티클 3차원 회전값(월드 x,y,z축 기준)
-	_bool isStartRotationRange = { false };
-	_float2 vStartRotationRange = { 0.f, 0.f }; // 초기화 시 정해지는 파티클 오일러각(빌보드 행렬의 x,y축 기준)
-	_float fStartRotation = { 0.f };
-	_float3 v3DRotationXYZ = { 0.f, 0.f, 0.f }; // 파티클의 3D 스케일을 정해줍니다
-	_float fFlipRotation = { 0.f }; // [0, 1]값으로 예를들어, 0.5의 값인 경우 파티클 초기화 시 50%확률로 반대방향으로 회전한다.
+
+	// 회전
+	_bool is3DStartAngle = { false }; // 초기화 시 정해지는 파티클 3차원 회전값(월드 x,y,z축 기준)
+	_bool isStartAngleRange = { false };
+	_float2 vStartAngleRange = { 0.f, 0.f }; // 초기화 시 정해지는 파티클 오일러각(빌보드 행렬의 x,y축 기준)
+	_float fStartAngle = { 0.f };
+	_float3 vStartAngle3D = { 0.f, 0.f, 0.f }; // 파티클의 3D 회전을 정해줍니다
+	_float fFlipAngle = { 0.f }; // [0, 1]값으로 예를들어, 0.5의 값인 경우 파티클 초기화 시 50%확률로 반대방향으로 회전한다.
+	_bool isDirectionRotation = { false };
+
 	_float4 vStartColor = { 1.f, 1.f, 1.f, 1.f }; // 초기화 시 정해지는 파티클의 컬러
 	_float fGravityModifier = { 0.f }; // 파티클에 적용 되는 중력값
 	_float fSimulationSpeed = { 1.f }; // 파티클 재생 속도
@@ -105,7 +114,6 @@ struct ENGINE_DLL MAIN_MODULE : public MODULE
 	_int iMaxParticles = { MAX_PARTICLE_NUM }; // 한 번에 존재할 수 있는 파티클의 수를 제한함.(인스턴싱 수가 100이여도 10으로 제한하면 10개만 나옴)
 	_bool isAutoRandomSeed = { true }; // 파티클 수명 주기마다 랜덤 값을 매번 바뀌게하는 용도.
 	string strStopAction = {"None"}; // None, Disable, Destroy, Callback // 객체 수명이 다하거나 파티클의 모든 재생이 완료됐을 때 옵션에 따라 행동이 달라진다.
-	_bool isDirectionRotation = { false };
 
 	_float fParticleSystemAge = { 0.f };
 };
@@ -215,16 +223,12 @@ struct ENGINE_DLL ROTATION_OVER_LIFETIME_MODULE : public MODULE
 	HRESULT Save(const _tchar* _pDirectoyPath);
 	HRESULT Load(const _tchar* _pDirectoyPath);
 	void Action(PARTICLE_IT& _particle_iter, _float _fTimeDelta);
-	void Restart();
-
+	void Reset(PARTICLE_IT& _particle_iter);
 	// 자체 회전에 사용할 값들
-	_bool isSeparateAxes = { false };
-	_float2 vAngularVelocityX = { 1.f, 1.f };
-	_float2 vAngularVelocityY = { 1.f, 1.f };
-	_float2 vAngularVelocityZ = { 1.f, 1.f };
-	CEase::EASE eEaseX = { CEase::OUT_QUINT };
-	CEase::EASE eEaseY = { CEase::OUT_QUINT };
-	CEase::EASE eEaseZ = { CEase::OUT_QUINT };
+	_bool	isAngularVelocityRange = { false };
+	_float fAngularVelocity = { 0.f };
+	_float2 vAngularVelocityRange = { 0.f, 0.f };
+
 };
 struct ENGINE_DLL COLOR_OVER_LIFETIME : public MODULE
 {
@@ -258,8 +262,6 @@ struct ENGINE_DLL SIZE_OVER_LIFETIME : public MODULE
 	CEase::EASE eEaseX = { CEase::OUT_QUINT };
 	CEase::EASE eEaseY = { CEase::OUT_QUINT };
 	CEase::EASE eEaseZ = { CEase::OUT_QUINT };
-
-	_float fSizeTimeAcc = { 0.f };
 };
 struct ENGINE_DLL TEXTURE_SHEET_ANIMATION : public MODULE
 {
