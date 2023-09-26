@@ -33,7 +33,7 @@ HRESULT CProfessor_Fig::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	m_pTransform->Set_Position(_float3(_float(rand() % 5) + 30.f, 0.f, _float(rand() % 5) + 10.f));
+	m_pTransform->Set_Position(_float3(35.f, 0.f, 10.f));
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
@@ -112,8 +112,9 @@ void CProfessor_Fig::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		if (wstring::npos != wstrObjectTag.find(TEXT("Golem")) ||
 			wstring::npos != wstrObjectTag.find(TEXT("Troll")))
 		{
-			cout << "In Monster" << endl;
-			m_RangeInEnemies.push_back({ wstrObjectTag, CollisionEventDesc.pOtherOwner });
+			auto iter = m_RangeInEnemies.find(wstrObjectTag);
+			if(iter == m_RangeInEnemies.end())
+				m_RangeInEnemies.emplace(wstrObjectTag, CollisionEventDesc.pOtherOwner);
 		}
 	}
 }
@@ -126,14 +127,10 @@ void CProfessor_Fig::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 
 	if (wstring::npos != wstrMyCollisionTag.find(TEXT("Range")))
 	{
-		if (wstring::npos != wstrObjectTag.find(TEXT("Golem")))
+		if (wstring::npos != wstrObjectTag.find(TEXT("Golem")) ||
+			wstring::npos != wstrObjectTag.find(TEXT("Troll")))
 		{
-			cout << "Out Monster" << endl;
-			if (FAILED(Remove_GameObject(wstrObjectTag)))
-			{
-				MSG_BOX("[CProfessor_Fig] Failed OnCollisionExit : \nFailed Remove_GameObject");
-				return;
-			}
+			Remove_GameObject(wstrObjectTag);
 		}
 	}
 }
@@ -141,7 +138,7 @@ void CProfessor_Fig::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 HRESULT CProfessor_Fig::Render()
 {
 #ifdef _DEBUG
-	//Tick_ImGui();
+	Tick_ImGui();
 #endif // _DEBUG
 
 	if (FAILED(SetUp_ShaderResources()))
@@ -270,7 +267,7 @@ HRESULT CProfessor_Fig::Make_Magics()
 		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
 		magicInitDesc.eMagicTag = BASICCAST;
 		magicInitDesc.fCoolTime = 0.f;
-		magicInitDesc.fDamage = 10.f;
+		magicInitDesc.iDamage = 10.f;
 		magicInitDesc.fCastDistance = 1000;
 		magicInitDesc.fBallDistance = 30;
 		magicInitDesc.fLifeTime = 0.8f;
@@ -285,7 +282,7 @@ HRESULT CProfessor_Fig::Make_Magics()
 		magicInitDesc.eMagicType = CMagic::MT_YELLOW;
 		magicInitDesc.eMagicTag = LEVIOSO;
 		magicInitDesc.fCoolTime = 0.f;
-		magicInitDesc.fDamage = 10.f;
+		magicInitDesc.iDamage = 10.f;
 		magicInitDesc.fCastDistance = 1000;
 		magicInitDesc.fBallDistance = 30;
 		magicInitDesc.fLifeTime = 0.8f;
@@ -354,7 +351,7 @@ HRESULT CProfessor_Fig::Add_Components()
 			throw TEXT("Com_Renderer");
 
 		/* For.Com_Model */
-		if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_Model_Professor_Fig"),
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Model_Professor_Fig"),
 			TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 			throw TEXT("Com_Model");
 
@@ -414,7 +411,7 @@ HRESULT CProfessor_Fig::Add_Components()
 		ParentMatrixDesc.pCombindTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
 		ParentMatrixDesc.pParentWorldMatrix = m_pTransform->Get_WorldMatrixPtr();
 
-		if (FAILED(Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_Weapon_Fig_Wand"),
+		if (FAILED(Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Weapon_Fig_Wand"),
 			TEXT("Com_Weapon"), reinterpret_cast<CComponent**>(&m_pWeapon), &ParentMatrixDesc)))
 			throw TEXT("Com_Weapon");
 
@@ -490,6 +487,15 @@ void CProfessor_Fig::Set_Current_Target()
 			m_pTarget = Pair.second;
 		else
 		{
+			if (true == Pair.second->isDead())
+			{
+				Remove_GameObject(Pair.first);
+				if (0 == m_RangeInEnemies.size())
+					break;
+
+				continue;
+			}
+
 			_float3 vSrcTargetPosition = m_pTarget->Get_Transform()->Get_Position();
 			_float3 vDstTargetPosition = Pair.second->Get_Transform()->Get_Position();
 
@@ -511,14 +517,7 @@ void CProfessor_Fig::Set_Current_Target()
 
 HRESULT CProfessor_Fig::Remove_GameObject(const wstring& wstrObjectTag)
 {
-	auto iter = find_if(m_RangeInEnemies.begin(), m_RangeInEnemies.end(), [&](auto& Pair)->_bool
-		{
-			if (wstring::npos != Pair.first.find(wstrObjectTag))
-				return true;
-
-			return false;
-		});
-
+	auto iter = m_RangeInEnemies.find(wstrObjectTag);
 	if (iter == m_RangeInEnemies.end())
 		return E_FAIL;
 
@@ -539,25 +538,25 @@ void CProfessor_Fig::Tick_ImGui()
 	ClientToScreen(g_hWnd, &rightBottom);
 	int Left = leftTop.x;
 	int Top = rightBottom.y;
-	ImVec2 vWinpos = { _float(Left + 1280.f), _float(Top - 200.f) };
+	ImVec2 vWinpos = { _float(Left + 1280.f), _float(Top - 400.f) };
 	ImGui::SetNextWindowPos(vWinpos);
 
 	ImGui::Begin("Test Professor_Fig");
 
-	if (ImGui::InputInt("animIndex##Armored", &m_iIndex))
-		m_pModelCom->Change_Animation(m_iIndex);
+	for (auto Pair : m_RangeInEnemies)
+		ImGui::Text(wstrToStr(Pair.first).c_str());
 
 	if (ImGui::Button("Set 0, 0, 0"))
 		m_pTransform->Set_Position(_float3(0.f, 0.f, 0.f));
 
-	ImGui::SeparatorText("Behavior");
+	/*ImGui::SeparatorText("Behavior");
 
 	vector<wstring> DebugBehaviorTags = m_pRootBehavior->Get_DebugBahaviorTags();
 
 	for (auto& Tag : DebugBehaviorTags)
 	{
 		ImGui::Text(wstrToStr(Tag).c_str());
-	}
+	}*/
 
 	ImGui::End();
 }
@@ -936,7 +935,7 @@ void CProfessor_Fig::Attack_Light()
 		return;
 
 	m_pMagicSlot->Action_Magic_Basic(0, m_pTarget->Get_Transform(),
-		XMMatrixIdentity(),
+		XMMatrixTranslation(0.f, 2.5f, 0.f),
 		m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(),
 		m_pWeapon->Get_Wand_Point_OffsetMatrix(),
 		COL_ENEMY);
@@ -948,7 +947,7 @@ void CProfessor_Fig::Attack_Heavy()
 		return;
 
 	m_pMagicSlot->Action_Magic_Basic(0, m_pTarget->Get_Transform(),
-		XMMatrixIdentity(),
+		XMMatrixTranslation(0.f, 2.5f, 0.f),
 		m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(),
 		m_pWeapon->Get_Wand_Point_OffsetMatrix(),
 		COL_ENEMY);
@@ -960,7 +959,7 @@ void CProfessor_Fig::Cast_Levioso()
 		return;
 
 	m_pMagicSlot->Action_Magic_Skill(0, m_pTarget->Get_Transform(),
-		XMMatrixIdentity(),
+		XMMatrixTranslation(0.f, 2.5f, 0.f),
 		m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(),
 		m_pWeapon->Get_Wand_Point_OffsetMatrix(),
 		COL_ENEMY);
@@ -972,7 +971,7 @@ void CProfessor_Fig::Cast_Protego()
 		return;
 
 	m_pMagicSlot->Action_Magic_Basic(1, m_pTransform,
-		XMMatrixIdentity(),
+		XMMatrixTranslation(0.f, 1.f, 0.f),
 		m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(),
 		m_pWeapon->Get_Wand_Point_OffsetMatrix(),
 		COL_MAGIC);

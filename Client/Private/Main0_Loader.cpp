@@ -45,6 +45,7 @@
 #include "Finisher.h"
 #include "Wingardiumleviosa.h"
 #include "Ncendio.h"
+#include "Lumos.h"
 #pragma endregion Magic
 
 #ifdef _DEBUG
@@ -117,6 +118,8 @@ HRESULT CMain0_Loader::Loading()
 
 	LeaveCriticalSection(&m_Critical_Section);
 
+	m_isFinished = true;
+
 	if (FAILED(hr))
 		return E_FAIL;
 
@@ -144,8 +147,6 @@ HRESULT CMain0_Loader::Loading_For_Logo()
 		return E_FAIL;
 	}
 
-	m_isFinished = true;
-
 	return S_OK;
 }
 
@@ -157,12 +158,12 @@ HRESULT CMain0_Loader::Loading_For_Cliffside()
 	{
 		/* --------------Texture-------------- */
 		/* Prototype_Component_Texture_Default_Particle*/
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_Texture_Default_Particle"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Texture_Default_Particle"),
 			CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Textures/Default_Particle.png")))))
 			throw TEXT("Prototype_Component_Texture_Default_Particle");
 
 		/* Prototype_Component_Texture_Terrain */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_Texture_Terrain"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Texture_Terrain"),
 			CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Terrain/Tile%d.dds"), 2))))
 			throw TEXT("Prototype_Component_Texture_Terrain");
 
@@ -317,44 +318,50 @@ HRESULT CMain0_Loader::Loading_For_Cliffside()
 
 #pragma region Magic
 		/* For.Prototype_GameObject_BasicCast */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_BasicCast"),
-			CBasicCast::Create(m_pDevice, m_pContext, LEVEL_CLIFFSIDE))))
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_BasicCast"),
+			CBasicCast::Create(m_pDevice, m_pContext, LEVEL_STATIC))))
 			throw TEXT("Prototype_GameObject_BasicCast");
 
 		/* For.Prototype_GameObject_Protego */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Protego"),
-			CProtego::Create(m_pDevice, m_pContext, LEVEL_CLIFFSIDE))))
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Protego"),
+			CProtego::Create(m_pDevice, m_pContext, LEVEL_STATIC))))
 			throw TEXT("Prototype_GameObject_Protego");
 
 		/* For.Prototype_GameObject_Revelio */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Revelio"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Revelio"),
 			CRevelio::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Revelio");
 
 		/* For.Prototype_GameObject_Wingardiumleviosa */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Wingardiumleviosa"),
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Wingardiumleviosa"),
 			CWingardiumleviosa::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Wingardiumleviosa");
 
 		/* For.Prototype_GameObject_Levioso */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Levioso"),
-			CLevioso::Create(m_pDevice, m_pContext, LEVEL_CLIFFSIDE))))
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Levioso"),
+			CLevioso::Create(m_pDevice, m_pContext, LEVEL_STATIC))))
 			throw TEXT("Prototype_GameObject_Levioso");
 
 		/* For.Prototype_GameObject_Confringo */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Confringo"),
-			CConfringo::Create(m_pDevice, m_pContext, LEVEL_CLIFFSIDE))))
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Confringo"),
+			CConfringo::Create(m_pDevice, m_pContext, LEVEL_STATIC))))
 			throw TEXT("Prototype_GameObject_Confringo");
 
 		/* For.Prototype_GameObject_Finisher */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Finisher"),
-			CFinisher::Create(m_pDevice, m_pContext, LEVEL_CLIFFSIDE))))
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Finisher"),
+			CFinisher::Create(m_pDevice, m_pContext, LEVEL_STATIC))))
 			throw TEXT("Prototype_GameObject_Finisher");
 
 		/* For.Prototype_GameObject_Ncendio */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Ncendio"),
-			CNcendio::Create(m_pDevice, m_pContext, LEVEL_CLIFFSIDE))))
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Ncendio"),
+			CNcendio::Create(m_pDevice, m_pContext, LEVEL_STATIC))))
 			throw TEXT("Prototype_GameObject_Ncendio");
+
+		/* For.Prototype_GameObject_Lumos */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Lumos"),
+			CLumos::Create(m_pDevice, m_pContext, LEVEL_STATIC))))
+			throw TEXT("Prototype_GameObject_Lumos");
+		
 #pragma endregion
 		{
 			std::lock_guard<std::mutex> lock(mtx);
@@ -408,15 +415,17 @@ HRESULT CMain0_Loader::Loading_For_Cliffside()
 		return E_FAIL;
 	}
 
-	m_isFinished = true;
-
 	return S_OK;
 }
 
 HRESULT CMain0_Loader::Loading_For_Vault()
 {
 
-	m_isFinished = true;
+	return S_OK;
+}
+
+HRESULT CMain0_Loader::Loading_For_GreatHall()
+{
 	return S_OK;
 }
 

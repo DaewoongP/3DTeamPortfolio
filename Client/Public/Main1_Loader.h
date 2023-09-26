@@ -58,10 +58,11 @@ private:
 	HRESULT Loading_For_Logo();
 	HRESULT Loading_For_Cliffside();
 	HRESULT Loading_For_Vault();
+	HRESULT Loading_For_GreatHall();
 	
 private:
-	HRESULT Loading_Map_Object(const _tchar* pMapObjectPath);
-	HRESULT Loading_Map_Object_Ins(const _tchar* pMapObjectInsPath);
+	HRESULT Loading_Map_Object(const _tchar* pMapObjectPath, LEVELID eID);
+	HRESULT Loading_Map_Object_Ins(const _tchar* pMapObjectInsPath, LEVELID eID);
 
 public:
 	static CMain1_Loader* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVELID eNextLevel);

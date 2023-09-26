@@ -30,16 +30,24 @@ HRESULT CMapObject_Ins::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	MAPOJBECTINSDESC* pMapObjectInsDesc = reinterpret_cast<MAPOJBECTINSDESC*>(pArg);
+	m_ObjectDesc = *reinterpret_cast<MAPOJBECTINSDESC*>(pArg);
 
-	if (nullptr == pMapObjectInsDesc)
+	if (FAILED(Add_Components()))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CMapObject_Ins::Initialize_Level(_uint iCurrentLevelIndex)
+{
+	/* Com_Model */
+	if (FAILED(CComposite::Add_Component(iCurrentLevelIndex, m_ObjectDesc.wszTag,
+		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModel))))
 	{
-		MSG_BOX("Object_Ins Desc is NULL");
+		MSG_BOX("Failed CMapObject_Ins Add_Component : (Com_Model)");
+		__debugbreak();
 		return E_FAIL;
 	}
-
-	if (FAILED(Add_Components(pMapObjectInsDesc)))
-		return E_FAIL;
 
 	return S_OK;
 }
@@ -100,7 +108,7 @@ HRESULT CMapObject_Ins::Render_Depth()
 	return S_OK;
 }
 
-HRESULT CMapObject_Ins::Add_Components(MAPOJBECTINSDESC* pMapObjectInsDesc)
+HRESULT CMapObject_Ins::Add_Components()
 {
 	/* Com_Renderer */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"),
@@ -125,15 +133,6 @@ HRESULT CMapObject_Ins::Add_Components(MAPOJBECTINSDESC* pMapObjectInsDesc)
 		TEXT("Com_ShadowShader"), reinterpret_cast<CComponent**>(&m_pShadowShader))))
 	{
 		MSG_BOX("Failed CMapObject_Ins Add_Component : (Com_ShadowShader)");
-		__debugbreak();
-		return E_FAIL;
-	}
-
-	/* Com_Model */
-	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, pMapObjectInsDesc->wszTag,
-		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModel))))
-	{
-		MSG_BOX("Failed CMapObject_Ins Add_Component : (Com_Model)");
 		__debugbreak();
 		return E_FAIL;
 	}

@@ -204,8 +204,6 @@ CUI::UIDESC CUI_Group_HP::Load_File(const HANDLE hFile)
 
 HRESULT CUI_Group_HP::Add_Fonts(_tchar* wszLevel)
 {
-	CUI_Font* pNumber = nullptr;
-
 	CUI_Font::FONTDESC Desc;
 	lstrcpy(Desc.m_pText, wszLevel);
 	Desc.m_vPos = { 1260.f, 700.f };
@@ -215,7 +213,7 @@ HRESULT CUI_Group_HP::Add_Fonts(_tchar* wszLevel)
 	Desc.m_vScale = { 0.3f, 0.3f };
 
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Font"),
-		TEXT("Com_UI_Font"), reinterpret_cast<CComponent**>(&pNumber), &m_pFont)))
+		TEXT("Com_UI_Font"), reinterpret_cast<CComponent**>(&m_pFont), &Desc)))
 	{
 		MSG_BOX("CUI_Group_Enemy_HP : Failed Clone Component (Com_UI_Font_Level)");
 		__debugbreak();

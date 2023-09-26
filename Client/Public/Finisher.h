@@ -24,7 +24,7 @@ public:
 	virtual void OnCollisionEnter(COLLEVENTDESC CollisionEventDesc) override;
 	virtual void OnCollisionStay(COLLEVENTDESC CollisionEventDesc) override;
 	virtual void OnCollisionExit(COLLEVENTDESC CollisionEventDesc) override;
-	virtual HRESULT Reset() { return S_OK; }
+	virtual HRESULT Reset(MAGICBALLINITDESC& InitDesc) override;
 
 private:
 	//Lightning Streak
@@ -49,7 +49,6 @@ private:
 	_float3 m_vSplineLerpPostion[3][10] = {};
 	_float3	m_vTargetPosition = {};
 	_float3 m_vLighiningStartPosition = {};
-	_float	m_fLerpAcc = { 0.f };
 
 	_uint	m_iLevel = { 0 };
 

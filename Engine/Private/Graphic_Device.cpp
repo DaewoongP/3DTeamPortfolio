@@ -36,7 +36,6 @@ HRESULT CGraphic_Device::Ready_Graphic_Device(HWND hWnd, GRAPHICDESC::WINMODE eW
 	};
 
 	m_pDeviceContext->OMSetRenderTargets(1, pRTVs, m_pDepthStencilView);
-	//m_pDeviceContext->OMSetRenderTargets(2, pRTVs, m_pShadowDepth);
 
 	// 뷰포트 구조체 값 저장
 	D3D11_VIEWPORT			ViewPortDesc;

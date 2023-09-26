@@ -18,6 +18,7 @@ class CPlayer_Camera;
 class CWeapon_Player_Wand;
 class CStateContext;
 class CPlayer_Information;
+struct CMagic::MAGICDESC;
 END
 
 BEGIN(Client)
@@ -73,9 +74,13 @@ private:
 
 	//절두체 타겟 설정 완료되면 사용
 	CTransform* m_pTargetTransform = { nullptr };
+	CGameObject* m_pTarget = { nullptr };
 
 	_float		m_fClothPower = { 0.f };
 	_float		m_fClothPowerPlus = { 0.0f };
+
+	CMagic::MAGICDESC* m_pBasicDesc_Light = { nullptr };
+	CMagic::MAGICDESC* m_pBasicDesc_Heavy = { nullptr };
 
 private:
 	HRESULT Add_Components();
@@ -90,6 +95,7 @@ private:
 private:
 	HRESULT Ready_MeshParts();
 	HRESULT Ready_Camera();
+	HRESULT Ready_MagicDesc();
 
 public:
 	// 마법에 함수가 잘 들어가나 테스트용도입니다.
@@ -110,6 +116,8 @@ private:
 
 	void Shot_Basic_Spell();
 
+	void Shot_Basic_Last_Spell();
+
 	void Protego();
 
 	void Gravity_On();
@@ -121,6 +129,12 @@ private:
 
 	//타겟을 정하기 위한 함수 (임시 용)
 	void Find_Target_For_Distance();
+
+	void Shot_Magic_Spell();
+
+	void Shot_Levioso();
+	void Shot_Confringo();
+	void Shot_Finisher();
 
 public:
 	static CPlayer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

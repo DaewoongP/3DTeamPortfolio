@@ -77,10 +77,10 @@ void CUI_Group_Enemy_HP::Tick(_float fTimeDelta)
 
 void CUI_Group_Enemy_HP::Late_Tick(_float fTimeDelta)
 {
-	//if (nullptr != m_pUI_HP && nullptr != m_pHealth)
-	//{
-	//	m_pUI_HP->Set_HP(m_pHealth->Get_Current_HP_Percent());
-	//}
+	if (nullptr != m_pUI_HP && nullptr != m_pHealth)
+	{
+		m_pUI_HP->Set_HP(m_pHealth->Get_Current_HP_Percent());
+	}
 	__super::Late_Tick(fTimeDelta);
 }
 

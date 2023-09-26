@@ -94,6 +94,7 @@ void CMagicBall::Tick(_float fTimeDelta)
 			if (m_isFirstFrameInState)
 			{
 				Ready_Dying();
+				m_pRigidBody->Disable_Collision("Magic_Ball");
 				m_isFirstFrameInState = false;
 			}
 
@@ -129,7 +130,6 @@ void CMagicBall::Late_Tick(_float fTimeDelta)
 
 void CMagicBall::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
-	//m_pRigidBody->Disable_Collision("Magic_Ball");
 }
 
 void CMagicBall::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)
@@ -140,19 +140,20 @@ void CMagicBall::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 {
 }
 
-HRESULT CMagicBall::Ready(MAGICBALLINITDESC& InitDesc)
+HRESULT CMagicBall::Reset(MAGICBALLINITDESC& InitDesc)
 {
 	m_MagicBallDesc.eMagicGroup = InitDesc.eMagicGroup;
 	m_MagicBallDesc.eMagicType = InitDesc.eMagicType;
 	m_MagicBallDesc.eBuffType = InitDesc.eBuffType;
 	m_MagicBallDesc.eMagicTag = InitDesc.eMagicTag;
-	m_MagicBallDesc.fDamage = InitDesc.fDamage;
+	m_MagicBallDesc.iDamage = InitDesc.iDamage;
 	m_MagicBallDesc.fDistance = InitDesc.fDistance;
 	m_MagicBallDesc.fInitLifeTime = InitDesc.fLifeTime;
 	m_TargetOffsetMatrix = InitDesc.TargetOffsetMatrix;
 	m_pWeaponMatrix = InitDesc.pWeaponMatrix;
 	m_WeaponOffsetMatrix = InitDesc.WeaponOffsetMatrix;
 
+	Safe_Release(m_pTarget);
 	m_pTarget = InitDesc.pTarget;
 	Safe_AddRef(m_pTarget);
 
@@ -165,12 +166,18 @@ HRESULT CMagicBall::Ready(MAGICBALLINITDESC& InitDesc)
 	m_CollisionDesc.eMagicType = m_MagicBallDesc.eMagicType;
 	m_CollisionDesc.eBuffType = m_MagicBallDesc.eBuffType;
 	m_CollisionDesc.eMagicTag = m_MagicBallDesc.eMagicTag;
-	m_CollisionDesc.fDamage = m_MagicBallDesc.fDamage;
+	m_CollisionDesc.iDamage = m_MagicBallDesc.iDamage;
 
 	Set_CollisionData(&m_CollisionDesc);
 	m_eCollisionFlag = InitDesc.eCollisionFlag;
 
 	m_pRigidBody->Set_CollisionFlag("Magic_Ball", m_eCollisionFlag);
+	//상태 초기화
+	Set_ObjEvent(OBJ_NONE);
+	m_eMagicBallState = MAGICBALL_STATE_BEGIN;
+	
+	m_pRigidBody->Disable_Collision("Magic_Ball");
+	m_pTransform->Set_WorldMatrix(XMMatrixIdentity());
 
 	return S_OK;
 }

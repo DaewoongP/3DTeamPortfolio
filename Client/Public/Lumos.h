@@ -9,12 +9,12 @@ class CTrail;
 END
 
 BEGIN(Client)
-class CBasicCast final : public CMagicBall
+class CLumos final : public CMagicBall
 {
 private:
-	explicit CBasicCast(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	explicit CBasicCast(const CBasicCast& rhs);
-	virtual ~CBasicCast() = default;
+	explicit CLumos(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	explicit CLumos(const CLumos& rhs);
+	virtual ~CLumos() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype(_uint m_iLevel);
@@ -25,35 +25,17 @@ public:
 	virtual void OnCollisionStay(COLLEVENTDESC CollisionEventDesc) override;
 	virtual void OnCollisionExit(COLLEVENTDESC CollisionEventDesc) override;
 
+public:
+	void	Lumos_Tick(_float fTimeDelta);
+
 private:
-	// 지팡이 트레일
-	CTrail*						 m_WandTrail = { nullptr };
-	//지팡이 움직임 이펙트
-	CParticleSystem*			m_pWandEffect = { nullptr };
-
-	// 기본공격 시작 글로우
-	CParticleSystem*			m_pMainGlow = { nullptr };
-	// 기본공격 트레일
-	CTrail*						m_pMainTrail = { nullptr };
-
-	// 피격 팡( 3개짜리 )
-	CParticleSystem*			m_pHitSplashEffect = { nullptr };
-	// 피격 이펙트
-	CParticleSystem*			m_pHitEffect = { nullptr };
-	// 피격 섬광
-	CParticleSystem*			m_pHitGlowEffect = { nullptr };
-	
-	//지팡이 3타 터지는 이펙트
-	CParticleSystem* m_pFinalAttackEffect = { nullptr };
+	// 글로우 이펙트
+	CParticleSystem*			m_pWandGlowEffect = { nullptr };
+	// 글로우 빨강 이펙트
+	CParticleSystem*			m_pWandGlowRedEffect= { nullptr };
 private:
-	_float3				m_vStartPostion = {};
-	_float3				m_vTargetPosition = {};
-	_float				m_fLerpAcc = { 0.f };
-
-	//For. Spline
-	_float3				m_vSplineLerp[2] = {};
-	_float				m_fTimeScalePerDitance = { 0.f };
 	_uint				m_iLevel = { 0 };
+	_float				m_fEndTimer = { 0.3f };
 
 private:
 	virtual void Ready_Begin() override;
@@ -71,7 +53,7 @@ private:
 	virtual HRESULT Add_Effect();
 
 public:
-	static CBasicCast* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel);
+	static CLumos* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel);
 	virtual CGameObject* Clone(void* pArg);
 	virtual void Free() override;
 };

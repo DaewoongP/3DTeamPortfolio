@@ -76,6 +76,8 @@ HRESULT CMain1_Loader::Loading()
 
 	LeaveCriticalSection(&m_Critical_Section);
 
+	m_isFinished = true;
+
 	if (FAILED(hr))
 		return E_FAIL;
 
@@ -84,8 +86,6 @@ HRESULT CMain1_Loader::Loading()
 
 HRESULT CMain1_Loader::Loading_For_Logo()
 {
-	m_isFinished = true;
-
 	return S_OK;
 }
 
@@ -106,11 +106,11 @@ HRESULT CMain1_Loader::Loading_For_Cliffside()
 			CTerrain::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Terrain");
 
-		if (FAILED(Loading_Map_Object(TEXT("../../Resources/GameData/MapData/MapData0.ddd"))))
+		/*if (FAILED(Loading_Map_Object(TEXT("../../Resources/GameData/MapData/MapData0.ddd"), LEVEL_CLIFFSIDE)))
 			throw TEXT("Map Object");
 
-		if (FAILED(Loading_Map_Object_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins0.ddd"))))
-			throw TEXT("Map Object_Ins");
+		if (FAILED(Loading_Map_Object_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins0.ddd"), LEVEL_CLIFFSIDE)))
+			throw TEXT("Map Object_Ins");*/
 
 		/* For.Prototype_Component_CharacterController*/
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_CharacterController"),
@@ -218,27 +218,62 @@ HRESULT CMain1_Loader::Loading_For_Cliffside()
 		return E_FAIL;
 	}
 
-	m_isFinished = true;
-
 	return S_OK;
 }
 
 HRESULT CMain1_Loader::Loading_For_Vault()
 {
-	m_isFinished = true;
+	try
+	{
+		if (FAILED(Loading_Map_Object(TEXT("../../Resources/GameData/MapData/MapData1.ddd"), LEVEL_VAULT)))
+			throw TEXT("Map Object");
+
+		if (FAILED(Loading_Map_Object_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins1.ddd"), LEVEL_VAULT)))
+			throw TEXT("Map Object_Ins");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("Failed Add_Prototype : ");
+		wstrErrorMSG += pErrorTag;
+		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+		__debugbreak();
+		return E_FAIL;
+	}
 
 	return S_OK;
 }
 
-HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath)
+HRESULT CMain1_Loader::Loading_For_GreatHall()
+{
+	try
+	{
+		if (FAILED(Loading_Map_Object(TEXT("../../Resources/GameData/MapData/MapData2.ddd"), LEVEL_GREATHALL)))
+			throw TEXT("Map Object");
+
+		if (FAILED(Loading_Map_Object_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins2.ddd"), LEVEL_GREATHALL)))
+			throw TEXT("Map Object_Ins");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("Failed Add_Prototype : ");
+		wstrErrorMSG += pErrorTag;
+		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	return S_OK;
+}
+
+HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath, LEVELID eID)
 {
 	/* For.Prototype_GameObject_MapObject */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_MapObject"),
+	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_MapObject"),
 		CMapObject::Create(m_pDevice, m_pContext))))
 		throw TEXT("Prototype_GameObject_MapObject");
 
 	/* For.Prototype_GameObject_MapEffect */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_MapEffect"),
+	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_MapEffect"),
 		CMapEffect::Create(m_pDevice, m_pContext))))
 		throw TEXT("Prototype_GameObject_MapEffect");
 
@@ -296,7 +331,7 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath)
 		modelPath += modelName;
 		modelPath += TEXT(".dat");
 		
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, LoadDesc.wszTag,
+		if (FAILED(pGameInstance->Add_Prototype(eID, LoadDesc.wszTag,
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, modelPath.c_str()), true)))
 		{
 			MSG_BOX("Failed to Create New Model Prototype");
@@ -309,10 +344,10 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath)
 	return S_OK;
 }
 
-HRESULT CMain1_Loader::Loading_Map_Object_Ins(const _tchar* pMapObjectInsPath)
+HRESULT CMain1_Loader::Loading_Map_Object_Ins(const _tchar* pMapObjectInsPath, LEVELID eID)
 {
 	/* For.Prototype_GameObject_MapObject_Ins */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_MapObject_Ins"),
+	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_MapObject_Ins"),
 		CMapObject_Ins::Create(m_pDevice, m_pContext))))
 		throw TEXT("Prototype_GameObject_MapObject_Ins");
 
@@ -404,7 +439,7 @@ HRESULT CMain1_Loader::Loading_Map_Object_Ins(const _tchar* pMapObjectInsPath)
 
 		// �ν��Ͻ� �� ������Ÿ�� ����
 		_float4x4 PivotMatrix = XMMatrixIdentity();
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, ws.c_str(),
+		if (FAILED(m_pGameInstance->Add_Prototype(eID, ws.c_str(),
 			CModel_Instance::Create(m_pDevice, m_pContext, CModel_Instance::TYPE_NONANIM, wsPath.c_str(),
 				LoadDesc.pMatTransform, LoadDesc.iInstanceCnt, PivotMatrix), true)))
 		{

@@ -13,6 +13,7 @@
 #include "Selector_Degree.h"
 #include "Sequence_Groggy.h"
 #include "Sequence_Attack.h"
+#include "UI_Group_Enemy_HP.h"
 #include "Sequence_Levitated.h"
 #include "Sequence_MoveTarget.h"
 
@@ -48,6 +49,9 @@ HRESULT CGolem_Combat::Initialize(void* pArg)
 	m_pTransform->Set_RigidBody(m_pRigidBody);
 	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
+
+	if (FAILED(Make_Notifies()))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -117,7 +121,7 @@ void CGolem_Combat::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		CMagicBall::COLLSIONREQUESTDESC* pCollisionMagicBallDesc = static_cast<CMagicBall::COLLSIONREQUESTDESC*>(CollisionEventDesc.pArg);
 		BUFF_TYPE eBuff = pCollisionMagicBallDesc->eBuffType;
 		auto Action = pCollisionMagicBallDesc->Action;
-		_float fDamage = pCollisionMagicBallDesc->fDamage;
+		_int fDamage = pCollisionMagicBallDesc->iDamage;
 
 		cout << fDamage << endl;
 		m_pHealth->Damaged(fDamage);
@@ -162,7 +166,7 @@ void CGolem_Combat::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 		{
 			if (FAILED(Remove_GameObject(wstrObjectTag)))
 			{
-				//MSG_BOX("[CGolem_Combat] Failed OnCollisionExit : \nFailed Remove_GameObject");
+				MSG_BOX("[CGolem_Combat] Failed OnCollisionExit : \nFailed Remove_GameObject");
 				return;
 			}
 		}
@@ -292,6 +296,28 @@ HRESULT CGolem_Combat::Make_AI()
 
 HRESULT CGolem_Combat::Make_Notifies()
 {
+	function<void()> Func = [&] {(*this).Enter_Light_Attack(); };
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Jab"), TEXT("Enter_Light_Attack"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Slash_Sword"), TEXT("Enter_Light_Attack"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_OverHand_Sword"), TEXT("Enter_Light_Attack"), Func)))
+		return E_FAIL;
+
+	Func = [&] {(*this).Enter_Body_Attack(); };
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Shoulder"), TEXT("Enter_Body_Attack"), Func)))
+		return E_FAIL;
+
+	Func = [&] {(*this).Exit_Attack(); };
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Jab"), TEXT("Exit_Attack"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Shoulder"), TEXT("Exit_Attack"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Slash_Sword"), TEXT("Exit_Attack"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_OverHand_Sword"), TEXT("Exit_Attack"), Func)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -357,13 +383,37 @@ HRESULT CGolem_Combat::Add_Components()
 		/* For.Collider_Range */
 		RigidBodyDesc.isStatic = true;
 		RigidBodyDesc.isTrigger = true;
-		PxSphereGeometry pSphereGeomatry = PxSphereGeometry(15.f);
-		RigidBodyDesc.pGeometry = &pSphereGeomatry;
+		PxSphereGeometry pSphereGeomatry1 = PxSphereGeometry(15.f);
+		RigidBodyDesc.pGeometry = &pSphereGeomatry1;
 		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Range");
 		RigidBodyDesc.eThisCollsion = COL_ENEMY_RANGE;
 		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC;
 
-		m_pRigidBody->Create_Collider(&RigidBodyDesc);
+		if (FAILED(m_pRigidBody->Create_Collider(&RigidBodyDesc)))
+			throw TEXT("Failed Create_Collider");
+
+		/* For.Collider_Attack */
+		RigidBodyDesc.vOffsetPosition = _float3(0.f, 2.2f, 1.f);
+		PxSphereGeometry pSphereGeomatry2 = PxSphereGeometry(1.f);
+		RigidBodyDesc.pGeometry = &pSphereGeomatry2;
+		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Attack");
+		RigidBodyDesc.eThisCollsion = COL_WEAPON;
+		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC;
+
+		if (FAILED(m_pRigidBody->Create_Collider(&RigidBodyDesc)))
+			throw TEXT("Failed Create_Collider");
+
+		// UI
+		CUI_Group_Enemy_HP::ENEMYHPDESC  Desc;
+
+		Desc.eType = CUI_Group_Enemy_HP::ENEMYTYPE::MONSTER;
+		Desc.pHealth = m_pHealth;
+		lstrcpy(Desc.wszObjectLevel, TEXT("1"));
+		lstrcpy(Desc.wszObjectName, TEXT("°³Ã¶¹Î ÇÏ¼öÀÎ"));
+
+		if (FAILED(Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Enemy_HP"),
+			TEXT("UI_Enemy_HP"), reinterpret_cast<CComponent**>(&m_pUI_HP), &Desc)))
+			throw TEXT("UI_Enemy_HP");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -398,6 +448,10 @@ void CGolem_Combat::Tick_ImGui()
 	ImGui::SetNextWindowPos(vWinpos);
 
 	ImGui::Begin("Test Golem_Combat");
+
+	string strHp = to_string(m_pHealth->Get_HP());
+	ImGui::Text("Current HP");
+	ImGui::Text(strHp.c_str());
 
 	if (ImGui::Button("Set 0, 0, 0"))
 		m_pTransform->Set_Position(_float3(0.f, 0.f, 0.f));
@@ -643,7 +697,15 @@ HRESULT CGolem_Combat::Make_Air_Hit(_Inout_ CSequence* pSequence)
 					return false;
 
 				if (BUFF_ATTACK_HEAVY & *pICurrentSpell)
+				{
+					CRigidBody* pRigidBody = { nullptr };
+					if (FAILED(pBlackBoard->Get_Type("pRigidBody", pRigidBody)))
+						return false;
+
+					pRigidBody->Set_Gravity(true);
+
 					return true;
+				}
 
 				return false;
 			});
@@ -918,10 +980,46 @@ HRESULT CGolem_Combat::Make_Death(_Inout_ CSequence* pSequence)
 	return S_OK;
 }
 
+void CGolem_Combat::Enter_Light_Attack()
+{
+	m_CollisionRequestDesc.eType = ATTACK_LIGHT;
+	m_CollisionRequestDesc.iDamage = 0;
+	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
+	m_pWeapon->On_Collider_Attack(&m_CollisionRequestDesc);
+}
+
+void CGolem_Combat::Enter_Heavy_Attack()
+{
+	m_CollisionRequestDesc.eType = ATTACK_HEAVY;
+	m_CollisionRequestDesc.iDamage = 0;
+	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
+	m_pWeapon->On_Collider_Attack(&m_CollisionRequestDesc);
+}
+
+void CGolem_Combat::Enter_Body_Attack()
+{
+	m_CollisionRequestDesc.eType = ATTACK_HEAVY;
+	m_CollisionRequestDesc.iDamage = 0;
+	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
+	Set_CollisionData(&m_CollisionRequestDesc);
+	m_pRigidBody->Enable_Collision("Enemy_Attack");
+}
+
+void CGolem_Combat::Exit_Attack()
+{
+	m_CollisionRequestDesc.eType = ATTACK_NONE;
+	m_CollisionRequestDesc.iDamage = 0;
+	Set_CollisionData(&m_CollisionRequestDesc);
+	m_pRigidBody->Disable_Collision("Enemy_Attack");
+	m_pWeapon->Off_Collider_Attack(&m_CollisionRequestDesc);
+}
+
 void CGolem_Combat::DeathBehavior(const _float& fTimeDelta)
 {
+	m_isDead = true;
+
 	m_fDeadTimeAcc += fTimeDelta;
-	if (5.f < m_fDeadTimeAcc)
+	if (3.f < m_fDeadTimeAcc)
 		Set_ObjEvent(OBJ_DEAD);
 }
 
@@ -939,12 +1037,6 @@ HRESULT CGolem_Combat::Make_Turns(_Inout_ CSequence* pSequence)
 		if (nullptr == pSelector_Degree)
 			throw TEXT("pSelector_Choose_Degree is nullptr");
 
-		CAction* pAction_Right_Back = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Right_Back)
-			throw TEXT("pAction_Right_Back is nullptr");
-		CAction* pAction_Left_Back = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Left_Back)
-			throw TEXT("pAction_Left_Back is nullptr");
 		CAction* pAction_Left90 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
 		if (nullptr == pAction_Left90)
 			throw TEXT("pAction_Left90 is nullptr");
@@ -957,6 +1049,12 @@ HRESULT CGolem_Combat::Make_Turns(_Inout_ CSequence* pSequence)
 		CAction* pAction_Right135 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
 		if (nullptr == pAction_Right135)
 			throw TEXT("pAction_Right135 is nullptr");
+		CAction* pAction_Right_Back = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		if (nullptr == pAction_Right_Back)
+			throw TEXT("pAction_Right_Back is nullptr");
+		CAction* pAction_Left_Back = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		if (nullptr == pAction_Left_Back)
+			throw TEXT("pAction_Left_Back is nullptr");
 		/* Set Decorations */
 
 		/* Set Options */
@@ -1073,7 +1171,7 @@ HRESULT CGolem_Combat::Make_Attack(_Inout_ CSelector* pSelector)
 		pSequence_Attack_OverHand->Set_Attack_Option(7.5f);
 		pSequence_Attack_Jab->Set_Attack_Action_Options(TEXT("Attack_Jab"), m_pModelCom);
 		pSequence_Attack_Jab->Set_Attack_Option(4.5f);
-		pRandom_Attack->Set_Option(5.f);
+		pRandom_Attack->Set_Option(1.f);
 
 		pAction_Protego_Deflect->Set_Options(TEXT("Protego_Deflect"), m_pModelCom);
 

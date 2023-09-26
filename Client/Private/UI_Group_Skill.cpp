@@ -40,16 +40,11 @@ HRESULT CUI_Group_Skill::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-
-	//_tchar SecondTag[MAX_PATH] = TEXT("Second");
-//	_tchar ThirdTag[MAX_PATH] = TEXT("Third");
-	//_tchar FourthTag[MAX_PATH] = TEXT("Fourth");
-
 	wstring SecondTag = TEXT("Second");
 	wstring ThirdTag = TEXT("Third");
 	wstring FourthTag = TEXT("Fourth");
 
-	Create_First(pArg);
+	Create_First(TEXT("../../Resources/GameData/UIData/UI_Group_Skill_1.uidata"));
 	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Skill_2.uidata"), SecondTag, SECOND);
 	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Skill_3.uidata"), ThirdTag, THIRD);
 	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Skill_4.uidata"), FourthTag, FOURTH);
@@ -65,12 +60,6 @@ HRESULT CUI_Group_Skill::Initialize(void* pArg)
 void CUI_Group_Skill::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
-
-	for (size_t i = 0; i < KEYLIST_END; i++)
-	{
-		Set_SpellTexture((KEYLIST)i, (SPELL)i);
-	}
 }
 
 void CUI_Group_Skill::Late_Tick(_float fTimeDelta)
@@ -253,14 +242,14 @@ CUI::UIDESC CUI_Group_Skill::Load_File(const HANDLE hFile)
 	return UIDesc;
 }
 
-HRESULT CUI_Group_Skill::Create_First(void* pArg)
+HRESULT CUI_Group_Skill::Create_First(const _tchar* pFilePath)
 {
 	//_tchar FirstTag[MAX_PATH] = TEXT("First");
 	wstring wstrTag = TEXT("Front");
 	if (FAILED(Add_Components(wstrTag)))
 		return E_FAIL;
 
-	if (FAILED(Read_File(reinterpret_cast<const _tchar*>(pArg), FIRST)))
+	if (FAILED(Read_File(pFilePath, FIRST)))
 		return E_FAIL;
 
 	return S_OK;
@@ -460,6 +449,5 @@ void CUI_Group_Skill::Free()
 		Safe_Release(iter);
 	}
 	m_SkillTextures.clear();
-
 }
 

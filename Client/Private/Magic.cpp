@@ -31,7 +31,7 @@ HRESULT CMagic::Initialize(void* pArg)
 	m_eMagicType = InitDesc->eMagicType;
 	m_eBuffType = InitDesc->eBuffType;
 	m_fInitCoolTime = InitDesc->fCoolTime;
-	m_fDamage = InitDesc->fDamage;
+	m_iDamage = InitDesc->iDamage;
 	m_fCastDistance = InitDesc->fCastDistance;
 	m_fBallDistance = InitDesc->fBallDistance;
 	m_eMagicTag = InitDesc->eMagicTag;
@@ -61,7 +61,7 @@ HRESULT CMagic::ResetMagicDesc(MAGICDESC SkillDesc)
 	m_eMagicType = SkillDesc.eMagicType;
 	m_eBuffType = SkillDesc.eBuffType;
 	m_fInitCoolTime = SkillDesc.fCoolTime;
-	m_fDamage = SkillDesc.fDamage;
+	m_iDamage = SkillDesc.iDamage;
 	m_fCastDistance = SkillDesc.fCastDistance;
 	m_fBallDistance = SkillDesc.fBallDistance;
 	m_eMagicTag = SkillDesc.eMagicTag;
@@ -82,7 +82,7 @@ _bool CMagic::Magic_Cast(CTransform* pTarget, _float4x4 targetOffsetMatrix, cons
 	ballInit.eMagicTag = m_eMagicTag;
 	ballInit.eMagicType = m_eMagicType;
 	ballInit.eCollisionFlag = eCollisionFlag;
-	ballInit.fDamage = m_fDamage;
+	ballInit.iDamage = m_iDamage;
 	ballInit.fDistance = m_fBallDistance;
 	ballInit.pTarget = pTarget;
 	ballInit.TargetOffsetMatrix = targetOffsetMatrix;
@@ -104,7 +104,7 @@ _bool CMagic::Magic_Cast(CTransform* pTarget, _float4x4 targetOffsetMatrix, cons
 	CMagicBallPool* pMagicBallPool = CMagicBallPool::GetInstance();
 	Safe_AddRef(pMagicBallPool);
 	
-	if (FAILED(pGameInstance->Add_Component(pMagicBallPool->Get_Magic(ballInit), LEVEL_CLIFFSIDE, TEXT("Layer_Magic"), objTag)))
+	if (FAILED(pGameInstance->Add_Component(pMagicBallPool->Get_Magic(ballInit), LEVEL_STATIC, TEXT("Layer_Magic"), objTag)))
 	{
 		MSG_BOX(msgBoxText);
 		ENDINSTANCE;

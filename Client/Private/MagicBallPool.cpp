@@ -9,6 +9,7 @@
 #include "Finisher.h"
 #include "Wingardiumleviosa.h"
 #include "Ncendio.h"
+#include "Lumos.h"
 
 IMPLEMENT_SINGLETON(CMagicBallPool)
 
@@ -26,7 +27,7 @@ HRESULT CMagicBallPool::Initialize()
     Create_InitMagic(Client::CONFRINGO, TEXT("Prototype_GameObject_Confringo"));
     Create_InitMagic(Client::FINISHER, TEXT("Prototype_GameObject_Finisher"));
     Create_InitMagic(Client::NCENDIO, TEXT("Prototype_GameObject_Ncendio"));
-
+    Create_InitMagic(Client::LUMOS, TEXT("Prototype_GameObject_Lumos"));
     Safe_Release(pGameInstance);
 
     return S_OK;
@@ -36,17 +37,17 @@ CMagicBall* CMagicBallPool::Get_Magic(CMagicBall::MAGICBALLINITDESC& MagicBallDe
 {
     CMagicBall* pMagicball = { nullptr };
 
-    if (m_MagicPoolVec[MagicBallDesc.eMagicTag].empty())
+    if (m_MagicPool[MagicBallDesc.eMagicTag].empty())
     {
         pMagicball = Create_Magic(MagicBallDesc.eMagicTag, MagicBallDesc);
     }
     else 
     {
-        pMagicball = m_MagicPoolVec[MagicBallDesc.eMagicTag].front();
-        m_MagicPoolVec[MagicBallDesc.eMagicTag].pop();
+        pMagicball = m_MagicPool[MagicBallDesc.eMagicTag].front();
+        m_MagicPool[MagicBallDesc.eMagicTag].pop();
     }
 
-    if (FAILED(pMagicball->Ready(MagicBallDesc)))
+    if (FAILED(pMagicball->Reset(MagicBallDesc)))
     {
         MSG_BOX("Failed Set MagicBall Init Setting");
         return nullptr;
@@ -58,8 +59,7 @@ CMagicBall* CMagicBallPool::Get_Magic(CMagicBall::MAGICBALLINITDESC& MagicBallDe
 void CMagicBallPool::Return_Magic(CMagicBall* pMagic, SPELL eSpell)
 {
     Safe_AddRef(pMagic);
-    pMagic->Reset();
-    m_MagicPoolVec[eSpell].push(pMagic);
+    m_MagicPool[eSpell].push(pMagic);
 }
 
 CMagicBall* CMagicBallPool::Create_Magic(SPELL eSpell, CMagicBall::MAGICBALLINITDESC& MagicBallDesc)
@@ -108,26 +108,27 @@ CMagicBall* CMagicBallPool::Create_Magic(SPELL eSpell, CMagicBall::MAGICBALLINIT
     case Client::IMPERIO:
         break;
     case Client::NCENDIO:
-        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Ncendio")));
+        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Ncendio")));
         break;
     case Client::LEVIOSO:
-        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Levioso")));
+        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Levioso")));
         break;
     case Client::LUMOS:
+        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Lumos")));
         break;
     case Client::PROTEGO:
-        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Protego")));
+        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Protego")));
         break;
     case Client::REPARO:
         break;
     case Client::REVELIO:
-        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Revelio")));
+        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Revelio")));
         break;
     case Client::WINGARDIUMLEVIOSA:
-        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Wingardiumleviosa")));
+        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Wingardiumleviosa")));
         break;
     case Client::BASICCAST:
-        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_BaseAttack")));
+        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_BasicCast")));
         break;
     case Client::STUPEFY:
         break;
@@ -136,7 +137,7 @@ CMagicBall* CMagicBallPool::Create_Magic(SPELL eSpell, CMagicBall::MAGICBALLINIT
     case Client::MAGICTHROW:
         break;
     case Client::FINISHER:
-        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Finisher")));
+        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Finisher")));
         break;
     case Client::SPELL_END:
         MSG_BOX("Invalid Tag Value");
@@ -160,8 +161,8 @@ void CMagicBallPool::Create_InitMagic(SPELL eTag, const _tchar* szTagName, _uint
 
 	for (_uint i = 0; i < iNumPool; ++i)
 	{
-		pMagic = pGameInstance->Clone_Component(LEVEL_CLIFFSIDE, szTagName);
-		m_MagicPoolVec[eTag].push(static_cast<CMagicBall*>(pMagic));
+		pMagic = pGameInstance->Clone_Component(LEVEL_STATIC, szTagName);
+		m_MagicPool[eTag].push(static_cast<CMagicBall*>(pMagic));
 	}
 
     Safe_Release(pGameInstance);
@@ -169,7 +170,7 @@ void CMagicBallPool::Create_InitMagic(SPELL eTag, const _tchar* szTagName, _uint
 
 void CMagicBallPool::Free()
 {
-    for (auto& MagicQueue : m_MagicPoolVec)
+    for (auto& MagicQueue : m_MagicPool)
     {
         while (!MagicQueue.empty())
         {
