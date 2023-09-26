@@ -24,6 +24,7 @@ public:
 	virtual void OnCollisionEnter(COLLEVENTDESC CollisionEventDesc) override;
 	virtual void OnCollisionStay(COLLEVENTDESC CollisionEventDesc) override;
 	virtual void OnCollisionExit(COLLEVENTDESC CollisionEventDesc) override;
+	virtual HRESULT Reset(MAGICBALLINITDESC& InitDesc) override;
 
 private:
 	// 지팡이 트레일

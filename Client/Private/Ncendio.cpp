@@ -30,7 +30,6 @@ HRESULT CNcendio::Initialize_Prototype(_uint iLevel)
 			return E_FAIL;
 		}
 	}
-
 	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_FireCircleBoom_Particle")))
 	{
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_FireCircleBoom_Particle")
@@ -41,7 +40,6 @@ HRESULT CNcendio::Initialize_Prototype(_uint iLevel)
 			return E_FAIL;
 		}
 	}
-
 	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_SmokeCloud_Particle")))
 	{
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_SmokeCloud_Particle")
@@ -52,7 +50,6 @@ HRESULT CNcendio::Initialize_Prototype(_uint iLevel)
 			return E_FAIL;
 		}
 	}
-
 	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_FireRing_MeshEffect")))
 	{
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_FireRing_MeshEffect")
@@ -90,6 +87,16 @@ HRESULT CNcendio::Initialize(void* pArg)
 
 		return E_FAIL;
 	}
+
+	m_pSmokeCloudEffect->Disable();
+	m_pFireCircleBoomEffect->Disable();
+	m_pBurnTargetEffect->Disable();
+
+	m_pSmokeCloudEffect->Get_Transform()->Set_Scale(_float3(2.f, 2.f, 2.f));
+	m_pFireCircleBoomEffect->Get_Transform()->Set_Scale(_float3(2.f, 2.f, 2.f));
+	m_pBurnTargetEffect->Get_Transform()->Set_Scale(_float3(2.f, 2.f, 2.f));
+	m_pFireRingMeshEffect->Get_Transform()->Set_Scale(_float3(2.f, 2.f, 2.f));
+
 	return S_OK;
 }
 
@@ -127,42 +134,30 @@ void CNcendio::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 	__super::OnCollisionExit(CollisionEventDesc);
 }
 
+HRESULT CNcendio::Reset(MAGICBALLINITDESC& InitDesc)
+{
+	__super::Reset(InitDesc);
+
+	m_pSmokeCloudEffect->Disable();
+	m_pFireCircleBoomEffect->Disable();
+	m_pBurnTargetEffect->Disable();
+	m_fLerpAcc = 0.0f;
+	m_isSmoke = false;
+	m_isSmokeStart = true;
+	return S_OK;
+}
+
 void CNcendio::Ready_Begin()
 {
-	//m_pTrail->Disable();
-	//m_pWandTwinklEffect->Disable();
+	m_pTransform->Set_Position(m_MagicBallDesc.vStartPosition);
 }
 
 void CNcendio::Ready_DrawMagic()
 {
-	//m_pWandTrailEffect->Enable();
 }
 
 void CNcendio::Ready_CastMagic()
 {
-	if (m_pTarget == nullptr)
-	{
-		//마우스 피킹 지점으로 발사
-		BEGININSTANCE;
-		_float4 vMouseOrigin, vMouseDirection;
-		_float3 vMouseWorldPickPosition, vDirStartToPicked;
-		if (FAILED(pGameInstance->Get_WorldMouseRay(m_pContext, g_hWnd, &vMouseOrigin, &vMouseDirection)))
-		{
-			ENDINSTANCE;
-			return;
-		}
-		ENDINSTANCE;
-
-		vMouseWorldPickPosition = vMouseOrigin.xyz() + vMouseDirection.xyz() * 10000;
-		vDirStartToPicked = (vMouseWorldPickPosition - m_MagicBallDesc.vStartPosition);
-		vDirStartToPicked.Normalize();
-		m_vTargetPosition = vDirStartToPicked * m_MagicBallDesc.fDistance;
-	}
-	else
-	{
-		m_vTargetPosition = m_pTarget->Get_Position() + m_TargetOffsetMatrix.Translation();
-	}
-	
 	// 인센디오 원형 불꽃을 타겟 포지션보다 살짝 낮춘다.
 	_float3 vOffsetPosition = m_MagicBallDesc.vStartPosition;
 	vOffsetPosition.y -= 0.5f;
@@ -186,7 +181,7 @@ void CNcendio::Ready_Dying()
 
 void CNcendio::Tick_Begin(_float fTimeDelta)
 {
-	//인센디오는 비긴 없습니다.4
+	//인센디오는 비긴 없습니다.
 	Do_MagicBallState_To_Next();
 }
 
@@ -197,12 +192,13 @@ void CNcendio::Tick_DrawMagic(_float fTimeDelta)
 
 void CNcendio::Tick_CastMagic(_float fTimeDelta)
 {
-
+	Do_MagicBallState_To_Next();
 }
 
 void CNcendio::Tick_Dying(_float fTimeDelta)
 {
-	
+	if(!m_pFireCircleBoomEffect->IsEnable())
+		Do_MagicBallState_To_Next();
 }
 
 HRESULT CNcendio::Add_Components()
@@ -221,6 +217,34 @@ HRESULT CNcendio::Add_Components()
 
 HRESULT CNcendio::Add_Effect()
 {
+	return S_OK;
+}
+
+HRESULT CNcendio::Add_RigidBody()
+{
+	CRigidBody::RIGIDBODYDESC RigidBodyDesc;
+	RigidBodyDesc.isStatic = false;
+	RigidBodyDesc.isTrigger = true;
+	RigidBodyDesc.fStaticFriction = 0.f;
+	RigidBodyDesc.fDynamicFriction = 0.f;
+	RigidBodyDesc.fRestitution = 0.f;
+	PxSphereGeometry SphereGeometry = PxSphereGeometry(3.f);
+	RigidBodyDesc.pGeometry = &SphereGeometry;
+	RigidBodyDesc.eConstraintFlag = CRigidBody::AllRot;
+	RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 0.f, 1.f);
+	RigidBodyDesc.vInitPosition = _float3(0.f, 0.f, 0.f);
+	RigidBodyDesc.isGravity = false;
+	RigidBodyDesc.pOwnerObject = this;
+	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Magic_Ball");
+
+	/* Com_RigidBody */
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
+		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
+	{
+		MSG_BOX("Failed CTest_Player Add_Component : (Com_RigidBody)");
+		return E_FAIL;
+	}
+
 	return S_OK;
 }
 

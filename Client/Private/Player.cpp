@@ -566,8 +566,8 @@ HRESULT CPlayer::Add_Magic()
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(0, CONFRINGO);
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(1, LEVIOSO);
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(2, FINISHER);
-	//m_pMagicSlot->Add_Magic_To_Skill_Slot(3, NCENDIO);
-	m_pMagicSlot->Add_Magic_To_Skill_Slot(3, LUMOS);
+	m_pMagicSlot->Add_Magic_To_Skill_Slot(3, NCENDIO);
+	//m_pMagicSlot->Add_Magic_To_Skill_Slot(3, LUMOS);
 	
 	return S_OK;
 }

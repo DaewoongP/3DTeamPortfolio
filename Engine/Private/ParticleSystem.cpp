@@ -375,6 +375,13 @@ void CParticleSystem::Enable()
 {
 	m_MainModuleDesc.isEnable = true;
 }
+void CParticleSystem::Enable(_float3 vPos)
+{
+	m_pTransform->Set_Position(vPos);
+	Get_EmissionModuleRef().Setting_PrevPos(vPos);
+	m_MainModuleDesc.isEnable = true;
+}
+
 void CParticleSystem::Disable()
 {
 	m_MainModuleDesc.isEnable = false;
