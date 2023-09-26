@@ -37,9 +37,6 @@ private:
 	CParticleSystem*	m_pBurnTargetEffect = { nullptr };
 	CMeshEffect*		m_pFireRingMeshEffect = { nullptr };
 
-	// For. Particle
-	_bool m_isSmoke = { false };
-	_bool m_isSmokeStart = { true };
 private:
 	virtual void Ready_Begin() override;
 	virtual void Ready_DrawMagic() override;

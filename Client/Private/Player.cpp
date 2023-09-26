@@ -641,7 +641,6 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		if (nullptr == pTestTarget)
 			throw TEXT("pTestTarget is nullptr");
 		m_pMagicSlot->Action_Magic_Skill(3, pTestTarget->Get_Transform(), pTestTarget->Get_Offset_Matrix(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
-	
 	}
 
 	ENDINSTANCE;

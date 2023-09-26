@@ -103,9 +103,6 @@ HRESULT CNcendio::Initialize(void* pArg)
 void CNcendio::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
-	_float3 vWandPosition = _float4x4(m_WeaponOffsetMatrix * (*m_pWeaponMatrix)).Translation();
-	//m_pWandTrailEffect->Get_Transform()->Set_Position(vWandPosition);
 }
 
 void CNcendio::Late_Tick(_float fTimeDelta)
@@ -142,21 +139,10 @@ HRESULT CNcendio::Reset(MAGICBALLINITDESC& InitDesc)
 	m_pFireCircleBoomEffect->Disable();
 	m_pBurnTargetEffect->Disable();
 	m_fLerpAcc = 0.0f;
-	m_isSmoke = false;
-	m_isSmokeStart = true;
 	return S_OK;
 }
 
 void CNcendio::Ready_Begin()
-{
-	m_pTransform->Set_Position(m_MagicBallDesc.vStartPosition);
-}
-
-void CNcendio::Ready_DrawMagic()
-{
-}
-
-void CNcendio::Ready_CastMagic()
 {
 	// ÀÎ¼¾µð¿À ¿øÇü ºÒ²ÉÀ» Å¸°Ù Æ÷Áö¼Çº¸´Ù »ìÂ¦ ³·Ãá´Ù.
 	_float3 vOffsetPosition = m_MagicBallDesc.vStartPosition;
@@ -167,11 +153,26 @@ void CNcendio::Ready_CastMagic()
 	vBurnTargetOffset.Normalize();
 	vBurnTargetOffset *= 0.5f;
 
+	m_pSmokeCloudEffect->Enable(vOffsetPosition);
+	m_pFireCircleBoomEffect->Enable(vOffsetPosition);
+	m_pBurnTargetEffect->Enable(m_vTargetPosition + vBurnTargetOffset);
+
 	// Àç»ý
 	m_pBurnTargetEffect->Play(m_vTargetPosition + vBurnTargetOffset);
 	m_pFireCircleBoomEffect->Play(vOffsetPosition);
 	m_pSmokeCloudEffect->Play(vOffsetPosition);
 	m_pFireRingMeshEffect->Play(vOffsetPosition);
+
+	m_pTransform->Set_Position(m_MagicBallDesc.vStartPosition);
+}
+
+void CNcendio::Ready_DrawMagic()
+{
+}
+
+void CNcendio::Ready_CastMagic()
+{
+	
 }
 
 void CNcendio::Ready_Dying()
@@ -225,6 +226,8 @@ HRESULT CNcendio::Add_RigidBody()
 	CRigidBody::RIGIDBODYDESC RigidBodyDesc;
 	RigidBodyDesc.isStatic = false;
 	RigidBodyDesc.isTrigger = true;
+	RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
+	RigidBodyDesc.vOffsetPosition = _float3(0.f, 0.0f, 0.f);
 	RigidBodyDesc.fStaticFriction = 0.f;
 	RigidBodyDesc.fDynamicFriction = 0.f;
 	RigidBodyDesc.fRestitution = 0.f;
@@ -232,9 +235,10 @@ HRESULT CNcendio::Add_RigidBody()
 	RigidBodyDesc.pGeometry = &SphereGeometry;
 	RigidBodyDesc.eConstraintFlag = CRigidBody::AllRot;
 	RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 0.f, 1.f);
-	RigidBodyDesc.vInitPosition = _float3(0.f, 0.f, 0.f);
 	RigidBodyDesc.isGravity = false;
 	RigidBodyDesc.pOwnerObject = this;
+	RigidBodyDesc.eThisCollsion = COL_MAGIC;
+	RigidBodyDesc.eCollisionFlag = m_eCollisionFlag;
 	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Magic_Ball");
 
 	/* Com_RigidBody */
