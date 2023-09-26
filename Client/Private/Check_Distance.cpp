@@ -52,6 +52,7 @@ HRESULT CCheck_Distance::Tick(const _float& fTimeDelta)
 	// 거리를 비교할건데
 	if (true == m_isCompareDistance)
 	{
+		cout << fTargetDistance << endl;
 		if (true == m_isCloseDistance)
 		{
 			// 현재 타겟과의 거리가 목표치 보다 가까워진 경우 성공을 반환한다.
