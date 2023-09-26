@@ -13,7 +13,7 @@ class CPlayer;
 
 class CUI_Group_Skill final : public CGameObject
 {
-private:
+public:
 	enum KEYLIST
 	{
 		FIRST,

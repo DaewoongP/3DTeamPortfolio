@@ -4,6 +4,7 @@ Texture2D g_Texture;
 float4x4 g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
 Texture2D g_AlphaTexture;
+Texture2D g_DissolveTexture;
 
 // For Progress
 float g_fPercent;
@@ -18,6 +19,9 @@ float g_fRadian;
 // For Interaction
 bool g_isClicked;
 bool g_isOnCollision;
+
+// For Glitter
+float		g_fDissolveAmount; // 0~1°ª
 
 
 SamplerState g_Sampler
@@ -254,6 +258,30 @@ float4 PS_MAIN_UI_ALPHA(PS_IN In) : SV_TARGET0
 
 	vColor.a *= vAlpha.r;
 
+	return vColor;
+}
+
+
+float4 PS_MAIN_UI_DISSOLVE(PS_IN In) : SV_TARGET0
+{
+	vector vColor = g_Texture.Sample(LinearSampler, In.vTexUV);
+	float fDissolve = g_DissolveTexture.Sample(LinearSampler, In.vTexUV).r;
+
+	float fEdgeThickness = 0.1f;
+
+	vector vRed = float4(1.0f, 0.2706f, 0.0f, 1.0f);
+	vector vYellow = float4(1.0f, 0.6471f, 0.0f, 1.0f);
+	vector vWhite = float4(1.0f, 0.8431f, 0.0f, 1.0f);
+
+	if (fDissolve > g_fDissolveAmount + fEdgeThickness)
+	{
+		vColor = float4(0.5451f, 0.2706f, 0.0745f, 1.0f);
+	}
+	else if (fDissolve > g_fDissolveAmount)
+	{
+		float blendFactor = (fDissolve - g_fDissolveAmount) / fEdgeThickness;
+		vColor.rgb = lerp(lerp(vRed.rgb, vYellow.rgb, blendFactor), vWhite.rgb, blendFactor);
+	}
 
 	return vColor;
 }
@@ -388,5 +416,18 @@ technique11 DefaultTechnique
 		HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
 		DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
 		PixelShader = compile ps_5_0 PS_MAIN_UI_ALPHA();
+	}
+
+	pass Dissolve
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DSS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
+		HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
+		DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
+		PixelShader = compile ps_5_0 PS_MAIN_UI_DISSOLVE();
 	}
 }

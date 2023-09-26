@@ -233,7 +233,7 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 	if (FAILED(m_pShadow->Render()))
 		return E_FAIL;
-	if(FAILED(m_pFlowMap->Render()))
+	if (FAILED(m_pFlowMap->Render()))
 		return E_FAIL;
 	if (FAILED(Render_SSAO()))
 		return E_FAIL;

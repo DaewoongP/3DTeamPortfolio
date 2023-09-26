@@ -221,6 +221,10 @@ public: /* For.Thread_Pool*/
 	auto Thread_Enqueue(T&& t, Args&&... args)
 		->std::future<typename std::invoke_result<T, Args...>::type>;
 
+public:
+	HRESULT Reserve_Particle(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* szParticleTag, const _tchar* szParticleDirectoryPath, _uint iNumReserveParticles = 10);
+	void Play_Particle(const _tchar* szParticleTag, _float3 vWorldPosition);
+
 private:
 	class CGraphic_Device*			m_pGraphic_Device = { nullptr };
 	class CInput_Device*			m_pInput_Device = { nullptr };
@@ -240,7 +244,8 @@ private:
 	class CString_Manager*			m_pString_Manager = { nullptr };
 	class CThreadPool*				m_pThread_Pool = { nullptr };
 	class CTexturePool*				m_pTexture_Pool = { nullptr };
-	
+	class CParticleSystemPool*		m_pParticleSystem_Pool = { nullptr };
+
 public:
 	HRESULT Add_Prototype_Textures(_uint iLevel, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pPrototypeName, const _tchar* pTargetExtension, const _tchar* pDirectoryPath, _bool isFailedSkip);
 	HRESULT Add_Prototype_Models(_uint iLevel, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CModel::TYPE eType, const _tchar* pPrototypeName, const _tchar* pTargetExtension, const _tchar* pDirectoryPath, _bool isFailedSkip, _float4x4 PivotMatrix = _float4x4());

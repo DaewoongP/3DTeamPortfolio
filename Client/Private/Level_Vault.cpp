@@ -13,7 +13,12 @@ HRESULT CLevel_Vault::Initialize()
 {
     if (FAILED(__super::Initialize()))
         return E_FAIL;
+	if (FAILED(Ready_Lights()))
+	{
+		MSG_BOX("Failed Ready_Lights");
 
+		return E_FAIL;
+	}
 	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
 	{
 		MSG_BOX("Failed Ready_Layer_Player");
@@ -59,6 +64,13 @@ void CLevel_Vault::Tick(_float fTimeDelta)
 		pGameInstance->Set_CurrentScene(TEXT("Scene_FieldGuide"), false);
 	}
 
+	if (false)//trigger on
+	{
+		Light_Out();
+		
+	}
+
+
 	ENDINSTANCE;
 
 #ifdef _DEBUG
@@ -74,6 +86,24 @@ HRESULT CLevel_Vault::Render()
 	return S_OK;
 }
 
+HRESULT CLevel_Vault::Light_Out()
+{
+	BEGININSTANCE
+	CLight::LIGHTDESC SettingLight;
+	ZEROMEM(&SettingLight);
+	
+	Color vColor = (XMVectorLerp(XMVectorSet(0.f, 0.f, 0.f, 0.f), XMVectorSet(1.f, 1.f, 1.f, 1.f),1.f));
+
+	SettingLight.vDiffuse = _float4(vColor.x,vColor.y, vColor.z, 0.f);
+	SettingLight.vSpecular = _float4(vColor.x, vColor.y, vColor.z, 0.f);
+	SettingLight.vAmbient = _float4(vColor.x, vColor.y, vColor.z, 0.f);
+	pGameInstance->Set_Light(CLight::TYPE_DIRECTIONAL, SettingLight);
+
+	ENDINSTANCE
+
+		return S_OK;
+}
+
 HRESULT CLevel_Vault::Ready_Layer_Player(const _tchar* pLayerTag)
 {
 	BEGININSTANCE;
@@ -87,6 +117,28 @@ HRESULT CLevel_Vault::Ready_Layer_Player(const _tchar* pLayerTag)
 
 	ENDINSTANCE;
 
+	return S_OK;
+}
+
+HRESULT CLevel_Vault::Ready_Lights()
+{
+	BEGININSTANCE;
+	CLight::LIGHTDESC		LightDesc;
+	ZeroMemory(&LightDesc, sizeof LightDesc);
+
+	LightDesc.eType = CLight::TYPE_DIRECTIONAL;
+	LightDesc.vPos = _float4(2.f, 30.f, 2.f, 1.f);
+	LightDesc.vLookAt = _float4(20.f, 0.f, 20.f, 1.f);
+	LightDesc.vDir = _float4(0.33f, -0.99f, 0.33f, 0.f);
+
+	LightDesc.vDiffuse = BLACKDEFAULT;
+	LightDesc.vAmbient = BLACKDEFAULT;
+	LightDesc.vSpecular = BLACKDEFAULT;
+
+	if (nullptr == pGameInstance->Add_Lights(m_pDevice, m_pContext, LightDesc))
+		return E_FAIL;
+
+	ENDINSTANCE;
 	return S_OK;
 }
 

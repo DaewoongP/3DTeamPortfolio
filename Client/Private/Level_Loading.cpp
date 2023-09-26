@@ -20,6 +20,13 @@ HRESULT CLevel_Loading::Initialize(LEVELID eNextLevelID)
 	if (FAILED(__super::Initialize()))
 		return E_FAIL;
 
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	// 현재 씬 설정.
+	pGameInstance->Set_CurrentScene(TEXT("Scene_Loading"), true);
+	Safe_Release(pGameInstance);
+
+
 	m_eNextLevelID = eNextLevelID;
 
 	switch (m_eNextLevelID)
@@ -167,7 +174,8 @@ HRESULT CLevel_Loading::Loading_Logo(const _tchar* pLayerTag)
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 	// 로고 이동전 로딩씬에 대한 객체 생성
-	
+
+
 	Safe_Release(pGameInstance);
 
 	return S_OK;
@@ -175,6 +183,28 @@ HRESULT CLevel_Loading::Loading_Logo(const _tchar* pLayerTag)
 
 HRESULT CLevel_Loading::Loading_Cliffside(const _tchar* pLayerTag)
 {
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	// 로고 이동전 로딩씬에 대한 객체 생성
+
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Loading"), pLayerTag)))
+	{
+		MSG_BOX("Failed Add Scene : (Scene_Loading)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	_tchar wszFilePath[MAX_PATH] = TEXT("");
+	lstrcpy(wszFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Loading1.uidata"));
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_LOADING, TEXT("Prototype_GameObject_UI_Group_Loading"),
+		pLayerTag, TEXT("Prototype_GameObject_UI_Group_Loading1"), wszFilePath)))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_UI_Group_Loading)");
+		return E_FAIL;
+	}
+
+	Safe_Release(pGameInstance);
+
 	return S_OK;
 }
 

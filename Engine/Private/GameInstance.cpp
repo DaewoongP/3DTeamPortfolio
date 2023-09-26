@@ -9,6 +9,7 @@
 #include "Graphic_Device.h"
 #include "Camera_Manager.h"
 #include "String_Manager.h"
+#include "ParticleSystemPool.h"
 #include "RenderTarget_Manager.h"
 
 IMPLEMENT_SINGLETON(CGameInstance)
@@ -32,7 +33,9 @@ CGameInstance::CGameInstance()
 	, m_pString_Manager{ CString_Manager::GetInstance() }
 	, m_pThread_Pool{ CThreadPool::GetInstance() }
 	, m_pTexture_Pool{ CTexturePool::GetInstance() }
+	, m_pParticleSystem_Pool{ CParticleSystemPool::GetInstance() }
 {
+	Safe_AddRef(m_pParticleSystem_Pool);
 	Safe_AddRef(m_pTexture_Pool);
 	Safe_AddRef(m_pThread_Pool);
 	Safe_AddRef(m_pFrustum);
@@ -69,8 +72,8 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInst, _uint iNumLevels, cons
 	if (FAILED(m_pFrustum->Initialize()))
 		return E_FAIL;
 
-	if (FAILED(m_pSound_Manager->Initialize()))
-		return E_FAIL;
+	/*if (FAILED(m_pSound_Manager->Initialize()))
+		return E_FAIL;*/
 
 	if (FAILED(m_pPhysX_Manager->Initialize(*ppDevice, *ppContext)))
 		return E_FAIL;
@@ -110,9 +113,9 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 
 	m_pFrustum->Tick();
 	
-	m_pPhysX_Manager->Tick(fTimeDelta);
-
 	m_pComponent_Manager->Late_Tick(fTimeDelta);
+
+	m_pPhysX_Manager->Tick(fTimeDelta);
 
 	m_pCollision_Manager->Tick();
 
@@ -930,6 +933,20 @@ HRESULT CGameInstance::Delete_WChar(_tchar* pWChar)
 	return m_pString_Manager->Delete_WChar(pWChar);
 }
 
+HRESULT CGameInstance::Reserve_Particle(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* szParticleTag, const _tchar* szParticleDirectoryPath, _uint iNumReserveParticles)
+{
+	NULL_CHECK_RETURN_MSG(m_pParticleSystem_Pool, E_FAIL, TEXT("ParticleSystem Pool NULL"));
+
+	return m_pParticleSystem_Pool->Reserve_Particle(pDevice, pContext, szParticleTag, szParticleDirectoryPath, iNumReserveParticles);
+}
+
+void CGameInstance::Play_Particle(const _tchar* szParticleTag, _float3 vWorldPosition)
+{
+	NULL_CHECK_RETURN_MSG(m_pParticleSystem_Pool, , TEXT("ParticleSystem Pool NULL"));
+
+	return m_pParticleSystem_Pool->Play_Particle(szParticleTag, vWorldPosition);
+}
+
 template<class T, class ...Args>
 inline auto CGameInstance::Thread_Enqueue(T&& t, Args && ...args) -> std::future<typename std::invoke_result<T, Args ...>::type>
 {
@@ -976,11 +993,14 @@ void CGameInstance::Release_Engine()
 
 	CThreadPool::GetInstance()->DestroyInstance();
 
+	CParticleSystemPool::GetInstance()->DestroyInstance();
+
 	CGraphic_Device::GetInstance()->DestroyInstance();
 }
 
 void CGameInstance::Free()
 {
+	Safe_Release(m_pParticleSystem_Pool);
 	Safe_Release(m_pTexture_Pool);
 	Safe_Release(m_pThread_Pool);
 	Safe_Release(m_pString_Manager);

@@ -70,12 +70,12 @@ _bool CUI_Group_Finisher::Set_Gauge()
 	if (fPercent <= 0.5f)
 	{
 		m_pFinishers[FRONT]->Set_Gauge(0.f);
-		m_pFinishers[BACK]->Set_Gauge(fPercent);
+		m_pFinishers[BACK]->Set_Gauge(fPercent * 2.f);
 	}
 	else if (fPercent > 0.5f)
 	{
-		m_pFinishers[FRONT]->Set_Gauge(fPercent / 2.0f);
-		m_pFinishers[BACK]->Set_Gauge(m_pHealth->Get_MaxHP());
+		m_pFinishers[FRONT]->Set_Gauge((fPercent - 0.5f) * 2.0f);
+		m_pFinishers[BACK]->Set_Gauge(1.f);
 	}
 
 	return true;

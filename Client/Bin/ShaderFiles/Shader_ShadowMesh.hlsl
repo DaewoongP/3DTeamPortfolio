@@ -43,7 +43,6 @@ struct PS_OUT
     float4 vLightDepth : SV_TARGET0;
 };
 
-/* 픽셀을 받고 픽셀의 색을 결정하여 리턴한다. */
 PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
@@ -60,7 +59,7 @@ technique11 DefaultTechnique
     pass Shadow
     {
         SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_Depth_Disable, 0);
+        SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
         VertexShader = compile vs_5_0 VS_MAIN();

@@ -13,8 +13,8 @@ private:
 
 public:
 	HRESULT Reserve_Particle(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* szParticleTag, const _tchar* szParticleDirectoryPath, _uint iNumReserveParticles);
-	void Play_Particle(const _tchar* szParticleTag);
-	void Return_Particle(const _tchar* szParticleTag, CParticleSystem* pParticle);
+	void Play_Particle(const _tchar* szParticleTag, _float3 vWorldPosition);
+	void Return_Particle(CParticleSystem* pParticle);
 
 private:
 	unordered_map<const _tchar*, class CParticleSystemQueue*>	m_ParticlePool;
@@ -38,6 +38,8 @@ public:
 		m_Particles.push(pParticle);
 	}
 	inline CParticleSystem* Pop_Front() {
+		if (true == m_Particles.empty())
+			return nullptr;
 		CParticleSystem* pRetParticle = m_Particles.front();
 		m_Particles.pop();
 		return pRetParticle;

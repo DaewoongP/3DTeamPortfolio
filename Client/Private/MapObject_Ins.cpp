@@ -98,6 +98,8 @@ HRESULT CMapObject_Ins::Render_Depth()
 
 	for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; ++iMeshCount)
 	{
+		m_pModel->Bind_Material(m_pShadowShader, "g_DiffuseTexture", iMeshCount, DIFFUSE);
+
 		if (FAILED(m_pShadowShader->Begin("Shadow")))
 			return E_FAIL;
 

@@ -4,9 +4,6 @@
     <Filter Include="00. MainApp">
       <UniqueIdentifier>{cc764a3f-4330-44bd-8028-de74905e22ce}</UniqueIdentifier>
     </Filter>
-    <Filter Include="99. Headers">
-      <UniqueIdentifier>{91c3e316-2a51-40fe-a9b3-e3fef6e8989d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Levels">
       <UniqueIdentifier>{25b86a2e-c9b4-49c1-b269-972d8fb989db}</UniqueIdentifier>
     </Filter>
@@ -361,6 +358,12 @@
     <Filter Include="07. GameManager">
       <UniqueIdentifier>{41feed39-b5e2-4b15-99fe-18a8117aafdf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_Logo">
+      <UniqueIdentifier>{615f137f-89fd-425e-8a34-0692f9d580b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI\UI_Logo">
+      <UniqueIdentifier>{cdb882fd-b63d-411c-a352-12031cde1674}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\02. Enemy\03. Golem\00. Combat\Weapon">
       <UniqueIdentifier>{f57875dd-9b97-4974-a4c8-dbc1374da1c3}</UniqueIdentifier>
     </Filter>
@@ -372,6 +375,12 @@
     </Filter>
     <Filter Include="02. GameObject\02. Enemy\03. Golem\01. Pensive\Weapon">
       <UniqueIdentifier>{fde3512d-c9d7-4f98-baac-ed8650da6e1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98. Default\99. Headers">
+      <UniqueIdentifier>{91c3e316-2a51-40fe-a9b3-e3fef6e8989d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_Loading">
+      <UniqueIdentifier>{9aa8f3bd-bbc6-46ed-92e0-477200a4d147}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -391,7 +400,7 @@
       <Filter>00. MainApp</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Client_Defines.h">
-      <Filter>99. Headers</Filter>
+      <Filter>98. Default\99. Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Level_Logo.h">
       <Filter>01. Levels\00. Logo</Filter>
@@ -400,7 +409,7 @@
       <Filter>01. Levels\99. Loading</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Client_Includes.h">
-      <Filter>99. Headers</Filter>
+      <Filter>98. Default\99. Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Sky.h">
       <Filter>02. GameObject\00. Sky</Filter>
@@ -472,7 +481,7 @@
       <Filter>02. GameObject\02. Enemy\00. Troll\01. Forest_Troll\Weapon</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Behavior_Includes.h">
-      <Filter>99. Headers</Filter>
+      <Filter>98. Default\99. Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Wait.h">
       <Filter>03. Behaviors\04. Movement</Filter>
@@ -724,7 +733,7 @@
       <Filter>01. Levels\04. Smith</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Client_Enum.h">
-      <Filter>99. Headers</Filter>
+      <Filter>98. Default\99. Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Check_Degree.h">
       <Filter>03. Behaviors\05. Function</Filter>
@@ -759,11 +768,20 @@
     <ClInclude Include="..\public\Game_Manager.h">
       <Filter>07. GameManager</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_Group_Logo.h">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Logo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Logo.h">
+      <Filter>02. GameObject\05. UI\UI\UI_Logo</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\Weapon_Golem_Combat.h">
       <Filter>02. GameObject\02. Enemy\03. Golem\00. Combat\Weapon</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Lumos.h">
       <Filter>05. Magic\MagicBall\05. Lumos</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Group_Loading.h">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Loading</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1118,11 +1136,20 @@
     <ClCompile Include="..\private\Game_Manager.cpp">
       <Filter>07. GameManager</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\UI_Group_Logo.cpp">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Logo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Logo.cpp">
+      <Filter>02. GameObject\05. UI\UI\UI_Logo</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\Weapon_Golem_Combat.cpp">
       <Filter>02. GameObject\02. Enemy\03. Golem\00. Combat\Weapon</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Lumos.cpp">
       <Filter>05. Magic\MagicBall\05. Lumos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Group_Loading.cpp">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Loading</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

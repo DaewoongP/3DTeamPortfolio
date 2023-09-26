@@ -15,6 +15,8 @@
 
 #include "Magic.h"
 
+#include "UI_Group_Skill.h"
+
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
@@ -86,6 +88,9 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_fClothPower = 3.0f;
 	m_fClothPowerPlus = 1.0f;
 
+	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::FIRST, CONFRINGO);
+	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::SECOND, LEVIOSO);
+
 	return S_OK;
 }
 
@@ -121,6 +126,8 @@ void CPlayer::Tick(_float fTimeDelta)
 	//m_pStateContext->Tick(fTimeDelta);
 
 	Update_Cloth(fTimeDelta);
+
+	Shot_Magic_Spell();
 	
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UNDERBODY);
@@ -279,7 +286,7 @@ HRESULT CPlayer::Render()
 				m_pCustomModel->Render(iPartsIndex, i);
 			}
 		}
-		else
+		else if (CCustomModel::ROBE == iPartsIndex)
 		{
 			for (_uint i = 0; i < iNumMeshes; ++i)
 			{
@@ -289,6 +296,35 @@ HRESULT CPlayer::Render()
 				m_pCustomModel->Bind_Material(m_pShader, "g_NormalTexture", iPartsIndex, i, NORMALS);
 
 				m_pShader->Begin("AnimMeshNonCull");
+
+				m_pCustomModel->Render(iPartsIndex, i);
+			}
+		}
+		else if (CCustomModel::HEAD == iPartsIndex ||
+				CCustomModel::ARM == iPartsIndex)
+		{
+			for (_uint i = 0; i < iNumMeshes; ++i)
+			{
+				m_pCustomModel->Bind_BoneMatrices(m_pShader, "g_BoneMatrices", iPartsIndex, i);
+
+				m_pCustomModel->Bind_Material(m_pShader, "g_DiffuseTexture", iPartsIndex, i, DIFFUSE);
+				m_pCustomModel->Bind_Material(m_pShader, "g_NormalTexture", iPartsIndex, i, NORMALS);
+
+				m_pShader->Begin("AnimMesh");
+
+				m_pCustomModel->Render(iPartsIndex, i);
+			}
+		}
+		else
+		{
+			for (_uint i = 0; i < iNumMeshes; ++i)
+			{
+				m_pCustomModel->Bind_BoneMatrices(m_pShader, "g_BoneMatrices", iPartsIndex, i);
+
+				m_pCustomModel->Bind_Material(m_pShader, "g_DiffuseTexture", iPartsIndex, i, DIFFUSE);
+				m_pCustomModel->Bind_Material(m_pShader, "g_NormalTexture", iPartsIndex, i, NORMALS);
+
+				m_pShader->Begin("AnimMeshColor");
 
 				m_pCustomModel->Render(iPartsIndex, i);
 			}
@@ -447,6 +483,18 @@ HRESULT CPlayer::Add_Components()
 		return E_FAIL;
 	}
 
+	/* Com_UI_Group_Skill_1 */
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Skill"),
+		TEXT("Com_UI_Group_Skill_1"), reinterpret_cast<CComponent**>(&m_UI_Group_Skill_01))))
+	{
+		MSG_BOX("Failed CPlayer Add_Component : (Com_UI_Group_Skill_1)");
+		__debugbreak();
+
+		return E_FAIL;
+	}
+
+
+
 	return S_OK;
 }
 
@@ -465,6 +513,10 @@ HRESULT CPlayer::SetUp_ShaderResources()
 
 	_float3 vHairColor = { 0.f, 0.f, 1.f };
 	if (FAILED(m_pShader->Bind_RawValue("g_fHairColor", &vHairColor, sizeof(_float3))))
+		return E_FAIL;
+
+	_float4 vColor = _float4(0.2f, 0.2f, 0.2f, 1.f);
+	if (FAILED(m_pShader->Bind_RawValue("g_vColor", &vColor, sizeof(_float4))))
 		return E_FAIL;
 
 	ENDINSTANCE;
@@ -584,6 +636,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 			m_isFixMouse = true;
 	}
 
+#ifdef _DEBUG
 	if (pGameInstance->Get_DIKeyState(DIK_UP))
 	{
 		m_pTransform->Go_Straight(fTimeDelta * 100);
@@ -605,43 +658,16 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		//m_pTransform->Turn(_float3(0.f, 1.f, 0.f), fTimeDelta);
 		m_pTransform->Go_Right(fTimeDelta);
 	}
+#endif //_DEBUG
 
 	if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
 	{
 		m_pRigidBody->Add_Force(m_pTransform->Get_Up() * 10.f, PxForceMode::eIMPULSE);
 	}
-
-	if (pGameInstance->Get_DIKeyState(DIK_1, CInput_Device::KEY_DOWN))
-	{
-		CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
-		if (nullptr == pTestTarget)
-			throw TEXT("pTestTarget is nullptr");
-		m_pMagicSlot->Action_Magic_Skill(0, pTestTarget->Get_Transform(), pTestTarget->Get_Offset_Matrix(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
-	}
-
-	if (pGameInstance->Get_DIKeyState(DIK_2, CInput_Device::KEY_DOWN))
-	{
-		CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
-		if (nullptr == pTestTarget)
-			throw TEXT("pTestTarget is nullptr");
-		m_pMagicSlot->Action_Magic_Skill(1, pTestTarget->Get_Transform(), pTestTarget->Get_Offset_Matrix(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
-	}
-
-	if (pGameInstance->Get_DIKeyState(DIK_3, CInput_Device::KEY_DOWN))
-	{
-		CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
-		if (nullptr == pTestTarget)
-			throw TEXT("pTestTarget is nullptr");
-		m_pMagicSlot->Action_Magic_Skill(2, pTestTarget->Get_Transform(), pTestTarget->Get_Offset_Matrix(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
-	}
-
-	if (pGameInstance->Get_DIKeyState(DIK_4, CInput_Device::KEY_DOWN))
-	{
-		CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
-		if (nullptr == pTestTarget)
-			throw TEXT("pTestTarget is nullptr");
-		m_pMagicSlot->Action_Magic_Skill(3, pTestTarget->Get_Transform(), pTestTarget->Get_Offset_Matrix(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
 	
+	if (pGameInstance->Get_DIKeyState(DIK_L, CInput_Device::KEY_DOWN))
+	{
+		CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_Dust01"), m_pTransform->Get_Position());
 	}
 
 	ENDINSTANCE;
@@ -1145,7 +1171,7 @@ void CPlayer::Find_Target_For_Distance()
 
 	if (nullptr == pLayer)
 	{
-		MSG_BOX("not MonsterLayer");
+		//MSG_BOX("not MonsterLayer");
 		return;
 	}
 
@@ -1295,16 +1321,44 @@ void CPlayer::Shot_Magic_Spell()
 
 void CPlayer::Shot_Levioso()
 {
+	Find_Target_For_Distance();
 
+	_float4x4 OffSetMatrix = XMMatrixIdentity();
+
+	if (nullptr != m_pTarget)
+	{
+		OffSetMatrix = m_pTarget->Get_Offset_Matrix();
+	}
+
+	m_pMagicSlot->Action_Magic_Skill(1, m_pTargetTransform, OffSetMatrix, m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
 }
 
 void CPlayer::Shot_Confringo()
 {
-	m_pMagicSlot->Action_Magic_Skill(0, m_pTargetTransform, m_pTarget->Get_Offset_Matrix(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
+	Find_Target_For_Distance();
+
+	_float4x4 OffSetMatrix = XMMatrixIdentity();
+
+	if (nullptr != m_pTarget)
+	{
+		OffSetMatrix = m_pTarget->Get_Offset_Matrix();
+	}
+
+	m_pMagicSlot->Action_Magic_Skill(0, m_pTargetTransform, OffSetMatrix, m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
 }
 
 void CPlayer::Shot_Finisher()
 {
+	Find_Target_For_Distance();
+
+	_float4x4 OffSetMatrix = XMMatrixIdentity();
+
+	if (nullptr != m_pTarget)
+	{
+		OffSetMatrix = m_pTarget->Get_Offset_Matrix();
+	}
+
+	m_pMagicSlot->Action_Magic_Skill(2, m_pTargetTransform, OffSetMatrix, m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
 }
 
 
@@ -1351,6 +1405,8 @@ void CPlayer::Free()
 		Safe_Release(m_pStateContext);
 		Safe_Release(m_pRigidBody);
 		Safe_Release(m_pPlayer_Information);
+		Safe_Release(m_UI_Group_Skill_01);
+
 		
 		if (nullptr != m_pTargetTransform)
 		{

@@ -41,6 +41,8 @@ public:
 
 private:
 	CImageFileDialog* m_pTextureIFD = { nullptr };
+	CImageFileDialog* m_pClipTextureIFD = { nullptr };
+	CComboBox* m_pClipChannelCombo = { nullptr };
 	CComboBox* m_pPassComboBox = { nullptr };
 	CComboBox* m_pColorEaseCombo = { nullptr };
 	CComboBox* m_pPosEaseCombo = { nullptr };

@@ -36,7 +36,6 @@ public:
 	virtual void OnCollisionEnter(COLLEVENTDESC CollisionEventDesc) override;
 	virtual void OnCollisionExit(COLLEVENTDESC CollisionEventDesc) override;
 	virtual HRESULT Render() override;
-	virtual HRESULT Render_Depth() override;
 
 private:
 	virtual HRESULT Make_AI() override;

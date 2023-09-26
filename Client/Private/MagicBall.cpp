@@ -177,8 +177,7 @@ HRESULT CMagicBall::Reset(MAGICBALLINITDESC& InitDesc)
 	Set_ObjEvent(OBJ_NONE);
 	m_eMagicBallState = MAGICBALL_STATE_BEGIN;
 	
-	m_pRigidBody->Enable_Collision("Magic_Ball");
-	m_pRigidBody->Set_ThisCollision(this);
+	m_pRigidBody->Enable_Collision("Magic_Ball", this);
 	m_pTransform->Set_WorldMatrix(XMMatrixIdentity());
 
 	return S_OK;

@@ -90,18 +90,23 @@ protected:
 	_float m_fLifeTime = { 5.f }; // Save
 	_float m_fAge = { 0.f };
 
+	// ·»´õ°ü·Ã
+	_bool m_isAlphaBlend = { true }; // Save
+	string m_strClipChannel = { "Red" }; // Save
+	_float m_fClipThreshold = { 0.1f }; // Save
+
 protected:
 	CModel::TYPE m_eAnimType; // Save
 	string m_strPassName = { "Default" }; // Save
 	wstring m_Path[PATH_END]; // Save
-	_bool m_isAlphaClipTexture = { false };
+	_bool m_isClipTexture = { false };
 	_float4x4 m_PivotMatrix = { _float4x4() }; // Save
 	string m_strCurAnim; // Save
 	
 protected:
 	CModel* m_pModel = { nullptr };
 	CTexture* m_pTexture = { nullptr };
-	CTexture* m_pAlphaClipTexture = { nullptr };
+	CTexture* m_pClipTexture = { nullptr };
 	CShader* m_pShader = { nullptr };
 	CRenderer* m_pRenderer = { nullptr };
 

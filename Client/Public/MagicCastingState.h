@@ -70,7 +70,7 @@ private:
 
     vector<wstring> m_vecSpellActionTextList;
 
-    _uint m_iSpellActionIndex = { (_uint)SPELL_ACTION_END };
+    _uint m_iSpellActionIndex = { (_uint)SPELL_ACTION_01 };
 
 private:
     void Initialize_BasicSpell_Combo();
