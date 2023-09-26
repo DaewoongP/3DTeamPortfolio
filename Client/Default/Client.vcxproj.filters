@@ -364,6 +364,9 @@
     <Filter Include="02. GameObject\02. Enemy\03. Golem\00. Combat\Weapon">
       <UniqueIdentifier>{f57875dd-9b97-4974-a4c8-dbc1374da1c3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="05. Magic\MagicBall\05. Lumos">
+      <UniqueIdentifier>{852374ec-175b-4b73-9ad4-fe97a917260d}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\02. Enemy\03. Golem\01. Pensive">
       <UniqueIdentifier>{86967c1b-301e-4843-a160-8603ef017876}</UniqueIdentifier>
     </Filter>
@@ -759,6 +762,9 @@
     <ClInclude Include="..\Public\Weapon_Golem_Combat.h">
       <Filter>02. GameObject\02. Enemy\03. Golem\00. Combat\Weapon</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Lumos.h">
+      <Filter>05. Magic\MagicBall\05. Lumos</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1114,6 +1120,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Weapon_Golem_Combat.cpp">
       <Filter>02. GameObject\02. Enemy\03. Golem\00. Combat\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Lumos.cpp">
+      <Filter>05. Magic\MagicBall\05. Lumos</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
