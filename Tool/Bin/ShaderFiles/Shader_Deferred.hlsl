@@ -224,12 +224,14 @@ PS_OUT PS_MAIN_DEFERRED(PS_IN In)
     vector vSSAO = g_SSAOTexture.Sample(LinearSampler, In.vTexUV);
     
     vector vShadow = g_ShadowTexture.Sample(LinearSampler, In.vTexUV);
-   
-   
-    if(vShadow.x<0.6f)
+
+    if (vShadow.x < 0.6f)
+    {
         vShade *= 0.2f;
+        vSpecular = float4(0.f, 0.f, 0.f, 0.f);
+    }
     
-    Out.vColor = vDiffuse * vShade * vSSAO  + vSpecular ;
+    Out.vColor = vDiffuse * vShade * vSSAO  + vSpecular;
 
     return Out;
 }

@@ -110,9 +110,9 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 
 	m_pFrustum->Tick();
 	
-	m_pPhysX_Manager->Tick(fTimeDelta);
-
 	m_pComponent_Manager->Late_Tick(fTimeDelta);
+
+	m_pPhysX_Manager->Tick(fTimeDelta);
 
 	m_pCollision_Manager->Tick();
 

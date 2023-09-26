@@ -178,11 +178,6 @@ HRESULT CDugbog::Render()
 	return S_OK;
 }
 
-HRESULT CDugbog::Render_Depth()
-{
-	return S_OK;
-}
-
 HRESULT CDugbog::Make_AI()
 {
 	BEGININSTANCE;

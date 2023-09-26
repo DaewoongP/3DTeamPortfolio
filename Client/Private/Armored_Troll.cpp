@@ -136,11 +136,6 @@ HRESULT CArmored_Troll::Render()
 	return S_OK;
 }
 
-HRESULT CArmored_Troll::Render_Depth()
-{
-	return S_OK;
-}
-
 HRESULT CArmored_Troll::Make_AI()
 {
 	BEGININSTANCE;
