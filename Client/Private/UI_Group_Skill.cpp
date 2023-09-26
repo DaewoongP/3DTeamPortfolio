@@ -69,7 +69,7 @@ void CUI_Group_Skill::Late_Tick(_float fTimeDelta)
 
 void CUI_Group_Skill::Set_SpellTexture(KEYLIST eKey, SPELL eSpell)
 {
-	if (nullptr == m_pMains[eKey] || eKey >= KEYLIST_END || eSpell >= SPELL_END)
+	if (nullptr == m_pMains[eKey] || eKey >= KEYLIST_END || eSpell >= BASICCAST)
 		return;
 
 	if (m_KeyList[eKey] == eSpell)

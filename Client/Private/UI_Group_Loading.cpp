@@ -1,35 +1,32 @@
-#include "UI_Group_Logo.h"
+#include "UI_Group_Loading.h"
 #include "GameInstance.h"
 #include "UI_Back.h"
-#include "UI_Effect_Back.h"
-#include "UI_Image.h"
-#include "UI_Button.h"
 #include "UI_Logo.h"
 
-CUI_Group_Logo::CUI_Group_Logo(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CUI_Group_Loading::CUI_Group_Loading(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
 }
 
-CUI_Group_Logo::CUI_Group_Logo(const CUI_Group_Logo& rhs)
+CUI_Group_Loading::CUI_Group_Loading(const CUI_Group_Loading& rhs)
 	: CGameObject(rhs)
 {
 }
 
-HRESULT CUI_Group_Logo::Initialize_Prototype()
+HRESULT CUI_Group_Loading::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 
 	if (FAILED(Add_Prototype()))
 	{
-		MSG_BOX("Failed CUI_Group_Logo Add ProtoType");
+		MSG_BOX("Failed CUI_Group_Loading Add ProtoType");
 		return E_FAIL;
 	}
 
 	return S_OK;
 }
 
-HRESULT CUI_Group_Logo::Initialize(void* pArg)
+HRESULT CUI_Group_Loading::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -37,33 +34,26 @@ HRESULT CUI_Group_Logo::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-	if (FAILED(Read_File(TEXT("../../Resources/GameData/UIData/UI_Group_Logo.uidata"))))
+	if (FAILED(Read_File(reinterpret_cast<_tchar*>(pArg))))
 		return E_FAIL;
 
 	return S_OK;
 }
 
-void CUI_Group_Logo::Tick(_float fTimeDelta)
+void CUI_Group_Loading::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 }
 
-void CUI_Group_Logo::Late_Tick(_float fTimeDelta)
+void CUI_Group_Loading::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 }
 
-HRESULT CUI_Group_Logo::Add_Prototype()
+HRESULT CUI_Group_Loading::Add_Prototype()
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
-
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Logo"),
-		CUI_Logo::Create(m_pDevice, m_pContext), true)))
-	{
-		Safe_Release(pGameInstance);
-		return E_FAIL;
-	}
 
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Back"),
 		CUI_Back::Create(m_pDevice, m_pContext), true)))
@@ -72,61 +62,35 @@ HRESULT CUI_Group_Logo::Add_Prototype()
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Effect_Back"),
-		CUI_Effect_Back::Create(m_pDevice, m_pContext), true)))
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Logo"),
+		CUI_Logo::Create(m_pDevice, m_pContext), true)))
 	{
 		Safe_Release(pGameInstance);
 		return E_FAIL;
 	}
-
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Effect_Back"),
-		CUI_Image::Create(m_pDevice, m_pContext), true)))
-	{
-		Safe_Release(pGameInstance);
-		return E_FAIL;
-	}
-
-
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Effect_Back"),
-		CUI_Button::Create(m_pDevice, m_pContext), true)))
-	{
-		Safe_Release(pGameInstance);
-		return E_FAIL;
-	}
-
-
 
 	Safe_Release(pGameInstance);
 	return S_OK;
 }
 
-HRESULT CUI_Group_Logo::Add_Components()
+HRESULT CUI_Group_Loading::Add_Components()
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Logo"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Back"),
 		TEXT("Com_UI_Back"), reinterpret_cast<CComponent**>(&m_pBack))))
 	{
-		MSG_BOX("CUI_Group_Logo : Failed Clone Component (Com_UI_Back)");
+		MSG_BOX("CUI_Group_Loading : Failed Clone Component (Com_UI_Back)");
 		Safe_Release(pGameInstance);
 		__debugbreak();
 		return E_FAIL;
 	}
 
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Effect_Back"),
-		TEXT("Com_UI_Logo"), reinterpret_cast<CComponent**>(&m_pLogo))))
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Logo"),
+		TEXT("Com_UI_Screen"), reinterpret_cast<CComponent**>(&m_pScreen))))
 	{
-		MSG_BOX("CUI_Group_Logo : Failed Clone Component (Com_UI_Logo)");
-		Safe_Release(pGameInstance);
-		__debugbreak();
-		return E_FAIL;
-	}
-
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Back"),
-		TEXT("Com_UI_Text"), reinterpret_cast<CComponent**>(&m_pText))))
-	{
-		MSG_BOX("CUI_Group_Logo : Failed Clone Component (Com_UI_Text)");
+		MSG_BOX("CUI_Group_Loading : Failed Clone Component (Com_UI_Screen)");
 		Safe_Release(pGameInstance);
 		__debugbreak();
 		return E_FAIL;
@@ -136,7 +100,7 @@ HRESULT CUI_Group_Logo::Add_Components()
 	return S_OK;
 }
 
-HRESULT CUI_Group_Logo::Read_File(const _tchar* pFilePath)
+HRESULT CUI_Group_Loading::Read_File(const _tchar* pFilePath)
 {
 	_ulong dwByte = 0;
 	DWORD dwStrByte = 0;
@@ -159,18 +123,15 @@ HRESULT CUI_Group_Logo::Read_File(const _tchar* pFilePath)
 	_uint iSize = { 0 };
 	ReadFile(hFile, &iSize, sizeof(_uint), &dwByte, nullptr);
 
-	m_pLogo->Load(Load_File(hFile));
-	m_pLogo->Set_Parent(m_pBack);
-
-	m_pText->Load(Load_File(hFile));
-	m_pText->Set_Parent(m_pBack);
+	m_pScreen->Load(Load_File(hFile));
+	m_pScreen->Set_Parent(m_pBack);
 
 	CloseHandle(hFile);
 
 	return S_OK;
 }
 
-CUI::UIDESC CUI_Group_Logo::Load_File(const HANDLE hFile)
+CUI::UIDESC CUI_Group_Loading::Load_File(const HANDLE hFile)
 {
 	CUI::UIDESC UIDesc;
 	ZEROMEM(&UIDesc);
@@ -201,26 +162,26 @@ CUI::UIDESC CUI_Group_Logo::Load_File(const HANDLE hFile)
 	return UIDesc;
 }
 
-CUI_Group_Logo* CUI_Group_Logo::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CUI_Group_Loading* CUI_Group_Loading::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CUI_Group_Logo* pInstance = New CUI_Group_Logo(pDevice, pContext);
+	CUI_Group_Loading* pInstance = New CUI_Group_Loading(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Created CUI_Group_Logo");
+		MSG_BOX("Failed to Created CUI_Group_Loading");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject* CUI_Group_Logo::Clone(void* pArg)
+CGameObject* CUI_Group_Loading::Clone(void* pArg)
 {
-	CUI_Group_Logo* pInstance = New CUI_Group_Logo(*this);
+	CUI_Group_Loading* pInstance = New CUI_Group_Loading(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned CUI_Group_Logo");
+		MSG_BOX("Failed to Cloned CUI_Group_Loading");
 		Safe_Release(pInstance);
 	}
 
@@ -228,12 +189,11 @@ CGameObject* CUI_Group_Logo::Clone(void* pArg)
 }
 
 
-void CUI_Group_Logo::Free()
+void CUI_Group_Loading::Free()
 {
 	__super::Free();
 
 	Safe_Release(m_pBack);
-	Safe_Release(m_pLogo);
-	Safe_Release(m_pText);
+	Safe_Release(m_pScreen);
 }
 

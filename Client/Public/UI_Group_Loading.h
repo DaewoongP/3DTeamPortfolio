@@ -3,16 +3,15 @@
 #include "Client_Defines.h"
 
 BEGIN(Client)
-class CUI_Logo;
-class CUI_Effect_Back;
 class CUI_Back;
+class CUI_Logo;
 
-class CUI_Group_Logo final : public CGameObject
+class CUI_Group_Loading final : public CGameObject
 {
 private:
-	explicit CUI_Group_Logo(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	explicit CUI_Group_Logo(const CUI_Group_Logo& rhs);
-	virtual ~CUI_Group_Logo() = default;
+	explicit CUI_Group_Loading(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	explicit CUI_Group_Loading(const CUI_Group_Loading& rhs);
+	virtual ~CUI_Group_Loading() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype();
@@ -21,9 +20,8 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 
 private:
-	CUI_Logo*		 m_pBack = { nullptr };
-	CUI_Effect_Back* m_pLogo = { nullptr };
-	CUI_Back*		 m_pText = { nullptr };
+	CUI_Back* m_pBack = { nullptr };
+	CUI_Logo* m_pScreen = { nullptr };
 
 private:
 	HRESULT Add_Prototype();
@@ -32,7 +30,7 @@ private:
 	CUI::UIDESC Load_File(const HANDLE hFile);
 
 public:
-	static CUI_Group_Logo* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CUI_Group_Loading* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;
 };

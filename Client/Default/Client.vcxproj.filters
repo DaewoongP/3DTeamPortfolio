@@ -376,6 +376,9 @@
     <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_Logo">
       <UniqueIdentifier>{615f137f-89fd-425e-8a34-0692f9d580b5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\05. UI\UI\UI_Logo">
+      <UniqueIdentifier>{cdb882fd-b63d-411c-a352-12031cde1674}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -780,6 +783,10 @@
     <ClInclude Include="..\Public\UI_Group_Logo.h">
       <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Logo</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_Logo.h">
+      <Filter>02. GameObject\05. UI\UI\UI_Logo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Group_Loading.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1151,6 +1158,10 @@
     <ClCompile Include="..\Private\UI_Group_Logo.cpp">
       <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Logo</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\UI_Logo.cpp">
+      <Filter>02. GameObject\05. UI\UI\UI_Logo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Group_Loading.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

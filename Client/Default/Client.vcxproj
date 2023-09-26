@@ -224,6 +224,7 @@
     <ClInclude Include="..\Public\UI_Group_Finisher.h" />
     <ClInclude Include="..\Public\UI_Group_Finisher_Icon.h" />
     <ClInclude Include="..\Public\UI_Group_HP.h" />
+    <ClInclude Include="..\Public\UI_Group_Loading.h" />
     <ClInclude Include="..\Public\UI_Group_Logo.h" />
     <ClInclude Include="..\Public\UI_Group_MiniMap.h" />
     <ClInclude Include="..\Public\UI_Group_Potion.h" />
@@ -258,6 +259,7 @@
     <ClInclude Include="..\Public\Turn.h" />
     <ClInclude Include="..\Public\UI_Image.h" />
     <ClInclude Include="..\Public\UI_Inventory.h" />
+    <ClInclude Include="..\Public\UI_Logo.h" />
     <ClInclude Include="..\Public\UI_Slot.h" />
     <ClInclude Include="..\Public\Wait.h" />
     <ClInclude Include="..\Public\Weapon_Armored_Troll.h" />
@@ -382,6 +384,7 @@
     <ClCompile Include="..\Private\UI_Group_Finisher.cpp" />
     <ClCompile Include="..\Private\UI_Group_Finisher_Icon.cpp" />
     <ClCompile Include="..\Private\UI_Group_HP.cpp" />
+    <ClCompile Include="..\Private\UI_Group_Loading.cpp" />
     <ClCompile Include="..\Private\UI_Group_Logo.cpp" />
     <ClCompile Include="..\Private\UI_Group_MiniMap.cpp" />
     <ClCompile Include="..\Private\UI_Group_Potion.cpp" />
@@ -413,6 +416,7 @@
     <ClCompile Include="..\Private\Turn.cpp" />
     <ClCompile Include="..\Private\UI_Image.cpp" />
     <ClCompile Include="..\Private\UI_Inventory.cpp" />
+    <ClCompile Include="..\Private\UI_Logo.cpp" />
     <ClCompile Include="..\Private\UI_Slot.cpp" />
     <ClCompile Include="..\Private\Wait.cpp" />
     <ClCompile Include="..\Private\Weapon_Armored_Troll.cpp" />
