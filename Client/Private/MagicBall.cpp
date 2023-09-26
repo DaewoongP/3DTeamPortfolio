@@ -10,6 +10,7 @@ CMagicBall::CMagicBall(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 CMagicBall::CMagicBall(const CMagicBall& rhs)
 	: CGameObject(rhs)
+	, m_iLevel(rhs.m_iLevel)
 {
 }
 
@@ -176,10 +177,85 @@ HRESULT CMagicBall::Reset(MAGICBALLINITDESC& InitDesc)
 	Set_ObjEvent(OBJ_NONE);
 	m_eMagicBallState = MAGICBALL_STATE_BEGIN;
 	
-	m_pRigidBody->Disable_Collision("Magic_Ball");
+	m_pRigidBody->Enable_Collision("Magic_Ball");
+	m_pRigidBody->Set_ThisCollision(this);
 	m_pTransform->Set_WorldMatrix(XMMatrixIdentity());
 
 	return S_OK;
+}
+
+void CMagicBall::Ready_SpinMove(CTrail* pTrail,_float2 vSpinWeight, _float fSpinSpeed)
+{
+	Ready_StraightMove(pTrail);
+	m_vSpinWeight = vSpinWeight;
+	m_fSpinSpeed = fSpinSpeed;
+}
+
+void CMagicBall::Ready_SplineMove(CTrail* pTrail)
+{
+	Ready_StraightMove(pTrail);
+
+	//Ready for Spline Lerp
+	m_vStartPostion = m_MagicBallDesc.vStartPosition;
+	m_fLerpAcc = 0.f;
+	// 플레이어가 타겟을 보는 vector를 구함.
+	_float3 vDir = XMVector3Normalize(m_vTargetPosition - m_vStartPostion);
+	// 임의의 축을 구함.
+	_float3 tempAxis = _float3(1, 1, 1);
+	// 외적
+	_float3	normal = XMVector3Cross(vDir, tempAxis);
+
+	//진행 경로만큼 뒤로 이동한 뒤
+	m_vSplineLerp[0] = m_vStartPostion - vDir;
+	//임의의 랜덤 값을 구하고
+	_float fRandom = Random_Generator(-20.f, 20.f);
+	// 외적 방향으로 튄다.
+	m_vSplineLerp[0] += _float3(normal.x * fRandom, normal.y * fabsf(fRandom), normal.z * fRandom);
+
+	//진행 경로만큼 뒤로 이동한 뒤
+	m_vSplineLerp[1] = m_vStartPostion + vDir;
+	//임의의 랜덤 값을 구하고
+	fRandom = Random_Generator(-20.f, 20.f);
+	// 외적 방향으로 튄다.
+	m_vSplineLerp[1] += _float3(normal.x * fRandom, normal.y * fabsf(fRandom), normal.z * fRandom);
+}
+
+void CMagicBall::Ready_StraightMove(CTrail* pTrail)
+{
+	//타겟이 있다면
+	if (m_pTarget == nullptr)
+	{
+		BEGININSTANCE;
+		_float4 vMouseOrigin, vMouseDirection;
+		_float3 vMouseWorldPickPosition, vDirStartToPicked;
+		//마우스 피킹지점 찾기
+		if (FAILED(pGameInstance->Get_WorldMouseRay(m_pContext, g_hWnd, &vMouseOrigin, &vMouseDirection)))
+		{
+			Safe_Release(pGameInstance);
+			ENDINSTANCE;
+			return;
+		}
+		ENDINSTANCE;
+
+		vMouseWorldPickPosition = vMouseOrigin.xyz() + vMouseDirection.xyz() * 100;
+		vDirStartToPicked = (vMouseWorldPickPosition - m_MagicBallDesc.vStartPosition);
+		vDirStartToPicked.Normalize();
+		m_vTargetPosition = m_MagicBallDesc.vStartPosition + vDirStartToPicked * m_MagicBallDesc.fDistance;
+	}
+	else
+	{
+		m_vTargetPosition = m_pTarget->Get_Position() + m_TargetOffsetMatrix.Translation();
+	}
+	m_fTimeScalePerDitance = m_MagicBallDesc.fDistance / _float3(m_vTargetPosition - m_vStartPostion).Length();
+	pTrail->Reset_Trail(_float3(m_vStartPostion) + _float3(0, 0.5f, 0), _float3(m_vStartPostion) + _float3(0, -0.5f, 0));
+	pTrail->Get_Transform()->Set_Position(m_vStartPostion);
+}
+
+void CMagicBall::Ready_SplineSpinMove(CTrail* pTrail,_float2 vSpinWeight, _float fSpinSpeed)
+{
+	Ready_SplineMove(pTrail);
+	m_vSpinWeight = vSpinWeight;
+	m_fSpinSpeed = fSpinSpeed;
 }
 
 HRESULT CMagicBall::Add_Components()

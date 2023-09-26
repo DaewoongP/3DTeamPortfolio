@@ -50,6 +50,12 @@ VS_OUT VS_MAIN(VS_IN In)
 	return Out;
 }
 
+VS_OUT VS_MAIN2(VS_IN In)
+{
+	VS_OUT Out = (VS_OUT)0;
+	MainLogic(In, Out);
+}
+
 struct PS_IN
 {
 	float4 vPosition : SV_POSITION;
@@ -74,10 +80,10 @@ PS_OUT	PS_MAIN(PS_IN In)
 
 	if (vDiffuse.a < 0.1f)
 		discard;
-
+	
 	Out.vColor = vDiffuse;
 	Out.vColor *= g_vColor;
-
+	  
 	return Out;
 }
 

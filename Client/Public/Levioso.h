@@ -42,10 +42,6 @@ private:
 	CParticleSystem*		  m_pWandGlow = { nullptr };
 
 private:
-	_float	m_fLerpAcc = { 0.f };
-	_float  m_fTimeScalePerDitance = { 0.f };
-
-	_float3				m_vTargetPosition = {};
 	_float				m_fWingardiumEffectDeadTimer = { 0.3f };
 
 private:

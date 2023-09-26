@@ -33,7 +33,7 @@ HRESULT CProfessor_Fig::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	m_pTransform->Set_Position(_float3(_float(rand() % 5) + 30.f, 0.f, _float(rand() % 5) + 10.f));
+	m_pTransform->Set_Position(_float3(35.f, 0.f, 10.f));
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
@@ -112,8 +112,9 @@ void CProfessor_Fig::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		if (wstring::npos != wstrObjectTag.find(TEXT("Golem")) ||
 			wstring::npos != wstrObjectTag.find(TEXT("Troll")))
 		{
-			cout << "In Monster" << endl;
-			m_RangeInEnemies.push_back({ wstrObjectTag, CollisionEventDesc.pOtherOwner });
+			auto iter = m_RangeInEnemies.find(wstrObjectTag);
+			if(iter == m_RangeInEnemies.end())
+				m_RangeInEnemies.emplace(wstrObjectTag, CollisionEventDesc.pOtherOwner);
 		}
 	}
 }
@@ -126,14 +127,10 @@ void CProfessor_Fig::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 
 	if (wstring::npos != wstrMyCollisionTag.find(TEXT("Range")))
 	{
-		if (wstring::npos != wstrObjectTag.find(TEXT("Golem")))
+		if (wstring::npos != wstrObjectTag.find(TEXT("Golem")) ||
+			wstring::npos != wstrObjectTag.find(TEXT("Troll")))
 		{
-			cout << "Out Monster" << endl;
-			if (FAILED(Remove_GameObject(wstrObjectTag)))
-			{
-				MSG_BOX("[CProfessor_Fig] Failed OnCollisionExit : \nFailed Remove_GameObject");
-				return;
-			}
+			Remove_GameObject(wstrObjectTag);
 		}
 	}
 }
@@ -141,7 +138,7 @@ void CProfessor_Fig::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 HRESULT CProfessor_Fig::Render()
 {
 #ifdef _DEBUG
-	//Tick_ImGui();
+	Tick_ImGui();
 #endif // _DEBUG
 
 	if (FAILED(SetUp_ShaderResources()))
@@ -270,7 +267,7 @@ HRESULT CProfessor_Fig::Make_Magics()
 		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
 		magicInitDesc.eMagicTag = BASICCAST;
 		magicInitDesc.fCoolTime = 0.f;
-		magicInitDesc.iDamage = 10.f;
+		magicInitDesc.iDamage = 10;
 		magicInitDesc.fCastDistance = 1000;
 		magicInitDesc.fBallDistance = 30;
 		magicInitDesc.fLifeTime = 0.8f;
@@ -285,7 +282,7 @@ HRESULT CProfessor_Fig::Make_Magics()
 		magicInitDesc.eMagicType = CMagic::MT_YELLOW;
 		magicInitDesc.eMagicTag = LEVIOSO;
 		magicInitDesc.fCoolTime = 0.f;
-		magicInitDesc.iDamage = 10.f;
+		magicInitDesc.iDamage = 10;
 		magicInitDesc.fCastDistance = 1000;
 		magicInitDesc.fBallDistance = 30;
 		magicInitDesc.fLifeTime = 0.8f;
@@ -490,9 +487,12 @@ void CProfessor_Fig::Set_Current_Target()
 			m_pTarget = Pair.second;
 		else
 		{
-			if (OBJ_DEAD == Pair.second->Get_ObjEvent())
+			if (true == Pair.second->isDead())
 			{
 				Remove_GameObject(Pair.first);
+				if (0 == m_RangeInEnemies.size())
+					break;
+
 				continue;
 			}
 
@@ -517,14 +517,7 @@ void CProfessor_Fig::Set_Current_Target()
 
 HRESULT CProfessor_Fig::Remove_GameObject(const wstring& wstrObjectTag)
 {
-	auto iter = find_if(m_RangeInEnemies.begin(), m_RangeInEnemies.end(), [&](auto& Pair)->_bool
-		{
-			if (wstring::npos != Pair.first.find(wstrObjectTag))
-				return true;
-
-			return false;
-		});
-
+	auto iter = m_RangeInEnemies.find(wstrObjectTag);
 	if (iter == m_RangeInEnemies.end())
 		return E_FAIL;
 
@@ -545,25 +538,25 @@ void CProfessor_Fig::Tick_ImGui()
 	ClientToScreen(g_hWnd, &rightBottom);
 	int Left = leftTop.x;
 	int Top = rightBottom.y;
-	ImVec2 vWinpos = { _float(Left + 1280.f), _float(Top - 200.f) };
+	ImVec2 vWinpos = { _float(Left + 1280.f), _float(Top - 400.f) };
 	ImGui::SetNextWindowPos(vWinpos);
 
 	ImGui::Begin("Test Professor_Fig");
 
-	if (ImGui::InputInt("animIndex##Armored", &m_iIndex))
-		m_pModelCom->Change_Animation(m_iIndex);
+	for (auto Pair : m_RangeInEnemies)
+		ImGui::Text(wstrToStr(Pair.first).c_str());
 
 	if (ImGui::Button("Set 0, 0, 0"))
 		m_pTransform->Set_Position(_float3(0.f, 0.f, 0.f));
 
-	ImGui::SeparatorText("Behavior");
+	/*ImGui::SeparatorText("Behavior");
 
 	vector<wstring> DebugBehaviorTags = m_pRootBehavior->Get_DebugBahaviorTags();
 
 	for (auto& Tag : DebugBehaviorTags)
 	{
 		ImGui::Text(wstrToStr(Tag).c_str());
-	}
+	}*/
 
 	ImGui::End();
 }

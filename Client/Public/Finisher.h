@@ -49,9 +49,6 @@ private:
 	_float3 m_vSplineLerpPostion[3][10] = {};
 	_float3	m_vTargetPosition = {};
 	_float3 m_vLighiningStartPosition = {};
-	_float	m_fLerpAcc = { 0.f };
-
-	_uint	m_iLevel = { 0 };
 
 private:
 	virtual void Ready_Begin() override;

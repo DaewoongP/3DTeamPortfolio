@@ -60,10 +60,10 @@ public:
 public:
 	/* For. Moving*/
 	void	Stright_Move(_float3 vTargerPosition, _float3 vStartPosition, _float fLerpAcc);
-	void	Spin_Move(_float3 vTargerPosition, _float3 vStartPosition, _float fLerpAcc);
+	void	Spin_Move(_float3 vTargerPosition, _float3 vStartPosition, _float2 vStartEndWeight, _float fSpeed, _float fLerpAcc);
 	void	Spline_Move(_float3 vSpline01, _float3 vStartPosition, _float3 vTargerPosition, _float3 vSpline02, _float fLerpAcc);
 
-	void	Spline_Spin_Move(_float3 vSpline01, _float3 vStartPosition, _float3 vTargerPosition, _float3 vSpline02, _float fLerpAcc);
+	void	Spline_Spin_Move(_float3 vSpline01, _float3 vStartPosition, _float3 vTargerPosition, _float3 vSpline02, _float2 vStartEndWeight, _float fSpeed, _float fLerpAcc);
 
 public:
 	/* For. Lightning*/
@@ -99,7 +99,7 @@ protected:
 	_float m_fTimeAcc = { 0.f };
 
 	//½º·¹½º È¦µå
-	_float m_fClipThreshold = { 0.0f };
+	_float m_fClipThreshold = { 0.2f };
 	string m_strClipChannel = { "Red" };
 	_bool m_isUseTextureColor = { false };
 

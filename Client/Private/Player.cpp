@@ -568,10 +568,25 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
+	// 루모스
+	{
+		magicInitDesc.eBuffType = BUFF_NONE;
+		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
+		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicTag = LUMOS;
+		magicInitDesc.fCoolTime = 1.5f;
+		magicInitDesc.iDamage = 0;
+		magicInitDesc.fCastDistance = 1000;
+		magicInitDesc.fBallDistance = 0;
+		magicInitDesc.fLifeTime = 30.f;
+		m_pMagicSlot->Add_Magics(magicInitDesc);
+	}
+
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(0, CONFRINGO);
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(1, LEVIOSO);
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(2, FINISHER);
-	m_pMagicSlot->Add_Magic_To_Skill_Slot(3, NCENDIO);
+	//m_pMagicSlot->Add_Magic_To_Skill_Slot(3, NCENDIO);
+	m_pMagicSlot->Add_Magic_To_Skill_Slot(3, LUMOS);
 	
 	return S_OK;
 }
@@ -588,6 +603,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 			m_isFixMouse = true;
 	}
 
+#ifdef _DEBUG
 	if (pGameInstance->Get_DIKeyState(DIK_UP))
 	{
 		m_pTransform->Go_Straight(fTimeDelta * 100);
@@ -609,60 +625,12 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		//m_pTransform->Turn(_float3(0.f, 1.f, 0.f), fTimeDelta);
 		m_pTransform->Go_Right(fTimeDelta);
 	}
+#endif //_DEBUG
 
 	if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
 	{
 		m_pRigidBody->Add_Force(m_pTransform->Get_Up() * 10.f, PxForceMode::eIMPULSE);
 	}
-
-	//if (pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN))
-	//{
-	//	/* 이거는 테스트 용으로 더미클래스 찾으려고 넣은 코드를 훔쳐온거임 */
-	//	CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
-	//	if (nullptr == pTestTarget)
-	//		throw TEXT("pTestTarget is nullptr");
-	//
-	//	m_pMagicSlot->Action_Magic_Basic(0, pTestTarget->Get_Transform(),XMMatrixIdentity(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
-	//}
-
-	//if (pGameInstance->Get_DIKeyState(DIK_Q, CInput_Device::KEY_DOWN))
-	//{DIK_1
-	//	//포르테고는 타켓이 생성 객체임
-	//	m_pMagicSlot->Action_Magic_Basic(1, m_pTransform, XMMatrixIdentity(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
-	//}
-	
-	/*if (pGameInstance->Get_DIKeyState(DIK_1, CInput_Device::KEY_DOWN))
-	{
-		CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
-		if (nullptr == pTestTarget)
-			throw TEXT("pTestTarget is nullptr");
-		m_pMagicSlot->Action_Magic_Skill(0, pTestTarget->Get_Transform(), pTestTarget->Get_Offset_Matrix(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
-	}
-
-	if (pGameInstance->Get_DIKeyState(DIK_2, CInput_Device::KEY_DOWN))
-	{
-		CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
-		if (nullptr == pTestTarget)
-			throw TEXT("pTestTarget is nullptr");
-		m_pMagicSlot->Action_Magic_Skill(1, pTestTarget->Get_Transform(), pTestTarget->Get_Offset_Matrix(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
-	}
-
-
-	if (pGameInstance->Get_DIKeyState(DIK_3, CInput_Device::KEY_DOWN))
-	{
-		CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
-		if (nullptr == pTestTarget)
-			throw TEXT("pTestTarget is nullptr");
-		m_pMagicSlot->Action_Magic_Skill(2, pTestTarget->Get_Transform(), pTestTarget->Get_Offset_Matrix(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
-	}
-
-	if (pGameInstance->Get_DIKeyState(DIK_4, CInput_Device::KEY_DOWN))
-	{
-		CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
-		if (nullptr == pTestTarget)
-			throw TEXT("pTestTarget is nullptr");
-		m_pMagicSlot->Action_Magic_Skill(3, pTestTarget->Get_Transform(), pTestTarget->Get_Offset_Matrix(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
-	}*/
 
 	ENDINSTANCE;
 }
@@ -814,7 +782,7 @@ HRESULT CPlayer::Ready_MagicDesc()
 	magicInitDesc.eMagicType = CMagic::MT_NOTHING;
 	magicInitDesc.eMagicTag = BASICCAST;
 	magicInitDesc.fCoolTime = 0.f;
-	magicInitDesc.iDamage = 10.f;
+	magicInitDesc.iDamage = 10;
 	magicInitDesc.fCastDistance = 1000;
 	magicInitDesc.fBallDistance = 30;
 	magicInitDesc.fLifeTime = 0.6f;
@@ -826,7 +794,7 @@ HRESULT CPlayer::Ready_MagicDesc()
 	magicInitDesc.eMagicType = CMagic::MT_NOTHING;
 	magicInitDesc.eMagicTag = BASICCAST;
 	magicInitDesc.fCoolTime = 0.f;
-	magicInitDesc.iDamage = 10.f;
+	magicInitDesc.iDamage = 10;
 	magicInitDesc.fCastDistance = 1000;
 	magicInitDesc.fBallDistance = 30;
 	magicInitDesc.fLifeTime = 0.6f;

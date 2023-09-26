@@ -86,6 +86,12 @@ public:
 	virtual HRESULT Reset(MAGICBALLINITDESC& InitDesc);
 
 protected:
+	virtual void Ready_SpinMove(CTrail* pTrail,_float2 vSpinWeight, _float fSpinSpeed);
+	virtual void Ready_SplineMove(CTrail* pTrail);
+	virtual void Ready_StraightMove(CTrail* pTrail);
+	virtual void Ready_SplineSpinMove(CTrail* pTrail , _float2 vSpinWeight, _float fSpinSpeed);
+
+protected:
 	// 충돌을 위한 리지드바디 입니다.
 	CRigidBody*				m_pRigidBody = { nullptr };
 	CRenderer*				m_pRenderer = { nullptr };
@@ -96,6 +102,22 @@ protected:
 	//무기의 현재 위치, 오프셋임
 	const _float4x4*		m_pWeaponMatrix = { nullptr };
 	_float4x4				m_WeaponOffsetMatrix = {};
+
+protected:
+	//트레일 이동처리 위함.
+	_float3				m_vStartPostion = {};
+	_float3				m_vTargetPosition = {};
+	_float				m_fLerpAcc = { 0.f };
+
+	//For. Spin
+	_float2				m_vSpinWeight = {};
+	_float				m_fSpinSpeed = { 1.f };
+
+	//For. Spline
+	_float3				m_vSplineLerp[2] = {};
+	_float				m_fTimeScalePerDitance = { 0.f };
+	_uint				m_iLevel = { 0 };
+
 
 protected:
 	MAGICBALLDESC			m_MagicBallDesc;

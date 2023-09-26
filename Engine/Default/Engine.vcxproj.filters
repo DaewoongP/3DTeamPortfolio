@@ -421,6 +421,9 @@
     <Filter Include="01. Utility\03. Components\06. Texture\TexturePool">
       <UniqueIdentifier>{843ee074-c9b8-4fa9-a1dc-cf379e699d41}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\03. Components\15. ParticleSystem\Pool">
+      <UniqueIdentifier>{46c235ac-b369-4875-a7d8-b91119a6da39}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -840,6 +843,9 @@
     <ClInclude Include="..\public\TexturePool.h">
       <Filter>01. Utility\03. Components\06. Texture\TexturePool</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\ParticleSystemPool.h">
+      <Filter>01. Utility\03. Components\15. ParticleSystem\Pool</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -1225,6 +1231,9 @@
     </ClCompile>
     <ClCompile Include="..\private\TexturePool.cpp">
       <Filter>01. Utility\03. Components\06. Texture\TexturePool</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ParticleSystemPool.cpp">
+      <Filter>01. Utility\03. Components\15. ParticleSystem\Pool</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

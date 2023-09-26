@@ -90,7 +90,7 @@ HRESULT CShader::Begin(const _char* pPassName)
 		return E_FAIL;
 
 	m_pContext->IASetInputLayout(pInputLayout);
-
+	
 	return S_OK;
 }
 

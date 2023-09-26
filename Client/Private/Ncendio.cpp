@@ -9,7 +9,6 @@ CNcendio::CNcendio(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 CNcendio::CNcendio(const CNcendio& rhs)
 	: CMagicBall(rhs)
-	, m_iLevel(rhs.m_iLevel)
 {
 }
 

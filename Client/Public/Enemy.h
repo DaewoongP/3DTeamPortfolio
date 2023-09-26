@@ -20,6 +20,7 @@ class CRootBehavior;
 END
 
 BEGIN(Client)
+class CUI_Group_Enemy_HP;
 class CWeapon_Armored_Troll;
 END
 
@@ -55,6 +56,7 @@ protected:
 	CShader* m_pShaderCom = { nullptr };
 	CRenderer* m_pRenderer = { nullptr };
 	CRigidBody* m_pRigidBody = { nullptr };
+	CUI_Group_Enemy_HP* m_pUI_HP = { nullptr };
 	CRootBehavior* m_pRootBehavior = { nullptr };
 
 protected:
