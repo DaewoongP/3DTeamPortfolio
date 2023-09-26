@@ -36,14 +36,14 @@ CMagicBall* CMagicBallPool::Get_Magic(CMagicBall::MAGICBALLINITDESC& MagicBallDe
 {
     CMagicBall* pMagicball = { nullptr };
 
-    if (m_MagicPoolVec[MagicBallDesc.eMagicTag].empty())
+    if (m_MagicPool[MagicBallDesc.eMagicTag].empty())
     {
         pMagicball = Create_Magic(MagicBallDesc.eMagicTag, MagicBallDesc);
     }
     else 
     {
-        pMagicball = m_MagicPoolVec[MagicBallDesc.eMagicTag].front();
-        m_MagicPoolVec[MagicBallDesc.eMagicTag].pop();
+        pMagicball = m_MagicPool[MagicBallDesc.eMagicTag].front();
+        m_MagicPool[MagicBallDesc.eMagicTag].pop();
     }
 
     if (FAILED(pMagicball->Reset(MagicBallDesc)))
@@ -58,7 +58,7 @@ CMagicBall* CMagicBallPool::Get_Magic(CMagicBall::MAGICBALLINITDESC& MagicBallDe
 void CMagicBallPool::Return_Magic(CMagicBall* pMagic, SPELL eSpell)
 {
     Safe_AddRef(pMagic);
-    m_MagicPoolVec[eSpell].push(pMagic);
+    m_MagicPool[eSpell].push(pMagic);
 }
 
 CMagicBall* CMagicBallPool::Create_Magic(SPELL eSpell, CMagicBall::MAGICBALLINITDESC& MagicBallDesc)
@@ -160,7 +160,7 @@ void CMagicBallPool::Create_InitMagic(SPELL eTag, const _tchar* szTagName, _uint
 	for (_uint i = 0; i < iNumPool; ++i)
 	{
 		pMagic = pGameInstance->Clone_Component(LEVEL_STATIC, szTagName);
-		m_MagicPoolVec[eTag].push(static_cast<CMagicBall*>(pMagic));
+		m_MagicPool[eTag].push(static_cast<CMagicBall*>(pMagic));
 	}
 
     Safe_Release(pGameInstance);
@@ -168,7 +168,7 @@ void CMagicBallPool::Create_InitMagic(SPELL eTag, const _tchar* szTagName, _uint
 
 void CMagicBallPool::Free()
 {
-    for (auto& MagicQueue : m_MagicPoolVec)
+    for (auto& MagicQueue : m_MagicPool)
     {
         while (!MagicQueue.empty())
         {

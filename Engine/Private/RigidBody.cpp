@@ -63,6 +63,10 @@ void CRigidBody::Set_Position(_float3 vPosition)
 		false == reinterpret_cast<PxRigidDynamic*>(m_pActor)->getKinematicTarget(vPose))
 	{
 		vPose = PxTransform(PhysXConverter::ToPxVec3(vPosition), PhysXConverter::ToPxQuat(Get_Rotation()));
+
+		if (false == vPose.isValid())
+			return;
+
 		m_pActor->setGlobalPose(vPose);
 	}
 }
@@ -74,6 +78,10 @@ void CRigidBody::Set_Rotation(_float4 vRotation)
 		false == reinterpret_cast<PxRigidDynamic*>(m_pActor)->getKinematicTarget(vPose))
 	{
 		vPose = PxTransform(PhysXConverter::ToPxVec3(Get_Position()), PhysXConverter::ToPxQuat(vRotation));
+
+		if (false == vPose.isValid())
+			return;
+
 		m_pActor->setGlobalPose(vPose);
 	}
 }

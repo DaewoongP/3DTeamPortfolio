@@ -52,8 +52,6 @@ private:
 	vector<VTXMESH>			m_NonAnimVertices;
 
 private:
-
-private:
 	_bool					m_isDownFrame = { false };
 
 private:
