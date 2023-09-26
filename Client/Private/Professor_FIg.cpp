@@ -77,6 +77,7 @@ HRESULT CProfessor_Fig::Initialize(void* pArg)
 
 void CProfessor_Fig::Tick(_float fTimeDelta)
 {
+	return;
 	__super::Tick(fTimeDelta);
 
 	Set_Current_Target();
@@ -90,6 +91,7 @@ void CProfessor_Fig::Tick(_float fTimeDelta)
 
 void CProfessor_Fig::Late_Tick(_float fTimeDelta)
 {
+	return;
 	__super::Late_Tick(fTimeDelta);
 
 	if (nullptr != m_pRenderer)

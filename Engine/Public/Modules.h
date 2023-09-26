@@ -28,7 +28,7 @@ public:
 	void Add_Notify(PT_NOTIFY ptNotify) {
 		Events.push_back(ptNotify); 
 	}
-
+	void Restart();
 public:
 	_float		fAge = { 0.f };
 	_float		fGravityAccel = { 0.f };
@@ -59,7 +59,7 @@ struct ENGINE_DLL MODULE
 
 	void Save(HANDLE hFile, _ulong& dwByte);
 	void Load(HANDLE hFile, _ulong& dwByte);
-
+	
 	_bool isActivate = { false };
 };
 struct ENGINE_DLL MAIN_MODULE : public MODULE
@@ -130,6 +130,12 @@ struct ENGINE_DLL EMISSION_MODULE : public MODULE
 
 	typedef struct tagBurst
 	{
+		void Restart()
+		{
+			fTriggerTimeAcc = 0.f;
+			fIntervalTimeAcc = 0.f;
+		}
+		 
 		_float fTime = { 0.f }; // Time초에 트리거 발동.
 		_int2 iCount = { 30, 30 }; // 1번의 Interval에 방출할 파티클 수
 		_uint iCycleCount = { 0 }; // Cycle에 사용할 누적값.
@@ -393,7 +399,7 @@ struct ENGINE_DLL RENDERER_MODULE : public MODULE
 
 	HRESULT Save(const _tchar* _pDirectoyPath);
 	HRESULT Load(const _tchar* _pDirectoyPath);
-	void Restart();
+
 
 	wstring wstrShaderTag = { TEXT("Shader_VtxRectColInstance") };
 	wstring wstrMaterialPath = { TEXT("../../Resources/Effects/Textures/Default_Particle.png") };
