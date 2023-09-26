@@ -147,22 +147,22 @@ HRESULT CLevel_Cliffside::Render()
 HRESULT CLevel_Cliffside::Ready_Lights()
 {
 	BEGININSTANCE;
-
 	CLight::LIGHTDESC		LightDesc;
 	ZeroMemory(&LightDesc, sizeof LightDesc);
 
 	LightDesc.eType = CLight::TYPE_DIRECTIONAL;
+	LightDesc.vPos = _float4(2.f, 30.f,2.f, 1.f);
+	LightDesc.vLookAt = _float4(20.f, 0.f, 20.f, 1.f);
 	LightDesc.vDir = _float4(0.33f, -0.99f, 0.33f, 0.f);
 
-	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
-	LightDesc.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
-	LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
+	LightDesc.vDiffuse = _float4(0.f, 0.f, 0, 1.f);
+	LightDesc.vAmbient = _float4(0.f, 0.f, 0, 1.f);
+	LightDesc.vSpecular = _float4(0.f, 0.f, 0, 1.f);
 
 	if (nullptr == pGameInstance->Add_Lights(m_pDevice, m_pContext, LightDesc))
 		return E_FAIL;
 
 	ENDINSTANCE;
-
 	return S_OK;
 }
 

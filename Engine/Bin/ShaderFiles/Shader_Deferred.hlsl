@@ -146,11 +146,10 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
     vPosition = mul(vPosition, g_ViewMatrixInv);
 
     vector vLightDir = vPosition - g_vLightPos;
-
     float fDistance = length(vLightDir);
 
     // 빛의 감쇄량을 0~1로 정규화 시켜 처리하기 위함.
-    float fAtt = saturate((g_fLightRange - fDistance) / g_fLightRange);
+    float fAtt = saturate((g_fLightRange*2 - fDistance) / g_fLightRange);
 	
     Out.vShade = g_vLightDiffuse * saturate(max(dot(normalize(vLightDir) * -1.f, vNormal), 0.f) + (g_vLightAmbient * g_vMtrlAmbient)) * fAtt;
 

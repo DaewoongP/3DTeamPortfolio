@@ -1,5 +1,6 @@
 #include "Weapon_Player_Wand.h"
 #include "GameInstance.h"
+#include"Light.h"
 
 CWeapon_Player_Wand::CWeapon_Player_Wand(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CParts(pDevice, pContext)
@@ -13,6 +14,8 @@ CWeapon_Player_Wand::CWeapon_Player_Wand(const CWeapon_Player_Wand& rhs)
 
 HRESULT CWeapon_Player_Wand::Initialize_Prototype()
 {
+	
+
 	return __super::Initialize_Prototype();
 }
 
@@ -46,6 +49,24 @@ HRESULT CWeapon_Player_Wand::Initialize(void* pArg)
 		}
 	}
 
+	BEGININSTANCE
+
+	CLight::LIGHTDESC LightInfo;
+	ZEROMEM(&LightInfo);
+	LightInfo.eType = CLight::TYPE_LUMOS;
+	LightInfo.vPos = _float4(_float4(m_WandPointOffsetMatrix.Translation().x,
+									 m_WandPointOffsetMatrix.Translation().y,
+									 m_WandPointOffsetMatrix.Translation().z, 1.f));
+	LightInfo.fRange = 5.f;
+	LightInfo.fSpotPower = 2.f;
+	LightInfo.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
+	LightInfo.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
+	LightInfo.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+	
+	pGameInstance->Add_Lights(m_pDevice, m_pContext, LightInfo);
+
+	ENDINSTANCE
+
  	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
 
@@ -55,6 +76,25 @@ HRESULT CWeapon_Player_Wand::Initialize(void* pArg)
 void CWeapon_Player_Wand::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	BEGININSTANCE
+
+	CLight::LIGHTDESC LightInfo;
+	ZEROMEM(&LightInfo);
+	LightInfo.eType = CLight::TYPE_LUMOS;
+	LightInfo.vPos = _float4(m_pTransform->Get_WorldMatrix().Translation().x,
+							 m_pTransform->Get_WorldMatrix().Translation().y,
+							 m_pTransform->Get_WorldMatrix().Translation().z, 1.f);
+	LightInfo.fRange = 3.f;
+	LightInfo.fSpotPower = 2.f;
+	LightInfo.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
+	LightInfo.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
+	LightInfo.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+
+	pGameInstance->Set_Light(CLight::TYPE_LUMOS, LightInfo);
+	cout << LightInfo.vPos.x << "y" << LightInfo.vPos.y << "Z" << LightInfo.vPos.z << endl;;
+	ENDINSTANCE
+
 }
 
 void CWeapon_Player_Wand::Late_Tick(_float fTimeDelta)
