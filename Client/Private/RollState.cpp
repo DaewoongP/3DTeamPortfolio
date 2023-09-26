@@ -46,6 +46,11 @@ void CRollState::OnStateEnter(void* _pArg)
 
 	*m_pIsFinishAnimation = false;
 
+	if (true == *m_pIsDirectionKeyPressed)
+	{
+		m_pPlayerTransform->Turn(_float3(0.0f,1.0f,0.0f), *m_pOwnerLookAngle);
+	}
+
 
 #ifdef _DEBUG
 	//cout << "Roll Enter" << endl;

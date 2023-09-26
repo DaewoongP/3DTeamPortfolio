@@ -58,6 +58,14 @@ void CMagicCastingState::OnStateEnter(void* _pArg)
 {
 	BEGININSTANCE;
 
+	_int i = wcscmp(static_cast<CStateContext*>(m_pOwner)->Get_PreStateKey(), TEXT("Magic_Cast"));
+
+	if (false != wcscmp(static_cast<CStateContext*>(m_pOwner)->Get_PreStateKey(), TEXT("Magic_Cast")))
+	{
+		m_isReadySpell = true;
+	}
+
+
 	pGameInstance->Reset_Timer(TEXT("Fix_Angle_Magic_Cast"));
 	pGameInstance->Reset_Timer(TEXT("Fix_Angle_Magic_Cast_Last"));
 
@@ -139,6 +147,8 @@ void CMagicCastingState::OnStateExit()
 #ifdef _DEBUG
 	//cout << "Hard Land Exit" << endl;
 #endif // _DEBUG
+
+	
 
 	*m_pIsFinishAnimation = true;
 }
@@ -484,6 +494,7 @@ void CMagicCastingState::Go_Roll()
 
 	ENDINSTANCE;
 }
+
 
 CMagicCastingState* CMagicCastingState::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
