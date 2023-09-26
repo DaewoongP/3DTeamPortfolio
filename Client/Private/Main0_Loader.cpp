@@ -366,7 +366,7 @@ HRESULT CMain0_Loader::Loading_For_Cliffside()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Lumos"),
 			CLumos::Create(m_pDevice, m_pContext, LEVEL_STATIC))))
 			throw TEXT("Prototype_GameObject_Lumos");
-		
+
 #pragma endregion
 		{
 			std::lock_guard<std::mutex> lock(mtx);
