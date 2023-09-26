@@ -286,7 +286,7 @@ HRESULT CPlayer::Render()
 				m_pCustomModel->Render(iPartsIndex, i);
 			}
 		}
-		else
+		else if (CCustomModel::ROBE == iPartsIndex)
 		{
 			for (_uint i = 0; i < iNumMeshes; ++i)
 			{
@@ -296,6 +296,35 @@ HRESULT CPlayer::Render()
 				m_pCustomModel->Bind_Material(m_pShader, "g_NormalTexture", iPartsIndex, i, NORMALS);
 
 				m_pShader->Begin("AnimMeshNonCull");
+
+				m_pCustomModel->Render(iPartsIndex, i);
+			}
+		}
+		else if (CCustomModel::HEAD == iPartsIndex ||
+				CCustomModel::ARM == iPartsIndex)
+		{
+			for (_uint i = 0; i < iNumMeshes; ++i)
+			{
+				m_pCustomModel->Bind_BoneMatrices(m_pShader, "g_BoneMatrices", iPartsIndex, i);
+
+				m_pCustomModel->Bind_Material(m_pShader, "g_DiffuseTexture", iPartsIndex, i, DIFFUSE);
+				m_pCustomModel->Bind_Material(m_pShader, "g_NormalTexture", iPartsIndex, i, NORMALS);
+
+				m_pShader->Begin("AnimMesh");
+
+				m_pCustomModel->Render(iPartsIndex, i);
+			}
+		}
+		else
+		{
+			for (_uint i = 0; i < iNumMeshes; ++i)
+			{
+				m_pCustomModel->Bind_BoneMatrices(m_pShader, "g_BoneMatrices", iPartsIndex, i);
+
+				m_pCustomModel->Bind_Material(m_pShader, "g_DiffuseTexture", iPartsIndex, i, DIFFUSE);
+				m_pCustomModel->Bind_Material(m_pShader, "g_NormalTexture", iPartsIndex, i, NORMALS);
+
+				m_pShader->Begin("AnimMeshColor");
 
 				m_pCustomModel->Render(iPartsIndex, i);
 			}
@@ -484,6 +513,10 @@ HRESULT CPlayer::SetUp_ShaderResources()
 
 	_float3 vHairColor = { 0.f, 0.f, 1.f };
 	if (FAILED(m_pShader->Bind_RawValue("g_fHairColor", &vHairColor, sizeof(_float3))))
+		return E_FAIL;
+
+	_float4 vColor = _float4(0.2f, 0.2f, 0.2f, 1.f);
+	if (FAILED(m_pShader->Bind_RawValue("g_vColor", &vColor, sizeof(_float4))))
 		return E_FAIL;
 
 	ENDINSTANCE;
