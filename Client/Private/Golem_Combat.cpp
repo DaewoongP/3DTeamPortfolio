@@ -166,7 +166,7 @@ void CGolem_Combat::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 		{
 			if (FAILED(Remove_GameObject(wstrObjectTag)))
 			{
-				//MSG_BOX("[CGolem_Combat] Failed OnCollisionExit : \nFailed Remove_GameObject");
+				MSG_BOX("[CGolem_Combat] Failed OnCollisionExit : \nFailed Remove_GameObject");
 				return;
 			}
 		}
@@ -448,6 +448,10 @@ void CGolem_Combat::Tick_ImGui()
 	ImGui::SetNextWindowPos(vWinpos);
 
 	ImGui::Begin("Test Golem_Combat");
+
+	string strHp = to_string(m_pHealth->Get_HP());
+	ImGui::Text("Current HP");
+	ImGui::Text(strHp.c_str());
 
 	if (ImGui::Button("Set 0, 0, 0"))
 		m_pTransform->Set_Position(_float3(0.f, 0.f, 0.f));
@@ -1012,6 +1016,8 @@ void CGolem_Combat::Exit_Attack()
 
 void CGolem_Combat::DeathBehavior(const _float& fTimeDelta)
 {
+	m_isDead = true;
+
 	m_fDeadTimeAcc += fTimeDelta;
 	if (3.f < m_fDeadTimeAcc)
 		Set_ObjEvent(OBJ_DEAD);
@@ -1031,12 +1037,6 @@ HRESULT CGolem_Combat::Make_Turns(_Inout_ CSequence* pSequence)
 		if (nullptr == pSelector_Degree)
 			throw TEXT("pSelector_Choose_Degree is nullptr");
 
-		CAction* pAction_Right_Back = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Right_Back)
-			throw TEXT("pAction_Right_Back is nullptr");
-		CAction* pAction_Left_Back = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Left_Back)
-			throw TEXT("pAction_Left_Back is nullptr");
 		CAction* pAction_Left90 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
 		if (nullptr == pAction_Left90)
 			throw TEXT("pAction_Left90 is nullptr");
@@ -1049,6 +1049,12 @@ HRESULT CGolem_Combat::Make_Turns(_Inout_ CSequence* pSequence)
 		CAction* pAction_Right135 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
 		if (nullptr == pAction_Right135)
 			throw TEXT("pAction_Right135 is nullptr");
+		CAction* pAction_Right_Back = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		if (nullptr == pAction_Right_Back)
+			throw TEXT("pAction_Right_Back is nullptr");
+		CAction* pAction_Left_Back = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		if (nullptr == pAction_Left_Back)
+			throw TEXT("pAction_Left_Back is nullptr");
 		/* Set Decorations */
 
 		/* Set Options */
@@ -1515,7 +1521,6 @@ void CGolem_Combat::Free()
 
 	if (true == m_isCloned)
 	{
-		Safe_Release(m_pUI_HP);
 		Safe_Release(m_pWeapon);
 	}
 }

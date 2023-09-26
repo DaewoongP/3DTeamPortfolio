@@ -79,6 +79,7 @@ HRESULT CTurn::Assemble_Childs()
 		MSG_BOX("[CTurn] Failed Assemble_Childs : \nFailed Assemble_Behavior Tsk_Check_Degree");
 		return E_FAIL;
 	}
+	Safe_AddRef(m_pCheckDegree);
 
 	return S_OK;
 }
