@@ -267,7 +267,7 @@ HRESULT CProfessor_Fig::Make_Magics()
 		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
 		magicInitDesc.eMagicTag = BASICCAST;
 		magicInitDesc.fCoolTime = 0.f;
-		magicInitDesc.iDamage = 10.f;
+		magicInitDesc.iDamage = 10;
 		magicInitDesc.fCastDistance = 1000;
 		magicInitDesc.fBallDistance = 30;
 		magicInitDesc.fLifeTime = 0.8f;
@@ -282,7 +282,7 @@ HRESULT CProfessor_Fig::Make_Magics()
 		magicInitDesc.eMagicType = CMagic::MT_YELLOW;
 		magicInitDesc.eMagicTag = LEVIOSO;
 		magicInitDesc.fCoolTime = 0.f;
-		magicInitDesc.iDamage = 10.f;
+		magicInitDesc.iDamage = 10;
 		magicInitDesc.fCastDistance = 1000;
 		magicInitDesc.fBallDistance = 30;
 		magicInitDesc.fLifeTime = 0.8f;

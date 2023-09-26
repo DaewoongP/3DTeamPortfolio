@@ -29,7 +29,7 @@ HRESULT CMagicSlot::Initialize(void* pArg)
 		magicInitDesc.eMagicType = CMagic::MT_ALL;
 		magicInitDesc.eMagicTag = PROTEGO;
 		magicInitDesc.fCoolTime = 0.f;
-		magicInitDesc.iDamage = 0.f;
+		magicInitDesc.iDamage = 0;
 		magicInitDesc.fCastDistance = 1000;
 		magicInitDesc.fBallDistance = 30;
 		magicInitDesc.fLifeTime = 3.f;
@@ -43,7 +43,7 @@ HRESULT CMagicSlot::Initialize(void* pArg)
 		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
 		magicInitDesc.eMagicTag = BASICCAST;
 		magicInitDesc.fCoolTime = 0.f;
-		magicInitDesc.iDamage = 10.f;
+		magicInitDesc.iDamage = 10;
 		magicInitDesc.fCastDistance = 1000;
 		magicInitDesc.fBallDistance = 30;
 		magicInitDesc.fLifeTime = 0.6f;

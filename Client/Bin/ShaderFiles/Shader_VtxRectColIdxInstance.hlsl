@@ -162,7 +162,7 @@ PS_NONBLEND_OUT PS_NONBLEND(PS_IN In)
 	}
 
 	Out.vColor = vDiffuse;
-	Out.vColor.rgb *= In.vColor;
+	Out.vColor.rgb *= In.vColor.rgb;
 	if (true == g_isUseNormalTexture)
 	{
 		vector vNormal = g_NormalTexture.Sample(LinearSampler, In.vTexUV);

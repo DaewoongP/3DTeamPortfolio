@@ -106,7 +106,7 @@ void CArmored_Troll::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		CMagicBall::COLLSIONREQUESTDESC* pCollisionMagicBallDesc = static_cast<CMagicBall::COLLSIONREQUESTDESC*>(CollisionEventDesc.pArg);
 		BUFF_TYPE eBuff = pCollisionMagicBallDesc->eBuffType;
 		auto Action = pCollisionMagicBallDesc->Action;
-		_float iDamage = pCollisionMagicBallDesc->iDamage;
+		_int iDamage = pCollisionMagicBallDesc->iDamage;
 
 		m_pHealth->Damaged(iDamage);
 
