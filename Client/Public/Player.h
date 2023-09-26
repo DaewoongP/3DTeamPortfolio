@@ -136,6 +136,7 @@ private:
 
 	void Shot_Levioso();
 	void Shot_Confringo();
+	void Shot_NCENDIO();
 	void Shot_Finisher();
 
 public:

@@ -1280,35 +1280,34 @@ void CPlayer::Shot_Magic_Spell()
 
 		m_pStateContext->Set_StateMachine(TEXT("Magic_Cast"), &MagicCastingStateDesc);
 	}
-	//else if (pGameInstance->Get_DIKeyState(DIK_3, CInput_Device::KEY_DOWN) &&
-	//	false == m_pStateContext->Is_Current_State(TEXT("Hit")) &&
-	//	false == m_pStateContext->Is_Current_State(TEXT("Protego")) &&
-	//	false == m_pStateContext->Is_Current_State(TEXT("Hard Land")) &&
-	//	false == m_pStateContext->Is_Current_State(TEXT("Jump")) &&
-	//	false == m_pStateContext->Is_Current_State(TEXT("Roll")))
-	//{
-	//	//마법 시전 스테이트
-	//	CMagicCastingState::MAGICCASTINGSTATEDESC MagicCastingStateDesc;
+	else if (pGameInstance->Get_DIKeyState(DIK_3, CInput_Device::KEY_DOWN) &&
+		false == m_pStateContext->Is_Current_State(TEXT("Hit")) &&
+		false == m_pStateContext->Is_Current_State(TEXT("Protego")) &&
+		false == m_pStateContext->Is_Current_State(TEXT("Hard Land")) &&
+		false == m_pStateContext->Is_Current_State(TEXT("Jump")) &&
+		false == m_pStateContext->Is_Current_State(TEXT("Roll")))
+	{
+		//마법 시전 스테이트
+		CMagicCastingState::MAGICCASTINGSTATEDESC MagicCastingStateDesc;
 
-	//	MagicCastingStateDesc.pFuncSpell = [&] { (*this).Shot_Finisher(); };
+		MagicCastingStateDesc.pFuncSpell = [&] { (*this).Shot_NCENDIO(); };
 
-	//	m_pStateContext->Set_StateMachine(TEXT("Magic_Cast"), &MagicCastingStateDesc);
-	//}
-	
-	//else if (pGameInstance->Get_DIKeyState(DIK_4, CInput_Device::KEY_DOWN) &&
-	//	false == m_pStateContext->Is_Current_State(TEXT("Hit")) &&
-	//	false == m_pStateContext->Is_Current_State(TEXT("Protego")) &&
-	//	false == m_pStateContext->Is_Current_State(TEXT("Hard Land")) &&
-	//	false == m_pStateContext->Is_Current_State(TEXT("Jump")) &&
-	//	false == m_pStateContext->Is_Current_State(TEXT("Roll")))
-	//{
-	//	//마법 시전 스테이트
-	//	CMagicCastingState::MAGICCASTINGSTATEDESC MagicCastingStateDesc;
+		m_pStateContext->Set_StateMachine(TEXT("Magic_Cast"), &MagicCastingStateDesc);
+	}
+	else if (pGameInstance->Get_DIKeyState(DIK_4, CInput_Device::KEY_DOWN) &&
+		false == m_pStateContext->Is_Current_State(TEXT("Hit")) &&
+		false == m_pStateContext->Is_Current_State(TEXT("Protego")) &&
+		false == m_pStateContext->Is_Current_State(TEXT("Hard Land")) &&
+		false == m_pStateContext->Is_Current_State(TEXT("Jump")) &&
+		false == m_pStateContext->Is_Current_State(TEXT("Roll")))
+	{
+		//마법 시전 스테이트
+		CMagicCastingState::MAGICCASTINGSTATEDESC MagicCastingStateDesc;
 
-	//	MagicCastingStateDesc.pFuncSpell = [&] { (*this).Shot_Confringo(); };
+		MagicCastingStateDesc.pFuncSpell = [&] { (*this).Shot_Finisher(); };
 
-	//	m_pStateContext->Set_StateMachine(TEXT("Magic_Cast"), &MagicCastingStateDesc);
-	//}
+		m_pStateContext->Set_StateMachine(TEXT("Magic_Cast"), &MagicCastingStateDesc);
+	}
 
 	ENDINSTANCE;
 }
@@ -1326,6 +1325,7 @@ void CPlayer::Shot_Levioso()
 
 	m_pMagicSlot->Action_Magic_Skill(1, m_pTargetTransform, OffSetMatrix, m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
 }
+ 
 
 void CPlayer::Shot_Confringo()
 {
@@ -1339,6 +1339,20 @@ void CPlayer::Shot_Confringo()
 	}
 
 	m_pMagicSlot->Action_Magic_Skill(0, m_pTargetTransform, OffSetMatrix, m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
+}
+
+void CPlayer::Shot_NCENDIO()
+{
+	Find_Target_For_Distance();
+
+	_float4x4 OffSetMatrix = XMMatrixIdentity();
+
+	if (nullptr != m_pTarget)
+	{
+		OffSetMatrix = m_pTarget->Get_Offset_Matrix();
+	}
+
+	m_pMagicSlot->Action_Magic_Skill(3, m_pTargetTransform, OffSetMatrix, m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
 }
 
 void CPlayer::Shot_Finisher()
