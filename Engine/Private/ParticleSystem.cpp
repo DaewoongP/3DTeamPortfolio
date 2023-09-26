@@ -112,6 +112,10 @@ void CParticleSystem::Tick(_float _fTimeDelta)
 	if (false == IsEnable())
 		return;
 
+	// Stop버튼을 누른 후 모든 파티클들이 소멸하면 자동으로 Disable이 된다.
+	if (m_isStop == true && Is_AllDead())
+		Disable();
+
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
@@ -186,12 +190,12 @@ void CParticleSystem::Tick(_float _fTimeDelta)
 
 		{
 			BillBoardMatrix = LookAt(vPos, vCamPosition.xyz(), m_RendererModuleDesc.isDeleteY);
-			if (true == m_MainModuleDesc.is3DStartRotation)
+			if (true == m_MainModuleDesc.is3DStartAngle)
 			{
 				RotationMatrix = _float4x4::MatrixFromQuaternion(XMQuaternionRotationRollPitchYaw(
-					XMConvertToRadians(m_MainModuleDesc.v3DRotationXYZ.x),
-					XMConvertToRadians(m_MainModuleDesc.v3DRotationXYZ.y),
-					XMConvertToRadians(m_MainModuleDesc.v3DRotationXYZ.z)));
+					XMConvertToRadians(m_MainModuleDesc.vStartAngle3D.x),
+					XMConvertToRadians(m_MainModuleDesc.vStartAngle3D.y),
+					XMConvertToRadians(m_MainModuleDesc.vStartAngle3D.z)));
 			}
 			else
 				RotationMatrix = _float4x4::MatrixRotationAxis(_float3(vCamPosition - vPos), XMConvertToRadians(Particle_iter->fAngle));
@@ -249,7 +253,17 @@ void CParticleSystem::Late_Tick(_float _fTimeDelta)
 		{
 			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_GLOW, this);
 		}
-		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BLEND, this);
+
+		if ("Default" == m_RendererModuleDesc.strPass ||
+			"TextureSheetAnimation" == m_RendererModuleDesc.strPass ||
+			"MotionBlur" == m_RendererModuleDesc.strPass)
+		{
+			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BLEND, this);
+		}
+		else
+		{
+			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+		}
 		//m_pRenderer->Add_RenderGroup(CRenderer::RENDER_MOTIONBLUR, this);
 	}
 }
@@ -272,17 +286,15 @@ void CParticleSystem::Play(_float3 vPosition)
 {
 	if (true == IsEnable())
 		Restart();
+
+	m_isStop = false;
+
 	m_pTransform->Set_Position(vPosition);
 	Enable();
 }
 void CParticleSystem::Stop()
 {
-	Disable();
-
-	for (auto iter = m_Particles[ALIVE].begin(); iter != m_Particles[ALIVE].end();)
-	{
-		iter = ::TransitionTo(iter, m_Particles[ALIVE], m_Particles[WAIT]);
-	}
+	m_isStop = true;
 }
 HRESULT CParticleSystem::Setup_ShaderResources()
 {
@@ -313,12 +325,15 @@ HRESULT CParticleSystem::Setup_ShaderResources()
 		if (FAILED(m_pShader->Bind_RawValue("g_fClipThreshold", &m_ShapeModuleDesc.fClipThreshold, sizeof(_float))))
 			throw "g_fClipThreshold";
 
+		if (FAILED(m_pShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
+			throw "g_fCamFar";
+
 		_int iClipChannel = { 3 };
 		if (m_ShapeModuleDesc.strClipChannel == "Red") { iClipChannel = 0; }
 		else if (m_ShapeModuleDesc.strClipChannel == "Green") { iClipChannel = 1; }
 		else if (m_ShapeModuleDesc.strClipChannel == "Blue") { iClipChannel = 2; }
 		else if (m_ShapeModuleDesc.strClipChannel == "Alpha") { iClipChannel = 3; }
-
+		
 		if (FAILED(m_pShader->Bind_RawValue("g_iClipChannel", &iClipChannel, sizeof(_int))))
 			throw "g_iClipChannel";
 
@@ -340,6 +355,9 @@ HRESULT CParticleSystem::Setup_ShaderResources()
 
 		if (FAILED(m_pShader->Bind_RawValue("g_isUseGradientTexture", &m_RendererModuleDesc.isUseGradientTexture, sizeof(_bool))))
 			throw "g_isUseGradientTexture";
+
+		if (FAILED(m_pShader->Bind_RawValue("g_isTextureSheetAnimationActivated", &m_TextureSheetAnimationModuleDesc.isActivate, sizeof(_bool))))
+			throw "g_isTextureSheetAnimationActivated";
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -752,17 +770,29 @@ void CParticleSystem::Reset_Particle(PARTICLE_IT& _particle_iter)
 
 	// 늦게 나온만큼 수명 추가.
 	_particle_iter->fLifeTime += _particle_iter->fGenTime;
-	_particle_iter->vAccel = _float4();
+	_particle_iter->vAccel = _float4(); // 미구현
 
-	if (false == m_MainModuleDesc.is3DStartRotation)
+	// 시작회전 ------------- 안씀
+	if (false == m_MainModuleDesc.is3DStartAngle)
 	{
-		if (true == m_MainModuleDesc.isStartRotationRange)
-			_particle_iter->fAngle = Random_Generator(m_MainModuleDesc.vStartRotationRange.x, m_MainModuleDesc.vStartRotationRange.y);
+		if (true == m_MainModuleDesc.isStartAngleRange)
+			_particle_iter->fAngle = Random_Generator(m_MainModuleDesc.vStartAngleRange.x, m_MainModuleDesc.vStartAngleRange.y);
 		else
-			_particle_iter->fAngle = m_MainModuleDesc.fStartRotation;
+			_particle_iter->fAngle = m_MainModuleDesc.fStartAngle;
 	}
-	if (true == RandomBool(m_MainModuleDesc.fFlipRotation))
+	else
+		_particle_iter->fAngle = m_MainModuleDesc.fStartAngle;
+
+	// 각속도 결정
+	m_RotationOverLifetimeModuleDesc.Reset(_particle_iter);
+
+	// 회전 시 반대방향으로 돌린건지 결정.
+	if (true == RandomBool(m_MainModuleDesc.fFlipAngle))
+	{
 		_particle_iter->fAngle *= -1.f;
+		_particle_iter->fAngularVelocity *= -1.f;
+	}
+		
 
 	// 시작 크기 결정
 	if (true == m_MainModuleDesc.is3DStartSize)
@@ -811,6 +841,9 @@ void CParticleSystem::Reset_AllParticles()
 }
 PARTICLE_IT CParticleSystem::Wating_One_Particle()
 {
+	if (true == m_isStop)
+		return m_Particles[WAIT].end();
+
 	if (m_Particles[WAIT].empty())
 	{
 		return m_Particles[WAIT].end();
@@ -865,7 +898,6 @@ void CParticleSystem::Restart()
 	m_EmissionModuleDesc.Restart();
 	m_ShapeModuleDesc.Restart();
 	m_RendererModuleDesc.Restart();
-	m_RotationOverLifetimeModuleDesc.Restart();
 }
 CParticleSystem* CParticleSystem::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, const _tchar* _pDirectoryPath, _uint m_iLevel)
 {

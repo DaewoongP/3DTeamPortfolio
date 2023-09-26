@@ -7,6 +7,7 @@ texture2D		g_Texture;
 texture2D		g_ClipTexture;
 texture2D		g_GradientTexture;
 float			g_fClipThreshold = 0.33f;
+float			g_fCamFar;
 int				g_iClipChannel;
 
 vector			g_vColor = vector(1.f, 1.f, 1.f, 1.f);
@@ -72,6 +73,12 @@ struct PS_OUT
 	float4	vColor : SV_TARGET0;
 };
 
+struct PS_NONBLEND_OUT
+{
+	float4	vColor : SV_TARGET0;
+	float4	vNormal : SV_TARGET1;
+};
+
 void VS_Module(VS_IN In, inout VS_OUT Out);
 void PS_Module(PS_IN In, inout PS_OUT Out);
 
@@ -87,7 +94,7 @@ void PS_NoiseModule(PS_IN In, inout PS_OUT Out);
 VS_OUT VS_MAIN(VS_IN In)
 {
 	VS_OUT			Out = (VS_OUT)0;
-	
+
 	VS_Module(In, Out);
 
 	return Out;
@@ -132,6 +139,38 @@ PS_OUT PS_MOTION_BLUR(PS_IN In)
 	return Out;
 }
 
+
+PS_NONBLEND_OUT PS_NONBLEND(PS_IN In)
+{
+	PS_NONBLEND_OUT Out = (PS_NONBLEND_OUT)0;
+
+	vector vDiffuse = g_Texture.Sample(LinearSampler, In.vTexUV);
+	vector vClipTexture = g_ClipTexture.Sample(LinearSampler, In.vTexUV);
+
+	if (0 == g_iClipChannel)
+		Out.vColor.a = vClipTexture.r;
+	else if (1 == g_iClipChannel)
+		Out.vColor.a = vClipTexture.g;
+	else if (2 == g_iClipChannel)
+		Out.vColor.a = vClipTexture.b;
+	else if (3 == g_iClipChannel)
+		Out.vColor.a = vClipTexture.a;
+
+	if (Out.vColor.a < g_fClipThreshold)
+	{
+		discard;
+	}
+
+	Out.vColor = vDiffuse;
+	Out.vColor.rgb *= In.vColor;
+	if (true == g_isUseNormalTexture)
+	{
+		vector vNormal = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+		Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
+	}
+	
+	return Out;
+}
 technique11		DefaultTechnique
 {
 	pass Default
@@ -155,6 +194,17 @@ technique11		DefaultTechnique
 		HullShader = NULL/*compile hs_5_0 HS_MAIN()*/;
 		DomainShader = NULL/*compile ds_5_0 DS_MAIN()*/;
 		PixelShader = compile ps_5_0 PS_MAIN();
+	}
+	pass NonBlend
+	{
+		SetRasterizerState(RS_Cull_None);
+		SetDepthStencilState(DSS_Default, 0);
+		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL/*compile hs_5_0 HS_MAIN()*/;
+		DomainShader = NULL/*compile ds_5_0 DS_MAIN()*/;
+		PixelShader = compile ps_5_0 PS_NONBLEND();
 	}
 	pass MotionBlur
 	{
@@ -182,7 +232,7 @@ technique11		DefaultTechnique
 void VS_Module(VS_IN In, inout VS_OUT Out)
 {
 	VS_MainModule(In, Out);
-	//VS_TextureSheetAnimationModule(In, Out);
+	VS_TextureSheetAnimationModule(In, Out);
 	//VS_NoiseModule(In, Out);
 
 }
@@ -223,13 +273,13 @@ void VS_NoiseModule(VS_IN In, inout VS_OUT Out)
 	if (false == g_isNoiseActivated)
 		return;
 
-		// 노이즈 스크롤 적용
-		float3 vNoiseInput = In.vPosition + float3(0, g_fNoiseTimeAcc * g_fScrollSpeed, 0);
-		float fNoiseValue = PerlinNoise_3D(vNoiseInput.x, vNoiseInput.y, vNoiseInput.z
-			, g_fFrequency, g_fPersistence, fOctavesScale, fOctavesMultiplier, g_iOctaves);
+	// 노이즈 스크롤 적용
+	float3 vNoiseInput = In.vPosition + float3(0, g_fNoiseTimeAcc * g_fScrollSpeed, 0);
+	float fNoiseValue = PerlinNoise_3D(vNoiseInput.x, vNoiseInput.y, vNoiseInput.z
+		, g_fFrequency, g_fPersistence, fOctavesScale, fOctavesMultiplier, g_iOctaves);
 
-		// 노이즈 강도 적용
-		float3 vDisplacedPosition = In.vPosition + fNoiseValue * g_fStrength;
+	// 노이즈 강도 적용
+	float3 vDisplacedPosition = In.vPosition + fNoiseValue * g_fStrength;
 }
 
 void PS_MainModule(PS_IN In, inout PS_OUT Out)
