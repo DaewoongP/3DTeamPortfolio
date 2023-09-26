@@ -17,7 +17,6 @@ END
 
 BEGIN(Client)
 class CRandom_Select;
-class CUI_Group_Enemy_HP;
 class CWeapon_Armored_Troll;
 END
 
@@ -37,10 +36,6 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual void OnCollisionEnter(COLLEVENTDESC CollisionEventDesc) override;
 	virtual HRESULT Render() override;
-	virtual HRESULT Render_Depth() override;
-
-private:
-	CUI_Group_Enemy_HP* m_pUI_HP = { nullptr };
 
 private:
 	CWeapon_Armored_Troll* m_pWeapon = { nullptr };
@@ -55,6 +50,10 @@ private:
 	_int m_iIndex = { 0 };
 	void Tick_ImGui();
 #endif // _DEBUG
+
+private:
+	_float m_fDeadTimeAcc = { 0.f };
+	void DeathBehavior(const _float& fTimeDelta);
 
 private: /* Çàµ¿ ¹­À½µé */
 	HRESULT Make_Turns(_Inout_ CSequence* pSequence);
@@ -80,7 +79,9 @@ private: /* Çàµ¿ ¹­À½µé */
 	HRESULT Make_Taunt_Degree(_Inout_ CSequence* pSequence);
 	HRESULT Make_Check_Spell(_Inout_ CSelector* pSelector);
 
-private: /* Notify Func */
+	HRESULT Make_Death(_Inout_ CSequence* pSequence);
+
+private: /* Notify Functions */
 	void Enter_Light_Attack();
 	void Enter_Heavy_Attack();
 	void Enter_Body_Attack();

@@ -20,6 +20,7 @@ class CRootBehavior;
 END
 
 BEGIN(Client)
+class CUI_Group_Enemy_HP;
 class CWeapon_Armored_Troll;
 END
 
@@ -32,7 +33,7 @@ public:
 	typedef struct tagCollisionRequestDesc
 	{
 		ATTACKTYPE eType = { ATTACKTYPE_END };
-		_float fDamage = { 0.f };
+		_uint iDamage = { 0 };
 		CTransform* pEnemyTransform = { nullptr };
 	}COLLISIONREQUESTDESC;
 
@@ -53,8 +54,10 @@ protected:
 	CModel* m_pModelCom = { nullptr };
 	CHealth* m_pHealth = { nullptr };
 	CShader* m_pShaderCom = { nullptr };
+	CShader* m_pShadowShaderCom = { nullptr };
 	CRenderer* m_pRenderer = { nullptr };
 	CRigidBody* m_pRigidBody = { nullptr };
+	CUI_Group_Enemy_HP* m_pUI_HP = { nullptr };
 	CRootBehavior* m_pRootBehavior = { nullptr };
 
 protected:
@@ -80,6 +83,7 @@ protected:
 	virtual HRESULT Make_Notifies() = 0;
 	virtual HRESULT Add_Components() = 0;
 	virtual HRESULT SetUp_ShaderResources();
+	virtual HRESULT SetUp_ShadowShaderResources();
 
 protected:// 가까운 적을 타겟으로 세팅
 	void Set_Current_Target();

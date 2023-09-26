@@ -14,15 +14,17 @@ BEGIN(Engine)
 class CLight final : public CBase
 {
 public:
-	enum TYPE { TYPE_DIRECTIONAL, TYPE_POINT, TYPE_SPOTLIGHT, TYPE_END };
+	enum TYPE { TYPE_DIRECTIONAL, TYPE_LUMOS, TYPE_POINT, TYPE_SPOTLIGHT,  TYPE_END };
 
 	typedef struct tagLightDesc
 	{
 		TYPE	eType;
 		_float4	vDir;
+		_float4 vLookAt;
 		_float4	vPos;
 		_float	fRange;
 		_float	fSpotPower;
+	
 
 		_char szName[MAX_PATH];
 		_uint iLightType;

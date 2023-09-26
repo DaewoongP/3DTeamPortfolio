@@ -1,6 +1,7 @@
 #include "Shader_Client_Defines.hlsli"
 
 matrix		g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
+texture2D	g_DiffuseTexture;
 
 float		g_fCamFar;
 
@@ -22,7 +23,8 @@ struct VS_IN
 struct VS_OUT
 {
     float4 vPosition : SV_POSITION;
-    float4 vProjPos : TEXCOORD0;
+    float2 vTexUV : TEXCOORD0;
+    float4 vProjPos : TEXCOORD1;
 };
 
 VS_OUT VS_MAIN(VS_IN In)
@@ -41,6 +43,7 @@ VS_OUT VS_MAIN(VS_IN In)
 	matWVP = mul(matWV, g_ProjMatrix);
 
 	Out.vPosition = mul(vPosition, matWVP);
+    Out.vTexUV = In.vTexUV;
 	Out.vProjPos = Out.vPosition;
 
 	return Out;
@@ -49,7 +52,8 @@ VS_OUT VS_MAIN(VS_IN In)
 struct PS_IN
 {
 	float4		vPosition : SV_POSITION;
-	float4		vProjPos : TEXCOORD0;
+	float2		vTexUV : TEXCOORD0;
+	float4		vProjPos : TEXCOORD1;
 };
 
 struct PS_OUT
@@ -60,7 +64,12 @@ struct PS_OUT
 PS_OUT	PS_MAIN(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
+	
+    vector vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
     
+    if (vDiffuse.a < 0.1f)
+        discard;
+	
     // ºû±âÁØÀÇ ºä½ºÆäÀÌ½º z°ª °¡Á®¿È
     Out.vLightDepth.r = In.vProjPos.w / g_fCamFar;
     Out.vLightDepth.a = 1.f; // ·»´õÅ¸°Ù¿¡ ·»´õ¸µ È®ÀÎÀ» À§ÇÔ.
@@ -73,7 +82,7 @@ technique11		DefaultTechnique
     pass Shadow
     {
 		SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_Depth_Disable, 0);
+        SetDepthStencilState(DSS_Default, 0);
 		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
 		VertexShader = compile vs_5_0 VS_MAIN();

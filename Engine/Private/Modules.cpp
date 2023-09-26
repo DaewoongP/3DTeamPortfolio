@@ -47,12 +47,12 @@ HRESULT MAIN_MODULE::Save(const _tchar* _pDirectoyPath)
 	WriteFile(hFile, &fStartSize, sizeof fStartSize, &dwByte, nullptr);
 	WriteFile(hFile, &is3DStartSize, sizeof is3DStartSize, &dwByte, nullptr);
 	WriteFile(hFile, &v3DSizeXYZ, sizeof v3DSizeXYZ, &dwByte, nullptr);
-	WriteFile(hFile, &is3DStartRotation, sizeof is3DStartRotation, &dwByte, nullptr);
-	WriteFile(hFile, &isStartRotationRange, sizeof isStartRotationRange, &dwByte, nullptr);
-	WriteFile(hFile, &vStartRotationRange, sizeof vStartRotationRange, &dwByte, nullptr);
-	WriteFile(hFile, &fStartRotation, sizeof fStartRotation, &dwByte, nullptr);
-	WriteFile(hFile, &v3DRotationXYZ, sizeof v3DRotationXYZ, &dwByte, nullptr);
-	WriteFile(hFile, &fFlipRotation, sizeof fFlipRotation, &dwByte, nullptr);
+	WriteFile(hFile, &is3DStartAngle, sizeof is3DStartAngle, &dwByte, nullptr);
+	WriteFile(hFile, &isStartAngleRange, sizeof isStartAngleRange, &dwByte, nullptr);
+	WriteFile(hFile, &vStartAngleRange, sizeof vStartAngleRange, &dwByte, nullptr);
+	WriteFile(hFile, &fStartAngle, sizeof fStartAngle, &dwByte, nullptr);
+	WriteFile(hFile, &vStartAngle3D, sizeof vStartAngle3D, &dwByte, nullptr);
+	WriteFile(hFile, &fFlipAngle, sizeof fFlipAngle, &dwByte, nullptr);
 	WriteFile(hFile, &vStartColor, sizeof vStartColor, &dwByte, nullptr);
 	WriteFile(hFile, &fGravityModifier, sizeof fGravityModifier, &dwByte, nullptr);
 	WriteFile(hFile, &fSimulationSpeed, sizeof fSimulationSpeed, &dwByte, nullptr);
@@ -106,12 +106,12 @@ HRESULT MAIN_MODULE::Load(const _tchar* _pDirectoyPath)
 	ReadFile(hFile, &fStartSize, sizeof fStartSize, &dwByte, nullptr);
 	ReadFile(hFile, &is3DStartSize, sizeof is3DStartSize, &dwByte, nullptr);
 	ReadFile(hFile, &v3DSizeXYZ, sizeof v3DSizeXYZ, &dwByte, nullptr);
-	ReadFile(hFile, &is3DStartRotation, sizeof is3DStartRotation, &dwByte, nullptr);
-	ReadFile(hFile, &isStartRotationRange, sizeof isStartRotationRange, &dwByte, nullptr);
-	ReadFile(hFile, &vStartRotationRange, sizeof vStartRotationRange, &dwByte, nullptr);
-	ReadFile(hFile, &fStartRotation, sizeof fStartRotation, &dwByte, nullptr);
-	ReadFile(hFile, &v3DRotationXYZ, sizeof v3DRotationXYZ, &dwByte, nullptr);
-	ReadFile(hFile, &fFlipRotation, sizeof fFlipRotation, &dwByte, nullptr);
+	ReadFile(hFile, &is3DStartAngle, sizeof is3DStartAngle, &dwByte, nullptr);
+	ReadFile(hFile, &isStartAngleRange, sizeof isStartAngleRange, &dwByte, nullptr);
+	ReadFile(hFile, &vStartAngleRange, sizeof vStartAngleRange, &dwByte, nullptr);
+	ReadFile(hFile, &fStartAngle, sizeof fStartAngle, &dwByte, nullptr);
+	ReadFile(hFile, &vStartAngle3D, sizeof vStartAngle3D, &dwByte, nullptr);
+	ReadFile(hFile, &fFlipAngle, sizeof fFlipAngle, &dwByte, nullptr);
 	ReadFile(hFile, &vStartColor, sizeof vStartColor, &dwByte, nullptr);
 	ReadFile(hFile, &fGravityModifier, sizeof fGravityModifier, &dwByte, nullptr);
 	ReadFile(hFile, &fSimulationSpeed, sizeof fSimulationSpeed, &dwByte, nullptr);
@@ -544,7 +544,7 @@ HRESULT RENDERER_MODULE::Load(const _tchar* _pDirectoyPath)
 	ReadFile(hFile, &isDeleteY, sizeof(isDeleteY), &dwByte, nullptr);
 	ReadFile(hFile, &isUseGradientTexture, sizeof(isUseGradientTexture), &dwByte, nullptr);
 	ReadFile(hFile, wszBuffer, sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
-	if(true == isUseGradientTexture)
+	if (true == isUseGradientTexture)
 		wstrGraientTexture = wszBuffer;
 	ReadFile(hFile, szBuffer, sizeof(_char) * MAX_PATH, &dwByte, nullptr);
 	strPass = szBuffer;
@@ -583,7 +583,7 @@ HRESULT VELOCITY_OVER_LIFETIME::Save(const _tchar* _pDirectoyPath)
 	WriteFile(hFile, &vLinearMax, sizeof(vLinearMax), &dwByte, nullptr);
 	//WriteFile(hFile, &eLinearEase, sizeof(eLinearEase), &dwByte, nullptr);
 
-	
+
 
 	CloseHandle(hFile);
 	return S_OK;
@@ -662,13 +662,9 @@ HRESULT ROTATION_OVER_LIFETIME_MODULE::Save(const _tchar* _pDirectoyPath)
 
 	__super::Save(hFile, dwByte);
 
-	WriteFile(hFile, &isSeparateAxes, sizeof(isSeparateAxes), &dwByte, nullptr);
-	WriteFile(hFile, &vAngularVelocityX, sizeof(vAngularVelocityX), &dwByte, nullptr);
-	WriteFile(hFile, &vAngularVelocityY, sizeof(vAngularVelocityY), &dwByte, nullptr);
-	WriteFile(hFile, &vAngularVelocityZ, sizeof(vAngularVelocityZ), &dwByte, nullptr);
-	WriteFile(hFile, &eEaseX, sizeof(eEaseX), &dwByte, nullptr);
-	WriteFile(hFile, &eEaseY, sizeof(eEaseY), &dwByte, nullptr);
-	WriteFile(hFile, &eEaseZ, sizeof(eEaseZ), &dwByte, nullptr);
+	WriteFile(hFile, &isAngularVelocityRange, sizeof(isAngularVelocityRange), &dwByte, nullptr);
+	WriteFile(hFile, &fAngularVelocity, sizeof(fAngularVelocity), &dwByte, nullptr);
+	WriteFile(hFile, &vAngularVelocityRange, sizeof(vAngularVelocityRange), &dwByte, nullptr);
 
 	CloseHandle(hFile);
 	return S_OK;
@@ -693,13 +689,9 @@ HRESULT ROTATION_OVER_LIFETIME_MODULE::Load(const _tchar* _pDirectoyPath)
 	_ulong dwByte = 0;
 	__super::Load(hFile, dwByte);
 
-	ReadFile(hFile, &isSeparateAxes, sizeof(isSeparateAxes), &dwByte, nullptr);
-	ReadFile(hFile, &vAngularVelocityX, sizeof(vAngularVelocityX), &dwByte, nullptr);
-	ReadFile(hFile, &vAngularVelocityY, sizeof(vAngularVelocityY), &dwByte, nullptr);
-	ReadFile(hFile, &vAngularVelocityZ, sizeof(vAngularVelocityZ), &dwByte, nullptr);
-	ReadFile(hFile, &eEaseX, sizeof(eEaseX), &dwByte, nullptr);
-	ReadFile(hFile, &eEaseY, sizeof(eEaseY), &dwByte, nullptr);
-	ReadFile(hFile, &eEaseZ, sizeof(eEaseZ), &dwByte, nullptr);
+	ReadFile(hFile, &isAngularVelocityRange, sizeof(isAngularVelocityRange), &dwByte, nullptr);
+	ReadFile(hFile, &fAngularVelocity, sizeof(fAngularVelocity), &dwByte, nullptr);
+	ReadFile(hFile, &vAngularVelocityRange, sizeof(vAngularVelocityRange), &dwByte, nullptr);
 
 	CloseHandle(hFile);
 
@@ -709,11 +701,25 @@ void ROTATION_OVER_LIFETIME_MODULE::Action(PARTICLE_IT& _particle_iter, _float _
 {
 	if (false == isActivate)
 		return;
-}
-void ROTATION_OVER_LIFETIME_MODULE::Restart()
-{
+
+	// 이 구조에서는 빌보드를 가정(메쉬나 사용안함)하기 때문에 Angle에 대해서만 다룸.
+	_particle_iter->fAngle += _particle_iter->fAngularVelocity * _fTimeDelta;
 }
 
+void ROTATION_OVER_LIFETIME_MODULE::Reset(PARTICLE_IT& _particle_iter)
+{
+	if (false == isActivate)
+		return;
+
+	if (false == isAngularVelocityRange)
+	{
+		_particle_iter->fAngularVelocity = fAngularVelocity;
+	}
+	else // Range인 경우
+	{
+		_particle_iter->fAngularVelocity = Random_Generator(vAngularVelocityRange.x, vAngularVelocityRange.y);
+	}
+}
 HRESULT COLOR_OVER_LIFETIME::Save(const _tchar* _pDirectoyPath)
 {
 	fs::path fsFilePath = _pDirectoyPath;
@@ -776,7 +782,7 @@ void COLOR_OVER_LIFETIME::Action(PARTICLE_IT& _particle_iter, _float4 vMainColor
 		return;
 
 	_float4 changeAmount = vEndColor - vStartColor;
-	
+
 	_particle_iter->vColor.x = vMainColor.x * CEase::Ease(eEase, _particle_iter->fAge
 		, vStartColor.x
 		, changeAmount.x
@@ -942,6 +948,10 @@ HRESULT TEXTURE_SHEET_ANIMATION::Save(const _tchar* _pDirectoyPath)
 	WriteFile(hFile, &isUseNormalTexture, sizeof(isUseNormalTexture), &dwByte, nullptr);
 	WriteFile(hFile, wstrNormalPath.data(), sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
 	WriteFile(hFile, &isLoopOption, sizeof(isLoopOption), &dwByte, nullptr);
+	WriteFile(hFile, &isAnimation, sizeof(isAnimation), &dwByte, nullptr);
+	WriteFile(hFile, &isSeletedIndexRange, sizeof(isSeletedIndexRange), &dwByte, nullptr);
+	WriteFile(hFile, &vSeletedIndexRange, sizeof(vSeletedIndexRange), &dwByte, nullptr);
+	WriteFile(hFile, &iSeletedIndex, sizeof(iSeletedIndex), &dwByte, nullptr);
 
 	CloseHandle(hFile);
 	return S_OK;
@@ -978,10 +988,13 @@ HRESULT TEXTURE_SHEET_ANIMATION::Load(const _tchar* _pDirectoyPath)
 	ReadFile(hFile, &fUpdateInterval, sizeof(fUpdateInterval), &dwByte, nullptr);
 	ReadFile(hFile, &isUseNormalTexture, sizeof(isUseNormalTexture), &dwByte, nullptr);
 	ReadFile(hFile, wszBuffer, sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
-	if(true == isUseNormalTexture)
+	if (true == isUseNormalTexture)
 		wstrNormalPath = wszBuffer;
 	ReadFile(hFile, &isLoopOption, sizeof(isLoopOption), &dwByte, nullptr);
-
+	ReadFile(hFile, &isAnimation, sizeof(isAnimation), &dwByte, nullptr);
+	ReadFile(hFile, &isSeletedIndexRange, sizeof(isSeletedIndexRange), &dwByte, nullptr);
+	ReadFile(hFile, &vSeletedIndexRange, sizeof(vSeletedIndexRange), &dwByte, nullptr);
+	ReadFile(hFile, &iSeletedIndex, sizeof(iSeletedIndex), &dwByte, nullptr);
 	CloseHandle(hFile);
 	// 파티클 텍스처 시트 구현해!
 	return S_OK;
@@ -991,22 +1004,25 @@ void TEXTURE_SHEET_ANIMATION::Action(PARTICLE_IT& _particle_iter, _float fTimeDe
 	if (false == isActivate)
 		return;
 
-	fTimeAcc += fTimeDelta;
-	if (fTimeAcc <= fUpdateInterval)
-		return;
-
-	fTimeAcc = 0.f;
-	++_particle_iter->iCurIndex;
-	if (_particle_iter->iCurIndex > iMaxIndex)
+	if (true == isAnimation)
 	{
-		if (false == isLoopOption)
+		fTimeAcc += fTimeDelta;
+		if (fTimeAcc <= fUpdateInterval)
+			return;
+
+		fTimeAcc = 0.f;
+		++_particle_iter->iCurIndex;
+		if (_particle_iter->iCurIndex > iMaxIndex)
 		{
-			_particle_iter->fLifeTime = 0.f;
-			_particle_iter->iCurIndex = iMaxIndex; // 마지막 1프레임 살아나는거 잡는 코드
-		}
-		else
-		{
-			_particle_iter->iCurIndex = 0;
+			if (false == isLoopOption)
+			{
+				_particle_iter->fLifeTime = 0.f;
+				_particle_iter->iCurIndex = iMaxIndex; // 마지막 1프레임 살아나는거 잡는 코드
+			}
+			else
+			{
+				_particle_iter->iCurIndex = 0;
+			}
 		}
 	}
 }
@@ -1015,10 +1031,22 @@ void TEXTURE_SHEET_ANIMATION::Reset(PARTICLE_IT& _particle_iter)
 	if (false == isActivate)
 		return;
 
-	if (true == isStartFrameRange)
-		fStartFrame = Random_Generator(vStartFrameRange.x, vStartFrameRange.y);
+	if (true == isAnimation) // 텍스처시트 애니메이션
+	{
+		if (true == isStartFrameRange)
+			fStartFrame = Random_Generator(vStartFrameRange.x, vStartFrameRange.y);
 
-	_particle_iter->iCurIndex = _uint(iMaxIndex * fStartFrame);
+		_particle_iter->iCurIndex = _uint(iMaxIndex * fStartFrame);
+	}
+	else // 그냥 uv만 자르기
+	{
+		if (true == isSeletedIndexRange) // 랜덤로직
+			_particle_iter->iCurIndex = static_cast<_uint>(Random_Generator(
+				static_cast<_float>(vSeletedIndexRange.x),
+				static_cast<_float>(vSeletedIndexRange.y + 0.99f))); // 마지막 인덱스도 나오도록 +0.99f를 함
+		else
+			_particle_iter->iCurIndex = iSeletedIndex;
+	}
 }
 void TEXTURE_SHEET_ANIMATION::Restart()
 {

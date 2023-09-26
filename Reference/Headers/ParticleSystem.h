@@ -33,6 +33,10 @@ public:
 	// DEAD : 죽은 파티클 부활 할 수 없음.
 	enum STATE { ALIVE, DELAY, WAIT, DEAD, STATE_END };
 
+public:
+	wstring Get_ParticleTag() { return m_szParticleTag; }
+	void Set_ParticleTag(wstring szParticleTag) { m_szParticleTag = szParticleTag; }
+
 protected:
 	explicit CParticleSystem(ID3D11Device * _pDevice, ID3D11DeviceContext * _pContext);
 	explicit CParticleSystem(const CParticleSystem& _rhs);
@@ -67,11 +71,14 @@ public:
 	SIZE_OVER_LIFETIME&				Get_SizeOverLifetimeModuleRef() { return m_SizeOverLifeTimeModuleDesc; }
 	ROTATION_OVER_LIFETIME_MODULE&	Get_RotationOverLifetimeModuleRef() { return m_RotationOverLifetimeModuleDesc; }
 
+	
 public:
 	void Play(_float3 vPosition = _float3());
 	void Stop();
 	virtual void Restart();
-
+	// Stop vs Disable
+	// Stop : 새로운 파티클의 생성을 막는다.(Alive와 Delay에 남은 파티클들이 여전히 연산을 진행하고있음.)
+	// Disable : 파티클 객체를 비활성화 시킨다.(Tick과 Late Tick을 강제로 멈춤)
 public:
 	void Enable();
 	void Disable();
@@ -101,7 +108,7 @@ protected:
 
 	// 인스턴스 수에 따라 resize, reserve함수로 메모리 할당.
 	void Resize_Container(_uint iNumInstance);
-
+	
 protected:
 	void Action_By_Age();
 	void Action_By_Duration();
@@ -140,6 +147,8 @@ protected:
 	vector<VTXPARTICLEINSTANCE>  m_ParticleMatrices;
 	function<void()> m_StopAction;
 	_uint m_iLevel = { 0 };
+	_bool m_isStop = { false };
+	wstring m_szParticleTag;
 
 public:
 	static CParticleSystem* Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, const _tchar* _pDirectoryPath, _uint iLevel = 0);

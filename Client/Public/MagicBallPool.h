@@ -16,11 +16,12 @@ public:
 public:
 	HRESULT Initialize();
 
+public:
 	CMagicBall* Get_Magic(CMagicBall::MAGICBALLINITDESC& MagicBallDesc);
-	void Return_Magic(CMagicBall* pMagic , SPELL eSpell);
+	void Return_Magic(CMagicBall* pMagic, SPELL eSpell);
 
 private:
-	queue<CMagicBall*>	 m_MagicPoolVec[SPELL_END] = {};
+	queue<CMagicBall*>	 m_MagicPool[SPELL_END] = {};
 
 private:
 	CMagicBall* Create_Magic(SPELL eSpell, CMagicBall::MAGICBALLINITDESC& MagicBallDesc);

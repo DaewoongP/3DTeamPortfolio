@@ -72,6 +72,7 @@ public:
 	void Set_AngularDamping(_float _fAngualrDamping) const;
 	void Set_Gravity(_bool _isGravity);
 	void Set_CollisionFlag(const _char* szColliderTag, PxU32 eCollisionFlag);
+	void Set_ThisCollision(CGameObject* pThisObj);
 		
 #ifdef _DEBUG
 	void Set_DebugColor(_uint iColliderIndex, _float4 _vColor) { m_Colors[iColliderIndex] = _vColor; }
@@ -102,7 +103,7 @@ public:
 	void Translate(_float3 _vPosition) const;
 	void Rotate(_float4 _vRotation) const;
 
-	void Enable_Collision(const _char* szColliderTag);
+	void Enable_Collision(const _char* szColliderTag, CGameObject* pThisCollision);
 	void Disable_Collision(const _char* szColliderTag);
 
 private:

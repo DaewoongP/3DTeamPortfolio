@@ -119,7 +119,7 @@ HRESULT CWeapon_Armored_Troll::Add_Components(void* pArg)
 		RigidBodyDesc.fStaticFriction = 0.f;
 		RigidBodyDesc.fDynamicFriction = 1.f;
 		RigidBodyDesc.fRestitution = 0.f;
-		PxCapsuleGeometry pCapsuleGeomatry = PxCapsuleGeometry(0.4f, 0.7f);
+		PxCapsuleGeometry pCapsuleGeomatry = PxCapsuleGeometry(1.f, 1.3f);
 		RigidBodyDesc.pGeometry = &pCapsuleGeomatry;
 		RigidBodyDesc.eConstraintFlag = CRigidBody::None;
 		RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 1.f, 1.f);

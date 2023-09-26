@@ -50,7 +50,7 @@ private:
 	// 리스트 내에 들어있는 오브젝트 중 가장 가까운 객체 포인터
 	const CGameObject* m_pTarget = { nullptr };
 	// 범위 안에 들어온 몬스터 리스트
-	list<pair<wstring, const CGameObject*>> m_RangeInEnemies;
+	unordered_map<wstring, const CGameObject*> m_RangeInEnemies;
 
 	_bool m_isChangeAnimation = { false };
 	_bool m_isRangeInEnemy = { false };

@@ -7,7 +7,6 @@ CProtego::CProtego(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 CProtego::CProtego(const CProtego& rhs)
 	: CMagicBall(rhs)
-	, m_iLevel(rhs.m_iLevel)
 	, m_eCurState(rhs.m_eCurState)
 	, m_vColor1(rhs.m_vColor1)
 	, m_vColor2(rhs.m_vColor2)
@@ -79,44 +78,18 @@ HRESULT CProtego::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 	{
-		MSG_BOX("Failed Player Initialize");
+		MSG_BOX("Failed CProtego Initialize");
 
 		return E_FAIL;
 	}
 
-	
 	if (FAILED(Add_Components()))
 	{
-		MSG_BOX("Failed Player Add_Components");
+		MSG_BOX("Failed CProtego Add_Components");
 
 		return E_FAIL;
 	}
 
-	switch (m_MagicBallDesc.eMagicType)
-	{
-	case Client::CMagic::MT_NOTHING:
-		break;
-	case Client::CMagic::MT_YELLOW:
-		break;
-	case Client::CMagic::MT_PURPLE:
-		break;
-	case Client::CMagic::MT_RED:
-		break;
-	case Client::CMagic::MT_ALL:
-		m_vColor1 = { 0.f, 0.f, 1.f, 1.f };
-		//m_vColor2 = { 0.5f, 0.f, 0.5f, 1.f };
-		m_vColor2 = { 1.f, 0.f, 1.f, 1.f };
-		break;
-	default:
-		break;
-	}
-
-	//_float3 vPos = m_pTransform->Get_Position();
-	//vPos.y += 0.5f;
-	//m_pTransform->Set_Position(vPos);
-
-	m_pFlameBlastFlipbook->Get_Transform()->Set_Scale(_float3(1.f, 1.f, 1.f));
-	m_pDefaultConeBoom_Particle->Disable();
 	return S_OK;
 }
 
@@ -164,7 +137,7 @@ void CProtego::Tick(_float fTimeDelta)
 void CProtego::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
-
+	m_pRigidBody->Enable_Collision("Magic_Ball", this);
 #ifdef _DEBUG
 	this->Tick_Imgui();
 #endif // _DEBUG
@@ -181,7 +154,7 @@ void CProtego::Late_Tick(_float fTimeDelta)
 	if (nullptr != m_pRenderer && STATE_END != m_eCurState)
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BLEND, this);
-		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_GLOW, this);
+		//m_pRenderer->Add_RenderGroup(CRenderer::RENDER_GLOW, this);
 #ifdef _DEBUG
 
 #endif // _DEBUG
@@ -198,6 +171,7 @@ HRESULT CProtego::Render()
 
 	FAILED_CHECK_RETURN(m_pShader->Begin("Protego"), E_FAIL);
 	FAILED_CHECK_RETURN(m_pBuffer->Render(), E_FAIL);
+
 	return S_OK;
 }
 
@@ -233,7 +207,7 @@ void CProtego::Tick_Exit(const _float& fTimeDelta)
 	if (fRatio >= 1.f)
 	{
 		m_eCurState = STATE_END;
-		Set_ObjEvent(OBJ_DEAD);
+		Set_MagicBallState(MAGICBALL_STATE_END);
 	}
 }
 
@@ -317,53 +291,79 @@ void CProtego::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 	__super::OnCollisionExit(CollisionEventDesc);
 }
 
+HRESULT CProtego::Reset(MAGICBALLINITDESC& InitDesc)
+{
+	__super::Reset(InitDesc);
+
+	switch (InitDesc.eMagicType)
+	{
+	case Client::CMagic::MT_NOTHING:
+		__debugbreak(); // 그룹을 제대로 던져주지 않으면 오류. F5누르면 계속 진행 가능.(흰색 프로테고.)
+		break;
+	case Client::CMagic::MT_YELLOW:
+		m_vColor1 = { 1.f, 1.f, 0.f, 1.f }; // 노란색
+		m_vColor2 = { 1.f, 0.5f, 0.f, 1.f }; // 주황색
+		break;
+	case Client::CMagic::MT_PURPLE:
+		m_vColor1 = { 0.f, 0.f, 1.f, 1.f }; // 파란색
+		m_vColor2 = { 0.5f, 0.f, 0.5f, 1.f }; // 보라색
+		break;
+	case Client::CMagic::MT_RED:
+		m_vColor1 = { 1.f, 0.f, 0.f, 1.f }; // 빨강색
+		m_vColor2 = { 1.f, 0.5f, 0.f, 1.f }; // 주황색
+		break;
+	case Client::CMagic::MT_ALL:
+		m_vColor1 = { 0.f, 0.f, 1.f, 1.f }; // 파란색
+		m_vColor2 = { 1.f, 0.f, 1.f, 1.f }; // 흰색
+		break;
+	default:
+		__debugbreak(); // 그룹을 제대로 던져주지 않으면 오류. F5누르면 계속 진행 가능.(흰색 프로테고.)
+		break;
+	}
+	
+	m_fScale = { 2.3f };
+	m_fEnterDuration = { 0.1f };
+	m_fExitDuration = { 0.1f };
+	m_fRimPower = { 2.1f };
+	m_isHitEffect = { false };
+
+	m_eCurState = { ENTER };
+	m_fTimeAcc = { 0.f };
+	m_fHitTimeAcc = { 0.f };
+	m_pFlameBlastFlipbook->Get_Transform()->Set_Scale(_float3(1.f, 1.f, 1.f));
+	m_pDefaultConeBoom_Particle->Disable();
+
+	return S_OK;
+}
+
 HRESULT CProtego::Add_Components()
 {
-	try
-	{
-		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_UVSphere"),
-			TEXT("Com_Buffer"), reinterpret_cast<CComponent**>(&m_pBuffer))))
-			throw "Com_Buffer";
+	FAILED_CHECK_RETURN(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_UVSphere"),
+		TEXT("Com_Buffer"), reinterpret_cast<CComponent**>(&m_pBuffer)), E_FAIL);
 
-		/* For.Com_Shader */
-		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_Component_Shader_Protego"),
-			TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
-			throw "Com_Shader";
+	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, TEXT("Prototype_Component_Shader_Protego"),
+		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader)), E_FAIL);
 
-		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_Component_Texture_VFX_T_Circle_LerpMask_D"),
-			TEXT("Com_VFX_T_Circle_LerpMask_D"), reinterpret_cast<CComponent**>(&m_pTexture[0]))))
-			throw "Com_VFX_T_Circle_LerpMask_D";
+	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, TEXT("Prototype_Component_Texture_VFX_T_Circle_LerpMask_D"),
+		TEXT("Com_VFX_T_Circle_LerpMask_D"), reinterpret_cast<CComponent**>(&m_pTexture[0])), E_FAIL);
 
-		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_Component_Texture_VFX_T_Noise04_D"),
-			TEXT("Com_VFX_T_Noise04_D.VFX_T_Noise04_D"), reinterpret_cast<CComponent**>(&m_pTexture[1]))))
-			throw "Com_VFX_T_Noise04_D";
+	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, TEXT("Prototype_Component_Texture_VFX_T_Noise04_D"),
+		TEXT("Com_VFX_T_Noise04_D.VFX_T_Noise04_D"), reinterpret_cast<CComponent**>(&m_pTexture[1])), E_FAIL);
 
-		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_Component_Texture_VFX_T_RibbonOffset_N"),
-			TEXT("Com_VFX_T_RibbonOffset_N"), reinterpret_cast<CComponent**>(&m_pTexture[2]))))
-			throw "Com_VFX_T_RibbonOffset_N";
+	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, TEXT("Prototype_Component_Texture_VFX_T_RibbonOffset_N"),
+		TEXT("Com_VFX_T_RibbonOffset_N"), reinterpret_cast<CComponent**>(&m_pTexture[2])), E_FAIL);
 
-		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_Component_Texture_VFX_T_Inky_Smoke_D"),
-			TEXT("Com_VFX_T_Inky_Smoke_D"), reinterpret_cast<CComponent**>(&m_pTexture[3]))))
-			throw "Com_VFX_T_Inky_Smoke_D";
+	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, TEXT("Prototype_Component_Texture_VFX_T_Inky_Smoke_D"),
+		TEXT("Com_VFX_T_Inky_Smoke_D"), reinterpret_cast<CComponent**>(&m_pTexture[3])), E_FAIL);
 
-		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_Component_Texture_VFX_T_Wisps_2_D"),
-			TEXT("Com_VFX_VFX_T_Wisps_2_D"), reinterpret_cast<CComponent**>(&m_pTexture[4]))))
-			throw "Com_VFX_VFX_T_Wisps_2_D";
+	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, TEXT("Prototype_Component_Texture_VFX_T_Wisps_2_D"),
+		TEXT("Com_VFX_VFX_T_Wisps_2_D"), reinterpret_cast<CComponent**>(&m_pTexture[4])), E_FAIL);
 
-		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_DefaultConeBoom_Particle"),
-			TEXT("Com_DefaultConeBoom_Particle"), reinterpret_cast<CComponent**>(&m_pDefaultConeBoom_Particle))))
-			throw "Com_DefaultConeBoom_Particle";
+	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_DefaultConeBoom_Particle"),
+		TEXT("Com_DefaultConeBoom_Particle"), reinterpret_cast<CComponent**>(&m_pDefaultConeBoom_Particle)), E_FAIL);
 
-		if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_FireBlastFB_Loop_D_Flipbook"),
-			TEXT("Prototype_GameObject_FireBlastFB_Loop_D_Flipbook"), reinterpret_cast<CComponent**>(&m_pFlameBlastFlipbook))))
-			throw "Com_FireBlastFB_Loop_D_Flipbook";
-	}
-	catch (const char* pErrorMessage)
-	{
-		string strErrorMessage = "Failed to Cloned in CProtego_Effect : ";
-		strErrorMessage += pErrorMessage;
-		MSG_BOX(strErrorMessage.data());
-	}
+	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_FireBlastFB_Loop_D_Flipbook"),
+		TEXT("Prototype_GameObject_FireBlastFB_Loop_D_Flipbook"), reinterpret_cast<CComponent**>(&m_pFlameBlastFlipbook)), E_FAIL);
 
 	return S_OK;
 }

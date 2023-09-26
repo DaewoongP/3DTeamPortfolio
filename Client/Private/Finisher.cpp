@@ -12,7 +12,6 @@ CFinisher::CFinisher(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 CFinisher::CFinisher(const CFinisher& rhs)
 	: CMagicBall(rhs)
-	, m_iLevel(rhs.m_iLevel)
 {
 }
 
@@ -179,11 +178,17 @@ void CFinisher::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 	__super::OnCollisionExit(CollisionEventDesc);
 }
 
+HRESULT CFinisher::Reset(MAGICBALLINITDESC& InitDesc)
+{
+	__super::Reset(InitDesc);
+	return S_OK;
+}
+
 void CFinisher::Ready_Begin()
 {
 	for (int i = 0; i < 3; i++)
 	{
-		m_pTrail[i]->Disable();
+		//m_pTrail[i]->Disable();
 	}
 
 	 m_LightningSparkEffect_Green->Disable();
@@ -233,16 +238,16 @@ void CFinisher::Ready_CastMagic()
 		m_vTargetPosition = m_pTarget->Get_Position() + m_TargetOffsetMatrix.Translation();
 	}
 
-	_float3 vWeight[2];
-	vWeight[0] = _float3(-0.05f, -0.05f, -0.05f);
-	vWeight[1] = _float3(0.05f, 0.05f, 0.05f);
-
 	for (int i = 0; i < 3; i++)
 	{
-		m_pTrail[i]->Set_Threshold(0.0f);
+		_float3 vWeight[2];
+		vWeight[0] = _float3(-2.f, -0.5f, -2.f);
+		vWeight[1] = _float3(2.f,0.5f, 2.f);
+
+		m_pTrail[i]->Set_Threshold(0.2f);
 		m_pTrail[i]->Ready_LightningStrike(m_pTarget->Get_Position() + _float3(0, 10, 0), m_pTarget->Get_Position(), vWeight, 10);
-		m_pTrail[i]->Reset_Trail(m_pTarget->Get_Position() + _float3(0, 10, 0) + _float3(0, 0.5f, 0), m_pTarget->Get_Position() + _float3(0, 10, 0) + _float3(0, -0.5f, 0));
-		m_pTrail[i]->Get_Transform()->Set_Position(m_pTarget->Get_Position() + _float3(0, 10, 0));
+		//m_pTrail[i]->Reset_Trail(m_pTarget->Get_Position() + _float3(0, 10, 0) + _float3(0, 2.f, 0), m_pTarget->Get_Position() + _float3(0, 10, 0) + _float3(0, -2.f, 0));
+		//m_pTrail[i]->Get_Transform()->Set_Position(m_pTarget->Get_Position() + _float3(0, 10, 0));
 		m_pTrail[i]->Enable();
 	}
 
@@ -285,8 +290,8 @@ void CFinisher::Tick_CastMagic(_float fTimeDelta)
 
 void CFinisher::Tick_Dying(_float fTimeDelta)
 {
-	if(!m_DustParticle->IsEnable())
-		Do_MagicBallState_To_Next();
+	//if(!m_DustParticle->IsEnable())
+	//	Do_MagicBallState_To_Next();
 }
 
 HRESULT CFinisher::Add_Components()

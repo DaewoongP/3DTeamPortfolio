@@ -9,8 +9,13 @@
 #include "Player_Information.h"
 
 #include "ProtegoState.h"
+#include "MagicCastingState.h"
 
 #include "Armored_Troll.h"
+
+#include "Magic.h"
+
+#include "UI_Group_Skill.h"
 
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -67,6 +72,13 @@ HRESULT CPlayer::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
+	if (FAILED(Ready_MagicDesc()))
+	{
+		MSG_BOX("Failed Ready _MagicDesc");
+
+		return E_FAIL;
+	}
+
 	m_pTransform->Set_Speed(1.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(180.f));
 	m_pTransform->Set_RigidBody(m_pRigidBody);
@@ -75,6 +87,9 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 	m_fClothPower = 3.0f;
 	m_fClothPowerPlus = 1.0f;
+
+	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::FIRST, CONFRINGO);
+	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::SECOND, LEVIOSO);
 
 	return S_OK;
 }
@@ -111,6 +126,8 @@ void CPlayer::Tick(_float fTimeDelta)
 	//m_pStateContext->Tick(fTimeDelta);
 
 	Update_Cloth(fTimeDelta);
+
+	Shot_Magic_Spell();
 	
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UNDERBODY);
@@ -183,12 +200,17 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 				break;
 			}
 
-			ProtegoStateDesc.pTransform = CollisionEventDesc.pOtherTransform;
+			ProtegoStateDesc.pTransform = pDesc->pEnemyTransform;
 
 			m_pStateContext->Set_StateMachine(TEXT("Protego"), &ProtegoStateDesc);
 		}
 		//회피시 무시
 		else if (m_pStateContext->Is_Current_State(TEXT("Roll")))
+		{
+
+		}
+		//피격중인 상태일 경우 무시
+		else if (m_pStateContext->Is_Current_State(TEXT("Hit")))
 		{
 
 		}
@@ -220,7 +242,7 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 				break;
 			}
 
-			HitStateDesc.pTransform = CollisionEventDesc.pOtherTransform;
+			HitStateDesc.pTransform = pDesc->pEnemyTransform;
 
 			m_pStateContext->Set_StateMachine(TEXT("Hit"), &HitStateDesc);
 
@@ -264,7 +286,7 @@ HRESULT CPlayer::Render()
 				m_pCustomModel->Render(iPartsIndex, i);
 			}
 		}
-		else
+		else if (CCustomModel::ROBE == iPartsIndex)
 		{
 			for (_uint i = 0; i < iNumMeshes; ++i)
 			{
@@ -274,6 +296,35 @@ HRESULT CPlayer::Render()
 				m_pCustomModel->Bind_Material(m_pShader, "g_NormalTexture", iPartsIndex, i, NORMALS);
 
 				m_pShader->Begin("AnimMeshNonCull");
+
+				m_pCustomModel->Render(iPartsIndex, i);
+			}
+		}
+		else if (CCustomModel::HEAD == iPartsIndex ||
+				CCustomModel::ARM == iPartsIndex)
+		{
+			for (_uint i = 0; i < iNumMeshes; ++i)
+			{
+				m_pCustomModel->Bind_BoneMatrices(m_pShader, "g_BoneMatrices", iPartsIndex, i);
+
+				m_pCustomModel->Bind_Material(m_pShader, "g_DiffuseTexture", iPartsIndex, i, DIFFUSE);
+				m_pCustomModel->Bind_Material(m_pShader, "g_NormalTexture", iPartsIndex, i, NORMALS);
+
+				m_pShader->Begin("AnimMesh");
+
+				m_pCustomModel->Render(iPartsIndex, i);
+			}
+		}
+		else
+		{
+			for (_uint i = 0; i < iNumMeshes; ++i)
+			{
+				m_pCustomModel->Bind_BoneMatrices(m_pShader, "g_BoneMatrices", iPartsIndex, i);
+
+				m_pCustomModel->Bind_Material(m_pShader, "g_DiffuseTexture", iPartsIndex, i, DIFFUSE);
+				m_pCustomModel->Bind_Material(m_pShader, "g_NormalTexture", iPartsIndex, i, NORMALS);
+
+				m_pShader->Begin("AnimMeshColor");
 
 				m_pCustomModel->Render(iPartsIndex, i);
 			}
@@ -395,7 +446,7 @@ HRESULT CPlayer::Add_Components()
 	RigidBodyDesc.vInitPosition = _float3(2.f, 2.f, 2.f);
 	RigidBodyDesc.vInitRotation = m_pTransform->Get_Quaternion();
 	RigidBodyDesc.fStaticFriction = 0.f;
-	RigidBodyDesc.fDynamicFriction = 0.f;
+	RigidBodyDesc.fDynamicFriction = 1.f;
 	RigidBodyDesc.fRestitution = 0.f;
 	PxCapsuleGeometry MyGeometry = PxCapsuleGeometry(0.5f, 0.5f);
 	RigidBodyDesc.pGeometry = &MyGeometry;
@@ -432,6 +483,18 @@ HRESULT CPlayer::Add_Components()
 		return E_FAIL;
 	}
 
+	/* Com_UI_Group_Skill_1 */
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Skill"),
+		TEXT("Com_UI_Group_Skill_1"), reinterpret_cast<CComponent**>(&m_UI_Group_Skill_01))))
+	{
+		MSG_BOX("Failed CPlayer Add_Component : (Com_UI_Group_Skill_1)");
+		__debugbreak();
+
+		return E_FAIL;
+	}
+
+
+
 	return S_OK;
 }
 
@@ -450,6 +513,10 @@ HRESULT CPlayer::SetUp_ShaderResources()
 
 	_float3 vHairColor = { 0.f, 0.f, 1.f };
 	if (FAILED(m_pShader->Bind_RawValue("g_fHairColor", &vHairColor, sizeof(_float3))))
+		return E_FAIL;
+
+	_float4 vColor = _float4(0.2f, 0.2f, 0.2f, 1.f);
+	if (FAILED(m_pShader->Bind_RawValue("g_vColor", &vColor, sizeof(_float4))))
 		return E_FAIL;
 
 	ENDINSTANCE;
@@ -485,10 +552,10 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicType = CMagic::MT_YELLOW;
 		magicInitDesc.eMagicTag = LEVIOSO;
 		magicInitDesc.fCoolTime = 1.f;
-		magicInitDesc.fDamage = 0.f;
+		magicInitDesc.iDamage = 0;
 		magicInitDesc.fCastDistance = 1000;
 		magicInitDesc.fBallDistance = 30;
-		magicInitDesc.fLifeTime = 1.2f;
+		magicInitDesc.fLifeTime = 1.8f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
@@ -499,7 +566,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicType = CMagic::MT_RED;
 		magicInitDesc.eMagicTag = CONFRINGO;
 		magicInitDesc.fCoolTime = 1.f;
-		magicInitDesc.fDamage = 50.f;
+		magicInitDesc.iDamage = 50;
 		magicInitDesc.fCastDistance = 1000;
 		magicInitDesc.fBallDistance = 30;
 		magicInitDesc.fLifeTime = 0.8f;
@@ -513,7 +580,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicType = CMagic::MT_ALL;
 		magicInitDesc.eMagicTag = FINISHER;
 		magicInitDesc.fCoolTime = 1.f;
-		magicInitDesc.fDamage = 500.f;
+		magicInitDesc.iDamage = 500;
 		magicInitDesc.fCastDistance = 1000;
 		magicInitDesc.fBallDistance = 3000;
 		magicInitDesc.fLifeTime = 3.f;
@@ -527,17 +594,32 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicType = CMagic::MT_RED;
 		magicInitDesc.eMagicTag = NCENDIO;
 		magicInitDesc.fCoolTime = 1.5f;
-		magicInitDesc.fDamage = 300.f;
+		magicInitDesc.iDamage = 300;
 		magicInitDesc.fCastDistance = 1000;
 		magicInitDesc.fBallDistance = 30;
 		magicInitDesc.fLifeTime = 1.f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
+	// 루모스
+	{
+		magicInitDesc.eBuffType = BUFF_NONE;
+		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
+		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicTag = LUMOS;
+		magicInitDesc.fCoolTime = 1.5f;
+		magicInitDesc.iDamage = 0;
+		magicInitDesc.fCastDistance = 1000;
+		magicInitDesc.fBallDistance = 0;
+		magicInitDesc.fLifeTime = 30.f;
+		m_pMagicSlot->Add_Magics(magicInitDesc);
+	}
+
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(0, CONFRINGO);
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(1, LEVIOSO);
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(2, FINISHER);
-	m_pMagicSlot->Add_Magic_To_Skill_Slot(3, NCENDIO);
+	//m_pMagicSlot->Add_Magic_To_Skill_Slot(3, NCENDIO);
+	m_pMagicSlot->Add_Magic_To_Skill_Slot(3, LUMOS);
 	
 	return S_OK;
 }
@@ -554,6 +636,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 			m_isFixMouse = true;
 	}
 
+#ifdef _DEBUG
 	if (pGameInstance->Get_DIKeyState(DIK_UP))
 	{
 		m_pTransform->Go_Straight(fTimeDelta * 100);
@@ -575,58 +658,16 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		//m_pTransform->Turn(_float3(0.f, 1.f, 0.f), fTimeDelta);
 		m_pTransform->Go_Right(fTimeDelta);
 	}
+#endif //_DEBUG
 
 	if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
 	{
 		m_pRigidBody->Add_Force(m_pTransform->Get_Up() * 10.f, PxForceMode::eIMPULSE);
 	}
-
-	//if (pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN))
-	//{
-	//	/* 이거는 테스트 용으로 더미클래스 찾으려고 넣은 코드를 훔쳐온거임 */
-	//	CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
-	//	if (nullptr == pTestTarget)
-	//		throw TEXT("pTestTarget is nullptr");
-	//
-	//	m_pMagicSlot->Action_Magic_Basic(0, pTestTarget->Get_Transform(),XMMatrixIdentity(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
-	//}
-
-	//if (pGameInstance->Get_DIKeyState(DIK_Q, CInput_Device::KEY_DOWN))
-	//{DIK_1
-	//	//포르테고는 타켓이 생성 객체임
-	//	m_pMagicSlot->Action_Magic_Basic(1, m_pTransform, XMMatrixIdentity(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix());
-	//}
 	
-	if (pGameInstance->Get_DIKeyState(DIK_1, CInput_Device::KEY_DOWN))
+	if (pGameInstance->Get_DIKeyState(DIK_L, CInput_Device::KEY_DOWN))
 	{
-		CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
-		if (nullptr == pTestTarget)
-			throw TEXT("pTestTarget is nullptr");
-		m_pMagicSlot->Action_Magic_Skill(0, pTestTarget->Get_Transform(), pTestTarget->Get_Offset_Matrix(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
-	}
-
-	if (pGameInstance->Get_DIKeyState(DIK_2, CInput_Device::KEY_DOWN))
-	{
-		CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
-		if (nullptr == pTestTarget)
-			throw TEXT("pTestTarget is nullptr");
-		m_pMagicSlot->Action_Magic_Skill(1, pTestTarget->Get_Transform(), pTestTarget->Get_Offset_Matrix(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
-	}
-
-	if (pGameInstance->Get_DIKeyState(DIK_3, CInput_Device::KEY_DOWN))
-	{
-		CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
-		if (nullptr == pTestTarget)
-			throw TEXT("pTestTarget is nullptr");
-		m_pMagicSlot->Action_Magic_Skill(2, pTestTarget->Get_Transform(), pTestTarget->Get_Offset_Matrix(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
-	}
-
-	if (pGameInstance->Get_DIKeyState(DIK_4, CInput_Device::KEY_DOWN))
-	{
-		CGameObject* pTestTarget = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Monster"), TEXT("GameObject_Golem_Combat")));
-		if (nullptr == pTestTarget)
-			throw TEXT("pTestTarget is nullptr");
-		m_pMagicSlot->Action_Magic_Skill(3, pTestTarget->Get_Transform(), pTestTarget->Get_Offset_Matrix(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
+		CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_Dust01"), m_pTransform->Get_Position());
 	}
 
 	ENDINSTANCE;
@@ -771,6 +812,36 @@ HRESULT CPlayer::Ready_Camera()
 	return S_OK;
 }
 
+HRESULT CPlayer::Ready_MagicDesc()
+{
+	CMagic::MAGICDESC magicInitDesc;
+	magicInitDesc.eBuffType = BUFF_ATTACK_LIGHT;
+	magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
+	magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+	magicInitDesc.eMagicTag = BASICCAST;
+	magicInitDesc.fCoolTime = 0.f;
+	magicInitDesc.iDamage = 10;
+	magicInitDesc.fCastDistance = 1000;
+	magicInitDesc.fBallDistance = 30;
+	magicInitDesc.fLifeTime = 0.6f;
+
+	m_pBasicDesc_Light = New CMagic::MAGICDESC(magicInitDesc);
+
+	magicInitDesc.eBuffType = BUFF_ATTACK_HEAVY;
+	magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
+	magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+	magicInitDesc.eMagicTag = BASICCAST;
+	magicInitDesc.fCoolTime = 0.f;
+	magicInitDesc.iDamage = 10;
+	magicInitDesc.fCastDistance = 1000;
+	magicInitDesc.fBallDistance = 30;
+	magicInitDesc.fLifeTime = 0.6f;
+
+	m_pBasicDesc_Heavy = New CMagic::MAGICDESC(magicInitDesc);
+
+	return S_OK;
+}
+
 
 void CPlayer::MagicTestTextOutput()
 {
@@ -905,13 +976,15 @@ void CPlayer::Update_Target_Angle()
 
 void CPlayer::Shot_Basic_Spell()
 {
-	//Find_Target_For_Distance();
+	Find_Target_For_Distance();
+	m_pMagicSlot->Add_Magics(*m_pBasicDesc_Light);
 	m_pMagicSlot->Action_Magic_Basic(0, m_pTargetTransform, XMMatrixTranslation(0.f, 2.5f, 0.f), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
 }
 
 void CPlayer::Shot_Basic_Last_Spell()
 {
-	//Find_Target_For_Distance();
+	Find_Target_For_Distance();
+	m_pMagicSlot->Add_Magics(*m_pBasicDesc_Heavy);
 	m_pMagicSlot->Action_Magic_Basic(0, m_pTargetTransform, XMMatrixTranslation(0.f, 2.5f, 0.f), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
 }
 
@@ -1000,6 +1073,7 @@ HRESULT CPlayer::Bind_Notify()
 	
 	funcNotify = [&] {(*this).Shot_Basic_Last_Spell(); };
 	
+	//Basic_Last
 	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Hvy_frmLft_anm"), TEXT("Shot_Spell"), funcNotify)))
 	{
 		MSG_BOX("Failed Bind_Notify");
@@ -1093,9 +1167,15 @@ void CPlayer::Find_Target_For_Distance()
 {
 	BEGININSTANCE;
 
-	unordered_map<const _tchar*, CComponent*>* pLayer = pGameInstance->Find_Components_In_Layer(LEVEL_STATIC, TEXT("Layer_Monster"));
+	unordered_map<const _tchar*, CComponent*>* pLayer = pGameInstance->Find_Components_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Monster"));
 
-	_float fMinDistance = { 10000.0f };
+	if (nullptr == pLayer)
+	{
+		//MSG_BOX("not MonsterLayer");
+		return;
+	}
+
+	_float fMinDistance = { 10.0f };
 
 
 	//거리가 낮은 놈을 저장
@@ -1135,6 +1215,18 @@ void CPlayer::Find_Target_For_Distance()
 		m_pTargetTransform = pTarget->Get_Transform();
 
 		Safe_AddRef(m_pTargetTransform);
+
+
+		//기존 객체는 지워주고
+		if (nullptr != m_pTarget)
+		{
+			Safe_Release(m_pTarget);
+		}
+
+		//타겟으로 한다.
+		m_pTarget = pTarget;
+
+		Safe_AddRef(m_pTarget);
 	}
 
 	//객체가 없다면 
@@ -1144,6 +1236,14 @@ void CPlayer::Find_Target_For_Distance()
 		if (nullptr != m_pTargetTransform)
 		{
 			Safe_Release(m_pTargetTransform);
+			m_pTargetTransform = nullptr;
+		}
+
+		//기존 객체는 지워주고
+		if (nullptr != m_pTarget)
+		{
+			Safe_Release(m_pTarget);
+			m_pTarget = nullptr;
 		}
 	}
 
@@ -1152,6 +1252,116 @@ void CPlayer::Find_Target_For_Distance()
 
 
 }
+
+void CPlayer::Shot_Magic_Spell()
+{
+	BEGININSTANCE;
+	//입력 되면 안되는 스테이트
+	if (pGameInstance->Get_DIKeyState(DIK_1, CInput_Device::KEY_DOWN) &&
+		false == m_pStateContext->Is_Current_State(TEXT("Hit")) &&
+		false == m_pStateContext->Is_Current_State(TEXT("Protego")) &&
+		false == m_pStateContext->Is_Current_State(TEXT("Hard Land")) &&
+		false == m_pStateContext->Is_Current_State(TEXT("Jump")) &&
+		false == m_pStateContext->Is_Current_State(TEXT("Roll"))
+		)
+	{
+		//마법 시전 스테이트
+		CMagicCastingState::MAGICCASTINGSTATEDESC MagicCastingStateDesc;
+
+		MagicCastingStateDesc.pFuncSpell = [&] { (*this).Shot_Confringo(); };
+
+		m_pStateContext->Set_StateMachine(TEXT("Magic_Cast"), &MagicCastingStateDesc);
+	}
+	else if (pGameInstance->Get_DIKeyState(DIK_2, CInput_Device::KEY_DOWN) &&
+		false == m_pStateContext->Is_Current_State(TEXT("Hit")) &&
+		false == m_pStateContext->Is_Current_State(TEXT("Protego")) &&
+		false == m_pStateContext->Is_Current_State(TEXT("Hard Land")) &&
+		false == m_pStateContext->Is_Current_State(TEXT("Jump")) &&
+		false == m_pStateContext->Is_Current_State(TEXT("Roll")))
+	{
+		//마법 시전 스테이트
+		CMagicCastingState::MAGICCASTINGSTATEDESC MagicCastingStateDesc;
+
+		MagicCastingStateDesc.pFuncSpell = [&] { (*this).Shot_Levioso(); };
+
+		m_pStateContext->Set_StateMachine(TEXT("Magic_Cast"), &MagicCastingStateDesc);
+	}
+	//else if (pGameInstance->Get_DIKeyState(DIK_3, CInput_Device::KEY_DOWN) &&
+	//	false == m_pStateContext->Is_Current_State(TEXT("Hit")) &&
+	//	false == m_pStateContext->Is_Current_State(TEXT("Protego")) &&
+	//	false == m_pStateContext->Is_Current_State(TEXT("Hard Land")) &&
+	//	false == m_pStateContext->Is_Current_State(TEXT("Jump")) &&
+	//	false == m_pStateContext->Is_Current_State(TEXT("Roll")))
+	//{
+	//	//마법 시전 스테이트
+	//	CMagicCastingState::MAGICCASTINGSTATEDESC MagicCastingStateDesc;
+
+	//	MagicCastingStateDesc.pFuncSpell = [&] { (*this).Shot_Finisher(); };
+
+	//	m_pStateContext->Set_StateMachine(TEXT("Magic_Cast"), &MagicCastingStateDesc);
+	//}
+	
+	//else if (pGameInstance->Get_DIKeyState(DIK_4, CInput_Device::KEY_DOWN) &&
+	//	false == m_pStateContext->Is_Current_State(TEXT("Hit")) &&
+	//	false == m_pStateContext->Is_Current_State(TEXT("Protego")) &&
+	//	false == m_pStateContext->Is_Current_State(TEXT("Hard Land")) &&
+	//	false == m_pStateContext->Is_Current_State(TEXT("Jump")) &&
+	//	false == m_pStateContext->Is_Current_State(TEXT("Roll")))
+	//{
+	//	//마법 시전 스테이트
+	//	CMagicCastingState::MAGICCASTINGSTATEDESC MagicCastingStateDesc;
+
+	//	MagicCastingStateDesc.pFuncSpell = [&] { (*this).Shot_Confringo(); };
+
+	//	m_pStateContext->Set_StateMachine(TEXT("Magic_Cast"), &MagicCastingStateDesc);
+	//}
+
+	ENDINSTANCE;
+}
+
+void CPlayer::Shot_Levioso()
+{
+	Find_Target_For_Distance();
+
+	_float4x4 OffSetMatrix = XMMatrixIdentity();
+
+	if (nullptr != m_pTarget)
+	{
+		OffSetMatrix = m_pTarget->Get_Offset_Matrix();
+	}
+
+	m_pMagicSlot->Action_Magic_Skill(1, m_pTargetTransform, OffSetMatrix, m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
+}
+
+void CPlayer::Shot_Confringo()
+{
+	Find_Target_For_Distance();
+
+	_float4x4 OffSetMatrix = XMMatrixIdentity();
+
+	if (nullptr != m_pTarget)
+	{
+		OffSetMatrix = m_pTarget->Get_Offset_Matrix();
+	}
+
+	m_pMagicSlot->Action_Magic_Skill(0, m_pTargetTransform, OffSetMatrix, m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
+}
+
+void CPlayer::Shot_Finisher()
+{
+	Find_Target_For_Distance();
+
+	_float4x4 OffSetMatrix = XMMatrixIdentity();
+
+	if (nullptr != m_pTarget)
+	{
+		OffSetMatrix = m_pTarget->Get_Offset_Matrix();
+	}
+
+	m_pMagicSlot->Action_Magic_Skill(2, m_pTargetTransform, OffSetMatrix, m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
+}
+
+
 
 CPlayer* CPlayer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
@@ -1195,11 +1405,19 @@ void CPlayer::Free()
 		Safe_Release(m_pStateContext);
 		Safe_Release(m_pRigidBody);
 		Safe_Release(m_pPlayer_Information);
+		Safe_Release(m_UI_Group_Skill_01);
+
 		
 		if (nullptr != m_pTargetTransform)
 		{
 			Safe_Release(m_pTargetTransform);
 		}
-		
+		if (nullptr != m_pTarget)
+		{
+			Safe_Release(m_pTarget);
+		}
+
+		Safe_Delete(m_pBasicDesc_Heavy);
+		Safe_Delete(m_pBasicDesc_Light);
 	}
 }

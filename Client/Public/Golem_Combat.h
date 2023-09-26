@@ -37,10 +37,6 @@ public:
 	virtual void OnCollisionEnter(COLLEVENTDESC CollisionEventDesc) override;
 	virtual void OnCollisionExit(COLLEVENTDESC CollisionEventDesc) override;
 	virtual HRESULT Render() override;
-	virtual HRESULT Render_Depth() override;
-
-private:
-	CUI_Group_Enemy_HP* m_pUI_HP = { nullptr };
 
 private:
 	CWeapon_Golem_Combat* m_pWeapon = { nullptr };
@@ -56,7 +52,7 @@ private:
 	void Tick_ImGui();
 #endif // _DEBUG
 
-private:
+private: /* 사망처리 전용 함수 */
 	_float m_fDeadTimeAcc = { 0.f };
 	void DeathBehavior(const _float& fTimeDelta);
 
@@ -71,6 +67,12 @@ private: /* 행동 묶음들 */
 	HRESULT Make_Air_Hit(_Inout_ CSequence* pSequence);
 	HRESULT Make_Random_Idle_Move(_Inout_ CRandom_Select* pRandomSelect);
 	HRESULT Make_Death(_Inout_ CSequence* pSequence);
+
+private: /* Notify Func */
+	void Enter_Light_Attack();
+	void Enter_Heavy_Attack();
+	void Enter_Body_Attack();
+	void Exit_Attack();
 
 public:
 	static CGolem_Combat* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

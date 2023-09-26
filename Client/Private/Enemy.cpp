@@ -47,6 +47,7 @@ void CEnemy::Late_Tick(_float fTimeDelta)
 	if (nullptr != m_pRenderer)
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
 #ifdef _DEBUG
 		m_pRenderer->Add_DebugGroup(m_pRigidBody);
 #endif // _DEBUG
@@ -91,6 +92,34 @@ HRESULT CEnemy::Render()
 
 HRESULT CEnemy::Render_Depth()
 {
+	if (FAILED(SetUp_ShadowShaderResources()))
+		return E_FAIL;
+
+	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+	for (_uint i = 0; i < iNumMeshes; ++i)
+	{
+		try /* Failed Render */
+		{
+			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShadowShaderCom, "g_BoneMatrices", i)))
+				throw TEXT("Bind_BoneMatrices");
+
+			if (FAILED(m_pShadowShaderCom->Begin("Shadow")))
+				throw TEXT("Shader Begin AnimMesh");
+
+			if (FAILED(m_pModelCom->Render(i)))
+				throw TEXT("Model Render");
+		}
+		catch (const _tchar* pErrorTag)
+		{
+			wstring wstrErrorMSG = TEXT("[CEnemy] Failed Render : ");
+			wstrErrorMSG += pErrorTag;
+			MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+
+			return E_FAIL;
+		}
+	}
+
 	return S_OK;
 }
 
@@ -167,6 +196,11 @@ HRESULT CEnemy::Add_Components()
 			TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 			throw TEXT("Com_Shader");
 
+		/* For.Com_ShadowShader */
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_ShadowAnimMesh"),
+			TEXT("Com_ShadowShader"), reinterpret_cast<CComponent**>(&m_pShadowShaderCom))))
+			throw TEXT("Com_ShadowShader");
+
 		/* For.Com_RootBehavior */
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RootBehavior"),
 			TEXT("Com_RootBehavior"), reinterpret_cast<CComponent**>(&m_pRootBehavior))))
@@ -209,6 +243,43 @@ HRESULT CEnemy::SetUp_ShaderResources()
 	catch (const _tchar* pErrorTag)
 	{
 		wstring wstrErrorMSG = TEXT("[CEnemy] Failed SetUp_ShaderResources : \n");
+		wstrErrorMSG += pErrorTag;
+		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+
+		ENDINSTANCE;
+
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CEnemy::SetUp_ShadowShaderResources()
+{
+	BEGININSTANCE;
+
+	try /* Check SetUp_ShaderResources */
+	{
+		if (nullptr == m_pShadowShaderCom)
+			throw TEXT("m_pShaderCom is nullptr");
+
+		if (FAILED(m_pShadowShaderCom->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
+			throw TEXT("Failed Bind_Matrix : g_WorldMatrix");
+
+		if (FAILED(m_pShadowShaderCom->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_LightTransformMatrix(CPipeLine::D3DTS_VIEW))))
+			throw TEXT("Failed Bind_Matrix : g_ViewMatrix");
+
+		if (FAILED(m_pShadowShaderCom->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_LightTransformMatrix(CPipeLine::D3DTS_PROJ))))
+			throw TEXT("Failed Bind_Matrix : g_ProjMatrix");
+
+		if (FAILED(m_pShadowShaderCom->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
+			throw TEXT("Failed Bind_RawValue : g_fCamFar");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CEnemy] Failed SetUp_ShadowShaderResources : \n");
 		wstrErrorMSG += pErrorTag;
 		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
 
@@ -274,11 +345,13 @@ void CEnemy::Free()
 
 	if (true == m_isCloned)
 	{
+		Safe_Release(m_pUI_HP);
 		Safe_Release(m_pHealth);
 		Safe_Release(m_pModelCom);
 		Safe_Release(m_pRenderer);
 		Safe_Release(m_pShaderCom);
 		Safe_Release(m_pRigidBody);
 		Safe_Release(m_pRootBehavior);
+		Safe_Release(m_pShadowShaderCom);
 	}
 }

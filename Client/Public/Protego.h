@@ -33,7 +33,7 @@ public:
 	virtual void OnCollisionEnter(COLLEVENTDESC CollisionEventDesc) override;
 	virtual void OnCollisionStay(COLLEVENTDESC CollisionEventDesc) override;
 	virtual void OnCollisionExit(COLLEVENTDESC CollisionEventDesc) override;
-	virtual HRESULT Reset() { return S_OK; }
+	virtual HRESULT Reset(MAGICBALLINITDESC& InitDesc) override;
 
 private:
 	void Tick_Enter(const _float& fTimeDelta);
@@ -60,7 +60,6 @@ private: /* For. Component */
 	CTexture_Flipbook* m_pFlameBlastFlipbook = { nullptr };
 
 private:
-	_uint m_iLevel = { 0 };
 	STATE m_eCurState = { ENTER };
 	_float4 m_vColor1 = { 1.f, 1.f, 1.f, 1.f };
 	_float4 m_vColor2 = { 1.f, 1.f, 1.f, 1.f };

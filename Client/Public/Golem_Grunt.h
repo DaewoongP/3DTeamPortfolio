@@ -1,4 +1,0 @@
-
-class CGolem_Grunt
-{
-};

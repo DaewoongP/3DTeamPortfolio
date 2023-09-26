@@ -168,6 +168,7 @@
     <ClInclude Include="..\Public\Death.h" />
     <ClInclude Include="..\Public\Enemy.h" />
     <ClInclude Include="..\public\Game_Manager.h" />
+    <ClInclude Include="..\Public\Lumos.h" />
     <ClInclude Include="..\Public\Ncendio.h" />
     <ClInclude Include="..\Public\Inventory.h" />
     <ClInclude Include="..\Public\Check_Degree.h" />
@@ -249,8 +250,6 @@
     <ClInclude Include="..\Public\Client_Includes.h" />
     <ClInclude Include="..\Public\Dugbog.h" />
     <ClInclude Include="..\Public\Forest_Troll.h" />
-    <ClInclude Include="..\Public\Golem_Grunt.h" />
-    <ClInclude Include="..\Public\Golem_Merlin.h" />
     <ClInclude Include="..\Public\MapObject.h" />
     <ClInclude Include="..\Public\Pensive.h" />
     <ClInclude Include="..\Public\PhysXRender.h" />
@@ -277,8 +276,6 @@
     <ClInclude Include="..\Public\Weapon_Fig_Wand.h" />
     <ClInclude Include="..\Public\Weapon_Forest_Troll.h" />
     <ClInclude Include="..\Public\Weapon_Golem_Combat.h" />
-    <ClInclude Include="..\Public\Weapon_Golem_Grunt.h" />
-    <ClInclude Include="..\Public\Weapon_Golem_Merlin.h" />
     <ClInclude Include="..\Public\Weapon_Pensive.h" />
     <ClInclude Include="..\Public\Weapon_Player_Wand.h" />
     <ClInclude Include="..\Public\Wingardiumleviosa.h" />
@@ -329,6 +326,7 @@
     <ClCompile Include="..\Private\Death.cpp" />
     <ClCompile Include="..\Private\Enemy.cpp" />
     <ClCompile Include="..\private\Game_Manager.cpp" />
+    <ClCompile Include="..\Private\Lumos.cpp" />
     <ClCompile Include="..\Private\Ncendio.cpp" />
     <ClCompile Include="..\Private\Inventory.cpp" />
     <ClCompile Include="..\Private\Check_Degree.cpp" />
@@ -407,8 +405,6 @@
     <ClCompile Include="..\Private\Golem_Combat.cpp" />
     <ClCompile Include="..\Private\Dugbog.cpp" />
     <ClCompile Include="..\Private\Forest_Troll.cpp" />
-    <ClCompile Include="..\Private\Golem_Grunt.cpp" />
-    <ClCompile Include="..\Private\Golem_Merlin.cpp" />
     <ClCompile Include="..\Private\MapObject.cpp" />
     <ClCompile Include="..\Private\Pensive.cpp" />
     <ClCompile Include="..\Private\PhysXRender.cpp" />
@@ -436,8 +432,6 @@
     <ClCompile Include="..\Private\Weapon_Fig_Wand.cpp" />
     <ClCompile Include="..\Private\Weapon_Forest_Troll.cpp" />
     <ClCompile Include="..\Private\Weapon_Golem_Combat.cpp" />
-    <ClCompile Include="..\Private\Weapon_Golem_Grunt.cpp" />
-    <ClCompile Include="..\Private\Weapon_Golem_Merlin.cpp" />
     <ClCompile Include="..\Private\Weapon_Pensive.cpp" />
     <ClCompile Include="..\Private\Weapon_Player_Wand.cpp" />
     <ClCompile Include="..\Private\Wingardiumleviosa.cpp" />
