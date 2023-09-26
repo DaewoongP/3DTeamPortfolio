@@ -31,15 +31,15 @@ void CPXEventCallBack::onContact(const PxContactPairHeader& pairHeader, const Px
 			continue;
 
 		SourDesc.pOtherObjectTag = pDestObject->Get_Tag();
-		CharToWChar(pairs[i].shapes[1]->getName(), SourDesc.pOtherCollisionTag);
-		CharToWChar(pairs[i].shapes[0]->getName(), SourDesc.pThisCollisionTag);
+		MultiByteToWideChar(CP_ACP, 0, pairs[i].shapes[1]->getName(), strlen(pairs[i].shapes[1]->getName()) + 1, SourDesc.pOtherCollisionTag, MAX_PATH);
+		MultiByteToWideChar(CP_ACP, 0, pairs[i].shapes[0]->getName(), strlen(pairs[i].shapes[0]->getName()) + 1, SourDesc.pThisCollisionTag, MAX_PATH);
 		SourDesc.pOtherOwner = pDestObject;
 		SourDesc.pOtherTransform = pDestObject->Get_Transform();
 		SourDesc.pArg = pDestObject->Get_CollisionData();
 
 		DestDesc.pOtherObjectTag = pSourObject->Get_Tag();
-		CharToWChar(pairs[i].shapes[0]->getName(), DestDesc.pOtherCollisionTag);
-		CharToWChar(pairs[i].shapes[1]->getName(), DestDesc.pThisCollisionTag);
+		MultiByteToWideChar(CP_ACP, 0, pairs[i].shapes[0]->getName(), strlen(pairs[i].shapes[0]->getName()) + 1, DestDesc.pOtherCollisionTag, MAX_PATH);
+		MultiByteToWideChar(CP_ACP, 0, pairs[i].shapes[1]->getName(), strlen(pairs[i].shapes[1]->getName()) + 1, DestDesc.pThisCollisionTag, MAX_PATH);
 		DestDesc.pOtherOwner = pSourObject;
 		DestDesc.pOtherTransform = pSourObject->Get_Transform();
 		DestDesc.pArg = pSourObject->Get_CollisionData();
@@ -99,15 +99,15 @@ void CPXEventCallBack::onTrigger(PxTriggerPair* pairs, PxU32 count)
 			continue;
 
 		SourDesc.pOtherObjectTag = pDestObject->Get_Tag();
-		CharToWChar(pairs[i].otherShape->getName(), SourDesc.pOtherCollisionTag);
-		CharToWChar(pairs[i].triggerShape->getName(), SourDesc.pThisCollisionTag);
+		MultiByteToWideChar(CP_ACP, 0, pairs[i].otherShape->getName(), strlen(pairs[i].otherShape->getName()) + 1, SourDesc.pOtherCollisionTag, MAX_PATH);
+		MultiByteToWideChar(CP_ACP, 0, pairs[i].triggerShape->getName(), strlen(pairs[i].triggerShape->getName()) + 1, SourDesc.pThisCollisionTag, MAX_PATH);
 		SourDesc.pOtherOwner = pDestObject;
 		SourDesc.pOtherTransform = pDestObject->Get_Transform();
 		SourDesc.pArg = pDestObject->Get_CollisionData();
 
 		DestDesc.pOtherObjectTag = pSourObject->Get_Tag();
-		CharToWChar(pairs[i].triggerShape->getName(), DestDesc.pOtherCollisionTag);
-		CharToWChar(pairs[i].otherShape->getName(), DestDesc.pThisCollisionTag);
+		MultiByteToWideChar(CP_ACP, 0, pairs[i].triggerShape->getName(), strlen(pairs[i].triggerShape->getName()) + 1, DestDesc.pOtherCollisionTag, MAX_PATH);
+		MultiByteToWideChar(CP_ACP, 0, pairs[i].otherShape->getName(), strlen(pairs[i].otherShape->getName()) + 1, DestDesc.pThisCollisionTag, MAX_PATH);
 		DestDesc.pOtherOwner = pSourObject;
 		DestDesc.pOtherTransform = pSourObject->Get_Transform();
 		DestDesc.pArg = pSourObject->Get_CollisionData();

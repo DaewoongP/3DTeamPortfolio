@@ -24,7 +24,7 @@ HRESULT CPhysX_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* p
 	}
 
 	// 씬생성에 필요한 디스패쳐 생성
-	m_pDefaultCpuDispatcher = PxDefaultCpuDispatcherCreate(4);
+	m_pDefaultCpuDispatcher = PxDefaultCpuDispatcherCreate(2);
 
 	// 시공간을 생성할 하나의 씬을 생성
 	m_pPhysxScene = Create_Scene();

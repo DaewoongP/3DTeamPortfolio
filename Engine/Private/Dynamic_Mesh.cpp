@@ -452,7 +452,7 @@ HRESULT CDynamic_Mesh::Initialize_ClothMesh(HANDLE hFile)
 	m_pSolver = pClothFactory->createSolver();
 	
 	/* 크게 건드릴게 없는 고정 옵션 값 */
-	m_pCloth->setSolverFrequency(20.f);
+	m_pCloth->setSolverFrequency(300.f);
 	m_pCloth->setTetherConstraintScale(1.1f);
 	m_pCloth->setDragCoefficient(0.5f);
 	m_pCloth->setLiftCoefficient(0.6f);
@@ -556,7 +556,7 @@ HRESULT CDynamic_Mesh::Initialize_ClothMesh()
 	m_pSolver = pClothFactory->createSolver();
 
 	/* 크게 건드릴게 없는 고정 옵션 값 */
-	m_pCloth->setSolverFrequency(20.f);
+	m_pCloth->setSolverFrequency(300.f);
 	m_pCloth->setTetherConstraintScale(1.f);
 	m_pCloth->setDragCoefficient(0.5f);
 	m_pCloth->setLiftCoefficient(0.6f);

@@ -495,7 +495,7 @@ void CRigidBody::Rotate(_float4 _vRotation) const
 	}
 }
 
-void CRigidBody::Enable_Collision(const _char* szColliderTag)
+void CRigidBody::Enable_Collision(const _char* szColliderTag, CGameObject* pThisCollision)
 {
 	PxShape* pShape = Find_Shape(szColliderTag);
 
@@ -507,6 +507,7 @@ void CRigidBody::Enable_Collision(const _char* szColliderTag)
 	FilterData.word2 = USE_COL;
 	pShape->setSimulationFilterData(FilterData);
 	m_pActor->attachShape(*pShape);
+	m_pActor->userData = pThisCollision;
 }
 
 void CRigidBody::Disable_Collision(const _char* szColliderTag)
@@ -521,6 +522,7 @@ void CRigidBody::Disable_Collision(const _char* szColliderTag)
 	FilterData.word2 = END_COL;
 	pShape->setSimulationFilterData(FilterData);
 	m_pActor->attachShape(*pShape);
+	m_pActor->userData = nullptr;
 }
 
 #ifdef _DEBUG
