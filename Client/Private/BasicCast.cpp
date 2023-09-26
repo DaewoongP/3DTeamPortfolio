@@ -12,7 +12,6 @@ CBasicCast::CBasicCast(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 CBasicCast::CBasicCast(const CBasicCast& rhs)
 	: CMagicBall(rhs)
-	, m_iLevel(rhs.m_iLevel)
 {
 }
 
@@ -196,66 +195,12 @@ void CBasicCast::Ready_DrawMagic()
 void CBasicCast::Ready_CastMagic()
 {
 	m_pMainTrail->Enable();
-	if (m_pTarget == nullptr)
-	{
-		BEGININSTANCE;
-		_float4 vMouseOrigin, vMouseDirection;
-		_float3 vMouseWorldPickPosition, vDirStartToPicked;
-		if (FAILED(pGameInstance->Get_WorldMouseRay(m_pContext, g_hWnd, &vMouseOrigin, &vMouseDirection)))
-		{
-			Safe_Release(pGameInstance);
-			ENDINSTANCE;
-			return;
-		}
-		ENDINSTANCE;
-
-		vMouseWorldPickPosition = vMouseOrigin.xyz() + vMouseDirection.xyz() * 100;
-		vDirStartToPicked = (vMouseWorldPickPosition - m_MagicBallDesc.vStartPosition);
-		vDirStartToPicked.Normalize();
-		m_vTargetPosition = m_MagicBallDesc.vStartPosition + vDirStartToPicked * m_MagicBallDesc.fDistance;
-	}
-	else
-	{
-		m_vTargetPosition = m_pTarget->Get_Position() + m_TargetOffsetMatrix.Translation();
-	}
-	{
-		//Ready for Spline Lerp
-		m_vStartPostion = m_MagicBallDesc.vStartPosition;
-		m_fLerpAcc = 0.f;
-		// 플레이어가 타겟을 보는 vector를 구함.
-		_float3 vDir = XMVector3Normalize(m_vTargetPosition - m_vStartPostion);
-		// 임의의 축을 구함.
-		_float3 tempAxis = _float3(1, 1, 1);
-		// 외적
-		_float3	normal = XMVector3Cross(vDir, tempAxis);
-
-		//진행 경로만큼 뒤로 이동한 뒤
-		m_vSplineLerp[0] = m_vStartPostion - vDir;
-		//임의의 랜덤 값을 구하고
-		_float fRandom = Random_Generator(-20.f, 20.f);
-		// 외적 방향으로 튄다.
-		m_vSplineLerp[0] += _float3(normal.x * fRandom, normal.y * fabsf(fRandom), normal.z * fRandom);
-
-		//진행 경로만큼 뒤로 이동한 뒤
-		m_vSplineLerp[1] = m_vStartPostion + vDir;
-		//임의의 랜덤 값을 구하고
-		fRandom = Random_Generator(-20.f, 20.f);
-		// 외적 방향으로 튄다.
-		m_vSplineLerp[1] += _float3(normal.x * fRandom, normal.y * fabsf(fRandom), normal.z * fRandom);
-		m_fTimeScalePerDitance = m_MagicBallDesc.fDistance / _float3(m_vTargetPosition - m_vStartPostion).Length();
-
-		m_pMainTrail->Reset_Trail(_float3(m_vStartPostion) + _float3(0, 0.5f, 0), _float3(m_vStartPostion) + _float3(0, -0.5f, 0));
-		m_pMainTrail->Get_Transform()->Set_Position(m_vStartPostion);
-	}
-
+	Ready_SplineMove(m_pMainTrail);
 	m_pMainTrail->Enable();
 
 	_float3 vWandPosition = _float4x4(m_WeaponOffsetMatrix * (*m_pWeaponMatrix)).Translation();
 	m_pMainGlow->Enable();
 	m_pMainGlow->Play(vWandPosition);
-
-	//충돌체를 켜주고
-	m_pRigidBody->Enable_Collision("Magic_Ball");
 }
 
 void CBasicCast::Ready_Dying()

@@ -50,8 +50,6 @@ private:
 	_float3	m_vTargetPosition = {};
 	_float3 m_vLighiningStartPosition = {};
 
-	_uint	m_iLevel = { 0 };
-
 private:
 	virtual void Ready_Begin() override;
 	virtual void Ready_DrawMagic() override;

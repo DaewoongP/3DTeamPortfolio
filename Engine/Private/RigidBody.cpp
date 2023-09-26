@@ -182,6 +182,11 @@ void CRigidBody::Set_CollisionFlag(const _char* szColliderTag, PxU32 eCollisionF
 	m_pActor->attachShape(*pShape);
 }
 
+void CRigidBody::Set_ThisCollision(CGameObject* pThisObj)
+{
+	m_pActor->userData = pThisObj;
+}
+
 HRESULT CRigidBody::Initialize_Prototype()
 {
 #ifdef _DEBUG

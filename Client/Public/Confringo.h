@@ -47,16 +47,6 @@ private:
 	CParticleSystem* m_pWandTwinklEffect = { nullptr };
 	// 완드 트레일
 	CTrail*			 m_pWandTrail = { nullptr };
-private:
-	//For. Trail
-	_float3 m_vStartPostion = {};
-	_float3	m_vTargetPosition = {};
-	_float	m_fLerpAcc = { 0.f };
-
-	//For. Spline
-	_float3 m_vSplineLerp[2] = {};
-	_float  m_fTimeScalePerDitance = { 0.f };
-	_uint	m_iLevel = { 0 };
 
 private:
 	virtual void Ready_Begin() override;

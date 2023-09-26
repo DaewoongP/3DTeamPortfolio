@@ -12,7 +12,6 @@ CLumos::CLumos(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 CLumos::CLumos(const CLumos& rhs)
 	: CMagicBall(rhs)
-	, m_iLevel(rhs.m_iLevel)
 {
 }
 

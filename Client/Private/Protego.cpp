@@ -7,7 +7,6 @@ CProtego::CProtego(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 CProtego::CProtego(const CProtego& rhs)
 	: CMagicBall(rhs)
-	, m_iLevel(rhs.m_iLevel)
 	, m_eCurState(rhs.m_eCurState)
 	, m_vColor1(rhs.m_vColor1)
 	, m_vColor2(rhs.m_vColor2)
