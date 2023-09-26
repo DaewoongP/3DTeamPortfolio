@@ -19,6 +19,13 @@ HRESULT CLevel_Vault::Initialize()
 
 		return E_FAIL;
 	}
+	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
+	{
+		MSG_BOX("Failed Ready_Layer_Player");
+
+		return E_FAIL;
+	}
+	
 	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
 	{
 		MSG_BOX("Failed Ready_Layer_Player");
@@ -39,7 +46,12 @@ HRESULT CLevel_Vault::Initialize()
 
 		return E_FAIL;
 	}
-
+	//if (FAILED(Load_MapEffect(TEXT("../../Resources/GameData/MeshEffectData/MapEffect/MapEffect.ME"))))
+//{
+//	MSG_BOX("Failed Load Map Effect");
+//
+//	return E_FAIL;
+//}
 	BEGININSTANCE;
 
 	pGameInstance->Reset_World_TimeAcc();
@@ -135,8 +147,7 @@ HRESULT CLevel_Vault::Ready_Lights()
 	LightDesc.vAmbient = BLACKDEFAULT;
 	LightDesc.vSpecular = BLACKDEFAULT;
 
-	if (nullptr == pGameInstance->Add_Lights(m_pDevice, m_pContext, LightDesc))
-		return E_FAIL;
+	pGameInstance->Set_Light(CLight::TYPE_DIRECTIONAL,LightDesc);
 
 	ENDINSTANCE;
 	return S_OK;
@@ -144,6 +155,22 @@ HRESULT CLevel_Vault::Ready_Lights()
 
 HRESULT CLevel_Vault::Ready_Layer_BackGround(const _tchar* pLayerTag)
 {
+	BEGININSTANCE
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
+	{
+		MSG_BOX("Failed Add Scene : (Scene_Main)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_VAULT, TEXT("Prototype_GameObject_Sky"), pLayerTag, TEXT("GameObject_Sky"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Sky)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	ENDINSTANCE
 	return S_OK;
 }
 

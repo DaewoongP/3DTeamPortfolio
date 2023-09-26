@@ -78,6 +78,9 @@ HRESULT CLevel_Cliffside::Initialize()
 		return E_FAIL;
 	}
 
+
+
+
 	Load_Monsters(TEXT("../../Resources/GameData/MonsterData/Test.mon"));
 	
 #ifdef _DEBUG
@@ -153,7 +156,7 @@ HRESULT CLevel_Cliffside::Ready_Lights()
 	ZeroMemory(&LightDesc, sizeof LightDesc);
 
 	LightDesc.eType = CLight::TYPE_DIRECTIONAL;
-	LightDesc.vPos = _float4(2.f, 25.f, 2.f, 1.f);
+	LightDesc.vPos = _float4(10.f, 100.f, 25.f, 1.f);
 	LightDesc.vLookAt = _float4(20.f, 0.f, 20.f, 1.f);
 	LightDesc.vDir = _float4(0.33f, -0.99f, 0.33f, 0.f);
 
