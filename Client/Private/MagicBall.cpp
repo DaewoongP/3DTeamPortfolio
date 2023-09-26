@@ -245,6 +245,8 @@ void CMagicBall::Ready_StraightMove(CTrail* pTrail)
 	{
 		m_vTargetPosition = m_pTarget->Get_Position() + m_TargetOffsetMatrix.Translation();
 	}
+	// 설정 거리/실제 거리
+	m_vStartPostion = m_MagicBallDesc.vStartPosition;
 	m_fTimeScalePerDitance = m_MagicBallDesc.fDistance / _float3(m_vTargetPosition - m_vStartPostion).Length();
 	pTrail->Reset_Trail(_float3(m_vStartPostion) + _float3(0, 0.5f, 0), _float3(m_vStartPostion) + _float3(0, -0.5f, 0));
 	pTrail->Get_Transform()->Set_Position(m_vStartPostion);
