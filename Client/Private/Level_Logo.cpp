@@ -71,6 +71,7 @@ HRESULT CLevel_Logo::Ready_Layer_BackGround(const _tchar* pLayerTag)
 		pLayerTag, TEXT("Prototype_GameObject_UI_Group_Logo"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_UI_Group_Logo)");
+		__debugbreak();
 		return E_FAIL;
 	}
 
