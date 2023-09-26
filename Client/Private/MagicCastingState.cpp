@@ -495,6 +495,7 @@ void CMagicCastingState::Go_Roll()
 	ENDINSTANCE;
 }
 
+
 CMagicCastingState* CMagicCastingState::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CMagicCastingState* pInstance = New CMagicCastingState(pDevice, pContext);

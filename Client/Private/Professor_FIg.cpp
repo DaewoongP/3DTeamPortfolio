@@ -490,7 +490,6 @@ void CProfessor_Fig::Set_Current_Target()
 			m_pTarget = Pair.second;
 		else
 		{
-
 			if (OBJ_DEAD == Pair.second->Get_ObjEvent())
 			{
 				Remove_GameObject(Pair.first);

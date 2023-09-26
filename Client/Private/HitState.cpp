@@ -41,7 +41,6 @@ void CHitState::OnStateEnter(void* _pArg)
 #endif // _DEBUG
 
 	HITSTATEDESC* pHitStateDesc = static_cast<HITSTATEDESC*>(_pArg);
-
 	m_isPowerfulHit = (_bool)pHitStateDesc->iHitType;
 
 	m_pTargetTransform = (CTransform*)pHitStateDesc->pTransform;
@@ -330,6 +329,10 @@ void CHitState::PowerfulHit_Tick()
 		}*/
 	}
 }
+
+
+
+
 
 CHitState* CHitState::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {

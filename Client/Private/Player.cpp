@@ -1260,6 +1260,7 @@ void CPlayer::Shot_Magic_Spell()
 		false == m_pStateContext->Is_Current_State(TEXT("Roll"))
 		)
 	{
+		Find_Target_For_Distance();
 		//마법 시전 스테이트
 		CMagicCastingState::MAGICCASTINGSTATEDESC MagicCastingStateDesc;
 
@@ -1275,6 +1276,7 @@ void CPlayer::Shot_Magic_Spell()
 		false == m_pStateContext->Is_Current_State(TEXT("Jump")) &&
 		false == m_pStateContext->Is_Current_State(TEXT("Roll")))
 	{
+		Find_Target_For_Distance();
 		//마법 시전 스테이트
 		CMagicCastingState::MAGICCASTINGSTATEDESC MagicCastingStateDesc;
 
@@ -1290,6 +1292,7 @@ void CPlayer::Shot_Magic_Spell()
 		false == m_pStateContext->Is_Current_State(TEXT("Jump")) &&
 		false == m_pStateContext->Is_Current_State(TEXT("Roll")))
 	{
+		Find_Target_For_Distance();
 		//마법 시전 스테이트
 		CMagicCastingState::MAGICCASTINGSTATEDESC MagicCastingStateDesc;
 
@@ -1305,6 +1308,7 @@ void CPlayer::Shot_Magic_Spell()
 		false == m_pStateContext->Is_Current_State(TEXT("Jump")) &&
 		false == m_pStateContext->Is_Current_State(TEXT("Roll")))
 	{
+		Find_Target_For_Distance();
 		//마법 시전 스테이트
 		CMagicCastingState::MAGICCASTINGSTATEDESC MagicCastingStateDesc;
 
@@ -1318,7 +1322,7 @@ void CPlayer::Shot_Magic_Spell()
 
 void CPlayer::Shot_Levioso()
 {
-	Find_Target_For_Distance();
+	//Find_Target_For_Distance();
 
 	_float4x4 OffSetMatrix = XMMatrixIdentity();
 
@@ -1333,7 +1337,7 @@ void CPlayer::Shot_Levioso()
 
 void CPlayer::Shot_Confringo()
 {
-	Find_Target_For_Distance();
+	//Find_Target_For_Distance();
 
 	_float4x4 OffSetMatrix = XMMatrixIdentity();
 
@@ -1347,7 +1351,7 @@ void CPlayer::Shot_Confringo()
 
 void CPlayer::Shot_NCENDIO()
 {
-	Find_Target_For_Distance();
+	//Find_Target_For_Distance();
 
 	_float4x4 OffSetMatrix = XMMatrixIdentity();
 
@@ -1361,7 +1365,7 @@ void CPlayer::Shot_NCENDIO()
 
 void CPlayer::Shot_Finisher()
 {
-	Find_Target_For_Distance();
+	//Find_Target_For_Distance();
 
 	_float4x4 OffSetMatrix = XMMatrixIdentity();
 
