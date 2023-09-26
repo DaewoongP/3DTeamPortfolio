@@ -420,6 +420,11 @@ HRESULT CMain0_Loader::Loading_For_Cliffside()
 
 HRESULT CMain0_Loader::Loading_For_Vault()
 {
+	/* For.Prototype_GameObject_ConvexMesh*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_MeshEffect"),
+		CMeshEffect::Create(m_pDevice, m_pContext,TEXT("../../Resources/GameData/MeshEffectData/Cloister/Cloister.ME")))))
+		throw TEXT("Prototype_GameObject_MeshEffect");
+
 
 	return S_OK;
 }

@@ -19,12 +19,12 @@ public:
 private:
 	HRESULT Ready_Layer_Player(const _tchar* pLayerTag);
 	HRESULT Ready_Layer_BackGround(const _tchar* pLayerTag);
+	HRESULT Ready_Layer_MapEffect(const _tchar* pLayerTag);
 
 private:
 	HRESULT Load_MapObject(const _tchar* pObjectFilePath);
 	HRESULT Load_MapObject_Ins(const _tchar* pObjectFilePath);
 	HRESULT Load_Monsters(const wstring& wstrMonsterFilePath);
-	HRESULT Load_MapEffect(const _tchar* pObjectFilePath);
 
 private:
 	HRESULT Ready_Lights();

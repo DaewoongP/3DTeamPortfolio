@@ -46,12 +46,12 @@ HRESULT CLevel_Vault::Initialize()
 
 		return E_FAIL;
 	}
-	//if (FAILED(Load_MapEffect(TEXT("../../Resources/GameData/MeshEffectData/MapEffect/MapEffect.ME"))))
-//{
-//	MSG_BOX("Failed Load Map Effect");
-//
-//	return E_FAIL;
-//}
+	if (FAILED(Ready_Layer_MapEffect(TEXT("Layer_MeshEffect"))))
+{
+	MSG_BOX("Failed Load Layer_MeshEffect");
+
+	return E_FAIL;
+}
 	BEGININSTANCE;
 
 	pGameInstance->Reset_World_TimeAcc();
@@ -155,22 +155,6 @@ HRESULT CLevel_Vault::Ready_Lights()
 
 HRESULT CLevel_Vault::Ready_Layer_BackGround(const _tchar* pLayerTag)
 {
-	BEGININSTANCE
-	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
-	{
-		MSG_BOX("Failed Add Scene : (Scene_Main)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
-
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_VAULT, TEXT("Prototype_GameObject_Sky"), pLayerTag, TEXT("GameObject_Sky"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Sky)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
-
-	ENDINSTANCE
 	return S_OK;
 }
 
@@ -367,7 +351,7 @@ HRESULT CLevel_Vault::Load_Monsters(const wstring& wstrMonsterFilePath)
 
 	if (INVALID_HANDLE_VALUE == hFile)
 	{
-		MSG_BOX("Failed to Create MapObject File for Load MapObject");
+		MSG_BOX("Failed to Create Monsters File for Load Monsters");
 		return E_FAIL;
 	}
 
@@ -457,6 +441,32 @@ HRESULT CLevel_Vault::Load_Monsters(const wstring& wstrMonsterFilePath)
 	}
 
 	CloseHandle(hFile);
+
+	return S_OK;
+}
+
+HRESULT CLevel_Vault::Ready_Layer_MapEffect(const _tchar* pLayerTag)
+{
+	
+
+	BEGININSTANCE;
+
+	/* Add Scene : Main */
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
+	{
+		MSG_BOX("Failed Add Scene : (Scene_Main)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_VAULT, TEXT("Prototype_GameObject_MeshEffect"), pLayerTag, TEXT("GameObject_MeshEffect"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_MeshEffect)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
 
 	return S_OK;
 }
