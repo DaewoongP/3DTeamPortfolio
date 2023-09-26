@@ -25,10 +25,6 @@ private:
 	HRESULT Load_MapObject_Ins(const _tchar* pObjectFilePath);
 	HRESULT Load_Monsters(const wstring& wstrMonsterFilePath);
 
-	
-
-
-
 private:
 	HRESULT Ready_Lights();
 

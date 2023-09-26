@@ -61,9 +61,9 @@ HRESULT CWeapon_Player_Wand::Initialize(void* pArg)
 	
 	LightInfo.fRange = 5.f;
 	LightInfo.fSpotPower = 2.f;
-	LightInfo.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
-	LightInfo.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
-	LightInfo.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+	LightInfo.vAmbient = BLACKDEFAULT;
+	LightInfo.vSpecular = BLACKDEFAULT;
+	LightInfo.vDiffuse = BLACKDEFAULT;
 	
 	pGameInstance->Add_Lights(m_pDevice, m_pContext, LightInfo);
 
@@ -79,10 +79,7 @@ void CWeapon_Player_Wand::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	Do_Lumos(fTimeDelta);
-	
-
-
+	//Do_Lumos(fTimeDelta);
 }
 
 void CWeapon_Player_Wand::Late_Tick(_float fTimeDelta)

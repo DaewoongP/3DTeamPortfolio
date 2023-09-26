@@ -43,7 +43,6 @@ struct PS_OUT
     float4 vLightDepth : SV_TARGET0;
 };
 
-/* 픽셀을 받고 픽셀의 색을 결정하여 리턴한다. */
 PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;

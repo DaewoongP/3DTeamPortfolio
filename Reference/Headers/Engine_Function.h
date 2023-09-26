@@ -121,7 +121,7 @@ namespace Engine
 		}
 
 		// 충돌처리 Enter, Stay, Exit
-		pairFlags = PxPairFlag::eCONTACT_DEFAULT
+		pairFlags = PxPairFlag::eDETECT_DISCRETE_CONTACT
 			| PxPairFlag::eNOTIFY_TOUCH_FOUND
 			| PxPairFlag::eNOTIFY_TOUCH_PERSISTS
 			| PxPairFlag::eNOTIFY_TOUCH_LOST;

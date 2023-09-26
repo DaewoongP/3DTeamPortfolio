@@ -754,7 +754,7 @@ HRESULT CArmored_Troll::Make_Attack_Degree(_Inout_ CSequence* pSequence)
 					MSG_BOX("Failed Get_Type fTargetDistance");
 					return false;
 				}
-				//cout << fTargetDistance << endl;
+
 				return 7.f >= fTargetDistance;
 			});
 
