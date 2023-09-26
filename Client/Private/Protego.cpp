@@ -79,44 +79,18 @@ HRESULT CProtego::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 	{
-		MSG_BOX("Failed Player Initialize");
+		MSG_BOX("Failed CProtego Initialize");
 
 		return E_FAIL;
 	}
 
-	
 	if (FAILED(Add_Components()))
 	{
-		MSG_BOX("Failed Player Add_Components");
+		MSG_BOX("Failed CProtego Add_Components");
 
 		return E_FAIL;
 	}
 
-	switch (m_MagicBallDesc.eMagicType)
-	{
-	case Client::CMagic::MT_NOTHING:
-		break;
-	case Client::CMagic::MT_YELLOW:
-		break;
-	case Client::CMagic::MT_PURPLE:
-		break;
-	case Client::CMagic::MT_RED:
-		break;
-	case Client::CMagic::MT_ALL:
-		m_vColor1 = { 0.f, 0.f, 1.f, 1.f };
-		//m_vColor2 = { 0.5f, 0.f, 0.5f, 1.f };
-		m_vColor2 = { 1.f, 0.f, 1.f, 1.f };
-		break;
-	default:
-		break;
-	}
-
-	//_float3 vPos = m_pTransform->Get_Position();
-	//vPos.y += 0.5f;
-	//m_pTransform->Set_Position(vPos);
-
-	m_pFlameBlastFlipbook->Get_Transform()->Set_Scale(_float3(1.f, 1.f, 1.f));
-	m_pDefaultConeBoom_Particle->Disable();
 	return S_OK;
 }
 
@@ -198,6 +172,7 @@ HRESULT CProtego::Render()
 
 	FAILED_CHECK_RETURN(m_pShader->Begin("Protego"), E_FAIL);
 	FAILED_CHECK_RETURN(m_pBuffer->Render(), E_FAIL);
+
 	return S_OK;
 }
 
@@ -233,7 +208,7 @@ void CProtego::Tick_Exit(const _float& fTimeDelta)
 	if (fRatio >= 1.f)
 	{
 		m_eCurState = STATE_END;
-		Set_ObjEvent(OBJ_DEAD);
+		Set_MagicBallState(MAGICBALL_STATE_END);
 	}
 }
 
@@ -315,6 +290,44 @@ void CProtego::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)
 void CProtego::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 {
 	__super::OnCollisionExit(CollisionEventDesc);
+}
+
+HRESULT CProtego::Reset(MAGICBALLINITDESC& InitDesc)
+{
+	__super::Reset(InitDesc);
+
+	switch (InitDesc.eMagicType)
+	{
+	case Client::CMagic::MT_NOTHING:
+		break;
+	case Client::CMagic::MT_YELLOW:
+		break;
+	case Client::CMagic::MT_PURPLE:
+		break;
+	case Client::CMagic::MT_RED:
+		break;
+	case Client::CMagic::MT_ALL:
+		m_vColor1 = { 0.f, 0.f, 1.f, 1.f };
+		//m_vColor2 = { 0.5f, 0.f, 0.5f, 1.f };
+		m_vColor2 = { 1.f, 0.f, 1.f, 1.f };
+		break;
+	default:
+		break;
+	}
+
+	m_fScale = { 2.3f };
+	m_fEnterDuration = { 0.1f };
+	m_fExitDuration = { 0.1f };
+	m_fRimPower = { 2.1f };
+	m_isHitEffect = { false };
+
+	m_eCurState = { ENTER };
+	m_fTimeAcc = { 0.f };
+	m_fHitTimeAcc = { 0.f };
+	m_pFlameBlastFlipbook->Get_Transform()->Set_Scale(_float3(1.f, 1.f, 1.f));
+	m_pDefaultConeBoom_Particle->Disable();
+
+	return S_OK;
 }
 
 HRESULT CProtego::Add_Components()
