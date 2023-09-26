@@ -387,7 +387,7 @@ HRESULT CMain0_Loader::Loading_For_Cliffside()
 			std::lock_guard<std::mutex> lock(mtx);
 			
 			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Dust01"),
-				TEXT("../../Resources/GameData/ParticleData/Ncendio/FireCircleBoom/"), 20)))
+				TEXT("../../Resources/GameData/ParticleData/Misc/Dust01/"), 3)))
 				throw TEXT("Reserve Particle : Particle_Dust01");
 		}
 

@@ -36,12 +36,15 @@ private:
 public:
 	inline void Push_Back(CParticleSystem* pParticle) {
 		m_Particles.push(pParticle);
+		cout << "Push_Back : " << m_Particles.size() << endl;
 	}
 	inline CParticleSystem* Pop_Front() {
 		if (true == m_Particles.empty())
 			return nullptr;
+		
 		CParticleSystem* pRetParticle = m_Particles.front();
 		m_Particles.pop();
+		cout << "Pop_Front : " << m_Particles.size() << endl;
 		return pRetParticle;
 	}
 

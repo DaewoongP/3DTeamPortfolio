@@ -115,8 +115,8 @@ void CParticleSystem::Tick(_float _fTimeDelta)
 		return;
 
 	// Stop버튼을 누른 후 모든 파티클들이 소멸하면 자동으로 Disable이 된다.
-	if (m_isStop == true && Is_AllDead())
-		Disable();
+	if (true == m_isStop && Is_AllDead())
+		Action_By_StopOption();
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
@@ -291,8 +291,7 @@ void CParticleSystem::Play(_float3 vPosition)
 
 	m_isStop = false;
 
-	m_pTransform->Set_Position(vPosition);
-	Enable();
+	Enable(vPosition);
 }
 void CParticleSystem::Stop()
 {
@@ -516,31 +515,31 @@ void CParticleSystem::Action_By_Duration()
 }
 void CParticleSystem::Action_By_StopOption()
 {
-	if (m_MainModuleDesc.strStopAction == "Disable")
+	if ("Disable" == m_MainModuleDesc.strStopAction)
 	{
-		Stop();
+		Disable();
 		Restart();
 	}
-	else if (m_MainModuleDesc.strStopAction == "Destroy")
+	else if ("Destroy" == m_MainModuleDesc.strStopAction)
 	{
-		CGameObject* pOwner = dynamic_cast<CGameObject*>(m_pOwner);
-		if (nullptr != pOwner)
-		{
-			pOwner->Set_ObjEvent(CGameObject::OBJ_DEAD);
-		}
+		Set_ObjEvent(CGameObject::OBJ_DEAD);
 	}
-	else if (m_MainModuleDesc.strStopAction == "Callback")
+	else if ("Callback" == m_MainModuleDesc.strStopAction)
 	{
-		m_StopAction();
-		Stop();
+		//m_StopAction();
+		Disable();
 		Restart();
 	}
-	else if (m_MainModuleDesc.strStopAction == "Pool")
+	else if ("Pool" == m_MainModuleDesc.strStopAction)
 	{
+		if (TEXT("") == m_szParticleTag) // 툴 크래쉬 방지용
+			return;
+
 		Set_ObjEvent(CGameObject::OBJ_DEAD);
 		CParticleSystemPool* pPool = CParticleSystemPool::GetInstance();
 		Safe_AddRef(pPool);
 		pPool->Return_Particle(this);
+		Restart();
 		Safe_Release(pPool);
 	}
 }
