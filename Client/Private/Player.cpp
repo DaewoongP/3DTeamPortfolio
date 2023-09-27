@@ -99,6 +99,8 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::FIRST, CONFRINGO);
 	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::SECOND, LEVIOSO);
+	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::THIRD, NCENDIO);
+	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::FOURTH, DIFFINDO);
 
 	
 
@@ -702,10 +704,10 @@ void CPlayer::Key_Input(_float fTimeDelta)
 	}
 #endif //_DEBUG
 
-	if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
+	/*if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
 	{
 		m_pRigidBody->Add_Force(m_pTransform->Get_Up() * 10.f, PxForceMode::eIMPULSE);
-	}
+	}*/
 	
 	if (pGameInstance->Get_DIKeyState(DIK_L, CInput_Device::KEY_DOWN))
 	{
