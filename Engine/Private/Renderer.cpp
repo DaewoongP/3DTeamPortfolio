@@ -142,6 +142,8 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Shadow_Depth"), 240.f, 240.f, 160.f, 160.f)))
 		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_UI"), 300.f, 300.f, 160.f, 160.f)))
+		return E_FAIL;
 #endif // _DEBUG
 	m_pNoiseTexture = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/whitenoise.png"));
 
@@ -261,8 +263,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 
 #ifdef _DEBUG
-	/*if (FAILED(Render_UITexture()))
-		return E_FAIL;*/
+	if (FAILED(Render_UITexture()))
+		return E_FAIL;
 #endif // _DEBUG
 
 #ifdef _DEBUG

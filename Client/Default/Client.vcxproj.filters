@@ -382,6 +382,9 @@
     <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_Loading">
       <UniqueIdentifier>{9aa8f3bd-bbc6-46ed-92e0-477200a4d147}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_Quest">
+      <UniqueIdentifier>{96c66db1-04a2-4e80-b18b-359da51a8dc8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -783,6 +786,9 @@
     <ClInclude Include="..\Public\UI_Group_Loading.h">
       <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Loading</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_Group_Quest.h">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Quest</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1150,6 +1156,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_Group_Loading.cpp">
       <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Loading</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Group_Quest.cpp">
+      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Quest</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -66,6 +66,8 @@ void CMain_Menu::Tick(_float fTimeDelta)
 		m_pInventory->Tick(fTimeDelta);
 		break;
 	case QUEST:
+		if (nullptr != m_pQuest)
+			m_pQuest->Tick(fTimeDelta);
 		break;
 	case SETTING:
 		break;
@@ -91,6 +93,8 @@ void CMain_Menu::Late_Tick(_float fTimeDelta)
 			m_pInventory->Late_Tick(fTimeDelta);
 		break;
 	case QUEST:
+		if (nullptr != m_pQuest)
+			m_pQuest->Late_Tick(fTimeDelta);
 		break;
 	case SETTING:
 		break;
@@ -387,6 +391,9 @@ HRESULT CMain_Menu::Ready_Menus()
 	m_pInventory = dynamic_cast<CMenu_Inventory*>(pGameInstance->Clone_Component(LEVEL_STATIC,
 		TEXT("Prototype_GameObject_Menu_Inventory")));
 
+	m_pQuest = dynamic_cast<CMenu_Quest*>(pGameInstance->Clone_Component(LEVEL_STATIC,
+		TEXT("Prototype_GameObject_Menu_Quest")));
+
 	Safe_Release(pGameInstance);
 
 	return S_OK;
@@ -436,6 +443,7 @@ void CMain_Menu::Free()
 
 	Safe_Release(m_pGear);	
 	Safe_Release(m_pInventory);
+	Safe_Release(m_pQuest);
 	Safe_Release(m_pCursor);
 	
 
