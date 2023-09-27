@@ -161,4 +161,5 @@ void CTrigger_Vault::Free()
 #endif // _DEBUG
 
 	Safe_Release(m_pRigidBody);
+	Safe_Release(m_pMeshEffect);
 }

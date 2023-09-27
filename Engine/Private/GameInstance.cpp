@@ -964,6 +964,8 @@ inline auto CGameInstance::Thread_Enqueue(T&& t, Args && ...args) -> std::future
 
 void CGameInstance::Release_Engine()
 {
+	std::lock_guard<std::mutex> lock(mtx);
+
 	CGameInstance::GetInstance()->DestroyInstance();
 
 	CCamera_Manager::GetInstance()->DestroyInstance();
