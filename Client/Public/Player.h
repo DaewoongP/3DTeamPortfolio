@@ -20,6 +20,7 @@ class CStateContext;
 class CPlayer_Information;
 struct CMagic::MAGICDESC;
 class CUI_Group_Skill;
+class CMagicBall;
 END
 
 BEGIN(Client)
@@ -85,6 +86,8 @@ private:
 	CMagic::MAGICDESC* m_pBasicDesc_Light = { nullptr };
 	CMagic::MAGICDESC* m_pBasicDesc_Heavy = { nullptr };
 
+	CMagicBall* m_pMagicBall = { nullptr };
+
 private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
@@ -116,6 +119,9 @@ private:
 	void UpdateLookAngle();
 	//타겟과의 각을 구하기 위한함수
 	void Update_Target_Angle();
+
+	void Next_Spell_Action();
+
 
 	void Shot_Basic_Spell();
 

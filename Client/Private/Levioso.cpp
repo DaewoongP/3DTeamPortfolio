@@ -194,7 +194,7 @@ void CLevioso::Ready_CastMagic()
 	m_pMainTrail->Enable();
 	m_pTraceDustEffect->Enable();
 
-	Ready_SpinMove(m_pMainTrail,_float2(1.f,0.f),30.f);
+	Ready_SpinMove(m_pMainTrail,_float2(1.f,0.f),0.5f);
 	m_pTraceDustEffect->Get_EmissionModuleRef().Setting_PrevPos(m_vStartPostion);
 	m_pTraceDustEffect->Play(m_vStartPostion);
 	m_pTraceDustEffect->Get_Transform()->Set_Position(m_vStartPostion);
@@ -222,7 +222,7 @@ void CLevioso::Tick_Begin(_float fTimeDelta)
 
 void CLevioso::Tick_DrawMagic(_float fTimeDelta)
 {
-	Do_MagicBallState_To_Next();
+	
 }
 
 void CLevioso::Tick_CastMagic(_float fTimeDelta)
