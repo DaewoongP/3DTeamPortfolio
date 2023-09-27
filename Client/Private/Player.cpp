@@ -247,7 +247,7 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			m_pStateContext->Set_StateMachine(TEXT("Hit"), &HitStateDesc);
 
 			//체력 수정
-			//m_pPlayer_Information->fix_HP();
+			m_pPlayer_Information->fix_HP(-pDesc->iDamage);
 		}
 
 	}
