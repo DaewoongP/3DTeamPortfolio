@@ -337,9 +337,6 @@
     <Filter Include="02. GameObject\04. UI\UI_Group\UI_Group_Loading">
       <UniqueIdentifier>{9aa8f3bd-bbc6-46ed-92e0-477200a4d147}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\05. UI\UI_Group\UI_Group_Quest">
-      <UniqueIdentifier>{96c66db1-04a2-4e80-b18b-359da51a8dc8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\04. UI\UI_Composite">
       <UniqueIdentifier>{bcff362f-a7cb-497b-b754-00e1c5101961}</UniqueIdentifier>
     </Filter>
@@ -796,7 +793,7 @@
       <Filter>02. GameObject\07. Trigger</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_Group_Quest.h">
-      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Quest</Filter>
+      <Filter>02. GameObject\04. UI\UI_Group</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1173,7 +1170,7 @@
       <Filter>02. GameObject\07. Trigger</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_Group_Quest.cpp">
-      <Filter>02. GameObject\05. UI\UI_Group\UI_Group_Quest</Filter>
+      <Filter>02. GameObject\04. UI\UI_Group</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
