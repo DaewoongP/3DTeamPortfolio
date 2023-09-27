@@ -125,7 +125,7 @@ HRESULT CMeshEffect::Initialize(void* _pArg)
 {
 	if (FAILED(Add_Components()))
 		return E_FAIL;
-
+	
 	return S_OK;
 }
 

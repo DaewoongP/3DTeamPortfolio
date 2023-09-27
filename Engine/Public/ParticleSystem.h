@@ -149,7 +149,7 @@ protected:
 	function<void()> m_StopAction;
 	_uint m_iLevel = { 0 };
 	_bool m_isStop = { false };
-	wstring m_szParticleTag;
+	wstring m_szParticleTag = { TEXT("") };
 
 public:
 	static CParticleSystem* Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, const _tchar* _pDirectoryPath, _uint iLevel = 0);
