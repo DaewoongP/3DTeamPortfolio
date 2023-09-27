@@ -105,7 +105,6 @@ void CMagicBall::Tick(_float fTimeDelta)
 		
 		case Client::CMagicBall::MAGICBALL_STATE_END:
 		{
-			cout << "¸¶¹ý Á×¾î¿ä" << endl;
 			CMagicBallPool* pMagicBallPool = CMagicBallPool::GetInstance();
 			Safe_AddRef(pMagicBallPool);
 			pMagicBallPool->Return_Magic(this, m_MagicBallDesc.eMagicTag);

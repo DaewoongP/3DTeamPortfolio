@@ -124,9 +124,6 @@ void CMagicCastingState::OnStateEnter(void* _pArg)
 
 	ENDINSTANCE;
 
-#ifdef _DEBUG
-	//cout << "Hard Land Enter" << endl;
-#endif // _DEBUG
 }
 
 void CMagicCastingState::OnStateTick()
@@ -145,9 +142,6 @@ void CMagicCastingState::OnStateTick()
 
 void CMagicCastingState::OnStateExit()
 {
-#ifdef _DEBUG
-	//cout << "Hard Land Exit" << endl;
-#endif // _DEBUG
 
 	
 

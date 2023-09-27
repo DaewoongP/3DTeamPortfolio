@@ -72,13 +72,6 @@ HRESULT CCheck_Degree::Tick(const _float& fTimeDelta)
 		return E_FAIL;
 	}
 
-	/*if (true == isLeft)
-		cout << "Left" << endl;
-	else
-		cout << "RIght" << endl;
-
-	cout << fDegree << endl;*/
-
 	return BEHAVIOR_SUCCESS;
 }
 

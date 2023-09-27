@@ -45,10 +45,6 @@ void CMoveTurnState::Late_Tick(_float fTimeDelta)
 
 void CMoveTurnState::OnStateEnter(void* _pArg)
 {
-#ifdef _DEBUG
-	//cout << "Turn Enter" << endl;
-#endif // _DEBUG
-
 	BEGININSTANCE;
 
 	if (FAILED(pGameInstance->Reset_Timer(TEXT("Turn to Start Delay"))))
@@ -81,9 +77,6 @@ void CMoveTurnState::OnStateTick()
 
 void CMoveTurnState::OnStateExit()
 {
-#ifdef _DEBUG
-	//cout << "Turn Exit" << endl;
-#endif // _DEBUG
 }
 
 

@@ -52,12 +52,10 @@ void CWeapon_Armored_Troll::Late_Tick(_float fTimeDelta)
 
 void CWeapon_Armored_Troll::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
-	wcout << "\n\n\n\n Hit \n\n\n" << endl;
 }
 
 void CWeapon_Armored_Troll::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 {
-	wcout << "\n\n\n\n Out \n\n\n" << endl;
 }
 
 HRESULT CWeapon_Armored_Troll::Render()

@@ -370,9 +370,6 @@ void CMain_Menu::Set_SelectedText()
 			m_eCurMenu = (MENU)m_iSelectedText;
 			m_pTexts[m_iSelectedText]->Set_Clicked(true);
 
-#ifdef _DEBUG
-			//cout << m_iSelectedText << endl;
-#endif // _DEBUG
 		}
 		iIndex++;
 	}

@@ -45,6 +45,8 @@ HRESULT CMainApp::Initialize()
 void CMainApp::Tick(_float fTimeDelta)
 {
 	NULL_CHECK_RETURN(m_pGameInstance, );
+
+	ShowCursor(false);
 	
 #ifdef _DEBUG
 	Tick_ImGui();

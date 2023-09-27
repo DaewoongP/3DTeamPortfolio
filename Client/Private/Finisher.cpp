@@ -249,6 +249,7 @@ void CFinisher::Ready_CastMagic()
 		vDirStartToPicked = (vMouseWorldPickPosition - m_MagicBallDesc.vStartPosition);
 		vDirStartToPicked.Normalize();
 		m_vTargetPosition = vDirStartToPicked * m_MagicBallDesc.fDistance;
+		return;
 	}
 	else
 	{
