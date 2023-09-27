@@ -385,10 +385,26 @@ HRESULT CMain0_Loader::Loading_For_Cliffside()
 
 		{
 			std::lock_guard<std::mutex> lock(mtx);
-			
+
 			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Dust01"),
-				TEXT("../../Resources/GameData/ParticleData/Ncendio/FireCircleBoom/"), 20)))
+				TEXT("../../Resources/GameData/ParticleData/Misc/Dust01/"), 3)))
 				throw TEXT("Reserve Particle : Particle_Dust01");
+		}
+
+		{
+			std::lock_guard<std::mutex> lock(mtx);
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Dust02"),
+				TEXT("../../Resources/GameData/ParticleData/Misc/Dust02/"), 3)))
+				throw TEXT("Reserve Particle : Particle_Dust02");
+		}
+
+		{
+			std::lock_guard<std::mutex> lock(mtx);
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_RockChunksRough"),
+				TEXT("../../Resources/GameData/ParticleData/Misc/RockChunksRough/"), 3)))
+				throw TEXT("Reserve Particle : Particle_RockChunksRough");
 		}
 
 		/* --------------Debug-------------- */
@@ -433,6 +449,15 @@ HRESULT CMain0_Loader::Loading_For_Cliffside()
 
 HRESULT CMain0_Loader::Loading_For_Vault()
 {
+	/* For.Prototype_GameObject_ConvexMesh*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_MeshEffect"),
+		CMeshEffect::Create(m_pDevice, m_pContext,TEXT("../../Resources/GameData/MeshEffectData/Cloister/Cloister.ME")))))
+		throw TEXT("Prototype_GameObject_MeshEffect");
+
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_VAULT, TEXT("Prototype_GameObject_LoadTrigger"),
+		CLoadTrigger::Create(m_pDevice, m_pContext))))
+		throw TEXT("Prototype_GameObject_LoadTrigger");
+
 
 	return S_OK;
 }

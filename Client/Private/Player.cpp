@@ -682,6 +682,8 @@ void CPlayer::Key_Input(_float fTimeDelta)
 	if (pGameInstance->Get_DIKeyState(DIK_L, CInput_Device::KEY_DOWN))
 	{
 		CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_Dust01"), m_pTransform->Get_Position());
+		CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_Dust02"), m_pTransform->Get_Position());
+		CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_RockChunksRough"), m_pTransform->Get_Position());
 	}
 
 	ENDINSTANCE;

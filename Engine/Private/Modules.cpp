@@ -553,9 +553,6 @@ HRESULT RENDERER_MODULE::Load(const _tchar* _pDirectoyPath)
 	CloseHandle(hFile);
 	return S_OK;
 }
-void RENDERER_MODULE::Restart()
-{
-}
 
 
 HRESULT VELOCITY_OVER_LIFETIME::Save(const _tchar* _pDirectoyPath)
@@ -1059,4 +1056,22 @@ void TEXTURE_SHEET_ANIMATION::Restart()
 void TEXTURE_SHEET_ANIMATION::CalculateMaxSize()
 {
 	iMaxIndex = iWidthLength * iHeightLength - 1;
+}
+
+void PARTICLE::Restart()
+{
+	fAge = { 0.f };
+	fGravityAccel = { 0.f };
+	vAccel = _float4();
+	vVelocity = _float4();
+	WorldMatrix = _float4x4();
+	fGenTime = { 0.f };
+	fLifeTime = { 0.f };
+	fAngularVelocity = { 0.f };
+	fAngle = { 0.f };
+	vColor = { 1.f, 1.f, 1.f, 1.f };
+	vStartScale = { 1.f, 1.f, 1.f };
+	vScale = { 1.f, 1.f, 1.f };
+	iCurIndex = { 0 };
+	isAlive = { true };
 }

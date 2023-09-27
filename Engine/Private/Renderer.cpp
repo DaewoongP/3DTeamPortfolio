@@ -140,7 +140,7 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Shade"), 240.f, 80.f, 160.f, 160.f)))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Shadow_Depth"), 240.f, 240.f, 160.f, 160.f)))
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_FlowMap"), 240.f, 240.f, 160.f, 160.f)))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_FinGlow"), 240.f, 400.f, 160.f, 160.f)))
 		return E_FAIL;

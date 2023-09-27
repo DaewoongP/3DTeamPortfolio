@@ -9,4 +9,6 @@ namespace Tool
 		*out_str = vector.at(idx).c_str();
 		return true;
 	}
+
+#define __TOOL__
 }

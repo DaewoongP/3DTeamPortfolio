@@ -152,7 +152,7 @@ void CWeapon_Player_Wand::Do_Lumos(_float fTimeDelta)
 		LightInfo.eType = CLight::TYPE_LUMOS;
 		LightInfo.vPos = (vPos + vLook + _float3(0.f, 2.5f, 0.f)).TransCoord();
 		LightInfo.vLookAt = vPos.TransCoord();
-		LightInfo.fRange = 15.f;
+		LightInfo.fRange = 17.f;
 		LightInfo.fSpotPower = 2.f;
 		if (AccTime < 1.f)
 			AccTime += fTimeDelta*3.f;
@@ -181,7 +181,7 @@ void CWeapon_Player_Wand::Do_Lumos(_float fTimeDelta)
 		LightInfo.eType = CLight::TYPE_LUMOS;
 		LightInfo.vPos = (vPos + vLook + _float3(0.f, 2.5f, 0.f)).TransCoord();
 		LightInfo.vLookAt = vPos.TransCoord();
-		LightInfo.fRange = 15.f;
+		LightInfo.fRange = 17.f;
 		LightInfo.fSpotPower = 0.f;
 		if (AccTime < 1.f)
 			AccTime += fTimeDelta*3.f;

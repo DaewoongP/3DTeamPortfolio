@@ -49,6 +49,8 @@ CMeshEffect::CMeshEffect(const CMeshEffect& _rhs)
 {
 	for (_uint i = 0; i < PATH_END; ++i)
 		m_Path[i] = _rhs.m_Path[i];
+	
+	m_pTransform->Set_WorldMatrix(_rhs.m_pTransform->Get_WorldMatrix());
 }
 
 CMeshEffect::~CMeshEffect()
@@ -115,7 +117,6 @@ HRESULT CMeshEffect::Initialize_Prototype(const _tchar* pFilePath, _uint _iLevel
 				, VTXPOSNORTEX_DECL::Elements, VTXPOSNORTEX_DECL::iNumElements));
 	}
 
-	m_pTransform->Set_Position(_float3(0.f, 0.f, 0.f));
 	Safe_Release(pGameInstance);
 	return S_OK;
 }
@@ -124,7 +125,7 @@ HRESULT CMeshEffect::Initialize(void* _pArg)
 {
 	if (FAILED(Add_Components()))
 		return E_FAIL;
-
+	
 	return S_OK;
 }
 
