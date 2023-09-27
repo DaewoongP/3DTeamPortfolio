@@ -1025,14 +1025,14 @@ void CPlayer::Next_Spell_Action()
 void CPlayer::Shot_Basic_Spell()
 {
 	Find_Target_For_Distance();
-	m_pMagicSlot->Add_Magics(*m_pBasicDesc_Light);
+	m_pMagicSlot->Add_Magics(m_BasicDesc_Light);
 	m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(0, m_pTargetTransform, XMMatrixTranslation(0.f, 2.5f, 0.f), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
 }
 
 void CPlayer::Shot_Basic_Last_Spell()
 {
 	Find_Target_For_Distance();
-	m_pMagicSlot->Add_Magics(*m_pBasicDesc_Heavy);
+	m_pMagicSlot->Add_Magics(m_BasicDesc_Heavy);
 	m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(0, m_pTargetTransform, XMMatrixTranslation(0.f, 2.5f, 0.f), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
 }
 
