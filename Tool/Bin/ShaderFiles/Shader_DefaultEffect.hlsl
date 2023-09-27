@@ -3,7 +3,7 @@
 
 matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix			g_TransformationMatrix;
-texture2D		g_Texture;
+//texture2D		g_Texture;
 texture2D		g_MaterialTexture;
 //texture2D		g_ClipTexture;
 int				g_iClipChannel;
@@ -109,7 +109,7 @@ PS_OUT PS_MAIN_CLOISTER(PS_IN In)
 
     TilingAndOffset_float(In.vTexUV, g_vTililing, g_vOffset, In.vTexUV);
 
-    vector vDiffuse = g_Texture.Sample(LinearSampler, In.vTexUV);
+    vector vDiffuse = g_MaterialTexture.Sample(LinearSampler, In.vTexUV);
 
     if (vDiffuse.a < 0.5f)
         discard;

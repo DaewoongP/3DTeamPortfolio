@@ -60,6 +60,8 @@ private:
 	_bool m_isChangeAnimation = { false };
 	_bool m_isRangeInEnemy = { false };
 
+	CMagicBall* m_CastingMagic = { nullptr };
+
 private:
 	HRESULT Make_AI();
 	HRESULT Make_Magics();
@@ -95,7 +97,6 @@ private: /* Notify Functions */
 	void Cast_Protego();
 	void Shot_Magic();
 
-	CMagicBall* m_CastingMagic = { nullptr };
 
 public:
 	static CProfessor_Fig* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

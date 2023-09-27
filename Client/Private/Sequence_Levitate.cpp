@@ -128,7 +128,7 @@ HRESULT CSequence_Levitate::Assemble_Childs()
 		pAction_Levitate_Enter->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 			{
 				CRigidBody* pRigidBody = { nullptr };
-				if (FAILED(pBlackBoard->Get_Type("", pRigidBody)))
+				if (FAILED(pBlackBoard->Get_Type("pRigidBody", pRigidBody)))
 					return false;
 				return true;
 			});

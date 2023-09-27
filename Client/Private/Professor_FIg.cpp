@@ -348,31 +348,31 @@ HRESULT CProfessor_Fig::Make_Notifies()
 		return E_FAIL;
 
 	Func = [&] {(*this).Shot_Magic(); };
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Front_1"), TEXT("Cast_Protego"), Func)))
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Front_1"), TEXT("Shot_Magic"), Func)))
 		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Step_Back_2"), TEXT("Cast_Protego"), Func)))
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Step_Back_2"), TEXT("Shot_Magic"), Func)))
 		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Step_Back_3"), TEXT("Cast_Protego"), Func)))
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Step_Back_3"), TEXT("Shot_Magic"), Func)))
 		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Left_45"), TEXT("Cast_Protego"), Func)))
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Left_45"), TEXT("Shot_Magic"), Func)))
 		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Left_90"), TEXT("Cast_Protego"), Func)))
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Left_90"), TEXT("Shot_Magic"), Func)))
 		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Left_135"), TEXT("Cast_Protego"), Func)))
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Left_135"), TEXT("Shot_Magic"), Func)))
 		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Right_45"), TEXT("Cast_Protego"), Func)))
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Right_45"), TEXT("Shot_Magic"), Func)))
 		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Right_90"), TEXT("Cast_Protego"), Func)))
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Right_90"), TEXT("Shot_Magic"), Func)))
 		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Right_135"), TEXT("Cast_Protego"), Func)))
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Right_135"), TEXT("Shot_Magic"), Func)))
 		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Right_180"), TEXT("Cast_Protego"), Func)))
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Right_180"), TEXT("Shot_Magic"), Func)))
 		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Heavy_Front_2"), TEXT("Cast_Protego"), Func)))
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Heavy_Front_2"), TEXT("Shot_Magic"), Func)))
 		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Levioso"), TEXT("Cast_Protego"), Func)))
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Levioso"), TEXT("Shot_Magic"), Func)))
 		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Cast_Protego"), TEXT("Cast_Protego"), Func)))
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Cast_Protego"), TEXT("Shot_Magic"), Func)))
 		return E_FAIL;
 
 	return S_OK;
