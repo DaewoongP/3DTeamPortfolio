@@ -78,7 +78,7 @@ HRESULT CLevel_Cliffside::Initialize()
 		return E_FAIL;
 	}
 
-	Load_Monsters(TEXT("../../Resources/GameData/MonsterData/Test.mon"));
+	Load_Monsters(TEXT("../../Resources/GameData/MonsterData/Cliff.mon"));
 	
 #ifdef _DEBUG
 	if (FAILED(Ready_Layer_Debug(TEXT("Layer_Debug"))))

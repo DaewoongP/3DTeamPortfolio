@@ -49,6 +49,7 @@ HRESULT CGolem_Combat::Initialize(void* pArg)
 	m_pTransform->Set_RigidBody(m_pRigidBody);
 	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
+	m_pModelCom->Change_Animation(TEXT("Spawn_Fall_Loop"));
 
 	if (FAILED(Make_Notifies()))
 		return E_FAIL;
@@ -593,11 +594,11 @@ HRESULT CGolem_Combat::Make_Levioso_Combo(_Inout_ CSelector* pSelector)
 		/* Set Decorator */
 		pSelector->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 			{
-				_uint* pIPreviusSpell = { nullptr };
-				if (FAILED(pBlackBoard->Get_Type("iPreviusSpell", pIPreviusSpell)))
+				_uint* piCurrentSpell = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", piCurrentSpell)))
 					return false;
-
-				if (BUFF_LEVIOSO & *pIPreviusSpell)
+				
+				if (BUFF_LEVIOSO & *piCurrentSpell)
 					return true;
 
 				return false;
@@ -717,15 +718,11 @@ HRESULT CGolem_Combat::Make_Air_Hit(_Inout_ CSequence* pSequence)
 			{
 				_bool* pIsHitCombo = { nullptr };
 				_uint* pICurrentSpell = { nullptr };
-				_uint* pIPreviusSpell = { nullptr };
 				if (FAILED(pBlackBoard->Get_Type("isHitCombo", pIsHitCombo)))
-					return false;
-				if (FAILED(pBlackBoard->Get_Type("iPreviusSpell", pIPreviusSpell)))
 					return false;
 				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
 					return false;
 
-				*pIPreviusSpell = BUFF_NONE;
 				*pICurrentSpell = BUFF_NONE;
 
 				*pIsHitCombo = false;
@@ -899,22 +896,22 @@ HRESULT CGolem_Combat::Make_Death(_Inout_ CSequence* pSequence)
 			});
 		pSequence_Death_Ground->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 			{
-				_uint* pIPreviusSpell = { nullptr };
-				if (FAILED(pBlackBoard->Get_Type("iPreviusSpell", pIPreviusSpell)))
+				_uint* piCurrentSpell = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", piCurrentSpell)))
 					return false;
 
-				if (BUFF_LEVIOSO & *pIPreviusSpell)
+				if (BUFF_LEVIOSO & *piCurrentSpell)
 					return false;
 
 				return true;
 			});
 		pSequence_Death_Air->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 			{
-				_uint* pIPreviusSpell = { nullptr };
-				if (FAILED(pBlackBoard->Get_Type("iPreviusSpell", pIPreviusSpell)))
+				_uint* piCurrentSpell = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", piCurrentSpell)))
 					return false;
 
-				if (BUFF_LEVIOSO & *pIPreviusSpell)
+				if (BUFF_LEVIOSO & *piCurrentSpell)
 				{
 					CRigidBody* pRigidBody = { nullptr };
 					if (FAILED(pBlackBoard->Get_Type("pRigidBody", pRigidBody)))
@@ -1238,7 +1235,7 @@ HRESULT CGolem_Combat::Make_NormalAttack(_Inout_ CSelector* pSelector)
 				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
 					return false;
 
-				if (BUFF_NONE != *pICurrentSpell)
+				if (BUFF_LEVIOSO & *pICurrentSpell)
 					return false;
 
 				return true;
@@ -1364,17 +1361,13 @@ HRESULT CGolem_Combat::Make_Hit_Combo(_Inout_ CSelector* pSelector)
 			{
 				_bool* pIsHitCombo = { nullptr };
 				_uint* pICurrentSpell = { nullptr };
-				_uint* pIPreviusSpell = { nullptr };
 				if (FAILED(pBlackBoard->Get_Type("isHitCombo", pIsHitCombo)))
 					return false;
 				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
 					return false;
-				if (FAILED(pBlackBoard->Get_Type("iPreviusSpell", pIPreviusSpell)))
-					return false;
 
 				// 이부분은 애매한 처리임. 나중에 몬스터에 맞은 마법값이 이상하게 동작할 경우 확인할 것
 				*pICurrentSpell = BUFF_NONE;
-				*pIPreviusSpell = BUFF_NONE;
 
 				*pIsHitCombo = false;
 

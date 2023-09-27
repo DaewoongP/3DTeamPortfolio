@@ -167,8 +167,6 @@ HRESULT CEnemy::Make_AI()
 			throw TEXT("Failed Add_Type isHitAttack");
 		if (FAILED(m_pRootBehavior->Add_Type("iCurrentSpell", &m_iCurrentSpell)))
 			throw TEXT("Failed Add_Type iCurrentSpell");
-		if (FAILED(m_pRootBehavior->Add_Type("iPreviusSpell", &m_iPreviusSpell)))
-			throw TEXT("Failed Add_Type iPreviusSpell");
 		if (FAILED(m_pRootBehavior->Add_Type("isChangeAnimation", &m_isChangeAnimation)))
 			throw TEXT("Failed Add_Type isChangeAnimation");
 

@@ -4,6 +4,7 @@
 
 #include "Wait.h"
 #include "Action.h"
+#include "RigidBody.h"
 #include "Random_Select.h"
 #include "Check_Distance.h"
 
@@ -124,6 +125,13 @@ HRESULT CSequence_Levitate::Assemble_Childs()
 			throw TEXT("pAction_Levitate_Land is nullptr");
 
 		/* Set Decorations */
+		pAction_Levitate_Enter->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				CRigidBody* pRigidBody = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("", pRigidBody)))
+					return false;
+				return true;
+			});
 
 		/* Set Options */
 		pAction_Levitate_Enter->Set_Options(TEXT("Levitate_Enter"), pModel);
@@ -162,19 +170,6 @@ void CSequence_Levitate::Reset_Behavior(HRESULT result)
 		BEHAVIOR_RUNNING != result)			// 상위 노드에서 상태가 바뀐경우
 	{
 		m_ReturnData = result;
-
-		_uint* pICurrentSpell = { nullptr };
-		_uint* pIPreviusSpell = { nullptr };
-		if (FAILED(m_pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
-			return;
-		if (FAILED(m_pBlackBoard->Get_Type("iPreviusSpell", pIPreviusSpell)))
-			return;
-
-		if (*pICurrentSpell & BUFF_LEVIOSO)
-		{
-			*pIPreviusSpell = *pICurrentSpell;
-			*pICurrentSpell ^= BUFF_LEVIOSO;
-		}
 	}
 }
 
