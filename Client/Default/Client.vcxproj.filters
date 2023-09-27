@@ -283,9 +283,6 @@
     <Filter Include="02. GameObject\02. Enemy\03. Golem\01. Pensive\Weapon">
       <UniqueIdentifier>{fde3512d-c9d7-4f98-baac-ed8650da6e1a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="98. Default\99. Headers">
-      <UniqueIdentifier>{91c3e316-2a51-40fe-a9b3-e3fef6e8989d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\03. MapObject">
       <UniqueIdentifier>{0671651e-f669-4b5e-82f4-dfb1f4480ca3}</UniqueIdentifier>
     </Filter>
@@ -385,6 +382,9 @@
     <Filter Include="02. GameObject\07. Trigger">
       <UniqueIdentifier>{b738306a-5e9e-4d2f-91bd-31bb6708ef2c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="99. Headers">
+      <UniqueIdentifier>{91c3e316-2a51-40fe-a9b3-e3fef6e8989d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -403,7 +403,7 @@
       <Filter>00. MainApp</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Client_Defines.h">
-      <Filter>98. Default\99. Headers</Filter>
+      <Filter>99. Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Level_Logo.h">
       <Filter>01. Levels\00. Logo</Filter>
@@ -412,7 +412,7 @@
       <Filter>01. Levels\99. Loading</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Client_Includes.h">
-      <Filter>98. Default\99. Headers</Filter>
+      <Filter>99. Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Sky.h">
       <Filter>02. GameObject\00. Sky</Filter>
@@ -484,7 +484,7 @@
       <Filter>02. GameObject\02. Enemy\00. Troll\01. Forest_Troll\Weapon</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Behavior_Includes.h">
-      <Filter>98. Default\99. Headers</Filter>
+      <Filter>99. Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Wait.h">
       <Filter>03. Behaviors\04. Movement</Filter>
@@ -736,7 +736,7 @@
       <Filter>01. Levels\04. Smith</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Client_Enum.h">
-      <Filter>98. Default\99. Headers</Filter>
+      <Filter>99. Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Check_Degree.h">
       <Filter>03. Behaviors\05. Function</Filter>

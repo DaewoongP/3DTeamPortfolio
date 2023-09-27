@@ -29,6 +29,8 @@ HRESULT CLevel_Loading::Initialize(LEVELID eNextLevelID)
 
 	m_eNextLevelID = eNextLevelID;
 
+	m_isLoadingLevel = true;
+
 	switch (m_eNextLevelID)
 	{
 	case LEVEL_LOGO:
