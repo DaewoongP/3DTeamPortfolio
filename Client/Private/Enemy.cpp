@@ -1,6 +1,9 @@
 #include "Enemy.h"
 #include "GameInstance.h"
 
+#include "Player.h"
+#include "UI_Group_Enemy_HP.h"
+
 CEnemy::CEnemy(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
@@ -32,12 +35,26 @@ HRESULT CEnemy::Initialize(void* pArg)
 	else
 		m_pTransform->Set_Position(_float3(_float(rand() % 5) + 20.f, 2.f, 20.f - _float(rand() % 5)));
 
+	BEGININSTANCE;
+	for (_uint i = 0; i < LEVEL_END; ++i)
+	{
+		if (nullptr == m_pPlayer)
+		{
+			m_pPlayer = dynamic_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(i, TEXT("Layer_Player"), TEXT("GameObject_Player")));
+			if (nullptr != m_pPlayer)
+				break;
+		}
+	}
+	ENDINSTANCE;
+
 	return S_OK;
 }
 
 void CEnemy::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	m_pUI_HP->Tick(fTimeDelta);
 }
 
 void CEnemy::Late_Tick(_float fTimeDelta)
@@ -70,6 +87,8 @@ HRESULT CEnemy::Render()
 
 			if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", i, DIFFUSE)))
 				throw TEXT("Bind_Material Diffuse");
+			if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_NormalTexture", i, NORMALS)))
+				throw TEXT("Bind_Material Normal");
 
 			if (FAILED(m_pShaderCom->Begin("AnimMesh")))
 				throw TEXT("Shader Begin AnimMesh");
@@ -317,7 +336,7 @@ void CEnemy::Set_Current_Target()
 
 	if (false == m_isRangeInEnemy)
 	{
-		m_pTarget = nullptr;
+		m_pTarget = m_pPlayer;
 	}
 }
 
@@ -337,6 +356,18 @@ HRESULT CEnemy::Remove_GameObject(const wstring& wstrObjectTag)
 	m_RangeInEnemies.erase(iter);
 
 	return S_OK;
+}
+
+void CEnemy::On_Gravity()
+{
+	if(nullptr != m_pRigidBody)
+		m_pRigidBody->Set_Gravity(true);
+}
+
+void CEnemy::Off_Gravity()
+{
+	if (nullptr != m_pRigidBody)
+		m_pRigidBody->Set_Gravity(false);
 }
 
 void CEnemy::Free()

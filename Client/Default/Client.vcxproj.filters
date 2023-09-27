@@ -642,7 +642,7 @@
     <ClInclude Include="..\public\Main0_Loader.h">
       <Filter>01. Levels\99. Loading\Loader</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Sequence_Levitated.h">
+    <ClInclude Include="..\Public\Sequence_Levitate.h">
       <Filter>03. Behaviors\02. Sequences</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\RollState.h">
@@ -1022,7 +1022,7 @@
     <ClCompile Include="..\private\Main0_Loader.cpp">
       <Filter>01. Levels\99. Loading\Loader</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Sequence_Levitated.cpp">
+    <ClCompile Include="..\Private\Sequence_Levitate.cpp">
       <Filter>03. Behaviors\02. Sequences</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\RollState.cpp">

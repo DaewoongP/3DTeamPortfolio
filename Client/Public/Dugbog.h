@@ -38,6 +38,9 @@ public:
 	virtual HRESULT Render() override;
 
 private:
+	_bool m_isAbleLevioso = { false };
+
+private:
 	virtual HRESULT Make_AI() override;
 	virtual HRESULT Make_Notifies() override;
 	virtual HRESULT Add_Components() override;
@@ -65,9 +68,19 @@ private: /* Çàµ¿ ¹­À½ */
 	HRESULT Make_Turns(_Inout_ CSequence* pSequence);
 	HRESULT Make_Turn_Runs(_Inout_ CSequence* pSequence);
 	HRESULT Make_Levioso_Combo(_Inout_ CSelector* pSelector);
-	HRESULT Make_Air_Hit(_Inout_ CSequence* pSequence);
+	HRESULT Make_Air_Hit(_Inout_ CSelector* pSelector);
+	HRESULT Make_Air_Hit_Tongue(_Inout_ CSequence* pSequence);
 
 private: /* Notify Functions */
+	void Enter_Light_Attack();
+	void Enter_Heavy_Attack();
+	void Enable_Levioso() {
+		m_isAbleLevioso = true;
+	}
+	void Disable_Levioso() {
+		m_isAbleLevioso = false;
+	}
+	void Exit_Attack();
 
 public:
 	static CDugbog* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

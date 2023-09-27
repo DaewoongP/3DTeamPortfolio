@@ -639,7 +639,7 @@ HRESULT CMonster_Window::Load_Model_Prototypes(const wstring& wstrFilePath)
 		else
 		{
 			// dat파일 체크
-			if (!lstrcmp(entry.path().extension().c_str(), TEXT(".dat")))
+			if (!lstrcmp(entry.path().extension().c_str(), TEXT(".gcm")))
 			{
 				if (false == fs::exists(entry.path()))
 				{
@@ -670,24 +670,21 @@ HRESULT CMonster_Window::Load_Model_Prototypes(const wstring& wstrFilePath)
 				// 2차 분리, 여기서 모델 이름이 나와야 함
 				wstring result1 = result.substr(0, current1);
 
-				_bool isAdd = { true };
-				if (true == isAdd && wstring::npos == result1.find(TEXT("Golem")))
+				if (wstring::npos != result1.find(TEXT("Golem")))
 				{
-					m_wstrModelPaths.pop_back();
-					iter++;
-					continue;
+				}
+				else if (wstring::npos != result1.find(TEXT("Dugbog")))
+				{
+				}
+				else if (wstring::npos != result1.find(TEXT("Troll")))
+				{
 				}
 				else
-					isAdd = false;
-
-				if (true == isAdd && wstring::npos == result1.find(TEXT("Troll")))
 				{
 					m_wstrModelPaths.pop_back();
-					iter++;
+					++iter;
 					continue;
 				}
-				else
-					isAdd = false;
 
 				// 모델 리스트에 출력할 문자열 모음에 넣음
 				m_wstrMonsterTags.push_back(result1);
