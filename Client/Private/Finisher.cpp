@@ -296,7 +296,7 @@ void CFinisher::Tick_Begin(_float fTimeDelta)
 
 void CFinisher::Tick_DrawMagic(_float fTimeDelta)
 {
-	Do_MagicBallState_To_Next();
+
 }
 
 void CFinisher::Tick_CastMagic(_float fTimeDelta)

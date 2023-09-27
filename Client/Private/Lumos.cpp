@@ -131,15 +131,16 @@ void CLumos::Ready_Begin()
 
 void CLumos::Ready_DrawMagic()
 {
-}
-
-void CLumos::Ready_CastMagic()
-{
 	_float3 vWandPosition = _float4x4(m_WeaponOffsetMatrix * (*m_pWeaponMatrix)).Translation();
 	m_pWandGlowEffect->Enable();
 	m_pWandGlowEffect->Play(vWandPosition);
 	m_pWandGlowRedEffect->Enable();
 	m_pWandGlowRedEffect->Play(vWandPosition);
+}
+
+void CLumos::Ready_CastMagic()
+{
+	
 }
 
 void CLumos::Ready_Dying()
@@ -158,7 +159,7 @@ void CLumos::Tick_Begin(_float fTimeDelta)
 
 void CLumos::Tick_DrawMagic(_float fTimeDelta)
 {
-	Do_MagicBallState_To_Next();
+	
 }
 
 void CLumos::Tick_CastMagic(_float fTimeDelta)

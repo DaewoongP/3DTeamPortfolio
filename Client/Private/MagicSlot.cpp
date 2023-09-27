@@ -136,17 +136,17 @@ HRESULT CMagicSlot::Add_Magic_To_Basic_Slot(_uint iSlotIndex, SPELL eSpellType)
 	return S_OK;
 }
 
-void CMagicSlot::Action_Magic_Skill(_uint iIndex, CTransform* pTarget, _float4x4 TargetOffsetMatrix, const _float4x4* pWeaponMatrix, _float4x4 WeaponOffsetMatrix, COLLISIONFLAG eCollisionFlag)
+CMagicBall* CMagicSlot::Action_Magic_Skill(_uint iIndex, CTransform* pTarget, _float4x4 TargetOffsetMatrix, const _float4x4* pWeaponMatrix, _float4x4 WeaponOffsetMatrix, COLLISIONFLAG eCollisionFlag)
 {
 	//if Size over = MSG / if Index Slot is nullptr, nothing
 	if (iIndex < m_MagicSlots.size())
 	{
 		if (m_MagicSlots[iIndex] == nullptr)
 		{
-			return;
+			return nullptr;
 		}
 
-		m_MagicSlots[iIndex]->Magic_Cast(pTarget, TargetOffsetMatrix, pWeaponMatrix, WeaponOffsetMatrix, eCollisionFlag);
+		return m_MagicSlots[iIndex]->Magic_Cast(pTarget, TargetOffsetMatrix, pWeaponMatrix, WeaponOffsetMatrix, eCollisionFlag);
 	}
 	else if (m_MagicSlots[iIndex] == nullptr)
 	{
@@ -154,19 +154,20 @@ void CMagicSlot::Action_Magic_Skill(_uint iIndex, CTransform* pTarget, _float4x4
 	}
 	else
 		MSG_BOX("Skill Cast Index is out of Size");
+	return nullptr;
 }
 
-void CMagicSlot::Action_Magic_Basic(_uint iIndex, CTransform* pTarget, _float4x4 TargetOffsetMatrix,const _float4x4* pWeaponMatrix, _float4x4 WeaponOffsetMatrix, COLLISIONFLAG eCollisionFlag)
+CMagicBall* CMagicSlot::Action_Magic_Basic(_uint iIndex, CTransform* pTarget, _float4x4 TargetOffsetMatrix,const _float4x4* pWeaponMatrix, _float4x4 WeaponOffsetMatrix, COLLISIONFLAG eCollisionFlag)
 {
 	//if Size over = MSG / if Index Slot is nullptr, nothing
 	if (iIndex < m_MagicEssentialSlots.size())
 	{
 		if (m_MagicEssentialSlots[iIndex] == nullptr)
 		{
-			return;
+			return nullptr;
 		}
 
-		m_MagicEssentialSlots[iIndex]->Magic_Cast(pTarget, TargetOffsetMatrix, pWeaponMatrix, WeaponOffsetMatrix, eCollisionFlag);
+		return m_MagicEssentialSlots[iIndex]->Magic_Cast(pTarget, TargetOffsetMatrix, pWeaponMatrix, WeaponOffsetMatrix, eCollisionFlag);
 	}
 	else if (m_MagicEssentialSlots[iIndex] == nullptr)
 	{
@@ -174,6 +175,7 @@ void CMagicSlot::Action_Magic_Basic(_uint iIndex, CTransform* pTarget, _float4x4
 	}
 	else
 		MSG_BOX("Basic Cast Index is out of Size");
+	return nullptr;
 }
 
 CMagicSlot* CMagicSlot::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

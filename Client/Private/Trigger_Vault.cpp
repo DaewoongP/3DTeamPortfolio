@@ -13,14 +13,19 @@ CTrigger_Vault::CTrigger_Vault(const CTrigger_Vault& rhs)
 
 HRESULT CTrigger_Vault::Initialize(void* pArg)
 {
-	if (FAILED(Add_Components()))
+	if (nullptr == pArg)
 		return E_FAIL;
 
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
-	dynamic_cast<CMeshEffect*>(pGameInstance->Find_Component_In_Layer(
-		LEVEL_VAULT, TEXT("Layer_MeshEffect"), TEXT("GameObject_MeshEffect")));
-	Safe_Release(pGameInstance);
+	TRIGGERPOS vPos = *reinterpret_cast<TRIGGERPOS*>(pArg);
+
+	if (FAILED(__super::Initialize(pArg)))
+		return E_FAIL;
+
+	/*m_pMeshEffect->Get_Transform()->Set_Position(vPos.vEffectPos);
+	m_pTransform->Set_Position(vPos.vTriggerPos);*/
+	m_pTransform->Set_Position(_float3(0.f, 0.f, 0.f));
+	if (FAILED(Add_Components()))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -29,14 +34,26 @@ void CTrigger_Vault::Tick(_float fTimeDelta)
 {
 	if (true == m_isStartEffect)
 	{
-		m_fAccTime += fTimeDelta;
 		_float3 vPos = m_pMeshEffect->Get_Transform()->Get_Position();
-		m_pMeshEffect->Get_Transform()->Set_Position(_float3(vPos.x, -12.f + m_fAccTime, vPos.z));
+		if (8.25f < vPos.y)
+			return;
+		vPos.y += fTimeDelta;
+		m_pMeshEffect->Get_Transform()->Set_Position(vPos);
 	}
+
+	__super::Tick(fTimeDelta);
 }
 
 void CTrigger_Vault::Late_Tick(_float fTimeDelta)
 {
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	if (pGameInstance->Get_DIKeyState(DIK_N, CInput_Device::KEY_DOWN))//트리거 발동시로수정해야함.
+		m_pMeshEffect->Stop();
+	Safe_Release(pGameInstance);
+
+	__super::Late_Tick(fTimeDelta);
+
 #ifdef _DEBUG
 	if (nullptr != m_pRenderer)
 	{
@@ -47,17 +64,21 @@ void CTrigger_Vault::Late_Tick(_float fTimeDelta)
 
 void CTrigger_Vault::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
+	// 트리거 충돌 - 플레이어
 	if (wcswcs(CollisionEventDesc.pOtherObjectTag, TEXT("Player")))
 	{
-		m_isStartEffect = true;
-		
+		// null확인
 		if (nullptr == m_pMeshEffect)
 			return;
 
+		// 이펙트 시작 bool
+		m_isStartEffect = true;
+
+		// 포지션 긁어옴
 		_float3 vPos = m_pMeshEffect->Get_Transform()->Get_Position();
 
-		if (nullptr != m_pMeshEffect)
-			m_pMeshEffect->Play(_float3(vPos.x, -12.f, vPos.z));
+		// 이펙트  시작
+		m_pMeshEffect->Play(_float3(vPos.x, -12.f, vPos.z));
 	}
 }
 
@@ -66,17 +87,30 @@ HRESULT CTrigger_Vault::Add_Components()
 	CRigidBody::RIGIDBODYDESC RigidBodyDesc;
 	RigidBodyDesc.isStatic = true;
 	RigidBodyDesc.isTrigger = true;
-	RigidBodyDesc.vInitPosition = _float3(20.f, 10.f, 20.f);
-	RigidBodyDesc.vDebugColor = _float4(0.f, 0.f, 0.f, 1.f);
+	RigidBodyDesc.isGravity = false;
+	RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
+	RigidBodyDesc.fStaticFriction = 0.f;
+	RigidBodyDesc.fDynamicFriction = 0.f;
+	RigidBodyDesc.fRestitution = 0.f;
+	PxSphereGeometry MyGeometry = PxSphereGeometry(10.f);
+	RigidBodyDesc.pGeometry = &MyGeometry;
 	RigidBodyDesc.eConstraintFlag = CRigidBody::All;
+	RigidBodyDesc.eThisCollsion = COL_TRIGGER;
+	RigidBodyDesc.eCollisionFlag = COL_PLAYER;
 	RigidBodyDesc.pOwnerObject = this;
-	PxSphereGeometry SphereGeometry = PxSphereGeometry(10.f);
-	RigidBodyDesc.pGeometry = &SphereGeometry;
-	strcpy_s(RigidBodyDesc.szCollisionTag, "LoadTrigger");
+	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Trigger_Vault");
+
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
 		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
 	{
-		MSG_BOX("CLoadTrigger Failed Clone Component : Com_RigidBody");
+		MSG_BOX("CTrigger_Vault Failed Clone Component : Com_RigidBody");
+		return E_FAIL;
+	}
+
+	if (FAILED(CComposite::Add_Component(LEVEL_VAULT, TEXT("Prototype_GameObject_Cloister_MeshEffect"),
+		TEXT("Com_MeshEffect"), reinterpret_cast<CComponent**>(&m_pMeshEffect))))
+	{
+		MSG_BOX("CTrigger_Vault Failed Clone Component : Com_MeshEffect");
 		return E_FAIL;
 	}
 
@@ -84,7 +118,7 @@ HRESULT CTrigger_Vault::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"),
 		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
 	{
-		MSG_BOX("CLoadTrigger Failed Clone Component : Com_Renderer");
+		MSG_BOX("CTrigger_Vault Failed Clone Component : Com_Renderer");
 		return E_FAIL;
 	}
 #endif // _DEBUG
@@ -127,4 +161,5 @@ void CTrigger_Vault::Free()
 #endif // _DEBUG
 
 	Safe_Release(m_pRigidBody);
+	Safe_Release(m_pMeshEffect);
 }

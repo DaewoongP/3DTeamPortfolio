@@ -51,11 +51,12 @@
 #include "Lumos.h"
 #pragma endregion Magic
 
+#include "Trigger_Vault.h"
+
 #ifdef _DEBUG
 #include "Test_Player.h"
 #include "Camera_Debug.h"
 #include "PhysXRender.h"
-#include "LoadTrigger.h"
 #endif // _DEBUG
 
 CMain0_Loader::CMain0_Loader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -429,10 +430,6 @@ HRESULT CMain0_Loader::Loading_For_Cliffside()
 			CPhysXRender::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_PhysxRenderer");
 
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_LoadTrigger"),
-			CLoadTrigger::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_LoadTrigger");
-
 #endif // _DEBUG
 	}
 	catch (const _tchar* pErrorTag)
@@ -449,14 +446,14 @@ HRESULT CMain0_Loader::Loading_For_Cliffside()
 
 HRESULT CMain0_Loader::Loading_For_Vault()
 {
-	/* For.Prototype_GameObject_ConvexMesh*/
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_MeshEffect"),
+	/* For.Prototype_GameObject_MeshEffect*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_VAULT, TEXT("Prototype_GameObject_Cloister_MeshEffect"),
 		CMeshEffect::Create(m_pDevice, m_pContext,TEXT("../../Resources/GameData/MeshEffectData/Cloister/Cloister.ME")))))
-		throw TEXT("Prototype_GameObject_MeshEffect");
+		throw TEXT("Prototype_GameObject_Cloister_MeshEffect");
 
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_VAULT, TEXT("Prototype_GameObject_LoadTrigger"),
-		CLoadTrigger::Create(m_pDevice, m_pContext))))
-		throw TEXT("Prototype_GameObject_LoadTrigger");
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_VAULT, TEXT("Prototype_GameObject_Trigger_Vault"),
+		CTrigger_Vault::Create(m_pDevice, m_pContext))))
+		throw TEXT("Prototype_GameObject_Trigger_Vault");
 
 
 	return S_OK;

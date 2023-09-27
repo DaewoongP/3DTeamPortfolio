@@ -233,7 +233,7 @@ void CBasicCast::Tick_Begin(_float fTimeDelta)
 
 void CBasicCast::Tick_DrawMagic(_float fTimeDelta)
 {
-	Do_MagicBallState_To_Next();
+	
 }
 
 void CBasicCast::Tick_CastMagic(_float fTimeDelta)

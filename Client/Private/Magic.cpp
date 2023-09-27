@@ -70,10 +70,10 @@ HRESULT CMagic::ResetMagicDesc(MAGICDESC SkillDesc)
 	return S_OK;
 }
 
-_bool CMagic::Magic_Cast(CTransform* pTarget, _float4x4 targetOffsetMatrix, const _float4x4* pWeaponMatrix, _float4x4 WeaponOffsetMatrix, COLLISIONFLAG eCollisionFlag)
+CMagicBall* CMagic::Magic_Cast(CTransform* pTarget, _float4x4 targetOffsetMatrix, const _float4x4* pWeaponMatrix, _float4x4 WeaponOffsetMatrix, COLLISIONFLAG eCollisionFlag)
 {
 	if (m_fCurrentCoolTime > 0)
-		return false;
+		return nullptr;
 
 	//마법을 생성 합니다.
 	CMagicBall::MAGICBALLINITDESC ballInit;
@@ -109,9 +109,11 @@ _bool CMagic::Magic_Cast(CTransform* pTarget, _float4x4 targetOffsetMatrix, cons
 		MSG_BOX(msgBoxText);
 		ENDINSTANCE;
 		Safe_Release(pMagicBallPool);
-		return false;
+		return nullptr;
 	}
 	Safe_Release(pMagicBallPool);
+
+	CMagicBall* pMagicBall = dynamic_cast<CMagicBall*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Magic"), objTag));
 	pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
 
 	ENDINSTANCE;
@@ -123,7 +125,7 @@ _bool CMagic::Magic_Cast(CTransform* pTarget, _float4x4 targetOffsetMatrix, cons
 
 	m_fCurrentCoolTime = m_fInitCoolTime;
 
-	return true;
+	return pMagicBall;
 }
 
 HRESULT CMagic::Add_ActionFunc(function<void()> func)

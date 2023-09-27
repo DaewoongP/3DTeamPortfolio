@@ -3,7 +3,8 @@
 
 #include "MapObject.h"
 #include "MapObject_Ins.h"
-#include"LoadTrigger.h"	
+#include "Trigger_Vault.h"
+#include "Player.h"
 
 CLevel_Vault::CLevel_Vault(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CLevel(pDevice, pContext)
@@ -47,12 +48,6 @@ HRESULT CLevel_Vault::Initialize()
 
 		return E_FAIL;
 	}
-	if (FAILED(Ready_Layer_MapEffect(TEXT("Layer_MeshEffect"))))
-	{
-	MSG_BOX("Failed Load Layer_MeshEffect");
-
-	return E_FAIL;
-	}
 	if (FAILED(Ready_Layer_Trigger(TEXT("Layer_Trigger"))))
 	{
 		MSG_BOX("Failed Load Layer_Trigger");
@@ -84,10 +79,6 @@ void CLevel_Vault::Tick(_float fTimeDelta)
 	{
 		pGameInstance->Set_CurrentScene(TEXT("Scene_FieldGuide"), false);
 	}
-	
-	//MeshEffect(fTimeDelta);
-	
-
 
 	ENDINSTANCE;
 
@@ -108,7 +99,12 @@ HRESULT CLevel_Vault::Ready_Layer_Player(const _tchar* pLayerTag)
 {
 	BEGININSTANCE;
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_VAULT, TEXT("Prototype_GameObject_Player"), pLayerTag, TEXT("GameObject_Player"))))
+
+	CPlayer::PLAYERDESC PlayerDesc;
+	PlayerDesc.vPosition = _float3();
+	PlayerDesc.eLevelID = LEVEL_VAULT;
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_VAULT, TEXT("Prototype_GameObject_Player"), pLayerTag, TEXT("GameObject_Player"), &PlayerDesc)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Player)");
 		ENDINSTANCE;
@@ -140,34 +136,6 @@ HRESULT CLevel_Vault::Ready_Lights()
 	ENDINSTANCE;
 	return S_OK;
 }
-
-HRESULT CLevel_Vault::Add_Trigger()
-{
-
-
-	return S_OK;
-}
-
-//HRESULT CLevel_Vault::MeshEffect(_float fTimeDelta)
-//{
-//	if (m_isAcc && -12.f + m_AccTime < 8.25f)
-//		m_AccTime += fTimeDelta * 20.f;
-//	if (nullptr != pMeshEffect && 2 == m_iTriggerCount)
-//		pMeshEffect->Play(_float3(103.f, -12.f, 104.f));
-//
-//
-//	/*if (몹 다잡은후)
-//	{	m_AccTime = 0.f;
-//		m_isAcc = false;
-//	}*/
-//	if (pGameInstance->Get_DIKeyState(DIK_N, CInput_Device::KEY_DOWN))//트리거 발동시로수정해야함.
-//		pMeshEffect->Stop();
-//
-//
-//	ENDINSTANCE;
-//
-//	return S_OK;
-//}
 
 HRESULT CLevel_Vault::Ready_Layer_BackGround(const _tchar* pLayerTag)
 {
@@ -461,7 +429,7 @@ HRESULT CLevel_Vault::Load_Monsters(const wstring& wstrMonsterFilePath)
 	return S_OK;
 }
 
-HRESULT CLevel_Vault::Ready_Layer_MapEffect(const _tchar* pLayerTag)
+HRESULT CLevel_Vault::Ready_Layer_Trigger(const _tchar* pLayerTag)
 {
 	BEGININSTANCE;
 
@@ -473,40 +441,18 @@ HRESULT CLevel_Vault::Ready_Layer_MapEffect(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_VAULT, TEXT("Prototype_GameObject_MeshEffect"), pLayerTag, TEXT("GameObject_MeshEffect"))))
+	CTrigger_Vault::TRIGGERPOS TriggerDesc;
+	TriggerDesc.vEffectPos = _float3();
+	TriggerDesc.vTriggerPos;
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_VAULT, LEVEL_VAULT, TEXT("Prototype_GameObject_Trigger_Vault"), 
+		pLayerTag, TEXT("GameObject_Trigger_Vault"), &TriggerDesc)))
 	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_MeshEffect)");
-		ENDINSTANCE;
+		MSG_BOX("Failed Add_GameObject : (GameObject_Trigger_Vault)");
 		return E_FAIL;
 	}
-	CGameObject* MeshEffect = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_VAULT, TEXT("Layer_MeshEffect"), TEXT("GameObject_MeshEffect")));
-	if(nullptr!=MeshEffect)
-	dynamic_cast<CMeshEffect*>(MeshEffect)->Stop();
-
 
 	ENDINSTANCE;
-
-	return S_OK;
-}
-
-HRESULT CLevel_Vault::Ready_Layer_Trigger(const _tchar* pLayerTag)
-{
-	//BEGININSTANCE
-	//
-	///* Add Scene : Main */
-	//if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
-	//{
-	//	MSG_BOX("Failed Add Scene : (Scene_Main)");
-	//	ENDINSTANCE;
-	//	return E_FAIL;
-	//}
-	//if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_VAULT, TEXT("Prototype_GameObject_LoadTrigger"), pLayerTag, TEXT("GameObject_LoadTrigger"))))
-	//{
-	//	MSG_BOX("Failed Add_GameObject : (GameObject_LoadTrigger)");
-	//	return E_FAIL;
-	//}
-	//ENDINSTANCE
-
 
 	return S_OK;
 }
