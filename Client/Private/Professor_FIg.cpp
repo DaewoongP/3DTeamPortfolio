@@ -113,8 +113,10 @@ void CProfessor_Fig::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			wstring::npos != wstrObjectTag.find(TEXT("Troll")) ||
 			wstring::npos != wstrObjectTag.find(TEXT("Dugbog")))
 		{
+			if (CollisionEventDesc.pOtherOwner->isDead())
+				return;
 			auto iter = m_RangeInEnemies.find(wstrObjectTag);
-			if(iter == m_RangeInEnemies.end())
+			if (iter == m_RangeInEnemies.end())
 				m_RangeInEnemies.emplace(wstrObjectTag, CollisionEventDesc.pOtherOwner);
 		}
 	}

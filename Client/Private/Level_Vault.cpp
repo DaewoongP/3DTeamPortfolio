@@ -85,7 +85,7 @@ void CLevel_Vault::Tick(_float fTimeDelta)
 		pGameInstance->Set_CurrentScene(TEXT("Scene_FieldGuide"), false);
 	}
 	
-	MeshEffect(fTimeDelta);
+	//MeshEffect(fTimeDelta);
 	
 
 
@@ -148,43 +148,26 @@ HRESULT CLevel_Vault::Add_Trigger()
 	return S_OK;
 }
 
-HRESULT CLevel_Vault::MeshEffect(_float fTimeDelta)
-{
-	if (m_isAcc && -12.f + m_AccTime < 8.25f)
-		m_AccTime += fTimeDelta * 20.f;
-	BEGININSTANCE
-	CGameObject* MeshEffect = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_VAULT, TEXT("Layer_MeshEffect"), TEXT("GameObject_MeshEffect")));
-	if (nullptr == MeshEffect)
-	{
-		ENDINSTANCE
-			return E_FAIL;
-	}
-	CMeshEffect* pMeshEffect = dynamic_cast<CMeshEffect*>(MeshEffect);
-
-	if (pGameInstance->Get_DIKeyState(DIK_K, CInput_Device::KEY_DOWN))//트리거 발동시로수정해야함.
-	{
-		m_isAcc = true;
-		++m_iTriggerCount;
-
-		if (nullptr != pMeshEffect&&1==m_iTriggerCount)
-			pMeshEffect->Play(_float3(pMeshEffect->Get_Transform()->Get_Position().x, -12.f, pMeshEffect->Get_Transform()->Get_Position().z));
-
-		if (nullptr != pMeshEffect && 2 == m_iTriggerCount)
-			pMeshEffect->Play(_float3(103.f, -12.f, 104.f));
-
-	}
-	pMeshEffect->Get_Transform()->Set_Position(_float3(pMeshEffect->Get_Transform()->Get_Position().x, -12.f + m_AccTime, pMeshEffect->Get_Transform()->Get_Position().z));
-	/*if (몹 다잡은후)
-	{	m_AccTime = 0.f;
-		m_isAcc = false;
-	}*/
-	if (pGameInstance->Get_DIKeyState(DIK_N, CInput_Device::KEY_DOWN))//트리거 발동시로수정해야함.
-		pMeshEffect->Stop();
-
-
-	ENDINSTANCE
-	return S_OK;
-}
+//HRESULT CLevel_Vault::MeshEffect(_float fTimeDelta)
+//{
+//	if (m_isAcc && -12.f + m_AccTime < 8.25f)
+//		m_AccTime += fTimeDelta * 20.f;
+//	if (nullptr != pMeshEffect && 2 == m_iTriggerCount)
+//		pMeshEffect->Play(_float3(103.f, -12.f, 104.f));
+//
+//
+//	/*if (몹 다잡은후)
+//	{	m_AccTime = 0.f;
+//		m_isAcc = false;
+//	}*/
+//	if (pGameInstance->Get_DIKeyState(DIK_N, CInput_Device::KEY_DOWN))//트리거 발동시로수정해야함.
+//		pMeshEffect->Stop();
+//
+//
+//	ENDINSTANCE;
+//
+//	return S_OK;
+//}
 
 HRESULT CLevel_Vault::Ready_Layer_BackGround(const _tchar* pLayerTag)
 {

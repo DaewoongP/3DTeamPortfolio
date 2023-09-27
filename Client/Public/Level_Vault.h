@@ -30,14 +30,11 @@ private:
 	HRESULT Ready_Lights();
 	HRESULT Add_Trigger();
 
-private:
-	HRESULT MeshEffect(_float fTimeDelta);
+//private:
+//	HRESULT MeshEffect(_float fTimeDelta);
 
+	//_uint m_iTriggerCount = { 0 };
 
-private:
-	_float m_AccTime = { 0.f };
-	_bool m_isAcc = { false };
-	_uint m_iTriggerCount = { 0 };
 public:
 	static CLevel_Vault* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual void Free() override;
