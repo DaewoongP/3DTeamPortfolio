@@ -231,6 +231,7 @@
     <ClInclude Include="..\Public\UI_Group_Logo.h" />
     <ClInclude Include="..\Public\UI_Group_MiniMap.h" />
     <ClInclude Include="..\Public\UI_Group_Potion.h" />
+    <ClInclude Include="..\Public\UI_Group_Quest.h" />
     <ClInclude Include="..\Public\UI_Group_R.h" />
     <ClInclude Include="..\Public\UI_Group_Skill.h" />
     <ClInclude Include="..\Public\UI_Group_T.h" />
@@ -390,6 +391,7 @@
     <ClCompile Include="..\Private\UI_Group_Logo.cpp" />
     <ClCompile Include="..\Private\UI_Group_MiniMap.cpp" />
     <ClCompile Include="..\Private\UI_Group_Potion.cpp" />
+    <ClCompile Include="..\Private\UI_Group_Quest.cpp" />
     <ClCompile Include="..\Private\UI_Group_R.cpp" />
     <ClCompile Include="..\Private\UI_Group_Skill.cpp" />
     <ClCompile Include="..\Private\UI_Group_T.cpp" />

@@ -24,6 +24,7 @@
 #include "Field_Guide.h"
 #include "Main_Menu.h"
 #include "Menu_Gear.h"
+#include "Menu_Quest.h"
 #include "Menu_Invectory.h"
 #pragma endregion UI
 
@@ -186,6 +187,9 @@ HRESULT CMain0_Loader::Loading_For_Logo()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Menu_Inventory"),
 			CMenu_Inventory::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Menu_Inventory");
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Menu_Quest"),
+			CMenu_Quest::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Menu_Quest");
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Logo"),
 			CUI_Group_Logo::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_UI_Group_Logo");

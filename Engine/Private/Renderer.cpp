@@ -282,8 +282,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 
 #ifdef _DEBUG
-	/*if (FAILED(Render_UITexture()))
-		return E_FAIL;*/
+	if (FAILED(Render_UITexture()))
+		return E_FAIL;
 #endif // _DEBUG
 
 #ifdef _DEBUG

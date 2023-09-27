@@ -206,8 +206,8 @@ HRESULT CUI_Group_HP::Add_Fonts(_tchar* wszLevel)
 {
 	CUI_Font::FONTDESC Desc;
 	lstrcpy(Desc.m_pText, wszLevel);
-	Desc.m_vPos = { 1260.f, 700.f };
-	Desc.m_vColor = _float4(218.f / 255.f, 165.f / 255.f, 32.f / 255.f, 1.f);
+	Desc.m_vPos = { 1230.f, 680.f };
+	Desc.m_vColor = _float4(0.f, 1.f, 0.f, 1.f);
 	Desc.m_fRotation = { 0.f };
 	Desc.m_vOrigin = { 0.f, 0.f };
 	Desc.m_vScale = { 0.3f, 0.3f };

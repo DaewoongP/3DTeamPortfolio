@@ -40,6 +40,36 @@ HRESULT CUI_Group_Logo::Initialize(void* pArg)
 	if (FAILED(Read_File(TEXT("../../Resources/GameData/UIData/UI_Group_Logo.uidata"))))
 		return E_FAIL;
 
+
+	wstring tag;
+
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	tag = TEXT("Com_UI_Back_Quest_Frame") + Generate_HashtagW(true);
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Back"),
+		TEXT("Com_UI_Back_Default"), reinterpret_cast<CComponent**>(&m_pUI))))
+	{
+		MSG_BOX("Com_Menu_Quest : Failed Clone Component (Com_UI_Back_Quest_Frame)");
+		Safe_Release(pGameInstance);
+		__debugbreak();
+		return E_FAIL;
+	}
+
+
+	CUI::UIDESC UIDesc;
+	UIDesc.vCombinedXY = { 0.f, 0.f };
+	UIDesc.fX = { 640.f };
+	UIDesc.fY = { 360.f };
+	UIDesc.fZ = { 1.f };
+	UIDesc.fSizeX = { 1500.f };
+	UIDesc.fSizeY = { 900.f };
+	_tchar szTexturePath[MAX_PATH] = TEXT("../../Resources/UI/Game/UI/Icons/Talents/UI_T_TalentNonVideoBack.png");
+	lstrcpy(UIDesc.szTexturePath, szTexturePath);
+	m_pUI->Load(UIDesc);
+
+	Safe_Release(pGameInstance);
+
 	return S_OK;
 }
 
@@ -114,7 +144,7 @@ HRESULT CUI_Group_Logo::Add_Components()
 		return E_FAIL;
 	}
 
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Effect_Back"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Logo"),
 		TEXT("Com_UI_Logo"), reinterpret_cast<CComponent**>(&m_pLogo))))
 	{
 		MSG_BOX("CUI_Group_Logo : Failed Clone Component (Com_UI_Logo)");
@@ -123,7 +153,7 @@ HRESULT CUI_Group_Logo::Add_Components()
 		return E_FAIL;
 	}
 
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Back"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Logo"),
 		TEXT("Com_UI_Text"), reinterpret_cast<CComponent**>(&m_pText))))
 	{
 		MSG_BOX("CUI_Group_Logo : Failed Clone Component (Com_UI_Text)");
@@ -232,6 +262,8 @@ void CUI_Group_Logo::Free()
 {
 	__super::Free();
 
+	
+	Safe_Release(m_pUI);
 	Safe_Release(m_pBack);
 	Safe_Release(m_pLogo);
 	Safe_Release(m_pText);

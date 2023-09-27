@@ -87,7 +87,7 @@ HRESULT CUI_Group_Loading::Add_Components()
 		return E_FAIL;
 	}
 
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Logo"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Back"),
 		TEXT("Com_UI_Screen"), reinterpret_cast<CComponent**>(&m_pScreen))))
 	{
 		MSG_BOX("CUI_Group_Loading : Failed Clone Component (Com_UI_Screen)");

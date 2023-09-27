@@ -21,9 +21,10 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 
 private:
-	CUI_Logo*		 m_pBack = { nullptr };
-	CUI_Effect_Back* m_pLogo = { nullptr };
-	CUI_Back*		 m_pText = { nullptr };
+	CUI_Back*		m_pUI = { nullptr };
+	CUI_Logo*		m_pBack = { nullptr };
+	CUI_Logo*		m_pLogo = { nullptr };
+	CUI_Logo*		m_pText = { nullptr };
 
 private:
 	HRESULT Add_Prototype();

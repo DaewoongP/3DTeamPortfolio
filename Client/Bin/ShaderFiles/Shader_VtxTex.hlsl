@@ -267,15 +267,15 @@ float4 PS_MAIN_UI_DISSOLVE(PS_IN In) : SV_TARGET0
 	vector vColor = g_Texture.Sample(LinearSampler, In.vTexUV);
 	float fDissolve = g_DissolveTexture.Sample(LinearSampler, In.vTexUV).r;
 
-	float fEdgeThickness = 0.1f;
+	float fEdgeThickness = 0.07f;
 
 	vector vRed = float4(1.0f, 0.2706f, 0.0f, 1.0f);
 	vector vYellow = float4(1.0f, 0.6471f, 0.0f, 1.0f);
-	vector vWhite = float4(1.0f, 0.8431f, 0.0f, 1.0f);
+	vector vWhite = float4(0.f, 0.f, 0.0f, 1.0f);
 
 	if (fDissolve > g_fDissolveAmount + fEdgeThickness)
 	{
-		vColor = float4(0.5451f, 0.2706f, 0.0745f, 1.0f);
+		discard;
 	}
 	else if (fDissolve > g_fDissolveAmount)
 	{

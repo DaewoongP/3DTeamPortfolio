@@ -21,7 +21,7 @@ public:
 
 private:
 	CUI_Back* m_pBack = { nullptr };
-	CUI_Logo* m_pScreen = { nullptr };
+	CUI_Back* m_pScreen = { nullptr };
 
 private:
 	HRESULT Add_Prototype();
