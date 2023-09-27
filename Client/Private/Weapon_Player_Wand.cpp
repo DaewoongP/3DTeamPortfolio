@@ -124,19 +124,22 @@ HRESULT CWeapon_Player_Wand::Render()
 
 void CWeapon_Player_Wand::Do_Lumos(_float fTimeDelta)
 {
+	DelayTime += fTimeDelta;
 	BEGININSTANCE;
-	if (false == m_isLightOn && pGameInstance->Get_DIKeyState(DIK_F4, CInput_Device::KEY_DOWN))
+	if (false == m_isLightOn && pGameInstance->Get_DIKeyState(DIK_F, CInput_Device::KEY_DOWN))
 	{
 		m_isLightOn = true;
 		AccTime = 0.f;
+		DelayTime = 0.0f;
 
 	}
-	else if (true == m_isLightOn && pGameInstance->Get_DIKeyState(DIK_F4, CInput_Device::KEY_DOWN))
+	else if (true == m_isLightOn && pGameInstance->Get_DIKeyState(DIK_F, CInput_Device::KEY_DOWN))
 	{
 		m_isLightOn = false;
 		AccTime = 0.f;
+		DelayTime = 0.0f;
 	}
-	if (m_isLightOn)
+	if (m_isLightOn && DelayTime >= 0.5f)
 	{
 		CLight::LIGHTDESC LightInfo;
 		ZEROMEM(&LightInfo);
@@ -164,7 +167,7 @@ void CWeapon_Player_Wand::Do_Lumos(_float fTimeDelta)
 
 		pGameInstance->Set_Light(CLight::TYPE_LUMOS, LightInfo);
 	}
-	else if (false == m_isLightOn)
+	else if (false == m_isLightOn && DelayTime >= 0.5f)
 	{
 		CLight::LIGHTDESC LightInfo;
 		ZEROMEM(&LightInfo);

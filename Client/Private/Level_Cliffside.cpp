@@ -4,6 +4,7 @@
 #include "MapObject.h"
 #include "MapObject_Ins.h"
 #include "UI_Group_Enemy_HP.h"
+#include "Player.h"
 
 CLevel_Cliffside::CLevel_Cliffside(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CLevel(pDevice, pContext)
@@ -217,7 +218,11 @@ HRESULT CLevel_Cliffside::Ready_Layer_Player(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Player"), pLayerTag, TEXT("GameObject_Player"))))
+	CPlayer::PLAYERDESC PlayerDesc;
+	PlayerDesc.vPosition = _float3();
+	PlayerDesc.eLevelID = LEVEL_CLIFFSIDE;
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Player"), pLayerTag, TEXT("GameObject_Player"),&PlayerDesc)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Player)");
 		ENDINSTANCE;

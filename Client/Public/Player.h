@@ -26,6 +26,13 @@ END
 BEGIN(Client)
 class CPlayer final : public CGameObject
 {
+public:
+	typedef struct tagPlayerDesc
+	{
+		_float3 vPosition = {_float3()};
+		LEVELID eLevelID= { LEVEL_END };
+	}PLAYERDESC;
+
 private:
 	explicit CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CPlayer(const CPlayer& rhs);
@@ -91,6 +98,8 @@ private:
 	CMagicBall* m_pMagicBall = { nullptr };
 
 	function<void(_float3, _float)> m_pFrncSpellToggle = { nullptr };
+
+	LEVELID m_eLevelID = { LEVEL_END };
 
 private:
 	HRESULT Add_Components();
