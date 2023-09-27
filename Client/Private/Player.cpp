@@ -131,6 +131,14 @@ void CPlayer::Tick(_float fTimeDelta)
 	
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UNDERBODY);
+
+
+	//루모스 업데이트
+	if (nullptr != m_pFrncSpellToggle)
+	{
+		m_pFrncSpellToggle(_float3(), _float());
+	}
+	
 }
 
 void CPlayer::Late_Tick(_float fTimeDelta)
@@ -354,6 +362,14 @@ HRESULT CPlayer::Render_Depth()
 	}
 
 	return S_OK;
+}
+
+void CPlayer::On_Maigc_Throw_Data(void* data)
+{
+	if (static_cast<CMagicBall::COLLSIONREQUESTDESC*>(data)->eMagicTag == LUMOS)
+	{
+		m_pFrncSpellToggle = static_cast<CMagicBall::COLLSIONREQUESTDESC*>(data)->Action;
+	}
 }
 
 HRESULT CPlayer::Add_Components()
@@ -619,7 +635,9 @@ HRESULT CPlayer::Add_Magic()
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(1, LEVIOSO);
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(2, FINISHER);
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(3, NCENDIO);
-	//m_pMagicSlot->Add_Magic_To_Skill_Slot(3, LUMOS);
+	m_pMagicSlot->Add_Magic_To_Basic_Slot(2, LUMOS);
+
+
 	
 	return S_OK;
 }
@@ -1423,6 +1441,23 @@ void CPlayer::Shot_Magic_Spell()
 
 		m_pStateContext->Set_StateMachine(TEXT("Magic_Cast"), &MagicCastingStateDesc);
 	}
+	else if (pGameInstance->Get_DIKeyState(DIK_F, CInput_Device::KEY_DOWN) &&
+		false == m_pStateContext->Is_Current_State(TEXT("Standing")) &&
+		false == m_pStateContext->Is_Current_State(TEXT("Hit")) &&
+		false == m_pStateContext->Is_Current_State(TEXT("Protego")) &&
+		false == m_pStateContext->Is_Current_State(TEXT("Hard Land")) &&
+		false == m_pStateContext->Is_Current_State(TEXT("Jump")) &&
+		false == m_pStateContext->Is_Current_State(TEXT("Roll")))
+	{
+		Find_Target_For_Distance();
+		//마법 시전 스테이트
+		CMagicCastingState::MAGICCASTINGSTATEDESC MagicCastingStateDesc;
+
+		MagicCastingStateDesc.pFuncSpell = [&] { (*this).Lumos(); };
+
+		m_pStateContext->Set_StateMachine(TEXT("Magic_Cast"), &MagicCastingStateDesc);
+	}
+
 
 	ENDINSTANCE;
 }
@@ -1482,6 +1517,18 @@ void CPlayer::Shot_Finisher()
 	}
 
 	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(2, m_pTargetTransform, OffSetMatrix, m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
+}
+
+void CPlayer::Lumos()
+{
+	if (nullptr == m_pFrncSpellToggle)
+	{
+		m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(2, m_pTransform, XMMatrixIdentity(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_NONE);
+	}
+	else
+	{
+		m_pFrncSpellToggle = nullptr;
+	}
 }
 
 

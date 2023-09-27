@@ -101,7 +101,8 @@ void CMagicCastingState::OnStateEnter(void* _pArg)
 		pGameInstance->Get_DIKeyState(DIK_1, CInput_Device::KEY_DOWN) ||
 		pGameInstance->Get_DIKeyState(DIK_2, CInput_Device::KEY_DOWN) ||
 		pGameInstance->Get_DIKeyState(DIK_3, CInput_Device::KEY_DOWN) ||
-		pGameInstance->Get_DIKeyState(DIK_4, CInput_Device::KEY_DOWN)
+		pGameInstance->Get_DIKeyState(DIK_4, CInput_Device::KEY_DOWN) ||
+		pGameInstance->Get_DIKeyState(DIK_F, CInput_Device::KEY_DOWN)
 		))
 	{
 		MAGICCASTINGSTATEDESC* pMagicCastingStateDesc = static_cast<MAGICCASTINGSTATEDESC*>(_pArg);

@@ -47,6 +47,8 @@ public:
 	virtual HRESULT Render() override;
 	virtual HRESULT Render_Depth() override;
 
+	virtual void On_Maigc_Throw_Data(void* data) override;
+
 private:
 	CShader*		m_pShader = { nullptr };
 	CShader*		m_pShadowShader = { nullptr };
@@ -87,6 +89,8 @@ private:
 	CMagic::MAGICDESC* m_pBasicDesc_Heavy = { nullptr };
 
 	CMagicBall* m_pMagicBall = { nullptr };
+
+	function<void(_float3, _float)> m_pFrncSpellToggle = { nullptr };
 
 private:
 	HRESULT Add_Components();
@@ -145,6 +149,7 @@ private:
 	void Shot_Confringo();
 	void Shot_NCENDIO();
 	void Shot_Finisher();
+	void Lumos();
 
 public:
 	static CPlayer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
