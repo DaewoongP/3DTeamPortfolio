@@ -69,7 +69,7 @@ void CObject_Window::Tick(_float fTimeDelta)
 
 	// Picking 창 On / Off
 	ImGui::Checkbox("Picking", &m_isCheckPicking);
-	if(true == m_isCheckPicking)
+	if (true == m_isCheckPicking)
 	{
 		Picking_Menu();
 	}
@@ -171,11 +171,11 @@ void CObject_Window::Picking_Menu()
 	ImGui::DragFloat3("Scale", m_vDummyMatrix[DUMMY_SCALE], 0.1f, -10.f, 10.f);
 	ImGui::SameLine(); CHelpMaker::HelpMarker("-10.f ~ 10.f");
 
-	ImGui::DragFloat3("Rotation", m_vDummyMatrix[DUMMY_ROT], 5.f, 0.f, 360.f);
-	ImGui::SameLine(); CHelpMaker::HelpMarker("0.f ~ 360.f");
+	ImGui::DragFloat3("Rotation", m_vDummyMatrix[DUMMY_ROT], 5.f, -360.f, 360.f);
+	ImGui::SameLine(); CHelpMaker::HelpMarker("-360.f ~ 360.f");
 
-	ImGui::DragFloat3("Translation", m_vDummyMatrix[DUMMY_TRANS], 1.f, -50.f, 50.f);
-	ImGui::SameLine(); CHelpMaker::HelpMarker("-50.f ~ 50.f");
+	ImGui::DragFloat3("Translation", m_vDummyMatrix[DUMMY_TRANS], 1.f, -250.f, 250.f);
+	ImGui::SameLine(); CHelpMaker::HelpMarker("-250.f ~ 250.f");
 
 	// 상태 행렬 초기화
 	if (ImGui::Button("reset"))
@@ -211,8 +211,8 @@ void CObject_Window::Picking_Menu()
 
 			m_pDummy->Set_Pos(vPos);
 		}
-		
-		_float3 vTranslation = 
+
+		_float3 vTranslation =
 		{ vPos.x + m_vDummyMatrix[DUMMY_TRANS][0], vPos.y + m_vDummyMatrix[DUMMY_TRANS][1], vPos.z + m_vDummyMatrix[DUMMY_TRANS][2] };
 
 		m_pDummy->Get_Transform()->Set_Scale_No_Zero(vScale);
@@ -267,7 +267,7 @@ void CObject_Window::Install_Object(_float3 vPos)
 
 		// 번호를 붙인 태그로 MapObject 등록
 		if (FAILED(m_pGameInstance->Add_Component(LEVEL_TOOL, LEVEL_TOOL,
-			TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_MapObject"), 
+			TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_MapObject"),
 			m_vecMapObjectTag.back().c_str(), &vWorldMatrix)))
 		{
 			MSG_BOX("Failed to Install MapObject");
@@ -304,11 +304,11 @@ void CObject_Window::Install_Object(_float3 vPos)
 void CObject_Window::Install_Continuous_Object(_float3 vPos)
 {
 	m_fTimeAcc += m_pGameInstance->Get_World_Tick();
-	
+
 	// 마우스를 꾹 누르고 있으면 연속 설치
 	if (true == m_pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_PRESSING) &&
 		m_pGameInstance->IsMouseInClient(m_pContext, g_hWnd) &&
-		-1.f != vPos.x && 
+		-1.f != vPos.x &&
 		0.1f < m_fTimeAcc)
 	{
 		m_fTimeAcc = 0.f;
@@ -378,7 +378,7 @@ void CObject_Window::Install_Random_Object(_float3 vPos)
 			fR = max(m_vRandomInstall[0].x, m_vRandomInstall[1].x);
 			fT = max(m_vRandomInstall[0].z, m_vRandomInstall[1].z);
 			fB = min(m_vRandomInstall[0].z, m_vRandomInstall[1].z);
-			
+
 			// 범위 내 랜덤한 곳에 설정한 수만큼 모델 설치
 			for (size_t i = 0; i < 5; i++)
 			{
@@ -572,7 +572,7 @@ void CObject_Window::Select_Model()
 	}
 
 	// 모델 선택
-	ImGui::ListBox("ModelList", &m_iModelIndex, VectorGetter, 
+	ImGui::ListBox("ModelList", &m_iModelIndex, VectorGetter,
 		static_cast<void*>(&m_vecModelList), (_int)m_vecModelList.size(), 15);
 
 	// 선택된 모델을 적용
@@ -623,7 +623,7 @@ void CObject_Window::Save_Load_Menu()
 			// action
 			// 주소 가공
 			std::string strFilePathName = ImGuiFileDialog::Instance()->GetFilePathName();
-			
+
 			wstring ws;
 			ws.assign(strFilePathName.begin(), strFilePathName.end());
 			lstrcpy(m_wszMapLoadDataPath, ws.c_str());
@@ -788,7 +788,7 @@ void CObject_Window::Delete_Object_Menu()
 
 		ImGui::SameLine();
 
-		 // yes를 누르면 MapObject 전부 삭제
+		// yes를 누르면 MapObject 전부 삭제
 		if (ImGui::Button("Yes"))
 		{
 			if (FAILED(m_pGameInstance->Clear_Layer(LEVEL_TOOL, TEXT("Layer_MapObject"))))
@@ -806,7 +806,7 @@ void CObject_Window::Delete_Object_Menu()
 			// 인스턴싱 관련 초기화
 			m_iPushBackInsObject = 0;
 			m_iInsObjectCnt = 0;
-			
+
 			for (auto& iter : m_vecFreeMatrix)
 			{
 				Safe_Delete_Array(iter);
@@ -851,7 +851,7 @@ void CObject_Window::Mesh_Picking_Menu()
 		if (nullptr == m_pContext)
 			return;
 		m_pContext->RSGetViewports(&iNumViewPorts, &ViewPort);
-		
+
 		POINT	pt{};
 		GetCursorPos(&pt);
 		ScreenToClient(g_hWnd, &pt);
@@ -944,7 +944,7 @@ void CObject_Window::Mesh_Picking_Menu()
 		else
 		{
 			m_vObjectPickingPos = pObject->Get_Transform()->Get_Position();
-		}		
+		}
 
 		m_pContext->Unmap(pCopyTexture2D, 0);
 
@@ -1001,9 +1001,9 @@ void CObject_Window::Change_Picking_Menu(const _tchar* wszTag, _uint iTagNum)
 		m_vChangeMapScaleOffset = m_pObject->Get_Transform()->Get_Scale();
 		m_vChangeMapRotOffset = m_pObject->Get_Transform()->Get_Quaternion();
 		m_vChangeMapTransOffset = m_pObject->Get_Transform()->Get_Position();
-		
+
 		m_pChangeMapObject = m_pObject;
-	}	
+	}
 
 	// imGui에서 값을 조정해서 변환 행렬을 만들어줌.
 	ImGui::DragFloat3("Scale", m_vChangeMapObject[DUMMY_SCALE], 0.1f, 0.1f, 10.f);
@@ -1077,6 +1077,24 @@ void CObject_Window::Delete_Picking_Object()
 
 void CObject_Window::Delete_Picking_Object_Ins()
 {
+	//if (0 < m_vecSaveInsObject.size())
+	//{
+	//	if (FAILED(m_pGameInstance->Delete_Component(LEVEL_TOOL,
+	//		TEXT("Layer_MapObject"), m_vecMapObjectTag.at(iNum).c_str())))
+	//	{
+	//		MSG_BOX("Failed to delete Picking MapObject_Ins");
+	//		return;
+	//	}
+
+	//	if (0 < m_iMapObjectIndex)
+	//	{
+	//		--m_iMapObjectIndex;
+	//	}
+
+	//	m_vecMapObjectTag.erase(m_vecMapObjectTag.begin() + iNum);
+	//	m_vecInsObjectTag.erase(m_vecInsObjectTag.begin() + iNum);
+	//	m_vecSaveInsObject.erase(m_vecSaveInsObject.begin() + iNum);
+	//}
 }
 
 void CObject_Window::Map_Brushing_Menu()
@@ -1156,8 +1174,8 @@ void CObject_Window::Map_Brushing_Menu()
 
 void CObject_Window::All_Map_Object_Translation()
 {
-	ImGui::DragFloat3("All MapObject Translation", m_vAllMapTrans, 1.f, -100.f, 100.f);
-	ImGui::SameLine(); CHelpMaker::HelpMarker("-100.f ~ 100.f");
+	ImGui::DragFloat3("All MapObject Translation", m_vAllMapTrans, 1.f, -500.f, 500.f);
+	ImGui::SameLine(); CHelpMaker::HelpMarker("-500.f ~ 500.f");
 
 	if (m_vAllMapTrans[0] != m_vAllMapPre[0] ||
 		m_vAllMapTrans[1] != m_vAllMapPre[1] ||
@@ -1171,7 +1189,7 @@ void CObject_Window::All_Map_Object_Translation()
 			_float3 vPos = pMapObject->Get_Transform()->Get_Position();
 
 			_float3 vTranslation =
-			{ vPos.x + (m_vAllMapTrans[0] - m_vAllMapPre[0]), 
+			{ vPos.x + (m_vAllMapTrans[0] - m_vAllMapPre[0]),
 				vPos.y + (m_vAllMapTrans[1] - m_vAllMapPre[1]),
 				vPos.z + (m_vAllMapTrans[2] - m_vAllMapPre[2]) };
 
@@ -1196,7 +1214,7 @@ void CObject_Window::All_Map_Object_Translation()
 		{
 			m_vAllMapPre[i] = m_vAllMapTrans[i];
 		}
-	}	
+	}
 }
 
 HRESULT CObject_Window::Save_MapObject(string szMapDataPath)
@@ -1227,7 +1245,7 @@ HRESULT CObject_Window::Save_MapObject(string szMapDataPath)
 		}
 
 		if (!WriteFile(hFile, &iter.iTagLen, sizeof(_uint), &dwByte, nullptr))
-		{ 
+		{
 			MSG_BOX("Failed to Write m_vecSaveObject.iTagLen");
 			return E_FAIL;
 		}
@@ -1356,7 +1374,7 @@ HRESULT CObject_Window::Save_MapObject_Ins(string szMapDataPath)
 			MSG_BOX("Failed to Write iInstanceCnt");
 			return E_FAIL;
 		}
-		
+
 		// 여기서 따로 벡터에 저장해둔 값들을 저장한다.
 		for (size_t j = 0; j < m_vecSaveInsObject.at(i).iInstanceCnt; ++j)
 		{
@@ -1490,7 +1508,7 @@ HRESULT CObject_Window::Load_MapObject_Ins(const _tchar* wszMapDataPath)
 
 		_tchar wszNumber[MAX_PATH];
 		_itow_s(j, wszNumber, 10);
-		
+
 		ws += wszNumber; // 여기까지 오면 Prototype_Component_Model_Instance_모델명_번호 이런식으로 이름이 붙음	
 
 		m_vecInsObjectTag.push_back(ws);
@@ -1592,7 +1610,7 @@ void CObject_Window::Deep_Copy_Path(const _tchar* wszPath)
 			++iCount;
 		}
 	}
-	
+
 	// 중복이라면 저장하지 않는다.
 	if (0 == iCount)
 	{
@@ -1602,7 +1620,7 @@ void CObject_Window::Deep_Copy_Path(const _tchar* wszPath)
 	else
 	{
 		delete[] wszNew;
-	}		
+	}
 }
 
 void CObject_Window::Deep_Copy_Tag(const _tchar* wszTag)
@@ -1665,7 +1683,7 @@ _float3 CObject_Window::Find_PickingPos()
 	{
 		return _float3(-1.f, -1.f, -1.f);
 	}
-	
+
 	m_pGameInstance->Get_WorldMouseRay(m_pContext, g_hWnd, &vRayPos, &vRayDir);
 
 	CVIBuffer_Terrain* pTerrain = static_cast<CVIBuffer_Terrain*>(
