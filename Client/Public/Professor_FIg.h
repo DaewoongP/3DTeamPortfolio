@@ -15,6 +15,7 @@ class CRootBehavior;
 END
 
 BEGIN(Client)
+class CMagicBall;
 class CMagicSlot;
 class CWeapon_Fig_Wand;
 END
@@ -92,6 +93,9 @@ private: /* Notify Functions */
 	void Attack_Heavy();
 	void Cast_Levioso();
 	void Cast_Protego();
+	void Shot_Magic();
+
+	CMagicBall* m_CastingMagic = { nullptr };
 
 public:
 	static CProfessor_Fig* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -21,7 +21,7 @@ HRESULT CRandom_Select::Initialize(void* pArg)
 			BEGININSTANCE;
 			_float fInterval = pGameInstance->Get_World_TimeAcc() - m_fPreWorldTimeAcc;
 			ENDINSTANCE;
-
+			
 			if (m_fLimit > fInterval)
 				return false;
 
@@ -60,18 +60,12 @@ HRESULT CRandom_Select::Tick(const _float& fTimeDelta)
 
 void CRandom_Select::Reset_Behavior(HRESULT result)
 {
-	_uint* pICurrentSpell = { nullptr };
-	if (FAILED(m_pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
-		return;
-
 	(*m_iterCurBehavior)->Reset_Behavior(result);
-	if (BUFF_NONE != *pICurrentSpell)
+	if (BEHAVIOR_RUNNING == m_ReturnData &&	// 현재 행동이 진행중이었는데
+		BEHAVIOR_RUNNING != result)			// 상위 노드에서 상태가 바뀐경우
 	{
+		m_ReturnData = result;
 		Set_Random_Behavior();
-
-		BEGININSTANCE;
-		m_fPreWorldTimeAcc = pGameInstance->Get_World_TimeAcc();
-		ENDINSTANCE;
 	}
 }
 

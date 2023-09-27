@@ -542,11 +542,11 @@ HRESULT CDugbog::Make_Death(_Inout_ CSequence* pSequence)
 			});
 		pAction_Death_Ground->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 			{
-				_uint* pIPreviusSpell = { nullptr };
-				if (FAILED(pBlackBoard->Get_Type("iPreviusSpell", pIPreviusSpell)))
+				_uint* piCurrentSpell = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", piCurrentSpell)))
 					return false;
 
-				if (BUFF_LEVIOSO & *pIPreviusSpell)
+				if (BUFF_LEVIOSO & *piCurrentSpell)
 					return false;
 
 				return true;
@@ -642,7 +642,11 @@ HRESULT CDugbog::Make_Alive(_Inout_ CSelector* pSelector)
 				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
 					return false;
 
-				return BUFF_NONE == *pICurrentSpell;
+				if (BUFF_LEVIOSO & *pICurrentSpell ||
+					BUFF_LEVIOSO_TONGUE & *pICurrentSpell)
+					return false;
+
+				return true;
 			});
 
 		/* Set Options */
@@ -714,17 +718,13 @@ HRESULT CDugbog::Make_Hit_Combo(_Inout_ CSelector* pSelector)
 			{
 				_bool* pIsHitCombo = { nullptr };
 				_uint* pICurrentSpell = { nullptr };
-				_uint* pIPreviusSpell = { nullptr };
 				if (FAILED(pBlackBoard->Get_Type("isHitCombo", pIsHitCombo)))
 					return false;
 				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
 					return false;
-				if (FAILED(pBlackBoard->Get_Type("iPreviusSpell", pIPreviusSpell)))
-					return false;
 
 				// 이부분은 애매한 처리임. 나중에 몬스터에 맞은 마법값이 이상하게 동작할 경우 확인할 것
 				*pICurrentSpell = BUFF_NONE;
-				*pIPreviusSpell = BUFF_NONE;
 
 				*pIsHitCombo = false;
 
@@ -1287,31 +1287,31 @@ HRESULT CDugbog::Make_Levioso_Combo(_Inout_ CSelector* pSelector)
 		/* Set Decorator */
 		pSelector->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 			{
-				_uint* pIPreviusSpell = { nullptr };
-				if (FAILED(pBlackBoard->Get_Type("iPreviusSpell", pIPreviusSpell)))
+				_uint* piCurrentSpell = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", piCurrentSpell)))
 					return false;
-
-				if (BUFF_LEVIOSO & *pIPreviusSpell ||
-					BUFF_LEVIOSO_TONGUE & *pIPreviusSpell)
+				cout << *piCurrentSpell << endl;
+				if (BUFF_LEVIOSO & *piCurrentSpell ||
+					BUFF_LEVIOSO_TONGUE & *piCurrentSpell)
 					return true;
 
 				return false;
 			});
 		pSelector_AirHit->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 			{
-				_uint* pIPreviusSpell = { nullptr };
-				if (FAILED(pBlackBoard->Get_Type("iPreviusSpell", pIPreviusSpell)))
+				_uint* piCurrentSpell = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", piCurrentSpell)))
 					return false;
 
-				return BUFF_LEVIOSO & *pIPreviusSpell;
+				return BUFF_LEVIOSO & *piCurrentSpell;
 			});
 		/*pSequence_AitHit_Tongue->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 			{
-				_uint* pIPreviusSpell = { nullptr };
-				if (FAILED(pBlackBoard->Get_Type("iPreviusSpell", pIPreviusSpell)))
+				_uint* piCurrentSpell = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", piCurrentSpell)))
 					return false;
 
-				return BUFF_LEVIOSO_TONGUE & *pIPreviusSpell;
+				return BUFF_LEVIOSO_TONGUE & *piCurrentSpell;
 			});*/
 
 		/* Set Options */
@@ -1440,15 +1440,11 @@ HRESULT CDugbog::Make_Air_Hit(_Inout_ CSelector* pSelector)
 			{
 				_bool* pIsHitCombo = { nullptr };
 				_uint* pICurrentSpell = { nullptr };
-				_uint* pIPreviusSpell = { nullptr };
 				if (FAILED(pBlackBoard->Get_Type("isHitCombo", pIsHitCombo)))
-					return false;
-				if (FAILED(pBlackBoard->Get_Type("iPreviusSpell", pIPreviusSpell)))
 					return false;
 				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
 					return false;
-
-				*pIPreviusSpell = BUFF_NONE;
+				
 				*pICurrentSpell = BUFF_NONE;
 
 				*pIsHitCombo = false;
@@ -1459,15 +1455,11 @@ HRESULT CDugbog::Make_Air_Hit(_Inout_ CSelector* pSelector)
 			{
 				_bool* pIsHitCombo = { nullptr };
 				_uint* pICurrentSpell = { nullptr };
-				_uint* pIPreviusSpell = { nullptr };
 				if (FAILED(pBlackBoard->Get_Type("isHitCombo", pIsHitCombo)))
-					return false;
-				if (FAILED(pBlackBoard->Get_Type("iPreviusSpell", pIPreviusSpell)))
 					return false;
 				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
 					return false;
 
-				*pIPreviusSpell = BUFF_NONE;
 				*pICurrentSpell = BUFF_NONE;
 
 				*pIsHitCombo = false;

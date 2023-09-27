@@ -69,7 +69,6 @@ protected:
 	const CGameObject* m_pTarget = { nullptr };
 	const CGameObject* m_pPlayer = { nullptr };
 	_uint m_iCurrentSpell = { 0 };
-	_uint m_iPreviusSpell = { 0 };
 	unordered_map<BUFF_TYPE, function<void(_float3, _float)>> m_CurrentTickSpells;
 
 	_bool m_isSpawn = { false };

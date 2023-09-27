@@ -4,6 +4,7 @@
 
 #include "Action.h"
 #include "MagicSlot.h"
+#include "MagicBall.h"
 #include "Check_Degree.h"
 #include "Check_Distance.h"
 #include "Selector_Degree.h"
@@ -343,6 +344,34 @@ HRESULT CProfessor_Fig::Make_Notifies()
 		return E_FAIL;
 
 	Func = [&] {(*this).Cast_Protego(); };
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Cast_Protego"), TEXT("Cast_Protego"), Func)))
+		return E_FAIL;
+
+	Func = [&] {(*this).Shot_Magic(); };
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Front_1"), TEXT("Cast_Protego"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Step_Back_2"), TEXT("Cast_Protego"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Step_Back_3"), TEXT("Cast_Protego"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Left_45"), TEXT("Cast_Protego"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Left_90"), TEXT("Cast_Protego"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Left_135"), TEXT("Cast_Protego"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Right_45"), TEXT("Cast_Protego"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Right_90"), TEXT("Cast_Protego"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Right_135"), TEXT("Cast_Protego"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Right_180"), TEXT("Cast_Protego"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Heavy_Front_2"), TEXT("Cast_Protego"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Levioso"), TEXT("Cast_Protego"), Func)))
+		return E_FAIL;
 	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Cast_Protego"), TEXT("Cast_Protego"), Func)))
 		return E_FAIL;
 
@@ -949,7 +978,7 @@ void CProfessor_Fig::Attack_Light()
 	if (nullptr != m_pTarget)
 		OffsetMatrix = m_pTarget->Get_Offset_Matrix();
 
-	m_pMagicSlot->Action_Magic_Basic(0, m_pTarget->Get_Transform(),
+	m_CastingMagic = m_pMagicSlot->Action_Magic_Basic(0, m_pTarget->Get_Transform(),
 		OffsetMatrix,
 		m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(),
 		m_pWeapon->Get_Wand_Point_OffsetMatrix(),
@@ -968,7 +997,7 @@ void CProfessor_Fig::Attack_Heavy()
 	if (nullptr != m_pTarget)
 		OffsetMatrix = m_pTarget->Get_Offset_Matrix();
 
-	m_pMagicSlot->Action_Magic_Basic(0, m_pTarget->Get_Transform(),
+	m_CastingMagic = m_pMagicSlot->Action_Magic_Basic(0, m_pTarget->Get_Transform(),
 		OffsetMatrix,
 		m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(),
 		m_pWeapon->Get_Wand_Point_OffsetMatrix(),
@@ -984,7 +1013,7 @@ void CProfessor_Fig::Cast_Levioso()
 	if (nullptr != m_pTarget)
 		OffsetMatrix = m_pTarget->Get_Offset_Matrix();
 
-	m_pMagicSlot->Action_Magic_Skill(0, m_pTarget->Get_Transform(),
+	m_CastingMagic = m_pMagicSlot->Action_Magic_Skill(0, m_pTarget->Get_Transform(),
 		OffsetMatrix,
 		m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(),
 		m_pWeapon->Get_Wand_Point_OffsetMatrix(),
@@ -996,11 +1025,16 @@ void CProfessor_Fig::Cast_Protego()
 	if (nullptr == m_pTarget)
 		return;
 
-	m_pMagicSlot->Action_Magic_Basic(1, m_pTransform,
+	m_CastingMagic = m_pMagicSlot->Action_Magic_Basic(1, m_pTransform,
 		XMMatrixTranslation(0.f, 1.f, 0.f),
 		m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(),
 		m_pWeapon->Get_Wand_Point_OffsetMatrix(),
 		COL_MAGIC);
+}
+
+void CProfessor_Fig::Shot_Magic()
+{
+	m_CastingMagic->Do_MagicBallState_To_Next();
 }
 
 CProfessor_Fig* CProfessor_Fig::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
