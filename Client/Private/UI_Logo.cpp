@@ -41,7 +41,11 @@ void CUI_Logo::Tick(_float fTimeDelta)
 void CUI_Logo::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
+
+#ifdef _DEBUG
 	Debug_UI(fTimeDelta);
+#endif // _DEBUG
+	
 	if (nullptr != m_pRendererCom)
 	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this);

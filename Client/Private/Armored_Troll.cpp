@@ -15,7 +15,7 @@
 #include "Sequence_Groggy.h"
 #include "Sequence_Attack.h"
 #include "UI_Group_Enemy_HP.h"
-#include "Sequence_Levitated.h"
+#include "Sequence_Levitate.h"
 #include "Sequence_MoveTarget.h"
 
 CArmored_Troll::CArmored_Troll(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -69,12 +69,7 @@ void CArmored_Troll::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	static _bool testt = { false };
-
-	if (CGameInstance::GetInstance()->Get_DIKeyState(DIK_0, CInput_Device::KEY_DOWN))
-		testt = !testt;
-	
-	if (nullptr != m_pRootBehavior && true == testt)
+	if (nullptr != m_pRootBehavior)
 		m_pRootBehavior->Tick(fTimeDelta);
 
 	if (nullptr != m_pModelCom)
@@ -111,8 +106,10 @@ void CArmored_Troll::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		m_pHealth->Damaged(iDamage);
 
 		auto iter = m_CurrentTickSpells.find(eBuff);
-		if (iter == m_CurrentTickSpells.end())
+		if (iter == m_CurrentTickSpells.end() && BUFF_LEVIOSO == eBuff)
+		{
 			m_CurrentTickSpells.emplace(eBuff, Action);
+		}
 
 		m_iCurrentSpell |= eBuff;
 	}
@@ -396,6 +393,16 @@ HRESULT CArmored_Troll::Add_Components()
 			TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
 			throw TEXT("Com_RigidBody");
 
+		m_OffsetMatrix = XMMatrixTranslation(RigidBodyDesc.vOffsetPosition.x, RigidBodyDesc.vOffsetPosition.y, RigidBodyDesc.vOffsetPosition.z);
+
+		/* For.Collider_Body_Attack */
+		RigidBodyDesc.isStatic = true;
+		RigidBodyDesc.isTrigger = true;
+		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC;
+		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Body_Attack");
+		if (FAILED(m_pRigidBody->Create_Collider(&RigidBodyDesc)))
+			throw TEXT("Failed Create_Collider");
+
 		/* For.Com_Weapon */
 		const CBone* pBone = m_pModelCom->Get_Bone(TEXT("SKT_RightHand"));
 		if (nullptr == pBone)
@@ -416,12 +423,14 @@ HRESULT CArmored_Troll::Add_Components()
 
 		Desc.eType = CUI_Group_Enemy_HP::ENEMYTYPE::BOSS;
 		Desc.pHealth = m_pHealth;
-		lstrcpy(Desc.wszObjectLevel, TEXT("77"));
-		lstrcpy(Desc.wszObjectName, TEXT("°³Ã¶¹Î"));
+		lstrcpy(Desc.wszObjectLevel, TEXT("10"));
+		lstrcpy(Desc.wszObjectName, TEXT("¹«ÀåÇÑ Æ®·Ñ"));
 
-		if (FAILED(Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Enemy_HP"),
-			TEXT("UI_Enemy_HP"), reinterpret_cast<CComponent**>(&m_pUI_HP), &Desc)))
-			throw TEXT("UI_Enemy_HP");
+		BEGININSTANCE;
+		m_pUI_HP = dynamic_cast<CUI_Group_Enemy_HP*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Enemy_HP"), &Desc));
+		ENDINSTANCE;
+		if (nullptr == m_pUI_HP)
+			throw TEXT("m_pUI_HP is nullptr");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -749,7 +758,6 @@ HRESULT CArmored_Troll::Make_Attack_Degree(_Inout_ CSequence* pSequence)
 					MSG_BOX("Failed Get_Type fTargetDistance");
 					return false;
 				}
-
 				return 7.f >= fTargetDistance;
 			});
 
@@ -1937,6 +1945,7 @@ void CArmored_Troll::Enter_Body_Attack()
 	m_CollisionRequestDesc.iDamage = 0;
 	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
 	Set_CollisionData(&m_CollisionRequestDesc);
+	m_pRigidBody->Enable_Collision("Enemy_Body_Attack", this);
 }
 
 void CArmored_Troll::Exit_Attack()
@@ -1944,6 +1953,7 @@ void CArmored_Troll::Exit_Attack()
 	m_CollisionRequestDesc.eType = ATTACK_NONE;
 	m_CollisionRequestDesc.iDamage = 0;
 	Set_CollisionData(&m_CollisionRequestDesc);
+	m_pRigidBody->Disable_Collision("Enemy_Body_Attack");
 	m_pWeapon->Off_Collider_Attack(&m_CollisionRequestDesc);
 }
 

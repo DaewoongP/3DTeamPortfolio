@@ -65,7 +65,8 @@ namespace Client
 		BUFF_CURSE			= 1 << 9,
 		BUFF_STUPEFY		= 1 << 10,
 		BUFF_DESCENDO		= 1 << 11,
-		BUFF_END = 13
+		BUFF_LEVIOSO_TONGUE = 1 << 12,
+		BUFF_END = 14
 	};
 
 #pragma region UI Scene

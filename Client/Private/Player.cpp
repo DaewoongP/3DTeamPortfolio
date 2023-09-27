@@ -11,7 +11,8 @@
 #include "ProtegoState.h"
 #include "MagicCastingState.h"
 
-#include "Armored_Troll.h"
+#include "Enemy.h"
+#include "UI_Group_Enemy_HP.h"
 
 #include "Magic.h"
 
@@ -152,6 +153,19 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 #ifdef _DEBUG
 	Tick_ImGui();
 #endif // _DEBUG
+
+	if (nullptr != m_pTarget)
+	{
+		if (true == m_pTarget->isDead())
+		{
+			m_pTarget = nullptr;
+			return;
+		}
+
+		CEnemy* pEnemy = static_cast<CEnemy*>(m_pTarget);
+		if (nullptr != pEnemy)
+			pEnemy->Get_UI_Enemy_HP()->Late_Tick(fTimeDelta);
+	}
 }
 
 void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
@@ -179,20 +193,20 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 
 			switch (pDesc->eType)
 			{
-			case CArmored_Troll::ATTACK_NONE:
+			case CEnemy::ATTACK_NONE:
 			{	}
 			break;
-			case CArmored_Troll::ATTACK_LIGHT:
+			case CEnemy::ATTACK_LIGHT:
 			{
 				ProtegoStateDesc.iHitType = CProtegoState::HIT_LIGHT;
 			}
 			break;
-			case CArmored_Troll::ATTACK_HEAVY:
+			case CEnemy::ATTACK_HEAVY:
 			{
 				ProtegoStateDesc.iHitType = CProtegoState::HIT_HEABY;
 			}
 			break;
-			case CArmored_Troll::ATTACKTYPE_END:
+			case CEnemy::ATTACKTYPE_END:
 			{	}
 			break;
 
@@ -221,20 +235,20 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 
 			switch (pDesc->eType)
 			{
-			case CArmored_Troll::ATTACK_NONE:
+			case CEnemy::ATTACK_NONE:
 			{	}
 			break;
-			case CArmored_Troll::ATTACK_LIGHT:
+			case CEnemy::ATTACK_LIGHT:
 			{
 				HitStateDesc.iHitType = CHitState::HIT_LIGHT;
 			}
 			break;
-			case CArmored_Troll::ATTACK_HEAVY:
+			case CEnemy::ATTACK_HEAVY:
 			{
 				HitStateDesc.iHitType = CHitState::HIT_HEABY;
 			}
 			break;
-			case CArmored_Troll::ATTACKTYPE_END:
+			case CEnemy::ATTACKTYPE_END:
 			{	}
 			break;
 
@@ -511,8 +525,8 @@ HRESULT CPlayer::SetUp_ShaderResources()
 	if (FAILED(m_pShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
 		return E_FAIL;
 
-	_float3 vHairColor = { 0.f, 0.f, 1.f };
-	if (FAILED(m_pShader->Bind_RawValue("g_fHairColor", &vHairColor, sizeof(_float3))))
+	_float3 vHairColor = { 0.2f, 0.2f, 0.2f };
+	if (FAILED(m_pShader->Bind_RawValue("g_vHairColor", &vHairColor, sizeof(_float3))))
 		return E_FAIL;
 
 	_float4 vColor = _float4(0.2f, 0.2f, 0.2f, 1.f);
@@ -825,7 +839,7 @@ HRESULT CPlayer::Ready_MagicDesc()
 	magicInitDesc.fBallDistance = 30;
 	magicInitDesc.fLifeTime = 0.6f;
 
-	m_pBasicDesc_Light = New CMagic::MAGICDESC(magicInitDesc);
+	m_BasicDesc_Light = magicInitDesc;
 
 	magicInitDesc.eBuffType = BUFF_ATTACK_HEAVY;
 	magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
@@ -837,11 +851,10 @@ HRESULT CPlayer::Ready_MagicDesc()
 	magicInitDesc.fBallDistance = 30;
 	magicInitDesc.fLifeTime = 0.6f;
 
-	m_pBasicDesc_Heavy = New CMagic::MAGICDESC(magicInitDesc);
+	m_BasicDesc_Heavy = magicInitDesc;
 
 	return S_OK;
 }
-
 
 void CPlayer::MagicTestTextOutput()
 {
@@ -977,15 +990,25 @@ void CPlayer::Update_Target_Angle()
 void CPlayer::Shot_Basic_Spell()
 {
 	Find_Target_For_Distance();
-	m_pMagicSlot->Add_Magics(*m_pBasicDesc_Light);
-	m_pMagicSlot->Action_Magic_Basic(0, m_pTargetTransform, XMMatrixTranslation(0.f, 2.5f, 0.f), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
+	m_pMagicSlot->Add_Magics(m_BasicDesc_Light);
+
+	_float4x4 OffsetMatrix = _float4x4();
+	if (nullptr != m_pTarget)
+		OffsetMatrix = m_pTarget->Get_Offset_Matrix();
+
+	m_pMagicSlot->Action_Magic_Basic(0, m_pTargetTransform, OffsetMatrix, m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
 }
 
 void CPlayer::Shot_Basic_Last_Spell()
 {
 	Find_Target_For_Distance();
-	m_pMagicSlot->Add_Magics(*m_pBasicDesc_Heavy);
-	m_pMagicSlot->Action_Magic_Basic(0, m_pTargetTransform, XMMatrixTranslation(0.f, 2.5f, 0.f), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
+	m_pMagicSlot->Add_Magics(m_BasicDesc_Heavy);
+
+	_float4x4 OffsetMatrix = _float4x4();
+	if (nullptr != m_pTarget)
+		OffsetMatrix = m_pTarget->Get_Offset_Matrix();
+
+	m_pMagicSlot->Action_Magic_Basic(0, m_pTargetTransform, OffsetMatrix, m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
 }
 
 void CPlayer::Protego()
@@ -1183,6 +1206,9 @@ void CPlayer::Find_Target_For_Distance()
 	
 	for (unordered_map<const _tchar*, CComponent*>::iterator iter = pLayer->begin(); iter != pLayer->end(); iter++)
 	{
+		if (true == static_cast<CGameObject*>(iter->second)->isDead())
+			continue;
+
 		//플레이어와
 		_float3 vPlayerPos = m_pTransform->Get_Position();
 		
@@ -1438,8 +1464,5 @@ void CPlayer::Free()
 		{
 			Safe_Release(m_pTarget);
 		}
-
-		Safe_Delete(m_pBasicDesc_Heavy);
-		Safe_Delete(m_pBasicDesc_Light);
 	}
 }
