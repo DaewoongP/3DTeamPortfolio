@@ -526,7 +526,7 @@ void CParticleSystem::Action_By_StopOption()
 	}
 	else if ("Callback" == m_MainModuleDesc.strStopAction)
 	{
-		if(m_StopAction)
+		if(m_StopAction) // 콜백함수의 주소가 있는지 검사.
 			m_StopAction();
 		Disable();
 		Restart();
