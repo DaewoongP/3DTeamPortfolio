@@ -222,7 +222,7 @@ void CConfringo::Ready_DrawMagic()
 
 void CConfringo::Ready_CastMagic()
 {
-	Ready_SplineSpinMove(m_pMainTrail,_float2(0.2f, 0.20f),10.f);
+	Ready_SplineSpinMove(m_pMainTrail,_float2(0.2f, 0.20f),0.5f);
 	m_pMainTrail->Enable(m_vStartPostion);
 	m_pWandDustEffect->Enable(m_vStartPostion);
 }
@@ -243,7 +243,7 @@ void CConfringo::Tick_Begin(_float fTimeDelta)
 
 void CConfringo::Tick_DrawMagic(_float fTimeDelta)
 {
-	Do_MagicBallState_To_Next();
+	
 }
 
 void CConfringo::Tick_CastMagic(_float fTimeDelta)

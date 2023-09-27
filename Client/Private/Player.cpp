@@ -11,6 +11,8 @@
 #include "ProtegoState.h"
 #include "MagicCastingState.h"
 
+#include "Armored_Troll.h"
+#include "MagicBall.h"
 #include "Enemy.h"
 #include "UI_Group_Enemy_HP.h"
 
@@ -38,6 +40,10 @@ HRESULT CPlayer::Initialize_Prototype()
 
 HRESULT CPlayer::Initialize(void* pArg)
 {
+	PLAYERDESC* pPlayerDesc = static_cast<PLAYERDESC*>(pArg);
+
+	m_eLevelID = pPlayerDesc->eLevelID;
+
 	if (FAILED(__super::Initialize(pArg)))
 	{
 		MSG_BOX("Failed Player Initialize");
@@ -51,6 +57,8 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 		return E_FAIL;
 	}
+
+	m_pTransform->Set_Position(pPlayerDesc->vPosition);
 
 	if (FAILED(Add_Magic()))
 	{
@@ -92,6 +100,8 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::FIRST, CONFRINGO);
 	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::SECOND, LEVIOSO);
 
+	
+
 	return S_OK;
 }
 
@@ -132,6 +142,14 @@ void CPlayer::Tick(_float fTimeDelta)
 	
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UNDERBODY);
+
+
+	//루모스 업데이트
+	if (nullptr != m_pFrncSpellToggle)
+	{
+		m_pFrncSpellToggle(_float3(), _float());
+	}
+	
 }
 
 void CPlayer::Late_Tick(_float fTimeDelta)
@@ -261,7 +279,7 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			m_pStateContext->Set_StateMachine(TEXT("Hit"), &HitStateDesc);
 
 			//체력 수정
-			//m_pPlayer_Information->fix_HP();
+			m_pPlayer_Information->fix_HP((pDesc->iDamage)*-1);
 		}
 
 	}
@@ -368,6 +386,14 @@ HRESULT CPlayer::Render_Depth()
 	}
 
 	return S_OK;
+}
+
+void CPlayer::On_Maigc_Throw_Data(void* data)
+{
+	if (static_cast<CMagicBall::COLLSIONREQUESTDESC*>(data)->eMagicTag == LUMOS)
+	{
+		m_pFrncSpellToggle = static_cast<CMagicBall::COLLSIONREQUESTDESC*>(data)->Action;
+	}
 }
 
 HRESULT CPlayer::Add_Components()
@@ -633,7 +659,9 @@ HRESULT CPlayer::Add_Magic()
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(1, LEVIOSO);
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(2, FINISHER);
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(3, NCENDIO);
-	//m_pMagicSlot->Add_Magic_To_Skill_Slot(3, LUMOS);
+	m_pMagicSlot->Add_Magic_To_Basic_Slot(2, LUMOS);
+
+
 	
 	return S_OK;
 }
@@ -989,28 +1017,23 @@ void CPlayer::Update_Target_Angle()
 	
 }
 
+void CPlayer::Next_Spell_Action()
+{
+	m_pMagicBall->Do_MagicBallState_To_Next();
+}
+
 void CPlayer::Shot_Basic_Spell()
 {
 	Find_Target_For_Distance();
-	m_pMagicSlot->Add_Magics(m_BasicDesc_Light);
-
-	_float4x4 OffsetMatrix = _float4x4();
-	if (nullptr != m_pTarget)
-		OffsetMatrix = m_pTarget->Get_Offset_Matrix();
-
-	m_pMagicSlot->Action_Magic_Basic(0, m_pTargetTransform, OffsetMatrix, m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
+	m_pMagicSlot->Add_Magics(*m_pBasicDesc_Light);
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(0, m_pTargetTransform, XMMatrixTranslation(0.f, 2.5f, 0.f), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
 }
 
 void CPlayer::Shot_Basic_Last_Spell()
 {
 	Find_Target_For_Distance();
-	m_pMagicSlot->Add_Magics(m_BasicDesc_Heavy);
-
-	_float4x4 OffsetMatrix = _float4x4();
-	if (nullptr != m_pTarget)
-		OffsetMatrix = m_pTarget->Get_Offset_Matrix();
-
-	m_pMagicSlot->Action_Magic_Basic(0, m_pTargetTransform, OffsetMatrix, m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
+	m_pMagicSlot->Add_Magics(*m_pBasicDesc_Heavy);
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(0, m_pTargetTransform, XMMatrixTranslation(0.f, 2.5f, 0.f), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
 }
 
 void CPlayer::Protego()
@@ -1033,7 +1056,90 @@ HRESULT CPlayer::Bind_Notify()
 {
 	function<void()> funcNotify = [&] {(*this).Shot_Basic_Spell(); };
 
-	//Shot_Spell
+	//Ready_Spell
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_BM_RF_Cast_Casual_Fwd_01_anm"), TEXT("Ready_Spell"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_BM_RF_Cast_Casual_Fwd_02_anm"), TEXT("Ready_Spell"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_BM_RF_Cast_Casual_Fwd_03_anm"), TEXT("Ready_Spell"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_BM_RF_Cast_Casual_Fwd_04_anm"), TEXT("Ready_Spell"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_01_anm"), TEXT("Ready_Spell"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_02_anm"), TEXT("Ready_Spell"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_03_anm"), TEXT("Ready_Spell"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_StepBwd_01_anm"), TEXT("Ready_Spell"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_StepBwd_02_anm"), TEXT("Ready_Spell"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_StepBwd_03_anm"), TEXT("Ready_Spell"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
+
+	
+	funcNotify = [&] {(*this).Shot_Basic_Last_Spell(); };
+	
+	//Basic_Last
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Hvy_frmLft_anm"), TEXT("Ready_Spell"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_StepBwd_04_anm"), TEXT("Ready_Spell"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
+
+
+	funcNotify = [&] {(*this).Next_Spell_Action(); };
+	
+	//next_action_Spell
 	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_BM_RF_Cast_Casual_Fwd_01_anm"), TEXT("Shot_Spell"), funcNotify)))
 	{
 		MSG_BOX("Failed Bind_Notify");
@@ -1094,18 +1200,12 @@ HRESULT CPlayer::Bind_Notify()
 
 		return E_FAIL;
 	}
-
-	
-	funcNotify = [&] {(*this).Shot_Basic_Last_Spell(); };
-	
-	//Basic_Last
 	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Hvy_frmLft_anm"), TEXT("Shot_Spell"), funcNotify)))
 	{
 		MSG_BOX("Failed Bind_Notify");
 
 		return E_FAIL;
 	}
-
 	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_StepBwd_04_anm"), TEXT("Shot_Spell"), funcNotify)))
 	{
 		MSG_BOX("Failed Bind_Notify");
@@ -1113,7 +1213,24 @@ HRESULT CPlayer::Bind_Notify()
 		return E_FAIL;
 	}
 
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Spell_Action_01"), TEXT("Shot_Spell"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
 
+		return E_FAIL;
+	}
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Spell_Action_02"), TEXT("Shot_Spell"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Spell_Action_03"), TEXT("Shot_Spell"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
 
 
 	funcNotify = [&] {(*this).Protego(); };
@@ -1192,7 +1309,7 @@ void CPlayer::Find_Target_For_Distance()
 {
 	BEGININSTANCE;
 
-	unordered_map<const _tchar*, CComponent*>* pLayer = pGameInstance->Find_Components_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Monster"));
+	unordered_map<const _tchar*, CComponent*>* pLayer = pGameInstance->Find_Components_In_Layer(m_eLevelID, TEXT("Layer_Monster"));
 
 	if (nullptr == pLayer)
 	{
@@ -1350,6 +1467,23 @@ void CPlayer::Shot_Magic_Spell()
 
 		m_pStateContext->Set_StateMachine(TEXT("Magic_Cast"), &MagicCastingStateDesc);
 	}
+	else if (pGameInstance->Get_DIKeyState(DIK_F, CInput_Device::KEY_DOWN) &&
+		false == m_pStateContext->Is_Current_State(TEXT("Standing")) &&
+		false == m_pStateContext->Is_Current_State(TEXT("Hit")) &&
+		false == m_pStateContext->Is_Current_State(TEXT("Protego")) &&
+		false == m_pStateContext->Is_Current_State(TEXT("Hard Land")) &&
+		false == m_pStateContext->Is_Current_State(TEXT("Jump")) &&
+		false == m_pStateContext->Is_Current_State(TEXT("Roll")))
+	{
+		Find_Target_For_Distance();
+		//마법 시전 스테이트
+		CMagicCastingState::MAGICCASTINGSTATEDESC MagicCastingStateDesc;
+
+		MagicCastingStateDesc.pFuncSpell = [&] { (*this).Lumos(); };
+
+		m_pStateContext->Set_StateMachine(TEXT("Magic_Cast"), &MagicCastingStateDesc);
+	}
+
 
 	ENDINSTANCE;
 }
@@ -1365,7 +1499,7 @@ void CPlayer::Shot_Levioso()
 		OffSetMatrix = m_pTarget->Get_Offset_Matrix();
 	}
 
-	m_pMagicSlot->Action_Magic_Skill(1, m_pTargetTransform, OffSetMatrix, m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(1, m_pTargetTransform, OffSetMatrix, m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
 }
  
 
@@ -1380,7 +1514,7 @@ void CPlayer::Shot_Confringo()
 		OffSetMatrix = m_pTarget->Get_Offset_Matrix();
 	}
 
-	m_pMagicSlot->Action_Magic_Skill(0, m_pTargetTransform, OffSetMatrix, m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(0, m_pTargetTransform, OffSetMatrix, m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
 }
 
 void CPlayer::Shot_NCENDIO()
@@ -1394,7 +1528,7 @@ void CPlayer::Shot_NCENDIO()
 		OffSetMatrix = m_pTarget->Get_Offset_Matrix();
 	}
 
-	m_pMagicSlot->Action_Magic_Skill(3, m_pTargetTransform, OffSetMatrix, m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(3, m_pTargetTransform, OffSetMatrix, m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
 }
 
 void CPlayer::Shot_Finisher()
@@ -1408,7 +1542,19 @@ void CPlayer::Shot_Finisher()
 		OffSetMatrix = m_pTarget->Get_Offset_Matrix();
 	}
 
-	m_pMagicSlot->Action_Magic_Skill(2, m_pTargetTransform, OffSetMatrix, m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(2, m_pTargetTransform, OffSetMatrix, m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
+}
+
+void CPlayer::Lumos()
+{
+	if (nullptr == m_pFrncSpellToggle)
+	{
+		m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(2, m_pTransform, XMMatrixIdentity(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_NONE);
+	}
+	else
+	{
+		m_pFrncSpellToggle = nullptr;
+	}
 }
 
 

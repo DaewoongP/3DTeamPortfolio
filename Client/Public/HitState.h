@@ -86,7 +86,6 @@ private:
     //날아가기?(이건 적의 공격이 뭔지에 따라?)
     void PowerfulHit_Tick();
 
-    void Update_Target_Angle();
 
 public:
     static CHitState* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

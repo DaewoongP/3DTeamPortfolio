@@ -4,6 +4,7 @@
 #include "MapObject.h"
 #include "MapObject_Ins.h"
 #include "Trigger_Vault.h"
+#include "Player.h"
 
 CLevel_Vault::CLevel_Vault(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CLevel(pDevice, pContext)
@@ -98,7 +99,12 @@ HRESULT CLevel_Vault::Ready_Layer_Player(const _tchar* pLayerTag)
 {
 	BEGININSTANCE;
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_VAULT, TEXT("Prototype_GameObject_Player"), pLayerTag, TEXT("GameObject_Player"))))
+
+	CPlayer::PLAYERDESC PlayerDesc;
+	PlayerDesc.vPosition = _float3();
+	PlayerDesc.eLevelID = LEVEL_VAULT;
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_VAULT, TEXT("Prototype_GameObject_Player"), pLayerTag, TEXT("GameObject_Player"), &PlayerDesc)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Player)");
 		ENDINSTANCE;

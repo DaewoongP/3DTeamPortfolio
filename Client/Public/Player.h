@@ -20,11 +20,19 @@ class CWeapon_Player_Wand;
 class CStateContext;
 class CPlayer_Information;
 class CUI_Group_Skill;
+class CMagicBall;
 END
 
 BEGIN(Client)
 class CPlayer final : public CGameObject
 {
+public:
+	typedef struct tagPlayerDesc
+	{
+		_float3 vPosition = {_float3()};
+		LEVELID eLevelID= { LEVEL_END };
+	}PLAYERDESC;
+
 private:
 	explicit CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CPlayer(const CPlayer& rhs);
@@ -45,6 +53,8 @@ public:
 	virtual void OnCollisionExit(COLLEVENTDESC CollisionEventDesc) override;
 	virtual HRESULT Render() override;
 	virtual HRESULT Render_Depth() override;
+
+	virtual void On_Maigc_Throw_Data(void* data) override;
 
 private:
 	CShader*		m_pShader = { nullptr };
@@ -85,6 +95,12 @@ private:
 	CMagic::MAGICDESC m_BasicDesc_Light;
 	CMagic::MAGICDESC m_BasicDesc_Heavy;
 
+	CMagicBall* m_pMagicBall = { nullptr };
+
+	function<void(_float3, _float)> m_pFrncSpellToggle = { nullptr };
+
+	LEVELID m_eLevelID = { LEVEL_END };
+
 private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
@@ -117,6 +133,9 @@ private:
 	//타겟과의 각을 구하기 위한함수
 	void Update_Target_Angle();
 
+	void Next_Spell_Action();
+
+
 	void Shot_Basic_Spell();
 
 	void Shot_Basic_Last_Spell();
@@ -139,6 +158,7 @@ private:
 	void Shot_Confringo();
 	void Shot_NCENDIO();
 	void Shot_Finisher();
+	void Lumos();
 
 public:
 	static CPlayer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
