@@ -35,6 +35,10 @@ HRESULT CMapObject_Ins::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
+	_float3	vPos = _float3(m_ObjectDesc.WorldMatrix._41, m_ObjectDesc.WorldMatrix._42, m_ObjectDesc.WorldMatrix._43);
+
+	m_pTransform->Set_Position(vPos);
+
 	return S_OK;
 }
 
