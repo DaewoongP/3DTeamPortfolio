@@ -265,6 +265,13 @@ CLevel* CGameInstance::Get_CurrentLevel()
 	return m_pLevel_Manager->Get_CurrentLevel();
 }
 
+_uint CGameInstance::Get_CurrentLevelIndex() const
+{
+	NULL_CHECK_RETURN_MSG(m_pLevel_Manager, 9999, TEXT("Level_Manager NULL"));
+
+	return m_pLevel_Manager->Get_CurrentLevelIndex();
+}
+
 HRESULT CGameInstance::Render_Level()
 {
 	NULL_CHECK_RETURN_MSG(m_pLevel_Manager, E_FAIL, TEXT("Level_Manager NULL"));

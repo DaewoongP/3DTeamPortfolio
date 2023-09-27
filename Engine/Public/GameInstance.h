@@ -74,6 +74,7 @@ public: /* For.Timer_Manager */
 public: /* For.Level_Manager */
 	HRESULT Open_Level(_uint iLevelIndex, class CLevel * pNewLevel);
 	class CLevel* Get_CurrentLevel();
+	_uint Get_CurrentLevelIndex() const;
 	HRESULT Render_Level();
 	HRESULT Add_Scene(const _tchar * pSceneTag, const _tchar * pLayerTag);
 

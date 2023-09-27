@@ -14,6 +14,13 @@ BEGIN(Client)
 
 class CTrigger_Vault final : public CGameObject
 {
+public:
+	typedef struct tagTriggerPosition
+	{
+		_float3 vTriggerPos;
+		_float3 vEffectPos;
+	}TRIGGERPOS;
+
 private:
 	explicit CTrigger_Vault(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CTrigger_Vault(const CTrigger_Vault& rhs);
@@ -30,7 +37,6 @@ private:
 	CMeshEffect*		m_pMeshEffect = { nullptr };
 
 private:
-	_float				m_fAccTime = { 0.f };
 	_bool				m_isStartEffect = { false };
 
 #ifdef _DEBUG
