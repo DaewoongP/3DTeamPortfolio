@@ -65,14 +65,29 @@ PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
 
-   
+    //vector FlowDir = g_FlowTexture1.Sample(LinearSampler, In.vTexUV) * 2.f - 1.f;
+    //FlowDir *= g_fFlowPower;
+    
+    //float phase = frac(_Time[])
+    
+    
+    
 
     float2 flowVector = g_FlowTexture1.Sample(LinearSampler, In.vTexUV).xy;
-    float2 UVa = In.vTexUV + (float2(flowVector.x,  flowVector.y) - 0.5f) * g_fFlowPower * frac(g_FrameTime*0.5f);
-    float2 UVb = In.vTexUV + (float2(flowVector.x, flowVector.y) - 0.5f) * g_fFlowPower * frac(g_FrameTime*0.5f +0.5f);
-    float FlowLerp = abs((frac(g_FrameTime*0.5f * g_fFlowPower) - 0.5f) * 2.f);
+    float2 UVa = In.vTexUV + (float2(flowVector.x,  flowVector.y) - 0.3f) * g_fFlowPower * sin(g_FrameTime*0.5f+0.5f);
+    float2 UVb = In.vTexUV + (float2(flowVector.x, flowVector.y) - 0.3f) * g_fFlowPower * cos(g_FrameTime*0.5f);
+    float FlowLerp = abs(0.5f - (g_fFlowPower * sin(g_FrameTime * 0.5f)) / 0.5f);
     
-    Out.vColor.rgb = lerp(g_FlowTexture2.Sample(LinearSampler, UVa).rgb, g_FlowTexture2.Sample(LinearSampler, UVb).rgb,FlowLerp);
+    
+    vector tex0 = g_FlowTexture2.Sample(LinearSampler, UVa);
+    vector tex1 = g_FlowTexture2.Sample(LinearSampler,UVb);
+    
+    
+    float3 finalColor = lerp(tex0, tex1, FlowLerp);
+    
+    Out.vColor = float4(finalColor, 1.f) * g_FlowTexture2.Sample(LinearSampler, In.vTexUV);
+    Out.vColor.rgb *= Out.vColor.a;
+    //Out.vColor.rgb = lerp(g_FlowTexture2.Sample(LinearSampler, UVa).rgb, g_FlowTexture2.Sample(LinearSampler, UVb).rgb,FlowLerp);
     
     return Out;
 }
