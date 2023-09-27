@@ -43,7 +43,7 @@ CMeshEffect::CMeshEffect(const CMeshEffect& _rhs)
 	, m_fAge(_rhs.m_fAge)
 	, m_eAnimType(_rhs.m_eAnimType)
 	, m_strPassName(_rhs.m_strPassName)
-	, m_isAlphaClipTexture(_rhs.m_isAlphaClipTexture)
+	, m_isClipTexture(_rhs.m_isClipTexture)
 	, m_PivotMatrix(_rhs.m_PivotMatrix)
 	, m_strCurAnim(_rhs.m_strCurAnim)
 {
@@ -82,13 +82,13 @@ HRESULT CMeshEffect::Initialize_Prototype(const _tchar* pFilePath, _uint _iLevel
 	}
 
 	// 필요한 텍스처 조사하고 원본 추가하는 로직
-	ProtoTag = ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_Path[ALPHA_CLIP_TEXTURE_PATH].c_str());
-	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, ProtoTag.data()))
-	{
-		pGameInstance->Add_Prototype(m_iLevel
-			, ProtoTag.data()
-			, CTexture::Create(m_pDevice, m_pContext, m_Path[ALPHA_CLIP_TEXTURE_PATH].c_str()));
-	}
+	//ProtoTag = ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_Path[ALPHA_CLIP_TEXTURE_PATH].c_str());
+	//if (nullptr == pGameInstance->Find_Prototype(m_iLevel, ProtoTag.data()))
+	//{
+	//	pGameInstance->Add_Prototype(m_iLevel
+	//		, ProtoTag.data()
+	//		, CTexture::Create(m_pDevice, m_pContext, m_Path[ALPHA_CLIP_TEXTURE_PATH].c_str()));
+	//}
 
 	ProtoTag = ToPrototypeTag(TEXT("Prototype_Component_Model"), m_Path[MODEL_PATH].c_str());
 
@@ -205,8 +205,10 @@ void CMeshEffect::Late_Tick(_float _fTimeDelta)
 
 	if (nullptr != m_pRenderer)
 	{
-		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BLEND, this);
-		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_GLOW, this);
+		if(true == m_isAlphaBlend)
+			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BLEND, this);
+		else
+			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 	}
 }
 
@@ -277,8 +279,8 @@ HRESULT CMeshEffect::Add_Components()
 		, TEXT("Com_MainTexture"), reinterpret_cast<CComponent**>(&m_pTexture)), E_FAIL);
 
 	/* For.Com_AlphaClipTexture */
-	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_Path[TEXTURE_PATH].c_str()).c_str()
-		, TEXT("Com_AlphaClipTexture"), reinterpret_cast<CComponent**>(&m_pAlphaClipTexture)), E_FAIL);
+	//FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_Path[TEXTURE_PATH].c_str()).c_str()
+	//	, TEXT("Com_ClipTexture"), reinterpret_cast<CComponent**>(&m_pClipTexture)), E_FAIL);
 
 	/* For.Com_Shader */
 	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, TEXT("Prototype_Component_Shader_DefaultEffect")
@@ -315,17 +317,24 @@ HRESULT CMeshEffect::Setup_ShaderResources()
 	if (FAILED(m_pShader->Bind_RawValue("g_vColor", &m_vColor, sizeof(_float4))))
 		return E_FAIL;
 
-	if (nullptr != m_pTexture)
-	{
-		if (FAILED(m_pTexture->Bind_ShaderResource(m_pShader, "g_Texture")))
-			return E_FAIL;
-	}
 
-	/*if (nullptr != m_pAlphaClipTexture)
-	{
-		if (FAILED(m_pAlphaClipTexture->Bind_ShaderResource(m_pShader, "g_AlphaClipTexture")))
-			return E_FAIL;
-	}*/
+	if (FAILED(m_pTexture->Bind_ShaderResource(m_pShader, "g_MaterialTexture")))
+		return E_FAIL;
+
+	//if (FAILED(m_pClipTexture->Bind_ShaderResource(m_pShader, "g_ClipTexture")))
+	//	return E_FAIL;
+
+	_int iClipChannel = { 3 };
+	if (m_strClipChannel == "Red") { iClipChannel = 0; }
+	else if (m_strClipChannel == "Green") { iClipChannel = 1; }
+	else if (m_strClipChannel == "Blue") { iClipChannel = 2; }
+	else if (m_strClipChannel == "Alpha") { iClipChannel = 3; }
+
+	if (FAILED(m_pShader->Bind_RawValue("g_iClipChannel", &iClipChannel, sizeof(_int))))
+		return E_FAIL;
+
+	if (FAILED(m_pShader->Bind_RawValue("g_fClipThreshold", &m_fClipThreshold, sizeof(_float))))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -366,12 +375,15 @@ HRESULT CMeshEffect::Save(const _tchar* pFilePath)
 	WriteFile(hFile, m_strPassName.data(), sizeof(_char) * MAX_PATH, &dwByte, nullptr);
 	for (auto& wstrPath : m_Path)
 		WriteFile(hFile, wstrPath.data(), sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
-	WriteFile(hFile, &m_isAlphaClipTexture, sizeof(_bool), &dwByte, nullptr);
+	WriteFile(hFile, &m_isClipTexture, sizeof(_bool), &dwByte, nullptr);
 	WriteFile(hFile, &m_PivotMatrix, sizeof(_float4x4), &dwByte, nullptr);
 	WriteFile(hFile, m_strCurAnim.data(), sizeof(_char) * MAX_PATH, &dwByte, nullptr);
 	m_pTransform->Write_File(hFile, &dwByte);
 	WriteFile(hFile, &m_vStartOffset, sizeof(m_vStartOffset), &dwByte, nullptr);
 	WriteFile(hFile, &m_vStartTiling, sizeof(m_vStartTiling), &dwByte, nullptr);
+	WriteFile(hFile, &m_isAlphaBlend, sizeof(m_isAlphaBlend), &dwByte, nullptr);
+	WriteFile(hFile, m_strClipChannel.data(), sizeof(_char) * MAX_PATH, &dwByte, nullptr);
+	WriteFile(hFile, &m_fClipThreshold, sizeof(m_fClipThreshold), &dwByte, nullptr);
 	CloseHandle(hFile);
 
 	return S_OK;
@@ -419,14 +431,17 @@ HRESULT CMeshEffect::Load(const _tchar* pFilePath)
 		ReadFile(hFile, wszBuffer, sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
 		m_Path[i] = wszBuffer;
 	}
-	ReadFile(hFile, &m_isAlphaClipTexture, sizeof(_bool), &dwByte, nullptr);
+	ReadFile(hFile, &m_isClipTexture, sizeof(_bool), &dwByte, nullptr);
 	ReadFile(hFile, &m_PivotMatrix, sizeof(_float4x4), &dwByte, nullptr);
 	ReadFile(hFile, szBuffer, sizeof(_char) * MAX_PATH, &dwByte, nullptr);
 	m_strCurAnim = szBuffer;
 	m_pTransform->Read_File(hFile, &dwByte);
 	ReadFile(hFile, &m_vStartOffset, sizeof(m_vStartOffset), &dwByte, nullptr);
 	ReadFile(hFile, &m_vStartTiling, sizeof(m_vStartTiling), &dwByte, nullptr);
-
+	ReadFile(hFile, &m_isAlphaBlend, sizeof(m_isAlphaBlend), &dwByte, nullptr);
+	ReadFile(hFile, szBuffer, sizeof(_char) * MAX_PATH, &dwByte, nullptr);
+	m_strClipChannel = szBuffer;
+	ReadFile(hFile, &m_fClipThreshold, sizeof(m_fClipThreshold), &dwByte, nullptr);
 	CloseHandle(hFile);
 
 	return S_OK;
@@ -461,7 +476,7 @@ void CMeshEffect::Free()
 	if (true == m_isCloned)
 	{
 		Safe_Release(m_pTexture);
-		Safe_Release(m_pAlphaClipTexture);
+		Safe_Release(m_pClipTexture);
 		Safe_Release(m_pModel);
 		Safe_Release(m_pShader);
 		Safe_Release(m_pRenderer);

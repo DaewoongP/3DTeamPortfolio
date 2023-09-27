@@ -33,6 +33,10 @@ public:
 	// DEAD : 죽은 파티클 부활 할 수 없음.
 	enum STATE { ALIVE, DELAY, WAIT, DEAD, STATE_END };
 
+public:
+	wstring Get_ParticleTag() { return m_szParticleTag; }
+	void Set_ParticleTag(wstring szParticleTag) { m_szParticleTag = szParticleTag; }
+
 protected:
 	explicit CParticleSystem(ID3D11Device * _pDevice, ID3D11DeviceContext * _pContext);
 	explicit CParticleSystem(const CParticleSystem& _rhs);
@@ -77,6 +81,7 @@ public:
 	// Disable : 파티클 객체를 비활성화 시킨다.(Tick과 Late Tick을 강제로 멈춤)
 public:
 	void Enable();
+	void Enable(_float3 vPos);
 	void Disable();
 
 protected:
@@ -144,6 +149,7 @@ protected:
 	function<void()> m_StopAction;
 	_uint m_iLevel = { 0 };
 	_bool m_isStop = { false };
+	wstring m_szParticleTag;
 
 public:
 	static CParticleSystem* Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, const _tchar* _pDirectoryPath, _uint iLevel = 0);

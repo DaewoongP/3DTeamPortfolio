@@ -831,9 +831,6 @@
     <ClInclude Include="..\Public\FlowMap.h">
       <Filter>01. Utility\03. Components\02. Renderer\FlowMap</Filter>
     </ClInclude>
-    <ClInclude Include="Fog.h">
-      <Filter>01. Utility\03. Components\02. Renderer\Fog</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Shadow.h">
       <Filter>01. Utility\03. Components\02. Renderer\Shadow</Filter>
     </ClInclude>
@@ -1085,9 +1082,6 @@
     <ClCompile Include="..\Private\Mesh_Instance.cpp">
       <Filter>01. Utility\03. Components\17. StaticMeshInstance\Mesh_Instance</Filter>
     </ClCompile>
-    <ClCompile Include="..\Public\Model_Instance.cpp">
-      <Filter>01. Utility\03. Components\17. StaticMeshInstance\Model_Instance</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\VIBuffer_Geometry.cpp">
       <Filter>01. Utility\03. Components\07. VIBuffer\Geometry</Filter>
     </ClCompile>
@@ -1223,9 +1217,6 @@
     <ClCompile Include="..\Private\FlowMap.cpp">
       <Filter>01. Utility\03. Components\02. Renderer\FlowMap</Filter>
     </ClCompile>
-    <ClCompile Include="Fog.cpp">
-      <Filter>01. Utility\03. Components\02. Renderer\Fog</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Shadow.cpp">
       <Filter>01. Utility\03. Components\02. Renderer\Shadow</Filter>
     </ClCompile>
@@ -1243,6 +1234,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\LoadingScene.cpp">
       <Filter>01. Utility\03. Components\02. Renderer\Loading</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Model_Instance.cpp">
+      <Filter>01. Utility\03. Components\17. StaticMeshInstance\Model_Instance</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

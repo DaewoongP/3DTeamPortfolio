@@ -41,13 +41,13 @@ void CHitState::OnStateEnter(void* _pArg)
 #endif // _DEBUG
 
 	HITSTATEDESC* pHitStateDesc = static_cast<HITSTATEDESC*>(_pArg);
-
 	m_isPowerfulHit = (_bool)pHitStateDesc->iHitType;
 
 	m_pTargetTransform = (CTransform*)pHitStateDesc->pTransform;
 
 	Safe_AddRef(m_pTargetTransform);
 
+	*m_pIsFinishAnimation = false;
 
 	Set_Dir();
 }
@@ -99,6 +99,11 @@ void CHitState::Go_Idle()
 	Set_StateMachine(TEXT("Idle"));
 }
 
+void CHitState::Go_Standing()
+{
+	Set_StateMachine(TEXT("Standing"));
+}
+
 void CHitState::Set_Dir()
 {
 #pragma region 각구하기
@@ -106,7 +111,7 @@ void CHitState::Set_Dir()
 
 	_float3 vPlayerPos = m_pPlayerTransform->Get_Position();
 
-	_float3 vTargetDir = vTargetPos = vPlayerPos;
+	_float3 vTargetDir = vTargetPos - vPlayerPos;
 
 	vTargetDir = XMVectorSetY(vTargetDir, 0.0f);
 
@@ -172,22 +177,22 @@ void CHitState::Set_Dir()
 		{
 		case Client::CHitState::HITDIR_FRONT:
 		{
-			m_pOwnerModel->Change_Animation(TEXT("Hu_Rct_Hit_Fwd_anm"));
+			m_pOwnerModel->Change_Animation(TEXT("Hu_Rct_Hit_Bwd_anm"));
 		}
 		break;
 		case Client::CHitState::HITDIR_BACK:
 		{
-			m_pOwnerModel->Change_Animation(TEXT("Hu_Rct_Hit_Bwd_anm"));
+			m_pOwnerModel->Change_Animation(TEXT("Hu_Rct_Hit_Fwd_anm"));
 		}
 		break;
 		case Client::CHitState::HITDIR_RIGHT:
 		{
-			m_pOwnerModel->Change_Animation(TEXT("Hu_Rct_Hit_Rht_anm"));
+			m_pOwnerModel->Change_Animation(TEXT("Hu_Rct_Hit_Lft_anm"));
 		}
 		break;
 		case Client::CHitState::HITDIR_LEFT:
 		{
-			m_pOwnerModel->Change_Animation(TEXT("Hu_Rct_Hit_Lft_anm"));
+			m_pOwnerModel->Change_Animation(TEXT("Hu_Rct_Hit_Rht_anm"));
 		}
 		break;
 		case Client::CHitState::HITDIR_END:
@@ -218,12 +223,12 @@ void CHitState::Set_Dir()
 		{
 		case Client::CHitState::POWERFULHITDIR_FRONT:
 		{
-			m_pOwnerModel->Change_Animation(TEXT("Hu_Rct_KnckDn_Hvy_Fwd_01_anm"));
+			m_pOwnerModel->Change_Animation(TEXT("Hu_Rct_KnckDn_Hvy_01_anm"));
 		}
 		break;
 		case Client::CHitState::POWERFULHITDIR_BACK:
 		{
-			m_pOwnerModel->Change_Animation(TEXT("Hu_Rct_KnckDn_Hvy_01_anm"));
+			m_pOwnerModel->Change_Animation(TEXT("Hu_Rct_KnckDn_Hvy_Fwd_01_anm"));
 		}
 		break;
 		case Client::CHitState::POWERFULHITDIR_END:
@@ -267,12 +272,12 @@ void CHitState::PowerfulHit_Tick()
 			{
 			case Client::CHitState::POWERFULHITDIR_FRONT:
 			{
-				m_pOwnerModel->Change_Animation(TEXT("Hu_Rct_KnckDn_Hvy_Fwd_Splat_anm"));
+				m_pOwnerModel->Change_Animation(TEXT("Hu_Rct_KnckDn_Hvy_Splat_01_anm"));
 			}
 				break;
 			case Client::CHitState::POWERFULHITDIR_BACK:
 			{
-				m_pOwnerModel->Change_Animation(TEXT("Hu_Rct_KnckDn_Hvy_Splat_01_anm"));
+				m_pOwnerModel->Change_Animation(TEXT("Hu_Rct_KnckDn_Hvy_Fwd_Splat_anm"));
 			}
 				break;
 			case Client::CHitState::POWERFULHITDIR_END:
@@ -295,12 +300,12 @@ void CHitState::PowerfulHit_Tick()
 			{
 			case Client::CHitState::POWERFULHITDIR_FRONT:
 			{
-				m_pOwnerModel->Change_Animation(TEXT("Hu_Rct_Knockdown_Fwd_Getup_anm"));
+				m_pOwnerModel->Change_Animation(TEXT("Hu_Rct_Knockdown_Bwd_Getup_anm"));
 			}
 			break;
 			case Client::CHitState::POWERFULHITDIR_BACK:
 			{
-				m_pOwnerModel->Change_Animation(TEXT("Hu_Rct_Knockdown_Bwd_Getup_anm"));
+				m_pOwnerModel->Change_Animation(TEXT("Hu_Rct_Knockdown_Fwd_Getup_anm"));
 			}
 			break;
 			case Client::CHitState::POWERFULHITDIR_END:
@@ -311,19 +316,23 @@ void CHitState::PowerfulHit_Tick()
 			default:
 				break;
 			}
-
+			Go_Standing();
 			*m_pIsFinishAnimation = false;
 		}
 		//기상애니메이션 끝났을 경우 아이들
-		if (true == *m_pIsFinishAnimation && (
+		/*if (true == *m_pIsFinishAnimation && (
 			!wcscmp(m_pOwnerModel->Get_Animation()->Get_AnimationName(), TEXT("Hu_Rct_Knockdown_Fwd_Getup_anm")) ||
 			!wcscmp(m_pOwnerModel->Get_Animation()->Get_AnimationName(), TEXT("Hu_Rct_Knockdown_Bwd_Getup_anm"))))
 		{
 			Go_Idle();
 			*m_pIsFinishAnimation = false;
-		}
+		}*/
 	}
 }
+
+
+
+
 
 CHitState* CHitState::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {

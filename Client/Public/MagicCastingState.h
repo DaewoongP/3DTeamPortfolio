@@ -72,6 +72,7 @@ private:
 
     _uint m_iSpellActionIndex = { (_uint)SPELL_ACTION_01 };
 
+    CTransform* m_pTargetTransform = { nullptr };
 private:
     void Initialize_BasicSpell_Combo();
 
@@ -98,7 +99,6 @@ private:
     void Go_Idle();
 
     void Go_Roll();
-
 
 public:
     static CMagicCastingState* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);

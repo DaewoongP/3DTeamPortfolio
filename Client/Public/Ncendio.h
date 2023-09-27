@@ -28,7 +28,7 @@ public:
 	virtual void OnCollisionEnter(COLLEVENTDESC CollisionEventDesc) override;
 	virtual void OnCollisionStay(COLLEVENTDESC CollisionEventDesc) override;
 	virtual void OnCollisionExit(COLLEVENTDESC CollisionEventDesc) override;
-	virtual HRESULT Reset() { return S_OK; }
+	virtual HRESULT Reset(MAGICBALLINITDESC& InitDesc) override;
 
 private:
 	// 불 트레일 
@@ -37,19 +37,6 @@ private:
 	CParticleSystem*	m_pBurnTargetEffect = { nullptr };
 	CMeshEffect*		m_pFireRingMeshEffect = { nullptr };
 
-private:
-	// For. Trail
-	_float3 m_vStartPostion = {};
-	_float3	m_vTargetPosition = {};
-	_float	m_fLerpAcc = { 0.f };
-
-	// For. Spline
-	_float3 m_vSplineLerp[2] = {};
-	_float  m_fTimeScalePerDitance = { 0.f };
-
-	// For. Particle
-	_bool m_isSmoke = { false };
-	_bool m_isSmokeStart = { true };
 private:
 	virtual void Ready_Begin() override;
 	virtual void Ready_DrawMagic() override;
@@ -64,6 +51,7 @@ private:
 private:
 	HRESULT Add_Components();
 	virtual HRESULT Add_Effect();
+	virtual HRESULT Add_RigidBody() override;
 
 public:
 	static CNcendio* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel = 0);

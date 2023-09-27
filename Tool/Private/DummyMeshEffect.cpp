@@ -26,6 +26,12 @@ HRESULT CDummyMeshEffect::Initialize(void* pArg)
 	m_pTextureIFD = CImageFileDialog::Create(m_pDevice, Generate_Hashtag(true).data());
 	m_pTextureIFD->m_strStartPath = "../../Resources/Effects/Textures/";
 	m_pTextureIFD->m_iImageButtonWidth = 32;
+
+	m_pClipTextureIFD = CImageFileDialog::Create(m_pDevice, Generate_Hashtag(true).data());
+	m_pClipTextureIFD->m_strStartPath = "../../Resources/Effects/Textures/";
+	m_pClipTextureIFD->m_iImageButtonWidth = 32;
+
+	m_pClipChannelCombo = CComboBox::Create(Generate_Hashtag(true).data(), "Clip Channel", { "Red", "Green", "Blue", "Alpha" }, "Red");
 	m_pColorEaseCombo = CComboBox::Create(Generate_Hashtag(true).data(), "Color Ease", CEase::pEases, CEase::EASE_END, CEase::pEases[0]);
 	m_pPosEaseCombo = CComboBox::Create(Generate_Hashtag(true).data(), "Position Ease", CEase::pEases, CEase::EASE_END, CEase::pEases[0]);
 	m_pRotEaseCombo = CComboBox::Create(Generate_Hashtag(true).data(), "Rotation Ease", CEase::pEases, CEase::EASE_END, CEase::pEases[0]);
@@ -46,14 +52,27 @@ void CDummyMeshEffect::Tick_Imgui(_float _fTimeDelta)
 	{
 		ImGui::TableNextRow();
 		
-		pEffectWindow->Table_ImageButton("Change MainTexture", "xcvljii23458", m_pTextureIFD);
+		pEffectWindow->Table_ImageButton("Diffuse Texture", "bgfqsqxxc", m_pTextureIFD);
+
 		// 메인 텍스처 교체
 		if (m_pTextureIFD->IsOk())
 		{
 			fs::path fsFilePath = m_pTextureIFD->Get_FilePathName();
 			ChangeTexture(&m_pTexture, m_Path[TEXTURE_PATH], ToRelativePath(fsFilePath.wstring().data()).c_str());
 		}
-		
+
+		pEffectWindow->Table_CheckBox("Alpha Blend", "939kjvodjdkjkcvxc", &m_isAlphaBlend);
+		if (true == m_isAlphaBlend)
+		{
+			m_pClipChannelCombo->Tick(CComboBox::FLAG::TABLE);
+			if (m_pClipChannelCombo->IsUpdated())
+				m_strClipChannel = m_pClipChannelCombo->Get_Current_Item();
+
+			pEffectWindow->Table_DragFloat("Clip Threshold", "dsfef4f44f4f44", &m_fClipThreshold, 0.01f, 0.f, 1.f);
+		}
+
+		pEffectWindow->Table_Void();
+
 		// 모델 교체
 		ImGui::TableSetColumnIndex(0);
 		ImGui::Text("ChangeModel"); ImGui::TableSetColumnIndex(1);
@@ -333,6 +352,8 @@ void CDummyMeshEffect::Free()
 	__super::Free();
 
 	Safe_Release(m_pTextureIFD);
+	Safe_Release(m_pClipTextureIFD);
+	Safe_Release(m_pClipChannelCombo);
 	Safe_Release(m_pPassComboBox);
 	Safe_Release(m_pColorEaseCombo);
 	Safe_Release(m_pPosEaseCombo);
