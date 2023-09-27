@@ -1,4 +1,6 @@
 #include "..\Public\PXEventCallBack.h"
+#include "Level_Manager.h"
+#include "Level.h"
 #include "GameObject.h"
 
 void CPXEventCallBack::onConstraintBreak(PxConstraintInfo* constraints, PxU32 count)
@@ -15,6 +17,17 @@ void CPXEventCallBack::onSleep(PxActor** actors, PxU32 count)
 
 void CPXEventCallBack::onContact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs)
 {
+	CLevel_Manager* pLevel_Manager = CLevel_Manager::GetInstance();
+	Safe_AddRef(pLevel_Manager);
+	if (true == pLevel_Manager->Get_CurrentLevel()->Is_Loading())
+	{
+		Safe_Release(pLevel_Manager);
+		return;
+	}	
+	Safe_Release(pLevel_Manager);
+
+	std::lock_guard<std::mutex> lock(mtx);
+
 	for (PxU32 i = 0; i < nbPairs; ++i)
 	{
 		COLLEVENTDESC SourDesc, DestDesc;
@@ -79,6 +92,15 @@ void CPXEventCallBack::onContact(const PxContactPairHeader& pairHeader, const Px
 
 void CPXEventCallBack::onTrigger(PxTriggerPair* pairs, PxU32 count)
 {
+	CLevel_Manager* pLevel_Manager = CLevel_Manager::GetInstance();
+	Safe_AddRef(pLevel_Manager);
+	if (true == pLevel_Manager->Get_CurrentLevel()->Is_Loading())
+	{
+		Safe_Release(pLevel_Manager);
+		return;
+	}
+	Safe_Release(pLevel_Manager);
+
 	std::lock_guard<std::mutex> lock(mtx);
 
 	for (PxU32 i = 0; i < count; i++)

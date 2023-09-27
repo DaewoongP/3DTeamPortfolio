@@ -135,6 +135,20 @@ HRESULT CConfringo::Initialize(void* pArg)
 
 		return E_FAIL;
 	}
+
+	m_pMainTrail->Disable();
+	m_pWandDustEffect->Disable();
+
+	m_pExplosiveEffect[0]->Disable();
+	m_pExplosiveEffect[1]->Disable();
+	m_pExplosiveBigPartEffect->Disable();
+	m_pExplosiveSmallPartEffect->Disable();
+
+	m_pWandTouchEffect->Disable();
+	m_pWandDustEffect->Disable();
+	m_pWandTwinklEffect->Disable();
+	m_pWandTrail->Disable();
+
 	return S_OK;
 }
 
@@ -178,15 +192,6 @@ HRESULT CConfringo::Reset(MAGICBALLINITDESC& InitDesc)
 {
 	__super::Reset(InitDesc);
 	m_fLerpAcc = 0.0f;
-	return S_OK;
-}
-
-void CConfringo::Ready_Begin()
-{
-	_float3 vWandPosition = _float4x4(m_WeaponOffsetMatrix * (*m_pWeaponMatrix)).Translation();
-	m_pWandDustEffect->Get_EmissionModuleRef().Setting_PrevPos(vWandPosition);
-	m_pWandTwinklEffect->Get_EmissionModuleRef().Setting_PrevPos(vWandPosition);
-
 	m_pMainTrail->Disable();
 	m_pWandDustEffect->Disable();
 
@@ -199,56 +204,35 @@ void CConfringo::Ready_Begin()
 	m_pWandDustEffect->Disable();
 	m_pWandTwinklEffect->Disable();
 	m_pWandTrail->Disable();
+	return S_OK;
+}
+
+void CConfringo::Ready_Begin()
+{
 }
 
 void CConfringo::Ready_DrawMagic()
 {
-	m_pWandTouchEffect->Enable();
-	m_pWandDustEffect->Enable();
-	m_pWandTwinklEffect->Enable();
-	m_pWandTrail->Enable();
-
-	m_pWandTwinklEffect->Get_EmissionModuleRef().Setting_PrevPos(m_vStartPostion);
-	m_pWandDustEffect->Get_EmissionModuleRef().Setting_PrevPos(m_vStartPostion);
-
-
 	_float3 vWandPosition = _float4x4(m_WeaponOffsetMatrix * (*m_pWeaponMatrix)).Translation();
-	m_pWandTouchEffect->Get_Transform()->Set_Position(vWandPosition);
-	m_pWandDustEffect->Get_Transform()->Set_Position(vWandPosition);
-	m_pWandTrail->Get_Transform()->Set_Position(vWandPosition);
-	m_pWandTwinklEffect->Get_Transform()->Set_Position(vWandPosition);
-	m_pWandTrail->Reset_Trail(_float3(vWandPosition) + _float3(0, 0.5f, 0), _float3(vWandPosition) + _float3(0, -0.5f, 0));
+	m_pWandTouchEffect->Enable(vWandPosition);
+	m_pWandDustEffect->Enable(vWandPosition);
+	m_pWandTwinklEffect->Enable(vWandPosition);
+	m_pWandTrail->Enable(vWandPosition);
 }
 
 void CConfringo::Ready_CastMagic()
 {
-	Ready_SplineSpinMove(m_pMainTrail,_float2(0.2f, 0.20f),10.f);
-
-	m_pWandDustEffect->Get_EmissionModuleRef().Setting_PrevPos(m_vStartPostion);
-	m_pWandDustEffect->Get_Transform()->Set_Position(m_vStartPostion);
-
-	m_pMainTrail->Enable();
-	m_pWandDustEffect->Enable();
-	//충돌체를 켜주고
-	m_pRigidBody->Enable_Collision("Magic_Ball", this);
+	Ready_SplineSpinMove(m_pMainTrail,_float2(0.2f, 0.20f),0.5f);
+	m_pMainTrail->Enable(m_vStartPostion);
+	m_pWandDustEffect->Enable(m_vStartPostion);
 }
 
 void CConfringo::Ready_Dying()
 {
-	/*m_pWandTouchEffect->Disable();
-	m_pWandDustEffect->Disable();
-	m_pWandTwinklEffect->Disable();
-	m_pWandTrail->Disable();*/
-
-	m_pExplosiveEffect[0]->Enable();
-	m_pExplosiveEffect[1]->Enable();
-	m_pExplosiveBigPartEffect->Enable();
-	m_pExplosiveSmallPartEffect->Enable();
-
-	m_pExplosiveEffect[0]->Play(m_pMainTrail->Get_Transform()->Get_Position());
-	m_pExplosiveEffect[1]->Play(m_pMainTrail->Get_Transform()->Get_Position());
-	m_pExplosiveBigPartEffect->Play(m_pMainTrail->Get_Transform()->Get_Position());
-	m_pExplosiveSmallPartEffect->Play(m_pMainTrail->Get_Transform()->Get_Position());
+	m_pExplosiveEffect[0]->Enable(m_pMainTrail->Get_Transform()->Get_Position());
+	m_pExplosiveEffect[1]->Enable(m_pMainTrail->Get_Transform()->Get_Position());
+	m_pExplosiveBigPartEffect->Enable(m_pMainTrail->Get_Transform()->Get_Position());
+	m_pExplosiveSmallPartEffect->Enable(m_pMainTrail->Get_Transform()->Get_Position());
 }
 
 void CConfringo::Tick_Begin(_float fTimeDelta)
@@ -259,7 +243,7 @@ void CConfringo::Tick_Begin(_float fTimeDelta)
 
 void CConfringo::Tick_DrawMagic(_float fTimeDelta)
 {
-	Do_MagicBallState_To_Next();
+	
 }
 
 void CConfringo::Tick_CastMagic(_float fTimeDelta)

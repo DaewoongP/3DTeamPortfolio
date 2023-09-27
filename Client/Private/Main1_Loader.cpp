@@ -106,10 +106,10 @@ HRESULT CMain1_Loader::Loading_For_Cliffside()
 			CTerrain::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Terrain");
 
-		if (FAILED(Loading_Map_Object(TEXT("../../Resources/GameData/MapData/MapData0.ddd"), LEVEL_CLIFFSIDE)))
+		if (FAILED(Loading_Map_Object(TEXT("../../Resources/GameData/MapData/MapData3.ddd"), LEVEL_CLIFFSIDE)))
 			throw TEXT("Map Object");
 
-		if (FAILED(Loading_Map_Object_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins0.ddd"), LEVEL_CLIFFSIDE)))
+		if (FAILED(Loading_Map_Object_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins3.ddd"), LEVEL_CLIFFSIDE)))
 			throw TEXT("Map Object_Ins");
 
 		/* For.Prototype_Component_CharacterController*/
@@ -160,10 +160,10 @@ HRESULT CMain1_Loader::Loading_For_Cliffside()
 			CSequence_Groggy::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Sequence_Groggy");
 
-		/* For.Prototype_Component_Sequence_Levitated */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sequence_Levitated"),
-			CSequence_Levitated::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_Sequence_Levitated");
+		/* For.Prototype_Component_Sequence_Levitate */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sequence_Levitate"),
+			CSequence_Levitate::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Sequence_Levitate");
 
 		/* For.Prototype_Component_Sequence_Attack */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sequence_Attack"),

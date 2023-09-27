@@ -81,6 +81,7 @@ public:
 	// Disable : 파티클 객체를 비활성화 시킨다.(Tick과 Late Tick을 강제로 멈춤)
 public:
 	void Enable();
+	void Enable(_float3 vPos);
 	void Disable();
 
 protected:
@@ -148,7 +149,7 @@ protected:
 	function<void()> m_StopAction;
 	_uint m_iLevel = { 0 };
 	_bool m_isStop = { false };
-	wstring m_szParticleTag;
+	wstring m_szParticleTag = { TEXT("") };
 
 public:
 	static CParticleSystem* Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, const _tchar* _pDirectoryPath, _uint iLevel = 0);

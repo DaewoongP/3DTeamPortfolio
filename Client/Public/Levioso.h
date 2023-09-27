@@ -33,8 +33,15 @@ public:
 private:
 	// 트레일 
 	CTrail*					  m_pMainTrail = { nullptr };
-	// 피격 트레일
+	// 트레일 따라가는 연기
+	CParticleSystem*		  m_pTraceDustEffect = { nullptr };
+	// 몹 피격 트레일
 	class CWingardium_Effect* m_pWingardiumEffect = { nullptr };
+
+	// 피격 푸쉬시
+	CParticleSystem*		  m_pHitDustEffect = { nullptr };
+	// 피격 파바바바방
+	CParticleSystem*		  m_pHitExplosionEffect = { nullptr };
 
 	//완드 
 	CTrail*					  m_pWandTrail = { nullptr };

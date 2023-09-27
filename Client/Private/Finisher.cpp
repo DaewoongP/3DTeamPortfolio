@@ -141,6 +141,24 @@ HRESULT CFinisher::Initialize(void* pArg)
 
 		return E_FAIL;
 	}
+
+	for (int i = 0; i < 3; i++)
+	{
+		m_pTrail[i]->Disable();
+	}
+
+	m_LightningSparkEffect_Green->Disable();
+	m_LightningSparkEffect_Blue->Disable();
+	m_LightningSparkEffect_Red->Disable();
+
+	m_LineParticle->Disable();
+	m_FlareCenterParticle->Disable();
+	m_FlareSpreadParticle->Disable();
+	m_DustParticle->Disable();
+
+	m_pWandLightningParticle->Disable();
+	m_pWandTrail->Disable();
+
 	return S_OK;
 }
 
@@ -181,6 +199,7 @@ void CFinisher::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 HRESULT CFinisher::Reset(MAGICBALLINITDESC& InitDesc)
 {
 	__super::Reset(InitDesc);
+
 	return S_OK;
 }
 
@@ -188,7 +207,7 @@ void CFinisher::Ready_Begin()
 {
 	for (int i = 0; i < 3; i++)
 	{
-		//m_pTrail[i]->Disable();
+		m_pTrail[i]->Disable();
 	}
 
 	 m_LightningSparkEffect_Green->Disable();
@@ -206,11 +225,9 @@ void CFinisher::Ready_Begin()
 
 void CFinisher::Ready_DrawMagic()
 {
-	m_pWandLightningParticle->Enable();
-	m_pWandTrail->Enable();
-
 	_float3 vWandPosition = _float4x4(m_WeaponOffsetMatrix * (*m_pWeaponMatrix)).Translation();
-	m_pWandTrail->Reset_Trail(_float3(vWandPosition) + _float3(0, 0.5f, 0), _float3(vWandPosition) + _float3(0, -0.5f, 0));
+	m_pWandLightningParticle->Enable(vWandPosition);
+	m_pWandTrail->Enable(vWandPosition);
 }
 
 void CFinisher::Ready_CastMagic()
@@ -246,18 +263,16 @@ void CFinisher::Ready_CastMagic()
 
 		m_pTrail[i]->Set_Threshold(0.2f);
 		m_pTrail[i]->Ready_LightningStrike(m_pTarget->Get_Position() + _float3(0, 10, 0), m_pTarget->Get_Position(), vWeight, 10);
-		//m_pTrail[i]->Reset_Trail(m_pTarget->Get_Position() + _float3(0, 10, 0) + _float3(0, 2.f, 0), m_pTarget->Get_Position() + _float3(0, 10, 0) + _float3(0, -2.f, 0));
-		//m_pTrail[i]->Get_Transform()->Set_Position(m_pTarget->Get_Position() + _float3(0, 10, 0));
-		m_pTrail[i]->Enable();
+		m_pTrail[i]->Enable(m_pTarget->Get_Position());
 	}
 
-	m_LightningSparkEffect_Blue->Enable();
-	m_LightningSparkEffect_Green->Enable();
-	m_LightningSparkEffect_Red->Enable();
-	m_LineParticle->Enable();
-	m_FlareCenterParticle->Enable();
-	m_FlareSpreadParticle->Enable();
-	m_DustParticle->Enable();
+	m_LightningSparkEffect_Blue->Enable(m_pTarget->Get_Position());
+	m_LightningSparkEffect_Green->Enable(m_pTarget->Get_Position());
+	m_LightningSparkEffect_Red->Enable(m_pTarget->Get_Position());
+	m_LineParticle->Enable(m_pTarget->Get_Position());
+	m_FlareCenterParticle->Enable(m_pTarget->Get_Position());
+	m_FlareSpreadParticle->Enable(m_pTarget->Get_Position());
+	m_DustParticle->Enable(m_pTarget->Get_Position());
 
 	m_LightningSparkEffect_Blue->Play(m_pTarget->Get_Position());
 	m_LightningSparkEffect_Green->Play(m_pTarget->Get_Position());
@@ -271,6 +286,7 @@ void CFinisher::Ready_CastMagic()
 
 void CFinisher::Ready_Dying()
 {
+	
 }
 
 void CFinisher::Tick_Begin(_float fTimeDelta)
@@ -280,18 +296,19 @@ void CFinisher::Tick_Begin(_float fTimeDelta)
 
 void CFinisher::Tick_DrawMagic(_float fTimeDelta)
 {
-	Do_MagicBallState_To_Next();
+
 }
 
 void CFinisher::Tick_CastMagic(_float fTimeDelta)
 {
-	Do_MagicBallState_To_Next();
+	if (!m_DustParticle->IsEnable())
+		Do_MagicBallState_To_Next();
 }
 
 void CFinisher::Tick_Dying(_float fTimeDelta)
 {
-	//if(!m_DustParticle->IsEnable())
-	//	Do_MagicBallState_To_Next();
+	if(!m_DustParticle->IsEnable())
+		Do_MagicBallState_To_Next();
 }
 
 HRESULT CFinisher::Add_Components()

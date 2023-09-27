@@ -92,6 +92,8 @@ HRESULT CStateContext::Set_StateMachine(const _tchar* _pTag, void * _pArg)
 
 	m_pCurrentStateMachine->OnStateEnter(_pArg);
 
+	lstrcpy(m_wszPreStateKey, _pTag);
+
 	return S_OK;
 }
 
@@ -292,7 +294,19 @@ HRESULT CStateContext::Ready_StateMachine()
 		return E_FAIL;
 	};
 
+	if (FAILED(Add_StateMachine(TEXT("Standing"),
+		static_cast<CStateMachine*>
+		(pGameInstance->Clone_Component(LEVEL_STATIC,
+			TEXT("Prototype_Component_State_Standing"))))))
+	{
+		ENDINSTANCE;
 
+		MSG_BOX("Failed Ready_StateMachine");
+
+		__debugbreak();
+
+		return E_FAIL;
+	};
 
 
 	Set_StateMachine(TEXT("Idle"));

@@ -58,6 +58,14 @@ void CMagicCastingState::OnStateEnter(void* _pArg)
 {
 	BEGININSTANCE;
 
+	_int i = wcscmp(static_cast<CStateContext*>(m_pOwner)->Get_PreStateKey(), TEXT("Magic_Cast"));
+
+	if (false != wcscmp(static_cast<CStateContext*>(m_pOwner)->Get_PreStateKey(), TEXT("Magic_Cast")))
+	{
+		m_isReadySpell = true;
+	}
+
+
 	pGameInstance->Reset_Timer(TEXT("Fix_Angle_Magic_Cast"));
 	pGameInstance->Reset_Timer(TEXT("Fix_Angle_Magic_Cast_Last"));
 
@@ -93,7 +101,8 @@ void CMagicCastingState::OnStateEnter(void* _pArg)
 		pGameInstance->Get_DIKeyState(DIK_1, CInput_Device::KEY_DOWN) ||
 		pGameInstance->Get_DIKeyState(DIK_2, CInput_Device::KEY_DOWN) ||
 		pGameInstance->Get_DIKeyState(DIK_3, CInput_Device::KEY_DOWN) ||
-		pGameInstance->Get_DIKeyState(DIK_4, CInput_Device::KEY_DOWN)
+		pGameInstance->Get_DIKeyState(DIK_4, CInput_Device::KEY_DOWN) ||
+		pGameInstance->Get_DIKeyState(DIK_F, CInput_Device::KEY_DOWN)
 		))
 	{
 		MAGICCASTINGSTATEDESC* pMagicCastingStateDesc = static_cast<MAGICCASTINGSTATEDESC*>(_pArg);
@@ -101,7 +110,7 @@ void CMagicCastingState::OnStateEnter(void* _pArg)
 		//맞는 액션으로 노티파이 바꾸고 실행 애니메이션 실행
 		
 		//함수 받아와야 겠다.
-		m_pOwnerModel->Bind_Notify(m_vecSpellActionTextList[m_iSpellActionIndex], TEXT("Shot_Spell"), pMagicCastingStateDesc->pFuncSpell);
+		m_pOwnerModel->Bind_Notify(m_vecSpellActionTextList[m_iSpellActionIndex], TEXT("Ready_Spell"), pMagicCastingStateDesc->pFuncSpell);
 
 		//애니메이션 재생
 		m_pOwnerModel->Change_Animation(m_vecSpellActionTextList[m_iSpellActionIndex]);
@@ -139,6 +148,8 @@ void CMagicCastingState::OnStateExit()
 #ifdef _DEBUG
 	//cout << "Hard Land Exit" << endl;
 #endif // _DEBUG
+
+	
 
 	*m_pIsFinishAnimation = true;
 }
@@ -484,6 +495,7 @@ void CMagicCastingState::Go_Roll()
 
 	ENDINSTANCE;
 }
+
 
 CMagicCastingState* CMagicCastingState::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {

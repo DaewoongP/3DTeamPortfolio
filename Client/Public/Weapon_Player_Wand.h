@@ -46,6 +46,7 @@ private:
 	_bool				m_isLightOn = false;
 	_float4				m_LightIntensity = { 0.f,0.f,0.f,0.f };
 	_float				AccTime = 0.f;
+	_float				DelayTime = 0.0f;
 private:
 	HRESULT Add_Components(void* pArg);
 	HRESULT Set_Shader_Resources();

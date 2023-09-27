@@ -14,7 +14,7 @@
 #include "Sequence_Groggy.h"
 #include "Sequence_Attack.h"
 #include "UI_Group_Enemy_HP.h"
-#include "Sequence_Levitated.h"
+#include "Sequence_Levitate.h"
 #include "Sequence_MoveTarget.h"
 
 CGolem_Combat::CGolem_Combat(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -49,6 +49,7 @@ HRESULT CGolem_Combat::Initialize(void* pArg)
 	m_pTransform->Set_RigidBody(m_pRigidBody);
 	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
+	m_pModelCom->Change_Animation(TEXT("Spawn_Fall_Loop"));
 
 	if (FAILED(Make_Notifies()))
 		return E_FAIL;
@@ -121,11 +122,11 @@ void CGolem_Combat::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		CMagicBall::COLLSIONREQUESTDESC* pCollisionMagicBallDesc = static_cast<CMagicBall::COLLSIONREQUESTDESC*>(CollisionEventDesc.pArg);
 		BUFF_TYPE eBuff = pCollisionMagicBallDesc->eBuffType;
 		auto Action = pCollisionMagicBallDesc->Action;
-		_int fDamage = pCollisionMagicBallDesc->iDamage;
+		_int iDamage = pCollisionMagicBallDesc->iDamage;
 
-		cout << fDamage << endl;
-		m_pHealth->Damaged(fDamage);
+		m_pHealth->Damaged(iDamage);
 
+		cout << "\nCall\n" << endl;
 		auto iter = m_CurrentTickSpells.find(eBuff);
 		if (iter == m_CurrentTickSpells.end() && BUFF_LEVIOSO == eBuff)
 		{
@@ -136,7 +137,10 @@ void CGolem_Combat::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			m_isHitCombo = true;
 
 		if (eBuff & BUFF_ATTACK_LIGHT)
+		{
+			m_isHitCombo = true;
 			m_isHitAttack = true;
+		}
 
 		m_iCurrentSpell |= eBuff;
 	}
@@ -164,11 +168,7 @@ void CGolem_Combat::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 		if (wstring::npos != wstrObjectTag.find(TEXT("Player")) ||
 			wstring::npos != wstrObjectTag.find(TEXT("Fig")))
 		{
-			if (FAILED(Remove_GameObject(wstrObjectTag)))
-			{
-				MSG_BOX("[CGolem_Combat] Failed OnCollisionExit : \nFailed Remove_GameObject");
-				return;
-			}
+			Remove_GameObject(wstrObjectTag);
 		}
 	}
 }
@@ -313,6 +313,42 @@ HRESULT CGolem_Combat::Make_Notifies()
 	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_OverHand_Sword"), TEXT("Exit_Attack"), Func)))
 		return E_FAIL;
 
+	Func = [&] {(*this).On_Gravity(); };
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Air_Hit_1"), TEXT("On_Gravity"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Air_Hit_2"), TEXT("On_Gravity"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Air_Hit_3"), TEXT("On_Gravity"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Air_Hit_4"), TEXT("On_Gravity"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Air_Hit_5"), TEXT("On_Gravity"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Air_Hit_6"), TEXT("On_Gravity"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Air_Hit_7"), TEXT("On_Gravity"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Air_Hit_8"), TEXT("On_Gravity"), Func)))
+		return E_FAIL;
+
+	Func = [&] {(*this).Off_Gravity(); };
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Air_Hit_1"), TEXT("Off_Gravity"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Air_Hit_2"), TEXT("Off_Gravity"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Air_Hit_3"), TEXT("Off_Gravity"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Air_Hit_4"), TEXT("Off_Gravity"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Air_Hit_5"), TEXT("Off_Gravity"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Air_Hit_6"), TEXT("Off_Gravity"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Air_Hit_7"), TEXT("Off_Gravity"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Air_Hit_8"), TEXT("Off_Gravity"), Func)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -368,7 +404,7 @@ HRESULT CGolem_Combat::Add_Components()
 		RigidBodyDesc.eThisCollsion = COL_ENEMY;
 		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC | COL_NPC_RANGE | COL_MAGIC;
 		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Body");
-
+		
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
 			TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
 			throw TEXT("Com_RigidBody");
@@ -404,11 +440,13 @@ HRESULT CGolem_Combat::Add_Components()
 		Desc.eType = CUI_Group_Enemy_HP::ENEMYTYPE::MONSTER;
 		Desc.pHealth = m_pHealth;
 		lstrcpy(Desc.wszObjectLevel, TEXT("1"));
-		lstrcpy(Desc.wszObjectName, TEXT("개철민 하수인"));
+		lstrcpy(Desc.wszObjectName, TEXT("가디언"));
 
-		if (FAILED(Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Enemy_HP"),
-			TEXT("UI_Enemy_HP"), reinterpret_cast<CComponent**>(&m_pUI_HP), &Desc)))
-			throw TEXT("UI_Enemy_HP");
+		BEGININSTANCE;
+		m_pUI_HP = dynamic_cast<CUI_Group_Enemy_HP*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Enemy_HP"), &Desc));
+		ENDINSTANCE;
+		if (nullptr == m_pUI_HP)
+			throw TEXT("m_pUI_HP is nullptr");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -556,11 +594,11 @@ HRESULT CGolem_Combat::Make_Levioso_Combo(_Inout_ CSelector* pSelector)
 		/* Set Decorator */
 		pSelector->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 			{
-				_uint* pIPreviusSpell = { nullptr };
-				if (FAILED(pBlackBoard->Get_Type("iPreviusSpell", pIPreviusSpell)))
+				_uint* piCurrentSpell = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", piCurrentSpell)))
 					return false;
-
-				if (BUFF_LEVIOSO & *pIPreviusSpell)
+				
+				if (BUFF_LEVIOSO & *piCurrentSpell)
 					return true;
 
 				return false;
@@ -612,14 +650,14 @@ HRESULT CGolem_Combat::Make_Air_Hit(_Inout_ CSequence* pSequence)
 		if (nullptr == pAction_GetUp)
 			throw TEXT("pAction_GetUp is nullptr");
 
-		/* 평타 맞고 공중에 뜨는 액션 */
-		CRandom_AirHit* pRandom_AirHit = dynamic_cast<CRandom_AirHit*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Random_AirHit")));
-		if (nullptr == pRandom_AirHit)
-			throw TEXT("pRandom_AirHit is nullptr");
 		/* 막타 맞고 날라가는 액션 */
 		CAction* pAction_Knockback = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
 		if (nullptr == pAction_Knockback)
 			throw TEXT("pAction_Knockback is nullptr");
+		/* 평타 맞고 공중에 뜨는 액션 */
+		CRandom_AirHit* pRandom_AirHit = dynamic_cast<CRandom_AirHit*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Random_AirHit")));
+		if (nullptr == pRandom_AirHit)
+			throw TEXT("pRandom_AirHit is nullptr");
 
 		CAction* pAction_Hit_1 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
 		if (nullptr == pAction_Hit_1)
@@ -647,18 +685,7 @@ HRESULT CGolem_Combat::Make_Air_Hit(_Inout_ CSequence* pSequence)
 				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
 					return false;
 
-				if (BUFF_ATTACK_LIGHT & *pICurrentSpell ||
-					BUFF_ATTACK_HEAVY & *pICurrentSpell)
-				{
-					CRigidBody* pRigidBody = { nullptr };
-					if (FAILED(pBlackBoard->Get_Type("pRigidBody", pRigidBody)))
-						return false;
-
-					pRigidBody->Set_Gravity(false);
-					return true;
-				}
-
-				return false;
+				return BUFF_ATTACK_LIGHT & *pICurrentSpell || BUFF_ATTACK_HEAVY & *pICurrentSpell;
 			});
 		pRandom_AirHit->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 			{
@@ -666,6 +693,8 @@ HRESULT CGolem_Combat::Make_Air_Hit(_Inout_ CSequence* pSequence)
 				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
 					return false;
 
+				if (BUFF_ATTACK_HEAVY & *pICurrentSpell)
+					return false;
 				if (BUFF_ATTACK_LIGHT & *pICurrentSpell)
 					return true;
 
@@ -685,43 +714,15 @@ HRESULT CGolem_Combat::Make_Air_Hit(_Inout_ CSequence* pSequence)
 
 				return false;
 			});
-		pAction_Knockback->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
-			{
-				_uint* pICurrentSpell = { nullptr };
-				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
-					return false;
-
-				if (BUFF_ATTACK_HEAVY & *pICurrentSpell)
-				{
-					CRigidBody* pRigidBody = { nullptr };
-					if (FAILED(pBlackBoard->Get_Type("pRigidBody", pRigidBody)))
-						return false;
-
-					pRigidBody->Set_Gravity(true);
-
-					return true;
-				}
-
-				return false;
-			});
 		pAction_GetUp->Add_Success_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 			{
 				_bool* pIsHitCombo = { nullptr };
 				_uint* pICurrentSpell = { nullptr };
-				_uint* pIPreviusSpell = { nullptr };
-				CRigidBody* pRigidBody = { nullptr };
 				if (FAILED(pBlackBoard->Get_Type("isHitCombo", pIsHitCombo)))
-					return false;
-				if (FAILED(pBlackBoard->Get_Type("iPreviusSpell", pIPreviusSpell)))
 					return false;
 				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
 					return false;
-				if (FAILED(pBlackBoard->Get_Type("pRigidBody", pRigidBody)))
-					return false;
 
-				pRigidBody->Set_Gravity(true);
-
-				*pIPreviusSpell = BUFF_NONE;
 				*pICurrentSpell = BUFF_NONE;
 
 				*pIsHitCombo = false;
@@ -753,17 +754,17 @@ HRESULT CGolem_Combat::Make_Air_Hit(_Inout_ CSequence* pSequence)
 		if (FAILED(pSelector_AirHit->Assemble_Behavior(TEXT("Action_Knockback"), pAction_Knockback)))
 			throw TEXT("Failed Assemble_Behavior Action_Knockback");
 
-		if (FAILED(pRandom_AirHit->Assemble_Behavior(TEXT("Action_Hit_1"), pAction_Hit_1, 0.125f)))
+		if (FAILED(pRandom_AirHit->Assemble_Behavior(TEXT("Action_Hit_1"), pAction_Hit_1, 0.133f)))
 			throw TEXT("Failed Assemble_Behavior Action_Hit_1");
-		if (FAILED(pRandom_AirHit->Assemble_Behavior(TEXT("Action_Hit_3"), pAction_Hit_3, 0.125f)))
+		if (FAILED(pRandom_AirHit->Assemble_Behavior(TEXT("Action_Hit_3"), pAction_Hit_3, 0.133f)))
 			throw TEXT("Failed Assemble_Behavior Action_Hit_3");
-		if (FAILED(pRandom_AirHit->Assemble_Behavior(TEXT("Action_Hit_4"), pAction_Hit_4, 0.125f)))
+		if (FAILED(pRandom_AirHit->Assemble_Behavior(TEXT("Action_Hit_4"), pAction_Hit_4, 0.133f)))
 			throw TEXT("Failed Assemble_Behavior Action_Hit_4");
-		if (FAILED(pRandom_AirHit->Assemble_Behavior(TEXT("Action_Hit_5"), pAction_Hit_5, 0.125f)))
+		if (FAILED(pRandom_AirHit->Assemble_Behavior(TEXT("Action_Hit_5"), pAction_Hit_5, 0.133f)))
 			throw TEXT("Failed Assemble_Behavior Action_Hit_5");
-		if (FAILED(pRandom_AirHit->Assemble_Behavior(TEXT("Action_Hit_6"), pAction_Hit_6, 0.125f)))
+		if (FAILED(pRandom_AirHit->Assemble_Behavior(TEXT("Action_Hit_6"), pAction_Hit_6, 0.133f)))
 			throw TEXT("Failed Assemble_Behavior Action_Hit_6");
-		if (FAILED(pRandom_AirHit->Assemble_Behavior(TEXT("Action_Hit_8"), pAction_Hit_8, 0.12f)))
+		if (FAILED(pRandom_AirHit->Assemble_Behavior(TEXT("Action_Hit_8"), pAction_Hit_8, 0.135f)))
 			throw TEXT("Failed Assemble_Behavior Action_Hit_8");
 	}
 	catch (const _tchar* pErrorTag)
@@ -895,22 +896,22 @@ HRESULT CGolem_Combat::Make_Death(_Inout_ CSequence* pSequence)
 			});
 		pSequence_Death_Ground->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 			{
-				_uint* pIPreviusSpell = { nullptr };
-				if (FAILED(pBlackBoard->Get_Type("iPreviusSpell", pIPreviusSpell)))
+				_uint* piCurrentSpell = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", piCurrentSpell)))
 					return false;
 
-				if (BUFF_LEVIOSO & *pIPreviusSpell)
+				if (BUFF_LEVIOSO & *piCurrentSpell)
 					return false;
 
 				return true;
 			});
 		pSequence_Death_Air->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 			{
-				_uint* pIPreviusSpell = { nullptr };
-				if (FAILED(pBlackBoard->Get_Type("iPreviusSpell", pIPreviusSpell)))
+				_uint* piCurrentSpell = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", piCurrentSpell)))
 					return false;
 
-				if (BUFF_LEVIOSO & *pIPreviusSpell)
+				if (BUFF_LEVIOSO & *piCurrentSpell)
 				{
 					CRigidBody* pRigidBody = { nullptr };
 					if (FAILED(pBlackBoard->Get_Type("pRigidBody", pRigidBody)))
@@ -1234,7 +1235,7 @@ HRESULT CGolem_Combat::Make_NormalAttack(_Inout_ CSelector* pSelector)
 				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
 					return false;
 
-				if (BUFF_NONE != *pICurrentSpell)
+				if (BUFF_LEVIOSO & *pICurrentSpell)
 					return false;
 
 				return true;
@@ -1360,17 +1361,13 @@ HRESULT CGolem_Combat::Make_Hit_Combo(_Inout_ CSelector* pSelector)
 			{
 				_bool* pIsHitCombo = { nullptr };
 				_uint* pICurrentSpell = { nullptr };
-				_uint* pIPreviusSpell = { nullptr };
 				if (FAILED(pBlackBoard->Get_Type("isHitCombo", pIsHitCombo)))
 					return false;
 				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
 					return false;
-				if (FAILED(pBlackBoard->Get_Type("iPreviusSpell", pIPreviusSpell)))
-					return false;
 
 				// 이부분은 애매한 처리임. 나중에 몬스터에 맞은 마법값이 이상하게 동작할 경우 확인할 것
 				*pICurrentSpell = BUFF_NONE;
-				*pIPreviusSpell = BUFF_NONE;
 
 				*pIsHitCombo = false;
 
@@ -1416,9 +1413,9 @@ HRESULT CGolem_Combat::Make_Check_Spell(_Inout_ CSelector* pSelector)
 		CSequence_Groggy* pSequence_Groggy = dynamic_cast<CSequence_Groggy*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence_Groggy")));
 		if (nullptr == pSequence_Groggy)
 			throw TEXT("pSequence_Groggy is nullptr");
-		CSequence_Levitated* pSequence_Levitated = dynamic_cast<CSequence_Levitated*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence_Levitated")));
-		if (nullptr == pSequence_Levitated)
-			throw TEXT("pSequence_Levitated is nullptr");
+		CSequence_Levitate* pSequence_Levitate = dynamic_cast<CSequence_Levitate*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence_Levitate")));
+		if (nullptr == pSequence_Levitate)
+			throw TEXT("pSequence_Levitate is nullptr");
 		CSequence* pSequence_Descendo = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
 		if (nullptr == pSequence_Descendo)
 			throw TEXT("pSequence_Descendo is nullptr");
@@ -1447,8 +1444,8 @@ HRESULT CGolem_Combat::Make_Check_Spell(_Inout_ CSelector* pSelector)
 		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Groggy"), pSequence_Groggy)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Groggy");
 		/* Levioso */
-		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Levitated"), pSequence_Levitated)))
-			throw TEXT("Failed Assemble_Behavior Sequence_Levitated");
+		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Levitate"), pSequence_Levitate)))
+			throw TEXT("Failed Assemble_Behavior Sequence_Levitate");
 		/* Descendo */
 		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Descendo"), pSequence_Descendo)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Descendo");
@@ -1456,15 +1453,15 @@ HRESULT CGolem_Combat::Make_Check_Spell(_Inout_ CSelector* pSelector)
 		if (FAILED(Make_Descendo(pSequence_Descendo)))
 			throw TEXT("Failed Make_Descendo");
 
-		if (FAILED(pSequence_Levitated->Assemble_Random_Select_Behavior(TEXT("Levitated_Loop_1"), 0.2f, 4.f)))
+		if (FAILED(pSequence_Levitate->Assemble_Random_Select_Behavior(TEXT("Levitate_Loop_1"), 0.2f, 4.f)))
 			throw TEXT("Failed Assemble_Random_Select_Behavior");
-		if (FAILED(pSequence_Levitated->Assemble_Random_Select_Behavior(TEXT("Levitated_Loop_2"), 0.2f, 4.f)))
+		if (FAILED(pSequence_Levitate->Assemble_Random_Select_Behavior(TEXT("Levitate_Loop_2"), 0.2f, 4.f)))
 			throw TEXT("Failed Assemble_Random_Select_Behavior");
-		if (FAILED(pSequence_Levitated->Assemble_Random_Select_Behavior(TEXT("Levitated_Loop_3"), 0.2f, 4.f)))
+		if (FAILED(pSequence_Levitate->Assemble_Random_Select_Behavior(TEXT("Levitate_Loop_3"), 0.2f, 4.f)))
 			throw TEXT("Failed Assemble_Random_Select_Behavior");
-		if (FAILED(pSequence_Levitated->Assemble_Random_Select_Behavior(TEXT("Levitated_Loop_4"), 0.2f, 4.f)))
+		if (FAILED(pSequence_Levitate->Assemble_Random_Select_Behavior(TEXT("Levitate_Loop_4"), 0.2f, 4.f)))
 			throw TEXT("Failed Assemble_Random_Select_Behavior");
-		if (FAILED(pSequence_Levitated->Assemble_Random_Select_Behavior(TEXT("Levitated_Loop_5"), 0.2f, 4.f)))
+		if (FAILED(pSequence_Levitate->Assemble_Random_Select_Behavior(TEXT("Levitate_Loop_5"), 0.2f, 4.f)))
 			throw TEXT("Failed Assemble_Random_Select_Behavior");
 	}
 	catch (const _tchar* pErrorTag)

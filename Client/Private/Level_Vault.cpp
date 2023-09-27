@@ -3,6 +3,8 @@
 
 #include "MapObject.h"
 #include "MapObject_Ins.h"
+#include "Trigger_Vault.h"
+#include "Player.h"
 
 CLevel_Vault::CLevel_Vault(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CLevel(pDevice, pContext)
@@ -19,6 +21,13 @@ HRESULT CLevel_Vault::Initialize()
 
 		return E_FAIL;
 	}
+	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
+	{
+		MSG_BOX("Failed Ready_Layer_Player");
+
+		return E_FAIL;
+	}
+	
 	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
 	{
 		MSG_BOX("Failed Ready_Layer_Player");
@@ -39,11 +48,18 @@ HRESULT CLevel_Vault::Initialize()
 
 		return E_FAIL;
 	}
+	if (FAILED(Ready_Layer_Trigger(TEXT("Layer_Trigger"))))
+	{
+		MSG_BOX("Failed Load Layer_Trigger");
+
+		return E_FAIL;
+	}
 
 	BEGININSTANCE;
 
 	pGameInstance->Reset_World_TimeAcc();
 	pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
+
 	ENDINSTANCE;
 
     return S_OK;
@@ -64,13 +80,6 @@ void CLevel_Vault::Tick(_float fTimeDelta)
 		pGameInstance->Set_CurrentScene(TEXT("Scene_FieldGuide"), false);
 	}
 
-	if (false)//trigger on
-	{
-		Light_Out();
-		
-	}
-
-
 	ENDINSTANCE;
 
 #ifdef _DEBUG
@@ -86,29 +95,16 @@ HRESULT CLevel_Vault::Render()
 	return S_OK;
 }
 
-HRESULT CLevel_Vault::Light_Out()
-{
-	BEGININSTANCE
-	CLight::LIGHTDESC SettingLight;
-	ZEROMEM(&SettingLight);
-	
-	Color vColor = (XMVectorLerp(XMVectorSet(0.f, 0.f, 0.f, 0.f), XMVectorSet(1.f, 1.f, 1.f, 1.f),1.f));
-
-	SettingLight.vDiffuse = _float4(vColor.x,vColor.y, vColor.z, 0.f);
-	SettingLight.vSpecular = _float4(vColor.x, vColor.y, vColor.z, 0.f);
-	SettingLight.vAmbient = _float4(vColor.x, vColor.y, vColor.z, 0.f);
-	pGameInstance->Set_Light(CLight::TYPE_DIRECTIONAL, SettingLight);
-
-	ENDINSTANCE
-
-		return S_OK;
-}
-
 HRESULT CLevel_Vault::Ready_Layer_Player(const _tchar* pLayerTag)
 {
 	BEGININSTANCE;
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_VAULT, TEXT("Prototype_GameObject_Player"), pLayerTag, TEXT("GameObject_Player"))))
+
+	CPlayer::PLAYERDESC PlayerDesc;
+	PlayerDesc.vPosition = _float3();
+	PlayerDesc.eLevelID = LEVEL_VAULT;
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_VAULT, TEXT("Prototype_GameObject_Player"), pLayerTag, TEXT("GameObject_Player"), &PlayerDesc)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Player)");
 		ENDINSTANCE;
@@ -135,8 +131,7 @@ HRESULT CLevel_Vault::Ready_Lights()
 	LightDesc.vAmbient = BLACKDEFAULT;
 	LightDesc.vSpecular = BLACKDEFAULT;
 
-	if (nullptr == pGameInstance->Add_Lights(m_pDevice, m_pContext, LightDesc))
-		return E_FAIL;
+	pGameInstance->Set_Light(CLight::TYPE_DIRECTIONAL,LightDesc);
 
 	ENDINSTANCE;
 	return S_OK;
@@ -340,7 +335,7 @@ HRESULT CLevel_Vault::Load_Monsters(const wstring& wstrMonsterFilePath)
 
 	if (INVALID_HANDLE_VALUE == hFile)
 	{
-		MSG_BOX("Failed to Create MapObject File for Load MapObject");
+		MSG_BOX("Failed to Create Monsters File for Load Monsters");
 		return E_FAIL;
 	}
 
@@ -430,6 +425,34 @@ HRESULT CLevel_Vault::Load_Monsters(const wstring& wstrMonsterFilePath)
 	}
 
 	CloseHandle(hFile);
+
+	return S_OK;
+}
+
+HRESULT CLevel_Vault::Ready_Layer_Trigger(const _tchar* pLayerTag)
+{
+	BEGININSTANCE;
+
+	/* Add Scene : Main */
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
+	{
+		MSG_BOX("Failed Add Scene : (Scene_Main)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	CTrigger_Vault::TRIGGERPOS TriggerDesc;
+	TriggerDesc.vEffectPos = _float3();
+	TriggerDesc.vTriggerPos;
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_VAULT, LEVEL_VAULT, TEXT("Prototype_GameObject_Trigger_Vault"), 
+		pLayerTag, TEXT("GameObject_Trigger_Vault"), &TriggerDesc)))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Trigger_Vault)");
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
 
 	return S_OK;
 }

@@ -28,7 +28,12 @@ HRESULT CRandom_AirHit::Tick(const _float& fTimeDelta)
 void CRandom_AirHit::Reset_Behavior(HRESULT result)
 {
 	(*m_iterCurBehavior)->Reset_Behavior(result);
-	Set_Random_Behavior();
+	if (BEHAVIOR_RUNNING == m_ReturnData &&	// 현재 행동이 진행중이었는데
+		BEHAVIOR_RUNNING != result)			// 상위 노드에서 상태가 바뀐경우
+	{
+		m_ReturnData = result;
+		Set_Random_Behavior();
+	}
 }
 
 CRandom_AirHit* CRandom_AirHit::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

@@ -74,10 +74,10 @@ void CStateMachine::Go_Hit()
 {
 	BEGININSTANCE;
 
-	if (pGameInstance->Get_DIKeyState(DIK_H,CInput_Device::KEY_DOWN))
+	/*if (pGameInstance->Get_DIKeyState(DIK_H,CInput_Device::KEY_DOWN))
 	{
 		Set_StateMachine(TEXT("Hit"));
-	}
+	}*/
 
 	ENDINSTANCE;
 }

@@ -28,7 +28,7 @@ public:
 	
 	//모델의 영점이 발이기 때문에 Offset을 두어 중점으로 올리려 합니다.
 	void Set_Offset_Matrix(_float4x4 matrix) { m_OffsetMatrix = matrix; }
-	_float4x4 Get_Offset_Matrix() { return m_OffsetMatrix; }
+	_float4x4 Get_Offset_Matrix() const { return m_OffsetMatrix; }
 
 public:
 	virtual HRESULT Initialize_Prototype();

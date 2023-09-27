@@ -4,6 +4,7 @@
 #include "MapObject.h"
 #include "MapObject_Ins.h"
 #include "UI_Group_Enemy_HP.h"
+#include "Player.h"
 
 CLevel_Cliffside::CLevel_Cliffside(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CLevel(pDevice, pContext)
@@ -64,21 +65,21 @@ HRESULT CLevel_Cliffside::Initialize()
 		return E_FAIL;
 	}
 
-	if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/MapData0.ddd"))))
+	if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/MapData3.ddd"))))
 	{
 		MSG_BOX("Failed Load Map Object");
 
 		return E_FAIL;
 	}
 
-	if (FAILED(Load_MapObject_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins0.ddd"))))
+	if (FAILED(Load_MapObject_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins3.ddd"))))
 	{
 		MSG_BOX("Failed Load Map Object_Ins");
 
 		return E_FAIL;
 	}
 
-	Load_Monsters(TEXT("../../Resources/GameData/MonsterData/Test.mon"));
+	Load_Monsters(TEXT("../../Resources/GameData/MonsterData/Cliff.mon"));
 	
 #ifdef _DEBUG
 	if (FAILED(Ready_Layer_Debug(TEXT("Layer_Debug"))))
@@ -160,7 +161,7 @@ HRESULT CLevel_Cliffside::Ready_Lights()
 	ZeroMemory(&LightDesc, sizeof LightDesc);
 
 	LightDesc.eType = CLight::TYPE_DIRECTIONAL;
-	LightDesc.vPos = _float4(2.f, 25.f, 2.f, 1.f);
+	LightDesc.vPos = _float4(10.f, 100.f, 25.f, 1.f);
 	LightDesc.vLookAt = _float4(20.f, 0.f, 20.f, 1.f);
 	LightDesc.vDir = _float4(0.33f, -0.99f, 0.33f, 0.f);
 
@@ -217,7 +218,11 @@ HRESULT CLevel_Cliffside::Ready_Layer_Player(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Player"), pLayerTag, TEXT("GameObject_Player"))))
+	CPlayer::PLAYERDESC PlayerDesc;
+	PlayerDesc.vPosition = _float3();
+	PlayerDesc.eLevelID = LEVEL_CLIFFSIDE;
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Player"), pLayerTag, TEXT("GameObject_Player"),&PlayerDesc)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Player)");
 		ENDINSTANCE;
@@ -247,12 +252,12 @@ HRESULT CLevel_Cliffside::Ready_Layer_Monster(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Armored_Troll"), pLayerTag, TEXT("GameObject_Armored_Troll"))))
+	/*if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Armored_Troll"), pLayerTag, TEXT("GameObject_Armored_Troll"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Armored_Troll)");
 		ENDINSTANCE;
 		return E_FAIL;
-	}
+	}*/
 
 	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Dugbog"), pLayerTag, TEXT("GameObject_Dugbog"))))
 	{

@@ -43,6 +43,11 @@ protected:
 	virtual ~CEnemy() = default;
 
 public:
+	CUI_Group_Enemy_HP* Get_UI_Enemy_HP() const {
+		return m_pUI_HP;
+	}
+
+public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;
@@ -62,8 +67,8 @@ protected:
 
 protected:
 	const CGameObject* m_pTarget = { nullptr };
+	const CGameObject* m_pPlayer = { nullptr };
 	_uint m_iCurrentSpell = { 0 };
-	_uint m_iPreviusSpell = { 0 };
 	unordered_map<BUFF_TYPE, function<void(_float3, _float)>> m_CurrentTickSpells;
 
 	_bool m_isSpawn = { false };
@@ -93,6 +98,8 @@ protected: /* Notify Func */
 	void Change_Animation() {
 		m_isChangeAnimation = true;
 	}
+	void On_Gravity();
+	void Off_Gravity();
 
 public:
 	virtual void Free() override;

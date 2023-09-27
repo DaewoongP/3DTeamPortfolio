@@ -1,7 +1,7 @@
 #pragma once
 
 /* =============================================== */
-//	[CSequence_Levitated]
+//	[CSequence_Levitate]
 //	: 객체의 공격관련 행동을 담당하는 클래스
 //	정 : 주성환
 //	부 : 
@@ -17,12 +17,12 @@ END
 
 BEGIN(Client)
 
-class CSequence_Levitated final : public CSequence
+class CSequence_Levitate final : public CSequence
 {
 private:
-	explicit CSequence_Levitated(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	explicit CSequence_Levitated(const CSequence_Levitated& rhs);
-	virtual ~CSequence_Levitated() = default;
+	explicit CSequence_Levitate(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	explicit CSequence_Levitate(const CSequence_Levitate& rhs);
+	virtual ~CSequence_Levitate() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype() override { return S_OK; }
@@ -37,14 +37,14 @@ private:
 	virtual HRESULT Assemble_Childs() override;
 
 private:
-	CRandom_Select* m_pRandom_Levitated_Loop = { nullptr };
+	CRandom_Select* m_pRandom_Levitate_Loop = { nullptr };
 
 private:
 	virtual void Reset_Behavior(HRESULT result) override;
 
 public:
-	static CSequence_Levitated* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CSequence_Levitated* Clone(void* pArg) override;
+	static CSequence_Levitate* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	virtual CSequence_Levitate* Clone(void* pArg) override;
 	virtual void Free() override;
 };
 

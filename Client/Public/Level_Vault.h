@@ -14,11 +14,11 @@ public:
 	virtual HRESULT Initialize();
 	virtual void Tick(_float fTimeDelta);
 	virtual HRESULT Render();
-	HRESULT Light_Out();
 
 private:
 	HRESULT Ready_Layer_Player(const _tchar* pLayerTag);
 	HRESULT Ready_Layer_BackGround(const _tchar* pLayerTag);
+	HRESULT Ready_Layer_Trigger(const _tchar* pLayerTag);
 
 private:
 	HRESULT Load_MapObject(const _tchar* pObjectFilePath);
@@ -27,7 +27,6 @@ private:
 
 private:
 	HRESULT Ready_Lights();
-
 
 public:
 	static CLevel_Vault* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

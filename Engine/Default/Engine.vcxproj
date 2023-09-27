@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="..\Public\Animation.h" />
     <ClInclude Include="..\Public\DOF.h" />
+    <ClInclude Include="..\Public\LoadingScene.h" />
     <ClInclude Include="..\public\MotionBlurInst.h" />
     <ClInclude Include="..\public\MotionBlur.h" />
     <ClInclude Include="..\public\ParticleSystemPool.h" />
@@ -161,6 +162,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Animation.cpp" />
+    <ClCompile Include="..\Private\LoadingScene.cpp" />
     <ClCompile Include="..\Private\DOF.cpp" />
     <ClCompile Include="..\Private\Model_Instance.cpp" />
     <ClCompile Include="..\private\MotionBlurInst.cpp" />

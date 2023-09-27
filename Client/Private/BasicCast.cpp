@@ -127,8 +127,14 @@ HRESULT CBasicCast::Initialize(void* pArg)
 
 		return E_FAIL;
 	}
-
-	
+	m_pHitEffect->Disable();
+	m_pHitGlowEffect->Disable();
+	m_pWandEffect->Disable();
+	m_pFinalAttackEffect->Disable();
+	m_pMainTrail->Disable();
+	m_WandTrail->Disable();
+	m_pMainGlow->Disable();
+	m_pHitSplashEffect->Disable();
 	return S_OK;
 }
 
@@ -167,8 +173,10 @@ void CBasicCast::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 	__super::OnCollisionExit(CollisionEventDesc);
 }
 
-void CBasicCast::Ready_Begin()
+HRESULT CBasicCast::Reset(MAGICBALLINITDESC& InitDesc)
 {
+	__super::Reset(InitDesc);
+	
 	m_pHitEffect->Disable();
 	m_pHitGlowEffect->Disable();
 	m_pWandEffect->Disable();
@@ -177,29 +185,29 @@ void CBasicCast::Ready_Begin()
 	m_WandTrail->Disable();
 	m_pMainGlow->Disable();
 	m_pHitSplashEffect->Disable();
+	m_fLerpAcc = 0.0f;
+	return S_OK;
+}
+
+void CBasicCast::Ready_Begin()
+{
 }
 
 void CBasicCast::Ready_DrawMagic()
 {
-	m_WandTrail->Enable();
-	m_pWandEffect->Enable();
-
-	m_pWandEffect->Get_EmissionModuleRef().Setting_PrevPos(m_vStartPostion);
-
 	_float3 vWandPosition = _float4x4(m_WeaponOffsetMatrix * (*m_pWeaponMatrix)).Translation();
-	m_WandTrail->Get_Transform()->Set_Position(vWandPosition);
-	m_pWandEffect->Get_Transform()->Set_Position(vWandPosition);
-	m_WandTrail->Reset_Trail(_float3(vWandPosition) + _float3(0, 0.5f, 0), _float3(vWandPosition) + _float3(0, -0.5f, 0));
+	m_WandTrail->Enable(vWandPosition);
+	m_pWandEffect->Enable(vWandPosition);
 }
 
 void CBasicCast::Ready_CastMagic()
 {
-	m_pMainTrail->Enable();
 	Ready_SplineMove(m_pMainTrail);
-	m_pMainTrail->Enable();
+	
 
 	_float3 vWandPosition = _float4x4(m_WeaponOffsetMatrix * (*m_pWeaponMatrix)).Translation();
-	m_pMainGlow->Enable();
+	m_pMainGlow->Enable(vWandPosition);
+	m_pMainTrail->Enable(vWandPosition);
 	m_pMainGlow->Play(vWandPosition);
 }
 
@@ -208,9 +216,9 @@ void CBasicCast::Ready_Dying()
 	m_WandTrail->Disable();
 	m_pWandEffect->Disable();
 
-	m_pHitGlowEffect->Enable();
-	m_pHitEffect->Enable();
-	m_pHitSplashEffect->Enable();
+	m_pHitGlowEffect->Enable(m_pMainTrail->Get_Transform()->Get_Position());
+	m_pHitEffect->Enable(m_pMainTrail->Get_Transform()->Get_Position());
+	m_pHitSplashEffect->Enable(m_pMainTrail->Get_Transform()->Get_Position());
 
 	m_pHitGlowEffect->Play(m_pMainTrail->Get_Transform()->Get_Position());
 	m_pHitEffect->Play(m_pMainTrail->Get_Transform()->Get_Position());
@@ -225,7 +233,7 @@ void CBasicCast::Tick_Begin(_float fTimeDelta)
 
 void CBasicCast::Tick_DrawMagic(_float fTimeDelta)
 {
-	Do_MagicBallState_To_Next();
+	
 }
 
 void CBasicCast::Tick_CastMagic(_float fTimeDelta)

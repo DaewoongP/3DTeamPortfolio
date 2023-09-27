@@ -24,6 +24,7 @@
 #include "MagicCastingState.h"
 #include "ProtegoState.h"
 #include "HitState.h"
+#include "StandingState.h"
 #pragma endregion
 
 
@@ -235,6 +236,11 @@ HRESULT CMain3_Loader::Loading_For_Cliffside()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_State_Hit"),
 			CHitState::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_State_Hit");
+
+		/* For.Prototype_Component_State_Standing */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_State_Standing"),
+			CStandingState::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_State_Standing");
 
 #pragma endregion
 

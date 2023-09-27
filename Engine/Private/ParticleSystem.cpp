@@ -115,8 +115,8 @@ void CParticleSystem::Tick(_float _fTimeDelta)
 		return;
 
 	// Stop버튼을 누른 후 모든 파티클들이 소멸하면 자동으로 Disable이 된다.
-	if (m_isStop == true && Is_AllDead())
-		Disable();
+	if (true == m_isStop && true == Is_AllDead())
+		Action_By_StopOption();
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
@@ -134,7 +134,7 @@ void CParticleSystem::Tick(_float _fTimeDelta)
 	// 파티클 나이 처리
 	Action_By_Age();
 
-	// Burst옵션에 따른 파티클 생성
+	// 파티클 준비.
 	m_EmissionModuleDesc.Action(this, _fTimeDelta);
 
 	// 카메라가 파티클 시스템의 로컬 포지션으로 감.
@@ -291,8 +291,7 @@ void CParticleSystem::Play(_float3 vPosition)
 
 	m_isStop = false;
 
-	m_pTransform->Set_Position(vPosition);
-	Enable();
+	Enable(vPosition);
 }
 void CParticleSystem::Stop()
 {
@@ -377,6 +376,13 @@ void CParticleSystem::Enable()
 {
 	m_MainModuleDesc.isEnable = true;
 }
+void CParticleSystem::Enable(_float3 vPos)
+{
+	m_pTransform->Set_Position(vPos);
+	Get_EmissionModuleRef().Setting_PrevPos(vPos);
+	m_MainModuleDesc.isEnable = true;
+}
+
 void CParticleSystem::Disable()
 {
 	m_MainModuleDesc.isEnable = false;
@@ -480,7 +486,7 @@ void CParticleSystem::Action_By_Age()
 	{
 		if (false == iter->isAlive)
 		{
-			Reset_Particle(iter);
+			//Reset_Particle(iter);
 			// 루프 활성화 시 Wait으로 이동
 			if (true == m_MainModuleDesc.isLooping)
 			{
@@ -509,31 +515,32 @@ void CParticleSystem::Action_By_Duration()
 }
 void CParticleSystem::Action_By_StopOption()
 {
-	if (m_MainModuleDesc.strStopAction == "Disable")
+	if ("Disable" == m_MainModuleDesc.strStopAction)
 	{
-		Stop();
+		Disable();
 		Restart();
 	}
-	else if (m_MainModuleDesc.strStopAction == "Destroy")
+	else if ("Destroy" == m_MainModuleDesc.strStopAction)
 	{
-		CGameObject* pOwner = dynamic_cast<CGameObject*>(m_pOwner);
-		if (nullptr != pOwner)
-		{
-			pOwner->Set_ObjEvent(CGameObject::OBJ_DEAD);
-		}
+		Set_ObjEvent(CGameObject::OBJ_DEAD);
 	}
-	else if (m_MainModuleDesc.strStopAction == "Callback")
+	else if ("Callback" == m_MainModuleDesc.strStopAction)
 	{
-		m_StopAction();
-		Stop();
+		if(m_StopAction) // 콜백함수의 주소가 있는지 검사.
+			m_StopAction();
+		Disable();
 		Restart();
 	}
-	else if (m_MainModuleDesc.strStopAction == "Pool")
+	else if ("Pool" == m_MainModuleDesc.strStopAction)
 	{
+		if (TEXT("") == m_szParticleTag) // 툴 크래쉬 방지용
+			return;
+
 		Set_ObjEvent(CGameObject::OBJ_DEAD);
 		CParticleSystemPool* pPool = CParticleSystemPool::GetInstance();
 		Safe_AddRef(pPool);
 		pPool->Return_Particle(this);
+		Restart();
 		Safe_Release(pPool);
 	}
 }
@@ -891,23 +898,26 @@ _float4x4 CParticleSystem::LookAt(_float3 vPos, _float3 _vTarget, _bool _isDelet
 }
 void CParticleSystem::Restart()
 {
-	// DEAD->WAIT
+	// 모든 그룹을 WAIT으로 이동
 	for (auto iter = m_Particles[DEAD].begin(); iter != m_Particles[DEAD].end();)
-	{
-		Reset_Particle(iter);
 		iter = TransitionTo(iter, m_Particles[DEAD], m_Particles[WAIT]);
-	}
+	for (auto iter = m_Particles[ALIVE].begin(); iter != m_Particles[ALIVE].end();)
+		iter = TransitionTo(iter, m_Particles[ALIVE], m_Particles[WAIT]);
+	for (auto iter = m_Particles[DELAY].begin(); iter != m_Particles[DELAY].end();)
+		iter = TransitionTo(iter, m_Particles[DELAY], m_Particles[WAIT]);
 
-	// 수명리셋
-	for (auto& Particle : m_Particles[ALIVE])
-		Particle.fAge = 0.f;
-	for (auto& Particle : m_Particles[DELAY])
-		Particle.fAge = 0.f;
+	// 파티클 리셋
+	for (_uint i = 0; i < STATE_END; ++i)
+	{
+		for (auto& Particle : m_Particles[i])
+		{
+			Particle.Restart();
+		}
+	}
 
 	m_MainModuleDesc.Restart();
 	m_EmissionModuleDesc.Restart();
 	m_ShapeModuleDesc.Restart();
-	m_RendererModuleDesc.Restart();
 }
 CParticleSystem* CParticleSystem::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, const _tchar* _pDirectoryPath, _uint m_iLevel)
 {

@@ -52,11 +52,12 @@
 #include "Lumos.h"
 #pragma endregion Magic
 
+#include "Trigger_Vault.h"
+
 #ifdef _DEBUG
 #include "Test_Player.h"
 #include "Camera_Debug.h"
 #include "PhysXRender.h"
-#include "LoadTrigger.h"
 #endif // _DEBUG
 
 CMain0_Loader::CMain0_Loader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -370,7 +371,7 @@ HRESULT CMain0_Loader::Loading_For_Cliffside()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Lumos"),
 			CLumos::Create(m_pDevice, m_pContext, LEVEL_STATIC))))
 			throw TEXT("Prototype_GameObject_Lumos");
-		
+
 #pragma endregion
 		{
 			std::lock_guard<std::mutex> lock(mtx);
@@ -389,10 +390,26 @@ HRESULT CMain0_Loader::Loading_For_Cliffside()
 
 		{
 			std::lock_guard<std::mutex> lock(mtx);
-			
+
 			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Dust01"),
-				TEXT("../../Resources/GameData/ParticleData/Ncendio/FireCircleBoom/"), 20)))
+				TEXT("../../Resources/GameData/ParticleData/Misc/Dust01/"), 3)))
 				throw TEXT("Reserve Particle : Particle_Dust01");
+		}
+
+		{
+			std::lock_guard<std::mutex> lock(mtx);
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Dust02"),
+				TEXT("../../Resources/GameData/ParticleData/Misc/Dust02/"), 3)))
+				throw TEXT("Reserve Particle : Particle_Dust02");
+		}
+
+		{
+			std::lock_guard<std::mutex> lock(mtx);
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_RockChunksRough"),
+				TEXT("../../Resources/GameData/ParticleData/Misc/RockChunksRough/"), 3)))
+				throw TEXT("Reserve Particle : Particle_RockChunksRough");
 		}
 
 		/* --------------Debug-------------- */
@@ -417,10 +434,6 @@ HRESULT CMain0_Loader::Loading_For_Cliffside()
 			CPhysXRender::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_PhysxRenderer");
 
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_LoadTrigger"),
-			CLoadTrigger::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_LoadTrigger");
-
 #endif // _DEBUG
 	}
 	catch (const _tchar* pErrorTag)
@@ -437,6 +450,15 @@ HRESULT CMain0_Loader::Loading_For_Cliffside()
 
 HRESULT CMain0_Loader::Loading_For_Vault()
 {
+	/* For.Prototype_GameObject_MeshEffect*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_VAULT, TEXT("Prototype_GameObject_Cloister_MeshEffect"),
+		CMeshEffect::Create(m_pDevice, m_pContext,TEXT("../../Resources/GameData/MeshEffectData/Cloister/Cloister.ME")))))
+		throw TEXT("Prototype_GameObject_Cloister_MeshEffect");
+
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_VAULT, TEXT("Prototype_GameObject_Trigger_Vault"),
+		CTrigger_Vault::Create(m_pDevice, m_pContext))))
+		throw TEXT("Prototype_GameObject_Trigger_Vault");
+
 
 	return S_OK;
 }

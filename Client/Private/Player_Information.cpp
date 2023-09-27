@@ -127,7 +127,10 @@ void CPlayer_Information::Using_Fnisher()
 
 void CPlayer_Information::fix_HP(_int _iNum)
 {
-	m_pHealth->Set_HP(m_pHealth->Get_HP() + _iNum);
+	if (0 <=  m_pHealth->Get_HP() + _iNum)
+	{
+		m_pHealth->Set_HP(m_pHealth->Get_HP() + _iNum);
+	}
 }
 
 CPlayer_Information* CPlayer_Information::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

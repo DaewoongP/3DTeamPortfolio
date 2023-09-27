@@ -2,6 +2,8 @@
 #include "GameObject.h"
 #include "Client_Defines.h"
 
+#include "Magic.h"
+
 BEGIN(Engine)
 class CModel;
 class CShader;
@@ -13,6 +15,7 @@ class CRootBehavior;
 END
 
 BEGIN(Client)
+class CMagicBall;
 class CMagicSlot;
 class CWeapon_Fig_Wand;
 END
@@ -52,8 +55,12 @@ private:
 	// 범위 안에 들어온 몬스터 리스트
 	unordered_map<wstring, const CGameObject*> m_RangeInEnemies;
 
+	CMagic::MAGICDESC m_MagicDesc;
+
 	_bool m_isChangeAnimation = { false };
 	_bool m_isRangeInEnemy = { false };
+
+	CMagicBall* m_CastingMagic = { nullptr };
 
 private:
 	HRESULT Make_AI();
@@ -88,6 +95,8 @@ private: /* Notify Functions */
 	void Attack_Heavy();
 	void Cast_Levioso();
 	void Cast_Protego();
+	void Shot_Magic();
+
 
 public:
 	static CProfessor_Fig* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

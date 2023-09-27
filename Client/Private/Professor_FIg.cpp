@@ -4,6 +4,7 @@
 
 #include "Action.h"
 #include "MagicSlot.h"
+#include "MagicBall.h"
 #include "Check_Degree.h"
 #include "Check_Distance.h"
 #include "Selector_Degree.h"
@@ -110,10 +111,13 @@ void CProfessor_Fig::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 	if (wstring::npos != wstrMyCollisionTag.find(TEXT("Range")))
 	{
 		if (wstring::npos != wstrObjectTag.find(TEXT("Golem")) ||
-			wstring::npos != wstrObjectTag.find(TEXT("Troll")))
+			wstring::npos != wstrObjectTag.find(TEXT("Troll")) ||
+			wstring::npos != wstrObjectTag.find(TEXT("Dugbog")))
 		{
+			if (CollisionEventDesc.pOtherOwner->isDead())
+				return;
 			auto iter = m_RangeInEnemies.find(wstrObjectTag);
-			if(iter == m_RangeInEnemies.end())
+			if (iter == m_RangeInEnemies.end())
 				m_RangeInEnemies.emplace(wstrObjectTag, CollisionEventDesc.pOtherOwner);
 		}
 	}
@@ -128,7 +132,8 @@ void CProfessor_Fig::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 	if (wstring::npos != wstrMyCollisionTag.find(TEXT("Range")))
 	{
 		if (wstring::npos != wstrObjectTag.find(TEXT("Golem")) ||
-			wstring::npos != wstrObjectTag.find(TEXT("Troll")))
+			wstring::npos != wstrObjectTag.find(TEXT("Troll")) ||
+			wstring::npos != wstrObjectTag.find(TEXT("Dugbog")))
 		{
 			Remove_GameObject(wstrObjectTag);
 		}
@@ -163,6 +168,9 @@ HRESULT CProfessor_Fig::Render()
 			}
 			else
 			{
+				if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_NormalTexture", i, NORMALS)))
+					throw TEXT("Bind_Material Normal");
+
 				if (FAILED(m_pShaderCom->Begin("AnimMesh")))
 					throw TEXT("Shader Begin AnimMesh");
 			}
@@ -272,6 +280,7 @@ HRESULT CProfessor_Fig::Make_Magics()
 		magicInitDesc.fBallDistance = 30;
 		magicInitDesc.fLifeTime = 0.8f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
+		m_MagicDesc = magicInitDesc;
 	}
 
 	//Skill Magic LEVIOSO
@@ -336,6 +345,34 @@ HRESULT CProfessor_Fig::Make_Notifies()
 
 	Func = [&] {(*this).Cast_Protego(); };
 	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Cast_Protego"), TEXT("Cast_Protego"), Func)))
+		return E_FAIL;
+
+	Func = [&] {(*this).Shot_Magic(); };
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Front_1"), TEXT("Shot_Magic"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Step_Back_2"), TEXT("Shot_Magic"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Step_Back_3"), TEXT("Shot_Magic"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Left_45"), TEXT("Shot_Magic"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Left_90"), TEXT("Shot_Magic"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Left_135"), TEXT("Shot_Magic"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Right_45"), TEXT("Shot_Magic"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Right_90"), TEXT("Shot_Magic"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Right_135"), TEXT("Shot_Magic"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Right_180"), TEXT("Shot_Magic"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Heavy_Front_2"), TEXT("Shot_Magic"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Levioso"), TEXT("Shot_Magic"), Func)))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Cast_Protego"), TEXT("Shot_Magic"), Func)))
 		return E_FAIL;
 
 	return S_OK;
@@ -458,8 +495,8 @@ HRESULT CProfessor_Fig::SetUp_ShaderResources()
 			throw TEXT("Failed Bind_RawValue : g_fCamFar");
 
 		_float3 vHairColor = { 1.f, 1.f, 1.f };
-		if (FAILED(m_pShaderCom->Bind_RawValue("g_fHairColor", &vHairColor, sizeof(_float3))))
-			throw TEXT("Failed Bind_RawValue : g_fHairColor");
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_vHairColor", &vHairColor, sizeof(_float3))))
+			throw TEXT("Failed Bind_RawValue : g_vHairColor");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -934,8 +971,15 @@ void CProfessor_Fig::Attack_Light()
 	if (nullptr == m_pTarget)
 		return;
 
-	m_pMagicSlot->Action_Magic_Basic(0, m_pTarget->Get_Transform(),
-		XMMatrixTranslation(0.f, 2.5f, 0.f),
+	m_MagicDesc.eBuffType = BUFF_ATTACK_LIGHT;
+	m_pMagicSlot->Add_Magics(m_MagicDesc);
+
+	_float4x4 OffsetMatrix = _float4x4();
+	if (nullptr != m_pTarget)
+		OffsetMatrix = m_pTarget->Get_Offset_Matrix();
+
+	m_CastingMagic = m_pMagicSlot->Action_Magic_Basic(0, m_pTarget->Get_Transform(),
+		OffsetMatrix,
 		m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(),
 		m_pWeapon->Get_Wand_Point_OffsetMatrix(),
 		COL_ENEMY);
@@ -946,8 +990,15 @@ void CProfessor_Fig::Attack_Heavy()
 	if (nullptr == m_pTarget)
 		return;
 
-	m_pMagicSlot->Action_Magic_Basic(0, m_pTarget->Get_Transform(),
-		XMMatrixTranslation(0.f, 2.5f, 0.f),
+	m_MagicDesc.eBuffType = BUFF_ATTACK_HEAVY;
+	m_pMagicSlot->Add_Magics(m_MagicDesc);
+
+	_float4x4 OffsetMatrix = _float4x4();
+	if (nullptr != m_pTarget)
+		OffsetMatrix = m_pTarget->Get_Offset_Matrix();
+
+	m_CastingMagic = m_pMagicSlot->Action_Magic_Basic(0, m_pTarget->Get_Transform(),
+		OffsetMatrix,
 		m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(),
 		m_pWeapon->Get_Wand_Point_OffsetMatrix(),
 		COL_ENEMY);
@@ -958,8 +1009,12 @@ void CProfessor_Fig::Cast_Levioso()
 	if (nullptr == m_pTarget)
 		return;
 
-	m_pMagicSlot->Action_Magic_Skill(0, m_pTarget->Get_Transform(),
-		XMMatrixTranslation(0.f, 2.5f, 0.f),
+	_float4x4 OffsetMatrix = _float4x4();
+	if (nullptr != m_pTarget)
+		OffsetMatrix = m_pTarget->Get_Offset_Matrix();
+
+	m_CastingMagic = m_pMagicSlot->Action_Magic_Skill(0, m_pTarget->Get_Transform(),
+		OffsetMatrix,
 		m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(),
 		m_pWeapon->Get_Wand_Point_OffsetMatrix(),
 		COL_ENEMY);
@@ -970,11 +1025,16 @@ void CProfessor_Fig::Cast_Protego()
 	if (nullptr == m_pTarget)
 		return;
 
-	m_pMagicSlot->Action_Magic_Basic(1, m_pTransform,
+	m_CastingMagic = m_pMagicSlot->Action_Magic_Basic(1, m_pTransform,
 		XMMatrixTranslation(0.f, 1.f, 0.f),
 		m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(),
 		m_pWeapon->Get_Wand_Point_OffsetMatrix(),
 		COL_MAGIC);
+}
+
+void CProfessor_Fig::Shot_Magic()
+{
+	m_CastingMagic->Do_MagicBallState_To_Next();
 }
 
 CProfessor_Fig* CProfessor_Fig::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

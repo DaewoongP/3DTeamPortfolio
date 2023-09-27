@@ -28,7 +28,7 @@ public:
 	void Add_Notify(PT_NOTIFY ptNotify) {
 		Events.push_back(ptNotify); 
 	}
-
+	void Restart();
 public:
 	_float		fAge = { 0.f };
 	_float		fGravityAccel = { 0.f };
@@ -59,7 +59,7 @@ struct ENGINE_DLL MODULE
 
 	void Save(HANDLE hFile, _ulong& dwByte);
 	void Load(HANDLE hFile, _ulong& dwByte);
-
+	
 	_bool isActivate = { false };
 };
 struct ENGINE_DLL MAIN_MODULE : public MODULE
@@ -113,7 +113,7 @@ struct ENGINE_DLL MAIN_MODULE : public MODULE
 	string strEmmiterVelocity = { "RigidBody" }; // RigidBoyd, Transform // Inherit Velocity 모듈과 Emission 모듈에 사용되는데 속도 정할 때 사용함.
 	_int iMaxParticles = { MAX_PARTICLE_NUM }; // 한 번에 존재할 수 있는 파티클의 수를 제한함.(인스턴싱 수가 100이여도 10으로 제한하면 10개만 나옴)
 	_bool isAutoRandomSeed = { true }; // 파티클 수명 주기마다 랜덤 값을 매번 바뀌게하는 용도.
-	string strStopAction = {"None"}; // None, Disable, Destroy, Callback // 객체 수명이 다하거나 파티클의 모든 재생이 완료됐을 때 옵션에 따라 행동이 달라진다.
+	string strStopAction = {"None"}; // None, Disable, Destroy, Callback, Pool // 객체 수명이 다하거나 파티클의 모든 재생이 완료됐을 때 옵션에 따라 행동이 달라진다.
 
 	_float fParticleSystemAge = { 0.f };
 };
@@ -130,10 +130,16 @@ struct ENGINE_DLL EMISSION_MODULE : public MODULE
 
 	typedef struct tagBurst
 	{
-		_float fTime = { 0.f }; // Time초 마다 트리거 발동.
+		void Restart()
+		{
+			fTriggerTimeAcc = 0.f;
+			fIntervalTimeAcc = 0.f;
+		}
+		 
+		_float fTime = { 0.f }; // Time초에 트리거 발동.
 		_int2 iCount = { 30, 30 }; // 1번의 Interval에 방출할 파티클 수
 		_uint iCycleCount = { 0 }; // Cycle에 사용할 누적값.
-		_int iCycles = { 1 }; // Time초 마다 Interval번 만큼 Cycle번 반복
+		_int iCycles = { 1 }; // Interval간격으로 Cycle번 반복
 		_float fIntervalTimeAcc = { 0.f }; // Interval에 사용할 시간 누적값.
 		_float fInterval = { 0.010f }; // Time초 마다 Interval간격으로 방출
 		_float fProbability = { 1.f }; // 트리거가 발생할 확률 [0 ,1]
@@ -393,7 +399,7 @@ struct ENGINE_DLL RENDERER_MODULE : public MODULE
 
 	HRESULT Save(const _tchar* _pDirectoyPath);
 	HRESULT Load(const _tchar* _pDirectoyPath);
-	void Restart();
+
 
 	wstring wstrShaderTag = { TEXT("Shader_VtxRectColInstance") };
 	wstring wstrMaterialPath = { TEXT("../../Resources/Effects/Textures/Default_Particle.png") };
