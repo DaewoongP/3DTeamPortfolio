@@ -3,6 +3,7 @@
 
 #include "MapObject.h"
 #include "MapObject_Ins.h"
+#include"LoadTrigger.h"	
 
 CLevel_Vault::CLevel_Vault(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CLevel(pDevice, pContext)
@@ -47,15 +48,23 @@ HRESULT CLevel_Vault::Initialize()
 		return E_FAIL;
 	}
 	if (FAILED(Ready_Layer_MapEffect(TEXT("Layer_MeshEffect"))))
-{
+	{
 	MSG_BOX("Failed Load Layer_MeshEffect");
 
 	return E_FAIL;
-}
+	}
+	if (FAILED(Ready_Layer_Trigger(TEXT("Layer_Trigger"))))
+	{
+		MSG_BOX("Failed Load Layer_Trigger");
+
+		return E_FAIL;
+	}
+
 	BEGININSTANCE;
 
 	pGameInstance->Reset_World_TimeAcc();
 	pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
+
 	ENDINSTANCE;
 
     return S_OK;
@@ -75,12 +84,9 @@ void CLevel_Vault::Tick(_float fTimeDelta)
 	{
 		pGameInstance->Set_CurrentScene(TEXT("Scene_FieldGuide"), false);
 	}
-
-	if (false)//trigger on
-	{
-		Light_Out();
-		
-	}
+	
+	MeshEffect(fTimeDelta);
+	
 
 
 	ENDINSTANCE;
@@ -96,24 +102,6 @@ HRESULT CLevel_Vault::Render()
 		return E_FAIL;
 
 	return S_OK;
-}
-
-HRESULT CLevel_Vault::Light_Out()
-{
-	BEGININSTANCE
-	CLight::LIGHTDESC SettingLight;
-	ZEROMEM(&SettingLight);
-	
-	Color vColor = (XMVectorLerp(XMVectorSet(0.f, 0.f, 0.f, 0.f), XMVectorSet(1.f, 1.f, 1.f, 1.f),1.f));
-
-	SettingLight.vDiffuse = _float4(vColor.x,vColor.y, vColor.z, 0.f);
-	SettingLight.vSpecular = _float4(vColor.x, vColor.y, vColor.z, 0.f);
-	SettingLight.vAmbient = _float4(vColor.x, vColor.y, vColor.z, 0.f);
-	pGameInstance->Set_Light(CLight::TYPE_DIRECTIONAL, SettingLight);
-
-	ENDINSTANCE
-
-		return S_OK;
 }
 
 HRESULT CLevel_Vault::Ready_Layer_Player(const _tchar* pLayerTag)
@@ -150,6 +138,51 @@ HRESULT CLevel_Vault::Ready_Lights()
 	pGameInstance->Set_Light(CLight::TYPE_DIRECTIONAL,LightDesc);
 
 	ENDINSTANCE;
+	return S_OK;
+}
+
+HRESULT CLevel_Vault::Add_Trigger()
+{
+
+
+	return S_OK;
+}
+
+HRESULT CLevel_Vault::MeshEffect(_float fTimeDelta)
+{
+	if (m_isAcc && -12.f + m_AccTime < 8.25f)
+		m_AccTime += fTimeDelta * 20.f;
+	BEGININSTANCE
+	CGameObject* MeshEffect = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_VAULT, TEXT("Layer_MeshEffect"), TEXT("GameObject_MeshEffect")));
+	if (nullptr == MeshEffect)
+	{
+		ENDINSTANCE
+			return E_FAIL;
+	}
+	CMeshEffect* pMeshEffect = dynamic_cast<CMeshEffect*>(MeshEffect);
+
+	if (pGameInstance->Get_DIKeyState(DIK_K, CInput_Device::KEY_DOWN))//트리거 발동시로수정해야함.
+	{
+		m_isAcc = true;
+		++m_iTriggerCount;
+
+		if (nullptr != pMeshEffect&&1==m_iTriggerCount)
+			pMeshEffect->Play(_float3(pMeshEffect->Get_Transform()->Get_Position().x, -12.f, pMeshEffect->Get_Transform()->Get_Position().z));
+
+		if (nullptr != pMeshEffect && 2 == m_iTriggerCount)
+			pMeshEffect->Play(_float3(103.f, -12.f, 104.f));
+
+	}
+	pMeshEffect->Get_Transform()->Set_Position(_float3(pMeshEffect->Get_Transform()->Get_Position().x, -12.f + m_AccTime, pMeshEffect->Get_Transform()->Get_Position().z));
+	/*if (몹 다잡은후)
+	{	m_AccTime = 0.f;
+		m_isAcc = false;
+	}*/
+	if (pGameInstance->Get_DIKeyState(DIK_N, CInput_Device::KEY_DOWN))//트리거 발동시로수정해야함.
+		pMeshEffect->Stop();
+
+
+	ENDINSTANCE
 	return S_OK;
 }
 
@@ -447,8 +480,6 @@ HRESULT CLevel_Vault::Load_Monsters(const wstring& wstrMonsterFilePath)
 
 HRESULT CLevel_Vault::Ready_Layer_MapEffect(const _tchar* pLayerTag)
 {
-	
-
 	BEGININSTANCE;
 
 	/* Add Scene : Main */
@@ -465,8 +496,34 @@ HRESULT CLevel_Vault::Ready_Layer_MapEffect(const _tchar* pLayerTag)
 		ENDINSTANCE;
 		return E_FAIL;
 	}
+	CGameObject* MeshEffect = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_VAULT, TEXT("Layer_MeshEffect"), TEXT("GameObject_MeshEffect")));
+	if(nullptr!=MeshEffect)
+	dynamic_cast<CMeshEffect*>(MeshEffect)->Stop();
+
 
 	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CLevel_Vault::Ready_Layer_Trigger(const _tchar* pLayerTag)
+{
+	//BEGININSTANCE
+	//
+	///* Add Scene : Main */
+	//if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
+	//{
+	//	MSG_BOX("Failed Add Scene : (Scene_Main)");
+	//	ENDINSTANCE;
+	//	return E_FAIL;
+	//}
+	//if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_VAULT, TEXT("Prototype_GameObject_LoadTrigger"), pLayerTag, TEXT("GameObject_LoadTrigger"))))
+	//{
+	//	MSG_BOX("Failed Add_GameObject : (GameObject_LoadTrigger)");
+	//	return E_FAIL;
+	//}
+	//ENDINSTANCE
+
 
 	return S_OK;
 }

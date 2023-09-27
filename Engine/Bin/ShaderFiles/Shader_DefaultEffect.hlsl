@@ -53,6 +53,8 @@ VS_OUT VS_MAIN2(VS_IN In)
 {
 	VS_OUT Out = (VS_OUT)0;
 	MainLogic(In, Out);
+	
+    return Out;
 }
 
 struct PS_IN
@@ -81,7 +83,7 @@ PS_OUT	PS_MAIN(PS_IN In)
 		discard;
 	
 	Out.vColor = vDiffuse;
-	  
+    Out.vColor *= g_vColor;
 	return Out;
 }
 
@@ -97,6 +99,7 @@ PS_OUT PS_MAIN_CLOISTER(PS_IN In)
         discard;
 	
     Out.vColor = vDiffuse;
+    Out.vColor *= g_vColor;
     return Out;
 }
 technique11		DefaultTechnique

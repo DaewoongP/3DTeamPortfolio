@@ -425,6 +425,10 @@ HRESULT CMain0_Loader::Loading_For_Vault()
 		CMeshEffect::Create(m_pDevice, m_pContext,TEXT("../../Resources/GameData/MeshEffectData/Cloister/Cloister.ME")))))
 		throw TEXT("Prototype_GameObject_MeshEffect");
 
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_VAULT, TEXT("Prototype_GameObject_LoadTrigger"),
+		CLoadTrigger::Create(m_pDevice, m_pContext))))
+		throw TEXT("Prototype_GameObject_LoadTrigger");
+
 
 	return S_OK;
 }
