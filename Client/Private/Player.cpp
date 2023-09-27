@@ -37,6 +37,10 @@ HRESULT CPlayer::Initialize_Prototype()
 
 HRESULT CPlayer::Initialize(void* pArg)
 {
+	PLAYERDESC* pPlayerDesc = static_cast<PLAYERDESC*>(pArg);
+
+	m_eLevelID = pPlayerDesc->eLevelID;
+
 	if (FAILED(__super::Initialize(pArg)))
 	{
 		MSG_BOX("Failed Player Initialize");
@@ -50,6 +54,8 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 		return E_FAIL;
 	}
+
+	m_pTransform->Set_Position(pPlayerDesc->vPosition);
 
 	if (FAILED(Add_Magic()))
 	{
@@ -90,6 +96,8 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::FIRST, CONFRINGO);
 	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::SECOND, LEVIOSO);
+
+	
 
 	return S_OK;
 }
@@ -1286,7 +1294,7 @@ void CPlayer::Find_Target_For_Distance()
 {
 	BEGININSTANCE;
 
-	unordered_map<const _tchar*, CComponent*>* pLayer = pGameInstance->Find_Components_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Monster"));
+	unordered_map<const _tchar*, CComponent*>* pLayer = pGameInstance->Find_Components_In_Layer(m_eLevelID, TEXT("Layer_Monster"));
 
 	if (nullptr == pLayer)
 	{
