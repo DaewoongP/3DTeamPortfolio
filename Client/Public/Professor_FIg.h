@@ -2,6 +2,8 @@
 #include "GameObject.h"
 #include "Client_Defines.h"
 
+#include "Magic.h"
+
 BEGIN(Engine)
 class CModel;
 class CShader;
@@ -51,6 +53,8 @@ private:
 	const CGameObject* m_pTarget = { nullptr };
 	// 범위 안에 들어온 몬스터 리스트
 	unordered_map<wstring, const CGameObject*> m_RangeInEnemies;
+
+	CMagic::MAGICDESC m_MagicDesc;
 
 	_bool m_isChangeAnimation = { false };
 	_bool m_isRangeInEnemy = { false };

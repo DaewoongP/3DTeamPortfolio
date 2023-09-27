@@ -13,6 +13,9 @@
 
 #include "Armored_Troll.h"
 #include "MagicBall.h"
+#include "Enemy.h"
+#include "UI_Group_Enemy_HP.h"
+
 #include "Magic.h"
 
 #include "UI_Group_Skill.h"
@@ -160,6 +163,19 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 #ifdef _DEBUG
 	Tick_ImGui();
 #endif // _DEBUG
+
+	if (nullptr != m_pTarget)
+	{
+		if (true == m_pTarget->isDead())
+		{
+			m_pTarget = nullptr;
+			return;
+		}
+
+		CEnemy* pEnemy = static_cast<CEnemy*>(m_pTarget);
+		if (nullptr != pEnemy)
+			pEnemy->Get_UI_Enemy_HP()->Late_Tick(fTimeDelta);
+	}
 }
 
 void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
@@ -187,20 +203,20 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 
 			switch (pDesc->eType)
 			{
-			case CArmored_Troll::ATTACK_NONE:
+			case CEnemy::ATTACK_NONE:
 			{	}
 			break;
-			case CArmored_Troll::ATTACK_LIGHT:
+			case CEnemy::ATTACK_LIGHT:
 			{
 				ProtegoStateDesc.iHitType = CProtegoState::HIT_LIGHT;
 			}
 			break;
-			case CArmored_Troll::ATTACK_HEAVY:
+			case CEnemy::ATTACK_HEAVY:
 			{
 				ProtegoStateDesc.iHitType = CProtegoState::HIT_HEABY;
 			}
 			break;
-			case CArmored_Troll::ATTACKTYPE_END:
+			case CEnemy::ATTACKTYPE_END:
 			{	}
 			break;
 
@@ -229,20 +245,20 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 
 			switch (pDesc->eType)
 			{
-			case CArmored_Troll::ATTACK_NONE:
+			case CEnemy::ATTACK_NONE:
 			{	}
 			break;
-			case CArmored_Troll::ATTACK_LIGHT:
+			case CEnemy::ATTACK_LIGHT:
 			{
 				HitStateDesc.iHitType = CHitState::HIT_LIGHT;
 			}
 			break;
-			case CArmored_Troll::ATTACK_HEAVY:
+			case CEnemy::ATTACK_HEAVY:
 			{
 				HitStateDesc.iHitType = CHitState::HIT_HEABY;
 			}
 			break;
-			case CArmored_Troll::ATTACKTYPE_END:
+			case CEnemy::ATTACKTYPE_END:
 			{	}
 			break;
 
@@ -472,7 +488,7 @@ HRESULT CPlayer::Add_Components()
 	RigidBodyDesc.vDebugColor = _float4(1.f, 105 / 255.f, 180 / 255.f, 1.f); // hot pink
 	RigidBodyDesc.pOwnerObject = this;
 	RigidBodyDesc.eThisCollsion = COL_PLAYER;
-	RigidBodyDesc.eCollisionFlag = COL_ENEMY_RANGE | COL_WEAPON | COL_ENEMY;
+	RigidBodyDesc.eCollisionFlag = COL_ENEMY_RANGE | COL_WEAPON | COL_ENEMY | COL_TRIGGER;
 	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Player_Default");
 
 	/* Com_RigidBody */
@@ -527,8 +543,8 @@ HRESULT CPlayer::SetUp_ShaderResources()
 	if (FAILED(m_pShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
 		return E_FAIL;
 
-	_float3 vHairColor = { 0.f, 0.f, 1.f };
-	if (FAILED(m_pShader->Bind_RawValue("g_fHairColor", &vHairColor, sizeof(_float3))))
+	_float3 vHairColor = { 0.2f, 0.2f, 0.2f };
+	if (FAILED(m_pShader->Bind_RawValue("g_vHairColor", &vHairColor, sizeof(_float3))))
 		return E_FAIL;
 
 	_float4 vColor = _float4(0.2f, 0.2f, 0.2f, 1.f);
@@ -845,7 +861,7 @@ HRESULT CPlayer::Ready_MagicDesc()
 	magicInitDesc.fBallDistance = 30;
 	magicInitDesc.fLifeTime = 0.6f;
 
-	m_pBasicDesc_Light = New CMagic::MAGICDESC(magicInitDesc);
+	m_BasicDesc_Light = magicInitDesc;
 
 	magicInitDesc.eBuffType = BUFF_ATTACK_HEAVY;
 	magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
@@ -857,11 +873,10 @@ HRESULT CPlayer::Ready_MagicDesc()
 	magicInitDesc.fBallDistance = 30;
 	magicInitDesc.fLifeTime = 0.6f;
 
-	m_pBasicDesc_Heavy = New CMagic::MAGICDESC(magicInitDesc);
+	m_BasicDesc_Heavy = magicInitDesc;
 
 	return S_OK;
 }
-
 
 void CPlayer::MagicTestTextOutput()
 {
@@ -1302,6 +1317,9 @@ void CPlayer::Find_Target_For_Distance()
 	
 	for (unordered_map<const _tchar*, CComponent*>::iterator iter = pLayer->begin(); iter != pLayer->end(); iter++)
 	{
+		if (true == static_cast<CGameObject*>(iter->second)->isDead())
+			continue;
+
 		//플레이어와
 		_float3 vPlayerPos = m_pTransform->Get_Position();
 		
@@ -1586,8 +1604,5 @@ void CPlayer::Free()
 		{
 			Safe_Release(m_pTarget);
 		}
-
-		Safe_Delete(m_pBasicDesc_Heavy);
-		Safe_Delete(m_pBasicDesc_Light);
 	}
 }

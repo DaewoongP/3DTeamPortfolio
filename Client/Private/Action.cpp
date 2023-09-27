@@ -69,6 +69,7 @@ HRESULT CAction::Tick(const _float& fTimeDelta)
 	if (false == Check_Decorators())
 	{
 		m_ReturnData = BEHAVIOR_FAIL;
+		Check_End_Decorators();
 		Check_Fail_Decorators();
 		return BEHAVIOR_FAIL;
 	}
@@ -119,6 +120,7 @@ HRESULT CAction::Tick(const _float& fTimeDelta)
 	
 	if (true == bCheck)
 	{
+		Check_End_Decorators();
 		Check_Success_Decorators();
 		return BEHAVIOR_SUCCESS;
 	}

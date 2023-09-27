@@ -21,6 +21,7 @@ private:
 
 public:
 	class CLevel* Get_CurrentLevel() { return m_pCurrentLevel; }
+	_uint Get_CurrentLevelIndex() const { return m_iLevelIndex; }
 	list<const _tchar*> Get_Layers(const _tchar* pSceneTag);
 	
 public:

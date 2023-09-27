@@ -36,7 +36,7 @@ HRESULT CLookAt::Tick(const _float& fTimeDelta)
 		return BEHAVIOR_FAIL;
 	}
 
-	m_pOwnerTransform->LookAt_Lerp((*ppTarget)->Get_Transform()->Get_Position(), fTimeDelta, true);
+	m_pOwnerTransform->LookAt_Lerp((*ppTarget)->Get_Transform()->Get_Position(), fTimeDelta * m_fTurnSpeed, true);
 
 	return BEHAVIOR_SUCCESS;
 }

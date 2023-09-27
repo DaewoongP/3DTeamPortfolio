@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "Client_Defines.h"
 
+#include "Magic.h"
 #include "HitState.h"
 
 BEGIN(Engine)
@@ -18,7 +19,6 @@ class CPlayer_Camera;
 class CWeapon_Player_Wand;
 class CStateContext;
 class CPlayer_Information;
-struct CMagic::MAGICDESC;
 class CUI_Group_Skill;
 class CMagicBall;
 END
@@ -85,8 +85,8 @@ private:
 	_float		m_fClothPower = { 0.f };
 	_float		m_fClothPowerPlus = { 0.0f };
 
-	CMagic::MAGICDESC* m_pBasicDesc_Light = { nullptr };
-	CMagic::MAGICDESC* m_pBasicDesc_Heavy = { nullptr };
+	CMagic::MAGICDESC m_BasicDesc_Light;
+	CMagic::MAGICDESC m_BasicDesc_Heavy;
 
 	CMagicBall* m_pMagicBall = { nullptr };
 

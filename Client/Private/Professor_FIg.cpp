@@ -110,10 +110,13 @@ void CProfessor_Fig::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 	if (wstring::npos != wstrMyCollisionTag.find(TEXT("Range")))
 	{
 		if (wstring::npos != wstrObjectTag.find(TEXT("Golem")) ||
-			wstring::npos != wstrObjectTag.find(TEXT("Troll")))
+			wstring::npos != wstrObjectTag.find(TEXT("Troll")) ||
+			wstring::npos != wstrObjectTag.find(TEXT("Dugbog")))
 		{
+			if (CollisionEventDesc.pOtherOwner->isDead())
+				return;
 			auto iter = m_RangeInEnemies.find(wstrObjectTag);
-			if(iter == m_RangeInEnemies.end())
+			if (iter == m_RangeInEnemies.end())
 				m_RangeInEnemies.emplace(wstrObjectTag, CollisionEventDesc.pOtherOwner);
 		}
 	}
@@ -128,7 +131,8 @@ void CProfessor_Fig::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 	if (wstring::npos != wstrMyCollisionTag.find(TEXT("Range")))
 	{
 		if (wstring::npos != wstrObjectTag.find(TEXT("Golem")) ||
-			wstring::npos != wstrObjectTag.find(TEXT("Troll")))
+			wstring::npos != wstrObjectTag.find(TEXT("Troll")) ||
+			wstring::npos != wstrObjectTag.find(TEXT("Dugbog")))
 		{
 			Remove_GameObject(wstrObjectTag);
 		}
@@ -163,6 +167,9 @@ HRESULT CProfessor_Fig::Render()
 			}
 			else
 			{
+				if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_NormalTexture", i, NORMALS)))
+					throw TEXT("Bind_Material Normal");
+
 				if (FAILED(m_pShaderCom->Begin("AnimMesh")))
 					throw TEXT("Shader Begin AnimMesh");
 			}
@@ -272,6 +279,7 @@ HRESULT CProfessor_Fig::Make_Magics()
 		magicInitDesc.fBallDistance = 30;
 		magicInitDesc.fLifeTime = 0.8f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
+		m_MagicDesc = magicInitDesc;
 	}
 
 	//Skill Magic LEVIOSO
@@ -458,8 +466,8 @@ HRESULT CProfessor_Fig::SetUp_ShaderResources()
 			throw TEXT("Failed Bind_RawValue : g_fCamFar");
 
 		_float3 vHairColor = { 1.f, 1.f, 1.f };
-		if (FAILED(m_pShaderCom->Bind_RawValue("g_fHairColor", &vHairColor, sizeof(_float3))))
-			throw TEXT("Failed Bind_RawValue : g_fHairColor");
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_vHairColor", &vHairColor, sizeof(_float3))))
+			throw TEXT("Failed Bind_RawValue : g_vHairColor");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -934,8 +942,15 @@ void CProfessor_Fig::Attack_Light()
 	if (nullptr == m_pTarget)
 		return;
 
+	m_MagicDesc.eBuffType = BUFF_ATTACK_LIGHT;
+	m_pMagicSlot->Add_Magics(m_MagicDesc);
+
+	_float4x4 OffsetMatrix = _float4x4();
+	if (nullptr != m_pTarget)
+		OffsetMatrix = m_pTarget->Get_Offset_Matrix();
+
 	m_pMagicSlot->Action_Magic_Basic(0, m_pTarget->Get_Transform(),
-		XMMatrixTranslation(0.f, 2.5f, 0.f),
+		OffsetMatrix,
 		m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(),
 		m_pWeapon->Get_Wand_Point_OffsetMatrix(),
 		COL_ENEMY);
@@ -946,8 +961,15 @@ void CProfessor_Fig::Attack_Heavy()
 	if (nullptr == m_pTarget)
 		return;
 
+	m_MagicDesc.eBuffType = BUFF_ATTACK_HEAVY;
+	m_pMagicSlot->Add_Magics(m_MagicDesc);
+
+	_float4x4 OffsetMatrix = _float4x4();
+	if (nullptr != m_pTarget)
+		OffsetMatrix = m_pTarget->Get_Offset_Matrix();
+
 	m_pMagicSlot->Action_Magic_Basic(0, m_pTarget->Get_Transform(),
-		XMMatrixTranslation(0.f, 2.5f, 0.f),
+		OffsetMatrix,
 		m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(),
 		m_pWeapon->Get_Wand_Point_OffsetMatrix(),
 		COL_ENEMY);
@@ -958,8 +980,12 @@ void CProfessor_Fig::Cast_Levioso()
 	if (nullptr == m_pTarget)
 		return;
 
+	_float4x4 OffsetMatrix = _float4x4();
+	if (nullptr != m_pTarget)
+		OffsetMatrix = m_pTarget->Get_Offset_Matrix();
+
 	m_pMagicSlot->Action_Magic_Skill(0, m_pTarget->Get_Transform(),
-		XMMatrixTranslation(0.f, 2.5f, 0.f),
+		OffsetMatrix,
 		m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(),
 		m_pWeapon->Get_Wand_Point_OffsetMatrix(),
 		COL_ENEMY);

@@ -197,6 +197,7 @@
     <ClInclude Include="..\Public\Random_AirHit.h" />
     <ClInclude Include="..\Public\Sequence_AirHit.h" />
     <ClInclude Include="..\Public\StandingState.h" />
+    <ClInclude Include="..\public\Trigger_Vault.h" />
     <ClInclude Include="..\Public\UI_Font.h" />
     <ClInclude Include="..\Public\UI_Group_Cursor.h" />
     <ClInclude Include="..\Public\UI_Group_Enemy_HP.h" />
@@ -214,7 +215,7 @@
     <ClInclude Include="..\public\Seamless_Loader.h" />
     <ClInclude Include="..\Public\Sequence_Attack.h" />
     <ClInclude Include="..\Public\Sequence_Groggy.h" />
-    <ClInclude Include="..\Public\Sequence_Levitated.h" />
+    <ClInclude Include="..\Public\Sequence_Levitate.h" />
     <ClInclude Include="..\Public\Sequence_MoveTarget.h" />
     <ClInclude Include="..\Public\StateContext.h" />
     <ClInclude Include="..\public\StateMachine.h" />
@@ -355,6 +356,7 @@
     <ClCompile Include="..\Private\Random_AirHit.cpp" />
     <ClCompile Include="..\Private\Sequence_AirHit.cpp" />
     <ClCompile Include="..\Private\StandingState.cpp" />
+    <ClCompile Include="..\private\Trigger_Vault.cpp" />
     <ClCompile Include="..\Private\UI_Font.cpp" />
     <ClCompile Include="..\Private\UI_Group_Cursor.cpp" />
     <ClCompile Include="..\Private\UI_Group_Enemy_HP.cpp" />
@@ -372,7 +374,7 @@
     <ClCompile Include="..\private\Seamless_Loader.cpp" />
     <ClCompile Include="..\Private\Sequence_Attack.cpp" />
     <ClCompile Include="..\Private\Sequence_Groggy.cpp" />
-    <ClCompile Include="..\Private\Sequence_Levitated.cpp" />
+    <ClCompile Include="..\Private\Sequence_Levitate.cpp" />
     <ClCompile Include="..\Private\Sequence_MoveTarget.cpp" />
     <ClCompile Include="..\private\StateMachine.cpp" />
     <ClCompile Include="..\Private\IdleState.cpp" />
