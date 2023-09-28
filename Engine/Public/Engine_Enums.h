@@ -23,7 +23,8 @@ namespace Engine
 		COL_MAGIC			= 1 << 6,
 		COL_STATIC			= 1 << 7,
 		COL_TRIGGER			= 1 << 8,
-		// COL~~ = 1 << 9,
+		COL_ITEM			= 1 << 9,
+		// COL~~ = 1 << 10,
 		// ... 계속 추가해주시면 됩니다!! 숫자만 계속 증가시켜주세요
 
 		COL_TEST = 1 << 29, // 충돌 가능한 최대치입니다. 지우고 추가하셔도 됩니다.

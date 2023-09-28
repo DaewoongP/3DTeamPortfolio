@@ -164,6 +164,7 @@ void CPlayer::Tick(_float fTimeDelta)
 		m_pFrncSpellToggle(_float3(), _float());
 	}
 	
+	
 }
 
 void CPlayer::Late_Tick(_float fTimeDelta)
@@ -1316,7 +1317,7 @@ void CPlayer::Find_Target_For_Distance()
 	if (nullptr == pLayer)
 	{
 		//MSG_BOX("not MonsterLayer");
-		ENDINSTANCE;
+		ENDINSTANCE
 		return;
 	}
 
