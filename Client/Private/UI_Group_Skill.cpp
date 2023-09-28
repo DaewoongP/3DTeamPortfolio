@@ -14,8 +14,12 @@ CUI_Group_Skill::CUI_Group_Skill(const CUI_Group_Skill& rhs)
 	: CGameObject(rhs)
 	, m_ProtoTypeTags(rhs.m_ProtoTypeTags)
 	, m_SpellProtoTypeTags(rhs.m_SpellProtoTypeTags)
-	, m_SkillTextures(rhs.m_SkillTextures)
 {
+	for (auto& pTexture : rhs.m_SkillTextures)
+	{
+		m_SkillTextures.push_back(pTexture);
+		Safe_AddRef(pTexture);
+	}
 }
 
 HRESULT CUI_Group_Skill::Initialize_Prototype()
@@ -259,7 +263,7 @@ HRESULT CUI_Group_Skill::Create_Component(const _tchar* pFIlePath, wstring wszTa
 void CUI_Group_Skill::Add_SpellProtoTypeTag()
 {
 	BEGININSTANCE;
-	std::lock_guard<std::mutex> lock(mtx);
+
 	_tchar pName[MAX_PATH] = TEXT("");
 	lstrcpy(pName, TEXT("Prototype_Component_Texture_UI_T_spellmeter_Accio_Overlay"));
 	m_SpellProtoTypeTags.push_back(pGameInstance->Make_WChar(pName));
