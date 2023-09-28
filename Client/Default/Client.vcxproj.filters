@@ -385,6 +385,12 @@
     <Filter Include="99. Headers">
       <UniqueIdentifier>{91c3e316-2a51-40fe-a9b3-e3fef6e8989d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\09.Quest">
+      <UniqueIdentifier>{bd366894-944a-46fb-9a40-739567c40c2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09.Quest\NewFilter1">
+      <UniqueIdentifier>{d3fcfdbd-fd0f-48c0-8142-e43f2e47c216}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -795,6 +801,9 @@
     <ClInclude Include="..\Public\UI_Group_Quest.h">
       <Filter>02. GameObject\04. UI\UI_Group</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Quest.h">
+      <Filter>02. GameObject\09.Quest</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1171,6 +1180,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_Group_Quest.cpp">
       <Filter>02. GameObject\04. UI\UI_Group</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Quest.cpp">
+      <Filter>02. GameObject\09.Quest</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
