@@ -9,6 +9,10 @@ class CTrail;
 END
 
 BEGIN(Client)
+class CWingardium_Effect;
+END
+
+BEGIN(Client)
 class CLevioso final : public CMagicBall
 {
 private:
@@ -36,7 +40,7 @@ private:
 	// 트레일 따라가는 연기
 	CParticleSystem*		  m_pTraceDustEffect = { nullptr };
 	// 몹 피격 트레일
-	class CWingardium_Effect* m_pWingardiumEffect = { nullptr };
+	CWingardium_Effect* m_pWingardiumEffect = { nullptr };
 
 	// 피격 푸쉬시
 	CParticleSystem*		  m_pHitDustEffect = { nullptr };

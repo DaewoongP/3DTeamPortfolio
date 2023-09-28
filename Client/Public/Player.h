@@ -54,7 +54,7 @@ public:
 	virtual HRESULT Render() override;
 	virtual HRESULT Render_Depth() override;
 
-	virtual void On_Maigc_Throw_Data(void* data) override;
+	virtual void On_Maigc_Throw_Data(void* data) const override;
 
 private:
 	CShader*		m_pShader = { nullptr };
@@ -97,7 +97,7 @@ private:
 
 	CMagicBall* m_pMagicBall = { nullptr };
 
-	function<void(_float3, _float)> m_pFrncSpellToggle = { nullptr };
+	function< void(_float3, _float)> m_pFrncSpellToggle = { nullptr };
 
 	LEVELID m_eLevelID = { LEVEL_END };
 

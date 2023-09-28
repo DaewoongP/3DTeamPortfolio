@@ -339,12 +339,12 @@ HRESULT CMain0_Loader::Loading_For_Cliffside()
 
 		/* For.Prototype_GameObject_Revelio */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Revelio"),
-			CRevelio::Create(m_pDevice, m_pContext))))
+			CRevelio::Create(m_pDevice, m_pContext, LEVEL_STATIC))))
 			throw TEXT("Prototype_GameObject_Revelio");
 
 		/* For.Prototype_GameObject_Wingardiumleviosa */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Wingardiumleviosa"),
-			CWingardiumleviosa::Create(m_pDevice, m_pContext))))
+			CWingardiumleviosa::Create(m_pDevice, m_pContext, LEVEL_STATIC))))
 			throw TEXT("Prototype_GameObject_Wingardiumleviosa");
 
 		/* For.Prototype_GameObject_Levioso */
