@@ -335,6 +335,8 @@ void CComponent_Manager::Update_CurrentScene()
 
 void CComponent_Manager::Free()
 {
+	std::lock_guard<std::mutex> lock(mtx);
+
 	for (_uint i = 0; i < m_iNumLevels; ++i)
 	{
 		for (auto& Pair : m_pCurrentLayers[i])
