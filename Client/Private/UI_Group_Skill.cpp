@@ -259,7 +259,7 @@ HRESULT CUI_Group_Skill::Create_Component(const _tchar* pFIlePath, wstring wszTa
 void CUI_Group_Skill::Add_SpellProtoTypeTag()
 {
 	BEGININSTANCE;
-
+	std::lock_guard<std::mutex> lock(mtx);
 	_tchar pName[MAX_PATH] = TEXT("");
 	lstrcpy(pName, TEXT("Prototype_Component_Texture_UI_T_spellmeter_Accio_Overlay"));
 	m_SpellProtoTypeTags.push_back(pGameInstance->Make_WChar(pName));
