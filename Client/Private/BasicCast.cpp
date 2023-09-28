@@ -17,9 +17,8 @@ CBasicCast::CBasicCast(const CBasicCast& rhs)
 
 HRESULT CBasicCast::Initialize_Prototype(_uint iLevel)
 {
-	if (FAILED(__super::Initialize_Prototype()))
+	if (FAILED(__super::Initialize_Prototype(iLevel)))
 		return E_FAIL;
-	m_iLevel = iLevel;
 	BEGININSTANCE;
 
 	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_MagicTrail_BasicCast_Effect")))
@@ -142,10 +141,9 @@ void CBasicCast::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	_float3 vWandPosition = _float4x4(m_WeaponOffsetMatrix * (*m_pWeaponMatrix)).Translation();
-	m_pWandEffect->Get_Transform()->Set_Position(vWandPosition);
-	m_WandTrail->Get_Transform()->Set_Position(vWandPosition);
-	m_pMainGlow->Get_Transform()->Set_Position(vWandPosition);
+	m_pWandEffect->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
+	m_WandTrail->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
+	m_pMainGlow->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
 }
 
 void CBasicCast::Late_Tick(_float fTimeDelta)
@@ -195,20 +193,17 @@ void CBasicCast::Ready_Begin()
 
 void CBasicCast::Ready_DrawMagic()
 {
-	_float3 vWandPosition = _float4x4(m_WeaponOffsetMatrix * (*m_pWeaponMatrix)).Translation();
-	m_WandTrail->Enable(vWandPosition);
-	m_pWandEffect->Enable(vWandPosition);
+	m_WandTrail->Enable(m_CurrentWeaponMatrix.Translation());
+	m_pWandEffect->Enable(m_CurrentWeaponMatrix.Translation());
 }
 
 void CBasicCast::Ready_CastMagic()
 {
 	Ready_SplineMove(m_pMainTrail);
 	
-
-	_float3 vWandPosition = _float4x4(m_WeaponOffsetMatrix * (*m_pWeaponMatrix)).Translation();
-	m_pMainGlow->Enable(vWandPosition);
-	m_pMainTrail->Enable(vWandPosition);
-	m_pMainGlow->Play(vWandPosition);
+	m_pMainGlow->Enable(m_CurrentWeaponMatrix.Translation());
+	m_pMainTrail->Enable(m_CurrentWeaponMatrix.Translation());
+	m_pMainGlow->Play(m_CurrentWeaponMatrix.Translation());
 }
 
 void CBasicCast::Ready_Dying()
@@ -240,10 +235,10 @@ void CBasicCast::Tick_CastMagic(_float fTimeDelta)
 {
 	if (m_fLerpAcc != 1)
 	{
-		m_fLerpAcc += fTimeDelta / m_MagicBallDesc.fInitLifeTime * m_fTimeScalePerDitance;
+		m_fLerpAcc += fTimeDelta / m_fLifeTime * m_fTimeScalePerDitance;
 		if (m_fLerpAcc > 1)
 			m_fLerpAcc = 1;
-		m_pMainTrail->Spline_Move(m_vSplineLerp[0], m_vStartPostion, m_vTargetPosition, m_vSplineLerp[1], m_fLerpAcc);
+		m_pMainTrail->Spline_Move(m_vSplineLerp[0], m_vStartPosition, m_vEndPosition, m_vSplineLerp[1], m_fLerpAcc);
 		m_pTransform->Set_Position(m_pMainTrail->Get_Transform()->Get_Position());
 	}
 	else

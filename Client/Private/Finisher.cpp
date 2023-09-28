@@ -17,10 +17,8 @@ CFinisher::CFinisher(const CFinisher& rhs)
 
 HRESULT CFinisher::Initialize_Prototype(_uint iLevel)
 {
-	if (FAILED(__super::Initialize_Prototype()))
+	if (FAILED(__super::Initialize_Prototype(iLevel)))
 		return E_FAIL;
-
-	m_iLevel = iLevel;
 
 	BEGININSTANCE;
 	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Trail_Lightning_Effect")))
@@ -166,9 +164,8 @@ void CFinisher::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	_float3 vWandPosition = _float4x4(m_WeaponOffsetMatrix * (*m_pWeaponMatrix)).Translation();
-	m_pWandLightningParticle->Get_Transform()->Set_Position(vWandPosition);
-	m_pWandTrail->Get_Transform()->Set_Position(vWandPosition);
+	m_pWandLightningParticle->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
+	m_pWandTrail->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
 }
 
 void CFinisher::Late_Tick(_float fTimeDelta)
@@ -225,35 +222,34 @@ void CFinisher::Ready_Begin()
 
 void CFinisher::Ready_DrawMagic()
 {
-	_float3 vWandPosition = _float4x4(m_WeaponOffsetMatrix * (*m_pWeaponMatrix)).Translation();
-	m_pWandLightningParticle->Enable(vWandPosition);
-	m_pWandTrail->Enable(vWandPosition);
+	m_pWandLightningParticle->Enable(m_CurrentWeaponMatrix.Translation());
+	m_pWandTrail->Enable(m_CurrentWeaponMatrix.Translation());
 }
 
 void CFinisher::Ready_CastMagic()
 {
+	_float distance = 30.0f;
 	if (m_pTarget == nullptr)
 	{
-		//마우스 피킹 지점으로 발사
 		BEGININSTANCE;
 		_float4 vMouseOrigin, vMouseDirection;
 		_float3 vMouseWorldPickPosition, vDirStartToPicked;
+		//마우스 피킹지점 찾기
 		if (FAILED(pGameInstance->Get_WorldMouseRay(m_pContext, g_hWnd, &vMouseOrigin, &vMouseDirection)))
 		{
 			Safe_Release(pGameInstance);
+			ENDINSTANCE;
 			return;
 		}
 		ENDINSTANCE;
 
-		vMouseWorldPickPosition = vMouseOrigin.xyz() + vMouseDirection.xyz() * 10000;
-		vDirStartToPicked = (vMouseWorldPickPosition - m_MagicBallDesc.vStartPosition);
+		//가상의 지점으로 레이를 쏨.
+		vMouseWorldPickPosition = vMouseOrigin.xyz() + vMouseDirection.xyz() * 100;
+		//방향을 구함
+		vDirStartToPicked = (vMouseWorldPickPosition - m_vStartPosition);
 		vDirStartToPicked.Normalize();
-		m_vTargetPosition = vDirStartToPicked * m_MagicBallDesc.fDistance;
-		return;
-	}
-	else
-	{
-		m_vTargetPosition = m_pTarget->Get_Position() + m_TargetOffsetMatrix.Translation();
+		//목표지점
+		m_vEndPosition = m_vStartPosition + vDirStartToPicked * distance;
 	}
 
 	for (int i = 0; i < 3; i++)
@@ -263,26 +259,26 @@ void CFinisher::Ready_CastMagic()
 		vWeight[1] = _float3(2.f,0.5f, 2.f);
 
 		m_pTrail[i]->Set_Threshold(0.2f);
-		m_pTrail[i]->Ready_LightningStrike(m_pTarget->Get_Position() + _float3(0, 10, 0), m_pTarget->Get_Position(), vWeight, 10);
-		m_pTrail[i]->Enable(m_pTarget->Get_Position());
+		m_pTrail[i]->Ready_LightningStrike(m_vEndPosition + _float3(0, 10, 0), m_vEndPosition, vWeight, 10);
+		m_pTrail[i]->Enable(m_vEndPosition);
 	}
 
-	m_LightningSparkEffect_Blue->Enable(m_pTarget->Get_Position());
-	m_LightningSparkEffect_Green->Enable(m_pTarget->Get_Position());
-	m_LightningSparkEffect_Red->Enable(m_pTarget->Get_Position());
-	m_LineParticle->Enable(m_pTarget->Get_Position());
-	m_FlareCenterParticle->Enable(m_pTarget->Get_Position());
-	m_FlareSpreadParticle->Enable(m_pTarget->Get_Position());
-	m_DustParticle->Enable(m_pTarget->Get_Position());
+	m_LightningSparkEffect_Blue->Enable(m_vEndPosition);
+	m_LightningSparkEffect_Green->Enable(m_vEndPosition);
+	m_LightningSparkEffect_Red->Enable(m_vEndPosition);
+	m_LineParticle->Enable(m_vEndPosition);
+	m_FlareCenterParticle->Enable(m_vEndPosition);
+	m_FlareSpreadParticle->Enable(m_vEndPosition);
+	m_DustParticle->Enable(m_vEndPosition);
 
-	m_LightningSparkEffect_Blue->Play(m_pTarget->Get_Position());
-	m_LightningSparkEffect_Green->Play(m_pTarget->Get_Position());
-	m_LightningSparkEffect_Red->Play(m_pTarget->Get_Position());
-	m_LineParticle->Play(m_pTarget->Get_Position());
-	m_FlareCenterParticle->Play(m_pTarget->Get_Position());
-	m_FlareSpreadParticle->Play(m_pTarget->Get_Position() + _float3(0, 0.5f, 0));
-	m_DustParticle->Play(m_pTarget->Get_Position());
-	m_pTransform->Set_Position(m_pTarget->Get_Position());
+	m_LightningSparkEffect_Blue->Play(m_vEndPosition);
+	m_LightningSparkEffect_Green->Play(m_vEndPosition);
+	m_LightningSparkEffect_Red->Play(m_vEndPosition);
+	m_LineParticle->Play(m_vEndPosition);
+	m_FlareCenterParticle->Play(m_vEndPosition);
+	m_FlareSpreadParticle->Play(m_vEndPosition + _float3(0, 0.5f, 0));
+	m_DustParticle->Play(m_vEndPosition);
+	m_pTransform->Set_Position(m_vEndPosition);
 }
 
 void CFinisher::Ready_Dying()

@@ -274,10 +274,8 @@ HRESULT CProfessor_Fig::Make_Magics()
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
 		magicInitDesc.eMagicTag = BASICCAST;
-		magicInitDesc.fCoolTime = 0.f;
+		magicInitDesc.fInitCoolTime = 0.f;
 		magicInitDesc.iDamage = 10;
-		magicInitDesc.fCastDistance = 1000;
-		magicInitDesc.fBallDistance = 30;
 		magicInitDesc.fLifeTime = 0.8f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 		m_MagicDesc = magicInitDesc;
@@ -290,10 +288,8 @@ HRESULT CProfessor_Fig::Make_Magics()
 		magicInitDesc.eMagicGroup = CMagic::MG_CONTROL;
 		magicInitDesc.eMagicType = CMagic::MT_YELLOW;
 		magicInitDesc.eMagicTag = LEVIOSO;
-		magicInitDesc.fCoolTime = 0.f;
+		magicInitDesc.fInitCoolTime = 0.f;
 		magicInitDesc.iDamage = 10;
-		magicInitDesc.fCastDistance = 1000;
-		magicInitDesc.fBallDistance = 30;
 		magicInitDesc.fLifeTime = 0.8f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
@@ -978,10 +974,8 @@ void CProfessor_Fig::Attack_Light()
 	if (nullptr != m_pTarget)
 		OffsetMatrix = m_pTarget->Get_Offset_Matrix();
 
-	m_CastingMagic = m_pMagicSlot->Action_Magic_Basic(0, m_pTarget->Get_Transform(),
-		OffsetMatrix,
-		m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(),
-		m_pWeapon->Get_Wand_Point_OffsetMatrix(),
+	m_CastingMagic = m_pMagicSlot->Action_Magic_Basic(0, m_pTarget,
+		m_pWeapon,
 		COL_ENEMY);
 }
 
@@ -997,10 +991,8 @@ void CProfessor_Fig::Attack_Heavy()
 	if (nullptr != m_pTarget)
 		OffsetMatrix = m_pTarget->Get_Offset_Matrix();
 
-	m_CastingMagic = m_pMagicSlot->Action_Magic_Basic(0, m_pTarget->Get_Transform(),
-		OffsetMatrix,
-		m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(),
-		m_pWeapon->Get_Wand_Point_OffsetMatrix(),
+	m_CastingMagic = m_pMagicSlot->Action_Magic_Basic(0, m_pTarget,
+		m_pWeapon,
 		COL_ENEMY);
 }
 
@@ -1013,10 +1005,8 @@ void CProfessor_Fig::Cast_Levioso()
 	if (nullptr != m_pTarget)
 		OffsetMatrix = m_pTarget->Get_Offset_Matrix();
 
-	m_CastingMagic = m_pMagicSlot->Action_Magic_Skill(0, m_pTarget->Get_Transform(),
-		OffsetMatrix,
-		m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(),
-		m_pWeapon->Get_Wand_Point_OffsetMatrix(),
+	m_CastingMagic = m_pMagicSlot->Action_Magic_Skill(0, m_pTarget,
+		m_pWeapon,
 		COL_ENEMY);
 }
 
@@ -1025,11 +1015,9 @@ void CProfessor_Fig::Cast_Protego()
 	if (nullptr == m_pTarget)
 		return;
 
-	m_CastingMagic = m_pMagicSlot->Action_Magic_Basic(1, m_pTransform,
-		XMMatrixTranslation(0.f, 1.f, 0.f),
-		m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(),
-		m_pWeapon->Get_Wand_Point_OffsetMatrix(),
-		COL_MAGIC);
+	m_CastingMagic = m_pMagicSlot->Action_Magic_Basic(1, m_pTarget,
+		m_pWeapon,
+		COL_ENEMY);
 }
 
 void CProfessor_Fig::Shot_Magic()

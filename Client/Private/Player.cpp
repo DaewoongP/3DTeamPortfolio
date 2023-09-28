@@ -402,11 +402,11 @@ HRESULT CPlayer::Render_Depth()
 	return S_OK;
 }
 
-void CPlayer::On_Maigc_Throw_Data(void* data)
+void CPlayer::On_Maigc_Throw_Data(void* data) const
 {
 	if (static_cast<CMagicBall::COLLSIONREQUESTDESC*>(data)->eMagicTag == LUMOS)
 	{
-		m_pFrncSpellToggle = static_cast<CMagicBall::COLLSIONREQUESTDESC*>(data)->Action;
+		//m_pFrncSpellToggle = static_cast<CMagicBall::COLLSIONREQUESTDESC*>(data)->Action;
 	}
 }
 
@@ -605,10 +605,8 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicGroup = CMagic::MG_CONTROL;
 		magicInitDesc.eMagicType = CMagic::MT_YELLOW;
 		magicInitDesc.eMagicTag = LEVIOSO;
-		magicInitDesc.fCoolTime = 1.f;
+		magicInitDesc.fInitCoolTime = 1.f;
 		magicInitDesc.iDamage = 0;
-		magicInitDesc.fCastDistance = 1000;
-		magicInitDesc.fBallDistance = 30;
 		magicInitDesc.fLifeTime = 1.8f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
@@ -619,10 +617,8 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicGroup = CMagic::MG_DAMAGE;
 		magicInitDesc.eMagicType = CMagic::MT_RED;
 		magicInitDesc.eMagicTag = CONFRINGO;
-		magicInitDesc.fCoolTime = 1.f;
+		magicInitDesc.fInitCoolTime = 1.f;
 		magicInitDesc.iDamage = 50;
-		magicInitDesc.fCastDistance = 1000;
-		magicInitDesc.fBallDistance = 30;
 		magicInitDesc.fLifeTime = 0.8f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
@@ -633,10 +629,8 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 		magicInitDesc.eMagicType = CMagic::MT_ALL;
 		magicInitDesc.eMagicTag = FINISHER;
-		magicInitDesc.fCoolTime = 1.f;
+		magicInitDesc.fInitCoolTime = 1.f;
 		magicInitDesc.iDamage = 500;
-		magicInitDesc.fCastDistance = 1000;
-		magicInitDesc.fBallDistance = 3000;
 		magicInitDesc.fLifeTime = 3.f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
@@ -647,10 +641,8 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicGroup = CMagic::MG_DAMAGE;
 		magicInitDesc.eMagicType = CMagic::MT_RED;
 		magicInitDesc.eMagicTag = NCENDIO;
-		magicInitDesc.fCoolTime = 1.5f;
+		magicInitDesc.fInitCoolTime = 1.5f;
 		magicInitDesc.iDamage = 300;
-		magicInitDesc.fCastDistance = 1000;
-		magicInitDesc.fBallDistance = 30;
 		magicInitDesc.fLifeTime = 1.f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
@@ -661,10 +653,8 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
 		magicInitDesc.eMagicTag = LUMOS;
-		magicInitDesc.fCoolTime = 1.5f;
+		magicInitDesc.fInitCoolTime = 1.5f;
 		magicInitDesc.iDamage = 0;
-		magicInitDesc.fCastDistance = 1000;
-		magicInitDesc.fBallDistance = 0;
 		magicInitDesc.fLifeTime = 30.f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
@@ -879,10 +869,8 @@ HRESULT CPlayer::Ready_MagicDesc()
 	magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 	magicInitDesc.eMagicType = CMagic::MT_NOTHING;
 	magicInitDesc.eMagicTag = BASICCAST;
-	magicInitDesc.fCoolTime = 0.f;
+	magicInitDesc.fInitCoolTime = 0.f;
 	magicInitDesc.iDamage = 10;
-	magicInitDesc.fCastDistance = 1000;
-	magicInitDesc.fBallDistance = 30;
 	magicInitDesc.fLifeTime = 0.6f;
 
 	m_BasicDesc_Light = magicInitDesc;
@@ -891,10 +879,8 @@ HRESULT CPlayer::Ready_MagicDesc()
 	magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 	magicInitDesc.eMagicType = CMagic::MT_NOTHING;
 	magicInitDesc.eMagicTag = BASICCAST;
-	magicInitDesc.fCoolTime = 0.f;
+	magicInitDesc.fInitCoolTime = 0.f;
 	magicInitDesc.iDamage = 10;
-	magicInitDesc.fCastDistance = 1000;
-	magicInitDesc.fBallDistance = 30;
 	magicInitDesc.fLifeTime = 0.6f;
 
 	m_BasicDesc_Heavy = magicInitDesc;
@@ -1042,19 +1028,19 @@ void CPlayer::Shot_Basic_Spell()
 {
 	Find_Target_For_Distance();
 	m_pMagicSlot->Add_Magics(m_BasicDesc_Light);
-	m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(0, m_pTargetTransform, XMMatrixTranslation(0.f, 2.5f, 0.f), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(0, m_pTarget, m_pWeapon, COL_ENEMY);
 }
 
 void CPlayer::Shot_Basic_Last_Spell()
 {
 	Find_Target_For_Distance();
 	m_pMagicSlot->Add_Magics(m_BasicDesc_Heavy);
-	m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(0, m_pTargetTransform, XMMatrixTranslation(0.f, 2.5f, 0.f), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(0, m_pTarget, m_pWeapon, COL_ENEMY);
 }
 
 void CPlayer::Protego()
 {
-	m_pMagicSlot->Action_Magic_Basic(1, m_pTransform, XMMatrixTranslation(0.0f, 1.0f, 0.0f), m_pTransform->Get_WorldMatrixPtr(), XMMatrixIdentity(), COL_MAGIC);
+	m_pMagicSlot->Action_Magic_Basic(1, this, m_pWeapon, COL_MAGIC);
 }
 
 void CPlayer::Gravity_On()
@@ -1516,7 +1502,7 @@ void CPlayer::Shot_Levioso()
 		OffSetMatrix = m_pTarget->Get_Offset_Matrix();
 	}
 
-	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(1, m_pTargetTransform, OffSetMatrix, m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(1, m_pTarget, m_pWeapon, COL_ENEMY);
 }
  
 
@@ -1531,7 +1517,7 @@ void CPlayer::Shot_Confringo()
 		OffSetMatrix = m_pTarget->Get_Offset_Matrix();
 	}
 
-	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(0, m_pTargetTransform, OffSetMatrix, m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(0, m_pTarget, m_pWeapon, COL_ENEMY);
 }
 
 void CPlayer::Shot_NCENDIO()
@@ -1545,7 +1531,7 @@ void CPlayer::Shot_NCENDIO()
 		OffSetMatrix = m_pTarget->Get_Offset_Matrix();
 	}
 
-	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(3, m_pTargetTransform, OffSetMatrix, m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(3, m_pTarget, m_pWeapon, COL_ENEMY);
 }
 
 void CPlayer::Shot_Finisher()
@@ -1559,14 +1545,14 @@ void CPlayer::Shot_Finisher()
 		OffSetMatrix = m_pTarget->Get_Offset_Matrix();
 	}
 
-	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(2, m_pTargetTransform, OffSetMatrix, m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(2, m_pTarget, m_pWeapon, COL_ENEMY);
 }
 
 void CPlayer::Lumos()
 {
 	if (nullptr == m_pFrncSpellToggle)
 	{
-		m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(2, m_pTransform, XMMatrixIdentity(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_NONE);
+		m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(2, this, m_pWeapon, COL_NONE);
 	}
 	else
 	{

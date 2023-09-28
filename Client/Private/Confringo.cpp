@@ -17,10 +17,9 @@ CConfringo::CConfringo(const CConfringo& rhs)
 
 HRESULT CConfringo::Initialize_Prototype(_uint iLevel)
 {
-	if (FAILED(__super::Initialize_Prototype()))
+	if (FAILED(__super::Initialize_Prototype(iLevel)))
 		return E_FAIL;
 
-	m_iLevel = iLevel;
 	BEGININSTANCE;
 	//¸ÞÀÎ ÀÌÆåÆ®
 	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Confringo_Trail")))
@@ -156,11 +155,10 @@ void CConfringo::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	_float3 vWandPosition = _float4x4(m_WeaponOffsetMatrix * (*m_pWeaponMatrix)).Translation();
-	m_pWandTouchEffect->Get_Transform()->Set_Position(vWandPosition);
-	m_pWandDustEffect->Get_Transform()->Set_Position(vWandPosition);
-	m_pWandTwinklEffect->Get_Transform()->Set_Position(vWandPosition);
-	m_pWandTrail->Get_Transform()->Set_Position(vWandPosition);
+	m_pWandTouchEffect->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
+	m_pWandDustEffect->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
+	m_pWandTwinklEffect->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
+	m_pWandTrail->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
 }
 
 void CConfringo::Late_Tick(_float fTimeDelta)
@@ -213,18 +211,17 @@ void CConfringo::Ready_Begin()
 
 void CConfringo::Ready_DrawMagic()
 {
-	_float3 vWandPosition = _float4x4(m_WeaponOffsetMatrix * (*m_pWeaponMatrix)).Translation();
-	m_pWandTouchEffect->Enable(vWandPosition);
-	m_pWandDustEffect->Enable(vWandPosition);
-	m_pWandTwinklEffect->Enable(vWandPosition);
-	m_pWandTrail->Enable(vWandPosition);
+	m_pWandTouchEffect->Enable(m_CurrentWeaponMatrix.Translation());
+	m_pWandDustEffect->Enable(m_CurrentWeaponMatrix.Translation());
+	m_pWandTwinklEffect->Enable(m_CurrentWeaponMatrix.Translation());
+	m_pWandTrail->Enable(m_CurrentWeaponMatrix.Translation());
 }
 
 void CConfringo::Ready_CastMagic()
 {
 	Ready_SplineSpinMove(m_pMainTrail,_float2(0.2f, 0.20f),0.5f);
-	m_pMainTrail->Enable(m_vStartPostion);
-	m_pWandDustEffect->Enable(m_vStartPostion);
+	m_pMainTrail->Enable(m_vStartPosition);
+	m_pWandDustEffect->Enable(m_vStartPosition);
 }
 
 void CConfringo::Ready_Dying()
@@ -250,10 +247,10 @@ void CConfringo::Tick_CastMagic(_float fTimeDelta)
 {
 	if (m_fLerpAcc != 1)
 	{
-		m_fLerpAcc += fTimeDelta / m_MagicBallDesc.fInitLifeTime * m_fTimeScalePerDitance;
+		m_fLerpAcc += fTimeDelta / m_fLifeTime * m_fTimeScalePerDitance;
 		if (m_fLerpAcc > 1)
 			m_fLerpAcc = 1;
-		m_pMainTrail->Spline_Spin_Move(m_vSplineLerp[0], m_vStartPostion, m_vTargetPosition, m_vSplineLerp[1], m_vSpinWeight, m_fSpinSpeed, m_fLerpAcc);
+		m_pMainTrail->Spline_Spin_Move(m_vSplineLerp[0], m_vStartPosition, m_vEndPosition, m_vSplineLerp[1], m_vSpinWeight, m_fSpinSpeed, m_fLerpAcc);
 		m_pWandDustEffect->Get_Transform()->Set_Position(m_pMainTrail->Get_Transform()->Get_Position());
 		m_pTransform->Set_Position(m_pMainTrail->Get_Transform()->Get_Position());
 	}

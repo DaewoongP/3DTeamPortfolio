@@ -17,11 +17,10 @@ CLumos::CLumos(const CLumos& rhs)
 
 HRESULT CLumos::Initialize_Prototype(_uint iLevel)
 {
-	if (FAILED(__super::Initialize_Prototype()))
+	if (FAILED(__super::Initialize_Prototype(iLevel)))
 		return E_FAIL;
-	m_iLevel = iLevel;
-	BEGININSTANCE;
 
+	BEGININSTANCE;
 	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Lumos_Wand_Glow_Red_Effect")))
 	{
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Lumos_Wand_Glow_Red_Effect")
@@ -41,7 +40,6 @@ HRESULT CLumos::Initialize_Prototype(_uint iLevel)
 		}
 	}
 	ENDINSTANCE;
-
 
 	return S_OK;
 }
@@ -82,9 +80,8 @@ void CLumos::Tick(_float fTimeDelta)
 		Set_MagicBallState(MAGICBALL_STATE_DYING);
 
 	//위치 동기화
-	_float3 vWandPosition = _float4x4(m_WeaponOffsetMatrix * (*m_pWeaponMatrix)).Translation();
-	m_pWandGlowEffect->Get_Transform()->Set_Position(vWandPosition);
-	m_pWandGlowRedEffect->Get_Transform()->Set_Position(vWandPosition);
+	m_pWandGlowEffect->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
+	m_pWandGlowRedEffect->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
 }
 
 void CLumos::Late_Tick(_float fTimeDelta)
@@ -124,18 +121,17 @@ void CLumos::Lumos_Tick(_float3 vPos,_float fTimeDelta)
 
 void CLumos::Ready_Begin()
 {
-	dynamic_cast<CGameObject*>(m_pTarget->Get_Owner())->On_Maigc_Throw_Data(&m_CollisionDesc);
+	m_pTarget->On_Maigc_Throw_Data(&m_CollisionDesc);
 	m_pWandGlowEffect->Disable();
 	m_pWandGlowRedEffect->Disable();
 }
 
 void CLumos::Ready_DrawMagic()
 {
-	_float3 vWandPosition = _float4x4(m_WeaponOffsetMatrix * (*m_pWeaponMatrix)).Translation();
 	m_pWandGlowEffect->Enable();
-	m_pWandGlowEffect->Play(vWandPosition);
+	m_pWandGlowEffect->Play(m_CurrentWeaponMatrix.Translation());
 	m_pWandGlowRedEffect->Enable();
-	m_pWandGlowRedEffect->Play(vWandPosition);
+	m_pWandGlowRedEffect->Play(m_CurrentWeaponMatrix.Translation());
 }
 
 void CLumos::Ready_CastMagic()

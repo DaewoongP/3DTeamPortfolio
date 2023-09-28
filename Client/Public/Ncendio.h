@@ -3,10 +3,6 @@
 #include "Client_Defines.h"
 #include "MagicBall.h"
 
-//∆Æ∑π¿œ
-#include "Trail.h"
-#include "ParticleSystem.h"
-
 BEGIN(Engine)
 class CParticleSystem;
 class CMeshEffect;
