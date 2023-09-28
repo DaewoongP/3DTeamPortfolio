@@ -36,10 +36,6 @@ void CProtegoState::Late_Tick(_float fTimeDelta)
 
 void CProtegoState::OnStateEnter(void* _pArg)
 {
-#ifdef _DEBUG
-	//cout << "Protego Enter" << endl;
-#endif // _DEBUG
-	
 	//미리 시전 중이다.
 	if (nullptr == _pArg)
 	{
@@ -136,10 +132,6 @@ void CProtegoState::OnStateTick()
 
 void CProtegoState::OnStateExit()
 {
-#ifdef _DEBUG
-	//cout << "Protego Exit" << endl;
-#endif // _DEBUG
-
 	m_isHit = false;
 
 	m_iHittype = (_uint)HIT_END;

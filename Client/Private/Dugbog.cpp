@@ -1290,7 +1290,6 @@ HRESULT CDugbog::Make_Levioso_Combo(_Inout_ CSelector* pSelector)
 				_uint* piCurrentSpell = { nullptr };
 				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", piCurrentSpell)))
 					return false;
-				cout << *piCurrentSpell << endl;
 				if (BUFF_LEVIOSO & *piCurrentSpell ||
 					BUFF_LEVIOSO_TONGUE & *piCurrentSpell)
 					return true;

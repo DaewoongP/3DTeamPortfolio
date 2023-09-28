@@ -34,7 +34,7 @@ HRESULT CProfessor_Fig::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	m_pTransform->Set_Position(_float3(35.f, 0.f, 10.f));
+	m_pTransform->Set_Position(_float3(40.f, 6.4f, 62.f));
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;

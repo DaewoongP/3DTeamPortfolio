@@ -109,7 +109,19 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 HRESULT CPlayer::Initialize_Level(_uint iCurrentLevelIndex)
 {
-	m_pRigidBody->Set_Position(_float3(15.f, 20.f, 20.f));
+
+	switch (iCurrentLevelIndex)
+	{
+	case LEVEL_CLIFFSIDE:
+		m_pTransform->Set_Position(_float3(25.f, 3.f, 22.5f));
+		break;
+	case LEVEL_VAULT:
+		break;
+	default:
+		break;
+	}
+
+	
 	return S_OK;
 }
 
@@ -192,7 +204,7 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
 	wstring wstrCollisionTag = CollisionEventDesc.pOtherCollisionTag;
-	wcout << wstrCollisionTag << endl;
+
 	if (wstring::npos != wstrCollisionTag.find(TEXT("Attack")) ||
 		wstring::npos != wstrCollisionTag.find(TEXT("Enemy_Body")))
 	{
@@ -722,7 +734,9 @@ void CPlayer::Key_Input(_float fTimeDelta)
 void CPlayer::Fix_Mouse()
 {
 	if (false == m_isFixMouse)
+	{
 		return;
+	}
 
 	POINT	ptMouse{ g_iWinSizeX >> 1, g_iWinSizeY >> 1 };
 

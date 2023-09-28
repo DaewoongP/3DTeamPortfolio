@@ -44,9 +44,6 @@ void CMoveStartState::OnStateEnter(void* _pArg)
 	*m_pIMoveSwitch = CStateContext::MOVETYPE_JOGING;
 
 
-#ifdef _DEBUG
-	//cout << "Start Enter" << endl;
-#endif // _DEBUG
 }
 
 void CMoveStartState::OnStateTick()
@@ -70,9 +67,6 @@ void CMoveStartState::OnStateTick()
 
 void CMoveStartState::OnStateExit()
 {
-#ifdef _DEBUG
-	//cout << "Start Exit" << endl;
-#endif // _DEBUG
 }
 
 

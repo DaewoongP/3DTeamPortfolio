@@ -48,6 +48,9 @@ HRESULT CLevel_Vault::Initialize()
 
 		return E_FAIL;
 	}
+
+	Load_Monsters(TEXT("../../Resources/GameData/MonsterData/Valt.mon"));
+
 	if (FAILED(Ready_Layer_Trigger(TEXT("Layer_Trigger"))))
 	{
 		MSG_BOX("Failed Load Layer_Trigger");
@@ -128,7 +131,7 @@ HRESULT CLevel_Vault::Ready_Lights()
 	LightDesc.vDir = _float4(0.33f, -0.99f, 0.33f, 0.f);
 
 	LightDesc.vDiffuse = BLACKDEFAULT;
-	LightDesc.vAmbient = BLACKDEFAULT;
+	LightDesc.vAmbient = _float4(0.1f, 0.1f, 0.1f, 1.f);
 	LightDesc.vSpecular = BLACKDEFAULT;
 
 	pGameInstance->Set_Light(CLight::TYPE_DIRECTIONAL,LightDesc);

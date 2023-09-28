@@ -37,10 +37,10 @@ HRESULT CGolem_Combat::Initialize_Prototype()
 
 HRESULT CGolem_Combat::Initialize(void* pArg)
 {
-	if (FAILED(__super::Initialize(pArg)))
+	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-	if (FAILED(Add_Components()))
+	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
 	if (FAILED(Make_AI()))
@@ -126,7 +126,6 @@ void CGolem_Combat::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 
 		m_pHealth->Damaged(iDamage);
 
-		cout << "\nCall\n" << endl;
 		auto iter = m_CurrentTickSpells.find(eBuff);
 		if (iter == m_CurrentTickSpells.end() && BUFF_LEVIOSO == eBuff)
 		{

@@ -36,10 +36,6 @@ void CStandingState::Late_Tick(_float fTimeDelta)
 
 void CStandingState::OnStateEnter(void* _pArg)
 {
-#ifdef _DEBUG
-	//cout << "Hard Land Enter" << endl;
-#endif // _DEBUG
-
 	* m_pIsFinishAnimation = false;
 }
 
@@ -51,9 +47,6 @@ void CStandingState::OnStateTick()
 
 void CStandingState::OnStateExit()
 {
-#ifdef _DEBUG
-	//cout << "Hard Land Exit" << endl;
-#endif // _DEBUG
 	* m_pIsFinishAnimation = false;
 }
 
