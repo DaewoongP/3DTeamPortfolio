@@ -5,7 +5,7 @@
 
 BEGIN(Engine)
 class CRigidBody;
-class CRender;
+class CRenderer;
 class CTrail;
 END
 
