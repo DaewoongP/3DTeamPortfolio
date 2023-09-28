@@ -56,7 +56,7 @@ void CMoveStartState::OnStateTick()
 
 	Go_Roll();
 
-	Go_Jump();
+	//Go_Jump();
 
 	Switch_Sprint();
 
