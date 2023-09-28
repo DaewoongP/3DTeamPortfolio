@@ -1330,6 +1330,7 @@ void CPlayer::Find_Target_For_Distance()
 	if (nullptr == pLayer)
 	{
 		//MSG_BOX("not MonsterLayer");
+		ENDINSTANCE;
 		return;
 	}
 
