@@ -1,25 +1,13 @@
 #include "Shader_EngineHeader.hlsli"
 
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
-matrix g_ViewMatrixInv, g_ProjMatrixInv;
 
-texture2D g_Texture;
-vector g_vCamPosition;
-float g_fCamFar;
+
 float g_fGlowPower;
 
 texture2D g_AlphaTexture;
 texture2D g_DoBlurTexture;
 texture2D g_GlowTexture;
-
-
-vector g_vLightDiffuse;
-vector g_vLightAmbient;
-vector g_vLightSpecular;
-
-float g_FrameTime;
-float3 g_ScrollSpeed;
-float3 g_Scales;
 
 float BlurWeights[13] =
 {

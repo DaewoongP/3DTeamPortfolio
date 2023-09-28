@@ -8,19 +8,6 @@ float g_FrameTime;
 texture2D g_FlowTexture1;
 texture2D g_FlowTexture2;
 
-vector g_vLightDiffuse;
-vector g_vLightAmbient;
-vector g_vLightSpecular;
-
-
-
-float BlurWeights[23] =
-{
-    0.0011, 0.0123, 0.0561, 0.1353, 0.278, 0.3001, 0.4868, 0.6666, 0.7261, 0.8712, 0.9231,
-    0.9986, 0.9231, 0.8712, 0.7261, 0.6666, 0.4868, 0.3001, 0.278, 0.1353, 0.0561, 0.0123, 0.0011
-};
-float total = 11.4776f;
-
 struct VS_IN
 {
     float3 vPosition : POSITION;

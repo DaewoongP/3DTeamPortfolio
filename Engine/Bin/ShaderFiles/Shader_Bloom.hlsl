@@ -9,18 +9,7 @@ float g_fCamFar;
 
 texture2D g_DoBlurTexture;
 texture2D g_WhiteBloomTexture;
-texture2D g_GlowTexture;
 texture2D g_OriTexture;
-texture2D g_PostProcessingTexture;
-texture2D g_SpecularTexture;
-
-vector g_vLightDiffuse;
-vector g_vLightAmbient;
-vector g_vLightSpecular;
-
-float g_FrameTime;
-float3 g_ScrollSpeed;
-float3 g_Scales;
 
 float BlurWeights[23] =
 {
@@ -64,17 +53,6 @@ VS_OUT VS_MAIN(VS_IN In)
     
     Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);
     Out.vTexUV = In.vTexUV;
-    
-    //Out.texCoords1 = In.vTexUV;
-    Out.texCoords1 = (In.vTexUV * g_Scales.x);
-    Out.texCoords1.y = Out.texCoords1.y + (g_FrameTime * g_ScrollSpeed.x);
-    
-    Out.texCoords2 = (In.vTexUV * g_Scales.y);
-    Out.texCoords2.y = Out.texCoords2.y + (g_FrameTime * g_ScrollSpeed.y);
-    
-    Out.texCoords3 = (In.vTexUV * g_Scales.z);
-    Out.texCoords3.y = Out.texCoords3.y + (g_FrameTime * g_ScrollSpeed.z);
-    
     
     
     return Out;
@@ -168,7 +146,7 @@ PS_OUT PS_MAIN_BLOOM(PS_IN_POSTEX In)
 
     
     vector vBloom = g_OriTexture.Sample(BloomSampler, In.vTexUV); //vBloom은 하얀부분을뽑아낼 텍스쳐
-    vector vSpecular = g_SpecularTexture.Sample(BloomSampler, In.vTexUV);
+    vector vSpecular = g_WhiteBloomTexture.Sample(BloomSampler, In.vTexUV);
     vBloom = vBloom * vSpecular;
     
     float Brigtness = dot(vBloom.rgb, float3(0.2126f, 0.7152f, 0.0722f));
@@ -207,18 +185,6 @@ PS_OUT PS_MAIN_BLOOM_AFTER(PS_IN_POSTEX In)
     
 }
 
-PS_OUT PS_MAIN_GLOW(PS_IN_POSTEX In)
-{
-    PS_OUT Out = (PS_OUT) 0;
-    
-    vector vTextureColor = g_OriTexture.Sample(LinearSampler, In.vTexUV);
-    vector vPixelColor = g_GlowTexture.Sample(LinearSampler, In.vTexUV);
-    
-    
-   // Out.vColor = saturate(vTextureColor)
-    return Out;
-    
-}
 technique11 DefaultTechnique
 {
   
@@ -268,17 +234,7 @@ technique11 DefaultTechnique
         DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
         PixelShader = compile ps_5_0 PS_MAIN_BLOOM_AFTER();
     }
-    pass Glow
-    {
-        SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_Depth_Disable, 0);
-        SetBlendState(BS_BlendOne, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN_POSTEX();
-        GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
-        HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
-        DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
-        PixelShader = compile ps_5_0 PS_MAIN_GLOW();
-    }
+  
 
 
 }
