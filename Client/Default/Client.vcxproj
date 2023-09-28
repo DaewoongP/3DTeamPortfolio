@@ -169,6 +169,7 @@
     <ClInclude Include="..\Public\Enemy.h" />
     <ClInclude Include="..\public\Game_Manager.h" />
     <ClInclude Include="..\Public\Lumos.h" />
+    <ClInclude Include="..\Public\MPBall.h" />
     <ClInclude Include="..\Public\Ncendio.h" />
     <ClInclude Include="..\Public\Inventory.h" />
     <ClInclude Include="..\Public\Check_Degree.h" />
@@ -483,6 +484,7 @@
       <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</IncludeInUnityFile>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="MPBall.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico" />
