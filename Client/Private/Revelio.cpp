@@ -11,9 +11,9 @@ CRevelio::CRevelio(const CRevelio& rhs)
 {
 }
 
-HRESULT CRevelio::Initialize_Prototype()
+HRESULT CRevelio::Initialize_Prototype(_uint iLevel)
 {
-	if (FAILED(__super::Initialize_Prototype()))
+	if (FAILED(__super::Initialize_Prototype(iLevel)))
 		return E_FAIL;
 
 	return S_OK;
@@ -72,11 +72,11 @@ HRESULT CRevelio::Add_Effect()
 	return S_OK;
 }
 
-CRevelio* CRevelio::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CRevelio* CRevelio::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,_uint iLevel)
 {
 	CRevelio* pInstance = New CRevelio(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize_Prototype()))
+	if (FAILED(pInstance->Initialize_Prototype(iLevel)))
 	{
 		MSG_BOX("Failed to Created CRevelio");
 		Safe_Release(pInstance);

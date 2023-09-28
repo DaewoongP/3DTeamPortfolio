@@ -28,10 +28,8 @@ HRESULT CMagicSlot::Initialize(void* pArg)
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 		magicInitDesc.eMagicType = CMagic::MT_ALL;
 		magicInitDesc.eMagicTag = PROTEGO;
-		magicInitDesc.fCoolTime = 0.f;
+		magicInitDesc.fInitCoolTime = 0.f;
 		magicInitDesc.iDamage = 0;
-		magicInitDesc.fCastDistance = 1000;
-		magicInitDesc.fBallDistance = 30;
 		magicInitDesc.fLifeTime = 3.f;
 		Add_Magics(magicInitDesc);
 	}
@@ -42,10 +40,8 @@ HRESULT CMagicSlot::Initialize(void* pArg)
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
 		magicInitDesc.eMagicTag = BASICCAST;
-		magicInitDesc.fCoolTime = 0.f;
+		magicInitDesc.fInitCoolTime = 0.f;
 		magicInitDesc.iDamage = 10;
-		magicInitDesc.fCastDistance = 1000;
-		magicInitDesc.fBallDistance = 30;
 		magicInitDesc.fLifeTime = 0.6f;
 		Add_Magics(magicInitDesc);
 	}
@@ -99,13 +95,6 @@ HRESULT CMagicSlot::Add_Magics(CMagic::MAGICDESC SkillDesc)
 	return S_OK;
 }
 
-HRESULT CMagicSlot::Add_Function_To_Magic(function<void()> func, SPELL eSpellType)
-{
-	m_Magics[eSpellType]->Add_ActionFunc(func);
-
-	return S_OK;
-}
-
 HRESULT CMagicSlot::Add_Magic_To_Skill_Slot(_uint iSlotIndex, SPELL eSpellType)
 {
 	if(m_Magics[eSpellType] == nullptr)
@@ -136,7 +125,7 @@ HRESULT CMagicSlot::Add_Magic_To_Basic_Slot(_uint iSlotIndex, SPELL eSpellType)
 	return S_OK;
 }
 
-CMagicBall* CMagicSlot::Action_Magic_Skill(_uint iIndex, CTransform* pTarget, _float4x4 TargetOffsetMatrix, const _float4x4* pWeaponMatrix, _float4x4 WeaponOffsetMatrix, COLLISIONFLAG eCollisionFlag)
+CMagicBall* CMagicSlot::Action_Magic_Skill(_uint iIndex, const CGameObject* pTarget, const CGameObject* pWeaponMatrix, COLLISIONFLAG eCollisionFlag)
 {
 	//if Size over = MSG / if Index Slot is nullptr, nothing
 	if (iIndex < m_MagicSlots.size())
@@ -146,7 +135,7 @@ CMagicBall* CMagicSlot::Action_Magic_Skill(_uint iIndex, CTransform* pTarget, _f
 			return nullptr;
 		}
 
-		return m_MagicSlots[iIndex]->Magic_Cast(pTarget, TargetOffsetMatrix, pWeaponMatrix, WeaponOffsetMatrix, eCollisionFlag);
+		return m_MagicSlots[iIndex]->Magic_Cast(pTarget, pWeaponMatrix, eCollisionFlag);
 	}
 	else if (m_MagicSlots[iIndex] == nullptr)
 	{
@@ -157,7 +146,7 @@ CMagicBall* CMagicSlot::Action_Magic_Skill(_uint iIndex, CTransform* pTarget, _f
 	return nullptr;
 }
 
-CMagicBall* CMagicSlot::Action_Magic_Basic(_uint iIndex, CTransform* pTarget, _float4x4 TargetOffsetMatrix,const _float4x4* pWeaponMatrix, _float4x4 WeaponOffsetMatrix, COLLISIONFLAG eCollisionFlag)
+CMagicBall* CMagicSlot::Action_Magic_Basic(_uint iIndex, const CGameObject* pTarget, const CGameObject* pWeaponMatrix, COLLISIONFLAG eCollisionFlag)
 {
 	//if Size over = MSG / if Index Slot is nullptr, nothing
 	if (iIndex < m_MagicEssentialSlots.size())
@@ -167,7 +156,7 @@ CMagicBall* CMagicSlot::Action_Magic_Basic(_uint iIndex, CTransform* pTarget, _f
 			return nullptr;
 		}
 
-		return m_MagicEssentialSlots[iIndex]->Magic_Cast(pTarget, TargetOffsetMatrix, pWeaponMatrix, WeaponOffsetMatrix, eCollisionFlag);
+		return m_MagicEssentialSlots[iIndex]->Magic_Cast(pTarget, pWeaponMatrix, eCollisionFlag);
 	}
 	else if (m_MagicEssentialSlots[iIndex] == nullptr)
 	{

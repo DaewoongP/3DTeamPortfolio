@@ -14,12 +14,10 @@ CNcendio::CNcendio(const CNcendio& rhs)
 
 HRESULT CNcendio::Initialize_Prototype(_uint iLevel)
 {
-	if (FAILED(__super::Initialize_Prototype()))
+	if (FAILED(__super::Initialize_Prototype(iLevel)))
 		return E_FAIL;
-
-	m_iLevel = iLevel;
+	
 	BEGININSTANCE;
-
 	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_BurnTarget_Particle")))
 	{
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_BurnTarget_Particle")
@@ -140,25 +138,25 @@ HRESULT CNcendio::Reset(MAGICBALLINITDESC& InitDesc)
 void CNcendio::Ready_Begin()
 {
 	// 인센디오 원형 불꽃을 타겟 포지션보다 살짝 낮춘다.
-	_float3 vOffsetPosition = m_MagicBallDesc.vStartPosition;
+	_float3 vOffsetPosition = m_vStartPosition;
 	vOffsetPosition.y -= 0.5f;
 
 	// 맞춘 대상보다 텍스처가 더 앞으로 나오게 조정한다.
-	_float3 vBurnTargetOffset = m_MagicBallDesc.vStartPosition - m_vTargetPosition;
+	_float3 vBurnTargetOffset = m_vStartPosition - m_vEndPosition;
 	vBurnTargetOffset.Normalize();
 	vBurnTargetOffset *= 0.5f;
 
 	m_pSmokeCloudEffect->Enable(vOffsetPosition);
 	m_pFireCircleBoomEffect->Enable(vOffsetPosition);
-	m_pBurnTargetEffect->Enable(m_vTargetPosition + vBurnTargetOffset);
+	m_pBurnTargetEffect->Enable(m_vEndPosition + vBurnTargetOffset);
 
 	// 재생
-	m_pBurnTargetEffect->Play(m_vTargetPosition + vBurnTargetOffset);
+	m_pBurnTargetEffect->Play(m_vEndPosition + vBurnTargetOffset);
 	m_pFireCircleBoomEffect->Play(vOffsetPosition);
 	m_pSmokeCloudEffect->Play(vOffsetPosition);
 	m_pFireRingMeshEffect->Play(vOffsetPosition);
 
-	m_pTransform->Set_Position(m_MagicBallDesc.vStartPosition);
+	m_pTransform->Set_Position(m_vStartPosition);
 }
 
 void CNcendio::Ready_DrawMagic()
