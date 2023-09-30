@@ -212,6 +212,28 @@ HRESULT CLevel_Loading::Loading_Cliffside(const _tchar* pLayerTag)
 
 HRESULT CLevel_Loading::Loading_Vault(const _tchar* pLayerTag)
 {
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	// 로고 이동전 로딩씬에 대한 객체 생성
+
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Loading"), pLayerTag)))
+	{
+		MSG_BOX("Failed Add Scene : (Scene_Loading)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	_tchar wszFilePath[MAX_PATH] = TEXT("");
+	lstrcpy(wszFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Loading2.uidata"));
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_LOADING, TEXT("Prototype_GameObject_UI_Group_Loading"),
+		pLayerTag, TEXT("Prototype_GameObject_UI_Group_Loading1"), wszFilePath)))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_UI_Group_Loading)");
+		return E_FAIL;
+	}
+
+	Safe_Release(pGameInstance);
+
 	return S_OK;
 }
 

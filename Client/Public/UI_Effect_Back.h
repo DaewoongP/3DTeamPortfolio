@@ -50,7 +50,7 @@ public:
 	virtual HRESULT Render() override;
 
 private:
-	CShader*			m_pShaderCom = { nullptr };
+	CShader*				m_pShaderCom = { nullptr };
 	CRenderer*			m_pRendererCom = { nullptr };
 	CVIBuffer_Rect*		m_pVIBufferCom = { nullptr };
 	CUI_Image*			m_pImageCom = { nullptr };
@@ -59,6 +59,7 @@ private:
 private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
+	HRESULT Set_Texture(_uint iIndex, CTexture* pTexture);
 
 private:
 	EFFECTTYPE		m_eEffecttype = { EFFECTTYPE_END };

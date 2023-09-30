@@ -13,6 +13,11 @@ CMenu_Quest::CMenu_Quest(const CMenu_Quest& rhs)
 {
 }
 
+void CMenu_Quest::Set_Open(_bool isOpen)
+{
+	m_isOpen = isOpen;
+}
+
 HRESULT CMenu_Quest::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
@@ -30,8 +35,6 @@ HRESULT CMenu_Quest::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
-
-
 
 	Ready_Offset();
 
