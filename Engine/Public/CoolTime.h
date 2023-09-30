@@ -26,8 +26,7 @@ private:
 
 public:
 	void Set_Time_Accel(_bool isAccel) { m_isAccelerlator = isAccel; }
-
-
+	void Set_Enable(_bool isEnable) { m_isEnable = isEnable; }
 
 public:
 	virtual HRESULT Initialize_Prototype() override { return S_OK; }

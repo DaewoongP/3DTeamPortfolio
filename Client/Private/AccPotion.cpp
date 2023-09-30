@@ -36,12 +36,14 @@ HRESULT CAccPotion::Initialize(void* pArg)
 
 void CAccPotion::Use()
 {
+	if (false == m_pCooltime->IsEnable())
+		m_pCooltime->Set_Enable(true);
+
 	if (true == m_pCooltime->IsEnable())
 	{
 		cout << "아이템 썼어요" << endl;
 		
 		m_pCooltime->Set_Time_Accel(true);
-
 
 	}
 }
@@ -54,6 +56,7 @@ HRESULT CAccPotion::Add_Components()
 		__debugbreak();
 		return E_FAIL;
 	}
+
 	return S_OK;
 }
 
@@ -97,4 +100,6 @@ CGameObject* CAccPotion::Clone(void* pArg)
 void CAccPotion::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_pCooltime);
 }

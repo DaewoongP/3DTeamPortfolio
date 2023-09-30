@@ -22,6 +22,8 @@
 
 #include "RecoveryPotion.h"
 #include"AccPotion.h"
+#include"CoolTime.h"	
+
 
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -171,7 +173,9 @@ void CPlayer::Tick(_float fTimeDelta)
 	{
 		m_pFrncSpellToggle(_float3(), _float());
 	}
-	
+	m_pCooltime->Tick(fTimeDelta);
+
+
 	
 }
 
@@ -547,6 +551,13 @@ HRESULT CPlayer::Add_Components()
 	//}
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_AccPotion"),
 		TEXT("Com_AccPotion"), reinterpret_cast<CComponent**>(&m_pAccPotion))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_CoolTime"),
+		TEXT("Com_CoolTime"), reinterpret_cast<CComponent**>(&m_pCooltime))))
 	{
 		__debugbreak();
 		return E_FAIL;
@@ -1609,7 +1620,7 @@ void CPlayer::Free()
 		Safe_Release(m_pPlayer_Information);
 		Safe_Release(m_UI_Group_Skill_01);
 		Safe_Release(m_pRecoveryPotion);
-		
+		Safe_Release(m_pAccPotion);
 		if (nullptr != m_pTargetTransform)
 		{
 			Safe_Release(m_pTargetTransform);

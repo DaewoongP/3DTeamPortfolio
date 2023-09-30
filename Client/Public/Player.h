@@ -12,6 +12,7 @@ class CRenderer;
 class CCollider;
 class CCustomModel;
 class CRigidBody;
+class CCoolTime;
 END
 
 BEGIN(Client)
@@ -64,7 +65,8 @@ private:
 	CRenderer*		m_pRenderer = { nullptr };
 	CCustomModel*	m_pCustomModel = { nullptr };
 	CRigidBody*		m_pRigidBody = { nullptr };
-	
+	CCoolTime*		m_pCooltime = { nullptr };
+
 private:
 	CPlayer_Camera* m_pPlayer_Camera = { nullptr };
 	CPlayer_Information* m_pPlayer_Information = { nullptr };

@@ -22,10 +22,12 @@ HRESULT CCoolTime::Initialize(void* pArg)
 
 void CCoolTime::Tick(_float _fTimeDelta)
 {
+	__super::Tick(_fTimeDelta);
+
 	if (false == m_isEnable)
 		return;
 
-	if (m_fCurCoolTime >= m_fMaxCoolTime)
+	if (m_fCurCoolTime >= 15.f)
 	{
 		m_fCurCoolTime = 0.f;
 		m_isEnable = false;
