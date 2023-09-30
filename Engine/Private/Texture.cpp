@@ -126,7 +126,7 @@ HRESULT CTexture::Bind_ShaderResource(CShader* pShader, const _char* pContantNam
 {
 	if (iTextureIndex >= m_iNumTextures)
 		return E_FAIL;
-
+	
 	return pShader->Bind_ShaderResource(pContantName, m_Textures[iTextureIndex]);
 }
 
@@ -145,7 +145,7 @@ CTexture* CTexture::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,
 	pInstance = pTexturePool->Reuse_Texture(pDevice, pContext, pTextureFilePath, iNumTextures);
 
 	Safe_Release(pTexturePool);
-
+	
 	if (nullptr == pInstance)
 	{
 		MSG_BOX("Failed to Reuse CTexture");
