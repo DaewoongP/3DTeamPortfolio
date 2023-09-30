@@ -108,58 +108,54 @@ void CLevel_Loading::Tick(_float fTimeDelta)
 		return;
 	}
 
-	if (GetKeyState(VK_RETURN) & 0x8000)
+	// 로딩완료 체크
+	if (false == m_pMain0_Loader->Get_Finished() ||
+		false == m_pMain1_Loader->Get_Finished() ||
+		false == m_pMain2_Loader->Get_Finished() ||
+		false == m_pMain3_Loader->Get_Finished())
+		return;
+
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	pGameInstance->Clear_Resources();
+
+	CLevel* pLevel = { nullptr };
+
+	switch (m_eNextLevelID)
 	{
-		// 로딩완료 체크
-		if (false == m_pMain0_Loader->Get_Finished() || 
-			false == m_pMain1_Loader->Get_Finished() || 
-			false == m_pMain2_Loader->Get_Finished() || 
-			false == m_pMain3_Loader->Get_Finished())
-			return;
+	case LEVEL_LOGO:
+		pLevel = CLevel_Logo::Create(m_pDevice, m_pContext);
+		break;
+	case LEVEL_CLIFFSIDE:
+		pLevel = CLevel_Cliffside::Create(m_pDevice, m_pContext);
+		break;
+	case LEVEL_VAULT:
+		pLevel = CLevel_Vault::Create(m_pDevice, m_pContext);
+		break;
+	case LEVEL_GREATHALL:
+		pLevel = CLevel_GreatHall::Create(m_pDevice, m_pContext);
+		break;
+	default:
+		MSG_BOX("Failed Create Next Level");
+		__debugbreak();
+		break;
+	}
 
-		CGameInstance* pGameInstance = CGameInstance::GetInstance();
-		Safe_AddRef(pGameInstance);
-
-		pGameInstance->Clear_Resources();
-
-		CLevel* pLevel = { nullptr };
-
-		switch (m_eNextLevelID)
-		{
-		case LEVEL_LOGO:
-			pLevel = CLevel_Logo::Create(m_pDevice, m_pContext);
-			break;
-		case LEVEL_CLIFFSIDE:
-			pLevel = CLevel_Cliffside::Create(m_pDevice, m_pContext);
-			break;
-		case LEVEL_VAULT:
-			pLevel = CLevel_Vault::Create(m_pDevice, m_pContext);
-			break;
-		case LEVEL_GREATHALL:
-			pLevel = CLevel_GreatHall::Create(m_pDevice, m_pContext);
-			break;
-		default:
-			MSG_BOX("Failed Create Next Level");
-			__debugbreak();
-			break;
-		}
-
-		if (nullptr == pLevel)
-		{
-			Safe_Release(pGameInstance);
-			return;
-		}
-
-		if (FAILED(pGameInstance->Open_Level(m_eNextLevelID, pLevel)))
-		{
-			MSG_BOX("Failed open Next Level");
-			Safe_Release(pGameInstance);
-			return;
-		}
-		
+	if (nullptr == pLevel)
+	{
 		Safe_Release(pGameInstance);
 		return;
 	}
+
+	if (FAILED(pGameInstance->Open_Level(m_eNextLevelID, pLevel)))
+	{
+		MSG_BOX("Failed open Next Level");
+		Safe_Release(pGameInstance);
+		return;
+	}
+
+	Safe_Release(pGameInstance);
 }
 
 HRESULT CLevel_Loading::Render()

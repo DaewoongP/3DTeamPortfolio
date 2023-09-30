@@ -48,7 +48,7 @@ void CPXEventCallBack::onContact(const PxContactPairHeader& pairHeader, const Px
 		MultiByteToWideChar(CP_ACP, 0, pairs[i].shapes[SHAPE_SOUR]->getName(), strlen(pairs[i].shapes[SHAPE_SOUR]->getName()) + 1, SourDesc.pThisCollisionTag, MAX_PATH);
 		SourDesc.pOtherOwner = pDestObject;
 		SourDesc.pOtherTransform = pDestObject->Get_Transform();
-		SourDesc.pArg = pDestObject->Get_CollisionData();
+		SourDesc.pArg = 
 
 		DestDesc.pOtherObjectTag = pSourObject->Get_Tag();
 		MultiByteToWideChar(CP_ACP, 0, pairs[i].shapes[SHAPE_SOUR]->getName(), strlen(pairs[i].shapes[SHAPE_SOUR]->getName()) + 1, DestDesc.pOtherCollisionTag, MAX_PATH);

@@ -163,7 +163,7 @@ HRESULT CRenderer::Draw_RenderGroup()
 {
 	if (FAILED(m_pRenderTarget_Manager->Begin_PostProcessingRenderTarget(m_pContext, TEXT("MRT_PostProcessing"))))
 		return E_FAIL;
-
+	// 객체 자체에 대한 처리
 	if (FAILED(Render_Priority()))
 		return E_FAIL;
 	if (FAILED(Render_Depth()))
@@ -174,24 +174,24 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 	if (FAILED(m_pShadow->Render()))
 		return E_FAIL;
-	if (FAILED(m_pFlowMap->Render()))
-		return E_FAIL;
 	if (FAILED(Render_SSAO()))
 		return E_FAIL;
-	if (FAILED(m_pDistortion->Render()))
+	// 빛연산 완료
+	if (FAILED(Render_Deferred()))
 		return E_FAIL;
 
-	if (FAILED(Render_Deferred()))
+	// 빛연산 처리가 필요없는 객체 렌더링
+	if (FAILED(Render_Effects()))
 		return E_FAIL;
 	if (FAILED(Render_NonLight()))
 		return E_FAIL;
 	if (FAILED(Render_Blend()))
 		return E_FAIL;
-	if (FAILED(Render_EffectType()))
-		return E_FAIL;
 
 	if (FAILED(m_pRenderTarget_Manager->End_PostProcessingRenderTarget(m_pContext)))
 		return E_FAIL;
+
+	// 전체적인 화면에 대한 처리
 
 	if (FAILED(m_pBloom->Render()))
 		return E_FAIL;
@@ -199,7 +199,6 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 	if (FAILED(m_pDOF->Render()))
 		return E_FAIL;
-
 
 #ifdef _DEBUG
 	if (FAILED(Render_Picking()))
@@ -242,6 +241,7 @@ HRESULT CRenderer::Draw_RenderGroup()
 			_float4(1.f, 0.f, 0.f, 1.f), 0.f, _float2(), 0.5f)))
 			return E_FAIL;
 	}
+
 	Safe_Release(pFont_Manager);
 #endif // _DEBUG
 
@@ -362,38 +362,37 @@ HRESULT CRenderer::Render_Lights()
 	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Lights"))))
 		return E_FAIL;
 
-	if (FAILED(m_pDeferredShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+	if (FAILED(m_pLightShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
-	if (FAILED(m_pDeferredShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+	if (FAILED(m_pLightShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
 		return E_FAIL;
-	if (FAILED(m_pDeferredShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
+	if (FAILED(m_pLightShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
 
 	CPipeLine* pPipeLine = CPipeLine::GetInstance();
 	Safe_AddRef(pPipeLine);
 
-	if (FAILED(m_pDeferredShader->Bind_Matrix("g_ViewMatrixInv", pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_VIEW))))
+	if (FAILED(m_pLightShader->Bind_Matrix("g_ViewMatrixInv", pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
-	if (FAILED(m_pDeferredShader->Bind_Matrix("g_ProjMatrixInv", pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_PROJ))))
+	if (FAILED(m_pLightShader->Bind_Matrix("g_ProjMatrixInv", pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
-	if (FAILED(m_pDeferredShader->Bind_RawValue("g_vCamPosition", pPipeLine->Get_CamPosition(), sizeof(_float4))))
+	if (FAILED(m_pLightShader->Bind_RawValue("g_vCamPosition", pPipeLine->Get_CamPosition(), sizeof(_float4))))
 		return E_FAIL;
-	if (FAILED(m_pDeferredShader->Bind_RawValue("g_fCamFar", pPipeLine->Get_CamFar(), sizeof(_float))))
+	if (FAILED(m_pLightShader->Bind_RawValue("g_fCamFar", pPipeLine->Get_CamFar(), sizeof(_float))))
 		return E_FAIL;
 
 	Safe_Release(pPipeLine);
 
-	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Normal"), m_pDeferredShader, "g_NormalTexture")))
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Normal"), m_pLightShader, "g_NormalTexture")))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Depth"), m_pDeferredShader, "g_DepthTexture")))
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Depth"), m_pLightShader, "g_DepthTexture")))
 		return E_FAIL;
 
-	m_pLight_Manager->Render_Lights(m_pDeferredShader, m_pRectBuffer);
+	m_pLight_Manager->Render_Lights(m_pLightShader, m_pRectBuffer);
 
 	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext)))
 		return E_FAIL;
-
 
 	return S_OK;
 }
@@ -450,9 +449,6 @@ HRESULT CRenderer::Render_Deferred()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Specular"), m_pDeferredShader, "g_SpecularTexture")))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_MapEffect"), m_pDeferredShader, "g_MapEffectTexture")))
-		return E_FAIL;
-
 
 	if (FAILED(m_pDeferredShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
@@ -528,7 +524,7 @@ HRESULT CRenderer::Render_PostProcessing()
 	return S_OK;
 }
 
-HRESULT CRenderer::Render_EffectType()
+HRESULT CRenderer::Render_Effects()
 {
 	if (nullptr == m_pRenderTarget_Manager)
 		return E_FAIL;
@@ -546,69 +542,6 @@ HRESULT CRenderer::Render_EffectType()
 
 	m_RenderObjects[RENDER_BLOOM].clear();
 	
-	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext)))
-		return E_FAIL;
-
-	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Distortion"))))
-		return E_FAIL;
-
-	for (auto& pGameObject : m_RenderObjects[RENDER_DISTORTION])
-	{
-		if (nullptr != pGameObject)
-			pGameObject->Render();
-
-		Safe_Release(pGameObject);
-	}
-
-	m_RenderObjects[RENDER_DISTORTION].clear();
-
-	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext)))
-		return E_FAIL;
-
-	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_FinGlow"))))
-		return E_FAIL;
-
-	for (auto& pGameObject : m_RenderObjects[RENDER_GLOW])
-	{
-		if (nullptr != pGameObject)
-			pGameObject->Render();
-
-		Safe_Release(pGameObject);
-	}
-
-	m_RenderObjects[RENDER_GLOW].clear();
-
-	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext)))
-		return E_FAIL;
-
-	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_MotionBlur"))))
-		return E_FAIL;
-
-	for (auto& pGameObject : m_RenderObjects[RENDER_MOTIONBLUR])
-	{
-		if (nullptr != pGameObject)
-			pGameObject->Render();
-
-		Safe_Release(pGameObject);
-	}
-
-	m_RenderObjects[RENDER_MOTIONBLUR].clear();
-
-	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext)))
-		return E_FAIL;
-
-	m_pMotionBlurInstance->Begin_MRT();
-	for (auto& pGameObject : m_RenderObjects[RENDER_MOTIONBLUR])
-	{
-		if (nullptr != pGameObject)
-			pGameObject->Render();
-
-		Safe_Release(pGameObject);
-	}
-
-	m_RenderObjects[RENDER_MOTIONBLUR].clear();
-	m_pMotionBlurInstance->End_MRT();
-
 	return S_OK;
 }
 
@@ -705,6 +638,10 @@ HRESULT CRenderer::Add_Components()
 	if (nullptr == m_pDeferredShader)
 		return E_FAIL;
 
+	m_pLightShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Light.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements);
+	if (nullptr == m_pLightShader)
+		return E_FAIL;
+
 	m_pPostProcessingShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_PostProcessing.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements);
 	if (nullptr == m_pPostProcessingShader)
 		return E_FAIL;
@@ -725,10 +662,6 @@ HRESULT CRenderer::Add_Components()
 	if (nullptr == m_pBloom)
 		return E_FAIL;
 
-	m_pDistortion = CDistortion::Create(m_pDevice, m_pContext, TEXT("Target_MapEffect"));
-	if (nullptr == m_pDistortion)
-		return E_FAIL;
-
 	m_pMotionBlurInstance = CMotionBlurInstance::Create(m_pDevice, m_pContext, 0);
 	if (nullptr == m_pMotionBlurInstance)
 		return E_FAIL;
@@ -743,10 +676,6 @@ HRESULT CRenderer::Add_Components()
 
 	m_pShadow = CShadow::Create(m_pDevice, m_pContext, m_pRectBuffer);
 	if (nullptr == m_pShadow)
-		return E_FAIL;
-
-	m_pFlowMap = CFlowMap::Create(m_pDevice, m_pContext,TEXT("Target_FlowMap"));
-	if (nullptr == m_pFlowMap)
 		return E_FAIL;
 
 	m_pDOF = CDOF::Create(m_pDevice, m_pContext, TEXT("Target_PostProcessing"));
@@ -879,10 +808,8 @@ void CRenderer::Free()
 	Safe_Release(m_pDOF);
 	Safe_Release(m_pShadow);
 	Safe_Release(m_pBloom);
-	Safe_Release(m_pDistortion);
 	Safe_Release(m_pGlow);
 	Safe_Release(m_pMotionBlurInstance);
-	Safe_Release(m_pFlowMap);
 
 	Safe_Release(m_pRectBuffer);
 }

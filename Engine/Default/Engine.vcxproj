@@ -306,6 +306,7 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_FlowMap.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Geometry.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Glow.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Light.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_MotionBlur.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Navigation.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_PostProcessing.hlsl" />
