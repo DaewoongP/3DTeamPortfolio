@@ -28,6 +28,7 @@ HRESULT CMagicBallPool::Initialize()
     Create_InitMagic(Client::FINISHER, TEXT("Prototype_GameObject_Finisher"));
     Create_InitMagic(Client::NCENDIO, TEXT("Prototype_GameObject_Ncendio"));
     Create_InitMagic(Client::LUMOS, TEXT("Prototype_GameObject_Lumos"));
+    Create_InitMagic(Client::ARRESTOMOMENTUM, TEXT("Prototype_GameObject_Arrestomomentum"));
     Safe_Release(pGameInstance);
 
     return S_OK;
@@ -78,6 +79,7 @@ CMagicBall* CMagicBallPool::Create_Magic(SPELL eSpell, CMagicBall::MAGICBALLINIT
     case Client::ALTERATION:
         break;
     case Client::ARRESTOMOMENTUM:
+        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Arrestomomentum")));
         break;
     case Client::AVADAKEDAVRA:
         break;

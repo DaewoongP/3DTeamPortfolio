@@ -660,10 +660,23 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
+	// ¾Æ¸®½ºÅä¸ð¸àÅÒ
+	{
+		magicInitDesc.eBuffType = BUFF_NONE;
+		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
+		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicTag = ARRESTOMOMENTUM;
+		magicInitDesc.fInitCoolTime = 1.5f;
+		magicInitDesc.iDamage = 0;
+		magicInitDesc.fLifeTime = 30.f;
+		m_pMagicSlot->Add_Magics(magicInitDesc);
+	}
+
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(0, CONFRINGO);
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(1, LEVIOSO);
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(2, FINISHER);
-	m_pMagicSlot->Add_Magic_To_Skill_Slot(3, NCENDIO);
+	//m_pMagicSlot->Add_Magic_To_Skill_Slot(3, NCENDIO);
+	m_pMagicSlot->Add_Magic_To_Skill_Slot(3, ARRESTOMOMENTUM);
 	m_pMagicSlot->Add_Magic_To_Basic_Slot(2, LUMOS);
 
 

@@ -165,7 +165,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Action.h" />
+    <ClInclude Include="..\Public\Arrestomomentum.h" />
     <ClInclude Include="..\Public\Death.h" />
+    <ClInclude Include="..\Public\Descendo.h" />
     <ClInclude Include="..\Public\Enemy.h" />
     <ClInclude Include="..\public\Game_Manager.h" />
     <ClInclude Include="..\Public\Lumos.h" />
@@ -327,7 +329,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Action.cpp" />
+    <ClCompile Include="..\Private\Arrestomomentum.cpp" />
     <ClCompile Include="..\Private\Death.cpp" />
+    <ClCompile Include="..\Private\Descendo.cpp" />
     <ClCompile Include="..\Private\Enemy.cpp" />
     <ClCompile Include="..\private\Game_Manager.cpp" />
     <ClCompile Include="..\Private\Lumos.cpp" />
