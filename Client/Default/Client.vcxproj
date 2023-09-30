@@ -209,7 +209,6 @@
     <ClInclude Include="..\Public\MoveTurnState.h" />
     <ClInclude Include="..\Public\Default_MagicTrail_Effect.h" />
     <ClInclude Include="..\Public\Levioso.h" />
-    <ClInclude Include="..\Public\Random_Select.h" />
     <ClInclude Include="..\public\Field_Guide.h" />
     <ClInclude Include="..\public\LoadTrigger.h" />
     <ClInclude Include="..\public\MagicSlot.h" />
@@ -370,7 +369,6 @@
     <ClCompile Include="..\Private\MoveTurnState.cpp" />
     <ClCompile Include="..\Private\Default_MagicTrail_Effect.cpp" />
     <ClCompile Include="..\Private\Levioso.cpp" />
-    <ClCompile Include="..\Private\Random_Select.cpp" />
     <ClCompile Include="..\private\Field_Guide.cpp" />
     <ClCompile Include="..\private\LoadTrigger.cpp" />
     <ClCompile Include="..\private\MagicSlot.cpp" />

@@ -5,7 +5,7 @@
 #include "Wait.h"
 #include "Action.h"
 #include "RigidBody.h"
-#include "Random_Select.h"
+#include "RandomChoose.h"
 #include "Check_Distance.h"
 
 CSequence_Levitate::CSequence_Levitate(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -34,7 +34,7 @@ HRESULT CSequence_Levitate::Initialize(void* pArg)
 		});
 
 	BEGININSTANCE;
-	m_pRandom_Levitate_Loop = dynamic_cast<CRandom_Select*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Random_Select")));
+	m_pRandom_Levitate_Loop = dynamic_cast<CRandomChoose*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_RandomChoose")));
 	ENDINSTANCE;
 	if (nullptr == m_pRandom_Levitate_Loop)
 	{
@@ -89,7 +89,7 @@ HRESULT CSequence_Levitate::Assemble_Random_Select_Behavior(const wstring& wstrA
 
 	pAction->Set_Options(wstrActionTag, pModel, true);
 	pTsk_Wait->Set_Timer(fLoopTime);
-	
+
 	_uint iIndex = m_Behaviors.size();
 	if (FAILED(m_pRandom_Levitate_Loop->Assemble_Behavior(wstrActionTag, pAction, fWeight)))
 	{
@@ -130,6 +130,14 @@ HRESULT CSequence_Levitate::Assemble_Childs()
 				CRigidBody* pRigidBody = { nullptr };
 				if (FAILED(pBlackBoard->Get_Type("pRigidBody", pRigidBody)))
 					return false;
+				return true;
+			});
+		m_pRandom_Levitate_Loop->Add_Change_Condition(BEHAVIOR_FAIL, [&](CBlackBoard* pBlackBoard)->_bool
+			{
+				return true;
+			});
+		m_pRandom_Levitate_Loop->Add_Change_Condition(BEHAVIOR_SUCCESS, [&](CBlackBoard* pBlackBoard)->_bool
+			{
 				return true;
 			});
 
