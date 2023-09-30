@@ -78,13 +78,6 @@ HRESULT CNcendio::Initialize(void* pArg)
 
 		return E_FAIL;
 	}
-
-	if (FAILED(Add_Effect()))
-	{
-		MSG_BOX("Failed Player Add_Effect");
-
-		return E_FAIL;
-	}
 	return S_OK;
 }
 
@@ -194,11 +187,6 @@ HRESULT CNcendio::Add_Components()
 	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_FireRing_MeshEffect")
 		, TEXT("Com_FireRing"), (CComponent**)&m_pFireRingMeshEffect), E_FAIL);
 
-	return S_OK;
-}
-
-HRESULT CNcendio::Add_Effect()
-{
 	return S_OK;
 }
 

@@ -42,7 +42,6 @@ private:
 
 private:
 	HRESULT Add_Components();
-	virtual HRESULT Add_Effect();
 	virtual HRESULT Add_RigidBody() override;
 
 public:

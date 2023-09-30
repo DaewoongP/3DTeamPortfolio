@@ -67,11 +67,6 @@ HRESULT CRevelio::Add_Components()
 	return S_OK;
 }
 
-HRESULT CRevelio::Add_Effect()
-{
-	return S_OK;
-}
-
 CRevelio* CRevelio::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,_uint iLevel)
 {
 	CRevelio* pInstance = New CRevelio(pDevice, pContext);

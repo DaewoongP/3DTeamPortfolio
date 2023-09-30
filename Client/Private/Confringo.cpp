@@ -127,13 +127,6 @@ HRESULT CConfringo::Initialize(void* pArg)
 
 		return E_FAIL;
 	}
-
-	if (FAILED(Add_Effect()))
-	{
-		MSG_BOX("Failed Player Add_Effect");
-
-		return E_FAIL;
-	}
 	return S_OK;
 }
 
@@ -229,11 +222,6 @@ void CConfringo::Tick_Dying(_float fTimeDelta)
 
 
 HRESULT CConfringo::Add_Components()
-{
-	return S_OK;
-}
-
-HRESULT CConfringo::Add_Effect()
 {
 	m_TrailVec[EFFECT_STATE_WAND].resize(1);
 	m_ParticleVec[EFFECT_STATE_WAND].resize(3);

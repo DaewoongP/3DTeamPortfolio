@@ -3,11 +3,6 @@
 #include "Client_Defines.h"
 #include "MagicBall.h"
 
-BEGIN(Engine)
-class CParticleSystem;
-class CTrail;
-END
-
 BEGIN(Client)
 class CBasicCast final : public CMagicBall
 {
@@ -39,7 +34,6 @@ private:
 
 private:
 	HRESULT Add_Components();
-	virtual HRESULT Add_Effect();
 
 public:
 	static CBasicCast* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel);

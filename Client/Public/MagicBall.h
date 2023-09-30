@@ -6,6 +6,7 @@
 BEGIN(Engine)
 class CRigidBody;
 class CRenderer;
+class CParticle;
 class CTrail;
 END
 
@@ -149,7 +150,6 @@ protected:
 	HRESULT Add_Components();
 	//기본적인 리지드바디 할당임. 크기 바꾸고싶으면 오버라이드 하면됨.
 	virtual HRESULT Add_RigidBody();
-	virtual HRESULT Add_Effect() = 0;
 
 public:
 	virtual CGameObject* Clone(void* pArg) = 0;

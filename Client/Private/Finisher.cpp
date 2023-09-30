@@ -132,13 +132,6 @@ HRESULT CFinisher::Initialize(void* pArg)
 
 		return E_FAIL;
 	}
-
-	if (FAILED(Add_Effect()))
-	{
-		MSG_BOX("Failed Player Add_Effect");
-
-		return E_FAIL;
-	}
 	return S_OK;
 }
 
@@ -359,11 +352,6 @@ HRESULT CFinisher::Add_Components()
 		return E_FAIL;
 	}
 	
-	return S_OK;
-}
-
-HRESULT CFinisher::Add_Effect()
-{
 	return S_OK;
 }
 

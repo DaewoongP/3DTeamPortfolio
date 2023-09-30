@@ -112,13 +112,6 @@ HRESULT CLevioso::Initialize(void* pArg)
 
 		return E_FAIL;
 	}
-
-	if (FAILED(Add_Effect()))
-	{
-		MSG_BOX("Failed Player Add_Effect");
-
-		return E_FAIL;
-	}
 	m_CollisionDesc.Action = bind(&CLevioso::TrailAction, this, placeholders::_1, placeholders::_2);
 	return S_OK;
 }
@@ -225,11 +218,6 @@ void CLevioso::Tick_Dying(_float fTimeDelta)
 
 HRESULT CLevioso::Add_Components()
 {
-	return S_OK;
-}
-
-HRESULT CLevioso::Add_Effect()
-{
 	m_TrailVec[EFFECT_STATE_WAND].resize(1);
 	m_ParticleVec[EFFECT_STATE_WAND].resize(1);
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_BasicCast_Wand_Trail_Effect"),
@@ -288,8 +276,6 @@ HRESULT CLevioso::Add_Effect()
 		__debugbreak();
 		return E_FAIL;
 	}
-
-
 
 	return S_OK;
 }

@@ -60,13 +60,6 @@ HRESULT CLumos::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
-	if (FAILED(Add_Effect()))
-	{
-		MSG_BOX("Failed Player Add_Effect");
-
-		return E_FAIL;
-	}
-
 	m_CollisionDesc.Action = bind(&CLumos::Lumos_Tick, this, placeholders::_1, placeholders::_2);
 	return S_OK;
 }
@@ -153,11 +146,6 @@ void CLumos::Tick_Dying(_float fTimeDelta)
 }
 
 HRESULT CLumos::Add_Components()
-{
-	return S_OK;
-}
-
-HRESULT CLumos::Add_Effect()
 {
 	m_ParticleVec[EFFECT_STATE_WAND].resize(2);
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Lumos_Wand_Glow_Effect"),
