@@ -177,4 +177,10 @@ CRandomChoose* CRandomChoose::Clone(void* pArg)
 void CRandomChoose::Free()
 {
 	__super::Free();
+
+	for (_uint i = 0; i < BEHAVIOR_END; ++i)
+	{
+		for (auto pDecorator : m_ConditionFunctions[i])
+			Safe_Release(pDecorator);
+	}
 }

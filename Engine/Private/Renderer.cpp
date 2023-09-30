@@ -193,12 +193,6 @@ HRESULT CRenderer::Draw_RenderGroup()
 
 	// 전체적인 화면에 대한 처리
 
-	if (FAILED(m_pBloom->Render()))
-		return E_FAIL;
-	if (FAILED(m_pGlow->Render()))
-		return E_FAIL;
-	if (FAILED(m_pDOF->Render()))
-		return E_FAIL;
 
 #ifdef _DEBUG
 	if (FAILED(Render_Picking()))
@@ -504,8 +498,6 @@ HRESULT CRenderer::Render_PostProcessing()
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_PostProcessing"), m_pPostProcessingShader, "g_PostProcessingTexture")))
 		return E_FAIL;
 
-	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_DOFBlurY"), m_pPostProcessingShader, "g_DOFTexture")))
-		return E_FAIL; 
 	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
 	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
@@ -513,10 +505,8 @@ HRESULT CRenderer::Render_PostProcessing()
 	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_FinBloom"), m_pPostProcessingShader, "g_BloomTexture")))
-		return E_FAIL; 
-	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_FinGlow"), m_pPostProcessingShader, "g_GlowTexture")))
 		return E_FAIL;
-	
+
 	m_pPostProcessingShader->Begin("PostProcessing");
 
 	m_pRectBuffer->Render();
@@ -529,9 +519,7 @@ HRESULT CRenderer::Render_Effects()
 	if (nullptr == m_pRenderTarget_Manager)
 		return E_FAIL;
 
-	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_FinBloom"))))
-		return E_FAIL;
-
+	// 삭제시 들어오던값도 삭제해야함
 	for (auto& pGameObject : m_RenderObjects[RENDER_BLOOM])
 	{
 		if (nullptr != pGameObject)
@@ -542,6 +530,27 @@ HRESULT CRenderer::Render_Effects()
 
 	m_RenderObjects[RENDER_BLOOM].clear();
 	
+	// 삭제시 들어오던값도 삭제해야함
+	for (auto& pGameObject : m_RenderObjects[RENDER_GLOW])
+	{
+		if (nullptr != pGameObject)
+			pGameObject->Render();
+
+		Safe_Release(pGameObject);
+	}
+
+	m_RenderObjects[RENDER_GLOW].clear();
+	// 삭제시 들어오던값도 삭제해야함
+	for (auto& pGameObject : m_RenderObjects[RENDER_DISTORTION])
+	{
+		if (nullptr != pGameObject)
+			pGameObject->Render();
+
+		Safe_Release(pGameObject);
+	}
+
+	m_RenderObjects[RENDER_DISTORTION].clear();
+
 	return S_OK;
 }
 
@@ -650,40 +659,12 @@ HRESULT CRenderer::Add_Components()
 	if (nullptr == m_pSSAOShader)
 		return E_FAIL;
 
-	m_pShadeTypeShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Type.hlsl"), VTXPOSNORTEX_DECL::Elements, VTXPOSNORTEX_DECL::iNumElements);
-	if (nullptr == m_pShadeTypeShader)
-		return E_FAIL;
-
-	m_pAfterShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_AfterShade.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements);
-	if (nullptr == m_pAfterShader)
-		return E_FAIL;
-
-	m_pBloom = CBloom::Create(m_pDevice, m_pContext, TEXT("Target_FinBloom"));
-	if (nullptr == m_pBloom)
-		return E_FAIL;
-
-	m_pMotionBlurInstance = CMotionBlurInstance::Create(m_pDevice, m_pContext, 0);
-	if (nullptr == m_pMotionBlurInstance)
-		return E_FAIL;
-
-	m_pGlow = CGlow::Create(m_pDevice, m_pContext, TEXT("Target_FinGlow"), 1.f);//파티클이 갖고있는 정보하나주면 힘을 변경하도록 하면될것같음
-	if (nullptr == m_pGlow)
-		return E_FAIL;
-
-	m_pMotionBlur = CMotionBlur::Create(m_pDevice, m_pContext, TEXT("Target_FinGlow"));
-	if (nullptr == m_pMotionBlur)
-		return E_FAIL;
-
 	m_pShadow = CShadow::Create(m_pDevice, m_pContext, m_pRectBuffer);
 	if (nullptr == m_pShadow)
 		return E_FAIL;
 
-	m_pDOF = CDOF::Create(m_pDevice, m_pContext, TEXT("Target_PostProcessing"));
-	if (nullptr == m_pDOF)
-		return E_FAIL;
-
-
 	Safe_Release(pGameInstance);
+
 	return S_OK;
 }
 #ifdef _DEBUG
@@ -798,18 +779,20 @@ void CRenderer::Free()
 	Safe_Release(m_pRenderTarget_Manager);
 	Safe_Release(m_pLight_Manager);
 
-	Safe_Release(m_pAfterShader);
-	Safe_Release(m_pMotionBlur);
-	Safe_Release(m_pSSAOShader);
-	Safe_Release(m_pShadeTypeShader);
 	Safe_Release(m_pDeferredShader);
+	Safe_Release(m_pLightShader);
 	Safe_Release(m_pPostProcessingShader);
+	Safe_Release(m_pShadeTypeShader);
+	Safe_Release(m_pSSAOShader);
+	Safe_Release(m_pAfterShader);
 
-	Safe_Release(m_pDOF);
-	Safe_Release(m_pShadow);
+	Safe_Release(m_pEffectBlur);
 	Safe_Release(m_pBloom);
+	Safe_Release(m_pShadow);
 	Safe_Release(m_pGlow);
 	Safe_Release(m_pMotionBlurInstance);
+	Safe_Release(m_pMotionBlur);
+	Safe_Release(m_pDOF);
 
 	Safe_Release(m_pRectBuffer);
 }

@@ -34,24 +34,31 @@ public:
 
 	typedef struct tagRigidBodyDesc
 	{
-		_char			szCollisionTag[MAX_PATH] = "";
-		class CGameObject* pOwnerObject = { nullptr };
-		_bool			isStatic = { false };
-		_bool			isTrigger = { false };
-		_bool			isGravity = { true };
-		_float3			vInitPosition = _float3(0.f, 0.f, 0.f);
-		_float4			vInitRotation = _float4(0.f, 0.f, 0.f, 1.f);
-		_float3			vOffsetPosition = _float3(0.f, 0.f, 0.f);
-		_float4			vOffsetRotation = _float4(0.f, 0.f, 0.f, 1.f);
-		_float			fStaticFriction = { 0.5f };
-		_float			fDynamicFriction = { 0.5f };
-		_float			fRestitution = { 0.f };
-		PxGeometry*		pGeometry = { nullptr };
-		_uint			eConstraintFlag = { None };
-		COLLISIONFLAG	eThisCollsion = { COL_NONE };
-		PxU32			eCollisionFlag = { COL_NONE };
-		_float4			vDebugColor = _float4(0.f, 1.f, 0.f, 1.f);
+		_char				szCollisionTag[MAX_PATH] = "";
+		class CGameObject*	pOwnerObject = { nullptr };
+		_bool				isStatic = { false };
+		_bool				isTrigger = { false };
+		_bool				isGravity = { true };
+		_float3				vInitPosition = _float3(0.f, 0.f, 0.f);
+		_float4				vInitRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		_float3				vOffsetPosition = _float3(0.f, 0.f, 0.f);
+		_float4				vOffsetRotation = _float4(0.f, 0.f, 0.f, 1.f);
+		_float				fStaticFriction = { 0.5f };
+		_float				fDynamicFriction = { 0.5f };
+		_float				fRestitution = { 0.f };
+		PxGeometry*			pGeometry = { nullptr };
+		_uint				eConstraintFlag = { None };
+		COLLISIONFLAG		eThisCollsion = { COL_NONE };
+		PxU32				eCollisionFlag = { COL_NONE };
+		_float4				vDebugColor = _float4(0.f, 1.f, 0.f, 1.f);
+		void*				pCollisionData = { nullptr };
 	}RIGIDBODYDESC;
+
+	typedef struct tagCollisionDataDesc
+	{
+		class CGameObject*	pOwnerObject = { nullptr };
+		void*				pCollisionData = { nullptr };
+	}COLLISIONDATADESC;
 
 private:
 	explicit CRigidBody(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -103,18 +110,19 @@ public:
 	void Rotate(_float4 _vRotation) const;
 
 	void Enable_Collision(const _char* szColliderTag, CGameObject* pThisCollision);
+	void Enable_Collision(const _char* szColliderTag, CGameObject* pThisCollision, void* pCollisionData);
 	void Disable_Collision(const _char* szColliderTag);
 
 private:
-	PxRigidActor*			m_pActor = { nullptr };
-	PxMaterial*				m_pMaterial = { nullptr };
-	PxGeometry*				m_pGeometry = { nullptr };
-	PxScene*				m_pScene = { nullptr };
-	unordered_map<const _char*, PxShape*>	m_Shapes;
+	PxRigidActor*					m_pActor = { nullptr };
+	PxMaterial*						m_pMaterial = { nullptr };
+	PxGeometry*						m_pGeometry = { nullptr };
+	PxScene*						m_pScene = { nullptr };
+	_umap<const _char*, PxShape*>	m_Shapes;
 
 private:
-	_bool					m_isStatic = { false };
-	_bool					m_isKinematic = { false };
+	_bool							m_isStatic = { false };
+	_bool							m_isKinematic = { false };
 
 #ifdef _DEBUG
 private:

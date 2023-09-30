@@ -10,18 +10,18 @@ CBlur::CBlur(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 HRESULT CBlur::Initialize()
 {
-	m_pRenderTarget_Manager = CRenderTarget_Manager::GetInstance();
-	Safe_AddRef(m_pRenderTarget_Manager);
+	CRenderTarget_Manager* pRenderTarget_Manager = CRenderTarget_Manager::GetInstance();
+	Safe_AddRef(pRenderTarget_Manager);
 
 	_uint				iNumViews = { 1 };
 	D3D11_VIEWPORT		ViewportDesc;
 
 	m_pContext->RSGetViewports(&iNumViews, &ViewportDesc);
 
-	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
+	if (FAILED(pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_Blur"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Blur"), TEXT("Target_Blur"))))
+	if (FAILED(pRenderTarget_Manager->Add_MRT(TEXT("MRT_Blur"), TEXT("Target_Blur"))))
 		return E_FAIL;
 
 	XMStoreFloat4x4(&m_WorldMatrix, XMMatrixIdentity());
@@ -29,6 +29,8 @@ HRESULT CBlur::Initialize()
 	m_WorldMatrix._22 = ViewportDesc.Height;
 	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(ViewportDesc.Width, ViewportDesc.Height, 0.f, 1.f));
+
+	Safe_Release(pRenderTarget_Manager);
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
@@ -38,9 +40,12 @@ HRESULT CBlur::Initialize()
 
 HRESULT CBlur::Render(const _tchar* pTargetTag, BLUR eBlurType)
 {
-	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Blur"))))
+	CRenderTarget_Manager* pRenderTarget_Manager = CRenderTarget_Manager::GetInstance();
+	Safe_AddRef(pRenderTarget_Manager);
+
+	if (FAILED(pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Blur"))))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(pTargetTag, m_pShader, "g_Texture")))
+	if (FAILED(pRenderTarget_Manager->Bind_ShaderResourceView(pTargetTag, m_pShader, "g_Texture")))
 		return E_FAIL;
 
 	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
@@ -65,8 +70,10 @@ HRESULT CBlur::Render(const _tchar* pTargetTag, BLUR eBlurType)
 			return E_FAIL;
 	}
 
-	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext)))
+	if (FAILED(pRenderTarget_Manager->End_MRT(m_pContext)))
 		return E_FAIL;
+
+	Safe_Release(pRenderTarget_Manager);
 
 	return S_OK;
 }
@@ -103,5 +110,4 @@ void CBlur::Free()
 
 	Safe_Release(m_pShader);
 	Safe_Release(m_pBuffer);
-	Safe_Release(m_pRenderTarget_Manager);
 }
