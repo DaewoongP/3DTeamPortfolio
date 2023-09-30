@@ -13,10 +13,7 @@
 BEGIN(Engine)
 class CSequence;
 class CSelector;
-END
-
-BEGIN(Client)
-class CRandom_Select;
+class CRandomChoose;
 END
 
 BEGIN(Client)
@@ -56,7 +53,7 @@ private: /* 사망처리 전용 함수 */
 	void DeathBehavior(const _float& fTimeDelta);
 
 private: /* 행동 묶음 */
-	HRESULT Make_Idle_Break(_Inout_ CRandom_Select* pRandom_Select);
+	HRESULT Make_Idle_Break(_Inout_ CRandomChoose* pRandomChoose);
 	HRESULT Make_Death(_Inout_ CSequence* pSequence);
 	HRESULT Make_Alive(_Inout_ CSelector* pSelector);
 

@@ -34,7 +34,7 @@ HRESULT CSequence_Levitate::Initialize(void* pArg)
 		});
 
 	BEGININSTANCE;
-	m_pRandom_Levitate_Loop = dynamic_cast<CRandomChoose*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Random_Select")));
+	m_pRandom_Levitate_Loop = dynamic_cast<CRandomChoose*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_RandomChoose")));
 	ENDINSTANCE;
 	if (nullptr == m_pRandom_Levitate_Loop)
 	{
@@ -134,11 +134,11 @@ HRESULT CSequence_Levitate::Assemble_Childs()
 			});
 		m_pRandom_Levitate_Loop->Add_Change_Condition(BEHAVIOR_FAIL, [&](CBlackBoard* pBlackBoard)->_bool
 			{
-				_bool* pIsParring = { nullptr };
-				if (FAILED(m_pBlackBoard->Get_Type("isParring", pIsParring)))
-					return false;
-				
-				return *pIsParring;
+				return true;
+			});
+		m_pRandom_Levitate_Loop->Add_Change_Condition(BEHAVIOR_SUCCESS, [&](CBlackBoard* pBlackBoard)->_bool
+			{
+				return true;
 			});
 
 		/* Set Options */

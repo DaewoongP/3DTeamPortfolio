@@ -21,10 +21,7 @@ HRESULT CRandomChoose::Tick(const _float& fTimeDelta)
 
 	// 데코레이터 확인
 	if (false == Check_Decorators())
-	{
-		m_ReturnData = BEHAVIOR_FAIL;
 		return BEHAVIOR_FAIL;
-	}
 
 	m_ReturnData = (*m_iterCurBehavior)->Tick(fTimeDelta);
 
@@ -136,9 +133,12 @@ HRESULT CRandomChoose::Add_Change_Condition(HRESULT ReturnType, function<_bool(c
 
 	return S_OK;
 }
-/* 이거 함수가 없을때 true 반환하는 대신 다른 대안 생각하기. */
+
 _bool CRandomChoose::Check_ChangeConditions(HRESULT eBehaviorType)
 {
+	if (0 == m_ConditionFunctions[eBehaviorType].size())
+		return false;
+
 	for (auto& Deco : m_ConditionFunctions[eBehaviorType])
 	{
 		if (false == Deco->Is_Execute(m_pBlackBoard))

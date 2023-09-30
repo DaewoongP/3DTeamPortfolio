@@ -16,10 +16,7 @@ HRESULT CSelector::Tick(const _float& fTimeDelta)
 		return E_FAIL;
 
 	if (false == Check_Decorators())
-	{
-		m_ReturnData = BEHAVIOR_FAIL;
 		return BEHAVIOR_FAIL;
-	}
 
 	m_ReturnData = (*m_iterCurBehavior)->Tick(fTimeDelta);
 

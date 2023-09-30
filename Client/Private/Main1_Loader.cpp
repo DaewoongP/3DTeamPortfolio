@@ -127,11 +127,6 @@ HRESULT CMain1_Loader::Loading_For_Cliffside()
 			CAction::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Action");
 
-		/* For.Prototype_Component_Random_Select */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Random_Select"),
-			CRandom_Select::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_Random_Select");
-
 		/* For.Prototype_Component_RandomChoose */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_RandomChoose"),
 			CRandomChoose::Create(m_pDevice, m_pContext))))

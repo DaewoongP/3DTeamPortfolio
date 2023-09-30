@@ -34,7 +34,7 @@ BEGIN(Engine)
 
 class ENGINE_DLL CBehavior abstract : public CComponent
 {
-protected:
+public:
 	enum RETURNVALUE { BEHAVIOR_SUCCESS, BEHAVIOR_RUNNING, BEHAVIOR_FAIL, BEHAVIOR_END };
 
 protected:

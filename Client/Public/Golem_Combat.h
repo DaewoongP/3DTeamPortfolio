@@ -13,10 +13,10 @@
 BEGIN(Engine)
 class CSequence;
 class CSelector;
+class CRandomChoose;
 END
 
 BEGIN(Client)
-class CRandom_Select;
 class CWeapon_Golem_Combat;
 END
 
@@ -65,7 +65,7 @@ private: /* Çàµ¿ ¹­À½µé */
 	HRESULT Make_Descendo(_Inout_ CSequence* pSequence);
 	HRESULT Make_Levioso_Combo(_Inout_ CSelector* pSelector);
 	HRESULT Make_Air_Hit(_Inout_ CSequence* pSequence);
-	HRESULT Make_Random_Idle_Move(_Inout_ CRandom_Select* pRandomSelect);
+	HRESULT Make_Random_Idle_Move(_Inout_ CRandomChoose* pRandomChoose);
 	HRESULT Make_Death(_Inout_ CSequence* pSequence);
 
 private: /* Notify Func */

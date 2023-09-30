@@ -105,38 +105,33 @@ void CProfessor_Fig::Late_Tick(_float fTimeDelta)
 void CProfessor_Fig::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
-	wstring wstrCollisionTag = CollisionEventDesc.pOtherCollisionTag;
 	wstring wstrMyCollisionTag = CollisionEventDesc.pThisCollisionTag;
 
 	if (wstring::npos != wstrMyCollisionTag.find(TEXT("Range")))
 	{
-		if (wstring::npos != wstrObjectTag.find(TEXT("Golem")) ||
-			wstring::npos != wstrObjectTag.find(TEXT("Troll")) ||
-			wstring::npos != wstrObjectTag.find(TEXT("Dugbog")))
-		{
-			if (CollisionEventDesc.pOtherOwner->isDead())
-				return;
-			auto iter = m_RangeInEnemies.find(wstrObjectTag);
-			if (iter == m_RangeInEnemies.end())
-				m_RangeInEnemies.emplace(wstrObjectTag, CollisionEventDesc.pOtherOwner);
-		}
+		if (false == IsMonster(wstrObjectTag))
+			return;
+
+		if (CollisionEventDesc.pOtherOwner->isDead())
+			return;
+
+		auto iter = m_RangeInEnemies.find(wstrObjectTag);
+		if (iter == m_RangeInEnemies.end())
+			m_RangeInEnemies.emplace(wstrObjectTag, CollisionEventDesc.pOtherOwner);
 	}
 }
 
 void CProfessor_Fig::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 {
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
-	wstring wstrCollisionTag = CollisionEventDesc.pOtherCollisionTag;
 	wstring wstrMyCollisionTag = CollisionEventDesc.pThisCollisionTag;
 
 	if (wstring::npos != wstrMyCollisionTag.find(TEXT("Range")))
 	{
-		if (wstring::npos != wstrObjectTag.find(TEXT("Golem")) ||
-			wstring::npos != wstrObjectTag.find(TEXT("Troll")) ||
-			wstring::npos != wstrObjectTag.find(TEXT("Dugbog")))
-		{
-			Remove_GameObject(wstrObjectTag);
-		}
+		if (false == IsMonster(wstrObjectTag))
+			return;
+
+		Remove_GameObject(wstrObjectTag);
 	}
 }
 
@@ -564,6 +559,23 @@ HRESULT CProfessor_Fig::Remove_GameObject(const wstring& wstrObjectTag)
 	return S_OK;
 }
 
+_bool CProfessor_Fig::IsMonster(const wstring& wstrObjectTag)
+{
+	/* 골렘인 경우 */
+	if (wstring::npos != wstrObjectTag.find(TEXT("Golem")))
+		return true;
+
+	/* 트롤인 경우 */
+	if (wstring::npos != wstrObjectTag.find(TEXT("Troll")))
+		return true;
+
+	/* 더그보그인 경우 */
+	if (wstring::npos != wstrObjectTag.find(TEXT("Dugbog")))
+		return true;
+
+	return false;
+}
+
 #ifdef _DEBUG
 void CProfessor_Fig::Tick_ImGui()
 {
@@ -597,6 +609,7 @@ void CProfessor_Fig::Tick_ImGui()
 
 	ImGui::End();
 }
+
 #endif // _DEBUG
 
 HRESULT CProfessor_Fig::Make_Turns(_Inout_ CSequence* pSequence)
