@@ -55,6 +55,7 @@ HRESULT CUI_Inventory::Initialize(void* pArg)
 	}
 
 	Ready_Offset();
+	Ready_DefaultTexture();
 
 	return S_OK;
 }
@@ -148,6 +149,76 @@ HRESULT CUI_Inventory::Ready_Offset()
 	return S_OK;
 }
 
+HRESULT CUI_Inventory::Ready_DefaultTexture()
+{
+	
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Back"),
+		TEXT("Com_UI_Back_Default"), reinterpret_cast<CComponent**>(&m_pBack))))
+	{
+		MSG_BOX("Com_Menu_Quest : Failed Clone Component (Com_UI_Back_Quest_Frame)");
+		Safe_Release(pGameInstance);
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	CUI::UIDESC UIDesc;
+	UIDesc.vCombinedXY = { 0.f, 0.f };
+	UIDesc.fX = { 640.f };
+	UIDesc.fY = { 360.f };
+	UIDesc.fZ = { 0.99f };
+	UIDesc.fSizeX = { 1280.f };
+	UIDesc.fSizeY = { 720.f };
+
+	switch (m_eItemtype)
+	{
+	case Client::CInventory::HAND:
+	{
+		_tchar szTexturePath[MAX_PATH] = TEXT("../../Resources/UI/Game/UI_Edit/Gear_Inventory_Hand_Frame.dds");
+		lstrcpy(UIDesc.szTexturePath, szTexturePath);
+	}
+		break;
+	case Client::CInventory::FACE:
+	{
+		_tchar szTexturePath[MAX_PATH] = TEXT("../../Resources/UI/Game/UI_Edit/Gear_Inventory_Face_Frame.dds");
+		lstrcpy(UIDesc.szTexturePath, szTexturePath);
+	}
+		break;
+	case Client::CInventory::HEAD:
+	{
+		_tchar szTexturePath[MAX_PATH] = TEXT("../../Resources/UI/Game/UI_Edit/Gear_Inventory_Head_Frame.dds");
+		lstrcpy(UIDesc.szTexturePath, szTexturePath);
+	}
+		break;
+	case Client::CInventory::NECK:
+	{
+		_tchar szTexturePath[MAX_PATH] = TEXT("../../Resources/UI/Game/UI_Edit/Gear_Inventory_Neck_Frame.dds");
+		lstrcpy(UIDesc.szTexturePath, szTexturePath);
+	}
+		break;
+	case Client::CInventory::BACK:
+	{
+		_tchar szTexturePath[MAX_PATH] = TEXT("../../Resources/UI/Game/UI_Edit/Gear_Inventory_Back_Frame.dds");
+		lstrcpy(UIDesc.szTexturePath, szTexturePath);
+	}
+		break;
+	case Client::CInventory::OUTFIT:
+	{
+		_tchar szTexturePath[MAX_PATH] = TEXT("../../Resources/UI/Game/UI_Edit/Gear_Inventory_Outfit_Frame.dds");
+		lstrcpy(UIDesc.szTexturePath, szTexturePath);
+	}
+		break;
+	}
+
+	m_pBack->Load(UIDesc);
+
+	Safe_Release(pGameInstance);
+
+	return S_OK;
+}
+
 HRESULT CUI_Inventory::Add_ItemTexture()
 {
 	CGameInstance* pGameInstace = CGameInstance::GetInstance();
@@ -197,11 +268,11 @@ HRESULT CUI_Inventory::Set_InventoryItem(vector<CGameObject*>& pItems)
 				__debugbreak();
 				return E_FAIL;
 			}
-			//	 m_pSlots[iIndex]->Set_IconTexture(pItem->Texture);
+			//	m_pSlots[iIndex]->Set_IconTexture(pItem->Texture);
 		}
 		else if (m_pSlots[iIndex]->Get_IconTexture() && nullptr!= m_pSlots[iIndex])
 		{
-			//	 m_pSlots[iIndex]->Set_IconTexture(pItem->Texture);
+			//	m_pSlots[iIndex]->Set_IconTexture(pItem->Texture);
 		}
 		++iIndex;
 	}
@@ -213,6 +284,8 @@ HRESULT CUI_Inventory::Delete_InventoryItem(_uint iIndex)
 {
 	Safe_Release(m_pSlots[iIndex]);
 	m_pSlots.erase(m_pSlots.begin() + iIndex);
+
+	static_cast<CInventory*>(m_pOwner)->Delete_Item(m_eItemtype, iIndex);
 
 	return S_OK;
 }
@@ -227,7 +300,7 @@ HRESULT CUI_Inventory::Swap_InventoryItem()
 	{
 		if (pSlot->Get_Clicked())
 		{
-			dynamic_cast<CInventory*>(m_pOwner)->Swap_Item(iIndex, m_eItemtype);
+			static_cast<CInventory*>(m_pOwner)->Swap_Item(iIndex, m_eItemtype);
 		}
 		++iIndex;
 	}

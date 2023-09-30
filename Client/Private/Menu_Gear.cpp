@@ -2,6 +2,7 @@
 #include "GameInstance.h"
 #include "UI_Effect_Back.h"
 #include "UI_Back.h"
+#include "Inventory.h"
 
 CMenu_Gear::CMenu_Gear(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -12,6 +13,7 @@ CMenu_Gear::CMenu_Gear(const CMenu_Gear& rhs)
 	: CGameObject(rhs)
 {
 }
+
 
 HRESULT CMenu_Gear::Initialize_Prototype()
 {
@@ -61,10 +63,21 @@ HRESULT CMenu_Gear::Initialize(void* pArg)
 void CMenu_Gear::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+	CGameInstance* pGameInstacne = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstacne);
+
+	if (nullptr == m_pInventory)
+	{
+		//pGameInstacne->Find_Component_In_Layer() 플레이어의 인벤토리 찾아서 들고있게끔.
+	}
+	Safe_Release(pGameInstacne);
+
+	Select_Gear();
 }
 
 void CMenu_Gear::Late_Tick(_float fTimeDelta)
 {
+	return;
 	__super::Late_Tick(fTimeDelta);
 }
 
@@ -121,7 +134,7 @@ HRESULT CMenu_Gear::Add_Components_Frame()
 		__debugbreak();
 		return E_FAIL;
 	}
-	pComponents.push_back(pBack);
+	m_pComponents.push_back(pBack);
 
 
 	pBack = nullptr;
@@ -134,7 +147,7 @@ HRESULT CMenu_Gear::Add_Components_Frame()
 		__debugbreak();
 		return E_FAIL;
 	}
-	pComponents.push_back(pBack);
+	m_pComponents.push_back(pBack);
 
 
 	pBack = nullptr;
@@ -147,7 +160,7 @@ HRESULT CMenu_Gear::Add_Components_Frame()
 		__debugbreak();
 		return E_FAIL;
 	}
-	pComponents.push_back(pBack);
+	m_pComponents.push_back(pBack);
 
 
 	pBack = nullptr;
@@ -160,7 +173,7 @@ HRESULT CMenu_Gear::Add_Components_Frame()
 		__debugbreak();
 		return E_FAIL;
 	}
-	pComponents.push_back(pBack);
+	m_pComponents.push_back(pBack);
 
 	Safe_Release(pGameInstance);
 	return S_OK;
@@ -187,19 +200,19 @@ HRESULT CMenu_Gear::Read_File_Frame(const _tchar* pFilePath)
 	ReadFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
 	ReadFile(hFile, szGroupName, dwStrByte, &dwByte, nullptr);
 
-	pComponents[0]->Load(Load_File(hFile));
+	m_pComponents[0]->Load(Load_File(hFile));
 
 	_uint iSize = { 0 };
 	ReadFile(hFile, &iSize, sizeof(_uint), &dwByte, nullptr);
 	
-	pComponents[1]->Load(Load_File(hFile));
-	pComponents[1]->Set_Parent(pComponents[0]);
+	m_pComponents[1]->Load(Load_File(hFile));
+	m_pComponents[1]->Set_Parent(m_pComponents[0]);
 
-	pComponents[2]->Load(Load_File(hFile));
-	pComponents[2]->Set_Parent(pComponents[0]);
+	m_pComponents[2]->Load(Load_File(hFile));
+	m_pComponents[2]->Set_Parent(m_pComponents[0]);
 
-	pComponents[3]->Load(Load_File(hFile));
-	pComponents[3]->Set_Parent(pComponents[0]);
+	m_pComponents[3]->Load(Load_File(hFile));
+	m_pComponents[3]->Set_Parent(m_pComponents[0]);
 
 	CloseHandle(hFile);
 
@@ -235,7 +248,7 @@ HRESULT CMenu_Gear::Add_Components_Slot(wstring wszTag)
 		__debugbreak();
 		return E_FAIL;
 	}
-	pSlotFrames.push_back(pSlot);
+	m_pSlotFrames.push_back(pSlot);
 
 
 	CUI_Effect_Back* pIcon = nullptr;
@@ -249,7 +262,7 @@ HRESULT CMenu_Gear::Add_Components_Slot(wstring wszTag)
 		__debugbreak();
 		return E_FAIL;
 	}
-	pSlotIcons.push_back(pIcon);
+	m_pSlotIcons.push_back(pIcon);
 	
 	CUI_Back* pBack = nullptr;
 	wstring Back = TEXT("Com_UI_Back_Gear_SlotBack_");
@@ -262,7 +275,7 @@ HRESULT CMenu_Gear::Add_Components_Slot(wstring wszTag)
 		__debugbreak();
 		return E_FAIL;
 	}
-	pComponents.push_back(pBack);
+	m_pComponents.push_back(pBack);
 
 	Safe_Release(pGameInstance);
 	return S_OK;
@@ -290,23 +303,23 @@ HRESULT CMenu_Gear::Read_File_Slot(const _tchar* pFilePath, wstring wszTag, GEAR
 	ReadFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
 	ReadFile(hFile, szGroupName, dwStrByte, &dwByte, nullptr);
 
-	pSlotFrames[eType]->Load(Load_File(hFile));
-	pSlotFrames[eType]->Set_Effecttype(CUI_Effect_Back::ALPHA);
+	m_pSlotFrames[eType]->Load(Load_File(hFile));
+	m_pSlotFrames[eType]->Set_Effecttype(CUI_Effect_Back::ALPHA);
 
 	_uint iSize = { 0 };
 	ReadFile(hFile, &iSize, sizeof(_uint), &dwByte, nullptr);
 
 	wstring Icon = TEXT("Com_UI_Back_Gear_SlotIcon_");
 	Icon += wszTag;
-	CUI_Effect_Back* pIcon = dynamic_cast<CUI_Effect_Back*>(Find_Component(Icon.c_str()));
+	CUI_Effect_Back* pIcon = static_cast<CUI_Effect_Back*>(Find_Component(Icon.c_str()));
 	pIcon->Load(Load_File(hFile));
-	pIcon->Set_Parent(pSlotFrames[eType]);
+	pIcon->Set_Parent(m_pSlotFrames[eType]);
 
 	wstring Back = TEXT("Com_UI_Back_Gear_SlotBack_");
 	Back += wszTag;
-	CUI_Back* pBack = dynamic_cast<CUI_Back*>(Find_Component(Back.c_str()));
+	CUI_Back* pBack = static_cast<CUI_Back*>(Find_Component(Back.c_str()));
 	pBack->Load(Load_File(hFile));
-	pBack->Set_Parent(pSlotFrames[eType]);
+	pBack->Set_Parent(m_pSlotFrames[eType]);
 
 	CloseHandle(hFile);
 
@@ -339,7 +352,7 @@ HRESULT CMenu_Gear::Add_Components_Status()
 		__debugbreak();
 		return E_FAIL;
 	}
-	pComponents.push_back(pUI);
+	m_pComponents.push_back(pUI);
 
 	CUI_Back* pHP = nullptr;
 	CUI_Back* pDEF = nullptr;
@@ -354,7 +367,7 @@ HRESULT CMenu_Gear::Add_Components_Status()
 		__debugbreak();
 		return E_FAIL;
 	}
-	pStatuses.push_back(pHP);
+	m_pStatuses.push_back(pHP);
 
 	wstring DEF = TEXT("Com_UI_Effect_Back_Gear_SlotFrame_");
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Back"),
@@ -365,7 +378,7 @@ HRESULT CMenu_Gear::Add_Components_Status()
 		__debugbreak();
 		return E_FAIL;
 	}
-	pStatuses.push_back(pDEF);
+	m_pStatuses.push_back(pDEF);
 
 	wstring ATT = TEXT("Com_UI_Effect_Back_Gear_SlotFrame_");
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Back"),
@@ -376,7 +389,7 @@ HRESULT CMenu_Gear::Add_Components_Status()
 		__debugbreak();
 		return E_FAIL;
 	}
-	pStatuses.push_back(pSTAT);
+	m_pStatuses.push_back(pSTAT);
 
 	Safe_Release(pGameInstance);
 	return S_OK;
@@ -404,20 +417,20 @@ HRESULT CMenu_Gear::Read_File_Statust(const _tchar* pFilePath)
 	ReadFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
 	ReadFile(hFile, szGroupName, dwStrByte, &dwByte, nullptr);
 
-	CUI_Back* pStatText = dynamic_cast<CUI_Back*>(Find_Component(TEXT("Com_UI_Back_Gear_Status_Text")));
+	CUI_Back* pStatText = static_cast<CUI_Back*>(Find_Component(TEXT("Com_UI_Back_Gear_Status_Text")));
 	pStatText->Load(Load_File(hFile));
 
 	_uint iSize = { 0 };
 	ReadFile(hFile, &iSize, sizeof(_uint), &dwByte, nullptr);
 
-	pStatuses[0]->Load(Load_File(hFile));
-	pStatuses[0]->Set_Parent(pStatText);
+	m_pStatuses[0]->Load(Load_File(hFile));
+	m_pStatuses[0]->Set_Parent(pStatText);
 
-	pStatuses[1]->Load(Load_File(hFile));
-	pStatuses[1]->Set_Parent(pStatText);
+	m_pStatuses[1]->Load(Load_File(hFile));
+	m_pStatuses[1]->Set_Parent(pStatText);
 
-	pStatuses[2]->Load(Load_File(hFile));
-	pStatuses[2]->Set_Parent(pStatText);
+	m_pStatuses[2]->Load(Load_File(hFile));
+	m_pStatuses[2]->Set_Parent(pStatText);
 
 	CloseHandle(hFile);
 
@@ -456,9 +469,32 @@ CUI::UIDESC CMenu_Gear::Load_File(const HANDLE hFile)
 	return UIDesc;
 }
 
+void CMenu_Gear::Select_Gear()
+{
+	_uint iIndex = 0;
+	for (auto& pSlot : m_pSlotFrames)
+	{
+		if (nullptr != m_pInventory && pSlot->Get_Clicked())
+		{
+			iIndex = iIndex + 0;
+			//m_pInventory->Set_Open(true);
+			m_pInventory->Set_CurItemtype(CInventory::ITEMTYPE(iIndex));
+			m_isOpen = false;
+			return;
+		}
+		++iIndex;
+	}
+	//m_pInventory->Set_Open(false);
+}
+
+void CMenu_Gear::Set_Open(_bool isOpen)
+{
+	m_isOpen = isOpen;
+}
+
 CMenu_Gear* CMenu_Gear::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CMenu_Gear* pInstance = new CMenu_Gear(pDevice, pContext);
+	CMenu_Gear* pInstance = New CMenu_Gear(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -471,7 +507,7 @@ CMenu_Gear* CMenu_Gear::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
 
 CGameObject* CMenu_Gear::Clone(void* pArg)
 {
-	CMenu_Gear* pInstance = new CMenu_Gear(*this);
+	CMenu_Gear* pInstance = New CMenu_Gear(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
@@ -490,22 +526,22 @@ void CMenu_Gear::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pVIBufferCom);
 
-	for(auto& pSlotFrame : pSlotFrames)
+	for(auto& pSlotFrame : m_pSlotFrames)
 	{
 		Safe_Release(pSlotFrame);
 	}
 
-	for (auto& pIcon : pSlotIcons)
+	for (auto& pIcon : m_pSlotIcons)
 	{
 		Safe_Release(pIcon);
 	}
 
-	for(auto& pStatus : pStatuses)
+	for(auto& pStatus : m_pStatuses)
 	{
 		Safe_Release(pStatus);
 	}
 
-	for(auto& pCom : pComponents)
+	for(auto& pCom : m_pComponents)
 	{
 		Safe_Release(pCom);
 	}

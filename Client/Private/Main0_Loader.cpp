@@ -26,6 +26,8 @@
 #include "Menu_Gear.h"
 #include "Menu_Quest.h"
 #include "Menu_Invectory.h"
+#include "UI_Inventory.h"
+#include "Inventory.h"
 #pragma endregion UI
 
 #pragma region Effects
@@ -196,6 +198,13 @@ HRESULT CMain0_Loader::Loading_For_Logo()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Loading"),
 			CUI_Group_Loading::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_UI_Group_Loading");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Inventory"),
+			CUI_Inventory::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_UI_Inventory");
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Inventory"),
+			CInventory::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Inventory");
 	}
 	catch (const _tchar* pErrorTag)
 	{
