@@ -141,6 +141,18 @@ HRESULT CMagicBall::Reset(MAGICBALLINITDESC& InitDesc)
 	m_pRigidBody->Enable_Collision("Magic_Ball", this);
 	m_pTransform->Set_WorldMatrix(XMMatrixIdentity());
 
+	for (int i = 0; i < EFFECT_STATE_END; i++)
+	{
+		for (int j = 0; j < m_TrailVec[i].size(); j++)
+		{
+			m_TrailVec[i].data()[j]->Disable();
+		}
+		for (int j = 0; j < m_ParticleVec[i].size(); j++)
+		{
+			m_ParticleVec[i].data()[j]->Disable();
+		}
+	}
+
 	return S_OK;
 }
 
@@ -216,6 +228,128 @@ void CMagicBall::Ready_SplineSpinMove(CTrail* pTrail,_float2 vSpinWeight, _float
 	m_vSpinWeight = vSpinWeight;
 	m_fSpinSpeed = fSpinSpeed;
 }
+
+void CMagicBall::Ready_Begin()
+{
+}
+
+void CMagicBall::Ready_DrawMagic()
+{
+	//완드 이펙트 재생
+	for (int i =0; i<m_TrailVec[EFFECT_STATE_WAND].size();i++)
+	{
+		m_TrailVec[EFFECT_STATE_WAND].data()[i]->Enable(m_CurrentWeaponMatrix.Translation());
+	}
+	for (int i = 0; i < m_ParticleVec[EFFECT_STATE_WAND].size(); i++)
+	{
+		m_ParticleVec[EFFECT_STATE_WAND].data()[i]->Enable(m_CurrentWeaponMatrix.Translation());
+		m_ParticleVec[EFFECT_STATE_WAND].data()[i]->Play(m_CurrentWeaponMatrix.Translation());
+	}
+}
+
+void CMagicBall::Ready_CastMagic()
+{
+	//완드 이펙트 재생
+	for (int i = 0; i < m_TrailVec[EFFECT_STATE_MAIN].size(); i++)
+	{
+		m_TrailVec[EFFECT_STATE_MAIN].data()[i]->Enable(m_CurrentWeaponMatrix.Translation());
+	}
+	for (int i = 0; i < m_ParticleVec[EFFECT_STATE_MAIN].size(); i++)
+	{
+		m_ParticleVec[EFFECT_STATE_MAIN].data()[i]->Enable(m_CurrentWeaponMatrix.Translation());
+		m_ParticleVec[EFFECT_STATE_MAIN].data()[i]->Play(m_CurrentWeaponMatrix.Translation());
+	}
+}
+
+void CMagicBall::Ready_Dying()
+{
+	//완드 이펙트 제거
+	for (int i = 0; i < m_TrailVec[EFFECT_STATE_WAND].size(); i++)
+	{
+		m_TrailVec[EFFECT_STATE_WAND].data()[i]->Disable();
+	}
+	for (int i = 0; i < m_ParticleVec[EFFECT_STATE_WAND].size(); i++)
+	{
+		m_ParticleVec[EFFECT_STATE_WAND].data()[i]->Disable();
+	}
+
+	//히트 이펙트 재생
+	if (m_TrailVec[EFFECT_STATE_MAIN].size() > 0)
+	{
+		CTransform* hitPos = m_TrailVec[EFFECT_STATE_MAIN].data()[0]->Get_Transform();
+		Safe_AddRef(hitPos);
+		for (int i = 0; i < m_TrailVec[EFFECT_STATE_HIT].size(); i++)
+		{
+			m_TrailVec[EFFECT_STATE_HIT].data()[i]->Enable(hitPos->Get_Position());
+		}
+		for (int i = 0; i < m_ParticleVec[EFFECT_STATE_HIT].size(); i++)
+		{
+			m_ParticleVec[EFFECT_STATE_HIT].data()[i]->Enable(hitPos->Get_Position());
+			m_ParticleVec[EFFECT_STATE_HIT].data()[i]->Play(hitPos->Get_Position());
+		}
+		Safe_Release(hitPos);
+	}
+	else 
+	{
+		for (int i = 0; i < m_TrailVec[EFFECT_STATE_HIT].size(); i++)
+		{
+			m_TrailVec[EFFECT_STATE_HIT].data()[i]->Enable(m_CurrentTargetMatrix.Translation());
+		}
+		for (int i = 0; i < m_ParticleVec[EFFECT_STATE_HIT].size(); i++)
+		{
+			m_ParticleVec[EFFECT_STATE_HIT].data()[i]->Enable(m_CurrentTargetMatrix.Translation());
+			m_ParticleVec[EFFECT_STATE_HIT].data()[i]->Play(m_CurrentTargetMatrix.Translation());
+		}
+	}
+}
+
+void CMagicBall::Tick_Begin(_float fTimeDelta)
+{
+	Do_MagicBallState_To_Next();
+}
+
+void CMagicBall::Tick_DrawMagic(_float fTimeDelta)
+{
+	//완드
+	for (int i = 0; i < m_TrailVec[EFFECT_STATE_WAND].size(); i++)
+	{
+		m_TrailVec[EFFECT_STATE_WAND].data()[i]->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
+	}
+	for (int i = 0; i < m_TrailVec[EFFECT_STATE_WAND].size(); i++)
+	{
+		m_ParticleVec[EFFECT_STATE_WAND].data()[i]->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
+	}
+}
+
+void CMagicBall::Tick_CastMagic(_float fTimeDelta)
+{
+	//완드
+	for (int i = 0; i < m_TrailVec[EFFECT_STATE_WAND].size(); i++)
+	{
+		m_TrailVec[EFFECT_STATE_WAND].data()[i]->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
+	}
+	for (int i = 0; i < m_TrailVec[EFFECT_STATE_WAND].size(); i++)
+	{
+		m_ParticleVec[EFFECT_STATE_WAND].data()[i]->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
+	}
+}
+
+void CMagicBall::Tick_Dying(_float fTimeDelta)
+{
+	_bool isAlive = { false };
+	for (int i = 0; i < m_ParticleVec[EFFECT_STATE_HIT].size(); i++)
+	{
+		if (m_ParticleVec[EFFECT_STATE_HIT].data()[i]->IsEnable())
+		{
+			isAlive = true;
+			break;
+		}
+	}
+
+	if(!isAlive)
+		Do_MagicBallState_To_Next();
+}
+
 
 void CMagicBall::Tick_MagicBall_State(_float fTimeDelta)
 {
@@ -348,6 +482,18 @@ void CMagicBall::Free()
 
 	if (true == m_isCloned)
 	{
+		for (int i = 0; i < EFFECT_STATE_END; i++)
+		{
+			for (int j = 0; j < m_TrailVec[i].size(); j++)
+			{
+				Safe_Release(m_TrailVec[i].data()[j]);
+			}
+			for (int j = 0; j < m_ParticleVec[i].size(); j++)
+			{
+				Safe_Release(m_ParticleVec[i].data()[j]);
+			}
+		}
+
 		Safe_Release(m_pRenderer);
 		Safe_Release(m_pRigidBody);
 	}

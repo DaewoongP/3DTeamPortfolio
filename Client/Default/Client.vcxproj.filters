@@ -391,6 +391,9 @@
     <Filter Include="02. GameObject\08. Inventory\Item\MPBall">
       <UniqueIdentifier>{5eb7cb7b-6f9e-420b-bad4-8d44bfc40af4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="05. Magic\MagicBall\09. Arrestomomentum">
+      <UniqueIdentifier>{683eec54-b155-4003-932d-9dc50d316cea}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">

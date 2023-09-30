@@ -68,16 +68,6 @@ HRESULT CBasicCast::Initialize_Prototype(_uint iLevel)
 			return E_FAIL;
 		}
 	}
-
-	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_DefaultConeEmit_Particle")))
-	{
-		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_DefaultConeEmit_Particle")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/BasicCast/DefaultConeEmit"), m_iLevel))))
-		{
-			ENDINSTANCE;
-			return E_FAIL;
-		}
-	}
 	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Basic_Cast_Hit_Glow_Particle")))
 	{
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Basic_Cast_Hit_Glow_Particle")
@@ -126,24 +116,12 @@ HRESULT CBasicCast::Initialize(void* pArg)
 
 		return E_FAIL;
 	}
-	m_pHitEffect->Disable();
-	m_pHitGlowEffect->Disable();
-	m_pWandEffect->Disable();
-	m_pFinalAttackEffect->Disable();
-	m_pMainTrail->Disable();
-	m_WandTrail->Disable();
-	m_pMainGlow->Disable();
-	m_pHitSplashEffect->Disable();
 	return S_OK;
 }
 
 void CBasicCast::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
-	m_pWandEffect->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
-	m_WandTrail->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
-	m_pMainGlow->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
 }
 
 void CBasicCast::Late_Tick(_float fTimeDelta)
@@ -174,151 +152,123 @@ void CBasicCast::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 HRESULT CBasicCast::Reset(MAGICBALLINITDESC& InitDesc)
 {
 	__super::Reset(InitDesc);
-	
-	m_pHitEffect->Disable();
-	m_pHitGlowEffect->Disable();
-	m_pWandEffect->Disable();
-	m_pFinalAttackEffect->Disable();
-	m_pMainTrail->Disable();
-	m_WandTrail->Disable();
-	m_pMainGlow->Disable();
-	m_pHitSplashEffect->Disable();
 	m_fLerpAcc = 0.0f;
 	return S_OK;
 }
 
 void CBasicCast::Ready_Begin()
 {
+	__super::Ready_Begin();
 }
 
 void CBasicCast::Ready_DrawMagic()
 {
-	m_WandTrail->Enable(m_CurrentWeaponMatrix.Translation());
-	m_pWandEffect->Enable(m_CurrentWeaponMatrix.Translation());
+	__super::Ready_DrawMagic();
 }
 
 void CBasicCast::Ready_CastMagic()
 {
-	Ready_SplineMove(m_pMainTrail);
-	
-	m_pMainGlow->Enable(m_CurrentWeaponMatrix.Translation());
-	m_pMainTrail->Enable(m_CurrentWeaponMatrix.Translation());
-	m_pMainGlow->Play(m_CurrentWeaponMatrix.Translation());
+	Ready_SplineMove(m_TrailVec[EFFECT_STATE_MAIN][0]);
+	__super::Ready_CastMagic();
 }
 
 void CBasicCast::Ready_Dying()
 {
-	m_WandTrail->Disable();
-	m_pWandEffect->Disable();
-
-	m_pHitGlowEffect->Enable(m_pMainTrail->Get_Transform()->Get_Position());
-	m_pHitEffect->Enable(m_pMainTrail->Get_Transform()->Get_Position());
-	m_pHitSplashEffect->Enable(m_pMainTrail->Get_Transform()->Get_Position());
-
-	m_pHitGlowEffect->Play(m_pMainTrail->Get_Transform()->Get_Position());
-	m_pHitEffect->Play(m_pMainTrail->Get_Transform()->Get_Position());
-	m_pHitSplashEffect->Play(m_pMainTrail->Get_Transform()->Get_Position());
+	__super::Ready_Dying();
 }
 
 void CBasicCast::Tick_Begin(_float fTimeDelta)
 {
-	//베이직 캐스트는 비긴 없습니다.
-	Do_MagicBallState_To_Next();
+	__super::Tick_Begin(fTimeDelta);
 }
 
 void CBasicCast::Tick_DrawMagic(_float fTimeDelta)
 {
-	
+	__super::Tick_DrawMagic(fTimeDelta);
 }
 
 void CBasicCast::Tick_CastMagic(_float fTimeDelta)
 {
+	__super::Tick_CastMagic(fTimeDelta);
 	if (m_fLerpAcc != 1)
 	{
 		m_fLerpAcc += fTimeDelta / m_fLifeTime * m_fTimeScalePerDitance;
 		if (m_fLerpAcc > 1)
 			m_fLerpAcc = 1;
-		m_pMainTrail->Spline_Move(m_vSplineLerp[0], m_vStartPosition, m_vEndPosition, m_vSplineLerp[1], m_fLerpAcc);
-		m_pTransform->Set_Position(m_pMainTrail->Get_Transform()->Get_Position());
+		m_TrailVec[EFFECT_STATE_MAIN][0]->Spline_Move(m_vSplineLerp[0], m_vStartPosition, m_vEndPosition, m_vSplineLerp[1], m_fLerpAcc);
+		m_pTransform->Set_Position(m_TrailVec[EFFECT_STATE_MAIN][0]->Get_Transform()->Get_Position());
 	}
 	else
 	{
 		Do_MagicBallState_To_Next();
 	}
-	m_pTransform->Set_Position(m_pMainTrail->Get_Transform()->Get_Position());
+	m_pTransform->Set_Position(m_TrailVec[EFFECT_STATE_MAIN][0]->Get_Transform()->Get_Position());
 }
 
 void CBasicCast::Tick_Dying(_float fTimeDelta)
 {
-	//사망하러 가겠습니다.
-	if (!m_pHitEffect->IsEnable()&&
-		!m_pHitGlowEffect->IsEnable())
-	{
-		Do_MagicBallState_To_Next();
-	}
+	__super::Tick_Dying(fTimeDelta);
 }
 
 HRESULT CBasicCast::Add_Components()
 {
-	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_DefaultConeBoom_Particle")
-		, TEXT("Com_DefaultConeBoom_Particle"), (CComponent**)&m_pHitEffect)))
-	{
-		__debugbreak();
-		return E_FAIL;
-	}
-	
-	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Default_SphereTrace_Particle")
-		, TEXT("Com_Default_SphereTrace_Particle"), (CComponent**)&m_pWandEffect)))
-	{
-		__debugbreak();
-		return E_FAIL;
-	}
-	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Basic_Cast_Hit_Glow_Particle")
-		, TEXT("Com_Hit_Glow_Particle"), (CComponent**)&m_pHitGlowEffect)))
-	{
-		__debugbreak();
-		return E_FAIL;
-	}
-
-	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_DefaultConeEmit_Particle")
-		, TEXT("Com_DefaultConeEmit_Particle"), (CComponent**)&m_pFinalAttackEffect)))
-	{
-		__debugbreak();
-		return E_FAIL;
-	}
-
-	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_BasicCast_Glow_Particle")
-		, TEXT("Com_Glow_Particle"), (CComponent**)&m_pMainGlow)))
-	{
-		__debugbreak();
-		return E_FAIL;
-	}
-	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_BasicCast_Hit_Effect_Splash_Particle")
-		, TEXT("Com_Hit_Effect_Splash_Particle"), (CComponent**)&m_pHitSplashEffect)))
-	{
-		__debugbreak();
-		return E_FAIL;
-	}
-	return S_OK;
-}
-
-HRESULT CBasicCast::Add_Effect()
-{
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_MagicTrail_BasicCast_Effect"),
-		TEXT("Com_TrailEffect"), reinterpret_cast<CComponent**>(&m_pMainTrail))))
-	{
-		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_MagicTrail_BasicCast_Effect)");
-		__debugbreak();
-		return E_FAIL;
-	}
-
+	m_TrailVec[EFFECT_STATE_WAND].resize(1);
+	m_ParticleVec[EFFECT_STATE_WAND].resize(1);
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_BasicCast_Wand_Trail_Effect"),
-		TEXT("Com_Wand_Trail"), reinterpret_cast<CComponent**>(&m_WandTrail))))
+		TEXT("Com_Wand_Trail"), reinterpret_cast<CComponent**>(&m_TrailVec[EFFECT_STATE_WAND][0]))))
 	{
 		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_BasicCast_Wand_Trail_Effect)");
 		__debugbreak();
 		return E_FAIL;
 	}
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Default_SphereTrace_Particle")
+		, TEXT("Com_Default_SphereTrace_Particle"), (CComponent**)&m_ParticleVec[EFFECT_STATE_WAND][0])))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	m_TrailVec[EFFECT_STATE_MAIN].resize(1);
+	m_ParticleVec[EFFECT_STATE_MAIN].resize(1);
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_MagicTrail_BasicCast_Effect"),
+		TEXT("Com_TrailEffect"), reinterpret_cast<CComponent**>(&m_TrailVec[EFFECT_STATE_MAIN][0]))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_MagicTrail_BasicCast_Effect)");
+		__debugbreak();
+		return E_FAIL;
+	}
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_BasicCast_Glow_Particle")
+		, TEXT("Com_Glow_Particle"), (CComponent**)&m_ParticleVec[EFFECT_STATE_MAIN][0])))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+	
+	m_ParticleVec[EFFECT_STATE_HIT].resize(3);
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_DefaultConeBoom_Particle")
+		, TEXT("Com_DefaultConeBoom_Particle"), (CComponent**)&m_ParticleVec[EFFECT_STATE_HIT][0])))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Basic_Cast_Hit_Glow_Particle")
+		, TEXT("Com_Hit_Glow_Particle"), (CComponent**)&m_ParticleVec[EFFECT_STATE_HIT][1])))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_BasicCast_Hit_Effect_Splash_Particle")
+		, TEXT("Com_Hit_Effect_Splash_Particle"), (CComponent**)&m_ParticleVec[EFFECT_STATE_HIT][2])))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	return S_OK;
+}
+
+HRESULT CBasicCast::Add_Effect()
+{
 
 	return S_OK;
 }
@@ -351,16 +301,4 @@ CGameObject* CBasicCast::Clone(void* pArg)
 void CBasicCast::Free()
 {
 	__super::Free();
-	if (true == m_isCloned)
-	{
-		Safe_Release(m_WandTrail);
-		Safe_Release(m_pMainTrail);
-		Safe_Release(m_pHitEffect);
-		Safe_Release(m_pHitGlowEffect);
-		Safe_Release(m_pWandEffect);
-		Safe_Release(m_pFinalAttackEffect);
-		Safe_Release(m_pMainGlow);
-		Safe_Release(m_pHitSplashEffect);
-	}
-	
 }
