@@ -31,28 +31,28 @@ void CPXEventCallBack::onContact(const PxContactPairHeader& pairHeader, const Px
 	for (PxU32 i = 0; i < nbPairs; ++i)
 	{
 		COLLEVENTDESC SourDesc, DestDesc;
-		CGameObject* pSourObject = static_cast<CGameObject*>(pairHeader.actors[0]->userData);
-		CGameObject* pDestObject = static_cast<CGameObject*>(pairHeader.actors[1]->userData);
-		//pairHeader.flags == PxContactPairHeaderFlag::eREMOVED_ACTOR_0;
+
+		if (nullptr == pairs[i].shapes[SHAPE_SOUR]->userData ||
+			nullptr == pairs[i].shapes[SHAPE_DEST]->userData)
+			continue;
+		
+		CGameObject* pSourObject = static_cast<CGameObject*>(pairs[i].shapes[SHAPE_SOUR]->userData);
+		CGameObject* pDestObject = static_cast<CGameObject*>(pairs[i].shapes[SHAPE_DEST]->userData);
 
 		if (nullptr == pSourObject ||
 			nullptr == pDestObject)
 			continue;
 
-		if (nullptr == pairHeader.actors[0]->userData ||
-			nullptr == pairHeader.actors[1]->userData)
-			continue;
-
 		SourDesc.pOtherObjectTag = pDestObject->Get_Tag();
-		MultiByteToWideChar(CP_ACP, 0, pairs[i].shapes[1]->getName(), strlen(pairs[i].shapes[1]->getName()) + 1, SourDesc.pOtherCollisionTag, MAX_PATH);
-		MultiByteToWideChar(CP_ACP, 0, pairs[i].shapes[0]->getName(), strlen(pairs[i].shapes[0]->getName()) + 1, SourDesc.pThisCollisionTag, MAX_PATH);
+		MultiByteToWideChar(CP_ACP, 0, pairs[i].shapes[SHAPE_DEST]->getName(), strlen(pairs[i].shapes[SHAPE_DEST]->getName()) + 1, SourDesc.pOtherCollisionTag, MAX_PATH);
+		MultiByteToWideChar(CP_ACP, 0, pairs[i].shapes[SHAPE_SOUR]->getName(), strlen(pairs[i].shapes[SHAPE_SOUR]->getName()) + 1, SourDesc.pThisCollisionTag, MAX_PATH);
 		SourDesc.pOtherOwner = pDestObject;
 		SourDesc.pOtherTransform = pDestObject->Get_Transform();
 		SourDesc.pArg = pDestObject->Get_CollisionData();
 
 		DestDesc.pOtherObjectTag = pSourObject->Get_Tag();
-		MultiByteToWideChar(CP_ACP, 0, pairs[i].shapes[0]->getName(), strlen(pairs[i].shapes[0]->getName()) + 1, DestDesc.pOtherCollisionTag, MAX_PATH);
-		MultiByteToWideChar(CP_ACP, 0, pairs[i].shapes[1]->getName(), strlen(pairs[i].shapes[1]->getName()) + 1, DestDesc.pThisCollisionTag, MAX_PATH);
+		MultiByteToWideChar(CP_ACP, 0, pairs[i].shapes[SHAPE_SOUR]->getName(), strlen(pairs[i].shapes[SHAPE_SOUR]->getName()) + 1, DestDesc.pOtherCollisionTag, MAX_PATH);
+		MultiByteToWideChar(CP_ACP, 0, pairs[i].shapes[SHAPE_DEST]->getName(), strlen(pairs[i].shapes[SHAPE_DEST]->getName()) + 1, DestDesc.pThisCollisionTag, MAX_PATH);
 		DestDesc.pOtherOwner = pSourObject;
 		DestDesc.pOtherTransform = pSourObject->Get_Transform();
 		DestDesc.pArg = pSourObject->Get_CollisionData();
@@ -72,13 +72,13 @@ void CPXEventCallBack::onContact(const PxContactPairHeader& pairHeader, const Px
 			{
 				pSourObject->OnCollisionExit(SourDesc);
 				pDestObject->OnCollisionExit(DestDesc);
-				pairHeader.actors[0]->userData = nullptr;
+				pairs[i].shapes[SHAPE_SOUR]->userData = nullptr;
 			}
 			else if (CComponent::OBJ_DEAD == pDestObject->Get_ObjEvent())
 			{
 				pSourObject->OnCollisionExit(SourDesc);
 				pDestObject->OnCollisionExit(DestDesc);
-				pairHeader.actors[1]->userData = nullptr;
+				pairs[i].shapes[SHAPE_DEST]->userData = nullptr;
 			}
 		}
 
@@ -107,17 +107,17 @@ void CPXEventCallBack::onTrigger(PxTriggerPair* pairs, PxU32 count)
 	{
 		if (pairs[i].flags & (PxTriggerPairFlag::eREMOVED_SHAPE_TRIGGER | PxTriggerPairFlag::eREMOVED_SHAPE_OTHER))
 			continue;
+
+		if (nullptr == pairs->triggerShape->userData ||
+			nullptr == pairs->otherShape->userData)
+			continue;
 		
 		COLLEVENTDESC SourDesc, DestDesc;
-		CGameObject* pSourObject = static_cast<CGameObject*>(pairs->triggerActor->userData);
-		CGameObject* pDestObject = static_cast<CGameObject*>(pairs->otherActor->userData);
+		CGameObject* pSourObject = static_cast<CGameObject*>(pairs->triggerShape->userData);
+		CGameObject* pDestObject = static_cast<CGameObject*>(pairs->otherShape->userData);
 		
 		if (nullptr == pSourObject ||
 			nullptr == pDestObject)
-			continue;
-
-		if (nullptr == pairs->triggerActor->userData ||
-			nullptr == pairs->otherActor->userData)
 			continue;
 
 		SourDesc.pOtherObjectTag = pDestObject->Get_Tag();
@@ -152,14 +152,14 @@ void CPXEventCallBack::onTrigger(PxTriggerPair* pairs, PxU32 count)
 		{
 			pSourObject->OnCollisionExit(SourDesc);
 			pDestObject->OnCollisionExit(DestDesc);
-			pairs->triggerActor->userData = nullptr;
+			pairs->triggerShape->userData = nullptr;
 			continue;
 		}
 		else if (CComponent::OBJ_DEAD == pDestObject->Get_ObjEvent())
 		{
 			pSourObject->OnCollisionExit(SourDesc);
 			pDestObject->OnCollisionExit(DestDesc);
-			pairs->otherActor->userData = nullptr;
+			pairs->otherShape->userData = nullptr;
 			continue;
 		}
 

@@ -182,11 +182,6 @@ void CRigidBody::Set_CollisionFlag(const _char* szColliderTag, PxU32 eCollisionF
 	m_pActor->attachShape(*pShape);
 }
 
-void CRigidBody::Set_ThisCollision(CGameObject* pThisObj)
-{
-	m_pActor->userData = pThisObj;
-}
-
 HRESULT CRigidBody::Initialize_Prototype()
 {
 #ifdef _DEBUG
@@ -336,9 +331,6 @@ HRESULT CRigidBody::Create_Collider(RIGIDBODYDESC* pRigidBodyDesc)
 		return E_FAIL;
 	}
 	
-	// 유저데이터에 이 컴포넌트 세팅해서 나중에 충돌처리 함수 부르기 위해 처리.
-	m_pActor->userData = pRigidBodyDesc->pOwnerObject;
-	
 	// 저항 처리
 	m_pMaterial = pPhysX->createMaterial(pRigidBodyDesc->fStaticFriction, 
 		pRigidBodyDesc->fDynamicFriction, pRigidBodyDesc->fRestitution);
@@ -377,6 +369,8 @@ HRESULT CRigidBody::Create_Collider(RIGIDBODYDESC* pRigidBodyDesc)
 	Safe_AddRef(pString_Manager);
 	pShape->setName(pString_Manager->Make_Char(pRigidBodyDesc->szCollisionTag));
 	Safe_Release(pString_Manager);
+	// 유저데이터 설정
+	pShape->userData = pRigidBodyDesc->pOwnerObject;
 	
 	// 액터와 씬 처리.
 	// AttachShape로 콜라이더 여러개 바인딩 가능.
@@ -506,8 +500,8 @@ void CRigidBody::Enable_Collision(const _char* szColliderTag, CGameObject* pThis
 	m_pActor->detachShape(*pShape);
 	FilterData.word2 = USE_COL;
 	pShape->setSimulationFilterData(FilterData);
+	pShape->userData = pThisCollision;
 	m_pActor->attachShape(*pShape);
-	m_pActor->userData = pThisCollision;
 }
 
 void CRigidBody::Disable_Collision(const _char* szColliderTag)
@@ -521,8 +515,8 @@ void CRigidBody::Disable_Collision(const _char* szColliderTag)
 	m_pActor->detachShape(*pShape);
 	FilterData.word2 = END_COL;
 	pShape->setSimulationFilterData(FilterData);
+	pShape->userData = nullptr;
 	m_pActor->attachShape(*pShape);
-	m_pActor->userData = nullptr;
 }
 
 #ifdef _DEBUG
