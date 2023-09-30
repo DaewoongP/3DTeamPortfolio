@@ -786,12 +786,6 @@
     <ClInclude Include="..\Public\UI_Group_Quest.h">
       <Filter>02. GameObject\04. UI\UI_Group</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Check_Degree.h">
-      <Filter>03. Behaviors\04. Function</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Check_Distance.h">
-      <Filter>03. Behaviors\04. Function</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\RecoveryPotion.h">
       <Filter>02. GameObject\09. Item\01. RecoveryPotion</Filter>
     </ClInclude>
@@ -800,6 +794,12 @@
     </ClInclude>
     <ClInclude Include="..\Public\Check_Degree.h" />
     <ClInclude Include="..\Public\Check_Distance.h" />
+    <ClInclude Include="..\Public\Check_Distance.h">
+      <Filter>03. Behaviors\04. Function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Check_Degree.h">
+      <Filter>03. Behaviors\04. Function</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1156,12 +1156,6 @@
     <ClCompile Include="..\Private\UI_Group_Quest.cpp">
       <Filter>02. GameObject\04. UI\UI_Group</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Check_Degree.cpp">
-      <Filter>03. Behaviors\04. Function</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Check_Distance.cpp">
-      <Filter>03. Behaviors\04. Function</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\RecoveryPotion.cpp">
       <Filter>02. GameObject\09. Item\01. RecoveryPotion</Filter>
     </ClCompile>
@@ -1172,6 +1166,12 @@
     <ClCompile Include="..\Private\Check_Distance.cpp" />
     <ClCompile Include="..\Private\MPBall.cpp">
       <Filter>02. GameObject\08. Inventory\Item\MPBall</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Check_Degree.cpp">
+      <Filter>03. Behaviors\04. Function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Check_Distance.cpp">
+      <Filter>03. Behaviors\04. Function</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
