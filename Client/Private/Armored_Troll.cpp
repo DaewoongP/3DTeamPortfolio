@@ -1925,7 +1925,7 @@ HRESULT CArmored_Troll::Make_Death(_Inout_ CSequence* pSequence)
 void CArmored_Troll::Enter_Light_Attack()
 {
 	m_CollisionRequestDesc.eType = ATTACK_LIGHT;
-	m_CollisionRequestDesc.iDamage = 0;
+	m_CollisionRequestDesc.iDamage = 10;
 	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
 	m_pWeapon->On_Collider_Attack(&m_CollisionRequestDesc);
 }
@@ -1933,7 +1933,7 @@ void CArmored_Troll::Enter_Light_Attack()
 void CArmored_Troll::Enter_Heavy_Attack()
 {
 	m_CollisionRequestDesc.eType = ATTACK_HEAVY;
-	m_CollisionRequestDesc.iDamage = 0;
+	m_CollisionRequestDesc.iDamage = 20;
 	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
 	m_pWeapon->On_Collider_Attack(&m_CollisionRequestDesc);
 }

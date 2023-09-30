@@ -50,6 +50,8 @@ void CTrigger_Vault::Late_Tick(_float fTimeDelta)
 	Safe_AddRef(pGameInstance);
 	if (pGameInstance->Get_DIKeyState(DIK_N, CInput_Device::KEY_DOWN))//트리거 발동시로수정해야함.
 		m_pMeshEffect->Stop();
+	//if (pGameInstance->Get_DIKeyState(DIK_K, CInput_Device::KEY_DOWN))//트리거 발동시로수정해야함.
+	//	m_pMeshEffect->Stop();
 	Safe_Release(pGameInstance);
 
 	__super::Late_Tick(fTimeDelta);

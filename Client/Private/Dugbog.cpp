@@ -1559,16 +1559,31 @@ HRESULT CDugbog::Make_Air_Hit_Tongue(_Inout_ CSequence* pSequence)
 	return S_OK;
 }
 
-void CDugbog::Enter_Light_Attack()
+void CDugbog::Enter_Light_Attack() 
 {
-}
+	m_CollisionRequestDesc.eType = ATTACK_LIGHT;    
+	m_CollisionRequestDesc.iDamage = 5;    
+	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;   
+	Set_CollisionData(&m_CollisionRequestDesc);    
+	m_pRigidBody->Enable_Collision("Enemy_Attack", this); 
+} 
 
 void CDugbog::Enter_Heavy_Attack()
-{
-}
+{ 
+	m_CollisionRequestDesc.eType = ATTACK_HEAVY;    
+	m_CollisionRequestDesc.iDamage = 10;    
+	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;   
+	Set_CollisionData(&m_CollisionRequestDesc);    
+	m_pRigidBody->Enable_Collision("Enemy_Attack", this); 
+}  
 
-void CDugbog::Exit_Attack()
-{
+void CDugbog::Exit_Attack() 
+{ 
+	m_CollisionRequestDesc.eType = ATTACK_NONE;    
+	m_CollisionRequestDesc.iDamage = 0;    
+	m_CollisionRequestDesc.pEnemyTransform = m_pTransform; 
+	Set_CollisionData(&m_CollisionRequestDesc);     
+	m_pRigidBody->Disable_Collision("Enemy_Attack"); 
 }
 
 CDugbog* CDugbog::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

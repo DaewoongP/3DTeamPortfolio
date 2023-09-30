@@ -1,15 +1,15 @@
 #include "..\Public\Shadow.h"
-#include "RenderTarget_Manager.h"
 #include "Shader.h"
 #include "PipeLine.h"
 #include "VIBuffer_Rect.h"
+#include "RenderTarget_Manager.h"
 
 CShadow::CShadow(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CComponent(pDevice, pContext)
 {
 }
 
-HRESULT CShadow::Initialize_Prototype()
+HRESULT CShadow::Initialize(CVIBuffer_Rect* pRectBuffer)
 {
 	CRenderTarget_Manager* pRenderTarget_Manager = CRenderTarget_Manager::GetInstance();
 	Safe_AddRef(pRenderTarget_Manager);
@@ -36,6 +36,9 @@ HRESULT CShadow::Initialize_Prototype()
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
+
+	m_pBuffer = pRectBuffer;
+	Safe_AddRef(m_pBuffer);
 
 	return S_OK;
 }
@@ -98,21 +101,16 @@ HRESULT CShadow::Render()
 HRESULT CShadow::Add_Components()
 {
 	m_pShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Shadow.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements);
-	if (nullptr == m_pShader)
-		return E_FAIL;
-
-	m_pBuffer = CVIBuffer_Rect::Create(m_pDevice, m_pContext);
-	if (nullptr == m_pBuffer)
-		return E_FAIL;
-
+	NULL_CHECK_RETURN(m_pShader, E_FAIL);
+	
 	return S_OK;
 }
 
-CShadow* CShadow::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CShadow* CShadow::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CVIBuffer_Rect* pRectBuffer)
 {
 	CShadow* pInstance = New CShadow(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize_Prototype()))
+	if (FAILED(pInstance->Initialize(pRectBuffer)))
 	{
 		MSG_BOX("Failed to Created CShadow");
 		Safe_Release(pInstance);

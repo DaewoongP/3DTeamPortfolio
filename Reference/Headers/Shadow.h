@@ -13,7 +13,7 @@ private:
 	virtual ~CShadow() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype();
+	HRESULT Initialize(CVIBuffer_Rect* pRectBuffer);
 	virtual HRESULT Render() override;
 
 private:
@@ -25,7 +25,7 @@ private:
 	HRESULT Add_Components();
 
 public:
-	static CShadow* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CShadow* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CVIBuffer_Rect* pRectBuffer);
 	virtual CComponent* Clone(void* pArg) { return nullptr; }
 	virtual void Free() override;
 };

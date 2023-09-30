@@ -165,8 +165,6 @@ HRESULT CMainApp::Ready_Prototype_Component_For_Static()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_OBB_Collider"),
 			CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_OBB))))
 			throw TEXT("Prototype_Component_OBB_Collider");
-
-
 	}
 	catch (const _tchar* pErrorTag)
 	{

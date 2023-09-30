@@ -30,7 +30,7 @@ HRESULT CMapObject::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	m_ObjectDesc = *reinterpret_cast<MAPOBJECTDESC*>(pArg);
+	m_ObjectDesc = *static_cast<MAPOBJECTDESC*>(pArg);
 	m_pTransform->Set_WorldMatrix(m_ObjectDesc.WorldMatrix);
 
 	// 음수 값이 있을 경우 Cull 모드를 None로 바꾼다.

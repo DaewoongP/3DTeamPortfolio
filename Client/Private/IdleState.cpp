@@ -85,7 +85,7 @@ void CIdleState::OnStateTick()
 
 	Go_Roll();
 
-	Go_Jump();
+	//Go_Jump();
 
 	Go_Magic_Cast();
 

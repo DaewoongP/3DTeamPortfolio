@@ -5,6 +5,7 @@
 BEGIN(Engine)
 class CShader;
 class CVIBuffer_Rect;
+class CRenderTarget_Manager;
 
 class CBlur final : public CComponent
 {
@@ -15,22 +16,20 @@ private:
 	virtual ~CBlur() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype(const _tchar* pTargetTag, BLUR eBlurOption);
-	virtual HRESULT Render() override;
+	HRESULT Initialize();
+	HRESULT Render(const _tchar* pTargetTag, BLUR eBlurType = BLUR_XY);
 
 private:
-	CShader*			m_pShader = { nullptr };
-	CVIBuffer_Rect*		m_pBuffer = { nullptr };
-	_float4x4			m_WorldMatrix, m_ViewMatrix, m_ProjMatrix;
-	_tchar				m_szTargetTag[MAX_PATH] = TEXT("");
-	BLUR				m_eBlurOption = { BLUR_END };
+	CShader*				m_pShader = { nullptr };
+	CVIBuffer_Rect*			m_pBuffer = { nullptr };
+	CRenderTarget_Manager*	m_pRenderTarget_Manager = { nullptr };
+	_float4x4				m_WorldMatrix, m_ViewMatrix, m_ProjMatrix;
 
 private:
 	HRESULT Add_Components();
 
 public:
-	static CBlur* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,
-		const _tchar* pTargetTag, BLUR eBlurOption);
+	static CBlur* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CComponent* Clone(void* pArg) { return nullptr; }
 	virtual void Free() override;
 };

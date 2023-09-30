@@ -154,8 +154,8 @@ PS_OUT PS_MAIN_DISTORTION(PS_IN In)
     float2 newUV;
     newUV.xy = (FinalNoise.xy * perturb) + In.vTexUV.xy;
     
-    vector vOrigin = g_OriTexture.Sample(DistortionSampler, newUV.xy);
-    vector vAlpha = g_AlphaTexture.Sample(DistortionSampler, newUV.xy);
+    vector vOrigin = g_OriTexture.Sample(LinearSampler_Clamp, newUV.xy);
+    vector vAlpha = g_AlphaTexture.Sample(LinearSampler_Clamp, newUV.xy);
     
     Out.vColor = vOrigin;
     if(vAlpha.x>1.f)
@@ -191,8 +191,8 @@ PS_OUT PS_MAIN_DISTORTIONX(PS_IN In)
     float2 newUV;
     newUV.xy = (FinalNoise.xy * perturb) + In.vTexUV.xy;
     
-    vector vOrigin = g_OriTexture.Sample(DistortionSampler, newUV.xy);
-    vector vAlpha = g_AlphaTexture.Sample(DistortionSampler, newUV.xy);
+    vector vOrigin = g_OriTexture.Sample(LinearSampler_Clamp, newUV.xy);
+    vector vAlpha = g_AlphaTexture.Sample(LinearSampler_Clamp, newUV.xy);
     
     Out.vColor = vOrigin;
     

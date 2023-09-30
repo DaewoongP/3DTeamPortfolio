@@ -12,9 +12,9 @@ CWingardiumleviosa::CWingardiumleviosa(const CWingardiumleviosa& rhs)
 {
 }
 
-HRESULT CWingardiumleviosa::Initialize_Prototype()
+HRESULT CWingardiumleviosa::Initialize_Prototype(_uint iLevel)
 {
-	if (FAILED(__super::Initialize_Prototype()))
+	if (FAILED(__super::Initialize_Prototype(iLevel)))
 		return E_FAIL;
 
 	return S_OK;
@@ -58,7 +58,7 @@ HRESULT CWingardiumleviosa::Initialize(void* pArg)
 void CWingardiumleviosa::Tick(_float fTimeDelta)
 {
 	//파티클의 위치를 타겟의 위치로.
-	m_pEffectTrans->Set_Position(m_pTarget->Get_Position());
+	m_pEffectTrans->Set_Position(m_CurrentTargetMatrix.Translation());
 	__super::Tick(fTimeDelta);
 }
 
@@ -87,11 +87,11 @@ HRESULT CWingardiumleviosa::Add_Effect()
 	return S_OK;
 }
 
-CWingardiumleviosa* CWingardiumleviosa::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CWingardiumleviosa* CWingardiumleviosa::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel)
 {
 	CWingardiumleviosa* pInstance = New CWingardiumleviosa(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize_Prototype()))
+	if (FAILED(pInstance->Initialize_Prototype(iLevel)))
 	{
 		MSG_BOX("Failed to Created CWingardiumleviosa");
 		Safe_Release(pInstance);

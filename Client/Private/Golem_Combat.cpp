@@ -989,7 +989,7 @@ HRESULT CGolem_Combat::Make_Death(_Inout_ CSequence* pSequence)
 void CGolem_Combat::Enter_Light_Attack()
 {
 	m_CollisionRequestDesc.eType = ATTACK_LIGHT;
-	m_CollisionRequestDesc.iDamage = 0;
+	m_CollisionRequestDesc.iDamage = 5;
 	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
 	m_pWeapon->On_Collider_Attack(&m_CollisionRequestDesc);
 }
@@ -997,7 +997,7 @@ void CGolem_Combat::Enter_Light_Attack()
 void CGolem_Combat::Enter_Heavy_Attack()
 {
 	m_CollisionRequestDesc.eType = ATTACK_HEAVY;
-	m_CollisionRequestDesc.iDamage = 0;
+	m_CollisionRequestDesc.iDamage = 10;
 	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
 	m_pWeapon->On_Collider_Attack(&m_CollisionRequestDesc);
 }

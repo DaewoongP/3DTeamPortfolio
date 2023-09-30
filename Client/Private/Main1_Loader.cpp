@@ -262,6 +262,8 @@ HRESULT CMain1_Loader::Loading_For_GreatHall()
 
 HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath, LEVELID eID)
 {
+	std::lock_guard<std::mutex> lock(mtx);
+
 	/* For.Prototype_GameObject_MapObject */
 	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_MapObject"),
 		CMapObject::Create(m_pDevice, m_pContext))))
@@ -341,6 +343,8 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath, LEVELID 
 
 HRESULT CMain1_Loader::Loading_Map_Object_Ins(const _tchar* pMapObjectInsPath, LEVELID eID)
 {
+	std::lock_guard<std::mutex> lock(mtx);
+
 	/* For.Prototype_GameObject_MapObject_Ins */
 	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_MapObject_Ins"),
 		CMapObject_Ins::Create(m_pDevice, m_pContext))))
