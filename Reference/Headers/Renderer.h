@@ -27,9 +27,6 @@ public:
 
 public:
 	void	Add_RenderGroup(RENDERGROUP eRenderGroup, class CGameObject* pGameObject);
-	void	Add_RenderGroup(RENDERGROUP eRenderGroup, class CGameObject* pGameObject,_float LightPower);
-	void	Add_RenderGroup(RENDERGROUP eRenderGroup, class CGameObject* pGameObject, _tchar* pShaderPass, CTexture* pOriTexture = nullptr, CTexture*  pNoisetexture = nullptr,CTexture* pAlphaTexture = nullptr);
-	
 	HRESULT Draw_RenderGroup();
 
 #ifdef _DEBUG
@@ -49,12 +46,10 @@ private:
 	HRESULT Render_SSAO();
 	HRESULT Render_Deferred();
 	HRESULT Render_Combine();
-	HRESULT Render_MotionBlurInst();
 	HRESULT Render_NonLight();
 	HRESULT Render_Blend();
 	HRESULT Render_PostProcessing();
 	HRESULT Render_EffectType();
-	HRESULT Render_Distortion();
 	HRESULT Render_UI();
 
 #ifdef _DEBUG
@@ -74,8 +69,6 @@ private:
 	HRESULT Render_MRTs();
 	void Is_DebugRender();
 	_bool Is_MRTRender();
-	_bool Is_Render_Distortion();
-
 #endif // _DEBUG
 
 private:	
@@ -87,7 +80,6 @@ private:
 	_bool							m_isMRTRender = { true };
 	_bool							m_isDistortion = { false };
 #endif // _DEBUG
-
 
 private:
 	class CRenderTarget_Manager*	m_pRenderTarget_Manager = { nullptr };
@@ -103,21 +95,19 @@ private: /* Post Processing */
 	class CShader*					m_pPostProcessingShader = { nullptr };
 
 private: /* Shader_Type */
-	class CVIBuffer_Rect*			m_pShadeTypeBuffer = { nullptr };//각종 쉐이더처리 해줄때 쓸 것
+	class CVIBuffer_Rect*			m_pShadeTypeBuffer = { nullptr };
 	class CShader*					m_pShadeTypeShader = { nullptr };
 
 private: /* Shader_Type */
-	class CVIBuffer_Rect*			m_pSSAOBuffer = { nullptr };//각종 쉐이더처리 해줄때 쓸 것
+	class CVIBuffer_Rect*			m_pSSAOBuffer = { nullptr };
 	class CShader*					m_pSSAOShader = { nullptr };
 
 private: /* AfterShader*/
-	class CVIBuffer_Rect* m_pAfterShaderBuffer = { nullptr };//각종 쉐이더처리 해줄때 쓸 것
-	class CShader* m_pAfterShader = { nullptr };
+	class CVIBuffer_Rect*			m_pAfterShaderBuffer = { nullptr };
+	class CShader*					m_pAfterShader = { nullptr };
 
 private:
-	class CBlur*					m_pSSAOBlur = { nullptr };
 	class CBlur*					m_pEffectBlur = { nullptr };
-	//class CBlur* m_pShadowBlur = { nullptr };
 	class CBloom*					m_pBloom = { nullptr };
 	
 	class CShadow*					m_pShadow = { nullptr };
@@ -134,16 +124,7 @@ private:
 
 	class CDOF*						m_pDOF = { nullptr };
 
-private:
-	_float m_fFrameTime = 0.f;
-	class CTexture*					 m_pNoiseTexture = { nullptr };
-
-	class CTexture*					 m_pTexture = { nullptr };
-	class CTexture*					 m_pTexture2 = { nullptr };
-	class CTexture*					 m_pTexture3 = { nullptr };
-
 public:
-	static const _char* pRenderGroup[RENDER_END];
 	static CRenderer* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;

@@ -14,16 +14,13 @@
 #include "Glow.h"
 #include "Shadow.h"
 #include "MotionBlur.h"
-#include"FlowMap.h"	
-#include"DOF.h"
+#include "FlowMap.h"
+#include "DOF.h"
 
 #ifdef _DEBUG
 #include "Input_Device.h"
 #include "Font_Manager.h"
 #endif // _DEBUG
-
-const _char* CRenderer::pRenderGroup[RENDER_END] = { "Render_Priority", "Render_Depth", "Render_Nonblend"
-, "Render_NonLight", "Render_Blend", "Render_Picking", "Render_Brushing", "Render_UI", "Render_UITexture" };
 
 CRenderer::CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -33,7 +30,6 @@ CRenderer::CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	Safe_AddRef(m_pRenderTarget_Manager);
 	Safe_AddRef(m_pLight_Manager);
 }
-
 
 HRESULT CRenderer::Initialize_Prototype()
 {
@@ -90,7 +86,6 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 #endif // _DEBUG
 
-
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Diffuse"))))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Normal"))))
@@ -113,6 +108,7 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Combine"), TEXT("Target_Combine"))))
 		return E_FAIL;
+
 #ifdef _DEBUG
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Picking"), TEXT("Target_Picking"))))
 		return E_FAIL;
@@ -134,37 +130,7 @@ HRESULT CRenderer::Initialize_Prototype()
 #ifdef _DEBUG 
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Diffuse"), 80.f, 80.f, 160.f, 160.f)))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Normal"), 80.f, 240.f, 160.f, 160.f)))
-		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Depth"), 80.f, 400.f, 160.f, 160.f)))
-		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Shade"), 240.f, 80.f, 160.f, 160.f)))
-		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_FlowMap"), 240.f, 240.f, 160.f, 160.f)))
-		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_FinGlow"), 240.f, 400.f, 160.f, 160.f)))
-		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_FlowMap"), 240.f, 560.f, 160.f, 160.f)))
-		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Combine"), 240.f, 560.f, 160.f, 160.f)))
-		return E_FAIL;
-
-	/*if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Blur"), 900.f, 300.f, 600.f, 600.f)))
-		return E_FAIL;*/
-	/*if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_PostProcessing"), 240.f, 560.f, 160.f, 160.f)))
-		return E_FAIL;*/
-
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_DOFBlurY"), 600.f, 600.f, 400.f, 400.f)))
-		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Picking"), 1200.f, 80.f, 160.f, 160.f)))
-		return E_FAIL;
-	//if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_MapBrushing"), 1040.f, 80.f, 160.f, 160.f)))
-	//	return E_FAIL;
-	/*if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_UI"), 1200.f, 300.f, 160.f, 160.f)))
-		return E_FAIL;*/
-
 #endif // _DEBUG
-	m_pNoiseTexture = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/whitenoise.png"));
 
 	return S_OK;
 }
@@ -182,27 +148,6 @@ void CRenderer::Add_RenderGroup(RENDERGROUP eRenderGroup, CGameObject* pGameObje
 	m_RenderObjects[eRenderGroup].push_back(pGameObject);
 
 	Safe_AddRef(pGameObject);
-}
-
-void CRenderer::Add_RenderGroup(RENDERGROUP eRenderGroup, CGameObject* pGameObject, _float LightPower)
-{
-	if (eRenderGroup < RENDERGROUP::RENDER_PRIORITY ||
-		eRenderGroup >= RENDERGROUP::RENDER_END ||
-		nullptr == pGameObject)
-	{
-		MSG_BOX("Failed Add RenderGroup");
-		return;
-	}
-	
-	m_RenderObjects[eRenderGroup].push_back(pGameObject);
-	m_fGlowPower = LightPower;
-	Safe_AddRef(pGameObject);
-}
-
-void CRenderer::Add_RenderGroup(RENDERGROUP eRenderGroup, CGameObject* pGameObject, _tchar* pShaderPass, CTexture* pOriTexture, CTexture*  pNoisetexture, CTexture* pAlphaTexture)
-{
-	Add_RenderGroup(eRenderGroup, pGameObject);
-	m_pDistortion->Set_Textures(pShaderPass, pOriTexture, pNoisetexture, pAlphaTexture);
 }
 
 #ifdef _DEBUG
@@ -229,6 +174,7 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 	if (FAILED(Render_Lights()))
 		return E_FAIL; 
+
 	if (FAILED(Render_EffectType()))
 		return E_FAIL;
 	if (FAILED(m_pShadow->Render()))
@@ -239,26 +185,18 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 	if (FAILED(m_pDistortion->Render()))
 		return E_FAIL;
-	if (FAILED(m_pSSAOBlur->Render()))
-		return E_FAIL;
 	if (FAILED(Render_Combine()))
 		return E_FAIL;
 
 	if (FAILED(Render_Deferred()))
 		return E_FAIL;
-
-	if (FAILED(Render_MotionBlurInst()))
-		return E_FAIL;
-
 	if (FAILED(Render_NonLight()))
 		return E_FAIL;
-
 	if (FAILED(Render_Blend()))
 		return E_FAIL;
 
 	if (FAILED(m_pBloom->Render()))
 		return E_FAIL;
-
 	if (FAILED(m_pGlow->Render()))
 		return E_FAIL;
 	if (FAILED(m_pDOF->Render()))
@@ -275,9 +213,6 @@ HRESULT CRenderer::Draw_RenderGroup()
 	
 	if (FAILED(Render_PostProcessing()))
 		return E_FAIL;
-	
-
-
 	if (FAILED(Render_UI()))
 		return E_FAIL;
 
@@ -308,11 +243,6 @@ HRESULT CRenderer::Draw_RenderGroup()
 			return E_FAIL;
 		if (FAILED(pFont_Manager->Render_Font(TEXT("Font_135"), TEXT("Target Render"), _float2(1120.f, 660.f),
 			_float4(1.f, 0.f, 0.f, 1.f), 0.f, _float2(), 0.5f)))
-			return E_FAIL;
-	}
-	if (true == Is_Render_Distortion())
-	{
-		if (FAILED(Render_Distortion()))
 			return E_FAIL;
 	}
 	Safe_Release(pFont_Manager);
@@ -499,8 +429,6 @@ HRESULT CRenderer::Render_SSAO()
 
 	Safe_Release(pPipeLine);
 
-	m_pNoiseTexture->Bind_ShaderResource(m_pSSAOShader, "g_NoiseTexture");
-
 	if (FAILED(m_pSSAOShader->Begin("SSAO")))
 		return E_FAIL;
 
@@ -586,30 +514,6 @@ HRESULT CRenderer::Render_Combine()
 	return S_OK;
 }
 
-HRESULT CRenderer::Render_MotionBlurInst()
-{
-	if (nullptr == m_pRenderTarget_Manager)
-		return E_FAIL;
-
-	//if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Blend"))))
-	//	return E_FAIL;
-
-	//for (auto& pGameObject : m_RenderObjects[RENDER_MOTIONBLUR])
-	//{
-	//	if (nullptr != pGameObject)
-	//		pGameObject->Render();
-
-	//	Safe_Release(pGameObject);
-	//}
-
-	//m_RenderObjects[RENDER_MOTIONBLUR].clear();
-
-	//if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext)))
-	//	return E_FAIL;
-
-	return S_OK;
-}
-
 HRESULT CRenderer::Render_NonLight()
 {
 	for (auto& pGameObject : m_RenderObjects[RENDER_NONLIGHT])
@@ -647,11 +551,7 @@ HRESULT CRenderer::Render_PostProcessing()
 {
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_PostProcessing"), m_pPostProcessingShader, "g_PostProcessingTexture")))
 		return E_FAIL;
-	/*if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_FinBloom"), m_pPostProcessingShader, "g_BloomTexture")))
-		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_FinGlow"), m_pPostProcessingShader, "g_GlowTexture")))
-		return E_FAIL;*/
-	
+
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_DOFBlurY"), m_pPostProcessingShader, "g_DOFTexture")))
 		return E_FAIL; 
 	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
@@ -752,41 +652,6 @@ HRESULT CRenderer::Render_EffectType()
 
 	m_RenderObjects[RENDER_MOTIONBLUR].clear();
 	m_pMotionBlurInstance->End_MRT();
-
-	return S_OK;
-}
-
-HRESULT CRenderer::Render_Distortion()
-{
-	
-	//m_pTexture->Bind_ShaderResource(m_pAfterShader, "g_NoiseTexture");
-	//m_pTexture2->Bind_ShaderResource(m_pAfterShader, "g_AlphaTexture");
-	//m_pTexture3->Bind_ShaderResource(m_pAfterShader, "g_PostProcessingTexture");
-
-	///*if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_PostProcessing"), m_pAfterShader, "g_PostProcessingTexture")))
-	//	return E_FAIL;*/
-
-
-	//if (FAILED(m_pAfterShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
-	//	return E_FAIL;
-	//if (FAILED(m_pAfterShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
-	//	return E_FAIL;
-	//if (FAILED(m_pAfterShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
-	//	return E_FAIL;
-	//m_fFrameTime += 0.01f;
-	//if (m_fFrameTime > 1000.f)
-	//	m_fFrameTime = 0.f;
-	//if (FAILED(m_pAfterShader->Bind_RawValue("g_FrameTime", &m_fFrameTime, sizeof(_float))))
-	//	return E_FAIL;
-	//_float3 Speed = { 1.3f, 2.1f, 2.3f };
-	//if (FAILED(m_pAfterShader->Bind_RawValue("g_ScrollSpeed", &Speed, sizeof(_float3))))
-	//	return E_FAIL;
-	//_float3 Scale = { 1.f, 2.f, 3.f };
-	//if (FAILED(m_pAfterShader->Bind_RawValue("g_Scales", &Scale, sizeof(_float3))))
-	//	return E_FAIL;
-	//m_pAfterShader->Begin("Distortion");
-
-	//m_pAfterShaderBuffer->Render();
 
 	return S_OK;
 }
@@ -916,18 +781,6 @@ HRESULT CRenderer::Add_Components()
 	if (nullptr == m_pAfterShaderBuffer)
 		return E_FAIL;
 
-	m_pSSAOBlur = CBlur::Create(m_pDevice, m_pContext, TEXT("Target_SSAO"), CBlur::BLUR_XY);
-	if (nullptr == m_pSSAOBlur)
-		return E_FAIL;
-	
-	//m_pEffectBlur = CBlur::Create(m_pDevice, m_pContext, TEXT("Target_EffectBlur"), CBlur::BLUR_XY);
-	//if (nullptr == m_pEffectBlur)
-	//	return E_FAIL;
-
-	//m_pShadowBlur= CBlur::Create(m_pDevice, m_pContext, TEXT("Target_Shadow"), CBlur::BLUR_XY);
-	//if (nullptr == m_pShadowBlur)
-	//	return E_FAIL;
-
 	m_pBloom = CBloom::Create(m_pDevice, m_pContext, TEXT("Target_FinBloom"));
 	if (nullptr == m_pBloom)
 		return E_FAIL;
@@ -1029,23 +882,6 @@ _bool CRenderer::Is_MRTRender()
 
 	return m_isMRTRender;
 }
-
-_bool CRenderer::Is_Render_Distortion()
-{
-	CInput_Device* pInput_Device = CInput_Device::GetInstance();
-	Safe_AddRef(pInput_Device);
-
-	if (pInput_Device->Get_DIKeyState(DIK_F3, CInput_Device::KEY_DOWN))
-	{
-		if (true == m_isDistortion)
-			m_isDistortion = false;
-		else
-			m_isDistortion = true;
-	}
-	Safe_Release(pInput_Device);
-
-	return m_isDistortion;
-}
 #endif // _DEBUG
 
 CRenderer* CRenderer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -1090,12 +926,6 @@ void CRenderer::Free()
 	Safe_Release(m_pRenderTarget_Manager);
 	Safe_Release(m_pLight_Manager);
 
-	Safe_Release(m_pTexture);
-	Safe_Release(m_pTexture2);
-	Safe_Release(m_pTexture3);
-	Safe_Release(m_pNoiseTexture);
-
-
 	Safe_Release(m_pAfterShaderBuffer);
 	Safe_Release(m_pAfterShader);
 
@@ -1108,13 +938,10 @@ void CRenderer::Free()
 	Safe_Release(m_pDeferredBuffer);
 	Safe_Release(m_pPostProcessingShader);
 	Safe_Release(m_pPostProcessingBuffer);
-	
-	
-	
+
 	Safe_Release(m_pDOF);
 	Safe_Release(m_pShadow);
 	Safe_Release(m_pBloom);
-	Safe_Release(m_pSSAOBlur);
 	Safe_Release(m_pDistortion);
 	Safe_Release(m_pGlow);
 	Safe_Release(m_pMotionBlurInstance);
