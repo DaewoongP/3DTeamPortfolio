@@ -5,11 +5,8 @@
 
 BEGIN(Engine)
 class CRigidBody;
-class CRender;
-END
-
-BEGIN(Client)
-class CWeapon_Player_Wand;
+class CRenderer;
+class CTrail;
 END
 
 BEGIN(Client)
@@ -21,18 +18,17 @@ public:
 public:
 	typedef struct MagicBallInitDesc
 	{
-		CTransform*				pTarget = { nullptr };
-		_float4x4				TargetOffsetMatrix = {};
+		const CGameObject*			pTarget = { nullptr };
+		const CGameObject*			pWeapon = { nullptr };
+
 		CMagic::MAGIC_GROUP		eMagicGroup = { CMagic::MG_END };
 		CMagic::MAGIC_TYPE		eMagicType = { CMagic::MT_END };
 		BUFF_TYPE				eBuffType = { BUFF_NONE };
 		SPELL					eMagicTag = { SPELL_END };
 		COLLISIONFLAG			eCollisionFlag;
+
 		_int					iDamage = { 0 };
-		_float					fDistance = { 0 };
 		_float					fLifeTime = { 1.0f };
-		const _float4x4*		pWeaponMatrix = {nullptr};
-		_float4x4				WeaponOffsetMatrix = {};
 	}MAGICBALLINITDESC;
 
 	typedef struct CollsionRequestDesc
@@ -45,19 +41,6 @@ public:
 		function<void(_float3,_float)>		Action = { nullptr };
 	}COLLSIONREQUESTDESC;
 
-	typedef struct tagMagicBallDesc
-	{
-		CMagic::MAGIC_GROUP		eMagicGroup = { CMagic::MG_END };
-		CMagic::MAGIC_TYPE		eMagicType = { CMagic::MT_END };
-		BUFF_TYPE				eBuffType = { BUFF_NONE };
-		SPELL					eMagicTag = { SPELL_END };
-		_float3					vStartPosition = {};
-		_int					iDamage = { 0 };
-		_float					fDistance = { 0 };
-		_float					fInitLifeTime = { 1.0f };
-		_float					fLifeTime = { 1.0f };
-	}MAGICBALLDESC;
-	
 protected:
 	explicit CMagicBall(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CMagicBall(const CMagicBall& rhs);
@@ -76,7 +59,7 @@ public:
 	}
 
 public:
-	virtual HRESULT Initialize_Prototype() override;
+	virtual HRESULT Initialize_Prototype(_uint iLevel);
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
@@ -95,34 +78,39 @@ protected:
 	// 충돌을 위한 리지드바디 입니다.
 	CRigidBody*				m_pRigidBody = { nullptr };
 	CRenderer*				m_pRenderer = { nullptr };
-	//타겟에 대한 트랜스폼임.
-	CTransform*				m_pTarget = { nullptr };
-	_float4x4				m_TargetOffsetMatrix = {};
 	
-	//무기의 현재 위치, 오프셋임
-	const _float4x4*		m_pWeaponMatrix = { nullptr };
-	_float4x4				m_WeaponOffsetMatrix = {};
-
 protected:
-	//트레일 이동처리 위함.
-	_float3				m_vStartPostion = {};
-	_float3				m_vTargetPosition = {};
-	_float				m_fLerpAcc = { 0.f };
+	//총알에서는 발사 기간이요. 쉴드에서는 지속시간이다.
+	_float					m_fLifeTime = { 1.0f };
+
+	const CGameObject*		m_pTarget = { nullptr };
+
+	const _float4x4*		m_pWeaponWorldMatrix = { nullptr };
+	const _float4x4*		m_pWeaponOffsetMatrix = { nullptr };
+	const _float4x4*		m_pTargetWorldMatrix = { nullptr };
+	const _float4x4*		m_pTargetOffsetMatrix = { nullptr };
+
+	// 실시간으로 갱신될 완드와 타겟 위치
+	_float4x4				m_CurrentTargetMatrix = {};
+	_float4x4				m_CurrentWeaponMatrix = {};
+	// 처음에만 기록될 완드와 타겟 위치
+	_float3					m_vStartPosition = {};
+	_float3					m_vEndPosition = {};
+
+	_float					m_fLerpAcc = { 0.f };
 
 	//For. Spin
-	_float2				m_vSpinWeight = {};
-	_float				m_fSpinSpeed = { 1.f };
+	_float2					m_vSpinWeight = {};
+	_float					m_fSpinSpeed = { 1.f };
 
 	//For. Spline
-	_float3				m_vSplineLerp[2] = {};
-	_float				m_fTimeScalePerDitance = { 0.f };
-	_uint				m_iLevel = { 0 };
-
+	_float3					m_vSplineLerp[2] = {};
+	_float					m_fTimeScalePerDitance = { 0.f };
+	_uint					m_iLevel = { 0 };
 
 protected:
-	MAGICBALLDESC			m_MagicBallDesc;
 	COLLSIONREQUESTDESC		m_CollisionDesc = {};
-	COLLISIONFLAG			m_eCollisionFlag;
+	COLLISIONFLAG			m_eCollisionFlag = {};
 
 	//행동 계산용임.
 	MAGICBALL_STATE			m_eMagicBallState = { MAGICBALL_STATE_BEGIN };
@@ -139,6 +127,8 @@ protected:
 	virtual void Tick_CastMagic(_float fTimeDelta) {};
 	virtual void Tick_Dying(_float fTimeDelta) {};
 
+	void Tick_MagicBall_State(_float fTimeDelta);
+	void Set_StartPosition();
 protected:
 	HRESULT Add_Components();
 	//기본적인 리지드바디 할당임. 크기 바꾸고싶으면 오버라이드 하면됨.

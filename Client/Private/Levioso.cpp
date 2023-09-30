@@ -16,7 +16,7 @@ CLevioso::CLevioso(const CLevioso& rhs)
 {
 }
 
-void CLevioso::TrailAction(_float3 vPosition, _float fTimeDelta)
+void CLevioso::TrailAction (_float3 vPosition, _float fTimeDelta)
 {
 	m_pWingardiumEffect->TrailAction(vPosition, fTimeDelta);
 	m_fWingardiumEffectDeadTimer = 0.3f;
@@ -25,7 +25,7 @@ void CLevioso::TrailAction(_float3 vPosition, _float fTimeDelta)
 
 HRESULT CLevioso::Initialize_Prototype(_uint iLevel)
 {
-	if (FAILED(__super::Initialize_Prototype()))
+	if (FAILED(__super::Initialize_Prototype(iLevel)))
 		return E_FAIL;
 
 	BEGININSTANCE;
@@ -127,9 +127,8 @@ void CLevioso::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	_float3 vWandPosition = _float4x4(m_WeaponOffsetMatrix * (*m_pWeaponMatrix)).Translation();
-	m_pWandTrail->Get_Transform()->Set_Position(vWandPosition);
-	m_pWandGlow->Get_Transform()->Set_Position(vWandPosition);
+	m_pWandTrail->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
+	m_pWandGlow->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
 }
 
 void CLevioso::Late_Tick(_float fTimeDelta)
@@ -183,10 +182,9 @@ void CLevioso::Ready_DrawMagic()
 	m_pWandTrail->Enable();
 	m_pWandGlow->Enable();
 
-	_float3 vWandPosition = _float4x4(m_WeaponOffsetMatrix * (*m_pWeaponMatrix)).Translation();
-	m_pWandTrail->Get_Transform()->Set_Position(vWandPosition);
-	m_pWandGlow->Get_Transform()->Set_Position(vWandPosition);
-	m_pWandTrail->Reset_Trail(_float3(vWandPosition) + _float3(0, 0.5f, 0), _float3(vWandPosition) + _float3(0, -0.5f, 0));
+	m_pWandTrail->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
+	m_pWandGlow->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
+	m_pWandTrail->Reset_Trail(_float3(m_CurrentWeaponMatrix.Translation()) + _float3(0, 0.5f, 0), _float3(m_CurrentWeaponMatrix.Translation()) + _float3(0, -0.5f, 0));
 }
 
 void CLevioso::Ready_CastMagic()
@@ -195,9 +193,9 @@ void CLevioso::Ready_CastMagic()
 	m_pTraceDustEffect->Enable();
 
 	Ready_SpinMove(m_pMainTrail,_float2(1.f,0.f),0.5f);
-	m_pTraceDustEffect->Get_EmissionModuleRef().Setting_PrevPos(m_vStartPostion);
-	m_pTraceDustEffect->Play(m_vStartPostion);
-	m_pTraceDustEffect->Get_Transform()->Set_Position(m_vStartPostion);
+	m_pTraceDustEffect->Get_EmissionModuleRef().Setting_PrevPos(m_vStartPosition);
+	m_pTraceDustEffect->Play(m_vStartPosition);
+	m_pTraceDustEffect->Get_Transform()->Set_Position(m_vStartPosition);
 	
 }
 
@@ -229,10 +227,10 @@ void CLevioso::Tick_CastMagic(_float fTimeDelta)
 {
 	if (m_fLerpAcc != 1)
 	{
-		m_fLerpAcc += fTimeDelta / m_MagicBallDesc.fInitLifeTime * m_fTimeScalePerDitance;
+		m_fLerpAcc += fTimeDelta / m_fLifeTime * m_fTimeScalePerDitance;
 		if (m_fLerpAcc > 1)
 			m_fLerpAcc = 1;
-		m_pMainTrail->Spin_Move(m_vTargetPosition, m_MagicBallDesc.vStartPosition,m_vSpinWeight,m_fSpinSpeed, m_fLerpAcc);
+		m_pMainTrail->Spin_Move(m_vEndPosition, m_vStartPosition,m_vSpinWeight,m_fSpinSpeed, m_fLerpAcc);
 		m_pTransform->Set_Position(m_pMainTrail->Get_Transform()->Get_Position());
 		m_pTraceDustEffect->Get_Transform()->Set_Position(m_pMainTrail->Get_Transform()->Get_Position());
 	}

@@ -17,7 +17,7 @@ private:
 	virtual ~CLumos() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype(_uint m_iLevel);
+	virtual HRESULT Initialize_Prototype(_uint iLevel)override;
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;

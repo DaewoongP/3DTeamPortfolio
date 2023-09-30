@@ -14,8 +14,12 @@ CUI_Group_Skill::CUI_Group_Skill(const CUI_Group_Skill& rhs)
 	: CGameObject(rhs)
 	, m_ProtoTypeTags(rhs.m_ProtoTypeTags)
 	, m_SpellProtoTypeTags(rhs.m_SpellProtoTypeTags)
-	, m_SkillTextures(rhs.m_SkillTextures)
 {
+	for (auto& pTexture : rhs.m_SkillTextures)
+	{
+		m_SkillTextures.push_back(pTexture);
+		Safe_AddRef(pTexture);
+	}
 }
 
 HRESULT CUI_Group_Skill::Initialize_Prototype()

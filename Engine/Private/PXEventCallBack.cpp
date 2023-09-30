@@ -140,6 +140,12 @@ void CPXEventCallBack::onTrigger(PxTriggerPair* pairs, PxU32 count)
 			pDestObject->OnCollisionEnter(DestDesc);
 		}
 
+		if (pairs->status == PxPairFlag::eNOTIFY_TOUCH_PERSISTS)
+		{
+			pSourObject->OnCollisionStay(SourDesc);
+			pDestObject->OnCollisionStay(DestDesc);
+		}
+
 		// trigger는 stay 존재 x 따로 제작해주거나 해야함.
 
 		if (CComponent::OBJ_DEAD == pSourObject->Get_ObjEvent())

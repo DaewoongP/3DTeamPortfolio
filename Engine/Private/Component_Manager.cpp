@@ -31,8 +31,6 @@ HRESULT CComponent_Manager::Reserve_Containers(_uint iNumLevels)
 
 HRESULT CComponent_Manager::Add_Prototype(_uint iLevelIndex, const _tchar* pPrototypeTag, CComponent* pPrototype, _bool isFailedSkip)
 {
-	std::lock_guard<std::mutex> lock(mtx);
-
 	if (nullptr != Find_Prototype(iLevelIndex, pPrototypeTag))
 	{
 		if (true == isFailedSkip)

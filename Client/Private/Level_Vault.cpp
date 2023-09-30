@@ -15,19 +15,14 @@ HRESULT CLevel_Vault::Initialize()
 {
     if (FAILED(__super::Initialize()))
         return E_FAIL;
+
 	if (FAILED(Ready_Lights()))
 	{
 		MSG_BOX("Failed Ready_Lights");
 
 		return E_FAIL;
 	}
-	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
-	{
-		MSG_BOX("Failed Ready_Layer_Player");
 
-		return E_FAIL;
-	}
-	
 	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
 	{
 		MSG_BOX("Failed Ready_Layer_Player");
@@ -48,8 +43,6 @@ HRESULT CLevel_Vault::Initialize()
 
 		return E_FAIL;
 	}
-
-	Load_Monsters(TEXT("../../Resources/GameData/MonsterData/Valt.mon"));
 
 	if (FAILED(Ready_Layer_Trigger(TEXT("Layer_Trigger"))))
 	{
@@ -122,6 +115,7 @@ HRESULT CLevel_Vault::Ready_Layer_Player(const _tchar* pLayerTag)
 HRESULT CLevel_Vault::Ready_Lights()
 {
 	BEGININSTANCE;
+
 	CLight::LIGHTDESC		LightDesc;
 	ZeroMemory(&LightDesc, sizeof LightDesc);
 
@@ -137,11 +131,7 @@ HRESULT CLevel_Vault::Ready_Lights()
 	pGameInstance->Set_Light(CLight::TYPE_DIRECTIONAL,LightDesc);
 
 	ENDINSTANCE;
-	return S_OK;
-}
 
-HRESULT CLevel_Vault::Ready_Layer_BackGround(const _tchar* pLayerTag)
-{
 	return S_OK;
 }
 

@@ -26,18 +26,13 @@ public:
 public:
 	//Add New Skill
 	HRESULT Add_Magics(CMagic::MAGICDESC SkillDesc);
-	//Add Function to Skill
-	HRESULT Add_Function_To_Magic(function<void()> func , SPELL eSpellType);
 
 	//Add Magic to Slot
 	HRESULT Add_Magic_To_Skill_Slot(_uint iSlotIndex , SPELL eSpellType);
 	HRESULT Add_Magic_To_Basic_Slot(_uint iSlotIndex , SPELL eSpellType);
 
-public:
-	//Skill Action
-	CMagicBall* Action_Magic_Skill(_uint iIndex, CTransform* pTarget,_float4x4 TargetOffsetMatrix, const _float4x4* pWeaponMatrix, _float4x4 WeaponOffsetMatrix, COLLISIONFLAG eCollisionFlag);
-	//Basic Skill Action
-	CMagicBall* Action_Magic_Basic(_uint iIndex, CTransform* pTarget, _float4x4 TargetOffsetMatrix, const _float4x4* pWeaponMatrix, _float4x4 WeaponOffsetMatrix, COLLISIONFLAG eCollisionFlag);
+	CMagicBall* Action_Magic_Skill(_uint iIndex, const CGameObject* pTarget, const CGameObject* pWeaponMatrix, COLLISIONFLAG eCollisionFlag);
+	CMagicBall* Action_Magic_Basic(_uint iIndex, const CGameObject* pTarget, const CGameObject* pWeaponMatrix, COLLISIONFLAG eCollisionFlag);
 
 private:
 	//4 Slot To Skill

@@ -391,6 +391,12 @@
     <Filter Include="02. GameObject\09. Item\01. RecoveryPotion">
       <UniqueIdentifier>{c07071fe-c006-4bca-b390-e403b214f1e9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\08. Inventory\Item">
+      <UniqueIdentifier>{a8a056c1-627a-4e55-9a40-91512c0110cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\08. Inventory\Item\MPBall">
+      <UniqueIdentifier>{5eb7cb7b-6f9e-420b-bad4-8d44bfc40af4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -804,6 +810,9 @@
     <ClInclude Include="..\public\RecoveryPotion.h">
       <Filter>02. GameObject\09. Item\01. RecoveryPotion</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\MPBall.h">
+      <Filter>02. GameObject\08. Inventory\Item\MPBall</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -907,9 +916,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\Selector_Degree.cpp">
       <Filter>03. Behaviors\01. Selectors</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Magic.cpp">
-      <Filter>05. Magic</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MagicBall.cpp">
       <Filter>05. Magic\MagicBall</Filter>
@@ -1183,6 +1189,12 @@
     </ClCompile>
     <ClCompile Include="..\private\RecoveryPotion.cpp">
       <Filter>02. GameObject\09. Item\01. RecoveryPotion</Filter>
+    </ClCompile>
+    <ClCompile Include="MPBall.cpp">
+      <Filter>02. GameObject\08. Inventory\Item\MPBall</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Magic.cpp">
+      <Filter>05. Magic</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

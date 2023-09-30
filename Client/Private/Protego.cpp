@@ -24,10 +24,9 @@ CProtego::CProtego(const CProtego& rhs)
 
 HRESULT CProtego::Initialize_Prototype(_uint _iLevel)
 {
-	if (FAILED(__super::Initialize_Prototype()))
+	if (FAILED(__super::Initialize_Prototype(_iLevel)))
 		return E_FAIL;
 
-	m_iLevel = _iLevel;
 	BEGININSTANCE;
 
 	/* For.Prototype_Component_Shader_VtxMesh */
@@ -95,7 +94,7 @@ HRESULT CProtego::Initialize(void* pArg)
 
 void CProtego::Tick(_float fTimeDelta)
 {
-	m_pTransform->Set_Position(XMVector3TransformCoord(m_pTarget->Get_Position(), m_TargetOffsetMatrix));
+	m_pTransform->Set_Position(m_CurrentTargetMatrix.Translation());
 	__super::Tick(fTimeDelta);
 
 	//Tick_Imgui();
@@ -189,7 +188,7 @@ void CProtego::Tick_Enter(const _float& fTimeDelta)
 
 void CProtego::Tick_Stay(const _float& fTimeDelta)
 {
-	if (m_MagicBallDesc.fLifeTime - m_fTimeAcc <= m_fExitDuration)
+	if (m_fLifeTime - m_fTimeAcc <= m_fExitDuration)
 	{
 		m_fTimeAcc = 0.f;
 		m_eCurState = EXIT;
