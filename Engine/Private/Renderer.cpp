@@ -71,9 +71,6 @@ HRESULT CRenderer::Initialize_Prototype()
 		TEXT("Target_Distortion"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
-		TEXT("Target_SSAOBluring"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
-		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_FinBloom"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
 
@@ -105,8 +102,6 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_FinBloom"), TEXT("Target_FinBloom"))))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Distortion"), TEXT("Target_Distortion"))))
-		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Combine"), TEXT("Target_Combine"))))
 		return E_FAIL;
 
 #ifdef _DEBUG
@@ -185,8 +180,6 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 	if (FAILED(m_pDistortion->Render()))
 		return E_FAIL;
-	if (FAILED(Render_Combine()))
-		return E_FAIL;
 
 	if (FAILED(Render_Deferred()))
 		return E_FAIL;
@@ -195,14 +188,16 @@ HRESULT CRenderer::Draw_RenderGroup()
 	if (FAILED(Render_Blend()))
 		return E_FAIL;
 
+	if (FAILED(m_pRenderTarget_Manager->End_PostProcessingRenderTarget(m_pContext)))
+		return E_FAIL;
+
 	if (FAILED(m_pBloom->Render()))
 		return E_FAIL;
 	if (FAILED(m_pGlow->Render()))
 		return E_FAIL;
 	if (FAILED(m_pDOF->Render()))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->End_PostProcessingRenderTarget(m_pContext)))
-		return E_FAIL;
+
 
 #ifdef _DEBUG
 	if (FAILED(Render_Picking()))
@@ -392,7 +387,7 @@ HRESULT CRenderer::Render_Lights()
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Depth"), m_pDeferredShader, "g_DepthTexture")))
 		return E_FAIL;
 
-	m_pLight_Manager->Render_Lights(m_pDeferredShader, m_pDeferredBuffer);
+	m_pLight_Manager->Render_Lights(m_pDeferredShader, m_pRectBuffer);
 
 	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext)))
 		return E_FAIL;
@@ -432,7 +427,7 @@ HRESULT CRenderer::Render_SSAO()
 	if (FAILED(m_pSSAOShader->Begin("SSAO")))
 		return E_FAIL;
 
-	if (FAILED(m_pSSAOBuffer->Render()))
+	if (FAILED(m_pRectBuffer->Render()))
 		return E_FAIL;
 
 	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext)))
@@ -467,48 +462,7 @@ HRESULT CRenderer::Render_Deferred()
 	if (FAILED(m_pDeferredShader->Begin("Deferred")))
 		return E_FAIL;
 
-	if (FAILED(m_pDeferredBuffer->Render()))
-		return E_FAIL;
-
-	return S_OK;
-}
-
-HRESULT CRenderer::Render_Combine()
-{
-	if (nullptr == m_pRenderTarget_Manager)
-		return E_FAIL;
-
-	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Combine"))))
-		return E_FAIL;
-
-	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Diffuse"), m_pDeferredShader, "g_DiffuseTexture")))
-		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Shade"), m_pDeferredShader, "g_ShadeTexture")))
-		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_SSAO"), m_pDeferredShader, "g_SSAOTexture")))
-		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Shadow"), m_pDeferredShader, "g_ShadowTexture")))
-		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Specular"), m_pDeferredShader, "g_SpecularTexture")))
-		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_MapEffect"), m_pDeferredShader, "g_MapEffectTexture")))
-		return E_FAIL;
-
-
-	if (FAILED(m_pDeferredShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
-		return E_FAIL;
-	if (FAILED(m_pDeferredShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
-		return E_FAIL;
-	if (FAILED(m_pDeferredShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
-		return E_FAIL;
-
-	if (FAILED(m_pDeferredShader->Begin("Deferred")))
-		return E_FAIL;
-
-	if (FAILED(m_pDeferredBuffer->Render()))
-		return E_FAIL;
-
-	if (m_pRenderTarget_Manager->End_MRT(m_pContext))
+	if (FAILED(m_pRectBuffer->Render()))
 		return E_FAIL;
 
 	return S_OK;
@@ -567,7 +521,7 @@ HRESULT CRenderer::Render_PostProcessing()
 	
 	m_pPostProcessingShader->Begin("PostProcessing");
 
-	m_pPostProcessingBuffer->Render();
+	m_pRectBuffer->Render();
 
 	return S_OK;
 }
@@ -738,6 +692,10 @@ HRESULT CRenderer::Sort_UI()
 
 HRESULT CRenderer::Add_Components()
 {
+	m_pRectBuffer = CVIBuffer_Rect::Create(m_pDevice, m_pContext);
+	if (nullptr == m_pRectBuffer)
+		return E_FAIL;
+
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
@@ -745,40 +703,20 @@ HRESULT CRenderer::Add_Components()
 	if (nullptr == m_pDeferredShader)
 		return E_FAIL;
 
-	m_pDeferredBuffer = CVIBuffer_Rect::Create(m_pDevice, m_pContext);
-	if (nullptr == m_pDeferredBuffer)
-		return E_FAIL;
-
 	m_pPostProcessingShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_PostProcessing.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements);
 	if (nullptr == m_pPostProcessingShader)
-		return E_FAIL;
-
-	m_pPostProcessingBuffer = CVIBuffer_Rect::Create(m_pDevice, m_pContext);
-	if (nullptr == m_pPostProcessingBuffer)
 		return E_FAIL;
 
 	m_pSSAOShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_SSAO.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements);
 	if (nullptr == m_pSSAOShader)
 		return E_FAIL;
 
-	m_pSSAOBuffer = CVIBuffer_Rect::Create(m_pDevice, m_pContext);
-	if (nullptr == m_pSSAOBuffer)
-		return E_FAIL;
-
 	m_pShadeTypeShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Type.hlsl"), VTXPOSNORTEX_DECL::Elements, VTXPOSNORTEX_DECL::iNumElements);
 	if (nullptr == m_pShadeTypeShader)
 		return E_FAIL;
 
-	m_pShadeTypeBuffer = CVIBuffer_Rect::Create(m_pDevice, m_pContext);
-	if (nullptr == m_pShadeTypeBuffer)
-		return E_FAIL;
-
 	m_pAfterShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_AfterShade.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements);
 	if (nullptr == m_pAfterShader)
-		return E_FAIL;
-
-	m_pAfterShaderBuffer = CVIBuffer_Rect::Create(m_pDevice, m_pContext);
-	if (nullptr == m_pAfterShaderBuffer)
 		return E_FAIL;
 
 	m_pBloom = CBloom::Create(m_pDevice, m_pContext, TEXT("Target_FinBloom"));
@@ -792,20 +730,23 @@ HRESULT CRenderer::Add_Components()
 	m_pMotionBlurInstance = CMotionBlurInstance::Create(m_pDevice, m_pContext, 0);
 	if (nullptr == m_pMotionBlurInstance)
 		return E_FAIL;
+
 	m_pGlow = CGlow::Create(m_pDevice, m_pContext, TEXT("Target_FinGlow"), 1.f);//파티클이 갖고있는 정보하나주면 힘을 변경하도록 하면될것같음
 	if (nullptr == m_pGlow)
 		return E_FAIL;
+
 	m_pMotionBlur = CMotionBlur::Create(m_pDevice, m_pContext, TEXT("Target_FinGlow"));
 	if (nullptr == m_pMotionBlur)
 		return E_FAIL;
 
-	m_pShadow = CShadow::Create(m_pDevice, m_pContext);
+	m_pShadow = CShadow::Create(m_pDevice, m_pContext, m_pRectBuffer);
 	if (nullptr == m_pShadow)
 		return E_FAIL;
 
 	m_pFlowMap = CFlowMap::Create(m_pDevice, m_pContext,TEXT("Target_FlowMap"));
 	if (nullptr == m_pFlowMap)
 		return E_FAIL;
+
 	m_pDOF = CDOF::Create(m_pDevice, m_pContext, TEXT("Target_PostProcessing"));
 	if (nullptr == m_pDOF)
 		return E_FAIL;
@@ -843,9 +784,9 @@ HRESULT CRenderer::Render_MRTs()
 	if (FAILED(m_pDeferredShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
 
-	if (FAILED(m_pRenderTarget_Manager->Render_Debug(TEXT("MRT_GameObjects"), m_pDeferredShader, m_pDeferredBuffer)))
+	if (FAILED(m_pRenderTarget_Manager->Render_Debug(TEXT("MRT_GameObjects"), m_pDeferredShader, m_pRectBuffer)))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Render_Debug(TEXT("MRT_Lights"), m_pDeferredShader, m_pDeferredBuffer)))
+	if (FAILED(m_pRenderTarget_Manager->Render_Debug(TEXT("MRT_Lights"), m_pDeferredShader, m_pRectBuffer)))
 		return E_FAIL;
 
 	return S_OK;
@@ -926,18 +867,12 @@ void CRenderer::Free()
 	Safe_Release(m_pRenderTarget_Manager);
 	Safe_Release(m_pLight_Manager);
 
-	Safe_Release(m_pAfterShaderBuffer);
 	Safe_Release(m_pAfterShader);
-
 	Safe_Release(m_pMotionBlur);
-	Safe_Release(m_pSSAOBuffer);
 	Safe_Release(m_pSSAOShader);
 	Safe_Release(m_pShadeTypeShader);
-	Safe_Release(m_pShadeTypeBuffer);
 	Safe_Release(m_pDeferredShader);
-	Safe_Release(m_pDeferredBuffer);
 	Safe_Release(m_pPostProcessingShader);
-	Safe_Release(m_pPostProcessingBuffer);
 
 	Safe_Release(m_pDOF);
 	Safe_Release(m_pShadow);
@@ -946,4 +881,6 @@ void CRenderer::Free()
 	Safe_Release(m_pGlow);
 	Safe_Release(m_pMotionBlurInstance);
 	Safe_Release(m_pFlowMap);
+
+	Safe_Release(m_pRectBuffer);
 }

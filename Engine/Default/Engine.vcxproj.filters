@@ -418,11 +418,11 @@
     <Filter Include="01. Utility\03. Components\15. ParticleSystem\Pool">
       <UniqueIdentifier>{46c235ac-b369-4875-a7d8-b91119a6da39}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\03. Components\02. Renderer\Shadow\Shader">
-      <UniqueIdentifier>{d6e48222-790a-42b5-a30b-71e187ad6d29}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Utility\03. Components\11. Status\03. CoolTime">
       <UniqueIdentifier>{b4e12e5c-1eb3-449c-9dbf-b84389d6d718}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\14. RigidBody\Shader">
+      <UniqueIdentifier>{d6e48222-790a-42b5-a30b-71e187ad6d29}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1253,7 +1253,7 @@
       <Filter>01. Utility\03. Components\02. Renderer\Shader</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Debug.hlsl">
-      <Filter>01. Utility\03. Components\02. Renderer\Shadow\Shader</Filter>
+      <Filter>01. Utility\03. Components\14. RigidBody\Shader</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointColInstance.hlsl">
       <Filter>01. Utility\98. ShaderFiles</Filter>

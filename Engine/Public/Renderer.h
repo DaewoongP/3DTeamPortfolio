@@ -45,7 +45,6 @@ private:
 	HRESULT Render_Depth();
 	HRESULT Render_SSAO();
 	HRESULT Render_Deferred();
-	HRESULT Render_Combine();
 	HRESULT Render_NonLight();
 	HRESULT Render_Blend();
 	HRESULT Render_PostProcessing();
@@ -85,43 +84,26 @@ private:
 	class CRenderTarget_Manager*	m_pRenderTarget_Manager = { nullptr };
 	class CLight_Manager*			m_pLight_Manager = { nullptr };
 
-private: /* Deferred Shader */
-	class CVIBuffer_Rect*			m_pDeferredBuffer = { nullptr };
-	class CShader*					m_pDeferredShader = { nullptr };
+private:
+	class CVIBuffer_Rect*			m_pRectBuffer = { nullptr };
 	_float4x4						m_WorldMatrix, m_ViewMatrix, m_ProjMatrix;
 
-private: /* Post Processing */
-	class CVIBuffer_Rect*			m_pPostProcessingBuffer = { nullptr };
+	class CShader*					m_pDeferredShader = { nullptr };
 	class CShader*					m_pPostProcessingShader = { nullptr };
-
-private: /* Shader_Type */
-	class CVIBuffer_Rect*			m_pShadeTypeBuffer = { nullptr };
 	class CShader*					m_pShadeTypeShader = { nullptr };
-
-private: /* Shader_Type */
-	class CVIBuffer_Rect*			m_pSSAOBuffer = { nullptr };
 	class CShader*					m_pSSAOShader = { nullptr };
-
-private: /* AfterShader*/
-	class CVIBuffer_Rect*			m_pAfterShaderBuffer = { nullptr };
 	class CShader*					m_pAfterShader = { nullptr };
 
 private:
 	class CBlur*					m_pEffectBlur = { nullptr };
 	class CBloom*					m_pBloom = { nullptr };
-	
 	class CShadow*					m_pShadow = { nullptr };
-	
 	class CGlow*					m_pGlow = {nullptr};
 	_float							m_fGlowPower = { 0.f };
-
 	class CDistortion*				m_pDistortion ={nullptr};
-
 	class CMotionBlurInstance*		m_pMotionBlurInstance = { nullptr };
 	class CMotionBlur*				m_pMotionBlur = { nullptr };
-
 	class CFlowMap*					m_pFlowMap = { nullptr };
-
 	class CDOF*						m_pDOF = { nullptr };
 
 public:
