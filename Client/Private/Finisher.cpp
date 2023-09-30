@@ -139,33 +139,12 @@ HRESULT CFinisher::Initialize(void* pArg)
 
 		return E_FAIL;
 	}
-
-	for (int i = 0; i < 3; i++)
-	{
-		m_pTrail[i]->Disable();
-	}
-
-	m_LightningSparkEffect_Green->Disable();
-	m_LightningSparkEffect_Blue->Disable();
-	m_LightningSparkEffect_Red->Disable();
-
-	m_LineParticle->Disable();
-	m_FlareCenterParticle->Disable();
-	m_FlareSpreadParticle->Disable();
-	m_DustParticle->Disable();
-
-	m_pWandLightningParticle->Disable();
-	m_pWandTrail->Disable();
-
 	return S_OK;
 }
 
 void CFinisher::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
-	m_pWandLightningParticle->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
-	m_pWandTrail->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
 }
 
 void CFinisher::Late_Tick(_float fTimeDelta)
@@ -196,34 +175,21 @@ void CFinisher::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 HRESULT CFinisher::Reset(MAGICBALLINITDESC& InitDesc)
 {
 	__super::Reset(InitDesc);
-
+	for (int i = 0; i < 3; i++)
+	{
+		m_pTrail[i]->Disable();
+	}
 	return S_OK;
 }
 
 void CFinisher::Ready_Begin()
 {
-	for (int i = 0; i < 3; i++)
-	{
-		m_pTrail[i]->Disable();
-	}
-
-	 m_LightningSparkEffect_Green->Disable();
-	 m_LightningSparkEffect_Blue->Disable();
-	 m_LightningSparkEffect_Red->Disable();
-
-	 m_LineParticle->Disable();
-	 m_FlareCenterParticle->Disable();
-	 m_FlareSpreadParticle->Disable();
-	 m_DustParticle->Disable();
-
-	 m_pWandLightningParticle->Disable();
-	 m_pWandTrail->Disable();
+	__super::Ready_Begin();
 }
 
 void CFinisher::Ready_DrawMagic()
 {
-	m_pWandLightningParticle->Enable(m_CurrentWeaponMatrix.Translation());
-	m_pWandTrail->Enable(m_CurrentWeaponMatrix.Translation());
+	__super::Ready_DrawMagic();
 }
 
 void CFinisher::Ready_CastMagic()
@@ -262,33 +228,25 @@ void CFinisher::Ready_CastMagic()
 		m_pTrail[i]->Ready_LightningStrike(m_vEndPosition + _float3(0, 10, 0), m_vEndPosition, vWeight, 10);
 		m_pTrail[i]->Enable(m_vEndPosition);
 	}
-
-	m_LightningSparkEffect_Blue->Enable(m_vEndPosition);
-	m_LightningSparkEffect_Green->Enable(m_vEndPosition);
-	m_LightningSparkEffect_Red->Enable(m_vEndPosition);
-	m_LineParticle->Enable(m_vEndPosition);
-	m_FlareCenterParticle->Enable(m_vEndPosition);
-	m_FlareSpreadParticle->Enable(m_vEndPosition);
-	m_DustParticle->Enable(m_vEndPosition);
-
-	m_LightningSparkEffect_Blue->Play(m_vEndPosition);
-	m_LightningSparkEffect_Green->Play(m_vEndPosition);
-	m_LightningSparkEffect_Red->Play(m_vEndPosition);
-	m_LineParticle->Play(m_vEndPosition);
-	m_FlareCenterParticle->Play(m_vEndPosition);
-	m_FlareSpreadParticle->Play(m_vEndPosition + _float3(0, 0.5f, 0));
-	m_DustParticle->Play(m_vEndPosition);
 	m_pTransform->Set_Position(m_vEndPosition);
 }
 
 void CFinisher::Ready_Dying()
 {
-	
+	for (int i = 0; i < m_TrailVec[EFFECT_STATE_HIT].size(); i++)
+	{
+		m_TrailVec[EFFECT_STATE_HIT].data()[i]->Enable(m_vEndPosition);
+	}
+	for (int i = 0; i < m_ParticleVec[EFFECT_STATE_HIT].size(); i++)
+	{
+		m_ParticleVec[EFFECT_STATE_HIT].data()[i]->Enable(m_vEndPosition);
+		m_ParticleVec[EFFECT_STATE_HIT].data()[i]->Play(m_vEndPosition);
+	}
 }
 
 void CFinisher::Tick_Begin(_float fTimeDelta)
 {
-	Do_MagicBallState_To_Next();
+	__super::Tick_Begin(fTimeDelta);
 }
 
 void CFinisher::Tick_DrawMagic(_float fTimeDelta)
@@ -298,23 +256,87 @@ void CFinisher::Tick_DrawMagic(_float fTimeDelta)
 
 void CFinisher::Tick_CastMagic(_float fTimeDelta)
 {
-	if (!m_DustParticle->IsEnable())
-		Do_MagicBallState_To_Next();
+	Do_MagicBallState_To_Next();
 }
 
 void CFinisher::Tick_Dying(_float fTimeDelta)
 {
-	if(!m_DustParticle->IsEnable())
+	//트레일 이어주기
+	for (int i = 0; i < m_TrailVec[EFFECT_STATE_WAND].size(); i++)
+	{
+		m_TrailVec[EFFECT_STATE_WAND].data()[i]->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
+	}
+	for (int i = 0; i < m_ParticleVec[EFFECT_STATE_WAND].size(); i++)
+	{
+		m_ParticleVec[EFFECT_STATE_WAND].data()[i]->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
+	}
+
+	if (!m_ParticleVec[EFFECT_STATE_HIT].data()[6]->IsEnable())
 		Do_MagicBallState_To_Next();
 }
 
 HRESULT CFinisher::Add_Components()
 {
-	return S_OK;
-}
+	m_TrailVec[EFFECT_STATE_WAND].resize(1);
+	m_ParticleVec[EFFECT_STATE_WAND].resize(1);
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_BasicCast_Wand_Trail_Effect")
+		, TEXT("Com_Wand_Trail"), (CComponent**)&m_TrailVec[EFFECT_STATE_WAND][0])))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Wand_Lightning_Effect")
+		, TEXT("Com_Wand_Lightning"), (CComponent**)&m_ParticleVec[EFFECT_STATE_WAND][0])))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
 
-HRESULT CFinisher::Add_Effect()
-{
+	m_ParticleVec[EFFECT_STATE_HIT].resize(7);
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Spark_Blue_Effect")
+		, TEXT("Com_Spark_Blue_Effect"), (CComponent**)&m_ParticleVec[EFFECT_STATE_HIT][0])))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Spark_Green_Effect")
+		, TEXT("Com_Spark_Green_Effect"), (CComponent**)&m_ParticleVec[EFFECT_STATE_HIT][1])))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Spark_Red_Effect")
+		, TEXT("Com_Spark_Red_Effect"), (CComponent**)&m_ParticleVec[EFFECT_STATE_HIT][2])))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Lightning_Line_Effect")
+		, TEXT("Com_Line_Effect"), (CComponent**)&m_ParticleVec[EFFECT_STATE_HIT][3])))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Lightning_Flare_Center_Effect")
+		, TEXT("Com_FlareCenter_Effect"), (CComponent**)&m_ParticleVec[EFFECT_STATE_HIT][4])))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Lightning_Flare_Spread_Effect")
+		, TEXT("Com_FlareSpread_Effect"), (CComponent**)&m_ParticleVec[EFFECT_STATE_HIT][5])))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Lightning_Dust_Effect")
+		, TEXT("Com_Dust_Effect"), (CComponent**)&m_ParticleVec[EFFECT_STATE_HIT][6])))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	//별도 
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Trail_Lightning_Effect"),
 		TEXT("Com_LightningTrail01"), reinterpret_cast<CComponent**>(&m_pTrail[0]))))
 	{
@@ -322,7 +344,6 @@ HRESULT CFinisher::Add_Effect()
 		__debugbreak();
 		return E_FAIL;
 	}
-
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Trail_Lightning_Effect"),
 		TEXT("Com_LightningTrail02"), reinterpret_cast<CComponent**>(&m_pTrail[1]))))
 	{
@@ -330,7 +351,6 @@ HRESULT CFinisher::Add_Effect()
 		__debugbreak();
 		return E_FAIL;
 	}
-
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Trail_Lightning_Effect"),
 		TEXT("Com_LightningTrail03"), reinterpret_cast<CComponent**>(&m_pTrail[2]))))
 	{
@@ -338,61 +358,12 @@ HRESULT CFinisher::Add_Effect()
 		__debugbreak();
 		return E_FAIL;
 	}
+	
+	return S_OK;
+}
 
-	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Spark_Blue_Effect")
-		, TEXT("Com_Spark_Blue_Effect"), (CComponent**)&m_LightningSparkEffect_Blue)))
-	{
-		__debugbreak();
-		return E_FAIL;
-	}
-	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Spark_Green_Effect")
-		, TEXT("Com_Spark_Green_Effect"), (CComponent**)&m_LightningSparkEffect_Green)))
-	{
-		__debugbreak();
-		return E_FAIL;
-	}
-	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Spark_Red_Effect")
-		, TEXT("Com_Spark_Red_Effect"), (CComponent**)&m_LightningSparkEffect_Red)))
-	{
-		__debugbreak();
-		return E_FAIL;
-	}
-	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Lightning_Line_Effect")
-		, TEXT("Com_Line_Effect"), (CComponent**)&m_LineParticle)))
-	{
-		__debugbreak();
-		return E_FAIL;
-	}
-	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Lightning_Flare_Center_Effect")
-		, TEXT("Com_FlareCenter_Effect"), (CComponent**)&m_FlareCenterParticle)))
-	{
-		__debugbreak();
-		return E_FAIL;
-	}
-	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Lightning_Flare_Spread_Effect")
-		, TEXT("Com_FlareSpread_Effect"), (CComponent**)&m_FlareSpreadParticle)))
-	{
-		__debugbreak();
-		return E_FAIL;
-	}
-	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Lightning_Dust_Effect")
-		, TEXT("Com_Dust_Effect"), (CComponent**)&m_DustParticle)))
-	{
-		__debugbreak();
-		return E_FAIL;
-	}
-	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Wand_Lightning_Effect")
-		, TEXT("Com_Wand_Lightning"), (CComponent**)&m_pWandLightningParticle)))
-	{
-		__debugbreak();
-		return E_FAIL;
-	}
-	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_BasicCast_Wand_Trail_Effect")
-		, TEXT("Com_Wand_Trail"), (CComponent**)&m_pWandTrail)))
-	{
-		__debugbreak();
-		return E_FAIL;
-	}
+HRESULT CFinisher::Add_Effect()
+{
 	return S_OK;
 }
 
@@ -429,17 +400,5 @@ void CFinisher::Free()
 		Safe_Release(m_pTrail[0]);
 		Safe_Release(m_pTrail[1]);
 		Safe_Release(m_pTrail[2]);
-
-		Safe_Release(m_LightningSparkEffect_Blue);
-		Safe_Release(m_LightningSparkEffect_Red);
-		Safe_Release(m_LightningSparkEffect_Green);
-
-		Safe_Release(m_LineParticle);
-		Safe_Release(m_FlareCenterParticle);
-		Safe_Release(m_FlareSpreadParticle);
-		Safe_Release(m_DustParticle);
-
-		Safe_Release(m_pWandLightningParticle);
-		Safe_Release(m_pWandTrail);
 	}
 }

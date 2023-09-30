@@ -264,10 +264,6 @@ void CMagicBall::Ready_CastMagic()
 void CMagicBall::Ready_Dying()
 {
 	//완드 이펙트 제거
-	for (int i = 0; i < m_TrailVec[EFFECT_STATE_WAND].size(); i++)
-	{
-		m_TrailVec[EFFECT_STATE_WAND].data()[i]->Disable();
-	}
 	for (int i = 0; i < m_ParticleVec[EFFECT_STATE_WAND].size(); i++)
 	{
 		m_ParticleVec[EFFECT_STATE_WAND].data()[i]->Disable();
