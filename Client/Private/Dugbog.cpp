@@ -8,7 +8,7 @@
 #include "Action.h"
 #include "MagicBall.h"
 #include "Check_Degree.h"
-#include "Random_AirHit.h"
+#include "RandomChoose.h"
 #include "Random_Select.h"
 #include "Check_Distance.h"
 #include "Selector_Degree.h"
@@ -1361,7 +1361,7 @@ HRESULT CDugbog::Make_Air_Hit(_Inout_ CSelector* pSelector)
 			throw TEXT("pSequence_Air_Heavy is nullptr");
 
 		/* 평타 맞고 공중에 뜨는 액션 */
-		CRandom_AirHit* pRandom_AirHit = dynamic_cast<CRandom_AirHit*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Random_AirHit")));
+		CRandomChoose* pRandom_AirHit = dynamic_cast<CRandomChoose*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_RandomChoose")));
 		if (nullptr == pRandom_AirHit)
 			throw TEXT("pRandom_AirHit is nullptr");
 		CAction* pAction_Splat_Front = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
@@ -1421,7 +1421,7 @@ HRESULT CDugbog::Make_Air_Hit(_Inout_ CSelector* pSelector)
 
 				return false;
 			});
-		pRandom_AirHit->Add_Function_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+		pRandom_AirHit->Add_Change_Condition([&](CBlackBoard* pBlackBoard)->_bool
 			{
 				_bool* pIsHitAttack = { nullptr };
 				if (FAILED(pBlackBoard->Get_Type("isHitAttack", pIsHitAttack)))

@@ -1328,6 +1328,7 @@ void CPlayer::Find_Target_For_Distance()
 	if (nullptr == pLayer)
 	{
 		//MSG_BOX("not MonsterLayer");
+		ENDINSTANCE;
 		return;
 	}
 
@@ -1405,11 +1406,7 @@ void CPlayer::Find_Target_For_Distance()
 			m_pTarget = nullptr;
 		}
 	}
-
-
 	ENDINSTANCE;
-
-
 }
 
 void CPlayer::Shot_Magic_Spell()

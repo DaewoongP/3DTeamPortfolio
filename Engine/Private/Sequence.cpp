@@ -21,12 +21,9 @@ HRESULT CSequence::Tick(const _float& fTimeDelta)
 		return BEHAVIOR_FAIL;
 	}
 
-	HRESULT hr = (*m_iterCurBehavior)->Tick(fTimeDelta);
+	m_ReturnData = (*m_iterCurBehavior)->Tick(fTimeDelta);
 
-	(*m_iterCurBehavior)->Set_ReturnData(hr);
-	m_ReturnData = hr;
-
-	switch (hr)
+	switch (m_ReturnData)
 	{
 	case BEHAVIOR_RUNNING:
 		return BEHAVIOR_RUNNING;
@@ -35,7 +32,7 @@ HRESULT CSequence::Tick(const _float& fTimeDelta)
 		Check_End_Decorators();
 		Check_Success_Decorators();
 
-		(*m_iterCurBehavior)->Reset_Behavior(hr);
+		(*m_iterCurBehavior)->Reset_Behavior(m_ReturnData);
 		++m_iterCurBehavior;
 
 		if (m_iterCurBehavior == m_Behaviors.end())
@@ -50,15 +47,25 @@ HRESULT CSequence::Tick(const _float& fTimeDelta)
 		Check_End_Decorators();
 		Check_Fail_Decorators();
 
-		(*m_iterCurBehavior)->Reset_Behavior(hr);
+		(*m_iterCurBehavior)->Reset_Behavior(m_ReturnData);
 		m_iterCurBehavior = m_Behaviors.begin();
 		return BEHAVIOR_FAIL;
 
-	case BEHAVIOR_ERROR:
-		return BEHAVIOR_ERROR;
+	case BEHAVIOR_END:
+	default:
+		return E_FAIL;
 	}
+}
 
-	return E_FAIL;
+void CSequence::Reset_Behavior(HRESULT result)
+{
+	if (BEHAVIOR_RUNNING == m_ReturnData &&	// 현재 행동이 진행중이었는데
+		BEHAVIOR_RUNNING != result)			// 상위 노드에서 상태가 바뀐경우
+	{
+		(*m_iterCurBehavior)->Reset_Behavior(result);
+		m_iterCurBehavior = m_Behaviors.begin();
+	}
+	m_ReturnData = result;
 }
 
 CSequence* CSequence::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -89,5 +96,5 @@ CSequence* CSequence::Clone(void* pArg)
 
 void CSequence::Free()
 {
-	CBehavior::Free();
+	__super::Free();
 }
