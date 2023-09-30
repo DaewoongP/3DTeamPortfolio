@@ -134,31 +134,12 @@ HRESULT CConfringo::Initialize(void* pArg)
 
 		return E_FAIL;
 	}
-
-	m_pMainTrail->Disable();
-	m_pWandDustEffect->Disable();
-
-	m_pExplosiveEffect[0]->Disable();
-	m_pExplosiveEffect[1]->Disable();
-	m_pExplosiveBigPartEffect->Disable();
-	m_pExplosiveSmallPartEffect->Disable();
-
-	m_pWandTouchEffect->Disable();
-	m_pWandDustEffect->Disable();
-	m_pWandTwinklEffect->Disable();
-	m_pWandTrail->Disable();
-
 	return S_OK;
 }
 
 void CConfringo::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
-	m_pWandTouchEffect->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
-	m_pWandDustEffect->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
-	m_pWandTwinklEffect->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
-	m_pWandTrail->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
 }
 
 void CConfringo::Late_Tick(_float fTimeDelta)
@@ -189,70 +170,51 @@ void CConfringo::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 HRESULT CConfringo::Reset(MAGICBALLINITDESC& InitDesc)
 {
 	__super::Reset(InitDesc);
-	m_fLerpAcc = 0.0f;
-	m_pMainTrail->Disable();
-	m_pWandDustEffect->Disable();
-
-	m_pExplosiveEffect[0]->Disable();
-	m_pExplosiveEffect[1]->Disable();
-	m_pExplosiveBigPartEffect->Disable();
-	m_pExplosiveSmallPartEffect->Disable();
-
-	m_pWandTouchEffect->Disable();
-	m_pWandDustEffect->Disable();
-	m_pWandTwinklEffect->Disable();
-	m_pWandTrail->Disable();
 	return S_OK;
 }
 
 void CConfringo::Ready_Begin()
 {
+	__super::Ready_Begin();
 }
 
 void CConfringo::Ready_DrawMagic()
 {
-	m_pWandTouchEffect->Enable(m_CurrentWeaponMatrix.Translation());
-	m_pWandDustEffect->Enable(m_CurrentWeaponMatrix.Translation());
-	m_pWandTwinklEffect->Enable(m_CurrentWeaponMatrix.Translation());
-	m_pWandTrail->Enable(m_CurrentWeaponMatrix.Translation());
+	__super::Ready_DrawMagic();
 }
 
 void CConfringo::Ready_CastMagic()
 {
-	Ready_SplineSpinMove(m_pMainTrail,_float2(0.2f, 0.20f),0.5f);
-	m_pMainTrail->Enable(m_vStartPosition);
-	m_pWandDustEffect->Enable(m_vStartPosition);
+	Ready_SplineSpinMove(m_TrailVec[EFFECT_STATE_MAIN].data()[0],_float2(0.2f, 0.20f),0.5f);
+	__super::Ready_CastMagic();
 }
 
 void CConfringo::Ready_Dying()
 {
-	m_pExplosiveEffect[0]->Enable(m_pMainTrail->Get_Transform()->Get_Position());
-	m_pExplosiveEffect[1]->Enable(m_pMainTrail->Get_Transform()->Get_Position());
-	m_pExplosiveBigPartEffect->Enable(m_pMainTrail->Get_Transform()->Get_Position());
-	m_pExplosiveSmallPartEffect->Enable(m_pMainTrail->Get_Transform()->Get_Position());
+	__super::Ready_Dying();
 }
 
 void CConfringo::Tick_Begin(_float fTimeDelta)
 {
-	//콘프링고는 비긴 없습니다.
-	Do_MagicBallState_To_Next();
+	__super::Tick_Begin(fTimeDelta);
 }
 
 void CConfringo::Tick_DrawMagic(_float fTimeDelta)
 {
-	
+	__super::Tick_DrawMagic(fTimeDelta);
 }
 
 void CConfringo::Tick_CastMagic(_float fTimeDelta)
 {
+	__super::Tick_CastMagic(fTimeDelta);
 	if (m_fLerpAcc != 1)
 	{
 		m_fLerpAcc += fTimeDelta / m_fLifeTime * m_fTimeScalePerDitance;
 		if (m_fLerpAcc > 1)
 			m_fLerpAcc = 1;
-		m_pMainTrail->Spline_Spin_Move(m_vSplineLerp[0], m_vStartPosition, m_vEndPosition, m_vSplineLerp[1], m_vSpinWeight, m_fSpinSpeed, m_fLerpAcc);
-		m_pWandDustEffect->Get_Transform()->Set_Position(m_pMainTrail->Get_Transform()->Get_Position());
-		m_pTransform->Set_Position(m_pMainTrail->Get_Transform()->Get_Position());
+		m_TrailVec[EFFECT_STATE_MAIN].data()[0]->Spline_Spin_Move(m_vSplineLerp[0], m_vStartPosition, m_vEndPosition, m_vSplineLerp[1], m_vSpinWeight, m_fSpinSpeed, m_fLerpAcc);
+		m_ParticleVec[EFFECT_STATE_MAIN].data()[0]->Get_Transform()->Set_Position(m_TrailVec[EFFECT_STATE_MAIN].data()[0]->Get_Transform()->Get_Position());
+		m_pTransform->Set_Position(m_TrailVec[EFFECT_STATE_MAIN].data()[0]->Get_Transform()->Get_Position());
 	}
 	else 
 	{
@@ -262,11 +224,7 @@ void CConfringo::Tick_CastMagic(_float fTimeDelta)
 
 void CConfringo::Tick_Dying(_float fTimeDelta)
 {
-	if (!m_pExplosiveEffect[0]->IsEnable() &&
-		!m_pExplosiveEffect[1]->IsEnable() &&
-		!m_pExplosiveSmallPartEffect->IsEnable()&&
-		!m_pExplosiveBigPartEffect->IsEnable())
-		Do_MagicBallState_To_Next();
+	__super::Tick_Dying(fTimeDelta);
 }
 
 
@@ -277,72 +235,75 @@ HRESULT CConfringo::Add_Components()
 
 HRESULT CConfringo::Add_Effect()
 {
-	//메인
+	m_TrailVec[EFFECT_STATE_WAND].resize(1);
+	m_ParticleVec[EFFECT_STATE_WAND].resize(3);
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_BasicCast_Wand_Trail_Effect")
+		, TEXT("Com_Wand_Trail_Effect"), reinterpret_cast<CComponent**>(&m_TrailVec[EFFECT_STATE_WAND][0]))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Fire_Torch_Effect")
+		, TEXT("Com_Fire_Torch"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_WAND][0]))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Confringo_Dust_Effect")
+		, TEXT("Com_Dust_Effect"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_WAND][1]))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Default_SphereTrace_Particle")
+		, TEXT("Com_Twinkle_Effect"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_WAND][2]))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	m_TrailVec[EFFECT_STATE_MAIN].resize(1);
+	m_ParticleVec[EFFECT_STATE_MAIN].resize(1);
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Confringo_Trail"),
-		TEXT("Com_Trail"), reinterpret_cast<CComponent**>(&m_pMainTrail))))
+		TEXT("Com_Trail"), reinterpret_cast<CComponent**>(&m_TrailVec[EFFECT_STATE_MAIN][0]))))
 	{
 		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Confringo_Trail)");
 		__debugbreak();
 		return E_FAIL;
 	}
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Confringo_Dust_Effect")
-		, TEXT("Com_Main_Dust"),  reinterpret_cast<CComponent**>(&m_pTrailDustEffect))))
+		, TEXT("Com_Main_Dust"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_MAIN][0]))))
 	{
 		__debugbreak();
 		return E_FAIL;
 	}
 
-	//종료
+	m_ParticleVec[EFFECT_STATE_HIT].resize(4);
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_FireBallDir_Effect")
-		, TEXT("Com_Explosive_Particle01"), reinterpret_cast<CComponent**>(&m_pExplosiveEffect[0]))))
+		, TEXT("Com_Explosive_Particle01"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_HIT][0]))))
 	{
 		__debugbreak();
 		return E_FAIL;
 	}
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_FireBallB_Effect")
-		, TEXT("Com_Explosive_Particle02"), reinterpret_cast<CComponent**>(&m_pExplosiveEffect[1]))))
+		, TEXT("Com_Explosive_Particle02"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_HIT][1]))))
 	{
 		__debugbreak();
 		return E_FAIL;
 	}
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Confringo_Expread_Effect")
-		, TEXT("Com_END_Expread"), reinterpret_cast<CComponent**>(&m_pExplosiveBigPartEffect))))
+		, TEXT("Com_END_Expread"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_HIT][2]))))
 	{
 		__debugbreak();
 		return E_FAIL;
 	}
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Confringo_Small_Expread_Effect")
-		, TEXT("Com_Small_Expread"), reinterpret_cast<CComponent**>(&m_pExplosiveSmallPartEffect))))
+		, TEXT("Com_Small_Expread"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_HIT][3]))))
 	{
 		__debugbreak();
 		return E_FAIL;
 	}
 
-	//완드
-	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Fire_Torch_Effect")
-		, TEXT("Com_Fire_Torch"), reinterpret_cast<CComponent**>(&m_pWandTouchEffect))))
-	{
-		__debugbreak();
-		return E_FAIL;
-	}
-	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Confringo_Dust_Effect")
-		, TEXT("Com_Dust_Effect"), reinterpret_cast<CComponent**>(&m_pWandDustEffect))))
-	{
-		__debugbreak();
-		return E_FAIL;
-	}
-	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Default_SphereTrace_Particle")
-		, TEXT("Com_Twinkle_Effect"), reinterpret_cast<CComponent**>(&m_pWandTwinklEffect))))
-	{
-		__debugbreak();
-		return E_FAIL;
-	}
-	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_BasicCast_Wand_Trail_Effect")
-		, TEXT("Com_Wand_Trail_Effect"), reinterpret_cast<CComponent**>(&m_pWandTrail))))
-	{
-		__debugbreak();
-		return E_FAIL;
-	}
 	return S_OK;
 }
 
@@ -375,23 +336,5 @@ CGameObject* CConfringo::Clone(void* pArg)
 void CConfringo::Free()
 {
 	__super::Free();
-	if (true == m_isCloned)
-	{
-		//메인
-		Safe_Release(m_pMainTrail);
-		Safe_Release(m_pTrailDustEffect);
-		
-		//종료
-		Safe_Release(m_pExplosiveEffect[0]);
-		Safe_Release(m_pExplosiveEffect[1]);
-		Safe_Release(m_pExplosiveBigPartEffect);
-		Safe_Release(m_pExplosiveSmallPartEffect);
-		
-		//완드
-		Safe_Release(m_pWandTouchEffect);
-		Safe_Release(m_pWandDustEffect);
-		Safe_Release(m_pWandTwinklEffect);
-		Safe_Release(m_pWandTrail);
-	}
 }
 

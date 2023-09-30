@@ -27,28 +27,6 @@ public:
 	virtual HRESULT Reset(MAGICBALLINITDESC& InitDesc) override;
 
 private:
-	// 불 트레일 
-	CTrail* m_pMainTrail = { nullptr };
-	// 불 트레일 파티클
-	CParticleSystem* m_pTrailDustEffect = { nullptr };
-	
-	//종료 이펙트
-	CParticleSystem* m_pExplosiveEffect[2] = { nullptr };
-	//종료 큰 불똥
-	CParticleSystem* m_pExplosiveBigPartEffect = { nullptr };
-	//종료 작은 불똥
-	CParticleSystem* m_pExplosiveSmallPartEffect = { nullptr };
-
-	// 완드 불
-	CParticleSystem* m_pWandTouchEffect = { nullptr };
-	// 완드 먼지
-	CParticleSystem* m_pWandDustEffect = { nullptr };
-	// 완드 트윙클
-	CParticleSystem* m_pWandTwinklEffect = { nullptr };
-	// 완드 트레일
-	CTrail*			 m_pWandTrail = { nullptr };
-
-private:
 	virtual void Ready_Begin() override;
 	virtual void Ready_DrawMagic() override;
 	virtual void Ready_CastMagic() override;
