@@ -385,6 +385,12 @@
     <Filter Include="99. Headers">
       <UniqueIdentifier>{91c3e316-2a51-40fe-a9b3-e3fef6e8989d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\09. Item">
+      <UniqueIdentifier>{5c3eefb3-c8a9-4a27-96cf-0e1d6a672946}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Item\01. RecoveryPotion">
+      <UniqueIdentifier>{c07071fe-c006-4bca-b390-e403b214f1e9}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\08. Inventory\Item">
       <UniqueIdentifier>{a8a056c1-627a-4e55-9a40-91512c0110cc}</UniqueIdentifier>
     </Filter>
@@ -801,6 +807,9 @@
     <ClInclude Include="..\Public\UI_Group_Quest.h">
       <Filter>02. GameObject\04. UI\UI_Group</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\RecoveryPotion.h">
+      <Filter>02. GameObject\09. Item\01. RecoveryPotion</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\MPBall.h">
       <Filter>02. GameObject\08. Inventory\Item\MPBall</Filter>
     </ClInclude>
@@ -1177,6 +1186,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_Group_Quest.cpp">
       <Filter>02. GameObject\04. UI\UI_Group</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\RecoveryPotion.cpp">
+      <Filter>02. GameObject\09. Item\01. RecoveryPotion</Filter>
     </ClCompile>
     <ClCompile Include="MPBall.cpp">
       <Filter>02. GameObject\08. Inventory\Item\MPBall</Filter>

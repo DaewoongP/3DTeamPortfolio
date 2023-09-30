@@ -20,6 +20,8 @@
 
 #include "UI_Group_Skill.h"
 
+#include "RecoveryPotion.h"
+
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
@@ -417,9 +419,7 @@ HRESULT CPlayer::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"),
 		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
 	{
-		MSG_BOX("Failed CPlayer Add_Component : (Com_Renderer)");
 		__debugbreak();
-
 		return E_FAIL;
 	}
 
@@ -427,9 +427,7 @@ HRESULT CPlayer::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
 	{
-		MSG_BOX("Failed CPlayer Add_Component : (Com_Shader)");
 		__debugbreak();
-
 		return E_FAIL;
 	}
 
@@ -437,9 +435,7 @@ HRESULT CPlayer::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_ShadowAnimMesh"),
 		TEXT("Com_ShadowShader"), reinterpret_cast<CComponent**>(&m_pShadowShader))))
 	{
-		MSG_BOX("Failed CPlayer Add_Component : (Com_ShadowShader)");
 		__debugbreak();
-
 		return E_FAIL;
 	}
 
@@ -447,9 +443,7 @@ HRESULT CPlayer::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Model_CustomModel_Player"),
 		TEXT("Com_Model_CustomModel_Player"), reinterpret_cast<CComponent**>(&m_pCustomModel))))
 	{
-		MSG_BOX("Failed CPlayer Add_Component : (Com_Model_CustomModel_Player)");
 		__debugbreak();
-
 		return E_FAIL;
 	}
 
@@ -465,9 +459,7 @@ HRESULT CPlayer::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_StateContext"),
 		TEXT("Com_StateContext"), reinterpret_cast<CComponent**>(&m_pStateContext), &StateContextDesc)))
 	{
-		MSG_BOX("Failed CPlayer Add_Component : (Com_StateContext)");
 		__debugbreak();
-
 		return E_FAIL;
 	}
 
@@ -488,9 +480,7 @@ HRESULT CPlayer::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_MagicSlot"),
 		TEXT("Com_MagicSlot"), reinterpret_cast<CComponent**>(&m_pMagicSlot))))
 	{
-		MSG_BOX("Failed CPlayer Add_Component : (Com_MagicSlot)");
 		__debugbreak();
-
 		return E_FAIL;
 	}
 
@@ -518,9 +508,7 @@ HRESULT CPlayer::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
 		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
 	{
-		MSG_BOX("Failed CPlayer Add_Component : (Com_RigidBody)");
 		__debugbreak();
-
 		return E_FAIL;
 	}
 
@@ -532,9 +520,7 @@ HRESULT CPlayer::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Player_Information"),
 		TEXT("Com_Player_Information"), reinterpret_cast<CComponent**>(&m_pPlayer_Information))))
 	{
-		MSG_BOX("Failed CPlayer Add_Component : (Com_Player_Information)");
 		__debugbreak();
-
 		return E_FAIL;
 	}
 
@@ -542,13 +528,17 @@ HRESULT CPlayer::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Skill"),
 		TEXT("Com_UI_Group_Skill_1"), reinterpret_cast<CComponent**>(&m_UI_Group_Skill_01))))
 	{
-		MSG_BOX("Failed CPlayer Add_Component : (Com_UI_Group_Skill_1)");
 		__debugbreak();
-
 		return E_FAIL;
 	}
 
-
+	/* Com_UI_Group_Skill_1 */
+	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_RecoveryPotion"),
+	//	TEXT("Com_RecoveryPotion"), reinterpret_cast<CComponent**>(&m_pRecoveryPotion))))
+	//{
+	//	__debugbreak();
+	//	return E_FAIL;
+	//}
 
 	return S_OK;
 }
@@ -702,7 +692,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 	if (pGameInstance->Get_DIKeyState(DIK_RIGHT))
 	{
-		//m_pTransform->Turn(_float3(0.f, 1.f, 0.f), fTimeDelta);
+		////m_pTransform->Turn(_float3(0.f, 1.f, 0.f), fTimeDelta);
 		m_pTransform->Go_Right(fTimeDelta);
 	}
 #endif //_DEBUG
@@ -717,6 +707,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_Dust01"), m_pTransform->Get_Position());
 		CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_Dust02"), m_pTransform->Get_Position());
 		CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_RockChunksRough"), m_pTransform->Get_Position());
+		m_pRecoveryPotion->Use();
 	}
 
 	ENDINSTANCE;
@@ -1606,7 +1597,7 @@ void CPlayer::Free()
 		Safe_Release(m_pRigidBody);
 		Safe_Release(m_pPlayer_Information);
 		Safe_Release(m_UI_Group_Skill_01);
-
+		Safe_Release(m_pRecoveryPotion);
 		
 		if (nullptr != m_pTargetTransform)
 		{

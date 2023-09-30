@@ -30,6 +30,12 @@
 
 #include "Player_Information.h"
 
+#pragma region Items
+
+#include "RecoveryPotion.h"
+
+#pragma endregion
+
 
 CMain3_Loader::CMain3_Loader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice(pDevice)
@@ -269,6 +275,11 @@ HRESULT CMain3_Loader::Loading_For_Cliffside()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Professor_Fig"),
 			CProfessor_Fig::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Professor_Fig");
+
+		/* For.Prototype_GameObject_Professor_Fig */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_RecoveryPotion"),
+			CRecoveryPotion::Create(m_pDevice, m_pContext, LEVEL_STATIC))))
+			throw TEXT("Prototype_GameObject_RecoveryPotion");
 	}
 	catch (const _tchar* pErrorTag)
 	{

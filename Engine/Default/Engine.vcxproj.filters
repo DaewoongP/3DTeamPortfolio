@@ -427,6 +427,9 @@
     <Filter Include="01. Utility\03. Components\02. Renderer\Shadow\Shader">
       <UniqueIdentifier>{d6e48222-790a-42b5-a30b-71e187ad6d29}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\03. Components\11. Status\03. CoolTime">
+      <UniqueIdentifier>{b4e12e5c-1eb3-449c-9dbf-b84389d6d718}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -849,6 +852,9 @@
     <ClInclude Include="..\Public\LoadingScene.h">
       <Filter>01. Utility\03. Components\02. Renderer\Loading</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\CoolTime.h">
+      <Filter>01. Utility\03. Components\11. Status\03. CoolTime</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -1237,6 +1243,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Model_Instance.cpp">
       <Filter>01. Utility\03. Components\17. StaticMeshInstance\Model_Instance</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CoolTime.cpp">
+      <Filter>01. Utility\03. Components\11. Status\03. CoolTime</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
