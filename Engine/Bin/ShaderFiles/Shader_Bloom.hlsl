@@ -110,7 +110,7 @@ PS_OUT PS_MAIN_BLURX(PS_IN_POSTEX In)
     {
 
         UV = In.vTexUV + float2(dx * i, 0.f);
-        vector SSAO = g_DoBlurTexture.Sample(BlurSampler, UV);
+        vector SSAO = g_DoBlurTexture.Sample(LinearSampler_Clamp, UV);
         
         Out.vColor += BlurWeights[11 + i] * SSAO;
     }
@@ -129,7 +129,7 @@ PS_OUT PS_MAIN_BLURY(PS_IN_POSTEX In)
     for (int i = -11; i < 11; ++i)
     {
         UV = In.vTexUV + float2(0, dy * i);
-        vector SSAO = g_DoBlurTexture.Sample(BlurSampler, UV);
+        vector SSAO = g_DoBlurTexture.Sample(LinearSampler_Clamp, UV);
         Out.vColor += BlurWeights[11 + i] * SSAO;
     }
     Out.vColor /= total;
@@ -145,8 +145,8 @@ PS_OUT PS_MAIN_BLOOM(PS_IN_POSTEX In)
     PS_OUT Out = (PS_OUT) 0;
 
     
-    vector vBloom = g_OriTexture.Sample(BloomSampler, In.vTexUV); //vBloom은 하얀부분을뽑아낼 텍스쳐
-    vector vSpecular = g_WhiteBloomTexture.Sample(BloomSampler, In.vTexUV);
+    vector vBloom = g_OriTexture.Sample(PointSampler_Clamp, In.vTexUV); //vBloom은 하얀부분을뽑아낼 텍스쳐
+    vector vSpecular = g_WhiteBloomTexture.Sample(PointSampler_Clamp, In.vTexUV);
     vBloom = vBloom * vSpecular;
     
     float Brigtness = dot(vBloom.rgb, float3(0.2126f, 0.7152f, 0.0722f));
@@ -168,9 +168,9 @@ PS_OUT PS_MAIN_BLOOM_AFTER(PS_IN_POSTEX In)
 {
     PS_OUT Out = (PS_OUT) 0;
     
-    vector vWhiteBloom = g_WhiteBloomTexture.Sample(BloomSampler, In.vTexUV); //하얀부분을뽑아낼 텍스쳐
-    vector vBloomColor = g_DoBlurTexture.Sample(BloomSampler, In.vTexUV); //하얀부분을 블러처리
-    vector vBloomOriTex = g_OriTexture.Sample(BloomSampler, In.vTexUV); //최초의 이미지
+    vector vWhiteBloom = g_WhiteBloomTexture.Sample(PointSampler_Clamp, In.vTexUV); //하얀부분을뽑아낼 텍스쳐
+    vector vBloomColor = g_DoBlurTexture.Sample(PointSampler_Clamp, In.vTexUV); //하얀부분을 블러처리
+    vector vBloomOriTex = g_OriTexture.Sample(PointSampler_Clamp, In.vTexUV); //최초의 이미지
     
     vector vBloom = pow(pow(abs(vBloomColor), 2.2f) + pow(abs(vBloomOriTex), 2.2f), 1.f / 2.2f);
     

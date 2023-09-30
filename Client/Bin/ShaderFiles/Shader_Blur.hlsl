@@ -1,7 +1,5 @@
 #include "Shader_EngineHeader.hlsli"
-
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
-
 texture2D g_Texture;
 
 float3 g_Ran[13] =
@@ -75,7 +73,7 @@ PS_OUT PS_MAIN_BLURX(PS_IN In)
     for (int i = -6; i < 6; ++i)
     {
         UV = In.vTexUV + float2(dx * i, 0.f);
-        vector Blur = g_Texture.Sample(BlurSampler, UV);
+        vector Blur = g_Texture.Sample(LinearSampler_Clamp, UV);
         if (Blur.x > 0.9f)
         {
             Out.vColor = float4(1.f, 1.f, 1.f, 1.f);
@@ -98,7 +96,7 @@ PS_OUT PS_MAIN_BLURY(PS_IN In)
     for (int i = -6; i < 6; ++i)
     {
         UV = In.vTexUV + float2(0, dy * i);
-        vector Blur = g_Texture.Sample(BlurSampler, UV);
+        vector Blur = g_Texture.Sample(LinearSampler_Clamp, UV);
         Out.vColor += BlurWeights[6 + i] * Blur;
     }
 

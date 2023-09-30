@@ -209,13 +209,13 @@ PS_OUT PS_MAIN_BLURX(PS_IN In)
     
     float dx = 1.0f / 1280.f;
     float2 UV = 0;
-    float4 Color = g_Texture.Sample(BlurSampler, In.vTexUV);
+    float4 Color = g_Texture.Sample(LinearSampler_Clamp, In.vTexUV);
    
     {
         for (int i = -6; i < 6; ++i)
         {
             UV = In.vTexUV + float2(dx * i, 0.f);
-            Color = g_Texture.Sample(BlurSampler, UV);
+            Color = g_Texture.Sample(LinearSampler_Clamp, UV);
         
             Out.vColor += BlurWeights[6 + i] * Color;
         }
@@ -244,7 +244,7 @@ PS_OUT PS_MAIN_BLURX(PS_IN In)
         for (int i = -6; i < 6; ++i)
         {
             UV = In.vTexUV + float2(0, dy * i);
-            vector SSAO = g_Texture.Sample(BlurSampler, UV);
+            vector SSAO = g_Texture.Sample(LinearSampler_Clamp, UV);
             Out.vColor += BlurWeights[6 + i] * SSAO;
         }
         Out.vColor /= total6;
