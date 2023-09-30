@@ -42,7 +42,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <EnableUnitySupport>true</EnableUnitySupport>
   </PropertyGroup>
@@ -169,6 +169,7 @@
     <ClInclude Include="..\Public\Enemy.h" />
     <ClInclude Include="..\public\Game_Manager.h" />
     <ClInclude Include="..\Public\Lumos.h" />
+    <ClInclude Include="..\Public\AccPotion.h" />
     <ClInclude Include="..\Public\MPBall.h" />
     <ClInclude Include="..\Public\Ncendio.h" />
     <ClInclude Include="..\Public\Inventory.h" />
@@ -182,6 +183,7 @@
     <ClInclude Include="..\public\Level_GreatHall.h" />
     <ClInclude Include="..\public\Level_Smith.h" />
     <ClInclude Include="..\public\Level_Vault.h" />
+    <ClInclude Include="..\Public\PowerPotion.h" />
     <ClInclude Include="..\Public\ProtegoState.h" />
     <ClInclude Include="..\Public\MapEffect.h" />
     <ClInclude Include="..\Public\Menu_Gear.h" />
@@ -332,6 +334,7 @@
     <ClCompile Include="..\Private\Enemy.cpp" />
     <ClCompile Include="..\private\Game_Manager.cpp" />
     <ClCompile Include="..\Private\Lumos.cpp" />
+    <ClCompile Include="..\Private\AccPotion.cpp" />
     <ClCompile Include="..\Private\Ncendio.cpp" />
     <ClCompile Include="..\Private\Inventory.cpp" />
     <ClCompile Include="..\Private\Check_Degree.cpp" />
@@ -343,6 +346,7 @@
     <ClCompile Include="..\private\Level_GreatHall.cpp" />
     <ClCompile Include="..\private\Level_Smith.cpp" />
     <ClCompile Include="..\private\Level_Vault.cpp" />
+    <ClCompile Include="..\Private\PowerPotion.cpp" />
     <ClCompile Include="..\Private\ProtegoState.cpp" />
     <ClCompile Include="..\Private\MapEffect.cpp" />
     <ClCompile Include="..\Private\Menu_Gear.cpp" />

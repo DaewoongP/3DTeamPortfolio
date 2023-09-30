@@ -30,7 +30,6 @@ HRESULT CPlayer_Information::Initialize(void* pArg)
 	}
 
 
-
 	m_vecItemCount.resize(PLAYER_ITEM_END);
 
 	return S_OK;

@@ -25,6 +25,11 @@ private:
 	virtual ~CCoolTime() = default;
 
 public:
+	void Set_Time_Accel(_bool isAccel) { m_isAccelerlator = isAccel; }
+
+
+
+public:
 	virtual HRESULT Initialize_Prototype() override { return S_OK; }
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float _fTimeDelta) override;
@@ -35,6 +40,8 @@ public:
 
 private:
 	_bool m_isEnable = { false };
+	_bool m_isAccelerlator = { false };
+	_float m_fDrugTime = { 0.f };
 	_float m_fMaxCoolTime = { 0.f };
 	_float m_fCurCoolTime = { 0.f };
 

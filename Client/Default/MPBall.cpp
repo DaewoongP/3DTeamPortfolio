@@ -10,18 +10,24 @@ CMPBall::CMPBall(const CMPBall& rhs) :CGameObject(rhs)
 {
 }
 
-HRESULT CMPBall::Initialize_Prototype()
+HRESULT CMPBall::Initialize_Prototype(_uint iLevel)
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
 	
-	m_iLevel ;
+	m_iLevel = iLevel ;
 
 
 	BEGININSTANCE;
-	
-
-
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_MagicTrail_BasicCast_Effect")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_MagicTrail_BasicCast_Effect")
+			, CTrail::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/BasicCast/BasicCast.trail"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
 
 
 	ENDINSTANCE;
@@ -56,6 +62,15 @@ void CMPBall::Tick(_float fTimeDelta)
 void CMPBall::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
+}
+
+void CMPBall::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
+{
+	if (wcsstr(CollisionEventDesc.pOtherCollisionTag, TEXT("Player")) != nullptr)
+	{
+		//Set_MagicBallState(MAGICBALL_STATE_DYING);
+	}
+	__super::OnCollisionEnter(CollisionEventDesc);
 }
 
 HRESULT CMPBall::Add_Components()
@@ -109,11 +124,11 @@ HRESULT CMPBall::Add_RigidBody()
 	return S_OK;
 }
 
-CMPBall* CMPBall::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CMPBall* CMPBall::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,_uint iLevel)
 {
 	CMPBall* pInstance = New CMPBall(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize_Prototype()))
+	if (FAILED(pInstance->Initialize_Prototype(iLevel)))
 	{
 		MSG_BOX("Failed to Created CMPBall");
 		Safe_Release(pInstance);

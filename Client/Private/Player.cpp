@@ -21,6 +21,7 @@
 #include "UI_Group_Skill.h"
 
 #include "RecoveryPotion.h"
+#include"AccPotion.h"
 
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -136,6 +137,11 @@ void CPlayer::Tick(_float fTimeDelta)
 		m_pPlayer_Information->fix_HP(-10);
 		m_pPlayer_Information->Using_Fnisher();
 	}
+	if (pGameInstance->Get_DIKeyState(DIK_F5, CInput_Device::KEY_DOWN))
+	{
+		m_pAccPotion->Use();
+	}
+
 
 	ENDINSTANCE;
 
@@ -539,7 +545,12 @@ HRESULT CPlayer::Add_Components()
 	//	__debugbreak();
 	//	return E_FAIL;
 	//}
-
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_AccPotion"),
+		TEXT("Com_AccPotion"), reinterpret_cast<CComponent**>(&m_pAccPotion))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
 	return S_OK;
 }
 

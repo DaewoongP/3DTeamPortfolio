@@ -29,10 +29,13 @@
 
 
 #include "Player_Information.h"
+#include"CoolTime.h"
 
 #pragma region Items
 
 #include "RecoveryPotion.h"
+#include"AccPotion.h"
+
 
 #pragma endregion
 
@@ -262,6 +265,11 @@ HRESULT CMain3_Loader::Loading_For_Cliffside()
 			CPlayer_Information::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Player_Information");
 
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_CoolTime"),
+			CCoolTime::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_CoolTime");
+
+
 #pragma endregion
 
 
@@ -280,6 +288,11 @@ HRESULT CMain3_Loader::Loading_For_Cliffside()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_RecoveryPotion"),
 			CRecoveryPotion::Create(m_pDevice, m_pContext, LEVEL_STATIC))))
 			throw TEXT("Prototype_GameObject_RecoveryPotion");
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_AccPotion"),
+			CAccPotion::Create(m_pDevice, m_pContext, LEVEL_STATIC))))
+			throw TEXT("Prototype_GameObject_AccPotion");
+
+
 	}
 	catch (const _tchar* pErrorTag)
 	{
