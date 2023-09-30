@@ -289,9 +289,6 @@
     <Filter Include="02. GameObject\03. MapObject\MapObject_Ins">
       <UniqueIdentifier>{f13444ba-2393-4bce-95bb-afa19568f604}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\03. MapObject\MapEffect">
-      <UniqueIdentifier>{3d2f0c96-2d67-4229-a119-7e41208b82b3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\04. UI">
       <UniqueIdentifier>{66149634-b2ec-4e71-ba47-a1cf371175b5}</UniqueIdentifier>
     </Filter>
@@ -723,9 +720,6 @@
     <ClInclude Include="..\Public\HitState.h">
       <Filter>02. GameObject\01. Player\01. StateMachine\07. Hit</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\MapEffect.h">
-      <Filter>02. GameObject\03. MapObject\MapEffect</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Player_Information.h">
       <Filter>02. GameObject\01. Player\03. PlayerInformation</Filter>
     </ClInclude>
@@ -1111,9 +1105,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\HitState.cpp">
       <Filter>02. GameObject\01. Player\01. StateMachine\07. Hit</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\MapEffect.cpp">
-      <Filter>02. GameObject\03. MapObject\MapEffect</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Player_Information.cpp">
       <Filter>02. GameObject\01. Player\03. PlayerInformation</Filter>

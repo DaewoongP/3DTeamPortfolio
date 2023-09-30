@@ -183,7 +183,6 @@
     <ClInclude Include="..\public\Level_Smith.h" />
     <ClInclude Include="..\public\Level_Vault.h" />
     <ClInclude Include="..\Public\ProtegoState.h" />
-    <ClInclude Include="..\Public\MapEffect.h" />
     <ClInclude Include="..\Public\Menu_Gear.h" />
     <ClInclude Include="..\Public\HardLandState.h" />
     <ClInclude Include="..\Public\JumpState.h" />
@@ -344,7 +343,6 @@
     <ClCompile Include="..\private\Level_Smith.cpp" />
     <ClCompile Include="..\private\Level_Vault.cpp" />
     <ClCompile Include="..\Private\ProtegoState.cpp" />
-    <ClCompile Include="..\Private\MapEffect.cpp" />
     <ClCompile Include="..\Private\Menu_Gear.cpp" />
     <ClCompile Include="..\Private\HardLandState.cpp" />
     <ClCompile Include="..\Private\JumpState.cpp" />
