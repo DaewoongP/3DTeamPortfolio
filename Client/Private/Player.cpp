@@ -407,7 +407,7 @@ void CPlayer::On_Maigc_Throw_Data(void* data) const
 {
 	if (static_cast<CMagicBall::COLLSIONREQUESTDESC*>(data)->eMagicTag == LUMOS)
 	{
-		//m_pFrncSpellToggle = static_cast<CMagicBall::COLLSIONREQUESTDESC*>(data)->Action;
+		m_pFrncSpellToggle = static_cast<CMagicBall::COLLSIONREQUESTDESC*>(data)->Action;
 	}
 }
 

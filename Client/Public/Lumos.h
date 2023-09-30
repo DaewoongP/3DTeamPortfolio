@@ -30,11 +30,6 @@ public:
 	void	Lumos_Tick(_float3 vPos, _float fTimeDelta);
 
 private:
-	// 글로우 이펙트
-	CParticleSystem*			m_pWandGlowEffect = { nullptr };
-	// 글로우 빨강 이펙트
-	CParticleSystem*			m_pWandGlowRedEffect= { nullptr };
-private:
 	_float				m_fEndTimer = { 0.3f };
 
 private:

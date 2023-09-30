@@ -240,6 +240,15 @@ HRESULT CLevel_Cliffside::Ready_Layer_Monster(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
+	//개철민이 달아놓은 주석임. 나중에 삭제해야함.
+	_float4x4 Matrix = XMMatrixTranslation(40.f, 10.f, 60.f);
+	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Golem_CombatGrunt"), pLayerTag, TEXT("GameObject_Golem_Combat"), &Matrix)))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Golem_Combat)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
 	/*if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Armored_Troll"), pLayerTag, TEXT("GameObject_Armored_Troll"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Armored_Troll)");

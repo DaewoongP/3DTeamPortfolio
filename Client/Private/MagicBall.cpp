@@ -315,7 +315,7 @@ void CMagicBall::Tick_DrawMagic(_float fTimeDelta)
 	{
 		m_TrailVec[EFFECT_STATE_WAND].data()[i]->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
 	}
-	for (int i = 0; i < m_TrailVec[EFFECT_STATE_WAND].size(); i++)
+	for (int i = 0; i < m_ParticleVec[EFFECT_STATE_WAND].size(); i++)
 	{
 		m_ParticleVec[EFFECT_STATE_WAND].data()[i]->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
 	}
@@ -328,7 +328,7 @@ void CMagicBall::Tick_CastMagic(_float fTimeDelta)
 	{
 		m_TrailVec[EFFECT_STATE_WAND].data()[i]->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
 	}
-	for (int i = 0; i < m_TrailVec[EFFECT_STATE_WAND].size(); i++)
+	for (int i = 0; i < m_ParticleVec[EFFECT_STATE_WAND].size(); i++)
 	{
 		m_ParticleVec[EFFECT_STATE_WAND].data()[i]->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
 	}
