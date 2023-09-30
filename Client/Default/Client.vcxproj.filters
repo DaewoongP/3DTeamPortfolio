@@ -394,6 +394,12 @@
     <Filter Include="02. GameObject\08. Inventory\Item\MPBall">
       <UniqueIdentifier>{5eb7cb7b-6f9e-420b-bad4-8d44bfc40af4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Interactable_Obj">
+      <UniqueIdentifier>{d7ccccd1-f98f-4c43-b7c6-44c19a20a834}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\Treasure_Chest">
+      <UniqueIdentifier>{29d2298d-e409-4ddd-ae89-545341414500}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -807,6 +813,9 @@
     <ClInclude Include="..\Public\MPBall.h">
       <Filter>02. GameObject\08. Inventory\Item\MPBall</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Treasure_Chest.h">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Treasure_Chest</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1186,6 +1195,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Magic.cpp">
       <Filter>05. Magic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Treasure_Chest.cpp">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Treasure_Chest</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

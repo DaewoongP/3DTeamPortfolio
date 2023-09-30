@@ -12,6 +12,8 @@
 #include "MapObject.h"
 #include "MapObject_Ins.h"
 
+#include "Treasure_Chest.h"
+
 CMain1_Loader::CMain1_Loader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice(pDevice)
 	, m_pContext(pContext)
@@ -272,6 +274,11 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath, LEVELID 
 	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_MapObject"),
 		CMapObject::Create(m_pDevice, m_pContext))))
 		throw TEXT("Prototype_GameObject_MapObject");
+
+	/* For.Prototype_GameObject_Treasure_Chest */
+	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_Treasure_Chest"),
+		CTreasure_Chest::Create(m_pDevice, m_pContext))))
+		throw TEXT("Prototype_GameObject_Treasure_Chest");
 
 	HANDLE hFile = CreateFile(pMapObjectPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 

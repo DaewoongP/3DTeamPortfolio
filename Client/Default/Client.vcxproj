@@ -198,6 +198,7 @@
     <ClInclude Include="..\public\RecoveryPotion.h" />
     <ClInclude Include="..\Public\Sequence_AirHit.h" />
     <ClInclude Include="..\Public\StandingState.h" />
+    <ClInclude Include="..\Public\Treasure_Chest.h" />
     <ClInclude Include="..\public\Trigger_Vault.h" />
     <ClInclude Include="..\Public\UI_Font.h" />
     <ClInclude Include="..\Public\UI_Group_Cursor.h" />
@@ -358,6 +359,7 @@
     <ClCompile Include="..\private\RecoveryPotion.cpp" />
     <ClCompile Include="..\Private\Sequence_AirHit.cpp" />
     <ClCompile Include="..\Private\StandingState.cpp" />
+    <ClCompile Include="..\Private\Treasure_Chest.cpp" />
     <ClCompile Include="..\private\Trigger_Vault.cpp" />
     <ClCompile Include="..\Private\UI_Font.cpp" />
     <ClCompile Include="..\Private\UI_Group_Cursor.cpp" />
