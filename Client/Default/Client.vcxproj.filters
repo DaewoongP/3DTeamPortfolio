@@ -738,12 +738,6 @@
     <ClInclude Include="..\Public\Client_Enum.h">
       <Filter>99. Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Check_Degree.h">
-      <Filter>03. Behaviors\05. Function</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Check_Distance.h">
-      <Filter>03. Behaviors\05. Function</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\LookAt.h">
       <Filter>03. Behaviors\03. Movement</Filter>
     </ClInclude>
@@ -804,6 +798,8 @@
     <ClInclude Include="..\Public\MPBall.h">
       <Filter>02. GameObject\08. Inventory\Item\MPBall</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Check_Degree.h" />
+    <ClInclude Include="..\Public\Check_Distance.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1118,12 +1114,6 @@
     <ClCompile Include="..\private\Level_Smith.cpp">
       <Filter>01. Levels\04. Smith</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Check_Degree.cpp">
-      <Filter>03. Behaviors\05. Function</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Check_Distance.cpp">
-      <Filter>03. Behaviors\05. Function</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\LookAt.cpp">
       <Filter>03. Behaviors\03. Movement</Filter>
     </ClCompile>
@@ -1175,11 +1165,13 @@
     <ClCompile Include="..\private\RecoveryPotion.cpp">
       <Filter>02. GameObject\09. Item\01. RecoveryPotion</Filter>
     </ClCompile>
-    <ClCompile Include="MPBall.cpp">
-      <Filter>02. GameObject\08. Inventory\Item\MPBall</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Magic.cpp">
       <Filter>05. Magic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Check_Degree.cpp" />
+    <ClCompile Include="..\Private\Check_Distance.cpp" />
+    <ClCompile Include="..\Private\MPBall.cpp">
+      <Filter>02. GameObject\08. Inventory\Item\MPBall</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
