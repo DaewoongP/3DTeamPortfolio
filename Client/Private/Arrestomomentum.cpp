@@ -5,17 +5,17 @@
 #include "Trail.h"
 #include "ParticleSystem.h"
 
-Arrestomomentum::Arrestomomentum(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CArrestomomentum::CArrestomomentum(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CMagicBall(pDevice, pContext)
 {
 }
 
-Arrestomomentum::Arrestomomentum(const Arrestomomentum& rhs)
+CArrestomomentum::CArrestomomentum(const CArrestomomentum& rhs)
 	: CMagicBall(rhs)
 {
 }
 
-HRESULT Arrestomomentum::Initialize_Prototype(_uint iLevel)
+HRESULT CArrestomomentum::Initialize_Prototype(_uint iLevel)
 {
 	if (FAILED(__super::Initialize_Prototype(iLevel)))
 		return E_FAIL;
@@ -80,7 +80,7 @@ HRESULT Arrestomomentum::Initialize_Prototype(_uint iLevel)
 	return S_OK;
 }
 
-HRESULT Arrestomomentum::Initialize(void* pArg)
+HRESULT CArrestomomentum::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 	{
@@ -98,17 +98,17 @@ HRESULT Arrestomomentum::Initialize(void* pArg)
 	return S_OK;
 }
 
-void Arrestomomentum::Tick(_float fTimeDelta)
+void CArrestomomentum::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 }
 
-void Arrestomomentum::Late_Tick(_float fTimeDelta)
+void CArrestomomentum::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 }
 
-void Arrestomomentum::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
+void CArrestomomentum::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
 	__super::OnCollisionEnter(CollisionEventDesc);
 	//몹이랑 충돌했으면?
@@ -118,87 +118,113 @@ void Arrestomomentum::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 	}
 }
 
-void Arrestomomentum::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)
+void CArrestomomentum::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)
 {
 	__super::OnCollisionStay(CollisionEventDesc);
 }
 
-void Arrestomomentum::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
+void CArrestomomentum::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 {
 	__super::OnCollisionExit(CollisionEventDesc);
 }
 
-HRESULT Arrestomomentum::Reset(MAGICBALLINITDESC& InitDesc)
+HRESULT CArrestomomentum::Reset(MAGICBALLINITDESC& InitDesc)
 {
 	__super::Reset(InitDesc);
 	return S_OK;
 }
 
-void Arrestomomentum::Ready_Begin()
+void CArrestomomentum::Ready_Begin()
 {
 	__super::Ready_Begin();
 }
 
-void Arrestomomentum::Ready_DrawMagic()
+void CArrestomomentum::Ready_DrawMagic()
 {
 	__super::Ready_DrawMagic();
 }
 
-void Arrestomomentum::Ready_CastMagic()
+void CArrestomomentum::Ready_CastMagic()
 {
-	m_pTransform->Set_Position(m_vEndPosition);
+	
 	__super::Ready_CastMagic();
 }
 
-void Arrestomomentum::Ready_Dying()
+void CArrestomomentum::Ready_Dying()
 {
 	__super::Ready_Dying();
 }
 
-void Arrestomomentum::Tick_Begin(_float fTimeDelta)
+void CArrestomomentum::Tick_Begin(_float fTimeDelta)
 {
 	__super::Tick_Begin(fTimeDelta);
 }
 
-void Arrestomomentum::Tick_DrawMagic(_float fTimeDelta)
+void CArrestomomentum::Tick_DrawMagic(_float fTimeDelta)
 {
 	__super::Tick_DrawMagic(fTimeDelta);
 }
 
-void Arrestomomentum::Tick_CastMagic(_float fTimeDelta)
+void CArrestomomentum::Tick_CastMagic(_float fTimeDelta)
 {
-	__super::Tick_CastMagic(fTimeDelta);
+	_float distance = 30.0f;
+	if (m_pTarget == nullptr)
+	{
+		BEGININSTANCE;
+		_float4 vMouseOrigin, vMouseDirection;
+		_float3 vMouseWorldPickPosition, vDirStartToPicked;
+		//마우스 피킹지점 찾기
+		if (FAILED(pGameInstance->Get_WorldMouseRay(m_pContext, g_hWnd, &vMouseOrigin, &vMouseDirection)))
+		{
+			Safe_Release(pGameInstance);
+			ENDINSTANCE;
+			return;
+		}
+		ENDINSTANCE;
+
+		//가상의 지점으로 레이를 쏨.
+		vMouseWorldPickPosition = vMouseOrigin.xyz() + vMouseDirection.xyz() * 100;
+		//방향을 구함
+		vDirStartToPicked = (vMouseWorldPickPosition - m_vStartPosition);
+		vDirStartToPicked.Normalize();
+		//목표지점
+		m_vEndPosition = m_vStartPosition + vDirStartToPicked * distance;
+	}
+
+	m_pTransform->Set_Position(m_vEndPosition);
+	Do_MagicBallState_To_Next();
 }
 
-void Arrestomomentum::Tick_Dying(_float fTimeDelta)
+void CArrestomomentum::Tick_Dying(_float fTimeDelta)
 {
 	__super::Tick_Dying(fTimeDelta);
 }
 
-HRESULT Arrestomomentum::Add_Components()
+HRESULT CArrestomomentum::Add_Components()
 {
 	m_TrailVec[EFFECT_STATE_WAND].resize(1);
-	m_ParticleVec[EFFECT_STATE_WAND].resize(3);
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_BasicCast_Wand_Trail_Effect")
 		, TEXT("Com_Wand_Trail"), (CComponent**)&m_TrailVec[EFFECT_STATE_WAND][0])))
 	{
 		__debugbreak();
 		return E_FAIL;
 	}
+
+	m_ParticleVec[EFFECT_STATE_MAIN].resize(3);
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Arres_Wand_Flare_Center")
-		, TEXT("Com_Wand_CenterFlare"), (CComponent**)&m_ParticleVec[EFFECT_STATE_WAND][0])))
+		, TEXT("Com_Wand_CenterFlare"), (CComponent**)&m_ParticleVec[EFFECT_STATE_MAIN][0])))
 	{
 		__debugbreak();
 		return E_FAIL;
 	}
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Arres_Wand_Flare_Horizontal")
-		, TEXT("Com_Wand_HorizontalFlare"), (CComponent**)&m_ParticleVec[EFFECT_STATE_WAND][1])))
+		, TEXT("Com_Wand_HorizontalFlare"), (CComponent**)&m_ParticleVec[EFFECT_STATE_MAIN][1])))
 	{
 		__debugbreak();
 		return E_FAIL;
 	}
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Arres_Wand_Spark")
-		, TEXT("Com_Wand_Spark"), (CComponent**)&m_ParticleVec[EFFECT_STATE_WAND][2])))
+		, TEXT("Com_Wand_Spark"), (CComponent**)&m_ParticleVec[EFFECT_STATE_MAIN][2])))
 	{
 		__debugbreak();
 		return E_FAIL;
@@ -220,32 +246,32 @@ HRESULT Arrestomomentum::Add_Components()
 	return S_OK;
 }
 
-Arrestomomentum* Arrestomomentum::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel)
+CArrestomomentum* CArrestomomentum::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel)
 {
-	Arrestomomentum* pInstance = New Arrestomomentum(pDevice, pContext);
+	CArrestomomentum* pInstance = New CArrestomomentum(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(iLevel)))
 	{
-		MSG_BOX("Failed to Created Arrestomomentum");
+		MSG_BOX("Failed to Created CArrestomomentum");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject* Arrestomomentum::Clone(void* pArg)
+CGameObject* CArrestomomentum::Clone(void* pArg)
 {
-	Arrestomomentum* pInstance = New Arrestomomentum(*this);
+	CArrestomomentum* pInstance = New CArrestomomentum(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned Arrestomomentum");
+		MSG_BOX("Failed to Cloned CArrestomomentum");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-void Arrestomomentum::Free()
+void CArrestomomentum::Free()
 {
 	__super::Free();
 }

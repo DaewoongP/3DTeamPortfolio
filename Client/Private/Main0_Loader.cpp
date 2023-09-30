@@ -50,6 +50,8 @@
 #include "Wingardiumleviosa.h"
 #include "Ncendio.h"
 #include "Lumos.h"
+#include "Arrestomomentum.h"
+#include "Descendo.h"
 #pragma endregion Magic
 
 #include "Trigger_Vault.h"
@@ -371,6 +373,18 @@ HRESULT CMain0_Loader::Loading_For_Cliffside()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Lumos"),
 			CLumos::Create(m_pDevice, m_pContext, LEVEL_STATIC))))
 			throw TEXT("Prototype_GameObject_Lumos");
+
+		/* For.Prototype_GameObject_Lumos */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Arrestomomentum"),
+			CArrestomomentum::Create(m_pDevice, m_pContext, LEVEL_STATIC))))
+			throw TEXT("Prototype_GameObject_Arrestomomentum");
+
+		/* For.Prototype_GameObject_Lumos */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Descendo"),
+			CDescendo::Create(m_pDevice, m_pContext, LEVEL_STATIC))))
+			throw TEXT("Prototype_GameObject_Descendo");
+		
+		
 
 #pragma endregion
 		{

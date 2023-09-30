@@ -9,12 +9,12 @@ class CTrail;
 END
 
 BEGIN(Client)
-class Arrestomomentum final : public CMagicBall
+class CArrestomomentum final : public CMagicBall
 {
 private:
-	explicit Arrestomomentum(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	explicit Arrestomomentum(const Arrestomomentum& rhs);
-	virtual ~Arrestomomentum() = default;
+	explicit CArrestomomentum(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	explicit CArrestomomentum(const CArrestomomentum& rhs);
+	virtual ~CArrestomomentum() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype(_uint iLevel);
@@ -41,7 +41,7 @@ private:
 	HRESULT Add_Components();
 
 public:
-	static Arrestomomentum* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel = 0);
+	static CArrestomomentum* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel = 0);
 	virtual CGameObject* Clone(void* pArg);
 	virtual void Free() override;
 };

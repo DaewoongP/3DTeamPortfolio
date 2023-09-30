@@ -10,6 +10,8 @@
 #include "Wingardiumleviosa.h"
 #include "Ncendio.h"
 #include "Lumos.h"
+#include "Arrestomomentum.h"
+#include "Descendo.h"
 
 IMPLEMENT_SINGLETON(CMagicBallPool)
 
@@ -29,6 +31,7 @@ HRESULT CMagicBallPool::Initialize()
     Create_InitMagic(Client::NCENDIO, TEXT("Prototype_GameObject_Ncendio"));
     Create_InitMagic(Client::LUMOS, TEXT("Prototype_GameObject_Lumos"));
     Create_InitMagic(Client::ARRESTOMOMENTUM, TEXT("Prototype_GameObject_Arrestomomentum"));
+    Create_InitMagic(Client::DESCENDO, TEXT("Prototype_GameObject_Descendo"));
     Safe_Release(pGameInstance);
 
     return S_OK;
@@ -94,6 +97,7 @@ CMagicBall* CMagicBallPool::Create_Magic(SPELL eSpell, CMagicBall::MAGICBALLINIT
     case Client::DEPULSO:
         break;
     case Client::DESCENDO:
+        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Descendo")));
         break;
     case Client::DIFFINDO:
         break;
