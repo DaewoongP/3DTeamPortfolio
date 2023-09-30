@@ -85,7 +85,7 @@ HRESULT CMagicBall::Reset(MAGICBALLINITDESC& InitDesc)
 {
 	//Set InitDesc to MagicBallDesc
 	m_fLifeTime = InitDesc.fLifeTime;
-	
+	m_fLerpAcc = 0.0f;
 	m_pTarget = InitDesc.pTarget;
 
 	if (InitDesc.pTarget != nullptr)

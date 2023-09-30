@@ -35,22 +35,8 @@ public:
 	virtual HRESULT Reset(MAGICBALLINITDESC& InitDesc) override;
 
 private:
-	// 트레일 
-	CTrail*					  m_pMainTrail = { nullptr };
-	// 트레일 따라가는 연기
-	CParticleSystem*		  m_pTraceDustEffect = { nullptr };
 	// 몹 피격 트레일
 	CWingardium_Effect* m_pWingardiumEffect = { nullptr };
-
-	// 피격 푸쉬시
-	CParticleSystem*		  m_pHitDustEffect = { nullptr };
-	// 피격 파바바바방
-	CParticleSystem*		  m_pHitExplosionEffect = { nullptr };
-
-	//완드 
-	CTrail*					  m_pWandTrail = { nullptr };
-	//완드 글로우
-	CParticleSystem*		  m_pWandGlow = { nullptr };
 
 private:
 	_float				m_fWingardiumEffectDeadTimer = { 0.3f };

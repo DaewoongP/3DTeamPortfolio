@@ -152,7 +152,6 @@ void CBasicCast::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 HRESULT CBasicCast::Reset(MAGICBALLINITDESC& InitDesc)
 {
 	__super::Reset(InitDesc);
-	m_fLerpAcc = 0.0f;
 	return S_OK;
 }
 
@@ -202,7 +201,6 @@ void CBasicCast::Tick_CastMagic(_float fTimeDelta)
 	{
 		Do_MagicBallState_To_Next();
 	}
-	m_pTransform->Set_Position(m_TrailVec[EFFECT_STATE_MAIN][0]->Get_Transform()->Get_Position());
 }
 
 void CBasicCast::Tick_Dying(_float fTimeDelta)
