@@ -192,6 +192,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	{
 		if (true == m_pTarget->isDead())
 		{
+			Safe_Release(m_pTarget);
 			m_pTarget = nullptr;
 			return;
 		}
@@ -1030,6 +1031,9 @@ void CPlayer::Update_Target_Angle()
 
 void CPlayer::Next_Spell_Action()
 {
+	if (nullptr == m_pMagicBall)
+		return;
+
 	m_pMagicBall->Do_MagicBallState_To_Next();
 }
 

@@ -53,8 +53,6 @@ void CMapEffect::Late_Tick(_float _fTimeDelta)
 	if (nullptr != m_pRenderer)
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
-
-		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DISTORTION, this);
 	}
 }
 

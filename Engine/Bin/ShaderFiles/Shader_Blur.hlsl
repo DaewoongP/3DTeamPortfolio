@@ -21,9 +21,16 @@ float3 g_vRandomVector[13] =
     float3(0.2024539f, -0.7101201f, 0.29143293f)
 };
 
-float g_fBlurWeights[13] =
+uint g_iWeights = 19; // 개수 통일
+float g_fBlurWeights[19] =
 {
-    0.0561f, 0.1353f, 0.278f, 0.4868f, 0.7261f, 0.9231f, 1.f, 0.9231f, 0.7261f, 0.4868f, 0.278f, 0.1353f, 0.0561f
+    0.0561f, 0.1353f, 0.278f,
+    0.3221f, 0.4868f, 0.5881f, 
+    0.6661f, 0.7261f, 0.9231f,
+    0.999f, 
+    0.9231f, 0.7261f, 0.6661f,
+    0.5881f, 0.4868f, 0.3221f,
+    0.278f, 0.1353f, 0.0561f, 
 };
 
 struct VS_IN
@@ -71,12 +78,14 @@ PS_OUT PS_MAIN_BLURX(PS_IN In)
     float fDeltaX = 1.0f / g_fWinSizeX;
     float2 vNewUV = float2(0, 0);
     float fTotal = 0.f;
+    
+    int iValue = (g_iWeights - 1) / 2;
 
-    for (int i = -6; i < 6; ++i)
+    for (int i = -iValue; i < iValue; ++i)
     {
         vNewUV = In.vTexUV + float2(fDeltaX * i, 0.f);
-        Out.vColor += g_fBlurWeights[6 + i] * g_TargetTexture.Sample(LinearSampler_Clamp, vNewUV);
-        fTotal += g_fBlurWeights[6 + i];
+        Out.vColor += g_fBlurWeights[iValue + i] * g_TargetTexture.Sample(LinearSampler_Clamp, vNewUV);
+        fTotal += g_fBlurWeights[iValue + i];
     }
 
     Out.vColor /= fTotal;
@@ -92,11 +101,13 @@ PS_OUT PS_MAIN_BLURY(PS_IN In)
     float2 vNewUV = float2(0, 0);
     float fTotal = 0.f;
    
-    for (int i = -6; i < 6; ++i)
+    int iValue = (g_iWeights - 1) / 2;
+
+    for (int i = -iValue; i < iValue; ++i)
     {
         vNewUV = In.vTexUV + float2(0, fDeltaY * i);
-        Out.vColor += g_fBlurWeights[6 + i] * g_TargetTexture.Sample(LinearSampler_Clamp, vNewUV);
-        fTotal += g_fBlurWeights[6 + i];
+        Out.vColor += g_fBlurWeights[iValue + i] * g_TargetTexture.Sample(LinearSampler_Clamp, vNewUV);
+        fTotal += g_fBlurWeights[iValue + i];
     }
 
     Out.vColor /= fTotal;

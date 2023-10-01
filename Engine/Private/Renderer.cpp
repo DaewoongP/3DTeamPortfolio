@@ -182,9 +182,11 @@ HRESULT CRenderer::Draw_RenderGroup()
 	if (FAILED(Render_Deferred()))
 		return E_FAIL;
 
-	// 빛연산 처리가 필요없는 객체 렌더링
-	if (FAILED(Render_Effects()))
+	if (FAILED(m_pGlow->Render(m_RenderObjects[RENDER_GLOW])))
 		return E_FAIL;
+
+	// 빛연산 처리가 필요없는 객체 렌더링
+
 	if (FAILED(Render_NonLight()))
 		return E_FAIL;
 	if (FAILED(Render_Blend()))
@@ -498,6 +500,8 @@ HRESULT CRenderer::Render_PostProcessing()
 {
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_PostProcessing"), m_pPostProcessingShader, "g_PostProcessingTexture")))
 		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Glowed"), m_pPostProcessingShader, "g_GlowTexture")))
+		return E_FAIL;
 
 	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
@@ -509,44 +513,6 @@ HRESULT CRenderer::Render_PostProcessing()
 	m_pPostProcessingShader->Begin("PostProcessing");
 
 	m_pRectBuffer->Render();
-
-	return S_OK;
-}
-
-HRESULT CRenderer::Render_Effects()
-{
-	if (nullptr == m_pRenderTarget_Manager)
-		return E_FAIL;
-
-	for (auto& pGameObject : m_RenderObjects[RENDER_BLOOM])
-	{
-		if (nullptr != pGameObject)
-			pGameObject->Render();
-
-		Safe_Release(pGameObject);
-	}
-
-	m_RenderObjects[RENDER_BLOOM].clear();
-	
-	for (auto& pGameObject : m_RenderObjects[RENDER_GLOW])
-	{
-		if (nullptr != pGameObject)
-			pGameObject->Render();
-
-		Safe_Release(pGameObject);
-	}
-
-	m_RenderObjects[RENDER_GLOW].clear();
-
-	for (auto& pGameObject : m_RenderObjects[RENDER_DISTORTION])
-	{
-		if (nullptr != pGameObject)
-			pGameObject->Render();
-
-		Safe_Release(pGameObject);
-	}
-
-	m_RenderObjects[RENDER_DISTORTION].clear();
 
 	return S_OK;
 }
@@ -663,6 +629,10 @@ HRESULT CRenderer::Add_Components()
 
 	m_pBlur = CBlur::Create(m_pDevice, m_pContext, m_pRectBuffer);
 	if (nullptr == m_pBlur)
+		return E_FAIL;
+
+	m_pGlow = CGlow::Create(m_pDevice, m_pContext, m_pRectBuffer);
+	if (nullptr == m_pGlow)
 		return E_FAIL;
 
 	return S_OK;
