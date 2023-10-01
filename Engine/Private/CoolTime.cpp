@@ -23,21 +23,37 @@ HRESULT CCoolTime::Initialize(void* pArg)
 		COOLTIME_DESC Desc = *static_cast<COOLTIME_DESC*>(pArg);
 		m_fMaxCoolTime = Desc.fMaxCoolTime;
 	}
-
 	return S_OK;
 }
 
 void CCoolTime::Tick(_float _fTimeDelta)
 {
+	__super::Tick(_fTimeDelta);
+
 	if (false == m_isEnable)
 		return;
 
-	if (m_fCurCoolTime >= m_fMaxCoolTime)
+	if (m_fCurCoolTime >= 15.f)
 	{
 		Reset();
 	}
 
-	m_fCurCoolTime += _fTimeDelta;
+	if (15.f <= m_fDrugTime)
+	{
+		m_isAccelerlator = false;
+		m_fDrugTime = 0.f;
+	}
+
+	if (true == m_isAccelerlator)
+	{
+		m_fCurCoolTime += _fTimeDelta*1.2f;
+		m_fDrugTime += _fTimeDelta;
+	}
+	else 
+		m_fCurCoolTime += _fTimeDelta;
+	cout << m_fCurCoolTime << endl;
+
+
 }
 
 void CCoolTime::Play_CoolTime()

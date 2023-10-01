@@ -22,6 +22,12 @@ HRESULT CLevel_Cliffside::Initialize()
 
 		return E_FAIL;
 	}
+	if (FAILED(Ready_Layer_Item(TEXT("Layer_Item"))))
+	{
+		MSG_BOX("Failed Ready_Layer_Item");
+
+		return E_FAIL;
+	}
 	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
 	{
 		MSG_BOX("Failed Ready_Layer_Player");
@@ -226,6 +232,30 @@ HRESULT CLevel_Cliffside::Ready_Layer_Player(const _tchar* pLayerTag)
 	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Player"), pLayerTag, TEXT("GameObject_Player"),&PlayerDesc)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Player)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CLevel_Cliffside::Ready_Layer_Item(const _tchar* pLayerTag)
+{
+	BEGININSTANCE;
+
+	/* Add Scene : Main */
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
+	{
+		MSG_BOX("Failed Add Scene : (Scene_Main)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_AccPotion"), pLayerTag, TEXT("GameObject_AccPotion"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_AccPotion)");
 		ENDINSTANCE;
 		return E_FAIL;
 	}

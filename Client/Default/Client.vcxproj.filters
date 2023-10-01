@@ -391,6 +391,15 @@
     <Filter Include="02. GameObject\08. Inventory\Item\MPBall">
       <UniqueIdentifier>{5eb7cb7b-6f9e-420b-bad4-8d44bfc40af4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\08. Inventory\Item\Potion">
+      <UniqueIdentifier>{468d1cd9-e6fb-4a3a-8b33-c14df4a7eb93}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Item\ex1.PowerPotion">
+      <UniqueIdentifier>{5a4aa143-71df-4884-91e1-ca2caf295348}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Item\ex.AccPotion">
+      <UniqueIdentifier>{7cb5d380-3253-4755-a164-7338fda2ebf8}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\09. Item\WiggenweldPotion">
       <UniqueIdentifier>{c07071fe-c006-4bca-b390-e403b214f1e9}</UniqueIdentifier>
     </Filter>
@@ -792,6 +801,12 @@
     <ClInclude Include="..\Public\MPBall.h">
       <Filter>02. GameObject\08. Inventory\Item\MPBall</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\AccPotion.h">
+      <Filter>02. GameObject\09. Item\ex.AccPotion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PowerPotion.h">
+      <Filter>02. GameObject\09. Item\ex1.PowerPotion</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\Item.h">
       <Filter>02. GameObject\09. Item</Filter>
     </ClInclude>
@@ -1167,6 +1182,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Magic.cpp">
       <Filter>05. Magic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\AccPotion.cpp">
+      <Filter>02. GameObject\09. Item\ex.AccPotion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PowerPotion.cpp">
+      <Filter>02. GameObject\09. Item\ex1.PowerPotion</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Item.cpp">
       <Filter>02. GameObject\09. Item</Filter>

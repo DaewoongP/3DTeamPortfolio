@@ -20,6 +20,10 @@
 
 #include "UI_Group_Skill.h"
 
+#include "RecoveryPotion.h"
+#include "AccPotion.h"
+#include "CoolTime.h"	
+
 #include "WiggenweldPotion.h"
 
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -125,6 +129,11 @@ void CPlayer::Tick(_float fTimeDelta)
 		m_pPlayer_Information->fix_HP(-10);
 		m_pPlayer_Information->Using_Fnisher();
 	}
+	if (pGameInstance->Get_DIKeyState(DIK_F5, CInput_Device::KEY_DOWN))
+	{
+		m_pAccPotion->Use();
+	}
+
 
 	ENDINSTANCE;
 
@@ -154,7 +163,9 @@ void CPlayer::Tick(_float fTimeDelta)
 	{
 		m_pFrncSpellToggle(_float3(), _float());
 	}
-	
+	m_pCooltime->Tick(fTimeDelta);
+
+
 	
 }
 
@@ -521,6 +532,19 @@ HRESULT CPlayer::Add_Components()
 		return E_FAIL;
 	}
 
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_AccPotion"),
+		TEXT("Com_AccPotion"), reinterpret_cast<CComponent**>(&m_pAccPotion))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_CoolTime"),
+		TEXT("Com_CoolTime"), reinterpret_cast<CComponent**>(&m_pCooltime))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
 	return S_OK;
 }
 
@@ -1586,6 +1610,8 @@ void CPlayer::Free()
 		Safe_Release(m_pRigidBody);
 		Safe_Release(m_pPlayer_Information);
 		Safe_Release(m_UI_Group_Skill_01);
+		Safe_Release(m_pRecoveryPotion);
+		Safe_Release(m_pAccPotion);
 		
 		if (nullptr != m_pTargetTransform)
 		{
