@@ -25,61 +25,61 @@ HRESULT CStateMachine::Set_StateMachine(const _tchar* _pTag)
 	return S_OK;
 }
 
-void CStateMachine::Set_OwnerModel(CModel* _pOwnerModel)
+HRESULT CStateMachine::Set_StateMachineDesc(STATEMACHINEDESC* _pStateMachineDesc)
 {
-	NULL_CHECK_RETURN_MSG(_pOwnerModel, , TEXT("Failed Set StateMachine Owner Model"));
-
-	m_pOwnerModel = _pOwnerModel;
-
-	Safe_AddRef(m_pOwnerModel);
-}
-
-void CStateMachine::Set_OwnerLookAngle(_float* _pOwnerLookAngle)
-{
-	NULL_CHECK_RETURN_MSG(_pOwnerLookAngle, , TEXT("Failed Set StateMachine Owner LookAngle"));
-
-	m_pOwnerLookAngle = _pOwnerLookAngle;
-}
-
-void CStateMachine::Set_IsDirectionKeyPressed(_bool* _pIsDirectionKeyPressed)
-{
-	NULL_CHECK_RETURN_MSG(_pIsDirectionKeyPressed, , TEXT("Failed Set StateMachine Owner IsDirectionKeyPressed"));
-
-	m_pIsDirectionKeyPressed = _pIsDirectionKeyPressed;
-}
-
-void CStateMachine::Set_PlayerTransform(CTransform* _pPlayerTransform)
-{
-	NULL_CHECK_RETURN_MSG(_pPlayerTransform, , TEXT("Failed Set StateMachine Owner PlayerTransform"));
-
-	m_pPlayerTransform = _pPlayerTransform;
-
-	Safe_AddRef(m_pPlayerTransform);
-}
-
-
-void CStateMachine::Go_Protego()
-{
-	BEGININSTANCE;
-
-	if (pGameInstance->Get_DIKeyState(DIK_Q, CInput_Device::KEY_DOWN))
+	//비어있는게 있다면?
+	if (false == m_StateMachineDesc.IsValid())
 	{
-		Set_StateMachine(TEXT("Protego"));
+		m_StateMachineDesc = *_pStateMachineDesc;
+
+		return E_FAIL;
 	}
 
-	ENDINSTANCE;
+	return S_OK;
 }
 
-void CStateMachine::Go_Hit()
+HRESULT CStateMachine::Initialize(void* pArg)
 {
-	BEGININSTANCE;
-
-	/*if (pGameInstance->Get_DIKeyState(DIK_H,CInput_Device::KEY_DOWN))
+	if (nullptr == pArg)
 	{
-		Set_StateMachine(TEXT("Hit"));
-	}*/
+		MSG_BOX("Failed Initialize StateMachine");
 
-	ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	//채워져있냐?
+	if (true == m_StateMachineDesc.IsValid())
+	{
+		//채워져있으면 안되는데, 이상하니까 메세지만 띄워줘봐
+		if (nullptr != m_StateMachineDesc.pOwnerModel)
+		{
+			//이 친구들 있으면 지워주고
+			MSG_BOX("this value is be a valid value : pOwnerModel");
+			Safe_Release(m_StateMachineDesc.pOwnerModel);
+		}
+		if (nullptr != m_StateMachineDesc.pPlayerTransform)
+		{
+			//이 친구들 있으면 지워주고
+			MSG_BOX("this value is be a valid value : pPlayerTransform");
+			Safe_Release(m_StateMachineDesc.pPlayerTransform);
+		}
+	}
+
+	STATEMACHINEDESC pSTATEMACHINEDESC = *static_cast<STATEMACHINEDESC*>(pArg);
+
+	m_StateMachineDesc = *static_cast<STATEMACHINEDESC*>(pArg);
+
+	
+
+	Safe_AddRef(m_StateMachineDesc.pOwnerModel);
+	Safe_AddRef(m_StateMachineDesc.pPlayerTransform);
+
+	return S_OK;
+}
+
+void CStateMachine::OnStateEnter(void* _pArg)
+{
+	
 }
 
 CStateMachine* CStateMachine::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -114,8 +114,10 @@ void CStateMachine::Free()
 
 	if (true == m_isCloned)
 	{
-		Safe_Release(m_pOwnerModel);
-		Safe_Release(m_pPlayerTransform);
-
+		if (false == m_StateMachineDesc.IsValid())
+		{
+			Safe_Release(m_StateMachineDesc.pOwnerModel);
+			Safe_Release(m_StateMachineDesc.pPlayerTransform);
+		}
 	}
 }

@@ -22,6 +22,13 @@ HRESULT CHitState::Initialize_Prototype()
 
 HRESULT CHitState::Initialize(void* pArg)
 {
+	if (FAILED(CStateMachine::Initialize(pArg)))
+	{
+		__debugbreak();
+
+		return E_FAIL;
+	}
+
 	return S_OK;
 }
 
@@ -43,7 +50,7 @@ void CHitState::OnStateEnter(void* _pArg)
 
 	Safe_AddRef(m_pTargetTransform);
 
-	*m_pIsFinishAnimation = false;
+	*m_StateMachineDesc.pisFinishAnimation = false;
 
 	Set_Dir();
 }
@@ -71,19 +78,19 @@ void CHitState::OnStateExit()
 
 void CHitState::Bind_Notify()
 {
-	m_pOwnerModel->Bind_Notify(TEXT("Hu_Rct_Hit_Fwd_anm"),TEXT("End_Animation"), m_pFuncFinishAnimation);
-	m_pOwnerModel->Bind_Notify(TEXT("Hu_Rct_Hit_Bwd_anm"),TEXT("End_Animation"), m_pFuncFinishAnimation);
-	m_pOwnerModel->Bind_Notify(TEXT("Hu_Rct_Hit_Rht_anm"),TEXT("End_Animation"), m_pFuncFinishAnimation);
-	m_pOwnerModel->Bind_Notify(TEXT("Hu_Rct_Hit_Lft_anm"),TEXT("End_Animation"), m_pFuncFinishAnimation);
+	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Hu_Rct_Hit_Fwd_anm"),TEXT("End_Animation"), m_StateMachineDesc.pfuncFinishAnimation);
+	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Hu_Rct_Hit_Bwd_anm"),TEXT("End_Animation"), m_StateMachineDesc.pfuncFinishAnimation);
+	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Hu_Rct_Hit_Rht_anm"),TEXT("End_Animation"), m_StateMachineDesc.pfuncFinishAnimation);
+	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Hu_Rct_Hit_Lft_anm"),TEXT("End_Animation"), m_StateMachineDesc.pfuncFinishAnimation);
 
-	m_pOwnerModel->Bind_Notify(TEXT("Hu_Rct_KnckDn_Hvy_Fwd_01_anm"),TEXT("End_Animation"), m_pFuncFinishAnimation);
-	m_pOwnerModel->Bind_Notify(TEXT("Hu_Rct_KnckDn_Hvy_01_anm"),TEXT("End_Animation"), m_pFuncFinishAnimation);
+	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Hu_Rct_KnckDn_Hvy_Fwd_01_anm"),TEXT("End_Animation"), m_StateMachineDesc.pfuncFinishAnimation);
+	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Hu_Rct_KnckDn_Hvy_01_anm"),TEXT("End_Animation"), m_StateMachineDesc.pfuncFinishAnimation);
 
-	m_pOwnerModel->Bind_Notify(TEXT("Hu_Rct_KnckDn_Hvy_Splat_01_anm"),TEXT("End_Animation"), m_pFuncFinishAnimation);
-	m_pOwnerModel->Bind_Notify(TEXT("Hu_Rct_KnckDn_Hvy_Fwd_Splat_anm"),TEXT("End_Animation"), m_pFuncFinishAnimation);
+	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Hu_Rct_KnckDn_Hvy_Splat_01_anm"),TEXT("End_Animation"), m_StateMachineDesc.pfuncFinishAnimation);
+	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Hu_Rct_KnckDn_Hvy_Fwd_Splat_anm"),TEXT("End_Animation"), m_StateMachineDesc.pfuncFinishAnimation);
 	
-	m_pOwnerModel->Bind_Notify(TEXT("Hu_Rct_Knockdown_Fwd_Getup_anm"), TEXT("End_Animation"), m_pFuncFinishAnimation);
-	m_pOwnerModel->Bind_Notify(TEXT("Hu_Rct_Knockdown_Bwd_Getup_anm"), TEXT("End_Animation"), m_pFuncFinishAnimation);
+	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Hu_Rct_Knockdown_Fwd_Getup_anm"), TEXT("End_Animation"), m_StateMachineDesc.pfuncFinishAnimation);
+	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Hu_Rct_Knockdown_Bwd_Getup_anm"), TEXT("End_Animation"), m_StateMachineDesc.pfuncFinishAnimation);
 }
 
 void CHitState::Go_Idle()
@@ -101,7 +108,7 @@ void CHitState::Set_Dir()
 #pragma region 각구하기
 	_float3 vTargetPos = m_pTargetTransform->Get_Position();
 
-	_float3 vPlayerPos = m_pPlayerTransform->Get_Position();
+	_float3 vPlayerPos = m_StateMachineDesc.pPlayerTransform->Get_Position();
 
 	_float3 vTargetDir = vTargetPos - vPlayerPos;
 
@@ -109,7 +116,7 @@ void CHitState::Set_Dir()
 
 	vTargetDir.Normalize();
 
-	_float3 vPlayerLook = m_pPlayerTransform->Get_Look();
+	_float3 vPlayerLook = m_StateMachineDesc.pPlayerTransform->Get_Look();
 
 	vPlayerLook = XMVectorSetY(vPlayerLook, 0.0f);
 
@@ -169,22 +176,22 @@ void CHitState::Set_Dir()
 		{
 		case Client::CHitState::HITDIR_FRONT:
 		{
-			m_pOwnerModel->Change_Animation(TEXT("Hu_Rct_Hit_Bwd_anm"));
+			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Rct_Hit_Bwd_anm"));
 		}
 		break;
 		case Client::CHitState::HITDIR_BACK:
 		{
-			m_pOwnerModel->Change_Animation(TEXT("Hu_Rct_Hit_Fwd_anm"));
+			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Rct_Hit_Fwd_anm"));
 		}
 		break;
 		case Client::CHitState::HITDIR_RIGHT:
 		{
-			m_pOwnerModel->Change_Animation(TEXT("Hu_Rct_Hit_Lft_anm"));
+			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Rct_Hit_Lft_anm"));
 		}
 		break;
 		case Client::CHitState::HITDIR_LEFT:
 		{
-			m_pOwnerModel->Change_Animation(TEXT("Hu_Rct_Hit_Rht_anm"));
+			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Rct_Hit_Rht_anm"));
 		}
 		break;
 		case Client::CHitState::HITDIR_END:
@@ -215,12 +222,12 @@ void CHitState::Set_Dir()
 		{
 		case Client::CHitState::POWERFULHITDIR_FRONT:
 		{
-			m_pOwnerModel->Change_Animation(TEXT("Hu_Rct_KnckDn_Hvy_01_anm"));
+			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Rct_KnckDn_Hvy_01_anm"));
 		}
 		break;
 		case Client::CHitState::POWERFULHITDIR_BACK:
 		{
-			m_pOwnerModel->Change_Animation(TEXT("Hu_Rct_KnckDn_Hvy_Fwd_01_anm"));
+			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Rct_KnckDn_Hvy_Fwd_01_anm"));
 		}
 		break;
 		case Client::CHitState::POWERFULHITDIR_END:
@@ -241,10 +248,10 @@ void CHitState::Hit_Tick()
 		//추가타 있을경우에만 다시 애니메이션 재생하고,(강타로 들어올 수도 있음)
 		
 		//끝났을 경우 아이들
-		if (true == *m_pIsFinishAnimation)
+		if (true == *m_StateMachineDesc.pisFinishAnimation)
 		{
 			Go_Idle();
-			*m_pIsFinishAnimation = false;
+			*m_StateMachineDesc.pisFinishAnimation = false;
 		}
 	}
 }
@@ -256,20 +263,20 @@ void CHitState::PowerfulHit_Tick()
 		//추가타가 있더라도 현재상태 유지(피만 깍임)
 
 		//땅에 충돌시 애니메이션 착지 애니메이션 (충돌 판정)
-		if (true == *m_pIsFinishAnimation && (
-			!wcscmp(m_pOwnerModel->Get_Animation()->Get_AnimationName(), TEXT("Hu_Rct_KnckDn_Hvy_Fwd_01_anm")) ||
-			!wcscmp(m_pOwnerModel->Get_Animation()->Get_AnimationName(), TEXT("Hu_Rct_KnckDn_Hvy_01_anm"))))
+		if (true == *m_StateMachineDesc.pisFinishAnimation && (
+			!wcscmp(m_StateMachineDesc.pOwnerModel->Get_Animation()->Get_AnimationName(), TEXT("Hu_Rct_KnckDn_Hvy_Fwd_01_anm")) ||
+			!wcscmp(m_StateMachineDesc.pOwnerModel->Get_Animation()->Get_AnimationName(), TEXT("Hu_Rct_KnckDn_Hvy_01_anm"))))
 		{
 			switch (m_iPowerfulHitDir)
 			{
 			case Client::CHitState::POWERFULHITDIR_FRONT:
 			{
-				m_pOwnerModel->Change_Animation(TEXT("Hu_Rct_KnckDn_Hvy_Splat_01_anm"));
+				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Rct_KnckDn_Hvy_Splat_01_anm"));
 			}
 				break;
 			case Client::CHitState::POWERFULHITDIR_BACK:
 			{
-				m_pOwnerModel->Change_Animation(TEXT("Hu_Rct_KnckDn_Hvy_Fwd_Splat_anm"));
+				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Rct_KnckDn_Hvy_Fwd_Splat_anm"));
 			}
 				break;
 			case Client::CHitState::POWERFULHITDIR_END:
@@ -281,23 +288,23 @@ void CHitState::PowerfulHit_Tick()
 				break;
 			}
 
-			*m_pIsFinishAnimation = false;
+			*m_StateMachineDesc.pisFinishAnimation = false;
 		}
 		//착지애니메이션이 끝나면 기상 애니메이션 재생
-		if (true == *m_pIsFinishAnimation && (
-			!wcscmp(m_pOwnerModel->Get_Animation()->Get_AnimationName(), TEXT("Hu_Rct_KnckDn_Hvy_Splat_01_anm")) ||
-			!wcscmp(m_pOwnerModel->Get_Animation()->Get_AnimationName(), TEXT("Hu_Rct_KnckDn_Hvy_Fwd_Splat_anm"))))
+		if (true == *m_StateMachineDesc.pisFinishAnimation && (
+			!wcscmp(m_StateMachineDesc.pOwnerModel->Get_Animation()->Get_AnimationName(), TEXT("Hu_Rct_KnckDn_Hvy_Splat_01_anm")) ||
+			!wcscmp(m_StateMachineDesc.pOwnerModel->Get_Animation()->Get_AnimationName(), TEXT("Hu_Rct_KnckDn_Hvy_Fwd_Splat_anm"))))
 		{
 			switch (m_iPowerfulHitDir)
 			{
 			case Client::CHitState::POWERFULHITDIR_FRONT:
 			{
-				m_pOwnerModel->Change_Animation(TEXT("Hu_Rct_Knockdown_Bwd_Getup_anm"));
+				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Rct_Knockdown_Bwd_Getup_anm"));
 			}
 			break;
 			case Client::CHitState::POWERFULHITDIR_BACK:
 			{
-				m_pOwnerModel->Change_Animation(TEXT("Hu_Rct_Knockdown_Fwd_Getup_anm"));
+				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Rct_Knockdown_Fwd_Getup_anm"));
 			}
 			break;
 			case Client::CHitState::POWERFULHITDIR_END:
@@ -309,15 +316,15 @@ void CHitState::PowerfulHit_Tick()
 				break;
 			}
 			Go_Standing();
-			*m_pIsFinishAnimation = false;
+			*m_StateMachineDesc.pisFinishAnimation = false;
 		}
 		//기상애니메이션 끝났을 경우 아이들
-		/*if (true == *m_pIsFinishAnimation && (
-			!wcscmp(m_pOwnerModel->Get_Animation()->Get_AnimationName(), TEXT("Hu_Rct_Knockdown_Fwd_Getup_anm")) ||
-			!wcscmp(m_pOwnerModel->Get_Animation()->Get_AnimationName(), TEXT("Hu_Rct_Knockdown_Bwd_Getup_anm"))))
+		/*if (true == *m_StateMachineDesc.pisFinishAnimation && (
+			!wcscmp(m_StateMachineDesc.pOwnerModel->Get_Animation()->Get_AnimationName(), TEXT("Hu_Rct_Knockdown_Fwd_Getup_anm")) ||
+			!wcscmp(m_StateMachineDesc.pOwnerModel->Get_Animation()->Get_AnimationName(), TEXT("Hu_Rct_Knockdown_Bwd_Getup_anm"))))
 		{
 			Go_Idle();
-			*m_pIsFinishAnimation = false;
+			*m_StateMachineDesc.pisFinishAnimation = false;
 		}*/
 	}
 }
