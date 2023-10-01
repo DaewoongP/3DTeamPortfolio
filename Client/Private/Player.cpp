@@ -603,6 +603,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicTag = LEVIOSO;
 		magicInitDesc.fInitCoolTime = 1.f;
 		magicInitDesc.iDamage = 0;
+		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 1.8f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
@@ -615,6 +616,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicTag = CONFRINGO;
 		magicInitDesc.fInitCoolTime = 1.f;
 		magicInitDesc.iDamage = 50;
+		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 0.8f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
@@ -627,6 +629,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicTag = FINISHER;
 		magicInitDesc.fInitCoolTime = 1.f;
 		magicInitDesc.iDamage = 500;
+		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 3.f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
@@ -639,6 +642,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicTag = NCENDIO;
 		magicInitDesc.fInitCoolTime = 1.5f;
 		magicInitDesc.iDamage = 300;
+		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 1.f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
@@ -651,6 +655,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicTag = LUMOS;
 		magicInitDesc.fInitCoolTime = 1.5f;
 		magicInitDesc.iDamage = 0;
+		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 30.f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
@@ -663,6 +668,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicTag = ARRESTOMOMENTUM;
 		magicInitDesc.fInitCoolTime = 1.5f;
 		magicInitDesc.iDamage = 0;
+		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 30.f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
@@ -675,6 +681,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicTag = ACCIO;
 		magicInitDesc.fInitCoolTime = 1.5f;
 		magicInitDesc.iDamage = 10;
+		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 1.f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
@@ -687,7 +694,21 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicTag = DESCENDO;
 		magicInitDesc.fInitCoolTime = 1.5f;
 		magicInitDesc.iDamage = 10;
+		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 1.f;
+		m_pMagicSlot->Add_Magics(magicInitDesc);
+	}
+
+	// ÇÃ¸®Ææµµ
+	{
+		magicInitDesc.eBuffType = BUFF_NONE;
+		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
+		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicTag = FLIPENDO;
+		magicInitDesc.fInitCoolTime = 1.f;
+		magicInitDesc.iDamage = 10;
+		magicInitDesc.isChase = true;
+		magicInitDesc.fLifeTime = 0.3f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
@@ -697,7 +718,8 @@ HRESULT CPlayer::Add_Magic()
 	//m_pMagicSlot->Add_Magic_To_Skill_Slot(3, NCENDIO);
 	//m_pMagicSlot->Add_Magic_To_Skill_Slot(3, ARRESTOMOMENTUM);
 	//m_pMagicSlot->Add_Magic_To_Skill_Slot(3, ACCIO);
-	m_pMagicSlot->Add_Magic_To_Skill_Slot(3, DESCENDO);
+	//m_pMagicSlot->Add_Magic_To_Skill_Slot(3, DESCENDO);
+	m_pMagicSlot->Add_Magic_To_Skill_Slot(3, FLIPENDO);
 	m_pMagicSlot->Add_Magic_To_Basic_Slot(2, LUMOS);
 
 

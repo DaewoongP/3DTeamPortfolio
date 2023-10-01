@@ -29,7 +29,7 @@ public:
 		BUFF_TYPE				eBuffType = { BUFF_NONE };
 		SPELL					eMagicTag = { SPELL_END };
 		COLLISIONFLAG			eCollisionFlag;
-
+		_bool					isChase = { false };
 		_int					iDamage = { 0 };
 		_float					fLifeTime = { 1.0f };
 	}MAGICBALLINITDESC;
@@ -107,6 +107,7 @@ protected:
 	_float3					m_vEndPosition = {};
 
 	_float					m_fLerpAcc = { 0.f };
+	_bool					m_isChase = { false };
 
 	//For. Spin
 	_float2					m_vSpinWeight = {};

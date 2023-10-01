@@ -87,7 +87,7 @@ HRESULT CMagicBall::Reset(MAGICBALLINITDESC& InitDesc)
 	m_fLifeTime = InitDesc.fLifeTime;
 	m_fLerpAcc = 0.0f;
 	m_pTarget = InitDesc.pTarget;
-
+	m_isChase = InitDesc.isChase;
 	if (InitDesc.pTarget != nullptr)
 	{
 		m_pTargetWorldMatrix = InitDesc.pTarget->Get_Transform()->Get_WorldMatrixPtr();
@@ -346,6 +346,10 @@ void CMagicBall::Tick_DrawMagic(_float fTimeDelta)
 
 void CMagicBall::Tick_CastMagic(_float fTimeDelta)
 {
+	if (m_pTarget != nullptr)
+	{
+		m_vEndPosition = m_CurrentTargetMatrix.Translation();
+	}
 	//¿Ïµå
 	for (int i = 0; i < m_TrailVec[EFFECT_STATE_WAND].size(); i++)
 	{

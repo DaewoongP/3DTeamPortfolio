@@ -845,6 +845,9 @@
     <ClInclude Include="..\Public\Check_Degree.h">
       <Filter>03. Behaviors\04. Function</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Flipendo.h">
+      <Filter>05. Magic\MagicBall\12. Flipendo</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1238,6 +1241,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Check_Distance.cpp">
       <Filter>03. Behaviors\04. Function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Flipendo.cpp">
+      <Filter>05. Magic\MagicBall\12. Flipendo</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
