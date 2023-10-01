@@ -256,7 +256,7 @@ void CParticleSystem::Late_Tick(_float _fTimeDelta)
 			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_GLOW, this);
 		}
 
-		if ("Default" == m_RendererModuleDesc.strPass ||
+		else if ("Default" == m_RendererModuleDesc.strPass ||
 			"TextureSheetAnimation" == m_RendererModuleDesc.strPass ||
 			"MotionBlur" == m_RendererModuleDesc.strPass)
 		{
@@ -266,7 +266,7 @@ void CParticleSystem::Late_Tick(_float _fTimeDelta)
 		{
 			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		}
-		//m_pRenderer->Add_RenderGroup(CRenderer::RENDER_MOTIONBLUR, this);
+
 	}
 }
 

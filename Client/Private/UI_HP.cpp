@@ -37,10 +37,6 @@ HRESULT CUI_HP::Initialize(void* pArg)
 void CUI_HP::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
-#ifdef _DEBUG
-	Debug_UI(fTimeDelta);
-#endif // DEBUG
 }
 
 void CUI_HP::Late_Tick(_float fTimeDelta)
@@ -149,22 +145,6 @@ HRESULT CUI_HP::Initialize_Gauge(_float fMin, _float fMax, _float fCurrent)
 
 	return S_OK;
 }
-
-#ifdef _DEBUG
-HRESULT CUI_HP::Debug_UI(_float fTimeDelta)
-{
-	ImGui::Begin("UIHP");
-
-	_float fHp = m_pProgressCom->Get_Gauge(CUI_Progress::CURRENT);
-	if (ImGui::DragFloat("Hp Control", &fHp))
-	{
-		m_pProgressCom->Set_Gauge(fHp, CUI_Progress::CURRENT);
-	}
-
-	ImGui::End();
-	return S_OK;
-}
-#endif // _DEBUG
 
 CUI_HP* CUI_HP::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {

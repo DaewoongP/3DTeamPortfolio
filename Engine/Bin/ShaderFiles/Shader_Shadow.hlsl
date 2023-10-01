@@ -53,7 +53,7 @@ PS_OUT PS_MAIN_SHADOW(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
 
-    vector vDepthDesc = g_DepthTexture.Sample(BlurSampler, In.vTexUV);
+    vector vDepthDesc = g_DepthTexture.Sample(LinearSampler_Clamp, In.vTexUV);
     
     // camfar로 나누어진 뷰스페이스의 z값이므로 곱해서 복구
     float fViewZ = vDepthDesc.y * g_fCamFar;
@@ -94,7 +94,7 @@ PS_OUT PS_MAIN_SHADOW(PS_IN In)
     // 현재 In의 픽셀의 포지션이 빛의 텍스처에 어디에 있는지 알아내고
     // 해당 텍스처의 픽셀 값인 (빛기준 LightProjPos.w / CamFar)를 처리한 값을 가져옴.
     // 빛기준의 뷰스페이스 z값이라고 봐도된다.
-    vector vLightDepth = g_vLightDepthTexture.Sample(BlurSampler, vLightUV);
+    vector vLightDepth = g_vLightDepthTexture.Sample(LinearSampler_Clamp, vLightUV);
     
     // 그럼이제 현재 In 픽셀의 "빛의" 뷰스페이스 상의 z값과
     // UV좌표에 설정되어있는 "빛의" 뷰스페이스상의 뎁스값을 비교하여

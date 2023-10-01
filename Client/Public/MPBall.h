@@ -12,10 +12,11 @@ private:
 	virtual ~CMPBall() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype();
+	virtual HRESULT Initialize_Prototype(_uint m_iLevel);
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
+	virtual void OnCollisionEnter(COLLEVENTDESC CollisionEventDesc) override;
 
 
 private:
@@ -33,7 +34,7 @@ private:
 
 
 public:
-	static CMPBall* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CMPBall* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;
 

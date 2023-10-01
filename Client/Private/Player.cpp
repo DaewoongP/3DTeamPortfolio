@@ -20,6 +20,11 @@
 
 #include "UI_Group_Skill.h"
 
+#include "AccPotion.h"
+#include "CoolTime.h"	
+
+#include "WiggenweldPotion.h"
+
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
@@ -102,26 +107,15 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::THIRD, NCENDIO);
 	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::FOURTH, DIFFINDO);
 
-	
+	m_vLevelInitPosition[LEVEL_CLIFFSIDE] = _float3(25.f, 3.f, 22.5f);
 
 	return S_OK;
 }
 
 HRESULT CPlayer::Initialize_Level(_uint iCurrentLevelIndex)
 {
+	m_pTransform->Set_Position(m_vLevelInitPosition[iCurrentLevelIndex]);
 
-	switch (iCurrentLevelIndex)
-	{
-	case LEVEL_CLIFFSIDE:
-		m_pTransform->Set_Position(_float3(25.f, 3.f, 22.5f));
-		break;
-	case LEVEL_VAULT:
-		break;
-	default:
-		break;
-	}
-
-	
 	return S_OK;
 }
 
@@ -134,6 +128,11 @@ void CPlayer::Tick(_float fTimeDelta)
 		m_pPlayer_Information->fix_HP(-10);
 		m_pPlayer_Information->Using_Fnisher();
 	}
+	if (pGameInstance->Get_DIKeyState(DIK_F5, CInput_Device::KEY_DOWN))
+	{
+		m_pAccPotion->Use();
+	}
+
 
 	ENDINSTANCE;
 
@@ -163,7 +162,9 @@ void CPlayer::Tick(_float fTimeDelta)
 	{
 		m_pFrncSpellToggle(_float3(), _float());
 	}
-	
+	m_pCooltime->Tick(fTimeDelta);
+
+
 	
 }
 
@@ -191,6 +192,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	{
 		if (true == m_pTarget->isDead())
 		{
+			Safe_Release(m_pTarget);
 			m_pTarget = nullptr;
 			return;
 		}
@@ -417,9 +419,7 @@ HRESULT CPlayer::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"),
 		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
 	{
-		MSG_BOX("Failed CPlayer Add_Component : (Com_Renderer)");
 		__debugbreak();
-
 		return E_FAIL;
 	}
 
@@ -427,9 +427,7 @@ HRESULT CPlayer::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
 	{
-		MSG_BOX("Failed CPlayer Add_Component : (Com_Shader)");
 		__debugbreak();
-
 		return E_FAIL;
 	}
 
@@ -437,9 +435,7 @@ HRESULT CPlayer::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_ShadowAnimMesh"),
 		TEXT("Com_ShadowShader"), reinterpret_cast<CComponent**>(&m_pShadowShader))))
 	{
-		MSG_BOX("Failed CPlayer Add_Component : (Com_ShadowShader)");
 		__debugbreak();
-
 		return E_FAIL;
 	}
 
@@ -447,9 +443,7 @@ HRESULT CPlayer::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Model_CustomModel_Player"),
 		TEXT("Com_Model_CustomModel_Player"), reinterpret_cast<CComponent**>(&m_pCustomModel))))
 	{
-		MSG_BOX("Failed CPlayer Add_Component : (Com_Model_CustomModel_Player)");
 		__debugbreak();
-
 		return E_FAIL;
 	}
 
@@ -465,9 +459,7 @@ HRESULT CPlayer::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_StateContext"),
 		TEXT("Com_StateContext"), reinterpret_cast<CComponent**>(&m_pStateContext), &StateContextDesc)))
 	{
-		MSG_BOX("Failed CPlayer Add_Component : (Com_StateContext)");
 		__debugbreak();
-
 		return E_FAIL;
 	}
 
@@ -488,9 +480,7 @@ HRESULT CPlayer::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_MagicSlot"),
 		TEXT("Com_MagicSlot"), reinterpret_cast<CComponent**>(&m_pMagicSlot))))
 	{
-		MSG_BOX("Failed CPlayer Add_Component : (Com_MagicSlot)");
 		__debugbreak();
-
 		return E_FAIL;
 	}
 
@@ -518,9 +508,7 @@ HRESULT CPlayer::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
 		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
 	{
-		MSG_BOX("Failed CPlayer Add_Component : (Com_RigidBody)");
 		__debugbreak();
-
 		return E_FAIL;
 	}
 
@@ -532,9 +520,7 @@ HRESULT CPlayer::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Player_Information"),
 		TEXT("Com_Player_Information"), reinterpret_cast<CComponent**>(&m_pPlayer_Information))))
 	{
-		MSG_BOX("Failed CPlayer Add_Component : (Com_Player_Information)");
 		__debugbreak();
-
 		return E_FAIL;
 	}
 
@@ -542,14 +528,23 @@ HRESULT CPlayer::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Skill"),
 		TEXT("Com_UI_Group_Skill_1"), reinterpret_cast<CComponent**>(&m_UI_Group_Skill_01))))
 	{
-		MSG_BOX("Failed CPlayer Add_Component : (Com_UI_Group_Skill_1)");
 		__debugbreak();
-
 		return E_FAIL;
 	}
 
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_AccPotion"),
+		TEXT("Com_AccPotion"), reinterpret_cast<CComponent**>(&m_pAccPotion))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
 
-
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_CoolTime"),
+		TEXT("Com_CoolTime"), reinterpret_cast<CComponent**>(&m_pCooltime))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
 	return S_OK;
 }
 
@@ -741,7 +736,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 	if (pGameInstance->Get_DIKeyState(DIK_RIGHT))
 	{
-		//m_pTransform->Turn(_float3(0.f, 1.f, 0.f), fTimeDelta);
+		////m_pTransform->Turn(_float3(0.f, 1.f, 0.f), fTimeDelta);
 		m_pTransform->Go_Right(fTimeDelta);
 	}
 #endif //_DEBUG
@@ -753,9 +748,21 @@ void CPlayer::Key_Input(_float fTimeDelta)
 	
 	if (pGameInstance->Get_DIKeyState(DIK_L, CInput_Device::KEY_DOWN))
 	{
-		CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_Dust01"), m_pTransform->Get_Position());
-		CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_Dust02"), m_pTransform->Get_Position());
-		CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_RockChunksRough"), m_pTransform->Get_Position());
+		//CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_Dust01"), m_pTransform->Get_Position());
+		//CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_Dust02"), m_pTransform->Get_Position());
+		//CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_RockChunksRough"), m_pTransform->Get_Position());
+		_int iHp = 1;
+		m_pPlayer_Information->Get_Health()->Set_HP(iHp);
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_K, CInput_Device::KEY_DOWN))
+	{
+		CWiggenweldPotion::INIT_DESC initDesc;
+		initDesc.pHealthCom = m_pPlayer_Information->Get_Health();
+		CWiggenweldPotion* pWiggenweldPotion = static_cast<CWiggenweldPotion*>(
+			pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_WiggenweldPotion"), &initDesc));
+		pWiggenweldPotion->Use(_float3());
+		Safe_Release(pWiggenweldPotion);
 	}
 
 	ENDINSTANCE;
@@ -938,20 +945,22 @@ void CPlayer::Tick_ImGui()
 {
 	ImGui::Begin("Player");
 	
-	
 	if (ImGui::Checkbox("Gravity", &m_isGravity))
 	{
 		m_pRigidBody->Set_Gravity(m_isGravity);
 	}
 
-	if (ImGui::Button("Go to 0"))
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	if (ImGui::Button("Go to Level Init Position"))
 	{
-		m_pRigidBody->Set_Position(_float3(1.f, 1.f, 1.f));
+		m_pTransform->Set_Position(m_vLevelInitPosition[pGameInstance->Get_CurrentLevelIndex()]);
 	}
+	Safe_Release(pGameInstance);
+	
 
 	_float3 vVelocity = m_pTransform->Get_Velocity();
 	ImGui::InputFloat3("Velocity", reinterpret_cast<_float*>(&vVelocity));
-
 
 	ImGui::End();
 }
@@ -1061,6 +1070,9 @@ void CPlayer::Update_Target_Angle()
 
 void CPlayer::Next_Spell_Action()
 {
+	if (nullptr == m_pMagicBall)
+		return;
+
 	m_pMagicBall->Do_MagicBallState_To_Next();
 }
 
@@ -1355,8 +1367,7 @@ void CPlayer::Find_Target_For_Distance()
 
 	if (nullptr == pLayer)
 	{
-		//MSG_BOX("not MonsterLayer");
-		ENDINSTANCE
+		ENDINSTANCE;
 		return;
 	}
 
@@ -1434,11 +1445,7 @@ void CPlayer::Find_Target_For_Distance()
 			m_pTarget = nullptr;
 		}
 	}
-
-
 	ENDINSTANCE;
-
-
 }
 
 void CPlayer::Shot_Magic_Spell()
@@ -1645,7 +1652,8 @@ void CPlayer::Free()
 		Safe_Release(m_pRigidBody);
 		Safe_Release(m_pPlayer_Information);
 		Safe_Release(m_UI_Group_Skill_01);
-
+		Safe_Release(m_pAccPotion);
+		Safe_Release(m_pCooltime);
 		
 		if (nullptr != m_pTargetTransform)
 		{

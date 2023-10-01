@@ -22,9 +22,21 @@ HRESULT CLevel_Cliffside::Initialize()
 
 		return E_FAIL;
 	}
+	if (FAILED(Ready_Layer_Item(TEXT("Layer_Item"))))
+	{
+		MSG_BOX("Failed Ready_Layer_Item");
+
+		return E_FAIL;
+	}
 	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
 	{
 		MSG_BOX("Failed Ready_Layer_Player");
+
+		return E_FAIL;
+	}
+	if (FAILED(Ready_Layer_Inventory(TEXT("Layer_Inventory"))))
+	{
+		MSG_BOX("Failed Ready_Layer_Inventory");
 
 		return E_FAIL;
 	}
@@ -81,7 +93,6 @@ HRESULT CLevel_Cliffside::Initialize()
 	}
 
 	//Load_Monsters(TEXT("../../Resources/GameData/MonsterData/Cliff1.mon"));
-
 #ifdef _DEBUG
 	if (FAILED(Ready_Layer_Debug(TEXT("Layer_Debug"))))
 	{
@@ -229,6 +240,54 @@ HRESULT CLevel_Cliffside::Ready_Layer_Player(const _tchar* pLayerTag)
 	return S_OK;
 }
 
+HRESULT CLevel_Cliffside::Ready_Layer_Item(const _tchar* pLayerTag)
+{
+	BEGININSTANCE;
+
+	/* Add Scene : Main */
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
+	{
+		MSG_BOX("Failed Add Scene : (Scene_Main)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_AccPotion"), pLayerTag, TEXT("GameObject_AccPotion"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_AccPotion)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CLevel_Cliffside::Ready_Layer_Inventory(const _tchar* pLayerTag)
+{
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	/* Add Scene : Main */
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Menu"), pLayerTag)))
+	{
+		MSG_BOX("Failed Add Scene : (Scene_Menu)");
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	}
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Inventory"), pLayerTag, TEXT("GameObject_Inventory"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Inventory)");
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	}
+
+	Safe_Release(pGameInstance);
+	return S_OK;
+}
+
 HRESULT CLevel_Cliffside::Ready_Layer_Monster(const _tchar* pLayerTag)
 {
 	BEGININSTANCE;
@@ -240,13 +299,8 @@ HRESULT CLevel_Cliffside::Ready_Layer_Monster(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	/*if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Golem_CombatGrunt"), pLayerTag, TEXT("GameObject_Golem_Combat"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Golem_Combat)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}*/
-
+	///////////////	테스트용 몬스터 배치 코드 입니다. /////////////////////
+	///////////////	실전 배치시 해당 코드는 지워주세요.////////////////////
 	_float4x4 Matrix = XMMatrixTranslation(40.f, 10.f, 60.f);
 	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Golem_CombatGrunt"), pLayerTag, TEXT("GameObject_Golem_Combat"), &Matrix)))
 	{
@@ -254,24 +308,18 @@ HRESULT CLevel_Cliffside::Ready_Layer_Monster(const _tchar* pLayerTag)
 		ENDINSTANCE;
 		return E_FAIL;
 	}
-
-	/*if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Armored_Troll"), pLayerTag, TEXT("GameObject_Armored_Troll"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Armored_Troll)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}*/
-
-	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Dugbog"), pLayerTag, TEXT("GameObject_Dugbog"))))
+	Matrix = XMMatrixTranslation(40.f, 10.f, 65.f);
+	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Dugbog"), pLayerTag, TEXT("GameObject_Dugbog"), &Matrix)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Dugbog)");
 		ENDINSTANCE;
 		return E_FAIL;
 	}
+	///////////////////////////////////////////////////////////////////////
 
-	/*if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Golem_MerlinGrunt"), pLayerTag, TEXT("GameObject_Golem_Merlin"))))
+	/*if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Armored_Troll"), pLayerTag, TEXT("GameObject_Armored_Troll"))))
 	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Golem_Merlin)");
+		MSG_BOX("Failed Add_GameObject : (GameObject_Armored_Troll)");
 		ENDINSTANCE;
 		return E_FAIL;
 	}*/

@@ -61,6 +61,13 @@ public:
 		Clamp(m_iHP += iValue, 0, m_iMaxHP);
 	}
 
+	// 예를들어, MaxHP가 100이고, 인자로 0.2f를 입력하면 20의 체력이 회복된다.
+	void Heal(_float fPercent) {
+		Clamp(fPercent, 0.f, 1.f); // 범위를 [0, 1]로 제한.
+		_int iHealAmount = static_cast<_int>(m_iMaxHP * fPercent);
+		Heal(iHealAmount);
+	}
+
 private:
 	_int m_iMaxHP = { 0 };
 	_int m_iHP = { 0 };

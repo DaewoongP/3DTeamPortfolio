@@ -14,10 +14,7 @@
 BEGIN(Engine)
 class CModel;
 class CTransform;
-END
-
-BEGIN(Client)
-class CRandom_AirHit;
+class CRandomChoose;
 END
 
 BEGIN(Client)
@@ -39,7 +36,7 @@ public:
 	HRESULT Assemble_Behavior(const _float& fWeight);
 
 private:
-	CRandom_AirHit* m_pRandom_AirHit = { nullptr };
+	CRandomChoose* m_pRandomChoose = { nullptr };
 
 private:
 	virtual HRESULT Assemble_Childs() override;

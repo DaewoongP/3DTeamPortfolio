@@ -17,6 +17,7 @@ class CMenu_Gear;
 class CMenu_Inventory;
 class CMenu_Quest;
 class CMenu_Setting;
+class CInventory;
 
 class CMain_Menu final : public CGameObject
 {
@@ -33,7 +34,7 @@ public:
 	virtual HRESULT Render() override;
 
 public:
-	void	Set_Menu(_uint iIndex);
+	void 	Set_Menu(_uint iIndex);
 
 private:
 	HRESULT Add_Prototype();
@@ -59,12 +60,15 @@ private: // Main Frame
 
 private: // Main Group
 	CMenu_Gear*			m_pGear = { nullptr };
-	CMenu_Inventory*	m_pInventory = { nullptr };
-	CMenu_Quest*		m_pQuest = { nullptr };
+	CMenu_Inventory*		m_pInventory = { nullptr };
+	CMenu_Quest*			m_pQuest = { nullptr };
 	CMenu_Setting*		m_pSetting = { nullptr };
 
 private:
-	CUI_Group_Cursor* m_pCursor = { nullptr };
+	CUI_Group_Cursor*		m_pCursor = { nullptr };
+
+private:
+	CInventory*			m_pPlayerInventory = { nullptr };
 
 private:
 	void		Set_SelectedText();

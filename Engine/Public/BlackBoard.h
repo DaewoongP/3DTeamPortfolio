@@ -44,7 +44,9 @@ public:
 		{
 			string strErrorMSG = strTypename + " is Not in BlackBoard";
 			MessageBoxA(nullptr, strErrorMSG.c_str(), "System Message", MB_OK);
+#ifdef _DEBUG
 			__debugbreak();
+#endif // _DEBUG
 			return E_FAIL;
 		}
 

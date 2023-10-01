@@ -30,7 +30,6 @@ HRESULT CPlayer_Information::Initialize(void* pArg)
 	}
 
 
-
 	m_vecItemCount.resize(PLAYER_ITEM_END);
 
 	return S_OK;
@@ -103,9 +102,7 @@ HRESULT CPlayer_Information::Add_Components()
 		__debugbreak();
 		return E_FAIL;
 	}
-
-
-
+	
 	return S_OK;
 }
 
@@ -169,5 +166,6 @@ void CPlayer_Information::Free()
 		Safe_Release(m_pFinisher);
 		Safe_Release(m_pUI_Finisher);
 		Safe_Release(m_pUI_Health);
+		//Safe_Release(m_pInventory);
 	}
 }

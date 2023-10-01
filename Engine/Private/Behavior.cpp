@@ -71,20 +71,6 @@ HRESULT CBehavior::Add_Fail_Decorator(function<_bool(class CBlackBoard*)> Func)
 	return S_OK;
 }
 
-HRESULT CBehavior::Add_Function_Decorator(function<_bool(class CBlackBoard*)> Func)
-{
-	if (nullptr == Func)
-		return E_FAIL;
-
-	CDecorator* pDecoration = CDecorator::Create(Func);
-	if (nullptr == pDecoration)
-		return E_FAIL;
-
-	m_FunctionDecorators.push_back(pDecoration);
-
-	return S_OK;
-}
-
 HRESULT CBehavior::Assemble_Behavior(const wstring& _BehaviorTag, CBehavior* _pBehavior)
 {
 	/* 태그 중복값 검사 */
@@ -101,7 +87,6 @@ HRESULT CBehavior::Assemble_Behavior(const wstring& _BehaviorTag, CBehavior* _pB
 	}
 
 	_pBehavior->m_wstrBehaviorTag = _BehaviorTag;
-	_pBehavior->m_pParentBehavior = this; /* 상호참조 때문에 AddRef는 하지 않는다. */
 	_pBehavior->m_pOwner = m_pOwner; /* 상호참조 때문에 AddRef는 하지 않는다. */
 	_pBehavior->m_pBlackBoard = m_pBlackBoard;
 	Safe_AddRef(m_pBlackBoard);
@@ -164,17 +149,6 @@ _bool CBehavior::Check_Fail_Decorators()
 	return true;
 }
 
-_bool CBehavior::Check_Run_Function_Decorators()
-{
-	for (auto& Deco : m_FunctionDecorators)
-	{
-		if (false == Deco->Is_Execute(m_pBlackBoard))
-			return false;
-	}
-
-	return true;
-}
-
 CBehavior* CBehavior::Find_Behavior(const wstring& BehaviorTag)
 {
 	const auto& iter = find_if(m_Behaviors.begin(), m_Behaviors.end(), [&](auto pBehavior)
@@ -203,8 +177,6 @@ void CBehavior::Free()
 	for (auto& Func : m_SuccessDecorators)
 		Safe_Release(Func);
 	for (auto& Func : m_FailDecorators)
-		Safe_Release(Func);
-	for (auto& Func : m_FunctionDecorators)
 		Safe_Release(Func);
 
 	if (true == m_isCloned)

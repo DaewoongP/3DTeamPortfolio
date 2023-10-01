@@ -20,8 +20,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Animation.h" />
+    <ClInclude Include="..\public\CoolTime.h" />
     <ClInclude Include="..\Public\DOF.h" />
-    <ClInclude Include="..\Public\LoadingScene.h" />
     <ClInclude Include="..\public\MotionBlurInst.h" />
     <ClInclude Include="..\public\MotionBlur.h" />
     <ClInclude Include="..\public\ParticleSystemPool.h" />
@@ -162,7 +162,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Animation.cpp" />
-    <ClCompile Include="..\Private\LoadingScene.cpp" />
+    <ClCompile Include="..\private\CoolTime.cpp" />
     <ClCompile Include="..\Private\DOF.cpp" />
     <ClCompile Include="..\Private\Model_Instance.cpp" />
     <ClCompile Include="..\private\MotionBlurInst.cpp" />
@@ -306,6 +306,7 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_FlowMap.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Geometry.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Glow.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Light.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_MotionBlur.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Navigation.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_PostProcessing.hlsl" />

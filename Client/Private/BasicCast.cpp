@@ -125,7 +125,7 @@ void CBasicCast::Late_Tick(_float fTimeDelta)
 void CBasicCast::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
 	//¸÷ÀÌ¶û Ãæµ¹ÇßÀ¸¸é?
-	if (wcsstr(CollisionEventDesc.pOtherCollisionTag,TEXT("Enemy_Body")) != nullptr)
+	if (wcsstr(CollisionEventDesc.pOtherCollisionTag, TEXT("Enemy_Body")) != nullptr)
 	{
 		Set_MagicBallState(MAGICBALL_STATE_DYING);
 	}

@@ -25,6 +25,7 @@
 #include "Behavior.h"
 #include "Selector.h"
 #include "Sequence.h"
+#include "CoolTime.h"
 #include "Animation.h"
 #include "Transform.h"
 #include "RigidBody.h"

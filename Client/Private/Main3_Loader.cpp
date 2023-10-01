@@ -29,6 +29,14 @@
 
 
 #include "Player_Information.h"
+#include "CoolTime.h"
+
+#pragma region Items
+
+#include "AccPotion.h"
+#include "WiggenweldPotion.h"
+
+#pragma endregion
 
 
 CMain3_Loader::CMain3_Loader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -269,6 +277,16 @@ HRESULT CMain3_Loader::Loading_For_Cliffside()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Professor_Fig"),
 			CProfessor_Fig::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Professor_Fig");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_AccPotion"),
+			CAccPotion::Create(m_pDevice, m_pContext, LEVEL_STATIC))))
+			throw TEXT("Prototype_GameObject_AccPotion");
+
+
+		/* For.Prototype_GameObject_WiggenweldPotion */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_WiggenweldPotion"),
+			CWiggenweldPotion::Create(m_pDevice, m_pContext, LEVEL_STATIC, TEXT("../../Resources/UI/Game/UI/Icons/Potions/UI_T_WoundCleaning.png")))))
+			throw TEXT("Prototype_GameObject_WiggenweldPotion");
 	}
 	catch (const _tchar* pErrorTag)
 	{

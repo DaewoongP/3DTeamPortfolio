@@ -21,7 +21,6 @@ HRESULT CUI_Slot::Initialize(void* pArg)
 		m_Textures.resize(SLOT_END);
 		m_AlphaTextures.resize(SLOT_END);
 
-
 		UIDESC* pDesc = (UIDESC*)pArg;
 
 		m_vCombinedXY = pDesc->vCombinedXY;
@@ -31,7 +30,6 @@ HRESULT CUI_Slot::Initialize(void* pArg)
 		m_fSizeX = pDesc->fSizeX;
 		m_fSizeY = pDesc->fSizeY;
 		lstrcpy(m_wszTexturePath, pDesc->szTexturePath);
-		//lstrcpy(m_wszAlphaTexturePath, pDesc->szAlphaTexturePath);
 		m_Textures[BACK] = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/UI_T_ButtonBack.png"));
 		m_Textures[FRAME] = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/FX/UI_T_Goldleaf_Large.png"));
 
@@ -117,10 +115,8 @@ HRESULT CUI_Slot::Render()
 			if (FAILED(m_pVIBufferCom->Render()))
 				return E_FAIL;
 		}
-
 		// m_iTextureIndex++;
 	}
-
 	// m_iTextureIndex = 0;
 	return S_OK;
 }

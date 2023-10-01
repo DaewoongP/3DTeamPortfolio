@@ -175,12 +175,6 @@
     <Filter Include="03. Behaviors\00. Action">
       <UniqueIdentifier>{22de2c6d-33c0-405e-880a-8329dd7ffd58}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Behaviors\04. Movement">
-      <UniqueIdentifier>{d95f3888-ed91-44de-bed2-7ee502737efa}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Behaviors\03. RandomChoose">
-      <UniqueIdentifier>{68fa3644-0ca1-4bca-844f-2fc72e090f6d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="97. ShaderFiles">
       <UniqueIdentifier>{776f72a6-a2da-4037-a3c4-4c09ed568945}</UniqueIdentifier>
     </Filter>
@@ -198,9 +192,6 @@
     </Filter>
     <Filter Include="97. ShaderFiles\Magic\Protego">
       <UniqueIdentifier>{2b531332-cdaa-4769-a0cb-b4ae97608818}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Behaviors\05. Function">
-      <UniqueIdentifier>{11282af5-bac7-4061-9441-81c0be48d567}</UniqueIdentifier>
     </Filter>
     <Filter Include="04. Effect">
       <UniqueIdentifier>{b30da159-0cae-438f-a468-3cc4137f82aa}</UniqueIdentifier>
@@ -385,6 +376,15 @@
     <Filter Include="99. Headers">
       <UniqueIdentifier>{91c3e316-2a51-40fe-a9b3-e3fef6e8989d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Behaviors\03. Movement">
+      <UniqueIdentifier>{d95f3888-ed91-44de-bed2-7ee502737efa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Behaviors\04. Function">
+      <UniqueIdentifier>{11282af5-bac7-4061-9441-81c0be48d567}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Item">
+      <UniqueIdentifier>{5c3eefb3-c8a9-4a27-96cf-0e1d6a672946}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\08. Inventory\Item">
       <UniqueIdentifier>{a8a056c1-627a-4e55-9a40-91512c0110cc}</UniqueIdentifier>
     </Filter>
@@ -405,6 +405,18 @@
     </Filter>
     <Filter Include="05. Magic\MagicBall\13. Diffindo">
       <UniqueIdentifier>{5e7fdfdc-7c44-4397-8d4e-53e918a12608}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\08. Inventory\Item\Potion">
+      <UniqueIdentifier>{468d1cd9-e6fb-4a3a-8b33-c14df4a7eb93}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Item\ex1.PowerPotion">
+      <UniqueIdentifier>{5a4aa143-71df-4884-91e1-ca2caf295348}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Item\ex.AccPotion">
+      <UniqueIdentifier>{7cb5d380-3253-4755-a164-7338fda2ebf8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Item\WiggenweldPotion">
+      <UniqueIdentifier>{c07071fe-c006-4bca-b390-e403b214f1e9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -508,7 +520,7 @@
       <Filter>99. Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Wait.h">
-      <Filter>03. Behaviors\04. Movement</Filter>
+      <Filter>03. Behaviors\03. Movement</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Dugbog.h">
       <Filter>02. GameObject\02. Enemy\02. Dugbog</Filter>
@@ -535,7 +547,7 @@
       <Filter>02. GameObject\01. Player</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Turn.h">
-      <Filter>03. Behaviors\04. Movement</Filter>
+      <Filter>03. Behaviors\03. Movement</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Selector_Degree.h">
       <Filter>03. Behaviors\01. Selectors</Filter>
@@ -605,9 +617,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\Default_MagicTrail_Effect.h">
       <Filter>04. Effect\Default_MagicTrail_Effect</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Random_Select.h">
-      <Filter>03. Behaviors\03. RandomChoose</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Sequence_Groggy.h">
       <Filter>03. Behaviors\02. Sequences</Filter>
@@ -738,12 +747,6 @@
     <ClInclude Include="..\Public\Player_Information.h">
       <Filter>02. GameObject\01. Player\03. PlayerInformation</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Check_Degree.h">
-      <Filter>03. Behaviors\05. Function</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Check_Distance.h">
-      <Filter>03. Behaviors\05. Function</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Finisher.h">
       <Filter>05. Magic\MagicBall\07. Finisher</Filter>
     </ClInclude>
@@ -759,14 +762,8 @@
     <ClInclude Include="..\Public\Client_Enum.h">
       <Filter>99. Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Check_Degree.h">
-      <Filter>03. Behaviors\05. Function</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Check_Distance.h">
-      <Filter>03. Behaviors\05. Function</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\LookAt.h">
-      <Filter>03. Behaviors\04. Movement</Filter>
+      <Filter>03. Behaviors\03. Movement</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Menu_Gear.h">
       <Filter>06. Scene\Main_Menu\Gear</Filter>
@@ -774,11 +771,8 @@
     <ClInclude Include="..\Public\Sequence_AirHit.h">
       <Filter>03. Behaviors\02. Sequences</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Random_AirHit.h">
-      <Filter>03. Behaviors\03. RandomChoose</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Death.h">
-      <Filter>03. Behaviors\04. Movement</Filter>
+      <Filter>03. Behaviors\03. Movement</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Enemy.h">
       <Filter>02. GameObject\02. Enemy</Filter>
@@ -816,6 +810,9 @@
     <ClInclude Include="..\Public\UI_Group_Quest.h">
       <Filter>02. GameObject\04. UI\UI_Group</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\WiggenweldPotion.h">
+      <Filter>02. GameObject\09. Item\WiggenweldPotion</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\MPBall.h">
       <Filter>02. GameObject\08. Inventory\Item\MPBall</Filter>
     </ClInclude>
@@ -827,6 +824,26 @@
     </ClInclude>
     <ClInclude Include="..\Public\Accio.h">
       <Filter>05. Magic\MagicBall\11. Accio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\AccPotion.h">
+      <Filter>02. GameObject\09. Item\ex.AccPotion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PowerPotion.h">
+      <Filter>02. GameObject\09. Item\ex1.PowerPotion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Item.h">
+      <Filter>02. GameObject\09. Item</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemFactory.h">
+      <Filter>02. GameObject\09. Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Check_Degree.h" />
+    <ClInclude Include="..\Public\Check_Distance.h" />
+    <ClInclude Include="..\Public\Check_Distance.h">
+      <Filter>03. Behaviors\04. Function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Check_Degree.h">
+      <Filter>03. Behaviors\04. Function</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -900,7 +917,7 @@
       <Filter>02. GameObject\02. Enemy\00. Troll\01. Forest_Troll\Weapon</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Wait.cpp">
-      <Filter>03. Behaviors\04. Movement</Filter>
+      <Filter>03. Behaviors\03. Movement</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Dugbog.cpp">
       <Filter>02. GameObject\02. Enemy\02. Dugbog</Filter>
@@ -927,7 +944,7 @@
       <Filter>02. GameObject\01. Player</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Turn.cpp">
-      <Filter>03. Behaviors\04. Movement</Filter>
+      <Filter>03. Behaviors\03. Movement</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Selector_Degree.cpp">
       <Filter>03. Behaviors\01. Selectors</Filter>
@@ -994,9 +1011,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\Default_MagicTrail_Effect.cpp">
       <Filter>04. Effect\Default_MagicTrail_Effect</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Random_Select.cpp">
-      <Filter>03. Behaviors\03. RandomChoose</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Sequence_Groggy.cpp">
       <Filter>03. Behaviors\02. Sequences</Filter>
@@ -1133,12 +1147,6 @@
     <ClCompile Include="..\Private\Player_Information.cpp">
       <Filter>02. GameObject\01. Player\03. PlayerInformation</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Check_Degree.cpp">
-      <Filter>03. Behaviors\05. Function</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Check_Distance.cpp">
-      <Filter>03. Behaviors\05. Function</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Finisher.cpp">
       <Filter>05. Magic\MagicBall\07. Finisher</Filter>
     </ClCompile>
@@ -1151,23 +1159,14 @@
     <ClCompile Include="..\private\Level_Smith.cpp">
       <Filter>01. Levels\04. Smith</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Check_Degree.cpp">
-      <Filter>03. Behaviors\05. Function</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Check_Distance.cpp">
-      <Filter>03. Behaviors\05. Function</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\LookAt.cpp">
-      <Filter>03. Behaviors\04. Movement</Filter>
+      <Filter>03. Behaviors\03. Movement</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Sequence_AirHit.cpp">
       <Filter>03. Behaviors\02. Sequences</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Random_AirHit.cpp">
-      <Filter>03. Behaviors\03. RandomChoose</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Death.cpp">
-      <Filter>03. Behaviors\04. Movement</Filter>
+      <Filter>03. Behaviors\03. Movement</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Enemy.cpp">
       <Filter>02. GameObject\02. Enemy</Filter>
@@ -1202,8 +1201,8 @@
     <ClCompile Include="..\Private\UI_Group_Quest.cpp">
       <Filter>02. GameObject\04. UI\UI_Group</Filter>
     </ClCompile>
-    <ClCompile Include="MPBall.cpp">
-      <Filter>02. GameObject\08. Inventory\Item\MPBall</Filter>
+    <ClCompile Include="..\private\WiggenweldPotion.cpp">
+      <Filter>02. GameObject\09. Item\WiggenweldPotion</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Magic.cpp">
       <Filter>05. Magic</Filter>
@@ -1216,6 +1215,29 @@
     </ClCompile>
     <ClCompile Include="..\Private\Accio.cpp">
       <Filter>05. Magic\MagicBall\11. Accio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\AccPotion.cpp">
+      <Filter>02. GameObject\09. Item\ex.AccPotion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PowerPotion.cpp">
+      <Filter>02. GameObject\09. Item\ex1.PowerPotion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Item.cpp">
+      <Filter>02. GameObject\09. Item</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemFactory.cpp">
+      <Filter>02. GameObject\09. Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Check_Degree.cpp" />
+    <ClCompile Include="..\Private\Check_Distance.cpp" />
+    <ClCompile Include="..\Private\MPBall.cpp">
+      <Filter>02. GameObject\08. Inventory\Item\MPBall</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Check_Degree.cpp">
+      <Filter>03. Behaviors\04. Function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Check_Distance.cpp">
+      <Filter>03. Behaviors\04. Function</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

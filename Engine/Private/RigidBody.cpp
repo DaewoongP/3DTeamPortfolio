@@ -369,9 +369,13 @@ HRESULT CRigidBody::Create_Collider(RIGIDBODYDESC* pRigidBodyDesc)
 	Safe_AddRef(pString_Manager);
 	pShape->setName(pString_Manager->Make_Char(pRigidBodyDesc->szCollisionTag));
 	Safe_Release(pString_Manager);
+
 	// 유저데이터 설정
-	pShape->userData = pRigidBodyDesc->pOwnerObject;
-	
+	COLLISIONDATADESC* pCollisionData = New COLLISIONDATADESC;
+	pCollisionData->pCollisionData = pRigidBodyDesc->pCollisionData;
+	pCollisionData->pOwnerObject = pRigidBodyDesc->pOwnerObject;
+	pShape->userData = pCollisionData;
+
 	// 액터와 씬 처리.
 	// AttachShape로 콜라이더 여러개 바인딩 가능.
 	// 씬도 일단 한개만 처리하게 해둬서 신경 안써도 될듯.
@@ -500,7 +504,23 @@ void CRigidBody::Enable_Collision(const _char* szColliderTag, CGameObject* pThis
 	m_pActor->detachShape(*pShape);
 	FilterData.word2 = USE_COL;
 	pShape->setSimulationFilterData(FilterData);
-	pShape->userData = pThisCollision;
+	static_cast<COLLISIONDATADESC*>(pShape->userData)->pOwnerObject = pThisCollision;
+	m_pActor->attachShape(*pShape);
+}
+
+void CRigidBody::Enable_Collision(const _char* szColliderTag, CGameObject* pThisCollision, void* pCollisionData)
+{
+	PxShape* pShape = Find_Shape(szColliderTag);
+
+	if (nullptr == pShape)
+		return;
+
+	PxFilterData FilterData = pShape->getSimulationFilterData();
+	m_pActor->detachShape(*pShape);
+	FilterData.word2 = USE_COL;
+	pShape->setSimulationFilterData(FilterData);
+	static_cast<COLLISIONDATADESC*>(pShape->userData)->pOwnerObject = pThisCollision;
+	static_cast<COLLISIONDATADESC*>(pShape->userData)->pCollisionData = pCollisionData;
 	m_pActor->attachShape(*pShape);
 }
 
@@ -515,7 +535,7 @@ void CRigidBody::Disable_Collision(const _char* szColliderTag)
 	m_pActor->detachShape(*pShape);
 	FilterData.word2 = END_COL;
 	pShape->setSimulationFilterData(FilterData);
-	pShape->userData = nullptr;
+	static_cast<COLLISIONDATADESC*>(pShape->userData)->pOwnerObject = nullptr;
 	m_pActor->attachShape(*pShape);
 }
 
@@ -749,9 +769,9 @@ void CRigidBody::Free()
 
 	if (nullptr != m_pActor)
 	{
-		m_pActor->userData = nullptr;
 		for (auto& ShapePair : m_Shapes)
 		{
+			Safe_Delete(ShapePair.second->userData);
 			m_pActor->detachShape(*ShapePair.second);
 		}
 		

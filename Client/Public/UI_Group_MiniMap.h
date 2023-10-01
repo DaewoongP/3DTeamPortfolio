@@ -25,11 +25,9 @@ public:
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 
-
-
 private:
-	class CUI_Effect_Back*		m_pUI_Effect_Back;
-	class CUI_Back*				m_pUI_Back;
+	class CUI_Effect_Back*				m_pUI_Effect_Back;
+	class CUI_Back*					m_pUI_Back;
 
 	vector<class CTexture*>			m_MapTextures;
 

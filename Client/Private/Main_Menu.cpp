@@ -7,6 +7,7 @@
 #include "Menu_Invectory.h"
 #include "Menu_Quest.h"
 #include "Menu_Setting.h"
+#include "Inventory.h"
 
 CMain_Menu::CMain_Menu(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -52,6 +53,17 @@ void CMain_Menu::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
+	if (nullptr == m_pPlayerInventory)
+	{
+		CGameInstance* pGameInstacne = CGameInstance::GetInstance();
+		Safe_AddRef(pGameInstacne);
+
+		m_pPlayerInventory = static_cast<CInventory*>(pGameInstacne->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Inventory"), TEXT("GameObject_Inventory")));
+		Safe_AddRef(m_pPlayerInventory);
+
+		Safe_Release(pGameInstacne);
+	}
+
 	Set_SelectedText();
 
 
@@ -63,7 +75,7 @@ void CMain_Menu::Tick(_float fTimeDelta)
 		break;
 	case INVENTORY:
 		if (nullptr != m_pInventory)
-		m_pInventory->Tick(fTimeDelta);
+			m_pInventory->Tick(fTimeDelta);
 		break;
 	case QUEST:
 		if (nullptr != m_pQuest)
@@ -250,17 +262,17 @@ HRESULT CMain_Menu::Read_File(const _tchar* pFilePath)
 	ReadFile(hFile, szGroupName, dwStrByte, &dwByte, nullptr);
 
 
-	CUI_Back* pFrame = dynamic_cast<CUI_Back*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Menu_UI"), TEXT("Com_UI_Effect_Back_Menu_Frame")));
+	CUI_Back* pFrame = static_cast<CUI_Back*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Menu_UI"), TEXT("Com_UI_Effect_Back_Menu_Frame")));
 	pFrame->Load(Load_File(hFile));
 
 	_uint iSize = { 0 };
 	ReadFile(hFile, &iSize, sizeof(_uint), &dwByte, nullptr);
 
-	CUI_Back* pQ = dynamic_cast<CUI_Back*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Menu_UI"), TEXT("Com_UI_Effect_Back_Menu_Q")));
+	CUI_Back* pQ = static_cast<CUI_Back*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Menu_UI"), TEXT("Com_UI_Effect_Back_Menu_Q")));
 	pQ->Load(Load_File(hFile));
 	pQ->Set_Parent(pFrame);
 
-	CUI_Back* pE= dynamic_cast<CUI_Back*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Menu_UI"), TEXT("Com_UI_Effect_Back_Menu_E")));
+	CUI_Back* pE= static_cast<CUI_Back*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Menu_UI"), TEXT("Com_UI_Effect_Back_Menu_E")));
 	pE->Load(Load_File(hFile));
 	pE->Set_Parent(pFrame);
 
@@ -295,7 +307,7 @@ HRESULT CMain_Menu::Read_File(const _tchar* pFilePath)
 	ReadFile(hFile, szGroupName, dwStrByte, &dwByte, nullptr);
 
 
-	CUI_Back* pBack = dynamic_cast<CUI_Back*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Menu_UI"), TEXT("Com_UI_Effect_Back_Menu_Back")));
+	CUI_Back* pBack = static_cast<CUI_Back*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Menu_UI"), TEXT("Com_UI_Effect_Back_Menu_Back")));
 	pBack->Load(Load_File(hFile2));
 	CloseHandle(hFile2);
 
@@ -362,6 +374,7 @@ void CMain_Menu::Set_SelectedText()
 				m_iSelectedText = iIndex;
 				m_eCurMenu = (MENU)m_iSelectedText;
 				m_pTexts[m_iSelectedText]->Set_Clicked(true);
+				m_pPlayerInventory->Set_Open(false);
 				return;
 			}
 
@@ -369,7 +382,7 @@ void CMain_Menu::Set_SelectedText()
 			m_iSelectedText = iIndex;
 			m_eCurMenu = (MENU)m_iSelectedText;
 			m_pTexts[m_iSelectedText]->Set_Clicked(true);
-
+			m_pPlayerInventory->Set_Open(false);
 		}
 		iIndex++;
 	}
@@ -380,15 +393,13 @@ HRESULT CMain_Menu::Ready_Menus()
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 	
-	m_pGear = dynamic_cast<CMenu_Gear*>(pGameInstance->Clone_Component(LEVEL_STATIC,
+	m_pGear = static_cast<CMenu_Gear*>(pGameInstance->Clone_Component(LEVEL_STATIC,
 		TEXT("Prototype_GameObject_Menu_Gear")));
-	//Safe_AddRef(m_pGear);
 
-
-	m_pInventory = dynamic_cast<CMenu_Inventory*>(pGameInstance->Clone_Component(LEVEL_STATIC,
+	m_pInventory = static_cast<CMenu_Inventory*>(pGameInstance->Clone_Component(LEVEL_STATIC,
 		TEXT("Prototype_GameObject_Menu_Inventory")));
 
-	m_pQuest = dynamic_cast<CMenu_Quest*>(pGameInstance->Clone_Component(LEVEL_STATIC,
+	m_pQuest = static_cast<CMenu_Quest*>(pGameInstance->Clone_Component(LEVEL_STATIC,
 		TEXT("Prototype_GameObject_Menu_Quest")));
 
 	Safe_Release(pGameInstance);
@@ -439,9 +450,9 @@ void CMain_Menu::Free()
 	Safe_Release(m_pTexture);
 
 	Safe_Release(m_pGear);	
-	Safe_Release(m_pInventory);
+	if (true == m_isCloned)
+		Safe_Release(m_pInventory);
 	Safe_Release(m_pQuest);
 	Safe_Release(m_pCursor);
-	
-
+	Safe_Release(m_pPlayerInventory);
 }

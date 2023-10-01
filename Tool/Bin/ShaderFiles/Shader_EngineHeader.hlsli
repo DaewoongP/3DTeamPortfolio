@@ -12,25 +12,20 @@ sampler PointSampler = sampler_state
 	AddressU = WRAP;
 	AddressV = WRAP;
 };
-sampler BlurSampler = sampler_state
+sampler LinearSampler_Clamp = sampler_state
 {
     Filter = MIN_MAG_MIP_LINEAR;
     AddressU = clamp;
     AddressV = clamp;
 };
 
-sampler BloomSampler = sampler_state
+sampler PointSampler_Clamp = sampler_state
 {
     Filter = MIN_MAG_MIP_POINT;
     AddressU = clamp;
     AddressV = clamp;
 };
-sampler DistortionSampler = sampler_state
-{
-    Filter = MIN_MAG_MIP_LINEAR;
-    AddressU = clamp;
-    AddressV = clamp;
-};
+
 /* Raterizer State */
 RasterizerState RS_Default
 {
@@ -61,7 +56,6 @@ RasterizerState RS_WireFrame
 };
 
 /* Depth_Stencil State */
-
 DepthStencilState DSS_Default
 {
 	DepthEnable = true;
