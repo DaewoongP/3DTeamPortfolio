@@ -400,6 +400,12 @@
     <Filter Include="05. Magic\MagicBall\11. Accio">
       <UniqueIdentifier>{703f4170-540d-477e-9e7d-2f10b19b80de}</UniqueIdentifier>
     </Filter>
+    <Filter Include="05. Magic\MagicBall\12. Flipendo">
+      <UniqueIdentifier>{78baa83c-c63f-4943-8e3c-fc5bdef4b1a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\MagicBall\13. Diffindo">
+      <UniqueIdentifier>{5e7fdfdc-7c44-4397-8d4e-53e918a12608}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
