@@ -127,6 +127,7 @@ HRESULT CMagicSlot::Add_Magic_To_Basic_Slot(_uint iSlotIndex, SPELL eSpellType)
 
 CMagicBall* CMagicSlot::Action_Magic_Skill(_uint iIndex, const CGameObject* pTarget, const CGameObject* pWeaponMatrix, COLLISIONFLAG eCollisionFlag)
 {
+
 	//if Size over = MSG / if Index Slot is nullptr, nothing
 	if (iIndex < m_MagicSlots.size())
 	{

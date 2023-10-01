@@ -30,7 +30,7 @@ class CMagic : public CComposite
 public:
 	// 마법의 구분( 어떤 파티션에 분류되는 친구인가? )
 	enum MAGIC_GROUP { MG_CONTROL, MG_POWER, MG_DAMAGE, MG_UTILITY, MG_CHANGE, MG_CURSE, MG_ESSENTIAL, MG_END };
-	
+
 	// 마법이 영향을 줄 상대 실드의 색
 	enum MAGIC_TYPE { MT_NOTHING, MT_YELLOW, MT_PURPLE, MT_RED, MT_ALL, MT_END };
 
@@ -54,6 +54,10 @@ protected:
 	virtual ~CMagic() = default;
 
 public:
+	void Set_PowerUp(_bool isPowerUp) { m_isPowerUp; }
+
+
+public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;
@@ -71,7 +75,8 @@ protected:
 	MAGICDESC					m_MagicDesc = {};
 	//사용 후 적용시켜줄 쿨타임
 	_float						m_fCurrentCoolTime = { 0 };
-
+	_bool						m_isPowerUp = {false};
+	
 private:
 	//프로토타입 생성을 위한 enum type 별 이름 지정.
 	_tchar m_szTagArray[SPELL_END][MAX_PATH] = {

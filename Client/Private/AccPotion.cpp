@@ -5,20 +5,22 @@
 #include"CoolTime.h"
 
 CAccPotion::CAccPotion(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CGameObject(pDevice, pContext)
+	: CItem(pDevice, pContext)
 {
 }
 
 CAccPotion::CAccPotion(const CAccPotion& rhs)
-	: CGameObject(rhs)
+	: CItem(rhs)
 {
 }
 
-HRESULT CAccPotion::Initialize_Prototype(_uint iLevel)
+HRESULT CAccPotion::Initialize_Prototype(_uint iLevel, const _tchar* pUIImagePath)
 {
-	if (FAILED(__super::Initialize_Prototype()))
+	if (FAILED(__super::Initialize_Prototype(iLevel, pUIImagePath)))
 		return E_FAIL;
 
+	m_iLevel = iLevel;
+	m_eItemType = ITEMTYPE::POTION;
 
 	return S_OK;
 }
@@ -34,7 +36,7 @@ HRESULT CAccPotion::Initialize(void* pArg)
 	return S_OK;
 }
 
-void CAccPotion::Use()
+void CAccPotion::Use(_float3 vPlayPos)
 {
 	if (false == m_pCooltime->IsEnable())
 		m_pCooltime->Set_Enable(true);
@@ -71,11 +73,11 @@ HRESULT CAccPotion::SetUp_ShaderResources()
 	return S_OK;
 }
 
-CAccPotion* CAccPotion::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel)
+CAccPotion* CAccPotion::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel, const _tchar* pUIImagePath)
 {
 	CAccPotion* pInstance = New CAccPotion(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize_Prototype(iLevel)))
+	if (FAILED(pInstance->Initialize_Prototype(iLevel, pUIImagePath)))
 	{
 		MSG_BOX("Failed to Created CAccPotion");
 		Safe_Release(pInstance);

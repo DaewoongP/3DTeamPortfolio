@@ -130,8 +130,14 @@ void CPlayer::Tick(_float fTimeDelta)
 	}
 	if (pGameInstance->Get_DIKeyState(DIK_F5, CInput_Device::KEY_DOWN))
 	{
-		m_pAccPotion->Use();
+		m_pAccPotion->Use(_float3(0.f,0.f,0.f));
 	}
+	if (pGameInstance->Get_DIKeyState(DIK_F6, CInput_Device::KEY_DOWN))
+	{
+		m_pPowerPotion->Use(_float3(0.f, 0.f, 0.f));
+	}
+
+
 
 
 	ENDINSTANCE;
@@ -533,6 +539,13 @@ HRESULT CPlayer::Add_Components()
 
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_AccPotion"),
 		TEXT("Com_AccPotion"), reinterpret_cast<CComponent**>(&m_pAccPotion))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_PowerPotion"),
+		TEXT("Com_PowerPotion"), reinterpret_cast<CComponent**>(&m_pPowerPotion))))
 	{
 		__debugbreak();
 		return E_FAIL;

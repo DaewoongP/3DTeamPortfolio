@@ -71,6 +71,9 @@ CMagicBall* CMagic::Magic_Cast(const CGameObject* pTarget, const CGameObject* pW
 	ballInit.pTarget = pTarget;
 	ballInit.pWeapon = pWeapon;
 
+	if (m_isPowerUp)
+		ballInit.iDamage *= 2.f;
+
 	BEGININSTANCE;
 
 	//타입별 생성을 위한 태그지정임.

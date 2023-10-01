@@ -1,6 +1,5 @@
 #pragma once
-
-#include "GameObject.h"
+#include"Item.h"
 #include "Engine_Defines.h"
 #include "Client_Defines.h"
 
@@ -16,7 +15,7 @@ END
 
 BEGIN(Client)
 
-class CAccPotion final : public CGameObject
+class CAccPotion final : public CItem
 {
 private:
 	CAccPotion(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -24,10 +23,10 @@ private:
 	virtual ~CAccPotion() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype(_uint iLevel);
+	virtual HRESULT Initialize_Prototype(_uint iLevel, const _tchar* pUIImagePath);
 	virtual HRESULT Initialize(void* pArg) override;
 
-	void Use();
+	void Use(_float3 vPlayPos);
 
 private:
 	HRESULT Add_Components();
@@ -36,13 +35,13 @@ private:
 private:
 	_bool m_isDrug = { false };
 	_float m_fDrugTime = { 0.f };
-
+	_uint m_iLevel = { 0 };
 
 	CCoolTime* m_pCooltime = { nullptr };
 
 
 public:
-	static CAccPotion* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel);
+	static CAccPotion* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel, const _tchar* pUIImagePath);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free(void) override;
 

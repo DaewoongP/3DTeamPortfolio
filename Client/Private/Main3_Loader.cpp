@@ -34,6 +34,7 @@
 #pragma region Items
 
 #include "AccPotion.h"
+#include"PowerPotion.h"
 #include "WiggenweldPotion.h"
 
 #pragma endregion
@@ -278,10 +279,15 @@ HRESULT CMain3_Loader::Loading_For_Cliffside()
 			CProfessor_Fig::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Professor_Fig");
 
+		/* For.Prototype_GameObject_AccPotion */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_AccPotion"),
-			CAccPotion::Create(m_pDevice, m_pContext, LEVEL_STATIC))))
+			CAccPotion::Create(m_pDevice, m_pContext, LEVEL_STATIC,TEXT("../../Resources/UI/Game/UI/UI_T_CloudSmokeMask.png")))))
 			throw TEXT("Prototype_GameObject_AccPotion");
 
+		/* For.Prototype_GameObject_PowerPotion */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_PowerPotion"),
+			CPowerPotion::Create(m_pDevice, m_pContext, LEVEL_STATIC,TEXT("../../Resources/UI/Game/UI/UI_T_CloudSmokeMask.png")))))
+			throw TEXT("Prototype_GameObject_PowerPotion");
 
 		/* For.Prototype_GameObject_WiggenweldPotion */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_WiggenweldPotion"),
