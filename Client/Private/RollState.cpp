@@ -59,9 +59,6 @@ void CRollState::OnStateEnter(void* _pArg)
 	}
 
 
-#ifdef _DEBUG
-	cout << "Roll Enter" << endl;
-#endif // _DEBUG
 }
 
 void CRollState::OnStateTick()
@@ -83,9 +80,6 @@ void CRollState::OnStateTick()
 
 void CRollState::OnStateExit()
 {
-#ifdef _DEBUG
-	cout << "Roll Exit" << endl;
-#endif // _DEBUG
 }
 
 void CRollState::Bind_Notify()

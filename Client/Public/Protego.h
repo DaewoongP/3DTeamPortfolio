@@ -8,7 +8,6 @@ class CShader;
 class CRenderer;
 class CTexture;
 class CVIBuffer_UVSphere;
-class CParticleSystem;
 class CTexture_Flipbook;
 END
 
@@ -77,7 +76,6 @@ private:
 private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
-	virtual HRESULT Add_Effect();
 	virtual HRESULT Add_RigidBody() override;
 
 public:

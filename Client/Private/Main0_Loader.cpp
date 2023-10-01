@@ -26,6 +26,8 @@
 #include "Menu_Gear.h"
 #include "Menu_Quest.h"
 #include "Menu_Invectory.h"
+#include "UI_Inventory.h"
+#include "Inventory.h"
 #pragma endregion UI
 
 #pragma region Effects
@@ -50,6 +52,9 @@
 #include "Wingardiumleviosa.h"
 #include "Ncendio.h"
 #include "Lumos.h"
+#include "Arrestomomentum.h"
+#include "Descendo.h"
+#include "Accio.h"
 #pragma endregion Magic
 
 #include "Trigger_Vault.h"
@@ -196,6 +201,13 @@ HRESULT CMain0_Loader::Loading_For_Logo()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Loading"),
 			CUI_Group_Loading::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_UI_Group_Loading");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Inventory"),
+			CUI_Inventory::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_UI_Inventory");
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Inventory"),
+			CInventory::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Inventory");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -339,12 +351,12 @@ HRESULT CMain0_Loader::Loading_For_Cliffside()
 
 		/* For.Prototype_GameObject_Revelio */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Revelio"),
-			CRevelio::Create(m_pDevice, m_pContext))))
+			CRevelio::Create(m_pDevice, m_pContext, LEVEL_STATIC))))
 			throw TEXT("Prototype_GameObject_Revelio");
 
 		/* For.Prototype_GameObject_Wingardiumleviosa */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Wingardiumleviosa"),
-			CWingardiumleviosa::Create(m_pDevice, m_pContext))))
+			CWingardiumleviosa::Create(m_pDevice, m_pContext, LEVEL_STATIC))))
 			throw TEXT("Prototype_GameObject_Wingardiumleviosa");
 
 		/* For.Prototype_GameObject_Levioso */
@@ -372,6 +384,21 @@ HRESULT CMain0_Loader::Loading_For_Cliffside()
 			CLumos::Create(m_pDevice, m_pContext, LEVEL_STATIC))))
 			throw TEXT("Prototype_GameObject_Lumos");
 
+		/* For.Prototype_GameObject_Lumos */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Arrestomomentum"),
+			CArrestomomentum::Create(m_pDevice, m_pContext, LEVEL_STATIC))))
+			throw TEXT("Prototype_GameObject_Arrestomomentum");
+
+		/* For.Prototype_GameObject_Lumos */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Descendo"),
+			CDescendo::Create(m_pDevice, m_pContext, LEVEL_STATIC))))
+			throw TEXT("Prototype_GameObject_Descendo");
+
+		/* For.Prototype_GameObject_Accio */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Accio"),
+			CAccio::Create(m_pDevice, m_pContext, LEVEL_STATIC))))
+			throw TEXT("Prototype_GameObject_Accio");
+
 #pragma endregion
 		{
 			std::lock_guard<std::mutex> lock(mtx);
@@ -394,18 +421,10 @@ HRESULT CMain0_Loader::Loading_For_Cliffside()
 			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Dust01"),
 				TEXT("../../Resources/GameData/ParticleData/Misc/Dust01/"), 3)))
 				throw TEXT("Reserve Particle : Particle_Dust01");
-		}
-
-		{
-			std::lock_guard<std::mutex> lock(mtx);
 
 			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Dust02"),
 				TEXT("../../Resources/GameData/ParticleData/Misc/Dust02/"), 3)))
 				throw TEXT("Reserve Particle : Particle_Dust02");
-		}
-
-		{
-			std::lock_guard<std::mutex> lock(mtx);
 
 			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_RockChunksRough"),
 				TEXT("../../Resources/GameData/ParticleData/Misc/RockChunksRough/"), 3)))

@@ -49,10 +49,6 @@ void CIdleState::Late_Tick(_float fTimeDelta)
 
 void CIdleState::OnStateEnter(void* _pArg)
 {
-#ifdef _DEBUG
-	cout << "Idle Enter" << endl;
-#endif // _DEBUG
-
 	BEGININSTANCE;
 
 	pGameInstance->Reset_Timer(TEXT("Action_Change"));
@@ -102,9 +98,6 @@ void CIdleState::OnStateTick()
 
 void CIdleState::OnStateExit()
 {
-#ifdef _DEBUG
-	cout << "Idle Exit" << endl;
-#endif // _DEBUG
 }
 
 void CIdleState::Action_None_Tick()

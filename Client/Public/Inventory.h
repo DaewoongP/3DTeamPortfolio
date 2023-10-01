@@ -38,6 +38,9 @@ private:
 	virtual ~CInventory() = default;
 
 public:
+	_bool Get_Open() { return m_isOpen; }
+
+public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
@@ -48,7 +51,7 @@ private:
 
 private:
 	// UI 컴포넌트
-	CUI_Inventory*					m_pUI_Inventory[ITEMTYPE_END];
+	CUI_Inventory*				m_pUI_Inventory[ITEMTYPE_END];
 	// 실질적인 아이템 저장소
 	vector<vector<CGameObject*>>	m_pItems;
 	// 현재 플레이어의 장비 포인터

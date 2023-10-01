@@ -93,10 +93,6 @@ HRESULT CAction::Tick(const _float& fTimeDelta)
 		/* 하나라도 동작중이면 계속 진행 */
 		if (BEHAVIOR_RUNNING == hr)
 			m_isFinishBehaviors = false;
-
-#ifdef _DEBUG
-		pBehavior->Set_ReturnData(hr);
-#endif // _DEBUG
 	}
 
 	_bool* pIsChangeAnimation = { nullptr };
@@ -110,9 +106,8 @@ HRESULT CAction::Tick(const _float& fTimeDelta)
 
 	if (true == *pIsChangeAnimation ||								// 애니메이션을 변경하라는 노티파이가 울렸거나
 		true == m_pModel->Is_Finish_Animation() ||					// 애니메이션이 끝났거나
-		(0 < m_FunctionDecorators.size() && 
-			true == Check_Run_Function_Decorators()) ||				// 내가 재설정한 조건에 부합한경우거나
 		(true == m_isCheckBehavior && true == m_isFinishBehaviors)) // 행동체크를 할건데 모든 행동이 끝났으면
+		/* 내가 설정한 기준에 부합한 경우도 있었는데 지웠음(해당 기준을 썼던 클래스 찾기 ) */
 	{
 		m_isEndFirstPlay = true;
 		bCheck = true;	// 나가

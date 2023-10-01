@@ -17,11 +17,10 @@ CLumos::CLumos(const CLumos& rhs)
 
 HRESULT CLumos::Initialize_Prototype(_uint iLevel)
 {
-	if (FAILED(__super::Initialize_Prototype()))
+	if (FAILED(__super::Initialize_Prototype(iLevel)))
 		return E_FAIL;
-	m_iLevel = iLevel;
-	BEGININSTANCE;
 
+	BEGININSTANCE;
 	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Lumos_Wand_Glow_Red_Effect")))
 	{
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Lumos_Wand_Glow_Red_Effect")
@@ -42,7 +41,6 @@ HRESULT CLumos::Initialize_Prototype(_uint iLevel)
 	}
 	ENDINSTANCE;
 
-
 	return S_OK;
 }
 
@@ -62,13 +60,6 @@ HRESULT CLumos::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
-	if (FAILED(Add_Effect()))
-	{
-		MSG_BOX("Failed Player Add_Effect");
-
-		return E_FAIL;
-	}
-
 	m_CollisionDesc.Action = bind(&CLumos::Lumos_Tick, this, placeholders::_1, placeholders::_2);
 	return S_OK;
 }
@@ -80,11 +71,6 @@ void CLumos::Tick(_float fTimeDelta)
 
 	if(m_fEndTimer<=0)
 		Set_MagicBallState(MAGICBALL_STATE_DYING);
-
-	//위치 동기화
-	_float3 vWandPosition = _float4x4(m_WeaponOffsetMatrix * (*m_pWeaponMatrix)).Translation();
-	m_pWandGlowEffect->Get_Transform()->Set_Position(vWandPosition);
-	m_pWandGlowRedEffect->Get_Transform()->Set_Position(vWandPosition);
 }
 
 void CLumos::Late_Tick(_float fTimeDelta)
@@ -109,10 +95,6 @@ void CLumos::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 HRESULT CLumos::Reset(MAGICBALLINITDESC& InitDesc)
 {
 	__super::Reset(InitDesc);
-
-	m_pWandGlowEffect->Disable();
-	m_pWandGlowRedEffect->Disable();
-	m_fLerpAcc = 0.0f;
 	m_fEndTimer = 0.3f;
 	return S_OK;
 }
@@ -124,76 +106,57 @@ void CLumos::Lumos_Tick(_float3 vPos,_float fTimeDelta)
 
 void CLumos::Ready_Begin()
 {
-	dynamic_cast<CGameObject*>(m_pTarget->Get_Owner())->On_Maigc_Throw_Data(&m_CollisionDesc);
-	m_pWandGlowEffect->Disable();
-	m_pWandGlowRedEffect->Disable();
+	m_pTarget->On_Maigc_Throw_Data(&m_CollisionDesc);
 }
 
 void CLumos::Ready_DrawMagic()
 {
-	_float3 vWandPosition = _float4x4(m_WeaponOffsetMatrix * (*m_pWeaponMatrix)).Translation();
-	m_pWandGlowEffect->Enable();
-	m_pWandGlowEffect->Play(vWandPosition);
-	m_pWandGlowRedEffect->Enable();
-	m_pWandGlowRedEffect->Play(vWandPosition);
+	__super::Ready_DrawMagic();
 }
 
 void CLumos::Ready_CastMagic()
 {
-	
+
 }
 
 void CLumos::Ready_Dying()
 {
-	m_pWandGlowEffect->Stop();
-	m_pWandGlowRedEffect->Stop();
-
-	//여기에 자연스레 사라지게 해주기 만들기
+	m_ParticleVec[EFFECT_STATE_WAND].data()[0]->Stop();
+	m_ParticleVec[EFFECT_STATE_WAND].data()[1]->Stop();
 }
 
 void CLumos::Tick_Begin(_float fTimeDelta)
 {
-	//베이직 캐스트는 비긴 없습니다.
-	Do_MagicBallState_To_Next();
+	__super::Tick_Begin(fTimeDelta);
 }
 
 void CLumos::Tick_DrawMagic(_float fTimeDelta)
 {
-	
+	__super::Tick_DrawMagic(fTimeDelta);
 }
 
 void CLumos::Tick_CastMagic(_float fTimeDelta)
 {
- 
+	__super::Tick_CastMagic(fTimeDelta);
 }
 
 void CLumos::Tick_Dying(_float fTimeDelta)
 {
-	//사망하러 가겠습니다.
-	if (!m_pWandGlowEffect->IsEnable()&&
-		!m_pWandGlowRedEffect->IsEnable())
-	{
-		Do_MagicBallState_To_Next();
-	}
+	__super::Tick_Dying(fTimeDelta);
 }
 
 HRESULT CLumos::Add_Components()
 {
-	return S_OK;
-}
-
-HRESULT CLumos::Add_Effect()
-{
+	m_ParticleVec[EFFECT_STATE_WAND].resize(2);
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Lumos_Wand_Glow_Effect"),
-		TEXT("Com_WandGlow"), reinterpret_cast<CComponent**>(&m_pWandGlowEffect))))
+		TEXT("Com_WandGlow"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_WAND][0]))))
 	{
 		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Lumos_Wand_Glow_Effect)");
 		__debugbreak();
 		return E_FAIL;
 	}
-
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Lumos_Wand_Glow_Red_Effect"),
-		TEXT("Com_WandGlowRed"), reinterpret_cast<CComponent**>(&m_pWandGlowRedEffect))))
+		TEXT("Com_WandGlowRed"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_WAND][1]))))
 	{
 		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Lumos_Wand_Glow_Red_Effect)");
 		__debugbreak();
@@ -231,10 +194,4 @@ CGameObject* CLumos::Clone(void* pArg)
 void CLumos::Free()
 {
 	__super::Free();
-	if (true == m_isCloned)
-	{
-		Safe_Release(m_pWandGlowEffect);
-		Safe_Release(m_pWandGlowRedEffect);
-	}
-	
 }

@@ -34,7 +34,7 @@ HRESULT CProfessor_Fig::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	m_pTransform->Set_Position(_float3(35.f, 0.f, 10.f));
+	m_pTransform->Set_Position(_float3(40.f, 6.4f, 62.f));
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
@@ -105,38 +105,33 @@ void CProfessor_Fig::Late_Tick(_float fTimeDelta)
 void CProfessor_Fig::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
-	wstring wstrCollisionTag = CollisionEventDesc.pOtherCollisionTag;
 	wstring wstrMyCollisionTag = CollisionEventDesc.pThisCollisionTag;
 
 	if (wstring::npos != wstrMyCollisionTag.find(TEXT("Range")))
 	{
-		if (wstring::npos != wstrObjectTag.find(TEXT("Golem")) ||
-			wstring::npos != wstrObjectTag.find(TEXT("Troll")) ||
-			wstring::npos != wstrObjectTag.find(TEXT("Dugbog")))
-		{
-			if (CollisionEventDesc.pOtherOwner->isDead())
-				return;
-			auto iter = m_RangeInEnemies.find(wstrObjectTag);
-			if (iter == m_RangeInEnemies.end())
-				m_RangeInEnemies.emplace(wstrObjectTag, CollisionEventDesc.pOtherOwner);
-		}
+		if (false == IsMonster(wstrObjectTag))
+			return;
+
+		if (CollisionEventDesc.pOtherOwner->isDead())
+			return;
+
+		auto iter = m_RangeInEnemies.find(wstrObjectTag);
+		if (iter == m_RangeInEnemies.end())
+			m_RangeInEnemies.emplace(wstrObjectTag, CollisionEventDesc.pOtherOwner);
 	}
 }
 
 void CProfessor_Fig::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 {
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
-	wstring wstrCollisionTag = CollisionEventDesc.pOtherCollisionTag;
 	wstring wstrMyCollisionTag = CollisionEventDesc.pThisCollisionTag;
 
 	if (wstring::npos != wstrMyCollisionTag.find(TEXT("Range")))
 	{
-		if (wstring::npos != wstrObjectTag.find(TEXT("Golem")) ||
-			wstring::npos != wstrObjectTag.find(TEXT("Troll")) ||
-			wstring::npos != wstrObjectTag.find(TEXT("Dugbog")))
-		{
-			Remove_GameObject(wstrObjectTag);
-		}
+		if (false == IsMonster(wstrObjectTag))
+			return;
+
+		Remove_GameObject(wstrObjectTag);
 	}
 }
 
@@ -274,10 +269,8 @@ HRESULT CProfessor_Fig::Make_Magics()
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
 		magicInitDesc.eMagicTag = BASICCAST;
-		magicInitDesc.fCoolTime = 0.f;
+		magicInitDesc.fInitCoolTime = 0.f;
 		magicInitDesc.iDamage = 10;
-		magicInitDesc.fCastDistance = 1000;
-		magicInitDesc.fBallDistance = 30;
 		magicInitDesc.fLifeTime = 0.8f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 		m_MagicDesc = magicInitDesc;
@@ -290,10 +283,8 @@ HRESULT CProfessor_Fig::Make_Magics()
 		magicInitDesc.eMagicGroup = CMagic::MG_CONTROL;
 		magicInitDesc.eMagicType = CMagic::MT_YELLOW;
 		magicInitDesc.eMagicTag = LEVIOSO;
-		magicInitDesc.fCoolTime = 0.f;
+		magicInitDesc.fInitCoolTime = 0.f;
 		magicInitDesc.iDamage = 10;
-		magicInitDesc.fCastDistance = 1000;
-		magicInitDesc.fBallDistance = 30;
 		magicInitDesc.fLifeTime = 0.8f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
@@ -564,6 +555,23 @@ HRESULT CProfessor_Fig::Remove_GameObject(const wstring& wstrObjectTag)
 	return S_OK;
 }
 
+_bool CProfessor_Fig::IsMonster(const wstring& wstrObjectTag)
+{
+	/* 골렘인 경우 */
+	if (wstring::npos != wstrObjectTag.find(TEXT("Golem")))
+		return true;
+
+	/* 트롤인 경우 */
+	if (wstring::npos != wstrObjectTag.find(TEXT("Troll")))
+		return true;
+
+	/* 더그보그인 경우 */
+	if (wstring::npos != wstrObjectTag.find(TEXT("Dugbog")))
+		return true;
+
+	return false;
+}
+
 #ifdef _DEBUG
 void CProfessor_Fig::Tick_ImGui()
 {
@@ -597,6 +605,7 @@ void CProfessor_Fig::Tick_ImGui()
 
 	ImGui::End();
 }
+
 #endif // _DEBUG
 
 HRESULT CProfessor_Fig::Make_Turns(_Inout_ CSequence* pSequence)
@@ -978,10 +987,8 @@ void CProfessor_Fig::Attack_Light()
 	if (nullptr != m_pTarget)
 		OffsetMatrix = m_pTarget->Get_Offset_Matrix();
 
-	m_CastingMagic = m_pMagicSlot->Action_Magic_Basic(0, m_pTarget->Get_Transform(),
-		OffsetMatrix,
-		m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(),
-		m_pWeapon->Get_Wand_Point_OffsetMatrix(),
+	m_CastingMagic = m_pMagicSlot->Action_Magic_Basic(0, m_pTarget,
+		m_pWeapon,
 		COL_ENEMY);
 }
 
@@ -997,10 +1004,8 @@ void CProfessor_Fig::Attack_Heavy()
 	if (nullptr != m_pTarget)
 		OffsetMatrix = m_pTarget->Get_Offset_Matrix();
 
-	m_CastingMagic = m_pMagicSlot->Action_Magic_Basic(0, m_pTarget->Get_Transform(),
-		OffsetMatrix,
-		m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(),
-		m_pWeapon->Get_Wand_Point_OffsetMatrix(),
+	m_CastingMagic = m_pMagicSlot->Action_Magic_Basic(0, m_pTarget,
+		m_pWeapon,
 		COL_ENEMY);
 }
 
@@ -1013,10 +1018,8 @@ void CProfessor_Fig::Cast_Levioso()
 	if (nullptr != m_pTarget)
 		OffsetMatrix = m_pTarget->Get_Offset_Matrix();
 
-	m_CastingMagic = m_pMagicSlot->Action_Magic_Skill(0, m_pTarget->Get_Transform(),
-		OffsetMatrix,
-		m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(),
-		m_pWeapon->Get_Wand_Point_OffsetMatrix(),
+	m_CastingMagic = m_pMagicSlot->Action_Magic_Skill(0, m_pTarget,
+		m_pWeapon,
 		COL_ENEMY);
 }
 
@@ -1025,11 +1028,9 @@ void CProfessor_Fig::Cast_Protego()
 	if (nullptr == m_pTarget)
 		return;
 
-	m_CastingMagic = m_pMagicSlot->Action_Magic_Basic(1, m_pTransform,
-		XMMatrixTranslation(0.f, 1.f, 0.f),
-		m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(),
-		m_pWeapon->Get_Wand_Point_OffsetMatrix(),
-		COL_MAGIC);
+	m_CastingMagic = m_pMagicSlot->Action_Magic_Basic(1, m_pTarget,
+		m_pWeapon,
+		COL_ENEMY);
 }
 
 void CProfessor_Fig::Shot_Magic()

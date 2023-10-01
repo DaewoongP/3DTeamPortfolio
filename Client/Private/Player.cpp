@@ -20,6 +20,11 @@
 
 #include "UI_Group_Skill.h"
 
+#include "AccPotion.h"
+#include "CoolTime.h"	
+
+#include "WiggenweldPotion.h"
+
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
@@ -110,78 +115,16 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_iActionType = (_uint)ACTION_NONE;
 
 	m_pCustomModel->Change_Animation(TEXT("Hu_BM_RF_Idle_anm"));
-
+	
+	m_vLevelInitPosition[LEVEL_CLIFFSIDE] = _float3(25.f, 3.f, 22.5f);
+	m_vLevelInitPosition[LEVEL_VAULT] = _float3(7.0f, 0.02f, 7.5f);
 	return S_OK;
 }
 
 HRESULT CPlayer::Initialize_Level(_uint iCurrentLevelIndex)
 {
-	m_eLevelID = (LEVELID)iCurrentLevelIndex;
-	
-	switch (iCurrentLevelIndex)
-	{
-	case Client::LEVEL_STATIC:
-	{
-	}
-		break;
-	case Client::LEVEL_LOGO:
-	{
-	}
-		break;
-	case Client::LEVEL_CLIFFSIDE:
-	{
-		m_pTransform->Set_Position(_float3(28.0f, 3.0f, 26.0f));
-	}
-		break;
-	case Client::LEVEL_VAULT:
-	{
-		m_pTransform->Set_Position(_float3(7.0f, 0.02f, 7.5f));
-	}
-		break;
-	case Client::LEVEL_GREATHALL:
-	{
+	m_pTransform->Set_Position(m_vLevelInitPosition[iCurrentLevelIndex]);
 
-	}
-		break;
-	case Client::LEVEL_SMITH:
-	{
-
-	}
-		break;
-	case Client::LEVEL_MINIGAME:
-	{
-
-	}
-		break;
-	case Client::LEVEL_PVP:
-	{
-
-	}
-		break;
-	case Client::LEVEL_SKY:
-	{
-
-	}
-		break;
-	case Client::LEVEL_DRAGON:
-	{
-
-	}
-		break;
-	case Client::LEVEL_LOADING:
-	{
-
-	}
-		break;
-	case Client::LEVEL_END:
-	{
-
-	}
-		break;
-	default:
-		break;
-	}
-	m_pRigidBody->Set_Position(_float3(15.f, 20.f, 20.f));
 	return S_OK;
 }
 
@@ -194,6 +137,11 @@ void CPlayer::Tick(_float fTimeDelta)
 		m_pPlayer_Information->fix_HP(-10);
 		m_pPlayer_Information->Using_Fnisher();
 	}
+	if (pGameInstance->Get_DIKeyState(DIK_F5, CInput_Device::KEY_DOWN))
+	{
+		m_pAccPotion->Use();
+	}
+
 
 	ENDINSTANCE;
 
@@ -222,6 +170,9 @@ void CPlayer::Tick(_float fTimeDelta)
 	{
 		m_pFrncSpellToggle(_float3(), _float());
 	}
+	m_pCooltime->Tick(fTimeDelta);
+
+
 	
 
 	//cout << m_pTransform->Get_Position().x << endl;
@@ -254,6 +205,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	{
 		if (true == m_pTarget->isDead())
 		{
+			Safe_Release(m_pTarget);
 			m_pTarget = nullptr;
 			return;
 		}
@@ -268,7 +220,7 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
 	wstring wstrCollisionTag = CollisionEventDesc.pOtherCollisionTag;
-	wcout << wstrCollisionTag << endl;
+
 	if (wstring::npos != wstrCollisionTag.find(TEXT("Attack")) ||
 		wstring::npos != wstrCollisionTag.find(TEXT("Enemy_Body")))
 	{
@@ -475,7 +427,7 @@ HRESULT CPlayer::Render_Depth()
 	return S_OK;
 }
 
-void CPlayer::On_Maigc_Throw_Data(void* data)
+void CPlayer::On_Maigc_Throw_Data(void* data) const
 {
 	if (static_cast<CMagicBall::COLLSIONREQUESTDESC*>(data)->eMagicTag == LUMOS)
 	{
@@ -489,9 +441,7 @@ HRESULT CPlayer::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"),
 		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
 	{
-		MSG_BOX("Failed CPlayer Add_Component : (Com_Renderer)");
 		__debugbreak();
-
 		return E_FAIL;
 	}
 
@@ -499,9 +449,7 @@ HRESULT CPlayer::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
 	{
-		MSG_BOX("Failed CPlayer Add_Component : (Com_Shader)");
 		__debugbreak();
-
 		return E_FAIL;
 	}
 
@@ -509,9 +457,7 @@ HRESULT CPlayer::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_ShadowAnimMesh"),
 		TEXT("Com_ShadowShader"), reinterpret_cast<CComponent**>(&m_pShadowShader))))
 	{
-		MSG_BOX("Failed CPlayer Add_Component : (Com_ShadowShader)");
 		__debugbreak();
-
 		return E_FAIL;
 	}
 
@@ -519,9 +465,7 @@ HRESULT CPlayer::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Model_CustomModel_Player"),
 		TEXT("Com_Model_CustomModel_Player"), reinterpret_cast<CComponent**>(&m_pCustomModel))))
 	{
-		MSG_BOX("Failed CPlayer Add_Component : (Com_Model_CustomModel_Player)");
 		__debugbreak();
-
 		return E_FAIL;
 	}
 
@@ -529,9 +473,7 @@ HRESULT CPlayer::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_StateContext"),
 		TEXT("Com_StateContext"), reinterpret_cast<CComponent**>(&m_pStateContext))))
 	{
-		MSG_BOX("Failed CPlayer Add_Component : (Com_StateContext)");
 		__debugbreak();
-
 		return E_FAIL;
 	}
 
@@ -552,9 +494,7 @@ HRESULT CPlayer::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_MagicSlot"),
 		TEXT("Com_MagicSlot"), reinterpret_cast<CComponent**>(&m_pMagicSlot))))
 	{
-		MSG_BOX("Failed CPlayer Add_Component : (Com_MagicSlot)");
 		__debugbreak();
-
 		return E_FAIL;
 	}
 
@@ -582,9 +522,7 @@ HRESULT CPlayer::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
 		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
 	{
-		MSG_BOX("Failed CPlayer Add_Component : (Com_RigidBody)");
 		__debugbreak();
-
 		return E_FAIL;
 	}
 
@@ -596,9 +534,7 @@ HRESULT CPlayer::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Player_Information"),
 		TEXT("Com_Player_Information"), reinterpret_cast<CComponent**>(&m_pPlayer_Information))))
 	{
-		MSG_BOX("Failed CPlayer Add_Component : (Com_Player_Information)");
 		__debugbreak();
-
 		return E_FAIL;
 	}
 
@@ -606,14 +542,23 @@ HRESULT CPlayer::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Skill"),
 		TEXT("Com_UI_Group_Skill_1"), reinterpret_cast<CComponent**>(&m_UI_Group_Skill_01))))
 	{
-		MSG_BOX("Failed CPlayer Add_Component : (Com_UI_Group_Skill_1)");
 		__debugbreak();
-
 		return E_FAIL;
 	}
 
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_AccPotion"),
+		TEXT("Com_AccPotion"), reinterpret_cast<CComponent**>(&m_pAccPotion))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
 
-
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_CoolTime"),
+		TEXT("Com_CoolTime"), reinterpret_cast<CComponent**>(&m_pCooltime))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
 	return S_OK;
 }
 
@@ -670,10 +615,8 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicGroup = CMagic::MG_CONTROL;
 		magicInitDesc.eMagicType = CMagic::MT_YELLOW;
 		magicInitDesc.eMagicTag = LEVIOSO;
-		magicInitDesc.fCoolTime = 1.f;
+		magicInitDesc.fInitCoolTime = 1.f;
 		magicInitDesc.iDamage = 0;
-		magicInitDesc.fCastDistance = 1000;
-		magicInitDesc.fBallDistance = 30;
 		magicInitDesc.fLifeTime = 1.8f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
@@ -684,10 +627,8 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicGroup = CMagic::MG_DAMAGE;
 		magicInitDesc.eMagicType = CMagic::MT_RED;
 		magicInitDesc.eMagicTag = CONFRINGO;
-		magicInitDesc.fCoolTime = 1.f;
+		magicInitDesc.fInitCoolTime = 1.f;
 		magicInitDesc.iDamage = 50;
-		magicInitDesc.fCastDistance = 1000;
-		magicInitDesc.fBallDistance = 30;
 		magicInitDesc.fLifeTime = 0.8f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
@@ -698,10 +639,8 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 		magicInitDesc.eMagicType = CMagic::MT_ALL;
 		magicInitDesc.eMagicTag = FINISHER;
-		magicInitDesc.fCoolTime = 1.f;
+		magicInitDesc.fInitCoolTime = 1.f;
 		magicInitDesc.iDamage = 500;
-		magicInitDesc.fCastDistance = 1000;
-		magicInitDesc.fBallDistance = 3000;
 		magicInitDesc.fLifeTime = 3.f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
@@ -712,10 +651,8 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicGroup = CMagic::MG_DAMAGE;
 		magicInitDesc.eMagicType = CMagic::MT_RED;
 		magicInitDesc.eMagicTag = NCENDIO;
-		magicInitDesc.fCoolTime = 1.5f;
+		magicInitDesc.fInitCoolTime = 1.5f;
 		magicInitDesc.iDamage = 300;
-		magicInitDesc.fCastDistance = 1000;
-		magicInitDesc.fBallDistance = 30;
 		magicInitDesc.fLifeTime = 1.f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
@@ -726,18 +663,55 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
 		magicInitDesc.eMagicTag = LUMOS;
-		magicInitDesc.fCoolTime = 1.5f;
+		magicInitDesc.fInitCoolTime = 1.5f;
 		magicInitDesc.iDamage = 0;
-		magicInitDesc.fCastDistance = 1000;
-		magicInitDesc.fBallDistance = 0;
 		magicInitDesc.fLifeTime = 30.f;
+		m_pMagicSlot->Add_Magics(magicInitDesc);
+	}
+
+	// ¾Æ¸®½ºÅä¸ð¸àÅÒ
+	{
+		magicInitDesc.eBuffType = BUFF_NONE;
+		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
+		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicTag = ARRESTOMOMENTUM;
+		magicInitDesc.fInitCoolTime = 1.5f;
+		magicInitDesc.iDamage = 0;
+		magicInitDesc.fLifeTime = 30.f;
+		m_pMagicSlot->Add_Magics(magicInitDesc);
+	}
+
+	// ¾Æ¾¾¿À
+	{
+		magicInitDesc.eBuffType = BUFF_NONE;
+		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
+		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicTag = ACCIO;
+		magicInitDesc.fInitCoolTime = 1.5f;
+		magicInitDesc.iDamage = 10;
+		magicInitDesc.fLifeTime = 1.f;
+		m_pMagicSlot->Add_Magics(magicInitDesc);
+	}
+
+	// µð¼¾µµ
+	{
+		magicInitDesc.eBuffType = BUFF_NONE;
+		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
+		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicTag = DESCENDO;
+		magicInitDesc.fInitCoolTime = 1.5f;
+		magicInitDesc.iDamage = 10;
+		magicInitDesc.fLifeTime = 1.f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(0, CONFRINGO);
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(1, LEVIOSO);
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(2, FINISHER);
-	m_pMagicSlot->Add_Magic_To_Skill_Slot(3, NCENDIO);
+	//m_pMagicSlot->Add_Magic_To_Skill_Slot(3, NCENDIO);
+	//m_pMagicSlot->Add_Magic_To_Skill_Slot(3, ARRESTOMOMENTUM);
+	//m_pMagicSlot->Add_Magic_To_Skill_Slot(3, ACCIO);
+	m_pMagicSlot->Add_Magic_To_Skill_Slot(3, DESCENDO);
 	m_pMagicSlot->Add_Magic_To_Basic_Slot(2, LUMOS);
 
 
@@ -876,7 +850,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 	if (pGameInstance->Get_DIKeyState(DIK_RIGHT))
 	{
-		//m_pTransform->Turn(_float3(0.f, 1.f, 0.f), fTimeDelta);
+		////m_pTransform->Turn(_float3(0.f, 1.f, 0.f), fTimeDelta);
 		m_pTransform->Go_Right(fTimeDelta);
 	}
 #endif //_DEBUG
@@ -887,7 +861,9 @@ void CPlayer::Key_Input(_float fTimeDelta)
 void CPlayer::Fix_Mouse()
 {
 	if (false == m_isFixMouse)
+	{
 		return;
+	}
 
 	POINT	ptMouse{ g_iWinSizeX >> 1, g_iWinSizeY >> 1 };
 
@@ -1030,10 +1006,8 @@ HRESULT CPlayer::Ready_MagicDesc()
 	magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 	magicInitDesc.eMagicType = CMagic::MT_NOTHING;
 	magicInitDesc.eMagicTag = BASICCAST;
-	magicInitDesc.fCoolTime = 0.f;
+	magicInitDesc.fInitCoolTime = 0.f;
 	magicInitDesc.iDamage = 10;
-	magicInitDesc.fCastDistance = 1000;
-	magicInitDesc.fBallDistance = 30;
 	magicInitDesc.fLifeTime = 0.6f;
 
 	m_BasicDesc_Light = magicInitDesc;
@@ -1042,10 +1016,8 @@ HRESULT CPlayer::Ready_MagicDesc()
 	magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 	magicInitDesc.eMagicType = CMagic::MT_NOTHING;
 	magicInitDesc.eMagicTag = BASICCAST;
-	magicInitDesc.fCoolTime = 0.f;
+	magicInitDesc.fInitCoolTime = 0.f;
 	magicInitDesc.iDamage = 10;
-	magicInitDesc.fCastDistance = 1000;
-	magicInitDesc.fBallDistance = 30;
 	magicInitDesc.fLifeTime = 0.6f;
 
 	m_BasicDesc_Heavy = magicInitDesc;
@@ -1063,20 +1035,22 @@ void CPlayer::Tick_ImGui()
 {
 	ImGui::Begin("Player");
 	
-	
 	if (ImGui::Checkbox("Gravity", &m_isGravity))
 	{
 		m_pRigidBody->Set_Gravity(m_isGravity);
 	}
 
-	if (ImGui::Button("Go to 0"))
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	if (ImGui::Button("Go to Level Init Position"))
 	{
-		m_pRigidBody->Set_Position(_float3(1.f, 1.f, 1.f));
+		m_pTransform->Set_Position(m_vLevelInitPosition[pGameInstance->Get_CurrentLevelIndex()]);
 	}
+	Safe_Release(pGameInstance);
+	
 
 	_float3 vVelocity = m_pTransform->Get_Velocity();
 	ImGui::InputFloat3("Velocity", reinterpret_cast<_float*>(&vVelocity));
-
 
 	ImGui::End();
 }
@@ -1348,6 +1322,9 @@ void CPlayer::Update_Target_Angle()
 
 void CPlayer::Next_Spell_Action()
 {
+	if (nullptr == m_pMagicBall)
+		return;
+
 	m_pMagicBall->Do_MagicBallState_To_Next();
 }
 
@@ -1355,35 +1332,19 @@ void CPlayer::Shot_Basic_Spell()
 {
 	Find_Target_For_Distance();
 	m_pMagicSlot->Add_Magics(m_BasicDesc_Light);
-	
-	_float4x4 OffSetMatrix = XMMatrixIdentity();
-
-	if (nullptr != m_pTarget)
-	{
-		OffSetMatrix = m_pTarget->Get_Offset_Matrix();
-	}
-	
-	m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(0, m_pTargetTransform, OffSetMatrix, m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(0, m_pTarget, m_pWeapon, COL_ENEMY);
 }
 
 void CPlayer::Shot_Basic_Last_Spell()
 {
 	Find_Target_For_Distance();
 	m_pMagicSlot->Add_Magics(m_BasicDesc_Heavy);
-
-	_float4x4 OffSetMatrix = XMMatrixIdentity();
-
-	if (nullptr != m_pTarget)
-	{
-		OffSetMatrix = m_pTarget->Get_Offset_Matrix();
-	}
-
-	m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(0, m_pTargetTransform, OffSetMatrix, m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(0, m_pTarget, m_pWeapon, COL_ENEMY);
 }
 
 void CPlayer::Protego()
 {
-	m_pMagicSlot->Action_Magic_Basic(1, m_pTransform, XMMatrixTranslation(0.0f, 1.0f, 0.0f), m_pTransform->Get_WorldMatrixPtr(), XMMatrixIdentity(), COL_MAGIC);
+	m_pMagicSlot->Action_Magic_Basic(1, this, m_pWeapon, COL_MAGIC);
 }
 
 void CPlayer::Gravity_On()
@@ -1658,10 +1619,7 @@ void CPlayer::Find_Target_For_Distance()
 
 	if (nullptr == pLayer)
 	{
-		//MSG_BOX("not MonsterLayer");
-
 		ENDINSTANCE;
-
 		return;
 	}
 
@@ -1739,11 +1697,7 @@ void CPlayer::Find_Target_For_Distance()
 			m_pTarget = nullptr;
 		}
 	}
-
-
 	ENDINSTANCE;
-
-
 }
 
 
@@ -1758,7 +1712,7 @@ void CPlayer::Shot_Levioso()
 		OffSetMatrix = m_pTarget->Get_Offset_Matrix();
 	}
 
-	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(1, m_pTargetTransform, OffSetMatrix, m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(1, m_pTarget, m_pWeapon, COL_ENEMY);
 }
  
 
@@ -1773,7 +1727,7 @@ void CPlayer::Shot_Confringo()
 		OffSetMatrix = m_pTarget->Get_Offset_Matrix();
 	}
 
-	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(0, m_pTargetTransform, OffSetMatrix, m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(0, m_pTarget, m_pWeapon, COL_ENEMY);
 }
 
 void CPlayer::Shot_NCENDIO()
@@ -1787,7 +1741,7 @@ void CPlayer::Shot_NCENDIO()
 		OffSetMatrix = m_pTarget->Get_Offset_Matrix();
 	}
 
-	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(3, m_pTargetTransform, OffSetMatrix, m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(3, m_pTarget, m_pWeapon, COL_ENEMY);
 }
 
 void CPlayer::Shot_Finisher()
@@ -1801,14 +1755,14 @@ void CPlayer::Shot_Finisher()
 		OffSetMatrix = m_pTarget->Get_Offset_Matrix();
 	}
 
-	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(2, m_pTargetTransform, OffSetMatrix, m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(2, m_pTarget, m_pWeapon, COL_ENEMY);
 }
 
 void CPlayer::Lumos()
 {
 	if (nullptr == m_pFrncSpellToggle)
 	{
-		m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(2, m_pTransform, XMMatrixIdentity(), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_NONE);
+		m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(2, this, m_pWeapon, COL_NONE);
 	}
 	else
 	{
@@ -1946,7 +1900,8 @@ void CPlayer::Free()
 		Safe_Release(m_pRigidBody);
 		Safe_Release(m_pPlayer_Information);
 		Safe_Release(m_UI_Group_Skill_01);
-
+		Safe_Release(m_pAccPotion);
+		Safe_Release(m_pCooltime);
 		
 		if (nullptr != m_pTargetTransform)
 		{

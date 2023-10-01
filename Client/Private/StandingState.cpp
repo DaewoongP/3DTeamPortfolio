@@ -43,9 +43,6 @@ void CStandingState::Late_Tick(_float fTimeDelta)
 
 void CStandingState::OnStateEnter(void* _pArg)
 {
-#ifdef _DEBUG
-	cout << "Standing Enter" << endl;
-#endif // _DEBUG
 
 	*m_StateMachineDesc.pisFinishAnimation = false;
 }
@@ -58,9 +55,6 @@ void CStandingState::OnStateTick()
 
 void CStandingState::OnStateExit()
 {
-#ifdef _DEBUG
-	cout << "Standing Exit" << endl;
-#endif // _DEBUG
 	* m_StateMachineDesc.pisFinishAnimation = false;
 }
 

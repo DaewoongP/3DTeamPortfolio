@@ -43,10 +43,6 @@ void CHitState::Late_Tick(_float fTimeDelta)
 
 void CHitState::OnStateEnter(void* _pArg)
 {
-#ifdef _DEBUG
-	cout << "Hit Enter" << endl;
-#endif // _DEBUG
-
 	HITSTATEDESC* pHitStateDesc = static_cast<HITSTATEDESC*>(_pArg);
 	m_isPowerfulHit = (_bool)pHitStateDesc->iHitType;
 
@@ -77,10 +73,6 @@ void CHitState::OnStateTick()
 
 void CHitState::OnStateExit()
 {
-#ifdef _DEBUG
-	cout << "Hit Exit" << endl;
-#endif // _DEBUG
-
 	Safe_Release(m_pTargetTransform);
 }
 

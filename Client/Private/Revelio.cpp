@@ -11,9 +11,9 @@ CRevelio::CRevelio(const CRevelio& rhs)
 {
 }
 
-HRESULT CRevelio::Initialize_Prototype()
+HRESULT CRevelio::Initialize_Prototype(_uint iLevel)
 {
-	if (FAILED(__super::Initialize_Prototype()))
+	if (FAILED(__super::Initialize_Prototype(iLevel)))
 		return E_FAIL;
 
 	return S_OK;
@@ -50,19 +50,16 @@ void CRevelio::Late_Tick(_float fTimeDelta)
 void CRevelio::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
 	__super::OnCollisionEnter(CollisionEventDesc);
-	//cout << "Player Enter" << endl;
 }
 
 void CRevelio::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)
 {
 	__super::OnCollisionStay(CollisionEventDesc);
-	//cout << "stay" << endl;
 }
 
 void CRevelio::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 {
 	__super::OnCollisionExit(CollisionEventDesc);
-	//cout << "Exit" << endl;
 }
 
 HRESULT CRevelio::Add_Components()
@@ -70,16 +67,11 @@ HRESULT CRevelio::Add_Components()
 	return S_OK;
 }
 
-HRESULT CRevelio::Add_Effect()
-{
-	return S_OK;
-}
-
-CRevelio* CRevelio::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CRevelio* CRevelio::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,_uint iLevel)
 {
 	CRevelio* pInstance = New CRevelio(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize_Prototype()))
+	if (FAILED(pInstance->Initialize_Prototype(iLevel)))
 	{
 		MSG_BOX("Failed to Created CRevelio");
 		Safe_Release(pInstance);

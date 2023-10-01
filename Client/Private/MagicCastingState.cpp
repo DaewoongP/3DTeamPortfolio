@@ -277,9 +277,6 @@ void CMagicCastingState::OnStateEnter(void* _pArg)
 
 	ENDINSTANCE;
 
-#ifdef _DEBUG
-	cout << "Magic Cast Enter" << endl;
-#endif // _DEBUG
 }
 
 void CMagicCastingState::OnStateTick()
@@ -292,9 +289,6 @@ void CMagicCastingState::OnStateTick()
 
 void CMagicCastingState::OnStateExit()
 {
-#ifdef _DEBUG
-	cout << "Magic Cast Exit" << endl;
-#endif // _DEBUG
 
 	* m_pisReadySpell = true;
 

@@ -10,6 +10,9 @@
 #include "Wingardiumleviosa.h"
 #include "Ncendio.h"
 #include "Lumos.h"
+#include "Arrestomomentum.h"
+#include "Descendo.h"
+#include "Accio.h"
 
 IMPLEMENT_SINGLETON(CMagicBallPool)
 
@@ -28,6 +31,9 @@ HRESULT CMagicBallPool::Initialize()
     Create_InitMagic(Client::FINISHER, TEXT("Prototype_GameObject_Finisher"));
     Create_InitMagic(Client::NCENDIO, TEXT("Prototype_GameObject_Ncendio"));
     Create_InitMagic(Client::LUMOS, TEXT("Prototype_GameObject_Lumos"));
+    Create_InitMagic(Client::ARRESTOMOMENTUM, TEXT("Prototype_GameObject_Arrestomomentum"));
+    Create_InitMagic(Client::DESCENDO, TEXT("Prototype_GameObject_Descendo"));
+    Create_InitMagic(Client::ACCIO, TEXT("Prototype_GameObject_Accio"));
     Safe_Release(pGameInstance);
 
     return S_OK;
@@ -39,7 +45,7 @@ CMagicBall* CMagicBallPool::Get_Magic(CMagicBall::MAGICBALLINITDESC& MagicBallDe
 
     if (m_MagicPool[MagicBallDesc.eMagicTag].empty())
     {
-        pMagicball = Create_Magic(MagicBallDesc.eMagicTag, MagicBallDesc);
+        pMagicball = Create_Magic(MagicBallDesc.eMagicTag);
     }
     else 
     {
@@ -62,7 +68,7 @@ void CMagicBallPool::Return_Magic(CMagicBall* pMagic, SPELL eSpell)
     m_MagicPool[eSpell].push(pMagic);
 }
 
-CMagicBall* CMagicBallPool::Create_Magic(SPELL eSpell, CMagicBall::MAGICBALLINITDESC& MagicBallDesc)
+CMagicBall* CMagicBallPool::Create_Magic(SPELL eSpell)
 {
     CMagicBall* pMagicBall = { nullptr };
 
@@ -72,12 +78,14 @@ CMagicBall* CMagicBallPool::Create_Magic(SPELL eSpell, CMagicBall::MAGICBALLINIT
     switch (eSpell)
     {
     case Client::ACCIO:
+        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Accio")));
         break;
     case Client::ALOHOMORA:
         break;
     case Client::ALTERATION:
         break;
     case Client::ARRESTOMOMENTUM:
+        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Arrestomomentum")));
         break;
     case Client::AVADAKEDAVRA:
         break;
@@ -92,6 +100,7 @@ CMagicBall* CMagicBallPool::Create_Magic(SPELL eSpell, CMagicBall::MAGICBALLINIT
     case Client::DEPULSO:
         break;
     case Client::DESCENDO:
+        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Descendo")));
         break;
     case Client::DIFFINDO:
         break;

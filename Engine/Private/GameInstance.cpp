@@ -125,8 +125,10 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 void CGameInstance::Clear_LevelResources(_uint iLevelIndex)
 {
 	NULL_CHECK_RETURN_MSG(m_pComponent_Manager, , TEXT("Component_Manager NULL"));
+	NULL_CHECK_RETURN_MSG(m_pCamera_Manager, , TEXT("Camera_Manager NULL"));
 
 	m_pComponent_Manager->Clear_LevelResources(iLevelIndex);
+	m_pCamera_Manager->Clear();
 }
 
 void CGameInstance::Clear_Resources()
@@ -907,6 +909,19 @@ HRESULT CGameInstance::Add_Prototype_Models(_uint iLevel, ID3D11Device* pDevice,
 		}
 
 		++iter;
+	}
+
+	return S_OK;
+}
+
+HRESULT CGameInstance::Find_And_Add_Texture(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel, const _tchar* pPath)
+{
+	wstring wstrTag = ToPrototypeTag(TEXT("Prototype_Component_Texture"), pPath);
+	if (nullptr == Find_Prototype(iLevel, Make_WChar(wstrTag.data())))
+	{
+		if (FAILED(Add_Prototype(iLevel, wstrTag.data()
+			, CTexture::Create(pDevice, pContext, pPath))))
+			return E_FAIL;
 	}
 
 	return S_OK;

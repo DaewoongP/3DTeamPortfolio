@@ -24,20 +24,42 @@ public:
 	virtual void Tick(_float fTimeDelta) override;
 
 public:
+	_bool IsCoolOn_Skill(_uint iSlot) { return (m_MagicSlots[iSlot]->IsCoolOn()); }
+	_bool IsCoolOn_Essential(_uint iSlot) { return (m_MagicEssentialSlots[iSlot]->IsCoolOn()); }
+	
+	//겟셋 비추
+	_float Get_CoolTime(_uint iSlot) { return (m_MagicSlots[iSlot]->Get_CoolTime()); }
+	void Set_CoolTime(_uint iSlot, _float value) { m_MagicSlots[iSlot]->Set_CoolTime(value); }
+	_float Get_CoolSpeedTime(_uint iSlot) { return (m_MagicSlots[iSlot]->Get_CoolSpeedTime()); }
+	void Set_CoolSpeedTime(_uint iSlot, _float value) { m_MagicSlots[iSlot]->Set_CoolSpeedTime(value); }
+	_float Get_CoolMultipleTimer(_uint iSlot) { return (m_MagicSlots[iSlot]->Get_CoolMultipleTimer()); }
+	void Set_CoolMultipleTimer(_uint iSlot, _float value) { m_MagicSlots[iSlot]->Set_CoolMultipleTimer(value); }
+
+	//스킬 n초간 n만큼 가속.
+	void Set_SkillCoolMultiple(_float fTime, _float fValue)
+	{
+		for (CMagic* pMagic : m_MagicEssentialSlots)
+		{
+			if(pMagic!=nullptr)
+				pMagic->Set_SkillCoolMultiple(fTime, fValue);
+		}
+		for (CMagic* pMagic : m_MagicSlots)
+		{
+			if (pMagic != nullptr)
+				pMagic->Set_SkillCoolMultiple(fTime, fValue);
+		}
+	}
+
+public:
 	//Add New Skill
 	HRESULT Add_Magics(CMagic::MAGICDESC SkillDesc);
-	//Add Function to Skill
-	HRESULT Add_Function_To_Magic(function<void()> func , SPELL eSpellType);
 
 	//Add Magic to Slot
 	HRESULT Add_Magic_To_Skill_Slot(_uint iSlotIndex , SPELL eSpellType);
 	HRESULT Add_Magic_To_Basic_Slot(_uint iSlotIndex , SPELL eSpellType);
 
-public:
-	//Skill Action
-	CMagicBall* Action_Magic_Skill(_uint iIndex, CTransform* pTarget,_float4x4 TargetOffsetMatrix, const _float4x4* pWeaponMatrix, _float4x4 WeaponOffsetMatrix, COLLISIONFLAG eCollisionFlag);
-	//Basic Skill Action
-	CMagicBall* Action_Magic_Basic(_uint iIndex, CTransform* pTarget, _float4x4 TargetOffsetMatrix, const _float4x4* pWeaponMatrix, _float4x4 WeaponOffsetMatrix, COLLISIONFLAG eCollisionFlag);
+	CMagicBall* Action_Magic_Skill(_uint iIndex, const CGameObject* pTarget, const CGameObject* pWeaponMatrix, COLLISIONFLAG eCollisionFlag);
+	CMagicBall* Action_Magic_Basic(_uint iIndex, const CGameObject* pTarget, const CGameObject* pWeaponMatrix, COLLISIONFLAG eCollisionFlag);
 
 private:
 	//4 Slot To Skill

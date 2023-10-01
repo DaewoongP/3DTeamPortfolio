@@ -119,7 +119,7 @@ HRESULT CRenderTarget::Render(CShader* pShader, CVIBuffer_Rect* pVIBuffer)
 	if (FAILED(pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
 
-	if (FAILED(pShader->Bind_ShaderResource("g_Texture", m_pSRV)))
+	if (FAILED(pShader->Bind_ShaderResource("g_DebugTexture", m_pSRV)))
 		return E_FAIL;
 
 	if (FAILED(pShader->Begin("Debug")))

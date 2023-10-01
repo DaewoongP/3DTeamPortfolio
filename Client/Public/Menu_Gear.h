@@ -13,6 +13,7 @@ END
 BEGIN(Client)
 class CUI_Effect_Back;
 class CUI_Back;
+class CInventory;
 
 class CMenu_Gear final : public CGameObject
 {
@@ -34,6 +35,9 @@ private:
 	virtual ~CMenu_Gear() = default;
 
 public:
+	void		Set_Open(_bool isOpen = true);
+
+public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;
@@ -42,8 +46,6 @@ public:
 
 private:
 	HRESULT Add_Prototype();
-
-
 
 	HRESULT Ready_Gear_Frame();
 	HRESULT Add_Components_Frame();
@@ -66,11 +68,15 @@ private:
 	CVIBuffer_Rect* m_pVIBufferCom = { nullptr };
 
 private:
-	vector<CUI_Effect_Back*> pSlotFrames;
-	vector<CUI_Effect_Back*> pSlotIcons;
+	vector<CUI_Effect_Back*>	m_pSlotFrames;
+	vector<CUI_Effect_Back*>	m_pSlotIcons;
+	vector<CUI_Back*>			m_pStatuses;
+	vector<CUI*>				m_pComponents;
 
-	vector<CUI_Back*> pStatuses;
-	vector<CUI*> pComponents;
+	CInventory* m_pInventory = { nullptr };
+
+private:
+	void			Select_Gear();
 
 private:
 	_bool		m_isOpen = { false };

@@ -21,14 +21,13 @@ protected:
 
 public:
 	CTransform* Get_Transform() const { return m_pTransform; }
-	void* Get_CollisionData() { return m_pCollisionArg; }
 	_bool isDead() const { return m_isDead; }
 	void Set_Dead() { m_isDead = true; }
-	void Set_CollisionData(void* pArg) { m_pCollisionArg = pArg; }
 	
 	//모델의 영점이 발이기 때문에 Offset을 두어 중점으로 올리려 합니다.
 	void Set_Offset_Matrix(_float4x4 matrix) { m_OffsetMatrix = matrix; }
 	_float4x4 Get_Offset_Matrix() const { return m_OffsetMatrix; }
+	const _float4x4* Get_Offset_MatrixPtr() const { return &m_OffsetMatrix; }
 
 public:
 	virtual HRESULT Initialize_Prototype();
@@ -40,7 +39,7 @@ public:
 	virtual void OnCollisionExit(COLLEVENTDESC CollisionDesc) {}
 
 	//마법이 값을 떤지고 도망가는 함수. 각 오브젝트마다 파서 대응해줘야함.
-	virtual void On_Maigc_Throw_Data(void* data) {}
+	virtual void On_Maigc_Throw_Data(void* data) const {}
 	virtual HRESULT Render() override;
 	virtual HRESULT Render_Depth();
 
@@ -48,11 +47,8 @@ protected:
 	CTransform*		m_pTransform = { nullptr };
 
 protected:
-	_float4x4	m_OffsetMatrix = {};
-	_bool m_isDead = { false };
-
-private:
-	void*		m_pCollisionArg = { nullptr };
+	_float4x4		m_OffsetMatrix = {};
+	_bool			m_isDead = { false };
 
 public:
 	virtual CGameObject* Clone(void* pArg) PURE;

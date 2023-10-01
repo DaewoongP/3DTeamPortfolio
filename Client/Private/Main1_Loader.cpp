@@ -127,15 +127,10 @@ HRESULT CMain1_Loader::Loading_For_Cliffside()
 			CAction::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Action");
 
-		/* For.Prototype_Component_Random_Select */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Random_Select"),
-			CRandom_Select::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_Random_Select");
-
-		/* For.Prototype_Component_Random_AirHit */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Random_AirHit"),
-			CRandom_AirHit::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_Random_AirHit");
+		/* For.Prototype_Component_RandomChoose */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_RandomChoose"),
+			CRandomChoose::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_RandomChoose");
 
 #pragma region Behavior_Selectors
 		/* For.Prototype_Component_Selector */
@@ -267,6 +262,8 @@ HRESULT CMain1_Loader::Loading_For_GreatHall()
 
 HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath, LEVELID eID)
 {
+	std::lock_guard<std::mutex> lock(mtx);
+
 	/* For.Prototype_GameObject_MapObject */
 	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_MapObject"),
 		CMapObject::Create(m_pDevice, m_pContext))))
@@ -346,6 +343,8 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath, LEVELID 
 
 HRESULT CMain1_Loader::Loading_Map_Object_Ins(const _tchar* pMapObjectInsPath, LEVELID eID)
 {
+	std::lock_guard<std::mutex> lock(mtx);
+
 	/* For.Prototype_GameObject_MapObject_Ins */
 	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_MapObject_Ins"),
 		CMapObject_Ins::Create(m_pDevice, m_pContext))))

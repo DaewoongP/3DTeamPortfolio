@@ -7,6 +7,10 @@
 /* =============================================== */
 #include "Composite.h"
 
+BEGIN(Engine)
+class CGameObject;
+END
+
 BEGIN(Client)
 
 // 마법임.
@@ -36,14 +40,32 @@ public:
 		MAGIC_TYPE		eMagicType = { MT_END };
 		BUFF_TYPE		eBuffType = { BUFF_NONE };
 		SPELL			eMagicTag = { SPELL_END };
-		_float			fCoolTime = { 0 };
+		//데미지
 		_int			iDamage = { 0 };
-		//마법의 발동 사거리
-		_float			fCastDistance = { 0 };
-		//투사체의 사거리.
-		_float			fBallDistance = { 0 };
+		//쿨타임	
+		_float			fInitCoolTime = { 1.f };
+		//속도
 		_float			fLifeTime = { 1.0f };
 	}MAGICDESC;
+
+
+public:
+	_bool IsCoolOn() { return (m_fCurrentCoolTime < 0); }
+
+	//겟셋 비추
+	_float Get_CoolTime() { return m_fCurrentCoolTime; }
+	void Set_CoolTime(_float value) { m_fCurrentCoolTime = value; }
+	_float Get_CoolSpeedTime() { return m_fCoolSpeed; }
+	void Set_CoolSpeedTime(_float value) { m_fCoolSpeed = value; }
+	_float Get_CoolMultipleTimer() { return m_fCoolMultipleTimer; }
+	void Set_CoolMultipleTimer(_float value) { m_fCoolMultipleTimer = value; }
+
+	//스킬 가속
+	void Set_SkillCoolMultiple(_float fTime, _float fValue) 
+	{
+		m_fCoolSpeed = fValue;
+		m_fCoolMultipleTimer = fTime;
+	}
 
 protected:
 	explicit CMagic(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -62,30 +84,16 @@ public:
 
 public:
 	//목표와 시작 위치를 설정해줌. 지팡이에서 파티클 재생을 해주기위해 지팡이도 던져줌.
-	virtual class CMagicBall* Magic_Cast(class CTransform* pTarget, _float4x4 targetOffsetMatrix, const _float4x4* pWeaponMatrix, _float4x4 offsetMatrix, COLLISIONFLAG eCollisionFlag);
-	virtual HRESULT Add_ActionFunc(function<void()> func);
+	virtual class CMagicBall* Magic_Cast(const CGameObject* pTarget, const CGameObject* pWeapon, COLLISIONFLAG eCollisionFlag);
 
 protected:
-	MAGIC_GROUP					m_eMagicGroup = { MG_END };
-	// 어떤 색의 보호막을 공격하는 마법인지?
-	MAGIC_TYPE					m_eMagicType = { MT_END };
-	// 마법이 입히는 버프/디버프는 뭔지?
-	BUFF_TYPE					m_eBuffType = { BUFF_NONE };
-	// 풀 혹은 UI에 보내주기 위한 내가 어떤 마법인지.
-	SPELL						m_eMagicTag = { SPELL_END };
-	//발동시 적용시켜줄 쿨타임
-	_float						m_fInitCoolTime = { 0 };
-	_float						m_fCurrentCoolTime = { 0 };
-	//데미지
-	_int						m_iDamage = { 0 };
-	// 마법의 사거리
-	_float						m_fCastDistance = { 0 };
-	// 투사체의 사거리
-	_float						m_fBallDistance = { 0 };
-	//마법의 생명주기
-	_float						m_fLifeTime = { 1.0f };
-	//마법 사용시 같이 불러주고싶은 외부 함수
-	vector<function<void()>>	m_ActionVec;
+	MAGICDESC					m_MagicDesc = {};
+	//사용 후 적용시켜줄 쿨타임
+	_float						m_fCurrentCoolTime = { 0.f };
+	//쿨 배속
+	_float						m_fCoolSpeed = { 1.0f };
+	//쿨 배속 적용 시간
+	_float						m_fCoolMultipleTimer = { 0.f };
 
 private:
 	//프로토타입 생성을 위한 enum type 별 이름 지정.

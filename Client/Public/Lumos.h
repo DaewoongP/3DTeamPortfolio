@@ -17,7 +17,7 @@ private:
 	virtual ~CLumos() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype(_uint m_iLevel);
+	virtual HRESULT Initialize_Prototype(_uint iLevel)override;
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
@@ -29,11 +29,6 @@ public:
 public:
 	void	Lumos_Tick(_float3 vPos, _float fTimeDelta);
 
-private:
-	// ±Û·Î¿ì ÀÌÆåÆ®
-	CParticleSystem*			m_pWandGlowEffect = { nullptr };
-	// ±Û·Î¿ì »¡°­ ÀÌÆåÆ®
-	CParticleSystem*			m_pWandGlowRedEffect= { nullptr };
 private:
 	_float				m_fEndTimer = { 0.3f };
 
@@ -50,7 +45,6 @@ private:
 
 private:
 	HRESULT Add_Components();
-	virtual HRESULT Add_Effect();
 
 public:
 	static CLumos* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel);

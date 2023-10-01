@@ -15,19 +15,14 @@ HRESULT CLevel_Vault::Initialize()
 {
     if (FAILED(__super::Initialize()))
         return E_FAIL;
+
 	if (FAILED(Ready_Lights()))
 	{
 		MSG_BOX("Failed Ready_Lights");
 
 		return E_FAIL;
 	}
-	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
-	{
-		MSG_BOX("Failed Ready_Layer_Player");
 
-		return E_FAIL;
-	}
-	
 	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
 	{
 		MSG_BOX("Failed Ready_Layer_Player");
@@ -48,6 +43,7 @@ HRESULT CLevel_Vault::Initialize()
 
 		return E_FAIL;
 	}
+
 	if (FAILED(Ready_Layer_Trigger(TEXT("Layer_Trigger"))))
 	{
 		MSG_BOX("Failed Load Layer_Trigger");
@@ -114,6 +110,7 @@ HRESULT CLevel_Vault::Ready_Layer_Player(const _tchar* pLayerTag)
 HRESULT CLevel_Vault::Ready_Lights()
 {
 	BEGININSTANCE;
+
 	CLight::LIGHTDESC		LightDesc;
 	ZeroMemory(&LightDesc, sizeof LightDesc);
 
@@ -123,17 +120,13 @@ HRESULT CLevel_Vault::Ready_Lights()
 	LightDesc.vDir = _float4(0.33f, -0.99f, 0.33f, 0.f);
 
 	LightDesc.vDiffuse = BLACKDEFAULT;
-	LightDesc.vAmbient = BLACKDEFAULT;
+	LightDesc.vAmbient = _float4(0.1f, 0.1f, 0.1f, 1.f);
 	LightDesc.vSpecular = BLACKDEFAULT;
 
 	pGameInstance->Set_Light(CLight::TYPE_DIRECTIONAL,LightDesc);
 
 	ENDINSTANCE;
-	return S_OK;
-}
 
-HRESULT CLevel_Vault::Ready_Layer_BackGround(const _tchar* pLayerTag)
-{
 	return S_OK;
 }
 

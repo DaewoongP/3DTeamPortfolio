@@ -65,7 +65,6 @@ struct PS_OUT
     vector vDepth : SV_TARGET2;
 };
 
-/* 픽셀을 받고 픽셀의 색을 결정하여 리턴한다. */
 PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
@@ -87,6 +86,29 @@ PS_OUT PS_MAIN(PS_IN In)
 
     return Out;
 }
+
+PS_OUT PS_MAIN_SKY_BLACK(PS_IN In)
+{
+    PS_OUT Out = (PS_OUT) 0;
+
+    vector vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+    vector vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+    float3 vNormal = vNormalDesc.xyz * 2.f - 1.f; // 0 ~ 1 -> -1 ~ 1
+    
+    float3x3 WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal.xyz, In.vNormal.xyz);
+    
+    vNormal = mul(vNormal, WorldMatrix);
+    
+    if (vDiffuse.a < 0.1f)
+        discard;
+
+    Out.vDiffuse = float4(0.1f, 0.1f, 0.1f, 1.f);
+    Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
+    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fCamFar, 0.f, 0.f);
+
+    return Out;
+}
+
 PS_OUT PS_MAIN_EFFECT(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
@@ -133,6 +155,19 @@ technique11 DefaultTechnique
         HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
         DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
         PixelShader = compile ps_5_0 PS_MAIN();
+    }
+
+    pass VaultSky
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Depth_Disable, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
+        HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
+        DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
+        PixelShader = compile ps_5_0 PS_MAIN_SKY_BLACK();
     }
 
     pass Mesh_No_Cull

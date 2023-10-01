@@ -13,6 +13,7 @@ class CRenderer;
 class CCollider;
 class CCustomModel;
 class CRigidBody;
+class CCoolTime;
 END
 
 BEGIN(Client)
@@ -22,6 +23,8 @@ class CStateContext;
 class CPlayer_Information;
 class CUI_Group_Skill;
 class CMagicBall;
+class CAccPotion;
+class CWiggenweldPotion;
 END
 
 BEGIN(Client)
@@ -67,7 +70,7 @@ public:
 	virtual HRESULT Render() override;
 	virtual HRESULT Render_Depth() override;
 
-	virtual void On_Maigc_Throw_Data(void* data) override;
+	virtual void On_Maigc_Throw_Data(void* data) const override;
 
 private:
 	CShader*		m_pShader = { nullptr };
@@ -75,14 +78,14 @@ private:
 	CRenderer*		m_pRenderer = { nullptr };
 	CCustomModel*	m_pCustomModel = { nullptr }; //스테이트
 	CRigidBody*		m_pRigidBody = { nullptr };
+	CCoolTime*		m_pCooltime = { nullptr };
 
 private:
 	CPlayer_Camera* m_pPlayer_Camera = { nullptr };
 	CPlayer_Information* m_pPlayer_Information = { nullptr };
 
 	CUI_Group_Skill* m_UI_Group_Skill_01 = { nullptr };
-
-
+	CAccPotion* m_pAccPotion = { nullptr };
 private:
 	
 
@@ -105,9 +108,11 @@ private:
 
 	CMagicBall* m_pMagicBall = { nullptr };
 
-	function<void(_float3, _float)> m_pFrncSpellToggle = { nullptr };
+	mutable function< void(_float3, _float)> m_pFrncSpellToggle = { nullptr };
 
 	LEVELID m_eLevelID = { LEVEL_END };
+	
+	_float3		m_vLevelInitPosition[LEVEL_END];
 
 #pragma region 스테이트에 넘기는 변수
 

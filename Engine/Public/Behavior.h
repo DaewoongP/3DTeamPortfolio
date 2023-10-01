@@ -34,8 +34,8 @@ BEGIN(Engine)
 
 class ENGINE_DLL CBehavior abstract : public CComponent
 {
-protected:
-	enum RETURNVALUE { BEHAVIOR_SUCCESS, BEHAVIOR_RUNNING, BEHAVIOR_FAIL, BEHAVIOR_ERROR, BEHAVIOR_END };
+public:
+	enum RETURNVALUE { BEHAVIOR_SUCCESS, BEHAVIOR_RUNNING, BEHAVIOR_FAIL, BEHAVIOR_END };
 
 protected:
 	explicit CBehavior(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -45,9 +45,6 @@ protected:
 public:
 	HRESULT Get_ReturnData() const {
 		return m_ReturnData;
-	}
-	void Set_ReturnData(HRESULT hr) {
-		m_ReturnData = hr;
 	}
 
 public:
@@ -63,38 +60,32 @@ public:
 	HRESULT Add_Success_Decorator(function<_bool(class CBlackBoard*)> Func);
 	/* 비헤이비어 실패 시 동작하는 함수를 추가한다. */
 	HRESULT Add_Fail_Decorator(function<_bool(class CBlackBoard*)> Func);
-	/* 비헤이비어의 특정 함수를 실행하기 위한 기준점을 결정하는 함수를 추가한다. */
-	HRESULT Add_Function_Decorator(function<_bool(class CBlackBoard*)> Func);
 	/* 주의. pBehavior의 AddRef를 진행하지 않지만 SafeRelease를 호출한다. */
 	HRESULT Assemble_Behavior(const wstring & BehaviorTag, CBehavior * pBehavior);
 	virtual void Reset_Behavior(HRESULT result) {};
 
 protected:
-	_bool m_isPlayBehavior = { false };
 	wstring m_wstrBehaviorTag = { L"" };
+
 	/* 블랙보드는 루트노드당 하나씩 가지고 루트노드의 자식들은 루트노드의 블랙보드를 공유하는 형태로 가져갈 것이기 때문에 블랙보드의 생성은 루트노드에서 수행한다. */
 	class CBlackBoard* m_pBlackBoard = { nullptr };
-	/* 비헤비어트리의 상위 노드 포인터 */
-	CBehavior* m_pParentBehavior = { nullptr };
+	HRESULT m_ReturnData = { 0 };
 
-protected:
+protected: /* For.Decorators */
 	list<class CDecorator*> m_Decorators;
 	list<class CDecorator*> m_EndDecorators; // 비헤이비어 종료 시 수행할 작업을 저장할 함수객체리스트
 	list<class CDecorator*> m_SuccessDecorators; // 비헤이비어 성공 반환시 수행할 작업을 저장할 함수객체리스트
 	list<class CDecorator*> m_FailDecorators; // 비헤이비어 실패 반환시 수행할 작업을 저장할 함수객체리스트
-	list<class CDecorator*> m_FunctionDecorators; // 비헤이비어의 특정 함수를 실행하기 위한 기준점을 결정하는 작업을 저장할 함수객체리스트
+	
+protected: /* Behavior List */
 	list<CBehavior*> m_Behaviors;
 	list<CBehavior*>::iterator m_iterCurBehavior;
 
 protected:
-	HRESULT m_ReturnData = { 0 };
-
-protected:
-	_bool Check_Decorators();
-	_bool Check_End_Decorators();
-	_bool Check_Success_Decorators();
-	_bool Check_Fail_Decorators();
-	_bool Check_Run_Function_Decorators();
+	_bool Check_Decorators(); // 행동이 시작하는 진입점에서 동작하는 함수들을 체크한다.
+	_bool Check_End_Decorators(); // 행동이 종료하는 시점에서 동작하는 함수들을 체크한다.
+	_bool Check_Success_Decorators(); // 행동이 Success를 반환한 경우에 동작하는 함수들을 체크한다. 
+	_bool Check_Fail_Decorators(); //행동이 Fail을 반환한 경우에 동작하는 함수들을 체크한다.
 	CBehavior* Find_Behavior(const wstring & BehaviorTag);
 	virtual HRESULT Assemble_Childs() { return S_OK; }
 

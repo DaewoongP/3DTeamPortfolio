@@ -44,9 +44,6 @@ void CHardLandState::Late_Tick(_float fTimeDelta)
 
 void CHardLandState::OnStateEnter(void* _pArg)
 {
-#ifdef _DEBUG
-	cout << "Hard Land Enter" << endl;
-#endif // _DEBUG
 }
 
 void CHardLandState::OnStateTick()
@@ -62,9 +59,6 @@ void CHardLandState::OnStateTick()
 
 void CHardLandState::OnStateExit()
 {
-#ifdef _DEBUG
-	cout << "Hard Land Exit" << endl;
-#endif // _DEBUG
 }
 
 void CHardLandState::Go_Idle()

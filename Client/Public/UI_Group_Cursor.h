@@ -23,7 +23,7 @@ public:
 	void Set_CursorPos();
 
 private:
-	CUI_Effect_Back*	m_pUI_Effect_Back = { nullptr };
+	CUI_Effect_Back*		m_pUI_Effect_Back = { nullptr };
 	CUI_Back*			m_pUI_Back = { nullptr };
 
 private:

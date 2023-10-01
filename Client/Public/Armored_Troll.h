@@ -13,10 +13,10 @@
 BEGIN(Engine)
 class CSequence;
 class CSelector;
+class CRandomChoose;
 END
 
 BEGIN(Client)
-class CRandom_Select;
 class CWeapon_Armored_Troll;
 END
 
@@ -71,7 +71,7 @@ private: /* Çàµ¿ ¹­À½µé */
 	HRESULT Make_Attack_Right_135(_Inout_ CSequence* pSequence);
 	HRESULT Make_Attack_Right_180(_Inout_ CSequence* pSequence);
 
-	HRESULT Make_Pattern_Attack_Far(_Inout_ CRandom_Select* pRandom_Select);
+	HRESULT Make_Pattern_Attack_Far(_Inout_ CRandomChoose* pRandom_Select);
 
 	HRESULT Make_Pattern_Attack_Run(_Inout_ CSequence* pSequence);
 	HRESULT Make_Pattern_Attack_Charge(_Inout_ CSelector* pSelector);

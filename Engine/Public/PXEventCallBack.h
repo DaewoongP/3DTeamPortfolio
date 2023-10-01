@@ -11,6 +11,7 @@ BEGIN(Engine)
 
 class CPXEventCallBack : public PxSimulationEventCallback
 {
+	enum EVENTSHAPE { SHAPE_SOUR, SHAPE_DEST, SHAPE_END };
 private:
 	CPXEventCallBack() = default;
 	~CPXEventCallBack() = default;

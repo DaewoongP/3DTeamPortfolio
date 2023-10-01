@@ -49,7 +49,6 @@ void CMoveLoopState::Tick(_float fTimeDelta)
 
 	if (pGameInstance->Check_Timer(TEXT("Meter per Sconde")))
 	{
-		//cout << m_StateMachineDesc.pPlayerTransform->Get_Position().z << endl;
 	}
 
 	ENDINSTANCE;
@@ -61,9 +60,6 @@ void CMoveLoopState::Late_Tick(_float fTimeDelta)
 
 void CMoveLoopState::OnStateEnter(void* _pArg)
 {
-#ifdef _DEBUG
-	cout << "Loop Enter" << endl;
-#endif // _DEBUG
 }
 
 void CMoveLoopState::OnStateTick()
@@ -105,9 +101,6 @@ void CMoveLoopState::OnStateTick()
 
 void CMoveLoopState::OnStateExit()
 {
-#ifdef _DEBUG
-	cout << "Loop Exit" << endl;
-#endif // _DEBUG
 }
 
 void CMoveLoopState::Bind_Notify()

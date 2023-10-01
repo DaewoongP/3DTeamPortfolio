@@ -27,24 +27,25 @@ HRESULT CMagic::Initialize(void* pArg)
 	__super::Initialize(pArg);
 
 	MAGICDESC* InitDesc = static_cast<MAGICDESC*>(pArg);
-	m_eMagicGroup = InitDesc->eMagicGroup;
-	m_eMagicType = InitDesc->eMagicType;
-	m_eBuffType = InitDesc->eBuffType;
-	m_fInitCoolTime = InitDesc->fCoolTime;
-	m_iDamage = InitDesc->iDamage;
-	m_fCastDistance = InitDesc->fCastDistance;
-	m_fBallDistance = InitDesc->fBallDistance;
-	m_eMagicTag = InitDesc->eMagicTag;
-	m_fLifeTime = InitDesc->fLifeTime;
-
+	memcpy(&m_MagicDesc, InitDesc,sizeof(MAGICDESC));
+	m_fCurrentCoolTime = m_MagicDesc.fInitCoolTime;
 	return S_OK;
 }
 
 void CMagic::Tick(_float fTimeDelta)
 {
+	if (m_fCoolMultipleTimer > 0)
+	{
+		m_fCoolMultipleTimer -= fTimeDelta;
+	}
+	else 
+	{
+		m_fCoolSpeed = 1.0f;
+	}
+
 	if (m_fCurrentCoolTime > 0)
 	{
-		m_fCurrentCoolTime -= fTimeDelta;
+		m_fCurrentCoolTime -= fTimeDelta * m_fCoolSpeed;
 	}
 
 	__super::Tick(fTimeDelta);
@@ -57,38 +58,27 @@ void CMagic::Late_Tick(_float fTimeDelta)
 
 HRESULT CMagic::ResetMagicDesc(MAGICDESC SkillDesc)
 {
-	m_eMagicGroup = SkillDesc.eMagicGroup;
-	m_eMagicType = SkillDesc.eMagicType;
-	m_eBuffType = SkillDesc.eBuffType;
-	m_fInitCoolTime = SkillDesc.fCoolTime;
-	m_iDamage = SkillDesc.iDamage;
-	m_fCastDistance = SkillDesc.fCastDistance;
-	m_fBallDistance = SkillDesc.fBallDistance;
-	m_eMagicTag = SkillDesc.eMagicTag;
-	m_fLifeTime = SkillDesc.fLifeTime;
-
+	memcpy(&m_MagicDesc, &SkillDesc, sizeof(MAGICDESC));
+	m_fCurrentCoolTime = m_MagicDesc.fInitCoolTime;
 	return S_OK;
 }
 
-CMagicBall* CMagic::Magic_Cast(CTransform* pTarget, _float4x4 targetOffsetMatrix, const _float4x4* pWeaponMatrix, _float4x4 WeaponOffsetMatrix, COLLISIONFLAG eCollisionFlag)
+CMagicBall* CMagic::Magic_Cast(const CGameObject* pTarget, const CGameObject* pWeapon, COLLISIONFLAG eCollisionFlag)
 {
 	if (m_fCurrentCoolTime > 0)
 		return nullptr;
 
 	//마법을 생성 합니다.
 	CMagicBall::MAGICBALLINITDESC ballInit;
-	ballInit.eBuffType = m_eBuffType;
-	ballInit.eMagicGroup = m_eMagicGroup;
-	ballInit.eMagicTag = m_eMagicTag;
-	ballInit.eMagicType = m_eMagicType;
+	ballInit.eBuffType = m_MagicDesc.eBuffType;
+	ballInit.eMagicGroup = m_MagicDesc.eMagicGroup;
+	ballInit.eMagicTag = m_MagicDesc.eMagicTag;
+	ballInit.eMagicType = m_MagicDesc.eMagicType;
 	ballInit.eCollisionFlag = eCollisionFlag;
-	ballInit.iDamage = m_iDamage;
-	ballInit.fDistance = m_fBallDistance;
+	ballInit.iDamage = m_MagicDesc.iDamage;
+	ballInit.fLifeTime = m_MagicDesc.fLifeTime;
 	ballInit.pTarget = pTarget;
-	ballInit.TargetOffsetMatrix = targetOffsetMatrix;
-	ballInit.fLifeTime = m_fLifeTime;
-	ballInit.pWeaponMatrix = pWeaponMatrix;
-	ballInit.WeaponOffsetMatrix = WeaponOffsetMatrix;
+	ballInit.pWeapon = pWeapon;
 
 	BEGININSTANCE;
 
@@ -98,7 +88,7 @@ CMagicBall* CMagic::Magic_Cast(CTransform* pTarget, _float4x4 targetOffsetMatrix
 
 	_char msgBoxText[MAX_PATH] = "Failed Add_GameObject : GameObject_";
 	_char objName[MAX_PATH] = "";
-	WCharToChar(m_szTagArray[m_eMagicTag], objName);
+	WCharToChar(m_szTagArray[m_MagicDesc.eMagicTag], objName);
 	sprintf_s(msgBoxText, "%s%s", msgBoxText, objName);
 
 	CMagicBallPool* pMagicBallPool = CMagicBallPool::GetInstance();
@@ -118,20 +108,9 @@ CMagicBall* CMagic::Magic_Cast(CTransform* pTarget, _float4x4 targetOffsetMatrix
 
 	ENDINSTANCE;
 
-	for (_uint i = 0; i < m_ActionVec.size(); i++)
-	{
-		m_ActionVec[i]();
-	}
-
-	m_fCurrentCoolTime = m_fInitCoolTime;
+	m_fCurrentCoolTime = m_MagicDesc.fInitCoolTime;
 
 	return pMagicBall;
-}
-
-HRESULT CMagic::Add_ActionFunc(function<void()> func)
-{
-	m_ActionVec.push_back(func);
-	return S_OK;
 }
 
 CMagic* CMagic::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

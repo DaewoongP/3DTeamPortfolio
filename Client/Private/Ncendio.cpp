@@ -14,12 +14,10 @@ CNcendio::CNcendio(const CNcendio& rhs)
 
 HRESULT CNcendio::Initialize_Prototype(_uint iLevel)
 {
-	if (FAILED(__super::Initialize_Prototype()))
+	if (FAILED(__super::Initialize_Prototype(iLevel)))
 		return E_FAIL;
-
-	m_iLevel = iLevel;
+	
 	BEGININSTANCE;
-
 	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_BurnTarget_Particle")))
 	{
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_BurnTarget_Particle")
@@ -80,18 +78,6 @@ HRESULT CNcendio::Initialize(void* pArg)
 
 		return E_FAIL;
 	}
-
-	if (FAILED(Add_Effect()))
-	{
-		MSG_BOX("Failed Player Add_Effect");
-
-		return E_FAIL;
-	}
-
-	m_pSmokeCloudEffect->Disable();
-	m_pFireCircleBoomEffect->Disable();
-	m_pBurnTargetEffect->Disable();
-
 	return S_OK;
 }
 
@@ -129,36 +115,29 @@ void CNcendio::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 HRESULT CNcendio::Reset(MAGICBALLINITDESC& InitDesc)
 {
 	__super::Reset(InitDesc);
-
-	m_pSmokeCloudEffect->Disable();
-	m_pFireCircleBoomEffect->Disable();
-	m_pBurnTargetEffect->Disable();
-	m_fLerpAcc = 0.0f;
 	return S_OK;
 }
 
 void CNcendio::Ready_Begin()
 {
 	// 인센디오 원형 불꽃을 타겟 포지션보다 살짝 낮춘다.
-	_float3 vOffsetPosition = m_MagicBallDesc.vStartPosition;
+	_float3 vOffsetPosition = m_vStartPosition;
 	vOffsetPosition.y -= 0.5f;
 
 	// 맞춘 대상보다 텍스처가 더 앞으로 나오게 조정한다.
-	_float3 vBurnTargetOffset = m_MagicBallDesc.vStartPosition - m_vTargetPosition;
+	_float3 vBurnTargetOffset = m_vStartPosition - m_vEndPosition;
 	vBurnTargetOffset.Normalize();
 	vBurnTargetOffset *= 0.5f;
 
-	m_pSmokeCloudEffect->Enable(vOffsetPosition);
-	m_pFireCircleBoomEffect->Enable(vOffsetPosition);
-	m_pBurnTargetEffect->Enable(m_vTargetPosition + vBurnTargetOffset);
+	for (int i = 0; i < m_ParticleVec[EFFECT_STATE_HIT].size(); i++)
+	{
+		m_ParticleVec[EFFECT_STATE_HIT].data()[i]->Enable(vOffsetPosition);
+		m_ParticleVec[EFFECT_STATE_HIT].data()[i]->Play(vOffsetPosition);
+	}
 
-	// 재생
-	m_pBurnTargetEffect->Play(m_vTargetPosition + vBurnTargetOffset);
-	m_pFireCircleBoomEffect->Play(vOffsetPosition);
-	m_pSmokeCloudEffect->Play(vOffsetPosition);
 	m_pFireRingMeshEffect->Play(vOffsetPosition);
-
-	m_pTransform->Set_Position(m_MagicBallDesc.vStartPosition);
+	m_pTransform->Set_Position(m_vStartPosition);
+	Set_MagicBallState(MAGICBALL_STATE_CASTMAGIC);
 }
 
 void CNcendio::Ready_DrawMagic()
@@ -167,18 +146,15 @@ void CNcendio::Ready_DrawMagic()
 
 void CNcendio::Ready_CastMagic()
 {
-	
 }
 
 void CNcendio::Ready_Dying()
 {
-
 }
 
 void CNcendio::Tick_Begin(_float fTimeDelta)
 {
-	//인센디오는 비긴 없습니다.
-	Do_MagicBallState_To_Next();
+	
 }
 
 void CNcendio::Tick_DrawMagic(_float fTimeDelta)
@@ -193,26 +169,24 @@ void CNcendio::Tick_CastMagic(_float fTimeDelta)
 
 void CNcendio::Tick_Dying(_float fTimeDelta)
 {
-	if(!m_pFireCircleBoomEffect->IsEnable())
+	if(!m_ParticleVec[EFFECT_STATE_HIT].data()[0]->IsEnable()&&
+	   !m_ParticleVec[EFFECT_STATE_HIT].data()[1]->IsEnable()&&
+	   !m_ParticleVec[EFFECT_STATE_HIT].data()[2]->IsEnable())
 		Do_MagicBallState_To_Next();
 }
 
 HRESULT CNcendio::Add_Components()
 {
+	m_ParticleVec[EFFECT_STATE_HIT].resize(3);
 	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_FireCircleBoom_Particle")
-		, TEXT("Com_FireCircleBoom"), (CComponent**)&m_pFireCircleBoomEffect), E_FAIL);
+		, TEXT("Com_FireCircleBoom"), (CComponent**)&m_ParticleVec[EFFECT_STATE_HIT][0]), E_FAIL);
 	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_BurnTarget_Particle")
-		, TEXT("Com_BurnTarget"), (CComponent**)&m_pBurnTargetEffect), E_FAIL);
+		, TEXT("Com_BurnTarget"), (CComponent**)&m_ParticleVec[EFFECT_STATE_HIT][1]), E_FAIL);
 	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_SmokeCloud_Particle")
-		, TEXT("Com_SmokeCloud"), (CComponent**)&m_pSmokeCloudEffect), E_FAIL);
+		, TEXT("Com_SmokeCloud"), (CComponent**)&m_ParticleVec[EFFECT_STATE_HIT][2]), E_FAIL);
 	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_FireRing_MeshEffect")
 		, TEXT("Com_FireRing"), (CComponent**)&m_pFireRingMeshEffect), E_FAIL);
 
-	return S_OK;
-}
-
-HRESULT CNcendio::Add_Effect()
-{
 	return S_OK;
 }
 
@@ -275,11 +249,8 @@ CGameObject* CNcendio::Clone(void* pArg)
 void CNcendio::Free()
 {
 	__super::Free();
-	if (true == m_isCloned)
+	if(m_isCloned== true)
 	{
-		Safe_Release(m_pSmokeCloudEffect);
-		Safe_Release(m_pFireCircleBoomEffect);
-		Safe_Release(m_pBurnTargetEffect);
 		Safe_Release(m_pFireRingMeshEffect);
 	}
 }

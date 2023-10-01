@@ -29,8 +29,6 @@ HRESULT CWait::Tick(const _float& fTimeDelta)
 	_float fInterval = pGameInstance->Get_World_TimeAcc() - m_fPreWorldTimeAcc;
 	ENDINSTANCE;
 
-	//cout << fInterval << endl;
-
 	if (fInterval >= m_fLimit)
 		return BEHAVIOR_SUCCESS;
 
