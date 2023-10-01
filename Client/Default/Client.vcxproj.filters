@@ -804,7 +804,7 @@
     <ClInclude Include="..\Public\AccPotion.h">
       <Filter>02. GameObject\09. Item\ex.AccPotion</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\PowerPotion.h">
+    <ClInclude Include="..\Public\MaximaPotion.h">
       <Filter>02. GameObject\09. Item\ex1.PowerPotion</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Item.h">
@@ -1186,7 +1186,7 @@
     <ClCompile Include="..\Private\AccPotion.cpp">
       <Filter>02. GameObject\09. Item\ex.AccPotion</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\PowerPotion.cpp">
+    <ClCompile Include="..\Private\MaximaPotion.cpp">
       <Filter>02. GameObject\09. Item\ex1.PowerPotion</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Item.cpp">

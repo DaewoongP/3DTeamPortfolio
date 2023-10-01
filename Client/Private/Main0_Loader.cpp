@@ -335,6 +335,8 @@ HRESULT CMain0_Loader::Loading_For_Cliffside()
 			CMagic::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Magic");
 
+
+
 #pragma region Magic
 		/* For.Prototype_GameObject_BasicCast */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_BasicCast"),

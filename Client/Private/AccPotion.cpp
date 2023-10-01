@@ -52,8 +52,11 @@ void CAccPotion::Use(_float3 vPlayPos)
 
 HRESULT CAccPotion::Add_Components()
 {
+	CCoolTime::COOLTIME_DESC MaxCool;
+	MaxCool.fMaxCoolTime = 15.f;
+
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_CoolTime"),
-		TEXT("Com_CoolTime"), reinterpret_cast<CComponent**>(&m_pCooltime))))
+		TEXT("Com_CoolTime"), reinterpret_cast<CComponent**>(&m_pCooltime),&MaxCool)))
 	{
 		__debugbreak();
 		return E_FAIL;

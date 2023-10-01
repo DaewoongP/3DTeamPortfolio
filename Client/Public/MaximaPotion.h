@@ -11,17 +11,17 @@ class CRenderer;
 class CTransform;
 class CModel;
 class CCoolTime;
-class CMagic;
 END
 
 BEGIN(Client)
+class CMagicSlot;
 
-class CPowerPotion final : public CItem
+class CMaximaPotion final : public CItem
 {
 private:
-	CPowerPotion(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CPowerPotion(const CPowerPotion& rhs);
-	virtual ~CPowerPotion() = default;
+	CMaximaPotion(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CMaximaPotion(const CMaximaPotion& rhs);
+	virtual ~CMaximaPotion() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype(_uint iLevel, const _tchar* pUIImagePath);
@@ -39,10 +39,10 @@ private:
 	_uint m_iLevel = { 0 };
 
 	CCoolTime* m_pCooltime = { nullptr };
-	CMagic* m_pMagic = { nullptr };
+	CMagicSlot* m_pMagicSlot = { nullptr };
 
 public:
-	static CPowerPotion* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel, const _tchar* pUIImagePath);
+	static CMaximaPotion* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel, const _tchar* pUIImagePath);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free(void) override;
 

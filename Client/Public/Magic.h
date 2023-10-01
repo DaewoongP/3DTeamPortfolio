@@ -54,7 +54,6 @@ protected:
 	virtual ~CMagic() = default;
 
 public:
-	void Set_PowerUp(_bool isPowerUp) { m_isPowerUp; }
 
 
 public:
@@ -69,13 +68,12 @@ public:
 
 public:
 	//목표와 시작 위치를 설정해줌. 지팡이에서 파티클 재생을 해주기위해 지팡이도 던져줌.
-	virtual class CMagicBall* Magic_Cast(const CGameObject* pTarget, const CGameObject* pWeapon, COLLISIONFLAG eCollisionFlag);
+	virtual class CMagicBall* Magic_Cast(const CGameObject* pTarget, const CGameObject* pWeapon, COLLISIONFLAG eCollisionFlag,_bool PowerUp);
 
 protected:
 	MAGICDESC					m_MagicDesc = {};
 	//사용 후 적용시켜줄 쿨타임
 	_float						m_fCurrentCoolTime = { 0 };
-	_bool						m_isPowerUp = {false};
 	
 private:
 	//프로토타입 생성을 위한 enum type 별 이름 지정.

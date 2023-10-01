@@ -17,6 +17,8 @@ private:
 	explicit CMagicSlot(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CMagicSlot(const CMagicSlot& rhs);
 	virtual ~CMagicSlot() = default;
+public:
+
 
 public:
 	virtual HRESULT Initialize_Prototype();
@@ -31,8 +33,10 @@ public:
 	HRESULT Add_Magic_To_Skill_Slot(_uint iSlotIndex , SPELL eSpellType);
 	HRESULT Add_Magic_To_Basic_Slot(_uint iSlotIndex , SPELL eSpellType);
 
-	CMagicBall* Action_Magic_Skill(_uint iIndex, const CGameObject* pTarget, const CGameObject* pWeaponMatrix, COLLISIONFLAG eCollisionFlag);
-	CMagicBall* Action_Magic_Basic(_uint iIndex, const CGameObject* pTarget, const CGameObject* pWeaponMatrix, COLLISIONFLAG eCollisionFlag);
+	CMagicBall* Action_Magic_Skill(_uint iIndex, const CGameObject* pTarget, const CGameObject* pWeaponMatrix, COLLISIONFLAG eCollisionFlag, _bool isPowerUp=false);
+	CMagicBall* Action_Magic_Basic(_uint iIndex, const CGameObject* pTarget, const CGameObject* pWeaponMatrix, COLLISIONFLAG eCollisionFlag, _bool isPowerUp=false);
+
+private:
 
 private:
 	//4 Slot To Skill

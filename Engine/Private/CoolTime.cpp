@@ -33,7 +33,7 @@ void CCoolTime::Tick(_float _fTimeDelta)
 	if (false == m_isEnable)
 		return;
 
-	if (m_fCurCoolTime >= 15.f)
+	if (m_fCurCoolTime >= m_fMaxCoolTime)
 	{
 		Reset();
 	}
