@@ -397,6 +397,9 @@
     <Filter Include="05. Magic\MagicBall\10. Descendo">
       <UniqueIdentifier>{9519c13e-a7cb-4b96-9eb2-b9ce8a40056a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="05. Magic\MagicBall\11. Accio">
+      <UniqueIdentifier>{703f4170-540d-477e-9e7d-2f10b19b80de}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -816,6 +819,9 @@
     <ClInclude Include="..\Public\Descendo.h">
       <Filter>05. Magic\MagicBall\10. Descendo</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Accio.h">
+      <Filter>05. Magic\MagicBall\11. Accio</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1201,6 +1207,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Descendo.cpp">
       <Filter>05. Magic\MagicBall\10. Descendo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Accio.cpp">
+      <Filter>05. Magic\MagicBall\11. Accio</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

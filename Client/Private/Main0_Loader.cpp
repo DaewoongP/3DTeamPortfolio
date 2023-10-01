@@ -52,6 +52,7 @@
 #include "Lumos.h"
 #include "Arrestomomentum.h"
 #include "Descendo.h"
+#include "Accio.h"
 #pragma endregion Magic
 
 #include "Trigger_Vault.h"
@@ -383,8 +384,11 @@ HRESULT CMain0_Loader::Loading_For_Cliffside()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Descendo"),
 			CDescendo::Create(m_pDevice, m_pContext, LEVEL_STATIC))))
 			throw TEXT("Prototype_GameObject_Descendo");
-		
-		
+
+		/* For.Prototype_GameObject_Accio */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Accio"),
+			CAccio::Create(m_pDevice, m_pContext, LEVEL_STATIC))))
+			throw TEXT("Prototype_GameObject_Accio");
 
 #pragma endregion
 		{

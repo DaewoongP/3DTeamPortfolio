@@ -6,7 +6,7 @@
 BEGIN(Engine)
 class CRigidBody;
 class CRenderer;
-class CParticle;
+class CParticleSystem;
 class CTrail;
 END
 
@@ -72,7 +72,8 @@ public:
 
 protected:
 	virtual void Ready_SpinMove(CTrail* pTrail,_float2 vSpinWeight, _float fSpinSpeed);
-	virtual void Ready_SplineMove(CTrail* pTrail);
+	virtual void Ready_SplineMove(CTrail* pTrail, _float3 Aixs = _float3(1,1,1));
+	virtual void Ready_SplineMove_Accio(CTrail* pTrail, _float3 Aixs = _float3(1, 1, 1));
 	virtual void Ready_StraightMove(CTrail* pTrail);
 	virtual void Ready_SplineSpinMove(CTrail* pTrail , _float2 vSpinWeight, _float fSpinSpeed);
 

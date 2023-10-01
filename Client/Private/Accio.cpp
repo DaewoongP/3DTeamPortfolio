@@ -1,25 +1,43 @@
-#include "Descendo.h"
+#include "Accio.h"
 #include "GameInstance.h"
 #include "Engine_Function.h"
 
 #include "Trail.h"
 #include "ParticleSystem.h"
+#include "Wingardium_Effect.h"
 
-CDescendo::CDescendo(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CAccio::CAccio(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CMagicBall(pDevice, pContext)
 {
 }
 
-CDescendo::CDescendo(const CDescendo& rhs)
+CAccio::CAccio(const CAccio& rhs)
 	: CMagicBall(rhs)
 {
 }
 
-HRESULT CDescendo::Initialize_Prototype(_uint iLevel)
+void CAccio::TrailAction (_float3 vPosition, _float fTimeDelta)
+{
+	m_pWingardiumEffect->TrailAction(vPosition, fTimeDelta);
+	m_fWingardiumEffectDeadTimer = 0.3f;
+
+}
+
+HRESULT CAccio::Initialize_Prototype(_uint iLevel)
 {
 	if (FAILED(__super::Initialize_Prototype(iLevel)))
 		return E_FAIL;
+
 	BEGININSTANCE;
+	if (nullptr == pGameInstance->Find_Prototype(iLevel, TEXT("Prototype_GameObject_Wingardium_Effect")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(iLevel, TEXT("Prototype_GameObject_Wingardium_Effect"),
+			CWingardium_Effect::Create(m_pDevice, m_pContext, iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
 	if (nullptr == pGameInstance->Find_Prototype(iLevel, TEXT("Prototype_GameObject_MagicTrail_Winga_Effect")))
 	{
 		if (FAILED(pGameInstance->Add_Prototype(iLevel, TEXT("Prototype_GameObject_MagicTrail_Winga_Effect"),
@@ -83,23 +101,12 @@ HRESULT CDescendo::Initialize_Prototype(_uint iLevel)
 			return E_FAIL;
 		}
 	}
-	if (nullptr == pGameInstance->Find_Prototype(iLevel, TEXT("Prototype_GameObject_Defatul_Default_GlowBall")))
-	{
-		if (FAILED(pGameInstance->Add_Prototype(iLevel, TEXT("Prototype_GameObject_Defatul_Default_GlowBall")
-			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Default/Default_GlowBall/"), iLevel))))
-		{
-			ENDINSTANCE;
-			return E_FAIL;
-		}
-	}
-	
 	ENDINSTANCE;
-
 
 	return S_OK;
 }
 
-HRESULT CDescendo::Initialize(void* pArg)
+HRESULT CAccio::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 	{
@@ -114,117 +121,128 @@ HRESULT CDescendo::Initialize(void* pArg)
 
 		return E_FAIL;
 	}
-	_float4 vColor = _float4(255.f / 255.f, 102.f / 255.f, 102.f / 255.f, 1);
+	m_CollisionDesc.Action = bind(&CAccio::TrailAction, this, placeholders::_1, placeholders::_2);
+
+	//트레일 색상변경부
+	_float3 vColor = _float3(255.f / 255.f, 255.f / 255.f, 204.f / 255.f);
+	m_pWingardiumEffect->Set_Color(vColor, vColor);
 	for (int i = 0; i < EFFECT_STATE_END; i++)
 	{
-		for (_uint j = 0; j < m_ParticleVec[i].size(); j++)
-		{
-			m_ParticleVec[i].data()[j]->Get_MainModuleRef().vStartColor = vColor;
-		}
-
 		for (_uint j = 0; j < m_TrailVec[i].size(); j++)
 		{
-			m_TrailVec[i].data()[j]->Set_Trail_HeadColor(vColor.xyz());
-			m_TrailVec[i].data()[j]->Set_Trail_TailColor(vColor.xyz());
+			m_TrailVec[i].data()[j]->Set_Trail_HeadColor(vColor);
+			m_TrailVec[i].data()[j]->Set_Trail_TailColor(vColor);
 		}
+		
 	}
-
-
 	return S_OK;
 }
 
-void CDescendo::Tick(_float fTimeDelta)
+void CAccio::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 }
 
-void CDescendo::Late_Tick(_float fTimeDelta)
+void CAccio::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 }
 
-void CDescendo::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
+void CAccio::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
 	//몹이랑 충돌했으면?
-	if (wcsstr(CollisionEventDesc.pOtherCollisionTag,TEXT("Enemy_Body")) != nullptr)
+	if (wcsstr(CollisionEventDesc.pOtherCollisionTag, TEXT("Enemy_Body")) != nullptr)
 	{
 		Set_MagicBallState(MAGICBALL_STATE_DYING);
 	}
+
 	__super::OnCollisionEnter(CollisionEventDesc);
 }
 
-void CDescendo::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)
+void CAccio::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)
 {
 	__super::OnCollisionStay(CollisionEventDesc);
 }
 
-void CDescendo::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
+void CAccio::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 {
 	__super::OnCollisionExit(CollisionEventDesc);
 }
 
-HRESULT CDescendo::Reset(MAGICBALLINITDESC& InitDesc)
+HRESULT CAccio::Reset(MAGICBALLINITDESC& InitDesc)
 {
 	__super::Reset(InitDesc);
+	m_fWingardiumEffectDeadTimer = 0.3f;
+	m_pWingardiumEffect->Disable();
 	return S_OK;
 }
 
-void CDescendo::Ready_Begin()
+void CAccio::Ready_Begin()
 {
 	__super::Ready_Begin();
 }
 
-void CDescendo::Ready_DrawMagic()
+void CAccio::Ready_DrawMagic()
 {
 	__super::Ready_DrawMagic();
 }
 
-void CDescendo::Ready_CastMagic()
+void CAccio::Ready_CastMagic()
 {
-	Ready_SplineMove_Accio(m_TrailVec[EFFECT_STATE_MAIN][0],_float3(0,1,0));
+	Ready_SpinMove(m_TrailVec[EFFECT_STATE_MAIN].data()[0],_float2(1.f,0.f),0.5f);
 	__super::Ready_CastMagic();
 }
 
-void CDescendo::Ready_Dying()
+void CAccio::Ready_Dying()
 {
-	m_ParticleVec[EFFECT_STATE_MAIN][4]->Disable();
+	m_pWingardiumEffect->SetActionTrigger(true);
+	m_pWingardiumEffect->Enable();
 	__super::Ready_Dying();
 }
 
-void CDescendo::Tick_Begin(_float fTimeDelta)
+void CAccio::Tick_Begin(_float fTimeDelta)
 {
 	__super::Tick_Begin(fTimeDelta);
 }
 
-void CDescendo::Tick_DrawMagic(_float fTimeDelta)
+void CAccio::Tick_DrawMagic(_float fTimeDelta)
 {
 	__super::Tick_DrawMagic(fTimeDelta);
 }
 
-void CDescendo::Tick_CastMagic(_float fTimeDelta)
+void CAccio::Tick_CastMagic(_float fTimeDelta)
 {
 	__super::Tick_CastMagic(fTimeDelta);
+
 	if (m_fLerpAcc != 1)
 	{
 		m_fLerpAcc += fTimeDelta / m_fLifeTime * m_fTimeScalePerDitance;
 		if (m_fLerpAcc > 1)
 			m_fLerpAcc = 1;
-		m_TrailVec[EFFECT_STATE_MAIN][0]->Spline_Move(m_vSplineLerp[0], m_vStartPosition, m_vEndPosition, m_vSplineLerp[1], m_fLerpAcc);
-		m_pTransform->Set_Position(m_TrailVec[EFFECT_STATE_MAIN][0]->Get_Transform()->Get_Position());
-		m_ParticleVec[EFFECT_STATE_MAIN][4]->Get_Transform()->Set_Position(m_TrailVec[EFFECT_STATE_MAIN][0]->Get_Transform()->Get_Position());
+		m_TrailVec[EFFECT_STATE_MAIN].data()[0]->Spin_Move(m_vEndPosition, m_vStartPosition,m_vSpinWeight,m_fSpinSpeed, m_fLerpAcc);
+		m_pTransform->Set_Position(m_TrailVec[EFFECT_STATE_MAIN].data()[0]->Get_Transform()->Get_Position());
 	}
 	else
 	{
 		Do_MagicBallState_To_Next();
 	}
+
+	for (int i = 0; i < m_ParticleVec[EFFECT_STATE_MAIN].size(); i++)
+	{
+		m_ParticleVec[EFFECT_STATE_MAIN].data()[i]->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
+	}
 }
 
-void CDescendo::Tick_Dying(_float fTimeDelta)
+void CAccio::Tick_Dying(_float fTimeDelta)
 {
-	__super::Tick_Dying(fTimeDelta);
+	m_fWingardiumEffectDeadTimer -= fTimeDelta;
+	if (m_fWingardiumEffectDeadTimer < 0)
+	{
+		Do_MagicBallState_To_Next();
+	}
 }
 
-HRESULT CDescendo::Add_Components()
+HRESULT CAccio::Add_Components()
 {
 	m_TrailVec[EFFECT_STATE_WAND].resize(1);
 	m_ParticleVec[EFFECT_STATE_WAND].resize(1);
@@ -244,9 +262,9 @@ HRESULT CDescendo::Add_Components()
 	}
 
 	m_TrailVec[EFFECT_STATE_MAIN].resize(1);
-	m_ParticleVec[EFFECT_STATE_MAIN].resize(5);
+	m_ParticleVec[EFFECT_STATE_MAIN].resize(4);
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_MagicTrail_Winga_Effect"),
-		TEXT("Com_MainTrail"), reinterpret_cast<CComponent**>(&m_TrailVec[EFFECT_STATE_MAIN][0]))))
+		TEXT("Com_Effect"), reinterpret_cast<CComponent**>(&m_TrailVec[EFFECT_STATE_MAIN][0]))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_MagicTrail_Winga_Effect)");
 		__debugbreak();
@@ -280,13 +298,6 @@ HRESULT CDescendo::Add_Components()
 		__debugbreak();
 		return E_FAIL;
 	}
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Defatul_Default_GlowBall"),
-		TEXT("Com_MainEffect"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_MAIN][4]))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Defatul_Default_GlowBall)");
-		__debugbreak();
-		return E_FAIL;
-	}
 
 	m_ParticleVec[EFFECT_STATE_HIT].resize(1);
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Accio_HitMain"),
@@ -297,36 +308,49 @@ HRESULT CDescendo::Add_Components()
 		return E_FAIL;
 	}
 
+	//별도
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Wingardium_Effect"),
+		TEXT("Com_WingradiumEffect"), reinterpret_cast<CComponent**>(&m_pWingardiumEffect))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Wingardium_Effect)");
+		__debugbreak();
+		return E_FAIL;
+	}
 
 	return S_OK;
 }
 
-CDescendo* CDescendo::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,_uint iLevel)
+CAccio* CAccio::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel)
 {
-	CDescendo* pInstance = New CDescendo(pDevice, pContext);
+	CAccio* pInstance = New CAccio(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(iLevel)))
 	{
-		MSG_BOX("Failed to Created CDescendo");
+		MSG_BOX("Failed to Created CAccio");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject* CDescendo::Clone(void* pArg)
+CGameObject* CAccio::Clone(void* pArg)
 {
-	CDescendo* pInstance = New CDescendo(*this);
+	CAccio* pInstance = New CAccio(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned CDescendo");
+		MSG_BOX("Failed to Cloned CAccio");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-void CDescendo::Free()
+void CAccio::Free()
 {
 	__super::Free();
+
+	if (true == m_isCloned)
+	{
+		Safe_Release(m_pWingardiumEffect);
+	}
 }

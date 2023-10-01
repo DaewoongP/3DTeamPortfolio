@@ -113,8 +113,8 @@ HRESULT CMagicBall::Reset(MAGICBALLINITDESC& InitDesc)
 	}
 	else 
 	{
-		m_pTargetWorldMatrix = nullptr;
-		m_pTargetOffsetMatrix = nullptr;
+		m_pWeaponWorldMatrix = nullptr;
+		m_pWeaponOffsetMatrix = nullptr;
 		m_CurrentWeaponMatrix = XMMatrixIdentity();
 		m_vStartPosition = _float3(0,0,0);
 	}
@@ -163,7 +163,7 @@ void CMagicBall::Ready_SpinMove(CTrail* pTrail,_float2 vSpinWeight, _float fSpin
 	m_fSpinSpeed = fSpinSpeed;
 }
 
-void CMagicBall::Ready_SplineMove(CTrail* pTrail)
+void CMagicBall::Ready_SplineMove(CTrail* pTrail,_float3 Aixs)
 {
 	Ready_StraightMove(pTrail);
 
@@ -172,7 +172,7 @@ void CMagicBall::Ready_SplineMove(CTrail* pTrail)
 	// 플레이어가 타겟을 보는 vector를 구함.
 	_float3 vDir = XMVector3Normalize(m_vEndPosition - m_vStartPosition);
 	// 임의의 축을 구함.
-	_float3 tempAxis = _float3(1, 1, 1);
+	_float3 tempAxis = Aixs;
 	// 외적
 	_float3	normal = XMVector3Cross(vDir, tempAxis);
 
@@ -189,6 +189,34 @@ void CMagicBall::Ready_SplineMove(CTrail* pTrail)
 	fRandom = Random_Generator(-20.f, 20.f);
 	// 외적 방향으로 튄다.
 	m_vSplineLerp[1] += _float3(normal.x * fRandom, normal.y * fabsf(fRandom), normal.z * fRandom);
+}
+
+void CMagicBall::Ready_SplineMove_Accio(CTrail* pTrail, _float3 Aixs)
+{
+	Ready_StraightMove(pTrail);
+
+	//Ready for Spline Lerp
+	m_fLerpAcc = 0.f;
+	// 플레이어가 타겟을 보는 vector를 구함.
+	_float3 vDir = XMVector3Normalize(m_vEndPosition - m_vStartPosition);
+	// 임의의 축을 구함.
+	_float3 tempAxis = Aixs;
+	// 외적
+	_float3	normal = XMVector3Cross(vDir, tempAxis);
+
+	//진행 경로만큼 뒤로 이동한 뒤
+	m_vSplineLerp[0] = m_vStartPosition - vDir;
+	//임의의 랜덤 값을 구하고
+	_float fRandom = Random_Generator(-20.f, 20.f);
+	// 외적 방향으로 튄다.
+	m_vSplineLerp[0] += _float3(0, normal.y * fRandom,0);
+
+	//진행 경로만큼 뒤로 이동한 뒤
+	m_vSplineLerp[1] = m_vStartPosition + vDir;
+	//임의의 랜덤 값을 구하고
+	fRandom = Random_Generator(-20.f, 20.f);
+	// 외적 방향으로 튄다.
+	m_vSplineLerp[1] += _float3(0, normal.y * fRandom, 0);
 }
 
 void CMagicBall::Ready_StraightMove(CTrail* pTrail)

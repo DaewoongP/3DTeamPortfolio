@@ -164,6 +164,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Public\Accio.h" />
     <ClInclude Include="..\Public\Action.h" />
     <ClInclude Include="..\Public\Arrestomomentum.h" />
     <ClInclude Include="..\Public\Death.h" />
@@ -328,6 +329,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Private\Accio.cpp" />
     <ClCompile Include="..\Private\Action.cpp" />
     <ClCompile Include="..\Private\Arrestomomentum.cpp" />
     <ClCompile Include="..\Private\Death.cpp" />
