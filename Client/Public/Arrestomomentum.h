@@ -9,20 +9,12 @@ class CTrail;
 END
 
 BEGIN(Client)
-class CWingardium_Effect;
-END
-
-BEGIN(Client)
-class CLevioso final : public CMagicBall
+class CArrestomomentum final : public CMagicBall
 {
 private:
-	explicit CLevioso(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	explicit CLevioso(const CLevioso& rhs);
-	virtual ~CLevioso() = default;
-
-public:
-	//윙가를 돌리는 함수임. 안부른지 0.3초 이상 지나면 죽음.
-	void TrailAction(_float3 vPosition, _float fTimeDelta);
+	explicit CArrestomomentum(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	explicit CArrestomomentum(const CArrestomomentum& rhs);
+	virtual ~CArrestomomentum() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype(_uint iLevel);
@@ -33,13 +25,6 @@ public:
 	virtual void OnCollisionStay(COLLEVENTDESC CollisionEventDesc) override;
 	virtual void OnCollisionExit(COLLEVENTDESC CollisionEventDesc) override;
 	virtual HRESULT Reset(MAGICBALLINITDESC& InitDesc) override;
-
-private:
-	// 몹 피격 트레일
-	CWingardium_Effect* m_pWingardiumEffect = { nullptr };
-
-private:
-	_float				m_fWingardiumEffectDeadTimer = { 0.3f };
 
 private:
 	virtual void Ready_Begin() override;
@@ -56,7 +41,7 @@ private:
 	HRESULT Add_Components();
 
 public:
-	static CLevioso* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel);
+	static CArrestomomentum* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel = 0);
 	virtual CGameObject* Clone(void* pArg);
 	virtual void Free() override;
 };

@@ -6,6 +6,7 @@
 BEGIN(Engine)
 class CRigidBody;
 class CRenderer;
+class CParticleSystem;
 class CTrail;
 END
 
@@ -15,6 +16,8 @@ class CMagicBall : public CGameObject
 public:
 	//매직볼의 상태임.		시작->트레일->발사->사망->종료
 	enum MAGICBALL_STATE { MAGICBALL_STATE_BEGIN, MAGICBALL_STATE_DRAWTRAIL, MAGICBALL_STATE_CASTMAGIC, MAGICBALL_STATE_DYING, MAGICBALL_STATE_END};
+	//이펙트 상태임.		완드->발사->사망->종료
+	enum EFFECT_STATE{EFFECT_STATE_WAND, EFFECT_STATE_MAIN, EFFECT_STATE_HIT, EFFECT_STATE_END};
 public:
 	typedef struct MagicBallInitDesc
 	{
@@ -30,7 +33,6 @@ public:
 		_int					iDamage = { 0 };
 		_float					fLifeTime = { 1.0f };
 	}MAGICBALLINITDESC;
-
 	typedef struct CollsionRequestDesc
 	{
 		CMagic::MAGIC_GROUP		eMagicGroup = { CMagic::MG_END };
@@ -70,15 +72,22 @@ public:
 
 protected:
 	virtual void Ready_SpinMove(CTrail* pTrail,_float2 vSpinWeight, _float fSpinSpeed);
-	virtual void Ready_SplineMove(CTrail* pTrail);
+	virtual void Ready_SplineMove(CTrail* pTrail, _float3 Aixs = _float3(1,1,1));
+	virtual void Ready_SplineMove_Accio(CTrail* pTrail, _float3 Aixs = _float3(1, 1, 1));
 	virtual void Ready_StraightMove(CTrail* pTrail);
 	virtual void Ready_SplineSpinMove(CTrail* pTrail , _float2 vSpinWeight, _float fSpinSpeed);
 
+// 컴포넌트
 protected:
-	// 충돌을 위한 리지드바디 입니다.
 	CRigidBody*				m_pRigidBody = { nullptr };
 	CRenderer*				m_pRenderer = { nullptr };
 	
+//생산성을 높이기위해 도입한 파티클 벡터 특수한 친구들은 여기에 안쓸겁니다.
+protected:
+	vector<CTrail*>						m_TrailVec[EFFECT_STATE_END];
+	vector<CParticleSystem*>			m_ParticleVec[EFFECT_STATE_END];
+
+//발사에 관한 로직
 protected:
 	//총알에서는 발사 기간이요. 쉴드에서는 지속시간이다.
 	_float					m_fLifeTime = { 1.0f };
@@ -108,6 +117,7 @@ protected:
 	_float					m_fTimeScalePerDitance = { 0.f };
 	_uint					m_iLevel = { 0 };
 
+//전달 및 흐름
 protected:
 	COLLSIONREQUESTDESC		m_CollisionDesc = {};
 	COLLISIONFLAG			m_eCollisionFlag = {};
@@ -117,15 +127,23 @@ protected:
 	_bool					m_isFirstFrameInState = { true };
 
 protected:
-	virtual void Ready_Begin() {};
-	virtual void Ready_DrawMagic() {};
-	virtual void Ready_CastMagic() {};
-	virtual void Ready_Dying() {};
+	//모든 이펙트 비활성화
+	virtual void Ready_Begin();
+	//완드 이펙트 활성화 
+	virtual void Ready_DrawMagic();
+	//메인 이펙트 활성화
+	virtual void Ready_CastMagic();
+	//히트 이펙트 활성화
+	virtual void Ready_Dying();
 
-	virtual void Tick_Begin(_float fTimeDelta) {};
-	virtual void Tick_DrawMagic(_float fTimeDelta) {};
-	virtual void Tick_CastMagic(_float fTimeDelta) {};
-	virtual void Tick_Dying(_float fTimeDelta) {};
+	//다음 상태로
+	virtual void Tick_Begin(_float fTimeDelta);
+	//완드 이펙트 재생(다음상태로는 다른곳에서 재생)
+	virtual void Tick_DrawMagic(_float fTimeDelta);
+	//메인 이펙트 재생(도달/충돌시 다음상태로) / 마법 발사 상태는 다 다르므로 알아서 처리하셈
+	virtual void Tick_CastMagic(_float fTimeDelta);
+	//히트 이펙트 재생(재생 종료시 사망)
+	virtual void Tick_Dying(_float fTimeDelta);
 
 	void Tick_MagicBall_State(_float fTimeDelta);
 	void Set_StartPosition();
@@ -133,7 +151,6 @@ protected:
 	HRESULT Add_Components();
 	//기본적인 리지드바디 할당임. 크기 바꾸고싶으면 오버라이드 하면됨.
 	virtual HRESULT Add_RigidBody();
-	virtual HRESULT Add_Effect() = 0;
 
 public:
 	virtual CGameObject* Clone(void* pArg) = 0;

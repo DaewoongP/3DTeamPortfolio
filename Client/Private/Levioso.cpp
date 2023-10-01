@@ -38,9 +38,9 @@ HRESULT CLevioso::Initialize_Prototype(_uint iLevel)
 			return E_FAIL;
 		}
 	}
-	if (nullptr == pGameInstance->Find_Prototype(iLevel, TEXT("Prototype_GameObject_MagicTraill_Winga_Effect")))
+	if (nullptr == pGameInstance->Find_Prototype(iLevel, TEXT("Prototype_GameObject_MagicTrail_Winga_Effect")))
 	{
-		if (FAILED(pGameInstance->Add_Prototype(iLevel, TEXT("Prototype_GameObject_MagicTraill_Winga_Effect"),
+		if (FAILED(pGameInstance->Add_Prototype(iLevel, TEXT("Prototype_GameObject_MagicTrail_Winga_Effect"),
 			CTrail::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/TrailData/Wingardium/Wingardium.trail"), iLevel))))
 		{
 			ENDINSTANCE;
@@ -112,13 +112,6 @@ HRESULT CLevioso::Initialize(void* pArg)
 
 		return E_FAIL;
 	}
-
-	if (FAILED(Add_Effect()))
-	{
-		MSG_BOX("Failed Player Add_Effect");
-
-		return E_FAIL;
-	}
 	m_CollisionDesc.Action = bind(&CLevioso::TrailAction, this, placeholders::_1, placeholders::_2);
 	return S_OK;
 }
@@ -126,9 +119,6 @@ HRESULT CLevioso::Initialize(void* pArg)
 void CLevioso::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
-	m_pWandTrail->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
-	m_pWandGlow->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
 }
 
 void CLevioso::Late_Tick(_float fTimeDelta)
@@ -161,78 +151,55 @@ HRESULT CLevioso::Reset(MAGICBALLINITDESC& InitDesc)
 {
 	__super::Reset(InitDesc);
 	m_fWingardiumEffectDeadTimer = 0.3f;
-	m_fLerpAcc = 0.0f;
-	m_pMainTrail->Disable();
 	m_pWingardiumEffect->Disable();
-	m_pWandTrail->Disable();
-	m_pWandGlow->Disable();
-	m_pTraceDustEffect->Disable();
-	m_pHitDustEffect->Disable();
-	m_pHitExplosionEffect->Disable();
 	return S_OK;
 }
 
 void CLevioso::Ready_Begin()
 {
-	
+	__super::Ready_Begin();
 }
 
 void CLevioso::Ready_DrawMagic()
 {
-	m_pWandTrail->Enable();
-	m_pWandGlow->Enable();
-
-	m_pWandTrail->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
-	m_pWandGlow->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
-	m_pWandTrail->Reset_Trail(_float3(m_CurrentWeaponMatrix.Translation()) + _float3(0, 0.5f, 0), _float3(m_CurrentWeaponMatrix.Translation()) + _float3(0, -0.5f, 0));
+	__super::Ready_DrawMagic();
 }
 
 void CLevioso::Ready_CastMagic()
 {
-	m_pMainTrail->Enable();
-	m_pTraceDustEffect->Enable();
-
-	Ready_SpinMove(m_pMainTrail,_float2(1.f,0.f),0.5f);
-	m_pTraceDustEffect->Get_EmissionModuleRef().Setting_PrevPos(m_vStartPosition);
-	m_pTraceDustEffect->Play(m_vStartPosition);
-	m_pTraceDustEffect->Get_Transform()->Set_Position(m_vStartPosition);
-	
+	Ready_SpinMove(m_TrailVec[EFFECT_STATE_MAIN].data()[0],_float2(1.f,0.f),0.5f);
+	__super::Ready_CastMagic();
 }
 
 void CLevioso::Ready_Dying()
 {
-	m_pMainTrail->Disable();
-	m_pTraceDustEffect->Disable();
 	m_pWingardiumEffect->SetActionTrigger(true);
 	m_pWingardiumEffect->Enable();
-
-	m_pHitDustEffect->Enable();
-	m_pHitExplosionEffect->Enable();
-	
-	m_pHitDustEffect->Play(m_pMainTrail->Get_Transform()->Get_Position());
-	m_pHitExplosionEffect->Play(m_pMainTrail->Get_Transform()->Get_Position());
+	__super::Ready_Dying();
 }
 
 void CLevioso::Tick_Begin(_float fTimeDelta)
 {
-	Do_MagicBallState_To_Next();
+	__super::Tick_Begin(fTimeDelta);
 }
 
 void CLevioso::Tick_DrawMagic(_float fTimeDelta)
 {
-	
+	__super::Tick_DrawMagic(fTimeDelta);
 }
 
 void CLevioso::Tick_CastMagic(_float fTimeDelta)
 {
+	__super::Tick_CastMagic(fTimeDelta);
+
 	if (m_fLerpAcc != 1)
 	{
 		m_fLerpAcc += fTimeDelta / m_fLifeTime * m_fTimeScalePerDitance;
 		if (m_fLerpAcc > 1)
 			m_fLerpAcc = 1;
-		m_pMainTrail->Spin_Move(m_vEndPosition, m_vStartPosition,m_vSpinWeight,m_fSpinSpeed, m_fLerpAcc);
-		m_pTransform->Set_Position(m_pMainTrail->Get_Transform()->Get_Position());
-		m_pTraceDustEffect->Get_Transform()->Set_Position(m_pMainTrail->Get_Transform()->Get_Position());
+		m_TrailVec[EFFECT_STATE_MAIN].data()[0]->Spin_Move(m_vEndPosition, m_vStartPosition,m_vSpinWeight,m_fSpinSpeed, m_fLerpAcc);
+		m_pTransform->Set_Position(m_TrailVec[EFFECT_STATE_MAIN].data()[0]->Get_Transform()->Get_Position());
+		m_ParticleVec[EFFECT_STATE_MAIN].data()[0]->Get_Transform()->Set_Position(m_TrailVec[EFFECT_STATE_MAIN].data()[0]->Get_Transform()->Get_Position());
 	}
 	else
 	{
@@ -251,18 +218,57 @@ void CLevioso::Tick_Dying(_float fTimeDelta)
 
 HRESULT CLevioso::Add_Components()
 {
-	return S_OK;
-}
-
-HRESULT CLevioso::Add_Effect()
-{
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_MagicTraill_Winga_Effect"),
-		TEXT("Com_Effect"), reinterpret_cast<CComponent**>(&m_pMainTrail))))
+	m_TrailVec[EFFECT_STATE_WAND].resize(1);
+	m_ParticleVec[EFFECT_STATE_WAND].resize(1);
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_BasicCast_Wand_Trail_Effect"),
+		TEXT("Com_Wand_Trail"), reinterpret_cast<CComponent**>(&m_TrailVec[EFFECT_STATE_WAND][0]))))
 	{
-		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_MagicTraill_Winga_Effect)");
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_BasicCast_Wand_Trail_Effect)");
 		__debugbreak();
 		return E_FAIL;
 	}
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Defatul_Wand_Glow_Effect"),
+		TEXT("Com_WandGlow"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_WAND][0]))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Defatul_Wand_Glow_Effect)");
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	m_TrailVec[EFFECT_STATE_MAIN].resize(1);
+	m_ParticleVec[EFFECT_STATE_MAIN].resize(1);
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_MagicTrail_Winga_Effect"),
+		TEXT("Com_Effect"), reinterpret_cast<CComponent**>(&m_TrailVec[EFFECT_STATE_MAIN][0]))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_MagicTrail_Winga_Effect)");
+		__debugbreak();
+		return E_FAIL;
+	}
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Levioso_TraceDust_Effect"),
+		TEXT("Com_TraceDust"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_MAIN][0]))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Levioso_TraceDust_Effect)");
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	m_ParticleVec[EFFECT_STATE_HIT].resize(2);
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Levioso_HitDust_Effect"),
+		TEXT("Com_HitDust_Effect"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_HIT][0]))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Levioso_HitDust_Effect)");
+		__debugbreak();
+		return E_FAIL;
+	}
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Levioso_HitExplosion_Effect"),
+		TEXT("Com_HitExplosion_Effect"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_HIT][1]))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Levioso_HitExplosion_Effect)");
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	//º°µµ
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Wingardium_Effect"),
 		TEXT("Com_WingradiumEffect"), reinterpret_cast<CComponent**>(&m_pWingardiumEffect))))
 	{
@@ -270,43 +276,6 @@ HRESULT CLevioso::Add_Effect()
 		__debugbreak();
 		return E_FAIL;
 	}
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Defatul_Wand_Glow_Effect"),
-		TEXT("Com_WandGlow"), reinterpret_cast<CComponent**>(&m_pWandGlow))))
-	{
-		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Defatul_Wand_Glow_Effect)");
-		__debugbreak();
-		return E_FAIL;
-	}
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_BasicCast_Wand_Trail_Effect"),
-		TEXT("Com_Wand_Trail"), reinterpret_cast<CComponent**>(&m_pWandTrail))))
-	{
-		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_BasicCast_Wand_Trail_Effect)");
-		__debugbreak();
-		return E_FAIL;
-	}
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Levioso_TraceDust_Effect"),
-		TEXT("Com_TraceDust"), reinterpret_cast<CComponent**>(&m_pTraceDustEffect))))
-	{
-		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Levioso_TraceDust_Effect)");
-		__debugbreak();
-		return E_FAIL;
-	}
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Levioso_HitDust_Effect"),
-		TEXT("Com_HitDust_Effect"), reinterpret_cast<CComponent**>(&m_pHitDustEffect))))
-	{
-		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Levioso_HitDust_Effect)");
-		__debugbreak();
-		return E_FAIL;
-	}
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Levioso_HitExplosion_Effect"),
-		TEXT("Com_HitExplosion_Effect"), reinterpret_cast<CComponent**>(&m_pHitExplosionEffect))))
-	{
-		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Levioso_HitExplosion_Effect)");
-		__debugbreak();
-		return E_FAIL;
-	}
-
-
 
 	return S_OK;
 }
@@ -342,12 +311,6 @@ void CLevioso::Free()
 
 	if (true == m_isCloned)
 	{
-		Safe_Release(m_pMainTrail);
-		Safe_Release(m_pTraceDustEffect);
-		Safe_Release(m_pHitDustEffect);
-		Safe_Release(m_pHitExplosionEffect);
 		Safe_Release(m_pWingardiumEffect);
-		Safe_Release(m_pWandTrail);
-		Safe_Release(m_pWandGlow);
 	}
 }

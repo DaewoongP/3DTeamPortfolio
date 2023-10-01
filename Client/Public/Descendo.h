@@ -9,23 +9,15 @@ class CTrail;
 END
 
 BEGIN(Client)
-class CWingardium_Effect;
-END
-
-BEGIN(Client)
-class CLevioso final : public CMagicBall
+class CDescendo final : public CMagicBall
 {
 private:
-	explicit CLevioso(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	explicit CLevioso(const CLevioso& rhs);
-	virtual ~CLevioso() = default;
+	explicit CDescendo(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	explicit CDescendo(const CDescendo& rhs);
+	virtual ~CDescendo() = default;
 
 public:
-	//윙가를 돌리는 함수임. 안부른지 0.3초 이상 지나면 죽음.
-	void TrailAction(_float3 vPosition, _float fTimeDelta);
-
-public:
-	virtual HRESULT Initialize_Prototype(_uint iLevel);
+	virtual HRESULT Initialize_Prototype(_uint m_iLevel);
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
@@ -33,14 +25,7 @@ public:
 	virtual void OnCollisionStay(COLLEVENTDESC CollisionEventDesc) override;
 	virtual void OnCollisionExit(COLLEVENTDESC CollisionEventDesc) override;
 	virtual HRESULT Reset(MAGICBALLINITDESC& InitDesc) override;
-
-private:
-	// 몹 피격 트레일
-	CWingardium_Effect* m_pWingardiumEffect = { nullptr };
-
-private:
-	_float				m_fWingardiumEffectDeadTimer = { 0.3f };
-
+	
 private:
 	virtual void Ready_Begin() override;
 	virtual void Ready_DrawMagic() override;
@@ -56,7 +41,7 @@ private:
 	HRESULT Add_Components();
 
 public:
-	static CLevioso* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel);
+	static CDescendo* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel);
 	virtual CGameObject* Clone(void* pArg);
 	virtual void Free() override;
 };

@@ -391,6 +391,21 @@
     <Filter Include="02. GameObject\08. Inventory\Item\MPBall">
       <UniqueIdentifier>{5eb7cb7b-6f9e-420b-bad4-8d44bfc40af4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="05. Magic\MagicBall\09. Arrestomomentum">
+      <UniqueIdentifier>{683eec54-b155-4003-932d-9dc50d316cea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\MagicBall\10. Descendo">
+      <UniqueIdentifier>{9519c13e-a7cb-4b96-9eb2-b9ce8a40056a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\MagicBall\11. Accio">
+      <UniqueIdentifier>{703f4170-540d-477e-9e7d-2f10b19b80de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\MagicBall\12. Flipendo">
+      <UniqueIdentifier>{78baa83c-c63f-4943-8e3c-fc5bdef4b1a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\MagicBall\13. Diffindo">
+      <UniqueIdentifier>{5e7fdfdc-7c44-4397-8d4e-53e918a12608}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\08. Inventory\Item\Potion">
       <UniqueIdentifier>{468d1cd9-e6fb-4a3a-8b33-c14df4a7eb93}</UniqueIdentifier>
     </Filter>
@@ -801,6 +816,15 @@
     <ClInclude Include="..\Public\MPBall.h">
       <Filter>02. GameObject\08. Inventory\Item\MPBall</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Arrestomomentum.h">
+      <Filter>05. Magic\MagicBall\09. Arrestomomentum</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Descendo.h">
+      <Filter>05. Magic\MagicBall\10. Descendo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Accio.h">
+      <Filter>05. Magic\MagicBall\11. Accio</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\AccPotion.h">
       <Filter>02. GameObject\09. Item\ex.AccPotion</Filter>
     </ClInclude>
@@ -1182,6 +1206,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\Magic.cpp">
       <Filter>05. Magic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Arrestomomentum.cpp">
+      <Filter>05. Magic\MagicBall\09. Arrestomomentum</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Descendo.cpp">
+      <Filter>05. Magic\MagicBall\10. Descendo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Accio.cpp">
+      <Filter>05. Magic\MagicBall\11. Accio</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\AccPotion.cpp">
       <Filter>02. GameObject\09. Item\ex.AccPotion</Filter>

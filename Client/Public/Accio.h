@@ -13,12 +13,12 @@ class CWingardium_Effect;
 END
 
 BEGIN(Client)
-class CLevioso final : public CMagicBall
+class CAccio final : public CMagicBall
 {
 private:
-	explicit CLevioso(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	explicit CLevioso(const CLevioso& rhs);
-	virtual ~CLevioso() = default;
+	explicit CAccio(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	explicit CAccio(const CAccio& rhs);
+	virtual ~CAccio() = default;
 
 public:
 	//윙가를 돌리는 함수임. 안부른지 0.3초 이상 지나면 죽음.
@@ -56,7 +56,7 @@ private:
 	HRESULT Add_Components();
 
 public:
-	static CLevioso* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel);
+	static CAccio* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel);
 	virtual CGameObject* Clone(void* pArg);
 	virtual void Free() override;
 };
