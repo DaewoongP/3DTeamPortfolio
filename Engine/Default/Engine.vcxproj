@@ -22,6 +22,7 @@
     <ClInclude Include="..\Public\Animation.h" />
     <ClInclude Include="..\public\CoolTime.h" />
     <ClInclude Include="..\Public\DOF.h" />
+    <ClInclude Include="..\public\HDR.h" />
     <ClInclude Include="..\public\MotionBlurInst.h" />
     <ClInclude Include="..\public\MotionBlur.h" />
     <ClInclude Include="..\public\ParticleSystemPool.h" />
@@ -164,6 +165,7 @@
     <ClCompile Include="..\Private\Animation.cpp" />
     <ClCompile Include="..\private\CoolTime.cpp" />
     <ClCompile Include="..\Private\DOF.cpp" />
+    <ClCompile Include="..\private\HDR.cpp" />
     <ClCompile Include="..\Private\Model_Instance.cpp" />
     <ClCompile Include="..\private\MotionBlurInst.cpp" />
     <ClCompile Include="..\private\MotionBlur.cpp" />
