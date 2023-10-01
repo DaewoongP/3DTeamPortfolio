@@ -130,7 +130,6 @@ HRESULT CMagicBall::Reset(MAGICBALLINITDESC& InitDesc)
 	m_CollisionDesc.eMagicTag = InitDesc.eMagicTag;
 	m_CollisionDesc.iDamage = InitDesc.iDamage;
 
-	Set_CollisionData(&m_CollisionDesc);
 	m_eCollisionFlag = InitDesc.eCollisionFlag;
 
 	m_pRigidBody->Set_CollisionFlag("Magic_Ball", m_eCollisionFlag);
@@ -138,7 +137,7 @@ HRESULT CMagicBall::Reset(MAGICBALLINITDESC& InitDesc)
 	Set_ObjEvent(OBJ_NONE);
 	Set_MagicBallState(MAGICBALL_STATE_BEGIN);
 	
-	m_pRigidBody->Enable_Collision("Magic_Ball", this);
+	m_pRigidBody->Enable_Collision("Magic_Ball", this, &m_CollisionDesc);
 	m_pTransform->Set_WorldMatrix(XMMatrixIdentity());
 
 	return S_OK;

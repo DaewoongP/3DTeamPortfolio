@@ -24,8 +24,8 @@ HRESULT CInventory::Initialize(void* pArg)
 {
 	__super::Initialize(pArg);
 
-	m_pItems.reserve(ITEMTYPE_END);
-	m_pPlayerCurItems.reserve(RESOURCE);
+	m_pItems.resize(ITEMTYPE_END);
+	m_pPlayerCurItems.resize(RESOURCE);
 
 	return S_OK;
 }

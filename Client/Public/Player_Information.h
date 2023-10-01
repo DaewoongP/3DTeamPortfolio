@@ -11,6 +11,7 @@ BEGIN(Client)
 
 class CUI_Group_HP;
 class CUI_Group_Finisher;
+class CInventory;
 
 class CPlayer_Information :
     public CComposite
@@ -79,6 +80,10 @@ private:
     
     //아이템 갯수를 저장
     vector<_uint> m_vecItemCount = {};
+
+    // 인벤토리
+    CInventory* m_pInventory = { nullptr };
+
 
 private:
     HRESULT Add_Components();

@@ -5,7 +5,7 @@
 
 #include "Turn.h"
 #include "Action.h"
-#include "Random_AirHit.h"
+#include "RandomChoose.h"
 #include "Check_Distance.h"
 
 CSequence_AirHit::CSequence_AirHit(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -21,11 +21,11 @@ CSequence_AirHit::CSequence_AirHit(const CSequence_AirHit& rhs)
 HRESULT CSequence_AirHit::Initialize(void* pArg)
 {
 	BEGININSTANCE;
-	m_pRandom_AirHit = dynamic_cast<CRandom_AirHit*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Random_AirHit")));
+	m_pRandomChoose = static_cast<CRandomChoose*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_RandomChoose")));
 	ENDINSTANCE;
-	if (nullptr == m_pRandom_AirHit)
+	if (nullptr == m_pRandomChoose)
 	{
-		MSG_BOX("[CSequence_AirHit] Failed Initialize : m_pRandom_Select is nullptr");
+		MSG_BOX("[CSequence_AirHit] Failed Initialize : m_pRandomChoose is nullptr");
 		return E_FAIL;
 	}
 
@@ -40,7 +40,7 @@ HRESULT CSequence_AirHit::Tick(const _float& fTimeDelta)
 HRESULT CSequence_AirHit::Assemble_Behavior(const _float& fWeight)
 {
 	BEGININSTANCE;
-	CAction* pAction_AirHit = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+	CAction* pAction_AirHit = static_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
 	ENDINSTANCE;
 	if (nullptr == pAction_AirHit)
 	{
@@ -50,7 +50,7 @@ HRESULT CSequence_AirHit::Assemble_Behavior(const _float& fWeight)
 	_uint iIndex = m_Behaviors.size();
 	wstring wstrBehaviorTag = TEXT("Action_AirHit_") + to_wstring(iIndex);
 
-	return m_pRandom_AirHit->Assemble_Behavior(wstrBehaviorTag, pAction_AirHit, fWeight);
+	return m_pRandomChoose->Assemble_Behavior(wstrBehaviorTag, pAction_AirHit, fWeight);
 }
 
 HRESULT CSequence_AirHit::Assemble_Childs()
@@ -60,17 +60,17 @@ HRESULT CSequence_AirHit::Assemble_Childs()
 	try
 	{
 		/* Make Child Behaviors */
-		CSelector* pSelector_AirHit = dynamic_cast<CSelector*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Selector")));
+		CSelector* pSelector_AirHit = static_cast<CSelector*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Selector")));
 		if (nullptr == pSelector_AirHit)
 			throw TEXT("pSelector_AirHit is nullptr");
 
 		/* 막타 맞고 날라가는 액션 */
-		CSequence* pSequence_Knockback = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
+		CSequence* pSequence_Knockback = static_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
 		if (nullptr == pSequence_Knockback)
 			throw TEXT("pSequence_Knockback is nullptr");
 
 		/* Set Decorator*/
-		m_pRandom_AirHit->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+		m_pRandomChoose->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 			{
 				_uint* pICurrentSpell = { nullptr };
 				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
@@ -97,9 +97,9 @@ HRESULT CSequence_AirHit::Assemble_Childs()
 		if (FAILED(__super::Assemble_Behavior(TEXT("Selector_AirHit"), pSelector_AirHit)))
 			throw TEXT("Failed Assemble_Behavior Selector_AirHit");
 
-		if (FAILED(pSelector_AirHit->Assemble_Behavior(TEXT("RandomSelect_AirHit"), m_pRandom_AirHit)))
-			throw TEXT("Failed Assemble_Behavior RandomSelect_AirHit");
-		Safe_AddRef(m_pRandom_AirHit);
+		if (FAILED(pSelector_AirHit->Assemble_Behavior(TEXT("RandomChoose"), m_pRandomChoose)))
+			throw TEXT("Failed Assemble_Behavior RandomChoose");
+		Safe_AddRef(m_pRandomChoose);
 		if (FAILED(pSelector_AirHit->Assemble_Behavior(TEXT("Sequence_Knockback"), pSequence_Knockback)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Knockback");
 	}
@@ -156,6 +156,6 @@ void CSequence_AirHit::Free()
 	__super::Free();
 	if (true == m_isCloned)
 	{
-		Safe_Release(m_pRandom_AirHit);
+		Safe_Release(m_pRandomChoose);
 	}
 }

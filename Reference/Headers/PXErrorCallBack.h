@@ -17,6 +17,7 @@ public:
 	virtual void reportError(PxErrorCode::Enum eCode, const _char* pMessage, const _char* pFile,
 		int iLine)
 	{
+#ifdef _DEBUG
 		const _char* pErrorCode = NULL;
 
 		switch (eCode)
@@ -71,5 +72,6 @@ public:
 				cout << buffer << endl;
 			}
 		}
+#endif // _DEBUG
 	}
 };

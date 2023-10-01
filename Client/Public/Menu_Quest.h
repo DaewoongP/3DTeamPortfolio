@@ -11,6 +11,9 @@ class CTexture;
 END
 
 BEGIN(Client)
+class CUI_Back;
+class CUI_Group_Quest;
+
 
 class CMenu_Quest final : public CGameObject
 {
@@ -18,6 +21,9 @@ private:
 	explicit CMenu_Quest(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CMenu_Quest(const CMenu_Quest& rhs);
 	virtual ~CMenu_Quest() = default;
+
+public:
+	void		Set_Open(_bool isOpen);
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -41,7 +47,8 @@ private:
 	CVIBuffer_Rect* m_pVIBufferCom = { nullptr };
 
 private:
-	vector<_float2>				m_fOffset;
+	vector<CUI_Back*>			m_pFonts;
+	vector<_float2>			m_fOffset;
 	vector<CUI*>				m_pUIs;
 
 private:

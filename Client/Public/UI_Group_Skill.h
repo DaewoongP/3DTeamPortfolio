@@ -57,7 +57,7 @@ private:
 	vector<_tchar*> m_SpellProtoTypeTags;
 
 private:
-	vector<class CUI_Effect_Back*>	m_pMains;
+	vector<class CUI_Effect_Back*>		m_pMains;
 	vector<class CUI_Back*>			m_pFrames; 
 	vector<class CUI_Back*>			m_pNumbers;
 	vector<class CTexture*>			m_SkillTextures;

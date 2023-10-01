@@ -24,7 +24,7 @@ private:
 	queue<CMagicBall*>	 m_MagicPool[SPELL_END] = {};
 
 private:
-	CMagicBall* Create_Magic(SPELL eSpell, CMagicBall::MAGICBALLINITDESC& MagicBallDesc);
+	CMagicBall* Create_Magic(SPELL eSpell);
 	void		Create_InitMagic(SPELL eSpell, const _tchar* szTagName, _uint iNumPool = 10);
 
 public:

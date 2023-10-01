@@ -182,11 +182,6 @@ void CRigidBody::Set_CollisionFlag(const _char* szColliderTag, PxU32 eCollisionF
 	m_pActor->attachShape(*pShape);
 }
 
-void CRigidBody::Set_ThisCollision(CGameObject* pThisObj)
-{
-	m_pActor->userData = pThisObj;
-}
-
 HRESULT CRigidBody::Initialize_Prototype()
 {
 #ifdef _DEBUG
@@ -336,9 +331,6 @@ HRESULT CRigidBody::Create_Collider(RIGIDBODYDESC* pRigidBodyDesc)
 		return E_FAIL;
 	}
 	
-	// 유저데이터에 이 컴포넌트 세팅해서 나중에 충돌처리 함수 부르기 위해 처리.
-	m_pActor->userData = pRigidBodyDesc->pOwnerObject;
-	
 	// 저항 처리
 	m_pMaterial = pPhysX->createMaterial(pRigidBodyDesc->fStaticFriction, 
 		pRigidBodyDesc->fDynamicFriction, pRigidBodyDesc->fRestitution);
@@ -377,7 +369,13 @@ HRESULT CRigidBody::Create_Collider(RIGIDBODYDESC* pRigidBodyDesc)
 	Safe_AddRef(pString_Manager);
 	pShape->setName(pString_Manager->Make_Char(pRigidBodyDesc->szCollisionTag));
 	Safe_Release(pString_Manager);
-	
+
+	// 유저데이터 설정
+	COLLISIONDATADESC* pCollisionData = New COLLISIONDATADESC;
+	pCollisionData->pCollisionData = pRigidBodyDesc->pCollisionData;
+	pCollisionData->pOwnerObject = pRigidBodyDesc->pOwnerObject;
+	pShape->userData = pCollisionData;
+
 	// 액터와 씬 처리.
 	// AttachShape로 콜라이더 여러개 바인딩 가능.
 	// 씬도 일단 한개만 처리하게 해둬서 신경 안써도 될듯.
@@ -506,8 +504,24 @@ void CRigidBody::Enable_Collision(const _char* szColliderTag, CGameObject* pThis
 	m_pActor->detachShape(*pShape);
 	FilterData.word2 = USE_COL;
 	pShape->setSimulationFilterData(FilterData);
+	static_cast<COLLISIONDATADESC*>(pShape->userData)->pOwnerObject = pThisCollision;
 	m_pActor->attachShape(*pShape);
-	m_pActor->userData = pThisCollision;
+}
+
+void CRigidBody::Enable_Collision(const _char* szColliderTag, CGameObject* pThisCollision, void* pCollisionData)
+{
+	PxShape* pShape = Find_Shape(szColliderTag);
+
+	if (nullptr == pShape)
+		return;
+
+	PxFilterData FilterData = pShape->getSimulationFilterData();
+	m_pActor->detachShape(*pShape);
+	FilterData.word2 = USE_COL;
+	pShape->setSimulationFilterData(FilterData);
+	static_cast<COLLISIONDATADESC*>(pShape->userData)->pOwnerObject = pThisCollision;
+	static_cast<COLLISIONDATADESC*>(pShape->userData)->pCollisionData = pCollisionData;
+	m_pActor->attachShape(*pShape);
 }
 
 void CRigidBody::Disable_Collision(const _char* szColliderTag)
@@ -521,8 +535,8 @@ void CRigidBody::Disable_Collision(const _char* szColliderTag)
 	m_pActor->detachShape(*pShape);
 	FilterData.word2 = END_COL;
 	pShape->setSimulationFilterData(FilterData);
+	static_cast<COLLISIONDATADESC*>(pShape->userData)->pOwnerObject = nullptr;
 	m_pActor->attachShape(*pShape);
-	m_pActor->userData = nullptr;
 }
 
 #ifdef _DEBUG
@@ -755,9 +769,9 @@ void CRigidBody::Free()
 
 	if (nullptr != m_pActor)
 	{
-		m_pActor->userData = nullptr;
 		for (auto& ShapePair : m_Shapes)
 		{
+			Safe_Delete(ShapePair.second->userData);
 			m_pActor->detachShape(*ShapePair.second);
 		}
 		

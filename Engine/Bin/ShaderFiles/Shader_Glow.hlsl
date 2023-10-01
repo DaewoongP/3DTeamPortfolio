@@ -59,7 +59,7 @@ PS_OUT PS_MAIN(PS_IN In)
     PS_OUT Out = (PS_OUT) 0;
 
     vector GlowColor = g_GlowTexture.Sample(LinearSampler, In.vTexUV);
-    vector vAlpha = g_AlphaTexture.Sample(DistortionSampler, In.vTexUV);
+    vector vAlpha = g_AlphaTexture.Sample(LinearSampler_Clamp, In.vTexUV);
 
     
     if ((GlowColor.r == 0.f) && (GlowColor.g == 0.f) && (GlowColor.b == 0.f))
@@ -79,7 +79,7 @@ PS_OUT PS_MAIN_GLOW(PS_IN In)
     vector GlowColor = g_GlowTexture.Sample(LinearSampler, In.vTexUV);
      
   
-    vector vAlpha = g_AlphaTexture.Sample(DistortionSampler, In.vTexUV);
+    vector vAlpha = g_AlphaTexture.Sample(LinearSampler_Clamp, In.vTexUV);
     
     if(g_fGlowPower<=0.001)
     {
@@ -104,7 +104,7 @@ PS_OUT PS_MAIN_BLUR(PS_IN In)
         for (int i = -6; i < 6; ++i)
         {
             UV = In.vTexUV + float2(dx * i, 0.f);
-            vector SSAO = g_DoBlurTexture.Sample(BlurSampler, UV);
+            vector SSAO = g_DoBlurTexture.Sample(LinearSampler_Clamp, UV);
         
             Out.vColor += BlurWeights[6 + i] * SSAO;
             Count += 1;
