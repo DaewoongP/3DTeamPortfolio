@@ -83,7 +83,6 @@ HRESULT CShadow::Render()
 	if (FAILED(m_pShader->Bind_RawValue("g_fCamFar", pPipeLine->Get_CamFar(), sizeof(_float))))
 		return E_FAIL;
 
-
 	Safe_Release(pPipeLine);
 
 	m_pShader->Begin("Shadow");

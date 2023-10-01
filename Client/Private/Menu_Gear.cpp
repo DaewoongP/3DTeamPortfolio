@@ -554,5 +554,6 @@ void CMenu_Gear::Free()
 		Safe_Release(pCom);
 	}
 
-	Safe_Release(m_pInventory);
+	if (true == m_isCloned)
+		Safe_Release(m_pInventory);
 }

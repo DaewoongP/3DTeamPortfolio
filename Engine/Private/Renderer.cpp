@@ -65,7 +65,10 @@ HRESULT CRenderer::Initialize_Prototype()
 		TEXT("Target_SSAO"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
-		TEXT("Target_Bloom"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
+		TEXT("Target_SSAO_BlurX"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
+		TEXT("Target_SSAO_Blured"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
 
 #ifdef _DEBUG
@@ -93,7 +96,9 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_SSAO"), TEXT("Target_SSAO"))))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Bloom"), TEXT("Target_Bloom"))))
+	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_SSAO_BlurX"), TEXT("Target_SSAO_BlurX"))))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_SSAO_Blured"), TEXT("Target_SSAO_Blured"))))
 		return E_FAIL;
 
 #ifdef _DEBUG
@@ -117,13 +122,13 @@ HRESULT CRenderer::Initialize_Prototype()
 #ifdef _DEBUG 
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Diffuse"), 80.f, 80.f, 160.f, 160.f)))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Depth"), 80.f, 160.f, 160.f, 160.f)))
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Depth"), 80.f, 240.f, 160.f, 160.f)))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Shadow_Depth"), 80.f, 240.f, 160.f, 160.f)))
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Shadow_Depth"), 80.f, 400.f, 160.f, 160.f)))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_SSAO"), 80.f, 320.f, 160.f, 160.f)))
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_SSAO_Blured"), 80.f, 560.f, 160.f, 160.f)))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_PostProcessing"), 80.f, 400.f, 160.f, 160.f)))
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_PostProcessing"), 240.f, 80.f, 160.f, 160.f)))
 		return E_FAIL;
 #endif // _DEBUG
 
@@ -187,8 +192,6 @@ HRESULT CRenderer::Draw_RenderGroup()
 
 	if (FAILED(m_pRenderTarget_Manager->End_PostProcessingRenderTarget(m_pContext)))
 		return E_FAIL;
-
-	// 전체적인 화면에 대한 처리
 
 	if (FAILED(Render_PostProcessing()))
 		return E_FAIL;
@@ -387,6 +390,7 @@ HRESULT CRenderer::Render_SSAO()
 	if (nullptr == m_pRenderTarget_Manager)
 		return E_FAIL;
 
+	// SSAO
 	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_SSAO"))))
 		return E_FAIL;
 
@@ -418,6 +422,12 @@ HRESULT CRenderer::Render_SSAO()
 
 	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext)))
 		return E_FAIL;
+	
+	// Blur
+	if (FAILED(m_pBlur->Render(TEXT("MRT_SSAO_BlurX"), TEXT("Target_SSAO"), CBlur::BLUR_X)))
+		return E_FAIL;
+	if (FAILED(m_pBlur->Render(TEXT("MRT_SSAO_Blured"), TEXT("Target_SSAO_BlurX"), CBlur::BLUR_Y)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -428,7 +438,7 @@ HRESULT CRenderer::Render_Deferred()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Shade"), m_pDeferredShader, "g_ShadeTexture")))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_SSAO"), m_pDeferredShader, "g_SSAOTexture")))
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_SSAO_Blured"), m_pDeferredShader, "g_SSAOTexture")))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Shadow"), m_pDeferredShader, "g_ShadowTexture")))
 		return E_FAIL;
@@ -508,7 +518,6 @@ HRESULT CRenderer::Render_Effects()
 	if (nullptr == m_pRenderTarget_Manager)
 		return E_FAIL;
 
-	// 삭제시 들어오던값도 삭제해야함
 	for (auto& pGameObject : m_RenderObjects[RENDER_BLOOM])
 	{
 		if (nullptr != pGameObject)
@@ -519,7 +528,6 @@ HRESULT CRenderer::Render_Effects()
 
 	m_RenderObjects[RENDER_BLOOM].clear();
 	
-	// 삭제시 들어오던값도 삭제해야함
 	for (auto& pGameObject : m_RenderObjects[RENDER_GLOW])
 	{
 		if (nullptr != pGameObject)
@@ -529,7 +537,7 @@ HRESULT CRenderer::Render_Effects()
 	}
 
 	m_RenderObjects[RENDER_GLOW].clear();
-	// 삭제시 들어오던값도 삭제해야함
+
 	for (auto& pGameObject : m_RenderObjects[RENDER_DISTORTION])
 	{
 		if (nullptr != pGameObject)
@@ -650,7 +658,11 @@ HRESULT CRenderer::Add_Components()
 		return E_FAIL;
 	
 	m_pBloom = CBloom::Create(m_pDevice, m_pContext, m_pRectBuffer);
-	if (nullptr == m_pShadow)
+	if (nullptr == m_pBloom)
+		return E_FAIL;
+
+	m_pBlur = CBlur::Create(m_pDevice, m_pContext, m_pRectBuffer);
+	if (nullptr == m_pBlur)
 		return E_FAIL;
 
 	return S_OK;
@@ -774,7 +786,7 @@ void CRenderer::Free()
 	Safe_Release(m_pSSAOShader);
 	Safe_Release(m_pAfterShader);
 
-	Safe_Release(m_pEffectBlur);
+	Safe_Release(m_pBlur);
 	Safe_Release(m_pBloom);
 	Safe_Release(m_pShadow);
 	Safe_Release(m_pGlow);

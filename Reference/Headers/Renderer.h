@@ -95,7 +95,7 @@ private:
 	class CShader*					m_pAfterShader = { nullptr };
 
 private:
-	class CBlur*					m_pEffectBlur = { nullptr };
+	class CBlur*					m_pBlur = { nullptr };
 	class CBloom*					m_pBloom = { nullptr };
 	class CShadow*					m_pShadow = { nullptr };
 	class CGlow*					m_pGlow = { nullptr };
