@@ -28,6 +28,12 @@ HRESULT CLevel_Cliffside::Initialize()
 
 		return E_FAIL;
 	}
+	if (FAILED(Ready_Layer_Inventory(TEXT("Layer_Inventory"))))
+	{
+		MSG_BOX("Failed Ready_Layer_Inventory");
+
+		return E_FAIL;
+	}
 	if (FAILED(Ready_Layer_NPC(TEXT("Layer_NPC"))))
 	{
 		MSG_BOX("Failed Ready_Layer_NPC");
@@ -226,6 +232,30 @@ HRESULT CLevel_Cliffside::Ready_Layer_Player(const _tchar* pLayerTag)
 
 	ENDINSTANCE;
 
+	return S_OK;
+}
+
+HRESULT CLevel_Cliffside::Ready_Layer_Inventory(const _tchar* pLayerTag)
+{
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	/* Add Scene : Main */
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Menu"), pLayerTag)))
+	{
+		MSG_BOX("Failed Add Scene : (Scene_Menu)");
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	}
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Inventory"), pLayerTag, TEXT("GameObject_Inventory"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Inventory)");
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	}
+
+	Safe_Release(pGameInstance);
 	return S_OK;
 }
 

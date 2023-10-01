@@ -17,6 +17,7 @@ class CMenu_Gear;
 class CMenu_Inventory;
 class CMenu_Quest;
 class CMenu_Setting;
+class CInventory;
 
 class CMain_Menu final : public CGameObject
 {
@@ -65,6 +66,9 @@ private: // Main Group
 
 private:
 	CUI_Group_Cursor*		m_pCursor = { nullptr };
+
+private:
+	CInventory*			m_pPlayerInventory = { nullptr };
 
 private:
 	void		Set_SelectedText();

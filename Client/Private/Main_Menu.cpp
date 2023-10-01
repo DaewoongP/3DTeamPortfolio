@@ -7,6 +7,7 @@
 #include "Menu_Invectory.h"
 #include "Menu_Quest.h"
 #include "Menu_Setting.h"
+#include "Inventory.h"
 
 CMain_Menu::CMain_Menu(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -52,6 +53,17 @@ void CMain_Menu::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
+	if (nullptr == m_pPlayerInventory)
+	{
+		CGameInstance* pGameInstacne = CGameInstance::GetInstance();
+		Safe_AddRef(pGameInstacne);
+
+		m_pPlayerInventory = static_cast<CInventory*>(pGameInstacne->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Inventory"), TEXT("GameObject_Inventory")));
+		Safe_AddRef(m_pPlayerInventory);
+
+		Safe_Release(pGameInstacne);
+	}
+
 	Set_SelectedText();
 
 
@@ -63,7 +75,7 @@ void CMain_Menu::Tick(_float fTimeDelta)
 		break;
 	case INVENTORY:
 		if (nullptr != m_pInventory)
-		m_pInventory->Tick(fTimeDelta);
+			m_pInventory->Tick(fTimeDelta);
 		break;
 	case QUEST:
 		if (nullptr != m_pQuest)
@@ -362,6 +374,7 @@ void CMain_Menu::Set_SelectedText()
 				m_iSelectedText = iIndex;
 				m_eCurMenu = (MENU)m_iSelectedText;
 				m_pTexts[m_iSelectedText]->Set_Clicked(true);
+				m_pPlayerInventory->Set_Open(false);
 				return;
 			}
 
@@ -369,7 +382,7 @@ void CMain_Menu::Set_SelectedText()
 			m_iSelectedText = iIndex;
 			m_eCurMenu = (MENU)m_iSelectedText;
 			m_pTexts[m_iSelectedText]->Set_Clicked(true);
-
+			m_pPlayerInventory->Set_Open(false);
 		}
 		iIndex++;
 	}
@@ -440,4 +453,5 @@ void CMain_Menu::Free()
 	Safe_Release(m_pInventory);
 	Safe_Release(m_pQuest);
 	Safe_Release(m_pCursor);
+	Safe_Release(m_pPlayerInventory);
 }
