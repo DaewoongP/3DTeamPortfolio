@@ -10,6 +10,12 @@ CCoolTime::CCoolTime(const CCoolTime& rhs)
 {
 }
 
+void CCoolTime::Set_MaxCoolTime(_float _fMaxCoolTime)
+{
+	m_fMaxCoolTime = _fMaxCoolTime;
+	Clamp(m_fMaxCoolTime, 0.f, FLT_MAX);
+}
+
 HRESULT CCoolTime::Initialize(void* pArg)
 {
 	if (nullptr != pArg)
@@ -28,8 +34,7 @@ void CCoolTime::Tick(_float _fTimeDelta)
 
 	if (m_fCurCoolTime >= m_fMaxCoolTime)
 	{
-		m_fCurCoolTime = 0.f;
-		m_isEnable = false;
+		Reset();
 	}
 
 	m_fCurCoolTime += _fTimeDelta;
@@ -41,6 +46,12 @@ void CCoolTime::Play_CoolTime()
 		return;
 
 	m_isEnable = true;
+}
+
+void CCoolTime::Reset()
+{
+	m_fCurCoolTime = 0.f;
+	m_isEnable = false;
 }
 
 CCoolTime* CCoolTime::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

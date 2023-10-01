@@ -23,7 +23,6 @@ CModel::CModel(const CModel& rhs)
 	, m_MaterialDatas(rhs.m_MaterialDatas)
 	, m_AnimationDatas(rhs.m_AnimationDatas)
 	, m_ModelGCM(rhs.m_ModelGCM)
-
 	, m_iNumMeshes(rhs.m_iNumMeshes)
 	, m_Meshes(rhs.m_Meshes)
 	, m_iNumMaterials(rhs.m_iNumMaterials)

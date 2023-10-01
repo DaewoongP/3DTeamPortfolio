@@ -47,7 +47,7 @@ public:
     _float Get_Health_Percent() const { return m_pHealth->Get_Current_HP_Percent(); }
     //현제 피니셔 비율
     _float Get_Finisher_Percent() const { return m_pFinisher->Get_Current_HP_Percent(); }
-
+    CHealth* Get_Health() { return m_pHealth; }
 
 public:
     virtual HRESULT Initialize_Prototype();
