@@ -20,7 +20,6 @@
 
 #include "UI_Group_Skill.h"
 
-#include "RecoveryPotion.h"
 #include "AccPotion.h"
 #include "CoolTime.h"	
 
@@ -1610,7 +1609,6 @@ void CPlayer::Free()
 		Safe_Release(m_pRigidBody);
 		Safe_Release(m_pPlayer_Information);
 		Safe_Release(m_UI_Group_Skill_01);
-		Safe_Release(m_pRecoveryPotion);
 		Safe_Release(m_pAccPotion);
 		
 		if (nullptr != m_pTargetTransform)

@@ -42,7 +42,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <EnableUnitySupport>true</EnableUnitySupport>
   </PropertyGroup>
@@ -198,9 +198,7 @@
     <ClInclude Include="..\Public\Menu_Quest.h" />
     <ClInclude Include="..\Public\Menu_Setting.h" />
     <ClInclude Include="..\Public\MapObject_Ins.h" />
-    <ClInclude Include="..\Public\Random_AirHit.h" />
     <ClInclude Include="..\public\WiggenweldPotion.h" />
-    <ClInclude Include="..\public\RecoveryPotion.h" />
     <ClInclude Include="..\Public\Sequence_AirHit.h" />
     <ClInclude Include="..\Public\StandingState.h" />
     <ClInclude Include="..\public\Trigger_Vault.h" />
@@ -364,9 +362,7 @@
     <ClCompile Include="..\Private\Menu_Quest.cpp" />
     <ClCompile Include="..\Private\Menu_Setting.cpp" />
     <ClCompile Include="..\Private\MapObject_Ins.cpp" />
-    <ClCompile Include="..\Private\Random_AirHit.cpp" />
     <ClCompile Include="..\private\WiggenweldPotion.cpp" />
-    <ClCompile Include="..\private\RecoveryPotion.cpp" />
     <ClCompile Include="..\Private\Sequence_AirHit.cpp" />
     <ClCompile Include="..\Private\StandingState.cpp" />
     <ClCompile Include="..\private\Trigger_Vault.cpp" />
@@ -495,7 +491,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="ItemFactory.cpp" />
-    <ClCompile Include="MPBall.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico" />

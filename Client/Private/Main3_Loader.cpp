@@ -33,9 +33,7 @@
 
 #pragma region Items
 
-#include "RecoveryPotion.h"
 #include "AccPotion.h"
-
 #include "WiggenweldPotion.h"
 
 #pragma endregion
@@ -285,10 +283,6 @@ HRESULT CMain3_Loader::Loading_For_Cliffside()
 			CProfessor_Fig::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Professor_Fig");
 
-		/* For.Prototype_GameObject_RecoveryPotion */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_RecoveryPotion"),
-			CRecoveryPotion::Create(m_pDevice, m_pContext, LEVEL_STATIC))))
-			throw TEXT("Prototype_GameObject_RecoveryPotion");
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_AccPotion"),
 			CAccPotion::Create(m_pDevice, m_pContext, LEVEL_STATIC))))
 			throw TEXT("Prototype_GameObject_AccPotion");
