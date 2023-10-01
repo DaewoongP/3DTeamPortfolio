@@ -39,12 +39,8 @@ public:
 private:
 	CUI_Back*			m_pUI_Back = { nullptr };
 	CUI_HP*				m_pUI_HP = { nullptr };
-
-	CHealth*			m_pHealth = { nullptr };
-
-private:
+	CHealth*				m_pHealth = { nullptr };
 	CUI_Font*			m_pFont = { nullptr };
-//	_tchar				m_wszObjectLevel[MAX_PATH] = TEXT("");
 
 private:
 	HRESULT Add_Prototype();

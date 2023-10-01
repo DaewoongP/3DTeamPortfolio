@@ -31,34 +31,31 @@ HRESULT CRootBehavior::Tick(const _float& fTimeDelta)
 	m_DebugBehaviorTags.clear();
 #endif // _DEBUG
 
-	HRESULT hr = (*m_iterCurBehavior)->Tick(fTimeDelta);
+	m_ReturnData = (*m_iterCurBehavior)->Tick(fTimeDelta);
 
-	(*m_iterCurBehavior)->Set_ReturnData(hr);
-	m_ReturnData = hr;
 #ifdef _DEBUG
 	Find_Running_Behavior(m_DebugBehaviorTags);
 #endif // _DEBUG
 
-	switch (hr)
+	switch (m_ReturnData)
 	{
 	case BEHAVIOR_RUNNING:
 		return S_OK;
 
 	case BEHAVIOR_SUCCESS:
-		(*m_iterCurBehavior)->Reset_Behavior(hr);
+		(*m_iterCurBehavior)->Reset_Behavior(m_ReturnData);
 		m_iterCurBehavior = m_Behaviors.begin();
 		return S_OK;
 
 	case BEHAVIOR_FAIL:
-		(*m_iterCurBehavior)->Reset_Behavior(hr);
+		(*m_iterCurBehavior)->Reset_Behavior(m_ReturnData);
 		m_iterCurBehavior = m_Behaviors.begin();
 		return S_OK;
 
-	case BEHAVIOR_ERROR:
+	case BEHAVIOR_END:
+	default:
 		return E_FAIL;
 	}
-
-	return hr;
 }
 
 HRESULT CRootBehavior::Add_Type(const string& strTypename, any Type)

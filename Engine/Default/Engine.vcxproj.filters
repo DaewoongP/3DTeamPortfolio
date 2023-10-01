@@ -403,9 +403,6 @@
     <Filter Include="01. Utility\03. Components\02. Renderer\FlowMap">
       <UniqueIdentifier>{bda6b89d-6c62-4ec2-8788-194e69c46dc7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\03. Components\02. Renderer\Fog">
-      <UniqueIdentifier>{0715a8bd-6d7c-44e5-8ab4-f1ffb439192d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Utility\03. Components\02. Renderer\Shadow">
       <UniqueIdentifier>{29b3dbe5-1450-4524-9b24-b47c4a05122b}</UniqueIdentifier>
     </Filter>
@@ -421,14 +418,11 @@
     <Filter Include="01. Utility\03. Components\15. ParticleSystem\Pool">
       <UniqueIdentifier>{46c235ac-b369-4875-a7d8-b91119a6da39}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\03. Components\02. Renderer\Loading">
-      <UniqueIdentifier>{1447e5f8-adf7-4ab9-8aa9-af399dab8d9c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\03. Components\02. Renderer\Shadow\Shader">
-      <UniqueIdentifier>{d6e48222-790a-42b5-a30b-71e187ad6d29}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Utility\03. Components\11. Status\03. CoolTime">
       <UniqueIdentifier>{b4e12e5c-1eb3-449c-9dbf-b84389d6d718}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\14. RigidBody\Shader">
+      <UniqueIdentifier>{d6e48222-790a-42b5-a30b-71e187ad6d29}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -849,9 +843,6 @@
     <ClInclude Include="..\public\ParticleSystemPool.h">
       <Filter>01. Utility\03. Components\15. ParticleSystem\Pool</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\LoadingScene.h">
-      <Filter>01. Utility\03. Components\02. Renderer\Loading</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\CoolTime.h">
       <Filter>01. Utility\03. Components\11. Status\03. CoolTime</Filter>
     </ClInclude>
@@ -1238,9 +1229,6 @@
     <ClCompile Include="..\private\ParticleSystemPool.cpp">
       <Filter>01. Utility\03. Components\15. ParticleSystem\Pool</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\LoadingScene.cpp">
-      <Filter>01. Utility\03. Components\02. Renderer\Loading</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Model_Instance.cpp">
       <Filter>01. Utility\03. Components\17. StaticMeshInstance\Model_Instance</Filter>
     </ClCompile>
@@ -1265,7 +1253,7 @@
       <Filter>01. Utility\03. Components\02. Renderer\Shader</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Debug.hlsl">
-      <Filter>01. Utility\03. Components\02. Renderer\Shadow\Shader</Filter>
+      <Filter>01. Utility\03. Components\14. RigidBody\Shader</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointColInstance.hlsl">
       <Filter>01. Utility\98. ShaderFiles</Filter>
@@ -1317,6 +1305,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_DOF.hlsl">
       <Filter>01. Utility\03. Components\02. Renderer\DOF</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Light.hlsl">
+      <Filter>01. Utility\03. Components\02. Renderer\Shader</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

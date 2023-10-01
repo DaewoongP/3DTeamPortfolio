@@ -165,6 +165,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Action.h" />
+    <ClInclude Include="..\public\Item.h" />
     <ClInclude Include="..\Public\Death.h" />
     <ClInclude Include="..\Public\Enemy.h" />
     <ClInclude Include="..\public\Game_Manager.h" />
@@ -198,6 +199,7 @@
     <ClInclude Include="..\Public\Menu_Setting.h" />
     <ClInclude Include="..\Public\MapObject_Ins.h" />
     <ClInclude Include="..\Public\Random_AirHit.h" />
+    <ClInclude Include="..\public\WiggenweldPotion.h" />
     <ClInclude Include="..\public\RecoveryPotion.h" />
     <ClInclude Include="..\Public\Sequence_AirHit.h" />
     <ClInclude Include="..\Public\StandingState.h" />
@@ -211,7 +213,6 @@
     <ClInclude Include="..\Public\MoveTurnState.h" />
     <ClInclude Include="..\Public\Default_MagicTrail_Effect.h" />
     <ClInclude Include="..\Public\Levioso.h" />
-    <ClInclude Include="..\Public\Random_Select.h" />
     <ClInclude Include="..\public\Field_Guide.h" />
     <ClInclude Include="..\public\LoadTrigger.h" />
     <ClInclude Include="..\public\MagicSlot.h" />
@@ -325,16 +326,19 @@
     <ClInclude Include="ImGui\stb\stb_image_resize.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="ItemFactory.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Action.cpp" />
+    <ClCompile Include="..\private\Item.cpp" />
     <ClCompile Include="..\Private\Death.cpp" />
     <ClCompile Include="..\Private\Enemy.cpp" />
     <ClCompile Include="..\private\Game_Manager.cpp" />
     <ClCompile Include="..\Private\Lumos.cpp" />
     <ClCompile Include="..\Private\AccPotion.cpp" />
+    <ClCompile Include="..\Private\MPBall.cpp" />
     <ClCompile Include="..\Private\Ncendio.cpp" />
     <ClCompile Include="..\Private\Inventory.cpp" />
     <ClCompile Include="..\Private\Check_Degree.cpp" />
@@ -361,6 +365,7 @@
     <ClCompile Include="..\Private\Menu_Setting.cpp" />
     <ClCompile Include="..\Private\MapObject_Ins.cpp" />
     <ClCompile Include="..\Private\Random_AirHit.cpp" />
+    <ClCompile Include="..\private\WiggenweldPotion.cpp" />
     <ClCompile Include="..\private\RecoveryPotion.cpp" />
     <ClCompile Include="..\Private\Sequence_AirHit.cpp" />
     <ClCompile Include="..\Private\StandingState.cpp" />
@@ -374,7 +379,6 @@
     <ClCompile Include="..\Private\MoveTurnState.cpp" />
     <ClCompile Include="..\Private\Default_MagicTrail_Effect.cpp" />
     <ClCompile Include="..\Private\Levioso.cpp" />
-    <ClCompile Include="..\Private\Random_Select.cpp" />
     <ClCompile Include="..\private\Field_Guide.cpp" />
     <ClCompile Include="..\private\LoadTrigger.cpp" />
     <ClCompile Include="..\private\MagicSlot.cpp" />
@@ -490,6 +494,7 @@
       <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</IncludeInUnityFile>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="ItemFactory.cpp" />
     <ClCompile Include="MPBall.cpp" />
   </ItemGroup>
   <ItemGroup>

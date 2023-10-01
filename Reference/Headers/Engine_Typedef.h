@@ -22,6 +22,9 @@ namespace Engine
 	typedef		double					_double;
 
 	typedef		bool					_bool;
+	
+	template<typename Key, typename Value>
+	using		_umap				=	std::unordered_map<Key, Value>;
 
 	typedef		XMUINT2					_uint2;
 	typedef		XMUINT3					_uint3;

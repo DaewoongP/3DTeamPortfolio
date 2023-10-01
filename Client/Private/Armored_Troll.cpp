@@ -9,7 +9,7 @@
 #include "Action.h"
 #include "MagicBall.h"
 #include "Check_Degree.h"
-#include "Random_Select.h"
+#include "RandomChoose.h"
 #include "Check_Distance.h"
 #include "Selector_Degree.h"
 #include "Sequence_Groggy.h"
@@ -161,7 +161,7 @@ HRESULT CArmored_Troll::Make_AI()
 		CSequence* pSequence_Attacks_Degree = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
 		if (nullptr == pSequence_Attacks_Degree)
 			throw TEXT("pSequence_Attacks_Degree is nullptr");
-		CRandom_Select* pRandom_Select_Attacks_Far = dynamic_cast<CRandom_Select*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Random_Select")));
+		CRandomChoose* pRandom_Select_Attacks_Far = dynamic_cast<CRandomChoose*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_RandomChoose")));
 		if (nullptr == pRandom_Select_Attacks_Far)
 			throw TEXT("pRandom_Select_Attakcs_Far is nullptr");
 		CSequence* pSequence_Taunts = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
@@ -183,7 +183,6 @@ HRESULT CArmored_Troll::Make_AI()
 
 		/* Set Options */
 		pTsk_Check_Distance->Set_Transform(m_pTransform);
-		pRandom_Select_Attacks_Far->Set_Option(1.f);
 
 		/* Bind Childs */
 		if (FAILED(m_pRootBehavior->Assemble_Behavior(TEXT("Selector"), pSelector)))
@@ -848,7 +847,7 @@ HRESULT CArmored_Troll::Make_Pattern_Attack_BackHnd(_Inout_ CSequence* pSequence
 		CCheck_Distance* pCheck_Distance_Enter = dynamic_cast<CCheck_Distance*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Check_Distance")));
 		if (nullptr == pCheck_Distance_Enter)
 			throw TEXT("pCheck_Distance_Enter is nullptr");
-		CRandom_Select* pRandom_Select = dynamic_cast<CRandom_Select*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Random_Select")));
+		CRandomChoose* pRandom_Select = dynamic_cast<CRandomChoose*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_RandomChoose")));
 		if (nullptr == pRandom_Select)
 			throw TEXT("pRandom_Select is nullptr");
 		CCheck_Distance* pCheck_Distance_Exit = dynamic_cast<CCheck_Distance*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Check_Distance")));
@@ -946,7 +945,7 @@ HRESULT CArmored_Troll::Make_Pattern_Attack_ForHnd(_Inout_ CSequence* pSequence)
 		CCheck_Distance* pCheck_Distance_Enter = dynamic_cast<CCheck_Distance*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Check_Distance")));
 		if (nullptr == pCheck_Distance_Enter)
 			throw TEXT("pCheck_Distance_Enter is nullptr");
-		CRandom_Select* pRandom_Select = dynamic_cast<CRandom_Select*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Random_Select")));
+		CRandomChoose* pRandom_Select = dynamic_cast<CRandomChoose*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_RandomChoose")));
 		if (nullptr == pRandom_Select)
 			throw TEXT("pRandom_Select is nullptr");
 		CCheck_Distance* pCheck_Distance_Exit = dynamic_cast<CCheck_Distance*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Check_Distance")));
@@ -1085,7 +1084,7 @@ HRESULT CArmored_Troll::Make_Attack_Left_90(_Inout_ CSequence* pSequence)
 			throw TEXT("Parameter pSequence is nullptr");
 
 		/* Make Child Behaviors */
-		CRandom_Select* pRandom_Select = dynamic_cast<CRandom_Select*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Random_Select")));
+		CRandomChoose* pRandom_Select = dynamic_cast<CRandomChoose*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_RandomChoose")));
 		if (nullptr == pRandom_Select)
 			throw TEXT("pRandom_Select is nullptr");
 
@@ -1297,7 +1296,7 @@ HRESULT CArmored_Troll::Make_Attack_Right_90(_Inout_ CSequence* pSequence)
 			throw TEXT("Parameter pSequence is nullptr");
 
 		/* Make Child Behaviors */
-		CRandom_Select* pRandom_Select = dynamic_cast<CRandom_Select*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Random_Select")));
+		CRandomChoose* pRandom_Select = dynamic_cast<CRandomChoose*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_RandomChoose")));
 		if (nullptr == pRandom_Select)
 			throw TEXT("pRandom_Select is nullptr");
 
@@ -1427,7 +1426,7 @@ HRESULT CArmored_Troll::Make_Attack_Right_180(_Inout_ CSequence* pSequence)
 	return S_OK;
 }
 
-HRESULT CArmored_Troll::Make_Pattern_Attack_Far(_Inout_ CRandom_Select* pRandom_Select)
+HRESULT CArmored_Troll::Make_Pattern_Attack_Far(_Inout_ CRandomChoose* pRandom_Select)
 {
 	BEGININSTANCE;
 
@@ -1492,9 +1491,9 @@ HRESULT CArmored_Troll::Make_Pattern_Attack_Run(_Inout_ CSequence* pSequence)
 		CAction* pAction_Run_Loop = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
 		if (nullptr == pAction_Run_Loop)
 			throw TEXT("pAction_Run_Loop is nullptr");
-		CRandom_Select* pRandom_Select_Attacks = dynamic_cast<CRandom_Select*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Random_Select")));
-		if (nullptr == pRandom_Select_Attacks)
-			TEXT("pRandom_Select_Attacks is nullptr");
+		CRandomChoose* pRandom_Attacks = dynamic_cast<CRandomChoose*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_RandomChoose")));
+		if (nullptr == pRandom_Attacks)
+			TEXT("pRandom_Attacks is nullptr");
 
 		CSequence_Attack* pSequence_Attack_Swing_BackHnd = dynamic_cast<CSequence_Attack*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence_Attack")));
 		if (nullptr == pSequence_Attack_Swing_BackHnd)
@@ -1554,16 +1553,16 @@ HRESULT CArmored_Troll::Make_Pattern_Attack_Run(_Inout_ CSequence* pSequence)
 			throw TEXT("Failed Assemble_Behavior Sequence_Turn_Run");
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Run_Loop"), pAction_Run_Loop)))
 			throw TEXT("Failed Assemble_Behavior Action_Run_Loop");
-		if (FAILED(pSequence->Assemble_Behavior(TEXT("Random_Select_Attacks"), pRandom_Select_Attacks)))
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Random_Select_Attacks"), pRandom_Attacks)))
 			throw TEXT("Failed Assemble_Behavior Random_Select_Attacks");
 
-		if (FAILED(pRandom_Select_Attacks->Assemble_Behavior(TEXT("Sequence_Attack_Swing_BackHnd"), pSequence_Attack_Swing_BackHnd, 0.25f)))
+		if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Sequence_Attack_Swing_BackHnd"), pSequence_Attack_Swing_BackHnd, 0.25f)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Swing_BackHnd");
-		if (FAILED(pRandom_Select_Attacks->Assemble_Behavior(TEXT("Sequence_Attack_Swing_ForHnd"), pSequence_Attack_Swing_ForHnd, 0.25f)))
+		if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Sequence_Attack_Swing_ForHnd"), pSequence_Attack_Swing_ForHnd, 0.25f)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Swing_ForHnd");
-		if (FAILED(pRandom_Select_Attacks->Assemble_Behavior(TEXT("Sequence_Attack_Hop_ForHnd"), pSequence_Attack_Hop_ForHnd, 0.25f)))
+		if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Sequence_Attack_Hop_ForHnd"), pSequence_Attack_Hop_ForHnd, 0.25f)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Hop_ForHnd");
-		if (FAILED(pRandom_Select_Attacks->Assemble_Behavior(TEXT("Sequence_Attack_Hop_BackHnd"), pSequence_Attack_Hop_BackHnd, 0.25f)))
+		if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Sequence_Attack_Hop_BackHnd"), pSequence_Attack_Hop_BackHnd, 0.25f)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Hop_BackHnd");
 
 		if (FAILED(pAction_Run_Loop->Assemble_Behavior(TEXT("Check_Distance"), pTsk_Check_Distance)))
@@ -1694,12 +1693,12 @@ HRESULT CArmored_Troll::Make_Taunt_Degree(_Inout_ CSequence* pSequence)
 		CSelector_Degree* pSelector_Degree = dynamic_cast<CSelector_Degree*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Selector_Degree")));
 		if (nullptr == pSelector_Degree)
 			throw TEXT("pSelector_Choose_Degree is nullptr");
-		CRandom_Select* pRandom_Select_Taunt_Left_Front = dynamic_cast<CRandom_Select*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Random_Select")));
-		if (nullptr == pRandom_Select_Taunt_Left_Front)
-			throw TEXT("pRandom_Select_Taunt_Left_Front is nullptr");
-		CRandom_Select* pRandom_Select_Taunt_Right_Front = dynamic_cast<CRandom_Select*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Random_Select")));
-		if (nullptr == pRandom_Select_Taunt_Right_Front)
-			throw TEXT("pRandom_Select_Taunt_Right_Front is nullptr");
+		CRandomChoose* pRandom_Taunt_Left_Front = dynamic_cast<CRandomChoose*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_RandomChoose")));
+		if (nullptr == pRandom_Taunt_Left_Front)
+			throw TEXT("pRandom_Taunt_Left_Front is nullptr");
+		CRandomChoose* pRandom_Taunt_Right_Front = dynamic_cast<CRandomChoose*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_RandomChoose")));
+		if (nullptr == pRandom_Taunt_Right_Front)
+			throw TEXT("pRandom_Taunt_Right_Front is nullptr");
 		CAction* pAction_Idle = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
 		if (nullptr == pAction_Idle)
 			throw TEXT("pAction_Idle is nullptr");
@@ -1800,9 +1799,9 @@ HRESULT CArmored_Troll::Make_Taunt_Degree(_Inout_ CSequence* pSequence)
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Idle"), pAction_Idle)))
 			throw TEXT("Failed Assemble_Behavior Action_Idle");
 
-		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::LEFT_FRONT, pRandom_Select_Taunt_Left_Front)))
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::LEFT_FRONT, pRandom_Taunt_Left_Front)))
 			throw TEXT("Failed Assemble_Behavior pSelector_Degree LEFT_FRONT");
-		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::RIGHT_FRONT, pRandom_Select_Taunt_Right_Front)))
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::RIGHT_FRONT, pRandom_Taunt_Right_Front)))
 			throw TEXT("Failed Assemble_Behavior pSelector_Degree RIGHT_FRONT");
 		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::LEFT_45, pAction_Left_45)))
 			throw TEXT("Failed Assemble_Behavior pSelector_Degree LEFT_45");
@@ -1821,26 +1820,26 @@ HRESULT CArmored_Troll::Make_Taunt_Degree(_Inout_ CSequence* pSequence)
 		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::RIGHT_BACK, pAction_Right_180)))
 			throw TEXT("Failed Assemble_Behavior pSelector_Degree RIGHT_BACK");
 
-		if (FAILED(pRandom_Select_Taunt_Left_Front->Assemble_Behavior(TEXT("Action_Left_Front_1"), pAction_Left_Front_1, 0.2f)))
+		if (FAILED(pRandom_Taunt_Left_Front->Assemble_Behavior(TEXT("Action_Left_Front_1"), pAction_Left_Front_1, 0.2f)))
 			throw TEXT("Failed Assemble_Behavior Action_Left_Front_1");
-		if (FAILED(pRandom_Select_Taunt_Left_Front->Assemble_Behavior(TEXT("Action_Left_Front_2"), pAction_Left_Front_2, 0.2f)))
+		if (FAILED(pRandom_Taunt_Left_Front->Assemble_Behavior(TEXT("Action_Left_Front_2"), pAction_Left_Front_2, 0.2f)))
 			throw TEXT("Failed Assemble_Behavior Action_Left_Front_2");
-		if (FAILED(pRandom_Select_Taunt_Left_Front->Assemble_Behavior(TEXT("Action_Left_Front_3"), pAction_Left_Front_3, 0.2f)))
+		if (FAILED(pRandom_Taunt_Left_Front->Assemble_Behavior(TEXT("Action_Left_Front_3"), pAction_Left_Front_3, 0.2f)))
 			throw TEXT("Failed Assemble_Behavior Action_Left_Front_3");
-		if (FAILED(pRandom_Select_Taunt_Left_Front->Assemble_Behavior(TEXT("Action_Left_Front_4"), pAction_Left_Front_4, 0.2f)))
+		if (FAILED(pRandom_Taunt_Left_Front->Assemble_Behavior(TEXT("Action_Left_Front_4"), pAction_Left_Front_4, 0.2f)))
 			throw TEXT("Failed Assemble_Behavior Action_Left_Front_4");
-		if (FAILED(pRandom_Select_Taunt_Left_Front->Assemble_Behavior(TEXT("Action_Left_Front_5"), pAction_Left_Front_5, 0.2f)))
+		if (FAILED(pRandom_Taunt_Left_Front->Assemble_Behavior(TEXT("Action_Left_Front_5"), pAction_Left_Front_5, 0.2f)))
 			throw TEXT("Failed Assemble_Behavior Action_Left_Front_5");
 
-		if (FAILED(pRandom_Select_Taunt_Right_Front->Assemble_Behavior(TEXT("Action_Right_Front_1"), pAction_Right_Front_1, 0.2f)))
+		if (FAILED(pRandom_Taunt_Right_Front->Assemble_Behavior(TEXT("Action_Right_Front_1"), pAction_Right_Front_1, 0.2f)))
 			throw TEXT("Failed Assemble_Behavior Action_Right_Front_1");
-		if (FAILED(pRandom_Select_Taunt_Right_Front->Assemble_Behavior(TEXT("Action_Right_Front_2"), pAction_Right_Front_2, 0.2f)))
+		if (FAILED(pRandom_Taunt_Right_Front->Assemble_Behavior(TEXT("Action_Right_Front_2"), pAction_Right_Front_2, 0.2f)))
 			throw TEXT("Failed Assemble_Behavior Action_Right_Front_2");
-		if (FAILED(pRandom_Select_Taunt_Right_Front->Assemble_Behavior(TEXT("Action_Right_Front_3"), pAction_Right_Front_3, 0.2f)))
+		if (FAILED(pRandom_Taunt_Right_Front->Assemble_Behavior(TEXT("Action_Right_Front_3"), pAction_Right_Front_3, 0.2f)))
 			throw TEXT("Failed Assemble_Behavior Action_Right_Front_3");
-		if (FAILED(pRandom_Select_Taunt_Right_Front->Assemble_Behavior(TEXT("Action_Right_Front_4"), pAction_Right_Front_4, 0.2f)))
+		if (FAILED(pRandom_Taunt_Right_Front->Assemble_Behavior(TEXT("Action_Right_Front_4"), pAction_Right_Front_4, 0.2f)))
 			throw TEXT("Failed Assemble_Behavior Action_Right_Front_4");
-		if (FAILED(pRandom_Select_Taunt_Right_Front->Assemble_Behavior(TEXT("Action_Right_Front_5"), pAction_Right_Front_5, 0.2f)))
+		if (FAILED(pRandom_Taunt_Right_Front->Assemble_Behavior(TEXT("Action_Right_Front_5"), pAction_Right_Front_5, 0.2f)))
 			throw TEXT("Failed Assemble_Behavior Action_Right_Front_5");
 
 		if (FAILED(pAction_Idle->Assemble_Behavior(TEXT("Tsk_Wait"), pTsk_Wait)))
@@ -1944,15 +1943,13 @@ void CArmored_Troll::Enter_Body_Attack()
 	m_CollisionRequestDesc.eType = ATTACK_HEAVY;
 	m_CollisionRequestDesc.iDamage = 0;
 	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
-	Set_CollisionData(&m_CollisionRequestDesc);
-	m_pRigidBody->Enable_Collision("Enemy_Body_Attack", this);
+	m_pRigidBody->Enable_Collision("Enemy_Body_Attack", this, &m_CollisionRequestDesc);
 }
 
 void CArmored_Troll::Exit_Attack()
 {
 	m_CollisionRequestDesc.eType = ATTACK_NONE;
 	m_CollisionRequestDesc.iDamage = 0;
-	Set_CollisionData(&m_CollisionRequestDesc);
 	m_pRigidBody->Disable_Collision("Enemy_Body_Attack");
 	m_pWeapon->Off_Collider_Attack(&m_CollisionRequestDesc);
 }

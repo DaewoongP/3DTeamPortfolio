@@ -30,7 +30,7 @@ HRESULT CMapObject::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	m_ObjectDesc = *reinterpret_cast<MAPOBJECTDESC*>(pArg);
+	m_ObjectDesc = *static_cast<MAPOBJECTDESC*>(pArg);
 	m_pTransform->Set_WorldMatrix(m_ObjectDesc.WorldMatrix);
 
 	// 음수 값이 있을 경우 Cull 모드를 None로 바꾼다.
@@ -158,9 +158,12 @@ void CMapObject::Late_Tick(_float fTimeDelta)
 	
 	if (nullptr != m_pRenderer)
 	{
-		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
-
+		if (pGameInstance->isIn_WorldFrustum(m_vCenterPoint.TransCoord(), m_fRadius))
+		{
+			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+		}
+		
 #ifdef _DEBUG
 		m_pRenderer->Add_DebugGroup(m_pRigidBody);
 #endif // _DEBUG

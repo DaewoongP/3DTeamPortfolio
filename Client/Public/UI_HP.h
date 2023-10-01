@@ -49,15 +49,10 @@ private:
 
 private:
 	HRESULT	Initialize_Gauge(_float fMin, _float fMax, _float fCurrent);
-	
-#ifdef _DEBUG
-	HRESULT Debug_UI(_float fTimeDelta);
-#endif // _DEBUG
 
 private:
 	HPTYPE				m_eHPType;
-	_float				m_fPercent = { 0.7f };
-
+	_float				m_fPercent = { 0.f };
 
 public:
 	static CUI_HP* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

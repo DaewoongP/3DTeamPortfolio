@@ -24,6 +24,7 @@ class CUI_Group_Skill;
 class CMagicBall;
 class CRecoveryPotion;
 class CAccPotion;
+class CWiggenweldPotion;
 END
 
 BEGIN(Client)
@@ -104,6 +105,8 @@ private:
 	function< void(_float3, _float)> m_pFrncSpellToggle = { nullptr };
 
 	LEVELID m_eLevelID = { LEVEL_END };
+	
+	_float3		m_vLevelInitPosition[LEVEL_END];
 
 private:
 	HRESULT Add_Components();

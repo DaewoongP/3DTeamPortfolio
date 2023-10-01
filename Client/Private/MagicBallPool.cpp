@@ -39,7 +39,7 @@ CMagicBall* CMagicBallPool::Get_Magic(CMagicBall::MAGICBALLINITDESC& MagicBallDe
 
     if (m_MagicPool[MagicBallDesc.eMagicTag].empty())
     {
-        pMagicball = Create_Magic(MagicBallDesc.eMagicTag, MagicBallDesc);
+        pMagicball = Create_Magic(MagicBallDesc.eMagicTag);
     }
     else 
     {
@@ -62,7 +62,7 @@ void CMagicBallPool::Return_Magic(CMagicBall* pMagic, SPELL eSpell)
     m_MagicPool[eSpell].push(pMagic);
 }
 
-CMagicBall* CMagicBallPool::Create_Magic(SPELL eSpell, CMagicBall::MAGICBALLINITDESC& MagicBallDesc)
+CMagicBall* CMagicBallPool::Create_Magic(SPELL eSpell)
 {
     CMagicBall* pMagicBall = { nullptr };
 

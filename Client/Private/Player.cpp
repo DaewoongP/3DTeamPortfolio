@@ -21,9 +21,10 @@
 #include "UI_Group_Skill.h"
 
 #include "RecoveryPotion.h"
-#include"AccPotion.h"
-#include"CoolTime.h"	
+#include "AccPotion.h"
+#include "CoolTime.h"	
 
+#include "WiggenweldPotion.h"
 
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -107,26 +108,15 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::THIRD, NCENDIO);
 	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::FOURTH, DIFFINDO);
 
-	
+	m_vLevelInitPosition[LEVEL_CLIFFSIDE] = _float3(25.f, 3.f, 22.5f);
 
 	return S_OK;
 }
 
 HRESULT CPlayer::Initialize_Level(_uint iCurrentLevelIndex)
 {
+	m_pTransform->Set_Position(m_vLevelInitPosition[iCurrentLevelIndex]);
 
-	switch (iCurrentLevelIndex)
-	{
-	case LEVEL_CLIFFSIDE:
-		m_pTransform->Set_Position(_float3(25.f, 3.f, 22.5f));
-		break;
-	case LEVEL_VAULT:
-		break;
-	default:
-		break;
-	}
-
-	
 	return S_OK;
 }
 
@@ -542,13 +532,6 @@ HRESULT CPlayer::Add_Components()
 		return E_FAIL;
 	}
 
-	/* Com_UI_Group_Skill_1 */
-	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_RecoveryPotion"),
-	//	TEXT("Com_RecoveryPotion"), reinterpret_cast<CComponent**>(&m_pRecoveryPotion))))
-	//{
-	//	__debugbreak();
-	//	return E_FAIL;
-	//}
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_AccPotion"),
 		TEXT("Com_AccPotion"), reinterpret_cast<CComponent**>(&m_pAccPotion))))
 	{
@@ -726,10 +709,21 @@ void CPlayer::Key_Input(_float fTimeDelta)
 	
 	if (pGameInstance->Get_DIKeyState(DIK_L, CInput_Device::KEY_DOWN))
 	{
-		CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_Dust01"), m_pTransform->Get_Position());
-		CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_Dust02"), m_pTransform->Get_Position());
-		CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_RockChunksRough"), m_pTransform->Get_Position());
-		m_pRecoveryPotion->Use();
+		//CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_Dust01"), m_pTransform->Get_Position());
+		//CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_Dust02"), m_pTransform->Get_Position());
+		//CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_RockChunksRough"), m_pTransform->Get_Position());
+		_int iHp = 1;
+		m_pPlayer_Information->Get_Health()->Set_HP(iHp);
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_K, CInput_Device::KEY_DOWN))
+	{
+		CWiggenweldPotion::INIT_DESC initDesc;
+		initDesc.pHealthCom = m_pPlayer_Information->Get_Health();
+		CWiggenweldPotion* pWiggenweldPotion = static_cast<CWiggenweldPotion*>(
+			pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_WiggenweldPotion"), &initDesc));
+		pWiggenweldPotion->Use(_float3());
+		Safe_Release(pWiggenweldPotion);
 	}
 
 	ENDINSTANCE;
@@ -912,20 +906,22 @@ void CPlayer::Tick_ImGui()
 {
 	ImGui::Begin("Player");
 	
-	
 	if (ImGui::Checkbox("Gravity", &m_isGravity))
 	{
 		m_pRigidBody->Set_Gravity(m_isGravity);
 	}
 
-	if (ImGui::Button("Go to 0"))
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	if (ImGui::Button("Go to Level Init Position"))
 	{
-		m_pRigidBody->Set_Position(_float3(1.f, 1.f, 1.f));
+		m_pTransform->Set_Position(m_vLevelInitPosition[pGameInstance->Get_CurrentLevelIndex()]);
 	}
+	Safe_Release(pGameInstance);
+	
 
 	_float3 vVelocity = m_pTransform->Get_Velocity();
 	ImGui::InputFloat3("Velocity", reinterpret_cast<_float*>(&vVelocity));
-
 
 	ImGui::End();
 }
@@ -1329,8 +1325,7 @@ void CPlayer::Find_Target_For_Distance()
 
 	if (nullptr == pLayer)
 	{
-		//MSG_BOX("not MonsterLayer");
-		ENDINSTANCE
+		ENDINSTANCE;
 		return;
 	}
 
@@ -1408,11 +1403,7 @@ void CPlayer::Find_Target_For_Distance()
 			m_pTarget = nullptr;
 		}
 	}
-
-
 	ENDINSTANCE;
-
-
 }
 
 void CPlayer::Shot_Magic_Spell()
@@ -1621,6 +1612,7 @@ void CPlayer::Free()
 		Safe_Release(m_UI_Group_Skill_01);
 		Safe_Release(m_pRecoveryPotion);
 		Safe_Release(m_pAccPotion);
+		
 		if (nullptr != m_pTargetTransform)
 		{
 			Safe_Release(m_pTargetTransform);

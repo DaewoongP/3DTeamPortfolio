@@ -266,7 +266,7 @@ void CParticleSystem::Late_Tick(_float _fTimeDelta)
 		{
 			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		}
-		//m_pRenderer->Add_RenderGroup(CRenderer::RENDER_MOTIONBLUR, this);
+
 	}
 }
 
