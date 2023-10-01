@@ -16,11 +16,13 @@ CLevioso::CLevioso(const CLevioso& rhs)
 {
 }
 
-void CLevioso::TrailAction (_float3 vPosition, _float fTimeDelta)
+void CLevioso::TrailAction (void* pArg)
 {
-	m_pWingardiumEffect->TrailAction(vPosition, fTimeDelta);
+	Stick_TickDesc* desc = static_cast<Stick_TickDesc*>(pArg);
+	BEGININSTANCE;
+	m_pWingardiumEffect->TrailAction(*desc->pPosition, pGameInstance->Get_World_Tick());
+	ENDINSTANCE;
 	m_fWingardiumEffectDeadTimer = 0.3f;
-
 }
 
 HRESULT CLevioso::Initialize_Prototype(_uint iLevel)
@@ -112,7 +114,7 @@ HRESULT CLevioso::Initialize(void* pArg)
 
 		return E_FAIL;
 	}
-	m_CollisionDesc.Action = bind(&CLevioso::TrailAction, this, placeholders::_1, placeholders::_2);
+	m_CollisionDesc.Action = bind(&CLevioso::TrailAction, this, placeholders::_1);
 	return S_OK;
 }
 

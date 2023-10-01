@@ -167,6 +167,7 @@
     <ClInclude Include="..\Public\Accio.h" />
     <ClInclude Include="..\Public\Action.h" />
     <ClInclude Include="..\Public\Arrestomomentum.h" />
+    <ClInclude Include="..\Public\Client_Struct.h" />
     <ClInclude Include="..\Public\Flipendo.h" />
     <ClInclude Include="..\public\Item.h" />
     <ClInclude Include="..\Public\Death.h" />

@@ -100,7 +100,7 @@ private:
 
 	CMagicBall* m_pMagicBall = { nullptr };
 
-	mutable function< void(_float3, _float)> m_pFrncSpellToggle = { nullptr };
+	mutable function< void(void*)> m_pFrncSpellToggle = { nullptr };
 
 	LEVELID m_eLevelID = { LEVEL_END };
 	

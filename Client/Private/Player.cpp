@@ -160,7 +160,7 @@ void CPlayer::Tick(_float fTimeDelta)
 	//루모스 업데이트
 	if (nullptr != m_pFrncSpellToggle)
 	{
-		m_pFrncSpellToggle(_float3(), _float());
+		m_pFrncSpellToggle(nullptr);
 	}
 	m_pCooltime->Tick(fTimeDelta);
 
