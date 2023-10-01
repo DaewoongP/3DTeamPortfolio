@@ -124,7 +124,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 HRESULT CPlayer::Initialize_Level(_uint iCurrentLevelIndex)
 {
 	m_pTransform->Set_Position(m_vLevelInitPosition[iCurrentLevelIndex]);
-
+	m_eLevelID = (LEVELID)iCurrentLevelIndex;
 	return S_OK;
 }
 
@@ -1272,9 +1272,9 @@ HRESULT CPlayer::Ready_StateMachine()
 		return E_FAIL;
 	}
 
-
-
 	m_pStateContext->Set_StateMachine(TEXT("Idle"));
+
+	return S_OK;
 }
 
 void CPlayer::Update_Target_Angle()
