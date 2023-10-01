@@ -47,15 +47,6 @@ HRESULT CGlow::Initialize(CVIBuffer_Rect* pRectBuffer)
 	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(ViewportDesc.Width, ViewportDesc.Height, 0.f, 1.f));
 
-#ifdef _DEBUG 
-	if (FAILED(pRenderTarget_Manager->Ready_Debug(TEXT("Target_Glow"), 240.f, 240.f, 160.f, 160.f)))
-		return E_FAIL;
-	if (FAILED(pRenderTarget_Manager->Ready_Debug(TEXT("Target_Glow_Blured"), 240.f, 400.f, 160.f, 160.f)))
-		return E_FAIL;
-	if (FAILED(pRenderTarget_Manager->Ready_Debug(TEXT("Target_Glowed"), 240.f, 560.f, 160.f, 160.f)))
-		return E_FAIL;
-#endif // _DEBUG
-
 	Safe_Release(pRenderTarget_Manager);
 
 	m_pShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Glow.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements);
