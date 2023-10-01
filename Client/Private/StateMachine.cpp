@@ -114,7 +114,7 @@ void CStateMachine::Free()
 
 	if (true == m_isCloned)
 	{
-		if (false == m_StateMachineDesc.IsValid())
+		if (true == m_StateMachineDesc.IsValid())
 		{
 			Safe_Release(m_StateMachineDesc.pOwnerModel);
 			Safe_Release(m_StateMachineDesc.pPlayerTransform);

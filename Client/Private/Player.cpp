@@ -1913,5 +1913,8 @@ void CPlayer::Free()
 		{
 			Safe_Release(m_pTarget);
 		}
+
+		Safe_Release(m_StateMachineDesc.pOwnerModel);
+		Safe_Release(m_StateMachineDesc.pPlayerTransform);
 	}
 }
