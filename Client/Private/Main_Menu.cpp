@@ -453,5 +453,8 @@ void CMain_Menu::Free()
 	Safe_Release(m_pInventory);
 	Safe_Release(m_pQuest);
 	Safe_Release(m_pCursor);
-	Safe_Release(m_pPlayerInventory);
+	if (m_isCloned)
+	{
+		Safe_Release(m_pPlayerInventory);
+	}
 }

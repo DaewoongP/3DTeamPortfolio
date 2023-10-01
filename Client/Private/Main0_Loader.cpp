@@ -17,6 +17,7 @@
 #include "UI_Group_MiniMap.h"
 #include "UI_Group_Enemy_HP.h"
 #include "UI_Group_Cursor.h"
+#include "UI_Slot.h"
 #include "UI_Progress1.h"
 #include "UI_Image.h"
 #include "UI_Button.h"
@@ -205,6 +206,9 @@ HRESULT CMain0_Loader::Loading_For_Logo()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Inventory"),
 			CInventory::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Inventory");
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Slot"),
+			CUI_Slot::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_UI_Slot");
 	}
 	catch (const _tchar* pErrorTag)
 	{

@@ -2,6 +2,7 @@
 #include "GameInstance.h"
 #include "UI_Inventory.h"
 #include "GameObject.h"
+#include "Item.h"
 
 CInventory::CInventory(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -28,6 +29,18 @@ HRESULT CInventory::Initialize(void* pArg)
 	m_pPlayerCurItems.resize(RESOURCE);
 
 	Add_Components();
+
+	//BEGININSTANCE;
+
+	//CWiggenweldPotion::INIT_DESC initDesc;
+	//initDesc.pHealthCom = nullptr;
+	//CWiggenweldPotion* pWiggenweldPotion = static_cast<CWiggenweldPotion*>(
+	//	pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_WiggenweldPotion"), &initDesc));
+	//
+	//Add_Item(pWiggenweldPotion, ITEMTYPE::GEAR);
+	//
+	//Safe_Release(pWiggenweldPotion);
+	//ENDINSTANCE
 
 	return S_OK;
 }
@@ -105,7 +118,7 @@ HRESULT CInventory::Add_Components()
 	return S_OK;
 }
 
-void CInventory::Add_Item(CGameObject* pItem, ITEMTYPE eType)
+void CInventory::Add_Item(CItem* pItem, ITEMTYPE eType)
 {
 	if (eType >= ITEMTYPE_END || eType < 0)
 		return;
@@ -158,7 +171,7 @@ void CInventory::Swap_Item(_uint Index, ITEMTYPE eType)
 		m_pItems[eType].erase(m_pItems[eType].begin() + Index);
 	}
 
-	CGameObject* SourItem = m_pItems[eType][Index];
+	CItem* SourItem = m_pItems[eType][Index];
 	m_pItems[eType][Index] = m_pPlayerCurItems[eType];
 	m_pPlayerCurItems[eType] = SourItem;
 
@@ -194,7 +207,7 @@ CGameObject* CInventory::Clone(void* pArg)
 void CInventory::Free()
 {
 	__super::Free();
-
+	// 여기에 두번 불려야하고 지금 인벤토리를 가지고있는 녀석들은 두놈인데
 	if (m_pItems.size() > 0)
 	{
 		for (size_t i = 0; i < ITEMTYPE_END; i++)
@@ -204,8 +217,9 @@ void CInventory::Free()
 				Safe_Release(pItem);
 			}
 		}
+		m_pItems.clear();
 	}
-	m_pItems.clear();
+
 
 
 	for (auto& pUI_Inven : m_pUI_Inventory)
@@ -218,4 +232,6 @@ void CInventory::Free()
 		Safe_Release(pCurItem);
 	}
 	m_pPlayerCurItems.clear();
+
+
 }

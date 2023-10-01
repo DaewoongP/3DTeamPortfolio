@@ -65,7 +65,7 @@ void CUI_Inventory::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	Swap_InventoryItem();
+	//Swap_InventoryItem();
 }
 
 void CUI_Inventory::Late_Tick(_float fTimeDelta)
@@ -146,6 +146,7 @@ HRESULT CUI_Inventory::Ready_Offset()
 			m_fPosition.push_back(fPos);
 		}
 	}
+	m_pSlots.resize(m_iVertical * m_iHorizontal);
 
 	return S_OK;
 }
@@ -175,37 +176,37 @@ HRESULT CUI_Inventory::Ready_DefaultTexture(const _tchar* pFilePath)
 
 	switch (m_eItemtype)
 	{
-	case Client::CInventory::HAND:
+	case Client::HAND:
 	{
 		_tchar szTexturePath[MAX_PATH] = TEXT("../../Resources/UI/Game/UI_Edit/Gear_Inventory_Hand_Frame.dds");
 		lstrcpy(UIDesc.szTexturePath, szTexturePath);
 	}
 		break;
-	case Client::CInventory::FACE:
+	case Client::FACE:
 	{
 		_tchar szTexturePath[MAX_PATH] = TEXT("../../Resources/UI/Game/UI_Edit/Gear_Inventory_Face_Frame.dds");
 		lstrcpy(UIDesc.szTexturePath, szTexturePath);
 	}
 		break;
-	case Client::CInventory::HEAD:
+	case Client::HEAD:
 	{
 		_tchar szTexturePath[MAX_PATH] = TEXT("../../Resources/UI/Game/UI_Edit/Gear_Inventory_Head_Frame.dds");
 		lstrcpy(UIDesc.szTexturePath, szTexturePath);
 	}
 		break;
-	case Client::CInventory::NECK:
+	case Client::NECK:
 	{
 		_tchar szTexturePath[MAX_PATH] = TEXT("../../Resources/UI/Game/UI_Edit/Gear_Inventory_Neck_Frame.dds");
 		lstrcpy(UIDesc.szTexturePath, szTexturePath);
 	}
 		break;
-	case Client::CInventory::BACK:
+	case Client::BACK:
 	{
 		_tchar szTexturePath[MAX_PATH] = TEXT("../../Resources/UI/Game/UI_Edit/Gear_Inventory_Back_Frame.dds");
 		lstrcpy(UIDesc.szTexturePath, szTexturePath);
 	}
 		break;
-	case Client::CInventory::OUTFIT:
+	case Client::OUTFIT:
 	{
 		_tchar szTexturePath[MAX_PATH] = TEXT("../../Resources/UI/Game/UI_Edit/Gear_Inventory_Outfit_Frame.dds");
 		lstrcpy(UIDesc.szTexturePath, szTexturePath);
@@ -240,10 +241,15 @@ HRESULT CUI_Inventory::Add_ItemTexture()
 	return S_OK;
 }
 
-HRESULT CUI_Inventory::Set_InventoryItem(vector<CGameObject*>& pItems)
+HRESULT CUI_Inventory::Set_InventoryItem(vector<CItem*>& pItems)
 {
 	for (auto& pSlot : m_pSlots)
-		pSlot->Set_IconTexture(nullptr);
+	{
+		if (nullptr != pSlot)
+		{
+			pSlot->Set_IconTexture(nullptr);
+		}
+	}
 	
 	_uint iSize = pItems.size();
 	_uint iIndex = 0;
@@ -256,26 +262,26 @@ HRESULT CUI_Inventory::Set_InventoryItem(vector<CGameObject*>& pItems)
 			CUI::UIDESC Desc;
 			ZEROMEM(&Desc);
 			Desc.vCombinedXY = _float2(0.f,0.f);
-			Desc.fX = m_fPosition[iIndex].x;
-			Desc.fY = m_fPosition[iIndex].y;
-			Desc.fZ = 0.5f;
+			Desc.fX = m_fPosition[iIndex].x + 640.f;
+			Desc.fY = m_fPosition[iIndex].y + 360.f;
+			Desc.fZ = 0.1f;
 			Desc.fSizeX = 70.f;
 			Desc.fSizeY = 70.f;
-			
-			//lstrcpy(Desc.szTexturePath, );
+
+			lstrcpy(Desc.szTexturePath, TEXT(""));
 
 			if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Slot"),
-				wszTag.c_str(), reinterpret_cast<CComponent**>(&m_pSlots[iIndex]))))
+				wszTag.c_str(), reinterpret_cast<CComponent**>(&m_pSlots[iIndex]), &Desc)))
 			{
 				MSG_BOX("Com_Inventory : Failed Clone Component (Com_UI_Slot)");
 				__debugbreak();
 				return E_FAIL;
 			}
-			//	m_pSlots[iIndex]->Set_IconTexture(pItem->Texture);
+				m_pSlots[iIndex]->Set_IconTexture(pItem->Get_UITexture());
 		}
 		else if (m_pSlots[iIndex]->Get_IconTexture() && nullptr!= m_pSlots[iIndex])
 		{
-			//	m_pSlots[iIndex]->Set_IconTexture(pItem->Texture);
+				m_pSlots[iIndex]->Set_IconTexture(pItem->Get_UITexture());
 		}
 		++iIndex;
 	}
@@ -295,7 +301,7 @@ HRESULT CUI_Inventory::Delete_InventoryItem(_uint iIndex)
 
 HRESULT CUI_Inventory::Swap_InventoryItem()
 {
-	if (m_eItemtype > CInventory::OUTFIT)
+	if (m_eItemtype > OUTFIT)
 		return E_FAIL;
 
 	_uint iIndex = 0;

@@ -2,8 +2,14 @@
 #include "Client_Defines.h"
 #include "GameInstance.h"
 
+#include "Inventory.h"
+
 #include "UI_Group_HP.h"
 #include "UI_Group_Finisher.h"
+
+// Áö¿ï°Å
+#include "WiggenweldPotion.h"
+#include "Item.h"
 
 CPlayer_Information::CPlayer_Information(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
 	: CComposite(_pDevice, _pContext)
@@ -38,6 +44,33 @@ HRESULT CPlayer_Information::Initialize(void* pArg)
 void CPlayer_Information::Tick(_float fTimeDelta)
 {
 	CComposite::Tick(fTimeDelta);
+
+	if (nullptr == m_pInventory)
+	{
+		CGameInstance* pGameInstacne = CGameInstance::GetInstance();
+		Safe_AddRef(pGameInstacne);
+
+		m_pInventory = static_cast<CInventory*>(pGameInstacne->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Inventory"), TEXT("GameObject_Inventory")));
+		Safe_AddRef(m_pInventory);
+
+		Safe_Release(pGameInstacne);
+	}
+
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	if (pGameInstance->Get_DIKeyState(DIK_Q, CInput_Device::KEY_DOWN))
+	{
+
+		CWiggenweldPotion::INIT_DESC initDesc;
+		initDesc.pHealthCom = nullptr;
+		CWiggenweldPotion* pWiggenweldPotion = static_cast<CWiggenweldPotion*>(
+			pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_WiggenweldPotion"), &initDesc));
+		m_pInventory->Add_Item(pWiggenweldPotion, HAND);
+		//Safe_Release(pWiggenweldPotion);
+	}
+	Safe_Release(pGameInstance);
+
+
 }
 
 void CPlayer_Information::Late_Tick(_float fTimeDelta)
