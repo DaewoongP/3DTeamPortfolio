@@ -205,7 +205,9 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	{
 		if (true == m_pTarget->isDead())
 		{
+			Safe_Release(m_pTargetTransform);
 			Safe_Release(m_pTarget);
+			m_pTargetTransform = nullptr;
 			m_pTarget = nullptr;
 			return;
 		}
