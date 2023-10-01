@@ -27,6 +27,8 @@ HRESULT CInventory::Initialize(void* pArg)
 	m_pItems.resize(ITEMTYPE_END);
 	m_pPlayerCurItems.resize(RESOURCE);
 
+	Add_Components();
+
 	return S_OK;
 }
 
@@ -34,6 +36,13 @@ void CInventory::Late_Tick(_float fTimeDelta)
 {
 	if (m_isOpen)
 	{
+		CGameInstance* pGameInstance = CGameInstance::GetInstance();
+		Safe_AddRef(pGameInstance);
+		if (pGameInstance->Get_DIKeyState(DIK_ESCAPE, CInput_Device::KEY_DOWN))
+		{
+			m_isOpen = false;
+		}
+		Safe_Release(pGameInstance);
 		//m_pUI_Inventory[m_eCurOpenItemtype]->Set_InventoryItem(m_pItems[m_eCurOpenItemtype]);
 		m_pUI_Inventory[m_eCurOpenItemtype]->Late_Tick(fTimeDelta);
 	}
@@ -184,13 +193,20 @@ CGameObject* CInventory::Clone(void* pArg)
 
 void CInventory::Free()
 {
-	for (size_t i = 0; i < ITEMTYPE_END; i++)
+	__super::Free();
+
+	if (m_pItems.size() > 0)
 	{
-		for (auto& pItem : m_pItems[i])
+		for (size_t i = 0; i < ITEMTYPE_END; i++)
 		{
-			Safe_Release(pItem);
+			for (auto& pItem : m_pItems[i])
+			{
+				Safe_Release(pItem);
+			}
 		}
 	}
+	m_pItems.clear();
+
 
 	for (auto& pUI_Inven : m_pUI_Inventory)
 	{
@@ -201,4 +217,5 @@ void CInventory::Free()
 	{
 		Safe_Release(pCurItem);
 	}
+	m_pPlayerCurItems.clear();
 }

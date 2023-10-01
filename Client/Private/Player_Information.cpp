@@ -103,16 +103,7 @@ HRESULT CPlayer_Information::Add_Components()
 		__debugbreak();
 		return E_FAIL;
 	}
-
-
-	/* Com_Inventory */
-	/*if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Inventory"),
-		TEXT("Com_Inventory"), reinterpret_cast<CComponent**>(&m_pInventory))))
-	{
-		MSG_BOX("Failed CPlayer Add_Component : (Prototype_GameObject_Inventory)");
-		__debugbreak();
-		return E_FAIL;
-	}*/
+	
 	return S_OK;
 }
 
@@ -176,5 +167,6 @@ void CPlayer_Information::Free()
 		Safe_Release(m_pFinisher);
 		Safe_Release(m_pUI_Finisher);
 		Safe_Release(m_pUI_Health);
+		//Safe_Release(m_pInventory);
 	}
 }

@@ -52,10 +52,11 @@ HRESULT CUI_Inventory::Initialize(void* pArg)
 		m_iHorizontal = pDesc->iHorizontal;
 		m_iVertical = pDesc->iVertical;
 		m_eItemtype = pDesc->eItemtype;
+		Ready_Offset();
+		Ready_DefaultTexture(UIDesc.szTexturePath);
 	}
 
-	Ready_Offset();
-	Ready_DefaultTexture();
+
 
 	return S_OK;
 }
@@ -149,7 +150,7 @@ HRESULT CUI_Inventory::Ready_Offset()
 	return S_OK;
 }
 
-HRESULT CUI_Inventory::Ready_DefaultTexture()
+HRESULT CUI_Inventory::Ready_DefaultTexture(const _tchar* pFilePath)
 {
 	
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
@@ -168,7 +169,7 @@ HRESULT CUI_Inventory::Ready_DefaultTexture()
 	UIDesc.vCombinedXY = { 0.f, 0.f };
 	UIDesc.fX = { 640.f };
 	UIDesc.fY = { 360.f };
-	UIDesc.fZ = { 0.99f };
+	UIDesc.fZ = { 0.5f };
 	UIDesc.fSizeX = { 1280.f };
 	UIDesc.fSizeY = { 720.f };
 
@@ -210,6 +211,8 @@ HRESULT CUI_Inventory::Ready_DefaultTexture()
 		lstrcpy(UIDesc.szTexturePath, szTexturePath);
 	}
 		break;
+	default:
+		lstrcpy(UIDesc.szTexturePath, pFilePath);
 	}
 
 	m_pBack->Load(UIDesc);
@@ -350,4 +353,6 @@ void CUI_Inventory::Free()
 	{
 		Safe_Release(pUI);
 	}
+
+	Safe_Release(m_pBack);
 }

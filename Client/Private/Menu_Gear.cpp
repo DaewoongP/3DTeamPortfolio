@@ -3,6 +3,8 @@
 #include "UI_Effect_Back.h"
 #include "UI_Back.h"
 #include "Inventory.h"
+#include "Player.h"
+#include "Player_Information.h"
 
 CMenu_Gear::CMenu_Gear(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -62,23 +64,30 @@ HRESULT CMenu_Gear::Initialize(void* pArg)
 
 void CMenu_Gear::Tick(_float fTimeDelta)
 {
-	__super::Tick(fTimeDelta);
-	CGameInstance* pGameInstacne = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstacne);
-
 	if (nullptr == m_pInventory)
 	{
-		//pGameInstacne->Find_Component_In_Layer() 플레이어의 인벤토리 찾아서 들고있게끔.
-	}
-	Safe_Release(pGameInstacne);
+		CGameInstance* pGameInstacne = CGameInstance::GetInstance();
+		Safe_AddRef(pGameInstacne);
 
-	Select_Gear();
+		m_pInventory = static_cast<CInventory*>(pGameInstacne->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Inventory"), TEXT("GameObject_Inventory")));
+		Safe_AddRef(m_pInventory);
+
+		Safe_Release(pGameInstacne);
+	}
+
+	if (!m_pInventory->Get_Open())
+	{
+		__super::Tick(fTimeDelta);
+		Select_Gear();
+	}
 }
 
 void CMenu_Gear::Late_Tick(_float fTimeDelta)
 {
-	return;
-	__super::Late_Tick(fTimeDelta);
+	if (!m_pInventory->Get_Open())
+	{
+		__super::Late_Tick(fTimeDelta);
+	}
 }
 
 HRESULT CMenu_Gear::Render()
@@ -476,8 +485,7 @@ void CMenu_Gear::Select_Gear()
 	{
 		if (nullptr != m_pInventory && pSlot->Get_Clicked())
 		{
-			iIndex = iIndex + 0;
-			//m_pInventory->Set_Open(true);
+			m_pInventory->Set_Open(true);
 			m_pInventory->Set_CurItemtype(CInventory::ITEMTYPE(iIndex));
 			m_isOpen = false;
 			return;
@@ -545,4 +553,6 @@ void CMenu_Gear::Free()
 	{
 		Safe_Release(pCom);
 	}
+
+	Safe_Release(m_pInventory);
 }

@@ -50,7 +50,7 @@ private:
 
 private:
 	HRESULT  Ready_Offset();
-	HRESULT	Ready_DefaultTexture();
+	HRESULT	Ready_DefaultTexture(const _tchar* pFilePath);
 	HRESULT	Add_ItemTexture();
 
 public:
