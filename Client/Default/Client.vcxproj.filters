@@ -388,14 +388,14 @@
     <Filter Include="02. GameObject\09. Item">
       <UniqueIdentifier>{5c3eefb3-c8a9-4a27-96cf-0e1d6a672946}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\09. Item\01. RecoveryPotion">
-      <UniqueIdentifier>{c07071fe-c006-4bca-b390-e403b214f1e9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\08. Inventory\Item">
       <UniqueIdentifier>{a8a056c1-627a-4e55-9a40-91512c0110cc}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\08. Inventory\Item\MPBall">
       <UniqueIdentifier>{5eb7cb7b-6f9e-420b-bad4-8d44bfc40af4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Item\WiggenweldPotion">
+      <UniqueIdentifier>{c07071fe-c006-4bca-b390-e403b214f1e9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -807,11 +807,17 @@
     <ClInclude Include="..\Public\UI_Group_Quest.h">
       <Filter>02. GameObject\04. UI\UI_Group</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\RecoveryPotion.h">
-      <Filter>02. GameObject\09. Item\01. RecoveryPotion</Filter>
+    <ClInclude Include="..\public\WiggenweldPotion.h">
+      <Filter>02. GameObject\09. Item\WiggenweldPotion</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MPBall.h">
       <Filter>02. GameObject\08. Inventory\Item\MPBall</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Item.h">
+      <Filter>02. GameObject\09. Item</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemFactory.h">
+      <Filter>02. GameObject\09. Item</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1187,14 +1193,20 @@
     <ClCompile Include="..\Private\UI_Group_Quest.cpp">
       <Filter>02. GameObject\04. UI\UI_Group</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\RecoveryPotion.cpp">
-      <Filter>02. GameObject\09. Item\01. RecoveryPotion</Filter>
+    <ClCompile Include="..\private\WiggenweldPotion.cpp">
+      <Filter>02. GameObject\09. Item\WiggenweldPotion</Filter>
     </ClCompile>
     <ClCompile Include="MPBall.cpp">
       <Filter>02. GameObject\08. Inventory\Item\MPBall</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Magic.cpp">
       <Filter>05. Magic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Item.cpp">
+      <Filter>02. GameObject\09. Item</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemFactory.cpp">
+      <Filter>02. GameObject\09. Item</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
