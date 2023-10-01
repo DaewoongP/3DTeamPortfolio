@@ -1610,6 +1610,7 @@ void CPlayer::Free()
 		Safe_Release(m_pPlayer_Information);
 		Safe_Release(m_UI_Group_Skill_01);
 		Safe_Release(m_pAccPotion);
+		Safe_Release(m_pCooltime);
 		
 		if (nullptr != m_pTargetTransform)
 		{

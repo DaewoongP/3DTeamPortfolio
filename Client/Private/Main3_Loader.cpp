@@ -264,11 +264,6 @@ HRESULT CMain3_Loader::Loading_For_Cliffside()
 			CPlayer_Information::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Player_Information");
 
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_CoolTime"),
-			CCoolTime::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_CoolTime");
-
-
 #pragma endregion
 
 
