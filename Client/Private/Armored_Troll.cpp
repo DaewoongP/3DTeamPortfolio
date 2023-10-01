@@ -1943,15 +1943,13 @@ void CArmored_Troll::Enter_Body_Attack()
 	m_CollisionRequestDesc.eType = ATTACK_HEAVY;
 	m_CollisionRequestDesc.iDamage = 0;
 	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
-	Set_CollisionData(&m_CollisionRequestDesc);
-	m_pRigidBody->Enable_Collision("Enemy_Body_Attack", this);
+	m_pRigidBody->Enable_Collision("Enemy_Body_Attack", this, &m_CollisionRequestDesc);
 }
 
 void CArmored_Troll::Exit_Attack()
 {
 	m_CollisionRequestDesc.eType = ATTACK_NONE;
 	m_CollisionRequestDesc.iDamage = 0;
-	Set_CollisionData(&m_CollisionRequestDesc);
 	m_pRigidBody->Disable_Collision("Enemy_Body_Attack");
 	m_pWeapon->Off_Collider_Attack(&m_CollisionRequestDesc);
 }

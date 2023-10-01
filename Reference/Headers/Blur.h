@@ -5,7 +5,6 @@
 BEGIN(Engine)
 class CShader;
 class CVIBuffer_Rect;
-class CRenderTarget_Manager;
 
 class CBlur final : public CComponent
 {
@@ -22,7 +21,6 @@ public:
 private:
 	CShader*				m_pShader = { nullptr };
 	CVIBuffer_Rect*			m_pBuffer = { nullptr };
-	CRenderTarget_Manager*	m_pRenderTarget_Manager = { nullptr };
 	_float4x4				m_WorldMatrix, m_ViewMatrix, m_ProjMatrix;
 
 private:

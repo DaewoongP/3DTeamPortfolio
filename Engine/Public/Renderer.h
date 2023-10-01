@@ -15,8 +15,7 @@ class ENGINE_DLL CRenderer final : public CGameObject
 {
 public:
 	enum RENDERGROUP {RENDER_PRIORITY, RENDER_DEPTH, RENDER_NONBLEND, RENDER_NONLIGHT, RENDER_BLEND,
-					  RENDER_BLUR,RENDER_BLOOM, RENDER_DISTORTION, RENDER_GLOW, RENDER_MOTIONBLUR,
-					  RENDER_PICKING, RENDER_BRUSHING, RENDER_UI, RENDER_UITEXTURE, RENDER_END };
+					  RENDER_BLOOM, RENDER_GLOW, RENDER_DISTORTION, RENDER_PICKING, RENDER_BRUSHING, RENDER_UI, RENDER_UITEXTURE, RENDER_END };
 
 private:
 	explicit CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -48,7 +47,7 @@ private:
 	HRESULT Render_NonLight();
 	HRESULT Render_Blend();
 	HRESULT Render_PostProcessing();
-	HRESULT Render_EffectType();
+	HRESULT Render_Effects();
 	HRESULT Render_UI();
 
 #ifdef _DEBUG
@@ -89,6 +88,7 @@ private:
 	_float4x4						m_WorldMatrix, m_ViewMatrix, m_ProjMatrix;
 
 	class CShader*					m_pDeferredShader = { nullptr };
+	class CShader*					m_pLightShader = { nullptr };
 	class CShader*					m_pPostProcessingShader = { nullptr };
 	class CShader*					m_pShadeTypeShader = { nullptr };
 	class CShader*					m_pSSAOShader = { nullptr };
@@ -98,12 +98,10 @@ private:
 	class CBlur*					m_pEffectBlur = { nullptr };
 	class CBloom*					m_pBloom = { nullptr };
 	class CShadow*					m_pShadow = { nullptr };
-	class CGlow*					m_pGlow = {nullptr};
+	class CGlow*					m_pGlow = { nullptr };
 	_float							m_fGlowPower = { 0.f };
-	class CDistortion*				m_pDistortion ={nullptr};
 	class CMotionBlurInstance*		m_pMotionBlurInstance = { nullptr };
 	class CMotionBlur*				m_pMotionBlur = { nullptr };
-	class CFlowMap*					m_pFlowMap = { nullptr };
 	class CDOF*						m_pDOF = { nullptr };
 
 public:

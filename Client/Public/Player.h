@@ -21,7 +21,7 @@ class CStateContext;
 class CPlayer_Information;
 class CUI_Group_Skill;
 class CMagicBall;
-class CRecoveryPotion;
+class CWiggenweldPotion;
 END
 
 BEGIN(Client)
@@ -69,7 +69,6 @@ private:
 	CPlayer_Information* m_pPlayer_Information = { nullptr };
 
 	CUI_Group_Skill* m_UI_Group_Skill_01 = { nullptr };
-	CRecoveryPotion* m_pRecoveryPotion = { nullptr };
 
 private:
 	//카메라룩과 플레이어룩의 차이 각을 담기위한 변수(음수일 경우 오른쪽, 양수일 경우 왼쪽)
@@ -101,6 +100,8 @@ private:
 	function< void(_float3, _float)> m_pFrncSpellToggle = { nullptr };
 
 	LEVELID m_eLevelID = { LEVEL_END };
+	
+	_float3		m_vLevelInitPosition[LEVEL_END];
 
 private:
 	HRESULT Add_Components();
