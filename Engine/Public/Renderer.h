@@ -98,7 +98,7 @@ private:
 	class CBlur*					m_pEffectBlur = { nullptr };
 	class CBloom*					m_pBloom = { nullptr };
 	class CShadow*					m_pShadow = { nullptr };
-	class CGlow*					m_pGlow = {nullptr};
+	class CGlow*					m_pGlow = { nullptr };
 	_float							m_fGlowPower = { 0.f };
 	class CMotionBlurInstance*		m_pMotionBlurInstance = { nullptr };
 	class CMotionBlur*				m_pMotionBlur = { nullptr };

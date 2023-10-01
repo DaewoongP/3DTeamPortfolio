@@ -65,10 +65,7 @@ HRESULT CRenderer::Initialize_Prototype()
 		TEXT("Target_SSAO"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
-		TEXT("Target_Distortion"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
-		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
-		TEXT("Target_FinBloom"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
+		TEXT("Target_Bloom"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
 
 #ifdef _DEBUG
@@ -96,9 +93,7 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_SSAO"), TEXT("Target_SSAO"))))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_FinBloom"), TEXT("Target_FinBloom"))))
-		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Distortion"), TEXT("Target_Distortion"))))
+	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Bloom"), TEXT("Target_Bloom"))))
 		return E_FAIL;
 
 #ifdef _DEBUG
@@ -127,6 +122,8 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Shadow_Depth"), 80.f, 240.f, 160.f, 160.f)))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_SSAO"), 80.f, 320.f, 160.f, 160.f)))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_PostProcessing"), 80.f, 400.f, 160.f, 160.f)))
 		return E_FAIL;
 #endif // _DEBUG
 
@@ -193,25 +190,19 @@ HRESULT CRenderer::Draw_RenderGroup()
 
 	// 전체적인 화면에 대한 처리
 
-
-#ifdef _DEBUG
-	if (FAILED(Render_Picking()))
-		return E_FAIL;
-	//if (FAILED(Render_Brushing()))
-	//	return E_FAIL;
-#endif // _DEBUG
-	
 	if (FAILED(Render_PostProcessing()))
 		return E_FAIL;
 	if (FAILED(Render_UI()))
 		return E_FAIL;
 
 #ifdef _DEBUG
+	if (FAILED(Render_Picking()))
+		return E_FAIL;
+	//if (FAILED(Render_Brushing()))
+	//	return E_FAIL;
 	if (FAILED(Render_UITexture()))
 		return E_FAIL;
-#endif // _DEBUG
 
-#ifdef _DEBUG
 	CFont_Manager* pFont_Manager = CFont_Manager::GetInstance();
 	Safe_AddRef(pFont_Manager);
 
@@ -504,8 +495,6 @@ HRESULT CRenderer::Render_PostProcessing()
 		return E_FAIL;
 	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_FinBloom"), m_pPostProcessingShader, "g_BloomTexture")))
-		return E_FAIL;
 
 	m_pPostProcessingShader->Begin("PostProcessing");
 
@@ -640,9 +629,6 @@ HRESULT CRenderer::Add_Components()
 	if (nullptr == m_pRectBuffer)
 		return E_FAIL;
 
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
-
 	m_pDeferredShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Deferred.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements);
 	if (nullptr == m_pDeferredShader)
 		return E_FAIL;
@@ -662,8 +648,10 @@ HRESULT CRenderer::Add_Components()
 	m_pShadow = CShadow::Create(m_pDevice, m_pContext, m_pRectBuffer);
 	if (nullptr == m_pShadow)
 		return E_FAIL;
-
-	Safe_Release(pGameInstance);
+	
+	m_pBloom = CBloom::Create(m_pDevice, m_pContext, m_pRectBuffer);
+	if (nullptr == m_pShadow)
+		return E_FAIL;
 
 	return S_OK;
 }
