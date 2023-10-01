@@ -4,6 +4,7 @@
 #include "Client_Defines.h"
 
 #include "StateContext.h"
+#include "Player.h"
 
 CMoveLoopState::CMoveLoopState(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
 	:CStateMachine(_pDevice, _pContext)
@@ -24,6 +25,13 @@ HRESULT CMoveLoopState::Initialize_Prototype()
 
 HRESULT CMoveLoopState::Initialize(void* pArg)
 {
+	if (FAILED(CStateMachine::Initialize(pArg)))
+	{
+		__debugbreak();
+
+		return E_FAIL;
+	}
+
 	BEGININSTANCE;
 
 	pGameInstance->Add_Timer(TEXT("Meter per Sconde"), true, 1.0f);
@@ -41,7 +49,7 @@ void CMoveLoopState::Tick(_float fTimeDelta)
 
 	if (pGameInstance->Check_Timer(TEXT("Meter per Sconde")))
 	{
-		//cout << m_pPlayerTransform->Get_Position().z << endl;
+		//cout << m_StateMachineDesc.pPlayerTransform->Get_Position().z << endl;
 	}
 
 	ENDINSTANCE;
@@ -54,7 +62,7 @@ void CMoveLoopState::Late_Tick(_float fTimeDelta)
 void CMoveLoopState::OnStateEnter(void* _pArg)
 {
 #ifdef _DEBUG
-	//cout << "Loop Enter" << endl;
+	cout << "Loop Enter" << endl;
 #endif // _DEBUG
 }
 
@@ -66,141 +74,118 @@ void CMoveLoopState::OnStateTick()
 
 	Go_Idle();
 
-	Go_Roll();
-
-	//Go_Jump();
-
 	Switch_MoveType();
 
-	if (true == *m_pIsFinishAnimation)
+	if (true == *m_StateMachineDesc.pisFinishAnimation)
 	{
-		switch (*m_pIMoveSwitch)
+		switch (*m_StateMachineDesc.piMoveType)
 		{
-		case CStateContext::MOVETYPE_JOGING:
+		case CPlayer::MOVETYPE_JOGING:
 		{
-			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_Jog_Loop_Fwd_anm"));
+			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_Jog_Loop_Fwd_anm"));
 		}
 		break;
 
-		case CStateContext::MOVETYPE_SPRINT:
+		case CPlayer::MOVETYPE_SPRINT:
 		{
-			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_Sprint_Loop_Fwd_anm"));
+			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_Sprint_Loop_Fwd_anm"));
 		}
 		break;
 		}
-		*m_pIsFinishAnimation = false;
+		*m_StateMachineDesc.pisFinishAnimation = false;
 	}
 
 	BEGININSTANCE;
 
-	//m_pPlayerTransform->Go_Straight(7.0f * pGameInstance->Get_World_Tick());
+	//m_StateMachineDesc.pPlayerTransform->Go_Straight(7.0f * pGameInstance->Get_World_Tick());
 
 	ENDINSTANCE;
 
-	Go_Magic_Cast();
-
-	Go_Protego();
 }
 
 void CMoveLoopState::OnStateExit()
 {
 #ifdef _DEBUG
-	//cout << "Loop Exit" << endl;
+	cout << "Loop Exit" << endl;
 #endif // _DEBUG
 }
 
 void CMoveLoopState::Bind_Notify()
 {
-	m_pOwnerModel->Bind_Notify(TEXT("Hu_BM_Sprint_Loop_Fwd_anm"), TEXT("End_Animation"), m_pFuncFinishAnimation);
-	m_pOwnerModel->Bind_Notify(TEXT("Hu_BM_Jog_Loop_Fwd_anm"), TEXT("End_Animation"), m_pFuncFinishAnimation);
-	m_pOwnerModel->Bind_Notify(TEXT("Hu_BM_Sprint2Jog_RU_anm"), TEXT("End_Animation"), m_pFuncFinishAnimation);
-	m_pOwnerModel->Bind_Notify(TEXT("Hu_BM_Jog2Sprint_RU_anm"), TEXT("End_Animation"), m_pFuncFinishAnimation);
+	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Hu_BM_Sprint_Loop_Fwd_anm"), TEXT("End_Animation"), m_StateMachineDesc.pfuncFinishAnimation);
+	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Hu_BM_Jog_Loop_Fwd_anm"), TEXT("End_Animation"), m_StateMachineDesc.pfuncFinishAnimation);
+	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Hu_BM_Sprint2Jog_RU_anm"), TEXT("End_Animation"), m_StateMachineDesc.pfuncFinishAnimation);
+	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Hu_BM_Jog2Sprint_RU_anm"), TEXT("End_Animation"), m_StateMachineDesc.pfuncFinishAnimation);
 }
 
 void CMoveLoopState::LookFront()
 {
-	_float fAngle = *m_pOwnerLookAngle;
+	_float fAngle = *m_StateMachineDesc.pOwnerLookAngle;
 
 	BEGININSTANCE;
 	
-	if (true == *m_pIsDirectionKeyPressed)
+	if (true == *m_StateMachineDesc.pisDirectionPressed)
 	{
 		//지속적으로 회전
-		m_pPlayerTransform->Turn(_float3(0.0f, 1.0f, 0.0f), fAngle * pGameInstance->Get_World_Tick() * (*m_pFRotationSpeed));
+		m_StateMachineDesc.pPlayerTransform->Turn(_float3(0.0f, 1.0f, 0.0f), fAngle * pGameInstance->Get_World_Tick() * (*m_StateMachineDesc.pfRotaionSpeed));
 	}
 
 	ENDINSTANCE;
 }
 
-void CMoveLoopState::Over_135()
-{
-	//135보다 크다면 오른쪽
-	if (m_f135Angle < (*m_pOwnerLookAngle))
-	{
-		//180도를 실행
-		m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Turn_Start_Rht_135_anm"));
-	}
-	//135보다 작다면 왼쪽
-	if (-m_f135Angle > (*m_pOwnerLookAngle))
-	{
-		//180도를 실행
-		m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Turn_Start_Lft_135_anm"));
-	}
-}
-
 void CMoveLoopState::Go_Idle()
 {
 	//방향키가 눌리지 않았을 경우
-	if (true != *m_pIsDirectionKeyPressed)
+	if (true != *m_StateMachineDesc.pisDirectionPressed)
 	{
-		switch (*m_pIActionSwitch)
+		switch (*m_StateMachineDesc.piActionType)
 		{
-		case CStateContext::ACTION_NONE:
+		case CPlayer::ACTION_NONE:
 		{
-			switch (*m_pIMoveSwitch)
+			switch (*m_StateMachineDesc.piMoveType)
 			{
-			case CStateContext::MOVETYPE_JOGING:
+			case CPlayer::MOVETYPE_JOGING:
 			{
-				m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_anm"));
+				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_anm"));
 			}
 			break;
-			case CStateContext::MOVETYPE_SPRINT:
+			case CPlayer::MOVETYPE_SPRINT:
 			{
-				m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Sprint_Stop_Fwd_anm"));
+				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Sprint_Stop_Fwd_anm"));
 			}
 			break;
 			}
 		}
 		break;
-		case CStateContext::ACTION_CASUAL:
+		case CPlayer::ACTION_CASUAL:
 		{
-			switch (*m_pIMoveSwitch)
+			switch (*m_StateMachineDesc.piMoveType)
 			{
-			case CStateContext::MOVETYPE_JOGING:
+			case CPlayer::MOVETYPE_JOGING:
 			{
-				m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_anm"));
+				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_anm"));
 			}
 			break;
-			case CStateContext::MOVETYPE_SPRINT:
+			case CPlayer::MOVETYPE_SPRINT:
 			{
-				m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Sprint_Stop_Fwd_anm"));
+				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Sprint_Stop_Fwd_anm"));
 			}
 			break;
 			}
 		}
 		break;
-		case CStateContext::ACTION_CMBT:
+		case CPlayer::ACTION_CMBT:
 		{
-			switch (*m_pIMoveSwitch)
+			switch (*m_StateMachineDesc.piMoveType)
 			{
-			case CStateContext::MOVETYPE_JOGING:
+			case CPlayer::MOVETYPE_JOGING:
 			{
-				m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_2Cmbt_anm"));
+				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_2Cmbt_anm"));
 			}
 			break;
-			case CStateContext::MOVETYPE_SPRINT:
+			case CPlayer::MOVETYPE_SPRINT:
 			{
-				m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Sprint_Stop_Fwd_Cmbt_anm"));
+				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Sprint_Stop_Fwd_Cmbt_anm"));
 			}
 			break;
 			}
@@ -215,30 +200,6 @@ void CMoveLoopState::Go_Idle()
 	}
 }
 
-void CMoveLoopState::Go_Roll()
-{
-	BEGININSTANCE;
-
-	if (pGameInstance->Get_DIKeyState(DIK_LCONTROL, CInput_Device::KEY_DOWN))
-	{
-		Set_StateMachine(TEXT("Roll"));
-	}
-
-	ENDINSTANCE;
-}
-
-void CMoveLoopState::Go_Jump()
-{
-	BEGININSTANCE;
-
-	if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
-	{
-		Set_StateMachine(TEXT("Jump"));
-	}
-
-	ENDINSTANCE;
-}
-
 void CMoveLoopState::Switch_MoveType()
 {
 	BEGININSTANCE;
@@ -246,44 +207,25 @@ void CMoveLoopState::Switch_MoveType()
 	//Sprint키
 	if (pGameInstance->Get_DIKeyState(DIK_LSHIFT, CInput_Device::KEY_DOWN))
 	{
-		switch (*m_pIMoveSwitch)
+		switch (*m_StateMachineDesc.piMoveType)
 		{
-		case CStateContext::MOVETYPE_WALK:
-		case CStateContext::MOVETYPE_JOGING:
+		case CPlayer::MOVETYPE_WALK:
+		case CPlayer::MOVETYPE_JOGING:
 		{
-			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_Jog2Sprint_RU_anm"));
+			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_Jog2Sprint_RU_anm"));
 			
-			*m_pIMoveSwitch = CStateContext::MOVETYPE_SPRINT;
+			*m_StateMachineDesc.piMoveType = CPlayer::MOVETYPE_SPRINT;
 		}
 		break;
 
-		case CStateContext::MOVETYPE_SPRINT:
+		case CPlayer::MOVETYPE_SPRINT:
 		{
-			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_Sprint2Jog_RU_anm"));
+			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_Sprint2Jog_RU_anm"));
 			
-			*m_pIMoveSwitch = CStateContext::MOVETYPE_JOGING;
+			*m_StateMachineDesc.piMoveType = CPlayer::MOVETYPE_JOGING;
 		}
 		break;
 		}
-	}
-
-	ENDINSTANCE;
-}
-
-void CMoveLoopState::Go_Magic_Cast()
-{
-	BEGININSTANCE;
-
-	if (pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN))
-	{
-		if (CStateContext::ACTION_NONE == *m_pIActionSwitch)
-		{
-			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_LF_Idle2Cmbt_RF_Wand_Equip_anm"));
-		}
-		//일단 전투로 보냄
-		//포착 기능 생기면 그때 캐주얼이랑 분기
-		*m_pIActionSwitch = CStateContext::ACTION_CMBT;
-		Set_StateMachine(TEXT("Magic_Cast"));
 	}
 
 	ENDINSTANCE;

@@ -40,10 +40,6 @@ HRESULT CPlayer::Initialize_Prototype()
 
 HRESULT CPlayer::Initialize(void* pArg)
 {
-	PLAYERDESC* pPlayerDesc = static_cast<PLAYERDESC*>(pArg);
-
-	m_eLevelID = pPlayerDesc->eLevelID;
-
 	if (FAILED(__super::Initialize(pArg)))
 	{
 		MSG_BOX("Failed Player Initialize");
@@ -57,8 +53,6 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 		return E_FAIL;
 	}
-
-	m_pTransform->Set_Position(pPlayerDesc->vPosition);
 
 	if (FAILED(Add_Magic()))
 	{
@@ -88,6 +82,13 @@ HRESULT CPlayer::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
+	if (FAILED(Ready_StateMachine()))
+	{
+		MSG_BOX("Failed Ready_StateMachine");
+
+		return E_FAIL;
+	}
+
 	m_pTransform->Set_Speed(1.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(180.f));
 	m_pTransform->Set_RigidBody(m_pRigidBody);
@@ -102,13 +103,84 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::THIRD, NCENDIO);
 	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::FOURTH, DIFFINDO);
 
-	
+	m_fRotationSpeed = 2.0f;
+
+	m_iMoveType = (_uint)MOVETYPE_NONE;
+
+	m_iActionType = (_uint)ACTION_NONE;
+
+	m_pCustomModel->Change_Animation(TEXT("Hu_BM_RF_Idle_anm"));
 
 	return S_OK;
 }
 
 HRESULT CPlayer::Initialize_Level(_uint iCurrentLevelIndex)
 {
+	m_eLevelID = (LEVELID)iCurrentLevelIndex;
+	
+	switch (iCurrentLevelIndex)
+	{
+	case Client::LEVEL_STATIC:
+	{
+	}
+		break;
+	case Client::LEVEL_LOGO:
+	{
+	}
+		break;
+	case Client::LEVEL_CLIFFSIDE:
+	{
+		m_pTransform->Set_Position(_float3(28.0f, 3.0f, 26.0f));
+	}
+		break;
+	case Client::LEVEL_VAULT:
+	{
+		m_pTransform->Set_Position(_float3(7.0f, 0.02f, 7.5f));
+	}
+		break;
+	case Client::LEVEL_GREATHALL:
+	{
+
+	}
+		break;
+	case Client::LEVEL_SMITH:
+	{
+
+	}
+		break;
+	case Client::LEVEL_MINIGAME:
+	{
+
+	}
+		break;
+	case Client::LEVEL_PVP:
+	{
+
+	}
+		break;
+	case Client::LEVEL_SKY:
+	{
+
+	}
+		break;
+	case Client::LEVEL_DRAGON:
+	{
+
+	}
+		break;
+	case Client::LEVEL_LOADING:
+	{
+
+	}
+		break;
+	case Client::LEVEL_END:
+	{
+
+	}
+		break;
+	default:
+		break;
+	}
 	m_pRigidBody->Set_Position(_float3(15.f, 20.f, 20.f));
 	return S_OK;
 }
@@ -136,11 +208,10 @@ void CPlayer::Tick(_float fTimeDelta)
 	UpdateLookAngle();
 
 
-	//m_pStateContext->Tick(fTimeDelta);
+	//m_pStateContext->Tick(fTimeDelta)
 
 	Update_Cloth(fTimeDelta);
 
-	Shot_Magic_Spell();
 	
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UNDERBODY);
@@ -152,6 +223,11 @@ void CPlayer::Tick(_float fTimeDelta)
 		m_pFrncSpellToggle(_float3(), _float());
 	}
 	
+
+	//cout << m_pTransform->Get_Position().x << endl;
+	//cout << m_pTransform->Get_Position().y << endl;
+	//cout << m_pTransform->Get_Position().z << endl;
+
 }
 
 void CPlayer::Late_Tick(_float fTimeDelta)
@@ -236,7 +312,7 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 
 			ProtegoStateDesc.pTransform = pDesc->pEnemyTransform;
 
-			m_pStateContext->Set_StateMachine(TEXT("Protego"), &ProtegoStateDesc);
+			Go_Protego(&ProtegoStateDesc);
 		}
 		//회피시 무시
 		else if (m_pStateContext->Is_Current_State(TEXT("Roll")))
@@ -260,7 +336,14 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			break;
 			case CEnemy::ATTACK_LIGHT:
 			{
-				HitStateDesc.iHitType = CHitState::HIT_LIGHT;
+				if (m_pStateContext->Is_Current_State(TEXT("Jump")))
+				{
+					HitStateDesc.iHitType = CHitState::HIT_HEABY;
+				}
+				else 
+				{
+					HitStateDesc.iHitType = CHitState::HIT_LIGHT;
+				}
 			}
 			break;
 			case CEnemy::ATTACK_HEAVY:
@@ -269,7 +352,9 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			}
 			break;
 			case CEnemy::ATTACKTYPE_END:
-			{	}
+			{
+			
+			}
 			break;
 
 			default:
@@ -278,7 +363,7 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 
 			HitStateDesc.pTransform = pDesc->pEnemyTransform;
 
-			m_pStateContext->Set_StateMachine(TEXT("Hit"), &HitStateDesc);
+			Go_Hit(&HitStateDesc);
 
 			//체력 수정
 			m_pPlayer_Information->fix_HP((pDesc->iDamage)*-1);
@@ -440,17 +525,9 @@ HRESULT CPlayer::Add_Components()
 		return E_FAIL;
 	}
 
-	CStateContext::STATECONTEXTDESC StateContextDesc{};
-
-	StateContextDesc.pOwnerModel = m_pCustomModel;
-	StateContextDesc.pOwnerLookAngle = &m_fLookAngle;
-	StateContextDesc.pIsDirectionPressed = &m_isDirectionKeyPressed;
-	StateContextDesc.pPlayerTransform = m_pTransform;
-	StateContextDesc.pTargetAngle = &m_fTargetAngle;
-
 	/* For.Com_StateContext */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_StateContext"),
-		TEXT("Com_StateContext"), reinterpret_cast<CComponent**>(&m_pStateContext), &StateContextDesc)))
+		TEXT("Com_StateContext"), reinterpret_cast<CComponent**>(&m_pStateContext))))
 	{
 		MSG_BOX("Failed CPlayer Add_Component : (Com_StateContext)");
 		__debugbreak();
@@ -672,12 +749,112 @@ void CPlayer::Key_Input(_float fTimeDelta)
 {
 	BEGININSTANCE;
 
+#pragma region 스테이트 변경 키 입력
+
+	if (pGameInstance->Get_DIKeyState(DIK_LCONTROL,CInput_Device::KEY_DOWN))
+	{
+		Go_Roll();
+	}
+
+
+	if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
+	{
+		Go_Jump();
+	}
+
+	if (true == m_isReadySpell)
+	{
+		CMagicCastingState::MAGICCASTINGSTATEDESC MagicCastingStateDesc = CMagicCastingState::MAGICCASTINGSTATEDESC();
+
+		MagicCastingStateDesc.pisReadySpell = &m_isReadySpell;
+
+		MagicCastingStateDesc.iSpellType = CMagicCastingState::SPELL_BASIC;
+
+		// 평타 : 타입과 레디 변수만 넘겨준다.
+		if (pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN))
+		{
+			Go_MagicCast(&MagicCastingStateDesc);
+		}
+			
+		MagicCastingStateDesc.iSpellType = CMagicCastingState::SPELL_NORMAL;
+		
+		//기본 스팰
+		if (pGameInstance->Get_DIKeyState(DIK_1, CInput_Device::KEY_DOWN))
+		{
+			MagicCastingStateDesc.pFuncSpell = [&] {(*this).Shot_Confringo(); };
+
+			Go_MagicCast(&MagicCastingStateDesc);
+		}
+		if (pGameInstance->Get_DIKeyState(DIK_2, CInput_Device::KEY_DOWN))
+		{
+			MagicCastingStateDesc.pFuncSpell = [&] {(*this).Shot_Levioso(); };
+
+			Go_MagicCast(&MagicCastingStateDesc);
+		}
+		if (pGameInstance->Get_DIKeyState(DIK_3, CInput_Device::KEY_DOWN))
+		{
+			MagicCastingStateDesc.pFuncSpell = [&] {(*this).Shot_NCENDIO(); };
+
+			Go_MagicCast(&MagicCastingStateDesc);
+		}
+		if (pGameInstance->Get_DIKeyState(DIK_4, CInput_Device::KEY_DOWN))
+		{
+			MagicCastingStateDesc.pFuncSpell = [&] {(*this).Shot_Finisher(); };
+
+			Go_MagicCast(&MagicCastingStateDesc);
+		}
+
+		if (pGameInstance->Get_DIKeyState(DIK_F, CInput_Device::KEY_DOWN))
+		{
+			MagicCastingStateDesc.pFuncSpell = [&] {(*this).Lumos(); };
+
+			Go_MagicCast(&MagicCastingStateDesc);
+		}
+
+		if (pGameInstance->Get_DIKeyState(DIK_X, CInput_Device::KEY_DOWN))
+		{
+			MagicCastingStateDesc.pFuncSpell = [&] {(*this).Shot_Finisher(); };
+
+			Go_MagicCast(&MagicCastingStateDesc);
+		}
+
+		MagicCastingStateDesc.iSpellType = CMagicCastingState::SPELL_FINISHER;
+
+		
+
+
+
+		if (pGameInstance->Get_DIKeyState(DIK_Q,CInput_Device::KEY_DOWN) && false == m_pStateContext->Is_Current_State(TEXT("Protego")))
+		{
+			Go_Protego(nullptr);
+		}
+
+		
+	}
+#pragma endregion
+
+	
+	
+	
+	
 	if (pGameInstance->Get_DIKeyState(DIK_GRAVE, CInput_Device::KEY_DOWN))
 	{
 		if (true == m_isFixMouse)
 			m_isFixMouse = false;
 		else
 			m_isFixMouse = true;
+	}
+
+	/*if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
+	{
+		m_pRigidBody->Add_Force(m_pTransform->Get_Up() * 10.f, PxForceMode::eIMPULSE);
+	}*/
+	
+	if (pGameInstance->Get_DIKeyState(DIK_L, CInput_Device::KEY_DOWN))
+	{
+		CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_Dust01"), m_pTransform->Get_Position());
+		CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_Dust02"), m_pTransform->Get_Position());
+		CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_RockChunksRough"), m_pTransform->Get_Position());
 	}
 
 #ifdef _DEBUG
@@ -703,18 +880,6 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		m_pTransform->Go_Right(fTimeDelta);
 	}
 #endif //_DEBUG
-
-	/*if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
-	{
-		m_pRigidBody->Add_Force(m_pTransform->Get_Up() * 10.f, PxForceMode::eIMPULSE);
-	}*/
-	
-	if (pGameInstance->Get_DIKeyState(DIK_L, CInput_Device::KEY_DOWN))
-	{
-		CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_Dust01"), m_pTransform->Get_Position());
-		CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_Dust02"), m_pTransform->Get_Position());
-		CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_RockChunksRough"), m_pTransform->Get_Position());
-	}
 
 	ENDINSTANCE;
 }
@@ -976,6 +1141,168 @@ void CPlayer::UpdateLookAngle()
 	ENDINSTANCE;
 }
 
+HRESULT CPlayer::Ready_StateMachine()
+{
+	//채워져 있다면 안되니까 E_Fail
+	if (true == m_StateMachineDesc.IsValid())
+	{
+		MSG_BOX("Failed Ready_StateMachine");
+		return E_FAIL;
+	}
+	
+	m_StateMachineDesc.pOwnerModel = m_pCustomModel;
+	m_StateMachineDesc.pPlayerTransform = m_pTransform;
+	m_StateMachineDesc.pfRotaionSpeed = &m_fRotationSpeed;
+	m_StateMachineDesc.pfTargetAngle = &m_fTargetAngle;
+	m_StateMachineDesc.pisDirectionPressed = &m_isDirectionKeyPressed;
+	
+	m_StateMachineDesc.pisFinishAnimation = &m_isFinishAnimation;
+	m_StateMachineDesc.piActionType = &m_iActionType;
+	m_StateMachineDesc.piMoveType = &m_iMoveType;
+	m_StateMachineDesc.pOwnerLookAngle = &m_fLookAngle;
+	m_StateMachineDesc.pfuncFinishAnimation = [&] { (*this).Finish_Animation(); };
+
+	Safe_AddRef(m_StateMachineDesc.pOwnerModel);
+	Safe_AddRef(m_StateMachineDesc.pPlayerTransform);
+
+
+	if (FAILED(m_pStateContext->Add_StateMachine(
+		LEVEL_STATIC, 
+		TEXT("Com_Player_Idle_State"), 
+		TEXT("Idle"), 
+		TEXT("Prototype_Component_State_Idle"), 
+		&m_StateMachineDesc)))
+	{
+		MSG_BOX("Failed Add Idle State");
+
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pStateContext->Add_StateMachine(
+		LEVEL_STATIC,
+		TEXT("Com_Player_Move_Turn_State"),
+		TEXT("Move Turn"),
+		TEXT("Prototype_Component_State_Move_Turn"),
+		&m_StateMachineDesc)))
+	{
+		MSG_BOX("Failed Add Move Turn State");
+
+		return E_FAIL;
+	}
+	
+	if (FAILED(m_pStateContext->Add_StateMachine(
+		LEVEL_STATIC,
+		TEXT("Com_Player_Move_Start_State"),
+		TEXT("Move Start"),
+		TEXT("Prototype_Component_State_Move_Start"),
+		&m_StateMachineDesc)))
+	{
+		MSG_BOX("Failed Add Move Start State");
+
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pStateContext->Add_StateMachine(
+		LEVEL_STATIC,
+		TEXT("Com_Player_Move_Loop_State"),
+		TEXT("Move Loop"),
+		TEXT("Prototype_Component_State_Move_Loop"),
+		&m_StateMachineDesc)))
+	{
+		MSG_BOX("Failed Add Move Loop State");
+
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pStateContext->Add_StateMachine(
+		LEVEL_STATIC,
+		TEXT("Com_Player_Roll_State"),
+		TEXT("Roll"),
+		TEXT("Prototype_Component_State_Roll"),
+		&m_StateMachineDesc)))
+	{
+		MSG_BOX("Failed Add Roll State");
+
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pStateContext->Add_StateMachine(
+		LEVEL_STATIC,
+		TEXT("Com_Player_Jump_State"),
+		TEXT("Jump"),
+		TEXT("Prototype_Component_State_Jump"),
+		&m_StateMachineDesc)))
+	{
+		MSG_BOX("Failed Add Jump State");
+
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pStateContext->Add_StateMachine(
+		LEVEL_STATIC,
+		TEXT("Com_Player_Hard_Land_State"),
+		TEXT("Hard Land"),
+		TEXT("Prototype_Component_State_Hard_Land"),
+		&m_StateMachineDesc)))
+	{
+		MSG_BOX("Failed Add Hard Land State");
+
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pStateContext->Add_StateMachine(
+		LEVEL_STATIC,
+		TEXT("Com_Player_Magic_Cast_State"),
+		TEXT("Magic_Cast"),
+		TEXT("Prototype_Component_State_Magic_Casting"),
+		&m_StateMachineDesc)))
+	{
+		MSG_BOX("Failed Add Magic_Cast State");
+
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pStateContext->Add_StateMachine(
+		LEVEL_STATIC,
+		TEXT("Com_Player_Protego_State"),
+		TEXT("Protego"),
+		TEXT("Prototype_Component_State_ProtegoState"),
+		&m_StateMachineDesc)))
+	{
+		MSG_BOX("Failed Add Protego State");
+
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pStateContext->Add_StateMachine(
+		LEVEL_STATIC,
+		TEXT("Com_Player_Hit_State"),
+		TEXT("Hit"),
+		TEXT("Prototype_Component_State_Hit"),
+		&m_StateMachineDesc)))
+	{
+		MSG_BOX("Failed Add Hit State");
+
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pStateContext->Add_StateMachine(
+		LEVEL_STATIC,
+		TEXT("Com_Player_Standing_State"),
+		TEXT("Standing"),
+		TEXT("Prototype_Component_State_Standing"),
+		&m_StateMachineDesc)))
+	{
+		MSG_BOX("Failed Add Standing State");
+
+		return E_FAIL;
+	}
+
+
+
+	m_pStateContext->Set_StateMachine(TEXT("Idle"));
+}
+
 void CPlayer::Update_Target_Angle()
 {
 	//나에서 타겟을 향한 벡터
@@ -1028,14 +1355,30 @@ void CPlayer::Shot_Basic_Spell()
 {
 	Find_Target_For_Distance();
 	m_pMagicSlot->Add_Magics(m_BasicDesc_Light);
-	m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(0, m_pTargetTransform, XMMatrixTranslation(0.f, 2.5f, 0.f), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
+	
+	_float4x4 OffSetMatrix = XMMatrixIdentity();
+
+	if (nullptr != m_pTarget)
+	{
+		OffSetMatrix = m_pTarget->Get_Offset_Matrix();
+	}
+	
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(0, m_pTargetTransform, OffSetMatrix, m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
 }
 
 void CPlayer::Shot_Basic_Last_Spell()
 {
 	Find_Target_For_Distance();
 	m_pMagicSlot->Add_Magics(m_BasicDesc_Heavy);
-	m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(0, m_pTargetTransform, XMMatrixTranslation(0.f, 2.5f, 0.f), m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
+
+	_float4x4 OffSetMatrix = XMMatrixIdentity();
+
+	if (nullptr != m_pTarget)
+	{
+		OffSetMatrix = m_pTarget->Get_Offset_Matrix();
+	}
+
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(0, m_pTargetTransform, OffSetMatrix, m_pWeapon->Get_Transform()->Get_WorldMatrixPtr(), m_pWeapon->Get_Wand_Point_OffsetMatrix(), COL_ENEMY);
 }
 
 void CPlayer::Protego()
@@ -1316,6 +1659,9 @@ void CPlayer::Find_Target_For_Distance()
 	if (nullptr == pLayer)
 	{
 		//MSG_BOX("not MonsterLayer");
+
+		ENDINSTANCE;
+
 		return;
 	}
 
@@ -1400,95 +1746,6 @@ void CPlayer::Find_Target_For_Distance()
 
 }
 
-void CPlayer::Shot_Magic_Spell()
-{
-	BEGININSTANCE;
-	//입력 되면 안되는 스테이트
-	if (pGameInstance->Get_DIKeyState(DIK_1, CInput_Device::KEY_DOWN) &&
-		false == m_pStateContext->Is_Current_State(TEXT("Standing")) &&
-		false == m_pStateContext->Is_Current_State(TEXT("Hit")) &&
-		false == m_pStateContext->Is_Current_State(TEXT("Protego")) &&
-		false == m_pStateContext->Is_Current_State(TEXT("Hard Land")) &&
-		false == m_pStateContext->Is_Current_State(TEXT("Jump")) &&
-		false == m_pStateContext->Is_Current_State(TEXT("Roll"))
-		)
-	{
-		Find_Target_For_Distance();
-		//마법 시전 스테이트
-		CMagicCastingState::MAGICCASTINGSTATEDESC MagicCastingStateDesc;
-
-		MagicCastingStateDesc.pFuncSpell = [&] { (*this).Shot_Confringo(); };
-
-		m_pStateContext->Set_StateMachine(TEXT("Magic_Cast"), &MagicCastingStateDesc);
-	}
-	else if (pGameInstance->Get_DIKeyState(DIK_2, CInput_Device::KEY_DOWN) &&
-		false == m_pStateContext->Is_Current_State(TEXT("Standing")) &&
-		false == m_pStateContext->Is_Current_State(TEXT("Hit")) &&
-		false == m_pStateContext->Is_Current_State(TEXT("Protego")) &&
-		false == m_pStateContext->Is_Current_State(TEXT("Hard Land")) &&
-		false == m_pStateContext->Is_Current_State(TEXT("Jump")) &&
-		false == m_pStateContext->Is_Current_State(TEXT("Roll")))
-	{
-		Find_Target_For_Distance();
-		//마법 시전 스테이트
-		CMagicCastingState::MAGICCASTINGSTATEDESC MagicCastingStateDesc;
-
-		MagicCastingStateDesc.pFuncSpell = [&] { (*this).Shot_Levioso(); };
-
-		m_pStateContext->Set_StateMachine(TEXT("Magic_Cast"), &MagicCastingStateDesc);
-	}
-	else if (pGameInstance->Get_DIKeyState(DIK_3, CInput_Device::KEY_DOWN) &&
-		false == m_pStateContext->Is_Current_State(TEXT("Standing")) &&
-		false == m_pStateContext->Is_Current_State(TEXT("Hit")) &&
-		false == m_pStateContext->Is_Current_State(TEXT("Protego")) &&
-		false == m_pStateContext->Is_Current_State(TEXT("Hard Land")) &&
-		false == m_pStateContext->Is_Current_State(TEXT("Jump")) &&
-		false == m_pStateContext->Is_Current_State(TEXT("Roll")))
-	{
-		Find_Target_For_Distance();
-		//마법 시전 스테이트
-		CMagicCastingState::MAGICCASTINGSTATEDESC MagicCastingStateDesc;
-
-		MagicCastingStateDesc.pFuncSpell = [&] { (*this).Shot_NCENDIO(); };
-
-		m_pStateContext->Set_StateMachine(TEXT("Magic_Cast"), &MagicCastingStateDesc);
-	}
-	else if (pGameInstance->Get_DIKeyState(DIK_4, CInput_Device::KEY_DOWN) &&
-		false == m_pStateContext->Is_Current_State(TEXT("Standing")) &&
-		false == m_pStateContext->Is_Current_State(TEXT("Hit")) &&
-		false == m_pStateContext->Is_Current_State(TEXT("Protego")) &&
-		false == m_pStateContext->Is_Current_State(TEXT("Hard Land")) &&
-		false == m_pStateContext->Is_Current_State(TEXT("Jump")) &&
-		false == m_pStateContext->Is_Current_State(TEXT("Roll")))
-	{
-		Find_Target_For_Distance();
-		//마법 시전 스테이트
-		CMagicCastingState::MAGICCASTINGSTATEDESC MagicCastingStateDesc;
-
-		MagicCastingStateDesc.pFuncSpell = [&] { (*this).Shot_Finisher(); };
-
-		m_pStateContext->Set_StateMachine(TEXT("Magic_Cast"), &MagicCastingStateDesc);
-	}
-	else if (pGameInstance->Get_DIKeyState(DIK_F, CInput_Device::KEY_DOWN) &&
-		false == m_pStateContext->Is_Current_State(TEXT("Standing")) &&
-		false == m_pStateContext->Is_Current_State(TEXT("Hit")) &&
-		false == m_pStateContext->Is_Current_State(TEXT("Protego")) &&
-		false == m_pStateContext->Is_Current_State(TEXT("Hard Land")) &&
-		false == m_pStateContext->Is_Current_State(TEXT("Jump")) &&
-		false == m_pStateContext->Is_Current_State(TEXT("Roll")))
-	{
-		Find_Target_For_Distance();
-		//마법 시전 스테이트
-		CMagicCastingState::MAGICCASTINGSTATEDESC MagicCastingStateDesc;
-
-		MagicCastingStateDesc.pFuncSpell = [&] { (*this).Lumos(); };
-
-		m_pStateContext->Set_StateMachine(TEXT("Magic_Cast"), &MagicCastingStateDesc);
-	}
-
-
-	ENDINSTANCE;
-}
 
 void CPlayer::Shot_Levioso()
 {
@@ -1560,6 +1817,91 @@ void CPlayer::Lumos()
 }
 
 
+
+void CPlayer::Finish_Animation()
+{
+	m_isFinishAnimation = true;
+}
+
+void CPlayer::Go_Roll()
+{
+	if (m_pStateContext->Is_Current_State(TEXT("Idle")) ||
+		m_pStateContext->Is_Current_State(TEXT("Move Turn")) ||
+		m_pStateContext->Is_Current_State(TEXT("Move Start")) ||
+		m_pStateContext->Is_Current_State(TEXT("Move Loop")) ||
+		m_pStateContext->Is_Current_State(TEXT("Magic_Cast")))
+	{
+		m_pStateContext->Set_StateMachine(TEXT("Roll"));
+	}
+}
+
+void CPlayer::Go_Jump()
+{
+	if (m_pStateContext->Is_Current_State(TEXT("Idle")) ||
+		m_pStateContext->Is_Current_State(TEXT("Move Turn")) ||
+		m_pStateContext->Is_Current_State(TEXT("Move Start")) ||
+		m_pStateContext->Is_Current_State(TEXT("Move Loop")) ||
+		m_pStateContext->Is_Current_State(TEXT("Magic_Cast")))
+	{
+		m_pStateContext->Set_StateMachine(TEXT("Jump"));
+	}
+}
+
+void CPlayer::Go_MagicCast(void* _pArg)
+{
+	if (m_pStateContext->Is_Current_State(TEXT("Idle")) ||
+		m_pStateContext->Is_Current_State(TEXT("Move Turn")) ||
+		m_pStateContext->Is_Current_State(TEXT("Move Start")) ||
+		m_pStateContext->Is_Current_State(TEXT("Move Loop")) ||
+		m_pStateContext->Is_Current_State(TEXT("Magic_Cast")))
+	{
+		m_pStateContext->Set_StateMachine(TEXT("Magic_Cast"), _pArg);
+	}
+}
+
+void CPlayer::Go_Switch_Start()
+{
+	if (m_pStateContext->Is_Current_State(TEXT("Move Turn")) ||
+		m_pStateContext->Is_Current_State(TEXT("Move Start")))
+	{
+		m_pStateContext->Set_StateMachine(TEXT("Move Start"));
+	}
+}
+
+void CPlayer::Go_Switch_Loop()
+{
+	if (m_pStateContext->Is_Current_State(TEXT("Move Loop")))
+	{
+		m_pStateContext->Set_StateMachine(TEXT("Move Loop"));
+	}
+}
+
+void CPlayer::Go_Protego(void* _pArg)
+{
+	if (m_pStateContext->Is_Current_State(TEXT("Idle")) ||
+		m_pStateContext->Is_Current_State(TEXT("Move Turn")) ||
+		m_pStateContext->Is_Current_State(TEXT("Move Start")) ||
+		m_pStateContext->Is_Current_State(TEXT("Move Loop")) ||
+		m_pStateContext->Is_Current_State(TEXT("Magic_Cast")) ||
+		m_pStateContext->Is_Current_State(TEXT("Protego")))
+	{
+		m_pStateContext->Set_StateMachine(TEXT("Protego"),_pArg);
+	}
+}
+
+void CPlayer::Go_Hit(void* _pArg)
+{
+	if (m_pStateContext->Is_Current_State(TEXT("Idle")) ||
+		m_pStateContext->Is_Current_State(TEXT("Move Turn")) ||
+		m_pStateContext->Is_Current_State(TEXT("Move Start")) ||
+		m_pStateContext->Is_Current_State(TEXT("Move Loop")) ||
+		m_pStateContext->Is_Current_State(TEXT("Magic_Cast")) ||
+		m_pStateContext->Is_Current_State(TEXT("Standing")) ||
+		m_pStateContext->Is_Current_State(TEXT("Jump")))
+	{
+		m_pStateContext->Set_StateMachine(TEXT("Hit"), _pArg);
+	}
+}
 
 CPlayer* CPlayer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {

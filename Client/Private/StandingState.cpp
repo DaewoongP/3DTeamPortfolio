@@ -22,6 +22,13 @@ HRESULT CStandingState::Initialize_Prototype()
 
 HRESULT CStandingState::Initialize(void* pArg)
 {
+	if (FAILED(CStateMachine::Initialize(pArg)))
+	{
+		__debugbreak();
+
+		return E_FAIL;
+	}
+
 	return S_OK;
 }
 
@@ -37,10 +44,10 @@ void CStandingState::Late_Tick(_float fTimeDelta)
 void CStandingState::OnStateEnter(void* _pArg)
 {
 #ifdef _DEBUG
-	//cout << "Hard Land Enter" << endl;
+	cout << "Standing Enter" << endl;
 #endif // _DEBUG
 
-	* m_pIsFinishAnimation = false;
+	*m_StateMachineDesc.pisFinishAnimation = false;
 }
 
 void CStandingState::OnStateTick()
@@ -52,16 +59,16 @@ void CStandingState::OnStateTick()
 void CStandingState::OnStateExit()
 {
 #ifdef _DEBUG
-	//cout << "Hard Land Exit" << endl;
+	cout << "Standing Exit" << endl;
 #endif // _DEBUG
-	* m_pIsFinishAnimation = false;
+	* m_StateMachineDesc.pisFinishAnimation = false;
 }
 
 void CStandingState::Go_Idle()
 {
-	if (true == *m_pIsFinishAnimation)
+	if (true == *m_StateMachineDesc.pisFinishAnimation)
 	{
-		*m_pIsFinishAnimation = false;
+		*m_StateMachineDesc.pisFinishAnimation = false;
 		Set_StateMachine(TEXT("Idle"));
 	}
 }

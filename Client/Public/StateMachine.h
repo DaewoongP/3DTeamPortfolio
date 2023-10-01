@@ -13,8 +13,42 @@ BEGIN(Client)
 class CStateMachine :
     public CComposite
 {
-    //컴포넌트니까 전부 오너를 가질 수 있다.
-    //오너의 모델을 가지고 있다가 변경한다.
+public:
+    typedef struct tagStateMachineDesc
+    {
+        //애니메이션 끝난것을 확인
+        _bool* pisFinishAnimation = { nullptr };//공//
+        CModel* pOwnerModel = { nullptr };//플//
+        _float* pOwnerLookAngle = { nullptr };//플//
+        _bool* pisDirectionPressed = { nullptr };//플//
+        CTransform* pPlayerTransform = { nullptr };//플//
+        _float* pfTargetAngle = { nullptr };//플//
+        //달리기와 전력질주 구분용
+        _uint* piMoveType = { nullptr };//공//
+        //액션 구분용
+        _uint* piActionType= { nullptr };//공//
+        //회전 배율
+        _float* pfRotaionSpeed = { nullptr };//공
+        function<void()> pfuncFinishAnimation = { nullptr };//플      
+
+        //값이 비어 있는게 있다면 false 전부 채워져 있다면 true
+        _bool IsValid()
+        {
+            //비어 있다면 채워줘라
+            if (nullptr == pisFinishAnimation) { return false; }
+            if (nullptr == pOwnerModel) { return false; }
+            if (nullptr == pOwnerLookAngle) { return false; }
+            if (nullptr == pisDirectionPressed) { return false; }
+            if (nullptr == pPlayerTransform) { return false; }
+            if (nullptr == pfTargetAngle) { return false; }
+            if (nullptr == piMoveType) { return false; }
+            if (nullptr == piActionType) { return false; }
+            if (nullptr == pfRotaionSpeed) { return false; }
+            if (nullptr == pfuncFinishAnimation) { return false; }
+
+            return true;
+        };
+    }STATEMACHINEDESC;
 
 protected:
     explicit CStateMachine(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext);
@@ -24,45 +58,24 @@ protected:
 public:
     HRESULT Set_StateMachine(const _tchar* _pTag);
 public:
-    void Set_OwnerModel(CModel* _pOwnerModel);
-    void Set_OwnerLookAngle(_float* _pOwnerLookAngle);
-    void Set_IsDirectionKeyPressed(_bool* _pIsDirectionKeyPressed);
-    void Set_PlayerTransform(CTransform* _pPlayerTransform);
-    void Set_MoveSwitch(_uint* _pIMoveSwitch) { m_pIMoveSwitch = _pIMoveSwitch; }
-    void Set_ActionSwitch(_uint* _pIActionSwitch) { m_pIActionSwitch = _pIActionSwitch; }
-    void Set_IsFnishAnimation(_bool* _pIsFinishAnimation) { m_pIsFinishAnimation = _pIsFinishAnimation; }
-    void Set_FuncFinishAnimation(function<void()>& _funcFinishAnimation) { m_pFuncFinishAnimation = _funcFinishAnimation; }
-    void Set_RotationSpeed(_float* _pFRotationSpeed) { m_pFRotationSpeed = _pFRotationSpeed; }
-    void Set_TarGetAngle(_float* _pFTargetAngle) { m_pFTargetAngle = _pFTargetAngle; }
-
+    HRESULT Set_StateMachineDesc(STATEMACHINEDESC* _pStateMachineDesc);
 public:
-    virtual void OnStateEnter(void * _pArg = nullptr) {};
+    virtual HRESULT Initialize(void* pArg);
+    virtual void OnStateEnter(void * _pArg = nullptr);
     virtual void OnStateTick()  {};
     virtual void OnStateExit()  {};
 
     virtual void Bind_Notify()  {};
 
 protected:
-    CModel* m_pOwnerModel = { nullptr };
-    _float* m_pOwnerLookAngle = { nullptr };
-    _bool* m_pIsDirectionKeyPressed = { nullptr };
-    CTransform* m_pPlayerTransform = { nullptr };
-    _float* m_pFTargetAngle = { nullptr };
-    
+    //플레이어에 선언된 구조체를 가지고 오기만 한다.
+    STATEMACHINEDESC m_StateMachineDesc = { STATEMACHINEDESC() };
+
     _float m_f45Angle = { XMConvertToRadians(45.0f) };
     _float m_f135Angle = { XMConvertToRadians(135.0f) };
     
-    _uint* m_pIMoveSwitch = { nullptr };
-    _uint* m_pIActionSwitch = { nullptr };
-
-    _bool* m_pIsFinishAnimation = { nullptr };
-    function<void()> m_pFuncFinishAnimation = { nullptr };
-
-    _float* m_pFRotationSpeed = { nullptr };
 
 protected:
-    void Go_Protego();
-    void Go_Hit();
 
 public:
     static CStateMachine* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

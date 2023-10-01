@@ -218,11 +218,7 @@ HRESULT CLevel_Cliffside::Ready_Layer_Player(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	CPlayer::PLAYERDESC PlayerDesc;
-	PlayerDesc.vPosition = _float3();
-	PlayerDesc.eLevelID = LEVEL_CLIFFSIDE;
-
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Player"), pLayerTag, TEXT("GameObject_Player"),&PlayerDesc)))
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Player"), pLayerTag, TEXT("GameObject_Player"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Player)");
 		ENDINSTANCE;
