@@ -52,6 +52,14 @@ HRESULT CArmored_Troll::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
+	return S_OK;
+}
+
+HRESULT CArmored_Troll::Initialize_Level(_uint iCurrentLevelIndex)
+{
+	if (FAILED(Add_Components_Level(iCurrentLevelIndex)))
+		return E_FAIL;
+
 	if (FAILED(Make_AI()))
 		return E_FAIL;
 
@@ -118,7 +126,7 @@ void CArmored_Troll::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 HRESULT CArmored_Troll::Render()
 {
 #ifdef _DEBUG
-	Tick_ImGui();
+	//Tick_ImGui();
 #endif // _DEBUG
 
 	if (FAILED(SetUp_ShaderResources()))
@@ -357,11 +365,6 @@ HRESULT CArmored_Troll::Add_Components()
 		if (FAILED(__super::Add_Components()))
 			throw TEXT("Failed Enemy Add_Components");
 
-		/* For.Com_Model */
-		if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_Model_Armored_Troll"),
-			TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
-			throw TEXT("Com_Model");
-
 		/* For.Com_Health */
 		CHealth::HEALTHDESC HealthDesc;
 		HealthDesc.iMaxHP = 500;
@@ -402,21 +405,6 @@ HRESULT CArmored_Troll::Add_Components()
 		if (FAILED(m_pRigidBody->Create_Collider(&RigidBodyDesc)))
 			throw TEXT("Failed Create_Collider");
 
-		/* For.Com_Weapon */
-		const CBone* pBone = m_pModelCom->Get_Bone(TEXT("SKT_RightHand"));
-		if (nullptr == pBone)
-			throw TEXT("pBone is nullptr");
-
-		CWeapon_Armored_Troll::PARENTMATRIXDESC ParentMatrixDesc;
-		ParentMatrixDesc.OffsetMatrix = _float4x4();
-		ParentMatrixDesc.PivotMatrix = m_pModelCom->Get_PivotFloat4x4();
-		ParentMatrixDesc.pCombindTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
-		ParentMatrixDesc.pParentWorldMatrix = m_pTransform->Get_WorldMatrixPtr();
-
-		if (FAILED(Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_Weapon_Armored_Troll"),
-			TEXT("Com_Weapon"), reinterpret_cast<CComponent**>(&m_pWeapon), &ParentMatrixDesc)))
-			throw TEXT("Com_Weapon");
-
 		// UI
 		CUI_Group_Enemy_HP::ENEMYHPDESC  Desc;
 
@@ -444,6 +432,43 @@ HRESULT CArmored_Troll::Add_Components()
 	return S_OK;
 }
 
+HRESULT CArmored_Troll::Add_Components_Level(_uint iCurrentLevelIndex)
+{
+	try
+	{
+		/* For.Com_Model */
+		if (FAILED(CComposite::Add_Component(iCurrentLevelIndex, TEXT("Prototype_Component_Model_Armored_Troll"),
+			TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
+			throw TEXT("Com_Model");
+
+		/* For.Com_Weapon */
+		const CBone* pBone = m_pModelCom->Get_Bone(TEXT("SKT_RightHand"));
+		if (nullptr == pBone)
+			throw TEXT("pBone is nullptr");
+
+		CWeapon_Armored_Troll::PARENTMATRIXDESC ParentMatrixDesc;
+		ParentMatrixDesc.OffsetMatrix = _float4x4();
+		ParentMatrixDesc.PivotMatrix = m_pModelCom->Get_PivotFloat4x4();
+		ParentMatrixDesc.pCombindTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
+		ParentMatrixDesc.pParentWorldMatrix = m_pTransform->Get_WorldMatrixPtr();
+
+		if (FAILED(Add_Component(iCurrentLevelIndex, TEXT("Prototype_Component_Weapon_Armored_Troll"),
+			TEXT("Com_Weapon"), reinterpret_cast<CComponent**>(&m_pWeapon), &ParentMatrixDesc)))
+			throw TEXT("Com_Weapon");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed Add_Components_Level : ");
+		wstrErrorMSG += pErrorTag;
+		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+		__debugbreak();
+
+		return E_FAIL;
+	}
+	
+	return S_OK;
+}
+
 HRESULT CArmored_Troll::SetUp_ShaderResources()
 {
 	return __super::SetUp_ShaderResources();
@@ -460,7 +485,7 @@ void CArmored_Troll::Tick_ImGui()
 	ClientToScreen(g_hWnd, &rightBottom);
 	int Left = leftTop.x;
 	int Top = rightBottom.y;
-	ImVec2 vWinpos = { _float(Left + 1280.f), _float(Top) };
+	ImVec2 vWinpos = { _float(Left + 1280.f), _float(Top - 300.f) };
 	ImGui::SetNextWindowPos(vWinpos);
 
 	ImGui::Begin("Test Troll");

@@ -57,7 +57,7 @@ void CForest_Troll::Late_Tick(_float fTimeDelta)
 HRESULT CForest_Troll::Render()
 {
 #ifdef _DEBUG
-	Tick_ImGui();
+	//Tick_ImGui();
 #endif // _DEBUG
 
 	if (FAILED(__super::Render()))
@@ -193,12 +193,6 @@ HRESULT CForest_Troll::SetUp_ShaderResources()
 #ifdef _DEBUG
 void CForest_Troll::Tick_ImGui()
 {
-	ImGui::Begin("Test Troll");
-
-	if (ImGui::InputInt("animIndex##Forest", &m_iIndex))
-		m_pModelCom->Change_Animation(m_iIndex);
-
-	ImGui::End();
 }
 #endif // _DEBUG
 

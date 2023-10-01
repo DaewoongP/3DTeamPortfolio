@@ -163,9 +163,6 @@ void CPlayer::Tick(_float fTimeDelta)
 		m_pFrncSpellToggle(_float3(), _float());
 	}
 	m_pCooltime->Tick(fTimeDelta);
-
-
-	
 }
 
 void CPlayer::Late_Tick(_float fTimeDelta)
@@ -192,6 +189,9 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	{
 		if (true == m_pTarget->isDead())
 		{
+			Safe_Release(m_pTargetTransform);
+			Safe_Release(m_pTarget);
+			m_pTargetTransform = nullptr;
 			m_pTarget = nullptr;
 			return;
 		}
@@ -608,7 +608,7 @@ HRESULT CPlayer::Add_Magic()
 
 	// 콘프링고
 	{
-		magicInitDesc.eBuffType = BUFF_FIRE;
+		magicInitDesc.eBuffType = BUFF_CONFRINGO;
 		magicInitDesc.eMagicGroup = CMagic::MG_DAMAGE;
 		magicInitDesc.eMagicType = CMagic::MT_RED;
 		magicInitDesc.eMagicTag = CONFRINGO;
@@ -632,7 +632,7 @@ HRESULT CPlayer::Add_Magic()
 	
 	// 인센디오
 	{
-		magicInitDesc.eBuffType = BUFF_FIRE;
+		magicInitDesc.eBuffType = BUFF_NCENDIO;
 		magicInitDesc.eMagicGroup = CMagic::MG_DAMAGE;
 		magicInitDesc.eMagicType = CMagic::MT_RED;
 		magicInitDesc.eMagicTag = NCENDIO;

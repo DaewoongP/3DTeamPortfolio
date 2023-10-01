@@ -28,6 +28,7 @@ private:
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
+	virtual HRESULT Initialize_Level(_uint iCurrentLevelIndex) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual void OnCollisionEnter(COLLEVENTDESC CollisionEventDesc) override;
@@ -41,6 +42,7 @@ private:
 	virtual HRESULT Make_AI() override;
 	virtual HRESULT Make_Notifies() override;
 	virtual HRESULT Add_Components() override;
+	virtual HRESULT Add_Components_Level(_uint iCurrentLevelIndex) override;
 	virtual HRESULT SetUp_ShaderResources() override;
 
 #ifdef _DEBUG

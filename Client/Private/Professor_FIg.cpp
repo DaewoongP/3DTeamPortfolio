@@ -109,7 +109,7 @@ void CProfessor_Fig::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 
 	if (wstring::npos != wstrMyCollisionTag.find(TEXT("Range")))
 	{
-		if (false == IsMonster(wstrObjectTag))
+		if (false == IsEnemy(wstrObjectTag))
 			return;
 
 		if (CollisionEventDesc.pOtherOwner->isDead())
@@ -128,7 +128,7 @@ void CProfessor_Fig::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 
 	if (wstring::npos != wstrMyCollisionTag.find(TEXT("Range")))
 	{
-		if (false == IsMonster(wstrObjectTag))
+		if (false == IsEnemy(wstrObjectTag))
 			return;
 
 		Remove_GameObject(wstrObjectTag);
@@ -138,7 +138,7 @@ void CProfessor_Fig::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 HRESULT CProfessor_Fig::Render()
 {
 #ifdef _DEBUG
-	Tick_ImGui();
+	//Tick_ImGui();
 #endif // _DEBUG
 
 	if (FAILED(SetUp_ShaderResources()))
@@ -555,7 +555,7 @@ HRESULT CProfessor_Fig::Remove_GameObject(const wstring& wstrObjectTag)
 	return S_OK;
 }
 
-_bool CProfessor_Fig::IsMonster(const wstring& wstrObjectTag)
+_bool CProfessor_Fig::IsEnemy(const wstring& wstrObjectTag)
 {
 	/* °ñ·½ÀÎ °æ¿ì */
 	if (wstring::npos != wstrObjectTag.find(TEXT("Golem")))
@@ -987,9 +987,7 @@ void CProfessor_Fig::Attack_Light()
 	if (nullptr != m_pTarget)
 		OffsetMatrix = m_pTarget->Get_Offset_Matrix();
 
-	m_CastingMagic = m_pMagicSlot->Action_Magic_Basic(0, m_pTarget,
-		m_pWeapon,
-		COL_ENEMY);
+	m_CastingMagic = m_pMagicSlot->Action_Magic_Basic(0, m_pTarget, m_pWeapon, COL_ENEMY);
 }
 
 void CProfessor_Fig::Attack_Heavy()
@@ -1004,9 +1002,7 @@ void CProfessor_Fig::Attack_Heavy()
 	if (nullptr != m_pTarget)
 		OffsetMatrix = m_pTarget->Get_Offset_Matrix();
 
-	m_CastingMagic = m_pMagicSlot->Action_Magic_Basic(0, m_pTarget,
-		m_pWeapon,
-		COL_ENEMY);
+	m_CastingMagic = m_pMagicSlot->Action_Magic_Basic(0, m_pTarget, m_pWeapon, COL_ENEMY);
 }
 
 void CProfessor_Fig::Cast_Levioso()
@@ -1018,9 +1014,7 @@ void CProfessor_Fig::Cast_Levioso()
 	if (nullptr != m_pTarget)
 		OffsetMatrix = m_pTarget->Get_Offset_Matrix();
 
-	m_CastingMagic = m_pMagicSlot->Action_Magic_Skill(0, m_pTarget,
-		m_pWeapon,
-		COL_ENEMY);
+	m_CastingMagic = m_pMagicSlot->Action_Magic_Skill(0, m_pTarget, m_pWeapon, COL_ENEMY);
 }
 
 void CProfessor_Fig::Cast_Protego()
@@ -1028,9 +1022,7 @@ void CProfessor_Fig::Cast_Protego()
 	if (nullptr == m_pTarget)
 		return;
 
-	m_CastingMagic = m_pMagicSlot->Action_Magic_Basic(1, m_pTarget,
-		m_pWeapon,
-		COL_ENEMY);
+	m_CastingMagic = m_pMagicSlot->Action_Magic_Basic(1, this, m_pWeapon, COL_ENEMY);
 }
 
 void CProfessor_Fig::Shot_Magic()
@@ -1077,8 +1069,5 @@ void CProfessor_Fig::Free()
 		Safe_Release(m_pRigidBody);
 		Safe_Release(m_pMagicSlot);
 		Safe_Release(m_pRootBehavior);
-
-		/*for (auto& Pair : m_RangeInEnemies)
-			Safe_Release(Pair.second);*/
 	}
 }

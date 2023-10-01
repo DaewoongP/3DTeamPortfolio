@@ -43,6 +43,14 @@ HRESULT CDugbog::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
+	return S_OK;
+}
+
+HRESULT CDugbog::Initialize_Level(_uint iCurrentLevelIndex)
+{
+	if (FAILED(Add_Components_Level(iCurrentLevelIndex)))
+		return E_FAIL;
+
 	if (FAILED(Make_AI()))
 		return E_FAIL;
 
@@ -98,7 +106,6 @@ void CDugbog::Late_Tick(_float fTimeDelta)
 void CDugbog::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
-	wstring wstrCollisionTag = CollisionEventDesc.pOtherCollisionTag;
 	wstring wstrMyCollisionTag = CollisionEventDesc.pThisCollisionTag;
 
 	/* Collision Magic */
@@ -112,16 +119,16 @@ void CDugbog::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		m_pHealth->Damaged(iDamage);
 
 		auto iter = m_CurrentTickSpells.find(eBuff);
-		if (iter == m_CurrentTickSpells.end() && BUFF_LEVIOSO == eBuff)
+		if (iter == m_CurrentTickSpells.end() && 
+			true == IsDebuff(eBuff))
 		{
-			if (BUFF_LEVIOSO == eBuff &&
-				true == m_isAbleLevioso)
+			if (BUFF_LEVIOSO == eBuff && true == m_isAbleLevioso)
 				eBuff = BUFF_LEVIOSO_TONGUE;
 
 			m_CurrentTickSpells.emplace(eBuff, Action);
 		}
 
-		if (eBuff & m_iCurrentSpell)
+		if (true == isCombo(eBuff))
 			m_isHitCombo = true;
 
 		if (eBuff & BUFF_ATTACK_LIGHT)
@@ -133,35 +140,32 @@ void CDugbog::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 	/* Collision Player Fig */
 	if (wstring::npos != wstrMyCollisionTag.find(TEXT("Range")))
 	{
-		if (wstring::npos != wstrObjectTag.find(TEXT("Player")) ||
-			wstring::npos != wstrObjectTag.find(TEXT("Fig")))
-		{
-			m_isSpawn = true;
-			m_RangeInEnemies.push_back({ wstrObjectTag, CollisionEventDesc.pOtherOwner });
-		}
+		if (false == IsEnemy(wstrObjectTag))
+			return;
+
+		m_isSpawn = true;
+		m_RangeInEnemies.push_back({ wstrObjectTag, CollisionEventDesc.pOtherOwner });
 	}
 }
 
 void CDugbog::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 {
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
-	wstring wstrCollisionTag = CollisionEventDesc.pOtherCollisionTag;
 	wstring wstrMyCollisionTag = CollisionEventDesc.pThisCollisionTag;
 
 	if (wstring::npos != wstrMyCollisionTag.find(TEXT("Range")))
 	{
-		if (wstring::npos != wstrObjectTag.find(TEXT("Player")) ||
-			wstring::npos != wstrObjectTag.find(TEXT("Fig")))
-		{
-			Remove_GameObject(wstrObjectTag);
-		}
+		if (false == IsEnemy(wstrObjectTag))
+			return;
+
+		Remove_GameObject(wstrObjectTag);
 	}
 }
 
 HRESULT CDugbog::Render()
 {
 #ifdef _DEBUG
-	Tick_ImGui();
+	//Tick_ImGui();
 #endif // _DEBUG
 
 	if (FAILED(SetUp_ShaderResources()))
@@ -184,7 +188,7 @@ HRESULT CDugbog::Make_AI()
 	{
 		if (FAILED(__super::Make_AI()))
 			throw TEXT("Failed Enemy Make_AI");
-		if(FAILED(m_pRootBehavior->Add_Type("isAbleLevioso", m_isAbleLevioso)))
+		if (FAILED(m_pRootBehavior->Add_Type("isAbleLevioso", m_isAbleLevioso)))
 			throw TEXT("Failed Add_Type isAbleLevioso");
 
 		/* Make Child Behaviors */
@@ -276,6 +280,8 @@ HRESULT CDugbog::Make_Notifies()
 		return E_FAIL;
 	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Air_Hit_Front_3"), TEXT("On_Gravity"), Func)))
 		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Knockback"), TEXT("On_Gravity"), Func)))
+		return E_FAIL;
 
 	Func = [&] {(*this).Off_Gravity(); };
 	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Air_Hit_Front_1"), TEXT("Off_Gravity"), Func)))
@@ -294,11 +300,6 @@ HRESULT CDugbog::Add_Components()
 	{
 		if (FAILED(__super::Add_Components()))
 			throw TEXT("Failed Enemy Add_Components");
-
-		/* For.Com_Model */
-		if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_Model_Dugbog"),
-			TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
-			throw TEXT("Com_Model");
 
 		/* For.Com_Health */
 		CHealth::HEALTHDESC HealthDesc;
@@ -368,7 +369,24 @@ HRESULT CDugbog::Add_Components()
 	{
 		wstring wstrErrorMSG = TEXT("[CDugbog] Failed Add_Components : ");
 		wstrErrorMSG += pErrorTag;
-		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
+
+		return E_FAIL;
+	}
+
+	return S_OK;
+}
+
+HRESULT CDugbog::Add_Components_Level(_uint iCurrentLevelIndex)
+{
+	/* For.Com_Model */
+	if (FAILED(CComposite::Add_Component(iCurrentLevelIndex, TEXT("Prototype_Component_Model_Dugbog"),
+		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
+	{
+		wstring wstrErrorMSG = TEXT("[CDugbog] Failed Add_Components_Level : ");
+		wstrErrorMSG += TEXT("Com_Model");
+		MSG_BOX(wstrErrorMSG.c_str());
 		__debugbreak();
 
 		return E_FAIL;
@@ -393,7 +411,7 @@ void CDugbog::Tick_ImGui()
 	ClientToScreen(g_hWnd, &rightBottom);
 	int Left = leftTop.x;
 	int Top = rightBottom.y;
-	ImVec2 vWinpos = { _float(Left + 1280.f), _float(Top - 600.f) };
+	ImVec2 vWinpos = { _float(Left + 1280.f), _float(Top - 300.f) };
 	ImGui::SetNextWindowPos(vWinpos);
 
 	ImGui::Begin("Dugbog");
@@ -636,7 +654,7 @@ HRESULT CDugbog::Make_Alive(_Inout_ CSelector* pSelector)
 				CHealth* pHealth = { nullptr };
 				if (FAILED(pBlackBoard->Get_Type("pHealth", pHealth)))
 					return false;
-				
+
 				return !(pHealth->isDead());
 			});
 		pRandom_Attacks->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
@@ -791,7 +809,7 @@ HRESULT CDugbog::Make_Check_Spell(_Inout_ CSelector* pSelector)
 			});
 
 		/* Set_Options */
-		
+
 		/* Levioso */
 		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Levitate"), pSequence_Levitate)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Levitate");
@@ -960,7 +978,7 @@ HRESULT CDugbog::Make_Tongue_Attack(_Inout_ CSequence* pSequence)
 		CAction* pAction_Attack = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
 		if (nullptr == pAction_Attack)
 			throw TEXT("pAction_Attack is nullptr");
-		
+
 		CSequence* pSequence_Far = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
 		if (nullptr == pSequence_Far)
 			throw TEXT("pSequence_Far is nullptr");
@@ -1038,7 +1056,7 @@ HRESULT CDugbog::Make_Tongue_Attack(_Inout_ CSequence* pSequence)
 			throw TEXT("Failed Assemble_Behavior Sequence_Turns");
 		if (FAILED(pSelector_Near->Assemble_Behavior(TEXT("Tsk_Turn"), pTsk_Turn)))
 			throw TEXT("Failed Assemble_Behavior Tsk_Turn");
-		
+
 		if (FAILED(pAction_Run_Loop->Assemble_Behavior(TEXT("Check_Distance_Far"), pCheck_Distance_Far)))
 			throw TEXT("Failed Assemble_Behavior Check_Distance_Far");
 		if (FAILED(pAction_Run_Loop->Assemble_Behavior(TEXT("Tsk_LookAt"), pTsk_LookAt)))
@@ -1286,7 +1304,7 @@ HRESULT CDugbog::Make_Levioso_Combo(_Inout_ CSelector* pSelector)
 		if (nullptr == pSequence_AitHit_Tongue)
 			throw TEXT("pSequence_AitHit_Tongue is nullptr");*/
 
-		/* Set Decorator */
+			/* Set Decorator */
 		pSelector->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 			{
 				_uint* piCurrentSpell = { nullptr };
@@ -1315,9 +1333,9 @@ HRESULT CDugbog::Make_Levioso_Combo(_Inout_ CSelector* pSelector)
 				return BUFF_LEVIOSO_TONGUE & *piCurrentSpell;
 			});*/
 
-		/* Set Options */
+			/* Set Options */
 
-		/* Assemble Behaviors */
+			/* Assemble Behaviors */
 		if (FAILED(pSelector->Assemble_Behavior(TEXT("Selector_AirHit"), pSelector_AirHit)))
 			throw TEXT("Failed Assemble_Behavior Selector_AirHit");
 		/*if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_AitHit_Tongue"), pSequence_AitHit_Tongue)))
@@ -1431,7 +1449,7 @@ HRESULT CDugbog::Make_Air_Hit(_Inout_ CSelector* pSelector)
 					return false;
 				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
 					return false;
-				
+
 				*pICurrentSpell = BUFF_NONE;
 
 				*pIsHitCombo = false;
@@ -1559,26 +1577,26 @@ HRESULT CDugbog::Make_Air_Hit_Tongue(_Inout_ CSequence* pSequence)
 	return S_OK;
 }
 
-void CDugbog::Enter_Light_Attack() 
+void CDugbog::Enter_Light_Attack()
 {
-	m_CollisionRequestDesc.eType = ATTACK_LIGHT;    
-	m_CollisionRequestDesc.iDamage = 5;    
-	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;   
+	m_CollisionRequestDesc.eType = ATTACK_LIGHT;
+	m_CollisionRequestDesc.iDamage = 5;
+	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
 	m_pRigidBody->Enable_Collision("Enemy_Attack", this, &m_CollisionRequestDesc);
-} 
+}
 
 void CDugbog::Enter_Heavy_Attack()
-{ 
-	m_CollisionRequestDesc.eType = ATTACK_HEAVY;    
-	m_CollisionRequestDesc.iDamage = 10;    
-	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;   
+{
+	m_CollisionRequestDesc.eType = ATTACK_HEAVY;
+	m_CollisionRequestDesc.iDamage = 10;
+	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
 	m_pRigidBody->Enable_Collision("Enemy_Attack", this, &m_CollisionRequestDesc);
-}  
+}
 
-void CDugbog::Exit_Attack() 
-{ 
-	m_CollisionRequestDesc.eType = ATTACK_NONE;    
-	m_CollisionRequestDesc.iDamage = 0;    
+void CDugbog::Exit_Attack()
+{
+	m_CollisionRequestDesc.eType = ATTACK_NONE;
+	m_CollisionRequestDesc.iDamage = 0;
 	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
 	m_pRigidBody->Disable_Collision("Enemy_Attack");
 }
