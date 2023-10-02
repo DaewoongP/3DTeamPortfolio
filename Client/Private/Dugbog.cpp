@@ -43,6 +43,14 @@ HRESULT CDugbog::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
+	return S_OK;
+}
+
+HRESULT CDugbog::Initialize_Level(_uint iCurrentLevelIndex)
+{
+	if (FAILED(Add_Components_Level(iCurrentLevelIndex)))
+		return E_FAIL;
+
 	if (FAILED(Make_AI()))
 		return E_FAIL;
 
@@ -84,7 +92,7 @@ void CDugbog::Tick(_float fTimeDelta)
 		else
 			iter = m_CurrentTickSpells.erase(iter);
 	}
-
+	cout << m_iCurrentSpell << endl;
 	if (nullptr != m_pModelCom)
 		m_pModelCom->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 }
@@ -105,7 +113,6 @@ void CDugbog::Late_Tick(_float fTimeDelta)
 void CDugbog::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
-	wstring wstrCollisionTag = CollisionEventDesc.pOtherCollisionTag;
 	wstring wstrMyCollisionTag = CollisionEventDesc.pThisCollisionTag;
 
 	/* Collision Magic */
@@ -119,16 +126,16 @@ void CDugbog::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		m_pHealth->Damaged(iDamage);
 
 		auto iter = m_CurrentTickSpells.find(eBuff);
-		if (iter == m_CurrentTickSpells.end() && BUFF_LEVIOSO == eBuff)
+		if (iter == m_CurrentTickSpells.end() &&
+			true == IsDebuff(eBuff))
 		{
-			if (BUFF_LEVIOSO == eBuff &&
-				true == m_isAbleLevioso)
+			if (BUFF_LEVIOSO == eBuff && true == m_isAbleLevioso)
 				eBuff = BUFF_LEVIOSO_TONGUE;
 
 			m_CurrentTickSpells.emplace(eBuff, Action);
 		}
 
-		if (eBuff & m_iCurrentSpell)
+		if (true == isCombo(eBuff))
 			m_isHitCombo = true;
 
 		if (eBuff & BUFF_ATTACK_LIGHT)
@@ -140,35 +147,32 @@ void CDugbog::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 	/* Collision Player Fig */
 	if (wstring::npos != wstrMyCollisionTag.find(TEXT("Range")))
 	{
-		if (wstring::npos != wstrObjectTag.find(TEXT("Player")) ||
-			wstring::npos != wstrObjectTag.find(TEXT("Fig")))
-		{
-			m_isSpawn = true;
-			m_RangeInEnemies.push_back({ wstrObjectTag, CollisionEventDesc.pOtherOwner });
-		}
+		if (false == IsEnemy(wstrObjectTag))
+			return;
+
+		m_isSpawn = true;
+		m_RangeInEnemies.push_back({ wstrObjectTag, CollisionEventDesc.pOtherOwner });
 	}
 }
 
 void CDugbog::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 {
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
-	wstring wstrCollisionTag = CollisionEventDesc.pOtherCollisionTag;
 	wstring wstrMyCollisionTag = CollisionEventDesc.pThisCollisionTag;
 
 	if (wstring::npos != wstrMyCollisionTag.find(TEXT("Range")))
 	{
-		if (wstring::npos != wstrObjectTag.find(TEXT("Player")) ||
-			wstring::npos != wstrObjectTag.find(TEXT("Fig")))
-		{
-			Remove_GameObject(wstrObjectTag);
-		}
+		if (false == IsEnemy(wstrObjectTag))
+			return;
+
+		Remove_GameObject(wstrObjectTag);
 	}
 }
 
 HRESULT CDugbog::Render()
 {
 #ifdef _DEBUG
-	Tick_ImGui();
+	//Tick_ImGui();
 #endif // _DEBUG
 
 	if (FAILED(SetUp_ShaderResources()))
@@ -191,7 +195,7 @@ HRESULT CDugbog::Make_AI()
 	{
 		if (FAILED(__super::Make_AI()))
 			throw TEXT("Failed Enemy Make_AI");
-		if(FAILED(m_pRootBehavior->Add_Type("isAbleLevioso", m_isAbleLevioso)))
+		if (FAILED(m_pRootBehavior->Add_Type("isAbleLevioso", m_isAbleLevioso)))
 			throw TEXT("Failed Add_Type isAbleLevioso");
 
 		/* Make Child Behaviors */
@@ -283,6 +287,8 @@ HRESULT CDugbog::Make_Notifies()
 		return E_FAIL;
 	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Air_Hit_Front_3"), TEXT("On_Gravity"), Func)))
 		return E_FAIL;
+	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Knockback"), TEXT("On_Gravity"), Func)))
+		return E_FAIL;
 
 	Func = [&] {(*this).Off_Gravity(); };
 	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Air_Hit_Front_1"), TEXT("Off_Gravity"), Func)))
@@ -302,11 +308,6 @@ HRESULT CDugbog::Add_Components()
 		if (FAILED(__super::Add_Components()))
 			throw TEXT("Failed Enemy Add_Components");
 
-		/* For.Com_Model */
-		if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_Model_Dugbog"),
-			TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
-			throw TEXT("Com_Model");
-
 		/* For.Com_Health */
 		CHealth::HEALTHDESC HealthDesc;
 		HealthDesc.iMaxHP = 200;
@@ -319,12 +320,12 @@ HRESULT CDugbog::Add_Components()
 		RigidBodyDesc.isStatic = false;
 		RigidBodyDesc.isTrigger = false;
 		RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
-		RigidBodyDesc.vOffsetPosition = _float3(0.f, 1.f, 0.f);
+		RigidBodyDesc.vOffsetPosition = _float3(0.f, 0.5f, 0.f);
 		RigidBodyDesc.vOffsetRotation = XMQuaternionRotationRollPitchYaw(0.f, 0.f, 0.f);
 		RigidBodyDesc.fStaticFriction = 0.f;
 		RigidBodyDesc.fDynamicFriction = 1.f;
 		RigidBodyDesc.fRestitution = 0.f;
-		PxSphereGeometry pSphereGeomatry1 = PxSphereGeometry(1.f);
+		PxSphereGeometry pSphereGeomatry1 = PxSphereGeometry(0.5f);
 		RigidBodyDesc.pGeometry = &pSphereGeomatry1;
 		RigidBodyDesc.eConstraintFlag = CRigidBody::RotX | CRigidBody::RotY | CRigidBody::RotZ;
 		RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 0.f, 1.f);
@@ -339,21 +340,25 @@ HRESULT CDugbog::Add_Components()
 
 		m_OffsetMatrix = XMMatrixTranslation(RigidBodyDesc.vOffsetPosition.x, RigidBodyDesc.vOffsetPosition.y, RigidBodyDesc.vOffsetPosition.z);
 
-		/* For.Collider */
+		/* For.Collider_Range */
 		RigidBodyDesc.isStatic = true;
 		RigidBodyDesc.isTrigger = true;
-		PxCapsuleGeometry pCapsuleGeomatry = PxCapsuleGeometry(0.7f, 1.2f);
-		RigidBodyDesc.eThisCollsion = COL_WEAPON;
-		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC;
-		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Attack");
-		if (FAILED(m_pRigidBody->Create_Collider(&RigidBodyDesc)))
-			throw TEXT("Failed Create_Collider");
-
-		/* For.Collider_Range */
 		PxSphereGeometry pSphereGeomatry2 = PxSphereGeometry(15.f);
 		RigidBodyDesc.pGeometry = &pSphereGeomatry2;
 		RigidBodyDesc.eThisCollsion = COL_ENEMY_RANGE;
 		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Range");
+		if (FAILED(m_pRigidBody->Create_Collider(&RigidBodyDesc)))
+			throw TEXT("Failed Create_Collider");
+
+		/* For.Collider_Attack_Tongue */
+		RigidBodyDesc.vOffsetPosition = _float3(0.f, 0.5f, 1.5f);
+		RigidBodyDesc.vOffsetRotation = XMQuaternionRotationRollPitchYaw(0.f, XMConvertToRadians(90.f), 0.f);
+		PxCapsuleGeometry pCapsuleGeomatry = PxCapsuleGeometry(0.6f, 1.2f);
+		RigidBodyDesc.pGeometry = &pCapsuleGeomatry;
+		RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 1.f, 1.f);
+		RigidBodyDesc.eThisCollsion = COL_ENEMY;
+		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC;
+		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Attack_Tongue");
 		if (FAILED(m_pRigidBody->Create_Collider(&RigidBodyDesc)))
 			throw TEXT("Failed Create_Collider");
 
@@ -375,7 +380,24 @@ HRESULT CDugbog::Add_Components()
 	{
 		wstring wstrErrorMSG = TEXT("[CDugbog] Failed Add_Components : ");
 		wstrErrorMSG += pErrorTag;
-		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
+
+		return E_FAIL;
+	}
+
+	return S_OK;
+}
+
+HRESULT CDugbog::Add_Components_Level(_uint iCurrentLevelIndex)
+{
+	/* For.Com_Model */
+	if (FAILED(CComposite::Add_Component(iCurrentLevelIndex, TEXT("Prototype_Component_Model_Dugbog"),
+		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
+	{
+		wstring wstrErrorMSG = TEXT("[CDugbog] Failed Add_Components_Level : ");
+		wstrErrorMSG += TEXT("Com_Model");
+		MSG_BOX(wstrErrorMSG.c_str());
 		__debugbreak();
 
 		return E_FAIL;
@@ -400,7 +422,7 @@ void CDugbog::Tick_ImGui()
 	ClientToScreen(g_hWnd, &rightBottom);
 	int Left = leftTop.x;
 	int Top = rightBottom.y;
-	ImVec2 vWinpos = { _float(Left + 1280.f), _float(Top - 600.f) };
+	ImVec2 vWinpos = { _float(Left + 1280.f), _float(Top - 300.f) };
 	ImGui::SetNextWindowPos(vWinpos);
 
 	ImGui::Begin("Dugbog");
@@ -520,6 +542,9 @@ HRESULT CDugbog::Make_Death(_Inout_ CSequence* pSequence)
 		CSequence* pSequence_Death_Air = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
 		if (nullptr == pSequence_Death_Air)
 			throw TEXT("pSequence_Death_Air is nullptr");
+		CAction* pAction_Death_Tongue = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		if (nullptr == pAction_Death_Tongue)
+			throw TEXT("pAction_Death_Tongue is nullptr");
 		CAction* pAction_Death_Back = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
 		if (nullptr == pAction_Death_Back)
 			throw TEXT("pAction_Death_Back is nullptr");
@@ -536,10 +561,13 @@ HRESULT CDugbog::Make_Death(_Inout_ CSequence* pSequence)
 			throw TEXT("pTsk_Death_Ground is nullptr");
 		CDeath* pTsk_Death_Back = dynamic_cast<CDeath*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Death")));
 		if (nullptr == pTsk_Death_Back)
-			throw TEXT("pTsk_Death_Back_1 is nullptr");
+			throw TEXT("pTsk_Death_Back is nullptr");
 		CDeath* pTsk_Death_Air = dynamic_cast<CDeath*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Death")));
 		if (nullptr == pTsk_Death_Air)
-			throw TEXT("pTsk_Death_Back_1 is nullptr");
+			throw TEXT("pTsk_Death_Air is nullptr");
+		CDeath* pTsk_Death_Tongue = dynamic_cast<CDeath*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Death")));
+		if (nullptr == pTsk_Death_Tongue)
+			throw TEXT("pTsk_Death_Tongue is nullptr");
 
 		// Set Decorators
 		pSequence->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
@@ -556,10 +584,33 @@ HRESULT CDugbog::Make_Death(_Inout_ CSequence* pSequence)
 				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", piCurrentSpell)))
 					return false;
 
-				if (BUFF_LEVIOSO & *piCurrentSpell)
+				if (BUFF_LEVIOSO & *piCurrentSpell ||
+					BUFF_LEVIOSO_TONGUE & *piCurrentSpell)
 					return false;
 
 				return true;
+			});
+		pSequence_Death_Air->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_uint* piCurrentSpell = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", piCurrentSpell)))
+					return false;
+
+				if (BUFF_LEVIOSO & *piCurrentSpell)
+					return true;
+
+				return false;
+			});
+		pAction_Death_Tongue->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_uint* piCurrentSpell = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", piCurrentSpell)))
+					return false;
+
+				if (BUFF_LEVIOSO_TONGUE & *piCurrentSpell)
+					return true;
+
+				return false;
 			});
 
 		// Set Options 
@@ -567,20 +618,24 @@ HRESULT CDugbog::Make_Death(_Inout_ CSequence* pSequence)
 		pTsk_Death_Ground->Set_DeathFunction(Func);
 		pTsk_Death_Back->Set_DeathFunction(Func);
 		pTsk_Death_Air->Set_DeathFunction(Func);
+		pTsk_Death_Tongue->Set_DeathFunction(Func);
 		pAction_Death_Ground->Set_Options(TEXT("Death_Ground"), m_pModelCom);
 		pAction_Death_Back->Set_Options(TEXT("Splat_Back"), m_pModelCom, true);
 		pAction_Knockback->Set_Options(TEXT("Knockback"), m_pModelCom);
 		pAction_Splat_Back->Set_Options(TEXT("Splat_Back"), m_pModelCom, true);
+		pAction_Death_Tongue->Set_Options(TEXT("Death_Tongue_Levitate"), m_pModelCom);
 
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Selector_Choose"), pSelector_Choose)))
 			throw TEXT("Failed Assemble_Behavior Selector_Choose");
 
 		if (FAILED(pSelector_Choose->Assemble_Behavior(TEXT("Sequence_Death_Ground"), pAction_Death_Ground)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Death_Ground");
-		if (FAILED(pSelector_Choose->Assemble_Behavior(TEXT("pAction_Death_Back"), pAction_Death_Back)))
-			throw TEXT("Failed Assemble_Behavior pAction_Death_Back");
 		if (FAILED(pSelector_Choose->Assemble_Behavior(TEXT("pSequence_Death_Air"), pSequence_Death_Air)))
 			throw TEXT("Failed Assemble_Behavior pSequence_Death_Air");
+		if (FAILED(pSelector_Choose->Assemble_Behavior(TEXT("Action_Death_Tongue"), pAction_Death_Tongue)))
+			throw TEXT("Failed Assemble_Behavior Action_Death_Tongue");
+		if (FAILED(pSelector_Choose->Assemble_Behavior(TEXT("pAction_Death_Back"), pAction_Death_Back)))
+			throw TEXT("Failed Assemble_Behavior pAction_Death_Back");
 
 		if (FAILED(pSequence_Death_Air->Assemble_Behavior(TEXT("pAction_Knockback"), pAction_Knockback)))
 			throw TEXT("Failed Assemble_Behavior pAction_Knockback");
@@ -593,6 +648,8 @@ HRESULT CDugbog::Make_Death(_Inout_ CSequence* pSequence)
 			throw TEXT("Failed Assemble_Behavior pTsk_Death_Air");
 		if (FAILED(pAction_Death_Ground->Assemble_Behavior(TEXT("Tsk_Death_Ground"), pTsk_Death_Ground)))
 			throw TEXT("Failed Assemble_Behavior Tsk_Death_Ground");
+		if (FAILED(pAction_Death_Tongue->Assemble_Behavior(TEXT("Tsk_Death_Tongue"), pTsk_Death_Tongue)))
+			throw TEXT("Failed Assemble_Behavior Tsk_Death_Tongue");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -643,7 +700,7 @@ HRESULT CDugbog::Make_Alive(_Inout_ CSelector* pSelector)
 				CHealth* pHealth = { nullptr };
 				if (FAILED(pBlackBoard->Get_Type("pHealth", pHealth)))
 					return false;
-				
+
 				return !(pHealth->isDead());
 			});
 		pRandom_Attacks->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
@@ -656,6 +713,10 @@ HRESULT CDugbog::Make_Alive(_Inout_ CSelector* pSelector)
 					BUFF_LEVIOSO_TONGUE & *pICurrentSpell)
 					return false;
 
+				return true;
+			});
+		pRandom_Attacks->Add_Change_Condition(CBehavior::BEHAVIOR_SUCCESS, [&](CBlackBoard* pBlackBoard)->_bool
+			{
 				return true;
 			});
 
@@ -779,6 +840,9 @@ HRESULT CDugbog::Make_Check_Spell(_Inout_ CSelector* pSelector)
 		CSequence_Levitate* pSequence_Levitate = dynamic_cast<CSequence_Levitate*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence_Levitate")));
 		if (nullptr == pSequence_Levitate)
 			throw TEXT("pSequence_Levitate is nullptr");
+		CSequence* pSequence_Levitate_Tongue = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
+		if (nullptr == pSequence_Levitate_Tongue)
+			throw TEXT("pSequence_Levitate_Tongue is nullptr");
 
 		/* Set Decorations */
 		pSelector->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
@@ -796,15 +860,30 @@ HRESULT CDugbog::Make_Check_Spell(_Inout_ CSelector* pSelector)
 
 				return true;
 			});
+		pSequence_Levitate_Tongue->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_uint* pICurrentSpell = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
+					return false;
+
+				if (BUFF_LEVIOSO_TONGUE & *pICurrentSpell)
+					return true;
+
+				return false;
+			});
 
 		/* Set_Options */
-		
+
 		/* Levioso */
 		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Levitate"), pSequence_Levitate)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Levitate");
+		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Levitate_Tongue"), pSequence_Levitate_Tongue)))
+			throw TEXT("Failed Assemble_Behavior Sequence_Levitate_Tongue");
 
 		if (FAILED(pSequence_Levitate->Assemble_Random_Select_Behavior(TEXT("Levitate_Loop"), 1.f, 4.f)))
 			throw TEXT("Failed Assemble_Random_Select_Behavior");
+		if (FAILED(Make_Levioso_Tongue(pSequence_Levitate_Tongue)))
+			throw TEXT("Failed Make_Levioso_Tongue");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -967,7 +1046,7 @@ HRESULT CDugbog::Make_Tongue_Attack(_Inout_ CSequence* pSequence)
 		CAction* pAction_Attack = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
 		if (nullptr == pAction_Attack)
 			throw TEXT("pAction_Attack is nullptr");
-		
+
 		CSequence* pSequence_Far = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
 		if (nullptr == pSequence_Far)
 			throw TEXT("pSequence_Far is nullptr");
@@ -1045,7 +1124,7 @@ HRESULT CDugbog::Make_Tongue_Attack(_Inout_ CSequence* pSequence)
 			throw TEXT("Failed Assemble_Behavior Sequence_Turns");
 		if (FAILED(pSelector_Near->Assemble_Behavior(TEXT("Tsk_Turn"), pTsk_Turn)))
 			throw TEXT("Failed Assemble_Behavior Tsk_Turn");
-		
+
 		if (FAILED(pAction_Run_Loop->Assemble_Behavior(TEXT("Check_Distance_Far"), pCheck_Distance_Far)))
 			throw TEXT("Failed Assemble_Behavior Check_Distance_Far");
 		if (FAILED(pAction_Run_Loop->Assemble_Behavior(TEXT("Tsk_LookAt"), pTsk_LookAt)))
@@ -1289,9 +1368,6 @@ HRESULT CDugbog::Make_Levioso_Combo(_Inout_ CSelector* pSelector)
 		CSelector* pSelector_AirHit = dynamic_cast<CSelector*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Selector")));
 		if (nullptr == pSelector_AirHit)
 			throw TEXT("pSelector_AirHit is nullptr");
-		/*CSequence* pSequence_AitHit_Tongue = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
-		if (nullptr == pSequence_AitHit_Tongue)
-			throw TEXT("pSequence_AitHit_Tongue is nullptr");*/
 
 		/* Set Decorator */
 		pSelector->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
@@ -1313,31 +1389,90 @@ HRESULT CDugbog::Make_Levioso_Combo(_Inout_ CSelector* pSelector)
 
 				return BUFF_LEVIOSO & *piCurrentSpell;
 			});
-		/*pSequence_AitHit_Tongue->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
-			{
-				_uint* piCurrentSpell = { nullptr };
-				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", piCurrentSpell)))
-					return false;
-
-				return BUFF_LEVIOSO_TONGUE & *piCurrentSpell;
-			});*/
 
 		/* Set Options */
 
 		/* Assemble Behaviors */
 		if (FAILED(pSelector->Assemble_Behavior(TEXT("Selector_AirHit"), pSelector_AirHit)))
 			throw TEXT("Failed Assemble_Behavior Selector_AirHit");
-		/*if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_AitHit_Tongue"), pSequence_AitHit_Tongue)))
-			throw TEXT("Failed Assemble_Behavior Sequence_AitHit_Tongue");*/
 
 		if (FAILED(Make_Air_Hit(pSelector_AirHit)))
 			throw TEXT("Failed Make_Air_Hit");
-		/*if (FAILED(Make_Air_Hit_Tongue(pSequence_AitHit_Tongue)))
-			throw TEXT("Failed Make_Air_Hit_Tongue");*/
 	}
 	catch (const _tchar* pErrorTag)
 	{
 		wstring wstrErrorMSG = TEXT("[CDugbog] Failed Make_Levioso_Combo : \n");
+		wstrErrorMSG += pErrorTag;
+		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
+
+		ENDINSTANCE;
+
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CDugbog::Make_Levioso_Tongue(_Inout_ CSequence* pSequence)
+{
+	BEGININSTANCE;
+
+	try
+	{
+		if (nullptr == pSequence)
+			throw TEXT("Parameter pSequence is nullptr");
+
+		/* Create Child Behavior */
+		CAction* pAction_Levitate_Enter = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		if (nullptr == pAction_Levitate_Enter)
+			throw TEXT("pAction_Levitate_Enter is nullptr");
+		CAction* pAction_Levitate_Loop = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		if (nullptr == pAction_Levitate_Loop)
+			throw TEXT("pAction_Levitate_Loop is nullptr");
+		CAction* pAction_Levitate_Exit = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		if (nullptr == pAction_Levitate_Exit)
+			throw TEXT("pAction_Levitate_Exit is nullptr");
+
+		CWait* pTsk_Wait = dynamic_cast<CWait*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Wait")));
+		if (nullptr == pTsk_Wait)
+			throw TEXT("pTsk_Wait is nullptr");
+
+		/* Set Decorator */
+		pAction_Levitate_Exit->Add_Success_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_uint* pICurrentSpell = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
+					return false;
+
+				if (BUFF_LEVIOSO_TONGUE & *pICurrentSpell)
+					*pICurrentSpell ^= BUFF_LEVIOSO_TONGUE;
+
+				return true;
+			});
+
+		/* Set Options */
+		pAction_Levitate_Enter->Set_Options(TEXT("Levitate_Tongue_Enter"), m_pModelCom);
+		pAction_Levitate_Loop->Set_Options(TEXT("Levitate_Tongue_Loop"), m_pModelCom, true, 0.f, false, false);
+		pAction_Levitate_Exit->Set_Options(TEXT("Levitate_Tongue_End"), m_pModelCom);
+		pTsk_Wait->Set_Timer(5.f);
+
+		/* Assemble Behaviors */
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Levitate_Enter"), pAction_Levitate_Enter)))
+			throw TEXT("Failed Assemble_Behavior Action_Levitate_Enter");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Levitate_Loop"), pAction_Levitate_Loop)))
+			throw TEXT("Failed Assemble_Behavior Action_Levitate_Loop");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Levitate_Exit"), pAction_Levitate_Exit)))
+			throw TEXT("Failed Assemble_Behavior Action_Levitate_Exit");
+
+		if (FAILED(pAction_Levitate_Loop->Assemble_Behavior(TEXT("Tsk_Wait"), pTsk_Wait)))
+			throw TEXT("Failed Assemble_Behavior Tsk_Wait");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CDugbog] Failed Make_Levioso_Tongue : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
 		__debugbreak();
@@ -1438,7 +1573,7 @@ HRESULT CDugbog::Make_Air_Hit(_Inout_ CSelector* pSelector)
 					return false;
 				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
 					return false;
-				
+
 				*pICurrentSpell = BUFF_NONE;
 
 				*pIsHitCombo = false;
@@ -1538,56 +1673,29 @@ HRESULT CDugbog::Make_Air_Hit(_Inout_ CSelector* pSelector)
 	return S_OK;
 }
 
-HRESULT CDugbog::Make_Air_Hit_Tongue(_Inout_ CSequence* pSequence)
+void CDugbog::Enter_Light_Attack()
 {
-	BEGININSTANCE;
-
-	try
-	{
-		if (nullptr == pSequence)
-			throw TEXT("Parameter pSequence is nullptr");
-
-
-	}
-	catch (const _tchar* pErrorTag)
-	{
-		wstring wstrErrorMSG = TEXT("[CDugbog] Failed Make_Air_Hit_Tongue : \n");
-		wstrErrorMSG += pErrorTag;
-		MSG_BOX(wstrErrorMSG.c_str());
-		__debugbreak();
-
-		ENDINSTANCE;
-
-		return E_FAIL;
-	}
-
-	ENDINSTANCE;
-
-	return S_OK;
+	m_CollisionRequestDesc.eType = ATTACK_LIGHT;
+	m_CollisionRequestDesc.iDamage = 5;
+	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
+	m_pRigidBody->Enable_Collision("Enemy_Body", this, &m_CollisionRequestDesc);
 }
 
-void CDugbog::Enter_Light_Attack() 
-{
-	m_CollisionRequestDesc.eType = ATTACK_LIGHT;    
-	m_CollisionRequestDesc.iDamage = 5;    
-	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;   
-	m_pRigidBody->Enable_Collision("Enemy_Attack", this, &m_CollisionRequestDesc);
-} 
-
 void CDugbog::Enter_Heavy_Attack()
-{ 
-	m_CollisionRequestDesc.eType = ATTACK_HEAVY;    
-	m_CollisionRequestDesc.iDamage = 10;    
-	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;   
-	m_pRigidBody->Enable_Collision("Enemy_Attack", this, &m_CollisionRequestDesc);
-}  
-
-void CDugbog::Exit_Attack() 
-{ 
-	m_CollisionRequestDesc.eType = ATTACK_NONE;    
-	m_CollisionRequestDesc.iDamage = 0;    
+{
+	m_CollisionRequestDesc.eType = ATTACK_HEAVY;
+	m_CollisionRequestDesc.iDamage = 10;
 	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
-	m_pRigidBody->Disable_Collision("Enemy_Attack");
+	m_pRigidBody->Enable_Collision("Enemy_Attack_Tongue", this, &m_CollisionRequestDesc);
+}
+
+void CDugbog::Exit_Attack()
+{
+	m_CollisionRequestDesc.eType = ATTACK_NONE;
+	m_CollisionRequestDesc.iDamage = 0;
+	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
+	m_pRigidBody->Disable_Collision("Enemy_Body");
+	m_pRigidBody->Disable_Collision("Enemy_Attack_Tongue");
 }
 
 CDugbog* CDugbog::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

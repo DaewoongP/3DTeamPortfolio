@@ -56,14 +56,14 @@ public:
 	virtual HRESULT Render_Depth() override;
 
 protected:
-	CModel* m_pModelCom = { nullptr };
-	CHealth* m_pHealth = { nullptr };
-	CShader* m_pShaderCom = { nullptr };
-	CShader* m_pShadowShaderCom = { nullptr };
-	CRenderer* m_pRenderer = { nullptr };
-	CRigidBody* m_pRigidBody = { nullptr };
 	CUI_Group_Enemy_HP* m_pUI_HP = { nullptr };
+	CHealth* m_pHealth = { nullptr };
+	CModel* m_pModelCom = { nullptr };
+	CRenderer* m_pRenderer = { nullptr };
+	CShader* m_pShaderCom = { nullptr };
+	CRigidBody* m_pRigidBody = { nullptr };
 	CRootBehavior* m_pRootBehavior = { nullptr };
+	CShader* m_pShadowShaderCom = { nullptr };
 
 protected:
 	const CGameObject* m_pTarget = { nullptr };
@@ -90,12 +90,16 @@ protected:
 	virtual HRESULT Make_AI();
 	virtual HRESULT Make_Notifies() = 0;
 	virtual HRESULT Add_Components() = 0;
+	virtual HRESULT Add_Components_Level(_uint iCurrentLevelIndex) = 0;
 	virtual HRESULT SetUp_ShaderResources();
 	virtual HRESULT SetUp_ShadowShaderResources();
 
 protected:// 가까운 적을 타겟으로 세팅
 	void Set_Current_Target();
 	HRESULT Remove_GameObject(const wstring& wstrObjectTag);
+	_bool IsEnemy(const wstring& wstrObjectTag);
+	_bool IsDebuff(BUFF_TYPE eType);
+	_bool isCombo(BUFF_TYPE eType);
 
 protected: /* Notify Func */
 	void Change_Animation() {

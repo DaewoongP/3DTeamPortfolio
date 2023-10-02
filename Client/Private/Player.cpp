@@ -171,14 +171,6 @@ void CPlayer::Tick(_float fTimeDelta)
 		m_pFrncSpellToggle(nullptr);
 	}
 	m_pCooltime->Tick(fTimeDelta);
-
-
-	
-
-	//cout << m_pTransform->Get_Position().x << endl;
-	//cout << m_pTransform->Get_Position().y << endl;
-	//cout << m_pTransform->Get_Position().z << endl;
-
 }
 
 void CPlayer::Late_Tick(_float fTimeDelta)
@@ -619,7 +611,7 @@ HRESULT CPlayer::Add_Magic()
 
 	// 콘프링고
 	{
-		magicInitDesc.eBuffType = BUFF_FIRE;
+		magicInitDesc.eBuffType = BUFF_CONFRINGO;
 		magicInitDesc.eMagicGroup = CMagic::MG_DAMAGE;
 		magicInitDesc.eMagicType = CMagic::MT_RED;
 		magicInitDesc.eMagicTag = CONFRINGO;
@@ -645,7 +637,7 @@ HRESULT CPlayer::Add_Magic()
 	
 	// 인센디오
 	{
-		magicInitDesc.eBuffType = BUFF_FIRE;
+		magicInitDesc.eBuffType = BUFF_NCENDIO;
 		magicInitDesc.eMagicGroup = CMagic::MG_DAMAGE;
 		magicInitDesc.eMagicType = CMagic::MT_RED;
 		magicInitDesc.eMagicTag = NCENDIO;

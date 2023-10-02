@@ -55,18 +55,15 @@ namespace Client
 		BUFF_NONE			= 0,		// 아무 디버프 없음
 		BUFF_ATTACK_LIGHT	= 1 << 0,	// 기본공격
 		BUFF_ATTACK_HEAVY	= 1 << 1,	// 마지막 공격
-		BUFF_SLOW			= 1 << 2,
-		BUFF_FROZEN			= 1 << 3,
-		BUFF_UNGRAVITY		= 1 << 4,
-		BUFF_WEAPONLOSS		= 1 << 5,
-		BUFF_FIRE			= 1 << 6,
-		BUFF_LEVIOSO		= 1 << 7,	//부착형 버프
-		BUFF_PUSH			= 1 << 8,
-		BUFF_CURSE			= 1 << 9,
-		BUFF_STUPEFY		= 1 << 10,
-		BUFF_DESCENDO		= 1 << 11,	//부착형 버프
-		BUFF_LEVIOSO_TONGUE = 1 << 12,
-		BUFF_END = 14
+		BUFF_LEVIOSO		= 1 << 2,
+		BUFF_LEVIOSO_TONGUE = 1 << 3,
+		BUFF_STUPEFY		= 1 << 4,
+		BUFF_ACCIO			= 1 << 5,
+		BUFF_CONFRINGO		= 1 << 6,
+		BUFF_NCENDIO		= 1 << 7,
+		BUFF_BUFF_DESCENDO	= 1 << 8,
+		BUFF_DESCENDO		= 1 << 9,
+		BUFF_END = 10
 	};
 
 #pragma region UI Scene

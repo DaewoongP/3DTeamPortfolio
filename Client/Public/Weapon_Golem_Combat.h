@@ -31,6 +31,7 @@ private:
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
+	virtual HRESULT Initialize_Level(_uint iCurrentLevelIndex) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
@@ -50,6 +51,7 @@ private:
 
 private:
 	HRESULT Add_Components(void* pArg);
+	HRESULT Add_Components_Level(_uint iCurrentLevelIndex);
 	HRESULT Set_Shader_Resources();
 
 public:

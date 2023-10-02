@@ -381,16 +381,59 @@ HRESULT CEnemy::Remove_GameObject(const wstring& wstrObjectTag)
 	return S_OK;
 }
 
+_bool CEnemy::IsEnemy(const wstring& wstrObjectTag)
+{
+	if (wstring::npos != wstrObjectTag.find(TEXT("Player")))
+		return true;
+
+	if (wstring::npos != wstrObjectTag.find(TEXT("Fig")))
+		return true;
+
+	return false;
+}
+
+_bool CEnemy::IsDebuff(BUFF_TYPE eType)
+{
+	if (BUFF_LEVIOSO & eType)
+		return true;
+
+	return false;
+}
+
+_bool CEnemy::isCombo(BUFF_TYPE eType)
+{
+	/* 내 현재 상태에 디버프가 없는 경우 */
+	if (false == IsDebuff(BUFF_TYPE(m_iCurrentSpell)))
+		return false;
+
+	if (eType & BUFF_ATTACK_LIGHT)
+		m_isHitCombo = true;
+
+	if (eType & BUFF_ATTACK_HEAVY)
+		m_isHitCombo = true;
+
+	if (true == IsDebuff(eType))
+		m_isHitCombo = true;
+
+	return false;
+}
+
 void CEnemy::On_Gravity()
 {
-	if(nullptr != m_pRigidBody)
+	if (nullptr != m_pRigidBody)
+	{
+		cout << "On Gravity" << endl;
 		m_pRigidBody->Set_Gravity(true);
+	}
 }
 
 void CEnemy::Off_Gravity()
 {
 	if (nullptr != m_pRigidBody)
+	{
+		cout << "Off Gravity" << endl;
 		m_pRigidBody->Set_Gravity(false);
+	}
 }
 
 void CEnemy::Free()

@@ -33,8 +33,9 @@ public:
 	virtual HRESULT Tick(const _float& fTimeDelta);
 
 public:
-	HRESULT Assemble_Behavior(DEGREES eType, CBehavior* pBehavior);
 	/* 각 각도에 실행 시킬 비헤비어를 넣으면 됨 */
+	HRESULT Assemble_Behavior(DEGREES eType, CBehavior* pBehavior);
+	/* 쿨타임 */
 	void Set_Option(const _float& fCoolTime) {
 		m_fLimit = fCoolTime;
 	}

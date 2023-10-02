@@ -57,7 +57,7 @@ void CAssassin_Goblin::Late_Tick(_float fTimeDelta)
 HRESULT CAssassin_Goblin::Render()
 {
 #ifdef _DEBUG
-	Tick_ImGui();
+	//Tick_ImGui();
 #endif // _DEBUG
 
 	if (FAILED(__super::Render()))
@@ -166,12 +166,6 @@ HRESULT CAssassin_Goblin::SetUp_ShaderResources()
 #ifdef _DEBUG
 void CAssassin_Goblin::Tick_ImGui()
 {
-	ImGui::Begin("Test Troll");
-
-	if (ImGui::InputInt("animIndex", &m_iIndex))
-		m_pModelCom->Change_Animation(m_iIndex);
-
-	ImGui::End();
 }
 #endif // _DEBUG
 
