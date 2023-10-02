@@ -75,11 +75,18 @@ void CDugbog::Tick(_float fTimeDelta)
 
 	_float3 vPosition = m_pTransform->Get_Position();
 
+	
+
 	for (auto iter = m_CurrentTickSpells.begin(); iter != m_CurrentTickSpells.end(); )
 	{
 		if (iter->first & m_iCurrentSpell)
 		{
-			iter->second(vPosition, fTimeDelta);
+			auto Desciter = m_MagicTickDesc.find(iter->first);
+			if (Desciter != m_MagicTickDesc.end())
+			{
+				iter->second(Desciter->second);
+			}
+			
 			++iter;
 		}
 		else

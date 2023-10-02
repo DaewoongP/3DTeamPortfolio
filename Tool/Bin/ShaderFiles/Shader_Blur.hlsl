@@ -1,8 +1,10 @@
 #include "Shader_EngineHeader.hlsli"
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
-texture2D g_Texture;
+texture2D g_TargetTexture;
 
-float3 g_Ran[13] =
+float g_fWinSizeX, g_fWinSizeY;
+
+float3 g_vRandomVector[13] =
 {
     float3(0.2024537f, 0.841204f, -0.9060241f),
 	float3(-0.221324f, 0.324325f, -0.8234234f),
@@ -19,11 +21,17 @@ float3 g_Ran[13] =
     float3(0.2024539f, -0.7101201f, 0.29143293f)
 };
 
-float BlurWeights[13] =
+uint g_iWeights = 19; // 개수 통일
+float g_fBlurWeights[19] =
 {
-    0.0561, 0.1353, 0.278, 0.4868, 0.7261, 0.9231, 1, 0.9231, 0.7261, 0.4868, 0.278, 0.1353, 0.0561
+    0.0561f, 0.1353f, 0.278f,
+    0.3221f, 0.4868f, 0.5881f, 
+    0.6661f, 0.7261f, 0.9231f,
+    0.999f, 
+    0.9231f, 0.7261f, 0.6661f,
+    0.5881f, 0.4868f, 0.3221f,
+    0.278f, 0.1353f, 0.0561f, 
 };
-float total = 6.2108f;
 
 struct VS_IN
 {
@@ -67,21 +75,20 @@ PS_OUT PS_MAIN_BLURX(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
     
-    float dx = 1.0f / 1280.f;
-    float2 UV = 0;
+    float fDeltaX = 1.0f / g_fWinSizeX;
+    float2 vNewUV = float2(0, 0);
+    float fTotal = 0.f;
     
-    for (int i = -6; i < 6; ++i)
+    int iValue = (g_iWeights - 1) / 2;
+
+    for (int i = -iValue; i < iValue; ++i)
     {
-        UV = In.vTexUV + float2(dx * i, 0.f);
-        vector Blur = g_Texture.Sample(LinearSampler_Clamp, UV);
-        if (Blur.x > 0.9f)
-        {
-            Out.vColor = float4(1.f, 1.f, 1.f, 1.f);
-            return Out;
-        }
-        Out.vColor += BlurWeights[6 + i] * Blur;
+        vNewUV = In.vTexUV + float2(fDeltaX * i, 0.f);
+        Out.vColor += g_fBlurWeights[iValue + i] * g_TargetTexture.Sample(LinearSampler_Clamp, vNewUV);
+        fTotal += g_fBlurWeights[iValue + i];
     }
-    Out.vColor /= total;
+
+    Out.vColor /= fTotal;
     
     return Out;
 }
@@ -90,17 +97,20 @@ PS_OUT PS_MAIN_BLURY(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
     
-    float dy = 1.0f / (720.f / 2.f);
-    float2 UV = 0;
+    float fDeltaY = 1.f / (g_fWinSizeY / 2.f);
+    float2 vNewUV = float2(0, 0);
+    float fTotal = 0.f;
    
-    for (int i = -6; i < 6; ++i)
+    int iValue = (g_iWeights - 1) / 2;
+
+    for (int i = -iValue; i < iValue; ++i)
     {
-        UV = In.vTexUV + float2(0, dy * i);
-        vector Blur = g_Texture.Sample(LinearSampler_Clamp, UV);
-        Out.vColor += BlurWeights[6 + i] * Blur;
+        vNewUV = In.vTexUV + float2(0, fDeltaY * i);
+        Out.vColor += g_fBlurWeights[iValue + i] * g_TargetTexture.Sample(LinearSampler_Clamp, vNewUV);
+        fTotal += g_fBlurWeights[iValue + i];
     }
 
-    Out.vColor /= total;
+    Out.vColor /= fTotal;
 
     return Out;
 }

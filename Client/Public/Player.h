@@ -4,6 +4,7 @@
 
 #include "Magic.h"
 #include "HitState.h"
+#include "StateMachine.h"
 
 BEGIN(Engine)
 
@@ -22,7 +23,7 @@ class CStateContext;
 class CPlayer_Information;
 class CUI_Group_Skill;
 class CMagicBall;
-class CAccPotion;
+class CFocusPotion;
 class CWiggenweldPotion;
 END
 
@@ -30,11 +31,23 @@ BEGIN(Client)
 class CPlayer final : public CGameObject
 {
 public:
-	typedef struct tagPlayerDesc
+	enum MOVETYPE
 	{
-		_float3 vPosition = {_float3()};
-		LEVELID eLevelID= { LEVEL_END };
-	}PLAYERDESC;
+		MOVETYPE_NONE,
+		MOVETYPE_WALK,
+		MOVETYPE_JOGING,
+		MOVETYPE_SPRINT,
+		MOVETYPE_END
+	};
+
+	enum ACTIONTYPE
+	{
+		ACTION_NONE,
+		ACTION_CASUAL,
+		ACTION_CMBT,
+		ACTION_END
+	};
+
 
 private:
 	explicit CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -63,7 +76,7 @@ private:
 	CShader*		m_pShader = { nullptr };
 	CShader*		m_pShadowShader = { nullptr };
 	CRenderer*		m_pRenderer = { nullptr };
-	CCustomModel*	m_pCustomModel = { nullptr };
+	CCustomModel*	m_pCustomModel = { nullptr }; //스테이트
 	CRigidBody*		m_pRigidBody = { nullptr };
 	CCoolTime*		m_pCooltime = { nullptr };
 
@@ -72,14 +85,8 @@ private:
 	CPlayer_Information* m_pPlayer_Information = { nullptr };
 
 	CUI_Group_Skill* m_UI_Group_Skill_01 = { nullptr };
-	CAccPotion* m_pAccPotion = { nullptr };
 private:
-	//카메라룩과 플레이어룩의 차이 각을 담기위한 변수(음수일 경우 오른쪽, 양수일 경우 왼쪽)
-	_float m_fLookAngle{};
-	//방향키 입력이 들어왔는지 확인하는 변수
-	_bool m_isDirectionKeyPressed { false };
-	//타겟을 향하기위한 각 변수
-	_float m_fTargetAngle{};
+	
 
 	_bool		m_isFixMouse = { false };
 	CStateContext* m_pStateContext = { nullptr };
@@ -100,11 +107,37 @@ private:
 
 	CMagicBall* m_pMagicBall = { nullptr };
 
-	function< void(_float3, _float)> m_pFrncSpellToggle = { nullptr };
+	mutable function< void(void*)> m_pFrncSpellToggle = { nullptr };
 
 	LEVELID m_eLevelID = { LEVEL_END };
 	
 	_float3		m_vLevelInitPosition[LEVEL_END];
+
+#pragma region 스테이트에 넘기는 변수
+
+	//카메라룩과 플레이어룩의 차이 각을 담기위한 변수(음수일 경우 오른쪽, 양수일 경우 왼쪽)
+	_float m_fLookAngle{};
+	//방향키 입력이 들어왔는지 확인하는 변수
+	_bool m_isDirectionKeyPressed { false };
+	//타겟을 향하기위한 각 변수
+	_float m_fTargetAngle{};
+
+	CStateMachine::STATEMACHINEDESC m_StateMachineDesc = { CStateMachine::STATEMACHINEDESC() };
+
+	_bool m_isFinishAnimation = { false };
+
+	_uint m_iMoveType = { (_uint)MOVETYPE_END };
+
+	_uint m_iActionType = { (_uint)ACTION_END };
+
+	_float m_fRotationSpeed = { 0.0f };
+
+	function<void()> m_funcFinishAnimation = { nullptr };
+
+	_bool m_isReadySpell = { true };
+	
+#pragma endregion
+
 
 private:
 	HRESULT Add_Components();
@@ -120,6 +153,7 @@ private:
 	HRESULT Ready_MeshParts();
 	HRESULT Ready_Camera();
 	HRESULT Ready_MagicDesc();
+	HRESULT Ready_StateMachine();
 
 public:
 	// 마법에 함수가 잘 들어가나 테스트용도입니다.
@@ -129,7 +163,7 @@ public:
 #ifdef _DEBUG
 private:
 	void Tick_ImGui();
-	_bool	m_isGravity;
+	_bool m_isGravity = { false };
 #endif // _DEBUG
 
 private:
@@ -138,8 +172,27 @@ private:
 	//타겟과의 각을 구하기 위한함수
 	void Update_Target_Angle();
 
-	void Next_Spell_Action();
+	void Update_Cloth(_float fTimeDelta);
 
+	//타겟을 정하기 위한 함수 (임시 용)
+	void Find_Target_For_Distance();
+	
+#pragma region 노티파이 사용함수
+
+	HRESULT Bind_Notify();
+
+	void Gravity_On();
+	void Gravity_Off();
+
+	void Shot_Levioso();
+	void Shot_Confringo();
+	void Shot_NCENDIO();
+	void Shot_Finisher();
+	void Lumos();
+
+	void Finish_Animation();
+
+	void Next_Spell_Action();
 
 	void Shot_Basic_Spell();
 
@@ -147,23 +200,31 @@ private:
 
 	void Protego();
 
-	void Gravity_On();
-	void Gravity_Off();
+#pragma endregion
 
-	HRESULT Bind_Notify();
+#pragma region 스테이트 변경 함수
 
-	void Update_Cloth(_float fTimeDelta);
+	void Go_Roll();
 
-	//타겟을 정하기 위한 함수 (임시 용)
-	void Find_Target_For_Distance();
+	void Go_Jump();
 
-	void Shot_Magic_Spell();
+	void Go_MagicCast(void * _pArg);
 
-	void Shot_Levioso();
-	void Shot_Confringo();
-	void Shot_NCENDIO();
-	void Shot_Finisher();
-	void Lumos();
+	void Go_Protego(void * _pArg);
+
+	void Go_Hit(void* _pArg);
+
+	void Go_Switch_Start();
+
+	void Go_Switch_Loop();
+
+
+
+
+
+
+
+#pragma endregion
 
 public:
 	static CPlayer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

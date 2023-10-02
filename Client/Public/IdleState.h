@@ -38,12 +38,6 @@ private:
 
     void Go_Start();
 
-    void Go_Roll();
-
-    void Go_Jump();
-
-    void Go_Magic_Cast();
-
     void ActionType_Change();
 
 public:

@@ -73,7 +73,7 @@ private:
 	vector<CUI_Back*>			m_pStatuses;
 	vector<CUI*>				m_pComponents;
 
-	CInventory* m_pInventory = { nullptr };
+	CInventory*				m_pInventory = { nullptr };
 
 private:
 	void			Select_Gear();

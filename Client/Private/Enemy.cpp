@@ -47,12 +47,37 @@ HRESULT CEnemy::Initialize(void* pArg)
 	}
 	ENDINSTANCE;
 
+	//미리 구조체 만들어주기~
+	m_pTransform->Get_Position();
+	{
+		STICK_TICKDESC* pStickDesc = new STICK_TICKDESC();
+		pStickDesc->pPosition = &m_vCurrentPosition;
+
+		m_MagicTickDesc.emplace(BUFF_LEVIOSO, pStickDesc);
+	}
+	{
+		STICK_4_TICKDESC* pStick4Desc = new STICK_4_TICKDESC();
+		pStick4Desc->pHand[0] = &m_vCurrentPosition;
+		pStick4Desc->pHand[1] = &m_vCurrentPosition;
+		pStick4Desc->pFoot[0] = &m_vCurrentPosition;
+		pStick4Desc->pFoot[1] = &m_vCurrentPosition;
+
+		m_MagicTickDesc.emplace(BUFF_DESCENDO, pStick4Desc);
+	}
+	{
+		STICK_TICKDESC* pStickDesc = new STICK_TICKDESC();
+		pStickDesc->pPosition = &m_vCurrentPosition;
+
+		m_MagicTickDesc.emplace(BUFF_LEVIOSO_TONGUE, pStickDesc);
+	}
+
 	return S_OK;
 }
 
 void CEnemy::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+	m_vCurrentPosition = m_pTransform->Get_Position();
 
 	m_pUI_HP->Tick(fTimeDelta);
 }
@@ -425,5 +450,12 @@ void CEnemy::Free()
 		Safe_Release(m_pRigidBody);
 		Safe_Release(m_pRootBehavior);
 		Safe_Release(m_pShadowShaderCom);
+
+		for (auto iter = m_MagicTickDesc.begin(); iter != m_MagicTickDesc.end(); ++iter)
+		{
+			if(iter->second!=nullptr)
+				Safe_Delete(iter->second);
+		}
+		
 	}
 }

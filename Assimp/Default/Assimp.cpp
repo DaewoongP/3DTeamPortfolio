@@ -10,7 +10,7 @@ int main()
     _uint iConvertType = { 0 };
     wcout << TEXT("Input Convert Type") << endl;
 
-    wcout << TEXT("0. NonAnim | 1. Anim | 2. MapObj | 3. OnlyAnim : ");
+    wcout << TEXT("0. NonAnim | 1. Anim | 2. MapObj | 3. OnlyAnim | 4. MapObj_Anim : ");
 
     wcin >> iConvertType;
 

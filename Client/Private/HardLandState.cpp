@@ -2,6 +2,7 @@
 #include "GameInstance.h"
 #include "Client_Defines.h"
 #include "StateContext.h"
+#include "Player.h"
 
 CHardLandState::CHardLandState(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
 	:CStateMachine(_pDevice,_pContext)
@@ -22,6 +23,13 @@ HRESULT CHardLandState::Initialize_Prototype()
 
 HRESULT CHardLandState::Initialize(void* pArg)
 {
+	if (FAILED(CStateMachine::Initialize(pArg)))
+	{
+		__debugbreak();
+
+		return E_FAIL;
+	}
+
 	return S_OK;
 }
 
@@ -41,7 +49,7 @@ void CHardLandState::OnStateEnter(void* _pArg)
 void CHardLandState::OnStateTick()
 {
 	//애니메이션이 끝났을 경우
-	if (m_pOwnerModel->Is_Finish_Animation())
+	if (m_StateMachineDesc.pOwnerModel->Is_Finish_Animation())
 	{
 		Go_Idle();
 
@@ -55,7 +63,7 @@ void CHardLandState::OnStateExit()
 
 void CHardLandState::Go_Idle()
 {
-	if (!wcscmp(m_pOwnerModel->Get_Animation()->Get_AnimationName(), TEXT("Hu_BM_Land_Hard_v2_anm")))
+	if (!wcscmp(m_StateMachineDesc.pOwnerModel->Get_Animation()->Get_AnimationName(), TEXT("Hu_BM_Land_Hard_v2_anm")))
 	{
 		Set_StateMachine(TEXT("Idle"));
 	}
@@ -63,39 +71,39 @@ void CHardLandState::Go_Idle()
 
 void CHardLandState::Go_Loop()
 {
-	if (!wcscmp(m_pOwnerModel->Get_Animation()->Get_AnimationName(), TEXT("Hu_BM_Land_Hard_2Jog_v2_anm")))
+	if (!wcscmp(m_StateMachineDesc.pOwnerModel->Get_Animation()->Get_AnimationName(), TEXT("Hu_BM_Land_Hard_2Jog_v2_anm")))
 	{
 		//Loop
-		if (true == *m_pIsDirectionKeyPressed)
+		if (true == *m_StateMachineDesc.pisDirectionPressed)
 		{
-			*m_pIMoveSwitch = CStateContext::MOVETYPE_JOGING;
+			*m_StateMachineDesc.piMoveType = CPlayer::MOVETYPE_JOGING;
 			Set_StateMachine(TEXT("Move Loop"));
 		}
 		//idle
-		if (false == *m_pIsDirectionKeyPressed)
+		if (false == *m_StateMachineDesc.pisDirectionPressed)
 		{
-			switch (*m_pIActionSwitch)
+			switch (*m_StateMachineDesc.piActionType)
 			{
-			case CStateContext::ACTION_NONE:
+			case CPlayer::ACTION_NONE:
 			{
-				m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_anm"));
+				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_anm"));
 			}
 			break;
-			case CStateContext::ACTION_CASUAL:
+			case CPlayer::ACTION_CASUAL:
 			{
-				m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_anm"));
+				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_anm"));
 			}
 			break;
-			case CStateContext::ACTION_CMBT:
+			case CPlayer::ACTION_CMBT:
 			{
-				m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_2Cmbt_anm"));
+				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_2Cmbt_anm"));
 			}
 			break;
 
 			default:
 				break;
 			}
-			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_anm"));
+			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_anm"));
 			Set_StateMachine(TEXT("Idle"));
 		}
 	}

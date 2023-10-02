@@ -18,10 +18,10 @@ HRESULT CBloom::Initialize(CVIBuffer_Rect* pRectBuffer)
 	m_pContext->RSGetViewports(&iNumViews, &ViewportDesc);
 
 	if (FAILED(pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
-		TEXT("Target_Blur_Bloom"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
+		TEXT("Target_WhiteSpace"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
 
-	if (FAILED(pRenderTarget_Manager->Add_MRT(TEXT("MRT_Blur_Bloom"), TEXT("Target_Blur_Bloom"))))
+	if (FAILED(pRenderTarget_Manager->Add_MRT(TEXT("MRT_WhiteSpace"), TEXT("Target_WhiteSpace"))))
 		return E_FAIL;
 
 	XMStoreFloat4x4(&m_WorldMatrix, XMMatrixIdentity());
@@ -29,6 +29,11 @@ HRESULT CBloom::Initialize(CVIBuffer_Rect* pRectBuffer)
 	m_WorldMatrix._22 = ViewportDesc.Height;
 	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(ViewportDesc.Width, ViewportDesc.Height, 0.f, 1.f));
+
+#ifdef _DEBUG
+	if (FAILED(pRenderTarget_Manager->Ready_Debug(TEXT("Target_WhiteSpace"), 240.f, 240.f, 160.f, 160.f)))
+		return E_FAIL;
+#endif // _DEBUG
 
 	Safe_Release(pRenderTarget_Manager);
 
@@ -42,16 +47,15 @@ HRESULT CBloom::Initialize(CVIBuffer_Rect* pRectBuffer)
     return S_OK;
 }
 
-HRESULT CBloom::Render()
+HRESULT CBloom::Render(const _tchar* pRenderTargetTag)
 {
 	CRenderTarget_Manager* pRenderTarget_Manager = CRenderTarget_Manager::GetInstance();
 	Safe_AddRef(pRenderTarget_Manager);
 
-	if (FAILED(pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Bloom"))))
+#pragma region 하얀부분 추출
+	if (FAILED(pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_WhiteSpace"))))
 		return E_FAIL;
 
-
-	
 	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
 	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
@@ -59,34 +63,9 @@ HRESULT CBloom::Render()
 	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
 
-	m_pShader->Begin("Bloom");
+	if (FAILED(pRenderTarget_Manager->Bind_ShaderResourceView(pRenderTargetTag, m_pShader, "g_TargetTexture")))
 
-	if (FAILED(m_pShader->Render()))
-		return E_FAIL;
-
-	if (FAILED(pRenderTarget_Manager->End_MRT(m_pContext)))
-		return E_FAIL;
-
-	if (FAILED(pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Blur_Bloom"))))
-		return E_FAIL;
-
-	if (FAILED(pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Bloom"), m_pShader, "g_DoBlurTexture")))
-		return E_FAIL;
-
-	if (FAILED(m_pShader->Begin("BlurX")))
-		return E_FAIL;
-	if (FAILED(m_pBuffer->Render()))
-		return E_FAIL;
-
-	if (FAILED(pRenderTarget_Manager->End_MRT(m_pContext)))
-		return E_FAIL;
-
-	if (FAILED(pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_WhiteBloom"))))
-		return E_FAIL;
-
-	if (FAILED(pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Blur_Bloom"), m_pShader, "g_DoBlurTexture")))
-		return E_FAIL;
-	if (FAILED(m_pShader->Begin("BlurY")))
+	if (FAILED(m_pShader->Begin("WhiteSpace")))
 		return E_FAIL;
 
 	if (FAILED(m_pBuffer->Render()))
@@ -94,22 +73,8 @@ HRESULT CBloom::Render()
 
 	if (FAILED(pRenderTarget_Manager->End_MRT(m_pContext)))
 		return E_FAIL;
-	//if (FAILED(pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_FinBloom"))))
-	//	return E_FAIL;
+#pragma endregion
 
-	if (FAILED(pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Bloom"), m_pShader, "g_WhiteBloomTexture")))
-		return E_FAIL;
-	if (FAILED(pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_WhiteBloom"), m_pShader, "g_DoBlurTexture")))
-		return E_FAIL;
-
-
-	if (FAILED(m_pShader->Begin("FinBloom")))
-		return E_FAIL;
-
-
-	if (FAILED(m_pBuffer->Render()))
-		return E_FAIL;
-	
 	Safe_Release(pRenderTarget_Manager);
 
 	return S_OK;

@@ -15,7 +15,7 @@ class ENGINE_DLL CRenderer final : public CGameObject
 {
 public:
 	enum RENDERGROUP {RENDER_PRIORITY, RENDER_DEPTH, RENDER_NONBLEND, RENDER_NONLIGHT, RENDER_BLEND,
-					  RENDER_BLOOM, RENDER_GLOW, RENDER_DISTORTION, RENDER_PICKING, RENDER_BRUSHING, RENDER_UI, RENDER_UITEXTURE, RENDER_END };
+					  RENDER_GLOW, RENDER_PICKING, RENDER_BRUSHING, RENDER_UI, RENDER_UITEXTURE, RENDER_END };
 
 private:
 	explicit CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -44,10 +44,10 @@ private:
 	HRESULT Render_Depth();
 	HRESULT Render_SSAO();
 	HRESULT Render_Deferred();
+
 	HRESULT Render_NonLight();
 	HRESULT Render_Blend();
 	HRESULT Render_PostProcessing();
-	HRESULT Render_Effects();
 	HRESULT Render_UI();
 
 #ifdef _DEBUG
@@ -95,7 +95,7 @@ private:
 	class CShader*					m_pAfterShader = { nullptr };
 
 private:
-	class CBlur*					m_pEffectBlur = { nullptr };
+	class CBlur*					m_pBlur = { nullptr };
 	class CBloom*					m_pBloom = { nullptr };
 	class CShadow*					m_pShadow = { nullptr };
 	class CGlow*					m_pGlow = { nullptr };

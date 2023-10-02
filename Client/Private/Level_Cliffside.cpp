@@ -5,6 +5,7 @@
 #include "MapObject_Ins.h"
 #include "UI_Group_Enemy_HP.h"
 #include "Player.h"
+#include "UI.h"
 
 CLevel_Cliffside::CLevel_Cliffside(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CLevel(pDevice, pContext)
@@ -93,7 +94,6 @@ HRESULT CLevel_Cliffside::Initialize()
 	}
 
 	//Load_Monsters(TEXT("../../Resources/GameData/MonsterData/Cliff1.mon"));
-	
 #ifdef _DEBUG
 	if (FAILED(Ready_Layer_Debug(TEXT("Layer_Debug"))))
 	{
@@ -141,17 +141,6 @@ void CLevel_Cliffside::Tick(_float fTimeDelta)
 		pGameInstance->Set_CurrentScene(TEXT("Scene_FieldGuide"), false);
 	}
 
-	// 스테이지 이동
-	if (pGameInstance->Get_DIKeyState(DIK_BACKSPACE, CInput_Device::KEY_DOWN))
-	{
-		if (FAILED(pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVELID::LEVEL_VAULT))))
-		{
-			MSG_BOX("Failed Open LEVEL_CLIFFSIDE to LEVEL_VAULT");
-			Safe_Release(pGameInstance);
-			return;
-		}
-	}
-	
 	ENDINSTANCE;
 
 #ifdef _DEBUG
@@ -182,7 +171,7 @@ HRESULT CLevel_Cliffside::Ready_Lights()
 	LightDesc.vAmbient = WHITEDEFAULT;
 	LightDesc.vSpecular = WHITEDEFAULT;
 
-	if (nullptr == pGameInstance->Add_Lights(m_pDevice, m_pContext, LightDesc))
+	if (nullptr == pGameInstance->Add_Lights((_float)g_iWinSizeX, (_float)g_iWinSizeY, LightDesc))
 		return E_FAIL;
 
 	ENDINSTANCE;
@@ -225,11 +214,7 @@ HRESULT CLevel_Cliffside::Ready_Layer_Player(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	CPlayer::PLAYERDESC PlayerDesc;
-	PlayerDesc.vPosition = _float3();
-	PlayerDesc.eLevelID = LEVEL_CLIFFSIDE;
-
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Player"), pLayerTag, TEXT("GameObject_Player"),&PlayerDesc)))
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Player"), pLayerTag, TEXT("GameObject_Player"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Player)");
 		ENDINSTANCE;
@@ -253,12 +238,12 @@ HRESULT CLevel_Cliffside::Ready_Layer_Item(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_AccPotion"), pLayerTag, TEXT("GameObject_AccPotion"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_AccPotion)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
+	//if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_FocusPotion"), pLayerTag, TEXT("GameObject_FocusPotion"))))
+	//{
+	//	MSG_BOX("Failed Add_GameObject : (GameObject_FocusPotion)");
+	//	ENDINSTANCE;
+	//	return E_FAIL;
+	//}
 
 	ENDINSTANCE;
 
@@ -400,18 +385,18 @@ HRESULT CLevel_Cliffside::Load_MapObject(const _tchar* pObjectFilePath)
 		size_t findIndex = ws.find(TEXT("Model_")) + 6;
 
 		wstring modelName = ws.substr(findIndex);
-		wstring wsMapEffectName(TEXT("Cylinder_Long"));
+		wstring wsMapEffectName(TEXT("Anim_TreasureChest"));
 
 		if (0 == lstrcmp(modelName.c_str(), wsMapEffectName.c_str()))
 		{
 			_tchar wszobjName[MAX_PATH] = { 0 };
-			_stprintf_s(wszobjName, TEXT("GameObject_MapEffect_%d"), (iObjectNum));
+			_stprintf_s(wszobjName, TEXT("GameObject_Treasure_Chest_%d"), (iObjectNum));
 
 			if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE,
-				TEXT("Prototype_GameObject_MapEffect"), TEXT("Layer_BackGround"),
+				TEXT("Prototype_GameObject_Treasure_Chest"), TEXT("Layer_BackGround"),
 				wszobjName, &MapObjectDesc)))
 			{
-				MSG_BOX("Failed to Clone MapEffect");
+				MSG_BOX("Failed to Clone Treasure_Chest");
 				ENDINSTANCE;
 				return E_FAIL;
 			}
@@ -430,7 +415,7 @@ HRESULT CLevel_Cliffside::Load_MapObject(const _tchar* pObjectFilePath)
 				ENDINSTANCE;
 				return E_FAIL;
 			}
-		}		
+		}
 
 		++iObjectNum; ENDINSTANCE;
 	}
@@ -646,6 +631,7 @@ HRESULT CLevel_Cliffside::Load_Monsters(const wstring& wstrMonsterFilePath)
 HRESULT CLevel_Cliffside::Ready_Layer_UI(const _tchar* pLayerTag)
 {
 	BEGININSTANCE;
+
 	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
 	{
 		MSG_BOX("Failed Add Scene : (Scene_Main)");
@@ -654,15 +640,6 @@ HRESULT CLevel_Cliffside::Ready_Layer_UI(const _tchar* pLayerTag)
 	}
 
 	_tchar szFilePath[MAX_PATH] = TEXT("");
-
-	//lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_HP.uidata"));
-	//if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_HP"),
-	//	pLayerTag, TEXT("GameObject_UI_Group_HP"), szFilePath)))
-	//{
-	//	MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_HP)");
-	//	ENDINSTANCE;
-	//	return E_FAIL;
-	//}
 	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Potion.uidata"));
 	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_Potion"),
 		pLayerTag, TEXT("GameObject_UI_Group_Potion"), szFilePath)))
@@ -671,14 +648,6 @@ HRESULT CLevel_Cliffside::Ready_Layer_UI(const _tchar* pLayerTag)
 		ENDINSTANCE;
 		return E_FAIL;
 	}
-	//lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Finisher_Front.uidata"));
-	//if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_Finisher"),
-	//	pLayerTag, TEXT("GameObject_UI_Group_Finisher"), szFilePath)))
-	//{
-	//	MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_Finisher)");
-	//	ENDINSTANCE;
-	//	return E_FAIL;
-	//}
 	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Skill_1.uidata"));
 	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_Skill"),
 		pLayerTag, TEXT("Prototype_GameObject_UI_Group_Skill"), szFilePath)))
@@ -693,24 +662,32 @@ HRESULT CLevel_Cliffside::Ready_Layer_UI(const _tchar* pLayerTag)
 		MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_Finisher_Icon)");
 		return E_FAIL;
 	}
+
+	CUI::UIDESC UIDesc;
+	ZEROMEM(&UIDesc);
+	UIDesc.vCombinedXY = _float2(0.f, 0.f);
+	UIDesc.fX = 640.f;
+	UIDesc.fY = 360.f;
+	UIDesc.fZ = 0.3f;
+	UIDesc.fSizeX = 64.f;
+	UIDesc.fSizeY = 64.f;
+	lstrcpy(UIDesc.szTexturePath, TEXT("../../Resources/UI/Game/UI/HUD/Reticles/UI_T_Aim.png"));
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Back"),
+		pLayerTag, TEXT("GameObject_UI_Aim"), &UIDesc)))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_UI_Aim)");
+		return E_FAIL;
+	}
+
+
+
+
 	//lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_MiniMap.uidata"));
 	//if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_MiniMap"),
 	//	pLayerTag, TEXT("GameObject_UI_Group_MiniMap"), szFilePath)))
 	//{
 	//	MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_MiniMap)");
-	//	return E_FAIL;
-	//}
-
-	//CUI_Group_Enemy_HP::ENEMYHPDESC  Desc;
-	//
-	//Desc.eType = CUI_Group_Enemy_HP::ENEMYTYPE::BOSS;
-	//lstrcpy(Desc.wszObjectLevel, TEXT("77"));
-	//lstrcpy(Desc.wszObjectName, TEXT("개철민"));
-
-	//if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_Enemy_HP"),
-	//	pLayerTag, TEXT("GameObject_UI_Enemy_HP"), &Desc)))
-	//{
-	//	MSG_BOX("Failed Add_GameObject : (GameObject_UI_Enemy_HP)");
 	//	return E_FAIL;
 	//}
 
@@ -818,11 +795,11 @@ HRESULT CLevel_Cliffside::Ready_Layer_Debug(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	/*if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_LoadTrigger"), pLayerTag, TEXT("GameObject_LoadTrigger"))))
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Camera_Debug"), pLayerTag, TEXT("GameObject_Camera_Debug"))))
 	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_LoadTrigger)");
+		MSG_BOX("Failed Add_GameObject : (GameObject_Camera_Debug)");
 		return E_FAIL;
-	}*/
+	}
 
 	Safe_Release(pGameInstance);
 

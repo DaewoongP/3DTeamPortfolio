@@ -5,6 +5,7 @@
 BEGIN(Engine)
 class CShader;
 class CVIBuffer_Rect;
+class CBlur;
 
 class CShadow final : public CComponent
 {
@@ -17,13 +18,11 @@ public:
 	virtual HRESULT Render() override;
 
 private:
+	CBlur*				m_pBlur = { nullptr };
 	CShader*			m_pShader = { nullptr };
 	CVIBuffer_Rect*		m_pBuffer = { nullptr };
 	_float4x4			m_WorldMatrix, m_ViewMatrix, m_ProjMatrix;
-
-private:
-	HRESULT Add_Components();
-
+	
 public:
 	static CShadow* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CVIBuffer_Rect* pRectBuffer);
 	virtual CComponent* Clone(void* pArg) { return nullptr; }
