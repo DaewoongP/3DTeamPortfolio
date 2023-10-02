@@ -36,8 +36,6 @@ HRESULT CTreasure_Chest::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-	m_pModel->Set_CurrentAnimIndex(0);
-
 	return S_OK;
 }
 
@@ -61,7 +59,8 @@ void CTreasure_Chest::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	m_pModel->Play_Animation(fTimeDelta);
+	if (nullptr != m_pModel)
+		m_pModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 }
 
 void CTreasure_Chest::Late_Tick(_float fTimeDelta)
@@ -73,9 +72,9 @@ void CTreasure_Chest::Late_Tick(_float fTimeDelta)
 	if (nullptr != m_pRenderer)
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
-		//m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
+		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
 #ifdef _DEBUG
-		m_pRenderer->Add_DebugGroup(m_pRigidBody);
+		//m_pRenderer->Add_DebugGroup(m_pRigidBody);
 #endif // _DEBUG
 	}
 	
@@ -110,7 +109,19 @@ HRESULT CTreasure_Chest::Render()
 
 HRESULT CTreasure_Chest::Render_Depth()
 {
-	// 그림자 렌더 설정
+	if (FAILED(SetUp_ShadowShaderResources()))
+		return E_FAIL;
+
+	_uint		iNumMeshes = m_pModel->Get_NumMeshes();
+
+	for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; ++iMeshCount)
+	{
+		if (FAILED(m_pShadowShader->Begin("Shadow")))
+			return E_FAIL;
+
+		if (FAILED(m_pModel->Render(iMeshCount)))
+			return E_FAIL;
+	}
 
 	return S_OK;
 }
@@ -153,11 +164,11 @@ HRESULT CTreasure_Chest::SetUp_ShaderResources()
 
 	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
 		return E_FAIL;
-
 	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
-
 	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+	if (FAILED(m_pShadowShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
 		return E_FAIL;
 
 	ENDINSTANCE;
