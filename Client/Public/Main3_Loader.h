@@ -19,7 +19,7 @@ public:
 	_bool Get_Finished() const { return m_isFinished; }
 
 public:
-	HRESULT Initialize(LEVELID eNextLevel);
+	HRESULT Initialize(LEVELID eNextLevel, _bool isStaticLoaded);
 	HRESULT Loading();
 
 private:
@@ -34,15 +34,19 @@ private:
 private:
 	LEVELID					m_eNextLevelID = { LEVELID::LEVEL_END };
 	_bool					m_isFinished = { false };
+	_bool					m_isStaticLoaded = { false };
 
 private:
-	HRESULT Loading_For_Logo();
-	HRESULT Loading_For_Cliffside();
-	HRESULT Loading_For_Vault();
-	HRESULT Loading_For_GreatHall();
+	HRESULT Loading_For_Logo(LEVELID eLevelID);
+	HRESULT Loading_For_Cliffside(LEVELID eLevelID);
+	HRESULT Loading_For_Vault(LEVELID eLevelID);
+	HRESULT Loading_For_GreatHall(LEVELID eLevelID);
+
+private:
+	HRESULT Loading_For_Static(LEVELID eLevelID);
 
 public:
-	static CMain3_Loader* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVELID eNextLevel);
+	static CMain3_Loader* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVELID eNextLevel, _bool isStaticLoaded);
 	virtual void Free() override;
 };
 

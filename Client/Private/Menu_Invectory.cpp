@@ -2,6 +2,7 @@
 #include "GameInstance.h"
 #include "UI_Effect_Back.h"
 #include "UI_Back.h"
+#include "Inventory.h"
 
 CMenu_Inventory::CMenu_Inventory(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -30,8 +31,6 @@ HRESULT CMenu_Inventory::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
-
-	
 
 	Ready_Offset();
 
@@ -68,7 +67,19 @@ HRESULT CMenu_Inventory::Initialize(void* pArg)
 
 void CMenu_Inventory::Tick(_float fTimeDelta)
 {
+	if (nullptr == m_pInventory)
+	{
+		CGameInstance* pGameInstacne = CGameInstance::GetInstance();
+		Safe_AddRef(pGameInstacne);
+
+		m_pInventory = static_cast<CInventory*>(pGameInstacne->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Inventory"), TEXT("GameObject_Inventory")));
+		Safe_AddRef(m_pInventory);
+
+		Safe_Release(pGameInstacne);
+	}
+
 	__super::Tick(fTimeDelta);
+
 }
 
 void CMenu_Inventory::Late_Tick(_float fTimeDelta)
@@ -169,9 +180,14 @@ HRESULT CMenu_Inventory::Add_ItemTexture()
 	return S_OK;
 }
 
+void CMenu_Inventory::Set_Open(_bool isOpen)
+{
+	m_isOpen = isOpen;
+}
+
 CMenu_Inventory* CMenu_Inventory::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CMenu_Inventory* pInstance = new CMenu_Inventory(pDevice, pContext);
+	CMenu_Inventory* pInstance = New CMenu_Inventory(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -184,7 +200,7 @@ CMenu_Inventory* CMenu_Inventory::Create(ID3D11Device* pDevice, ID3D11DeviceCont
 
 CGameObject* CMenu_Inventory::Clone(void* pArg)
 {
-	CMenu_Inventory* pInstance = new CMenu_Inventory(*this);
+	CMenu_Inventory* pInstance = New CMenu_Inventory(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
@@ -211,5 +227,9 @@ void CMenu_Inventory::Free()
 	for (auto& pUI : m_pUIs)
 	{
 		Safe_Release(pUI);
+	}
+	if (m_isCloned)
+	{
+		Safe_Release(m_pInventory);
 	}
 }

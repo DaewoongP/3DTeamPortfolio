@@ -15,7 +15,7 @@ CLevel_Loading::CLevel_Loading(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
 {
 }
 
-HRESULT CLevel_Loading::Initialize(LEVELID eNextLevelID)
+HRESULT CLevel_Loading::Initialize(LEVELID eNextLevelID, _bool isStaticLoaded)
 {
 	if (FAILED(__super::Initialize()))
 		return E_FAIL;
@@ -25,7 +25,6 @@ HRESULT CLevel_Loading::Initialize(LEVELID eNextLevelID)
 	// 현재 씬 설정.
 	pGameInstance->Set_CurrentScene(TEXT("Scene_Loading"), true);
 	Safe_Release(pGameInstance);
-
 
 	m_eNextLevelID = eNextLevelID;
 
@@ -66,10 +65,10 @@ HRESULT CLevel_Loading::Initialize(LEVELID eNextLevelID)
 		break;
 	}
 
-	m_pMain0_Loader = CMain0_Loader::Create(m_pDevice, m_pContext, eNextLevelID);
-	m_pMain1_Loader = CMain1_Loader::Create(m_pDevice, m_pContext, eNextLevelID);
-	m_pMain2_Loader = CMain2_Loader::Create(m_pDevice, m_pContext, eNextLevelID);
-	m_pMain3_Loader = CMain3_Loader::Create(m_pDevice, m_pContext, eNextLevelID);
+	m_pMain0_Loader = CMain0_Loader::Create(m_pDevice, m_pContext, eNextLevelID, isStaticLoaded);
+	m_pMain1_Loader = CMain1_Loader::Create(m_pDevice, m_pContext, eNextLevelID, isStaticLoaded);
+	m_pMain2_Loader = CMain2_Loader::Create(m_pDevice, m_pContext, eNextLevelID, isStaticLoaded);
+	m_pMain3_Loader = CMain3_Loader::Create(m_pDevice, m_pContext, eNextLevelID, isStaticLoaded);
 
 	if(nullptr == m_pMain0_Loader || 
 		nullptr == m_pMain1_Loader || 
@@ -108,58 +107,54 @@ void CLevel_Loading::Tick(_float fTimeDelta)
 		return;
 	}
 
-	if (GetKeyState(VK_RETURN) & 0x8000)
+	// 로딩완료 체크
+	if (false == m_pMain0_Loader->Get_Finished() ||
+		false == m_pMain1_Loader->Get_Finished() ||
+		false == m_pMain2_Loader->Get_Finished() ||
+		false == m_pMain3_Loader->Get_Finished())
+		return;
+
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	pGameInstance->Clear_Resources();
+
+	CLevel* pLevel = { nullptr };
+
+	switch (m_eNextLevelID)
 	{
-		// 로딩완료 체크
-		if (false == m_pMain0_Loader->Get_Finished() || 
-			false == m_pMain1_Loader->Get_Finished() || 
-			false == m_pMain2_Loader->Get_Finished() || 
-			false == m_pMain3_Loader->Get_Finished())
-			return;
+	case LEVEL_LOGO:
+		pLevel = CLevel_Logo::Create(m_pDevice, m_pContext);
+		break;
+	case LEVEL_CLIFFSIDE:
+		pLevel = CLevel_Cliffside::Create(m_pDevice, m_pContext);
+		break;
+	case LEVEL_VAULT:
+		pLevel = CLevel_Vault::Create(m_pDevice, m_pContext);
+		break;
+	case LEVEL_GREATHALL:
+		pLevel = CLevel_GreatHall::Create(m_pDevice, m_pContext);
+		break;
+	default:
+		MSG_BOX("Failed Create Next Level");
+		__debugbreak();
+		break;
+	}
 
-		CGameInstance* pGameInstance = CGameInstance::GetInstance();
-		Safe_AddRef(pGameInstance);
-
-		pGameInstance->Clear_Resources();
-
-		CLevel* pLevel = { nullptr };
-
-		switch (m_eNextLevelID)
-		{
-		case LEVEL_LOGO:
-			pLevel = CLevel_Logo::Create(m_pDevice, m_pContext);
-			break;
-		case LEVEL_CLIFFSIDE:
-			pLevel = CLevel_Cliffside::Create(m_pDevice, m_pContext);
-			break;
-		case LEVEL_VAULT:
-			pLevel = CLevel_Vault::Create(m_pDevice, m_pContext);
-			break;
-		case LEVEL_GREATHALL:
-			pLevel = CLevel_GreatHall::Create(m_pDevice, m_pContext);
-			break;
-		default:
-			MSG_BOX("Failed Create Next Level");
-			__debugbreak();
-			break;
-		}
-
-		if (nullptr == pLevel)
-		{
-			Safe_Release(pGameInstance);
-			return;
-		}
-
-		if (FAILED(pGameInstance->Open_Level(m_eNextLevelID, pLevel)))
-		{
-			MSG_BOX("Failed open Next Level");
-			Safe_Release(pGameInstance);
-			return;
-		}
-		
+	if (nullptr == pLevel)
+	{
 		Safe_Release(pGameInstance);
 		return;
 	}
+
+	if (FAILED(pGameInstance->Open_Level(m_eNextLevelID, pLevel)))
+	{
+		MSG_BOX("Failed open Next Level");
+		Safe_Release(pGameInstance);
+		return;
+	}
+
+	Safe_Release(pGameInstance);
 }
 
 HRESULT CLevel_Loading::Render()
@@ -212,6 +207,28 @@ HRESULT CLevel_Loading::Loading_Cliffside(const _tchar* pLayerTag)
 
 HRESULT CLevel_Loading::Loading_Vault(const _tchar* pLayerTag)
 {
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	// 로고 이동전 로딩씬에 대한 객체 생성
+
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Loading"), pLayerTag)))
+	{
+		MSG_BOX("Failed Add Scene : (Scene_Loading)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	_tchar wszFilePath[MAX_PATH] = TEXT("");
+	lstrcpy(wszFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Loading2.uidata"));
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_LOADING, TEXT("Prototype_GameObject_UI_Group_Loading"),
+		pLayerTag, TEXT("Prototype_GameObject_UI_Group_Loading1"), wszFilePath)))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_UI_Group_Loading)");
+		return E_FAIL;
+	}
+
+	Safe_Release(pGameInstance);
+
 	return S_OK;
 }
 
@@ -266,11 +283,11 @@ void CLevel_Loading::Render_Finished()
 }
 #endif // _DEBUG
 
-CLevel_Loading* CLevel_Loading::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVELID eNextLevelID)
+CLevel_Loading* CLevel_Loading::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVELID eNextLevelID, _bool isStaticLoaded)
 {
 	CLevel_Loading* pInstance = New CLevel_Loading(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize(eNextLevelID)))
+	if (FAILED(pInstance->Initialize(eNextLevelID, isStaticLoaded)))
 	{
 		MSG_BOX("Failed to Created CLevel_Loading");
 		Safe_Release(pInstance);

@@ -9,28 +9,23 @@ class CVIBuffer_Rect;
 class CBlur final : public CComponent
 {
 public:
-	enum BLUR { BLUR_X, BLUR_Y, BLUR_XY, BLUR_END };
+	enum BLUR { BLUR_X, BLUR_Y, BLUR_END };
 private:
 	explicit CBlur(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual ~CBlur() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype(const _tchar* pTargetTag, BLUR eBlurOption);
-	virtual HRESULT Render() override;
+	HRESULT Initialize(CVIBuffer_Rect* pRectBuffer);
+	HRESULT Render(const _tchar* pMRTTag, const _tchar* pTargetTag, BLUR eBlurType);
 
 private:
-	CShader*			m_pShader = { nullptr };
-	CVIBuffer_Rect*		m_pBuffer = { nullptr };
-	_float4x4			m_WorldMatrix, m_ViewMatrix, m_ProjMatrix;
-	_tchar				m_szTargetTag[MAX_PATH] = TEXT("");
-	BLUR				m_eBlurOption = { BLUR_END };
-
-private:
-	HRESULT Add_Components();
+	CShader*				m_pShader = { nullptr };
+	CVIBuffer_Rect*			m_pBuffer = { nullptr };
+	_float2					m_vWinSize;
+	_float4x4				m_WorldMatrix, m_ViewMatrix, m_ProjMatrix;
 
 public:
-	static CBlur* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,
-		const _tchar* pTargetTag, BLUR eBlurOption);
+	static CBlur* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CVIBuffer_Rect* pRectBuffer);
 	virtual CComponent* Clone(void* pArg) { return nullptr; }
 	virtual void Free() override;
 };

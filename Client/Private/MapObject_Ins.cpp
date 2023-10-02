@@ -30,7 +30,7 @@ HRESULT CMapObject_Ins::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	m_ObjectDesc = *reinterpret_cast<MAPOJBECTINSDESC*>(pArg);
+	m_ObjectDesc = *static_cast<MAPOJBECTINSDESC*>(pArg);
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;

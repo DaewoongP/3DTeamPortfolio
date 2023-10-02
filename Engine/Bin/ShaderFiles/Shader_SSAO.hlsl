@@ -1,28 +1,12 @@
 #include "Shader_EngineHeader.hlsli"
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
-matrix g_ViewMatrixInv, g_ProjMatrixInv;
-
 float g_fCamFar;
 
-float gOcclusionRadius = 0.5f;
-float gOcclusionFadeStart = 0.2f;
-float gOcclusionFadeEnd = 2.0f;
-float gSurfaceEpsilon = 0.05f;
-
-texture2D g_PostProcessingTexture;
 //SSAO
 float g_fRadius = 0.001f;
-float g_fFalloff = 0.000002f;
-float g_fStrength = 0.0007f;
-float g_fTotStrength = 1.38f;
-float g_fInSamples = 1.f / 16.f;
-
 
 texture2D g_DepthTexture;
 texture2D g_NormalTexture;
-texture2D g_SSAOTexture;
-texture2D g_BlurTexture;
-texture2D g_NoiseTexture;
 
 float3 g_Ran[29] =
 {
@@ -56,13 +40,6 @@ float3 g_Ran[29] =
     float3(0.2017639f, 0.7109701f, 0.12352346f),
     float3(0.7817636f, -0.9797312f, 0.13523549f),
 };
-
-float BlurWeights[31] =
-{
-    0.0011, 0.0123, 0.0234, 0.0561, 0.0864, 0.1353, 0.2312, 0.278, 0.3001, 0.4868, 0.6666, 0.7261, 0.8712, 0.9231, 0.9986, 0.9999,
-    0.9986, 0.9231, 0.8712, 0.7261, 0.6666, 0.4868, 0.3001, 0.278,0.2312, 0.1353, 0.0864, 0.0561, 0234, 0.0123, 0.0011
-};
-float total = 11.9827f;
 
 struct VS_IN
 {
@@ -146,54 +123,6 @@ PS_OUT PS_MAIN(PS_IN In)
     return Out;
 }
 
-
-PS_OUT PS_MAIN_BLURX(PS_IN In)
-{
-    PS_OUT Out = (PS_OUT) 0;
-    
-    
-    float dx = 1.0f / 1280.f;
-    float dy = 1.f / (720.f / 2.f);
-    float2 UV = 0;
-    float Color = g_SSAOTexture.Sample(BlurSampler, In.vTexUV).x;
-    
-    {
-        for (int i = -15; i < 15; ++i)
-        {
-
-            UV = In.vTexUV + float2(dx * i,0);
-            vector SSAO = g_SSAOTexture.Sample(BlurSampler, UV);
-        
-            Out.vColor += BlurWeights[15 + i] * SSAO;
-        }
-    }
-        Out.vColor /= total;
-     
-    return Out;
- }
-
-    PS_OUT PS_MAIN_BLURY(PS_IN In)
-{
-    PS_OUT Out = (PS_OUT) 0;
-    
- 
-    float dy = 1.0f / (720.f / 2.f);
-    
-    float2 UV = 0;
-   
-    for (int i = -15; i < 15; ++i)
-    {
-        UV = In.vTexUV + float2(0,dy * i);
-        vector SSAO = g_SSAOTexture.Sample(BlurSampler, UV);
-        Out.vColor += BlurWeights[15 + i] * SSAO;
-    }
-    Out.vColor /= total;
-    
-    
-    
-    return Out;
-}
-
 technique11 DefaultTechnique
 {
     pass SSAO
@@ -206,28 +135,5 @@ technique11 DefaultTechnique
         HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
         DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
         PixelShader = compile ps_5_0 PS_MAIN();
-    }
-
-    pass BlurX
-    {
-        SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_Depth_Disable, 0);
-        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN();
-        GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
-        HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
-        DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
-        PixelShader = compile ps_5_0 PS_MAIN_BLURX();
-    }
-    pass BlurY
-    {
-        SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_Depth_Disable, 0);
-        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN();
-        GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
-        HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
-        DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
-        PixelShader = compile ps_5_0 PS_MAIN_BLURY();
     }
 }

@@ -21,34 +21,6 @@ HRESULT CStateContext::Initialize_Prototype()
 
 HRESULT CStateContext::Initialize(void* pArg)
 {
-	NULL_CHECK_RETURN_MSG(pArg, E_FAIL, TEXT("Failed Initialize CStateContext"));
-
-	STATECONTEXTDESC* StateContextDesc = (STATECONTEXTDESC*)pArg;
-
-	m_pOwnerLookAngle = StateContextDesc->pOwnerLookAngle;
-
-	m_pOwnerModel = StateContextDesc->pOwnerModel;
-
-	Safe_AddRef(m_pOwnerModel);
-
-	m_pIsDirectionPressed = StateContextDesc->pIsDirectionPressed;
-
-	m_pPlayerTransform = StateContextDesc->pPlayerTransform;
-
-	Safe_AddRef(m_pPlayerTransform);
-
-	m_pfuncFinishAnimation = [&] {(*this).FinishAnimation(); };
-
-	m_fRotaionSpeed = 2.0f;
-
-	m_pTargetAngle = StateContextDesc->pTargetAngle;
-
-	if (FAILED(Ready_StateMachine()))
-	{
-		MSG_BOX(TEXT("Failed Ready StateMachine"));
-
-		return E_FAIL;
-	}
 
 	return S_OK;
 }
@@ -75,8 +47,11 @@ HRESULT CStateContext::Set_StateMachine(const _tchar* _pTag, void * _pArg)
 	{
 		m_pCurrentStateMachine->OnStateExit();
 
+		lstrcpy(m_wszPreStateKey, (*m_iterCurrentStateMachines).first);
+		
 		Safe_Release(m_pCurrentStateMachine);
 	}
+	
 
 	m_pCurrentStateMachine = Find_StateMachine(_pTag);
 	
@@ -91,8 +66,6 @@ HRESULT CStateContext::Set_StateMachine(const _tchar* _pTag, void * _pArg)
 	Safe_AddRef(m_pCurrentStateMachine);
 
 	m_pCurrentStateMachine->OnStateEnter(_pArg);
-
-	lstrcpy(m_wszPreStateKey, _pTag);
 
 	return S_OK;
 }
@@ -117,11 +90,6 @@ _bool CStateContext::Is_Current_State(const _tchar* _pTag)
 	return false;
 }
 
-void CStateContext::FinishAnimation()
-{
-	m_isFinishAnimation = true;
-}
-
 CStateMachine* CStateContext::Find_StateMachine(const _tchar* _pTag)
 {
 	auto iter = find_if(
@@ -132,186 +100,36 @@ CStateMachine* CStateContext::Find_StateMachine(const _tchar* _pTag)
 	if (iter == m_pStateMachines.end())
 		return nullptr;
 
+	m_iterCurrentStateMachines = iter;
+
 	return iter->second;
 }
 
-HRESULT CStateContext::Add_StateMachine(const _tchar* _pTag, CStateMachine* _pState)
+//래밸, 컴포넌트태그, 스테이트키, 프로토태그, 보이드 포인터
+HRESULT CStateContext::Add_StateMachine(LEVELID _eLevelID, const _tchar* _ComponentTag, const _tchar* _StateTag, const _tchar* _ProtoTag, void* _pArg)
 {
-	NULL_CHECK_RETURN_MSG(_pState, E_FAIL , TEXT("Failed Add StateMachine"));
-	
-	_pState->Set_Owner(this);
-	_pState->Set_OwnerModel(m_pOwnerModel);
-	_pState->Set_OwnerLookAngle(m_pOwnerLookAngle);
-	_pState->Set_IsDirectionKeyPressed(m_pIsDirectionPressed);
-	_pState->Set_PlayerTransform(m_pPlayerTransform);
-	_pState->Set_MoveSwitch(&m_iMoveSwitch);
-	_pState->Set_ActionSwitch(&m_iActionSwitch);
-	_pState->Set_IsFnishAnimation(&m_isFinishAnimation);
-	_pState->Set_FuncFinishAnimation(m_pfuncFinishAnimation);
-	_pState->Set_RotationSpeed(&m_fRotaionSpeed);
-	_pState->Set_TarGetAngle(m_pTargetAngle);
-
-	_pState->Bind_Notify();
-
-	m_pStateMachines.emplace(_pTag, _pState);
-
-	return S_OK;
-}
-
-HRESULT CStateContext::Ready_StateMachine()
-{
-	BEGININSTANCE;
-
-	if (FAILED(Add_StateMachine(TEXT("Idle"),
-		static_cast<CStateMachine*>
-		(pGameInstance->Clone_Component(LEVEL_STATIC,
-			TEXT("Prototype_Component_State_Idle"))))))
+	if (nullptr == _pArg)
 	{
-		ENDINSTANCE;
-
-		MSG_BOX("Failed Ready_StateMachine");
-		__debugbreak();
+		MSG_BOX("Failed Add StateMachine");
 
 		return E_FAIL;
-	};
+	}
 
-	if (FAILED(Add_StateMachine(TEXT("Move Turn"),
-		static_cast<CStateMachine*>
-		(pGameInstance->Clone_Component(LEVEL_STATIC,
-			TEXT("Prototype_Component_State_Move_Turn"))))))
+	CStateMachine* pStateMachine = { nullptr };
+
+	if (FAILED(CComposite::Add_Component
+	(_eLevelID,_ProtoTag,_ComponentTag, reinterpret_cast<CComponent**>(&pStateMachine),_pArg)))
 	{
-		ENDINSTANCE;
-
-		MSG_BOX("Failed Ready_StateMachine");
-		__debugbreak();
+		MSG_BOX("Failed Add StateMachine");
 
 		return E_FAIL;
-	};
+	}
 
-	if (FAILED(Add_StateMachine(TEXT("Move Start"),
-		static_cast<CStateMachine*>
-		(pGameInstance->Clone_Component(LEVEL_STATIC,
-			TEXT("Prototype_Component_State_Move_Start"))))))
-	{
-		ENDINSTANCE;
+	pStateMachine->Set_Owner(this);
 
-		MSG_BOX("Failed Ready_StateMachine");
-		__debugbreak();
+	pStateMachine->Bind_Notify();
 
-		return E_FAIL;
-	};
-
-	if (FAILED(Add_StateMachine(TEXT("Move Loop"),
-		static_cast<CStateMachine*>
-		(pGameInstance->Clone_Component(LEVEL_STATIC,
-			TEXT("Prototype_Component_State_Move_Loop"))))))
-	{
-		ENDINSTANCE;
-
-		MSG_BOX("Failed Ready_StateMachine");
-		__debugbreak();
-
-		return E_FAIL;
-	};
-
-	if (FAILED(Add_StateMachine(TEXT("Roll"),
-		static_cast<CStateMachine*>
-		(pGameInstance->Clone_Component(LEVEL_STATIC,
-			TEXT("Prototype_Component_State_Roll"))))))
-	{
-		ENDINSTANCE;
-
-		MSG_BOX("Failed Ready_StateMachine");
-		__debugbreak();
-
-		return E_FAIL;
-	};
-
-	if (FAILED(Add_StateMachine(TEXT("Jump"),
-		static_cast<CStateMachine*>
-		(pGameInstance->Clone_Component(LEVEL_STATIC,
-			TEXT("Prototype_Component_State_Jump"))))))
-	{
-		ENDINSTANCE;
-
-		MSG_BOX("Failed Ready_StateMachine");
-		__debugbreak();
-
-		return E_FAIL;
-	};
-
-	if (FAILED(Add_StateMachine(TEXT("Hard Land"),
-		static_cast<CStateMachine*>
-		(pGameInstance->Clone_Component(LEVEL_STATIC,
-			TEXT("Prototype_Component_State_Hard_Land"))))))
-	{
-		ENDINSTANCE;
-
-		MSG_BOX("Failed Ready_StateMachine");
-		__debugbreak();
-
-		return E_FAIL;
-	};
-
-	if (FAILED(Add_StateMachine(TEXT("Magic_Cast"),
-		static_cast<CStateMachine*>
-		(pGameInstance->Clone_Component(LEVEL_STATIC,
-			TEXT("Prototype_Component_State_Magic_Casting"))))))
-	{
-		ENDINSTANCE;
-
-		MSG_BOX("Failed Ready_StateMachine");
-		__debugbreak();
-
-		return E_FAIL;
-	};
-	
-	if (FAILED(Add_StateMachine(TEXT("Protego"),
-		static_cast<CStateMachine*>
-		(pGameInstance->Clone_Component(LEVEL_STATIC,
-			TEXT("Prototype_Component_State_ProtegoState"))))))
-	{
-		ENDINSTANCE;
-
-		MSG_BOX("Failed Ready_StateMachine");
-
-		__debugbreak();
-
-		return E_FAIL;
-	};
-
-	if (FAILED(Add_StateMachine(TEXT("Hit"),
-		static_cast<CStateMachine*>
-		(pGameInstance->Clone_Component(LEVEL_STATIC,
-			TEXT("Prototype_Component_State_Hit"))))))
-	{
-		ENDINSTANCE;
-
-		MSG_BOX("Failed Ready_StateMachine");
-
-		__debugbreak();
-
-		return E_FAIL;
-	};
-
-	if (FAILED(Add_StateMachine(TEXT("Standing"),
-		static_cast<CStateMachine*>
-		(pGameInstance->Clone_Component(LEVEL_STATIC,
-			TEXT("Prototype_Component_State_Standing"))))))
-	{
-		ENDINSTANCE;
-
-		MSG_BOX("Failed Ready_StateMachine");
-
-		__debugbreak();
-
-		return E_FAIL;
-	};
-
-
-	Set_StateMachine(TEXT("Idle"));
-
-	ENDINSTANCE;
+	m_pStateMachines.emplace(_StateTag, pStateMachine);
 
 	return S_OK;
 }
@@ -350,8 +168,6 @@ void CStateContext::Free()
 	if (true == m_isCloned)
 	{
 		Safe_Release(m_pCurrentStateMachine);
-		Safe_Release(m_pOwnerModel);
-		Safe_Release(m_pPlayerTransform);
 
 		for (auto &iter : m_pStateMachines)
 		{

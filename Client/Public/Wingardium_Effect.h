@@ -38,6 +38,13 @@ public:
 	void SetActionTrigger(_bool value) { m_bActionTrigger = value; }
 	void Disable() { m_isEnable = false; }
 	void Enable() { m_isEnable = true; }
+	void Set_Color(_float3 vHead,_float3 vTail) {
+		for (CTrail* pTrail : m_pTrail)
+		{
+			pTrail->Set_Trail_HeadColor(vHead);
+			pTrail->Set_Trail_TailColor(vTail);
+		}
+	}
 
 public:
 	virtual HRESULT Initialize_Prototype(_uint iLevel);

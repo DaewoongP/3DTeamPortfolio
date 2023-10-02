@@ -290,10 +290,26 @@ void CPlayer_Camera::Update_Eye_At()
 
 	vAt = vAt.Transform(vAt, m_pTransform->Get_WorldMatrix());
 
-	_float3 vUp = _float3(0.0f, 1.0f ,0.0f);
+	_float3 vUp = _float3(0.0f, 1.0f, 0.0f);
 
 	BEGININSTANCE;
 
+	while (false == IsValid_CameraPos(vEye, vUp))
+	{
+		//Eye
+		_float3 vEye = m_vEyeStandard;
+		vEye *= m_fEyeDistance;
+		vEye = vEye.Transform(vEye, m_pTransform->Get_WorldMatrix());
+
+		//At
+		_float3 vAt = m_vAtStandard;
+		vAt *= m_fAtDistance;
+
+		vAt = vAt.Transform(vAt, m_pTransform->Get_WorldMatrix());
+
+		_float3 vUp = _float3(0.0f, 1.0f, 0.0f);
+	}
+	
 	pGameInstance->Set_Transform(
 		CPipeLine::D3DTS_VIEW, 
 		XMMatrixLookAtLH(vEye, vAt, vUp));
@@ -301,6 +317,18 @@ void CPlayer_Camera::Update_Eye_At()
 	ENDINSTANCE;
 }
 
+_bool CPlayer_Camera::IsValid_CameraPos(_float3 vEye, _float3 vUp)
+{
+	if (XMVector3Equal(vEye, XMVectorZero()) ||
+		XMVector3IsInfinite(vEye) ||
+		XMVector3Equal(vUp, XMVectorZero()) ||
+		XMVector3IsInfinite(vUp))
+	{
+		return false;
+	}
+	
+	return true;
+}
 
 CPlayer_Camera* CPlayer_Camera::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, void* pArg)
 {

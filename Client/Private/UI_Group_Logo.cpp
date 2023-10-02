@@ -40,13 +40,9 @@ HRESULT CUI_Group_Logo::Initialize(void* pArg)
 	if (FAILED(Read_File(TEXT("../../Resources/GameData/UIData/UI_Group_Logo.uidata"))))
 		return E_FAIL;
 
-
-	wstring tag;
-
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	tag = TEXT("Com_UI_Back_Quest_Frame") + Generate_HashtagW(true);
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Back"),
 		TEXT("Com_UI_Back_Default"), reinterpret_cast<CComponent**>(&m_pUI))))
 	{
@@ -55,7 +51,6 @@ HRESULT CUI_Group_Logo::Initialize(void* pArg)
 		__debugbreak();
 		return E_FAIL;
 	}
-
 
 	CUI::UIDESC UIDesc;
 	UIDesc.vCombinedXY = { 0.f, 0.f };
@@ -123,8 +118,6 @@ HRESULT CUI_Group_Logo::Add_Prototype()
 		Safe_Release(pGameInstance);
 		return E_FAIL;
 	}
-
-
 
 	Safe_Release(pGameInstance);
 	return S_OK;
@@ -262,7 +255,6 @@ void CUI_Group_Logo::Free()
 {
 	__super::Free();
 
-	
 	Safe_Release(m_pUI);
 	Safe_Release(m_pBack);
 	Safe_Release(m_pLogo);

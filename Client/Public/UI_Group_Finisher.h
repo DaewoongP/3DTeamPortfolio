@@ -40,10 +40,7 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 
 public:
-	// 인자없는 set_gauge만 쓰면 됨.
-	// C헬스 꼭 있어야함.
 	_bool	Set_Gauge();
-	void	Set_Gauge(_float fGauge);
 
 private:
 	// 0 = Front, 1 = Back

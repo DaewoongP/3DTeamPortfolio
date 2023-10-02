@@ -7,10 +7,8 @@ CBloom::CBloom(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) : CComponen
 {
 }
 
-HRESULT CBloom::Initialize_Prototype(const _tchar* pTargetTag)
+HRESULT CBloom::Initialize(CVIBuffer_Rect* pRectBuffer)
 {
-	lstrcpy(m_szTargetTag, pTargetTag);
-
 	CRenderTarget_Manager* pRenderTarget_Manager = CRenderTarget_Manager::GetInstance();
 	Safe_AddRef(pRenderTarget_Manager);
 
@@ -20,26 +18,11 @@ HRESULT CBloom::Initialize_Prototype(const _tchar* pTargetTag)
 	m_pContext->RSGetViewports(&iNumViews, &ViewportDesc);
 
 	if (FAILED(pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
-		TEXT("Target_Bloom"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 1.f))))
+		TEXT("Target_WhiteSpace"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
 
-	if (FAILED(pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
-		TEXT("Target_Blur_Bloom"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
-		return E_FAIL;//x값변환
-	
-	if (FAILED(pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
-		TEXT("Target_WhiteBloom"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
+	if (FAILED(pRenderTarget_Manager->Add_MRT(TEXT("MRT_WhiteSpace"), TEXT("Target_WhiteSpace"))))
 		return E_FAIL;
-
-	
-
-	if (FAILED(pRenderTarget_Manager->Add_MRT(TEXT("MRT_Blur_Bloom"), TEXT("Target_Blur_Bloom"))))
-		return E_FAIL;
-	if (FAILED(pRenderTarget_Manager->Add_MRT(TEXT("MRT_Bloom"), TEXT("Target_Bloom"))))
-		return E_FAIL;
-	if (FAILED(pRenderTarget_Manager->Add_MRT(TEXT("MRT_WhiteBloom"), TEXT("Target_WhiteBloom"))))
-		return E_FAIL;
-	
 
 	XMStoreFloat4x4(&m_WorldMatrix, XMMatrixIdentity());
 	m_WorldMatrix._11 = ViewportDesc.Width;
@@ -47,23 +30,32 @@ HRESULT CBloom::Initialize_Prototype(const _tchar* pTargetTag)
 	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(ViewportDesc.Width, ViewportDesc.Height, 0.f, 1.f));
 
+#ifdef _DEBUG
+	if (FAILED(pRenderTarget_Manager->Ready_Debug(TEXT("Target_WhiteSpace"), 240.f, 240.f, 160.f, 160.f)))
+		return E_FAIL;
+#endif // _DEBUG
+
 	Safe_Release(pRenderTarget_Manager);
 
-	if (FAILED(Add_Components()))
+	m_pBuffer = pRectBuffer;
+	Safe_AddRef(m_pBuffer);
+
+	m_pShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Bloom.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements);
+	if (nullptr == m_pShader)
 		return E_FAIL;
+
     return S_OK;
 }
 
-HRESULT CBloom::Render()
+HRESULT CBloom::Render(const _tchar* pRenderTargetTag)
 {
 	CRenderTarget_Manager* pRenderTarget_Manager = CRenderTarget_Manager::GetInstance();
 	Safe_AddRef(pRenderTarget_Manager);
-	if (FAILED(pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Bloom"))))
+
+#pragma region 하얀부분 추출
+	if (FAILED(pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_WhiteSpace"))))
 		return E_FAIL;
 
-	if (FAILED(pRenderTarget_Manager->Bind_ShaderResourceView(m_szTargetTag, m_pShader, "g_OriTexture")))
-		return E_FAIL;
-	
 	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
 	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
@@ -71,34 +63,9 @@ HRESULT CBloom::Render()
 	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
 
-	m_pShader->Begin("Bloom");
+	if (FAILED(pRenderTarget_Manager->Bind_ShaderResourceView(pRenderTargetTag, m_pShader, "g_TargetTexture")))
 
-	if (FAILED(m_pShader->Render()))
-		return E_FAIL;
-
-	if (FAILED(pRenderTarget_Manager->End_MRT(m_pContext)))
-		return E_FAIL;
-
-	if (FAILED(pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Blur_Bloom"))))
-		return E_FAIL;
-
-	if (FAILED(pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Bloom"), m_pShader, "g_DoBlurTexture")))
-		return E_FAIL;
-
-	if (FAILED(m_pShader->Begin("BlurX")))
-		return E_FAIL;
-	if (FAILED(m_pBuffer->Render()))
-		return E_FAIL;
-
-	if (FAILED(pRenderTarget_Manager->End_MRT(m_pContext)))
-		return E_FAIL;
-
-	if (FAILED(pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_WhiteBloom"))))
-		return E_FAIL;
-
-	if (FAILED(pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Blur_Bloom"), m_pShader, "g_DoBlurTexture")))
-		return E_FAIL;
-	if (FAILED(m_pShader->Begin("BlurY")))
+	if (FAILED(m_pShader->Begin("WhiteSpace")))
 		return E_FAIL;
 
 	if (FAILED(m_pBuffer->Render()))
@@ -106,46 +73,18 @@ HRESULT CBloom::Render()
 
 	if (FAILED(pRenderTarget_Manager->End_MRT(m_pContext)))
 		return E_FAIL;
-	//if (FAILED(pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_FinBloom"))))
-	//	return E_FAIL;
+#pragma endregion
 
-	if (FAILED(pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Bloom"), m_pShader, "g_WhiteBloomTexture")))
-		return E_FAIL;
-	if (FAILED(pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_WhiteBloom"), m_pShader, "g_DoBlurTexture")))
-		return E_FAIL;
-	if (FAILED(pRenderTarget_Manager->Bind_ShaderResourceView(m_szTargetTag, m_pShader, "g_OriTexture")))
-		return E_FAIL;
-
-
-	if (FAILED(m_pShader->Begin("FinBloom")))
-		return E_FAIL;
-
-
-	if (FAILED(m_pBuffer->Render()))
-		return E_FAIL;
-	
 	Safe_Release(pRenderTarget_Manager);
-	return S_OK;
-}
-
-HRESULT CBloom::Add_Components()
-{
-	m_pShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Bloom.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements);
-	if (nullptr == m_pShader)
-		return E_FAIL;
-
-	m_pBuffer = CVIBuffer_Rect::Create(m_pDevice, m_pContext);
-	if (nullptr == m_pBuffer)
-		return E_FAIL;
 
 	return S_OK;
 }
 
-CBloom* CBloom::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pTargetTag)
+CBloom* CBloom::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CVIBuffer_Rect* pRectBuffer)
 {
 	CBloom* pInstance = New CBloom(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize_Prototype(pTargetTag)))
+	if (FAILED(pInstance->Initialize(pRectBuffer)))
 	{
 		MSG_BOX("Failed to Created CBloom");
 		Safe_Release(pInstance);

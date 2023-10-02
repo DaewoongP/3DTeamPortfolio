@@ -23,7 +23,6 @@ CModel::CModel(const CModel& rhs)
 	, m_MaterialDatas(rhs.m_MaterialDatas)
 	, m_AnimationDatas(rhs.m_AnimationDatas)
 	, m_ModelGCM(rhs.m_ModelGCM)
-
 	, m_iNumMeshes(rhs.m_iNumMeshes)
 	, m_Meshes(rhs.m_Meshes)
 	, m_iNumMaterials(rhs.m_iNumMaterials)
@@ -114,6 +113,27 @@ _float4x4 CModel::Get_BoneCombinedTransformationMatrix(_uint iIndex)
 	return m_Bones[iIndex]->Get_CombinedTransformationMatrix();
 }
 
+_float4x4 CModel::Get_Attaching_Bone_Matrix(_uint iBoneIndex)
+{
+	if (iBoneIndex > m_Bones.size())
+		return _float4x4();
+
+	XMMATRIX AttachingBoneMatrix;
+
+	CBone* pBone = m_Bones[iBoneIndex];
+	_float4x4 PivotMatirx = XMLoadFloat4x4(&m_PivotMatrix);
+	_float4x4 OffsetMatrix = pBone->Get_OffsetMatrix();
+	_float4x4 CombinedFloat4x4 = pBone->Get_CombinedTransformationMatrix();
+	_float4x4 CombinedMatrix = XMLoadFloat4x4(&CombinedFloat4x4);
+
+	AttachingBoneMatrix = OffsetMatrix * CombinedMatrix * PivotMatirx;
+	AttachingBoneMatrix.r[0] = XMVector3Normalize(AttachingBoneMatrix.r[0]);
+	AttachingBoneMatrix.r[1] = XMVector3Normalize(AttachingBoneMatrix.r[1]);
+	AttachingBoneMatrix.r[2] = XMVector3Normalize(AttachingBoneMatrix.r[2]);
+
+	return AttachingBoneMatrix;
+}
+
 HRESULT CModel::Initialize_Prototype(TYPE eType, const _tchar* pModelFilePath, _float4x4 PivotMatrix)
 {
 	m_wstrModelPath = ToRelativePath(pModelFilePath);
@@ -186,7 +206,6 @@ void CModel::Change_Animation(const wstring& wstrAnimationTag, ANIMTYPE eType)
 	m_tAnimationDesc[eType].iPreviousAnimIndex = m_tAnimationDesc[eType].iCurrentAnimIndex;
 	m_tAnimationDesc[eType].isResetAnimTrigger = true;
 	m_tAnimationDesc[eType].isFinishAnimation = false;
-	//Reset_Animation(eType);
 }
 
 void CModel::Change_Animation(_uint iAnimIndex, ANIMTYPE eType)
@@ -195,12 +214,11 @@ void CModel::Change_Animation(_uint iAnimIndex, ANIMTYPE eType)
 	m_tAnimationDesc[eType].iPreviousAnimIndex = m_tAnimationDesc[eType].iCurrentAnimIndex;
 	m_tAnimationDesc[eType].isResetAnimTrigger = true;
 	m_tAnimationDesc[eType].isFinishAnimation = false;
-	//Reset_Animation(eType);
 }
 
 void CModel::Play_Animation(_float fTimeDelta, ANIMTYPE eType, CTransform* pTransform)
 {
-	// �ִϸ��̼� ������ ��������
+	//애니메이션 없으면 재생하지마
 	if (m_tAnimationDesc[eType].iNumAnimations == 0)
 		return;
 
@@ -208,23 +226,18 @@ void CModel::Play_Animation(_float fTimeDelta, ANIMTYPE eType, CTransform* pTran
 	CAnimation* currentAnimation = m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex];
 	if (currentAnimation->Invalidate_AccTime(fTimeDelta) || m_tAnimationDesc[eType].isResetAnimTrigger)
 	{
-		//�ִϸ��̼� ��������
+		//시간이 지났고, 리셋트리거가 호출됐다면 리셋시킵니다.
 		currentAnimation->Reset();
-		//������ ������������ ������ ��������.
 		if (currentAnimation->Get_LerpAnim())
 		{
 			m_tAnimationDesc[eType].isAnimChangeLerp = true;
 			m_tAnimationDesc[eType].fAnimChangeTimer = ANIMATIONLERPTIME;
 		}
-		////0�����(��ü)���? ��Ʈ ��Ʈ���� ������.
 		m_isFirstFrame = true;
-		//���¼��� �ٵ����ϱ� Ʈ���� ����.
 		m_tAnimationDesc[eType].isResetAnimTrigger = false;
 	}
-	//Ʈ�������� �ִٸ�?
 	else if (pTransform != nullptr)
 	{
-		//��Ʈ�ִϸ��̼� �������ִٸ� ��Ʈ�ִϸ��̼� ��������.
 		if (currentAnimation->Get_RootAnim_State() &&
 			!currentAnimation->Get_Paused_State() &&
 			(currentAnimation->Get_Duration() >
@@ -233,31 +246,24 @@ void CModel::Play_Animation(_float fTimeDelta, ANIMTYPE eType, CTransform* pTran
 			Do_Root_Animation(fTimeDelta, pTransform, m_isFirstFrame);
 			m_isFirstFrame = false;
 		}
-
-
 	}
-	// �ִϸ��̼� ���� üũ ( ���� �� ��� ��� false )
+
 	m_tAnimationDesc[eType].isFinishAnimation = currentAnimation->Get_Duration() <=
 		currentAnimation->Get_Accmulation() &&
 		!currentAnimation->Get_LoopAnim();
 
-	//��Ƽ���� ������
 	currentAnimation->Invalidate_Frame(fTimeDelta);
 
-	//�� ������
-	//���� �𵨿� ���������� �ȵ��ִٸ� �׳� ������
 	if (!m_tAnimationDesc[eType].isAnimChangeLerp)
 	{
 		currentAnimation->Invalidate_TransformationMatrix(m_Bones, fTimeDelta, &m_tAnimationDesc[eType].AffectBoneVec);
 	}
 	else if (m_tAnimationDesc[eType].fAnimChangeTimer >= 0.0)
 	{
-		//���������� ���ֵ��� ��������.
 		currentAnimation->Invalidate_TransformationMatrix_Lerp(m_Bones, fTimeDelta, ANIMATIONLERPTIME - m_tAnimationDesc[eType].fAnimChangeTimer, m_iRootBoneIndex, &m_tAnimationDesc[eType].AffectBoneVec);
 		m_tAnimationDesc[eType].fAnimChangeTimer -= fTimeDelta;
 	}
 	else
-		//���������� ���ִµ� �ð��� �ٵ�����? �������� ����.
 		m_tAnimationDesc[eType].isAnimChangeLerp = false;
 
 	for (auto& pBone : m_Bones)
@@ -274,10 +280,8 @@ void CModel::Play_Animation(_float fTimeDelta, ANIMTYPE eType, CTransform* pTran
 			continue;
 		}
 
-		//������ ���� ��Ʈ���� ����������ִٸ�? �׸��� ��Ʈ�ִϸ��̼��� �������ִٸ�?
 		if (m_iRootBoneIndex == pBone->Get_ParentNodeIndex() && m_tAnimationDesc[eType].Animations[m_tAnimationDesc[eType].iCurrentAnimIndex]->Get_RootAnim_State())
 		{
-			//�� ���� ��Ʈ���� ������ �����ʾƾ���.(��Ʈ�� matrix�� transform�� ���������� �������ٰű� ������.)
 			pBone->Invalidate_CombinedTransformationMatrix_Basic(m_Bones);
 		}
 		else

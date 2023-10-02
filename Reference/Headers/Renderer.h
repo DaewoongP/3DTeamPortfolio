@@ -15,8 +15,7 @@ class ENGINE_DLL CRenderer final : public CGameObject
 {
 public:
 	enum RENDERGROUP {RENDER_PRIORITY, RENDER_DEPTH, RENDER_NONBLEND, RENDER_NONLIGHT, RENDER_BLEND,
-					  RENDER_BLUR,RENDER_BLOOM, RENDER_DISTORTION, RENDER_GLOW, RENDER_MOTIONBLUR,//셰이딩처리를 해줄애들
-					  RENDER_PICKING, RENDER_BRUSHING, RENDER_UI, RENDER_UITEXTURE, RENDER_END };
+					  RENDER_GLOW, RENDER_PICKING, RENDER_BRUSHING, RENDER_UI, RENDER_UITEXTURE, RENDER_END };
 
 private:
 	explicit CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -27,9 +26,6 @@ public:
 
 public:
 	void	Add_RenderGroup(RENDERGROUP eRenderGroup, class CGameObject* pGameObject);
-	void	Add_RenderGroup(RENDERGROUP eRenderGroup, class CGameObject* pGameObject,_float LightPower);
-	void	Add_RenderGroup(RENDERGROUP eRenderGroup, class CGameObject* pGameObject, _tchar* pShaderPass, CTexture* pOriTexture = nullptr, CTexture*  pNoisetexture = nullptr,CTexture* pAlphaTexture = nullptr);
-	
 	HRESULT Draw_RenderGroup();
 
 #ifdef _DEBUG
@@ -48,13 +44,10 @@ private:
 	HRESULT Render_Depth();
 	HRESULT Render_SSAO();
 	HRESULT Render_Deferred();
-	HRESULT Render_Combine();
-	HRESULT Render_MotionBlurInst();
+
 	HRESULT Render_NonLight();
 	HRESULT Render_Blend();
 	HRESULT Render_PostProcessing();
-	HRESULT Render_EffectType();
-	HRESULT Render_Distortion();
 	HRESULT Render_UI();
 
 #ifdef _DEBUG
@@ -74,8 +67,6 @@ private:
 	HRESULT Render_MRTs();
 	void Is_DebugRender();
 	_bool Is_MRTRender();
-	_bool Is_Render_Distortion();
-
 #endif // _DEBUG
 
 private:	
@@ -88,62 +79,32 @@ private:
 	_bool							m_isDistortion = { false };
 #endif // _DEBUG
 
-
 private:
 	class CRenderTarget_Manager*	m_pRenderTarget_Manager = { nullptr };
 	class CLight_Manager*			m_pLight_Manager = { nullptr };
 
-private: /* Deferred Shader */
-	class CVIBuffer_Rect*			m_pDeferredBuffer = { nullptr };
-	class CShader*					m_pDeferredShader = { nullptr };
+private:
+	class CVIBuffer_Rect*			m_pRectBuffer = { nullptr };
 	_float4x4						m_WorldMatrix, m_ViewMatrix, m_ProjMatrix;
 
-private: /* Post Processing */
-	class CVIBuffer_Rect*			m_pPostProcessingBuffer = { nullptr };
+	class CShader*					m_pDeferredShader = { nullptr };
+	class CShader*					m_pLightShader = { nullptr };
 	class CShader*					m_pPostProcessingShader = { nullptr };
-
-private: /* Shader_Type */
-	class CVIBuffer_Rect*			m_pShadeTypeBuffer = { nullptr };//각종 쉐이더처리 해줄때 쓸 것
 	class CShader*					m_pShadeTypeShader = { nullptr };
-
-private: /* Shader_Type */
-	class CVIBuffer_Rect*			m_pSSAOBuffer = { nullptr };//각종 쉐이더처리 해줄때 쓸 것
 	class CShader*					m_pSSAOShader = { nullptr };
-
-private: /* AfterShader*/
-	class CVIBuffer_Rect* m_pAfterShaderBuffer = { nullptr };//각종 쉐이더처리 해줄때 쓸 것
-	class CShader* m_pAfterShader = { nullptr };
+	class CShader*					m_pAfterShader = { nullptr };
 
 private:
-	class CBlur*					m_pSSAOBlur = { nullptr };
-	class CBlur*					m_pEffectBlur = { nullptr };
-	//class CBlur* m_pShadowBlur = { nullptr };
+	class CBlur*					m_pBlur = { nullptr };
 	class CBloom*					m_pBloom = { nullptr };
-	
 	class CShadow*					m_pShadow = { nullptr };
-	
-	class CGlow*					m_pGlow = {nullptr};
+	class CGlow*					m_pGlow = { nullptr };
 	_float							m_fGlowPower = { 0.f };
-
-	class CDistortion*				m_pDistortion ={nullptr};
-
 	class CMotionBlurInstance*		m_pMotionBlurInstance = { nullptr };
 	class CMotionBlur*				m_pMotionBlur = { nullptr };
-
-	class CFlowMap*					m_pFlowMap = { nullptr };
-
 	class CDOF*						m_pDOF = { nullptr };
 
-private:
-	_float m_fFrameTime = 0.f;
-	class CTexture*					 m_pNoiseTexture = { nullptr };
-
-	class CTexture*					 m_pTexture = { nullptr };
-	class CTexture*					 m_pTexture2 = { nullptr };
-	class CTexture*					 m_pTexture3 = { nullptr };
-
 public:
-	static const _char* pRenderGroup[RENDER_END];
 	static CRenderer* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;

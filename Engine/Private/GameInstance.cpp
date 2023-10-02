@@ -529,18 +529,18 @@ const _float4x4* CGameInstance::Get_LightProj()
 	return m_pLight_Manager->Get_LightProj();
 }
 
-void CGameInstance::Set_Light(_uint iIndex, CLight::LIGHTDESC LightDesc)
+void CGameInstance::Set_Light(_uint iIndex, _float fWinSizeX, _float fWinSizeY, CLight::LIGHTDESC LightDesc)
 {
 	NULL_CHECK_RETURN_MSG(m_pLight_Manager, , TEXT("Light NULL"));
 
-	return m_pLight_Manager->Set_Light(iIndex, LightDesc);
+	return m_pLight_Manager->Set_Light(iIndex, fWinSizeX, fWinSizeY, LightDesc);
 }
 
-CLight* CGameInstance::Add_Lights(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const CLight::LIGHTDESC& LightDesc)
+CLight* CGameInstance::Add_Lights(_float fWinSizeX, _float fWinSizeY, const CLight::LIGHTDESC& LightDesc)
 {
 	NULL_CHECK_RETURN_MSG(m_pLight_Manager, nullptr, TEXT("Light NULL"));
 
-	return m_pLight_Manager->Add_Lights(pDevice,pContext,LightDesc);
+	return m_pLight_Manager->Add_Lights(fWinSizeX, fWinSizeY, LightDesc);
 }
 
 HRESULT CGameInstance::Delete_Lights(_uint iIndex,const _char* Name)
@@ -809,6 +809,15 @@ void CGameInstance::Stop_CutScene()
 	return m_pCamera_Manager->Stop_CutScene();
 }
 
+#ifdef _DEBUG
+void CGameInstance::Set_DebugCam(_bool isCam)
+{
+	NULL_CHECK_RETURN_MSG(m_pCamera_Manager, , TEXT("Camera NULL"));
+
+	return m_pCamera_Manager->Set_DebugCam(isCam);
+}
+#endif // _DEBUG
+
 CRenderTarget* CGameInstance::Find_RenderTarget(const _tchar* pTargetTag)
 {
 	NULL_CHECK_RETURN_MSG(m_pRenderTarget_Manager, nullptr, TEXT("RenderTarget_Manager NULL"));
@@ -909,6 +918,32 @@ HRESULT CGameInstance::Add_Prototype_Models(_uint iLevel, ID3D11Device* pDevice,
 		}
 
 		++iter;
+	}
+
+	return S_OK;
+}
+
+HRESULT CGameInstance::Find_And_Add_Texture(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel, const _tchar* pPath)
+{
+	wstring wstrTag = ToPrototypeTag(TEXT("Prototype_Component_Texture"), pPath);
+	if (nullptr == Find_Prototype(iLevel, Make_WChar(wstrTag.data())))
+	{
+		if (FAILED(Add_Prototype(iLevel, wstrTag.data()
+			, CTexture::Create(pDevice, pContext, pPath))))
+			return E_FAIL;
+	}
+
+	return S_OK;
+}
+
+HRESULT CGameInstance::Find_And_Add_Model(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel, CModel::TYPE eModelType, const _tchar* pModelPath, _float4x4 PivotMatrix)
+{
+	wstring wstrTag = ToPrototypeTag(TEXT("Prototype_Component_Model"), pModelPath);
+	if (nullptr == Find_Prototype(iLevel, Make_WChar(wstrTag.data())))
+	{
+		if (FAILED(Add_Prototype(iLevel, wstrTag.data()
+			, CModel::Create(pDevice, pContext, eModelType, pModelPath, PivotMatrix))))
+			return E_FAIL;
 	}
 
 	return S_OK;

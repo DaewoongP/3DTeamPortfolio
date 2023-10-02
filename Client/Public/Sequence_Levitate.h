@@ -11,8 +11,8 @@
 #include "Sequence.h"
 #include "Client_Defines.h"
 
-BEGIN(Client)
-class CRandom_Select;
+BEGIN(Engine)
+class CRandomChoose;
 END
 
 BEGIN(Client)
@@ -37,7 +37,7 @@ private:
 	virtual HRESULT Assemble_Childs() override;
 
 private:
-	CRandom_Select* m_pRandom_Levitate_Loop = { nullptr };
+	CRandomChoose* m_pRandom_Levitate_Loop = { nullptr };
 
 private:
 	virtual void Reset_Behavior(HRESULT result) override;

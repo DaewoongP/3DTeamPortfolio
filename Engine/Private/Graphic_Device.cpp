@@ -91,10 +91,8 @@ HRESULT CGraphic_Device::Bind_BackBuffer()
 	NULL_CHECK_RETURN_MSG(m_pDeviceContext, E_FAIL, TEXT("Device Context NULL"));
 	NULL_CHECK_RETURN_MSG(m_pBackBufferRTV, E_FAIL, TEXT("BackBufferRTV NULL"));
 	NULL_CHECK_RETURN_MSG(m_pDepthStencilView, E_FAIL, TEXT("DepthStencilView NULL"));
-	//NULL_CHECK_RETURN_MSG(m_pShadowDepth, E_FAIL, TEXT("ShadowDepth NULL"));
 
 	m_pDeviceContext->OMSetRenderTargets(1, &m_pBackBufferRTV, m_pDepthStencilView);
-	//m_pDeviceContext->OMSetRenderTargets(2, &m_pBackBufferRTV, m_pShadowDepth);
 
 	return S_OK;
 }

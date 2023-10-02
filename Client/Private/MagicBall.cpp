@@ -48,10 +48,10 @@ HRESULT CMagicBall::Initialize(void* pArg)
 void CMagicBall::Tick(_float fTimeDelta)
 {
 	//실시간으로 갱신해줍니다.
-	if(m_pTargetWorldMatrix!=nullptr)
+	if(m_pTargetWorldMatrix != nullptr)
 		m_CurrentTargetMatrix = (*m_pTargetOffsetMatrix) * (*m_pTargetWorldMatrix);
 	
-	if(m_pWeaponWorldMatrix!=nullptr)
+	if(m_pWeaponWorldMatrix != nullptr)
 		m_CurrentWeaponMatrix = (*m_pWeaponOffsetMatrix) * (*m_pWeaponWorldMatrix);
 	Tick_MagicBall_State(fTimeDelta);
 	__super::Tick(fTimeDelta);
@@ -85,9 +85,9 @@ HRESULT CMagicBall::Reset(MAGICBALLINITDESC& InitDesc)
 {
 	//Set InitDesc to MagicBallDesc
 	m_fLifeTime = InitDesc.fLifeTime;
-	
+	m_fLerpAcc = 0.0f;
 	m_pTarget = InitDesc.pTarget;
-
+	m_isChase = InitDesc.isChase;
 	if (InitDesc.pTarget != nullptr)
 	{
 		m_pTargetWorldMatrix = InitDesc.pTarget->Get_Transform()->Get_WorldMatrixPtr();
@@ -113,8 +113,8 @@ HRESULT CMagicBall::Reset(MAGICBALLINITDESC& InitDesc)
 	}
 	else 
 	{
-		m_pTargetWorldMatrix = nullptr;
-		m_pTargetOffsetMatrix = nullptr;
+		m_pWeaponWorldMatrix = nullptr;
+		m_pWeaponOffsetMatrix = nullptr;
 		m_CurrentWeaponMatrix = XMMatrixIdentity();
 		m_vStartPosition = _float3(0,0,0);
 	}
@@ -130,7 +130,6 @@ HRESULT CMagicBall::Reset(MAGICBALLINITDESC& InitDesc)
 	m_CollisionDesc.eMagicTag = InitDesc.eMagicTag;
 	m_CollisionDesc.iDamage = InitDesc.iDamage;
 
-	Set_CollisionData(&m_CollisionDesc);
 	m_eCollisionFlag = InitDesc.eCollisionFlag;
 
 	m_pRigidBody->Set_CollisionFlag("Magic_Ball", m_eCollisionFlag);
@@ -138,8 +137,20 @@ HRESULT CMagicBall::Reset(MAGICBALLINITDESC& InitDesc)
 	Set_ObjEvent(OBJ_NONE);
 	Set_MagicBallState(MAGICBALL_STATE_BEGIN);
 	
-	m_pRigidBody->Enable_Collision("Magic_Ball", this);
+	m_pRigidBody->Enable_Collision("Magic_Ball", this, &m_CollisionDesc);
 	m_pTransform->Set_WorldMatrix(XMMatrixIdentity());
+
+	for (int i = 0; i < EFFECT_STATE_END; i++)
+	{
+		for (int j = 0; j < m_TrailVec[i].size(); j++)
+		{
+			m_TrailVec[i].data()[j]->Disable();
+		}
+		for (int j = 0; j < m_ParticleVec[i].size(); j++)
+		{
+			m_ParticleVec[i].data()[j]->Disable();
+		}
+	}
 
 	return S_OK;
 }
@@ -151,7 +162,7 @@ void CMagicBall::Ready_SpinMove(CTrail* pTrail,_float2 vSpinWeight, _float fSpin
 	m_fSpinSpeed = fSpinSpeed;
 }
 
-void CMagicBall::Ready_SplineMove(CTrail* pTrail)
+void CMagicBall::Ready_SplineMove(CTrail* pTrail,_float3 Aixs)
 {
 	Ready_StraightMove(pTrail);
 
@@ -160,7 +171,7 @@ void CMagicBall::Ready_SplineMove(CTrail* pTrail)
 	// 플레이어가 타겟을 보는 vector를 구함.
 	_float3 vDir = XMVector3Normalize(m_vEndPosition - m_vStartPosition);
 	// 임의의 축을 구함.
-	_float3 tempAxis = _float3(1, 1, 1);
+	_float3 tempAxis = Aixs;
 	// 외적
 	_float3	normal = XMVector3Cross(vDir, tempAxis);
 
@@ -177,6 +188,34 @@ void CMagicBall::Ready_SplineMove(CTrail* pTrail)
 	fRandom = Random_Generator(-20.f, 20.f);
 	// 외적 방향으로 튄다.
 	m_vSplineLerp[1] += _float3(normal.x * fRandom, normal.y * fabsf(fRandom), normal.z * fRandom);
+}
+
+void CMagicBall::Ready_SplineMove_Accio(CTrail* pTrail, _float3 Aixs)
+{
+	Ready_StraightMove(pTrail);
+
+	//Ready for Spline Lerp
+	m_fLerpAcc = 0.f;
+	// 플레이어가 타겟을 보는 vector를 구함.
+	_float3 vDir = XMVector3Normalize(m_vEndPosition - m_vStartPosition);
+	// 임의의 축을 구함.
+	_float3 tempAxis = Aixs;
+	// 외적
+	_float3	normal = XMVector3Cross(vDir, tempAxis);
+
+	//진행 경로만큼 뒤로 이동한 뒤
+	m_vSplineLerp[0] = m_vStartPosition - vDir;
+	//임의의 랜덤 값을 구하고
+	_float fRandom = Random_Generator(-20.f, 20.f);
+	// 외적 방향으로 튄다.
+	m_vSplineLerp[0] += _float3(0, normal.y * fRandom,0);
+
+	//진행 경로만큼 뒤로 이동한 뒤
+	m_vSplineLerp[1] = m_vStartPosition + vDir;
+	//임의의 랜덤 값을 구하고
+	fRandom = Random_Generator(-20.f, 20.f);
+	// 외적 방향으로 튄다.
+	m_vSplineLerp[1] += _float3(0, normal.y * fRandom, 0);
 }
 
 void CMagicBall::Ready_StraightMove(CTrail* pTrail)
@@ -216,6 +255,128 @@ void CMagicBall::Ready_SplineSpinMove(CTrail* pTrail,_float2 vSpinWeight, _float
 	m_vSpinWeight = vSpinWeight;
 	m_fSpinSpeed = fSpinSpeed;
 }
+
+void CMagicBall::Ready_Begin()
+{
+}
+
+void CMagicBall::Ready_DrawMagic()
+{
+	//완드 이펙트 재생
+	for (int i =0; i<m_TrailVec[EFFECT_STATE_WAND].size();i++)
+	{
+		m_TrailVec[EFFECT_STATE_WAND].data()[i]->Enable(m_CurrentWeaponMatrix.Translation());
+	}
+	for (int i = 0; i < m_ParticleVec[EFFECT_STATE_WAND].size(); i++)
+	{
+		m_ParticleVec[EFFECT_STATE_WAND].data()[i]->Enable(m_CurrentWeaponMatrix.Translation());
+		m_ParticleVec[EFFECT_STATE_WAND].data()[i]->Play(m_CurrentWeaponMatrix.Translation());
+	}
+}
+
+void CMagicBall::Ready_CastMagic()
+{
+	//완드 이펙트 재생
+	for (int i = 0; i < m_TrailVec[EFFECT_STATE_MAIN].size(); i++)
+	{
+		m_TrailVec[EFFECT_STATE_MAIN].data()[i]->Enable(m_CurrentWeaponMatrix.Translation());
+	}
+	for (int i = 0; i < m_ParticleVec[EFFECT_STATE_MAIN].size(); i++)
+	{
+		m_ParticleVec[EFFECT_STATE_MAIN].data()[i]->Enable(m_CurrentWeaponMatrix.Translation());
+		m_ParticleVec[EFFECT_STATE_MAIN].data()[i]->Play(m_CurrentWeaponMatrix.Translation());
+	}
+}
+
+void CMagicBall::Ready_Dying()
+{
+	//완드 이펙트 제거
+	for (int i = 0; i < m_ParticleVec[EFFECT_STATE_WAND].size(); i++)
+	{
+		m_ParticleVec[EFFECT_STATE_WAND].data()[i]->Disable();
+	}
+
+	//히트 이펙트 재생
+	if (m_TrailVec[EFFECT_STATE_MAIN].size() > 0)
+	{
+		CTransform* hitPos = m_TrailVec[EFFECT_STATE_MAIN].data()[0]->Get_Transform();
+		Safe_AddRef(hitPos);
+		for (int i = 0; i < m_TrailVec[EFFECT_STATE_HIT].size(); i++)
+		{
+			m_TrailVec[EFFECT_STATE_HIT].data()[i]->Enable(hitPos->Get_Position());
+		}
+		for (int i = 0; i < m_ParticleVec[EFFECT_STATE_HIT].size(); i++)
+		{
+			m_ParticleVec[EFFECT_STATE_HIT].data()[i]->Enable(hitPos->Get_Position());
+			m_ParticleVec[EFFECT_STATE_HIT].data()[i]->Play(hitPos->Get_Position());
+		}
+		Safe_Release(hitPos);
+	}
+	else 
+	{
+		for (int i = 0; i < m_TrailVec[EFFECT_STATE_HIT].size(); i++)
+		{
+			m_TrailVec[EFFECT_STATE_HIT].data()[i]->Enable(m_CurrentTargetMatrix.Translation());
+		}
+		for (int i = 0; i < m_ParticleVec[EFFECT_STATE_HIT].size(); i++)
+		{
+			m_ParticleVec[EFFECT_STATE_HIT].data()[i]->Enable(m_CurrentTargetMatrix.Translation());
+			m_ParticleVec[EFFECT_STATE_HIT].data()[i]->Play(m_CurrentTargetMatrix.Translation());
+		}
+	}
+}
+
+void CMagicBall::Tick_Begin(_float fTimeDelta)
+{
+	Do_MagicBallState_To_Next();
+}
+
+void CMagicBall::Tick_DrawMagic(_float fTimeDelta)
+{
+	//완드
+	for (int i = 0; i < m_TrailVec[EFFECT_STATE_WAND].size(); i++)
+	{
+		m_TrailVec[EFFECT_STATE_WAND].data()[i]->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
+	}
+	for (int i = 0; i < m_ParticleVec[EFFECT_STATE_WAND].size(); i++)
+	{
+		m_ParticleVec[EFFECT_STATE_WAND].data()[i]->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
+	}
+}
+
+void CMagicBall::Tick_CastMagic(_float fTimeDelta)
+{
+	if (m_pTarget != nullptr)
+	{
+		m_vEndPosition = m_CurrentTargetMatrix.Translation();
+	}
+	//완드
+	for (int i = 0; i < m_TrailVec[EFFECT_STATE_WAND].size(); i++)
+	{
+		m_TrailVec[EFFECT_STATE_WAND].data()[i]->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
+	}
+	for (int i = 0; i < m_ParticleVec[EFFECT_STATE_WAND].size(); i++)
+	{
+		m_ParticleVec[EFFECT_STATE_WAND].data()[i]->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
+	}
+}
+
+void CMagicBall::Tick_Dying(_float fTimeDelta)
+{
+	_bool isAlive = { false };
+	for (int i = 0; i < m_ParticleVec[EFFECT_STATE_HIT].size(); i++)
+	{
+		if (m_ParticleVec[EFFECT_STATE_HIT].data()[i]->IsEnable())
+		{
+			isAlive = true;
+			break;
+		}
+	}
+
+	if(!isAlive)
+		Do_MagicBallState_To_Next();
+}
+
 
 void CMagicBall::Tick_MagicBall_State(_float fTimeDelta)
 {
@@ -348,6 +509,18 @@ void CMagicBall::Free()
 
 	if (true == m_isCloned)
 	{
+		for (int i = 0; i < EFFECT_STATE_END; i++)
+		{
+			for (int j = 0; j < m_TrailVec[i].size(); j++)
+			{
+				Safe_Release(m_TrailVec[i].data()[j]);
+			}
+			for (int j = 0; j < m_ParticleVec[i].size(); j++)
+			{
+				Safe_Release(m_ParticleVec[i].data()[j]);
+			}
+		}
+
 		Safe_Release(m_pRenderer);
 		Safe_Release(m_pRigidBody);
 	}

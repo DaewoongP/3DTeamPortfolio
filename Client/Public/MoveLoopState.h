@@ -31,17 +31,9 @@ public:
 
     void LookFront();
 
-    void Over_135();
-
     void Go_Idle();
 
-    void Go_Roll();
-
-    void Go_Jump();
-
     void Switch_MoveType();
-
-    void Go_Magic_Cast();
 
 
 public:

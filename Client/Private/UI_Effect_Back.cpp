@@ -28,9 +28,8 @@ void CUI_Effect_Back::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-#ifdef _DEBUG
-	m_fRadian += fTimeDelta * 2.f;
-#endif // _DEBUG
+	if (CURSOR == m_eEffecttype)
+		m_fRadian += fTimeDelta * 2.f;
 }
 
 void CUI_Effect_Back::Late_Tick(_float fTimeDelta)
@@ -174,6 +173,19 @@ HRESULT CUI_Effect_Back::SetUp_ShaderResources()
 		if (FAILED(m_pShaderCom->Bind_RawValue("g_isClicked", &m_isClicked, sizeof(_bool))))
 			return E_FAIL;
 		break;
+	}
+
+	return S_OK;
+}
+
+HRESULT CUI_Effect_Back::Set_Texture(_uint iIndex, CTexture* pTexture)
+{
+	if (nullptr != m_Textures[iIndex])
+	{
+		Safe_Release(m_Textures[iIndex]);
+
+		m_Textures[iIndex] = pTexture;
+		Safe_AddRef(m_Textures[iIndex]);
 	}
 
 	return S_OK;

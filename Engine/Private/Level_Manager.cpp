@@ -75,13 +75,6 @@ HRESULT CLevel_Manager::Add_Scene(const _tchar* pSceneTag, const _tchar* pLayerT
 		{
 			if (!lstrcmp(ListLayerTag, pLayerTag))
 			{
-#ifdef _DEBUG
-				MSG_BOX("Failed to Add Scene");
-				// 아마 여기 걸리셨으면 이미 씬을 만들어두고 또 하신거니
-				// 그냥 Add_Scene함수를 지우면 됩니다.
-				// (딱 한번만 불러주면 됩니다 같은 레이어에 대해서.)
-				__debugbreak();
-#endif // _DEBUG
 				return S_FALSE;
 			}
 		}

@@ -34,9 +34,10 @@ _uint WINAPI Thread_Main1(void* pArg)
 	return 0;
 }
 
-HRESULT CMain1_Loader::Initialize(LEVELID eNextLevel)
+HRESULT CMain1_Loader::Initialize(LEVELID eNextLevel, _bool isStaticLoaded)
 {
 	m_eNextLevelID = eNextLevel;
+	m_isStaticLoaded = isStaticLoaded;
 
 	InitializeCriticalSection(&m_Critical_Section);
 
@@ -59,16 +60,29 @@ HRESULT CMain1_Loader::Loading()
 
 	HRESULT		hr = { 0 };
 
+	if (false == m_isStaticLoaded)
+	{
+		hr = Loading_For_Static(LEVEL_STATIC);
+	}
+
+	if (FAILED(hr))
+	{
+		LeaveCriticalSection(&m_Critical_Section);
+		return E_FAIL;
+	}
+
+	hr = 0;
+
 	switch (m_eNextLevelID)
 	{
 	case LEVEL_LOGO:
-		hr = Loading_For_Logo();
+		hr = Loading_For_Logo(LEVEL_LOGO);
 		break;
 	case LEVEL_CLIFFSIDE:
-		hr = Loading_For_Cliffside();
+		hr = Loading_For_Cliffside(LEVEL_CLIFFSIDE);
 		break;
 	case LEVEL_VAULT:
-		hr = Loading_For_Vault();
+		hr = Loading_For_Vault(LEVEL_VAULT);
 		break;
 	default:
 		MSG_BOX("Failed Load Next Level");
@@ -85,174 +99,189 @@ HRESULT CMain1_Loader::Loading()
 	return S_OK;
 }
 
-HRESULT CMain1_Loader::Loading_For_Logo()
+HRESULT CMain1_Loader::Loading_For_Logo(LEVELID eLevelID)
 {
 	return S_OK;
 }
 
-HRESULT CMain1_Loader::Loading_For_Cliffside()
+HRESULT CMain1_Loader::Loading_For_Cliffside(LEVELID eLevelID)
 {
 	if (nullptr == m_pGameInstance)
 		return E_FAIL;
 
 	try /* Failed Check Add_Prototype*/
 	{
+		if (FAILED(Loading_Map_Object(TEXT("../../Resources/GameData/MapData/MapData0.ddd"), eLevelID)))
+			throw TEXT("Map Object");
+
+		if (FAILED(Loading_Map_Object_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins0.ddd"), eLevelID)))
+			throw TEXT("Map Object_Ins");
+
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("Failed Add_Prototype : ");
+		wstrErrorMSG += pErrorTag;
+		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	return S_OK;
+}
+
+HRESULT CMain1_Loader::Loading_For_Vault(LEVELID eLevelID)
+{
+	try
+	{
+		if (FAILED(Loading_Map_Object(TEXT("../../Resources/GameData/MapData/MapData1.ddd"), eLevelID)))
+			throw TEXT("Map Object");
+
+		if (FAILED(Loading_Map_Object_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins1.ddd"), eLevelID)))
+			throw TEXT("Map Object_Ins");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("Failed Add_Prototype : ");
+		wstrErrorMSG += pErrorTag;
+		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	return S_OK;
+}
+
+HRESULT CMain1_Loader::Loading_For_GreatHall(LEVELID eLevelID)
+{
+	try
+	{
+		if (FAILED(Loading_Map_Object(TEXT("../../Resources/GameData/MapData/MapData2.ddd"), eLevelID)))
+			throw TEXT("Map Object");
+
+		if (FAILED(Loading_Map_Object_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins2.ddd"), eLevelID)))
+			throw TEXT("Map Object_Ins");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("Failed Add_Prototype : ");
+		wstrErrorMSG += pErrorTag;
+		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	return S_OK;
+}
+
+HRESULT CMain1_Loader::Loading_For_Static(LEVELID eLevelID)
+{
+	try
+	{
+#pragma region Load BackGround
 		/* For.Prototype_GameObject_Sky */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Sky"),
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Sky"),
 			CSky::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Sky");
 
+		/* For.Prototype_Component_Model_Sky */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Model_Sky"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/SkySphere/SkySphere.dat")))))
+			throw TEXT("Prototype_Component_Model_Sky");
+
 		/* For.Prototype_GameObject_Terrain */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Terrain"),
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Terrain"),
 			CTerrain::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Terrain");
+#pragma endregion
 
-		if (FAILED(Loading_Map_Object(TEXT("../../Resources/GameData/MapData/MapData0.ddd"), LEVEL_CLIFFSIDE)))
-			throw TEXT("Map Object");
-
-		if (FAILED(Loading_Map_Object_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins0.ddd"), LEVEL_CLIFFSIDE)))
-			throw TEXT("Map Object_Ins");
-
-		/* For.Prototype_Component_CharacterController*/
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_CharacterController"),
-			CCharacterController::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_CharacterController");
-
+#pragma region Load Main Behavior Com
 		/* For.Prototype_Component_RootBehavior */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_RootBehavior"),
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_RootBehavior"),
 			CRootBehavior::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_RootBehavior");
 
 		/* For.Prototype_Component_Action */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Action"),
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Action"),
 			CAction::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Action");
 
-		/* For.Prototype_Component_Random_Select */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Random_Select"),
-			CRandom_Select::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_Random_Select");
-
-		/* For.Prototype_Component_Random_AirHit */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Random_AirHit"),
-			CRandom_AirHit::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_Random_AirHit");
+		/* For.Prototype_Component_RandomChoose */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_RandomChoose"),
+			CRandomChoose::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_RandomChoose");
+#pragma endregion
 
 #pragma region Behavior_Selectors
 		/* For.Prototype_Component_Selector */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Selector"),
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Selector"),
 			CSelector::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Selector");
 
 		/* For.Prototype_Component_Selector_Degree */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Selector_Degree"),
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Selector_Degree"),
 			CSelector_Degree::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Selector_Degree");
 #pragma endregion Behavior_Selectors
 
 #pragma region Behavior_Sequences
 		/* For.Prototype_Component_Sequence */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sequence"),
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Sequence"),
 			CSequence::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Sequence");
 
 		/* For.Prototype_Component_Sequence_Groggy */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sequence_Groggy"),
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Sequence_Groggy"),
 			CSequence_Groggy::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Sequence_Groggy");
 
 		/* For.Prototype_Component_Sequence_Levitate */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sequence_Levitate"),
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Sequence_Levitate"),
 			CSequence_Levitate::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Sequence_Levitate");
 
 		/* For.Prototype_Component_Sequence_Attack */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sequence_Attack"),
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Sequence_Attack"),
 			CSequence_Attack::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Sequence_Attack");
 
 		/* For.Prototype_Component_Sequence_MoveTarget */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sequence_MoveTarget"),
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Sequence_MoveTarget"),
 			CSequence_MoveTarget::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Sequence_MoveTarget");
 #pragma endregion Behavior_Sequences
 
 #pragma region Behavior_Movements
 		/* For.Prototype_Component_Wait */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Wait"),
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Wait"),
 			CWait::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Wait");
 
 		/* For.Prototype_Component_Turn */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Turn"),
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Turn"),
 			CTurn::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Turn");
 
 		/* For.Prototype_Component_LookAt */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_LookAt"),
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_LookAt"),
 			CLookAt::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_LookAt");
 
 		/* For.Prototype_Component_Check_Degree */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Check_Degree"),
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Check_Degree"),
 			CCheck_Degree::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Check_Degree");
 
 		/* For.Prototype_Component_Check_Distance */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Check_Distance"),
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Check_Distance"),
 			CCheck_Distance::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Check_Distance");
 
 		/* For.Prototype_Component_Death */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Death"),
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Death"),
 			CDeath::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Death");
 #pragma endregion Behavior_Movements
-
-	}
-	catch (const _tchar* pErrorTag)
-	{
-		wstring wstrErrorMSG = TEXT("Failed Add_Prototype : ");
-		wstrErrorMSG += pErrorTag;
-		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
-		__debugbreak();
-		return E_FAIL;
-	}
-
-	return S_OK;
-}
-
-HRESULT CMain1_Loader::Loading_For_Vault()
-{
-	try
-	{
-		if (FAILED(Loading_Map_Object(TEXT("../../Resources/GameData/MapData/MapData1.ddd"), LEVEL_VAULT)))
-			throw TEXT("Map Object");
-
-		if (FAILED(Loading_Map_Object_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins1.ddd"), LEVEL_VAULT)))
-			throw TEXT("Map Object_Ins");
-	}
-	catch (const _tchar* pErrorTag)
-	{
-		wstring wstrErrorMSG = TEXT("Failed Add_Prototype : ");
-		wstrErrorMSG += pErrorTag;
-		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
-		__debugbreak();
-		return E_FAIL;
-	}
-
-	return S_OK;
-}
-
-HRESULT CMain1_Loader::Loading_For_GreatHall()
-{
-	try
-	{
-		if (FAILED(Loading_Map_Object(TEXT("../../Resources/GameData/MapData/MapData2.ddd"), LEVEL_GREATHALL)))
-			throw TEXT("Map Object");
-
-		if (FAILED(Loading_Map_Object_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins2.ddd"), LEVEL_GREATHALL)))
-			throw TEXT("Map Object_Ins");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -457,11 +486,11 @@ HRESULT CMain1_Loader::Loading_Map_Object_Ins(const _tchar* pMapObjectInsPath, L
 	return S_OK;
 }
 
-CMain1_Loader* CMain1_Loader::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVELID eNextLevel)
+CMain1_Loader* CMain1_Loader::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVELID eNextLevel, _bool isStaticLoaded)
 {
 	CMain1_Loader* pInstance = New CMain1_Loader(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize(eNextLevel)))
+	if (FAILED(pInstance->Initialize(eNextLevel, isStaticLoaded)))
 	{
 		MSG_BOX("Failed to Created CMain1_Loader");
 		Safe_Release(pInstance);

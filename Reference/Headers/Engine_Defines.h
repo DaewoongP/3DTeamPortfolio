@@ -93,6 +93,7 @@
 #include <condition_variable>
 #include <future>
 #include <ctime>
+#include <memory>
 static std::mutex mtx;
 
 // file system - c++ 17

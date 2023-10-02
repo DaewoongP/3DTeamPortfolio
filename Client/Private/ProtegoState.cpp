@@ -22,6 +22,13 @@ HRESULT CProtegoState::Initialize_Prototype()
 
 HRESULT CProtegoState::Initialize(void* pArg)
 {
+	if (FAILED(CStateMachine::Initialize(pArg)))
+	{
+		__debugbreak();
+
+		return E_FAIL;
+	}
+
 	return S_OK;
 }
 
@@ -40,7 +47,7 @@ void CProtegoState::OnStateEnter(void* _pArg)
 	if (nullptr == _pArg)
 	{
 		//시작 애니메이션
-		m_pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Protego_Start_anm"));
+		m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Protego_Start_anm"));
 	}
 	//시전중에 맞았다!! 
 	else
@@ -52,7 +59,7 @@ void CProtegoState::OnStateEnter(void* _pArg)
 //나에서 타겟을 향한 벡터
 		_float3 vDirTarget{};
 
-		vDirTarget = ProtegoStateDesc->pTransform->Get_Position() - m_pPlayerTransform->Get_Position();
+		vDirTarget = ProtegoStateDesc->pTransform->Get_Position() - m_StateMachineDesc.pPlayerTransform->Get_Position();
 
 		vDirTarget = XMVectorSetY(vDirTarget, 0.0f);
 
@@ -61,7 +68,7 @@ void CProtegoState::OnStateEnter(void* _pArg)
 		//내 룩 벡터
 		_float3 vLook{};
 
-		vLook = m_pPlayerTransform->Get_Look();
+		vLook = m_StateMachineDesc.pPlayerTransform->Get_Look();
 
 		vLook = XMVectorSetY(vLook, 0.0f);
 
@@ -81,7 +88,7 @@ void CProtegoState::OnStateEnter(void* _pArg)
 			fTargetAngle *= -1;
 		}
 
-		m_pPlayerTransform->Turn(_float3(0.0f, 1.0f, 0.0f), fTargetAngle);
+		m_StateMachineDesc.pPlayerTransform->Turn(_float3(0.0f, 1.0f, 0.0f), fTargetAngle);
 #pragma endregion
 
 		m_isHit = ProtegoStateDesc->isHit;
@@ -97,13 +104,13 @@ void CProtegoState::OnStateEnter(void* _pArg)
 			case HIT_LIGHT:
 			{
 				//애니메이션 실행
-				m_pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Protego_Parry_Fwd_AOE_anm"));
+				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Protego_Parry_Fwd_AOE_anm"));
 			}
 			break;
 			case HIT_HEABY:
 			{
 				//애니메이션 실행
-				m_pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Protego_Parry_Fwd_AOE_Slide_anm"));
+				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Protego_Parry_Fwd_AOE_Slide_anm"));
 			}
 			break;
 
@@ -117,14 +124,14 @@ void CProtegoState::OnStateEnter(void* _pArg)
 void CProtegoState::OnStateTick()
 {
 	//루프 진행
-	if (true == *m_pIsFinishAnimation &&
-		!wcscmp(m_pOwnerModel->Get_Animation()->Get_AnimationName(), TEXT("Hu_Cmbt_Protego_Start_anm")))
+	if (true == *m_StateMachineDesc.pisFinishAnimation &&
+		!wcscmp(m_StateMachineDesc.pOwnerModel->Get_Animation()->Get_AnimationName(), TEXT("Hu_Cmbt_Protego_Start_anm")))
 	{
-		*m_pIsFinishAnimation = false;
+		*m_StateMachineDesc.pisFinishAnimation = false;
 
-		m_pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Protego_Loop_anm"));
+		m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Protego_Loop_anm"));
 	}
-	else if (true == *m_pIsFinishAnimation)
+	else if (true == *m_StateMachineDesc.pisFinishAnimation)
 	{
 		Set_StateMachine(TEXT("Idle"));
 	}
@@ -139,18 +146,18 @@ void CProtegoState::OnStateExit()
 
 void CProtegoState::Bind_Notify()
 {
-	m_pOwnerModel->Bind_Notify(TEXT("Hu_Cmbt_Protego_Start_anm"), TEXT("End_Animation"), m_pFuncFinishAnimation);
-	m_pOwnerModel->Bind_Notify(TEXT("Hu_Cmbt_Protego_Loop_anm"), TEXT("End_Animation"), m_pFuncFinishAnimation);
-	m_pOwnerModel->Bind_Notify(TEXT("Hu_Cmbt_Protego_Parry_Fwd_AOE_Slide_anm"), TEXT("End_Animation"), m_pFuncFinishAnimation);
-	m_pOwnerModel->Bind_Notify(TEXT("Hu_Cmbt_Protego_Parry_Fwd_AOE_anm"), TEXT("End_Animation"), m_pFuncFinishAnimation);
+	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Hu_Cmbt_Protego_Start_anm"), TEXT("End_Animation"), m_StateMachineDesc.pfuncFinishAnimation);
+	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Hu_Cmbt_Protego_Loop_anm"), TEXT("End_Animation"), m_StateMachineDesc.pfuncFinishAnimation);
+	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Hu_Cmbt_Protego_Parry_Fwd_AOE_Slide_anm"), TEXT("End_Animation"), m_StateMachineDesc.pfuncFinishAnimation);
+	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Hu_Cmbt_Protego_Parry_Fwd_AOE_anm"), TEXT("End_Animation"), m_StateMachineDesc.pfuncFinishAnimation);
 	//스투페파이
 }
 
 void CProtegoState::Go_Idle()
 {
-	if (true == *m_pIsFinishAnimation &&(
-		!wcscmp(m_pOwnerModel->Get_Animation()->Get_AnimationName(), TEXT("Hu_Cmbt_Protego_Loop_anm")) ||
-		!wcscmp(m_pOwnerModel->Get_Animation()->Get_AnimationName(), TEXT("Hu_Cmbt_Protego_Parry_Fwd_AOE_Slide_anm")))
+	if (true == *m_StateMachineDesc.pisFinishAnimation &&(
+		!wcscmp(m_StateMachineDesc.pOwnerModel->Get_Animation()->Get_AnimationName(), TEXT("Hu_Cmbt_Protego_Loop_anm")) ||
+		!wcscmp(m_StateMachineDesc.pOwnerModel->Get_Animation()->Get_AnimationName(), TEXT("Hu_Cmbt_Protego_Parry_Fwd_AOE_Slide_anm")))
 		)
 	{
 		Set_StateMachine(TEXT("Idle"));

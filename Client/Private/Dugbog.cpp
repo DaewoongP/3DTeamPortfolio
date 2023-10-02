@@ -8,8 +8,7 @@
 #include "Action.h"
 #include "MagicBall.h"
 #include "Check_Degree.h"
-#include "Random_AirHit.h"
-#include "Random_Select.h"
+#include "RandomChoose.h"
 #include "Check_Distance.h"
 #include "Selector_Degree.h"
 #include "Sequence_Groggy.h"
@@ -68,11 +67,18 @@ void CDugbog::Tick(_float fTimeDelta)
 
 	_float3 vPosition = m_pTransform->Get_Position();
 
+	
+
 	for (auto iter = m_CurrentTickSpells.begin(); iter != m_CurrentTickSpells.end(); )
 	{
 		if (iter->first & m_iCurrentSpell)
 		{
-			iter->second(vPosition, fTimeDelta);
+			auto Desciter = m_MagicTickDesc.find(iter->first);
+			if (Desciter != m_MagicTickDesc.end())
+			{
+				iter->second(Desciter->second);
+			}
+			
 			++iter;
 		}
 		else
@@ -193,9 +199,9 @@ HRESULT CDugbog::Make_AI()
 		if (nullptr == pSelector)
 			throw TEXT("pSelector is nullptr");
 
-		CRandom_Select* pRandom_Select_Break = dynamic_cast<CRandom_Select*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Random_Select")));
-		if (nullptr == pRandom_Select_Break)
-			throw TEXT("pRandom_Select_Break is nullptr");
+		CRandomChoose* pRandom_Break = dynamic_cast<CRandomChoose*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_RandomChoose")));
+		if (nullptr == pRandom_Break)
+			throw TEXT("pRandom_Break is nullptr");
 		CAction* pAction_Spawn = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
 		if (nullptr == pAction_Spawn)
 			throw TEXT("pAction_Spawn is nullptr");
@@ -213,8 +219,8 @@ HRESULT CDugbog::Make_AI()
 		if (FAILED(m_pRootBehavior->Assemble_Behavior(TEXT("Selector"), pSelector)))
 			throw TEXT("Failed Assemble_Behavior Selector");
 
-		if (FAILED(pSelector->Assemble_Behavior(TEXT("Random_Select_Break"), pRandom_Select_Break)))
-			throw TEXT("Failed Assemble_Behavior Random_Select_Break");
+		if (FAILED(pSelector->Assemble_Behavior(TEXT("Random_Break"), pRandom_Break)))
+			throw TEXT("Failed Assemble_Behavior Random_Break");
 		if (FAILED(pSelector->Assemble_Behavior(TEXT("Action_Spawn"), pAction_Spawn)))
 			throw TEXT("Failed Assemble_Behavior Action_Spawn");
 		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Death"), pSequence_Death)))
@@ -222,7 +228,7 @@ HRESULT CDugbog::Make_AI()
 		if (FAILED(pSelector->Assemble_Behavior(TEXT("Selector_Alive"), pSelector_Alive)))
 			throw TEXT("Failed Assemble_Behavior Selector_Alive");
 
-		if (FAILED(Make_Idle_Break(pRandom_Select_Break)))
+		if (FAILED(Make_Idle_Break(pRandom_Break)))
 			throw TEXT("Failed Make_Idle_Break");
 		if (FAILED(Make_Death(pSequence_Death)))
 			throw TEXT("Failed Make_Death");
@@ -425,14 +431,14 @@ void CDugbog::DeathBehavior(const _float& fTimeDelta)
 		Set_ObjEvent(OBJ_DEAD);
 }
 
-HRESULT CDugbog::Make_Idle_Break(_Inout_ CRandom_Select* pRandom_Select)
+HRESULT CDugbog::Make_Idle_Break(_Inout_ CRandomChoose* pRandomChoose)
 {
 	BEGININSTANCE;
 
 	try
 	{
-		if (nullptr == pRandom_Select)
-			throw TEXT("Parameter pRandom_Select is nullptr");
+		if (nullptr == pRandomChoose)
+			throw TEXT("Parameter pRandomChoose is nullptr");
 
 		/* Create Child Behaviors */
 		CAction* pAction_Hide_1 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
@@ -449,13 +455,17 @@ HRESULT CDugbog::Make_Idle_Break(_Inout_ CRandom_Select* pRandom_Select)
 			throw TEXT("pAction_Hide_4 is nullptr");
 
 		/* Set Decoretors */
-		pRandom_Select->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+		pRandomChoose->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 			{
 				_bool* pIsSpawn = { nullptr };
 				if (FAILED(pBlackBoard->Get_Type("isSpawn", pIsSpawn)))
 					return false;
 
 				return !(*pIsSpawn);
+			});
+		pRandomChoose->Add_Change_Condition(CBehavior::BEHAVIOR_SUCCESS, [&](CBlackBoard* pBlackBoard)->_bool
+			{
+				return true;
 			});
 
 		/* Set Options */
@@ -465,13 +475,13 @@ HRESULT CDugbog::Make_Idle_Break(_Inout_ CRandom_Select* pRandom_Select)
 		pAction_Hide_4->Set_Options(TEXT("Hide_4"), m_pModelCom);
 
 		/* Assemble Behaviors */
-		if (FAILED(pRandom_Select->Assemble_Behavior(TEXT("Action_Hide_1"), pAction_Hide_1, 0.25f)))
+		if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Action_Hide_1"), pAction_Hide_1, 0.25f)))
 			throw TEXT("Failed Assemble_Behavior Action_Hide_1");
-		if (FAILED(pRandom_Select->Assemble_Behavior(TEXT("Action_Hide_2"), pAction_Hide_2, 0.25f)))
+		if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Action_Hide_2"), pAction_Hide_2, 0.25f)))
 			throw TEXT("Failed Assemble_Behavior Action_Hide_2");
-		if (FAILED(pRandom_Select->Assemble_Behavior(TEXT("Action_Hide_3"), pAction_Hide_3, 0.25f)))
+		if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Action_Hide_3"), pAction_Hide_3, 0.25f)))
 			throw TEXT("Failed Assemble_Behavior Action_Hide_3");
-		if (FAILED(pRandom_Select->Assemble_Behavior(TEXT("Action_Hide_4"), pAction_Hide_4, 0.25f)))
+		if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Action_Hide_4"), pAction_Hide_4, 0.25f)))
 			throw TEXT("Failed Assemble_Behavior Action_Hide_4");
 	}
 	catch (const _tchar* pErrorTag)
@@ -616,9 +626,9 @@ HRESULT CDugbog::Make_Alive(_Inout_ CSelector* pSelector)
 		CSelector* pSelector_Check_Spell = dynamic_cast<CSelector*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Selector")));
 		if (nullptr == pSelector_Check_Spell)
 			throw TEXT("pSelector_Check_Spell is nullptr");
-		CRandom_Select* pRandom_Select_Attacks = dynamic_cast<CRandom_Select*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Random_Select")));
-		if (nullptr == pRandom_Select_Attacks)
-			throw TEXT("pRandom_Select_Attacks is nullptr");
+		CRandomChoose* pRandom_Attacks = dynamic_cast<CRandomChoose*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_RandomChoose")));
+		if (nullptr == pRandom_Attacks)
+			throw TEXT("pRandom_Attacks is nullptr");
 
 		CSelector* pSelector_Run_Attack = dynamic_cast<CSelector*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Selector")));
 		if (nullptr == pSelector_Run_Attack)
@@ -636,7 +646,7 @@ HRESULT CDugbog::Make_Alive(_Inout_ CSelector* pSelector)
 				
 				return !(pHealth->isDead());
 			});
-		pRandom_Select_Attacks->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+		pRandom_Attacks->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 			{
 				_uint* pICurrentSpell = { nullptr };
 				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
@@ -650,19 +660,18 @@ HRESULT CDugbog::Make_Alive(_Inout_ CSelector* pSelector)
 			});
 
 		/* Set Options */
-		pRandom_Select_Attacks->Set_Option(1.f);
 
 		/* Assemble Behaviors */
 		if (FAILED(pSelector->Assemble_Behavior(TEXT("Selector_Hit_Combo"), pSelector_Hit_Combo)))
 			throw TEXT("Failed Assemble_Behavior Selector_Hit_Combo");
 		if (FAILED(pSelector->Assemble_Behavior(TEXT("Selector_Check_Spell"), pSelector_Check_Spell)))
 			throw TEXT("Failed Assemble_Behavior Selector_Check_Spell");
-		if (FAILED(pSelector->Assemble_Behavior(TEXT("Random_Select_Attacks"), pRandom_Select_Attacks)))
-			throw TEXT("Failed Assemble_Behavior Random_Select_Attacks");
+		if (FAILED(pSelector->Assemble_Behavior(TEXT("Random_Attacks"), pRandom_Attacks)))
+			throw TEXT("Failed Assemble_Behavior Random_Attacks");
 
-		if (FAILED(pRandom_Select_Attacks->Assemble_Behavior(TEXT("Selector_Run_Attack"), pSelector_Run_Attack, 0.5f)))
+		if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Selector_Run_Attack"), pSelector_Run_Attack, 0.5f)))
 			throw TEXT("Failed Assemble_Behavior Selector_Run_Attack");
-		if (FAILED(pRandom_Select_Attacks->Assemble_Behavior(TEXT("Sequence_Tongue_Attack"), pSequence_Tongue_Attack, 0.5f)))
+		if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Sequence_Tongue_Attack"), pSequence_Tongue_Attack, 0.5f)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Tongue_Attack");
 
 		if (FAILED(Make_Hit_Combo(pSelector_Hit_Combo)))
@@ -1361,7 +1370,7 @@ HRESULT CDugbog::Make_Air_Hit(_Inout_ CSelector* pSelector)
 			throw TEXT("pSequence_Air_Heavy is nullptr");
 
 		/* 평타 맞고 공중에 뜨는 액션 */
-		CRandom_AirHit* pRandom_AirHit = dynamic_cast<CRandom_AirHit*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Random_AirHit")));
+		CRandomChoose* pRandom_AirHit = dynamic_cast<CRandomChoose*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_RandomChoose")));
 		if (nullptr == pRandom_AirHit)
 			throw TEXT("pRandom_AirHit is nullptr");
 		CAction* pAction_Splat_Front = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
@@ -1421,20 +1430,6 @@ HRESULT CDugbog::Make_Air_Hit(_Inout_ CSelector* pSelector)
 
 				return false;
 			});
-		pRandom_AirHit->Add_Function_Decorator([&](CBlackBoard* pBlackBoard)->_bool
-			{
-				_bool* pIsHitAttack = { nullptr };
-				if (FAILED(pBlackBoard->Get_Type("isHitAttack", pIsHitAttack)))
-					return false;
-
-				if (true == *pIsHitAttack)
-				{
-					*pIsHitAttack = false;
-					return true;
-				}
-
-				return false;
-			});
 		pAction_GetUp_Front->Add_End_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 			{
 				_bool* pIsHitCombo = { nullptr };
@@ -1464,6 +1459,20 @@ HRESULT CDugbog::Make_Air_Hit(_Inout_ CSelector* pSelector)
 				*pIsHitCombo = false;
 
 				return true;
+			});
+		pRandom_AirHit->Add_Change_Condition(CBehavior::BEHAVIOR_RUNNING, [&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_bool* pIsHitAttack = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("isHitAttack", pIsHitAttack)))
+					return false;
+
+				if (true == *pIsHitAttack)
+				{
+					*pIsHitAttack = false;
+					return true;
+				}
+
+				return false;
 			});
 
 		/* Set Options */
@@ -1562,8 +1571,7 @@ void CDugbog::Enter_Light_Attack()
 	m_CollisionRequestDesc.eType = ATTACK_LIGHT;    
 	m_CollisionRequestDesc.iDamage = 5;    
 	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;   
-	Set_CollisionData(&m_CollisionRequestDesc);    
-	m_pRigidBody->Enable_Collision("Enemy_Attack", this); 
+	m_pRigidBody->Enable_Collision("Enemy_Attack", this, &m_CollisionRequestDesc);
 } 
 
 void CDugbog::Enter_Heavy_Attack()
@@ -1571,17 +1579,15 @@ void CDugbog::Enter_Heavy_Attack()
 	m_CollisionRequestDesc.eType = ATTACK_HEAVY;    
 	m_CollisionRequestDesc.iDamage = 10;    
 	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;   
-	Set_CollisionData(&m_CollisionRequestDesc);    
-	m_pRigidBody->Enable_Collision("Enemy_Attack", this); 
+	m_pRigidBody->Enable_Collision("Enemy_Attack", this, &m_CollisionRequestDesc);
 }  
 
 void CDugbog::Exit_Attack() 
 { 
 	m_CollisionRequestDesc.eType = ATTACK_NONE;    
 	m_CollisionRequestDesc.iDamage = 0;    
-	m_CollisionRequestDesc.pEnemyTransform = m_pTransform; 
-	Set_CollisionData(&m_CollisionRequestDesc);     
-	m_pRigidBody->Disable_Collision("Enemy_Attack"); 
+	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
+	m_pRigidBody->Disable_Collision("Enemy_Attack");
 }
 
 CDugbog* CDugbog::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

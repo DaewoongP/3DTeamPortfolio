@@ -2,6 +2,7 @@
 #include "GameInstance.h"
 #include "UI_Inventory.h"
 #include "GameObject.h"
+#include "Item.h"
 
 CInventory::CInventory(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -24,8 +25,22 @@ HRESULT CInventory::Initialize(void* pArg)
 {
 	__super::Initialize(pArg);
 
-	m_pItems.reserve(ITEMTYPE_END);
-	m_pPlayerCurItems.reserve(RESOURCE);
+	m_pItems.resize(ITEMTYPE_END);
+	m_pPlayerCurItems.resize(RESOURCE);
+
+	Add_Components();
+
+	//BEGININSTANCE;
+
+	//CWiggenweldPotion::INIT_DESC initDesc;
+	//initDesc.pHealthCom = nullptr;
+	//CWiggenweldPotion* pWiggenweldPotion = static_cast<CWiggenweldPotion*>(
+	//	pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_WiggenweldPotion"), &initDesc));
+	//
+	//Add_Item(pWiggenweldPotion, ITEMTYPE::GEAR);
+	//
+	//Safe_Release(pWiggenweldPotion);
+	//ENDINSTANCE
 
 	return S_OK;
 }
@@ -34,6 +49,13 @@ void CInventory::Late_Tick(_float fTimeDelta)
 {
 	if (m_isOpen)
 	{
+		CGameInstance* pGameInstance = CGameInstance::GetInstance();
+		Safe_AddRef(pGameInstance);
+		if (pGameInstance->Get_DIKeyState(DIK_ESCAPE, CInput_Device::KEY_DOWN))
+		{
+			m_isOpen = false;
+		}
+		Safe_Release(pGameInstance);
 		//m_pUI_Inventory[m_eCurOpenItemtype]->Set_InventoryItem(m_pItems[m_eCurOpenItemtype]);
 		m_pUI_Inventory[m_eCurOpenItemtype]->Late_Tick(fTimeDelta);
 	}
@@ -61,7 +83,7 @@ HRESULT CInventory::Add_Components()
 		{
 			wstring TexturePath = TEXT("../../Resources/UI/Game/UI_Edit/Gear_Item_Frame.png");
 			lstrcpy(pDesc.UIDesc.szTexturePath, TexturePath.c_str());
-			pDesc.fOffset = _float2(-360.f, 90.f);
+			pDesc.fOffset = _float2(240.f, 260.f);
 			pDesc.fWidth = 80.f;
 			pDesc.fHeight = 80.f;
 			pDesc.iHorizontal = 5;
@@ -72,7 +94,7 @@ HRESULT CInventory::Add_Components()
 		{
 			wstring TexturePath = TEXT("../../Resources/UI/Game/UI_Edit/Inventory_Default_Edit.png");
 			lstrcpy( pDesc.UIDesc.szTexturePath, TexturePath.c_str());
-			pDesc.fOffset = _float2(-400.f, 100.f);
+			pDesc.fOffset = _float2(280.f, 270.f);
 			pDesc.fWidth = 80.f;
 			pDesc.fHeight = 80.f;
 			pDesc.iHorizontal = 4;
@@ -96,7 +118,7 @@ HRESULT CInventory::Add_Components()
 	return S_OK;
 }
 
-void CInventory::Add_Item(CGameObject* pItem, ITEMTYPE eType)
+void CInventory::Add_Item(CItem* pItem, ITEMTYPE eType)
 {
 	if (eType >= ITEMTYPE_END || eType < 0)
 		return;
@@ -107,18 +129,14 @@ void CInventory::Add_Item(CGameObject* pItem, ITEMTYPE eType)
 			return;
 
 		m_pItems[eType].push_back(pItem);
-		Safe_AddRef(pItem);
-
 		m_pUI_Inventory[eType]->Set_InventoryItem(m_pItems[eType]);
 	}
-	else
+	else if (RESOURCE == eType)
 	{
 		if (m_pItems[eType].size() >= iResourceMax)
 			return;
 
 		m_pItems[eType].push_back(pItem);
-		Safe_AddRef(pItem);
-
 		m_pUI_Inventory[eType]->Set_InventoryItem(m_pItems[eType]);
 	}
 }
@@ -149,7 +167,7 @@ void CInventory::Swap_Item(_uint Index, ITEMTYPE eType)
 		m_pItems[eType].erase(m_pItems[eType].begin() + Index);
 	}
 
-	CGameObject* SourItem = m_pItems[eType][Index];
+	CItem* SourItem = m_pItems[eType][Index];
 	m_pItems[eType][Index] = m_pPlayerCurItems[eType];
 	m_pPlayerCurItems[eType] = SourItem;
 
@@ -184,21 +202,31 @@ CGameObject* CInventory::Clone(void* pArg)
 
 void CInventory::Free()
 {
-	for (size_t i = 0; i < ITEMTYPE_END; i++)
+	__super::Free();
+
+	if (m_isCloned)
 	{
-		for (auto& pItem : m_pItems[i])
+		if (m_pItems.size() > 0)
 		{
-			Safe_Release(pItem);
+			for (size_t i = 0; i < ITEMTYPE_END; i++)
+			{
+				for (auto& pItem : m_pItems[i])
+				{
+					Safe_Release(pItem);
+				}
+			}
+			m_pItems.clear();
 		}
-	}
 
-	for (auto& pUI_Inven : m_pUI_Inventory)
-	{
-		Safe_Release(pUI_Inven);
-	}
+		for (auto& pUI_Inven : m_pUI_Inventory)
+		{
+			Safe_Release(pUI_Inven);
+		}
 
-	for (auto& pCurItem : m_pPlayerCurItems)
-	{
-		Safe_Release(pCurItem);
-	}
+		for (auto& pCurItem : m_pPlayerCurItems)
+		{
+			Safe_Release(pCurItem);
+		}
+		m_pPlayerCurItems.clear();
+	}	
 }

@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "Client_Defines.h"
 #include "UI.h"
+#include "Item.h"
 
 BEGIN(Engine)
 class CShader;
@@ -12,6 +13,7 @@ END
 
 BEGIN(Client)
 class CUI_Slot;
+class CUI_Back;
 class CInventory;
 
 class CUI_Inventory final : public CGameObject
@@ -26,7 +28,7 @@ public:
 		_float					fHeight;
 		_uint					iHorizontal;
 		_uint					iVertical;
-		CInventory::ITEMTYPE	eItemtype;
+		ITEMTYPE					eItemtype;
 	};
 
 private:
@@ -48,16 +50,17 @@ private:
 	CUI::UIDESC Load_File(const HANDLE hFile);
 
 private:
-	HRESULT Ready_Offset();
+	HRESULT  Ready_Offset();
+	HRESULT	Ready_DefaultTexture(const _tchar* pFilePath);
 	HRESULT	Add_ItemTexture();
 
 public:
-	HRESULT	Set_InventoryItem(vector<CGameObject*>& pItems);
+	HRESULT	Set_InventoryItem(vector<CItem*>& pItems);
 	HRESULT	Delete_InventoryItem(_uint iIndex);
 	HRESULT	Swap_InventoryItem();
 
 private:
-	CShader*			m_pShaderCom = { nullptr };
+	CShader*				m_pShaderCom = { nullptr };
 	CRenderer*			m_pRendererCom = { nullptr };
 	CVIBuffer_Rect*		m_pVIBufferCom = { nullptr };
 
@@ -67,12 +70,14 @@ private:
 	_float					m_fHeight;
 	_uint					m_iHorizontal;
 	_uint					m_iVertical;
-	CInventory::ITEMTYPE	m_eItemtype;
+	ITEMTYPE					m_eItemtype;
 
 private:
 	vector<_float2>					m_fPosition;
 	vector<class CTexture*>			m_ItemTextures;
-	vector<CUI_Slot*>				m_pSlots;
+	vector<CUI_Slot*>					m_pSlots;
+
+	CUI_Back*							m_pBack;
 
 private:
 	_bool		m_isOpen = { false };

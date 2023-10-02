@@ -39,11 +39,9 @@ public:
 
 public:
 	void On_Collider_Attack(CEnemy::COLLISIONREQUESTDESC* pCollisionRequestDesc) {
-		Set_CollisionData(pCollisionRequestDesc);
-		m_pRigidBody->Enable_Collision("Attack", this);
+		m_pRigidBody->Enable_Collision("Attack", this, pCollisionRequestDesc);
 	}
 	void Off_Collider_Attack(CEnemy::COLLISIONREQUESTDESC* pCollisionRequestDesc) {
-		Set_CollisionData(pCollisionRequestDesc);
 		m_pRigidBody->Disable_Collision("Attack");
 	}
 

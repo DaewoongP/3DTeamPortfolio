@@ -3,6 +3,7 @@
 #include "Level_Loading.h"
 
 #include "MagicBallPool.h"
+#include "UI_Group_Loading.h"
 
 CMainApp::CMainApp()
 	: m_pGameInstance{ CGameInstance::GetInstance() }
@@ -46,7 +47,11 @@ void CMainApp::Tick(_float fTimeDelta)
 {
 	NULL_CHECK_RETURN(m_pGameInstance, );
 
+#ifdef _DEBUG
+	ShowCursor(true);
+#else
 	ShowCursor(false);
+#endif // _DEBUG
 	
 #ifdef _DEBUG
 	Tick_ImGui();
@@ -56,6 +61,10 @@ void CMainApp::Tick(_float fTimeDelta)
 	m_pGameInstance->Tick_Engine(fTimeDelta);
 
 	Tick_FPS(fTimeDelta);
+
+#ifdef _DEBUG
+	Debug_ImGui();
+#endif // _DEBUG
 }
 
 HRESULT CMainApp::Render()
@@ -165,6 +174,15 @@ HRESULT CMainApp::Ready_Prototype_Component_For_Static()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_OBB_Collider"),
 			CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_OBB))))
 			throw TEXT("Prototype_Component_OBB_Collider");
+
+		/* Prototype_Component_CoolTime*/
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_CoolTime"),
+			CCoolTime::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_CoolTime");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Loading"),
+			CUI_Group_Loading::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_UI_Group_Loading");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -273,6 +291,47 @@ void CMainApp::Tick_ImGui()
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
+}
+
+void CMainApp::Debug_ImGui()
+{
+	RECT rc;
+	ZEROMEM(&rc);
+	GetWindowRect(g_hWnd, &rc);
+
+	ImGui::SetNextWindowPos(ImVec2(0.f, 0.f));
+	ImGui::SetNextWindowSize(ImVec2(200.f, 200.f));
+
+	ImGui::Begin("Main Debug");
+
+	ImGui::Text("Change Level");
+	_bool isChangedLevel = { false };
+	m_eLevelID = (LEVELID)m_pGameInstance->Get_CurrentLevelIndex();
+	if (LEVEL_END == m_eLevelID ||
+		LEVEL_LOADING == m_eLevelID ||
+		LEVEL_STATIC == m_eLevelID)
+	{
+		ImGui::End();
+		return;
+	}
+	if (ImGui::RadioButton("LEVEL_LOGO", (_int*)(&m_eLevelID), LEVEL_LOGO))
+		isChangedLevel = true;
+	if (ImGui::RadioButton("LEVEL_CLIFFSIDE", (_int*)(&m_eLevelID), LEVEL_CLIFFSIDE))
+		isChangedLevel = true;
+	if (ImGui::RadioButton("LEVEL_VAULT", (_int*)(&m_eLevelID), LEVEL_VAULT))
+		isChangedLevel = true;
+
+	if (true == isChangedLevel)
+	{
+		m_pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, m_eLevelID, m_isFirstLoaded));
+
+		if (false == m_isFirstLoaded)
+		{
+			m_isFirstLoaded = true;
+		}
+	}
+
+	ImGui::End();
 }
 
 HRESULT CMainApp::Render_ImGui()
