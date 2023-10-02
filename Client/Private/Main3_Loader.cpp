@@ -33,9 +33,9 @@
 
 #pragma region Items
 
-#include "AccPotion.h"
+#include "FocusPotion.h"
 #include "WiggenweldPotion.h"
-
+#include "Ingredient.h"
 #pragma endregion
 
 
@@ -328,7 +328,11 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_AccPotion"),
 			CAccPotion::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_AccPotion");
-
+		
+		/* For.Prototype_GameObject_FocusPotion */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_FocusPotion"),
+			CFocusPotion::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_FocusPotion");
 
 		/* For.Prototype_GameObject_WiggenweldPotion */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_WiggenweldPotion"),

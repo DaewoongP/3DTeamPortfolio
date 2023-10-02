@@ -166,6 +166,8 @@
   <ItemGroup>
     <ClInclude Include="..\Public\Accio.h" />
     <ClInclude Include="..\Public\Action.h" />
+    <ClInclude Include="..\public\ChineseChompingCabbageItem.h" />
+    <ClInclude Include="..\Public\Ingredient.h" />
     <ClInclude Include="..\Public\Arrestomomentum.h" />
     <ClInclude Include="..\Public\Client_Struct.h" />
     <ClInclude Include="..\Public\Crucio.h" />
@@ -173,12 +175,15 @@
     <ClInclude Include="..\Public\Flipendo.h" />
     <ClInclude Include="..\Public\Imperio.h" />
     <ClInclude Include="..\public\Item.h" />
+    <ClInclude Include="..\public\Plant.h" />
+    <ClInclude Include="..\Public\Potion.h" />
+    <ClInclude Include="..\public\Tool.h" />
     <ClInclude Include="..\Public\Death.h" />
     <ClInclude Include="..\Public\Descendo.h" />
     <ClInclude Include="..\Public\Enemy.h" />
     <ClInclude Include="..\public\Game_Manager.h" />
     <ClInclude Include="..\Public\Lumos.h" />
-    <ClInclude Include="..\Public\AccPotion.h" />
+    <ClInclude Include="..\Public\FocusPotion.h" />
     <ClInclude Include="..\Public\MPBall.h" />
     <ClInclude Include="..\Public\Ncendio.h" />
     <ClInclude Include="..\Public\Inventory.h" />
@@ -339,6 +344,8 @@
   <ItemGroup>
     <ClCompile Include="..\Private\Accio.cpp" />
     <ClCompile Include="..\Private\Action.cpp" />
+    <ClCompile Include="..\private\ChineseChompingCabbageItem.cpp" />
+    <ClCompile Include="..\Private\Ingredient.cpp" />
     <ClCompile Include="..\Private\Arrestomomentum.cpp" />
     <ClCompile Include="..\Private\Crucio.cpp" />
     <ClCompile Include="..\Private\Expelliarmus.cpp" />
@@ -350,7 +357,9 @@
     <ClCompile Include="..\Private\Enemy.cpp" />
     <ClCompile Include="..\private\Game_Manager.cpp" />
     <ClCompile Include="..\Private\Lumos.cpp" />
-    <ClCompile Include="..\Private\AccPotion.cpp" />
+    <ClCompile Include="..\Private\FocusPotion.cpp" />
+    <ClCompile Include="..\private\Plant.cpp" />
+    <ClCompile Include="..\Private\Potion.cpp" />
     <ClCompile Include="..\Private\MPBall.cpp" />
     <ClCompile Include="..\Private\Ncendio.cpp" />
     <ClCompile Include="..\Private\Inventory.cpp" />

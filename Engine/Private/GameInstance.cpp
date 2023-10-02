@@ -936,6 +936,19 @@ HRESULT CGameInstance::Find_And_Add_Texture(ID3D11Device* pDevice, ID3D11DeviceC
 	return S_OK;
 }
 
+HRESULT CGameInstance::Find_And_Add_Model(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel, CModel::TYPE eModelType, const _tchar* pModelPath, _float4x4 PivotMatrix)
+{
+	wstring wstrTag = ToPrototypeTag(TEXT("Prototype_Component_Model"), pModelPath);
+	if (nullptr == Find_Prototype(iLevel, Make_WChar(wstrTag.data())))
+	{
+		if (FAILED(Add_Prototype(iLevel, wstrTag.data()
+			, CModel::Create(pDevice, pContext, eModelType, pModelPath, PivotMatrix))))
+			return E_FAIL;
+	}
+
+	return S_OK;
+}
+
 _char* CGameInstance::Make_Char(const _char* pMakeChar)
 {
 	NULL_CHECK_RETURN_MSG(m_pString_Manager, nullptr, TEXT("String_Manager NULL"));

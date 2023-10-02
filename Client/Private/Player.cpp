@@ -20,7 +20,7 @@
 
 #include "UI_Group_Skill.h"
 
-#include "AccPotion.h"
+#include "FocusPotion.h"
 #include "CoolTime.h"	
 
 #include "WiggenweldPotion.h"
@@ -139,7 +139,7 @@ void CPlayer::Tick(_float fTimeDelta)
 	}
 	if (pGameInstance->Get_DIKeyState(DIK_F5, CInput_Device::KEY_DOWN))
 	{
-		m_pAccPotion->Use();
+		//m_pFocusPotion->Use();
 	}
 
 
@@ -548,13 +548,6 @@ HRESULT CPlayer::Add_Components()
 		return E_FAIL;
 	}
 
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_AccPotion"),
-		TEXT("Com_AccPotion"), reinterpret_cast<CComponent**>(&m_pAccPotion))))
-	{
-		__debugbreak();
-		return E_FAIL;
-	}
-
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_CoolTime"),
 		TEXT("Com_CoolTime"), reinterpret_cast<CComponent**>(&m_pCooltime))))
 	{
@@ -906,6 +899,25 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		m_pTransform->Go_Right(fTimeDelta);
 	}
 #endif //_DEBUG
+
+	if (pGameInstance->Get_DIKeyState(DIK_L, CInput_Device::KEY_DOWN))
+	{
+		//CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_Dust01"), m_pTransform->Get_Position());
+		//CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_Dust02"), m_pTransform->Get_Position());
+		//CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_RockChunksRough"), m_pTransform->Get_Position());
+		_int iHp = 1;
+		m_pPlayer_Information->Get_Health()->Set_HP(iHp);
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_K, CInput_Device::KEY_DOWN))
+	{
+		CWiggenweldPotion::CLONE_DESC initDesc;
+		initDesc.pPlayer = this;
+		CWiggenweldPotion* pWiggenweldPotion = static_cast<CWiggenweldPotion*>(
+			pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_WiggenweldPotion"), &initDesc));
+		pWiggenweldPotion->Use(_float3());
+		Safe_Release(pWiggenweldPotion);
+	}
 
 	ENDINSTANCE;
 }
@@ -1952,7 +1964,6 @@ void CPlayer::Free()
 		Safe_Release(m_pRigidBody);
 		Safe_Release(m_pPlayer_Information);
 		Safe_Release(m_UI_Group_Skill_01);
-		Safe_Release(m_pAccPotion);
 		Safe_Release(m_pCooltime);
 		
 		if (nullptr != m_pTargetTransform)
