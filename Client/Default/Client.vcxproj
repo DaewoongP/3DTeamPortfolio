@@ -165,12 +165,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Action.h" />
+    <ClInclude Include="..\public\ChineseChompingCabbageItem.h" />
+    <ClInclude Include="..\Public\Ingredient.h" />
     <ClInclude Include="..\public\Item.h" />
+    <ClInclude Include="..\public\Plant.h" />
+    <ClInclude Include="..\Public\Potion.h" />
+    <ClInclude Include="..\public\Tool.h" />
     <ClInclude Include="..\Public\Death.h" />
     <ClInclude Include="..\Public\Enemy.h" />
     <ClInclude Include="..\public\Game_Manager.h" />
     <ClInclude Include="..\Public\Lumos.h" />
-    <ClInclude Include="..\Public\AccPotion.h" />
+    <ClInclude Include="..\Public\FocusPotion.h" />
     <ClInclude Include="..\Public\MPBall.h" />
     <ClInclude Include="..\Public\Ncendio.h" />
     <ClInclude Include="..\Public\Inventory.h" />
@@ -324,18 +329,21 @@
     <ClInclude Include="ImGui\stb\stb_image_resize.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="ItemFactory.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Action.cpp" />
+    <ClCompile Include="..\private\ChineseChompingCabbageItem.cpp" />
+    <ClCompile Include="..\Private\Ingredient.cpp" />
     <ClCompile Include="..\private\Item.cpp" />
     <ClCompile Include="..\Private\Death.cpp" />
     <ClCompile Include="..\Private\Enemy.cpp" />
     <ClCompile Include="..\private\Game_Manager.cpp" />
     <ClCompile Include="..\Private\Lumos.cpp" />
-    <ClCompile Include="..\Private\AccPotion.cpp" />
+    <ClCompile Include="..\Private\FocusPotion.cpp" />
+    <ClCompile Include="..\private\Plant.cpp" />
+    <ClCompile Include="..\Private\Potion.cpp" />
     <ClCompile Include="..\Private\MPBall.cpp" />
     <ClCompile Include="..\Private\Ncendio.cpp" />
     <ClCompile Include="..\Private\Inventory.cpp" />
@@ -490,7 +498,6 @@
       <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</IncludeInUnityFile>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="ItemFactory.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico" />

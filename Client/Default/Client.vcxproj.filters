@@ -382,9 +382,6 @@
     <Filter Include="03. Behaviors\04. Function">
       <UniqueIdentifier>{11282af5-bac7-4061-9441-81c0be48d567}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\09. Item">
-      <UniqueIdentifier>{5c3eefb3-c8a9-4a27-96cf-0e1d6a672946}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\08. Inventory\Item">
       <UniqueIdentifier>{a8a056c1-627a-4e55-9a40-91512c0110cc}</UniqueIdentifier>
     </Filter>
@@ -394,13 +391,31 @@
     <Filter Include="02. GameObject\08. Inventory\Item\Potion">
       <UniqueIdentifier>{468d1cd9-e6fb-4a3a-8b33-c14df4a7eb93}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\09. Item\ex1.PowerPotion">
+    <Filter Include="02. GameObject\09. Item">
+      <UniqueIdentifier>{ab9b91ab-d68d-4f81-9267-777bc595a5e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Item\02. Ingredient">
+      <UniqueIdentifier>{d1c4c5bb-3054-45a2-b861-88bb25724c63}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Item\03. Plant">
+      <UniqueIdentifier>{d6985474-b264-4e9f-a32d-e5cdeaaab077}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Item\03. Plant\ChineseChompingCabbageItem">
+      <UniqueIdentifier>{26e2e61d-8c32-4e1e-869e-f932d2308d43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Item\99. Interface">
+      <UniqueIdentifier>{9cd20c79-d1dd-4c10-aa3f-aa47c981708a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Item\01. Potion">
+      <UniqueIdentifier>{1d5e3cac-b99b-4bcc-9472-30c063c0fb5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Item\01. Potion\PowerPotion">
       <UniqueIdentifier>{5a4aa143-71df-4884-91e1-ca2caf295348}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\09. Item\ex.AccPotion">
+    <Filter Include="02. GameObject\09. Item\01. Potion\FocusPotion">
       <UniqueIdentifier>{7cb5d380-3253-4755-a164-7338fda2ebf8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\09. Item\WiggenweldPotion">
+    <Filter Include="02. GameObject\09. Item\01. Potion\WiggenweldPotion">
       <UniqueIdentifier>{c07071fe-c006-4bca-b390-e403b214f1e9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -796,22 +811,16 @@
       <Filter>02. GameObject\04. UI\UI_Group</Filter>
     </ClInclude>
     <ClInclude Include="..\public\WiggenweldPotion.h">
-      <Filter>02. GameObject\09. Item\WiggenweldPotion</Filter>
+      <Filter>02. GameObject\09. Item\01. Potion\WiggenweldPotion</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MPBall.h">
       <Filter>02. GameObject\08. Inventory\Item\MPBall</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\AccPotion.h">
-      <Filter>02. GameObject\09. Item\ex.AccPotion</Filter>
+    <ClInclude Include="..\Public\FocusPotion.h">
+      <Filter>02. GameObject\09. Item\01. Potion\FocusPotion</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\PowerPotion.h">
-      <Filter>02. GameObject\09. Item\ex1.PowerPotion</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Item.h">
-      <Filter>02. GameObject\09. Item</Filter>
-    </ClInclude>
-    <ClInclude Include="ItemFactory.h">
-      <Filter>02. GameObject\09. Item</Filter>
+      <Filter>02. GameObject\09. Item\01. Potion\PowerPotion</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Check_Degree.h" />
     <ClInclude Include="..\Public\Check_Distance.h" />
@@ -820,6 +829,24 @@
     </ClInclude>
     <ClInclude Include="..\Public\Check_Degree.h">
       <Filter>03. Behaviors\04. Function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ChineseChompingCabbageItem.h">
+      <Filter>02. GameObject\09. Item\03. Plant\ChineseChompingCabbageItem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Potion.h">
+      <Filter>02. GameObject\09. Item\01. Potion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Ingredient.h">
+      <Filter>02. GameObject\09. Item\02. Ingredient</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Item.h">
+      <Filter>02. GameObject\09. Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Tool.h">
+      <Filter>02. GameObject\09. Item\99. Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Plant.h">
+      <Filter>02. GameObject\09. Item\03. Plant</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1178,22 +1205,16 @@
       <Filter>02. GameObject\04. UI\UI_Group</Filter>
     </ClCompile>
     <ClCompile Include="..\private\WiggenweldPotion.cpp">
-      <Filter>02. GameObject\09. Item\WiggenweldPotion</Filter>
+      <Filter>02. GameObject\09. Item\01. Potion\WiggenweldPotion</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Magic.cpp">
       <Filter>05. Magic</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\AccPotion.cpp">
-      <Filter>02. GameObject\09. Item\ex.AccPotion</Filter>
+    <ClCompile Include="..\Private\FocusPotion.cpp">
+      <Filter>02. GameObject\09. Item\01. Potion\FocusPotion</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\PowerPotion.cpp">
-      <Filter>02. GameObject\09. Item\ex1.PowerPotion</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Item.cpp">
-      <Filter>02. GameObject\09. Item</Filter>
-    </ClCompile>
-    <ClCompile Include="ItemFactory.cpp">
-      <Filter>02. GameObject\09. Item</Filter>
+      <Filter>02. GameObject\09. Item\01. Potion\PowerPotion</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Check_Degree.cpp" />
     <ClCompile Include="..\Private\Check_Distance.cpp" />
@@ -1205,6 +1226,21 @@
     </ClCompile>
     <ClCompile Include="..\Private\Check_Distance.cpp">
       <Filter>03. Behaviors\04. Function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ChineseChompingCabbageItem.cpp">
+      <Filter>02. GameObject\09. Item\03. Plant\ChineseChompingCabbageItem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Potion.cpp">
+      <Filter>02. GameObject\09. Item\01. Potion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Ingredient.cpp">
+      <Filter>02. GameObject\09. Item\02. Ingredient</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Item.cpp">
+      <Filter>02. GameObject\09. Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Plant.cpp">
+      <Filter>02. GameObject\09. Item\03. Plant</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

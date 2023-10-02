@@ -33,9 +33,9 @@
 
 #pragma region Items
 
-#include "AccPotion.h"
+#include "FocusPotion.h"
 #include "WiggenweldPotion.h"
-
+#include "Ingredient.h"
 #pragma endregion
 
 
@@ -278,14 +278,14 @@ HRESULT CMain3_Loader::Loading_For_Cliffside()
 			CProfessor_Fig::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Professor_Fig");
 
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_AccPotion"),
-			CAccPotion::Create(m_pDevice, m_pContext, LEVEL_STATIC))))
-			throw TEXT("Prototype_GameObject_AccPotion");
-
+		/* For.Prototype_GameObject_FocusPotion */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_FocusPotion"),
+			CFocusPotion::Create(m_pDevice, m_pContext, LEVEL_STATIC))))
+			throw TEXT("Prototype_GameObject_FocusPotion");
 
 		/* For.Prototype_GameObject_WiggenweldPotion */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_WiggenweldPotion"),
-			CWiggenweldPotion::Create(m_pDevice, m_pContext, LEVEL_STATIC, TEXT("../../Resources/UI/Game/UI/Icons/Potions/UI_T_WoundCleaning.png")))))
+			CWiggenweldPotion::Create(m_pDevice, m_pContext, LEVEL_STATIC))))
 			throw TEXT("Prototype_GameObject_WiggenweldPotion");
 	}
 	catch (const _tchar* pErrorTag)

@@ -253,12 +253,12 @@ HRESULT CLevel_Cliffside::Ready_Layer_Item(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_AccPotion"), pLayerTag, TEXT("GameObject_AccPotion"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_AccPotion)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
+	//if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_FocusPotion"), pLayerTag, TEXT("GameObject_FocusPotion"))))
+	//{
+	//	MSG_BOX("Failed Add_GameObject : (GameObject_FocusPotion)");
+	//	ENDINSTANCE;
+	//	return E_FAIL;
+	//}
 
 	ENDINSTANCE;
 

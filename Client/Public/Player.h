@@ -22,7 +22,7 @@ class CStateContext;
 class CPlayer_Information;
 class CUI_Group_Skill;
 class CMagicBall;
-class CAccPotion;
+class CFocusPotion;
 class CWiggenweldPotion;
 END
 
@@ -72,7 +72,6 @@ private:
 	CPlayer_Information* m_pPlayer_Information = { nullptr };
 
 	CUI_Group_Skill* m_UI_Group_Skill_01 = { nullptr };
-	CAccPotion* m_pAccPotion = { nullptr };
 private:
 	//카메라룩과 플레이어룩의 차이 각을 담기위한 변수(음수일 경우 오른쪽, 양수일 경우 왼쪽)
 	_float m_fLookAngle{};

@@ -5,50 +5,54 @@
 #include "Client_Defines.h"
 
 BEGIN(Engine)
+
 class CShader;
 class CTexture;
 class CRenderer;
 class CTransform;
 class CModel;
 class CCoolTime;
-class CHealth;
 END
 
 BEGIN(Client)
 
-class CWiggenweldPotion final : public CPotion
+class CFocusPotion final : public CPotion
 {
 public:
-	typedef struct tagCWiggenweldPotionCreateDesc
+	typedef struct tagCFocusPotionCreateDesc
 	{
 		// 아무것도 없어도 일단 만들어놓기.
 	}CREATE_DESC;
 
 public:
-	typedef struct tagCWiggenweldPotionCloneDesc : public tagPotionCloneDesc
+	typedef struct tagCFocusPotionCloneDesc : public tagPotionCloneDesc
 	{
 		// 아무것도 없어도 일단 만들어놓기.
 	}CLONE_DESC;
 
 private:
-	CWiggenweldPotion(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CWiggenweldPotion(const CWiggenweldPotion& rhs);
-	virtual ~CWiggenweldPotion() = default;
+	CFocusPotion(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CFocusPotion(const CFocusPotion& rhs);
+	virtual ~CFocusPotion() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype(_uint iLevel);
 	virtual HRESULT Initialize(void* pArg) override;
 
-public: // CTool override Function
 	virtual void Use(_float3 vPlayPos) override;
 
 private:
-	CHealth*	m_pPlayerHealthCom = { nullptr };
-	_float		m_fRecoveryAmount = { 0.2f };
+	HRESULT Add_Components();
+	HRESULT SetUp_ShaderResources();
+
+private:
+	_float m_fDuration = { 15.f };
 
 public:
-	static CWiggenweldPotion* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel);
+	static CFocusPotion* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free(void) override;
+
+
 };
 END
