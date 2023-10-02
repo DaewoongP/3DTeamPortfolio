@@ -32,7 +32,6 @@
 #include "CoolTime.h"
 
 #pragma region Items
-
 #include "FocusPotion.h"
 #include "WiggenweldPotion.h"
 #include "Ingredient.h"
@@ -325,18 +324,14 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 #pragma endregion
 
 #pragma region Load Potion
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_AccPotion"),
-			CAccPotion::Create(m_pDevice, m_pContext, eLevelID))))
-			throw TEXT("Prototype_GameObject_AccPotion");
-		
-		/* For.Prototype_GameObject_FocusPotion */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_FocusPotion"),
-			CFocusPotion::Create(m_pDevice, m_pContext, eLevelID))))
-			throw TEXT("Prototype_GameObject_FocusPotion");
+		///* For.Prototype_GameObject_FocusPotion */
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_FocusPotion"),
+		//	CFocusPotion::Create(m_pDevice, m_pContext, eLevelID))))
+		//	throw TEXT("Prototype_GameObject_FocusPotion");
 
 		/* For.Prototype_GameObject_WiggenweldPotion */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_WiggenweldPotion"),
-			CWiggenweldPotion::Create(m_pDevice, m_pContext, eLevelID, TEXT("../../Resources/UI/Game/UI/Icons/Potions/UI_T_WoundCleaning.png")))))
+			CWiggenweldPotion::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_WiggenweldPotion");
 #pragma endregion
 	}

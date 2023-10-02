@@ -106,6 +106,8 @@ HRESULT CPotion::Set_ShaderResources()
 	}
 
 	ENDINSTANCE;
+
+	return S_OK;
 }
 
 void CPotion::Free(void)

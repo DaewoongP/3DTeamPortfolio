@@ -198,7 +198,6 @@
     <ClInclude Include="..\public\Level_Smith.h" />
     <ClInclude Include="..\public\Level_Vault.h" />
     <ClInclude Include="..\Public\PotionTap.h" />
-    <ClInclude Include="..\Public\PowerPotion.h" />
     <ClInclude Include="..\Public\ProtegoState.h" />
     <ClInclude Include="..\Public\Menu_Gear.h" />
     <ClInclude Include="..\Public\HardLandState.h" />
@@ -373,7 +372,6 @@
     <ClCompile Include="..\private\Level_Smith.cpp" />
     <ClCompile Include="..\private\Level_Vault.cpp" />
     <ClCompile Include="..\Private\PotionTap.cpp" />
-    <ClCompile Include="..\Private\PowerPotion.cpp" />
     <ClCompile Include="..\Private\ProtegoState.cpp" />
     <ClCompile Include="..\Private\Menu_Gear.cpp" />
     <ClCompile Include="..\Private\HardLandState.cpp" />

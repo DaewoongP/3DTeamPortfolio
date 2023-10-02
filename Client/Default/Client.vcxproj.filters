@@ -843,9 +843,6 @@
     <ClInclude Include="..\Public\FocusPotion.h">
       <Filter>02. GameObject\09. Item\01. Potion\FocusPotion</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\PowerPotion.h">
-      <Filter>02. GameObject\09. Item\01. Potion\PowerPotion</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Arrestomomentum.h">
       <Filter>05. Magic\MagicBall\09. Arrestomomentum</Filter>
     </ClInclude>
@@ -854,9 +851,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\Accio.h">
       <Filter>05. Magic\MagicBall\11. Accio</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\AccPotion.h">
-      <Filter>02. GameObject\09. Item\ex.AccPotion</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\PowerPotion.h">
       <Filter>02. GameObject\09. Item\ex1.PowerPotion</Filter>
@@ -1273,9 +1267,6 @@
     <ClCompile Include="..\Private\FocusPotion.cpp">
       <Filter>02. GameObject\09. Item\01. Potion\FocusPotion</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\PowerPotion.cpp">
-      <Filter>02. GameObject\09. Item\01. Potion\PowerPotion</Filter>
-     </ClCompile>
     <ClCompile Include="..\Private\Arrestomomentum.cpp">
       <Filter>05. Magic\MagicBall\09. Arrestomomentum</Filter>
     </ClCompile>
@@ -1284,9 +1275,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\Accio.cpp">
       <Filter>05. Magic\MagicBall\11. Accio</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\AccPotion.cpp">
-      <Filter>02. GameObject\09. Item\ex.AccPotion</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\PowerPotion.cpp">
       <Filter>02. GameObject\09. Item\ex1.PowerPotion</Filter>
