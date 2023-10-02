@@ -407,12 +407,6 @@ HRESULT CProtego::SetUp_ShaderResources()
 	return S_OK;
 }
 
-HRESULT CProtego::Add_Effect()
-{
-	return E_NOTIMPL;
-}
-
-
 HRESULT CProtego::Add_RigidBody()
 {
 	CRigidBody::RIGIDBODYDESC RigidBodyDesc;

@@ -15,22 +15,22 @@ private:
 	virtual ~CLevel_Loading() = default;
 
 public:
-	virtual HRESULT Initialize(LEVELID eNextLevelID);
+	virtual HRESULT Initialize(LEVELID eNextLevelID, _bool isStaticLoaded);
 	virtual void Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
 private: /* Loaders */
 	// 다음 레벨을 구성하기위한 쓰레드 생성 객체
-	class CMain0_Loader*				m_pMain0_Loader = { nullptr };
-	class CMain1_Loader*				m_pMain1_Loader = { nullptr };
-	class CMain2_Loader*				m_pMain2_Loader = { nullptr };
-	class CMain3_Loader*				m_pMain3_Loader = { nullptr };
+	class CMain0_Loader*	m_pMain0_Loader = { nullptr };
+	class CMain1_Loader*	m_pMain1_Loader = { nullptr };
+	class CMain2_Loader*	m_pMain2_Loader = { nullptr };
+	class CMain3_Loader*	m_pMain3_Loader = { nullptr };
 
-	LEVELID								m_eNextLevelID = { LEVEL_END };
+	LEVELID					m_eNextLevelID = { LEVEL_END };
 
 #ifdef _DEBUG
 private:
-	wstring								m_szFinishedLoader = TEXT("");
+	wstring					m_szFinishedLoader = TEXT("");
 #endif // _DEBUG
 
 private:
@@ -46,7 +46,7 @@ private:
 #endif // _DEBUG
 
 public:
-	static CLevel_Loading* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVELID eNextLevelID);
+	static CLevel_Loading* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVELID eNextLevelID, _bool isStaticLoaded = true);
 	virtual void Free() override;
 };
 

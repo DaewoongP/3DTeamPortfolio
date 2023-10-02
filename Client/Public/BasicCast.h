@@ -3,11 +3,6 @@
 #include "Client_Defines.h"
 #include "MagicBall.h"
 
-BEGIN(Engine)
-class CParticleSystem;
-class CTrail;
-END
-
 BEGIN(Client)
 class CBasicCast final : public CMagicBall
 {
@@ -25,28 +20,7 @@ public:
 	virtual void OnCollisionStay(COLLEVENTDESC CollisionEventDesc) override;
 	virtual void OnCollisionExit(COLLEVENTDESC CollisionEventDesc) override;
 	virtual HRESULT Reset(MAGICBALLINITDESC& InitDesc) override;
-
-private:
-	// 지팡이 트레일
-	CTrail*						 m_WandTrail = { nullptr };
-	//지팡이 움직임 이펙트
-	CParticleSystem*			m_pWandEffect = { nullptr };
-
-	// 기본공격 시작 글로우
-	CParticleSystem*			m_pMainGlow = { nullptr };
-	// 기본공격 트레일
-	CTrail*						m_pMainTrail = { nullptr };
-
-	// 피격 팡( 3개짜리 )
-	CParticleSystem*			m_pHitSplashEffect = { nullptr };
-	// 피격 이펙트
-	CParticleSystem*			m_pHitEffect = { nullptr };
-	// 피격 섬광
-	CParticleSystem*			m_pHitGlowEffect = { nullptr };
 	
-	//지팡이 3타 터지는 이펙트
-	CParticleSystem* m_pFinalAttackEffect = { nullptr };
-
 private:
 	virtual void Ready_Begin() override;
 	virtual void Ready_DrawMagic() override;
@@ -60,7 +34,6 @@ private:
 
 private:
 	HRESULT Add_Components();
-	virtual HRESULT Add_Effect();
 
 public:
 	static CBasicCast* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel);

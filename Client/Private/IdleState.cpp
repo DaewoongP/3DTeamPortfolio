@@ -2,6 +2,7 @@
 #include "GameInstance.h"
 #include "Client_Defines.h"
 #include "StateContext.h"
+#include "Player.h"
 
 CIdleState::CIdleState(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
 	:CStateMachine(_pDevice,_pContext)
@@ -17,6 +18,14 @@ CIdleState::CIdleState(const CIdleState& rhs)
 
 HRESULT CIdleState::Initialize(void* pArg)
 {
+	if (FAILED(CStateMachine::Initialize(pArg)))
+	{
+		__debugbreak();
+
+		return E_FAIL;
+	}
+
+
 	BEGININSTANCE;
 
 	m_fAction_Change_Duration = 10.0f;
@@ -50,26 +59,28 @@ void CIdleState::OnStateEnter(void* _pArg)
 
 void CIdleState::OnStateTick()
 {
-	switch (*m_pIActionSwitch)
+	
+
+	switch (*m_StateMachineDesc.piActionType)
 	{
-	case CStateContext::ACTION_NONE:
+	case CPlayer::ACTION_NONE:
 	{
 		Action_None_Tick();
 	}
 	break;
-	case CStateContext::ACTION_CASUAL:
+	case CPlayer::ACTION_CASUAL:
 	{
 		Action_Casual_Tick();
 		ActionType_Change();
 	}
 	break;
-	case CStateContext::ACTION_CMBT:
+	case CPlayer::ACTION_CMBT:
 	{
 		Action_Cmbt_Tick();
 		ActionType_Change();
 	}
 	break;
-	case CStateContext::ACTION_END:
+	case CPlayer::ACTION_END:
 	{
 
 	}
@@ -83,15 +94,6 @@ void CIdleState::OnStateTick()
 
 	Go_Start();
 
-	Go_Roll();
-
-	//Go_Jump();
-
-	Go_Magic_Cast();
-
-	Go_Protego();
-
-	Go_Hit();
 }
 
 void CIdleState::OnStateExit()
@@ -100,72 +102,74 @@ void CIdleState::OnStateExit()
 
 void CIdleState::Action_None_Tick()
 {
-	if (true == *m_pIsFinishAnimation)
+	if (true == *m_StateMachineDesc.pisFinishAnimation)
 	{
-		m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Idle_anm"));
+		m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Idle_anm"));
 
-		*m_pIsFinishAnimation = false;
+		*m_StateMachineDesc.pisFinishAnimation = false;
 	}
 }
 
 void CIdleState::Action_Casual_Tick()
 {
-	if (true == *m_pIsFinishAnimation)
+	if (true == *m_StateMachineDesc.pisFinishAnimation)
 	{
-		m_pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Idle_Casual_anm"));
+		m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Idle_Casual_anm"));
 
-		*m_pIsFinishAnimation = false;
+		*m_StateMachineDesc.pisFinishAnimation = false;
 	}
 }
 
 void CIdleState::Action_Cmbt_Tick()
 {
-	if (true == *m_pIsFinishAnimation)
+	if (true == *m_StateMachineDesc.pisFinishAnimation)
 	{
-		m_pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_RF_Idle_anm"));
+		m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_RF_Idle_anm"));
 
-		*m_pIsFinishAnimation = false;
+		*m_StateMachineDesc.pisFinishAnimation = false;
 	}
 }
 
 void CIdleState::Bind_Notify()
 {
-	m_pOwnerModel->Bind_Notify(TEXT("Hu_BM_RF_Jog_Start_Fwd_anm"), TEXT("End_Animation"), m_pFuncFinishAnimation);
-	m_pOwnerModel->Bind_Notify(TEXT("Hu_BM_RF_Idle_anm"), TEXT("End_Animation"), m_pFuncFinishAnimation);
-	m_pOwnerModel->Bind_Notify(TEXT("Hu_Cmbt_Idle_Casual_anm"), TEXT("End_Animation"), m_pFuncFinishAnimation);
-	m_pOwnerModel->Bind_Notify(TEXT("Hu_Cmbt_RF_Idle_anm"), TEXT("End_Animation"), m_pFuncFinishAnimation);
-	m_pOwnerModel->Bind_Notify(TEXT("Hu_Cmbt_Idle_RF_2Cmbt_Idle_Casual_anm"), TEXT("End_Animation"), m_pFuncFinishAnimation);
-	m_pOwnerModel->Bind_Notify(TEXT("Hu_Cmbt_Idle_Casual_2BM_Idle_RF_anm"), TEXT("End_Animation"), m_pFuncFinishAnimation);
+	
+	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Hu_BM_RF_Jog_Start_Fwd_anm"), TEXT("End_Animation"), m_StateMachineDesc.pfuncFinishAnimation);
+	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Hu_BM_RF_Idle_anm"), TEXT("End_Animation"), m_StateMachineDesc.pfuncFinishAnimation);
+	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Hu_Cmbt_Idle_Casual_anm"), TEXT("End_Animation"), m_StateMachineDesc.pfuncFinishAnimation);
+	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Hu_Cmbt_RF_Idle_anm"), TEXT("End_Animation"), m_StateMachineDesc.pfuncFinishAnimation);
+	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Hu_Cmbt_Idle_RF_2Cmbt_Idle_Casual_anm"), TEXT("End_Animation"), m_StateMachineDesc.pfuncFinishAnimation);
+	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Hu_Cmbt_Idle_Casual_2BM_Idle_RF_anm"), TEXT("End_Animation"), m_StateMachineDesc.pfuncFinishAnimation);
 }
 
 void CIdleState::Go_Turn()
 {
-	_float fAngle = *m_pOwnerLookAngle;
+	
+	_float fAngle = *m_StateMachineDesc.pOwnerLookAngle;
 
-	if (true == *m_pIsDirectionKeyPressed)
+	if (true == *m_StateMachineDesc.pisDirectionPressed)
 	{
 		//양수 오른쪽
-		if (m_f135Angle < (*m_pOwnerLookAngle))
+		if (m_f135Angle < (*m_StateMachineDesc.pOwnerLookAngle))
 		{
 			//180도를 실행
-			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Idle_Turn_Rht_135_anm"));
+			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Idle_Turn_Rht_135_anm"));
 		}
-		else if (m_f45Angle < (*m_pOwnerLookAngle))
+		else if (m_f45Angle < (*m_StateMachineDesc.pOwnerLookAngle))
 		{
 			//90도를 실행
-			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Idle_Turn_Rht_45_anm"));
+			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Idle_Turn_Rht_45_anm"));
 		}
 
 		//음수 왼쪽
-		if (-m_f135Angle > (*m_pOwnerLookAngle))
+		if (-m_f135Angle > (*m_StateMachineDesc.pOwnerLookAngle))
 		{
 			//180도를 실행
-			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Idle_Turn_Lft_135_anm"));
+			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Idle_Turn_Lft_135_anm"));
 		}
-		else if (-m_f45Angle > (*m_pOwnerLookAngle))
+		else if (-m_f45Angle > (*m_StateMachineDesc.pOwnerLookAngle))
 		{
 			//90도를 실행
-			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Idle_Turn_Lft_45_anm"));
+			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Idle_Turn_Lft_45_anm"));
 		}
 
 		Set_StateMachine(TEXT("Move Turn"));
@@ -174,61 +178,19 @@ void CIdleState::Go_Turn()
 
 void CIdleState::Go_Start()
 {
-	_float fAngle = *m_pOwnerLookAngle;
+	_float fAngle = *m_StateMachineDesc.pOwnerLookAngle;
 	
 	//각이 작을 경우 바로뛴다.
-	if (true == *m_pIsDirectionKeyPressed && 
+	if (true == *m_StateMachineDesc.pisDirectionPressed && 
 		m_f45Angle > fAngle && 
 		-m_f45Angle < fAngle)
 	{
-		m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Start_Fwd_anm"));
+		m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Start_Fwd_anm"));
 
 		Set_StateMachine(TEXT("Move Start"));
 	}
 }
 
-void CIdleState::Go_Roll()
-{
-	BEGININSTANCE;
-	
-	if (pGameInstance->Get_DIKeyState(DIK_LCONTROL,CInput_Device::KEY_DOWN))
-	{
-		Set_StateMachine(TEXT("Roll"));
-	}
-	
-	ENDINSTANCE;
-}
-
-void CIdleState::Go_Jump()
-{
-	BEGININSTANCE;
-
-	if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
-	{
-		Set_StateMachine(TEXT("Jump"));
-	}
-
-	ENDINSTANCE;
-}
-
-void CIdleState::Go_Magic_Cast()
-{
-	BEGININSTANCE;
-
-	if (pGameInstance->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_DOWN))
-	{
-		if (CStateContext::ACTION_NONE == *m_pIActionSwitch)
-		{
-			m_pOwnerModel->Change_Animation(TEXT("Hu_BM_LF_Idle2Cmbt_RF_Wand_Equip_anm"));
-		}
-		//일단 전투로 보냄
-		//포착 기능 생기면 그때 캐주얼이랑 분기
-		*m_pIActionSwitch = CStateContext::ACTION_CMBT;
-		Set_StateMachine(TEXT("Magic_Cast"));
-	}
-
-	ENDINSTANCE;
-}
 
 void CIdleState::ActionType_Change()
 {
@@ -236,20 +198,20 @@ void CIdleState::ActionType_Change()
 
 	if (pGameInstance->Check_Timer(TEXT("Action_Change")))
 	{
-		switch (*m_pIActionSwitch)
+		switch (*m_StateMachineDesc.piActionType)
 		{
-		case CStateContext::ACTION_CMBT:
+		case CPlayer::ACTION_CMBT:
 		{
-			m_pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Idle_RF_2Cmbt_Idle_Casual_anm"));
+			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Idle_RF_2Cmbt_Idle_Casual_anm"));
 		}
 		break;
-		case CStateContext::ACTION_CASUAL:
+		case CPlayer::ACTION_CASUAL:
 		{
-			m_pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Idle_Casual_2BM_Idle_RF_anm"));
+			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Idle_Casual_2BM_Idle_RF_anm"));
 		}
 		break;
 		}
-		--(*m_pIActionSwitch);
+		--(*m_StateMachineDesc.piActionType);
 
 	}
 

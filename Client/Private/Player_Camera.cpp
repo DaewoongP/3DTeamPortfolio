@@ -151,6 +151,25 @@ void CPlayer_Camera::Mouse_Input(_float _fTimeDelta)
 
 	if (dwMouseMove)
 	{
+		////회전 제한
+		//_float3 vLook = m_pTransform->Get_Look();
+
+		//vLook.Normalize();
+
+		//_float3 vLookNoY = vLook;
+
+		//vLookNoY.y = 0.0f;
+		//vLookNoY.Normalize();
+
+		//if (XMConvertToRadians(70.0f) >= fabsf(XMVectorGetX(XMVector3AngleBetweenNormals(vLookNoY, vLook))))
+		//{
+		//	_float3	vRight = m_pTransform->Get_Right();
+
+		//	m_pTransform->Turn(vRight, dwMouseMove * _fTimeDelta * 0.1f);
+
+		//	dwMouseMove = 0;
+		//}
+
 		_float3	vRight = m_pTransform->Get_Right();
 
 		m_pTransform->Turn(vRight, dwMouseMove * _fTimeDelta * 0.1f);
@@ -290,10 +309,26 @@ void CPlayer_Camera::Update_Eye_At()
 
 	vAt = vAt.Transform(vAt, m_pTransform->Get_WorldMatrix());
 
-	_float3 vUp = _float3(0.0f, 1.0f ,0.0f);
+	_float3 vUp = _float3(0.0f, 1.0f, 0.0f);
 
 	BEGININSTANCE;
 
+	while (false == IsValid_CameraPos(vEye, vUp))
+	{
+		//Eye
+		_float3 vEye = m_vEyeStandard;
+		vEye *= m_fEyeDistance;
+		vEye = vEye.Transform(vEye, m_pTransform->Get_WorldMatrix());
+
+		//At
+		_float3 vAt = m_vAtStandard;
+		vAt *= m_fAtDistance;
+
+		vAt = vAt.Transform(vAt, m_pTransform->Get_WorldMatrix());
+
+		_float3 vUp = _float3(0.0f, 1.0f, 0.0f);
+	}
+	
 	pGameInstance->Set_Transform(
 		CPipeLine::D3DTS_VIEW, 
 		XMMatrixLookAtLH(vEye, vAt, vUp));
@@ -301,6 +336,18 @@ void CPlayer_Camera::Update_Eye_At()
 	ENDINSTANCE;
 }
 
+_bool CPlayer_Camera::IsValid_CameraPos(_float3 vEye, _float3 vUp)
+{
+	if (XMVector3Equal(vEye, XMVectorZero()) ||
+		XMVector3IsInfinite(vEye) ||
+		XMVector3Equal(vUp, XMVectorZero()) ||
+		XMVector3IsInfinite(vUp))
+	{
+		return false;
+	}
+	
+	return true;
+}
 
 CPlayer_Camera* CPlayer_Camera::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, void* pArg)
 {

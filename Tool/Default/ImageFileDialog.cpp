@@ -64,7 +64,7 @@ void CImageFileDialog::Tick()
             m_strFilePathName = m_pInstance.GetFilePathName();
             m_strFilePath = m_pInstance.GetCurrentPath();
             m_isOk = true;
-            ChangeTexture(m_strFilePathName.data());
+           // ChangeTexture(m_strFilePathName.data());
         }
 
         // close
@@ -77,7 +77,7 @@ void CImageFileDialog::Tick()
         if (m_strPrevFilePathName != m_pInstance.GetFilePathName())
         {
             string strCurrentFilePathName = m_pInstance.GetFilePathName();
-            ChangeTexture(strCurrentFilePathName.data());
+            //ChangeTexture(strCurrentFilePathName.data());
             m_strPrevFilePathName = strCurrentFilePathName;
         }
 

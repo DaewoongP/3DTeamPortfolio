@@ -130,6 +130,7 @@ PS_OUT PS_MAIN_POINT(PS_IN In)
     float fAtt = saturate((g_fLightRange - fDistance) / g_fLightRange);
 	
     Out.vShade = g_vLightDiffuse * saturate(max(dot(normalize(vLightDir) * -1.f, vNormal), 0.f) + (g_vLightAmbient * g_vMtrlAmbient)) * fAtt;
+    Out.vShade.a = 1.f;
 
     vector vReflect = reflect(normalize(vLightDir), vNormal);
     vector vLook = vPosition - g_vCamPosition;
@@ -177,6 +178,7 @@ PS_OUT PS_MAIN_SPOTLIGHT(PS_IN In)
     float fAtt = fSpot / fDistance * fDistance;
 	
     Out.vShade = g_vLightDiffuse * saturate(max(dot(normalize(vLightDir) * -1.f, vNormal), 0.f) + (g_vLightAmbient * g_vMtrlAmbient)) * fAtt;
+    Out.vShade.a = 1.f;
 
     vector vReflect = reflect(normalize(vLightDir), vNormal);
     vector vLook = vPosition - g_vCamPosition;

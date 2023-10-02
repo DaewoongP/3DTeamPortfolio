@@ -6,6 +6,7 @@ BEGIN(Client)
 class CMagicCastingState :
     public CStateMachine
 {
+public:
     enum BASICSPELLCOMBO
     {
         BASICSPELL_START = 0,
@@ -22,6 +23,14 @@ class CMagicCastingState :
         BASICSPELL_RANDOM_END     
     };
 
+    enum SPELL_TYPE
+    {
+        SPELL_BASIC,
+        SPELL_NORMAL,
+        SPELL_FINISHER,
+        SPELL_END
+    };
+
     enum SPELLACTION
     {
         SPELL_ACTION_01,
@@ -32,6 +41,9 @@ class CMagicCastingState :
 public:
     typedef struct tagMagicCastingStateDesc
     {
+        _bool* pisReadySpell = { nullptr };
+        _uint iSpellType = (_uint)SPELL_END;
+
         //노티파이에 넣을 함수포인터
         function<void()> pFuncSpell = { nullptr };
     }MAGICCASTINGSTATEDESC;
@@ -60,9 +72,9 @@ public:
     virtual void Bind_Notify();
 
 private:
-    _uint m_iBasicSpellCombo{ 0 };
-    _bool m_isReadySpell{ true };
-    _float m_fFixAngleSpeed{ 0.0f };
+    _uint m_iBasicSpellCombo = { 0 };
+    _bool* m_pisReadySpell = { nullptr };
+    _float m_fFixAngleSpeed = { 0.0f };
 
     _uint m_iBasicSpellRandom{ 0 };
 
@@ -72,15 +84,9 @@ private:
 
     _uint m_iSpellActionIndex = { (_uint)SPELL_ACTION_01 };
 
-    CTransform* m_pTargetTransform = { nullptr };
 private:
-    void Initialize_BasicSpell_Combo();
-
     void BasicSpell_Ready();
     
-    //클릭시 콤보(막타 후 아이들로 돌아가는 것은 노티파이의 역활)
-    void BasicSpell_Tick();
-
     //주문 시전시 나를 회전 시킨다.
     void Fix_Angle();
 
@@ -91,14 +97,12 @@ private:
     void Spell_Action_Count();
 
 private:
-    void Action_Casual_Tick();
     void Action_Cmbt_Tick();
 
     
 
     void Go_Idle();
 
-    void Go_Roll();
 
 public:
     static CMagicCastingState* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);

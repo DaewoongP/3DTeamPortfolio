@@ -40,6 +40,8 @@ public:
 		MAGIC_TYPE		eMagicType = { MT_END };
 		BUFF_TYPE		eBuffType = { BUFF_NONE };
 		SPELL			eMagicTag = { SPELL_END };
+		//추적 옵션
+		_bool			isChase = { false };
 		//데미지
 		_int			iDamage = { 0 };
 		//쿨타임	
@@ -47,6 +49,25 @@ public:
 		//속도
 		_float			fLifeTime = { 1.0f };
 	}MAGICDESC;
+
+
+public:
+	_bool IsCoolOn() { return (m_fCurrentCoolTime < 0); }
+
+	//겟셋 비추
+	_float Get_CoolTime() { return m_fCurrentCoolTime; }
+	void Set_CoolTime(_float value) { m_fCurrentCoolTime = value; }
+	_float Get_CoolSpeedTime() { return m_fCoolSpeed; }
+	void Set_CoolSpeedTime(_float value) { m_fCoolSpeed = value; }
+	_float Get_CoolMultipleTimer() { return m_fCoolMultipleTimer; }
+	void Set_CoolMultipleTimer(_float value) { m_fCoolMultipleTimer = value; }
+
+	//스킬 가속
+	void Set_SkillCoolMultiple(_float fTime, _float fValue) 
+	{
+		m_fCoolSpeed = fValue;
+		m_fCoolMultipleTimer = fTime;
+	}
 
 protected:
 	explicit CMagic(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -73,8 +94,12 @@ public:
 protected:
 	MAGICDESC					m_MagicDesc = {};
 	//사용 후 적용시켜줄 쿨타임
-	_float						m_fCurrentCoolTime = { 0 };
-	
+	_float						m_fCurrentCoolTime = { 0.f };
+	//쿨 배속
+	_float						m_fCoolSpeed = { 1.0f };
+	//쿨 배속 적용 시간
+	_float						m_fCoolMultipleTimer = { 0.f };
+
 private:
 	//프로토타입 생성을 위한 enum type 별 이름 지정.
 	_tchar m_szTagArray[SPELL_END][MAX_PATH] = {

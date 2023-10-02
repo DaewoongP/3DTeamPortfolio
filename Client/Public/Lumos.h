@@ -27,13 +27,8 @@ public:
 	virtual HRESULT Reset(MAGICBALLINITDESC& InitDesc) override;
 
 public:
-	void	Lumos_Tick(_float3 vPos, _float fTimeDelta);
+	void	Lumos_Tick(void* pArg);
 
-private:
-	// ±Û·Î¿ì ÀÌÆåÆ®
-	CParticleSystem*			m_pWandGlowEffect = { nullptr };
-	// ±Û·Î¿ì »¡°­ ÀÌÆåÆ®
-	CParticleSystem*			m_pWandGlowRedEffect= { nullptr };
 private:
 	_float				m_fEndTimer = { 0.3f };
 
@@ -50,7 +45,6 @@ private:
 
 private:
 	HRESULT Add_Components();
-	virtual HRESULT Add_Effect();
 
 public:
 	static CLumos* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel);

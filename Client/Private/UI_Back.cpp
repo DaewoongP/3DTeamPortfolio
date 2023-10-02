@@ -23,9 +23,15 @@ HRESULT CUI_Back::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
-	
+		
 	if (FAILED(Add_Components()))
 		return E_FAIL;
+
+	if (nullptr != pArg)
+	{
+		UIDESC* pDesc = (UIDESC*)pArg;
+		this->Load(*pDesc);
+	}
 
 	Make_Matrix(g_iWinSizeX, g_iWinSizeY);
 
@@ -119,8 +125,11 @@ HRESULT CUI_Back::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
 
-	if (FAILED(m_Textures[m_iTextureIndex]->Bind_ShaderResources(m_pShaderCom, "g_Texture")))
-		return E_FAIL;
+	if (m_Textures.size() > 0)
+	{
+		if (FAILED(m_Textures[m_iTextureIndex]->Bind_ShaderResources(m_pShaderCom, "g_Texture")))
+			return E_FAIL;
+	}
 
 	if (m_AlphaTextures.size() > 0)
 	{

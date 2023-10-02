@@ -34,9 +34,18 @@ HRESULT CMagic::Initialize(void* pArg)
 
 void CMagic::Tick(_float fTimeDelta)
 {
+	if (m_fCoolMultipleTimer > 0)
+	{
+		m_fCoolMultipleTimer -= fTimeDelta;
+	}
+	else 
+	{
+		m_fCoolSpeed = 1.0f;
+	}
+
 	if (m_fCurrentCoolTime > 0)
 	{
-		m_fCurrentCoolTime -= fTimeDelta;
+		m_fCurrentCoolTime -= fTimeDelta * m_fCoolSpeed;
 	}
 
 	__super::Tick(fTimeDelta);

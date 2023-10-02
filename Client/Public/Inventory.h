@@ -2,27 +2,13 @@
 #include "Component.h"
 #include "Client_Defines.h"
 #include "GameObject.h"
-
+#include "Item.h"
 
 BEGIN(Client)
 class CUI_Inventory;
 
 class CInventory final : public CGameObject
 {
-public:
-	enum ITEMTYPE
-	{
-		HAND,
-		FACE,
-		HEAD,
-		NECK,
-		BACK,
-		OUTFIT,
-		RESOURCE,
-		POTION,
-		ITEMTYPE_END
-	};
-
 public:
 	void Set_CurItemtype(ITEMTYPE eType) {
 		m_eCurOpenItemtype = eType;
@@ -47,15 +33,15 @@ public:
 
 private:
 	_bool			m_isOpen = { false };
-	ITEMTYPE		m_eCurOpenItemtype = { ITEMTYPE_END };
+	ITEMTYPE			m_eCurOpenItemtype = { ITEMTYPE_END };
 
 private:
 	// UI 컴포넌트
 	CUI_Inventory*				m_pUI_Inventory[ITEMTYPE_END];
 	// 실질적인 아이템 저장소
-	vector<vector<CGameObject*>>	m_pItems;
+	vector<vector<CItem*>>			m_pItems;
 	// 현재 플레이어의 장비 포인터
-	vector<CGameObject*>			m_pPlayerCurItems;
+	vector<CItem*>				m_pPlayerCurItems;
 
 private:
 	_uint iGearMax = { 20 };
@@ -65,7 +51,7 @@ private:
 	HRESULT Add_Components();
 
 public:
-	void	Add_Item(CGameObject* pItem, ITEMTYPE eType);
+	void	Add_Item(CItem* pItem, ITEMTYPE eType);
 	void	Delete_Item(ITEMTYPE eType, _uint iIndex);
 	void	Swap_Item(_uint Index, ITEMTYPE eType);
 

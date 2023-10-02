@@ -77,7 +77,7 @@ PS_OUT PS_MAIN_DEFERRED(PS_IN In)
 
     if (vShadow.r < 0.6f)
     {
-        vShade *= 0.2f;
+        vShade *= 0.5f;
         vSpecular = float4(0.f, 0.f, 0.f, 0.f);
     }
     

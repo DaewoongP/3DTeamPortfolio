@@ -129,8 +129,8 @@ public: /* For.Light_Manager */
 	const _float4x4* Get_LightProj();
 
 
-	void Set_Light(_uint iIndex, CLight::LIGHTDESC LightDesc);
-	class CLight* Add_Lights(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const CLight::LIGHTDESC & LightDesc);
+	void Set_Light(_uint iIndex, _float fWinSizeX, _float fWinSizeY, CLight::LIGHTDESC LightDesc);
+	class CLight* Add_Lights(_float fWinSizeX, _float fWinSizeY, const CLight::LIGHTDESC & LightDesc);
 	HRESULT Delete_Lights(_uint iIndex,const _char* Name);
 	HRESULT Clear_Lights();
 
@@ -203,6 +203,9 @@ public:	/* For.Camera_Manager */
 	class CCamera* Find_Camera(const _tchar* _CameraTag);
 	//ÄÆ¾À ÁßÁö
 	void Stop_CutScene();
+#ifdef _DEBUG
+	void Set_DebugCam(_bool isCam);
+#endif // _DEBUG
 
 public: /* For.RenderTaget_Manager*/
 	class CRenderTarget* Find_RenderTarget(const _tchar* pTargetTag);
@@ -251,6 +254,7 @@ public:
 	HRESULT Add_Prototype_Textures(_uint iLevel, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pPrototypeName, const _tchar* pTargetExtension, const _tchar* pDirectoryPath, _bool isFailedSkip);
 	HRESULT Add_Prototype_Models(_uint iLevel, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CModel::TYPE eType, const _tchar* pPrototypeName, const _tchar* pTargetExtension, const _tchar* pDirectoryPath, _bool isFailedSkip, _float4x4 PivotMatrix = _float4x4());
 	HRESULT Find_And_Add_Texture(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel, const _tchar* pPath);
+	HRESULT Find_And_Add_Model(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel, CModel::TYPE eModelType, const _tchar* pModelPath, _float4x4 PivotMatrix = _float4x4());
 
 	static void Release_Engine();
 	virtual void Free() override;

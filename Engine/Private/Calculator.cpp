@@ -318,6 +318,9 @@ _float3 CCalculator::GetVectorSlerp(_float3 v1, _float3 v2, _float3 vUp, _float 
 
 _float4x4 CCalculator::RightUpLook_In_Vectors(_float3 vSourPos, _float3 vDestPos)
 {
+	if (XMVector3Equal(vSourPos, vDestPos))
+		return XMMatrixIdentity();
+
 	_float4x4 ResultMatrix = _float4x4();
 
 	_float3 vRight, vUp, vLook;

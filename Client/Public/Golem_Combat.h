@@ -32,6 +32,7 @@ private:
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
+	virtual HRESULT Initialize_Level(_uint iCurrentLevelIndex) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual void OnCollisionEnter(COLLEVENTDESC CollisionEventDesc) override;
@@ -45,6 +46,7 @@ private:
 	virtual HRESULT Make_AI() override;
 	virtual HRESULT Make_Notifies() override;
 	virtual HRESULT Add_Components() override;
+	virtual HRESULT Add_Components_Level(_uint iCurrentLevelIndex) override;
 	virtual HRESULT SetUp_ShaderResources() override;
 
 #ifdef _DEBUG
@@ -57,16 +59,20 @@ private: /* 사망처리 전용 함수 */
 	void DeathBehavior(const _float& fTimeDelta);
 
 private: /* 행동 묶음들 */
-	HRESULT Make_Turns(_Inout_ CSequence* pSequence);
-	HRESULT Make_Attack(_Inout_ CSelector* pSelector);
-	HRESULT Make_NormalAttack(_Inout_ CSelector* pSelector);
+	HRESULT Make_Death(_Inout_ CSequence* pSequence);
+	HRESULT Make_Alive(_Inout_ CSelector* pSelector);
+
 	HRESULT Make_Hit_Combo(_Inout_ CSelector* pSelector);
 	HRESULT Make_Check_Spell(_Inout_ CSelector* pSelector);
-	HRESULT Make_Descendo(_Inout_ CSequence* pSequence);
+	HRESULT Make_NormalAttack(_Inout_ CSelector* pSelector);
+
 	HRESULT Make_Levioso_Combo(_Inout_ CSelector* pSelector);
-	HRESULT Make_Air_Hit(_Inout_ CSequence* pSequence);
+	HRESULT Make_Descendo(_Inout_ CSequence* pSequence);
+	HRESULT Make_Turns(_Inout_ CSequence* pSequence);
+	HRESULT Make_Attack(_Inout_ CSelector* pSelector);
 	HRESULT Make_Random_Idle_Move(_Inout_ CRandomChoose* pRandomChoose);
-	HRESULT Make_Death(_Inout_ CSequence* pSequence);
+
+	HRESULT Make_Air_Hit(_Inout_ CSequence* pSequence);
 
 private: /* Notify Func */
 	void Enter_Light_Attack();

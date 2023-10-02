@@ -27,13 +27,6 @@ public:
 	virtual HRESULT Reset(MAGICBALLINITDESC& InitDesc) override;
 
 private:
-	// 불 트레일 
-	CParticleSystem*	m_pSmokeCloudEffect = { nullptr };
-	CParticleSystem*	m_pFireCircleBoomEffect = { nullptr };
-	CParticleSystem*	m_pBurnTargetEffect = { nullptr };
-	CMeshEffect*		m_pFireRingMeshEffect = { nullptr };
-
-private:
 	virtual void Ready_Begin() override;
 	virtual void Ready_DrawMagic() override;
 	virtual void Ready_CastMagic() override;
@@ -45,8 +38,10 @@ private:
 	virtual void Tick_Dying(_float fTimeDelta) override;
 
 private:
+	CMeshEffect* m_pFireRingMeshEffect = { nullptr };
+
+private:
 	HRESULT Add_Components();
-	virtual HRESULT Add_Effect();
 	virtual HRESULT Add_RigidBody() override;
 
 public:

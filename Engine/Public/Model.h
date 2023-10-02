@@ -43,6 +43,9 @@ public:
 	class CMesh* Get_Meshes_Test() { return(m_Meshes[0]); }
 	vector<class CMesh*>* Get_MeshesVec() { return &m_Meshes; }
 
+	// 뼈오프셋 * 뼈 컴바인 * 모델피벗에 대한 메트릭스(내부적으로 0,1,2행 노말라이즈)를 반환
+	_float4x4 Get_Attaching_Bone_Matrix(_uint iBoneIndex);
+	
 public:
 	virtual HRESULT Initialize_Prototype(TYPE eType, const _tchar* pModelFilePath, _float4x4 PivotMatrix);
 	virtual HRESULT Initialize(void* pArg) override;
