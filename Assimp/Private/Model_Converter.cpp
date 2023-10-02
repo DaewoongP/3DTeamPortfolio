@@ -74,7 +74,7 @@ HRESULT CModel_Converter::Convert_Model(_uint iType, const _char* pModelFilePath
 		fs::create_directory(szPath);
 	}
 	// Write MapObject
-	else if (TYPE_MAPOBJECT == eType)
+	else if (TYPE_MAPOBJECT == eType || TYPE_MAPOBJECT_ANIM == eType)
 	{
 		lstrcat(szPath, TEXT("MapObject/NonAnims/"));
 		lstrcat(szPath, szFileName);
@@ -97,7 +97,6 @@ HRESULT CModel_Converter::Convert_Model(_uint iType, const _char* pModelFilePath
 		}
 	}
 
-
 	cout << "Convert Materials..." << endl;
 	if (FAILED(Convert_Materials(eType, pModelFilePath, szPath)))
 	{
@@ -105,7 +104,7 @@ HRESULT CModel_Converter::Convert_Model(_uint iType, const _char* pModelFilePath
 		return E_FAIL;
 	}
 
-	if (TYPE_ANIM == eType || TYPE_ONLYANIM == eType)
+	if (TYPE_ANIM == eType || TYPE_ONLYANIM == eType || TYPE_MAPOBJECT_ANIM == eType)
 	{
 		// 애니메이션 파일일경우에만 실행.
 		cout << "Convert Animations..." << endl;
@@ -429,14 +428,8 @@ HRESULT CModel_Converter::Convert_Materials(TYPE eType, const char* pModelFilePa
 			CharToWChar(strFileName, szTextureName);
 			lstrcat(szTexturePath, pSaveDirectory);
 
-			if (eType != TYPE_MAPOBJECT)
-			{
-				lstrcat(szTexturePath, szTextureName);
-
-				lstrcpy(Material.MaterialTexture[j].szTexPath, szTexturePath);
-				Material.MaterialTexture[j].TexType = TEXTYPE(j);
-			}
-			else // 맵 오브젝트일 경우 경로를 다르게 설정한다.
+			// 맵 오브젝트일 경우 경로를 다르게 설정한다.
+			if (eType == TYPE_MAPOBJECT || eType == TYPE_MAPOBJECT_ANIM)
 			{
 				wstring wsTexturePath(szTexturePath);
 				wstring wsTargetIndex(TEXT("MapObject/"));
@@ -450,6 +443,13 @@ HRESULT CModel_Converter::Convert_Materials(TYPE eType, const char* pModelFilePa
 				lstrcat(szNewTexturePath, szTextureName);
 
 				lstrcpy(Material.MaterialTexture[j].szTexPath, szNewTexturePath);
+				Material.MaterialTexture[j].TexType = TEXTYPE(j);
+			}
+			else 
+			{
+				lstrcat(szTexturePath, szTextureName);
+
+				lstrcpy(Material.MaterialTexture[j].szTexPath, szTexturePath);
 				Material.MaterialTexture[j].TexType = TEXTYPE(j);
 			}
 		}

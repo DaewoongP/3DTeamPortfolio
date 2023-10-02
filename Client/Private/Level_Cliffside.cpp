@@ -385,18 +385,18 @@ HRESULT CLevel_Cliffside::Load_MapObject(const _tchar* pObjectFilePath)
 		size_t findIndex = ws.find(TEXT("Model_")) + 6;
 
 		wstring modelName = ws.substr(findIndex);
-		wstring wsMapEffectName(TEXT("Cylinder_Long"));
+		wstring wsMapEffectName(TEXT("Anim_TreasureChest"));
 
 		if (0 == lstrcmp(modelName.c_str(), wsMapEffectName.c_str()))
 		{
 			_tchar wszobjName[MAX_PATH] = { 0 };
-			_stprintf_s(wszobjName, TEXT("GameObject_MapEffect_%d"), (iObjectNum));
+			_stprintf_s(wszobjName, TEXT("GameObject_Treasure_Chest_%d"), (iObjectNum));
 
 			if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE,
-				TEXT("Prototype_GameObject_MapEffect"), TEXT("Layer_BackGround"),
+				TEXT("Prototype_GameObject_Treasure_Chest"), TEXT("Layer_BackGround"),
 				wszobjName, &MapObjectDesc)))
 			{
-				MSG_BOX("Failed to Clone MapEffect");
+				MSG_BOX("Failed to Clone Treasure_Chest");
 				ENDINSTANCE;
 				return E_FAIL;
 			}
@@ -415,7 +415,7 @@ HRESULT CLevel_Cliffside::Load_MapObject(const _tchar* pObjectFilePath)
 				ENDINSTANCE;
 				return E_FAIL;
 			}
-		}		
+		}
 
 		++iObjectNum; ENDINSTANCE;
 	}

@@ -235,40 +235,16 @@ HRESULT CLevel_Vault::Load_MapObject(const _tchar* pObjectFilePath)
 		}
 		BEGININSTANCE;
 
-		wstring ws(MapObjectDesc.wszTag);
-		size_t findIndex = ws.find(TEXT("Model_")) + 6;
+		_tchar wszobjName[MAX_PATH] = { 0 };
+		_stprintf_s(wszobjName, TEXT("GameObject_MapObject_%d"), (iObjectNum));
 
-		wstring modelName = ws.substr(findIndex);
-		wstring wsMapEffectName(TEXT("Cylinder_Long"));
-
-		if (0 == lstrcmp(modelName.c_str(), wsMapEffectName.c_str()))
+		if (FAILED(pGameInstance->Add_Component(LEVEL_VAULT, LEVEL_VAULT,
+			TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_BackGround"),
+			wszobjName, &MapObjectDesc)))
 		{
-			_tchar wszobjName[MAX_PATH] = { 0 };
-			_stprintf_s(wszobjName, TEXT("GameObject_MapEffect_%d"), (iObjectNum));
-
-			if (FAILED(pGameInstance->Add_Component(LEVEL_VAULT, LEVEL_VAULT,
-				TEXT("Prototype_GameObject_MapEffect"), TEXT("Layer_BackGround"),
-				wszobjName, &MapObjectDesc)))
-			{
-				MSG_BOX("Failed to Clone MapEffect");
-				ENDINSTANCE;
-				return E_FAIL;
-			}
-		}
-
-		else
-		{
-			_tchar wszobjName[MAX_PATH] = { 0 };
-			_stprintf_s(wszobjName, TEXT("GameObject_MapObject_%d"), (iObjectNum));
-
-			if (FAILED(pGameInstance->Add_Component(LEVEL_VAULT, LEVEL_VAULT,
-				TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_BackGround"),
-				wszobjName, &MapObjectDesc)))
-			{
-				MSG_BOX("Failed to Clone MapObject");
-				ENDINSTANCE;
-				return E_FAIL;
-			}
+			MSG_BOX("Failed to Clone MapObject");
+			ENDINSTANCE;
+			return E_FAIL;
 		}
 
 		++iObjectNum; ENDINSTANCE;
