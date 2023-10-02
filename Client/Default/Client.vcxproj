@@ -175,6 +175,7 @@
     <ClInclude Include="..\Public\Expelliarmus.h" />
     <ClInclude Include="..\Public\Flipendo.h" />
     <ClInclude Include="..\Public\Imperio.h" />
+    <ClInclude Include="..\Public\EndurusPotion.h" />
     <ClInclude Include="..\public\Item.h" />
     <ClInclude Include="..\public\Plant.h" />
     <ClInclude Include="..\Public\Potion.h" />
@@ -198,6 +199,7 @@
     <ClInclude Include="..\public\Level_GreatHall.h" />
     <ClInclude Include="..\public\Level_Smith.h" />
     <ClInclude Include="..\public\Level_Vault.h" />
+    <ClInclude Include="..\Public\MaximaPotion.h" />
     <ClInclude Include="..\Public\PotionTap.h" />
     <ClInclude Include="..\Public\ProtegoState.h" />
     <ClInclude Include="..\Public\Menu_Gear.h" />
@@ -354,6 +356,7 @@
     <ClCompile Include="..\Private\Expelliarmus.cpp" />
     <ClCompile Include="..\Private\Flipendo.cpp" />
     <ClCompile Include="..\Private\Imperio.cpp" />
+    <ClCompile Include="..\Private\EndurusPotion.cpp" />
     <ClCompile Include="..\private\Item.cpp" />
     <ClCompile Include="..\Private\Death.cpp" />
     <ClCompile Include="..\Private\Descendo.cpp" />
@@ -375,6 +378,7 @@
     <ClCompile Include="..\private\Level_GreatHall.cpp" />
     <ClCompile Include="..\private\Level_Smith.cpp" />
     <ClCompile Include="..\private\Level_Vault.cpp" />
+    <ClCompile Include="..\Private\MaximaPotion.cpp" />
     <ClCompile Include="..\Private\PotionTap.cpp" />
     <ClCompile Include="..\Private\ProtegoState.cpp" />
     <ClCompile Include="..\Private\Menu_Gear.cpp" />

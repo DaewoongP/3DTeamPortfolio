@@ -32,7 +32,11 @@
 #include "CoolTime.h"
 
 #pragma region Items
+
 #include "FocusPotion.h"
+
+#include "MaximaPotion.h"
+#include "EndurusPotion.h"
 #include "WiggenweldPotion.h"
 #include "Ingredient.h"
 #pragma endregion
@@ -328,6 +332,11 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_FocusPotion"),
 		//	CFocusPotion::Create(m_pDevice, m_pContext, eLevelID))))
 		//	throw TEXT("Prototype_GameObject_FocusPotion");
+
+		/* For.Prototype_GameObject_MaximaPotion */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_MaximaPotion"),
+			CMaximaPotion::Create(m_pDevice, m_pContext, eLevelID, TEXT("../../Resources/UI/Game/UI/UI_T_CloudSmokeMask.png")))))
+			throw TEXT("Prototype_GameObject_MaximaPotion");
 
 		/* For.Prototype_GameObject_WiggenweldPotion */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_WiggenweldPotion"),

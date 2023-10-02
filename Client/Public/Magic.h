@@ -30,7 +30,7 @@ class CMagic : public CComposite
 public:
 	// 마법의 구분( 어떤 파티션에 분류되는 친구인가? )
 	enum MAGIC_GROUP { MG_CONTROL, MG_POWER, MG_DAMAGE, MG_UTILITY, MG_CHANGE, MG_CURSE, MG_ESSENTIAL, MG_END };
-	
+
 	// 마법이 영향을 줄 상대 실드의 색
 	enum MAGIC_TYPE { MT_NOTHING, MT_YELLOW, MT_PURPLE, MT_RED, MT_ALL, MT_END };
 
@@ -75,6 +75,9 @@ protected:
 	virtual ~CMagic() = default;
 
 public:
+
+
+public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;
@@ -86,7 +89,7 @@ public:
 
 public:
 	//목표와 시작 위치를 설정해줌. 지팡이에서 파티클 재생을 해주기위해 지팡이도 던져줌.
-	virtual class CMagicBall* Magic_Cast(const CGameObject* pTarget, const CGameObject* pWeapon, COLLISIONFLAG eCollisionFlag);
+	virtual class CMagicBall* Magic_Cast(const CGameObject* pTarget, const CGameObject* pWeapon, COLLISIONFLAG eCollisionFlag,_bool PowerUp);
 
 protected:
 	MAGICDESC					m_MagicDesc = {};

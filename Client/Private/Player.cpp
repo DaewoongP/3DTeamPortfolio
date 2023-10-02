@@ -20,8 +20,12 @@
 
 #include "UI_Group_Skill.h"
 
+#include "MaximaPotion.h"
 #include "FocusPotion.h"
+
+#include "EndurusPotion.h"
 #include "CoolTime.h"	
+#include "Defence.h"
 
 #include "WiggenweldPotion.h"
 
@@ -141,7 +145,15 @@ void CPlayer::Tick(_float fTimeDelta)
 	{
 		//m_pFocusPotion->Use();
 	}
-
+	if (pGameInstance->Get_DIKeyState(DIK_F6, CInput_Device::KEY_DOWN))
+	{
+		m_pMaximaPotion->Use(_float3(0.f, 0.f, 0.f));
+		m_isPowerUp = true;
+	}
+	if (pGameInstance->Get_DIKeyState(DIK_F7, CInput_Device::KEY_DOWN))
+	{	
+		//m_pEndurusPotion->Use(_float3(0.f, 0.f, 0.f));
+	}
 
 	ENDINSTANCE;
 
@@ -540,12 +552,37 @@ HRESULT CPlayer::Add_Components()
 		return E_FAIL;
 	}
 
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_MaximaPotion"),
+		TEXT("Com_MaximaPotion"), reinterpret_cast<CComponent**>(&m_pMaximaPotion))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+	
+	//_int DefValue = 15;
+	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_EndurusPotion"),
+	//	TEXT("Com_EndurusPotion"), reinterpret_cast<CComponent**>(&m_pEndurusPotion),&DefValue)))
+	//{
+	//	__debugbreak();
+	//	return E_FAIL;
+	//}
+
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_CoolTime"),
 		TEXT("Com_CoolTime"), reinterpret_cast<CComponent**>(&m_pCooltime))))
 	{
 		__debugbreak();
 		return E_FAIL;
 	}
+	CDefence::DEFFENCEDESC Def;
+	Def.iDeffence = 0;
+
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Defence"),
+		TEXT("Com_Defence"), reinterpret_cast<CComponent**>(&m_pDefence),&Def)))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+	
 	return S_OK;
 }
 
@@ -1388,19 +1425,19 @@ void CPlayer::Shot_Basic_Spell()
 {
 	Find_Target_For_Distance();
 	m_pMagicSlot->Add_Magics(m_BasicDesc_Light);
-	m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(0, m_pTarget, m_pWeapon, COL_ENEMY);
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(0, m_pTarget, m_pWeapon, COL_ENEMY,m_isPowerUp);
 }
 
 void CPlayer::Shot_Basic_Last_Spell()
 {
 	Find_Target_For_Distance();
 	m_pMagicSlot->Add_Magics(m_BasicDesc_Heavy);
-	m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(0, m_pTarget, m_pWeapon, COL_ENEMY);
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(0, m_pTarget, m_pWeapon, COL_ENEMY,m_isPowerUp);
 }
 
 void CPlayer::Protego()
 {
-	m_pMagicSlot->Action_Magic_Basic(1, this, m_pWeapon, COL_MAGIC);
+	m_pMagicSlot->Action_Magic_Basic(1, this, m_pWeapon, COL_MAGIC,m_isPowerUp);
 }
 
 void CPlayer::Gravity_On()
@@ -1768,13 +1805,13 @@ void CPlayer::Shot_Levioso()
 		OffSetMatrix = m_pTarget->Get_Offset_Matrix();
 	}
 
-	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(1, m_pTarget, m_pWeapon, COL_ENEMY);
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(1, m_pTarget, m_pWeapon, COL_ENEMY,m_isPowerUp);
 }
  
 
 void CPlayer::Shot_Confringo()
 {
-	//Find_Target_For_Distance();
+	//Find_Target_For_Distawnce();
 
 	_float4x4 OffSetMatrix = XMMatrixIdentity();
 
@@ -1783,7 +1820,7 @@ void CPlayer::Shot_Confringo()
 		OffSetMatrix = m_pTarget->Get_Offset_Matrix();
 	}
 
-	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(0, m_pTarget, m_pWeapon, COL_ENEMY);
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(0, m_pTarget, m_pWeapon, COL_ENEMY,m_isPowerUp);
 }
 
 void CPlayer::Shot_NCENDIO()
@@ -1797,7 +1834,7 @@ void CPlayer::Shot_NCENDIO()
 		OffSetMatrix = m_pTarget->Get_Offset_Matrix();
 	}
 
-	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(3, m_pTarget, m_pWeapon, COL_ENEMY);
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(3, m_pTarget, m_pWeapon, COL_ENEMY, m_isPowerUp);
 }
 
 void CPlayer::Shot_Finisher()
@@ -1811,14 +1848,14 @@ void CPlayer::Shot_Finisher()
 		OffSetMatrix = m_pTarget->Get_Offset_Matrix();
 	}
 
-	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(2, m_pTarget, m_pWeapon, COL_ENEMY);
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(2, m_pTarget, m_pWeapon, COL_ENEMY, m_isPowerUp);
 }
 
 void CPlayer::Lumos()
 {
 	if (nullptr == m_pFrncSpellToggle)
 	{
-		m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(2, this, m_pWeapon, COL_NONE);
+		m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(2, this, m_pWeapon, COL_NONE, m_isPowerUp);
 	}
 	else
 	{
@@ -1957,6 +1994,8 @@ void CPlayer::Free()
 		Safe_Release(m_pPlayer_Information);
 		Safe_Release(m_UI_Group_Skill_01);
 		Safe_Release(m_pCooltime);
+		Safe_Release(m_pMaximaPotion);
+		Safe_Release(m_pDefence);
 		
 		if (nullptr != m_pTargetTransform)
 		{

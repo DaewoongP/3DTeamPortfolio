@@ -125,8 +125,9 @@ HRESULT CMagicSlot::Add_Magic_To_Basic_Slot(_uint iSlotIndex, SPELL eSpellType)
 	return S_OK;
 }
 
-CMagicBall* CMagicSlot::Action_Magic_Skill(_uint iIndex, const CGameObject* pTarget, const CGameObject* pWeaponMatrix, COLLISIONFLAG eCollisionFlag)
+CMagicBall* CMagicSlot::Action_Magic_Skill(_uint iIndex, const CGameObject* pTarget, const CGameObject* pWeaponMatrix, COLLISIONFLAG eCollisionFlag, _bool isPowerUp)
 {
+
 	//if Size over = MSG / if Index Slot is nullptr, nothing
 	if (iIndex < m_MagicSlots.size())
 	{
@@ -134,8 +135,10 @@ CMagicBall* CMagicSlot::Action_Magic_Skill(_uint iIndex, const CGameObject* pTar
 		{
 			return nullptr;
 		}
+		
+		
 
-		return m_MagicSlots[iIndex]->Magic_Cast(pTarget, pWeaponMatrix, eCollisionFlag);
+		return m_MagicSlots[iIndex]->Magic_Cast(pTarget, pWeaponMatrix, eCollisionFlag,isPowerUp);
 	}
 	else if (m_MagicSlots[iIndex] == nullptr)
 	{
@@ -146,7 +149,7 @@ CMagicBall* CMagicSlot::Action_Magic_Skill(_uint iIndex, const CGameObject* pTar
 	return nullptr;
 }
 
-CMagicBall* CMagicSlot::Action_Magic_Basic(_uint iIndex, const CGameObject* pTarget, const CGameObject* pWeaponMatrix, COLLISIONFLAG eCollisionFlag)
+CMagicBall* CMagicSlot::Action_Magic_Basic(_uint iIndex, const CGameObject* pTarget, const CGameObject* pWeaponMatrix, COLLISIONFLAG eCollisionFlag, _bool isPowerUp)
 {
 	//if Size over = MSG / if Index Slot is nullptr, nothing
 	if (iIndex < m_MagicEssentialSlots.size())
@@ -156,7 +159,7 @@ CMagicBall* CMagicSlot::Action_Magic_Basic(_uint iIndex, const CGameObject* pTar
 			return nullptr;
 		}
 
-		return m_MagicEssentialSlots[iIndex]->Magic_Cast(pTarget, pWeaponMatrix, eCollisionFlag);
+		return m_MagicEssentialSlots[iIndex]->Magic_Cast(pTarget, pWeaponMatrix, eCollisionFlag,isPowerUp);
 	}
 	else if (m_MagicEssentialSlots[iIndex] == nullptr)
 	{
@@ -211,4 +214,4 @@ void CMagicSlot::Free()
 	}
 
 	__super::Free();
-}
+	}
