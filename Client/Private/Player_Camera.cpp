@@ -151,6 +151,25 @@ void CPlayer_Camera::Mouse_Input(_float _fTimeDelta)
 
 	if (dwMouseMove)
 	{
+		////회전 제한
+		//_float3 vLook = m_pTransform->Get_Look();
+
+		//vLook.Normalize();
+
+		//_float3 vLookNoY = vLook;
+
+		//vLookNoY.y = 0.0f;
+		//vLookNoY.Normalize();
+
+		//if (XMConvertToRadians(70.0f) >= fabsf(XMVectorGetX(XMVector3AngleBetweenNormals(vLookNoY, vLook))))
+		//{
+		//	_float3	vRight = m_pTransform->Get_Right();
+
+		//	m_pTransform->Turn(vRight, dwMouseMove * _fTimeDelta * 0.1f);
+
+		//	dwMouseMove = 0;
+		//}
+
 		_float3	vRight = m_pTransform->Get_Right();
 
 		m_pTransform->Turn(vRight, dwMouseMove * _fTimeDelta * 0.1f);
