@@ -30,6 +30,7 @@ public:
 	void Set_LightProj(_float4x4 ProjLight) { m_ProjLight = ProjLight; }
 	void Set_LightView(_float4x4 ViewLight) { m_ViewLight = ViewLight; }
 	_bool Light_NullCheck() { return m_Lights.empty(); }
+
 public:
 	CLight* Add_Lights(_float fWinSizeX, _float fWinSizeY, const CLight::LIGHTDESC& LightDesc);
 	HRESULT Delete_Lights(_uint iIndex,const _char* Name);

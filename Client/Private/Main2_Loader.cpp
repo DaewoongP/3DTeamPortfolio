@@ -209,16 +209,6 @@ HRESULT CMain2_Loader::Loading_For_Cliffside(LEVELID eLevelID)
 			CWeapon_Golem_Combat::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Weapon_Golem_Combat");
 
-		PivotMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
-		/* For.Prototype_Component_Model_Golem_Combat */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_Model_Golem_Combat"),
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/Golem_CombatGrunt/Golem_CombatGrunt.gcm"), PivotMatrix))))
-			throw TEXT("Prototype_Component_Model_Golem_Combat");
-
-		/* For.Prototype_GameObject_Golem_CombatGrunt */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Golem_CombatGrunt"),
-			CGolem_Combat::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_Golem_CombatGrunt");
 		//////////////////////////////////////////
 	}
 	catch (const _tchar* pErrorTag)

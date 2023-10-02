@@ -16,16 +16,16 @@ HRESULT CLevel_Vault::Initialize()
     if (FAILED(__super::Initialize()))
         return E_FAIL;
 
-	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
+	if (FAILED(Ready_Lights()))
 	{
-		MSG_BOX("Failed Ready_Layer_Player");
+		MSG_BOX("Failed Ready_Lights");
 
 		return E_FAIL;
 	}
 
-	if (FAILED(Ready_Lights()))
+	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
 	{
-		MSG_BOX("Failed Ready_Lights");
+		MSG_BOX("Failed Ready_Layer_Player");
 
 		return E_FAIL;
 	}
@@ -192,7 +192,7 @@ HRESULT CLevel_Vault::Ready_Lights()
 	LightDesc.vAmbient = _float4(0.1f, 0.1f, 0.1f, 1.f);
 	LightDesc.vSpecular = BLACKDEFAULT;
 
-	pGameInstance->Set_Light(CLight::TYPE_DIRECTIONAL, (_float)g_iWinSizeX, (_float)g_iWinSizeY, LightDesc);
+	pGameInstance->Add_Lights((_float)g_iWinSizeX, (_float)g_iWinSizeY, LightDesc);
 
 	ENDINSTANCE;
 

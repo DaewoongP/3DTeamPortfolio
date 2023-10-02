@@ -34,12 +34,6 @@ private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
 
-#ifdef _DEBUG
-private:
-	HRESULT		Debug_UI(_float fTimeDelta);
-
-#endif // _DEBUG
-
 private:
 	_float		m_fTimeDelta = { 0.f };
 	_float		m_fDissolveAmount = { 0.f };

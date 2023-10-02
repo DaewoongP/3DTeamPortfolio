@@ -41,9 +41,8 @@ HRESULT CWiggenweldPotion::Initialize(void* pArg)
 	return S_OK;
 }
 
-void CWiggenweldPotion::Use(_float3 vPlayPos,void* ExtraValue)
+void CWiggenweldPotion::Use(_float3 vPlayPos)
 {
-	m_pPlayerInformation->Get_Health()->Heal(m_fRecoveryAmount);
 }
 
 CWiggenweldPotion* CWiggenweldPotion::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel)

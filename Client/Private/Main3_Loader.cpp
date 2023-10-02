@@ -328,20 +328,7 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 #pragma endregion
 
 #pragma region Load Potion
-		///* For.Prototype_GameObject_FocusPotion */
-		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_FocusPotion"),
-		//	CFocusPotion::Create(m_pDevice, m_pContext, eLevelID))))
-		//	throw TEXT("Prototype_GameObject_FocusPotion");
 
-		/* For.Prototype_GameObject_MaximaPotion */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_MaximaPotion"),
-			CMaximaPotion::Create(m_pDevice, m_pContext, eLevelID, TEXT("../../Resources/UI/Game/UI/UI_T_CloudSmokeMask.png")))))
-			throw TEXT("Prototype_GameObject_MaximaPotion");
-
-		/* For.Prototype_GameObject_WiggenweldPotion */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_WiggenweldPotion"),
-			CWiggenweldPotion::Create(m_pDevice, m_pContext, eLevelID))))
-			throw TEXT("Prototype_GameObject_WiggenweldPotion");
 #pragma endregion
 	}
 	catch (const _tchar* pErrorTag)

@@ -187,7 +187,7 @@ void CWeapon_Player_Wand::Do_Lumos(_float fTimeDelta)
 		LightInfo.fRange = 17.f;
 		LightInfo.fSpotPower = 0.f;
 		if (AccTime < 1.f)
-			AccTime += fTimeDelta*3.f;
+			AccTime += fTimeDelta * 3.f;
 
 		m_LightIntensity = XMVectorLerp(WHITEDEFAULT, BLACKDEFAULT, AccTime);
 

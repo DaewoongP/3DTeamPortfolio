@@ -147,7 +147,7 @@ void CPlayer::Tick(_float fTimeDelta)
 	}
 	if (pGameInstance->Get_DIKeyState(DIK_F6, CInput_Device::KEY_DOWN))
 	{
-		m_pMaximaPotion->Use(_float3(0.f, 0.f, 0.f));
+		//m_pMaximaPotion->Use(_float3(0.f, 0.f, 0.f));
 		m_isPowerUp = true;
 	}
 	if (pGameInstance->Get_DIKeyState(DIK_F7, CInput_Device::KEY_DOWN))
@@ -182,6 +182,7 @@ void CPlayer::Tick(_float fTimeDelta)
 	{
 		m_pFrncSpellToggle(nullptr);
 	}
+
 	m_pCooltime->Tick(fTimeDelta);
 }
 
@@ -547,13 +548,6 @@ HRESULT CPlayer::Add_Components()
 	/* Com_UI_Group_Skill_1 */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Skill"),
 		TEXT("Com_UI_Group_Skill_1"), reinterpret_cast<CComponent**>(&m_UI_Group_Skill_01))))
-	{
-		__debugbreak();
-		return E_FAIL;
-	}
-
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_MaximaPotion"),
-		TEXT("Com_MaximaPotion"), reinterpret_cast<CComponent**>(&m_pMaximaPotion))))
 	{
 		__debugbreak();
 		return E_FAIL;
@@ -938,7 +932,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		m_pPlayer_Information->Get_Health()->Set_HP(iHp);
 	}
 
-	if (pGameInstance->Get_DIKeyState(DIK_K, CInput_Device::KEY_DOWN))
+	/*if (pGameInstance->Get_DIKeyState(DIK_K, CInput_Device::KEY_DOWN))a
 	{
 		CWiggenweldPotion::CLONE_DESC initDesc;
 		initDesc.pPlayer = this;
@@ -946,7 +940,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 			pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_WiggenweldPotion"), &initDesc));
 		pWiggenweldPotion->Use(_float3());
 		Safe_Release(pWiggenweldPotion);
-	}
+	}*/
 
 	ENDINSTANCE;
 }
@@ -1994,7 +1988,7 @@ void CPlayer::Free()
 		Safe_Release(m_pPlayer_Information);
 		Safe_Release(m_UI_Group_Skill_01);
 		Safe_Release(m_pCooltime);
-		Safe_Release(m_pMaximaPotion);
+		//Safe_Release(m_pMaximaPotion);
 		Safe_Release(m_pDefence);
 		
 		if (nullptr != m_pTargetTransform)

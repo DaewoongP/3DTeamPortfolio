@@ -1,6 +1,6 @@
 #include "..\Public\Light_Manager.h"
-#include"Transform.h"
-#include"PipeLine.h"
+#include "Transform.h"
+#include "PipeLine.h"
 
 IMPLEMENT_SINGLETON(CLight_Manager)
 
@@ -58,7 +58,7 @@ CLight* CLight_Manager::Add_Lights(_float fWinSizeX, _float fWinSizeY, const CLi
 	if (LightDesc.eType == CLight::TYPE_DIRECTIONAL)
 	{
 		m_ViewLight = XMMatrixLookAtLH(LightDesc.vPos, LightDesc.vLookAt, _float4(0.f, 1.f, 0.f, 0.f));
-		m_ProjLight = XMMatrixPerspectiveFovLH(XMConvertToRadians(90.f), fWinSizeX / fWinSizeY, 1.f, 1000.f);
+		m_ProjLight = XMMatrixPerspectiveFovLH(XMConvertToRadians(90.f), fWinSizeX / fWinSizeY, 0.1f, 1000.f);
 	}
 
 	CPipeLine* pPipeLine = CPipeLine::GetInstance();

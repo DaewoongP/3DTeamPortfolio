@@ -38,9 +38,9 @@ private:
 public:
 	virtual HRESULT Initialize_Prototype(_uint iLevel);
 	virtual HRESULT Initialize(void* pArg) override;
-	
+
 public:
-	virtual void Use(_float3 vPlayPos,void* ExtraValue = nullptr) override;
+	virtual void Use(_float3 vPlayPos);
 
 private:
 	CHealth*	m_pPlayerHealthCom = { nullptr };

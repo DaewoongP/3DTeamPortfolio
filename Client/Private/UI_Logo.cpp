@@ -42,10 +42,6 @@ void CUI_Logo::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-#ifdef _DEBUG
-	Debug_UI(fTimeDelta);
-#endif // _DEBUG
-	
 	if (nullptr != m_pRendererCom)
 	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this);
@@ -137,21 +133,6 @@ HRESULT CUI_Logo::SetUp_ShaderResources()
 
 	return S_OK;
 }
-
-#ifdef _DEBUG
-HRESULT CUI_Logo::Debug_UI(_float fTimeDelta)
-{
-	ImGui::Begin("AA");
-
-	if (ImGui::DragFloat("Control", &m_fDissolveAmount, 0.01f))
-	{
-
-	}
-
-	ImGui::End();
-	return S_OK;
-}
-#endif // _DEBUG
 
 CUI_Logo* CUI_Logo::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {

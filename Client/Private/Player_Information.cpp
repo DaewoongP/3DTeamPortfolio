@@ -56,27 +56,6 @@ void CPlayer_Information::Tick(_float fTimeDelta)
 		Safe_Release(pGameInstacne);
 	}
 
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
-	if (pGameInstance->Get_DIKeyState(DIK_Q, CInput_Device::KEY_DOWN))
-	{
-		CWiggenweldPotion::CLONE_DESC initDesc;
-		CWiggenweldPotion* pWiggenweldPotion = static_cast<CWiggenweldPotion*>(
-			pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_WiggenweldPotion"), &initDesc));
-		m_pInventory->Add_Item(pWiggenweldPotion, ITEMTYPE::RESOURCE);
-		//Safe_Release(pWiggenweldPotion);
-	}
-
-	if (pGameInstance->Get_DIKeyState(DIK_Z, CInput_Device::KEY_DOWN))
-	{
-		CWiggenweldPotion::CLONE_DESC initDesc;
-		CWiggenweldPotion* pWiggenweldPotion = static_cast<CWiggenweldPotion*>(
-			pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_WiggenweldPotion"), &initDesc));
-		m_pInventory->Add_Item(pWiggenweldPotion, ITEMTYPE::HAND);
-		//Safe_Release(pWiggenweldPotion);
-	}
-
-	Safe_Release(pGameInstance);
 }
 
 void CPlayer_Information::Late_Tick(_float fTimeDelta)
