@@ -30,6 +30,13 @@ HRESULT CLevel_Vault::Initialize()
 		return E_FAIL;
 	}
 
+	if(FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
+	{
+		MSG_BOX("Failed Ready_Layer_Monster");
+
+		return E_FAIL;
+	}
+
 	if (FAILED(Load_MapObject(TEXT("../../Resources/GameData/MapData/MapData1.ddd"))))
 	{
 		MSG_BOX("Failed Load Map Object");
@@ -442,6 +449,23 @@ HRESULT CLevel_Vault::Ready_Layer_Trigger(const _tchar* pLayerTag)
 		pLayerTag, TEXT("GameObject_Trigger_Vault"), &TriggerDesc)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Trigger_Vault)");
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CLevel_Vault::Ready_Layer_Monster(const _tchar* pLayerTag)
+{
+	BEGININSTANCE;
+
+	_float4x4 Matrix = XMMatrixTranslation(40.f, 10.f, 60.f);
+	if (FAILED(pGameInstance->Add_Component(LEVEL_VAULT, LEVEL_VAULT, TEXT("Prototype_GameObject_Armored_Troll"), pLayerTag, TEXT("GameObject_Armored_Troll"), &Matrix)))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Armored_Troll)");
+		ENDINSTANCE;
 		return E_FAIL;
 	}
 

@@ -67,8 +67,9 @@ private: /* Çàµ¿ ¹­À½ */
 	HRESULT Make_Turns(_Inout_ CSequence* pSequence);
 	HRESULT Make_Turn_Runs(_Inout_ CSequence* pSequence);
 	HRESULT Make_Levioso_Combo(_Inout_ CSelector* pSelector);
+	HRESULT Make_Levioso_Tongue(_Inout_ CSequence* pSequence);
+
 	HRESULT Make_Air_Hit(_Inout_ CSelector* pSelector);
-	HRESULT Make_Air_Hit_Tongue(_Inout_ CSequence* pSequence);
 
 private: /* Notify Functions */
 	void Enter_Light_Attack();

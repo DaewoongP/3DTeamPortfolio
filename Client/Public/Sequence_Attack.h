@@ -42,12 +42,14 @@ public:
 	void Set_Attack_Action_Options(const wstring& _wstrAnimationTag, CModel* _pModel,
 		_bool _isCheckBehavior = false, const _float& _fCoolTime = 0.f,
 		_bool _isOneTimeAction = false, _bool _isLerp = true);
-	/* 공격 사거리 세팅 */
-	void Set_Attack_Option(const _float& _fRange) {
+	/* 
+		매개변수
+		1. 공격 사거리
+		2. 회전 속도(배속. Default 1.f)
+	*/
+	void Set_Attack_Option(const _float& _fRange, const _float& fTurnSpeed = 1.f) {
 		m_fAttackRange = _fRange;
-	}
-	_bool isPlayAction() const {
-		return m_isPlayAttack;
+		m_fTurnSpeed = fTurnSpeed;
 	}
 
 public:
@@ -62,8 +64,7 @@ private:
 	_float m_fLimit = { 0.f };
 	_float m_fPreWorldTimeAcc = { 0.f };
 	_float m_fAttackRange = { 0.f };
-
-	_bool m_isPlayAttack = { false };
+	_float m_fTurnSpeed = { 0.f };
 
 private:
 	CAction* m_pAction = { nullptr };
