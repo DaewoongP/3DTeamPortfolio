@@ -34,6 +34,7 @@ private:
 private: /* ImGui */
 	HRESULT Initialize_ImGui();
 	void Tick_ImGui();
+	void Debug_ImGui();
 	HRESULT Render_ImGui();
 #endif // _DEBUG
 
@@ -55,6 +56,8 @@ private: /* ImGui */
 	_float4					m_vImGuiClearColor;
 	ID3D11Texture2D*		m_pTexture2D = { nullptr };
 	ID3D11RenderTargetView* m_pImGuiRTV = { nullptr };
+	LEVELID					m_eLevelID = { LEVEL_END };
+	_bool					m_isFirstLoaded = { false };
 #endif // _DEBUG
 
 private: /* Singleton */

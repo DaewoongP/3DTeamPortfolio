@@ -1,8 +1,5 @@
 #include "Shader_EngineHeader.hlsli"
-#include "Shader_RenderFunc.hlsli"
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
-
-texture2D g_DeferredTexture;
 
 struct VS_IN
 {
@@ -21,13 +18,13 @@ VS_OUT VS_MAIN(VS_IN In)
     VS_OUT Out = (VS_OUT) 0;
 
     matrix matWV, matWVP;
-
+    
     matWV = mul(g_WorldMatrix, g_ViewMatrix);
     matWVP = mul(matWV, g_ProjMatrix);
-
+    
     Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);
     Out.vTexUV = In.vTexUV;
-
+    
     return Out;
 }
 
@@ -46,20 +43,14 @@ PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
 
-    vector vDeferredTexture = g_DeferredTexture.Sample(LinearSampler, In.vTexUV);
-    if (0.f == vDeferredTexture.a)
-        discard;
 
-    Out.vColor = vDeferredTexture;
-
-    Out.vColor.rgb += ACESToneMapping(Out.vColor.rgb);
 
     return Out;
 }
 
 technique11 DefaultTechnique
 {
-    pass PostDeferred
+    pass HDR
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Depth_Disable, 0);

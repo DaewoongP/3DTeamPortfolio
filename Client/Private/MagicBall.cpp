@@ -48,10 +48,10 @@ HRESULT CMagicBall::Initialize(void* pArg)
 void CMagicBall::Tick(_float fTimeDelta)
 {
 	//실시간으로 갱신해줍니다.
-	if(m_pTargetWorldMatrix!=nullptr)
+	if(m_pTargetWorldMatrix != nullptr)
 		m_CurrentTargetMatrix = (*m_pTargetOffsetMatrix) * (*m_pTargetWorldMatrix);
 	
-	if(m_pWeaponWorldMatrix!=nullptr)
+	if(m_pWeaponWorldMatrix != nullptr)
 		m_CurrentWeaponMatrix = (*m_pWeaponOffsetMatrix) * (*m_pWeaponWorldMatrix);
 	Tick_MagicBall_State(fTimeDelta);
 	__super::Tick(fTimeDelta);

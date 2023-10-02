@@ -48,7 +48,7 @@ HRESULT CWeapon_Player_Wand::Initialize(void* pArg)
 		}
 	}
 
-	BEGININSTANCE
+	BEGININSTANCE;
 
 	CLight::LIGHTDESC LightInfo;
 	ZEROMEM(&LightInfo);
@@ -63,9 +63,9 @@ HRESULT CWeapon_Player_Wand::Initialize(void* pArg)
 	LightInfo.vSpecular = BLACKDEFAULT;
 	LightInfo.vDiffuse = BLACKDEFAULT;
 	
-	pGameInstance->Add_Lights(m_pDevice, m_pContext, LightInfo);
+	pGameInstance->Add_Lights((_float)g_iWinSizeX, (_float)g_iWinSizeY, LightInfo);
 
-	ENDINSTANCE
+	ENDINSTANCE;
 
  	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
@@ -165,7 +165,7 @@ void CWeapon_Player_Wand::Do_Lumos(_float fTimeDelta)
 		LightInfo.vSpecular = m_LightIntensity;
 		LightInfo.vDiffuse = m_LightIntensity;
 
-		pGameInstance->Set_Light(CLight::TYPE_LUMOS, LightInfo);
+		pGameInstance->Set_Light(CLight::TYPE_LUMOS, (_float)g_iWinSizeX, (_float)g_iWinSizeY, LightInfo);
 	}
 	else if (false == m_isLightOn && DelayTime >= 0.5f)
 	{
@@ -194,7 +194,7 @@ void CWeapon_Player_Wand::Do_Lumos(_float fTimeDelta)
 		LightInfo.vAmbient = m_LightIntensity;
 		LightInfo.vSpecular = m_LightIntensity;
 		LightInfo.vDiffuse = m_LightIntensity;
-		pGameInstance->Set_Light(CLight::TYPE_LUMOS, LightInfo);
+		pGameInstance->Set_Light(CLight::TYPE_LUMOS, (_float)g_iWinSizeX, (_float)g_iWinSizeY, LightInfo);
 	}
 
 	ENDINSTANCE;

@@ -140,17 +140,6 @@ void CLevel_Cliffside::Tick(_float fTimeDelta)
 		pGameInstance->Set_CurrentScene(TEXT("Scene_FieldGuide"), false);
 	}
 
-	// 스테이지 이동
-	if (pGameInstance->Get_DIKeyState(DIK_BACKSPACE, CInput_Device::KEY_DOWN))
-	{
-		if (FAILED(pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVELID::LEVEL_VAULT))))
-		{
-			MSG_BOX("Failed Open LEVEL_CLIFFSIDE to LEVEL_VAULT");
-			Safe_Release(pGameInstance);
-			return;
-		}
-	}
-	
 	ENDINSTANCE;
 
 #ifdef _DEBUG
@@ -181,7 +170,7 @@ HRESULT CLevel_Cliffside::Ready_Lights()
 	LightDesc.vAmbient = WHITEDEFAULT;
 	LightDesc.vSpecular = WHITEDEFAULT;
 
-	if (nullptr == pGameInstance->Add_Lights(m_pDevice, m_pContext, LightDesc))
+	if (nullptr == pGameInstance->Add_Lights((_float)g_iWinSizeX, (_float)g_iWinSizeY, LightDesc))
 		return E_FAIL;
 
 	ENDINSTANCE;
@@ -813,11 +802,11 @@ HRESULT CLevel_Cliffside::Ready_Layer_Debug(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	/*if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_LoadTrigger"), pLayerTag, TEXT("GameObject_LoadTrigger"))))
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Camera_Debug"), pLayerTag, TEXT("GameObject_Camera_Debug"))))
 	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_LoadTrigger)");
+		MSG_BOX("Failed Add_GameObject : (GameObject_Camera_Debug)");
 		return E_FAIL;
-	}*/
+	}
 
 	Safe_Release(pGameInstance);
 

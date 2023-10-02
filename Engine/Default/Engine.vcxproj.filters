@@ -208,9 +208,6 @@
     <Filter Include="01. Utility\02. GameObjects\00. Parts">
       <UniqueIdentifier>{b2e63afa-998c-44d2-9cf7-ca44f0b814a6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\11. Physics\Shader">
-      <UniqueIdentifier>{d6e48222-790a-42b5-a30b-71e187ad6d29}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Utility\11. Physics\Handler">
       <UniqueIdentifier>{56a1a23c-9418-428e-9eb5-1d7e5fe7bfb7}</UniqueIdentifier>
     </Filter>
@@ -423,9 +420,6 @@
     </Filter>
     <Filter Include="01. Utility\03. Components\14. RigidBody\Shader">
       <UniqueIdentifier>{d6e48222-790a-42b5-a30b-71e187ad6d29}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\03. Components\02. Renderer\HDR">
-      <UniqueIdentifier>{27b57899-ab1f-4dd6-b069-223c267a8f91}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -849,7 +843,6 @@
     <ClInclude Include="..\public\CoolTime.h">
       <Filter>01. Utility\03. Components\11. Status\03. CoolTime</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\HDR.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -1239,7 +1232,6 @@
     <ClCompile Include="..\private\CoolTime.cpp">
       <Filter>01. Utility\03. Components\11. Status\03. CoolTime</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\HDR.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Navigation.hlsl">
@@ -1312,6 +1304,9 @@
       <Filter>01. Utility\03. Components\02. Renderer\DOF</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Light.hlsl">
+      <Filter>01. Utility\03. Components\02. Renderer\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_RenderFunc.hlsli">
       <Filter>01. Utility\03. Components\02. Renderer\Shader</Filter>
     </FxCompile>
   </ItemGroup>

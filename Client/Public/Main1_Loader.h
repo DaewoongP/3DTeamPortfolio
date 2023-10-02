@@ -35,7 +35,7 @@ public:
 	_bool Get_Finished() const { return m_isFinished; }
 
 public:
-	HRESULT Initialize(LEVELID eNextLevel);
+	HRESULT Initialize(LEVELID eNextLevel, _bool isStaticLoaded);
 	HRESULT Loading();
 	
 private:
@@ -50,22 +50,26 @@ private:
 private:
 	LEVELID					m_eNextLevelID = { LEVELID::LEVEL_END };
 	_bool					m_isFinished = { false };
+	_bool					m_isStaticLoaded = { false };
 
 private:
 	vector<_float4x4*>		m_vecFreeMatrix; // 동적 할당 해제 용도
 
 private:
-	HRESULT Loading_For_Logo();
-	HRESULT Loading_For_Cliffside();
-	HRESULT Loading_For_Vault();
-	HRESULT Loading_For_GreatHall();
+	HRESULT Loading_For_Logo(LEVELID eLevelID);
+	HRESULT Loading_For_Cliffside(LEVELID eLevelID);
+	HRESULT Loading_For_Vault(LEVELID eLevelID);
+	HRESULT Loading_For_GreatHall(LEVELID eLevelID);
+
+private:
+	HRESULT Loading_For_Static(LEVELID eLevelID);
 	
 private:
 	HRESULT Loading_Map_Object(const _tchar* pMapObjectPath, LEVELID eID);
 	HRESULT Loading_Map_Object_Ins(const _tchar* pMapObjectInsPath, LEVELID eID);
 
 public:
-	static CMain1_Loader* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVELID eNextLevel);
+	static CMain1_Loader* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVELID eNextLevel, _bool isStaticLoaded);
 	virtual void Free() override;
 };
 

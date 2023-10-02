@@ -24,6 +24,11 @@ const _float4 CCamera_Manager::Get_OffSetEye(OFFSETCAMERADESC& _OffSetCameraDesc
 
 void CCamera_Manager::Tick(_float _TimeDelta)
 {
+#ifdef _DEBUG
+	if (true == m_isDebugCam)
+		return;
+#endif // _DEBUG
+
 	if (nullptr == m_pCurrentCamera)
 	{
 		return;

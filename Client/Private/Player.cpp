@@ -810,9 +810,6 @@ void CPlayer::Key_Input(_float fTimeDelta)
 #pragma endregion
 
 	
-	
-	
-	
 	if (pGameInstance->Get_DIKeyState(DIK_GRAVE, CInput_Device::KEY_DOWN))
 	{
 		if (true == m_isFixMouse)
