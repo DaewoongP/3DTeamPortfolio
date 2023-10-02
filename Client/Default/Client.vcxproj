@@ -192,6 +192,7 @@
     <ClInclude Include="..\public\Level_GreatHall.h" />
     <ClInclude Include="..\public\Level_Smith.h" />
     <ClInclude Include="..\public\Level_Vault.h" />
+    <ClInclude Include="..\Public\PotionTap.h" />
     <ClInclude Include="..\Public\PowerPotion.h" />
     <ClInclude Include="..\Public\ProtegoState.h" />
     <ClInclude Include="..\Public\Menu_Gear.h" />
@@ -205,6 +206,7 @@
     <ClInclude Include="..\Public\Menu_Quest.h" />
     <ClInclude Include="..\Public\Menu_Setting.h" />
     <ClInclude Include="..\Public\MapObject_Ins.h" />
+    <ClInclude Include="..\Public\UI_Potion_Tap.h" />
     <ClInclude Include="..\public\WiggenweldPotion.h" />
     <ClInclude Include="..\Public\Sequence_AirHit.h" />
     <ClInclude Include="..\Public\StandingState.h" />
@@ -361,6 +363,7 @@
     <ClCompile Include="..\private\Level_GreatHall.cpp" />
     <ClCompile Include="..\private\Level_Smith.cpp" />
     <ClCompile Include="..\private\Level_Vault.cpp" />
+    <ClCompile Include="..\Private\PotionTap.cpp" />
     <ClCompile Include="..\Private\PowerPotion.cpp" />
     <ClCompile Include="..\Private\ProtegoState.cpp" />
     <ClCompile Include="..\Private\Menu_Gear.cpp" />
@@ -374,6 +377,7 @@
     <ClCompile Include="..\Private\Menu_Quest.cpp" />
     <ClCompile Include="..\Private\Menu_Setting.cpp" />
     <ClCompile Include="..\Private\MapObject_Ins.cpp" />
+    <ClCompile Include="..\Private\UI_Potion_Tap.cpp" />
     <ClCompile Include="..\private\WiggenweldPotion.cpp" />
     <ClCompile Include="..\Private\Sequence_AirHit.cpp" />
     <ClCompile Include="..\Private\StandingState.cpp" />

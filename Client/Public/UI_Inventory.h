@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "Client_Defines.h"
 #include "UI.h"
+#include "Item.h"
 
 BEGIN(Engine)
 class CShader;
@@ -27,7 +28,7 @@ public:
 		_float					fHeight;
 		_uint					iHorizontal;
 		_uint					iVertical;
-		CInventory::ITEMTYPE		eItemtype;
+		ITEMTYPE					eItemtype;
 	};
 
 private:
@@ -54,7 +55,7 @@ private:
 	HRESULT	Add_ItemTexture();
 
 public:
-	HRESULT	Set_InventoryItem(vector<CGameObject*>& pItems);
+	HRESULT	Set_InventoryItem(vector<CItem*>& pItems);
 	HRESULT	Delete_InventoryItem(_uint iIndex);
 	HRESULT	Swap_InventoryItem();
 
@@ -69,7 +70,7 @@ private:
 	_float					m_fHeight;
 	_uint					m_iHorizontal;
 	_uint					m_iVertical;
-	CInventory::ITEMTYPE		m_eItemtype;
+	ITEMTYPE					m_eItemtype;
 
 private:
 	vector<_float2>					m_fPosition;

@@ -5,6 +5,7 @@
 #include "MapObject_Ins.h"
 #include "UI_Group_Enemy_HP.h"
 #include "Player.h"
+#include "UI.h"
 
 CLevel_Cliffside::CLevel_Cliffside(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CLevel(pDevice, pContext)
@@ -630,6 +631,7 @@ HRESULT CLevel_Cliffside::Load_Monsters(const wstring& wstrMonsterFilePath)
 HRESULT CLevel_Cliffside::Ready_Layer_UI(const _tchar* pLayerTag)
 {
 	BEGININSTANCE;
+
 	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
 	{
 		MSG_BOX("Failed Add Scene : (Scene_Main)");
@@ -638,15 +640,6 @@ HRESULT CLevel_Cliffside::Ready_Layer_UI(const _tchar* pLayerTag)
 	}
 
 	_tchar szFilePath[MAX_PATH] = TEXT("");
-
-	//lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_HP.uidata"));
-	//if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_HP"),
-	//	pLayerTag, TEXT("GameObject_UI_Group_HP"), szFilePath)))
-	//{
-	//	MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_HP)");
-	//	ENDINSTANCE;
-	//	return E_FAIL;
-	//}
 	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Potion.uidata"));
 	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_Potion"),
 		pLayerTag, TEXT("GameObject_UI_Group_Potion"), szFilePath)))
@@ -655,14 +648,6 @@ HRESULT CLevel_Cliffside::Ready_Layer_UI(const _tchar* pLayerTag)
 		ENDINSTANCE;
 		return E_FAIL;
 	}
-	//lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Finisher_Front.uidata"));
-	//if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_Finisher"),
-	//	pLayerTag, TEXT("GameObject_UI_Group_Finisher"), szFilePath)))
-	//{
-	//	MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_Finisher)");
-	//	ENDINSTANCE;
-	//	return E_FAIL;
-	//}
 	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Skill_1.uidata"));
 	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_Skill"),
 		pLayerTag, TEXT("Prototype_GameObject_UI_Group_Skill"), szFilePath)))
@@ -677,24 +662,32 @@ HRESULT CLevel_Cliffside::Ready_Layer_UI(const _tchar* pLayerTag)
 		MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_Finisher_Icon)");
 		return E_FAIL;
 	}
+
+	CUI::UIDESC UIDesc;
+	ZEROMEM(&UIDesc);
+	UIDesc.vCombinedXY = _float2(0.f, 0.f);
+	UIDesc.fX = 640.f;
+	UIDesc.fY = 360.f;
+	UIDesc.fZ = 0.3f;
+	UIDesc.fSizeX = 64.f;
+	UIDesc.fSizeY = 64.f;
+	lstrcpy(UIDesc.szTexturePath, TEXT("../../Resources/UI/Game/UI/HUD/Reticles/UI_T_Aim.png"));
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Back"),
+		pLayerTag, TEXT("GameObject_UI_Aim"), &UIDesc)))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_UI_Aim)");
+		return E_FAIL;
+	}
+
+
+
+
 	//lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_MiniMap.uidata"));
 	//if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_MiniMap"),
 	//	pLayerTag, TEXT("GameObject_UI_Group_MiniMap"), szFilePath)))
 	//{
 	//	MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_MiniMap)");
-	//	return E_FAIL;
-	//}
-
-	//CUI_Group_Enemy_HP::ENEMYHPDESC  Desc;
-	//
-	//Desc.eType = CUI_Group_Enemy_HP::ENEMYTYPE::BOSS;
-	//lstrcpy(Desc.wszObjectLevel, TEXT("77"));
-	//lstrcpy(Desc.wszObjectName, TEXT("개철민"));
-
-	//if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_Enemy_HP"),
-	//	pLayerTag, TEXT("GameObject_UI_Enemy_HP"), &Desc)))
-	//{
-	//	MSG_BOX("Failed Add_GameObject : (GameObject_UI_Enemy_HP)");
 	//	return E_FAIL;
 	//}
 
