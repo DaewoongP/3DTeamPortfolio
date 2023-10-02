@@ -26,6 +26,11 @@ public:
 	//메인카메라가 돌지 않음을 확인하기위한 함수
 	const _bool Get_MainCameraOff() const { return m_isMainCameraOff; }
 
+#ifdef _DEBUG
+public:
+	void Set_DebugCam(_bool isCam) { m_isDebugCam = isCam; }
+#endif // _DEBUG
+
 private:
 	//오프셋 카메라위치를 구하기위한 함수
 	const _float4 Get_OffSetEye(OFFSETCAMERADESC& _OffSetCameraDesc);
@@ -127,6 +132,11 @@ private:
 
 	//메인으로 돌아갈지 체크하기 위한 값
 	_bool m_isMainCameraOff{ false };
+
+#ifdef _DEBUG
+private:
+	_bool		m_isDebugCam = { false };
+#endif // _DEBUG
 
 private:
 	//태그로 컷씬을 찾는다.

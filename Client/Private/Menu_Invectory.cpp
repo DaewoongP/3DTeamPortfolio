@@ -2,6 +2,7 @@
 #include "GameInstance.h"
 #include "UI_Effect_Back.h"
 #include "UI_Back.h"
+#include "Inventory.h"
 
 CMenu_Inventory::CMenu_Inventory(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -66,7 +67,19 @@ HRESULT CMenu_Inventory::Initialize(void* pArg)
 
 void CMenu_Inventory::Tick(_float fTimeDelta)
 {
+	if (nullptr == m_pInventory)
+	{
+		CGameInstance* pGameInstacne = CGameInstance::GetInstance();
+		Safe_AddRef(pGameInstacne);
+
+		m_pInventory = static_cast<CInventory*>(pGameInstacne->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Inventory"), TEXT("GameObject_Inventory")));
+		Safe_AddRef(m_pInventory);
+
+		Safe_Release(pGameInstacne);
+	}
+
 	__super::Tick(fTimeDelta);
+
 }
 
 void CMenu_Inventory::Late_Tick(_float fTimeDelta)
@@ -214,5 +227,9 @@ void CMenu_Inventory::Free()
 	for (auto& pUI : m_pUIs)
 	{
 		Safe_Release(pUI);
+	}
+	if (m_isCloned)
+	{
+		Safe_Release(m_pInventory);
 	}
 }

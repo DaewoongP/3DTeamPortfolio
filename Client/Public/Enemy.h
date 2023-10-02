@@ -56,20 +56,21 @@ public:
 	virtual HRESULT Render_Depth() override;
 
 protected:
-	CModel* m_pModelCom = { nullptr };
-	CHealth* m_pHealth = { nullptr };
-	CShader* m_pShaderCom = { nullptr };
-	CShader* m_pShadowShaderCom = { nullptr };
-	CRenderer* m_pRenderer = { nullptr };
-	CRigidBody* m_pRigidBody = { nullptr };
 	CUI_Group_Enemy_HP* m_pUI_HP = { nullptr };
+	CHealth* m_pHealth = { nullptr };
+	CModel* m_pModelCom = { nullptr };
+	CRenderer* m_pRenderer = { nullptr };
+	CShader* m_pShaderCom = { nullptr };
+	CRigidBody* m_pRigidBody = { nullptr };
 	CRootBehavior* m_pRootBehavior = { nullptr };
+	CShader* m_pShadowShaderCom = { nullptr };
 
 protected:
 	const CGameObject* m_pTarget = { nullptr };
 	const CGameObject* m_pPlayer = { nullptr };
 	_uint m_iCurrentSpell = { 0 };
-	unordered_map<BUFF_TYPE, function<void(_float3, _float)>> m_CurrentTickSpells;
+	unordered_map<BUFF_TYPE, function<void(void*)>> m_CurrentTickSpells;
+	unordered_map<BUFF_TYPE, MAIGBUFFTICKDESC*>		m_MagicTickDesc;
 
 	_bool m_isSpawn = { false };
 	_bool m_isParring = { false };
@@ -77,6 +78,8 @@ protected:
 	_bool m_isHitAttack = { false };
 	_bool m_isRangeInEnemy = { false };
 	_bool m_isChangeAnimation = { false };
+
+	_float3 m_vCurrentPosition = {};
 
 	COLLISIONREQUESTDESC m_CollisionRequestDesc;
 
@@ -87,12 +90,16 @@ protected:
 	virtual HRESULT Make_AI();
 	virtual HRESULT Make_Notifies() = 0;
 	virtual HRESULT Add_Components() = 0;
+	virtual HRESULT Add_Components_Level(_uint iCurrentLevelIndex) = 0;
 	virtual HRESULT SetUp_ShaderResources();
 	virtual HRESULT SetUp_ShadowShaderResources();
 
 protected:// 가까운 적을 타겟으로 세팅
 	void Set_Current_Target();
 	HRESULT Remove_GameObject(const wstring& wstrObjectTag);
+	_bool IsEnemy(const wstring& wstrObjectTag);
+	_bool IsDebuff(BUFF_TYPE eType);
+	_bool isCombo(BUFF_TYPE eType);
 
 protected: /* Notify Func */
 	void Change_Animation() {

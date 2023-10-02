@@ -28,6 +28,7 @@ private:
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
+	virtual HRESULT Initialize_Level(_uint iCurrentLevelIndex) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual void OnCollisionEnter(COLLEVENTDESC CollisionEventDesc) override;
@@ -41,6 +42,7 @@ private:
 	virtual HRESULT Make_AI() override;
 	virtual HRESULT Make_Notifies() override;
 	virtual HRESULT Add_Components() override;
+	virtual HRESULT Add_Components_Level(_uint iCurrentLevelIndex) override;
 	virtual HRESULT SetUp_ShaderResources() override;
 
 #ifdef _DEBUG
@@ -65,8 +67,9 @@ private: /* Çàµ¿ ¹­À½ */
 	HRESULT Make_Turns(_Inout_ CSequence* pSequence);
 	HRESULT Make_Turn_Runs(_Inout_ CSequence* pSequence);
 	HRESULT Make_Levioso_Combo(_Inout_ CSelector* pSelector);
+	HRESULT Make_Levioso_Tongue(_Inout_ CSequence* pSequence);
+
 	HRESULT Make_Air_Hit(_Inout_ CSelector* pSelector);
-	HRESULT Make_Air_Hit_Tongue(_Inout_ CSequence* pSequence);
 
 private: /* Notify Functions */
 	void Enter_Light_Attack();

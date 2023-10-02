@@ -32,6 +32,14 @@ HRESULT CWeapon_Armored_Troll::Initialize(void* pArg)
 	return S_OK;
 }
 
+HRESULT CWeapon_Armored_Troll::Initialize_Level(_uint iCurrentLevelIndex)
+{
+	if (FAILED(Add_Components_Level(iCurrentLevelIndex)))
+		return E_FAIL;
+
+	return S_OK;
+}
+
 void CWeapon_Armored_Troll::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
@@ -96,10 +104,6 @@ HRESULT CWeapon_Armored_Troll::Add_Components(void* pArg)
 {
 	try /* Check Add_Components */
 	{
-		if (FAILED(Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_Component_Model_Weopon_Armored_Troll"), L"Com_Model",
-			(CComponent**)&m_pModelCom, this)))
-			throw TEXT("Failed Add_Component : Com_Model");
-
 		if (FAILED(Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"),
 			(CComponent**)&m_pRendererCom, this)))
 			throw TEXT("Failed Add_Component : Com_Renderer");
@@ -135,7 +139,23 @@ HRESULT CWeapon_Armored_Troll::Add_Components(void* pArg)
 	{
 		wstring wstrErrorMSG = TEXT("[CWeapon_Armored_Troll] Failed Add_Components : \n");
 		wstrErrorMSG += pErrorTag;
-		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
+
+		return E_FAIL;
+	}
+
+	return S_OK;
+}
+
+HRESULT CWeapon_Armored_Troll::Add_Components_Level(_uint iCurrentLevelIndex)
+{
+	if (FAILED(Add_Component(iCurrentLevelIndex, TEXT("Prototype_Component_Model_Weopon_Armored_Troll"), L"Com_Model",
+		(CComponent**)&m_pModelCom, this)))
+	{
+		wstring wstrErrorMSG = TEXT("[CWeapon_Armored_Troll] Failed Add_Components_Level : \n");
+		wstrErrorMSG += TEXT("Failed Add_Component : Com_Model");
+		MSG_BOX(wstrErrorMSG.c_str());
 		__debugbreak();
 
 		return E_FAIL;

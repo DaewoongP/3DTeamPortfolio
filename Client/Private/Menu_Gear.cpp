@@ -5,6 +5,8 @@
 #include "Inventory.h"
 #include "Player.h"
 #include "Player_Information.h"
+#include "Item.h"
+
 
 CMenu_Gear::CMenu_Gear(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -486,7 +488,7 @@ void CMenu_Gear::Select_Gear()
 		if (nullptr != m_pInventory && pSlot->Get_Clicked())
 		{
 			m_pInventory->Set_Open(true);
-			m_pInventory->Set_CurItemtype(CInventory::ITEMTYPE(iIndex));
+			m_pInventory->Set_CurItemtype(ITEMTYPE(iIndex));
 			m_isOpen = false;
 			return;
 		}
@@ -553,7 +555,8 @@ void CMenu_Gear::Free()
 	{
 		Safe_Release(pCom);
 	}
-
-	if (true == m_isCloned)
+	if (m_isCloned)
+	{
 		Safe_Release(m_pInventory);
+	}
 }

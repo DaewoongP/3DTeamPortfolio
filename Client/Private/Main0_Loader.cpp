@@ -8,7 +8,6 @@
 
 #pragma region UI
 #include "UI_Group_Logo.h"
-#include "UI_Group_Loading.h"
 #include "UI_Group_HP.h"
 #include "UI_Group_Potion.h"
 #include "UI_Group_Finisher.h"
@@ -17,6 +16,7 @@
 #include "UI_Group_MiniMap.h"
 #include "UI_Group_Enemy_HP.h"
 #include "UI_Group_Cursor.h"
+#include "UI_Slot.h"
 #include "UI_Progress1.h"
 #include "UI_Image.h"
 #include "UI_Button.h"
@@ -55,6 +55,9 @@
 #include "Arrestomomentum.h"
 #include "Descendo.h"
 #include "Accio.h"
+#include "Flipendo.h"
+#include "Expelliarmus.h"
+#include "Imperio.h"
 #pragma endregion Magic
 
 #include "Trigger_Vault.h"
@@ -85,9 +88,10 @@ _uint WINAPI Thread_Main0(void* pArg)
 	return 0;
 }
 
-HRESULT CMain0_Loader::Initialize(LEVELID eNextLevel)
+HRESULT CMain0_Loader::Initialize(LEVELID eNextLevel, _bool isStaticLoaded)
 {
 	m_eNextLevelID = eNextLevel;
+	m_isStaticLoaded = isStaticLoaded;
 
 	InitializeCriticalSection(&m_Critical_Section);
 
@@ -110,16 +114,29 @@ HRESULT CMain0_Loader::Loading()
 
 	HRESULT		hr = { 0 };
 
+	if (false == m_isStaticLoaded)
+	{
+		hr = Loading_For_Static(LEVEL_STATIC);
+	}
+
+	if (FAILED(hr))
+	{
+		LeaveCriticalSection(&m_Critical_Section);
+		return E_FAIL;
+	}
+
+	hr = 0;
+
 	switch (m_eNextLevelID)
 	{
 	case LEVEL_LOGO:
-		hr = Loading_For_Logo();
+		hr = Loading_For_Logo(LEVEL_LOGO);
 		break;
 	case LEVEL_CLIFFSIDE:
-		hr = Loading_For_Cliffside();
+		hr = Loading_For_Cliffside(LEVEL_CLIFFSIDE);
 		break;
 	case LEVEL_VAULT:
-		hr = Loading_For_Vault();
+		hr = Loading_For_Vault(LEVEL_VAULT);
 		break;
 	default:
 		MSG_BOX("Failed Load Next Level");
@@ -136,78 +153,17 @@ HRESULT CMain0_Loader::Loading()
 	return S_OK;
 }
 
-HRESULT CMain0_Loader::Loading_For_Logo()
+HRESULT CMain0_Loader::Loading_For_Logo(LEVELID eLevelID)
 {
 	if (nullptr == m_pGameInstance)
 		return E_FAIL;
+
 	try /* Failed Check Add_Prototype*/
 	{
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_HP"),
-			CUI_Group_HP::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_UI_Group_HP");
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_UI_Progress"),
-			CUI_Progress::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_UI_Progress");
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Potion"),
-			CUI_Group_Potion::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_UI_Group_Potion");
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Finisher"),
-			CUI_Group_Finisher::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_UI_Group_Finisher");
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Skill"),
-			CUI_Group_Skill::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_UI_Group_Skill");
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Finisher_Icon"),
-			CUI_Group_Finisher_Icon::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_UI_Group_Finisher_Icon");
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Enemy_HP"),
-			CUI_Group_Enemy_HP::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_UI_Group_Enemy_HP");
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Font"),
-			CUI_Font::Create(m_pDevice, m_pContext, TEXT("../../Resources/Fonts/NexonGothic.spritefont")))))
-			throw TEXT("Prototype_GameObject_UI_Font");
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Cursor"),
-			CUI_Group_Cursor::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_UI_Group_Cursor");
-		/*if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_MiniMap"),
-			CUI_Group_MiniMap::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_UI_Group_MiniMap");*/
-
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_UI_Image"),
-			CUI_Image::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_UI_Image");
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_UI_Button"),
-			CUI_Button::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_UI_Button");
-
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Field_Guide"),
-			CField_Guide::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_Field_Guide");
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Main_Menu"),
-			CMain_Menu::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_Main_Menu");
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Menu_Gear"),
-			CMenu_Gear::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_Menu_Gear");
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Menu_Inventory"),
-			CMenu_Inventory::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_Menu_Inventory");
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Menu_Quest"),
-			CMenu_Quest::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_Menu_Quest");
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Logo"),
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Group_Logo"),
 			CUI_Group_Logo::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_UI_Group_Logo");
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Loading"),
-			CUI_Group_Loading::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_UI_Group_Loading");
 
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Inventory"),
-			CUI_Inventory::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_UI_Inventory");
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Inventory"),
-			CInventory::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_Inventory");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -222,183 +178,309 @@ HRESULT CMain0_Loader::Loading_For_Logo()
 	return S_OK;
 }
 
-HRESULT CMain0_Loader::Loading_For_Cliffside()
+HRESULT CMain0_Loader::Loading_For_Cliffside(LEVELID eLevelID)
 {
 	if (nullptr == m_pGameInstance)
 		return E_FAIL;
 	try /* Failed Check Add_Prototype*/
 	{
+		
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("Failed Add_Prototype : ");
+		wstrErrorMSG += pErrorTag;
+		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	return S_OK;
+}
+
+HRESULT CMain0_Loader::Loading_For_Vault(LEVELID eLevelID)
+{
+	/* For.Prototype_GameObject_MeshEffect*/
+	if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Cloister_MeshEffect"),
+		CMeshEffect::Create(m_pDevice, m_pContext,TEXT("../../Resources/GameData/MeshEffectData/Cloister/Cloister.ME")))))
+		throw TEXT("Prototype_GameObject_Cloister_MeshEffect");
+
+	if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Trigger_Vault"),
+		CTrigger_Vault::Create(m_pDevice, m_pContext))))
+		throw TEXT("Prototype_GameObject_Trigger_Vault");
+
+
+	return S_OK;
+}
+
+HRESULT CMain0_Loader::Loading_For_GreatHall(LEVELID eLevelID)
+{
+	return S_OK;
+}
+
+HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
+{
+	if (nullptr == m_pGameInstance)
+		return E_FAIL;
+	try
+	{
+#pragma region Load UI
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Group_HP"),
+			CUI_Group_HP::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_UI_Group_HP");
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_UI_Progress"),
+			CUI_Progress::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_UI_Progress");
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Group_Potion"),
+			CUI_Group_Potion::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_UI_Group_Potion");
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Group_Finisher"),
+			CUI_Group_Finisher::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_UI_Group_Finisher");
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Group_Skill"),
+			CUI_Group_Skill::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_UI_Group_Skill");
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Group_Finisher_Icon"),
+			CUI_Group_Finisher_Icon::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_UI_Group_Finisher_Icon");
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Group_Enemy_HP"),
+			CUI_Group_Enemy_HP::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_UI_Group_Enemy_HP");
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Font"),
+			CUI_Font::Create(m_pDevice, m_pContext, TEXT("../../Resources/Fonts/NexonGothic.spritefont")))))
+			throw TEXT("Prototype_GameObject_UI_Font");
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Group_Cursor"),
+			CUI_Group_Cursor::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_UI_Group_Cursor");
+		/*if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Group_MiniMap"),
+			CUI_Group_MiniMap::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_UI_Group_MiniMap");*/
+
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_UI_Image"),
+			CUI_Image::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_UI_Image");
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_UI_Button"),
+			CUI_Button::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_UI_Button");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Field_Guide"),
+			CField_Guide::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Field_Guide");
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Main_Menu"),
+			CMain_Menu::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Main_Menu");
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Menu_Gear"),
+			CMenu_Gear::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Menu_Gear");
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Menu_Inventory"),
+			CMenu_Inventory::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Menu_Inventory");
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Menu_Quest"),
+			CMenu_Quest::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Menu_Quest");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Inventory"),
+			CUI_Inventory::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_UI_Inventory");
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Inventory"),
+			CInventory::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Inventory");
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Slot"),
+			CUI_Slot::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_UI_Slot");
+#pragma endregion
+
+#pragma region Load Texture
 		/* --------------Texture-------------- */
 		/* Prototype_Component_Texture_Default_Particle*/
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Texture_Default_Particle"),
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_Default_Particle"),
 			CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Textures/Default_Particle.png")))))
 			throw TEXT("Prototype_Component_Texture_Default_Particle");
 
 		/* Prototype_Component_Texture_Terrain */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Texture_Terrain"),
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_Terrain"),
 			CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Terrain/Tile%d.dds"), 2))))
 			throw TEXT("Prototype_Component_Texture_Terrain");
+#pragma endregion
 
+#pragma region Load Buffer
 		/* --------------Buffer-------------- */
 		/* For.Prototype_Component_VIBuffer_Cube */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Cube"),
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_VIBuffer_Cube"),
 			CVIBuffer_Cube::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_VIBuffer_Cube");
 
 		/* Prototype_Component_VIBuffer_Terrain */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Terrain"),
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_VIBuffer_Terrain"),
 			CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Terrain/DT.bmp")))))
 			throw TEXT("Prototype_Component_VIBuffer_Terrain");
 
 		/* For.Prototype_Component_VIBuffer_Cloth */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Cloth"),
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_VIBuffer_Cloth"),
 			CVIBuffer_Cloth::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_VIBuffer_Cloth");
 
 		/* For.Prototype_GameObject_ConvexMesh*/
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_ConvexMesh"),
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_ConvexMesh"),
 			CConvexMesh::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_ConvexMesh");
 
 		/* For.Prototype_GameObject_ConvexMesh*/
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_TriangleMesh"),
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_TriangleMesh"),
 			CTriangleMesh::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_TriangleMesh");
+#pragma endregion
 
+#pragma region Load Shader
 		/* --------------Shader-------------- */
 		/* For.Prototype_Component_Shader_VtxCube */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxCube"),
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_VtxCube"),
 			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxCube.hlsl"), VTXPOSCUBE_DECL::Elements, VTXPOSCUBE_DECL::iNumElements))))
 			throw TEXT("Prototype_Component_Texture_SkyBox");
 
 		/* For.Prototype_Component_Shader_VtxAnimMesh */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimMesh"),
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_VtxAnimMesh"),
 			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxAnimMesh.hlsl"), VTXANIMMESH_DECL::Elements, VTXANIMMESH_DECL::iNumElements))))
 			throw TEXT("Prototype_Component_Shader_VtxAnimMesh");
 
 		/* For.Prototype_Component_Shader_VtxMesh */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxMesh"),
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_VtxMesh"),
 			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxMesh.hlsl"), VTXMESH_DECL::Elements, VTXMESH_DECL::iNumElements))))
 			throw TEXT("Prototype_Component_Shader_VtxMesh");
-		
+
 		/* For.Prototype_Component_Shader_ShadowAnimMesh */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_ShadowAnimMesh"),
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_ShadowAnimMesh"),
 			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_ShadowAnimMesh.hlsl"), VTXANIMMESH_DECL::Elements, VTXANIMMESH_DECL::iNumElements))))
 			throw TEXT("Prototype_Component_Shader_ShadowAnimMesh");
 
 		/* For.Prototype_Component_Shader_ShadowMesh */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_ShadowMesh"),
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_ShadowMesh"),
 			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_ShadowMesh.hlsl"), VTXMESH_DECL::Elements, VTXMESH_DECL::iNumElements))))
 			throw TEXT("Prototype_Component_Shader_ShadowMesh");
 
 		/* For.Prototype_Component_Shader_MeshInstance */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxMeshInstance"),
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_VtxMeshInstance"),
 			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxMeshInstance.hlsl"),
 				VTXMESHINSTANCE_DECL::Elements, VTXMESHINSTANCE_DECL::iNumElements))))
 			return E_FAIL;
-		
+
 		/* For.Prototype_Component_Shader_ShadowMeshInstance */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_ShadowMeshInstance"),
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_ShadowMeshInstance"),
 			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_ShadowMeshInstance.hlsl"),
 				VTXMESHINSTANCE_DECL::Elements, VTXMESHINSTANCE_DECL::iNumElements))))
 			return E_FAIL;
 
 		/* For.Prototype_Component_Shader_Terrain */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_Terrain"),
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_Terrain"),
 			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Terrain.hlsl"), VTXPOSNORTEX_DECL::Elements, VTXPOSNORTEX_DECL::iNumElements))))
 			throw TEXT("Prototype_Component_Shader_Terrain");
 
 		/* For.Prototype_Component_Shader_Terrain */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_Debug"),
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_Debug"),
 			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Debug.hlsl"), VTXPOSNORTEX_DECL::Elements, VTXPOSNORTEX_DECL::iNumElements))))
 			throw TEXT("Prototype_Component_Shader_Debug");
 
 		/* Prototype_Component_Shader_DefaultEffect */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_DefaultEffect"),
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_DefaultEffect"),
 			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_DefaultEffect.hlsl"), VTXMESH_DECL::Elements, VTXMESH_DECL::iNumElements))))
 			throw TEXT("Prototype_Component_Shader_DefaultEffect");
-
-		/* --------------UI-------------- */
-
-	
+#pragma endregion
+		
+#pragma region Load ETC
 		/* --------------ETC-------------- */
 		/* For.Prototype_Component_Health*/
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Health"),
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Health"),
 			CHealth::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Health");
 
 		/* For.Prototype_Component_RigidBody */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_RigidBody"),
 			CRigidBody::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_RigidBody");
 
 		/* --------------Magic-------------- */
 		/* For. Prototype_Component_Magic*/
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Magic"),
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Magic"),
 			CMagic::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Magic");
+#pragma endregion
 
-#pragma region Magic
+#pragma region Load Magic
 		/* For.Prototype_GameObject_BasicCast */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_BasicCast"),
-			CBasicCast::Create(m_pDevice, m_pContext, LEVEL_STATIC))))
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_BasicCast"),
+			CBasicCast::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_BasicCast");
 
 		/* For.Prototype_GameObject_Protego */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Protego"),
-			CProtego::Create(m_pDevice, m_pContext, LEVEL_STATIC))))
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Protego"),
+			CProtego::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Protego");
 
 		/* For.Prototype_GameObject_Revelio */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Revelio"),
-			CRevelio::Create(m_pDevice, m_pContext, LEVEL_STATIC))))
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Revelio"),
+			CRevelio::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Revelio");
 
 		/* For.Prototype_GameObject_Wingardiumleviosa */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Wingardiumleviosa"),
-			CWingardiumleviosa::Create(m_pDevice, m_pContext, LEVEL_STATIC))))
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Wingardiumleviosa"),
+			CWingardiumleviosa::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Wingardiumleviosa");
 
 		/* For.Prototype_GameObject_Levioso */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Levioso"),
-			CLevioso::Create(m_pDevice, m_pContext, LEVEL_STATIC))))
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Levioso"),
+			CLevioso::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Levioso");
 
 		/* For.Prototype_GameObject_Confringo */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Confringo"),
-			CConfringo::Create(m_pDevice, m_pContext, LEVEL_STATIC))))
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Confringo"),
+			CConfringo::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Confringo");
 
 		/* For.Prototype_GameObject_Finisher */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Finisher"),
-			CFinisher::Create(m_pDevice, m_pContext, LEVEL_STATIC))))
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Finisher"),
+			CFinisher::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Finisher");
 
 		/* For.Prototype_GameObject_Ncendio */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Ncendio"),
-			CNcendio::Create(m_pDevice, m_pContext, LEVEL_STATIC))))
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Ncendio"),
+			CNcendio::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Ncendio");
 
 		/* For.Prototype_GameObject_Lumos */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Lumos"),
-			CLumos::Create(m_pDevice, m_pContext, LEVEL_STATIC))))
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Lumos"),
+			CLumos::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Lumos");
 
-		/* For.Prototype_GameObject_Lumos */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Arrestomomentum"),
-			CArrestomomentum::Create(m_pDevice, m_pContext, LEVEL_STATIC))))
+		/* For.Prototype_GameObject_Arrestomomentum */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Arrestomomentum"),
+			CArrestomomentum::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Arrestomomentum");
 
-		/* For.Prototype_GameObject_Lumos */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Descendo"),
-			CDescendo::Create(m_pDevice, m_pContext, LEVEL_STATIC))))
+		/* For.Prototype_GameObject_Descendo */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Descendo"),
+			CDescendo::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Descendo");
 
 		/* For.Prototype_GameObject_Accio */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Accio"),
-			CAccio::Create(m_pDevice, m_pContext, LEVEL_STATIC))))
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Accio"),
+			CAccio::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Accio");
 
+		/* For.Prototype_GameObject_Flipendo */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Flipendo"),
+			CFlipendo::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_Flipendo");
+
+		/* For.Prototype_GameObject_Expelliarmus */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Expelliarmus"),
+			CExpelliarmus::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_Expelliarmus");
+		
+		/* For.Prototype_GameObject_Imperio */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Imperio"),
+			CImperio::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_Imperio");
+		
 #pragma endregion
 		{
 			std::lock_guard<std::mutex> lock(mtx);
@@ -411,10 +493,12 @@ HRESULT CMain0_Loader::Loading_For_Cliffside()
 		}
 
 		/* For.Prototype_GameObject_MagicSlot */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_MagicSlot"),
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_MagicSlot"),
 			CMagicSlot::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_MagicSlot");
+#pragma endregion
 
+#pragma region Load Particle
 		{
 			std::lock_guard<std::mutex> lock(mtx);
 
@@ -430,30 +514,34 @@ HRESULT CMain0_Loader::Loading_For_Cliffside()
 				TEXT("../../Resources/GameData/ParticleData/Misc/RockChunksRough/"), 3)))
 				throw TEXT("Reserve Particle : Particle_RockChunksRough");
 		}
+#pragma endregion
 
-		/* --------------Debug-------------- */
+#pragma region Load Debug
+		
 #ifdef _DEBUG
-
+		/* --------------Debug-------------- */
 		/* For.Prototype_GameObject_Camera_Debug*/
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Camera_Debug"),
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Camera_Debug"),
 			CCamera_Debug::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Camera_Debug");
 
 		/* For.Prototype_GameObject_Test_Player*/
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Player"),
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Test_Player"),
 			CTest_Player::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Test_Player");
 
 		/* For.Prototype_GameObject_Test_Particle */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Test_Particle"),
-			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Test/"), LEVEL_STATIC))))
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Test_Particle"),
+			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Test/"), eLevelID))))
 			throw TEXT("Prototype_GameObject_Test_Particle");
 
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_PhysxRenderer"),
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_PhysxRenderer"),
 			CPhysXRender::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_PhysxRenderer");
 
 #endif // _DEBUG
+
+#pragma endregion
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -467,31 +555,12 @@ HRESULT CMain0_Loader::Loading_For_Cliffside()
 	return S_OK;
 }
 
-HRESULT CMain0_Loader::Loading_For_Vault()
-{
-	/* For.Prototype_GameObject_MeshEffect*/
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_VAULT, TEXT("Prototype_GameObject_Cloister_MeshEffect"),
-		CMeshEffect::Create(m_pDevice, m_pContext,TEXT("../../Resources/GameData/MeshEffectData/Cloister/Cloister.ME")))))
-		throw TEXT("Prototype_GameObject_Cloister_MeshEffect");
 
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_VAULT, TEXT("Prototype_GameObject_Trigger_Vault"),
-		CTrigger_Vault::Create(m_pDevice, m_pContext))))
-		throw TEXT("Prototype_GameObject_Trigger_Vault");
-
-
-	return S_OK;
-}
-
-HRESULT CMain0_Loader::Loading_For_GreatHall()
-{
-	return S_OK;
-}
-
-CMain0_Loader* CMain0_Loader::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVELID eNextLevel)
+CMain0_Loader* CMain0_Loader::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVELID eNextLevel, _bool isStaticLoaded)
 {
 	CMain0_Loader* pInstance = New CMain0_Loader(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize(eNextLevel)))
+	if (FAILED(pInstance->Initialize(eNextLevel, isStaticLoaded)))
 	{
 		MSG_BOX("Failed to Created CMain0_Loader");
 		Safe_Release(pInstance);

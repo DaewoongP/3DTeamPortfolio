@@ -65,7 +65,7 @@ void CPensive::Late_Tick(_float fTimeDelta)
 HRESULT CPensive::Render()
 {
 #ifdef _DEBUG
-	Tick_ImGui();
+	//Tick_ImGui();
 #endif // _DEBUG
 
 	if (FAILED(SetUp_ShaderResources()))
@@ -208,32 +208,6 @@ HRESULT CPensive::SetUp_ShaderResources()
 #ifdef _DEBUG
 void CPensive::Tick_ImGui()
 {
-	RECT clientRect;
-	GetClientRect(g_hWnd, &clientRect);
-	POINT leftTop = { clientRect.left, clientRect.top };
-	POINT rightBottom = { clientRect.right, clientRect.bottom };
-	ClientToScreen(g_hWnd, &leftTop);
-	ClientToScreen(g_hWnd, &rightBottom);
-	int Left = leftTop.x;
-	int Top = rightBottom.y;
-	ImVec2 vWinpos = { _float(Left + 1280.f), _float(Top - 300.f) };
-	ImGui::SetNextWindowPos(vWinpos);
-
-	ImGui::Begin("Test Golem_Merlin");
-
-	if (ImGui::InputInt("animIndex##Armored", &m_iIndex))
-		m_pModelCom->Change_Animation(m_iIndex);
-
-	ImGui::SeparatorText("Behavior");
-
-	/*vector<wstring> DebugBehaviorTags = m_pRootBehavior->Get_DebugBahaviorTags();
-
-	for (auto& Tag : DebugBehaviorTags)
-	{
-		ImGui::Text(wstrToStr(Tag).c_str());
-	}*/
-
-	ImGui::End();
 }
 #endif // _DEBUG
 

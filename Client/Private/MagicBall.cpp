@@ -48,10 +48,10 @@ HRESULT CMagicBall::Initialize(void* pArg)
 void CMagicBall::Tick(_float fTimeDelta)
 {
 	//실시간으로 갱신해줍니다.
-	if(m_pTargetWorldMatrix!=nullptr)
+	if(m_pTargetWorldMatrix != nullptr)
 		m_CurrentTargetMatrix = (*m_pTargetOffsetMatrix) * (*m_pTargetWorldMatrix);
 	
-	if(m_pWeaponWorldMatrix!=nullptr)
+	if(m_pWeaponWorldMatrix != nullptr)
 		m_CurrentWeaponMatrix = (*m_pWeaponOffsetMatrix) * (*m_pWeaponWorldMatrix);
 	Tick_MagicBall_State(fTimeDelta);
 	__super::Tick(fTimeDelta);
@@ -87,7 +87,7 @@ HRESULT CMagicBall::Reset(MAGICBALLINITDESC& InitDesc)
 	m_fLifeTime = InitDesc.fLifeTime;
 	m_fLerpAcc = 0.0f;
 	m_pTarget = InitDesc.pTarget;
-
+	m_isChase = InitDesc.isChase;
 	if (InitDesc.pTarget != nullptr)
 	{
 		m_pTargetWorldMatrix = InitDesc.pTarget->Get_Transform()->Get_WorldMatrixPtr();
@@ -346,6 +346,10 @@ void CMagicBall::Tick_DrawMagic(_float fTimeDelta)
 
 void CMagicBall::Tick_CastMagic(_float fTimeDelta)
 {
+	if (m_pTarget != nullptr)
+	{
+		m_vEndPosition = m_CurrentTargetMatrix.Translation();
+	}
 	//완드
 	for (int i = 0; i < m_TrailVec[EFFECT_STATE_WAND].size(); i++)
 	{

@@ -27,7 +27,7 @@ public:
 	virtual HRESULT Reset(MAGICBALLINITDESC& InitDesc) override;
 
 public:
-	void	Lumos_Tick(_float3 vPos, _float fTimeDelta);
+	void	Lumos_Tick(void* pArg);
 
 private:
 	_float				m_fEndTimer = { 0.3f };

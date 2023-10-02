@@ -16,6 +16,13 @@ HRESULT CLevel_Vault::Initialize()
     if (FAILED(__super::Initialize()))
         return E_FAIL;
 
+	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
+	{
+		MSG_BOX("Failed Ready_Layer_Player");
+
+		return E_FAIL;
+	}
+
 	if (FAILED(Ready_Lights()))
 	{
 		MSG_BOX("Failed Ready_Lights");
@@ -23,9 +30,16 @@ HRESULT CLevel_Vault::Initialize()
 		return E_FAIL;
 	}
 
-	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
+	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 	{
-		MSG_BOX("Failed Ready_Layer_Player");
+		MSG_BOX("Failed Ready_Lights");
+
+		return E_FAIL;
+	}
+
+	if(FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
+	{
+		MSG_BOX("Failed Ready_Layer_Monster");
 
 		return E_FAIL;
 	}
@@ -51,7 +65,30 @@ HRESULT CLevel_Vault::Initialize()
 		return E_FAIL;
 	}
 
+#ifdef _DEBUG
+	if (FAILED(Ready_Debug(TEXT("Layer_Debug"))))
+	{
+		MSG_BOX("Failed Load Layer_Debug");
+
+		return E_FAIL;
+	}
+#endif // _DEBUG
+
 	BEGININSTANCE;
+
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), TEXT("Layer_Magic"))))
+	{
+		MSG_BOX("Failed Add Scene : (Scene_Main)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), TEXT("Layer_Particle"))))
+	{
+		MSG_BOX("Failed Add Scene : (Scene_Main)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
 
 	pGameInstance->Reset_World_TimeAcc();
 	pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
@@ -95,6 +132,14 @@ HRESULT CLevel_Vault::Ready_Layer_Player(const _tchar* pLayerTag)
 {
 	BEGININSTANCE;
 
+	/* Add Scene : Main */
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
+	{
+		MSG_BOX("Failed Add Scene : (Scene_Main)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
 	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_VAULT, TEXT("Prototype_GameObject_Player"), pLayerTag, TEXT("GameObject_Player"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Player)");
@@ -103,6 +148,30 @@ HRESULT CLevel_Vault::Ready_Layer_Player(const _tchar* pLayerTag)
 	}
 
 	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CLevel_Vault::Ready_Layer_BackGround(const _tchar* pLayerTag)
+{
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	/* Add Scene : Main */
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
+	{
+		MSG_BOX("Failed Add Scene : (Scene_Main)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_VAULT, TEXT("Prototype_GameObject_Sky"), pLayerTag, TEXT("GameObject_Sky"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Sky)");
+		return E_FAIL;
+	}
+
+	Safe_Release(pGameInstance);
 
 	return S_OK;
 }
@@ -123,7 +192,7 @@ HRESULT CLevel_Vault::Ready_Lights()
 	LightDesc.vAmbient = _float4(0.1f, 0.1f, 0.1f, 1.f);
 	LightDesc.vSpecular = BLACKDEFAULT;
 
-	pGameInstance->Set_Light(CLight::TYPE_DIRECTIONAL,LightDesc);
+	pGameInstance->Set_Light(CLight::TYPE_DIRECTIONAL, (_float)g_iWinSizeX, (_float)g_iWinSizeY, LightDesc);
 
 	ENDINSTANCE;
 
@@ -173,40 +242,16 @@ HRESULT CLevel_Vault::Load_MapObject(const _tchar* pObjectFilePath)
 		}
 		BEGININSTANCE;
 
-		wstring ws(MapObjectDesc.wszTag);
-		size_t findIndex = ws.find(TEXT("Model_")) + 6;
+		_tchar wszobjName[MAX_PATH] = { 0 };
+		_stprintf_s(wszobjName, TEXT("GameObject_MapObject_%d"), (iObjectNum));
 
-		wstring modelName = ws.substr(findIndex);
-		wstring wsMapEffectName(TEXT("Cylinder_Long"));
-
-		if (0 == lstrcmp(modelName.c_str(), wsMapEffectName.c_str()))
+		if (FAILED(pGameInstance->Add_Component(LEVEL_VAULT, LEVEL_VAULT,
+			TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_BackGround"),
+			wszobjName, &MapObjectDesc)))
 		{
-			_tchar wszobjName[MAX_PATH] = { 0 };
-			_stprintf_s(wszobjName, TEXT("GameObject_MapEffect_%d"), (iObjectNum));
-
-			if (FAILED(pGameInstance->Add_Component(LEVEL_VAULT, LEVEL_VAULT,
-				TEXT("Prototype_GameObject_MapEffect"), TEXT("Layer_BackGround"),
-				wszobjName, &MapObjectDesc)))
-			{
-				MSG_BOX("Failed to Clone MapEffect");
-				ENDINSTANCE;
-				return E_FAIL;
-			}
-		}
-
-		else
-		{
-			_tchar wszobjName[MAX_PATH] = { 0 };
-			_stprintf_s(wszobjName, TEXT("GameObject_MapObject_%d"), (iObjectNum));
-
-			if (FAILED(pGameInstance->Add_Component(LEVEL_VAULT, LEVEL_VAULT,
-				TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_BackGround"),
-				wszobjName, &MapObjectDesc)))
-			{
-				MSG_BOX("Failed to Clone MapObject");
-				ENDINSTANCE;
-				return E_FAIL;
-			}
+			MSG_BOX("Failed to Clone MapObject");
+			ENDINSTANCE;
+			return E_FAIL;
 		}
 
 		++iObjectNum; ENDINSTANCE;
@@ -417,6 +462,32 @@ HRESULT CLevel_Vault::Load_Monsters(const wstring& wstrMonsterFilePath)
 	return S_OK;
 }
 
+#ifdef _DEBUG
+HRESULT CLevel_Vault::Ready_Debug(const _tchar* pLayerTag)
+{
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	/* Add Scene : Main */
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
+	{
+		MSG_BOX("Failed Add Scene : (Scene_Main)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_VAULT, TEXT("Prototype_GameObject_Camera_Debug"), pLayerTag, TEXT("GameObject_Camera_Debug"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Camera_Debug)");
+		return E_FAIL;
+	}
+
+	Safe_Release(pGameInstance);
+
+	return S_OK;
+}
+#endif // _DEBUG
+
 HRESULT CLevel_Vault::Ready_Layer_Trigger(const _tchar* pLayerTag)
 {
 	BEGININSTANCE;
@@ -437,6 +508,23 @@ HRESULT CLevel_Vault::Ready_Layer_Trigger(const _tchar* pLayerTag)
 		pLayerTag, TEXT("GameObject_Trigger_Vault"), &TriggerDesc)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Trigger_Vault)");
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CLevel_Vault::Ready_Layer_Monster(const _tchar* pLayerTag)
+{
+	BEGININSTANCE;
+
+	_float4x4 Matrix = XMMatrixTranslation(40.f, 10.f, 60.f);
+	if (FAILED(pGameInstance->Add_Component(LEVEL_VAULT, LEVEL_VAULT, TEXT("Prototype_GameObject_Armored_Troll"), pLayerTag, TEXT("GameObject_Armored_Troll"), &Matrix)))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Armored_Troll)");
+		ENDINSTANCE;
 		return E_FAIL;
 	}
 

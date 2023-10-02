@@ -16,11 +16,11 @@ CAccio::CAccio(const CAccio& rhs)
 {
 }
 
-void CAccio::TrailAction (_float3 vPosition, _float fTimeDelta)
+void CAccio::TrailAction (void* pArg)
 {
-	m_pWingardiumEffect->TrailAction(vPosition, fTimeDelta);
+	ACCIO_TICKDESC* desc = static_cast<ACCIO_TICKDESC*>(pArg);
+	m_pWingardiumEffect->TrailAction(desc->vPosition, desc->fTimeDelta);
 	m_fWingardiumEffectDeadTimer = 0.3f;
-
 }
 
 HRESULT CAccio::Initialize_Prototype(_uint iLevel)
@@ -121,7 +121,7 @@ HRESULT CAccio::Initialize(void* pArg)
 
 		return E_FAIL;
 	}
-	m_CollisionDesc.Action = bind(&CAccio::TrailAction, this, placeholders::_1, placeholders::_2);
+	m_CollisionDesc.Action = bind(&CAccio::TrailAction, this, placeholders::_1);
 
 	//트레일 색상변경부
 	_float3 vColor = _float3(255.f / 255.f, 255.f / 255.f, 204.f / 255.f);

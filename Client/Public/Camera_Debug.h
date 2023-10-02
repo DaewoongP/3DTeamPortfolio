@@ -27,9 +27,13 @@ private:
 	void		Key_Input(const _float& fTimeDelta);
 	void		Mouse_Move(_float fTimeDelta);
 	void		Fix_Mouse();
+#ifdef _DEBUG
+	void		Tick_ImGui(_float fTimeDelta);
+#endif // _DEBUG
 
 private:
 	_bool		m_isFixMouse = { 0 };
+	_bool		m_isDebug = { false };
 	_float		m_fSpeed = { 0.f };
 	_float		m_fCameraNear = { 0.f };
 

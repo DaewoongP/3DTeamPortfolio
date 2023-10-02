@@ -73,7 +73,7 @@ private:
 	// 가까운 적을 타겟으로 세팅
 	void Set_Current_Target();
 	HRESULT Remove_GameObject(const wstring& wstrObjectTag);
-	_bool IsMonster(const wstring& wstrObjectTag);
+	_bool IsEnemy(const wstring& wstrObjectTag);
 
 #ifdef _DEBUG
 	_int m_iIndex = { 0 };

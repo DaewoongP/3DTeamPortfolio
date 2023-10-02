@@ -21,8 +21,13 @@ private:
 	virtual ~CAccio() = default;
 
 public:
+	//트레일 액션 돌리는데 필요한 함수임.
+	typedef struct Accio_TickDesc {
+		_float  fTimeDelta = { 0.02f };
+		_float3 vPosition = {};
+	}ACCIO_TICKDESC;
 	//윙가를 돌리는 함수임. 안부른지 0.3초 이상 지나면 죽음.
-	void TrailAction(_float3 vPosition, _float fTimeDelta);
+	void TrailAction(void* pArg);
 
 public:
 	virtual HRESULT Initialize_Prototype(_uint iLevel);

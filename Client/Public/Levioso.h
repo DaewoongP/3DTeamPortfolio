@@ -22,7 +22,7 @@ private:
 
 public:
 	//윙가를 돌리는 함수임. 안부른지 0.3초 이상 지나면 죽음.
-	void TrailAction(_float3 vPosition, _float fTimeDelta);
+	void TrailAction(void* pArg);
 
 public:
 	virtual HRESULT Initialize_Prototype(_uint iLevel);

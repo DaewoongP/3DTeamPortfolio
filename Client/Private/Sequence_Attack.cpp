@@ -3,7 +3,7 @@
 #include "GameInstance.h"
 #include "BlackBoard.h"
 
-#include "Turn.h"
+#include "LookAt.h"
 #include "Action.h"
 #include "RandomChoose.h"
 #include "Check_Distance.h"
@@ -75,33 +75,44 @@ HRESULT CSequence_Attack::Assemble_Childs()
 		if (FAILED(m_pBlackBoard->Get_Type("pTransform", pTransform)))
 			throw TEXT("pTransform is nullptr");
 
-		CCheck_Distance* pTsk_Check_Distance_Enter = dynamic_cast<CCheck_Distance*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Check_Distance")));
-		if (nullptr == pTsk_Check_Distance_Enter)
-			throw TEXT("pTsk_Check_Distance_Enter is nullptr");
-		CCheck_Distance* pTsk_Check_Distance_Exit = dynamic_cast<CCheck_Distance*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Check_Distance")));
-		if (nullptr == pTsk_Check_Distance_Exit)
-			throw TEXT("pTsk_Check_Distance_Exit is nullptr");
-		CTurn* pTsk_Turn = dynamic_cast<CTurn*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Turn")));
-		if (nullptr == pTsk_Turn)
-			throw TEXT("pTsk_Turn is nullptr");
+		CCheck_Distance* pTsk_Check_Distance = dynamic_cast<CCheck_Distance*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Check_Distance")));
+		if (nullptr == pTsk_Check_Distance)
+			throw TEXT("pTsk_Check_Distance is nullptr");
+		CLookAt* pTsk_LookAt = dynamic_cast<CLookAt*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_LookAt")));
+		if (nullptr == pTsk_LookAt)
+			throw TEXT("pTsk_LookAt is nullptr");
 
 		/* Set Decorations */
+		m_pAction->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_float fAttackRange = { 0.f };
+				_float fTargetDistance = { 0.f };
+				if (FAILED(pBlackBoard->Get_Type("fAttackRange", fAttackRange)))
+				{
+					MSG_BOX("Failed Get_Type fAttackRange");
+					return false;
+				}
+				if (FAILED(pBlackBoard->Get_Type("fTargetDistance", fTargetDistance)))
+				{
+					MSG_BOX("Failed Get_Type fTargetDistance");
+					return false;
+				}
+
+				return fAttackRange >= fTargetDistance;
+			});
 
 		/* Set Options */
-		pTsk_Turn->Set_Option(60.f, 3.f);
-		pTsk_Turn->Set_Transform(pTransform);
-		pTsk_Check_Distance_Enter->Set_Transform(pTransform);
-		pTsk_Check_Distance_Exit->Set_Transform(pTransform);
+		pTsk_LookAt->Set_Option(m_fTurnSpeed);
+		pTsk_LookAt->Set_Transform(pTransform);
+		pTsk_Check_Distance->Set_Transform(pTransform);
 
-		if (FAILED(Assemble_Behavior(TEXT("Tsk_Check_Distance_Enter"), pTsk_Check_Distance_Enter)))
+		if (FAILED(Assemble_Behavior(TEXT("Tsk_Check_Distance"), pTsk_Check_Distance)))
 			throw TEXT("Failed Assemble_Behavior Tsk_Check_Distance_Enter");
-		if (FAILED(Assemble_Behavior(TEXT("Tsk_Turn"), pTsk_Turn)))
-			throw TEXT("Tsk_Turn");
 		if (FAILED(Assemble_Behavior(TEXT("Action_Attack"), m_pAction)))
-			throw TEXT("Action_Attack");
-		if (FAILED(Assemble_Behavior(TEXT("Tsk_Check_Distance_Exit"), pTsk_Check_Distance_Exit)))
-			throw TEXT("Failed Assemble_Behavior Tsk_Check_Distance_Exit");
+			throw TEXT("Failed Assemble_Behavior Action_Attack");
 		Safe_AddRef(m_pAction);
+		if (FAILED(m_pAction->Assemble_Behavior(TEXT("Tsk_LookAt"), pTsk_LookAt)))
+			throw TEXT("Failed Assemble_Behavior Tsk_LookAt");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -124,8 +135,7 @@ void CSequence_Attack::Reset_Behavior(HRESULT result)
 {
 	m_pAction->Reset_Behavior(result);
 	(*m_iterCurBehavior)->Reset_Behavior(result);
-
-	m_isPlayAttack = false;
+	m_iterCurBehavior = m_Behaviors.begin();
 
 	BEGININSTANCE;
 	m_fPreWorldTimeAcc = pGameInstance->Get_World_TimeAcc();

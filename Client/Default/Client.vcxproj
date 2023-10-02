@@ -167,14 +167,24 @@
     <ClInclude Include="..\Public\Accio.h" />
     <ClInclude Include="..\Public\Action.h" />
     <ClInclude Include="..\Public\Animation_Camera_Model.h" />
+    <ClInclude Include="..\public\ChineseChompingCabbageItem.h" />
+    <ClInclude Include="..\Public\Ingredient.h" />
     <ClInclude Include="..\Public\Arrestomomentum.h" />
+    <ClInclude Include="..\Public\Client_Struct.h" />
+    <ClInclude Include="..\Public\Crucio.h" />
+    <ClInclude Include="..\Public\Expelliarmus.h" />
+    <ClInclude Include="..\Public\Flipendo.h" />
+    <ClInclude Include="..\Public\Imperio.h" />
     <ClInclude Include="..\public\Item.h" />
+    <ClInclude Include="..\public\Plant.h" />
+    <ClInclude Include="..\Public\Potion.h" />
+    <ClInclude Include="..\public\Tool.h" />
     <ClInclude Include="..\Public\Death.h" />
     <ClInclude Include="..\Public\Descendo.h" />
     <ClInclude Include="..\Public\Enemy.h" />
     <ClInclude Include="..\public\Game_Manager.h" />
     <ClInclude Include="..\Public\Lumos.h" />
-    <ClInclude Include="..\Public\AccPotion.h" />
+    <ClInclude Include="..\Public\FocusPotion.h" />
     <ClInclude Include="..\Public\MPBall.h" />
     <ClInclude Include="..\Public\Ncendio.h" />
     <ClInclude Include="..\Public\Inventory.h" />
@@ -188,9 +198,8 @@
     <ClInclude Include="..\public\Level_GreatHall.h" />
     <ClInclude Include="..\public\Level_Smith.h" />
     <ClInclude Include="..\public\Level_Vault.h" />
-    <ClInclude Include="..\Public\PowerPotion.h" />
+    <ClInclude Include="..\Public\PotionTap.h" />
     <ClInclude Include="..\Public\ProtegoState.h" />
-    <ClInclude Include="..\Public\MapEffect.h" />
     <ClInclude Include="..\Public\Menu_Gear.h" />
     <ClInclude Include="..\Public\HardLandState.h" />
     <ClInclude Include="..\Public\JumpState.h" />
@@ -202,9 +211,11 @@
     <ClInclude Include="..\Public\Menu_Quest.h" />
     <ClInclude Include="..\Public\Menu_Setting.h" />
     <ClInclude Include="..\Public\MapObject_Ins.h" />
+    <ClInclude Include="..\Public\UI_Potion_Tap.h" />
     <ClInclude Include="..\public\WiggenweldPotion.h" />
     <ClInclude Include="..\Public\Sequence_AirHit.h" />
     <ClInclude Include="..\Public\StandingState.h" />
+    <ClInclude Include="..\Public\Treasure_Chest.h" />
     <ClInclude Include="..\public\Trigger_Vault.h" />
     <ClInclude Include="..\Public\UI_Font.h" />
     <ClInclude Include="..\Public\UI_Group_Cursor.h" />
@@ -329,7 +340,6 @@
     <ClInclude Include="ImGui\stb\stb_image_resize.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="ItemFactory.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -337,14 +347,22 @@
     <ClCompile Include="..\Private\Accio.cpp" />
     <ClCompile Include="..\Private\Action.cpp" />
     <ClCompile Include="..\Private\Animation_Camera_Model.cpp" />
+    <ClCompile Include="..\private\ChineseChompingCabbageItem.cpp" />
+    <ClCompile Include="..\Private\Ingredient.cpp" />
     <ClCompile Include="..\Private\Arrestomomentum.cpp" />
+    <ClCompile Include="..\Private\Crucio.cpp" />
+    <ClCompile Include="..\Private\Expelliarmus.cpp" />
+    <ClCompile Include="..\Private\Flipendo.cpp" />
+    <ClCompile Include="..\Private\Imperio.cpp" />
     <ClCompile Include="..\private\Item.cpp" />
     <ClCompile Include="..\Private\Death.cpp" />
     <ClCompile Include="..\Private\Descendo.cpp" />
     <ClCompile Include="..\Private\Enemy.cpp" />
     <ClCompile Include="..\private\Game_Manager.cpp" />
     <ClCompile Include="..\Private\Lumos.cpp" />
-    <ClCompile Include="..\Private\AccPotion.cpp" />
+    <ClCompile Include="..\Private\FocusPotion.cpp" />
+    <ClCompile Include="..\private\Plant.cpp" />
+    <ClCompile Include="..\Private\Potion.cpp" />
     <ClCompile Include="..\Private\MPBall.cpp" />
     <ClCompile Include="..\Private\Ncendio.cpp" />
     <ClCompile Include="..\Private\Inventory.cpp" />
@@ -357,9 +375,8 @@
     <ClCompile Include="..\private\Level_GreatHall.cpp" />
     <ClCompile Include="..\private\Level_Smith.cpp" />
     <ClCompile Include="..\private\Level_Vault.cpp" />
-    <ClCompile Include="..\Private\PowerPotion.cpp" />
+    <ClCompile Include="..\Private\PotionTap.cpp" />
     <ClCompile Include="..\Private\ProtegoState.cpp" />
-    <ClCompile Include="..\Private\MapEffect.cpp" />
     <ClCompile Include="..\Private\Menu_Gear.cpp" />
     <ClCompile Include="..\Private\HardLandState.cpp" />
     <ClCompile Include="..\Private\JumpState.cpp" />
@@ -371,9 +388,11 @@
     <ClCompile Include="..\Private\Menu_Quest.cpp" />
     <ClCompile Include="..\Private\Menu_Setting.cpp" />
     <ClCompile Include="..\Private\MapObject_Ins.cpp" />
+    <ClCompile Include="..\Private\UI_Potion_Tap.cpp" />
     <ClCompile Include="..\private\WiggenweldPotion.cpp" />
     <ClCompile Include="..\Private\Sequence_AirHit.cpp" />
     <ClCompile Include="..\Private\StandingState.cpp" />
+    <ClCompile Include="..\Private\Treasure_Chest.cpp" />
     <ClCompile Include="..\private\Trigger_Vault.cpp" />
     <ClCompile Include="..\Private\UI_Font.cpp" />
     <ClCompile Include="..\Private\UI_Group_Cursor.cpp" />
@@ -500,7 +519,6 @@
       <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</IncludeInUnityFile>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="ItemFactory.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico" />

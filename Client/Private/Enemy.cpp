@@ -47,12 +47,37 @@ HRESULT CEnemy::Initialize(void* pArg)
 	}
 	ENDINSTANCE;
 
+	//미리 구조체 만들어주기~
+	m_pTransform->Get_Position();
+	{
+		STICK_TICKDESC* pStickDesc = new STICK_TICKDESC();
+		pStickDesc->pPosition = &m_vCurrentPosition;
+
+		m_MagicTickDesc.emplace(BUFF_LEVIOSO, pStickDesc);
+	}
+	{
+		STICK_4_TICKDESC* pStick4Desc = new STICK_4_TICKDESC();
+		pStick4Desc->pHand[0] = &m_vCurrentPosition;
+		pStick4Desc->pHand[1] = &m_vCurrentPosition;
+		pStick4Desc->pFoot[0] = &m_vCurrentPosition;
+		pStick4Desc->pFoot[1] = &m_vCurrentPosition;
+
+		m_MagicTickDesc.emplace(BUFF_DESCENDO, pStick4Desc);
+	}
+	{
+		STICK_TICKDESC* pStickDesc = new STICK_TICKDESC();
+		pStickDesc->pPosition = &m_vCurrentPosition;
+
+		m_MagicTickDesc.emplace(BUFF_LEVIOSO_TONGUE, pStickDesc);
+	}
+
 	return S_OK;
 }
 
 void CEnemy::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+	m_vCurrentPosition = m_pTransform->Get_Position();
 
 	m_pUI_HP->Tick(fTimeDelta);
 }
@@ -356,16 +381,59 @@ HRESULT CEnemy::Remove_GameObject(const wstring& wstrObjectTag)
 	return S_OK;
 }
 
+_bool CEnemy::IsEnemy(const wstring& wstrObjectTag)
+{
+	if (wstring::npos != wstrObjectTag.find(TEXT("Player")))
+		return true;
+
+	if (wstring::npos != wstrObjectTag.find(TEXT("Fig")))
+		return true;
+
+	return false;
+}
+
+_bool CEnemy::IsDebuff(BUFF_TYPE eType)
+{
+	if (BUFF_LEVIOSO & eType)
+		return true;
+
+	return false;
+}
+
+_bool CEnemy::isCombo(BUFF_TYPE eType)
+{
+	/* 내 현재 상태에 디버프가 없는 경우 */
+	if (false == IsDebuff(BUFF_TYPE(m_iCurrentSpell)))
+		return false;
+
+	if (eType & BUFF_ATTACK_LIGHT)
+		m_isHitCombo = true;
+
+	if (eType & BUFF_ATTACK_HEAVY)
+		m_isHitCombo = true;
+
+	if (true == IsDebuff(eType))
+		m_isHitCombo = true;
+
+	return false;
+}
+
 void CEnemy::On_Gravity()
 {
-	if(nullptr != m_pRigidBody)
+	if (nullptr != m_pRigidBody)
+	{
+		cout << "On Gravity" << endl;
 		m_pRigidBody->Set_Gravity(true);
+	}
 }
 
 void CEnemy::Off_Gravity()
 {
 	if (nullptr != m_pRigidBody)
+	{
+		cout << "Off Gravity" << endl;
 		m_pRigidBody->Set_Gravity(false);
+	}
 }
 
 void CEnemy::Free()
@@ -382,5 +450,12 @@ void CEnemy::Free()
 		Safe_Release(m_pRigidBody);
 		Safe_Release(m_pRootBehavior);
 		Safe_Release(m_pShadowShaderCom);
+
+		for (auto iter = m_MagicTickDesc.begin(); iter != m_MagicTickDesc.end(); ++iter)
+		{
+			if(iter->second!=nullptr)
+				Safe_Delete(iter->second);
+		}
+		
 	}
 }

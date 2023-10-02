@@ -40,6 +40,8 @@ public:
 		MAGIC_TYPE		eMagicType = { MT_END };
 		BUFF_TYPE		eBuffType = { BUFF_NONE };
 		SPELL			eMagicTag = { SPELL_END };
+		//추적 옵션
+		_bool			isChase = { false };
 		//데미지
 		_int			iDamage = { 0 };
 		//쿨타임	

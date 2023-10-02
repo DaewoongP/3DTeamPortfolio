@@ -20,7 +20,7 @@
 
 #include "UI_Group_Skill.h"
 
-#include "AccPotion.h"
+#include "FocusPotion.h"
 #include "CoolTime.h"	
 
 #include "WiggenweldPotion.h"
@@ -139,7 +139,7 @@ void CPlayer::Tick(_float fTimeDelta)
 	}
 	if (pGameInstance->Get_DIKeyState(DIK_F5, CInput_Device::KEY_DOWN))
 	{
-		m_pAccPotion->Use();
+		//m_pFocusPotion->Use();
 	}
 
 
@@ -168,17 +168,9 @@ void CPlayer::Tick(_float fTimeDelta)
 	//루모스 업데이트
 	if (nullptr != m_pFrncSpellToggle)
 	{
-		m_pFrncSpellToggle(_float3(), _float());
+		m_pFrncSpellToggle(nullptr);
 	}
 	m_pCooltime->Tick(fTimeDelta);
-
-
-	
-
-	//cout << m_pTransform->Get_Position().x << endl;
-	//cout << m_pTransform->Get_Position().y << endl;
-	//cout << m_pTransform->Get_Position().z << endl;
-
 }
 
 void CPlayer::Late_Tick(_float fTimeDelta)
@@ -548,13 +540,6 @@ HRESULT CPlayer::Add_Components()
 		return E_FAIL;
 	}
 
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_AccPotion"),
-		TEXT("Com_AccPotion"), reinterpret_cast<CComponent**>(&m_pAccPotion))))
-	{
-		__debugbreak();
-		return E_FAIL;
-	}
-
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_CoolTime"),
 		TEXT("Com_CoolTime"), reinterpret_cast<CComponent**>(&m_pCooltime))))
 	{
@@ -619,18 +604,20 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicTag = LEVIOSO;
 		magicInitDesc.fInitCoolTime = 1.f;
 		magicInitDesc.iDamage = 0;
+		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 1.8f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
 	// 콘프링고
 	{
-		magicInitDesc.eBuffType = BUFF_FIRE;
+		magicInitDesc.eBuffType = BUFF_CONFRINGO;
 		magicInitDesc.eMagicGroup = CMagic::MG_DAMAGE;
 		magicInitDesc.eMagicType = CMagic::MT_RED;
 		magicInitDesc.eMagicTag = CONFRINGO;
 		magicInitDesc.fInitCoolTime = 1.f;
 		magicInitDesc.iDamage = 50;
+		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 0.8f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
@@ -643,18 +630,20 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicTag = FINISHER;
 		magicInitDesc.fInitCoolTime = 1.f;
 		magicInitDesc.iDamage = 500;
+		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 3.f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 	
 	// 인센디오
 	{
-		magicInitDesc.eBuffType = BUFF_FIRE;
+		magicInitDesc.eBuffType = BUFF_NCENDIO;
 		magicInitDesc.eMagicGroup = CMagic::MG_DAMAGE;
 		magicInitDesc.eMagicType = CMagic::MT_RED;
 		magicInitDesc.eMagicTag = NCENDIO;
 		magicInitDesc.fInitCoolTime = 1.5f;
 		magicInitDesc.iDamage = 300;
+		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 1.f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
@@ -667,6 +656,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicTag = LUMOS;
 		magicInitDesc.fInitCoolTime = 1.5f;
 		magicInitDesc.iDamage = 0;
+		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 30.f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
@@ -679,6 +669,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicTag = ARRESTOMOMENTUM;
 		magicInitDesc.fInitCoolTime = 1.5f;
 		magicInitDesc.iDamage = 0;
+		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 30.f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
@@ -691,6 +682,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicTag = ACCIO;
 		magicInitDesc.fInitCoolTime = 1.5f;
 		magicInitDesc.iDamage = 10;
+		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 1.f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
@@ -703,17 +695,63 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicTag = DESCENDO;
 		magicInitDesc.fInitCoolTime = 1.5f;
 		magicInitDesc.iDamage = 10;
+		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 1.f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	m_pMagicSlot->Add_Magic_To_Skill_Slot(0, CONFRINGO);
-	m_pMagicSlot->Add_Magic_To_Skill_Slot(1, LEVIOSO);
-	m_pMagicSlot->Add_Magic_To_Skill_Slot(2, FINISHER);
+	// 플리펜도
+	{
+		magicInitDesc.eBuffType = BUFF_NONE;
+		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
+		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicTag = FLIPENDO;
+		magicInitDesc.fInitCoolTime = 1.f;
+		magicInitDesc.iDamage = 10;
+		magicInitDesc.isChase = true;
+		magicInitDesc.fLifeTime = 0.3f;
+		m_pMagicSlot->Add_Magics(magicInitDesc);
+	}
+
+	// 엑스펠리아르무스
+	{
+		magicInitDesc.eBuffType = BUFF_NONE;
+		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
+		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicTag = EXPELLIARMUS;
+		magicInitDesc.fInitCoolTime = 1.f;
+		magicInitDesc.iDamage = 10;
+		magicInitDesc.isChase = true;
+		magicInitDesc.fLifeTime = 1.2f;
+		m_pMagicSlot->Add_Magics(magicInitDesc);
+	}
+
+	// 임페리오
+	{
+		magicInitDesc.eBuffType = BUFF_NONE;
+		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
+		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicTag = IMPERIO;
+		magicInitDesc.fInitCoolTime = 1.f;
+		magicInitDesc.iDamage = 10;
+		magicInitDesc.isChase = true;
+		magicInitDesc.fLifeTime = 0.8f;
+		m_pMagicSlot->Add_Magics(magicInitDesc);
+	}
+
+	/*m_pMagicSlot->Add_Magic_To_Skill_Slot(0, CONFRINGO);
+	m_pMagicSlot->Add_Magic_To_Skill_Slot(1, LEVIOSO);*/
+	m_pMagicSlot->Add_Magic_To_Skill_Slot(0, DESCENDO);
+	m_pMagicSlot->Add_Magic_To_Skill_Slot(1, FLIPENDO);
+	m_pMagicSlot->Add_Magic_To_Skill_Slot(2, EXPELLIARMUS);
+	//m_pMagicSlot->Add_Magic_To_Skill_Slot(2, FINISHER);
 	//m_pMagicSlot->Add_Magic_To_Skill_Slot(3, NCENDIO);
 	//m_pMagicSlot->Add_Magic_To_Skill_Slot(3, ARRESTOMOMENTUM);
 	//m_pMagicSlot->Add_Magic_To_Skill_Slot(3, ACCIO);
-	m_pMagicSlot->Add_Magic_To_Skill_Slot(3, DESCENDO);
+	//m_pMagicSlot->Add_Magic_To_Skill_Slot(3, DESCENDO);
+	//m_pMagicSlot->Add_Magic_To_Skill_Slot(3, FLIPENDO);
+	//m_pMagicSlot->Add_Magic_To_Skill_Slot(3, EXPELLIARMUS);
+	m_pMagicSlot->Add_Magic_To_Skill_Slot(3, IMPERIO);
 	m_pMagicSlot->Add_Magic_To_Basic_Slot(2, LUMOS);
 
 
@@ -810,9 +848,6 @@ void CPlayer::Key_Input(_float fTimeDelta)
 #pragma endregion
 
 	
-	
-	
-	
 	if (pGameInstance->Get_DIKeyState(DIK_GRAVE, CInput_Device::KEY_DOWN))
 	{
 		if (true == m_isFixMouse)
@@ -856,6 +891,25 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		m_pTransform->Go_Right(fTimeDelta);
 	}
 #endif //_DEBUG
+
+	if (pGameInstance->Get_DIKeyState(DIK_L, CInput_Device::KEY_DOWN))
+	{
+		//CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_Dust01"), m_pTransform->Get_Position());
+		//CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_Dust02"), m_pTransform->Get_Position());
+		//CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_RockChunksRough"), m_pTransform->Get_Position());
+		_int iHp = 1;
+		m_pPlayer_Information->Get_Health()->Set_HP(iHp);
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_K, CInput_Device::KEY_DOWN))
+	{
+		CWiggenweldPotion::CLONE_DESC initDesc;
+		initDesc.pPlayer = this;
+		CWiggenweldPotion* pWiggenweldPotion = static_cast<CWiggenweldPotion*>(
+			pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_WiggenweldPotion"), &initDesc));
+		pWiggenweldPotion->Use(_float3());
+		Safe_Release(pWiggenweldPotion);
+	}
 
 	ENDINSTANCE;
 }
@@ -1902,7 +1956,6 @@ void CPlayer::Free()
 		Safe_Release(m_pRigidBody);
 		Safe_Release(m_pPlayer_Information);
 		Safe_Release(m_UI_Group_Skill_01);
-		Safe_Release(m_pAccPotion);
 		Safe_Release(m_pCooltime);
 		
 		if (nullptr != m_pTargetTransform)
