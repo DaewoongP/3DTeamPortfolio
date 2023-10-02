@@ -2,6 +2,7 @@
 #include "GameInstance.h"
 #include "Client_Defines.h"
 #include "StateContext.h"
+#include "Player.h"
 
 CRollState::CRollState(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
 	:CStateMachine(_pDevice,_pContext)
@@ -22,6 +23,13 @@ HRESULT CRollState::Initialize_Prototype()
 
 HRESULT CRollState::Initialize(void* pArg)
 {
+	if (FAILED(CStateMachine::Initialize(pArg)))
+	{
+		__debugbreak();
+
+		return E_FAIL;
+	}
+
 	return S_OK;
 }
 
@@ -36,19 +44,18 @@ void CRollState::Late_Tick(_float fTimeDelta)
 
 void CRollState::OnStateEnter(void* _pArg)
 {
-
 	//전투 상태가 되어야 한다.
-	*m_pIActionSwitch = CStateContext::ACTION_CMBT;
+	*m_StateMachineDesc.piActionType = CPlayer::ACTION_CMBT;
 
-	m_pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_DdgeRll_Fwd_anm"));
+	m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_DdgeRll_Fwd_anm"));
 
 	//m_isEnterTick = true;
 
-	*m_pIsFinishAnimation = false;
+	*m_StateMachineDesc.pisFinishAnimation = false;
 
-	if (true == *m_pIsDirectionKeyPressed)
+	if (true == *m_StateMachineDesc.pisDirectionPressed)
 	{
-		m_pPlayerTransform->Turn(_float3(0.0f,1.0f,0.0f), *m_pOwnerLookAngle);
+		m_StateMachineDesc.pPlayerTransform->Turn(_float3(0.0f,1.0f,0.0f), *m_StateMachineDesc.pOwnerLookAngle);
 	}
 
 
@@ -57,17 +64,17 @@ void CRollState::OnStateEnter(void* _pArg)
 void CRollState::OnStateTick()
 {
 	////방향키가 눌려있다면 방향키 방향으로 회전 시켜준다.
-	//if (true == m_isEnterTick && true == *m_pIsDirectionKeyPressed)
+	//if (true == m_isEnterTick && true == *m_StateMachineDesc.pisDirectionPressed)
 	//{
-	//	m_pPlayerTransform->Turn(_float3(0.0f, 1.0f, 0.0f), *m_pOwnerLookAngle);
+	//	m_StateMachineDesc.pPlayerTransform->Turn(_float3(0.0f, 1.0f, 0.0f), *m_StateMachineDesc.pOwnerLookAngle);
 	//	m_isEnterTick = false;
 	//}
 	
-	if (true == *m_pIsFinishAnimation)
+	if (true == *m_StateMachineDesc.pisFinishAnimation)
 	{
-		m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Idle_anm"));
+		m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Idle_anm"));
 		Set_StateMachine(TEXT("Idle"));
-		*m_pIsFinishAnimation = false;
+		*m_StateMachineDesc.pisFinishAnimation = false;
 	}
 }
 
@@ -77,14 +84,14 @@ void CRollState::OnStateExit()
 
 void CRollState::Bind_Notify()
 {
-	m_pOwnerModel->Bind_Notify(TEXT("Hu_Cmbt_DdgeRll_Fwd_anm"), TEXT("End_Animation"), m_pFuncFinishAnimation);
+	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Hu_Cmbt_DdgeRll_Fwd_anm"), TEXT("End_Animation"), m_StateMachineDesc.pfuncFinishAnimation);
 }
 
 void CRollState::Go_Idle()
 {
-	if (true == *m_pIsFinishAnimation)
+	if (true == *m_StateMachineDesc.pisFinishAnimation)
 	{
-		m_pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Idle_anm"));
+		m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Idle_anm"));
 		Set_StateMachine(TEXT("Idle"));
 	}
 }

@@ -4,6 +4,7 @@
 #ifdef _DEBUG
 #include "Test_Player.h"
 #endif // _DEBUG
+#include "Player.h"
 
 
 CCamera_Debug::CCamera_Debug(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -34,7 +35,15 @@ HRESULT CCamera_Debug::Initialize(void* pArg)
 	m_pTransform->Set_Position(_float3(0.f, 2.f, 0.f));
 
 	m_fCameraNear = 0.1f;
+#ifdef _DEBUG
+	m_isDebug = true;
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	
+	pGameInstance->Set_DebugCam(m_isDebug);
 
+	Safe_Release(pGameInstance);
+#endif
 	return S_OK;
 }
 
@@ -58,7 +67,9 @@ void CCamera_Debug::Tick(_float fTimeDelta)
 	Safe_Release(pGameInstance);
 
 	__super::Tick(fTimeDelta);
-
+#ifdef _DEBUG
+	Tick_ImGui(fTimeDelta);
+#endif
 }
 
 void CCamera_Debug::Key_Input(const _float& fTimeDelta)
@@ -66,26 +77,30 @@ void CCamera_Debug::Key_Input(const _float& fTimeDelta)
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	if (pGameInstance->Get_DIKeyState(DIK_W, CInput_Device::KEY_PRESSING))
+	if (true == m_isDebug)
 	{
-		m_pTransform->Go_Straight(fTimeDelta);
+		if (pGameInstance->Get_DIKeyState(DIK_W, CInput_Device::KEY_PRESSING))
+		{
+			m_pTransform->Go_Straight(fTimeDelta);
+		}
+
+		if (pGameInstance->Get_DIKeyState(DIK_S, CInput_Device::KEY_PRESSING))
+		{
+			m_pTransform->Go_Backward(fTimeDelta);
+		}
+
+		if (pGameInstance->Get_DIKeyState(DIK_A, CInput_Device::KEY_PRESSING))
+		{
+			m_pTransform->Go_Left(fTimeDelta);
+		}
+
+		if (pGameInstance->Get_DIKeyState(DIK_D, CInput_Device::KEY_PRESSING))
+		{
+			m_pTransform->Go_Right(fTimeDelta);
+		}
 	}
 
-	if (pGameInstance->Get_DIKeyState(DIK_S, CInput_Device::KEY_PRESSING))
-	{
-		m_pTransform->Go_Backward(fTimeDelta);
-	}
-
-	if (pGameInstance->Get_DIKeyState(DIK_A, CInput_Device::KEY_PRESSING))
-	{
-		m_pTransform->Go_Left(fTimeDelta);
-	}
-
-	if (pGameInstance->Get_DIKeyState(DIK_D, CInput_Device::KEY_PRESSING))
-	{
-		m_pTransform->Go_Right(fTimeDelta);
-	}
-
+#ifdef _DEBUG
 	if (pGameInstance->Get_DIKeyState(DIK_GRAVE, CInput_Device::KEY_DOWN))
 	{
 		if (true == m_isFixMouse)
@@ -94,6 +109,16 @@ void CCamera_Debug::Key_Input(const _float& fTimeDelta)
 			m_isFixMouse = true;
 	}
 
+	if (pGameInstance->Get_DIKeyState(DIK_F3, CInput_Device::KEY_DOWN))
+	{
+		if (true == m_isDebug)
+			m_isDebug = false;
+		else
+			m_isDebug = true;
+
+		pGameInstance->Set_DebugCam(m_isDebug);
+	}
+#endif
 	Safe_Release(pGameInstance);
 }
 
@@ -139,6 +164,49 @@ void CCamera_Debug::Fix_Mouse(void)
 	ClientToScreen(g_hWnd, &ptMouse);
 	SetCursorPos(ptMouse.x, ptMouse.y);
 }
+
+#ifdef _DEBUG
+void CCamera_Debug::Tick_ImGui(_float fTimeDelta)
+{
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	RECT rc;
+	ZEROMEM(&rc);
+	GetWindowRect(g_hWnd, &rc);
+
+	ImGui::SetNextWindowPos(ImVec2(0.f, 200.f));
+	ImGui::SetNextWindowSize(ImVec2(200.f, 400.f));
+
+	ImGui::Begin("Camera");
+	_float3 vPos = m_pTransform->Get_Position();
+
+	if (ImGui::InputFloat3("Debug Cam Pos", reinterpret_cast<_float*>(&vPos)))
+	{
+		m_pTransform->Set_Position(vPos);
+	}
+
+	_float fSpeed = m_pTransform->Get_Speed();
+	if (ImGui::SliderFloat("Cam Speed", &fSpeed, 0.1f, 200.f))
+	{
+		m_pTransform->Set_Speed(fSpeed);
+	}
+
+	if (ImGui::Button("Teleport Pos to Cam"))
+	{
+		CPlayer* pPlayer = dynamic_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(pGameInstance->Get_CurrentLevelIndex(), TEXT("Layer_Player"), TEXT("GameObject_Player")));
+		if (nullptr != pPlayer)
+		{
+			_float3 vPos = m_pTransform->Get_Position();
+			_float3 vLook = m_pTransform->Get_Look();
+			pPlayer->Get_Transform()->Set_Position(vPos + vLook);
+		}
+	}
+	
+	ImGui::End();
+
+	Safe_Release(pGameInstance);
+}
+#endif // _DEBUG
 
 CCamera_Debug* CCamera_Debug::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {

@@ -88,6 +88,8 @@ private:
 	//Eye At ±¸ÇÏ±â
 	void	Update_Eye_At();
 
+	_bool	IsValid_CameraPos(_float3 vEye, _float3 vUp);
+
 public:
 	static CPlayer_Camera* Create(ID3D11Device * _pDevice, ID3D11DeviceContext * _pContext, void* pArg);
 	virtual void Free() override;

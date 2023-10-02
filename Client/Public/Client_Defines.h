@@ -14,6 +14,7 @@ extern HWND g_hWnd;
 using namespace Client;
 
 #include "Client_Enum.h"
+#include "Client_Struct.h"
 
 #ifdef _DEBUG
 

@@ -35,14 +35,6 @@ HRESULT CWingardiumleviosa::Initialize(void* pArg)
 
 		return E_FAIL;
 	}
-
-	if (FAILED(Add_Effect()))
-	{
-		MSG_BOX("Failed Player Add_Effect");
-
-		return E_FAIL;
-	}
-
 	//만약 타겟이 존재하지 않는다면? 윙 가르디움 레비오우사는 그러면 안나감.
 	if (m_pTarget == nullptr)
 	{
@@ -68,11 +60,6 @@ void CWingardiumleviosa::Late_Tick(_float fTimeDelta)
 }
 
 HRESULT CWingardiumleviosa::Add_Components()
-{
-	return S_OK;
-}
-
-HRESULT CWingardiumleviosa::Add_Effect()
 {
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Wingardium_Effect"),
 		TEXT("Com_Effect"), reinterpret_cast<CComponent**>(&m_pEffect))))

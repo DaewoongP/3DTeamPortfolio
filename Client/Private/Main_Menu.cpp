@@ -455,7 +455,8 @@ void CMain_Menu::Free()
 	Safe_Release(m_pTexture);
 
 	Safe_Release(m_pGear);	
-	Safe_Release(m_pInventory);
+	if (true == m_isCloned)
+		Safe_Release(m_pInventory);
 	Safe_Release(m_pQuest);
 	Safe_Release(m_pCursor);
 	if (m_isCloned)

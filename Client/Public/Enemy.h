@@ -69,7 +69,8 @@ protected:
 	const CGameObject* m_pTarget = { nullptr };
 	const CGameObject* m_pPlayer = { nullptr };
 	_uint m_iCurrentSpell = { 0 };
-	unordered_map<BUFF_TYPE, function<void(_float3, _float)>> m_CurrentTickSpells;
+	unordered_map<BUFF_TYPE, function<void(void*)>> m_CurrentTickSpells;
+	unordered_map<BUFF_TYPE, MAIGBUFFTICKDESC*>		m_MagicTickDesc;
 
 	_bool m_isSpawn = { false };
 	_bool m_isParring = { false };
@@ -77,6 +78,8 @@ protected:
 	_bool m_isHitAttack = { false };
 	_bool m_isRangeInEnemy = { false };
 	_bool m_isChangeAnimation = { false };
+
+	_float3 m_vCurrentPosition = {};
 
 	COLLISIONREQUESTDESC m_CollisionRequestDesc;
 

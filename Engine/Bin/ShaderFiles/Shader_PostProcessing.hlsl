@@ -1,7 +1,8 @@
 #include "Shader_EngineHeader.hlsli"
+#include "Shader_RenderFunc.hlsli"
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
-texture2D g_PostProcessingTexture;
+texture2D g_DeferredTexture;
 
 struct VS_IN
 {
@@ -45,15 +46,20 @@ PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
 
-    vector vPost = g_PostProcessingTexture.Sample(LinearSampler, In.vTexUV);
+    vector vDeferredTexture = g_DeferredTexture.Sample(LinearSampler, In.vTexUV);
+    if (0.f == vDeferredTexture.a)
+        discard;
 
-    Out.vColor = vPost;
+    Out.vColor = vDeferredTexture;
+
+    Out.vColor.rgb += ACESToneMapping(Out.vColor.rgb);
+
     return Out;
 }
 
 technique11 DefaultTechnique
 {
-    pass PostProcessing
+    pass PostDeferred
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Depth_Disable, 0);

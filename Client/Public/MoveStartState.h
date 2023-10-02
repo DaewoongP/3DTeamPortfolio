@@ -37,16 +37,7 @@ private:
 
     void Go_Loop();
 
-    void Go_Roll();
-
-    void Go_Jump();
-
     void Switch_Sprint();
-
-
-    void Over_135();
-
-    void Go_Magic_Cast();
 
    
 
