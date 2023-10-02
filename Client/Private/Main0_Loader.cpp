@@ -285,10 +285,6 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Inventory"),
 			CInventory::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Inventory");
-
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Group_Loading"),
-			CUI_Group_Loading::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_UI_Group_Loading");
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Slot"),
 			CUI_Slot::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_UI_Slot");

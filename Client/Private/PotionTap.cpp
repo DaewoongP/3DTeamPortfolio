@@ -124,7 +124,6 @@ void CPotionTap::Free()
 				for (auto& pPotion : m_pPotions[i])
 				{
 					Safe_Release(pPotion);
-					pPotion == nullptr;
 				}
 			}
 			m_pPotions.clear();

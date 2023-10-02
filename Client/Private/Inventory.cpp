@@ -213,7 +213,6 @@ void CInventory::Free()
 				for (auto& pItem : m_pItems[i])
 				{
 					Safe_Release(pItem);
-					pItem == nullptr;
 				}
 			}
 			m_pItems.clear();
