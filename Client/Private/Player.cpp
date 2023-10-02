@@ -712,6 +712,32 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
+	// 엑스펠리아르무스
+	{
+		magicInitDesc.eBuffType = BUFF_NONE;
+		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
+		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicTag = EXPELLIARMUS;
+		magicInitDesc.fInitCoolTime = 1.f;
+		magicInitDesc.iDamage = 10;
+		magicInitDesc.isChase = true;
+		magicInitDesc.fLifeTime = 0.3f;
+		m_pMagicSlot->Add_Magics(magicInitDesc);
+	}
+
+	// 임페리오
+	{
+		magicInitDesc.eBuffType = BUFF_NONE;
+		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
+		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicTag = IMPERIO;
+		magicInitDesc.fInitCoolTime = 1.f;
+		magicInitDesc.iDamage = 10;
+		magicInitDesc.isChase = true;
+		magicInitDesc.fLifeTime = 0.8f;
+		m_pMagicSlot->Add_Magics(magicInitDesc);
+	}
+
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(0, CONFRINGO);
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(1, LEVIOSO);
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(2, FINISHER);
@@ -719,7 +745,9 @@ HRESULT CPlayer::Add_Magic()
 	//m_pMagicSlot->Add_Magic_To_Skill_Slot(3, ARRESTOMOMENTUM);
 	//m_pMagicSlot->Add_Magic_To_Skill_Slot(3, ACCIO);
 	//m_pMagicSlot->Add_Magic_To_Skill_Slot(3, DESCENDO);
-	m_pMagicSlot->Add_Magic_To_Skill_Slot(3, FLIPENDO);
+	//m_pMagicSlot->Add_Magic_To_Skill_Slot(3, FLIPENDO);
+	//m_pMagicSlot->Add_Magic_To_Skill_Slot(3, EXPELLIARMUS);
+	m_pMagicSlot->Add_Magic_To_Skill_Slot(3, IMPERIO);
 	m_pMagicSlot->Add_Magic_To_Basic_Slot(2, LUMOS);
 
 

@@ -56,6 +56,8 @@
 #include "Descendo.h"
 #include "Accio.h"
 #include "Flipendo.h"
+#include "Expelliarmus.h"
+#include "Imperio.h"
 #pragma endregion Magic
 
 #include "Trigger_Vault.h"
@@ -405,6 +407,16 @@ HRESULT CMain0_Loader::Loading_For_Cliffside()
 			CFlipendo::Create(m_pDevice, m_pContext, LEVEL_STATIC))))
 			throw TEXT("Prototype_GameObject_Flipendo");
 
+		/* For.Prototype_GameObject_Accio */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Expelliarmus"),
+			CExpelliarmus::Create(m_pDevice, m_pContext, LEVEL_STATIC))))
+			throw TEXT("Prototype_GameObject_Expelliarmus");
+		
+		/* For.Prototype_GameObject_Accio */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_Imperio"),
+			CImperio::Create(m_pDevice, m_pContext, LEVEL_STATIC))))
+			throw TEXT("Prototype_GameObject_Imperio");
+		
 #pragma endregion
 		{
 			std::lock_guard<std::mutex> lock(mtx);
