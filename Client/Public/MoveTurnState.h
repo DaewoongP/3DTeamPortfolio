@@ -29,7 +29,6 @@ public:
 
 
 private:
-    _float m_fEnterAngle;
 
 private:
     virtual void Bind_Notify() override;
@@ -40,13 +39,7 @@ private:
 
     void LookFront();
 
-    void Go_Roll();
 
-    void Go_Jump();
-
-    void Over_135();
-
-    void Go_Magic_Cast();
 
 
 public:

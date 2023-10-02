@@ -1,4 +1,5 @@
 #include "Shader_EngineHeader.hlsli"
+#include "Shader_RenderFunc.hlsli"
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
 texture2D g_TargetTexture;
@@ -48,7 +49,6 @@ PS_OUT PS_MAIN_WHITE(PS_IN In)
     PS_OUT Out = (PS_OUT) 0;
     
     float4 vTargetColor = g_TargetTexture.Sample(PointSampler_Clamp, In.vTexUV);
-
     float fBrightness = dot(vTargetColor.rgb, g_vLuminancekey);
     
     if (fBrightness > 0.99f)

@@ -54,7 +54,7 @@ PS_OUT PS_MAIN(PS_IN In)
     float4 vGlow = pow(pow(abs(vBluredTexture), g_fGlowPower) + pow(abs(vOriginTexture), g_fGlowPower), 1.f / g_fGlowPower);
     
     Out.vColor = pow(abs(vGlow), g_fGlowPower);
-
+    
     return Out;
 }
 

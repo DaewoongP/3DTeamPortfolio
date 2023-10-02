@@ -56,7 +56,7 @@ HRESULT CRenderer::Initialize_Prototype()
 		TEXT("Target_Specular"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
-		TEXT("Target_PostProcessing"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 0.f))))
+		TEXT("Target_Deferred"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 0.f))))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_Shadow_Depth"), (_uint)ViewportDesc.Width * 12, (_uint)ViewportDesc.Height * 12, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f), true)))
@@ -90,7 +90,7 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Lights"), TEXT("Target_Specular"))))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_PostProcessing"), TEXT("Target_PostProcessing"))))
+	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Deferred"), TEXT("Target_Deferred"))))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Shadow_Depth"), TEXT("Target_Shadow_Depth"))))
 		return E_FAIL;
@@ -128,7 +128,7 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_SSAO_Blured"), 80.f, 560.f, 160.f, 160.f)))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_PostProcessing"), 240.f, 80.f, 160.f, 160.f)))
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Deferred"), 240.f, 80.f, 160.f, 160.f)))
 		return E_FAIL;
 #endif // _DEBUG
 
@@ -163,10 +163,13 @@ HRESULT CRenderer::Add_DebugGroup(CComponent* pDebugCom)
 
 HRESULT CRenderer::Draw_RenderGroup()
 {
-	if (FAILED(m_pRenderTarget_Manager->Begin_PostProcessingRenderTarget(m_pContext, TEXT("MRT_PostProcessing"))))
-		return E_FAIL;
-	// 객체 자체에 대한 처리
+	// 스카이박스 렌더링
 	if (FAILED(Render_Priority()))
+		return E_FAIL;
+
+	// 객체 전부를 그린 렌더타겟 저장
+	// 빛연산 포함. (객체와 깊이관련 연산은 전부 이안에서 처리)
+	if (FAILED(m_pRenderTarget_Manager->Begin_PostProcessingRenderTarget(m_pContext, TEXT("MRT_Deferred"))))
 		return E_FAIL;
 	if (FAILED(Render_Depth()))
 		return E_FAIL;
@@ -178,25 +181,25 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 	if (FAILED(Render_SSAO()))
 		return E_FAIL;
-	// 빛연산 완료
 	if (FAILED(Render_Deferred()))
 		return E_FAIL;
-
-	if (FAILED(m_pGlow->Render(m_RenderObjects[RENDER_GLOW])))
+	if (FAILED(m_pRenderTarget_Manager->End_PostProcessingRenderTarget(m_pContext)))
 		return E_FAIL;
 
-	// 빛연산 처리가 필요없는 객체 렌더링
-
+	// 객체 렌더타겟 후처리 쉐이딩
+	if (FAILED(Render_PostProcessing()))
+		return E_FAIL;
+	// 이펙트
 	if (FAILED(Render_NonLight()))
 		return E_FAIL;
 	if (FAILED(Render_Blend()))
 		return E_FAIL;
-
-	if (FAILED(m_pRenderTarget_Manager->End_PostProcessingRenderTarget(m_pContext)))
+	if (FAILED(m_pGlow->Render(m_RenderObjects[RENDER_GLOW])))
 		return E_FAIL;
 
-	if (FAILED(Render_PostProcessing()))
-		return E_FAIL;
+	// 이펙트 후처리 쉐이딩
+
+	// UI 렌더링
 	if (FAILED(Render_UI()))
 		return E_FAIL;
 
@@ -498,11 +501,8 @@ HRESULT CRenderer::Render_Blend()
 
 HRESULT CRenderer::Render_PostProcessing()
 {
-	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_PostProcessing"), m_pPostProcessingShader, "g_PostProcessingTexture")))
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Deferred"), m_pPostProcessingShader, "g_DeferredTexture")))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Glowed"), m_pPostProcessingShader, "g_GlowTexture")))
-		return E_FAIL;
-
 	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
 	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
