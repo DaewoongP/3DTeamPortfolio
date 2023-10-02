@@ -383,6 +383,11 @@ void CMain_Menu::Set_SelectedText()
 			m_eCurMenu = (MENU)m_iSelectedText;
 			m_pTexts[m_iSelectedText]->Set_Clicked(true);
 			m_pPlayerInventory->Set_Open(false);
+			if (iIndex == 1)
+			{
+				m_pPlayerInventory->Set_Open(true);
+				m_pPlayerInventory->Set_CurItemtype(ITEMTYPE::RESOURCE);
+			}
 		}
 		iIndex++;
 	}

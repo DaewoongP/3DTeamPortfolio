@@ -403,6 +403,12 @@
     <Filter Include="02. GameObject\09. Item\WiggenweldPotion">
       <UniqueIdentifier>{c07071fe-c006-4bca-b390-e403b214f1e9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\08. Inventory\PotionTap">
+      <UniqueIdentifier>{bb5f7ed2-3b1a-4f84-9841-e49923a81270}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\04. UI\UI\UI_Potion_Tap">
+      <UniqueIdentifier>{36aed02f-50ec-4f84-99e9-0238717d796e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -821,6 +827,12 @@
     <ClInclude Include="..\Public\Check_Degree.h">
       <Filter>03. Behaviors\04. Function</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\PotionTap.h">
+      <Filter>02. GameObject\08. Inventory\PotionTap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Potion_Tap.h">
+      <Filter>02. GameObject\04. UI\UI\UI_Potion_Tap</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1205,6 +1217,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Check_Distance.cpp">
       <Filter>03. Behaviors\04. Function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PotionTap.cpp">
+      <Filter>02. GameObject\08. Inventory\PotionTap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Potion_Tap.cpp">
+      <Filter>02. GameObject\04. UI\UI\UI_Potion_Tap</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

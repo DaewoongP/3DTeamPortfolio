@@ -262,8 +262,8 @@ HRESULT CUI_Inventory::Set_InventoryItem(vector<CItem*>& pItems)
 			CUI::UIDESC Desc;
 			ZEROMEM(&Desc);
 			Desc.vCombinedXY = _float2(0.f,0.f);
-			Desc.fX = m_fPosition[iIndex].x + 640.f;
-			Desc.fY = m_fPosition[iIndex].y + 360.f;
+			Desc.fX = m_fPosition[iIndex].x;
+			Desc.fY = m_fPosition[iIndex].y;
 			Desc.fZ = 0.1f;
 			Desc.fSizeX = 70.f;
 			Desc.fSizeY = 70.f;
@@ -279,7 +279,7 @@ HRESULT CUI_Inventory::Set_InventoryItem(vector<CItem*>& pItems)
 			}
 				m_pSlots[iIndex]->Set_IconTexture(pItem->Get_UITexture());
 		}
-		else if (m_pSlots[iIndex]->Get_IconTexture() && nullptr!= m_pSlots[iIndex])
+		else if (nullptr == m_pSlots[iIndex]->Get_IconTexture() && nullptr!= m_pSlots[iIndex])
 		{
 				m_pSlots[iIndex]->Set_IconTexture(pItem->Get_UITexture());
 		}
