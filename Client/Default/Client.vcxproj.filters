@@ -866,6 +866,9 @@
     <ClInclude Include="..\Public\Imperio.h">
       <Filter>05. Magic\MagicBall\16. Imperio</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Crucio.h">
+      <Filter>05. Magic\MagicBall\15. Crucio</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1268,6 +1271,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Imperio.cpp">
       <Filter>05. Magic\MagicBall\16. Imperio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Crucio.cpp">
+      <Filter>05. Magic\MagicBall\15. Crucio</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

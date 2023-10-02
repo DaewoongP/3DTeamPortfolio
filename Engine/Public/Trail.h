@@ -71,9 +71,10 @@ public:
 	void	Spline_Spin_Move(_float3 vSpline01, _float3 vStartPosition, _float3 vTargerPosition, _float3 vSpline02, _float2 vStartEndWeight, _float fSpeed, _float fLerpAcc);
 
 public:
-	/* For. Lightning*/
+	/* For. Lightning(Point to Point Spline Lerp Trail)*/
 	void	Ready_LightningStrike(_float3 vStartPosition, _float3 vEndPosition, _float3 vWeight[2], _uint iCount);
 	void	Tick_LightningStrike(_float fTimeDelta);
+
 protected:
 	HRESULT Save(const _tchar* pFilePath);
 	HRESULT Load(const _tchar* pFilePath);

@@ -168,6 +168,7 @@
     <ClInclude Include="..\Public\Action.h" />
     <ClInclude Include="..\Public\Arrestomomentum.h" />
     <ClInclude Include="..\Public\Client_Struct.h" />
+    <ClInclude Include="..\Public\Crucio.h" />
     <ClInclude Include="..\Public\Expelliarmus.h" />
     <ClInclude Include="..\Public\Flipendo.h" />
     <ClInclude Include="..\Public\Imperio.h" />
@@ -339,6 +340,7 @@
     <ClCompile Include="..\Private\Accio.cpp" />
     <ClCompile Include="..\Private\Action.cpp" />
     <ClCompile Include="..\Private\Arrestomomentum.cpp" />
+    <ClCompile Include="..\Private\Crucio.cpp" />
     <ClCompile Include="..\Private\Expelliarmus.cpp" />
     <ClCompile Include="..\Private\Flipendo.cpp" />
     <ClCompile Include="..\Private\Imperio.cpp" />
