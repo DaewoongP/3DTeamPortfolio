@@ -26,7 +26,6 @@ HRESULT CMaximaPotion::Initialize_Prototype(_uint iLevel, const _tchar* pUIImage
 
 HRESULT CMaximaPotion::Initialize(void* pArg)
 {
-
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
 
@@ -36,7 +35,12 @@ HRESULT CMaximaPotion::Initialize(void* pArg)
     return S_OK;
 }
 
-void CMaximaPotion::Use(_float3 vPlayPos)
+//void CMaximaPotion::Tick(_float fTimeDelta)
+//{
+//    __super::Tick(fTimeDelta);
+//}
+
+void CMaximaPotion::Use(_float3 vPlayPos,void* ExtraValue)
 {
    // m_pCooltime->Set_Enable(true);
     
@@ -46,7 +50,7 @@ void CMaximaPotion::Use(_float3 vPlayPos)
 HRESULT CMaximaPotion::Add_Components()
 {
     CCoolTime::COOLTIME_DESC MaxCool;
-    MaxCool.fMaxCoolTime = 20.f;
+    MaxCool.fMaxCoolTime = 5.f;
 
     if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_CoolTime"),
         TEXT("Com_CoolTime"), reinterpret_cast<CComponent**>(&m_pCooltime),&MaxCool)))
@@ -55,12 +59,12 @@ HRESULT CMaximaPotion::Add_Components()
         return E_FAIL;
     }
 
-    if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Player"),
-        TEXT("Com_Player"), reinterpret_cast<CComponent**>(&m_pMagicSlot))))
-    {
-        __debugbreak();
-        return E_FAIL;
-    }
+   //if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Player"),
+   //    TEXT("Com_Player"), reinterpret_cast<CComponent**>(&m_pMagicSlot))))
+   //{
+   //    __debugbreak();
+   //    return E_FAIL;
+   //}
 
 
     return S_OK;

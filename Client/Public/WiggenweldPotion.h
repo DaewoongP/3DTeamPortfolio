@@ -37,7 +37,7 @@ public:
 	virtual HRESULT Initialize(void* pArg) override;
 	
 public:
-	virtual void Use(_float3 vPlayPos) override;
+	virtual void Use(_float3 vPlayPos,void* ExtraValue = nullptr) override;
 
 private:
 	_float m_fRecoveryAmount = { 0.2f };

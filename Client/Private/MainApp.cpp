@@ -170,6 +170,12 @@ HRESULT CMainApp::Ready_Prototype_Component_For_Static()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_CoolTime"),
 			CCoolTime::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_CoolTime");
+
+		/* Prototype_Component_Defence*/
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Defence"),
+			CDefence::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Defence");
+
 	}
 	catch (const _tchar* pErrorTag)
 	{

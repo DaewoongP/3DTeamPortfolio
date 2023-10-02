@@ -22,7 +22,9 @@
 
 #include "AccPotion.h"
 #include"MaximaPotion.h"
+#include"EndurusPotion.h"
 #include "CoolTime.h"	
+#include"Defence.h"
 
 #include "WiggenweldPotion.h"
 
@@ -136,8 +138,12 @@ void CPlayer::Tick(_float fTimeDelta)
 	if (pGameInstance->Get_DIKeyState(DIK_F6, CInput_Device::KEY_DOWN))
 	{
 		m_pMaximaPotion->Use(_float3(0.f, 0.f, 0.f));
+		m_isPowerUp = true;
 	}
-
+	if (pGameInstance->Get_DIKeyState(DIK_F7, CInput_Device::KEY_DOWN))
+	{	
+		//m_pEndurusPotion->Use(_float3(0.f, 0.f, 0.f));
+	}
 
 
 
@@ -551,6 +557,14 @@ HRESULT CPlayer::Add_Components()
 		__debugbreak();
 		return E_FAIL;
 	}
+	
+	//_int DefValue = 15;
+	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_EndurusPotion"),
+	//	TEXT("Com_EndurusPotion"), reinterpret_cast<CComponent**>(&m_pEndurusPotion),&DefValue)))
+	//{
+	//	__debugbreak();
+	//	return E_FAIL;
+	//}
 
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_CoolTime"),
 		TEXT("Com_CoolTime"), reinterpret_cast<CComponent**>(&m_pCooltime))))
@@ -558,6 +572,16 @@ HRESULT CPlayer::Add_Components()
 		__debugbreak();
 		return E_FAIL;
 	}
+	CDefence::DEFFENCEDESC Def;
+	Def.iDeffence = 0;
+
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Defence"),
+		TEXT("Com_Defence"), reinterpret_cast<CComponent**>(&m_pDefence),&Def)))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+	
 	return S_OK;
 }
 
@@ -1526,7 +1550,7 @@ void CPlayer::Shot_Levioso()
 
 void CPlayer::Shot_Confringo()
 {
-	//Find_Target_For_Distance();
+	//Find_Target_For_Distawnce();
 
 	_float4x4 OffSetMatrix = XMMatrixIdentity();
 
@@ -1625,6 +1649,8 @@ void CPlayer::Free()
 		Safe_Release(m_UI_Group_Skill_01);
 		Safe_Release(m_pAccPotion);
 		Safe_Release(m_pCooltime);
+		Safe_Release(m_pMaximaPotion);
+		Safe_Release(m_pDefence);
 		
 		if (nullptr != m_pTargetTransform)
 		{

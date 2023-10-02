@@ -35,6 +35,7 @@
 
 #include "AccPotion.h"
 #include"MaximaPotion.h"
+#include"EndurusPotion.h"
 #include "WiggenweldPotion.h"
 
 #pragma endregion
@@ -281,18 +282,24 @@ HRESULT CMain3_Loader::Loading_For_Cliffside()
 
 		/* For.Prototype_GameObject_AccPotion */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_AccPotion"),
-			CAccPotion::Create(m_pDevice, m_pContext, LEVEL_STATIC,TEXT("../../Resources/UI/Game/UI/UI_T_CloudSmokeMask.png")))))
+			CAccPotion::Create(m_pDevice, m_pContext, LEVEL_STATIC,TEXT("../../Resources/UI/Game/UI/Icons/Potions/UI_T_AMFillPotion.png")))))
 			throw TEXT("Prototype_GameObject_AccPotion");
 
 		/* For.Prototype_GameObject_MaximaPotion */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_MaximaPotion"),
-			CMaximaPotion::Create(m_pDevice, m_pContext, LEVEL_STATIC,TEXT("../../Resources/UI/Game/UI/UI_T_CloudSmokeMask.png")))))
+			CMaximaPotion::Create(m_pDevice, m_pContext, LEVEL_STATIC, TEXT("../../Resources/UI/Game/UI/Icons/Potions/UI_T_Maxima.png")))))
 			throw TEXT("Prototype_GameObject_MaximaPotion");
+
+		/* For.Prototype_GameObject_EndurusPotion */
+		//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_EndurusPotion"),
+		//	CEndurusPotion::Create(m_pDevice, m_pContext, LEVEL_STATIC, TEXT("../../Resources/UI/Game/UI/Icons/Potions/UI_T_Edurus.png")))))
+		//	throw TEXT("Prototype_GameObject_EndurusPotion");
 
 		/* For.Prototype_GameObject_WiggenweldPotion */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_WiggenweldPotion"),
 			CWiggenweldPotion::Create(m_pDevice, m_pContext, LEVEL_STATIC, TEXT("../../Resources/UI/Game/UI/Icons/Potions/UI_T_WoundCleaning.png")))))
 			throw TEXT("Prototype_GameObject_WiggenweldPotion");
+
 	}
 	catch (const _tchar* pErrorTag)
 	{

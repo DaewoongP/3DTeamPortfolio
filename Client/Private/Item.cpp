@@ -51,6 +51,12 @@ HRESULT CItem::Initialize(void* pArg)
 	return S_OK;
 }
 
+void CItem::Tick(_float fTimeDelta)
+{
+	__super::Tick(fTimeDelta);
+
+}
+
 
 HRESULT CItem::Add_Components()
 {

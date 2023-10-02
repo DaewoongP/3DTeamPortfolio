@@ -26,7 +26,7 @@ public:
 	virtual HRESULT Initialize_Prototype(_uint iLevel, const _tchar* pUIImagePath);
 	virtual HRESULT Initialize(void* pArg) override;
 
-	void Use(_float3 vPlayPos);
+	void Use(_float3 vPlayPos,void* ExtraValue = nullptr) override;
 
 private:
 	HRESULT Add_Components();

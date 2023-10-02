@@ -43,9 +43,9 @@ public:
 public:
 	HRESULT Initialize_Prototype(_uint iLevel, const _tchar* pUIImagePath);
 	virtual HRESULT Initialize(void* pArg) override;
-
+	void Tick(_float fTimeDelta) override;
 public:
-	virtual void Use(_float3 vPlayPos) PURE;
+	virtual void Use(_float3 vPlayPos,void* extraValue = nullptr) PURE;
 
 private:
 	HRESULT Add_Components();

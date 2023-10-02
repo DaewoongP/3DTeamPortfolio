@@ -36,7 +36,7 @@ HRESULT CAccPotion::Initialize(void* pArg)
 	return S_OK;
 }
 
-void CAccPotion::Use(_float3 vPlayPos)
+void CAccPotion::Use(_float3 vPlayPos,void* ExtraValue)
 {
 	if (false == m_pCooltime->IsEnable())
 		m_pCooltime->Set_Enable(true);
