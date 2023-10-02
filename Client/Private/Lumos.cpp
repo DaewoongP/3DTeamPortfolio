@@ -60,7 +60,7 @@ HRESULT CLumos::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
-	m_CollisionDesc.Action = bind(&CLumos::Lumos_Tick, this, placeholders::_1, placeholders::_2);
+	m_CollisionDesc.Action = bind(&CLumos::Lumos_Tick, this, placeholders::_1);
 	return S_OK;
 }
 
@@ -99,7 +99,7 @@ HRESULT CLumos::Reset(MAGICBALLINITDESC& InitDesc)
 	return S_OK;
 }
 
-void CLumos::Lumos_Tick(_float3 vPos,_float fTimeDelta)
+void CLumos::Lumos_Tick(void* pArg)
 {
 	m_fEndTimer = 0.3f;
 }

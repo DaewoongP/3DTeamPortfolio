@@ -54,6 +54,9 @@
 #include "Arrestomomentum.h"
 #include "Descendo.h"
 #include "Accio.h"
+#include "Flipendo.h"
+#include "Expelliarmus.h"
+#include "Imperio.h"
 #pragma endregion Magic
 
 #include "Trigger_Vault.h"
@@ -443,12 +446,12 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			CLumos::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Lumos");
 
-		/* For.Prototype_GameObject_Lumos */
+		/* For.Prototype_GameObject_Arrestomomentum */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Arrestomomentum"),
 			CArrestomomentum::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Arrestomomentum");
 
-		/* For.Prototype_GameObject_Lumos */
+		/* For.Prototype_GameObject_Descendo */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Descendo"),
 			CDescendo::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Descendo");
@@ -458,6 +461,22 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			CAccio::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Accio");
 
+		/* For.Prototype_GameObject_Flipendo */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Flipendo"),
+			CFlipendo::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_Flipendo");
+
+		/* For.Prototype_GameObject_Expelliarmus */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Expelliarmus"),
+			CExpelliarmus::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_Expelliarmus");
+		
+		/* For.Prototype_GameObject_Imperio */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Imperio"),
+			CImperio::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_Imperio");
+		
+#pragma endregion
 		{
 			std::lock_guard<std::mutex> lock(mtx);
 

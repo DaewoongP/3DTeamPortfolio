@@ -3,21 +3,16 @@
 #include "Client_Defines.h"
 #include "MagicBall.h"
 
-BEGIN(Engine)
-class CParticleSystem;
-class CTrail;
-END
-
 BEGIN(Client)
-class CLumos final : public CMagicBall
+class CFlipendo final : public CMagicBall
 {
 private:
-	explicit CLumos(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	explicit CLumos(const CLumos& rhs);
-	virtual ~CLumos() = default;
+	explicit CFlipendo(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	explicit CFlipendo(const CFlipendo& rhs);
+	virtual ~CFlipendo() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype(_uint iLevel)override;
+	virtual HRESULT Initialize_Prototype(_uint m_iLevel);
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
@@ -25,13 +20,7 @@ public:
 	virtual void OnCollisionStay(COLLEVENTDESC CollisionEventDesc) override;
 	virtual void OnCollisionExit(COLLEVENTDESC CollisionEventDesc) override;
 	virtual HRESULT Reset(MAGICBALLINITDESC& InitDesc) override;
-
-public:
-	void	Lumos_Tick(void* pArg);
-
-private:
-	_float				m_fEndTimer = { 0.3f };
-
+	
 private:
 	virtual void Ready_Begin() override;
 	virtual void Ready_DrawMagic() override;
@@ -47,7 +36,7 @@ private:
 	HRESULT Add_Components();
 
 public:
-	static CLumos* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel);
+	static CFlipendo* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel);
 	virtual CGameObject* Clone(void* pArg);
 	virtual void Free() override;
 };

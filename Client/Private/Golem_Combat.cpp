@@ -85,7 +85,7 @@ void CGolem_Combat::Tick(_float fTimeDelta)
 	{
 		if (iter->first & m_iCurrentSpell)
 		{
-			iter->second(vPosition, fTimeDelta);
+			iter->second(m_MagicTickDesc.at(iter->first));
 			++iter;
 		}
 		else

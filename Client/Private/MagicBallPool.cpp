@@ -13,6 +13,9 @@
 #include "Arrestomomentum.h"
 #include "Descendo.h"
 #include "Accio.h"
+#include "Flipendo.h"
+#include "Expelliarmus.h"
+#include "Imperio.h"
 
 IMPLEMENT_SINGLETON(CMagicBallPool)
 
@@ -34,6 +37,10 @@ HRESULT CMagicBallPool::Initialize()
     Create_InitMagic(Client::ARRESTOMOMENTUM, TEXT("Prototype_GameObject_Arrestomomentum"));
     Create_InitMagic(Client::DESCENDO, TEXT("Prototype_GameObject_Descendo"));
     Create_InitMagic(Client::ACCIO, TEXT("Prototype_GameObject_Accio"));
+    Create_InitMagic(Client::FLIPENDO, TEXT("Prototype_GameObject_Flipendo")); 
+    Create_InitMagic(Client::EXPELLIARMUS, TEXT("Prototype_GameObject_Expelliarmus"));
+    Create_InitMagic(Client::IMPERIO, TEXT("Prototype_GameObject_Imperio"));
+    
     Safe_Release(pGameInstance);
 
     return S_OK;
@@ -92,6 +99,7 @@ CMagicBall* CMagicBallPool::Create_Magic(SPELL eSpell)
     case Client::BOMBARDA:
         break;
     case Client::CONFRINGO:
+        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Confringo")));
         break;
     case Client::CONJURATION:
         break;
@@ -109,12 +117,15 @@ CMagicBall* CMagicBallPool::Create_Magic(SPELL eSpell)
     case Client::EVAESCO:
         break;
     case Client::EXPELLIARMUS:
+        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Expelliarmus")));
         break;
     case Client::FLIPENDO:
+        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Flipendo")));
         break;
     case Client::GLACIUS:
         break;
     case Client::IMPERIO:
+        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Imperio")));
         break;
     case Client::NCENDIO:
         pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Ncendio")));
