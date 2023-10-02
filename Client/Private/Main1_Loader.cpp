@@ -11,7 +11,6 @@
 #include "Terrain.h"
 #include "MapObject.h"
 #include "MapObject_Ins.h"
-#include "MapEffect.h"
 
 CMain1_Loader::CMain1_Loader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice(pDevice)
@@ -302,11 +301,6 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath, LEVELID 
 	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_MapObject"),
 		CMapObject::Create(m_pDevice, m_pContext))))
 		throw TEXT("Prototype_GameObject_MapObject");
-
-	/* For.Prototype_GameObject_MapEffect */
-	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_MapEffect"),
-		CMapEffect::Create(m_pDevice, m_pContext))))
-		throw TEXT("Prototype_GameObject_MapEffect");
 
 	HANDLE hFile = CreateFile(pMapObjectPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
