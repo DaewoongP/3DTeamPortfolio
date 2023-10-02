@@ -184,7 +184,7 @@ HRESULT CLight_Window::Create_Light()
 		if(!m_vecLightList.empty())
 			m_iLightIndex++;
 		m_isSetting = false;
-		if (nullptr == pGameInstance->Add_Lights(m_pDevice, m_pContext, LightDesc))
+		if (nullptr == pGameInstance->Add_Lights((_float)g_iWinSizeX, (_float)g_iWinSizeY, LightDesc))
 		{
 			MSG_BOX("Failed to create Light");
 			return E_FAIL;
@@ -218,7 +218,7 @@ HRESULT CLight_Window::Create_Light()
 		}
 		else
 		{
-			pGameInstance->Set_Light(m_iLightIndex, LightDesc);
+			pGameInstance->Set_Light(m_iLightIndex, (_float)g_iWinSizeX, (_float)g_iWinSizeY, LightDesc);
 		}
 
 	}
@@ -228,15 +228,16 @@ HRESULT CLight_Window::Create_Light()
 		m_isSetting = false;
 		if (m_iLightIndex >= 0)
 		{
-			pGameInstance->Set_Light(m_iLightIndex, LightDesc);
+			pGameInstance->Set_Light(m_iLightIndex, (_float)g_iWinSizeX, (_float)g_iWinSizeY, LightDesc);
 			Set_Tool_Light(m_iLightIndex,LightDesc);
 		}
 
 	}
 	
-	ENDINSTANCE
-		m_iLightType = LightDesc.iLightType;
-		return S_OK;
+	ENDINSTANCE;
+	m_iLightType = LightDesc.iLightType;
+
+	return S_OK;
 }
 HRESULT CLight_Window::Save_Light()
 {
@@ -368,7 +369,7 @@ HRESULT CLight_Window::Load_Light()
 			for (size_t i = 0; i < m_vecLightDesc.size(); ++i)
 			{
 				LightDesc = m_vecLightDesc[i];
-				pGameInstance->Add_Lights( m_pDevice,m_pContext, LightDesc);
+				pGameInstance->Add_Lights((_float)g_iWinSizeX, (_float)g_iWinSizeY, LightDesc);
 
 			}
 		ENDINSTANCE
@@ -594,7 +595,7 @@ void CLight_Window::Picking_Menu(CLight::LIGHTDESC LightDesc)
 				{
 					m_isSetting = false;
 
-					pGameInstance->Add_Lights(m_pDevice, m_pContext, LightDesc);
+					pGameInstance->Add_Lights((_float)g_iWinSizeX, (_float)g_iWinSizeY, LightDesc);
 					m_vecLightDesc.push_back(LightDesc);
 					m_vecLightList.push_back(StrInput);
 					m_iLightIndex++;

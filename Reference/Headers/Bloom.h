@@ -13,7 +13,7 @@ private:
 
 public:
 	HRESULT Initialize(CVIBuffer_Rect* pRectBuffer);
-	HRESULT Render();
+	HRESULT Render(const _tchar* pRenderTargetTag);
 
 private:
 	CShader*			m_pShader = { nullptr };

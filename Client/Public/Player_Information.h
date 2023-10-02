@@ -82,7 +82,7 @@ private:
     vector<_uint> m_vecItemCount = {};
 
     // 인벤토리
-    // CInventory* m_pInventory = { nullptr };
+    CInventory* m_pInventory = { nullptr };
 
 
 private:

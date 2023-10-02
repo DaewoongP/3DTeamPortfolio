@@ -1,4 +1,5 @@
 #include "..\Public\Shadow.h"
+#include "Blur.h"
 #include "Shader.h"
 #include "PipeLine.h"
 #include "VIBuffer_Rect.h"
@@ -22,9 +23,19 @@ HRESULT CShadow::Initialize(CVIBuffer_Rect* pRectBuffer)
 	if (FAILED(pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_Shadow"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
+	/*if (FAILED(pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
+		TEXT("Target_Shadow_BlurX"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
+		return E_FAIL;
+	if (FAILED(pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
+		TEXT("Target_Shadow_Blured"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
+		return E_FAIL;*/
 
 	if (FAILED(pRenderTarget_Manager->Add_MRT(TEXT("MRT_Shadow"), TEXT("Target_Shadow"))))
 		return E_FAIL;
+	/*if (FAILED(pRenderTarget_Manager->Add_MRT(TEXT("MRT_Shadow_BlurX"), TEXT("Target_Shadow_BlurX"))))
+		return E_FAIL;
+	if (FAILED(pRenderTarget_Manager->Add_MRT(TEXT("MRT_Shadow_Blured"), TEXT("Target_Shadow_Blured"))))
+		return E_FAIL;*/
 
 	XMStoreFloat4x4(&m_WorldMatrix, XMMatrixIdentity());
 	m_WorldMatrix._11 = ViewportDesc.Width;
@@ -34,11 +45,14 @@ HRESULT CShadow::Initialize(CVIBuffer_Rect* pRectBuffer)
 
 	Safe_Release(pRenderTarget_Manager);
 
-	if (FAILED(Add_Components()))
-		return E_FAIL;
-
 	m_pBuffer = pRectBuffer;
 	Safe_AddRef(m_pBuffer);
+
+	m_pShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Shadow.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements);
+	NULL_CHECK_RETURN(m_pShader, E_FAIL);
+
+	m_pBlur = CBlur::Create(m_pDevice, m_pContext, pRectBuffer);
+	NULL_CHECK_RETURN(m_pBlur, E_FAIL);
 
 	return S_OK;
 }
@@ -83,26 +97,24 @@ HRESULT CShadow::Render()
 	if (FAILED(m_pShader->Bind_RawValue("g_fCamFar", pPipeLine->Get_CamFar(), sizeof(_float))))
 		return E_FAIL;
 
-
 	Safe_Release(pPipeLine);
 
-	m_pShader->Begin("Shadow");
+	if (FAILED(m_pShader->Begin("Shadow")))
+		return E_FAIL;
 
-	m_pBuffer->Render();
+	if (FAILED(m_pBuffer->Render()))
+		return E_FAIL;
 
 	if (FAILED(pRenderTarget_Manager->End_MRT(m_pContext)))
 		return E_FAIL;
 
+	/*if (FAILED(m_pBlur->Render(TEXT("MRT_Shadow_BlurX"), TEXT("Target_Shadow"), CBlur::BLUR_X)))
+		return E_FAIL;
+	if (FAILED(m_pBlur->Render(TEXT("MRT_Shadow_Blured"), TEXT("Target_Shadow_BlurX"), CBlur::BLUR_Y)))
+		return E_FAIL;*/
+
 	Safe_Release(pRenderTarget_Manager);
 
-	return S_OK;
-}
-
-HRESULT CShadow::Add_Components()
-{
-	m_pShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Shadow.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements);
-	NULL_CHECK_RETURN(m_pShader, E_FAIL);
-	
 	return S_OK;
 }
 
@@ -123,6 +135,7 @@ void CShadow::Free()
 {
 	__super::Free();
 
+	Safe_Release(m_pBlur);
 	Safe_Release(m_pShader);
 	Safe_Release(m_pBuffer);
 }

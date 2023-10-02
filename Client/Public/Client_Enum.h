@@ -60,11 +60,11 @@ namespace Client
 		BUFF_UNGRAVITY		= 1 << 4,
 		BUFF_WEAPONLOSS		= 1 << 5,
 		BUFF_FIRE			= 1 << 6,
-		BUFF_LEVIOSO		= 1 << 7,
+		BUFF_LEVIOSO		= 1 << 7,	//ºÎÂøÇü ¹öÇÁ
 		BUFF_PUSH			= 1 << 8,
 		BUFF_CURSE			= 1 << 9,
 		BUFF_STUPEFY		= 1 << 10,
-		BUFF_DESCENDO		= 1 << 11,
+		BUFF_DESCENDO		= 1 << 11,	//ºÎÂøÇü ¹öÇÁ
 		BUFF_LEVIOSO_TONGUE = 1 << 12,
 		BUFF_END = 14
 	};

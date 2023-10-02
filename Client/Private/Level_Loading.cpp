@@ -15,7 +15,7 @@ CLevel_Loading::CLevel_Loading(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
 {
 }
 
-HRESULT CLevel_Loading::Initialize(LEVELID eNextLevelID)
+HRESULT CLevel_Loading::Initialize(LEVELID eNextLevelID, _bool isStaticLoaded)
 {
 	if (FAILED(__super::Initialize()))
 		return E_FAIL;
@@ -25,7 +25,6 @@ HRESULT CLevel_Loading::Initialize(LEVELID eNextLevelID)
 	// ÇöÀç ¾À ¼³Á¤.
 	pGameInstance->Set_CurrentScene(TEXT("Scene_Loading"), true);
 	Safe_Release(pGameInstance);
-
 
 	m_eNextLevelID = eNextLevelID;
 
@@ -66,10 +65,10 @@ HRESULT CLevel_Loading::Initialize(LEVELID eNextLevelID)
 		break;
 	}
 
-	m_pMain0_Loader = CMain0_Loader::Create(m_pDevice, m_pContext, eNextLevelID);
-	m_pMain1_Loader = CMain1_Loader::Create(m_pDevice, m_pContext, eNextLevelID);
-	m_pMain2_Loader = CMain2_Loader::Create(m_pDevice, m_pContext, eNextLevelID);
-	m_pMain3_Loader = CMain3_Loader::Create(m_pDevice, m_pContext, eNextLevelID);
+	m_pMain0_Loader = CMain0_Loader::Create(m_pDevice, m_pContext, eNextLevelID, isStaticLoaded);
+	m_pMain1_Loader = CMain1_Loader::Create(m_pDevice, m_pContext, eNextLevelID, isStaticLoaded);
+	m_pMain2_Loader = CMain2_Loader::Create(m_pDevice, m_pContext, eNextLevelID, isStaticLoaded);
+	m_pMain3_Loader = CMain3_Loader::Create(m_pDevice, m_pContext, eNextLevelID, isStaticLoaded);
 
 	if(nullptr == m_pMain0_Loader || 
 		nullptr == m_pMain1_Loader || 
@@ -284,11 +283,11 @@ void CLevel_Loading::Render_Finished()
 }
 #endif // _DEBUG
 
-CLevel_Loading* CLevel_Loading::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVELID eNextLevelID)
+CLevel_Loading* CLevel_Loading::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVELID eNextLevelID, _bool isStaticLoaded)
 {
 	CLevel_Loading* pInstance = New CLevel_Loading(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize(eNextLevelID)))
+	if (FAILED(pInstance->Initialize(eNextLevelID, isStaticLoaded)))
 	{
 		MSG_BOX("Failed to Created CLevel_Loading");
 		Safe_Release(pInstance);

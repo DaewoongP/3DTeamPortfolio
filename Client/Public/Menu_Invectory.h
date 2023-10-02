@@ -11,6 +11,7 @@ class CTexture;
 END
 
 BEGIN(Client)
+class CInventory;
 
 class CMenu_Inventory final : public CGameObject
 {
@@ -49,6 +50,10 @@ private:
 	vector<class CTexture*>		m_ItemTextures;
 
 	vector<CUI*>					m_pUIs;
+
+private:
+	CInventory* m_pInventory = { nullptr };
+
 
 private:
 	_bool						m_isOpen = { false };

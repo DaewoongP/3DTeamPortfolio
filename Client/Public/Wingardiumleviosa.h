@@ -36,7 +36,6 @@ private:
 
 private:
 	HRESULT Add_Components();
-	virtual HRESULT Add_Effect();
 
 public:
 	static CWingardiumleviosa* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel);
