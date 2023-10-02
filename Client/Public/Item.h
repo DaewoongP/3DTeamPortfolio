@@ -79,6 +79,9 @@ protected: // Player Components
 	class CTransform* m_pPlayerTransform = { nullptr };
 	class CPlayer_Information* m_pPlayerInformation = { nullptr };
 
+public:
+	virtual void Use(_float3 vPlayPos,void* extraValue = nullptr) PURE;
+
 private:
 	HRESULT Add_Components();
 

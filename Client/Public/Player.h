@@ -13,6 +13,7 @@ class CCollider;
 class CCustomModel;
 class CRigidBody;
 class CCoolTime;
+class CDefence;
 END
 
 BEGIN(Client)
@@ -24,6 +25,7 @@ class CUI_Group_Skill;
 class CMagicBall;
 class CMaximaPotion;
 class CFocusPotion;
+//class CEndurusPotion;
 class CWiggenweldPotion;
 END
 
@@ -58,6 +60,8 @@ public:
 	void Set_TargetTransform(CTransform* _pTargetTransform = nullptr) { m_pTargetTransform = _pTargetTransform; }
 	_float3 Get_PlayerPos() { return m_pTransform->Get_Position(); }
 
+	_bool Set_PowerUp(_bool isPowerUp) { m_isPowerUp = isPowerUp; }
+
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
@@ -79,6 +83,7 @@ private:
 	CCustomModel*	m_pCustomModel = { nullptr }; //스테이트
 	CRigidBody*		m_pRigidBody = { nullptr };
 	CCoolTime*		m_pCooltime = { nullptr };
+	CDefence* m_pDefence = { nullptr };
 
 private:
 	CPlayer_Camera* m_pPlayer_Camera = { nullptr };
@@ -87,6 +92,7 @@ private:
 	CUI_Group_Skill* m_UI_Group_Skill_01 = { nullptr };
 	CMaximaPotion* m_pMaximaPotion = { nullptr };
 	
+	//CEndurusPotion* m_pEndurusPotion = { nullptr };
 private:
 	
 
@@ -116,6 +122,8 @@ private:
 	_float3		m_vLevelInitPosition[LEVEL_END];
 
 	_bool m_isPowerUp = { false };
+	_int m_iDeffence = { 0 };
+	
 #pragma region 스테이트에 넘기는 변수
 
 	//카메라룩과 플레이어룩의 차이 각을 담기위한 변수(음수일 경우 오른쪽, 양수일 경우 왼쪽)
@@ -140,7 +148,6 @@ private:
 	_bool m_isReadySpell = { true };
 	
 #pragma endregion
-
 
 private:
 	HRESULT Add_Components();

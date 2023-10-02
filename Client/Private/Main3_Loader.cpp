@@ -33,8 +33,10 @@
 
 #pragma region Items
 
-#include "MaximaPotion.h"
 #include "FocusPotion.h"
+
+#include "MaximaPotion.h"
+#include "EndurusPotion.h"
 #include "WiggenweldPotion.h"
 #include "Ingredient.h"
 #pragma endregion

@@ -79,10 +79,13 @@ CMagicBall* CMagic::Magic_Cast(const CGameObject* pTarget, const CGameObject* pW
 	ballInit.fLifeTime = m_MagicDesc.fLifeTime;
 	ballInit.pTarget = pTarget;
 	ballInit.pWeapon = pWeapon;
+	
 	if (PowerUp)
-		ballInit.iDamage *= 2.f;
+		ballInit.iDamage *= 2;
 
 	cout << ballInit.iDamage << endl;
+
+
 
 	BEGININSTANCE;
 

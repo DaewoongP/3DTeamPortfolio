@@ -183,6 +183,12 @@ HRESULT CMainApp::Ready_Prototype_Component_For_Static()
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Loading"),
 			CUI_Group_Loading::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_UI_Group_Loading");
+			
+		/* Prototype_Component_Defence*/
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Defence"),
+			CDefence::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Defence");
+
 	}
 	catch (const _tchar* pErrorTag)
 	{

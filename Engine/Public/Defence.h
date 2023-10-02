@@ -28,12 +28,13 @@ private:
 	virtual ~CDefence() = default;
 
 public:
-	const _int& Get_Deffence() const {
+	const _int& Get_Defence() const {
 		return m_iDeffence;
 	}
-	void Set_Deffence(const _int & iDeffence) {
+	void Set_Defence(const _int & iDeffence) {
 		m_iDeffence = iDeffence;
 	}
+	void Set_PotionDefence(const _int iDeffence) { m_iDeffence += iDeffence; }
 
 public:
 	virtual HRESULT Initialize_Prototype() override { return S_OK; }
