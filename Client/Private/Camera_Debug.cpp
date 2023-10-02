@@ -185,6 +185,12 @@ void CCamera_Debug::Tick_ImGui(_float fTimeDelta)
 		m_pTransform->Set_Position(vPos);
 	}
 
+	_float fSpeed = m_pTransform->Get_Speed();
+	if (ImGui::SliderFloat("Cam Speed", &fSpeed, 0.1f, 200.f))
+	{
+		m_pTransform->Set_Speed(fSpeed);
+	}
+
 	if (ImGui::Button("Teleport Pos to Cam"))
 	{
 		CPlayer* pPlayer = dynamic_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(pGameInstance->Get_CurrentLevelIndex(), TEXT("Layer_Player"), TEXT("GameObject_Player")));
