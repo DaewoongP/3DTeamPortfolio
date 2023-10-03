@@ -1,5 +1,9 @@
 #include "Protego.h"
 #include "GameInstance.h"
+
+#include "Enemy.h"
+#include "Professor_FIg.h"
+#include "Player.h"
 CProtego::CProtego(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CMagicBall(pDevice, pContext)
 {
@@ -136,18 +140,9 @@ void CProtego::Tick(_float fTimeDelta)
 void CProtego::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
-	m_pRigidBody->Enable_Collision("Magic_Ball", this);
 #ifdef _DEBUG
 	this->Tick_Imgui();
 #endif // _DEBUG
-
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
-	if (pGameInstance->Get_DIKeyState(DIK_J))
-	{
-		Hit_Effect(_float3(9.f, 9.f, 9.f));
-	}
-	Safe_Release(pGameInstance);
 
 	m_pDefaultConeBoom_Particle->Late_Tick(fTimeDelta);
 	if (nullptr != m_pRenderer && STATE_END != m_eCurState)
@@ -275,9 +270,64 @@ void CProtego::Hit_Effect(_float3 vPosition)
 
 void CProtego::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
-	//출돌된게 있습니다.
+	//충돌된게 있습니다.
 	__super::OnCollisionEnter(CollisionEventDesc);
+
+	//던져줘야하는값
+	CEnemy::ATTACKTYPE eAttackType = CEnemy::ATTACK_NONE;
+
+	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
+	wstring wstrCollisionTag = CollisionEventDesc.pOtherCollisionTag;
+
+	//몹 충돌이면 라이트/헤비 처리
+	if (wstring::npos != wstrCollisionTag.find(TEXT("Attack")) ||
+		wstring::npos != wstrCollisionTag.find(TEXT("Enemy_Body")))
+	{
+		CEnemy::COLLISIONREQUESTDESC* pDesc = static_cast<CEnemy::COLLISIONREQUESTDESC*>(CollisionEventDesc.pArg);
+		if (pDesc == nullptr)
+			return;
+
+		eAttackType = pDesc->eType;
+	}
+
+	//마법 충돌이면 라이트/브레이크 처리
+	if (wstring::npos != wstrCollisionTag.find(TEXT("Magic_Ball")))
+	{
+		COLLSIONREQUESTDESC* pDesc = static_cast<COLLSIONREQUESTDESC*>(CollisionEventDesc.pArg);
+		if (pDesc == nullptr)
+			return;
+
+		if (m_CollisionDesc.eMagicType == pDesc->eMagicType)
+		{
+			eAttackType = CEnemy::ATTACK_BREAK;
+		}
+		else 
+		{
+			eAttackType = CEnemy::ATTACK_LIGHT;
+			//도탄 기능 추가해줘야함.
+		}
+	}
+
+	if (CEnemy::ATTACK_NONE == eAttackType)
+	{
+		return;
+	}
+	//논이 아니면 충돌 이펙트 재생
 	Hit_Effect(CollisionEventDesc.pOtherTransform->Get_Position());
+
+	//나를 만든 부모에게 프로테고 충돌됐다는걸 보내줘야함.
+	/*if (!lstrcmp(m_pTarget->Get_Tag(), TEXT("GameObject_Player")))
+	{
+		static_cast<CPlayer*>(m_pTarget)->Set_Protego_Collision(eAttackType);
+	}
+	else if (!lstrcmp(m_pTarget->Get_Tag(), TEXT("GameObject_Professor_Fig")))
+	{
+		static_cast<CProfessor_Fig*>(m_pTarget)->Set_Protego_Collision(eAttackType);
+	}
+	else 
+	{
+		static_cast<CEnemy*>(m_pTarget)->Set_Protego_Collision(eAttackType);
+	}*/
 }
 
 void CProtego::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)
@@ -407,33 +457,36 @@ HRESULT CProtego::SetUp_ShaderResources()
 	return S_OK;
 }
 
-HRESULT CProtego::Add_RigidBody()
-{
-	CRigidBody::RIGIDBODYDESC RigidBodyDesc;
-	RigidBodyDesc.isStatic = false;
-	RigidBodyDesc.isTrigger = true;
-	RigidBodyDesc.fStaticFriction = 0.f;
-	RigidBodyDesc.fDynamicFriction = 0.f;
-	RigidBodyDesc.fRestitution = 0.f;
-	PxSphereGeometry SphereGeometry = PxSphereGeometry(m_fScale);
-	RigidBodyDesc.pGeometry = &SphereGeometry;
-	RigidBodyDesc.eConstraintFlag = CRigidBody::AllRot;
-	RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 0.f, 1.f);
-	RigidBodyDesc.vInitPosition = _float3(0.f, 0.f, 0.f);
-	RigidBodyDesc.isGravity = false;
-	RigidBodyDesc.pOwnerObject = this;
-	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Magic_Ball");
-
-	/* Com_RigidBody */
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
-		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
-	{
-		MSG_BOX("Failed CTest_Player Add_Component : (Com_RigidBody)");
-		return E_FAIL;
-	}
-
-	return S_OK;
-}
+//HRESULT CProtego::Add_RigidBody()
+//{
+//	CRigidBody::RIGIDBODYDESC RigidBodyDesc;
+//	RigidBodyDesc.isStatic = false;
+//	RigidBodyDesc.isTrigger = true;
+//	RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
+//	RigidBodyDesc.vOffsetPosition = _float3(0.f, 0.0f, 0.f);
+//	RigidBodyDesc.fStaticFriction = 0.f;
+//	RigidBodyDesc.fDynamicFriction = 0.f;
+//	RigidBodyDesc.fRestitution = 0.f;
+//	PxSphereGeometry SphereGeometry = PxSphereGeometry(m_fScale);
+//	RigidBodyDesc.pGeometry = &SphereGeometry;
+//	RigidBodyDesc.eConstraintFlag = CRigidBody::AllRot;
+//	RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 0.f, 1.f);
+//	RigidBodyDesc.isGravity = false;
+//	RigidBodyDesc.pOwnerObject = this;
+//	RigidBodyDesc.eThisCollsion = COL_MAGIC;
+//	RigidBodyDesc.eCollisionFlag = COL_ENEMY_RANGE | COL_WEAPON | COL_ENEMY | COL_TRIGGER | COL_MAGIC;
+//	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Magic_Ball");
+//
+//	/* Com_RigidBody */
+//	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
+//		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
+//	{
+//		MSG_BOX("Failed CTest_Player Add_Component : (Com_RigidBody)");
+//		return E_FAIL;
+//	}
+//
+//	return S_OK;
+//}
 
 CProtego* CProtego::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint _iLevel)
 {

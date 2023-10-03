@@ -770,18 +770,59 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	/*m_pMagicSlot->Add_Magic_To_Skill_Slot(0, CONFRINGO);
-	m_pMagicSlot->Add_Magic_To_Skill_Slot(1, LEVIOSO);*/
-	m_pMagicSlot->Add_Magic_To_Skill_Slot(0, DESCENDO);
+	// 크루시오
+	{
+		magicInitDesc.eBuffType = BUFF_NONE;
+		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
+		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicTag = CRUCIO;
+		magicInitDesc.fInitCoolTime = 1.f;
+		magicInitDesc.iDamage = 10;
+		magicInitDesc.isChase = true;
+		magicInitDesc.fLifeTime = 0.8f;
+		m_pMagicSlot->Add_Magics(magicInitDesc);
+	}
+
+	// 스투페파이
+	{
+		magicInitDesc.eBuffType = BUFF_NONE;
+		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
+		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicTag = STUPEFY;
+		magicInitDesc.fInitCoolTime = 1.f;
+		magicInitDesc.iDamage = 10;
+		magicInitDesc.isChase = true;
+		magicInitDesc.fLifeTime = 0.8f;
+		m_pMagicSlot->Add_Magics(magicInitDesc);
+	}
+
+	/* 사용가능 스킬 마법 목록 */
+	/*
+	CONFRINGO
+	LEVIOSO
+	DESCENDO
+	FLIPENDO
+	EXPELLIARMUS
+	FINISHER
+	NCENDIO
+	ARRESTOMOMENTUM
+	ACCIO
+	IMPERIO
+	CRUCIO << 번개 아직 안함
+	DIFFINDO << 매쉬이펙트라 잠깐 보류
+	STUPEFY
+	*/
+
+	/* 사용가능 기본 스킬 목록*/
+	/*
+	LUMOS
+	BASICCAST
+	PROTEGO
+	*/
+
+	m_pMagicSlot->Add_Magic_To_Skill_Slot(0, STUPEFY);
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(1, FLIPENDO);
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(2, EXPELLIARMUS);
-	//m_pMagicSlot->Add_Magic_To_Skill_Slot(2, FINISHER);
-	//m_pMagicSlot->Add_Magic_To_Skill_Slot(3, NCENDIO);
-	//m_pMagicSlot->Add_Magic_To_Skill_Slot(3, ARRESTOMOMENTUM);
-	//m_pMagicSlot->Add_Magic_To_Skill_Slot(3, ACCIO);
-	//m_pMagicSlot->Add_Magic_To_Skill_Slot(3, DESCENDO);
-	//m_pMagicSlot->Add_Magic_To_Skill_Slot(3, FLIPENDO);
-	//m_pMagicSlot->Add_Magic_To_Skill_Slot(3, EXPELLIARMUS);
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(3, IMPERIO);
 	m_pMagicSlot->Add_Magic_To_Basic_Slot(2, LUMOS);
 
@@ -1790,7 +1831,7 @@ void CPlayer::Find_Target_For_Distance()
 
 void CPlayer::Shot_Levioso()
 {
-	//Find_Target_For_Distance();
+	Find_Target_For_Distance();
 
 	_float4x4 OffSetMatrix = XMMatrixIdentity();
 
@@ -1801,11 +1842,10 @@ void CPlayer::Shot_Levioso()
 
 	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(1, m_pTarget, m_pWeapon, COL_ENEMY,m_isPowerUp);
 }
- 
 
 void CPlayer::Shot_Confringo()
 {
-	//Find_Target_For_Distawnce();
+	Find_Target_For_Distance();
 
 	_float4x4 OffSetMatrix = XMMatrixIdentity();
 
@@ -1819,7 +1859,7 @@ void CPlayer::Shot_Confringo()
 
 void CPlayer::Shot_NCENDIO()
 {
-	//Find_Target_For_Distance();
+	Find_Target_For_Distance();
 
 	_float4x4 OffSetMatrix = XMMatrixIdentity();
 
@@ -1833,7 +1873,7 @@ void CPlayer::Shot_NCENDIO()
 
 void CPlayer::Shot_Finisher()
 {
-	//Find_Target_For_Distance();
+	Find_Target_For_Distance();
 
 	_float4x4 OffSetMatrix = XMMatrixIdentity();
 

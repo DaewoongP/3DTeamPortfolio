@@ -119,8 +119,6 @@ HRESULT CMagicBall::Reset(MAGICBALLINITDESC& InitDesc)
 		m_vStartPosition = _float3(0,0,0);
 	}
 	
-	InitDesc.eCollisionFlag;
-	
 	m_pTransform->Set_Position(m_CurrentWeaponMatrix.Translation());
 
 	//Set CollisionDesc

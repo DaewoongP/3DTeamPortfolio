@@ -76,7 +76,7 @@ private:
 private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
-	virtual HRESULT Add_RigidBody() override;
+	//virtual HRESULT Add_RigidBody() override;
 
 public:
 	static CProtego* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint _iLevel);

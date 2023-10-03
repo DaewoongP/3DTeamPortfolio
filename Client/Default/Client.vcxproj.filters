@@ -457,6 +457,9 @@
     <Filter Include="02. GameObject\09. Item\ex1.MaximaPotion">
       <UniqueIdentifier>{5a4aa143-71df-4884-91e1-ca2caf295348}</UniqueIdentifier>
     </Filter>
+    <Filter Include="05. Magic\MagicBall\17. Stupefy">
+      <UniqueIdentifier>{3889487f-722c-4c11-99ae-a49e505aff2c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -929,6 +932,9 @@
     <ClInclude Include="..\Public\EndurusPotion.h">
       <Filter>02. GameObject\09. Item\ex2.EdurusPotion</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Stupefy.h">
+      <Filter>05. Magic\MagicBall\17. Stupefy</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1361,6 +1367,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\EndurusPotion.cpp">
       <Filter>02. GameObject\09. Item\ex2.EdurusPotion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Stupefy.cpp">
+      <Filter>05. Magic\MagicBall\17. Stupefy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
