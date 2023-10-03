@@ -151,33 +151,36 @@ void CPlayer_Camera::Mouse_Input(_float _fTimeDelta)
 
 	if (dwMouseMove)
 	{
-		/*_float4x4 worldMatrix = m_pTransform->Get_WorldMatrix();
+		_float4x4 worldMatrix = m_pTransform->Get_WorldMatrix();
 
 		_float3	vRight = worldMatrix.Right();
 
 		worldMatrix = worldMatrix.MatrixRotationAxis(vRight, dwMouseMove * _fTimeDelta * 0.1f);
 
-		_float3 vLook = worldMatrix.Look();
+		_float3 vUp = worldMatrix.Up();
 
-		vLook.Normalize();
+		vUp.Normalize();
 
-		_float3 vLookNoY = vLook;
+		_float3 vStandardUp = _float3(0.0f, 1.0f, 0.0f);
 
-		vLookNoY.y = 0.0f;
-		vLookNoY.Normalize();
+		_float fAngle = vStandardUp.Dot(vUp);
 
-		if (XMConvertToRadians(60.0f) >= fabsf(XMVectorGetX(XMVector3AngleBetweenNormals(vLookNoY, vLook))))
+		fAngle = acosf(fAngle);
+
+		_float fStandardAngle = XMConvertToRadians(45.0f);
+
+		if (fStandardAngle >= fAngle)
 		{
 			m_pTransform->Turn(vRight, dwMouseMove * _fTimeDelta * 0.1f);
 
 			dwMouseMove = 0;
-		}*/
+		}
 
-		_float3	vRight = m_pTransform->Get_Right();
+		/*_float3	vRight = m_pTransform->Get_Right();
 
 		m_pTransform->Turn(vRight, dwMouseMove * _fTimeDelta * 0.1f);
 
-		dwMouseMove = 0;
+		dwMouseMove = 0;*/
 	}
 
 	dwMouseMove = pGameInstance->Get_DIMouseMove(CInput_Device::DIMM_X);

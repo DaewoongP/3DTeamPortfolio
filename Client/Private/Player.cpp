@@ -39,6 +39,43 @@ CPlayer::CPlayer(const CPlayer& rhs)
 {
 }
 
+void CPlayer::Set_Protego_Collision(CEnemy::ATTACKTYPE _eAttackType, CTransform* _pTransform)
+{
+	if (m_pStateContext->Is_Current_State(TEXT("Protego")))
+	{
+		CProtegoState::PROTEGOSTATEDESC ProtegoStateDesc;
+
+		ProtegoStateDesc.isHit = true;
+
+		switch (_eAttackType)
+		{
+		case CEnemy::ATTACK_NONE:
+		{	}
+		break;
+		case CEnemy::ATTACK_LIGHT:
+		{
+			ProtegoStateDesc.iHitType = CProtegoState::HIT_LIGHT;
+		}
+		break;
+		case CEnemy::ATTACK_HEAVY:
+		{
+			ProtegoStateDesc.iHitType = CProtegoState::HIT_HEABY;
+		}
+		break;
+		case CEnemy::ATTACKTYPE_END:
+		{	}
+		break;
+
+		default:
+			break;
+		}
+
+		ProtegoStateDesc.pTransform = _pTransform;
+
+		Go_Protego(&ProtegoStateDesc);
+	}
+}
+
 HRESULT CPlayer::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
@@ -242,36 +279,7 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		//Protego
 		if (m_pStateContext->Is_Current_State(TEXT("Protego")))
 		{
-			CProtegoState::PROTEGOSTATEDESC ProtegoStateDesc;
-
-			ProtegoStateDesc.isHit = true;
-
-			switch (pDesc->eType)
-			{
-			case CEnemy::ATTACK_NONE:
-			{	}
-			break;
-			case CEnemy::ATTACK_LIGHT:
-			{
-				ProtegoStateDesc.iHitType = CProtegoState::HIT_LIGHT;
-			}
-			break;
-			case CEnemy::ATTACK_HEAVY:
-			{
-				ProtegoStateDesc.iHitType = CProtegoState::HIT_HEABY;
-			}
-			break;
-			case CEnemy::ATTACKTYPE_END:
-			{	}
-			break;
-
-			default:
-				break;
-			}
-
-			ProtegoStateDesc.pTransform = pDesc->pEnemyTransform;
-
-			Go_Protego(&ProtegoStateDesc);
+			
 		}
 		//회피시 무시
 		else if (m_pStateContext->Is_Current_State(TEXT("Roll")))

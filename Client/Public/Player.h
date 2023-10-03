@@ -5,6 +5,7 @@
 #include "Magic.h"
 #include "HitState.h"
 #include "StateMachine.h"
+#include "Enemy.h"
 
 BEGIN(Engine)
 class CShader;
@@ -59,6 +60,8 @@ private:
 public:
 	void Set_TargetTransform(CTransform* _pTargetTransform = nullptr) { m_pTargetTransform = _pTargetTransform; }
 	_float3 Get_PlayerPos() { return m_pTransform->Get_Position(); }
+	void Set_Protego_Collision(CEnemy::ATTACKTYPE _eAttackType, CTransform* _pTransform);
+
 
 	_bool Set_PowerUp(_bool isPowerUp) { m_isPowerUp = isPowerUp; }
 
