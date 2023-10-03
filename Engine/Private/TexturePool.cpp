@@ -1,5 +1,6 @@
 #include "..\Public\TexturePool.h"
 #include "Texture.h"
+#include "String_Manager.h"
 
 IMPLEMENT_SINGLETON(CTexturePool)
 
@@ -11,8 +12,8 @@ CTexture* CTexturePool::Reuse_Texture(ID3D11Device* pDevice, ID3D11DeviceContext
 	{
 		// 咆胶贸 货肺 积己
 		CTexture* pTexture = CTexture::Create_Origin(pDevice, pContext, pTextureFilePath, iNumTextures);
-		pTexture->Set_Tag(pTextureFilePath);
-		m_Textures.emplace(pTexture->Get_Tag(), pTexture);
+
+		m_Textures.emplace(CString_Manager::GetInstance()->Make_WChar(pTextureFilePath), pTexture);
 
 		Safe_AddRef(pTexture);
 		return pTexture;
