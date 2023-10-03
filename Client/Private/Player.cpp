@@ -122,6 +122,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 	
 	m_vLevelInitPosition[LEVEL_CLIFFSIDE] = _float3(25.f, 3.f, 22.5f);
 	m_vLevelInitPosition[LEVEL_VAULT] = _float3(7.0f, 0.02f, 7.5f);
+
 	return S_OK;
 }
 
@@ -184,6 +185,10 @@ void CPlayer::Tick(_float fTimeDelta)
 	}
 
 	m_pCooltime->Tick(fTimeDelta);
+
+#ifdef _DEBUG
+	ADD_IMGUI([&] { this->Tick_ImGui(); });
+#endif // _DEBUG
 }
 
 void CPlayer::Late_Tick(_float fTimeDelta)
@@ -201,10 +206,6 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 		m_pRenderer->Add_DebugGroup(m_pRigidBody);
 #endif // _DEBUG
 	}
-
-#ifdef _DEBUG
-	Tick_ImGui();
-#endif // _DEBUG
 
 	if (nullptr != m_pTarget)
 	{

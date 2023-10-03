@@ -87,7 +87,6 @@ void CGolem_Combat::Tick(_float fTimeDelta)
 	if (nullptr != m_pRootBehavior)
 		m_pRootBehavior->Tick(fTimeDelta);
 
-	cout << m_iCurrentSpell << endl;
 	if (true == m_isParring ||
 		true == IsDebuff(BUFF_TYPE(m_iCurrentSpell)))
 	{

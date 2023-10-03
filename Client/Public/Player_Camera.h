@@ -44,11 +44,6 @@ public:
 	HRESULT Initialize(void* pArg);
 	virtual void Tick(const _float& fTimeDelta);
 
-#ifdef _DEBUG
-	void Tick_ImGui();
-#endif // _DEBUG
-
-
 private:
 	CTransform* m_pTransform = { nullptr };
 	CTransform* m_pPlayerTransform = { nullptr };

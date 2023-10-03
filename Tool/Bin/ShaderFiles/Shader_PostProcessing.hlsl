@@ -3,6 +3,8 @@
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
 texture2D g_DeferredTexture;
+texture2D g_GlowTexture;
+texture2D g_Texture;
 
 struct VS_IN
 {
@@ -42,7 +44,7 @@ struct PS_OUT
     float4 vColor : SV_TARGET0;
 };
 
-PS_OUT PS_MAIN(PS_IN In)
+PS_OUT PS_MAIN_HDR(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
 
@@ -50,7 +52,10 @@ PS_OUT PS_MAIN(PS_IN In)
     if (0.f == vDeferredTexture.a)
         discard;
 
-    Out.vColor = vDeferredTexture;
+    vector vTexture = g_Texture.Sample(LinearSampler, In.vTexUV);
+    vector vGlowTexture = g_GlowTexture.Sample(LinearSampler, In.vTexUV);
+
+    Out.vColor = vDeferredTexture + vGlowTexture + vTexture;
 
     Out.vColor.rgb += ACESToneMapping(Out.vColor.rgb);
 
@@ -59,7 +64,7 @@ PS_OUT PS_MAIN(PS_IN In)
 
 technique11 DefaultTechnique
 {
-    pass PostDeferred
+    pass HDR
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Depth_Disable, 0);
@@ -68,6 +73,6 @@ technique11 DefaultTechnique
         GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
         HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
         DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
-        PixelShader = compile ps_5_0 PS_MAIN();
+        PixelShader = compile ps_5_0 PS_MAIN_HDR();
     }
 }
