@@ -81,11 +81,13 @@ HRESULT CMainApp::Render()
 
 #ifdef _DEBUG
 	FAILED_CHECK_RETURN(m_pGameInstance->Render_Font(TEXT("Font_135"), m_szFPS, _float2(0.f, 680.f)), E_FAIL);
-
-	Render_ImGui();
 #endif // _DEBUG
+
 	FAILED_CHECK_RETURN(m_pGameInstance->Present(), E_FAIL);
 
+#ifdef _DEBUG
+	Render_ImGui();
+#endif // _DEBUG
 	return S_OK;
 }
 
