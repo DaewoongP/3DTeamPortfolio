@@ -81,12 +81,13 @@ HRESULT CMainApp::Render()
 
 #ifdef _DEBUG
 	FAILED_CHECK_RETURN(m_pGameInstance->Render_Font(TEXT("Font_135"), m_szFPS, _float2(0.f, 680.f)), E_FAIL);
-
-	Render_ImGui();
 #endif // _DEBUG
 
 	FAILED_CHECK_RETURN(m_pGameInstance->Present(), E_FAIL);
 
+#ifdef _DEBUG
+	Render_ImGui();
+#endif // _DEBUG
 	return S_OK;
 }
 
@@ -243,8 +244,6 @@ void CMainApp::Tick_FPS(_float fTimeDelta)
 #ifdef _DEBUG
 HRESULT CMainApp::Initialize_ImGui()
 {
-	std::lock_guard<std::mutex> lock(mtx);
-
 	// Show the window
 	::ShowWindow(g_hWnd, SW_SHOWDEFAULT);
 	::UpdateWindow(g_hWnd);
@@ -309,7 +308,7 @@ void CMainApp::Debug_ImGui()
 	GetWindowRect(g_hWnd, &rc);
 
 	ImGui::SetNextWindowPos(ImVec2(0.f, 0.f));
-	ImGui::SetNextWindowSize(ImVec2(300.f, 200.f));
+	ImGui::SetNextWindowSize(ImVec2(200.f, 200.f));
 
 	ImGui::Begin("Main Debug");
 
@@ -345,6 +344,8 @@ void CMainApp::Debug_ImGui()
 
 HRESULT CMainApp::Render_ImGui()
 {
+	// 여기서 내 백버퍼를 빼고 무슨 작업을 쳐놓고 그렸는데,
+	// 내백버퍼를 다시 장치에 바인딩하기위해 렌더 
 	ImGui::EndFrame();
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
