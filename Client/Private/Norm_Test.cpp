@@ -80,7 +80,7 @@ HRESULT CNorm_Test::Add_Components()
 		return E_FAIL;
 	}
 
-	m_pTexture = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Textures/T_FX_Distortion_Ring_N.png"));
+	m_pTexture = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Textures/T_FX_Distortion_N.png"));
 
 	return S_OK;
 }
