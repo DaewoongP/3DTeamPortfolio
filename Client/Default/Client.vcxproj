@@ -182,6 +182,7 @@
     <ClInclude Include="..\public\Norm_Test.h" />
     <ClInclude Include="..\public\Plant.h" />
     <ClInclude Include="..\Public\Potion.h" />
+    <ClInclude Include="..\Public\Stupefy.h" />
     <ClInclude Include="..\public\Tool.h" />
     <ClInclude Include="..\Public\Death.h" />
     <ClInclude Include="..\Public\Descendo.h" />
@@ -398,6 +399,7 @@
     <ClCompile Include="..\Private\Menu_Quest.cpp" />
     <ClCompile Include="..\Private\Menu_Setting.cpp" />
     <ClCompile Include="..\Private\MapObject_Ins.cpp" />
+    <ClCompile Include="..\Private\Stupefy.cpp" />
     <ClCompile Include="..\Private\UI_Potion_Tap.cpp" />
     <ClCompile Include="..\private\WiggenweldPotion.cpp" />
     <ClCompile Include="..\Private\Sequence_AirHit.cpp" />

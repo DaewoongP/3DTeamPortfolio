@@ -251,12 +251,12 @@ void CParticleSystem::Late_Tick(_float _fTimeDelta)
 
 	if (nullptr != m_pRenderer)
 	{
-		if (true == m_RendererModuleDesc.isGlow)
+		/*if (true == m_RendererModuleDesc.isGlow)
 		{
 			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BLEND, this);
 		}
 
-		else if ("Default" == m_RendererModuleDesc.strPass ||
+		else */if ("Default" == m_RendererModuleDesc.strPass ||
 			"TextureSheetAnimation" == m_RendererModuleDesc.strPass ||
 			"MotionBlur" == m_RendererModuleDesc.strPass)
 		{

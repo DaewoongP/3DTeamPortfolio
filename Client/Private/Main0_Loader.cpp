@@ -58,6 +58,8 @@
 #include "Flipendo.h"
 #include "Expelliarmus.h"
 #include "Imperio.h"
+#include "Crucio.h"
+#include "Stupefy.h"
 #pragma endregion Magic
 
 #include "Trigger_Vault.h"
@@ -496,6 +498,16 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Imperio"),
 			CImperio::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Imperio");
+
+		/* For.Prototype_GameObject_Crucio */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Crucio"),
+			CCrucio::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_Crucio");
+		
+		/* For.Prototype_GameObject_Stupefy */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Stupefy"),
+			CStupefy::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_Stupefy");
 		
 #pragma endregion
 		{
