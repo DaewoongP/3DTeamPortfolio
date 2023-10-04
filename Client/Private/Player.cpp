@@ -241,6 +241,8 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 
 #ifdef _DEBUG
 	Tick_ImGui();
+	Tick_TestShake();
+
 #endif // _DEBUG
 
 	if (nullptr != m_pTarget)
@@ -801,6 +803,26 @@ HRESULT CPlayer::Add_Magic()
 void CPlayer::Key_Input(_float fTimeDelta)
 {
 	BEGININSTANCE;
+
+#ifdef _DEBUG
+	//카메라 쉐이크 테스트
+	if (pGameInstance->Get_DIKeyState(DIK_K,CInput_Device::KEY_DOWN))
+	{
+		_float3 vAxis = _float3(m_fx, m_fy, m_fz);
+
+		vAxis.Normalize();
+
+		pGameInstance->Set_Shake(
+			(CCamera_Manager::SHAKE_TYPE)m_iShake_Type,
+			(CCamera_Manager::SHAKE_AXIS)m_iShake_Axis,
+			(CEase::EASE)m_iEase,
+			m_fShakeSpeed,
+			m_fShakeDuration,
+			m_fShakePower,
+			(CCamera_Manager::SHAKE_POWER)m_iShakePower,
+			vAxis);
+	}
+#endif // _DEBUG
 
 #pragma region 스테이트 변경 키 입력
 
@@ -1425,14 +1447,14 @@ void CPlayer::Next_Spell_Action()
 
 void CPlayer::Shot_Basic_Spell()
 {
-	Find_Target_For_Distance();
+	//Find_Target_For_Distance();
 	m_pMagicSlot->Add_Magics(m_BasicDesc_Light);
 	m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(0, m_pTarget, m_pWeapon, COL_ENEMY,m_isPowerUp);
 }
 
 void CPlayer::Shot_Basic_Last_Spell()
 {
-	Find_Target_For_Distance();
+	//Find_Target_For_Distance();
 	m_pMagicSlot->Add_Magics(m_BasicDesc_Heavy);
 	m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(0, m_pTarget, m_pWeapon, COL_ENEMY,m_isPowerUp);
 }
@@ -1896,8 +1918,50 @@ void CPlayer::Go_Jump()
 	}
 }
 
+#ifdef _DEBUG
+
+void CPlayer::Tick_TestShake()
+{
+	ImGui::Begin("TestShake");
+
+	ImGui::Text("Shake_Type");
+
+	ImGui::RadioButton("TRANSLATION", &m_iShake_Type, CCamera_Manager::SHAKE_TYPE_TRANSLATION); ImGui::SameLine();
+	ImGui::RadioButton("ROTATION", &m_iShake_Type, CCamera_Manager::SHAKE_TYPE_ROTATION);
+
+
+	ImGui::Text("Shake_Axis");
+
+	ImGui::RadioButton("RIGHT", &m_iShake_Axis, CCamera_Manager::SHAKE_AXIS_RIGHT); ImGui::SameLine();
+	ImGui::RadioButton("UP", &m_iShake_Axis, CCamera_Manager::SHAKE_AXIS_UP);
+	ImGui::RadioButton("LOOK", &m_iShake_Axis, CCamera_Manager::SHAKE_AXIS_LOOK); ImGui::SameLine();
+	ImGui::RadioButton("SET", &m_iShake_Axis, CCamera_Manager::SHAKE_AXIS_SET);
+
+	ImGui::Text("SHAKE_POWER");
+
+	ImGui::RadioButton("CRECENDO", &m_iShakePower, CCamera_Manager::SHAKE_POWER_CRECENDO); ImGui::SameLine();
+	ImGui::RadioButton("DECRECENDO", &m_iShakePower, CCamera_Manager::SHAKE_POWER_DECRECENDO);
+	ImGui::RadioButton("CRECENDO_DECRECENDO", &m_iShakePower, CCamera_Manager::SHAKE_POWER_CRECENDO_DECRECENDO);
+
+
+	ImGui::DragFloat("SHAKE_SPEED", &m_fShakeSpeed, 0.1f, 1.0f, 60.0f);
+	ImGui::DragFloat("SHAKE_DURATION", &m_fShakeDuration, 0.001f, 0.001f, 100.0f);
+	ImGui::DragFloat("SHAKE_POWER", &m_fShakePower, 0.001f, 0.001f, 1.0f);
+
+	ImGui::DragFloat("Axis_Set.X", &m_fx, 0.001, 0.001f, 1.0f);
+	ImGui::DragFloat("Axis_Set.Y", &m_fy, 0.001, 0.001f, 1.0f);
+	ImGui::DragFloat("Axis_Set.Z", &m_fz, 0.001, 0.001f, 1.0f);
+
+	ImGui::End();
+
+}
+
+#endif // _DEBUG
+
 void CPlayer::Go_MagicCast(void* _pArg)
 {
+	Find_Target_For_Distance();
+
 	if (m_pStateContext->Is_Current_State(TEXT("Idle")) ||
 		m_pStateContext->Is_Current_State(TEXT("Move Turn")) ||
 		m_pStateContext->Is_Current_State(TEXT("Move Start")) ||

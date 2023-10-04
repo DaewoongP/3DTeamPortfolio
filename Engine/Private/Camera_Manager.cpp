@@ -4,6 +4,25 @@
 
 IMPLEMENT_SINGLETON(CCamera_Manager);
 
+void CCamera_Manager::Set_Shake(SHAKE_TYPE _eType, SHAKE_AXIS _eAxis, CEase::EASE _eEase, _float _fSpeed, _float _Duration, _float _fPower, SHAKE_POWER _ePower, _float3 _vAxisSet)
+{
+	m_fShakeTimeAcc = 0.0f;
+
+	m_fShakeDuration = _Duration;
+	m_fShakePower = _fPower;
+
+	m_vShake_Axis_Set = _vAxisSet;
+
+	m_eShake_Axis = _eAxis;
+	m_eShake_Type = _eType;
+	m_eShake_Power = _ePower;
+
+	m_eEase = _eEase;
+
+	//진동 주기
+	m_fShakeSpeed = _fSpeed;
+}
+
 const _float4 CCamera_Manager::Get_OffSetEye(OFFSETCAMERADESC& _OffSetCameraDesc)
 {
 	//포지션에
@@ -56,6 +75,11 @@ void CCamera_Manager::Tick(_float _TimeDelta)
 	{
 
 	}
+}
+
+void CCamera_Manager::Late_Tick(_float _TimeDelta)
+{
+	Shake_Update(_TimeDelta);
 }
 
 HRESULT CCamera_Manager::Initialize_CameraManager()
@@ -636,6 +660,168 @@ void CCamera_Manager::CutScene_Lerp_Update(CUTSCENECAMERADESC _CutSceneCameraDes
 
 	//카메라의 역행렬
 	m_ViewMatrix = XMMatrixLookAtLH(vEye, vAt, vUp);
+}
+
+void CCamera_Manager::Shake_Update(_float _TimeDelta)
+{
+	//예외 조건
+	//누적 시간 >= 총 시간
+	if (m_fShakeTimeAcc >= m_fShakeDuration)
+	{
+		return;
+	}
+
+	m_fShakeTimeAcc += _TimeDelta;
+
+	if (m_fShakeTimeAcc >= m_fShakeDuration)
+	{
+		m_fShakeTimeAcc = m_fShakeDuration;
+	}
+
+	_float4x4 view_Matrix = *m_pPipeLine->Get_TransformMatrix(CPipeLine::D3DTS_VIEW);
+
+	_float fShakePower = { 0.0f };
+	fShakePower = m_fShakePower - CEase::Ease(m_eEase, m_fShakeTimeAcc, 0.0f, m_fShakePower, m_fShakeDuration);
+	
+	switch (m_eShake_Power)
+	{
+	case Engine::CCamera_Manager::SHAKE_POWER_CRECENDO:
+	{
+		fShakePower = CEase::Ease(m_eEase, m_fShakeTimeAcc, 0.0f, m_fShakePower, m_fShakeDuration);
+	}
+		break;
+	case Engine::CCamera_Manager::SHAKE_POWER_DECRECENDO:
+	{
+		fShakePower = m_fShakePower - CEase::Ease(m_eEase, m_fShakeTimeAcc, 0.0f, m_fShakePower, m_fShakeDuration);
+	}
+	break;
+	case Engine::CCamera_Manager::SHAKE_POWER_CRECENDO_DECRECENDO:
+	{
+		//지속시간의 반을 넘어갔다면, 점점 약해진다.
+		if (m_fShakeTimeAcc >= m_fShakeDuration * 0.5f)
+		{
+			fShakePower = m_fShakePower - CEase::Ease(m_eEase, m_fShakeTimeAcc, 0.0f, m_fShakePower, m_fShakeDuration);
+		}
+		else
+		{
+			fShakePower = CEase::Ease(m_eEase, m_fShakeTimeAcc, 0.0f, m_fShakePower, m_fShakeDuration);
+		}
+	}
+		break;
+	case Engine::CCamera_Manager::SHAKE_POWER_END:
+		break;
+	default:
+		break;
+	}
+
+
+
+	_float fSin = sinf(m_fShakeTimeAcc * m_fShakeDuration * XMConvertToRadians(360.0f) * m_fShakeSpeed);
+
+	_float fShakeResult = fSin * fShakePower;
+
+	//쉐이크
+	switch (m_eShake_Type)
+	{
+	case Engine::CCamera_Manager::SHAKE_TYPE_TRANSLATION:
+	{
+		switch (m_eShake_Axis)
+		{
+		case Engine::CCamera_Manager::SHAKE_AXIS_RIGHT:
+		{
+			_float3 vRight = view_Matrix.Right();
+			vRight.Normalize();
+			vRight *= fShakeResult;
+			view_Matrix = view_Matrix * XMMatrixTranslation(vRight.x, vRight.y, vRight.z);
+		}
+			break;
+		case Engine::CCamera_Manager::SHAKE_AXIS_UP:
+		{
+			_float3 vUp = view_Matrix.Up();
+			vUp.Normalize();
+			vUp *= fShakeResult;
+			view_Matrix = view_Matrix * XMMatrixTranslation(vUp.x, vUp.y, vUp.z);
+		}
+			break;
+		case Engine::CCamera_Manager::SHAKE_AXIS_LOOK:
+		{
+			_float3 vLook = view_Matrix.Look();
+			vLook.Normalize();
+			vLook *= fShakeResult;
+			view_Matrix = view_Matrix * XMMatrixTranslation(vLook.x, vLook.y, vLook.z);
+		}
+			break;
+		case Engine::CCamera_Manager::SHAKE_AXIS_SET:
+		{
+			_float3 vAxis = m_vShake_Axis_Set;
+			vAxis.Normalize();
+			vAxis *= fShakeResult;
+			view_Matrix = view_Matrix * XMMatrixTranslation(vAxis.x, vAxis.y, vAxis.z);
+		}
+			break;
+		case Engine::CCamera_Manager::SHAKE_AXIS_END:
+			break;
+		default:
+			break;
+		}
+	}
+		break;
+	case Engine::CCamera_Manager::SHAKE_TYPE_ROTATION:
+	{
+		_float3 vRight = view_Matrix.Right();
+		_float3 vUp = view_Matrix.Up();
+		_float3 vLook = view_Matrix.Look();
+
+		_float4x4 RotationMatrix = _float4x4();
+
+		switch (m_eShake_Axis)
+		{
+		case Engine::CCamera_Manager::SHAKE_AXIS_RIGHT:
+		{
+			RotationMatrix = XMMatrixRotationQuaternion(
+				XMQuaternionRotationAxis(XMVector3Normalize(vRight), fShakeResult));
+		}
+			break;
+		case Engine::CCamera_Manager::SHAKE_AXIS_UP:
+		{
+			RotationMatrix = XMMatrixRotationQuaternion(
+				XMQuaternionRotationAxis(XMVector3Normalize(vUp), fShakeResult));
+		}
+			break;
+		case Engine::CCamera_Manager::SHAKE_AXIS_LOOK:
+		{
+			RotationMatrix = XMMatrixRotationQuaternion(
+				XMQuaternionRotationAxis(XMVector3Normalize(vLook), fShakeResult));
+		}
+			break;
+		case Engine::CCamera_Manager::SHAKE_AXIS_SET:
+		{
+			RotationMatrix = XMMatrixRotationQuaternion(
+				XMQuaternionRotationAxis(XMVector3Normalize(m_vShake_Axis_Set), fShakeResult));
+		}
+			break;
+		case Engine::CCamera_Manager::SHAKE_AXIS_END:
+			break;
+		default:
+			break;
+		}
+
+		vRight = XMVector3TransformNormal(vRight, RotationMatrix);
+		vUp = XMVector3TransformNormal(vUp, RotationMatrix);
+		vLook = XMVector3TransformNormal(vLook, RotationMatrix);
+
+		memcpy(&view_Matrix.m[0][0], &vRight, sizeof(_float3));
+		memcpy(&view_Matrix.m[1][0], &vUp, sizeof(_float3));
+		memcpy(&view_Matrix.m[2][0], &vLook, sizeof(_float3));
+	}
+		break;
+	case Engine::CCamera_Manager::SHAKE_TYPE_END:
+		break;
+	default:
+		break;
+	}
+
+	m_pPipeLine->Set_Transform(CPipeLine::D3DTS_VIEW, view_Matrix);
 }
 
 void CCamera_Manager::Free()

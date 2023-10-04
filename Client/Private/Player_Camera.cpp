@@ -155,7 +155,7 @@ void CPlayer_Camera::Mouse_Input(_float _fTimeDelta)
 
 		_float3	vRight = worldMatrix.Right();
 
-		worldMatrix = worldMatrix.MatrixRotationAxis(vRight, dwMouseMove * _fTimeDelta * 0.1f);
+		worldMatrix = worldMatrix * XMMatrixRotationAxis(vRight, dwMouseMove * _fTimeDelta * 0.1f);
 
 		_float3 vUp = worldMatrix.Up();
 
@@ -165,10 +165,16 @@ void CPlayer_Camera::Mouse_Input(_float _fTimeDelta)
 
 		_float fAngle = vStandardUp.Dot(vUp);
 
-		fAngle = acosf(fAngle);
+		if (1.0f < fAngle)
+		{
+			fAngle = 1.0f;
+		}
 
-		_float fStandardAngle = XMConvertToRadians(45.0f);
+		fAngle = fabsf(acosf(fAngle));
 
+		_float fStandardAngle = XMConvertToRadians(60.0f);
+
+		//기준 보다 커지면 안됌
 		if (fStandardAngle >= fAngle)
 		{
 			m_pTransform->Turn(vRight, dwMouseMove * _fTimeDelta * 0.1f);

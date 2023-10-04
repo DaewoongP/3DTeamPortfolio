@@ -177,6 +177,29 @@ public:
 private:
 	void Tick_ImGui();
 	_bool m_isGravity = { false };
+
+#pragma region 카메라 쉐이크
+
+	_int m_iShake_Type = { 0 };
+	_int m_iShake_Axis = { 0 };
+	_int m_iEase = { 0 };
+
+	_float m_fShakeSpeed = { 5.0f };
+	_float m_fShakeDuration = { 1.0f };
+	_float m_fShakePower = { 0.01f };
+
+	_int m_iShakePower = { 0 };
+
+	_float m_fx = { 1.0f };
+	_float m_fy = { 1.0f };
+	_float m_fz = { 1.0f };
+
+	void Tick_TestShake();
+
+#pragma endregion
+
+
+
 #endif // _DEBUG
 
 private:

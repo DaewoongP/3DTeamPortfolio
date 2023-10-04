@@ -7,7 +7,6 @@
 #include "Level_Manager.h"
 #include "Timer_Manager.h"
 #include "Graphic_Device.h"
-#include "Camera_Manager.h"
 #include "String_Manager.h"
 #include "ParticleSystemPool.h"
 #include "RenderTarget_Manager.h"
@@ -108,6 +107,8 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 	m_pComponent_Manager->Tick(fTimeDelta);
 
 	m_pCamera_Manager->Tick(fTimeDelta);
+
+	m_pCamera_Manager->Late_Tick(fTimeDelta);
 
 	m_pPipeLine->Tick();
 
@@ -807,6 +808,13 @@ void CGameInstance::Stop_CutScene()
 	NULL_CHECK_RETURN_MSG(m_pCamera_Manager, , TEXT("Camera NULL"));
 
 	return m_pCamera_Manager->Stop_CutScene();
+}
+
+void CGameInstance::Set_Shake(CCamera_Manager::SHAKE_TYPE _eType, CCamera_Manager::SHAKE_AXIS _eAxis, CEase::EASE _eEase, _float _fSpeed, _float _Duration, _float _fPower, CCamera_Manager::SHAKE_POWER _ePower, _float3 _vAxisSet)
+{
+	NULL_CHECK_RETURN_MSG(m_pCamera_Manager, , TEXT("Camera NULL"));
+
+	return m_pCamera_Manager->Set_Shake(_eType, _eAxis, _eEase, _fSpeed, _Duration, _fPower, _ePower, _vAxisSet);
 }
 
 #ifdef _DEBUG
