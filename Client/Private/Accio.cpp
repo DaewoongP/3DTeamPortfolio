@@ -220,7 +220,7 @@ void CAccio::Tick_CastMagic(_float fTimeDelta)
 		if (m_fLerpAcc > 1)
 			m_fLerpAcc = 1;
 		m_TrailVec[EFFECT_STATE_MAIN].data()[0]->Spin_Move(m_vEndPosition, m_vStartPosition,m_vSpinWeight,m_fSpinSpeed, m_fLerpAcc);
-		m_pTransform->Set_Position(m_TrailVec[EFFECT_STATE_MAIN].data()[0]->Get_Transform()->Get_Position());
+		m_pTransform->Set_Position(XMVectorLerp(m_vStartPosition, m_vEndPosition, m_fLerpAcc));
 	}
 	else
 	{
