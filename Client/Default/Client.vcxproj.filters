@@ -457,6 +457,9 @@
     <Filter Include="02. GameObject\09. Item\01. Potion\MaximaPotion">
       <UniqueIdentifier>{5a4aa143-71df-4884-91e1-ca2caf295348}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\09. Item\01. Potion\Invisibility Potion">
+      <UniqueIdentifier>{e904701a-4d69-4b17-8f05-2bc317be6f15}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -932,6 +935,9 @@
     <ClInclude Include="..\public\ImGui_Manager.h">
       <Filter>96. ImGui</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\InvisiblityPotion.h">
+      <Filter>02. GameObject\09. Item\01. Potion\Invisibility Potion</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1367,6 +1373,9 @@
     </ClCompile>
     <ClCompile Include="..\private\ImGui_Manager.cpp">
       <Filter>96. ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\InvisiblityPotion.cpp">
+      <Filter>02. GameObject\09. Item\01. Potion\Invisibility Potion</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

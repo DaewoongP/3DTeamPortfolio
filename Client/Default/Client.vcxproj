@@ -177,6 +177,7 @@
     <ClInclude Include="..\Public\Flipendo.h" />
     <ClInclude Include="..\Public\Imperio.h" />
     <ClInclude Include="..\Public\EdurusPotion.h" />
+    <ClInclude Include="..\Public\InvisiblityPotion.h" />
     <ClInclude Include="..\public\Item.h" />
     <ClInclude Include="..\public\Plant.h" />
     <ClInclude Include="..\Public\Potion.h" />
@@ -359,6 +360,7 @@
     <ClCompile Include="..\Private\Flipendo.cpp" />
     <ClCompile Include="..\Private\Imperio.cpp" />
     <ClCompile Include="..\Private\EdurusPotion.cpp" />
+    <ClCompile Include="..\Private\InvisiblityPotion.cpp" />
     <ClCompile Include="..\private\Item.cpp" />
     <ClCompile Include="..\Private\Death.cpp" />
     <ClCompile Include="..\Private\Descendo.cpp" />

@@ -26,6 +26,7 @@ class CMagicBall;
 class CMaximaPotion;
 class CFocusPotion;
 class CEdurusPotion;
+class CInvisiblityPotion;
 class CWiggenweldPotion;
 END
 
@@ -63,7 +64,7 @@ public:
 	void Set_PowerUp(_bool isPowerUp) { m_isPowerUp = isPowerUp; }
 	void Set_DefUp(_bool isDefUp) { m_isDefUp = isDefUp; }
 	void Set_FocusOn(_bool isFocus) { m_isFocusOn = isFocus; }
-
+	void Set_Invisible(_bool isInvisible) { m_isInvisible = isInvisible; }
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -98,6 +99,7 @@ private:
 	CMaximaPotion* m_pMaximaPotion = { nullptr };
 	CEdurusPotion* m_pEdurusPotion = { nullptr };
 	CFocusPotion*	m_pFocusPotion = { nullptr };
+	CInvisiblityPotion* m_pInvisiblityPotion = { nullptr };
 	CWiggenweldPotion* m_pWiggenweldPotion = { nullptr };
 private:
 	
@@ -126,10 +128,11 @@ private:
 	LEVELID m_eLevelID = { LEVEL_END };
 	
 	_float3		m_vLevelInitPosition[LEVEL_END];
-
+	//물약 사용여부
 	_bool m_isPowerUp = { false };
 	_bool m_isDefUp = { false };
 	_bool m_isFocusOn = { false };
+	_bool m_isInvisible = { false };
 	_int m_iDeffence = { 0 };
 	
 #pragma region 스테이트에 넘기는 변수
