@@ -801,6 +801,12 @@ HRESULT CLevel_Cliffside::Ready_Layer_Debug(const _tchar* pLayerTag)
 		MSG_BOX("Failed Add_GameObject : (GameObject_Camera_Debug)");
 		return E_FAIL;
 	}
+	
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Norm_Test"), pLayerTag, TEXT("GameObject_Norm_Test"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Norm_Test)");
+		return E_FAIL;
+	}
 
 	Safe_Release(pGameInstance);
 

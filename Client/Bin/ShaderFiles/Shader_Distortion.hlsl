@@ -203,7 +203,6 @@ PS_OUT PS_MAIN_DISTORTIONX(PS_IN In)
 
 technique11 DefaultTechnique
 {
-   
     pass Distortion
     {
         SetRasterizerState(RS_Default);

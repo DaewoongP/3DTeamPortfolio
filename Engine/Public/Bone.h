@@ -21,6 +21,7 @@ public:
 	// 뼈의 이름 반환
 	const _tchar* Get_Name() const { return m_szName; }
 	const _uint	  Get_Index() { return m_iIndex; }
+	_uint	  Get_Index() const { return m_iIndex; }
 	// 뼈의 최종 상태 행렬 반환.
 	_float4x4			Get_CombinedTransformationMatrix() const { return m_CombinedTransformationMatrix; }
 	const _float4x4* Get_CombinedTransformationMatrixPtr() const { return &m_CombinedTransformationMatrix; }

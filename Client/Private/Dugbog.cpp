@@ -75,6 +75,22 @@ void CDugbog::Tick(_float fTimeDelta)
 
 	Tick_Spells();
 
+	for (auto iter = m_CurrentTickSpells.begin(); iter != m_CurrentTickSpells.end(); )
+	{
+		if (iter->first & m_iCurrentSpell)
+		{
+			auto Desciter = m_MagicTickDesc.find(iter->first);
+			if (Desciter != m_MagicTickDesc.end())
+			{
+				iter->second(Desciter->second);
+			}
+			
+			++iter;
+		}
+		else
+			iter = m_CurrentTickSpells.erase(iter);
+	}
+
 	if (nullptr != m_pModelCom)
 		m_pModelCom->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 }

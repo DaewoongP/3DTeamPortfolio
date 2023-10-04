@@ -75,7 +75,7 @@ HRESULT CBlur::Render(const _tchar* pMRTTag, const _tchar* pTargetTag, BLUR eBlu
 			return E_FAIL;
 	}
 
-	if (FAILED(pRenderTarget_Manager->End_MRT(m_pContext)))
+	if (FAILED(pRenderTarget_Manager->End_MRT(m_pContext, pMRTTag)))
 		return E_FAIL;
 
 	Safe_Release(pRenderTarget_Manager);

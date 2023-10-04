@@ -82,7 +82,7 @@ HRESULT CGlow::Render(list<CGameObject*>& GlowRenderObjects, _float fGlowPower)
 
 	GlowRenderObjects.clear();
 
-	if (FAILED(pRenderTarget_Manager->End_MRT(m_pContext)))
+	if (FAILED(pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_Glow"))))
 		return E_FAIL;
 
 	// 블러처리
@@ -114,7 +114,7 @@ HRESULT CGlow::Render(list<CGameObject*>& GlowRenderObjects, _float fGlowPower)
 	if (FAILED(m_pBuffer->Render()))
 		return E_FAIL;
 
-	if (FAILED(pRenderTarget_Manager->End_MRT(m_pContext)))
+	if (FAILED(pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_Glowed"))))
 		return E_FAIL;
 
 	Safe_Release(pRenderTarget_Manager);

@@ -460,6 +460,21 @@
     <Filter Include="02. GameObject\02. Enemy\04. Boss">
       <UniqueIdentifier>{0af7f112-5794-49f9-b566-5e0282856103}</UniqueIdentifier>
     </Filter>
+    <Filter Include="05. Magic\MagicBall\17. Stupefy">
+      <UniqueIdentifier>{3889487f-722c-4c11-99ae-a49e505aff2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Item\02. Ingredient\HorklumpJuice">
+      <UniqueIdentifier>{317ed26b-2a5b-4a2b-89f6-42e887793982}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\04. UI\UI_Item">
+      <UniqueIdentifier>{00fec493-edb5-4b7e-a84e-cd428648c052}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96. ImGui">
+      <UniqueIdentifier>{a50a5e26-6a04-4c0e-a541-6d264c6a12fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Effect\Normal">
+      <UniqueIdentifier>{a74d6959-7585-400e-a1ae-d972cc6abd86}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -938,6 +953,18 @@
     <ClInclude Include="..\Public\RigidMove.h">
       <Filter>03. Behaviors\03. Movement</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Stupefy.h">
+      <Filter>05. Magic\MagicBall\17. Stupefy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\HorklumpJuice_Item.h">
+      <Filter>02. GameObject\09. Item\02. Ingredient\HorklumpJuice</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ImGui_Manager.h">
+      <Filter>96. ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Norm_Test.h">
+      <Filter>04. Effect\Normal</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1376,6 +1403,18 @@
     </ClCompile>
     <ClCompile Include="..\Private\RigidMove.cpp">
       <Filter>03. Behaviors\03. Movement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Stupefy.cpp">
+      <Filter>05. Magic\MagicBall\17. Stupefy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\HorklumpJuice_Item.cpp">
+      <Filter>02. GameObject\09. Item\02. Ingredient\HorklumpJuice</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ImGui_Manager.cpp">
+      <Filter>96. ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Norm_Test.cpp">
+      <Filter>04. Effect\Normal</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

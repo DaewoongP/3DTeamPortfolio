@@ -7,13 +7,18 @@
 #include "Player_Information.h"
 
 BEGIN(Engine)
-class CTexture;
-class CModel;
-class CRenderer;
 class CShader;
+class CTexture;
+class CRenderer;
+class CTransform;
+class CModel;
+class CCoolTime;
+class CHealth;
 END
 
 BEGIN(Client)
+class CPlayer;
+
 enum ITEMTYPE
 {
 	HAND,
@@ -32,7 +37,7 @@ class CItem abstract : public CGameObject
 protected:
 	typedef struct tagItemCloneDesc
 	{
-		class CPlayer* pPlayer = { nullptr };
+		
 	}ITEM_CLONE_DESC;
 
 protected:
@@ -41,9 +46,6 @@ protected:
 		_uint			iCost = { 0 };
 		wstring			wstrKoreanName = { TEXT("") };
 		wstring			wstrUIPath = { TEXT("") };
-		wstring			wstrModelPath = { TEXT("") };
-		CModel::TYPE	eModelType = { CModel::TYPE_END };
-		_float4x4		PivotMatrix = { _float4x4() };
 		ITEMTYPE		eItemType = { ITEMTYPE_END };
 	}ITEM_CREATE_DESC;
 
@@ -69,10 +71,7 @@ protected:
 	CPlayer* m_pPlayer = { nullptr };
 
 protected:
-	CRenderer*	m_pRenderer = { nullptr };
 	CTexture*	m_pUITexture = { nullptr };
-	CModel*		m_pModel = { nullptr };
-	CShader*	m_pShader = { nullptr };
 
 protected: // Player Components
 	class CCustomModel* m_pPlayerModel = { nullptr };

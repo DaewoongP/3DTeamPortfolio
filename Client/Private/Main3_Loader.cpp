@@ -335,6 +335,11 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 
 #pragma region Load Potion
 
+		/* For.Prototype_GameObject_WiggenweldPotion*/
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_WiggenweldPotion"),
+			CWiggenweldPotion::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_WiggenweldPotion");
+
 #pragma endregion
 	}
 	catch (const _tchar* pErrorTag)

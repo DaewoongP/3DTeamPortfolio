@@ -169,6 +169,8 @@
     <ClInclude Include="..\Public\Animation_Camera_Model.h" />
     <ClInclude Include="..\public\ChineseChompingCabbageItem.h" />
     <ClInclude Include="..\Public\ConjuredDragon.h" />
+    <ClInclude Include="..\public\HorklumpJuice_Item.h" />
+    <ClInclude Include="..\public\ImGui_Manager.h" />
     <ClInclude Include="..\Public\Ingredient.h" />
     <ClInclude Include="..\Public\Arrestomomentum.h" />
     <ClInclude Include="..\Public\Client_Struct.h" />
@@ -178,8 +180,10 @@
     <ClInclude Include="..\Public\Imperio.h" />
     <ClInclude Include="..\Public\EndurusPotion.h" />
     <ClInclude Include="..\public\Item.h" />
+    <ClInclude Include="..\public\Norm_Test.h" />
     <ClInclude Include="..\public\Plant.h" />
     <ClInclude Include="..\Public\Potion.h" />
+    <ClInclude Include="..\Public\Stupefy.h" />
     <ClInclude Include="..\public\Tool.h" />
     <ClInclude Include="..\Public\Death.h" />
     <ClInclude Include="..\Public\Descendo.h" />
@@ -353,6 +357,8 @@
     <ClCompile Include="..\Private\Animation_Camera_Model.cpp" />
     <ClCompile Include="..\private\ChineseChompingCabbageItem.cpp" />
     <ClCompile Include="..\Private\ConjuredDragon.cpp" />
+    <ClCompile Include="..\private\HorklumpJuice_Item.cpp" />
+    <ClCompile Include="..\private\ImGui_Manager.cpp" />
     <ClCompile Include="..\Private\Ingredient.cpp" />
     <ClCompile Include="..\Private\Arrestomomentum.cpp" />
     <ClCompile Include="..\Private\Crucio.cpp" />
@@ -367,6 +373,7 @@
     <ClCompile Include="..\private\Game_Manager.cpp" />
     <ClCompile Include="..\Private\Lumos.cpp" />
     <ClCompile Include="..\Private\FocusPotion.cpp" />
+    <ClCompile Include="..\private\Norm_Test.cpp" />
     <ClCompile Include="..\private\Plant.cpp" />
     <ClCompile Include="..\Private\Potion.cpp" />
     <ClCompile Include="..\Private\MPBall.cpp" />
@@ -395,6 +402,7 @@
     <ClCompile Include="..\Private\Menu_Quest.cpp" />
     <ClCompile Include="..\Private\Menu_Setting.cpp" />
     <ClCompile Include="..\Private\MapObject_Ins.cpp" />
+    <ClCompile Include="..\Private\Stupefy.cpp" />
     <ClCompile Include="..\Private\UI_Potion_Tap.cpp" />
     <ClCompile Include="..\Private\RigidMove.cpp" />
     <ClCompile Include="..\private\WiggenweldPotion.cpp" />

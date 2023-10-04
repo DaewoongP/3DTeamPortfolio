@@ -62,7 +62,7 @@ HRESULT CGraphic_Device::Ready_Graphic_Device(HWND hWnd, GRAPHICDESC::WINMODE eW
 HRESULT CGraphic_Device::Clear_BackBuffer_View(_float4 vClearColor)
 {
 	NULL_CHECK_RETURN_MSG(m_pDeviceContext, E_FAIL, TEXT("Device Context NULL"));
-	std::lock_guard<std::mutex> lock(mtx);
+	
 	m_pDeviceContext->ClearRenderTargetView(m_pBackBufferRTV, (_float*)&vClearColor);
 
 	return S_OK;
@@ -74,8 +74,6 @@ HRESULT CGraphic_Device::Clear_DepthStencil_View()
 
 	m_pDeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
 
-	//m_pDeviceContext->ClearDepthStencilView(m_pShadowDepth, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
-	
 	return S_OK;
 }
 
@@ -172,16 +170,13 @@ HRESULT CGraphic_Device::Ready_DepthStencilRenderTargetView(_uint iWinCX, _uint 
 	TextureDesc.SampleDesc.Count = 1;
 	TextureDesc.Usage = D3D11_USAGE_DEFAULT;
 
-	TextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL/*| D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE*/;
+	TextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 	TextureDesc.CPUAccessFlags = 0;
 	TextureDesc.MiscFlags = 0;
 
 	FAILED_CHECK_RETURN_MSG(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &pDepthStencilTexture), E_FAIL, L"Failed Create Texture2D");
 	FAILED_CHECK_RETURN_MSG(m_pDevice->CreateDepthStencilView(pDepthStencilTexture, nullptr, &m_pDepthStencilView), E_FAIL,
 		L"Failed CreateDepthStencilView");
-
-
-
 
 	Safe_Release(pDepthStencilTexture);
 

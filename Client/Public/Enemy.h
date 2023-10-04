@@ -29,7 +29,7 @@ BEGIN(Client)
 class CEnemy abstract : public CGameObject
 {
 public:
-	enum ATTACKTYPE { ATTACK_NONE, ATTACK_LIGHT, ATTACK_HEAVY, ATTACKTYPE_END };
+	enum ATTACKTYPE { ATTACK_NONE, ATTACK_LIGHT, ATTACK_HEAVY,ATTACK_BREAK,ATTACK_SUPERBREAK, ATTACKTYPE_END };
 	typedef struct tagCollisionRequestDesc
 	{
 		ATTACKTYPE eType = { ATTACKTYPE_END };

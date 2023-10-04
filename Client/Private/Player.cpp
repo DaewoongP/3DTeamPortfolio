@@ -122,6 +122,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 	
 	m_vLevelInitPosition[LEVEL_CLIFFSIDE] = _float3(25.f, 3.f, 22.5f);
 	m_vLevelInitPosition[LEVEL_VAULT] = _float3(7.0f, 0.02f, 7.5f);
+
 	return S_OK;
 }
 
@@ -184,6 +185,10 @@ void CPlayer::Tick(_float fTimeDelta)
 	}
 
 	m_pCooltime->Tick(fTimeDelta);
+
+#ifdef _DEBUG
+	ADD_IMGUI([&] { this->Tick_ImGui(); });
+#endif // _DEBUG
 }
 
 void CPlayer::Late_Tick(_float fTimeDelta)
@@ -201,10 +206,6 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 		m_pRenderer->Add_DebugGroup(m_pRigidBody);
 #endif // _DEBUG
 	}
-
-#ifdef _DEBUG
-	Tick_ImGui();
-#endif // _DEBUG
 
 	if (nullptr != m_pTarget)
 	{
@@ -926,15 +927,20 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		m_pPlayer_Information->Get_Health()->Set_HP(iHp);
 	}
 
-	/*if (pGameInstance->Get_DIKeyState(DIK_K, CInput_Device::KEY_DOWN))a
+	if (pGameInstance->Get_DIKeyState(DIK_K, CInput_Device::KEY_DOWN))
 	{
 		CWiggenweldPotion::CLONE_DESC initDesc;
-		initDesc.pPlayer = this;
-		CWiggenweldPotion* pWiggenweldPotion = static_cast<CWiggenweldPotion*>(
-			pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_WiggenweldPotion"), &initDesc));
-		pWiggenweldPotion->Use(_float3());
-		Safe_Release(pWiggenweldPotion);
-	}*/
+		//CWiggenweldPotion* pWiggenweldPotion = static_cast<CWiggenweldPotion*>(
+		//	pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_WiggenweldPotion"), &initDesc));
+		pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE
+			, TEXT("Prototype_GameObject_WiggenweldPotion")
+			, TEXT("Layer_Item")
+			, Generate_HashtagW().data()
+			, &initDesc);
+		
+		//pWiggenweldPotion->Use(_float3());
+		//Safe_Release(pWiggenweldPotion);
+	}
 
 	ENDINSTANCE;
 }
@@ -1425,7 +1431,7 @@ void CPlayer::Shot_Basic_Last_Spell()
 
 void CPlayer::Protego()
 {
-	m_pMagicSlot->Action_Magic_Basic(1, this, m_pWeapon, COL_MAGIC,m_isPowerUp);
+	m_pMagicSlot->Action_Magic_Basic(1, this, m_pWeapon, (COLLISIONFLAG)( COL_WEAPON | COL_ENEMY ) ,m_isPowerUp);
 }
 
 void CPlayer::Gravity_On()
@@ -1784,7 +1790,7 @@ void CPlayer::Find_Target_For_Distance()
 
 void CPlayer::Shot_Levioso()
 {
-	//Find_Target_For_Distance();
+	Find_Target_For_Distance();
 
 	_float4x4 OffSetMatrix = XMMatrixIdentity();
 
@@ -1795,11 +1801,10 @@ void CPlayer::Shot_Levioso()
 
 	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(1, m_pTarget, m_pWeapon, COL_ENEMY,m_isPowerUp);
 }
- 
 
 void CPlayer::Shot_Confringo()
 {
-	//Find_Target_For_Distawnce();
+	Find_Target_For_Distance();
 
 	_float4x4 OffSetMatrix = XMMatrixIdentity();
 
@@ -1813,7 +1818,7 @@ void CPlayer::Shot_Confringo()
 
 void CPlayer::Shot_NCENDIO()
 {
-	//Find_Target_For_Distance();
+	Find_Target_For_Distance();
 
 	_float4x4 OffSetMatrix = XMMatrixIdentity();
 
@@ -1827,7 +1832,7 @@ void CPlayer::Shot_NCENDIO()
 
 void CPlayer::Shot_Finisher()
 {
-	//Find_Target_For_Distance();
+	Find_Target_For_Distance();
 
 	_float4x4 OffSetMatrix = XMMatrixIdentity();
 
