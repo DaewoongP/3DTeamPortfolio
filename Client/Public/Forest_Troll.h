@@ -54,11 +54,6 @@ private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
 
-#ifdef _DEBUG
-	_int m_iIndex = { 0 };
-	void Tick_ImGui();
-#endif // _DEBUG
-
 public:
 	static CForest_Troll* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
