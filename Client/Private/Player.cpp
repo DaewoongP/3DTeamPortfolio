@@ -226,11 +226,9 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 
 void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
-	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
 	wstring wstrCollisionTag = CollisionEventDesc.pOtherCollisionTag;
-
-	if (wstring::npos != wstrCollisionTag.find(TEXT("Attack")) ||
-		wstring::npos != wstrCollisionTag.find(TEXT("Enemy_Body")))
+	
+	if (wstring::npos != wstrCollisionTag.find(TEXT("Attack")))
 	{
 		CEnemy::COLLISIONREQUESTDESC* pDesc = static_cast<CEnemy::COLLISIONREQUESTDESC*>(CollisionEventDesc.pArg);
 
@@ -523,7 +521,7 @@ HRESULT CPlayer::Add_Components()
 	RigidBodyDesc.vDebugColor = _float4(1.f, 105 / 255.f, 180 / 255.f, 1.f); // hot pink
 	RigidBodyDesc.pOwnerObject = this;
 	RigidBodyDesc.eThisCollsion = COL_PLAYER;
-	RigidBodyDesc.eCollisionFlag = COL_ENEMY_RANGE | COL_WEAPON | COL_ENEMY | COL_TRIGGER;
+	RigidBodyDesc.eCollisionFlag = COL_ENEMY_RANGE | COL_ENEMY_ATTACK | COL_ENEMY | COL_TRIGGER;
 	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Player_Default");
 
 	/* Com_RigidBody */
@@ -708,7 +706,7 @@ HRESULT CPlayer::Add_Magic()
 
 	// 아씨오
 	{
-		magicInitDesc.eBuffType = BUFF_NONE;
+		magicInitDesc.eBuffType = BUFF_ACCIO;
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
 		magicInitDesc.eMagicTag = ACCIO;
@@ -721,7 +719,7 @@ HRESULT CPlayer::Add_Magic()
 
 	// 디센도
 	{
-		magicInitDesc.eBuffType = BUFF_NONE;
+		magicInitDesc.eBuffType = BUFF_DESCENDO;
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
 		magicInitDesc.eMagicTag = DESCENDO;
@@ -734,7 +732,7 @@ HRESULT CPlayer::Add_Magic()
 
 	// 플리펜도
 	{
-		magicInitDesc.eBuffType = BUFF_NONE;
+		magicInitDesc.eBuffType = BUFF_FLIPENDO;
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
 		magicInitDesc.eMagicTag = FLIPENDO;
@@ -771,64 +769,19 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	// 크루시오
-	{
-		magicInitDesc.eBuffType = BUFF_NONE;
-		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
-		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
-		magicInitDesc.eMagicTag = CRUCIO;
-		magicInitDesc.fInitCoolTime = 1.f;
-		magicInitDesc.iDamage = 10;
-		magicInitDesc.isChase = true;
-		magicInitDesc.fLifeTime = 0.8f;
-		m_pMagicSlot->Add_Magics(magicInitDesc);
-	}
+	m_pMagicSlot->Add_Magic_To_Skill_Slot(0, LEVIOSO);
+	m_pMagicSlot->Add_Magic_To_Skill_Slot(1, DESCENDO);
+	m_pMagicSlot->Add_Magic_To_Skill_Slot(2, ACCIO);
+	m_pMagicSlot->Add_Magic_To_Skill_Slot(3, FLIPENDO);
+	//m_pMagicSlot->Add_Magic_To_Skill_Slot(0, CONFRINGO);
+	//m_pMagicSlot->Add_Magic_To_Skill_Slot(2, EXPELLIARMUS);
+	//m_pMagicSlot->Add_Magic_To_Skill_Slot(2, FINISHER);
+	//m_pMagicSlot->Add_Magic_To_Skill_Slot(3, NCENDIO);
+	//m_pMagicSlot->Add_Magic_To_Skill_Slot(3, ARRESTOMOMENTUM);
+	//m_pMagicSlot->Add_Magic_To_Skill_Slot(3, IMPERIO);
 
-	// 스투페파이
-	{
-		magicInitDesc.eBuffType = BUFF_NONE;
-		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
-		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
-		magicInitDesc.eMagicTag = STUPEFY;
-		magicInitDesc.fInitCoolTime = 1.f;
-		magicInitDesc.iDamage = 10;
-		magicInitDesc.isChase = true;
-		magicInitDesc.fLifeTime = 0.8f;
-		m_pMagicSlot->Add_Magics(magicInitDesc);
-	}
-
-	/* 사용가능 스킬 마법 목록 */
-	/*
-	CONFRINGO
-	LEVIOSO
-	DESCENDO
-	FLIPENDO
-	EXPELLIARMUS
-	FINISHER
-	NCENDIO
-	ARRESTOMOMENTUM
-	ACCIO
-	IMPERIO
-	CRUCIO << 번개 아직 안함
-	DIFFINDO << 매쉬이펙트라 잠깐 보류
-	STUPEFY
-	*/
-
-	/* 사용가능 기본 스킬 목록*/
-	/*
-	LUMOS
-	BASICCAST
-	PROTEGO
-	*/
-
-	m_pMagicSlot->Add_Magic_To_Skill_Slot(0, STUPEFY);
-	m_pMagicSlot->Add_Magic_To_Skill_Slot(1, FLIPENDO);
-	m_pMagicSlot->Add_Magic_To_Skill_Slot(2, EXPELLIARMUS);
-	m_pMagicSlot->Add_Magic_To_Skill_Slot(3, IMPERIO);
 	m_pMagicSlot->Add_Magic_To_Basic_Slot(2, LUMOS);
 
-
-	
 	return S_OK;
 }
 
@@ -880,13 +833,13 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		}
 		if (pGameInstance->Get_DIKeyState(DIK_3, CInput_Device::KEY_DOWN))
 		{
-			MagicCastingStateDesc.pFuncSpell = [&] {(*this).Shot_NCENDIO(); };
+			MagicCastingStateDesc.pFuncSpell = [&] {(*this).Shot_Finisher(); };
 
 			Go_MagicCast(&MagicCastingStateDesc);
 		}
 		if (pGameInstance->Get_DIKeyState(DIK_4, CInput_Device::KEY_DOWN))
 		{
-			MagicCastingStateDesc.pFuncSpell = [&] {(*this).Shot_Finisher(); };
+			MagicCastingStateDesc.pFuncSpell = [&] {(*this).Shot_NCENDIO(); };
 
 			Go_MagicCast(&MagicCastingStateDesc);
 		}

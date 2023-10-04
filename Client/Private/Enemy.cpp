@@ -98,10 +98,7 @@ void CEnemy::Late_Tick(_float fTimeDelta)
 
 HRESULT CEnemy::Render()
 {
-	if (FAILED(SetUp_ShaderResources()))
-		return E_FAIL;
-
-	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
+	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
@@ -359,7 +356,26 @@ void CEnemy::Set_Current_Target()
 
 	if (false == m_isRangeInEnemy)
 	{
-		m_pTarget = m_pPlayer;
+		m_pTarget = nullptr;
+	}
+}
+
+void CEnemy::Tick_Spells()
+{
+	for (auto iter = m_CurrentTickSpells.begin(); iter != m_CurrentTickSpells.end(); )
+	{
+		if (iter->first & m_iCurrentSpell)
+		{
+			auto Desciter = m_MagicTickDesc.find(iter->first);
+			if (Desciter != m_MagicTickDesc.end())
+			{
+				iter->second(Desciter->second);
+			}
+
+			++iter;
+		}
+		else
+			iter = m_CurrentTickSpells.erase(iter);
 	}
 }
 
@@ -390,11 +406,13 @@ _bool CEnemy::IsEnemy(const wstring& wstrObjectTag)
 		return true;
 
 	return false;
-}
+} 
 
 _bool CEnemy::IsDebuff(BUFF_TYPE eType)
 {
 	if (BUFF_LEVIOSO & eType)
+		return true;
+	if (BUFF_DESCENDO & eType)
 		return true;
 
 	return false;
@@ -402,27 +420,30 @@ _bool CEnemy::IsDebuff(BUFF_TYPE eType)
 
 _bool CEnemy::isCombo(BUFF_TYPE eType)
 {
+	_bool ReturnData = { false };
 	/* 내 현재 상태에 디버프가 없는 경우 */
 	if (false == IsDebuff(BUFF_TYPE(m_iCurrentSpell)))
 		return false;
 
 	if (eType & BUFF_ATTACK_LIGHT)
-		m_isHitCombo = true;
+		ReturnData = m_isHitCombo = true;
 
 	if (eType & BUFF_ATTACK_HEAVY)
-		m_isHitCombo = true;
+		ReturnData = m_isHitCombo = true;
 
 	if (true == IsDebuff(eType))
-		m_isHitCombo = true;
+		ReturnData = m_isHitCombo = true;
 
-	return false;
+	return ReturnData;
 }
 
 void CEnemy::On_Gravity()
 {
 	if (nullptr != m_pRigidBody)
 	{
+#ifdef _DEBUG
 		cout << "On Gravity" << endl;
+#endif // _DEBUG
 		m_pRigidBody->Set_Gravity(true);
 	}
 }
@@ -431,7 +452,9 @@ void CEnemy::Off_Gravity()
 {
 	if (nullptr != m_pRigidBody)
 	{
+#ifdef _DEBUG
 		cout << "Off Gravity" << endl;
+#endif // _DEBUG
 		m_pRigidBody->Set_Gravity(false);
 	}
 }

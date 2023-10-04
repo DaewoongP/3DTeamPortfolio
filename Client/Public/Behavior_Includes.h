@@ -5,6 +5,7 @@
 #include "Death.h"
 #include "LookAt.h"
 #include "Action.h"
+#include "RigidMove.h"
 #include "Check_Degree.h"
 #include "RandomChoose.h"
 #include "Check_Distance.h"

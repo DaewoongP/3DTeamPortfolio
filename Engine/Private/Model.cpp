@@ -476,6 +476,23 @@ HRESULT CModel::Bind_Notify(const wstring& wstrAnimIndex, const wstring& wstrNot
 	return Bind_Notify(iAnimationIndex, wstrNotifyTag, Func, eType);
 }
 
+HRESULT CModel::Bind_Notifies(const wstring& wstrNotifyTag, function<void()>& Func, ANIMTYPE eType)
+{
+	if (0 > eType || ANIM_END <= eType || nullptr == Func)
+		return E_FAIL;
+
+	for (auto& pAnimation : m_tAnimationDesc[eType].Animations)
+	{
+		Engine::KEYFRAME* pKeyFrame = pAnimation->Find_NotifyFrame(wstrNotifyTag.c_str());
+		if (nullptr == pKeyFrame)
+			continue;
+
+		static_cast<NOTIFYFRAME*>(pKeyFrame)->Action = Func;
+	}
+
+	return S_OK;
+}
+
 HRESULT CModel::Bind_Material(CShader* pShader, const char* pConstantName, _uint iMeshIndex, Engine::TextureType MaterialType)
 {
 	if (iMeshIndex >= m_iNumMeshes ||

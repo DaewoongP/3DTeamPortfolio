@@ -42,16 +42,10 @@ private:
 	CWeapon_Armored_Troll* m_pWeapon = { nullptr };
 
 private:
-	virtual HRESULT Make_AI() override;
-	virtual HRESULT Make_Notifies() override;
-	virtual HRESULT Add_Components() override;
-	virtual HRESULT Add_Components_Level(_uint iCurrentLevelIndex) override;
-	virtual HRESULT SetUp_ShaderResources() override;
-
-#ifdef _DEBUG
-	_int m_iIndex = { 0 };
-	void Tick_ImGui();
-#endif // _DEBUG
+	HRESULT Make_AI();
+	HRESULT Make_Notifies();
+	HRESULT Add_Components();
+	HRESULT Add_Components_Level(_uint iCurrentLevelIndex);
 
 private:
 	_float m_fDeadTimeAcc = { 0.f };
@@ -81,7 +75,6 @@ private: /* Çàµ¿ ¹­À½µé */
 
 	HRESULT Make_Turns(_Inout_ CSequence* pSequence);
 	HRESULT Make_Turn_Run(_Inout_ CSequence* pSequence);
-	HRESULT Make_Check_Spell(_Inout_ CSelector* pSelector);
 
 private: /* Notify Functions */
 	void Enter_Light_Attack();

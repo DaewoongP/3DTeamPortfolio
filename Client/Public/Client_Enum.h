@@ -61,8 +61,8 @@ namespace Client
 		BUFF_ACCIO			= 1 << 5,
 		BUFF_CONFRINGO		= 1 << 6,
 		BUFF_NCENDIO		= 1 << 7,
-		BUFF_BUFF_DESCENDO	= 1 << 8,
-		BUFF_DESCENDO		= 1 << 9,
+		BUFF_DESCENDO		= 1 << 8,
+		BUFF_FLIPENDO		= 1 << 9,
 		BUFF_END = 10
 	};
 

@@ -1,6 +1,6 @@
 #pragma once
 /* =============================================== */
-//	[CGolem_Combat]
+//	[CConjuredDragon]
 // 
 //	정 : 주성환
 //	부 :
@@ -17,17 +17,13 @@ class CRandomChoose;
 END
 
 BEGIN(Client)
-class CWeapon_Golem_Combat;
-END
 
-BEGIN(Client)
-
-class CGolem_Combat final : public CEnemy
+class CConjuredDragon final : public CEnemy
 {
 private:
-	explicit CGolem_Combat(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	explicit CGolem_Combat(const CGolem_Combat& rhs);
-	virtual ~CGolem_Combat() = default;
+	explicit CConjuredDragon(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	explicit CConjuredDragon(const CConjuredDragon& rhs);
+	virtual ~CConjuredDragon() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -38,9 +34,6 @@ public:
 	virtual void OnCollisionEnter(COLLEVENTDESC CollisionEventDesc) override;
 	virtual void OnCollisionExit(COLLEVENTDESC CollisionEventDesc) override;
 	virtual HRESULT Render() override;
-
-private:
-	CWeapon_Golem_Combat* m_pWeapon = { nullptr };
 
 private:
 	HRESULT Make_AI();
@@ -56,27 +49,11 @@ private: /* 행동 묶음들 */
 	HRESULT Make_Death(_Inout_ CSequence* pSequence);
 	HRESULT Make_Alive(_Inout_ CSelector* pSelector);
 
-	HRESULT Make_Hit_Combo(_Inout_ CSelector* pSelector);
-	HRESULT Make_Check_Spell(_Inout_ CSelector* pSelector);
-	HRESULT Make_NormalAttack(_Inout_ CSelector* pSelector);
-
-	HRESULT Make_Levioso_Combo(_Inout_ CSelector* pSelector);
-	HRESULT Make_Descendo(_Inout_ CSequence* pSequence);
-	HRESULT Make_Turns(_Inout_ CSequence* pSequence);
-	HRESULT Make_Attack(_Inout_ CSelector* pSelector);
-	HRESULT Make_Random_Idle_Move(_Inout_ CRandomChoose* pRandomChoose);
-
-	HRESULT Make_Air_Hit(_Inout_ CSequence* pSequence);
-
 private: /* Notify Func */
-	void Enter_Light_Attack();
-	void Enter_Heavy_Attack();
-	void Enter_Body_Attack();
-	void Exit_Attack();
 
 public:
-	static CGolem_Combat* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CGolem_Combat* Clone(void* pArg) override;
+	static CConjuredDragon* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	virtual CConjuredDragon* Clone(void* pArg) override;
 	virtual void Free() override;
 };
 
