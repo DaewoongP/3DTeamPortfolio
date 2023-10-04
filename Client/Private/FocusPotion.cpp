@@ -11,7 +11,6 @@ CFocusPotion::CFocusPotion(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 CFocusPotion::CFocusPotion(const CFocusPotion& rhs)
 	: CPotion(rhs)
-	, m_fDuration(rhs.m_fDuration)
 {
 }
 
@@ -19,6 +18,7 @@ HRESULT CFocusPotion::Initialize_Prototype(_uint iLevel)
 {
 	// 아이템 정보
 	m_ItemCreateDesc.iCost = 500;									// 가격
+	m_ItemCreateDesc.fDuration = 15.f;								//지속시간
 	m_ItemCreateDesc.wstrKoreanName = TEXT("집중력 물약");			// 한글명
 	m_ItemCreateDesc.wstrUIPath = TEXT("../../Resources/UI/Game/UI/Icons/Potions/UI_T_AMFillPotion.png"); // UI경로
 	m_ItemCreateDesc.wstrModelPath = TEXT("../../Resources/Models/NonAnims/SM_SpherePrimitiveRegularNormals_01/SM_SpherePrimitiveRegularNormals_01.dat"); // 모델경로
@@ -50,6 +50,13 @@ HRESULT CFocusPotion::Initialize(void* pArg)
 void CFocusPotion::Use(_float3 vPlayPos)
 {
 
+}
+
+void CFocusPotion::Duration(_float fTimeDelta)
+{
+	m_fDuration += fTimeDelta;
+	if (m_fDuration >= m_ItemCreateDesc.fDuration)
+		m_pPlayer->Set_FocusOn(false);
 }
 
 HRESULT CFocusPotion::Add_Components()

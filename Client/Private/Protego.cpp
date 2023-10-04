@@ -138,7 +138,7 @@ void CProtego::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 	m_pRigidBody->Enable_Collision("Magic_Ball", this);
 #ifdef _DEBUG
-	this->Tick_Imgui();
+	//this->Tick_Imgui();
 #endif // _DEBUG
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
@@ -236,25 +236,25 @@ void CProtego::Find_And_Add_Texture(const _tchar* pPath)
 }
 
 #ifdef _DEBUG
-void CProtego::Tick_Imgui()
-{
-	RECT clientRect;
-	GetClientRect(g_hWnd, &clientRect);
-	POINT leftTop = { clientRect.left, clientRect.top };
-	POINT rightBottom = { clientRect.right, clientRect.bottom };
-	ClientToScreen(g_hWnd, &leftTop);
-	ClientToScreen(g_hWnd, &rightBottom);
-	int Left = leftTop.x;
-	int Top = rightBottom.y;
-	ImVec2 vWinpos = { _float(Left + 0.f), _float(Top) };
-	ImGui::SetNextWindowPos(vWinpos);
-
-	ImGui::Begin("RimPower");
-
-	ImGui::DragFloat("RimPower", &m_fRimPower, 0.1f, 0.f, FLT_MAX);
-
-	ImGui::End();
-}
+//void CProtego::Tick_Imgui()
+//{
+//	RECT clientRect;
+//	GetClientRect(g_hWnd, &clientRect);
+//	POINT leftTop = { clientRect.left, clientRect.top };
+//	POINT rightBottom = { clientRect.right, clientRect.bottom };
+//	ClientToScreen(g_hWnd, &leftTop);
+//	ClientToScreen(g_hWnd, &rightBottom);
+//	int Left = leftTop.x;
+//	int Top = rightBottom.y;
+//	ImVec2 vWinpos = { _float(Left + 0.f), _float(Top) };
+//	ImGui::SetNextWindowPos(vWinpos);
+//
+//	ImGui::Begin("RimPower");
+//
+//	ImGui::DragFloat("RimPower", &m_fRimPower, 0.1f, 0.f, FLT_MAX);
+//
+//	ImGui::End();
+//}
 #endif // _DEBUG
 
 void CProtego::Hit_Effect(_float3 vPosition)

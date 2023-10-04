@@ -30,13 +30,14 @@
 
 #include "Player_Information.h"
 #include "CoolTime.h"
+#include"Defence.h"
 
 #pragma region Items
 
 #include "FocusPotion.h"
 
 #include "MaximaPotion.h"
-#include "EndurusPotion.h"
+#include "EdurusPotion.h"
 #include "WiggenweldPotion.h"
 #include "Ingredient.h"
 #pragma endregion
@@ -307,6 +308,19 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 			CPlayer_Information::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Player_Information");
 
+		/* For.Prototype_Component_Player_Information */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_CoolTime"),
+			CCoolTime::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_CoolTime");
+
+		/* For.Prototype_Component_Player_Information */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Defence"),
+			CDefence::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Defence");
+
+		
+
+
 #pragma endregion
 
 #pragma region Load Fig
@@ -328,6 +342,26 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 #pragma endregion
 
 #pragma region Load Potion
+		/* For.Prototype_Component_Weapon_WiggenwledPotion */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("ProtoType_GameObject_WiggenweldPotion"),
+			CWiggenweldPotion::Create(m_pDevice, m_pContext,eLevelID))))
+			throw TEXT("ProtoType_GameObject_WiggenweldPotion");
+
+		///* For.Prototype_Component_Weapon_FocusPotion */
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("ProtoType_GameObject_Focuspotion"),
+		//	CFocusPotion::Create(m_pDevice, m_pContext, eLevelID))))b
+		//	throw TEXT("ProtoType_GameObject_Focuspotion");
+
+
+		///* For.Prototype_Component_Weapon_MaximaPotion */
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("ProtoType_GameObject_MaximaPotion"),
+		//	CMaximaPotion::Create(m_pDevice, m_pContext, eLevelID))))
+		//	throw TEXT("ProtoType_GameObject_MaximaPotion");
+
+		/* For.Prototype_Component_Weapon_EdurusPotion */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("ProtoType_GameObject_EdurusPotion"),
+			CEdurusPotion::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("ProtoType_GameObject_EdurusPotion");
 
 #pragma endregion
 	}

@@ -22,12 +22,12 @@
 
 #include "MaximaPotion.h"
 #include "FocusPotion.h"
+#include "EdurusPotion.h"
+#include "WiggenweldPotion.h"
 
-#include "EndurusPotion.h"
 #include "CoolTime.h"	
 #include "Defence.h"
 
-#include "WiggenweldPotion.h"
 
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -142,19 +142,7 @@ void CPlayer::Tick(_float fTimeDelta)
 		m_pPlayer_Information->fix_HP(-10);
 		m_pPlayer_Information->Using_Fnisher();
 	}
-	if (pGameInstance->Get_DIKeyState(DIK_F5, CInput_Device::KEY_DOWN))
-	{
-		//m_pFocusPotion->Use();
-	}
-	if (pGameInstance->Get_DIKeyState(DIK_F6, CInput_Device::KEY_DOWN))
-	{
-		//m_pMaximaPotion->Use(_float3(0.f, 0.f, 0.f));
-		m_isPowerUp = true;
-	}
-	if (pGameInstance->Get_DIKeyState(DIK_F7, CInput_Device::KEY_DOWN))
-	{	
-		//m_pEndurusPotion->Use(_float3(0.f, 0.f, 0.f));
-	}
+	
 
 	ENDINSTANCE;
 
@@ -185,6 +173,8 @@ void CPlayer::Tick(_float fTimeDelta)
 	}
 
 	m_pCooltime->Tick(fTimeDelta);
+	Potion_Duration(fTimeDelta);
+
 
 #ifdef _DEBUG
 	ADD_IMGUI([&] { this->Tick_ImGui(); });
@@ -435,6 +425,18 @@ HRESULT CPlayer::Render_Depth()
 	return S_OK;
 }
 
+void CPlayer::Potion_Duration(_float fTimeDelta)
+{
+	if(m_isPowerUp)
+		m_pMaximaPotion->Duration(fTimeDelta);
+
+	if (m_isDefUp)
+		m_pEdurusPotion->Duration(fTimeDelta);
+	
+	if (m_isFocusOn)
+		m_pFocusPotion->Duration(fTimeDelta);
+}
+
 void CPlayer::On_Maigc_Throw_Data(void* data) const
 {
 	if (static_cast<CMagicBall::COLLSIONREQUESTDESC*>(data)->eMagicTag == LUMOS)
@@ -450,7 +452,6 @@ HRESULT CPlayer::Add_Components()
 		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
 	{
 		__debugbreak();
-		return E_FAIL;
 	}
 
 	/* For.Com_Shader */
@@ -554,14 +555,7 @@ HRESULT CPlayer::Add_Components()
 		return E_FAIL;
 	}
 	
-	//_int DefValue = 15;
-	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_EndurusPotion"),
-	//	TEXT("Com_EndurusPotion"), reinterpret_cast<CComponent**>(&m_pEndurusPotion),&DefValue)))
-	//{
-	//	__debugbreak();
-	//	return E_FAIL;
-	//}
-
+	
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_CoolTime"),
 		TEXT("Com_CoolTime"), reinterpret_cast<CComponent**>(&m_pCooltime))))
 	{
@@ -933,7 +927,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		m_pPlayer_Information->Get_Health()->Set_HP(iHp);
 	}
 
-	/*if (pGameInstance->Get_DIKeyState(DIK_K, CInput_Device::KEY_DOWN))a
+	/*if (pGameInstance->Get_DIKeyState(DIK_K, CInput_Device::KEY_DOWN))
 	{
 		CWiggenweldPotion::CLONE_DESC initDesc;
 		initDesc.pPlayer = this;
@@ -942,6 +936,38 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		pWiggenweldPotion->Use(_float3());
 		Safe_Release(pWiggenweldPotion);
 	}*/
+
+	if (pGameInstance->Get_DIKeyState(DIK_F5, CInput_Device::KEY_DOWN))
+	{
+		CFocusPotion::CLONE_DESC initDesc;
+		initDesc.pPlayer = this;
+		CFocusPotion* pWiggenweldPotion = static_cast<CFocusPotion*>(
+			pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_FocusPotion"), &initDesc));
+		pWiggenweldPotion->Use(_float3());
+		Safe_Release(pWiggenweldPotion);
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_F6, CInput_Device::KEY_DOWN))
+	{
+		CMaximaPotion::CLONE_DESC initDesc;
+		initDesc.pPlayer = this;
+		CMaximaPotion* pWiggenweldPotion = static_cast<CMaximaPotion*>(
+			pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_MaximaPotion"), &initDesc));
+		pWiggenweldPotion->Use(_float3());
+		Safe_Release(pWiggenweldPotion);
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_F7, CInput_Device::KEY_DOWN))
+	{
+		CEdurusPotion::CLONE_DESC initDesc;
+		initDesc.pPlayer = this;
+		CEdurusPotion* pWiggenweldPotion = static_cast<CEdurusPotion*>(
+			pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_EdurusPotion"), &initDesc));
+		pWiggenweldPotion->Use(_float3());
+		Safe_Release(pWiggenweldPotion);
+	}
+
+
 
 	ENDINSTANCE;
 }
@@ -1989,7 +2015,10 @@ void CPlayer::Free()
 		Safe_Release(m_pPlayer_Information);
 		Safe_Release(m_UI_Group_Skill_01);
 		Safe_Release(m_pCooltime);
-		//Safe_Release(m_pMaximaPotion);
+		Safe_Release(m_pMaximaPotion);
+		Safe_Release(m_pEdurusPotion);
+		Safe_Release(m_pFocusPotion);
+		Safe_Release(m_pWiggenweldPotion);
 		Safe_Release(m_pDefence);
 		
 		if (nullptr != m_pTargetTransform)
