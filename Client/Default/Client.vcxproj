@@ -179,6 +179,7 @@
     <ClInclude Include="..\Public\Imperio.h" />
     <ClInclude Include="..\Public\EndurusPotion.h" />
     <ClInclude Include="..\public\Item.h" />
+    <ClInclude Include="..\public\Norm_Test.h" />
     <ClInclude Include="..\public\Plant.h" />
     <ClInclude Include="..\Public\Potion.h" />
     <ClInclude Include="..\public\Tool.h" />
@@ -368,6 +369,7 @@
     <ClCompile Include="..\private\Game_Manager.cpp" />
     <ClCompile Include="..\Private\Lumos.cpp" />
     <ClCompile Include="..\Private\FocusPotion.cpp" />
+    <ClCompile Include="..\private\Norm_Test.cpp" />
     <ClCompile Include="..\private\Plant.cpp" />
     <ClCompile Include="..\Private\Potion.cpp" />
     <ClCompile Include="..\Private\MPBall.cpp" />

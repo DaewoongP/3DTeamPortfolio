@@ -2,7 +2,7 @@
 #include "RenderTarget_Manager.h"
 #include "Shader.h"
 #include "VIBuffer_Rect.h"
-#include"Texture.h"
+#include "Texture.h"
 
 CDistortion::CDistortion(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) : CComponent(pDevice, pContext)
 {
@@ -96,7 +96,7 @@ HRESULT CDistortion::Render()
 	m_pShader->Begin("DistortionX");
 
 	m_pBuffer->Render();
-	if (FAILED(pRenderTarget_Manager->End_MRT(m_pContext)))
+	if (FAILED(pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_MapEffect"))))
 		return E_FAIL;
 
 

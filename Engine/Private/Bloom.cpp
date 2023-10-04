@@ -30,11 +30,6 @@ HRESULT CBloom::Initialize(CVIBuffer_Rect* pRectBuffer)
 	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(ViewportDesc.Width, ViewportDesc.Height, 0.f, 1.f));
 
-#ifdef _DEBUG
-	if (FAILED(pRenderTarget_Manager->Ready_Debug(TEXT("Target_WhiteSpace"), 240.f, 240.f, 160.f, 160.f)))
-		return E_FAIL;
-#endif // _DEBUG
-
 	Safe_Release(pRenderTarget_Manager);
 
 	m_pBuffer = pRectBuffer;
@@ -53,7 +48,7 @@ HRESULT CBloom::Render(const _tchar* pRenderTargetTag)
 	Safe_AddRef(pRenderTarget_Manager);
 
 #pragma region 하얀부분 추출
-	if (FAILED(pRenderTarget_Manager->Begin_PostProcessingRenderTarget(m_pContext, TEXT("MRT_WhiteSpace"))))
+	if (FAILED(pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_WhiteSpace"))))
 		return E_FAIL;
 
 	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
@@ -72,7 +67,7 @@ HRESULT CBloom::Render(const _tchar* pRenderTargetTag)
 	if (FAILED(m_pBuffer->Render()))
 		return E_FAIL;
 
-	if (FAILED(pRenderTarget_Manager->End_PostProcessingRenderTarget(m_pContext)))
+	if (FAILED(pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_WhiteSpace"))))
 		return E_FAIL;
 #pragma endregion
 

@@ -319,6 +319,7 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Type.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VelocityMapInst.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointColInstance.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointInstance.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxRectColIdxInstance.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxRectColInstance.hlsl" />
   </ItemGroup>

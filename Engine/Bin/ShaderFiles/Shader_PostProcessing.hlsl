@@ -3,8 +3,7 @@
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
 texture2D g_DeferredTexture;
-texture2D g_GlowTexture;
-texture2D g_Texture;
+texture2D g_SkyTexture;
 
 struct VS_IN
 {
@@ -49,15 +48,14 @@ PS_OUT PS_MAIN_HDR(PS_IN In)
     PS_OUT Out = (PS_OUT) 0;
 
     vector vDeferredTexture = g_DeferredTexture.Sample(LinearSampler, In.vTexUV);
+    vector vSkyTexture = g_SkyTexture.Sample(LinearSampler, In.vTexUV);
+    
     if (0.f == vDeferredTexture.a)
-        discard;
+        vDeferredTexture = vSkyTexture;
+    else
+        vDeferredTexture.rgb += ACESToneMapping(vDeferredTexture.rgb);
 
-    vector vTexture = g_Texture.Sample(LinearSampler, In.vTexUV);
-    vector vGlowTexture = g_GlowTexture.Sample(LinearSampler, In.vTexUV);
-
-    Out.vColor = vDeferredTexture + vGlowTexture + vTexture;
-
-    Out.vColor.rgb += ACESToneMapping(Out.vColor.rgb);
+    Out.vColor = vDeferredTexture;
 
     return Out;
 }

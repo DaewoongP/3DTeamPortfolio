@@ -15,7 +15,7 @@ class ENGINE_DLL CRenderer final : public CGameObject
 {
 public:
 	enum RENDERGROUP {RENDER_PRIORITY, RENDER_DEPTH, RENDER_NONBLEND, RENDER_NONLIGHT, RENDER_BLEND,
-					  RENDER_GLOW, RENDER_PICKING, RENDER_BRUSHING, RENDER_UI, RENDER_UITEXTURE, RENDER_END };
+					  RENDER_GLOW, RENDER_DISTORTION, RENDER_PICKING, RENDER_BRUSHING, RENDER_UI, RENDER_UITEXTURE, RENDER_END };
 
 private:
 	explicit CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -48,6 +48,7 @@ private:
 	HRESULT Render_NonLight();
 	HRESULT Render_Blend();
 	HRESULT Render_HDR();
+	HRESULT Render_Distortion();
 	HRESULT Render_PostProcessing();
 	HRESULT Render_UI();
 
