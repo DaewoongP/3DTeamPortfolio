@@ -472,6 +472,9 @@
     <Filter Include="96. ImGui">
       <UniqueIdentifier>{a50a5e26-6a04-4c0e-a541-6d264c6a12fd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\09. Item\02. Ingredient\AshwinderEggs">
+      <UniqueIdentifier>{e33012ec-8d62-40c4-85e9-f8df38017186}</UniqueIdentifier>
+    </Filter>
     <Filter Include="04. Effect\Normal">
       <UniqueIdentifier>{a74d6959-7585-400e-a1ae-d972cc6abd86}</UniqueIdentifier>
     </Filter>
@@ -947,6 +950,12 @@
     <ClInclude Include="..\Public\EndurusPotion.h">
       <Filter>02. GameObject\09. Item\ex2.EdurusPotion</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\ImGui_Manager.h">
+      <Filter>96. ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\AshwinderEggs_Item.h">
+      <Filter>02. GameObject\09. Item\02. Ingredient\AshwinderEggs</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\ConjuredDragon.h">
       <Filter>02. GameObject\02. Enemy\04. Boss</Filter>
     </ClInclude>
@@ -1397,6 +1406,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\EndurusPotion.cpp">
       <Filter>02. GameObject\09. Item\ex2.EdurusPotion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ImGui_Manager.cpp">
+      <Filter>96. ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\AshwinderEggs_Item.cpp">
+      <Filter>02. GameObject\09. Item\02. Ingredient\AshwinderEggs</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\ConjuredDragon.cpp">
       <Filter>02. GameObject\02. Enemy\04. Boss</Filter>

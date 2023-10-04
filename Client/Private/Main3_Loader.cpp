@@ -39,6 +39,7 @@
 #include "EndurusPotion.h"
 #include "WiggenweldPotion.h"
 #include "Ingredient.h"
+#include "AshwinderEggs_Item.h"
 #pragma endregion
 
 
@@ -333,13 +334,17 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 			throw TEXT("Prototype_Component_Weapon_Fig_Wand");
 #pragma endregion
 
-#pragma region Load Potion
+#pragma region Load Item
 
 		/* For.Prototype_GameObject_WiggenweldPotion*/
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_WiggenweldPotion"),
 			CWiggenweldPotion::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_WiggenweldPotion");
 
+		/* For.Prototype_GameObject_AshwinderEggs_Item*/
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_AshwinderEggs_Item"),
+			CAshwinderEggs_Item::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_AshwinderEggs_Item");
 #pragma endregion
 	}
 	catch (const _tchar* pErrorTag)

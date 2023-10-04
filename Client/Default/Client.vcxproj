@@ -167,6 +167,7 @@
     <ClInclude Include="..\Public\Accio.h" />
     <ClInclude Include="..\Public\Action.h" />
     <ClInclude Include="..\Public\Animation_Camera_Model.h" />
+    <ClInclude Include="..\public\AshwinderEggs_Item.h" />
     <ClInclude Include="..\public\ChineseChompingCabbageItem.h" />
     <ClInclude Include="..\Public\ConjuredDragon.h" />
     <ClInclude Include="..\public\HorklumpJuice_Item.h" />
@@ -355,6 +356,7 @@
     <ClCompile Include="..\Private\Accio.cpp" />
     <ClCompile Include="..\Private\Action.cpp" />
     <ClCompile Include="..\Private\Animation_Camera_Model.cpp" />
+    <ClCompile Include="..\Private\AshwinderEggs_Item.cpp" />
     <ClCompile Include="..\private\ChineseChompingCabbageItem.cpp" />
     <ClCompile Include="..\Private\ConjuredDragon.cpp" />
     <ClCompile Include="..\private\HorklumpJuice_Item.cpp" />
