@@ -21,11 +21,11 @@ HRESULT CFocusPotion::Initialize_Prototype(_uint iLevel)
 	m_ItemCreateDesc.iCost = 500;									// 가격
 	m_ItemCreateDesc.wstrKoreanName = TEXT("집중력 물약");			// 한글명
 	m_ItemCreateDesc.wstrUIPath = TEXT("../../Resources/UI/Game/UI/Icons/Potions/UI_T_AMFillPotion.png"); // UI경로
-	m_ItemCreateDesc.wstrModelPath = TEXT("../../Resources/Models/NonAnims/SM_SpherePrimitiveRegularNormals_01/SM_SpherePrimitiveRegularNormals_01.dat"); // 모델경로
-	m_ItemCreateDesc.eModelType = CModel::TYPE_NONANIM; // 모델 타입
-	m_ItemCreateDesc.PivotMatrix = _float4x4(); // 피벗 매트릭스
 
 	// 포션 정보
+	m_PotionCreateDesc.wstrModelPath = TEXT("../../Resources/Models/NonAnims/SM_SpherePrimitiveRegularNormals_01/SM_SpherePrimitiveRegularNormals_01.dat"); // 모델경로
+	m_PotionCreateDesc.eModelType = CModel::TYPE_NONANIM; // 모델 타입
+	m_PotionCreateDesc.PivotMatrix = _float4x4(); // 피벗 매트릭스
 	m_PotionCreateDesc.Ingredients.push_back(FLUXWEED_STEM);		// 재료1
 	m_PotionCreateDesc.Ingredients.push_back(DITTANY_LEAVES);		// 재료2
 	m_PotionCreateDesc.fManufacturingTime = 60.f;					// 제조시간

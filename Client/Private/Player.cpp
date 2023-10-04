@@ -933,15 +933,20 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		m_pPlayer_Information->Get_Health()->Set_HP(iHp);
 	}
 
-	/*if (pGameInstance->Get_DIKeyState(DIK_K, CInput_Device::KEY_DOWN))a
+	if (pGameInstance->Get_DIKeyState(DIK_K, CInput_Device::KEY_DOWN))
 	{
 		CWiggenweldPotion::CLONE_DESC initDesc;
-		initDesc.pPlayer = this;
-		CWiggenweldPotion* pWiggenweldPotion = static_cast<CWiggenweldPotion*>(
-			pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_WiggenweldPotion"), &initDesc));
-		pWiggenweldPotion->Use(_float3());
-		Safe_Release(pWiggenweldPotion);
-	}*/
+		//CWiggenweldPotion* pWiggenweldPotion = static_cast<CWiggenweldPotion*>(
+		//	pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_WiggenweldPotion"), &initDesc));
+		pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE
+			, TEXT("Prototype_GameObject_WiggenweldPotion")
+			, TEXT("Layer_Item")
+			, Generate_HashtagW().data()
+			, &initDesc);
+		
+		//pWiggenweldPotion->Use(_float3());
+		//Safe_Release(pWiggenweldPotion);
+	}
 
 	ENDINSTANCE;
 }
