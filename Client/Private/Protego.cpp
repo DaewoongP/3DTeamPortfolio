@@ -11,7 +11,6 @@ CProtego::CProtego(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 CProtego::CProtego(const CProtego& rhs)
 	: CMagicBall(rhs)
-	, m_eCurState(rhs.m_eCurState)
 	, m_vColor1(rhs.m_vColor1)
 	, m_vColor2(rhs.m_vColor2)
 	, m_fScale(rhs.m_fScale)
@@ -98,10 +97,9 @@ HRESULT CProtego::Initialize(void* pArg)
 
 void CProtego::Tick(_float fTimeDelta)
 {
-	m_pTransform->Set_Position(m_CurrentTargetMatrix.Translation());
 	__super::Tick(fTimeDelta);
 
-	//Tick_Imgui();
+	m_pTransform->Set_Position(m_CurrentTargetMatrix.Translation());
 
 	// 히트 시간 누적
 	m_fHitTimeAcc += fTimeDelta;
@@ -109,7 +107,6 @@ void CProtego::Tick(_float fTimeDelta)
 	{
 		m_isHitEffect = false;
 	}
-	BEGININSTANCE;
 
 	// 히트 이펙트 띄울 위치 고정시키는 로직.
 	if (true == m_isHitEffect)
@@ -118,48 +115,22 @@ void CProtego::Tick(_float fTimeDelta)
 	}
 
 	m_fTimeAcc += fTimeDelta;
-	switch (m_eCurState)
-	{
-	case Client::CProtego::ENTER:
-		Tick_Enter(fTimeDelta);
-		break;
-	case Client::CProtego::STAY:
-		Tick_Stay(fTimeDelta);
-		break;
-	case Client::CProtego::EXIT:
-		Tick_Exit(fTimeDelta);
-		break;
-	case Client::CProtego::STATE_END:
-		break;
-	default:
-		break;
-	}
-	ENDINSTANCE;
 }
 
 void CProtego::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
-#ifdef _DEBUG
-	this->Tick_Imgui();
-#endif // _DEBUG
 
 	m_pDefaultConeBoom_Particle->Late_Tick(fTimeDelta);
-	if (nullptr != m_pRenderer && STATE_END != m_eCurState)
+	if (nullptr != m_pRenderer)
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BLEND, this);
 		//m_pRenderer->Add_RenderGroup(CRenderer::RENDER_GLOW, this);
-#ifdef _DEBUG
-
-#endif // _DEBUG
 	}
 }
 
 HRESULT CProtego::Render()
 {
-#ifdef _DEBUG
-	// Tick_ImGui();
-#endif // _DEBUG
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
@@ -167,54 +138,6 @@ HRESULT CProtego::Render()
 	FAILED_CHECK_RETURN(m_pBuffer->Render(), E_FAIL);
 
 	return S_OK;
-}
-
-void CProtego::Tick_Enter(const _float& fTimeDelta)
-{
-	_float fRatio = m_fTimeAcc / m_fEnterDuration;
-	m_vColor1.w = fRatio;
-	m_vColor2.w = fRatio;
-
-	m_pTransform->Set_Scale(_float3(m_fScale * fRatio, m_fScale * fRatio, m_fScale * fRatio));
-
-	if (fRatio > 1.f)
-		m_eCurState = STAY;
-}
-
-void CProtego::Tick_Stay(const _float& fTimeDelta)
-{
-	if (m_fLifeTime - m_fTimeAcc <= m_fExitDuration)
-	{
-		m_fTimeAcc = 0.f;
-		m_eCurState = EXIT;
-	}
-}
-
-void CProtego::Tick_Exit(const _float& fTimeDelta)
-{
-	_float fRatio = m_fTimeAcc / m_fExitDuration;
-	m_vColor1.w = fRatio;
-	m_vColor2.w = fRatio;
-	m_fScale = 3.f - fRatio * 3.f;
-	m_pTransform->Set_Scale(_float3(m_fScale, m_fScale, m_fScale));
-
-	if (fRatio >= 1.f)
-	{
-		m_eCurState = STATE_END;
-		Set_MagicBallState(MAGICBALL_STATE_END);
-	}
-}
-
-void CProtego::Late_Tick_Enter(const _float& fTimeDelta)
-{
-}
-
-void CProtego::Late_Tick_Stay(const _float& fTimeDelta)
-{
-}
-
-void CProtego::Late_Tick_Exit(const _float& fTimeDelta)
-{
 }
 
 void CProtego::Find_And_Add_Texture(const _tchar* pPath)
@@ -230,28 +153,6 @@ void CProtego::Find_And_Add_Texture(const _tchar* pPath)
 	ENDINSTANCE;
 }
 
-#ifdef _DEBUG
-void CProtego::Tick_Imgui()
-{
-	RECT clientRect;
-	GetClientRect(g_hWnd, &clientRect);
-	POINT leftTop = { clientRect.left, clientRect.top };
-	POINT rightBottom = { clientRect.right, clientRect.bottom };
-	ClientToScreen(g_hWnd, &leftTop);
-	ClientToScreen(g_hWnd, &rightBottom);
-	int Left = leftTop.x;
-	int Top = rightBottom.y;
-	ImVec2 vWinpos = { _float(Left + 0.f), _float(Top) };
-	ImGui::SetNextWindowPos(vWinpos);
-
-	ImGui::Begin("RimPower");
-
-	ImGui::DragFloat("RimPower", &m_fRimPower, 0.1f, 0.f, FLT_MAX);
-
-	ImGui::End();
-}
-#endif // _DEBUG
-
 void CProtego::Hit_Effect(_float3 vPosition)
 {
 	_float3 vDirection = vPosition - m_pTransform->Get_Position();
@@ -266,6 +167,62 @@ void CProtego::Hit_Effect(_float3 vPosition)
 	m_pFlameBlastFlipbook->Play(m_vCollisionPoint);
 	m_isHitEffect = true;
 	m_fHitTimeAcc = 0.f;
+}
+
+void CProtego::Ready_Begin()
+{
+}
+
+void CProtego::Ready_DrawMagic()
+{
+}
+
+void CProtego::Ready_CastMagic()
+{
+}
+
+void CProtego::Ready_Dying()
+{
+}
+
+void CProtego::Tick_Begin(_float fTimeDelta)
+{
+	__super::Tick_Begin(fTimeDelta);
+}
+
+void CProtego::Tick_DrawMagic(_float fTimeDelta)
+{
+	_float fRatio = m_fTimeAcc / m_fEnterDuration;
+	m_vColor1.w = fRatio;
+	m_vColor2.w = fRatio;
+
+	m_pTransform->Set_Scale(_float3(m_fScale * fRatio, m_fScale * fRatio, m_fScale * fRatio));
+
+	if (fRatio > 1.f)
+		Do_MagicBallState_To_Next();
+}
+
+void CProtego::Tick_CastMagic(_float fTimeDelta)
+{
+	if (m_fLifeTime - m_fTimeAcc <= m_fExitDuration)
+	{
+		m_fTimeAcc = 0.f;
+		Do_MagicBallState_To_Next();
+	}
+}
+
+void CProtego::Tick_Dying(_float fTimeDelta)
+{
+	_float fRatio = m_fTimeAcc / m_fExitDuration;
+	m_vColor1.w = fRatio;
+	m_vColor2.w = fRatio;
+	m_fScale = 3.f - fRatio * 3.f;
+	m_pTransform->Set_Scale(_float3(m_fScale, m_fScale, m_fScale));
+
+	if (fRatio >= 1.f)
+	{
+		Do_MagicBallState_To_Next();
+	}
 }
 
 void CProtego::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
@@ -342,8 +299,8 @@ void CProtego::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 
 HRESULT CProtego::Reset(MAGICBALLINITDESC& InitDesc)
 {
+	//Set InitDesc to MagicBallDesc
 	__super::Reset(InitDesc);
-
 	switch (InitDesc.eMagicType)
 	{
 	case Client::CMagic::MT_NOTHING:
@@ -375,8 +332,6 @@ HRESULT CProtego::Reset(MAGICBALLINITDESC& InitDesc)
 	m_fExitDuration = { 0.1f };
 	m_fRimPower = { 2.1f };
 	m_isHitEffect = { false };
-
-	m_eCurState = { ENTER };
 	m_fTimeAcc = { 0.f };
 	m_fHitTimeAcc = { 0.f };
 	m_pFlameBlastFlipbook->Get_Transform()->Set_Scale(_float3(1.f, 1.f, 1.f));
@@ -457,36 +412,36 @@ HRESULT CProtego::SetUp_ShaderResources()
 	return S_OK;
 }
 
-//HRESULT CProtego::Add_RigidBody()
-//{
-//	CRigidBody::RIGIDBODYDESC RigidBodyDesc;
-//	RigidBodyDesc.isStatic = false;
-//	RigidBodyDesc.isTrigger = true;
-//	RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
-//	RigidBodyDesc.vOffsetPosition = _float3(0.f, 0.0f, 0.f);
-//	RigidBodyDesc.fStaticFriction = 0.f;
-//	RigidBodyDesc.fDynamicFriction = 0.f;
-//	RigidBodyDesc.fRestitution = 0.f;
-//	PxSphereGeometry SphereGeometry = PxSphereGeometry(m_fScale);
-//	RigidBodyDesc.pGeometry = &SphereGeometry;
-//	RigidBodyDesc.eConstraintFlag = CRigidBody::AllRot;
-//	RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 0.f, 1.f);
-//	RigidBodyDesc.isGravity = false;
-//	RigidBodyDesc.pOwnerObject = this;
-//	RigidBodyDesc.eThisCollsion = COL_MAGIC;
-//	RigidBodyDesc.eCollisionFlag = COL_ENEMY_RANGE | COL_WEAPON | COL_ENEMY | COL_TRIGGER | COL_MAGIC;
-//	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Magic_Ball");
-//
-//	/* Com_RigidBody */
-//	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
-//		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
-//	{
-//		MSG_BOX("Failed CTest_Player Add_Component : (Com_RigidBody)");
-//		return E_FAIL;
-//	}
-//
-//	return S_OK;
-//}
+HRESULT CProtego::Add_RigidBody()
+{
+	CRigidBody::RIGIDBODYDESC RigidBodyDesc;
+	RigidBodyDesc.isStatic = false;
+	RigidBodyDesc.isTrigger = true;
+	RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
+	RigidBodyDesc.vOffsetPosition = _float3(0.f, 0.0f, 0.f);
+	RigidBodyDesc.fStaticFriction = 0.f;
+	RigidBodyDesc.fDynamicFriction = 0.f;
+	RigidBodyDesc.fRestitution = 0.f;
+	PxSphereGeometry SphereGeometry = PxSphereGeometry(1.5f);
+	RigidBodyDesc.pGeometry = &SphereGeometry;
+	RigidBodyDesc.eConstraintFlag = CRigidBody::AllRot;
+	RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 0.f, 1.f);
+	RigidBodyDesc.isGravity = false;
+	RigidBodyDesc.pOwnerObject = this;
+	RigidBodyDesc.eThisCollsion = COL_MAGIC;
+	RigidBodyDesc.eCollisionFlag = m_eCollisionFlag;
+	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Magic_Ball");
+
+	/* Com_RigidBody */
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
+		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
+	{
+		MSG_BOX("Failed CMagicBall Add_Component : (Com_RigidBody)");
+		__debugbreak();
+		return E_FAIL;
+	}
+	return S_OK;
+}
 
 CProtego* CProtego::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint _iLevel)
 {
