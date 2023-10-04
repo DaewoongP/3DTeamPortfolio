@@ -22,8 +22,8 @@ HRESULT CPotion::Initialize_Prototype(_uint iLevel)
 
 	_float4x4 ScaleMatrix = XMMatrixScaling(0.5f, 0.5f, 0.5f);
 	_float4x4 RotMatrix = XMMatrixRotationQuaternion(XMQuaternionRotationRollPitchYaw(
-		XMConvertToRadians(180.f),
-		XMConvertToRadians(180.f),
+		XMConvertToRadians(-90.f),
+		XMConvertToRadians(0.f),
 		XMConvertToRadians(180.f)));
 	m_PotionCreateDesc.PivotMatrix = ScaleMatrix * RotMatrix;
 
