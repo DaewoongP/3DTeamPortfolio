@@ -63,7 +63,7 @@ HRESULT CMotionBlur::Render()
 	if (FAILED(m_pBuffer->Render()))
 		return E_FAIL;
 
-	if (FAILED(pRenderTarget_Manager->End_MRT(m_pContext)))
+	if (FAILED(pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_MotionBlur"))))
 		return E_FAIL;
 
 	Safe_Release(pRenderTarget_Manager);

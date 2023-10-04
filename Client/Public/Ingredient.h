@@ -1,21 +1,13 @@
 #pragma once
-
 #include "Item.h"
-
-BEGIN(Engine)
-class CShader;
-class CTexture;
-class CRenderer;
-class CTransform;
-class CModel;
-class CCoolTime;
-class CHealth;
-END
 
 BEGIN(Client)
 
 class CIngredient abstract : public CItem
 {
+protected: // 일반 상태, 채집 상태
+	enum STATE { IDLE, GATHERING, DEATH, STATE_END };
+
 protected:
 	typedef struct tagIngredientCreateDesc
 	{
@@ -26,10 +18,10 @@ protected:
 protected:
 	typedef struct tagIngredientCloneDesc : public tagItemCloneDesc
 	{
-		
+
 	}INGREDIENT_CLONE_DESC;
 
-private:
+protected:
 	CIngredient(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CIngredient(const CIngredient& rhs);
 	virtual ~CIngredient() = default;
@@ -43,7 +35,10 @@ private:
 	void Setting_By_Ingredient();
 
 protected:
-	INGREDIENT_CREATE_DESC m_IngredientDesc = { INGREDIENT_CREATE_DESC() };
+	STATE m_eState = { IDLE };
+
+protected:
+	INGREDIENT_CREATE_DESC m_IngredientCreateDesc = { INGREDIENT_CREATE_DESC() };
 
 public:
 	virtual void Free(void) override;

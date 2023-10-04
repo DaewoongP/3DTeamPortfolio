@@ -28,7 +28,7 @@ private:
 	void		Mouse_Move(_float fTimeDelta);
 	void		Fix_Mouse();
 #ifdef _DEBUG
-	void		Tick_ImGui(_float fTimeDelta);
+	void		Tick_ImGui();
 #endif // _DEBUG
 
 private:

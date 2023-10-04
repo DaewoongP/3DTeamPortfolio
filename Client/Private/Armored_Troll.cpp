@@ -120,10 +120,6 @@ void CArmored_Troll::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 
 HRESULT CArmored_Troll::Render()
 {
-#ifdef _DEBUG
-	Tick_ImGui();
-#endif // _DEBUG
-
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 

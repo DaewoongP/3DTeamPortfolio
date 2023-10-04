@@ -168,6 +168,8 @@
     <ClInclude Include="..\Public\Action.h" />
     <ClInclude Include="..\Public\Animation_Camera_Model.h" />
     <ClInclude Include="..\public\ChineseChompingCabbageItem.h" />
+    <ClInclude Include="..\public\HorklumpJuice_Item.h" />
+    <ClInclude Include="..\public\ImGui_Manager.h" />
     <ClInclude Include="..\Public\Ingredient.h" />
     <ClInclude Include="..\Public\Arrestomomentum.h" />
     <ClInclude Include="..\Public\Client_Struct.h" />
@@ -177,6 +179,7 @@
     <ClInclude Include="..\Public\Imperio.h" />
     <ClInclude Include="..\Public\EndurusPotion.h" />
     <ClInclude Include="..\public\Item.h" />
+    <ClInclude Include="..\public\Norm_Test.h" />
     <ClInclude Include="..\public\Plant.h" />
     <ClInclude Include="..\Public\Potion.h" />
     <ClInclude Include="..\Public\Stupefy.h" />
@@ -351,6 +354,8 @@
     <ClCompile Include="..\Private\Action.cpp" />
     <ClCompile Include="..\Private\Animation_Camera_Model.cpp" />
     <ClCompile Include="..\private\ChineseChompingCabbageItem.cpp" />
+    <ClCompile Include="..\private\HorklumpJuice_Item.cpp" />
+    <ClCompile Include="..\private\ImGui_Manager.cpp" />
     <ClCompile Include="..\Private\Ingredient.cpp" />
     <ClCompile Include="..\Private\Arrestomomentum.cpp" />
     <ClCompile Include="..\Private\Crucio.cpp" />
@@ -365,6 +370,7 @@
     <ClCompile Include="..\private\Game_Manager.cpp" />
     <ClCompile Include="..\Private\Lumos.cpp" />
     <ClCompile Include="..\Private\FocusPotion.cpp" />
+    <ClCompile Include="..\private\Norm_Test.cpp" />
     <ClCompile Include="..\private\Plant.cpp" />
     <ClCompile Include="..\Private\Potion.cpp" />
     <ClCompile Include="..\Private\MPBall.cpp" />

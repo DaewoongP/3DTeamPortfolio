@@ -102,7 +102,7 @@ HRESULT CDOF::Render()
 
 	m_pBuffer->Render();
 
-	if (FAILED(pRenderTarget_Manager->End_MRT(m_pContext)))
+	if (FAILED(pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_DOF"))))
 		return E_FAIL;
 
 
@@ -116,7 +116,7 @@ HRESULT CDOF::Render()
 
 	m_pBuffer->Render();
 
-	if (FAILED(pRenderTarget_Manager->End_MRT(m_pContext)))
+	if (FAILED(pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_DOFBlur"))))
 		return E_FAIL;
 
 	if (FAILED(pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_DOFBlurY"))))
@@ -129,7 +129,7 @@ HRESULT CDOF::Render()
 
 	m_pBuffer->Render();
 
-	if (FAILED(pRenderTarget_Manager->End_MRT(m_pContext)))
+	if (FAILED(pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_DOFBlurY"))))
 		return E_FAIL;
 
 

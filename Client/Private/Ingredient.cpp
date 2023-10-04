@@ -12,8 +12,8 @@ CIngredient::CIngredient(const CIngredient& rhs)
 
 HRESULT CIngredient::Initialize_Prototype(_uint iLevel)
 {
-	Ready_Ingredient_UITexture();
 	m_ItemCreateDesc.eItemType = RESOURCE;
+
 	if (FAILED(__super::Initialize_Prototype(iLevel)))
 		return E_FAIL;
 

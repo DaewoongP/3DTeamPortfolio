@@ -253,7 +253,7 @@ void CParticleSystem::Late_Tick(_float _fTimeDelta)
 	{
 		/*if (true == m_RendererModuleDesc.isGlow)
 		{
-			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_GLOW, this);
+			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BLEND, this);
 		}
 
 		else */if ("Default" == m_RendererModuleDesc.strPass ||

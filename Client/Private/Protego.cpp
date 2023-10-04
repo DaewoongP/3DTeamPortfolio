@@ -56,19 +56,19 @@ HRESULT CProtego::Initialize_Prototype(_uint _iLevel)
 			return E_FAIL;
 	}
 
-	// ¿øÀÇ ¸ð¾çÀ» Àâ¾ÆÁÖ´Â ÅØ½ºÃ³
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ ï¿½Ø½ï¿½Ã³
 	Find_And_Add_Texture(TEXT("../../Resources/Effects/Textures/Gradients/VFX_T_Circle_LerpMask_D.png"));
 
-	// 5¹øÂ° ÀÏ··ÀÌ´Â ÅØ½ºÃ³¿Í ¼¯¾î ¾²´Â ³ëÀÌÁî ÅØ½ºÃ³
+	// 5ï¿½ï¿½Â° ï¿½Ï·ï¿½ï¿½Ì´ï¿½ ï¿½Ø½ï¿½Ã³ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ø½ï¿½Ã³
 	Find_And_Add_Texture(TEXT("../../Resources/Effects/Textures/Noises/VFX_T_Noise04_D.png"));
 
-	// ¸ð¸§
+	// ï¿½ï¿½
 	Find_And_Add_Texture(TEXT("../../Resources/Effects/Textures/Noises/VFX_T_RibbonOffset_N.png"));
 
-	// ¸¶¹ýÀ» ¸·¾ÒÀ» ¶§ »ý±â´Â ¿¬±â°°Àº°É·Î ÃßÁ¤µÊ.
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½â°°ï¿½ï¿½ï¿½É·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
 	Find_And_Add_Texture(TEXT("../../Resources/Effects/Textures/VFX_T_Inky_Smoke_D.png"));
 
-	// Ç¥¸é¿¡ ÀÏ··ÀÌ´Â È¿°ú
+	// Ç¥ï¿½é¿¡ ï¿½Ï·ï¿½ï¿½Ì´ï¿½ È¿ï¿½ï¿½
 	Find_And_Add_Texture(TEXT("../../Resources/Effects/Textures/VFX_T_Wisps_2_D.png"));
 
 	ENDINSTANCE;
@@ -101,14 +101,14 @@ void CProtego::Tick(_float fTimeDelta)
 
 	m_pTransform->Set_Position(m_CurrentTargetMatrix.Translation());
 
-	// È÷Æ® ½Ã°£ ´©Àû
+	// ï¿½ï¿½Æ® ï¿½Ã°ï¿½ ï¿½ï¿½ï¿½ï¿½
 	m_fHitTimeAcc += fTimeDelta;
 	if (m_fHitTimeAcc >= 0.5f)
 	{
 		m_isHitEffect = false;
 	}
 
-	// È÷Æ® ÀÌÆåÆ® ¶ç¿ï À§Ä¡ °íÁ¤½ÃÅ°´Â ·ÎÁ÷.
+	// ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
 	if (true == m_isHitEffect)
 	{
 		m_vCollisionPoint = m_vCollisionPointOffset + m_pTransform->Get_Position();
@@ -120,6 +120,18 @@ void CProtego::Tick(_float fTimeDelta)
 void CProtego::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
+	m_pRigidBody->Enable_Collision("Magic_Ball", this);
+#ifdef _DEBUG
+	ADD_IMGUI([&] { this->Tick_Imgui(); });
+#endif // _DEBUG
+
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	if (pGameInstance->Get_DIKeyState(DIK_J))
+	{
+		Hit_Effect(_float3(9.f, 9.f, 9.f));
+	}
+	Safe_Release(pGameInstance);
 
 	m_pDefaultConeBoom_Particle->Late_Tick(fTimeDelta);
 	if (nullptr != m_pRenderer)
@@ -227,16 +239,16 @@ void CProtego::Tick_Dying(_float fTimeDelta)
 
 void CProtego::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
-	//Ãæµ¹µÈ°Ô ÀÖ½À´Ï´Ù.
+	//ï¿½æµ¹ï¿½È°ï¿½ ï¿½Ö½ï¿½ï¿½Ï´ï¿½.
 	__super::OnCollisionEnter(CollisionEventDesc);
 
-	//´øÁ®Áà¾ßÇÏ´Â°ª
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï´Â°ï¿½
 	CEnemy::ATTACKTYPE eAttackType = CEnemy::ATTACK_NONE;
 
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
 	wstring wstrCollisionTag = CollisionEventDesc.pOtherCollisionTag;
 
-	//¸÷ Ãæµ¹ÀÌ¸é ¶óÀÌÆ®/Çìºñ Ã³¸®
+	//ï¿½ï¿½ ï¿½æµ¹ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®/ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½
 	if (wstring::npos != wstrCollisionTag.find(TEXT("Attack")) ||
 		wstring::npos != wstrCollisionTag.find(TEXT("Enemy_Body")))
 	{
@@ -247,7 +259,7 @@ void CProtego::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		eAttackType = pDesc->eType;
 	}
 
-	//¸¶¹ý Ãæµ¹ÀÌ¸é ¶óÀÌÆ®/ºê·¹ÀÌÅ© Ã³¸®
+	//ï¿½ï¿½ï¿½ï¿½ ï¿½æµ¹ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®/ï¿½ê·¹ï¿½ï¿½Å© Ã³ï¿½ï¿½
 	if (wstring::npos != wstrCollisionTag.find(TEXT("Magic_Ball")))
 	{
 		COLLSIONREQUESTDESC* pDesc = static_cast<COLLSIONREQUESTDESC*>(CollisionEventDesc.pArg);
@@ -261,7 +273,7 @@ void CProtego::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		else 
 		{
 			eAttackType = CEnemy::ATTACK_LIGHT;
-			//µµÅº ±â´É Ãß°¡ÇØÁà¾ßÇÔ.
+			//ï¿½ï¿½Åº ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
 		}
 	}
 
@@ -269,10 +281,10 @@ void CProtego::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 	{
 		return;
 	}
-	//³íÀÌ ¾Æ´Ï¸é Ãæµ¹ ÀÌÆåÆ® Àç»ý
+	//ï¿½ï¿½ï¿½ï¿½ ï¿½Æ´Ï¸ï¿½ ï¿½æµ¹ ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½
 	Hit_Effect(CollisionEventDesc.pOtherTransform->Get_Position());
 
-	//³ª¸¦ ¸¸µç ºÎ¸ð¿¡°Ô ÇÁ·ÎÅ×°í Ãæµ¹µÆ´Ù´Â°É º¸³»Áà¾ßÇÔ.
+	//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Î¸ð¿¡°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½×°ï¿½ ï¿½æµ¹ï¿½Æ´Ù´Â°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
 	/*if (!lstrcmp(m_pTarget->Get_Tag(), TEXT("GameObject_Player")))
 	{
 		static_cast<CPlayer*>(m_pTarget)->Set_Protego_Collision(eAttackType);
@@ -304,26 +316,26 @@ HRESULT CProtego::Reset(MAGICBALLINITDESC& InitDesc)
 	switch (InitDesc.eMagicType)
 	{
 	case Client::CMagic::MT_NOTHING:
-		__debugbreak(); // ±×·ìÀ» Á¦´ë·Î ´øÁ®ÁÖÁö ¾ÊÀ¸¸é ¿À·ù. F5´©¸£¸é °è¼Ó ÁøÇà °¡´É.(Èò»ö ÇÁ·ÎÅ×°í.)
+		__debugbreak(); // ï¿½×·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½. F5ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.(ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½×°ï¿½.)
 		break;
 	case Client::CMagic::MT_YELLOW:
-		m_vColor1 = { 1.f, 1.f, 0.f, 1.f }; // ³ë¶õ»ö
-		m_vColor2 = { 1.f, 0.5f, 0.f, 1.f }; // ÁÖÈ²»ö
+		m_vColor1 = { 1.f, 1.f, 0.f, 1.f }; // ï¿½ï¿½ï¿½ï¿½ï¿½
+		m_vColor2 = { 1.f, 0.5f, 0.f, 1.f }; // ï¿½ï¿½È²ï¿½ï¿½
 		break;
 	case Client::CMagic::MT_PURPLE:
-		m_vColor1 = { 0.f, 0.f, 1.f, 1.f }; // ÆÄ¶õ»ö
-		m_vColor2 = { 0.5f, 0.f, 0.5f, 1.f }; // º¸¶ó»ö
+		m_vColor1 = { 0.f, 0.f, 1.f, 1.f }; // ï¿½Ä¶ï¿½ï¿½ï¿½
+		m_vColor2 = { 0.5f, 0.f, 0.5f, 1.f }; // ï¿½ï¿½ï¿½ï¿½ï¿½
 		break;
 	case Client::CMagic::MT_RED:
-		m_vColor1 = { 1.f, 0.f, 0.f, 1.f }; // »¡°­»ö
-		m_vColor2 = { 1.f, 0.5f, 0.f, 1.f }; // ÁÖÈ²»ö
+		m_vColor1 = { 1.f, 0.f, 0.f, 1.f }; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		m_vColor2 = { 1.f, 0.5f, 0.f, 1.f }; // ï¿½ï¿½È²ï¿½ï¿½
 		break;
 	case Client::CMagic::MT_ALL:
-		m_vColor1 = { 0.f, 0.f, 1.f, 1.f }; // ÆÄ¶õ»ö
-		m_vColor2 = { 1.f, 0.f, 1.f, 1.f }; // Èò»ö
+		m_vColor1 = { 0.f, 0.f, 1.f, 1.f }; // ï¿½Ä¶ï¿½ï¿½ï¿½
+		m_vColor2 = { 1.f, 0.f, 1.f, 1.f }; // ï¿½ï¿½ï¿½
 		break;
 	default:
-		__debugbreak(); // ±×·ìÀ» Á¦´ë·Î ´øÁ®ÁÖÁö ¾ÊÀ¸¸é ¿À·ù. F5´©¸£¸é °è¼Ó ÁøÇà °¡´É.(Èò»ö ÇÁ·ÎÅ×°í.)
+		__debugbreak(); // ï¿½×·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½. F5ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.(ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½×°ï¿½.)
 		break;
 	}
 	

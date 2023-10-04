@@ -105,7 +105,7 @@ HRESULT CShadow::Render()
 	if (FAILED(m_pBuffer->Render()))
 		return E_FAIL;
 
-	if (FAILED(pRenderTarget_Manager->End_MRT(m_pContext)))
+	if (FAILED(pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_Shadow"))))
 		return E_FAIL;
 
 	/*if (FAILED(m_pBlur->Render(TEXT("MRT_Shadow_BlurX"), TEXT("Target_Shadow"), CBlur::BLUR_X)))
