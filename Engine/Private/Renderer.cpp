@@ -474,9 +474,9 @@ HRESULT CRenderer::Render_SSAO()
 		return E_FAIL;
 	
 	// Blur
-	if (FAILED(m_pBlur->Render(TEXT("MRT_SSAO_BlurX"), TEXT("Target_SSAO"), CBlur::BLUR_X, 5)))
+	if (FAILED(m_pBlur->Render(TEXT("MRT_SSAO_BlurX"), TEXT("Target_SSAO"), CBlur::BLUR_X)))
 		return E_FAIL;
-	if (FAILED(m_pBlur->Render(TEXT("MRT_SSAO_Blured"), TEXT("Target_SSAO_BlurX"), CBlur::BLUR_Y, 5)))
+	if (FAILED(m_pBlur->Render(TEXT("MRT_SSAO_Blured"), TEXT("Target_SSAO_BlurX"), CBlur::BLUR_Y)))
 		return E_FAIL;
 
 	return S_OK;
