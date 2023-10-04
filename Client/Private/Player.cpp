@@ -1472,7 +1472,7 @@ void CPlayer::Shot_Basic_Last_Spell()
 
 void CPlayer::Protego()
 {
-	m_pMagicSlot->Action_Magic_Basic(1, this, m_pWeapon, COL_ENEMY,m_isPowerUp);
+	m_pMagicSlot->Action_Magic_Basic(1, this, m_pWeapon, (COLLISIONFLAG)( COL_WEAPON | COL_ENEMY ) ,m_isPowerUp);
 }
 
 void CPlayer::Gravity_On()
