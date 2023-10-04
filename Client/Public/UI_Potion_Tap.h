@@ -1,20 +1,12 @@
 #pragma once
-#include "GameObject.h"
-#include "Client_Defines.h"
-#include "UI.h"
-#include "Item.h"
 
-BEGIN(Engine)
-class CShader;
-class CRenderer;
-class CVIBuffer_Rect;
-class CTexture;
-END
+#include "UI.h"
+#include "Client_Defines.h"
 
 BEGIN(Client)
 class CUI_Back;
-class CUI_Effect_Back;
-class CUI_Font;
+class CItem;
+class CUI_Group_Cursor;
 
 class CUI_Potion_Tap final : public CGameObject
 {
@@ -31,31 +23,29 @@ public:
 	virtual HRESULT Render() override;
 
 public:
-	HRESULT Add_Prototype();
-
-private:
-	CUI::UIDESC Load_File(const HANDLE hFile);
-
-private:
+	HRESULT	Add_Prototype();
 	HRESULT	Ready_DefaultTexture();
 
-public:
-	HRESULT	Set_ItemCount(vector<CItem*>& pItems);
-	HRESULT	Set_CurTapItem();
-
 private:
-	CShader* m_pShaderCom = { nullptr };
-	CRenderer* m_pRendererCom = { nullptr };
-	CVIBuffer_Rect* m_pVIBufferCom = { nullptr };
+	HRESULT Create_Component(const _tchar* pFIlePath, wstring wszTag, POTIONTAP eType);
+	HRESULT Add_Components(wstring wszTag, POTIONTAP eType);
+	HRESULT Read_File(const _tchar* pFilePath, POTIONTAP iIndex);
+	CUI::UIDESC Load_File(const HANDLE hFile, _bool isDDS = true);
+
+public:
+	HRESULT	Set_ItemCount(vector<vector<CItem*>>& pItems);
+	_uint	Set_CurTapItem();
+
 
 private:
 	vector<CUI_Back*>				m_pIcons;
 	vector<CUI_Effect_Back*>		m_pFrames;
-	vector<CUI_Back*>				m_pCountBack;
-	vector<CUI_Back*>				m_pItemBack;
+	vector<CUI_Back*>				m_pCountBacks;
+	vector<CUI_Effect_Back*>		m_pItemBacks;
 	vector<CUI_Font*>				m_pFonts;
 
-	CUI_Back*						m_pBack;
+	CUI_Back*					m_pBack;
+	CUI_Group_Cursor*				m_pCursor;
 
 private:
 	_bool						m_isOpen = { false };
