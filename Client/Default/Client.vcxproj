@@ -392,7 +392,9 @@
     <ClCompile Include="..\Private\Menu_Quest.cpp" />
     <ClCompile Include="..\Private\Menu_Setting.cpp" />
     <ClCompile Include="..\Private\MapObject_Ins.cpp" />
-    <ClCompile Include="..\Private\UI_Potion_Tap.cpp" />
+    <ClCompile Include="..\Private\UI_Potion_Tap.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="..\private\WiggenweldPotion.cpp" />
     <ClCompile Include="..\Private\Sequence_AirHit.cpp" />
     <ClCompile Include="..\Private\StandingState.cpp" />

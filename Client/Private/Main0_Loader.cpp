@@ -28,6 +28,8 @@
 #include "Menu_Invectory.h"
 #include "UI_Inventory.h"
 #include "Inventory.h"
+#include "UI_Potion_Tap.h"
+#include "PotionTap.h"
 #pragma endregion UI
 
 #pragma region Effects
@@ -288,6 +290,13 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Slot"),
 			CUI_Slot::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_UI_Slot");
+
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Potion_Tap"),
+			CPotionTap::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Potion_Tap");
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Potion_Tap"),
+			CUI_Potion_Tap::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_UI_Potion_Tap");
 #pragma endregion
 
 #pragma region Load Texture
