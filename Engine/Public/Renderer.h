@@ -49,7 +49,6 @@ private:
 	HRESULT Render_Blend();
 	HRESULT Render_HDR();
 	HRESULT Render_Distortion();
-	HRESULT Render_Effects();
 	HRESULT Render_PostProcessing();
 	HRESULT Render_UI();
 
@@ -95,7 +94,7 @@ private:
 	class CShader*					m_pPostProcessingShader = { nullptr };
 	class CShader*					m_pShadeTypeShader = { nullptr };
 	class CShader*					m_pSSAOShader = { nullptr };
-	class CShader*					m_pAfterShader = { nullptr };
+	class CShader*					m_pDistortionShader = { nullptr };
 
 private:
 	class CBlur*					m_pBlur = { nullptr };

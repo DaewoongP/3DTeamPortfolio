@@ -1282,9 +1282,6 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Bloom.hlsl">
       <Filter>01. Utility\03. Components\02. Renderer\Bloom</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_Distortion.hlsl">
-      <Filter>01. Utility\03. Components\02. Renderer\Distortion</Filter>
-    </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Glow.hlsl">
       <Filter>01. Utility\03. Components\02. Renderer\Glow</Filter>
     </FxCompile>
@@ -1311,6 +1308,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointInstance.hlsl">
       <Filter>01. Utility\98. ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Distortion.hlsl">
+      <Filter>01. Utility\03. Components\02. Renderer\Shader</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
