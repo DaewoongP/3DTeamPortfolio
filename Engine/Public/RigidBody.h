@@ -56,8 +56,6 @@ public:
 
 	typedef struct tagCollisionDataDesc
 	{
-		tagCollisionDataDesc() = default;
-		~tagCollisionDataDesc() = default;
 		class CGameObject*	pOwnerObject = { nullptr };
 		void*				pCollisionData = { nullptr };
 	}COLLISIONDATADESC;
@@ -136,6 +134,7 @@ private:
 private:
 	PxShape* Find_Shape(const _char* szShapeTag);
 	_bool IsValid(RIGIDBODYDESC* pRigidBodyDesc);
+	void Check_TriggerStay();
 
 #ifdef _DEBUG
 private:

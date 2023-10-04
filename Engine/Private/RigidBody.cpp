@@ -293,6 +293,8 @@ void CRigidBody::Late_Tick(_float fTimeDelta)
 	{
 		m_pActor->userData = nullptr;
 	}
+
+	Check_TriggerStay();
 }
 
 #ifdef _DEBUG
@@ -735,6 +737,18 @@ _bool CRigidBody::IsValid(RIGIDBODYDESC* pRigidBodyDesc)
 	}
 	
 	return true;
+}
+
+void CRigidBody::Check_TriggerStay()
+{
+	for (auto& Pair : m_Shapes)
+	{
+		if (true == Pair.second->getFlags().isSet(PxShapeFlag::eTRIGGER_SHAPE) &&
+			nullptr != Pair.second->userData)
+		{
+			
+		}
+	}
 }
 
 CRigidBody* CRigidBody::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
