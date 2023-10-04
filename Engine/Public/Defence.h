@@ -34,7 +34,9 @@ public:
 	void Set_Defence(const _int & iDeffence) {
 		m_iDeffence = iDeffence;
 	}
-	void Set_PotionDefence(const _int iDeffence) { m_iDeffence += iDeffence; }
+	void Set_PotionDefence(const _int iDeffence) {
+		m_iDeffence += iDeffence;
+	}
 
 public:
 	virtual HRESULT Initialize_Prototype() override { return S_OK; }

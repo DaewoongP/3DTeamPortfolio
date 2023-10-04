@@ -51,18 +51,19 @@ HRESULT CEdurusPotion::Initialize(void* pArg)
 void CEdurusPotion::Duration(_float fTimeDelta)
 {
 	m_fDuration += fTimeDelta;
+	cout << m_fDuration << endl;
 	if (m_fDuration >= m_ItemCreateDesc.fDuration)
+	{
 		m_pPlayer->Set_DefUp(false);
+	}
+
 }
 
 void CEdurusPotion::Use(_float3 vPlayPos)
 {
 	cout << "물약사용" << endl;
 
-	
-	//cout << m_iDefValue << endl;
-
-	
+	m_pPlayer->Set_DefUp(true);
 
 	m_pDefence->Set_PotionDefence(15);
 
@@ -131,5 +132,5 @@ void CEdurusPotion::Free(void)
 	__super::Free();
 
 	Safe_Release(m_pCooltime);
-	//Safe_Release(m_pDefence);
+	Safe_Release(m_pDefence);
 }

@@ -15,8 +15,7 @@ CMaximaPotion::CMaximaPotion(const CMaximaPotion& rhs) : CPotion(rhs)
 
 HRESULT CMaximaPotion::Initialize_Prototype(_uint iLevel)
 {
-    if (FAILED(__super::Initialize_Prototype(iLevel)))
-        return E_FAIL;
+   
     // 아이템 정보
     m_ItemCreateDesc.iCost = 300;											// 가격
     m_ItemCreateDesc.fDuration = 20.f;                                      //지속시간
@@ -29,6 +28,8 @@ HRESULT CMaximaPotion::Initialize_Prototype(_uint iLevel)
     m_PotionCreateDesc.Ingredients.push_back(INGREDIENT::SPIDER_FANG);	// 재료2
     m_PotionCreateDesc.fManufacturingTime = 30.f;							// 제조 시간
 
+    if (FAILED(__super::Initialize_Prototype(iLevel)))
+        return E_FAIL;
     return S_OK;
 }
 

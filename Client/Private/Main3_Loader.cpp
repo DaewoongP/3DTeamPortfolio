@@ -308,17 +308,6 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 			CPlayer_Information::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Player_Information");
 
-		/* For.Prototype_Component_Player_Information */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_CoolTime"),
-			CCoolTime::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_CoolTime");
-
-		/* For.Prototype_Component_Player_Information */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Defence"),
-			CDefence::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_Defence");
-
-		
 
 
 #pragma endregion
@@ -343,25 +332,25 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 
 #pragma region Load Potion
 		/* For.Prototype_Component_Weapon_WiggenwledPotion */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("ProtoType_GameObject_WiggenweldPotion"),
-			CWiggenweldPotion::Create(m_pDevice, m_pContext,eLevelID))))
-			throw TEXT("ProtoType_GameObject_WiggenweldPotion");
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_WiggenweldPotion"),
+		//	CWiggenweldPotion::Create(m_pDevice, m_pContext,eLevelID))))
+		//	throw TEXT("ProtoType_GameObject_WiggenweldPotion");
 
-		///* For.Prototype_Component_Weapon_FocusPotion */
-		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("ProtoType_GameObject_Focuspotion"),
-		//	CFocusPotion::Create(m_pDevice, m_pContext, eLevelID))))b
+		/////* For.Prototype_Component_Weapon_FocusPotion */
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_FocusPotion"),
+		//	CFocusPotion::Create(m_pDevice, m_pContext, eLevelID))))
 		//	throw TEXT("ProtoType_GameObject_Focuspotion");
 
 
-		///* For.Prototype_Component_Weapon_MaximaPotion */
-		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("ProtoType_GameObject_MaximaPotion"),
+		/////* For.Prototype_Component_Weapon_MaximaPotion */
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_MaximaPotion"),
 		//	CMaximaPotion::Create(m_pDevice, m_pContext, eLevelID))))
 		//	throw TEXT("ProtoType_GameObject_MaximaPotion");
 
-		/* For.Prototype_Component_Weapon_EdurusPotion */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("ProtoType_GameObject_EdurusPotion"),
-			CEdurusPotion::Create(m_pDevice, m_pContext, eLevelID))))
-			throw TEXT("ProtoType_GameObject_EdurusPotion");
+		///* For.Prototype_Component_Weapon_EdurusPotion */
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_EdurusPotion"),
+		//	CEdurusPotion::Create(m_pDevice, m_pContext, eLevelID))))
+		//	throw TEXT("ProtoType_GameObject_EdurusPotion");
 
 #pragma endregion
 	}

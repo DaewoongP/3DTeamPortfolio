@@ -427,9 +427,6 @@
     <Filter Include="02. GameObject\09. Item\01. Potion">
       <UniqueIdentifier>{1d5e3cac-b99b-4bcc-9472-30c063c0fb5e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\09. Item\01. Potion\PowerPotion">
-      <UniqueIdentifier>{5a4aa143-71df-4884-91e1-ca2caf295348}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\09. Item\01. Potion\FocusPotion">
       <UniqueIdentifier>{7cb5d380-3253-4755-a164-7338fda2ebf8}</UniqueIdentifier>
     </Filter>

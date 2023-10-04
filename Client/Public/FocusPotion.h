@@ -46,6 +46,9 @@ private:
 	HRESULT SetUp_ShaderResources();
 
 
+private:
+	CCoolTime* m_pCoolTime = { nullptr };
+
 public:
 	static CFocusPotion* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel);
 	virtual CGameObject* Clone(void* pArg) override;

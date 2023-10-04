@@ -64,6 +64,7 @@ public:
 	void Set_DefUp(_bool isDefUp) { m_isDefUp = isDefUp; }
 	void Set_FocusOn(_bool isFocus) { m_isFocusOn = isFocus; }
 
+
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
@@ -87,7 +88,7 @@ private:
 	CCustomModel*	m_pCustomModel = { nullptr }; //스테이트
 	CRigidBody*		m_pRigidBody = { nullptr };
 	CCoolTime*		m_pCooltime = { nullptr };
-	CDefence* m_pDefence = { nullptr };
+	CDefence*		m_pDefence = { nullptr };
 
 private:
 	CPlayer_Camera* m_pPlayer_Camera = { nullptr };

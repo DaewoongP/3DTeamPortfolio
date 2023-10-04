@@ -49,7 +49,7 @@ HRESULT CFocusPotion::Initialize(void* pArg)
 
 void CFocusPotion::Use(_float3 vPlayPos)
 {
-
+	m_pPlayer->Set_FocusOn(true);
 }
 
 void CFocusPotion::Duration(_float fTimeDelta)
@@ -61,6 +61,14 @@ void CFocusPotion::Duration(_float fTimeDelta)
 
 HRESULT CFocusPotion::Add_Components()
 {
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_CoolTime"),
+		TEXT("Com_CoolTime"), reinterpret_cast<CComponent**>(&m_pCoolTime))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+
+
 	return S_OK;
 }
 
@@ -104,4 +112,5 @@ CGameObject* CFocusPotion::Clone(void* pArg)
 void CFocusPotion::Free()
 {
 	__super::Free();
+	Safe_Release(m_pCoolTime);
 }
