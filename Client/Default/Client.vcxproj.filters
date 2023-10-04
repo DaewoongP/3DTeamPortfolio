@@ -457,6 +457,12 @@
     <Filter Include="02. GameObject\09. Item\ex1.MaximaPotion">
       <UniqueIdentifier>{5a4aa143-71df-4884-91e1-ca2caf295348}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\09. Item\02. Ingredient\HorklumpJuice">
+      <UniqueIdentifier>{317ed26b-2a5b-4a2b-89f6-42e887793982}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\04. UI\UI_Item">
+      <UniqueIdentifier>{00fec493-edb5-4b7e-a84e-cd428648c052}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -929,6 +935,9 @@
     <ClInclude Include="..\Public\EndurusPotion.h">
       <Filter>02. GameObject\09. Item\ex2.EdurusPotion</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\HorklumpJuice_Item.h">
+      <Filter>02. GameObject\09. Item\02. Ingredient\HorklumpJuice</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1361,6 +1370,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\EndurusPotion.cpp">
       <Filter>02. GameObject\09. Item\ex2.EdurusPotion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\HorklumpJuice_Item.cpp">
+      <Filter>02. GameObject\09. Item\02. Ingredient\HorklumpJuice</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
