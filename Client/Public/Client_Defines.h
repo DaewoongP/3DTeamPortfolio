@@ -22,6 +22,8 @@ using namespace Client;
 #include "backends\imgui_impl_win32.h"
 #include "backends\imgui_impl_dx11.h"
 
+#include "ImGui_Manager.h"
+
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb\stb_image.h"
 #endif // _DEBUG

@@ -463,6 +463,9 @@
     <Filter Include="02. GameObject\04. UI\UI_Item">
       <UniqueIdentifier>{00fec493-edb5-4b7e-a84e-cd428648c052}</UniqueIdentifier>
     </Filter>
+    <Filter Include="96. ImGui">
+      <UniqueIdentifier>{a50a5e26-6a04-4c0e-a541-6d264c6a12fd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -938,6 +941,9 @@
     <ClInclude Include="..\public\HorklumpJuice_Item.h">
       <Filter>02. GameObject\09. Item\02. Ingredient\HorklumpJuice</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\ImGui_Manager.h">
+      <Filter>96. ImGui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1373,6 +1379,9 @@
     </ClCompile>
     <ClCompile Include="..\private\HorklumpJuice_Item.cpp">
       <Filter>02. GameObject\09. Item\02. Ingredient\HorklumpJuice</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ImGui_Manager.cpp">
+      <Filter>96. ImGui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

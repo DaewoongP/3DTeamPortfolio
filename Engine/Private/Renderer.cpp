@@ -186,18 +186,25 @@ HRESULT CRenderer::Draw_RenderGroup()
 	if (FAILED(m_pRenderTarget_Manager->End_PostProcessingRenderTarget(m_pContext)))
 		return E_FAIL;
 
-	// 객체 렌더타겟 후처리 쉐이딩
-	if (FAILED(Render_PostProcessing()))
+	if (FAILED(m_pBloom->Render(TEXT("Target_Deferred"))))
 		return E_FAIL;
+	if (FAILED(m_pGlow->Render(m_RenderObjects[RENDER_GLOW])))
+		return E_FAIL;
+	if (FAILED(Render_HDR()))
+		return E_FAIL;
+	
+	// 객체 렌더타겟 후처리 쉐이딩
+	
 	// 이펙트
 	if (FAILED(Render_NonLight()))
 		return E_FAIL;
 	if (FAILED(Render_Blend()))
 		return E_FAIL;
-	if (FAILED(m_pGlow->Render(m_RenderObjects[RENDER_GLOW])))
-		return E_FAIL;
 
 	// 이펙트 후처리 쉐이딩
+
+
+	// 백버퍼 렌더링
 
 	// UI 렌더링
 	if (FAILED(Render_UI()))
@@ -499,9 +506,13 @@ HRESULT CRenderer::Render_Blend()
 	return S_OK;
 }
 
-HRESULT CRenderer::Render_PostProcessing()
+HRESULT CRenderer::Render_HDR()
 {
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Deferred"), m_pPostProcessingShader, "g_DeferredTexture")))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_WhiteSpace"), m_pPostProcessingShader, "g_Texture")))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Glowed"), m_pPostProcessingShader, "g_GlowTexture")))
 		return E_FAIL;
 	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
@@ -510,9 +521,18 @@ HRESULT CRenderer::Render_PostProcessing()
 	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
 
-	m_pPostProcessingShader->Begin("PostProcessing");
+	if (FAILED(m_pPostProcessingShader->Begin("HDR")))
+		return E_FAIL;
 
-	m_pRectBuffer->Render();
+	if (FAILED(m_pRectBuffer->Render()))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CRenderer::Render_PostProcessing()
+{
+	
 
 	return S_OK;
 }

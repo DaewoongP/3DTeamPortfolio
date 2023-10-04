@@ -8,6 +8,9 @@ class CGameInstance;
 END
 
 BEGIN(Client)
+#ifdef _DEBUG
+class CImGui_Manager;
+#endif // _DEBUG
 
 class CMainApp final : public CBase
 {
@@ -23,7 +26,6 @@ public:
 public:
 	// 게임 전체에서 사용하기 위한 스태틱 컴포넌트 생성 함수
 	HRESULT Ready_Prototype_Component_For_Static();
-	HRESULT Ready_Prototype_Object_For_Loading();
 	HRESULT Ready_Fonts();
 	HRESULT Open_Level(LEVELID eLevelIndex);
 
@@ -32,10 +34,7 @@ private:
 
 #ifdef _DEBUG
 private: /* ImGui */
-	HRESULT Initialize_ImGui();
-	void Tick_ImGui();
 	void Debug_ImGui();
-	HRESULT Render_ImGui();
 #endif // _DEBUG
 
 private:
@@ -53,9 +52,7 @@ private: /* For. Frame Per Second*/
 
 #ifdef _DEBUG
 private: /* ImGui */
-	_float4					m_vImGuiClearColor;
-	ID3D11Texture2D*		m_pTexture2D = { nullptr };
-	ID3D11RenderTargetView* m_pImGuiRTV = { nullptr };
+	CImGui_Manager*			m_pImGui_Manager = { nullptr };
 	LEVELID					m_eLevelID = { LEVEL_END };
 	_bool					m_isFirstLoaded = { false };
 #endif // _DEBUG

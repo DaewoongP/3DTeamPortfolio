@@ -53,7 +53,7 @@ HRESULT CBloom::Render(const _tchar* pRenderTargetTag)
 	Safe_AddRef(pRenderTarget_Manager);
 
 #pragma region 하얀부분 추출
-	if (FAILED(pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_WhiteSpace"))))
+	if (FAILED(pRenderTarget_Manager->Begin_PostProcessingRenderTarget(m_pContext, TEXT("MRT_WhiteSpace"))))
 		return E_FAIL;
 
 	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
@@ -64,6 +64,7 @@ HRESULT CBloom::Render(const _tchar* pRenderTargetTag)
 		return E_FAIL;
 
 	if (FAILED(pRenderTarget_Manager->Bind_ShaderResourceView(pRenderTargetTag, m_pShader, "g_TargetTexture")))
+		return E_FAIL;
 
 	if (FAILED(m_pShader->Begin("WhiteSpace")))
 		return E_FAIL;
@@ -71,7 +72,7 @@ HRESULT CBloom::Render(const _tchar* pRenderTargetTag)
 	if (FAILED(m_pBuffer->Render()))
 		return E_FAIL;
 
-	if (FAILED(pRenderTarget_Manager->End_MRT(m_pContext)))
+	if (FAILED(pRenderTarget_Manager->End_PostProcessingRenderTarget(m_pContext)))
 		return E_FAIL;
 #pragma endregion
 

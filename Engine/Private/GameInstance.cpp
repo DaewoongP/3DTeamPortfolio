@@ -1009,8 +1009,6 @@ void CGameInstance::Release_Engine()
 
 	CPipeLine::GetInstance()->DestroyInstance();
 
-	CTexturePool::GetInstance()->DestroyInstance();
-
 	CComponent_Manager::GetInstance()->DestroyInstance();
 
 	CLevel_Manager::GetInstance()->DestroyInstance();
@@ -1035,11 +1033,13 @@ void CGameInstance::Release_Engine()
 
 	CInput_Device::GetInstance()->DestroyInstance();
 
-	CString_Manager::GetInstance()->DestroyInstance();
-
 	CThreadPool::GetInstance()->DestroyInstance();
 
 	CParticleSystemPool::GetInstance()->DestroyInstance();
+
+	CTexturePool::GetInstance()->DestroyInstance();
+
+	CString_Manager::GetInstance()->DestroyInstance();
 
 	CGraphic_Device::GetInstance()->DestroyInstance();
 }

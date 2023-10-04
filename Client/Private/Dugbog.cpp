@@ -92,7 +92,7 @@ void CDugbog::Tick(_float fTimeDelta)
 		else
 			iter = m_CurrentTickSpells.erase(iter);
 	}
-	cout << m_iCurrentSpell << endl;
+
 	if (nullptr != m_pModelCom)
 		m_pModelCom->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 }
