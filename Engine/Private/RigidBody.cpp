@@ -746,7 +746,6 @@ void CRigidBody::Check_TriggerStay()
 		if (true == Pair.second->getFlags().isSet(PxShapeFlag::eTRIGGER_SHAPE) &&
 			nullptr != Pair.second->userData)
 		{
-			
 		}
 	}
 }
