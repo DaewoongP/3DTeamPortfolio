@@ -49,6 +49,7 @@ private:
 	HRESULT Render_Blend();
 	HRESULT Render_HDR();
 	HRESULT Render_Distortion();
+	HRESULT Render_Effects();
 	HRESULT Render_PostProcessing();
 	HRESULT Render_UI();
 

@@ -76,6 +76,12 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_Distortion"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
+		TEXT("Target_HDR"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
+		TEXT("Target_Effect"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
+		return E_FAIL;
 
 #ifdef _DEBUG
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
@@ -110,6 +116,10 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Distortion"), TEXT("Target_Distortion"))))
 		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_HDR"), TEXT("Target_HDR"))))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Effect"), TEXT("Target_Effect"))))
+		return E_FAIL;
 
 #ifdef _DEBUG
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Picking"), TEXT("Target_Picking"))))
@@ -143,6 +153,8 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Distortion"), 240.f, 240.f, 160.f, 160.f)))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Priority"), 240.f, 400.f, 160.f, 160.f)))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Glowed"), 1280.f - 160.f, 160.f, 320.f, 320.f)))
 		return E_FAIL;
 #endif // _DEBUG
 
@@ -208,17 +220,20 @@ HRESULT CRenderer::Draw_RenderGroup()
 	// 이펙트
 	if (FAILED(Render_Distortion()))
 		return E_FAIL;
-	if (FAILED(m_pGlow->Render(m_RenderObjects[RENDER_GLOW])))
+
+	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Effect"))))
 		return E_FAIL;
 	if (FAILED(Render_NonLight()))
 		return E_FAIL;
 	if (FAILED(Render_Blend()))
 		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_Effect"))))
+		return E_FAIL;
 
-	// 이펙트 후처리 쉐이딩
-
-
-	// 백버퍼 렌더링
+	if (FAILED(m_pGlow->Render(m_RenderObjects[RENDER_GLOW]), 30.f))
+		return E_FAIL;
+	if (FAILED(Render_PostProcessing()))
+		return E_FAIL;
 
 	// UI 렌더링
 	if (FAILED(Render_UI()))
@@ -459,9 +474,9 @@ HRESULT CRenderer::Render_SSAO()
 		return E_FAIL;
 	
 	// Blur
-	if (FAILED(m_pBlur->Render(TEXT("MRT_SSAO_BlurX"), TEXT("Target_SSAO"), CBlur::BLUR_X)))
+	if (FAILED(m_pBlur->Render(TEXT("MRT_SSAO_BlurX"), TEXT("Target_SSAO"), CBlur::BLUR_X, 5)))
 		return E_FAIL;
-	if (FAILED(m_pBlur->Render(TEXT("MRT_SSAO_Blured"), TEXT("Target_SSAO_BlurX"), CBlur::BLUR_Y)))
+	if (FAILED(m_pBlur->Render(TEXT("MRT_SSAO_Blured"), TEXT("Target_SSAO_BlurX"), CBlur::BLUR_Y, 5)))
 		return E_FAIL;
 
 	return S_OK;
@@ -531,6 +546,9 @@ HRESULT CRenderer::Render_Blend()
 
 HRESULT CRenderer::Render_HDR()
 {
+	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_HDR"))))
+		return E_FAIL;
+
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Priority"), m_pPostProcessingShader, "g_SkyTexture")))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Deferred"), m_pPostProcessingShader, "g_DeferredTexture")))
@@ -546,6 +564,9 @@ HRESULT CRenderer::Render_HDR()
 		return E_FAIL;
 
 	if (FAILED(m_pRectBuffer->Render()))
+		return E_FAIL;
+
+	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_HDR"))))
 		return E_FAIL;
 
 	return S_OK;
@@ -574,7 +595,23 @@ HRESULT CRenderer::Render_Distortion()
 
 HRESULT CRenderer::Render_PostProcessing()
 {
-	
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_HDR"), m_pPostProcessingShader, "g_HDRTexture")))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Glowed"), m_pPostProcessingShader, "g_GlowTexture")))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Effect"), m_pPostProcessingShader, "g_EffectTexture")))
+		return E_FAIL;
+	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pPostProcessingShader->Begin("PostProcessing")))
+		return E_FAIL;
+
+	if (FAILED(m_pRectBuffer->Render()))
+		return E_FAIL;
 
 	return S_OK;
 }
