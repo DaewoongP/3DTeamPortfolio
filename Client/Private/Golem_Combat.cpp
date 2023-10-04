@@ -935,10 +935,11 @@ HRESULT CGolem_Combat::Make_Descendo(_Inout_ CSequence* pSequence)
 			{
 				_uint* pICurrentSpell = { nullptr };
 				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
-					return E_FAIL;
+					return false;
 
 				if (*pICurrentSpell & BUFF_DESCENDO)
 					*pICurrentSpell ^= BUFF_DESCENDO;
+				return true;
 			});
 
 		/* Set Options */
