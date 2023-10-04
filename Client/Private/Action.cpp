@@ -138,6 +138,9 @@ void CAction::Reset_Behavior(HRESULT result)
 
 	if (BEHAVIOR_SUCCESS == result)
 	{
+		for (auto& pBehavior : m_Behaviors)
+			pBehavior->Reset_Behavior(result);
+
 		BEGININSTANCE;
 		m_fPreWorldTimeAcc = pGameInstance->Get_World_TimeAcc();
 		ENDINSTANCE;

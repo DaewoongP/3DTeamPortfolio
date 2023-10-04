@@ -172,7 +172,15 @@ CTexture* CTexture::Create_Origin(ID3D11Device* pDevice, ID3D11DeviceContext* pC
 
 CComponent* CTexture::Clone(void* pArg)
 {
-	return CTexture::Create(m_pDevice, m_pContext, m_szTextureFilePath, m_iNumTextures);
+	CTexture* pInstance = New CTexture(*this);
+
+	if (FAILED(pInstance->Initialize(pArg)))
+	{
+		MSG_BOX("Failed to Cloned CTexture");
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
 }
 
 void CTexture::Free()

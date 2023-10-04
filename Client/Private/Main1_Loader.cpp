@@ -252,6 +252,11 @@ HRESULT CMain1_Loader::Loading_For_Static(LEVELID eLevelID)
 #pragma endregion Behavior_Sequences
 
 #pragma region Behavior_Movements
+		/* For.Prototype_Component_RigidMove */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_RigidMove"),
+			CRigidMove::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_RigidMove");
+
 		/* For.Prototype_Component_Wait */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Wait"),
 			CWait::Create(m_pDevice, m_pContext))))

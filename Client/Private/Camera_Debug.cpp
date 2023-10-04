@@ -1,9 +1,5 @@
 #include "..\Public\Camera_Debug.h"
 #include "GameInstance.h"
-
-#ifdef _DEBUG
-#include "Test_Player.h"
-#endif // _DEBUG
 #include "Player.h"
 
 
@@ -43,6 +39,7 @@ HRESULT CCamera_Debug::Initialize(void* pArg)
 	pGameInstance->Set_DebugCam(m_isDebug);
 
 	Safe_Release(pGameInstance);
+
 #endif
 	return S_OK;
 }
@@ -67,9 +64,10 @@ void CCamera_Debug::Tick(_float fTimeDelta)
 	Safe_Release(pGameInstance);
 
 	__super::Tick(fTimeDelta);
+
 #ifdef _DEBUG
-	Tick_ImGui(fTimeDelta);
-#endif
+	ADD_IMGUI([&] { this->Tick_ImGui(); });
+#endif // _DEBUG
 }
 
 void CCamera_Debug::Key_Input(const _float& fTimeDelta)
@@ -166,7 +164,7 @@ void CCamera_Debug::Fix_Mouse(void)
 }
 
 #ifdef _DEBUG
-void CCamera_Debug::Tick_ImGui(_float fTimeDelta)
+void CCamera_Debug::Tick_ImGui()
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
@@ -175,7 +173,7 @@ void CCamera_Debug::Tick_ImGui(_float fTimeDelta)
 	GetWindowRect(g_hWnd, &rc);
 
 	ImGui::SetNextWindowPos(ImVec2(0.f, 200.f));
-	ImGui::SetNextWindowSize(ImVec2(200.f, 400.f));
+	ImGui::SetNextWindowSize(ImVec2(300.f, 200.f));
 
 	ImGui::Begin("Camera");
 	_float3 vPos = m_pTransform->Get_Position();

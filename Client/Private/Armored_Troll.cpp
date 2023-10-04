@@ -91,14 +91,6 @@ void CArmored_Troll::Tick(_float fTimeDelta)
 void CArmored_Troll::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
-
-	if (nullptr != m_pRenderer)
-	{
-		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
-#ifdef _DEBUG
-		m_pRenderer->Add_DebugGroup(m_pRigidBody);
-#endif // _DEBUG
-	}
 }
 
 void CArmored_Troll::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
@@ -120,11 +112,7 @@ void CArmored_Troll::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 
 HRESULT CArmored_Troll::Render()
 {
-#ifdef _DEBUG
-	Tick_ImGui();
-#endif // _DEBUG
-
-	if (FAILED(SetUp_ShaderResources()))
+	if (FAILED(__super::SetUp_ShaderResources()))
 		return E_FAIL;
 
 	if (FAILED(__super::Render()))
@@ -195,119 +183,23 @@ HRESULT CArmored_Troll::Make_AI()
 HRESULT CArmored_Troll::Make_Notifies()
 {
 	function<void()> Func = [&] {(*this).Change_Animation(); };
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Run_Start_Front"), TEXT("Change_Animation"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_1Step_Swing_Front_BackHnd"), TEXT("Change_Animation"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_2Step_Swing_Front_BackHnd"), TEXT("Change_Animation"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Step_Swing_Front_ForHnd"), TEXT("Change_Animation"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Step_Swing_Left_90_BackHnd"), TEXT("Change_Animation"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Step_Swing_Right_180_ForHnd"), TEXT("Change_Animation"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Swing_Front_ForHnd"), TEXT("Change_Animation"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Swing_Front_BackHnd"), TEXT("Change_Animation"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Run_Swing_Front_BackHnd"), TEXT("Change_Animation"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Run_Swing_Front_ForHnd"), TEXT("Change_Animation"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Swing_Left_90_ForHnd"), TEXT("Change_Animation"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Swing_Right_90_BackHnd"), TEXT("Change_Animation"), Func)))
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Change_Animation"), Func)))
 		return E_FAIL;
 
 	Func = [&] {(*this).Enter_Light_Attack(); };
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_1Step_Swing_Front_BackHnd"), TEXT("Enter_Light_Attack"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_2Step_Swing_Front_BackHnd"), TEXT("Enter_Light_Attack"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Step_Swing_Front_ForHnd"), TEXT("Enter_Light_Attack"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Step_Swing_Left_90_BackHnd"), TEXT("Enter_Light_Attack"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Step_Swing_Right_180_ForHnd"), TEXT("Enter_Light_Attack"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Swing_Front_ForHnd"), TEXT("Enter_Light_Attack"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Swing_Front_BackHnd"), TEXT("Enter_Light_Attack"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Swing_Front_ForHnd"), TEXT("Enter_Light_Attack"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Swing_Left_90_ForHnd"), TEXT("Enter_Light_Attack"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Swing_Right_90_BackHnd"), TEXT("Enter_Light_Attack"), Func)))
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Enter_Light_Attack"), Func)))
 		return E_FAIL;
 
 	Func = [&] {(*this).Enter_Heavy_Attack(); };
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Hop_Backhand_BackHnd"), TEXT("Enter_Heavy_Attack"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Hop_Backhand_ForHnd"), TEXT("Enter_Heavy_Attack"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Overhead_Slam_LeftHnd"), TEXT("Enter_Heavy_Attack"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Overhead_Slam_RightHnd"), TEXT("Enter_Heavy_Attack"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Overhead_Slam_Left_180"), TEXT("Enter_Heavy_Attack"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Overhead_Slam_Left_90"), TEXT("Enter_Heavy_Attack"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Overhead_Slam_Right_180"), TEXT("Enter_Heavy_Attack"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Overhead_Slam_Right_90"), TEXT("Enter_Heavy_Attack"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Run_Swing_Front_BackHnd"), TEXT("Enter_Heavy_Attack"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Run_Swing_Front_ForHnd"), TEXT("Enter_Heavy_Attack"), Func)))
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Enter_Heavy_Attack"), Func)))
 		return E_FAIL;
 
 	Func = [&] {(*this).Enter_Body_Attack(); };
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Charge_Enter"), TEXT("Enter_Body_Attack"), Func)))
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Enter_Body_Attack"), Func)))
 		return E_FAIL;
 
 	Func = [&] {(*this).Exit_Attack(); };
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Charge_End"), TEXT("Exit_Attack"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Hop_Backhand_BackHnd"), TEXT("Exit_Attack"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Hop_Backhand_ForHnd"), TEXT("Exit_Attack"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Overhead_Slam_LeftHnd"), TEXT("Exit_Attack"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Overhead_Slam_RightHnd"), TEXT("Exit_Attack"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Overhead_Slam_Left_180"), TEXT("Exit_Attack"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Overhead_Slam_Left_90"), TEXT("Exit_Attack"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Overhead_Slam_Right_180"), TEXT("Exit_Attack"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Overhead_Slam_Right_90"), TEXT("Exit_Attack"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_1Step_Swing_Front_BackHnd"), TEXT("Exit_Attack"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_2Step_Swing_Front_BackHnd"), TEXT("Exit_Attack"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Step_Swing_Front_ForHnd"), TEXT("Exit_Attack"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Step_Swing_Left_90_BackHnd"), TEXT("Exit_Attack"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Step_Swing_Right_180_ForHnd"), TEXT("Exit_Attack"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Swing_Front_ForHnd"), TEXT("Exit_Attack"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Swing_Front_BackHnd"), TEXT("Exit_Attack"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Run_Swing_Front_BackHnd"), TEXT("Exit_Attack"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Run_Swing_Front_ForHnd"), TEXT("Exit_Attack"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Swing_Left_90_ForHnd"), TEXT("Exit_Attack"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Swing_Right_90_BackHnd"), TEXT("Exit_Attack"), Func)))
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Exit_Attack"), Func)))
 		return E_FAIL;
 
 	return S_OK;
@@ -352,9 +244,10 @@ HRESULT CArmored_Troll::Add_Components()
 
 		m_OffsetMatrix = XMMatrixTranslation(RigidBodyDesc.vOffsetPosition.x, RigidBodyDesc.vOffsetPosition.y, RigidBodyDesc.vOffsetPosition.z);
 
-		/* For.Collider_Body_Attack */
+		/* For.Collider Enemy_Body_Attack */
 		RigidBodyDesc.isStatic = true;
 		RigidBodyDesc.isTrigger = true;
+		RigidBodyDesc.eThisCollsion = COL_ENEMY_ATTACK;
 		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC;
 		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Body_Attack");
 		if (FAILED(m_pRigidBody->Create_Collider(&RigidBodyDesc)))
@@ -423,45 +316,6 @@ HRESULT CArmored_Troll::Add_Components_Level(_uint iCurrentLevelIndex)
 
 	return S_OK;
 }
-
-HRESULT CArmored_Troll::SetUp_ShaderResources()
-{
-	return __super::SetUp_ShaderResources();
-}
-
-#ifdef _DEBUG
-void CArmored_Troll::Tick_ImGui()
-{
-	RECT clientRect;
-	GetClientRect(g_hWnd, &clientRect);
-	POINT leftTop = { clientRect.left, clientRect.top };
-	POINT rightBottom = { clientRect.right, clientRect.bottom };
-	ClientToScreen(g_hWnd, &leftTop);
-	ClientToScreen(g_hWnd, &rightBottom);
-	int Left = leftTop.x;
-	int Top = rightBottom.y;
-	ImVec2 vWinpos = { _float(Left + 1280.f), _float(Top - 300.f) };
-	ImGui::SetNextWindowPos(vWinpos);
-
-	ImGui::Begin("Test Troll");
-
-	string strHp = to_string(m_pHealth->Get_HP());
-	ImGui::Text("Current HP");
-	ImGui::Text(strHp.c_str());
-
-	ImGui::SeparatorText("Behavior");
-
-	vector<wstring> DebugBehaviorTags = m_pRootBehavior->Get_DebugBahaviorTags();
-
-	for (auto& Tag : DebugBehaviorTags)
-	{
-		ImGui::Text(wstrToStr(Tag).c_str());
-	}
-
-	ImGui::End();
-}
-
-#endif // _DEBUG
 
 void CArmored_Troll::DeathBehavior(const _float& fTimeDelta)
 {

@@ -56,10 +56,6 @@ void CAssassin_Goblin::Late_Tick(_float fTimeDelta)
 
 HRESULT CAssassin_Goblin::Render()
 {
-#ifdef _DEBUG
-	//Tick_ImGui();
-#endif // _DEBUG
-
 	if (FAILED(__super::Render()))
 		return E_FAIL;
 
@@ -162,12 +158,6 @@ HRESULT CAssassin_Goblin::SetUp_ShaderResources()
 
 	return S_OK;
 }
-
-#ifdef _DEBUG
-void CAssassin_Goblin::Tick_ImGui()
-{
-}
-#endif // _DEBUG
 
 CAssassin_Goblin* CAssassin_Goblin::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {

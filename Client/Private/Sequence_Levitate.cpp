@@ -4,6 +4,7 @@
 
 #include "Wait.h"
 #include "Action.h"
+#include "RigidMove.h"
 #include "RigidBody.h"
 #include "RandomChoose.h"
 #include "Check_Distance.h"
@@ -73,14 +74,14 @@ HRESULT CSequence_Levitate::Assemble_Random_Select_Behavior(const wstring& wstrA
 	CAction* pAction = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
 	if (nullptr == pAction)
 	{
-		MSG_BOX("[CSequence_AirHit] Failed Assemble_Random_Select_Behavior\n : pAction is nullptr");
+		MSG_BOX("[CSequence_Levitate] Failed Assemble_Random_Select_Behavior\n : pAction is nullptr");
 		ENDINSTANCE;
 		return E_FAIL;
 	}
 	CWait* pTsk_Wait = dynamic_cast<CWait*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Wait")));
 	if (nullptr == pTsk_Wait)
 	{
-		MSG_BOX("[CSequence_AirHit] Failed Assemble_Random_Select_Behavior\n : pTsk_Wait is nullptr");
+		MSG_BOX("[CSequence_Levitate] Failed Assemble_Random_Select_Behavior\n : pTsk_Wait is nullptr");
 		ENDINSTANCE;
 		return E_FAIL;
 	}
@@ -93,13 +94,13 @@ HRESULT CSequence_Levitate::Assemble_Random_Select_Behavior(const wstring& wstrA
 	_uint iIndex = m_Behaviors.size();
 	if (FAILED(m_pRandom_Levitate_Loop->Assemble_Behavior(wstrActionTag, pAction, fWeight)))
 	{
-		MSG_BOX("[CSequence_AirHit] Failed Assemble_Random_Select_Behavior\n : Failed Assemble_Behavior");
+		MSG_BOX("[CSequence_Levitate] Failed Assemble_Random_Select_Behavior\n : Failed Assemble_Behavior");
 		return E_FAIL;
 	}
 	wstring wstrBehaviorTag = TEXT("Tsk_Wait_") + to_wstring(iIndex);
 	if (FAILED(pAction->Assemble_Behavior(wstrBehaviorTag, pTsk_Wait)))
 	{
-		MSG_BOX("[CSequence_AirHit] Failed Assemble_Random_Select_Behavior\n : Failed Assemble_Behavior");
+		MSG_BOX("[CSequence_Levitate] Failed Assemble_Random_Select_Behavior\n : Failed Assemble_Behavior");
 		return E_FAIL;
 	}
 
@@ -120,9 +121,19 @@ HRESULT CSequence_Levitate::Assemble_Childs()
 		CAction* pAction_Levitate_Enter = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
 		if (nullptr == pAction_Levitate_Enter)
 			throw TEXT("pAction_Levitate_Enter is nullptr");
+		CAction* pAction_Levitate_Fall = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
+		if (nullptr == pAction_Levitate_Fall)
+			throw TEXT("pAction_Levitate_Fall is nullptr");
 		CAction* pAction_Levitate_Land = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
 		if (nullptr == pAction_Levitate_Land)
 			throw TEXT("pAction_Levitate_Land is nullptr");
+
+		CRigidMove* pTsk_Up = dynamic_cast<CRigidMove*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidMove")));
+		if (nullptr == pTsk_Up)
+			throw TEXT("pTsk_Up is nullptr");
+		CWait* pTsk_Wait = dynamic_cast<CWait*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Wait")));
+		if (nullptr == pTsk_Wait)
+			throw TEXT("pTsk_Wait is nullptr");
 
 		/* Set Decorations */
 		pAction_Levitate_Enter->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
@@ -142,16 +153,34 @@ HRESULT CSequence_Levitate::Assemble_Childs()
 			});
 
 		/* Set Options */
+		CTransform* pTransform = { nullptr };
+		CRigidBody* pRigidBody = { nullptr };
+		if (FAILED(m_pBlackBoard->Get_Type("pTransform", pTransform)))
+			throw TEXT("pTransform is Invalid");
+		if (FAILED(m_pBlackBoard->Get_Type("pRigidBody", pRigidBody)))
+			throw TEXT("pRigidBody is Invalid");
+		
 		pAction_Levitate_Enter->Set_Options(TEXT("Levitate_Enter"), pModel);
+		pAction_Levitate_Fall->Set_Options(TEXT("Levitate_Fall_Loop"), pModel, true);
 		pAction_Levitate_Land->Set_Options(TEXT("Levitate_Land"), pModel);
+		_float3 vForce = { 0.f, 3.f, 0.f };
+		pTsk_Up->Set_Option(pRigidBody, vForce, 1.6f);
+		pTsk_Wait->Set_Timer(0.5f);
 
 		/* Assemble Behaviors */
 		if (FAILED(Assemble_Behavior(TEXT("Action_Levitate_Enter"), pAction_Levitate_Enter)))
 			throw TEXT("Failed Assemble_Behavior Action_Levitate_Enter");
 		if (FAILED(Assemble_Behavior(TEXT("Random_Levitate_Loop"), m_pRandom_Levitate_Loop)))
 			throw TEXT("Failed Assemble_Behavior Random_Levitate_Loop");
+		if (FAILED(Assemble_Behavior(TEXT("Action_Levitate_Fall"), pAction_Levitate_Fall)))
+			throw TEXT("Failed Assemble_Behavior Action_Levitate_Fall");
 		if (FAILED(Assemble_Behavior(TEXT("Action_Levitate_Land"), pAction_Levitate_Land)))
 			throw TEXT("Failed Assemble_Behavior Action_Levitate_Land");
+
+		if (FAILED(pAction_Levitate_Enter->Assemble_Behavior(TEXT("Tsk_Up"), pTsk_Up)))
+			throw TEXT("Failed Assemble_Behavior Tsk_Up");
+		if (FAILED(pAction_Levitate_Fall->Assemble_Behavior(TEXT("Tsk_Wait"), pTsk_Wait)))
+			throw TEXT("Failed Assemble_Behavior Tsk_Wait");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -173,6 +202,7 @@ HRESULT CSequence_Levitate::Assemble_Childs()
 void CSequence_Levitate::Reset_Behavior(HRESULT result)
 {
 	(*m_iterCurBehavior)->Reset_Behavior(result);
+	m_iterCurBehavior = m_Behaviors.begin();
 
 	if (BEHAVIOR_RUNNING == m_ReturnData &&	// 현재 공중에 뜸 상태가 진행중이었는데
 		BEHAVIOR_RUNNING != result)			// 상위 노드에서 상태가 바뀐경우

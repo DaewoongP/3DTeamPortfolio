@@ -60,6 +60,8 @@
 #include "Flipendo.h"
 #include "Expelliarmus.h"
 #include "Imperio.h"
+#include "Crucio.h"
+#include "Stupefy.h"
 #pragma endregion Magic
 
 #include "Trigger_Vault.h"
@@ -68,6 +70,7 @@
 #include "Test_Player.h"
 #include "Camera_Debug.h"
 #include "PhysXRender.h"
+#include "Norm_Test.h"
 #endif // _DEBUG
 
 CMain0_Loader::CMain0_Loader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -186,7 +189,7 @@ HRESULT CMain0_Loader::Loading_For_Cliffside(LEVELID eLevelID)
 		return E_FAIL;
 	try /* Failed Check Add_Prototype*/
 	{
-		
+
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -204,7 +207,7 @@ HRESULT CMain0_Loader::Loading_For_Vault(LEVELID eLevelID)
 {
 	/* For.Prototype_GameObject_MeshEffect*/
 	if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Cloister_MeshEffect"),
-		CMeshEffect::Create(m_pDevice, m_pContext,TEXT("../../Resources/GameData/MeshEffectData/Cloister/Cloister.ME")))))
+		CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/Cloister/Cloister.ME")))))
 		throw TEXT("Prototype_GameObject_Cloister_MeshEffect");
 
 	if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Trigger_Vault"),
@@ -227,76 +230,80 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 	try
 	{
 #pragma region Load UI
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Group_HP"),
-			CUI_Group_HP::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_UI_Group_HP");
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_UI_Progress"),
-			CUI_Progress::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_UI_Progress");
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Group_Potion"),
-			CUI_Group_Potion::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_UI_Group_Potion");
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Group_Finisher"),
-			CUI_Group_Finisher::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_UI_Group_Finisher");
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Group_Skill"),
-			CUI_Group_Skill::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_UI_Group_Skill");
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Group_Finisher_Icon"),
-			CUI_Group_Finisher_Icon::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_UI_Group_Finisher_Icon");
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Group_Enemy_HP"),
-			CUI_Group_Enemy_HP::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_UI_Group_Enemy_HP");
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Font"),
-			CUI_Font::Create(m_pDevice, m_pContext, TEXT("../../Resources/Fonts/NexonGothic.spritefont")))))
-			throw TEXT("Prototype_GameObject_UI_Font");
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Group_Cursor"),
-			CUI_Group_Cursor::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_UI_Group_Cursor");
-		/*if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Group_MiniMap"),
-			CUI_Group_MiniMap::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_UI_Group_MiniMap");*/
+		{
+			std::lock_guard<std::mutex> lock(mtx);
 
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_UI_Image"),
-			CUI_Image::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_UI_Image");
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_UI_Button"),
-			CUI_Button::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_UI_Button");
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Group_HP"),
+				CUI_Group_HP::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_GameObject_UI_Group_HP");
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_UI_Progress"),
+				CUI_Progress::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_Component_UI_Progress");
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Group_Potion"),
+				CUI_Group_Potion::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_GameObject_UI_Group_Potion");
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Group_Finisher"),
+				CUI_Group_Finisher::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_GameObject_UI_Group_Finisher");
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Group_Skill"),
+				CUI_Group_Skill::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_GameObject_UI_Group_Skill");
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Group_Finisher_Icon"),
+				CUI_Group_Finisher_Icon::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_GameObject_UI_Group_Finisher_Icon");
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Group_Enemy_HP"),
+				CUI_Group_Enemy_HP::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_GameObject_UI_Group_Enemy_HP");
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Font"),
+				CUI_Font::Create(m_pDevice, m_pContext, TEXT("../../Resources/Fonts/NexonGothic.spritefont")))))
+				throw TEXT("Prototype_GameObject_UI_Font");
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Group_Cursor"),
+				CUI_Group_Cursor::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_GameObject_UI_Group_Cursor");
+			/*if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Group_MiniMap"),
+				CUI_Group_MiniMap::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_GameObject_UI_Group_MiniMap");*/
 
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Field_Guide"),
-			CField_Guide::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_Field_Guide");
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Main_Menu"),
-			CMain_Menu::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_Main_Menu");
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Menu_Gear"),
-			CMenu_Gear::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_Menu_Gear");
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Menu_Inventory"),
-			CMenu_Inventory::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_Menu_Inventory");
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Menu_Quest"),
-			CMenu_Quest::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_Menu_Quest");
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_UI_Image"),
+				CUI_Image::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_Component_UI_Image");
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_UI_Button"),
+				CUI_Button::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_Component_UI_Button");
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Field_Guide"),
+				CField_Guide::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_GameObject_Field_Guide");
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Main_Menu"),
+				CMain_Menu::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_GameObject_Main_Menu");
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Menu_Gear"),
+				CMenu_Gear::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_GameObject_Menu_Gear");
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Menu_Inventory"),
+				CMenu_Inventory::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_GameObject_Menu_Inventory");
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Menu_Quest"),
+				CMenu_Quest::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_GameObject_Menu_Quest");
 
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Inventory"),
-			CUI_Inventory::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_UI_Inventory");
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Inventory"),
-			CInventory::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_Inventory");
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Slot"),
-			CUI_Slot::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_UI_Slot");
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Inventory"),
+				CUI_Inventory::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_GameObject_UI_Inventory");
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Inventory"),
+				CInventory::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_GameObject_Inventory");
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Slot"),
+				CUI_Slot::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_GameObject_UI_Slot");
 
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Potion_Tap"),
-			CPotionTap::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_Potion_Tap");
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Potion_Tap"),
-			CUI_Potion_Tap::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_UI_Potion_Tap");
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Potion_Tap"),
+				CPotionTap::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_GameObject_Potion_Tap");
+
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Potion_Tap"),
+				CUI_Potion_Tap::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_GameObject_UI_Potion_Tap");
+		}
 #pragma endregion
 
 #pragma region Load Texture
@@ -310,6 +317,88 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_Terrain"),
 			CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Terrain/Tile%d.dds"), 2))))
 			throw TEXT("Prototype_Component_Texture_Terrain");
+
+		////////// Ingredient관련 텍스처들. ////////////
+		///* Prototype_Component_Texture_UI_T_AshwinderEggs_Item */
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_UI_T_AshwinderEggs_Item"),
+		//	CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/Ingredients/UI_T_AshwinderEggs_Item.png")))))
+		//	throw TEXT("Prototype_Component_Texture_UI_T_AshwinderEggs_Item");
+
+		///* Prototype_Component_Texture_UI_T_DugbogTongue*/
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_UI_T_DugbogTongue"),
+		//	CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/Ingredients/UI_T_DugbogTongue.png")))))
+		//	throw TEXT("Prototype_Component_Texture_UI_T_DugbogTongue");
+
+		///* Prototype_Component_Texture_UI_T_LeapingToadstool_Byproduct*/
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_UI_T_LeapingToadstool_Byproduct"),
+		//	CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/Plants/UI_T_LeapingToadstool_Byproduct.png")))))
+		//	throw TEXT("Prototype_Component_Texture_UI_T_LeapingToadstool_Byproduct");
+
+		///* Prototype_Component_Texture_UI_T_LacewingFlies*/
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_UI_T_LacewingFlies"),
+		//	CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/Ingredients/UI_T_LacewingFlies.png")))))
+		//	throw TEXT("Prototype_Component_Texture_UI_T_LacewingFlies");
+
+		///* Prototype_Component_Texture_UI_T_Knotgrass_Byproduct*/
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_UI_T_Knotgrass_Byproduct"),
+		//	CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/Plants/UI_T_Knotgrass_Byproduct.png")))))
+		//	throw TEXT("Prototype_Component_Texture_UI_T_Knotgrass_Byproduct");
+
+		///* Prototype_Component_Texture_UI_T_HorklumpJuice*/
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_UI_T_HorklumpJuice"),
+		//	CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/Potions/UI_T_HorklumpJuice.png")))))
+		//	throw TEXT("Prototype_Component_Texture_UI_T_HorklumpJuice");
+		//
+		///* Prototype_Component_Texture_UI_T_LeechJuice*/
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_UI_T_LeechJuice"),
+		//	CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/Ingredients/UI_T_LeechJuice.png")))))
+		//	throw TEXT("Prototype_Component_Texture_UI_T_LeechJuice");
+
+		///* Prototype_Component_Texture_UI_T_Mallowsweet_Byproduct*/
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_UI_T_Mallowsweet_Byproduct"),
+		//	CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/Plants/UI_T_Mallowsweet_Byproduct.png")))))
+		//	throw TEXT("Prototype_Component_Texture_UI_T_Mallowsweet_Byproduct");
+
+		///* Prototype_Component_Texture_UI_T_Moonstone*/
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_UI_T_Moonstone"),
+		//	CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/Ingredients/UI_T_Moonstone.png")))))
+		//	throw TEXT("Prototype_Component_Texture_UI_T_Moonstone");
+
+		///* Prototype_Component_Texture_UI_T_Shrivelfig_Byproduct*/
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_UI_T_Shrivelfig_Byproduct"),
+		//	CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/Ingredients/UI_T_Shrivelfig_Byproduct.png")))))
+		//	throw TEXT("Prototype_Component_Texture_UI_T_Shrivelfig_Byproduct");
+
+		///* Prototype_Component_Texture_UI_T_Wolf_Byproduct*/
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_UI_T_Wolf_Byproduct"),
+		//	CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/Ingredients/UI_T_Wolf_Byproduct.png")))))
+		//	throw TEXT("Prototype_Component_Texture_UI_T_Wolf_Byproduct");
+
+		///* Prototype_Component_Texture_UI_T_TrollMucus*/
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_UI_T_TrollMucus"),
+		//	CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/Ingredients/UI_T_TrollMucus.png")))))
+		//	throw TEXT("Prototype_Component_Texture_UI_T_TrollMucus");
+
+		///* Prototype_Component_Texture_UI_T_Skull*/
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_UI_T_Skull"),
+		//	CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/Ingredients/UI_T_Skull.png")))))
+		//	throw TEXT("Prototype_Component_Texture_UI_T_Skull");
+
+		///* Prototype_Component_Texture_UI_T_Spider_fang*/
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_UI_T_Spider_fang"),
+		//	CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/Ingredients/UI_T_Spider_fang.png")))))
+		//	throw TEXT("Prototype_Component_Texture_UI_T_Spider_fang");
+
+		///* Prototype_Component_Texture_UI_T_Dittany*/
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_UI_T_Dittany"),
+		//	CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/Plants/UI_T_Dittany.png")))))
+		//	throw TEXT("Prototype_Component_Texture_UI_T_Dittany");
+
+		///* Prototype_Component_Texture_UI_T_Icons_Fluxweed*/
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_UI_T_Icons_Fluxweed"),
+		//	CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/Plants/UI_T_Icons_Fluxweed.png")))))
+		//	throw TEXT("Prototype_Component_Texture_UI_T_Icons_Fluxweed");
+		//////////////////////////////////////
 #pragma endregion
 
 #pragma region Load Buffer
@@ -328,6 +417,11 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_VIBuffer_Cloth"),
 			CVIBuffer_Cloth::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_VIBuffer_Cloth");
+		
+		/* For.Prototype_Component_VIBuffer_Point_Instance */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_VIBuffer_Point_Instance"),
+			CVIBuffer_Point_Instance::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_VIBuffer_Point_Instance");
 
 		/* For.Prototype_GameObject_ConvexMesh*/
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_ConvexMesh"),
@@ -367,6 +461,12 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_ShadowMesh.hlsl"), VTXMESH_DECL::Elements, VTXMESH_DECL::iNumElements))))
 			throw TEXT("Prototype_Component_Shader_ShadowMesh");
 
+		/* For.Prototype_Component_Shader_VtxPointInstance */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_VtxPointInstance"),
+			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxPointInstance.hlsl"),
+				VTXPOINTINSTANCE_DECL::Elements, VTXPOINTINSTANCE_DECL::iNumElements))))
+			return E_FAIL;
+		
 		/* For.Prototype_Component_Shader_MeshInstance */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_VtxMeshInstance"),
 			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxMeshInstance.hlsl"),
@@ -394,7 +494,7 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_DefaultEffect.hlsl"), VTXMESH_DECL::Elements, VTXMESH_DECL::iNumElements))))
 			throw TEXT("Prototype_Component_Shader_DefaultEffect");
 #pragma endregion
-		
+
 #pragma region Load ETC
 		/* --------------ETC-------------- */
 		/* For.Prototype_Component_Health*/
@@ -484,11 +584,21 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Expelliarmus"),
 			CExpelliarmus::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Expelliarmus");
-		
+
 		/* For.Prototype_GameObject_Imperio */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Imperio"),
 			CImperio::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Imperio");
+
+		/* For.Prototype_GameObject_Crucio */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Crucio"),
+			CCrucio::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_Crucio");
+		
+		/* For.Prototype_GameObject_Stupefy */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Stupefy"),
+			CStupefy::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_Stupefy");
 		
 #pragma endregion
 		{
@@ -526,7 +636,7 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 #pragma endregion
 
 #pragma region Load Debug
-		
+
 #ifdef _DEBUG
 		/* --------------Debug-------------- */
 		/* For.Prototype_GameObject_Camera_Debug*/
@@ -544,9 +654,15 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Test/"), eLevelID))))
 			throw TEXT("Prototype_GameObject_Test_Particle");
 
+		/* For.Prototype_GameObject_PhysxRenderer */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_PhysxRenderer"),
 			CPhysXRender::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_PhysxRenderer");
+
+		/* For.Prototype_GameObject_Norm_Test */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Norm_Test"),
+			CNorm_Test::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Norm_Test");
 
 #endif // _DEBUG
 
