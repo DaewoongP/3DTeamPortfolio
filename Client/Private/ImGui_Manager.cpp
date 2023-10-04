@@ -58,15 +58,6 @@ HRESULT CImGui_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* p
 
 HRESULT CImGui_Manager::Render()
 {
-	if (false == m_isRender)
-	{
-		m_Functions.clear();
-		m_isRender = true;
-		return S_OK;
-	}
-	else
-		m_isRender = false;
-
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();

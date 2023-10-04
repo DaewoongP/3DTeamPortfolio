@@ -119,7 +119,7 @@ HRESULT CWeapon_Golem_Combat::Add_Components(void* pArg)
 		RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 1.f, 1.f);
 		RigidBodyDesc.pOwnerObject = this;
 		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Attack");
-		RigidBodyDesc.eThisCollsion = COL_WEAPON;
+		RigidBodyDesc.eThisCollsion = COL_ENEMY_ATTACK;
 		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC;
 
 		/* For.Com_RigidBody */

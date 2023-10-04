@@ -56,10 +56,6 @@ void CForest_Troll::Late_Tick(_float fTimeDelta)
 
 HRESULT CForest_Troll::Render()
 {
-#ifdef _DEBUG
-	//Tick_ImGui();
-#endif // _DEBUG
-
 	if (FAILED(__super::Render()))
 		return E_FAIL;
 
@@ -189,12 +185,6 @@ HRESULT CForest_Troll::SetUp_ShaderResources()
 
 	return S_OK;
 }
-
-#ifdef _DEBUG
-void CForest_Troll::Tick_ImGui()
-{
-}
-#endif // _DEBUG
 
 CForest_Troll* CForest_Troll::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {

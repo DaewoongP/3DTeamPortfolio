@@ -94,7 +94,6 @@ HRESULT CLevel_Cliffside::Initialize()
 		return E_FAIL;
 	}
 
-	//Load_Monsters(TEXT("../../Resources/GameData/MonsterData/Cliff1.mon"));
 #ifdef _DEBUG
 	if (FAILED(Ready_Layer_Debug(TEXT("Layer_Debug"))))
 	{
@@ -302,20 +301,21 @@ HRESULT CLevel_Cliffside::Ready_Layer_Monster(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 	Matrix = XMMatrixTranslation(40.f, 10.f, 65.f);
-	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Dugbog"), pLayerTag, TEXT("GameObject_Dugbog"), &Matrix)))
+	/*if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Dugbog"), pLayerTag, TEXT("GameObject_Dugbog"), &Matrix)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Dugbog)");
 		ENDINSTANCE;
 		return E_FAIL;
-	}
-	///////////////////////////////////////////////////////////////////////
-
-	/*if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Armored_Troll"), pLayerTag, TEXT("GameObject_Armored_Troll"))))
+	}*/
+	/*if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_ConjuredDragon"), pLayerTag, TEXT("GameObject_ConjuredDragon"), &Matrix)))
 	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Armored_Troll)");
+		MSG_BOX("Failed Add_GameObject : (GameObject_ConjuredDragon)");
 		ENDINSTANCE;
 		return E_FAIL;
 	}*/
+	///////////////////////////////////////////////////////////////////////
+
+	//Load_Monsters(TEXT("../../Resources/GameData/MonsterData/Cliff1.mon"));
 
 	ENDINSTANCE;
 
@@ -332,8 +332,9 @@ HRESULT CLevel_Cliffside::Ready_Layer_NPC(const _tchar* pLayerTag)
 		ENDINSTANCE;
 		return E_FAIL;
 	}
+	_float3 vPosition = _float3(40.f, 26.4f, 62.f);
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Professor_Fig"), pLayerTag, TEXT("GameObject_Professor_Fig"))))
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_STATIC, TEXT("Prototype_GameObject_Professor_Fig"), pLayerTag, TEXT("GameObject_Professor_Fig"), &vPosition)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Professor_Fig)");
 		ENDINSTANCE;
@@ -805,6 +806,12 @@ HRESULT CLevel_Cliffside::Ready_Layer_Debug(const _tchar* pLayerTag)
 	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Camera_Debug"), pLayerTag, TEXT("GameObject_Camera_Debug"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Camera_Debug)");
+		return E_FAIL;
+	}
+	
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Norm_Test"), pLayerTag, TEXT("GameObject_Norm_Test"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Norm_Test)");
 		return E_FAIL;
 	}
 

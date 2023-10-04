@@ -93,7 +93,7 @@ HRESULT CMotionBlurInstance::Render()
 
 	m_pBuffer->Render();
 
-	if (FAILED(pRenderTarget_Manager->End_MRT(m_pContext)))
+	if (FAILED(pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_Fin_MontionBlurInstance"))))
 		return E_FAIL;
 
 	// RawValues
@@ -107,12 +107,6 @@ HRESULT CMotionBlurInstance::Begin_MRT()
 	CRenderTarget_Manager* pRenderTarget_Manager = CRenderTarget_Manager::GetInstance();
 	Safe_AddRef(pRenderTarget_Manager);
 
-	if (FAILED(pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Velocity"))))
-	{
-		Safe_Release(pRenderTarget_Manager);
-		return E_FAIL;
-	}
-
 	Safe_Release(pRenderTarget_Manager);
 
 	return S_OK;
@@ -122,11 +116,6 @@ HRESULT CMotionBlurInstance::End_MRT()
 {
 	CRenderTarget_Manager* pRenderTarget_Manager = CRenderTarget_Manager::GetInstance();
 	Safe_AddRef(pRenderTarget_Manager);
-	if (FAILED(pRenderTarget_Manager->End_MRT(m_pContext)))
-	{
-		Safe_Release(pRenderTarget_Manager);
-		return E_FAIL;
-	}
 
 	Safe_Release(pRenderTarget_Manager);
 	return S_OK;

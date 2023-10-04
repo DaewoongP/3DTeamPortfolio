@@ -5,14 +5,13 @@
 ///////// Monster / Monster Weapon //////////
 /////////////////////////////////////////////
 
-#pragma region Monsters & NPC
+#pragma region Monsters
+#include "ConjuredDragon.h"
 #include "Armored_Troll.h"
 #include "Forest_Troll.h"
 #include "Golem_Combat.h"
 #include "Dugbog.h"
-
-#include "Professor_FIg.h"
-#pragma endregion Monsters & NPC
+#pragma endregion Monsters
 
 #pragma region Weapon
 #include "Weapon_Armored_Troll.h"
@@ -123,19 +122,22 @@ HRESULT CMain2_Loader::Loading_For_Cliffside(LEVELID eLevelID)
 
 	try
 	{
-		_float4x4 PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f));
+		_float4x4 PivotMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
 
-		/* ============ Enemy Weapon Models ============ */
+		/* For.Prototype_Component_Model_Dugbog */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Dugbog"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/Dugbog/Dugbog.gcm"), PivotMatrix))))
+			throw TEXT("Prototype_Component_Model_Dugbog");
 
-		/* For.Prototype_Component_Model_Weopon_Armored_Troll */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Weopon_Armored_Troll"),
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Troll_Armored_Club/Troll_Armored_Club.dat"), PivotMatrix))))
-			throw TEXT("Prototype_Component_Model_Weopon_Armored_Troll");
+		/* For.Prototype_GameObject_Dugbog */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Dugbog"),
+			CDugbog::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Dugbog");
 
-		/* For.Prototype_Component_Model_Weopon_Forest_Troll */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Weopon_Forest_Troll"),
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Troll_Forest_Club/Troll_Forest_Club.dat"), PivotMatrix))))
-			throw TEXT("Prototype_Component_Model_Weopon_Forest_Troll");
+		/* ========================== DEBUG ========================== */
+		/* 밑에 코드는 몬스터의 간단한 행동을 테스트 하기 위해		   */
+		/* 1스테이지에 직접 소환해서 테스트하기 위한 임시 코드입니다.  */
+		/* =========================================================== */
 
 		/* For.Prototype_Component_Model_Weopon_Golem_Combat */
 		PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f));
@@ -143,73 +145,33 @@ HRESULT CMain2_Loader::Loading_For_Cliffside(LEVELID eLevelID)
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Golem_Combat_Sword/Golem_Combat_Sword.dat"), PivotMatrix))))
 			throw TEXT("Prototype_Component_Model_Weopon_Golem_Combat");
 
-		/* ============ Friendly Weapon Models ============ */
-
-
-		/* For.Prototype_Component_Model_Weopon_Fig_Wand */
-		PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f));
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Weopon_Fig_Wand"),
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Wand_Fig/Wand_Fig.dat"), PivotMatrix))))
-			throw TEXT("Prototype_Component_Model_Weopon_Fig_Wand");
-
-		/* ============ Enemy Models ============ */
+		/* For.Prototype_Component_Weapon_Golem_Combat */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Weapon_Golem_Combat"),
+			CWeapon_Golem_Combat::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Weapon_Golem_Combat");
 
 		PivotMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
-		/* For.Prototype_Component_Model_Armored_Troll */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Armored_Troll"),
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/Armored_Troll/Armored_Troll.gcm"), PivotMatrix))))
-			throw TEXT("Prototype_Component_Model_Armored_Troll");
-
 		/* For.Prototype_Component_Model_Golem_Combat */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Golem_Combat"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/Golem_CombatGrunt/Golem_CombatGrunt.gcm"), PivotMatrix))))
 			throw TEXT("Prototype_Component_Model_Golem_Combat");
-
-		/* For.Prototype_Component_Model_Dugbog */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Dugbog"),
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/Dugbog/Dugbog.gcm"), PivotMatrix))))
-			throw TEXT("Prototype_Component_Model_Dugbog");
-
-		/* ============ Enemies ============ */
-
-		/* For.Prototype_GameObject_Armored_Troll */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Armored_Troll"),
-			CArmored_Troll::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_Armored_Troll");
-
-		/* For.Prototype_GameObject_Forest_Troll */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Forest_Troll"),
-			CForest_Troll::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_Forest_Troll");
-
-		/* For.Prototype_GameObject_Dugbog */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Dugbog"),
-			CDugbog::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_Dugbog");
 
 		/* For.Prototype_GameObject_Golem_CombatGrunt */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Golem_CombatGrunt"),
 			CGolem_Combat::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Golem_CombatGrunt");
 
-		PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f));
+		/* For.Prototype_Component_Model_ConjuredDragon */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_ConjuredDragon"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/SK_HebrideanBlack_Skeleton/SK_HebrideanBlack_Skeleton.gcm"), PivotMatrix))))
+			throw TEXT("Prototype_Component_Model_ConjuredDragon");
 
-		/* For.Prototype_Component_Weapon_Armored_Troll */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Weapon_Armored_Troll"),
-			CWeapon_Armored_Troll::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_Weapon_Armored_Troll");
+		/* For.Prototype_GameObject_ConjuredDragon */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_ConjuredDragon"),
+			CConjuredDragon::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_ConjuredDragon");
 
-		/* For.Prototype_Component_Weapon_Forest_Troll */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Weapon_Forest_Troll"),
-			CWeapon_Forest_Troll::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_Weapon_Forest_Troll");
-
-		/* For.Prototype_Component_Weapon_Golem_Combat */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Weapon_Golem_Combat"),
-			CWeapon_Golem_Combat::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_Weapon_Golem_Combat");
-
-		//////////////////////////////////////////
+		/* =========================================================== */
 	}
 	catch (const _tchar* pErrorTag)
 	{

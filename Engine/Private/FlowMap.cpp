@@ -97,7 +97,7 @@ HRESULT CFlowMap::Render()
 	m_pShader->Begin("Flow");
 
 	m_pBuffer->Render();
-	if (FAILED(pRenderTarget_Manager->End_MRT(m_pContext)))
+	if (FAILED(pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_FlowMap"))))
 		return E_FAIL;
 
 

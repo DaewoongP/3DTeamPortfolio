@@ -34,7 +34,11 @@ HRESULT CProfessor_Fig::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	m_pTransform->Set_Position(_float3(40.f, 6.4f, 62.f));
+	if (nullptr != pArg)
+	{
+		_float3* pPosition = reinterpret_cast<_float3*>(pArg);
+		m_pTransform->Set_Position(*pPosition);
+	}
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
@@ -51,27 +55,6 @@ HRESULT CProfessor_Fig::Initialize(void* pArg)
 	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RigidBody(m_pRigidBody);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
-
-	// Notify
-	function<void()> Func = [&] {(*this).Change_Animation(); };
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Front_1"), TEXT("Change_Animation"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Step_Back_2"), TEXT("Change_Animation"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Step_Back_3"), TEXT("Change_Animation"), Func)))
-		return E_FAIL;
-
-	Func = [&] {(*this).Attack_Light(); };
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Front_1"), TEXT("Attack_Light"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Step_Back_2"), TEXT("Attack_Light"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Step_Back_3"), TEXT("Attack_Light"), Func)))
-		return E_FAIL;
-
-	Func = [&] {(*this).Attack_Heavy(); };
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Heavy_Front_2"), TEXT("Attack_Heavy"), Func)))
-		return E_FAIL;
 
 	return S_OK;
 }
@@ -297,73 +280,27 @@ HRESULT CProfessor_Fig::Make_Magics()
 HRESULT CProfessor_Fig::Make_Notifies()
 {
 	function<void()> Func = [&] { (*this).Change_Animation(); };
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Front_1"), TEXT("Change_Animation"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Step_Back_2"), TEXT("Change_Animation"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Step_Back_3"), TEXT("Change_Animation"), Func)))
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Change_Animation"), Func)))
 		return E_FAIL;
 
 	Func = [&] {(*this).Attack_Light(); };
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Front_1"), TEXT("Attack_Light"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Step_Back_2"), TEXT("Attack_Light"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Step_Back_3"), TEXT("Attack_Light"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Left_45"), TEXT("Attack_Light"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Left_90"), TEXT("Attack_Light"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Left_135"), TEXT("Attack_Light"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Right_45"), TEXT("Attack_Light"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Right_90"), TEXT("Attack_Light"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Right_135"), TEXT("Attack_Light"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Right_180"), TEXT("Attack_Light"), Func)))
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Attack_Light"), Func)))
 		return E_FAIL;
 
 	Func = [&] {(*this).Attack_Heavy(); };
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Heavy_Front_2"), TEXT("Attack_Heavy"), Func)))
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Attack_Heavy"), Func)))
 		return E_FAIL;
 
 	Func = [&] {(*this).Cast_Levioso(); };
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Levioso"), TEXT("Cast_Levioso"), Func)))
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Cast_Levioso"), Func)))
 		return E_FAIL;
 
 	Func = [&] {(*this).Cast_Protego(); };
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Cast_Protego"), TEXT("Cast_Protego"), Func)))
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Cast_Protego"), Func)))
 		return E_FAIL;
 
 	Func = [&] {(*this).Shot_Magic(); };
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Front_1"), TEXT("Shot_Magic"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Step_Back_2"), TEXT("Shot_Magic"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Step_Back_3"), TEXT("Shot_Magic"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Left_45"), TEXT("Shot_Magic"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Left_90"), TEXT("Shot_Magic"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Left_135"), TEXT("Shot_Magic"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Right_45"), TEXT("Shot_Magic"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Right_90"), TEXT("Shot_Magic"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Right_135"), TEXT("Shot_Magic"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Light_Right_180"), TEXT("Shot_Magic"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Heavy_Front_2"), TEXT("Shot_Magic"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Cast_Levioso"), TEXT("Shot_Magic"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Cast_Protego"), TEXT("Shot_Magic"), Func)))
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Shot_Magic"), Func)))
 		return E_FAIL;
 
 	return S_OK;

@@ -47,14 +47,16 @@ struct PS_OUT
 PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
-
+    
     float4 vOriginTexture = g_TargetTexture.Sample(LinearSampler, In.vTexUV);
     float4 vBluredTexture = g_TargetBluredTexture.Sample(LinearSampler, In.vTexUV);
 
     float4 vGlow = pow(pow(abs(vBluredTexture), g_fGlowPower) + pow(abs(vOriginTexture), g_fGlowPower), 1.f / g_fGlowPower);
     
-    Out.vColor = pow(abs(vGlow), g_fGlowPower);
-    
+    Out.vColor = vOriginTexture + vBluredTexture * g_fGlowPower;
+    if (0.f == Out.vColor.a)
+        discard;
+
     return Out;
 }
 
@@ -64,7 +66,7 @@ technique11 DefaultTechnique
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Depth_Disable, 0);
-        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
         HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
