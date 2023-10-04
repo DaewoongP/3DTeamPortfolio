@@ -23,12 +23,6 @@ HRESULT CLevel_Cliffside::Initialize()
 
 		return E_FAIL;
 	}
-	if (FAILED(Ready_Layer_Item(TEXT("Layer_Item"))))
-	{
-		MSG_BOX("Failed Ready_Layer_Item");
-
-		return E_FAIL;
-	}
 	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
 	{
 		MSG_BOX("Failed Ready_Layer_Player");
@@ -82,6 +76,13 @@ HRESULT CLevel_Cliffside::Initialize()
 	if (FAILED(Load_MapObject_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins0.ddd"))))
 	{
 		MSG_BOX("Failed Load Map Object_Ins");
+
+		return E_FAIL;
+	}
+
+	if (FAILED(Ready_Layer_Item(TEXT("Layer_Item"))))
+	{
+		MSG_BOX("Failed Ready_Layer_Item");
 
 		return E_FAIL;
 	}
@@ -245,6 +246,12 @@ HRESULT CLevel_Cliffside::Ready_Layer_Item(const _tchar* pLayerTag)
 	//	return E_FAIL;
 	//}
 
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_WiggenweldPotion"), pLayerTag, TEXT("GameObject_WiggenweldPotion"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (WiggenweldPotion)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
 	ENDINSTANCE;
 
 	return S_OK;

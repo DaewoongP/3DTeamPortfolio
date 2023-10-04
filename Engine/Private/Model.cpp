@@ -121,12 +121,12 @@ _float4x4 CModel::Get_Attaching_Bone_Matrix(_uint iBoneIndex)
 	XMMATRIX AttachingBoneMatrix;
 
 	CBone* pBone = m_Bones[iBoneIndex];
-	_float4x4 PivotMatirx = XMLoadFloat4x4(&m_PivotMatrix);
+	_float4x4 PivotMatrix = XMLoadFloat4x4(&m_PivotMatrix);
 	_float4x4 OffsetMatrix = pBone->Get_OffsetMatrix();
 	_float4x4 CombinedFloat4x4 = pBone->Get_CombinedTransformationMatrix();
 	_float4x4 CombinedMatrix = XMLoadFloat4x4(&CombinedFloat4x4);
 
-	AttachingBoneMatrix = OffsetMatrix * CombinedMatrix * PivotMatirx;
+	AttachingBoneMatrix = OffsetMatrix * CombinedMatrix * PivotMatrix;
 	AttachingBoneMatrix.r[0] = XMVector3Normalize(AttachingBoneMatrix.r[0]);
 	AttachingBoneMatrix.r[1] = XMVector3Normalize(AttachingBoneMatrix.r[1]);
 	AttachingBoneMatrix.r[2] = XMVector3Normalize(AttachingBoneMatrix.r[2]);

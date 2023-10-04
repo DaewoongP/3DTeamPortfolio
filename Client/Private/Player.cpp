@@ -28,6 +28,7 @@
 #include "Defence.h"
 
 #include "WiggenweldPotion.h"
+#include "Inventory.h"
 
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -892,13 +893,6 @@ void CPlayer::Key_Input(_float fTimeDelta)
 	{
 		m_pRigidBody->Add_Force(m_pTransform->Get_Up() * 10.f, PxForceMode::eIMPULSE);
 	}*/
-	
-	if (pGameInstance->Get_DIKeyState(DIK_L, CInput_Device::KEY_DOWN))
-	{
-		CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_Dust01"), m_pTransform->Get_Position());
-		CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_Dust02"), m_pTransform->Get_Position());
-		CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_RockChunksRough"), m_pTransform->Get_Position());
-	}
 
 #ifdef _DEBUG
 	if (pGameInstance->Get_DIKeyState(DIK_UP))
@@ -929,23 +923,12 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		//CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_Dust01"), m_pTransform->Get_Position());
 		//CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_Dust02"), m_pTransform->Get_Position());
 		//CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_RockChunksRough"), m_pTransform->Get_Position());
-		_int iHp = 1;
-		m_pPlayer_Information->Get_Health()->Set_HP(iHp);
-	}
-
-	if (pGameInstance->Get_DIKeyState(DIK_K, CInput_Device::KEY_DOWN))
-	{
-		CWiggenweldPotion::CLONE_DESC initDesc;
-		//CWiggenweldPotion* pWiggenweldPotion = static_cast<CWiggenweldPotion*>(
-		//	pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_WiggenweldPotion"), &initDesc));
-		pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE
-			, TEXT("Prototype_GameObject_WiggenweldPotion")
-			, TEXT("Layer_Item")
-			, Generate_HashtagW().data()
-			, &initDesc);
 		
-		//pWiggenweldPotion->Use(_float3());
-		//Safe_Release(pWiggenweldPotion);
+		//CItem* pItem = static_cast<CItem*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_WiggenweldPotion")));
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(pItem, pItem->Get_Type());
+
+		wstring temp = TEXT("Drink_Potion_Throw");
+		m_pCustomModel->Change_Animation(temp);
 	}
 
 	ENDINSTANCE;
@@ -1689,7 +1672,14 @@ HRESULT CPlayer::Bind_Notify()
 
 		return E_FAIL;
 	}
+	
+	funcNotify = [&] { cout << "포션을 마셨습니다" << endl; };
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Drink_Potion_Throw"), TEXT("Drink_Potion"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
 
+		return E_FAIL;
+	}
 	return S_OK;
 }
 

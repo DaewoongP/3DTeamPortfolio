@@ -48,7 +48,7 @@ public:
     //현제 피니셔 비율
     _float Get_Finisher_Percent() const { return m_pFinisher->Get_Current_HP_Percent(); }
     CHealth* Get_Health() { return m_pHealth; }
-
+    CInventory* Get_Inventory() { return m_pInventory; }
 public:
     virtual HRESULT Initialize_Prototype();
     virtual HRESULT Initialize(void* pArg);

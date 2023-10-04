@@ -167,8 +167,8 @@
     <ClInclude Include="..\Public\Accio.h" />
     <ClInclude Include="..\Public\Action.h" />
     <ClInclude Include="..\Public\Animation_Camera_Model.h" />
+    <ClInclude Include="..\public\AshwinderEggs_Item.h" />
     <ClInclude Include="..\public\ChineseChompingCabbageItem.h" />
-    <ClInclude Include="..\public\HorklumpJuice_Item.h" />
     <ClInclude Include="..\public\ImGui_Manager.h" />
     <ClInclude Include="..\Public\Ingredient.h" />
     <ClInclude Include="..\Public\Arrestomomentum.h" />
@@ -351,8 +351,8 @@
     <ClCompile Include="..\Private\Accio.cpp" />
     <ClCompile Include="..\Private\Action.cpp" />
     <ClCompile Include="..\Private\Animation_Camera_Model.cpp" />
+    <ClCompile Include="..\Private\AshwinderEggs_Item.cpp" />
     <ClCompile Include="..\private\ChineseChompingCabbageItem.cpp" />
-    <ClCompile Include="..\private\HorklumpJuice_Item.cpp" />
     <ClCompile Include="..\private\ImGui_Manager.cpp" />
     <ClCompile Include="..\Private\Ingredient.cpp" />
     <ClCompile Include="..\Private\Arrestomomentum.cpp" />
