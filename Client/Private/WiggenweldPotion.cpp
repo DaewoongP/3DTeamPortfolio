@@ -38,6 +38,20 @@ HRESULT CWiggenweldPotion::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Health"),
+		TEXT("Com_Helath"), reinterpret_cast<CComponent**>(&m_pPlayerHealthCom))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Player_Information"),
+		TEXT("Com_Player_Information"), reinterpret_cast<CComponent**>(&m_pPlayerInformation))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+
+
 	return S_OK;
 }
 
@@ -91,4 +105,6 @@ CGameObject* CWiggenweldPotion::Clone(void* pArg)
 void CWiggenweldPotion::Free()
 {
 	__super::Free();
+	Safe_Release(m_pPlayerHealthCom);
+	Safe_Release(m_pPlayerInformation);
 }

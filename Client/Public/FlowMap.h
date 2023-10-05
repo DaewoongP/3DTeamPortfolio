@@ -4,41 +4,42 @@
 
 BEGIN(Engine)
 class CShader;
+class CTexture;
 class CRenderer;
-class CModel;
+class CVIBuffer_Rect;
 END
 
 BEGIN(Client)
 
-class CSky final : public CGameObject
+class CFlowMap final : public CGameObject
 {
 private:
-	explicit CSky(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	explicit CSky(const CSky& rhs);
-	virtual ~CSky() = default;
+	explicit CFlowMap(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	explicit CFlowMap(const CFlowMap& rhs);
+	virtual ~CFlowMap() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype();
-	virtual HRESULT Initialize(void* pArg);
-	virtual HRESULT Initialize_Level(_uint iCurrentLevelIndex) override;
+	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
 private:
-	CModel*				m_pModel = { nullptr };
 	CShader*			m_pShader = { nullptr };
+	CTexture*			m_pTexture1 = { nullptr };
+	CTexture*			m_pTexture2 = { nullptr };
 	CRenderer*			m_pRenderer = { nullptr };
+	CVIBuffer_Rect*		m_pBuffer = { nullptr };
 
 private:
-	LEVELID				m_iCurrentLevelIndex = { LEVEL_END };
+	_float				m_fFrame = { 0.f };
 
 private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
 
 public:
-	static CSky* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CFlowMap* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;
 };

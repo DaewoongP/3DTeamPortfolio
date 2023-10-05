@@ -213,6 +213,9 @@ public:
 	}
 	
 	static const char* pEase[EASE_END];
+
+	// 러프 용 주석 (4번째 매개변수를 파워로 사용할 수 있음)
+	// CEase::타입, Acc, 0, 1, 러프 시간
 	static float Ease(EASE eEase, float elapsedTime, float startValue, float changeAmount, float totalDuration)
 	{
 		switch (eEase)

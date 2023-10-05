@@ -69,8 +69,18 @@ HRESULT CCrucio::Initialize_Prototype(_uint iLevel)
 			return E_FAIL;
 		}
 	}
-	//메인 트레일 추가 필요 << 파티클로 해볼라 했는데 구조상 파티클로 안됨.
-	//차라리 나중에 매쉬보고 해야할듯
+	
+	//메인 매쉬이펙트 
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Crucio_Lightning03")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Crucio_Lightning03")
+			, CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/Crucio/Lightning03/Lightning03.ME"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			__debugbreak();
+			return E_FAIL;
+		}
+	}
 
 	//종료 이펙트
 	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Crucio_End_Dust")))
@@ -203,11 +213,6 @@ void CCrucio::Late_Tick(_float fTimeDelta)
 void CCrucio::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
 	__super::OnCollisionEnter(CollisionEventDesc);
-	//몹이랑 충돌했으면?
-	if (wcsstr(CollisionEventDesc.pOtherCollisionTag, TEXT("Enemy_Body")) != nullptr)
-	{
-		Set_MagicBallState(MAGICBALL_STATE_DYING);
-	}
 }
 
 void CCrucio::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)
@@ -259,6 +264,21 @@ void CCrucio::Tick_DrawMagic(_float fTimeDelta)
 void CCrucio::Tick_CastMagic(_float fTimeDelta)
 {
 	__super::Tick_CastMagic(fTimeDelta);
+	m_fLightningTimer -= fTimeDelta;
+	if (m_fLightningTimer < 0)
+	{
+		//완드 위치에서 생성.
+		_int iIndex = rand() % 4;
+		m_pLightningMeshEffect[iIndex]->Play(m_CurrentWeaponMatrix.Translation());
+		//스케일은 distance /3;
+		_float fDistance = Vector3::Distance(m_CurrentWeaponMatrix.Translation(), m_CurrentTargetMatrix.Translation());
+		m_pLightningMeshEffect[iIndex]->Get_Transform()->Set_Scale(_float3(1.f, 1.f, fDistance / 3.f));
+		//로테이션은 z축만 랜덤으로 생성.
+		m_pLightningMeshEffect[iIndex]->Get_Transform()->LookAt(m_CurrentTargetMatrix.Translation());
+		//m_pLightningMeshEffect[iIndex]->Get_Transform()->Turn(_float3(0,0,1),XMConvertToRadians(rand()%360));
+		m_fLightningTimer = 0.1f;
+	}
+
 	_bool isAlive = { false };
 	for (int i = 0; i < m_ParticleVec[EFFECT_STATE_MAIN].size(); i++)
 	{
@@ -340,6 +360,15 @@ HRESULT CCrucio::Add_Components()
 		return E_FAIL;
 	}
 
+	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Crucio_Lightning03")
+		, TEXT("Com_Lightning01"), (CComponent**)&m_pLightningMeshEffect[0]), E_FAIL);
+	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Crucio_Lightning03")
+		, TEXT("Com_Lightning02"), (CComponent**)&m_pLightningMeshEffect[1]), E_FAIL);
+	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Crucio_Lightning03")
+		, TEXT("Com_Lightning03"), (CComponent**)&m_pLightningMeshEffect[2]), E_FAIL);
+	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Crucio_Lightning03")
+		, TEXT("Com_Lightning04"), (CComponent**)&m_pLightningMeshEffect[3]), E_FAIL);
+	
 	//메인 트레일 제작중
 	m_ParticleVec[EFFECT_STATE_MAIN].resize(9);
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Crucio_Main_Wand_Sprak_03")
@@ -450,6 +479,10 @@ CGameObject* CCrucio::Clone(void* pArg)
 
 void CCrucio::Free()
 {
+	for (int i = 0; i < 4; i++)
+	{
+		Safe_Release(m_pLightningMeshEffect[i]);
+	}
 	__super::Free();
 }
 

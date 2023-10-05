@@ -170,7 +170,8 @@
     <ClInclude Include="..\public\AshwinderEggs_Item.h" />
     <ClInclude Include="..\public\ChineseChompingCabbageItem.h" />
     <ClInclude Include="..\Public\ConjuredDragon.h" />
-    <ClInclude Include="..\public\HorklumpJuice_Item.h" />
+    <ClInclude Include="..\Public\Diffindo.h" />
+    <ClInclude Include="..\public\FlowMap.h" />
     <ClInclude Include="..\public\ImGui_Manager.h" />
     <ClInclude Include="..\Public\Ingredient.h" />
     <ClInclude Include="..\Public\Arrestomomentum.h" />
@@ -179,7 +180,8 @@
     <ClInclude Include="..\Public\Expelliarmus.h" />
     <ClInclude Include="..\Public\Flipendo.h" />
     <ClInclude Include="..\Public\Imperio.h" />
-    <ClInclude Include="..\Public\EndurusPotion.h" />
+    <ClInclude Include="..\Public\EdurusPotion.h" />
+    <ClInclude Include="..\Public\InvisiblityPotion.h" />
     <ClInclude Include="..\public\Item.h" />
     <ClInclude Include="..\public\Norm_Test.h" />
     <ClInclude Include="..\public\Plant.h" />
@@ -310,7 +312,6 @@
     <ClInclude Include="..\Public\Weapon_Player_Wand.h" />
     <ClInclude Include="..\Public\Wingardiumleviosa.h" />
     <ClInclude Include="..\Public\Wingardium_Effect.h" />
-    <ClInclude Include="Animation_Camera.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="ImGui\backends\imgui_impl_dx11.h">
@@ -359,7 +360,8 @@
     <ClCompile Include="..\Private\AshwinderEggs_Item.cpp" />
     <ClCompile Include="..\private\ChineseChompingCabbageItem.cpp" />
     <ClCompile Include="..\Private\ConjuredDragon.cpp" />
-    <ClCompile Include="..\private\HorklumpJuice_Item.cpp" />
+    <ClCompile Include="..\Private\Diffindo.cpp" />
+    <ClCompile Include="..\private\FlowMap.cpp" />
     <ClCompile Include="..\private\ImGui_Manager.cpp" />
     <ClCompile Include="..\Private\Ingredient.cpp" />
     <ClCompile Include="..\Private\Arrestomomentum.cpp" />
@@ -367,7 +369,8 @@
     <ClCompile Include="..\Private\Expelliarmus.cpp" />
     <ClCompile Include="..\Private\Flipendo.cpp" />
     <ClCompile Include="..\Private\Imperio.cpp" />
-    <ClCompile Include="..\Private\EndurusPotion.cpp" />
+    <ClCompile Include="..\Private\EdurusPotion.cpp" />
+    <ClCompile Include="..\Private\InvisiblityPotion.cpp" />
     <ClCompile Include="..\private\Item.cpp" />
     <ClCompile Include="..\Private\Death.cpp" />
     <ClCompile Include="..\Private\Descendo.cpp" />
@@ -495,7 +498,6 @@
     <ClCompile Include="..\Private\Weapon_Player_Wand.cpp" />
     <ClCompile Include="..\Private\Wingardiumleviosa.cpp" />
     <ClCompile Include="..\Private\Wingardium_Effect.cpp" />
-    <ClCompile Include="Animation_Camera.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="ImGui\backends\imgui_impl_dx11.cpp">
       <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</IncludeInUnityFile>
@@ -547,6 +549,7 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Debug.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_FlowMap.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Protego.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_ShadowAnimMesh.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_ShadowMesh.hlsl" />

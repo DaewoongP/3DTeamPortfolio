@@ -5,6 +5,7 @@ BEGIN(Engine)
 
 class CModel;
 class CBone;
+
 END
 
 
@@ -27,15 +28,22 @@ private:
 
 public:
     //Get,Set
+    const _float3 Get_Eye()const { return m_vEye; }
+    const _float3 Get_Up()const { return m_vUp; }
+    const _float3 Get_At()const { return m_vAt; }
+
+    const _bool Is_Finish_Animation() const { return m_pAnimCameraModel->Is_Finish_Animation(); }
+
+    void Change_Animation(const wstring& _AnimattionIndex) { m_pAnimCameraModel->Change_Animation(_AnimattionIndex); }
+    
 
 public:
     virtual HRESULT Initialize_Protofftype();
     virtual HRESULT Initialize(void* pArg);
     virtual HRESULT Initialize_Level(_uint _iLevelIndex)override;
     virtual void Tick(_float fTimeDelta);
-    virtual void Late_Tick(_float fTimeDelta);
 public:
-  
+    
 
 private:
     CModel* m_pAnimCameraModel = { nullptr };
@@ -47,10 +55,10 @@ private:
     _float3 m_vEye = _float3();
     _float3 m_vAt= _float3();
 
-    //뼈이름이라 소문자 씀
-    const CBone* m_pskt_cam = { nullptr };
-    //이름은 lookat이지만 룩을 구하는데 쓰이는 up을 구할때 사용한다.
-    const CBone* m_plookat = { nullptr };
+    //
+    const CBone* m_pEyePoint = { nullptr };
+    //
+    const CBone* m_pUpPoint = { nullptr };
 private:
     HRESULT Add_Components();
     HRESULT Ready_BonData();

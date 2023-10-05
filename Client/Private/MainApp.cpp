@@ -53,11 +53,6 @@ void CMainApp::Tick(_float fTimeDelta)
 {
 	if (nullptr == m_pGameInstance)
 		return;
-	
-#ifdef _DEBUG
-	FAILED_CHECK_RETURN(m_pImGui_Manager->Add_Function([&] { this->Debug_ImGui(); }), );
-	FAILED_CHECK_RETURN(m_pImGui_Manager->Render(), );
-#endif // _DEBUG
 
 #ifdef _DEBUG
 	ShowCursor(true);
@@ -69,6 +64,11 @@ void CMainApp::Tick(_float fTimeDelta)
 	m_pGameInstance->Tick_Engine(fTimeDelta);
 
 	Tick_FPS(fTimeDelta);
+
+#ifdef _DEBUG
+	FAILED_CHECK_RETURN(m_pImGui_Manager->Add_Function([&] { this->Debug_ImGui(); }), );
+	FAILED_CHECK_RETURN(m_pImGui_Manager->Render(), );
+#endif // _DEBUG
 }
 
 HRESULT CMainApp::Render()
@@ -216,7 +216,7 @@ HRESULT CMainApp::Ready_Fonts()
 HRESULT CMainApp::Open_Level(LEVELID eLevelIndex)
 {
 	NULL_CHECK_RETURN(m_pGameInstance, E_FAIL);
-	
+
 	return m_pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, eLevelIndex));
 }
 
@@ -268,13 +268,16 @@ void CMainApp::Debug_ImGui()
 
 	if (true == isChangedLevel)
 	{
-		m_pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, m_eLevelID, m_isFirstLoaded));
+		m_pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, m_eLevelID, m_isStaticLoaded));
 
-		if (false == m_isFirstLoaded)
+		if (false == m_isStaticLoaded)
 		{
-			m_isFirstLoaded = true;
+			m_isStaticLoaded = true;
 		}
 	}
+
+	if (LEVEL_LOGO != m_eLevelID)
+		m_isStaticLoaded = true;
 
 	ImGui::End();
 }

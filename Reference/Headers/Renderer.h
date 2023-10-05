@@ -17,6 +17,12 @@ public:
 	enum RENDERGROUP {RENDER_PRIORITY, RENDER_DEPTH, RENDER_NONBLEND, RENDER_NONLIGHT, RENDER_BLEND,
 					  RENDER_GLOW, RENDER_DISTORTION, RENDER_PICKING, RENDER_BRUSHING, RENDER_UI, RENDER_UITEXTURE, RENDER_END };
 
+public:
+	_float Get_GlowPower() { return m_fGlowPower; }
+	void Set_GlowPower(_float fPower) { m_fGlowPower = fPower; }
+	_float Get_HDR() { return m_fHDR; }
+	void Set_HDR(_float fPower) { m_fHDR = fPower; }
+
 private:
 	explicit CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual ~CRenderer() = default;
@@ -49,7 +55,6 @@ private:
 	HRESULT Render_Blend();
 	HRESULT Render_HDR();
 	HRESULT Render_Distortion();
-	HRESULT Render_Effects();
 	HRESULT Render_PostProcessing();
 	HRESULT Render_UI();
 
@@ -95,7 +100,7 @@ private:
 	class CShader*					m_pPostProcessingShader = { nullptr };
 	class CShader*					m_pShadeTypeShader = { nullptr };
 	class CShader*					m_pSSAOShader = { nullptr };
-	class CShader*					m_pAfterShader = { nullptr };
+	class CShader*					m_pDistortionShader = { nullptr };
 
 private:
 	class CBlur*					m_pBlur = { nullptr };
@@ -103,6 +108,7 @@ private:
 	class CShadow*					m_pShadow = { nullptr };
 	class CGlow*					m_pGlow = { nullptr };
 	_float							m_fGlowPower = { 0.f };
+	_float							m_fHDR = { 0.f };
 	class CMotionBlurInstance*		m_pMotionBlurInstance = { nullptr };
 	class CMotionBlur*				m_pMotionBlur = { nullptr };
 	class CDOF*						m_pDOF = { nullptr };

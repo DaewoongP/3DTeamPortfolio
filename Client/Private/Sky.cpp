@@ -32,6 +32,13 @@ HRESULT CSky::Initialize(void* pArg)
 	return S_OK;
 }
 
+HRESULT CSky::Initialize_Level(_uint iCurrentLevelIndex)
+{
+	m_iCurrentLevelIndex = (LEVELID)iCurrentLevelIndex;
+
+	return S_OK;
+}
+
 void CSky::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
@@ -64,8 +71,16 @@ HRESULT CSky::Render()
 		if (FAILED(m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", i, DIFFUSE)))
 			return E_FAIL;
 
-		if (FAILED(m_pShader->Begin("Sky")))
-			return E_FAIL;
+		if (LEVEL_VAULT == m_iCurrentLevelIndex)
+		{
+			if (FAILED(m_pShader->Begin("VaultSky")))
+				return E_FAIL;
+		}
+		else
+		{
+			if (FAILED(m_pShader->Begin("Sky")))
+				return E_FAIL;
+		}
 
 		if (FAILED(m_pModel->Render(i)))
 			return E_FAIL;

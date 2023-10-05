@@ -1,5 +1,6 @@
 #include "Player_Camera.h"
 #include "GameInstance.h"
+#include "Animation_Camera_Model.h"
 
 CPlayer_Camera::CPlayer_Camera(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
 	:CCamera(_pDevice, _pContext)
@@ -43,6 +44,14 @@ _float3 CPlayer_Camera::Get_CamRightXZ()
 	return vXZRight;
 }
 
+void CPlayer_Camera::Change_Animation(const wstring& _AnimattionIndex)
+{
+	if (nullptr != m_pAnimation_Camera_Model)
+	{
+		m_pAnimation_Camera_Model->Change_Animation(_AnimattionIndex);
+	}
+}
+
 
 HRESULT CPlayer_Camera::Initialize(void* pArg)
 {
@@ -66,7 +75,8 @@ HRESULT CPlayer_Camera::Initialize(void* pArg)
 
 	m_pTransform->Set_RotationSpeed(1.0f);
 
-	
+	m_eLevelID = pCameraDesc->eLevelID;
+	m_ppTargetTransform = pCameraDesc->ppTargetTransform;
 	m_pPlayerTransform = pCameraDesc->pPlayerTransform;
 	Safe_AddRef(m_pPlayerTransform);
 	
@@ -82,13 +92,15 @@ HRESULT CPlayer_Camera::Initialize(void* pArg)
 
 	m_vEyeStandard = _float3(sinf(XMConvertToRadians(30.0f)), 0.0f, -cosf(XMConvertToRadians(30.f)));
 
-	m_fEyeMaxDistance = m_fAtMaxDistance = 3.0f;
+	m_fEyeMaxDistance = m_fAtMaxDistance = 2.0f;
 	m_fEyeMinDistance = m_fAtMinDistance = 1.0f;
 
 
 	m_fTimeSpeed = 10.0f;
 
-	m_fCameraHeight = 1.5f;
+	m_fCameraHeight = 1.2f;
+
+	Ready_Animation_Camera();
 
 	return S_OK;
 }
@@ -102,6 +114,8 @@ void CPlayer_Camera::Tick(const _float& _TimeDelta)
 	Follow_Transform();
 
 	Eye_At_Distance();
+
+	m_pAnimation_Camera_Model->Tick(_TimeDelta);
 
 	Update_Eye_At();
 
@@ -129,30 +143,42 @@ void CPlayer_Camera::Mouse_Input(_float _fTimeDelta)
 
 	if (dwMouseMove)
 	{
-		////회전 제한
-		//_float3 vLook = m_pTransform->Get_Look();
+		_float4x4 worldMatrix = m_pTransform->Get_WorldMatrix();
 
-		//vLook.Normalize();
+		_float3	vRight = worldMatrix.Right();
 
-		//_float3 vLookNoY = vLook;
+		worldMatrix = worldMatrix * XMMatrixRotationAxis(vRight, dwMouseMove * _fTimeDelta * 0.1f);
 
-		//vLookNoY.y = 0.0f;
-		//vLookNoY.Normalize();
+		_float3 vUp = worldMatrix.Up();
 
-		//if (XMConvertToRadians(70.0f) >= fabsf(XMVectorGetX(XMVector3AngleBetweenNormals(vLookNoY, vLook))))
-		//{
-		//	_float3	vRight = m_pTransform->Get_Right();
+		vUp.Normalize();
 
-		//	m_pTransform->Turn(vRight, dwMouseMove * _fTimeDelta * 0.1f);
+		_float3 vStandardUp = _float3(0.0f, 1.0f, 0.0f);
 
-		//	dwMouseMove = 0;
-		//}
+		_float fAngle = vStandardUp.Dot(vUp);
 
-		_float3	vRight = m_pTransform->Get_Right();
+		if (1.0f < fAngle)
+		{
+			fAngle = 1.0f;
+		}
+
+		fAngle = fabsf(acosf(fAngle));
+
+		_float fStandardAngle = XMConvertToRadians(60.0f);
+
+		//기준 보다 커지면 안됌
+		if (fStandardAngle >= fAngle)
+		{
+			m_pTransform->Turn(vRight, dwMouseMove * _fTimeDelta * 0.1f);
+
+			dwMouseMove = 0;
+		}
+
+		/*_float3	vRight = m_pTransform->Get_Right();
 
 		m_pTransform->Turn(vRight, dwMouseMove * _fTimeDelta * 0.1f);
 
-		dwMouseMove = 0;
+		dwMouseMove = 0;*/
 	}
 
 	dwMouseMove = pGameInstance->Get_DIMouseMove(CInput_Device::DIMM_X);
@@ -306,6 +332,82 @@ void CPlayer_Camera::Update_Eye_At()
 
 		_float3 vUp = _float3(0.0f, 1.0f, 0.0f);
 	}
+
+
+	
+
+	//재생중
+	if (false == m_pAnimation_Camera_Model->Is_Finish_Animation())
+	{
+		//최대치보다 작다면
+		if (1.0f > m_fLerpTimeAcc)
+		{
+			m_fLerpTimeAcc += pGameInstance->Get_World_Tick() * m_fLerpSpeed;
+			
+			if (1.0f <= m_fLerpTimeAcc)
+			{
+				m_fLerpTimeAcc = 1.0f;
+			}
+		}
+	}
+	else if (true == m_pAnimation_Camera_Model->Is_Finish_Animation())
+	{
+		//0.0f보다 크다면
+		if (0.0f < m_fLerpTimeAcc)
+		{
+			m_fLerpTimeAcc -= pGameInstance->Get_World_Tick() * m_fLerpSpeed;
+
+			if (0.0f >= m_fLerpTimeAcc)
+			{
+				m_fLerpTimeAcc = 0.0f;
+			}
+		}
+	}
+
+	if (0.0f != m_fLerpTimeAcc)
+	{
+		vEye = XMVectorLerp(vEye, m_pAnimation_Camera_Model->Get_Eye(), m_fLerpTimeAcc);
+		vUp = XMVectorLerp(vUp, m_pAnimation_Camera_Model->Get_Up(), m_fLerpTimeAcc);
+		vAt = XMVectorLerp(vAt, m_pAnimation_Camera_Model->Get_At(), m_fLerpTimeAcc);
+	}
+
+	if (nullptr != (*m_ppTargetTransform) && 0.0f != m_fLerpTimeAcc && 1.0f > m_fLerpTimeAcc && false == m_pAnimation_Camera_Model->Is_Finish_Animation())
+	{
+		// 트렌스폼 룩을 타겟을 향하게 해야한다.
+
+		//일단 행렬을 만든다 타겟을 바라보는
+		_float3 vTarget = (*m_ppTargetTransform)->Get_Position();
+
+		_float3 vPosition = m_pTransform->Get_Position();
+
+		_float3 vDirTatget = vTarget - vPosition;
+
+		//애니메이션 카메라가 기준이 라이트 회전이 없는 상태인것 같기 때문에
+		vDirTatget.y = 0.0f;
+
+		vDirTatget.Normalize();
+
+		_float4x4 matrixForTarget = 
+			XMMatrixInverse
+			( 
+				nullptr,
+				XMMatrixLookAtLH
+				(
+					vPosition, XMVectorSetY
+					(
+						vTarget,vPosition.y
+					), _float3(0.0f, 1.0f, 0.0f)
+				)
+			);
+
+		//matrixForTarget.Translation(vPosition);
+
+		_float4x4 matrixResult = m_pTransform->Get_WorldMatrix();
+
+		_Matrix::Lerp(matrixResult, matrixForTarget, m_fLerpTimeAcc, matrixResult);
+
+		m_pTransform->Set_WorldMatrix(matrixResult);
+	}
 	
 	pGameInstance->Set_Transform(
 		CPipeLine::D3DTS_VIEW, 
@@ -327,6 +429,29 @@ _bool CPlayer_Camera::IsValid_CameraPos(_float3 vEye, _float3 vUp)
 	return true;
 }
 
+HRESULT CPlayer_Camera::Ready_Animation_Camera()
+{
+	BEGININSTANCE;
+
+	CAnimation_Camera_Model::ANIMATION_CAMERA_MODEL_DESC Animation_Camera_Model_Desc = { CAnimation_Camera_Model::ANIMATION_CAMERA_MODEL_DESC() };
+
+	Animation_Camera_Model_Desc.pTargetTransform = m_pTransform;
+	
+	m_pAnimation_Camera_Model = static_cast<CAnimation_Camera_Model*>
+		(pGameInstance->Clone_Component
+		(LEVEL_STATIC, TEXT("Prototype_GameObject_Animation_Camera_Model"), &Animation_Camera_Model_Desc));
+	
+	if (nullptr == m_pAnimation_Camera_Model)
+	{
+		MSG_BOX("Failed Ready_Animation_Camera");
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
 CPlayer_Camera* CPlayer_Camera::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, void* pArg)
 {
 	CPlayer_Camera* pInstance = New CPlayer_Camera(_pDevice, _pContext);
@@ -346,4 +471,5 @@ void CPlayer_Camera::Free()
 
 	Safe_Release(m_pTransform);
 	Safe_Release(m_pPlayerTransform);
+	Safe_Release(m_pAnimation_Camera_Model);
 }
