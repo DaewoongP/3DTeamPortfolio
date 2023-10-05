@@ -89,9 +89,6 @@ HRESULT CMainApp::Render()
 
 	FAILED_CHECK_RETURN(m_pGameInstance->Present(), E_FAIL);
 
-#ifdef _DEBUG
-	Render_ImGui();
-#endif // _DEBUG
 	return S_OK;
 }
 
