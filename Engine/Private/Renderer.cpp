@@ -13,7 +13,6 @@
 #include "Glow.h"
 #include "Shadow.h"
 #include "MotionBlur.h"
-#include "FlowMap.h"
 #include "DOF.h"
 
 #ifdef _DEBUG
@@ -156,8 +155,6 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Priority"), 240.f, 240.f, 160.f, 160.f)))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Distortion"), 1280.f - 160.f, 160.f, 320.f, 320.f)))
-		return E_FAIL;
 #endif // _DEBUG
 
 	return S_OK;
@@ -229,7 +226,7 @@ HRESULT CRenderer::Draw_RenderGroup()
 	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_Effect"))))
 		return E_FAIL;
 
-	if (FAILED(m_pGlow->Render(m_RenderObjects[RENDER_GLOW]), 30.f))
+	if (FAILED(m_pGlow->Render(m_RenderObjects[RENDER_GLOW], 3.f)))
 		return E_FAIL;
 	if (FAILED(Render_PostProcessing()))
 		return E_FAIL;
@@ -764,7 +761,7 @@ HRESULT CRenderer::Add_Components()
 	m_pGlow = CGlow::Create(m_pDevice, m_pContext, m_pRectBuffer);
 	if (nullptr == m_pGlow)
 		return E_FAIL;
-
+	
 	return S_OK;
 }
 #ifdef _DEBUG

@@ -172,6 +172,7 @@
     <ClInclude Include="..\Public\ConjuredDragon.h" />
     <ClInclude Include="..\Public\Diffindo.h" />
     <ClInclude Include="..\public\HorklumpJuice_Item.h" />
+    <ClInclude Include="..\public\FlowMap.h" />
     <ClInclude Include="..\public\ImGui_Manager.h" />
     <ClInclude Include="..\Public\Ingredient.h" />
     <ClInclude Include="..\Public\Arrestomomentum.h" />
@@ -363,6 +364,7 @@
     <ClCompile Include="..\Private\ConjuredDragon.cpp" />
     <ClCompile Include="..\Private\Diffindo.cpp" />
     <ClCompile Include="..\private\HorklumpJuice_Item.cpp" />
+    <ClCompile Include="..\private\FlowMap.cpp" />
     <ClCompile Include="..\private\ImGui_Manager.cpp" />
     <ClCompile Include="..\Private\Ingredient.cpp" />
     <ClCompile Include="..\Private\Arrestomomentum.cpp" />
@@ -551,6 +553,7 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Debug.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_FlowMap.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Protego.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_ShadowAnimMesh.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_ShadowMesh.hlsl" />

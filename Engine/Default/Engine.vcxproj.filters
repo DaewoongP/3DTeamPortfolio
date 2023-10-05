@@ -394,9 +394,6 @@
     <Filter Include="01. Utility\03. Components\07. VIBuffer\Instance\Particle\Rect">
       <UniqueIdentifier>{36441e4a-67b3-4801-b621-746be4b58e3a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\03. Components\02. Renderer\FlowMap">
-      <UniqueIdentifier>{bda6b89d-6c62-4ec2-8788-194e69c46dc7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Utility\03. Components\02. Renderer\Shadow">
       <UniqueIdentifier>{29b3dbe5-1450-4524-9b24-b47c4a05122b}</UniqueIdentifier>
     </Filter>
@@ -816,9 +813,6 @@
     <ClInclude Include="..\public\VIBuffer_Rect_Particle_Instance.h">
       <Filter>01. Utility\03. Components\07. VIBuffer\Instance\Particle\Rect</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\FlowMap.h">
-      <Filter>01. Utility\03. Components\02. Renderer\FlowMap</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Shadow.h">
       <Filter>01. Utility\03. Components\02. Renderer\Shadow</Filter>
     </ClInclude>
@@ -1199,9 +1193,6 @@
     <ClCompile Include="..\private\VIBuffer_Rect_Particle_Instance.cpp">
       <Filter>01. Utility\03. Components\07. VIBuffer\Instance\Particle\Rect</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\FlowMap.cpp">
-      <Filter>01. Utility\03. Components\02. Renderer\FlowMap</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Shadow.cpp">
       <Filter>01. Utility\03. Components\02. Renderer\Shadow</Filter>
     </ClCompile>
@@ -1282,9 +1273,6 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VelocityMapInst.hlsl">
       <Filter>01. Utility\03. Components\15. ParticleSystem\MotionBlurInst</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_FlowMap.hlsl">
-      <Filter>01. Utility\03. Components\02. Renderer\FlowMap</Filter>
-    </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Shadow.hlsl">
       <Filter>01. Utility\03. Components\02. Renderer\Shadow</Filter>
     </FxCompile>
@@ -1313,6 +1301,9 @@
     </None>
     <None Include="..\Bin\ShaderFiles\Shader_EngineHeader.hlsli">
       <Filter>01. Utility\98. ShaderFiles</Filter>
+    </None>
+    <None Include="..\Bin\ShaderFiles\Shader_PBR.hlsli">
+      <Filter>01. Utility\03. Components\02. Renderer\Shader</Filter>
     </None>
   </ItemGroup>
 </Project>

@@ -36,6 +36,7 @@
 #include "ParticleSystem.h"
 #include "ParticleSystemPool.h"
 #include "Trail.h"
+#include "FlowMap.h"
 #include "MeshEffect.h"
 #include "Wingardium_Effect.h"
 #pragma endregion Effects
@@ -190,7 +191,10 @@ HRESULT CMain0_Loader::Loading_For_Cliffside(LEVELID eLevelID)
 		return E_FAIL;
 	try /* Failed Check Add_Prototype*/
 	{
-
+		/* For.Prototype_GameObject_FlowMap */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_FlowMap"),
+			CFlowMap::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_FlowMap");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -447,6 +451,11 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxAnimMesh.hlsl"), VTXANIMMESH_DECL::Elements, VTXANIMMESH_DECL::iNumElements))))
 			throw TEXT("Prototype_Component_Shader_VtxAnimMesh");
 
+		/* Prototype_Component_Shader_FlowMap */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_FlowMap"),
+			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_FlowMap.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements))))
+			throw TEXT("Prototype_Component_Shader_FlowMap");
+
 		/* For.Prototype_Component_Shader_VtxMesh */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_VtxMesh"),
 			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxMesh.hlsl"), VTXMESH_DECL::Elements, VTXMESH_DECL::iNumElements))))
@@ -508,14 +517,15 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			CRigidBody::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_RigidBody");
 
+#pragma endregion
+
+#pragma region Load Magic
 		/* --------------Magic-------------- */
 		/* For. Prototype_Component_Magic*/
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Magic"),
 			CMagic::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Magic");
-#pragma endregion
 
-#pragma region Load Magic
 		/* For.Prototype_GameObject_BasicCast */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_BasicCast"),
 			CBasicCast::Create(m_pDevice, m_pContext, eLevelID))))

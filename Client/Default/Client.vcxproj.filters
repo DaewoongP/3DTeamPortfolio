@@ -490,6 +490,9 @@
     <Filter Include="05. Magic\MagicBall\18. Bombarda">
       <UniqueIdentifier>{71aa1272-8b21-4963-b502-4d0bebac9131}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\10. Flowmap">
+      <UniqueIdentifier>{8d96a00c-986f-458a-b01c-19b091c17877}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -980,9 +983,6 @@
     <ClInclude Include="..\Public\Stupefy.h">
       <Filter>05. Magic\MagicBall\17. Stupefy</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\HorklumpJuice_Item.h">
-      <Filter>02. GameObject\09. Item\02. Ingredient\HorklumpJuice</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\ImGui_Manager.h">
       <Filter>96. ImGui</Filter>
     </ClInclude>
@@ -991,6 +991,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\Diffindo.h">
       <Filter>05. Magic\MagicBall\13. Diffindo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\FlowMap.h">
+      <Filter>02. GameObject\10. Flowmap</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1443,9 +1446,6 @@
     <ClCompile Include="..\Private\Stupefy.cpp">
       <Filter>05. Magic\MagicBall\17. Stupefy</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\HorklumpJuice_Item.cpp">
-      <Filter>02. GameObject\09. Item\02. Ingredient\HorklumpJuice</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\ImGui_Manager.cpp">
       <Filter>96. ImGui</Filter>
     </ClCompile>
@@ -1454,6 +1454,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Diffindo.cpp">
       <Filter>05. Magic\MagicBall\13. Diffindo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\FlowMap.cpp">
+      <Filter>02. GameObject\10. Flowmap</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1513,6 +1516,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_ShadowMeshInstance.hlsl">
       <Filter>97. ShaderFiles\Meshes</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_FlowMap.hlsl">
+      <Filter>97. ShaderFiles\Textures</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

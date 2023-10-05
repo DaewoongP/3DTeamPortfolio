@@ -196,6 +196,12 @@ HRESULT CLevel_Cliffside::Ready_Layer_BackGround(const _tchar* pLayerTag)
 		MSG_BOX("Failed Add_GameObject : (GameObject_Sky)");
 		return E_FAIL;
 	}
+	
+	/*if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_FlowMap"), pLayerTag, TEXT("GameObject_FlowMap"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_FlowMap)");
+		return E_FAIL;
+	}*/
 
 	Safe_Release(pGameInstance);
 
