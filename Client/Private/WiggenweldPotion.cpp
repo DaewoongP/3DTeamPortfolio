@@ -72,8 +72,8 @@ HRESULT CWiggenweldPotion::Render()
 
 void CWiggenweldPotion::Use(_float3 vPlayPos)
 {
-	m_pPlayerHealthCom->Heal(0.4f);
-	m_pPlayerInformation->fix_HP(40);
+	__super::Use(vPlayPos);
+	m_pPlayerInformation->Get_Health()->Heal(m_fRecoveryAmount);
 }
 
 CWiggenweldPotion* CWiggenweldPotion::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel)

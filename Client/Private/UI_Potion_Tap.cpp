@@ -45,14 +45,14 @@ HRESULT CUI_Potion_Tap::Initialize(void* pArg)
 	wstring SeventhTag = TEXT("Seventh");
 	wstring EighthTag = TEXT("Eighth");
 
-	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Potion_Tap_1_Edit.uidata"), FirstTag, POTIONTAP::DEFENSIVE_POWER_UP);
+	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Potion_Tap_1_Edit.uidata"), FirstTag, POTIONTAP::ENDURUS_POTION);
 	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Potion_Tap_2_Edit.uidata"), SecondTag, POTIONTAP::ATTACK_POWER_UP);
-	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Potion_Tap_3_Edit.uidata"), ThirdTag, POTIONTAP::SHOW_TIME);
+	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Potion_Tap_3_Edit.uidata"), ThirdTag, POTIONTAP::FOCUS_POTION);
 	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Potion_Tap_4_Edit.uidata"), FourthTag, POTIONTAP::THUNDER_CLOUD);
 	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Potion_Tap_5_Edit.uidata"), FifthTag, POTIONTAP::INVISIBILITY_PILL);
 	
 	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Potion_Tap_6_Edit.uidata"), SixthTag, POTIONTAP::MANDRAKE);
-	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Potion_Tap_7_Edit.uidata"), SeventhTag, POTIONTAP::BITE_CABBAGE);
+	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Potion_Tap_7_Edit.uidata"), SeventhTag, POTIONTAP::CHINESES_CHOPPING_CABBAGE);
 	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Potion_Tap_8_Edit.uidata"), EighthTag, POTIONTAP::TENTACULAR);
 
 	return S_OK;
@@ -276,7 +276,7 @@ HRESULT CUI_Potion_Tap::Add_Components(wstring wszTag, POTIONTAP eType)
 
 	switch (eType)
 	{
-	case Client::DEFENSIVE_POWER_UP:
+	case Client::ENDURUS_POTION:
 	{
 		Desc.m_vPos = { 662.f, 144.f };
 		wstring wstrNCount = to_wstring(0);
@@ -290,7 +290,7 @@ HRESULT CUI_Potion_Tap::Add_Components(wstring wszTag, POTIONTAP eType)
 		lstrcpy(Desc.m_pText, wstrNCount.c_str());
 	}
 		break;
-	case Client::SHOW_TIME:
+	case Client::FOCUS_POTION:
 	{
 		Desc.m_vPos = { 854.f, 333.f };
 		wstring wstrNCount = to_wstring(0);
@@ -318,7 +318,7 @@ HRESULT CUI_Potion_Tap::Add_Components(wstring wszTag, POTIONTAP eType)
 		lstrcpy(Desc.m_pText, wstrNCount.c_str());
 	}
 		break;
-	case Client::BITE_CABBAGE:
+	case Client::CHINESES_CHOPPING_CABBAGE:
 	{
 		Desc.m_vPos = { 473.f, 333.f };
 		wstring wstrNCount = to_wstring(0);

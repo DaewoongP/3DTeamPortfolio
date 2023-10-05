@@ -31,6 +31,10 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 
 public:
+	_bool Is_Valid(POTIONTAP ePotionTap);
+
+public:
+	CItem*			Get_CurItem();
 	_bool			Get_Open() { return m_isOpen; }
 
 private:
@@ -55,9 +59,13 @@ private:
 	HRESULT Ready_Main_Tap();
 	HRESULT	Ready_PotionTextures();
 
+private:
+	CItem* ToolFactory(POTIONTAP eType);
+
 public:
-	void	Add_Potion(CItem* pItem, POTIONTAP eType);
+	void	Add_Potion(POTIONTAP eType);
 	void	Delete_Potion(POTIONTAP eType, _uint iIndex);
+	void	Delete_Potion(POTIONTAP eType, CItem* pItem);
 
 	void	Set_CurPotion();
 

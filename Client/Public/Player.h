@@ -259,7 +259,8 @@ private:
 	void Shot_Basic_Last_Spell();
 
 	void Protego();
-
+	void Add_Layer_Item();
+	void Drink_Potion();
 #pragma endregion
 
 #pragma region 스테이트 변경 함수
