@@ -53,11 +53,6 @@ public:
 	HRESULT Initialize(void* pArg);
 	virtual void Tick(const _float& fTimeDelta);
 
-#ifdef _DEBUG
-	void Tick_ImGui();
-#endif // _DEBUG
-
-
 private:
 	CAnimation_Camera_Model* m_pAnimation_Camera_Model = { nullptr };
 

@@ -1,4 +1,5 @@
 #include "Bloom.h"
+#include "Blur.h"
 #include "RenderTarget_Manager.h"
 #include "Shader.h"
 #include "VIBuffer_Rect.h"
@@ -20,8 +21,18 @@ HRESULT CBloom::Initialize(CVIBuffer_Rect* pRectBuffer)
 	if (FAILED(pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_WhiteSpace"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
+	if (FAILED(pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
+		TEXT("Target_WhiteSpace_BlurX"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
+		return E_FAIL;
+	if (FAILED(pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
+		TEXT("Target_WhiteSpace_Blured"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
+		return E_FAIL;
 
 	if (FAILED(pRenderTarget_Manager->Add_MRT(TEXT("MRT_WhiteSpace"), TEXT("Target_WhiteSpace"))))
+		return E_FAIL;
+	if (FAILED(pRenderTarget_Manager->Add_MRT(TEXT("MRT_WhiteSpace_BlurX"), TEXT("Target_WhiteSpace_BlurX"))))
+		return E_FAIL;
+	if (FAILED(pRenderTarget_Manager->Add_MRT(TEXT("MRT_WhiteSpace_Blured"), TEXT("Target_WhiteSpace_Blured"))))
 		return E_FAIL;
 
 	XMStoreFloat4x4(&m_WorldMatrix, XMMatrixIdentity());
@@ -29,11 +40,6 @@ HRESULT CBloom::Initialize(CVIBuffer_Rect* pRectBuffer)
 	m_WorldMatrix._22 = ViewportDesc.Height;
 	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(ViewportDesc.Width, ViewportDesc.Height, 0.f, 1.f));
-
-#ifdef _DEBUG
-	if (FAILED(pRenderTarget_Manager->Ready_Debug(TEXT("Target_WhiteSpace"), 240.f, 240.f, 160.f, 160.f)))
-		return E_FAIL;
-#endif // _DEBUG
 
 	Safe_Release(pRenderTarget_Manager);
 
@@ -43,6 +49,8 @@ HRESULT CBloom::Initialize(CVIBuffer_Rect* pRectBuffer)
 	m_pShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Bloom.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements);
 	if (nullptr == m_pShader)
 		return E_FAIL;
+
+	m_pBlur = CBlur::Create(m_pDevice, m_pContext, pRectBuffer);
 
     return S_OK;
 }
@@ -64,6 +72,7 @@ HRESULT CBloom::Render(const _tchar* pRenderTargetTag)
 		return E_FAIL;
 
 	if (FAILED(pRenderTarget_Manager->Bind_ShaderResourceView(pRenderTargetTag, m_pShader, "g_TargetTexture")))
+		return E_FAIL;
 
 	if (FAILED(m_pShader->Begin("WhiteSpace")))
 		return E_FAIL;
@@ -71,7 +80,33 @@ HRESULT CBloom::Render(const _tchar* pRenderTargetTag)
 	if (FAILED(m_pBuffer->Render()))
 		return E_FAIL;
 
-	if (FAILED(pRenderTarget_Manager->End_MRT(m_pContext)))
+	if (FAILED(pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_WhiteSpace"))))
+		return E_FAIL;
+#pragma endregion
+
+	if (FAILED(m_pBlur->Render(TEXT("MRT_WhiteSpace_BlurX"), TEXT("Target_WhiteSpace"), CBlur::BLUR_X)))
+		return E_FAIL;
+	if (FAILED(m_pBlur->Render(TEXT("MRT_WhiteSpace_Blured"), TEXT("Target_WhiteSpace_BlurX"), CBlur::BLUR_Y)))
+		return E_FAIL;
+
+#pragma region ºí·ë Ã³¸®
+	if (FAILED(pRenderTarget_Manager->Bind_ShaderResourceView(pRenderTargetTag, m_pShader, "g_TargetTexture")))
+		return E_FAIL;
+	if (FAILED(pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_WhiteSpace"), m_pShader, "g_WhiteTexture")))
+		return E_FAIL;
+	if (FAILED(pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_WhiteSpace_Blured"), m_pShader, "g_WhiteBlurTexture")))
+		return E_FAIL;
+	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
+		return E_FAIL;
+
+	if (FAILED(m_pShader->Begin("Bloom")))
+		return E_FAIL;
+
+	if (FAILED(m_pBuffer->Render()))
 		return E_FAIL;
 #pragma endregion
 
@@ -97,6 +132,7 @@ void CBloom::Free()
 {
 	__super::Free();
 
+	Safe_Release(m_pBlur);
 	Safe_Release(m_pShader);
 	Safe_Release(m_pBuffer);
 }

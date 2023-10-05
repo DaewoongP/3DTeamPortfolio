@@ -14,12 +14,18 @@ protected:
 	{
 		vector<INGREDIENT>	Ingredients;
 		_float				fManufacturingTime = { 0.f };
+		wstring				wstrModelPath = { TEXT("") };
+		CModel::TYPE		eModelType = { CModel::TYPE_END };
+		_float4x4			PivotMatrix = { _float4x4() };
 	}POTION_CREATE_DESC;
 
 protected:
 	typedef struct tagPotionCloneDesc : public tagItemCloneDesc
 	{
-		// 아무것도 없어도 만들어놓기.
+		_float4x4        OffsetMatrix;
+		_float4x4        PivotMatrix;
+		const _float4x4* pCombindTransformationMatrix;
+		const _float4x4* pParentWorldMatrix;
 	}POTION_CLONE_DESC;
 
 protected:
@@ -38,11 +44,27 @@ private:
 	HRESULT Set_ShaderResources();
 
 protected:
+	CRenderer* m_pRenderer = { nullptr };
+	CModel* m_pModel = { nullptr };
+	CShader* m_pShader = { nullptr };
+
+protected:
 	POTION_CREATE_DESC			m_PotionCreateDesc = { POTION_CREATE_DESC() };
 	_float4x4					m_WorldMatrix;
+	
+	_float 						m_fDuration = { 0.f };
+	_uint						m_iBoneIndex = { 0 };
+
+	_float4x4        m_OffsetMatrix;
+	_float4x4        m_PivotMatrix;
+	const _float4x4* m_pCombindTransformationMatrix;
+	const _float4x4* m_pParentWorldMatrix;
 
 private:
 	CBone*						m_pTargetBone = { nullptr };
+
+private:
+	HRESULT Add_Components();
 
 public:
 	virtual void Free(void) override;

@@ -5,6 +5,11 @@ matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 texture2D g_TargetTexture;
 // 밝은 부분 추출하는 Luma 영상추출 기법
 float3 g_vLuminancekey = float3(0.2126f, 0.7152f, 0.0722f);
+float g_fGamma = 2.2f;
+
+// bloom
+texture2D g_WhiteTexture;
+texture2D g_WhiteBlurTexture;
 
 struct VS_IN
 {
@@ -55,6 +60,8 @@ PS_OUT PS_MAIN_WHITE(PS_IN In)
     {
         Out.vColor = float4(vTargetColor.rgb, 1.f);
     }
+    else
+        discard;
 
     return Out;
 }
@@ -63,6 +70,18 @@ PS_OUT PS_MAIN_BLOOM(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
 
+    vector vHDR = g_TargetTexture.Sample(PointSampler_Clamp, In.vTexUV);
+    vector vWhite = g_WhiteTexture.Sample(PointSampler_Clamp, In.vTexUV);
+    vector vWhiteBlured = g_WhiteBlurTexture.Sample(PointSampler_Clamp, In.vTexUV);
+    
+    vector vBloom = pow(pow(abs(vWhiteBlured), g_fGamma) + pow(abs(vWhite), g_fGamma), 1.f / g_fGamma);
+
+    vHDR = pow(abs(vHDR), g_fGamma);
+    vBloom = pow(abs(vBloom), g_fGamma);
+    
+    vHDR += vBloom;
+    
+    Out.vColor = pow(abs(vHDR), 1 / g_fGamma);
 
     return Out;
 }
@@ -73,7 +92,7 @@ technique11 DefaultTechnique
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Depth_Disable, 0);
-        SetBlendState(BS_BlendOne, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
         HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
@@ -84,7 +103,7 @@ technique11 DefaultTechnique
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Depth_Disable, 0);
-        SetBlendState(BS_BlendOne, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
         HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;

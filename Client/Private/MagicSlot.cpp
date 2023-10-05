@@ -42,7 +42,7 @@ HRESULT CMagicSlot::Initialize(void* pArg)
 		magicInitDesc.eMagicTag = BASICCAST;
 		magicInitDesc.fInitCoolTime = 0.f;
 		magicInitDesc.iDamage = 10;
-		magicInitDesc.fLifeTime = 0.6f;
+		magicInitDesc.fLifeTime = 0.3f;
 		Add_Magics(magicInitDesc);
 	}
 

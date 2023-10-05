@@ -64,10 +64,6 @@ void CPensive::Late_Tick(_float fTimeDelta)
 
 HRESULT CPensive::Render()
 {
-#ifdef _DEBUG
-	//Tick_ImGui();
-#endif // _DEBUG
-
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
@@ -204,12 +200,6 @@ HRESULT CPensive::SetUp_ShaderResources()
 
 	return S_OK;
 }
-
-#ifdef _DEBUG
-void CPensive::Tick_ImGui()
-{
-}
-#endif // _DEBUG
 
 CPensive* CPensive::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {

@@ -116,6 +116,8 @@ void CDynamic_Mesh::Tick(_float fTimeDelta)
 		nullptr == m_pSolver)
 		return;
 
+	if (m_pSolver->hasError())
+		return;
 	// 고정 프레임
 	m_pSolver->beginSimulation(1 / 60.f);
 

@@ -119,8 +119,6 @@ HRESULT CMagicBall::Reset(MAGICBALLINITDESC& InitDesc)
 		m_vStartPosition = _float3(0,0,0);
 	}
 	
-	InitDesc.eCollisionFlag;
-	
 	m_pTransform->Set_Position(m_CurrentWeaponMatrix.Translation());
 
 	//Set CollisionDesc
@@ -495,7 +493,7 @@ HRESULT CMagicBall::Add_RigidBody()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
 		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
 	{
-		MSG_BOX("Failed CTest_Player Add_Component : (Com_RigidBody)");
+		MSG_BOX("Failed CMagicBall Add_Component : (Com_RigidBody)");
 		__debugbreak();
 		return E_FAIL;
 	}

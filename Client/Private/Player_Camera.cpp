@@ -131,29 +131,7 @@ void CPlayer_Camera::Tick(const _float& _TimeDelta)
 	pGameInstance->Set_CameraFar(m_CameraDesc.m_fFar);
 
 	ENDINSTANCE;
-
-#ifdef _DEBUG
-	
-	Tick_ImGui();
-
-#endif // _DEBUG
 }
-
-#ifdef _DEBUG
-void CPlayer_Camera::Tick_ImGui()
-{
-	ImGui::Begin("Test Player Camera");
-
-	BEGININSTANCE;
-
-	ImGui::DragFloat("Eye_Intersect_Distance", &m_fEyeIntersectDistance, 0.01f, 0.0f, 20.0f);
-	ImGui::DragFloat("At_Intersect_Distance", &m_fAtIntersectDistance, 0.01f, 0.0f, 20.0f);
-
-	ENDINSTANCE;
-
-	ImGui::End();
-}
-#endif // _DEBUG
 
 void CPlayer_Camera::Mouse_Input(_float _fTimeDelta)
 {

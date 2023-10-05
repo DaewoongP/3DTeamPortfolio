@@ -23,12 +23,6 @@ HRESULT CLevel_Cliffside::Initialize()
 
 		return E_FAIL;
 	}
-	if (FAILED(Ready_Layer_Item(TEXT("Layer_Item"))))
-	{
-		MSG_BOX("Failed Ready_Layer_Item");
-
-		return E_FAIL;
-	}
 	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
 	{
 		MSG_BOX("Failed Ready_Layer_Player");
@@ -86,6 +80,13 @@ HRESULT CLevel_Cliffside::Initialize()
 		return E_FAIL;
 	}
 
+	if (FAILED(Ready_Layer_Item(TEXT("Layer_Item"))))
+	{
+		MSG_BOX("Failed Ready_Layer_Item");
+
+		return E_FAIL;
+	}
+
 	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
 	{
 		MSG_BOX("Failed Ready_Layer_Monster");
@@ -93,7 +94,6 @@ HRESULT CLevel_Cliffside::Initialize()
 		return E_FAIL;
 	}
 
-	//Load_Monsters(TEXT("../../Resources/GameData/MonsterData/Cliff1.mon"));
 #ifdef _DEBUG
 	if (FAILED(Ready_Layer_Debug(TEXT("Layer_Debug"))))
 	{
@@ -196,6 +196,12 @@ HRESULT CLevel_Cliffside::Ready_Layer_BackGround(const _tchar* pLayerTag)
 		MSG_BOX("Failed Add_GameObject : (GameObject_Sky)");
 		return E_FAIL;
 	}
+	
+	/*if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_FlowMap"), pLayerTag, TEXT("GameObject_FlowMap"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_FlowMap)");
+		return E_FAIL;
+	}*/
 
 	Safe_Release(pGameInstance);
 
@@ -246,6 +252,12 @@ HRESULT CLevel_Cliffside::Ready_Layer_Item(const _tchar* pLayerTag)
 	//	return E_FAIL;
 	//}
 
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_WiggenweldPotion"), pLayerTag, TEXT("GameObject_WiggenweldPotion"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (WiggenweldPotion)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
 	ENDINSTANCE;
 
 	return S_OK;
@@ -296,20 +308,21 @@ HRESULT CLevel_Cliffside::Ready_Layer_Monster(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 	Matrix = XMMatrixTranslation(40.f, 10.f, 65.f);
-	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Dugbog"), pLayerTag, TEXT("GameObject_Dugbog"), &Matrix)))
+	/*if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Dugbog"), pLayerTag, TEXT("GameObject_Dugbog"), &Matrix)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Dugbog)");
 		ENDINSTANCE;
 		return E_FAIL;
-	}
-	///////////////////////////////////////////////////////////////////////
-
-	/*if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Armored_Troll"), pLayerTag, TEXT("GameObject_Armored_Troll"))))
+	}*/
+	/*if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_ConjuredDragon"), pLayerTag, TEXT("GameObject_ConjuredDragon"), &Matrix)))
 	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Armored_Troll)");
+		MSG_BOX("Failed Add_GameObject : (GameObject_ConjuredDragon)");
 		ENDINSTANCE;
 		return E_FAIL;
 	}*/
+	///////////////////////////////////////////////////////////////////////
+
+	//Load_Monsters(TEXT("../../Resources/GameData/MonsterData/Cliff1.mon"));
 
 	ENDINSTANCE;
 
@@ -326,8 +339,9 @@ HRESULT CLevel_Cliffside::Ready_Layer_NPC(const _tchar* pLayerTag)
 		ENDINSTANCE;
 		return E_FAIL;
 	}
+	_float3 vPosition = _float3(40.f, 26.4f, 62.f);
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Professor_Fig"), pLayerTag, TEXT("GameObject_Professor_Fig"))))
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_STATIC, TEXT("Prototype_GameObject_Professor_Fig"), pLayerTag, TEXT("GameObject_Professor_Fig"), &vPosition)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Professor_Fig)");
 		ENDINSTANCE;
@@ -636,7 +650,7 @@ HRESULT CLevel_Cliffside::Ready_Layer_UI(const _tchar* pLayerTag)
 	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
 	{
 		MSG_BOX("Failed Add Scene : (Scene_Main)");
-		ENDINSTANCE;
+		Safe_Release(pGameInstance);
 		return E_FAIL;
 	}
 
@@ -646,7 +660,7 @@ HRESULT CLevel_Cliffside::Ready_Layer_UI(const _tchar* pLayerTag)
 		pLayerTag, TEXT("GameObject_UI_Group_Potion"), szFilePath)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_Potion)");
-		ENDINSTANCE;
+		Safe_Release(pGameInstance);
 		return E_FAIL;
 	}
 	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Skill_1.uidata"));
@@ -654,6 +668,7 @@ HRESULT CLevel_Cliffside::Ready_Layer_UI(const _tchar* pLayerTag)
 		pLayerTag, TEXT("Prototype_GameObject_UI_Group_Skill"), szFilePath)))
 	{
 		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_UI_Group_Skill)");
+		Safe_Release(pGameInstance);
 		return E_FAIL;
 	}
 	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Finisher_Icon.uidata"));
@@ -661,6 +676,7 @@ HRESULT CLevel_Cliffside::Ready_Layer_UI(const _tchar* pLayerTag)
 		pLayerTag, TEXT("GameObject_UI_Group_Finisher_Icon"), szFilePath)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_Finisher_Icon)");
+		Safe_Release(pGameInstance);
 		return E_FAIL;
 	}
 
@@ -678,10 +694,17 @@ HRESULT CLevel_Cliffside::Ready_Layer_UI(const _tchar* pLayerTag)
 		pLayerTag, TEXT("GameObject_UI_Aim"), &UIDesc)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_UI_Aim)");
+		Safe_Release(pGameInstance);
 		return E_FAIL;
 	}
 
 
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Potion_Tap"), pLayerTag, TEXT("GameObject_Potion_Tap"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Potion_Tap)");
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	}
 
 
 	//lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_MiniMap.uidata"));
@@ -799,6 +822,12 @@ HRESULT CLevel_Cliffside::Ready_Layer_Debug(const _tchar* pLayerTag)
 	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Camera_Debug"), pLayerTag, TEXT("GameObject_Camera_Debug"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Camera_Debug)");
+		return E_FAIL;
+	}
+	
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Norm_Test"), pLayerTag, TEXT("GameObject_Norm_Test"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Norm_Test)");
 		return E_FAIL;
 	}
 

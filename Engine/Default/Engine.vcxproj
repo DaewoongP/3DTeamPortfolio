@@ -28,7 +28,6 @@
     <ClInclude Include="..\public\TexturePool.h" />
     <ClInclude Include="..\public\VIBuffer_Particle_Instance.h" />
     <ClInclude Include="..\public\VIBuffer_Rect_Particle_Instance.h" />
-    <ClInclude Include="..\Public\FlowMap.h" />
     <ClInclude Include="..\public\Shadow.h" />
     <ClInclude Include="..\public\ThreadPool.h" />
     <ClInclude Include="..\public\VIBuffer_UVSphere.h" />
@@ -45,7 +44,6 @@
     <ClInclude Include="..\Public\Bounding_OBB.h" />
     <ClInclude Include="..\public\Bounding_Sphere.h" />
     <ClInclude Include="..\Public\ConvexMesh.h" />
-    <ClInclude Include="..\Public\Distortion.h" />
     <ClInclude Include="..\public\Debug_Render_TriangleMesh.h" />
     <ClInclude Include="..\public\Ease.h" />
     <ClInclude Include="..\Public\Debug_Functions.h" />
@@ -171,7 +169,6 @@
     <ClCompile Include="..\private\TexturePool.cpp" />
     <ClCompile Include="..\private\VIBuffer_Particle_Instance.cpp" />
     <ClCompile Include="..\private\VIBuffer_Rect_Particle_Instance.cpp" />
-    <ClCompile Include="..\Private\FlowMap.cpp" />
     <ClCompile Include="..\private\Shadow.cpp" />
     <ClCompile Include="..\private\ThreadPool.cpp" />
     <ClCompile Include="..\private\VIBuffer_UVSphere.cpp" />
@@ -188,7 +185,6 @@
     <ClCompile Include="..\Private\Bounding_OBB.cpp" />
     <ClCompile Include="..\private\Bounding_Sphere.cpp" />
     <ClCompile Include="..\Private\ConvexMesh.cpp" />
-    <ClCompile Include="..\Private\Distortion.cpp" />
     <ClCompile Include="..\private\Debug_Render_TriangleMesh.cpp" />
     <ClCompile Include="..\Private\Ease.cpp" />
     <ClCompile Include="..\private\Debug_Render_Box.cpp" />
@@ -303,7 +299,6 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_DOF.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Flipbook.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Distortion.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_FlowMap.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Geometry.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Glow.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_RenderFunc.hlsli" />
@@ -319,12 +314,14 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Type.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VelocityMapInst.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointColInstance.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointInstance.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxRectColIdxInstance.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxRectColInstance.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Bin\ShaderFiles\Shader_EngineHeader.hlsli" />
     <None Include="..\Bin\ShaderFiles\Shader_Functions.hlsli" />
+    <None Include="..\Bin\ShaderFiles\Shader_PBR.hlsli" />
     <None Include="..\Public\DirectXTK\matrix.inl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

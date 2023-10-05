@@ -18,7 +18,7 @@ BEGIN(Client)
 
 class CWiggenweldPotion final : public CPotion
 {
-public:
+private:
 	typedef struct tagCWiggenweldPotionCreateDesc
 	{
 		// 아무것도 없어도 일단 만들어놓기.
@@ -38,12 +38,16 @@ private:
 public:
 	virtual HRESULT Initialize_Prototype(_uint iLevel);
 	virtual HRESULT Initialize(void* pArg) override;
+	virtual void Tick(_float fTimeDelta) override;
+	virtual void Late_Tick(_float fTimeDelta) override;
+	virtual HRESULT Render() override;
 
 public:
 	virtual void Use(_float3 vPlayPos);
 
 private:
 	CHealth*	m_pPlayerHealthCom = { nullptr };
+	CPlayer_Information* m_pPlayerInformation = { nullptr };
 	_float		m_fRecoveryAmount = { 0.2f };
 
 public:
