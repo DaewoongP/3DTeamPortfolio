@@ -409,9 +409,20 @@ void CPlayer_Camera::Update_Eye_At()
 
 		vDirTatget.Normalize();
 
-		_float4x4 matrixForTarget = XMMatrixLookAtLH(vPosition, XMVectorSetY(vTarget,vPosition.y), _float3(0.0f, 1.0f, 0.0f));
+		_float4x4 matrixForTarget = 
+			XMMatrixInverse
+			( 
+				nullptr,
+				XMMatrixLookAtLH
+				(
+					vPosition, XMVectorSetY
+					(
+						vTarget,vPosition.y
+					), _float3(0.0f, 1.0f, 0.0f)
+				)
+			);
 
-		matrixForTarget.Translation(vPosition);
+		//matrixForTarget.Translation(vPosition);
 
 		_float4x4 matrixResult = m_pTransform->Get_WorldMatrix();
 
@@ -419,8 +430,6 @@ void CPlayer_Camera::Update_Eye_At()
 
 		m_pTransform->Set_WorldMatrix(matrixResult);
 	}
-
-	//행렬 러프는 0.0f이 아니고 1.0f보다 작을때만 한다.
 	
 	pGameInstance->Set_Transform(
 		CPipeLine::D3DTS_VIEW, 
