@@ -1,23 +1,23 @@
-#include "Weapon_Armored_Troll.h"
+#include "Weapon_Goblin_Assasin.h"
 
 #include "GameInstance.h"
 
-CWeapon_Armored_Troll::CWeapon_Armored_Troll(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CWeapon_Goblin_Assasin::CWeapon_Goblin_Assasin(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CParts(pDevice, pContext)
 {
 }
 
-CWeapon_Armored_Troll::CWeapon_Armored_Troll(const CWeapon_Armored_Troll& rhs)
+CWeapon_Goblin_Assasin::CWeapon_Goblin_Assasin(const CWeapon_Goblin_Assasin& rhs)
 	: CParts(rhs)
 {
 }
 
-HRESULT CWeapon_Armored_Troll::Initialize_Prototype()
+HRESULT CWeapon_Goblin_Assasin::Initialize_Prototype()
 {
 	return __super::Initialize_Prototype();
 }
 
-HRESULT CWeapon_Armored_Troll::Initialize(void* pArg)
+HRESULT CWeapon_Goblin_Assasin::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -32,7 +32,7 @@ HRESULT CWeapon_Armored_Troll::Initialize(void* pArg)
 	return S_OK;
 }
 
-HRESULT CWeapon_Armored_Troll::Initialize_Level(_uint iCurrentLevelIndex)
+HRESULT CWeapon_Goblin_Assasin::Initialize_Level(_uint iCurrentLevelIndex)
 {
 	if (FAILED(Add_Components_Level(iCurrentLevelIndex)))
 		return E_FAIL;
@@ -40,12 +40,12 @@ HRESULT CWeapon_Armored_Troll::Initialize_Level(_uint iCurrentLevelIndex)
 	return S_OK;
 }
 
-void CWeapon_Armored_Troll::Tick(_float fTimeDelta)
+void CWeapon_Goblin_Assasin::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 }
 
-void CWeapon_Armored_Troll::Late_Tick(_float fTimeDelta)
+void CWeapon_Goblin_Assasin::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
@@ -58,15 +58,17 @@ void CWeapon_Armored_Troll::Late_Tick(_float fTimeDelta)
 	}
 }
 
-void CWeapon_Armored_Troll::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
+void CWeapon_Goblin_Assasin::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
+	wstring wstrOtherCollisionTag = CollisionEventDesc.pOtherCollisionTag;
+
+	if (wstring::npos != wstrOtherCollisionTag.find(TEXT("Magic_Ball")))
+	{
+		static_cast<CEnemy*>(m_pOwner)->Set_Parring();
+	}
 }
 
-void CWeapon_Armored_Troll::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
-{
-}
-
-HRESULT CWeapon_Armored_Troll::Render()
+HRESULT CWeapon_Goblin_Assasin::Render()
 {
 	if (FAILED(Set_Shader_Resources()))
 		return E_FAIL;
@@ -100,7 +102,7 @@ HRESULT CWeapon_Armored_Troll::Render()
 	return __super::Render();
 }
 
-HRESULT CWeapon_Armored_Troll::Add_Components(void* pArg)
+HRESULT CWeapon_Goblin_Assasin::Add_Components(void* pArg)
 {
 	try /* Check Add_Components */
 	{
@@ -121,14 +123,14 @@ HRESULT CWeapon_Armored_Troll::Add_Components(void* pArg)
 		RigidBodyDesc.fStaticFriction = 0.f;
 		RigidBodyDesc.fDynamicFriction = 1.f;
 		RigidBodyDesc.fRestitution = 0.f;
-		PxCapsuleGeometry pCapsuleGeomatry = PxCapsuleGeometry(1.f, 1.3f);
+		PxCapsuleGeometry pCapsuleGeomatry = PxCapsuleGeometry(0.8f, 0.9f);
 		RigidBodyDesc.pGeometry = &pCapsuleGeomatry;
 		RigidBodyDesc.eConstraintFlag = CRigidBody::None;
 		RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 1.f, 1.f);
 		RigidBodyDesc.pOwnerObject = this;
 		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Attack");
 		RigidBodyDesc.eThisCollsion = COL_ENEMY_ATTACK;
-		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC | COL_SHIELD;
+		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC | COL_SHIELD | COL_MAGIC;
 
 		/* For.Com_RigidBody */
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
@@ -139,8 +141,7 @@ HRESULT CWeapon_Armored_Troll::Add_Components(void* pArg)
 	{
 		wstring wstrErrorMSG = TEXT("[CWeapon_Armored_Troll] Failed Add_Components : \n");
 		wstrErrorMSG += pErrorTag;
-		MSG_BOX(wstrErrorMSG.c_str());
-		__debugbreak();
+		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
 
 		return E_FAIL;
 	}
@@ -148,12 +149,12 @@ HRESULT CWeapon_Armored_Troll::Add_Components(void* pArg)
 	return S_OK;
 }
 
-HRESULT CWeapon_Armored_Troll::Add_Components_Level(_uint iCurrentLevelIndex)
+HRESULT CWeapon_Goblin_Assasin::Add_Components_Level(_uint iCurrentLevelIndex)
 {
-	if (FAILED(Add_Component(iCurrentLevelIndex, TEXT("Prototype_Component_Model_Weopon_Armored_Troll"), L"Com_Model",
+	if (FAILED(Add_Component(iCurrentLevelIndex, TEXT("Prototype_Component_Model_Weopon_Goblin_Assasin"), L"Com_Model",
 		(CComponent**)&m_pModelCom, this)))
 	{
-		wstring wstrErrorMSG = TEXT("[CWeapon_Armored_Troll] Failed Add_Components_Level : \n");
+		wstring wstrErrorMSG = TEXT("[CWeapon_Goblin_Assasin] Failed Add_Components_Level : \n");
 		wstrErrorMSG += TEXT("Failed Add_Component : Com_Model");
 		MSG_BOX(wstrErrorMSG.c_str());
 		__debugbreak();
@@ -164,7 +165,7 @@ HRESULT CWeapon_Armored_Troll::Add_Components_Level(_uint iCurrentLevelIndex)
 	return S_OK;
 }
 
-HRESULT CWeapon_Armored_Troll::Set_Shader_Resources()
+HRESULT CWeapon_Goblin_Assasin::Set_Shader_Resources()
 {
 	BEGININSTANCE;
 
@@ -201,38 +202,38 @@ HRESULT CWeapon_Armored_Troll::Set_Shader_Resources()
 	return S_OK;
 }
 
-CWeapon_Armored_Troll* CWeapon_Armored_Troll::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CWeapon_Goblin_Assasin* CWeapon_Goblin_Assasin::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CWeapon_Armored_Troll* pInstance = New CWeapon_Armored_Troll(pDevice, pContext);
+	CWeapon_Goblin_Assasin* pInstance = New CWeapon_Goblin_Assasin(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Created CWeapon_Armored_Troll");
+		MSG_BOX("Failed to Created CWeapon_Goblin_Assasin");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-CWeapon_Armored_Troll* CWeapon_Armored_Troll::Clone(void* pArg)
+CWeapon_Goblin_Assasin* CWeapon_Goblin_Assasin::Clone(void* pArg)
 {
-	CWeapon_Armored_Troll* pInstance = New CWeapon_Armored_Troll(*this);
+	CWeapon_Goblin_Assasin* pInstance = New CWeapon_Goblin_Assasin(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned CWeapon_Armored_Troll");
+		MSG_BOX("Failed to Cloned CWeapon_Goblin_Assasin");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-void CWeapon_Armored_Troll::Free()
+void CWeapon_Goblin_Assasin::Free()
 {
 	__super::Free();
 
 	if (true == m_isCloned)
 	{
-		Safe_Release(m_pModelCom);
 		Safe_Release(m_pRigidBody);
+		Safe_Release(m_pModelCom);
 		Safe_Release(m_pShaderCom);
 		Safe_Release(m_pRendererCom);
 	}

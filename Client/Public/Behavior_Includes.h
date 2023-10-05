@@ -12,5 +12,6 @@
 #include "Sequence_Groggy.h"
 #include "Selector_Degree.h"
 #include "Sequence_Attack.h"
+#include "Sequence_Descendo.h"
 #include "Sequence_Levitate.h"
 #include "Sequence_MoveTarget.h"

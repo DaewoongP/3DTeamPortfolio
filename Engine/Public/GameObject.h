@@ -44,11 +44,12 @@ public:
 	virtual HRESULT Render_Depth();
 
 protected:
-	CTransform*		m_pTransform = { nullptr };
+	CTransform*			m_pTransform = { nullptr };
 
 protected:
-	_float4x4		m_OffsetMatrix = {};
-	_bool			m_isDead = { false };
+	_float4x4			m_OffsetMatrix = {};
+	const _float4x4*	m_pHitMatrix = { nullptr };
+	_bool				m_isDead = { false };
 
 public:
 	virtual CGameObject* Clone(void* pArg) PURE;

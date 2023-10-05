@@ -1,6 +1,6 @@
 #include "Sequence_AirHit.h"
 
-#include "GameInstance.h"
+#include "Client_GameInstance_Functions.h"
 #include "BlackBoard.h"
 
 #include "Turn.h"
@@ -20,12 +20,10 @@ CSequence_AirHit::CSequence_AirHit(const CSequence_AirHit& rhs)
 
 HRESULT CSequence_AirHit::Initialize(void* pArg)
 {
-	BEGININSTANCE;
-	m_pRandomChoose = static_cast<CRandomChoose*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_RandomChoose")));
-	ENDINSTANCE;
-	if (nullptr == m_pRandomChoose)
+	m_pRandomChoose = nullptr;
+	if (FAILED(Create_Behavior(m_pRandomChoose)))
 	{
-		MSG_BOX("[CSequence_AirHit] Failed Initialize : m_pRandomChoose is nullptr");
+		MSG_BOX("[CSequence_AirHit] Failed Initialize : Failed Create_Behavior m_pRandomChoose");
 		return E_FAIL;
 	}
 
@@ -39,12 +37,11 @@ HRESULT CSequence_AirHit::Tick(const _float& fTimeDelta)
 
 HRESULT CSequence_AirHit::Assemble_Behavior(const _float& fWeight)
 {
-	BEGININSTANCE;
-	CAction* pAction_AirHit = static_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-	ENDINSTANCE;
-	if (nullptr == pAction_AirHit)
+	CAction* pAction_AirHit = nullptr;
+
+	if (FAILED(Create_Behavior(pAction_AirHit)))
 	{
-		MSG_BOX("[CSequence_AirHit] Failed Assemble_Behavior\n : pAction_AirHit is nullptr");
+		MSG_BOX("[CSequence_AirHit] Failed Assemble_Behavior\n : Failed Create_Behavior pAction_AirHit");
 		return E_FAIL;
 	}
 	_uint iIndex = m_Behaviors.size();
@@ -60,14 +57,14 @@ HRESULT CSequence_AirHit::Assemble_Childs()
 	try
 	{
 		/* Make Child Behaviors */
-		CSelector* pSelector_AirHit = static_cast<CSelector*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Selector")));
-		if (nullptr == pSelector_AirHit)
-			throw TEXT("pSelector_AirHit is nullptr");
+		CSelector* pSelector_AirHit = nullptr;
+		if (FAILED(Create_Behavior(pSelector_AirHit)))
+			throw TEXT("Failed Create_Behavior pSelector_AirHit");
 
 		/* 막타 맞고 날라가는 액션 */
-		CSequence* pSequence_Knockback = static_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
-		if (nullptr == pSequence_Knockback)
-			throw TEXT("pSequence_Knockback is nullptr");
+		CSequence* pSequence_Knockback = nullptr;
+		if (FAILED(Create_Behavior(pSequence_Knockback)))
+			throw TEXT("Failed Create_Behavior pSequence_Knockback");
 
 		/* Set Decorator*/
 		m_pRandomChoose->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool

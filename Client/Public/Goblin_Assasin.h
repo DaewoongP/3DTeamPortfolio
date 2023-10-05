@@ -1,6 +1,6 @@
 #pragma once
 /* =============================================== */
-//	[CGolem_Combat]
+//	[CGoblin_Assasin]
 // 
 //	정 : 주성환
 //	부 :
@@ -17,17 +17,17 @@ class CRandomChoose;
 END
 
 BEGIN(Client)
-class CWeapon_Golem_Combat;
+class CWeapon_Goblin_Assasin;
 END
 
 BEGIN(Client)
 
-class CGolem_Combat final : public CEnemy
+class CGoblin_Assasin final : public CEnemy
 {
 private:
-	explicit CGolem_Combat(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	explicit CGolem_Combat(const CGolem_Combat& rhs);
-	virtual ~CGolem_Combat() = default;
+	explicit CGoblin_Assasin(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	explicit CGoblin_Assasin(const CGoblin_Assasin& rhs);
+	virtual ~CGoblin_Assasin() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -40,7 +40,7 @@ public:
 	virtual HRESULT Render() override;
 
 private:
-	CWeapon_Golem_Combat* m_pWeapon = { nullptr };
+	CWeapon_Goblin_Assasin* m_pWeapon = { nullptr };
 
 private:
 	HRESULT Make_AI();
@@ -62,6 +62,7 @@ private: /* 행동 묶음들 */
 	HRESULT Make_NormalAttack(_Inout_ CSelector* pSelector);
 
 	HRESULT Make_Fly_Combo(_Inout_ CSelector* pSelector);
+	HRESULT Make_Descendo(_Inout_ CSequence* pSequence);
 	HRESULT Make_Turns(_Inout_ CSequence* pSequence);
 	HRESULT Make_Attack(_Inout_ CSelector* pSelector);
 	HRESULT Make_Random_Idle_Move(_Inout_ CRandomChoose* pRandomChoose);
@@ -77,8 +78,8 @@ private: /* Notify Func */
 	void Exit_Attack();
 
 public:
-	static CGolem_Combat* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CGolem_Combat* Clone(void* pArg) override;
+	static CGoblin_Assasin* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	virtual CGoblin_Assasin* Clone(void* pArg) override;
 	virtual void Free() override;
 };
 

@@ -1,8 +1,7 @@
-#include "Golem_Combat.h"
+#include "Goblin_Assasin.h"
+#include "GameInstance.h"
 
-#include "Client_GameInstance_Functions.h"
-
-#include "Weapon_Golem_Combat.h"
+#include "Weapon_Goblin_Assasin.h"
 
 #include "Wait.h"
 #include "Death.h"
@@ -15,21 +14,20 @@
 #include "Sequence_Groggy.h"
 #include "Sequence_Attack.h"
 #include "UI_Group_Enemy_HP.h"
-#include "Sequence_Descendo.h"
 #include "Sequence_Levitate.h"
 #include "Sequence_MoveTarget.h"
 
-CGolem_Combat::CGolem_Combat(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CGoblin_Assasin::CGoblin_Assasin(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CEnemy(pDevice, pContext)
 {
 }
 
-CGolem_Combat::CGolem_Combat(const CGolem_Combat& rhs)
+CGoblin_Assasin::CGoblin_Assasin(const CGoblin_Assasin& rhs)
 	: CEnemy(rhs)
 {
 }
 
-HRESULT CGolem_Combat::Initialize_Prototype()
+HRESULT CGoblin_Assasin::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
@@ -37,7 +35,7 @@ HRESULT CGolem_Combat::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CGolem_Combat::Initialize(void* pArg)
+HRESULT CGoblin_Assasin::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -48,7 +46,7 @@ HRESULT CGolem_Combat::Initialize(void* pArg)
 	return S_OK;
 }
 
-HRESULT CGolem_Combat::Initialize_Level(_uint iCurrentLevelIndex)
+HRESULT CGoblin_Assasin::Initialize_Level(_uint iCurrentLevelIndex)
 {
 	if (FAILED(Add_Components_Level(iCurrentLevelIndex)))
 		return E_FAIL;
@@ -59,7 +57,6 @@ HRESULT CGolem_Combat::Initialize_Level(_uint iCurrentLevelIndex)
 	m_pTransform->Set_RigidBody(m_pRigidBody);
 	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
-	m_pModelCom->Change_Animation(TEXT("Spawn_Fall_Loop"));
 
 	if (FAILED(Bind_HitMatrices()))
 		return E_FAIL;
@@ -70,27 +67,14 @@ HRESULT CGolem_Combat::Initialize_Level(_uint iCurrentLevelIndex)
 	return S_OK;
 }
 
-void CGolem_Combat::Tick(_float fTimeDelta)
+void CGoblin_Assasin::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
-	// Test Code 
-	BEGININSTANCE;
-	if (pGameInstance->Get_DIKeyState(DIK_LCONTROL, CInput_Device::KEY_PRESSING))
-	{
-		if (pGameInstance->Get_DIKeyState(DIK_4, CInput_Device::KEY_DOWN))
-			m_isParring = true;
-		if (pGameInstance->Get_DIKeyState(DIK_1, CInput_Device::KEY_DOWN))
-			m_iCurrentSpell |= BUFF_STUPEFY;
-	}
-
-	ENDINSTANCE;
-	////////////////////////////
 
 	m_pHitMatrix = m_HitMatrices[rand() % 3];
 
 	Set_Current_Target();
-	
+
 	if (nullptr != m_pRootBehavior)
 		m_pRootBehavior->Tick(fTimeDelta);
 
@@ -106,17 +90,17 @@ void CGolem_Combat::Tick(_float fTimeDelta)
 		m_pModelCom->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 }
 
-void CGolem_Combat::Late_Tick(_float fTimeDelta)
+void CGoblin_Assasin::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 }
 
-void CGolem_Combat::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
+void CGoblin_Assasin::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
 	wstring wstrMyCollisionTag = CollisionEventDesc.pThisCollisionTag;
 	wstring wstrOtherCollisionTag = CollisionEventDesc.pOtherCollisionTag;
-	
+
 	/* Collision Magic */
 	if (wstring::npos != wstrObjectTag.find(TEXT("MagicBall")))
 	{
@@ -154,14 +138,14 @@ void CGolem_Combat::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 	}
 
 	/* Collision Protego */
-	if (wstring::npos != wstrMyCollisionTag.find(TEXT("Attack")) && 
+	if (wstring::npos != wstrMyCollisionTag.find(TEXT("Attack")) &&
 		wstring::npos != wstrOtherCollisionTag.find(TEXT("Protego")))
 	{
 		m_isParring = true;
 	}
 }
 
-void CGolem_Combat::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
+void CGoblin_Assasin::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 {
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
 	wstring wstrMyCollisionTag = CollisionEventDesc.pThisCollisionTag;
@@ -175,7 +159,7 @@ void CGolem_Combat::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 	}
 }
 
-HRESULT CGolem_Combat::Render()
+HRESULT CGoblin_Assasin::Render()
 {
 #ifdef _DEBUG
 	//Tick_ImGui();
@@ -186,14 +170,14 @@ HRESULT CGolem_Combat::Render()
 
 	if (FAILED(__super::Render()))
 	{
-		MSG_BOX("[CGolem_Combat] Failed Render");
+		MSG_BOX("[CGoblin_Assasin] Failed Render");
 		return E_FAIL;
 	}
 
 	return S_OK;
 }
 
-HRESULT CGolem_Combat::Make_AI()
+HRESULT CGoblin_Assasin::Make_AI()
 {
 	BEGININSTANCE;
 
@@ -248,7 +232,7 @@ HRESULT CGolem_Combat::Make_AI()
 	}
 	catch (const _tchar* pErrorTag)
 	{
-		wstring wstrErrorMSG = TEXT("[CGolem_Combat] Failed Make_AI : \n");
+		wstring wstrErrorMSG = TEXT("[CGoblin_Assasin] Failed Make_AI : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
 		__debugbreak();
@@ -263,7 +247,7 @@ HRESULT CGolem_Combat::Make_AI()
 	return S_OK;
 }
 
-HRESULT CGolem_Combat::Make_Notifies()
+HRESULT CGoblin_Assasin::Make_Notifies()
 {
 	function<void()> Func = [&] {(*this).Enter_Light_Attack(); };
 	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Enter_Light_Attack"), Func)))
@@ -292,7 +276,7 @@ HRESULT CGolem_Combat::Make_Notifies()
 	return S_OK;
 }
 
-HRESULT CGolem_Combat::Add_Components()
+HRESULT CGoblin_Assasin::Add_Components()
 {
 	try /* Check Add_Components */
 	{
@@ -370,7 +354,7 @@ HRESULT CGolem_Combat::Add_Components()
 	}
 	catch (const _tchar* pErrorTag)
 	{
-		wstring wstrErrorMSG = TEXT("[CGolem_Combat] Failed Add_Components : \n");
+		wstring wstrErrorMSG = TEXT("[CGoblin_Assasin] Failed Add_Components : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
 		__debugbreak();
@@ -381,7 +365,7 @@ HRESULT CGolem_Combat::Add_Components()
 	return S_OK;
 }
 
-HRESULT CGolem_Combat::Make_Death(_Inout_ CSequence* pSequence)
+HRESULT CGoblin_Assasin::Make_Death(_Inout_ CSequence* pSequence)
 {
 	BEGININSTANCE;
 
@@ -500,7 +484,7 @@ HRESULT CGolem_Combat::Make_Death(_Inout_ CSequence* pSequence)
 	}
 	catch (const _tchar* pErrorTag)
 	{
-		wstring wstrErrorMSG = TEXT("[CGolem_Combat] Failed Make_Death : \n");
+		wstring wstrErrorMSG = TEXT("[CGoblin_Assasin] Failed Make_Death : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
 		__debugbreak();
@@ -515,7 +499,7 @@ HRESULT CGolem_Combat::Make_Death(_Inout_ CSequence* pSequence)
 	return S_OK;
 }
 
-HRESULT CGolem_Combat::Make_Alive(_Inout_ CSelector* pSelector)
+HRESULT CGoblin_Assasin::Make_Alive(_Inout_ CSelector* pSelector)
 {
 	BEGININSTANCE;
 
@@ -559,7 +543,7 @@ HRESULT CGolem_Combat::Make_Alive(_Inout_ CSelector* pSelector)
 	}
 	catch (const _tchar* pErrorTag)
 	{
-		wstring wstrErrorMSG = TEXT("[CGolem_Combat] Failed Make_Death : \n");
+		wstring wstrErrorMSG = TEXT("[CGoblin_Assasin] Failed Make_Death : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
 		__debugbreak();
@@ -574,7 +558,7 @@ HRESULT CGolem_Combat::Make_Alive(_Inout_ CSelector* pSelector)
 	return S_OK;
 }
 
-HRESULT CGolem_Combat::Make_Hit_Combo(_Inout_ CSelector* pSelector)
+HRESULT CGoblin_Assasin::Make_Hit_Combo(_Inout_ CSelector* pSelector)
 {
 	BEGININSTANCE;
 
@@ -592,7 +576,7 @@ HRESULT CGolem_Combat::Make_Hit_Combo(_Inout_ CSelector* pSelector)
 			throw TEXT("Failed Create_Behavior pSelector_Fly_Combo");
 
 		/* Set Decorations */
-		
+
 		/* Set Options */
 
 		/* Assemble Behaviors */
@@ -604,7 +588,7 @@ HRESULT CGolem_Combat::Make_Hit_Combo(_Inout_ CSelector* pSelector)
 	}
 	catch (const _tchar* pErrorTag)
 	{
-		wstring wstrErrorMSG = TEXT("[CGolem_Combat] Failed Make_Hit : \n");
+		wstring wstrErrorMSG = TEXT("[CGoblin_Assasin] Failed Make_Hit : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
 		__debugbreak();
@@ -619,7 +603,7 @@ HRESULT CGolem_Combat::Make_Hit_Combo(_Inout_ CSelector* pSelector)
 	return S_OK;
 }
 
-HRESULT CGolem_Combat::Make_Check_Spell(_Inout_ CSelector* pSelector)
+HRESULT CGoblin_Assasin::Make_Check_Spell(_Inout_ CSelector* pSelector)
 {
 	BEGININSTANCE;
 
@@ -638,7 +622,7 @@ HRESULT CGolem_Combat::Make_Check_Spell(_Inout_ CSelector* pSelector)
 		CSequence_Levitate* pSequence_Levitate = nullptr;
 		if (FAILED(Create_Behavior(pSequence_Levitate)))
 			throw TEXT("Failed Create_Behavior pSequence_Levitate");
-		CSequence_Descendo* pSequence_Descendo = nullptr;
+		CSequence* pSequence_Descendo = nullptr;
 		if (FAILED(Create_Behavior(pSequence_Descendo)))
 			throw TEXT("Failed Create_Behavior pSequence_Descendo");
 
@@ -668,10 +652,13 @@ HRESULT CGolem_Combat::Make_Check_Spell(_Inout_ CSelector* pSelector)
 			throw TEXT("Failed Assemble_Random_Select_Behavior");
 		if (FAILED(pSequence_Levitate->Assemble_Random_Select_Behavior(TEXT("Levitate_Loop_5"), 0.2f, 4.f)))
 			throw TEXT("Failed Assemble_Random_Select_Behavior");
+
+		if (FAILED(Make_Descendo(pSequence_Descendo)))
+			throw TEXT("Failed Make_Descendo");
 	}
 	catch (const _tchar* pErrorTag)
 	{
-		wstring wstrErrorMSG = TEXT("[CGolem_Combat] Failed Make_Check_Spell : \n");
+		wstring wstrErrorMSG = TEXT("[CGoblin_Assasin] Failed Make_Check_Spell : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
 		__debugbreak();
@@ -686,7 +673,7 @@ HRESULT CGolem_Combat::Make_Check_Spell(_Inout_ CSelector* pSelector)
 	return S_OK;;
 }
 
-HRESULT CGolem_Combat::Make_NormalAttack(_Inout_ CSelector* pSelector)
+HRESULT CGoblin_Assasin::Make_NormalAttack(_Inout_ CSelector* pSelector)
 {
 	BEGININSTANCE;
 
@@ -802,7 +789,7 @@ HRESULT CGolem_Combat::Make_NormalAttack(_Inout_ CSelector* pSelector)
 	}
 	catch (const _tchar* pErrorTag)
 	{
-		wstring wstrErrorMSG = TEXT("[CGolem_Combat] Failed Make_NormalAttack : \n");
+		wstring wstrErrorMSG = TEXT("[CGoblin_Assasin] Failed Make_NormalAttack : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
 		__debugbreak();
@@ -817,7 +804,7 @@ HRESULT CGolem_Combat::Make_NormalAttack(_Inout_ CSelector* pSelector)
 	return S_OK;;
 }
 
-HRESULT CGolem_Combat::Make_Fly_Combo(_Inout_ CSelector* pSelector)
+HRESULT CGoblin_Assasin::Make_Fly_Combo(_Inout_ CSelector* pSelector)
 {
 	BEGININSTANCE;
 
@@ -859,7 +846,7 @@ HRESULT CGolem_Combat::Make_Fly_Combo(_Inout_ CSelector* pSelector)
 	}
 	catch (const _tchar* pErrorTag)
 	{
-		wstring wstrErrorMSG = TEXT("[CGolem_Combat] Failed Make_Levioso_Combo : \n");
+		wstring wstrErrorMSG = TEXT("[CGoblin_Assasin] Failed Make_Levioso_Combo : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
 		__debugbreak();
@@ -874,7 +861,76 @@ HRESULT CGolem_Combat::Make_Fly_Combo(_Inout_ CSelector* pSelector)
 	return S_OK;
 }
 
-HRESULT CGolem_Combat::Make_Turns(_Inout_ CSequence* pSequence)
+HRESULT CGoblin_Assasin::Make_Descendo(_Inout_ CSequence* pSequence)
+{
+	BEGININSTANCE;
+
+	try /* Failed Check Make_Descendo */
+	{
+		if (nullptr == pSequence)
+			throw TEXT("Parameter pSequence is nullptr");
+
+		/* Make Child Behaviors */
+		CAction* pAction_Descendo = nullptr;
+		if (FAILED(Create_Behavior(pAction_Descendo)))
+			throw TEXT("Failed Create_Behavior pAction_Descendo");
+		CAction* pAction_GetUp = nullptr;
+		if (FAILED(Create_Behavior(pAction_GetUp)))
+			throw TEXT("Failed Create_Behavior pAction_GetUp");
+
+		/* Set Decorator */
+		pSequence->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_uint* pCurrentSpell = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pCurrentSpell)))
+					return false;
+
+				if (BUFF_DESCENDO & *pCurrentSpell)
+					return true;
+
+				return false;
+			});
+		pSequence->Add_Success_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_uint* pICurrentSpell = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
+					return false;
+
+				if (*pICurrentSpell & BUFF_DESCENDO)
+					*pICurrentSpell ^= BUFF_DESCENDO;
+
+				return true;
+			});
+
+
+		/* Set Options */
+		pAction_Descendo->Set_Options(TEXT("Descendo_4"), m_pModelCom);
+		pAction_GetUp->Set_Options(TEXT("Get_Up_Send_Front"), m_pModelCom);
+
+		/* Assemble Behaviors */
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Descendo"), pAction_Descendo)))
+			throw TEXT("Failed Assemble_Behavior Action_Descendo");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_GetUp"), pAction_GetUp)))
+			throw TEXT("Failed Assemble_Behavior Action_GetUp");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CGoblin_Assasin] Failed Make_Descendo : \n");
+		wstrErrorMSG += pErrorTag;
+		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
+
+		ENDINSTANCE;
+
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CGoblin_Assasin::Make_Turns(_Inout_ CSequence* pSequence)
 {
 	BEGININSTANCE;
 
@@ -942,7 +998,7 @@ HRESULT CGolem_Combat::Make_Turns(_Inout_ CSequence* pSequence)
 	}
 	catch (const _tchar* pErrorTag)
 	{
-		wstring wstrErrorMSG = TEXT("[CGolem_Combat] Failed Make_Turns : \n");
+		wstring wstrErrorMSG = TEXT("[CGoblin_Assasin] Failed Make_Turns : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
 		__debugbreak();
@@ -957,7 +1013,7 @@ HRESULT CGolem_Combat::Make_Turns(_Inout_ CSequence* pSequence)
 	return S_OK;
 }
 
-HRESULT CGolem_Combat::Make_Attack(_Inout_ CSelector* pSelector)
+HRESULT CGoblin_Assasin::Make_Attack(_Inout_ CSelector* pSelector)
 {
 	BEGININSTANCE;
 
@@ -1050,7 +1106,7 @@ HRESULT CGolem_Combat::Make_Attack(_Inout_ CSelector* pSelector)
 	}
 	catch (const _tchar* pErrorTag)
 	{
-		wstring wstrErrorMSG = TEXT("[CGolem_Combat] Failed Make_Attack : \n");
+		wstring wstrErrorMSG = TEXT("[CGoblin_Assasin] Failed Make_Attack : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
 		__debugbreak();
@@ -1065,7 +1121,7 @@ HRESULT CGolem_Combat::Make_Attack(_Inout_ CSelector* pSelector)
 	return S_OK;
 }
 
-HRESULT CGolem_Combat::Make_Random_Idle_Move(_Inout_ CRandomChoose* pRandomChoose)
+HRESULT CGoblin_Assasin::Make_Random_Idle_Move(_Inout_ CRandomChoose* pRandomChoose)
 {
 	BEGININSTANCE;
 
@@ -1114,7 +1170,7 @@ HRESULT CGolem_Combat::Make_Random_Idle_Move(_Inout_ CRandomChoose* pRandomChoos
 	}
 	catch (const _tchar* pErrorTag)
 	{
-		wstring wstrErrorMSG = TEXT("[CGolem_Combat] Failed Make_Random_Idle_Move : \n");
+		wstring wstrErrorMSG = TEXT("[CGoblin_Assasin] Failed Make_Random_Idle_Move : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
 		__debugbreak();
@@ -1129,7 +1185,7 @@ HRESULT CGolem_Combat::Make_Random_Idle_Move(_Inout_ CRandomChoose* pRandomChoos
 	return S_OK;
 }
 
-HRESULT CGolem_Combat::Make_Air_Hit(_Inout_ CSequence* pSequence)
+HRESULT CGoblin_Assasin::Make_Air_Hit(_Inout_ CSequence* pSequence)
 {
 	BEGININSTANCE;
 
@@ -1243,7 +1299,7 @@ HRESULT CGolem_Combat::Make_Air_Hit(_Inout_ CSequence* pSequence)
 		pAction_Hit_8->Set_Options(TEXT("Air_Hit_8"), m_pModelCom);
 		pAction_Knockback->Set_Options(TEXT("Knockback_Back"), m_pModelCom);
 		pAction_Splat->Set_Options(TEXT("Knockback_Back_Splat"), m_pModelCom);
-		pAction_GetUp->Set_Options(TEXT("Getup_Back"), m_pModelCom);
+		pAction_GetUp->Set_Options(TEXT("Get_Up_Send"), m_pModelCom);
 
 		/* Assemble Childs */
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Selector_AirHit"), pSelector_AirHit)))
@@ -1273,7 +1329,7 @@ HRESULT CGolem_Combat::Make_Air_Hit(_Inout_ CSequence* pSequence)
 	}
 	catch (const _tchar* pErrorTag)
 	{
-		wstring wstrErrorMSG = TEXT("[CGolem_Combat] Failed Make_Air_Hit : \n");
+		wstring wstrErrorMSG = TEXT("[CGoblin_Assasin] Failed Make_Descendo : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
 		__debugbreak();
@@ -1288,7 +1344,7 @@ HRESULT CGolem_Combat::Make_Air_Hit(_Inout_ CSequence* pSequence)
 	return S_OK;
 }
 
-HRESULT CGolem_Combat::Make_Fly_Descendo(_Inout_ CSequence* pSequence)
+HRESULT CGoblin_Assasin::Make_Fly_Descendo(CSequence* pSequence)
 {
 	BEGININSTANCE;
 
@@ -1323,16 +1379,16 @@ HRESULT CGolem_Combat::Make_Fly_Descendo(_Inout_ CSequence* pSequence)
 		CRigidMove* pTsk_RigidMove_Up = nullptr;
 		if (FAILED(Create_Behavior(pTsk_RigidMove_Up)))
 			throw TEXT("Failed Create_Behavior pTsk_RigidMove_Up");
-		
+
 		/* Set Decorators */
-		
+
 
 		/* Set Options */
 		pAction_Descendo1->Set_Options(TEXT("Descendo_1"), m_pModelCom);
 		pAction_Descendo2->Set_Options(TEXT("Descendo_2"), m_pModelCom);
 		pAction_Descendo3->Set_Options(TEXT("Descendo_3"), m_pModelCom);
-		pAction_Descendo4->Set_Options(TEXT("Descendo_Ground"), m_pModelCom);
-		pAction_GetUp->Set_Options(TEXT("Getup_Front"), m_pModelCom);
+		pAction_Descendo4->Set_Options(TEXT("Descendo_4"), m_pModelCom);
+		pAction_GetUp->Set_Options(TEXT("Get_Up_Send_Front"), m_pModelCom);
 		_float3 vForce = _float3(0.f, -100.f, 0.f);
 		pTsk_RigidMove->Set_Option(m_pRigidBody, vForce, 0.6f);
 		vForce = _float3(0.f, 3.f, 0.f);
@@ -1357,7 +1413,7 @@ HRESULT CGolem_Combat::Make_Fly_Descendo(_Inout_ CSequence* pSequence)
 	}
 	catch (const _tchar* pErrorTag)
 	{
-		wstring wstrErrorMSG = TEXT("[CGolem_Combat] Failed Make_Fly_Descendo : \n");
+		wstring wstrErrorMSG = TEXT("[CGoblin_Assasin] Failed Make_Fly_Descendo : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
 		__debugbreak();
@@ -1372,7 +1428,7 @@ HRESULT CGolem_Combat::Make_Fly_Descendo(_Inout_ CSequence* pSequence)
 	return S_OK;
 }
 
-void CGolem_Combat::Enter_Light_Attack()
+void CGoblin_Assasin::Enter_Light_Attack()
 {
 	m_CollisionRequestDesc.eType = ATTACK_LIGHT;
 	m_CollisionRequestDesc.iDamage = 5;
@@ -1380,7 +1436,7 @@ void CGolem_Combat::Enter_Light_Attack()
 	m_pWeapon->On_Collider_Attack(&m_CollisionRequestDesc);
 }
 
-void CGolem_Combat::Enter_Heavy_Attack()
+void CGoblin_Assasin::Enter_Heavy_Attack()
 {
 	m_CollisionRequestDesc.eType = ATTACK_HEAVY;
 	m_CollisionRequestDesc.iDamage = 10;
@@ -1388,7 +1444,7 @@ void CGolem_Combat::Enter_Heavy_Attack()
 	m_pWeapon->On_Collider_Attack(&m_CollisionRequestDesc);
 }
 
-void CGolem_Combat::Enter_Body_Attack()
+void CGoblin_Assasin::Enter_Body_Attack()
 {
 	m_CollisionRequestDesc.eType = ATTACK_HEAVY;
 	m_CollisionRequestDesc.iDamage = 0;
@@ -1396,7 +1452,7 @@ void CGolem_Combat::Enter_Body_Attack()
 	m_pRigidBody->Enable_Collision("Enemy_Attack", this, &m_CollisionRequestDesc);
 }
 
-void CGolem_Combat::Exit_Attack()
+void CGoblin_Assasin::Exit_Attack()
 {
 	m_CollisionRequestDesc.eType = ATTACK_NONE;
 	m_CollisionRequestDesc.iDamage = 0;
@@ -1404,7 +1460,7 @@ void CGolem_Combat::Exit_Attack()
 	m_pWeapon->Off_Collider_Attack(&m_CollisionRequestDesc);
 }
 
-void CGolem_Combat::DeathBehavior(const _float& fTimeDelta)
+void CGoblin_Assasin::DeathBehavior(const _float& fTimeDelta)
 {
 	m_isDead = true;
 
@@ -1413,7 +1469,7 @@ void CGolem_Combat::DeathBehavior(const _float& fTimeDelta)
 		Set_ObjEvent(OBJ_DEAD);
 }
 
-HRESULT CGolem_Combat::Add_Components_Level(_uint iCurrentLevelIndex)
+HRESULT CGoblin_Assasin::Add_Components_Level(_uint iCurrentLevelIndex)
 {
 	try
 	{
@@ -1427,7 +1483,7 @@ HRESULT CGolem_Combat::Add_Components_Level(_uint iCurrentLevelIndex)
 		if (nullptr == pBone)
 			throw TEXT("pBone is nullptr");
 
-		CWeapon_Golem_Combat::PARENTMATRIXDESC ParentMatrixDesc;
+		CWeapon_Goblin_Assasin::PARENTMATRIXDESC ParentMatrixDesc;
 		ParentMatrixDesc.OffsetMatrix = pBone->Get_OffsetMatrix();
 		ParentMatrixDesc.PivotMatrix = m_pModelCom->Get_PivotFloat4x4();
 		ParentMatrixDesc.pCombindTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
@@ -1439,7 +1495,7 @@ HRESULT CGolem_Combat::Add_Components_Level(_uint iCurrentLevelIndex)
 	}
 	catch (const _tchar* pErrorTag)
 	{
-		wstring wstrErrorMSG = TEXT("[CGolem_Combat] Failed Add_Components_Level : \n");
+		wstring wstrErrorMSG = TEXT("[CGoblin_Assasin] Failed Add_Components_Level : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
 		__debugbreak();
@@ -1451,7 +1507,7 @@ HRESULT CGolem_Combat::Add_Components_Level(_uint iCurrentLevelIndex)
 	return S_OK;
 }
 
-HRESULT CGolem_Combat::Bind_HitMatrices()
+HRESULT CGoblin_Assasin::Bind_HitMatrices()
 {
 	const CBone* pBone = m_pModelCom->Get_Bone(TEXT("Head"));
 	if (nullptr == pBone)
@@ -1471,33 +1527,33 @@ HRESULT CGolem_Combat::Bind_HitMatrices()
 	return S_OK;
 }
 
-CGolem_Combat* CGolem_Combat::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CGoblin_Assasin* CGoblin_Assasin::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CGolem_Combat* pInstance = New CGolem_Combat(pDevice, pContext);
+	CGoblin_Assasin* pInstance = New CGoblin_Assasin(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Created CGolem_Combat");
+		MSG_BOX("Failed to Created CGoblin_Assasin");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGolem_Combat* CGolem_Combat::Clone(void* pArg)
+CGoblin_Assasin* CGoblin_Assasin::Clone(void* pArg)
 {
-	CGolem_Combat* pInstance = New CGolem_Combat(*this);
+	CGoblin_Assasin* pInstance = New CGoblin_Assasin(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned CGolem_Combat");
+		MSG_BOX("Failed to Cloned CGoblin_Assasin");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CGolem_Combat::Free()
+void CGoblin_Assasin::Free()
 {
 	__super::Free();
 
