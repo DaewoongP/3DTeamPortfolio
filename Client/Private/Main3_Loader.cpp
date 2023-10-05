@@ -194,7 +194,7 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 		PivotMatrix *= XMMatrixScaling(0.5f, 0.5f, 0.5f);
 		/* For.Prototype_Component_Model_Animation_Camera */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Animation_Camera"),
-			CCustomModel::Create(m_pDevice, m_pContext, CCustomModel::TYPE_ANIM, L"../../Resources/Models/Anims/CCL_CameraRig_Skeleton/CCL_CameraRig_Skeleton.dat", PivotMatrix))))
+			CCustomModel::Create(m_pDevice, m_pContext, CCustomModel::TYPE_ANIM, L"../../Resources/Models/Anims/CCL_CameraRig_Skeleton/CCL_CameraRig_Skeleton.gcm", PivotMatrix))))
 			throw TEXT("Prototype_Component_Model_Animation_Camera");
 
 		/* For.Prototype_GameObject_Animation_Camera_Model */
