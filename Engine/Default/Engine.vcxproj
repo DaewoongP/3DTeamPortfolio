@@ -28,7 +28,6 @@
     <ClInclude Include="..\public\TexturePool.h" />
     <ClInclude Include="..\public\VIBuffer_Particle_Instance.h" />
     <ClInclude Include="..\public\VIBuffer_Rect_Particle_Instance.h" />
-    <ClInclude Include="..\Public\FlowMap.h" />
     <ClInclude Include="..\public\Shadow.h" />
     <ClInclude Include="..\public\ThreadPool.h" />
     <ClInclude Include="..\public\VIBuffer_UVSphere.h" />
@@ -170,7 +169,6 @@
     <ClCompile Include="..\private\TexturePool.cpp" />
     <ClCompile Include="..\private\VIBuffer_Particle_Instance.cpp" />
     <ClCompile Include="..\private\VIBuffer_Rect_Particle_Instance.cpp" />
-    <ClCompile Include="..\Private\FlowMap.cpp" />
     <ClCompile Include="..\private\Shadow.cpp" />
     <ClCompile Include="..\private\ThreadPool.cpp" />
     <ClCompile Include="..\private\VIBuffer_UVSphere.cpp" />
@@ -301,7 +299,6 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_DOF.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Flipbook.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Distortion.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_FlowMap.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Geometry.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Glow.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_RenderFunc.hlsli" />
@@ -324,6 +321,7 @@
   <ItemGroup>
     <None Include="..\Bin\ShaderFiles\Shader_EngineHeader.hlsli" />
     <None Include="..\Bin\ShaderFiles\Shader_Functions.hlsli" />
+    <None Include="..\Bin\ShaderFiles\Shader_PBR.hlsli" />
     <None Include="..\Public\DirectXTK\matrix.inl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
