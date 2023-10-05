@@ -56,8 +56,6 @@ public:
 
 	typedef struct tagCollisionDataDesc
 	{
-		tagCollisionDataDesc() = default;
-		~tagCollisionDataDesc() = default;
 		class CGameObject*	pOwnerObject = { nullptr };
 		void*				pCollisionData = { nullptr };
 	}COLLISIONDATADESC;

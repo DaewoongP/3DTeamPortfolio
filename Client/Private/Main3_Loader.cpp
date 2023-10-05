@@ -40,6 +40,7 @@
 #include"InvisiblityPotion.h"
 #include "WiggenweldPotion.h"
 #include "Ingredient.h"
+#include "AshwinderEggs_Item.h"
 #pragma endregion
 
 
@@ -324,6 +325,12 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 			CProfessor_Fig::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Professor_Fig");
 
+		/* For.Prototype_Component_Model_Weopon_Fig_Wand */
+		PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f));
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Weopon_Fig_Wand"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Wand_Fig/Wand_Fig.dat"), PivotMatrix))))
+			throw TEXT("Prototype_Component_Model_Weopon_Fig_Wand");
+
 		/* For.Prototype_Component_Weapon_Fig_Wand */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Weapon_Fig_Wand"),
 			CWeapon_Fig_Wand::Create(m_pDevice, m_pContext))))
@@ -331,18 +338,17 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 #pragma endregion
 
 #pragma region Load Potion
-		/* For.Prototype_Component_Weapon_WiggenwledPotion */
+		/* For.Prototype_GameObject_WiggenweldPotion*/
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_WiggenweldPotion"),
-			CWiggenweldPotion::Create(m_pDevice, m_pContext,eLevelID))))
-			throw TEXT("ProtoType_GameObject_WiggenweldPotion");
+			CWiggenweldPotion::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_WiggenweldPotion");
 
-		///* For.Prototype_Component_Weapon_FocusPotion */
+		/* For.Prototype_Component_Weapon_FocusPotion */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_FocusPotion"),
 			CFocusPotion::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("ProtoType_GameObject_Focuspotion");
 
-
-		///* For.Prototype_Component_Weapon_MaximaPotion */
+		/* For.Prototype_Component_Weapon_MaximaPotion */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_MaximaPotion"),
 			CMaximaPotion::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("ProtoType_GameObject_MaximaPotion");
@@ -357,7 +363,11 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 			CInvisiblityPotion::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_InvisiblityPotion");
 
-
+#pragma region Load Item
+		/* For.Prototype_GameObject_AshwinderEggs_Item*/
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_AshwinderEggs_Item"),
+			CAshwinderEggs_Item::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_AshwinderEggs_Item");
 #pragma endregion
 	}
 	catch (const _tchar* pErrorTag)

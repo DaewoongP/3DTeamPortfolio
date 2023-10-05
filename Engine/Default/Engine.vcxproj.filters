@@ -367,9 +367,6 @@
     <Filter Include="01. Utility\03. Components\02. Renderer\Glow">
       <UniqueIdentifier>{44645e54-ea4c-469c-be94-9021413642f0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\03. Components\02. Renderer\Distortion">
-      <UniqueIdentifier>{8f07d4c3-cba6-4826-8064-c6c2886c4414}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Utility\01. Levels">
       <UniqueIdentifier>{2c2cbf1d-cdd5-4810-b3dd-cc3ffc5bd683}</UniqueIdentifier>
     </Filter>
@@ -759,9 +756,6 @@
     <ClInclude Include="..\Public\Bloom.h">
       <Filter>01. Utility\03. Components\02. Renderer\Bloom</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Distortion.h">
-      <Filter>01. Utility\03. Components\02. Renderer\Distortion</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Glow.h">
       <Filter>01. Utility\03. Components\02. Renderer\Glow</Filter>
     </ClInclude>
@@ -1145,9 +1139,6 @@
     <ClCompile Include="..\Private\Bloom.cpp">
       <Filter>01. Utility\03. Components\02. Renderer\Bloom</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Distortion.cpp">
-      <Filter>01. Utility\03. Components\02. Renderer\Distortion</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Glow.cpp">
       <Filter>01. Utility\03. Components\02. Renderer\Glow</Filter>
     </ClCompile>
@@ -1282,9 +1273,6 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Bloom.hlsl">
       <Filter>01. Utility\03. Components\02. Renderer\Bloom</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_Distortion.hlsl">
-      <Filter>01. Utility\03. Components\02. Renderer\Distortion</Filter>
-    </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Glow.hlsl">
       <Filter>01. Utility\03. Components\02. Renderer\Glow</Filter>
     </FxCompile>
@@ -1307,6 +1295,12 @@
       <Filter>01. Utility\03. Components\02. Renderer\Shader</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_RenderFunc.hlsli">
+      <Filter>01. Utility\03. Components\02. Renderer\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointInstance.hlsl">
+      <Filter>01. Utility\98. ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Distortion.hlsl">
       <Filter>01. Utility\03. Components\02. Renderer\Shader</Filter>
     </FxCompile>
   </ItemGroup>

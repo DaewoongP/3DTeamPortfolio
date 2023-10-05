@@ -73,9 +73,7 @@ void CDugbog::Tick(_float fTimeDelta)
 	if (nullptr != m_pRootBehavior)
 		m_pRootBehavior->Tick(fTimeDelta);
 
-	_float3 vPosition = m_pTransform->Get_Position();
-
-	
+	Tick_Spells();
 
 	for (auto iter = m_CurrentTickSpells.begin(); iter != m_CurrentTickSpells.end(); )
 	{
@@ -100,14 +98,6 @@ void CDugbog::Tick(_float fTimeDelta)
 void CDugbog::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
-
-	if (nullptr != m_pRenderer)
-	{
-		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
-#ifdef _DEBUG
-		m_pRenderer->Add_DebugGroup(m_pRigidBody);
-#endif // _DEBUG
-	}
 }
 
 void CDugbog::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
@@ -127,9 +117,9 @@ void CDugbog::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 
 		auto iter = m_CurrentTickSpells.find(eBuff);
 		if (iter == m_CurrentTickSpells.end() &&
-			true == IsDebuff(eBuff))
+			BUFF_LEVIOSO & eBuff)
 		{
-			if (BUFF_LEVIOSO == eBuff && true == m_isAbleLevioso)
+			if (BUFF_LEVIOSO & eBuff && true == m_isAbleLevioso)
 				eBuff = BUFF_LEVIOSO_TONGUE;
 
 			m_CurrentTickSpells.emplace(eBuff, Action);
@@ -171,11 +161,7 @@ void CDugbog::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 
 HRESULT CDugbog::Render()
 {
-#ifdef _DEBUG
-	//Tick_ImGui();
-#endif // _DEBUG
-
-	if (FAILED(SetUp_ShaderResources()))
+	if (FAILED(__super::SetUp_ShaderResources()))
 		return E_FAIL;
 
 	if (FAILED(__super::Render()))
@@ -259,43 +245,31 @@ HRESULT CDugbog::Make_AI()
 HRESULT CDugbog::Make_Notifies()
 {
 	function<void()> Func = [&] {(*this).Enter_Light_Attack(); };
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Lunge_Bite"), TEXT("Enter_Light_Attack"), Func)))
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Enter_Light_Attack"), Func)))
 		return E_FAIL;
 
 	Func = [&] {(*this).Enter_Heavy_Attack(); };
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Tongue_Strike"), TEXT("Enter_Heavy_Attack"), Func)))
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Enter_Heavy_Attack"), Func)))
 		return E_FAIL;
 
 	Func = [&] {(*this).Exit_Attack(); };
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Lunge_Bite"), TEXT("Exit_Attack"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Tongue_Strike"), TEXT("Exit_Attack"), Func)))
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Exit_Attack"), Func)))
 		return E_FAIL;
 
 	Func = [&] {(*this).Enable_Levioso(); };
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Tongue_Strike"), TEXT("Enable_Levioso"), Func)))
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Enable_Levioso"), Func)))
 		return E_FAIL;
 
 	Func = [&] {(*this).Disable_Levioso(); };
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Attack_Tongue_Strike"), TEXT("Disable_Levioso"), Func)))
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Disable_Levioso"), Func)))
 		return E_FAIL;
 
 	Func = [&] {(*this).On_Gravity(); };
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Air_Hit_Front_1"), TEXT("On_Gravity"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Air_Hit_Front_2"), TEXT("On_Gravity"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Air_Hit_Front_3"), TEXT("On_Gravity"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Knockback"), TEXT("On_Gravity"), Func)))
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("On_Gravity"), Func)))
 		return E_FAIL;
 
 	Func = [&] {(*this).Off_Gravity(); };
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Air_Hit_Front_1"), TEXT("Off_Gravity"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Air_Hit_Front_2"), TEXT("Off_Gravity"), Func)))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Bind_Notify(TEXT("Air_Hit_Front_3"), TEXT("Off_Gravity"), Func)))
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Off_Gravity"), Func)))
 		return E_FAIL;
 
 	return S_OK;
@@ -340,7 +314,7 @@ HRESULT CDugbog::Add_Components()
 
 		m_OffsetMatrix = XMMatrixTranslation(RigidBodyDesc.vOffsetPosition.x, RigidBodyDesc.vOffsetPosition.y, RigidBodyDesc.vOffsetPosition.z);
 
-		/* For.Collider_Range */
+		/* For.Collider Enemy_Range */
 		RigidBodyDesc.isStatic = true;
 		RigidBodyDesc.isTrigger = true;
 		PxSphereGeometry pSphereGeomatry2 = PxSphereGeometry(15.f);
@@ -350,13 +324,22 @@ HRESULT CDugbog::Add_Components()
 		if (FAILED(m_pRigidBody->Create_Collider(&RigidBodyDesc)))
 			throw TEXT("Failed Create_Collider");
 
-		/* For.Collider_Attack_Tongue */
+		/* For.Collider Enemy_Attack_Body */
+		RigidBodyDesc.isStatic = true;
+		RigidBodyDesc.isTrigger = true;
+		RigidBodyDesc.eThisCollsion = COL_ENEMY_ATTACK;
+		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC;
+		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Attack_Body");
+		if (FAILED(m_pRigidBody->Create_Collider(&RigidBodyDesc)))
+			throw TEXT("Failed Create_Collider");
+
+		/* For.Collider Enemy_Attack_Tongue */
 		RigidBodyDesc.vOffsetPosition = _float3(0.f, 0.5f, 1.5f);
 		RigidBodyDesc.vOffsetRotation = XMQuaternionRotationRollPitchYaw(0.f, XMConvertToRadians(90.f), 0.f);
 		PxCapsuleGeometry pCapsuleGeomatry = PxCapsuleGeometry(0.6f, 1.2f);
 		RigidBodyDesc.pGeometry = &pCapsuleGeomatry;
 		RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 1.f, 1.f);
-		RigidBodyDesc.eThisCollsion = COL_ENEMY;
+		RigidBodyDesc.eThisCollsion = COL_ENEMY_ATTACK;
 		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC;
 		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Attack_Tongue");
 		if (FAILED(m_pRigidBody->Create_Collider(&RigidBodyDesc)))
@@ -405,44 +388,6 @@ HRESULT CDugbog::Add_Components_Level(_uint iCurrentLevelIndex)
 
 	return S_OK;
 }
-
-HRESULT CDugbog::SetUp_ShaderResources()
-{
-	return __super::SetUp_ShaderResources();
-}
-
-#ifdef _DEBUG
-void CDugbog::Tick_ImGui()
-{
-	RECT clientRect;
-	GetClientRect(g_hWnd, &clientRect);
-	POINT leftTop = { clientRect.left, clientRect.top };
-	POINT rightBottom = { clientRect.right, clientRect.bottom };
-	ClientToScreen(g_hWnd, &leftTop);
-	ClientToScreen(g_hWnd, &rightBottom);
-	int Left = leftTop.x;
-	int Top = rightBottom.y;
-	ImVec2 vWinpos = { _float(Left + 1280.f), _float(Top - 300.f) };
-	ImGui::SetNextWindowPos(vWinpos);
-
-	ImGui::Begin("Dugbog");
-
-	string strHp = to_string(m_pHealth->Get_HP());
-	ImGui::Text("Current HP");
-	ImGui::Text(strHp.c_str());
-
-	ImGui::SeparatorText("Behavior");
-
-	vector<wstring> DebugBehaviorTags = m_pRootBehavior->Get_DebugBahaviorTags();
-
-	for (auto& Tag : DebugBehaviorTags)
-	{
-		ImGui::Text(wstrToStr(Tag).c_str());
-	}
-
-	ImGui::End();
-}
-#endif // _DEBUG
 
 void CDugbog::DeathBehavior(const _float& fTimeDelta)
 {
@@ -614,7 +559,7 @@ HRESULT CDugbog::Make_Death(_Inout_ CSequence* pSequence)
 			});
 
 		// Set Options 
-		function<void(const _float&)> Func = [&](const _float& fTimeDelta) {this->DeathBehavior(fTimeDelta); };
+		function<void(const _float&)> Func = [&](const _float& fTimeDelta) { this->DeathBehavior(fTimeDelta); };
 		pTsk_Death_Ground->Set_DeathFunction(Func);
 		pTsk_Death_Back->Set_DeathFunction(Func);
 		pTsk_Death_Air->Set_DeathFunction(Func);
@@ -1678,7 +1623,7 @@ void CDugbog::Enter_Light_Attack()
 	m_CollisionRequestDesc.eType = ATTACK_LIGHT;
 	m_CollisionRequestDesc.iDamage = 5;
 	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
-	m_pRigidBody->Enable_Collision("Enemy_Body", this, &m_CollisionRequestDesc);
+	m_pRigidBody->Enable_Collision("Enemy_Attack_Body", this, &m_CollisionRequestDesc);
 }
 
 void CDugbog::Enter_Heavy_Attack()
@@ -1694,7 +1639,7 @@ void CDugbog::Exit_Attack()
 	m_CollisionRequestDesc.eType = ATTACK_NONE;
 	m_CollisionRequestDesc.iDamage = 0;
 	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
-	m_pRigidBody->Disable_Collision("Enemy_Body");
+	m_pRigidBody->Disable_Collision("Enemy_Attack_Body");
 	m_pRigidBody->Disable_Collision("Enemy_Attack_Tongue");
 }
 

@@ -20,9 +20,9 @@ HRESULT CWiggenweldPotion::Initialize_Prototype(_uint iLevel)
 	m_ItemCreateDesc.iCost = 100;											// 가격
 	m_ItemCreateDesc.wstrKoreanName = TEXT("위젠웰드 묘약");					// 한글명
 	m_ItemCreateDesc.wstrUIPath = TEXT("../../Resources/UI/Game/UI/Icons/Potions/UI_T_WoundCleaning.png"); // UI경로
-	m_ItemCreateDesc.wstrModelPath = TEXT("../../Resources/Models/NonAnims/SM_SpherePrimitiveRegularNormals_01/SM_SpherePrimitiveRegularNormals_01.dat"); // 모델경로
 	
 	// 포션 정보
+	m_PotionCreateDesc.wstrModelPath = TEXT("../../Resources/Models/NonAnims/SM_Health_Bottle/SM_Health_Bottle.dat"); // 모델경로
 	m_PotionCreateDesc.Ingredients.push_back(INGREDIENT::HORKLUMP_JUICE);	// 재료1
 	m_PotionCreateDesc.Ingredients.push_back(INGREDIENT::DITTANY_LEAVES);	// 재료2
 	m_PotionCreateDesc.fManufacturingTime = 15.f;							// 제조 시간
@@ -53,6 +53,21 @@ HRESULT CWiggenweldPotion::Initialize(void* pArg)
 
 
 	return S_OK;
+}
+
+void CWiggenweldPotion::Tick(_float fTimeDelta)
+{
+	__super::Tick(fTimeDelta);
+}
+
+void CWiggenweldPotion::Late_Tick(_float fTimeDelta)
+{
+	__super::Late_Tick(fTimeDelta);
+}
+
+HRESULT CWiggenweldPotion::Render()
+{
+	return __super::Render();
 }
 
 void CWiggenweldPotion::Use(_float3 vPlayPos)

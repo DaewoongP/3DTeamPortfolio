@@ -61,24 +61,32 @@ namespace Client
 		BUFF_ACCIO			= 1 << 5,
 		BUFF_CONFRINGO		= 1 << 6,
 		BUFF_NCENDIO		= 1 << 7,
-		BUFF_BUFF_DESCENDO	= 1 << 8,
-		BUFF_DESCENDO		= 1 << 9,
+		BUFF_DESCENDO		= 1 << 8,
+		BUFF_FLIPENDO		= 1 << 9,
 		BUFF_END = 10
 	};
 
-#pragma region UI Scene
+#pragma region UI
 	enum MENU
 	{
 		GEAR,
 		INVENTORY,
-		//TALENT,
-		//COLLECTION,
-		//ACTION,
-		//MAP,
 		QUEST,
-		//OWLMAIL,
 		SETTING,
 		MENU_END
+	};
+
+	enum POTIONTAP
+	{
+		DEFENSIVE_POWER_UP,
+		ATTACK_POWER_UP,
+		SHOW_TIME,
+		THUNDER_CLOUD,
+		INVISIBILITY_PILL,
+		MANDRAKE,
+		BITE_CABBAGE,
+		TENTACULAR,
+		POTIONTAP_END
 	};
 #pragma endregion
 
@@ -93,6 +101,19 @@ namespace Client
 		ITEM_FELIX_FELICIS_POTION,
 		ITEM_CHINESE_CHOMPING_CABBAGE,
 		ITEM_END		
+	};
+
+	enum ITEMTYPE
+	{
+		HAND,
+		FACE,
+		HEAD,
+		NECK,
+		BACK,
+		OUTFIT,
+		RESOURCE,
+		POTION,
+		ITEMTYPE_END
 	};
 
 

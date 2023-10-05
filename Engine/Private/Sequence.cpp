@@ -26,14 +26,13 @@ HRESULT CSequence::Tick(const _float& fTimeDelta)
 		return BEHAVIOR_RUNNING;
 
 	case BEHAVIOR_SUCCESS:
-		Check_End_Decorators();
-		Check_Success_Decorators();
-
 		(*m_iterCurBehavior)->Reset_Behavior(m_ReturnData);
 		++m_iterCurBehavior;
 
 		if (m_iterCurBehavior == m_Behaviors.end())
 		{
+			Check_End_Decorators();
+			Check_Success_Decorators();
 			m_iterCurBehavior = m_Behaviors.begin();
 			return BEHAVIOR_SUCCESS;
 		}

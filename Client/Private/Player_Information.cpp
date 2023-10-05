@@ -55,7 +55,6 @@ void CPlayer_Information::Tick(_float fTimeDelta)
 
 		Safe_Release(pGameInstacne);
 	}
-
 }
 
 void CPlayer_Information::Late_Tick(_float fTimeDelta)

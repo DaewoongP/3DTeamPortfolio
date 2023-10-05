@@ -1,18 +1,17 @@
 #pragma once
 #include "UI.h"
 #include "Client_Defines.h"
-#include "UI_Image.h"
-#include "UI_Button.h"
-#include "UI_Group_Skill.h"
 
 BEGIN(Engine)
 class CShader;
 class CTexture;
 class CRenderer;
+class CUI_Button;
 class CVIBuffer_Rect;
 END
 
 BEGIN(Client)
+class CUI_Group_Skill;
 
 class CUI_Slot final : public CUI
 {

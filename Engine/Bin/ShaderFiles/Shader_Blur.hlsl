@@ -4,22 +4,7 @@ texture2D g_TargetTexture;
 
 float g_fWinSizeX, g_fWinSizeY;
 
-float3 g_vRandomVector[13] =
-{
-    float3(0.2024537f, 0.841204f, -0.9060241f),
-	float3(-0.221324f, 0.324325f, -0.8234234f),
-	float3(0.8724724f, 0.8547973f, -0.43252611f),
-	float3(0.2698734f, 0.5684943f, -0.12515022f),
-	float3(0.26482924f, 0.236820f, 0.72384287f),
-	float3(0.20348342f, 0.234832f, 0.23682923f),
-	float3(-0.0012315f, 0.8234823f, 0.23483244f),
-	float3(-0.2342863f, 0.234982f, -0.00001524f),
-	float3(-0.3426888f, 0.780742f, -0.8349823f),
-	float3(-0.5234832f, 0.8291234f, 0.23941929f),
-	float3(0.90889192f, 0.8123121f, -0.12812992f),
-	float3(0.4520239f, 0.1201011f, -0.82943914f),
-    float3(0.2024539f, -0.7101201f, 0.29143293f)
-};
+uint g_iSampleCnt;
 
 uint g_iWeights = 19; // 개수 통일
 float g_fBlurWeights[19] =
@@ -75,7 +60,7 @@ PS_OUT PS_MAIN_BLURX(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
     
-    float fDeltaX = 1.0f / g_fWinSizeX;
+    float fDeltaX = 1.0f / g_fWinSizeX * g_iSampleCnt;
     float2 vNewUV = float2(0, 0);
     float fTotal = 0.f;
     
@@ -84,12 +69,12 @@ PS_OUT PS_MAIN_BLURX(PS_IN In)
     for (int i = -iValue; i < iValue; ++i)
     {
         vNewUV = In.vTexUV + float2(fDeltaX * i, 0.f);
-        Out.vColor += g_fBlurWeights[iValue + i] * g_TargetTexture.Sample(LinearSampler_Clamp, vNewUV);
+        Out.vColor += g_fBlurWeights[iValue + i] * g_TargetTexture.Sample(LinearSampler, vNewUV);
         fTotal += g_fBlurWeights[iValue + i];
     }
 
     Out.vColor /= fTotal;
-    
+    Out.vColor.a = 1.f;
     return Out;
 }
 
@@ -97,7 +82,7 @@ PS_OUT PS_MAIN_BLURY(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
     
-    float fDeltaY = 1.f / (g_fWinSizeY / 2.f);
+    float fDeltaY = 1.f / g_fWinSizeY * g_iSampleCnt;
     float2 vNewUV = float2(0, 0);
     float fTotal = 0.f;
    
@@ -106,12 +91,12 @@ PS_OUT PS_MAIN_BLURY(PS_IN In)
     for (int i = -iValue; i < iValue; ++i)
     {
         vNewUV = In.vTexUV + float2(0, fDeltaY * i);
-        Out.vColor += g_fBlurWeights[iValue + i] * g_TargetTexture.Sample(LinearSampler_Clamp, vNewUV);
+        Out.vColor += g_fBlurWeights[iValue + i] * g_TargetTexture.Sample(LinearSampler, vNewUV);
         fTotal += g_fBlurWeights[iValue + i];
     }
 
     Out.vColor /= fTotal;
-
+    Out.vColor.a = 1.f;
     return Out;
 }
 

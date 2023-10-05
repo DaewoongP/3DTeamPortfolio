@@ -64,6 +64,7 @@ public:
 	void	Delete_Animation(_uint iAnimIndex, ANIMTYPE eType = UPPERBODY);
 	HRESULT Bind_Notify(const _uint& iAnimIndex, const wstring& wstrNotifyTag, function<void()>& Func, ANIMTYPE eType = UPPERBODY);
 	HRESULT Bind_Notify(const wstring& wstrAnimIndex, const wstring& wstrNotifyTag, function<void()>& Func, ANIMTYPE eType = UPPERBODY);
+	HRESULT Bind_Notifies(const wstring& wstrNotifyTag, function<void()>& Func, ANIMTYPE eType = UPPERBODY);
 
 public:
 	virtual HRESULT Bind_Material(class CShader* pShader, const char* pConstantName, _uint iMeshIndex, Engine::TextureType MaterialType);

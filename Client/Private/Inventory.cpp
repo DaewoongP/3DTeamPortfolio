@@ -45,6 +45,14 @@ HRESULT CInventory::Initialize(void* pArg)
 	return S_OK;
 }
 
+void CInventory::Tick(_float fTimeDelta)
+{
+	if (m_isOpen)
+	{
+		m_pUI_Inventory[m_eCurOpenItemtype]->Tick(fTimeDelta);
+	}
+}
+
 void CInventory::Late_Tick(_float fTimeDelta)
 {
 	if (m_isOpen)

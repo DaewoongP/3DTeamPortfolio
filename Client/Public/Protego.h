@@ -16,9 +16,6 @@ BEGIN(Client)
 class CProtego final : public CMagicBall
 {
 private:
-	enum STATE { ENTER, STAY, EXIT, STATE_END };
-
-private:
 	explicit CProtego(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CProtego(const CProtego& rhs);
 	virtual ~CProtego() = default;
@@ -34,23 +31,30 @@ public:
 	virtual void OnCollisionExit(COLLEVENTDESC CollisionEventDesc) override;
 	virtual HRESULT Reset(MAGICBALLINITDESC& InitDesc) override;
 
-private:
-	void Tick_Enter(const _float& fTimeDelta);
-	void Tick_Stay(const _float& fTimeDelta);
-	void Tick_Exit(const _float& fTimeDelta);
-
-private:
-	void Late_Tick_Enter(const _float& fTimeDelta);
-	void Late_Tick_Stay(const _float& fTimeDelta);
-	void Late_Tick_Exit(const _float& fTimeDelta);
-
 	void Hit_Effect(_float3 vPosition);
+
+protected:
+	//모든 이펙트 비활성화
+	virtual void Ready_Begin();
+	//완드 이펙트 활성화 
+	virtual void Ready_DrawMagic();
+	//메인 이펙트 활성화
+	virtual void Ready_CastMagic();
+	//히트 이펙트 활성화
+	virtual void Ready_Dying();
+
+	//다음 상태로
+	virtual void Tick_Begin(_float fTimeDelta);
+	//완드 이펙트 재생(다음상태로는 다른곳에서 재생)
+	virtual void Tick_DrawMagic(_float fTimeDelta);
+	//메인 이펙트 재생(도달/충돌시 다음상태로) / 마법 발사 상태는 다 다르므로 알아서 처리하셈
+	virtual void Tick_CastMagic(_float fTimeDelta);
+	//히트 이펙트 재생(재생 종료시 사망)
+	virtual void Tick_Dying(_float fTimeDelta);
 
 private:
 	void Find_And_Add_Texture(const _tchar* pPath);
-#ifdef _DEBUG
-	//void Tick_Imgui();
-#endif // _DEBUG
+	
 private: /* For. Component */
 	CShader* m_pShader = { nullptr };
 	CTexture* m_pTexture[5] = {};
@@ -59,7 +63,6 @@ private: /* For. Component */
 	CTexture_Flipbook* m_pFlameBlastFlipbook = { nullptr };
 
 private:
-	STATE m_eCurState = { ENTER };
 	_float4 m_vColor1 = { 1.f, 1.f, 1.f, 1.f };
 	_float4 m_vColor2 = { 1.f, 1.f, 1.f, 1.f };
 	_float m_fScale = { 2.3f };
