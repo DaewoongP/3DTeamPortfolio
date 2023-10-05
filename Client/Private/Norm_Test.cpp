@@ -36,7 +36,12 @@ void CNorm_Test::Late_Tick(_float fTimeDelta)
 	if (nullptr != m_pRenderer)
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DISTORTION, this);
+		m_pRenderer->Add_DebugGroup(m_pRigidBody);
 	}
+}
+
+void CNorm_Test::OnCollisionEnter(COLLEVENTDESC CollisionDesc)
+{
 }
 
 HRESULT CNorm_Test::Render()
@@ -68,6 +73,32 @@ HRESULT CNorm_Test::Add_Components()
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
 	{
 		MSG_BOX("CNorm_Test Failed Clone Component : Com_Shader");
+		return E_FAIL;
+	}
+
+	CRigidBody::RIGIDBODYDESC RigidBodyDesc;
+	RigidBodyDesc.isStatic = false;
+	RigidBodyDesc.isTrigger = true;
+	RigidBodyDesc.isGravity = false;
+	RigidBodyDesc.vInitPosition = _float3(25.f, 3.f, 22.5f);
+	RigidBodyDesc.fStaticFriction = 1.f;
+	RigidBodyDesc.fDynamicFriction = 1.f;
+	RigidBodyDesc.fRestitution = 0.f;
+	PxBoxGeometry MyGeometry = PxBoxGeometry(0.5f, 0.5f, 0.5f);
+	RigidBodyDesc.pGeometry = &MyGeometry;
+	RigidBodyDesc.eConstraintFlag = CRigidBody::All;
+	RigidBodyDesc.eThisCollsion = COL_ENEMY;
+	RigidBodyDesc.eCollisionFlag = COL_MAGIC | COL_PLAYER;
+	RigidBodyDesc.vDebugColor = _float4(0.f, 0.f, 1.f, 1.f);
+	RigidBodyDesc.pOwnerObject = this;
+	RigidBodyDesc.pCollisionData = nullptr;
+	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Test");
+
+	/* For. Com_RigidBody */
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
+		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
+	{
+		MSG_BOX("CNorm_Test Failed Clone Component : Com_RigidBody");
 		return E_FAIL;
 	}
 
@@ -143,5 +174,6 @@ void CNorm_Test::Free()
 	Safe_Release(m_pShader);
 	Safe_Release(m_pTexture);
 	Safe_Release(m_pRenderer);
+	Safe_Release(m_pRigidBody);
 	Safe_Release(m_pBuffer);
 }
