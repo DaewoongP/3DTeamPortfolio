@@ -859,8 +859,8 @@ HRESULT CPlayer::Add_Magic()
 	m_pMagicSlot->Add_Magic_To_Basic_Slot(2, LUMOS);
 	m_pMagicSlot->Add_Magic_To_Basic_Slot(3, FINISHER);
 
-	Set_Spell_Botton(0, DESCENDO);
-	Set_Spell_Botton(1, FLIPENDO);
+	Set_Spell_Botton(0, LEVIOSO);
+	Set_Spell_Botton(1, DESCENDO);
 	Set_Spell_Botton(2, EXPELLIARMUS);
 	Set_Spell_Botton(3, IMPERIO);
 

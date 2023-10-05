@@ -89,7 +89,7 @@ HRESULT CMainApp::Render()
 
 	if (FAILED(m_pGameInstance->Present()))
 	{
-		m_pDevice->GetDeviceRemovedReason();
+		HRESULT hr = m_pDevice->GetDeviceRemovedReason();
 		return E_FAIL;
 	}
 	
