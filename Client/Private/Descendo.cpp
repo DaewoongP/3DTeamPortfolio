@@ -92,6 +92,15 @@ HRESULT CDescendo::Initialize_Prototype(_uint iLevel)
 			return E_FAIL;
 		}
 	}
+	if (nullptr == pGameInstance->Find_Prototype(iLevel, TEXT("Prototype_GameObject_Descendo_Down_Effect")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(iLevel, TEXT("Prototype_GameObject_Descendo_Down_Effect")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Descendo/Down_Effect/"), iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
 	
 	ENDINSTANCE;
 
@@ -288,7 +297,7 @@ HRESULT CDescendo::Add_Components()
 		return E_FAIL;
 	}
 
-	m_ParticleVec[EFFECT_STATE_HIT].resize(1);
+	m_ParticleVec[EFFECT_STATE_HIT].resize(2);
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Accio_HitMain"),
 		TEXT("Com_HitDust_Effect"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_HIT][0]))))
 	{
@@ -296,7 +305,14 @@ HRESULT CDescendo::Add_Components()
 		__debugbreak();
 		return E_FAIL;
 	}
-
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Descendo_Down_Effect"),
+		TEXT("Com_Down_Effect"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_HIT][1]))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Descendo_Down_Effect)");
+		__debugbreak();
+		return E_FAIL;
+	}
+	
 
 	return S_OK;
 }
