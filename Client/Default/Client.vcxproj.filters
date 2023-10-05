@@ -409,11 +409,47 @@
     <Filter Include="02. GameObject\08. Inventory\Item\Potion">
       <UniqueIdentifier>{468d1cd9-e6fb-4a3a-8b33-c14df4a7eb93}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\04. UI\UI\UI_Potion_Tap">
+      <UniqueIdentifier>{36aed02f-50ec-4f84-99e9-0238717d796e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\MagicBall\14. Expelliarmus">
+      <UniqueIdentifier>{a129608e-6318-4dac-b3d0-548d33adac32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\MagicBall\15. Crucio">
+      <UniqueIdentifier>{27f1b01c-e910-4e62-bf1b-8487ea68fcca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\MagicBall\16. Imperio">
+      <UniqueIdentifier>{3e5daa2a-0540-4c2b-b10a-c7031295ac39}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\04. Boss">
+      <UniqueIdentifier>{0af7f112-5794-49f9-b566-5e0282856103}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Magic\MagicBall\17. Stupefy">
+      <UniqueIdentifier>{3889487f-722c-4c11-99ae-a49e505aff2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\04. UI\UI_Item">
+      <UniqueIdentifier>{00fec493-edb5-4b7e-a84e-cd428648c052}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96. ImGui">
+      <UniqueIdentifier>{a50a5e26-6a04-4c0e-a541-6d264c6a12fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Effect\Normal">
+      <UniqueIdentifier>{a74d6959-7585-400e-a1ae-d972cc6abd86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\08. Inventory\PotionTab">
+      <UniqueIdentifier>{bb5f7ed2-3b1a-4f84-9841-e49923a81270}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\09. Item">
       <UniqueIdentifier>{ab9b91ab-d68d-4f81-9267-777bc595a5e8}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\09. Item\02. Ingredient">
       <UniqueIdentifier>{d1c4c5bb-3054-45a2-b861-88bb25724c63}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Item\02. Ingredient\HorklumpJuice">
+      <UniqueIdentifier>{317ed26b-2a5b-4a2b-89f6-42e887793982}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Item\02. Ingredient\AshwinderEggs">
+      <UniqueIdentifier>{e33012ec-8d62-40c4-85e9-f8df38017186}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\09. Item\03. Plant">
       <UniqueIdentifier>{d6985474-b264-4e9f-a32d-e5cdeaaab077}</UniqueIdentifier>
@@ -436,47 +472,11 @@
     <Filter Include="02. GameObject\09. Item\01. Potion\WiggenweldPotion">
       <UniqueIdentifier>{c07071fe-c006-4bca-b390-e403b214f1e9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\08. Inventory\PotionTap">
-      <UniqueIdentifier>{bb5f7ed2-3b1a-4f84-9841-e49923a81270}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\04. UI\UI\UI_Potion_Tap">
-      <UniqueIdentifier>{36aed02f-50ec-4f84-99e9-0238717d796e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="05. Magic\MagicBall\14. Expelliarmus">
-      <UniqueIdentifier>{a129608e-6318-4dac-b3d0-548d33adac32}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="05. Magic\MagicBall\15. Crucio">
-      <UniqueIdentifier>{27f1b01c-e910-4e62-bf1b-8487ea68fcca}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="05. Magic\MagicBall\16. Imperio">
-      <UniqueIdentifier>{3e5daa2a-0540-4c2b-b10a-c7031295ac39}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\09. Item\ex2.EdurusPotion">
       <UniqueIdentifier>{e0f8e81c-7682-4cf5-a671-009fe0c7b2dc}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\09. Item\ex1.MaximaPotion">
       <UniqueIdentifier>{5a4aa143-71df-4884-91e1-ca2caf295348}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\02. Enemy\04. Boss">
-      <UniqueIdentifier>{0af7f112-5794-49f9-b566-5e0282856103}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="05. Magic\MagicBall\17. Stupefy">
-      <UniqueIdentifier>{3889487f-722c-4c11-99ae-a49e505aff2c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\09. Item\02. Ingredient\HorklumpJuice">
-      <UniqueIdentifier>{317ed26b-2a5b-4a2b-89f6-42e887793982}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\04. UI\UI_Item">
-      <UniqueIdentifier>{00fec493-edb5-4b7e-a84e-cd428648c052}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="96. ImGui">
-      <UniqueIdentifier>{a50a5e26-6a04-4c0e-a541-6d264c6a12fd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\09. Item\02. Ingredient\AshwinderEggs">
-      <UniqueIdentifier>{e33012ec-8d62-40c4-85e9-f8df38017186}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="04. Effect\Normal">
-      <UniqueIdentifier>{a74d6959-7585-400e-a1ae-d972cc6abd86}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -927,7 +927,7 @@
       <Filter>02. GameObject\09. Item\03. Plant</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\PotionTap.h">
-      <Filter>02. GameObject\08. Inventory\PotionTap</Filter>
+      <Filter>02. GameObject\08. Inventory\PotionTab</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_Potion_Tap.h">
       <Filter>02. GameObject\04. UI\UI\UI_Potion_Tap</Filter>
@@ -1387,7 +1387,7 @@
       <Filter>02. GameObject\09. Item\03. Plant</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\PotionTap.cpp">
-      <Filter>02. GameObject\08. Inventory\PotionTap</Filter>
+      <Filter>02. GameObject\08. Inventory\PotionTab</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_Potion_Tap.cpp">
       <Filter>02. GameObject\04. UI\UI\UI_Potion_Tap</Filter>

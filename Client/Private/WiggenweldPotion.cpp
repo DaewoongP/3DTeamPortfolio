@@ -22,6 +22,7 @@ HRESULT CWiggenweldPotion::Initialize_Prototype(_uint iLevel)
 	m_ItemCreateDesc.wstrUIPath = TEXT("../../Resources/UI/Game/UI/Icons/Potions/UI_T_WoundCleaning.png"); // UI경로
 	
 	// 포션 정보
+	m_PotionCreateDesc.ePotionTap = ENDURUS_POTION;
 	m_PotionCreateDesc.wstrModelPath = TEXT("../../Resources/Models/NonAnims/SM_Health_Bottle/SM_Health_Bottle.dat"); // 모델경로
 	m_PotionCreateDesc.Ingredients.push_back(INGREDIENT::HORKLUMP_JUICE);	// 재료1
 	m_PotionCreateDesc.Ingredients.push_back(INGREDIENT::DITTANY_LEAVES);	// 재료2
@@ -58,6 +59,7 @@ HRESULT CWiggenweldPotion::Render()
 
 void CWiggenweldPotion::Use(_float3 vPlayPos)
 {
+	__super::Use(vPlayPos);
 	m_pPlayerInformation->Get_Health()->Heal(m_fRecoveryAmount);
 }
 

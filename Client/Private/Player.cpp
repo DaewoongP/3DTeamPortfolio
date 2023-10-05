@@ -29,7 +29,7 @@
 
 #include "WiggenweldPotion.h"
 #include "Inventory.h"
-
+#include "PotionTap.h"
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
@@ -910,20 +910,27 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		////m_pTransform->Turn(_float3(0.f, 1.f, 0.f), fTimeDelta);
 		m_pTransform->Go_Right(fTimeDelta);
 	}
-#endif //_DEBUG
+
+	if (pGameInstance->Get_DIKeyState(DIK_K, CInput_Device::KEY_DOWN))
+	{
+		m_pPlayer_Information->Get_PotionTap()->Add_Potion(POTIONTAP::FOCUS_POTION);
+	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_L, CInput_Device::KEY_DOWN))
 	{
 		//CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_Dust01"), m_pTransform->Get_Position());
 		//CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_Dust02"), m_pTransform->Get_Position());
 		//CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_RockChunksRough"), m_pTransform->Get_Position());
-		
+
 		//CItem* pItem = static_cast<CItem*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_WiggenweldPotion")));
 		//m_pPlayer_Information->Get_Inventory()->Add_Item(pItem, pItem->Get_Type());
 
 		wstring temp = TEXT("Drink_Potion_Throw");
 		m_pCustomModel->Change_Animation(temp);
 	}
+#endif //_DEBUG
+
+
 
 	ENDINSTANCE;
 }
@@ -1667,7 +1674,9 @@ HRESULT CPlayer::Bind_Notify()
 		return E_FAIL;
 	}
 	
-	funcNotify = [&] { cout << "포션을 마셨습니다" << endl; };
+	funcNotify = [this] {
+		m_pPlayer_Information->Get_PotionTap()->Use_Item(m_pTransform->Get_Position());
+	};
 	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Drink_Potion_Throw"), TEXT("Drink_Potion"), funcNotify)))
 	{
 		MSG_BOX("Failed Bind_Notify");

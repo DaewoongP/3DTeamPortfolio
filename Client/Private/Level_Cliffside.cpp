@@ -245,12 +245,6 @@ HRESULT CLevel_Cliffside::Ready_Layer_Item(const _tchar* pLayerTag)
 	//	return E_FAIL;
 	//}
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_WiggenweldPotion"), pLayerTag, TEXT("GameObject_WiggenweldPotion"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (WiggenweldPotion)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
 	ENDINSTANCE;
 
 	return S_OK;

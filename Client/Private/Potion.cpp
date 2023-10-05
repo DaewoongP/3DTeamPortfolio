@@ -49,13 +49,20 @@ HRESULT CPotion::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-	//const CBone* pBone = m_pPlayerModel->Get_Bone(TEXT("SKT_RightHand"));
+	// 수명 
+	m_pLifeTime = CCoolTime::Create(m_pDevice, m_pContext);
+	m_pLifeTime->Set_Enable(false);
+	m_pLifeTime->Set_MaxCoolTime(5.f);
 
-	m_iBoneIndex = 39;
-	const CBone* pBone = m_pPlayerModel->Get_Bone_Index(m_iBoneIndex);
+	// 손에 붙어있는 시간
+	m_pAttachedTime = CCoolTime::Create(m_pDevice, m_pContext);
+	m_pAttachedTime->Set_Enable(false);
+	m_pAttachedTime->Set_MaxCoolTime(3.f);
+
+	// 파츠 값들 설정
+	const CBone* pBone = m_pPlayerModel->Get_Bone(TEXT("SKT_LeftHand"));
 	if (nullptr == pBone)
 		return E_FAIL;
-
 	m_OffsetMatrix = pBone->Get_OffsetMatrix();
 	m_PivotMatrix = m_pPlayerModel->Get_PivotFloat4x4();
 	m_pCombindTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
@@ -67,43 +74,32 @@ HRESULT CPotion::Initialize(void* pArg)
 void CPotion::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+	m_pLifeTime->Tick(fTimeDelta);
+	m_pAttachedTime->Tick(fTimeDelta);
 
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
-
-	if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
-	{
-		if (39 == m_iBoneIndex)
-			m_iBoneIndex = 45;
-		else
-			m_iBoneIndex = 39;
-
-		const CBone* pBone = m_pPlayerModel->Get_Bone_Index(m_iBoneIndex);
-		
-		cout << "Bone Index : " << m_iBoneIndex << '\n';
-		wcout << "Bone Name : " << pBone->Get_Name() << '\n';
-		m_OffsetMatrix = pBone->Get_OffsetMatrix();
-		m_pCombindTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
-	} 
-
-	Safe_Release(pGameInstance);
+	if (false == m_pLifeTime->IsEnable())
+		Set_ObjEvent(OBJ_EVENT::OBJ_DEAD);
 }
 
 void CPotion::Late_Tick(_float fTimeDelta)
 {
-	_float4x4 BoneMatrix;
+	// 파츠 로직
+	if (false == m_pAttachedTime->IsEnable())
+	{
+		_float4x4 BoneMatrix;
 
-	/* 부모(뼈의 오프셋 * 뼈의 컴바인드 * 피벗) */
-	BoneMatrix = m_OffsetMatrix * (*m_pCombindTransformationMatrix) * m_PivotMatrix;
+		/* 부모(뼈의 오프셋 * 뼈의 컴바인드 * 피벗) */
+		BoneMatrix = m_OffsetMatrix * (*m_pCombindTransformationMatrix) * m_PivotMatrix;
 
-	// 스케일 제거.
-	BoneMatrix.Right(XMVector3Normalize(BoneMatrix.Right()));
-	BoneMatrix.Up(XMVector3Normalize(BoneMatrix.Up()));
-	BoneMatrix.Look(XMVector3Normalize(BoneMatrix.Look()));
+		// 스케일 제거.
+		BoneMatrix.Right(XMVector3Normalize(BoneMatrix.Right()));
+		BoneMatrix.Up(XMVector3Normalize(BoneMatrix.Up()));
+		BoneMatrix.Look(XMVector3Normalize(BoneMatrix.Look()));
 
-	_float4x4 CombinedWorldMatrix;
-	CombinedWorldMatrix = BoneMatrix * (*m_pParentWorldMatrix);
-	m_pTransform->Set_WorldMatrix(CombinedWorldMatrix);
+		_float4x4 CombinedWorldMatrix;
+		CombinedWorldMatrix = BoneMatrix * (*m_pParentWorldMatrix);
+		m_pTransform->Set_WorldMatrix(CombinedWorldMatrix);
+	}
 	
 	__super::Late_Tick(fTimeDelta);
 
@@ -134,6 +130,23 @@ HRESULT CPotion::Render()
 	}
 
 	return S_OK;
+}
+
+void CPotion::Use(_float3 vPlayPos)
+{
+	// 시간 재생
+	m_pLifeTime->Play_CoolTime();
+	m_pAttachedTime->Play_CoolTime();
+
+	// 레이어에 등록
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	pGameInstance->Add_Component(
+		this,
+		pGameInstance->Get_CurrentLevelIndex(),
+		TEXT("Layer_Item"),
+		Generate_HashtagW().data());
+	Safe_Release(pGameInstance);
 }
 
 HRESULT CPotion::Set_ShaderResources()
@@ -196,5 +209,7 @@ void CPotion::Free(void)
 		Safe_Release(m_pRenderer);
 		Safe_Release(m_pModel);
 		Safe_Release(m_pShader);
+		Safe_Release(m_pLifeTime);
+		Safe_Release(m_pAttachedTime);
 	}
 }

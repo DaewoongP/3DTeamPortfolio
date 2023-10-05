@@ -1,30 +1,29 @@
-#include "PotionTap.h"
+#include "PotionTab.h"
 
 #include "GameInstance.h"
 #include "UI_Potion_Tap.h"
 #include "UI_Effect_Back.h"
 #include "Tool.h"
 #include "Item.h"
-#include "FocusPotion.h"
 
-CPotionTap::CPotionTap(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CPotionTab::CPotionTab(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
 }
 
-CPotionTap::CPotionTap(const CPotionTap& rhs)
+CPotionTab::CPotionTab(const CPotionTab& rhs)
 	: CGameObject(rhs)
 {
 }
 
-HRESULT CPotionTap::Initialize_Prototype()
+HRESULT CPotionTab::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 
 	return S_OK;
 }
 
-HRESULT CPotionTap::Initialize(void* pArg)
+HRESULT CPotionTab::Initialize(void* pArg)
 {
 	__super::Initialize(pArg);
 
@@ -37,7 +36,7 @@ HRESULT CPotionTap::Initialize(void* pArg)
 	return S_OK;
 }
 
-void CPotionTap::Tick(_float fTimeDelta)
+void CPotionTab::Tick(_float fTimeDelta)
 {
 	m_pUI_Main_Tap->Tick(fTimeDelta);
 
@@ -50,7 +49,7 @@ void CPotionTap::Tick(_float fTimeDelta)
 	Safe_Release(pGameInstance);
 }
 
-void CPotionTap::Late_Tick(_float fTimeDelta)
+void CPotionTab::Late_Tick(_float fTimeDelta)
 {
 	//__super::Late_Tick(fTimeDelta);
 
@@ -72,12 +71,7 @@ void CPotionTap::Late_Tick(_float fTimeDelta)
 
 }
 
-_bool CPotionTap::Is_Valid(POTIONTAP ePotionTap)
-{
-	return ePotionTap >= 0 && ePotionTap < POTIONTAP_END;
-}
-
-HRESULT CPotionTap::Add_Components()
+HRESULT CPotionTab::Add_Components()
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
@@ -86,7 +80,7 @@ HRESULT CPotionTap::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Potion_Tap"),
 		TEXT("Com_UI_Group_Potion_Tap"), reinterpret_cast<CComponent**>(&m_pUI_Potion_Tap))))
 	{
-		MSG_BOX("Com_PotionTap : Failed Clone Component (Com_UI_Group_Potion_Tap )");
+		MSG_BOX("Com_PotionTab : Failed Clone Component (Com_UI_Group_Potion_Tap )");
 		Safe_Release(pGameInstance);
 		__debugbreak();
 		return E_FAIL;
@@ -105,7 +99,7 @@ HRESULT CPotionTap::Add_Components()
 	return S_OK;
 }
 
-HRESULT CPotionTap::Ready_Main_Tap()
+HRESULT CPotionTab::Ready_Main_Tap()
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
@@ -117,7 +111,7 @@ HRESULT CPotionTap::Ready_Main_Tap()
 	UIDesc.fZ = { 0.8f };
 	UIDesc.fSizeX = { 112.f };
 	UIDesc.fSizeY = { 112.f };
-	_tchar szTexturePath[MAX_PATH] = TEXT("../../Resources/UI/Game/PotionTap/Main_Tap.dds");
+	_tchar szTexturePath[MAX_PATH] = TEXT("../../Resources/UI/Game/PotionTab/Main_Tap.dds");
 	lstrcpy(UIDesc.szTexturePath, szTexturePath);
 
 	m_pUI_Main_Tap->Load(UIDesc);
@@ -137,83 +131,45 @@ HRESULT CPotionTap::Ready_Main_Tap()
 	return S_OK;
 }
 
-HRESULT CPotionTap::Ready_PotionTextures()
+HRESULT CPotionTab::Ready_PotionTextures()
 {
 
 	m_pPotionTextures.push_back(CTexture::Create(m_pDevice, m_pContext,
-		TEXT("../../Resources/UI/Game/PotionTap/UI_T_Edurus_Meter.png")));
+		TEXT("../../Resources/UI/Game/PotionTab/UI_T_Edurus_Meter.png")));
 
 	m_pPotionTextures.push_back(CTexture::Create(m_pDevice, m_pContext,
-		TEXT("../../Resources/UI/Game/PotionTap/UI_T_Maxima_Meter.png")));
+		TEXT("../../Resources/UI/Game/PotionTab/UI_T_Maxima_Meter.png")));
 
 	m_pPotionTextures.push_back(CTexture::Create(m_pDevice, m_pContext,
-		TEXT("../../Resources/UI/Game/PotionTap/UI_T_AMFillPotion_Meter.png")));
+		TEXT("../../Resources/UI/Game/PotionTab/UI_T_AMFillPotion_Meter.png")));
 
 	m_pPotionTextures.push_back(CTexture::Create(m_pDevice, m_pContext,
-		TEXT("../../Resources/UI/Game/PotionTap/UI_T_AutoDamagePotion_Meter.png")));
+		TEXT("../../Resources/UI/Game/PotionTab/UI_T_AutoDamagePotion_Meter.png")));
 
 	m_pPotionTextures.push_back(CTexture::Create(m_pDevice, m_pContext,
-		TEXT("../../Resources/UI/Game/PotionTap/UI_T_InvisibilityPotion_Meter.png")));
+		TEXT("../../Resources/UI/Game/PotionTab/UI_T_InvisibilityPotion_Meter.png")));
 
 	m_pPotionTextures.push_back(CTexture::Create(m_pDevice, m_pContext,
-		TEXT("../../Resources/UI/Game/PotionTap/UI_T_Mandrake_Byproduct_Meter.png")));
+		TEXT("../../Resources/UI/Game/PotionTab/UI_T_Mandrake_Byproduct_Meter.png")));
 
 	m_pPotionTextures.push_back(CTexture::Create(m_pDevice, m_pContext,
-		TEXT("../../Resources/UI/Game/PotionTap/UI_T_ChompingCabbage_Byproduct_Meter.png")));
+		TEXT("../../Resources/UI/Game/PotionTab/UI_T_ChompingCabbage_Byproduct_Meter.png")));
 
 	m_pPotionTextures.push_back(CTexture::Create(m_pDevice, m_pContext,
-		TEXT("../../Resources/UI/Game/PotionTap/UI_T_VenomousTentacula_Byproduct_Meter.png")));
+		TEXT("../../Resources/UI/Game/PotionTab/UI_T_VenomousTentacula_Byproduct_Meter.png")));
 
 	return S_OK;
 }
 
-CItem* CPotionTap::ToolFactory(POTIONTAP eType)
+void CPotionTab::Add_Potion(CItem* pItem, POTIONTAP eType)
 {
-	CItem* pItem = { nullptr };
-
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
-	switch (eType)
-	{
-	case Client::ENDURUS_POTION:
-		break;
-	case Client::ATTACK_POWER_UP:
-		break;
-	case Client::FOCUS_POTION:
-		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
-			LEVEL_STATIC,
-			TEXT("Prototype_GameObject_FocusPotion")));
-		break;
-	case Client::THUNDER_CLOUD:
-		break;
-	case Client::INVISIBILITY_PILL:
-		break;
-	case Client::MANDRAKE:
-		break;
-	case Client::CHINESES_CHOPPING_CABBAGE:
-		break;
-	case Client::TENTACULAR:
-		break;
-	}
-
-	Safe_Release(pGameInstance);
-
-	return pItem;
-}
-
-void CPotionTap::Add_Potion(POTIONTAP eType)
-{
-	if (false == Is_Valid(eType))
-		return;
-
-	CItem* pItem = ToolFactory(eType);
-	if (nullptr == pItem)
+	if (eType >= POTIONTAP_END || eType < 0)
 		return;
 
 	m_pPotions[eType].push_back(pItem);
 }
 
-void CPotionTap::Delete_Potion(POTIONTAP eType, _uint iIndex)
+void CPotionTab::Delete_Potion(POTIONTAP eType, _uint iIndex)
 {
 	_uint Index = 0;
 	auto iter = m_pPotions[eType].begin();
@@ -229,7 +185,7 @@ void CPotionTap::Delete_Potion(POTIONTAP eType, _uint iIndex)
 	}
 }
 
-void CPotionTap::Set_CurPotion()
+void CPotionTab::Set_CurPotion()
 {
 	if (nullptr != m_pUI_Potion_Tap)
 		m_eCurPotion = (POTIONTAP)m_pUI_Potion_Tap->Set_CurTapItem();
@@ -243,42 +199,43 @@ void CPotionTap::Set_CurPotion()
 	}
 }
 
-void CPotionTap::Use_Item(_float3 vPlayPos)
+void CPotionTab::Use_Item(_float3 vPlayPos)
 {
-	if (false == Is_Valid(m_eCurPotion))
+	if (m_pPotions[m_eCurPotion].size() <= 0)
 		return;
 
 	dynamic_cast<CTool*>(m_pPotions[m_eCurPotion][0])->Use(vPlayPos);
 	Delete_Potion(m_eCurPotion, m_pPotions[m_eCurPotion].size() - 1);
 }
 
-CPotionTap* CPotionTap::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+
+CPotionTab* CPotionTab::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CPotionTap* pInstance = new CPotionTap(pDevice, pContext);
+	CPotionTab* pInstance = new CPotionTab(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Created CPotionTap");
+		MSG_BOX("Failed to Created CPotionTab");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject* CPotionTap::Clone(void* pArg)
+CGameObject* CPotionTab::Clone(void* pArg)
 {
-	CPotionTap* pInstance = new CPotionTap(*this);
+	CPotionTab* pInstance = new CPotionTab(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned CPotionTap");
+		MSG_BOX("Failed to Cloned CPotionTab");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CPotionTap::Free()
+void CPotionTab::Free()
 {
 	__super::Free();
 

@@ -17,6 +17,7 @@ protected:
 		wstring				wstrModelPath = { TEXT("") };
 		CModel::TYPE		eModelType = { CModel::TYPE_END };
 		_float4x4			PivotMatrix = { _float4x4() };
+		POTIONTAP			ePotionTap = { POTIONTAP_END };
 	}POTION_CREATE_DESC;
 
 protected:
@@ -40,6 +41,8 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
+	virtual void Use(_float3 vPlayPos) override;
+
 private:
 	HRESULT Set_ShaderResources();
 
@@ -47,20 +50,21 @@ protected:
 	CRenderer* m_pRenderer = { nullptr };
 	CModel* m_pModel = { nullptr };
 	CShader* m_pShader = { nullptr };
+	CCoolTime* m_pLifeTime = { nullptr };
+	CCoolTime* m_pAttachedTime = { nullptr };
 
 protected:
 	POTION_CREATE_DESC			m_PotionCreateDesc = { POTION_CREATE_DESC() };
-	_float4x4					m_WorldMatrix;
-	_uint						m_iBoneIndex = { 0 };
 
+private:
+	_bool			 m_isAttached = { false };
+	
 	_float4x4        m_OffsetMatrix;
 	_float4x4        m_PivotMatrix;
 	const _float4x4* m_pCombindTransformationMatrix;
 	const _float4x4* m_pParentWorldMatrix;
 
-private:
-	CBone*						m_pTargetBone = { nullptr };
-
+	
 private:
 	HRESULT Add_Components();
 

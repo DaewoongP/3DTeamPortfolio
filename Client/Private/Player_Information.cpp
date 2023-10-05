@@ -10,7 +10,7 @@
 // Áö¿ï°Å
 #include "WiggenweldPotion.h"
 #include "Item.h"
-
+#include "PotionTap.h"
 CPlayer_Information::CPlayer_Information(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
 	: CComposite(_pDevice, _pContext)
 {
@@ -52,6 +52,17 @@ void CPlayer_Information::Tick(_float fTimeDelta)
 
 		m_pInventory = static_cast<CInventory*>(pGameInstacne->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Inventory"), TEXT("GameObject_Inventory")));
 		Safe_AddRef(m_pInventory);
+
+		Safe_Release(pGameInstacne);
+	}
+
+	if (nullptr == m_pPotionTap)
+	{
+		CGameInstance* pGameInstacne = CGameInstance::GetInstance();
+		Safe_AddRef(pGameInstacne);
+
+		m_pPotionTap = static_cast<CPotionTap*>(pGameInstacne->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_UI"), TEXT("GameObject_Potion_Tap")));
+		Safe_AddRef(m_pPotionTap);
 
 		Safe_Release(pGameInstacne);
 	}
@@ -184,5 +195,6 @@ void CPlayer_Information::Free()
 		Safe_Release(m_pUI_Finisher);
 		Safe_Release(m_pUI_Health);
 		Safe_Release(m_pInventory);
+		Safe_Release(m_pPotionTap);
 	}
 }

@@ -49,7 +49,7 @@ HRESULT CFocusPotion::Initialize(void* pArg)
 
 void CFocusPotion::Use(_float3 vPlayPos)
 {
-
+	__super::Use(vPlayPos);
 }
 
 HRESULT CFocusPotion::Add_Components()

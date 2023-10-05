@@ -335,11 +335,15 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 #pragma endregion
 
 #pragma region Load Item
-
 		/* For.Prototype_GameObject_WiggenweldPotion*/
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_WiggenweldPotion"),
 			CWiggenweldPotion::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_WiggenweldPotion");
+
+		/* For.Prototype_GameObject_FocusPotion*/
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_FocusPotion"),
+			CFocusPotion::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_FocusPotion");
 
 		/* For.Prototype_GameObject_AshwinderEggs_Item*/
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_AshwinderEggs_Item"),
