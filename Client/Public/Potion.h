@@ -55,6 +55,7 @@ protected:
 
 protected:
 	POTION_CREATE_DESC			m_PotionCreateDesc = { POTION_CREATE_DESC() };
+	_float						m_fDuration = { 0.f };
 
 private:
 	_bool			 m_isAttached = { false };
