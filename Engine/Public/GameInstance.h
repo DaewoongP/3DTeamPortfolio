@@ -16,6 +16,7 @@
 #include "Component_Manager.h"
 #include "Collision_Manager.h"
 #include "Ease.h"
+#include "Camera_Manager.h"
 
 BEGIN(Engine)
 
@@ -203,6 +204,18 @@ public:	/* For.Camera_Manager */
 	class CCamera* Find_Camera(const _tchar* _CameraTag);
 	//컷씬 중지
 	void Stop_CutScene();
+
+	//쉐이크 시작함수		//타입, 축, 그래프, 주기, 크기, 지속시간, 특정 축
+	void Set_Shake(
+		CCamera_Manager::SHAKE_TYPE _eType = CCamera_Manager::SHAKE_TYPE_ROTATION,
+		CCamera_Manager::SHAKE_AXIS _eAxis = CCamera_Manager::SHAKE_AXIS_SET,
+		CEase::EASE _eEase = CEase::IN_SINE,
+		_float _fSpeed = 5.0f,
+		_float _Duration = 5.0f,
+		_float _fPower = 0.02f,
+		CCamera_Manager::SHAKE_POWER _ePower = CCamera_Manager::SHAKE_POWER_DECRECENDO,
+		_float3 _vAxisSet = _float3());
+
 #ifdef _DEBUG
 	void Set_DebugCam(_bool isCam);
 #endif // _DEBUG

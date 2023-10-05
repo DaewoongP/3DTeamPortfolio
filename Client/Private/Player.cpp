@@ -42,6 +42,60 @@ CPlayer::CPlayer(const CPlayer& rhs)
 {
 }
 
+void CPlayer::Set_Protego_Collision(CEnemy::ATTACKTYPE _eAttackType, CTransform* _pTransform)
+{
+	if (m_pStateContext->Is_Current_State(TEXT("Protego")))
+	{
+		CProtegoState::PROTEGOSTATEDESC ProtegoStateDesc;
+
+		ProtegoStateDesc.isHit = true;
+
+		switch (_eAttackType)
+		{
+		case CEnemy::ATTACK_NONE:
+		{	}
+		break;
+		case CEnemy::ATTACK_LIGHT:
+		{
+			ProtegoStateDesc.iHitType = CProtegoState::HIT_LIGHT;
+		}
+		break;
+		case CEnemy::ATTACK_HEAVY:
+		{
+			ProtegoStateDesc.iHitType = CProtegoState::HIT_HEABY;
+		}
+		break;
+		case CEnemy::ATTACKTYPE_END:
+		{	}
+		break;
+
+		default:
+			break;
+		}
+
+		ProtegoStateDesc.pTransform = _pTransform;
+
+		Go_Protego(&ProtegoStateDesc);
+	}
+}
+
+void CPlayer::Set_Spell_Botton(_uint _Button, SPELL _eSpell)
+{
+	if (SKILLINPUT_1 > _Button || SKILLINPUT_4 < _Button || ACCIO > _eSpell || WINGARDIUMLEVIOSA < _eSpell)
+	{
+#ifdef _DEBUG
+		MSG_BOX("Failed Set_Spell_Botton");
+		return;
+#endif // _DEBUG
+	}
+
+	m_pMagicSlot->Add_Magic_To_Skill_Slot(_Button, _eSpell);
+	
+	m_UI_Group_Skill_01->Set_SpellTexture((CUI_Group_Skill::KEYLIST)_Button, _eSpell);
+
+	return;
+}
+
 HRESULT CPlayer::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
@@ -80,13 +134,6 @@ HRESULT CPlayer::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
-	if (FAILED(Ready_Camera()))
-	{
-		MSG_BOX("Failed Ready Player Camera");
-
-		return E_FAIL;
-	}
-
 	if (FAILED(Ready_MagicDesc()))
 	{
 		MSG_BOX("Failed Ready _MagicDesc");
@@ -111,11 +158,6 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_fClothPower = 3.0f;
 	m_fClothPowerPlus = 1.0f;
 
-	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::FIRST, CONFRINGO);
-	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::SECOND, LEVIOSO);
-	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::THIRD, NCENDIO);
-	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::FOURTH, DIFFINDO);
-
 	m_fRotationSpeed = 2.0f;
 
 	m_iMoveType = (_uint)MOVETYPE_NONE;
@@ -134,6 +176,15 @@ HRESULT CPlayer::Initialize_Level(_uint iCurrentLevelIndex)
 {
 	m_pTransform->Set_Position(m_vLevelInitPosition[iCurrentLevelIndex]);
 	m_eLevelID = (LEVELID)iCurrentLevelIndex;
+
+
+	if (FAILED(Ready_Camera()))
+	{
+		MSG_BOX("Failed Ready Player Camera");
+
+		return E_FAIL;
+	}
+
 	return S_OK;
 }
 
@@ -235,36 +286,7 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		//Protego
 		if (m_pStateContext->Is_Current_State(TEXT("Protego")))
 		{
-			CProtegoState::PROTEGOSTATEDESC ProtegoStateDesc;
-
-			ProtegoStateDesc.isHit = true;
-
-			switch (pDesc->eType)
-			{
-			case CEnemy::ATTACK_NONE:
-			{	}
-			break;
-			case CEnemy::ATTACK_LIGHT:
-			{
-				ProtegoStateDesc.iHitType = CProtegoState::HIT_LIGHT;
-			}
-			break;
-			case CEnemy::ATTACK_HEAVY:
-			{
-				ProtegoStateDesc.iHitType = CProtegoState::HIT_HEABY;
-			}
-			break;
-			case CEnemy::ATTACKTYPE_END:
-			{	}
-			break;
-
-			default:
-				break;
-			}
-
-			ProtegoStateDesc.pTransform = pDesc->pEnemyTransform;
-
-			Go_Protego(&ProtegoStateDesc);
+			
 		}
 		//회피시 무시
 		else if (m_pStateContext->Is_Current_State(TEXT("Roll")))
@@ -833,18 +855,13 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	m_pMagicSlot->Add_Magic_To_Skill_Slot(0, DIFFINDO);
-	m_pMagicSlot->Add_Magic_To_Skill_Slot(1, LEVIOSO);
-	m_pMagicSlot->Add_Magic_To_Skill_Slot(2, ACCIO);
-	m_pMagicSlot->Add_Magic_To_Skill_Slot(3, FINISHER);
-	//m_pMagicSlot->Add_Magic_To_Skill_Slot(0, CONFRINGO);
-	//m_pMagicSlot->Add_Magic_To_Skill_Slot(2, EXPELLIARMUS);
-	//m_pMagicSlot->Add_Magic_To_Skill_Slot(2, FINISHER);
-	//m_pMagicSlot->Add_Magic_To_Skill_Slot(3, NCENDIO);
-	//m_pMagicSlot->Add_Magic_To_Skill_Slot(3, ARRESTOMOMENTUM);
-	//m_pMagicSlot->Add_Magic_To_Skill_Slot(3, IMPERIO);
-
 	m_pMagicSlot->Add_Magic_To_Basic_Slot(2, LUMOS);
+	m_pMagicSlot->Add_Magic_To_Basic_Slot(3, FINISHER);
+
+	Set_Spell_Botton(0, DESCENDO);
+	Set_Spell_Botton(1, FLIPENDO);
+	Set_Spell_Botton(2, EXPELLIARMUS);
+	Set_Spell_Botton(3, IMPERIO);
 
 	return S_OK;
 }
@@ -852,6 +869,31 @@ HRESULT CPlayer::Add_Magic()
 void CPlayer::Key_Input(_float fTimeDelta)
 {
 	BEGININSTANCE;
+
+	if (pGameInstance->Get_DIKeyState(DIK_P, CInput_Device::KEY_DOWN))
+	{
+		m_pPlayer_Camera->Change_Animation(TEXT("Cam_Finisher_Lightning_01_anm"));
+	}
+
+#ifdef _DEBUG
+	//카메라 쉐이크 테스트
+	if (pGameInstance->Get_DIKeyState(DIK_K,CInput_Device::KEY_DOWN))
+	{
+		_float3 vAxis = _float3(m_fx, m_fy, m_fz);
+
+		vAxis.Normalize();
+
+		pGameInstance->Set_Shake(
+			(CCamera_Manager::SHAKE_TYPE)m_iShake_Type,
+			(CCamera_Manager::SHAKE_AXIS)m_iShake_Axis,
+			(CEase::EASE)m_iEase,
+			m_fShakeSpeed,
+			m_fShakeDuration,
+			m_fShakePower,
+			(CCamera_Manager::SHAKE_POWER)m_iShakePower,
+			vAxis);
+	}
+#endif // _DEBUG
 
 #pragma region 스테이트 변경 키 입력
 
@@ -885,25 +927,25 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		//기본 스팰
 		if (pGameInstance->Get_DIKeyState(DIK_1, CInput_Device::KEY_DOWN))
 		{
-			MagicCastingStateDesc.pFuncSpell = [&] {(*this).Shot_Confringo(); };
+			MagicCastingStateDesc.pFuncSpell = [&] {(*this).Shot_Magic_Spell_Button_1(); };
 
 			Go_MagicCast(&MagicCastingStateDesc);
 		}
 		if (pGameInstance->Get_DIKeyState(DIK_2, CInput_Device::KEY_DOWN))
 		{
-			MagicCastingStateDesc.pFuncSpell = [&] {(*this).Shot_Levioso(); };
+			MagicCastingStateDesc.pFuncSpell = [&] {(*this).Shot_Magic_Spell_Button_2(); };
 
 			Go_MagicCast(&MagicCastingStateDesc);
 		}
 		if (pGameInstance->Get_DIKeyState(DIK_3, CInput_Device::KEY_DOWN))
 		{
-			MagicCastingStateDesc.pFuncSpell = [&] {(*this).Shot_Finisher(); };
+			MagicCastingStateDesc.pFuncSpell = [&] {(*this).Shot_Magic_Spell_Button_3(); };
 
 			Go_MagicCast(&MagicCastingStateDesc);
 		}
 		if (pGameInstance->Get_DIKeyState(DIK_4, CInput_Device::KEY_DOWN))
 		{
-			MagicCastingStateDesc.pFuncSpell = [&] {(*this).Shot_NCENDIO(); };
+			MagicCastingStateDesc.pFuncSpell = [&] {(*this).Shot_Magic_Spell_Button_4(); };
 
 			Go_MagicCast(&MagicCastingStateDesc);
 		}
@@ -915,16 +957,19 @@ void CPlayer::Key_Input(_float fTimeDelta)
 			Go_MagicCast(&MagicCastingStateDesc);
 		}
 
-		if (pGameInstance->Get_DIKeyState(DIK_X, CInput_Device::KEY_DOWN))
-		{
-			MagicCastingStateDesc.pFuncSpell = [&] {(*this).Shot_Finisher(); };
-
-			Go_MagicCast(&MagicCastingStateDesc);
-		}
+		
 
 		MagicCastingStateDesc.iSpellType = CMagicCastingState::SPELL_FINISHER;
 
-		
+		//조건 추가 해야함
+		if (pGameInstance->Get_DIKeyState(DIK_X, CInput_Device::KEY_DOWN))
+		{
+			MagicCastingStateDesc.pFuncSpell = [&] {(*this).Finisher(); };
+
+			Go_MagicCast(&MagicCastingStateDesc);
+
+			m_pPlayer_Camera->Change_Animation(TEXT("Cam_Finisher_Lightning_01_anm"));
+		}
 
 
 
@@ -1114,6 +1159,8 @@ HRESULT CPlayer::Ready_Camera()
 
 	PlayerCameraDesc.CameraDesc = CameraDesc;
 	PlayerCameraDesc.pPlayerTransform = m_pTransform;
+	PlayerCameraDesc.ppTargetTransform = &m_pTargetTransform;
+	PlayerCameraDesc.eLevelID = m_eLevelID;
 
 	m_pPlayer_Camera = CPlayer_Camera::Create(m_pDevice,m_pContext, &PlayerCameraDesc);
 
@@ -1469,14 +1516,14 @@ void CPlayer::Next_Spell_Action()
 
 void CPlayer::Shot_Basic_Spell()
 {
-	Find_Target_For_Distance();
+	//Find_Target_For_Distance();
 	m_pMagicSlot->Add_Magics(m_BasicDesc_Light);
 	m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(0, m_pTarget, m_pWeapon, COL_ENEMY,m_isPowerUp);
 }
 
 void CPlayer::Shot_Basic_Last_Spell()
 {
-	Find_Target_For_Distance();
+	//Find_Target_For_Distance();
 	m_pMagicSlot->Add_Magics(m_BasicDesc_Heavy);
 	m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(0, m_pTarget, m_pWeapon, COL_ENEMY,m_isPowerUp);
 }
@@ -1582,6 +1629,17 @@ HRESULT CPlayer::Bind_Notify()
 	}
 
 
+	funcNotify = [&] {(*this).Finisher(); };
+
+	//Finisher
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Finisher_Lightning"), TEXT("Ready_Spell"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
+
+
 	funcNotify = [&] {(*this).Next_Spell_Action(); };
 	
 	//next_action_Spell
@@ -1671,6 +1729,13 @@ HRESULT CPlayer::Bind_Notify()
 		return E_FAIL;
 	}
 	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Spell_Action_03"), TEXT("Shot_Spell"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Finisher_Lightning"), TEXT("Shot_Spell"), funcNotify)))
 	{
 		MSG_BOX("Failed Bind_Notify");
 
@@ -1846,11 +1911,8 @@ void CPlayer::Find_Target_For_Distance()
 	ENDINSTANCE;
 }
 
-
-void CPlayer::Shot_Levioso()
+void CPlayer::Finisher()
 {
-	Find_Target_For_Distance();
-
 	_float4x4 OffSetMatrix = XMMatrixIdentity();
 
 	if (nullptr != m_pTarget)
@@ -1858,49 +1920,7 @@ void CPlayer::Shot_Levioso()
 		OffSetMatrix = m_pTarget->Get_Offset_Matrix();
 	}
 
-	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(1, m_pTarget, m_pWeapon, COL_ENEMY,m_isPowerUp);
-}
-
-void CPlayer::Shot_Confringo()
-{
-	Find_Target_For_Distance();
-
-	_float4x4 OffSetMatrix = XMMatrixIdentity();
-
-	if (nullptr != m_pTarget)
-	{
-		OffSetMatrix = m_pTarget->Get_Offset_Matrix();
-	}
-
-	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(0, m_pTarget, m_pWeapon, COL_ENEMY,m_isPowerUp);
-}
-
-void CPlayer::Shot_NCENDIO()
-{
-	Find_Target_For_Distance();
-
-	_float4x4 OffSetMatrix = XMMatrixIdentity();
-
-	if (nullptr != m_pTarget)
-	{
-		OffSetMatrix = m_pTarget->Get_Offset_Matrix();
-	}
-
-	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(3, m_pTarget, m_pWeapon, COL_ENEMY, m_isPowerUp);
-}
-
-void CPlayer::Shot_Finisher()
-{
-	Find_Target_For_Distance();
-
-	_float4x4 OffSetMatrix = XMMatrixIdentity();
-
-	if (nullptr != m_pTarget)
-	{
-		OffSetMatrix = m_pTarget->Get_Offset_Matrix();
-	}
-
-	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(2, m_pTarget, m_pWeapon, COL_ENEMY, m_isPowerUp);
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(3, m_pTarget, m_pWeapon, COL_ENEMY, m_isPowerUp);
 }
 
 void CPlayer::Lumos()
@@ -1946,8 +1966,50 @@ void CPlayer::Go_Jump()
 	}
 }
 
+#ifdef _DEBUG
+
+void CPlayer::Tick_TestShake()
+{
+	ImGui::Begin("TestShake");
+
+	ImGui::Text("Shake_Type");
+
+	ImGui::RadioButton("TRANSLATION", &m_iShake_Type, CCamera_Manager::SHAKE_TYPE_TRANSLATION); ImGui::SameLine();
+	ImGui::RadioButton("ROTATION", &m_iShake_Type, CCamera_Manager::SHAKE_TYPE_ROTATION);
+
+
+	ImGui::Text("Shake_Axis");
+
+	ImGui::RadioButton("RIGHT", &m_iShake_Axis, CCamera_Manager::SHAKE_AXIS_RIGHT); ImGui::SameLine();
+	ImGui::RadioButton("UP", &m_iShake_Axis, CCamera_Manager::SHAKE_AXIS_UP);
+	ImGui::RadioButton("LOOK", &m_iShake_Axis, CCamera_Manager::SHAKE_AXIS_LOOK); ImGui::SameLine();
+	ImGui::RadioButton("SET", &m_iShake_Axis, CCamera_Manager::SHAKE_AXIS_SET);
+
+	ImGui::Text("SHAKE_POWER");
+
+	ImGui::RadioButton("CRECENDO", &m_iShakePower, CCamera_Manager::SHAKE_POWER_CRECENDO); ImGui::SameLine();
+	ImGui::RadioButton("DECRECENDO", &m_iShakePower, CCamera_Manager::SHAKE_POWER_DECRECENDO);
+	ImGui::RadioButton("CRECENDO_DECRECENDO", &m_iShakePower, CCamera_Manager::SHAKE_POWER_CRECENDO_DECRECENDO);
+
+
+	ImGui::DragFloat("SHAKE_SPEED", &m_fShakeSpeed, 0.1f, 1.0f, 60.0f);
+	ImGui::DragFloat("SHAKE_DURATION", &m_fShakeDuration, 0.001f, 0.001f, 100.0f);
+	ImGui::DragFloat("SHAKE_POWER", &m_fShakePower, 0.001f, 0.001f, 1.0f);
+
+	ImGui::DragFloat("Axis_Set.X", &m_fx, 0.001, 0.001f, 1.0f);
+	ImGui::DragFloat("Axis_Set.Y", &m_fy, 0.001, 0.001f, 1.0f);
+	ImGui::DragFloat("Axis_Set.Z", &m_fz, 0.001, 0.001f, 1.0f);
+
+	ImGui::End();
+
+}
+
+#endif // _DEBUG
+
 void CPlayer::Go_MagicCast(void* _pArg)
 {
+	Find_Target_For_Distance();
+
 	if (m_pStateContext->Is_Current_State(TEXT("Idle")) ||
 		m_pStateContext->Is_Current_State(TEXT("Move Turn")) ||
 		m_pStateContext->Is_Current_State(TEXT("Move Start")) ||
@@ -2014,6 +2076,56 @@ CPlayer* CPlayer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 	return pInstance;
 }
+
+void CPlayer::Shot_Magic_Spell_Button_1()
+{
+	_float4x4 OffSetMatrix = XMMatrixIdentity();
+
+	if (nullptr != m_pTarget)
+	{
+		OffSetMatrix = m_pTarget->Get_Offset_Matrix();
+	}
+
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(SKILLINPUT_1, m_pTarget, m_pWeapon, COL_ENEMY, m_isPowerUp);
+}
+
+void CPlayer::Shot_Magic_Spell_Button_2()
+{
+	_float4x4 OffSetMatrix = XMMatrixIdentity();
+
+	if (nullptr != m_pTarget)
+	{
+		OffSetMatrix = m_pTarget->Get_Offset_Matrix();
+	}
+
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(SKILLINPUT_2, m_pTarget, m_pWeapon, COL_ENEMY, m_isPowerUp);
+}
+
+void CPlayer::Shot_Magic_Spell_Button_3()
+{
+	_float4x4 OffSetMatrix = XMMatrixIdentity();
+
+	if (nullptr != m_pTarget)
+	{
+		OffSetMatrix = m_pTarget->Get_Offset_Matrix();
+	}
+
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(SKILLINPUT_3, m_pTarget, m_pWeapon, COL_ENEMY, m_isPowerUp);
+}
+
+void CPlayer::Shot_Magic_Spell_Button_4()
+{
+	_float4x4 OffSetMatrix = XMMatrixIdentity();
+
+	if (nullptr != m_pTarget)
+	{
+		OffSetMatrix = m_pTarget->Get_Offset_Matrix();
+	}
+
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(SKILLINPUT_4, m_pTarget, m_pWeapon, COL_ENEMY, m_isPowerUp);
+}
+
+
 
 CGameObject* CPlayer::Clone(void* pArg)
 {

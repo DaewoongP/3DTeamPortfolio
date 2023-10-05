@@ -5,6 +5,7 @@
 #include "Magic.h"
 #include "HitState.h"
 #include "StateMachine.h"
+#include "Enemy.h"
 
 BEGIN(Engine)
 class CShader;
@@ -51,6 +52,14 @@ public:
 		ACTION_END
 	};
 
+	enum SKILLINPUT
+	{
+		SKILLINPUT_1,
+		SKILLINPUT_2,
+		SKILLINPUT_3,
+		SKILLINPUT_4,
+		SKILLINPUT_END
+	};
 
 private:
 	explicit CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -60,11 +69,15 @@ private:
 public:
 	void Set_TargetTransform(CTransform* _pTargetTransform = nullptr) { m_pTargetTransform = _pTargetTransform; }
 	_float3 Get_PlayerPos() { return m_pTransform->Get_Position(); }
+	void Set_Protego_Collision(CEnemy::ATTACKTYPE _eAttackType, CTransform* _pTransform);
+
 
 	void Set_PowerUp(_bool isPowerUp) { m_isPowerUp = isPowerUp; }
 	void Set_DefUp(_bool isDefUp) { m_isDefUp = isDefUp; }
 	void Set_FocusOn(_bool isFocus) { m_isFocusOn = isFocus; }
 	void Set_Invisible(_bool isInvisible) { m_isInvisible = isInvisible; }
+
+	void Set_Spell_Botton(_uint _Button, SPELL _eSpell);
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -185,6 +198,29 @@ public:
 private:
 	void Tick_ImGui();
 	_bool m_isGravity = { false };
+
+#pragma region 카메라 쉐이크
+
+	_int m_iShake_Type = { 0 };
+	_int m_iShake_Axis = { 0 };
+	_int m_iEase = { 0 };
+
+	_float m_fShakeSpeed = { 5.0f };
+	_float m_fShakeDuration = { 1.0f };
+	_float m_fShakePower = { 0.01f };
+
+	_int m_iShakePower = { 0 };
+
+	_float m_fx = { 1.0f };
+	_float m_fy = { 1.0f };
+	_float m_fz = { 1.0f };
+
+	void Tick_TestShake();
+
+#pragma endregion
+
+
+
 #endif // _DEBUG
 
 private:
@@ -205,10 +241,13 @@ private:
 	void Gravity_On();
 	void Gravity_Off();
 
-	void Shot_Levioso();
-	void Shot_Confringo();
-	void Shot_NCENDIO();
-	void Shot_Finisher();
+	void Shot_Magic_Spell_Button_1();
+	void Shot_Magic_Spell_Button_2();
+	void Shot_Magic_Spell_Button_3();
+	void Shot_Magic_Spell_Button_4();
+
+	void Finisher();
+
 	void Lumos();
 
 	void Finish_Animation();
