@@ -34,6 +34,7 @@ public:
 	_bool Is_Valid(POTIONTAP ePotionTap);
 
 public:
+	CItem*			Get_CurItem();
 	_bool			Get_Open() { return m_isOpen; }
 
 private:
@@ -64,6 +65,7 @@ private:
 public:
 	void	Add_Potion(POTIONTAP eType);
 	void	Delete_Potion(POTIONTAP eType, _uint iIndex);
+	void	Delete_Potion(POTIONTAP eType, CItem* pItem);
 
 	void	Set_CurPotion();
 

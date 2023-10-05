@@ -37,6 +37,7 @@ HRESULT CPotion::Initialize_Prototype(_uint iLevel)
 
 	if (FAILED(__super::Initialize_Prototype(iLevel)))
 		return E_FAIL;
+	
 
 	return S_OK;
 }
@@ -51,13 +52,11 @@ HRESULT CPotion::Initialize(void* pArg)
 
 	// 수명 
 	m_pLifeTime = CCoolTime::Create(m_pDevice, m_pContext);
-	m_pLifeTime->Set_Enable(false);
 	m_pLifeTime->Set_MaxCoolTime(5.f);
 
 	// 손에 붙어있는 시간
 	m_pAttachedTime = CCoolTime::Create(m_pDevice, m_pContext);
-	m_pAttachedTime->Set_Enable(false);
-	m_pAttachedTime->Set_MaxCoolTime(3.f);
+	m_pAttachedTime->Set_MaxCoolTime(2.f);
 
 	// 파츠 값들 설정
 	const CBone* pBone = m_pPlayerModel->Get_Bone(TEXT("SKT_LeftHand"));
@@ -68,6 +67,9 @@ HRESULT CPotion::Initialize(void* pArg)
 	m_pCombindTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
 	m_pParentWorldMatrix = m_pPlayerTransform->Get_WorldMatrixPtr();
 
+	m_pLifeTime->Play_CoolTime();
+	m_pAttachedTime->Play_CoolTime();
+
 	return S_OK;
 }
 
@@ -76,15 +78,18 @@ void CPotion::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 	m_pLifeTime->Tick(fTimeDelta);
 	m_pAttachedTime->Tick(fTimeDelta);
-
+	
 	if (false == m_pLifeTime->IsEnable())
+	{
 		Set_ObjEvent(OBJ_EVENT::OBJ_DEAD);
+		cout << "포션 죽어요" << '\n';
+	}
 }
 
 void CPotion::Late_Tick(_float fTimeDelta)
 {
 	// 파츠 로직
-	if (false == m_pAttachedTime->IsEnable())
+	if (true == m_pAttachedTime->IsEnable())
 	{
 		_float4x4 BoneMatrix;
 
@@ -134,19 +139,7 @@ HRESULT CPotion::Render()
 
 void CPotion::Use(_float3 vPlayPos)
 {
-	// 시간 재생
-	m_pLifeTime->Play_CoolTime();
-	m_pAttachedTime->Play_CoolTime();
 
-	// 레이어에 등록
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
-	pGameInstance->Add_Component(
-		this,
-		pGameInstance->Get_CurrentLevelIndex(),
-		TEXT("Layer_Item"),
-		Generate_HashtagW().data());
-	Safe_Release(pGameInstance);
 }
 
 HRESULT CPotion::Set_ShaderResources()

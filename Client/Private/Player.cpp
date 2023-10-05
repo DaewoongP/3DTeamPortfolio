@@ -120,7 +120,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_iActionType = (_uint)ACTION_NONE;
 
 	m_pCustomModel->Change_Animation(TEXT("Hu_BM_RF_Idle_anm"));
-	
+
 	m_vLevelInitPosition[LEVEL_CLIFFSIDE] = _float3(25.f, 3.f, 22.5f);
 	m_vLevelInitPosition[LEVEL_VAULT] = _float3(7.0f, 0.02f, 7.5f);
 
@@ -153,7 +153,7 @@ void CPlayer::Tick(_float fTimeDelta)
 		m_isPowerUp = true;
 	}
 	if (pGameInstance->Get_DIKeyState(DIK_F7, CInput_Device::KEY_DOWN))
-	{	
+	{
 		//m_pEndurusPotion->Use(_float3(0.f, 0.f, 0.f));
 	}
 
@@ -174,7 +174,7 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	Update_Cloth(fTimeDelta);
 
-	
+
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UNDERBODY);
 
@@ -228,7 +228,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
 	wstring wstrCollisionTag = CollisionEventDesc.pOtherCollisionTag;
-	
+
 	if (wstring::npos != wstrCollisionTag.find(TEXT("Attack")))
 	{
 		CEnemy::COLLISIONREQUESTDESC* pDesc = static_cast<CEnemy::COLLISIONREQUESTDESC*>(CollisionEventDesc.pArg);
@@ -299,7 +299,7 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 				{
 					HitStateDesc.iHitType = CHitState::HIT_HEABY;
 				}
-				else 
+				else
 				{
 					HitStateDesc.iHitType = CHitState::HIT_LIGHT;
 				}
@@ -312,7 +312,7 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			break;
 			case CEnemy::ATTACKTYPE_END:
 			{
-			
+
 			}
 			break;
 
@@ -325,7 +325,7 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			Go_Hit(&HitStateDesc);
 
 			//체력 수정
-			m_pPlayer_Information->fix_HP((pDesc->iDamage)*-1);
+			m_pPlayer_Information->fix_HP((pDesc->iDamage) * -1);
 		}
 
 	}
@@ -379,7 +379,7 @@ HRESULT CPlayer::Render()
 			}
 		}
 		else if (CCustomModel::HEAD == iPartsIndex ||
-				CCustomModel::ARM == iPartsIndex)
+			CCustomModel::ARM == iPartsIndex)
 		{
 			for (_uint i = 0; i < iNumMeshes; ++i)
 			{
@@ -552,7 +552,7 @@ HRESULT CPlayer::Add_Components()
 		__debugbreak();
 		return E_FAIL;
 	}
-	
+
 	//_int DefValue = 15;
 	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_EndurusPotion"),
 	//	TEXT("Com_EndurusPotion"), reinterpret_cast<CComponent**>(&m_pEndurusPotion),&DefValue)))
@@ -571,12 +571,12 @@ HRESULT CPlayer::Add_Components()
 	Def.iDeffence = 0;
 
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Defence"),
-		TEXT("Com_Defence"), reinterpret_cast<CComponent**>(&m_pDefence),&Def)))
+		TEXT("Com_Defence"), reinterpret_cast<CComponent**>(&m_pDefence), &Def)))
 	{
 		__debugbreak();
 		return E_FAIL;
 	}
-	
+
 	return S_OK;
 }
 
@@ -665,7 +665,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.fLifeTime = 3.f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
-	
+
 	// 인센디오
 	{
 		magicInitDesc.eBuffType = BUFF_NCENDIO;
@@ -792,7 +792,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 #pragma region 스테이트 변경 키 입력
 
-	if (pGameInstance->Get_DIKeyState(DIK_LCONTROL,CInput_Device::KEY_DOWN))
+	if (pGameInstance->Get_DIKeyState(DIK_LCONTROL, CInput_Device::KEY_DOWN))
 	{
 		Go_Roll();
 	}
@@ -816,9 +816,9 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		{
 			Go_MagicCast(&MagicCastingStateDesc);
 		}
-			
+
 		MagicCastingStateDesc.iSpellType = CMagicCastingState::SPELL_NORMAL;
-		
+
 		//기본 스팰
 		if (pGameInstance->Get_DIKeyState(DIK_1, CInput_Device::KEY_DOWN))
 		{
@@ -861,20 +861,20 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 		MagicCastingStateDesc.iSpellType = CMagicCastingState::SPELL_FINISHER;
 
-		
 
 
 
-		if (pGameInstance->Get_DIKeyState(DIK_Q,CInput_Device::KEY_DOWN) && false == m_pStateContext->Is_Current_State(TEXT("Protego")))
+
+		if (pGameInstance->Get_DIKeyState(DIK_Q, CInput_Device::KEY_DOWN) && false == m_pStateContext->Is_Current_State(TEXT("Protego")))
 		{
 			Go_Protego(nullptr);
 		}
 
-		
+
 	}
 #pragma endregion
 
-	
+
 	if (pGameInstance->Get_DIKeyState(DIK_GRAVE, CInput_Device::KEY_DOWN))
 	{
 		if (true == m_isFixMouse)
@@ -990,7 +990,7 @@ HRESULT CPlayer::Ready_MeshParts()
 		CCustomModel::ROBE, TEXT("../../Resources/GameData/ClothData/Test.cloth"))))
 	{
 		MSG_BOX("Failed Add MeshPart Robe");
-	
+
 		return E_FAIL;
 	}
 
@@ -1059,7 +1059,7 @@ HRESULT CPlayer::Ready_Camera()
 	PlayerCameraDesc.CameraDesc = CameraDesc;
 	PlayerCameraDesc.pPlayerTransform = m_pTransform;
 
-	m_pPlayer_Camera = CPlayer_Camera::Create(m_pDevice,m_pContext, &PlayerCameraDesc);
+	m_pPlayer_Camera = CPlayer_Camera::Create(m_pDevice, m_pContext, &PlayerCameraDesc);
 
 	Safe_AddRef(m_pPlayer_Camera);
 
@@ -1111,7 +1111,7 @@ void CPlayer::MagicTestTextOutput()
 void CPlayer::Tick_ImGui()
 {
 	ImGui::Begin("Player");
-	
+
 	if (ImGui::Checkbox("Gravity", &m_isGravity))
 	{
 		m_pRigidBody->Set_Gravity(m_isGravity);
@@ -1124,7 +1124,7 @@ void CPlayer::Tick_ImGui()
 		m_pTransform->Set_Position(m_vLevelInitPosition[pGameInstance->Get_CurrentLevelIndex()]);
 	}
 	Safe_Release(pGameInstance);
-	
+
 
 	_float3 vVelocity = m_pTransform->Get_Velocity();
 	ImGui::InputFloat3("Velocity", reinterpret_cast<_float*>(&vVelocity));
@@ -1137,13 +1137,13 @@ void CPlayer::Tick_ImGui()
 void CPlayer::UpdateLookAngle()
 {
 	BEGININSTANCE;
-	
+
 	m_isDirectionKeyPressed = false;
 
 	_float3 vNextLook{};
 
-	if (pGameInstance->Get_DIKeyState(DIK_W, CInput_Device::KEY_PRESSING) || 
-		pGameInstance->Get_DIKeyState(DIK_W,CInput_Device::KEY_DOWN))
+	if (pGameInstance->Get_DIKeyState(DIK_W, CInput_Device::KEY_PRESSING) ||
+		pGameInstance->Get_DIKeyState(DIK_W, CInput_Device::KEY_DOWN))
 	{
 		vNextLook = m_pPlayer_Camera->Get_CamLookXZ();
 		m_isDirectionKeyPressed = true;
@@ -1200,13 +1200,13 @@ HRESULT CPlayer::Ready_StateMachine()
 		MSG_BOX("Failed Ready_StateMachine");
 		return E_FAIL;
 	}
-	
+
 	m_StateMachineDesc.pOwnerModel = m_pCustomModel;
 	m_StateMachineDesc.pPlayerTransform = m_pTransform;
 	m_StateMachineDesc.pfRotaionSpeed = &m_fRotationSpeed;
 	m_StateMachineDesc.pfTargetAngle = &m_fTargetAngle;
 	m_StateMachineDesc.pisDirectionPressed = &m_isDirectionKeyPressed;
-	
+
 	m_StateMachineDesc.pisFinishAnimation = &m_isFinishAnimation;
 	m_StateMachineDesc.piActionType = &m_iActionType;
 	m_StateMachineDesc.piMoveType = &m_iMoveType;
@@ -1218,10 +1218,10 @@ HRESULT CPlayer::Ready_StateMachine()
 
 
 	if (FAILED(m_pStateContext->Add_StateMachine(
-		LEVEL_STATIC, 
-		TEXT("Com_Player_Idle_State"), 
-		TEXT("Idle"), 
-		TEXT("Prototype_Component_State_Idle"), 
+		LEVEL_STATIC,
+		TEXT("Com_Player_Idle_State"),
+		TEXT("Idle"),
+		TEXT("Prototype_Component_State_Idle"),
 		&m_StateMachineDesc)))
 	{
 		MSG_BOX("Failed Add Idle State");
@@ -1240,7 +1240,7 @@ HRESULT CPlayer::Ready_StateMachine()
 
 		return E_FAIL;
 	}
-	
+
 	if (FAILED(m_pStateContext->Add_StateMachine(
 		LEVEL_STATIC,
 		TEXT("Com_Player_Move_Start_State"),
@@ -1358,7 +1358,7 @@ void CPlayer::Update_Target_Angle()
 {
 	//나에서 타겟을 향한 벡터
 	_float3 vDirTarget{};
-	
+
 	if (nullptr == m_pTargetTransform)
 	{
 		vDirTarget = m_pPlayer_Camera->Get_CamLookXZ();
@@ -1371,7 +1371,7 @@ void CPlayer::Update_Target_Angle()
 
 		vDirTarget.Normalize();
 	}
-	
+
 	//내 룩 벡터
 	_float3 vLook{};
 
@@ -1380,7 +1380,7 @@ void CPlayer::Update_Target_Angle()
 	vLook = XMVectorSetY(vLook, 0.0f);
 
 	vLook.Normalize();
-	
+
 	_float fTargetAngle = vLook.Dot(vDirTarget);
 
 	if (1.0f < fTargetAngle)
@@ -1394,7 +1394,7 @@ void CPlayer::Update_Target_Angle()
 	{
 		m_fTargetAngle *= -1;
 	}
-	
+
 }
 
 void CPlayer::Next_Spell_Action()
@@ -1409,19 +1409,19 @@ void CPlayer::Shot_Basic_Spell()
 {
 	Find_Target_For_Distance();
 	m_pMagicSlot->Add_Magics(m_BasicDesc_Light);
-	m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(0, m_pTarget, m_pWeapon, COL_ENEMY,m_isPowerUp);
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(0, m_pTarget, m_pWeapon, COL_ENEMY, m_isPowerUp);
 }
 
 void CPlayer::Shot_Basic_Last_Spell()
 {
 	Find_Target_For_Distance();
 	m_pMagicSlot->Add_Magics(m_BasicDesc_Heavy);
-	m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(0, m_pTarget, m_pWeapon, COL_ENEMY,m_isPowerUp);
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(0, m_pTarget, m_pWeapon, COL_ENEMY, m_isPowerUp);
 }
 
 void CPlayer::Protego()
 {
-	m_pMagicSlot->Action_Magic_Basic(1, this, m_pWeapon, (COLLISIONFLAG)( COL_ENEMY | COL_ENEMY_ATTACK ) ,m_isPowerUp);
+	m_pMagicSlot->Action_Magic_Basic(1, this, m_pWeapon, (COLLISIONFLAG)(COL_ENEMY | COL_ENEMY_ATTACK), m_isPowerUp);
 }
 
 void CPlayer::Gravity_On()
@@ -1501,9 +1501,9 @@ HRESULT CPlayer::Bind_Notify()
 		return E_FAIL;
 	}
 
-	
+
 	funcNotify = [&] {(*this).Shot_Basic_Last_Spell(); };
-	
+
 	//Basic_Last
 	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Hvy_frmLft_anm"), TEXT("Ready_Spell"), funcNotify)))
 	{
@@ -1521,7 +1521,7 @@ HRESULT CPlayer::Bind_Notify()
 
 
 	funcNotify = [&] {(*this).Next_Spell_Action(); };
-	
+
 	//next_action_Spell
 	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Hu_BM_RF_Cast_Casual_Fwd_01_anm"), TEXT("Shot_Spell"), funcNotify)))
 	{
@@ -1673,16 +1673,24 @@ HRESULT CPlayer::Bind_Notify()
 
 		return E_FAIL;
 	}
-	
-	funcNotify = [this] {
-		m_pPlayer_Information->Get_PotionTap()->Use_Item(m_pTransform->Get_Position());
-	};
+
+	funcNotify = [&] { (*this).Drink_Potion(); };
 	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Drink_Potion_Throw"), TEXT("Drink_Potion"), funcNotify)))
 	{
 		MSG_BOX("Failed Bind_Notify");
 
 		return E_FAIL;
 	}
+
+
+	funcNotify = [&] { (*this).Add_Layer_Item(); };
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Drink_Potion_Throw"), TEXT("Add_Layer_Item"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
+
 	return S_OK;
 }
 
@@ -1714,7 +1722,7 @@ void CPlayer::Find_Target_For_Distance()
 
 	//거리가 낮은 놈을 저장
 	CGameObject* pTarget = { nullptr };
-	
+
 	for (unordered_map<const _tchar*, CComponent*>::iterator iter = pLayer->begin(); iter != pLayer->end(); iter++)
 	{
 		if (true == static_cast<CGameObject*>(iter->second)->isDead())
@@ -1722,7 +1730,7 @@ void CPlayer::Find_Target_For_Distance()
 
 		//플레이어와
 		_float3 vPlayerPos = m_pTransform->Get_Position();
-		
+
 		//몬스터의 
 		_float3 vMonsterPos = dynamic_cast<CGameObject*>(iter->second)->Get_Transform()->Get_Position();
 
@@ -1798,7 +1806,7 @@ void CPlayer::Shot_Levioso()
 		OffSetMatrix = m_pTarget->Get_Offset_Matrix();
 	}
 
-	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(1, m_pTarget, m_pWeapon, COL_ENEMY,m_isPowerUp);
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(1, m_pTarget, m_pWeapon, COL_ENEMY, m_isPowerUp);
 }
 
 void CPlayer::Shot_Confringo()
@@ -1812,7 +1820,7 @@ void CPlayer::Shot_Confringo()
 		OffSetMatrix = m_pTarget->Get_Offset_Matrix();
 	}
 
-	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(0, m_pTarget, m_pWeapon, COL_ENEMY,m_isPowerUp);
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(0, m_pTarget, m_pWeapon, COL_ENEMY, m_isPowerUp);
 }
 
 void CPlayer::Shot_NCENDIO()
@@ -1915,6 +1923,30 @@ void CPlayer::Go_Switch_Loop()
 	}
 }
 
+void CPlayer::Add_Layer_Item()
+{
+	CItem* pItem = m_pPlayer_Information->Get_PotionTap()->Get_CurItem();
+
+	if (nullptr == pItem)
+		return;
+
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	_uint iLevelIndex = pGameInstance->Get_CurrentLevelIndex();
+	Safe_AddRef(pGameInstance);
+
+	pGameInstance->Add_Component(
+		pItem,
+		iLevelIndex,
+		TEXT("Layer_Item"),
+		Generate_HashtagW().data());
+	pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
+	Safe_Release(pGameInstance);
+}
+
+void CPlayer::Drink_Potion()
+{
+	m_pPlayer_Information->Get_PotionTap()->Use_Item(m_pTransform->Get_Position());
+}
 void CPlayer::Go_Protego(void* _pArg)
 {
 	if (m_pStateContext->Is_Current_State(TEXT("Idle")) ||
@@ -1924,7 +1956,7 @@ void CPlayer::Go_Protego(void* _pArg)
 		m_pStateContext->Is_Current_State(TEXT("Magic_Cast")) ||
 		m_pStateContext->Is_Current_State(TEXT("Protego")))
 	{
-		m_pStateContext->Set_StateMachine(TEXT("Protego"),_pArg);
+		m_pStateContext->Set_StateMachine(TEXT("Protego"), _pArg);
 	}
 }
 
@@ -1988,7 +2020,7 @@ void CPlayer::Free()
 		Safe_Release(m_pCooltime);
 		//Safe_Release(m_pMaximaPotion);
 		Safe_Release(m_pDefence);
-		
+
 		if (nullptr != m_pTargetTransform)
 		{
 			Safe_Release(m_pTargetTransform);

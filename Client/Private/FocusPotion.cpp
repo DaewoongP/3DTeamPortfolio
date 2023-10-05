@@ -23,9 +23,7 @@ HRESULT CFocusPotion::Initialize_Prototype(_uint iLevel)
 	m_ItemCreateDesc.wstrUIPath = TEXT("../../Resources/UI/Game/UI/Icons/Potions/UI_T_AMFillPotion.png"); // UI경로
 
 	// 포션 정보
-	m_PotionCreateDesc.wstrModelPath = TEXT("../../Resources/Models/NonAnims/SM_SpherePrimitiveRegularNormals_01/SM_SpherePrimitiveRegularNormals_01.dat"); // 모델경로
-	m_PotionCreateDesc.eModelType = CModel::TYPE_NONANIM; // 모델 타입
-	m_PotionCreateDesc.PivotMatrix = _float4x4(); // 피벗 매트릭스
+	m_PotionCreateDesc.wstrModelPath = TEXT("../../Resources/Models/NonAnims/SM_Health_Bottle/SM_Health_Bottle.dat"); // 모델경로
 	m_PotionCreateDesc.Ingredients.push_back(FLUXWEED_STEM);		// 재료1
 	m_PotionCreateDesc.Ingredients.push_back(DITTANY_LEAVES);		// 재료2
 	m_PotionCreateDesc.fManufacturingTime = 60.f;					// 제조시간
@@ -50,6 +48,8 @@ HRESULT CFocusPotion::Initialize(void* pArg)
 void CFocusPotion::Use(_float3 vPlayPos)
 {
 	__super::Use(vPlayPos);
+
+	cout << "쿨타임이 감소했어요" << '\n';
 }
 
 HRESULT CFocusPotion::Add_Components()

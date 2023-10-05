@@ -58,7 +58,6 @@ protected:
 
 private:
 	_bool			 m_isAttached = { false };
-	
 	_float4x4        m_OffsetMatrix;
 	_float4x4        m_PivotMatrix;
 	const _float4x4* m_pCombindTransformationMatrix;

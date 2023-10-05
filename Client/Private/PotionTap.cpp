@@ -77,6 +77,17 @@ _bool CPotionTap::Is_Valid(POTIONTAP ePotionTap)
 	return ePotionTap >= 0 && ePotionTap < POTIONTAP_END;
 }
 
+CItem* CPotionTap::Get_CurItem()
+{
+	if (false == Is_Valid(m_eCurPotion))
+		return nullptr;
+
+	if (m_pPotions[m_eCurPotion].empty())
+		return nullptr;
+
+	return m_pPotions[m_eCurPotion].back();
+}
+
 HRESULT CPotionTap::Add_Components()
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
@@ -221,11 +232,23 @@ void CPotionTap::Delete_Potion(POTIONTAP eType, _uint iIndex)
 	{
 		if (Index == iIndex)
 		{
-			Safe_Release(*iter);
+			//Safe_Release(*iter);
 			iter = m_pPotions[eType].erase(iter);
 			break;
 		}
 		++Index;
+	}
+}
+
+void CPotionTap::Delete_Potion(POTIONTAP eType, CItem* pItem)
+{
+	for (auto iter = m_pPotions[eType].begin(); iter != m_pPotions[eType].end(); ++iter)
+	{
+		if (pItem == *iter)
+		{
+			iter = m_pPotions[eType].erase(iter);
+			break;
+		}
 	}
 }
 
@@ -248,8 +271,23 @@ void CPotionTap::Use_Item(_float3 vPlayPos)
 	if (false == Is_Valid(m_eCurPotion))
 		return;
 
-	dynamic_cast<CTool*>(m_pPotions[m_eCurPotion][0])->Use(vPlayPos);
-	Delete_Potion(m_eCurPotion, m_pPotions[m_eCurPotion].size() - 1);
+	if (m_pPotions[m_eCurPotion].empty())
+		return;
+
+	cout << "포션 사이즈 전 : " << m_pPotions[m_eCurPotion].size() << '\t' << m_pPotions[m_eCurPotion].back() << '\n';
+
+	CItem* pTool = (m_pPotions[m_eCurPotion].back());
+	dynamic_cast<CTool*>(pTool)->Use(vPlayPos);
+
+	Delete_Potion(m_eCurPotion, pTool);
+
+	if (m_pPotions[m_eCurPotion].empty())
+	{
+		m_eCurPotion = POTIONTAP_END;
+		m_pUI_Main_Tap->Set_Texture(nullptr);
+		return;
+	}
+	cout << "포션 사이즈 후 : " << m_pPotions[m_eCurPotion].size() << '\t' << m_pPotions[m_eCurPotion].back() << '\n';
 }
 
 CPotionTap* CPotionTap::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
