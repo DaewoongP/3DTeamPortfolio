@@ -881,9 +881,6 @@
     <ClInclude Include="..\Public\Check_Degree.h">
       <Filter>03. Behaviors\04. Function</Filter>
     </ClInclude>
-    <ClInclude Include="Animation_Camera.h">
-      <Filter>02. GameObject\01. Player\00. Camera</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Animation_Camera_Model.h">
       <Filter>02. GameObject\01. Player\00. Camera</Filter>
     </ClInclude>
@@ -1319,9 +1316,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\Check_Distance.cpp">
       <Filter>03. Behaviors\04. Function</Filter>
-    </ClCompile>
-    <ClCompile Include="Animation_Camera.cpp">
-      <Filter>02. GameObject\01. Player\00. Camera</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Animation_Camera_Model.cpp">
       <Filter>02. GameObject\01. Player\00. Camera</Filter>

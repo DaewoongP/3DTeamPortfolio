@@ -33,6 +33,7 @@ public:
 	{
 		CAMERADESC CameraDesc{};
 		CTransform* pPlayerTransform = { nullptr };
+		CTransform** ppTargetTransform = { nullptr };
 		LEVELID eLevelID = { LEVEL_END };
 	}PLAYERCAMERADESC;
 
@@ -62,6 +63,7 @@ private:
 
 	CTransform* m_pTransform = { nullptr };
 	CTransform* m_pPlayerTransform = { nullptr };
+	CTransform** m_ppTargetTransform = { nullptr };
 	LEVELID m_eLevelID = { LEVEL_END };
 
 	_float m_fFollowLimit = { 0.0f };

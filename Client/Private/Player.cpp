@@ -154,11 +154,6 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_fClothPower = 3.0f;
 	m_fClothPowerPlus = 1.0f;
 
-	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::FIRST, CONFRINGO);
-	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::SECOND, LEVIOSO);
-	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::THIRD, NCENDIO);
-	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::FOURTH, DIFFINDO);
-
 	m_fRotationSpeed = 2.0f;
 
 	m_iMoveType = (_uint)MOVETYPE_NONE;
@@ -259,8 +254,8 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	}
 
 #ifdef _DEBUG
-	Tick_ImGui();
-	Tick_TestShake();
+	//Tick_ImGui();
+	//Tick_TestShake();
 
 #endif // _DEBUG
 
@@ -804,7 +799,6 @@ HRESULT CPlayer::Add_Magic()
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(0, DESCENDO);
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(1, FLIPENDO);
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(2, EXPELLIARMUS);
-	//m_pMagicSlot->Add_Magic_To_Skill_Slot(2, FINISHER);
 	//m_pMagicSlot->Add_Magic_To_Skill_Slot(3, NCENDIO);
 	//m_pMagicSlot->Add_Magic_To_Skill_Slot(3, ARRESTOMOMENTUM);
 	//m_pMagicSlot->Add_Magic_To_Skill_Slot(3, ACCIO);
@@ -812,8 +806,14 @@ HRESULT CPlayer::Add_Magic()
 	//m_pMagicSlot->Add_Magic_To_Skill_Slot(3, FLIPENDO);
 	//m_pMagicSlot->Add_Magic_To_Skill_Slot(3, EXPELLIARMUS);
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(3, IMPERIO);
-	m_pMagicSlot->Add_Magic_To_Basic_Slot(2, LUMOS);
 
+	m_pMagicSlot->Add_Magic_To_Basic_Slot(2, LUMOS);
+	m_pMagicSlot->Add_Magic_To_Basic_Slot(3, FINISHER);
+
+	Set_Spell_Botton(0, DESCENDO);
+	Set_Spell_Botton(1, FLIPENDO);
+	Set_Spell_Botton(2, EXPELLIARMUS);
+	Set_Spell_Botton(3, IMPERIO);
 
 	
 	return S_OK;
@@ -910,16 +910,19 @@ void CPlayer::Key_Input(_float fTimeDelta)
 			Go_MagicCast(&MagicCastingStateDesc);
 		}
 
-		/*if (pGameInstance->Get_DIKeyState(DIK_X, CInput_Device::KEY_DOWN))
-		{
-			MagicCastingStateDesc.pFuncSpell = [&] {(*this).Shot_Finisher(); };
-
-			Go_MagicCast(&MagicCastingStateDesc);
-		}*/
+		
 
 		MagicCastingStateDesc.iSpellType = CMagicCastingState::SPELL_FINISHER;
 
-		
+		//조건 추가 해야함
+		if (pGameInstance->Get_DIKeyState(DIK_X, CInput_Device::KEY_DOWN))
+		{
+			MagicCastingStateDesc.pFuncSpell = [&] {(*this).Finisher(); };
+
+			Go_MagicCast(&MagicCastingStateDesc);
+
+			m_pPlayer_Camera->Change_Animation(TEXT("Cam_Finisher_Lightning_01_anm"));
+		}
 
 
 
@@ -1122,6 +1125,7 @@ HRESULT CPlayer::Ready_Camera()
 
 	PlayerCameraDesc.CameraDesc = CameraDesc;
 	PlayerCameraDesc.pPlayerTransform = m_pTransform;
+	PlayerCameraDesc.ppTargetTransform = &m_pTargetTransform;
 	PlayerCameraDesc.eLevelID = m_eLevelID;
 
 	m_pPlayer_Camera = CPlayer_Camera::Create(m_pDevice,m_pContext, &PlayerCameraDesc);
@@ -1585,6 +1589,17 @@ HRESULT CPlayer::Bind_Notify()
 	}
 
 
+	funcNotify = [&] {(*this).Finisher(); };
+
+	//Finisher
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Finisher_Lightning"), TEXT("Ready_Spell"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
+
+
 	funcNotify = [&] {(*this).Next_Spell_Action(); };
 	
 	//next_action_Spell
@@ -1680,6 +1695,13 @@ HRESULT CPlayer::Bind_Notify()
 		return E_FAIL;
 	}
 
+	if (FAILED(m_pCustomModel->Bind_Notify(TEXT("Finisher_Lightning"), TEXT("Shot_Spell"), funcNotify)))
+	{
+		MSG_BOX("Failed Bind_Notify");
+
+		return E_FAIL;
+	}
+
 
 	funcNotify = [&] {(*this).Protego(); };
 
@@ -1738,6 +1760,7 @@ HRESULT CPlayer::Bind_Notify()
 
 		return E_FAIL;
 	}
+	
 
 	return S_OK;
 }
@@ -1840,6 +1863,18 @@ void CPlayer::Find_Target_For_Distance()
 		}
 	}
 	ENDINSTANCE;
+}
+
+void CPlayer::Finisher()
+{
+	_float4x4 OffSetMatrix = XMMatrixIdentity();
+
+	if (nullptr != m_pTarget)
+	{
+		OffSetMatrix = m_pTarget->Get_Offset_Matrix();
+	}
+
+	m_pMagicBall = m_pMagicSlot->Action_Magic_Basic(3, m_pTarget, m_pWeapon, COL_ENEMY, m_isPowerUp);
 }
 
 void CPlayer::Lumos()

@@ -235,6 +235,8 @@ private:
 	void Shot_Magic_Spell_Button_3();
 	void Shot_Magic_Spell_Button_4();
 
+	void Finisher();
+
 	void Lumos();
 
 	void Finish_Animation();

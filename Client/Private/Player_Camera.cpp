@@ -76,6 +76,7 @@ HRESULT CPlayer_Camera::Initialize(void* pArg)
 	m_pTransform->Set_RotationSpeed(1.0f);
 
 	m_eLevelID = pCameraDesc->eLevelID;
+	m_ppTargetTransform = pCameraDesc->ppTargetTransform;
 	m_pPlayerTransform = pCameraDesc->pPlayerTransform;
 	Safe_AddRef(m_pPlayerTransform);
 	
@@ -91,13 +92,13 @@ HRESULT CPlayer_Camera::Initialize(void* pArg)
 
 	m_vEyeStandard = _float3(sinf(XMConvertToRadians(30.0f)), 0.0f, -cosf(XMConvertToRadians(30.f)));
 
-	m_fEyeMaxDistance = m_fAtMaxDistance = 3.0f;
+	m_fEyeMaxDistance = m_fAtMaxDistance = 2.0f;
 	m_fEyeMinDistance = m_fAtMinDistance = 1.0f;
 
 
 	m_fTimeSpeed = 10.0f;
 
-	m_fCameraHeight = 1.5f;
+	m_fCameraHeight = 1.2f;
 
 	Ready_Animation_Camera();
 
@@ -354,6 +355,9 @@ void CPlayer_Camera::Update_Eye_At()
 		_float3 vUp = _float3(0.0f, 1.0f, 0.0f);
 	}
 
+
+	
+
 	//재생중
 	if (false == m_pAnimation_Camera_Model->Is_Finish_Animation())
 	{
@@ -388,6 +392,35 @@ void CPlayer_Camera::Update_Eye_At()
 		vUp = XMVectorLerp(vUp, m_pAnimation_Camera_Model->Get_Up(), m_fLerpTimeAcc);
 		vAt = XMVectorLerp(vAt, m_pAnimation_Camera_Model->Get_At(), m_fLerpTimeAcc);
 	}
+
+	if (nullptr != (*m_ppTargetTransform) && 0.0f != m_fLerpTimeAcc && 1.0f > m_fLerpTimeAcc && false == m_pAnimation_Camera_Model->Is_Finish_Animation())
+	{
+		// 트렌스폼 룩을 타겟을 향하게 해야한다.
+
+		//일단 행렬을 만든다 타겟을 바라보는
+		_float3 vTarget = (*m_ppTargetTransform)->Get_Position();
+
+		_float3 vPosition = m_pTransform->Get_Position();
+
+		_float3 vDirTatget = vTarget - vPosition;
+
+		//애니메이션 카메라가 기준이 라이트 회전이 없는 상태인것 같기 때문에
+		vDirTatget.y = 0.0f;
+
+		vDirTatget.Normalize();
+
+		_float4x4 matrixForTarget = XMMatrixLookAtLH(vPosition, XMVectorSetY(vTarget,vPosition.y), _float3(0.0f, 1.0f, 0.0f));
+
+		matrixForTarget.Translation(vPosition);
+
+		_float4x4 matrixResult = m_pTransform->Get_WorldMatrix();
+
+		_Matrix::Lerp(matrixResult, matrixForTarget, m_fLerpTimeAcc, matrixResult);
+
+		m_pTransform->Set_WorldMatrix(matrixResult);
+	}
+
+	//행렬 러프는 0.0f이 아니고 1.0f보다 작을때만 한다.
 	
 	pGameInstance->Set_Transform(
 		CPipeLine::D3DTS_VIEW, 
