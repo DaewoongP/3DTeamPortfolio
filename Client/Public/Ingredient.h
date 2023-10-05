@@ -5,12 +5,6 @@ BEGIN(Client)
 
 class CIngredient abstract : public CItem
 {
-	typedef struct tagIngredientCreateDesc
-	{
-		INGREDIENT_TYPE			eIngredientType;
-		INGREDIENT				eIngredient;
-	}INGREDIENT_CREATE_DESC;
-
 protected:
 	CIngredient(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CIngredient(const CIngredient& rhs);
@@ -24,7 +18,6 @@ protected:
 	void Setting_By_Ingredient();
 
 protected:
-	INGREDIENT_CREATE_DESC	m_IngredientCreateDesc;
 	INGREDIENT_TYPE			m_eIngredientType;
 	INGREDIENT				m_eIngredient;
 

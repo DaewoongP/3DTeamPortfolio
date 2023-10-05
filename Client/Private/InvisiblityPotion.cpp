@@ -10,7 +10,6 @@ CInvisiblityPotion::CInvisiblityPotion(ID3D11Device* pDevice, ID3D11DeviceContex
 
 CInvisiblityPotion::CInvisiblityPotion(const CInvisiblityPotion& rhs)
 	: CPotion(rhs)
-	, m_fRecoveryAmount(rhs.m_fRecoveryAmount)
 {
 }
 
@@ -27,7 +26,7 @@ HRESULT CInvisiblityPotion::Initialize_Prototype(_uint iLevel)
 	m_PotionCreateDesc.Ingredients.push_back(INGREDIENT::KNOTGRASS_SPRIG);			// 재료2
 	m_PotionCreateDesc.Ingredients.push_back(INGREDIENT::TROLL_BOGEYS);			// 재료3
 	m_PotionCreateDesc.fManufacturingTime = 60.f;									// 제조 시간
-	m_PotionCreateDesc.wstrModelPath = TEXT("../../Resources/Models/NonAnims/SM_SpherePrimitiveRegularNormals_01/SM_SpherePrimitiveRegularNormals_01.dat"); // 모델경로
+	m_PotionCreateDesc.wstrModelPath = TEXT("../../Resources/Models/NonAnims/SM_Invisibility_Bottle/SM_Invisibility_Bottle.dat"); // 모델경로
 	if (FAILED(__super::Initialize_Prototype(iLevel)))
 		return E_FAIL;
 
@@ -44,8 +43,8 @@ HRESULT CInvisiblityPotion::Initialize(void* pArg)
 
 void CInvisiblityPotion::Use(_float3 vPlayPos)
 {
+	__super::Use(vPlayPos);
 	m_pPlayer->Set_Invisible(true);
-
 }
 
 void CInvisiblityPotion::Duration(_float fTimeDelta)
@@ -84,6 +83,4 @@ CGameObject* CInvisiblityPotion::Clone(void* pArg)
 void CInvisiblityPotion::Free()
 {
 	__super::Free();
-	Safe_Release(m_pPlayerHealthCom);
-	Safe_Release(m_pPlayerInformation);
 }

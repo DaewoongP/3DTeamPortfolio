@@ -41,13 +41,6 @@ public:
 
 	virtual void Use(_float3 vPlayPos) override;
 	void Duration(_float fTimeDelta);
-private:
-	HRESULT Add_Components();
-	HRESULT SetUp_ShaderResources();
-
-
-private:
-	CCoolTime* m_pCoolTime = { nullptr };
 
 public:
 	static CFocusPotion* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel);

@@ -16,7 +16,7 @@ END
 BEGIN(Client)
 class CMagicSlot;
 
-class CMaximaPotion final : public CPotion
+class CThunderBrewPotion final : public CPotion
 {
 public:
 	typedef struct tagCFocusPotionCreateDesc
@@ -31,24 +31,17 @@ public:
 	}CLONE_DESC;
 
 private:
-	CMaximaPotion(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CMaximaPotion(const CMaximaPotion& rhs);
-	virtual ~CMaximaPotion() = default;
+	CThunderBrewPotion(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CThunderBrewPotion(const CThunderBrewPotion& rhs);
+	virtual ~CThunderBrewPotion() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype(_uint iLevel);
 	virtual HRESULT Initialize(void* pArg) override;
-	void Use(_float3 vPlayerPos);
-	void Duration(_float fTimeDelta);
-
-private:
-	_bool m_isDrug = { false };
-	_float m_fDrugTime = { 0.f };
-
-	CMagicSlot* m_pMagicSlot = { nullptr };
+	virtual void Use(_float3 vPlayerPos) override;
 
 public:
-	static CMaximaPotion* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel);
+	static CThunderBrewPotion* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free(void) override;
 

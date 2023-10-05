@@ -55,15 +55,15 @@ protected:
 
 protected:
 	POTION_CREATE_DESC			m_PotionCreateDesc = { POTION_CREATE_DESC() };
-	_float						m_fDuration = { 0.f };
-
+	_float	m_fDuration = { 0.f };
+	
 private:
 	_bool			 m_isAttached = { false };
 	_float4x4        m_OffsetMatrix;
 	_float4x4        m_PivotMatrix;
 	const _float4x4* m_pCombindTransformationMatrix;
 	const _float4x4* m_pParentWorldMatrix;
-
+	
 	
 private:
 	HRESULT Add_Components();

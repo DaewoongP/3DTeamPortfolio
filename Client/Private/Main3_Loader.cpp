@@ -375,6 +375,12 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_InvisiblityPotion"),
 			CInvisiblityPotion::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_InvisiblityPotion");
+
+		/* For.Prototype_GameObject_ThunderBrewPotion */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_ThunderBrewPotion"),
+			CInvisiblityPotion::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_ThunderBrewPotion");
+
 #pragma endregion
 
 #pragma region Load Item

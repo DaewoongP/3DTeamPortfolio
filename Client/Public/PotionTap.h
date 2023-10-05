@@ -43,7 +43,7 @@ private:
 private:
 	// ¸ÞÀÎÈ­¸é ÅÇ UI
 	CUI_Effect_Back*				m_pUI_Main_Tap = { nullptr };
-	CUI_Font*					m_pUI_Main_Count = { nullptr };
+	CUI_Font*						m_pUI_Main_Count = { nullptr };
 	vector<CTexture*>				m_pPotionTextures;
 
 	// UI ÄÄÆ÷³ÍÆ®
@@ -59,8 +59,8 @@ private:
 	HRESULT Ready_Main_Tap();
 	HRESULT	Ready_PotionTextures();
 
-private:
-	CItem* ToolFactory(POTIONTAP eType);
+public:
+	static CItem* ToolFactory(POTIONTAP eType);
 
 public:
 	void	Add_Potion(POTIONTAP eType);

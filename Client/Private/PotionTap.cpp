@@ -56,7 +56,6 @@ void CPotionTap::Late_Tick(_float fTimeDelta)
 
 	m_pUI_Main_Tap->Late_Tick(fTimeDelta);
 
-
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 	if (pGameInstance->Get_DIKeyState(DIK_TAB, CInput_Device::KEY_PRESSING))
@@ -187,8 +186,14 @@ CItem* CPotionTap::ToolFactory(POTIONTAP eType)
 	switch (eType)
 	{
 	case Client::ENDURUS_POTION:
+		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
+			LEVEL_STATIC,
+			TEXT("Prototype_GameObject_EdurusPotion")));
 		break;
-	case Client::ATTACK_POWER_UP:
+	case Client::MAXIMA_POTION:
+		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
+			LEVEL_STATIC,
+			TEXT("Prototype_GameObject_MaximaPotion")));
 		break;
 	case Client::FOCUS_POTION:
 		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
@@ -196,8 +201,14 @@ CItem* CPotionTap::ToolFactory(POTIONTAP eType)
 			TEXT("Prototype_GameObject_FocusPotion")));
 		break;
 	case Client::THUNDER_CLOUD:
+		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
+			LEVEL_STATIC,
+			TEXT("Prototype_GameObject_ThunderBrewPotion")));
 		break;
-	case Client::INVISIBILITY_PILL:
+	case Client::INVISIBILITY_POTION:
+		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
+			LEVEL_STATIC,
+			TEXT("Prototype_GameObject_InvisiblityPotion")));
 		break;
 	case Client::MANDRAKE:
 		break;
@@ -274,8 +285,6 @@ void CPotionTap::Use_Item(_float3 vPlayPos)
 	if (m_pPotions[m_eCurPotion].empty())
 		return;
 
-	cout << "포션 사이즈 전 : " << m_pPotions[m_eCurPotion].size() << '\t' << m_pPotions[m_eCurPotion].back() << '\n';
-
 	CItem* pTool = (m_pPotions[m_eCurPotion].back());
 	dynamic_cast<CTool*>(pTool)->Use(vPlayPos);
 
@@ -285,9 +294,7 @@ void CPotionTap::Use_Item(_float3 vPlayPos)
 	{
 		m_eCurPotion = POTIONTAP_END;
 		m_pUI_Main_Tap->Set_Texture(nullptr);
-		return;
 	}
-	cout << "포션 사이즈 후 : " << m_pPotions[m_eCurPotion].size() << '\t' << m_pPotions[m_eCurPotion].back() << '\n';
 }
 
 CPotionTap* CPotionTap::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

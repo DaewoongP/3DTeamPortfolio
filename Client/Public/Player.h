@@ -114,9 +114,8 @@ private:
 	CFocusPotion*	m_pFocusPotion = { nullptr };
 	CInvisiblityPotion* m_pInvisiblityPotion = { nullptr };
 	CWiggenweldPotion* m_pWiggenweldPotion = { nullptr };
-private:
-	
 
+private:
 	_bool		m_isFixMouse = { false };
 	CStateContext* m_pStateContext = { nullptr };
 	

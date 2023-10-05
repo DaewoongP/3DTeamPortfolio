@@ -43,11 +43,6 @@ public:
 	virtual void Use(_float3 vPlayPos);
 	void Duration(_float fTimeDelta);
 
-private:
-	CHealth* m_pPlayerHealthCom = { nullptr };
-	CPlayer_Information* m_pPlayerInformation = { nullptr };
-	_float		m_fRecoveryAmount = { 0.2f };
-
 public:
 	static CInvisiblityPotion* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel);
 	virtual CGameObject* Clone(void* pArg) override;

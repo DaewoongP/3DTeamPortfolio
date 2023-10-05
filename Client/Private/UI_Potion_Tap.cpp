@@ -46,10 +46,10 @@ HRESULT CUI_Potion_Tap::Initialize(void* pArg)
 	wstring EighthTag = TEXT("Eighth");
 
 	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Potion_Tap_1_Edit.uidata"), FirstTag, POTIONTAP::ENDURUS_POTION);
-	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Potion_Tap_2_Edit.uidata"), SecondTag, POTIONTAP::ATTACK_POWER_UP);
+	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Potion_Tap_2_Edit.uidata"), SecondTag, POTIONTAP::MAXIMA_POTION);
 	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Potion_Tap_3_Edit.uidata"), ThirdTag, POTIONTAP::FOCUS_POTION);
 	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Potion_Tap_4_Edit.uidata"), FourthTag, POTIONTAP::THUNDER_CLOUD);
-	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Potion_Tap_5_Edit.uidata"), FifthTag, POTIONTAP::INVISIBILITY_PILL);
+	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Potion_Tap_5_Edit.uidata"), FifthTag, POTIONTAP::INVISIBILITY_POTION);
 	
 	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Potion_Tap_6_Edit.uidata"), SixthTag, POTIONTAP::MANDRAKE);
 	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Potion_Tap_7_Edit.uidata"), SeventhTag, POTIONTAP::CHINESES_CHOPPING_CABBAGE);
@@ -283,7 +283,7 @@ HRESULT CUI_Potion_Tap::Add_Components(wstring wszTag, POTIONTAP eType)
 		lstrcpy(Desc.m_pText, wstrNCount.c_str());
 	}
 		break;
-	case Client::ATTACK_POWER_UP:
+	case Client::MAXIMA_POTION:
 	{
 		Desc.m_vPos = { 794.f, 194.f };
 		wstring wstrNCount = to_wstring(0);
@@ -304,7 +304,7 @@ HRESULT CUI_Potion_Tap::Add_Components(wstring wszTag, POTIONTAP eType)
 		lstrcpy(Desc.m_pText, wstrNCount.c_str());
 	}
 		break;
-	case Client::INVISIBILITY_PILL:
+	case Client::INVISIBILITY_POTION:
 	{
 		Desc.m_vPos = { 663.f, 525.f };
 		wstring wstrNCount = to_wstring(0);

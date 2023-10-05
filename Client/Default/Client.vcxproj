@@ -187,6 +187,7 @@
     <ClInclude Include="..\public\Plant.h" />
     <ClInclude Include="..\Public\Potion.h" />
     <ClInclude Include="..\Public\Stupefy.h" />
+    <ClInclude Include="..\public\ThunderBrewPotion.h" />
     <ClInclude Include="..\public\Tool.h" />
     <ClInclude Include="..\Public\Death.h" />
     <ClInclude Include="..\Public\Descendo.h" />
@@ -408,6 +409,7 @@
     <ClCompile Include="..\Private\Menu_Setting.cpp" />
     <ClCompile Include="..\Private\MapObject_Ins.cpp" />
     <ClCompile Include="..\Private\Stupefy.cpp" />
+    <ClCompile Include="..\private\ThunderBrewPotion.cpp" />
     <ClCompile Include="..\Private\UI_Potion_Tap.cpp" />
     <ClCompile Include="..\Private\RigidMove.cpp" />
     <ClCompile Include="..\private\WiggenweldPotion.cpp" />

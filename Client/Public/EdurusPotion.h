@@ -56,6 +56,7 @@ private:
 	CCoolTime* m_pCooltime = { nullptr };
 	CDefence* m_pDefence = { nullptr };
 	_int m_iDefValue = { 0 };
+	
 public:
 	static CEdurusPotion* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel);
 	virtual CGameObject* Clone(void* pArg) override;
