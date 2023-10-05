@@ -1,5 +1,6 @@
 #include "Armored_Troll.h"
-#include "GameInstance.h"
+
+#include "Client_GameInstance_Functions.h"
 #include "Weapon_Armored_Troll.h"
 
 #include "Turn.h"
@@ -131,16 +132,16 @@ HRESULT CArmored_Troll::Make_AI()
 			throw TEXT("Failed Enemy Make_AI");
 
 		/* Make Childs */
-		CSelector* pSelector = dynamic_cast<CSelector*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Selector")));
-		if (nullptr == pSelector)
-			throw TEXT("pSelector is nullptr");
+		CSelector* pSelector = nullptr;
+		if (FAILED(Create_Behavior(pSelector)))
+			throw TEXT("Failed Create_Behavior pSelector");
 
-		CSequence* pSequence_Death = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
-		if (nullptr == pSequence_Death)
-			throw TEXT("pSequence_Death is nullptr");
-		CSelector* pSelector_Alive = dynamic_cast<CSelector*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Selector")));
-		if (nullptr == pSelector_Alive)
-			throw TEXT("pSelector_Alive is nullptr");
+		CSequence* pSequence_Death = nullptr;
+		if (FAILED(Create_Behavior(pSequence_Death)))
+			throw TEXT("Failed Create_Behavior pSequence_Death");
+		CSelector* pSelector_Alive = nullptr;
+		if (FAILED(Create_Behavior(pSelector_Alive)))
+			throw TEXT("Failed Create_Behavior pSelector_Alive");
 
 		/* Set Decorator */
 
@@ -352,13 +353,13 @@ HRESULT CArmored_Troll::Make_Death(_Inout_ CSequence* pSequence)
 		if (nullptr == pSequence)
 			throw TEXT("Parameter pSequence is nullptr");
 
-		CAction* pAction_Death_Ground = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Death_Ground)
-			throw TEXT("pAction_Death_Ground is nullptr");
+		CAction* pAction_Death_Ground = nullptr;
+		if (FAILED(Create_Behavior(pAction_Death_Ground)))
+			throw TEXT("Failed Create_Behavior pAction_Death_Ground");
 
-		CDeath* pTsk_Death_Ground = dynamic_cast<CDeath*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Death")));
-		if (nullptr == pTsk_Death_Ground)
-			throw TEXT("pTsk_Death_Ground is nullptr");
+		CDeath* pTsk_Death_Ground = nullptr;
+		if (FAILED(Create_Behavior(pTsk_Death_Ground)))
+			throw TEXT("Failed Create_Behavior pTsk_Death_Ground");
 
 		// Set Decorators
 		pSequence->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
@@ -405,15 +406,15 @@ HRESULT CArmored_Troll::Make_Alive(_Inout_ CSelector* pSelector)
 	try
 	{
 		/* Create Child Behavior */
-		CSequence* pSequence_Attacks_Degree = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
-		if (nullptr == pSequence_Attacks_Degree)
-			throw TEXT("pSequence_Attacks_Degree is nullptr");
-		CSequence* pSequence_Attacks_Far = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
-		if (nullptr == pSequence_Attacks_Far)
-			throw TEXT("pSequence_Attacks_Far is nullptr");
-		CSequence* pSequence_Taunts = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
-		if (nullptr == pSequence_Taunts)
-			throw TEXT("pSequence_Taunts is nullptr");
+		CSequence* pSequence_Attacks_Degree = nullptr;
+		if (FAILED(Create_Behavior(pSequence_Attacks_Degree)))
+			throw TEXT("Failed Create_Behavior pSequence_Attacks_Degree");
+		CSequence* pSequence_Attacks_Far = nullptr;
+		if (FAILED(Create_Behavior(pSequence_Attacks_Far)))
+			throw TEXT("Failed Create_Behavior pSequence_Attacks_Far");
+		CSequence* pSequence_Taunts = nullptr;
+		if (FAILED(Create_Behavior(pSequence_Taunts)))
+			throw TEXT("Failed Create_Behavior pSequence_Taunts");
 
 		/* Set Decorator */
 		pSelector->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
@@ -469,46 +470,46 @@ HRESULT CArmored_Troll::Make_Attack_Degree(_Inout_ CSequence* pSequence)
 			throw TEXT("Parameter pSequence is nullptr");
 
 		/* Make Child Behaviors */
-		CCheck_Distance* pTsk_Check_Distance = dynamic_cast<CCheck_Distance*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Check_Distance")));
-		if (nullptr == pTsk_Check_Distance)
-			throw TEXT("pTsk_Check_Distance is nullptr");
-		CCheck_Degree* pTsk_Check_Degree = dynamic_cast<CCheck_Degree*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Check_Degree")));
-		if (nullptr == pTsk_Check_Degree)
-			throw TEXT("pTsk_Check_Degree is nullptr");
-		CSelector_Degree* pSelector_Degree = dynamic_cast<CSelector_Degree*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Selector_Degree")));
-		if (nullptr == pSelector_Degree)
-			throw TEXT("pSelector_Choose_Degree is nullptr");
+		CCheck_Distance* pTsk_Check_Distance = nullptr;
+		if (FAILED(Create_Behavior(pTsk_Check_Distance)))
+			throw TEXT("Failed Create_Behavior pTsk_Check_Distance");
+		CCheck_Degree* pTsk_Check_Degree = nullptr;
+		if (FAILED(Create_Behavior(pTsk_Check_Degree)))
+			throw TEXT("Failed Create_Behavior pTsk_Check_Degree");
+		CSelector_Degree* pSelector_Degree = nullptr;
+		if (FAILED(Create_Behavior(pSelector_Degree)))
+			throw TEXT("Failed Create_Behavior pSelector_Degree");
 
-		CSequence* pSequence_Attack_Left_Front = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
-		if (nullptr == pSequence_Attack_Left_Front)
-			throw TEXT("pSequence_Attack_Left_Front is nullptr");
-		CSequence* pSequence_Attack_Right_Front = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
-		if (nullptr == pSequence_Attack_Right_Front)
-			throw TEXT("pSequence_Attack_Right_Front is nullptr");
-		CSequence* pSequence_Attack_Left_45 = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
-		if (nullptr == pSequence_Attack_Left_45)
-			throw TEXT("pSequence_Attack_Left_45 is nullptr");
-		CSequence* pSequence_Attack_Left_90 = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
-		if (nullptr == pSequence_Attack_Left_90)
-			throw TEXT("Sequence_Attack_Left_90 is nullptr");
-		CSequence* pSequence_Attack_Left_135 = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
-		if (nullptr == pSequence_Attack_Left_135)
-			throw TEXT("pSequence_Attack_Left_135 is nullptr");
-		CSequence* pSequence_Attack_Left_180 = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
-		if (nullptr == pSequence_Attack_Left_180)
-			throw TEXT("pSequence_Attack_Left_180 is nullptr");
-		CSequence* pSequence_Attack_Right_45 = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
-		if (nullptr == pSequence_Attack_Right_45)
-			throw TEXT("pSequence_Attack_Right_45 is nullptr");
-		CSequence* pSequence_Attack_Right_90 = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
-		if (nullptr == pSequence_Attack_Right_90)
-			throw TEXT("pSequence_Attack_Right_90 is nullptr");
-		CSequence* pSequence_Attack_Right_135 = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
-		if (nullptr == pSequence_Attack_Right_135)
-			throw TEXT("pSequence_Attack_Right_135 is nullptr");
-		CSequence* pSequence_Attack_Right_180 = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
-		if (nullptr == pSequence_Attack_Right_180)
-			throw TEXT("pSequence_Attack_Right_180 is nullptr");
+		CSequence* pSequence_Attack_Left_Front = nullptr;
+		if (FAILED(Create_Behavior(pSequence_Attack_Left_Front)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_Left_Front");
+		CSequence* pSequence_Attack_Right_Front = nullptr;
+		if (FAILED(Create_Behavior(pSequence_Attack_Right_Front)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_Right_Front");
+		CSequence* pSequence_Attack_Left_45 = nullptr;
+		if (FAILED(Create_Behavior(pSequence_Attack_Left_45)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_Left_45");
+		CSequence* pSequence_Attack_Left_90 = nullptr;
+		if (FAILED(Create_Behavior(pSequence_Attack_Left_90)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_Left_90");
+		CSequence* pSequence_Attack_Left_135 = nullptr;
+		if (FAILED(Create_Behavior(pSequence_Attack_Left_135)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_Left_135");
+		CSequence* pSequence_Attack_Left_180 = nullptr;
+		if (FAILED(Create_Behavior(pSequence_Attack_Left_180)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_Left_180");
+		CSequence* pSequence_Attack_Right_45 = nullptr;
+		if (FAILED(Create_Behavior(pSequence_Attack_Right_45)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_Right_45");
+		CSequence* pSequence_Attack_Right_90 = nullptr;
+		if (FAILED(Create_Behavior(pSequence_Attack_Right_90)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_Right_90");
+		CSequence* pSequence_Attack_Right_135 = nullptr;
+		if (FAILED(Create_Behavior(pSequence_Attack_Right_135)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_Right_135");
+		CSequence* pSequence_Attack_Right_180 = nullptr;
+		if (FAILED(Create_Behavior(pSequence_Attack_Right_180)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_Right_180");
 
 		/* Set Decorations */
 		pSelector_Degree->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
@@ -613,19 +614,19 @@ HRESULT CArmored_Troll::Make_Pattern_Attack_Far(_Inout_ CSequence* pSequence)
 			throw TEXT("Parameter pSequence is nullptr");
 
 		/* Make Child Behaviors */
-		CCheck_Distance* pCheck_Distance = dynamic_cast<CCheck_Distance*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Check_Distance")));
-		if (nullptr == pCheck_Distance)
-			throw TEXT("pCheck_Distance is nullptr");
-		CRandomChoose* pRandom_Attack = dynamic_cast<CRandomChoose*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_RandomChoose")));
-		if (nullptr == pRandom_Attack)
-			throw TEXT("pRandom_Attack is nullptr");
+		CCheck_Distance* pCheck_Distance = nullptr;
+		if (FAILED(Create_Behavior(pCheck_Distance)))
+			throw TEXT("Failed Create_Behavior pCheck_Distance");
+		CRandomChoose* pRandom_Attack = nullptr;
+		if (FAILED(Create_Behavior(pRandom_Attack)))
+			throw TEXT("Failed Create_Behavior pRandom_Attack");
 
-		CSelector* pSelector_Attack_Charge = dynamic_cast<CSelector*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Selector")));
-		if (nullptr == pSelector_Attack_Charge)
-			throw TEXT("pSelector_Attack_Charge is nullptr");
-		CSequence* pSequence_Attack_Run = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
-		if (nullptr == pSequence_Attack_Run)
-			throw TEXT("pSequence_Attack_Run is nullptr");
+		CSelector* pSelector_Attack_Charge = nullptr;
+		if (FAILED(Create_Behavior(pSelector_Attack_Charge)))
+			throw TEXT("Failed Create_Behavior pSelector_Attack_Charge");
+		CSequence* pSequence_Attack_Run = nullptr;
+		if (FAILED(Create_Behavior(pSequence_Attack_Run)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_Run");
 
 		/* Set Decorations */
 		pRandom_Attack->Add_Change_Condition(CBehavior::BEHAVIOR_SUCCESS, [&](CBlackBoard* pBlackBoard)->_bool
@@ -679,82 +680,83 @@ HRESULT CArmored_Troll::Make_Taunt_Degree(_Inout_ CSequence* pSequence)
 			throw TEXT("Parameter pSequence is nullptr");
 
 		/* Make Child Behaviors */
-		CCheck_Degree* pTsk_Check_Degree = dynamic_cast<CCheck_Degree*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Check_Degree")));
-		if (nullptr == pTsk_Check_Degree)
-			throw TEXT("pTsk_Check_Degree is nullptr");
-		CSelector_Degree* pSelector_Degree = dynamic_cast<CSelector_Degree*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Selector_Degree")));
-		if (nullptr == pSelector_Degree)
-			throw TEXT("pSelector_Choose_Degree is nullptr");
-		CRandomChoose* pRandom_Taunt_Left_Front = dynamic_cast<CRandomChoose*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_RandomChoose")));
-		if (nullptr == pRandom_Taunt_Left_Front)
-			throw TEXT("pRandom_Taunt_Left_Front is nullptr");
-		CRandomChoose* pRandom_Taunt_Right_Front = dynamic_cast<CRandomChoose*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_RandomChoose")));
-		if (nullptr == pRandom_Taunt_Right_Front)
-			throw TEXT("pRandom_Taunt_Right_Front is nullptr");
-		CAction* pAction_Idle = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Idle)
-			throw TEXT("pAction_Idle is nullptr");
+		CCheck_Degree* pTsk_Check_Degree = nullptr;
+		if (FAILED(Create_Behavior(pTsk_Check_Degree)))
+			throw TEXT("Failed Create_Behavior pTsk_Check_Degree");
+		CSelector_Degree* pSelector_Degree = nullptr;
+		if (FAILED(Create_Behavior(pSelector_Degree)))
+			throw TEXT("Failed Create_Behavior pSelector_Degree");
+		CRandomChoose* pRandom_Taunt_Left_Front = nullptr;
+		if (FAILED(Create_Behavior(pRandom_Taunt_Left_Front)))
+			throw TEXT("Failed Create_Behavior pRandom_Taunt_Left_Front");
+		CRandomChoose* pRandom_Taunt_Right_Front = nullptr;
+		if (FAILED(Create_Behavior(pRandom_Taunt_Right_Front)))
+			throw TEXT("Failed Create_Behavior pRandom_Taunt_Right_Front");
+		CAction* pAction_Idle = nullptr;
+		if (FAILED(Create_Behavior(pAction_Idle)))
+			throw TEXT("Failed Create_Behavior pAction_Idle");
 
-		CAction* pAction_Left_Front_1 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Left_Front_1)
-			throw TEXT("pAction_Left_Front_1 is nullptr");
-		CAction* pAction_Left_Front_2 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Left_Front_2)
-			throw TEXT("pAction_Left_Front_2 is nullptr");
-		CAction* pAction_Left_Front_3 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Left_Front_3)
-			throw TEXT("pAction_Left_Front_3 is nullptr");
-		CAction* pAction_Left_Front_4 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Left_Front_4)
-			throw TEXT("pAction_Left_Front_4 is nullptr");
-		CAction* pAction_Left_Front_5 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Left_Front_5)
-			throw TEXT("pAction_Left_Front_5 is nullptr");
+		CAction* pAction_Left_Front_1 = nullptr;
+		if (FAILED(Create_Behavior(pAction_Left_Front_1)))
+			throw TEXT("Failed Create_Behavior pAction_Left_Front_1");
+		CAction* pAction_Left_Front_2 = nullptr;
+		if (FAILED(Create_Behavior(pAction_Left_Front_2)))
+			throw TEXT("Failed Create_Behavior pAction_Left_Front_2");
+		CAction* pAction_Left_Front_3 = nullptr;
+		if (FAILED(Create_Behavior(pAction_Left_Front_3)))
+			throw TEXT("Failed Create_Behavior pAction_Left_Front_3");
+		CAction* pAction_Left_Front_4 = nullptr;
+		if (FAILED(Create_Behavior(pAction_Left_Front_4)))
+			throw TEXT("Failed Create_Behavior pAction_Left_Front_4");
+		CAction* pAction_Left_Front_5 = nullptr;
+		if (FAILED(Create_Behavior(pAction_Left_Front_5)))
+			throw TEXT("Failed Create_Behavior pAction_Left_Front_5");
 
-		CAction* pAction_Right_Front_1 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Right_Front_1)
-			throw TEXT("pAction_Right_Front_1 is nullptr");
-		CAction* pAction_Right_Front_2 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Right_Front_2)
-			throw TEXT("pAction_Right_Front_2 is nullptr");
-		CAction* pAction_Right_Front_3 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Right_Front_3)
-			throw TEXT("pAction_Right_Front_3 is nullptr");
-		CAction* pAction_Right_Front_4 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Right_Front_4)
-			throw TEXT("pAction_Right_Front_4 is nullptr");
-		CAction* pAction_Right_Front_5 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Right_Front_5)
-			throw TEXT("pAction_Right_Front_5 is nullptr");
+		CAction* pAction_Right_Front_1 = nullptr;
+		if (FAILED(Create_Behavior(pAction_Right_Front_1)))
+			throw TEXT("Failed Create_Behavior pAction_Right_Front_1");
+		CAction* pAction_Right_Front_2 = nullptr;
+		if (FAILED(Create_Behavior(pAction_Right_Front_2)))
+			throw TEXT("Failed Create_Behavior pAction_Right_Front_2");
+		CAction* pAction_Right_Front_3 = nullptr;
+		if (FAILED(Create_Behavior(pAction_Right_Front_3)))
+			throw TEXT("Failed Create_Behavior pAction_Right_Front_3");
+		CAction* pAction_Right_Front_4 = nullptr;
+		if (FAILED(Create_Behavior(pAction_Right_Front_4)))
+			throw TEXT("Failed Create_Behavior pAction_Right_Front_4");
+		CAction* pAction_Right_Front_5 = nullptr;
+		if (FAILED(Create_Behavior(pAction_Right_Front_5)))
+			throw TEXT("Failed Create_Behavior pAction_Right_Front_5");
 
-		CAction* pAction_Left_45 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Left_45)
-			throw TEXT("pAction_Left_45 is nullptr");
-		CAction* pAction_Right_45 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Right_45)
-			throw TEXT("pAction_Right_45 is nullptr");
-		CAction* pAction_Left_90 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Left_90)
-			throw TEXT("pAction_Left_90 is nullptr");
-		CAction* pAction_Right_90 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Right_90)
-			throw TEXT("pAction_Right_90 is nullptr");
-		CAction* pAction_Left_135 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Left_135)
-			throw TEXT("pAction_Left_135 is nullptr");
-		CAction* pAction_Right_135 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Right_135)
-			throw TEXT("pAction_Right_135 is nullptr");
-		CAction* pAction_Right_180 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Right_180)
-			throw TEXT("pAction_Right_180 is nullptr");
-		CAction* pAction_Left_180 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Left_180)
-			throw TEXT("pAction_Left_180 is nullptr");
+		CAction* pAction_Left_45 = nullptr;
+		if (FAILED(Create_Behavior(pAction_Left_45)))
+			throw TEXT("Failed Create_Behavior pAction_Left_45");
+		CAction* pAction_Right_45 = nullptr;
+		if (FAILED(Create_Behavior(pAction_Right_45)))
+			throw TEXT("Failed Create_Behavior pAction_Right_45");
+		CAction* pAction_Left_90 = nullptr;
+		if (FAILED(Create_Behavior(pAction_Left_90)))
+			throw TEXT("Failed Create_Behavior pAction_Left_90");
+		CAction* pAction_Right_90 = nullptr;
+		if (FAILED(Create_Behavior(pAction_Right_90)))
+			throw TEXT("Failed Create_Behavior pAction_Right_90");
+		CAction* pAction_Left_135 = nullptr;
+		if (FAILED(Create_Behavior(pAction_Left_135)))
+			throw TEXT("Failed Create_Behavior pAction_Left_135");
+		CAction* pAction_Right_135 = nullptr;
+		if (FAILED(Create_Behavior(pAction_Right_135)))
+			throw TEXT("Failed Create_Behavior pAction_Right_135");
+		CAction* pAction_Right_180 = nullptr;
+		if (FAILED(Create_Behavior(pAction_Right_180)))
+			throw TEXT("Failed Create_Behavior pAction_Right_180");
+		CAction* pAction_Left_180 = nullptr;
+		if (FAILED(Create_Behavior(pAction_Left_180)))
+			throw TEXT("Failed Create_Behavior pAction_Left_180");
 
-		CWait* pTsk_Wait = dynamic_cast<CWait*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Wait")));
-		if (nullptr == pTsk_Wait)
-			throw TEXT("pTsk_Wait is nullptr");
+		CWait* pTsk_Wait = nullptr;
+		if (FAILED(Create_Behavior(pTsk_Wait)))
+			throw TEXT("Failed Create_Behavior pTsk_Wait");
+
 		/* Set Decorations */
 		pRandom_Taunt_Left_Front->Add_Change_Condition(CBehavior::BEHAVIOR_SUCCESS, [&](CBlackBoard* pBlackBoard)->_bool
 			{
@@ -869,15 +871,15 @@ HRESULT CArmored_Troll::Make_Attack_Left_Front(_Inout_ CSequence* pSequence)
 	try
 	{
 		/* Create Child Behaviors */
-		CSequence* pSequence_Attack_ForHnd_1 = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
-		if (nullptr == pSequence_Attack_ForHnd_1)
-			throw TEXT("pSequence_Attack_ForHnd_1 is nullptr");
-		CSequence* pSequence_Attack_BackHnd = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
-		if (nullptr == pSequence_Attack_BackHnd)
-			throw TEXT("pSequence_Attack_BackHnd is nullptr");
-		CAction* pAction_Attack_Overhead = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Attack_Overhead)
-			throw TEXT("pAction_Attack_Overhead is nullptr");
+		CSequence* pSequence_Attack_ForHnd_1 = nullptr;
+		if (FAILED(Create_Behavior(pSequence_Attack_ForHnd_1)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_ForHnd_1");
+		CSequence* pSequence_Attack_BackHnd = nullptr;
+		if (FAILED(Create_Behavior(pSequence_Attack_BackHnd)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_BackHnd");
+		CAction* pAction_Attack_Overhead = nullptr;
+		if (FAILED(Create_Behavior(pAction_Attack_Overhead)))
+			throw TEXT("Failed Create_Behavior pAction_Attack_Overhead");
 
 		/* Set Decorators */
 		pAction_Attack_Overhead->Set_Options(TEXT("Attack_Overhead_Slam_RightHnd"), m_pModelCom);
@@ -922,15 +924,15 @@ HRESULT CArmored_Troll::Make_Attack_Left_45(_Inout_ CSequence* pSequence)
 			throw TEXT("pSequence pSequence is nullptr");
 
 		/* Make Child Behaviors */
-		CSequence* pSequence_Attack_ForHnd1 = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
-		if (nullptr == pSequence_Attack_ForHnd1)
-			throw TEXT("pSequence_Attack_ForHnd1 is nullptr");
-		CSequence* pSequence_Attack_BackHnd = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
-		if (nullptr == pSequence_Attack_BackHnd)
-			throw TEXT("pSequence_Attack_BackHnd is nullptr");
-		CSequence* pSequence_Attack_ForHnd2 = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
-		if (nullptr == pSequence_Attack_ForHnd2)
-			throw TEXT("pSequence_Attack_ForHnd2 is nullptr");
+		CSequence* pSequence_Attack_ForHnd1 = nullptr;
+		if (FAILED(Create_Behavior(pSequence_Attack_ForHnd1)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_ForHnd1");
+		CSequence* pSequence_Attack_BackHnd = nullptr;
+		if (FAILED(Create_Behavior(pSequence_Attack_BackHnd)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_BackHnd");
+		CSequence* pSequence_Attack_ForHnd2 = nullptr;
+		if (FAILED(Create_Behavior(pSequence_Attack_ForHnd2)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_ForHnd2");
 
 		/* Set Decorations */
 
@@ -978,41 +980,41 @@ HRESULT CArmored_Troll::Make_Attack_Left_90(_Inout_ CSequence* pSequence)
 			throw TEXT("Parameter pSequence is nullptr");
 
 		/* Make Child Behaviors */
-		CRandomChoose* pRandom_Select = dynamic_cast<CRandomChoose*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_RandomChoose")));
-		if (nullptr == pRandom_Select)
-			throw TEXT("pRandom_Select is nullptr");
+		CRandomChoose* pRandom_Select = nullptr;
+		if (FAILED(Create_Behavior(pRandom_Select)))
+			throw TEXT("Failed Create_Behavior pRandom_Select");
 
-		CSequence* pSequence_BackHnd_Combo = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
-		if (nullptr == pSequence_BackHnd_Combo)
-			throw TEXT("pSequence_BackHnd_Combo is nullptr");
-		CSequence* pSequence_ForHnd_Combo = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
-		if (nullptr == pSequence_ForHnd_Combo)
-			throw TEXT("pSequence_ForHnd_Combo is nullptr");
-		CAction* pAction_Attack_Overhead = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Attack_Overhead)
-			throw TEXT("pAction_Attack_Overhead is nullptr");
+		CSequence* pSequence_BackHnd_Combo = nullptr;
+		if (FAILED(Create_Behavior(pSequence_BackHnd_Combo)))
+			throw TEXT("Failed Create_Behavior pSequence_BackHnd_Combo");
+		CSequence* pSequence_ForHnd_Combo = nullptr;
+		if (FAILED(Create_Behavior(pSequence_ForHnd_Combo)))
+			throw TEXT("Failed Create_Behavior pSequence_ForHnd_Combo");
+		CAction* pAction_Attack_Overhead = nullptr;
+		if (FAILED(Create_Behavior(pAction_Attack_Overhead)))
+			throw TEXT("Failed Create_Behavior pAction_Attack_Overhead");
 
 		/* BackHnd Combo */
-		CSequence_Attack* pSequence_Attack_BackHnd_1 = dynamic_cast<CSequence_Attack*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence_Attack")));
-		if (nullptr == pSequence_Attack_BackHnd_1)
-			throw TEXT("pSequence_Attack_BackHnd_1 is nullptr");
-		CSequence* pSequence_Attack_ForHnd_1 = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
-		if (nullptr == pSequence_Attack_ForHnd_1)
-			throw TEXT("pSequence_Attack_ForHnd_1 is nullptr");
-		CAction* pAction_Attack_Overhead_Right = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Attack_Overhead_Right)
-			throw TEXT("pAction_Attack_Overhead_Right is nullptr");
+		CSequence_Attack* pSequence_Attack_BackHnd_1 = nullptr;
+		if (FAILED(Create_Behavior(pSequence_Attack_BackHnd_1)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_BackHnd_1");
+		CSequence* pSequence_Attack_ForHnd_1 = nullptr;
+		if (FAILED(Create_Behavior(pSequence_Attack_ForHnd_1)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_ForHnd_1");
+		CAction* pAction_Attack_Overhead_Right = nullptr;
+		if (FAILED(Create_Behavior(pAction_Attack_Overhead_Right)))
+			throw TEXT("Failed Create_Behavior pAction_Attack_Overhead_Right");
 
 		/* ForHnd Combo */
-		CSequence_Attack* pSequence_Attack_ForHnd_2 = dynamic_cast<CSequence_Attack*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence_Attack")));
-		if (nullptr == pSequence_Attack_ForHnd_2)
-			throw TEXT("pSequence_Attack_ForHnd_2 is nullptr");
-		CSequence* pSequence_Attack_BackHnd_2 = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
-		if (nullptr == pSequence_Attack_BackHnd_2)
-			throw TEXT("pSequence_Attack_BackHnd_2 is nullptr");
-		CAction* pAction_Attack_Overhead_Left = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Attack_Overhead_Left)
-			throw TEXT("pAction_Attack_Overhead_Left is nullptr");
+		CSequence_Attack* pSequence_Attack_ForHnd_2 = nullptr;
+		if (FAILED(Create_Behavior(pSequence_Attack_ForHnd_2)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_ForHnd_2");
+		CSequence* pSequence_Attack_BackHnd_2 = nullptr;
+		if (FAILED(Create_Behavior(pSequence_Attack_BackHnd_2)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_BackHnd_2");
+		CAction* pAction_Attack_Overhead_Left = nullptr;
+		if (FAILED(Create_Behavior(pAction_Attack_Overhead_Left)))
+			throw TEXT("Failed Create_Behavior pAction_Attack_Overhead_Left");
 
 		/* Set Decorations */
 		pRandom_Select->Add_Change_Condition(CBehavior::BEHAVIOR_SUCCESS, [&](CBlackBoard* pBlackBoard)->_bool
@@ -1087,9 +1089,9 @@ HRESULT CArmored_Troll::Make_Attack_Left_180(_Inout_ CSequence* pSequence)
 			throw TEXT("Parameter pSequence is nullptr");
 
 		/* Make Child Behaviors */
-		CAction* pAction_Attack_Overhead = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Attack_Overhead)
-			throw TEXT("pSequence_Attack_Overhead is nullptr");
+		CAction* pAction_Attack_Overhead = nullptr;
+		if (FAILED(Create_Behavior(pAction_Attack_Overhead)))
+			throw TEXT("Failed Create_Behavior pAction_Attack_Overhead");
 
 		/* Set Decorations */
 
@@ -1124,16 +1126,16 @@ HRESULT CArmored_Troll::Make_Attack_Right_Front(_Inout_ CSequence* pSequence)
 	try
 	{
 		/* Create Child Behaviors */
-		CSequence* pSequence_Attack_BackHnd_1 = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
-		if (nullptr == pSequence_Attack_BackHnd_1)
-			throw TEXT("pSequence_Attack_BackHnd_1 is nullptr");
-		CSequence* pSequence_Attack_ForHnd = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
-		if (nullptr == pSequence_Attack_ForHnd)
-			throw TEXT("pSequence_Attack_ForHnd is nullptr");
+		CSequence* pSequence_Attack_BackHnd_1 = nullptr;
+		if (FAILED(Create_Behavior(pSequence_Attack_BackHnd_1)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_BackHnd_1");
+		CSequence* pSequence_Attack_ForHnd = nullptr;
+		if (FAILED(Create_Behavior(pSequence_Attack_ForHnd)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_ForHnd");
 
-		CAction* pAction_Attack_Overhead = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Attack_Overhead)
-			throw TEXT("pAction_Attack_Overhead is nullptr");
+		CAction* pAction_Attack_Overhead = nullptr;
+		if (FAILED(Create_Behavior(pAction_Attack_Overhead)))
+			throw TEXT("Failed Create_Behavior pAction_Attack_Overhead");
 
 		/* Set Decorators */
 		pAction_Attack_Overhead->Set_Options(TEXT("Attack_Overhead_Slam_LeftHnd"), m_pModelCom);
@@ -1178,15 +1180,15 @@ HRESULT CArmored_Troll::Make_Attack_Right_45(_Inout_ CSequence* pSequence)
 			throw TEXT("Parameter pSequence is nullptr");
 
 		/* Make Child Behaviors */
-		CSequence* pSequence_Attack_BackHnd1 = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
-		if (nullptr == pSequence_Attack_BackHnd1)
-			throw TEXT("pSequence_Attack_BackHnd1 is nullptr");
-		CSequence* pSequence_Attack_ForHnd = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
-		if (nullptr == pSequence_Attack_ForHnd)
-			throw TEXT("pSequence_Attack_ForHnd is nullptr");
-		CSequence* pSequence_Attack_BackHnd2 = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
-		if (nullptr == pSequence_Attack_BackHnd2)
-			throw TEXT("pSequence_Attack_BackHnd2 is nullptr");
+		CSequence* pSequence_Attack_BackHnd1 = nullptr;
+		if (FAILED(Create_Behavior(pSequence_Attack_BackHnd1)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_BackHnd1");
+		CSequence* pSequence_Attack_ForHnd = nullptr;
+		if (FAILED(Create_Behavior(pSequence_Attack_ForHnd)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_ForHnd");
+		CSequence* pSequence_Attack_BackHnd2 = nullptr;
+		if (FAILED(Create_Behavior(pSequence_Attack_BackHnd2)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_BackHnd2");
 
 		/* Set Decorations */
 
@@ -1234,27 +1236,27 @@ HRESULT CArmored_Troll::Make_Attack_Right_90(_Inout_ CSequence* pSequence)
 			throw TEXT("Parameter pSequence is nullptr");
 
 		/* Make Child Behaviors */
-		CRandomChoose* pRandom_Select = dynamic_cast<CRandomChoose*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_RandomChoose")));
-		if (nullptr == pRandom_Select)
-			throw TEXT("pRandom_Select is nullptr");
+		CRandomChoose* pRandom_Select = nullptr;
+		if (FAILED(Create_Behavior(pRandom_Select)))
+			throw TEXT("Failed Create_Behavior pRandom_Select");
 
-		CSequence* pSequence_BackHnd_Combo = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
-		if (nullptr == pSequence_BackHnd_Combo)
-			throw TEXT("pSequence_BackHnd_Combo is nullptr");
-		CAction* pAction_Attack_Overhead = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Attack_Overhead)
-			throw TEXT("pAction_Attack_Overhead is nullptr");
+		CSequence* pSequence_BackHnd_Combo = nullptr;
+		if (FAILED(Create_Behavior(pSequence_BackHnd_Combo)))
+			throw TEXT("Failed Create_Behavior pSequence_BackHnd_Combo");
+		CAction* pAction_Attack_Overhead = nullptr;
+		if (FAILED(Create_Behavior(pAction_Attack_Overhead)))
+			throw TEXT("Failed Create_Behavior pAction_Attack_Overhead");
 
 		/* BackHnd Combo */
-		CSequence_Attack* pSequence_Attack_BackHnd = dynamic_cast<CSequence_Attack*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence_Attack")));
-		if (nullptr == pSequence_Attack_BackHnd)
-			throw TEXT("pSequence_Attack_BackHnd is nullptr");
-		CSequence* pSequence_Attack_ForHnd = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
-		if (nullptr == pSequence_Attack_ForHnd)
-			throw TEXT("pSequence_Attack_ForHnd is nullptr");
-		CAction* pAction_Attack_Overhead_Right = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Attack_Overhead_Right)
-			throw TEXT("pAction_Attack_Overhead_Right is nullptr");
+		CSequence_Attack* pSequence_Attack_BackHnd = nullptr;
+		if (FAILED(Create_Behavior(pSequence_Attack_BackHnd)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_BackHnd");
+		CSequence* pSequence_Attack_ForHnd = nullptr;
+		if (FAILED(Create_Behavior(pSequence_Attack_ForHnd)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_ForHnd");
+		CAction* pAction_Attack_Overhead_Right = nullptr;
+		if (FAILED(Create_Behavior(pAction_Attack_Overhead_Right)))
+			throw TEXT("Failed Create_Behavior pAction_Attack_Overhead_Right");
 
 		/* Set Decorations */
 		pRandom_Select->Add_Change_Condition(CBehavior::BEHAVIOR_SUCCESS, [&](CBlackBoard* pBlackBoard)->_bool
@@ -1314,9 +1316,9 @@ HRESULT CArmored_Troll::Make_Attack_Right_180(_Inout_ CSequence* pSequence)
 			throw TEXT("Parameter pSequence is nullptr");
 
 		/* Make Child Behaviors */
-		CAction* pAction_Attack_Overhead = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Attack_Overhead)
-			throw TEXT("pSequence_Attack_Overhead is nullptr");
+		CAction* pAction_Attack_Overhead = nullptr;
+		if (FAILED(Create_Behavior(pAction_Attack_Overhead)))
+			throw TEXT("Failed Create_Behavior pAction_Attack_Overhead");
 
 		/* Set Decorations */
 
@@ -1354,32 +1356,32 @@ HRESULT CArmored_Troll::Make_Pattern_Attack_BackHnd(_Inout_ CSequence* pSequence
 			throw TEXT("Parameter pSequence is nullptr");
 
 		/* Make Child Behaviors */
-		CCheck_Distance* pCheck_Distance = dynamic_cast<CCheck_Distance*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Check_Distance")));
-		if (nullptr == pCheck_Distance)
-			throw TEXT("pCheck_Distance is nullptr");
-		CRandomChoose* pRandom_Attack = dynamic_cast<CRandomChoose*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_RandomChoose")));
-		if (nullptr == pRandom_Attack)
-			throw TEXT("pRandom_Attack is nullptr");
+		CCheck_Distance* pCheck_Distance = nullptr;
+		if (FAILED(Create_Behavior(pCheck_Distance)))
+			throw TEXT("Failed Create_Behavior pCheck_Distance");
+		CRandomChoose* pRandom_Attack = nullptr;
+		if (FAILED(Create_Behavior(pRandom_Attack)))
+			throw TEXT("Failed Create_Behavior pRandom_Attack");
 
-		CAction* pAttack_Swing = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAttack_Swing)
-			throw TEXT("pAttack_Swing is nullptr");
-		CAction* pAttack_1Step_Swing = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAttack_1Step_Swing)
-			throw TEXT("pAttack_1Step_Swing is nullptr");
-		CAction* pAttack_2Step_Swing = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAttack_2Step_Swing)
-			throw TEXT("pAttack_2Step_Swing is nullptr");
+		CAction* pAttack_Swing = nullptr;
+		if (FAILED(Create_Behavior(pAttack_Swing)))
+			throw TEXT("Failed Create_Behavior pAttack_Swing");
+		CAction* pAttack_1Step_Swing = nullptr;
+		if (FAILED(Create_Behavior(pAttack_1Step_Swing)))
+			throw TEXT("Failed Create_Behavior pAttack_1Step_Swing");
+		CAction* pAttack_2Step_Swing = nullptr;
+		if (FAILED(Create_Behavior(pAttack_2Step_Swing)))
+			throw TEXT("Failed Create_Behavior pAttack_2Step_Swing");
 
-		CLookAt* pTsk_LookAt_1 = dynamic_cast<CLookAt*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_LookAt")));
-		if (nullptr == pTsk_LookAt_1)
-			throw TEXT("pTsk_LookAt_1 is nullptr");
-		CLookAt* pTsk_LookAt_2 = dynamic_cast<CLookAt*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_LookAt")));
-		if (nullptr == pTsk_LookAt_2)
-			throw TEXT("pTsk_LookAt_2 is nullptr");
-		CLookAt* pTsk_LookAt_3 = dynamic_cast<CLookAt*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_LookAt")));
-		if (nullptr == pTsk_LookAt_3)
-			throw TEXT("pTsk_LookAt_3 is nullptr");
+		CLookAt* pTsk_LookAt_1 = nullptr;
+		if (FAILED(Create_Behavior(pTsk_LookAt_1)))
+			throw TEXT("Failed Create_Behavior pTsk_LookAt_1");
+		CLookAt* pTsk_LookAt_2 = nullptr;
+		if (FAILED(Create_Behavior(pTsk_LookAt_2)))
+			throw TEXT("Failed Create_Behavior pTsk_LookAt_2");
+		CLookAt* pTsk_LookAt_3 = nullptr;
+		if (FAILED(Create_Behavior(pTsk_LookAt_3)))
+			throw TEXT("Failed Create_Behavior pTsk_LookAt_3");
 
 		/* Set Decorations */
 		pRandom_Attack->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
@@ -1461,26 +1463,26 @@ HRESULT CArmored_Troll::Make_Pattern_Attack_ForHnd(_Inout_ CSequence* pSequence)
 			throw TEXT("Parameter pSequence is nullptr");
 
 		/* Make Child Behaviors */
-		CCheck_Distance* pCheck_Distance = dynamic_cast<CCheck_Distance*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Check_Distance")));
-		if (nullptr == pCheck_Distance)
-			throw TEXT("pCheck_Distance is nullptr");
-		CRandomChoose* pRandom_Attack = dynamic_cast<CRandomChoose*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_RandomChoose")));
-		if (nullptr == pRandom_Attack)
-			throw TEXT("pRandom_Attack is nullptr");
+		CCheck_Distance* pCheck_Distance = nullptr;
+		if (FAILED(Create_Behavior(pCheck_Distance)))
+			throw TEXT("Failed Create_Behavior pCheck_Distance");
+		CRandomChoose* pRandom_Attack = nullptr;
+		if (FAILED(Create_Behavior(pRandom_Attack)))
+			throw TEXT("Failed Create_Behavior pRandom_Attack");
 
-		CAction* pAttack_Swing = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAttack_Swing)
-			throw TEXT("pAttack_Swing is nullptr");
-		CAction* pAttack_Step_Swing = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAttack_Step_Swing)
-			throw TEXT("pAttack_Step_Swing is nullptr");
+		CAction* pAttack_Swing = nullptr;
+		if (FAILED(Create_Behavior(pAttack_Swing)))
+			throw TEXT("Failed Create_Behavior pAttack_Swing");
+		CAction* pAttack_Step_Swing = nullptr;
+		if (FAILED(Create_Behavior(pAttack_Step_Swing)))
+			throw TEXT("Failed Create_Behavior pAttack_Step_Swing");
 
-		CLookAt* pTsk_LookAt_1 = dynamic_cast<CLookAt*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_LookAt")));
-		if (nullptr == pTsk_LookAt_1)
-			throw TEXT("pTsk_LookAt_1 is nullptr");
-		CLookAt* pTsk_LookAt_2 = dynamic_cast<CLookAt*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_LookAt")));
-		if (nullptr == pTsk_LookAt_2)
-			throw TEXT("pTsk_LookAt_2 is nullptr");
+		CLookAt* pTsk_LookAt_1 = nullptr;
+		if (FAILED(Create_Behavior(pTsk_LookAt_1)))
+			throw TEXT("Failed Create_Behavior pTsk_LookAt_1");
+		CLookAt* pTsk_LookAt_2 = nullptr;
+		if (FAILED(Create_Behavior(pTsk_LookAt_2)))
+			throw TEXT("Failed Create_Behavior pTsk_LookAt_2");
 
 		/* Set Decorations */
 		pRandom_Attack->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
@@ -1556,35 +1558,35 @@ HRESULT CArmored_Troll::Make_Pattern_Attack_Run(_Inout_ CSequence* pSequence)
 			throw TEXT("Parameter pSelector is nullptr");
 
 		/* Make Child Behaviors */
-		CSequence* pSequence_Turn_Run = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
-		if (nullptr == pSequence_Turn_Run)
-			throw TEXT("pSequence_Turn_Run is nullptr");
-		CAction* pAction_Run_Loop = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Run_Loop)
-			throw TEXT("pAction_Run_Loop is nullptr");
-		CRandomChoose* pRandom_Attacks = dynamic_cast<CRandomChoose*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_RandomChoose")));
-		if (nullptr == pRandom_Attacks)
-			TEXT("pRandom_Attacks is nullptr");
+		CSequence* pSequence_Turn_Run = nullptr;
+		if (FAILED(Create_Behavior(pSequence_Turn_Run)))
+			throw TEXT("Failed Create_Behavior pSequence_Turn_Run");
+		CAction* pAction_Run_Loop = nullptr;
+		if (FAILED(Create_Behavior(pAction_Run_Loop)))
+			throw TEXT("Failed Create_Behavior pAction_Run_Loop");
+		CRandomChoose* pRandom_Attacks = nullptr;
+		if (FAILED(Create_Behavior(pRandom_Attacks)))
+			throw TEXT("Failed Create_Behavior pRandom_Attacks");
 
-		CSequence_Attack* pSequence_Attack_Swing_BackHnd = dynamic_cast<CSequence_Attack*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence_Attack")));
-		if (nullptr == pSequence_Attack_Swing_BackHnd)
-			throw TEXT("pSequence_Attack_Swing_BackHnd is nullptr");
-		CSequence_Attack* pSequence_Attack_Swing_ForHnd = dynamic_cast<CSequence_Attack*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence_Attack")));
-		if (nullptr == pSequence_Attack_Swing_ForHnd)
-			throw TEXT("pSequence_Attack_Swing_ForHnd is nullptr");
-		CSequence_Attack* pSequence_Attack_Hop_ForHnd = dynamic_cast<CSequence_Attack*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence_Attack")));
-		if (nullptr == pSequence_Attack_Hop_ForHnd)
-			throw TEXT("pSequence_Attack_Hop_ForHnd is nullptr");
-		CSequence_Attack* pSequence_Attack_Hop_BackHnd = dynamic_cast<CSequence_Attack*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence_Attack")));
-		if (nullptr == pSequence_Attack_Hop_BackHnd)
-			throw TEXT("pSequence_Attack_Hop_BackHnd is nullptr");
+		CSequence_Attack* pSequence_Attack_Swing_BackHnd = nullptr;
+		if (FAILED(Create_Behavior(pSequence_Attack_Swing_BackHnd)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_Swing_BackHnd");
+		CSequence_Attack* pSequence_Attack_Swing_ForHnd = nullptr;
+		if (FAILED(Create_Behavior(pSequence_Attack_Swing_ForHnd)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_Swing_ForHnd");
+		CSequence_Attack* pSequence_Attack_Hop_ForHnd = nullptr;
+		if (FAILED(Create_Behavior(pSequence_Attack_Hop_ForHnd)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_Hop_ForHnd");
+		CSequence_Attack* pSequence_Attack_Hop_BackHnd = nullptr;
+		if (FAILED(Create_Behavior(pSequence_Attack_Hop_BackHnd)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_Hop_BackHnd");
 
-		CCheck_Distance* pTsk_Check_Distance = dynamic_cast<CCheck_Distance*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Check_Distance")));
-		if (nullptr == pTsk_Check_Distance)
-			throw TEXT("pTsk_Check_Distance is nullptr");
-		CLookAt* pTsk_LookAt = dynamic_cast<CLookAt*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_LookAt")));
-		if (nullptr == pTsk_LookAt)
-			throw TEXT("pTsk_LookAt is nullptr");
+		CCheck_Distance* pTsk_Check_Distance = nullptr;
+		if (FAILED(Create_Behavior(pTsk_Check_Distance)))
+			throw TEXT("Failed Create_Behavior pTsk_Check_Distance");
+		CLookAt* pTsk_LookAt = nullptr;
+		if (FAILED(Create_Behavior(pTsk_LookAt)))
+			throw TEXT("Failed Create_Behavior pTsk_LookAt");
 
 		/* Set Decorations */
 		pSequence_Turn_Run->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
@@ -1675,32 +1677,32 @@ HRESULT CArmored_Troll::Make_Pattern_Attack_Charge(_Inout_ CSelector* pSelector)
 			throw TEXT("Parameter pSelector is nullptr");
 
 		/* Make Child Behaviors */
-		CSequence* pSequence_Turns = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
-		if (nullptr == pSequence_Turns)
-			throw TEXT("pSequence_Turns is nullptr");
-		CSequence* pSequence_Attack_Charge = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
-		if (nullptr == pSequence_Attack_Charge)
-			throw TEXT("pSequence_Attack_Charge is nullptr");
+		CSequence* pSequence_Turns = nullptr;
+		if (FAILED(Create_Behavior(pSequence_Turns)))
+			throw TEXT("Failed Create_Behavior pSequence_Turns");
+		CSequence* pSequence_Attack_Charge = nullptr;
+		if (FAILED(Create_Behavior(pSequence_Attack_Charge)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_Charge");
 
-		CAction* pAction_Charge_Enter = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Charge_Enter)
-			throw TEXT("pAction_Charge_Enter is nullptr");
-		CAction* pAction_Charge_Loop = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Charge_Loop)
-			throw TEXT("pAction_Charge_Loop is nullptr");
-		CAction* pAction_Charge_End = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Charge_End)
-			throw TEXT("pAction_Charge_End is nullptr");
+		CAction* pAction_Charge_Enter = nullptr;
+		if (FAILED(Create_Behavior(pAction_Charge_Enter)))
+			throw TEXT("Failed Create_Behavior pAction_Charge_Enter");
+		CAction* pAction_Charge_Loop = nullptr;
+		if (FAILED(Create_Behavior(pAction_Charge_Loop)))
+			throw TEXT("Failed Create_Behavior pAction_Charge_Loop");
+		CAction* pAction_Charge_End = nullptr;
+		if (FAILED(Create_Behavior(pAction_Charge_End)))
+			throw TEXT("Failed Create_Behavior pAction_Charge_End");
 
-		CLookAt* pTsk_LookAt_1 = dynamic_cast<CLookAt*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_LookAt")));
-		if (nullptr == pTsk_LookAt_1)
-			throw TEXT("pTsk_LookAt_1 is nullptr");
-		CLookAt* pTsk_LookAt_2 = dynamic_cast<CLookAt*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_LookAt")));
-		if (nullptr == pTsk_LookAt_2)
-			throw TEXT("pTsk_LookAt_2 is nullptr");
-		CWait* pTsk_Wait = dynamic_cast<CWait*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Wait")));
-		if (nullptr == pTsk_Wait)
-			throw TEXT("pTsk_Wait is nullptr");
+		CLookAt* pTsk_LookAt_1 = nullptr;
+		if (FAILED(Create_Behavior(pTsk_LookAt_1)))
+			throw TEXT("Failed Create_Behavior pTsk_LookAt_1");
+		CLookAt* pTsk_LookAt_2 = nullptr;
+		if (FAILED(Create_Behavior(pTsk_LookAt_2)))
+			throw TEXT("Failed Create_Behavior pTsk_LookAt_2");
+		CWait* pTsk_Wait = nullptr;
+		if (FAILED(Create_Behavior(pTsk_Wait)))
+			throw TEXT("Failed Create_Behavior pTsk_Wait");
 
 		/* Set Decorations */
 
@@ -1759,37 +1761,37 @@ HRESULT CArmored_Troll::Make_Turns(_Inout_ CSequence* pSequence)
 	try /* Failed Check Make_Turns */
 	{
 		/* Make Child Behaviors */
-		CCheck_Degree* pTsk_Check_Degree = dynamic_cast<CCheck_Degree*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Check_Degree")));
-		if (nullptr == pTsk_Check_Degree)
-			throw TEXT("pTsk_Check_Degree is nullptr");
-		CSelector_Degree* pSelector_Degree = dynamic_cast<CSelector_Degree*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Selector_Degree")));
-		if (nullptr == pSelector_Degree)
-			throw TEXT("pSelector_Choose_Degree is nullptr");
+		CCheck_Degree* pTsk_Check_Degree = nullptr;
+		if (FAILED(Create_Behavior(pTsk_Check_Degree)))
+			throw TEXT("Failed Create_Behavior pTsk_Check_Degree");
+		CSelector_Degree* pSelector_Degree = nullptr;
+		if (FAILED(Create_Behavior(pSelector_Degree)))
+			throw TEXT("Failed Create_Behavior pSelector_Degree");
 
-		CAction* pAction_Left_45 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Left_45)
-			throw TEXT("pAction_Left_45 is nullptr");
-		CAction* pAction_Right_45 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Right_45)
-			throw TEXT("pAction_Right_45 is nullptr");
-		CAction* pAction_Left_90 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Left_90)
-			throw TEXT("pAction_Left_90 is nullptr");
-		CAction* pAction_Right_90 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Right_90)
-			throw TEXT("pAction_Right_90 is nullptr");
-		CAction* pAction_Left_135 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Left_135)
-			throw TEXT("pAction_Left_135 is nullptr");
-		CAction* pAction_Right_135 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Right_135)
-			throw TEXT("pAction_Right_135 is nullptr");
-		CAction* pAction_Right_180 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Right_180)
-			throw TEXT("pAction_Right_180 is nullptr");
-		CAction* pAction_Left_180 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Left_180)
-			throw TEXT("pAction_Left_180 is nullptr");
+		CAction* pAction_Left_45 = nullptr;
+		if (FAILED(Create_Behavior(pAction_Left_45)))
+			throw TEXT("Failed Create_Behavior pAction_Left_45");
+		CAction* pAction_Right_45 = nullptr;
+		if (FAILED(Create_Behavior(pAction_Right_45)))
+			throw TEXT("Failed Create_Behavior pAction_Right_45");
+		CAction* pAction_Left_90 = nullptr;
+		if (FAILED(Create_Behavior(pAction_Left_90)))
+			throw TEXT("Failed Create_Behavior pAction_Left_90");
+		CAction* pAction_Right_90 = nullptr;
+		if (FAILED(Create_Behavior(pAction_Right_90)))
+			throw TEXT("Failed Create_Behavior pAction_Right_90");
+		CAction* pAction_Left_135 = nullptr;
+		if (FAILED(Create_Behavior(pAction_Left_135)))
+			throw TEXT("Failed Create_Behavior pAction_Left_135");
+		CAction* pAction_Right_135 = nullptr;
+		if (FAILED(Create_Behavior(pAction_Right_135)))
+			throw TEXT("Failed Create_Behavior pAction_Right_135");
+		CAction* pAction_Right_180 = nullptr;
+		if (FAILED(Create_Behavior(pAction_Right_180)))
+			throw TEXT("Failed Create_Behavior pAction_Right_180");
+		CAction* pAction_Left_180 = nullptr;
+		if (FAILED(Create_Behavior(pAction_Left_180)))
+			throw TEXT("Failed Create_Behavior pAction_Left_180");
 		/* Set Decorations */
 
 		/* Set Options */
@@ -1854,43 +1856,44 @@ HRESULT CArmored_Troll::Make_Turn_Run(_Inout_ CSequence* pSequence)
 			throw TEXT("Parameter pSequence is nullptr");
 
 		/* Make Child Behaviors */
-		CCheck_Degree* pTsk_Check_Degree = dynamic_cast<CCheck_Degree*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Check_Degree")));
-		if (nullptr == pTsk_Check_Degree)
-			throw TEXT("pTsk_Check_Degree is nullptr");
-		CSelector_Degree* pSelector_Degree = dynamic_cast<CSelector_Degree*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Selector_Degree")));
-		if (nullptr == pSelector_Degree)
-			throw TEXT("pSelector_Choose_Degree is nullptr");
+		CCheck_Degree* pTsk_Check_Degree = nullptr;
+		if (FAILED(Create_Behavior(pTsk_Check_Degree)))
+			throw TEXT("Failed Create_Behavior pTsk_Check_Degree");
+		CSelector_Degree* pSelector_Degree = nullptr;
+		if (FAILED(Create_Behavior(pSelector_Degree)))
+			throw TEXT("Failed Create_Behavior pSelector_Degree");
 
-		CAction* pAction_Left_Front = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Left_Front)
-			throw TEXT("pAction_Left_Front is nullptr");
-		CAction* pAction_Right_Front = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Right_Front)
-			throw TEXT("pAction_Right_Front is nullptr");
-		CAction* pAction_Left_45 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Left_45)
-			throw TEXT("pAction_Left_45 is nullptr");
-		CAction* pAction_Right_45 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Right_45)
-			throw TEXT("pAction_Right_45 is nullptr");
-		CAction* pAction_Left_90 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Left_90)
-			throw TEXT("pAction_Left_90 is nullptr");
-		CAction* pAction_Right_90 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Right_90)
-			throw TEXT("pAction_Right_90 is nullptr");
-		CAction* pAction_Left_135 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Left_135)
-			throw TEXT("pAction_Left_135 is nullptr");
-		CAction* pAction_Right_135 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Right_135)
-			throw TEXT("pAction_Right_135 is nullptr");
-		CAction* pAction_Right_180 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Right_180)
-			throw TEXT("pAction_Right_180 is nullptr");
-		CAction* pAction_Left_180 = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Left_180)
-			throw TEXT("pAction_Left_180 is nullptr");
+		CAction* pAction_Left_Front = nullptr;
+		if (FAILED(Create_Behavior(pAction_Left_Front)))
+			throw TEXT("Failed Create_Behavior pAction_Left_Front");
+		CAction* pAction_Right_Front = nullptr;
+		if (FAILED(Create_Behavior(pAction_Right_Front)))
+			throw TEXT("Failed Create_Behavior pAction_Right_Front");
+		CAction* pAction_Left_45 = nullptr;
+		if (FAILED(Create_Behavior(pAction_Left_45)))
+			throw TEXT("Failed Create_Behavior pAction_Left_45");
+		CAction* pAction_Right_45 = nullptr;
+		if (FAILED(Create_Behavior(pAction_Right_45)))
+			throw TEXT("Failed Create_Behavior pAction_Right_45");
+		CAction* pAction_Left_90 = nullptr;
+		if (FAILED(Create_Behavior(pAction_Left_90)))
+			throw TEXT("Failed Create_Behavior pAction_Left_90");
+		CAction* pAction_Right_90 = nullptr;
+		if (FAILED(Create_Behavior(pAction_Right_90)))
+			throw TEXT("Failed Create_Behavior pAction_Right_90");
+		CAction* pAction_Left_135 = nullptr;
+		if (FAILED(Create_Behavior(pAction_Left_135)))
+			throw TEXT("Failed Create_Behavior pAction_Left_135");
+		CAction* pAction_Right_135 = nullptr;
+		if (FAILED(Create_Behavior(pAction_Right_135)))
+			throw TEXT("Failed Create_Behavior pAction_Right_135");
+		CAction* pAction_Right_180 = nullptr;
+		if (FAILED(Create_Behavior(pAction_Right_180)))
+			throw TEXT("Failed Create_Behavior pAction_Right_180");
+		CAction* pAction_Left_180 = nullptr;
+		if (FAILED(Create_Behavior(pAction_Left_180)))
+			throw TEXT("Failed Create_Behavior pAction_Left_180");
+
 		/* Set Decorations */
 
 		/* Set Options */

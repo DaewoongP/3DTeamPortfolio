@@ -15,6 +15,8 @@ class CModel;
 class CShader;
 class CHealth;
 class CRenderer;
+class CSelector;
+class CSequence;
 class CRigidBody;
 class CRootBehavior;
 END
@@ -75,6 +77,7 @@ protected:
 	const CGameObject* m_pTarget = { nullptr };
 	const CGameObject* m_pPlayer = { nullptr };
 	_uint m_iCurrentSpell = { 0 };
+	_uint m_iPreviusSpell = { 0 };
 	unordered_map<BUFF_TYPE, function<void(void*)>> m_CurrentTickSpells;
 	unordered_map<BUFF_TYPE, MAIGBUFFTICKDESC*>		m_MagicTickDesc;
 
@@ -103,14 +106,21 @@ protected:
 	HRESULT Add_Components_Level(_uint iCurrentLevelIndex) {}
 
 protected:
+	HRESULT Make_Hit_Combo(_Inout_ CSelector* pSelector);
+	HRESULT Make_Check_Spell(_Inout_ CSelector* pSelector);
+	HRESULT Make_Fly_Descendo(_Inout_ CSequence* pSequence);
+
+protected:
 	// 가까운 적을 타겟으로 세팅
 	void Set_Current_Target();
 	void Tick_Spells();
 
 	HRESULT Remove_GameObject(const wstring& wstrObjectTag);
 	_bool IsEnemy(const wstring& wstrObjectTag);
-	_bool IsDebuff(BUFF_TYPE eType);
-	_bool isCombo(BUFF_TYPE eType);
+	_bool IsDebuff(const _uint& iType);
+	_bool isFlying(const _uint& iType);
+	_bool isCombo(const _uint& iType);
+	void Remove_Fly_Spells();
 
 protected: /* Notify Func */
 	void Change_Animation() {

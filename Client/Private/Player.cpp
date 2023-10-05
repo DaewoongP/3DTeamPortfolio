@@ -1120,7 +1120,7 @@ void CPlayer::MagicTestTextOutput()
 
 void CPlayer::Tick_ImGui()
 {
-	ImGui::Begin("Player");
+	/*ImGui::Begin("Player");
 	
 	if (ImGui::Checkbox("Gravity", &m_isGravity))
 	{
@@ -1135,11 +1135,10 @@ void CPlayer::Tick_ImGui()
 	}
 	Safe_Release(pGameInstance);
 	
-
 	_float3 vVelocity = m_pTransform->Get_Velocity();
 	ImGui::InputFloat3("Velocity", reinterpret_cast<_float*>(&vVelocity));
 
-	ImGui::End();
+	ImGui::End();*/
 }
 
 #endif // _DEBUG

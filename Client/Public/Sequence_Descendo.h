@@ -1,7 +1,7 @@
 #pragma once
 
 /* =============================================== */
-//	[CSequence_Groggy]
+//	[CSequence_Descendo]
 //	
 //	정 : 주성환
 //	부 : 
@@ -13,17 +13,16 @@
 
 BEGIN(Client)
 
-class CSequence_Groggy final : public CSequence
+class CSequence_Descendo final : public CSequence
 {
 private:
-	explicit CSequence_Groggy(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	explicit CSequence_Groggy(const CSequence_Groggy& rhs);
-	virtual ~CSequence_Groggy() = default;
+	explicit CSequence_Descendo(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	explicit CSequence_Descendo(const CSequence_Descendo& rhs);
+	virtual ~CSequence_Descendo() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype() override { return S_OK; }
 	virtual HRESULT Initialize(void* pArg) override;
-	virtual HRESULT Tick(const _float& fTimeDelta);
 
 public:
 	void Set_LoopTime(const _float& fTime) {
@@ -43,8 +42,8 @@ private:
 	virtual void Reset_Behavior(HRESULT result) override;
 
 public:
-	static CSequence_Groggy* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CSequence_Groggy* Clone(void* pArg) override;
+	static CSequence_Descendo* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	virtual CSequence_Descendo* Clone(void* pArg) override;
 	virtual void Free() override;
 };
 

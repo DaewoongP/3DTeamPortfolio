@@ -27,16 +27,21 @@ private:
 public:
 	virtual HRESULT Initialize_Prototype() override { return S_OK; }
 	virtual HRESULT Initialize(void* pArg) override;
-	virtual HRESULT Tick(const _float& fTimeDelta);
 
 public:
 	// Random_Select 클래스에 추가할 Action의 가중치 대입
 	HRESULT Assemble_Random_Select_Behavior(const wstring& wstrActionTag, const _float& fWeight, const _float& fLoopTime);
+	void Set_Option(const _float& fUpForce, const _float& fUpTime) {
+		m_fUpForce = fUpForce;
+		m_fUpTime = fUpTime;
+	}
 
 private:
 	virtual HRESULT Assemble_Childs() override;
 
 private:
+	_float m_fUpForce = { 0.f };
+	_float m_fUpTime = { 0.f };
 	CRandomChoose* m_pRandom_Levitate_Loop = { nullptr };
 
 private:
