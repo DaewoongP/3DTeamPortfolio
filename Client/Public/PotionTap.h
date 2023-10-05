@@ -1,28 +1,19 @@
 #pragma once
-#include "Component.h"
-#include "Client_Defines.h"
 #include "GameObject.h"
-#include "Item.h"
+#include "Client_Defines.h"
+
+BEGIN(Engine)
+class CTexture;
+END
 
 BEGIN(Client)
+class CUI_Effect_Back;
+class CUI_Font;
 class CUI_Potion_Tap;
+class CTool;
 
 class CPotionTap final : public CGameObject
 {
-public:
-	enum POTIONTAP
-	{
-		DEFENSIVE_POWER_UP, 
-		ATTACK_POWER_UP,    
-		SHOW_TIME,         
-		THUNDER_CLOUD,     
-		INVISIBILITY_PILL,  
-		MANDRAKE,          
-		BITE_CABBAGE,      
-		TENTACULAR,        
-		POTIONTAP_END
-	};
-
 private:
 	CPotionTap(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CPotionTap(const CPotionTap& rhs);
@@ -36,29 +27,49 @@ public:
 public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg) override;
+	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 
 public:
-	_bool Get_Open() { return m_isOpen; }
+	_bool Is_Valid(POTIONTAP ePotionTap);
+
+public:
+	CItem*			Get_CurItem();
+	_bool			Get_Open() { return m_isOpen; }
 
 private:
 	_bool			m_isOpen = { false };
 
 private:
+	// 메인화면 탭 UI
+	CUI_Effect_Back*				m_pUI_Main_Tap = { nullptr };
+	CUI_Font*					m_pUI_Main_Count = { nullptr };
+	vector<CTexture*>				m_pPotionTextures;
+
 	// UI 컴포넌트
 	CUI_Potion_Tap*				m_pUI_Potion_Tap = { nullptr };
 	// 실질적인 포션 저장소
 	vector<vector<CItem*>>			m_pPotions;
 
 private:
-	POTIONTAP						m_eCurPotion = { POTIONTAP_END };
+	POTIONTAP					m_eCurPotion = { POTIONTAP_END };
 
 private:
 	HRESULT Add_Components();
+	HRESULT Ready_Main_Tap();
+	HRESULT	Ready_PotionTextures();
+
+private:
+	CItem* ToolFactory(POTIONTAP eType);
 
 public:
-	void	Add_Potion(CItem* pItem, ITEMTYPE eType);
-	void	Delete_Potion(ITEMTYPE eType, _uint iIndex);
+	void	Add_Potion(POTIONTAP eType);
+	void	Delete_Potion(POTIONTAP eType, _uint iIndex);
+	void	Delete_Potion(POTIONTAP eType, CItem* pItem);
+
+	void	Set_CurPotion();
+
+	void	Use_Item(_float3 vPlayPos);
 
 public:
 	static CPotionTap* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

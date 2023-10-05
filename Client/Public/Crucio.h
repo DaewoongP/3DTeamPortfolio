@@ -6,6 +6,7 @@
 BEGIN(Engine)
 class CParticleSystem;
 class CTrail;
+class CMeshEffect;
 END
 
 BEGIN(Client)
@@ -36,6 +37,10 @@ private:
 	virtual void Tick_DrawMagic(_float fTimeDelta) override;
 	virtual void Tick_CastMagic(_float fTimeDelta) override;
 	virtual void Tick_Dying(_float fTimeDelta) override;
+
+private:
+	CMeshEffect* m_pLightningMeshEffect[4] = { nullptr };
+	_float		 m_fLightningTimer = { 0.1f };
 
 private:
 	HRESULT Add_Components();

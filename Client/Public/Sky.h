@@ -20,6 +20,7 @@ private:
 public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg);
+	virtual HRESULT Initialize_Level(_uint iCurrentLevelIndex) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
@@ -28,6 +29,9 @@ private:
 	CModel*				m_pModel = { nullptr };
 	CShader*			m_pShader = { nullptr };
 	CRenderer*			m_pRenderer = { nullptr };
+
+private:
+	LEVELID				m_iCurrentLevelIndex = { LEVEL_END };
 
 private:
 	HRESULT Add_Components();

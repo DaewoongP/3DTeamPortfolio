@@ -197,6 +197,11 @@ _bool CUI_Effect_Back::Get_Clicked()
 	return 	m_pButtonCom->Click(g_hWnd, m_vCombinedXY, _float2(m_fSizeX, m_fSizeY));
 }
 
+_bool CUI_Effect_Back::Get_Collision()
+{
+	return 	m_pButtonCom->Collision_Rect(g_hWnd, m_vCombinedXY, _float2(m_fSizeX, m_fSizeY));
+}
+
 void CUI_Effect_Back::Set_Texture(CTexture* pTexture)
 {
 	m_pImageCom->Set_Texture(pTexture);

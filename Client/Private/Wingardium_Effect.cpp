@@ -195,7 +195,7 @@ void CWingardium_Effect::TrailAction(_float3 pos, _float fTimeDelta)
 			}
 
 			BEGININSTANCE;
-			if (pGameInstance->RayCast(m_pTransform->Get_Position(), m_pTransform->Get_Up() * -1, 100, &m_vBottom))
+			if (pGameInstance->RayCast(m_pTransform->Get_Position(), m_pTransform->Get_Up() * -1, nullptr, 100, &m_vBottom))
 			{
 			}
 			ENDINSTANCE;

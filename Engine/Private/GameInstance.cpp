@@ -7,7 +7,6 @@
 #include "Level_Manager.h"
 #include "Timer_Manager.h"
 #include "Graphic_Device.h"
-#include "Camera_Manager.h"
 #include "String_Manager.h"
 #include "ParticleSystemPool.h"
 #include "RenderTarget_Manager.h"
@@ -108,6 +107,8 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 	m_pComponent_Manager->Tick(fTimeDelta);
 
 	m_pCamera_Manager->Tick(fTimeDelta);
+
+	m_pCamera_Manager->Late_Tick(fTimeDelta);
 
 	m_pPipeLine->Tick();
 
@@ -725,18 +726,18 @@ void CGameInstance::Set_Simulation(_bool isSimulation)
 	m_pPhysX_Manager->Set_Simulation(isSimulation);
 }
 
-_bool CGameInstance::RayCast(_float3 vOrigin, _float3 vDir, _float fMaxDist, _Inout_ _float3* pHitPosition, _Inout_ _float* pDist, _uint iMaxHits, CPhysX_Manager::RayCastQueryFlag RaycastFlag)
+_bool CGameInstance::RayCast(_float3 vOrigin, _float3 vDir, _Inout_ CGameObject** ppCollisionObject, _float fMaxDist, _Inout_ _float3* pHitPosition, _Inout_ _float* pDist, _uint iMaxHits, CPhysX_Manager::RayCastQueryFlag RaycastFlag)
 {
 	NULL_CHECK_RETURN_MSG(m_pPhysX_Manager, false, TEXT("PhysX_Manager NULL"));
 
-	return m_pPhysX_Manager->RayCast(vOrigin, vDir, fMaxDist, pHitPosition, pDist, iMaxHits, RaycastFlag);
+	return m_pPhysX_Manager->RayCast(vOrigin, vDir, ppCollisionObject, fMaxDist, pHitPosition, pDist, iMaxHits, RaycastFlag);
 }
 
-_bool CGameInstance::Mouse_RayCast(HWND hWnd, ID3D11DeviceContext* pContext, _float fMaxDist, _Inout_ _float3* pHitPosition, _Inout_ _float* pDist, _uint iMaxHits, CPhysX_Manager::RayCastQueryFlag RaycastFlag)
+_bool CGameInstance::Mouse_RayCast(HWND hWnd, ID3D11DeviceContext* pContext, _Inout_ CGameObject** ppCollisionObject, _float fMaxDist, _Inout_ _float3* pHitPosition, _Inout_ _float* pDist, _uint iMaxHits, CPhysX_Manager::RayCastQueryFlag RaycastFlag)
 {
 	NULL_CHECK_RETURN_MSG(m_pPhysX_Manager, false, TEXT("PhysX_Manager NULL"));
 
-	return m_pPhysX_Manager->Mouse_RayCast(hWnd, pContext, fMaxDist, pHitPosition, pDist, iMaxHits, RaycastFlag);
+	return m_pPhysX_Manager->Mouse_RayCast(hWnd, pContext, ppCollisionObject, fMaxDist, pHitPosition, pDist, iMaxHits, RaycastFlag);
 }
 
 void CGameInstance::Update_PhysxScene()
@@ -807,6 +808,13 @@ void CGameInstance::Stop_CutScene()
 	NULL_CHECK_RETURN_MSG(m_pCamera_Manager, , TEXT("Camera NULL"));
 
 	return m_pCamera_Manager->Stop_CutScene();
+}
+
+void CGameInstance::Set_Shake(CCamera_Manager::SHAKE_TYPE _eType, CCamera_Manager::SHAKE_AXIS _eAxis, CEase::EASE _eEase, _float _fSpeed, _float _Duration, _float _fPower, CCamera_Manager::SHAKE_POWER _ePower, _float3 _vAxisSet)
+{
+	NULL_CHECK_RETURN_MSG(m_pCamera_Manager, , TEXT("Camera NULL"));
+
+	return m_pCamera_Manager->Set_Shake(_eType, _eAxis, _eEase, _fSpeed, _Duration, _fPower, _ePower, _vAxisSet);
 }
 
 #ifdef _DEBUG

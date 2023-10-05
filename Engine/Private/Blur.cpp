@@ -38,7 +38,7 @@ HRESULT CBlur::Initialize(CVIBuffer_Rect* pRectBuffer)
 	return S_OK;
 }
 
-HRESULT CBlur::Render(const _tchar* pMRTTag, const _tchar* pTargetTag, BLUR eBlurType)
+HRESULT CBlur::Render(const _tchar* pMRTTag, const _tchar* pTargetTag, BLUR eBlurType, _uint iSampleCnt)
 {
 	CRenderTarget_Manager* pRenderTarget_Manager = CRenderTarget_Manager::GetInstance();
 	Safe_AddRef(pRenderTarget_Manager);
@@ -58,6 +58,8 @@ HRESULT CBlur::Render(const _tchar* pMRTTag, const _tchar* pTargetTag, BLUR eBlu
 	if (FAILED(m_pShader->Bind_RawValue("g_fWinSizeX", &m_vWinSize.x, sizeof(_float))))
 		return E_FAIL;
 	if (FAILED(m_pShader->Bind_RawValue("g_fWinSizeY", &m_vWinSize.y, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShader->Bind_RawValue("g_iSampleCnt", &iSampleCnt, sizeof(_uint))))
 		return E_FAIL;
 
 	if (BLUR_X == eBlurType)

@@ -8,6 +8,7 @@ class CRigidBody;
 class CRenderer;
 class CParticleSystem;
 class CTrail;
+class CMeshEffect;
 END
 
 BEGIN(Client)

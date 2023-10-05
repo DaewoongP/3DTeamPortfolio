@@ -23,12 +23,6 @@ HRESULT CLevel_Cliffside::Initialize()
 
 		return E_FAIL;
 	}
-	if (FAILED(Ready_Layer_Item(TEXT("Layer_Item"))))
-	{
-		MSG_BOX("Failed Ready_Layer_Item");
-
-		return E_FAIL;
-	}
 	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
 	{
 		MSG_BOX("Failed Ready_Layer_Player");
@@ -82,6 +76,13 @@ HRESULT CLevel_Cliffside::Initialize()
 	if (FAILED(Load_MapObject_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins0.ddd"))))
 	{
 		MSG_BOX("Failed Load Map Object_Ins");
+
+		return E_FAIL;
+	}
+
+	if (FAILED(Ready_Layer_Item(TEXT("Layer_Item"))))
+	{
+		MSG_BOX("Failed Ready_Layer_Item");
 
 		return E_FAIL;
 	}
@@ -195,6 +196,12 @@ HRESULT CLevel_Cliffside::Ready_Layer_BackGround(const _tchar* pLayerTag)
 		MSG_BOX("Failed Add_GameObject : (GameObject_Sky)");
 		return E_FAIL;
 	}
+	
+	/*if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_FlowMap"), pLayerTag, TEXT("GameObject_FlowMap"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_FlowMap)");
+		return E_FAIL;
+	}*/
 
 	Safe_Release(pGameInstance);
 
@@ -219,6 +226,7 @@ HRESULT CLevel_Cliffside::Ready_Layer_Player(const _tchar* pLayerTag)
 		ENDINSTANCE;
 		return E_FAIL;
 	}
+
 
 	ENDINSTANCE;
 
@@ -301,7 +309,7 @@ HRESULT CLevel_Cliffside::Ready_Layer_Monster(const _tchar* pLayerTag)
 		MSG_BOX("Failed Add_GameObject : (GameObject_Dugbog)");
 		ENDINSTANCE;
 		return E_FAIL;
-	}*/
+	}
 	/*if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_ConjuredDragon"), pLayerTag, TEXT("GameObject_ConjuredDragon"), &Matrix)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_ConjuredDragon)");
@@ -638,7 +646,7 @@ HRESULT CLevel_Cliffside::Ready_Layer_UI(const _tchar* pLayerTag)
 	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
 	{
 		MSG_BOX("Failed Add Scene : (Scene_Main)");
-		ENDINSTANCE;
+		Safe_Release(pGameInstance);
 		return E_FAIL;
 	}
 
@@ -648,7 +656,7 @@ HRESULT CLevel_Cliffside::Ready_Layer_UI(const _tchar* pLayerTag)
 		pLayerTag, TEXT("GameObject_UI_Group_Potion"), szFilePath)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_Potion)");
-		ENDINSTANCE;
+		Safe_Release(pGameInstance);
 		return E_FAIL;
 	}
 	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Skill_1.uidata"));
@@ -656,6 +664,7 @@ HRESULT CLevel_Cliffside::Ready_Layer_UI(const _tchar* pLayerTag)
 		pLayerTag, TEXT("Prototype_GameObject_UI_Group_Skill"), szFilePath)))
 	{
 		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_UI_Group_Skill)");
+		Safe_Release(pGameInstance);
 		return E_FAIL;
 	}
 	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Finisher_Icon.uidata"));
@@ -663,6 +672,7 @@ HRESULT CLevel_Cliffside::Ready_Layer_UI(const _tchar* pLayerTag)
 		pLayerTag, TEXT("GameObject_UI_Group_Finisher_Icon"), szFilePath)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_Finisher_Icon)");
+		Safe_Release(pGameInstance);
 		return E_FAIL;
 	}
 
@@ -680,10 +690,17 @@ HRESULT CLevel_Cliffside::Ready_Layer_UI(const _tchar* pLayerTag)
 		pLayerTag, TEXT("GameObject_UI_Aim"), &UIDesc)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_UI_Aim)");
+		Safe_Release(pGameInstance);
 		return E_FAIL;
 	}
 
 
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Potion_Tap"), pLayerTag, TEXT("GameObject_Potion_Tap"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Potion_Tap)");
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	}
 
 
 	//lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_MiniMap.uidata"));

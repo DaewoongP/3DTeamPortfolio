@@ -46,6 +46,8 @@ public:
 	virtual void Use(_float3 vPlayPos);
 
 private:
+	CHealth*	m_pPlayerHealthCom = { nullptr };
+	CPlayer_Information* m_pPlayerInformation = { nullptr };
 	_float		m_fRecoveryAmount = { 0.2f };
 
 public:

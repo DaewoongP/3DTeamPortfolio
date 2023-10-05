@@ -13,6 +13,7 @@ CLevel_Vault::CLevel_Vault(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 HRESULT CLevel_Vault::Initialize()
 {
+	CGameInstance::GetInstance()->Clear_Lights();
     if (FAILED(__super::Initialize()))
         return E_FAIL;
 

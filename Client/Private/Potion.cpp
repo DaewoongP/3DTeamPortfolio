@@ -19,18 +19,25 @@ HRESULT CPotion::Initialize_Prototype(_uint iLevel)
 	// 아이템 정보
 	m_ItemCreateDesc.eItemType = ITEMTYPE::POTION;
 	m_PotionCreateDesc.eModelType = CModel::TYPE_NONANIM; // 모델 타입
-	m_PotionCreateDesc.PivotMatrix = _float4x4(); // 피벗 매트릭스
+
+	_float4x4 ScaleMatrix = XMMatrixScaling(0.5f, 0.5f, 0.5f);
+	_float4x4 RotMatrix = XMMatrixRotationQuaternion(XMQuaternionRotationRollPitchYaw(
+		XMConvertToRadians(-90.f),
+		XMConvertToRadians(0.f),
+		XMConvertToRadians(180.f)));
+	m_PotionCreateDesc.PivotMatrix = ScaleMatrix * RotMatrix;
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
 	FAILED_CHECK_RETURN(pGameInstance->Find_And_Add_Model(m_pDevice, m_pContext, m_iLevel, m_PotionCreateDesc.eModelType
-		, m_PotionCreateDesc.wstrModelPath.data()), E_FAIL);
+		, m_PotionCreateDesc.wstrModelPath.data(), m_PotionCreateDesc.PivotMatrix), E_FAIL);
 
 	Safe_Release(pGameInstance);
 
 	if (FAILED(__super::Initialize_Prototype(iLevel)))
 		return E_FAIL;
+	
 
 	return S_OK;
 }
@@ -43,11 +50,25 @@ HRESULT CPotion::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-	const CBone* pBone = m_pPlayerModel->Get_Bone(TEXT("SKT_RightHand"));
+	// 수명 
+	m_pLifeTime = CCoolTime::Create(m_pDevice, m_pContext);
+	m_pLifeTime->Set_MaxCoolTime(5.f);
+
+	// 손에 붙어있는 시간
+	m_pAttachedTime = CCoolTime::Create(m_pDevice, m_pContext);
+	m_pAttachedTime->Set_MaxCoolTime(2.f);
+
+	// 파츠 값들 설정
+	const CBone* pBone = m_pPlayerModel->Get_Bone(TEXT("SKT_LeftHand"));
 	if (nullptr == pBone)
 		return E_FAIL;
+	m_OffsetMatrix = pBone->Get_OffsetMatrix();
+	m_PivotMatrix = m_pPlayerModel->Get_PivotFloat4x4();
+	m_pCombindTransformationMatrix = pBone->Get_CombinedTransformationMatrixPtr();
+	m_pParentWorldMatrix = m_pPlayerTransform->Get_WorldMatrixPtr();
 
-	m_iBoneIndex = pBone->Get_Index();
+	m_pLifeTime->Play_CoolTime();
+	m_pAttachedTime->Play_CoolTime();
 
 	return S_OK;
 }
@@ -55,14 +76,36 @@ HRESULT CPotion::Initialize(void* pArg)
 void CPotion::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
-	// 뼈에 부착.
-	m_WorldMatrix = m_pTransform->Get_WorldMatrix() *
-		m_pPlayerModel->Get_Attaching_Bone_Matrix(m_iBoneIndex) * m_pPlayerTransform->Get_WorldMatrix();
+	m_pLifeTime->Tick(fTimeDelta);
+	m_pAttachedTime->Tick(fTimeDelta);
+	
+	if (false == m_pLifeTime->IsEnable())
+	{
+		Set_ObjEvent(OBJ_EVENT::OBJ_DEAD);
+		cout << "포션 죽어요" << '\n';
+	}
 }
 
 void CPotion::Late_Tick(_float fTimeDelta)
 {
+	// 파츠 로직
+	if (true == m_pAttachedTime->IsEnable())
+	{
+		_float4x4 BoneMatrix;
+
+		/* 부모(뼈의 오프셋 * 뼈의 컴바인드 * 피벗) */
+		BoneMatrix = m_OffsetMatrix * (*m_pCombindTransformationMatrix) * m_PivotMatrix;
+
+		// 스케일 제거.
+		BoneMatrix.Right(XMVector3Normalize(BoneMatrix.Right()));
+		BoneMatrix.Up(XMVector3Normalize(BoneMatrix.Up()));
+		BoneMatrix.Look(XMVector3Normalize(BoneMatrix.Look()));
+
+		_float4x4 CombinedWorldMatrix;
+		CombinedWorldMatrix = BoneMatrix * (*m_pParentWorldMatrix);
+		m_pTransform->Set_WorldMatrix(CombinedWorldMatrix);
+	}
+	
 	__super::Late_Tick(fTimeDelta);
 
 	if (nullptr != m_pRenderer)
@@ -94,6 +137,11 @@ HRESULT CPotion::Render()
 	return S_OK;
 }
 
+void CPotion::Use(_float3 vPlayPos)
+{
+
+}
+
 HRESULT CPotion::Set_ShaderResources()
 {
 	BEGININSTANCE;
@@ -103,7 +151,7 @@ HRESULT CPotion::Set_ShaderResources()
 		if (nullptr == m_pShader)
 			throw TEXT("m_pShaderCom is nullptr");
 
-		if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+		if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
 			throw TEXT("Failed Bind_Matrix : g_WorldMatrix");
 
 		if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW))))
@@ -154,5 +202,7 @@ void CPotion::Free(void)
 		Safe_Release(m_pRenderer);
 		Safe_Release(m_pModel);
 		Safe_Release(m_pShader);
+		Safe_Release(m_pLifeTime);
+		Safe_Release(m_pAttachedTime);
 	}
 }

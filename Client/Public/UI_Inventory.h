@@ -1,8 +1,6 @@
 #pragma once
-#include "GameObject.h"
-#include "Client_Defines.h"
 #include "UI.h"
-#include "Item.h"
+#include "Client_Defines.h"
 
 BEGIN(Engine)
 class CShader;

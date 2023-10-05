@@ -28,12 +28,15 @@
 #include "Menu_Invectory.h"
 #include "UI_Inventory.h"
 #include "Inventory.h"
+#include "UI_Potion_Tap.h"
+#include "PotionTap.h"
 #pragma endregion UI
 
 #pragma region Effects
 #include "ParticleSystem.h"
 #include "ParticleSystemPool.h"
 #include "Trail.h"
+#include "FlowMap.h"
 #include "MeshEffect.h"
 #include "Wingardium_Effect.h"
 #pragma endregion Effects
@@ -60,6 +63,7 @@
 #include "Imperio.h"
 #include "Crucio.h"
 #include "Stupefy.h"
+#include "Diffindo.h"
 #pragma endregion Magic
 
 #include "Trigger_Vault.h"
@@ -187,7 +191,10 @@ HRESULT CMain0_Loader::Loading_For_Cliffside(LEVELID eLevelID)
 		return E_FAIL;
 	try /* Failed Check Add_Prototype*/
 	{
-		
+		/* For.Prototype_GameObject_FlowMap */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_FlowMap"),
+			CFlowMap::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_FlowMap");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -205,7 +212,7 @@ HRESULT CMain0_Loader::Loading_For_Vault(LEVELID eLevelID)
 {
 	/* For.Prototype_GameObject_MeshEffect*/
 	if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Cloister_MeshEffect"),
-		CMeshEffect::Create(m_pDevice, m_pContext,TEXT("../../Resources/GameData/MeshEffectData/Cloister/Cloister.ME")))))
+		CMeshEffect::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/MeshEffectData/Cloister/Cloister.ME")))))
 		throw TEXT("Prototype_GameObject_Cloister_MeshEffect");
 
 	if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Trigger_Vault"),
@@ -268,7 +275,6 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_UI_Button"),
 				CUI_Button::Create(m_pDevice, m_pContext))))
 				throw TEXT("Prototype_Component_UI_Button");
-
 			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Field_Guide"),
 				CField_Guide::Create(m_pDevice, m_pContext))))
 				throw TEXT("Prototype_GameObject_Field_Guide");
@@ -294,8 +300,16 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Slot"),
 				CUI_Slot::Create(m_pDevice, m_pContext))))
 				throw TEXT("Prototype_GameObject_UI_Slot");
+
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Potion_Tap"),
+				CPotionTap::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_GameObject_Potion_Tap");
+
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Potion_Tap"),
+				CUI_Potion_Tap::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_GameObject_UI_Potion_Tap");
 		}
-#pragma endregion		
+#pragma endregion
 
 #pragma region Load Texture
 		/* --------------Texture-------------- */
@@ -308,6 +322,88 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_Terrain"),
 			CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Terrain/Tile%d.dds"), 2))))
 			throw TEXT("Prototype_Component_Texture_Terrain");
+
+		////////// Ingredient관련 텍스처들. ////////////
+		///* Prototype_Component_Texture_UI_T_AshwinderEggs_Item */
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_UI_T_AshwinderEggs_Item"),
+		//	CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/Ingredients/UI_T_AshwinderEggs_Item.png")))))
+		//	throw TEXT("Prototype_Component_Texture_UI_T_AshwinderEggs_Item");
+
+		///* Prototype_Component_Texture_UI_T_DugbogTongue*/
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_UI_T_DugbogTongue"),
+		//	CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/Ingredients/UI_T_DugbogTongue.png")))))
+		//	throw TEXT("Prototype_Component_Texture_UI_T_DugbogTongue");
+
+		///* Prototype_Component_Texture_UI_T_LeapingToadstool_Byproduct*/
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_UI_T_LeapingToadstool_Byproduct"),
+		//	CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/Plants/UI_T_LeapingToadstool_Byproduct.png")))))
+		//	throw TEXT("Prototype_Component_Texture_UI_T_LeapingToadstool_Byproduct");
+
+		///* Prototype_Component_Texture_UI_T_LacewingFlies*/
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_UI_T_LacewingFlies"),
+		//	CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/Ingredients/UI_T_LacewingFlies.png")))))
+		//	throw TEXT("Prototype_Component_Texture_UI_T_LacewingFlies");
+
+		///* Prototype_Component_Texture_UI_T_Knotgrass_Byproduct*/
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_UI_T_Knotgrass_Byproduct"),
+		//	CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/Plants/UI_T_Knotgrass_Byproduct.png")))))
+		//	throw TEXT("Prototype_Component_Texture_UI_T_Knotgrass_Byproduct");
+
+		///* Prototype_Component_Texture_UI_T_HorklumpJuice*/
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_UI_T_HorklumpJuice"),
+		//	CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/Potions/UI_T_HorklumpJuice.png")))))
+		//	throw TEXT("Prototype_Component_Texture_UI_T_HorklumpJuice");
+		//
+		///* Prototype_Component_Texture_UI_T_LeechJuice*/
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_UI_T_LeechJuice"),
+		//	CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/Ingredients/UI_T_LeechJuice.png")))))
+		//	throw TEXT("Prototype_Component_Texture_UI_T_LeechJuice");
+
+		///* Prototype_Component_Texture_UI_T_Mallowsweet_Byproduct*/
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_UI_T_Mallowsweet_Byproduct"),
+		//	CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/Plants/UI_T_Mallowsweet_Byproduct.png")))))
+		//	throw TEXT("Prototype_Component_Texture_UI_T_Mallowsweet_Byproduct");
+
+		///* Prototype_Component_Texture_UI_T_Moonstone*/
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_UI_T_Moonstone"),
+		//	CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/Ingredients/UI_T_Moonstone.png")))))
+		//	throw TEXT("Prototype_Component_Texture_UI_T_Moonstone");
+
+		///* Prototype_Component_Texture_UI_T_Shrivelfig_Byproduct*/
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_UI_T_Shrivelfig_Byproduct"),
+		//	CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/Ingredients/UI_T_Shrivelfig_Byproduct.png")))))
+		//	throw TEXT("Prototype_Component_Texture_UI_T_Shrivelfig_Byproduct");
+
+		///* Prototype_Component_Texture_UI_T_Wolf_Byproduct*/
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_UI_T_Wolf_Byproduct"),
+		//	CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/Ingredients/UI_T_Wolf_Byproduct.png")))))
+		//	throw TEXT("Prototype_Component_Texture_UI_T_Wolf_Byproduct");
+
+		///* Prototype_Component_Texture_UI_T_TrollMucus*/
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_UI_T_TrollMucus"),
+		//	CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/Ingredients/UI_T_TrollMucus.png")))))
+		//	throw TEXT("Prototype_Component_Texture_UI_T_TrollMucus");
+
+		///* Prototype_Component_Texture_UI_T_Skull*/
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_UI_T_Skull"),
+		//	CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/Ingredients/UI_T_Skull.png")))))
+		//	throw TEXT("Prototype_Component_Texture_UI_T_Skull");
+
+		///* Prototype_Component_Texture_UI_T_Spider_fang*/
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_UI_T_Spider_fang"),
+		//	CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/Ingredients/UI_T_Spider_fang.png")))))
+		//	throw TEXT("Prototype_Component_Texture_UI_T_Spider_fang");
+
+		///* Prototype_Component_Texture_UI_T_Dittany*/
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_UI_T_Dittany"),
+		//	CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/Plants/UI_T_Dittany.png")))))
+		//	throw TEXT("Prototype_Component_Texture_UI_T_Dittany");
+
+		///* Prototype_Component_Texture_UI_T_Icons_Fluxweed*/
+		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_UI_T_Icons_Fluxweed"),
+		//	CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/Plants/UI_T_Icons_Fluxweed.png")))))
+		//	throw TEXT("Prototype_Component_Texture_UI_T_Icons_Fluxweed");
+		//////////////////////////////////////
 #pragma endregion
 
 #pragma region Load Buffer
@@ -354,6 +450,11 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_VtxAnimMesh"),
 			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxAnimMesh.hlsl"), VTXANIMMESH_DECL::Elements, VTXANIMMESH_DECL::iNumElements))))
 			throw TEXT("Prototype_Component_Shader_VtxAnimMesh");
+
+		/* Prototype_Component_Shader_FlowMap */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_FlowMap"),
+			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_FlowMap.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements))))
+			throw TEXT("Prototype_Component_Shader_FlowMap");
 
 		/* For.Prototype_Component_Shader_VtxMesh */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_VtxMesh"),
@@ -403,7 +504,7 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_DefaultEffect.hlsl"), VTXMESH_DECL::Elements, VTXMESH_DECL::iNumElements))))
 			throw TEXT("Prototype_Component_Shader_DefaultEffect");
 #pragma endregion
-		
+
 #pragma region Load ETC
 		/* --------------ETC-------------- */
 		/* For.Prototype_Component_Health*/
@@ -416,14 +517,15 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			CRigidBody::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_RigidBody");
 
+#pragma endregion
+
+#pragma region Load Magic
 		/* --------------Magic-------------- */
 		/* For. Prototype_Component_Magic*/
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Magic"),
 			CMagic::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Magic");
-#pragma endregion
 
-#pragma region Load Magic
 		/* For.Prototype_GameObject_BasicCast */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_BasicCast"),
 			CBasicCast::Create(m_pDevice, m_pContext, eLevelID))))
@@ -493,7 +595,7 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Expelliarmus"),
 			CExpelliarmus::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Expelliarmus");
-		
+
 		/* For.Prototype_GameObject_Imperio */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Imperio"),
 			CImperio::Create(m_pDevice, m_pContext, eLevelID))))
@@ -509,6 +611,11 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			CStupefy::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Stupefy");
 		
+		/* For.Prototype_GameObject_Diffindo */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Diffindo"),
+			CDiffindo::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_Diffindo");
+
 #pragma endregion
 		{
 			std::lock_guard<std::mutex> lock(mtx);
@@ -545,7 +652,7 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 #pragma endregion
 
 #pragma region Load Debug
-		
+
 #ifdef _DEBUG
 		/* --------------Debug-------------- */
 		/* For.Prototype_GameObject_Camera_Debug*/

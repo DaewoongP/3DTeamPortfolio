@@ -1,9 +1,7 @@
 #pragma once
-#include "GameObject.h"
-#include "Client_Defines.h"
 
-#include "UI_Progress1.h"
 #include "UI.h"
+#include "Client_Defines.h"
 
 BEGIN(Engine)
 class CHealth;

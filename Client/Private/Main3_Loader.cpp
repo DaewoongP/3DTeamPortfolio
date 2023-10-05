@@ -30,15 +30,18 @@
 
 #include "Player_Information.h"
 #include "CoolTime.h"
+#include "Animation_Camera_Model.h"
+#include "Defence.h"
 
 #pragma region Items
 
 #include "FocusPotion.h"
-
 #include "MaximaPotion.h"
-#include "EndurusPotion.h"
+#include "EdurusPotion.h"
+#include"InvisiblityPotion.h"
 #include "WiggenweldPotion.h"
 #include "Ingredient.h"
+#include "AshwinderEggs_Item.h"
 #pragma endregion
 
 
@@ -187,6 +190,18 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Weapon_Player_Wand"),
 			CWeapon_Player_Wand::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Weapon_Player_Wand");
+
+		PivotMatrix *= XMMatrixScaling(0.5f, 0.5f, 0.5f);
+		/* For.Prototype_Component_Model_Animation_Camera */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Animation_Camera"),
+			CCustomModel::Create(m_pDevice, m_pContext, CCustomModel::TYPE_ANIM, L"../../Resources/Models/Anims/CCL_CameraRig_Skeleton/CCL_CameraRig_Skeleton.dat", PivotMatrix))))
+			throw TEXT("Prototype_Component_Model_Animation_Camera");
+
+		/* For.Prototype_GameObject_Animation_Camera_Model */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Animation_Camera_Model"),
+			CAnimation_Camera_Model::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Animation_Camera_Model");
+
 #pragma endregion
 
 #pragma region Player Parts
@@ -307,6 +322,8 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 			CPlayer_Information::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Player_Information");
 
+
+
 #pragma endregion
 
 #pragma region Load Fig
@@ -334,12 +351,37 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 #pragma endregion
 
 #pragma region Load Potion
-
 		/* For.Prototype_GameObject_WiggenweldPotion*/
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_WiggenweldPotion"),
 			CWiggenweldPotion::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_WiggenweldPotion");
 
+		/* For.Prototype_GameObject_FocusPotion*/
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_FocusPotion"),
+			CFocusPotion::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_FocusPotion");
+
+		/* For.Prototype_GameObject_MaximaPotion */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_MaximaPotion"),
+			CMaximaPotion::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("ProtoType_GameObject_MaximaPotion");
+
+		/* For.Prototype_GameObject_EdurusPotion */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_EdurusPotion"),
+			CEdurusPotion::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("ProtoType_GameObject_EdurusPotion");
+
+		/* For.Prototype_GameObject_InvisiblityPotion */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_InvisiblityPotion"),
+			CInvisiblityPotion::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_InvisiblityPotion");
+#pragma endregion
+
+#pragma region Load Item
+		/* For.Prototype_GameObject_AshwinderEggs_Item*/
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_AshwinderEggs_Item"),
+			CAshwinderEggs_Item::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_AshwinderEggs_Item");
 #pragma endregion
 	}
 	catch (const _tchar* pErrorTag)

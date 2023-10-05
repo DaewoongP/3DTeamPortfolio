@@ -54,7 +54,7 @@ protected:
 
 private:
 	void Find_And_Add_Texture(const _tchar* pPath);
-
+	
 private: /* For. Component */
 	CShader* m_pShader = { nullptr };
 	CTexture* m_pTexture[5] = {};

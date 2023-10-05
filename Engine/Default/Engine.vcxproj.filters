@@ -367,9 +367,6 @@
     <Filter Include="01. Utility\03. Components\02. Renderer\Glow">
       <UniqueIdentifier>{44645e54-ea4c-469c-be94-9021413642f0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\03. Components\02. Renderer\Distortion">
-      <UniqueIdentifier>{8f07d4c3-cba6-4826-8064-c6c2886c4414}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Utility\01. Levels">
       <UniqueIdentifier>{2c2cbf1d-cdd5-4810-b3dd-cc3ffc5bd683}</UniqueIdentifier>
     </Filter>
@@ -396,9 +393,6 @@
     </Filter>
     <Filter Include="01. Utility\03. Components\07. VIBuffer\Instance\Particle\Rect">
       <UniqueIdentifier>{36441e4a-67b3-4801-b621-746be4b58e3a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\03. Components\02. Renderer\FlowMap">
-      <UniqueIdentifier>{bda6b89d-6c62-4ec2-8788-194e69c46dc7}</UniqueIdentifier>
     </Filter>
     <Filter Include="01. Utility\03. Components\02. Renderer\Shadow">
       <UniqueIdentifier>{29b3dbe5-1450-4524-9b24-b47c4a05122b}</UniqueIdentifier>
@@ -759,9 +753,6 @@
     <ClInclude Include="..\Public\Bloom.h">
       <Filter>01. Utility\03. Components\02. Renderer\Bloom</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Distortion.h">
-      <Filter>01. Utility\03. Components\02. Renderer\Distortion</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Glow.h">
       <Filter>01. Utility\03. Components\02. Renderer\Glow</Filter>
     </ClInclude>
@@ -821,9 +812,6 @@
     </ClInclude>
     <ClInclude Include="..\public\VIBuffer_Rect_Particle_Instance.h">
       <Filter>01. Utility\03. Components\07. VIBuffer\Instance\Particle\Rect</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\FlowMap.h">
-      <Filter>01. Utility\03. Components\02. Renderer\FlowMap</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Shadow.h">
       <Filter>01. Utility\03. Components\02. Renderer\Shadow</Filter>
@@ -1145,9 +1133,6 @@
     <ClCompile Include="..\Private\Bloom.cpp">
       <Filter>01. Utility\03. Components\02. Renderer\Bloom</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Distortion.cpp">
-      <Filter>01. Utility\03. Components\02. Renderer\Distortion</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Glow.cpp">
       <Filter>01. Utility\03. Components\02. Renderer\Glow</Filter>
     </ClCompile>
@@ -1207,9 +1192,6 @@
     </ClCompile>
     <ClCompile Include="..\private\VIBuffer_Rect_Particle_Instance.cpp">
       <Filter>01. Utility\03. Components\07. VIBuffer\Instance\Particle\Rect</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\FlowMap.cpp">
-      <Filter>01. Utility\03. Components\02. Renderer\FlowMap</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Shadow.cpp">
       <Filter>01. Utility\03. Components\02. Renderer\Shadow</Filter>
@@ -1282,9 +1264,6 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Bloom.hlsl">
       <Filter>01. Utility\03. Components\02. Renderer\Bloom</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_Distortion.hlsl">
-      <Filter>01. Utility\03. Components\02. Renderer\Distortion</Filter>
-    </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Glow.hlsl">
       <Filter>01. Utility\03. Components\02. Renderer\Glow</Filter>
     </FxCompile>
@@ -1293,9 +1272,6 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VelocityMapInst.hlsl">
       <Filter>01. Utility\03. Components\15. ParticleSystem\MotionBlurInst</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_FlowMap.hlsl">
-      <Filter>01. Utility\03. Components\02. Renderer\FlowMap</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Shadow.hlsl">
       <Filter>01. Utility\03. Components\02. Renderer\Shadow</Filter>
@@ -1312,6 +1288,9 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointInstance.hlsl">
       <Filter>01. Utility\98. ShaderFiles</Filter>
     </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Distortion.hlsl">
+      <Filter>01. Utility\03. Components\02. Renderer\Shader</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Public\DirectXTK\matrix.inl">
@@ -1322,6 +1301,9 @@
     </None>
     <None Include="..\Bin\ShaderFiles\Shader_EngineHeader.hlsli">
       <Filter>01. Utility\98. ShaderFiles</Filter>
+    </None>
+    <None Include="..\Bin\ShaderFiles\Shader_PBR.hlsli">
+      <Filter>01. Utility\03. Components\02. Renderer\Shader</Filter>
     </None>
   </ItemGroup>
 </Project>

@@ -3,8 +3,8 @@
 #include "GameObject.h"
 #include "CustomModel.h"
 #include "Engine_Defines.h"
-#include "Client_Defines.h"
 #include "Player_Information.h"
+#include "Client_Defines.h"
 
 BEGIN(Engine)
 class CShader;
@@ -19,19 +19,6 @@ END
 BEGIN(Client)
 class CPlayer;
 
-enum ITEMTYPE
-{
-	HAND,
-	FACE,
-	HEAD,
-	NECK,
-	BACK,
-	OUTFIT,
-	RESOURCE,
-	POTION,
-	ITEMTYPE_END
-};
-
 class CItem abstract : public CGameObject
 {
 protected:
@@ -44,6 +31,7 @@ protected:
 	typedef struct tagItemCreateDesc
 	{
 		_uint			iCost = { 0 };
+		_float			fDuration = { 0.f };
 		wstring			wstrKoreanName = { TEXT("") };
 		wstring			wstrUIPath = { TEXT("") };
 		ITEMTYPE		eItemType = { ITEMTYPE_END };

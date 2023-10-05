@@ -16,6 +16,7 @@
 #include "Component_Manager.h"
 #include "Collision_Manager.h"
 #include "Ease.h"
+#include "Camera_Manager.h"
 
 BEGIN(Engine)
 
@@ -174,14 +175,16 @@ public: /* For.PhysX_Manager */
 	PxControllerManager* Get_ControllerManager() const;
 	cloth::Factory* Get_ClothFactory() const;
 	void Set_Simulation(_bool isSimulation);
-	// 1. vOrigin : 레이 시작지점 2. vDir : 방향 3. fMaxDist : 최대거리 4. pHitPosition : (out)레이가 충돌한 위치 5. pDist : (out)충돌한 거리 
-	// 6. iMaxHits : 레이를 맞을 수 있는 최대 개수 7. RaycastFlag : dynamic / static / all 중에 레이와 충돌할 객체 타입 (static에 하이트맵도 현재 포함중인거 생각해야합니다.)
+	// 1. vOrigin : 레이 시작지점 2. vDir : 방향 3. pCollisionObject : 충돌한 오브젝트 4. fMaxDist : 최대거리 5. pHitPosition : (out)레이가 충돌한 위치 6. pDist : (out)충돌한 거리 
+	// 7. iMaxHits : 레이를 맞을 수 있는 최대 개수 8. RaycastFlag : dynamic / static / all 중에 레이와 충돌할 객체 타입
 	// 반환 : 충돌 했을 시 true
-	_bool RayCast(_float3 vOrigin, _float3 vDir, _float fMaxDist = PX_MAX_F32, _Inout_ _float3* pHitPosition = nullptr, _Inout_ _float* pDist = nullptr, _uint iMaxHits = 1, CPhysX_Manager::RayCastQueryFlag RaycastFlag = CPhysX_Manager::RAY_ALL);
-	// 1. pContext : Dx11 DeviceContext 2. hWnd : 클라이언트 핸들 3. fMaxDist : 최대거리 4. pHitPosition : (out)레이가 충돌한 위치 5. pDist : (out)충돌한 거리 
-	// 6. iMaxHits : 레이를 맞을 수 있는 최대 개수 7. RaycastFlag : dynamic / static / all 중에 레이와 충돌할 객체 타입 (static에 하이트맵도 현재 포함중인거 생각해야합니다.)
+	_bool RayCast(_float3 vOrigin, _float3 vDir, _Inout_ class CGameObject** ppCollisionObject = nullptr, _float fMaxDist = PX_MAX_F32, _Inout_ _float3* pHitPosition = nullptr, _Inout_ _float* pDist = nullptr, 
+		_uint iMaxHits = 1, CPhysX_Manager::RayCastQueryFlag RaycastFlag = CPhysX_Manager::RAY_ALL);
+	// 1. pContext : Dx11 DeviceContext 2. hWnd : 클라이언트 핸들 3. pCollisionObject : 충돌한 오브젝트 4. fMaxDist : 최대거리 5. pHitPosition : (out)레이가 충돌한 위치 6. pDist : (out)충돌한 거리 
+	// 7. iMaxHits : 레이를 맞을 수 있는 최대 개수 8. RaycastFlag : dynamic / static / all 중에 레이와 충돌할 객체 타입
 	// 반환 : 충돌 했을 시 true
-	_bool Mouse_RayCast(HWND hWnd, ID3D11DeviceContext* pContext, _float fMaxDist = PX_MAX_F32, _Inout_ _float3* pHitPosition = nullptr, _Inout_ _float* pDist = nullptr, _uint iMaxHits = 1, CPhysX_Manager::RayCastQueryFlag RaycastFlag = CPhysX_Manager::RAY_ALL);
+	_bool Mouse_RayCast(HWND hWnd, ID3D11DeviceContext* pContext, _Inout_ class CGameObject** ppCollisionObject = nullptr, _float fMaxDist = PX_MAX_F32, _Inout_ _float3* pHitPosition = nullptr, _Inout_ _float* pDist = nullptr, 
+		_uint iMaxHits = 1, CPhysX_Manager::RayCastQueryFlag RaycastFlag = CPhysX_Manager::RAY_ALL);
 	void Update_PhysxScene();
 
 public:	/* For.Camera_Manager */
@@ -203,6 +206,18 @@ public:	/* For.Camera_Manager */
 	class CCamera* Find_Camera(const _tchar* _CameraTag);
 	//컷씬 중지
 	void Stop_CutScene();
+
+	//쉐이크 시작함수		//타입, 축, 그래프, 주기, 크기, 지속시간, 특정 축
+	void Set_Shake(
+		CCamera_Manager::SHAKE_TYPE _eType = CCamera_Manager::SHAKE_TYPE_ROTATION,
+		CCamera_Manager::SHAKE_AXIS _eAxis = CCamera_Manager::SHAKE_AXIS_SET,
+		CEase::EASE _eEase = CEase::IN_SINE,
+		_float _fSpeed = 5.0f,
+		_float _Duration = 5.0f,
+		_float _fPower = 0.02f,
+		CCamera_Manager::SHAKE_POWER _ePower = CCamera_Manager::SHAKE_POWER_DECRECENDO,
+		_float3 _vAxisSet = _float3());
+
 #ifdef _DEBUG
 	void Set_DebugCam(_bool isCam);
 #endif // _DEBUG

@@ -16,7 +16,7 @@ private:
 
 public:
 	HRESULT Initialize(CVIBuffer_Rect* pRectBuffer);
-	HRESULT Render(const _tchar* pMRTTag, const _tchar* pTargetTag, BLUR eBlurType);
+	HRESULT Render(const _tchar* pMRTTag, const _tchar* pTargetTag, BLUR eBlurType, _uint iSampleCnt = 1);
 
 private:
 	CShader*				m_pShader = { nullptr };

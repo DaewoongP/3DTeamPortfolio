@@ -2,8 +2,17 @@
 #include "Shader_RenderFunc.hlsli"
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
+// PostProcessing
+texture2D g_HDRTexture;
+
+// HDR
 texture2D g_DeferredTexture;
 texture2D g_SkyTexture;
+float g_fHDRPower;
+
+// Effect
+texture2D g_EffectTexture;
+texture2D g_GlowTexture;
 
 struct VS_IN
 {
@@ -43,6 +52,19 @@ struct PS_OUT
     float4 vColor : SV_TARGET0;
 };
 
+PS_OUT PS_MAIN(PS_IN In)
+{
+    PS_OUT Out = (PS_OUT) 0;
+
+    vector vHDRTexture = g_HDRTexture.Sample(LinearSampler, In.vTexUV);
+    vector vGlowTexture = g_GlowTexture.Sample(LinearSampler, In.vTexUV);
+    vector vEffectTexture = g_EffectTexture.Sample(LinearSampler, In.vTexUV);
+    
+    Out.vColor = vHDRTexture + vEffectTexture + vGlowTexture;
+
+    return Out;
+}
+
 PS_OUT PS_MAIN_HDR(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
@@ -53,8 +75,8 @@ PS_OUT PS_MAIN_HDR(PS_IN In)
     if (0.f == vDeferredTexture.a)
         vDeferredTexture = vSkyTexture;
     else
-        vDeferredTexture.rgb += ACESToneMapping(vDeferredTexture.rgb);
-
+        vDeferredTexture.rgb += ACESToneMapping(vDeferredTexture.rgb) * g_fHDRPower;
+    
     Out.vColor = vDeferredTexture;
 
     return Out;
@@ -72,5 +94,16 @@ technique11 DefaultTechnique
         HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
         DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
         PixelShader = compile ps_5_0 PS_MAIN_HDR();
+    }
+    pass PostProcessing
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Depth_Disable, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
+        HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
+        DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
+        PixelShader = compile ps_5_0 PS_MAIN();
     }
 }

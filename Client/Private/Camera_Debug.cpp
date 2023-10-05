@@ -96,6 +96,16 @@ void CCamera_Debug::Key_Input(const _float& fTimeDelta)
 		{
 			m_pTransform->Go_Right(fTimeDelta);
 		}
+
+		if (pGameInstance->Get_DIMouseState(CInput_Device::DIMK_RBUTTON, CInput_Device::KEY_DOWN))
+		{
+			CGameObject* pObject = nullptr;
+			if (pGameInstance->Mouse_RayCast(g_hWnd, m_pContext, &pObject, 999.f, nullptr, nullptr, 1, CPhysX_Manager::RAY_ONLY_DYNAMIC))
+			{
+				int a = 1;
+
+			}
+		}
 	}
 
 #ifdef _DEBUG

@@ -159,12 +159,30 @@ void CRigidBody::Set_AngularDamping(_float _fAngualrDamping) const
 	}
 }
 
+void CRigidBody::Set_LinearDamping(_float _fLinearDamping) const
+{
+	if (nullptr != m_pActor &&
+		nullptr != m_pActor->is<PxRigidBody>())
+	{
+		reinterpret_cast<PxRigidDynamic*>(m_pActor)->setLinearDamping(_fLinearDamping);
+	}
+}
+
 void CRigidBody::Set_Gravity(_bool _isGravity)
 {
 	if (nullptr != m_pActor &&
 		nullptr != m_pActor->is<PxRigidBody>())
 	{
 		m_pActor->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, !_isGravity);
+	}
+}
+
+void CRigidBody::Set_Mass(_float fMass)
+{
+	if (nullptr != m_pActor &&
+		nullptr != m_pActor->is<PxRigidBody>())
+	{
+		reinterpret_cast<PxRigidDynamic*>(m_pActor)->setMass(fMass);
 	}
 }
 
@@ -281,18 +299,10 @@ HRESULT CRigidBody::Initialize(void* pArg)
 
 void CRigidBody::Tick(_float fTimeDelta)
 {
-	if (CGameObject::OBJ_DEAD == m_pOwner->Get_ObjEvent())
-	{
-		m_pActor->userData = nullptr;
-	}
 }
 
 void CRigidBody::Late_Tick(_float fTimeDelta)
 {
-	if (CGameObject::OBJ_DEAD == m_pOwner->Get_ObjEvent())
-	{
-		m_pActor->userData = nullptr;
-	}
 }
 
 #ifdef _DEBUG
