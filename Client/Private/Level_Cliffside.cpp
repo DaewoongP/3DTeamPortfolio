@@ -221,6 +221,7 @@ HRESULT CLevel_Cliffside::Ready_Layer_Player(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
+
 	ENDINSTANCE;
 
 	return S_OK;

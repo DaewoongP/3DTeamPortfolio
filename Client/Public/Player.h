@@ -51,6 +51,14 @@ public:
 		ACTION_END
 	};
 
+	enum SKILLINPUT
+	{
+		SKILLINPUT_1,
+		SKILLINPUT_2,
+		SKILLINPUT_3,
+		SKILLINPUT_4,
+		SKILLINPUT_END
+	};
 
 private:
 	explicit CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -64,6 +72,8 @@ public:
 
 
 	_bool Set_PowerUp(_bool isPowerUp) { m_isPowerUp = isPowerUp; }
+
+	void Set_Spell_Botton(_uint _Button, SPELL _eSpell);
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -220,10 +230,11 @@ private:
 	void Gravity_On();
 	void Gravity_Off();
 
-	void Shot_Levioso();
-	void Shot_Confringo();
-	void Shot_NCENDIO();
-	void Shot_Finisher();
+	void Shot_Magic_Spell_Button_1();
+	void Shot_Magic_Spell_Button_2();
+	void Shot_Magic_Spell_Button_3();
+	void Shot_Magic_Spell_Button_4();
+
 	void Lumos();
 
 	void Finish_Animation();

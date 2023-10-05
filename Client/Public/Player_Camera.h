@@ -11,6 +11,12 @@ END
 
 BEGIN(Client)
 
+class CAnimation_Camera_Model;
+
+END
+
+BEGIN(Client)
+
 class CPlayer_Camera :
 	public CCamera
 {
@@ -27,6 +33,7 @@ public:
 	{
 		CAMERADESC CameraDesc{};
 		CTransform* pPlayerTransform = { nullptr };
+		LEVELID eLevelID = { LEVEL_END };
 	}PLAYERCAMERADESC;
 
 private:
@@ -39,6 +46,7 @@ public:
 	_float3 Get_CamLookXZ();
 	_float3 Get_CamRightXZ();
 public:
+	void Change_Animation(const wstring& _AnimattionIndex);
 
 public:
 	HRESULT Initialize(void* pArg);
@@ -50,8 +58,12 @@ public:
 
 
 private:
+	//CAnimation_Camera_Model* m_pAnimation_Camera_Model = { nullptr };
+
 	CTransform* m_pTransform = { nullptr };
 	CTransform* m_pPlayerTransform = { nullptr };
+	LEVELID m_eLevelID = { LEVEL_END };
+
 	_float m_fFollowLimit = { 0.0f };
 
 	//카메라 위치 기준 축
@@ -76,6 +88,10 @@ private:
 
 	_float m_fCameraHeight{ 0.0f };
 
+	_float m_fLerpTimeAcc = { 0.0f };
+
+	_float m_fLerpSpeed = { 5.0f };
+
 private:
 	void	Mouse_Input(_float _fTimeDelta);
 	//행렬 갱신
@@ -89,6 +105,8 @@ private:
 	void	Update_Eye_At();
 
 	_bool	IsValid_CameraPos(_float3 vEye, _float3 vUp);
+
+	//HRESULT Ready_Animation_Camera();
 
 public:
 	static CPlayer_Camera* Create(ID3D11Device * _pDevice, ID3D11DeviceContext * _pContext, void* pArg);
