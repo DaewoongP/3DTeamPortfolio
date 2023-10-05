@@ -14,17 +14,18 @@ CEdurusPotion::CEdurusPotion(const CEdurusPotion& rhs) : CPotion(rhs)
 }
 
 HRESULT CEdurusPotion::Initialize_Prototype(_uint iLevel)
-{	// 아이템 정보
+{	
+	// 아이템 정보
 	m_ItemCreateDesc.iCost = 300;											// 가격
 	m_ItemCreateDesc.fDuration = 20.f;										//지속시간
 	m_ItemCreateDesc.wstrKoreanName = TEXT("에두루스 마법약");					// 한글명
 	m_ItemCreateDesc.wstrUIPath = TEXT("../../Resources/UI/Game/UI/Icons/Potions/UI_T_Edurus.png"); // UI경로
-	m_ItemCreateDesc.wstrModelPath = TEXT("../../Resources/Models/NonAnims/SM_SpherePrimitiveRegularNormals_01/SM_SpherePrimitiveRegularNormals_01.dat"); // 모델경로
-
+	
 	// 포션 정보
 	m_PotionCreateDesc.Ingredients.push_back(INGREDIENT::ASHWINDER_EGGS);	// 재료1
 	m_PotionCreateDesc.Ingredients.push_back(INGREDIENT::MONGREL_FUR);	// 재료2
 	m_PotionCreateDesc.fManufacturingTime = 30.f;							// 제조 시간
+	m_PotionCreateDesc.wstrModelPath = TEXT("../../Resources/Models/NonAnims/SM_SpherePrimitiveRegularNormals_01/SM_SpherePrimitiveRegularNormals_01.dat"); // 모델경로
 
 	if (FAILED(__super::Initialize_Prototype(iLevel)))
 		return E_FAIL;

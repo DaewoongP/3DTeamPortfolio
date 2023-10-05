@@ -21,14 +21,13 @@ HRESULT CInvisiblityPotion::Initialize_Prototype(_uint iLevel)
 	m_ItemCreateDesc.fDuration = 4.f;										//지속시간
 	m_ItemCreateDesc.wstrKoreanName = TEXT("투명 마법약");					// 한글명
 	m_ItemCreateDesc.wstrUIPath = TEXT("../../Resources/UI/Game/UI/Icons/Potions/UI_T_InvisibilityPotion.png"); // UI경로
-	m_ItemCreateDesc.wstrModelPath = TEXT("../../Resources/Models/NonAnims/SM_SpherePrimitiveRegularNormals_01/SM_SpherePrimitiveRegularNormals_01.dat"); // 모델경로
-
+	
 	// 포션 정보
 	m_PotionCreateDesc.Ingredients.push_back(INGREDIENT::LEAPING_TOADSTOOL_CAPS);	// 재료1
 	m_PotionCreateDesc.Ingredients.push_back(INGREDIENT::KNOTGRASS_SPRIG);			// 재료2
 	m_PotionCreateDesc.Ingredients.push_back(INGREDIENT::TROLL_BOGEYS);			// 재료3
 	m_PotionCreateDesc.fManufacturingTime = 60.f;									// 제조 시간
-
+	m_PotionCreateDesc.wstrModelPath = TEXT("../../Resources/Models/NonAnims/SM_SpherePrimitiveRegularNormals_01/SM_SpherePrimitiveRegularNormals_01.dat"); // 모델경로
 	if (FAILED(__super::Initialize_Prototype(iLevel)))
 		return E_FAIL;
 

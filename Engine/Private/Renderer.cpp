@@ -10,7 +10,6 @@
 
 #include "Blur.h"
 #include "Bloom.h"
-#include "Distortion.h"
 #include "Glow.h"
 #include "Shadow.h"
 #include "MotionBlur.h"
