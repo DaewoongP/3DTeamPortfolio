@@ -31,6 +31,7 @@ protected:
 	typedef struct tagItemCreateDesc
 	{
 		_uint			iCost = { 0 };
+		_float			fDuration = { 0.f };
 		wstring			wstrKoreanName = { TEXT("") };
 		wstring			wstrUIPath = { TEXT("") };
 		ITEMTYPE		eItemType = { ITEMTYPE_END };

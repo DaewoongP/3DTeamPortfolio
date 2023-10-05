@@ -22,8 +22,10 @@
 
 #include "MaximaPotion.h"
 #include "FocusPotion.h"
+#include "EdurusPotion.h"
+#include"InvisiblityPotion.h"
+#include "WiggenweldPotion.h"
 
-#include "EndurusPotion.h"
 #include "CoolTime.h"	
 #include "Defence.h"
 
@@ -103,6 +105,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(180.f));
 	m_pTransform->Set_RigidBody(m_pRigidBody);
 
+	
 	Bind_Notify();
 
 	m_fClothPower = 3.0f;
@@ -143,19 +146,7 @@ void CPlayer::Tick(_float fTimeDelta)
 		m_pPlayer_Information->fix_HP(-10);
 		m_pPlayer_Information->Using_Fnisher();
 	}
-	if (pGameInstance->Get_DIKeyState(DIK_F5, CInput_Device::KEY_DOWN))
-	{
-		//m_pFocusPotion->Use();
-	}
-	if (pGameInstance->Get_DIKeyState(DIK_F6, CInput_Device::KEY_DOWN))
-	{
-		//m_pMaximaPotion->Use(_float3(0.f, 0.f, 0.f));
-		m_isPowerUp = true;
-	}
-	if (pGameInstance->Get_DIKeyState(DIK_F7, CInput_Device::KEY_DOWN))
-	{	
-		//m_pEndurusPotion->Use(_float3(0.f, 0.f, 0.f));
-	}
+	
 
 	ENDINSTANCE;
 
@@ -185,7 +176,9 @@ void CPlayer::Tick(_float fTimeDelta)
 		m_pFrncSpellToggle(nullptr);
 	}
 
-	m_pCooltime->Tick(fTimeDelta);
+	//m_pCooltime->Tick(fTimeDelta);
+	//Potion_Duration(fTimeDelta);
+
 
 #ifdef _DEBUG
 	ADD_IMGUI([&] { this->Tick_ImGui(); });
@@ -280,6 +273,11 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		}
 		//피격중인 상태일 경우 무시
 		else if (m_pStateContext->Is_Current_State(TEXT("Hit")))
+		{
+
+		}
+		//에두루스 마법약 상태일때 슈퍼아머 혹은 무적
+		else if (m_isDefUp)
 		{
 
 		}
@@ -409,6 +407,8 @@ HRESULT CPlayer::Render()
 		}
 	}
 
+	//if(m_isInvisible) 투명망토 사용시 ShaderPass 바꿔주면 될것같음.
+
 	return S_OK;
 }
 
@@ -434,6 +434,38 @@ HRESULT CPlayer::Render_Depth()
 	return S_OK;
 }
 
+void CPlayer::Potion_Duration(_float fTimeDelta)
+{
+	if (m_isPowerUp)
+	{
+		m_pMaximaPotion->Duration(fTimeDelta);
+		if(!m_isPowerUp)
+		Safe_Release(m_pMaximaPotion);
+
+	}
+
+	if (m_isDefUp)
+	{
+		m_pEdurusPotion->Duration(fTimeDelta);
+		if (!m_isDefUp)
+			Safe_Release(m_pEdurusPotion);
+	}
+	if (m_isInvisible)
+	{
+		m_pInvisiblityPotion->Duration(fTimeDelta);
+		if (!m_isInvisible)
+			Safe_Release(m_pInvisiblityPotion);
+	}
+	/*if (m_isFocusOn)
+	{
+		m_pFocusPotion->Duration(fTimeDelta);
+		if(!m_isFocusOn)
+		Safe_Release(m_pFocusPotion);
+
+	}*/
+
+}
+
 void CPlayer::On_Maigc_Throw_Data(void* data) const
 {
 	if (static_cast<CMagicBall::COLLSIONREQUESTDESC*>(data)->eMagicTag == LUMOS)
@@ -449,7 +481,6 @@ HRESULT CPlayer::Add_Components()
 		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
 	{
 		__debugbreak();
-		return E_FAIL;
 	}
 
 	/* For.Com_Shader */
@@ -553,13 +584,6 @@ HRESULT CPlayer::Add_Components()
 		return E_FAIL;
 	}
 	
-	//_int DefValue = 15;
-	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_EndurusPotion"),
-	//	TEXT("Com_EndurusPotion"), reinterpret_cast<CComponent**>(&m_pEndurusPotion),&DefValue)))
-	//{
-	//	__debugbreak();
-	//	return E_FAIL;
-	//}
 
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_CoolTime"),
 		TEXT("Com_CoolTime"), reinterpret_cast<CComponent**>(&m_pCooltime))))
@@ -912,18 +936,18 @@ void CPlayer::Key_Input(_float fTimeDelta)
 	}
 #endif //_DEBUG
 
-	if (pGameInstance->Get_DIKeyState(DIK_L, CInput_Device::KEY_DOWN))
-	{
-		//CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_Dust01"), m_pTransform->Get_Position());
-		//CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_Dust02"), m_pTransform->Get_Position());
-		//CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_RockChunksRough"), m_pTransform->Get_Position());
+	// if (pGameInstance->Get_DIKeyState(DIK_K, CInput_Device::KEY_DOWN))
+	// {
+	// 	CWiggenweldPotion::CLONE_DESC initDesc;
+	// 	initDesc.pPlayer = this;
+	// 	CWiggenweldPotion* pWiggenweldPotion = static_cast<CWiggenweldPotion*>(
+	// 		pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_WiggenweldPotion"), &initDesc));
+	// 	pWiggenweldPotion->Use(_float3());
 		
-		//CItem* pItem = static_cast<CItem*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_WiggenweldPotion")));
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(pItem, pItem->Get_Type());
+	// 	m_pPlayer_Information->fix_HP(40);
+	// 	Safe_Release(pWiggenweldPotion);
+	// }
 
-		wstring temp = TEXT("Drink_Potion_Throw");
-		m_pCustomModel->Change_Animation(temp);
-	}
 
 	ENDINSTANCE;
 }
@@ -1977,7 +2001,11 @@ void CPlayer::Free()
 		Safe_Release(m_pPlayer_Information);
 		Safe_Release(m_UI_Group_Skill_01);
 		Safe_Release(m_pCooltime);
-		//Safe_Release(m_pMaximaPotion);
+		Safe_Release(m_pMaximaPotion);
+		Safe_Release(m_pEdurusPotion);
+		Safe_Release(m_pFocusPotion);
+		Safe_Release(m_pInvisiblityPotion);
+		Safe_Release(m_pWiggenweldPotion);
 		Safe_Release(m_pDefence);
 		
 		if (nullptr != m_pTargetTransform)

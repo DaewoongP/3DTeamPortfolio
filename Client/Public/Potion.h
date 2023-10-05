@@ -51,6 +51,8 @@ protected:
 protected:
 	POTION_CREATE_DESC			m_PotionCreateDesc = { POTION_CREATE_DESC() };
 	_float4x4					m_WorldMatrix;
+	
+	_float 						m_fDuration = { 0.f };
 	_uint						m_iBoneIndex = { 0 };
 
 	_float4x4        m_OffsetMatrix;

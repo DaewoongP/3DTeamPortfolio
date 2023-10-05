@@ -427,9 +427,6 @@
     <Filter Include="02. GameObject\09. Item\01. Potion">
       <UniqueIdentifier>{1d5e3cac-b99b-4bcc-9472-30c063c0fb5e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\09. Item\01. Potion\PowerPotion">
-      <UniqueIdentifier>{5a4aa143-71df-4884-91e1-ca2caf295348}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\09. Item\01. Potion\FocusPotion">
       <UniqueIdentifier>{7cb5d380-3253-4755-a164-7338fda2ebf8}</UniqueIdentifier>
     </Filter>
@@ -450,6 +447,18 @@
     </Filter>
     <Filter Include="05. Magic\MagicBall\16. Imperio">
       <UniqueIdentifier>{3e5daa2a-0540-4c2b-b10a-c7031295ac39}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96. ImGui">
+      <UniqueIdentifier>{a50a5e26-6a04-4c0e-a541-6d264c6a12fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Item\01. Potion\EdurusPotion">
+      <UniqueIdentifier>{e0f8e81c-7682-4cf5-a671-009fe0c7b2dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Item\01. Potion\MaximaPotion">
+      <UniqueIdentifier>{5a4aa143-71df-4884-91e1-ca2caf295348}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Item\01. Potion\Invisibility Potion">
+      <UniqueIdentifier>{e904701a-4d69-4b17-8f05-2bc317be6f15}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\09. Item\ex2.EdurusPotion">
       <UniqueIdentifier>{e0f8e81c-7682-4cf5-a671-009fe0c7b2dc}</UniqueIdentifier>
@@ -889,7 +898,7 @@
       <Filter>05. Magic\MagicBall\11. Accio</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MaximaPotion.h">
-      <Filter>02. GameObject\09. Item\ex1.MaximaPotion</Filter>
+      <Filter>02. GameObject\09. Item\01. Potion\MaximaPotion</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Item.h">
       <Filter>02. GameObject\09. Item</Filter>
@@ -947,11 +956,14 @@
     <ClInclude Include="..\Public\Crucio.h">
       <Filter>05. Magic\MagicBall\15. Crucio</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\EndurusPotion.h">
-      <Filter>02. GameObject\09. Item\ex2.EdurusPotion</Filter>
+    <ClInclude Include="..\Public\EdurusPotion.h">
+      <Filter>02. GameObject\09. Item\01. Potion\EdurusPotion</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ImGui_Manager.h">
       <Filter>96. ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\InvisiblityPotion.h">
+      <Filter>02. GameObject\09. Item\01. Potion\Invisibility Potion</Filter>
     </ClInclude>
     <ClInclude Include="..\public\AshwinderEggs_Item.h">
       <Filter>02. GameObject\09. Item\02. Ingredient\AshwinderEggs</Filter>
@@ -1349,7 +1361,7 @@
       <Filter>05. Magic\MagicBall\11. Accio</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MaximaPotion.cpp">
-      <Filter>02. GameObject\09. Item\ex1.MaximaPotion</Filter>
+      <Filter>02. GameObject\09. Item\01. Potion\MaximaPotion</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Item.cpp">
       <Filter>02. GameObject\09. Item</Filter>
@@ -1404,11 +1416,14 @@
     <ClCompile Include="..\Private\Crucio.cpp">
       <Filter>05. Magic\MagicBall\15. Crucio</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\EndurusPotion.cpp">
-      <Filter>02. GameObject\09. Item\ex2.EdurusPotion</Filter>
+    <ClCompile Include="..\Private\EdurusPotion.cpp">
+      <Filter>02. GameObject\09. Item\01. Potion\EdurusPotion</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ImGui_Manager.cpp">
       <Filter>96. ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\InvisiblityPotion.cpp">
+      <Filter>02. GameObject\09. Item\01. Potion\Invisibility Potion</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\AshwinderEggs_Item.cpp">
       <Filter>02. GameObject\09. Item\02. Ingredient\AshwinderEggs</Filter>
