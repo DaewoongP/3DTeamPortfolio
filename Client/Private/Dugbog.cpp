@@ -58,6 +58,9 @@ HRESULT CDugbog::Initialize_Level(_uint iCurrentLevelIndex)
 	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
 
+	if (FAILED(Bind_HitMatrices()))
+		return E_FAIL;
+
 	if (FAILED(Make_Notifies()))
 		return E_FAIL;
 
@@ -67,6 +70,8 @@ HRESULT CDugbog::Initialize_Level(_uint iCurrentLevelIndex)
 void CDugbog::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	m_pHitMatrix = m_HitMatrices[rand() % 3];
 
 	Set_Current_Target();
 
@@ -328,7 +333,7 @@ HRESULT CDugbog::Add_Components()
 		RigidBodyDesc.isStatic = true;
 		RigidBodyDesc.isTrigger = true;
 		RigidBodyDesc.eThisCollsion = COL_ENEMY_ATTACK;
-		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC;
+		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC | COL_SHIELD;
 		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Attack_Body");
 		if (FAILED(m_pRigidBody->Create_Collider(&RigidBodyDesc)))
 			throw TEXT("Failed Create_Collider");
@@ -340,7 +345,7 @@ HRESULT CDugbog::Add_Components()
 		RigidBodyDesc.pGeometry = &pCapsuleGeomatry;
 		RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 1.f, 1.f);
 		RigidBodyDesc.eThisCollsion = COL_ENEMY_ATTACK;
-		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC;
+		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC | COL_SHIELD;
 		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Attack_Tongue");
 		if (FAILED(m_pRigidBody->Create_Collider(&RigidBodyDesc)))
 			throw TEXT("Failed Create_Collider");
@@ -385,6 +390,26 @@ HRESULT CDugbog::Add_Components_Level(_uint iCurrentLevelIndex)
 
 		return E_FAIL;
 	}
+
+	return S_OK;
+}
+
+HRESULT CDugbog::Bind_HitMatrices()
+{
+	const CBone* pBone = m_pModelCom->Get_Bone(TEXT("Head"));
+	if (nullptr == pBone)
+		return E_FAIL;
+	m_HitMatrices[0] = pBone->Get_CombinedTransformationMatrixPtr();
+
+	pBone = m_pModelCom->Get_Bone(TEXT("Hips"));
+	if (nullptr == pBone)
+		return E_FAIL;
+	m_HitMatrices[1] = pBone->Get_CombinedTransformationMatrixPtr();
+
+	pBone = m_pModelCom->Get_Bone(TEXT("Spine2"));
+	if (nullptr == pBone)
+		return E_FAIL;
+	m_HitMatrices[2] = pBone->Get_CombinedTransformationMatrixPtr();
 
 	return S_OK;
 }

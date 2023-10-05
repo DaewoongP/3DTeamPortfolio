@@ -47,6 +47,7 @@ private:
 	HRESULT Make_Notifies();
 	HRESULT Add_Components();
 	HRESULT Add_Components_Level(_uint iCurrentLevelIndex);
+	HRESULT Bind_HitMatrices();
 
 private: /* 사망처리 전용 함수 */
 	_float m_fDeadTimeAcc = { 0.f };

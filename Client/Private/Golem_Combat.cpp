@@ -59,6 +59,9 @@ HRESULT CGolem_Combat::Initialize_Level(_uint iCurrentLevelIndex)
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
 	m_pModelCom->Change_Animation(TEXT("Spawn_Fall_Loop"));
 
+	if (FAILED(Bind_HitMatrices()))
+		return E_FAIL;
+
 	if (FAILED(Make_Notifies()))
 		return E_FAIL;
 
@@ -82,8 +85,10 @@ void CGolem_Combat::Tick(_float fTimeDelta)
 	ENDINSTANCE;
 	////////////////////////////
 
-	Set_Current_Target();
+	m_pHitMatrix = m_HitMatrices[rand() % 3];
 
+	Set_Current_Target();
+	
 	if (nullptr != m_pRootBehavior)
 		m_pRootBehavior->Tick(fTimeDelta);
 
@@ -108,7 +113,8 @@ void CGolem_Combat::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
 	wstring wstrMyCollisionTag = CollisionEventDesc.pThisCollisionTag;
-
+	wstring wstrOtherCollisionTag = CollisionEventDesc.pOtherCollisionTag;
+	
 	/* Collision Magic */
 	if (wstring::npos != wstrObjectTag.find(TEXT("MagicBall")))
 	{
@@ -137,12 +143,19 @@ void CGolem_Combat::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 
 	/* Collision Player Fig */
 	if (wstring::npos != wstrMyCollisionTag.find(TEXT("Range")))
-	{
+	{wcout << wstrOtherCollisionTag << endl;
 		if (false == IsEnemy(wstrObjectTag))
 			return;
 
 		m_isSpawn = true;
 		m_RangeInEnemies.push_back({ wstrObjectTag, CollisionEventDesc.pOtherOwner });
+	}
+
+	/* Collision Protego */
+	if (wstring::npos != wstrMyCollisionTag.find(TEXT("Attack")) && 
+		wstring::npos != wstrOtherCollisionTag.find(TEXT("Protego")))
+	{
+		m_isParring = true;
 	}
 }
 
@@ -307,7 +320,7 @@ HRESULT CGolem_Combat::Add_Components()
 		RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 0.f, 1.f);
 		RigidBodyDesc.pOwnerObject = this;
 		RigidBodyDesc.eThisCollsion = COL_ENEMY;
-		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC | COL_NPC_RANGE | COL_MAGIC;
+		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC | COL_NPC_RANGE | COL_MAGIC | COL_SHIELD;
 		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Body");
 
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
@@ -333,8 +346,8 @@ HRESULT CGolem_Combat::Add_Components()
 		PxSphereGeometry pSphereGeomatry2 = PxSphereGeometry(1.f);
 		RigidBodyDesc.pGeometry = &pSphereGeomatry2;
 		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Attack");
-		RigidBodyDesc.eThisCollsion = COL_ENEMY_ATTACK;
-		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC;
+		RigidBodyDesc.eThisCollsion = COL_ENEMY;
+		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC | COL_SHIELD;
 
 		if (FAILED(m_pRigidBody->Create_Collider(&RigidBodyDesc)))
 			throw TEXT("Failed Create_Collider");
@@ -939,6 +952,7 @@ HRESULT CGolem_Combat::Make_Descendo(_Inout_ CSequence* pSequence)
 
 				if (*pICurrentSpell & BUFF_DESCENDO)
 					*pICurrentSpell ^= BUFF_DESCENDO;
+
 				return true;
 			});
 
@@ -1473,6 +1487,26 @@ HRESULT CGolem_Combat::Add_Components_Level(_uint iCurrentLevelIndex)
 		return E_FAIL;
 	}
 
+
+	return S_OK;
+}
+
+HRESULT CGolem_Combat::Bind_HitMatrices()
+{
+	const CBone* pBone = m_pModelCom->Get_Bone(TEXT("Head"));
+	if (nullptr == pBone)
+		return E_FAIL;
+	m_HitMatrices[0] = pBone->Get_CombinedTransformationMatrixPtr();
+
+	pBone = m_pModelCom->Get_Bone(TEXT("Hips"));
+	if (nullptr == pBone)
+		return E_FAIL;
+	m_HitMatrices[1] = pBone->Get_CombinedTransformationMatrixPtr();
+
+	pBone = m_pModelCom->Get_Bone(TEXT("Spine2"));
+	if (nullptr == pBone)
+		return E_FAIL;
+	m_HitMatrices[2] = pBone->Get_CombinedTransformationMatrixPtr();
 
 	return S_OK;
 }

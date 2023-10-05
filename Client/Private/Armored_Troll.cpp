@@ -41,14 +41,6 @@ HRESULT CArmored_Troll::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	if (nullptr != pArg)
-	{
-		_float4x4* pWorldMatrix = reinterpret_cast<_float4x4*>(pArg);
-		m_pTransform->Set_WorldMatrix(*pWorldMatrix);
-	}
-	else
-		m_pTransform->Set_Position(_float3(20.f, 2.f, 20.f));
-
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
@@ -67,6 +59,9 @@ HRESULT CArmored_Troll::Initialize_Level(_uint iCurrentLevelIndex)
 	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
 
+	if (FAILED(Bind_HitMatrices()))
+		return E_FAIL;
+
 	if (FAILED(Make_Notifies()))
 		return E_FAIL;
 
@@ -76,6 +71,8 @@ HRESULT CArmored_Troll::Initialize_Level(_uint iCurrentLevelIndex)
 void CArmored_Troll::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	m_pHitMatrix = m_HitMatrices[rand() % 3];
 
 	Set_Current_Target();
 	if (nullptr == m_pTarget)
@@ -248,7 +245,7 @@ HRESULT CArmored_Troll::Add_Components()
 		RigidBodyDesc.isStatic = true;
 		RigidBodyDesc.isTrigger = true;
 		RigidBodyDesc.eThisCollsion = COL_ENEMY_ATTACK;
-		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC;
+		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC | COL_SHIELD;
 		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Body_Attack");
 		if (FAILED(m_pRigidBody->Create_Collider(&RigidBodyDesc)))
 			throw TEXT("Failed Create_Collider");
@@ -313,6 +310,26 @@ HRESULT CArmored_Troll::Add_Components_Level(_uint iCurrentLevelIndex)
 
 		return E_FAIL;
 	}
+
+	return S_OK;
+}
+
+HRESULT CArmored_Troll::Bind_HitMatrices()
+{
+	const CBone* pBone = m_pModelCom->Get_Bone(TEXT("Head"));
+	if (nullptr == pBone)
+		return E_FAIL;
+	m_HitMatrices[0] = pBone->Get_CombinedTransformationMatrixPtr();
+
+	pBone = m_pModelCom->Get_Bone(TEXT("Hips"));
+	if (nullptr == pBone)
+		return E_FAIL;
+	m_HitMatrices[1] = pBone->Get_CombinedTransformationMatrixPtr();
+
+	pBone = m_pModelCom->Get_Bone(TEXT("Spine2"));
+	if (nullptr == pBone)
+		return E_FAIL;
+	m_HitMatrices[2] = pBone->Get_CombinedTransformationMatrixPtr();
 
 	return S_OK;
 }

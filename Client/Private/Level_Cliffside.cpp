@@ -300,12 +300,12 @@ HRESULT CLevel_Cliffside::Ready_Layer_Monster(const _tchar* pLayerTag)
 		ENDINSTANCE;
 		return E_FAIL;
 	}*/
-	/*if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_ConjuredDragon"), pLayerTag, TEXT("GameObject_ConjuredDragon"), &Matrix)))
+	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_ConjuredDragon"), pLayerTag, TEXT("GameObject_ConjuredDragon"), &Matrix)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_ConjuredDragon)");
 		ENDINSTANCE;
 		return E_FAIL;
-	}*/
+	}
 	///////////////////////////////////////////////////////////////////////
 
 	//Load_Monsters(TEXT("../../Resources/GameData/MonsterData/Cliff1.mon"));
@@ -325,7 +325,7 @@ HRESULT CLevel_Cliffside::Ready_Layer_NPC(const _tchar* pLayerTag)
 		ENDINSTANCE;
 		return E_FAIL;
 	}
-	_float3 vPosition = _float3(40.f, 26.4f, 62.f);
+	_float3 vPosition = _float3(40.f, 6.4f, 62.f);
 
 	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_STATIC, TEXT("Prototype_GameObject_Professor_Fig"), pLayerTag, TEXT("GameObject_Professor_Fig"), &vPosition)))
 	{

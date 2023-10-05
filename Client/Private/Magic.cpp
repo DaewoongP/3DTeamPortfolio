@@ -83,10 +83,6 @@ CMagicBall* CMagic::Magic_Cast(const CGameObject* pTarget, const CGameObject* pW
 	if (PowerUp)
 		ballInit.iDamage *= 2;
 
-	cout << ballInit.iDamage << endl;
-
-
-
 	BEGININSTANCE;
 
 	//타입별 생성을 위한 태그지정임.

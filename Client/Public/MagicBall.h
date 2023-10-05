@@ -40,6 +40,7 @@ public:
 		BUFF_TYPE				eBuffType = { BUFF_NONE };
 		SPELL					eMagicTag = { SPELL_END };
 		_int					iDamage = { 0 };
+		CTransform*				pTransform = { nullptr };
 		function<void(void*)>		Action = { nullptr };
 	}COLLSIONREQUESTDESC;
 

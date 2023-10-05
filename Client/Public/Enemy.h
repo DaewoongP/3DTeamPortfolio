@@ -46,6 +46,9 @@ public:
 	CUI_Group_Enemy_HP* Get_UI_Enemy_HP() const {
 		return m_pUI_HP;
 	}
+	void Set_Parring() {
+		m_isParring = true;
+	}
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -54,6 +57,9 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 	virtual HRESULT Render_Depth() override;
+
+public:
+	void Set_Protego_Collision(CTransform* pTransform, ATTACKTYPE eType) const {}
 
 protected:
 	CUI_Group_Enemy_HP* m_pUI_HP = { nullptr };
@@ -80,6 +86,7 @@ protected:
 	_bool m_isChangeAnimation = { false };
 
 	_float3 m_vCurrentPosition = {};
+	array<const _float4x4*, 3> m_HitMatrices;
 
 	COLLISIONREQUESTDESC m_CollisionRequestDesc;
 

@@ -425,13 +425,17 @@ _bool CEnemy::isCombo(BUFF_TYPE eType)
 	if (false == IsDebuff(BUFF_TYPE(m_iCurrentSpell)))
 		return false;
 
+	if (BUFF_DESCENDO & m_iCurrentSpell &&
+		(eType & BUFF_ATTACK_LIGHT || eType & BUFF_ATTACK_HEAVY))
+		return false;
+
 	if (eType & BUFF_ATTACK_LIGHT)
 		ReturnData = m_isHitCombo = true;
 
-	if (eType & BUFF_ATTACK_HEAVY)
+	else if (eType & BUFF_ATTACK_HEAVY)
 		ReturnData = m_isHitCombo = true;
 
-	if (true == IsDebuff(eType))
+	else if (true == IsDebuff(eType))
 		ReturnData = m_isHitCombo = true;
 
 	return ReturnData;
