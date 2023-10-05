@@ -487,6 +487,9 @@
     <Filter Include="04. Effect\Normal">
       <UniqueIdentifier>{a74d6959-7585-400e-a1ae-d972cc6abd86}</UniqueIdentifier>
     </Filter>
+    <Filter Include="05. Magic\MagicBall\18. Bombarda">
+      <UniqueIdentifier>{71aa1272-8b21-4963-b502-4d0bebac9131}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\10. Flowmap">
       <UniqueIdentifier>{8d96a00c-986f-458a-b01c-19b091c17877}</UniqueIdentifier>
     </Filter>
@@ -986,6 +989,9 @@
     <ClInclude Include="..\public\Norm_Test.h">
       <Filter>04. Effect\Normal</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Diffindo.h">
+      <Filter>05. Magic\MagicBall\13. Diffindo</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\FlowMap.h">
       <Filter>02. GameObject\10. Flowmap</Filter>
     </ClInclude>
@@ -1445,6 +1451,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Norm_Test.cpp">
       <Filter>04. Effect\Normal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Diffindo.cpp">
+      <Filter>05. Magic\MagicBall\13. Diffindo</Filter>
     </ClCompile>
     <ClCompile Include="..\private\FlowMap.cpp">
       <Filter>02. GameObject\10. Flowmap</Filter>

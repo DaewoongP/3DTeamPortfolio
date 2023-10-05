@@ -63,6 +63,7 @@
 #include "Imperio.h"
 #include "Crucio.h"
 #include "Stupefy.h"
+#include "Diffindo.h"
 #pragma endregion Magic
 
 #include "Trigger_Vault.h"
@@ -610,6 +611,11 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			CStupefy::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Stupefy");
 		
+		/* For.Prototype_GameObject_Diffindo */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Diffindo"),
+			CDiffindo::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_Diffindo");
+
 #pragma endregion
 		{
 			std::lock_guard<std::mutex> lock(mtx);
