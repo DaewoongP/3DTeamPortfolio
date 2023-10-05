@@ -58,7 +58,7 @@ public:
 
 
 private:
-	//CAnimation_Camera_Model* m_pAnimation_Camera_Model = { nullptr };
+	CAnimation_Camera_Model* m_pAnimation_Camera_Model = { nullptr };
 
 	CTransform* m_pTransform = { nullptr };
 	CTransform* m_pPlayerTransform = { nullptr };
@@ -106,7 +106,7 @@ private:
 
 	_bool	IsValid_CameraPos(_float3 vEye, _float3 vUp);
 
-	//HRESULT Ready_Animation_Camera();
+	HRESULT Ready_Animation_Camera();
 
 public:
 	static CPlayer_Camera* Create(ID3D11Device * _pDevice, ID3D11DeviceContext * _pContext, void* pArg);

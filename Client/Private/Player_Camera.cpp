@@ -46,10 +46,10 @@ _float3 CPlayer_Camera::Get_CamRightXZ()
 
 void CPlayer_Camera::Change_Animation(const wstring& _AnimattionIndex)
 {
-	/*if (nullptr != m_pAnimation_Camera_Model)
+	if (nullptr != m_pAnimation_Camera_Model)
 	{
 		m_pAnimation_Camera_Model->Change_Animation(_AnimattionIndex);
-	}*/
+	}
 }
 
 
@@ -99,7 +99,7 @@ HRESULT CPlayer_Camera::Initialize(void* pArg)
 
 	m_fCameraHeight = 1.5f;
 
-	//Ready_Animation_Camera();
+	Ready_Animation_Camera();
 
 	return S_OK;
 }
@@ -114,7 +114,7 @@ void CPlayer_Camera::Tick(const _float& _TimeDelta)
 
 	Eye_At_Distance();
 
-	//m_pAnimation_Camera_Model->Tick(_TimeDelta);
+	m_pAnimation_Camera_Model->Tick(_TimeDelta);
 
 	Update_Eye_At();
 
@@ -354,40 +354,40 @@ void CPlayer_Camera::Update_Eye_At()
 		_float3 vUp = _float3(0.0f, 1.0f, 0.0f);
 	}
 
-	////재생중
-	//if (false == m_pAnimation_Camera_Model->Is_Finish_Animation())
-	//{
-	//	//최대치보다 작다면
-	//	if (1.0f > m_fLerpTimeAcc)
-	//	{
-	//		m_fLerpTimeAcc += pGameInstance->Get_World_Tick() * m_fLerpSpeed;
-	//		
-	//		if (1.0f <= m_fLerpTimeAcc)
-	//		{
-	//			m_fLerpTimeAcc = 1.0f;
-	//		}
-	//	}
-	//}
-	//else if (true == m_pAnimation_Camera_Model->Is_Finish_Animation())
-	//{
-	//	//0.0f보다 크다면
-	//	if (0.0f < m_fLerpTimeAcc)
-	//	{
-	//		m_fLerpTimeAcc -= pGameInstance->Get_World_Tick() * m_fLerpSpeed;
+	//재생중
+	if (false == m_pAnimation_Camera_Model->Is_Finish_Animation())
+	{
+		//최대치보다 작다면
+		if (1.0f > m_fLerpTimeAcc)
+		{
+			m_fLerpTimeAcc += pGameInstance->Get_World_Tick() * m_fLerpSpeed;
+			
+			if (1.0f <= m_fLerpTimeAcc)
+			{
+				m_fLerpTimeAcc = 1.0f;
+			}
+		}
+	}
+	else if (true == m_pAnimation_Camera_Model->Is_Finish_Animation())
+	{
+		//0.0f보다 크다면
+		if (0.0f < m_fLerpTimeAcc)
+		{
+			m_fLerpTimeAcc -= pGameInstance->Get_World_Tick() * m_fLerpSpeed;
 
-	//		if (0.0f >= m_fLerpTimeAcc)
-	//		{
-	//			m_fLerpTimeAcc = 0.0f;
-	//		}
-	//	}
-	//}
+			if (0.0f >= m_fLerpTimeAcc)
+			{
+				m_fLerpTimeAcc = 0.0f;
+			}
+		}
+	}
 
-	//if (0.0f != m_fLerpTimeAcc)
-	//{
-	//	vEye = XMVectorLerp(vEye, m_pAnimation_Camera_Model->Get_Eye(), m_fLerpTimeAcc);
-	//	vUp = XMVectorLerp(vUp, m_pAnimation_Camera_Model->Get_Up(), m_fLerpTimeAcc);
-	//	vAt = XMVectorLerp(vAt, m_pAnimation_Camera_Model->Get_At(), m_fLerpTimeAcc);
-	//}
+	if (0.0f != m_fLerpTimeAcc)
+	{
+		vEye = XMVectorLerp(vEye, m_pAnimation_Camera_Model->Get_Eye(), m_fLerpTimeAcc);
+		vUp = XMVectorLerp(vUp, m_pAnimation_Camera_Model->Get_Up(), m_fLerpTimeAcc);
+		vAt = XMVectorLerp(vAt, m_pAnimation_Camera_Model->Get_At(), m_fLerpTimeAcc);
+	}
 	
 	pGameInstance->Set_Transform(
 		CPipeLine::D3DTS_VIEW, 
@@ -409,28 +409,28 @@ _bool CPlayer_Camera::IsValid_CameraPos(_float3 vEye, _float3 vUp)
 	return true;
 }
 
-//HRESULT CPlayer_Camera::Ready_Animation_Camera()
-//{
-//	BEGININSTANCE;
-//
-//	CAnimation_Camera_Model::ANIMATION_CAMERA_MODEL_DESC Animation_Camera_Model_Desc = { CAnimation_Camera_Model::ANIMATION_CAMERA_MODEL_DESC() };
-//
-//	Animation_Camera_Model_Desc.pTargetTransform = m_pTransform;
-//	
-//	m_pAnimation_Camera_Model = static_cast<CAnimation_Camera_Model*>
-//		(pGameInstance->Clone_Component
-//		(LEVEL_STATIC, TEXT("Prototype_GameObject_Animation_Camera_Model"), &Animation_Camera_Model_Desc));
-//	
-//	if (nullptr == m_pAnimation_Camera_Model)
-//	{
-//		MSG_BOX("Failed Ready_Animation_Camera");
-//		return E_FAIL;
-//	}
-//
-//	ENDINSTANCE;
-//
-//	return S_OK;
-//}
+HRESULT CPlayer_Camera::Ready_Animation_Camera()
+{
+	BEGININSTANCE;
+
+	CAnimation_Camera_Model::ANIMATION_CAMERA_MODEL_DESC Animation_Camera_Model_Desc = { CAnimation_Camera_Model::ANIMATION_CAMERA_MODEL_DESC() };
+
+	Animation_Camera_Model_Desc.pTargetTransform = m_pTransform;
+	
+	m_pAnimation_Camera_Model = static_cast<CAnimation_Camera_Model*>
+		(pGameInstance->Clone_Component
+		(LEVEL_STATIC, TEXT("Prototype_GameObject_Animation_Camera_Model"), &Animation_Camera_Model_Desc));
+	
+	if (nullptr == m_pAnimation_Camera_Model)
+	{
+		MSG_BOX("Failed Ready_Animation_Camera");
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
 
 CPlayer_Camera* CPlayer_Camera::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, void* pArg)
 {
@@ -451,5 +451,5 @@ void CPlayer_Camera::Free()
 
 	Safe_Release(m_pTransform);
 	Safe_Release(m_pPlayerTransform);
-	//Safe_Release(m_pAnimation_Camera_Model);
+	Safe_Release(m_pAnimation_Camera_Model);
 }
