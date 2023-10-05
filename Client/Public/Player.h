@@ -231,8 +231,11 @@ private:
 
 	void Update_Cloth(_float fTimeDelta);
 
+	void Clear_Target();
+
 	//타겟을 정하기 위한 함수 (임시 용)
 	void Find_Target_For_Distance();
+	void Find_Target_For_RayDistance();
 	
 #pragma region 노티파이 사용함수
 

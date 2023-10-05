@@ -198,8 +198,12 @@ void CPlayer::Tick(_float fTimeDelta)
 		m_pPlayer_Information->Using_Fnisher();
 	}
 	
-
 	ENDINSTANCE;
+
+	if (nullptr != m_pTarget && m_pTarget->isDead())
+	{
+		Clear_Target();
+	}
 
 	Update_Target_Angle();
 
@@ -1824,6 +1828,11 @@ void CPlayer::Update_Cloth(_float fTimeDelta)
 
 void CPlayer::Find_Target_For_Distance()
 {
+	if (nullptr != m_pTarget)
+	{
+		return;
+	}
+
 	BEGININSTANCE;
 
 	unordered_map<const _tchar*, CComponent*>* pLayer = pGameInstance->Find_Components_In_Layer(m_eLevelID, TEXT("Layer_Monster"));
@@ -1848,6 +1857,108 @@ void CPlayer::Find_Target_For_Distance()
 		//플레이어와
 		_float3 vPlayerPos = m_pTransform->Get_Position();
 		
+		//몬스터의 
+		_float3 vMonsterPos = dynamic_cast<CGameObject*>(iter->second)->Get_Transform()->Get_Position();
+
+		//거리를 구하고
+		_float fDistance = XMVectorGetX(XMVector3Length(vPlayerPos - vMonsterPos));
+
+		//기존 값보다 작다면
+		if (fMinDistance > fDistance)
+		{
+			//거리를 갱신하고
+			fMinDistance = fDistance;
+			//객체도 갱신한다.
+			pTarget = dynamic_cast<CGameObject*>(iter->second);
+		}
+	}
+
+	// 객체가 있다면
+	if (nullptr != pTarget)
+	{
+		//기존 객체는 지워주고
+		if (nullptr != m_pTargetTransform)
+		{
+			Safe_Release(m_pTargetTransform);
+		}
+
+		//타겟으로 한다.
+		m_pTargetTransform = pTarget->Get_Transform();
+
+		Safe_AddRef(m_pTargetTransform);
+
+
+		//기존 객체는 지워주고
+		if (nullptr != m_pTarget)
+		{
+			Safe_Release(m_pTarget);
+		}
+
+		//타겟으로 한다.
+		m_pTarget = pTarget;
+
+		Safe_AddRef(m_pTarget);
+	}
+
+	//객체가 없다면 
+	else if (nullptr == pTarget)
+	{
+		//기존 객체는 지워주고
+		if (nullptr != m_pTargetTransform)
+		{
+			Safe_Release(m_pTargetTransform);
+			m_pTargetTransform = nullptr;
+		}
+
+		//기존 객체는 지워주고
+		if (nullptr != m_pTarget)
+		{
+			Safe_Release(m_pTarget);
+			m_pTarget = nullptr;
+		}
+	}
+	ENDINSTANCE;
+}
+
+void CPlayer::Find_Target_For_RayDistance()
+{
+	//있는건 지우고
+	if (nullptr != m_pTarget)
+	{
+		Clear_Target();
+	}
+
+	BEGININSTANCE;
+
+	unordered_map<const _tchar*, CComponent*>* pLayer = pGameInstance->Find_Components_In_Layer(m_eLevelID, TEXT("Layer_Monster"));
+
+	if (nullptr == pLayer)
+	{
+		ENDINSTANCE;
+		return;
+	}
+
+	_float fMinDistance = { 10.0f };
+
+	////Ray에 부딪히는 놈들 모두 저장
+	//for (unordered_map<const _tchar*, CComponent*>::iterator iter = pLayer->begin(); iter != pLayer->end(); iter++)
+	//{
+	//	pGamein
+	//}
+
+
+
+	//거리가 낮은 놈을 저장
+	CGameObject* pTarget = { nullptr };
+
+	for (unordered_map<const _tchar*, CComponent*>::iterator iter = pLayer->begin(); iter != pLayer->end(); iter++)
+	{
+		if (true == static_cast<CGameObject*>(iter->second)->isDead())
+			continue;
+
+		//플레이어와
+		_float3 vPlayerPos = m_pTransform->Get_Position();
+
 		//몬스터의 
 		_float3 vMonsterPos = dynamic_cast<CGameObject*>(iter->second)->Get_Transform()->Get_Position();
 
@@ -2111,6 +2222,14 @@ void CPlayer::Shot_Magic_Spell_Button_3()
 	}
 
 	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(SKILLINPUT_3, m_pTarget, m_pWeapon, COL_ENEMY, m_isPowerUp);
+}
+
+void CPlayer::Clear_Target()
+{
+	Safe_Release(m_pTarget);
+	Safe_Release(m_pTargetTransform);
+	m_pTarget = nullptr;
+	m_pTargetTransform = nullptr;
 }
 
 void CPlayer::Shot_Magic_Spell_Button_4()
