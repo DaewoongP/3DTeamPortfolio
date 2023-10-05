@@ -216,10 +216,7 @@ HRESULT CMainApp::Ready_Fonts()
 HRESULT CMainApp::Open_Level(LEVELID eLevelIndex)
 {
 	NULL_CHECK_RETURN(m_pGameInstance, E_FAIL);
-	if (false == m_isFirstLoaded)
-	{
-		m_isFirstLoaded = true;
-	}
+
 	return m_pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, eLevelIndex));
 }
 
@@ -271,13 +268,16 @@ void CMainApp::Debug_ImGui()
 
 	if (true == isChangedLevel)
 	{
-		m_pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, m_eLevelID, m_isFirstLoaded));
+		m_pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, m_eLevelID, m_isStaticLoaded));
 
-		if (false == m_isFirstLoaded)
+		if (false == m_isStaticLoaded)
 		{
-			m_isFirstLoaded = true;
+			m_isStaticLoaded = true;
 		}
 	}
+
+	if (LEVEL_LOGO != m_eLevelID)
+		m_isStaticLoaded = true;
 
 	ImGui::End();
 }

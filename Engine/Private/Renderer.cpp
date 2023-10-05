@@ -158,6 +158,7 @@ HRESULT CRenderer::Initialize_Prototype()
 #endif // _DEBUG
 
 	m_fGlowPower = 3.f;
+	m_fHDR = 1.f;
 
 	return S_OK;
 }
@@ -553,6 +554,8 @@ HRESULT CRenderer::Render_HDR()
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Priority"), m_pPostProcessingShader, "g_SkyTexture")))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Deferred"), m_pPostProcessingShader, "g_DeferredTexture")))
+		return E_FAIL;
+	if (FAILED(m_pPostProcessingShader->Bind_RawValue("g_fHDRPower", &m_fHDR, sizeof(_float))))
 		return E_FAIL;
 	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;

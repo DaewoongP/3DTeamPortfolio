@@ -8,6 +8,7 @@ texture2D g_HDRTexture;
 // HDR
 texture2D g_DeferredTexture;
 texture2D g_SkyTexture;
+float g_fHDRPower;
 
 // Effect
 texture2D g_EffectTexture;
@@ -74,7 +75,7 @@ PS_OUT PS_MAIN_HDR(PS_IN In)
     if (0.f == vDeferredTexture.a)
         vDeferredTexture = vSkyTexture;
     else
-        vDeferredTexture.rgb += ACESToneMapping(vDeferredTexture.rgb) * 0.7f;
+        vDeferredTexture.rgb += ACESToneMapping(vDeferredTexture.rgb) * g_fHDRPower;
     
     Out.vColor = vDeferredTexture;
 

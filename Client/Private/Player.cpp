@@ -233,6 +233,7 @@ void CPlayer::Tick(_float fTimeDelta)
 
 #ifdef _DEBUG
 	ADD_IMGUI([&] { this->Tick_ImGui(); });
+	ADD_IMGUI([&] { this->Tick_TestShake(); });
 #endif // _DEBUG
 }
 
@@ -1225,6 +1226,7 @@ void CPlayer::Tick_ImGui()
 	if (ImGui::Button("Go to Level Init Position"))
 	{
 		m_pTransform->Set_Position(m_vLevelInitPosition[pGameInstance->Get_CurrentLevelIndex()]);
+		m_pRigidBody->Clear_Force();
 	}
 	Safe_Release(pGameInstance);
 	
@@ -1236,6 +1238,12 @@ void CPlayer::Tick_ImGui()
 	if (ImGui::SliderFloat("GlowPower", &fGlowPower, 0.1f, 10.f))
 	{
 		m_pRenderer->Set_GlowPower(fGlowPower);
+	}
+
+	_float fHDR = m_pRenderer->Get_HDR();
+	if (ImGui::SliderFloat("HDR", &fHDR, 0.f, 1.5f))
+	{
+		m_pRenderer->Set_HDR(fHDR);
 	}
 
 	ImGui::End();
@@ -1996,9 +2004,9 @@ void CPlayer::Tick_TestShake()
 	ImGui::DragFloat("SHAKE_DURATION", &m_fShakeDuration, 0.001f, 0.001f, 100.0f);
 	ImGui::DragFloat("SHAKE_POWER", &m_fShakePower, 0.001f, 0.001f, 1.0f);
 
-	ImGui::DragFloat("Axis_Set.X", &m_fx, 0.001, 0.001f, 1.0f);
-	ImGui::DragFloat("Axis_Set.Y", &m_fy, 0.001, 0.001f, 1.0f);
-	ImGui::DragFloat("Axis_Set.Z", &m_fz, 0.001, 0.001f, 1.0f);
+	ImGui::DragFloat("Axis_Set.X", &m_fx, 0.001f, 0.001f, 1.0f);
+	ImGui::DragFloat("Axis_Set.Y", &m_fy, 0.001f, 0.001f, 1.0f);
+	ImGui::DragFloat("Axis_Set.Z", &m_fz, 0.001f, 0.001f, 1.0f);
 
 	ImGui::End();
 
