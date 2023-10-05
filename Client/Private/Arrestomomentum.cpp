@@ -146,27 +146,6 @@ void CArrestomomentum::Ready_DrawMagic()
 
 void CArrestomomentum::Ready_CastMagic()
 {
-	
-	__super::Ready_CastMagic();
-}
-
-void CArrestomomentum::Ready_Dying()
-{
-	__super::Ready_Dying();
-}
-
-void CArrestomomentum::Tick_Begin(_float fTimeDelta)
-{
-	__super::Tick_Begin(fTimeDelta);
-}
-
-void CArrestomomentum::Tick_DrawMagic(_float fTimeDelta)
-{
-	__super::Tick_DrawMagic(fTimeDelta);
-}
-
-void CArrestomomentum::Tick_CastMagic(_float fTimeDelta)
-{
 	_float distance = 30.0f;
 	if (m_pTarget == nullptr)
 	{
@@ -190,7 +169,26 @@ void CArrestomomentum::Tick_CastMagic(_float fTimeDelta)
 		//목표지점
 		m_vEndPosition = m_vStartPosition + vDirStartToPicked * distance;
 	}
+	__super::Ready_CastMagic();
+}
 
+void CArrestomomentum::Ready_Dying()
+{
+	__super::Ready_Dying();
+}
+
+void CArrestomomentum::Tick_Begin(_float fTimeDelta)
+{
+	__super::Tick_Begin(fTimeDelta);
+}
+
+void CArrestomomentum::Tick_DrawMagic(_float fTimeDelta)
+{
+	__super::Tick_DrawMagic(fTimeDelta);
+}
+
+void CArrestomomentum::Tick_CastMagic(_float fTimeDelta)
+{
 	m_pTransform->Set_Position(m_vEndPosition);
 	Do_MagicBallState_To_Next();
 }

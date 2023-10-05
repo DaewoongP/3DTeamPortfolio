@@ -794,8 +794,34 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	m_pMagicSlot->Add_Magic_To_Skill_Slot(0, LEVIOSO);
-	m_pMagicSlot->Add_Magic_To_Skill_Slot(1, DESCENDO);
+	//크루시오
+	{
+		magicInitDesc.eBuffType = BUFF_NONE;
+		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
+		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicTag = CRUCIO;
+		magicInitDesc.fInitCoolTime = 1.f;
+		magicInitDesc.iDamage = 10;
+		magicInitDesc.isChase = true;
+		magicInitDesc.fLifeTime = 0.8f;
+		m_pMagicSlot->Add_Magics(magicInitDesc);
+	}
+
+	//스투페파이
+	{
+		magicInitDesc.eBuffType = BUFF_NONE;
+		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
+		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicTag = STUPEFY;
+		magicInitDesc.fInitCoolTime = 1.f;
+		magicInitDesc.iDamage = 10;
+		magicInitDesc.isChase = true;
+		magicInitDesc.fLifeTime = 0.8f;
+		m_pMagicSlot->Add_Magics(magicInitDesc);
+	}
+
+	m_pMagicSlot->Add_Magic_To_Skill_Slot(0, ARRESTOMOMENTUM);
+	m_pMagicSlot->Add_Magic_To_Skill_Slot(1, LEVIOSO);
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(2, ACCIO);
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(3, FLIPENDO);
 	//m_pMagicSlot->Add_Magic_To_Skill_Slot(0, CONFRINGO);
