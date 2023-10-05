@@ -82,7 +82,7 @@ void CPhysX_Manager::Tick(_float fTimeDelta)
 	m_pPhysxScene->fetchResults(true);
 }
 
-_bool CPhysX_Manager::RayCast(_float3 vOrigin, _float3 vDir, _float fMaxDist, _Inout_ _float3* pHitPosition, _Inout_ _float* pDist, _uint iMaxHits, RayCastQueryFlag RaycastFlag)
+_bool CPhysX_Manager::RayCast(_float3 vOrigin, _float3 vDir, _Inout_ class CGameObject** ppCollisionObject, _float fMaxDist, _Inout_ _float3* pHitPosition, _Inout_ _float* pDist, _uint iMaxHits, RayCastQueryFlag RaycastFlag)
 {
 	vDir.Normalize();
 
@@ -110,12 +110,27 @@ _bool CPhysX_Manager::RayCast(_float3 vOrigin, _float3 vDir, _float fMaxDist, _I
 			*pHitPosition = PhysXConverter::ToXMFLOAT3(CallbackBuf.block.position);
 		if (nullptr != pDist)
 			*pDist = CallbackBuf.block.distance;
+
+		if (0 == CallbackBuf.getNbAnyHits())
+		{
+			return false;
+		}
+
+		if (nullptr != ppCollisionObject)
+		{
+			PxRaycastHit hit = CallbackBuf.getAnyHit(0);
+
+			if (nullptr == hit.shape->userData)
+				return false;
+
+			*ppCollisionObject = static_cast<CRigidBody::COLLISIONDATADESC*>(hit.shape->userData)->pOwnerObject;
+		}
 	}
 
 	return isCollision;
 }
 
-_bool CPhysX_Manager::Mouse_RayCast(HWND hWnd, ID3D11DeviceContext* pContext, _float fMaxDist, _float3* pHitPosition, _float* pDist, _uint iMaxHits, RayCastQueryFlag RaycastFlag)
+_bool CPhysX_Manager::Mouse_RayCast(HWND hWnd, ID3D11DeviceContext* pContext, _Inout_ class CGameObject** ppCollisionObject, _float fMaxDist, _Inout_ _float3* pHitPosition, _Inout_ _float* pDist, _uint iMaxHits, RayCastQueryFlag RaycastFlag)
 {
 	CCalculator* pCalculator = CCalculator::GetInstance();
 	Safe_AddRef(pCalculator);
@@ -128,8 +143,8 @@ _bool CPhysX_Manager::Mouse_RayCast(HWND hWnd, ID3D11DeviceContext* pContext, _f
 	}
 
 	Safe_Release(pCalculator);
-
-	return RayCast(vRayPos.xyz(), vRayDir.xyz(), fMaxDist, pHitPosition, pDist, iMaxHits, RaycastFlag);
+	
+	return RayCast(vRayPos.xyz(), vRayDir.xyz(), ppCollisionObject, fMaxDist, pHitPosition, pDist, iMaxHits, RaycastFlag);
 }
 
 PxScene* CPhysX_Manager::Create_Scene()
@@ -140,7 +155,7 @@ PxScene* CPhysX_Manager::Create_Scene()
 	SceneDesc.cpuDispatcher = m_pDefaultCpuDispatcher;
 	SceneDesc.filterShader = CollisionFilterShader;
 	SceneDesc.userData = nullptr; // 데이터를 여기에 넣어두는것도 가능.
-
+	SceneDesc.staticKineFilteringMode = PxPairFilteringMode::eKEEP;
 	PxScene* pScene = m_pPhysics->createScene(SceneDesc);
 	
 	if (nullptr == pScene)

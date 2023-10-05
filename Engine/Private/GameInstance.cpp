@@ -726,18 +726,18 @@ void CGameInstance::Set_Simulation(_bool isSimulation)
 	m_pPhysX_Manager->Set_Simulation(isSimulation);
 }
 
-_bool CGameInstance::RayCast(_float3 vOrigin, _float3 vDir, _float fMaxDist, _Inout_ _float3* pHitPosition, _Inout_ _float* pDist, _uint iMaxHits, CPhysX_Manager::RayCastQueryFlag RaycastFlag)
+_bool CGameInstance::RayCast(_float3 vOrigin, _float3 vDir, _Inout_ CGameObject** ppCollisionObject, _float fMaxDist, _Inout_ _float3* pHitPosition, _Inout_ _float* pDist, _uint iMaxHits, CPhysX_Manager::RayCastQueryFlag RaycastFlag)
 {
 	NULL_CHECK_RETURN_MSG(m_pPhysX_Manager, false, TEXT("PhysX_Manager NULL"));
 
-	return m_pPhysX_Manager->RayCast(vOrigin, vDir, fMaxDist, pHitPosition, pDist, iMaxHits, RaycastFlag);
+	return m_pPhysX_Manager->RayCast(vOrigin, vDir, ppCollisionObject, fMaxDist, pHitPosition, pDist, iMaxHits, RaycastFlag);
 }
 
-_bool CGameInstance::Mouse_RayCast(HWND hWnd, ID3D11DeviceContext* pContext, _float fMaxDist, _Inout_ _float3* pHitPosition, _Inout_ _float* pDist, _uint iMaxHits, CPhysX_Manager::RayCastQueryFlag RaycastFlag)
+_bool CGameInstance::Mouse_RayCast(HWND hWnd, ID3D11DeviceContext* pContext, _Inout_ CGameObject** ppCollisionObject, _float fMaxDist, _Inout_ _float3* pHitPosition, _Inout_ _float* pDist, _uint iMaxHits, CPhysX_Manager::RayCastQueryFlag RaycastFlag)
 {
 	NULL_CHECK_RETURN_MSG(m_pPhysX_Manager, false, TEXT("PhysX_Manager NULL"));
 
-	return m_pPhysX_Manager->Mouse_RayCast(hWnd, pContext, fMaxDist, pHitPosition, pDist, iMaxHits, RaycastFlag);
+	return m_pPhysX_Manager->Mouse_RayCast(hWnd, pContext, ppCollisionObject, fMaxDist, pHitPosition, pDist, iMaxHits, RaycastFlag);
 }
 
 void CGameInstance::Update_PhysxScene()
