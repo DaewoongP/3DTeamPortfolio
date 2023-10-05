@@ -97,7 +97,9 @@ _bool CPhysX_Manager::RayCast(_float3 vOrigin, _float3 vDir, _Inout_ class CGame
 		FilterData.flags = PxQueryFlag::eSTATIC;
 	}
 	else
+	{
 		FilterData.flags = PxQueryFlag::eDYNAMIC | PxQueryFlag::eSTATIC;
+	}
 
 	PxHitFlags eHitFlag = PxHitFlag::ePOSITION | PxHitFlag::eNORMAL | PxHitFlag::eUV;
 
@@ -155,9 +157,9 @@ PxScene* CPhysX_Manager::Create_Scene()
 	SceneDesc.cpuDispatcher = m_pDefaultCpuDispatcher;
 	SceneDesc.filterShader = CollisionFilterShader;
 	SceneDesc.userData = nullptr; // 데이터를 여기에 넣어두는것도 가능.
-	SceneDesc.staticKineFilteringMode = PxPairFilteringMode::eKEEP;
-	PxScene* pScene = m_pPhysics->createScene(SceneDesc);
 	
+	PxScene* pScene = m_pPhysics->createScene(SceneDesc);
+
 	if (nullptr == pScene)
 	{
 		MSG_BOX("Failed Create Scene");
