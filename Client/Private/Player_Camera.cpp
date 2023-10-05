@@ -240,10 +240,10 @@ void CPlayer_Camera::Eye_At_Distance()
 	//일단 확인용으로 imgui를 사용한다.
 
 	BEGININSTANCE;
-	pGameInstance->RayCast(m_pTransform->Get_Position(), m_vEyeStandard, m_fEyeMaxDistance, nullptr, &m_fEyeIntersectDistance,1,CPhysX_Manager::RAY_ONLY_STATIC);
+	//pGameInstance->RayCast(m_pTransform->Get_Position(), m_vEyeStandard, m_fEyeMaxDistance, nullptr, &m_fEyeIntersectDistance,1,CPhysX_Manager::RAY_ONLY_STATIC);
 	//eye
 	//충돌해서 값이 있고, 최대 거리보다 길다면
-	if (pGameInstance->RayCast(m_pTransform->Get_Position(), m_vEyeStandard, m_fEyeMaxDistance, nullptr, &m_fEyeIntersectDistance, 1) &&
+	if (0.0f != m_fEyeIntersectDistance &&
 		m_fEyeMaxDistance > m_fEyeIntersectDistance)
 	{
 		//차이 구하고
@@ -270,7 +270,7 @@ void CPlayer_Camera::Eye_At_Distance()
 
 	//At
 	//충돌해서 값이 있고, 최대 거리보다 길다면
-	if (pGameInstance->RayCast(m_pTransform->Get_Position(), m_vAtStandard, m_fAtMaxDistance, nullptr, &m_fAtIntersectDistance, 1) &&
+	if (0.0f != m_fAtIntersectDistance &&
 		m_fAtMaxDistance > m_fAtIntersectDistance)
 	{
 		//차이 구하고

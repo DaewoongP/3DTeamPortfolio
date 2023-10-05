@@ -899,6 +899,15 @@ void CPlayer::Key_Input(_float fTimeDelta)
 	}
 #endif // _DEBUG
 
+	//조준
+	if (pGameInstance->Get_DIMouseState(CInput_Device::DIMK_RBUTTON, CInput_Device::KEY_PRESSING))
+	{
+		Find_Target_For_RayDistance();
+	}
+
+
+
+
 #pragma region 스테이트 변경 키 입력
 
 	if (pGameInstance->Get_DIKeyState(DIK_LCONTROL,CInput_Device::KEY_DOWN))
@@ -1940,66 +1949,42 @@ void CPlayer::Find_Target_For_RayDistance()
 
 	_float fMinDistance = { 10.0f };
 
-	////Ray에 부딪히는 놈들 모두 저장
-	//for (unordered_map<const _tchar*, CComponent*>::iterator iter = pLayer->begin(); iter != pLayer->end(); iter++)
-	//{
-	//	pGamein
-	//}
-
-
-
 	//거리가 낮은 놈을 저장
 	CGameObject* pTarget = { nullptr };
-
-	for (unordered_map<const _tchar*, CComponent*>::iterator iter = pLayer->begin(); iter != pLayer->end(); iter++)
+	
+	//Ray에 부딪힌 놈이 있다면
+	if (pGameInstance->Mouse_RayCast(g_hWnd, m_pContext, &pTarget, fMinDistance, nullptr, nullptr, 1, CPhysX_Manager::RAY_ONLY_DYNAMIC))
 	{
-		if (true == static_cast<CGameObject*>(iter->second)->isDead())
-			continue;
-
-		//플레이어와
-		_float3 vPlayerPos = m_pTransform->Get_Position();
-
-		//몬스터의 
-		_float3 vMonsterPos = dynamic_cast<CGameObject*>(iter->second)->Get_Transform()->Get_Position();
-
-		//거리를 구하고
-		_float fDistance = XMVectorGetX(XMVector3Length(vPlayerPos - vMonsterPos));
-
-		//기존 값보다 작다면
-		if (fMinDistance > fDistance)
+		//검사한다 몬스터인지
+		for (unordered_map<const _tchar*, CComponent*>::iterator iter = pLayer->begin(); iter != pLayer->end(); iter++)
 		{
-			//거리를 갱신하고
-			fMinDistance = fDistance;
-			//객체도 갱신한다.
-			pTarget = dynamic_cast<CGameObject*>(iter->second);
+			//몬스터라면
+			if (iter->second == pTarget)
+			{
+				//기존 객체는 지워주고
+				if (nullptr != m_pTargetTransform)
+				{
+					Safe_Release(m_pTargetTransform);
+				}
+
+				//타겟으로 한다.
+				m_pTargetTransform = pTarget->Get_Transform();
+
+				Safe_AddRef(m_pTargetTransform);
+
+
+				//기존 객체는 지워주고
+				if (nullptr != m_pTarget)
+				{
+					Safe_Release(m_pTarget);
+				}
+
+				//타겟으로 한다.
+				m_pTarget = pTarget;
+
+				Safe_AddRef(m_pTarget);
+			}
 		}
-	}
-
-	// 객체가 있다면
-	if (nullptr != pTarget)
-	{
-		//기존 객체는 지워주고
-		if (nullptr != m_pTargetTransform)
-		{
-			Safe_Release(m_pTargetTransform);
-		}
-
-		//타겟으로 한다.
-		m_pTargetTransform = pTarget->Get_Transform();
-
-		Safe_AddRef(m_pTargetTransform);
-
-
-		//기존 객체는 지워주고
-		if (nullptr != m_pTarget)
-		{
-			Safe_Release(m_pTarget);
-		}
-
-		//타겟으로 한다.
-		m_pTarget = pTarget;
-
-		Safe_AddRef(m_pTarget);
 	}
 
 	//객체가 없다면 
