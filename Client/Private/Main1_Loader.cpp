@@ -13,6 +13,7 @@
 #include "MapObject_Ins.h"
 
 #include "Treasure_Chest.h"
+#include "Potion_Station.h"
 
 CMain1_Loader::CMain1_Loader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice(pDevice)
@@ -111,10 +112,10 @@ HRESULT CMain1_Loader::Loading_For_Cliffside(LEVELID eLevelID)
 
 	try /* Failed Check Add_Prototype*/
 	{
-		if (FAILED(Loading_Map_Object(TEXT("../../Resources/GameData/MapData/MapData0.ddd"), eLevelID)))
+		if (FAILED(Loading_Map_Object(TEXT("../../Resources/GameData/MapData/MapData3.ddd"), eLevelID)))
 			throw TEXT("Map Object");
 
-		if (FAILED(Loading_Map_Object_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins0.ddd"), eLevelID)))
+		if (FAILED(Loading_Map_Object_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins3.ddd"), eLevelID)))
 			throw TEXT("Map Object_Ins");
 
 	}
@@ -313,6 +314,11 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath, LEVELID 
 	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_Treasure_Chest"),
 		CTreasure_Chest::Create(m_pDevice, m_pContext))))
 		throw TEXT("Prototype_GameObject_Treasure_Chest");
+
+	/* For.Prototype_GameObject_Potion_Station */
+	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_Potion_Station"),
+		CPotion_Station::Create(m_pDevice, m_pContext))))
+		throw TEXT("Prototype_GameObject_Potion_Station");
 
 	HANDLE hFile = CreateFile(pMapObjectPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 

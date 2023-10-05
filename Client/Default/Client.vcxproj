@@ -186,6 +186,7 @@
     <ClInclude Include="..\public\Norm_Test.h" />
     <ClInclude Include="..\public\Plant.h" />
     <ClInclude Include="..\Public\Potion.h" />
+    <ClInclude Include="..\Public\Potion_Station.h" />
     <ClInclude Include="..\Public\Stupefy.h" />
     <ClInclude Include="..\public\Tool.h" />
     <ClInclude Include="..\Public\Death.h" />
@@ -394,6 +395,7 @@
     <ClCompile Include="..\private\Level_Smith.cpp" />
     <ClCompile Include="..\private\Level_Vault.cpp" />
     <ClCompile Include="..\Private\MaximaPotion.cpp" />
+    <ClCompile Include="..\Private\Potion_Station.cpp" />
     <ClCompile Include="..\Private\PotionTap.cpp" />
     <ClCompile Include="..\Private\ProtegoState.cpp" />
     <ClCompile Include="..\Private\Menu_Gear.cpp" />
