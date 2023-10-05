@@ -171,7 +171,6 @@
     <ClInclude Include="..\public\ChineseChompingCabbageItem.h" />
     <ClInclude Include="..\Public\ConjuredDragon.h" />
     <ClInclude Include="..\Public\Diffindo.h" />
-    <ClInclude Include="..\public\HorklumpJuice_Item.h" />
     <ClInclude Include="..\public\FlowMap.h" />
     <ClInclude Include="..\public\ImGui_Manager.h" />
     <ClInclude Include="..\Public\Ingredient.h" />
@@ -363,7 +362,6 @@
     <ClCompile Include="..\private\ChineseChompingCabbageItem.cpp" />
     <ClCompile Include="..\Private\ConjuredDragon.cpp" />
     <ClCompile Include="..\Private\Diffindo.cpp" />
-    <ClCompile Include="..\private\HorklumpJuice_Item.cpp" />
     <ClCompile Include="..\private\FlowMap.cpp" />
     <ClCompile Include="..\private\ImGui_Manager.cpp" />
     <ClCompile Include="..\Private\Ingredient.cpp" />

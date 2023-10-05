@@ -836,7 +836,7 @@ HRESULT CPlayer::Add_Magic()
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(0, DIFFINDO);
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(1, LEVIOSO);
 	m_pMagicSlot->Add_Magic_To_Skill_Slot(2, ACCIO);
-	m_pMagicSlot->Add_Magic_To_Skill_Slot(3, FLIPENDO);
+	m_pMagicSlot->Add_Magic_To_Skill_Slot(3, FINISHER);
 	//m_pMagicSlot->Add_Magic_To_Skill_Slot(0, CONFRINGO);
 	//m_pMagicSlot->Add_Magic_To_Skill_Slot(2, EXPELLIARMUS);
 	//m_pMagicSlot->Add_Magic_To_Skill_Slot(2, FINISHER);
@@ -1184,6 +1184,12 @@ void CPlayer::Tick_ImGui()
 
 	_float3 vVelocity = m_pTransform->Get_Velocity();
 	ImGui::InputFloat3("Velocity", reinterpret_cast<_float*>(&vVelocity));
+
+	_float fGlowPower = m_pRenderer->Get_GlowPower();
+	if (ImGui::SliderFloat("GlowPower", &fGlowPower, 0.1f, 10.f))
+	{
+		m_pRenderer->Set_GlowPower(fGlowPower);
+	}
 
 	ImGui::End();
 }

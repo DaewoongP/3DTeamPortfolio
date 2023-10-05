@@ -17,6 +17,10 @@ public:
 	enum RENDERGROUP {RENDER_PRIORITY, RENDER_DEPTH, RENDER_NONBLEND, RENDER_NONLIGHT, RENDER_BLEND,
 					  RENDER_GLOW, RENDER_DISTORTION, RENDER_PICKING, RENDER_BRUSHING, RENDER_UI, RENDER_UITEXTURE, RENDER_END };
 
+public:
+	_float Get_GlowPower() { return m_fGlowPower; }
+	void Set_GlowPower(_float fPower) { m_fGlowPower = fPower; }
+
 private:
 	explicit CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual ~CRenderer() = default;

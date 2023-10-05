@@ -53,11 +53,6 @@ void CMainApp::Tick(_float fTimeDelta)
 {
 	if (nullptr == m_pGameInstance)
 		return;
-	
-#ifdef _DEBUG
-	FAILED_CHECK_RETURN(m_pImGui_Manager->Add_Function([&] { this->Debug_ImGui(); }), );
-	FAILED_CHECK_RETURN(m_pImGui_Manager->Render(), );
-#endif // _DEBUG
 
 #ifdef _DEBUG
 	ShowCursor(true);
@@ -69,6 +64,11 @@ void CMainApp::Tick(_float fTimeDelta)
 	m_pGameInstance->Tick_Engine(fTimeDelta);
 
 	Tick_FPS(fTimeDelta);
+
+#ifdef _DEBUG
+	FAILED_CHECK_RETURN(m_pImGui_Manager->Add_Function([&] { this->Debug_ImGui(); }), );
+	FAILED_CHECK_RETURN(m_pImGui_Manager->Render(), );
+#endif // _DEBUG
 }
 
 HRESULT CMainApp::Render()
@@ -216,7 +216,10 @@ HRESULT CMainApp::Ready_Fonts()
 HRESULT CMainApp::Open_Level(LEVELID eLevelIndex)
 {
 	NULL_CHECK_RETURN(m_pGameInstance, E_FAIL);
-	
+	if (false == m_isFirstLoaded)
+	{
+		m_isFirstLoaded = true;
+	}
 	return m_pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, eLevelIndex));
 }
 

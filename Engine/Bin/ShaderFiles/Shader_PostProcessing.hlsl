@@ -74,7 +74,7 @@ PS_OUT PS_MAIN_HDR(PS_IN In)
     if (0.f == vDeferredTexture.a)
         vDeferredTexture = vSkyTexture;
     else
-        vDeferredTexture.rgb += ACESToneMapping(vDeferredTexture.rgb);
+        vDeferredTexture.rgb += ACESToneMapping(vDeferredTexture.rgb) * 0.7f;
     
     Out.vColor = vDeferredTexture;
 

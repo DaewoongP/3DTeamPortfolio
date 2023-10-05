@@ -157,6 +157,8 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 #endif // _DEBUG
 
+	m_fGlowPower = 3.f;
+
 	return S_OK;
 }
 
@@ -226,7 +228,7 @@ HRESULT CRenderer::Draw_RenderGroup()
 	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_Effect"))))
 		return E_FAIL;
 
-	if (FAILED(m_pGlow->Render(m_RenderObjects[RENDER_GLOW], 3.f)))
+	if (FAILED(m_pGlow->Render(m_RenderObjects[RENDER_GLOW], m_fGlowPower)))
 		return E_FAIL;
 	if (FAILED(Render_PostProcessing()))
 		return E_FAIL;
