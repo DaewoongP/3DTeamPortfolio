@@ -194,11 +194,11 @@ void CWingardium_Effect::TrailAction(_float3 pos, _float fTimeDelta)
 
 			}
 
-			BEGININSTANCE;
+			/*BEGININSTANCE;
 			if (pGameInstance->RayCast(m_pTransform->Get_Position(), m_pTransform->Get_Up() * -1, nullptr, 100, &m_vBottom))
 			{
 			}
-			ENDINSTANCE;
+			ENDINSTANCE;*/
 
 			//y∏¶ ø√∑¡¡‹.
 			_float fElapsedTime = m_TrailToOriginDesc[i].fSettingLifeTime - m_TrailToOriginDesc[i].fCurrnetLifeTime;
