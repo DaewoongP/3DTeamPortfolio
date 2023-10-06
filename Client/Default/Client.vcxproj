@@ -187,6 +187,7 @@
     <ClInclude Include="..\public\Norm_Test.h" />
     <ClInclude Include="..\public\Plant.h" />
     <ClInclude Include="..\Public\Potion.h" />
+    <ClInclude Include="..\Public\Sequence_Descendo.h" />
     <ClInclude Include="..\Public\Stupefy.h" />
     <ClInclude Include="..\public\Tool.h" />
     <ClInclude Include="..\Public\Death.h" />
@@ -224,6 +225,7 @@
     <ClInclude Include="..\Public\MapObject_Ins.h" />
     <ClInclude Include="..\Public\UI_Potion_Tap.h" />
     <ClInclude Include="..\Public\RigidMove.h" />
+    <ClInclude Include="..\Public\Weapon_Goblin_Assasin.h" />
     <ClInclude Include="..\public\WiggenweldPotion.h" />
     <ClInclude Include="..\Public\Sequence_AirHit.h" />
     <ClInclude Include="..\Public\StandingState.h" />
@@ -275,12 +277,12 @@
     <ClInclude Include="..\Public\Professor_Fig.h" />
     <ClInclude Include="..\Public\Selector_Degree.h" />
     <ClInclude Include="..\Public\Armored_Troll.h" />
-    <ClInclude Include="..\Public\Assasin_Goblin.h" />
+    <ClInclude Include="..\Public\Goblin_Assasin.h" />
     <ClInclude Include="..\Public\Behavior_Includes.h" />
     <ClInclude Include="..\public\Camera_Debug.h" />
     <ClInclude Include="..\Public\Golem_Combat.h" />
     <ClInclude Include="..\Public\Client_Defines.h" />
-    <ClInclude Include="..\Public\Client_Includes.h" />
+    <ClInclude Include="..\Public\Client_GameInstance_Functions.h" />
     <ClInclude Include="..\Public\Dugbog.h" />
     <ClInclude Include="..\Public\Forest_Troll.h" />
     <ClInclude Include="..\Public\MapObject.h" />
@@ -409,9 +411,11 @@
     <ClCompile Include="..\Private\Menu_Quest.cpp" />
     <ClCompile Include="..\Private\Menu_Setting.cpp" />
     <ClCompile Include="..\Private\MapObject_Ins.cpp" />
+    <ClCompile Include="..\Private\Sequence_Descendo.cpp" />
     <ClCompile Include="..\Private\Stupefy.cpp" />
     <ClCompile Include="..\Private\UI_Potion_Tap.cpp" />
     <ClCompile Include="..\Private\RigidMove.cpp" />
+    <ClCompile Include="..\Private\Weapon_Goblin_Assasin.cpp" />
     <ClCompile Include="..\private\WiggenweldPotion.cpp" />
     <ClCompile Include="..\Private\Sequence_AirHit.cpp" />
     <ClCompile Include="..\Private\StandingState.cpp" />
@@ -463,7 +467,7 @@
     <ClCompile Include="..\Private\Professor_Fig.cpp" />
     <ClCompile Include="..\Private\Selector_Degree.cpp" />
     <ClCompile Include="..\Private\Armored_Troll.cpp" />
-    <ClCompile Include="..\Private\Assasin_Goblin.cpp" />
+    <ClCompile Include="..\Private\Goblin_Assasin.cpp" />
     <ClCompile Include="..\private\Camera_Debug.cpp" />
     <ClCompile Include="..\private\Player_Camera.cpp" />
     <ClCompile Include="..\Private\Golem_Combat.cpp" />

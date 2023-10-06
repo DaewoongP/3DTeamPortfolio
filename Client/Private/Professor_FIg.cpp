@@ -269,6 +269,7 @@ HRESULT CProfessor_Fig::Make_Magics()
 		magicInitDesc.fInitCoolTime = 0.f;
 		magicInitDesc.iDamage = 10;
 		magicInitDesc.fLifeTime = 0.8f;
+		magicInitDesc.isChase = true;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
@@ -958,8 +959,8 @@ void CProfessor_Fig::Cast_Protego()
 {
 	if (nullptr == m_pTarget)
 		return;
-
-	m_CastingMagic = m_pMagicSlot->Action_Magic_Basic(1, this, m_pWeapon, COL_ENEMY);
+	
+	m_CastingMagic = m_pMagicSlot->Action_Magic_Basic(1, this, m_pWeapon, COL_ENEMY_ATTACK);
 }
 
 void CProfessor_Fig::Shot_Magic()

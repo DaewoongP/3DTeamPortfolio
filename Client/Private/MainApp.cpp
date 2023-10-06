@@ -88,7 +88,7 @@ HRESULT CMainApp::Render()
 #endif // _DEBUG
 
 	FAILED_CHECK_RETURN(m_pGameInstance->Present(), E_FAIL);
-
+	
 	return S_OK;
 }
 

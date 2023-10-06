@@ -1,7 +1,7 @@
 #pragma once
 
 /* =============================================== */
-//	[CWeapon_Golem_Combat]
+//	[CWeapon_Goblin_Assasin]
 // 
 //	정 : 주성환
 //	부 :
@@ -21,12 +21,12 @@ END
 
 BEGIN(Client)
 
-class CWeapon_Golem_Combat : public CParts
+class CWeapon_Goblin_Assasin : public CParts
 {
 private:
-	explicit CWeapon_Golem_Combat(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	explicit CWeapon_Golem_Combat(const CWeapon_Golem_Combat& rhs);
-	virtual ~CWeapon_Golem_Combat() = default;
+	explicit CWeapon_Goblin_Assasin(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	explicit CWeapon_Goblin_Assasin(const CWeapon_Goblin_Assasin& rhs);
+	virtual ~CWeapon_Goblin_Assasin() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -44,6 +44,7 @@ public:
 	void Off_Collider_Attack(CEnemy::COLLISIONREQUESTDESC* pCollisionRequestDesc) {
 		m_pRigidBody->Disable_Collision("Attack");
 	}
+
 private:
 	CModel* m_pModelCom = { nullptr };
 	CShader* m_pShaderCom = { nullptr };
@@ -56,8 +57,8 @@ private:
 	HRESULT Set_Shader_Resources();
 
 public:
-	static CWeapon_Golem_Combat* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CWeapon_Golem_Combat* Clone(void* pArg) override;
+	static CWeapon_Goblin_Assasin* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	virtual CWeapon_Goblin_Assasin* Clone(void* pArg) override;
 	virtual void Free() override;
 };
 

@@ -181,6 +181,9 @@ void CRenderer::Add_RenderGroup(RENDERGROUP eRenderGroup, CGameObject* pGameObje
 #ifdef _DEBUG
 HRESULT CRenderer::Add_DebugGroup(CComponent* pDebugCom)
 {
+	if (false == m_isDebugRender)
+		return S_OK;
+
 	m_DebugObject.push_back(pDebugCom);
 
 	Safe_AddRef(pDebugCom);
@@ -771,11 +774,10 @@ HRESULT CRenderer::Add_Components()
 }
 #ifdef _DEBUG
 HRESULT CRenderer::Render_Debug()
-{	
+{
 	for (auto& pDebugCom : m_DebugObject)
 	{
-		if (nullptr != pDebugCom &&
-			true == m_isDebugRender)
+		if (nullptr != pDebugCom)
 			pDebugCom->Render();
 
 		Safe_Release(pDebugCom);

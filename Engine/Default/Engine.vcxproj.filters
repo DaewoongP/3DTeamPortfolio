@@ -831,6 +831,9 @@
     <ClInclude Include="..\public\CoolTime.h">
       <Filter>01. Utility\03. Components\11. Status\03. CoolTime</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\RaycastCallBack.h">
+      <Filter>01. Utility\11. Physics\EventCallBack</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -1213,6 +1216,9 @@
     </ClCompile>
     <ClCompile Include="..\private\CoolTime.cpp">
       <Filter>01. Utility\03. Components\11. Status\03. CoolTime</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\RaycastCallBack.cpp">
+      <Filter>01. Utility\11. Physics\EventCallBack</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

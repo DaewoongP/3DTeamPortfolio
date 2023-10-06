@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "Client_Defines.h"
 
+#include "Enemy.h"
 #include "Magic.h"
 
 BEGIN(Engine)
@@ -38,6 +39,9 @@ public:
 	virtual void OnCollisionExit(COLLEVENTDESC CollisionEventDesc) override;
 	virtual HRESULT Render() override;
 	virtual HRESULT Render_Depth() override;
+
+public:
+	void Set_Protego_Collision(CTransform* pTransform, CEnemy::ATTACKTYPE eType) const {}
 
 private:
 	CModel* m_pModelCom = { nullptr };
@@ -97,7 +101,6 @@ private: /* Notify Functions */
 	void Cast_Levioso();
 	void Cast_Protego();
 	void Shot_Magic();
-
 
 public:
 	static CProfessor_Fig* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

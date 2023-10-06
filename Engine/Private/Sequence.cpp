@@ -55,12 +55,9 @@ HRESULT CSequence::Tick(const _float& fTimeDelta)
 
 void CSequence::Reset_Behavior(HRESULT result)
 {
-	if (BEHAVIOR_RUNNING == m_ReturnData &&	// 현재 행동이 진행중이었는데
-		BEHAVIOR_RUNNING != result)			// 상위 노드에서 상태가 바뀐경우
-	{
-		(*m_iterCurBehavior)->Reset_Behavior(result);
-		m_iterCurBehavior = m_Behaviors.begin();
-	}
+	(*m_iterCurBehavior)->Reset_Behavior(result);
+	m_iterCurBehavior = m_Behaviors.begin();
+
 	m_ReturnData = result;
 }
 

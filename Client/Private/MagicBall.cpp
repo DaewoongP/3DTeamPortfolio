@@ -127,7 +127,7 @@ HRESULT CMagicBall::Reset(MAGICBALLINITDESC& InitDesc)
 	m_CollisionDesc.eBuffType = InitDesc.eBuffType;
 	m_CollisionDesc.eMagicTag = InitDesc.eMagicTag;
 	m_CollisionDesc.iDamage = InitDesc.iDamage;
-
+	m_CollisionDesc.pTransform = m_pTransform;
 	m_eCollisionFlag = InitDesc.eCollisionFlag;
 
 	m_pRigidBody->Set_CollisionFlag("Magic_Ball", m_eCollisionFlag);
