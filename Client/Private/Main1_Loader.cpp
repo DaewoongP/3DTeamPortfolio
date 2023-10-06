@@ -13,6 +13,7 @@
 
 #include "Treasure_Chest.h"
 #include "Potion_Station.h"
+#include "Gatherer.h"
 
 CMain1_Loader::CMain1_Loader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice(pDevice)
@@ -349,6 +350,11 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath, LEVELID 
 		CPotion_Station::Create(m_pDevice, m_pContext))))
 		throw TEXT("Prototype_GameObject_Potion_Station");
 
+	/* For.Prototype_GameObject_Gatherer */
+	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_Gatherer"),
+		CGatherer::Create(m_pDevice, m_pContext))))
+		throw TEXT("Prototype_GameObject_Gatherer");
+
 	HANDLE hFile = CreateFile(pMapObjectPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
 	if (INVALID_HANDLE_VALUE == hFile)
@@ -405,6 +411,10 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath, LEVELID 
 
 		// 비교해야되는 문자열
 		wstring wsTreasureChestName(TEXT("Anim_TreasureChest"));
+		wstring wsAshwinderEggs(TEXT("Anim_AshwinderEggs"));
+		wstring wsHorklump(TEXT("Anim_Horklump"));
+		wstring wsLeapingToadStools(TEXT("Anim_LeapingToadStools"));
+		wstring wsLeech(TEXT("Anim_Leech"));
 
 		// 보물상자
 		if (0 == lstrcmp(modelName.c_str(), wsTreasureChestName.c_str()))
@@ -413,6 +423,19 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath, LEVELID 
 				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, modelPath.c_str()), true)))
 			{
 				MSG_BOX("Failed to Create New Model Prototype(TreasureChest)");
+			}
+		}
+
+		// 채집물
+		else if (0 == lstrcmp(modelName.c_str(), wsAshwinderEggs.c_str()) ||
+			0 == lstrcmp(modelName.c_str(), wsHorklump.c_str()) ||
+			0 == lstrcmp(modelName.c_str(), wsLeapingToadStools.c_str()) ||
+			0 == lstrcmp(modelName.c_str(), wsLeech.c_str()))
+		{
+			if (FAILED(pGameInstance->Add_Prototype(eID, LoadDesc.wszTag,
+				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, modelPath.c_str()), true)))
+			{
+				MSG_BOX("Failed to Create New Model Prototype(Gatherer)");
 			}
 		}
 

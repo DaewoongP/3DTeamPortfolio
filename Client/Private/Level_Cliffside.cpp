@@ -399,6 +399,10 @@ HRESULT CLevel_Cliffside::Load_MapObject(const _tchar* pObjectFilePath)
 
 		// 비교해야되는 문자열
 		wstring wsTreasureChestName(TEXT("Anim_TreasureChest"));
+		wstring wsAshwinderEggs(TEXT("Anim_AshwinderEggs"));
+		wstring wsHorklump(TEXT("Anim_Horklump"));
+		wstring wsLeapingToadStools(TEXT("Anim_LeapingToadStools"));
+		wstring wsLeech(TEXT("Anim_Leech"));
 
 		// 보물상자
 		if (0 == lstrcmp(modelName.c_str(), wsTreasureChestName.c_str()))
@@ -416,6 +420,26 @@ HRESULT CLevel_Cliffside::Load_MapObject(const _tchar* pObjectFilePath)
 			}
 		}
 
+		// 채집물
+		else if (0 == lstrcmp(modelName.c_str(), wsAshwinderEggs.c_str()) ||
+			0 == lstrcmp(modelName.c_str(), wsHorklump.c_str()) ||
+			0 == lstrcmp(modelName.c_str(), wsLeapingToadStools.c_str()) ||
+			0 == lstrcmp(modelName.c_str(), wsLeech.c_str()))
+		{
+			_tchar wszobjName[MAX_PATH] = { 0 };
+			_stprintf_s(wszobjName, TEXT("GameObject_Gatherer_%d"), (iObjectNum));
+
+			if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE,
+				TEXT("Prototype_GameObject_Gatherer"), TEXT("Layer_BackGround"),
+				wszobjName, &MapObjectDesc)))
+			{
+				MSG_BOX("Failed to Clone Gatherer");
+				ENDINSTANCE;
+				return E_FAIL;
+			}
+		}
+
+		// 일반 맵 오브젝트
 		else
 		{
 			_tchar wszobjName[MAX_PATH] = { 0 };

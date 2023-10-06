@@ -16,6 +16,10 @@ class CPlayer;
 
 class CGatherer final : public CGameObject
 {
+public: 
+	// 순서대로 애쉬와인드 알, 호클럼프 즙, 독버섯 갓, 거머리 즙 
+	enum GATHERING { ASHWINDEREGG, HORKLUMP, LEAPINGTOADSTOOLS, LEECH, GATHERING_END };
+
 public:
 	typedef struct tagMapObjectDesc
 	{
@@ -54,6 +58,7 @@ private:
 
 private:
 	MAPOBJECTDESC	m_ObjectDesc;
+	GATHERING		m_GatheringType = { GATHERING_END }; // 채집물 종류
 
 private:
 	HRESULT Add_Components();

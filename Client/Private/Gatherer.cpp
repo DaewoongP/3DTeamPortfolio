@@ -38,10 +38,6 @@ HRESULT CGatherer::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-	BEGININSTANCE;
-
-	ENDINSTANCE;
-
 	return S_OK;
 }
 
@@ -56,12 +52,69 @@ HRESULT CGatherer::Initialize_Level(_uint iCurrentLevelIndex)
 		return E_FAIL;
 	}
 
+	// 채집물 종류 파악
+	wstring wsAshwinderEggs(TEXT("Anim_AshwinderEggs"));
+	wstring wsHorklump(TEXT("Anim_Horklump"));
+	wstring wsLeapingToadStools(TEXT("Anim_LeapingToadStools"));
+	wstring wsLeech(TEXT("Anim_Leech"));
+
+	if (0 == lstrcmp(m_ObjectDesc.wszTag, wsAshwinderEggs.c_str()))
+	{
+		m_GatheringType = CGatherer::ASHWINDEREGG;
+	}
+	else if (0 == lstrcmp(m_ObjectDesc.wszTag, wsHorklump.c_str()))
+	{
+		m_GatheringType = CGatherer::HORKLUMP;
+	}
+	else if (0 == lstrcmp(m_ObjectDesc.wszTag, wsLeapingToadStools.c_str()))
+	{
+		m_GatheringType = CGatherer::LEAPINGTOADSTOOLS;
+	}
+	else if (0 == lstrcmp(m_ObjectDesc.wszTag, wsLeech.c_str()))
+	{
+		m_GatheringType = CGatherer::LEECH;
+	}
+
+	// 채집물 애니메이션이 공통적으로 0번이 뽑히는 모션임
+	// 1번이 IDLE이라고 생각할 수 있음
+	m_pModel->Set_CurrentAnimIndex(1);
+
+	// 플레이어 찾기
+	BEGININSTANCE;
+	m_pPlayer = static_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(iCurrentLevelIndex, TEXT("Layer_Player"), TEXT("GameObject_Player")));
+	ENDINSTANCE;
+
 	return S_OK;
 }
 
 void CGatherer::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	// 플레이어와 거리 비교
+	_float3 vPlayerPos = m_pPlayer->Get_PlayerPos();
+	_float3 vChestPos = m_pTransform->Get_Position();
+
+	m_fDist_From_Player = sqrtf((vPlayerPos.x - vChestPos.x) * (vPlayerPos.x - vChestPos.x) +
+		(vPlayerPos.y - vChestPos.y) * (vPlayerPos.y - vChestPos.y) +
+		(vPlayerPos.z - vChestPos.z) * (vPlayerPos.z - vChestPos.z));
+
+	// 일정 거리안으로 들어왔을 때
+	if (2.f >= m_fDist_From_Player && nullptr != m_pModel)
+	{
+		// 여기서 버튼 UI가 나타나면 될듯
+
+		BEGININSTANCE;  // 버튼을 누르면 동작
+		if (pGameInstance->Get_DIKeyState(DIK_E, CInput_Device::KEY_DOWN))
+		{
+			// 채집당하는 애니메이션으로 변경
+			m_pModel->Set_CurrentAnimIndex(0);
+
+			// 여기서 인벤토리 처리해주면 될듯
+		}
+
+		ENDINSTANCE;
+	}
 
 	if (nullptr != m_pModel)
 		m_pModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
