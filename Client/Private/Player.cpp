@@ -995,9 +995,11 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		MagicCastingStateDesc.iSpellType = CMagicCastingState::SPELL_FINISHER;
 
 		//조건 추가함
-		if (pGameInstance->Get_DIKeyState(DIK_X, CInput_Device::KEY_DOWN) && m_pPlayer_Information->Is_Use_Fnisher())
+		if (pGameInstance->Get_DIKeyState(DIK_X, CInput_Device::KEY_DOWN) && m_pPlayer_Information->Is_Use_Fnisher() && nullptr != m_pTarget)
 		{
 			MagicCastingStateDesc.pFuncSpell = [&] {(*this).Finisher(); };
+
+			static_cast<CEnemy*>(m_pTarget)->Ready_Hit_Finisher();
 
 			m_pPlayer_Information->Using_Fnisher();
 
@@ -1197,6 +1199,7 @@ HRESULT CPlayer::Ready_Camera()
 	PlayerCameraDesc.pPlayerTransform = m_pTransform;
 	PlayerCameraDesc.ppTargetTransform = &m_pTargetTransform;
 	PlayerCameraDesc.eLevelID = m_eLevelID;
+	PlayerCameraDesc.IsMove = &m_isFixMouse;
 
 	m_pPlayer_Camera = CPlayer_Camera::Create(m_pDevice, m_pContext, &PlayerCameraDesc);
 
