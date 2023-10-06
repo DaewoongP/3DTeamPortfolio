@@ -1,6 +1,5 @@
 ﻿#include "..\Public\Main1_Loader.h"
 #include "GameInstance.h"
-#include "Client_Includes.h"
 #include "Behavior_Includes.h"
 
 //////////////////////////////
@@ -260,6 +259,11 @@ HRESULT CMain1_Loader::Loading_For_Static(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Sequence_Groggy"),
 			CSequence_Groggy::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Sequence_Groggy");
+
+		/* For.Prototype_Component_Sequence_Descendo */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Sequence_Descendo"),
+			CSequence_Descendo::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Sequence_Descendo");
 
 		/* For.Prototype_Component_Sequence_Levitate */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Sequence_Levitate"),

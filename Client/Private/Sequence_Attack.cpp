@@ -1,6 +1,6 @@
 #include "Sequence_Attack.h"
 
-#include "GameInstance.h"
+#include "Client_GameInstance_Functions.h"
 #include "BlackBoard.h"
 
 #include "LookAt.h"
@@ -45,12 +45,10 @@ HRESULT CSequence_Attack::Initialize(void* pArg)
 			return true;
 		});
 
-	BEGININSTANCE;
-	m_pAction = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-	ENDINSTANCE;
-	if (nullptr == m_pAction)
+	m_pAction = nullptr;
+	if (FAILED(Create_Behavior(m_pAction)))
 	{
-		MSG_BOX("[CSequence_Attack] Failed Initialize : m_pAction is nullptr");
+		MSG_BOX("[CSequence_Attack] Failed Initialize : Failed Create_Behavior m_pAction");
 		return E_FAIL;
 	}
 
@@ -75,12 +73,12 @@ HRESULT CSequence_Attack::Assemble_Childs()
 		if (FAILED(m_pBlackBoard->Get_Type("pTransform", pTransform)))
 			throw TEXT("pTransform is nullptr");
 
-		CCheck_Distance* pTsk_Check_Distance = dynamic_cast<CCheck_Distance*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Check_Distance")));
-		if (nullptr == pTsk_Check_Distance)
-			throw TEXT("pTsk_Check_Distance is nullptr");
-		CLookAt* pTsk_LookAt = dynamic_cast<CLookAt*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_LookAt")));
-		if (nullptr == pTsk_LookAt)
-			throw TEXT("pTsk_LookAt is nullptr");
+		CCheck_Distance* pTsk_Check_Distance = nullptr;
+		if (FAILED(Create_Behavior(pTsk_Check_Distance)))
+			throw TEXT("Failed Create_Behavior pTsk_Check_Distance");
+		CLookAt* pTsk_LookAt = nullptr;
+		if (FAILED(Create_Behavior(pTsk_LookAt)))
+			throw TEXT("Failed Create_Behavior pTsk_LookAt");
 
 		/* Set Decorations */
 		m_pAction->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool

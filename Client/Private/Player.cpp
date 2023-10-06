@@ -591,7 +591,7 @@ HRESULT CPlayer::Add_Components()
 
 	m_OffsetMatrix = XMMatrixTranslation(RigidBodyDesc.vOffsetPosition.x, RigidBodyDesc.vOffsetPosition.y, RigidBodyDesc.vOffsetPosition.z);
 	m_pRigidBody->Get_RigidBodyActor()->setAngularDamping(1.f);
-
+	m_pRigidBody->Set_Density(100.f);
 
 	/* Com_Player_Information */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Player_Information"),
@@ -858,12 +858,25 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
+	//º½¹Ù¸£´Ù
+	{
+		magicInitDesc.eBuffType = BUFF_NONE;
+		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
+		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicTag = BOMBARDA;
+		magicInitDesc.fInitCoolTime = 1.f;
+		magicInitDesc.iDamage = 10;
+		magicInitDesc.isChase = true;
+		magicInitDesc.fLifeTime = 0.8f;
+		m_pMagicSlot->Add_Magics(magicInitDesc);
+	}
+
 	m_pMagicSlot->Add_Magic_To_Basic_Slot(2, LUMOS);
 	m_pMagicSlot->Add_Magic_To_Basic_Slot(3, FINISHER);
 
-	Set_Spell_Botton(0, DESCENDO);
-	Set_Spell_Botton(1, FLIPENDO);
-	Set_Spell_Botton(2, EXPELLIARMUS);
+	Set_Spell_Botton(0, LEVIOSO);
+	Set_Spell_Botton(1, DIFFINDO);
+	Set_Spell_Botton(2, BOMBARDA);
 	Set_Spell_Botton(3, IMPERIO);
 
 	return S_OK;
@@ -1248,6 +1261,13 @@ void CPlayer::Tick_ImGui()
 	{
 		m_pRenderer->Set_HDR(fHDR);
 	}
+
+	ImGui::End();
+}
+
+void CPlayer::Tick_Magic_ImGui()
+{
+	ImGui::Begin("Magic");
 
 	ImGui::End();
 }
