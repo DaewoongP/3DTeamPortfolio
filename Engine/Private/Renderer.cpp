@@ -78,7 +78,7 @@ HRESULT CRenderer::Initialize_Prototype()
 		TEXT("Target_HDR"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
-		TEXT("Target_Effect"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
+		TEXT("Target_Effect"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 0.f))))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_PostProcessing"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
@@ -153,7 +153,11 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Deferred"), 240.f, 80.f, 160.f, 160.f)))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Priority"), 240.f, 240.f, 160.f, 160.f)))
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_HDR"), 240.f, 240.f, 160.f, 160.f)))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Effect"), 240.f, 400.f, 160.f, 160.f)))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Glowed"), 240.f, 560.f, 160.f, 160.f)))
 		return E_FAIL;
 #endif // _DEBUG
 
@@ -198,6 +202,7 @@ HRESULT CRenderer::Draw_RenderGroup()
 	if (FAILED(Render_Priority()))
 		return E_FAIL;
 
+#pragma region MRT_Deferred
 	// 객체 전부를 그린 렌더타겟 저장
 	// 빛연산 포함. (객체와 깊이관련 연산은 전부 이안에서 처리)
 	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Deferred"))))
@@ -216,27 +221,34 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_Deferred"))))
 		return E_FAIL;
+#pragma endregion
 
+#pragma region MRT_HDR
 	if (FAILED(Render_HDR()))
 		return E_FAIL;
+#pragma endregion
 
-	// 객체 렌더타겟 후처리 쉐이딩
-	
-	// 이펙트
-	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Effect"))))
-		return E_FAIL;
-	if (FAILED(Render_NonLight()))
-		return E_FAIL;
-	if (FAILED(Render_Blend()))
-		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_Effect"))))
-		return E_FAIL;
-
+#pragma region MRT_Glowed
 	if (FAILED(m_pGlow->Render(m_RenderObjects[RENDER_GLOW], m_fGlowPower)))
+		return E_FAIL;
+#pragma endregion
+
+#pragma region MRT_PostProcessing
+	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_PostProcessing"))))
 		return E_FAIL;
 	if (FAILED(Render_PostProcessing()))
 		return E_FAIL;
 
+	if (FAILED(Render_NonLight()))
+		return E_FAIL;
+	if (FAILED(Render_Blend()))
+		return E_FAIL;
+
+	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_PostProcessing"))))
+		return E_FAIL;
+#pragma endregion
+
+	// Screen Shading
 	if (FAILED(Render_Distortion()))
 		return E_FAIL;
 
@@ -621,14 +633,9 @@ HRESULT CRenderer::Render_Distortion()
 
 HRESULT CRenderer::Render_PostProcessing()
 {
-	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_PostProcessing"))))
-		return E_FAIL;
-
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_HDR"), m_pPostProcessingShader, "g_HDRTexture")))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Glowed"), m_pPostProcessingShader, "g_GlowTexture")))
-		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Effect"), m_pPostProcessingShader, "g_EffectTexture")))
 		return E_FAIL;
 	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
@@ -640,9 +647,6 @@ HRESULT CRenderer::Render_PostProcessing()
 		return E_FAIL;
 
 	if (FAILED(m_pRectBuffer->Render()))
-		return E_FAIL;
-
-	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_PostProcessing"))))
 		return E_FAIL;
 
 	return S_OK;
