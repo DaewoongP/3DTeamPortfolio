@@ -1263,6 +1263,13 @@ void CPlayer::Tick_ImGui()
 	ImGui::End();
 }
 
+void CPlayer::Tick_Magic_ImGui()
+{
+	ImGui::Begin("Magic");
+
+	ImGui::End();
+}
+
 #endif // _DEBUG
 
 void CPlayer::UpdateLookAngle()

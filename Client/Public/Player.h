@@ -197,6 +197,7 @@ public:
 #ifdef _DEBUG
 private:
 	void Tick_ImGui();
+	void Tick_Magic_ImGui();
 	_bool m_isGravity = { false };
 
 #pragma region 카메라 쉐이크
