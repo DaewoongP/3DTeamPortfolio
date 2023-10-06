@@ -223,12 +223,9 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 #pragma endregion
 
-#pragma region MRT_HDR
+#pragma region Render Targets
 	if (FAILED(Render_HDR()))
 		return E_FAIL;
-#pragma endregion
-
-#pragma region MRT_Glowed
 	if (FAILED(m_pGlow->Render(m_RenderObjects[RENDER_GLOW], m_fGlowPower)))
 		return E_FAIL;
 #pragma endregion
@@ -256,6 +253,7 @@ HRESULT CRenderer::Draw_RenderGroup()
 	if (FAILED(Render_UI()))
 		return E_FAIL;
 
+#pragma region Debugs
 #ifdef _DEBUG
 	if (FAILED(Render_Picking()))
 		return E_FAIL;
@@ -290,6 +288,7 @@ HRESULT CRenderer::Draw_RenderGroup()
 
 	Safe_Release(pFont_Manager);
 #endif // _DEBUG
+#pragma endregion
 
 	return S_OK;
 }
