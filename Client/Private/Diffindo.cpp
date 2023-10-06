@@ -31,6 +31,33 @@ HRESULT CDiffindo::Initialize_Prototype(_uint iLevel)
 			return E_FAIL;
 		}
 	}
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Diffindo_Ball_Twinkle")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Diffindo_Ball_Twinkle")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Diffindo/Ball_Twinkle/"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Diffindo_Cast_Twinkle")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Diffindo_Cast_Twinkle")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Diffindo/Cast_Twinkle/"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Diffindo_Dust")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Diffindo_Dust")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Diffindo/Dust/"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
 	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Diffindo_MeshEffect")))
 	{
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Diffindo_MeshEffect")
@@ -130,6 +157,9 @@ void CDiffindo::Ready_CastMagic()
 		m_vEndPosition = m_vStartPosition + vDirStartToPicked * 30.f;
 	}
 
+	m_ParticleVec[EFFECT_STATE_MAIN][0]->Get_Transform()->LookAt(m_vEndPosition);
+	m_ParticleVec[EFFECT_STATE_MAIN][1]->Get_Transform()->LookAt(m_vEndPosition);
+
 	m_fTimeScalePerDitance = 30.f / _float3(m_vEndPosition - m_vStartPosition).Length();
 	m_pMeshEffect->Play(m_vStartPosition);
 	m_pMeshEffect->Get_Transform()->LookAt(m_vEndPosition);
@@ -159,7 +189,12 @@ void CDiffindo::Tick_CastMagic(_float fTimeDelta)
 	
 	m_pMeshEffect->Get_Transform()->Go_Straight(fTimeDelta);
 	m_pTransform->Set_Position(m_pMeshEffect->Get_Transform()->Get_Position());
+	m_ParticleVec[EFFECT_STATE_MAIN][0]->Get_Transform()->Set_Position(m_pTransform->Get_Position());
+	m_ParticleVec[EFFECT_STATE_MAIN][1]->Get_Transform()->Set_Position(m_pTransform->Get_Position());
+
+	m_ParticleVec[EFFECT_STATE_MAIN][2]->Get_Transform()->Set_Position(m_CurrentWeaponMatrix.Translation());
 	_float distance =m_pMeshEffect->Get_Transform()->Get_Speed()* m_fLerpAcc;
+
 	if (distance>30)
 	{
 		Do_MagicBallState_To_Next();
@@ -181,6 +216,30 @@ HRESULT CDiffindo::Add_Components()
 		__debugbreak();
 		return E_FAIL;
 	}
+	
+	m_ParticleVec[EFFECT_STATE_MAIN].resize(3);
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Diffindo_Ball_Twinkle"),
+		TEXT("Com_Ball_Twinkle"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_MAIN][0]))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Diffindo_Ball_Twinkle)");
+		__debugbreak();
+		return E_FAIL;
+	}
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Diffindo_Dust"),
+		TEXT("Com_Wand_Dust"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_MAIN][1]))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Diffindo_Dust)");
+		__debugbreak();
+		return E_FAIL;
+	}
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Diffindo_Cast_Twinkle"),
+		TEXT("Com_Cast_Twinkle"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_MAIN][2]))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Diffindo_Cast_Twinkle)");
+		__debugbreak();
+		return E_FAIL;
+	}
+
 
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Diffindo_MeshEffect"),
 		TEXT("Com_Mesh_Effect"), reinterpret_cast<CComponent**>(&m_pMeshEffect))))

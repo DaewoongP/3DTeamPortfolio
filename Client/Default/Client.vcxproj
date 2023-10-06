@@ -168,6 +168,7 @@
     <ClInclude Include="..\Public\Action.h" />
     <ClInclude Include="..\Public\Animation_Camera_Model.h" />
     <ClInclude Include="..\public\AshwinderEggs_Item.h" />
+    <ClInclude Include="..\Public\Bombarda.h" />
     <ClInclude Include="..\public\ChineseChompingCabbageItem.h" />
     <ClInclude Include="..\Public\ConjuredDragon.h" />
     <ClInclude Include="..\Public\Diffindo.h" />
@@ -360,6 +361,7 @@
     <ClCompile Include="..\Private\Action.cpp" />
     <ClCompile Include="..\Private\Animation_Camera_Model.cpp" />
     <ClCompile Include="..\Private\AshwinderEggs_Item.cpp" />
+    <ClCompile Include="..\Private\Bombarda.cpp" />
     <ClCompile Include="..\private\ChineseChompingCabbageItem.cpp" />
     <ClCompile Include="..\Private\ConjuredDragon.cpp" />
     <ClCompile Include="..\Private\Diffindo.cpp" />

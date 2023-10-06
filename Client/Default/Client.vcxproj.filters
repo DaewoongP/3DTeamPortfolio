@@ -1037,6 +1037,9 @@
     <ClInclude Include="..\public\FlowMap.h">
       <Filter>02. GameObject\10. Flowmap</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Bombarda.h">
+      <Filter>05. Magic\MagicBall\18. Bombarda</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1502,6 +1505,9 @@
     </ClCompile>
     <ClCompile Include="..\private\FlowMap.cpp">
       <Filter>02. GameObject\10. Flowmap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Bombarda.cpp">
+      <Filter>05. Magic\MagicBall\18. Bombarda</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
