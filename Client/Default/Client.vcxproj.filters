@@ -532,6 +532,9 @@
     <Filter Include="02. GameObject\10. Flowmap">
       <UniqueIdentifier>{8d96a00c-986f-458a-b01c-19b091c17877}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\PotionStation">
+      <UniqueIdentifier>{e8e87625-76be-4cce-8219-8d85981baf70}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -1037,6 +1040,9 @@
     <ClInclude Include="..\public\FlowMap.h">
       <Filter>02. GameObject\10. Flowmap</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Potion_Station.h">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\PotionStation</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\Bombarda.h">
       <Filter>05. Magic\MagicBall\18. Bombarda</Filter>
     </ClInclude>
@@ -1505,6 +1511,9 @@
     </ClCompile>
     <ClCompile Include="..\private\FlowMap.cpp">
       <Filter>02. GameObject\10. Flowmap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Potion_Station.cpp">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\PotionStation</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Bombarda.cpp">
       <Filter>05. Magic\MagicBall\18. Bombarda</Filter>

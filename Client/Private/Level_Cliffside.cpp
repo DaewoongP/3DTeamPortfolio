@@ -396,9 +396,13 @@ HRESULT CLevel_Cliffside::Load_MapObject(const _tchar* pObjectFilePath)
 		size_t findIndex = ws.find(TEXT("Model_")) + 6;
 
 		wstring modelName = ws.substr(findIndex);
-		wstring wsMapEffectName(TEXT("Anim_TreasureChest"));
 
-		if (0 == lstrcmp(modelName.c_str(), wsMapEffectName.c_str()))
+		// 비교해야되는 문자열
+		wstring wsTreasureChestName(TEXT("Anim_TreasureChest"));
+		wstring wsPotionStation(TEXT("SM_HM_Potion_Table"));
+
+		// 보물상자
+		if (0 == lstrcmp(modelName.c_str(), wsTreasureChestName.c_str()))
 		{
 			_tchar wszobjName[MAX_PATH] = { 0 };
 			_stprintf_s(wszobjName, TEXT("GameObject_Treasure_Chest_%d"), (iObjectNum));
@@ -408,6 +412,22 @@ HRESULT CLevel_Cliffside::Load_MapObject(const _tchar* pObjectFilePath)
 				wszobjName, &MapObjectDesc)))
 			{
 				MSG_BOX("Failed to Clone Treasure_Chest");
+				ENDINSTANCE;
+				return E_FAIL;
+			}
+		}
+
+		// 포션 제작소
+		else if (0 == lstrcmp(modelName.c_str(), wsPotionStation.c_str()))
+		{
+			_tchar wszobjName[MAX_PATH] = { 0 };
+			_stprintf_s(wszobjName, TEXT("GameObject_Potion_Station_%d"), (iObjectNum));
+
+			if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE,
+				TEXT("Prototype_GameObject_Potion_Station"), TEXT("Layer_BackGround"),
+				wszobjName, &MapObjectDesc)))
+			{
+				MSG_BOX("Failed to Clone Potion_Station");
 				ENDINSTANCE;
 				return E_FAIL;
 			}
