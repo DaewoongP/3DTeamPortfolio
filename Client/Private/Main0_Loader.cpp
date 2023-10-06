@@ -145,6 +145,9 @@ HRESULT CMain0_Loader::Loading()
 	case LEVEL_VAULT:
 		hr = Loading_For_Vault(LEVEL_VAULT);
 		break;
+	case LEVEL_SMITH:
+		hr = Loading_For_Hogsmeade(LEVEL_SMITH);
+		break;
 	default:
 		MSG_BOX("Failed Load Next Level");
 		break;
@@ -224,6 +227,11 @@ HRESULT CMain0_Loader::Loading_For_Vault(LEVELID eLevelID)
 }
 
 HRESULT CMain0_Loader::Loading_For_GreatHall(LEVELID eLevelID)
+{
+	return S_OK;
+}
+
+HRESULT CMain0_Loader::Loading_For_Hogsmeade(LEVELID eLevelID)
 {
 	return S_OK;
 }

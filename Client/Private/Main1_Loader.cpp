@@ -85,6 +85,9 @@ HRESULT CMain1_Loader::Loading()
 	case LEVEL_VAULT:
 		hr = Loading_For_Vault(LEVEL_VAULT);
 		break;
+	case LEVEL_SMITH:
+		hr = Loading_For_Hogsmeade(LEVEL_SMITH);
+		break;
 	default:
 		MSG_BOX("Failed Load Next Level");
 		break;
@@ -112,10 +115,10 @@ HRESULT CMain1_Loader::Loading_For_Cliffside(LEVELID eLevelID)
 
 	try /* Failed Check Add_Prototype*/
 	{
-		if (FAILED(Loading_Map_Object(TEXT("../../Resources/GameData/MapData/MapData3.ddd"), eLevelID)))
+		if (FAILED(Loading_Map_Object(TEXT("../../Resources/GameData/MapData/MapData0.ddd"), eLevelID)))
 			throw TEXT("Map Object");
 
-		if (FAILED(Loading_Map_Object_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins3.ddd"), eLevelID)))
+		if (FAILED(Loading_Map_Object_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins0.ddd"), eLevelID)))
 			throw TEXT("Map Object_Ins");
 
 	}
@@ -161,6 +164,28 @@ HRESULT CMain1_Loader::Loading_For_GreatHall(LEVELID eLevelID)
 			throw TEXT("Map Object");
 
 		if (FAILED(Loading_Map_Object_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins2.ddd"), eLevelID)))
+			throw TEXT("Map Object_Ins");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("Failed Add_Prototype : ");
+		wstrErrorMSG += pErrorTag;
+		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	return S_OK;
+}
+
+HRESULT CMain1_Loader::Loading_For_Hogsmeade(LEVELID eLevelID)
+{
+	try
+	{
+		if (FAILED(Loading_Map_Object(TEXT("../../Resources/GameData/MapData/MapData3.ddd"), eLevelID)))
+			throw TEXT("Map Object");
+
+		if (FAILED(Loading_Map_Object_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins3.ddd"), eLevelID)))
 			throw TEXT("Map Object_Ins");
 	}
 	catch (const _tchar* pErrorTag)

@@ -120,6 +120,8 @@ HRESULT CPotion_Station::Add_Components()
 		__debugbreak();
 		return E_FAIL;
 	}
+
+	return S_OK;
 }
 
 HRESULT CPotion_Station::SetUp_ShaderResources()
