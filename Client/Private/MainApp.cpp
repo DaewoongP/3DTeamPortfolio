@@ -87,11 +87,7 @@ HRESULT CMainApp::Render()
 	FAILED_CHECK_RETURN(m_pGameInstance->Render_Font(TEXT("Font_135"), m_szFPS, _float2(0.f, 680.f), _float4(0.f, 1.f, 0.f, 1.f)), E_FAIL);
 #endif // _DEBUG
 
-	if (FAILED(m_pGameInstance->Present()))
-	{
-		HRESULT hr = m_pDevice->GetDeviceRemovedReason();
-		return E_FAIL;
-	}
+	FAILED_CHECK_RETURN(m_pGameInstance->Present(), E_FAIL);
 	
 	return S_OK;
 }
