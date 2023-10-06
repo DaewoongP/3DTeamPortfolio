@@ -733,18 +733,18 @@ void CGameInstance::Update_PhysxScene()
 	m_pPhysX_Manager->Tick(1 / 60.f);
 }
 
-_bool CGameInstance::RayCast(_float3 vOrigin, _float3 vDir, _Inout_ class CGameObject** ppCollisionObject, const _char* pRigidBodyTag, _float fMaxDist, _Inout_ _float3* pHitPosition, _Inout_ _float* pDist, _uint iMaxHits)
+_bool CGameInstance::RayCast(_float3 vOrigin, _float3 vDir, _float fMaxDist, _Inout_ _float3* pHitPosition, _Inout_ _float* pDist)
 {
 	NULL_CHECK_RETURN_MSG(m_pPhysX_Manager, false, TEXT("PhysX_Manager NULL"));
 
-	return m_pPhysX_Manager->RayCast(vOrigin, vDir, ppCollisionObject, pRigidBodyTag, fMaxDist, pHitPosition, pDist, iMaxHits);
+	return m_pPhysX_Manager->RayCast(vOrigin, vDir, fMaxDist, pHitPosition, pDist);
 }
 
-_bool CGameInstance::Mouse_RayCast(HWND hWnd, ID3D11DeviceContext* pContext, _Inout_ class CGameObject** ppCollisionObject, const _char* pRigidBodyTag, _float fMaxDist, _Inout_ _float3* pHitPosition, _Inout_ _float* pDist, _uint iMaxHits)
+_bool CGameInstance::Mouse_RayCast(HWND hWnd, ID3D11DeviceContext* pContext, _float fMaxDist, _Inout_ _float3* pHitPosition, _Inout_ _float* pDist)
 {
 	NULL_CHECK_RETURN_MSG(m_pPhysX_Manager, false, TEXT("PhysX_Manager NULL"));
 
-	return m_pPhysX_Manager->Mouse_RayCast(hWnd, pContext, ppCollisionObject, pRigidBodyTag, fMaxDist, pHitPosition, pDist, iMaxHits);
+	return m_pPhysX_Manager->Mouse_RayCast(hWnd, pContext, fMaxDist, pHitPosition, pDist);
 }
 
 HRESULT CGameInstance::Read_CutSceneCamera(const _tchar* _CutSceneTag, const _tchar* _CutScenePath)

@@ -82,42 +82,33 @@ void CPhysX_Manager::Tick(_float fTimeDelta)
 	m_pPhysxScene->fetchResults(true);
 }
 
-_bool CPhysX_Manager::RayCast(_float3 vOrigin, _float3 vDir, _Inout_ class CGameObject** ppCollisionObject, const _char* pRigidBodyTag, _float fMaxDist, _Inout_ _float3* pHitPosition, _Inout_ _float* pDist, _uint iMaxHits)
+_bool CPhysX_Manager::RayCast(_float3 vOrigin, _float3 vDir, _float fMaxDist, _Inout_ _float3* pHitPosition, _Inout_ _float* pDist)
 {
 	vDir.Normalize();
 
 	PxRaycastHit rayhit;
-	CRaycastCallBack* pRaycastCallBack = CRaycastCallBack::Create(&rayhit, iMaxHits);
-	pRaycastCallBack->Set_Tag(pRigidBodyTag);
+	PxRaycastBuffer buf;
 
 	_bool isCollision = m_pPhysxScene->raycast(PhysXConverter::ToPxVec3(vOrigin), PhysXConverter::ToPxVec3(vDir),
-		fMaxDist, *pRaycastCallBack);
+		fMaxDist, buf);
 	
 	if (true == isCollision)
 	{
 		if (nullptr != pHitPosition)
 		{
-			*pHitPosition = PhysXConverter::ToXMFLOAT3(pRaycastCallBack->block.position);
+			*pHitPosition = PhysXConverter::ToXMFLOAT3(buf.block.position);
 		}
 
 		if (nullptr != pDist)
 		{
-			*pDist = pRaycastCallBack->block.distance;
-		}
-
-		if (nullptr != ppCollisionObject)
-		{
-			/*if (nullptr == pRaycastCallBack->touches->shape->userData)
-				return false;
-
-			*ppCollisionObject = static_cast<CRigidBody::COLLISIONDATADESC*>(pRaycastCallBack->touches->shape->userData)->pOwnerObject;*/
+			*pDist = buf.block.distance;
 		}
 	}
 
 	return isCollision;
 }
 
-_bool CPhysX_Manager::Mouse_RayCast(HWND hWnd, ID3D11DeviceContext* pContext, _Inout_ class CGameObject** ppCollisionObject, const _char* pRigidBodyTag, _float fMaxDist, _Inout_ _float3* pHitPosition, _Inout_ _float* pDist, _uint iMaxHits)
+_bool CPhysX_Manager::Mouse_RayCast(HWND hWnd, ID3D11DeviceContext* pContext, _float fMaxDist, _Inout_ _float3* pHitPosition, _Inout_ _float* pDist)
 {
 	CCalculator* pCalculator = CCalculator::GetInstance();
 	Safe_AddRef(pCalculator);
@@ -131,7 +122,7 @@ _bool CPhysX_Manager::Mouse_RayCast(HWND hWnd, ID3D11DeviceContext* pContext, _I
 
 	Safe_Release(pCalculator);
 	
-	return RayCast(vRayPos.xyz(), vRayDir.xyz(), ppCollisionObject, pRigidBodyTag, fMaxDist, pHitPosition, pDist, iMaxHits);
+	return RayCast(vRayPos.xyz(), vRayDir.xyz(), fMaxDist, pHitPosition, pDist);
 }
 
 PxScene* CPhysX_Manager::Create_Scene()
