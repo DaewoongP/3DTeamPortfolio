@@ -196,6 +196,7 @@ private:
 
 #pragma endregion
 
+	_float m_fTargetViewRange = { 0.0f };
 
 private:
 	HRESULT Add_Components();
@@ -238,7 +239,7 @@ private:
 
 	//타겟을 정하기 위한 함수 (임시 용)
 	void Find_Target_For_Distance();
-	void Find_Target_For_RayDistance();
+	void Find_Target_For_ViewSpace();
 	
 #pragma region 노티파이 사용함수
 

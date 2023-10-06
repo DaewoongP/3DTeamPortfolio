@@ -171,6 +171,8 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 	m_vecCoolTimeRatio.resize(SKILLINPUT_END);
 
+	m_fTargetViewRange = 1.0f;
+
 	return S_OK;
 }
 
@@ -606,12 +608,9 @@ HRESULT CPlayer::Add_Components()
 		return E_FAIL;
 	}
 
-	//구조체
-	//CUI_Group_Skill::Desc Desc.pvec = &m_vecCoolTimeRatio;
-
 	/* Com_UI_Group_Skill_1 */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Skill"),
-		TEXT("Com_UI_Group_Skill_1"), reinterpret_cast<CComponent**>(&m_UI_Group_Skill_01))))
+		TEXT("Com_UI_Group_Skill_1"), reinterpret_cast<CComponent**>(&m_UI_Group_Skill_01), &m_vecCoolTimeRatio)))
 	{
 		__debugbreak();
 		return E_FAIL;
@@ -910,7 +909,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 	//조준
 	if (pGameInstance->Get_DIMouseState(CInput_Device::DIMK_RBUTTON, CInput_Device::KEY_PRESSING))
 	{
-		Find_Target_For_RayDistance();
+		Find_Target_For_ViewSpace();
 	}
 
 
@@ -1939,7 +1938,7 @@ void CPlayer::Find_Target_For_Distance()
 	ENDINSTANCE;
 }
 
-void CPlayer::Find_Target_For_RayDistance()
+void CPlayer::Find_Target_For_ViewSpace()
 {
 	//있는건 지우고
 	if (nullptr != m_pTarget)
@@ -1961,59 +1960,84 @@ void CPlayer::Find_Target_For_RayDistance()
 
 	//거리가 낮은 놈을 저장
 	CGameObject* pTarget = { nullptr };
-	
-	//Ray에 부딪힌 놈이 있다면
-	if (pGameInstance->Mouse_RayCast(g_hWnd, m_pContext, &pTarget, fMinDistance, nullptr, nullptr, 1, CPhysX_Manager::RAY_ONLY_DYNAMIC))
+
+	//몬스터월드를 뷰스페이스로 올린다.
+	//x, y기준으로 +,- 범위를 지정해서 안에 있는지 확인한다.
+
+	_float4x4 viewMatrix = *pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW);
+
+	//임시 저장 컨테이너
+	list<pair<CEnemy*,_float>> EnemyList;
+
+	//범위 안에 있는것들만 저장
+	for (unordered_map<const _tchar*, CComponent*>::iterator iter = pLayer->begin(); iter != pLayer->end(); iter++)
 	{
-		//검사한다 몬스터인지
-		for (unordered_map<const _tchar*, CComponent*>::iterator iter = pLayer->begin(); iter != pLayer->end(); iter++)
+		CEnemy* pEnemy = static_cast<CEnemy*>((*iter).second);
+		
+		//뷰스페이스로 올리기
+		_float4x4 TargetWorldMatrix = pEnemy->Get_Transform()->Get_WorldMatrix();
+
+		_float4x4 TargetViewMatrix = TargetWorldMatrix * viewMatrix;
+
+		_float3 vTargetViewPosition = TargetViewMatrix.Translation();
+
+		//-1 ~ 1 사이에 있는 것들을 중에 카메라보다 앞에 있는것
+		if (-m_fTargetViewRange < vTargetViewPosition.x &&
+			m_fTargetViewRange > vTargetViewPosition.x &&
+			-m_fTargetViewRange < vTargetViewPosition.y &&
+			m_fTargetViewRange > vTargetViewPosition.y &&
+			0.0f < vTargetViewPosition.z)
 		{
-			//몬스터라면
-			if (iter->second == pTarget)
-			{
-				//기존 객체는 지워주고
-				if (nullptr != m_pTargetTransform)
-				{
-					Safe_Release(m_pTargetTransform);
-				}
-
-				//타겟으로 한다.
-				m_pTargetTransform = pTarget->Get_Transform();
-
-				Safe_AddRef(m_pTargetTransform);
-
-
-				//기존 객체는 지워주고
-				if (nullptr != m_pTarget)
-				{
-					Safe_Release(m_pTarget);
-				}
-
-				//타겟으로 한다.
-				m_pTarget = pTarget;
-
-				Safe_AddRef(m_pTarget);
-			}
+			EnemyList.push_back(pair(pEnemy, vTargetViewPosition.z));
 		}
 	}
 
-	//객체가 없다면 
-	else if (nullptr == pTarget)
+	//비었다면
+	if (true == EnemyList.empty())
 	{
-		//기존 객체는 지워주고
-		if (nullptr != m_pTargetTransform)
-		{
-			Safe_Release(m_pTargetTransform);
-			m_pTargetTransform = nullptr;
-		}
-
-		//기존 객체는 지워주고
-		if (nullptr != m_pTarget)
-		{
-			Safe_Release(m_pTarget);
-			m_pTarget = nullptr;
-		}
+		ENDINSTANCE;
+		return;
 	}
+
+	EnemyList.sort(
+	[](const pair<CEnemy*, _float>& _pEnemy_1, const pair<CEnemy*, _float>& _pEnemy_2)
+	{
+		return _pEnemy_1.second < _pEnemy_2.second;
+	});
+
+	pTarget = EnemyList.front().first;
+
+	if (nullptr == pTarget)
+	{
+		EnemyList.clear();
+
+		ENDINSTANCE;
+		return;
+	}
+
+	//기존 객체는 지워주고
+	if (nullptr != m_pTargetTransform)
+	{
+		Safe_Release(m_pTargetTransform);
+	}
+
+	//타겟으로 한다.
+	m_pTargetTransform = pTarget->Get_Transform();
+
+	Safe_AddRef(m_pTargetTransform);
+
+
+	//기존 객체는 지워주고
+	if (nullptr != m_pTarget)
+	{
+		Safe_Release(m_pTarget);
+	}
+
+	//타겟으로 한다.
+	m_pTarget = pTarget;
+
+	Safe_AddRef(m_pTarget);
+
 	ENDINSTANCE;
 }
 
