@@ -51,9 +51,6 @@ void CCoolTime::Tick(_float _fTimeDelta)
 	}
 	else 
 		m_fCurCoolTime += _fTimeDelta;
-	cout << m_fCurCoolTime << endl;
-	
-
 }
 
 void CCoolTime::Play_CoolTime()

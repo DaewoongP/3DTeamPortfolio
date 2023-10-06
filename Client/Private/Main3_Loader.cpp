@@ -116,6 +116,9 @@ HRESULT CMain3_Loader::Loading()
 	case LEVEL_VAULT:
 		hr = Loading_For_Vault(LEVEL_VAULT);
 		break;
+	case LEVEL_SMITH:
+		hr = Loading_For_Hogsmeade(LEVEL_SMITH);
+		break;
 	default:
 		MSG_BOX("Failed Load Next Level");
 		break;
@@ -165,6 +168,11 @@ HRESULT CMain3_Loader::Loading_For_Vault(LEVELID eLevelID)
 }
 
 HRESULT CMain3_Loader::Loading_For_GreatHall(LEVELID eLevelID)
+{
+	return S_OK;
+}
+
+HRESULT CMain3_Loader::Loading_For_Hogsmeade(LEVELID eLevelID)
 {
 	return S_OK;
 }
@@ -356,25 +364,26 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 			CWiggenweldPotion::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_WiggenweldPotion");
 
-		/* For.Prototype_Component_Weapon_FocusPotion */
+		/* For.Prototype_GameObject_FocusPotion*/
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_FocusPotion"),
 			CFocusPotion::Create(m_pDevice, m_pContext, eLevelID))))
-			throw TEXT("ProtoType_GameObject_Focuspotion");
+			throw TEXT("Prototype_GameObject_FocusPotion");
 
-		/* For.Prototype_Component_Weapon_MaximaPotion */
+		/* For.Prototype_GameObject_MaximaPotion */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_MaximaPotion"),
 			CMaximaPotion::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("ProtoType_GameObject_MaximaPotion");
 
-		/* For.Prototype_Component_Weapon_EdurusPotion */
+		/* For.Prototype_GameObject_EdurusPotion */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_EdurusPotion"),
 			CEdurusPotion::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("ProtoType_GameObject_EdurusPotion");
 
-		/* For.Prototype_Component_Weapon_EdurusPotion */
+		/* For.Prototype_GameObject_InvisiblityPotion */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_InvisiblityPotion"),
 			CInvisiblityPotion::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_InvisiblityPotion");
+#pragma endregion
 
 #pragma region Load Item
 		/* For.Prototype_GameObject_AshwinderEggs_Item*/

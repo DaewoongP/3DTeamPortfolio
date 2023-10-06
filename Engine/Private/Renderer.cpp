@@ -78,7 +78,7 @@ HRESULT CRenderer::Initialize_Prototype()
 		TEXT("Target_HDR"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
-		TEXT("Target_Effect"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
+		TEXT("Target_Effect"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 0.f))))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_PostProcessing"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
@@ -153,11 +153,10 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Deferred"), 240.f, 80.f, 160.f, 160.f)))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Priority"), 240.f, 240.f, 160.f, 160.f)))
-		return E_FAIL;
 #endif // _DEBUG
 
 	m_fGlowPower = 3.f;
+	m_fHDR = 0.7f;
 
 	return S_OK;
 }
@@ -180,6 +179,9 @@ void CRenderer::Add_RenderGroup(RENDERGROUP eRenderGroup, CGameObject* pGameObje
 #ifdef _DEBUG
 HRESULT CRenderer::Add_DebugGroup(CComponent* pDebugCom)
 {
+	if (false == m_isDebugRender)
+		return S_OK;
+
 	m_DebugObject.push_back(pDebugCom);
 
 	Safe_AddRef(pDebugCom);
@@ -194,6 +196,7 @@ HRESULT CRenderer::Draw_RenderGroup()
 	if (FAILED(Render_Priority()))
 		return E_FAIL;
 
+#pragma region MRT_Deferred
 	// 객체 전부를 그린 렌더타겟 저장
 	// 빛연산 포함. (객체와 깊이관련 연산은 전부 이안에서 처리)
 	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Deferred"))))
@@ -212,27 +215,34 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_Deferred"))))
 		return E_FAIL;
+#pragma endregion
 
+#pragma region Render Targets
 	if (FAILED(Render_HDR()))
 		return E_FAIL;
 
-	// 객체 렌더타겟 후처리 쉐이딩
-	
-	// 이펙트
-	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Effect"))))
+	if (FAILED(Sort_Render(RENDER_GLOW)))
 		return E_FAIL;
-	if (FAILED(Render_NonLight()))
-		return E_FAIL;
-	if (FAILED(Render_Blend()))
-		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_Effect"))))
-		return E_FAIL;
-
 	if (FAILED(m_pGlow->Render(m_RenderObjects[RENDER_GLOW], m_fGlowPower)))
+		return E_FAIL;
+#pragma endregion
+
+#pragma region MRT_PostProcessing
+	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_PostProcessing"))))
 		return E_FAIL;
 	if (FAILED(Render_PostProcessing()))
 		return E_FAIL;
 
+	if (FAILED(Render_NonLight()))
+		return E_FAIL;
+	if (FAILED(Render_Blend()))
+		return E_FAIL;
+
+	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_PostProcessing"))))
+		return E_FAIL;
+#pragma endregion
+
+	// Screen Shading
 	if (FAILED(Render_Distortion()))
 		return E_FAIL;
 
@@ -240,6 +250,7 @@ HRESULT CRenderer::Draw_RenderGroup()
 	if (FAILED(Render_UI()))
 		return E_FAIL;
 
+#pragma region Debugs
 #ifdef _DEBUG
 	if (FAILED(Render_Picking()))
 		return E_FAIL;
@@ -274,6 +285,7 @@ HRESULT CRenderer::Draw_RenderGroup()
 
 	Safe_Release(pFont_Manager);
 #endif // _DEBUG
+#pragma endregion
 
 	return S_OK;
 }
@@ -529,7 +541,7 @@ HRESULT CRenderer::Render_NonLight()
 
 HRESULT CRenderer::Render_Blend()
 {
-	if (FAILED(Sort_Blend()))
+	if (FAILED(Sort_Render(RENDER_BLEND)))
 		return E_FAIL;
 	
 	for (auto& pGameObject : m_RenderObjects[RENDER_BLEND])
@@ -553,6 +565,8 @@ HRESULT CRenderer::Render_HDR()
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Priority"), m_pPostProcessingShader, "g_SkyTexture")))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Deferred"), m_pPostProcessingShader, "g_DeferredTexture")))
+		return E_FAIL;
+	if (FAILED(m_pPostProcessingShader->Bind_RawValue("g_fHDRPower", &m_fHDR, sizeof(_float))))
 		return E_FAIL;
 	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
@@ -615,14 +629,9 @@ HRESULT CRenderer::Render_Distortion()
 
 HRESULT CRenderer::Render_PostProcessing()
 {
-	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_PostProcessing"))))
-		return E_FAIL;
-
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_HDR"), m_pPostProcessingShader, "g_HDRTexture")))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Glowed"), m_pPostProcessingShader, "g_GlowTexture")))
-		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Effect"), m_pPostProcessingShader, "g_EffectTexture")))
 		return E_FAIL;
 	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
@@ -634,9 +643,6 @@ HRESULT CRenderer::Render_PostProcessing()
 		return E_FAIL;
 
 	if (FAILED(m_pRectBuffer->Render()))
-		return E_FAIL;
-
-	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_PostProcessing"))))
 		return E_FAIL;
 
 	return S_OK;
@@ -683,7 +689,7 @@ HRESULT CRenderer::Render_UITexture()
 }
 #endif // _DEBUG
 
-HRESULT CRenderer::Sort_Blend()
+HRESULT CRenderer::Sort_Render(RENDERGROUP eGroup)
 {
 	CPipeLine* pPipeLine = CPipeLine::GetInstance();
 	Safe_AddRef(pPipeLine);
@@ -703,7 +709,7 @@ HRESULT CRenderer::Sort_Blend()
 			return true;
 
 		return false;
-	});
+		});
 
 	return S_OK;
 }
@@ -768,11 +774,10 @@ HRESULT CRenderer::Add_Components()
 }
 #ifdef _DEBUG
 HRESULT CRenderer::Render_Debug()
-{	
+{
 	for (auto& pDebugCom : m_DebugObject)
 	{
-		if (nullptr != pDebugCom &&
-			true == m_isDebugRender)
+		if (nullptr != pDebugCom)
 			pDebugCom->Render();
 
 		Safe_Release(pDebugCom);

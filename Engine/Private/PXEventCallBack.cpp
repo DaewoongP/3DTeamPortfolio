@@ -39,7 +39,7 @@ void CPXEventCallBack::onContact(const PxContactPairHeader& pairHeader, const Px
 
 		CRigidBody::COLLISIONDATADESC SourCollisionDesc = *static_cast<CRigidBody::COLLISIONDATADESC*>(pairs[i].shapes[SHAPE_SOUR]->userData);
 		CRigidBody::COLLISIONDATADESC DestCollisionDesc = *static_cast<CRigidBody::COLLISIONDATADESC*>(pairs[i].shapes[SHAPE_DEST]->userData);
-		
+
 		CGameObject* pSourObject = SourCollisionDesc.pOwnerObject;
 		CGameObject* pDestObject = DestCollisionDesc.pOwnerObject;
 

@@ -47,6 +47,7 @@ private:
 	HRESULT Make_Notifies();
 	HRESULT Add_Components();
 	HRESULT Add_Components_Level(_uint iCurrentLevelIndex);
+	HRESULT Bind_HitMatrices();
 
 private: /* 사망처리 전용 함수 */
 	_float m_fDeadTimeAcc = { 0.f };
@@ -60,13 +61,14 @@ private: /* 행동 묶음들 */
 	HRESULT Make_Check_Spell(_Inout_ CSelector* pSelector);
 	HRESULT Make_NormalAttack(_Inout_ CSelector* pSelector);
 
-	HRESULT Make_Levioso_Combo(_Inout_ CSelector* pSelector);
-	HRESULT Make_Descendo(_Inout_ CSequence* pSequence);
+	HRESULT Make_Fly_Combo(_Inout_ CSelector* pSelector);
 	HRESULT Make_Turns(_Inout_ CSequence* pSequence);
 	HRESULT Make_Attack(_Inout_ CSelector* pSelector);
 	HRESULT Make_Random_Idle_Move(_Inout_ CRandomChoose* pRandomChoose);
 
+	/* Fly Combo */
 	HRESULT Make_Air_Hit(_Inout_ CSequence* pSequence);
+	HRESULT Make_Fly_Descendo(_Inout_ CSequence* pSequence);
 
 private: /* Notify Func */
 	void Enter_Light_Attack();

@@ -9,6 +9,7 @@
 #include "Level_CliffSide.h"
 #include "Level_Vault.h"
 #include "Level_GreatHall.h"
+#include "Level_Smith.h"
 
 CLevel_Loading::CLevel_Loading(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CLevel(pDevice, pContext)
@@ -55,6 +56,13 @@ HRESULT CLevel_Loading::Initialize(LEVELID eNextLevelID, _bool isStaticLoaded)
 		break;
 	case LEVEL_GREATHALL:
 		if (FAILED(Loading_GreatHall(TEXT("Layer_GreatHall"))))
+		{
+			MSG_BOX("Failed Loading MainGame Object");
+			return E_FAIL;
+		}
+		break;
+	case LEVEL_SMITH:
+		if (FAILED(Loading_Hogsmeade(TEXT("Layer_Hogsmeade"))))
 		{
 			MSG_BOX("Failed Loading MainGame Object");
 			return E_FAIL;
@@ -134,6 +142,9 @@ void CLevel_Loading::Tick(_float fTimeDelta)
 		break;
 	case LEVEL_GREATHALL:
 		pLevel = CLevel_GreatHall::Create(m_pDevice, m_pContext);
+		break;
+	case LEVEL_SMITH:
+		pLevel = CLevel_Smith::Create(m_pDevice, m_pContext);
 		break;
 	default:
 		MSG_BOX("Failed Create Next Level");
@@ -234,6 +245,23 @@ HRESULT CLevel_Loading::Loading_Vault(const _tchar* pLayerTag)
 
 HRESULT CLevel_Loading::Loading_GreatHall(const _tchar* pLayerTag)
 {
+	return S_OK;
+}
+
+HRESULT CLevel_Loading::Loading_Hogsmeade(const _tchar* pLayerTag)
+{
+	BEGININSTANCE;
+	// 로고 이동전 로딩씬에 대한 객체 생성
+
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Loading"), pLayerTag)))
+	{
+		MSG_BOX("Failed Add Scene : (Scene_Loading)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
 	return S_OK;
 }
 

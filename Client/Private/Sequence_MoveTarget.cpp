@@ -1,6 +1,6 @@
 #include "Sequence_MoveTarget.h"
 
-#include "GameInstance.h"
+#include "Client_GameInstance_Functions.h"
 #include "BlackBoard.h"
 
 #include "Turn.h"
@@ -33,12 +33,10 @@ HRESULT CSequence_MoveTarget::Initialize(void* pArg)
 			return true;
 		});
 
-	BEGININSTANCE;
-	m_pAction = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-	ENDINSTANCE;
-	if (nullptr == m_pAction)
+	m_pAction = nullptr;
+	if (FAILED(Create_Behavior(m_pAction)))
 	{
-		MSG_BOX("[CSequence_MoveTarget] Failed Initialize : m_pAction is nullptr");
+		MSG_BOX("[CSequence_MoveTarget] Failed Initialize : Failed Create_Behavior m_pAction");
 		return E_FAIL;
 	}
 
@@ -61,15 +59,15 @@ HRESULT CSequence_MoveTarget::Assemble_Childs()
 			throw TEXT("pTransform is nullptr");
 
 		/* Make Child Behaviors */
-		CCheck_Degree* pTsk_Check_Degree = dynamic_cast<CCheck_Degree*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Check_Degree")));
-		if (nullptr == pTsk_Check_Degree)
-			throw TEXT("pTsk_Check_Degree is nullptr");
-		CCheck_Distance* pTsk_Check_Distance = dynamic_cast<CCheck_Distance*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Check_Distance")));
-		if (nullptr == pTsk_Check_Distance)
-			throw TEXT("pTsk_Check_Distance is nullptr");
-		CTurn* pTsk_Turn = dynamic_cast<CTurn*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Turn")));
-		if (nullptr == pTsk_Turn)
-			throw TEXT("pTsk_Turn is nullptr");
+		CCheck_Degree* pTsk_Check_Degree = nullptr;
+		if (FAILED(Create_Behavior(pTsk_Check_Degree)))
+			throw TEXT("Failed Create_Behavior pTsk_Check_Degree");
+		CCheck_Distance* pTsk_Check_Distance = nullptr;
+		if (FAILED(Create_Behavior(pTsk_Check_Distance)))
+			throw TEXT("Failed Create_Behavior pTsk_Check_Distance");
+		CTurn* pTsk_Turn = nullptr;
+		if (FAILED(Create_Behavior(pTsk_Turn)))
+			throw TEXT("Failed Create_Behavior pTsk_Turn");
 
 		/* Set Options */
 		pTsk_Check_Degree->Set_Transform(pTransform);

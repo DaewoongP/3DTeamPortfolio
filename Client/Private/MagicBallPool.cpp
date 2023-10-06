@@ -19,6 +19,7 @@
 #include "Crucio.h"
 #include "Stupefy.h"
 #include "Diffindo.h"
+#include "Bombarda.h"
 
 IMPLEMENT_SINGLETON(CMagicBallPool)
 
@@ -46,6 +47,7 @@ HRESULT CMagicBallPool::Initialize()
     Create_InitMagic(Client::CRUCIO, TEXT("Prototype_GameObject_Crucio")); 
     Create_InitMagic(Client::STUPEFY, TEXT("Prototype_GameObject_Stupefy"));
     Create_InitMagic(Client::DIFFINDO, TEXT("Prototype_GameObject_Diffindo"));
+    Create_InitMagic(Client::BOMBARDA, TEXT("Prototype_GameObject_Bombarda"));
     Safe_Release(pGameInstance);
 
     return S_OK;
@@ -102,6 +104,7 @@ CMagicBall* CMagicBallPool::Create_Magic(SPELL eSpell)
     case Client::AVADAKEDAVRA:
         break;
     case Client::BOMBARDA:
+        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Bombarda")));
         break;
     case Client::CONFRINGO:
         pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Confringo")));

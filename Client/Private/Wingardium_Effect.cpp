@@ -101,10 +101,10 @@ void CWingardium_Effect::Set_Position(_float3 vPos)
 	m_pTransform->Set_Position(vPos);
 }
 
-//Æ®·¹ÀÏÀÇ ½ÇÁ¦ ¿òÁ÷ÀÓ ¼³Á¤ºÎ.
+//Æ®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
 void CWingardium_Effect::TrailAction(_float3 pos, _float fTimeDelta)
 {
-	// µô·¹ÀÌ ½Ã°£ÀÌ Áö³µÀ¸¸é Æ®·¹ÀÏ µ¿ÀÛ½ÃÄÑÁà.
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Û½ï¿½ï¿½ï¿½ï¿½ï¿½.
 	if (m_TrailCurrentDelay > 0)
 	{
 		m_TrailCurrentDelay -= fTimeDelta;
@@ -127,13 +127,13 @@ void CWingardium_Effect::TrailAction(_float3 pos, _float fTimeDelta)
 
 	for (_uint i = 0; i < TrailCount; i++)
 	{
-		//µ¿ÀÛÀÌ °¡´ÉÇÑ ÆÄÆ¼Å¬ÀÌ¶ó¸é?
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ¼Å¬ï¿½Ì¶ï¿½ï¿½?
 		if (m_TrailDesc[i].isEnable)
 		{
 			m_TrailDesc[i].fCurrnetLifeTime -= fTimeDelta;
 			if (m_TrailDesc[i].fCurrnetLifeTime < 0)
 			{
-				//¿ÀºêÁ¦ÀÇ ¿µÁ¡
+				//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 				_float3 vHigh, vLow;
 				vHigh = _float3(0, 0.5f, 0);
 				vLow = _float3(0, -0.5f, 0);
@@ -150,22 +150,22 @@ void CWingardium_Effect::TrailAction(_float3 pos, _float fTimeDelta)
 				m_pTrail[i]->Reset_Trail(vHigh, vLow);
 			}
 
-			//y¸¦ ¿Ã·ÁÁÜ.
+			//yï¿½ï¿½ ï¿½Ã·ï¿½ï¿½ï¿½.
 			_float fElapsedTime = m_TrailDesc[i].fSettingLifeTime - m_TrailDesc[i].fCurrnetLifeTime;
-			// Æ®·¹ÀÏ ÀÚÃ¼ÀÇ À§Ä¡¸¦ ¼¼ÆÃÇÒ°ÅÀÓ
+			// Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ò°ï¿½ï¿½ï¿½
 			_float3	vTrailPos = {};
 			_float fEase_Y = CEase::InOutBack(fElapsedTime, m_TrailDesc[i].fAnimStart_Y, m_TrailDesc[i].fToY, m_TrailDesc[i].fSettingLifeTime);
-			// Æ®·¹ÀÏÀÇ À§Ä¡´Â y
+			// Æ®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ y
 			vTrailPos.y = fEase_Y;
 
-			// ¼³Á¤µÈ y¸¦ ÀÌ¿ëÇØ ¹ÝÁö¸§ ¼³Á¤
+			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ yï¿½ï¿½ ï¿½Ì¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			m_TrailDesc[i].fRadius = CEase::InOutBack(fEase_Y - m_TrailDesc[i].fAnimStart_Y, 0, m_TrailDesc[i].fToRadius, m_TrailDesc[i].fToY - m_TrailDesc[i].fAnimStart_Y);
 			vTrailPos.x = m_TrailDesc[i].fRadius;
 
-			// Æ÷Áö¼Ç¿¡ °ª ´ëÀÔ
+			// ï¿½ï¿½ï¿½ï¿½ï¿½Ç¿ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			m_pTrailTransform[i]->Set_Position(vTrailPos);
 
-			//°øÀü
+			//ï¿½ï¿½ï¿½ï¿½
 			_float4x4 rotationMatrix = XMMatrixRotationY(m_TrailDesc[i].fSpeed * fElapsedTime);
 			m_pTrailTransform[i]->Set_WorldMatrix(m_pTrailTransform[i]->Get_WorldMatrix() * rotationMatrix);
 		}
@@ -173,13 +173,13 @@ void CWingardium_Effect::TrailAction(_float3 pos, _float fTimeDelta)
 
 	for (_uint i = 0; i < TrailCount / 2; i++)
 	{
-		//µ¿ÀÛÀÌ °¡´ÉÇÑ ÆÄÆ¼Å¬ÀÌ¶ó¸é?
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ¼Å¬ï¿½Ì¶ï¿½ï¿½?
 		if (m_TrailToOriginDesc[i].isEnable)
 		{
 			m_TrailToOriginDesc[i].fCurrnetLifeTime -= fTimeDelta;
 			if (m_TrailToOriginDesc[i].fCurrnetLifeTime < 0)
 			{
-				//¿ÀºêÁ¦ÀÇ ¿µÁ¡
+				//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 				_float3 vHigh, vLow;
 				vHigh = _float3(0, 0.5f, 0);
 				vLow = _float3(0, -0.5f, 0);
@@ -194,29 +194,23 @@ void CWingardium_Effect::TrailAction(_float3 pos, _float fTimeDelta)
 
 			}
 
-			BEGININSTANCE;
-			if (pGameInstance->RayCast(m_pTransform->Get_Position(), m_pTransform->Get_Up() * -1, nullptr, 100, &m_vBottom))
-			{
-			}
-			ENDINSTANCE;
-
-			//y¸¦ ¿Ã·ÁÁÜ.
+			//yï¿½ï¿½ ï¿½Ã·ï¿½ï¿½ï¿½.
 			_float fElapsedTime = m_TrailToOriginDesc[i].fSettingLifeTime - m_TrailToOriginDesc[i].fCurrnetLifeTime;
 			_float3	vTrailPos = {};
 			_float fEase_Y = CEase::InOutBack(fElapsedTime, m_TrailToOriginDesc[i].fAnimStart_Y, m_TrailToOriginDesc[i].fToY, m_TrailToOriginDesc[i].fSettingLifeTime);
-			// Æ®·¹ÀÏÀÇ À§Ä¡´Â y
+			// Æ®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ y
 			vTrailPos.y = fEase_Y;
 
-			//¿Ã¶ó°£ Y À§Ä¡¸¦ ÀÌ¿ëÇØ¼­ ¹ÝÁö¸§ ¼³Á¤
+			//ï¿½Ã¶ï¿½ Y ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½Ì¿ï¿½ï¿½Ø¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			m_TrailToOriginDesc[i].fRadius = CEase::InOutBack(fEase_Y - m_TrailToOriginDesc[i].fAnimStart_Y, 0, m_TrailToOriginDesc[i].fToRadius, m_TrailToOriginDesc[i].fToY - m_TrailToOriginDesc[i].fAnimStart_Y);
 
-			// ¹ÝÁö¸§¸¸Å­ trailÀÌµ¿.
+			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å­ trailï¿½Ìµï¿½.
 			_float4x4 parentMatrix = m_pTransform->Get_WorldMatrix();
 			vTrailPos.x = m_TrailToOriginDesc[i].fRadius;
-			// Æ÷Áö¼Ç¿¡ °ª ´ëÀÔ
+			// ï¿½ï¿½ï¿½ï¿½ï¿½Ç¿ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			m_pTrailToOriginTransform[i]->Set_Position(vTrailPos);
 
-			//°øÀü
+			//ï¿½ï¿½ï¿½ï¿½
 			_float4x4 rotationMatrix = XMMatrixRotationY(m_TrailToOriginDesc[i].fSpeed * fElapsedTime);
 			m_pTrailToOriginTransform[i]->Set_WorldMatrix(m_pTrailToOriginTransform[i]->Get_WorldMatrix() * rotationMatrix);
 		}

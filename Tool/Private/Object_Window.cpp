@@ -174,8 +174,8 @@ void CObject_Window::Picking_Menu()
 	ImGui::DragFloat3("Rotation", m_vDummyMatrix[DUMMY_ROT], 5.f, -360.f, 360.f);
 	ImGui::SameLine(); CHelpMaker::HelpMarker("-360.f ~ 360.f");
 
-	ImGui::DragFloat3("Translation", m_vDummyMatrix[DUMMY_TRANS], 1.f, -250.f, 250.f);
-	ImGui::SameLine(); CHelpMaker::HelpMarker("-250.f ~ 250.f");
+	ImGui::DragFloat3("Translation", m_vDummyMatrix[DUMMY_TRANS], 1.f, -500.f, 500.f);
+	ImGui::SameLine(); CHelpMaker::HelpMarker("-500.f ~ 500.f");
 
 	// 상태 행렬 초기화
 	if (ImGui::Button("reset"))

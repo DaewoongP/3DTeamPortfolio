@@ -91,7 +91,8 @@ HRESULT CMagicBall::Reset(MAGICBALLINITDESC& InitDesc)
 	if (InitDesc.pTarget != nullptr)
 	{
 		m_pTargetWorldMatrix = InitDesc.pTarget->Get_Transform()->Get_WorldMatrixPtr();
-		m_pTargetOffsetMatrix = InitDesc.pTarget->Get_Offset_MatrixPtr();
+		m_pTargetOffsetMatrix = InitDesc.pTarget->Get_HitMatrixPtr();
+		if(m_pTargetOffsetMatrix==nullptr) m_pTargetOffsetMatrix = InitDesc.pTarget->Get_Offset_MatrixPtr();
 		m_CurrentTargetMatrix = (*m_pTargetOffsetMatrix) * (*m_pTargetWorldMatrix);
 		m_vEndPosition = m_CurrentTargetMatrix.Translation();
 
@@ -127,7 +128,7 @@ HRESULT CMagicBall::Reset(MAGICBALLINITDESC& InitDesc)
 	m_CollisionDesc.eBuffType = InitDesc.eBuffType;
 	m_CollisionDesc.eMagicTag = InitDesc.eMagicTag;
 	m_CollisionDesc.iDamage = InitDesc.iDamage;
-
+	m_CollisionDesc.pTransform = m_pTransform;
 	m_eCollisionFlag = InitDesc.eCollisionFlag;
 
 	m_pRigidBody->Set_CollisionFlag("Magic_Ball", m_eCollisionFlag);

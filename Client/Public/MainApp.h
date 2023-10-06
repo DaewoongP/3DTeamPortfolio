@@ -54,7 +54,7 @@ private: /* For. Frame Per Second*/
 private: /* ImGui */
 	CImGui_Manager*			m_pImGui_Manager = { nullptr };
 	LEVELID					m_eLevelID = { LEVEL_END };
-	_bool					m_isFirstLoaded = { false };
+	_bool					m_isStaticLoaded = { false };
 #endif // _DEBUG
 
 private: /* Singleton */

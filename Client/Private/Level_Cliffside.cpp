@@ -252,12 +252,6 @@ HRESULT CLevel_Cliffside::Ready_Layer_Item(const _tchar* pLayerTag)
 	//	return E_FAIL;
 	//}
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_WiggenweldPotion"), pLayerTag, TEXT("GameObject_WiggenweldPotion"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (WiggenweldPotion)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
 	ENDINSTANCE;
 
 	return S_OK;
@@ -298,8 +292,10 @@ HRESULT CLevel_Cliffside::Ready_Layer_Monster(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
+	///////////////////////////////////////////////////////////////////////
 	///////////////	테스트용 몬스터 배치 코드 입니다. /////////////////////
 	///////////////	실전 배치시 해당 코드는 지워주세요.////////////////////
+	///////////////////////////////////////////////////////////////////////
 	_float4x4 Matrix = XMMatrixTranslation(40.f, 10.f, 60.f);
 	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Golem_CombatGrunt"), pLayerTag, TEXT("GameObject_Golem_Combat"), &Matrix)))
 	{
@@ -308,12 +304,12 @@ HRESULT CLevel_Cliffside::Ready_Layer_Monster(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 	Matrix = XMMatrixTranslation(40.f, 10.f, 65.f);
-	/*if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Dugbog"), pLayerTag, TEXT("GameObject_Dugbog"), &Matrix)))
+	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Dugbog"), pLayerTag, TEXT("GameObject_Dugbog"), &Matrix)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Dugbog)");
 		ENDINSTANCE;
 		return E_FAIL;
-	}*/
+	}
 	/*if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_ConjuredDragon"), pLayerTag, TEXT("GameObject_ConjuredDragon"), &Matrix)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_ConjuredDragon)");
@@ -339,7 +335,7 @@ HRESULT CLevel_Cliffside::Ready_Layer_NPC(const _tchar* pLayerTag)
 		ENDINSTANCE;
 		return E_FAIL;
 	}
-	_float3 vPosition = _float3(40.f, 26.4f, 62.f);
+	_float3 vPosition = _float3(40.f, 6.4f, 62.f);
 
 	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_STATIC, TEXT("Prototype_GameObject_Professor_Fig"), pLayerTag, TEXT("GameObject_Professor_Fig"), &vPosition)))
 	{
@@ -400,9 +396,13 @@ HRESULT CLevel_Cliffside::Load_MapObject(const _tchar* pObjectFilePath)
 		size_t findIndex = ws.find(TEXT("Model_")) + 6;
 
 		wstring modelName = ws.substr(findIndex);
-		wstring wsMapEffectName(TEXT("Anim_TreasureChest"));
 
-		if (0 == lstrcmp(modelName.c_str(), wsMapEffectName.c_str()))
+		// 비교해야되는 문자열
+		wstring wsTreasureChestName(TEXT("Anim_TreasureChest"));
+		wstring wsPotionStation(TEXT("SM_HM_Potion_Table"));
+
+		// 보물상자
+		if (0 == lstrcmp(modelName.c_str(), wsTreasureChestName.c_str()))
 		{
 			_tchar wszobjName[MAX_PATH] = { 0 };
 			_stprintf_s(wszobjName, TEXT("GameObject_Treasure_Chest_%d"), (iObjectNum));
@@ -412,6 +412,22 @@ HRESULT CLevel_Cliffside::Load_MapObject(const _tchar* pObjectFilePath)
 				wszobjName, &MapObjectDesc)))
 			{
 				MSG_BOX("Failed to Clone Treasure_Chest");
+				ENDINSTANCE;
+				return E_FAIL;
+			}
+		}
+
+		// 포션 제작소
+		else if (0 == lstrcmp(modelName.c_str(), wsPotionStation.c_str()))
+		{
+			_tchar wszobjName[MAX_PATH] = { 0 };
+			_stprintf_s(wszobjName, TEXT("GameObject_Potion_Station_%d"), (iObjectNum));
+
+			if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE,
+				TEXT("Prototype_GameObject_Potion_Station"), TEXT("Layer_BackGround"),
+				wszobjName, &MapObjectDesc)))
+			{
+				MSG_BOX("Failed to Clone Potion_Station");
 				ENDINSTANCE;
 				return E_FAIL;
 			}

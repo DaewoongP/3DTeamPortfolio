@@ -75,6 +75,9 @@ HRESULT CDummyParticle::Initialize(void* _pArg)
 	m_pGradientTextureIFD->m_strStartPath = "../../Resources/Effects/Textures/Gradients/";
 	m_pGradientTextureIFD->m_iImageButtonWidth = 32;
 	
+	m_pDistortionTextureIFD = CImageFileDialog::Create(m_pDevice, "DistortionTextureDialog");
+	m_pDistortionTextureIFD->m_strStartPath = "../../Resources/Effects/Textures/";
+	m_pDistortionTextureIFD->m_iImageButtonWidth = 32;
 
 	Load_After();
 	return S_OK;
@@ -506,7 +509,22 @@ void CDummyParticle::RendererModule_TreeNode(CEffect_Window* pEffectWindow)
 			}
 
 			m_RendererModuleDesc.strPass = m_pPassComboBox->Tick(CComboBox::TABLE);
-			pEffectWindow->Table_CheckBox("GLOW", "KCXK939DJJZZZ", &m_RendererModuleDesc.isGlow);
+			pEffectWindow->Table_CheckBox("Glow", "KCXK939DJJZZZ", &m_RendererModuleDesc.isGlow);
+			pEffectWindow->Table_CheckBox("Distortion", "jid8e9qeiojjdc", &m_RendererModuleDesc.isDistortion);
+			
+			if (true == m_RendererModuleDesc.isDistortion)
+			{
+				pEffectWindow->Table_ImageButton("Distortion", "kdjfivjisv39", m_pDistortionTextureIFD);
+				if (m_pDistortionTextureIFD->IsOk())
+				{
+					string strFilePath = m_pDistortionTextureIFD->Get_FilePathName();
+					fs::path fsFilePath = ToRelativePath(strFilePath.data());
+					ChangeTexture(&m_pDistortionTexture, m_RendererModuleDesc.wstrDistortionTexture, fsFilePath.wstring().data());
+					// ../../Resources/Effect/Default_Particle.png;
+					////////
+				}
+			}
+			
 			ImGui::EndTable();
 		}
 		ImGui::TreePop();
@@ -962,6 +980,7 @@ void CDummyParticle::Free(void)
 	Safe_Release(m_pMaterialTextureIFD);
 	Safe_Release(m_pNormalTextureIFD);
 	Safe_Release(m_pGradientTextureIFD);
+	Safe_Release(m_pDistortionTextureIFD);
 	Safe_Release(m_pColorEaseCombo);
 	Safe_Release(m_pSizeXEaseCombo);
 	Safe_Release(m_pSizeYEaseCombo);

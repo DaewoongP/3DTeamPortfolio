@@ -222,6 +222,7 @@ public:
 #ifdef _DEBUG
 private:
 	void Tick_ImGui();
+	void Tick_Magic_ImGui();
 	_bool m_isGravity = { false };
 
 	void Tick_TestShake();
@@ -266,7 +267,8 @@ private:
 	void Shot_Basic_Last_Spell();
 
 	void Protego();
-
+	void Add_Layer_Item();
+	void Drink_Potion();
 #pragma endregion
 
 #pragma region 스테이트 변경 함수

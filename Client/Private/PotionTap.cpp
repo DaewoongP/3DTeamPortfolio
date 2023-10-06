@@ -5,6 +5,7 @@
 #include "UI_Effect_Back.h"
 #include "Tool.h"
 #include "Item.h"
+#include "FocusPotion.h"
 
 CPotionTap::CPotionTap(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -69,6 +70,22 @@ void CPotionTap::Late_Tick(_float fTimeDelta)
 	}
 	Safe_Release(pGameInstance);
 
+}
+
+_bool CPotionTap::Is_Valid(POTIONTAP ePotionTap)
+{
+	return ePotionTap >= 0 && ePotionTap < POTIONTAP_END;
+}
+
+CItem* CPotionTap::Get_CurItem()
+{
+	if (false == Is_Valid(m_eCurPotion))
+		return nullptr;
+
+	if (m_pPotions[m_eCurPotion].empty())
+		return nullptr;
+
+	return m_pPotions[m_eCurPotion].back();
 }
 
 HRESULT CPotionTap::Add_Components()
@@ -161,9 +178,47 @@ HRESULT CPotionTap::Ready_PotionTextures()
 	return S_OK;
 }
 
-void CPotionTap::Add_Potion(CItem* pItem, POTIONTAP eType)
+CItem* CPotionTap::ToolFactory(POTIONTAP eType)
 {
-	if (eType >= POTIONTAP_END || eType < 0)
+	CItem* pItem = { nullptr };
+
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	switch (eType)
+	{
+	case Client::ENDURUS_POTION:
+		break;
+	case Client::ATTACK_POWER_UP:
+		break;
+	case Client::FOCUS_POTION:
+		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
+			LEVEL_STATIC,
+			TEXT("Prototype_GameObject_FocusPotion")));
+		break;
+	case Client::THUNDER_CLOUD:
+		break;
+	case Client::INVISIBILITY_PILL:
+		break;
+	case Client::MANDRAKE:
+		break;
+	case Client::CHINESES_CHOPPING_CABBAGE:
+		break;
+	case Client::TENTACULAR:
+		break;
+	}
+
+	Safe_Release(pGameInstance);
+
+	return pItem;
+}
+
+void CPotionTap::Add_Potion(POTIONTAP eType)
+{
+	if (false == Is_Valid(eType))
+		return;
+
+	CItem* pItem = ToolFactory(eType);
+	if (nullptr == pItem)
 		return;
 
 	m_pPotions[eType].push_back(pItem);
@@ -177,11 +232,23 @@ void CPotionTap::Delete_Potion(POTIONTAP eType, _uint iIndex)
 	{
 		if (Index == iIndex)
 		{
-			Safe_Release(*iter);
+			//Safe_Release(*iter);
 			iter = m_pPotions[eType].erase(iter);
 			break;
 		}
 		++Index;
+	}
+}
+
+void CPotionTap::Delete_Potion(POTIONTAP eType, CItem* pItem)
+{
+	for (auto iter = m_pPotions[eType].begin(); iter != m_pPotions[eType].end(); ++iter)
+	{
+		if (pItem == *iter)
+		{
+			iter = m_pPotions[eType].erase(iter);
+			break;
+		}
 	}
 }
 
@@ -201,13 +268,27 @@ void CPotionTap::Set_CurPotion()
 
 void CPotionTap::Use_Item(_float3 vPlayPos)
 {
-	if (m_pPotions[m_eCurPotion].size() <= 0)
+	if (false == Is_Valid(m_eCurPotion))
 		return;
 
-	dynamic_cast<CTool*>(m_pPotions[m_eCurPotion][0])->Use(vPlayPos);
-	Delete_Potion(m_eCurPotion, m_pPotions[m_eCurPotion].size() - 1);
-}
+	if (m_pPotions[m_eCurPotion].empty())
+		return;
 
+	cout << "포션 사이즈 전 : " << m_pPotions[m_eCurPotion].size() << '\t' << m_pPotions[m_eCurPotion].back() << '\n';
+
+	CItem* pTool = (m_pPotions[m_eCurPotion].back());
+	dynamic_cast<CTool*>(pTool)->Use(vPlayPos);
+
+	Delete_Potion(m_eCurPotion, pTool);
+
+	if (m_pPotions[m_eCurPotion].empty())
+	{
+		m_eCurPotion = POTIONTAP_END;
+		m_pUI_Main_Tap->Set_Texture(nullptr);
+		return;
+	}
+	cout << "포션 사이즈 후 : " << m_pPotions[m_eCurPotion].size() << '\t' << m_pPotions[m_eCurPotion].back() << '\n';
+}
 
 CPotionTap* CPotionTap::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {

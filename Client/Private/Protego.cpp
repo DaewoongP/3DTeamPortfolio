@@ -4,6 +4,7 @@
 #include "Enemy.h"
 #include "Professor_FIg.h"
 #include "Player.h"
+
 CProtego::CProtego(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CMagicBall(pDevice, pContext)
 {
@@ -100,7 +101,7 @@ void CProtego::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	m_pTransform->Set_Position(m_CurrentTargetMatrix.Translation());
-
+	
 	// ��Ʈ �ð� ����
 	m_fHitTimeAcc += fTimeDelta;
 	if (m_fHitTimeAcc >= 0.5f)
@@ -236,27 +237,25 @@ void CProtego::Tick_Dying(_float fTimeDelta)
 
 void CProtego::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
-	//�浹�Ȱ� �ֽ��ϴ�.
 	__super::OnCollisionEnter(CollisionEventDesc);
 
-	//��������ϴ°�
 	CEnemy::ATTACKTYPE eAttackType = CEnemy::ATTACK_NONE;
+	CTransform* pTransform = nullptr;
 
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
 	wstring wstrCollisionTag = CollisionEventDesc.pOtherCollisionTag;
-
-	//�� �浹�̸� ����Ʈ/��� ó��
+	wcout << wstrCollisionTag << endl;
 	if (wstring::npos != wstrCollisionTag.find(TEXT("Attack")) ||
 		wstring::npos != wstrCollisionTag.find(TEXT("Enemy_Body")))
 	{
 		CEnemy::COLLISIONREQUESTDESC* pDesc = static_cast<CEnemy::COLLISIONREQUESTDESC*>(CollisionEventDesc.pArg);
 		if (pDesc == nullptr)
 			return;
-
 		eAttackType = pDesc->eType;
+		pTransform = pDesc->pEnemyTransform;
+		Safe_AddRef(pTransform);
 	}
 
-	//���� �浹�̸� ����Ʈ/�극��ũ ó��
 	if (wstring::npos != wstrCollisionTag.find(TEXT("Magic_Ball")))
 	{
 		COLLSIONREQUESTDESC* pDesc = static_cast<COLLSIONREQUESTDESC*>(CollisionEventDesc.pArg);
@@ -266,11 +265,15 @@ void CProtego::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		if (m_CollisionDesc.eMagicType == pDesc->eMagicType)
 		{
 			eAttackType = CEnemy::ATTACK_BREAK;
+			pTransform = m_CollisionDesc.pTransform;
+			Safe_AddRef(pTransform);
 		}
 		else 
 		{
 			eAttackType = CEnemy::ATTACK_LIGHT;
-			//��ź ��� �߰��������.
+			pTransform = m_CollisionDesc.pTransform;
+			Safe_AddRef(pTransform);
+			//도탄 추가해줘야함.
 		}
 	}
 
@@ -278,22 +281,22 @@ void CProtego::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 	{
 		return;
 	}
-	//���� �ƴϸ� �浹 ����Ʈ ���
 	Hit_Effect(CollisionEventDesc.pOtherTransform->Get_Position());
 
-	//���� ���� �θ𿡰� �����װ� �浹�ƴٴ°� ���������.
 	/*if (!lstrcmp(m_pTarget->Get_Tag(), TEXT("GameObject_Player")))
 	{
-		static_cast<CPlayer*>(m_pTarget)->Set_Protego_Collision(eAttackType);
+		static_cast<CPlayer*>(m_pTarget)->Set_Protego_Collision(pTransform, eAttackType);
 	}
-	else if (!lstrcmp(m_pTarget->Get_Tag(), TEXT("GameObject_Professor_Fig")))
+	else */if (!lstrcmp(m_pTarget->Get_Tag(), TEXT("GameObject_Professor_Fig")))
 	{
-		static_cast<CProfessor_Fig*>(m_pTarget)->Set_Protego_Collision(eAttackType);
+		static_cast<const CProfessor_Fig*>(m_pTarget)->Set_Protego_Collision(pTransform, eAttackType);
 	}
 	else 
 	{
-		static_cast<CEnemy*>(m_pTarget)->Set_Protego_Collision(eAttackType);
-	}*/
+		static_cast<const CEnemy*>(m_pTarget)->Set_Protego_Collision(pTransform/* (마법)충돌체 위치 */, eAttackType);
+	}
+
+	Safe_Release(pTransform);
 }
 
 void CProtego::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)
@@ -425,7 +428,7 @@ HRESULT CProtego::Add_RigidBody()
 {
 	CRigidBody::RIGIDBODYDESC RigidBodyDesc;
 	RigidBodyDesc.isStatic = false;
-	RigidBodyDesc.isTrigger = true;
+	RigidBodyDesc.isTrigger = false;
 	RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
 	RigidBodyDesc.vOffsetPosition = _float3(0.f, 0.0f, 0.f);
 	RigidBodyDesc.fStaticFriction = 0.f;
@@ -433,12 +436,12 @@ HRESULT CProtego::Add_RigidBody()
 	RigidBodyDesc.fRestitution = 0.f;
 	PxSphereGeometry SphereGeometry = PxSphereGeometry(1.5f);
 	RigidBodyDesc.pGeometry = &SphereGeometry;
-	RigidBodyDesc.eConstraintFlag = CRigidBody::AllRot;
+	RigidBodyDesc.eConstraintFlag = CRigidBody::All;
 	RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 0.f, 1.f);
 	RigidBodyDesc.isGravity = false;
 	RigidBodyDesc.pOwnerObject = this;
-	RigidBodyDesc.eThisCollsion = COL_MAGIC;
-	RigidBodyDesc.eCollisionFlag = m_eCollisionFlag;
+	RigidBodyDesc.eThisCollsion = COL_SHIELD;
+	RigidBodyDesc.eCollisionFlag = COL_ENEMY_ATTACK;
 	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Magic_Ball");
 
 	/* Com_RigidBody */
