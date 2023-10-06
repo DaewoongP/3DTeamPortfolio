@@ -171,6 +171,10 @@ HRESULT CPlayer::Initialize(void* pArg)
 	//m_vLevelInitPosition[LEVEL_SMITH] = _float3(30.f, 3.f, 15.f);
 	m_vLevelInitPosition[LEVEL_SMITH] = _float3(94.5f, 7.2f, 78.f); // 포션 스테이션 바로 앞
 
+	m_vecCoolTimeRatio.resize(SKILLINPUT_END);
+
+	m_fTargetViewRange = 1.0f;
+
 	return S_OK;
 }
 
@@ -200,8 +204,14 @@ void CPlayer::Tick(_float fTimeDelta)
 		m_pPlayer_Information->Using_Fnisher();
 	}
 	
-
 	ENDINSTANCE;
+
+	Update_Skill_CoolTime();
+
+	if (nullptr != m_pTarget && m_pTarget->isDead())
+	{
+		Clear_Target();
+	}
 
 	Update_Target_Angle();
 
@@ -600,7 +610,7 @@ HRESULT CPlayer::Add_Components()
 
 	/* Com_UI_Group_Skill_1 */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Skill"),
-		TEXT("Com_UI_Group_Skill_1"), reinterpret_cast<CComponent**>(&m_UI_Group_Skill_01))))
+		TEXT("Com_UI_Group_Skill_1"), reinterpret_cast<CComponent**>(&m_UI_Group_Skill_01), &m_vecCoolTimeRatio)))
 	{
 		__debugbreak();
 		return E_FAIL;
@@ -673,13 +683,14 @@ HRESULT CPlayer::SetUp_ShadowShaderResources()
 HRESULT CPlayer::Add_Magic()
 {
 	CMagic::MAGICDESC magicInitDesc;
+
 	// 레비오소
 	{
 		magicInitDesc.eBuffType = BUFF_LEVIOSO;
 		magicInitDesc.eMagicGroup = CMagic::MG_CONTROL;
 		magicInitDesc.eMagicType = CMagic::MT_YELLOW;
 		magicInitDesc.eMagicTag = LEVIOSO;
-		magicInitDesc.fInitCoolTime = 1.f;
+		magicInitDesc.fInitCoolTime = 5.f;
 		magicInitDesc.iDamage = 0;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 1.8f;
@@ -692,7 +703,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicGroup = CMagic::MG_DAMAGE;
 		magicInitDesc.eMagicType = CMagic::MT_RED;
 		magicInitDesc.eMagicTag = CONFRINGO;
-		magicInitDesc.fInitCoolTime = 1.f;
+		magicInitDesc.fInitCoolTime = 5.f;
 		magicInitDesc.iDamage = 50;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 0.8f;
@@ -705,7 +716,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 		magicInitDesc.eMagicType = CMagic::MT_ALL;
 		magicInitDesc.eMagicTag = FINISHER;
-		magicInitDesc.fInitCoolTime = 1.f;
+		magicInitDesc.fInitCoolTime = 5.f;
 		magicInitDesc.iDamage = 500;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 3.f;
@@ -718,7 +729,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicGroup = CMagic::MG_DAMAGE;
 		magicInitDesc.eMagicType = CMagic::MT_RED;
 		magicInitDesc.eMagicTag = NCENDIO;
-		magicInitDesc.fInitCoolTime = 1.5f;
+		magicInitDesc.fInitCoolTime = 5.f;
 		magicInitDesc.iDamage = 300;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 1.f;
@@ -731,7 +742,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
 		magicInitDesc.eMagicTag = LUMOS;
-		magicInitDesc.fInitCoolTime = 1.5f;
+		magicInitDesc.fInitCoolTime = 5.f;
 		magicInitDesc.iDamage = 0;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 30.f;
@@ -744,7 +755,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
 		magicInitDesc.eMagicTag = ARRESTOMOMENTUM;
-		magicInitDesc.fInitCoolTime = 1.5f;
+		magicInitDesc.fInitCoolTime = 5.f;
 		magicInitDesc.iDamage = 0;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 30.f;
@@ -757,7 +768,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
 		magicInitDesc.eMagicTag = ACCIO;
-		magicInitDesc.fInitCoolTime = 1.5f;
+		magicInitDesc.fInitCoolTime = 5.f;
 		magicInitDesc.iDamage = 10;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 1.f;
@@ -770,7 +781,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
 		magicInitDesc.eMagicTag = DESCENDO;
-		magicInitDesc.fInitCoolTime = 1.5f;
+		magicInitDesc.fInitCoolTime = 5.f;
 		magicInitDesc.iDamage = 10;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 1.f;
@@ -783,7 +794,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
 		magicInitDesc.eMagicTag = FLIPENDO;
-		magicInitDesc.fInitCoolTime = 1.f;
+		magicInitDesc.fInitCoolTime = 5.f;
 		magicInitDesc.iDamage = 10;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 0.3f;
@@ -796,7 +807,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
 		magicInitDesc.eMagicTag = EXPELLIARMUS;
-		magicInitDesc.fInitCoolTime = 1.f;
+		magicInitDesc.fInitCoolTime = 5.f;
 		magicInitDesc.iDamage = 10;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 1.2f;
@@ -809,7 +820,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
 		magicInitDesc.eMagicTag = IMPERIO;
-		magicInitDesc.fInitCoolTime = 1.f;
+		magicInitDesc.fInitCoolTime = 5.f;
 		magicInitDesc.iDamage = 10;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 0.8f;
@@ -822,7 +833,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
 		magicInitDesc.eMagicTag = CRUCIO;
-		magicInitDesc.fInitCoolTime = 1.f;
+		magicInitDesc.fInitCoolTime = 5.f;
 		magicInitDesc.iDamage = 10;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 0.8f;
@@ -835,7 +846,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
 		magicInitDesc.eMagicTag = STUPEFY;
-		magicInitDesc.fInitCoolTime = 1.f;
+		magicInitDesc.fInitCoolTime = 5.f;
 		magicInitDesc.iDamage = 10;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 0.8f;
@@ -848,7 +859,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
 		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
 		magicInitDesc.eMagicTag = DIFFINDO;
-		magicInitDesc.fInitCoolTime = 1.f;
+		magicInitDesc.fInitCoolTime = 5.f;
 		magicInitDesc.iDamage = 10;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 0.8f;
@@ -908,6 +919,15 @@ void CPlayer::Key_Input(_float fTimeDelta)
 	}
 #endif // _DEBUG
 
+	//조준
+	if (pGameInstance->Get_DIMouseState(CInput_Device::DIMK_RBUTTON, CInput_Device::KEY_PRESSING))
+	{
+		Find_Target_For_ViewSpace();
+	}
+
+
+
+
 #pragma region 스테이트 변경 키 입력
 
 	if (pGameInstance->Get_DIKeyState(DIK_LCONTROL, CInput_Device::KEY_DOWN))
@@ -938,25 +958,25 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		MagicCastingStateDesc.iSpellType = CMagicCastingState::SPELL_NORMAL;
 
 		//기본 스팰
-		if (pGameInstance->Get_DIKeyState(DIK_1, CInput_Device::KEY_DOWN))
+		if (pGameInstance->Get_DIKeyState(DIK_1, CInput_Device::KEY_DOWN) && m_pMagicSlot->IsCoolOn_Skill(SKILLINPUT_1))
 		{
 			MagicCastingStateDesc.pFuncSpell = [&] {(*this).Shot_Magic_Spell_Button_1(); };
 
 			Go_MagicCast(&MagicCastingStateDesc);
 		}
-		if (pGameInstance->Get_DIKeyState(DIK_2, CInput_Device::KEY_DOWN))
+		if (pGameInstance->Get_DIKeyState(DIK_2, CInput_Device::KEY_DOWN) && m_pMagicSlot->IsCoolOn_Skill(SKILLINPUT_2))
 		{
 			MagicCastingStateDesc.pFuncSpell = [&] {(*this).Shot_Magic_Spell_Button_2(); };
 
 			Go_MagicCast(&MagicCastingStateDesc);
 		}
-		if (pGameInstance->Get_DIKeyState(DIK_3, CInput_Device::KEY_DOWN))
+		if (pGameInstance->Get_DIKeyState(DIK_3, CInput_Device::KEY_DOWN) && m_pMagicSlot->IsCoolOn_Skill(SKILLINPUT_3))
 		{
 			MagicCastingStateDesc.pFuncSpell = [&] {(*this).Shot_Magic_Spell_Button_3(); };
 
 			Go_MagicCast(&MagicCastingStateDesc);
 		}
-		if (pGameInstance->Get_DIKeyState(DIK_4, CInput_Device::KEY_DOWN))
+		if (pGameInstance->Get_DIKeyState(DIK_4, CInput_Device::KEY_DOWN) && m_pMagicSlot->IsCoolOn_Skill(SKILLINPUT_4))
 		{
 			MagicCastingStateDesc.pFuncSpell = [&] {(*this).Shot_Magic_Spell_Button_4(); };
 
@@ -974,10 +994,12 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 		MagicCastingStateDesc.iSpellType = CMagicCastingState::SPELL_FINISHER;
 
-		//조건 추가 해야함
-		if (pGameInstance->Get_DIKeyState(DIK_X, CInput_Device::KEY_DOWN))
+		//조건 추가함
+		if (pGameInstance->Get_DIKeyState(DIK_X, CInput_Device::KEY_DOWN) && m_pPlayer_Information->Is_Use_Fnisher())
 		{
 			MagicCastingStateDesc.pFuncSpell = [&] {(*this).Finisher(); };
+
+			m_pPlayer_Information->Using_Fnisher();
 
 			Go_MagicCast(&MagicCastingStateDesc);
 
@@ -1862,6 +1884,11 @@ void CPlayer::Update_Cloth(_float fTimeDelta)
 
 void CPlayer::Find_Target_For_Distance()
 {
+	if (nullptr != m_pTarget)
+	{
+		return;
+	}
+
 	BEGININSTANCE;
 
 	unordered_map<const _tchar*, CComponent*>* pLayer = pGameInstance->Find_Components_In_Layer(m_eLevelID, TEXT("Layer_Monster"));
@@ -1946,6 +1973,109 @@ void CPlayer::Find_Target_For_Distance()
 			m_pTarget = nullptr;
 		}
 	}
+	ENDINSTANCE;
+}
+
+void CPlayer::Find_Target_For_ViewSpace()
+{
+	//있는건 지우고
+	if (nullptr != m_pTarget)
+	{
+		Clear_Target();
+	}
+
+	BEGININSTANCE;
+
+	unordered_map<const _tchar*, CComponent*>* pLayer = pGameInstance->Find_Components_In_Layer(m_eLevelID, TEXT("Layer_Monster"));
+
+	if (nullptr == pLayer)
+	{
+		ENDINSTANCE;
+		return;
+	}
+
+	_float fMinDistance = { 10.0f };
+
+	//거리가 낮은 놈을 저장
+	CGameObject* pTarget = { nullptr };
+
+	//몬스터월드를 뷰스페이스로 올린다.
+	//x, y기준으로 +,- 범위를 지정해서 안에 있는지 확인한다.
+
+	_float4x4 viewMatrix = *pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW);
+
+	//임시 저장 컨테이너
+	list<pair<CEnemy*,_float>> EnemyList;
+
+	//범위 안에 있는것들만 저장
+	for (unordered_map<const _tchar*, CComponent*>::iterator iter = pLayer->begin(); iter != pLayer->end(); iter++)
+	{
+		CEnemy* pEnemy = static_cast<CEnemy*>((*iter).second);
+		
+		//뷰스페이스로 올리기
+		_float4x4 TargetWorldMatrix = pEnemy->Get_Transform()->Get_WorldMatrix();
+
+		_float4x4 TargetViewMatrix = TargetWorldMatrix * viewMatrix;
+
+		_float3 vTargetViewPosition = TargetViewMatrix.Translation();
+
+		//-1 ~ 1 사이에 있는 것들을 중에 카메라보다 앞에 있는것
+		if (-m_fTargetViewRange < vTargetViewPosition.x &&
+			m_fTargetViewRange > vTargetViewPosition.x &&
+			-m_fTargetViewRange < vTargetViewPosition.y &&
+			m_fTargetViewRange > vTargetViewPosition.y &&
+			0.0f < vTargetViewPosition.z)
+		{
+			EnemyList.push_back(pair(pEnemy, vTargetViewPosition.z));
+		}
+	}
+
+	//비었다면
+	if (true == EnemyList.empty())
+	{
+		ENDINSTANCE;
+		return;
+	}
+
+	EnemyList.sort(
+	[](const pair<CEnemy*, _float>& _pEnemy_1, const pair<CEnemy*, _float>& _pEnemy_2)
+	{
+		return _pEnemy_1.second < _pEnemy_2.second;
+	});
+
+	pTarget = EnemyList.front().first;
+
+	if (nullptr == pTarget)
+	{
+		EnemyList.clear();
+
+		ENDINSTANCE;
+		return;
+	}
+
+	//기존 객체는 지워주고
+	if (nullptr != m_pTargetTransform)
+	{
+		Safe_Release(m_pTargetTransform);
+	}
+
+	//타겟으로 한다.
+	m_pTargetTransform = pTarget->Get_Transform();
+
+	Safe_AddRef(m_pTargetTransform);
+
+
+	//기존 객체는 지워주고
+	if (nullptr != m_pTarget)
+	{
+		Safe_Release(m_pTarget);
+	}
+
+	//타겟으로 한다.
+	m_pTarget = pTarget;
+
+	Safe_AddRef(m_pTarget);
+
 	ENDINSTANCE;
 }
 
@@ -2126,6 +2256,17 @@ void CPlayer::Go_Hit(void* _pArg)
 	}
 }
 
+void CPlayer::Update_Skill_CoolTime()
+{
+	for (size_t i = 0; i < SKILLINPUT_END; i++)
+	{
+		_float Time = m_pMagicSlot->Get_CoolTime(i);
+		_float TimeAcc = m_pMagicSlot->Get_CoolMultipleTimer(i);
+
+ 		m_vecCoolTimeRatio[i] = 1.0f - m_pMagicSlot->Get_CoolTimeRatio(i);
+	}
+}
+
 CPlayer* CPlayer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CPlayer* pInstance = New CPlayer(pDevice, pContext);
@@ -2173,6 +2314,14 @@ void CPlayer::Shot_Magic_Spell_Button_3()
 	}
 
 	m_pMagicBall = m_pMagicSlot->Action_Magic_Skill(SKILLINPUT_3, m_pTarget, m_pWeapon, COL_ENEMY, m_isPowerUp);
+}
+
+void CPlayer::Clear_Target()
+{
+	Safe_Release(m_pTarget);
+	Safe_Release(m_pTargetTransform);
+	m_pTarget = nullptr;
+	m_pTargetTransform = nullptr;
 }
 
 void CPlayer::Shot_Magic_Spell_Button_4()
