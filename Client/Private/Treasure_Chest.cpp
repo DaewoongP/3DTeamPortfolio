@@ -61,6 +61,7 @@ void CTreasure_Chest::Tick(_float fTimeDelta)
 
 	if (nullptr != m_pModel)
 		m_pModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
+		
 }
 
 void CTreasure_Chest::Late_Tick(_float fTimeDelta)
@@ -116,6 +117,8 @@ HRESULT CTreasure_Chest::Render_Depth()
 
 	for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; ++iMeshCount)
 	{
+		m_pModel->Bind_BoneMatrices(m_pShadowShader, "g_BoneMatrices", iMeshCount);
+
 		if (FAILED(m_pShadowShader->Begin("Shadow")))
 			return E_FAIL;
 
@@ -147,7 +150,7 @@ HRESULT CTreasure_Chest::Add_Components()
 	}
 
 	/* Com_ShadowShader */
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_ShadowMesh"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_ShadowAnimMesh"),
 		TEXT("Com_ShadowShader"), reinterpret_cast<CComponent**>(&m_pShadowShader))))
 	{
 		MSG_BOX("Failed CTreasure_Chest Add_Component : (Com_ShadowShader)");
@@ -168,7 +171,7 @@ HRESULT CTreasure_Chest::SetUp_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
-	if (FAILED(m_pShadowShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
+	if (FAILED(m_pShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
 		return E_FAIL;
 
 	ENDINSTANCE;

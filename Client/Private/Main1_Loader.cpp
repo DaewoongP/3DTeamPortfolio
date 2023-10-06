@@ -402,12 +402,29 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath, LEVELID 
 		wstring szDirectoryPath = modelPath;
 		modelPath += modelName;
 		modelPath += TEXT(".dat");
-		
-		if (FAILED(pGameInstance->Add_Prototype(eID, LoadDesc.wszTag,
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, modelPath.c_str()), true)))
+
+		// 비교해야되는 문자열
+		wstring wsTreasureChestName(TEXT("Anim_TreasureChest"));
+
+		// 보물상자
+		if (0 == lstrcmp(modelName.c_str(), wsTreasureChestName.c_str()))
 		{
-			MSG_BOX("Failed to Create New Model Prototype");
+			if (FAILED(pGameInstance->Add_Prototype(eID, LoadDesc.wszTag,
+				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, modelPath.c_str()), true)))
+			{
+				MSG_BOX("Failed to Create New Model Prototype(TreasureChest)");
+			}
 		}
+
+		// 일반 맵오브젝트
+		else
+		{
+			if (FAILED(pGameInstance->Add_Prototype(eID, LoadDesc.wszTag,
+				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, modelPath.c_str()), true)))
+			{
+				MSG_BOX("Failed to Create New Model Prototype");
+			}
+		}		
 
 		++iObjectNum; ENDINSTANCE;
 	}
