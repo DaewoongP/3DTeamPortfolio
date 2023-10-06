@@ -107,9 +107,9 @@ namespace Engine
 			END_COL == filterData0.word2 ||
 			END_COL == filterData1.word2)
 		{
-			pairFlags = PxPairFlag::eCONTACT_DEFAULT;
+			//pairFlags = physx::PxPairFlag::eDETECT_DISCRETE_CONTACT;
 
-			return physx::PxFilterFlag::eDEFAULT;
+			return physx::PxFilterFlag::eSUPPRESS;
 		}
 
 		// 둘중 하나가 트리거일경우 트리거 처리로 변경

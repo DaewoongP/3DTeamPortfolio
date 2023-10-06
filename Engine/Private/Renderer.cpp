@@ -153,16 +153,10 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Deferred"), 240.f, 80.f, 160.f, 160.f)))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_HDR"), 240.f, 240.f, 160.f, 160.f)))
-		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Effect"), 240.f, 400.f, 160.f, 160.f)))
-		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Glowed"), 240.f, 560.f, 160.f, 160.f)))
-		return E_FAIL;
 #endif // _DEBUG
 
 	m_fGlowPower = 3.f;
-	m_fHDR = 1.f;
+	m_fHDR = 0.7f;
 
 	return S_OK;
 }
@@ -225,6 +219,9 @@ HRESULT CRenderer::Draw_RenderGroup()
 
 #pragma region Render Targets
 	if (FAILED(Render_HDR()))
+		return E_FAIL;
+
+	if (FAILED(Sort_Render(RENDER_GLOW)))
 		return E_FAIL;
 	if (FAILED(m_pGlow->Render(m_RenderObjects[RENDER_GLOW], m_fGlowPower)))
 		return E_FAIL;
@@ -544,7 +541,7 @@ HRESULT CRenderer::Render_NonLight()
 
 HRESULT CRenderer::Render_Blend()
 {
-	if (FAILED(Sort_Blend()))
+	if (FAILED(Sort_Render(RENDER_BLEND)))
 		return E_FAIL;
 	
 	for (auto& pGameObject : m_RenderObjects[RENDER_BLEND])
@@ -692,7 +689,7 @@ HRESULT CRenderer::Render_UITexture()
 }
 #endif // _DEBUG
 
-HRESULT CRenderer::Sort_Blend()
+HRESULT CRenderer::Sort_Render(RENDERGROUP eGroup)
 {
 	CPipeLine* pPipeLine = CPipeLine::GetInstance();
 	Safe_AddRef(pPipeLine);
@@ -712,7 +709,7 @@ HRESULT CRenderer::Sort_Blend()
 			return true;
 
 		return false;
-	});
+		});
 
 	return S_OK;
 }

@@ -427,7 +427,7 @@ HRESULT CProtego::SetUp_ShaderResources()
 HRESULT CProtego::Add_RigidBody()
 {
 	CRigidBody::RIGIDBODYDESC RigidBodyDesc;
-	RigidBodyDesc.isStatic = true;
+	RigidBodyDesc.isStatic = false;
 	RigidBodyDesc.isTrigger = false;
 	RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
 	RigidBodyDesc.vOffsetPosition = _float3(0.f, 0.0f, 0.f);
@@ -441,7 +441,7 @@ HRESULT CProtego::Add_RigidBody()
 	RigidBodyDesc.isGravity = false;
 	RigidBodyDesc.pOwnerObject = this;
 	RigidBodyDesc.eThisCollsion = COL_SHIELD;
-	RigidBodyDesc.eCollisionFlag = m_eCollisionFlag;
+	RigidBodyDesc.eCollisionFlag = COL_ENEMY_ATTACK;
 	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Magic_Ball");
 
 	/* Com_RigidBody */

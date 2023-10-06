@@ -356,8 +356,6 @@ void CPlayer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 
 void CPlayer::OnCollisionStay(COLLEVENTDESC CollisionEventDesc)
 {
-	// 터레인 판단 구문입니다.
-	//if (wcswcs(CollisionEventDesc.pOtherCollisionTag, L"Terrain"))
 }
 
 void CPlayer::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
@@ -574,11 +572,11 @@ HRESULT CPlayer::Add_Components()
 	RigidBodyDesc.pGeometry = &MyGeometry;
 	RigidBodyDesc.vOffsetPosition = _float3(0.f, MyGeometry.halfHeight + MyGeometry.radius, 0.f);
 	RigidBodyDesc.vOffsetRotation = XMQuaternionRotationRollPitchYaw(0.f, 0.f, XMConvertToRadians(90.f));
-	RigidBodyDesc.eConstraintFlag = CRigidBody::RotX | CRigidBody::RotZ;
+	RigidBodyDesc.eConstraintFlag = CRigidBody::AllRot;
 	RigidBodyDesc.vDebugColor = _float4(1.f, 105 / 255.f, 180 / 255.f, 1.f); // hot pink
 	RigidBodyDesc.pOwnerObject = this;
 	RigidBodyDesc.eThisCollsion = COL_PLAYER;
-	RigidBodyDesc.eCollisionFlag = COL_ENEMY_RANGE | COL_ENEMY_ATTACK | COL_ENEMY | COL_TRIGGER;
+	RigidBodyDesc.eCollisionFlag = COL_ENEMY_RANGE | COL_ENEMY_ATTACK | COL_TRIGGER | COL_STATIC;
 	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Player_Default");
 
 	/* Com_RigidBody */
@@ -591,7 +589,6 @@ HRESULT CPlayer::Add_Components()
 
 	m_OffsetMatrix = XMMatrixTranslation(RigidBodyDesc.vOffsetPosition.x, RigidBodyDesc.vOffsetPosition.y, RigidBodyDesc.vOffsetPosition.z);
 	m_pRigidBody->Get_RigidBodyActor()->setAngularDamping(1.f);
-	m_pRigidBody->Set_Density(100.f);
 
 	/* Com_Player_Information */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Player_Information"),

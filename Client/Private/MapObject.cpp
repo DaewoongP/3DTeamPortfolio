@@ -65,12 +65,13 @@ HRESULT CMapObject::Initialize_Level(_uint iCurrentLevelIndex)
 	RigidBodyDesc.isStatic = true;
 	RigidBodyDesc.isTrigger = false;
 	RigidBodyDesc.eConstraintFlag = CRigidBody::All;
-	RigidBodyDesc.fStaticFriction = 0.5f;
-	RigidBodyDesc.fDynamicFriction = 0.5f;
+	RigidBodyDesc.fStaticFriction = 1.f;
+	RigidBodyDesc.fDynamicFriction = 1.f;
 	RigidBodyDesc.fRestitution = 0.f;
 	RigidBodyDesc.pOwnerObject = this;
 	RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 1.f, 1.f);
 	RigidBodyDesc.eThisCollsion = COL_STATIC;
+	RigidBodyDesc.eCollisionFlag = COL_ENEMY | COL_PLAYER;
 	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "MapObject");
 
 	vector<CMesh*> Meshes = *m_pModel->Get_MeshesVec();
@@ -187,7 +188,7 @@ HRESULT CMapObject::Render()
 		m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", iMeshCount, DIFFUSE);
 		m_pModel->Bind_Material(m_pShader, "g_NormalTexture", iMeshCount, NORMALS);
 
-		m_pShader->Begin("Mesh_No_Cull");		
+		m_pShader->Begin("Mesh");		
 
 		if (FAILED(m_pModel->Render(iMeshCount)))
 			return E_FAIL;
