@@ -137,7 +137,13 @@ HRESULT CFinisher::Initialize(void* pArg)
 
 void CFinisher::Tick(_float fTimeDelta)
 {
-	__super::Tick(fTimeDelta);
+	if (m_pTargetWorldMatrix != nullptr)
+		m_CurrentTargetMatrix = /*(*m_pTargetOffsetMatrix) * */(*m_pTargetWorldMatrix);
+
+	if (m_pWeaponWorldMatrix != nullptr)
+		m_CurrentWeaponMatrix = (*m_pWeaponOffsetMatrix) * (*m_pWeaponWorldMatrix);
+	Tick_MagicBall_State(fTimeDelta);
+	CGameObject::Tick(fTimeDelta);
 }
 
 void CFinisher::Late_Tick(_float fTimeDelta)

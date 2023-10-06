@@ -155,7 +155,13 @@ HRESULT CBombarda::Initialize(void* pArg)
 
 void CBombarda::Tick(_float fTimeDelta)
 {
-	__super::Tick(fTimeDelta);
+	if (m_pTargetWorldMatrix != nullptr)
+		m_CurrentTargetMatrix = /*(*m_pTargetOffsetMatrix) * */(*m_pTargetWorldMatrix);
+
+	if (m_pWeaponWorldMatrix != nullptr)
+		m_CurrentWeaponMatrix = (*m_pWeaponOffsetMatrix) * (*m_pWeaponWorldMatrix);
+	Tick_MagicBall_State(fTimeDelta);
+	CGameObject::Tick(fTimeDelta);
 }
 
 void CBombarda::Late_Tick(_float fTimeDelta)

@@ -509,6 +509,8 @@ HRESULT RENDERER_MODULE::Save(const _tchar* _pDirectoyPath)
 	WriteFile(hFile, wstrGraientTexture.data(), sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
 	WriteFile(hFile, strPass.data(), sizeof(_char) * MAX_PATH, &dwByte, nullptr);
 	WriteFile(hFile, &isGlow, sizeof(isGlow), &dwByte, nullptr);
+	WriteFile(hFile, &isDistortion, sizeof(isDistortion), &dwByte, nullptr);
+	WriteFile(hFile, wstrDistortionTexture.data(), sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
 
 	CloseHandle(hFile);
 	return S_OK;
@@ -549,7 +551,9 @@ HRESULT RENDERER_MODULE::Load(const _tchar* _pDirectoyPath)
 	ReadFile(hFile, szBuffer, sizeof(_char) * MAX_PATH, &dwByte, nullptr);
 	strPass = szBuffer;
 	ReadFile(hFile, &isGlow, sizeof(isGlow), &dwByte, nullptr);
-
+	ReadFile(hFile, &isDistortion, sizeof(isDistortion), &dwByte, nullptr);
+	WriteFile(hFile, wszBuffer, sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
+	wstrDistortionTexture = wszBuffer;
 	CloseHandle(hFile);
 	return S_OK;
 }
