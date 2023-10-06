@@ -1,17 +1,17 @@
-#include "..\Public\Treasure_Chest.h"
+#include "..\Public\Gatherer.h"
 #include "GameInstance.h"
 
-CTreasure_Chest::CTreasure_Chest(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CGatherer::CGatherer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
 }
 
-CTreasure_Chest::CTreasure_Chest(const CTreasure_Chest& rhs)
+CGatherer::CGatherer(const CGatherer& rhs)
 	: CGameObject(rhs)
 {
 }
 
-HRESULT CTreasure_Chest::Initialize_Prototype()
+HRESULT CGatherer::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
@@ -19,11 +19,11 @@ HRESULT CTreasure_Chest::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CTreasure_Chest::Initialize(void* pArg)
+HRESULT CGatherer::Initialize(void* pArg)
 {
 	if (nullptr == pArg)
 	{
-		MSG_BOX("CTreasure_Chest Argument is NULL");
+		MSG_BOX("CGatherer Argument is NULL");
 		return E_FAIL;
 	}
 
@@ -39,49 +39,44 @@ HRESULT CTreasure_Chest::Initialize(void* pArg)
 	return S_OK;
 }
 
-HRESULT CTreasure_Chest::Initialize_Level(_uint iCurrentLevelIndex)
+HRESULT CGatherer::Initialize_Level(_uint iCurrentLevelIndex)
 {
 	/* Com_Model */
 	if (FAILED(CComposite::Add_Component(iCurrentLevelIndex, m_ObjectDesc.wszTag,
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModel))))
 	{
-		MSG_BOX("Failed CTreasure_Chest Add_Component : (Com_Model)");
+		MSG_BOX("Failed CGatherer Add_Component : (Com_Model)");
 		__debugbreak();
 		return E_FAIL;
 	}
 
-	// 리지드 바디 설정
-
 	return S_OK;
 }
 
-void CTreasure_Chest::Tick(_float fTimeDelta)
+void CGatherer::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
 	if (nullptr != m_pModel)
-		m_pModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);		
+		m_pModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 }
 
-void CTreasure_Chest::Late_Tick(_float fTimeDelta)
+void CGatherer::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	BEGININSTANCE; 
-	
+	BEGININSTANCE;
+
 	if (nullptr != m_pRenderer)
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
-#ifdef _DEBUG
-		//m_pRenderer->Add_DebugGroup(m_pRigidBody);
-#endif // _DEBUG
 	}
-	
+
 	ENDINSTANCE;
 }
 
-HRESULT CTreasure_Chest::Render()
+HRESULT CGatherer::Render()
 {
 	if (FAILED(__super::Render()))
 		return E_FAIL;
@@ -107,7 +102,7 @@ HRESULT CTreasure_Chest::Render()
 	return S_OK;
 }
 
-HRESULT CTreasure_Chest::Render_Depth()
+HRESULT CGatherer::Render_Depth()
 {
 	if (FAILED(SetUp_ShadowShaderResources()))
 		return E_FAIL;
@@ -128,13 +123,13 @@ HRESULT CTreasure_Chest::Render_Depth()
 	return S_OK;
 }
 
-HRESULT CTreasure_Chest::Add_Components()
+HRESULT CGatherer::Add_Components()
 {
 	/* Com_Renderer */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"),
 		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
 	{
-		MSG_BOX("Failed CTreasure_Chest Add_Component : (Com_Renderer)");
+		MSG_BOX("Failed CGatherer Add_Component : (Com_Renderer)");
 		__debugbreak();
 		return E_FAIL;
 	}
@@ -143,7 +138,7 @@ HRESULT CTreasure_Chest::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
 	{
-		MSG_BOX("Failed CTreasure_Chest Add_Component : (Com_Shader)");
+		MSG_BOX("Failed CGatherer Add_Component : (Com_Shader)");
 		__debugbreak();
 		return E_FAIL;
 	}
@@ -152,7 +147,7 @@ HRESULT CTreasure_Chest::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_ShadowAnimMesh"),
 		TEXT("Com_ShadowShader"), reinterpret_cast<CComponent**>(&m_pShadowShader))))
 	{
-		MSG_BOX("Failed CTreasure_Chest Add_Component : (Com_ShadowShader)");
+		MSG_BOX("Failed CGatherer Add_Component : (Com_ShadowShader)");
 		__debugbreak();
 		return E_FAIL;
 	}
@@ -160,7 +155,7 @@ HRESULT CTreasure_Chest::Add_Components()
 	return S_OK;
 }
 
-HRESULT CTreasure_Chest::SetUp_ShaderResources()
+HRESULT CGatherer::SetUp_ShaderResources()
 {
 	BEGININSTANCE;
 
@@ -178,7 +173,7 @@ HRESULT CTreasure_Chest::SetUp_ShaderResources()
 	return S_OK;
 }
 
-HRESULT CTreasure_Chest::SetUp_ShadowShaderResources()
+HRESULT CGatherer::SetUp_ShadowShaderResources()
 {
 	BEGININSTANCE;
 
@@ -196,7 +191,7 @@ HRESULT CTreasure_Chest::SetUp_ShadowShaderResources()
 	return S_OK;
 }
 
-void CTreasure_Chest::Check_MinMaxPoint(_float3 vPoint)
+void CGatherer::Check_MinMaxPoint(_float3 vPoint)
 {
 	if (m_vMinPoint.x > vPoint.x)
 		m_vMinPoint.x = vPoint.x;
@@ -213,36 +208,35 @@ void CTreasure_Chest::Check_MinMaxPoint(_float3 vPoint)
 		m_vMaxPoint.z = vPoint.z;
 }
 
-CTreasure_Chest* CTreasure_Chest::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CGatherer* CGatherer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CTreasure_Chest* pInstance = New CTreasure_Chest(pDevice, pContext);
+	CGatherer* pInstance = New CGatherer(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Created CTreasure_Chest");
+		MSG_BOX("Failed to Created CGatherer");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject* CTreasure_Chest::Clone(void* pArg)
+CGameObject* CGatherer::Clone(void* pArg)
 {
-	CTreasure_Chest* pInstance = New CTreasure_Chest(*this);
+	CGatherer* pInstance = New CGatherer(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned CTreasure_Chest");
+		MSG_BOX("Failed to Cloned CGameObject");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-void CTreasure_Chest::Free()
+void CGatherer::Free()
 {
 	__super::Free();
 
-	//Safe_Release(m_pRigidBody);
 	Safe_Release(m_pShadowShader);
 	Safe_Release(m_pShader);
 	Safe_Release(m_pModel);

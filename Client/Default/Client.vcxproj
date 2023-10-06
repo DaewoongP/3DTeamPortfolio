@@ -173,6 +173,7 @@
     <ClInclude Include="..\Public\ConjuredDragon.h" />
     <ClInclude Include="..\Public\Diffindo.h" />
     <ClInclude Include="..\public\FlowMap.h" />
+    <ClInclude Include="..\Public\Gatherer.h" />
     <ClInclude Include="..\public\ImGui_Manager.h" />
     <ClInclude Include="..\Public\Ingredient.h" />
     <ClInclude Include="..\Public\Arrestomomentum.h" />
@@ -367,6 +368,7 @@
     <ClCompile Include="..\Private\ConjuredDragon.cpp" />
     <ClCompile Include="..\Private\Diffindo.cpp" />
     <ClCompile Include="..\private\FlowMap.cpp" />
+    <ClCompile Include="..\Private\Gatherer.cpp" />
     <ClCompile Include="..\private\ImGui_Manager.cpp" />
     <ClCompile Include="..\Private\Ingredient.cpp" />
     <ClCompile Include="..\Private\Arrestomomentum.cpp" />
