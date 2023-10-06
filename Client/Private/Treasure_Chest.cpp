@@ -1,6 +1,8 @@
 #include "..\Public\Treasure_Chest.h"
 #include "GameInstance.h"
 
+#include "Player.h"
+
 CTreasure_Chest::CTreasure_Chest(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
@@ -52,6 +54,11 @@ HRESULT CTreasure_Chest::Initialize_Level(_uint iCurrentLevelIndex)
 
 	// 리지드 바디 설정
 
+	// 플레이어 찾기
+	BEGININSTANCE;
+	m_pPlayer = static_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(iCurrentLevelIndex, TEXT("Layer_Player"), TEXT("GameObject_Player")));
+	ENDINSTANCE;
+
 	return S_OK;
 }
 
@@ -59,8 +66,41 @@ void CTreasure_Chest::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	if (nullptr != m_pModel)
-		m_pModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);		
+	// 플레이어와 거리 비교
+	_float3 vPlayerPos = m_pPlayer->Get_PlayerPos();
+	_float3 vChestPos = m_pTransform->Get_Position();
+
+	m_fDist_From_Player = sqrtf((vPlayerPos.x - vChestPos.x) * (vPlayerPos.x - vChestPos.x) + 
+		(vPlayerPos.y - vChestPos.y) * (vPlayerPos.y - vChestPos.y) + 
+		(vPlayerPos.z - vChestPos.z) * (vPlayerPos.z - vChestPos.z));
+
+	// 일정 거리안으로 들어왔을 때
+	if (2.f >= m_fDist_From_Player && nullptr != m_pModel)
+	{
+		// 여기서 버튼 UI가 나타나면 될듯
+
+		BEGININSTANCE;  // 버튼을 누르면 동작
+		if (pGameInstance->Get_DIKeyState(DIK_E, CInput_Device::KEY_DOWN))
+		{
+			m_isGetItem = false;
+
+			// 여기서 인벤토리 처리해주면 될듯
+		}
+
+		ENDINSTANCE;
+	}
+
+	// 닫혀있는 상태
+	if (true == m_isGetItem)
+	{
+		m_pModel->Play_Animation(0.f, CModel::UPPERBODY, m_pTransform);
+	}
+
+	// 열리는 상태
+	else
+	{
+		m_pModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
+	}		
 }
 
 void CTreasure_Chest::Late_Tick(_float fTimeDelta)

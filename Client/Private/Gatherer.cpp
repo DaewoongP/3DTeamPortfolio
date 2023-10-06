@@ -1,6 +1,8 @@
 #include "..\Public\Gatherer.h"
 #include "GameInstance.h"
 
+#include "Player.h"
+
 CGatherer::CGatherer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
@@ -35,6 +37,10 @@ HRESULT CGatherer::Initialize(void* pArg)
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
+
+	BEGININSTANCE;
+
+	ENDINSTANCE;
 
 	return S_OK;
 }
