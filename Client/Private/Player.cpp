@@ -169,6 +169,8 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_vLevelInitPosition[LEVEL_CLIFFSIDE] = _float3(25.f, 3.f, 22.5f);
 	m_vLevelInitPosition[LEVEL_VAULT] = _float3(7.0f, 0.02f, 7.5f);
 
+	m_vecCoolTimeRatio.resize(SKILLINPUT_END);
+
 	return S_OK;
 }
 
@@ -199,6 +201,8 @@ void CPlayer::Tick(_float fTimeDelta)
 	}
 	
 	ENDINSTANCE;
+
+	Update_Skill_CoolTime();
 
 	if (nullptr != m_pTarget && m_pTarget->isDead())
 	{
@@ -601,6 +605,9 @@ HRESULT CPlayer::Add_Components()
 		__debugbreak();
 		return E_FAIL;
 	}
+
+	//±¸Á¶Ã¼
+	//CUI_Group_Skill::Desc Desc.pvec = &m_vecCoolTimeRatio;
 
 	/* Com_UI_Group_Skill_1 */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Skill"),
@@ -2160,6 +2167,17 @@ void CPlayer::Go_Hit(void* _pArg)
 		m_pStateContext->Is_Current_State(TEXT("Jump")))
 	{
 		m_pStateContext->Set_StateMachine(TEXT("Hit"), _pArg);
+	}
+}
+
+void CPlayer::Update_Skill_CoolTime()
+{
+	for (size_t i = 0; i < SKILLINPUT_END; i++)
+	{
+		_float Time = m_pMagicSlot->Get_CoolTime(i);
+		_float TimeAcc = m_pMagicSlot->Get_CoolMultipleTimer(i);
+
+ 		m_vecCoolTimeRatio[i] = 1.0f - m_pMagicSlot->Get_CoolTimeRatio(i);
 	}
 }
 

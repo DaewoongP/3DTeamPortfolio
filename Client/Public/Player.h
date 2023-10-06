@@ -147,6 +147,11 @@ private:
 	_bool m_isFocusOn = { false };
 	_bool m_isInvisible = { false };
 	_int m_iDeffence = { 0 };
+
+
+	//스킬UI에 넘겨주기
+	vector<_float> m_vecCoolTimeRatio;
+
 	
 #pragma region 스테이트에 넘기는 변수
 
@@ -172,6 +177,25 @@ private:
 	_bool m_isReadySpell = { true };
 	
 #pragma endregion
+
+#pragma region 카메라 쉐이크
+
+	_int m_iShake_Type = { 0 };
+	_int m_iShake_Axis = { 0 };
+	_int m_iEase = { 0 };
+
+	_float m_fShakeSpeed = { 5.0f };
+	_float m_fShakeDuration = { 1.0f };
+	_float m_fShakePower = { 0.01f };
+
+	_int m_iShakePower = { 0 };
+
+	_float m_fx = { 1.0f };
+	_float m_fy = { 1.0f };
+	_float m_fz = { 1.0f };
+
+#pragma endregion
+
 
 private:
 	HRESULT Add_Components();
@@ -199,28 +223,7 @@ private:
 	void Tick_ImGui();
 	_bool m_isGravity = { false };
 
-#pragma region 카메라 쉐이크
-
-	_int m_iShake_Type = { 0 };
-	_int m_iShake_Axis = { 0 };
-	_int m_iEase = { 0 };
-
-	_float m_fShakeSpeed = { 5.0f };
-	_float m_fShakeDuration = { 1.0f };
-	_float m_fShakePower = { 0.01f };
-
-	_int m_iShakePower = { 0 };
-
-	_float m_fx = { 1.0f };
-	_float m_fy = { 1.0f };
-	_float m_fz = { 1.0f };
-
 	void Tick_TestShake();
-
-#pragma endregion
-
-
-
 #endif // _DEBUG
 
 private:
@@ -281,13 +284,10 @@ private:
 
 	void Go_Switch_Loop();
 
-
-
-
-
-
-
 #pragma endregion
+
+	void Update_Skill_CoolTime();
+
 
 public:
 	static CPlayer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
