@@ -59,6 +59,7 @@ HRESULT CTreasure_Chest::Initialize_Level(_uint iCurrentLevelIndex)
 	// 플레이어 찾기
 	BEGININSTANCE;
 	m_pPlayer = static_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(iCurrentLevelIndex, TEXT("Layer_Player"), TEXT("GameObject_Player")));
+	m_pPlayerInformation = m_pPlayer->Get_Player_Information();
 	ENDINSTANCE;
 
 	return S_OK;
@@ -81,12 +82,13 @@ void CTreasure_Chest::Tick(_float fTimeDelta)
 	{
 		// 여기서 버튼 UI가 나타나면 될듯
 
-		BEGININSTANCE;  // 버튼을 누르면 동작(한번만 동작)
+		BEGININSTANCE;  // 버튼을 누르면 동작(한번만)
 		if (pGameInstance->Get_DIKeyState(DIK_E, CInput_Device::KEY_DOWN) && true == m_isGetItem)
 		{
 			m_isGetItem = false;
 
 			// 인벤토리 획득 처리
+			//m_pPlayerInformation->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_"));
 			cout << "보물 상자가 열리고 어떤 아이템 획득" << '\n';
 		}
 
@@ -103,7 +105,7 @@ void CTreasure_Chest::Tick(_float fTimeDelta)
 	else
 	{
 		m_pModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
-	}		
+	}
 }
 
 void CTreasure_Chest::Late_Tick(_float fTimeDelta)

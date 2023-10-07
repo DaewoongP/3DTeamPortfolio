@@ -113,9 +113,11 @@ void CGatherer::Tick(_float fTimeDelta)
 	{
 		// 여기서 버튼 UI가 나타나면 될듯
 
-		BEGININSTANCE;  // 버튼을 누르면 동작
-		if (pGameInstance->Get_DIKeyState(DIK_E, CInput_Device::KEY_DOWN))
+		BEGININSTANCE;  // 버튼을 누르면 동작(한번만)
+		if (pGameInstance->Get_DIKeyState(DIK_E, CInput_Device::KEY_DOWN) && true == m_isGetItem)
 		{
+			m_isGetItem = false;
+
 			// 채집당하는 애니메이션으로 변경
 			m_pModel->Set_CurrentAnimIndex(0);
 
@@ -146,6 +148,16 @@ void CGatherer::Tick(_float fTimeDelta)
 
 	if (nullptr != m_pModel)
 		m_pModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
+
+	// 채집물 뽑히는 애니메이션이 끝나고 나면 사망처리
+	if (nullptr != m_pModel) 
+	{
+		if (0 == m_pModel->Get_CurrentAnimIndex() && true == m_pModel->Is_Finish_Animation())
+		{
+			Set_ObjEvent(OBJ_DEAD);
+			cout << "채집물 죽음" << '\n';
+		}
+	}	
 }
 
 void CGatherer::Late_Tick(_float fTimeDelta)

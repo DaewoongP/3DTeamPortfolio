@@ -58,6 +58,8 @@ private:
 	_float			m_fRadius = { 0.f };
 	_float			m_fDist_From_Player = { 0.f }; // 채집물과 플레이어와의 거리
 
+	_bool			m_isGetItem = { true }; // 아이템 획득 가능 여부
+
 private:
 	MAPOBJECTDESC	m_ObjectDesc;
 	GATHERING		m_GatheringType = { CGatherer::GATHERING_END }; // 채집물 종류
