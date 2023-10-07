@@ -57,19 +57,14 @@ HRESULT CProtego::Initialize_Prototype(_uint _iLevel)
 			return E_FAIL;
 	}
 
-	// ���� ����� ����ִ� �ؽ�ó
 	Find_And_Add_Texture(TEXT("../../Resources/Effects/Textures/Gradients/VFX_T_Circle_LerpMask_D.png"));
 
-	// 5��° �Ϸ��̴� �ؽ�ó�� ���� ���� ������ �ؽ�ó
 	Find_And_Add_Texture(TEXT("../../Resources/Effects/Textures/Noises/VFX_T_Noise04_D.png"));
 
-	// ��
 	Find_And_Add_Texture(TEXT("../../Resources/Effects/Textures/Noises/VFX_T_RibbonOffset_N.png"));
 
-	// ������ ������ �� ����� ���ⰰ���ɷ� ������.
 	Find_And_Add_Texture(TEXT("../../Resources/Effects/Textures/VFX_T_Inky_Smoke_D.png"));
 
-	// ǥ�鿡 �Ϸ��̴� ȿ��
 	Find_And_Add_Texture(TEXT("../../Resources/Effects/Textures/VFX_T_Wisps_2_D.png"));
 
 	ENDINSTANCE;
@@ -102,14 +97,12 @@ void CProtego::Tick(_float fTimeDelta)
 
 	m_pTransform->Set_Position(m_CurrentTargetMatrix.Translation());
 	
-	// ��Ʈ �ð� ����
 	m_fHitTimeAcc += fTimeDelta;
 	if (m_fHitTimeAcc >= 0.5f)
 	{
 		m_isHitEffect = false;
 	}
 
-	// ��Ʈ ����Ʈ ��� ��ġ ������Ű�� ����.
 	if (true == m_isHitEffect)
 	{
 		m_vCollisionPoint = m_vCollisionPointOffset + m_pTransform->Get_Position();
@@ -134,8 +127,7 @@ void CProtego::Late_Tick(_float fTimeDelta)
 	m_pDefaultConeBoom_Particle->Late_Tick(fTimeDelta);
 	if (nullptr != m_pRenderer)
 	{
-		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BLEND, this);
-		//m_pRenderer->Add_RenderGroup(CRenderer::RENDER_GLOW, this);
+		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_GLOW, this);
 	}
 }
 
@@ -316,26 +308,26 @@ HRESULT CProtego::Reset(MAGICBALLINITDESC& InitDesc)
 	switch (InitDesc.eMagicType)
 	{
 	case Client::CMagic::MT_NOTHING:
-		__debugbreak(); // �׷��� ����� �������� ������ ����. F5������ ��� ���� ����.(��� �����װ�.)
+		__debugbreak();
 		break;
 	case Client::CMagic::MT_YELLOW:
-		m_vColor1 = { 1.f, 1.f, 0.f, 1.f }; // �����
-		m_vColor2 = { 1.f, 0.5f, 0.f, 1.f }; // ��Ȳ��
+		m_vColor1 = { 1.f, 1.f, 0.f, 1.f };
+		m_vColor2 = { 1.f, 0.5f, 0.f, 1.f };
 		break;
 	case Client::CMagic::MT_PURPLE:
-		m_vColor1 = { 0.f, 0.f, 1.f, 1.f }; // �Ķ���
-		m_vColor2 = { 0.5f, 0.f, 0.5f, 1.f }; // �����
+		m_vColor1 = { 0.f, 0.f, 1.f, 1.f };
+		m_vColor2 = { 0.5f, 0.f, 0.5f, 1.f };
 		break;
 	case Client::CMagic::MT_RED:
-		m_vColor1 = { 1.f, 0.f, 0.f, 1.f }; // ������
-		m_vColor2 = { 1.f, 0.5f, 0.f, 1.f }; // ��Ȳ��
+		m_vColor1 = { 1.f, 0.f, 0.f, 1.f };
+		m_vColor2 = { 1.f, 0.5f, 0.f, 1.f };
 		break;
 	case Client::CMagic::MT_ALL:
-		m_vColor1 = { 0.f, 0.f, 1.f, 1.f }; // �Ķ���
-		m_vColor2 = { 1.f, 0.f, 1.f, 1.f }; // ���
+		m_vColor1 = { 0.f, 0.f, 1.f, 1.f };
+		m_vColor2 = { 1.f, 0.f, 1.f, 1.f };
 		break;
 	default:
-		__debugbreak(); // �׷��� ����� �������� ������ ����. F5������ ��� ���� ����.(��� �����װ�.)
+		__debugbreak();
 		break;
 	}
 	

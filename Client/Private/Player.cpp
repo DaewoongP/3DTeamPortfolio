@@ -995,7 +995,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		MagicCastingStateDesc.iSpellType = CMagicCastingState::SPELL_FINISHER;
 
 		//조건 추가함
-		if (pGameInstance->Get_DIKeyState(DIK_X, CInput_Device::KEY_DOWN) && m_pPlayer_Information->Is_Use_Fnisher())
+		if (pGameInstance->Get_DIKeyState(DIK_X, CInput_Device::KEY_DOWN))// && m_pPlayer_Information->Is_Use_Fnisher())
 		{
 			MagicCastingStateDesc.pFuncSpell = [&] {(*this).Finisher(); };
 

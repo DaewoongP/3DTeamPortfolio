@@ -1,11 +1,4 @@
 #pragma once
-/* =============================================== */
-// 
-//	정 : 박정환
-//	부 :
-//
-/* =============================================== */
-
 #include "Light.h"
 
 BEGIN(Engine)
@@ -43,7 +36,7 @@ private:
 	_float4x4				m_ViewLight;
 	_float4x4				m_ProjLight;
 	_float4					m_fLightPos;
-
+public:
 	virtual void Free() override;
 };
 
