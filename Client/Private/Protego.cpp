@@ -419,8 +419,8 @@ HRESULT CProtego::SetUp_ShaderResources()
 HRESULT CProtego::Add_RigidBody()
 {
 	CRigidBody::RIGIDBODYDESC RigidBodyDesc;
-	RigidBodyDesc.isStatic = true;
-	RigidBodyDesc.isTrigger = true;
+	RigidBodyDesc.isStatic = false;
+	RigidBodyDesc.isTrigger = false;
 	RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
 	RigidBodyDesc.vOffsetPosition = _float3(0.f, 0.0f, 0.f);
 	RigidBodyDesc.fStaticFriction = 0.f;
