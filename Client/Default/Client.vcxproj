@@ -168,12 +168,14 @@
     <ClInclude Include="..\Public\Action.h" />
     <ClInclude Include="..\Public\Animation_Camera_Model.h" />
     <ClInclude Include="..\public\AshwinderEggs_Item.h" />
+    <ClInclude Include="..\Public\Bombarda.h" />
     <ClInclude Include="..\public\ChineseChompingCabbageItem.h" />
     <ClInclude Include="..\Public\ConjuredDragon.h" />
     <ClInclude Include="..\Public\DarkWizard_M.h" />
     <ClInclude Include="..\Public\Weapon_DarkWizard_Wand.h" />
     <ClInclude Include="..\Public\Diffindo.h" />
     <ClInclude Include="..\public\FlowMap.h" />
+    <ClInclude Include="..\Public\Gatherer.h" />
     <ClInclude Include="..\public\ImGui_Manager.h" />
     <ClInclude Include="..\Public\Ingredient.h" />
     <ClInclude Include="..\Public\Arrestomomentum.h" />
@@ -188,6 +190,7 @@
     <ClInclude Include="..\public\Norm_Test.h" />
     <ClInclude Include="..\public\Plant.h" />
     <ClInclude Include="..\Public\Potion.h" />
+    <ClInclude Include="..\Public\Potion_Station.h" />
     <ClInclude Include="..\Public\Sequence_Descendo.h" />
     <ClInclude Include="..\Public\Stupefy.h" />
     <ClInclude Include="..\public\Tool.h" />
@@ -362,12 +365,14 @@
     <ClCompile Include="..\Private\Action.cpp" />
     <ClCompile Include="..\Private\Animation_Camera_Model.cpp" />
     <ClCompile Include="..\Private\AshwinderEggs_Item.cpp" />
+    <ClCompile Include="..\Private\Bombarda.cpp" />
     <ClCompile Include="..\private\ChineseChompingCabbageItem.cpp" />
     <ClCompile Include="..\Private\ConjuredDragon.cpp" />
     <ClCompile Include="..\Private\DarkWizard_M.cpp" />
     <ClCompile Include="..\Private\Weapon_DarkWizard_Wand.cpp" />
     <ClCompile Include="..\Private\Diffindo.cpp" />
     <ClCompile Include="..\private\FlowMap.cpp" />
+    <ClCompile Include="..\Private\Gatherer.cpp" />
     <ClCompile Include="..\private\ImGui_Manager.cpp" />
     <ClCompile Include="..\Private\Ingredient.cpp" />
     <ClCompile Include="..\Private\Arrestomomentum.cpp" />
@@ -400,6 +405,7 @@
     <ClCompile Include="..\private\Level_Smith.cpp" />
     <ClCompile Include="..\private\Level_Vault.cpp" />
     <ClCompile Include="..\Private\MaximaPotion.cpp" />
+    <ClCompile Include="..\Private\Potion_Station.cpp" />
     <ClCompile Include="..\Private\PotionTap.cpp" />
     <ClCompile Include="..\Private\ProtegoState.cpp" />
     <ClCompile Include="..\Private\Menu_Gear.cpp" />

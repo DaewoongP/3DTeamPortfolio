@@ -24,7 +24,7 @@ HRESULT CPhysX_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* p
 	}
 
 	// 씬생성에 필요한 디스패쳐 생성
-	m_pDefaultCpuDispatcher = PxDefaultCpuDispatcherCreate(0);
+	m_pDefaultCpuDispatcher = PxDefaultCpuDispatcherCreate(2);
 
 	// 시공간을 생성할 하나의 씬을 생성
 	m_pPhysxScene = Create_Scene();
@@ -82,55 +82,33 @@ void CPhysX_Manager::Tick(_float fTimeDelta)
 	m_pPhysxScene->fetchResults(true);
 }
 
-_bool CPhysX_Manager::RayCast(_float3 vOrigin, _float3 vDir, _Inout_ class CGameObject** ppCollisionObject, _float fMaxDist, _Inout_ _float3* pHitPosition, _Inout_ _float* pDist, _uint iMaxHits, RayCastQueryFlag RaycastFlag)
+_bool CPhysX_Manager::RayCast(_float3 vOrigin, _float3 vDir, _float fMaxDist, _Inout_ _float3* pHitPosition, _Inout_ _float* pDist)
 {
 	vDir.Normalize();
 
-	PxRaycastBuffer CallbackBuf;
-	PxQueryFilterData FilterData;
-	if (RAY_ONLY_DYNAMIC == RaycastFlag)
-	{
-		FilterData.flags = PxQueryFlag::eDYNAMIC;
-	}
-	else if (RAY_ONLY_STATIC == RaycastFlag)
-	{
-		FilterData.flags = PxQueryFlag::eSTATIC;
-	}
-	else
-		FilterData.flags = PxQueryFlag::eDYNAMIC | PxQueryFlag::eSTATIC;
-
-	PxHitFlags eHitFlag = PxHitFlag::ePOSITION | PxHitFlag::eNORMAL | PxHitFlag::eUV;
+	PxRaycastHit rayhit;
+	PxRaycastBuffer buf;
 
 	_bool isCollision = m_pPhysxScene->raycast(PhysXConverter::ToPxVec3(vOrigin), PhysXConverter::ToPxVec3(vDir),
-		fMaxDist, CallbackBuf, eHitFlag, FilterData);
-
+		fMaxDist, buf);
+	
 	if (true == isCollision)
 	{
 		if (nullptr != pHitPosition)
-			*pHitPosition = PhysXConverter::ToXMFLOAT3(CallbackBuf.block.position);
-		if (nullptr != pDist)
-			*pDist = CallbackBuf.block.distance;
-
-		if (0 == CallbackBuf.getNbAnyHits())
 		{
-			return false;
+			*pHitPosition = PhysXConverter::ToXMFLOAT3(buf.block.position);
 		}
 
-		if (nullptr != ppCollisionObject)
+		if (nullptr != pDist)
 		{
-			PxRaycastHit hit = CallbackBuf.getAnyHit(0);
-
-			if (nullptr == hit.shape->userData)
-				return false;
-
-			*ppCollisionObject = static_cast<CRigidBody::COLLISIONDATADESC*>(hit.shape->userData)->pOwnerObject;
+			*pDist = buf.block.distance;
 		}
 	}
 
 	return isCollision;
 }
 
-_bool CPhysX_Manager::Mouse_RayCast(HWND hWnd, ID3D11DeviceContext* pContext, _Inout_ class CGameObject** ppCollisionObject, _float fMaxDist, _Inout_ _float3* pHitPosition, _Inout_ _float* pDist, _uint iMaxHits, RayCastQueryFlag RaycastFlag)
+_bool CPhysX_Manager::Mouse_RayCast(HWND hWnd, ID3D11DeviceContext* pContext, _float fMaxDist, _Inout_ _float3* pHitPosition, _Inout_ _float* pDist)
 {
 	CCalculator* pCalculator = CCalculator::GetInstance();
 	Safe_AddRef(pCalculator);
@@ -144,7 +122,7 @@ _bool CPhysX_Manager::Mouse_RayCast(HWND hWnd, ID3D11DeviceContext* pContext, _I
 
 	Safe_Release(pCalculator);
 	
-	return RayCast(vRayPos.xyz(), vRayDir.xyz(), ppCollisionObject, fMaxDist, pHitPosition, pDist, iMaxHits, RaycastFlag);
+	return RayCast(vRayPos.xyz(), vRayDir.xyz(), fMaxDist, pHitPosition, pDist);
 }
 
 PxScene* CPhysX_Manager::Create_Scene()
@@ -155,9 +133,9 @@ PxScene* CPhysX_Manager::Create_Scene()
 	SceneDesc.cpuDispatcher = m_pDefaultCpuDispatcher;
 	SceneDesc.filterShader = CollisionFilterShader;
 	SceneDesc.userData = nullptr; // 데이터를 여기에 넣어두는것도 가능.
-	SceneDesc.staticKineFilteringMode = PxPairFilteringMode::eKEEP;
-	PxScene* pScene = m_pPhysics->createScene(SceneDesc);
 	
+	PxScene* pScene = m_pPhysics->createScene(SceneDesc);
+
 	if (nullptr == pScene)
 	{
 		MSG_BOX("Failed Create Scene");

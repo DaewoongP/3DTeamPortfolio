@@ -541,6 +541,12 @@
     <Filter Include="02. GameObject\02. Enemy\05. DarkWizard\Weapon">
       <UniqueIdentifier>{231c744f-ab40-44fe-8fe7-d4cd81fb4189}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\PotionStation">
+      <UniqueIdentifier>{e8e87625-76be-4cce-8219-8d85981baf70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\Gatherer">
+      <UniqueIdentifier>{e88e5f73-5766-4d38-b329-5d4e9342c0b1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -1052,6 +1058,15 @@
     <ClInclude Include="..\Public\Weapon_DarkWizard_Wand.h">
       <Filter>02. GameObject\02. Enemy\05. DarkWizard\Weapon</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Potion_Station.h">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\PotionStation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Bombarda.h">
+      <Filter>05. Magic\MagicBall\18. Bombarda</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Gatherer.h">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Gatherer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1523,6 +1538,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\Weapon_DarkWizard_Wand.cpp">
       <Filter>02. GameObject\02. Enemy\05. DarkWizard\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Potion_Station.cpp">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\PotionStation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Bombarda.cpp">
+      <Filter>05. Magic\MagicBall\18. Bombarda</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Gatherer.cpp">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Gatherer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

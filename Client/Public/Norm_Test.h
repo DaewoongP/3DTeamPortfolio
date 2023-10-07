@@ -6,7 +6,6 @@ BEGIN(Engine)
 class CShader;
 class CTexture;
 class CRenderer;
-class CRigidBody;
 class CVIBuffer_Point_Instance;
 END
 
@@ -23,14 +22,12 @@ public:
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
-	virtual void OnCollisionEnter(COLLEVENTDESC CollisionDesc) override;
 	virtual HRESULT Render() override;
 
 private:
 	class CShader*					m_pShader = { nullptr };
 	class CTexture*					m_pTexture = { nullptr };
 	class CRenderer*				m_pRenderer = { nullptr };
-	class CRigidBody*				m_pRigidBody = { nullptr };
 	class CVIBuffer_Point_Instance*	m_pBuffer = { nullptr };
 
 private:

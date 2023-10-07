@@ -80,7 +80,10 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInst, _uint iNumLevels, cons
 	if (FAILED(m_pCamera_Manager->Initialize_CameraManager()))
 		return E_FAIL;
 
-	m_pThread_Pool->Initialize(4);
+	//m_pThread_Pool->Initialize(4);
+
+	if (FAILED(m_pLight_Manager->Reserve_Lights(30)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -499,56 +502,11 @@ _bool CGameInstance::isIn_WorldFrustum(_float4 vWorldPos, _float fRange)
 	return m_pFrustum->isIn_WorldFrustum(vWorldPos, fRange);
 }
 
-const CLight::LIGHTDESC* CGameInstance::Get_Light(_uint iIndex)
+CLight* CGameInstance::Add_Lights(const CLight::LIGHTDESC& LightDesc)
 {
 	NULL_CHECK_RETURN_MSG(m_pLight_Manager, nullptr, TEXT("Light NULL"));
 
-	return m_pLight_Manager->Get_Light(iIndex);
-}
-
-const _float4x4* CGameInstance::Get_LightView()
-{
-	//NULL_CHECK_RETURN_MSG(m_pLight_Manager, nullptr, TEXT("Light NULL"));
-
-	if(nullptr==m_pLight_Manager)
-	{
-		MSG_BOX("LightNULL");
-		return nullptr;
-	}
-
-	return m_pLight_Manager->Get_LightView();
-}
-
-const _float4x4* CGameInstance::Get_LightProj()
-{
-	//NULL_CHECK_RETURN_MSG(m_pLight_Manager, nullptr, TEXT("Light NULL"));
-	if (nullptr == m_pLight_Manager)
-	{
-		MSG_BOX("LightNULL");
-		return nullptr;
-	}
-	return m_pLight_Manager->Get_LightProj();
-}
-
-void CGameInstance::Set_Light(_uint iIndex, _float fWinSizeX, _float fWinSizeY, CLight::LIGHTDESC LightDesc)
-{
-	NULL_CHECK_RETURN_MSG(m_pLight_Manager, , TEXT("Light NULL"));
-
-	return m_pLight_Manager->Set_Light(iIndex, fWinSizeX, fWinSizeY, LightDesc);
-}
-
-CLight* CGameInstance::Add_Lights(_float fWinSizeX, _float fWinSizeY, const CLight::LIGHTDESC& LightDesc)
-{
-	NULL_CHECK_RETURN_MSG(m_pLight_Manager, nullptr, TEXT("Light NULL"));
-
-	return m_pLight_Manager->Add_Lights(fWinSizeX, fWinSizeY, LightDesc);
-}
-
-HRESULT CGameInstance::Delete_Lights(_uint iIndex,const _char* Name)
-{
-	NULL_CHECK_RETURN_MSG(m_pLight_Manager, E_FAIL, TEXT("Light NULL"));
-
-	return m_pLight_Manager->Delete_Lights(iIndex,Name);
+	return m_pLight_Manager->Add_Lights(LightDesc);
 }
 
 HRESULT CGameInstance::Clear_Lights()
@@ -726,25 +684,25 @@ void CGameInstance::Set_Simulation(_bool isSimulation)
 	m_pPhysX_Manager->Set_Simulation(isSimulation);
 }
 
-_bool CGameInstance::RayCast(_float3 vOrigin, _float3 vDir, _Inout_ CGameObject** ppCollisionObject, _float fMaxDist, _Inout_ _float3* pHitPosition, _Inout_ _float* pDist, _uint iMaxHits, CPhysX_Manager::RayCastQueryFlag RaycastFlag)
-{
-	NULL_CHECK_RETURN_MSG(m_pPhysX_Manager, false, TEXT("PhysX_Manager NULL"));
-
-	return m_pPhysX_Manager->RayCast(vOrigin, vDir, ppCollisionObject, fMaxDist, pHitPosition, pDist, iMaxHits, RaycastFlag);
-}
-
-_bool CGameInstance::Mouse_RayCast(HWND hWnd, ID3D11DeviceContext* pContext, _Inout_ CGameObject** ppCollisionObject, _float fMaxDist, _Inout_ _float3* pHitPosition, _Inout_ _float* pDist, _uint iMaxHits, CPhysX_Manager::RayCastQueryFlag RaycastFlag)
-{
-	NULL_CHECK_RETURN_MSG(m_pPhysX_Manager, false, TEXT("PhysX_Manager NULL"));
-
-	return m_pPhysX_Manager->Mouse_RayCast(hWnd, pContext, ppCollisionObject, fMaxDist, pHitPosition, pDist, iMaxHits, RaycastFlag);
-}
-
 void CGameInstance::Update_PhysxScene()
 {
 	NULL_CHECK_RETURN_MSG(m_pPhysX_Manager, , TEXT("PhysX_Manager NULL"));
 
 	m_pPhysX_Manager->Tick(1 / 60.f);
+}
+
+_bool CGameInstance::RayCast(_float3 vOrigin, _float3 vDir, _float fMaxDist, _Inout_ _float3* pHitPosition, _Inout_ _float* pDist)
+{
+	NULL_CHECK_RETURN_MSG(m_pPhysX_Manager, false, TEXT("PhysX_Manager NULL"));
+
+	return m_pPhysX_Manager->RayCast(vOrigin, vDir, fMaxDist, pHitPosition, pDist);
+}
+
+_bool CGameInstance::Mouse_RayCast(HWND hWnd, ID3D11DeviceContext* pContext, _float fMaxDist, _Inout_ _float3* pHitPosition, _Inout_ _float* pDist)
+{
+	NULL_CHECK_RETURN_MSG(m_pPhysX_Manager, false, TEXT("PhysX_Manager NULL"));
+
+	return m_pPhysX_Manager->Mouse_RayCast(hWnd, pContext, fMaxDist, pHitPosition, pDist);
 }
 
 HRESULT CGameInstance::Read_CutSceneCamera(const _tchar* _CutSceneTag, const _tchar* _CutScenePath)

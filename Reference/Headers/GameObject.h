@@ -28,7 +28,7 @@ public:
 	void Set_Offset_Matrix(_float4x4 matrix) { m_OffsetMatrix = matrix; }
 	_float4x4 Get_Offset_Matrix() const { return m_OffsetMatrix; }
 	const _float4x4* Get_Offset_MatrixPtr() const { return &m_OffsetMatrix; }
-
+	const _float4x4* Get_HitMatrixPtr() const { return m_pHitMatrix; }
 public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg);

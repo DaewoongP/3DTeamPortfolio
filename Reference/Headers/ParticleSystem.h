@@ -138,6 +138,7 @@ protected:
 	CTexture* m_pClipTexture = { nullptr }; // 알파테스트에 사용될 텍스처
 	CTexture* m_pGradientTexture = { nullptr }; // 알파테스트에 사용될 텍스처
 	CTexture* m_pNormalTexture = { nullptr }; // 텍스처시트에 사용될 텍스처
+	CTexture* m_pDistortionTexture = { nullptr }; // 디스토션에 사용될 텍스처
 	CVIBuffer_Rect_Particle_Instance* m_pBuffer = { nullptr };
 	CShader* m_pShader = { nullptr };
 	CModel* m_pModel = { nullptr };

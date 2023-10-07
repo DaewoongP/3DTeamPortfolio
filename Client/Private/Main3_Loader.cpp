@@ -116,6 +116,9 @@ HRESULT CMain3_Loader::Loading()
 	case LEVEL_VAULT:
 		hr = Loading_For_Vault(LEVEL_VAULT);
 		break;
+	case LEVEL_SMITH:
+		hr = Loading_For_Hogsmeade(LEVEL_SMITH);
+		break;
 	default:
 		MSG_BOX("Failed Load Next Level");
 		break;
@@ -169,6 +172,11 @@ HRESULT CMain3_Loader::Loading_For_GreatHall(LEVELID eLevelID)
 	return S_OK;
 }
 
+HRESULT CMain3_Loader::Loading_For_Hogsmeade(LEVELID eLevelID)
+{
+	return S_OK;
+}
+
 HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 {
 	try
@@ -194,7 +202,7 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 		PivotMatrix *= XMMatrixScaling(0.5f, 0.5f, 0.5f);
 		/* For.Prototype_Component_Model_Animation_Camera */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Animation_Camera"),
-			CCustomModel::Create(m_pDevice, m_pContext, CCustomModel::TYPE_ANIM, L"../../Resources/Models/Anims/CCL_CameraRig_Skeleton/CCL_CameraRig_Skeleton.dat", PivotMatrix))))
+			CCustomModel::Create(m_pDevice, m_pContext, CCustomModel::TYPE_ANIM, L"../../Resources/Models/Anims/CCL_CameraRig_Skeleton/CCL_CameraRig_Skeleton.gcm", PivotMatrix))))
 			throw TEXT("Prototype_Component_Model_Animation_Camera");
 
 		/* For.Prototype_GameObject_Animation_Camera_Model */

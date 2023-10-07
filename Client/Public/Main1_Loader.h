@@ -60,6 +60,7 @@ private:
 	HRESULT Loading_For_Cliffside(LEVELID eLevelID);
 	HRESULT Loading_For_Vault(LEVELID eLevelID);
 	HRESULT Loading_For_GreatHall(LEVELID eLevelID);
+	HRESULT Loading_For_Hogsmeade(LEVELID eLevelID);
 
 private:
 	HRESULT Loading_For_Static(LEVELID eLevelID);
