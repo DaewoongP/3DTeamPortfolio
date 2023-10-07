@@ -220,7 +220,7 @@ void CWindow_Manager::Tick(_float fTimeDelta)
 		m_eLoadingFlag |= UI_LOAD;
 	}
 
-	if (ImGui::RadioButton("Light", iCurMenuList, LIGHT_WINDOW))
+	/*if (ImGui::RadioButton("Light", iCurMenuList, LIGHT_WINDOW))
 	{
 		if (0 == (m_eLoadingFlag & LIGHT_LOAD))
 		{
@@ -235,7 +235,7 @@ void CWindow_Manager::Tick(_float fTimeDelta)
 
 		Setup_Current_Window(TEXT("Light_Window"));
 		m_eLoadingFlag |= LIGHT_LOAD;
-	}
+	}*/
 
 	if (ImGui::RadioButton("Cloth", iCurMenuList, CLOTH_WINDOW))
 	{

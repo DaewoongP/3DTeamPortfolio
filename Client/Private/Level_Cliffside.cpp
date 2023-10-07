@@ -164,14 +164,13 @@ HRESULT CLevel_Cliffside::Ready_Lights()
 
 	LightDesc.eType = CLight::TYPE_DIRECTIONAL;
 	LightDesc.vPos = _float4(10.f, 100.f, 25.f, 1.f);
-	LightDesc.vLookAt = _float4(20.f, 0.f, 20.f, 1.f);
 	LightDesc.vDir = _float4(0.33f, -0.99f, 0.33f, 0.f);
 
 	LightDesc.vDiffuse = WHITEDEFAULT;
 	LightDesc.vAmbient = WHITEDEFAULT;
 	LightDesc.vSpecular = WHITEDEFAULT;
 
-	if (nullptr == pGameInstance->Add_Lights((_float)g_iWinSizeX, (_float)g_iWinSizeY, LightDesc))
+	if (nullptr == pGameInstance->Add_Lights(LightDesc))
 		return E_FAIL;
 
 	ENDINSTANCE;
