@@ -3,12 +3,20 @@
 
 IMPLEMENT_SINGLETON(CLight_Manager)
 
+HRESULT CLight_Manager::Reserve_Lights(_uint iNumLights)
+{
+	for (_uint i = 0; i < iNumLights; ++i)
+	{
+		m_LightPool.push(CLight::Create(CLight::LIGHTDESC()));
+	}
+
+	return S_OK;
+}
+
 CLight* CLight_Manager::Add_Lights(const CLight::LIGHTDESC& LightDesc)
 {
-	CLight* pLight = CLight::Create(LightDesc);
-
-	if (nullptr == pLight)
-		return nullptr;
+	CLight* pLight = m_LightPool.front();
+	pLight->Set_LightDesc(LightDesc);
 
 	if (CLight::TYPE_DIRECTIONAL == LightDesc.eType)
 	{
@@ -20,6 +28,7 @@ CLight* CLight_Manager::Add_Lights(const CLight::LIGHTDESC& LightDesc)
 	}
 
 	m_Lights.push_back(pLight);
+	m_LightPool.pop();
 
 	return pLight;
 }
@@ -48,4 +57,10 @@ HRESULT CLight_Manager::Clear_Lights()
 void CLight_Manager::Free()
 {
 	Clear_Lights();
+
+	while (!m_LightPool.empty())
+	{
+		Safe_Release(m_LightPool.front());
+		m_LightPool.pop();
+	}
 }
