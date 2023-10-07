@@ -532,6 +532,15 @@
     <Filter Include="02. GameObject\10. Flowmap">
       <UniqueIdentifier>{8d96a00c-986f-458a-b01c-19b091c17877}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\02. Enemy\05. DarkWizard\00. Male">
+      <UniqueIdentifier>{fa4cacae-90c5-46ff-a8c7-e033b6d518a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\05. DarkWizard\01. Female">
+      <UniqueIdentifier>{7a43bd67-b607-45bf-877c-8fe218a71743}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\05. DarkWizard\Weapon">
+      <UniqueIdentifier>{231c744f-ab40-44fe-8fe7-d4cd81fb4189}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -1037,6 +1046,12 @@
     <ClInclude Include="..\public\FlowMap.h">
       <Filter>02. GameObject\10. Flowmap</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\DarkWizard_M.h">
+      <Filter>02. GameObject\02. Enemy\05. DarkWizard\00. Male</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Weapon_DarkWizard_Wand.h">
+      <Filter>02. GameObject\02. Enemy\05. DarkWizard\Weapon</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1502,6 +1517,12 @@
     </ClCompile>
     <ClCompile Include="..\private\FlowMap.cpp">
       <Filter>02. GameObject\10. Flowmap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DarkWizard_M.cpp">
+      <Filter>02. GameObject\02. Enemy\05. DarkWizard\00. Male</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Weapon_DarkWizard_Wand.cpp">
+      <Filter>02. GameObject\02. Enemy\05. DarkWizard\Weapon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -78,8 +78,6 @@ void CGolem_Combat::Tick(_float fTimeDelta)
 	BEGININSTANCE;
 	if (pGameInstance->Get_DIKeyState(DIK_LCONTROL, CInput_Device::KEY_PRESSING))
 	{
-		if (pGameInstance->Get_DIKeyState(DIK_4, CInput_Device::KEY_DOWN))
-			m_isParring = true;
 		if (pGameInstance->Get_DIKeyState(DIK_1, CInput_Device::KEY_DOWN))
 			m_iCurrentSpell |= BUFF_STUPEFY;
 	}
@@ -150,7 +148,9 @@ void CGolem_Combat::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			return;
 
 		m_isSpawn = true;
-		m_RangeInEnemies.push_back({ wstrObjectTag, CollisionEventDesc.pOtherOwner });
+		auto iter = m_RangeInEnemies.find(wstrObjectTag);
+		if (iter == m_RangeInEnemies.end())
+			m_RangeInEnemies.emplace(wstrObjectTag, CollisionEventDesc.pOtherOwner);
 	}
 
 	/* Collision Protego */
@@ -177,10 +177,6 @@ void CGolem_Combat::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 
 HRESULT CGolem_Combat::Render()
 {
-#ifdef _DEBUG
-	//Tick_ImGui();
-#endif // _DEBUG
-
 	if (FAILED(__super::SetUp_ShaderResources()))
 		return E_FAIL;
 
@@ -322,7 +318,7 @@ HRESULT CGolem_Combat::Add_Components()
 		RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 0.f, 1.f);
 		RigidBodyDesc.pOwnerObject = this;
 		RigidBodyDesc.eThisCollsion = COL_ENEMY;
-		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC | COL_NPC_RANGE | COL_MAGIC | COL_SHIELD;
+		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC | COL_NPC_RANGE | COL_MAGIC;
 		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Body");
 
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
@@ -439,7 +435,7 @@ HRESULT CGolem_Combat::Make_Death(_Inout_ CSequence* pSequence)
 				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", piCurrentSpell)))
 					return false;
 
-				if (BUFF_LEVIOSO & *piCurrentSpell)
+				if (true == isFlying(*piCurrentSpell))
 					return false;
 
 				return true;
@@ -450,7 +446,7 @@ HRESULT CGolem_Combat::Make_Death(_Inout_ CSequence* pSequence)
 				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", piCurrentSpell)))
 					return false;
 
-				if (BUFF_LEVIOSO & *piCurrentSpell)
+				if (true == isFlying(*piCurrentSpell))
 				{
 					CRigidBody* pRigidBody = { nullptr };
 					if (FAILED(pBlackBoard->Get_Type("pRigidBody", pRigidBody)))
@@ -465,7 +461,7 @@ HRESULT CGolem_Combat::Make_Death(_Inout_ CSequence* pSequence)
 			});
 
 		// Set Options 
-		function<void(const _float&)> Func = [&](const _float& fTimeDelta) {this->DeathBehavior(fTimeDelta); };
+		function<void(const _float&)> Func = [&](const _float& fTimeDelta) { this->DeathBehavior(fTimeDelta); };
 		pTsk_Death_Ground->Set_DeathFunction(Func);
 		pTsk_Death_Air->Set_DeathFunction(Func);
 		pAction_Knockback->Set_Options(TEXT("Knockback_Back"), m_pModelCom);
@@ -551,9 +547,9 @@ HRESULT CGolem_Combat::Make_Alive(_Inout_ CSelector* pSelector)
 			throw TEXT("Failed Assemble_Behavior Selector_NormalAttack");
 
 		if (FAILED(Make_Hit_Combo(pSelector_Hit_Combo)))
-			throw TEXT("Failed Make_NormalAttack");
+			throw TEXT("Failed Make_Hit_Combo");
 		if (FAILED(Make_Check_Spell(pSelector_CheckSpell)))
-			throw TEXT("Failed Make_NormalAttack");
+			throw TEXT("Failed Make_Check_Spell");
 		if (FAILED(Make_NormalAttack(pSelector_NormalAttack)))
 			throw TEXT("Failed Make_NormalAttack");
 	}
@@ -814,7 +810,7 @@ HRESULT CGolem_Combat::Make_NormalAttack(_Inout_ CSelector* pSelector)
 
 	ENDINSTANCE;
 
-	return S_OK;;
+	return S_OK;
 }
 
 HRESULT CGolem_Combat::Make_Fly_Combo(_Inout_ CSelector* pSelector)

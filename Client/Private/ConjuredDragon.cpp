@@ -120,7 +120,9 @@ void CConjuredDragon::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			return;
 
 		m_isSpawn = true;
-		m_RangeInEnemies.push_back({ wstrObjectTag, CollisionEventDesc.pOtherOwner });
+		auto iter = m_RangeInEnemies.find(wstrObjectTag);
+		if (iter == m_RangeInEnemies.end())
+			m_RangeInEnemies.emplace(wstrObjectTag, CollisionEventDesc.pOtherOwner);
 	}
 }
 
