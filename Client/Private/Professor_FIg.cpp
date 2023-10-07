@@ -79,6 +79,7 @@ void CProfessor_Fig::Late_Tick(_float fTimeDelta)
 	if (nullptr != m_pRenderer)
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
 #ifdef _DEBUG
 		m_pRenderer->Add_DebugGroup(m_pRigidBody);
 #endif // _DEBUG
@@ -120,10 +121,6 @@ void CProfessor_Fig::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 
 HRESULT CProfessor_Fig::Render()
 {
-#ifdef _DEBUG
-	//Tick_ImGui();
-#endif // _DEBUG
-
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
@@ -171,6 +168,34 @@ HRESULT CProfessor_Fig::Render()
 
 HRESULT CProfessor_Fig::Render_Depth()
 {
+	if (FAILED(SetUp_ShadowShaderResources()))
+		return E_FAIL;
+
+	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+	for (_uint i = 0; i < iNumMeshes; ++i)
+	{
+		try /* Failed Render */
+		{
+			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShadowShaderCom, "g_BoneMatrices", i)))
+				throw TEXT("Bind_BoneMatrices");
+
+			if (FAILED(m_pShadowShaderCom->Begin("Shadow")))
+				throw TEXT("Shader Begin AnimMesh");
+
+			if (FAILED(m_pModelCom->Render(i)))
+				throw TEXT("Model Render");
+		}
+		catch (const _tchar* pErrorTag)
+		{
+			wstring wstrErrorMSG = TEXT("[CProfessor_Fig] Failed Render : ");
+			wstrErrorMSG += pErrorTag;
+			MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+
+			return E_FAIL;
+		}
+	}
+
 	return S_OK;
 }
 
@@ -326,13 +351,18 @@ HRESULT CProfessor_Fig::Add_Components()
 			TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 			throw TEXT("Com_Shader");
 
+		/* For.Com_ShadowShader */
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_ShadowAnimMesh"),
+			TEXT("Com_ShadowShader"), reinterpret_cast<CComponent**>(&m_pShadowShaderCom))))
+			throw TEXT("Com_ShadowShader");
+
 		/* For.Com_RootBehavior */
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RootBehavior"),
 			TEXT("Com_RootBehavior"), reinterpret_cast<CComponent**>(&m_pRootBehavior))))
 			throw TEXT("Com_RootBehavior");
 
 		CRigidBody::RIGIDBODYDESC RigidBodyDesc;
-		RigidBodyDesc.isStatic = true;
+		RigidBodyDesc.isStatic = false;
 		RigidBodyDesc.isTrigger = false;
 		RigidBodyDesc.eConstraintFlag = CRigidBody::RotX | CRigidBody::RotY | CRigidBody::RotZ;
 		RigidBodyDesc.fDynamicFriction = 1.f;
@@ -341,7 +371,7 @@ HRESULT CProfessor_Fig::Add_Components()
 		RigidBodyDesc.pOwnerObject = this;
 		RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 0.f, 1.f);
 		RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
-		RigidBodyDesc.vOffsetPosition = _float3(0.f, 0.5f, 0.f);
+		RigidBodyDesc.vOffsetPosition = _float3(0.f, 0.85f, 0.f);
 		RigidBodyDesc.vOffsetRotation = XMQuaternionRotationRollPitchYaw(0.f, 0.f, XMConvertToRadians(90.f));
 		PxCapsuleGeometry pCapsuleGeomatry = PxCapsuleGeometry(0.25f, 0.6f);
 		RigidBodyDesc.pGeometry = &pCapsuleGeomatry;
@@ -355,9 +385,19 @@ HRESULT CProfessor_Fig::Add_Components()
 			throw TEXT("Com_RigidBody");
 
 		m_OffsetMatrix = XMMatrixTranslation(RigidBodyDesc.vOffsetPosition.x, RigidBodyDesc.vOffsetPosition.y, RigidBodyDesc.vOffsetPosition.z);
-
+		
+		/* Collision Range */
 		RigidBodyDesc.isStatic = true;
 		RigidBodyDesc.isTrigger = true;
+		RigidBodyDesc.eConstraintFlag = CRigidBody::RotX | CRigidBody::RotY | CRigidBody::RotZ;
+		RigidBodyDesc.fDynamicFriction = 1.f;
+		RigidBodyDesc.fRestitution = 0.f;
+		RigidBodyDesc.fStaticFriction = 0.f;
+		RigidBodyDesc.pOwnerObject = this;
+		RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 0.f, 1.f);
+		RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
+		RigidBodyDesc.vOffsetPosition = _float3(0.f, 0.85f, 0.f);
+		RigidBodyDesc.vOffsetRotation = XMQuaternionRotationRollPitchYaw(0.f, 0.f, XMConvertToRadians(90.f));
 		PxSphereGeometry pSphereGeomatry = PxSphereGeometry(10.f);
 		RigidBodyDesc.pGeometry = &pSphereGeomatry;
 		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Range");
@@ -507,44 +547,49 @@ _bool CProfessor_Fig::IsEnemy(const wstring& wstrObjectTag)
 	if (wstring::npos != wstrObjectTag.find(TEXT("Dugbog")))
 		return true;
 
+	/* 검은마법사인 경우 */
+	if (wstring::npos != wstrObjectTag.find(TEXT("DarkWizard")))
+		return true;
+
 	return false;
 }
 
-#ifdef _DEBUG
-void CProfessor_Fig::Tick_ImGui()
+HRESULT CProfessor_Fig::SetUp_ShadowShaderResources()
 {
-	RECT clientRect;
-	GetClientRect(g_hWnd, &clientRect);
-	POINT leftTop = { clientRect.left, clientRect.top };
-	POINT rightBottom = { clientRect.right, clientRect.bottom };
-	ClientToScreen(g_hWnd, &leftTop);
-	ClientToScreen(g_hWnd, &rightBottom);
-	int Left = leftTop.x;
-	int Top = rightBottom.y;
-	ImVec2 vWinpos = { _float(Left + 1280.f), _float(Top - 400.f) };
-	ImGui::SetNextWindowPos(vWinpos);
+	BEGININSTANCE;
 
-	ImGui::Begin("Test Professor_Fig");
-
-	for (auto Pair : m_RangeInEnemies)
-		ImGui::Text(wstrToStr(Pair.first).c_str());
-
-	if (ImGui::Button("Set 0, 0, 0"))
-		m_pTransform->Set_Position(_float3(0.f, 0.f, 0.f));
-
-	/*ImGui::SeparatorText("Behavior");
-
-	vector<wstring> DebugBehaviorTags = m_pRootBehavior->Get_DebugBahaviorTags();
-
-	for (auto& Tag : DebugBehaviorTags)
+	try /* Check SetUp_ShaderResources */
 	{
-		ImGui::Text(wstrToStr(Tag).c_str());
-	}*/
+		if (nullptr == m_pShadowShaderCom)
+			throw TEXT("m_pShaderCom is nullptr");
 
-	ImGui::End();
+		if (FAILED(m_pShadowShaderCom->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
+			throw TEXT("Failed Bind_Matrix : g_WorldMatrix");
+
+		if (FAILED(m_pShadowShaderCom->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_LightTransformMatrix(CPipeLine::D3DTS_VIEW))))
+			throw TEXT("Failed Bind_Matrix : g_ViewMatrix");
+
+		if (FAILED(m_pShadowShaderCom->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_LightTransformMatrix(CPipeLine::D3DTS_PROJ))))
+			throw TEXT("Failed Bind_Matrix : g_ProjMatrix");
+
+		if (FAILED(m_pShadowShaderCom->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
+			throw TEXT("Failed Bind_RawValue : g_fCamFar");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CProfessor_Fig] Failed SetUp_ShadowShaderResources : \n");
+		wstrErrorMSG += pErrorTag;
+		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+
+		ENDINSTANCE;
+
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
 }
-
-#endif // _DEBUG
 
 HRESULT CProfessor_Fig::Make_Turns(_Inout_ CSequence* pSequence)
 {
@@ -1000,12 +1045,13 @@ void CProfessor_Fig::Free()
 
 	if (true == m_isCloned)
 	{
-		Safe_Release(m_pWeapon);
 		Safe_Release(m_pModelCom);
-		Safe_Release(m_pRenderer);
 		Safe_Release(m_pShaderCom);
-		Safe_Release(m_pRigidBody);
+		Safe_Release(m_pShadowShaderCom);
+		Safe_Release(m_pRenderer);
 		Safe_Release(m_pMagicSlot);
+		Safe_Release(m_pRigidBody);
 		Safe_Release(m_pRootBehavior);
+		Safe_Release(m_pWeapon);
 	}
 }

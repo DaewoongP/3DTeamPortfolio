@@ -35,12 +35,12 @@ HRESULT CLevel_Cliffside::Initialize()
 
 		return E_FAIL;
 	}
-	if (FAILED(Ready_Layer_NPC(TEXT("Layer_NPC"))))
+	/*if (FAILED(Ready_Layer_NPC(TEXT("Layer_NPC"))))
 	{
 		MSG_BOX("Failed Ready_Layer_NPC");
 
 		return E_FAIL;
-	}
+	}*/
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 	{
 		MSG_BOX("Failed Ready_Layer_BackGround");
@@ -164,14 +164,13 @@ HRESULT CLevel_Cliffside::Ready_Lights()
 
 	LightDesc.eType = CLight::TYPE_DIRECTIONAL;
 	LightDesc.vPos = _float4(10.f, 100.f, 25.f, 1.f);
-	LightDesc.vLookAt = _float4(20.f, 0.f, 20.f, 1.f);
 	LightDesc.vDir = _float4(0.33f, -0.99f, 0.33f, 0.f);
 
 	LightDesc.vDiffuse = WHITEDEFAULT;
 	LightDesc.vAmbient = WHITEDEFAULT;
 	LightDesc.vSpecular = WHITEDEFAULT;
 
-	if (nullptr == pGameInstance->Add_Lights((_float)g_iWinSizeX, (_float)g_iWinSizeY, LightDesc))
+	if (nullptr == pGameInstance->Add_Lights(LightDesc))
 		return E_FAIL;
 
 	ENDINSTANCE;
@@ -303,14 +302,23 @@ HRESULT CLevel_Cliffside::Ready_Layer_Monster(const _tchar* pLayerTag)
 		ENDINSTANCE;
 		return E_FAIL;
 	}
-	Matrix = XMMatrixTranslation(40.f, 10.f, 65.f);
+
+	/*Matrix = XMMatrixTranslation(40.f, 10.f, 65.f);
 	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Dugbog"), pLayerTag, TEXT("GameObject_Dugbog"), &Matrix)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Dugbog)");
 		ENDINSTANCE;
 		return E_FAIL;
-	}
-	/*if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_ConjuredDragon"), pLayerTag, TEXT("GameObject_ConjuredDragon"), &Matrix)))
+	}*/
+	/*Matrix = XMMatrixTranslation(35.f, 10.f, 65.f);
+	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_DarkWizard_M"), pLayerTag, TEXT("GameObject_DarkWizard_M"), &Matrix)))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_DarkWizard_M)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}*/
+	/*Matrix = XMMatrixTranslation(10.f, 10.f, 50.f);
+	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_ConjuredDragon"), pLayerTag, TEXT("GameObject_ConjuredDragon"), &Matrix)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_ConjuredDragon)");
 		ENDINSTANCE;
@@ -399,7 +407,10 @@ HRESULT CLevel_Cliffside::Load_MapObject(const _tchar* pObjectFilePath)
 
 		// 비교해야되는 문자열
 		wstring wsTreasureChestName(TEXT("Anim_TreasureChest"));
-		wstring wsPotionStation(TEXT("SM_HM_Potion_Table"));
+		wstring wsAshwinderEggs(TEXT("Anim_AshwinderEggs"));
+		wstring wsHorklump(TEXT("Anim_Horklump"));
+		wstring wsLeapingToadStools(TEXT("Anim_LeapingToadStools"));
+		wstring wsLeech(TEXT("Anim_Leech"));
 
 		// 보물상자
 		if (0 == lstrcmp(modelName.c_str(), wsTreasureChestName.c_str()))
@@ -417,22 +428,26 @@ HRESULT CLevel_Cliffside::Load_MapObject(const _tchar* pObjectFilePath)
 			}
 		}
 
-		// 포션 제작소
-		else if (0 == lstrcmp(modelName.c_str(), wsPotionStation.c_str()))
+		// 채집물
+		else if (0 == lstrcmp(modelName.c_str(), wsAshwinderEggs.c_str()) ||
+			0 == lstrcmp(modelName.c_str(), wsHorklump.c_str()) ||
+			0 == lstrcmp(modelName.c_str(), wsLeapingToadStools.c_str()) ||
+			0 == lstrcmp(modelName.c_str(), wsLeech.c_str()))
 		{
 			_tchar wszobjName[MAX_PATH] = { 0 };
-			_stprintf_s(wszobjName, TEXT("GameObject_Potion_Station_%d"), (iObjectNum));
+			_stprintf_s(wszobjName, TEXT("GameObject_Gatherer_%d"), (iObjectNum));
 
 			if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE,
-				TEXT("Prototype_GameObject_Potion_Station"), TEXT("Layer_BackGround"),
+				TEXT("Prototype_GameObject_Gatherer"), TEXT("Layer_BackGround"),
 				wszobjName, &MapObjectDesc)))
 			{
-				MSG_BOX("Failed to Clone Potion_Station");
+				MSG_BOX("Failed to Clone Gatherer");
 				ENDINSTANCE;
 				return E_FAIL;
 			}
 		}
 
+		// 일반 맵 오브젝트
 		else
 		{
 			_tchar wszobjName[MAX_PATH] = { 0 };

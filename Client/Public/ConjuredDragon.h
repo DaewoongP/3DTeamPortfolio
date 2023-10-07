@@ -49,6 +49,8 @@ private: /* Çàµ¿ ¹­À½µé */
 	HRESULT Make_Death(_Inout_ CSequence* pSequence);
 	HRESULT Make_Alive(_Inout_ CSelector* pSelector);
 
+
+
 private: /* Notify Func */
 
 public:

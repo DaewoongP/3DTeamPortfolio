@@ -13,29 +13,6 @@ CAction::CAction(const CAction& rhs)
 {
 }
 
-void CAction::Set_Options(const wstring& _wstrAnimationTag, CModel* _pModel,
-	_bool _isCheckBehavior, const _float& _fCoolTime,
-	_bool _isOneTimeAction, _bool _isLerp,
-	CModel::ANIMTYPE eType)
-{
-	if (nullptr == _pModel)
-	{
-		MSG_BOX("[CAction] _pModel is nullptr");
-		return;
-	}
-
-	m_pModel = _pModel;
-	Safe_AddRef(m_pModel);
-
-	m_wstrAnimationTag = _wstrAnimationTag;
-	m_fLimit = _fCoolTime;
-	m_isOneTimeAction = _isOneTimeAction;
-	m_isCheckBehavior = _isCheckBehavior;
-
-	m_pModel->Get_Animation(m_wstrAnimationTag)->Set_LerpAnim(_isLerp);
-	m_eAnimationType = eType;
-}
-
 HRESULT CAction::Initialize(void* pArg)
 {
 	/* 쿨타임 */
@@ -44,7 +21,7 @@ HRESULT CAction::Initialize(void* pArg)
 			BEGININSTANCE;
 			_float fInterval = pGameInstance->Get_World_TimeAcc() - m_fPreWorldTimeAcc;
 			ENDINSTANCE;
-
+			
 			if (m_fLimit > fInterval)
 				return false;
 
@@ -95,25 +72,7 @@ HRESULT CAction::Tick(const _float& fTimeDelta)
 			m_isFinishBehaviors = false;
 	}
 
-	_bool* pIsChangeAnimation = { nullptr };
-	if (FAILED(m_pBlackBoard->Get_Type("isChangeAnimation", pIsChangeAnimation)))
-	{
-		MSG_BOX("isChangeAnimation is nullptr");
-		return E_FAIL;
-	}
-
-	_bool bCheck = { false };
-
-	if (true == *pIsChangeAnimation ||								// 애니메이션을 변경하라는 노티파이가 울렸거나
-		true == m_pModel->Is_Finish_Animation() ||					// 애니메이션이 끝났거나
-		(true == m_isCheckBehavior && true == m_isFinishBehaviors)) // 행동체크를 할건데 모든 행동이 끝났으면
-		/* 내가 설정한 기준에 부합한 경우도 있었는데 지웠음(해당 기준을 썼던 클래스 찾기 ) */
-	{
-		m_isEndFirstPlay = true;
-		bCheck = true;	// 나가
-	}
-	
-	if (true == bCheck)
+	if (true == Is_Success_Action())
 	{
 		Check_End_Decorators();
 		Check_Success_Decorators();
@@ -121,6 +80,43 @@ HRESULT CAction::Tick(const _float& fTimeDelta)
 	}
 
 	return BEHAVIOR_RUNNING;
+}
+
+void CAction::Set_Options(const wstring& _wstrAnimationTag, CModel* _pModel,
+	_bool _isCheckBehavior, const _float& _fCoolTime,
+	_bool _isOneTimeAction, _bool _isLerp,
+	CModel::ANIMTYPE eType)
+{
+	if (nullptr == _pModel)
+	{
+		MSG_BOX("[CAction] _pModel is nullptr");
+		return;
+	}
+
+	m_pModel = _pModel;
+	Safe_AddRef(m_pModel);
+
+	m_wstrAnimationTag = _wstrAnimationTag;
+	m_fLimit = _fCoolTime;
+	m_isOneTimeAction = _isOneTimeAction;
+	m_isCheckBehavior = _isCheckBehavior;
+
+	m_pModel->Get_Animation(m_wstrAnimationTag)->Set_LerpAnim(_isLerp);
+	m_eAnimationType = eType;
+}
+
+HRESULT CAction::Add_Exit_Condition(function<_bool(class CBlackBoard*)> Func)
+{
+	if (nullptr == Func)
+		return E_FAIL;
+
+	CDecorator* pDecoration = CDecorator::Create(Func);
+	if (nullptr == pDecoration)
+		return E_FAIL;
+
+	m_ConditionFunctions.push_back(pDecoration);
+
+	return S_OK;
 }
 
 void CAction::Reset_Behavior(HRESULT result)
@@ -145,6 +141,56 @@ void CAction::Reset_Behavior(HRESULT result)
 		m_fPreWorldTimeAcc = pGameInstance->Get_World_TimeAcc();
 		ENDINSTANCE;
 	}
+}
+
+_bool CAction::Is_Success_Action()
+{
+	_bool* pIsChangeAnimation = { nullptr };
+	if (FAILED(m_pBlackBoard->Get_Type("isChangeAnimation", pIsChangeAnimation)))
+	{
+		MSG_BOX("isChangeAnimation is nullptr");
+		return E_FAIL;
+	}
+
+	_bool isSuccess = { false };
+	// 애니메이션을 변경하라는 노티파이가 울린 경우
+	if (true == *pIsChangeAnimation)
+		isSuccess = true;
+
+	// 애니메이션이 끝난 경우
+	if (true == m_pModel->Is_Finish_Animation())
+		isSuccess = true;
+
+	// 내가 설정한 탈출조건에 부합한 경우
+	if (true == Check_Exit_Conditions())
+		isSuccess = true;
+
+	// 행동체크를 할건데 모든 행동이 끝난 경우
+	if (true == m_isCheckBehavior && 
+		true == m_isFinishBehaviors)
+		isSuccess = true;
+
+	if(true == isSuccess)
+	{
+		m_isEndFirstPlay = true;
+		return true;
+	}
+
+	return isSuccess;
+}
+
+_bool CAction::Check_Exit_Conditions()
+{
+	if (0 == m_ConditionFunctions.size())
+		return false;
+
+	for (auto& Deco : m_ConditionFunctions)
+	{
+		if (false == Deco->Is_Execute(m_pBlackBoard))
+			return false;
+	}
+
+	return true;
 }
 
 CAction* CAction::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

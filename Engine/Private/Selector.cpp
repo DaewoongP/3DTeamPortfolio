@@ -1,4 +1,5 @@
 #include "Selector.h"
+#include "Timer_Manager.h"
 
 CSelector::CSelector(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CBehavior(pDevice, pContext)
@@ -8,6 +9,25 @@ CSelector::CSelector(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 CSelector::CSelector(const CSelector& rhs)
 	: CBehavior(rhs)
 {
+}
+
+HRESULT CSelector::Initialize(void* pArg)
+{
+	/* ÄðÅ¸ÀÓ */
+	Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+		{
+			CTimer_Manager* pTimerManager = CTimer_Manager::GetInstance();
+			Safe_AddRef(pTimerManager);
+			_float fInterval = pTimerManager->Get_World_TimeAcc() - m_fPreWorldTimeAcc;
+			Safe_Release(pTimerManager);
+
+			if (m_fLimit > fInterval)
+				return false;
+
+			return true;
+		});
+
+	return S_OK;
 }
 
 HRESULT CSelector::Tick(const _float& fTimeDelta)
@@ -56,6 +76,14 @@ HRESULT CSelector::Tick(const _float& fTimeDelta)
 
 void CSelector::Reset_Behavior(HRESULT result)
 {
+	if (BEHAVIOR_SUCCESS == result)
+	{
+		CTimer_Manager* pTimerManager = CTimer_Manager::GetInstance();
+		Safe_AddRef(pTimerManager);
+		m_fPreWorldTimeAcc = pTimerManager->Get_World_TimeAcc();
+		Safe_Release(pTimerManager);
+	}
+
 	(*m_iterCurBehavior)->Reset_Behavior(result);
 	m_iterCurBehavior = m_Behaviors.begin();
 

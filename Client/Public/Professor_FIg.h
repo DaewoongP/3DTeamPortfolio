@@ -46,6 +46,7 @@ public:
 private:
 	CModel* m_pModelCom = { nullptr };
 	CShader* m_pShaderCom = { nullptr };
+	CShader* m_pShadowShaderCom = { nullptr };
 	CRenderer* m_pRenderer = { nullptr };
 	CMagicSlot* m_pMagicSlot = { nullptr };
 	CRigidBody* m_pRigidBody = { nullptr };
@@ -72,17 +73,13 @@ private:
 	HRESULT Make_Notifies();
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
+	HRESULT SetUp_ShadowShaderResources();
 
 private:
 	// 가까운 적을 타겟으로 세팅
 	void Set_Current_Target();
 	HRESULT Remove_GameObject(const wstring& wstrObjectTag);
 	_bool IsEnemy(const wstring& wstrObjectTag);
-
-#ifdef _DEBUG
-	_int m_iIndex = { 0 };
-	void Tick_ImGui();
-#endif // _DEBUG
 
 private: /* 행동 묶음들 */
 	HRESULT Make_Turns(_Inout_ CSequence* pSequence);

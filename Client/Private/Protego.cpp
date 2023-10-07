@@ -57,19 +57,14 @@ HRESULT CProtego::Initialize_Prototype(_uint _iLevel)
 			return E_FAIL;
 	}
 
-	// ���� ����� ����ִ� �ؽ�ó
 	Find_And_Add_Texture(TEXT("../../Resources/Effects/Textures/Gradients/VFX_T_Circle_LerpMask_D.png"));
 
-	// 5��° �Ϸ��̴� �ؽ�ó�� ���� ���� ������ �ؽ�ó
 	Find_And_Add_Texture(TEXT("../../Resources/Effects/Textures/Noises/VFX_T_Noise04_D.png"));
 
-	// ��
 	Find_And_Add_Texture(TEXT("../../Resources/Effects/Textures/Noises/VFX_T_RibbonOffset_N.png"));
 
-	// ������ ������ �� ����� ���ⰰ���ɷ� ������.
 	Find_And_Add_Texture(TEXT("../../Resources/Effects/Textures/VFX_T_Inky_Smoke_D.png"));
 
-	// ǥ�鿡 �Ϸ��̴� ȿ��
 	Find_And_Add_Texture(TEXT("../../Resources/Effects/Textures/VFX_T_Wisps_2_D.png"));
 
 	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Portego_Splash")))
@@ -138,15 +133,13 @@ void CProtego::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	m_pTransform->Set_Position(m_CurrentTargetMatrix.Translation());
-
-	// ��Ʈ �ð� ����
+	
 	m_fHitTimeAcc += fTimeDelta;
 	if (m_fHitTimeAcc >= 0.5f)
 	{
 		m_isHitEffect = false;
 	}
 
-	// ��Ʈ ����Ʈ ��� ��ġ ������Ű�� ����.
 	if (true == m_isHitEffect)
 	{
 		m_vCollisionPoint = m_vCollisionPointOffset + m_pTransform->Get_Position();
@@ -163,8 +156,7 @@ void CProtego::Late_Tick(_float fTimeDelta)
 	m_pDefaultConeBoom_Particle->Late_Tick(fTimeDelta);
 	if (nullptr != m_pRenderer)
 	{
-		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BLEND, this);
-		//m_pRenderer->Add_RenderGroup(CRenderer::RENDER_GLOW, this);
+		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_GLOW, this);
 	}
 }
 
@@ -283,7 +275,7 @@ void CProtego::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
 	wstring wstrCollisionTag = CollisionEventDesc.pOtherCollisionTag;
-	wcout << wstrCollisionTag << endl;
+	
 	if (wstring::npos != wstrCollisionTag.find(TEXT("Attack")) ||
 		wstring::npos != wstrCollisionTag.find(TEXT("Enemy_Body")))
 	{
@@ -334,7 +326,7 @@ void CProtego::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 	{
 		static_cast<const CProfessor_Fig*>(m_pTarget)->Set_Protego_Collision(pTransform, eAttackType);
 	}
-	else 
+	else
 	{
 		static_cast<const CEnemy*>(m_pTarget)->Set_Protego_Collision(pTransform/* (마법)충돌체 위치 */, eAttackType);
 	}
@@ -359,26 +351,26 @@ HRESULT CProtego::Reset(MAGICBALLINITDESC& InitDesc)
 	switch (InitDesc.eMagicType)
 	{
 	case Client::CMagic::MT_NOTHING:
-		__debugbreak(); // �׷��� ����� �������� ������ ����. F5������ ��� ���� ����.(��� �����װ�.)
+		__debugbreak();
 		break;
 	case Client::CMagic::MT_YELLOW:
-		m_vColor1 = { 1.f, 1.f, 0.f, 1.f }; // �����
-		m_vColor2 = { 1.f, 0.5f, 0.f, 1.f }; // ��Ȳ��
+		m_vColor1 = { 1.f, 1.f, 0.f, 1.f };
+		m_vColor2 = { 1.f, 0.5f, 0.f, 1.f };
 		break;
 	case Client::CMagic::MT_PURPLE:
-		m_vColor1 = { 0.f, 0.f, 1.f, 1.f }; // �Ķ���
-		m_vColor2 = { 0.5f, 0.f, 0.5f, 1.f }; // �����
+		m_vColor1 = { 0.f, 0.f, 1.f, 1.f };
+		m_vColor2 = { 0.5f, 0.f, 0.5f, 1.f };
 		break;
 	case Client::CMagic::MT_RED:
-		m_vColor1 = { 1.f, 0.f, 0.f, 1.f }; // ������
-		m_vColor2 = { 1.f, 0.5f, 0.f, 1.f }; // ��Ȳ��
+		m_vColor1 = { 1.f, 0.f, 0.f, 1.f };
+		m_vColor2 = { 1.f, 0.5f, 0.f, 1.f };
 		break;
 	case Client::CMagic::MT_ALL:
-		m_vColor1 = { 0.f, 0.f, 1.f, 1.f }; // �Ķ���
-		m_vColor2 = { 1.f, 0.f, 1.f, 1.f }; // ���
+		m_vColor1 = { 0.f, 0.f, 1.f, 1.f };
+		m_vColor2 = { 1.f, 0.f, 1.f, 1.f };
 		break;
 	default:
-		__debugbreak(); // �׷��� ����� �������� ������ ����. F5������ ��� ���� ����.(��� �����װ�.)
+		__debugbreak();
 		break;
 	}
 	
@@ -492,8 +484,8 @@ HRESULT CProtego::SetUp_ShaderResources()
 HRESULT CProtego::Add_RigidBody()
 {
 	CRigidBody::RIGIDBODYDESC RigidBodyDesc;
-	RigidBodyDesc.isStatic = true;
-	RigidBodyDesc.isTrigger = true;
+	RigidBodyDesc.isStatic = false;
+	RigidBodyDesc.isTrigger = false;
 	RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
 	RigidBodyDesc.vOffsetPosition = _float3(0.f, 0.0f, 0.f);
 	RigidBodyDesc.fStaticFriction = 0.f;
@@ -506,7 +498,7 @@ HRESULT CProtego::Add_RigidBody()
 	RigidBodyDesc.isGravity = false;
 	RigidBodyDesc.pOwnerObject = this;
 	RigidBodyDesc.eThisCollsion = COL_SHIELD;
-	RigidBodyDesc.eCollisionFlag = m_eCollisionFlag;
+	RigidBodyDesc.eCollisionFlag = COL_ENEMY_ATTACK;
 	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Magic_Ball");
 
 	/* Com_RigidBody */

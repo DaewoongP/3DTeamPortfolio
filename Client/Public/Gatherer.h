@@ -15,8 +15,12 @@ BEGIN(Client)
 class CPlayer;
 class CPlayer_Information;
 
-class CTreasure_Chest final : public CGameObject
+class CGatherer final : public CGameObject
 {
+public: 
+	// 순서대로 애쉬와인드 알, 호클럼프 즙, 독버섯 갓, 거머리 즙 
+	enum GATHERING { ASHWINDEREGG, HORKLUMP, LEAPINGTOADSTOOLS, LEECH, GATHERING_END };
+
 public:
 	typedef struct tagMapObjectDesc
 	{
@@ -26,9 +30,9 @@ public:
 	}MAPOBJECTDESC;
 
 private:
-	explicit CTreasure_Chest(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	explicit CTreasure_Chest(const CTreasure_Chest& rhs);
-	virtual ~CTreasure_Chest() = default;
+	explicit CGatherer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	explicit CGatherer(const CGatherer& rhs);
+	virtual ~CGatherer() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype();
@@ -42,11 +46,10 @@ public:
 private:
 	CShader* m_pShader = { nullptr };
 	CShader* m_pShadowShader = { nullptr };
-	CRigidBody* m_pRigidBody = { nullptr };
 	CRenderer* m_pRenderer = { nullptr };
 	CModel* m_pModel = { nullptr };
 
-	CPlayer* m_pPlayer = { nullptr }; // 플레이어 주소
+	CPlayer*			 m_pPlayer = { nullptr };			 // 플레이어 주소
 	CPlayer_Information* m_pPlayerInformation = { nullptr }; // 플레이어 인벤토리와 상호작용하기 위한 주소
 
 private:
@@ -59,6 +62,7 @@ private:
 
 private:
 	MAPOBJECTDESC	m_ObjectDesc;
+	GATHERING		m_GatheringType = { CGatherer::GATHERING_END }; // 채집물 종류
 
 private:
 	HRESULT Add_Components();
@@ -67,7 +71,7 @@ private:
 	void	Check_MinMaxPoint(_float3 vPoint);
 
 public:
-	static CTreasure_Chest* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);
+	static CGatherer* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;
 };

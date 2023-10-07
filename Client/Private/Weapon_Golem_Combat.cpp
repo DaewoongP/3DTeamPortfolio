@@ -92,7 +92,7 @@ HRESULT CWeapon_Golem_Combat::Render()
 		{
 			wstring wstrErrorMSG = TEXT("[CWeapon_Armored_Troll] Failed Render : \n");
 			wstrErrorMSG += pErrorTag;
-			MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+			MSG_BOX(wstrErrorMSG.c_str());
 			__debugbreak();
 
 			return E_FAIL;
@@ -141,7 +141,7 @@ HRESULT CWeapon_Golem_Combat::Add_Components(void* pArg)
 	{
 		wstring wstrErrorMSG = TEXT("[CWeapon_Armored_Troll] Failed Add_Components : \n");
 		wstrErrorMSG += pErrorTag;
-		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+		MSG_BOX(wstrErrorMSG.c_str());
 
 		return E_FAIL;
 	}
@@ -190,7 +190,7 @@ HRESULT CWeapon_Golem_Combat::Set_Shader_Resources()
 	{
 		wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed SetUp_ShaderResources : \n");
 		wstrErrorMSG += pErrorTag;
-		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+		MSG_BOX(wstrErrorMSG.c_str());
 
 		ENDINSTANCE;
 
