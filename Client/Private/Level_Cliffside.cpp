@@ -295,13 +295,13 @@ HRESULT CLevel_Cliffside::Ready_Layer_Monster(const _tchar* pLayerTag)
 	///////////////	테스트용 몬스터 배치 코드 입니다. /////////////////////
 	///////////////	실전 배치시 해당 코드는 지워주세요.////////////////////
 	///////////////////////////////////////////////////////////////////////
-	_float4x4 Matrix = XMMatrixTranslation(40.f, 10.f, 60.f);
+	/*_float4x4 Matrix = XMMatrixTranslation(40.f, 10.f, 60.f);
 	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Golem_CombatGrunt"), pLayerTag, TEXT("GameObject_Golem_Combat"), &Matrix)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Golem_Combat)");
 		ENDINSTANCE;
 		return E_FAIL;
-	}
+	}*/
 
 	/*Matrix = XMMatrixTranslation(40.f, 10.f, 65.f);
 	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Dugbog"), pLayerTag, TEXT("GameObject_Dugbog"), &Matrix)))
@@ -411,6 +411,7 @@ HRESULT CLevel_Cliffside::Load_MapObject(const _tchar* pObjectFilePath)
 		wstring wsHorklump(TEXT("Anim_Horklump"));
 		wstring wsLeapingToadStools(TEXT("Anim_LeapingToadStools"));
 		wstring wsLeech(TEXT("Anim_Leech"));
+		wstring wsGull(TEXT("Anim_Gull"));
 
 		// 보물상자
 		if (0 == lstrcmp(modelName.c_str(), wsTreasureChestName.c_str()))
@@ -442,6 +443,22 @@ HRESULT CLevel_Cliffside::Load_MapObject(const _tchar* pObjectFilePath)
 				wszobjName, &MapObjectDesc)))
 			{
 				MSG_BOX("Failed to Clone Gatherer");
+				ENDINSTANCE;
+				return E_FAIL;
+			}
+		}
+
+		// 갈매기
+		else if (0 == lstrcmp(modelName.c_str(), wsGull.c_str()))
+		{
+			_tchar wszobjName[MAX_PATH] = { 0 };
+			_stprintf_s(wszobjName, TEXT("GameObject_Gull_%d"), (iObjectNum));
+
+			if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE,
+				TEXT("Prototype_GameObject_Gull"), TEXT("Layer_BackGround"),
+				wszobjName, &MapObjectDesc)))
+			{
+				MSG_BOX("Failed to Clone Gull");
 				ENDINSTANCE;
 				return E_FAIL;
 			}

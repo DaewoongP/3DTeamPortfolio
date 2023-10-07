@@ -547,6 +547,12 @@
     <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\Gatherer">
       <UniqueIdentifier>{e88e5f73-5766-4d38-b329-5d4e9342c0b1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Anim_Obj">
+      <UniqueIdentifier>{86c2332f-3c78-49e8-8513-4950f2cb3106}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Anim_Obj\Gull">
+      <UniqueIdentifier>{64519bb8-2a5a-4d8b-974c-39f199b49dfa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -1067,6 +1073,9 @@
     <ClInclude Include="..\Public\Gatherer.h">
       <Filter>02. GameObject\03. MapObject\Interactable_Obj\Gatherer</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Gull.h">
+      <Filter>02. GameObject\03. MapObject\Anim_Obj\Gull</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1547,6 +1556,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Gatherer.cpp">
       <Filter>02. GameObject\03. MapObject\Interactable_Obj\Gatherer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Gull.cpp">
+      <Filter>02. GameObject\03. MapObject\Anim_Obj\Gull</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
