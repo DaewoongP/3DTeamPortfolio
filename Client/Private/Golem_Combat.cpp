@@ -52,7 +52,7 @@ HRESULT CGolem_Combat::Initialize_Level(_uint iCurrentLevelIndex)
 {
 	if (FAILED(Add_Components_Level(iCurrentLevelIndex)))
 		return E_FAIL;
-
+	
 	if (FAILED(Make_AI()))
 		return E_FAIL;
 
@@ -60,6 +60,7 @@ HRESULT CGolem_Combat::Initialize_Level(_uint iCurrentLevelIndex)
 	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
 	m_pModelCom->Change_Animation(TEXT("Spawn_Fall_Loop"));
+	m_isSpawn = true;
 
 	if (FAILED(Bind_HitMatrices()))
 		return E_FAIL;
@@ -74,16 +75,15 @@ void CGolem_Combat::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	// Test Code 
+	/////////// Test Code///////////
 	BEGININSTANCE;
 	if (pGameInstance->Get_DIKeyState(DIK_LCONTROL, CInput_Device::KEY_PRESSING))
 	{
 		if (pGameInstance->Get_DIKeyState(DIK_1, CInput_Device::KEY_DOWN))
 			m_iCurrentSpell |= BUFF_STUPEFY;
 	}
-
 	ENDINSTANCE;
-	////////////////////////////
+	////////////////////////////////
 
 	m_pHitMatrix = m_HitMatrices[rand() % 3];
 
@@ -261,27 +261,27 @@ HRESULT CGolem_Combat::Make_AI()
 
 HRESULT CGolem_Combat::Make_Notifies()
 {
-	function<void()> Func = [&] {(*this).Enter_Light_Attack(); };
+	function<void()> Func = [&] { this->Enter_Light_Attack(); };
 	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Enter_Light_Attack"), Func)))
 		return E_FAIL;
 
-	Func = [&] {(*this).Enter_Body_Attack(); };
+	Func = [&] { this->Enter_Body_Attack(); };
 	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Enter_Body_Attack"), Func)))
 		return E_FAIL;
 
-	Func = [&] {(*this).Exit_Attack(); };
+	Func = [&] { this->Exit_Attack(); };
 	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Exit_Attack"), Func)))
 		return E_FAIL;
 
-	Func = [&] {(*this).On_Gravity(); };
+	Func = [&] { this->On_Gravity(); };
 	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("On_Gravity"), Func)))
 		return E_FAIL;
 
-	Func = [&] {(*this).Off_Gravity(); };
+	Func = [&] { this->Off_Gravity(); };
 	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Off_Gravity"), Func)))
 		return E_FAIL;
 
-	Func = [&] {(*this).Change_Animation(); };
+	Func = [&] { this->Change_Animation(); };
 	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Change_Animation"), Func)))
 		return E_FAIL;
 
@@ -1370,34 +1370,57 @@ HRESULT CGolem_Combat::Make_Fly_Descendo(_Inout_ CSequence* pSequence)
 
 void CGolem_Combat::Enter_Light_Attack()
 {
+	if (true == m_isDead)
+		return;
+
 	m_CollisionRequestDesc.eType = ATTACK_LIGHT;
 	m_CollisionRequestDesc.iDamage = 5;
 	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
-	m_pWeapon->On_Collider_Attack(&m_CollisionRequestDesc);
+
+	if(nullptr != m_pWeapon)
+		m_pWeapon->On_Collider_Attack(&m_CollisionRequestDesc);
 }
 
 void CGolem_Combat::Enter_Heavy_Attack()
 {
+	if (true == m_isDead)
+		return;
+
 	m_CollisionRequestDesc.eType = ATTACK_HEAVY;
 	m_CollisionRequestDesc.iDamage = 10;
 	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
-	m_pWeapon->On_Collider_Attack(&m_CollisionRequestDesc);
+
+	if (nullptr != m_pWeapon)
+		m_pWeapon->On_Collider_Attack(&m_CollisionRequestDesc);
 }
 
 void CGolem_Combat::Enter_Body_Attack()
 {
+	if (true == m_isDead)
+		return;
+
 	m_CollisionRequestDesc.eType = ATTACK_HEAVY;
 	m_CollisionRequestDesc.iDamage = 0;
 	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
-	m_pRigidBody->Enable_Collision("Enemy_Attack", this, &m_CollisionRequestDesc);
+
+	if (nullptr != m_pRigidBody)
+		m_pRigidBody->Enable_Collision("Enemy_Attack", this, &m_CollisionRequestDesc);
 }
 
 void CGolem_Combat::Exit_Attack()
 {
+	if (true == m_isDead)
+		return;
+
 	m_CollisionRequestDesc.eType = ATTACK_NONE;
 	m_CollisionRequestDesc.iDamage = 0;
-	m_pRigidBody->Disable_Collision("Enemy_Attack");
-	m_pWeapon->Off_Collider_Attack(&m_CollisionRequestDesc);
+	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
+
+	if (nullptr != m_pRigidBody)
+		m_pRigidBody->Disable_Collision("Enemy_Attack");
+
+	if (nullptr != m_pWeapon)
+		m_pWeapon->Off_Collider_Attack(&m_CollisionRequestDesc);
 }
 
 void CGolem_Combat::DeathBehavior(const _float& fTimeDelta)
@@ -1498,7 +1521,5 @@ void CGolem_Combat::Free()
 	__super::Free();
 
 	if (true == m_isCloned)
-	{
 		Safe_Release(m_pWeapon);
-	}
 }

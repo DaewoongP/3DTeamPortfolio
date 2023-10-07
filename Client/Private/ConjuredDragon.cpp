@@ -2,20 +2,13 @@
 
 #include "Client_GameInstance_Functions.h"
 
-#include "Weapon_Golem_Combat.h"
-
-#include "Wait.h"
 #include "Death.h"
+#include "LookAt.h"
 #include "Action.h"
+#include "Selector.h"
+#include "Sequence.h"
 #include "MagicBall.h"
-#include "Check_Degree.h"
-#include "RandomChoose.h"
-#include "Selector_Degree.h"
-#include "Sequence_Groggy.h"
-#include "Sequence_Attack.h"
 #include "UI_Group_Enemy_HP.h"
-#include "Sequence_Levitate.h"
-#include "Sequence_MoveTarget.h"
 
 CConjuredDragon::CConjuredDragon(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CEnemy(pDevice, pContext)
@@ -51,8 +44,8 @@ HRESULT CConjuredDragon::Initialize_Level(_uint iCurrentLevelIndex)
 	if (FAILED(Add_Components_Level(iCurrentLevelIndex)))
 		return E_FAIL;
 
-	/*if (FAILED(Make_AI()))
-		return E_FAIL;*/
+	if (FAILED(Make_AI()))
+		return E_FAIL;
 
 	m_pTransform->Set_RigidBody(m_pRigidBody);
 	m_pTransform->Set_Speed(10.f);
@@ -69,9 +62,11 @@ void CConjuredDragon::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	Set_Current_Target();
+	if (nullptr == m_pTarget)
+		m_pTarget = m_pPlayer;
 
-	/*if (nullptr != m_pRootBehavior)
-		m_pRootBehavior->Tick(fTimeDelta);*/
+	if (nullptr != m_pRootBehavior)
+		m_pRootBehavior->Tick(fTimeDelta);
 
 	if (nullptr != m_pModelCom)
 		m_pModelCom->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
@@ -198,14 +193,6 @@ HRESULT CConjuredDragon::Make_AI()
 			throw TEXT("Failed Create_Behavior pSelector_Alive");
 
 		/* Set Decorations */
-		pSelector->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
-			{
-				_bool* pIsSpawn = { nullptr };
-				if (FAILED(pBlackBoard->Get_Type("isSpawn", pIsSpawn)))
-					return false;
-
-				return *pIsSpawn;
-			});
 
 		/* Set Options */
 
@@ -321,10 +308,6 @@ HRESULT CConjuredDragon::Make_Death(_Inout_ CSequence* pSequence)
 		if (nullptr == pSequence)
 			throw TEXT("Parameter pSequence is nullptr");
 
-		CSequence* pSequence_Death = nullptr;
-		if (FAILED(Create_Behavior(pSequence_Death)))
-			throw TEXT("Failed Create_Behavior pSequence_Death");
-
 		CAction* pAction_Death = nullptr;
 		if (FAILED(Create_Behavior(pAction_Death)))
 			throw TEXT("Failed Create_Behavior pAction_Death");
@@ -340,6 +323,9 @@ HRESULT CConjuredDragon::Make_Death(_Inout_ CSequence* pSequence)
 				if (FAILED(pBlackBoard->Get_Type("pHealth", pHealth)))
 					return false;
 
+				if(true == pHealth->isDead())
+					cout << "Death" << endl;
+
 				return pHealth->isDead();
 			});
 
@@ -348,10 +334,7 @@ HRESULT CConjuredDragon::Make_Death(_Inout_ CSequence* pSequence)
 		pTsk_Death->Set_DeathFunction(Func);
 		pAction_Death->Set_Options(TEXT("Death"), m_pModelCom);
 
-		if (FAILED(pSequence->Assemble_Behavior(TEXT("pSequence_Death"), pSequence_Death)))
-			throw TEXT("Failed Assemble_Behavior pSequence_Death");
-
-		if (FAILED(pSequence_Death->Assemble_Behavior(TEXT("Action_Death"), pAction_Death)))
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Death"), pAction_Death)))
 			throw TEXT("Failed Assemble_Behavior Action_Death");
 
 		if (FAILED(pAction_Death->Assemble_Behavior(TEXT("Tsk_Death"), pTsk_Death)))
@@ -381,7 +364,10 @@ HRESULT CConjuredDragon::Make_Alive(_Inout_ CSelector* pSelector)
 	try
 	{
 		/* Create Child Behavior */
-
+		CLookAt* pTsk_LookAt = { nullptr };
+		if (FAILED(Create_Behavior(pTsk_LookAt)))
+			throw TEXT("Failed Create_Behavior pTsk_LookAt");
+		
 		/* Set Decorators */
 		pSelector->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 			{
@@ -392,7 +378,12 @@ HRESULT CConjuredDragon::Make_Alive(_Inout_ CSelector* pSelector)
 				return !(pHealth->isDead());
 			});
 
+		/* Set Options */
+		pTsk_LookAt->Set_Transform(m_pTransform);
+
 		/* Assemble Behaviors */
+		if (FAILED(pSelector->Assemble_Behavior(TEXT("Tsk_LookAt"), pTsk_LookAt)))
+			throw TEXT("Failed Assemble_Behavior Tsk_LookAt");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -416,7 +407,7 @@ void CConjuredDragon::DeathBehavior(const _float& fTimeDelta)
 	m_isDead = true;
 
 	m_fDeadTimeAcc += fTimeDelta;
-	if (3.f < m_fDeadTimeAcc)
+	if (9.f < m_fDeadTimeAcc)
 		Set_ObjEvent(OBJ_DEAD);
 }
 

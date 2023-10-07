@@ -5,6 +5,29 @@ CNotify::CNotify()
 {
 }
 
+CNotify::CNotify(const CNotify& rhs)
+	: m_iNumKeyFrames(rhs.m_iNumKeyFrames)
+	, m_iCurrentKeyFramesIndex(rhs.m_iCurrentKeyFramesIndex)
+{
+	KEYFRAME* pKeyframe = nullptr;
+	for (auto Pair : rhs.m_KeyFrames)
+	{
+		switch (Pair.second->eKeyFrameType)
+		{	
+		case KEYFRAME::KF_SPEED :
+			pKeyframe = New SPEEDFRAME(*static_cast<SPEEDFRAME*>(Pair.second));
+			break;
+		case KEYFRAME::KF_SOUND:
+			pKeyframe = New SOUNDFRAME(*static_cast<SOUNDFRAME*>(Pair.second));
+			break;
+		case KEYFRAME::KF_NOTIFY:
+			pKeyframe = New NOTIFYFRAME(*static_cast<NOTIFYFRAME*>(Pair.second));
+			break;
+		}
+		m_KeyFrames.push_back({ Pair.first,pKeyframe });
+	}
+}
+
 HRESULT CNotify::Initialize()
 {
 	return S_OK;
@@ -230,6 +253,11 @@ CNotify* CNotify::Create()
 		Safe_Release(pInstance);
 	}
 	return pInstance;
+}
+
+CNotify* CNotify::Clone()
+{
+	return New CNotify(*this);
 }
 
 void CNotify::Free()
