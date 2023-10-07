@@ -150,7 +150,7 @@ HRESULT CMagicBall::Reset(MAGICBALLINITDESC& InitDesc)
 			m_ParticleVec[i].data()[j]->Disable();
 		}
 	}
-
+	m_fWandParticleDelayTimer = 0.1f;
 	return S_OK;
 }
 
@@ -280,11 +280,6 @@ void CMagicBall::Ready_CastMagic()
 	{
 		m_TrailVec[EFFECT_STATE_MAIN].data()[i]->Enable(m_CurrentWeaponMatrix.Translation());
 	}
-	for (int i = 0; i < m_ParticleVec[EFFECT_STATE_MAIN].size(); i++)
-	{
-		m_ParticleVec[EFFECT_STATE_MAIN].data()[i]->Enable(m_CurrentWeaponMatrix.Translation());
-		m_ParticleVec[EFFECT_STATE_MAIN].data()[i]->Play(m_CurrentWeaponMatrix.Translation());
-	}
 }
 
 void CMagicBall::Ready_Dying()
@@ -345,6 +340,17 @@ void CMagicBall::Tick_DrawMagic(_float fTimeDelta)
 
 void CMagicBall::Tick_CastMagic(_float fTimeDelta)
 {
+	m_fWandParticleDelayTimer -= fTimeDelta;
+	if (m_fWandParticleDelayTimer < 0)
+	{
+		m_fWandParticleDelayTimer = 1000.f;
+		for (int i = 0; i < m_ParticleVec[EFFECT_STATE_MAIN].size(); i++)
+		{
+			m_ParticleVec[EFFECT_STATE_MAIN].data()[i]->Enable(m_CurrentWeaponMatrix.Translation());
+			m_ParticleVec[EFFECT_STATE_MAIN].data()[i]->Play(m_CurrentWeaponMatrix.Translation());
+		}
+	}
+
 	if (m_pTarget != nullptr)
 	{
 		m_vEndPosition = m_CurrentTargetMatrix.Translation();

@@ -67,6 +67,43 @@ HRESULT CProtego::Initialize_Prototype(_uint _iLevel)
 
 	Find_And_Add_Texture(TEXT("../../Resources/Effects/Textures/VFX_T_Wisps_2_D.png"));
 
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Portego_Splash")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Portego_Splash"),
+			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Portego/Shield_Break/Splash"), m_iLevel))))
+			return E_FAIL;
+	}
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Portego_Splash2")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Portego_Splash2"),
+			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Portego/Shield_Break/Splash2"), m_iLevel))))
+			return E_FAIL;
+	}
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Portego_Twinkle")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Portego_Twinkle"),
+			CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Portego/Shield_Break/Twinkle"), m_iLevel))))
+			return E_FAIL;
+	}
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Bombarda_Hit_Splash_Lightining")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Bombarda_Hit_Splash_Lightining")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Portego/Shield_Break/Splash_Lightining/"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Bombarda_Hit_Distortion")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Bombarda_Hit_Distortion")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Portego/Shield_Break/Distortion/"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+
 	ENDINSTANCE;
 
 	return S_OK;
@@ -116,14 +153,6 @@ void CProtego::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 	m_pRigidBody->Enable_Collision("Magic_Ball", this);
 
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
-	if (pGameInstance->Get_DIKeyState(DIK_J))
-	{
-		Hit_Effect(_float3(9.f, 9.f, 9.f));
-	}
-	Safe_Release(pGameInstance);
-
 	m_pDefaultConeBoom_Particle->Late_Tick(fTimeDelta);
 	if (nullptr != m_pRenderer)
 	{
@@ -169,6 +198,16 @@ void CProtego::Hit_Effect(_float3 vPosition)
 	m_pFlameBlastFlipbook->Play(m_vCollisionPoint);
 	m_isHitEffect = true;
 	m_fHitTimeAcc = 0.f;
+}
+
+void CProtego::Break_Effect(_float3 vPosition)
+{
+	for (auto pParticle : m_pBreakParticle)
+	{
+		pParticle->Enable(vPosition);
+		pParticle->Play(vPosition);
+	}
+	Set_MagicBallState(MAGICBALL_STATE_DYING);
 }
 
 void CProtego::Ready_Begin()
@@ -273,6 +312,10 @@ void CProtego::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 	{
 		return;
 	}
+	else if (CEnemy::ATTACK_BREAK <= eAttackType) 
+	{
+		Break_Effect(m_CurrentTargetMatrix.Translation());
+	}
 	Hit_Effect(CollisionEventDesc.pOtherTransform->Get_Position());
 
 	/*if (!lstrcmp(m_pTarget->Get_Tag(), TEXT("GameObject_Player")))
@@ -331,6 +374,13 @@ HRESULT CProtego::Reset(MAGICBALLINITDESC& InitDesc)
 		break;
 	}
 	
+	for (int i = 0; i < 3; i++)
+	{
+		m_pBreakParticle[i]->Get_ColorOverLifetimeModuleRef().vStartColor = m_vColor1*0.8f;
+		m_pBreakParticle[i]->Get_ColorOverLifetimeModuleRef().vStartColor.z = 1.f;
+		m_pBreakParticle[i]->Get_ColorOverLifetimeModuleRef().vEndColor = m_vColor1;
+	}
+
 	m_fScale = { 2.3f };
 	m_fEnterDuration = { 0.1f };
 	m_fExitDuration = { 0.1f };
@@ -371,8 +421,23 @@ HRESULT CProtego::Add_Components()
 		TEXT("Com_DefaultConeBoom_Particle"), reinterpret_cast<CComponent**>(&m_pDefaultConeBoom_Particle)), E_FAIL);
 
 	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_FireBlastFB_Loop_D_Flipbook"),
-		TEXT("Prototype_GameObject_FireBlastFB_Loop_D_Flipbook"), reinterpret_cast<CComponent**>(&m_pFlameBlastFlipbook)), E_FAIL);
+		TEXT("Com_FireBlastFB_Loop_D_Flipbook"), reinterpret_cast<CComponent**>(&m_pFlameBlastFlipbook)), E_FAIL);
+	
+	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Portego_Splash2"),
+		TEXT("Com_Distortion"), reinterpret_cast<CComponent**>(&m_pBreakParticle[0])), E_FAIL);
 
+	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Portego_Splash"),
+		TEXT("Com_Splash"), reinterpret_cast<CComponent**>(&m_pBreakParticle[1])), E_FAIL);
+
+	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Portego_Twinkle"),
+		TEXT("Com_Twinkle"), reinterpret_cast<CComponent**>(&m_pBreakParticle[2])), E_FAIL);
+
+	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Bombarda_Hit_Splash_Lightining"),
+		TEXT("Com_Hit_Splash_Lightining"), reinterpret_cast<CComponent**>(&m_pBreakParticle[3])), E_FAIL);
+
+	FAILED_CHECK_RETURN(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Bombarda_Hit_Distortion"),
+		TEXT("Com_Hit_Distortion"), reinterpret_cast<CComponent**>(&m_pBreakParticle[4])), E_FAIL);
+	
 	return S_OK;
 }
 
@@ -484,5 +549,9 @@ void CProtego::Free()
 		Safe_Release(m_pBuffer);
 		Safe_Release(m_pDefaultConeBoom_Particle);
 		Safe_Release(m_pFlameBlastFlipbook);
+		for (auto pParticle : m_pBreakParticle)
+		{
+			Safe_Release(pParticle);
+		}
 	}
 }
