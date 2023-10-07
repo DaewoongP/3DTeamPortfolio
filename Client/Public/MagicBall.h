@@ -129,6 +129,8 @@ protected:
 	MAGICBALL_STATE			m_eMagicBallState = { MAGICBALL_STATE_BEGIN };
 	_bool					m_isFirstFrameInState = { true };
 
+	_float					m_fWandParticleDelayTimer = 0.1f;
+
 protected:
 	//모든 이펙트 비활성화
 	virtual void Ready_Begin();

@@ -874,10 +874,10 @@ HRESULT CPlayer::Add_Magic()
 	m_pMagicSlot->Add_Magic_To_Basic_Slot(2, LUMOS);
 	m_pMagicSlot->Add_Magic_To_Basic_Slot(3, FINISHER);
 
-	Set_Spell_Botton(0, LEVIOSO);
-	Set_Spell_Botton(1, DIFFINDO);
-	Set_Spell_Botton(2, BOMBARDA);
-	Set_Spell_Botton(3, IMPERIO);
+	Set_Spell_Botton(0, ACCIO);
+	Set_Spell_Botton(1, DESCENDO);
+	Set_Spell_Botton(2, EXPELLIARMUS);
+	Set_Spell_Botton(3, FLIPENDO);
 
 	return S_OK;
 }
@@ -972,8 +972,6 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 			Go_MagicCast(&MagicCastingStateDesc);
 		}
-
-		
 
 		MagicCastingStateDesc.iSpellType = CMagicCastingState::SPELL_FINISHER;
 

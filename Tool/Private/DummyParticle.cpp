@@ -511,7 +511,8 @@ void CDummyParticle::RendererModule_TreeNode(CEffect_Window* pEffectWindow)
 			m_RendererModuleDesc.strPass = m_pPassComboBox->Tick(CComboBox::TABLE);
 			pEffectWindow->Table_CheckBox("Glow", "KCXK939DJJZZZ", &m_RendererModuleDesc.isGlow);
 			pEffectWindow->Table_CheckBox("Distortion", "jid8e9qeiojjdc", &m_RendererModuleDesc.isDistortion);
-			
+			pEffectWindow->Table_CheckBox("Diffuse", "rocjfalscnrk", &m_RendererModuleDesc.isDiffuse);
+
 			if (true == m_RendererModuleDesc.isDistortion)
 			{
 				pEffectWindow->Table_ImageButton("Distortion", "kdjfivjisv39", m_pDistortionTextureIFD);

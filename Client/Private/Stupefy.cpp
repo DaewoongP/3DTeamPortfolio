@@ -69,6 +69,16 @@ HRESULT CStupefy::Initialize_Prototype(_uint iLevel)
 			return E_FAIL;
 		}
 	}
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Stupefy_Hit_Water")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Stupefy_Hit_Water")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Stupefy/Hit_Water"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+
 	ENDINSTANCE;
 	return S_OK;
 }
@@ -139,7 +149,7 @@ void CStupefy::Ready_DrawMagic()
 
 void CStupefy::Ready_CastMagic()
 {
-	Ready_SplineSpinMove(m_TrailVec[EFFECT_STATE_MAIN].data()[0],_float2(0.2f, 0.20f),0.5f);
+	Ready_SplineSpinMove(m_TrailVec[EFFECT_STATE_MAIN].data()[0], _float2(0.2f, 0.20f), 0.5f);
 	__super::Ready_CastMagic();
 }
 
@@ -169,7 +179,7 @@ void CStupefy::Tick_CastMagic(_float fTimeDelta)
 		m_TrailVec[EFFECT_STATE_MAIN].data()[0]->Spline_Spin_Move(m_vSplineLerp[0], m_vStartPosition, m_vEndPosition, m_vSplineLerp[1], m_vSpinWeight, m_fSpinSpeed, m_fLerpAcc);
 		m_pTransform->Set_Position(XMVectorLerp(m_vStartPosition, m_vEndPosition, m_fLerpAcc));
 	}
-	else 
+	else
 	{
 		Do_MagicBallState_To_Next();
 	}
@@ -200,7 +210,7 @@ HRESULT CStupefy::Add_Components()
 		return E_FAIL;
 	}
 
-	m_ParticleVec[EFFECT_STATE_HIT].resize(3);
+	m_ParticleVec[EFFECT_STATE_HIT].resize(4);
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Stupefy_Hit_Dust")
 		, TEXT("Com_Hit_Dust"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_HIT][0]))))
 	{
@@ -219,11 +229,17 @@ HRESULT CStupefy::Add_Components()
 		__debugbreak();
 		return E_FAIL;
 	}
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Stupefy_Hit_Water")
+		, TEXT("Com_Hit_Water"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_HIT][3]))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
 
 	return S_OK;
 }
 
-CStupefy* CStupefy::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,_uint iLevel)
+CStupefy* CStupefy::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel)
 {
 	CStupefy* pInstance = new CStupefy(pDevice, pContext);
 

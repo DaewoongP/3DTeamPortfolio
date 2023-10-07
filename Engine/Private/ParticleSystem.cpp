@@ -268,18 +268,20 @@ void CParticleSystem::Late_Tick(_float _fTimeDelta)
 		{
 			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DISTORTION, this);
 		}
-
-		else if ("Default" == m_RendererModuleDesc.strPass ||
-			"TextureSheetAnimation" == m_RendererModuleDesc.strPass ||
-			"MotionBlur" == m_RendererModuleDesc.strPass)
+		if (m_RendererModuleDesc.isDiffuse)
 		{
-			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BLEND, this);
+			if ("Default" == m_RendererModuleDesc.strPass ||
+				"TextureSheetAnimation" == m_RendererModuleDesc.strPass ||
+				"MotionBlur" == m_RendererModuleDesc.strPass ||
+				"Default_Depth_Disable" == m_RendererModuleDesc.strPass)
+			{
+				m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BLEND, this);
+			}
+			else
+			{
+				m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+			}
 		}
-		else
-		{
-			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
-		}
-
 	}
 }
 

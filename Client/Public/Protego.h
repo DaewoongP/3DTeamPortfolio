@@ -32,6 +32,7 @@ public:
 	virtual HRESULT Reset(MAGICBALLINITDESC& InitDesc) override;
 
 	void Hit_Effect(_float3 vPosition);
+	void Break_Effect(_float3 vPosition);
 
 protected:
 	//모든 이펙트 비활성화
@@ -61,6 +62,8 @@ private: /* For. Component */
 	CVIBuffer_UVSphere* m_pBuffer = { nullptr };
 	CParticleSystem* m_pDefaultConeBoom_Particle = { nullptr };
 	CTexture_Flipbook* m_pFlameBlastFlipbook = { nullptr };
+
+	array<CParticleSystem*, 5> m_pBreakParticle = { nullptr };
 
 private:
 	_float4 m_vColor1 = { 1.f, 1.f, 1.f, 1.f };
