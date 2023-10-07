@@ -84,6 +84,9 @@ HRESULT CMapObject::Initialize_Level(_uint iCurrentLevelIndex)
 
 	for (auto& pMesh : Meshes)
 	{
+		Vertices.clear();
+		Indices.clear();
+
 		vector<_float3> MeshVertices = *pMesh->Get_VerticesPositionVec();
 
 		for (auto& MeshVetex : MeshVertices)
@@ -97,50 +100,51 @@ HRESULT CMapObject::Initialize_Level(_uint iCurrentLevelIndex)
 
 		for (size_t i = 0; i < MeshIndices.size(); ++i)
 		{
-			Indices.push_back(MeshIndices[i] + iIndex);
+			Indices.push_back(MeshIndices[i]);
 		}
 
-		iIndex += Vertices.size();
+		// 피직스 메쉬 생성
+		PxTriangleMeshDesc TriangleMeshDesc;
+		TriangleMeshDesc.points.count = Vertices.size();
+		TriangleMeshDesc.points.stride = sizeof(_float3);
+		TriangleMeshDesc.points.data = Vertices.data();
+
+		TriangleMeshDesc.triangles.count = Indices.size() / 3;
+		TriangleMeshDesc.triangles.stride = 3 * sizeof(PxU32);
+		TriangleMeshDesc.triangles.data = Indices.data();
+
+		PxTolerancesScale PxScale;
+		PxCookingParams PxParams(PxScale);
+		PxDefaultMemoryOutputStream DefaultWriteBuffer;
+		if (!PxCookTriangleMesh(PxParams, TriangleMeshDesc, DefaultWriteBuffer))
+		{
+			MSG_BOX("Failed Create Triangle Mesh");
+			return E_FAIL;
+		}
+
+		PxPhysics* pPhysX = pGameInstance->Get_Physics();
+
+		PxDefaultMemoryInputData DefaultReadBuffer(DefaultWriteBuffer.getData(), DefaultWriteBuffer.getSize());
+		PxTriangleMeshGeometry TriangleMeshGeoMetry = PxTriangleMeshGeometry(pPhysX->createTriangleMesh(DefaultReadBuffer));
+		RigidBodyDesc.pGeometry = &TriangleMeshGeoMetry;
+		wstring randstr = TEXT("Com_RigidBody") + Generate_HashtagW();
+		/* Com_RigidBody */
+		CComponent* pRigidBody = { nullptr };
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
+			randstr.c_str(), reinterpret_cast<CComponent**>(&pRigidBody), &RigidBodyDesc)))
+		{
+			MSG_BOX("Failed CMapObject Add_Component : (Com_RigidBody)");
+			__debugbreak();
+			return E_FAIL;
+		}
+
+		m_RigidBodys.push_back(pRigidBody);
 	}
-
-	m_vCenterPoint = (m_vMaxPoint + m_vMinPoint) * 0.5f;
-	m_fRadius = Vector3::Distance(m_vMaxPoint, m_vCenterPoint);
-
-	// 피직스 메쉬 생성
-	PxTriangleMeshDesc TriangleMeshDesc;
-	TriangleMeshDesc.points.count = Vertices.size();
-	TriangleMeshDesc.points.stride = sizeof(_float3);
-	TriangleMeshDesc.points.data = Vertices.data();
-
-	TriangleMeshDesc.triangles.count = Indices.size() / 3;
-	TriangleMeshDesc.triangles.stride = 3 * sizeof(PxU32);
-	TriangleMeshDesc.triangles.data = Indices.data();
-
-	PxTolerancesScale PxScale;
-	PxCookingParams PxParams(PxScale);
-	PxDefaultMemoryOutputStream DefaultWriteBuffer;
-	if (!PxCookTriangleMesh(PxParams, TriangleMeshDesc, DefaultWriteBuffer))
-	{
-		MSG_BOX("Failed Create Triangle Mesh");
-		return E_FAIL;
-	}
-
-	PxPhysics* pPhysX = pGameInstance->Get_Physics();
-
-	PxDefaultMemoryInputData DefaultReadBuffer(DefaultWriteBuffer.getData(), DefaultWriteBuffer.getSize());
-	PxTriangleMeshGeometry TriangleMeshGeoMetry = PxTriangleMeshGeometry(pPhysX->createTriangleMesh(DefaultReadBuffer));
-	RigidBodyDesc.pGeometry = &TriangleMeshGeoMetry;
 
 	Safe_Release(pGameInstance);
 
-	/* Com_RigidBody */
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
-		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
-	{
-		MSG_BOX("Failed CMapObject Add_Component : (Com_RigidBody)");
-		__debugbreak();
-		return E_FAIL;
-	}
+	m_vCenterPoint = (m_vMaxPoint + m_vMinPoint) * 0.5f;
+	m_fRadius = Vector3::Distance(m_vMaxPoint, m_vCenterPoint);
 
 	return S_OK;
 }
@@ -166,7 +170,10 @@ void CMapObject::Late_Tick(_float fTimeDelta)
 		}
 		
 #ifdef _DEBUG
-		m_pRenderer->Add_DebugGroup(m_pRigidBody);
+		for (auto& pRigidBody : m_RigidBodys)
+		{
+			m_pRenderer->Add_DebugGroup(pRigidBody);
+		}
 #endif // _DEBUG
 	}
 
@@ -330,7 +337,10 @@ void CMapObject::Free()
 {
 	__super::Free();
 
-	Safe_Release(m_pRigidBody);
+	for (auto& pRigidBody : m_RigidBodys)
+		Safe_Release(pRigidBody);
+	m_RigidBodys.clear();
+
 	Safe_Release(m_pShader);
 	Safe_Release(m_pShadowShader);
 	Safe_Release(m_pModel);

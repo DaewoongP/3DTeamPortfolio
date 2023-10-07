@@ -39,7 +39,6 @@ public:
 private:
 	CShader*		m_pShader = { nullptr };
 	CShader*		m_pShadowShader = { nullptr };
-	CRigidBody*		m_pRigidBody = { nullptr };
 	CRenderer*		m_pRenderer = { nullptr };
 	CModel*			m_pModel = { nullptr };
 
@@ -51,6 +50,7 @@ private:
 
 private:
 	MAPOBJECTDESC	m_ObjectDesc;
+	vector<CComponent*>	m_RigidBodys;
 
 private:
 	HRESULT Add_Components();
