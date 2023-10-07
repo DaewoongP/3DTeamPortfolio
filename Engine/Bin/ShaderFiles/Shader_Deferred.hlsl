@@ -75,11 +75,8 @@ PS_OUT PS_MAIN_DEFERRED(PS_IN In)
     
     vector vShadow = g_ShadowTexture.Sample(LinearSampler, In.vTexUV);
 
-    if (vShadow.r < 0.6f)
-    {
-        vShade *= 0.5f;
-        vSpecular = float4(0.f, 0.f, 0.f, 0.f);
-    }
+    vShade *= vShadow.r;
+    vSpecular *= vShadow.r;
     
     Out.vColor = vDiffuse * vShade * vSSAO + vSpecular;
 

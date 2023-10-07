@@ -16,6 +16,7 @@ HRESULT CLight_Manager::Reserve_Lights(_uint iNumLights)
 CLight* CLight_Manager::Add_Lights(const CLight::LIGHTDESC& LightDesc)
 {
 	CLight* pLight = m_LightPool.front();
+
 	pLight->Set_LightDesc(LightDesc);
 
 	if (CLight::TYPE_DIRECTIONAL == LightDesc.eType)
@@ -28,6 +29,7 @@ CLight* CLight_Manager::Add_Lights(const CLight::LIGHTDESC& LightDesc)
 	}
 
 	m_Lights.push_back(pLight);
+
 	m_LightPool.pop();
 
 	return pLight;
