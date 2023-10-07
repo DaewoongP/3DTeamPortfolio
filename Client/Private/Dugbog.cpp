@@ -83,22 +83,6 @@ void CDugbog::Tick(_float fTimeDelta)
 
 	Tick_Spells();
 
-	for (auto iter = m_CurrentTickSpells.begin(); iter != m_CurrentTickSpells.end(); )
-	{
-		if (iter->first & m_iCurrentSpell)
-		{
-			auto Desciter = m_MagicTickDesc.find(iter->first);
-			if (Desciter != m_MagicTickDesc.end())
-			{
-				iter->second(Desciter->second);
-			}
-			
-			++iter;
-		}
-		else
-			iter = m_CurrentTickSpells.erase(iter);
-	}
-
 	if (nullptr != m_pModelCom)
 		m_pModelCom->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 }
@@ -149,7 +133,9 @@ void CDugbog::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			return;
 
 		m_isSpawn = true;
-		m_RangeInEnemies.push_back({ wstrObjectTag, CollisionEventDesc.pOtherOwner });
+		auto iter = m_RangeInEnemies.find(wstrObjectTag);
+		if (iter == m_RangeInEnemies.end())
+			m_RangeInEnemies.emplace(wstrObjectTag, CollisionEventDesc.pOtherOwner);
 	}
 }
 
@@ -325,8 +311,17 @@ HRESULT CDugbog::Add_Components()
 		/* For.Collider Enemy_Range */
 		RigidBodyDesc.isStatic = true;
 		RigidBodyDesc.isTrigger = true;
+		RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
+		RigidBodyDesc.vOffsetPosition = _float3(0.f, 0.5f, 0.f);
+		RigidBodyDesc.vOffsetRotation = XMQuaternionRotationRollPitchYaw(0.f, 0.f, 0.f);
+		RigidBodyDesc.fStaticFriction = 0.f;
+		RigidBodyDesc.fDynamicFriction = 1.f;
+		RigidBodyDesc.fRestitution = 0.f;
 		PxSphereGeometry pSphereGeomatry2 = PxSphereGeometry(15.f);
 		RigidBodyDesc.pGeometry = &pSphereGeomatry2;
+		RigidBodyDesc.eConstraintFlag = CRigidBody::RotX | CRigidBody::RotY | CRigidBody::RotZ;
+		RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 0.f, 1.f);
+		RigidBodyDesc.pOwnerObject = this;
 		RigidBodyDesc.eThisCollsion = COL_ENEMY_RANGE;
 		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC;
 		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Range");
@@ -336,6 +331,17 @@ HRESULT CDugbog::Add_Components()
 		/* For.Collider Enemy_Attack_Body */
 		RigidBodyDesc.isStatic = true;
 		RigidBodyDesc.isTrigger = true;
+		RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
+		RigidBodyDesc.vOffsetPosition = _float3(0.f, 1.f, 0.f);
+		RigidBodyDesc.vOffsetRotation = XMQuaternionRotationRollPitchYaw(0.f, 0.f, 0.f);
+		RigidBodyDesc.fStaticFriction = 0.f;
+		RigidBodyDesc.fDynamicFriction = 1.f;
+		RigidBodyDesc.fRestitution = 0.f;
+		PxSphereGeometry pSphereGeomatry3 = PxSphereGeometry(1.f);
+		RigidBodyDesc.pGeometry = &pSphereGeomatry2;
+		RigidBodyDesc.eConstraintFlag = CRigidBody::RotX | CRigidBody::RotY | CRigidBody::RotZ;
+		RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 0.f, 1.f);
+		RigidBodyDesc.pOwnerObject = this;
 		RigidBodyDesc.eThisCollsion = COL_ENEMY_ATTACK;
 		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC | COL_SHIELD;
 		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Attack_Body");
@@ -343,11 +349,19 @@ HRESULT CDugbog::Add_Components()
 			throw TEXT("Failed Create_Collider");
 
 		/* For.Collider Enemy_Attack_Tongue */
+		RigidBodyDesc.isStatic = true;
+		RigidBodyDesc.isTrigger = true;
+		RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
 		RigidBodyDesc.vOffsetPosition = _float3(0.f, 0.5f, 1.5f);
 		RigidBodyDesc.vOffsetRotation = XMQuaternionRotationRollPitchYaw(0.f, XMConvertToRadians(90.f), 0.f);
+		RigidBodyDesc.fStaticFriction = 0.f;
+		RigidBodyDesc.fDynamicFriction = 1.f;
+		RigidBodyDesc.fRestitution = 0.f;
 		PxCapsuleGeometry pCapsuleGeomatry = PxCapsuleGeometry(0.6f, 1.2f);
 		RigidBodyDesc.pGeometry = &pCapsuleGeomatry;
+		RigidBodyDesc.eConstraintFlag = CRigidBody::RotX | CRigidBody::RotY | CRigidBody::RotZ;
 		RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 1.f, 1.f);
+		RigidBodyDesc.pOwnerObject = this;
 		RigidBodyDesc.eThisCollsion = COL_ENEMY_ATTACK;
 		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC | COL_SHIELD;
 		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Attack_Tongue");
@@ -660,6 +674,9 @@ HRESULT CDugbog::Make_Alive(_Inout_ CSelector* pSelector)
 		CRandomChoose* pRandom_Attacks = nullptr;
 		if (FAILED(Create_Behavior(pRandom_Attacks)))
 			throw TEXT("Failed Create_Behavior pRandom_Attacks");
+		CSelector* pSelector_Taunts = { nullptr };
+		if (FAILED(Create_Behavior(pSelector_Taunts)))
+			throw TEXT("Failed Create_Behavior pSelector_Taunts");
 
 		CSelector* pSelector_Run_Attack = nullptr;
 		if (FAILED(Create_Behavior(pSelector_Run_Attack)))
@@ -692,8 +709,20 @@ HRESULT CDugbog::Make_Alive(_Inout_ CSelector* pSelector)
 			{
 				return true;
 			});
+		pSelector_Taunts->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_uint* pICurrentSpell = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
+					return false;
+
+				if (true == IsDebuff(*pICurrentSpell))
+					return false;
+
+				return true;
+			});
 
 		/* Set Options */
+		pRandom_Attacks->Set_Option(1.5f);
 
 		/* Assemble Behaviors */
 		if (FAILED(pSelector->Assemble_Behavior(TEXT("Selector_Hit_Combo"), pSelector_Hit_Combo)))
@@ -702,10 +731,12 @@ HRESULT CDugbog::Make_Alive(_Inout_ CSelector* pSelector)
 			throw TEXT("Failed Assemble_Behavior Selector_Check_Spell");
 		if (FAILED(pSelector->Assemble_Behavior(TEXT("Random_Attacks"), pRandom_Attacks)))
 			throw TEXT("Failed Assemble_Behavior Random_Attacks");
+		if (FAILED(pSelector->Assemble_Behavior(TEXT("Selector_Taunts"), pSelector_Taunts)))
+			throw TEXT("Failed Assemble_Behavior Selector_Taunts");
 
-		if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Selector_Run_Attack"), pSelector_Run_Attack, 0.5f)))
+		if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Selector_Run_Attack"), pSelector_Run_Attack, 0.67f)))
 			throw TEXT("Failed Assemble_Behavior Selector_Run_Attack");
-		if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Sequence_Tongue_Attack"), pSequence_Tongue_Attack, 0.5f)))
+		if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Sequence_Tongue_Attack"), pSequence_Tongue_Attack, 0.33f)))
 			throw TEXT("Failed Assemble_Behavior Sequence_Tongue_Attack");
 
 		if (FAILED(Make_Hit_Combo(pSelector_Hit_Combo)))
@@ -716,6 +747,8 @@ HRESULT CDugbog::Make_Alive(_Inout_ CSelector* pSelector)
 			throw TEXT("Failed Make_Run_Attack");
 		if (FAILED(Make_Tongue_Attack(pSequence_Tongue_Attack)))
 			throw TEXT("Failed Make_Run_Attack");
+		if (FAILED(Make_Taunts(pSelector_Taunts)))
+			throw TEXT("Failed Make_Taunts");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -1093,6 +1126,65 @@ HRESULT CDugbog::Make_Tongue_Attack(_Inout_ CSequence* pSequence)
 		if (FAILED(Make_Turn_Runs(pSequence_Turn_Runs)))
 			throw TEXT("Failed Make_Turn_Runs");
 		if (FAILED(Make_Turns(pSequence_Turns)))
+			throw TEXT("Failed Make_Turns");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CDugbog] Failed Make_Tongue_Attack : \n");
+		wstrErrorMSG += pErrorTag;
+		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
+
+		ENDINSTANCE;
+
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CDugbog::Make_Taunts(_Inout_ CSelector* pSelector)
+{
+	BEGININSTANCE;
+
+	try
+	{
+		if (nullptr == pSelector)
+			throw TEXT("Parameter pSelector is nullptr");
+
+		/* Create Child Behaviors */
+		CSequence* pSequence_Turn = { nullptr };
+		if (FAILED(Create_Behavior(pSequence_Turn)))
+			throw TEXT("Failed Create_Behavior pSequence_Turn");
+		CRandomChoose* pRandom_Taunts = { nullptr };
+		if (FAILED(Create_Behavior(pRandom_Taunts)))
+			throw TEXT("Failed Create_Behavior pRandom_Taunts");
+
+		CAction* pAction_Taunt_1 = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Taunt_1)))
+			throw TEXT("Failed Create_Behavior pAction_Taunt_1");
+		CAction* pAction_Taunt_2 = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Taunt_2)))
+			throw TEXT("Failed Create_Behavior pAction_Taunt_2");
+
+		/* Set Options */
+		pAction_Taunt_1->Set_Options(TEXT("Taunt_1"), m_pModelCom);
+		pAction_Taunt_2->Set_Options(TEXT("Taunt_2"), m_pModelCom);
+
+		/* Assemble Behaviors */
+		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Turn"), pSequence_Turn)))
+			throw TEXT("Failed Assemble_Behavior Sequence_Turn");
+		if (FAILED(pSelector->Assemble_Behavior(TEXT("Random_Taunts"), pRandom_Taunts)))
+			throw TEXT("Failed Assemble_Behavior Random_Taunts");
+
+		if (FAILED(pRandom_Taunts->Assemble_Behavior(TEXT("Action_Taunt_1"), pAction_Taunt_1, 0.5f)))
+			throw TEXT("Failed Assemble_Behavior Action_Taunt_1");
+		if (FAILED(pRandom_Taunts->Assemble_Behavior(TEXT("pAction_Taunt_2"), pAction_Taunt_2, 0.5f)))
+			throw TEXT("Failed Assemble_Behavior pAction_Taunt_2");
+
+		if (FAILED(Make_Turns(pSequence_Turn)))
 			throw TEXT("Failed Make_Turns");
 	}
 	catch (const _tchar* pErrorTag)
@@ -1628,7 +1720,7 @@ HRESULT CDugbog::Make_Air_Hit(_Inout_ CSelector* pSelector)
 	return S_OK;
 }
 
-HRESULT CDugbog::Make_Fly_Descendo(CSequence* pSequence)
+HRESULT CDugbog::Make_Fly_Descendo(_Inout_ CSequence* pSequence)
 {
 	BEGININSTANCE;
 
@@ -1669,8 +1761,8 @@ HRESULT CDugbog::Make_Fly_Descendo(CSequence* pSequence)
 		pAction_Descendo3->Set_Options(TEXT("Splat_Front"), m_pModelCom);
 		pAction_GetUp->Set_Options(TEXT("Getup_Front"), m_pModelCom);
 
-		_float3 vForce = _float3(0.f, -100.f, 0.f);
-		pTsk_RigidMove->Set_Option(m_pRigidBody, vForce, 0.3f);
+		_float3 vForce = _float3(0.f, -200.f, 0.f);
+		pTsk_RigidMove->Set_Option(m_pRigidBody, vForce, 0.2f);
 		vForce = _float3(0.f, 3.f, 0.f);
 		pTsk_RigidMove_Up->Set_Option(m_pRigidBody, vForce, 2.6f);
 

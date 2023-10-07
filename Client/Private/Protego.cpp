@@ -236,7 +236,7 @@ void CProtego::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
 	wstring wstrCollisionTag = CollisionEventDesc.pOtherCollisionTag;
-	wcout << wstrCollisionTag << endl;
+	
 	if (wstring::npos != wstrCollisionTag.find(TEXT("Attack")) ||
 		wstring::npos != wstrCollisionTag.find(TEXT("Enemy_Body")))
 	{
@@ -283,7 +283,7 @@ void CProtego::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 	{
 		static_cast<const CProfessor_Fig*>(m_pTarget)->Set_Protego_Collision(pTransform, eAttackType);
 	}
-	else 
+	else
 	{
 		static_cast<const CEnemy*>(m_pTarget)->Set_Protego_Collision(pTransform/* (마법)충돌체 위치 */, eAttackType);
 	}

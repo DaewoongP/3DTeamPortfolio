@@ -468,7 +468,7 @@ HRESULT CModel::Bind_Notify(const _uint& iAnimIndex, const wstring& wstrNotifyTa
 	return S_OK;
 }
 
-HRESULT CModel::Bind_Notify(const wstring& wstrAnimIndex, const wstring& wstrNotifyTag, function<void()>& Func, ANIMTYPE eType)
+HRESULT CModel::Bind_Notify(const wstring& wstrAnimIndex, const wstring& wstrNotifyTag, function<void()> Func, ANIMTYPE eType)
 {
 	_uint iAnimationIndex = { 0 };
 	iAnimationIndex = Find_Animation_Index(wstrAnimIndex);
@@ -476,7 +476,7 @@ HRESULT CModel::Bind_Notify(const wstring& wstrAnimIndex, const wstring& wstrNot
 	return Bind_Notify(iAnimationIndex, wstrNotifyTag, Func, eType);
 }
 
-HRESULT CModel::Bind_Notifies(const wstring& wstrNotifyTag, function<void()>& Func, ANIMTYPE eType)
+HRESULT CModel::Bind_Notifies(const wstring& wstrNotifyTag, function<void()> Func, ANIMTYPE eType)
 {
 	if (0 > eType || ANIM_END <= eType || nullptr == Func)
 		return E_FAIL;

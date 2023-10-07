@@ -1,4 +1,5 @@
 #include "RandomChoose.h"
+#include "Timer_Manager.h"
 
 #include "Calculator.h"
 #include "BlackBoard.h"
@@ -12,6 +13,25 @@ CRandomChoose::CRandomChoose(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 CRandomChoose::CRandomChoose(const CBehavior& rhs)
 	: CBehavior(rhs)
 {
+}
+
+HRESULT CRandomChoose::Initialize(void* pArg)
+{
+	/* ÄðÅ¸ÀÓ */
+	Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+		{
+			CTimer_Manager* pTimerManager = CTimer_Manager::GetInstance();
+			Safe_AddRef(pTimerManager);
+			_float fInterval = pTimerManager->Get_World_TimeAcc() - m_fPreWorldTimeAcc;
+			Safe_Release(pTimerManager);
+
+			if (m_fLimit > fInterval)
+				return false;
+
+			return true;
+		});
+
+	return S_OK;
 }
 
 HRESULT CRandomChoose::Tick(const _float& fTimeDelta)
@@ -98,6 +118,15 @@ void CRandomChoose::Reset_Behavior(HRESULT result)
 		(*m_iterCurBehavior)->Reset_Behavior(result);
 		Set_Random_Behavior();
 	}
+
+	if (BEHAVIOR_SUCCESS == result)
+	{
+		CTimer_Manager* pTimerManager = CTimer_Manager::GetInstance();
+		Safe_AddRef(pTimerManager);
+		m_fPreWorldTimeAcc = pTimerManager->Get_World_TimeAcc();
+		Safe_Release(pTimerManager);
+	}
+
 	m_ReturnData = result;
 }
 

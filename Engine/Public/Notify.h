@@ -18,6 +18,7 @@ class ENGINE_DLL CNotify final : public CBase
 {
 private:
 	explicit CNotify();
+	explicit CNotify(const CNotify& rhs);
 	virtual ~CNotify() = default;
 
 public:
@@ -49,6 +50,7 @@ private:
 
 public:
 	static CNotify* Create();
+	CNotify* Clone();
 	virtual void Free() override;
 };
 

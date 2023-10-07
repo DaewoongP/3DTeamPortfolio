@@ -1,5 +1,6 @@
 #include "Goblin_Assasin.h"
-#include "GameInstance.h"
+
+#include "Client_GameInstance_Functions.h"
 
 #include "Weapon_Goblin_Assasin.h"
 
@@ -134,7 +135,9 @@ void CGoblin_Assasin::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			return;
 
 		m_isSpawn = true;
-		m_RangeInEnemies.push_back({ wstrObjectTag, CollisionEventDesc.pOtherOwner });
+		auto iter = m_RangeInEnemies.find(wstrObjectTag);
+		if (iter == m_RangeInEnemies.end())
+			m_RangeInEnemies.emplace(wstrObjectTag, CollisionEventDesc.pOtherOwner);
 	}
 
 	/* Collision Protego */
@@ -161,10 +164,6 @@ void CGoblin_Assasin::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 
 HRESULT CGoblin_Assasin::Render()
 {
-#ifdef _DEBUG
-	//Tick_ImGui();
-#endif // _DEBUG
-
 	if (FAILED(__super::SetUp_ShaderResources()))
 		return E_FAIL;
 
