@@ -67,8 +67,9 @@ private:
 	virtual ~CPlayer() = default;
 	
 public:
-	void Set_TargetTransform(CTransform* _pTargetTransform = nullptr) { m_pTargetTransform = _pTargetTransform; }
+	CPlayer_Information* Get_Player_Information() { return m_pPlayer_Information; }
 	_float3 Get_PlayerPos() { return m_pTransform->Get_Position(); }
+	void Set_TargetTransform(CTransform* _pTargetTransform = nullptr) { m_pTargetTransform = _pTargetTransform; }
 	void Set_Protego_Collision(CEnemy::ATTACKTYPE _eAttackType, CTransform* _pTransform);
 
 

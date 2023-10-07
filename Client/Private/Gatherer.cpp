@@ -2,6 +2,8 @@
 #include "GameInstance.h"
 
 #include "Player.h"
+#include "Player_Information.h"
+#include "Inventory.h"
 
 CGatherer::CGatherer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -53,24 +55,30 @@ HRESULT CGatherer::Initialize_Level(_uint iCurrentLevelIndex)
 	}
 
 	// 채집물 종류 파악
+	wstring wsTargetName(TEXT("Prototype_Component_Model_"));
+	wstring wsModelName(m_ObjectDesc.wszTag);
+	
+	_uint iLength = wsTargetName.size();
+	wsModelName = wsModelName.substr(iLength);
+
 	wstring wsAshwinderEggs(TEXT("Anim_AshwinderEggs"));
 	wstring wsHorklump(TEXT("Anim_Horklump"));
 	wstring wsLeapingToadStools(TEXT("Anim_LeapingToadStools"));
 	wstring wsLeech(TEXT("Anim_Leech"));
 
-	if (0 == lstrcmp(m_ObjectDesc.wszTag, wsAshwinderEggs.c_str()))
+	if (0 == lstrcmp(wsModelName.c_str(), wsAshwinderEggs.c_str()))
 	{
 		m_GatheringType = CGatherer::ASHWINDEREGG;
 	}
-	else if (0 == lstrcmp(m_ObjectDesc.wszTag, wsHorklump.c_str()))
+	else if (0 == lstrcmp(wsModelName.c_str(), wsHorklump.c_str()))
 	{
 		m_GatheringType = CGatherer::HORKLUMP;
 	}
-	else if (0 == lstrcmp(m_ObjectDesc.wszTag, wsLeapingToadStools.c_str()))
+	else if (0 == lstrcmp(wsModelName.c_str(), wsLeapingToadStools.c_str()))
 	{
 		m_GatheringType = CGatherer::LEAPINGTOADSTOOLS;
 	}
-	else if (0 == lstrcmp(m_ObjectDesc.wszTag, wsLeech.c_str()))
+	else if (0 == lstrcmp(wsModelName.c_str(), wsLeech.c_str()))
 	{
 		m_GatheringType = CGatherer::LEECH;
 	}
@@ -82,6 +90,7 @@ HRESULT CGatherer::Initialize_Level(_uint iCurrentLevelIndex)
 	// 플레이어 찾기
 	BEGININSTANCE;
 	m_pPlayer = static_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(iCurrentLevelIndex, TEXT("Layer_Player"), TEXT("GameObject_Player")));
+	m_pPlayerInformation = m_pPlayer->Get_Player_Information();
 	ENDINSTANCE;
 
 	return S_OK;
@@ -93,11 +102,11 @@ void CGatherer::Tick(_float fTimeDelta)
 
 	// 플레이어와 거리 비교
 	_float3 vPlayerPos = m_pPlayer->Get_PlayerPos();
-	_float3 vChestPos = m_pTransform->Get_Position();
+	_float3 vGathererPos = m_pTransform->Get_Position();
 
-	m_fDist_From_Player = sqrtf((vPlayerPos.x - vChestPos.x) * (vPlayerPos.x - vChestPos.x) +
-		(vPlayerPos.y - vChestPos.y) * (vPlayerPos.y - vChestPos.y) +
-		(vPlayerPos.z - vChestPos.z) * (vPlayerPos.z - vChestPos.z));
+	m_fDist_From_Player = sqrtf((vPlayerPos.x - vGathererPos.x) * (vPlayerPos.x - vGathererPos.x) +
+		(vPlayerPos.y - vGathererPos.y) * (vPlayerPos.y - vGathererPos.y) +
+		(vPlayerPos.z - vGathererPos.z) * (vPlayerPos.z - vGathererPos.z));
 
 	// 일정 거리안으로 들어왔을 때
 	if (2.f >= m_fDist_From_Player && nullptr != m_pModel)
@@ -110,7 +119,26 @@ void CGatherer::Tick(_float fTimeDelta)
 			// 채집당하는 애니메이션으로 변경
 			m_pModel->Set_CurrentAnimIndex(0);
 
-			// 여기서 인벤토리 처리해주면 될듯
+			// 인벤토리 획득 처리
+			switch (m_GatheringType)
+			{
+			case CGatherer::ASHWINDEREGG:
+				//m_pPlayerInformation->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_AshwinderEggs_Item"));
+				cout << "애쉬와인더 알 획득"<< '\n';
+				break;
+			case CGatherer::HORKLUMP:
+				//m_pPlayerInformation->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_"));
+				cout << "후클럼프 즙 획득" << '\n';
+				break;
+			case CGatherer::LEAPINGTOADSTOOLS:
+				//m_pPlayerInformation->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_"));
+				cout << "독버섯 갓 획득" << '\n';
+				break;
+			case CGatherer::LEECH:
+				//m_pPlayerInformation->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_"));
+				cout << "거머리 즙 획득" << '\n';
+				break;
+			}
 		}
 
 		ENDINSTANCE;

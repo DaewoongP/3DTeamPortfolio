@@ -13,6 +13,7 @@ END
 BEGIN(Client)
 
 class CPlayer;
+class CPlayer_Information;
 
 class CTreasure_Chest final : public CGameObject
 {
@@ -46,6 +47,7 @@ private:
 	CModel* m_pModel = { nullptr };
 
 	CPlayer* m_pPlayer = { nullptr }; // 플레이어 주소
+	CPlayer_Information* m_pPlayerInformation = { nullptr }; // 플레이어 인벤토리와 상호작용하기 위한 주소
 
 private:
 	// 절두체 컬링을 위해 Bounding Box를 생성 하기위한 최소, 최대 정점

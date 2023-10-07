@@ -13,6 +13,7 @@ END
 BEGIN(Client)
 
 class CPlayer;
+class CPlayer_Information;
 
 class CGatherer final : public CGameObject
 {
@@ -48,7 +49,8 @@ private:
 	CRenderer* m_pRenderer = { nullptr };
 	CModel* m_pModel = { nullptr };
 
-	CPlayer* m_pPlayer = { nullptr }; // 플레이어 주소
+	CPlayer*			 m_pPlayer = { nullptr };			 // 플레이어 주소
+	CPlayer_Information* m_pPlayerInformation = { nullptr }; // 플레이어 인벤토리와 상호작용하기 위한 주소
 
 private:
 	// 절두체 컬링을 위해 Bounding Box를 생성 하기위한 최소, 최대 정점
@@ -58,7 +60,7 @@ private:
 
 private:
 	MAPOBJECTDESC	m_ObjectDesc;
-	GATHERING		m_GatheringType = { GATHERING_END }; // 채집물 종류
+	GATHERING		m_GatheringType = { CGatherer::GATHERING_END }; // 채집물 종류
 
 private:
 	HRESULT Add_Components();

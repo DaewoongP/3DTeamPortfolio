@@ -2,6 +2,8 @@
 #include "GameInstance.h"
 
 #include "Player.h"
+#include "Player_Information.h"
+#include "Inventory.h"
 
 CTreasure_Chest::CTreasure_Chest(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -79,12 +81,13 @@ void CTreasure_Chest::Tick(_float fTimeDelta)
 	{
 		// 여기서 버튼 UI가 나타나면 될듯
 
-		BEGININSTANCE;  // 버튼을 누르면 동작
-		if (pGameInstance->Get_DIKeyState(DIK_E, CInput_Device::KEY_DOWN))
+		BEGININSTANCE;  // 버튼을 누르면 동작(한번만 동작)
+		if (pGameInstance->Get_DIKeyState(DIK_E, CInput_Device::KEY_DOWN) && true == m_isGetItem)
 		{
 			m_isGetItem = false;
 
-			// 여기서 인벤토리 처리해주면 될듯
+			// 인벤토리 획득 처리
+			cout << "보물 상자가 열리고 어떤 아이템 획득" << '\n';
 		}
 
 		ENDINSTANCE;
