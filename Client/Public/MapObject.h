@@ -43,7 +43,6 @@ private:
 	CModel*			m_pModel = { nullptr };
 
 private:
-	_bool			m_isCull = { true }; // 스케일 값에 따라 어떤 Cull 방식을 선택할지 정하는 변수
 	// 절두체 컬링을 위해 Bounding Box를 생성 하기위한 최소, 최대 정점
 	_float3			m_vMinPoint, m_vMaxPoint, m_vCenterPoint;
 	_float			m_fRadius = { 0.f };
