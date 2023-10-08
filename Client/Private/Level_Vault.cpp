@@ -198,12 +198,12 @@ HRESULT CLevel_Vault::Ready_Lights()
 	ZeroMemory(&LightDescHork, sizeof LightDescHork);
 
 	LightDescHork.eType = CLight::TYPE_POINT;
-	LightDescHork.vPos = _float4(15.7, 1.5f, 21.7f, 1.f);
+	LightDescHork.vPos = _float4(15.7, 0.25f, 21.7f, 1.f);
 	LightDescHork.fRange = 3.f;
 
-	LightDescHork.vDiffuse = _float4(0.1f, 0.1f, 0.3f, 1.f);
+	LightDescHork.vDiffuse = _float4(90.f / 255.f, 109.f / 255.f, 231.f / 255.f, 1.f);
 	LightDescHork.vAmbient = WHITEDEFAULT;
-	LightDescHork.vSpecular = WHITEDEFAULT;
+	LightDescHork.vSpecular =  LightDescHork.vDiffuse;
 
 	pGameInstance->Add_Lights(LightDescHork);
 
