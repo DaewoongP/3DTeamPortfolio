@@ -194,7 +194,8 @@ HRESULT CLevel_Vault::Ready_Lights()
 
 	pGameInstance->Add_Lights(LightDesc);
 
-	CLight::LIGHTDESC		LightDescHork;
+	// 라이트 매니저 문제로 이 부분을 지금 설정할 수 없다.
+	/*CLight::LIGHTDESC		LightDescHork;
 	ZeroMemory(&LightDescHork, sizeof LightDescHork);
 
 	LightDescHork.eType = CLight::TYPE_POINT;
@@ -205,7 +206,7 @@ HRESULT CLevel_Vault::Ready_Lights()
 	LightDescHork.vAmbient = WHITEDEFAULT;
 	LightDescHork.vSpecular =  LightDescHork.vDiffuse;
 
-	pGameInstance->Add_Lights(LightDescHork);
+	pGameInstance->Add_Lights(LightDescHork);*/
 
 	ENDINSTANCE;
 
