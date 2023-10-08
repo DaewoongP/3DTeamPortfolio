@@ -75,6 +75,7 @@ HRESULT CPlayer_Camera::Initialize(void* pArg)
 
 	m_pTransform->Set_RotationSpeed(1.0f);
 
+	m_pisMove = pCameraDesc->IsMove;
 	m_eLevelID = pCameraDesc->eLevelID;
 	m_ppTargetTransform = pCameraDesc->ppTargetTransform;
 	m_pPlayerTransform = pCameraDesc->pPlayerTransform;
@@ -98,16 +99,32 @@ HRESULT CPlayer_Camera::Initialize(void* pArg)
 
 	m_fTimeSpeed = 10.0f;
 
-	m_fCameraHeight = 1.2f;
+	m_fCameraHeight = 1.0f;
 
 	Ready_Animation_Camera();
+
 
 	return S_OK;
 }
 
 void CPlayer_Camera::Tick(const _float& _TimeDelta)
 {
-	Mouse_Input(_TimeDelta);
+	BEGININSTANCE;
+
+	m_isPressingTab = false;
+
+	if (pGameInstance->Get_DIKeyState(DIK_TAB, CInput_Device::KEY_PRESSING))
+	{
+		m_isPressingTab = true;
+	}
+
+
+
+	//마우스 움직이는 조건 나중에 바꿔야함 텝창 또는 인벤토리열렸을때 움직일수 있게
+	if (true == m_pAnimation_Camera_Model->Is_Finish_Animation() && true == *m_pisMove && false == m_isPressingTab)
+	{
+		Mouse_Input(_TimeDelta);
+	}
 	
 	Update_FollowMatrix();
 
@@ -118,8 +135,6 @@ void CPlayer_Camera::Tick(const _float& _TimeDelta)
 	m_pAnimation_Camera_Model->Tick(_TimeDelta);
 
 	Update_Eye_At();
-
-	BEGININSTANCE;
 
 	pGameInstance->Set_Transform(
 		CPipeLine::D3DTS_PROJ, 

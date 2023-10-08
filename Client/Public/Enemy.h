@@ -69,6 +69,7 @@ public:
 
 public:
 	void Set_Protego_Collision(CTransform* pTransform, ATTACKTYPE eType) const {}
+	void Ready_Hit_Finisher() {};
 
 protected:
 	CUI_Group_Enemy_HP* m_pUI_HP = { nullptr };

@@ -200,6 +200,8 @@ private:
 
 	_float m_fTargetViewRange = { 0.0f };
 
+	vector<SPELL> m_vecSpellCheck;
+
 private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
@@ -255,6 +257,10 @@ private:
 	void Shot_Magic_Spell_Button_2();
 	void Shot_Magic_Spell_Button_3();
 	void Shot_Magic_Spell_Button_4();
+	
+	
+
+	_uint Special_Action(_uint _iButton);
 
 	void Finisher();
 
