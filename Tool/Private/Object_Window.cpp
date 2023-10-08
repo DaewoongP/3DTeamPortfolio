@@ -1826,7 +1826,15 @@ HRESULT CObject_Window::Save_Model_Path(_uint iType, const _tchar* pFilePath)
 				Deep_Copy_Name(wmodelname.c_str());
 
 				// 프로토타입 생성
-				_float4x4 PivotMatrix;
+				_float4x4 PivotMatrix = XMMatrixIdentity();
+
+				// 파일명에 Anim_가 들어가 있는지 찾는다.
+				if (std::string::npos != result.find(("Anim_")))
+				{
+					// 만약 있다면 다른 피벗 메트릭스를 부여한다.
+					PivotMatrix = XMMatrixRotationX(XMConvertToRadians(90.f));
+				}
+
 				if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, m_vecModelList_t.back(),
 					CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, m_vecModelPath_t.back(), PivotMatrix), true)))
 				{

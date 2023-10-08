@@ -142,7 +142,7 @@ HRESULT CUI_Inventory::Ready_Offset()
 	{
 		for (size_t x = 0; x < m_iHorizontal; x++)
 		{
-			_float2 fPos = _float2(fOffSet.x + x * m_fWidth, fOffSet.y - y * m_fHeight);
+			_float2 fPos = _float2(fOffSet.x + x * m_fWidth, fOffSet.y + y * m_fHeight);
 			m_fPosition.push_back(fPos);
 		}
 	}

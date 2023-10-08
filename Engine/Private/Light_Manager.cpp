@@ -1,101 +1,44 @@
 #include "..\Public\Light_Manager.h"
-#include "Transform.h"
 #include "PipeLine.h"
 
 IMPLEMENT_SINGLETON(CLight_Manager)
 
-CLight_Manager::CLight_Manager()
+HRESULT CLight_Manager::Reserve_Lights(_uint iNumLights)
 {
-
-}
-
-const CLight::LIGHTDESC* CLight_Manager::Get_Light(_uint iIndex)
-{
-	if (0 == m_Lights.size())
-		return nullptr;
-
-	auto	iter = m_Lights.begin();
-
-	for (size_t i = 0; i < iIndex; ++i)
-		++iter;
-
-	return (*iter)->Get_LightDesc();
-}
-
-void CLight_Manager::Set_Light(_uint iIndex, _float fWinSizeX, _float fWinSizeY, CLight::LIGHTDESC LightDesc)
-{
-	auto	iter = m_Lights.begin();
-
-	for (size_t i = 0; i < iIndex; ++i)
-		++iter;
-
-	if (LightDesc.eType == CLight::TYPE_LUMOS)
+	for (_uint i = 0; i < iNumLights; ++i)
 	{
-		m_ViewLight = XMMatrixLookAtLH(Get_Light(CLight::TYPE_LUMOS)->vPos, Get_Light(CLight::TYPE_LUMOS)->vLookAt, _float4(0.f, 1.f, 0.f, 0.f));
-		m_ProjLight = XMMatrixPerspectiveFovLH(XMConvertToRadians(90.f), fWinSizeX / fWinSizeY, 0.1f, 1000.f);
+		m_LightPool.push(CLight::Create(CLight::LIGHTDESC()));
+	}
+
+	return S_OK;
+}
+
+CLight* CLight_Manager::Add_Lights(const CLight::LIGHTDESC& LightDesc, _bool isShadow)
+{
+	CLight* pLight = { nullptr };
+	if (m_LightPool.empty())
+	{
+		pLight = CLight::Create(LightDesc);
 	}
 	else
 	{
-		m_ViewLight = XMMatrixLookAtLH(Get_Light(CLight::TYPE_DIRECTIONAL)->vPos, Get_Light(CLight::TYPE_DIRECTIONAL)->vLookAt, _float4(0.f, 1.f, 0.f, 0.f));
-		m_ProjLight = XMMatrixPerspectiveFovLH(XMConvertToRadians(90.f), fWinSizeX / fWinSizeY, 0.1f, 1000.f);
+		pLight = m_LightPool.front();
+		m_LightPool.pop();
+		pLight->Set_LightDesc(LightDesc);
 	}
 
-	CPipeLine* pPipeLine = CPipeLine::GetInstance();
-	Safe_AddRef(pPipeLine);
-
-	pPipeLine->Set_LightTransform(CPipeLine::D3DTS_VIEW, m_ViewLight);
-	pPipeLine->Set_LightTransform(CPipeLine::D3DTS_PROJ, m_ProjLight);
-
-	Safe_Release(pPipeLine);
-
-	(*iter)->Set_LightDesc(LightDesc);
-}
-
-CLight* CLight_Manager::Add_Lights(_float fWinSizeX, _float fWinSizeY, const CLight::LIGHTDESC& LightDesc)
-{
-	CLight* pLight = CLight::Create(LightDesc);
-
-	if (LightDesc.eType == CLight::TYPE_DIRECTIONAL)
+	if (true == isShadow)
 	{
-		m_ViewLight = XMMatrixLookAtLH(LightDesc.vPos, LightDesc.vLookAt, _float4(0.f, 1.f, 0.f, 0.f));
-		m_ProjLight = XMMatrixPerspectiveFovLH(XMConvertToRadians(90.f), fWinSizeX / fWinSizeY, 0.1f, 1000.f);
+		CPipeLine* pPipeLine = CPipeLine::GetInstance();
+		Safe_AddRef(pPipeLine);
+		pPipeLine->Set_LightTransform(CPipeLine::D3DTS_VIEW, XMMatrixLookAtLH(LightDesc.vPos, LightDesc.vPos + LightDesc.vDir, _float3(0.f, 1.f, 0.f)));
+		pPipeLine->Set_LightTransform(CPipeLine::D3DTS_PROJ, XMMatrixPerspectiveFovLH(XMConvertToRadians(90.f), 1280.f / 720.f, 0.1f, 1000.f));
+		Safe_Release(pPipeLine);
 	}
-
-	CPipeLine* pPipeLine = CPipeLine::GetInstance();
-	Safe_AddRef(pPipeLine);
-
-	pPipeLine->Set_LightTransform(CPipeLine::D3DTS_VIEW, m_ViewLight);
-	pPipeLine->Set_LightTransform(CPipeLine::D3DTS_PROJ, m_ProjLight);
-
-	Safe_Release(pPipeLine);
-	m_fLightPos = LightDesc.vPos;
-	if (nullptr == pLight)
-		return nullptr;
 
 	m_Lights.push_back(pLight);
 
 	return pLight;
-}
-
-HRESULT CLight_Manager::Delete_Lights(_uint iIndex, const _char* Name)
-{
-	auto iter = m_Lights.begin();
-	for (size_t i = 0; i < iIndex; ++i)
-		++iter;
-	Safe_Release(*iter);
-	m_Lights.erase(iter);
-
-	return S_OK;
-}
-
-HRESULT CLight_Manager::Clear_Lights()
-{
-	for (auto& pLight : m_Lights)
-		Safe_Release(pLight);
-
-	m_Lights.clear();
-
-	return S_OK;
 }
 
 HRESULT CLight_Manager::Render_Lights(CShader* pShader, CVIBuffer_Rect* pVIBuffer)
@@ -105,13 +48,49 @@ HRESULT CLight_Manager::Render_Lights(CShader* pShader, CVIBuffer_Rect* pVIBuffe
 		if (nullptr != pLight)
 			pLight->Render(pShader, pVIBuffer);
 	}
+
+	return S_OK;
+}
+
+HRESULT CLight_Manager::Delete_Light(CLight* pLight)
+{
+	auto iter = find_if(m_Lights.begin(), m_Lights.end(), [&](auto& pSourLight) {
+		if (pSourLight == pLight)
+		{
+			return true;
+		}
+		return false;
+		}
+	);
+
+	if (m_Lights.end() == iter)
+		return E_FAIL;
+
+	m_Lights.erase(iter);
+	m_LightPool.push(*iter);
+
+	return S_OK;
+}
+
+HRESULT CLight_Manager::Clear_Lights()
+{
+	for (auto& pLight : m_Lights)
+	{
+		m_LightPool.push(pLight);
+	}
+
+	m_Lights.clear();
+
 	return S_OK;
 }
 
 void CLight_Manager::Free()
 {
-	for (auto& pLight : m_Lights)
-		Safe_Release(pLight);
+	Clear_Lights();
 
-	m_Lights.clear();
+	while (!m_LightPool.empty())
+	{
+		Safe_Release(m_LightPool.front());
+		m_LightPool.pop();
+	}
 }

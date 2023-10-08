@@ -31,7 +31,9 @@ BEGIN(Client)
 class CEnemy abstract : public CGameObject
 {
 public:
-	enum ATTACKTYPE { ATTACK_NONE, ATTACK_LIGHT, ATTACK_HEAVY,ATTACK_BREAK,ATTACK_SUPERBREAK, ATTACKTYPE_END };
+	enum ATTACKTYPE { ATTACK_NONE, ATTACK_LIGHT, ATTACK_HEAVY, 
+		ATTACK_BREAK, ATTACK_SUPERBREAK, ATTACKTYPE_END };
+
 	typedef struct tagCollisionRequestDesc
 	{
 		ATTACKTYPE eType = { ATTACKTYPE_END };
@@ -50,6 +52,11 @@ public:
 	}
 	void Set_Parring() {
 		m_isParring = true;
+	}
+	const _float4x4* Get_HitBoneMatrix(const _uint& iIndex) {
+		if (0 > iIndex || 3 <= iIndex)
+			return nullptr;
+		return m_HitMatrices[iIndex];
 	}
 
 public:
@@ -77,7 +84,7 @@ protected:
 protected:
 	const CGameObject* m_pTarget = { nullptr };
 	const CGameObject* m_pPlayer = { nullptr };
-	_uint m_iCurrentSpell = { 0 };
+	mutable _uint m_iCurrentSpell = { 0 };
 	_uint m_iPreviusSpell = { 0 };
 	unordered_map<BUFF_TYPE, function<void(void*)>> m_CurrentTickSpells;
 	unordered_map<BUFF_TYPE, MAIGBUFFTICKDESC*>		m_MagicTickDesc;
@@ -94,8 +101,8 @@ protected:
 
 	COLLISIONREQUESTDESC m_CollisionRequestDesc;
 
-	// 범위 안에 들어온 오브젝트(적군) 리스트
-	list<pair<wstring, const CGameObject*>> m_RangeInEnemies;
+	// 범위 안에 들어온 오브젝트(적군)들
+	unordered_map<wstring, const CGameObject*> m_RangeInEnemies;
 
 protected:
 	HRESULT Make_AI();

@@ -107,7 +107,7 @@ namespace Engine
 			END_COL == filterData0.word2 ||
 			END_COL == filterData1.word2)
 		{
-			//pairFlags = physx::PxPairFlag::eDETECT_DISCRETE_CONTACT;
+			pairFlags = physx::PxPairFlag::eTRIGGER_DEFAULT;
 
 			return physx::PxFilterFlag::eSUPPRESS;
 		}

@@ -53,6 +53,12 @@ public:
 	_float	Get_Z()				{ return m_fZ; }
 	_float2 Get_SizeXY()		{ return _float2(m_fSizeX, m_fSizeY); }
 
+public:
+	void Go_Up(_float fSpeed, _float fTimeDelta);
+	void Go_Down(_float fSpeed, _float fTimeDelta);
+	void Go_Right(_float fSpeed, _float fTimeDelta);
+	void Go_Left(_float fSpeed, _float fTimeDelta);
+
 protected:
 	_float2			m_vCombinedXY = { 0.f, 0.f };
 	// 윈도우창의 실제 x좌표

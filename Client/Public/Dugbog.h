@@ -58,6 +58,7 @@ private: /* Çàµ¿ ¹­À½ */
 	HRESULT Make_Check_Spell(_Inout_ CSelector* pSelector);
 	HRESULT Make_Run_Attack(_Inout_ CSelector* pSelector);
 	HRESULT Make_Tongue_Attack(_Inout_ CSequence* pSequence);
+	HRESULT Make_Taunts(_Inout_ CSelector* pSelector);
 
 	HRESULT Make_Turns(_Inout_ CSequence* pSequence);
 	HRESULT Make_Turn_Runs(_Inout_ CSequence* pSequence);

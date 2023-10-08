@@ -76,6 +76,8 @@ PS_OUT PS_MAIN_SHADOW(PS_IN In)
     // 빛의 뷰스페이스로 변경
     float4 vLightViewPos = mul(vObjectWorldPos, g_vLightViewMatrix);
     
+    /////////////////// 빛 기준 좌표 처리 ///////////////////////
+    
     // 빛기준의 뷰좌표를 투영좌표로 변경하기위해 투영 행렬을 곱함.
     float4 vLightProjPos = mul(vLightViewPos, g_vLightProjMatrix);
     
@@ -100,23 +102,25 @@ PS_OUT PS_MAIN_SHADOW(PS_IN In)
     // UV좌표에 설정되어있는 "빛의" 뷰스페이스상의 뎁스값을 비교하여
     // UV좌표에 설정되어있는 뎁스보다 "깊을경우" 그림자로 처리한다.
     
-    // 빛의 투영값을 컬링처리.
-    // 안하면 그림자가 여러번 보일 수 있음.
-    // 빛의 투영스페이스에 걸리지 않은 포지션값은 그냥 원래 컬러 뽑아주면 된다.
-    if (-1.f >= vLightProjPos.x ||
-	1.f <= vLightProjPos.x ||
-	-1.f >= vLightProjPos.y ||
-	1.f <= vLightProjPos.y ||
-    0.f >= vLightProjPos.z ||
-	1.f <= vLightProjPos.z)
-    {
-        Out.vColor = vector(1.f, 1.f, 1.f, 1.f);
-    }
     // 빛의 뷰스페이스 포지션 z와 픽셀의 라이트 뎁스 (실제 월드공간상의 viewz값)
     // 빛의 뷰스페이스 z값이 UV좌표의 뷰스페이스 z값보다 "클경우 (깊을경우)" 그림자.
-    else if (vLightViewPos.z - 0.1f > vLightDepth.x * g_fCamFar)
+    if (vLightViewPos.z - 0.2f > vLightDepth.x * g_fCamFar)
     {
-        Out.vColor = vector(0.5f, 0.5f, 0.5f, 1.f);
+        Out.vColor *= 0.5f;
+        Out.vColor.a = 1.f;
+        
+        // 빛의 투영값을 컬링처리.
+        // 안하면 그림자가 여러번 보일 수 있음.
+        // 빛의 투영스페이스에 걸리지 않은 포지션값은 그냥 원래 컬러 뽑아주면 된다.
+        if (-1.f >= vLightProjPos.x ||
+	    1.f <= vLightProjPos.x ||
+	    -1.f >= vLightProjPos.y ||
+	    1.f <= vLightProjPos.y ||
+        0.f >= vLightProjPos.z ||
+	    1.f <= vLightProjPos.z)
+        {
+            Out.vColor = vector(1.f, 1.f, 1.f, 1.f);
+        }
     }
     else
     {

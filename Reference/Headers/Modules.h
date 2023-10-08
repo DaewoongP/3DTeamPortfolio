@@ -409,6 +409,7 @@ struct ENGINE_DLL RENDERER_MODULE : public MODULE
 	string strPass = { "Default" };
 	_bool isGlow = { false };
 	_bool isDistortion = { false };
+	_bool isDiffuse = { true };
 	wstring wstrDistortionTexture = { TEXT("../../Resources/Effects/Textures/T_FX_Distortion_Ring_N.png") };
 };
 

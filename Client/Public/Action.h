@@ -22,6 +22,11 @@ private:
 	virtual ~CAction() = default;
 
 public:
+	virtual HRESULT Initialize_Prototype() override { return S_OK; }
+	virtual HRESULT Initialize(void* pArg) override;
+	virtual HRESULT Tick(const _float& fTimeDelta);
+
+public:
 	/*
 		매개변수
 		1. 바인딩 할 애니메이션 태그
@@ -36,11 +41,8 @@ public:
 		_bool _isCheckBehavior = false, const _float& _fCoolTime = 0.f,
 		_bool _isOneTimeAction = false, _bool _isLerp = true,
 		CModel::ANIMTYPE eType = CModel::UPPERBODY);
-
-public:
-	virtual HRESULT Initialize_Prototype() override { return S_OK; }
-	virtual HRESULT Initialize(void* pArg) override;
-	virtual HRESULT Tick(const _float& fTimeDelta);
+	/* Action 클래스 탈출 조건 세팅 함수. */
+	HRESULT Add_Exit_Condition(function<_bool(class CBlackBoard*)> Func);
 
 public:
 	virtual void Reset_Behavior(HRESULT result) override;
@@ -57,9 +59,15 @@ private:
 	_bool m_isEndFirstPlay = { false };
 	_bool m_isFirst = { true };
 
+	list<CDecorator*>	m_ConditionFunctions;
+
 private:
 	CModel* m_pModel = { nullptr };
 	CModel::ANIMTYPE m_eAnimationType = { CModel::ANIM_END };
+
+private:
+	_bool Is_Success_Action();
+	_bool Check_Exit_Conditions();
 
 public:
 	static CAction* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

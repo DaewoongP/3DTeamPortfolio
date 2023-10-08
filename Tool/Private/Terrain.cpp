@@ -37,6 +37,8 @@ HRESULT CTerrain::Initialize(void* pArg)
 
 void CTerrain::Tick(_float fTimeDelta)
 {
+	Change_Height(fTimeDelta);
+
 	__super::Tick(fTimeDelta);
 }
 
@@ -134,7 +136,7 @@ HRESULT CTerrain::Picking_On_Terrain(_Inout_ _float4* pPickPosition)
 
 	_float fDist = FLT_MAX; // 피킹 연산 후 최종 거리값
 
-	_bool bResult = m_pBuffer->IsPicked(vRayPos, vRayDir, fDist);
+	_bool bResult = m_pBuffer->IsPicked(vRayPos, vRayDir, m_pTransform->Get_WorldMatrix(), fDist);
 
 	// 결과가 나올 경우 RayDir에 거리값을 곱해 최종 위치 산출
 	if (true == bResult)
@@ -152,6 +154,38 @@ HRESULT CTerrain::Picking_On_Terrain(_Inout_ _float4* pPickPosition)
 	}
 
 	return E_FAIL;
+}
+
+HRESULT CTerrain::Change_Height(_float fTimeDelta)
+{
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	if (pGameInstance->Get_DIKeyState(DIK_Z))
+	{
+		_float3 vPos = m_pTransform->Get_Position();
+		vPos.y -= 10.f * fTimeDelta;
+		m_pTransform->Set_Position(vPos);
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_X))
+	{
+		_float3 vPos = m_pTransform->Get_Position();
+		vPos.y += 10.f * fTimeDelta;
+		m_pTransform->Set_Position(vPos);
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_V))
+	{
+		_float3 vPos = m_pTransform->Get_Position();
+		vPos.y = 0.f;
+		m_pTransform->Set_Position(vPos);
+	}
+
+	Safe_Release(pGameInstance);
+
+
+	return S_OK;
 }
 
 HRESULT CTerrain::Add_Components()

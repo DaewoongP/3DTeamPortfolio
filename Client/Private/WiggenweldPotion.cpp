@@ -10,17 +10,11 @@ CWiggenweldPotion::CWiggenweldPotion(ID3D11Device* pDevice, ID3D11DeviceContext*
 
 CWiggenweldPotion::CWiggenweldPotion(const CWiggenweldPotion& rhs)
 	: CPotion(rhs)
-	, m_fRecoveryAmount(rhs.m_fRecoveryAmount)
 {
 }
 
 HRESULT CWiggenweldPotion::Initialize_Prototype(_uint iLevel)
-{
-	// 아이템 정보
-	m_ItemCreateDesc.iCost = 100;											// 가격
-	m_ItemCreateDesc.wstrKoreanName = TEXT("위젠웰드 묘약");					// 한글명
-	m_ItemCreateDesc.wstrUIPath = TEXT("../../Resources/UI/Game/UI/Icons/Potions/UI_T_WoundCleaning.png"); // UI경로
-	
+{	
 	// 포션 정보
 	m_PotionCreateDesc.wstrModelPath = TEXT("../../Resources/Models/NonAnims/SM_Health_Bottle/SM_Health_Bottle.dat"); // 모델경로
 	m_PotionCreateDesc.Ingredients.push_back(INGREDIENT::HORKLUMP_JUICE);	// 재료1
@@ -37,20 +31,6 @@ HRESULT CWiggenweldPotion::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
-
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Health"),
-		TEXT("Com_Helath"), reinterpret_cast<CComponent**>(&m_pPlayerHealthCom))))
-	{
-		__debugbreak();
-		return E_FAIL;
-	}
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Player_Information"),
-		TEXT("Com_Player_Information"), reinterpret_cast<CComponent**>(&m_pPlayerInformation))))
-	{
-		__debugbreak();
-		return E_FAIL;
-	}
-
 
 	return S_OK;
 }
@@ -70,11 +50,6 @@ HRESULT CWiggenweldPotion::Render()
 	return __super::Render();
 }
 
-void CWiggenweldPotion::Use(_float3 vPlayPos)
-{
-	__super::Use(vPlayPos);
-	m_pPlayerInformation->Get_Health()->Heal(m_fRecoveryAmount);
-}
 
 CWiggenweldPotion* CWiggenweldPotion::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel)
 {
@@ -105,6 +80,4 @@ CGameObject* CWiggenweldPotion::Clone(void* pArg)
 void CWiggenweldPotion::Free()
 {
 	__super::Free();
-	Safe_Release(m_pPlayerHealthCom);
-	Safe_Release(m_pPlayerInformation);
 }

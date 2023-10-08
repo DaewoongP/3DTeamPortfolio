@@ -10,16 +10,9 @@ END
 
 BEGIN(Client)
 
-class CUI_Back final : public CUI
+class CUI_Back : public CUI
 {
-public:
-	enum BACKTYPE
-	{
-		FONT,
-		BACKTYPE_END
-	};
-
-private:
+protected:
 	explicit CUI_Back(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CUI_Back(const CUI_Back& rhs);
 	virtual ~CUI_Back() = default;
@@ -35,16 +28,16 @@ public:
 	virtual void	Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
-private:
+protected:
 	CShader*			m_pShaderCom = { nullptr };
 	CRenderer*			m_pRendererCom = { nullptr };
 	CVIBuffer_Rect*		m_pVIBufferCom = { nullptr };
 
-private:
+protected:
 	HRESULT Add_Components();
-	HRESULT SetUp_ShaderResources();
+	virtual HRESULT SetUp_ShaderResources();
 
-private:
+protected:
 	_bool		m_isRemoveBlack = { false };
 
 public:

@@ -27,7 +27,7 @@ class CMagicBall;
 class CMaximaPotion;
 class CFocusPotion;
 class CEdurusPotion;
-class CInvisiblityPotion;
+class CInvisibilityPotion;
 class CWiggenweldPotion;
 END
 
@@ -67,8 +67,9 @@ private:
 	virtual ~CPlayer() = default;
 	
 public:
-	void Set_TargetTransform(CTransform* _pTargetTransform = nullptr) { m_pTargetTransform = _pTargetTransform; }
+	CPlayer_Information* Get_Player_Information() { return m_pPlayer_Information; }
 	_float3 Get_PlayerPos() { return m_pTransform->Get_Position(); }
+	void Set_TargetTransform(CTransform* _pTargetTransform = nullptr) { m_pTargetTransform = _pTargetTransform; }
 	void Set_Protego_Collision(CEnemy::ATTACKTYPE _eAttackType, CTransform* _pTransform);
 
 
@@ -109,14 +110,15 @@ private:
 	CPlayer_Information* m_pPlayer_Information = { nullptr };
 
 	CUI_Group_Skill* m_UI_Group_Skill_01 = { nullptr };
+
+	CTool* m_pCurTool = { nullptr };
 	CMaximaPotion* m_pMaximaPotion = { nullptr };
 	CEdurusPotion* m_pEdurusPotion = { nullptr };
 	CFocusPotion*	m_pFocusPotion = { nullptr };
-	CInvisiblityPotion* m_pInvisiblityPotion = { nullptr };
+	CInvisibilityPotion* m_pInvisibilityPotion = { nullptr };
 	CWiggenweldPotion* m_pWiggenweldPotion = { nullptr };
-private:
-	
 
+private:
 	_bool		m_isFixMouse = { false };
 	CStateContext* m_pStateContext = { nullptr };
 	

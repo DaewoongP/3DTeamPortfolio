@@ -52,7 +52,7 @@ HRESULT CGolem_Combat::Initialize_Level(_uint iCurrentLevelIndex)
 {
 	if (FAILED(Add_Components_Level(iCurrentLevelIndex)))
 		return E_FAIL;
-
+	
 	if (FAILED(Make_AI()))
 		return E_FAIL;
 
@@ -60,6 +60,7 @@ HRESULT CGolem_Combat::Initialize_Level(_uint iCurrentLevelIndex)
 	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
 	m_pModelCom->Change_Animation(TEXT("Spawn_Fall_Loop"));
+	m_isSpawn = true;
 
 	if (FAILED(Bind_HitMatrices()))
 		return E_FAIL;
@@ -74,18 +75,15 @@ void CGolem_Combat::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	// Test Code 
+	/////////// Test Code///////////
 	BEGININSTANCE;
 	if (pGameInstance->Get_DIKeyState(DIK_LCONTROL, CInput_Device::KEY_PRESSING))
 	{
-		if (pGameInstance->Get_DIKeyState(DIK_4, CInput_Device::KEY_DOWN))
-			m_isParring = true;
 		if (pGameInstance->Get_DIKeyState(DIK_1, CInput_Device::KEY_DOWN))
 			m_iCurrentSpell |= BUFF_STUPEFY;
 	}
-
 	ENDINSTANCE;
-	////////////////////////////
+	////////////////////////////////
 
 	m_pHitMatrix = m_HitMatrices[rand() % 3];
 
@@ -150,7 +148,9 @@ void CGolem_Combat::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			return;
 
 		m_isSpawn = true;
-		m_RangeInEnemies.push_back({ wstrObjectTag, CollisionEventDesc.pOtherOwner });
+		auto iter = m_RangeInEnemies.find(wstrObjectTag);
+		if (iter == m_RangeInEnemies.end())
+			m_RangeInEnemies.emplace(wstrObjectTag, CollisionEventDesc.pOtherOwner);
 	}
 
 	/* Collision Protego */
@@ -177,10 +177,6 @@ void CGolem_Combat::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 
 HRESULT CGolem_Combat::Render()
 {
-#ifdef _DEBUG
-	//Tick_ImGui();
-#endif // _DEBUG
-
 	if (FAILED(__super::SetUp_ShaderResources()))
 		return E_FAIL;
 
@@ -265,27 +261,27 @@ HRESULT CGolem_Combat::Make_AI()
 
 HRESULT CGolem_Combat::Make_Notifies()
 {
-	function<void()> Func = [&] {(*this).Enter_Light_Attack(); };
+	function<void()> Func = [&] { this->Enter_Light_Attack(); };
 	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Enter_Light_Attack"), Func)))
 		return E_FAIL;
 
-	Func = [&] {(*this).Enter_Body_Attack(); };
+	Func = [&] { this->Enter_Body_Attack(); };
 	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Enter_Body_Attack"), Func)))
 		return E_FAIL;
 
-	Func = [&] {(*this).Exit_Attack(); };
+	Func = [&] { this->Exit_Attack(); };
 	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Exit_Attack"), Func)))
 		return E_FAIL;
 
-	Func = [&] {(*this).On_Gravity(); };
+	Func = [&] { this->On_Gravity(); };
 	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("On_Gravity"), Func)))
 		return E_FAIL;
 
-	Func = [&] {(*this).Off_Gravity(); };
+	Func = [&] { this->Off_Gravity(); };
 	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Off_Gravity"), Func)))
 		return E_FAIL;
 
-	Func = [&] {(*this).Change_Animation(); };
+	Func = [&] { this->Change_Animation(); };
 	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Change_Animation"), Func)))
 		return E_FAIL;
 
@@ -322,7 +318,7 @@ HRESULT CGolem_Combat::Add_Components()
 		RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 0.f, 1.f);
 		RigidBodyDesc.pOwnerObject = this;
 		RigidBodyDesc.eThisCollsion = COL_ENEMY;
-		RigidBodyDesc.eCollisionFlag = COL_NPC_RANGE | COL_MAGIC | COL_SHIELD | COL_STATIC;
+		RigidBodyDesc.eCollisionFlag = COL_NPC_RANGE | COL_MAGIC | COL_STATIC;
 		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Body");
 
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
@@ -439,7 +435,7 @@ HRESULT CGolem_Combat::Make_Death(_Inout_ CSequence* pSequence)
 				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", piCurrentSpell)))
 					return false;
 
-				if (BUFF_LEVIOSO & *piCurrentSpell)
+				if (true == isFlying(*piCurrentSpell))
 					return false;
 
 				return true;
@@ -450,7 +446,7 @@ HRESULT CGolem_Combat::Make_Death(_Inout_ CSequence* pSequence)
 				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", piCurrentSpell)))
 					return false;
 
-				if (BUFF_LEVIOSO & *piCurrentSpell)
+				if (true == isFlying(*piCurrentSpell))
 				{
 					CRigidBody* pRigidBody = { nullptr };
 					if (FAILED(pBlackBoard->Get_Type("pRigidBody", pRigidBody)))
@@ -465,7 +461,7 @@ HRESULT CGolem_Combat::Make_Death(_Inout_ CSequence* pSequence)
 			});
 
 		// Set Options 
-		function<void(const _float&)> Func = [&](const _float& fTimeDelta) {this->DeathBehavior(fTimeDelta); };
+		function<void(const _float&)> Func = [&](const _float& fTimeDelta) { this->DeathBehavior(fTimeDelta); };
 		pTsk_Death_Ground->Set_DeathFunction(Func);
 		pTsk_Death_Air->Set_DeathFunction(Func);
 		pAction_Knockback->Set_Options(TEXT("Knockback_Back"), m_pModelCom);
@@ -551,9 +547,9 @@ HRESULT CGolem_Combat::Make_Alive(_Inout_ CSelector* pSelector)
 			throw TEXT("Failed Assemble_Behavior Selector_NormalAttack");
 
 		if (FAILED(Make_Hit_Combo(pSelector_Hit_Combo)))
-			throw TEXT("Failed Make_NormalAttack");
+			throw TEXT("Failed Make_Hit_Combo");
 		if (FAILED(Make_Check_Spell(pSelector_CheckSpell)))
-			throw TEXT("Failed Make_NormalAttack");
+			throw TEXT("Failed Make_Check_Spell");
 		if (FAILED(Make_NormalAttack(pSelector_NormalAttack)))
 			throw TEXT("Failed Make_NormalAttack");
 	}
@@ -814,7 +810,7 @@ HRESULT CGolem_Combat::Make_NormalAttack(_Inout_ CSelector* pSelector)
 
 	ENDINSTANCE;
 
-	return S_OK;;
+	return S_OK;
 }
 
 HRESULT CGolem_Combat::Make_Fly_Combo(_Inout_ CSelector* pSelector)
@@ -1374,34 +1370,57 @@ HRESULT CGolem_Combat::Make_Fly_Descendo(_Inout_ CSequence* pSequence)
 
 void CGolem_Combat::Enter_Light_Attack()
 {
+	if (true == m_isDead)
+		return;
+
 	m_CollisionRequestDesc.eType = ATTACK_LIGHT;
 	m_CollisionRequestDesc.iDamage = 5;
 	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
-	m_pWeapon->On_Collider_Attack(&m_CollisionRequestDesc);
+
+	if(nullptr != m_pWeapon)
+		m_pWeapon->On_Collider_Attack(&m_CollisionRequestDesc);
 }
 
 void CGolem_Combat::Enter_Heavy_Attack()
 {
+	if (true == m_isDead)
+		return;
+
 	m_CollisionRequestDesc.eType = ATTACK_HEAVY;
 	m_CollisionRequestDesc.iDamage = 10;
 	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
-	m_pWeapon->On_Collider_Attack(&m_CollisionRequestDesc);
+
+	if (nullptr != m_pWeapon)
+		m_pWeapon->On_Collider_Attack(&m_CollisionRequestDesc);
 }
 
 void CGolem_Combat::Enter_Body_Attack()
 {
+	if (true == m_isDead)
+		return;
+
 	m_CollisionRequestDesc.eType = ATTACK_HEAVY;
 	m_CollisionRequestDesc.iDamage = 0;
 	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
-	m_pRigidBody->Enable_Collision("Enemy_Attack", this, &m_CollisionRequestDesc);
+
+	if (nullptr != m_pRigidBody)
+		m_pRigidBody->Enable_Collision("Enemy_Attack", this, &m_CollisionRequestDesc);
 }
 
 void CGolem_Combat::Exit_Attack()
 {
+	if (true == m_isDead)
+		return;
+
 	m_CollisionRequestDesc.eType = ATTACK_NONE;
 	m_CollisionRequestDesc.iDamage = 0;
-	m_pRigidBody->Disable_Collision("Enemy_Attack");
-	m_pWeapon->Off_Collider_Attack(&m_CollisionRequestDesc);
+	m_CollisionRequestDesc.pEnemyTransform = m_pTransform;
+
+	if (nullptr != m_pRigidBody)
+		m_pRigidBody->Disable_Collision("Enemy_Attack");
+
+	if (nullptr != m_pWeapon)
+		m_pWeapon->Off_Collider_Attack(&m_CollisionRequestDesc);
 }
 
 void CGolem_Combat::DeathBehavior(const _float& fTimeDelta)
@@ -1502,7 +1521,5 @@ void CGolem_Combat::Free()
 	__super::Free();
 
 	if (true == m_isCloned)
-	{
 		Safe_Release(m_pWeapon);
-	}
 }

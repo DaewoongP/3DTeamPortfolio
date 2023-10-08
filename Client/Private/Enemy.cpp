@@ -560,6 +560,9 @@ void CEnemy::Remove_Fly_Spells()
 
 void CEnemy::On_Gravity()
 {
+	if (true == m_isDead)
+		return;
+
 	if (nullptr != m_pRigidBody)
 	{
 #ifdef _DEBUG
@@ -571,6 +574,9 @@ void CEnemy::On_Gravity()
 
 void CEnemy::Off_Gravity()
 {
+	if (true == m_isDead)
+		return;
+
 	if (nullptr != m_pRigidBody)
 	{
 #ifdef _DEBUG
@@ -586,13 +592,13 @@ void CEnemy::Free()
 
 	if (true == m_isCloned)
 	{
+		Safe_Release(m_pRootBehavior);
 		Safe_Release(m_pUI_HP);
 		Safe_Release(m_pHealth);
 		Safe_Release(m_pModelCom);
 		Safe_Release(m_pRenderer);
 		Safe_Release(m_pShaderCom);
 		Safe_Release(m_pRigidBody);
-		Safe_Release(m_pRootBehavior);
 		Safe_Release(m_pShadowShaderCom);
 
 		for (auto iter = m_MagicTickDesc.begin(); iter != m_MagicTickDesc.end(); ++iter)

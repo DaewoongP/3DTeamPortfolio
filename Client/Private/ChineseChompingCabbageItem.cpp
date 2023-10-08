@@ -4,12 +4,12 @@
 #include "Player_Information.h"
 
 CChineseChompingCabbageItem::CChineseChompingCabbageItem(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CPlant(pDevice, pContext)
+	: CTool(pDevice, pContext)
 {
 }
 
 CChineseChompingCabbageItem::CChineseChompingCabbageItem(const CChineseChompingCabbageItem& rhs)
-	: CPlant(rhs)
+	: CTool(rhs)
 {
 }
 
@@ -39,6 +39,10 @@ void CChineseChompingCabbageItem::Use(_float3 vPlayPos)
 	cout_float3("중국산 깨무는 양배추 소환", vPlayPos);
 #endif // _DEBUG
 
+}
+
+void CChineseChompingCabbageItem::CreateTool()
+{
 }
 
 HRESULT CChineseChompingCabbageItem::Add_Components()
