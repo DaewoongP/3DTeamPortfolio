@@ -42,11 +42,10 @@ public:
 //	void Tick(_float fTimeDelta) override;
 
 	void Duration(_float fTimeDelta);
-	void Use(_float3 vPlayPos);
-
+	
 private:
 	HRESULT Add_Components();
-	HRESULT SetUp_ShaderResources();
+	//HRESULT SetUp_ShaderResources();
 
 private:
 	_bool m_isDrug = { false };
@@ -61,7 +60,5 @@ public:
 	static CEdurusPotion* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free(void) override;
-
-
 };
 END

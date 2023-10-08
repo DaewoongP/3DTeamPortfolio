@@ -23,7 +23,7 @@
 #include "MaximaPotion.h"
 #include "FocusPotion.h"
 #include "EdurusPotion.h"
-#include"InvisiblityPotion.h"
+#include "InvisibilityPotion.h"
 #include "WiggenweldPotion.h"
 
 #include "CoolTime.h"	
@@ -32,6 +32,8 @@
 #include "WiggenweldPotion.h"
 #include "Inventory.h"
 #include "PotionTap.h"
+#include "Tool.h"
+
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
@@ -475,9 +477,9 @@ void CPlayer::Potion_Duration(_float fTimeDelta)
 	}
 	if (m_isInvisible)
 	{
-		m_pInvisiblityPotion->Duration(fTimeDelta);
+		m_pInvisibilityPotion->Duration(fTimeDelta);
 		if (!m_isInvisible)
-			Safe_Release(m_pInvisiblityPotion);
+			Safe_Release(m_pInvisibilityPotion);
 	}
 	/*if (m_isFocusOn)
 	{
@@ -1022,6 +1024,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		m_pPlayer_Information->Get_PotionTap()->Add_Potion(POTIONTAP::ENDURUS_POTION);
 		m_pPlayer_Information->Get_PotionTap()->Add_Potion(POTIONTAP::INVISIBILITY_POTION);
 		m_pPlayer_Information->Get_PotionTap()->Add_Potion(POTIONTAP::MAXIMA_POTION);
+		m_pPlayer_Information->Get_PotionTap()->Add_Potion(POTIONTAP::THUNDERBREW_POTION);
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_L, CInput_Device::KEY_DOWN))
@@ -1030,8 +1033,21 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		//CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_Dust02"), m_pTransform->Get_Position());
 		//CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_RockChunksRough"), m_pTransform->Get_Position());
 
-		//CItem* pItem = static_cast<CItem*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_WiggenweldPotion")));
 		//m_pPlayer_Information->Get_Inventory()->Add_Item(pItem, pItem->Get_Type());
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_AshwinderEggs_Item"));
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_Dittany_Leaves_Item"));
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_Dugbog_Tongue_Item"));
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_Leaping_Toadstool_Caps_Item"));
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_Lacewing_Flies_Item"));
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_Knotgrass_Item"));
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_Horklump_Juice_Item"));
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_Leech_Juice_Item"));
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_MallowSweet_Item"));
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_MoonStone_Item"));
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_Fluxweed_Stem_Item"));
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_Spider_Fang_Item"));
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_Troll_Bogeys_Item"));
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_Shrivelfig_Item"));
 
 		wstring temp = TEXT("Drink_Potion_Throw");
 		m_pCustomModel->Change_Animation(temp);
@@ -2061,28 +2077,18 @@ void CPlayer::Go_Switch_Loop()
 
 void CPlayer::Add_Layer_Item()
 {
-	CItem* pItem = m_pPlayer_Information->Get_PotionTap()->Get_CurItem();
+	CTool* pTool = m_pPlayer_Information->Get_PotionTap()->Get_CurTool();
 
-	if (nullptr == pItem)
+	if (nullptr == pTool)
 		return;
-
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	_uint iLevelIndex = pGameInstance->Get_CurrentLevelIndex();
-	Safe_AddRef(pGameInstance);
-
-	pGameInstance->Add_Component(
-		pItem,
-		iLevelIndex,
-		TEXT("Layer_Item"),
-		Generate_HashtagW().data());
-	pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
-	Safe_Release(pGameInstance);
+	pTool->CreateTool();
 }
 
 void CPlayer::Drink_Potion()
 {
 	m_pPlayer_Information->Get_PotionTap()->Use_Item(m_pTransform->Get_Position());
 }
+
 void CPlayer::Go_Protego(void* _pArg)
 {
 	if (m_pStateContext->Is_Current_State(TEXT("Idle")) ||
@@ -2207,7 +2213,7 @@ void CPlayer::Free()
 		Safe_Release(m_pMaximaPotion);
 		Safe_Release(m_pEdurusPotion);
 		Safe_Release(m_pFocusPotion);
-		Safe_Release(m_pInvisiblityPotion);
+		Safe_Release(m_pInvisibilityPotion);
 		Safe_Release(m_pWiggenweldPotion);
 		Safe_Release(m_pDefence);
 

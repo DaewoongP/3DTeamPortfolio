@@ -16,12 +16,6 @@ CFocusPotion::CFocusPotion(const CFocusPotion& rhs)
 
 HRESULT CFocusPotion::Initialize_Prototype(_uint iLevel)
 {
-	// 아이템 정보
-	m_ItemCreateDesc.iCost = 500;									// 가격
-	m_ItemCreateDesc.fDuration = 15.f;								//지속시간
-	m_ItemCreateDesc.wstrKoreanName = TEXT("집중력 물약");			// 한글명
-	m_ItemCreateDesc.wstrUIPath = TEXT("../../Resources/UI/Game/UI/Icons/Potions/UI_T_AMFillPotion.png"); // UI경로
-
 	// 포션 정보
 	m_PotionCreateDesc.wstrModelPath = TEXT("../../Resources/Models/NonAnims/SM_Focus_Bottle/SM_Focus_Bottle.dat"); // 모델경로
 	m_PotionCreateDesc.Ingredients.push_back(FLUXWEED_STEM);		// 재료1
@@ -44,18 +38,11 @@ HRESULT CFocusPotion::Initialize(void* pArg)
 	return S_OK;
 }
 
-void CFocusPotion::Use(_float3 vPlayPos)
-{
-	__super::Use(vPlayPos);
-
-	m_pPlayer->Set_FocusOn(true);
-}
-
 void CFocusPotion::Duration(_float fTimeDelta)
 {
-	m_fDuration += fTimeDelta;
+	/*m_fDuration += fTimeDelta;
 	if (m_fDuration >= m_ItemCreateDesc.fDuration)
-		m_pPlayer->Set_FocusOn(false);
+		m_pPlayer->Set_FocusOn(false);*/
 }
 
 CFocusPotion* CFocusPotion::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel)

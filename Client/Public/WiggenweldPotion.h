@@ -15,7 +15,6 @@ class CHealth;
 END
 
 BEGIN(Client)
-
 class CWiggenweldPotion final : public CPotion
 {
 private:
@@ -41,12 +40,6 @@ public:
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
-
-public:
-	virtual void Use(_float3 vPlayPos);
-
-private:
-	_float		m_fRecoveryAmount = { 0.2f };
 
 public:
 	static CWiggenweldPotion* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel);

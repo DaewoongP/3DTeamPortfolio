@@ -76,7 +76,7 @@ _bool CPotionTap::Is_Valid(POTIONTAP ePotionTap)
 	return ePotionTap >= 0 && ePotionTap < POTIONTAP_END;
 }
 
-CItem* CPotionTap::Get_CurItem()
+CTool* CPotionTap::Get_CurTool()
 {
 	if (false == Is_Valid(m_eCurPotion))
 		return nullptr;
@@ -177,38 +177,38 @@ HRESULT CPotionTap::Ready_PotionTextures()
 	return S_OK;
 }
 
-CItem* CPotionTap::ToolFactory(POTIONTAP eType)
+CTool* CPotionTap::ToolFactory(POTIONTAP eType)
 {
-	CItem* pItem = { nullptr };
+	CTool* pTool = { nullptr };
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 	switch (eType)
 	{
 	case Client::ENDURUS_POTION:
-		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
+		pTool = static_cast<CTool*>(pGameInstance->Clone_Component(
 			LEVEL_STATIC,
-			TEXT("Prototype_GameObject_EdurusPotion")));
+			TEXT("Prototype_GameObject_EdurusPotion_Item")));
 		break;
 	case Client::MAXIMA_POTION:
-		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
+		pTool = static_cast<CTool*>(pGameInstance->Clone_Component(
 			LEVEL_STATIC,
-			TEXT("Prototype_GameObject_MaximaPotion")));
+			TEXT("Prototype_GameObject_MaximaPotion_Item")));
 		break;
 	case Client::FOCUS_POTION:
-		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
+		pTool = static_cast<CTool*>(pGameInstance->Clone_Component(
 			LEVEL_STATIC,
-			TEXT("Prototype_GameObject_FocusPotion")));
+			TEXT("Prototype_GameObject_FocusPotion_Item")));
 		break;
-	case Client::THUNDER_CLOUD:
-		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
+	case Client::THUNDERBREW_POTION:
+		pTool = static_cast<CTool*>(pGameInstance->Clone_Component(
 			LEVEL_STATIC,
-			TEXT("Prototype_GameObject_ThunderBrewPotion")));
+			TEXT("Prototype_GameObject_ThunderBrewPotion_Item")));
 		break;
 	case Client::INVISIBILITY_POTION:
-		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
+		pTool = static_cast<CTool*>(pGameInstance->Clone_Component(
 			LEVEL_STATIC,
-			TEXT("Prototype_GameObject_InvisiblityPotion")));
+			TEXT("Prototype_GameObject_InvisibilityPotion_Item")));
 		break;
 	case Client::MANDRAKE:
 		break;
@@ -220,7 +220,7 @@ CItem* CPotionTap::ToolFactory(POTIONTAP eType)
 
 	Safe_Release(pGameInstance);
 
-	return pItem;
+	return pTool;
 }
 
 void CPotionTap::Add_Potion(POTIONTAP eType)
@@ -228,11 +228,11 @@ void CPotionTap::Add_Potion(POTIONTAP eType)
 	if (false == Is_Valid(eType))
 		return;
 
-	CItem* pItem = ToolFactory(eType);
-	if (nullptr == pItem)
+	CTool* pTool = ToolFactory(eType);
+	if (nullptr == pTool)
 		return;
 
-	m_pPotions[eType].push_back(pItem);
+	m_pPotions[eType].push_back(pTool);
 }
 
 void CPotionTap::Delete_Potion(POTIONTAP eType, _uint iIndex)
@@ -243,7 +243,7 @@ void CPotionTap::Delete_Potion(POTIONTAP eType, _uint iIndex)
 	{
 		if (Index == iIndex)
 		{
-			//Safe_Release(*iter);
+			Safe_Release(*iter);
 			iter = m_pPotions[eType].erase(iter);
 			break;
 		}
@@ -251,12 +251,13 @@ void CPotionTap::Delete_Potion(POTIONTAP eType, _uint iIndex)
 	}
 }
 
-void CPotionTap::Delete_Potion(POTIONTAP eType, CItem* pItem)
+void CPotionTap::Delete_Potion(POTIONTAP eType, CTool* pTool)
 {
 	for (auto iter = m_pPotions[eType].begin(); iter != m_pPotions[eType].end(); ++iter)
 	{
-		if (pItem == *iter)
+		if (pTool == *iter)
 		{
+			Safe_Release(*iter);
 			iter = m_pPotions[eType].erase(iter);
 			break;
 		}
@@ -285,8 +286,8 @@ void CPotionTap::Use_Item(_float3 vPlayPos)
 	if (m_pPotions[m_eCurPotion].empty())
 		return;
 
-	CItem* pTool = (m_pPotions[m_eCurPotion].back());
-	dynamic_cast<CTool*>(pTool)->Use(vPlayPos);
+	CTool* pTool = (m_pPotions[m_eCurPotion].back());
+	pTool->Use(vPlayPos);
 
 	Delete_Potion(m_eCurPotion, pTool);
 

@@ -38,7 +38,6 @@ private:
 public:
 	virtual HRESULT Initialize_Prototype(_uint iLevel);
 	virtual HRESULT Initialize(void* pArg) override;
-	virtual void Use(_float3 vPlayerPos) override;
 
 public:
 	static CThunderBrewPotion* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel);

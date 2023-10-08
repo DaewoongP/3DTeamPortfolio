@@ -30,6 +30,8 @@
 #include "Inventory.h"
 #include "UI_Potion_Tap.h"
 #include "PotionTap.h"
+#include "UI_Farming.h"
+#include "UI_Dynamic_Back.h"
 #pragma endregion UI
 
 #pragma region Effects
@@ -268,7 +270,9 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			/*if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Group_MiniMap"),
 				CUI_Group_MiniMap::Create(m_pDevice, m_pContext))))
 				throw TEXT("Prototype_GameObject_UI_Group_MiniMap");*/
-
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_UI_Dynamic_Back"),
+				CUI_Dynamic_Back::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_Component_UI_Dynamic_Back");
 			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_UI_Image"),
 				CUI_Image::Create(m_pDevice, m_pContext))))
 				throw TEXT("Prototype_Component_UI_Image");
@@ -308,6 +312,10 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Potion_Tap"),
 				CUI_Potion_Tap::Create(m_pDevice, m_pContext))))
 				throw TEXT("Prototype_GameObject_UI_Potion_Tap");
+
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Farming"),
+				CUI_Farming::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_GameObject_UI_Farming");
 		}
 #pragma endregion
 
@@ -323,87 +331,6 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Default/Textures/Terrain/Tile%d.dds"), 2))))
 			throw TEXT("Prototype_Component_Texture_Terrain");
 
-		////////// Ingredient관련 텍스처들. ////////////
-		///* Prototype_Component_Texture_UI_T_AshwinderEggs_Item */
-		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_UI_T_AshwinderEggs_Item"),
-		//	CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/Ingredients/UI_T_AshwinderEggs_Item.png")))))
-		//	throw TEXT("Prototype_Component_Texture_UI_T_AshwinderEggs_Item");
-
-		///* Prototype_Component_Texture_UI_T_DugbogTongue*/
-		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_UI_T_DugbogTongue"),
-		//	CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/Ingredients/UI_T_DugbogTongue.png")))))
-		//	throw TEXT("Prototype_Component_Texture_UI_T_DugbogTongue");
-
-		///* Prototype_Component_Texture_UI_T_LeapingToadstool_Byproduct*/
-		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_UI_T_LeapingToadstool_Byproduct"),
-		//	CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/Plants/UI_T_LeapingToadstool_Byproduct.png")))))
-		//	throw TEXT("Prototype_Component_Texture_UI_T_LeapingToadstool_Byproduct");
-
-		///* Prototype_Component_Texture_UI_T_LacewingFlies*/
-		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_UI_T_LacewingFlies"),
-		//	CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/Ingredients/UI_T_LacewingFlies.png")))))
-		//	throw TEXT("Prototype_Component_Texture_UI_T_LacewingFlies");
-
-		///* Prototype_Component_Texture_UI_T_Knotgrass_Byproduct*/
-		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_UI_T_Knotgrass_Byproduct"),
-		//	CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/Plants/UI_T_Knotgrass_Byproduct.png")))))
-		//	throw TEXT("Prototype_Component_Texture_UI_T_Knotgrass_Byproduct");
-
-		///* Prototype_Component_Texture_UI_T_HorklumpJuice*/
-		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_UI_T_HorklumpJuice"),
-		//	CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/Potions/UI_T_HorklumpJuice.png")))))
-		//	throw TEXT("Prototype_Component_Texture_UI_T_HorklumpJuice");
-		//
-		///* Prototype_Component_Texture_UI_T_LeechJuice*/
-		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_UI_T_LeechJuice"),
-		//	CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/Ingredients/UI_T_LeechJuice.png")))))
-		//	throw TEXT("Prototype_Component_Texture_UI_T_LeechJuice");
-
-		///* Prototype_Component_Texture_UI_T_Mallowsweet_Byproduct*/
-		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_UI_T_Mallowsweet_Byproduct"),
-		//	CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/Plants/UI_T_Mallowsweet_Byproduct.png")))))
-		//	throw TEXT("Prototype_Component_Texture_UI_T_Mallowsweet_Byproduct");
-
-		///* Prototype_Component_Texture_UI_T_Moonstone*/
-		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_UI_T_Moonstone"),
-		//	CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/Ingredients/UI_T_Moonstone.png")))))
-		//	throw TEXT("Prototype_Component_Texture_UI_T_Moonstone");
-
-		///* Prototype_Component_Texture_UI_T_Shrivelfig_Byproduct*/
-		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_UI_T_Shrivelfig_Byproduct"),
-		//	CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/Ingredients/UI_T_Shrivelfig_Byproduct.png")))))
-		//	throw TEXT("Prototype_Component_Texture_UI_T_Shrivelfig_Byproduct");
-
-		///* Prototype_Component_Texture_UI_T_Wolf_Byproduct*/
-		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_UI_T_Wolf_Byproduct"),
-		//	CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/Ingredients/UI_T_Wolf_Byproduct.png")))))
-		//	throw TEXT("Prototype_Component_Texture_UI_T_Wolf_Byproduct");
-
-		///* Prototype_Component_Texture_UI_T_TrollMucus*/
-		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_UI_T_TrollMucus"),
-		//	CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/Ingredients/UI_T_TrollMucus.png")))))
-		//	throw TEXT("Prototype_Component_Texture_UI_T_TrollMucus");
-
-		///* Prototype_Component_Texture_UI_T_Skull*/
-		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_UI_T_Skull"),
-		//	CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/Ingredients/UI_T_Skull.png")))))
-		//	throw TEXT("Prototype_Component_Texture_UI_T_Skull");
-
-		///* Prototype_Component_Texture_UI_T_Spider_fang*/
-		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_UI_T_Spider_fang"),
-		//	CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/Ingredients/UI_T_Spider_fang.png")))))
-		//	throw TEXT("Prototype_Component_Texture_UI_T_Spider_fang");
-
-		///* Prototype_Component_Texture_UI_T_Dittany*/
-		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_UI_T_Dittany"),
-		//	CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/Plants/UI_T_Dittany.png")))))
-		//	throw TEXT("Prototype_Component_Texture_UI_T_Dittany");
-
-		///* Prototype_Component_Texture_UI_T_Icons_Fluxweed*/
-		//if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Texture_UI_T_Icons_Fluxweed"),
-		//	CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/UI/Game/UI/Icons/Plants/UI_T_Icons_Fluxweed.png")))))
-		//	throw TEXT("Prototype_Component_Texture_UI_T_Icons_Fluxweed");
-		//////////////////////////////////////
 #pragma endregion
 
 #pragma region Load Buffer

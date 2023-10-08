@@ -23,7 +23,7 @@ protected:
 	ImGuiWindowFlags		m_WindowFlag;
 	ImVec2                  m_vWindowPos;
 	ImVec2                  m_vWindowSize;
-
+	
 protected:
 	ID3D11Device*			m_pDevice = { nullptr };
 	ID3D11DeviceContext*	m_pContext = { nullptr };

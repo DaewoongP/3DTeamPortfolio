@@ -34,7 +34,7 @@ public:
 	_bool Is_Valid(POTIONTAP ePotionTap);
 
 public:
-	CItem*			Get_CurItem();
+	CTool*			Get_CurTool();
 	_bool			Get_Open() { return m_isOpen; }
 
 private:
@@ -49,7 +49,7 @@ private:
 	// UI 컴포넌트
 	CUI_Potion_Tap*				m_pUI_Potion_Tap = { nullptr };
 	// 실질적인 포션 저장소
-	vector<vector<CItem*>>			m_pPotions;
+	vector<vector<CTool*>>			m_pPotions;
 
 private:
 	POTIONTAP					m_eCurPotion = { POTIONTAP_END };
@@ -60,12 +60,12 @@ private:
 	HRESULT	Ready_PotionTextures();
 
 public:
-	static CItem* ToolFactory(POTIONTAP eType);
+	static CTool* ToolFactory(POTIONTAP eType);
 
 public:
 	void	Add_Potion(POTIONTAP eType);
 	void	Delete_Potion(POTIONTAP eType, _uint iIndex);
-	void	Delete_Potion(POTIONTAP eType, CItem* pItem);
+	void	Delete_Potion(POTIONTAP eType, CTool* pItem);
 
 	void	Set_CurPotion();
 

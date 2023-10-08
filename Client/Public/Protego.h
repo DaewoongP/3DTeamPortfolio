@@ -60,7 +60,7 @@ private: /* For. Component */
 	CTexture* m_pTexture[5] = {};
 	CVIBuffer_UVSphere* m_pBuffer = { nullptr };
 	CParticleSystem* m_pDefaultConeBoom_Particle = { nullptr };
-	CTexture_Flipbook* m_pFlameBlastFlipbook = { nullptr };
+	//CTexture_Flipbook* m_pFlameBlastFlipbook = { nullptr };
 
 private:
 	_float4 m_vColor1 = { 1.f, 1.f, 1.f, 1.f };

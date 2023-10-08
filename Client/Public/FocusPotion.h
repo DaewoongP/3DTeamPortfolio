@@ -39,7 +39,6 @@ public:
 	virtual HRESULT Initialize_Prototype(_uint iLevel);
 	virtual HRESULT Initialize(void* pArg) override;
 
-	virtual void Use(_float3 vPlayPos) override;
 	void Duration(_float fTimeDelta);
 
 public:

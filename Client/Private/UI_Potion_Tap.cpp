@@ -48,7 +48,7 @@ HRESULT CUI_Potion_Tap::Initialize(void* pArg)
 	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Potion_Tap_1_Edit.uidata"), FirstTag, POTIONTAP::ENDURUS_POTION);
 	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Potion_Tap_2_Edit.uidata"), SecondTag, POTIONTAP::MAXIMA_POTION);
 	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Potion_Tap_3_Edit.uidata"), ThirdTag, POTIONTAP::FOCUS_POTION);
-	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Potion_Tap_4_Edit.uidata"), FourthTag, POTIONTAP::THUNDER_CLOUD);
+	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Potion_Tap_4_Edit.uidata"), FourthTag, POTIONTAP::THUNDERBREW_POTION);
 	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Potion_Tap_5_Edit.uidata"), FifthTag, POTIONTAP::INVISIBILITY_POTION);
 	
 	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Potion_Tap_6_Edit.uidata"), SixthTag, POTIONTAP::MANDRAKE);
@@ -297,7 +297,7 @@ HRESULT CUI_Potion_Tap::Add_Components(wstring wszTag, POTIONTAP eType)
 		lstrcpy(Desc.m_pText, wstrNCount.c_str());
 	}
 		break;
-	case Client::THUNDER_CLOUD:
+	case Client::THUNDERBREW_POTION:
 	{
 		Desc.m_vPos = { 803.f, 463.f };
 		wstring wstrNCount = to_wstring(0);

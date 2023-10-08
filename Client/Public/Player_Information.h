@@ -23,7 +23,7 @@ public:
         ENDURUS_POTION,     //방어력 포션
         MAXIMA_POTION,        //공격력 포션
         FOCUS_POTION,              //쿨타임 포션
-        THUNDER_CLOUD,          //번개구름 생성 포션
+        THUNDERBREW_POTION,          //번개구름 생성 포션
         INVISIBILITY_POTION,      //투명해지는 포션
         MANDRAKE,               //맨드레이크
         CHINESES_CHOPPING_CABBAGE,           //깨무는 양배추
