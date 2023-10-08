@@ -71,6 +71,7 @@ public:
 	virtual HRESULT Render() override;
 public:
 	HRESULT Picking_On_Terrain(_Inout_ _float4* pPickPosition);
+	HRESULT Change_Height(_float fTimeDelta);
 
 private:
 	_bool				m_isRendering = { false };
@@ -88,6 +89,9 @@ private:
 	_uint				m_iBrushTextureIndex = { 1 };	// 그려줄 지형 텍스처
 
 	eRenderType	m_eRenderCount = { RT_END }; // 랜더 순서를 정해주는 변수
+
+private:
+	_float				m_fCurrentHeight = { 0.f };
 
 private:
 	CShader*			m_pShader = { nullptr };

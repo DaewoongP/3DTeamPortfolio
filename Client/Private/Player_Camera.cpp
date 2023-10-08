@@ -93,7 +93,7 @@ HRESULT CPlayer_Camera::Initialize(void* pArg)
 	m_vEyeStandard = _float3(sinf(XMConvertToRadians(30.0f)), 0.0f, -cosf(XMConvertToRadians(30.f)));
 
 	m_fEyeMaxDistance = m_fAtMaxDistance = 2.0f;
-	m_fEyeMinDistance = m_fAtMinDistance = 1.0f;
+	m_fEyeMinDistance = m_fAtMinDistance = 0.2f;
 
 
 	m_fTimeSpeed = 10.0f;
@@ -240,17 +240,17 @@ void CPlayer_Camera::Eye_At_Distance()
 	//일단 확인용으로 imgui를 사용한다.
 
 	BEGININSTANCE;
-	
+	//pGameInstance->RayCast(m_pTransform->Get_Position(), m_vEyeStandard, m_fEyeMaxDistance, nullptr, &m_fEyeIntersectDistance,1,CPhysX_Manager::RAY_ONLY_STATIC);
 	//eye
 	//충돌해서 값이 있고, 최대 거리보다 길다면
-	if (0.0f != m_fEyeIntersectDistance && 
+	if (0.0f != m_fEyeIntersectDistance &&
 		m_fEyeMaxDistance > m_fEyeIntersectDistance)
 	{
 		//차이 구하고
 		_float fDistance = m_fEyeDistance - m_fEyeIntersectDistance;
 
 		//뺀다
-		m_fEyeDistance -= fDistance * pGameInstance->Get_World_Tick() * m_fTimeSpeed;
+		m_fEyeDistance -= fDistance * pGameInstance->Get_World_Tick() * m_fTimeSpeed + 0.1f;
 	}
 	//같지 않다면
 	else if (m_fEyeDistance != m_fEyeMaxDistance)
@@ -270,14 +270,14 @@ void CPlayer_Camera::Eye_At_Distance()
 
 	//At
 	//충돌해서 값이 있고, 최대 거리보다 길다면
-	if (0.0f != m_fAtIntersectDistance && 
+	if (0.0f != m_fAtIntersectDistance &&
 		m_fAtMaxDistance > m_fAtIntersectDistance)
 	{
 		//차이 구하고
 		_float fDistance = m_fAtDistance - m_fAtIntersectDistance;
 
 		//뺀다
-		m_fAtDistance -= fDistance * pGameInstance->Get_World_Tick() * m_fTimeSpeed;
+		m_fAtDistance -= fDistance * pGameInstance->Get_World_Tick() * m_fTimeSpeed + 0.1f;
 	}
 	//같지 않다면
 	else if (m_fAtDistance != m_fAtMaxDistance)

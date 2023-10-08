@@ -28,23 +28,46 @@ namespace Engine
 	typedef struct tagFrame
 	{
 		enum KEYFRAMETYPE {KF_SPEED,KF_NOTIFY,KF_SOUND,KF_END};
-		KEYFRAMETYPE    eKeyFrameType;
-		float			fTime;
+
+		tagFrame() {}
+		tagFrame(const tagFrame& rhs)
+			: eKeyFrameType(rhs.eKeyFrameType)
+			, fTime(rhs.fTime)
+			, isEnable(rhs.isEnable) {}
+
+		KEYFRAMETYPE    eKeyFrameType = KF_NOTIFY;
+		float			fTime = { 0.f };
 		bool			isEnable = { true };
 	}KEYFRAME;
 
 	typedef struct tagSpeedFrame : KEYFRAME
 	{
-		float			fSpeed;
+		tagSpeedFrame() {}
+		tagSpeedFrame(const tagSpeedFrame& rhs)
+			: tagFrame(rhs)
+			, fSpeed(rhs.fSpeed) {}
+		float			fSpeed = 0.f;
 	}SPEEDFRAME;
 
 	typedef struct tagNotifyFrame :KEYFRAME
 	{
-		function<void()> Action;
+		tagNotifyFrame() {}
+		tagNotifyFrame(const tagNotifyFrame& rhs)
+			: tagFrame(rhs)
+		{
+			Action = rhs.Action;
+		}
+		function<void()> Action = { nullptr };
 	}NOTIFYFRAME;
 
 	typedef struct tagSoundFrame : KEYFRAME
 	{
+		tagSoundFrame() {}
+		tagSoundFrame(const tagSoundFrame& rhs)
+			: tagFrame(rhs)
+		{
+			lstrcpy(wszSoundTag, rhs.wszSoundTag);
+		}
 		wchar_t wszSoundTag[MAX_PATH] = {};
 	}SOUNDFRAME;
 

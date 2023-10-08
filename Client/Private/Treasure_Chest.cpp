@@ -1,6 +1,10 @@
 #include "..\Public\Treasure_Chest.h"
 #include "GameInstance.h"
 
+#include "Player.h"
+#include "Player_Information.h"
+#include "Inventory.h"
+
 CTreasure_Chest::CTreasure_Chest(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
@@ -52,6 +56,12 @@ HRESULT CTreasure_Chest::Initialize_Level(_uint iCurrentLevelIndex)
 
 	// 리지드 바디 설정
 
+	// 플레이어 찾기
+	BEGININSTANCE;
+	m_pPlayer = static_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(iCurrentLevelIndex, TEXT("Layer_Player"), TEXT("GameObject_Player")));
+	m_pPlayerInformation = m_pPlayer->Get_Player_Information();
+	ENDINSTANCE;
+
 	return S_OK;
 }
 
@@ -59,8 +69,43 @@ void CTreasure_Chest::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	if (nullptr != m_pModel)
+	// 플레이어와 거리 비교
+	_float3 vPlayerPos = m_pPlayer->Get_PlayerPos();
+	_float3 vChestPos = m_pTransform->Get_Position();
+
+	m_fDist_From_Player = sqrtf((vPlayerPos.x - vChestPos.x) * (vPlayerPos.x - vChestPos.x) + 
+		(vPlayerPos.y - vChestPos.y) * (vPlayerPos.y - vChestPos.y) + 
+		(vPlayerPos.z - vChestPos.z) * (vPlayerPos.z - vChestPos.z));
+
+	// 일정 거리안으로 들어왔을 때
+	if (2.f >= m_fDist_From_Player && nullptr != m_pModel)
+	{
+		// 여기서 버튼 UI가 나타나면 될듯
+
+		BEGININSTANCE;  // 버튼을 누르면 동작(한번만)
+		if (pGameInstance->Get_DIKeyState(DIK_E, CInput_Device::KEY_DOWN) && true == m_isGetItem)
+		{
+			m_isGetItem = false;
+
+			// 인벤토리 획득 처리
+			//m_pPlayerInformation->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_"));
+			cout << "보물 상자가 열리고 어떤 아이템 획득" << '\n';
+		}
+
+		ENDINSTANCE;
+	}
+
+	// 닫혀있는 상태
+	if (true == m_isGetItem)
+	{
+		m_pModel->Play_Animation(0.f, CModel::UPPERBODY, m_pTransform);
+	}
+
+	// 열리는 상태
+	else
+	{
 		m_pModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
+	}
 }
 
 void CTreasure_Chest::Late_Tick(_float fTimeDelta)
@@ -116,6 +161,8 @@ HRESULT CTreasure_Chest::Render_Depth()
 
 	for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; ++iMeshCount)
 	{
+		m_pModel->Bind_BoneMatrices(m_pShadowShader, "g_BoneMatrices", iMeshCount);
+
 		if (FAILED(m_pShadowShader->Begin("Shadow")))
 			return E_FAIL;
 
@@ -147,7 +194,7 @@ HRESULT CTreasure_Chest::Add_Components()
 	}
 
 	/* Com_ShadowShader */
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_ShadowMesh"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_ShadowAnimMesh"),
 		TEXT("Com_ShadowShader"), reinterpret_cast<CComponent**>(&m_pShadowShader))))
 	{
 		MSG_BOX("Failed CTreasure_Chest Add_Component : (Com_ShadowShader)");
@@ -168,7 +215,7 @@ HRESULT CTreasure_Chest::SetUp_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
-	if (FAILED(m_pShadowShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
+	if (FAILED(m_pShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
 		return E_FAIL;
 
 	ENDINSTANCE;

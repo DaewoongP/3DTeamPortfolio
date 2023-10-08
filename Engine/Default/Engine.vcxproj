@@ -25,6 +25,7 @@
     <ClInclude Include="..\public\MotionBlurInst.h" />
     <ClInclude Include="..\public\MotionBlur.h" />
     <ClInclude Include="..\public\ParticleSystemPool.h" />
+    <ClInclude Include="..\public\RaycastCallBack.h" />
     <ClInclude Include="..\public\TexturePool.h" />
     <ClInclude Include="..\public\UI_ScaleButton.h" />
     <ClInclude Include="..\public\VIBuffer_Particle_Instance.h" />
@@ -167,6 +168,7 @@
     <ClCompile Include="..\private\MotionBlurInst.cpp" />
     <ClCompile Include="..\private\MotionBlur.cpp" />
     <ClCompile Include="..\private\ParticleSystemPool.cpp" />
+    <ClCompile Include="..\private\RaycastCallBack.cpp" />
     <ClCompile Include="..\private\TexturePool.cpp" />
     <ClCompile Include="..\private\UI_ScaleButton.cpp" />
     <ClCompile Include="..\private\VIBuffer_Particle_Instance.cpp" />

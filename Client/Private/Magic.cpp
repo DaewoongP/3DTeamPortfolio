@@ -46,9 +46,15 @@ void CMagic::Tick(_float fTimeDelta)
 	if (m_fCurrentCoolTime > 0)
 	{
 		m_fCurrentCoolTime -= fTimeDelta * m_fCoolSpeed;
+		if(m_fCurrentCoolTime <= 0.0f)
+	{
+		m_fCurrentCoolTime = 0.0f;
 	}
-
+	}
+	
 	__super::Tick(fTimeDelta);
+	
+	
 }
 
 void CMagic::Late_Tick(_float fTimeDelta)
@@ -82,10 +88,6 @@ CMagicBall* CMagic::Magic_Cast(const CGameObject* pTarget, const CGameObject* pW
 	
 	if (PowerUp)
 		ballInit.iDamage *= 2;
-
-	cout << ballInit.iDamage << endl;
-
-
 
 	BEGININSTANCE;
 

@@ -66,6 +66,7 @@
 #include "Crucio.h"
 #include "Stupefy.h"
 #include "Diffindo.h"
+#include "Bombarda.h"
 #pragma endregion Magic
 
 #include "Trigger_Vault.h"
@@ -147,6 +148,9 @@ HRESULT CMain0_Loader::Loading()
 	case LEVEL_VAULT:
 		hr = Loading_For_Vault(LEVEL_VAULT);
 		break;
+	case LEVEL_SMITH:
+		hr = Loading_For_Hogsmeade(LEVEL_SMITH);
+		break;
 	default:
 		MSG_BOX("Failed Load Next Level");
 		break;
@@ -226,6 +230,11 @@ HRESULT CMain0_Loader::Loading_For_Vault(LEVELID eLevelID)
 }
 
 HRESULT CMain0_Loader::Loading_For_GreatHall(LEVELID eLevelID)
+{
+	return S_OK;
+}
+
+HRESULT CMain0_Loader::Loading_For_Hogsmeade(LEVELID eLevelID)
 {
 	return S_OK;
 }
@@ -542,6 +551,11 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Diffindo"),
 			CDiffindo::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Diffindo");
+
+		/* For.Prototype_GameObject_Bombarda */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Bombarda"),
+			CBombarda::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_Bombarda");
 
 #pragma endregion
 		{

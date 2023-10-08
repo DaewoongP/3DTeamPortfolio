@@ -77,6 +77,15 @@ HRESULT CParticleSystem::Initialize_Prototype(const _tchar* _pDirectoryPath, _ui
 			return E_FAIL;
 	}
 
+	ProtoTag = ToPrototypeTag(TEXT("Prototype_Component_Texture"), m_RendererModuleDesc.wstrDistortionTexture.c_str());
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, ProtoTag.data()))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel
+			, ProtoTag.data()
+			, CTexture::Create(m_pDevice, m_pContext, m_RendererModuleDesc.wstrDistortionTexture.c_str()))))
+			return E_FAIL;
+	}
+
 	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_Component_Shader_VtxRectColIdxInstance")))
 	{
 		if (FAILED(pGameInstance->Add_Prototype(m_iLevel
@@ -255,18 +264,24 @@ void CParticleSystem::Late_Tick(_float _fTimeDelta)
 		{
 			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_GLOW, this);
 		}
-
-		else if ("Default" == m_RendererModuleDesc.strPass ||
-			"TextureSheetAnimation" == m_RendererModuleDesc.strPass ||
-			"MotionBlur" == m_RendererModuleDesc.strPass)
+		if (true == m_RendererModuleDesc.isDistortion)
 		{
-			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BLEND, this);
+			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DISTORTION, this);
 		}
-		else
+		if (m_RendererModuleDesc.isDiffuse)
 		{
-			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+			if ("Default" == m_RendererModuleDesc.strPass ||
+				"TextureSheetAnimation" == m_RendererModuleDesc.strPass ||
+				"MotionBlur" == m_RendererModuleDesc.strPass ||
+				"Default_Depth_Disable" == m_RendererModuleDesc.strPass)
+			{
+				m_pRenderer->Add_RenderGroup(CRenderer::RENDER_BLEND, this);
+			}
+			else
+			{
+				m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+			}
 		}
-
 	}
 }
 

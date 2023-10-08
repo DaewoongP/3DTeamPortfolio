@@ -77,7 +77,9 @@ public:
 	void Set_Kinematic(_bool _isKinematic);
 	void Set_Density(_float _fDensity) const;
 	void Set_AngularDamping(_float _fAngualrDamping) const;
+	void Set_LinearDamping(_float _fLinearDamping) const;
 	void Set_Gravity(_bool _isGravity);
+	void Set_Mass(_float fMass);
 	void Set_CollisionFlag(const _char* szColliderTag, PxU32 eCollisionFlag);
 
 #ifdef _DEBUG

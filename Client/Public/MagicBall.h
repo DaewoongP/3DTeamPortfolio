@@ -41,6 +41,7 @@ public:
 		BUFF_TYPE				eBuffType = { BUFF_NONE };
 		SPELL					eMagicTag = { SPELL_END };
 		_int					iDamage = { 0 };
+		CTransform*				pTransform = { nullptr };
 		function<void(void*)>		Action = { nullptr };
 	}COLLSIONREQUESTDESC;
 
@@ -127,6 +128,8 @@ protected:
 	//행동 계산용임.
 	MAGICBALL_STATE			m_eMagicBallState = { MAGICBALL_STATE_BEGIN };
 	_bool					m_isFirstFrameInState = { true };
+
+	_float					m_fWandParticleDelayTimer = 0.1f;
 
 protected:
 	//모든 이펙트 비활성화

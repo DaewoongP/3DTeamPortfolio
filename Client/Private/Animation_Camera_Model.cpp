@@ -57,6 +57,8 @@ HRESULT CAnimation_Camera_Model::Initialize(void* pArg)
 
 	Safe_AddRef(m_pTransform);
 
+	m_pAnimCameraModel->Change_Animation(TEXT("Cam_Start_Animation"));
+
 	return S_OK;
 }
 

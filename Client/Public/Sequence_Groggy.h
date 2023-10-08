@@ -2,7 +2,7 @@
 
 /* =============================================== */
 //	[CSequence_Groggy]
-//	: 객체의 공격관련 행동을 담당하는 클래스
+//	
 //	정 : 주성환
 //	부 : 
 //
@@ -10,15 +10,6 @@
 
 #include "Sequence.h"
 #include "Client_Defines.h"
-
-BEGIN(Engine)
-class CModel;
-class CTransform;
-END
-
-BEGIN(Client)
-class CAction;
-END
 
 BEGIN(Client)
 

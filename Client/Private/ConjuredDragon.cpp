@@ -1,20 +1,14 @@
 #include "ConjuredDragon.h"
-#include "GameInstance.h"
 
-#include "Weapon_Golem_Combat.h"
+#include "Client_GameInstance_Functions.h"
 
-#include "Wait.h"
 #include "Death.h"
+#include "LookAt.h"
 #include "Action.h"
+#include "Selector.h"
+#include "Sequence.h"
 #include "MagicBall.h"
-#include "Check_Degree.h"
-#include "RandomChoose.h"
-#include "Selector_Degree.h"
-#include "Sequence_Groggy.h"
-#include "Sequence_Attack.h"
 #include "UI_Group_Enemy_HP.h"
-#include "Sequence_Levitate.h"
-#include "Sequence_MoveTarget.h"
 
 CConjuredDragon::CConjuredDragon(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CEnemy(pDevice, pContext)
@@ -50,8 +44,8 @@ HRESULT CConjuredDragon::Initialize_Level(_uint iCurrentLevelIndex)
 	if (FAILED(Add_Components_Level(iCurrentLevelIndex)))
 		return E_FAIL;
 
-	/*if (FAILED(Make_AI()))
-		return E_FAIL;*/
+	if (FAILED(Make_AI()))
+		return E_FAIL;
 
 	m_pTransform->Set_RigidBody(m_pRigidBody);
 	m_pTransform->Set_Speed(10.f);
@@ -68,9 +62,11 @@ void CConjuredDragon::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	Set_Current_Target();
+	if (nullptr == m_pTarget)
+		m_pTarget = m_pPlayer;
 
-	/*if (nullptr != m_pRootBehavior)
-		m_pRootBehavior->Tick(fTimeDelta);*/
+	if (nullptr != m_pRootBehavior)
+		m_pRootBehavior->Tick(fTimeDelta);
 
 	if (nullptr != m_pModelCom)
 		m_pModelCom->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
@@ -119,7 +115,9 @@ void CConjuredDragon::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			return;
 
 		m_isSpawn = true;
-		m_RangeInEnemies.push_back({ wstrObjectTag, CollisionEventDesc.pOtherOwner });
+		auto iter = m_RangeInEnemies.find(wstrObjectTag);
+		if (iter == m_RangeInEnemies.end())
+			m_RangeInEnemies.emplace(wstrObjectTag, CollisionEventDesc.pOtherOwner);
 	}
 }
 
@@ -183,26 +181,18 @@ HRESULT CConjuredDragon::Make_AI()
 			throw TEXT("Failed Enemy Make_AI");
 
 		/* Make Child Behaviors */
-		CSelector* pSelector = dynamic_cast<CSelector*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Selector")));
-		if (nullptr == pSelector)
-			throw TEXT("pSelector is nullptr");
+		CSelector* pSelector = nullptr;
+		if (FAILED(Create_Behavior(pSelector)))
+			throw TEXT("Failed Create_Behavior pSelector");
 
-		CSequence* pSequence_Death = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
-		if (nullptr == pSequence_Death)
-			throw TEXT("pSequence_Death is nullptr");
-		CSelector* pSelector_Alive = dynamic_cast<CSelector*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Selector")));
-		if (nullptr == pSelector_Alive)
-			throw TEXT("pSelector_Alive is nullptr");
+		CSequence* pSequence_Death = nullptr;
+		if (FAILED(Create_Behavior(pSequence_Death)))
+			throw TEXT("Failed Create_Behavior pSequence_Death");
+		CSelector* pSelector_Alive = nullptr;
+		if (FAILED(Create_Behavior(pSelector_Alive)))
+			throw TEXT("Failed Create_Behavior pSelector_Alive");
 
 		/* Set Decorations */
-		pSelector->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
-			{
-				_bool* pIsSpawn = { nullptr };
-				if (FAILED(pBlackBoard->Get_Type("isSpawn", pIsSpawn)))
-					return false;
-
-				return *pIsSpawn;
-			});
 
 		/* Set Options */
 
@@ -318,39 +308,13 @@ HRESULT CConjuredDragon::Make_Death(_Inout_ CSequence* pSequence)
 		if (nullptr == pSequence)
 			throw TEXT("Parameter pSequence is nullptr");
 
-		CSelector* pSelector_Choose = dynamic_cast<CSelector*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Selector")));
-		if (nullptr == pSelector_Choose)
-			throw TEXT("pSelector_Choose is nullptr");
+		CAction* pAction_Death = nullptr;
+		if (FAILED(Create_Behavior(pAction_Death)))
+			throw TEXT("Failed Create_Behavior pAction_Death");
 
-		CSequence* pSequence_Death_Ground = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
-		if (nullptr == pSequence_Death_Ground)
-			throw TEXT("pSequence_Death_Ground is nullptr");
-		CSequence* pSequence_Death_Air = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
-		if (nullptr == pSequence_Death_Air)
-			throw TEXT("pSequence_Death_Air is nullptr");
-
-		CAction* pAction_Death_Ground = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Death_Ground)
-			throw TEXT("pAction_Death_Ground is nullptr");
-		CAction* pAction_Death_Ground_Loop = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Death_Ground_Loop)
-			throw TEXT("pAction_Death_Ground_Loop is nullptr");
-		CAction* pAction_Knockback = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Knockback)
-			throw TEXT("pAction_Knockback is nullptr");
-		CAction* pAction_Splat = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Splat)
-			throw TEXT("pAction_Splat is nullptr");
-		CAction* pAction_Splat_Loop = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Splat_Loop)
-			throw TEXT("pAction_Splat_Loop is nullptr");
-
-		CDeath* pTsk_Death_Ground = dynamic_cast<CDeath*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Death")));
-		if (nullptr == pTsk_Death_Ground)
-			throw TEXT("pTsk_Death_Ground is nullptr");
-		CDeath* pTsk_Death_Air = dynamic_cast<CDeath*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Death")));
-		if (nullptr == pTsk_Death_Air)
-			throw TEXT("pTsk_Death_Air is nullptr");
+		CDeath* pTsk_Death = nullptr;
+		if (FAILED(Create_Behavior(pTsk_Death)))
+			throw TEXT("Failed Create_Behavior pTsk_Death");
 
 		// Set Decorators
 		pSequence->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
@@ -359,72 +323,22 @@ HRESULT CConjuredDragon::Make_Death(_Inout_ CSequence* pSequence)
 				if (FAILED(pBlackBoard->Get_Type("pHealth", pHealth)))
 					return false;
 
+				if(true == pHealth->isDead())
+					cout << "Death" << endl;
+
 				return pHealth->isDead();
-			});
-		pSequence_Death_Ground->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
-			{
-				_uint* piCurrentSpell = { nullptr };
-				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", piCurrentSpell)))
-					return false;
-
-				if (BUFF_LEVIOSO & *piCurrentSpell)
-					return false;
-
-				return true;
-			});
-		pSequence_Death_Air->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
-			{
-				_uint* piCurrentSpell = { nullptr };
-				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", piCurrentSpell)))
-					return false;
-
-				if (BUFF_LEVIOSO & *piCurrentSpell)
-				{
-					CRigidBody* pRigidBody = { nullptr };
-					if (FAILED(pBlackBoard->Get_Type("pRigidBody", pRigidBody)))
-						return false;
-
-					pRigidBody->Set_Gravity(true);
-
-					return true;
-				}
-
-				return false;
 			});
 
 		// Set Options 
 		function<void(const _float&)> Func = [&](const _float& fTimeDelta) {this->DeathBehavior(fTimeDelta); };
-		pTsk_Death_Ground->Set_DeathFunction(Func);
-		pTsk_Death_Air->Set_DeathFunction(Func);
-		pAction_Knockback->Set_Options(TEXT("Knockback_Back"), m_pModelCom);
-		pAction_Splat->Set_Options(TEXT("Knockback_Back_Splat"), m_pModelCom, true);
-		pAction_Splat_Loop->Set_Options(TEXT("Send_Splat_Loop"), m_pModelCom, true);
-		pAction_Death_Ground->Set_Options(TEXT("Death"), m_pModelCom);
-		pAction_Death_Ground_Loop->Set_Options(TEXT("Send_Splat_Loop"), m_pModelCom, true);
+		pTsk_Death->Set_DeathFunction(Func);
+		pAction_Death->Set_Options(TEXT("Death"), m_pModelCom);
 
-		if (FAILED(pSequence->Assemble_Behavior(TEXT("Selector_Choose"), pSelector_Choose)))
-			throw TEXT("Failed Assemble_Behavior Selector_Choose");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Death"), pAction_Death)))
+			throw TEXT("Failed Assemble_Behavior Action_Death");
 
-		if (FAILED(pSelector_Choose->Assemble_Behavior(TEXT("Sequence_Death_Ground"), pSequence_Death_Ground)))
-			throw TEXT("Failed Assemble_Behavior Sequence_Death_Ground");
-		if (FAILED(pSelector_Choose->Assemble_Behavior(TEXT("Sequence_Death_Air"), pSequence_Death_Air)))
-			throw TEXT("Failed Assemble_Behavior Sequence_Death_Air");
-
-		if (FAILED(pSequence_Death_Ground->Assemble_Behavior(TEXT("Action_Death_Ground"), pAction_Death_Ground)))
-			throw TEXT("Failed Assemble_Behavior Action_Death_Ground");
-		if (FAILED(pSequence_Death_Ground->Assemble_Behavior(TEXT("Action_Death_Ground_Loop"), pAction_Death_Ground_Loop)))
-			throw TEXT("Failed Assemble_Behavior Action_Death_Ground_Loop");
-		if (FAILED(pSequence_Death_Air->Assemble_Behavior(TEXT("Action_Knockback"), pAction_Knockback)))
-			throw TEXT("Failed Assemble_Behavior Action_Knockback");
-		if (FAILED(pSequence_Death_Air->Assemble_Behavior(TEXT("Action_Splat"), pAction_Splat)))
-			throw TEXT("Failed Assemble_Behavior Action_Splat");
-		if (FAILED(pSequence_Death_Air->Assemble_Behavior(TEXT("Action_Splat_Loop"), pAction_Splat_Loop)))
-			throw TEXT("Failed Assemble_Behavior Action_Splat_Loop");
-
-		if (FAILED(pAction_Death_Ground_Loop->Assemble_Behavior(TEXT("Tsk_Death_Ground"), pTsk_Death_Ground)))
-			throw TEXT("Failed Assemble_Behavior Tsk_Death_Ground");
-		if (FAILED(pAction_Splat_Loop->Assemble_Behavior(TEXT("Tsk_Death_Air"), pTsk_Death_Air)))
-			throw TEXT("Failed Assemble_Behavior Tsk_Death_Air");
+		if (FAILED(pAction_Death->Assemble_Behavior(TEXT("Tsk_Death"), pTsk_Death)))
+			throw TEXT("Failed Assemble_Behavior Tsk_Death");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -450,7 +364,10 @@ HRESULT CConjuredDragon::Make_Alive(_Inout_ CSelector* pSelector)
 	try
 	{
 		/* Create Child Behavior */
-
+		CLookAt* pTsk_LookAt = { nullptr };
+		if (FAILED(Create_Behavior(pTsk_LookAt)))
+			throw TEXT("Failed Create_Behavior pTsk_LookAt");
+		
 		/* Set Decorators */
 		pSelector->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 			{
@@ -461,7 +378,12 @@ HRESULT CConjuredDragon::Make_Alive(_Inout_ CSelector* pSelector)
 				return !(pHealth->isDead());
 			});
 
+		/* Set Options */
+		pTsk_LookAt->Set_Transform(m_pTransform);
+
 		/* Assemble Behaviors */
+		if (FAILED(pSelector->Assemble_Behavior(TEXT("Tsk_LookAt"), pTsk_LookAt)))
+			throw TEXT("Failed Assemble_Behavior Tsk_LookAt");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -485,7 +407,7 @@ void CConjuredDragon::DeathBehavior(const _float& fTimeDelta)
 	m_isDead = true;
 
 	m_fDeadTimeAcc += fTimeDelta;
-	if (3.f < m_fDeadTimeAcc)
+	if (9.f < m_fDeadTimeAcc)
 		Set_ObjEvent(OBJ_DEAD);
 }
 

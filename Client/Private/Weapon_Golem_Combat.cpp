@@ -58,6 +58,16 @@ void CWeapon_Golem_Combat::Late_Tick(_float fTimeDelta)
 	}
 }
 
+void CWeapon_Golem_Combat::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
+{
+	wstring wstrOtherCollisionTag = CollisionEventDesc.pOtherCollisionTag;
+	
+	if (wstring::npos != wstrOtherCollisionTag.find(TEXT("Magic_Ball")))
+	{
+		static_cast<CEnemy*>(m_pOwner)->Set_Parring();
+	}
+}
+
 HRESULT CWeapon_Golem_Combat::Render()
 {
 	if (FAILED(Set_Shader_Resources()))
@@ -82,7 +92,7 @@ HRESULT CWeapon_Golem_Combat::Render()
 		{
 			wstring wstrErrorMSG = TEXT("[CWeapon_Armored_Troll] Failed Render : \n");
 			wstrErrorMSG += pErrorTag;
-			MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+			MSG_BOX(wstrErrorMSG.c_str());
 			__debugbreak();
 
 			return E_FAIL;
@@ -120,7 +130,7 @@ HRESULT CWeapon_Golem_Combat::Add_Components(void* pArg)
 		RigidBodyDesc.pOwnerObject = this;
 		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Attack");
 		RigidBodyDesc.eThisCollsion = COL_ENEMY_ATTACK;
-		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC;
+		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC | COL_SHIELD | COL_MAGIC;
 
 		/* For.Com_RigidBody */
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
@@ -131,7 +141,7 @@ HRESULT CWeapon_Golem_Combat::Add_Components(void* pArg)
 	{
 		wstring wstrErrorMSG = TEXT("[CWeapon_Armored_Troll] Failed Add_Components : \n");
 		wstrErrorMSG += pErrorTag;
-		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+		MSG_BOX(wstrErrorMSG.c_str());
 
 		return E_FAIL;
 	}
@@ -180,7 +190,7 @@ HRESULT CWeapon_Golem_Combat::Set_Shader_Resources()
 	{
 		wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed SetUp_ShaderResources : \n");
 		wstrErrorMSG += pErrorTag;
-		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+		MSG_BOX(wstrErrorMSG.c_str());
 
 		ENDINSTANCE;
 

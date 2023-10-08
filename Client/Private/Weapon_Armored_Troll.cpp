@@ -128,7 +128,7 @@ HRESULT CWeapon_Armored_Troll::Add_Components(void* pArg)
 		RigidBodyDesc.pOwnerObject = this;
 		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Attack");
 		RigidBodyDesc.eThisCollsion = COL_ENEMY_ATTACK;
-		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC;
+		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC | COL_SHIELD;
 
 		/* For.Com_RigidBody */
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),

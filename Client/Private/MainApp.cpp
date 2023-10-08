@@ -88,7 +88,7 @@ HRESULT CMainApp::Render()
 #endif // _DEBUG
 
 	FAILED_CHECK_RETURN(m_pGameInstance->Present(), E_FAIL);
-
+	
 	return S_OK;
 }
 
@@ -264,6 +264,8 @@ void CMainApp::Debug_ImGui()
 	if (ImGui::RadioButton("LEVEL_CLIFFSIDE", (_int*)(&m_eLevelID), LEVEL_CLIFFSIDE))
 		isChangedLevel = true;
 	if (ImGui::RadioButton("LEVEL_VAULT", (_int*)(&m_eLevelID), LEVEL_VAULT))
+		isChangedLevel = true;
+	if (ImGui::RadioButton("LEVEL_SMITH", (_int*)(&m_eLevelID), LEVEL_SMITH))
 		isChangedLevel = true;
 
 	if (true == isChangedLevel)

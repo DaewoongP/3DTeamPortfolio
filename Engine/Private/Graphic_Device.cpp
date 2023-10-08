@@ -81,7 +81,13 @@ HRESULT CGraphic_Device::Present()
 {
 	NULL_CHECK_RETURN_MSG(m_pSwapChain, E_FAIL, L"SwapChain NULL");
 
-	return m_pSwapChain->Present(0, 0);
+	if (FAILED(m_pSwapChain->Present(0, 0)))
+	{
+		HRESULT hr = m_pDevice->GetDeviceRemovedReason();
+		__debugbreak();
+	}
+
+	return S_OK;
 }
 
 HRESULT CGraphic_Device::Bind_BackBuffer()

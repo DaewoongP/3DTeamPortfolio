@@ -74,7 +74,7 @@ HRESULT CModel_Converter::Convert_Model(_uint iType, const _char* pModelFilePath
 		fs::create_directory(szPath);
 	}
 	// Write MapObject
-	else if (TYPE_MAPOBJECT == eType || TYPE_MAPOBJECT_ANIM == eType)
+	else if (TYPE_MAPOBJECT == eType)
 	{
 		lstrcat(szPath, TEXT("MapObject/NonAnims/"));
 		lstrcat(szPath, szFileName);
@@ -104,7 +104,7 @@ HRESULT CModel_Converter::Convert_Model(_uint iType, const _char* pModelFilePath
 		return E_FAIL;
 	}
 
-	if (TYPE_ANIM == eType || TYPE_ONLYANIM == eType || TYPE_MAPOBJECT_ANIM == eType)
+	if (TYPE_ANIM == eType || TYPE_ONLYANIM == eType)
 	{
 		// 애니메이션 파일일경우에만 실행.
 		cout << "Convert Animations..." << endl;
@@ -429,7 +429,7 @@ HRESULT CModel_Converter::Convert_Materials(TYPE eType, const char* pModelFilePa
 			lstrcat(szTexturePath, pSaveDirectory);
 
 			// 맵 오브젝트일 경우 경로를 다르게 설정한다.
-			if (eType == TYPE_MAPOBJECT || eType == TYPE_MAPOBJECT_ANIM)
+			if (eType == TYPE_MAPOBJECT)
 			{
 				wstring wsTexturePath(szTexturePath);
 				wstring wsTargetIndex(TEXT("MapObject/"));

@@ -36,6 +36,7 @@ public:
 	HRESULT RemakeTerrain(const _tchar * pHeightMap);
 	HRESULT RemakeTerrain(_uint iTerrainSizeX, _uint iTerrainSizeY);
 	_bool	IsPicked(_float4 vRayOrigin, _float4 vRayDir, _float& fMinDist);
+	_bool	IsPicked(_float4 vRayOrigin, _float4 vRayDir, _float4x4 WorldMatrix, _float& fMinDist);
 
 private:
 	_float3*			m_pPos = { nullptr };

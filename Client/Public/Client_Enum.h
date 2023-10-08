@@ -63,7 +63,8 @@ namespace Client
 		BUFF_NCENDIO		= 1 << 7,
 		BUFF_DESCENDO		= 1 << 8,
 		BUFF_FLIPENDO		= 1 << 9,
-		BUFF_END = 10
+		BUFF_PROTEGO		= 1 << 10,
+		BUFF_END = 11
 	};
 
 #pragma region UI

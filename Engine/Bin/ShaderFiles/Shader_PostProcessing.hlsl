@@ -4,15 +4,12 @@ matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
 // PostProcessing
 texture2D g_HDRTexture;
+texture2D g_GlowTexture;
 
 // HDR
 texture2D g_DeferredTexture;
 texture2D g_SkyTexture;
 float g_fHDRPower;
-
-// Effect
-texture2D g_EffectTexture;
-texture2D g_GlowTexture;
 
 struct VS_IN
 {
@@ -56,11 +53,10 @@ PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
 
-    vector vHDRTexture = g_HDRTexture.Sample(LinearSampler, In.vTexUV);
-    vector vGlowTexture = g_GlowTexture.Sample(LinearSampler, In.vTexUV);
-    vector vEffectTexture = g_EffectTexture.Sample(LinearSampler, In.vTexUV);
+    vector vHDR = g_HDRTexture.Sample(LinearSampler, In.vTexUV);
+    vector vGlow = g_GlowTexture.Sample(LinearSampler, In.vTexUV);
     
-    Out.vColor = vHDRTexture + vEffectTexture + vGlowTexture;
+    Out.vColor = vHDR + vGlow;
 
     return Out;
 }
