@@ -4,6 +4,7 @@ float4x4 g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 float4x4 g_BoneMatrices[256];
 texture2D g_DiffuseTexture;
 texture2D g_NormalTexture;
+texture2D g_EmissiveTexture;
 
 float3 g_vHairColor = float3(1.f, 1.f, 1.f);
 float4 g_vColor;
@@ -175,6 +176,29 @@ PS_OUT PS_MAIN_NONE(PS_IN In)
     return Out;
 }
 
+PS_OUT PS_MAIN_EMISSIVE(PS_IN In)
+{
+    PS_OUT Out = (PS_OUT)0;
+
+    vector vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+
+    vector vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+    // 텍스처의 노말값은 -1~1로 출력을 못하기때문에 0~1로 정규화되어 있다. 따라서 강제적으로 변환해줘야함.
+    float3 vNormal = vNormalDesc.xyz * 2.f - 1.f;
+
+    float3x3 WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal.xyz, In.vNormal.xyz);
+
+    vNormal = mul(vNormal, WorldMatrix);
+
+    vector vEmissive = g_EmissiveTexture.Sample(LinearSampler, In.vTexUV);
+
+    Out.vDiffuse = vDiffuse + vEmissive;
+    Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 0.f);
+    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fCamFar, 0.f, 0.f);
+
+    return Out;
+}
+
 technique11 DefaultTechnique
 {
 	pass AnimMesh
@@ -225,5 +249,17 @@ technique11 DefaultTechnique
 		HullShader		= NULL /*compile hs_5_0 HS_MAIN()*/;
 		DomainShader	= NULL /*compile ds_5_0 DS_MAIN()*/;
         PixelShader     = compile ps_5_0 PS_MAIN_NONE();
+    }
+    pass AnimMesh_E
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
+        HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
+        DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
+        PixelShader = compile ps_5_0 PS_MAIN_EMISSIVE();
     }
 }

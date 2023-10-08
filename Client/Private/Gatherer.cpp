@@ -193,7 +193,15 @@ HRESULT CGatherer::Render()
 		m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", iMeshCount, DIFFUSE);
 		m_pModel->Bind_Material(m_pShader, "g_NormalTexture", iMeshCount, NORMALS);
 
-		m_pShader->Begin("AnimMesh");
+		// 후클럼프 모델일 경우 Emissive 텍스처를 추가로 넣어준다.
+		if(m_GatheringType == CGatherer::HORKLUMP)
+			m_pModel->Bind_Material(m_pShader, "g_EmissiveTexture", iMeshCount, EMISSIVE);
+
+		// 후클럼프 모델일 경우 다른 패스로 그려준다.
+		if (m_GatheringType == CGatherer::HORKLUMP)
+			m_pShader->Begin("AnimMesh_E");
+		else
+			m_pShader->Begin("AnimMesh");
 
 		if (FAILED(m_pModel->Render(iMeshCount)))
 			return E_FAIL;

@@ -400,6 +400,7 @@ HRESULT CLevel_Cliffside::Load_MapObject(const _tchar* pObjectFilePath)
 		}
 		BEGININSTANCE;
 
+		// 읽어온 태그에서 모델이름 추출
 		wstring ws(MapObjectDesc.wszTag);
 		size_t findIndex = ws.find(TEXT("Model_")) + 6;
 
@@ -408,9 +409,7 @@ HRESULT CLevel_Cliffside::Load_MapObject(const _tchar* pObjectFilePath)
 		// 비교해야되는 문자열
 		wstring wsTreasureChestName(TEXT("Anim_TreasureChest"));
 		wstring wsAshwinderEggs(TEXT("Anim_AshwinderEggs"));
-		wstring wsHorklump(TEXT("Anim_Horklump"));
 		wstring wsLeapingToadStools(TEXT("Anim_LeapingToadStools"));
-		wstring wsLeech(TEXT("Anim_Leech"));
 		wstring wsGull(TEXT("Anim_Gull"));
 
 		// 보물상자
@@ -431,9 +430,7 @@ HRESULT CLevel_Cliffside::Load_MapObject(const _tchar* pObjectFilePath)
 
 		// 채집물
 		else if (0 == lstrcmp(modelName.c_str(), wsAshwinderEggs.c_str()) ||
-			0 == lstrcmp(modelName.c_str(), wsHorklump.c_str()) ||
-			0 == lstrcmp(modelName.c_str(), wsLeapingToadStools.c_str()) ||
-			0 == lstrcmp(modelName.c_str(), wsLeech.c_str()))
+			0 == lstrcmp(modelName.c_str(), wsLeapingToadStools.c_str()))
 		{
 			_tchar wszobjName[MAX_PATH] = { 0 };
 			_stprintf_s(wszobjName, TEXT("GameObject_Gatherer_%d"), (iObjectNum));

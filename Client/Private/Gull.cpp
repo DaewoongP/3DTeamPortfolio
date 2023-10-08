@@ -265,8 +265,7 @@ void CGull::Check_Dist_From_Player(_float fTimeDelta)
 		if (10.f <= m_fDeadTime)
 		{
 			Set_ObjEvent(OBJ_DEAD);
-		}			
-
+		}
 		return;
 	}
 
