@@ -418,6 +418,9 @@
     <Filter Include="01. Utility\03. Components\19. UI\UI_Component\UI_Button\UI_ScaleButton">
       <UniqueIdentifier>{a5b0d7fe-c9b2-42f5-a371-ab948940ca1e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\03. Components\22. Phase">
+      <UniqueIdentifier>{dd250ae5-d2dd-4f3c-8a80-17dda9e0eb77}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -840,6 +843,9 @@
     <ClInclude Include="..\public\RaycastCallBack.h">
       <Filter>01. Utility\11. Physics\EventCallBack</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Phase.h">
+      <Filter>01. Utility\03. Components\22. Phase</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -1228,6 +1234,9 @@
     </ClCompile>
     <ClCompile Include="..\private\RaycastCallBack.cpp">
       <Filter>01. Utility\11. Physics\EventCallBack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Phase.cpp">
+      <Filter>01. Utility\03. Components\22. Phase</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

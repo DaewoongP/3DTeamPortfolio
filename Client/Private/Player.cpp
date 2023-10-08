@@ -1081,8 +1081,8 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_Troll_Bogeys_Item"));
 		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_Shrivelfig_Item"));
 
-		wstring temp = TEXT("Drink_Potion_Throw");
-		m_pCustomModel->Change_Animation(temp);
+		//wstring temp = TEXT("Drink_Potion_Throw");
+		//m_pCustomModel->Change_Animation(temp);
 	}
 #endif //_DEBUG
 

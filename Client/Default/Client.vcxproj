@@ -172,6 +172,7 @@
     <ClInclude Include="..\public\ChineseChompingCabbageItem.h" />
     <ClInclude Include="..\Public\ConjuredDragon.h" />
     <ClInclude Include="..\Public\DarkWizard_M.h" />
+    <ClInclude Include="..\public\PotionStationCamera.h" />
     <ClInclude Include="..\Public\Weapon_DarkWizard_Wand.h" />
     <ClInclude Include="..\Public\Diffindo.h" />
     <ClInclude Include="..\public\Dittany_Leaves_Item.h" />
@@ -390,6 +391,7 @@
     <ClCompile Include="..\private\ChineseChompingCabbageItem.cpp" />
     <ClCompile Include="..\Private\ConjuredDragon.cpp" />
     <ClCompile Include="..\Private\DarkWizard_M.cpp" />
+    <ClCompile Include="..\private\PotionStationCamera.cpp" />
     <ClCompile Include="..\Private\Weapon_DarkWizard_Wand.cpp" />
     <ClCompile Include="..\Private\Diffindo.cpp" />
     <ClCompile Include="..\private\Dittany_Leaves_Item.cpp" />
