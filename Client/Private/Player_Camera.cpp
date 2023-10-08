@@ -99,7 +99,7 @@ HRESULT CPlayer_Camera::Initialize(void* pArg)
 
 	m_fTimeSpeed = 10.0f;
 
-	m_fCameraHeight = 1.2f;
+	m_fCameraHeight = 1.0f;
 
 	Ready_Animation_Camera();
 
