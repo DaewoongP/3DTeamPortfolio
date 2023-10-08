@@ -502,11 +502,11 @@ _bool CGameInstance::isIn_WorldFrustum(_float4 vWorldPos, _float fRange)
 	return m_pFrustum->isIn_WorldFrustum(vWorldPos, fRange);
 }
 
-CLight* CGameInstance::Add_Lights(const CLight::LIGHTDESC& LightDesc)
+CLight* CGameInstance::Add_Lights(const CLight::LIGHTDESC& LightDesc, _bool isShadow)
 {
 	NULL_CHECK_RETURN_MSG(m_pLight_Manager, nullptr, TEXT("Light NULL"));
 
-	return m_pLight_Manager->Add_Lights(LightDesc);
+	return m_pLight_Manager->Add_Lights(LightDesc, isShadow);
 }
 
 HRESULT CGameInstance::Clear_Lights()

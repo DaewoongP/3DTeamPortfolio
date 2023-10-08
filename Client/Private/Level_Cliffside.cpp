@@ -170,7 +170,7 @@ HRESULT CLevel_Cliffside::Ready_Lights()
 	LightDesc.vAmbient = WHITEDEFAULT;
 	LightDesc.vSpecular = WHITEDEFAULT;
 
-	if (nullptr == pGameInstance->Add_Lights(LightDesc))
+	if (nullptr == pGameInstance->Add_Lights(LightDesc, true))
 		return E_FAIL;
 
 	ENDINSTANCE;

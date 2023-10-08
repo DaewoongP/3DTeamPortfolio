@@ -104,7 +104,7 @@ PS_OUT PS_MAIN_SHADOW(PS_IN In)
     
     // 빛의 뷰스페이스 포지션 z와 픽셀의 라이트 뎁스 (실제 월드공간상의 viewz값)
     // 빛의 뷰스페이스 z값이 UV좌표의 뷰스페이스 z값보다 "클경우 (깊을경우)" 그림자.
-    if (vLightViewPos.z - 0.1f > vLightDepth.x * g_fCamFar)
+    if (vLightViewPos.z - 0.2f > vLightDepth.x * g_fCamFar)
     {
         Out.vColor *= 0.5f;
         Out.vColor.a = 1.f;
@@ -120,8 +120,6 @@ PS_OUT PS_MAIN_SHADOW(PS_IN In)
 	    1.f <= vLightProjPos.z)
         {
             Out.vColor = vector(1.f, 1.f, 1.f, 1.f);
-            // 다중점광원 처리시 살짝 곱해줘서
-            // Out.vColor *= 1.5f;
         }
     }
     else

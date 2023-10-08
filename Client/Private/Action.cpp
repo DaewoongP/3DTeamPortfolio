@@ -149,7 +149,7 @@ _bool CAction::Is_Success_Action()
 	if (FAILED(m_pBlackBoard->Get_Type("isChangeAnimation", pIsChangeAnimation)))
 	{
 		MSG_BOX("isChangeAnimation is nullptr");
-		return E_FAIL;
+		return false;
 	}
 
 	_bool isSuccess = { false };

@@ -125,7 +125,7 @@ public: /* For. Frustum */
 	_bool isIn_WorldFrustum(_float4 vWorldPos, _float fRange = 0.f);
 
 public: /* For.Light_Manager */
-	class CLight* Add_Lights(const CLight::LIGHTDESC & LightDesc);
+	class CLight* Add_Lights(const CLight::LIGHTDESC & LightDesc, _bool isShadow = false);
 	HRESULT Clear_Lights();
 
 public: /* For.Sound_Manager */

@@ -13,12 +13,21 @@ HRESULT CLight_Manager::Reserve_Lights(_uint iNumLights)
 	return S_OK;
 }
 
-CLight* CLight_Manager::Add_Lights(const CLight::LIGHTDESC& LightDesc)
+CLight* CLight_Manager::Add_Lights(const CLight::LIGHTDESC& LightDesc, _bool isShadow)
 {
-	CLight* pLight = m_LightPool.front();
-	pLight->Set_LightDesc(LightDesc);
+	CLight* pLight = { nullptr };
+	if (m_LightPool.empty())
+	{
+		pLight = CLight::Create(LightDesc);
+	}
+	else
+	{
+		pLight = m_LightPool.front();
+		m_LightPool.pop();
+		pLight->Set_LightDesc(LightDesc);
+	}
 
-	if (CLight::TYPE_DIRECTIONAL == LightDesc.eType)
+	if (true == isShadow)
 	{
 		CPipeLine* pPipeLine = CPipeLine::GetInstance();
 		Safe_AddRef(pPipeLine);
@@ -28,7 +37,6 @@ CLight* CLight_Manager::Add_Lights(const CLight::LIGHTDESC& LightDesc)
 	}
 
 	m_Lights.push_back(pLight);
-	m_LightPool.pop();
 
 	return pLight;
 }
@@ -44,10 +52,32 @@ HRESULT CLight_Manager::Render_Lights(CShader* pShader, CVIBuffer_Rect* pVIBuffe
 	return S_OK;
 }
 
+HRESULT CLight_Manager::Delete_Light(CLight* pLight)
+{
+	auto iter = find_if(m_Lights.begin(), m_Lights.end(), [&](auto& pSourLight) {
+		if (pSourLight == pLight)
+		{
+			return true;
+		}
+		return false;
+		}
+	);
+
+	if (m_Lights.end() == iter)
+		return E_FAIL;
+
+	m_Lights.erase(iter);
+	m_LightPool.push(*iter);
+
+	return S_OK;
+}
+
 HRESULT CLight_Manager::Clear_Lights()
 {
 	for (auto& pLight : m_Lights)
-		Safe_Release(pLight);
+	{
+		m_LightPool.push(pLight);
+	}
 
 	m_Lights.clear();
 

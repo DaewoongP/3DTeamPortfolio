@@ -12,8 +12,9 @@ private:
 
 public:
 	HRESULT Reserve_Lights(_uint iNumLights);
-	CLight* Add_Lights(const CLight::LIGHTDESC& LightDesc);
+	CLight* Add_Lights(const CLight::LIGHTDESC& LightDesc, _bool isShadow = false);
 	HRESULT Render_Lights(class CShader* pShader, class CVIBuffer_Rect* pVIBuffer);
+	HRESULT Delete_Light(class CLight* pLight);
 	HRESULT Clear_Lights();
 
 private:
