@@ -2,6 +2,8 @@
 
 #include "PipeLine.h"
 
+#include "GameInstance.h"
+
 IMPLEMENT_SINGLETON(CCamera_Manager);
 
 void CCamera_Manager::Set_Shake(SHAKE_TYPE _eType, SHAKE_AXIS _eAxis, CEase::EASE _eEase, _float _fSpeed, _float _Duration, _float _fPower, SHAKE_POWER _ePower, _float3 _vAxisSet)
@@ -54,6 +56,8 @@ void CCamera_Manager::Tick(_float _TimeDelta)
 	}
 
 	m_pCurrentCamera->Tick(_TimeDelta);
+
+	Lerp_For_Set_Camera(_TimeDelta);
 
 	//컷씬에 재생 할 것 이 있다면.
 	if (false == m_SplineData.empty() || false == m_CutSceneCameraDescs.empty())
@@ -218,7 +222,7 @@ HRESULT CCamera_Manager::Add_Camera(const _tchar* _CameraTag, CCamera* _pCamera)
 	return S_OK;
 }
 
-HRESULT CCamera_Manager::Set_Camera(const _tchar* _CameraTag)
+HRESULT CCamera_Manager::Set_Camera(const _tchar* _CameraTag, _float _fLerpTime)
 {
 	if (nullptr != m_pCurrentCamera)
 	{
@@ -233,6 +237,16 @@ HRESULT CCamera_Manager::Set_Camera(const _tchar* _CameraTag)
 	}
 
 	Safe_AddRef(m_pCurrentCamera);
+
+	//시간이 있다면 러프를 하겠다.
+	if (0.0f != _fLerpTime)
+	{
+		m_fSetCameraLerpTime = 0.0f;
+		m_fSetCameraLerpTimeAcc = 0.0f;
+
+		m_vPreviousEye = m_pPipeLine->Get_TransformMatrix(CPipeLine::D3DTS_VIEW)->Translation();
+		m_vPreviousAt = m_vPreviousEye + m_pPipeLine->Get_TransformMatrix(CPipeLine::D3DTS_VIEW)->Look();
+	}
 
 	return S_OK;
 }
@@ -822,6 +836,35 @@ void CCamera_Manager::Shake_Update(_float _TimeDelta)
 	}
 
 	m_pPipeLine->Set_Transform(CPipeLine::D3DTS_VIEW, view_Matrix);
+}
+
+void CCamera_Manager::Lerp_For_Set_Camera(_float _TimeDelta)
+{
+	//탈출
+	if (0.0f == m_fSetCameraLerpTimeAcc)
+	{
+		return;
+	}
+
+	//감소
+	m_fSetCameraLerpTimeAcc -= _TimeDelta;
+
+	//초기화
+	if (0.0f > m_fSetCameraLerpTimeAcc)
+	{
+		m_fSetCameraLerpTimeAcc = 0.0f;
+	}
+
+	// 1 ~ 0
+	_float fRatio = m_fSetCameraLerpTimeAcc / m_fSetCameraLerpTime;
+
+	_float3 vEye = m_pPipeLine->Get_TransformMatrix(CPipeLine::D3DTS_VIEW)->Translation();
+	_float3 vAt  = vEye + m_pPipeLine->Get_TransformMatrix(CPipeLine::D3DTS_VIEW)->Look();
+
+	vEye = XMVectorLerp(vEye, m_vPreviousEye, fRatio);
+	vAt = XMVectorLerp(vAt, m_vPreviousAt, fRatio);
+
+	m_pPipeLine->Set_Transform(CPipeLine::D3DTS_VIEW, XMMatrixLookAtLH(vEye, vAt, _float3(0.0f, 1.0f, 0.0f)));
 }
 
 void CCamera_Manager::Free()
