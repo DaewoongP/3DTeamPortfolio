@@ -79,19 +79,12 @@ HRESULT CShadow::Render()
 
 	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrixInv", pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
-	_float4x4 ViewMatrices[1];
-	_uint iNumMatrices = 1;
-	ViewMatrices[0] = *pPipeLine->Get_LightTransformMatrix(CPipeLine::D3DTS_VIEW);
-	if (FAILED(m_pShader->Bind_Matrices("g_vLightViewMatrix", ViewMatrices, iNumMatrices)))
+
+	if (FAILED(m_pShader->Bind_Matrix("g_vLightViewMatrix", pPipeLine->Get_LightTransformMatrix(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
-	/*if (FAILED(m_pShader->Bind_Matrix("g_vLightViewMatrix", pPipeLine->Get_LightTransformMatrix(CPipeLine::D3DTS_VIEW))))
-		return E_FAIL;*/
 	if (FAILED(m_pShader->Bind_Matrix("g_vLightProjMatrix", pPipeLine->Get_LightTransformMatrix(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 	if (FAILED(m_pShader->Bind_RawValue("g_fCamFar", pPipeLine->Get_CamFar(), sizeof(_float))))
-		return E_FAIL;
-	
-	if (FAILED(m_pShader->Bind_RawValue("g_iNumMatrices", &iNumMatrices, sizeof(_uint))))
 		return E_FAIL;
 
 	Safe_Release(pPipeLine);
