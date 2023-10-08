@@ -242,8 +242,12 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 #pragma endregion
 
-	// Screen Shading
+	// After Effect
 	if (FAILED(Render_Distortion()))
+		return E_FAIL;
+
+	// Screen Shading
+	if (FAILED(Render_Screen()))
 		return E_FAIL;
 
 	// UI 렌더링
@@ -648,9 +652,27 @@ HRESULT CRenderer::Render_PostProcessing()
 	return S_OK;
 }
 
+HRESULT CRenderer::Render_Screen()
+{
+	if (FAILED(Sort_Z(RENDER_SCREEN)))
+		return E_FAIL;
+
+	for (auto& pGameObject : m_RenderObjects[RENDER_SCREEN])
+	{
+		if (nullptr != pGameObject)
+			pGameObject->Render();
+
+		Safe_Release(pGameObject);
+	}
+
+	m_RenderObjects[RENDER_SCREEN].clear();
+
+	return S_OK;
+}
+
 HRESULT CRenderer::Render_UI()
 {
-	if (FAILED(Sort_UI()))
+	if (FAILED(Sort_Z(RENDER_UI)))
 		return E_FAIL;
 
 	for (auto& pGameObject : m_RenderObjects[RENDER_UI])
@@ -714,9 +736,9 @@ HRESULT CRenderer::Sort_Render(RENDERGROUP eGroup)
 	return S_OK;
 }
 
-HRESULT CRenderer::Sort_UI()
+HRESULT CRenderer::Sort_Z(RENDERGROUP eGroup)
 {
-	m_RenderObjects[RENDER_UI].sort([](const CGameObject* pSour, const CGameObject* pDest) {
+	m_RenderObjects[eGroup].sort([](const CGameObject* pSour, const CGameObject* pDest) {
 		_float fSourZ = XMVectorGetZ(pSour->Get_Transform()->Get_Position());
 		_float fDestZ = XMVectorGetZ(pDest->Get_Transform()->Get_Position());
 	
