@@ -22,7 +22,8 @@ private:
 	CShader*			m_pShader = { nullptr };
 	CVIBuffer_Rect*		m_pBuffer = { nullptr };
 	_float4x4			m_WorldMatrix, m_ViewMatrix, m_ProjMatrix;
-	
+	_float2				m_vWinSize;
+
 public:
 	static CShadow* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CVIBuffer_Rect* pRectBuffer);
 	virtual CComponent* Clone(void* pArg) { return nullptr; }

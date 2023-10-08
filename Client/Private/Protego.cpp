@@ -325,7 +325,7 @@ void CProtego::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			Safe_AddRef(pTransform);
 		}
 	}
-
+	return;
 	if (CEnemy::ATTACK_NONE == eAttackType)
 	{
 		return;

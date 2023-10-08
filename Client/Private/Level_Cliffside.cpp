@@ -159,6 +159,7 @@ HRESULT CLevel_Cliffside::Render()
 HRESULT CLevel_Cliffside::Ready_Lights()
 {
 	BEGININSTANCE;
+
 	CLight::LIGHTDESC		LightDesc;
 	ZeroMemory(&LightDesc, sizeof LightDesc);
 
@@ -170,10 +171,11 @@ HRESULT CLevel_Cliffside::Ready_Lights()
 	LightDesc.vAmbient = WHITEDEFAULT;
 	LightDesc.vSpecular = WHITEDEFAULT;
 
-	if (nullptr == pGameInstance->Add_Lights(LightDesc, true))
+	if (nullptr == pGameInstance->Add_Lights(_float(g_iWinSizeX), _float(g_iWinSizeY), LightDesc))
 		return E_FAIL;
 
 	ENDINSTANCE;
+
 	return S_OK;
 }
 

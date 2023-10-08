@@ -48,35 +48,28 @@ HRESULT CWeapon_Player_Wand::Initialize(void* pArg)
 		}
 	}
 
+	BEGININSTANCE;
+
+	CLight::LIGHTDESC LightInfo;
+	ZEROMEM(&LightInfo);
+	LightInfo.eType = CLight::TYPE_LUMOS;
+	LightInfo.vPos = _float4(_float4(m_OffsetMatrix.Translation().x,
+		m_OffsetMatrix.Translation().y,
+		m_OffsetMatrix.Translation().z, 1.f));
+
+	LightInfo.fRange = 5.f;
+	LightInfo.fSpotPower = 2.f;
+	LightInfo.vAmbient = BLACKDEFAULT;
+	LightInfo.vSpecular = BLACKDEFAULT;
+	LightInfo.vDiffuse = BLACKDEFAULT;
+
+	pGameInstance->Add_Lights((_float)g_iWinSizeX, (_float)g_iWinSizeY, LightInfo);
+
+	ENDINSTANCE;
+
+
  	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
-
-	return S_OK;
-}
-
-HRESULT CWeapon_Player_Wand::Initialize_Level(_uint iCurrentLevelIndex)
-{
-	if (LEVEL_VAULT == iCurrentLevelIndex)
-	{
-		BEGININSTANCE;
-
-		CLight::LIGHTDESC LightInfo;
-		ZEROMEM(&LightInfo);
-		LightInfo.eType = CLight::TYPE_POINT;
-		LightInfo.vPos = _float4(_float4(m_OffsetMatrix.Translation().x,
-			m_OffsetMatrix.Translation().y,
-			m_OffsetMatrix.Translation().z, 1.f));
-
-		LightInfo.fRange = 5.f;
-		LightInfo.fSpotPower = 2.f;
-		LightInfo.vAmbient = BLACKDEFAULT;
-		LightInfo.vSpecular = BLACKDEFAULT;
-		LightInfo.vDiffuse = BLACKDEFAULT;
-
-		m_pLight = pGameInstance->Add_Lights(LightInfo, true);
-
-		ENDINSTANCE;
-	}
 
 	return S_OK;
 }
@@ -149,12 +142,6 @@ void CWeapon_Player_Wand::Do_Lumos(_float fTimeDelta)
 	}
 	if (m_isLightOn && DelayTime >= 0.5f)
 	{
-		if (nullptr == m_pLight)
-		{
-			ENDINSTANCE;
-			return;
-		}
-			
 		CLight::LIGHTDESC LightInfo;
 		ZEROMEM(&LightInfo);
 		CGameObject* Target = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_VAULT, TEXT("Layer_Player"), TEXT("GameObject_Player")));
@@ -166,30 +153,23 @@ void CWeapon_Player_Wand::Do_Lumos(_float fTimeDelta)
 
 		_float3 vPos = Target->Get_Transform()->Get_Position();
 		_float3 vLook = XMVector3Normalize(Target->Get_Transform()->Get_Look()) * 2.f;
-		LightInfo.eType = CLight::TYPE_POINT;
+		LightInfo.eType = CLight::TYPE_LUMOS;
 		LightInfo.vPos = (vPos + vLook + _float3(0.f, 2.5f, 0.f)).TransCoord();
-		_float4 vAt = vPos.TransCoord();
-		LightInfo.vDir = vAt - LightInfo.vPos;
+		LightInfo.vLookAt = vPos.TransCoord();
 		LightInfo.fRange = 17.f;
 		LightInfo.fSpotPower = 2.f;
 		if (AccTime < 1.f)
-			AccTime += fTimeDelta*3.f;
+			AccTime += fTimeDelta * 3.f;
 
 		m_LightIntensity = XMVectorLerp(BLACKDEFAULT, WHITEDEFAULT, AccTime);
 		LightInfo.vAmbient = m_LightIntensity;
 		LightInfo.vSpecular = m_LightIntensity;
 		LightInfo.vDiffuse = m_LightIntensity;
 
-		m_pLight->Set_LightDesc(LightInfo);
+		pGameInstance->Set_Light(CLight::TYPE_LUMOS, (_float)g_iWinSizeX, (_float)g_iWinSizeY, LightInfo);
 	}
 	else if (false == m_isLightOn && DelayTime >= 0.5f)
 	{
-		if (nullptr == m_pLight)
-		{
-			ENDINSTANCE;
-			return;
-		}
-
 		CLight::LIGHTDESC LightInfo;
 		ZEROMEM(&LightInfo);
 
@@ -202,10 +182,9 @@ void CWeapon_Player_Wand::Do_Lumos(_float fTimeDelta)
 
 		_float3 vPos = Target->Get_Transform()->Get_Position();
 		_float3 vLook = XMVector3Normalize(Target->Get_Transform()->Get_Look()) * 2.f;
-		LightInfo.eType = CLight::TYPE_POINT;
+		LightInfo.eType = CLight::TYPE_LUMOS;
 		LightInfo.vPos = (vPos + vLook + _float3(0.f, 2.5f, 0.f)).TransCoord();
-		_float4 vAt = vPos.TransCoord();
-		LightInfo.vDir = vAt - LightInfo.vPos;
+		LightInfo.vLookAt = vPos.TransCoord();
 		LightInfo.fRange = 17.f;
 		LightInfo.fSpotPower = 0.f;
 		if (AccTime < 1.f)
@@ -216,8 +195,7 @@ void CWeapon_Player_Wand::Do_Lumos(_float fTimeDelta)
 		LightInfo.vAmbient = m_LightIntensity;
 		LightInfo.vSpecular = m_LightIntensity;
 		LightInfo.vDiffuse = m_LightIntensity;
-
-		m_pLight->Set_LightDesc(LightInfo);
+		pGameInstance->Set_Light(CLight::TYPE_LUMOS, (_float)g_iWinSizeX, (_float)g_iWinSizeY, LightInfo);
 	}
 
 	ENDINSTANCE;
