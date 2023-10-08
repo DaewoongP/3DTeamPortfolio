@@ -95,6 +95,7 @@ public:
 
 	void Potion_Duration(_float fTimeDelta);
 	virtual void On_Maigc_Throw_Data(void* data) const override;
+	_bool Is_Action_Camera_Playing();
 
 private:
 	CShader*		m_pShader = { nullptr };

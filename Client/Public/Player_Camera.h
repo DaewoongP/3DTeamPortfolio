@@ -49,7 +49,7 @@ public:
 	_float3 Get_CamRightXZ();
 public:
 	void Change_Animation(const wstring& _AnimattionIndex);
-
+	_bool Is_Finish_Animation();
 public:
 	HRESULT Initialize(void* pArg);
 	virtual void Tick(const _float& fTimeDelta);

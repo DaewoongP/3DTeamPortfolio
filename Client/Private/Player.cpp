@@ -514,6 +514,11 @@ void CPlayer::On_Maigc_Throw_Data(void* data) const
 	}
 }
 
+_bool CPlayer::Is_Action_Camera_Playing()
+{
+	return !m_pPlayer_Camera->Is_Finish_Animation();
+}
+
 HRESULT CPlayer::Add_Components()
 {
 	/* Com_Renderer */
@@ -885,6 +890,7 @@ HRESULT CPlayer::Add_Magic()
 		magicInitDesc.fLifeTime = 0.8f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
+
 
 	m_pMagicSlot->Add_Magic_To_Basic_Slot(2, LUMOS);
 	m_pMagicSlot->Add_Magic_To_Basic_Slot(3, FINISHER);
@@ -2234,11 +2240,12 @@ void CPlayer::Finish_Animation()
 
 void CPlayer::Go_Roll()
 {
-	if (m_pStateContext->Is_Current_State(TEXT("Idle")) ||
+	if (true == m_pPlayer_Camera->Is_Finish_Animation() &&
+		(m_pStateContext->Is_Current_State(TEXT("Idle")) ||
 		m_pStateContext->Is_Current_State(TEXT("Move Turn")) ||
 		m_pStateContext->Is_Current_State(TEXT("Move Start")) ||
 		m_pStateContext->Is_Current_State(TEXT("Move Loop")) ||
-		m_pStateContext->Is_Current_State(TEXT("Magic_Cast")))
+		m_pStateContext->Is_Current_State(TEXT("Magic_Cast"))))
 	{
 		m_pStateContext->Set_StateMachine(TEXT("Roll"));
 	}
@@ -2246,11 +2253,12 @@ void CPlayer::Go_Roll()
 
 void CPlayer::Go_Jump()
 {
-	if (m_pStateContext->Is_Current_State(TEXT("Idle")) ||
+	if (true == m_pPlayer_Camera->Is_Finish_Animation() &&
+		(m_pStateContext->Is_Current_State(TEXT("Idle")) ||
 		m_pStateContext->Is_Current_State(TEXT("Move Turn")) ||
 		m_pStateContext->Is_Current_State(TEXT("Move Start")) ||
 		m_pStateContext->Is_Current_State(TEXT("Move Loop")) ||
-		m_pStateContext->Is_Current_State(TEXT("Magic_Cast")))
+		m_pStateContext->Is_Current_State(TEXT("Magic_Cast"))))
 	{
 		m_pStateContext->Set_StateMachine(TEXT("Jump"));
 	}
@@ -2386,12 +2394,13 @@ void CPlayer::Drink_Potion()
 
 void CPlayer::Go_Protego(void* _pArg)
 {
-	if (m_pStateContext->Is_Current_State(TEXT("Idle")) ||
+	if (true == m_pPlayer_Camera->Is_Finish_Animation() &&
+		(m_pStateContext->Is_Current_State(TEXT("Idle")) ||
 		m_pStateContext->Is_Current_State(TEXT("Move Turn")) ||
 		m_pStateContext->Is_Current_State(TEXT("Move Start")) ||
 		m_pStateContext->Is_Current_State(TEXT("Move Loop")) ||
 		m_pStateContext->Is_Current_State(TEXT("Magic_Cast")) ||
-		m_pStateContext->Is_Current_State(TEXT("Protego")))
+		m_pStateContext->Is_Current_State(TEXT("Protego"))))
 	{
 		m_pStateContext->Set_StateMachine(TEXT("Protego"), _pArg);
 	}
@@ -2399,13 +2408,14 @@ void CPlayer::Go_Protego(void* _pArg)
 
 void CPlayer::Go_Hit(void* _pArg)
 {
-	if (m_pStateContext->Is_Current_State(TEXT("Idle")) ||
+	if (true == m_pPlayer_Camera->Is_Finish_Animation() &&
+		(m_pStateContext->Is_Current_State(TEXT("Idle")) ||
 		m_pStateContext->Is_Current_State(TEXT("Move Turn")) ||
 		m_pStateContext->Is_Current_State(TEXT("Move Start")) ||
 		m_pStateContext->Is_Current_State(TEXT("Move Loop")) ||
 		m_pStateContext->Is_Current_State(TEXT("Magic_Cast")) ||
 		m_pStateContext->Is_Current_State(TEXT("Standing")) ||
-		m_pStateContext->Is_Current_State(TEXT("Jump")))
+		m_pStateContext->Is_Current_State(TEXT("Jump"))))
 	{
 		m_pStateContext->Set_StateMachine(TEXT("Hit"), _pArg);
 	}

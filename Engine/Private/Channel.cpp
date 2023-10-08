@@ -216,6 +216,7 @@ void CChannel::Invalidate_TransformationMatrix_Lerp(CModel::BONES& Bones, _float
 		}
 	}
 	//러프시킬 뼈 움직임 코드
+	cout << fLerpTimeAcc << endl;
 	if (fLerpTimeAcc > ANIMATIONLERPTIME)
 		fLerpTimeAcc = ANIMATIONLERPTIME;
 	

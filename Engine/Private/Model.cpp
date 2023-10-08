@@ -260,11 +260,13 @@ void CModel::Play_Animation(_float fTimeDelta, ANIMTYPE eType, CTransform* pTran
 	}
 	else if (m_tAnimationDesc[eType].fAnimChangeTimer >= 0.0)
 	{
-		currentAnimation->Invalidate_TransformationMatrix_Lerp(m_Bones, fTimeDelta, ANIMATIONLERPTIME - m_tAnimationDesc[eType].fAnimChangeTimer, m_iRootBoneIndex, &m_tAnimationDesc[eType].AffectBoneVec);
 		m_tAnimationDesc[eType].fAnimChangeTimer -= fTimeDelta;
+		if (m_tAnimationDesc[eType].fAnimChangeTimer < 0)
+		{
+			m_tAnimationDesc[eType].isAnimChangeLerp = false;
+		}
+		currentAnimation->Invalidate_TransformationMatrix_Lerp(m_Bones, fTimeDelta, ANIMATIONLERPTIME - m_tAnimationDesc[eType].fAnimChangeTimer, m_iRootBoneIndex, &m_tAnimationDesc[eType].AffectBoneVec);
 	}
-	else
-		m_tAnimationDesc[eType].isAnimChangeLerp = false;
 
 	for (auto& pBone : m_Bones)
 	{
