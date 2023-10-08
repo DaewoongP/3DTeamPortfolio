@@ -61,7 +61,7 @@ private: /* For. Component */
 	CTexture* m_pTexture[5] = {};
 	CVIBuffer_UVSphere* m_pBuffer = { nullptr };
 	CParticleSystem* m_pDefaultConeBoom_Particle = { nullptr };
-	//CTexture_Flipbook* m_pFlameBlastFlipbook = { nullptr };
+	CTexture_Flipbook* m_pFlameBlastFlipbook = { nullptr };
 
 	array<CParticleSystem*, 5> m_pBreakParticle = { nullptr };
 

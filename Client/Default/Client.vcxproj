@@ -385,7 +385,6 @@
     <ClCompile Include="..\Private\Accio.cpp" />
     <ClCompile Include="..\Private\Action.cpp" />
     <ClCompile Include="..\Private\Animation_Camera_Model.cpp" />
-    <ClCompile Include="..\private\AshwinderEggs_Item.cpp" />
     <ClCompile Include="..\Private\AshwinderEggs_Item.cpp" />
     <ClCompile Include="..\Private\Bombarda.cpp" />
     <ClCompile Include="..\private\ChineseChompingCabbageItem.cpp" />
