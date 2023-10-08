@@ -204,7 +204,7 @@ public:	/* For.Camera_Manager */
 	//카메라 추가
 	HRESULT Add_Camera(const _tchar* _CameraTag, class CCamera* _pCamera);
 	//카메라 변경
-	HRESULT Set_Camera(const _tchar* _CameraTag);
+	HRESULT Set_Camera(const _tchar* _CameraTag, _float _fLerpTime = 0.0f);
 	//카메라 찾기
 	class CCamera* Find_Camera(const _tchar* _CameraTag);
 	//컷씬 중지
