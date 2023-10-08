@@ -27,7 +27,7 @@ class CMagicBall;
 class CMaximaPotion;
 class CFocusPotion;
 class CEdurusPotion;
-class CInvisiblityPotion;
+class CInvisibilityPotion;
 class CWiggenweldPotion;
 END
 
@@ -110,14 +110,15 @@ private:
 	CPlayer_Information* m_pPlayer_Information = { nullptr };
 
 	CUI_Group_Skill* m_UI_Group_Skill_01 = { nullptr };
+
+	CTool* m_pCurTool = { nullptr };
 	CMaximaPotion* m_pMaximaPotion = { nullptr };
 	CEdurusPotion* m_pEdurusPotion = { nullptr };
 	CFocusPotion*	m_pFocusPotion = { nullptr };
-	CInvisiblityPotion* m_pInvisiblityPotion = { nullptr };
+	CInvisibilityPotion* m_pInvisibilityPotion = { nullptr };
 	CWiggenweldPotion* m_pWiggenweldPotion = { nullptr };
-private:
-	
 
+private:
 	_bool		m_isFixMouse = { false };
 	CStateContext* m_pStateContext = { nullptr };
 	

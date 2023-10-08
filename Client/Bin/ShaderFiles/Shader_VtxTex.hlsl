@@ -23,6 +23,8 @@ bool g_isOnCollision;
 // For Glitter
 float		g_fDissolveAmount; // 0~1°ª
 
+// For Dynamic_Back
+float		g_fAlphaRatio = 1.f;
 
 SamplerState g_Sampler
 {
@@ -181,7 +183,7 @@ float4 PS_MAIN_MINIMAP(PS_IN In) : SV_TARGET0
 float4 PS_MAIN_CURSOR(PS_IN In) : SV_TARGET0
 {
 	float4 vColor = g_Texture.Sample(g_Sampler, In.vTexUV);
-	
+
 	float fCos = cos(g_fRadian);
 	float fSin = sin(g_fRadian);
 
@@ -269,7 +271,7 @@ float4 PS_MAIN_UI_DISSOLVE(PS_IN In) : SV_TARGET0
 
 	float fEdgeThickness = 0.07f;
 
-	vector vRed = float4(0.f, 0.f, 0.0f, 1.0f); 
+	vector vRed = float4(0.f, 0.f, 0.0f, 1.0f);
 	vector vYellow = float4(1.0f, 0.6471f, 0.0f, 1.0f);
 	vector vWhite = float4(1.0f, 0.2706f, 0.0f, 1.0f);
 
@@ -282,6 +284,14 @@ float4 PS_MAIN_UI_DISSOLVE(PS_IN In) : SV_TARGET0
 		float blendFactor = (fDissolve - g_fDissolveAmount) / fEdgeThickness;
 		vColor.rgb = lerp(lerp(vRed.rgb, vYellow.rgb, blendFactor), vWhite.rgb, blendFactor);
 	}
+
+	return vColor;
+}
+
+float4 PS_MAIN_DYNAMIC_BACK(PS_IN In) :SV_TARGET0
+{
+	vector vColor = g_Texture.Sample(LinearSampler, In.vTexUV);
+	vColor.a *= g_fAlphaRatio;
 
 	return vColor;
 }
@@ -429,5 +439,18 @@ technique11 DefaultTechnique
 		HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
 		DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
 		PixelShader = compile ps_5_0 PS_MAIN_UI_DISSOLVE();
+	}
+
+	pass Dynamic_Back
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DSS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
+		HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
+		DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
+		PixelShader = compile ps_5_0 PS_MAIN_DYNAMIC_BACK();
 	}
 }

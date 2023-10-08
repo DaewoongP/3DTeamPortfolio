@@ -645,8 +645,8 @@ void CUI_Window::Select_Object_ID(CGameObject* pGameObject)
 void CUI_Window::Save_Load_Button()
 {	
 	// open Dialog Simple
-	ImGuiFileDialog::Instance()->OpenDialog("UI_Texture", "Choose File", ".uidata", ".png, .dds", "");
-
+	ImGuiFileDialog::Instance()->OpenDialog("UI_Texture", "Choose File", ".uidata,.png,.dds ","../../Resources/GameData/UIData/");
+	//ImGuiFileDialog::Instance()->OpenDialog("CooseLoadFilePtcKey", "Load File", ".ptc", "../../Resources/GameData/ParticleData/");
 	// display
 	if (ImGuiFileDialog::Instance()->Display("UI_Texture"))
 	{

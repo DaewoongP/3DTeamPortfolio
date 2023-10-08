@@ -56,10 +56,8 @@ _bool CUI_Button::Collision_Rect(HWND hWnd, _float2 vPos, _float2 vSize)
 	return isIn;
 }
 
-
 _bool CUI_Button::Click(HWND hWnd, _float2 vPos, _float2 vSize)
 {
-
 	CInput_Device* pInputDevice = CInput_Device::GetInstance();
 	Safe_AddRef(pInputDevice);
 

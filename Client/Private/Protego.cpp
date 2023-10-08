@@ -195,7 +195,7 @@ void CProtego::Hit_Effect(_float3 vPosition)
 	m_pDefaultConeBoom_Particle->Get_Transform()->Set_Position(m_vCollisionPoint);
 	m_pDefaultConeBoom_Particle->Play();
 
-	m_pFlameBlastFlipbook->Play(m_vCollisionPoint);
+	//m_pFlameBlastFlipbook->Play(m_vCollisionPoint);
 	m_isHitEffect = true;
 	m_fHitTimeAcc = 0.f;
 }
@@ -388,7 +388,7 @@ HRESULT CProtego::Reset(MAGICBALLINITDESC& InitDesc)
 	m_isHitEffect = { false };
 	m_fTimeAcc = { 0.f };
 	m_fHitTimeAcc = { 0.f };
-	m_pFlameBlastFlipbook->Get_Transform()->Set_Scale(_float3(1.f, 1.f, 1.f));
+	//m_pFlameBlastFlipbook->Get_Transform()->Set_Scale(_float3(1.f, 1.f, 1.f));
 	m_pDefaultConeBoom_Particle->Disable();
 
 	return S_OK;
@@ -459,7 +459,7 @@ HRESULT CProtego::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pTexture[3]->Bind_ShaderResource(m_pShader, "g_Inky_Smoke_Texture"), E_FAIL);
 	FAILED_CHECK_RETURN(m_pTexture[4]->Bind_ShaderResource(m_pShader, "g_Wisps_2_Texture"), E_FAIL);
 	//FAILED_CHECK_RETURN(m_pTexture[3]->Bind_ShaderResource(m_pShader, "g_Collision_Texture"), E_FAIL);
-	FAILED_CHECK_RETURN(m_pFlameBlastFlipbook->Bind_DiffuseTexture(m_pShader, "g_Collision_Texture"), E_FAIL);
+	//FAILED_CHECK_RETURN(m_pFlameBlastFlipbook->Bind_DiffuseTexture(m_pShader, "g_Collision_Texture"), E_FAIL);
 
 	// RawValues
 	FAILED_CHECK_RETURN(m_pShader->Bind_RawValue("g_vCamPos", pGameInstance->Get_CamPosition(), sizeof(_float4)), E_FAIL);
@@ -469,9 +469,9 @@ HRESULT CProtego::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pShader->Bind_RawValue("g_fTime", &m_fTimeAcc, sizeof(_float)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShader->Bind_RawValue("g_fRimPower", &m_fRimPower, sizeof(_float)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShader->Bind_RawValue("g_vCollisionPoint", &m_vCollisionPoint, sizeof(_float3)), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShader->Bind_RawValue("g_iWidthLength", m_pFlameBlastFlipbook->Get_WidthLengthPtr(), sizeof(_uint)), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShader->Bind_RawValue("g_iHeightLength", m_pFlameBlastFlipbook->Get_HeightLengthPtr(), sizeof(_uint)), E_FAIL);
-	FAILED_CHECK_RETURN(m_pShader->Bind_RawValue("g_iCurIndex", m_pFlameBlastFlipbook->Get_CurIndexPtr(), sizeof(_uint)), E_FAIL);
+	//FAILED_CHECK_RETURN(m_pShader->Bind_RawValue("g_iWidthLength", m_pFlameBlastFlipbook->Get_WidthLengthPtr(), sizeof(_uint)), E_FAIL);
+	//FAILED_CHECK_RETURN(m_pShader->Bind_RawValue("g_iHeightLength", m_pFlameBlastFlipbook->Get_HeightLengthPtr(), sizeof(_uint)), E_FAIL);
+	//FAILED_CHECK_RETURN(m_pShader->Bind_RawValue("g_iCurIndex", m_pFlameBlastFlipbook->Get_CurIndexPtr(), sizeof(_uint)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShader->Bind_RawValue("g_fHitTimeAcc", &m_fHitTimeAcc, sizeof(_float)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShader->Bind_RawValue("g_vSphereWorldPos", &vSphereWorldPos, sizeof(_float3)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShader->Bind_RawValue("g_isHitEffect", &m_isHitEffect, sizeof(_bool)), E_FAIL);

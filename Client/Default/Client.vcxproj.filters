@@ -427,50 +427,17 @@
     <Filter Include="05. Magic\MagicBall\17. Stupefy">
       <UniqueIdentifier>{3889487f-722c-4c11-99ae-a49e505aff2c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\04. UI\UI_Item">
-      <UniqueIdentifier>{00fec493-edb5-4b7e-a84e-cd428648c052}</UniqueIdentifier>
-    </Filter>
     <Filter Include="96. ImGui">
       <UniqueIdentifier>{a50a5e26-6a04-4c0e-a541-6d264c6a12fd}</UniqueIdentifier>
     </Filter>
     <Filter Include="04. Effect\Normal">
       <UniqueIdentifier>{a74d6959-7585-400e-a1ae-d972cc6abd86}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\08. Inventory\PotionTab">
-      <UniqueIdentifier>{bb5f7ed2-3b1a-4f84-9841-e49923a81270}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\09. Item">
       <UniqueIdentifier>{ab9b91ab-d68d-4f81-9267-777bc595a5e8}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\09. Item\02. Ingredient">
       <UniqueIdentifier>{d1c4c5bb-3054-45a2-b861-88bb25724c63}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\09. Item\02. Ingredient\HorklumpJuice">
-      <UniqueIdentifier>{317ed26b-2a5b-4a2b-89f6-42e887793982}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\09. Item\02. Ingredient\AshwinderEggs">
-      <UniqueIdentifier>{e33012ec-8d62-40c4-85e9-f8df38017186}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\09. Item\03. Plant">
-      <UniqueIdentifier>{d6985474-b264-4e9f-a32d-e5cdeaaab077}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\09. Item\03. Plant\ChineseChompingCabbageItem">
-      <UniqueIdentifier>{26e2e61d-8c32-4e1e-869e-f932d2308d43}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\09. Item\99. Interface">
-      <UniqueIdentifier>{9cd20c79-d1dd-4c10-aa3f-aa47c981708a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\09. Item\01. Potion">
-      <UniqueIdentifier>{1d5e3cac-b99b-4bcc-9472-30c063c0fb5e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\09. Item\01. Potion\FocusPotion">
-      <UniqueIdentifier>{7cb5d380-3253-4755-a164-7338fda2ebf8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\09. Item\01. Potion\WiggenweldPotion">
-      <UniqueIdentifier>{c07071fe-c006-4bca-b390-e403b214f1e9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\08. Inventory\PotionTap">
-      <UniqueIdentifier>{bb5f7ed2-3b1a-4f84-9841-e49923a81270}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\04. UI\UI\UI_Potion_Tap">
       <UniqueIdentifier>{36aed02f-50ec-4f84-99e9-0238717d796e}</UniqueIdentifier>
@@ -487,21 +454,6 @@
     <Filter Include="96. ImGui">
       <UniqueIdentifier>{a50a5e26-6a04-4c0e-a541-6d264c6a12fd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\09. Item\01. Potion\EdurusPotion">
-      <UniqueIdentifier>{e0f8e81c-7682-4cf5-a671-009fe0c7b2dc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\09. Item\01. Potion\MaximaPotion">
-      <UniqueIdentifier>{5a4aa143-71df-4884-91e1-ca2caf295348}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\09. Item\01. Potion\Invisibility Potion">
-      <UniqueIdentifier>{e904701a-4d69-4b17-8f05-2bc317be6f15}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\09. Item\ex2.EdurusPotion">
-      <UniqueIdentifier>{e0f8e81c-7682-4cf5-a671-009fe0c7b2dc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\09. Item\ex1.MaximaPotion">
-      <UniqueIdentifier>{5a4aa143-71df-4884-91e1-ca2caf295348}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\02. Enemy\04. Boss">
       <UniqueIdentifier>{0af7f112-5794-49f9-b566-5e0282856103}</UniqueIdentifier>
     </Filter>
@@ -510,9 +462,6 @@
     </Filter>
     <Filter Include="02. GameObject\09. Item\02. Ingredient\HorklumpJuice">
       <UniqueIdentifier>{317ed26b-2a5b-4a2b-89f6-42e887793982}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\04. UI\UI_Item">
-      <UniqueIdentifier>{00fec493-edb5-4b7e-a84e-cd428648c052}</UniqueIdentifier>
     </Filter>
     <Filter Include="96. ImGui">
       <UniqueIdentifier>{a50a5e26-6a04-4c0e-a541-6d264c6a12fd}</UniqueIdentifier>
@@ -531,6 +480,105 @@
     </Filter>
     <Filter Include="02. GameObject\10. Flowmap">
       <UniqueIdentifier>{8d96a00c-986f-458a-b01c-19b091c17877}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Item\02. Ingredient\AshwinderEggs_Item">
+      <UniqueIdentifier>{7e32aa57-41a8-477e-81c1-095fb42e7e6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Item\02. Ingredient\Dugbog_Tongue_Item">
+      <UniqueIdentifier>{f52c08c4-b035-4b2a-94aa-afd2572a5c74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Item\02. Ingredient\Dittany_Leaves_Item">
+      <UniqueIdentifier>{f13b1b1b-ff19-488c-a6ab-ecbc454e0a34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Item\02. Ingredient\Leaping_Toadstool_Caps_Item">
+      <UniqueIdentifier>{6882e52f-bb6c-4bdf-82b4-a7749f3eab92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Item\02. Ingredient\Lacewing_Flies_Item">
+      <UniqueIdentifier>{425b6a55-9f0d-4cc0-894d-2f254aedd0b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Item\02. Ingredient\Knotgrass_Item">
+      <UniqueIdentifier>{10161daa-8b70-47d3-baf8-e674ecd43b3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Item\02. Ingredient\Leech_Juice_Item">
+      <UniqueIdentifier>{4749fd5d-4bcc-489e-9d18-23556b885cf7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Item\02. Ingredient\MallowSweet_Item">
+      <UniqueIdentifier>{24f7e11c-deba-4a87-aabf-3eb75d2c3a8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Item\02. Ingredient\MoonStone_Item">
+      <UniqueIdentifier>{e1d0774c-9abe-4c8e-9fa2-0a36332a24bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Item\02. Ingredient\Spider_Fang_Item">
+      <UniqueIdentifier>{7cd1fe41-5274-4652-bbbd-d57e6bf6e602}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Item\02. Ingredient\Fluxweed_Stem_Item">
+      <UniqueIdentifier>{ec6ca023-d204-421f-b987-e6dd05104f10}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Item\02. Ingredient\Horklump_Juice_Item">
+      <UniqueIdentifier>{cfd8b21e-6777-4f34-895c-61b1742bcb57}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Item\02. Ingredient\Troll_Bogeys_Item">
+      <UniqueIdentifier>{b617e8ac-647b-4517-b567-fbc871646981}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Item\02. Ingredient\Shrivelfig_Item">
+      <UniqueIdentifier>{8b32bd0e-0931-48bb-b464-9347fbdc14a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\04. UI\UI\UI_Farming">
+      <UniqueIdentifier>{4cbef12d-ec21-4d78-b4dd-15a4c545bc3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\04. UI\UI\UI_Dynamic_Back">
+      <UniqueIdentifier>{94884128-bfde-49f0-b76a-4d2f1d79153e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\04. UI\UI\UI Behavior">
+      <UniqueIdentifier>{c8770083-7040-4ffe-848c-04ec093f0dac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\11. Potion">
+      <UniqueIdentifier>{d222bc39-5d68-4a81-b3ee-7248d5f63e62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\11. Potion\EdurusPotion">
+      <UniqueIdentifier>{e0f8e81c-7682-4cf5-a671-009fe0c7b2dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\11. Potion\FocusPotion">
+      <UniqueIdentifier>{7cb5d380-3253-4755-a164-7338fda2ebf8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\11. Potion\MaximaPotion">
+      <UniqueIdentifier>{5a4aa143-71df-4884-91e1-ca2caf295348}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\11. Potion\ThunderBrewPotion">
+      <UniqueIdentifier>{53450692-f201-4b2c-a74b-edc0d08f89e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\11. Potion\WiggenweldPotion">
+      <UniqueIdentifier>{c07071fe-c006-4bca-b390-e403b214f1e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Item\01. Tool">
+      <UniqueIdentifier>{9cd20c79-d1dd-4c10-aa3f-aa47c981708a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Item\01. Tool\EdurusPotion_Item">
+      <UniqueIdentifier>{5c406098-07b5-46fb-9d45-b1311c184ef5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Item\01. Tool\FocusPotion_Item">
+      <UniqueIdentifier>{8d95b445-6949-4451-89ed-bb3e4b04ad31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Item\01. Tool\InvisibilityPotion_Item">
+      <UniqueIdentifier>{99b2c27d-89d3-49de-b6a8-52cf4a5d03cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Item\01. Tool\MaximaPotion_Item">
+      <UniqueIdentifier>{b86b4ae2-6cfd-485b-a56c-04feb5040ba7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Item\01. Tool\ThunderBrewPotion_Item">
+      <UniqueIdentifier>{97d176b2-8213-4c84-936e-eb62c849c5c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Item\01. Tool\WiggenweldPotion_Item">
+      <UniqueIdentifier>{03e8a175-ad44-477d-9e2e-0e367bbba782}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Item\01. Tool\ChineseChompingCabbage_Item">
+      <UniqueIdentifier>{26e2e61d-8c32-4e1e-869e-f932d2308d43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\11. Potion\InvisibilityPotion">
+      <UniqueIdentifier>{e904701a-4d69-4b17-8f05-2bc317be6f15}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\08. Inventory\PotionTap">
+      <UniqueIdentifier>{bb5f7ed2-3b1a-4f84-9841-e49923a81270}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\02. Enemy\05. DarkWizard\00. Male">
       <UniqueIdentifier>{fa4cacae-90c5-46ff-a8c7-e033b6d518a9}</UniqueIdentifier>
@@ -937,7 +985,7 @@
       <Filter>02. GameObject\04. UI\UI_Group</Filter>
     </ClInclude>
     <ClInclude Include="..\public\WiggenweldPotion.h">
-      <Filter>02. GameObject\09. Item\01. Potion\WiggenweldPotion</Filter>
+      <Filter>02. GameObject\11. Potion\WiggenweldPotion</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MPBall.h">
       <Filter>02. GameObject\08. Inventory\Item\MPBall</Filter>
@@ -946,7 +994,7 @@
       <Filter>02. GameObject\03. MapObject\Interactable_Obj\Treasure_Chest</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\FocusPotion.h">
-      <Filter>02. GameObject\09. Item\01. Potion\FocusPotion</Filter>
+      <Filter>02. GameObject\11. Potion\FocusPotion</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Arrestomomentum.h">
       <Filter>05. Magic\MagicBall\09. Arrestomomentum</Filter>
@@ -958,7 +1006,7 @@
       <Filter>05. Magic\MagicBall\11. Accio</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MaximaPotion.h">
-      <Filter>02. GameObject\09. Item\01. Potion\MaximaPotion</Filter>
+      <Filter>02. GameObject\11. Potion\MaximaPotion</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Item.h">
       <Filter>02. GameObject\09. Item</Filter>
@@ -975,10 +1023,7 @@
       <Filter>02. GameObject\01. Player\00. Camera</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ChineseChompingCabbageItem.h">
-      <Filter>02. GameObject\09. Item\03. Plant\ChineseChompingCabbageItem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Potion.h">
-      <Filter>02. GameObject\09. Item\01. Potion</Filter>
+      <Filter>02. GameObject\09. Item\01. Tool\ChineseChompingCabbage_Item</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Ingredient.h">
       <Filter>02. GameObject\09. Item\02. Ingredient</Filter>
@@ -986,14 +1031,8 @@
     <ClInclude Include="..\public\Item.h">
       <Filter>02. GameObject\09. Item</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Tool.h">
-      <Filter>02. GameObject\09. Item\99. Interface</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Plant.h">
-      <Filter>02. GameObject\09. Item\03. Plant</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\PotionTap.h">
-      <Filter>02. GameObject\08. Inventory\PotionTab</Filter>
+      <Filter>02. GameObject\08. Inventory\PotionTap</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_Potion_Tap.h">
       <Filter>02. GameObject\04. UI\UI\UI_Potion_Tap</Filter>
@@ -1014,16 +1053,13 @@
       <Filter>05. Magic\MagicBall\15. Crucio</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\EdurusPotion.h">
-      <Filter>02. GameObject\09. Item\01. Potion\EdurusPotion</Filter>
+      <Filter>02. GameObject\11. Potion\EdurusPotion</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ImGui_Manager.h">
       <Filter>96. ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\InvisiblityPotion.h">
-      <Filter>02. GameObject\09. Item\01. Potion\Invisibility Potion</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\AshwinderEggs_Item.h">
-      <Filter>02. GameObject\09. Item\02. Ingredient\AshwinderEggs</Filter>
+    <ClInclude Include="..\Public\InvisibilityPotion.h">
+      <Filter>02. GameObject\11. Potion\InvisibilityPotion</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ConjuredDragon.h">
       <Filter>02. GameObject\02. Enemy\04. Boss</Filter>
@@ -1051,6 +1087,81 @@
     </ClInclude>
     <ClInclude Include="..\public\FlowMap.h">
       <Filter>02. GameObject\10. Flowmap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ThunderBrewPotion.h">
+      <Filter>02. GameObject\11. Potion\ThunderBrewPotion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\AshwinderEggs_Item.h">
+      <Filter>02. GameObject\09. Item\02. Ingredient\AshwinderEggs_Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Dittany_Leaves_Item.h">
+      <Filter>02. GameObject\09. Item\02. Ingredient\Dittany_Leaves_Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Dugbog_Tongue_Item.h">
+      <Filter>02. GameObject\09. Item\02. Ingredient\Dugbog_Tongue_Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Leaping_Toadstool_Caps_Item.h">
+      <Filter>02. GameObject\09. Item\02. Ingredient\Leaping_Toadstool_Caps_Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Lacewing_Flies_Item.h">
+      <Filter>02. GameObject\09. Item\02. Ingredient\Lacewing_Flies_Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Knotgrass_Item.h">
+      <Filter>02. GameObject\09. Item\02. Ingredient\Knotgrass_Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Horklump_Juice_Item.h">
+      <Filter>02. GameObject\09. Item\02. Ingredient\Horklump_Juice_Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Leech_Juice_Item.h">
+      <Filter>02. GameObject\09. Item\02. Ingredient\Leech_Juice_Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MallowSweet_Item.h">
+      <Filter>02. GameObject\09. Item\02. Ingredient\MallowSweet_Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MoonStone_Item.h">
+      <Filter>02. GameObject\09. Item\02. Ingredient\MoonStone_Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Fluxweed_Stem_Item.h">
+      <Filter>02. GameObject\09. Item\02. Ingredient\Fluxweed_Stem_Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Spider_Fang_Item.h">
+      <Filter>02. GameObject\09. Item\02. Ingredient\Spider_Fang_Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Troll_Bogeys_Item.h">
+      <Filter>02. GameObject\09. Item\02. Ingredient\Troll_Bogeys_Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Shrivelfig_Item.h">
+      <Filter>02. GameObject\09. Item\02. Ingredient\Shrivelfig_Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_Farming.h">
+      <Filter>02. GameObject\04. UI\UI\UI_Farming</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_Dynamic_Back.h">
+      <Filter>02. GameObject\04. UI\UI\UI_Dynamic_Back</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Potion.h">
+      <Filter>02. GameObject\11. Potion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\WiggenweldPotion_Item.h">
+      <Filter>02. GameObject\09. Item\01. Tool\WiggenweldPotion_Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Tool.h">
+      <Filter>02. GameObject\09. Item\01. Tool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ThunderBrewPotion_Item.h">
+      <Filter>02. GameObject\09. Item\01. Tool\ThunderBrewPotion_Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MaximaPotion_Item.h">
+      <Filter>02. GameObject\09. Item\01. Tool\MaximaPotion_Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\InvisibilityPotion_Item.h">
+      <Filter>02. GameObject\09. Item\01. Tool\InvisibilityPotion_Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\FocusPotion_Item.h">
+      <Filter>02. GameObject\09. Item\01. Tool\FocusPotion_Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\EdurusPotion_Item.h">
+      <Filter>02. GameObject\09. Item\01. Tool\EdurusPotion_Item</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\DarkWizard_M.h">
       <Filter>02. GameObject\02. Enemy\05. DarkWizard\00. Male</Filter>
@@ -1421,7 +1532,7 @@
       <Filter>02. GameObject\04. UI\UI_Group</Filter>
     </ClCompile>
     <ClCompile Include="..\private\WiggenweldPotion.cpp">
-      <Filter>02. GameObject\09. Item\01. Potion\WiggenweldPotion</Filter>
+      <Filter>02. GameObject\11. Potion\WiggenweldPotion</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Magic.cpp">
       <Filter>05. Magic</Filter>
@@ -1430,7 +1541,7 @@
       <Filter>02. GameObject\03. MapObject\Interactable_Obj\Treasure_Chest</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\FocusPotion.cpp">
-      <Filter>02. GameObject\09. Item\01. Potion\FocusPotion</Filter>
+      <Filter>02. GameObject\11. Potion\FocusPotion</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Arrestomomentum.cpp">
       <Filter>05. Magic\MagicBall\09. Arrestomomentum</Filter>
@@ -1442,7 +1553,7 @@
       <Filter>05. Magic\MagicBall\11. Accio</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MaximaPotion.cpp">
-      <Filter>02. GameObject\09. Item\01. Potion\MaximaPotion</Filter>
+      <Filter>02. GameObject\11. Potion\MaximaPotion</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Item.cpp">
       <Filter>02. GameObject\09. Item</Filter>
@@ -1462,10 +1573,7 @@
       <Filter>02. GameObject\01. Player\00. Camera</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ChineseChompingCabbageItem.cpp">
-      <Filter>02. GameObject\09. Item\03. Plant\ChineseChompingCabbageItem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Potion.cpp">
-      <Filter>02. GameObject\09. Item\01. Potion</Filter>
+      <Filter>02. GameObject\09. Item\01. Tool\ChineseChompingCabbage_Item</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Ingredient.cpp">
       <Filter>02. GameObject\09. Item\02. Ingredient</Filter>
@@ -1473,11 +1581,8 @@
     <ClCompile Include="..\private\Item.cpp">
       <Filter>02. GameObject\09. Item</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Plant.cpp">
-      <Filter>02. GameObject\09. Item\03. Plant</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\PotionTap.cpp">
-      <Filter>02. GameObject\08. Inventory\PotionTab</Filter>
+      <Filter>02. GameObject\08. Inventory\PotionTap</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_Potion_Tap.cpp">
       <Filter>02. GameObject\04. UI\UI\UI_Potion_Tap</Filter>
@@ -1495,16 +1600,13 @@
       <Filter>05. Magic\MagicBall\15. Crucio</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\EdurusPotion.cpp">
-      <Filter>02. GameObject\09. Item\01. Potion\EdurusPotion</Filter>
+      <Filter>02. GameObject\11. Potion\EdurusPotion</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ImGui_Manager.cpp">
       <Filter>96. ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\InvisiblityPotion.cpp">
-      <Filter>02. GameObject\09. Item\01. Potion\Invisibility Potion</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\AshwinderEggs_Item.cpp">
-      <Filter>02. GameObject\09. Item\02. Ingredient\AshwinderEggs</Filter>
+    <ClCompile Include="..\Private\InvisibilityPotion.cpp">
+      <Filter>02. GameObject\11. Potion\InvisibilityPotion</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\ConjuredDragon.cpp">
       <Filter>02. GameObject\02. Enemy\04. Boss</Filter>
@@ -1532,6 +1634,81 @@
     </ClCompile>
     <ClCompile Include="..\private\FlowMap.cpp">
       <Filter>02. GameObject\10. Flowmap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ThunderBrewPotion.cpp">
+      <Filter>02. GameObject\11. Potion\ThunderBrewPotion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\AshwinderEggs_Item.cpp">
+      <Filter>02. GameObject\09. Item\02. Ingredient\AshwinderEggs_Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Dittany_Leaves_Item.cpp">
+      <Filter>02. GameObject\09. Item\02. Ingredient\Dittany_Leaves_Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Dugbog_Tongue_Item.cpp">
+      <Filter>02. GameObject\09. Item\02. Ingredient\Dugbog_Tongue_Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Leaping_Toadstool_Caps_Item.cpp">
+      <Filter>02. GameObject\09. Item\02. Ingredient\Leaping_Toadstool_Caps_Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Lacewing_Flies_Item.cpp">
+      <Filter>02. GameObject\09. Item\02. Ingredient\Lacewing_Flies_Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Knotgrass_Item.cpp">
+      <Filter>02. GameObject\09. Item\02. Ingredient\Knotgrass_Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Horklump_Juice_Item.cpp">
+      <Filter>02. GameObject\09. Item\02. Ingredient\Horklump_Juice_Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Leech_Juice_Item.cpp">
+      <Filter>02. GameObject\09. Item\02. Ingredient\Leech_Juice_Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MallowSweet_Item.cpp">
+      <Filter>02. GameObject\09. Item\02. Ingredient\MallowSweet_Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MoonStone_Item.cpp">
+      <Filter>02. GameObject\09. Item\02. Ingredient\MoonStone_Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Fluxweed_Stem_Item.cpp">
+      <Filter>02. GameObject\09. Item\02. Ingredient\Fluxweed_Stem_Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Spider_Fang_Item.cpp">
+      <Filter>02. GameObject\09. Item\02. Ingredient\Spider_Fang_Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Troll_Bogeys_Item.cpp">
+      <Filter>02. GameObject\09. Item\02. Ingredient\Troll_Bogeys_Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Shrivelfig_Item.cpp">
+      <Filter>02. GameObject\09. Item\02. Ingredient\Shrivelfig_Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_Farming.cpp">
+      <Filter>02. GameObject\04. UI\UI\UI_Farming</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_Dynamic_Back.cpp">
+      <Filter>02. GameObject\04. UI\UI\UI_Dynamic_Back</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Potion.cpp">
+      <Filter>02. GameObject\11. Potion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\WiggenweldPotion_Item.cpp">
+      <Filter>02. GameObject\09. Item\01. Tool\WiggenweldPotion_Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Tool.cpp">
+      <Filter>02. GameObject\09. Item\01. Tool</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ThunderBrewPotion_Item.cpp">
+      <Filter>02. GameObject\09. Item\01. Tool\ThunderBrewPotion_Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MaximaPotion_Item.cpp">
+      <Filter>02. GameObject\09. Item\01. Tool\MaximaPotion_Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\InvisibilityPotion_Item.cpp">
+      <Filter>02. GameObject\09. Item\01. Tool\InvisibilityPotion_Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\FocusPotion_Item.cpp">
+      <Filter>02. GameObject\09. Item\01. Tool\FocusPotion_Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\EdurusPotion_Item.cpp">
+      <Filter>02. GameObject\09. Item\01. Tool\EdurusPotion_Item</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\DarkWizard_M.cpp">
       <Filter>02. GameObject\02. Enemy\05. DarkWizard\00. Male</Filter>
