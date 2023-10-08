@@ -15,6 +15,8 @@ class CPlayer;
 
 class CGull final : public CGameObject
 {
+	// GULL_IDLE1은 먹이를 먹는 모션
+	// GULL_IDLE2는 주변을 두리번 거리는 모션
 	enum GULL_ANIMATION {
 		GULL_ALERT, GULL_FLY, GULL_IDLE1, GULL_IDLE2,
 		GULL_START_FLY, GULL_START_FLY_REVERSE, GULL_END
@@ -59,12 +61,14 @@ private:
 private:
 	MAPOBJECTDESC	m_ObjectDesc;
 	GULL_ANIMATION  m_GullAnimIndex = { GULL_END };
+	GULL_ANIMATION  m_PreGullAnimIndex = { m_GullAnimIndex }; // 이전 애니메이션 인덱스
 
 private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
 	HRESULT SetUp_ShadowShaderResources();
 	void	Check_MinMaxPoint(_float3 vPoint);
+	void	Check_Dist_From_Player(_float fTimeDelta);
 
 public:
 	static CGull* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -413,7 +413,11 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath, LEVELID 
 
 		wstring szDirectoryPath = modelPath;
 		modelPath += modelName;
-		modelPath += TEXT(".dat");
+
+		if(0 == lstrcmp(modelName.c_str(), TEXT("Anim_Gull")))
+			modelPath += TEXT(".gcm");
+		else
+			modelPath += TEXT(".dat");
 
 		// 비교해야되는 문자열
 		wstring wsTreasureChestName(TEXT("Anim_TreasureChest"));
@@ -423,7 +427,7 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath, LEVELID 
 		wstring wsLeech(TEXT("Anim_Leech"));
 		wstring wsGull(TEXT("Anim_Gull"));
 
-		// 보물상자
+		// Anim이 있는 맵 오브젝트
 		if (0 == lstrcmp(modelName.c_str(), wsTreasureChestName.c_str()) ||
 			0 == lstrcmp(modelName.c_str(), wsAshwinderEggs.c_str()) ||
 			0 == lstrcmp(modelName.c_str(), wsHorklump.c_str()) ||

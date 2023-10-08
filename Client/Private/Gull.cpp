@@ -36,6 +36,8 @@ HRESULT CGull::Initialize(void* pArg)
 	m_ObjectDesc = *reinterpret_cast<MAPOBJECTDESC*>(pArg);
 	m_pTransform->Set_WorldMatrix(m_ObjectDesc.WorldMatrix);
 
+	m_pTransform->Set_Speed(-5.f);
+
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
@@ -53,20 +55,9 @@ HRESULT CGull::Initialize_Level(_uint iCurrentLevelIndex)
 		return E_FAIL;
 	}
 
-	// 모든 애니메이션 Loop 처리
-	for (int i = 0; i < GULL_END; ++i)
-	{
-		m_pModel->Get_Animation(i)->Set_Loop(true);
-	}
+	m_GullAnimIndex = GULL_IDLE2;
 
-	_uint iRandValue = rand() % 2 + 1;
-
-	if (1 == iRandValue)
-		m_GullAnimIndex = GULL_IDLE1;
-	else if(2 == iRandValue)
-		m_GullAnimIndex = GULL_IDLE2;
-
-	m_pModel->Set_CurrentAnimIndex((_uint)m_GullAnimIndex);
+	m_pModel->Change_Animation((_uint)m_GullAnimIndex);
 
 	// 플레이어 찾기
 	BEGININSTANCE;
@@ -88,11 +79,13 @@ void CGull::Tick(_float fTimeDelta)
 		(vPlayerPos.y - vGullPos.y) * (vPlayerPos.y - vGullPos.y) +
 		(vPlayerPos.z - vGullPos.z) * (vPlayerPos.z - vGullPos.z));
 
-	// 거리에 따른 애니메이션 처리
-	if (4.f >= m_fDist_From_Player && nullptr != m_pModel)
+	Check_Dist_From_Player(fTimeDelta); // 플레이어 거리에 따른 애니메이션 변경
+
+	// 애니메이션이 변경되면 그때 애니메이션 삽입
+	if (m_PreGullAnimIndex != m_GullAnimIndex)
 	{
-		m_GullAnimIndex = GULL_ALERT;
-		m_pModel->Set_CurrentAnimIndex((_uint)m_GullAnimIndex);
+		m_PreGullAnimIndex = m_GullAnimIndex;
+		m_pModel->Change_Animation(m_GullAnimIndex);
 	}
 
 	if (nullptr != m_pModel)
@@ -244,6 +237,50 @@ void CGull::Check_MinMaxPoint(_float3 vPoint)
 		m_vMaxPoint.y = vPoint.y;
 	if (m_vMaxPoint.z < vPoint.z)
 		m_vMaxPoint.z = vPoint.z;
+}
+
+void CGull::Check_Dist_From_Player(_float fTimeDelta)
+{
+	if (nullptr == m_pModel)
+		return;
+
+	// 비행 시작과 관련된 상태일 경우
+	if (GULL_START_FLY == m_GullAnimIndex ||
+		GULL_START_FLY_REVERSE == m_GullAnimIndex)
+	{
+		// 해당 애니메이션이 끝나면 바꿔버림
+		if (true == m_pModel->Is_Finish_Animation())
+		{
+			m_GullAnimIndex = GULL_FLY;
+		}
+		return;
+	}
+
+	// 비행 중일 경우
+	if (GULL_FLY == m_GullAnimIndex)
+	{
+		m_pTransform->Go_Straight(fTimeDelta);
+		return;
+	}
+
+	// 거리에 따른 애니메이션 처리
+	// 일정 거리로 다가오면 경계
+	if (5.f >= m_fDist_From_Player && 4.f < m_fDist_From_Player)
+	{
+		m_GullAnimIndex = GULL_ALERT;
+	}
+
+	// 경계에서 더 다가오면 날아감
+	else if (4.f >= m_fDist_From_Player)
+	{
+		m_GullAnimIndex = GULL_START_FLY;
+	}
+
+	// 평상시
+	else
+	{
+		m_GullAnimIndex = GULL_IDLE2;
+	}
 }
 
 CGull* CGull::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
