@@ -169,7 +169,11 @@ void CGatherer::Late_Tick(_float fTimeDelta)
 
 	if (nullptr != m_pRenderer)
 	{
-		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+		// 후클럼프 모델일 경우 다른 Renderer에 넣어준다.
+		if (m_GatheringType == CGatherer::HORKLUMP)
+			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_GLOW, this);
+		else
+			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
 	}
 
