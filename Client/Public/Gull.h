@@ -57,6 +57,7 @@ private:
 	_float3			m_vMinPoint, m_vMaxPoint, m_vCenterPoint;
 	_float			m_fRadius = { 0.f };
 	_float			m_fDist_From_Player = { 0.f }; // 갈매기와 플레이어와의 거리
+	_float			m_fDeadTime = { 0.f }; // 갈매기 죽는 시간
 
 private:
 	MAPOBJECTDESC	m_ObjectDesc;

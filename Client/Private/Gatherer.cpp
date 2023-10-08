@@ -86,6 +86,7 @@ HRESULT CGatherer::Initialize_Level(_uint iCurrentLevelIndex)
 	// 채집물 애니메이션이 공통적으로 0번이 뽑히는 모션임
 	// 1번이 IDLE이라고 생각할 수 있음
 	m_pModel->Set_CurrentAnimIndex(1);
+	m_pModel->Get_Animation(1)->Set_Loop(true);
 
 	// 플레이어 찾기
 	BEGININSTANCE;

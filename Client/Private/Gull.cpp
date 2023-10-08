@@ -36,7 +36,7 @@ HRESULT CGull::Initialize(void* pArg)
 	m_ObjectDesc = *reinterpret_cast<MAPOBJECTDESC*>(pArg);
 	m_pTransform->Set_WorldMatrix(m_ObjectDesc.WorldMatrix);
 
-	m_pTransform->Set_Speed(-5.f);
+	m_pTransform->Set_Speed(-7.5f);
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
@@ -245,8 +245,7 @@ void CGull::Check_Dist_From_Player(_float fTimeDelta)
 		return;
 
 	// 비행 시작과 관련된 상태일 경우
-	if (GULL_START_FLY == m_GullAnimIndex ||
-		GULL_START_FLY_REVERSE == m_GullAnimIndex)
+	if (GULL_START_FLY == m_GullAnimIndex)
 	{
 		// 해당 애니메이션이 끝나면 바꿔버림
 		if (true == m_pModel->Is_Finish_Animation())
@@ -260,6 +259,14 @@ void CGull::Check_Dist_From_Player(_float fTimeDelta)
 	if (GULL_FLY == m_GullAnimIndex)
 	{
 		m_pTransform->Go_Straight(fTimeDelta);
+		m_fDeadTime += fTimeDelta;
+
+		// 일정 시간이 지나면 사망처리
+		if (10.f <= m_fDeadTime)
+		{
+			Set_ObjEvent(OBJ_DEAD);
+		}			
+
 		return;
 	}
 
