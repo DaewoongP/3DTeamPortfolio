@@ -29,6 +29,7 @@ class CFocusPotion;
 class CEdurusPotion;
 class CInvisibilityPotion;
 class CWiggenweldPotion;
+class CTool;
 END
 
 BEGIN(Client)

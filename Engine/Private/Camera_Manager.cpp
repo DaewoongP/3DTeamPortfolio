@@ -846,6 +846,8 @@ void CCamera_Manager::Lerp_For_Set_Camera(_float _TimeDelta)
 		return;
 	}
 
+	m_pPipeLine->Tick();
+
 	//감소
 	m_fSetCameraLerpTimeAcc -= _TimeDelta;
 
