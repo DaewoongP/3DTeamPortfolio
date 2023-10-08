@@ -102,9 +102,13 @@ void CPotion_Station::Tick(_float fTimeDelta)
 		cout << "캐릭터를 조종 못하게했어요." << '\n';
 		cout << "플레이어가 스르륵 사라져요" << '\n';
 
-		pGameInstance->Set_Camera(TEXT("Potion_Station_Camera"));
+		pGameInstance->Set_Camera(TEXT("Potion_Station_Camera"),5.0f);
 	}
+	if (pGameInstance->Get_DIKeyState(DIK_J, CInput_Device::KEY_DOWN))
+	{
+		pGameInstance->Set_Camera(TEXT("Player_Camera"),0.0f);
 
+	}
 
 
 	Safe_Release(pGameInstance);

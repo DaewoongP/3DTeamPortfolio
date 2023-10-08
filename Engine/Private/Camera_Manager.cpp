@@ -241,11 +241,11 @@ HRESULT CCamera_Manager::Set_Camera(const _tchar* _CameraTag, _float _fLerpTime)
 	//시간이 있다면 러프를 하겠다.
 	if (0.0f != _fLerpTime)
 	{
-		m_fSetCameraLerpTime = 0.0f;
-		m_fSetCameraLerpTimeAcc = 0.0f;
+		m_fSetCameraLerpTime = _fLerpTime;
+		m_fSetCameraLerpTimeAcc = _fLerpTime;
 
-		m_vPreviousEye = m_pPipeLine->Get_TransformMatrix(CPipeLine::D3DTS_VIEW)->Translation();
-		m_vPreviousAt = m_vPreviousEye + m_pPipeLine->Get_TransformMatrix(CPipeLine::D3DTS_VIEW)->Look();
+		m_vPreviousEye = m_pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_VIEW)->Translation();
+		m_vPreviousAt = m_vPreviousEye + m_pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_VIEW)->Look();
 	}
 
 	return S_OK;
@@ -858,8 +858,8 @@ void CCamera_Manager::Lerp_For_Set_Camera(_float _TimeDelta)
 	// 1 ~ 0
 	_float fRatio = m_fSetCameraLerpTimeAcc / m_fSetCameraLerpTime;
 
-	_float3 vEye = m_pPipeLine->Get_TransformMatrix(CPipeLine::D3DTS_VIEW)->Translation();
-	_float3 vAt  = vEye + m_pPipeLine->Get_TransformMatrix(CPipeLine::D3DTS_VIEW)->Look();
+	_float3 vEye = m_pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_VIEW)->Translation();
+	_float3 vAt  = vEye + m_pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_VIEW)->Look();
 
 	vEye = XMVectorLerp(vEye, m_vPreviousEye, fRatio);
 	vAt = XMVectorLerp(vAt, m_vPreviousAt, fRatio);

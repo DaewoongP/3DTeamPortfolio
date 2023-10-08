@@ -745,11 +745,11 @@ HRESULT CGameInstance::Add_Camera(const _tchar* _CameraTag, CCamera* _pCamera)
 	return m_pCamera_Manager->Add_Camera(_CameraTag, _pCamera);
 }
 
-HRESULT CGameInstance::Set_Camera(const _tchar* _CameraTag)
+HRESULT CGameInstance::Set_Camera(const _tchar* _CameraTag, _float _fLerpTime)
 {
 	NULL_CHECK_RETURN_MSG(m_pCamera_Manager, E_FAIL, TEXT("Camera NULL"));
 
-	return m_pCamera_Manager->Set_Camera(_CameraTag);
+	return m_pCamera_Manager->Set_Camera(_CameraTag, _fLerpTime);
 }
 
 CCamera* CGameInstance::Find_Camera(const _tchar* _CameraTag)
