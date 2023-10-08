@@ -151,8 +151,6 @@ void CProtego::Tick(_float fTimeDelta)
 void CProtego::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
-	m_pRigidBody->Enable_Collision("Magic_Ball", this);
-
 	m_pDefaultConeBoom_Particle->Late_Tick(fTimeDelta);
 	if (nullptr != m_pRenderer)
 	{
@@ -293,18 +291,38 @@ void CProtego::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		if (pDesc == nullptr)
 			return;
 
-		if (m_CollisionDesc.eMagicType == pDesc->eMagicType)
+		if (m_CollisionDesc.eMagicType == pDesc->eMagicType||
+			m_CollisionDesc.eMagicType == CMagic::MAGIC_TYPE::MT_ALL)
 		{
 			eAttackType = CEnemy::ATTACK_BREAK;
-			pTransform = m_CollisionDesc.pTransform;
+			pTransform = pDesc->pTransform;
 			Safe_AddRef(pTransform);
 		}
 		else 
 		{
 			eAttackType = CEnemy::ATTACK_LIGHT;
-			pTransform = m_CollisionDesc.pTransform;
+			pTransform = pDesc->pTransform;
+			_float3 vStart = CollisionEventDesc.pOtherTransform->Get_Position();
+			//가상의 축과
+			_float3 vAxis = _float3(0, 1, 0);
+			//볼이 플레이어를 향한 방향벡터를
+			_float3 vDir = m_pTransform->Get_Position() - CollisionEventDesc.pOtherTransform->Get_Position();
+			vDir.Normalize();
+			vAxis.Normalize();
+			//내적한담에
+			_float fDot = XMVectorGetX(XMVector3Dot(vAxis, vDir));
+			//각도를 구하고
+			_float fRadian = acosf(fDot);
+			//random으로 (-45,45)만큼 돌리고
+			fRadian += XMConvertToRadians(rand() % 90 - 45);
+			//그 방향으로 30만큼 이동한 지점의 점을 구하고
+			_float4x4 RotationMatrix = XMMatrixRotationY(fRadian);
+			_float3 vPos = XMVector3TransformNormal(vDir, RotationMatrix);
+			//그걸 목표점으로 삼는다.
+			_float3 vEnd = vPos * 30.f + vStart;
+			dynamic_cast<CMagicBall*>(pTransform->Get_Owner())->Re_Set_StartEndLerpAcc(vStart, vEnd);
+
 			Safe_AddRef(pTransform);
-			//도탄 추가해줘야함.
 		}
 	}
 
@@ -316,6 +334,7 @@ void CProtego::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 	{
 		Break_Effect(m_CurrentTargetMatrix.Translation());
 	}
+
 	Hit_Effect(CollisionEventDesc.pOtherTransform->Get_Position());
 
 	/*if (!lstrcmp(m_pTarget->Get_Tag(), TEXT("GameObject_Player")))
@@ -374,6 +393,11 @@ HRESULT CProtego::Reset(MAGICBALLINITDESC& InitDesc)
 		break;
 	}
 	
+	for (auto pParticle : m_pBreakParticle)
+	{
+		pParticle->Disable();
+	}
+
 	for (int i = 0; i < 3; i++)
 	{
 		m_pBreakParticle[i]->Get_ColorOverLifetimeModuleRef().vStartColor = m_vColor1*0.8f;
@@ -498,7 +522,7 @@ HRESULT CProtego::Add_RigidBody()
 	RigidBodyDesc.isGravity = false;
 	RigidBodyDesc.pOwnerObject = this;
 	RigidBodyDesc.eThisCollsion = COL_SHIELD;
-	RigidBodyDesc.eCollisionFlag = COL_ENEMY_ATTACK;
+	RigidBodyDesc.eCollisionFlag = m_eCollisionFlag;
 	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Magic_Ball");
 
 	/* Com_RigidBody */

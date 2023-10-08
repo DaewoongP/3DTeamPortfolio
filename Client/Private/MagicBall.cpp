@@ -41,7 +41,7 @@ HRESULT CMagicBall::Initialize(void* pArg)
 	}
 
 	m_pTransform->Set_RigidBody(m_pRigidBody);
-
+	m_pRigidBody->Disable_Collision("Magic_Ball");
 	return S_OK;
 }
 
@@ -453,6 +453,16 @@ void CMagicBall::Tick_MagicBall_State(_float fTimeDelta)
 void CMagicBall::Set_StartPosition()
 {
 	m_vStartPosition = m_CurrentWeaponMatrix.Translation();
+}
+
+void CMagicBall::Re_Set_StartEndLerpAcc(_float3 vStart, _float3 vEnd)
+{
+	m_vStartPosition = vStart;
+	m_vEndPosition = vEnd;
+	if(m_TrailVec[EFFECT_STATE_MAIN].size()>0)
+		Ready_SplineSpinMove(m_TrailVec[EFFECT_STATE_MAIN][0],_float2(0.2f, 0.2f),0.5f);
+	Set_MagicBallState_quiet(MAGICBALL_STATE_CASTMAGIC);
+	m_fLerpAcc = 0.f;
 }
 
 HRESULT CMagicBall::Add_Components()
