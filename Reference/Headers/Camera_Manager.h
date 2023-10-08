@@ -103,7 +103,7 @@ public:
 	HRESULT Add_Camera(const _tchar * _CameraTag, class CCamera* _pCamera);
 
 	//카메라 변경
-	HRESULT Set_Camera(const _tchar * _CameraTag);
+	HRESULT Set_Camera(const _tchar * _CameraTag, _float _fLerpTime = 0.0f);
 
 	//카메라 찾기
 	class CCamera* Find_Camera(const _tchar * _CameraTag);
@@ -196,6 +196,12 @@ private:
 	_float m_fShakeSpeed = { 0.0f };
 
 private:
+	_float3 m_vPreviousEye = { _float3() };
+	_float3 m_vPreviousAt = { _float3() };
+	_float m_fSetCameraLerpTime = { 0.0f };
+	_float m_fSetCameraLerpTimeAcc = { 0.0f };
+
+private:
 	//태그로 컷씬을 찾는다.
 	vector<CUTSCENECAMERADESC>* Find_CutScene(const _tchar* _CutSceneTag);
 
@@ -225,6 +231,10 @@ private:
 
 	//쉐이크
 	void Shake_Update(_float _TimeDelta);
+
+
+	//카메라 변경시 러프
+	void Lerp_For_Set_Camera(_float _TimeDelta);
 
 public:
 	virtual void Free() override;
