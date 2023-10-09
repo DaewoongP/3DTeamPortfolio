@@ -252,19 +252,27 @@ void CModel::Play_Animation(_float fTimeDelta, ANIMTYPE eType, CTransform* pTran
 		currentAnimation->Get_Accmulation() &&
 		!currentAnimation->Get_LoopAnim();
 
-	currentAnimation->Invalidate_Frame(fTimeDelta);
+	currentAnimation->Invalidate_Frame(fTimeDelta, m_PivotMatrix,pTransform);
 
 	if (!m_tAnimationDesc[eType].isAnimChangeLerp)
 	{
 		currentAnimation->Invalidate_TransformationMatrix(m_Bones, fTimeDelta, &m_tAnimationDesc[eType].AffectBoneVec);
 	}
-	else if (m_tAnimationDesc[eType].fAnimChangeTimer >= 0.0)
+	else if (m_tAnimationDesc[eType].fAnimChangeTimer >= 0.0) //0보다 크다면?
 	{
-		currentAnimation->Invalidate_TransformationMatrix_Lerp(m_Bones, fTimeDelta, ANIMATIONLERPTIME - m_tAnimationDesc[eType].fAnimChangeTimer, m_iRootBoneIndex, &m_tAnimationDesc[eType].AffectBoneVec);
+		//감소시킴
 		m_tAnimationDesc[eType].fAnimChangeTimer -= fTimeDelta;
+		//0 이하가 돼버렸으면?
+		if (m_tAnimationDesc[eType].fAnimChangeTimer < 0)
+		{
+			m_tAnimationDesc[eType].isAnimChangeLerp = false;
+			currentAnimation->Invalidate_TransformationMatrix(m_Bones, fTimeDelta, &m_tAnimationDesc[eType].AffectBoneVec);
+		}
+		else //0이하가 아니라면? 러프
+		{
+			currentAnimation->Invalidate_TransformationMatrix_Lerp(m_Bones, fTimeDelta, ANIMATIONLERPTIME - m_tAnimationDesc[eType].fAnimChangeTimer, m_iRootBoneIndex, &m_tAnimationDesc[eType].AffectBoneVec);
+		}
 	}
-	else
-		m_tAnimationDesc[eType].isAnimChangeLerp = false;
 
 	for (auto& pBone : m_Bones)
 	{
@@ -1015,6 +1023,19 @@ HRESULT CModel::Convert_Animations_GCM()
 					Animation.Notify->tKeyFrame.push_back(Notify_Frame);
 					break;
 				}
+				case KEYFRAME_GCM::KF_PARTICLE:
+				{
+					PARTICLEFRAME_GCM* Notify_Frame = New PARTICLEFRAME_GCM();
+
+					lstrcpy(Notify_Frame->szName, keyframe.first.data());
+					Notify_Frame->eKeyFrameType = *reinterpret_cast<KEYFRAME_GCM::KEYFRAMETYPE*>(&keyframe.second->eKeyFrameType);
+					Notify_Frame->fTime = keyframe.second->fTime;
+					lstrcpy(Notify_Frame->wszParticleTag, static_cast<PARTICLEFRAME*>(keyframe.second)->wszParticleTag);
+
+					//�������� ä���� ���ο� �����͸� ��Ƽ���̿� �־���.
+					Animation.Notify->tKeyFrame.push_back(Notify_Frame);
+					break;
+				}
 				}
 			}
 
@@ -1352,6 +1373,23 @@ HRESULT CModel::Ready_File_GCM(TYPE eType, const _tchar* pModelFilePath)
 						ReadFile(hFile, &NotifyFrame->fTime, sizeof(_float), &dwByte, nullptr);
 						ReadFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
 						ReadFile(hFile, NotifyFrame->wszSoundTag, dwStrByte, &dwByte, nullptr);
+						if (0 == dwByte)
+						{
+							MSG_BOX("Failed Read String Data");
+							return E_FAIL;
+						}
+						Animation.Notify->tKeyFrame.push_back(NotifyFrame);
+						break;
+					}
+					case KEYFRAME_GCM::KF_PARTICLE:
+					{
+						PARTICLEFRAME_GCM* NotifyFrame = New PARTICLEFRAME_GCM;
+
+						lstrcpy(NotifyFrame->szName, szFrameName);
+						NotifyFrame->eKeyFrameType = *reinterpret_cast<KEYFRAME_GCM::KEYFRAMETYPE*>(&iType);
+						ReadFile(hFile, &NotifyFrame->fTime, sizeof(_float), &dwByte, nullptr);
+						ReadFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
+						ReadFile(hFile, NotifyFrame->wszParticleTag, dwStrByte, &dwByte, nullptr);
 						if (0 == dwByte)
 						{
 							MSG_BOX("Failed Read String Data");
@@ -1837,6 +1875,12 @@ HRESULT CModel::Write_File_GCM(TYPE eType, const _tchar* pModelFilePath)
 						break;
 
 					case KEYFRAME::KF_NOTIFY:
+						break;
+					case KEYFRAME::KF_PARTICLE:
+						dwStrByte = (_ulong)sizeof(_tchar) * (lstrlen(reinterpret_cast<PARTICLEFRAME_GCM*>(Keyframe)->wszParticleTag) + 1);
+						WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
+						WriteFile(hFile, reinterpret_cast<PARTICLEFRAME_GCM*>(Keyframe)->wszParticleTag, dwStrByte, &dwByte, nullptr);
+
 						break;
 					}
 				}

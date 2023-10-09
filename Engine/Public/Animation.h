@@ -74,7 +74,7 @@ public:
 	
 	//주로 겜오브제 이니셜라이즈에서 사용할 키프레임 찾아서 가져오는 함수.
 	KEYFRAME*	Find_NotifyFrame(const _tchar* wszNotifyTag);
-	HRESULT		 Add_NotifyFrame(KEYFRAME_GCM* data);
+	HRESULT		 Add_NotifyFrame(KEYFRAME_GCM* data, CModel::BONES& Bones);
 	void		 Update_KeyFrame_By_Time();
 
 public:
@@ -88,7 +88,7 @@ public:
 	_bool Invalidate_AccTime(_float fTimeDelta); 
 	void Invalidate_TransformationMatrix(CModel::BONES& Bones, _float fTimeDelta, vector<_uint>* boneVec = nullptr);
 	void Invalidate_TransformationMatrix_Lerp(CModel::BONES& Bones, _float fTimeDelta, _float LerpTimeAcc, _uint iRootIndex, vector<_uint>* boneVec = nullptr);
-	void Invalidate_Frame(_float fTimeDelta);
+	void Invalidate_Frame(_float fTimeDelta, _float4x4 PivotMatrix, CTransform* pTransform);
 
 private:
 	_tchar						m_szName[MAX_STR] = TEXT("");

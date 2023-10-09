@@ -47,7 +47,10 @@ void CParticleSystemPool::Play_Particle(const _tchar* szParticleTag, _float3 vWo
 	// Particle_Rock
 	CParticleSystemQueue* pParticleQueue = Find_ParticleQueue(szParticleTag);
 	if (nullptr == pParticleQueue)
+	{
+		Safe_Release(pComponent_Manager);
 		return;
+	}
 
 	_tchar szComponentTag[MAX_PATH] = TEXT("GameObject_");
 	CString_Manager* pString_Manager = CString_Manager::GetInstance();

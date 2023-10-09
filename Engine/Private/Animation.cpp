@@ -73,12 +73,12 @@ KEYFRAME* CAnimation::Find_NotifyFrame(const _tchar* wszNotifyTag)
 	return m_pNotify->Find_Frame(wszNotifyTag);
 }
 
-HRESULT CAnimation::Add_NotifyFrame(KEYFRAME_GCM* data)
+HRESULT CAnimation::Add_NotifyFrame(KEYFRAME_GCM* data, CModel::BONES& Bones)
 {
 	if (m_pNotify == nullptr)
 		return E_FAIL;
 	m_iNumNorify++;
-	return m_pNotify->AddFrame(data);
+	return m_pNotify->AddFrame(data, Bones);
 }
 
 void CAnimation::Update_KeyFrame_By_Time()
@@ -184,7 +184,8 @@ HRESULT CAnimation::Initialize(Engine::ANIMATION_GCM Animation, const CModel::BO
 
 	for (_uint i = 0; i < m_iNumNorify; ++i)
 	{
-		m_pNotify->AddFrame(Animation.Notify->tKeyFrame[i]);
+
+		m_pNotify->AddFrame(Animation.Notify->tKeyFrame[i], Bones);
 	}
 
 	return S_OK;
@@ -273,11 +274,11 @@ void CAnimation::Invalidate_TransformationMatrix_Lerp(CModel::BONES& Bones, _flo
 	}
 }
 
-void CAnimation::Invalidate_Frame(_float fTimeDelta)
+void CAnimation::Invalidate_Frame(_float fTimeDelta, _float4x4 PivotMatrix,CTransform* pTransform)
 {
 	if (m_pNotify != nullptr)
 	{
-		m_pNotify->Invalidate_Frame(m_fTimeAcc, &m_iNotifyCurrentKeyFrame, &m_fTickPerSecond);
+		m_pNotify->Invalidate_Frame(m_fTimeAcc, &m_iNotifyCurrentKeyFrame, &m_fTickPerSecond, pTransform, PivotMatrix);
 	}
 }
 

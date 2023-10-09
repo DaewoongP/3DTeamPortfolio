@@ -31,6 +31,23 @@ HRESULT CAnimation_Window::Initialize(ImVec2 vWindowPos, ImVec2 vWindowSize)
 	sphereDesc.fRadius = 0.1f;
 	sphereDesc.vPosition = _float3(0, 0, 0);
 	m_pCameraPoint->Set_BoundingDesc(&sphereDesc);
+
+	
+	for (int i = 0; i < CModel::ANIM_END; i++)
+	{
+		m_pParticleNotify[i] =
+			dynamic_cast<CCamera_Point*>(
+				pGameInstance->Clone_Component(LEVEL_TOOL,
+					TEXT("Prototype_GameObject_Camera_Point"),
+					&CameraPointDesc));
+
+		CBounding_Sphere::BOUNDINGSPHEREDESC sphereDesc;
+		sphereDesc.fRadius = 0.05f;
+		sphereDesc.vPosition = _float3(0, 0, 0);
+		m_pParticleNotify[i]->Set_BoundingDesc(&sphereDesc);
+	}
+
+	
 	ENDINSTANCE;
 
 	m_WindowFlag = ImGuiWindowFlags_NoResize;
@@ -64,10 +81,10 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 	ImGui::Text("AnimationOffset");
 
 	OffsetVectorSetting(m_pDummyModel);
-
+	ParticlePositionVisualize();
 	ImGui::Separator();
 	ImGui::Text("Notify");
-	Notify_InputFileds(m_szNotifyName, &m_eNotifyKeyFrameType, &m_fNotifyActionTime, &m_fNotifySpeed);
+	Notify_InputFileds(m_szNotifyName, &m_eNotifyKeyFrameType, &m_fNotifyActionTime, &m_fNotifySpeed, m_szNotifyTag);
 
 	ImGui::Separator();
 	ImGui::Text("Root&BoneTree");
@@ -122,7 +139,7 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 			sprintf_s(szUIName, "%s%d", szUIName, ePartCnt);
 			ImGui::SliderFloat(szUIName, m_pDummyModel->Get_Animation(ePartCnt)->Get_Accmulation_Pointer(), 0, m_pDummyModel->Get_Animation(ePartCnt)->Get_Duration());
 			m_pDummyModel->Get_Animation(ePartCnt)->Update_KeyFrame_By_Time();
-			Add_Notify_Button(ePartCnt, m_szNotifyName, m_pDummyModel, &m_eNotifyKeyFrameType, &m_fNotifyActionTime, &m_fNotifySpeed);
+			Add_Notify_Button(ePartCnt, m_szNotifyName, m_pDummyModel, &m_eNotifyKeyFrameType, &m_fNotifyActionTime, &m_fNotifySpeed,m_szNotifyTag);
 
 			Edit_Notify_Button(ePartCnt, m_pDummyModel);
 			Create_Notify_ChildFrame(ePartCnt, m_pDummyModel);
@@ -452,11 +469,11 @@ void CAnimation_Window::Animation_Action_Button(CModel::ANIMTYPE ePartCnt, CMode
 	}
 }
 
-void CAnimation_Window::Notify_InputFileds(_char* szNotifyName, KEYFRAME::KEYFRAMETYPE* eNotifyKeyFrameType, _float* fNotifyActionTime, _float* fNotifySpeed)
+void CAnimation_Window::Notify_InputFileds(_char* szNotifyName, KEYFRAME::KEYFRAMETYPE* eNotifyKeyFrameType, _float* fNotifyActionTime, _float* fNotifySpeed,_char* szNotifyActionTag)
 {
 	_char szUIName[MAX_PATH] = "NotifyName##";
 	ImGui::InputText(szUIName, szNotifyName, 32);
-	const char* items[] = { "Speed","Notify","Sound" };
+	const char* items[] = { "Speed","Notify","Sound","Particle"};
 
 	sprintf_s(szUIName, "%s", "KeyFrameType##");
 	if (ImGui::BeginCombo(szUIName, m_szCurrentItemType))
@@ -480,9 +497,22 @@ void CAnimation_Window::Notify_InputFileds(_char* szNotifyName, KEYFRAME::KEYFRA
 		sprintf_s(szUIName, "%s", "Speed##");
 		ImGui::InputFloat(szUIName, fNotifySpeed);
 	}
+	if (*eNotifyKeyFrameType == KEYFRAME::KEYFRAMETYPE::KF_SOUND||
+		*eNotifyKeyFrameType == KEYFRAME::KEYFRAMETYPE::KF_PARTICLE)
+	{
+		sprintf_s(szUIName, "%s", "ActionTag##");
+		ImGui::InputText(szUIName, szNotifyActionTag,255);
+	}
+	if (*eNotifyKeyFrameType == KEYFRAME::KEYFRAMETYPE::KF_PARTICLE)
+	{
+		sprintf_s(szUIName, "%s", "ParitcleNotify_BindBoneIndex##");
+		ImGui::InputInt(szUIName, &m_iParitcleNotify_BindBoneIndex);
+		sprintf_s(szUIName, "%s", "ParitcleNotify_OffsetMatirx##");
+		ImGui::InputFloat3(szUIName, &m_vParitcleNotify_OffsetPosition.x);
+	}
 }
 
-void CAnimation_Window::Add_Notify_Button(CModel::ANIMTYPE ePartCnt, _char* szNotifyName, CModel* m_pDummyModel, KEYFRAME::KEYFRAMETYPE* eNotifyKeyFrameType, _float* fNotifyActionTime, _float* fNotifySpeed)
+void CAnimation_Window::Add_Notify_Button(CModel::ANIMTYPE ePartCnt, _char* szNotifyName, CModel* m_pDummyModel, KEYFRAME::KEYFRAMETYPE* eNotifyKeyFrameType, _float* fNotifyActionTime, _float* fNotifySpeed,_char* szActionTagName)
 {
 	_char szUIName[MAX_PATH] = "Add_Notify##";
 	sprintf_s(szUIName, "%s%d", szUIName, ePartCnt);
@@ -490,8 +520,6 @@ void CAnimation_Window::Add_Notify_Button(CModel::ANIMTYPE ePartCnt, _char* szNo
 	{
 		_tchar  wszNotifyName[MAX_PATH] = {};
 		CharToWChar(szNotifyName, wszNotifyName);
-
-
 
 		switch (*eNotifyKeyFrameType)
 		{
@@ -502,7 +530,7 @@ void CAnimation_Window::Add_Notify_Button(CModel::ANIMTYPE ePartCnt, _char* szNo
 			NotifyKeyFrameDesc->fTime = *fNotifyActionTime;
 			lstrcpy(NotifyKeyFrameDesc->szName, wszNotifyName);
 			NotifyKeyFrameDesc->fSpeed = *fNotifySpeed;
-			if (FAILED(m_pDummyModel->Get_Animation(ePartCnt)->Add_NotifyFrame(NotifyKeyFrameDesc)))
+			if (FAILED(m_pDummyModel->Get_Animation(ePartCnt)->Add_NotifyFrame(NotifyKeyFrameDesc, *m_pDummyModel->Get_Bone_Vector_Point())))
 			{
 				MSG_BOX("Failed To Add Notify");
 			}
@@ -516,7 +544,7 @@ void CAnimation_Window::Add_Notify_Button(CModel::ANIMTYPE ePartCnt, _char* szNo
 			NotifyKeyFrameDesc->fTime = *fNotifyActionTime;
 			lstrcpy(NotifyKeyFrameDesc->szName, wszNotifyName);
 			//reinterpret_cast<NOTIFYFRAME_GCM*>(&NotifyKeyFrameDesc)->fSpeed;
-			if (FAILED(m_pDummyModel->Get_Animation(ePartCnt)->Add_NotifyFrame(NotifyKeyFrameDesc)))
+			if (FAILED(m_pDummyModel->Get_Animation(ePartCnt)->Add_NotifyFrame(NotifyKeyFrameDesc, *m_pDummyModel->Get_Bone_Vector_Point())))
 			{
 				MSG_BOX("Failed To Add Notify");
 			}
@@ -525,12 +553,36 @@ void CAnimation_Window::Add_Notify_Button(CModel::ANIMTYPE ePartCnt, _char* szNo
 		}
 		case KEYFRAME_GCM::KF_SOUND:
 		{
-			NOTIFYFRAME_GCM* NotifyKeyFrameDesc = new NOTIFYFRAME_GCM{};
+			SOUNDFRAME_GCM* NotifyKeyFrameDesc = new SOUNDFRAME_GCM{};
 			NotifyKeyFrameDesc->eKeyFrameType = *eNotifyKeyFrameType;
 			NotifyKeyFrameDesc->fTime = *fNotifyActionTime;
 			lstrcpy(NotifyKeyFrameDesc->szName, wszNotifyName);
-			//reinterpret_cast<NOTIFYFRAME_GCM*>(&NotifyKeyFrameDesc)->fSpeed;
-			if (FAILED(m_pDummyModel->Get_Animation(ePartCnt)->Add_NotifyFrame(NotifyKeyFrameDesc)))
+			_tchar  wszActionTagName[MAX_PATH] = {};
+			CharToWChar(szActionTagName, wszActionTagName);
+			lstrcpy(NotifyKeyFrameDesc->wszSoundTag, wszActionTagName);
+			
+			if (FAILED(m_pDummyModel->Get_Animation(ePartCnt)->Add_NotifyFrame(NotifyKeyFrameDesc, *m_pDummyModel->Get_Bone_Vector_Point())))
+			{
+				MSG_BOX("Failed To Add Notify");
+			}
+			Safe_Delete(NotifyKeyFrameDesc);
+			break;
+		}
+		case KEYFRAME_GCM::KF_PARTICLE:
+		{
+			PARTICLEFRAME_GCM* NotifyKeyFrameDesc = new PARTICLEFRAME_GCM{};
+			NotifyKeyFrameDesc->eKeyFrameType = *eNotifyKeyFrameType;
+			NotifyKeyFrameDesc->fTime = *fNotifyActionTime;
+			lstrcpy(NotifyKeyFrameDesc->szName, wszNotifyName);
+			_tchar  wszActionTagName[MAX_PATH] = {};
+			CharToWChar(szActionTagName, wszActionTagName);
+			lstrcpy(NotifyKeyFrameDesc->wszParticleTag, wszActionTagName);
+			NotifyKeyFrameDesc->OffsetMatrix = XMMatrixTranslation(
+				m_vParitcleNotify_OffsetPosition.x,
+				m_vParitcleNotify_OffsetPosition.y,
+				m_vParitcleNotify_OffsetPosition.z);
+			NotifyKeyFrameDesc->iBoneIndex = m_iParitcleNotify_BindBoneIndex;
+			if (FAILED(m_pDummyModel->Get_Animation(ePartCnt)->Add_NotifyFrame(NotifyKeyFrameDesc, *m_pDummyModel->Get_Bone_Vector_Point())))
 			{
 				MSG_BOX("Failed To Add Notify");
 			}
@@ -549,7 +601,9 @@ void CAnimation_Window::Edit_Notify_Button(CModel::ANIMTYPE ePartCnt, CModel* m_
 	if (ImGui::Button(szUIName))
 	{
 		CNotify* pNotify = m_pDummyModel->Get_Animation(ePartCnt)->Get_Notify_Point();
-		pNotify->Edit_Frame(m_iSelectedNotifyIndex[ePartCnt], m_eNotifyKeyFrameType, m_fNotifyActionTime, m_fNotifySpeed);
+		//본즈 가져오자.
+		pNotify->Edit_Frame(m_iSelectedNotifyIndex[ePartCnt], m_eNotifyKeyFrameType, m_fNotifyActionTime, m_fNotifySpeed,m_szNotifyTag,
+			m_iParitcleNotify_BindBoneIndex,XMMatrixTranslation(m_vParitcleNotify_OffsetPosition.x, m_vParitcleNotify_OffsetPosition.y, m_vParitcleNotify_OffsetPosition.z), *m_pDummyModel->Get_Bone_Vector_Point());
 	}
 }
 
@@ -630,6 +684,32 @@ void CAnimation_Window::OffsetVectorSetting(CModel* m_pDummyModel)
 	ENDINSTANCE
 }
 
+void CAnimation_Window::ParticlePositionVisualize()
+{
+	for (int i = 0; i < CModel::ANIM_END; i++)
+	{
+		CNotify* pNotify = m_pDummyModel->Get_Animation(m_pDummyModel->Get_CurrentAnimIndex())->Get_Notify_Point();
+		KEYFRAME* pKeyFrame = pNotify->Find_Frame(m_iSelectedNotifyIndex[i]);
+		if (pKeyFrame ==nullptr||
+			pKeyFrame->eKeyFrameType != KEYFRAME::KF_PARTICLE)
+			return;
+		PARTICLEFRAME* pParticleFrame = static_cast<PARTICLEFRAME*>(pKeyFrame);
+		_float3 vPosition = {};
+		if (pParticleFrame->BindBoneMatrix != nullptr)
+		{
+			vPosition = _float4x4(pParticleFrame->OffsetMatrix * (*pParticleFrame->BindBoneMatrix)* m_pDummyModel->Get_PivotFloat4x4() * m_pDummyObject->Get_Transform()->Get_WorldMatrix()).Translation();
+		}
+		if (m_pParticleNotify[i] == nullptr)
+			return;
+
+		_float4 vCombinedPosition = { vPosition.x,vPosition.y,vPosition.z,1 };
+		m_pParticleNotify[i]->Set_Position(vCombinedPosition);
+		BEGININSTANCE
+			m_pParticleNotify[i]->Tick(pGameInstance->Get_QueryTimeDelta(TEXT("MainTimer")));
+		ENDINSTANCE
+	}
+}
+
 void CAnimation_Window::Create_Notify_ChildFrame(CModel::ANIMTYPE ePartCnt, CModel* m_pDummyModel)
 {
 	_char szUIName[MAX_PATH] = "AnimNotifyChildFrame##";
@@ -646,11 +726,30 @@ void CAnimation_Window::Create_Notify_ChildFrame(CModel::ANIMTYPE ePartCnt, CMod
 			WCharToChar(pNotify->Find_Frame_Key(iNotifyCount), szNotifyButtonName);
 			sprintf_s(szNotifyButtonName, "%s##%d%d", szNotifyButtonName, ePartCnt, iNotifyCount);
 			KEYFRAME::KEYFRAMETYPE eNotifyType = pNotify->Find_Frame(iNotifyCount)->eKeyFrameType;
+			
+			ImVec4 vColor = ImVec4(0, 0, 0, 0);
+			_char szTypeText[MAX_PATH] = {};
+			switch (eNotifyType)
+			{
+			case Engine::tagFrame::KF_SPEED:
+				vColor = ImVec4(0.7f, 0.f, 0.f, 1);
+				strcpy_s(szTypeText, "Speed");
+				break;
+			case Engine::tagFrame::KF_NOTIFY:
+				vColor = ImVec4(0.0f, 0.7f, 0.f, 1);
+				strcpy_s(szTypeText, "Notify");
+				break;
+			case Engine::tagFrame::KF_SOUND:
+				vColor = ImVec4(0.0f, 0.f, 0.7f, 1);
+				strcpy_s(szTypeText, "Sound");
+				break;
+			case Engine::tagFrame::KF_PARTICLE:
+				vColor = ImVec4(0.7f, 0.7f, 0.7f, 1);
+				strcpy_s(szTypeText, "Particle");
+				break;
+			}
 
-			if (ImGui::ColorButton("Type",
-				(eNotifyType == KEYFRAME::KF_NOTIFY) ? (ImVec4(0.7f, 0.f, 0.f, 1)) :
-				((eNotifyType == KEYFRAME::KF_SOUND) ? (ImVec4(0.0f, 0.7f, 0.f, 1)) :
-					(ImVec4(0.0f, 0.f, 0.7f, 1)))))
+			if (ImGui::ColorButton("Type",vColor))
 			{
 			}
 			ImGui::SameLine();
@@ -665,12 +764,21 @@ void CAnimation_Window::Create_Notify_ChildFrame(CModel::ANIMTYPE ePartCnt, CMod
 				{
 					m_fNotifySpeed = static_cast<SPEEDFRAME*>(pNotify->Find_Frame(iNotifyCount))->fSpeed;
 				}
+				if (m_eNotifyKeyFrameType == KEYFRAME::KF_SOUND)
+				{
+					WCharToChar(static_cast<SOUNDFRAME*>(pNotify->Find_Frame(iNotifyCount))->wszSoundTag, m_szNotifyTag);
+				}
+				if (m_eNotifyKeyFrameType == KEYFRAME::KF_PARTICLE)
+				{
+					WCharToChar(static_cast<PARTICLEFRAME*>(pNotify->Find_Frame(iNotifyCount))->wszParticleTag, m_szNotifyTag);
+					m_iParitcleNotify_BindBoneIndex = static_cast<PARTICLEFRAME*>(pNotify->Find_Frame(iNotifyCount))->iBoneIndex;
+					m_vParitcleNotify_OffsetPosition = static_cast<PARTICLEFRAME*>(pNotify->Find_Frame(iNotifyCount))->OffsetMatrix.Translation();
+				}
 				m_iSelectedNotifyIndex[ePartCnt] = iNotifyCount;
+
 			}
 			ImGui::SameLine();
-			ImGui::Text((eNotifyType == KEYFRAME::KF_NOTIFY) ? ("Notify") :
-				((eNotifyType == KEYFRAME::KF_SOUND) ? (("Sound")) :
-					(("Speed"))));
+			ImGui::Text(szTypeText);
 
 			_char  szTimeMessage[MAX_PATH] = "Action Time : ";
 			sprintf_s(szTimeMessage, "%s%f", szTimeMessage, pNotify->Find_Frame(iNotifyCount)->fTime);
@@ -682,6 +790,31 @@ void CAnimation_Window::Create_Notify_ChildFrame(CModel::ANIMTYPE ePartCnt, CMod
 				SPEEDFRAME* frame = static_cast<SPEEDFRAME*>(pNotify->Find_Frame(iNotifyCount));
 				sprintf_s(szSpeedMessage, "%s%f", szSpeedMessage, frame->fSpeed);
 				ImGui::SameLine();  ImGui::Text(szSpeedMessage);
+			}
+			else if(eNotifyType == KEYFRAME::KF_PARTICLE)
+			{
+				_char  szSpeedMessage[MAX_PATH] = "Tag : ";
+				PARTICLEFRAME* frame = static_cast<PARTICLEFRAME*>(pNotify->Find_Frame(iNotifyCount));
+				char szActionTag[MAX_PATH] = "";
+				WCharToChar(frame->wszParticleTag,szActionTag);
+				sprintf_s(szSpeedMessage, "%s%s", szSpeedMessage, szActionTag);
+				ImGui::SameLine();  ImGui::Text(szSpeedMessage);
+
+				strcpy_s(szSpeedMessage, "BoneIndex : ");
+				sprintf_s(szSpeedMessage, "%s%d", szSpeedMessage, frame->iBoneIndex);
+				ImGui::SameLine();  ImGui::Text(szSpeedMessage);
+
+				strcpy_s(szSpeedMessage, "Offset : ");
+				sprintf_s(szSpeedMessage, "%s%f%f%f", szSpeedMessage, frame->OffsetMatrix.Translation().x, frame->OffsetMatrix.Translation().y, frame->OffsetMatrix.Translation().z);
+				ImGui::SameLine();  ImGui::Text(szSpeedMessage);			
+			}
+			else if (eNotifyType == KEYFRAME::KF_SOUND)
+			{
+				_char  szSpeedMessage[MAX_PATH] = "Tag : ";
+				SOUNDFRAME* frame = static_cast<SOUNDFRAME*>(pNotify->Find_Frame(iNotifyCount));
+				char szActionTag[MAX_PATH] = "";
+				WCharToChar(frame->wszSoundTag, szActionTag);
+				sprintf_s(szSpeedMessage, "%s%s", szSpeedMessage, szActionTag);				ImGui::SameLine();  ImGui::Text(szSpeedMessage);
 			}
 			ImGui::SameLine();
 			_char szDeleteButtonName[MAX_PATH] = "Delete##";
@@ -707,10 +840,29 @@ void CAnimation_Window::Create_Notify_View(CModel::ANIMTYPE ePartCnt, CModel* m_
 		sprintf_s(szNotifyButtonName, "%s_%d", szNotifyButtonName, iNotifyCount);
 		KEYFRAME::KEYFRAMETYPE eNotifyType = pNotify->Find_Frame(iNotifyCount)->eKeyFrameType;
 
-		if (ImGui::ColorButton("Type",
-			(eNotifyType == KEYFRAME::KF_NOTIFY) ? (ImVec4(0.7f, 0.f, 0.f, 1)) :
-			((eNotifyType == KEYFRAME::KF_SOUND) ? (ImVec4(0.0f, 0.7f, 0.f, 1)) :
-				(ImVec4(0.0f, 0.f, 0.7f, 1)))))
+		ImVec4 vColor = ImVec4(0, 0, 0, 0);
+		_char szTypeText[MAX_PATH] = {};
+		switch (eNotifyType)
+		{
+		case Engine::tagFrame::KF_SPEED:
+			vColor = ImVec4(0.7f, 0.f, 0.f, 1);
+			strcpy_s(szTypeText, "Speed");
+			break;
+		case Engine::tagFrame::KF_NOTIFY:
+			vColor = ImVec4(0.0f, 0.7f, 0.f, 1);
+			strcpy_s(szTypeText, "Notify");
+			break;
+		case Engine::tagFrame::KF_SOUND:
+			vColor = ImVec4(0.0f, 0.f, 0.7f, 1);
+			strcpy_s(szTypeText, "Sound");
+			break;
+		case Engine::tagFrame::KF_PARTICLE:
+			vColor = ImVec4(0.7f, 0.7f, 0.7f, 1);
+			strcpy_s(szTypeText, "Particle");
+			break;
+		}
+
+		if (ImGui::ColorButton("Type", vColor))
 		{
 		}
 		ImGui::SameLine();
@@ -725,12 +877,20 @@ void CAnimation_Window::Create_Notify_View(CModel::ANIMTYPE ePartCnt, CModel* m_
 			{
 				m_fNotifySpeed = static_cast<SPEEDFRAME*>(pNotify->Find_Frame(iNotifyCount))->fSpeed;
 			}
+			else if (eNotifyType == KEYFRAME::KF_PARTICLE)
+			{
+				WCharToChar(static_cast<PARTICLEFRAME*>(pNotify->Find_Frame(iNotifyCount))->wszParticleTag, m_szNotifyName);
+				m_iParitcleNotify_BindBoneIndex = static_cast<PARTICLEFRAME*>(pNotify->Find_Frame(iNotifyCount))->iBoneIndex;
+				m_vParitcleNotify_OffsetPosition = static_cast<PARTICLEFRAME*>(pNotify->Find_Frame(iNotifyCount))->OffsetMatrix.Translation();
+			}
+			else if (eNotifyType == KEYFRAME::KF_SOUND)
+			{
+				WCharToChar(static_cast<SOUNDFRAME*>(pNotify->Find_Frame(iNotifyCount))->wszSoundTag, m_szNotifyName);
+			}
 			m_iSelectedNotifyIndex[ePartCnt] = iNotifyCount;
 		}
 		ImGui::SameLine();
-		ImGui::Text((eNotifyType == KEYFRAME::KF_NOTIFY) ? ("Notify") :
-			((eNotifyType == KEYFRAME::KF_SOUND) ? (("Sound")) :
-				(("Speed"))));
+		ImGui::Text(szTypeText);
 
 		_char  szTimeMessage[MAX_PATH] = "Action Time : ";
 		sprintf_s(szTimeMessage, "%s%f", szTimeMessage, pNotify->Find_Frame(iNotifyCount)->fTime);
@@ -741,6 +901,32 @@ void CAnimation_Window::Create_Notify_View(CModel::ANIMTYPE ePartCnt, CModel* m_
 			_char  szSpeedMessage[MAX_PATH] = "Speed : ";
 			SPEEDFRAME* frame = static_cast<SPEEDFRAME*>(pNotify->Find_Frame(iNotifyCount));
 			sprintf_s(szSpeedMessage, "%s%f", szSpeedMessage, frame->fSpeed);
+			ImGui::SameLine();  ImGui::Text(szSpeedMessage);
+		}
+		if (eNotifyType == KEYFRAME::KF_PARTICLE)
+		{
+			_char  szSpeedMessage[MAX_PATH] = "Tag : ";
+			PARTICLEFRAME* frame = static_cast<PARTICLEFRAME*>(pNotify->Find_Frame(iNotifyCount));
+			_char szParticleTag[MAX_PATH] = "";
+			WCharToChar(frame->wszParticleTag, szParticleTag);
+			sprintf_s(szSpeedMessage, "%s%s", szSpeedMessage, szParticleTag);
+			ImGui::SameLine();  ImGui::Text(szSpeedMessage);
+
+			strcpy_s(szSpeedMessage,"BoneIndex : ");
+			sprintf_s(szSpeedMessage, "%s%d", szSpeedMessage, frame->iBoneIndex);
+			ImGui::SameLine();  ImGui::Text(szSpeedMessage);
+
+			strcpy_s(szSpeedMessage, "Offset : ");
+			sprintf_s(szSpeedMessage, "%s%f%f%f", szSpeedMessage, frame->OffsetMatrix.Translation().x, frame->OffsetMatrix.Translation().y, frame->OffsetMatrix.Translation().z);
+			ImGui::SameLine();  ImGui::Text(szSpeedMessage);
+		}
+		if (eNotifyType == KEYFRAME::KF_SOUND)
+		{
+			_char  szSpeedMessage[MAX_PATH] = "Tag : ";
+			SOUNDFRAME* frame = static_cast<SOUNDFRAME*>(pNotify->Find_Frame(iNotifyCount));
+			_char szSoundTag[MAX_PATH] = "";
+			WCharToChar(frame->wszSoundTag, szSoundTag);
+			sprintf_s(szSpeedMessage, "%s%s", szSpeedMessage, szSoundTag);
 			ImGui::SameLine();  ImGui::Text(szSpeedMessage);
 		}
 		_char szDeleteButtonName[MAX_PATH] = "Delete##";
@@ -798,6 +984,11 @@ CAnimation_Window* CAnimation_Window::Create(ID3D11Device* pDevice, ID3D11Device
 void CAnimation_Window::Free(void)
 {
 	Safe_Release(m_pCameraPoint);
+	for (int i = 0; i < CModel::ANIM_END; i++)
+	{
+		Safe_Release(m_pParticleNotify[i]);
+	}
+	
 	Safe_Release(m_pDummyModel);
 	Safe_Release(m_pDummyObject);
 	__super::Free();

@@ -182,7 +182,7 @@ void CProtego::Find_And_Add_Texture(const _tchar* pPath)
 	ENDINSTANCE;
 }
 
-void CProtego::Hit_Effect(_float3 vPosition)
+_float3 CProtego::Hit_Effect(_float3 vPosition)
 {
 	_float3 vDirection = vPosition - m_pTransform->Get_Position();
 	vDirection.Normalize();
@@ -191,11 +191,12 @@ void CProtego::Hit_Effect(_float3 vPosition)
 	SHAPE_MODULE& shapeModule = m_pDefaultConeBoom_Particle->Get_ShapeModuleRef();
 	shapeModule.Set_ShapeLook(m_pTransform->Get_Position(), vPosition);
 	m_pDefaultConeBoom_Particle->Get_Transform()->Set_Position(m_vCollisionPoint);
-	m_pDefaultConeBoom_Particle->Play();
+	m_pDefaultConeBoom_Particle->Play(m_vCollisionPoint);
 
-	//m_pFlameBlastFlipbook->Play(m_vCollisionPoint);
+	m_pFlameBlastFlipbook->Play(m_vCollisionPoint);
 	m_isHitEffect = true;
 	m_fHitTimeAcc = 0.f;
+	return m_vCollisionPoint;
 }
 
 void CProtego::Break_Effect(_float3 vPosition)
@@ -273,69 +274,57 @@ void CProtego::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
 	wstring wstrCollisionTag = CollisionEventDesc.pOtherCollisionTag;
-	
+
 	if (wstring::npos != wstrCollisionTag.find(TEXT("Attack")) ||
 		wstring::npos != wstrCollisionTag.find(TEXT("Enemy_Body")))
 	{
 		CEnemy::COLLISIONREQUESTDESC* pDesc = static_cast<CEnemy::COLLISIONREQUESTDESC*>(CollisionEventDesc.pArg);
-		if (pDesc == nullptr)
+		if (pDesc == nullptr|| CEnemy::ATTACK_NONE == eAttackType)
 			return;
+
 		eAttackType = pDesc->eType;
 		pTransform = pDesc->pEnemyTransform;
+		Hit_Effect(CollisionEventDesc.pOtherTransform->Get_Position());
 		Safe_AddRef(pTransform);
 	}
-
-	if (wstring::npos != wstrCollisionTag.find(TEXT("Magic_Ball")))
+	else if (wstring::npos != wstrCollisionTag.find(TEXT("Magic_Ball")))
 	{
 		COLLSIONREQUESTDESC* pDesc = static_cast<COLLSIONREQUESTDESC*>(CollisionEventDesc.pArg);
 		if (pDesc == nullptr)
 			return;
 
 		if (m_CollisionDesc.eMagicType == pDesc->eMagicType||
-			m_CollisionDesc.eMagicType == CMagic::MAGIC_TYPE::MT_ALL)
+			pDesc->eMagicType == CMagic::MAGIC_TYPE::MT_ALL)
 		{
 			eAttackType = CEnemy::ATTACK_BREAK;
 			pTransform = pDesc->pTransform;
+			Break_Effect(m_CurrentTargetMatrix.Translation());
 			Safe_AddRef(pTransform);
 		}
 		else 
 		{
 			eAttackType = CEnemy::ATTACK_LIGHT;
 			pTransform = pDesc->pTransform;
-			_float3 vStart = CollisionEventDesc.pOtherTransform->Get_Position();
+			Safe_AddRef(pTransform);
 			//가상의 축과
 			_float3 vAxis = _float3(0, 1, 0);
 			//볼이 플레이어를 향한 방향벡터를
-			_float3 vDir = m_pTransform->Get_Position() - CollisionEventDesc.pOtherTransform->Get_Position();
+			_float3 vDir = dynamic_cast<CMagicBall*>(pTransform->Get_Owner())->Get_MoveDir();
 			vDir.Normalize();
 			vAxis.Normalize();
-			//내적한담에
-			_float fDot = XMVectorGetX(XMVector3Dot(vAxis, vDir));
-			//각도를 구하고
-			_float fRadian = acosf(fDot);
+			vDir *= -1;
+			//원래 dir을 이용해 충돌지점을 구한다.
+			_float3 vCollisionPosition = m_pTransform->Get_Position() + vDir * m_fScale * 0.5f;
 			//random으로 (-45,45)만큼 돌리고
-			fRadian += XMConvertToRadians(rand() % 90 - 45);
+			_float fRadian = XMConvertToRadians(rand() % 90 - 45);
 			//그 방향으로 30만큼 이동한 지점의 점을 구하고
 			_float4x4 RotationMatrix = XMMatrixRotationY(fRadian);
-			_float3 vPos = XMVector3TransformNormal(vDir, RotationMatrix);
-			//그걸 목표점으로 삼는다.
-			_float3 vEnd = vPos * 30.f + vStart;
-			dynamic_cast<CMagicBall*>(pTransform->Get_Owner())->Re_Set_StartEndLerpAcc(vStart, vEnd);
-
-			Safe_AddRef(pTransform);
+			
+			vDir = XMVector3TransformNormal(vDir, RotationMatrix);
+			dynamic_cast<CMagicBall*>(pTransform->Get_Owner())->Re_Set_StartEndLerpAcc(vCollisionPosition, vDir);
+			Hit_Effect(vCollisionPosition);
 		}
 	}
-
-	if (CEnemy::ATTACK_NONE == eAttackType)
-	{
-		return;
-	}
-	else if (CEnemy::ATTACK_BREAK <= eAttackType) 
-	{
-		Break_Effect(m_CurrentTargetMatrix.Translation());
-	}
-
-	Hit_Effect(CollisionEventDesc.pOtherTransform->Get_Position());
 
 	/*if (!lstrcmp(m_pTarget->Get_Tag(), TEXT("GameObject_Player")))
 	{
@@ -412,7 +401,7 @@ HRESULT CProtego::Reset(MAGICBALLINITDESC& InitDesc)
 	m_isHitEffect = { false };
 	m_fTimeAcc = { 0.f };
 	m_fHitTimeAcc = { 0.f };
-	//m_pFlameBlastFlipbook->Get_Transform()->Set_Scale(_float3(1.f, 1.f, 1.f));
+	m_pFlameBlastFlipbook->Get_Transform()->Set_Scale(_float3(1.f, 1.f, 1.f));
 	m_pDefaultConeBoom_Particle->Disable();
 
 	return S_OK;
@@ -482,8 +471,8 @@ HRESULT CProtego::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pTexture[2]->Bind_ShaderResource(m_pShader, "g_RibbonOffset_Texture"), E_FAIL);
 	FAILED_CHECK_RETURN(m_pTexture[3]->Bind_ShaderResource(m_pShader, "g_Inky_Smoke_Texture"), E_FAIL);
 	FAILED_CHECK_RETURN(m_pTexture[4]->Bind_ShaderResource(m_pShader, "g_Wisps_2_Texture"), E_FAIL);
-	//FAILED_CHECK_RETURN(m_pTexture[3]->Bind_ShaderResource(m_pShader, "g_Collision_Texture"), E_FAIL);
-	//FAILED_CHECK_RETURN(m_pFlameBlastFlipbook->Bind_DiffuseTexture(m_pShader, "g_Collision_Texture"), E_FAIL);
+	FAILED_CHECK_RETURN(m_pTexture[3]->Bind_ShaderResource(m_pShader, "g_Collision_Texture"), E_FAIL);
+	FAILED_CHECK_RETURN(m_pFlameBlastFlipbook->Bind_DiffuseTexture(m_pShader, "g_Collision_Texture"), E_FAIL);
 
 	// RawValues
 	FAILED_CHECK_RETURN(m_pShader->Bind_RawValue("g_vCamPos", pGameInstance->Get_CamPosition(), sizeof(_float4)), E_FAIL);
@@ -493,9 +482,9 @@ HRESULT CProtego::SetUp_ShaderResources()
 	FAILED_CHECK_RETURN(m_pShader->Bind_RawValue("g_fTime", &m_fTimeAcc, sizeof(_float)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShader->Bind_RawValue("g_fRimPower", &m_fRimPower, sizeof(_float)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShader->Bind_RawValue("g_vCollisionPoint", &m_vCollisionPoint, sizeof(_float3)), E_FAIL);
-	//FAILED_CHECK_RETURN(m_pShader->Bind_RawValue("g_iWidthLength", m_pFlameBlastFlipbook->Get_WidthLengthPtr(), sizeof(_uint)), E_FAIL);
-	//FAILED_CHECK_RETURN(m_pShader->Bind_RawValue("g_iHeightLength", m_pFlameBlastFlipbook->Get_HeightLengthPtr(), sizeof(_uint)), E_FAIL);
-	//FAILED_CHECK_RETURN(m_pShader->Bind_RawValue("g_iCurIndex", m_pFlameBlastFlipbook->Get_CurIndexPtr(), sizeof(_uint)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShader->Bind_RawValue("g_iWidthLength", m_pFlameBlastFlipbook->Get_WidthLengthPtr(), sizeof(_uint)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShader->Bind_RawValue("g_iHeightLength", m_pFlameBlastFlipbook->Get_HeightLengthPtr(), sizeof(_uint)), E_FAIL);
+	FAILED_CHECK_RETURN(m_pShader->Bind_RawValue("g_iCurIndex", m_pFlameBlastFlipbook->Get_CurIndexPtr(), sizeof(_uint)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShader->Bind_RawValue("g_fHitTimeAcc", &m_fHitTimeAcc, sizeof(_float)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShader->Bind_RawValue("g_vSphereWorldPos", &vSphereWorldPos, sizeof(_float3)), E_FAIL);
 	FAILED_CHECK_RETURN(m_pShader->Bind_RawValue("g_isHitEffect", &m_isHitEffect, sizeof(_bool)), E_FAIL);

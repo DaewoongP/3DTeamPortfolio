@@ -68,9 +68,6 @@ HRESULT CDarkWizard_M::Initialize_Level(_uint iCurrentLevelIndex)
 	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RigidBody(m_pRigidBody);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
-	m_HitMatrices[0] = m_pTransform->Get_WorldMatrixPtr();
-	m_HitMatrices[1] = m_pTransform->Get_WorldMatrixPtr();
-	m_HitMatrices[2] = m_pTransform->Get_WorldMatrixPtr();
 	return S_OK;
 }
 
@@ -470,6 +467,21 @@ HRESULT CDarkWizard_M::Add_Components_Level(_uint iCurrentLevelIndex)
 
 HRESULT CDarkWizard_M::Bind_HitMatrices()
 {
+	const CBone* pBone = m_pModelCom->Get_Bone(TEXT("Head"));
+	if (nullptr == pBone)
+		return E_FAIL;
+	m_HitMatrices[0] = pBone->Get_CombinedTransformationMatrixPtr();
+
+	pBone = m_pModelCom->Get_Bone(TEXT("Hips"));
+	if (nullptr == pBone)
+		return E_FAIL;
+	m_HitMatrices[1] = pBone->Get_CombinedTransformationMatrixPtr();
+
+	pBone = m_pModelCom->Get_Bone(TEXT("Spine2"));
+	if (nullptr == pBone)
+		return E_FAIL;
+	m_HitMatrices[2] = pBone->Get_CombinedTransformationMatrixPtr();
+
 	return S_OK;
 }
 

@@ -1,5 +1,6 @@
 #include "Notify.h"
 #include "Bone.h"
+#include "GameInstance.h"
 
 CNotify::CNotify()
 {
@@ -23,6 +24,9 @@ CNotify::CNotify(const CNotify& rhs)
 		case KEYFRAME::KF_NOTIFY:
 			pKeyframe = New NOTIFYFRAME(*static_cast<NOTIFYFRAME*>(Pair.second));
 			break;
+		case KEYFRAME::KF_PARTICLE:
+			pKeyframe = New PARTICLEFRAME(*static_cast<PARTICLEFRAME*>(Pair.second));
+			break;
 		}
 		m_KeyFrames.push_back({ Pair.first,pKeyframe });
 	}
@@ -33,7 +37,7 @@ HRESULT CNotify::Initialize()
 	return S_OK;
 }
 
-void CNotify::Invalidate_Frame(_float fTimeAcc, _Inout_ _uint* pCurrentKeyFrameIndex, _Inout_ _float* fSpeed)
+void CNotify::Invalidate_Frame(_float fTimeAcc, _Inout_ _uint* pCurrentKeyFrameIndex, _Inout_ _float* fSpeed, CTransform* pTransform, _float4x4 PivotMatrix)
 {
 	if (0.f == fTimeAcc)
 	{
@@ -92,11 +96,43 @@ void CNotify::Invalidate_Frame(_float fTimeAcc, _Inout_ _uint* pCurrentKeyFrameI
 				{
 					m_iCurrentKeyFramesIndex = (*pCurrentKeyFrameIndex);
 					static_cast<NOTIFYFRAME*>(pKeyFrame)->Action();
+					break;
 				}
-					
-					break;
 				case KEYFRAME::KF_SOUND:
+				{
+					CGameInstance* pGameInstance = CGameInstance::GetInstance();
+					Safe_AddRef(pGameInstance);
+					Safe_Release(pGameInstance);
+					//m_iCurrentKeyFramesIndex = (*pCurrentKeyFrameIndex);
+					//static_cast<SOUNDFRAME*>(pKeyFrame)->Action();
 					break;
+				}
+				case KEYFRAME::KF_PARTICLE:
+				{
+					m_iCurrentKeyFramesIndex = (*pCurrentKeyFrameIndex);
+					CGameInstance* pGameInstance = CGameInstance::GetInstance();
+					Safe_AddRef(pGameInstance);
+					//생성 지점 만들어주자.
+					_float4x4 PositionMatrix = {};
+
+					PARTICLEFRAME* pParticleFrame = static_cast<PARTICLEFRAME*>(pKeyFrame);
+					//데이터 로드할때 오프셋 메트릭스에 피벗 곱해주고
+					//index를 이용해 bindbonematrix 만들어줘야함.
+					if (pParticleFrame->BindBoneMatrix == nullptr)
+					{
+						pGameInstance->Play_Particle((pParticleFrame->wszParticleTag), _float3(0,0,0));
+						cout << "Please Bind Bone to ParticleNotify :" << Find_Frame_Key((*pCurrentKeyFrameIndex)) <<"\n";
+					}
+					else 
+					{
+						//여기에 pivot matrix 곱해주기 모델 가져와야하네?
+						PositionMatrix = pParticleFrame->OffsetMatrix * (*pParticleFrame->BindBoneMatrix)  * PivotMatrix * pTransform->Get_WorldMatrix();
+						pGameInstance->Play_Particle((pParticleFrame->wszParticleTag), PositionMatrix.Translation());
+					}
+					
+					Safe_Release(pGameInstance);
+					break;
+				}
 				}
 			}
 			if (m_iNumKeyFrames == (*pCurrentKeyFrameIndex) + 1)
@@ -149,7 +185,7 @@ void CNotify::Delete_Frame(_uint iFindFrame)
 	m_iNumKeyFrames--;
 }
 
-void CNotify::Edit_Frame(_uint iFindFrame, KEYFRAME::KEYFRAMETYPE eFrameType, _float fActionTime, _float fSpeed)
+void CNotify::Edit_Frame(_uint iFindFrame, KEYFRAME::KEYFRAMETYPE eFrameType, _float fActionTime, _float fSpeed,_char* szActionTag,_int iBondIndex,_float4x4 OffsetMatrix, const CModel::BONES& Bones)
 {
 	KEYFRAME* pKeyFrame = Find_Frame(iFindFrame);
 
@@ -158,6 +194,20 @@ void CNotify::Edit_Frame(_uint iFindFrame, KEYFRAME::KEYFRAMETYPE eFrameType, _f
 	if (eFrameType == KEYFRAME::KF_SPEED)
 	{
 		static_cast<SPEEDFRAME*>(pKeyFrame)->fSpeed = fSpeed;
+	}
+
+	if (eFrameType == KEYFRAME::KF_PARTICLE)
+	{
+		CharToWChar(szActionTag, static_cast<PARTICLEFRAME*>(pKeyFrame)->wszParticleTag);
+		
+		static_cast<PARTICLEFRAME*>(pKeyFrame)->iBoneIndex = iBondIndex;
+		static_cast<PARTICLEFRAME*>(pKeyFrame)->OffsetMatrix = OffsetMatrix;
+		static_cast<PARTICLEFRAME*>(pKeyFrame)->BindBoneMatrix = Bones[iBondIndex]->Get_CombinedTransformationMatrixPtr();
+	}
+	
+	if (eFrameType == KEYFRAME::KF_SOUND)
+	{
+		CharToWChar(szActionTag, static_cast<SOUNDFRAME*>(pKeyFrame)->wszSoundTag);
 	}
 
 	//정렬
@@ -180,7 +230,7 @@ KEYFRAME* CNotify::Find_Frame(const wchar_t* wszKeyFrameTag)
 	return nullptr;
 }
 
-HRESULT CNotify::AddFrame(KEYFRAME_GCM* data)
+HRESULT CNotify::AddFrame(KEYFRAME_GCM* data,const CModel::BONES& Bones)
 {
 	KEYFRAME* keyFrameDesc;
 	switch (data->eKeyFrameType)
@@ -217,7 +267,25 @@ HRESULT CNotify::AddFrame(KEYFRAME_GCM* data)
 		soundFrameDesc->eKeyFrameType = KEYFRAME::KF_SOUND;
 		soundFrameDesc->fTime = data->fTime;
 		soundFrameDesc->isEnable = true;
+		lstrcpy(soundFrameDesc->wszSoundTag, reinterpret_cast<SOUNDFRAME_GCM*>(data)->wszSoundTag);
 		keyFrameDesc = soundFrameDesc;
+		wstring str = data->szName;
+		pair< wstring, KEYFRAME*> NewPair = pair<wstring, KEYFRAME*>(str, keyFrameDesc);
+		m_KeyFrames.push_back(NewPair);
+		break;
+	}
+	case KEYFRAME::KF_PARTICLE:
+	{
+		PARTICLEFRAME* particleFrameDesc = New PARTICLEFRAME();
+		particleFrameDesc->eKeyFrameType = KEYFRAME::KF_PARTICLE;
+		particleFrameDesc->fTime = data->fTime;
+		particleFrameDesc->isEnable = true;
+		lstrcpy(particleFrameDesc->wszParticleTag, reinterpret_cast<PARTICLEFRAME_GCM*>(data)->wszParticleTag);
+		particleFrameDesc->iBoneIndex = reinterpret_cast<PARTICLEFRAME_GCM*>(data)->iBoneIndex;
+		particleFrameDesc->OffsetMatrix = reinterpret_cast<PARTICLEFRAME_GCM*>(data)->OffsetMatrix;
+		//여기에 모델의 몇번 뼈의 matrix를 던져줘야하기때문에, 우리는 model혹은 bone을 받아와야함.
+		particleFrameDesc->BindBoneMatrix = Bones[reinterpret_cast<PARTICLEFRAME_GCM*>(data)->iBoneIndex]->Get_CombinedTransformationMatrixPtr();
+		keyFrameDesc = particleFrameDesc;
 		wstring str = data->szName;
 		pair< wstring, KEYFRAME*> NewPair = pair<wstring, KEYFRAME*>(str, keyFrameDesc);
 		m_KeyFrames.push_back(NewPair);
