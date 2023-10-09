@@ -60,7 +60,7 @@ HRESULT CRenderer::Initialize_Prototype()
 		TEXT("Target_Deferred"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 0.f))))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
-		TEXT("Target_Shadow_Depth"), (_uint)ViewportDesc.Width * 1, (_uint)ViewportDesc.Height * 1, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f), true)))
+		TEXT("Target_Shadow_Depth"), (_uint)ViewportDesc.Width * 12, (_uint)ViewportDesc.Height * 12, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f), true)))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_SSAO"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
@@ -249,9 +249,6 @@ HRESULT CRenderer::Draw_RenderGroup()
 
 	// After Effect
 	if (FAILED(Render_Distortion()))
-		return E_FAIL;
-
-	if (FAILED(Render_RadialBlur()))
 		return E_FAIL;
 
 	// Screen Shading
@@ -639,8 +636,6 @@ HRESULT CRenderer::Render_Distortion()
 	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_Distortion"))))
 		return E_FAIL;
 
-	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_PreRadial"))))
-		return E_FAIL;
 	// Shader
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Distortion"), m_pDistortionShader, "g_DistortionTexture")))
 		return E_FAIL;
@@ -657,9 +652,6 @@ HRESULT CRenderer::Render_Distortion()
 		return E_FAIL;
 
 	if (FAILED(m_pRectBuffer->Render()))
-		return E_FAIL;
-
-	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_PreRadial"))))
 		return E_FAIL;
 
 	return S_OK;
