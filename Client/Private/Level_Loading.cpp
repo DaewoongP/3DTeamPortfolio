@@ -154,6 +154,9 @@ void CLevel_Loading::Tick(_float fTimeDelta)
 	case LEVEL_SMITH:
 		pLevel = CLevel_Smith::Create(m_pDevice, m_pContext);
 		break;
+	case LEVEL_SANCTUM:
+		pLevel = CLevel_Sanctum::Create(m_pDevice, m_pContext);
+		break;
 	default:
 		MSG_BOX("Failed Create Next Level");
 		__debugbreak();
