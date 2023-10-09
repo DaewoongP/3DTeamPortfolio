@@ -108,10 +108,10 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_fClothPower = 3.0f;
 	m_fClothPowerPlus = 1.0f;
 
-	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::FIRST, CONFRINGO);
-	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::SECOND, LEVIOSO);
-	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::THIRD, NCENDIO);
-	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::FOURTH, DIFFINDO);
+	//m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::FIRST, CONFRINGO);
+	//m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::SECOND, LEVIOSO);
+	//m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::THIRD, NCENDIO);
+	//m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::FOURTH, DIFFINDO);
 
 	m_fRotationSpeed = 2.0f;
 
@@ -546,13 +546,13 @@ HRESULT CPlayer::Add_Components()
 	}
 
 	/* Com_UI_Group_Skill_1 */
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Skill"),
-		TEXT("Com_UI_Group_Skill_1"), reinterpret_cast<CComponent**>(&m_UI_Group_Skill_01))))
-	{
-		__debugbreak();
-		return E_FAIL;
-	}
-	
+	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Skill"),
+	//	TEXT("Com_UI_Group_Skill_1"), reinterpret_cast<CComponent**>(&m_UI_Group_Skill_01))))
+	//{
+	//	__debugbreak();
+	//	return E_FAIL;
+	//}
+	//
 	//_int DefValue = 15;
 	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_EndurusPotion"),
 	//	TEXT("Com_EndurusPotion"), reinterpret_cast<CComponent**>(&m_pEndurusPotion),&DefValue)))

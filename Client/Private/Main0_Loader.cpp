@@ -30,6 +30,8 @@
 #include "Inventory.h"
 #include "UI_Potion_Tap.h"
 #include "PotionTap.h"
+#include "UI_Group_Brew.h"
+#include "UI_Group_SKillTap.h"
 #pragma endregion UI
 
 #pragma region Effects
@@ -299,10 +301,17 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Potion_Tap"),
 				CPotionTap::Create(m_pDevice, m_pContext))))
 				throw TEXT("Prototype_GameObject_Potion_Tap");
-
 			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Potion_Tap"),
 				CUI_Potion_Tap::Create(m_pDevice, m_pContext))))
 				throw TEXT("Prototype_GameObject_UI_Potion_Tap");
+
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Group_Brew"),
+				CUI_Group_Brew::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_GameObject_UI_Group_Brew");
+
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_UI_Group_SkillTap"),
+				CUI_Group_SkillTap::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_GameObject_UI_Group_SkillTap");
 		}
 #pragma endregion
 

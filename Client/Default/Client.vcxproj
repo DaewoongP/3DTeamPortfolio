@@ -200,7 +200,6 @@
     <ClInclude Include="..\Public\HitState.h" />
     <ClInclude Include="..\Public\Player_Information.h" />
     <ClInclude Include="..\Public\LookAt.h" />
-    <ClInclude Include="..\Public\Client_Enum.h" />
     <ClInclude Include="..\Public\Finisher.h" />
     <ClInclude Include="..\public\Level_GreatHall.h" />
     <ClInclude Include="..\public\Level_Smith.h" />
@@ -219,6 +218,8 @@
     <ClInclude Include="..\Public\Menu_Quest.h" />
     <ClInclude Include="..\Public\Menu_Setting.h" />
     <ClInclude Include="..\Public\MapObject_Ins.h" />
+    <ClInclude Include="..\Public\UI_Group_Brew.h" />
+    <ClInclude Include="..\Public\UI_Group_SKillTap.h" />
     <ClInclude Include="..\Public\UI_Potion_Tap.h" />
     <ClInclude Include="..\Public\RigidMove.h" />
     <ClInclude Include="..\public\WiggenweldPotion.h" />
@@ -405,6 +406,8 @@
     <ClCompile Include="..\Private\Menu_Setting.cpp" />
     <ClCompile Include="..\Private\MapObject_Ins.cpp" />
     <ClCompile Include="..\Private\Stupefy.cpp" />
+    <ClCompile Include="..\Private\UI_Group_Brew.cpp" />
+    <ClCompile Include="..\Private\UI_Group_SKillTap.cpp" />
     <ClCompile Include="..\Private\UI_Potion_Tap.cpp" />
     <ClCompile Include="..\Private\RigidMove.cpp" />
     <ClCompile Include="..\private\WiggenweldPotion.cpp" />

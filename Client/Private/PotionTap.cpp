@@ -121,8 +121,8 @@ HRESULT CPotionTap::Ready_Main_Tap()
 	ImageDesc.fX = m_pUI_Main_Tap->Get_XY().x;
 	ImageDesc.fY = m_pUI_Main_Tap->Get_XY().y;
 	ImageDesc.fZ = 0.f;
-	ImageDesc.fSizeX = m_pUI_Main_Tap->Get_SizeXY().x;
-	ImageDesc.fSizeY = m_pUI_Main_Tap->Get_SizeXY().y;
+	ImageDesc.fSizeX = 64.f;
+	ImageDesc.fSizeY = 64.f;
 
 	m_pUI_Main_Tap->Set_ImageCom(ImageDesc);
 

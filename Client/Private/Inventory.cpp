@@ -3,6 +3,7 @@
 #include "UI_Inventory.h"
 #include "GameObject.h"
 #include "Item.h"
+#include "Ingredient.h"
 
 CInventory::CInventory(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -27,7 +28,7 @@ HRESULT CInventory::Initialize(void* pArg)
 
 	m_pItems.resize(ITEMTYPE_END);
 	m_pPlayerCurItems.resize(RESOURCE);
-
+	m_ResourcesCount.resize(INGREDIENT_END, 0);
 	Add_Components();
 
 	//BEGININSTANCE;
@@ -73,7 +74,6 @@ HRESULT CInventory::Add_Components()
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
-
 
 	for (size_t i = 0; i < ITEMTYPE_END; i++)
 	{
@@ -146,6 +146,12 @@ void CInventory::Add_Item(CItem* pItem, ITEMTYPE eType)
 
 		m_pItems[eType].push_back(pItem);
 		m_pUI_Inventory[eType]->Set_InventoryItem(m_pItems[eType]);
+	}
+
+	CIngredient* pIngredient = dynamic_cast<CIngredient*>(pItem);
+	if (nullptr != pIngredient)
+	{
+		m_ResourcesCount[pIngredient->Get_Ingredient()]++;
 	}
 }
 

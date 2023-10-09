@@ -656,14 +656,13 @@ HRESULT CLevel_Cliffside::Ready_Layer_UI(const _tchar* pLayerTag)
 		Safe_Release(pGameInstance);
 		return E_FAIL;
 	}
-	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Skill_1.uidata"));
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_Skill"),
-		pLayerTag, TEXT("Prototype_GameObject_UI_Group_Skill"), szFilePath)))
-	{
-		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_UI_Group_Skill)");
-		Safe_Release(pGameInstance);
-		return E_FAIL;
-	}
+	//if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_Skill"),
+	//	pLayerTag, TEXT("Prototype_GameObject_UI_Group_Skill"))))
+	//{
+	//	MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_UI_Group_Skill)");
+	//	Safe_Release(pGameInstance);
+	//	return E_FAIL;
+	//}
 	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Finisher_Icon.uidata"));
 	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_Finisher_Icon"),
 		pLayerTag, TEXT("GameObject_UI_Group_Finisher_Icon"), szFilePath)))
@@ -695,6 +694,20 @@ HRESULT CLevel_Cliffside::Ready_Layer_UI(const _tchar* pLayerTag)
 	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Potion_Tap"), pLayerTag, TEXT("GameObject_Potion_Tap"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Potion_Tap)");
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	}
+
+	//if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_Brew"), pLayerTag, TEXT("GameObject_UI_Group_Brew"))))
+	//{
+	//	MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_Brew)");
+	//	Safe_Release(pGameInstance);
+	//	return E_FAIL;
+	//}
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_SkillTap"), pLayerTag, TEXT("GameObject_UI_Group_SkillTap"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_GameObject_UI_Group_SkillTap)");
 		Safe_Release(pGameInstance);
 		return E_FAIL;
 	}

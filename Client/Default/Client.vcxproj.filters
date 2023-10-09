@@ -478,6 +478,12 @@
     <Filter Include="04. Effect\Normal">
       <UniqueIdentifier>{a74d6959-7585-400e-a1ae-d972cc6abd86}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\04. UI\UI_Group\UI_Group_Brew">
+      <UniqueIdentifier>{046bcdc3-685b-4522-afa8-40b52b32465c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\04. UI\UI_Group\UI_Group_Skill_Tap">
+      <UniqueIdentifier>{e695472f-e3ce-4164-aeab-698da0e95413}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -816,9 +822,6 @@
     <ClInclude Include="..\public\Level_Smith.h">
       <Filter>01. Levels\04. Smith</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Client_Enum.h">
-      <Filter>99. Headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\LookAt.h">
       <Filter>03. Behaviors\03. Movement</Filter>
     </ClInclude>
@@ -973,6 +976,12 @@
     </ClInclude>
     <ClInclude Include="..\public\Norm_Test.h">
       <Filter>04. Effect\Normal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Group_Brew.h">
+      <Filter>02. GameObject\04. UI\UI_Group\UI_Group_Brew</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Group_SKillTap.h">
+      <Filter>02. GameObject\04. UI\UI_Group\UI_Group_Skill_Tap</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1430,6 +1439,12 @@
     </ClCompile>
     <ClCompile Include="..\private\Norm_Test.cpp">
       <Filter>04. Effect\Normal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Group_Brew.cpp">
+      <Filter>02. GameObject\04. UI\UI_Group\UI_Group_Brew</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Group_SKillTap.cpp">
+      <Filter>02. GameObject\04. UI\UI_Group\UI_Group_Skill_Tap</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

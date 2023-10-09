@@ -21,7 +21,10 @@ bool g_isClicked;
 bool g_isOnCollision;
 
 // For Glitter
-float		g_fDissolveAmount; // 0~1°ª
+float		g_fDissolveAmount; // 0~1°ª\
+
+// For Cool
+float		g_fCoolTime;
 
 
 SamplerState g_Sampler
@@ -286,6 +289,42 @@ float4 PS_MAIN_UI_DISSOLVE(PS_IN In) : SV_TARGET0
 	return vColor;
 }
 
+float4	PS_MAIN_UI_COOLTIME(PS_IN In) : SV_TARGET0
+{
+	float4 vColor = (float4) 0;
+
+	float fTime = 0.3f;
+
+	vColor = g_Texture.Sample(LinearSampler, In.vTexUV);
+	if (vColor.a < 0.1f)
+		discard;
+
+	if (In.vTexUV.y < 1.f - fTime)
+	{
+		vColor.rgb = 0.f;
+	}
+
+	return vColor;
+}
+
+float4	PS_MAIN_UI_GRAYCOOL(PS_IN In) : SV_TARGET0
+{
+	float4 vColor = (float4) 0;
+
+	float fTime = 0.3f;
+
+	vColor = g_Texture.Sample(LinearSampler, In.vTexUV);
+	if (vColor.a < 0.1f)
+		discard;
+
+	if (In.vTexUV.y < 1.f - fTime)
+	{
+		vColor.rgb = 0.3f;
+	}
+
+	return vColor;
+}
+
 technique11 DefaultTechnique
 {
 	pass BackGround
@@ -429,5 +468,31 @@ technique11 DefaultTechnique
 		HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
 		DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
 		PixelShader = compile ps_5_0 PS_MAIN_UI_DISSOLVE();
+	}
+
+	pass Cool
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DSS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
+		HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
+		DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
+		PixelShader = compile ps_5_0 PS_MAIN_UI_COOLTIME();
+	}
+
+	pass GrayCool
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DSS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
+		HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
+		DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
+		PixelShader = compile ps_5_0 PS_MAIN_UI_GRAYCOOL();
 	}
 }
