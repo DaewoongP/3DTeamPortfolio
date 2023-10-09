@@ -685,7 +685,7 @@ HRESULT CLevel_Cliffside::Ready_Layer_UI(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	_tchar szFilePath[MAX_PATH] = TEXT("");
+	/*_tchar szFilePath[MAX_PATH] = TEXT("");
 	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Potion.uidata"));
 	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_Potion"),
 		pLayerTag, TEXT("GameObject_UI_Group_Potion"), szFilePath)))
@@ -694,14 +694,7 @@ HRESULT CLevel_Cliffside::Ready_Layer_UI(const _tchar* pLayerTag)
 		Safe_Release(pGameInstance);
 		return E_FAIL;
 	}
-	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Skill_1.uidata"));
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_Skill"),
-		pLayerTag, TEXT("Prototype_GameObject_UI_Group_Skill"), szFilePath)))
-	{
-		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_UI_Group_Skill)");
-		Safe_Release(pGameInstance);
-		return E_FAIL;
-	}
+	
 	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Finisher_Icon.uidata"));
 	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_Finisher_Icon"),
 		pLayerTag, TEXT("GameObject_UI_Group_Finisher_Icon"), szFilePath)))
@@ -709,7 +702,7 @@ HRESULT CLevel_Cliffside::Ready_Layer_UI(const _tchar* pLayerTag)
 		MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_Finisher_Icon)");
 		Safe_Release(pGameInstance);
 		return E_FAIL;
-	}
+	}*/
 
 	CUI::UIDESC UIDesc;
 	ZEROMEM(&UIDesc);
@@ -730,12 +723,12 @@ HRESULT CLevel_Cliffside::Ready_Layer_UI(const _tchar* pLayerTag)
 	}
 
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Potion_Tap"), pLayerTag, TEXT("GameObject_Potion_Tap"))))
+	/*if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Potion_Tap"), pLayerTag, TEXT("GameObject_Potion_Tap"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Potion_Tap)");
 		Safe_Release(pGameInstance);
 		return E_FAIL;
-	}
+	}*/
 
 	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Farming"), pLayerTag, TEXT("GameObject_UI_Farming"))))
 	{

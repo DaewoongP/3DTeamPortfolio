@@ -775,6 +775,13 @@ void CGameInstance::Set_Shake(CCamera_Manager::SHAKE_TYPE _eType, CCamera_Manage
 	return m_pCamera_Manager->Set_Shake(_eType, _eAxis, _eEase, _fSpeed, _Duration, _fPower, _ePower, _vAxisSet);
 }
 
+_bool CGameInstance::Is_Current_Camera(const _tchar* _CameraTag)
+{
+	NULL_CHECK_RETURN_MSG(m_pCamera_Manager, false, TEXT("Camera NULL"));
+
+	return m_pCamera_Manager->Is_Current_Camera(_CameraTag);
+}
+
 #ifdef _DEBUG
 void CGameInstance::Set_DebugCam(_bool isCam)
 {

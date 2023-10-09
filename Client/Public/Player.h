@@ -184,6 +184,8 @@ private:
 
 #pragma region 카메라 쉐이크
 
+	vector<char*> m_vecEaseList;
+
 	_int m_iShake_Type = { 0 };
 	_int m_iShake_Axis = { 0 };
 	_int m_iEase = { 0 };
