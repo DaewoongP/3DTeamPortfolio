@@ -641,7 +641,7 @@ HRESULT CProfessor_Fig::Make_Turns(_Inout_ CSequence* pSequence)
 		pAction_Left_180->Set_Options(TEXT("Turn_Left_180"), m_pModelCom);
 		pAction_Right_180->Set_Options(TEXT("Turn_Right_180"), m_pModelCom);
 
-		pTsk_Check_Degree->Set_Transform(m_pTransform);
+		pTsk_Check_Degree->Set_Option(m_pTransform);
 
 		/* Assemble Behaviors */
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Tsk_Check_Degree"), pTsk_Check_Degree)))
@@ -916,7 +916,7 @@ HRESULT CProfessor_Fig::Make_Attack_Degree(_Inout_ CSequence* pSequence)
 		pAction_Left_180->Set_Options(TEXT("Attack_Cast_Light_Right_180"), m_pModelCom);
 		pAction_Right_180->Set_Options(TEXT("Attack_Cast_Light_Right_180"), m_pModelCom);
 
-		pTsk_Check_Degree->Set_Transform(m_pTransform);
+		pTsk_Check_Degree->Set_Option(m_pTransform);
 
 		/* Assemble Behaviors */
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Tsk_Check_Degree"), pTsk_Check_Degree)))

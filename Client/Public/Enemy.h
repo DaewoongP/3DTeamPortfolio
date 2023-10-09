@@ -64,6 +64,8 @@ public:
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
+	virtual void OnCollisionEnter(COLLEVENTDESC CollisionEventDesc) override;
+	virtual void OnCollisionExit(COLLEVENTDESC CollisionEventDesc) override;
 	virtual HRESULT Render() override;
 	virtual HRESULT Render_Depth() override;
 
@@ -90,6 +92,7 @@ protected:
 
 	_bool m_isSpawn = { false };
 	_bool m_isParring = { false };
+	_bool m_isOnGround = { false };
 	_bool m_isHitCombo = { false };
 	_bool m_isHitAttack = { false };
 	_bool m_isRangeInEnemy = { false };

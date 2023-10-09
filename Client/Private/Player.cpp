@@ -884,7 +884,7 @@ HRESULT CPlayer::Add_Magic()
 
 	Set_Spell_Botton(0, LEVIOSO);
 	Set_Spell_Botton(1, DIFFINDO);
-	Set_Spell_Botton(2, BOMBARDA);
+	Set_Spell_Botton(2, DESCENDO);
 	Set_Spell_Botton(3, IMPERIO);
 
 	return S_OK;

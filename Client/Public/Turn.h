@@ -29,15 +29,14 @@ private:
 	virtual ~CTurn() = default;
 
 public:
-	/*	1. 틱 당 회전속도
-		2. 목표 회전 값 */
-	void Set_Option(const _float& _fTickPerDegree, const _float& _fTargetDegree = 0.f) {
-		m_fTickPerDegree = _fTickPerDegree;
-		m_fTargetDegree = _fTargetDegree;
-	}
-	void Set_Transform(CTransform* pTransform) {
+	/*	1. 본인의 트랜스폼 포인터
+		2. 틱 당 회전속도
+		3. 목표 회전 값 */
+	void Set_Option(CTransform* pTransform, const _float& _fTickPerDegree = 1.f, const _float& _fTargetDegree = 0.f) {
 		m_pOwnerTransform = pTransform;
 		Safe_AddRef(m_pOwnerTransform);
+		m_fTickPerDegree = _fTickPerDegree;
+		m_fTargetDegree = _fTargetDegree;
 	}
 
 public:
