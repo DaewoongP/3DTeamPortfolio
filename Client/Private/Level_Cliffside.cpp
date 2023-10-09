@@ -705,12 +705,12 @@ HRESULT CLevel_Cliffside::Ready_Layer_UI(const _tchar* pLayerTag)
 	//	return E_FAIL;
 	//}
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_SkillTap"), pLayerTag, TEXT("GameObject_UI_Group_SkillTap"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_GameObject_UI_Group_SkillTap)");
-		Safe_Release(pGameInstance);
-		return E_FAIL;
-	}
+	//if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_SkillTap"), pLayerTag, TEXT("GameObject_UI_Group_SkillTap"))))
+	//{
+	//	MSG_BOX("Failed Add_GameObject : (GameObject_GameObject_UI_Group_SkillTap)");
+	//	Safe_Release(pGameInstance);
+	//	return E_FAIL;
+	//}
 
 
 	//lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_MiniMap.uidata"));
