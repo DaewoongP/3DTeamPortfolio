@@ -154,9 +154,6 @@
     <Filter Include="01. Levels\07. Sky">
       <UniqueIdentifier>{3416e37f-418a-468c-a94c-b7fb178d4e82}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Levels\08. Dragon">
-      <UniqueIdentifier>{a3441117-6109-46b1-8071-26b05cc98d52}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Levels\99. Loading">
       <UniqueIdentifier>{884f056e-8693-460c-8907-198be0f4c197}</UniqueIdentifier>
     </Filter>
@@ -600,6 +597,9 @@
     </Filter>
     <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\Gatherer">
       <UniqueIdentifier>{e88e5f73-5766-4d38-b329-5d4e9342c0b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Levels\08. Sanctum%28Dragon%29">
+      <UniqueIdentifier>{a3441117-6109-46b1-8071-26b05cc98d52}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\04. UI\UI\UI_Interact">
       <UniqueIdentifier>{06c934f6-bf3f-4fee-8a89-9fb722ad475e}</UniqueIdentifier>
@@ -1196,6 +1196,9 @@
     <ClInclude Include="..\Public\Gatherer.h">
       <Filter>02. GameObject\03. MapObject\Interactable_Obj\Gatherer</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Level_Sanctum.h">
+      <Filter>01. Levels\08. Sanctum%28Dragon%29</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\PotionStationCamera.h">
       <Filter>02. GameObject\03. MapObject\Interactable_Obj\PotionStation\Camera</Filter>
     </ClInclude>
@@ -1754,6 +1757,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Gatherer.cpp">
       <Filter>02. GameObject\03. MapObject\Interactable_Obj\Gatherer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Level_Sanctum.cpp">
+      <Filter>01. Levels\08. Sanctum%28Dragon%29</Filter>
     </ClCompile>
     <ClCompile Include="..\private\PotionStationCamera.cpp">
       <Filter>02. GameObject\03. MapObject\Interactable_Obj\PotionStation\Camera</Filter>
