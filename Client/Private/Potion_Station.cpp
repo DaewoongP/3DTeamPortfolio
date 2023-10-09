@@ -98,10 +98,11 @@ void CPotion_Station::Tick(_float fTimeDelta)
 	if (m_isInteractable && pGameInstance->Get_DIKeyState(DIK_L, CInput_Device::KEY_DOWN))
 	{
 		cout << "UI 인벤토리 띄워졌어요." << '\n';
+		
 		cout << "캐릭터를 조종 못하게했어요." << '\n';
 		cout << "플레이어가 스르륵 사라져요" << '\n';
 
-		pGameInstance->Set_Camera(TEXT("Potion_Station_Camera"),0.5f);
+		pGameInstance->Set_Camera(TEXT("Potion_Station_Camera"), 0.5f);
 	}
 	if (pGameInstance->Get_DIKeyState(DIK_J, CInput_Device::KEY_DOWN))
 	{

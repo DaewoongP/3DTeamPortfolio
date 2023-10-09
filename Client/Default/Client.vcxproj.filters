@@ -601,6 +601,9 @@
     <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\PotionStation\Camera">
       <UniqueIdentifier>{47ad6082-1c46-48ca-91b9-645d66ca436a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\08. CraftState">
+      <UniqueIdentifier>{d5efb67c-1189-46bb-bd77-8c0dcdb658ba}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -1187,6 +1190,9 @@
     <ClInclude Include="..\public\PotionStationCamera.h">
       <Filter>02. GameObject\03. MapObject\Interactable_Obj\PotionStation\Camera</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\CraftState.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\08. CraftState</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1736,6 +1742,9 @@
     </ClCompile>
     <ClCompile Include="..\private\PotionStationCamera.cpp">
       <Filter>02. GameObject\03. MapObject\Interactable_Obj\PotionStation\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CraftState.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\08. CraftState</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
