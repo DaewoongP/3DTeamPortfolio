@@ -595,6 +595,15 @@
     <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\Gatherer">
       <UniqueIdentifier>{e88e5f73-5766-4d38-b329-5d4e9342c0b1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\04. UI\UI\UI_Interact">
+      <UniqueIdentifier>{06c934f6-bf3f-4fee-8a89-9fb722ad475e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\PotionStation\Camera">
+      <UniqueIdentifier>{47ad6082-1c46-48ca-91b9-645d66ca436a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\08. CraftState">
+      <UniqueIdentifier>{d5efb67c-1189-46bb-bd77-8c0dcdb658ba}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -1178,6 +1187,12 @@
     <ClInclude Include="..\Public\Gatherer.h">
       <Filter>02. GameObject\03. MapObject\Interactable_Obj\Gatherer</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\PotionStationCamera.h">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\PotionStation\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CraftState.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\08. CraftState</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1724,6 +1739,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Gatherer.cpp">
       <Filter>02. GameObject\03. MapObject\Interactable_Obj\Gatherer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PotionStationCamera.cpp">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\PotionStation\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CraftState.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\08. CraftState</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

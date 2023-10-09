@@ -48,10 +48,14 @@ public:
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
+	virtual HRESULT Render_Depth() override;
 
 private:
+	HRESULT SetUp_ShadowShaderResources();
 	HRESULT Set_ShaderResources();
 	HRESULT Add_Components();
+	HRESULT Add_RigidBody();
+
 
 protected:
 	_uint		m_iLevel = { 0 };
@@ -66,6 +70,7 @@ protected: // For. Components
 	CRenderer*	m_pRenderer = { nullptr };
 	CModel*		m_pModel = { nullptr };
 	CShader*	m_pShader = { nullptr };
+	CShader* m_pShadowShader = { nullptr };
 	CRigidBody* m_pRigidBody = { nullptr };
 	CCoolTime*	m_pLifeTime = { nullptr };
 	CCoolTime*	m_pAttachedTime = { nullptr };

@@ -70,6 +70,7 @@
 #pragma endregion Magic
 
 #include "Trigger_Vault.h"
+#include "Phase.h"
 
 #ifdef _DEBUG
 #include "Test_Player.h"
@@ -341,6 +342,11 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			throw TEXT("Prototype_Component_Texture_Terrain");
 
 #pragma endregion
+
+		/* Prototype_Component_Texture_Default_Particle*/
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Phase"),
+			CPhase::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Phase");
 
 #pragma region Load Buffer
 		/* --------------Buffer-------------- */
