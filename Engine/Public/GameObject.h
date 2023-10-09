@@ -41,7 +41,7 @@ public:
 	//마법이 값을 떤지고 도망가는 함수. 각 오브젝트마다 파서 대응해줘야함.
 	virtual void On_Maigc_Throw_Data(void* data) const {}
 	virtual HRESULT Render() override;
-	virtual HRESULT Render_Depth();
+	virtual HRESULT Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix);
 
 protected:
 	CTransform*			m_pTransform = { nullptr };

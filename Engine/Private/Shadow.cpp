@@ -2,6 +2,7 @@
 #include "Blur.h"
 #include "Shader.h"
 #include "PipeLine.h"
+#include "Light_Manager.h"
 #include "VIBuffer_Rect.h"
 #include "RenderTarget_Manager.h"
 
@@ -68,6 +69,8 @@ HRESULT CShadow::Render()
 	// ºûÀÇ ºäÇà·Ä ±âÁØ µª½º
 	if (FAILED(pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Shadow_Depth"), m_pShader, "g_LightDepthTexture")))
 		return E_FAIL;
+	if (FAILED(pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Shadow_Depth1"), m_pShader, "g_LightDepthTexture1")))
+		return E_FAIL;
 
 	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
@@ -78,18 +81,26 @@ HRESULT CShadow::Render()
 
 	CPipeLine* pPipeLine = CPipeLine::GetInstance();
 	Safe_AddRef(pPipeLine);
+	CLight_Manager* pLight_Manager = CLight_Manager::GetInstance();
+	Safe_AddRef(pLight_Manager);
 
 	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrixInv", pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
-
 	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrixInv", pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
-
-	if (FAILED(m_pShader->Bind_Matrix("g_LightViewMatrix", pPipeLine->Get_LightTransformMatrix(CPipeLine::D3DTS_VIEW))))
+	if (FAILED(m_pShader->Bind_Matrix("g_LightViewMatrix", pLight_Manager->Get_LightViewMatrix(0))))
 		return E_FAIL;
-	if (FAILED(m_pShader->Bind_Matrix("g_LightProjMatrix", pPipeLine->Get_LightTransformMatrix(CPipeLine::D3DTS_PROJ))))
+	if (FAILED(m_pShader->Bind_Matrix("g_LightProjMatrix", pLight_Manager->Get_LightProjMatrix(0))))
+		return E_FAIL;
+	if (FAILED(m_pShader->Bind_Matrix("g_LightViewMatrix1", pLight_Manager->Get_LightViewMatrix(1))))
+		return E_FAIL;
+	if (FAILED(m_pShader->Bind_Matrix("g_LightProjMatrix1", pLight_Manager->Get_LightProjMatrix(1))))
 		return E_FAIL;
 	if (FAILED(m_pShader->Bind_RawValue("g_fCamFar", pPipeLine->Get_CamFar(), sizeof(_float))))
+		return E_FAIL;
+
+	_uint iLightNum = pLight_Manager->Get_LightShadowNum();
+	if (FAILED(m_pShader->Bind_RawValue("g_iNumLights", &iLightNum, sizeof(_uint))))
 		return E_FAIL;
 
 	if (FAILED(m_pShader->Begin("Shadow")))
@@ -129,6 +140,7 @@ HRESULT CShadow::Render()
 	if (FAILED(pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_Shadow_DownSample"))))
 		return E_FAIL;*/
 
+	Safe_Release(pLight_Manager);
 	Safe_Release(pPipeLine);
 	Safe_Release(pRenderTarget_Manager);
 

@@ -457,9 +457,9 @@ HRESULT CPlayer::Render()
 	return S_OK;
 }
 
-HRESULT CPlayer::Render_Depth()
+HRESULT CPlayer::Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix)
 {
-	if (FAILED(SetUp_ShadowShaderResources()))
+	if (FAILED(SetUp_ShadowShaderResources(LightViewMatrix, LightProjMatrix)))
 		return E_FAIL;
 
 	for (_uint iPartsIndex = 0; iPartsIndex < CCustomModel::MESH_END; ++iPartsIndex)
@@ -681,15 +681,15 @@ HRESULT CPlayer::SetUp_ShaderResources()
 	return S_OK;
 }
 
-HRESULT CPlayer::SetUp_ShadowShaderResources()
+HRESULT CPlayer::SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix)
 {
 	BEGININSTANCE;
 
 	if (FAILED(m_pShadowShader->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
 		return E_FAIL;
-	if (FAILED(m_pShadowShader->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_LightTransformMatrix(CPipeLine::D3DTS_VIEW))))
+	if (FAILED(m_pShadowShader->Bind_Matrix("g_ViewMatrix", &LightViewMatrix)))
 		return E_FAIL;
-	if (FAILED(m_pShadowShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_LightTransformMatrix(CPipeLine::D3DTS_PROJ))))
+	if (FAILED(m_pShadowShader->Bind_Matrix("g_ProjMatrix", &LightProjMatrix)))
 		return E_FAIL;
 	if (FAILED(m_pShadowShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
 		return E_FAIL;

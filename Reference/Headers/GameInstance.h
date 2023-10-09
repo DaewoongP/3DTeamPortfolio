@@ -105,7 +105,6 @@ public: /* For.PipeLine*/
 	// 카메라에서 Far 값 세팅.
 	void Set_CameraFar(_float fCamFar);
 	const _float4x4* Get_TransformMatrix(CPipeLine::D3DTRANSFORMSTATE eTransformState);
-	const _float4x4* Get_LightTransformMatrix(CPipeLine::D3DTRANSFORMSTATE eTransformState);
 	const _float4x4* Get_TransformMatrix_Inverse(CPipeLine::D3DTRANSFORMSTATE eTransformState);
 	const _float4* Get_CamPosition();
 	const _float3* Get_CamUp();
@@ -125,13 +124,7 @@ public: /* For. Frustum */
 	_bool isIn_WorldFrustum(_float4 vWorldPos, _float fRange = 0.f);
 
 public: /* For.Light_Manager */
-	const CLight::LIGHTDESC* Get_Light(_uint iIndex);
-	const _float4x4* Get_LightView();
-	const _float4x4* Get_LightProj();
-
-	void Set_Light(_uint iIndex, _float fWinSizeX, _float fWinSizeY, CLight::LIGHTDESC LightDesc);
-	class CLight* Add_Lights(_float fWinSizeX, _float fWinSizeY, const CLight::LIGHTDESC & LightDesc);
-	HRESULT Delete_Lights(_uint iIndex, const _char * Name);
+	class CLight* Add_Lights(const CLight::LIGHTDESC & LightDesc, _bool isShadow = false, _uint iLightViewIndex = 0, _float fAspect = 1280.f / 720.f);
 	HRESULT Clear_Lights();
 
 public: /* For.Sound_Manager */

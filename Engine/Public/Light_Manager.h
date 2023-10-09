@@ -1,5 +1,6 @@
 #pragma once
 #include "Light.h"
+#define			MAX_SHADOW		2
 
 BEGIN(Engine)
 
@@ -7,35 +8,31 @@ class CLight_Manager final : public CBase
 {
 	DECLARE_SINGLETON(CLight_Manager)
 private:
-	explicit CLight_Manager();
+	explicit CLight_Manager() = default;
 	virtual ~CLight_Manager() = default;
 
 public:
-	const CLight::LIGHTDESC* Get_Light(_uint iIndex);
-	_float4x4* Get_LightProj() { return &m_ProjLight; }
-	_float4x4* Get_LightView()
-	{
-		return &m_ViewLight;
-	}
-	_float4* Get_LightPosition() { return &m_fLightPos; }
-
-	void Set_Light(_uint iIndex, _float fWinSizeX, _float fWinSizeY, CLight::LIGHTDESC LightDesc);
-	void Set_LightProj(_float4x4 ProjLight) { m_ProjLight = ProjLight; }
-	void Set_LightView(_float4x4 ViewLight) { m_ViewLight = ViewLight; }
-	_bool Light_NullCheck() { return m_Lights.empty(); }
-
+	_uint Get_LightShadowNum() { return m_iBindedLightMatrices; }
+	_float4x4* Get_LightViewMatrix(_uint iIndex) { return &m_LightViewMatrix[iIndex]; }
+	_float4x4* Get_LightProjMatrix(_uint iIndex) { return &m_LightProjMatrix[iIndex]; }
+	
 public:
-	CLight* Add_Lights(_float fWinSizeX, _float fWinSizeY, const CLight::LIGHTDESC& LightDesc);
-	HRESULT Delete_Lights(_uint iIndex, const _char* Name);
+	HRESULT Reserve_Lights(_uint iNumReserve);
+	CLight* Add_Lights(const CLight::LIGHTDESC& LightDesc, _bool isShadow = false, _uint iLightViewIndex = 0, _float fAspect = 1280.f / 720.f);
 	HRESULT Clear_Lights();
 	HRESULT Render_Lights(class CShader* pShader, class CVIBuffer_Rect* pVIBuffer);
 
+private:
+	CLight* Create_Light(const CLight::LIGHTDESC& LightDesc);
 
 private:
-	list<class CLight*>		m_Lights;
-	_float4x4				m_ViewLight;
-	_float4x4				m_ProjLight;
-	_float4					m_fLightPos;
+	list<class CLight*>			m_Lights;
+	queue<class CLight*>		m_LightPool;
+	_float4x4					m_LightViewMatrix[MAX_SHADOW];
+	_float4x4					m_LightProjMatrix[MAX_SHADOW];
+	class CLight*				m_pShadowLights[MAX_SHADOW] = { nullptr };
+	_uint						m_iBindedLightMatrices = { 0 };
+
 public:
 	virtual void Free() override;
 };

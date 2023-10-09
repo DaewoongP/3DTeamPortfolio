@@ -114,38 +114,6 @@ HRESULT CMapObject::Render()
 	return S_OK;
 }
 
-HRESULT CMapObject::Render_Depth()
-{
-	if (nullptr == m_pShader ||
-		nullptr == m_pModel)
-		return S_OK;
-
-	BEGININSTANCE
-	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
-		return E_FAIL;
-
-	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_LightTransformMatrix(CPipeLine::D3DTS_VIEW))))
-		return E_FAIL;
-
-	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_LightTransformMatrix(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
-
-	if (FAILED(m_pShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
-		return E_FAIL;
-	ENDINSTANCE
-
-	_uint		iNumMeshes = m_pModel->Get_NumMeshes();
-
-	for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; iMeshCount++)
-	{
-		m_pShader->Begin("Shadow");
-
-		if (FAILED(m_pModel->Render(iMeshCount)))
-			return E_FAIL;
-	}
-	return S_OK;
-}
-
 HRESULT CMapObject::Add_Model_Component(const _tchar* wszModelTag)
 {
 	if (FAILED(CComposite::Add_Component(LEVEL_TOOL, wszModelTag,

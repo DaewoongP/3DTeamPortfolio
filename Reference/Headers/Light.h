@@ -3,7 +3,7 @@
 
 BEGIN(Engine)
 
-class CLight final : public CBase
+class ENGINE_DLL CLight final : public CBase
 {
 public:
 	enum TYPE { TYPE_DIRECTIONAL, TYPE_LUMOS, TYPE_POINT, TYPE_SPOTLIGHT, TYPE_END };
@@ -17,8 +17,6 @@ public:
 		_float	fRange;
 		_float	fSpotPower;
 
-		_char szName[MAX_PATH];
-		_uint iLightType;
 		_float4	vDiffuse;
 		_float4	vAmbient;
 		_float4	vSpecular;
@@ -29,9 +27,7 @@ private:
 	virtual ~CLight() = default;
 
 public:
-	const LIGHTDESC* Get_LightDesc() const {
-		return &m_LightDesc;
-	}
+	const LIGHTDESC* Get_LightDesc() const { return &m_LightDesc; }
 	void Set_LightDesc(LIGHTDESC LightDesc) { m_LightDesc = LightDesc; }
 	void Set_Position(_float4 vPosition) { m_LightDesc.vPos = vPosition; }
 

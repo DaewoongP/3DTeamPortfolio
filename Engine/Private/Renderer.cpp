@@ -60,7 +60,10 @@ HRESULT CRenderer::Initialize_Prototype()
 		TEXT("Target_Deferred"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 0.f))))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
-		TEXT("Target_Shadow_Depth"), (_uint)ViewportDesc.Width * 12, (_uint)ViewportDesc.Height * 12, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f), true)))
+		TEXT("Target_Shadow_Depth"), (_uint)ViewportDesc.Width * 6, (_uint)ViewportDesc.Height * 6, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f), true)))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
+		TEXT("Target_Shadow_Depth1"), (_uint)ViewportDesc.Width * 6, (_uint)ViewportDesc.Height * 6, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f), true)))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_SSAO"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
@@ -112,6 +115,8 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Shadow_Depth"), TEXT("Target_Shadow_Depth"))))
 		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Shadow_Depth1"), TEXT("Target_Shadow_Depth1"))))
+		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_SSAO"), TEXT("Target_SSAO"))))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_SSAO_BlurX"), TEXT("Target_SSAO_BlurX"))))
@@ -154,10 +159,15 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Shadow_Depth"), 80.f, 400.f, 160.f, 160.f)))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_SSAO_Blured"), 80.f, 560.f, 160.f, 160.f)))
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Shadow_Depth1"), 80.f, 560.f, 160.f, 160.f)))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Deferred"), 240.f, 80.f, 160.f, 160.f)))
 		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_SSAO_Blured"), 240.f, 240.f, 160.f, 160.f)))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Shadow"), 240.f, 400.f, 160.f, 160.f)))
+		return E_FAIL;
+	
 #endif // _DEBUG
 
 	m_fGlowPower = 3.f;
@@ -322,29 +332,60 @@ HRESULT CRenderer::Render_Priority()
 
 	return S_OK;
 }
+
 HRESULT CRenderer::Render_Depth()
 {
 	if (nullptr == m_pRenderTarget_Manager)
 		return E_FAIL;
 
+	// 1번 그림자 뎁스
+
 	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Shadow_Depth"), true)))
 		return E_FAIL;
 
+	_float4x4 LightViewMatrix = *m_pLight_Manager->Get_LightViewMatrix(0);
+	_float4x4 LightProjMatrix = *m_pLight_Manager->Get_LightProjMatrix(0);
 	for (auto& pGameObject : m_RenderObjects[RENDER_DEPTH])
 	{
 		if (nullptr != pGameObject)
-			pGameObject->Render_Depth();
+			pGameObject->Render_Depth(LightViewMatrix, LightProjMatrix);
 
-		Safe_Release(pGameObject);
+		if (1 == m_pLight_Manager->Get_LightShadowNum())
+		{
+			Safe_Release(pGameObject);
+		}
 	}
-
-	m_RenderObjects[RENDER_DEPTH].clear();
 
 	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_Shadow_Depth"), true)))
 		return E_FAIL;
 
+
+	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Shadow_Depth1"), true)))
+		return E_FAIL;
+
+	// 2번 그림자 뎁스
+	// 2개일때만 활성화 해서 그림.
+	if (2 == m_pLight_Manager->Get_LightShadowNum())
+	{
+		_float4x4 LightViewMatrix = *m_pLight_Manager->Get_LightViewMatrix(1);
+		_float4x4 LightProjMatrix = *m_pLight_Manager->Get_LightProjMatrix(1);
+		for (auto& pGameObject : m_RenderObjects[RENDER_DEPTH])
+		{
+			if (nullptr != pGameObject)
+				pGameObject->Render_Depth(LightViewMatrix, LightProjMatrix);
+
+			Safe_Release(pGameObject);
+		}
+	}
+
+	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_Shadow_Depth1"), true)))
+		return E_FAIL;
+
+	m_RenderObjects[RENDER_DEPTH].clear();
+
 	return S_OK;
 }
+
 HRESULT CRenderer::Render_NonBlend()
 {
 	if (nullptr == m_pRenderTarget_Manager)
@@ -449,7 +490,8 @@ HRESULT CRenderer::Render_Lights()
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Depth"), m_pLightShader, "g_DepthTexture")))
 		return E_FAIL;
 
-	m_pLight_Manager->Render_Lights(m_pLightShader, m_pRectBuffer);
+	if (FAILED(m_pLight_Manager->Render_Lights(m_pLightShader, m_pRectBuffer)))
+		return E_FAIL;
 
 	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_Lights"))))
 		return E_FAIL;
