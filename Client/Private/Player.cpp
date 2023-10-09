@@ -165,6 +165,11 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_fClothPower = 3.0f;
 	m_fClothPowerPlus = 1.0f;
 
+	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::FIRST, CONFRINGO);
+	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::SECOND, LEVIOSO);
+	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::THIRD, NCENDIO);
+	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::FOURTH, DIFFINDO);
+
 	m_fRotationSpeed = 2.0f;
 
 	m_iMoveType = (_uint)MOVETYPE_NONE;
@@ -623,6 +628,13 @@ HRESULT CPlayer::Add_Components()
 		return E_FAIL;
 	}
 	
+	//_int DefValue = 15;
+	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_EndurusPotion"),
+	//	TEXT("Com_EndurusPotion"), reinterpret_cast<CComponent**>(&m_pEndurusPotion),&DefValue)))
+	//{
+	//	__debugbreak();
+	//	return E_FAIL;
+	//}
 
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_CoolTime"),
 		TEXT("Com_CoolTime"), reinterpret_cast<CComponent**>(&m_pCooltime))))
@@ -901,6 +913,18 @@ void CPlayer::Key_Input(_float fTimeDelta)
 {
 	BEGININSTANCE;
 
+	if (pGameInstance->Get_DIKeyState(DIK_J, CInput_Device::KEY_DOWN))
+	{
+		pGameInstance->Set_Camera(TEXT("Player_Camera"),2.0f);
+	}
+
+
+	if (pGameInstance->Get_DIKeyState(DIK_L, CInput_Device::KEY_DOWN))
+	{
+		pGameInstance->Set_Camera(TEXT("Other_Camera"), 2.0f);
+	}
+
+
 	if (pGameInstance->Get_DIKeyState(DIK_P, CInput_Device::KEY_DOWN))
 	{
 		m_pPlayer_Camera->Change_Animation(TEXT("Cam_Finisher_Lightning_01_anm"));
@@ -1157,8 +1181,8 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_Troll_Bogeys_Item"));
 		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_Shrivelfig_Item"));
 
-		wstring temp = TEXT("Drink_Potion_Throw");
-		m_pCustomModel->Change_Animation(temp);
+		//wstring temp = TEXT("Drink_Potion_Throw");
+		//m_pCustomModel->Change_Animation(temp);
 	}
 #endif //_DEBUG
 
@@ -1301,6 +1325,8 @@ HRESULT CPlayer::Ready_Camera()
 	BEGININSTANCE;
 
 	pGameInstance->Add_Camera(TEXT("Player_Camera"), (CCamera*)m_pPlayer_Camera);
+
+	pGameInstance->Add_Camera(TEXT("Other_Camera"), CPlayer_Camera::Create(m_pDevice, m_pContext, &PlayerCameraDesc));
 
 	pGameInstance->Set_Camera(TEXT("Player_Camera"));
 

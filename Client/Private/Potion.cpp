@@ -53,7 +53,9 @@ HRESULT CPotion::Initialize(void* pArg)
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
-	
+
+	m_pTransform->Set_RigidBody(m_pRigidBody);
+
 	// ¼ö¸í 
 	m_pLifeTime = CCoolTime::Create(m_pDevice, m_pContext);
 	m_pLifeTime->Set_MaxCoolTime(5.f);
@@ -123,7 +125,7 @@ void CPotion::Late_Tick(_float fTimeDelta)
 {
 	// ÆÄÃ÷ ·ÎÁ÷
 	if (true == m_pAttachedTime->IsEnable())
-	{
+	{		
 		_float4x4 BoneMatrix;
 
 		/* ºÎ¸ð(»ÀÀÇ ¿ÀÇÁ¼Â * »ÀÀÇ ÄÄ¹ÙÀÎµå * ÇÇ¹þ) */
@@ -140,13 +142,20 @@ void CPotion::Late_Tick(_float fTimeDelta)
 	}
 	else
 	{
-		//m_pTransform->Set_RigidBody(m_pRigidBody);
+		m_pRigidBody->Enable_Collision("Potion", this);
 	}
 	
 	__super::Late_Tick(fTimeDelta);
 
 	if (nullptr != m_pRenderer)
+	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
+#ifdef _DEBUG
+		m_pRenderer->Add_DebugGroup(m_pRigidBody);
+#endif // _DEBUG
+	}
+		
 }
 
 HRESULT CPotion::Render()
@@ -170,6 +179,43 @@ HRESULT CPotion::Render()
 		if (FAILED(m_pModel->Render(i)))
 			return E_FAIL;
 	}
+
+	return S_OK;
+}
+
+HRESULT CPotion::Render_Depth()
+{
+	if (FAILED(SetUp_ShadowShaderResources()))
+		return E_FAIL;
+
+	_uint		iNumMeshes = m_pModel->Get_NumMeshes();
+
+	for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; ++iMeshCount)
+	{
+		if (FAILED(m_pShadowShader->Begin("Shadow")))
+			return E_FAIL;
+
+		if (FAILED(m_pModel->Render(iMeshCount)))
+			return E_FAIL;
+	}
+
+	return S_OK;
+}
+
+HRESULT CPotion::SetUp_ShadowShaderResources()
+{
+	BEGININSTANCE;
+
+	if (FAILED(m_pShadowShader->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
+		return E_FAIL;
+	if (FAILED(m_pShadowShader->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_LightTransformMatrix(CPipeLine::D3DTS_VIEW))))
+		return E_FAIL;
+	if (FAILED(m_pShadowShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_LightTransformMatrix(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+	if (FAILED(m_pShadowShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
+		return E_FAIL;
+
+	ENDINSTANCE;
 
 	return S_OK;
 }
@@ -221,24 +267,40 @@ HRESULT CPotion::Add_Components()
 	
 	FAILED_CHECK(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxMesh")
 		, TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader)));
-	
+	/* Com_ShadowShader */
+	FAILED_CHECK(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_ShadowMesh"),
+		TEXT("Com_ShadowShader"), reinterpret_cast<CComponent**>(&m_pShadowShader)));
+	FAILED_CHECK(Add_RigidBody());
+
+	return S_OK;
+}
+
+HRESULT CPotion::Add_RigidBody()
+{
 	CRigidBody::RIGIDBODYDESC RigidBodyDesc;
 	RigidBodyDesc.isStatic = false;
-	RigidBodyDesc.isTrigger = true;
+	RigidBodyDesc.isTrigger = false;
 	RigidBodyDesc.isGravity = true;
-	RigidBodyDesc.fStaticFriction = 0.5f;
-	RigidBodyDesc.fDynamicFriction = 0.5f;
-	RigidBodyDesc.fRestitution = 0.f;
-	PxCapsuleGeometry MyGeometry = PxCapsuleGeometry(0.5f, 1.f);
+	RigidBodyDesc.fStaticFriction = 0.f;
+	RigidBodyDesc.fDynamicFriction = 0.f;
+	RigidBodyDesc.fRestitution = 0.8f;
+	PxCapsuleGeometry MyGeometry = PxCapsuleGeometry(0.05f, 0.1f);
 	RigidBodyDesc.pGeometry = &MyGeometry;
-	RigidBodyDesc.eConstraintFlag = CRigidBody::AllRot;
-	RigidBodyDesc.eThisCollsion = COL_NONE;
-	RigidBodyDesc.eCollisionFlag = COL_NONE;
+	RigidBodyDesc.vOffsetRotation = XMQuaternionRotationRollPitchYaw(0.f, XMConvertToRadians(90.f), 0.f);
+	RigidBodyDesc.vOffsetPosition = _float3(0.f, -0.01f, 0.f);
+	RigidBodyDesc.eThisCollsion = COL_ITEM;
+	RigidBodyDesc.eCollisionFlag = COL_STATIC | COL_ITEM;
 	RigidBodyDesc.pOwnerObject = this;
-	RigidBodyDesc.pCollisionData = nullptr;
-	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, Generate_Hashtag().data());
-	FAILED_CHECK(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody")
-		, TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc));
+	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Potion");
+
+	/* Com_RigidBody */
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
+		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
+	{
+		return E_FAIL;
+	}
+
+	m_pRigidBody->Disable_Collision("Potion");
 	
 	return S_OK;
 }
@@ -252,8 +314,10 @@ void CPotion::Free(void)
 		Safe_Release(m_pRenderer);
 		Safe_Release(m_pModel);
 		Safe_Release(m_pShader);
-		Safe_Release(m_pRigidBody);
+		Safe_Release(m_pShadowShader);
 		Safe_Release(m_pLifeTime);
 		Safe_Release(m_pAttachedTime);
+
+		Safe_Release(m_pRigidBody);
 	}
 }

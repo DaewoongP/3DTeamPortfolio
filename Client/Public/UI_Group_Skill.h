@@ -62,6 +62,9 @@ private:
 	vector<class CTexture*>			m_SkillTextures;
 
 private:
+	vector<_float>* m_pCoolTime = { nullptr };
+
+private:
 	SPELL			m_KeyList[KEYLIST_END];
 
 public:

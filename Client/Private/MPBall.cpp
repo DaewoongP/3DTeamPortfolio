@@ -109,7 +109,7 @@ HRESULT CMPBall::Add_RigidBody()
 	RigidBodyDesc.vDebugColor = _float4(1.f, 0.f, 0.f, 1.f);
 	RigidBodyDesc.isGravity = false;
 	RigidBodyDesc.pOwnerObject = this;
-	RigidBodyDesc.eThisCollsion = COL_ITEM;
+	RigidBodyDesc.eThisCollsion = COL_TRIGGER;
 	RigidBodyDesc.eCollisionFlag = m_eCollisionFlag;
 	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "MPBall");
 

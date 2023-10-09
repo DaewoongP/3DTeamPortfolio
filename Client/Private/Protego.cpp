@@ -314,7 +314,7 @@ void CProtego::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			//각도를 구하고
 			_float fRadian = acosf(fDot);
 			//random으로 (-45,45)만큼 돌리고
-			fRadian += XMConvertToRadians(rand() % 90 - 45);
+			fRadian += XMConvertToRadians(_float(rand() % 90) - 45);
 			//그 방향으로 30만큼 이동한 지점의 점을 구하고
 			_float4x4 RotationMatrix = XMMatrixRotationY(fRadian);
 			_float3 vPos = XMVector3TransformNormal(vDir, RotationMatrix);
