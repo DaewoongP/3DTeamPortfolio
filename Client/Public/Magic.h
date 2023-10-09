@@ -52,7 +52,7 @@ public:
 
 
 public:
-	_bool IsCoolOn() { return (m_fCurrentCoolTime < 0); }
+	_bool IsCoolOn() { return (m_fCurrentCoolTime <= 0); }
 
 	//겟셋 비추
 	_float Get_CoolTime() { return m_fCurrentCoolTime; }
@@ -61,6 +61,8 @@ public:
 	void Set_CoolSpeedTime(_float value) { m_fCoolSpeed = value; }
 	_float Get_CoolMultipleTimer() { return m_fCoolMultipleTimer; }
 	void Set_CoolMultipleTimer(_float value) { m_fCoolMultipleTimer = value; }
+
+	_float Get_CoolTimeRatio() { return m_fCurrentCoolTime / m_MagicDesc.fInitCoolTime; }
 
 	//스킬 가속
 	void Set_SkillCoolMultiple(_float fTime, _float fValue) 

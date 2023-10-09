@@ -1,6 +1,6 @@
 #include "Sequence_Levitate.h"
 
-#include "GameInstance.h"
+#include "Client_GameInstance_Functions.h"
 
 #include "Wait.h"
 #include "Action.h"
@@ -34,33 +34,26 @@ HRESULT CSequence_Levitate::Initialize(void* pArg)
 			return false;
 		});
 
-	BEGININSTANCE;
-	m_pRandom_Levitate_Loop = dynamic_cast<CRandomChoose*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_RandomChoose")));
-	ENDINSTANCE;
-	if (nullptr == m_pRandom_Levitate_Loop)
+	Add_Success_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+		{
+			_uint* pICurrentSpell = { nullptr };
+			if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
+				return false;
+
+			if (*pICurrentSpell & BUFF_LEVIOSO)
+				*pICurrentSpell ^= BUFF_LEVIOSO;
+
+			return true;
+		});
+
+	m_pRandom_Levitate_Loop = nullptr;
+	if (FAILED(Create_Behavior(m_pRandom_Levitate_Loop)))
 	{
-		MSG_BOX("[CSequence_AirHit] Failed Initialize : m_pRandom_Select is nullptr");
+		MSG_BOX("[CSequence_AirHit] Failed Initialize : Failed Create_Behavior m_pRandom_Select");
 		return E_FAIL;
 	}
 
 	return S_OK;
-}
-
-HRESULT CSequence_Levitate::Tick(const _float& fTimeDelta)
-{
-	HRESULT hr = __super::Tick(fTimeDelta);
-
-	if (BEHAVIOR_SUCCESS == hr)
-	{
-		_uint* pICurrentSpell = { nullptr };
-		if (FAILED(m_pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
-			return E_FAIL;
-
-		if (*pICurrentSpell & BUFF_LEVIOSO)
-			*pICurrentSpell ^= BUFF_LEVIOSO;
-	}
-
-	return hr;
 }
 
 HRESULT CSequence_Levitate::Assemble_Random_Select_Behavior(const wstring& wstrActionTag, const _float& fWeight, const _float& fLoopTime)
@@ -69,24 +62,18 @@ HRESULT CSequence_Levitate::Assemble_Random_Select_Behavior(const wstring& wstrA
 	if (FAILED(m_pBlackBoard->Get_Type("pModel", pModel)))
 		return E_FAIL;
 
-	BEGININSTANCE;
-
-	CAction* pAction = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-	if (nullptr == pAction)
+	CAction* pAction = nullptr;
+	if (FAILED(Create_Behavior(pAction)))
 	{
-		MSG_BOX("[CSequence_Levitate] Failed Assemble_Random_Select_Behavior\n : pAction is nullptr");
-		ENDINSTANCE;
+		MSG_BOX("[CSequence_Levitate] Failed Assemble_Random_Select_Behavior\n : Failed Create_Behavior pAction");
 		return E_FAIL;
 	}
-	CWait* pTsk_Wait = dynamic_cast<CWait*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Wait")));
-	if (nullptr == pTsk_Wait)
+	CWait* pTsk_Wait = nullptr;
+	if (FAILED(Create_Behavior(pTsk_Wait)))
 	{
-		MSG_BOX("[CSequence_Levitate] Failed Assemble_Random_Select_Behavior\n : pTsk_Wait is nullptr");
-		ENDINSTANCE;
+		MSG_BOX("[CSequence_Levitate] Failed Assemble_Random_Select_Behavior\n : Failed Create_Behavior pTsk_Wait");
 		return E_FAIL;
 	}
-
-	ENDINSTANCE;
 
 	pAction->Set_Options(wstrActionTag, pModel, true);
 	pTsk_Wait->Set_Timer(fLoopTime);
@@ -118,22 +105,22 @@ HRESULT CSequence_Levitate::Assemble_Childs()
 			throw TEXT("pModel is nullptr");
 
 		/* Make Child Behaviors */
-		CAction* pAction_Levitate_Enter = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Levitate_Enter)
-			throw TEXT("pAction_Levitate_Enter is nullptr");
-		CAction* pAction_Levitate_Fall = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Levitate_Fall)
-			throw TEXT("pAction_Levitate_Fall is nullptr");
-		CAction* pAction_Levitate_Land = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Levitate_Land)
-			throw TEXT("pAction_Levitate_Land is nullptr");
+		CAction* pAction_Levitate_Enter = nullptr;
+		if (FAILED(Create_Behavior(pAction_Levitate_Enter)))
+			throw TEXT("Failed Create_Behavior pAction_Levitate_Enter");
+		CAction* pAction_Levitate_Fall = nullptr;
+		if (FAILED(Create_Behavior(pAction_Levitate_Fall)))
+			throw TEXT("Failed Create_Behavior pAction_Levitate_Fall");
+		CAction* pAction_Levitate_Land = nullptr;
+		if (FAILED(Create_Behavior(pAction_Levitate_Land)))
+			throw TEXT("Failed Create_Behavior pAction_Levitate_Land");
 
-		CRigidMove* pTsk_Up = dynamic_cast<CRigidMove*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidMove")));
-		if (nullptr == pTsk_Up)
-			throw TEXT("pTsk_Up is nullptr");
-		CWait* pTsk_Wait = dynamic_cast<CWait*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Wait")));
-		if (nullptr == pTsk_Wait)
-			throw TEXT("pTsk_Wait is nullptr");
+		CRigidMove* pTsk_Up = nullptr;
+		if (FAILED(Create_Behavior(pTsk_Up)))
+			throw TEXT("Failed Create_Behavior pTsk_Up");
+		CWait* pTsk_Wait = nullptr;
+		if (FAILED(Create_Behavior(pTsk_Wait)))
+			throw TEXT("Failed Create_Behavior pTsk_Wait");
 
 		/* Set Decorations */
 		pAction_Levitate_Enter->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
@@ -163,8 +150,7 @@ HRESULT CSequence_Levitate::Assemble_Childs()
 		pAction_Levitate_Enter->Set_Options(TEXT("Levitate_Enter"), pModel);
 		pAction_Levitate_Fall->Set_Options(TEXT("Levitate_Fall_Loop"), pModel, true);
 		pAction_Levitate_Land->Set_Options(TEXT("Levitate_Land"), pModel);
-		_float3 vForce = { 0.f, 3.f, 0.f };
-		pTsk_Up->Set_Option(pRigidBody, vForce, 1.6f);
+		pTsk_Up->Set_Option(pRigidBody, pTransform, CRigidMove::DIR_UP, m_fUpForce, m_fUpTime);
 		pTsk_Wait->Set_Timer(0.5f);
 
 		/* Assemble Behaviors */

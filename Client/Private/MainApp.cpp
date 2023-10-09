@@ -53,11 +53,6 @@ void CMainApp::Tick(_float fTimeDelta)
 {
 	if (nullptr == m_pGameInstance)
 		return;
-	
-#ifdef _DEBUG
-	FAILED_CHECK_RETURN(m_pImGui_Manager->Add_Function([&] { this->Debug_ImGui(); }), );
-	FAILED_CHECK_RETURN(m_pImGui_Manager->Render(), );
-#endif // _DEBUG
 
 #ifdef _DEBUG
 	ShowCursor(true);
@@ -69,6 +64,11 @@ void CMainApp::Tick(_float fTimeDelta)
 	m_pGameInstance->Tick_Engine(fTimeDelta);
 
 	Tick_FPS(fTimeDelta);
+
+#ifdef _DEBUG
+	FAILED_CHECK_RETURN(m_pImGui_Manager->Add_Function([&] { this->Debug_ImGui(); }), );
+	FAILED_CHECK_RETURN(m_pImGui_Manager->Render(), );
+#endif // _DEBUG
 }
 
 HRESULT CMainApp::Render()
@@ -88,7 +88,7 @@ HRESULT CMainApp::Render()
 #endif // _DEBUG
 
 	FAILED_CHECK_RETURN(m_pGameInstance->Present(), E_FAIL);
-
+	
 	return S_OK;
 }
 
@@ -216,7 +216,7 @@ HRESULT CMainApp::Ready_Fonts()
 HRESULT CMainApp::Open_Level(LEVELID eLevelIndex)
 {
 	NULL_CHECK_RETURN(m_pGameInstance, E_FAIL);
-	
+
 	return m_pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, eLevelIndex));
 }
 
@@ -265,16 +265,21 @@ void CMainApp::Debug_ImGui()
 		isChangedLevel = true;
 	if (ImGui::RadioButton("LEVEL_VAULT", (_int*)(&m_eLevelID), LEVEL_VAULT))
 		isChangedLevel = true;
+	if (ImGui::RadioButton("LEVEL_SMITH", (_int*)(&m_eLevelID), LEVEL_SMITH))
+		isChangedLevel = true;
 
 	if (true == isChangedLevel)
 	{
-		m_pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, m_eLevelID, m_isFirstLoaded));
+		m_pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, m_eLevelID, m_isStaticLoaded));
 
-		if (false == m_isFirstLoaded)
+		if (false == m_isStaticLoaded)
 		{
-			m_isFirstLoaded = true;
+			m_isStaticLoaded = true;
 		}
 	}
+
+	if (LEVEL_LOGO != m_eLevelID)
+		m_isStaticLoaded = true;
 
 	ImGui::End();
 }

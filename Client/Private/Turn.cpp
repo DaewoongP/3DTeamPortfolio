@@ -70,7 +70,7 @@ HRESULT CTurn::Tick(const _float& fTimeDelta)
 
 HRESULT CTurn::Assemble_Childs()
 {
-	m_pCheckDegree->Set_Transform(m_pOwnerTransform);
+	m_pCheckDegree->Set_Option(m_pOwnerTransform);
 
 	if (FAILED(Assemble_Behavior(TEXT("Tsk_Check_Degree"), m_pCheckDegree)))
 	{

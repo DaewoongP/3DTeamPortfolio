@@ -88,6 +88,15 @@ HRESULT CBasicCast::Initialize_Prototype(_uint iLevel)
 			return E_FAIL;
 		}
 	}
+	if (nullptr == pGameInstance->Find_Prototype(m_iLevel, TEXT("Prototype_GameObject_Default_Distortion")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(m_iLevel, TEXT("Prototype_GameObject_Default_Distortion")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Default/Default_Distortion"), m_iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
 	ENDINSTANCE;
 
 
@@ -182,13 +191,14 @@ void CBasicCast::Tick_DrawMagic(_float fTimeDelta)
 void CBasicCast::Tick_CastMagic(_float fTimeDelta)
 {
 	__super::Tick_CastMagic(fTimeDelta);
+	m_ParticleVec[EFFECT_STATE_MAIN][1]->Get_Transform()->LookAt(m_vEndPosition);
 	if (m_fLerpAcc != 1)
 	{
 		m_fLerpAcc += fTimeDelta / m_fLifeTime * m_fTimeScalePerDitance;
 		if (m_fLerpAcc > 1)
 			m_fLerpAcc = 1;
 		m_TrailVec[EFFECT_STATE_MAIN][0]->Spline_Move(m_vSplineLerp[0], m_vStartPosition, m_vEndPosition, m_vSplineLerp[1], m_fLerpAcc);
-		m_pTransform->Set_Position(m_TrailVec[EFFECT_STATE_MAIN][0]->Get_Transform()->Get_Position());
+		m_pTransform->Set_Position(XMVectorLerp(m_vStartPosition, m_vEndPosition, m_fLerpAcc));
 	}
 	else
 	{
@@ -220,7 +230,7 @@ HRESULT CBasicCast::Add_Components()
 	}
 
 	m_TrailVec[EFFECT_STATE_MAIN].resize(1);
-	m_ParticleVec[EFFECT_STATE_MAIN].resize(1);
+	m_ParticleVec[EFFECT_STATE_MAIN].resize(2);
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_MagicTrail_BasicCast_Effect"),
 		TEXT("Com_TrailEffect"), reinterpret_cast<CComponent**>(&m_TrailVec[EFFECT_STATE_MAIN][0]))))
 	{
@@ -234,6 +244,13 @@ HRESULT CBasicCast::Add_Components()
 		__debugbreak();
 		return E_FAIL;
 	}
+	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_Default_Distortion")
+		, TEXT("Com_Default_Distortion"), (CComponent**)&m_ParticleVec[EFFECT_STATE_MAIN][1])))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+	
 	
 	m_ParticleVec[EFFECT_STATE_HIT].resize(3);
 	if (FAILED(CComposite::Add_Component(m_iLevel, TEXT("Prototype_GameObject_DefaultConeBoom_Particle")

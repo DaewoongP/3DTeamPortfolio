@@ -1,10 +1,9 @@
 #include "Sequence_Groggy.h"
 
-#include "GameInstance.h"
+#include "Client_GameInstance_Functions.h"
 
 #include "Wait.h"
 #include "Action.h"
-#include "Check_Distance.h"
 
 CSequence_Groggy::CSequence_Groggy(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CSequence(pDevice, pContext)
@@ -18,19 +17,6 @@ CSequence_Groggy::CSequence_Groggy(const CSequence_Groggy& rhs)
 
 HRESULT CSequence_Groggy::Initialize(void* pArg)
 {
-	/* ÄðÅ¸ÀÓ */
-	Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
-		{
-			BEGININSTANCE;
-			_float fInterval = pGameInstance->Get_World_TimeAcc() - m_fPreWorldTimeAcc;
-			ENDINSTANCE;
-
-			if (m_fLimit > fInterval)
-				return false;
-
-			return true;
-		});
-
 	/* ½ºÆç È®ÀÎ */
 	Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 		{
@@ -42,6 +28,18 @@ HRESULT CSequence_Groggy::Initialize(void* pArg)
 				return true;
 
 			return false;
+		});
+
+	Add_Success_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+		{
+			_uint* pICurrentSpell = { nullptr };
+			if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
+				return false;
+
+			if (*pICurrentSpell & BUFF_STUPEFY)
+				*pICurrentSpell ^= BUFF_STUPEFY;
+
+			return true;
 		});
 
 	return S_OK;
@@ -73,26 +71,20 @@ HRESULT CSequence_Groggy::Assemble_Childs()
 		CModel* pModel = { nullptr };
 		if (FAILED(m_pBlackBoard->Get_Type("pModel", pModel)))
 			throw TEXT("pModel is nullptr");
-		CTransform* pTransform = { nullptr };
-		if (FAILED(m_pBlackBoard->Get_Type("pTransform", pTransform)))
-			throw TEXT("pTransform is nullptr");
 
-		CAction* pAction_Enter = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Enter)
-			throw TEXT("pAction_Enter is nullptr");
-		CAction* pAction_Loop = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Loop)
-			throw TEXT("pAction_Loop is nullptr");
-		CAction* pAction_End = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_End)
-			throw TEXT("pAction_End is nullptr");
-		CCheck_Distance* pTsk_Check_Distance = dynamic_cast<CCheck_Distance*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Check_Distance")));
-		if (nullptr == pTsk_Check_Distance)
-			throw TEXT("pTsk_Check_Distance is nullptr");
+		CAction* pAction_Enter = nullptr;
+		if (FAILED(Create_Behavior(pAction_Enter)))
+			throw TEXT("Failed Create_Behavior pAction_Enter");
+		CAction* pAction_Loop = nullptr;
+		if (FAILED(Create_Behavior(pAction_Loop)))
+			throw TEXT("Failed Create_Behavior pAction_Loop");
+		CAction* pAction_End = nullptr;
+		if (FAILED(Create_Behavior(pAction_End)))
+			throw TEXT("Failed Create_Behavior pAction_End");
 
-		CWait* pTsk_Wait = dynamic_cast<CWait*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Wait")));
-		if (nullptr == pTsk_Wait)
-			throw TEXT("pTsk_Wait is nullptr");
+		CWait* pTsk_Wait = nullptr;
+		if (FAILED(Create_Behavior(pTsk_Wait)))
+			throw TEXT("Failed Create_Behavior pTsk_Wait");
 
 		/* Set Decorations */
 
@@ -101,7 +93,6 @@ HRESULT CSequence_Groggy::Assemble_Childs()
 		pAction_Loop->Set_Options(TEXT("Groggy_Loop"), pModel, true);
 		pAction_End->Set_Options(TEXT("Groggy_End"), pModel);
 		pTsk_Wait->Set_Timer(m_fLoopTime);
-		pTsk_Check_Distance->Set_Transform(pTransform);
 
 		/* Assemble Childs */
 		if (FAILED(Assemble_Behavior(TEXT("Action_Enter"), pAction_Enter)))
@@ -110,8 +101,6 @@ HRESULT CSequence_Groggy::Assemble_Childs()
 			throw TEXT("Failed Assemble_Behavior Action_Loop");
 		if (FAILED(Assemble_Behavior(TEXT("Action_End"), pAction_End)))
 			throw TEXT("Failed Assemble_Behavior Action_End");
-		if(FAILED(Assemble_Behavior(TEXT("Tsk_Check_Distance"), pTsk_Check_Distance)))
-			throw TEXT("Failed Assemble_Behavior Tsk_Check_Distance");
 
 		if (FAILED(pAction_Loop->Assemble_Behavior(TEXT("Tsk_Wait"), pTsk_Wait)))
 			throw TEXT("Failed Assemble_Behavior Tsk_Wait");

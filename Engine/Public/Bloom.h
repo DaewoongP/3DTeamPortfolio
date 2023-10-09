@@ -3,6 +3,7 @@
 #include "Component.h"
 
 BEGIN(Engine)
+class CBlur;
 class CShader;
 class CVIBuffer_Rect;
 class CBloom : public CComponent
@@ -16,6 +17,7 @@ public:
 	HRESULT Render(const _tchar* pRenderTargetTag);
 
 private:
+	CBlur*				m_pBlur = { nullptr };
 	CShader*			m_pShader = { nullptr };
 	CVIBuffer_Rect*		m_pBuffer = { nullptr };
 	_float4x4			m_WorldMatrix, m_ViewMatrix, m_ProjMatrix;

@@ -1,11 +1,4 @@
 #pragma once
-/* =============================================== */
-// 
-//	정 : 박정환
-//	부 :
-//
-/* =============================================== */
-
 #include "Light.h"
 
 BEGIN(Engine)
@@ -20,8 +13,8 @@ private:
 public:
 	const CLight::LIGHTDESC* Get_Light(_uint iIndex);
 	_float4x4* Get_LightProj() { return &m_ProjLight; }
-	_float4x4* Get_LightView() 
-	{ 
+	_float4x4* Get_LightView()
+	{
 		return &m_ViewLight;
 	}
 	_float4* Get_LightPosition() { return &m_fLightPos; }
@@ -33,7 +26,7 @@ public:
 
 public:
 	CLight* Add_Lights(_float fWinSizeX, _float fWinSizeY, const CLight::LIGHTDESC& LightDesc);
-	HRESULT Delete_Lights(_uint iIndex,const _char* Name);
+	HRESULT Delete_Lights(_uint iIndex, const _char* Name);
 	HRESULT Clear_Lights();
 	HRESULT Render_Lights(class CShader* pShader, class CVIBuffer_Rect* pVIBuffer);
 
@@ -43,7 +36,7 @@ private:
 	_float4x4				m_ViewLight;
 	_float4x4				m_ProjLight;
 	_float4					m_fLightPos;
-
+public:
 	virtual void Free() override;
 };
 

@@ -12,6 +12,7 @@
 #include "Bone.h"
 #include "Mesh.h"
 #include "Model.h"
+#include "Phase.h"
 #include "Trail.h"
 #include "Shader.h"
 #include "Status.h"

@@ -51,6 +51,8 @@ HRESULT CUI_Font::Initialize(void* pArg)
 	_float textWidth = XMVectorGetX(textSize) * m_vScale.x; // 텍스트의 너비
 	_float textHeight = XMVectorGetY(textSize) * m_vScale.y; // 텍스트의 높이
 
+
+
 	m_vPos.x -= (textWidth / 2.0f); // 중앙 위치에서 왼쪽으로 텍스트의 반 너비만큼 이동
 //	m_vPos.y -= (textHeight / 2.0f); // 중앙 위치에서 위로 텍스트의 반 높이만큼 이동
 
@@ -84,12 +86,22 @@ HRESULT CUI_Font::Render()
 	m_pContext->GSSetShader(nullptr, nullptr, 0);
 
 	m_pBatch->Begin();
-
+	
 	m_pFont->DrawString(m_pBatch, m_pText, m_vPos, m_vColor, m_fRotation, m_vOrigin, m_vScale);
 
 	m_pBatch->End();
 
 	return S_OK;
+}
+
+void CUI_Font::Left_Align()
+{
+	_float4 textSize = m_pFont->MeasureString(m_pText);
+	_float textWidth = XMVectorGetX(textSize); // 텍스트의 너비
+	_float textHeight = XMVectorGetY(textSize); // 텍스트의 높이
+
+	m_vOrigin.x = textWidth / 2.f;
+	m_vOrigin.y = textHeight / 2.f;
 }
 
 void CUI_Font::Set_Text(wstring wText)

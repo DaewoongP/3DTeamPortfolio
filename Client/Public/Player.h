@@ -5,6 +5,7 @@
 #include "Magic.h"
 #include "HitState.h"
 #include "StateMachine.h"
+#include "Enemy.h"
 
 BEGIN(Engine)
 class CShader;
@@ -25,8 +26,10 @@ class CUI_Group_Skill;
 class CMagicBall;
 class CMaximaPotion;
 class CFocusPotion;
-//class CEndurusPotion;
+class CEdurusPotion;
+class CInvisibilityPotion;
 class CWiggenweldPotion;
+class CTool;
 END
 
 BEGIN(Client)
@@ -50,6 +53,14 @@ public:
 		ACTION_END
 	};
 
+	enum SKILLINPUT
+	{
+		SKILLINPUT_1,
+		SKILLINPUT_2,
+		SKILLINPUT_3,
+		SKILLINPUT_4,
+		SKILLINPUT_END
+	};
 
 private:
 	explicit CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -57,10 +68,18 @@ private:
 	virtual ~CPlayer() = default;
 	
 public:
-	void Set_TargetTransform(CTransform* _pTargetTransform = nullptr) { m_pTargetTransform = _pTargetTransform; }
+	CPlayer_Information* Get_Player_Information() { return m_pPlayer_Information; }
 	_float3 Get_PlayerPos() { return m_pTransform->Get_Position(); }
+	void Set_TargetTransform(CTransform* _pTargetTransform = nullptr) { m_pTargetTransform = _pTargetTransform; }
+	void Set_Protego_Collision(CEnemy::ATTACKTYPE _eAttackType, CTransform* _pTransform);
 
-	_bool Set_PowerUp(_bool isPowerUp) { m_isPowerUp = isPowerUp; }
+
+	void Set_PowerUp(_bool isPowerUp) { m_isPowerUp = isPowerUp; }
+	void Set_DefUp(_bool isDefUp) { m_isDefUp = isDefUp; }
+	void Set_FocusOn(_bool isFocus) { m_isFocusOn = isFocus; }
+	void Set_Invisible(_bool isInvisible) { m_isInvisible = isInvisible; }
+
+	void Set_Spell_Botton(_uint _Button, SPELL _eSpell);
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -74,6 +93,8 @@ public:
 	virtual HRESULT Render() override;
 	virtual HRESULT Render_Depth() override;
 
+
+	void Potion_Duration(_float fTimeDelta);
 	virtual void On_Maigc_Throw_Data(void* data) const override;
 
 private:
@@ -83,19 +104,22 @@ private:
 	CCustomModel*	m_pCustomModel = { nullptr }; //스테이트
 	CRigidBody*		m_pRigidBody = { nullptr };
 	CCoolTime*		m_pCooltime = { nullptr };
-	CDefence* m_pDefence = { nullptr };
+	CDefence*		m_pDefence = { nullptr };
 
 private:
 	CPlayer_Camera* m_pPlayer_Camera = { nullptr };
 	CPlayer_Information* m_pPlayer_Information = { nullptr };
 
 	CUI_Group_Skill* m_UI_Group_Skill_01 = { nullptr };
-	CMaximaPotion* m_pMaximaPotion = { nullptr };
-	
-	//CEndurusPotion* m_pEndurusPotion = { nullptr };
-private:
-	
 
+	CTool* m_pCurTool = { nullptr };
+	CMaximaPotion* m_pMaximaPotion = { nullptr };
+	CEdurusPotion* m_pEdurusPotion = { nullptr };
+	CFocusPotion*	m_pFocusPotion = { nullptr };
+	CInvisibilityPotion* m_pInvisibilityPotion = { nullptr };
+	CWiggenweldPotion* m_pWiggenweldPotion = { nullptr };
+
+private:
 	_bool		m_isFixMouse = { false };
 	CStateContext* m_pStateContext = { nullptr };
 	
@@ -120,9 +144,17 @@ private:
 	LEVELID m_eLevelID = { LEVEL_END };
 	
 	_float3		m_vLevelInitPosition[LEVEL_END];
-
+	//물약 사용여부
 	_bool m_isPowerUp = { false };
+	_bool m_isDefUp = { false };
+	_bool m_isFocusOn = { false };
+	_bool m_isInvisible = { false };
 	_int m_iDeffence = { 0 };
+
+
+	//스킬UI에 넘겨주기
+	vector<_float> m_vecCoolTimeRatio;
+
 	
 #pragma region 스테이트에 넘기는 변수
 
@@ -149,6 +181,28 @@ private:
 	
 #pragma endregion
 
+#pragma region 카메라 쉐이크
+
+	_int m_iShake_Type = { 0 };
+	_int m_iShake_Axis = { 0 };
+	_int m_iEase = { 0 };
+
+	_float m_fShakeSpeed = { 5.0f };
+	_float m_fShakeDuration = { 1.0f };
+	_float m_fShakePower = { 0.01f };
+
+	_int m_iShakePower = { 0 };
+
+	_float m_fx = { 1.0f };
+	_float m_fy = { 1.0f };
+	_float m_fz = { 1.0f };
+
+#pragma endregion
+
+	_float m_fTargetViewRange = { 0.0f };
+
+	vector<SPELL> m_vecSpellCheck;
+
 private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
@@ -173,7 +227,10 @@ public:
 #ifdef _DEBUG
 private:
 	void Tick_ImGui();
+	void Tick_Magic_ImGui();
 	_bool m_isGravity = { false };
+
+	void Tick_TestShake();
 #endif // _DEBUG
 
 private:
@@ -184,8 +241,11 @@ private:
 
 	void Update_Cloth(_float fTimeDelta);
 
+	void Clear_Target();
+
 	//타겟을 정하기 위한 함수 (임시 용)
 	void Find_Target_For_Distance();
+	void Find_Target_For_ViewSpace();
 	
 #pragma region 노티파이 사용함수
 
@@ -194,10 +254,17 @@ private:
 	void Gravity_On();
 	void Gravity_Off();
 
-	void Shot_Levioso();
-	void Shot_Confringo();
-	void Shot_NCENDIO();
-	void Shot_Finisher();
+	void Shot_Magic_Spell_Button_1();
+	void Shot_Magic_Spell_Button_2();
+	void Shot_Magic_Spell_Button_3();
+	void Shot_Magic_Spell_Button_4();
+	
+	
+
+	_uint Special_Action(_uint _iButton);
+
+	void Finisher();
+
 	void Lumos();
 
 	void Finish_Animation();
@@ -209,7 +276,8 @@ private:
 	void Shot_Basic_Last_Spell();
 
 	void Protego();
-
+	void Add_Layer_Item();
+	void Drink_Potion();
 #pragma endregion
 
 #pragma region 스테이트 변경 함수
@@ -228,13 +296,10 @@ private:
 
 	void Go_Switch_Loop();
 
-
-
-
-
-
-
 #pragma endregion
+
+	void Update_Skill_CoolTime();
+
 
 public:
 	static CPlayer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

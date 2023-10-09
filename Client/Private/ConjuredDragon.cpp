@@ -1,20 +1,18 @@
 #include "ConjuredDragon.h"
-#include "GameInstance.h"
 
-#include "Weapon_Golem_Combat.h"
+#include "Client_GameInstance_Functions.h"
 
 #include "Wait.h"
 #include "Death.h"
+#include "LookAt.h"
 #include "Action.h"
+#include "Selector.h"
+#include "Sequence.h"
 #include "MagicBall.h"
-#include "Check_Degree.h"
-#include "RandomChoose.h"
-#include "Selector_Degree.h"
-#include "Sequence_Groggy.h"
+#include "RigidMove.h"
+#include "Check_Distance.h"
 #include "Sequence_Attack.h"
 #include "UI_Group_Enemy_HP.h"
-#include "Sequence_Levitate.h"
-#include "Sequence_MoveTarget.h"
 
 CConjuredDragon::CConjuredDragon(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CEnemy(pDevice, pContext)
@@ -39,6 +37,9 @@ HRESULT CConjuredDragon::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
+	if (nullptr == m_pTarget)
+		m_pTarget = m_pPlayer;
+
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
@@ -50,8 +51,8 @@ HRESULT CConjuredDragon::Initialize_Level(_uint iCurrentLevelIndex)
 	if (FAILED(Add_Components_Level(iCurrentLevelIndex)))
 		return E_FAIL;
 
-	/*if (FAILED(Make_AI()))
-		return E_FAIL;*/
+	if (FAILED(Make_AI()))
+		return E_FAIL;
 
 	m_pTransform->Set_RigidBody(m_pRigidBody);
 	m_pTransform->Set_Speed(10.f);
@@ -65,12 +66,35 @@ HRESULT CConjuredDragon::Initialize_Level(_uint iCurrentLevelIndex)
 
 void CConjuredDragon::Tick(_float fTimeDelta)
 {
+	/* 행동 테스트용 코드 입네다 */
+	BEGININSTANCE;
+	if (pGameInstance->Get_DIKeyState(DIK_LCONTROL, CInput_Device::KEY_PRESSING))
+	{
+		if (pGameInstance->Get_DIKeyState(DIK_1, CInput_Device::KEY_DOWN))
+			m_isBreakInvincible = true;
+		if (pGameInstance->Get_DIKeyState(DIK_2, CInput_Device::KEY_DOWN))
+			m_isSpawnPhaseTwo = true;
+	}
+	ENDINSTANCE;
+	/* ========================= */
+
+	if (true == m_isPhaseTwo &&
+		false == m_isSpawnPhaseTwo)
+	{
+		_float3 vPosition = _float3(40.f, 25.f, 60.f);
+		m_pTransform->Set_Position(vPosition);
+		m_pModelCom->Change_Animation(TEXT("Hover_Loop"));
+		return;
+	}
+
 	__super::Tick(fTimeDelta);
 
-	Set_Current_Target();
+	Update_Invincible(fTimeDelta);
+	Check_Air_Balance(fTimeDelta);
+	Check_Phase();
 
-	/*if (nullptr != m_pRootBehavior)
-		m_pRootBehavior->Tick(fTimeDelta);*/
+	if (nullptr != m_pRootBehavior)
+		m_pRootBehavior->Tick(fTimeDelta);
 
 	if (nullptr != m_pModelCom)
 		m_pModelCom->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
@@ -78,7 +102,20 @@ void CConjuredDragon::Tick(_float fTimeDelta)
 
 void CConjuredDragon::Late_Tick(_float fTimeDelta)
 {
-	__super::Late_Tick(fTimeDelta);
+	if (true == m_isPhaseTwo &&
+		false == m_isSpawnPhaseTwo)
+		return;
+
+	CGameObject::Late_Tick(fTimeDelta);
+
+	if (nullptr != m_pRenderer)
+	{
+		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
+#ifdef _DEBUG
+		m_pRenderer->Add_DebugGroup(m_pRigidBody);
+#endif // _DEBUG
+	}
 }
 
 void CConjuredDragon::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
@@ -89,6 +126,9 @@ void CConjuredDragon::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 	/* Collision Magic */
 	if (wstring::npos != wstrObjectTag.find(TEXT("MagicBall")))
 	{
+		if (true == m_isInvincible)
+			return;
+
 		CMagicBall::COLLSIONREQUESTDESC* pCollisionMagicBallDesc = static_cast<CMagicBall::COLLSIONREQUESTDESC*>(CollisionEventDesc.pArg);
 		BUFF_TYPE eBuff = pCollisionMagicBallDesc->eBuffType;
 		auto Action = pCollisionMagicBallDesc->Action;
@@ -119,7 +159,9 @@ void CConjuredDragon::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			return;
 
 		m_isSpawn = true;
-		m_RangeInEnemies.push_back({ wstrObjectTag, CollisionEventDesc.pOtherOwner });
+		auto iter = m_RangeInEnemies.find(wstrObjectTag);
+		if (iter == m_RangeInEnemies.end())
+			m_RangeInEnemies.emplace(wstrObjectTag, CollisionEventDesc.pOtherOwner);
 	}
 }
 
@@ -146,6 +188,9 @@ HRESULT CConjuredDragon::Render()
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
+		if (0 == i || 2 == i)
+			continue;
+
 		try /* Failed Render */
 		{
 			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", i)))
@@ -173,6 +218,63 @@ HRESULT CConjuredDragon::Render()
 	return S_OK;
 }
 
+void CConjuredDragon::Update_Invincible(const _float& fTimeDelta)
+{
+	if (true == m_isInvincible)
+		return;
+
+	m_fInvincibleGauge += fTimeDelta * 7.f;
+	m_fInvincibleGauge = (m_fInvincibleGauge > 100.f) ? 100.f : m_fInvincibleGauge;
+}
+
+void CConjuredDragon::DeathBehavior(const _float& fTimeDelta)
+{
+	m_isDead = true;
+
+	m_fDeadTimeAcc += fTimeDelta;
+	if (9.f < m_fDeadTimeAcc)
+		Set_ObjEvent(OBJ_DEAD);
+}
+
+void CConjuredDragon::Check_Air_Balance(const _float& fTimeDelta)
+{
+	if (false == m_isSettingBalance)
+		return;
+
+	_float3 vTargetPosition = m_pTarget->Get_Transform()->Get_Position();
+	_float3 vPosition = m_pTransform->Get_Position();
+	_float fTargetDistance = _float3::Distance(vPosition, vTargetPosition);
+
+	if (30.f < fTargetDistance)
+	{
+		_float3 vDirection = vTargetPosition - vPosition;
+		vDirection = _float3(vDirection.x, 0.f, vDirection.z);
+		vDirection.Normalize();
+		m_pRigidBody->Add_Force(vDirection * 3.f);
+	}
+	else
+	{
+		_float3 vCurrentVelocity = m_pRigidBody->Get_Current_Velocity();
+		if (0.07f > vCurrentVelocity.Length())
+			return;
+
+		m_pRigidBody->Add_Force(-vCurrentVelocity * 3.f);
+	}
+}
+
+void CConjuredDragon::Check_Phase()
+{
+	if (true == m_isPhaseOne)
+	{
+		if (0.5f >= m_pHealth->Get_Current_HP_Percent())
+		{
+			m_pHealth->Set_HP(m_pHealth->Get_MaxHP() / 2);
+			m_isPhaseOne = false;
+			m_isInvincible = true;
+		}
+	}
+}
+
 HRESULT CConjuredDragon::Make_AI()
 {
 	BEGININSTANCE;
@@ -182,27 +284,36 @@ HRESULT CConjuredDragon::Make_AI()
 		if (FAILED(__super::Make_AI()))
 			throw TEXT("Failed Enemy Make_AI");
 
-		/* Make Child Behaviors */
-		CSelector* pSelector = dynamic_cast<CSelector*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Selector")));
-		if (nullptr == pSelector)
-			throw TEXT("pSelector is nullptr");
+		if (FAILED(m_pRootBehavior->Add_Type("fInvincibleGauge", &m_fInvincibleGauge)))
+			throw TEXT("Failed Add_Type fInvincibleGauge");
+		if (FAILED(m_pRootBehavior->Add_Type("isInvincible", &m_isInvincible)))
+			throw TEXT("Failed Add_Type isInvincible");
+		if (FAILED(m_pRootBehavior->Add_Type("isBreakInvincible", &m_isBreakInvincible)))
+			throw TEXT("Failed Add_Type isBreakInvincible");
+		if (FAILED(m_pRootBehavior->Add_Type("isSettingBalance", &m_isSettingBalance)))
+			throw TEXT("Failed Add_Type isSettingBalance");
+		if (FAILED(m_pRootBehavior->Add_Type("isMoveLeft", &m_isMoveLeft)))
+			throw TEXT("Failed Add_Type isMoveLeft");
+		if (FAILED(m_pRootBehavior->Add_Type("isPhaseOne", &m_isPhaseOne)))
+			throw TEXT("Failed Add_Type isPhaseOne");
+		if (FAILED(m_pRootBehavior->Add_Type("isPhaseTwo", &m_isPhaseTwo)))
+			throw TEXT("Failed Add_Type isPhaseTwo");
+		if (FAILED(m_pRootBehavior->Add_Type("isSpawnPhaseTwo", &m_isSpawnPhaseTwo)))
+			throw TEXT("Failed Add_Type isSpawnPhaseTwo");
 
-		CSequence* pSequence_Death = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
-		if (nullptr == pSequence_Death)
-			throw TEXT("pSequence_Death is nullptr");
-		CSelector* pSelector_Alive = dynamic_cast<CSelector*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Selector")));
-		if (nullptr == pSelector_Alive)
-			throw TEXT("pSelector_Alive is nullptr");
+		/* Make Child Behaviors */
+		CSelector* pSelector = nullptr;
+		if (FAILED(Create_Behavior(pSelector)))
+			throw TEXT("Failed Create_Behavior pSelector");
+
+		CSequence* pSequence_Death = nullptr;
+		if (FAILED(Create_Behavior(pSequence_Death)))
+			throw TEXT("Failed Create_Behavior pSequence_Death");
+		CSelector* pSelector_Alive = nullptr;
+		if (FAILED(Create_Behavior(pSelector_Alive)))
+			throw TEXT("Failed Create_Behavior pSelector_Alive");
 
 		/* Set Decorations */
-		pSelector->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
-			{
-				_bool* pIsSpawn = { nullptr };
-				if (FAILED(pBlackBoard->Get_Type("isSpawn", pIsSpawn)))
-					return false;
-
-				return *pIsSpawn;
-			});
 
 		/* Set Options */
 
@@ -239,6 +350,10 @@ HRESULT CConjuredDragon::Make_AI()
 
 HRESULT CConjuredDragon::Make_Notifies()
 {
+	function<void()> Func = [&] { this->Change_Animation(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Change_Animation"), Func)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -251,7 +366,7 @@ HRESULT CConjuredDragon::Add_Components()
 
 		/* For.Com_Health */
 		CHealth::HEALTHDESC HealthDesc;
-		HealthDesc.iMaxHP = 200;
+		HealthDesc.iMaxHP = 500;
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Health"),
 			TEXT("Com_Health"), reinterpret_cast<CComponent**>(&m_pHealth), &HealthDesc)))
 			throw TEXT("Com_Health");
@@ -262,18 +377,18 @@ HRESULT CConjuredDragon::Add_Components()
 		RigidBodyDesc.isTrigger = false;
 		RigidBodyDesc.isGravity = false;
 		RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
-		RigidBodyDesc.vOffsetPosition = _float3(0.f, 2.2f, 0.f);
-		RigidBodyDesc.vOffsetRotation = XMQuaternionRotationRollPitchYaw(0.f, 0.f, XMConvertToRadians(90.f));
+		RigidBodyDesc.vOffsetPosition = _float3(0.f, 1.5f, 0.f);
+		RigidBodyDesc.vOffsetRotation = XMQuaternionRotationRollPitchYaw(0.f, 0.f, 0.f);
 		RigidBodyDesc.fStaticFriction = 0.f;
 		RigidBodyDesc.fDynamicFriction = 1.f;
 		RigidBodyDesc.fRestitution = 0.f;
-		PxCapsuleGeometry pCapsuleGeomatry = PxCapsuleGeometry(0.7f, 1.5f);
-		RigidBodyDesc.pGeometry = &pCapsuleGeomatry;
+		PxSphereGeometry pSphereGeometry = PxSphereGeometry(1.5f);
+		RigidBodyDesc.pGeometry = &pSphereGeometry;
 		RigidBodyDesc.eConstraintFlag = CRigidBody::RotX | CRigidBody::RotY | CRigidBody::RotZ;
 		RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 0.f, 1.f);
 		RigidBodyDesc.pOwnerObject = this;
 		RigidBodyDesc.eThisCollsion = COL_ENEMY;
-		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC | COL_NPC_RANGE | COL_MAGIC;
+		RigidBodyDesc.eCollisionFlag = COL_MAGIC;
 		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Body");
 
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
@@ -288,7 +403,7 @@ HRESULT CConjuredDragon::Add_Components()
 		Desc.eType = CUI_Group_Enemy_HP::ENEMYTYPE::BOSS;
 		Desc.pHealth = m_pHealth;
 		lstrcpy(Desc.wszObjectLevel, TEXT("99"));
-		lstrcpy(Desc.wszObjectName, TEXT("용 란록"));
+		lstrcpy(Desc.wszObjectName, TEXT("Bone Dragon"));
 
 		BEGININSTANCE;
 		m_pUI_HP = dynamic_cast<CUI_Group_Enemy_HP*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Enemy_HP"), &Desc));
@@ -309,6 +424,34 @@ HRESULT CConjuredDragon::Add_Components()
 	return S_OK;
 }
 
+HRESULT CConjuredDragon::Add_Components_Level(_uint iCurrentLevelIndex)
+{
+	try
+	{
+		/* For.Com_Model */
+		if (FAILED(CComposite::Add_Component(iCurrentLevelIndex, TEXT("Prototype_Component_Model_ConjuredDragon"),
+			TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
+			throw TEXT("Com_Model");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CConjuredDragon] Failed Add_Components_Level : \n");
+		wstrErrorMSG += pErrorTag;
+		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
+
+		return E_FAIL;
+	}
+
+
+	return S_OK;
+}
+
+HRESULT CConjuredDragon::Bind_HitMatrices()
+{
+	return S_OK;
+}
+
 HRESULT CConjuredDragon::Make_Death(_Inout_ CSequence* pSequence)
 {
 	BEGININSTANCE;
@@ -318,39 +461,13 @@ HRESULT CConjuredDragon::Make_Death(_Inout_ CSequence* pSequence)
 		if (nullptr == pSequence)
 			throw TEXT("Parameter pSequence is nullptr");
 
-		CSelector* pSelector_Choose = dynamic_cast<CSelector*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Selector")));
-		if (nullptr == pSelector_Choose)
-			throw TEXT("pSelector_Choose is nullptr");
+		CAction* pAction_Death = nullptr;
+		if (FAILED(Create_Behavior(pAction_Death)))
+			throw TEXT("Failed Create_Behavior pAction_Death");
 
-		CSequence* pSequence_Death_Ground = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
-		if (nullptr == pSequence_Death_Ground)
-			throw TEXT("pSequence_Death_Ground is nullptr");
-		CSequence* pSequence_Death_Air = dynamic_cast<CSequence*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Sequence")));
-		if (nullptr == pSequence_Death_Air)
-			throw TEXT("pSequence_Death_Air is nullptr");
-
-		CAction* pAction_Death_Ground = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Death_Ground)
-			throw TEXT("pAction_Death_Ground is nullptr");
-		CAction* pAction_Death_Ground_Loop = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Death_Ground_Loop)
-			throw TEXT("pAction_Death_Ground_Loop is nullptr");
-		CAction* pAction_Knockback = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Knockback)
-			throw TEXT("pAction_Knockback is nullptr");
-		CAction* pAction_Splat = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Splat)
-			throw TEXT("pAction_Splat is nullptr");
-		CAction* pAction_Splat_Loop = dynamic_cast<CAction*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Action")));
-		if (nullptr == pAction_Splat_Loop)
-			throw TEXT("pAction_Splat_Loop is nullptr");
-
-		CDeath* pTsk_Death_Ground = dynamic_cast<CDeath*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Death")));
-		if (nullptr == pTsk_Death_Ground)
-			throw TEXT("pTsk_Death_Ground is nullptr");
-		CDeath* pTsk_Death_Air = dynamic_cast<CDeath*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Death")));
-		if (nullptr == pTsk_Death_Air)
-			throw TEXT("pTsk_Death_Air is nullptr");
+		CDeath* pTsk_Death = nullptr;
+		if (FAILED(Create_Behavior(pTsk_Death)))
+			throw TEXT("Failed Create_Behavior pTsk_Death");
 
 		// Set Decorators
 		pSequence->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
@@ -361,70 +478,17 @@ HRESULT CConjuredDragon::Make_Death(_Inout_ CSequence* pSequence)
 
 				return pHealth->isDead();
 			});
-		pSequence_Death_Ground->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
-			{
-				_uint* piCurrentSpell = { nullptr };
-				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", piCurrentSpell)))
-					return false;
-
-				if (BUFF_LEVIOSO & *piCurrentSpell)
-					return false;
-
-				return true;
-			});
-		pSequence_Death_Air->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
-			{
-				_uint* piCurrentSpell = { nullptr };
-				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", piCurrentSpell)))
-					return false;
-
-				if (BUFF_LEVIOSO & *piCurrentSpell)
-				{
-					CRigidBody* pRigidBody = { nullptr };
-					if (FAILED(pBlackBoard->Get_Type("pRigidBody", pRigidBody)))
-						return false;
-
-					pRigidBody->Set_Gravity(true);
-
-					return true;
-				}
-
-				return false;
-			});
 
 		// Set Options 
 		function<void(const _float&)> Func = [&](const _float& fTimeDelta) {this->DeathBehavior(fTimeDelta); };
-		pTsk_Death_Ground->Set_DeathFunction(Func);
-		pTsk_Death_Air->Set_DeathFunction(Func);
-		pAction_Knockback->Set_Options(TEXT("Knockback_Back"), m_pModelCom);
-		pAction_Splat->Set_Options(TEXT("Knockback_Back_Splat"), m_pModelCom, true);
-		pAction_Splat_Loop->Set_Options(TEXT("Send_Splat_Loop"), m_pModelCom, true);
-		pAction_Death_Ground->Set_Options(TEXT("Death"), m_pModelCom);
-		pAction_Death_Ground_Loop->Set_Options(TEXT("Send_Splat_Loop"), m_pModelCom, true);
+		pTsk_Death->Set_DeathFunction(Func);
+		pAction_Death->Set_Options(TEXT("Death"), m_pModelCom);
 
-		if (FAILED(pSequence->Assemble_Behavior(TEXT("Selector_Choose"), pSelector_Choose)))
-			throw TEXT("Failed Assemble_Behavior Selector_Choose");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Death"), pAction_Death)))
+			throw TEXT("Failed Assemble_Behavior Action_Death");
 
-		if (FAILED(pSelector_Choose->Assemble_Behavior(TEXT("Sequence_Death_Ground"), pSequence_Death_Ground)))
-			throw TEXT("Failed Assemble_Behavior Sequence_Death_Ground");
-		if (FAILED(pSelector_Choose->Assemble_Behavior(TEXT("Sequence_Death_Air"), pSequence_Death_Air)))
-			throw TEXT("Failed Assemble_Behavior Sequence_Death_Air");
-
-		if (FAILED(pSequence_Death_Ground->Assemble_Behavior(TEXT("Action_Death_Ground"), pAction_Death_Ground)))
-			throw TEXT("Failed Assemble_Behavior Action_Death_Ground");
-		if (FAILED(pSequence_Death_Ground->Assemble_Behavior(TEXT("Action_Death_Ground_Loop"), pAction_Death_Ground_Loop)))
-			throw TEXT("Failed Assemble_Behavior Action_Death_Ground_Loop");
-		if (FAILED(pSequence_Death_Air->Assemble_Behavior(TEXT("Action_Knockback"), pAction_Knockback)))
-			throw TEXT("Failed Assemble_Behavior Action_Knockback");
-		if (FAILED(pSequence_Death_Air->Assemble_Behavior(TEXT("Action_Splat"), pAction_Splat)))
-			throw TEXT("Failed Assemble_Behavior Action_Splat");
-		if (FAILED(pSequence_Death_Air->Assemble_Behavior(TEXT("Action_Splat_Loop"), pAction_Splat_Loop)))
-			throw TEXT("Failed Assemble_Behavior Action_Splat_Loop");
-
-		if (FAILED(pAction_Death_Ground_Loop->Assemble_Behavior(TEXT("Tsk_Death_Ground"), pTsk_Death_Ground)))
-			throw TEXT("Failed Assemble_Behavior Tsk_Death_Ground");
-		if (FAILED(pAction_Splat_Loop->Assemble_Behavior(TEXT("Tsk_Death_Air"), pTsk_Death_Air)))
-			throw TEXT("Failed Assemble_Behavior Tsk_Death_Air");
+		if (FAILED(pAction_Death->Assemble_Behavior(TEXT("Tsk_Death"), pTsk_Death)))
+			throw TEXT("Failed Assemble_Behavior Tsk_Death");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -450,6 +514,18 @@ HRESULT CConjuredDragon::Make_Alive(_Inout_ CSelector* pSelector)
 	try
 	{
 		/* Create Child Behavior */
+		CSequence* pSequence_Next_Phase = { nullptr };
+		if (FAILED(Create_Behavior(pSequence_Next_Phase)))
+			throw TEXT("Failed Create_Behavior pSequence_Next_Phase");
+		CSequence* pSequence_Start_Phase_Two = { nullptr };
+		if (FAILED(Create_Behavior(pSequence_Start_Phase_Two)))
+			throw TEXT("Failed Create_Behavior pSequence_Start_Phase_Two");
+		CSelector* pSelector_Ground_Pattern = { nullptr };
+		if (FAILED(Create_Behavior(pSelector_Ground_Pattern)))
+			throw TEXT("Failed Create_Behavior pSelector_Ground_Pattern");
+		CSelector* pSelector_Air_Pattern = { nullptr };
+		if (FAILED(Create_Behavior(pSelector_Air_Pattern)))
+			throw TEXT("Failed Create_Behavior pSelector_Air_Pattern");
 
 		/* Set Decorators */
 		pSelector->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
@@ -461,7 +537,26 @@ HRESULT CConjuredDragon::Make_Alive(_Inout_ CSelector* pSelector)
 				return !(pHealth->isDead());
 			});
 
+		/* Set Options */
+
 		/* Assemble Behaviors */
+		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Next_Phase"), pSequence_Next_Phase)))
+			throw TEXT("Failed Assemble_Behavior Sequence_Next_Phase");
+		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Start_Phase_Two"), pSequence_Start_Phase_Two)))
+			throw TEXT("Failed Assemble_Behavior Sequence_Start_Phase_Two");
+		if (FAILED(pSelector->Assemble_Behavior(TEXT("Selector_Ground_Pattern"), pSelector_Ground_Pattern)))
+			throw TEXT("Failed Assemble_Behavior Selector_Ground_Pattern");
+		if (FAILED(pSelector->Assemble_Behavior(TEXT("Selector_Air_Pattern"), pSelector_Air_Pattern)))
+			throw TEXT("Failed Assemble_Behavior Selector_Air_Pattern");
+
+		if (FAILED(Make_Next_Phase(pSequence_Next_Phase)))
+			throw TEXT("Failed Make_Next_Phase");
+		if (FAILED(Make_Start_Phase_Two(pSequence_Start_Phase_Two)))
+			throw TEXT("Failed Make_Start_Phase_Two");
+		if (FAILED(Make_Ground_Pattern(pSelector_Ground_Pattern)))
+			throw TEXT("Failed Make_Ground_Pattern");
+		if (FAILED(Make_Air_Pattern(pSelector_Air_Pattern)))
+			throw TEXT("Failed Make_Air_Pattern");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -480,36 +575,777 @@ HRESULT CConjuredDragon::Make_Alive(_Inout_ CSelector* pSelector)
 	return S_OK;
 }
 
-void CConjuredDragon::DeathBehavior(const _float& fTimeDelta)
+HRESULT CConjuredDragon::Make_Next_Phase(_Inout_ CSequence* pSequence)
 {
-	m_isDead = true;
+	BEGININSTANCE;
 
-	m_fDeadTimeAcc += fTimeDelta;
-	if (3.f < m_fDeadTimeAcc)
-		Set_ObjEvent(OBJ_DEAD);
-}
-
-HRESULT CConjuredDragon::Add_Components_Level(_uint iCurrentLevelIndex)
-{
 	try
 	{
-		/* For.Com_Model */
-		if (FAILED(CComposite::Add_Component(iCurrentLevelIndex, TEXT("Prototype_Component_Model_ConjuredDragon"),
-			TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
-			throw TEXT("Com_Model");
+		if (nullptr == pSequence)
+			throw TEXT("Parameter pSequence is nullptr");
+
+		/* Create Child Behaviors */
+		CAction* pAction_Enter_Next_Phase = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Enter_Next_Phase)))
+			throw TEXT("Failed Create_Behavior pAction_Enter_Next_Phase");
+		CAction* pAction_Fly = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Fly)))
+			throw TEXT("Failed Create_Behavior pAction_Fly");
+
+		CRigidMove* pRigidMove = { nullptr };
+		if (FAILED(Create_Behavior(pRigidMove)))
+			throw TEXT("Failed Create_Behavior pRigidMove");
+
+		/* Set Decorators */
+		pAction_Enter_Next_Phase->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_bool* pIsPhaseOne = { nullptr };
+				_bool* pIsSpawnPhaseTwo = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("isPhaseOne", pIsPhaseOne)))
+					return false;
+				if (FAILED(pBlackBoard->Get_Type("isSpawnPhaseTwo", pIsSpawnPhaseTwo)))
+					return false;
+
+				return false == *pIsPhaseOne && false == *pIsSpawnPhaseTwo;
+			});
+		pAction_Fly->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_bool* pIsSettingBalance = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("isSettingBalance", pIsSettingBalance)))
+					return false;
+
+				*pIsSettingBalance = false;
+
+				return true;
+			});
+		pAction_Fly->Add_End_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_bool* pIsPhaseTwo = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("isPhaseTwo", pIsPhaseTwo)))
+					return false;
+
+				*pIsPhaseTwo = true;
+
+				return true;
+			});
+
+		/* Set Options */
+		pAction_Enter_Next_Phase->Set_Options(TEXT("Fly_Next_Phase"), m_pModelCom, false, 0.f, true);
+		pAction_Fly->Set_Options(TEXT("Fly_Loop"), m_pModelCom, true, 0.f, true);
+		pRigidMove->Set_Option(m_pRigidBody, m_pTransform, CRigidMove::DIR_LOOK, 10.f, 10.f);
+
+		/* Assemble Behaviors */
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Enter_Next_Phase"), pAction_Enter_Next_Phase)))
+			throw TEXT("Failed Assemble_Behavior Action_Enter_Next_Phase");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("pAction_Fly"), pAction_Fly)))
+			throw TEXT("Failed Assemble_Behavior pAction_Fly");
+
+		if (FAILED(pAction_Fly->Assemble_Behavior(TEXT("RigidMove"), pRigidMove)))
+			throw TEXT("Failed Assemble_Behavior RigidMove");
 	}
 	catch (const _tchar* pErrorTag)
 	{
-		wstring wstrErrorMSG = TEXT("[CConjuredDragon] Failed Add_Components_Level : \n");
+		wstring wstrErrorMSG = TEXT("[CConjuredDragon] Failed Make_Next_Phase : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
 		__debugbreak();
 
+		ENDINSTANCE;
+
 		return E_FAIL;
 	}
 
+	ENDINSTANCE;
 
 	return S_OK;
+}
+
+HRESULT CConjuredDragon::Make_Start_Phase_Two(_Inout_ CSequence* pSequence)
+{
+	BEGININSTANCE;
+
+	try
+	{
+		if (nullptr == pSequence)
+			throw TEXT("Parameter pSequence is nullptr");
+
+		CAction* pAction_Fly_Down = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Fly_Down)))
+			throw TEXT("Failed Create_Behavior pAction_Fly_Down");
+		CAction* pAction_Land_Ground = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Land_Ground)))
+			throw TEXT("Failed Create_Behavior pAction_Land_Ground");
+
+		CWait* pTsk_Wait = { nullptr };
+		if (FAILED(Create_Behavior(pTsk_Wait)))
+			throw TEXT("Failed Create_Behavior pTsk_Wait");
+
+		/* Set Decorators */
+		pSequence->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_bool* pIsPhaseTwo = { nullptr };
+				_bool* pIsSpawnPhaseTwo = { nullptr };
+				CRigidBody* pRigidBody = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("isPhaseTwo", pIsPhaseTwo)))
+					return false;
+				if (FAILED(pBlackBoard->Get_Type("isSpawnPhaseTwo", pIsSpawnPhaseTwo)))
+					return false;
+				if (FAILED(pBlackBoard->Get_Type("pRigidBody", pRigidBody)))
+					return false;
+
+				if (true == *pIsPhaseTwo && true == *pIsSpawnPhaseTwo)
+				{
+					pRigidBody->Set_Gravity(true);
+					pRigidBody->Set_CollisionFlag("Enemy_Body", COL_MAGIC | COL_STATIC);
+					return true;
+				}
+
+				return false;
+			});
+
+		/* Set Options */
+		pAction_Fly_Down->Set_Options(TEXT("Fly_Loop"), m_pModelCom, true, 0.f, true);
+		pAction_Land_Ground->Set_Options(TEXT("Landing_To_Cmbt"), m_pModelCom);
+		pTsk_Wait->Set_Timer(2.f);
+
+		/* Assemble Behaviors */
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Fly_Down"), pAction_Fly_Down)))
+			throw TEXT("Failed Assemble_Behavior Action_Fly_Down");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("pction_Land_Ground"), pAction_Land_Ground)))
+			throw TEXT("Failed Assemble_Behavior Action_Land_Ground");
+
+		if (FAILED(pAction_Fly_Down->Assemble_Behavior(TEXT("pTsk_Wait"), pTsk_Wait)))
+			throw TEXT("Failed Assemble_Behavior pTsk_Wait");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CConjuredDragon] Failed Make_Start_Phase_Two : \n");
+		wstrErrorMSG += pErrorTag;
+		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
+
+		ENDINSTANCE;
+
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CConjuredDragon::Make_Ground_Pattern(_Inout_ CSelector* pSelector)
+{
+	BEGININSTANCE;
+
+	try
+	{
+		if (nullptr == pSelector)
+			throw TEXT("Parameter pSelector is nullptr");
+
+		/* Create Child Behaviors */
+		CAction* pAction_Idle = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Idle)))
+			throw TEXT("Failed Create_Behavior pAction_Idle");
+
+		/* Set Decorators */
+		pSelector->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				CHealth* pHealth = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("pHealth", pHealth)))
+					return false;
+
+				return 0.5f >= pHealth->Get_Current_HP_Percent();
+			});
+
+		/* Set Options */
+		pAction_Idle->Set_Options(TEXT("Ground_Idle_Combat_1"), m_pModelCom);
+
+		/* Assemble Behaviors */
+		if (FAILED(pSelector->Assemble_Behavior(TEXT("Action_Idle"), pAction_Idle)))
+			throw TEXT("Failed Assemble_Behavior Action_Idle");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CConjuredDragon] Failed Make_Ground_Pattern : \n");
+		wstrErrorMSG += pErrorTag;
+		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
+
+		ENDINSTANCE;
+
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CConjuredDragon::Make_Air_Pattern(_Inout_ CSelector* pSelector)
+{
+	BEGININSTANCE;
+
+	try
+	{
+		if (nullptr == pSelector)
+			throw TEXT("Parameter pSelector is nullptr");
+
+		/* Create Child Behaviors */
+		CSequence* pSequence_Break_Invincible = { nullptr };
+		if (FAILED(Create_Behavior(pSequence_Break_Invincible)))
+			throw TEXT("Failed Create_Behavior pSequence_Break_Invincible");
+		CSequence* pSequence_Change_Invincible = { nullptr };
+		if (FAILED(Create_Behavior(pSequence_Change_Invincible)))
+			throw TEXT("Failed Create_Behavior pSequence_Change_Invincible");
+		CSequence* pSequence_Patterns = { nullptr };
+		if (FAILED(Create_Behavior(pSequence_Patterns)))
+			throw TEXT("Failed Create_Behavior pSequence_Patterns");
+
+		CRandomChoose* pRandom_Attacks = { nullptr };
+		if (FAILED(Create_Behavior(pRandom_Attacks)))
+			throw TEXT("Failed Create_Behavior pRandom_Attacks");
+		CRandomChoose* pRandom_Idle_Breaks = { nullptr };
+		if (FAILED(Create_Behavior(pRandom_Idle_Breaks)))
+			throw TEXT("Failed Create_Behavior pRandom_Idle_Breaks");
+		CAction* pAction_Hover_Loop = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Hover_Loop)))
+			throw TEXT("Failed Create_Behavior pAction_Hover_Loop");
+
+		/* Set Decorators */
+		pSelector->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				CHealth* pHealth = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("pHealth", pHealth)))
+					return false;
+
+				return 0.5f < pHealth->Get_Current_HP_Percent();
+			});
+		pSequence_Patterns->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_bool* pIsBreakInvicible = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("isBreakInvincible", pIsBreakInvicible)))
+					return false;
+
+				return !(*pIsBreakInvicible);
+			});
+
+		/* Set Options */
+
+		/* Assemble Behaviors */
+		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Break_Invincible"), pSequence_Break_Invincible)))
+			throw TEXT("Failed Assemble_Behavior Sequence_Break_Invincible");
+		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Change_Invincible"), pSequence_Change_Invincible)))
+			throw TEXT("Failed Assemble_Behavior Sequence_Change_Invincible");
+		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Patterns"), pSequence_Patterns)))
+			throw TEXT("Failed Assemble_Behavior Sequence_Patterns");
+
+		if (FAILED(pSequence_Patterns->Assemble_Behavior(TEXT("Random_Attacks"), pRandom_Attacks)))
+			throw TEXT("Failed Assemble_Behavior Random_Attacks");
+		if (FAILED(pSequence_Patterns->Assemble_Behavior(TEXT("Random_Idle_Breaks"), pRandom_Idle_Breaks)))
+			throw TEXT("Failed Assemble_Behavior Random_Idle_Breaks");
+		if (FAILED(pSequence_Patterns->Assemble_Behavior(TEXT("Action_Hover_Loop"), pAction_Hover_Loop)))
+			throw TEXT("Failed Assemble_Behavior Action_Hover_Loop");
+
+		if (FAILED(Make_Air_Break_Invincible(pSequence_Break_Invincible)))
+			throw TEXT("Failed Make_Air_Break_Invincible");
+		if (FAILED(Make_Air_Change_Invincible(pSequence_Change_Invincible)))
+			throw TEXT("Failed Make_Air_Change_Invincible");
+		if (FAILED(Make_Air_Attacks(pRandom_Attacks)))
+			throw TEXT("Failed Make_Air_Attacks");
+		if (FAILED(Make_Air_Idle_Breaks(pRandom_Idle_Breaks)))
+			throw TEXT("Failed Make_Air_Idle_Breaks");
+		if (FAILED(Make_Air_Hover(pAction_Hover_Loop)))
+			throw TEXT("Failed Make_Air_Hover");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CConjuredDragon] Failed Make_Air_Pattern : \n");
+		wstrErrorMSG += pErrorTag;
+		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
+
+		ENDINSTANCE;
+
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CConjuredDragon::Make_Air_Break_Invincible(_Inout_ CSequence* pSequence)
+{
+	BEGININSTANCE;
+
+	try
+	{
+		if (nullptr == pSequence)
+			throw TEXT("Parameter pSequence is nullptr");
+
+		/* Create Child Behaviors */
+		CAction* pAction_Break_Invinclble = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Break_Invinclble)))
+			throw TEXT("Failed Create_Behavior pAction_Break_Invinclble");
+		CAction* pAction_Hover_Loop = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Hover_Loop)))
+			throw TEXT("Failed Create_Behavior pAction_Hover_Loop");
+
+		CLookAt* pTsk_LookAt = { nullptr };
+		if (FAILED(Create_Behavior(pTsk_LookAt)))
+			throw TEXT("Failed Create_Behavior pTsk_LookAt");
+
+		/* Set Decorators */
+		pSequence->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_bool* pIsBreakInvincible = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("isBreakInvincible", pIsBreakInvincible)))
+					return false;
+
+				return true == *pIsBreakInvincible;
+			});
+		pSequence->Add_Success_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_float* pInvincibleGauge = { nullptr };
+				_bool* pIsInvincible = { nullptr };
+				_bool* pIsBreakInvincible = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("fInvincibleGauge", pInvincibleGauge)))
+					return false;
+				if (FAILED(pBlackBoard->Get_Type("isInvincible", pIsInvincible)))
+					return false;
+				if (FAILED(pBlackBoard->Get_Type("isBreakInvincible", pIsBreakInvincible)))
+					return false;
+
+				*pInvincibleGauge = 0.f;
+				*pIsInvincible = false;
+				*pIsBreakInvincible = false;
+
+				return true;
+			});
+
+		/* Set Options */
+		pAction_Break_Invinclble->Set_Options(TEXT("Break_Invincible"), m_pModelCom);
+		pTsk_LookAt->Set_Option(m_pTransform);
+
+		/* Assemble Behaviors */
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Break_Invinclble"), pAction_Break_Invinclble)))
+			throw TEXT("Failed Assemble_Behavior Action_Break_Invinclble");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Hover_Loop"), pAction_Hover_Loop)))
+			throw TEXT("Failed Assemble_Behavior Action_Hover_Loop");
+
+		if (FAILED(pAction_Break_Invinclble->Assemble_Behavior(TEXT("Tsk_LookAt"), pTsk_LookAt)))
+			throw TEXT("Failed Assemble_Behavior Tsk_LookAt");
+		if (FAILED(Make_Air_Hover(pAction_Hover_Loop)))
+			throw TEXT("Failed Make_Air_Hover");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CConjuredDragon] Failed Make_Change_Invincible : \n");
+		wstrErrorMSG += pErrorTag;
+		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
+
+		ENDINSTANCE;
+
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CConjuredDragon::Make_Air_Change_Invincible(_Inout_ CSequence* pSequence)
+{
+	BEGININSTANCE;
+
+	try
+	{
+		if (nullptr == pSequence)
+			throw TEXT("Parameter pSequence is nullptr");
+
+		/* Create Child Behaviors */
+		CAction* pAction_Change_Invinclble = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Change_Invinclble)))
+			throw TEXT("Failed Create_Behavior pAction_Change_Invinclble");
+		CAction* pAction_Hover_Loop = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Hover_Loop)))
+			throw TEXT("Failed Create_Behavior pAction_Hover_Loop");
+
+		CLookAt* pTsk_LookAt = { nullptr };
+		if (FAILED(Create_Behavior(pTsk_LookAt)))
+			throw TEXT("Failed Create_Behavior pTsk_LookAt");
+
+		/* Set Decorators */
+		pSequence->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_float* pInvincibleGauge = { nullptr };
+				_bool* pIsInvincible = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("fInvincibleGauge", pInvincibleGauge)))
+					return false;
+				if (FAILED(pBlackBoard->Get_Type("isInvincible", pIsInvincible)))
+					return false;
+
+				return (100.f <= *pInvincibleGauge) && false == *pIsInvincible;
+			});
+		pSequence->Add_Success_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_float* pInvincibleGauge = { nullptr };
+				_bool* pIsInvincible = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("fInvincibleGauge", pInvincibleGauge)))
+					return false;
+				if (FAILED(pBlackBoard->Get_Type("isInvincible", pIsInvincible)))
+					return false;
+
+				*pInvincibleGauge = 0.f;
+				*pIsInvincible = true;
+
+				return true;
+			});
+
+		/* Set Options */
+		pAction_Change_Invinclble->Set_Options(TEXT("Fire_Burst_Recovery"), m_pModelCom);
+		pTsk_LookAt->Set_Option(m_pTransform);
+
+		/* Assemble Behaviors */
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Change_Invinclble"), pAction_Change_Invinclble)))
+			throw TEXT("Failed Assemble_Behavior Action_Change_Invinclble");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Hover_Loop"), pAction_Hover_Loop)))
+			throw TEXT("Failed Assemble_Behavior Action_Hover_Loop");
+
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Tsk_LookAt"), pTsk_LookAt)))
+			throw TEXT("Failed Assemble_Behavior Tsk_LookAt");
+		if (FAILED(Make_Air_Hover(pAction_Hover_Loop)))
+			throw TEXT("Failed Make_Air_Hover");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CConjuredDragon] Failed Make_Change_Invincible : \n");
+		wstrErrorMSG += pErrorTag;
+		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
+
+		ENDINSTANCE;
+
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CConjuredDragon::Make_Air_Attacks(_Inout_ CRandomChoose* pRandomChoose)
+{
+	BEGININSTANCE;
+
+	try
+	{
+		/* Create Child Behaviors */
+		CSequence* pSequence_Attack_Fireball = { nullptr };
+		if (FAILED(Create_Behavior(pSequence_Attack_Fireball)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_Fireball");
+		CSequence_Attack* pSequence_Attack_Purse = { nullptr };
+		if (FAILED(Create_Behavior(pSequence_Attack_Purse)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_Purse");
+		CSequence_Attack* pSequence_Attack_Breath = { nullptr };
+		if (FAILED(Create_Behavior(pSequence_Attack_Breath)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_Breath");
+
+		/* Set Decorators */
+		pRandomChoose->Add_Change_Condition(CBehavior::BEHAVIOR_SUCCESS, [&](CBlackBoard* pBlackBoard)->_bool
+			{
+				return true;
+			});
+
+		/* Set Options */
+		pSequence_Attack_Purse->Set_Attack_Action_Options(TEXT("Attack_Pulse"), m_pModelCom);
+		pSequence_Attack_Purse->Set_Attack_Option(100.f);
+		pSequence_Attack_Breath->Set_Attack_Action_Options(TEXT("Attack_Fire_Sweep_Breath"), m_pModelCom);
+		pSequence_Attack_Breath->Set_Attack_Option(100.f);
+
+		/* Assemble Behaviors */
+		if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Sequence_Attack_Fireball"), pSequence_Attack_Fireball, 0.4f)))
+			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Fireball");
+		if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Sequence_Attack_Breath"), pSequence_Attack_Breath, 0.35f)))
+			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Breath");
+		if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Sequence_Attack_Purse"), pSequence_Attack_Purse, 0.25f)))
+			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Purse");
+
+		if (FAILED(Make_Attack_Fireball(pSequence_Attack_Fireball)))
+			throw TEXT("Failed Make_Attack_Fireball");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CConjuredDragon] Failed Make_Air_Attacks : \n");
+		wstrErrorMSG += pErrorTag;
+		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
+
+		ENDINSTANCE;
+
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CConjuredDragon::Make_Attack_Fireball(_Inout_ CSequence* pSequence)
+{
+	BEGININSTANCE;
+
+	try
+	{
+		if (nullptr == pSequence)
+			throw TEXT("Parameter pSequence is nullptr");
+
+		/* Create Child Behaviors */
+		CSequence_Attack* pSequence_Attack_Fireball_1 = { nullptr };
+		if (FAILED(Create_Behavior(pSequence_Attack_Fireball_1)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_Fireball_1");
+		CSequence_Attack* pSequence_Attack_Fireball_2 = { nullptr };
+		if (FAILED(Create_Behavior(pSequence_Attack_Fireball_2)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_Fireball_2");
+
+		/* Set Options */
+		pSequence_Attack_Fireball_1->Set_Attack_Action_Options(TEXT("Attack_Fireball_2"), m_pModelCom);
+		pSequence_Attack_Fireball_1->Set_Attack_Option(100.f);
+		pSequence_Attack_Fireball_2->Set_Attack_Action_Options(TEXT("Attack_Fireball_2"), m_pModelCom);
+		pSequence_Attack_Fireball_2->Set_Attack_Option(100.f);
+
+		/* Assemble Behaviors */
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Sequence_Attack_Fireball_1"), pSequence_Attack_Fireball_1)))
+			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Fireball_1");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Sequence_Attack_Fireball_2"), pSequence_Attack_Fireball_2)))
+			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Fireball_2");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CConjuredDragon] Failed Make_Attack_Fireball : \n");
+		wstrErrorMSG += pErrorTag;
+		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
+
+		ENDINSTANCE;
+
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CConjuredDragon::Make_Air_Idle_Breaks(_Inout_ CRandomChoose* pRandomChoose)
+{
+	BEGININSTANCE;
+
+	try
+	{
+		if (nullptr == pRandomChoose)
+			throw TEXT("Parameter pRandomChoose is nullptr");
+
+		/* Create Child Behaviors */
+		CAction* pAction_Idle_Break_1 = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Idle_Break_1)))
+			throw TEXT("Failed Create_Behavior pAction_Idle_Break_1");
+		CAction* pAction_Idle_Break_2 = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Idle_Break_2)))
+			throw TEXT("Failed Create_Behavior pAction_Idle_Break_2");
+		CSelector* pSelector_Dash_LR = { nullptr };
+		if (FAILED(Create_Behavior(pSelector_Dash_LR)))
+			throw TEXT("Failed Create_Behavior pSelector_Dash_LR");
+
+		CAction* pAction_Hover_Dash_Left = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Hover_Dash_Left)))
+			throw TEXT("Failed Create_Behavior pAction_Hover_Dash_Left");
+		CAction* pAction_Hover_Dash_Right = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Hover_Dash_Right)))
+			throw TEXT("Failed Create_Behavior pAction_Hover_Dash_Right");
+
+		CLookAt* pTsk_LookAt_1 = { nullptr };
+		if (FAILED(Create_Behavior(pTsk_LookAt_1)))
+			throw TEXT("Failed Create_Behavior pTsk_LookAt_1");
+		CLookAt* pTsk_LookAt_2 = { nullptr };
+		if (FAILED(Create_Behavior(pTsk_LookAt_2)))
+			throw TEXT("Failed Create_Behavior pTsk_LookAt_2");
+		CLookAt* pTsk_LookAt_3 = { nullptr };
+		if (FAILED(Create_Behavior(pTsk_LookAt_3)))
+			throw TEXT("Failed Create_Behavior pTsk_LookAt_3");
+		CLookAt* pTsk_LookAt_4 = { nullptr };
+		if (FAILED(Create_Behavior(pTsk_LookAt_4)))
+			throw TEXT("Failed Create_Behavior pTsk_LookAt_4");
+		CRigidMove* pTsk_RigidMove_Left = { nullptr };
+		if (FAILED(Create_Behavior(pTsk_RigidMove_Left)))
+			throw TEXT("Failed Create_Behavior pTsk_RigidMove_Left");
+		CRigidMove* pTsk_RigidMove_Right = { nullptr };
+		if (FAILED(Create_Behavior(pTsk_RigidMove_Right)))
+			throw TEXT("Failed Create_Behavior pTsk_RigidMove_Right");
+
+		/* Set Decorators */
+		pRandomChoose->Add_Change_Condition(CBehavior::BEHAVIOR_SUCCESS, [&](CBlackBoard* pBlackBoard)->_bool
+			{
+				return true;
+			});
+		pAction_Hover_Dash_Left->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_bool* pIsSettingBalance = { nullptr };
+				_bool* pIsMoveLeft = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("isSettingBalance", pIsSettingBalance)))
+					return false;
+				if (FAILED(pBlackBoard->Get_Type("isMoveLeft", pIsMoveLeft)))
+					return false;
+
+				*pIsSettingBalance = false;
+
+				return false == *pIsMoveLeft;
+			});
+		pAction_Hover_Dash_Left->Add_End_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_bool* pIsSettingBalance = { nullptr };
+				_bool* pIsMoveLeft = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("isSettingBalance", pIsSettingBalance)))
+					return false;
+				if (FAILED(pBlackBoard->Get_Type("isMoveLeft", pIsMoveLeft)))
+					return false;
+
+				*pIsSettingBalance = true;
+				*pIsMoveLeft = true;
+
+				return true;
+			});
+		pAction_Hover_Dash_Right->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_bool* pIsSettingBalance = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("isSettingBalance", pIsSettingBalance)))
+					return false;
+
+				*pIsSettingBalance = false;
+
+				return true;
+			});
+		pAction_Hover_Dash_Right->Add_End_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_bool* pIsSettingBalance = { nullptr };
+				_bool* pIsMoveLeft = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("isSettingBalance", pIsSettingBalance)))
+					return false;
+				if (FAILED(pBlackBoard->Get_Type("isMoveLeft", pIsMoveLeft)))
+					return false;
+
+				*pIsSettingBalance = true;
+				*pIsMoveLeft = false;
+
+				return true;
+			});
+
+		/* Set Options */
+		pTsk_LookAt_1->Set_Option(m_pTransform);
+		pTsk_LookAt_2->Set_Option(m_pTransform);
+		pTsk_LookAt_3->Set_Option(m_pTransform);
+		pTsk_LookAt_4->Set_Option(m_pTransform);
+		pAction_Idle_Break_1->Set_Options(TEXT("Hover_Idle_Break_1"), m_pModelCom);
+		pAction_Idle_Break_2->Set_Options(TEXT("Hover_Idle_Break_2"), m_pModelCom);
+		pAction_Hover_Dash_Left->Set_Options(TEXT("Hover_Dash_Left"), m_pModelCom);
+		pAction_Hover_Dash_Right->Set_Options(TEXT("Hover_Dash_Right"), m_pModelCom);
+		pTsk_RigidMove_Left->Set_Option(m_pRigidBody, m_pTransform, CRigidMove::DIR_RIGHT, -20.f, 2.f);
+		pTsk_RigidMove_Right->Set_Option(m_pRigidBody, m_pTransform, CRigidMove::DIR_RIGHT, 20.f, 2.f);
+
+		/* Assemble Behaviors */
+		if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Action_Idle_Break_1"), pAction_Idle_Break_1, 0.33f)))
+			throw TEXT("Failed Assemble_Behavior Action_Idle_Break_1");
+		if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Action_Idle_Break_2"), pAction_Idle_Break_2, 0.33f)))
+			throw TEXT("Failed Assemble_Behavior Action_Idle_Break_2");
+		if (FAILED(pRandomChoose->Assemble_Behavior(TEXT("Selector_Dash_LR"), pSelector_Dash_LR, 0.34f)))
+			throw TEXT("Failed Assemble_Behavior Selector_Dash_LR");
+
+		if (FAILED(pSelector_Dash_LR->Assemble_Behavior(TEXT("Action_Hover_Dash_Left"), pAction_Hover_Dash_Left)))
+			throw TEXT("Failed Assemble_Behavior Action_Hover_Dash_Left");
+		if (FAILED(pSelector_Dash_LR->Assemble_Behavior(TEXT("Action_Hover_Dash_Right"), pAction_Hover_Dash_Right)))
+			throw TEXT("Failed Assemble_Behavior Action_Hover_Dash_Right");
+
+		if (FAILED(pAction_Idle_Break_1->Assemble_Behavior(TEXT("Tsk_LookAt_1"), pTsk_LookAt_1)))
+			throw TEXT("Failed Assemble_Behavior Tsk_LookAt_1");
+		if (FAILED(pAction_Idle_Break_2->Assemble_Behavior(TEXT("Tsk_LookAt_2"), pTsk_LookAt_2)))
+			throw TEXT("Failed Assemble_Behavior Tsk_LookAt_2");
+		if (FAILED(pAction_Hover_Dash_Left->Assemble_Behavior(TEXT("Tsk_LookAt_3"), pTsk_LookAt_3)))
+			throw TEXT("Failed Assemble_Behavior Tsk_LookAt_3");
+		if (FAILED(pAction_Hover_Dash_Right->Assemble_Behavior(TEXT("Tsk_LookAt_4"), pTsk_LookAt_4)))
+			throw TEXT("Failed Assemble_Behavior Tsk_LookAt_4");
+		if (FAILED(pAction_Hover_Dash_Left->Assemble_Behavior(TEXT("Tsk_RigidMove_Left"), pTsk_RigidMove_Left)))
+			throw TEXT("Failed Assemble_Behavior Tsk_RigidMove_Left");
+		if (FAILED(pAction_Hover_Dash_Right->Assemble_Behavior(TEXT("Tsk_RigidMove_Right"), pTsk_RigidMove_Right)))
+			throw TEXT("Failed Assemble_Behavior Tsk_RigidMove_Right");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CConjuredDragon] Failed Make_Air_Idle_Breaks : \n");
+		wstrErrorMSG += pErrorTag;
+		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
+
+		ENDINSTANCE;
+
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CConjuredDragon::Make_Air_Hover(_Inout_ CAction* pAction)
+{
+	BEGININSTANCE;
+
+	try
+	{
+		if (nullptr == pAction)
+			throw TEXT("Parameter pAction is nullptr");
+
+		/* Create Child Behaviors */
+		CLookAt* pTsk_LookAt = { nullptr };
+		if (FAILED(Create_Behavior(pTsk_LookAt)))
+			throw TEXT("Failed Create_Behavior pTsk_LookAt");
+		CWait* pTsk_Wait = { nullptr };
+		if (FAILED(Create_Behavior(pTsk_Wait)))
+			throw TEXT("Failed Create_Behavior pTsk_Wait");
+
+		/* Set Decorators */
+
+		/* Set Options */
+		pAction->Set_Options(TEXT("Hover_Loop"), m_pModelCom, true);
+		pTsk_LookAt->Set_Option(m_pTransform);
+		pTsk_Wait->Set_Timer(1.f);
+
+		/* Assemble Behaviors */
+		if (FAILED(pAction->Assemble_Behavior(TEXT("Tsk_LookAt"), pTsk_LookAt)))
+			throw TEXT("Failed Assemble_Behavior Tsk_LookAt");
+		if (FAILED(pAction->Assemble_Behavior(TEXT("Tsk_Wait"), pTsk_Wait)))
+			throw TEXT("Failed Assemble_Behavior Tsk_Wait");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CConjuredDragon] Failed Make_Air_Hover : \n");
+		wstrErrorMSG += pErrorTag;
+		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
+
+		ENDINSTANCE;
+
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+void CConjuredDragon::Shot_Fireball()
+{
 }
 
 CConjuredDragon* CConjuredDragon::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

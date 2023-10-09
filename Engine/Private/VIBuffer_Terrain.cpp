@@ -391,6 +391,31 @@ _bool CVIBuffer_Terrain::IsPicked(_float4 vRayOrigin, _float4 vRayDir, _float& f
 	return true;
 }
 
+_bool CVIBuffer_Terrain::IsPicked(_float4 vRayOrigin, _float4 vRayDir, _float4x4 WorldMatrix, _float& fMinDist)
+{
+	_float3 vPoint[POINT_END];
+	_float3 vCenter;
+	vPoint[LT] = _float3(0.f, 0.f, (_float)(m_iTerrainSizeZ - 1));
+	vPoint[RT] = _float3((_float)(m_iTerrainSizeX - 1), 0.f, (_float)(m_iTerrainSizeZ - 1));
+	vPoint[RB] = _float3((_float)(m_iTerrainSizeX - 1), 0.f, 0.f);
+	vPoint[LB] = _float3(0.f, 0.f, 0.f);
+
+	for (_uint i = 0; i < POINT_END; ++i)
+	{
+		vPoint[i] = XMVector3TransformCoord(vPoint[i], WorldMatrix);
+	}
+
+	if (false == isInFourPoint(vPoint[LT], vPoint[RT]
+		, vPoint[RB], vPoint[LB], vRayOrigin, vRayDir, fMinDist))
+	{
+		return false;
+	}
+
+	IntersectPoint(vPoint, vRayOrigin, vRayDir, fMinDist);
+
+	return true;
+}
+
 void CVIBuffer_Terrain::IntersectPoint(_float3 vPoints[POINT_END], _float4 RayOrigin, _float4 RayDir, _float& fDist)
 {
 	// 모서리 길이가 1.f

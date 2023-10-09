@@ -92,10 +92,29 @@ HRESULT CAccio::Initialize_Prototype(_uint iLevel)
 			return E_FAIL;
 		}
 	}
+
 	if (nullptr == pGameInstance->Find_Prototype(iLevel, TEXT("Prototype_GameObject_Accio_HitMain")))
 	{
 		if (FAILED(pGameInstance->Add_Prototype(iLevel, TEXT("Prototype_GameObject_Accio_HitMain")
 			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Accio/Hit_Main/"), iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+	if (nullptr == pGameInstance->Find_Prototype(iLevel, TEXT("Prototype_GameObject_Accio_Hit_Wave")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(iLevel, TEXT("Prototype_GameObject_Accio_Hit_Wave")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Accio/Hit_Wave/"), iLevel))))
+		{
+			ENDINSTANCE;
+			return E_FAIL;
+		}
+	}
+	if (nullptr == pGameInstance->Find_Prototype(iLevel, TEXT("Prototype_GameObject_Accio_Hit_Wind")))
+	{
+		if (FAILED(pGameInstance->Add_Prototype(iLevel, TEXT("Prototype_GameObject_Accio_Hit_Wind")
+			, CParticleSystem::Create(m_pDevice, m_pContext, TEXT("../../Resources/GameData/ParticleData/Accio/Hit_Wind/"), iLevel))))
 		{
 			ENDINSTANCE;
 			return E_FAIL;
@@ -220,7 +239,7 @@ void CAccio::Tick_CastMagic(_float fTimeDelta)
 		if (m_fLerpAcc > 1)
 			m_fLerpAcc = 1;
 		m_TrailVec[EFFECT_STATE_MAIN].data()[0]->Spin_Move(m_vEndPosition, m_vStartPosition,m_vSpinWeight,m_fSpinSpeed, m_fLerpAcc);
-		m_pTransform->Set_Position(m_TrailVec[EFFECT_STATE_MAIN].data()[0]->Get_Transform()->Get_Position());
+		m_pTransform->Set_Position(XMVectorLerp(m_vStartPosition, m_vEndPosition, m_fLerpAcc));
 	}
 	else
 	{
@@ -236,6 +255,10 @@ void CAccio::Tick_CastMagic(_float fTimeDelta)
 void CAccio::Tick_Dying(_float fTimeDelta)
 {
 	m_fWingardiumEffectDeadTimer -= fTimeDelta;
+
+	m_ParticleVec[EFFECT_STATE_HIT][1]->Get_Transform()->Set_Position(m_CurrentTargetMatrix.Translation());
+	m_ParticleVec[EFFECT_STATE_HIT][2]->Get_Transform()->Set_Position(m_CurrentTargetMatrix.Translation());
+
 	if (m_fWingardiumEffectDeadTimer < 0)
 	{
 		Do_MagicBallState_To_Next();
@@ -299,14 +322,31 @@ HRESULT CAccio::Add_Components()
 		return E_FAIL;
 	}
 
-	m_ParticleVec[EFFECT_STATE_HIT].resize(1);
+	m_ParticleVec[EFFECT_STATE_HIT].resize(3);
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Accio_HitMain"),
-		TEXT("Com_HitDust_Effect"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_HIT][0]))))
+		TEXT("Com_HitMain"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_HIT][0]))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Accio_HitMain)");
 		__debugbreak();
 		return E_FAIL;
 	}
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Accio_Hit_Wave"),
+		TEXT("Com_Hit_Wave"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_HIT][1]))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Accio_Hit_Wave)");
+		__debugbreak();
+		return E_FAIL;
+	}
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Accio_Hit_Wind"),
+		TEXT("Com_Hit_Wind"), reinterpret_cast<CComponent**>(&m_ParticleVec[EFFECT_STATE_HIT][2]))))
+	{
+		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Accio_Hit_Wind)");
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	
+		
 
 	//º°µµ
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Wingardium_Effect"),

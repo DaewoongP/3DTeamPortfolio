@@ -25,8 +25,13 @@ protected:
 	virtual ~CRandomChoose() = default;
 
 public:
+	void Set_Option(const _float& fCoolTime) {
+		m_fLimit = fCoolTime;
+	}
+
+public:
 	virtual HRESULT Initialize_Prototype() override { return S_OK; }
-	virtual HRESULT Initialize(void* pArg) override { return S_OK; }
+	virtual HRESULT Initialize(void* pArg) override;
 	virtual HRESULT Tick(const _float & fTimeDelta) override;
 
 public:
@@ -38,6 +43,9 @@ public:
 	HRESULT Add_Change_Condition(HRESULT ReturnType, function<_bool(class CBlackBoard*)> Func);
 
 protected:
+	_float m_fLimit = { 0.f };
+	_float m_fPreWorldTimeAcc = { 0.f };
+
 	/* CurrentBehavior를 리셋 할 지 결정하는 조건들을 저장한 리스트 */
 	list<CDecorator*>	m_ConditionFunctions[BEHAVIOR_END];
 	vector<_float>		m_ChildWeights;

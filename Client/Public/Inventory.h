@@ -1,10 +1,9 @@
 #pragma once
-#include "Component.h"
-#include "Client_Defines.h"
 #include "GameObject.h"
-#include "Item.h"
+#include "Client_Defines.h"
 
 BEGIN(Client)
+class CItem;
 class CUI_Inventory;
 
 class CInventory final : public CGameObject
@@ -61,6 +60,7 @@ private:
 
 public:
 	void	Add_Item(CItem* pItem, ITEMTYPE eType);
+	void	Add_Item(const _tchar* pPrototypeTag, _uint iLevel = LEVEL_STATIC, void* pArg = nullptr);
 	void	Delete_Item(ITEMTYPE eType, _uint iIndex);
 	void	Swap_Item(_uint Index, ITEMTYPE eType);
 

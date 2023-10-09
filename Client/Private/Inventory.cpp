@@ -1,9 +1,9 @@
 #include "..\Public\Inventory.h"
 #include "GameInstance.h"
 #include "UI_Inventory.h"
-#include "GameObject.h"
 #include "Item.h"
 #include "Ingredient.h"
+#include "UI_Farming.h"
 
 CInventory::CInventory(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -94,8 +94,8 @@ HRESULT CInventory::Add_Components()
 			pDesc.fOffset = _float2(240.f, 260.f);
 			pDesc.fWidth = 80.f;
 			pDesc.fHeight = 80.f;
-			pDesc.iHorizontal = 5;
-			pDesc.iVertical = 6;
+			pDesc.iHorizontal = 4;
+			pDesc.iVertical = 5;
 			pDesc.eItemtype = ITEMTYPE(i);
 		}
 		else
@@ -105,7 +105,7 @@ HRESULT CInventory::Add_Components()
 			pDesc.fOffset = _float2(280.f, 270.f);
 			pDesc.fWidth = 80.f;
 			pDesc.fHeight = 80.f;
-			pDesc.iHorizontal = 4;
+			pDesc.iHorizontal = 6;
 			pDesc.iVertical = 5;
 			pDesc.eItemtype = ITEMTYPE(i);
 		}
@@ -131,11 +131,28 @@ void CInventory::Add_Item(CItem* pItem, ITEMTYPE eType)
 	if (eType >= ITEMTYPE_END || eType < 0)
 		return;
 
+
+	// 템 얻었다는 UI띄우는거 가져오기..
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	CUI_Farming* pFarming = static_cast<CUI_Farming*>(pGameInstance->Find_Component_In_Layer(
+		pGameInstance->Get_CurrentLevelIndex()
+		, TEXT("Layer_UI")
+		, TEXT("GameObject_UI_Farming")));
+	if (nullptr == pFarming)
+	{
+		Safe_Release(pItem);
+		Safe_Release(pGameInstance);
+		return;
+	}
+
+	Safe_Release(pGameInstance);
+
 	if (eType < RESOURCE)
 	{
 		if (m_pItems[eType].size() >= iGearMax)
 			return;
-
+		pFarming->Play(pItem);
 		m_pItems[eType].push_back(pItem);
 		m_pUI_Inventory[eType]->Set_InventoryItem(m_pItems[eType]);
 	}
@@ -143,7 +160,7 @@ void CInventory::Add_Item(CItem* pItem, ITEMTYPE eType)
 	{
 		if (m_pItems[eType].size() >= iResourceMax)
 			return;
-
+		pFarming->Play(pItem);
 		m_pItems[eType].push_back(pItem);
 		m_pUI_Inventory[eType]->Set_InventoryItem(m_pItems[eType]);
 	}
@@ -153,6 +170,23 @@ void CInventory::Add_Item(CItem* pItem, ITEMTYPE eType)
 	{
 		m_ResourcesCount[pIngredient->Get_Ingredient()]++;
 	}
+}
+
+void CInventory::Add_Item(const _tchar* pPrototypeTag, _uint iLevel, void* pArg)
+{
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	CItem* pItem = dynamic_cast<CItem*>(pGameInstance->Clone_Component(iLevel, pPrototypeTag, pArg));
+	Safe_Release(pGameInstance);
+
+	// 잘못된 아이템을 넣은 경우 디버그 브레이크
+	if (nullptr == pItem)
+	{
+		__debugbreak();
+		return;
+	}
+
+	Add_Item(pItem, pItem->Get_Type());
 }
 
 void CInventory::Delete_Item(ITEMTYPE eType, _uint iIndex)

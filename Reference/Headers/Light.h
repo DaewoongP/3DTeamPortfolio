@@ -1,12 +1,4 @@
 #pragma once
-
-/* =============================================== */
-// 
-//	정 : 박정환
-//	부 :
-//
-/* =============================================== */
-
 #include "Base.h"
 
 BEGIN(Engine)
@@ -14,7 +6,7 @@ BEGIN(Engine)
 class CLight final : public CBase
 {
 public:
-	enum TYPE { TYPE_DIRECTIONAL, TYPE_LUMOS, TYPE_POINT, TYPE_SPOTLIGHT,  TYPE_END };
+	enum TYPE { TYPE_DIRECTIONAL, TYPE_LUMOS, TYPE_POINT, TYPE_SPOTLIGHT, TYPE_END };
 
 	typedef struct tagLightDesc
 	{
@@ -24,7 +16,6 @@ public:
 		_float4	vPos;
 		_float	fRange;
 		_float	fSpotPower;
-	
 
 		_char szName[MAX_PATH];
 		_uint iLightType;
@@ -43,7 +34,7 @@ public:
 	}
 	void Set_LightDesc(LIGHTDESC LightDesc) { m_LightDesc = LightDesc; }
 	void Set_Position(_float4 vPosition) { m_LightDesc.vPos = vPosition; }
-	
+
 public:
 	HRESULT Initialize(const LIGHTDESC& LightDesc);
 	HRESULT Render(class CShader* pShader, class CVIBuffer_Rect* pVIBuffer);

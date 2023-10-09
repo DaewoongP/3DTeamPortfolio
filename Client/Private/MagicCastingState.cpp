@@ -80,8 +80,6 @@ void CMagicCastingState::OnStateEnter(void* _pArg)
 	//평타
 	if (true == *m_pisReadySpell && pMagicCastingStateDesc->iSpellType == (_uint)SPELL_BASIC)
 	{
-		
-
 		switch (m_iBasicSpellCombo)
 		{
 		case Client::CMagicCastingState::BASICSPELL_START:
@@ -253,13 +251,58 @@ void CMagicCastingState::OnStateEnter(void* _pArg)
 	// 일반 마법
 	if (true == *m_pisReadySpell && pMagicCastingStateDesc->iSpellType == (_uint)SPELL_NORMAL)
 	{
-		//맞는 액션으로 노티파이 바꾸고 실행 애니메이션 실행
-		
-		//함수 받아와야 겠다.
-		m_StateMachineDesc.pOwnerModel->Bind_Notify(m_vecSpellActionTextList[m_iSpellActionIndex], TEXT("Ready_Spell"), pMagicCastingStateDesc->pFuncSpell);
+		switch (pMagicCastingStateDesc->iSpecialAction)
+		{
+		case Client::CMagicCastingState::SPECIAL_ACTION_NONE:
+		{
+			//함수 받아와야 겠다.
+			m_StateMachineDesc.pOwnerModel->Bind_Notify(m_vecSpellActionTextList[m_iSpellActionIndex], TEXT("Ready_Spell"), pMagicCastingStateDesc->pFuncSpell);
 
-		//애니메이션 재생
-		m_StateMachineDesc.pOwnerModel->Change_Animation(m_vecSpellActionTextList[m_iSpellActionIndex]);
+			//애니메이션 재생
+			m_StateMachineDesc.pOwnerModel->Change_Animation(m_vecSpellActionTextList[m_iSpellActionIndex]);
+		}
+			break;
+		//case Client::CMagicCastingState::SPECIAL_ACTION_DESCENDO:
+		//{
+		//	m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("DESCENDO_2"));
+		//}
+			break;
+		case Client::CMagicCastingState::SPECIAL_ACTION_DIFFINDO:
+		{
+			m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("DIFFINDO"), TEXT("Ready_Spell"), pMagicCastingStateDesc->pFuncSpell);
+
+			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("DIFFINDO"));
+		}
+			break;
+		case Client::CMagicCastingState::SPECIAL_ACTION_AVADA_KEDAVRA:
+		{
+			m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Avada_Kedvra"), TEXT("Ready_Spell"), pMagicCastingStateDesc->pFuncSpell);
+
+			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Avada_Kedvra"));
+		}
+			break;
+		case Client::CMagicCastingState::SPECIAL_ACTION_IMPERIO:
+		{
+			m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Imperio"), TEXT("Ready_Spell"), pMagicCastingStateDesc->pFuncSpell);
+
+			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Imperio"));
+		}
+			break;
+		case Client::CMagicCastingState::SPECIAL_ACTION_CRUCIO:
+		{
+			m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Crucio"), TEXT("Ready_Spell"), pMagicCastingStateDesc->pFuncSpell);
+
+			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Crucio"));
+		}
+			break;
+		case Client::CMagicCastingState::SPECIAL_ACTION_END:
+			break;
+		default:
+			break;
+		}
+		
+
+		
 
 		*m_pisReadySpell = false;
 
@@ -269,7 +312,7 @@ void CMagicCastingState::OnStateEnter(void* _pArg)
 	if (true == *m_pisReadySpell && pMagicCastingStateDesc->iSpellType == (_uint)SPELL_FINISHER)
 	{
 		//피니셔 애니메이션 재생
-		//m_StateMachineDesc.pOwnerModel->Change_Animation();
+		m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Finisher_Lightning"));
 
 		*m_pisReadySpell = false;
 	}
@@ -323,6 +366,13 @@ void CMagicCastingState::Bind_Notify()
 	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Spell_Action_01"), TEXT("Spell_Ready"), Notify_Pointer);
 	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Spell_Action_02"), TEXT("Spell_Ready"), Notify_Pointer);
 	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Spell_Action_03"), TEXT("Spell_Ready"), Notify_Pointer);
+
+	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Finisher_Lightning"), TEXT("Spell_Ready"), Notify_Pointer);
+
+	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Avada_Kedvra"), TEXT("Spell_Ready"), Notify_Pointer);
+	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Crucio"), TEXT("Spell_Ready"), Notify_Pointer);
+	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Imperio"), TEXT("Spell_Ready"), Notify_Pointer);
+	m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("DIFFINDO"), TEXT("Spell_Ready"), Notify_Pointer);
 }
 
 void CMagicCastingState::BasicSpell_Ready()

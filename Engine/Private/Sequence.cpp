@@ -1,4 +1,5 @@
 #include "Sequence.h"
+#include "Timer_Manager.h"
 
 CSequence::CSequence(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CBehavior(pDevice, pContext)
@@ -8,6 +9,25 @@ CSequence::CSequence(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 CSequence::CSequence(const CSequence& rhs)
 	: CBehavior(rhs)
 {
+}
+
+HRESULT CSequence::Initialize(void* pArg)
+{
+	/* 쿨타임 */
+	Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+		{
+			CTimer_Manager* pTimerManager = CTimer_Manager::GetInstance();
+			Safe_AddRef(pTimerManager);
+			_float fInterval = pTimerManager->Get_World_TimeAcc() - m_fPreWorldTimeAcc;
+			Safe_Release(pTimerManager);
+
+			if (m_fLimit > fInterval)
+				return false;
+
+			return true;
+		});
+
+	return S_OK;
 }
 
 HRESULT CSequence::Tick(const _float& fTimeDelta)
@@ -55,12 +75,17 @@ HRESULT CSequence::Tick(const _float& fTimeDelta)
 
 void CSequence::Reset_Behavior(HRESULT result)
 {
-	if (BEHAVIOR_RUNNING == m_ReturnData &&	// 현재 행동이 진행중이었는데
-		BEHAVIOR_RUNNING != result)			// 상위 노드에서 상태가 바뀐경우
+	if (BEHAVIOR_SUCCESS == result)
 	{
-		(*m_iterCurBehavior)->Reset_Behavior(result);
-		m_iterCurBehavior = m_Behaviors.begin();
+		CTimer_Manager* pTimerManager = CTimer_Manager::GetInstance();
+		Safe_AddRef(pTimerManager);
+		m_fPreWorldTimeAcc = pTimerManager->Get_World_TimeAcc();
+		Safe_Release(pTimerManager);
 	}
+
+	(*m_iterCurBehavior)->Reset_Behavior(result);
+	m_iterCurBehavior = m_Behaviors.begin();
+
 	m_ReturnData = result;
 }
 

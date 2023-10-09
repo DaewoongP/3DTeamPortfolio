@@ -21,12 +21,21 @@ protected:
 	virtual ~CSequence() = default;
 
 public:
+	void Set_Option(const _float& fCoolTime) {
+		m_fLimit = fCoolTime;
+	}
+
+public:
 	virtual HRESULT Initialize_Prototype() override { return S_OK; }
-	virtual HRESULT Initialize(void* pArg) override { return S_OK; }
+	virtual HRESULT Initialize(void* pArg) override;
 	virtual HRESULT Tick(const _float& fTimeDelta) override;
 
 public:
 	virtual void Reset_Behavior(HRESULT result) override;
+
+protected:
+	_float m_fLimit = { 0.f };
+	_float m_fPreWorldTimeAcc = { 0.f };
 
 protected:
 	virtual HRESULT Assemble_Childs() override { return S_OK; }

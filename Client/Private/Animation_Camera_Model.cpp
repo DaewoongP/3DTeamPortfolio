@@ -30,6 +30,19 @@ HRESULT CAnimation_Camera_Model::Initialize(void* pArg)
 	}
 
 	//컴포넌트 추가
+	if (FAILED(Add_Components()))
+	{
+		MSG_BOX("Failed Add_Components : CAnimation_Camera_Model");
+
+		return E_FAIL;
+	}
+
+	if (FAILED(Ready_BonData()))
+	{
+		MSG_BOX("Failed Ready_BonData : CAnimation_Camera_Model");
+
+		return E_FAIL;
+	}
 
 
 	ANIMATION_CAMERA_MODEL_DESC* pAnimation_Camera_Model_Desc = static_cast<ANIMATION_CAMERA_MODEL_DESC*>(pArg);
@@ -37,88 +50,94 @@ HRESULT CAnimation_Camera_Model::Initialize(void* pArg)
 	//부모가 할당한 것을 지우고
 	Safe_Release(m_pTransform);
 
+
+
 	//플레이어 것으로 장착
 	m_pTransform = pAnimation_Camera_Model_Desc->pTargetTransform;
 
 	Safe_AddRef(m_pTransform);
 
-
-
+	m_pAnimCameraModel->Change_Animation(TEXT("Cam_Start_Animation"));
 
 	return S_OK;
 }
 
 HRESULT CAnimation_Camera_Model::Initialize_Level(_uint _iLevelIndex)
 {
-	return E_NOTIMPL;
+	return S_OK;
 }
 
 void CAnimation_Camera_Model::Tick(_float fTimeDelta)
 {
+	//애니메이션 재생
+	m_pAnimCameraModel->Play_Animation(fTimeDelta);
 
-}
-
-void CAnimation_Camera_Model::Late_Tick(_float fTimeDelta)
-{
-
+	//eye,up,at갱신
+	Update_Up_Eye_At();
 }
 
 void CAnimation_Camera_Model::Update_Up_Eye_At()
 {
 	_float4x4 skt_camWorldMatrix = 	
-		m_pskt_cam->Get_OffsetMatrix() * 
-		m_pskt_cam->Get_CombinedTransformationMatrix() * 
+		m_pEyePoint->Get_OffsetMatrix() * 
+		m_pEyePoint->Get_CombinedTransformationMatrix() *
 		m_pAnimCameraModel->Get_PivotFloat4x4() * 
 		m_pTransform->Get_WorldMatrix();
 
 
 	_float4x4 lookatWorldMatrix =
-		m_plookat->Get_OffsetMatrix() *
-		m_plookat->Get_CombinedTransformationMatrix() *
+		m_pUpPoint->Get_OffsetMatrix() *
+		m_pUpPoint->Get_CombinedTransformationMatrix() *
 		m_pAnimCameraModel->Get_PivotFloat4x4() *
 		m_pTransform->Get_WorldMatrix();
 
 	//Eye
-	skt_camWorldMatrix.Translation(m_vEye);
+	m_vEye = skt_camWorldMatrix.Translation();
 
 	//up
-	lookatWorldMatrix.Translation(m_vUp);
+	m_vUp = lookatWorldMatrix.Translation();
 	m_vUp -= m_vEye;
+	//m_vUp = _float3(0.0f,1.0f,0.0f);
+
+	_float3 vBoneLook = skt_camWorldMatrix.Right();
+
+	vBoneLook.Normalize();
+
+	//vBoneLook *= -1;
 
 	//At
-	m_vAt = m_vEye + skt_camWorldMatrix.Look().Cross(m_vUp);
-	
+	m_vAt = m_vEye + vBoneLook.Cross(m_vUp);
+
+	int a = 0;
 }
 
 HRESULT CAnimation_Camera_Model::Add_Components()
 {
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC,TEXT("Prototype_Component_Animation_Camera_Model"),TEXT("Com_Aminmation_Camera_Model"),
-		reinterpret_cast<CComponent**>(m_pAnimCameraModel))))
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC,TEXT("Prototype_Component_Model_Animation_Camera"),TEXT("Com_Aminmation_Camera_Model"),
+		reinterpret_cast<CComponent**>(&m_pAnimCameraModel))))
 	{
 		MSG_BOX("Failed Add Com_Aminmation_Camera_Model");
 
 		return E_FAIL;
 	}
 
-
-
 	return S_OK;
 }
 
 HRESULT CAnimation_Camera_Model::Ready_BonData()
 {
-	m_pskt_cam = m_pAnimCameraModel->Get_Bone(TEXT("skt_cam"));
+	m_pEyePoint = m_pAnimCameraModel->Get_Bone(TEXT("skt_cam"));
 
-	if (nullptr == m_pskt_cam)
+	if (nullptr == m_pEyePoint)
 	{
 		MSG_BOX("Failed get Bone skt_cam");
 
 		return E_FAIL;
 	}
 
-	m_plookat = m_pAnimCameraModel->Get_Bone(TEXT("lookat"));
+	m_pUpPoint = m_pAnimCameraModel->Get_Bone(TEXT("lookat"));
 
-	if (nullptr == m_plookat)
+	if (nullptr == m_pUpPoint)
 	{
 		MSG_BOX("Failed get Bone lookat");
 
@@ -159,7 +178,7 @@ void CAnimation_Camera_Model::Free()
 
 	if (true == m_isCloned)
 	{
+		Safe_Release(m_pAnimCameraModel);
 		Safe_Release(m_Animation_Camera_Model_Desc.pTargetTransform);
-
 	}
 }

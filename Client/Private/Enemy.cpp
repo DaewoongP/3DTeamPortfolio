@@ -96,6 +96,26 @@ void CEnemy::Late_Tick(_float fTimeDelta)
 	}
 }
 
+void CEnemy::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
+{
+	wstring wstrCollisionTag = CollisionEventDesc.pThisCollisionTag;
+
+	if (wstring::npos != wstrCollisionTag.find(TEXT("MapObject")))
+	{
+		m_isOnGround = true;
+	}
+}
+
+void CEnemy::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
+{
+	wstring wstrCollisionTag = CollisionEventDesc.pThisCollisionTag;
+
+	if (wstring::npos != wstrCollisionTag.find(TEXT("MapObject")))
+	{
+		m_isOnGround = false;
+	}
+}
+
 HRESULT CEnemy::Render()
 {
 	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
@@ -183,6 +203,8 @@ HRESULT CEnemy::Make_AI()
 			throw TEXT("Failed Add_Type isSpawn");
 		if (FAILED(m_pRootBehavior->Add_Type("isParring", &m_isParring)))
 			throw TEXT("Failed Add_Type isParring");
+		if (FAILED(m_pRootBehavior->Add_Type("isOnGround", &m_isOnGround)))
+			throw TEXT("Failed Add_Type isOnGround");
 		if (FAILED(m_pRootBehavior->Add_Type("isHitCombo", &m_isHitCombo)))
 			throw TEXT("Failed Add_Type isHitCombo");
 		if (FAILED(m_pRootBehavior->Add_Type("isHitAttack", &m_isHitAttack)))
@@ -332,6 +354,72 @@ HRESULT CEnemy::SetUp_ShadowShaderResources()
 	return S_OK;
 }
 
+HRESULT CEnemy::Make_Hit_Combo(_Inout_ CSelector* pSelector)
+{
+	pSelector->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+		{
+			_bool* pIsHitCombo = { nullptr };
+			if (FAILED(pBlackBoard->Get_Type("isHitCombo", pIsHitCombo)))
+				return false;
+
+			return *pIsHitCombo;
+		});
+
+	return S_OK;
+}
+
+HRESULT CEnemy::Make_Check_Spell(_Inout_ CSelector* pSelector)
+{
+	pSelector->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+		{
+			_bool* pIsHitCombo = { nullptr };
+			_uint* pICurrentSpell = { nullptr };
+			if (FAILED(pBlackBoard->Get_Type("isHitCombo", pIsHitCombo)))
+				return false;
+			if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
+				return false;
+
+			if (BUFF_NONE == *pICurrentSpell || true == *pIsHitCombo)
+				return false;
+
+			return true;
+		});
+
+	return S_OK;
+}
+
+HRESULT CEnemy::Make_Fly_Descendo(CSequence* pSequence)
+{
+	pSequence->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+		{
+			_uint* pCurrentSpell = { nullptr };
+			if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pCurrentSpell)))
+				return false;
+
+			return BUFF_DESCENDO & *pCurrentSpell;
+		});
+	pSequence->Add_Success_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+		{
+			_bool* pIsHitCombo = { nullptr };
+			_uint* pICurrentSpell = { nullptr };
+			if (FAILED(pBlackBoard->Get_Type("isHitCombo", pIsHitCombo)))
+				return false;
+			if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pICurrentSpell)))
+				return false;
+
+			if (true == isFlying(*pICurrentSpell))
+				Remove_Fly_Spells();
+			if (BUFF_DESCENDO & *pICurrentSpell)
+				*pICurrentSpell ^= BUFF_DESCENDO;
+
+			*pIsHitCombo = false;
+
+			return true;
+		});
+
+	return S_OK;
+}
+
 void CEnemy::Set_Current_Target()
 {
 	_float3 vPosition = m_pTransform->Get_Position();
@@ -408,37 +496,95 @@ _bool CEnemy::IsEnemy(const wstring& wstrObjectTag)
 	return false;
 } 
 
-_bool CEnemy::IsDebuff(BUFF_TYPE eType)
+_bool CEnemy::IsDebuff(const _uint& iType)
 {
-	if (BUFF_LEVIOSO & eType)
+	if (BUFF_LEVIOSO & iType)
 		return true;
-	if (BUFF_DESCENDO & eType)
+	if (BUFF_LEVIOSO_TONGUE & iType)
+		return true;
+	if (BUFF_DESCENDO & iType)
 		return true;
 
 	return false;
 }
 
-_bool CEnemy::isCombo(BUFF_TYPE eType)
+_bool CEnemy::isFlying(const _uint& iType)
+{
+	if (BUFF_ACCIO & iType)
+		return true;
+	if (BUFF_LEVIOSO & iType)
+		return true;
+	if (BUFF_FLIPENDO & iType)
+		return true;
+
+	return false;
+}
+
+_bool CEnemy::isCombo(const _uint& iType)
 {
 	_bool ReturnData = { false };
+
 	/* 내 현재 상태에 디버프가 없는 경우 */
-	if (false == IsDebuff(BUFF_TYPE(m_iCurrentSpell)))
+	if (false == IsDebuff(m_iCurrentSpell))
 		return false;
 
-	if (eType & BUFF_ATTACK_LIGHT)
+	if (BUFF_DESCENDO & m_iCurrentSpell)
+	{
+		if (iType & BUFF_ATTACK_LIGHT || iType & BUFF_ATTACK_HEAVY)
+			return false;
+
+		if (true == isFlying(iType))
+		{
+			m_iCurrentSpell ^= BUFF_DESCENDO;
+			return false;
+		}
+	}
+
+	if (BUFF_LEVIOSO_TONGUE & m_iCurrentSpell)
+	{
+		if(iType & BUFF_ATTACK_LIGHT || iType & BUFF_ATTACK_HEAVY)
+		return false;
+
+		if (iType & BUFF_DESCENDO)
+		{
+			m_iCurrentSpell ^= BUFF_LEVIOSO_TONGUE;
+			return false;
+		}
+	}
+		
+
+	if (iType & BUFF_ATTACK_LIGHT)
 		ReturnData = m_isHitCombo = true;
 
-	if (eType & BUFF_ATTACK_HEAVY)
+	else if (iType & BUFF_ATTACK_HEAVY)
 		ReturnData = m_isHitCombo = true;
 
-	if (true == IsDebuff(eType))
+	else if (true == IsDebuff(iType))
 		ReturnData = m_isHitCombo = true;
 
 	return ReturnData;
 }
 
+void CEnemy::Remove_Fly_Spells()
+{
+	if (BUFF_ACCIO & m_iCurrentSpell)
+		m_iCurrentSpell ^= BUFF_ACCIO;
+
+	if (BUFF_LEVIOSO & m_iCurrentSpell)
+		m_iCurrentSpell ^= BUFF_LEVIOSO;
+
+	if (BUFF_FLIPENDO & m_iCurrentSpell)
+		m_iCurrentSpell ^= BUFF_FLIPENDO;
+
+	if (BUFF_LEVIOSO_TONGUE & m_iCurrentSpell)
+		m_iCurrentSpell ^= BUFF_LEVIOSO_TONGUE;
+}
+
 void CEnemy::On_Gravity()
 {
+	if (true == m_isDead)
+		return;
+
 	if (nullptr != m_pRigidBody)
 	{
 #ifdef _DEBUG
@@ -450,6 +596,9 @@ void CEnemy::On_Gravity()
 
 void CEnemy::Off_Gravity()
 {
+	if (true == m_isDead)
+		return;
+
 	if (nullptr != m_pRigidBody)
 	{
 #ifdef _DEBUG
@@ -465,13 +614,13 @@ void CEnemy::Free()
 
 	if (true == m_isCloned)
 	{
+		Safe_Release(m_pRootBehavior);
 		Safe_Release(m_pUI_HP);
 		Safe_Release(m_pHealth);
 		Safe_Release(m_pModelCom);
 		Safe_Release(m_pRenderer);
 		Safe_Release(m_pShaderCom);
 		Safe_Release(m_pRigidBody);
-		Safe_Release(m_pRootBehavior);
 		Safe_Release(m_pShadowShaderCom);
 
 		for (auto iter = m_MagicTickDesc.begin(); iter != m_MagicTickDesc.end(); ++iter)

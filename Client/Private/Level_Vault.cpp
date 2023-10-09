@@ -13,6 +13,7 @@ CLevel_Vault::CLevel_Vault(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 HRESULT CLevel_Vault::Initialize()
 {
+	CGameInstance::GetInstance()->Clear_Lights();
     if (FAILED(__super::Initialize()))
         return E_FAIL;
 
@@ -185,14 +186,13 @@ HRESULT CLevel_Vault::Ready_Lights()
 
 	LightDesc.eType = CLight::TYPE_DIRECTIONAL;
 	LightDesc.vPos = _float4(2.f, 30.f, 2.f, 1.f);
-	LightDesc.vLookAt = _float4(20.f, 0.f, 20.f, 1.f);
 	LightDesc.vDir = _float4(0.33f, -0.99f, 0.33f, 0.f);
 
 	LightDesc.vDiffuse = BLACKDEFAULT;
 	LightDesc.vAmbient = _float4(0.1f, 0.1f, 0.1f, 1.f);
 	LightDesc.vSpecular = BLACKDEFAULT;
 
-	pGameInstance->Add_Lights((_float)g_iWinSizeX, (_float)g_iWinSizeY, LightDesc);
+	pGameInstance->Add_Lights(_float(g_iWinSizeX), _float(g_iWinSizeY), LightDesc);
 
 	ENDINSTANCE;
 

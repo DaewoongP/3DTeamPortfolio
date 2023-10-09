@@ -10,7 +10,6 @@ CAnimation::CAnimation(const CAnimation& rhs)
 	: m_iNumChannels(rhs.m_iNumChannels)
 	, m_iNumNorify(rhs.m_iNumNorify)
 	, m_Channels(rhs.m_Channels)
-	, m_pNotify(rhs.m_pNotify)
 	, m_ChannelCurrentKeyFrames(rhs.m_ChannelCurrentKeyFrames)
 	, m_iNotifyCurrentKeyFrame(rhs.m_iNotifyCurrentKeyFrame)
 	, m_fDuration(rhs.m_fDuration)
@@ -31,8 +30,8 @@ CAnimation::CAnimation(const CAnimation& rhs)
 	{
 		Safe_AddRef(pChannel);
 	}
-
-	Safe_AddRef(m_pNotify);
+	CNotify* pNotify = (rhs.m_pNotify);
+	m_pNotify = rhs.m_pNotify->Clone();
 }
 
 void CAnimation::Set_CurrentKeyFrameIndex(CModel::BONES& Bones, _uint iKeyFrameIndex)

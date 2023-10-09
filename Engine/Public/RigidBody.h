@@ -70,6 +70,7 @@ public:
 	PxRigidBody* Get_RigidBodyActor() const;
 	_float3 Get_Position() const;
 	_float4 Get_Rotation() const;
+	_float3 Get_Current_Velocity() const;
 	void Set_Position(_float3 vPosition);
 	void Set_Rotation(_float4 vRotation);
 	void Set_Material(_float3 vMaterial);
@@ -77,7 +78,9 @@ public:
 	void Set_Kinematic(_bool _isKinematic);
 	void Set_Density(_float _fDensity) const;
 	void Set_AngularDamping(_float _fAngualrDamping) const;
+	void Set_LinearDamping(_float _fLinearDamping) const;
 	void Set_Gravity(_bool _isGravity);
+	void Set_Mass(_float fMass);
 	void Set_CollisionFlag(const _char* szColliderTag, PxU32 eCollisionFlag);
 
 #ifdef _DEBUG

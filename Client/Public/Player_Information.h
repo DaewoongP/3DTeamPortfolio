@@ -8,7 +8,7 @@ class CHealth;
 END
 
 BEGIN(Client)
-
+class CPotionTap;
 class CUI_Group_HP;
 class CUI_Group_Finisher;
 class CInventory;
@@ -20,13 +20,13 @@ public:
     enum PLAYER_ITEM
     {
         HEALING_POTION,         //힐 포션
-        DEFENSIVE_POWER_UP,     //방어력 포션
-        ATTACK_POWER_UP,        //공격력 포션
-        SHOW_TIME,              //쿨타임 포션
-        THUNDER_CLOUD,          //번개구름 생성 포션
-        INVISIBILITY_PILL,      //투명해지는 포션
+        ENDURUS_POTION,     //방어력 포션
+        MAXIMA_POTION,        //공격력 포션
+        FOCUS_POTION,              //쿨타임 포션
+        THUNDERBREW_POTION,          //번개구름 생성 포션
+        INVISIBILITY_POTION,      //투명해지는 포션
         MANDRAKE,               //맨드레이크
-        BITE_CABBAGE,           //깨무는 양배추
+        CHINESES_CHOPPING_CABBAGE,           //깨무는 양배추
         TENTACULAR,             //텐타큘라
         PLAYER_ITEM_END
     };
@@ -49,6 +49,8 @@ public:
     _float Get_Finisher_Percent() const { return m_pFinisher->Get_Current_HP_Percent(); }
     CHealth* Get_Health() { return m_pHealth; }
     CInventory* Get_Inventory() { return m_pInventory; }
+    CPotionTap* Get_PotionTap() { return m_pPotionTap; }
+
 public:
     virtual HRESULT Initialize_Prototype();
     virtual HRESULT Initialize(void* pArg);
@@ -83,7 +85,7 @@ private:
 
     // 인벤토리
     CInventory* m_pInventory = { nullptr };
-
+    CPotionTap* m_pPotionTap = { nullptr };
 
 private:
     HRESULT Add_Components();

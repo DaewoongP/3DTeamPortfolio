@@ -17,6 +17,10 @@ class CRandomChoose;
 END
 
 BEGIN(Client)
+class CAction;
+END
+
+BEGIN(Client)
 
 class CConjuredDragon final : public CEnemy
 {
@@ -36,20 +40,57 @@ public:
 	virtual HRESULT Render() override;
 
 private:
-	HRESULT Make_AI();
-	HRESULT Make_Notifies();
-	HRESULT Add_Components();
-	HRESULT Add_Components_Level(_uint iCurrentLevelIndex);
+	/* 무적 게이지. 100 까지 차면 무적이 됨 */
+	_float m_fInvincibleGauge = { 0.f };
+	_bool m_isInvincible = { false };
+	_bool m_isBreakInvincible = { false };
+	void Update_Invincible(const _float& fTimeDelta);
 
 private: /* 사망처리 전용 함수 */
 	_float m_fDeadTimeAcc = { 0.f };
 	void DeathBehavior(const _float& fTimeDelta);
 
+private:
+	/* 무중력 상태에서 특정 방향으로 이동하지 못하게 만드는 함수 */
+	_bool m_isSettingBalance = { false };
+	_bool m_isMoveLeft = { false };
+	void Check_Air_Balance(const _float& fTimeDelta);
+
+private: /* 페이즈 관련 함수 */
+	_bool m_isPhaseOne = { true };
+	_bool m_isPhaseTwo = { false };
+	_bool m_isSpawnPhaseTwo = { false };
+	void Check_Phase();
+
+private:
+	HRESULT Make_AI();
+	HRESULT Make_Notifies();
+	HRESULT Add_Components();
+	HRESULT Add_Components_Level(_uint iCurrentLevelIndex);
+	HRESULT Bind_HitMatrices();
+
 private: /* 행동 묶음들 */
 	HRESULT Make_Death(_Inout_ CSequence* pSequence);
 	HRESULT Make_Alive(_Inout_ CSelector* pSelector);
 
+	HRESULT Make_Next_Phase(_Inout_ CSequence* pSequence);
+	HRESULT Make_Start_Phase_Two(_Inout_ CSequence* pSequence);
+	HRESULT Make_Ground_Pattern(_Inout_ CSelector* pSelector);
+	HRESULT Make_Air_Pattern(_Inout_ CSelector* pSelector);
+
+	/* Ground Patterns */
+
+
+	/* Air Patterns */
+	HRESULT Make_Air_Break_Invincible(_Inout_ CSequence* pSequence);
+	HRESULT Make_Air_Change_Invincible(_Inout_ CSequence* pSequence);
+	HRESULT Make_Air_Attacks(_Inout_ CRandomChoose* pRandomChoose);
+	HRESULT Make_Attack_Fireball(_Inout_ CSequence* pSequence);
+	HRESULT Make_Air_Idle_Breaks(_Inout_ CRandomChoose* pRandomChoose);
+	HRESULT Make_Air_Hover(_Inout_ CAction* pAction);
+	
 private: /* Notify Func */
+	void Shot_Fireball();
 
 public:
 	static CConjuredDragon* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

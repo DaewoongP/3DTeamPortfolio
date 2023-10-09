@@ -159,6 +159,7 @@ HRESULT CLevel_Cliffside::Render()
 HRESULT CLevel_Cliffside::Ready_Lights()
 {
 	BEGININSTANCE;
+
 	CLight::LIGHTDESC		LightDesc;
 	ZeroMemory(&LightDesc, sizeof LightDesc);
 
@@ -171,10 +172,11 @@ HRESULT CLevel_Cliffside::Ready_Lights()
 	LightDesc.vAmbient = WHITEDEFAULT;
 	LightDesc.vSpecular = WHITEDEFAULT;
 
-	if (nullptr == pGameInstance->Add_Lights((_float)g_iWinSizeX, (_float)g_iWinSizeY, LightDesc))
+	if (nullptr == pGameInstance->Add_Lights(_float(g_iWinSizeX), _float(g_iWinSizeY), LightDesc))
 		return E_FAIL;
 
 	ENDINSTANCE;
+
 	return S_OK;
 }
 
@@ -196,6 +198,12 @@ HRESULT CLevel_Cliffside::Ready_Layer_BackGround(const _tchar* pLayerTag)
 		MSG_BOX("Failed Add_GameObject : (GameObject_Sky)");
 		return E_FAIL;
 	}
+	
+	/*if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_FlowMap"), pLayerTag, TEXT("GameObject_FlowMap"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_FlowMap)");
+		return E_FAIL;
+	}*/
 
 	Safe_Release(pGameInstance);
 
@@ -221,6 +229,7 @@ HRESULT CLevel_Cliffside::Ready_Layer_Player(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
+
 	ENDINSTANCE;
 
 	return S_OK;
@@ -245,12 +254,6 @@ HRESULT CLevel_Cliffside::Ready_Layer_Item(const _tchar* pLayerTag)
 	//	return E_FAIL;
 	//}
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_WiggenweldPotion"), pLayerTag, TEXT("GameObject_WiggenweldPotion"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (WiggenweldPotion)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
 	ENDINSTANCE;
 
 	return S_OK;
@@ -291,23 +294,33 @@ HRESULT CLevel_Cliffside::Ready_Layer_Monster(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
+	///////////////////////////////////////////////////////////////////////
 	///////////////	테스트용 몬스터 배치 코드 입니다. /////////////////////
 	///////////////	실전 배치시 해당 코드는 지워주세요.////////////////////
+	///////////////////////////////////////////////////////////////////////
 	_float4x4 Matrix = XMMatrixTranslation(40.f, 10.f, 60.f);
-	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Golem_CombatGrunt"), pLayerTag, TEXT("GameObject_Golem_Combat"), &Matrix)))
+	/*if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Golem_CombatGrunt"), pLayerTag, TEXT("GameObject_Golem_Combat"), &Matrix)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Golem_Combat)");
 		ENDINSTANCE;
 		return E_FAIL;
-	}
-	Matrix = XMMatrixTranslation(40.f, 10.f, 65.f);
-	/*if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Dugbog"), pLayerTag, TEXT("GameObject_Dugbog"), &Matrix)))
+	}*/
+	/*Matrix = XMMatrixTranslation(40.f, 10.f, 65.f);
+	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Dugbog"), pLayerTag, TEXT("GameObject_Dugbog"), &Matrix)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Dugbog)");
 		ENDINSTANCE;
 		return E_FAIL;
 	}*/
-	/*if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_ConjuredDragon"), pLayerTag, TEXT("GameObject_ConjuredDragon"), &Matrix)))
+	Matrix = XMMatrixTranslation(35.f, 10.f, 65.f);
+	/*if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_DarkWizard_M"), pLayerTag, TEXT("GameObject_DarkWizard_M"), &Matrix)))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_DarkWizard_M)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}*/
+	/*Matrix = XMMatrixTranslation(10.f, 10.f, 50.f);
+	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_ConjuredDragon"), pLayerTag, TEXT("GameObject_ConjuredDragon"), &Matrix)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_ConjuredDragon)");
 		ENDINSTANCE;
@@ -332,7 +345,7 @@ HRESULT CLevel_Cliffside::Ready_Layer_NPC(const _tchar* pLayerTag)
 		ENDINSTANCE;
 		return E_FAIL;
 	}
-	_float3 vPosition = _float3(40.f, 26.4f, 62.f);
+	_float3 vPosition = _float3(40.f, 6.4f, 62.f);
 
 	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_STATIC, TEXT("Prototype_GameObject_Professor_Fig"), pLayerTag, TEXT("GameObject_Professor_Fig"), &vPosition)))
 	{
@@ -393,9 +406,16 @@ HRESULT CLevel_Cliffside::Load_MapObject(const _tchar* pObjectFilePath)
 		size_t findIndex = ws.find(TEXT("Model_")) + 6;
 
 		wstring modelName = ws.substr(findIndex);
-		wstring wsMapEffectName(TEXT("Anim_TreasureChest"));
 
-		if (0 == lstrcmp(modelName.c_str(), wsMapEffectName.c_str()))
+		// 비교해야되는 문자열
+		wstring wsTreasureChestName(TEXT("Anim_TreasureChest"));
+		wstring wsAshwinderEggs(TEXT("Anim_AshwinderEggs"));
+		wstring wsHorklump(TEXT("Anim_Horklump"));
+		wstring wsLeapingToadStools(TEXT("Anim_LeapingToadStools"));
+		wstring wsLeech(TEXT("Anim_Leech"));
+
+		// 보물상자
+		if (0 == lstrcmp(modelName.c_str(), wsTreasureChestName.c_str()))
 		{
 			_tchar wszobjName[MAX_PATH] = { 0 };
 			_stprintf_s(wszobjName, TEXT("GameObject_Treasure_Chest_%d"), (iObjectNum));
@@ -410,6 +430,26 @@ HRESULT CLevel_Cliffside::Load_MapObject(const _tchar* pObjectFilePath)
 			}
 		}
 
+		// 채집물
+		else if (0 == lstrcmp(modelName.c_str(), wsAshwinderEggs.c_str()) ||
+			0 == lstrcmp(modelName.c_str(), wsHorklump.c_str()) ||
+			0 == lstrcmp(modelName.c_str(), wsLeapingToadStools.c_str()) ||
+			0 == lstrcmp(modelName.c_str(), wsLeech.c_str()))
+		{
+			_tchar wszobjName[MAX_PATH] = { 0 };
+			_stprintf_s(wszobjName, TEXT("GameObject_Gatherer_%d"), (iObjectNum));
+
+			if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE,
+				TEXT("Prototype_GameObject_Gatherer"), TEXT("Layer_BackGround"),
+				wszobjName, &MapObjectDesc)))
+			{
+				MSG_BOX("Failed to Clone Gatherer");
+				ENDINSTANCE;
+				return E_FAIL;
+			}
+		}
+
+		// 일반 맵 오브젝트
 		else
 		{
 			_tchar wszobjName[MAX_PATH] = { 0 };
@@ -712,6 +752,12 @@ HRESULT CLevel_Cliffside::Ready_Layer_UI(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Farming"), pLayerTag, TEXT("GameObject_UI_Farming"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_UI_Farming)");
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	}
 
 	//lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_MiniMap.uidata"));
 	//if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_MiniMap"),

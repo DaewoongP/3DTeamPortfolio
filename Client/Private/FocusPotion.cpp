@@ -11,21 +11,13 @@ CFocusPotion::CFocusPotion(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 CFocusPotion::CFocusPotion(const CFocusPotion& rhs)
 	: CPotion(rhs)
-	, m_fDuration(rhs.m_fDuration)
 {
 }
 
 HRESULT CFocusPotion::Initialize_Prototype(_uint iLevel)
 {
-	// 아이템 정보
-	m_ItemCreateDesc.iCost = 500;									// 가격
-	m_ItemCreateDesc.wstrKoreanName = TEXT("집중력 물약");			// 한글명
-	m_ItemCreateDesc.wstrUIPath = TEXT("../../Resources/UI/Game/UI/Icons/Potions/UI_T_AMFillPotion.png"); // UI경로
-
 	// 포션 정보
-	m_PotionCreateDesc.wstrModelPath = TEXT("../../Resources/Models/NonAnims/SM_SpherePrimitiveRegularNormals_01/SM_SpherePrimitiveRegularNormals_01.dat"); // 모델경로
-	m_PotionCreateDesc.eModelType = CModel::TYPE_NONANIM; // 모델 타입
-	m_PotionCreateDesc.PivotMatrix = _float4x4(); // 피벗 매트릭스
+	m_PotionCreateDesc.wstrModelPath = TEXT("../../Resources/Models/NonAnims/SM_Focus_Bottle/SM_Focus_Bottle.dat"); // 모델경로
 	m_PotionCreateDesc.Ingredients.push_back(FLUXWEED_STEM);		// 재료1
 	m_PotionCreateDesc.Ingredients.push_back(DITTANY_LEAVES);		// 재료2
 	m_PotionCreateDesc.fManufacturingTime = 60.f;					// 제조시간
@@ -41,31 +33,16 @@ HRESULT CFocusPotion::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	if (FAILED(Add_Components()))
-		return E_FAIL;
+	m_pLifeTime->Set_MaxCoolTime(m_fDuration + 2.f);
 
 	return S_OK;
 }
 
-void CFocusPotion::Use(_float3 vPlayPos)
+void CFocusPotion::Duration(_float fTimeDelta)
 {
-
-}
-
-HRESULT CFocusPotion::Add_Components()
-{
-	return S_OK;
-}
-
-HRESULT CFocusPotion::SetUp_ShaderResources()
-{
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
-
-
-
-	Safe_Release(pGameInstance);
-	return S_OK;
+	/*m_fDuration += fTimeDelta;
+	if (m_fDuration >= m_ItemCreateDesc.fDuration)
+		m_pPlayer->Set_FocusOn(false);*/
 }
 
 CFocusPotion* CFocusPotion::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel)

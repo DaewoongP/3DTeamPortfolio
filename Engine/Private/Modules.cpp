@@ -509,6 +509,9 @@ HRESULT RENDERER_MODULE::Save(const _tchar* _pDirectoyPath)
 	WriteFile(hFile, wstrGraientTexture.data(), sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
 	WriteFile(hFile, strPass.data(), sizeof(_char) * MAX_PATH, &dwByte, nullptr);
 	WriteFile(hFile, &isGlow, sizeof(isGlow), &dwByte, nullptr);
+	WriteFile(hFile, &isDistortion, sizeof(isDistortion), &dwByte, nullptr); 
+	WriteFile(hFile, &isDiffuse, sizeof(isDiffuse), &dwByte, nullptr);
+	WriteFile(hFile, wstrDistortionTexture.data(), sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
 
 	CloseHandle(hFile);
 	return S_OK;
@@ -549,7 +552,10 @@ HRESULT RENDERER_MODULE::Load(const _tchar* _pDirectoyPath)
 	ReadFile(hFile, szBuffer, sizeof(_char) * MAX_PATH, &dwByte, nullptr);
 	strPass = szBuffer;
 	ReadFile(hFile, &isGlow, sizeof(isGlow), &dwByte, nullptr);
-
+	ReadFile(hFile, &isDistortion, sizeof(isDistortion), &dwByte, nullptr);
+	ReadFile(hFile, &isDiffuse, sizeof(isDiffuse), &dwByte, nullptr);
+	WriteFile(hFile, wszBuffer, sizeof(_tchar) * MAX_PATH, &dwByte, nullptr);
+	wstrDistortionTexture = wszBuffer;
 	CloseHandle(hFile);
 	return S_OK;
 }
@@ -1004,21 +1010,21 @@ void TEXTURE_SHEET_ANIMATION::Action(PARTICLE_IT& _particle_iter, _float fTimeDe
 	if (true == isAnimation)
 	{
 		fTimeAcc += fTimeDelta;
-		if (fTimeAcc <= fUpdateInterval)
-			return;
-
-		fTimeAcc = 0.f;
-		++_particle_iter->iCurIndex;
-		if (_particle_iter->iCurIndex > iMaxIndex)
+		while (fTimeAcc >= fUpdateInterval)
 		{
-			if (false == isLoopOption)
+			fTimeAcc -= fUpdateInterval;
+			++_particle_iter->iCurIndex;
+			if (_particle_iter->iCurIndex > iMaxIndex)
 			{
-				_particle_iter->fLifeTime = 0.f;
-				_particle_iter->iCurIndex = iMaxIndex; // 마지막 1프레임 살아나는거 잡는 코드
-			}
-			else
-			{
-				_particle_iter->iCurIndex = 0;
+				if (false == isLoopOption)
+				{
+					_particle_iter->fLifeTime = 0.f;
+					_particle_iter->iCurIndex = iMaxIndex; // 마지막 1프레임 살아나는거 잡는 코드
+				}
+				else
+				{
+					_particle_iter->iCurIndex = 0;
+				}
 			}
 		}
 	}
