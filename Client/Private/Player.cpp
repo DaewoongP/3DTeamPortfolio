@@ -628,6 +628,13 @@ HRESULT CPlayer::Add_Components()
 		return E_FAIL;
 	}
 	
+	//_int DefValue = 15;
+	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_EndurusPotion"),
+	//	TEXT("Com_EndurusPotion"), reinterpret_cast<CComponent**>(&m_pEndurusPotion),&DefValue)))
+	//{
+	//	__debugbreak();
+	//	return E_FAIL;
+	//}
 
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_CoolTime"),
 		TEXT("Com_CoolTime"), reinterpret_cast<CComponent**>(&m_pCooltime))))
