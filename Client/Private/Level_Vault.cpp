@@ -195,7 +195,7 @@ HRESULT CLevel_Vault::Ready_Lights()
 	pGameInstance->Add_Lights(_float(g_iWinSizeX), _float(g_iWinSizeY), LightDesc);
 
 	ENDINSTANCE;
-
+	
 	return S_OK;
 }
 
