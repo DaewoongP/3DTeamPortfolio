@@ -64,11 +64,14 @@ public:
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
+	virtual void OnCollisionEnter(COLLEVENTDESC CollisionEventDesc) override;
+	virtual void OnCollisionExit(COLLEVENTDESC CollisionEventDesc) override;
 	virtual HRESULT Render() override;
 	virtual HRESULT Render_Depth() override;
 
 public:
 	void Set_Protego_Collision(CTransform* pTransform, ATTACKTYPE eType) const {}
+	void Ready_Hit_Finisher() {};
 
 protected:
 	CUI_Group_Enemy_HP* m_pUI_HP = { nullptr };
@@ -90,6 +93,7 @@ protected:
 
 	_bool m_isSpawn = { false };
 	_bool m_isParring = { false };
+	_bool m_isOnGround = { false };
 	_bool m_isHitCombo = { false };
 	_bool m_isHitAttack = { false };
 	_bool m_isRangeInEnemy = { false };

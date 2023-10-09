@@ -125,7 +125,13 @@ public: /* For. Frustum */
 	_bool isIn_WorldFrustum(_float4 vWorldPos, _float fRange = 0.f);
 
 public: /* For.Light_Manager */
-	class CLight* Add_Lights(const CLight::LIGHTDESC & LightDesc, _bool isShadow = false);
+	const CLight::LIGHTDESC* Get_Light(_uint iIndex);
+	const _float4x4* Get_LightView();
+	const _float4x4* Get_LightProj();
+
+	void Set_Light(_uint iIndex, _float fWinSizeX, _float fWinSizeY, CLight::LIGHTDESC LightDesc);
+	class CLight* Add_Lights(_float fWinSizeX, _float fWinSizeY, const CLight::LIGHTDESC & LightDesc);
+	HRESULT Delete_Lights(_uint iIndex, const _char * Name);
 	HRESULT Clear_Lights();
 
 public: /* For.Sound_Manager */

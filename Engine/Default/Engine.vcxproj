@@ -26,6 +26,7 @@
     <ClInclude Include="..\public\MotionBlur.h" />
     <ClInclude Include="..\public\ParticleSystemPool.h" />
     <ClInclude Include="..\public\Phase.h" />
+    <ClInclude Include="..\public\RadialBlur.h" />
     <ClInclude Include="..\public\RaycastCallBack.h" />
     <ClInclude Include="..\public\TexturePool.h" />
     <ClInclude Include="..\public\UI_ScaleButton.h" />
@@ -170,6 +171,7 @@
     <ClCompile Include="..\private\MotionBlur.cpp" />
     <ClCompile Include="..\private\ParticleSystemPool.cpp" />
     <ClCompile Include="..\private\Phase.cpp" />
+    <ClCompile Include="..\private\RadialBlur.cpp" />
     <ClCompile Include="..\private\RaycastCallBack.cpp" />
     <ClCompile Include="..\private\TexturePool.cpp" />
     <ClCompile Include="..\private\UI_ScaleButton.cpp" />
@@ -307,6 +309,7 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Distortion.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Geometry.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Glow.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_RadialBlur.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_RenderFunc.hlsli" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Light.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_MotionBlur.hlsl" />

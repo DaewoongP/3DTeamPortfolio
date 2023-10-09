@@ -35,6 +35,7 @@ public:
 		CTransform* pPlayerTransform = { nullptr };
 		CTransform** ppTargetTransform = { nullptr };
 		LEVELID eLevelID = { LEVEL_END };
+		_bool* IsMove = { nullptr };
 	}PLAYERCAMERADESC;
 
 private:
@@ -88,6 +89,10 @@ private:
 	_float m_fLerpTimeAcc = { 0.0f };
 
 	_float m_fLerpSpeed = { 5.0f };
+
+	_bool* m_pisMove = { nullptr };
+
+	_bool m_isPressingTab = { false };
 
 private:
 	void	Mouse_Input(_float _fTimeDelta);

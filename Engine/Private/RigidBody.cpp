@@ -56,6 +56,15 @@ _float4 CRigidBody::Get_Rotation() const
 	return _float4(vPose.q.x, vPose.q.y, vPose.q.z, vPose.q.w);
 }
 
+_float3 CRigidBody::Get_Current_Velocity() const
+{
+	if (true == m_isStatic)
+		return _float3();
+
+	PxVec3 vVelocity = reinterpret_cast<PxRigidDynamic*>(m_pActor)->getLinearVelocity();
+	return _float3(vVelocity.x, vVelocity.y, vVelocity.z);
+}
+
 void CRigidBody::Set_Position(_float3 vPosition)
 {
 	PxTransform vPose;

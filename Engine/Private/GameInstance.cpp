@@ -82,9 +82,6 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInst, _uint iNumLevels, cons
 
 	//m_pThread_Pool->Initialize(4);
 
-	if (FAILED(m_pLight_Manager->Reserve_Lights(30)))
-		return E_FAIL;
-
 	return S_OK;
 }
 
@@ -500,11 +497,56 @@ _bool CGameInstance::isIn_WorldFrustum(_float4 vWorldPos, _float fRange)
 	return m_pFrustum->isIn_WorldFrustum(vWorldPos, fRange);
 }
 
-CLight* CGameInstance::Add_Lights(const CLight::LIGHTDESC& LightDesc, _bool isShadow)
+const CLight::LIGHTDESC* CGameInstance::Get_Light(_uint iIndex)
 {
 	NULL_CHECK_RETURN_MSG(m_pLight_Manager, nullptr, TEXT("Light NULL"));
 
-	return m_pLight_Manager->Add_Lights(LightDesc, isShadow);
+	return m_pLight_Manager->Get_Light(iIndex);
+}
+
+const _float4x4* CGameInstance::Get_LightView()
+{
+	//NULL_CHECK_RETURN_MSG(m_pLight_Manager, nullptr, TEXT("Light NULL"));
+
+	if (nullptr == m_pLight_Manager)
+	{
+		MSG_BOX("LightNULL");
+		return nullptr;
+	}
+
+	return m_pLight_Manager->Get_LightView();
+}
+
+const _float4x4* CGameInstance::Get_LightProj()
+{
+	//NULL_CHECK_RETURN_MSG(m_pLight_Manager, nullptr, TEXT("Light NULL"));
+	if (nullptr == m_pLight_Manager)
+	{
+		MSG_BOX("LightNULL");
+		return nullptr;
+	}
+	return m_pLight_Manager->Get_LightProj();
+}
+
+void CGameInstance::Set_Light(_uint iIndex, _float fWinSizeX, _float fWinSizeY, CLight::LIGHTDESC LightDesc)
+{
+	NULL_CHECK_RETURN_MSG(m_pLight_Manager, , TEXT("Light NULL"));
+
+	return m_pLight_Manager->Set_Light(iIndex, fWinSizeX, fWinSizeY, LightDesc);
+}
+
+CLight* CGameInstance::Add_Lights(_float fWinSizeX, _float fWinSizeY, const CLight::LIGHTDESC& LightDesc)
+{
+	NULL_CHECK_RETURN_MSG(m_pLight_Manager, nullptr, TEXT("Light NULL"));
+
+	return m_pLight_Manager->Add_Lights(fWinSizeX, fWinSizeY, LightDesc);
+}
+
+HRESULT CGameInstance::Delete_Lights(_uint iIndex, const _char* Name)
+{
+	NULL_CHECK_RETURN_MSG(m_pLight_Manager, E_FAIL, TEXT("Light NULL"));
+
+	return m_pLight_Manager->Delete_Lights(iIndex, Name);
 }
 
 HRESULT CGameInstance::Clear_Lights()
@@ -513,6 +555,7 @@ HRESULT CGameInstance::Clear_Lights()
 
 	return m_pLight_Manager->Clear_Lights();
 }
+
 
 HRESULT CGameInstance::Add_Sounds(const _tchar* szSoundFilePath)
 {

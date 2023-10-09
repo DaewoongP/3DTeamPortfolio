@@ -3,13 +3,17 @@
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix g_ViewMatrixInv, g_ProjMatrixInv;
 
-matrix g_vLightViewMatrix;
-matrix g_vLightProjMatrix;
+matrix g_LightViewMatrix;
+matrix g_LightProjMatrix;
 
 float g_fCamFar;
 
 texture2D g_DepthTexture;
-texture2D g_vLightDepthTexture;
+texture2D g_LightDepthTexture;
+
+// DownSample
+texture2D g_ShadowTexture;
+float g_fWinSizeX, g_fWinSizeY;
 
 struct VS_IN
 {
@@ -74,12 +78,12 @@ PS_OUT PS_MAIN_SHADOW(PS_IN In)
     
     // 지금 픽셀의 월드포지션에서 현재 빛으로 설정되어있는 값의 뷰행렬을 곱하여
     // 빛의 뷰스페이스로 변경
-    float4 vLightViewPos = mul(vObjectWorldPos, g_vLightViewMatrix);
+    float4 vLightViewPos = mul(vObjectWorldPos, g_LightViewMatrix);
     
     /////////////////// 빛 기준 좌표 처리 ///////////////////////
     
     // 빛기준의 뷰좌표를 투영좌표로 변경하기위해 투영 행렬을 곱함.
-    float4 vLightProjPos = mul(vLightViewPos, g_vLightProjMatrix);
+    float4 vLightProjPos = mul(vLightViewPos, g_LightProjMatrix);
     
     // w나누기를 실행하여 실제 투영좌표로 변환
     vLightProjPos = vLightProjPos / vLightProjPos.w;
@@ -96,15 +100,15 @@ PS_OUT PS_MAIN_SHADOW(PS_IN In)
     // 현재 In의 픽셀의 포지션이 빛의 텍스처에 어디에 있는지 알아내고
     // 해당 텍스처의 픽셀 값인 (빛기준 LightProjPos.w / CamFar)를 처리한 값을 가져옴.
     // 빛기준의 뷰스페이스 z값이라고 봐도된다.
-    vector vLightDepth = g_vLightDepthTexture.Sample(LinearSampler_Clamp, vLightUV);
-    
+    vector vLightDepth = g_LightDepthTexture.Sample(LinearSampler_Clamp, vLightUV);
+
     // 그럼이제 현재 In 픽셀의 "빛의" 뷰스페이스 상의 z값과
     // UV좌표에 설정되어있는 "빛의" 뷰스페이스상의 뎁스값을 비교하여
     // UV좌표에 설정되어있는 뎁스보다 "깊을경우" 그림자로 처리한다.
     
     // 빛의 뷰스페이스 포지션 z와 픽셀의 라이트 뎁스 (실제 월드공간상의 viewz값)
     // 빛의 뷰스페이스 z값이 UV좌표의 뷰스페이스 z값보다 "클경우 (깊을경우)" 그림자.
-    if (vLightViewPos.z - 0.2f > vLightDepth.x * g_fCamFar)
+    if (vLightViewPos.z - 0.5f > vLightDepth.x * g_fCamFar)
     {
         Out.vColor *= 0.5f;
         Out.vColor.a = 1.f;
@@ -130,6 +134,23 @@ PS_OUT PS_MAIN_SHADOW(PS_IN In)
     return Out;
 }
 
+PS_OUT PS_MAIN_DOWNSAMPLING(PS_IN In)
+{
+    PS_OUT Out = (PS_OUT) 0;
+    
+    float2 vTexelSize = 1.f / float2(g_fWinSizeX, g_fWinSizeY);
+    float fSampling = 0.5f;
+    // 2x2
+    Out.vColor += g_ShadowTexture.Sample(LinearSampler_Clamp, In.vTexUV + float2(-fSampling, -fSampling) * vTexelSize);
+    Out.vColor += g_ShadowTexture.Sample(LinearSampler_Clamp, In.vTexUV + float2(fSampling, -fSampling) * vTexelSize);
+    Out.vColor += g_ShadowTexture.Sample(LinearSampler_Clamp, In.vTexUV + float2(-fSampling, fSampling) * vTexelSize);
+    Out.vColor += g_ShadowTexture.Sample(LinearSampler_Clamp, In.vTexUV + float2(fSampling, fSampling) * vTexelSize);
+
+    Out.vColor /= 4.f;
+
+    return Out;
+}
+
 technique11 DefaultTechnique
 {
     pass Shadow
@@ -142,6 +163,17 @@ technique11 DefaultTechnique
         HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
         DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
         PixelShader = compile ps_5_0 PS_MAIN_SHADOW();
+    }
+    pass DownSampling
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Depth_Disable, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;
+        HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
+        DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
+        PixelShader = compile ps_5_0 PS_MAIN_DOWNSAMPLING();
     }
 
 }
