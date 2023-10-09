@@ -44,6 +44,11 @@ HRESULT CUI_Group_Skill::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
+	if (nullptr != pArg)
+	{
+		m_pCoolTime = (vector<_float>*)pArg;
+	}
+
 	wstring SecondTag = TEXT("Second");
 	wstring ThirdTag = TEXT("Third");
 	wstring FourthTag = TEXT("Fourth");
@@ -57,6 +62,18 @@ HRESULT CUI_Group_Skill::Initialize(void* pArg)
 	m_KeyList[SECOND] = BASICCAST;
 	m_KeyList[THIRD] = BASICCAST;
 	m_KeyList[FOURTH] = BASICCAST;
+
+	if (nullptr != m_pCoolTime)
+	{
+		_uint iIndex = 0;
+		for (auto& pMain : m_pMains)
+		{
+			pMain->Set_CoolTime(&(*m_pCoolTime)[iIndex]);
+			pMain->Set_isCool(true);
+			++iIndex;
+		}
+	}
+
 
 	return S_OK;
 }
@@ -189,7 +206,8 @@ HRESULT CUI_Group_Skill::Read_File(const _tchar* pFilePath, KEYLIST iIndex)
 	ImageDesc.fSizeY = m_pMains[iIndex]->Get_SizeXY().y;
 
 	m_pMains[iIndex]->Set_ImageCom(ImageDesc);
-	
+	m_pMains[iIndex]->Set_Effecttype(CUI_Effect_Back::SKILL);
+	m_pMains[iIndex]->Set_ImageComShader(CUI_Image::SHADERTYPE::SKILL);
 	_uint iSize = { 0 };
 	ReadFile(hFile, &iSize, sizeof(_uint), &dwByte, nullptr);
 

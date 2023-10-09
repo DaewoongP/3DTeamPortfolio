@@ -22,6 +22,11 @@ public:
 	virtual HRESULT Initialize_Prototype(_uint iLevel);
 	virtual HRESULT Initialize(void* pArg) override;
 
+public:
+	INGREDIENT Get_Ingredient() {
+		return m_eIngredient;
+	}
+
 protected:
 	//HRESULT Ready_Ingredient_UITexture();
 
