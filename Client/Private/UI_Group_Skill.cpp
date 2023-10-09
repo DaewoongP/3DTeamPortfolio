@@ -63,7 +63,7 @@ HRESULT CUI_Group_Skill::Initialize(void* pArg)
 	m_KeyList[THIRD] = BASICCAST;
 	m_KeyList[FOURTH] = BASICCAST;
 
-	if (nullptr != m_pCoolTime)
+	/*if (nullptr != m_pCoolTime)
 	{
 		_uint iIndex = 0;
 		for (auto& pMain : m_pMains)
@@ -72,7 +72,7 @@ HRESULT CUI_Group_Skill::Initialize(void* pArg)
 			pMain->Set_isCool(true);
 			++iIndex;
 		}
-	}
+	}*/
 
 
 	return S_OK;

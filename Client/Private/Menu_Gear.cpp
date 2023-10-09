@@ -36,7 +36,7 @@ HRESULT CMenu_Gear::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
-
+	std::lock_guard<std::mutex> lock(mtx);
 	if (FAILED(Ready_Gear_Frame()))
 		return E_FAIL;
 

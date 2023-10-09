@@ -72,7 +72,7 @@ HRESULT CPotion_Station::Initialize(void* pArg)
 
 	CPotionStationCamera::POTIONSTATION_CAMERA_DESC Potionstation_Camera_Desc;
 
-	Potionstation_Camera_Desc.vAt = {98.124, 8.180, 77.079 };
+	Potionstation_Camera_Desc.vAt = {98.124f, 8.180f, 77.079f };
 	Potionstation_Camera_Desc.pSuperDesc = CameraDesc;
 
 	pGameInstance->Add_Camera(TEXT("Potion_Station_Camera"), CPotionStationCamera::Create(m_pDevice, m_pContext,&Potionstation_Camera_Desc));

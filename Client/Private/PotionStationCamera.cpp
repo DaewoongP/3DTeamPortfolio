@@ -16,7 +16,7 @@ HRESULT CPotionStationCamera::Initialize(void* pArg)
 		return E_FAIL;
 
 	m_vAt = pDesc->vAt;
-	m_vEye = _float3(97.234, 8.100, 78.389);
+	m_vEye = _float3(97.234f, 8.100f, 78.389f);
 	
 	return S_OK;
 }

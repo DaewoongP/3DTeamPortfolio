@@ -323,6 +323,9 @@ float4	PS_MAIN_UI_GRAYCOOL(PS_IN In) : SV_TARGET0
 	{
 		vColor.rgb = 0.3f;
 	}
+	
+    return vColor;
+
 }
 
 float4 PS_MAIN_DYNAMIC_BACK(PS_IN In) :SV_TARGET0

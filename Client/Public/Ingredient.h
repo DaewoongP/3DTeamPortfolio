@@ -24,7 +24,7 @@ public:
 
 public:
 	INGREDIENT Get_Ingredient() {
-		return m_eIngredient;
+		return m_IngredientCreateDesc.eIngredient;
 	}
 
 protected:

@@ -49,26 +49,26 @@ PS_OUT PS_MAIN(PS_IN In)
 
     vector vTex = g_TargetTexture.Sample(LinearSampler, In.vTexUV);
 
-    //float2 vBlurCenterUV = float2(0.5f, 0.5f);
-    //float2 uv = In.vTexUV;
-    //uv -= vBlurCenterUV;
+    float2 vBlurCenterUV = float2(0.5f, 0.5f);
+    float2 uv = In.vTexUV;
+    uv -= vBlurCenterUV;
     
-    //float fPrecompute = g_fBlurWidth * (1.0 / float(g_iNumSample - 1));
+    float fPrecompute = g_fBlurWidth * (1.0 / float(g_iNumSample - 1));
     
-    //float4 color = float4(0.f, 0.f, 0.f, 0.f);
+    float4 color = float4(0.f, 0.f, 0.f, 0.f);
     
-    //// 카운트값을 코드로 제한해야 컴파일이 원활함.
-    //int iterationCount = min(g_iNumSample, 10);
-    //for (int i = 0; i < iterationCount; ++i)
-    //{
-    //    float fScale = g_fBlurStart + (float(i) * fPrecompute);
-    //    color += g_TargetTexture.Sample(LinearSampler, uv * fScale + vBlurCenterUV);
-    //}
+    // 카운트값을 코드로 제한해야 컴파일이 원활함.
+    int iterationCount = min(g_iNumSample, 10);
+    for (int i = 0; i < iterationCount; ++i)
+    {
+        float fScale = g_fBlurStart + (float(i) * fPrecompute);
+        color += g_TargetTexture.Sample(LinearSampler, uv * fScale + vBlurCenterUV);
+    }
 
-    //color /= float(g_iNumSample);
-    //color.a = 1.f;
+    color /= float(g_iNumSample);
+    color.a = 1.f;
     
-    //Out.vColor = color;
+    Out.vColor = color;
    
     return Out;
 }
