@@ -1,7 +1,7 @@
 #pragma once
 #include "Camera.h"
 
-class PotionStationCamera : public CCamera
+class CPotionStationCamera : public CCamera
 {
 public:
 	typedef struct tagPotionStationCameraDesc
@@ -11,20 +11,21 @@ public:
 	}POTIONSTATION_CAMERA_DESC;
 
 private:
-	explicit PotionStationCamera() = default;
-	explicit PotionStationCamera(ID3D11Device * _pDevice, ID3D11DeviceContext * _pContext);
-	virtual ~PotionStationCamera() = default;
+	explicit CPotionStationCamera() = default;
+	explicit CPotionStationCamera(ID3D11Device * _pDevice, ID3D11DeviceContext * _pContext);
+	virtual ~CPotionStationCamera() = default;
 
 public:
 	HRESULT Initialize(void* pArg);
 	virtual void Tick(const _float & fTimeDelta);
-
-private:
+#ifdef _DEBUG
+	void Tick_Imgui(_float fTimeDelta);
+#endif // _DEBUG
 private:
 	_float3 m_vAt = {};
 	_float3 m_vEye = {};
 public:
-	static PotionStationCamera* Create(ID3D11Device * _pDevice, ID3D11DeviceContext * _pContext, void* pArg);
+	static CPotionStationCamera* Create(ID3D11Device * _pDevice, ID3D11DeviceContext * _pContext, void* pArg);
 	virtual void Free() override;
 
 };

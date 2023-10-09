@@ -70,12 +70,12 @@ HRESULT CPotion_Station::Initialize(void* pArg)
 	CameraDesc.m_fNear = 0.1f;
 	CameraDesc.m_fFar = 1000.f;
 
-	PotionStationCamera::POTIONSTATION_CAMERA_DESC Potionstation_Camera_Desc;
+	CPotionStationCamera::POTIONSTATION_CAMERA_DESC Potionstation_Camera_Desc;
 
-	Potionstation_Camera_Desc.vAt = m_pTransform->Get_Position();
+	Potionstation_Camera_Desc.vAt = {98.124, 8.180, 77.079 };
 	Potionstation_Camera_Desc.pSuperDesc = CameraDesc;
 
-	pGameInstance->Add_Camera(TEXT("Potion_Station_Camera"), PotionStationCamera::Create(m_pDevice, m_pContext,&Potionstation_Camera_Desc));
+	pGameInstance->Add_Camera(TEXT("Potion_Station_Camera"), CPotionStationCamera::Create(m_pDevice, m_pContext,&Potionstation_Camera_Desc));
 
 	Safe_Release(pGameInstance);
 
@@ -97,19 +97,17 @@ void CPotion_Station::Tick(_float fTimeDelta)
 
 	if (m_isInteractable && pGameInstance->Get_DIKeyState(DIK_L, CInput_Device::KEY_DOWN))
 	{
-		cout << "카메라가 고정됐어요" << '\n';
 		cout << "UI 인벤토리 띄워졌어요." << '\n';
 		cout << "캐릭터를 조종 못하게했어요." << '\n';
 		cout << "플레이어가 스르륵 사라져요" << '\n';
 
-		pGameInstance->Set_Camera(TEXT("Potion_Station_Camera"),5.0f);
+		pGameInstance->Set_Camera(TEXT("Potion_Station_Camera"),0.5f);
 	}
 	if (pGameInstance->Get_DIKeyState(DIK_J, CInput_Device::KEY_DOWN))
 	{
 		pGameInstance->Set_Camera(TEXT("Player_Camera"),0.0f);
 
 	}
-
 
 	Safe_Release(pGameInstance);
 }
