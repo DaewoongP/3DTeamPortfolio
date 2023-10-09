@@ -553,6 +553,9 @@
     <Filter Include="02. GameObject\03. MapObject\Anim_Obj\Gull">
       <UniqueIdentifier>{64519bb8-2a5a-4d8b-974c-39f199b49dfa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\Door">
+      <UniqueIdentifier>{c0f2b156-3bfd-454d-a84c-99b9be093137}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -1076,6 +1079,9 @@
     <ClInclude Include="..\Public\Gull.h">
       <Filter>02. GameObject\03. MapObject\Anim_Obj\Gull</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Door.h">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Door</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1559,6 +1565,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Gull.cpp">
       <Filter>02. GameObject\03. MapObject\Anim_Obj\Gull</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Door.cpp">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Door</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

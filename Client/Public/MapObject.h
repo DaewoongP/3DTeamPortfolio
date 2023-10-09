@@ -12,7 +12,7 @@ END
 
 BEGIN(Client)
 
-class CMapObject final : public CGameObject
+class CMapObject : public CGameObject
 {
 public:
 	typedef struct tagMapObjectDesc
@@ -22,7 +22,7 @@ public:
 		_tchar wszTag[MAX_PATH] = TEXT(""); // 오브젝트 종류(모델 컴포넌트 이름)
 	}MAPOBJECTDESC;
 
-private:
+protected:
 	explicit CMapObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CMapObject(const CMapObject& rhs);
 	virtual ~CMapObject() = default;
@@ -36,22 +36,22 @@ public:
 	virtual HRESULT Render() override;
 	virtual HRESULT Render_Depth() override;
 
-private:
+protected:
 	CShader*		m_pShader = { nullptr };
 	CShader*		m_pShadowShader = { nullptr };
 	CRenderer*		m_pRenderer = { nullptr };
 	CModel*			m_pModel = { nullptr };
 
-private:
+protected:
 	// 절두체 컬링을 위해 Bounding Box를 생성 하기위한 최소, 최대 정점
 	_float3			m_vMinPoint, m_vMaxPoint, m_vCenterPoint;
 	_float			m_fRadius = { 0.f };
 
-private:
+protected:
 	MAPOBJECTDESC	m_ObjectDesc;
 	vector<CComponent*>	m_RigidBodys;
 
-private:
+protected:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
 	HRESULT SetUp_ShadowShaderResources();
