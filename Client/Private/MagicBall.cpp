@@ -41,7 +41,7 @@ HRESULT CMagicBall::Initialize(void* pArg)
 	}
 
 	m_pTransform->Set_RigidBody(m_pRigidBody);
-
+	m_pRigidBody->Disable_Collision("Magic_Ball");
 	return S_OK;
 }
 
@@ -150,7 +150,7 @@ HRESULT CMagicBall::Reset(MAGICBALLINITDESC& InitDesc)
 			m_ParticleVec[i].data()[j]->Disable();
 		}
 	}
-
+	m_fWandParticleDelayTimer = 0.1f;
 	return S_OK;
 }
 
@@ -280,11 +280,6 @@ void CMagicBall::Ready_CastMagic()
 	{
 		m_TrailVec[EFFECT_STATE_MAIN].data()[i]->Enable(m_CurrentWeaponMatrix.Translation());
 	}
-	for (int i = 0; i < m_ParticleVec[EFFECT_STATE_MAIN].size(); i++)
-	{
-		m_ParticleVec[EFFECT_STATE_MAIN].data()[i]->Enable(m_CurrentWeaponMatrix.Translation());
-		m_ParticleVec[EFFECT_STATE_MAIN].data()[i]->Play(m_CurrentWeaponMatrix.Translation());
-	}
 }
 
 void CMagicBall::Ready_Dying()
@@ -345,6 +340,17 @@ void CMagicBall::Tick_DrawMagic(_float fTimeDelta)
 
 void CMagicBall::Tick_CastMagic(_float fTimeDelta)
 {
+	m_fWandParticleDelayTimer -= fTimeDelta;
+	if (m_fWandParticleDelayTimer < 0)
+	{
+		m_fWandParticleDelayTimer = 1000.f;
+		for (int i = 0; i < m_ParticleVec[EFFECT_STATE_MAIN].size(); i++)
+		{
+			m_ParticleVec[EFFECT_STATE_MAIN].data()[i]->Enable(m_CurrentWeaponMatrix.Translation());
+			m_ParticleVec[EFFECT_STATE_MAIN].data()[i]->Play(m_CurrentWeaponMatrix.Translation());
+		}
+	}
+
 	if (m_pTarget != nullptr)
 	{
 		m_vEndPosition = m_CurrentTargetMatrix.Translation();
@@ -447,6 +453,16 @@ void CMagicBall::Tick_MagicBall_State(_float fTimeDelta)
 void CMagicBall::Set_StartPosition()
 {
 	m_vStartPosition = m_CurrentWeaponMatrix.Translation();
+}
+
+void CMagicBall::Re_Set_StartEndLerpAcc(_float3 vStart, _float3 vEnd)
+{
+	m_vStartPosition = vStart;
+	m_vEndPosition = vEnd;
+	if(m_TrailVec[EFFECT_STATE_MAIN].size()>0)
+		Ready_SplineSpinMove(m_TrailVec[EFFECT_STATE_MAIN][0],_float2(0.2f, 0.2f),0.5f);
+	Set_MagicBallState_quiet(MAGICBALL_STATE_CASTMAGIC);
+	m_fLerpAcc = 0.f;
 }
 
 HRESULT CMagicBall::Add_Components()

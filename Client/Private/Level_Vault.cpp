@@ -192,7 +192,7 @@ HRESULT CLevel_Vault::Ready_Lights()
 	LightDesc.vAmbient = _float4(0.1f, 0.1f, 0.1f, 1.f);
 	LightDesc.vSpecular = BLACKDEFAULT;
 
-	pGameInstance->Add_Lights(LightDesc);
+	pGameInstance->Add_Lights(_float(g_iWinSizeX), _float(g_iWinSizeY), LightDesc);
 
 	ENDINSTANCE;
 

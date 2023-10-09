@@ -1,7 +1,7 @@
 #include "Weapon_Player_Wand.h"
 #include "GameInstance.h"
-#include"Light.h"
-#include"Player.h"
+#include "Light.h"
+#include "Player.h"
 
 CWeapon_Player_Wand::CWeapon_Player_Wand(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CParts(pDevice, pContext)
@@ -52,20 +52,21 @@ HRESULT CWeapon_Player_Wand::Initialize(void* pArg)
 
 	CLight::LIGHTDESC LightInfo;
 	ZEROMEM(&LightInfo);
-	LightInfo.eType = CLight::TYPE_POINT;
+	LightInfo.eType = CLight::TYPE_LUMOS;
 	LightInfo.vPos = _float4(_float4(m_OffsetMatrix.Translation().x,
 		m_OffsetMatrix.Translation().y,
 		m_OffsetMatrix.Translation().z, 1.f));
-	
+
 	LightInfo.fRange = 5.f;
 	LightInfo.fSpotPower = 2.f;
 	LightInfo.vAmbient = BLACKDEFAULT;
 	LightInfo.vSpecular = BLACKDEFAULT;
 	LightInfo.vDiffuse = BLACKDEFAULT;
-	
-	pGameInstance->Add_Lights(LightInfo);
+
+	pGameInstance->Add_Lights((_float)g_iWinSizeX, (_float)g_iWinSizeY, LightInfo);
 
 	ENDINSTANCE;
+
 
  	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
@@ -152,20 +153,20 @@ void CWeapon_Player_Wand::Do_Lumos(_float fTimeDelta)
 
 		_float3 vPos = Target->Get_Transform()->Get_Position();
 		_float3 vLook = XMVector3Normalize(Target->Get_Transform()->Get_Look()) * 2.f;
-		LightInfo.eType = CLight::TYPE_POINT;
+		LightInfo.eType = CLight::TYPE_LUMOS;
 		LightInfo.vPos = (vPos + vLook + _float3(0.f, 2.5f, 0.f)).TransCoord();
-		//LightInfo.vLookAt = vPos.TransCoord();
+		LightInfo.vLookAt = vPos.TransCoord();
 		LightInfo.fRange = 17.f;
 		LightInfo.fSpotPower = 2.f;
 		if (AccTime < 1.f)
-			AccTime += fTimeDelta*3.f;
+			AccTime += fTimeDelta * 3.f;
 
 		m_LightIntensity = XMVectorLerp(BLACKDEFAULT, WHITEDEFAULT, AccTime);
 		LightInfo.vAmbient = m_LightIntensity;
 		LightInfo.vSpecular = m_LightIntensity;
 		LightInfo.vDiffuse = m_LightIntensity;
 
-		//pGameInstance->Set_Light(CLight::TYPE_POINT, (_float)g_iWinSizeX, (_float)g_iWinSizeY, LightInfo);
+		pGameInstance->Set_Light(CLight::TYPE_LUMOS, (_float)g_iWinSizeX, (_float)g_iWinSizeY, LightInfo);
 	}
 	else if (false == m_isLightOn && DelayTime >= 0.5f)
 	{
@@ -181,9 +182,9 @@ void CWeapon_Player_Wand::Do_Lumos(_float fTimeDelta)
 
 		_float3 vPos = Target->Get_Transform()->Get_Position();
 		_float3 vLook = XMVector3Normalize(Target->Get_Transform()->Get_Look()) * 2.f;
-		LightInfo.eType = CLight::TYPE_POINT;
+		LightInfo.eType = CLight::TYPE_LUMOS;
 		LightInfo.vPos = (vPos + vLook + _float3(0.f, 2.5f, 0.f)).TransCoord();
-		//LightInfo.vLookAt = vPos.TransCoord();
+		LightInfo.vLookAt = vPos.TransCoord();
 		LightInfo.fRange = 17.f;
 		LightInfo.fSpotPower = 0.f;
 		if (AccTime < 1.f)
@@ -194,7 +195,7 @@ void CWeapon_Player_Wand::Do_Lumos(_float fTimeDelta)
 		LightInfo.vAmbient = m_LightIntensity;
 		LightInfo.vSpecular = m_LightIntensity;
 		LightInfo.vDiffuse = m_LightIntensity;
-		//pGameInstance->Set_Light(CLight::TYPE_POINT, (_float)g_iWinSizeX, (_float)g_iWinSizeY, LightInfo);
+		pGameInstance->Set_Light(CLight::TYPE_LUMOS, (_float)g_iWinSizeX, (_float)g_iWinSizeY, LightInfo);
 	}
 
 	ENDINSTANCE;
@@ -297,6 +298,7 @@ void CWeapon_Player_Wand::Free()
 
 	if (true == m_isCloned)
 	{
+		Safe_Release(m_pLight);
 		Safe_Release(m_pModelCom);
 		Safe_Release(m_pShaderCom);
 		Safe_Release(m_pRendererCom);

@@ -68,7 +68,9 @@ HRESULT CDarkWizard_M::Initialize_Level(_uint iCurrentLevelIndex)
 	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RigidBody(m_pRigidBody);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
-
+	m_HitMatrices[0] = m_pTransform->Get_WorldMatrixPtr();
+	m_HitMatrices[1] = m_pTransform->Get_WorldMatrixPtr();
+	m_HitMatrices[2] = m_pTransform->Get_WorldMatrixPtr();
 	return S_OK;
 }
 
@@ -377,7 +379,7 @@ HRESULT CDarkWizard_M::Add_Components()
 		RigidBodyDesc.pGeometry = &pCapsuleGeomatry;
 		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Body");
 		RigidBodyDesc.eThisCollsion = COL_ENEMY;
-		RigidBodyDesc.eCollisionFlag = COL_NPC_RANGE | COL_MAGIC | COL_STATIC;
+		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC | COL_NPC_RANGE | COL_MAGIC | COL_STATIC;
 
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
 			TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
@@ -1383,7 +1385,7 @@ void CDarkWizard_M::Attack_Light()
 	if (nullptr != m_pTarget)
 		OffsetMatrix = m_pTarget->Get_Offset_Matrix();
 
-	m_CastingMagic = m_pMagicSlot->Action_Magic_Basic(0, m_pTarget, m_pWeapon, COLLISIONFLAG(COL_PLAYER | COL_NPC));
+	m_CastingMagic = m_pMagicSlot->Action_Magic_Basic(0, m_pTarget, m_pWeapon, COLLISIONFLAG(COL_PLAYER | COL_NPC | COL_SHIELD));
 }
 
 void CDarkWizard_M::Attack_Heavy()
@@ -1398,7 +1400,7 @@ void CDarkWizard_M::Attack_Heavy()
 	if (nullptr != m_pTarget)
 		OffsetMatrix = m_pTarget->Get_Offset_Matrix();
 
-	m_CastingMagic = m_pMagicSlot->Action_Magic_Basic(0, m_pTarget, m_pWeapon, COLLISIONFLAG(COL_PLAYER | COL_NPC));
+	m_CastingMagic = m_pMagicSlot->Action_Magic_Basic(0, m_pTarget, m_pWeapon, COLLISIONFLAG(COL_PLAYER | COL_NPC | COL_SHIELD));
 }
 
 void CDarkWizard_M::Cast_Levioso()
@@ -1410,7 +1412,7 @@ void CDarkWizard_M::Cast_Levioso()
 	if (nullptr != m_pTarget)
 		OffsetMatrix = m_pTarget->Get_Offset_Matrix();
 
-	m_CastingMagic = m_pMagicSlot->Action_Magic_Skill(0, m_pTarget, m_pWeapon, COLLISIONFLAG(COL_PLAYER | COL_NPC));
+	m_CastingMagic = m_pMagicSlot->Action_Magic_Skill(0, m_pTarget, m_pWeapon, COLLISIONFLAG(COL_PLAYER | COL_NPC | COL_SHIELD));
 }
 
 void CDarkWizard_M::Cast_Protego()

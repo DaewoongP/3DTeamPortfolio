@@ -30,7 +30,6 @@ public:
 		// 아무것도 없어도 일단 만들어놓기.
 	}CLONE_DESC;
 
-
 private:
 	CMaximaPotion(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CMaximaPotion(const CMaximaPotion& rhs);
@@ -39,20 +38,12 @@ private:
 public:
 	virtual HRESULT Initialize_Prototype(_uint iLevel);
 	virtual HRESULT Initialize(void* pArg) override;
-	void Use(_float3 vPlayerPos);
 	void Duration(_float fTimeDelta);
-
-
-private:
-	HRESULT Add_Components();
-	HRESULT SetUp_ShaderResources();
 
 private:
 	_bool m_isDrug = { false };
 	_float m_fDrugTime = { 0.f };
-	_uint m_iLevel = { 0 };
 
-	CCoolTime* m_pCooltime = { nullptr };
 	CMagicSlot* m_pMagicSlot = { nullptr };
 
 public:

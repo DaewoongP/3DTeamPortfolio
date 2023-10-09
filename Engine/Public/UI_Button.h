@@ -3,7 +3,7 @@
 
 BEGIN(Engine)
 
-class ENGINE_DLL CUI_Button final : public CComponent
+class ENGINE_DLL CUI_Button : public CComponent
 {
 protected:
 	explicit CUI_Button(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -17,7 +17,7 @@ public:
 	virtual void	Late_Tick(_float fTimeDelta) override;
 
 public:
-	_bool	Collision_Rect(HWND hWnd, _float2 vPos, _float2 vSize);
+	virtual _bool	Collision_Rect(HWND hWnd, _float2 vPos, _float2 vSize);
 	_bool	Click(HWND hWnd, _float2 vPos, _float2 vSize);
 
 public:

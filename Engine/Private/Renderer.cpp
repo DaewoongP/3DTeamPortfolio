@@ -60,7 +60,7 @@ HRESULT CRenderer::Initialize_Prototype()
 		TEXT("Target_Deferred"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 0.f))))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
-		TEXT("Target_Shadow_Depth"), (_uint)ViewportDesc.Width * 12, (_uint)ViewportDesc.Height * 12, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f), true)))
+		TEXT("Target_Shadow_Depth"), (_uint)ViewportDesc.Width * 1, (_uint)ViewportDesc.Height * 1, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f), true)))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_SSAO"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
@@ -82,6 +82,9 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_PostProcessing"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
+		TEXT("Target_PreRadial"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
 
 #ifdef _DEBUG
@@ -122,6 +125,8 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Effect"), TEXT("Target_Effect"))))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_PostProcessing"), TEXT("Target_PostProcessing"))))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_PreRadial"), TEXT("Target_PreRadial"))))
 		return E_FAIL;
 
 #ifdef _DEBUG
@@ -242,8 +247,15 @@ HRESULT CRenderer::Draw_RenderGroup()
 		return E_FAIL;
 #pragma endregion
 
-	// Screen Shading
+	// After Effect
 	if (FAILED(Render_Distortion()))
+		return E_FAIL;
+
+	if (FAILED(Render_RadialBlur()))
+		return E_FAIL;
+
+	// Screen Shading
+	if (FAILED(Render_Screen()))
 		return E_FAIL;
 
 	// UI 렌더링
@@ -587,46 +599,6 @@ HRESULT CRenderer::Render_HDR()
 	return S_OK;
 }
 
-HRESULT CRenderer::Render_Distortion()
-{
-	// Rendering
-	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Distortion"))))
-		return E_FAIL;
-
-	for (auto& pGameObject : m_RenderObjects[RENDER_DISTORTION])
-	{
-		if (nullptr != pGameObject)
-			pGameObject->Render();
-
-		Safe_Release(pGameObject);
-	}
-
-	m_RenderObjects[RENDER_DISTORTION].clear();
-
-	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_Distortion"))))
-		return E_FAIL;
-
-	// Shader
-	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Distortion"), m_pDistortionShader, "g_DistortionTexture")))
-		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_PostProcessing"), m_pDistortionShader, "g_PostProcessingTexture")))
-		return E_FAIL;
-	if (FAILED(m_pDistortionShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
-		return E_FAIL;
-	if (FAILED(m_pDistortionShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
-		return E_FAIL;
-	if (FAILED(m_pDistortionShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
-		return E_FAIL;
-
-	if (FAILED(m_pDistortionShader->Begin("Distortion")))
-		return E_FAIL;
-
-	if (FAILED(m_pRectBuffer->Render()))
-		return E_FAIL;
-
-	return S_OK;
-}
-
 HRESULT CRenderer::Render_PostProcessing()
 {
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_HDR"), m_pPostProcessingShader, "g_HDRTexture")))
@@ -648,9 +620,103 @@ HRESULT CRenderer::Render_PostProcessing()
 	return S_OK;
 }
 
+HRESULT CRenderer::Render_Distortion()
+{
+	// Rendering
+	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Distortion"))))
+		return E_FAIL;
+
+	for (auto& pGameObject : m_RenderObjects[RENDER_DISTORTION])
+	{
+		if (nullptr != pGameObject)
+			pGameObject->Render();
+
+		Safe_Release(pGameObject);
+	}
+
+	m_RenderObjects[RENDER_DISTORTION].clear();
+
+	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_Distortion"))))
+		return E_FAIL;
+
+	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_PreRadial"))))
+		return E_FAIL;
+	// Shader
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Distortion"), m_pDistortionShader, "g_DistortionTexture")))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_PostProcessing"), m_pDistortionShader, "g_PostProcessingTexture")))
+		return E_FAIL;
+	if (FAILED(m_pDistortionShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pDistortionShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pDistortionShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
+		return E_FAIL;
+
+	if (FAILED(m_pDistortionShader->Begin("Distortion")))
+		return E_FAIL;
+
+	if (FAILED(m_pRectBuffer->Render()))
+		return E_FAIL;
+
+	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_PreRadial"))))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CRenderer::Render_RadialBlur()
+{
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_PreRadial"), m_pRadialBlurShader, "g_TargetTexture")))
+		return E_FAIL;
+	if (FAILED(m_pRadialBlurShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pRadialBlurShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pRadialBlurShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
+		return E_FAIL;
+	/*if (FAILED(m_pRadialBlurShader->Bind_RawValue("g_vBlurWorldPos", , sizeof(_float4))))
+		return E_FAIL;
+	if (FAILED(m_pRadialBlurShader->Bind_RawValue("g_vBlurSize", , sizeof(_float2))))
+		return E_FAIL;
+	CPipeLine* pPipeLine = CPipeLine::GetInstance();
+	Safe_AddRef(pPipeLine);
+	if (FAILED(m_pRadialBlurShader->Bind_RawValue("g_fCamFar", pPipeLine->Get_CamFar(), sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pRadialBlurShader->Bind_RawValue("g_vCamPos", pPipeLine->Get_CamPosition(), sizeof(_float4))))
+		return E_FAIL;
+	Safe_Release(pPipeLine);*/
+
+	if (FAILED(m_pRadialBlurShader->Begin("Radial")))
+		return E_FAIL;
+
+	if (FAILED(m_pRectBuffer->Render()))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CRenderer::Render_Screen()
+{
+	if (FAILED(Sort_Z(RENDER_SCREEN)))
+		return E_FAIL;
+
+	for (auto& pGameObject : m_RenderObjects[RENDER_SCREEN])
+	{
+		if (nullptr != pGameObject)
+			pGameObject->Render();
+
+		Safe_Release(pGameObject);
+	}
+
+	m_RenderObjects[RENDER_SCREEN].clear();
+
+	return S_OK;
+}
+
 HRESULT CRenderer::Render_UI()
 {
-	if (FAILED(Sort_UI()))
+	if (FAILED(Sort_Z(RENDER_UI)))
 		return E_FAIL;
 
 	for (auto& pGameObject : m_RenderObjects[RENDER_UI])
@@ -714,9 +780,9 @@ HRESULT CRenderer::Sort_Render(RENDERGROUP eGroup)
 	return S_OK;
 }
 
-HRESULT CRenderer::Sort_UI()
+HRESULT CRenderer::Sort_Z(RENDERGROUP eGroup)
 {
-	m_RenderObjects[RENDER_UI].sort([](const CGameObject* pSour, const CGameObject* pDest) {
+	m_RenderObjects[eGroup].sort([](const CGameObject* pSour, const CGameObject* pDest) {
 		_float fSourZ = XMVectorGetZ(pSour->Get_Transform()->Get_Position());
 		_float fDestZ = XMVectorGetZ(pDest->Get_Transform()->Get_Position());
 	
@@ -752,6 +818,10 @@ HRESULT CRenderer::Add_Components()
 
 	m_pSSAOShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_SSAO.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements);
 	if (nullptr == m_pSSAOShader)
+		return E_FAIL;
+	
+	m_pRadialBlurShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_RadialBlur.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements);
+	if (nullptr == m_pRadialBlurShader)
 		return E_FAIL;
 
 	m_pShadow = CShadow::Create(m_pDevice, m_pContext, m_pRectBuffer);
@@ -889,6 +959,7 @@ void CRenderer::Free()
 	Safe_Release(m_pShadeTypeShader);
 	Safe_Release(m_pSSAOShader);
 	Safe_Release(m_pDistortionShader);
+	Safe_Release(m_pRadialBlurShader);
 
 	Safe_Release(m_pBlur);
 	Safe_Release(m_pBloom);

@@ -159,21 +159,24 @@ HRESULT CLevel_Cliffside::Render()
 HRESULT CLevel_Cliffside::Ready_Lights()
 {
 	BEGININSTANCE;
+
 	CLight::LIGHTDESC		LightDesc;
 	ZeroMemory(&LightDesc, sizeof LightDesc);
 
 	LightDesc.eType = CLight::TYPE_DIRECTIONAL;
 	LightDesc.vPos = _float4(10.f, 100.f, 25.f, 1.f);
+	LightDesc.vLookAt = _float4(20.f, 0.f, 20.f, 1.f);
 	LightDesc.vDir = _float4(0.33f, -0.99f, 0.33f, 0.f);
 
 	LightDesc.vDiffuse = WHITEDEFAULT;
 	LightDesc.vAmbient = WHITEDEFAULT;
 	LightDesc.vSpecular = WHITEDEFAULT;
 
-	if (nullptr == pGameInstance->Add_Lights(LightDesc))
+	if (nullptr == pGameInstance->Add_Lights(_float(g_iWinSizeX), _float(g_iWinSizeY), LightDesc))
 		return E_FAIL;
 
 	ENDINSTANCE;
+
 	return S_OK;
 }
 
@@ -309,14 +312,14 @@ HRESULT CLevel_Cliffside::Ready_Layer_Monster(const _tchar* pLayerTag)
 		ENDINSTANCE;
 		return E_FAIL;
 	}*/
-	Matrix = XMMatrixTranslation(45.f, 10.f, 60.f);
+	Matrix = XMMatrixTranslation(35.f, 10.f, 65.f);
 	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_DarkWizard_M"), pLayerTag, TEXT("GameObject_DarkWizard_M"), &Matrix)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_DarkWizard_M)");
 		ENDINSTANCE;
 		return E_FAIL;
 	}
-	Matrix = XMMatrixTranslation(20.f, 8.f, 50.f);
+	/*Matrix = XMMatrixTranslation(10.f, 10.f, 50.f);
 	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_ConjuredDragon"), pLayerTag, TEXT("GameObject_ConjuredDragon"), &Matrix)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_ConjuredDragon)");
@@ -736,6 +739,12 @@ HRESULT CLevel_Cliffside::Ready_Layer_UI(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Farming"), pLayerTag, TEXT("GameObject_UI_Farming"))))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_UI_Farming)");
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	}
 
 	//lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_MiniMap.uidata"));
 	//if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_MiniMap"),

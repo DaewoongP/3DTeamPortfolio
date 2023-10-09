@@ -2,7 +2,7 @@
 #include "Shader.h"
 #include "VIBuffer_Rect.h"
 
-HRESULT CLight::Initialize(const LIGHTDESC & LightDesc)
+HRESULT CLight::Initialize(const LIGHTDESC& LightDesc)
 {
 	m_LightDesc = LightDesc;
 
@@ -15,8 +15,9 @@ HRESULT CLight::Render(CShader* pShader, CVIBuffer_Rect* pVIBuffer)
 
 	if (TYPE_DIRECTIONAL == m_LightDesc.eType)
 	{
+
 		if (FAILED(pShader->Bind_RawValue("g_vCamPosition", &m_LightDesc.vDir, sizeof(_float4))))
-				return E_FAIL;
+			return E_FAIL;
 
 		if (FAILED(pShader->Bind_RawValue("g_vLightDir", &m_LightDesc.vDir, sizeof(_float4))))
 			return E_FAIL;
@@ -46,6 +47,18 @@ HRESULT CLight::Render(CShader* pShader, CVIBuffer_Rect* pVIBuffer)
 
 		strcpy_s(szPassName, sizeof(_char) * MAX_STR, "Light_Spotlight");
 	}
+	else if (TYPE_LUMOS == m_LightDesc.eType)
+	{
+		if (FAILED(pShader->Bind_RawValue("g_vLightPos", &m_LightDesc.vPos, sizeof(_float4))))
+			return E_FAIL;
+
+		if (FAILED(pShader->Bind_RawValue("g_fLightRange", &m_LightDesc.fRange, sizeof(_float))))
+			return E_FAIL;
+
+
+
+		strcpy_s(szPassName, sizeof(_char) * MAX_STR, "Light_Point");
+	}
 
 	if (FAILED(pShader->Bind_RawValue("g_vLightDiffuse", &m_LightDesc.vDiffuse, sizeof(_float4))))
 		return E_FAIL;
@@ -63,9 +76,9 @@ HRESULT CLight::Render(CShader* pShader, CVIBuffer_Rect* pVIBuffer)
 	return S_OK;
 }
 
-CLight * CLight::Create(const LIGHTDESC & LightDesc)
+CLight* CLight::Create(const LIGHTDESC& LightDesc)
 {
-	CLight*	pInstance = New CLight();
+	CLight* pInstance = New CLight();
 
 	if (FAILED(pInstance->Initialize(LightDesc)))
 	{

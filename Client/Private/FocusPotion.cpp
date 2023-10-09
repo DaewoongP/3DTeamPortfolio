@@ -16,14 +16,8 @@ CFocusPotion::CFocusPotion(const CFocusPotion& rhs)
 
 HRESULT CFocusPotion::Initialize_Prototype(_uint iLevel)
 {
-	// 아이템 정보
-	m_ItemCreateDesc.iCost = 500;									// 가격
-	m_ItemCreateDesc.fDuration = 15.f;								//지속시간
-	m_ItemCreateDesc.wstrKoreanName = TEXT("집중력 물약");			// 한글명
-	m_ItemCreateDesc.wstrUIPath = TEXT("../../Resources/UI/Game/UI/Icons/Potions/UI_T_AMFillPotion.png"); // UI경로
-
 	// 포션 정보
-	m_PotionCreateDesc.wstrModelPath = TEXT("../../Resources/Models/NonAnims/SM_Health_Bottle/SM_Health_Bottle.dat"); // 모델경로
+	m_PotionCreateDesc.wstrModelPath = TEXT("../../Resources/Models/NonAnims/SM_Focus_Bottle/SM_Focus_Bottle.dat"); // 모델경로
 	m_PotionCreateDesc.Ingredients.push_back(FLUXWEED_STEM);		// 재료1
 	m_PotionCreateDesc.Ingredients.push_back(DITTANY_LEAVES);		// 재료2
 	m_PotionCreateDesc.fManufacturingTime = 60.f;					// 제조시간
@@ -39,49 +33,16 @@ HRESULT CFocusPotion::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	if (FAILED(Add_Components()))
-		return E_FAIL;
+	m_pLifeTime->Set_MaxCoolTime(m_fDuration + 2.f);
 
 	return S_OK;
-}
-
-void CFocusPotion::Use(_float3 vPlayPos)
-{
-	__super::Use(vPlayPos);
-
-	cout << "쿨타임이 감소했어요" << '\n';
-	m_pPlayer->Set_FocusOn(true);
 }
 
 void CFocusPotion::Duration(_float fTimeDelta)
 {
-	m_fDuration += fTimeDelta;
+	/*m_fDuration += fTimeDelta;
 	if (m_fDuration >= m_ItemCreateDesc.fDuration)
-		m_pPlayer->Set_FocusOn(false);
-}
-
-HRESULT CFocusPotion::Add_Components()
-{
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_CoolTime"),
-		TEXT("Com_CoolTime"), reinterpret_cast<CComponent**>(&m_pCoolTime))))
-	{
-		__debugbreak();
-		return E_FAIL;
-	}
-
-
-	return S_OK;
-}
-
-HRESULT CFocusPotion::SetUp_ShaderResources()
-{
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
-
-
-
-	Safe_Release(pGameInstance);
-	return S_OK;
+		m_pPlayer->Set_FocusOn(false);*/
 }
 
 CFocusPotion* CFocusPotion::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iLevel)
@@ -113,5 +74,4 @@ CGameObject* CFocusPotion::Clone(void* pArg)
 void CFocusPotion::Free()
 {
 	__super::Free();
-	Safe_Release(m_pCoolTime);
 }

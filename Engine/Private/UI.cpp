@@ -79,6 +79,26 @@ HRESULT CUI::Load(UIDESC UIDesc)
 	return S_OK;
 }
 
+void CUI::Go_Up(_float fSpeed, _float fTimeDelta)
+{
+	m_fY += fSpeed * fTimeDelta;
+}
+
+void CUI::Go_Down(_float fSpeed, _float fTimeDelta)
+{
+	m_fY -= fSpeed * fTimeDelta;
+}
+
+void CUI::Go_Right(_float fSpeed, _float fTimeDelta)
+{
+	m_fX += fSpeed * fTimeDelta;
+}
+
+void CUI::Go_Left(_float fSpeed, _float fTimeDelta)
+{
+	m_fX -= fSpeed * fTimeDelta;
+}
+
 void CUI::Make_Matrix(_float fWinSizeX, _float fWinSizeY)
 {
 	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());

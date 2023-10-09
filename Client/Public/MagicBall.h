@@ -53,6 +53,7 @@ protected:
 public:
 	// 매직볼의 상태를 강제로 세팅합니다.
 	void Set_MagicBallState(MAGICBALL_STATE eState) { m_eMagicBallState = eState; m_isFirstFrameInState = true;}
+	void Set_MagicBallState_quiet(MAGICBALL_STATE eState) { m_eMagicBallState = eState;}
 	// 매직볼의 상태를 자연스레 다음으로 세팅합니다.
 	void Do_MagicBallState_To_Next() { 
 		if (m_eMagicBallState != MAGICBALL_STATE_END)
@@ -61,6 +62,7 @@ public:
 			m_isFirstFrameInState = true;
 		}
 	}
+	void Re_Set_StartEndLerpAcc(_float3 vStart, _float3 vEnd);
 
 public:
 	virtual HRESULT Initialize_Prototype(_uint iLevel);
@@ -129,6 +131,8 @@ protected:
 	MAGICBALL_STATE			m_eMagicBallState = { MAGICBALL_STATE_BEGIN };
 	_bool					m_isFirstFrameInState = { true };
 
+	_float					m_fWandParticleDelayTimer = 0.1f;
+
 protected:
 	//모든 이펙트 비활성화
 	virtual void Ready_Begin();
@@ -150,6 +154,7 @@ protected:
 
 	void Tick_MagicBall_State(_float fTimeDelta);
 	void Set_StartPosition();
+	
 protected:
 	HRESULT Add_Components();
 	//기본적인 리지드바디 할당임. 크기 바꾸고싶으면 오버라이드 하면됨.
