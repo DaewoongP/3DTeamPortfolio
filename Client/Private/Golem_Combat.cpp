@@ -77,11 +77,11 @@ void CGolem_Combat::Tick(_float fTimeDelta)
 
 	/////////// Test Code///////////
 	BEGININSTANCE;
-	if (pGameInstance->Get_DIKeyState(DIK_LCONTROL, CInput_Device::KEY_PRESSING))
+	/*if (pGameInstance->Get_DIKeyState(DIK_LCONTROL, CInput_Device::KEY_PRESSING))
 	{
 		if (pGameInstance->Get_DIKeyState(DIK_1, CInput_Device::KEY_DOWN))
 			m_iCurrentSpell |= BUFF_STUPEFY;
-	}
+	}*/
 	ENDINSTANCE;
 	////////////////////////////////
 
@@ -111,6 +111,8 @@ void CGolem_Combat::Late_Tick(_float fTimeDelta)
 
 void CGolem_Combat::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
+	__super::OnCollisionEnter(CollisionEventDesc);
+
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
 	wstring wstrMyCollisionTag = CollisionEventDesc.pThisCollisionTag;
 	wstring wstrOtherCollisionTag = CollisionEventDesc.pOtherCollisionTag;
@@ -915,7 +917,7 @@ HRESULT CGolem_Combat::Make_Turns(_Inout_ CSequence* pSequence)
 		pAction_Left135->Set_Options(TEXT("Turn_Left_180"), m_pModelCom);
 		pAction_Right135->Set_Options(TEXT("Turn_Right_180"), m_pModelCom);
 
-		pTsk_Check_Degree->Set_Transform(m_pTransform);
+		pTsk_Check_Degree->Set_Option(m_pTransform);
 
 		/* Assemble Behaviors */
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Tsk_Check_Degree"), pTsk_Check_Degree)))
@@ -1329,10 +1331,8 @@ HRESULT CGolem_Combat::Make_Fly_Descendo(_Inout_ CSequence* pSequence)
 		pAction_Descendo3->Set_Options(TEXT("Descendo_3"), m_pModelCom);
 		pAction_Descendo4->Set_Options(TEXT("Descendo_Ground"), m_pModelCom);
 		pAction_GetUp->Set_Options(TEXT("Getup_Front"), m_pModelCom);
-		_float3 vForce = _float3(0.f, -100.f, 0.f);
-		pTsk_RigidMove->Set_Option(m_pRigidBody, vForce, 0.6f);
-		vForce = _float3(0.f, 3.f, 0.f);
-		pTsk_RigidMove_Up->Set_Option(m_pRigidBody, vForce, 2.6f);
+		pTsk_RigidMove->Set_Option(m_pRigidBody, m_pTransform, CRigidMove::DIR_UP, -100.f, 0.6f);
+		pTsk_RigidMove_Up->Set_Option(m_pRigidBody, m_pTransform, CRigidMove::DIR_UP, 3.f, 2.6f);
 
 		/* Assemble Behaviors */
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Descendo1"), pAction_Descendo1)))

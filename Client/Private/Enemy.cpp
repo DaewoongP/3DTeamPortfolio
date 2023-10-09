@@ -96,6 +96,26 @@ void CEnemy::Late_Tick(_float fTimeDelta)
 	}
 }
 
+void CEnemy::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
+{
+	wstring wstrCollisionTag = CollisionEventDesc.pThisCollisionTag;
+
+	if (wstring::npos != wstrCollisionTag.find(TEXT("MapObject")))
+	{
+		m_isOnGround = true;
+	}
+}
+
+void CEnemy::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
+{
+	wstring wstrCollisionTag = CollisionEventDesc.pThisCollisionTag;
+
+	if (wstring::npos != wstrCollisionTag.find(TEXT("MapObject")))
+	{
+		m_isOnGround = false;
+	}
+}
+
 HRESULT CEnemy::Render()
 {
 	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
@@ -183,6 +203,8 @@ HRESULT CEnemy::Make_AI()
 			throw TEXT("Failed Add_Type isSpawn");
 		if (FAILED(m_pRootBehavior->Add_Type("isParring", &m_isParring)))
 			throw TEXT("Failed Add_Type isParring");
+		if (FAILED(m_pRootBehavior->Add_Type("isOnGround", &m_isOnGround)))
+			throw TEXT("Failed Add_Type isOnGround");
 		if (FAILED(m_pRootBehavior->Add_Type("isHitCombo", &m_isHitCombo)))
 			throw TEXT("Failed Add_Type isHitCombo");
 		if (FAILED(m_pRootBehavior->Add_Type("isHitAttack", &m_isHitAttack)))

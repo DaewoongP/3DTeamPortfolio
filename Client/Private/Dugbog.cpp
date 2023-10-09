@@ -94,6 +94,8 @@ void CDugbog::Late_Tick(_float fTimeDelta)
 
 void CDugbog::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
+	__super::OnCollisionEnter(CollisionEventDesc);
+
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
 	wstring wstrMyCollisionTag = CollisionEventDesc.pThisCollisionTag;
 
@@ -954,12 +956,11 @@ HRESULT CDugbog::Make_Run_Attack(_Inout_ CSelector* pSelector)
 			});
 
 		/* Set Options */
-		pCheck_Distance->Set_Transform(m_pTransform);
-		pTsk_LookAt_Far->Set_Transform(m_pTransform);
-		pTsk_LookAt_Near->Set_Transform(m_pTransform);
-		pCheck_Distance_Far->Set_Transform(m_pTransform);
-		pCheck_Distance_Near->Set_Option(3.5f, true);
-		pCheck_Distance_Near->Set_Transform(m_pTransform);
+		pCheck_Distance->Set_Option(m_pTransform);
+		pTsk_LookAt_Far->Set_Option(m_pTransform);
+		pTsk_LookAt_Near->Set_Option(m_pTransform);
+		pCheck_Distance_Far->Set_Option(m_pTransform);
+		pCheck_Distance_Near->Set_Option(m_pTransform, true, 3.5f, true);
 
 		pAction_Run_Enter->Set_Options(TEXT("Attack_Run_Enter"), m_pModelCom);
 		pAction_Run_Loop_Far->Set_Options(TEXT("Attack_Run_Loop_Far"), m_pModelCom, false, 0.f, false, false);
@@ -1080,17 +1081,13 @@ HRESULT CDugbog::Make_Tongue_Attack(_Inout_ CSequence* pSequence)
 
 		/* Set Options */
 		pAction_Stance->Set_Options(TEXT("Idle_Stance_1"), m_pModelCom);
-		pCheck_Distance->Set_Transform(m_pTransform);
+		pCheck_Distance->Set_Option(m_pTransform);
 		pAction_Run_Loop->Set_Options(TEXT("Run_Loop"), m_pModelCom, true, 0.f, false, false);
-		pCheck_Distance_Far->Set_Option(5.f, true);
-		pCheck_Distance_Far->Set_Transform(m_pTransform);
+		pCheck_Distance_Far->Set_Option(m_pTransform, true, 5.f, true);
 		pAction_Attack->Set_Options(TEXT("Attack_Tongue_Strike"), m_pModelCom);
-		pTsk_Turn->Set_Option(45.f, 3.f);
-		pTsk_Turn->Set_Transform(m_pTransform);
-		pTsk_LookAt->Set_Option(1.5f);
-		pTsk_LookAt->Set_Transform(m_pTransform);
-		pTsk_LookAt_Attack->Set_Option(2.f);
-		pTsk_LookAt_Attack->Set_Transform(m_pTransform);
+		pTsk_Turn->Set_Option(m_pTransform, 45.f, 3.f);
+		pTsk_LookAt->Set_Option(m_pTransform, 1.5f);
+		pTsk_LookAt_Attack->Set_Option(m_pTransform, 2.f);
 
 		/* Assemble Behaviors */
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("pAction_Stance"), pAction_Stance)))
@@ -1257,7 +1254,7 @@ HRESULT CDugbog::Make_Turns(_Inout_ CSequence* pSequence)
 		pAction_Left_180->Set_Options(TEXT("Turn_Left_180"), m_pModelCom);
 		pAction_Right_180->Set_Options(TEXT("Turn_Right_180"), m_pModelCom);
 
-		pTsk_Check_Degree->Set_Transform(m_pTransform);
+		pTsk_Check_Degree->Set_Option(m_pTransform);
 
 		/* Assemble Behaviors */
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Tsk_Check_Degree"), pTsk_Check_Degree)))
@@ -1359,7 +1356,7 @@ HRESULT CDugbog::Make_Turn_Runs(_Inout_ CSequence* pSequence)
 		pAction_Left_180->Set_Options(TEXT("Turn_Run_Start_Left_180"), m_pModelCom);
 		pAction_Right_180->Set_Options(TEXT("Turn_Run_Start_Right_180"), m_pModelCom);
 
-		pTsk_Check_Degree->Set_Transform(m_pTransform);
+		pTsk_Check_Degree->Set_Option(m_pTransform);
 
 		/* Assemble Behaviors */
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Tsk_Check_Degree"), pTsk_Check_Degree)))
@@ -1761,10 +1758,8 @@ HRESULT CDugbog::Make_Fly_Descendo(_Inout_ CSequence* pSequence)
 		pAction_Descendo3->Set_Options(TEXT("Splat_Front"), m_pModelCom);
 		pAction_GetUp->Set_Options(TEXT("Getup_Front"), m_pModelCom);
 
-		_float3 vForce = _float3(0.f, -200.f, 0.f);
-		pTsk_RigidMove->Set_Option(m_pRigidBody, vForce, 0.2f);
-		vForce = _float3(0.f, 3.f, 0.f);
-		pTsk_RigidMove_Up->Set_Option(m_pRigidBody, vForce, 2.6f);
+		pTsk_RigidMove->Set_Option(m_pRigidBody, m_pTransform, CRigidMove::DIR_UP, -200.f, 0.2f);
+		pTsk_RigidMove_Up->Set_Option(m_pRigidBody, m_pTransform, CRigidMove::DIR_UP, 3.f, 2.6f);
 
 		/* Assemble Behaviors */
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Descendo1"), pAction_Descendo1)))

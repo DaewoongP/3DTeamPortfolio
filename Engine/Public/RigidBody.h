@@ -70,6 +70,7 @@ public:
 	PxRigidBody* Get_RigidBodyActor() const;
 	_float3 Get_Position() const;
 	_float4 Get_Rotation() const;
+	_float3 Get_Current_Velocity() const;
 	void Set_Position(_float3 vPosition);
 	void Set_Rotation(_float4 vRotation);
 	void Set_Material(_float3 vMaterial);

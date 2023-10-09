@@ -305,7 +305,7 @@ HRESULT CGoblin_Assasin::Add_Components()
 		RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 0.f, 1.f);
 		RigidBodyDesc.pOwnerObject = this;
 		RigidBodyDesc.eThisCollsion = COL_ENEMY;
-		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC | COL_NPC_RANGE | COL_MAGIC | COL_SHIELD;
+		RigidBodyDesc.eCollisionFlag = COL_NPC_RANGE | COL_MAGIC | COL_STATIC;
 		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Body");
 
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
@@ -974,7 +974,7 @@ HRESULT CGoblin_Assasin::Make_Turns(_Inout_ CSequence* pSequence)
 		pAction_Left135->Set_Options(TEXT("Turn_Left_180"), m_pModelCom);
 		pAction_Right135->Set_Options(TEXT("Turn_Right_180"), m_pModelCom);
 
-		pTsk_Check_Degree->Set_Transform(m_pTransform);
+		pTsk_Check_Degree->Set_Option(m_pTransform);
 
 		/* Assemble Behaviors */
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Tsk_Check_Degree"), pTsk_Check_Degree)))
@@ -1388,10 +1388,8 @@ HRESULT CGoblin_Assasin::Make_Fly_Descendo(CSequence* pSequence)
 		pAction_Descendo3->Set_Options(TEXT("Descendo_3"), m_pModelCom);
 		pAction_Descendo4->Set_Options(TEXT("Descendo_4"), m_pModelCom);
 		pAction_GetUp->Set_Options(TEXT("Get_Up_Send_Front"), m_pModelCom);
-		_float3 vForce = _float3(0.f, -100.f, 0.f);
-		pTsk_RigidMove->Set_Option(m_pRigidBody, vForce, 0.6f);
-		vForce = _float3(0.f, 3.f, 0.f);
-		pTsk_RigidMove_Up->Set_Option(m_pRigidBody, vForce, 2.6f);
+		pTsk_RigidMove->Set_Option(m_pRigidBody, m_pTransform, CRigidMove::DIR_UP, -100.f, 0.6f);
+		pTsk_RigidMove_Up->Set_Option(m_pRigidBody, m_pTransform, CRigidMove::DIR_UP, 3.f, 2.6f);
 
 		/* Assemble Behaviors */
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Descendo1"), pAction_Descendo1)))
