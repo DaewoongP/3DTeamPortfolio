@@ -1,6 +1,10 @@
 #pragma once
 #include "MapObject.h"
 
+BEGIN(Engine)
+class CRigidBody;;
+END
+
 BEGIN(Client)
 
 class CPlayer;
@@ -17,11 +21,13 @@ protected:
 
 public:
 	virtual HRESULT Initialize_Prototype();
+	virtual HRESULT Initialize(void* pArg) override;
 	virtual HRESULT Initialize_Level(_uint iCurrentLevelIndex) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 
 private:
+	CRigidBody* m_pRigidBody = { nullptr };
 	CPlayer* m_pPlayer = { nullptr };			 // 플레이어 주소
 
 private:
