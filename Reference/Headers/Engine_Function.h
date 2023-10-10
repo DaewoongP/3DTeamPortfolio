@@ -344,6 +344,16 @@ namespace Engine
 		WideCharToMultiByte(CP_UTF8, 0, &wstr[0], (int)wstr.size(), &strTo[0], size_needed, NULL, NULL);
 		return strTo;
 	}
+	/* lowBound 에서 highBound로 변환 */
+	float GetRandomFloat(float lowBound, float highBound)
+	{
+		if (lowBound >= highBound)
+			return lowBound;
+
+		float f = (rand() % 10000) * 0.0001f;
+
+		return (f * (highBound - lowBound)) + lowBound;
+	}
 
 	template<typename T>
 	typename std::list<T>::iterator TransitionTo(typename std::list<T>::iterator& _iter, std::list<T>& _source, std::list<T>& _dest)

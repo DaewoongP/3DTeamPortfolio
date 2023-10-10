@@ -607,6 +607,9 @@
     <Filter Include="02. GameObject\01. Player\01. StateMachine\08. CraftState">
       <UniqueIdentifier>{d5efb67c-1189-46bb-bd77-8c0dcdb658ba}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\02. Enemy\04. Boss\EnergyBall">
+      <UniqueIdentifier>{79dcddca-11cc-4450-a7ad-d7866f733612}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -1202,6 +1205,9 @@
     <ClInclude Include="..\public\CraftState.h">
       <Filter>02. GameObject\01. Player\01. StateMachine\08. CraftState</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\EnergyBall.h">
+      <Filter>02. GameObject\02. Enemy\04. Boss\EnergyBall</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1763,6 +1769,9 @@
     </ClCompile>
     <ClCompile Include="..\private\CraftState.cpp">
       <Filter>02. GameObject\01. Player\01. StateMachine\08. CraftState</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\EnergyBall.cpp">
+      <Filter>02. GameObject\02. Enemy\04. Boss\EnergyBall</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
