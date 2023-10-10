@@ -44,6 +44,7 @@
 #include "MeshEffect.h"
 #include "Wingardium_Effect.h"
 #include "EnergyBall.h"
+#include "Breath.h"
 #pragma endregion Effects
 
 #pragma region Magic
@@ -264,6 +265,11 @@ HRESULT CMain0_Loader::Loading_For_Sanctum(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_EnergyBall"),
 			CEnergyBall::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_EnergyBall");
+
+		/* Prototype_GameObject_Breath */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Breath"),
+			CBreath::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Breath");
 	}
 	catch (const _tchar* pErrorTag)
 	{
