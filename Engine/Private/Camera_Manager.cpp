@@ -2,8 +2,6 @@
 
 #include "PipeLine.h"
 
-#include "GameInstance.h"
-
 IMPLEMENT_SINGLETON(CCamera_Manager);
 
 void CCamera_Manager::Set_Shake(SHAKE_TYPE _eType, SHAKE_AXIS _eAxis, CEase::EASE _eEase, _float _fSpeed, _float _Duration, _float _fPower, SHAKE_POWER _ePower, _float3 _vAxisSet)
