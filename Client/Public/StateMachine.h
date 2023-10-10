@@ -1,6 +1,6 @@
 #pragma once
 #include "Composite.h"
-
+#include "Client_Defines.h"
 BEGIN(Engine)
 
 class CModel;

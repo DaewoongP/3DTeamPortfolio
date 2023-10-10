@@ -105,9 +105,6 @@ public:
 	//카메라 변경
 	HRESULT Set_Camera(const _tchar * _CameraTag, _float _fLerpTime = 0.0f);
 
-	//현재 카메라 체크
-	_bool Is_Current_Camera(const _tchar* _CameraTag);
-
 	//카메라 찾기
 	class CCamera* Find_Camera(const _tchar * _CameraTag);
 
@@ -134,9 +131,6 @@ private:
 
 	//카메라 컨테이너
 	unordered_map<const _tchar*, class CCamera*>	m_Cameras;
-
-	//키 보관용으로 사용
-	unordered_map<const _tchar*, class CCamera*>::iterator	m_iterCamera;
 
 	//for. CutScene
 	//컷씬 카메라 구조체 (이전 값을 담기 위함)

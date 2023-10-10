@@ -30,7 +30,7 @@ public:
 	virtual HRESULT Tick(const _float& fTimeDelta) override;
 
 public:
-	void Set_Transform(CTransform* pTransform) {
+	void Set_Option(CTransform* pTransform) {
 		m_pOwnerTransform = pTransform;
 		Safe_AddRef(m_pOwnerTransform);
 	}

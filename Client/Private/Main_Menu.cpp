@@ -58,7 +58,7 @@ void CMain_Menu::Tick(_float fTimeDelta)
 		CGameInstance* pGameInstacne = CGameInstance::GetInstance();
 		Safe_AddRef(pGameInstacne);
 
-		m_pPlayerInventory = static_cast<CInventory*>(pGameInstacne->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Inventory"), TEXT("GameObject_Inventory")));
+		m_pPlayerInventory = static_cast<CInventory*>(pGameInstacne->Find_Component_In_Layer(LEVEL_STATIC , TEXT("Layer_Inventory"), TEXT("GameObject_Inventory")));
 		Safe_AddRef(m_pPlayerInventory);
 
 		Safe_Release(pGameInstacne);
@@ -205,7 +205,7 @@ HRESULT CMain_Menu::Add_TextComponent(wstring wszTag)
 
 	wstring text = TEXT("Com_UI_Effect_Back_Text_");
 	text += wszTag;
-	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Effect_Back"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Effect_Back"),
 		text.c_str(), reinterpret_cast<CComponent**>(&pText))))
 	{
 		MSG_BOX("Com_Info_Main : Failed Clone Component (Com_UI_Effect_Back_Text)");

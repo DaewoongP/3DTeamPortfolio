@@ -24,6 +24,9 @@ private:
 
 public:
 	_bool Get_Open() { return m_isOpen; }
+	_uint Get_Resource(INGREDIENT eType) {
+		return m_ResourcesCount[eType];
+	}
 
 public:
 	virtual HRESULT Initialize_Prototype();
@@ -43,6 +46,9 @@ private:
 	// 현재 플레이어의 장비 포인터
 	vector<CItem*>				m_pPlayerCurItems;
 
+private: // For Resources
+	vector<_uint> m_ResourcesCount;
+
 private:
 	_uint iGearMax = { 20 };
 	_uint iResourceMax = { 30 };
@@ -53,7 +59,11 @@ private:
 public:
 	void	Add_Item(CItem* pItem, ITEMTYPE eType);
 	void	Add_Item(const _tchar* pPrototypeTag, _uint iLevel = LEVEL_STATIC, void* pArg = nullptr);
-	void	Delete_Item(ITEMTYPE eType, _uint iIndex);
+	void	Add_Item(ITEM_ID eItemID, _uint iLevel = LEVEL_STATIC, void* pArg = nullptr);
+
+	void	Delete_Item(ITEM_ID eTargetItemID);
+	_bool	Delete_Item(ITEMTYPE eType, CItem* pItem);
+	_bool	Delete_Item(ITEMTYPE eType, _uint iIndex);
 	void	Swap_Item(_uint Index, ITEMTYPE eType);
 
 public:

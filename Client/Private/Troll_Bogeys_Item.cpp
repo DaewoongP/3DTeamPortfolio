@@ -13,6 +13,7 @@ CTroll_Bogeys_Item::CTroll_Bogeys_Item(const CTroll_Bogeys_Item& rhs)
 HRESULT CTroll_Bogeys_Item::Initialize_Prototype(_uint iLevel)
 {
 	// 아이템 정보
+	m_ItemCreateDesc.eItemId = ITEM_ID_TROLL_BOGEYS;
 	m_ItemCreateDesc.wstrKoreanName = TEXT("트롤 점액");
 	m_ItemCreateDesc.wstrUIPath = TEXT("../../Resources/UI/Game/UI/Icons/Ingredients/UI_T_TrollMucus.png");
 	m_ItemCreateDesc.iCost = 70;

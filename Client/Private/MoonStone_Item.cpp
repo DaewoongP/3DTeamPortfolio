@@ -13,6 +13,7 @@ CMoonStone_Item::CMoonStone_Item(const CMoonStone_Item& rhs)
 HRESULT CMoonStone_Item::Initialize_Prototype(_uint iLevel)
 {
 	// 아이템 정보
+	m_ItemCreateDesc.eItemId = ITEM_ID_MOONSTONE;
 	m_ItemCreateDesc.wstrKoreanName = TEXT("월장석");
 	m_ItemCreateDesc.wstrUIPath = TEXT("../../Resources/UI/Game/UI/Icons/Ingredients/UI_T_Moonstone.png");
 	m_ItemCreateDesc.iCost = 90;

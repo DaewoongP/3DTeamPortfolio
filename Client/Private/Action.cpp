@@ -226,5 +226,8 @@ void CAction::Free()
 	if (true == m_isCloned)
 	{
 		Safe_Release(m_pModel);
+
+		for (auto& pDecorator : m_ConditionFunctions)
+			Safe_Release(pDecorator);
 	}
 }

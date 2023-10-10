@@ -35,6 +35,7 @@ protected:
 		_float			fDuration = { 0.f };
 		wstring			wstrKoreanName = { TEXT("") };
 		wstring			wstrUIPath = { TEXT("") };
+		ITEM_ID			eItemId = { ITEM_ID_END };
 		ITEMTYPE		eItemType = { ITEMTYPE_END };
 	}ITEM_CREATE_DESC;
 
@@ -58,6 +59,7 @@ public:
 	void Set_Alpha(_float fAlpha) { m_fAlphaRatio = fAlpha; }
 
 public:
+	ITEM_ID Get_ItemID() { return m_ItemCreateDesc.eItemId; }
 	CTexture* Get_UITexture() { return m_pUITexture; }
 	ITEMTYPE Get_Type() { return m_ItemCreateDesc.eItemType; }
 	const _tchar* Get_KoreanName() {
@@ -65,6 +67,7 @@ public:
 	}
 
 	void ToLayer(_int iLevel = -1, const _tchar* ComTag = ::Generate_HashtagW().data(), const _tchar* LayerTag = TEXT("Layer_Item"));
+	static CItem* SimpleFactory(ITEM_ID eItemID, _uint iLevel, void* pArg);
 
 protected:
 	_uint		m_iLevel = { 0 };

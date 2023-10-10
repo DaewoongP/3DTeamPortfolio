@@ -183,9 +183,13 @@ HRESULT CUI_Slot::SetUp_ShaderResources(_uint iIndex)
 			return E_FAIL;
 	}
 
-	_bool isCollision = m_pButtonCom->Collision_Rect(g_hWnd, m_vCombinedXY, _float2(m_fSizeX, m_fSizeY));
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_isOnCollision", &isCollision, sizeof(_bool))))
-		return E_FAIL;
+	if (nullptr != m_pButtonCom)
+	{
+		_bool isCollision = m_pButtonCom->Collision_Rect(g_hWnd, m_vCombinedXY, _float2(m_fSizeX, m_fSizeY));
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_isOnCollision", &isCollision, sizeof(_bool))))
+			return E_FAIL;
+	}
+	
 
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_isClicked", &m_isClicked, sizeof(_bool))))
 		return E_FAIL;

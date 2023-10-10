@@ -60,7 +60,10 @@ HRESULT CRenderer::Initialize_Prototype()
 		TEXT("Target_Deferred"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 0.f))))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
-		TEXT("Target_Shadow_Depth"), (_uint)ViewportDesc.Width * 12, (_uint)ViewportDesc.Height * 12, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f), true)))
+		TEXT("Target_Shadow_Depth"), (_uint)ViewportDesc.Width * 6, (_uint)ViewportDesc.Height * 6, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f), true)))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
+		TEXT("Target_Shadow_Depth1"), (_uint)ViewportDesc.Width * 6, (_uint)ViewportDesc.Height * 6, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f), true)))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_SSAO"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
@@ -82,6 +85,9 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
 		TEXT("Target_PostProcessing"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext,
+		TEXT("Target_PreRadial"), (_uint)ViewportDesc.Width, (_uint)ViewportDesc.Height, DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
 
 #ifdef _DEBUG
@@ -109,6 +115,8 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Shadow_Depth"), TEXT("Target_Shadow_Depth"))))
 		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Shadow_Depth1"), TEXT("Target_Shadow_Depth1"))))
+		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_SSAO"), TEXT("Target_SSAO"))))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_SSAO_BlurX"), TEXT("Target_SSAO_BlurX"))))
@@ -122,6 +130,8 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_Effect"), TEXT("Target_Effect"))))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_PostProcessing"), TEXT("Target_PostProcessing"))))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Add_MRT(TEXT("MRT_PreRadial"), TEXT("Target_PreRadial"))))
 		return E_FAIL;
 
 #ifdef _DEBUG
@@ -149,10 +159,15 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Shadow_Depth"), 80.f, 400.f, 160.f, 160.f)))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_SSAO_Blured"), 80.f, 560.f, 160.f, 160.f)))
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Shadow_Depth1"), 80.f, 560.f, 160.f, 160.f)))
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Deferred"), 240.f, 80.f, 160.f, 160.f)))
 		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_SSAO_Blured"), 240.f, 240.f, 160.f, 160.f)))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Shadow"), 240.f, 400.f, 160.f, 160.f)))
+		return E_FAIL;
+	
 #endif // _DEBUG
 
 	m_fGlowPower = 3.f;
@@ -245,6 +260,9 @@ HRESULT CRenderer::Draw_RenderGroup()
 	// After Effect
 	if (FAILED(Render_Distortion()))
 		return E_FAIL;
+	
+	if (FAILED(Render_RadialBlur()))
+		return E_FAIL;
 
 	// Screen Shading
 	if (FAILED(Render_Screen()))
@@ -317,29 +335,76 @@ HRESULT CRenderer::Render_Priority()
 
 	return S_OK;
 }
+
 HRESULT CRenderer::Render_Depth()
 {
 	if (nullptr == m_pRenderTarget_Manager)
 		return E_FAIL;
 
-	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Shadow_Depth"), true)))
-		return E_FAIL;
-
-	for (auto& pGameObject : m_RenderObjects[RENDER_DEPTH])
+	if (0 == m_pLight_Manager->Get_CurrentLightShadowNum())
 	{
-		if (nullptr != pGameObject)
-			pGameObject->Render_Depth();
+		for (auto& pGameObject : m_RenderObjects[RENDER_DEPTH])
+		{
+			Safe_Release(pGameObject);
+		}
 
-		Safe_Release(pGameObject);
+		m_RenderObjects[RENDER_DEPTH].clear();
+
+		return S_OK;
+	}
+
+	// 1번 그림자 뎁스
+
+	const _bool* pShadowRender = m_pLight_Manager->Get_IsShadowRender();
+
+	if (true == pShadowRender[0])
+	{
+		if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Shadow_Depth"), true)))
+			return E_FAIL;
+
+		_float4x4 LightViewMatrix = *m_pLight_Manager->Get_LightViewMatrix(0);
+		_float4x4 LightProjMatrix = *m_pLight_Manager->Get_LightProjMatrix(0);
+
+		for (auto& pGameObject : m_RenderObjects[RENDER_DEPTH])
+		{
+			if (nullptr != pGameObject)
+				pGameObject->Render_Depth(LightViewMatrix, LightProjMatrix);
+			// 다음렌더를 안하면 지운다
+			if (false == pShadowRender[1])
+				Safe_Release(pGameObject);
+		}
+
+		if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_Shadow_Depth"), true)))
+			return E_FAIL;
+	}
+
+	// 2번 그림자 뎁스
+	// 2개일때만 활성화 해서 그림.
+	if (true == pShadowRender[1])
+	{
+		if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Shadow_Depth1"), true)))
+			return E_FAIL;
+
+		_float4x4 LightViewMatrix = *m_pLight_Manager->Get_LightViewMatrix(1);
+		_float4x4 LightProjMatrix = *m_pLight_Manager->Get_LightProjMatrix(1);
+		for (auto& pGameObject : m_RenderObjects[RENDER_DEPTH])
+		{
+			if (nullptr != pGameObject)
+				pGameObject->Render_Depth(LightViewMatrix, LightProjMatrix);
+
+			// if (false == pShadowRender[2])
+			Safe_Release(pGameObject);
+		}
+
+		if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_Shadow_Depth1"), true)))
+			return E_FAIL;
 	}
 
 	m_RenderObjects[RENDER_DEPTH].clear();
 
-	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_Shadow_Depth"), true)))
-		return E_FAIL;
-
 	return S_OK;
 }
+
 HRESULT CRenderer::Render_NonBlend()
 {
 	if (nullptr == m_pRenderTarget_Manager)
@@ -444,7 +509,8 @@ HRESULT CRenderer::Render_Lights()
 	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Depth"), m_pLightShader, "g_DepthTexture")))
 		return E_FAIL;
 
-	m_pLight_Manager->Render_Lights(m_pLightShader, m_pRectBuffer);
+	if (FAILED(m_pLight_Manager->Render_Lights(m_pLightShader, m_pRectBuffer)))
+		return E_FAIL;
 
 	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_Lights"))))
 		return E_FAIL;
@@ -591,6 +657,27 @@ HRESULT CRenderer::Render_HDR()
 	return S_OK;
 }
 
+HRESULT CRenderer::Render_PostProcessing()
+{
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_HDR"), m_pPostProcessingShader, "g_HDRTexture")))
+		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Glowed"), m_pPostProcessingShader, "g_GlowTexture")))
+		return E_FAIL;
+	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pPostProcessingShader->Begin("PostProcessing")))
+		return E_FAIL;
+
+	if (FAILED(m_pRectBuffer->Render()))
+		return E_FAIL;
+
+	return S_OK;
+}
+
 HRESULT CRenderer::Render_Distortion()
 {
 	// Rendering
@@ -631,24 +718,8 @@ HRESULT CRenderer::Render_Distortion()
 	return S_OK;
 }
 
-HRESULT CRenderer::Render_PostProcessing()
+HRESULT CRenderer::Render_RadialBlur()
 {
-	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_HDR"), m_pPostProcessingShader, "g_HDRTexture")))
-		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Glowed"), m_pPostProcessingShader, "g_GlowTexture")))
-		return E_FAIL;
-	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
-		return E_FAIL;
-	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
-		return E_FAIL;
-	if (FAILED(m_pPostProcessingShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
-		return E_FAIL;
-	if (FAILED(m_pPostProcessingShader->Begin("PostProcessing")))
-		return E_FAIL;
-
-	if (FAILED(m_pRectBuffer->Render()))
-		return E_FAIL;
-
 	return S_OK;
 }
 

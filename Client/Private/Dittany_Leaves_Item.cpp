@@ -13,6 +13,7 @@ CDittany_Leaves_Item::CDittany_Leaves_Item(const CDittany_Leaves_Item& rhs)
 HRESULT CDittany_Leaves_Item::Initialize_Prototype(_uint iLevel)
 {
 	// æ∆¿Ã≈€ ¡§∫∏
+	m_ItemCreateDesc.eItemId = ITEM_ID_DITTANY_LEAVES;
 	m_ItemCreateDesc.wstrKoreanName = TEXT("≤… π⁄«œ ¿Ÿ");
 	m_ItemCreateDesc.wstrUIPath = TEXT("../../Resources/UI/Game/UI/Icons/Plants/UI_T_Dittany.png");
 	m_ItemCreateDesc.iCost = 50;

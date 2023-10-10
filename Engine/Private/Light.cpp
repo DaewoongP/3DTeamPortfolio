@@ -2,7 +2,22 @@
 #include "Shader.h"
 #include "VIBuffer_Rect.h"
 
-HRESULT CLight::Initialize(const LIGHTDESC & LightDesc)
+void CLight::Set_LightDesc(LIGHTDESC LightDesc)
+{
+	m_LightDesc = LightDesc;
+}
+
+void CLight::Set_Position(_float4 vPosition)
+{
+	m_LightDesc.vPos = vPosition;
+}
+
+void CLight::Set_Range(_float fRange)
+{
+	m_LightDesc.fRange = fRange;
+}
+
+HRESULT CLight::Initialize(const LIGHTDESC& LightDesc)
 {
 	m_LightDesc = LightDesc;
 
@@ -16,7 +31,7 @@ HRESULT CLight::Render(CShader* pShader, CVIBuffer_Rect* pVIBuffer)
 	if (TYPE_DIRECTIONAL == m_LightDesc.eType)
 	{
 		if (FAILED(pShader->Bind_RawValue("g_vCamPosition", &m_LightDesc.vDir, sizeof(_float4))))
-				return E_FAIL;
+			return E_FAIL;
 
 		if (FAILED(pShader->Bind_RawValue("g_vLightDir", &m_LightDesc.vDir, sizeof(_float4))))
 			return E_FAIL;
@@ -63,9 +78,9 @@ HRESULT CLight::Render(CShader* pShader, CVIBuffer_Rect* pVIBuffer)
 	return S_OK;
 }
 
-CLight * CLight::Create(const LIGHTDESC & LightDesc)
+CLight* CLight::Create(const LIGHTDESC& LightDesc)
 {
-	CLight*	pInstance = New CLight();
+	CLight* pInstance = New CLight();
 
 	if (FAILED(pInstance->Initialize(LightDesc)))
 	{

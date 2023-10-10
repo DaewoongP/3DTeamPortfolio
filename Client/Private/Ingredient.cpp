@@ -8,6 +8,7 @@ CIngredient::CIngredient(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 CIngredient::CIngredient(const CIngredient& rhs)
 	: CItem(rhs)
+	, m_IngredientCreateDesc(rhs.m_IngredientCreateDesc)
 {
 }
 

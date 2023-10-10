@@ -125,6 +125,116 @@ HRESULT CItem::Render()
 	return S_OK;
 }
 
+CItem* CItem::SimpleFactory(ITEM_ID eItemID, _uint iLevel, void* pArg)
+{
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	CItem* pItem = { nullptr };
+
+	switch (eItemID)
+	{
+	case Client::ITEM_ID_ASHWINDER_EGGS:
+		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
+			iLevel,
+			TEXT("Prototype_GameObject_AshwinderEggs_Item"), pArg));
+		break;
+	case Client::ITEM_ID_DUGBOG_TONGUE:
+		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
+			iLevel,
+			TEXT("Prototype_GameObject_Dugbog_Tongue_Item"), pArg));
+		break;
+	case Client::ITEM_ID_LEAPING_TOADSTOOL_CAPS:
+		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
+			iLevel,
+			TEXT("Prototype_GameObject_Leaping_Toadstool_Caps_Item"), pArg));
+		break;
+	case Client::ITEM_ID_LACEWING_FLIES:
+		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
+			iLevel,
+			TEXT("Prototype_GameObject_Lacewing_Flies_Item"), pArg));
+		break;
+	case Client::ITEM_ID_KNOTGRASS:
+		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
+			iLevel,
+			TEXT("Prototype_GameObject_Knotgrass_Item"), pArg));
+		break;
+	case Client::ITEM_ID_HORKLUMP_JUICE:
+		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
+			iLevel,
+			TEXT("Prototype_GameObject_Horklump_Juice_Item"), pArg));
+		break;
+	case Client::ITEM_ID_LEECH_JUICE:
+		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
+			iLevel,
+			TEXT("Prototype_GameObject_Leech_Juice_Item"), pArg));
+		break;
+	case Client::ITEM_ID_MALLOWSWEET:
+		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
+			iLevel,
+			TEXT("Prototype_GameObject_MallowSweet_Item"), pArg));
+		break;
+	case Client::ITEM_ID_MOONSTONE:
+		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
+			iLevel,
+			TEXT("Prototype_GameObject_MoonStone_Item"), pArg));
+		break;
+	//case Client::ITEM_ID_SHRIVELFIG_FRUIT:
+	//	pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
+	//		iLevel,
+	//		TEXT("Prototype_GameObject_Shrivelfig_Item"), pArg));
+	//	break;
+	case Client::ITEM_ID_MONGREL_FUR:
+		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
+			iLevel,
+			TEXT("Prototype_GameObject_Mongrel_Fur"), pArg));
+		break;
+	case Client::ITEM_ID_TROLL_BOGEYS:
+		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
+			iLevel,
+			TEXT("Prototype_GameObject_Troll_Bogeys_Item"), pArg));
+		break;
+	case Client::ITEM_ID_STENCH_OF_THE_DEAD:
+
+		break;
+	case Client::ITEM_ID_SPIDER_FANG:
+		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
+			iLevel,
+			TEXT("Prototype_GameObject_Spider_Fang_Item"), pArg));
+		break;
+	case Client::ITEM_ID_DITTANY_LEAVES:
+		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
+			iLevel,
+			TEXT("Prototype_GameObject_Dittany_Leaves_Item"), pArg));
+		break;
+	case Client::ITEM_ID_FLUXWEED_STEM:
+		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
+			iLevel,
+			TEXT("Prototype_GameObject_Fluxweed_Stem_Item"), pArg));
+		break;
+	//case Client::ITEM_ID_KNOTGRASS_SPRIG:
+	//	pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
+	//		iLevel,
+	//		TEXT("Prototype_GameObject_Knotgrass_Item"), pArg));
+	//	break;
+	case Client::ITEM_ID_MALLOWSWEET_LEAVES:
+		pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
+			iLevel,
+			TEXT("Prototype_GameObject_MallowSweet_Item"), pArg));
+		break;
+	//case Client::ITEM_ID_SHRIVELFIG_FRUIT:
+	//	pItem = static_cast<CItem*>(pGameInstance->Clone_Component(
+	//		iLevel,
+	//		TEXT("Prototype_GameObject_Shrivelfig_Item"), pArg));
+	//	break;
+	default:
+		break;
+	}
+
+	Safe_Release(pGameInstance);
+	return pItem;
+}
+
 void CItem::ToLayer(_int iLevel, const _tchar* ComTag, const _tchar* LayerTag)
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();

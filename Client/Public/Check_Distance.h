@@ -30,16 +30,18 @@ public:
 	virtual HRESULT Tick(const _float& fTimeDelta) override;
 
 public:
-	/* 옵션 세팅 시 목적 거리만큼 가까워 진경우(true == isCloseDistance) 
-	Success를 반환함 */
-	void Set_Option(const _float& fTargetDistance, _bool isCloseDistance) {
-		m_isCompareDistance = true;
-		m_isCloseDistance = isCloseDistance;
-		m_fTargetDistance = fTargetDistance;
-	}
-	void Set_Transform(CTransform* pTransform) {
+	/* 
+		1. 본인의 트랜스폼 포인터
+		2. 거리를 비교할지(미설정 시 거리만 체크합니다.)
+		3. 거리를 비교할 경우 목표 거리
+		4. 목표 거리보다 가까워질때 Success를 반환할 경우 true, 멀어질때 Success를 반환할 경우 false 설정.
+	*/
+	void Set_Option(CTransform* pTransform, _bool isCompareDistance = false, const _float& fTargetDistance = 0.f, _bool isCloseDistance = false) {
 		m_pOwnerTransform = pTransform;
 		Safe_AddRef(m_pOwnerTransform);
+		m_isCompareDistance = isCompareDistance;
+		m_isCloseDistance = isCloseDistance;
+		m_fTargetDistance = fTargetDistance;
 	}
 
 private:

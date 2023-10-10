@@ -91,7 +91,7 @@ public:
 	virtual void OnCollisionStay(COLLEVENTDESC CollisionEventDesc) override;
 	virtual void OnCollisionExit(COLLEVENTDESC CollisionEventDesc) override;
 	virtual HRESULT Render() override;
-	virtual HRESULT Render_Depth() override;
+	virtual HRESULT Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix) override;
 
 
 	void Potion_Duration(_float fTimeDelta);
@@ -114,11 +114,6 @@ private:
 	CUI_Group_Skill* m_UI_Group_Skill_01 = { nullptr };
 
 	CTool* m_pCurTool = { nullptr };
-	CMaximaPotion* m_pMaximaPotion = { nullptr };
-	CEdurusPotion* m_pEdurusPotion = { nullptr };
-	CFocusPotion*	m_pFocusPotion = { nullptr };
-	CInvisibilityPotion* m_pInvisibilityPotion = { nullptr };
-	CWiggenweldPotion* m_pWiggenweldPotion = { nullptr };
 
 private:
 	_bool		m_isFixMouse = { false };
@@ -211,7 +206,7 @@ private:
 private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
-	HRESULT SetUp_ShadowShaderResources();
+	HRESULT SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix);
 	HRESULT Add_Magic();
 
 private:

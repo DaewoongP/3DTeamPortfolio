@@ -96,6 +96,26 @@ void CEnemy::Late_Tick(_float fTimeDelta)
 	}
 }
 
+void CEnemy::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
+{
+	wstring wstrCollisionTag = CollisionEventDesc.pThisCollisionTag;
+
+	if (wstring::npos != wstrCollisionTag.find(TEXT("MapObject")))
+	{
+		m_isOnGround = true;
+	}
+}
+
+void CEnemy::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
+{
+	wstring wstrCollisionTag = CollisionEventDesc.pThisCollisionTag;
+
+	if (wstring::npos != wstrCollisionTag.find(TEXT("MapObject")))
+	{
+		m_isOnGround = false;
+	}
+}
+
 HRESULT CEnemy::Render()
 {
 	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
@@ -131,9 +151,9 @@ HRESULT CEnemy::Render()
 	return S_OK;
 }
 
-HRESULT CEnemy::Render_Depth()
+HRESULT CEnemy::Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix)
 {
-	if (FAILED(SetUp_ShadowShaderResources()))
+	if (FAILED(SetUp_ShadowShaderResources(LightViewMatrix, LightProjMatrix)))
 		return E_FAIL;
 
 	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
@@ -183,6 +203,8 @@ HRESULT CEnemy::Make_AI()
 			throw TEXT("Failed Add_Type isSpawn");
 		if (FAILED(m_pRootBehavior->Add_Type("isParring", &m_isParring)))
 			throw TEXT("Failed Add_Type isParring");
+		if (FAILED(m_pRootBehavior->Add_Type("isOnGround", &m_isOnGround)))
+			throw TEXT("Failed Add_Type isOnGround");
 		if (FAILED(m_pRootBehavior->Add_Type("isHitCombo", &m_isHitCombo)))
 			throw TEXT("Failed Add_Type isHitCombo");
 		if (FAILED(m_pRootBehavior->Add_Type("isHitAttack", &m_isHitAttack)))
@@ -295,7 +317,7 @@ HRESULT CEnemy::SetUp_ShaderResources()
 	return S_OK;
 }
 
-HRESULT CEnemy::SetUp_ShadowShaderResources()
+HRESULT CEnemy::SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix)
 {
 	BEGININSTANCE;
 
@@ -307,10 +329,10 @@ HRESULT CEnemy::SetUp_ShadowShaderResources()
 		if (FAILED(m_pShadowShaderCom->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
 			throw TEXT("Failed Bind_Matrix : g_WorldMatrix");
 
-		if (FAILED(m_pShadowShaderCom->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_LightTransformMatrix(CPipeLine::D3DTS_VIEW))))
+		if (FAILED(m_pShadowShaderCom->Bind_Matrix("g_ViewMatrix", &LightViewMatrix)))
 			throw TEXT("Failed Bind_Matrix : g_ViewMatrix");
 
-		if (FAILED(m_pShadowShaderCom->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_LightTransformMatrix(CPipeLine::D3DTS_PROJ))))
+		if (FAILED(m_pShadowShaderCom->Bind_Matrix("g_ProjMatrix", &LightProjMatrix)))
 			throw TEXT("Failed Bind_Matrix : g_ProjMatrix");
 
 		if (FAILED(m_pShadowShaderCom->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))

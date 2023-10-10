@@ -13,6 +13,7 @@ CFluxweed_Stem_Item::CFluxweed_Stem_Item(const CFluxweed_Stem_Item& rhs)
 HRESULT CFluxweed_Stem_Item::Initialize_Prototype(_uint iLevel)
 {
 	// 아이템 정보
+	m_ItemCreateDesc.eItemId = ITEM_ID_FLUXWEED_STEM;
 	m_ItemCreateDesc.wstrKoreanName = TEXT("보름초 줄기");
 	m_ItemCreateDesc.wstrUIPath = TEXT("../../Resources/UI/Game/UI/Icons/Plants/UI_T_Icons_Fluxweed.png");
 	m_ItemCreateDesc.iCost = 60;

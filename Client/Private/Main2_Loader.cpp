@@ -97,6 +97,12 @@ HRESULT CMain2_Loader::Loading()
 	case LEVEL_SMITH:
 		hr = Loading_For_Hogsmeade(LEVEL_SMITH);
 		break;
+	case LEVEL_SKY:
+		hr = Loading_For_Sky(LEVEL_SKY);
+		break;
+	case LEVEL_SANCTUM:
+		hr = Loading_For_Sanctum(LEVEL_SANCTUM);
+		break;
 	default:
 		MSG_BOX("Failed Load Next Level");
 		break;
@@ -177,16 +183,6 @@ HRESULT CMain2_Loader::Loading_For_Cliffside(LEVELID eLevelID)
 			CGolem_Combat::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Golem_CombatGrunt");
 
-		/* For.Prototype_Component_Model_ConjuredDragon */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_ConjuredDragon"),
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/SK_HebrideanBlack_Skeleton/SK_HebrideanBlack_Skeleton.gcm"), PivotMatrix))))
-			throw TEXT("Prototype_Component_Model_ConjuredDragon");
-
-		/* For.Prototype_GameObject_ConjuredDragon */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_ConjuredDragon"),
-			CConjuredDragon::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_ConjuredDragon");
-
 		/* For.Prototype_Component_Model_DarkWizard_M */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_DarkWizard_M"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/DarkWizard_M/DarkWizard_M.gcm"), PivotMatrix))))
@@ -222,11 +218,6 @@ HRESULT CMain2_Loader::Loading_For_Vault(LEVELID eLevelID)
 
 		/* ============ Enemy Weapon Models ============ */
 
-		/* For.Prototype_Component_Model_Weopon_Armored_Troll */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Weopon_Armored_Troll"),
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Troll_Armored_Club/Troll_Armored_Club.dat"), PivotMatrix))))
-			throw TEXT("Prototype_Component_Model_Weopon_Armored_Troll");
-
 		/* For.Prototype_Component_Model_Weopon_Golem_Combat */
 		PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f));
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Weopon_Golem_Combat"),
@@ -235,31 +226,14 @@ HRESULT CMain2_Loader::Loading_For_Vault(LEVELID eLevelID)
 
 		/* ============ Enemy Weapons ============ */
 
-		/* For.Prototype_Component_Weapon_Armored_Troll */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Weapon_Armored_Troll"),
-			CWeapon_Armored_Troll::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_Weapon_Armored_Troll");
-
 		/* For.Prototype_Component_Weapon_Golem_Combat */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Weapon_Golem_Combat"),
 			CWeapon_Golem_Combat::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Weapon_Golem_Combat");
 
-		/* ============ Friendly Weapon Models ============ */
-
-		/* For.Prototype_Component_Model_Weopon_Fig_Wand */
-		PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f));
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Weopon_Fig_Wand"),
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Wand_Fig/Wand_Fig.dat"), PivotMatrix))))
-			throw TEXT("Prototype_Component_Model_Weopon_Fig_Wand");
-
 		/* ============ Enemy Models ============ */
 
 		PivotMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
-		/* For.Prototype_Component_Model_Armored_Troll */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Armored_Troll"),
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/Armored_Troll/Armored_Troll.gcm"), PivotMatrix))))
-			throw TEXT("Prototype_Component_Model_Armored_Troll");
 
 		/* For.Prototype_Component_Model_Golem_Combat */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Golem_Combat"),
@@ -267,11 +241,6 @@ HRESULT CMain2_Loader::Loading_For_Vault(LEVELID eLevelID)
 			throw TEXT("Prototype_Component_Model_Golem_Combat");
 
 		/* ============ Enemies ============ */
-
-		/* For.Prototype_GameObject_Armored_Troll */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Armored_Troll"),
-			CArmored_Troll::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_Armored_Troll");
 
 		/* For.Prototype_GameObject_Golem_CombatGrunt */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Golem_CombatGrunt"),
@@ -296,6 +265,87 @@ HRESULT CMain2_Loader::Loading_For_GreatHall(LEVELID eLevelID)
 }
 
 HRESULT CMain2_Loader::Loading_For_Hogsmeade(LEVELID eLevelID)
+{
+	if (nullptr == m_pGameInstance)
+		return E_FAIL;
+
+	try
+	{
+		/* ============ Enemy Weapon Models ============ */
+
+		_float4x4 PivotMatrix = XMMatrixRotationX(XMConvertToRadians(-90.f));
+
+		/* For.Prototype_Component_Model_Weopon_Armored_Troll */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Weopon_Armored_Troll"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../../Resources/Models/NonAnims/Troll_Armored_Club/Troll_Armored_Club.dat"), PivotMatrix))))
+			throw TEXT("Prototype_Component_Model_Weopon_Armored_Troll");
+
+		/* ============ Enemy Weapons ============ */
+
+		/* For.Prototype_Component_Weapon_Armored_Troll */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Weapon_Armored_Troll"),
+			CWeapon_Armored_Troll::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_Component_Weapon_Armored_Troll");
+
+		/* ============ Enemy Models ============ */
+
+		PivotMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
+
+		/* For.Prototype_Component_Model_Armored_Troll */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_Armored_Troll"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/Armored_Troll/Armored_Troll.gcm"), PivotMatrix))))
+			throw TEXT("Prototype_Component_Model_Armored_Troll");
+
+		/* ============ Enemies ============ */
+
+		/* For.Prototype_GameObject_Armored_Troll */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Armored_Troll"),
+			CArmored_Troll::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Armored_Troll");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("Failed Add_Prototype : ");
+		wstrErrorMSG += pErrorTag;
+		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	return S_OK;
+}
+
+HRESULT CMain2_Loader::Loading_For_Sanctum(LEVELID eLevelID)
+{
+	if (nullptr == m_pGameInstance)
+		return E_FAIL;
+
+	try /* Failed Check Loading_For_Sanctum Add_Prototype*/
+	{
+		_float4x4 PivotMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
+		/* For.Prototype_Component_Model_ConjuredDragon */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_ConjuredDragon"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/SK_HebrideanBlack_Skeleton/SK_HebrideanBlack_Skeleton.gcm"), PivotMatrix))))
+			throw TEXT("Prototype_Component_Model_ConjuredDragon");
+
+		/* For.Prototype_GameObject_ConjuredDragon */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_ConjuredDragon"),
+			CConjuredDragon::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_ConjuredDragon");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("Failed Add_Prototype : ");
+		wstrErrorMSG += pErrorTag;
+		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	return S_OK;
+}
+
+HRESULT CMain2_Loader::Loading_For_Sky(LEVELID eLevelID)
 {
 	return S_OK;
 }

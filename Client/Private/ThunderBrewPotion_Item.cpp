@@ -16,6 +16,7 @@ CThunderBrewPotion_Item::CThunderBrewPotion_Item(const CThunderBrewPotion_Item& 
 HRESULT CThunderBrewPotion_Item::Initialize_Prototype(_uint iLevel)
 {
 	// 아이템 정보
+	m_ItemCreateDesc.eItemId = ITEM_ID_THUNDERBEW_POTION;
 	m_ItemCreateDesc.eItemType = ITEMTYPE::POTION;
 	m_ItemCreateDesc.iCost = 1000;											// 가격
 	m_ItemCreateDesc.fDuration = 20.f;                                      //지속시간

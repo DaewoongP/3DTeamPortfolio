@@ -81,8 +81,8 @@ HRESULT CRenderTarget::Initialize_Depth(_uint iSizeX, _uint iSizeY, DXGI_FORMAT 
 	/* ViewPort */
 	m_ShadowMapViewPortDesc.TopLeftX = 0;
 	m_ShadowMapViewPortDesc.TopLeftY = 0;
-	m_ShadowMapViewPortDesc.Width = static_cast<_float>(iSizeX);
-	m_ShadowMapViewPortDesc.Height = static_cast<_float>(iSizeY);
+	m_ShadowMapViewPortDesc.Width = _float(iSizeX);
+	m_ShadowMapViewPortDesc.Height = _float(iSizeY);
 	m_ShadowMapViewPortDesc.MinDepth = 0.f;
 	m_ShadowMapViewPortDesc.MaxDepth = 1.f;
 

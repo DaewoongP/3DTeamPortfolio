@@ -28,6 +28,9 @@ void CUI_Effect_Back::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
+	//if (INTERACT == m_eEffecttype)
+	//	m_isInteract = m_pButtonCom->Collision_Rect(g_hWnd, m_vCombinedXY, _float2(m_fSizeX, m_fSizeY));
+
 	if (CURSOR == m_eEffecttype)
 		m_fRadian += fTimeDelta * 2.f;
 }
@@ -63,6 +66,10 @@ HRESULT CUI_Effect_Back::Render()
 		break;
 	case Client::CUI_Effect_Back::ALPHA:
 		if (FAILED(m_pShaderCom->Begin("Alpha")))
+			return E_FAIL;
+		break;
+	case Client::CUI_Effect_Back::SKILL:
+		if (FAILED(m_pShaderCom->Begin("Cool")))
 			return E_FAIL;
 		break;
 	default:
@@ -143,8 +150,12 @@ HRESULT CUI_Effect_Back::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
 
-	if (FAILED(m_Textures[m_iTextureIndex]->Bind_ShaderResources(m_pShaderCom, "g_Texture")))
-		return E_FAIL;
+	if (nullptr != m_Textures[m_iTextureIndex])
+	{
+		if (FAILED(m_Textures[m_iTextureIndex]->Bind_ShaderResources(m_pShaderCom, "g_Texture")))
+			return E_FAIL;
+	}
+
 
 	if (0 < m_AlphaTextures.size() && m_eEffecttype == ALPHA)
 	{
@@ -170,8 +181,16 @@ HRESULT CUI_Effect_Back::SetUp_ShaderResources()
 	}
 		break;
 	case Client::CUI_Effect_Back::SKILL:
-		if (FAILED(m_pShaderCom->Bind_RawValue("g_isClicked", &m_isClicked, sizeof(_bool))))
-			return E_FAIL;
+	{
+		//if (FAILED(m_pShaderCom->Bind_RawValue("g_isClicked", &m_isClicked, sizeof(_bool))))
+		//	return E_FAIL;
+		if (m_isCool)
+		{
+			_float Cool = *m_fCoolTime;
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_fCoolTime", &Cool, sizeof(_float))))
+				return E_FAIL;
+		}
+	}
 		break;
 	}
 
@@ -215,6 +234,13 @@ void CUI_Effect_Back::Set_ImageCom(CUI_Image::IMAGEDESC desc)
 void CUI_Effect_Back::Set_Rotation(_float3 vAxis, _float fRadian)
 {
 	m_pTransform->Rotation(vAxis, fRadian);
+}
+
+void CUI_Effect_Back::Set_CoolTime(_float* pCool)
+{
+	m_fCoolTime = pCool;
+	if (nullptr != m_pImageCom)
+		m_pImageCom->Set_CoolTime(pCool);
 }
 
 void CUI_Effect_Back::Set_Effecttype(EFFECTTYPE eType)

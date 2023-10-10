@@ -1,5 +1,6 @@
 #pragma once
 #include "GameObject.h"
+#include "MapObject.h"
 #include "Client_Defines.h"
 
 BEGIN(Engine)
@@ -8,54 +9,46 @@ class CModel;
 class CShader;
 class CRenderer;
 class CRigidBody;
+class CParticleSystem;
 END
 
 BEGIN(Client)
+class CUI_Group_Brew;
 
-class CPotion_Station final : public CGameObject
+
+class CPotion_Station final : public CMapObject
 {
-public:
-	typedef struct tagMapObjectDesc
-	{
-		_float4x4 WorldMatrix; // 상태 행렬
-		_uint iTagLen = { 0 }; // 문자열 길이
-		_tchar wszTag[MAX_PATH] = TEXT(""); // 오브젝트 종류(모델 컴포넌트 이름)
-	}MAPOBJECTDESC;
-
+	enum STATE { IDLE, INTERACTABLE, SHOW, STATE_END};
 private:
 	explicit CPotion_Station(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CPotion_Station(const CPotion_Station& rhs);
 	virtual ~CPotion_Station() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype();
+	virtual HRESULT Initialize_Prototype(_uint iLevel);
 	virtual HRESULT Initialize(void* pArg) override;
-	virtual HRESULT Initialize_Level(_uint iCurrentLevelIndex) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
-	virtual HRESULT Render() override;
 
 private:
-	CShader* m_pShader = { nullptr };
-	CRigidBody* m_pRigidBody = { nullptr };
-	CRenderer* m_pRenderer = { nullptr };
-	CModel* m_pModel = { nullptr };
+	CUI_Group_Brew* m_pCUI_Group_Brew = {nullptr};
 
 private:
-	// 절두체 컬링을 위해 Bounding Box를 생성 하기위한 최소, 최대 정점
-	_float3			m_vMinPoint, m_vMaxPoint, m_vCenterPoint;
-	_float			m_fRadius = { 0.f };
+	class CPlayer* m_pPlayer = { nullptr };
+	class CTransform* m_pPlayerTransform = { nullptr };
 
 private:
-	MAPOBJECTDESC	m_ObjectDesc;
+	STATE m_eState = { IDLE };
+	_uint m_iLevel = {};
+
+private: // For.Components
+	CParticleSystem* m_pParticleSystem = { nullptr };
 
 private:
 	HRESULT Add_Components();
-	HRESULT SetUp_ShaderResources();
-	void	Check_MinMaxPoint(_float3 vPoint);
 
 public:
-	static CPotion_Station* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);
+	static CPotion_Station* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, _uint iLevel);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;
 };

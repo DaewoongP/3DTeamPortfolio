@@ -135,11 +135,6 @@ HRESULT CTest_Player::Render()
 	return S_OK;
 }
 
-HRESULT CTest_Player::Render_Depth()
-{
-	return S_OK;
-}
-
 HRESULT CTest_Player::Add_Components()
 {
 	/* Com_Renderer */

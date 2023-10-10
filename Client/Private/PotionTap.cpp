@@ -137,8 +137,8 @@ HRESULT CPotionTap::Ready_Main_Tap()
 	ImageDesc.fX = m_pUI_Main_Tap->Get_XY().x;
 	ImageDesc.fY = m_pUI_Main_Tap->Get_XY().y;
 	ImageDesc.fZ = 0.f;
-	ImageDesc.fSizeX = m_pUI_Main_Tap->Get_SizeXY().x;
-	ImageDesc.fSizeY = m_pUI_Main_Tap->Get_SizeXY().y;
+	ImageDesc.fSizeX = 64.f;
+	ImageDesc.fSizeY = 64.f;
 
 	m_pUI_Main_Tap->Set_ImageCom(ImageDesc);
 
@@ -233,6 +233,7 @@ void CPotionTap::Add_Potion(POTIONTAP eType)
 		return;
 
 	m_pPotions[eType].push_back(pTool);
+	m_pUI_Potion_Tap->Update_PotionCount(m_pPotions);
 }
 
 void CPotionTap::Delete_Potion(POTIONTAP eType, _uint iIndex)
@@ -290,6 +291,7 @@ void CPotionTap::Use_Item(_float3 vPlayPos)
 	pTool->Use(vPlayPos);
 
 	Delete_Potion(m_eCurPotion, pTool);
+	m_pUI_Potion_Tap->Update_PotionCount(m_pPotions);
 
 	if (m_pPotions[m_eCurPotion].empty())
 	{

@@ -68,9 +68,6 @@ HRESULT CDarkWizard_M::Initialize_Level(_uint iCurrentLevelIndex)
 	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RigidBody(m_pRigidBody);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
-	m_HitMatrices[0] = m_pTransform->Get_WorldMatrixPtr();
-	m_HitMatrices[1] = m_pTransform->Get_WorldMatrixPtr();
-	m_HitMatrices[2] = m_pTransform->Get_WorldMatrixPtr();
 	return S_OK;
 }
 
@@ -98,10 +95,12 @@ void CDarkWizard_M::Late_Tick(_float fTimeDelta)
 
 void CDarkWizard_M::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 {
+	__super::OnCollisionEnter(CollisionEventDesc);
+
 	wstring wstrObjectTag = CollisionEventDesc.pOtherObjectTag;
 	wstring wstrMyCollisionTag = CollisionEventDesc.pThisCollisionTag;
 	wstring wstrOtherCollisionTag = CollisionEventDesc.pOtherCollisionTag;
-
+	
 	/* Collision Magic */
 	if (wstring::npos != wstrObjectTag.find(TEXT("MagicBall")))
 	{
@@ -470,6 +469,21 @@ HRESULT CDarkWizard_M::Add_Components_Level(_uint iCurrentLevelIndex)
 
 HRESULT CDarkWizard_M::Bind_HitMatrices()
 {
+	const CBone* pBone = m_pModelCom->Get_Bone(TEXT("Head"));
+	if (nullptr == pBone)
+		return E_FAIL;
+	m_HitMatrices[0] = pBone->Get_CombinedTransformationMatrixPtr();
+
+	pBone = m_pModelCom->Get_Bone(TEXT("Hips"));
+	if (nullptr == pBone)
+		return E_FAIL;
+	m_HitMatrices[1] = pBone->Get_CombinedTransformationMatrixPtr();
+
+	pBone = m_pModelCom->Get_Bone(TEXT("Spine"));
+	if (nullptr == pBone)
+		return E_FAIL;
+	m_HitMatrices[2] = pBone->Get_CombinedTransformationMatrixPtr();
+
 	return S_OK;
 }
 
@@ -1037,7 +1051,7 @@ HRESULT CDarkWizard_M::Make_Turns(_Inout_ CSequence* pSequence)
 		pAction_Left_180->Set_Options(TEXT("Turn_Left_180"), m_pModelCom);
 		pAction_Right_180->Set_Options(TEXT("Turn_Right_180"), m_pModelCom);
 
-		pTsk_Check_Degree->Set_Transform(m_pTransform);
+		pTsk_Check_Degree->Set_Option(m_pTransform);
 
 		/* Assemble Behaviors */
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Tsk_Check_Degree"), pTsk_Check_Degree)))
@@ -1230,6 +1244,23 @@ HRESULT CDarkWizard_M::Make_Air_Hit(_Inout_ CSequence* pSequence)
 		pAction_Knockback->Set_Options(TEXT("Knockback_Back"), m_pModelCom);
 		pAction_Splat->Set_Options(TEXT("Splat_Back"), m_pModelCom);
 		pAction_GetUp->Set_Options(TEXT("Getup_Back"), m_pModelCom);
+		pAction_Hit_1->Add_Exit_Condition([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_bool* pIsOnGround = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("isOnGround", pIsOnGround)))
+					return false;
+				if (true == *pIsOnGround)
+					int i = 0;
+				return *pIsOnGround;
+			});
+		pAction_Knockback->Add_Exit_Condition([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_bool* pIsOnGround = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("isOnGround", pIsOnGround)))
+					return false;
+
+				return *pIsOnGround;
+			});
 
 		/* Assemble Childs */
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Selector_AirHit"), pSelector_AirHit)))
@@ -1304,10 +1335,8 @@ HRESULT CDarkWizard_M::Make_Fly_Descendo(_Inout_ CSequence* pSequence)
 		pAction_Descendo2->Set_Options(TEXT("Descendo_2"), m_pModelCom);
 		pAction_Descendo3->Set_Options(TEXT("Descendo_Ground"), m_pModelCom);
 		pAction_GetUp->Set_Options(TEXT("Getup_Front"), m_pModelCom);
-		_float3 vForce = _float3(0.f, -100.f, 0.f);
-		pTsk_RigidMove->Set_Option(m_pRigidBody, vForce, 0.6f);
-		vForce = _float3(0.f, 4.f, 0.f);
-		pTsk_RigidMove_Up->Set_Option(m_pRigidBody, vForce, 1.2f);
+		pTsk_RigidMove->Set_Option(m_pRigidBody, m_pTransform, CRigidMove::DIR_UP, -100.f, 0.6f);
+		pTsk_RigidMove_Up->Set_Option(m_pRigidBody, m_pTransform, CRigidMove::DIR_UP, 4.f, 1.2f);
 
 		/* Assemble Behaviors */
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Descendo1"), pAction_Descendo1)))

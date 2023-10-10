@@ -165,6 +165,11 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_fClothPower = 3.0f;
 	m_fClothPowerPlus = 1.0f;
 
+	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::FIRST, CONFRINGO);
+	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::SECOND, LEVIOSO);
+	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::THIRD, NCENDIO);
+	m_UI_Group_Skill_01->Set_SpellTexture(CUI_Group_Skill::FOURTH, DIFFINDO);
+
 	m_fRotationSpeed = 2.0f;
 
 	m_iMoveType = (_uint)MOVETYPE_NONE;
@@ -178,6 +183,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_vLevelInitPosition[LEVEL_VAULT] = _float3(7.0f, 0.02f, 7.5f);
 	//m_vLevelInitPosition[LEVEL_SMITH] = _float3(30.f, 3.f, 15.f); // 기본 위치
 	m_vLevelInitPosition[LEVEL_SMITH] = _float3(94.5f, 7.2f, 78.f); // 포션 스테이션 바로 앞
+	m_vLevelInitPosition[LEVEL_SKY] = _float3(88.8f, 12.5f, 69.8f); // 포션 스테이션 바로 앞
 
 
 
@@ -317,7 +323,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 			return;
 		}
 
-		CEnemy* pEnemy = static_cast<CEnemy*>(m_pTarget);
+		CEnemy* pEnemy = dynamic_cast<CEnemy*>(m_pTarget);
 		if (nullptr != pEnemy)
 			pEnemy->Get_UI_Enemy_HP()->Late_Tick(fTimeDelta);
 	}
@@ -486,9 +492,9 @@ HRESULT CPlayer::Render()
 	return S_OK;
 }
 
-HRESULT CPlayer::Render_Depth()
+HRESULT CPlayer::Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix)
 {
-	if (FAILED(SetUp_ShadowShaderResources()))
+	if (FAILED(SetUp_ShadowShaderResources(LightViewMatrix, LightProjMatrix)))
 		return E_FAIL;
 
 	for (_uint iPartsIndex = 0; iPartsIndex < CCustomModel::MESH_END; ++iPartsIndex)
@@ -510,26 +516,26 @@ HRESULT CPlayer::Render_Depth()
 
 void CPlayer::Potion_Duration(_float fTimeDelta)
 {
-	if (m_isPowerUp)
-	{
-		m_pMaximaPotion->Duration(fTimeDelta);
-		if(!m_isPowerUp)
-		Safe_Release(m_pMaximaPotion);
+	//if (m_isPowerUp)
+	//{
+	//	m_pMaximaPotion->Duration(fTimeDelta);
+	//	if(!m_isPowerUp)
+	//	Safe_Release(m_pMaximaPotion);
 
-	}
+	//}
 
-	if (m_isDefUp)
-	{
-		m_pEdurusPotion->Duration(fTimeDelta);
-		if (!m_isDefUp)
-			Safe_Release(m_pEdurusPotion);
-	}
-	if (m_isInvisible)
-	{
-		m_pInvisibilityPotion->Duration(fTimeDelta);
-		if (!m_isInvisible)
-			Safe_Release(m_pInvisibilityPotion);
-	}
+	//if (m_isDefUp)
+	//{
+	//	m_pEdurusPotion->Duration(fTimeDelta);
+	//	if (!m_isDefUp)
+	//		Safe_Release(m_pEdurusPotion);
+	//}
+	//if (m_isInvisible)
+	//{
+	//	m_pInvisibilityPotion->Duration(fTimeDelta);
+	//	if (!m_isInvisible)
+	//		Safe_Release(m_pInvisibilityPotion);
+	//}
 	/*if (m_isFocusOn)
 	{
 		m_pFocusPotion->Duration(fTimeDelta);
@@ -619,7 +625,7 @@ HRESULT CPlayer::Add_Components()
 	RigidBodyDesc.isStatic = false;
 	RigidBodyDesc.isTrigger = false;
 	RigidBodyDesc.isGravity = true;
-	RigidBodyDesc.vInitPosition = _float3(2.f, 2.f, 2.f);
+	RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
 	RigidBodyDesc.vInitRotation = m_pTransform->Get_Quaternion();
 	RigidBodyDesc.fStaticFriction = 0.f;
 	RigidBodyDesc.fDynamicFriction = 1.f;
@@ -662,6 +668,13 @@ HRESULT CPlayer::Add_Components()
 		return E_FAIL;
 	}
 	
+	//_int DefValue = 15;
+	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_EndurusPotion"),
+	//	TEXT("Com_EndurusPotion"), reinterpret_cast<CComponent**>(&m_pEndurusPotion),&DefValue)))
+	//{
+	//	__debugbreak();
+	//	return E_FAIL;
+	//}
 
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_CoolTime"),
 		TEXT("Com_CoolTime"), reinterpret_cast<CComponent**>(&m_pCooltime))))
@@ -708,15 +721,15 @@ HRESULT CPlayer::SetUp_ShaderResources()
 	return S_OK;
 }
 
-HRESULT CPlayer::SetUp_ShadowShaderResources()
+HRESULT CPlayer::SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix)
 {
 	BEGININSTANCE;
 
 	if (FAILED(m_pShadowShader->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
 		return E_FAIL;
-	if (FAILED(m_pShadowShader->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_LightTransformMatrix(CPipeLine::D3DTS_VIEW))))
+	if (FAILED(m_pShadowShader->Bind_Matrix("g_ViewMatrix", &LightViewMatrix)))
 		return E_FAIL;
-	if (FAILED(m_pShadowShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_LightTransformMatrix(CPipeLine::D3DTS_PROJ))))
+	if (FAILED(m_pShadowShader->Bind_Matrix("g_ProjMatrix", &LightProjMatrix)))
 		return E_FAIL;
 	if (FAILED(m_pShadowShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
 		return E_FAIL;
@@ -796,10 +809,12 @@ HRESULT CPlayer::Add_Magic()
 	}
 
 	// 아리스토모멘텀
+	// 속도 제어 마법입니다.
+	// 딜은 없습니다.
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
-		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
-		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicGroup = CMagic::MG_CONTROL;
+		magicInitDesc.eMagicType = CMagic::MT_YELLOW;
 		magicInitDesc.eMagicTag = ARRESTOMOMENTUM;
 		magicInitDesc.fInitCoolTime = 5.f;
 		magicInitDesc.iDamage = 0;
@@ -809,78 +824,89 @@ HRESULT CPlayer::Add_Magic()
 	}
 
 	// 아씨오
+	// 공중에 띄운채 끌어당기는 마법입니다.
+	// 딜은 없습니다.
 	{
 		magicInitDesc.eBuffType = BUFF_ACCIO;
-		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
-		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
+		magicInitDesc.eMagicType = CMagic::MT_PURPLE;
 		magicInitDesc.eMagicTag = ACCIO;
 		magicInitDesc.fInitCoolTime = 5.f;
-		magicInitDesc.iDamage = 10;
+		magicInitDesc.iDamage = 0;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 1.f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
 	// 디센도
+	// 땅에 박히게 하는 마법입니다.
+	// 딜은 약합니다.
 	{
 		magicInitDesc.eBuffType = BUFF_DESCENDO;
-		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
-		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
+		magicInitDesc.eMagicType = CMagic::MT_PURPLE;
 		magicInitDesc.eMagicTag = DESCENDO;
 		magicInitDesc.fInitCoolTime = 5.f;
-		magicInitDesc.iDamage = 10;
+		magicInitDesc.iDamage = 30;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 1.f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
 	// 플리펜도
+	// 공중에 띄워 한바퀴 x축으로 회전시키는 마법입니다.
+	// 딜은 없습니다.
 	{
 		magicInitDesc.eBuffType = BUFF_FLIPENDO;
-		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
-		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
+		magicInitDesc.eMagicType = CMagic::MT_PURPLE;
 		magicInitDesc.eMagicTag = FLIPENDO;
 		magicInitDesc.fInitCoolTime = 5.f;
-		magicInitDesc.iDamage = 10;
+		magicInitDesc.iDamage = 0;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 0.3f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
 	// 엑스펠리아르무스
+	// 무기를 날려버리는 마법입니다.
+	// 딜은 중간입니다.
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
-		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
-		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
+		magicInitDesc.eMagicType = CMagic::MT_RED;
 		magicInitDesc.eMagicTag = EXPELLIARMUS;
 		magicInitDesc.fInitCoolTime = 5.f;
-		magicInitDesc.iDamage = 10;
+		magicInitDesc.iDamage = 50;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 1.2f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
 	// 임페리오
+	// 적에게 저주를 걸어 다른 적과 싸우게 만드는 마법입니다.
+	// 딜은 중간입니다.
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
-		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
-		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicGroup = CMagic::MG_CURSE;
+		magicInitDesc.eMagicType = CMagic::MT_ALL;
 		magicInitDesc.eMagicTag = IMPERIO;
 		magicInitDesc.fInitCoolTime = 5.f;
-		magicInitDesc.iDamage = 10;
+		magicInitDesc.iDamage = 100;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 0.8f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	//크루시오
+	// 크루시오
+	// 공격을 맞은 적은 다른 적을 향해 도탄되는 투사체를 발사합니다.
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
-		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
-		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicGroup = CMagic::MG_CURSE;
+		magicInitDesc.eMagicType = CMagic::MT_ALL;
 		magicInitDesc.eMagicTag = CRUCIO;
 		magicInitDesc.fInitCoolTime = 5.f;
-		magicInitDesc.iDamage = 10;
+		magicInitDesc.iDamage = 200;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 0.8f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
@@ -890,10 +916,10 @@ HRESULT CPlayer::Add_Magic()
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
-		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicType = CMagic::MT_ALL;
 		magicInitDesc.eMagicTag = STUPEFY;
 		magicInitDesc.fInitCoolTime = 5.f;
-		magicInitDesc.iDamage = 10;
+		magicInitDesc.iDamage = 40;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 0.8f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
@@ -902,11 +928,11 @@ HRESULT CPlayer::Add_Magic()
 	//디핀도
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
-		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
-		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
+		magicInitDesc.eMagicType = CMagic::MT_RED;
 		magicInitDesc.eMagicTag = DIFFINDO;
 		magicInitDesc.fInitCoolTime = 5.f;
-		magicInitDesc.iDamage = 10;
+		magicInitDesc.iDamage = 200;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 0.8f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
@@ -915,11 +941,11 @@ HRESULT CPlayer::Add_Magic()
 	//봄바르다
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
-		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
-		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
+		magicInitDesc.eMagicType = CMagic::MT_RED;
 		magicInitDesc.eMagicTag = BOMBARDA;
 		magicInitDesc.fInitCoolTime = 1.f;
-		magicInitDesc.iDamage = 10;
+		magicInitDesc.iDamage = 500;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 0.8f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
@@ -930,9 +956,9 @@ HRESULT CPlayer::Add_Magic()
 	m_pMagicSlot->Add_Magic_To_Basic_Slot(3, FINISHER);
 
 	Set_Spell_Botton(0, DIFFINDO);
-	Set_Spell_Botton(1, BOMBARDA);
+	Set_Spell_Botton(1, LEVIOSO);
 	Set_Spell_Botton(2, CRUCIO);
-	Set_Spell_Botton(3, IMPERIO);
+	Set_Spell_Botton(3, FLIPENDO);
 
 	return S_OK;
 }
@@ -1185,23 +1211,23 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		//CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_RockChunksRough"), m_pTransform->Get_Position());
 
 		//m_pPlayer_Information->Get_Inventory()->Add_Item(pItem, pItem->Get_Type());
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_AshwinderEggs_Item"));
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_Dittany_Leaves_Item"));
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_Dugbog_Tongue_Item"));
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_Leaping_Toadstool_Caps_Item"));
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_Lacewing_Flies_Item"));
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_Knotgrass_Item"));
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_Horklump_Juice_Item"));
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_Leech_Juice_Item"));
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_MallowSweet_Item"));
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_MoonStone_Item"));
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_Fluxweed_Stem_Item"));
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_Spider_Fang_Item"));
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_Troll_Bogeys_Item"));
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_Shrivelfig_Item"));
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_ASHWINDER_EGGS);
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_DITTANY_LEAVES);
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_DUGBOG_TONGUE);
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_LEAPING_TOADSTOOL_CAPS);
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_LACEWING_FLIES);
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_KNOTGRASS);
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_HORKLUMP_JUICE);
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_LEECH_JUICE);
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_MALLOWSWEET);
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_MOONSTONE);
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_FLUXWEED_STEM);
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_SPIDER_FANG);
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_TROLL_BOGEYS);
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_SHRIVELFIG);
 
-		wstring temp = TEXT("Drink_Potion_Throw");
-		m_pCustomModel->Change_Animation(temp);
+		//wstring temp = TEXT("Drink_Potion_Throw");
+		//m_pCustomModel->Change_Animation(temp);
 	}
 #endif //_DEBUG
 
@@ -2066,7 +2092,7 @@ void CPlayer::Find_Target_For_Distance()
 		return;
 	}
 
-	_float fMinDistance = { 10.0f };
+	_float fMinDistance = { 50.0f };
 
 
 	//거리가 낮은 놈을 저장
@@ -2161,7 +2187,7 @@ void CPlayer::Find_Target_For_ViewSpace()
 		return;
 	}
 
-	_float fMinDistance = { 10.0f };
+	_float fMinDistance = { 50.0f };
 
 	//거리가 낮은 놈을 저장
 	CGameObject* pTarget = { nullptr };
@@ -2595,11 +2621,6 @@ void CPlayer::Free()
 		Safe_Release(m_pPlayer_Information);
 		Safe_Release(m_UI_Group_Skill_01);
 		Safe_Release(m_pCooltime);
-		Safe_Release(m_pMaximaPotion);
-		Safe_Release(m_pEdurusPotion);
-		Safe_Release(m_pFocusPotion);
-		Safe_Release(m_pInvisibilityPotion);
-		Safe_Release(m_pWiggenweldPotion);
 		Safe_Release(m_pDefence);
 
 		if (nullptr != m_pTargetTransform)
