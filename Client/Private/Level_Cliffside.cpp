@@ -730,7 +730,6 @@ HRESULT CLevel_Cliffside::Ready_Layer_UI(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-
 	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Potion_Tap"), pLayerTag, TEXT("GameObject_Potion_Tap"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Potion_Tap)");
@@ -741,13 +740,6 @@ HRESULT CLevel_Cliffside::Ready_Layer_UI(const _tchar* pLayerTag)
 	//if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_Brew"), pLayerTag, TEXT("GameObject_UI_Group_Brew"))))
 	//{
 	//	MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_Brew)");
-	//	Safe_Release(pGameInstance);
-	//	return E_FAIL;
-	//}
-
-	//if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_SkillTap"), pLayerTag, TEXT("GameObject_UI_Group_SkillTap"))))
-	//{
-	//	MSG_BOX("Failed Add_GameObject : (GameObject_GameObject_UI_Group_SkillTap)");
 	//	Safe_Release(pGameInstance);
 	//	return E_FAIL;
 	//}

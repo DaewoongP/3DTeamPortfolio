@@ -75,6 +75,25 @@ _bool CUI_Button::Click(HWND hWnd, _float2 vPos, _float2 vSize)
 	return false;
 }
 
+_bool CUI_Button::Pressing(HWND hWnd, _float2 vPos, _float2 vSize)
+{
+	CInput_Device* pInputDevice = CInput_Device::GetInstance();
+	Safe_AddRef(pInputDevice);
+
+	if (Collision_Rect(hWnd, vPos, vSize))
+	{
+		if (pInputDevice->Get_DIMouseState(CInput_Device::DIMK_LBUTTON, CInput_Device::KEY_PRESSING))
+		{
+			Safe_Release(pInputDevice);
+			return true;
+		}
+	}
+
+	Safe_Release(pInputDevice);
+
+	return false;
+}
+
 CUI_Button* CUI_Button::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CUI_Button* pInstance = New CUI_Button(pDevice, pContext);

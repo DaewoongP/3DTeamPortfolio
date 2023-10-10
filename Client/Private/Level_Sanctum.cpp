@@ -254,6 +254,7 @@ HRESULT CLevel_Sanctum::Load_MapObject_Ins(const _tchar* pObjectFilePath)
 	return E_NOTIMPL;
 }
 
+#ifdef _DEBUG
 HRESULT CLevel_Sanctum::Ready_Debug(const _tchar* pLayerTag)
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
@@ -277,6 +278,9 @@ HRESULT CLevel_Sanctum::Ready_Debug(const _tchar* pLayerTag)
 
 	return S_OK;
 }
+
+#endif // DEBUG
+
 
 CLevel_Sanctum* CLevel_Sanctum::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {

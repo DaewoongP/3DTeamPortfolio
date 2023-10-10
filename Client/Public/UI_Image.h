@@ -68,11 +68,12 @@ private:
 
 public:
 	HRESULT	Set_Texture(CTexture* pTexture);
-	HRESULT Set_Desc(IMAGEDESC desc);
+	HRESULT Set_Desc(IMAGEDESC desc, _bool isChild = false);
 
 protected:
 	HRESULT Change_Position(_float fX, _float fY);
 	HRESULT Change_Scale(_float fX, _float fY);
+
 
 private:
 	CShader*		m_pShaderCom = { nullptr };

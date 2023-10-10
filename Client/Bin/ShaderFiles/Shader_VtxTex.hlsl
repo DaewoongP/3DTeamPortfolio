@@ -295,13 +295,11 @@ float4	PS_MAIN_UI_COOLTIME(PS_IN In) : SV_TARGET0
 {
 	float4 vColor = (float4) 0;
 
-	float fTime = 0.3f;
-
 	vColor = g_Texture.Sample(LinearSampler, In.vTexUV);
 	if (vColor.a < 0.1f)
 		discard;
 
-	if (In.vTexUV.y < 1.f - fTime)
+	if (In.vTexUV.y < 1.f - g_fCoolTime)
 	{
 		vColor.rgb = 0.f;
 	}
@@ -313,13 +311,11 @@ float4	PS_MAIN_UI_GRAYCOOL(PS_IN In) : SV_TARGET0
 {
 	float4 vColor = (float4) 0;
 
-	float fTime = 0.3f;
-
 	vColor = g_Texture.Sample(LinearSampler, In.vTexUV);
 	if (vColor.a < 0.1f)
 		discard;
 
-	if (In.vTexUV.y < 1.f - fTime)
+	if (In.vTexUV.y < 1.f - g_fCoolTime)
 	{
 		vColor.rgb = 0.3f;
 	}
