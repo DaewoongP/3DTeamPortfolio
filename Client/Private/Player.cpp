@@ -481,26 +481,26 @@ HRESULT CPlayer::Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatr
 
 void CPlayer::Potion_Duration(_float fTimeDelta)
 {
-	if (m_isPowerUp)
-	{
-		m_pMaximaPotion->Duration(fTimeDelta);
-		if(!m_isPowerUp)
-		Safe_Release(m_pMaximaPotion);
+	//if (m_isPowerUp)
+	//{
+	//	m_pMaximaPotion->Duration(fTimeDelta);
+	//	if(!m_isPowerUp)
+	//	Safe_Release(m_pMaximaPotion);
 
-	}
+	//}
 
-	if (m_isDefUp)
-	{
-		m_pEdurusPotion->Duration(fTimeDelta);
-		if (!m_isDefUp)
-			Safe_Release(m_pEdurusPotion);
-	}
-	if (m_isInvisible)
-	{
-		m_pInvisibilityPotion->Duration(fTimeDelta);
-		if (!m_isInvisible)
-			Safe_Release(m_pInvisibilityPotion);
-	}
+	//if (m_isDefUp)
+	//{
+	//	m_pEdurusPotion->Duration(fTimeDelta);
+	//	if (!m_isDefUp)
+	//		Safe_Release(m_pEdurusPotion);
+	//}
+	//if (m_isInvisible)
+	//{
+	//	m_pInvisibilityPotion->Duration(fTimeDelta);
+	//	if (!m_isInvisible)
+	//		Safe_Release(m_pInvisibilityPotion);
+	//}
 	/*if (m_isFocusOn)
 	{
 		m_pFocusPotion->Duration(fTimeDelta);
@@ -1179,20 +1179,20 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		//CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_RockChunksRough"), m_pTransform->Get_Position());
 
 		//m_pPlayer_Information->Get_Inventory()->Add_Item(pItem, pItem->Get_Type());
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_AshwinderEggs_Item"));
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_Dittany_Leaves_Item"));
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_Dugbog_Tongue_Item"));
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_Leaping_Toadstool_Caps_Item"));
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_Lacewing_Flies_Item"));
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_Knotgrass_Item"));
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_Horklump_Juice_Item"));
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_Leech_Juice_Item"));
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_MallowSweet_Item"));
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_MoonStone_Item"));
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_Fluxweed_Stem_Item"));
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_Spider_Fang_Item"));
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_Troll_Bogeys_Item"));
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_Shrivelfig_Item"));
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_ASHWINDER_EGGS);
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_DITTANY_LEAVES);
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_DUGBOG_TONGUE);
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_LEAPING_TOADSTOOL_CAPS);
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_LACEWING_FLIES);
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_KNOTGRASS);
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_HORKLUMP_JUICE);
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_LEECH_JUICE);
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_MALLOWSWEET);
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_MOONSTONE);
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_FLUXWEED_STEM);
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_SPIDER_FANG);
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_TROLL_BOGEYS);
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_SHRIVELFIG);
 
 		//wstring temp = TEXT("Drink_Potion_Throw");
 		//m_pCustomModel->Change_Animation(temp);
@@ -2560,11 +2560,6 @@ void CPlayer::Free()
 		Safe_Release(m_pPlayer_Information);
 		Safe_Release(m_UI_Group_Skill_01);
 		Safe_Release(m_pCooltime);
-		Safe_Release(m_pMaximaPotion);
-		Safe_Release(m_pEdurusPotion);
-		Safe_Release(m_pFocusPotion);
-		Safe_Release(m_pInvisibilityPotion);
-		Safe_Release(m_pWiggenweldPotion);
 		Safe_Release(m_pDefence);
 
 		if (nullptr != m_pTargetTransform)

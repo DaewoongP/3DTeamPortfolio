@@ -18,6 +18,8 @@ HRESULT CChineseChompingCabbageItem::Initialize_Prototype(_uint iLevel)
 	if (FAILED(__super::Initialize_Prototype(iLevel)))
 		return E_FAIL;
 
+	m_ItemCreateDesc.eItemId = ITEM_ID_CHINESE_CHOMPING_CABBAGE;
+
 	return S_OK;
 }
 

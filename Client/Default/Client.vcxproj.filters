@@ -454,14 +454,8 @@
     <Filter Include="05. Magic\MagicBall\17. Stupefy">
       <UniqueIdentifier>{3889487f-722c-4c11-99ae-a49e505aff2c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\09. Item\02. Ingredient\HorklumpJuice">
-      <UniqueIdentifier>{317ed26b-2a5b-4a2b-89f6-42e887793982}</UniqueIdentifier>
-    </Filter>
     <Filter Include="96. ImGui">
       <UniqueIdentifier>{a50a5e26-6a04-4c0e-a541-6d264c6a12fd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\09. Item\02. Ingredient\AshwinderEggs">
-      <UniqueIdentifier>{e33012ec-8d62-40c4-85e9-f8df38017186}</UniqueIdentifier>
     </Filter>
     <Filter Include="04. Effect\Normal">
       <UniqueIdentifier>{a74d6959-7585-400e-a1ae-d972cc6abd86}</UniqueIdentifier>
@@ -606,6 +600,9 @@
     </Filter>
     <Filter Include="02. GameObject\01. Player\01. StateMachine\08. CraftState">
       <UniqueIdentifier>{d5efb67c-1189-46bb-bd77-8c0dcdb658ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\09. Item\02. Ingredient\Mongrel_Fur_Item">
+      <UniqueIdentifier>{1d482665-58b1-4b52-8f5a-7ca07153b2d1}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\02. Enemy\04. Boss\EnergyBall">
       <UniqueIdentifier>{79dcddca-11cc-4450-a7ad-d7866f733612}</UniqueIdentifier>
@@ -1205,6 +1202,9 @@
     <ClInclude Include="..\public\CraftState.h">
       <Filter>02. GameObject\01. Player\01. StateMachine\08. CraftState</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Mongrel_Fur_Item.h">
+      <Filter>02. GameObject\09. Item\02. Ingredient\Mongrel_Fur_Item</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\EnergyBall.h">
       <Filter>02. GameObject\02. Enemy\04. Boss\EnergyBall</Filter>
     </ClInclude>
@@ -1769,6 +1769,9 @@
     </ClCompile>
     <ClCompile Include="..\private\CraftState.cpp">
       <Filter>02. GameObject\01. Player\01. StateMachine\08. CraftState</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Mongrel_Fur_Item.cpp">
+      <Filter>02. GameObject\09. Item\02. Ingredient\Mongrel_Fur_Item</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\EnergyBall.cpp">
       <Filter>02. GameObject\02. Enemy\04. Boss\EnergyBall</Filter>

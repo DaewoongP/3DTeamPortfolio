@@ -13,6 +13,7 @@ CHorklump_Juice_Item::CHorklump_Juice_Item(const CHorklump_Juice_Item& rhs)
 HRESULT CHorklump_Juice_Item::Initialize_Prototype(_uint iLevel)
 {
 	// 아이템 정보
+	m_ItemCreateDesc.eItemId = ITEM_ID_HORKLUMP_JUICE;
 	m_ItemCreateDesc.wstrKoreanName = TEXT("호클럼프 즙");
 	m_ItemCreateDesc.wstrUIPath = TEXT("../../Resources/UI/Game/UI/Icons/Potions/UI_T_HorklumpJuice.png");
 	m_ItemCreateDesc.iCost = 60;

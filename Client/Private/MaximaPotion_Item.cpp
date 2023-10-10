@@ -16,6 +16,7 @@ CMaximaPotion_Item::CMaximaPotion_Item(const CMaximaPotion_Item& rhs)
 HRESULT CMaximaPotion_Item::Initialize_Prototype(_uint iLevel)
 {
 	// 아이템 정보
+	m_ItemCreateDesc.eItemId = ITEM_ID_MAXIMA_POTION;
 	m_ItemCreateDesc.eItemType = ITEMTYPE::POTION;
 	m_ItemCreateDesc.iCost = 300;											// 가격
 	m_ItemCreateDesc.fDuration = 20.f;                                      //지속시간

@@ -125,20 +125,16 @@ void CGatherer::Tick(_float fTimeDelta)
 			switch (m_GatheringType)
 			{
 			case CGatherer::ASHWINDEREGG:
-				//m_pPlayerInformation->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_AshwinderEggs_Item"));
-				cout << "¾Ö½¬¿ÍÀÎ´õ ¾Ë È¹µæ"<< '\n';
+				m_pPlayerInformation->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_ASHWINDER_EGGS);
 				break;
 			case CGatherer::HORKLUMP:
-				//m_pPlayerInformation->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_"));
-				cout << "ÈÄÅ¬·³ÇÁ Áó È¹µæ" << '\n';
+				m_pPlayerInformation->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_HORKLUMP_JUICE);
 				break;
 			case CGatherer::LEAPINGTOADSTOOLS:
-				//m_pPlayerInformation->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_"));
-				cout << "µ¶¹ö¼¸ °« È¹µæ" << '\n';
+				m_pPlayerInformation->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_LEAPING_TOADSTOOL_CAPS);
 				break;
 			case CGatherer::LEECH:
-				//m_pPlayerInformation->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_"));
-				cout << "°Å¸Ó¸® Áó È¹µæ" << '\n';
+				m_pPlayerInformation->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_LEECH_JUICE);
 				break;
 			}
 		}

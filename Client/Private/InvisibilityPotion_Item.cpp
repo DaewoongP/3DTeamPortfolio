@@ -16,6 +16,7 @@ CInvisibilityPotion_Item::CInvisibilityPotion_Item(const CInvisibilityPotion_Ite
 HRESULT CInvisibilityPotion_Item::Initialize_Prototype(_uint iLevel)
 {
 	// 아이템 정보
+	m_ItemCreateDesc.eItemId = ITEM_ID_INVISIBILITY_POTION;
 	m_ItemCreateDesc.eItemType = ITEMTYPE::POTION;
 	m_ItemCreateDesc.iCost = 500;											// 가격
 	m_ItemCreateDesc.fDuration = 4.f;										//지속시간

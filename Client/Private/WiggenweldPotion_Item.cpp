@@ -16,6 +16,7 @@ CWiggenweldPotion_Item::CWiggenweldPotion_Item(const CWiggenweldPotion_Item& rhs
 HRESULT CWiggenweldPotion_Item::Initialize_Prototype(_uint iLevel)
 {
 	// 아이템 정보
+	m_ItemCreateDesc.eItemId = ITEM_ID_WIGGENWELD_POTION;
 	m_ItemCreateDesc.eItemType = ITEMTYPE::POTION;
 	m_ItemCreateDesc.iCost = 100;											// 가격
 	m_ItemCreateDesc.wstrKoreanName = TEXT("위젠웰드 묘약");					// 한글명
