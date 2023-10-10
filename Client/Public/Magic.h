@@ -48,8 +48,10 @@ public:
 		_float			fInitCoolTime = { 1.f };
 		//속도
 		_float			fLifeTime = { 1.0f };
+		//논타겟 여부
+		_bool					isMouseTarget = { true };
+		_float3					vTarget_Dir = {};
 	}MAGICDESC;
-
 
 public:
 	_bool IsCoolOn() { return (m_fCurrentCoolTime <= 0); }

@@ -1,8 +1,9 @@
 #include "..\Public\Inventory.h"
 #include "GameInstance.h"
 #include "UI_Inventory.h"
-#include "GameObject.h"
 #include "Item.h"
+#include "Ingredient.h"
+#include "UI_Farming.h"
 
 CInventory::CInventory(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -27,7 +28,7 @@ HRESULT CInventory::Initialize(void* pArg)
 
 	m_pItems.resize(ITEMTYPE_END);
 	m_pPlayerCurItems.resize(RESOURCE);
-
+	m_ResourcesCount.resize(INGREDIENT_END, 0);
 	Add_Components();
 
 	//BEGININSTANCE;
@@ -74,7 +75,6 @@ HRESULT CInventory::Add_Components()
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-
 	for (size_t i = 0; i < ITEMTYPE_END; i++)
 	{
 		CUI_Inventory::INVENDESC pDesc;
@@ -94,8 +94,8 @@ HRESULT CInventory::Add_Components()
 			pDesc.fOffset = _float2(240.f, 260.f);
 			pDesc.fWidth = 80.f;
 			pDesc.fHeight = 80.f;
-			pDesc.iHorizontal = 5;
-			pDesc.iVertical = 6;
+			pDesc.iHorizontal = 4;
+			pDesc.iVertical = 5;
 			pDesc.eItemtype = ITEMTYPE(i);
 		}
 		else
@@ -105,7 +105,7 @@ HRESULT CInventory::Add_Components()
 			pDesc.fOffset = _float2(280.f, 270.f);
 			pDesc.fWidth = 80.f;
 			pDesc.fHeight = 80.f;
-			pDesc.iHorizontal = 4;
+			pDesc.iHorizontal = 6;
 			pDesc.iVertical = 5;
 			pDesc.eItemtype = ITEMTYPE(i);
 		}
@@ -126,16 +126,34 @@ HRESULT CInventory::Add_Components()
 	return S_OK;
 }
 
+
+
 void CInventory::Add_Item(CItem* pItem, ITEMTYPE eType)
 {
 	if (eType >= ITEMTYPE_END || eType < 0)
 		return;
 
+	// 템 얻었다는 UI띄우는거 가져오기..
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	CUI_Farming* pFarming = static_cast<CUI_Farming*>(pGameInstance->Find_Component_In_Layer(
+		LEVEL_STATIC
+		, TEXT("Layer_UI")
+		, TEXT("GameObject_UI_Farming")));
+	if (nullptr == pFarming)
+	{
+		Safe_Release(pItem);
+		Safe_Release(pGameInstance);
+		return;
+	}
+
+	Safe_Release(pGameInstance);
+
 	if (eType < RESOURCE)
 	{
 		if (m_pItems[eType].size() >= iGearMax)
 			return;
-
+		pFarming->Play(pItem);
 		m_pItems[eType].push_back(pItem);
 		m_pUI_Inventory[eType]->Set_InventoryItem(m_pItems[eType]);
 	}
@@ -143,13 +161,76 @@ void CInventory::Add_Item(CItem* pItem, ITEMTYPE eType)
 	{
 		if (m_pItems[eType].size() >= iResourceMax)
 			return;
-
+		pFarming->Play(pItem);
 		m_pItems[eType].push_back(pItem);
 		m_pUI_Inventory[eType]->Set_InventoryItem(m_pItems[eType]);
 	}
+
+	CIngredient* pIngredient = dynamic_cast<CIngredient*>(pItem);
+	if (nullptr != pIngredient)
+	{
+		cout << pIngredient->Get_Ingredient() << endl;
+		m_ResourcesCount[pIngredient->Get_Ingredient()]++;
+	}
 }
 
-void CInventory::Delete_Item(ITEMTYPE eType, _uint iIndex)
+void CInventory::Add_Item(const _tchar* pPrototypeTag, _uint iLevel, void* pArg)
+{
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	CItem* pItem = dynamic_cast<CItem*>(pGameInstance->Clone_Component(iLevel, pPrototypeTag, pArg));
+	Safe_Release(pGameInstance);
+
+	// 잘못된 아이템을 넣은 경우 디버그 브레이크
+	if (nullptr == pItem)
+	{
+		__debugbreak();
+		return;
+	}
+
+	Add_Item(pItem, pItem->Get_Type());
+}
+
+void CInventory::Add_Item(ITEM_ID eItemID, _uint iLevel, void* pArg)
+{
+	CItem* pItem = CItem::SimpleFactory(eItemID, iLevel, pArg);
+	if (nullptr == pItem)
+		return;
+
+	Add_Item(pItem, pItem->Get_Type());
+}
+
+void CInventory::Delete_Item(ITEM_ID eTargetItemID)
+{
+	for (_uint i = 0; i < ITEMTYPE_END; ++i)
+	{
+		for (auto iter = m_pItems[i].begin(); iter != m_pItems[i].end();)
+		{
+			if ((*iter)->Get_ItemID() == eTargetItemID)
+			{
+				ITEMTYPE eType = (*iter)->Get_Type();
+				if (eType == ITEMTYPE::RESOURCE)
+				{
+					CIngredient* pIngredient = dynamic_cast<CIngredient*>(*iter);
+					m_ResourcesCount[pIngredient->Get_Ingredient()]--;
+				}
+				Safe_Release(*iter);
+				m_pItems[eType].erase(iter);
+				m_pUI_Inventory[eType]->Set_InventoryItem(m_pItems[eType]);
+				return;
+			}
+			else
+				++iter;
+		}
+	}
+}
+
+_bool CInventory::Delete_Item(ITEMTYPE eType, CItem* pItem)
+{
+	return _bool();
+}
+
+_bool CInventory::Delete_Item(ITEMTYPE eType, _uint iIndex)
 {
 	_uint Index = 0;
 	auto iter = m_pItems[eType].begin();
@@ -160,10 +241,12 @@ void CInventory::Delete_Item(ITEMTYPE eType, _uint iIndex)
 			Safe_Release(*iter);
 			iter = m_pItems[eType].erase(iter);
 			m_pUI_Inventory[eType]->Set_InventoryItem(m_pItems[eType]);
-			break;
+			return true;
 		}
 		++Index;
 	}
+
+	return false;
 }
 
 void CInventory::Swap_Item(_uint Index, ITEMTYPE eType)

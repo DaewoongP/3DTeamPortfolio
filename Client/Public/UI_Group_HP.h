@@ -39,7 +39,7 @@ public:
 private:
 	CUI_Back*			m_pUI_Back = { nullptr };
 	CUI_HP*				m_pUI_HP = { nullptr };
-	CHealth*				m_pHealth = { nullptr };
+	CHealth*			m_pHealth = { nullptr };
 	CUI_Font*			m_pFont = { nullptr };
 
 private:

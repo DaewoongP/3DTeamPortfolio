@@ -62,6 +62,7 @@ private:
 	HRESULT Loading_For_GreatHall(LEVELID eLevelID);
 	HRESULT Loading_For_Hogsmeade(LEVELID eLevelID);
 	HRESULT Loading_For_Sky(LEVELID eLevelID);
+	HRESULT Loading_For_Sanctum(LEVELID eLevelID);
 
 private:
 	HRESULT Loading_For_Static(LEVELID eLevelID);

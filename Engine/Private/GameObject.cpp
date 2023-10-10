@@ -52,7 +52,7 @@ HRESULT CGameObject::Render()
 	return S_OK;
 }
 
-HRESULT CGameObject::Render_Depth()
+HRESULT CGameObject::Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix)
 {
 	return S_OK;
 }

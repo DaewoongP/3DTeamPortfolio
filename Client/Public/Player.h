@@ -27,8 +27,9 @@ class CMagicBall;
 class CMaximaPotion;
 class CFocusPotion;
 class CEdurusPotion;
-class CInvisiblityPotion;
+class CInvisibilityPotion;
 class CWiggenweldPotion;
+class CTool;
 END
 
 BEGIN(Client)
@@ -90,7 +91,7 @@ public:
 	virtual void OnCollisionStay(COLLEVENTDESC CollisionEventDesc) override;
 	virtual void OnCollisionExit(COLLEVENTDESC CollisionEventDesc) override;
 	virtual HRESULT Render() override;
-	virtual HRESULT Render_Depth() override;
+	virtual HRESULT Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix) override;
 
 
 	void Potion_Duration(_float fTimeDelta);
@@ -110,14 +111,10 @@ private:
 	CPlayer_Information* m_pPlayer_Information = { nullptr };
 
 	CUI_Group_Skill* m_UI_Group_Skill_01 = { nullptr };
-	CMaximaPotion* m_pMaximaPotion = { nullptr };
-	CEdurusPotion* m_pEdurusPotion = { nullptr };
-	CFocusPotion*	m_pFocusPotion = { nullptr };
-	CInvisiblityPotion* m_pInvisiblityPotion = { nullptr };
-	CWiggenweldPotion* m_pWiggenweldPotion = { nullptr };
-private:
-	
 
+	CTool* m_pCurTool = { nullptr };
+
+private:
 	_bool		m_isFixMouse = { false };
 	CStateContext* m_pStateContext = { nullptr };
 	
@@ -199,10 +196,12 @@ private:
 
 	_float m_fTargetViewRange = { 0.0f };
 
+	vector<SPELL> m_vecSpellCheck;
+
 private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
-	HRESULT SetUp_ShadowShaderResources();
+	HRESULT SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix);
 	HRESULT Add_Magic();
 
 private:
@@ -254,6 +253,10 @@ private:
 	void Shot_Magic_Spell_Button_2();
 	void Shot_Magic_Spell_Button_3();
 	void Shot_Magic_Spell_Button_4();
+	
+	
+
+	_uint Special_Action(_uint _iButton);
 
 	void Finisher();
 

@@ -1,7 +1,6 @@
 #include "Weapon_Player_Wand.h"
 #include "GameInstance.h"
-#include"Light.h"
-#include"Player.h"
+#include "Player.h"
 
 CWeapon_Player_Wand::CWeapon_Player_Wand(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CParts(pDevice, pContext)
@@ -56,14 +55,20 @@ HRESULT CWeapon_Player_Wand::Initialize(void* pArg)
 	LightInfo.vPos = _float4(_float4(m_OffsetMatrix.Translation().x,
 		m_OffsetMatrix.Translation().y,
 		m_OffsetMatrix.Translation().z, 1.f));
-	
+
 	LightInfo.fRange = 5.f;
 	LightInfo.fSpotPower = 2.f;
 	LightInfo.vAmbient = BLACKDEFAULT;
 	LightInfo.vSpecular = BLACKDEFAULT;
 	LightInfo.vDiffuse = BLACKDEFAULT;
+
+	if (FAILED(pGameInstance->Add_Light(LightInfo, &m_pLight, true, 1)))
+	{
+		ENDINSTANCE;
+		return E_FAIL;
+	}
 	
-	pGameInstance->Add_Lights(LightInfo);
+	pGameInstance->Set_IsShadowRender(1, false);
 
 	ENDINSTANCE;
 
@@ -143,47 +148,66 @@ void CWeapon_Player_Wand::Do_Lumos(_float fTimeDelta)
 	{
 		CLight::LIGHTDESC LightInfo;
 		ZEROMEM(&LightInfo);
-		CGameObject* Target = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_VAULT, TEXT("Layer_Player"), TEXT("GameObject_Player")));
-		if (nullptr == Target)
+
+		if (nullptr == m_pOwner ||
+			nullptr == m_pLight)
 		{
 			ENDINSTANCE;
 			return;
 		}
+		CTransform* pOwnerTrans = static_cast<CGameObject*>(m_pOwner)->Get_Transform();
 
-		_float3 vPos = Target->Get_Transform()->Get_Position();
-		_float3 vLook = XMVector3Normalize(Target->Get_Transform()->Get_Look()) * 2.f;
+		_float3 vPos = pOwnerTrans->Get_Position();
+		_float3 vLook = XMVector3Normalize(pOwnerTrans->Get_Look()) * 2.f;
 		LightInfo.eType = CLight::TYPE_POINT;
 		LightInfo.vPos = (vPos + vLook + _float3(0.f, 2.5f, 0.f)).TransCoord();
-		//LightInfo.vLookAt = vPos.TransCoord();
+		LightInfo.vLookAt = vPos.TransCoord();
 		LightInfo.fRange = 17.f;
 		LightInfo.fSpotPower = 2.f;
 		if (AccTime < 1.f)
-			AccTime += fTimeDelta*3.f;
+			AccTime += fTimeDelta * 3.f;
 
 		m_LightIntensity = XMVectorLerp(BLACKDEFAULT, WHITEDEFAULT, AccTime);
 		LightInfo.vAmbient = m_LightIntensity;
 		LightInfo.vSpecular = m_LightIntensity;
 		LightInfo.vDiffuse = m_LightIntensity;
+		pGameInstance->Set_IsShadowRender(1, true);
+		pGameInstance->Update_ShadowMatrix(1, LightInfo);
+		m_pLight->Set_LightDesc(LightInfo);
 
-		//pGameInstance->Set_Light(CLight::TYPE_POINT, (_float)g_iWinSizeX, (_float)g_iWinSizeY, LightInfo);
+		if (LEVEL_VAULT == pGameInstance->Get_CurrentLevelIndex())
+		{
+			LightInfo.vPos = (vPos + vLook + _float3(0.f, 2.5f, 0.f)).TransCoord();
+			LightInfo.vLookAt = (vPos + vLook * 2.f).TransCoord();
+			pGameInstance->Set_IsShadowRender(0, true);
+			pGameInstance->Update_ShadowMatrix(0, LightInfo);
+			if (nullptr == m_pVaultLight)
+			{
+				pGameInstance->Add_Light(LightInfo, &m_pVaultLight, true, 0);
+			}
+			else
+				m_pVaultLight->Set_LightDesc(LightInfo);
+		}
 	}
 	else if (false == m_isLightOn && DelayTime >= 0.5f)
 	{
 		CLight::LIGHTDESC LightInfo;
 		ZEROMEM(&LightInfo);
 
-		CGameObject* Target = dynamic_cast<CGameObject*>(pGameInstance->Find_Component_In_Layer(LEVEL_VAULT, TEXT("Layer_Player"), TEXT("GameObject_Player")));
-		if (nullptr == Target)
+		if (nullptr == m_pOwner ||
+			nullptr == m_pLight)
 		{
 			ENDINSTANCE;
 			return;
 		}
 
-		_float3 vPos = Target->Get_Transform()->Get_Position();
-		_float3 vLook = XMVector3Normalize(Target->Get_Transform()->Get_Look()) * 2.f;
+		CTransform* pOwnerTrans = static_cast<CGameObject*>(m_pOwner)->Get_Transform();
+
+		_float3 vPos = pOwnerTrans->Get_Position();
+		_float3 vLook = XMVector3Normalize(pOwnerTrans->Get_Look()) * 2.f;
 		LightInfo.eType = CLight::TYPE_POINT;
 		LightInfo.vPos = (vPos + vLook + _float3(0.f, 2.5f, 0.f)).TransCoord();
-		//LightInfo.vLookAt = vPos.TransCoord();
+		LightInfo.vLookAt = vPos.TransCoord();
 		LightInfo.fRange = 17.f;
 		LightInfo.fSpotPower = 0.f;
 		if (AccTime < 1.f)
@@ -194,7 +218,23 @@ void CWeapon_Player_Wand::Do_Lumos(_float fTimeDelta)
 		LightInfo.vAmbient = m_LightIntensity;
 		LightInfo.vSpecular = m_LightIntensity;
 		LightInfo.vDiffuse = m_LightIntensity;
-		//pGameInstance->Set_Light(CLight::TYPE_POINT, (_float)g_iWinSizeX, (_float)g_iWinSizeY, LightInfo);
+		pGameInstance->Set_IsShadowRender(1, false);
+		pGameInstance->Update_ShadowMatrix(1, LightInfo);
+		m_pLight->Set_LightDesc(LightInfo);
+
+		if (LEVEL_VAULT == pGameInstance->Get_CurrentLevelIndex())
+		{
+			LightInfo.vPos = (vPos + vLook + _float3(0.f, 2.5f, 0.f)).TransCoord();
+			LightInfo.vLookAt = (vPos + vLook * 2.f).TransCoord();
+			pGameInstance->Set_IsShadowRender(0, false);
+			pGameInstance->Update_ShadowMatrix(0, LightInfo);
+			if (nullptr == m_pVaultLight)
+			{
+				pGameInstance->Add_Light(LightInfo, &m_pVaultLight, false, 0);
+			}
+			else
+				m_pVaultLight->Set_LightDesc(LightInfo);
+		}
 	}
 
 	ENDINSTANCE;
@@ -300,5 +340,7 @@ void CWeapon_Player_Wand::Free()
 		Safe_Release(m_pModelCom);
 		Safe_Release(m_pShaderCom);
 		Safe_Release(m_pRendererCom);
+		Safe_Release(m_pLight);
+		Safe_Release(m_pVaultLight);
 	}
 }

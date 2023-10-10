@@ -415,6 +415,12 @@
     <Filter Include="01. Utility\03. Components\14. RigidBody\Shader">
       <UniqueIdentifier>{d6e48222-790a-42b5-a30b-71e187ad6d29}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\03. Components\19. UI\UI_Component\UI_Button\UI_ScaleButton">
+      <UniqueIdentifier>{a5b0d7fe-c9b2-42f5-a371-ab948940ca1e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. Components\22. Phase">
+      <UniqueIdentifier>{dd250ae5-d2dd-4f3c-8a80-17dda9e0eb77}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -831,8 +837,14 @@
     <ClInclude Include="..\public\CoolTime.h">
       <Filter>01. Utility\03. Components\11. Status\03. CoolTime</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\UI_ScaleButton.h">
+      <Filter>01. Utility\03. Components\19. UI\UI_Component\UI_Button\UI_ScaleButton</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\RaycastCallBack.h">
       <Filter>01. Utility\11. Physics\EventCallBack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Phase.h">
+      <Filter>01. Utility\03. Components\22. Phase</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1217,8 +1229,14 @@
     <ClCompile Include="..\private\CoolTime.cpp">
       <Filter>01. Utility\03. Components\11. Status\03. CoolTime</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\UI_ScaleButton.cpp">
+      <Filter>01. Utility\03. Components\19. UI\UI_Component\UI_Button\UI_ScaleButton</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\RaycastCallBack.cpp">
       <Filter>01. Utility\11. Physics\EventCallBack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Phase.cpp">
+      <Filter>01. Utility\03. Components\22. Phase</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1295,6 +1313,9 @@
       <Filter>01. Utility\98. ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Distortion.hlsl">
+      <Filter>01. Utility\03. Components\02. Renderer\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_RadialBlur.hlsl">
       <Filter>01. Utility\03. Components\02. Renderer\Shader</Filter>
     </FxCompile>
   </ItemGroup>

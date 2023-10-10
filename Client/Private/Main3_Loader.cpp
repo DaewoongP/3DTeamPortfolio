@@ -38,10 +38,32 @@
 #include "FocusPotion.h"
 #include "MaximaPotion.h"
 #include "EdurusPotion.h"
-#include"InvisiblityPotion.h"
+#include "InvisibilityPotion.h"
 #include "WiggenweldPotion.h"
-#include "Ingredient.h"
+#include "ThunderBrewPotion.h"
+
+#include "FocusPotion_Item.h"
+#include "MaximaPotion_Item.h"
+#include "EdurusPotion_Item.h"
+#include "InvisibilityPotion_Item.h"
+#include "ThunderBrewPotion_Item.h"
+#include "WiggenweldPotion_Item.h"
+
 #include "AshwinderEggs_Item.h"
+#include "Dittany_Leaves_Item.h"
+#include "Dugbog_Tongue_Item.h"
+#include "Leaping_Toadstool_Caps_Item.h"
+#include "Lacewing_Flies_Item.h"
+#include "Knotgrass_Item.h"
+#include "Horklump_Juice_Item.h"
+#include "Leech_Juice_Item.h"
+#include "MallowSweet_Item.h"
+#include "MoonStone_Item.h"
+#include "Fluxweed_Stem_Item.h"
+#include "Spider_Fang_Item.h"
+#include "Troll_Bogeys_Item.h"
+#include "Shrivelfig_Item.h"
+#include "Mongrel_Fur_Item.h"
 #pragma endregion
 
 
@@ -122,6 +144,9 @@ HRESULT CMain3_Loader::Loading()
 	case LEVEL_SKY:
 		hr = Loading_For_Sky(LEVEL_SKY);
 		break;
+	case LEVEL_SANCTUM:
+		hr = Loading_For_Sanctum(LEVEL_SANCTUM);
+		break;
 	default:
 		MSG_BOX("Failed Load Next Level");
 		break;
@@ -181,6 +206,11 @@ HRESULT CMain3_Loader::Loading_For_Hogsmeade(LEVELID eLevelID)
 }
 
 HRESULT CMain3_Loader::Loading_For_Sky(LEVELID eLevelID)
+{
+	return S_OK;
+}
+
+HRESULT CMain3_Loader::Loading_For_Sanctum(LEVELID eLevelID)
 {
 	return S_OK;
 }
@@ -387,17 +417,123 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 			CEdurusPotion::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("ProtoType_GameObject_EdurusPotion");
 
-		/* For.Prototype_GameObject_InvisiblityPotion */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_InvisiblityPotion"),
-			CInvisiblityPotion::Create(m_pDevice, m_pContext, eLevelID))))
-			throw TEXT("Prototype_GameObject_InvisiblityPotion");
+		/* For.Prototype_GameObject_InvisibilityPotion */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_InvisibilityPotion"),
+			CInvisibilityPotion::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_InvisibilityPotion");
+
+		/* For.Prototype_GameObject_ThunderBrewPotion */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_ThunderBrewPotion"),
+			CThunderBrewPotion::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_ThunderBrewPotion");
+
 #pragma endregion
 
 #pragma region Load Item
+		/* For.Prototype_GameObject_WiggenweldPotion_Item*/
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_WiggenweldPotion_Item"),
+			CWiggenweldPotion_Item::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_WiggenweldPotion_Item");
+
+		/* For.Prototype_GameObject_FocusPotion_Item*/
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_FocusPotion_Item"),
+			CFocusPotion_Item::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_FocusPotion_Item");
+
+		/* For.Prototype_GameObject_MaximaPotion_Item */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_MaximaPotion_Item"),
+			CMaximaPotion_Item::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_MaximaPotion_Item");
+
+		/* For.Prototype_GameObject_EdurusPotion_Item */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_EdurusPotion_Item"),
+			CEdurusPotion_Item::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_EdurusPotion_Item");
+
+		/* For.Prototype_GameObject_InvisibilityPotion_Item*/
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_InvisibilityPotion_Item"),
+			CInvisibilityPotion_Item::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_InvisibilityPotion_Item");
+
+		/* For.Prototype_GameObject_ThunderBrewPotion_Item */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_ThunderBrewPotion_Item"),
+			CThunderBrewPotion_Item::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_ThunderBrewPotion_Item");
+
 		/* For.Prototype_GameObject_AshwinderEggs_Item*/
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_AshwinderEggs_Item"),
 			CAshwinderEggs_Item::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_AshwinderEggs_Item");
+
+		/* For.Prototype_GameObject_Dittany_Leaves_Item*/
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Dittany_Leaves_Item"),
+			CDittany_Leaves_Item::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_Dittany_Leaves_Item");
+
+		/* For.Prototype_GameObject_Dugbog_Tongue_Item*/
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Dugbog_Tongue_Item"),
+			CDugbog_Tongue_Item::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_Dugbog_Tongue_Item");
+
+		/* For.Prototype_GameObject_Leaping_Toadstool_Caps_Item*/
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Leaping_Toadstool_Caps_Item"),
+			CLeaping_Toadstool_Caps_Item::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_Leaping_Toadstool_Caps_Item");
+
+		/* For.Prototype_GameObject_AshwinderEggs_Item*/
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Lacewing_Flies_Item"),
+			CLacewing_Flies_Item::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_Lacewing_Flies_Item");
+
+		/* For.Prototype_GameObject_Knotgrass_Item*/
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Knotgrass_Item"),
+			CKnotgrass_Item::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_Knotgrass_Item");
+
+		/* For.Prototype_GameObject_Horklump_Juice_Item*/
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Horklump_Juice_Item"),
+			CHorklump_Juice_Item::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_Horklump_Juice_Item");
+
+		/* For.Prototype_GameObject_Leech_Juice_Item*/
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Leech_Juice_Item"),
+			CLeech_Juice_Item::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_Leech_Juice_Item");
+
+		/* For.Prototype_GameObject_MallowSweet_Item*/
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_MallowSweet_Item"),
+			CMallowSweet_Item::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_MallowSweet_Item");
+
+		/* For.Prototype_GameObject_MoonStone_Item*/
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_MoonStone_Item"),
+			CMoonStone_Item::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_MoonStone_Item");
+
+		/* For.Prototype_GameObject_Fluxweed_Stem_Item*/
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Fluxweed_Stem_Item"),
+			CFluxweed_Stem_Item::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_Fluxweed_Stem_Item");
+
+		/* For.Prototype_GameObject_Spider_Fang_Item*/
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Spider_Fang_Item"),
+			CSpider_Fang_Item::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_Spider_Fang_Item");
+
+		/* For.Prototype_GameObject_Troll_Bogeys_Item*/
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Troll_Bogeys_Item"),
+			CTroll_Bogeys_Item::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_Troll_Bogeys_Item");
+
+		/* For.Prototype_GameObject_Shrivelfig_Item*/
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Shrivelfig_Item"),
+			CShrivelfig_Item::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_Shrivelfig_Item");
+
+		/* For.Prototype_GameObject_Mongrel_Fur*/
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Mongrel_Fur"),
+			CMongrel_Fur_Item::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_Mongrel_Fur");
 #pragma endregion
 	}
 	catch (const _tchar* pErrorTag)

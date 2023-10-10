@@ -30,16 +30,18 @@ public:
 	virtual HRESULT Tick(const _float& fTimeDelta) override;
 
 public:
-	void Set_Option(const _float& fTurnSpeed) {
-		m_fTurnSpeed = fTurnSpeed;
-	}
-	void Set_Transform(CTransform* pTransform) {
+	/* 
+		1. 본인의 트랜스폼 포인터
+		2. 회전 속도(배속, Default 1.f)
+	*/
+	void Set_Option(CTransform* pTransform, const _float& fTurnSpeed = 1.f) {
 		m_pOwnerTransform = pTransform;
 		Safe_AddRef(m_pOwnerTransform);
+		m_fTurnSpeed = fTurnSpeed;
 	}
 
 private:
-	_float m_fTurnSpeed = { 1.f };
+	_float m_fTurnSpeed = { 0.f };
 	CTransform* m_pOwnerTransform = { nullptr };
 
 public:

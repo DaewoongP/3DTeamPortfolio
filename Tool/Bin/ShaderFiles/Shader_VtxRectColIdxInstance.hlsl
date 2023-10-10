@@ -176,7 +176,7 @@ technique11		DefaultTechnique
 	pass Default
 	{
 		SetRasterizerState(RS_Cull_None);
-		SetDepthStencilState(DSS_Alpha, 0);
+        SetDepthStencilState(DSS_Alpha, 0);
 		SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		VertexShader = compile vs_5_0 VS_MAIN();
 		GeometryShader = NULL;
@@ -217,6 +217,17 @@ technique11		DefaultTechnique
 		DomainShader = NULL/*compile ds_5_0 DS_MAIN()*/;
 		PixelShader = compile ps_5_0 PS_MOTION_BLUR();
 	}
+    pass Default_Depth_Disable
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_Depth_Disable, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        HullShader = NULL /*compile hs_5_0 HS_MAIN()*/;
+        DomainShader = NULL /*compile ds_5_0 DS_MAIN()*/;
+        PixelShader = compile ps_5_0 PS_MAIN();
+    }
 }
 
 

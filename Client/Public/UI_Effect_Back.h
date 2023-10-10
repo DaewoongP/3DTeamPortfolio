@@ -24,15 +24,25 @@ public:
 		TEXT,
 		ALPHA,
 		SKILL,
+		INTERACT,
 		EFFECTTYPE_END
 	};
 
 public:
 	void Set_Effecttype(EFFECTTYPE eType);
+	void Set_ImageComShader(CUI_Image::SHADERTYPE eType) {
+		m_pImageCom->Set_ShaderType(eType);
+	}
 	void Set_Clicked(_bool isClicked = false);
 	void Set_Texture(CTexture* pTexture);
 	void Set_ImageCom(CUI_Image::IMAGEDESC desc);
 	void Set_Rotation(_float3 vAxis, _float fRadian);
+	void	 Set_CoolTime(_float* pCool);
+	void	 Set_isCool(_bool isCool) {
+		m_isCool = isCool;
+		if (nullptr != m_pImageCom)
+			m_pImageCom->Set_isCool(isCool);
+	}
 
 
 private:
@@ -70,6 +80,10 @@ private:
 
 private:
 	_bool			m_isClicked = { false };
+	_bool			m_isInteract = { false };
+private:
+	_float*			 m_fCoolTime = { 0 };
+	_bool			m_isCool = { false };
 
 public:
 	static CUI_Effect_Back* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

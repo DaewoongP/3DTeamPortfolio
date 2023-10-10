@@ -31,6 +31,17 @@ public:
         SPELL_END
     };
 
+    enum SPECIAL_ACTION_SPELL
+    {
+        SPECIAL_ACTION_NONE,
+        //SPECIAL_ACTION_DESCENDO,
+        SPECIAL_ACTION_DIFFINDO,
+        SPECIAL_ACTION_AVADA_KEDAVRA,
+        SPECIAL_ACTION_IMPERIO,
+        SPECIAL_ACTION_CRUCIO,
+        SPECIAL_ACTION_END
+    };
+
     enum SPELLACTION
     {
         SPELL_ACTION_01,
@@ -43,7 +54,7 @@ public:
     {
         _bool* pisReadySpell = { nullptr };
         _uint iSpellType = (_uint)SPELL_END;
-
+        _uint iSpecialAction = (_uint)SPECIAL_ACTION_END;
         //노티파이에 넣을 함수포인터
         function<void()> pFuncSpell = { nullptr };
     }MAGICCASTINGSTATEDESC;

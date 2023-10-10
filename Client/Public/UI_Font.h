@@ -10,6 +10,7 @@ BEGIN(Client)
 
 class CUI_Font final : public CGameObject
 {
+
 public:
 	struct FONTDESC
 	{
@@ -37,14 +38,21 @@ public:
 	void Set_vScale(_float2 vScale) { m_vScale = vScale; }
 	void Set_vColor(_float4 vColor) { m_vColor = vColor; }
 	void Set_Text(wstring wText);
+	void Set_Origin(_float2 vOrigin) { m_vOrigin = vOrigin; }
+
+	void Left_Align();
+
+
 
 protected:
 	_tchar			m_pText[MAX_PATH] = TEXT("");
 	_float2			m_vPos = { 650.f, 360.f };
-	XMVECTOR		m_vColor = _float4(1.f, 1.f, 1.f, 1.f);
+	_float4			m_vColor = _float4(1.f, 1.f, 1.f, 1.f);
+	//XMVECTOR		m_vColor = _float4(1.f, 1.f, 1.f, 1.f);
 	_float			m_fRotation = { 0.f };
 	_float2			m_vOrigin = { 0.f, 0.f };
 	_float2 		m_vScale = { 1.f, 1.f };
+
 
 private:
 	HRESULT		Add_Component();

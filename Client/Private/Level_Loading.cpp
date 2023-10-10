@@ -11,6 +11,7 @@
 #include "Level_GreatHall.h"
 #include "Level_Smith.h"
 #include "Level_Sky.h"
+#include "Level_Sanctum.h"
 
 CLevel_Loading::CLevel_Loading(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CLevel(pDevice, pContext)
@@ -44,35 +45,42 @@ HRESULT CLevel_Loading::Initialize(LEVELID eNextLevelID, _bool isStaticLoaded)
 	case LEVEL_CLIFFSIDE:
 		if (FAILED(Loading_Cliffside(TEXT("Layer_CliffSide"))))
 		{
-			MSG_BOX("Failed Loading MainGame Object");
+			MSG_BOX("Failed Loading CliffSide Object");
 			return E_FAIL;
 		}
 		break;
 	case LEVEL_VAULT:
 		if (FAILED(Loading_Vault(TEXT("Layer_Vault"))))
 		{
-			MSG_BOX("Failed Loading MainGame Object");
+			MSG_BOX("Failed Loading Vault Object");
 			return E_FAIL;
 		}
 		break;
 	case LEVEL_GREATHALL:
 		if (FAILED(Loading_GreatHall(TEXT("Layer_GreatHall"))))
 		{
-			MSG_BOX("Failed Loading MainGame Object");
+			MSG_BOX("Failed Loading GreatHall Object");
 			return E_FAIL;
 		}
 		break;
 	case LEVEL_SMITH:
 		if (FAILED(Loading_Hogsmeade(TEXT("Layer_Hogsmeade"))))
 		{
-			MSG_BOX("Failed Loading MainGame Object");
+			MSG_BOX("Failed Loading Hogsmeade Object");
 			return E_FAIL;
 		}
 		break;
 	case LEVEL_SKY:
 		if (FAILED(Loading_Sky(TEXT("Layer_Sky"))))
 		{
-			MSG_BOX("Failed Loading MainGame Object");
+			MSG_BOX("Failed Loading Sky Object");
+			return E_FAIL;
+		}
+		break;
+	case LEVEL_SANCTUM:
+		if (FAILED(Loading_Sanctum(TEXT("Layer_Sanctum"))))
+		{
+			MSG_BOX("Failed Loading Sanctum Object");
 			return E_FAIL;
 		}
 		break;
@@ -156,6 +164,9 @@ void CLevel_Loading::Tick(_float fTimeDelta)
 		break;
 	case LEVEL_SKY:
 		pLevel = CLevel_Sky::Create(m_pDevice, m_pContext);
+		break;
+	case LEVEL_SANCTUM:
+		pLevel = CLevel_Sanctum::Create(m_pDevice, m_pContext);
 		break;
 	default:
 		MSG_BOX("Failed Create Next Level");
@@ -278,18 +289,10 @@ HRESULT CLevel_Loading::Loading_Hogsmeade(const _tchar* pLayerTag)
 
 HRESULT CLevel_Loading::Loading_Sky(const _tchar* pLayerTag)
 {
-	BEGININSTANCE;
-	// 로고 이동전 로딩씬에 대한 객체 생성
-
-	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Loading"), pLayerTag)))
-	{
-		MSG_BOX("Failed Add Scene : (Scene_Loading)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
-
-	ENDINSTANCE;
-
+	return S_OK;
+}
+HRESULT CLevel_Loading::Loading_Sanctum(const _tchar* pLayerTag)
+{
 	return S_OK;
 }
 

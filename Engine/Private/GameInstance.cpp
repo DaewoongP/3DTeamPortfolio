@@ -80,10 +80,10 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInst, _uint iNumLevels, cons
 	if (FAILED(m_pCamera_Manager->Initialize_CameraManager()))
 		return E_FAIL;
 
-	//m_pThread_Pool->Initialize(4);
-
-	if (FAILED(m_pLight_Manager->Reserve_Lights(30)))
+	if (FAILED(m_pLight_Manager->Reserve_Lights(50)))
 		return E_FAIL;
+
+	//m_pThread_Pool->Initialize(4);
 
 	return S_OK;
 }
@@ -129,10 +129,8 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 void CGameInstance::Clear_LevelResources(_uint iLevelIndex)
 {
 	NULL_CHECK_RETURN_MSG(m_pComponent_Manager, , TEXT("Component_Manager NULL"));
-	NULL_CHECK_RETURN_MSG(m_pCamera_Manager, , TEXT("Camera_Manager NULL"));
-
+	
 	m_pComponent_Manager->Clear_LevelResources(iLevelIndex);
-	m_pCamera_Manager->Clear();
 }
 
 void CGameInstance::Clear_Resources()
@@ -142,6 +140,7 @@ void CGameInstance::Clear_Resources()
 
 	m_pCamera_Manager->Clear();
 	m_pTimer_Manager->Clear();
+	m_pLight_Manager->Clear_Lights();
 }
 
 _float2 CGameInstance::Get_ViewPortSize(ID3D11DeviceContext* pContext)
@@ -418,13 +417,6 @@ const _float4x4* CGameInstance::Get_TransformMatrix(CPipeLine::D3DTRANSFORMSTATE
 	return m_pPipeLine->Get_TransformMatrix(eTransformState);
 }
 
-const _float4x4* CGameInstance::Get_LightTransformMatrix(CPipeLine::D3DTRANSFORMSTATE eTransformState)
-{
-	NULL_CHECK_RETURN_MSG(m_pPipeLine, nullptr, TEXT("PipeLine NULL"));
-
-	return m_pPipeLine->Get_LightTransformMatrix(eTransformState);
-}
-
 const _float4x4* CGameInstance::Get_TransformMatrix_Inverse(CPipeLine::D3DTRANSFORMSTATE eTransformState)
 {
 	NULL_CHECK_RETURN_MSG(m_pPipeLine, nullptr, TEXT("PipeLine NULL"));
@@ -502,11 +494,32 @@ _bool CGameInstance::isIn_WorldFrustum(_float4 vWorldPos, _float fRange)
 	return m_pFrustum->isIn_WorldFrustum(vWorldPos, fRange);
 }
 
-CLight* CGameInstance::Add_Lights(const CLight::LIGHTDESC& LightDesc)
+HRESULT CGameInstance::Add_Light(const CLight::LIGHTDESC& LightDesc, _Inout_ class CLight** ppLight, _bool isShadow, _uint iLightViewIndex, _float fAspect)
+{
+	NULL_CHECK_RETURN_MSG(m_pLight_Manager, E_FAIL, TEXT("Light NULL"));
+
+	return m_pLight_Manager->Add_Light(LightDesc, ppLight, isShadow, iLightViewIndex, fAspect);
+}
+
+void CGameInstance::Set_IsShadowRender(_uint iShadowIndex, _bool isRender)
+{
+	NULL_CHECK_RETURN_MSG(m_pLight_Manager, , TEXT("Light NULL"));
+
+	return m_pLight_Manager->Set_IsShadowRender(iShadowIndex, isRender);
+}
+
+const CLight::LIGHTDESC* CGameInstance::Get_ShadowLightDesc(_uint iIndex)
 {
 	NULL_CHECK_RETURN_MSG(m_pLight_Manager, nullptr, TEXT("Light NULL"));
 
-	return m_pLight_Manager->Add_Lights(LightDesc);
+	return m_pLight_Manager->Get_ShadowLightDesc(iIndex);
+}
+
+HRESULT CGameInstance::Return_Light(CLight* pLight)
+{
+	NULL_CHECK_RETURN_MSG(m_pLight_Manager, E_FAIL, TEXT("Light NULL"));
+
+	return m_pLight_Manager->Return_Light(pLight);
 }
 
 HRESULT CGameInstance::Clear_Lights()
@@ -514,6 +527,13 @@ HRESULT CGameInstance::Clear_Lights()
 	NULL_CHECK_RETURN_MSG(m_pLight_Manager, E_FAIL, TEXT("Light NULL"));
 
 	return m_pLight_Manager->Clear_Lights();
+}
+
+HRESULT CGameInstance::Update_ShadowMatrix(_uint iShadowIndex, CLight::LIGHTDESC LightDesc)
+{
+	NULL_CHECK_RETURN_MSG(m_pLight_Manager, E_FAIL, TEXT("Light NULL"));
+
+	return m_pLight_Manager->Update_ShadowMatrix(iShadowIndex, LightDesc);
 }
 
 HRESULT CGameInstance::Add_Sounds(const _tchar* szSoundFilePath)
@@ -747,11 +767,11 @@ HRESULT CGameInstance::Add_Camera(const _tchar* _CameraTag, CCamera* _pCamera)
 	return m_pCamera_Manager->Add_Camera(_CameraTag, _pCamera);
 }
 
-HRESULT CGameInstance::Set_Camera(const _tchar* _CameraTag)
+HRESULT CGameInstance::Set_Camera(const _tchar* _CameraTag, _float _fLerpTime)
 {
 	NULL_CHECK_RETURN_MSG(m_pCamera_Manager, E_FAIL, TEXT("Camera NULL"));
 
-	return m_pCamera_Manager->Set_Camera(_CameraTag);
+	return m_pCamera_Manager->Set_Camera(_CameraTag, _fLerpTime);
 }
 
 CCamera* CGameInstance::Find_Camera(const _tchar* _CameraTag)
@@ -799,7 +819,7 @@ HRESULT CGameInstance::Add_Prototype_Textures(_uint iLevel, ID3D11Device* pDevic
 	{
 		const fs::directory_entry& FileEntry = *iter;
 
-		// ´ë»óÀÌ Æú´õÀÏ °æ¿ì Àç±Í·Î µé¾î°¨.
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½Í·ï¿½ ï¿½ï¿½î°¨.
 		if (true == FileEntry.is_directory())
 		{
 			if (FAILED(Add_Prototype_Textures(iLevel, pDevice, pContext, pPrototypeName, pTargetExtension, FileEntry.path().wstring().c_str(), isFailedSkip)))
@@ -808,30 +828,30 @@ HRESULT CGameInstance::Add_Prototype_Textures(_uint iLevel, ID3D11Device* pDevic
 			}
 		}
 
-		// È®ÀåÀÚ°¡ ÀÖ´ÂÁö °Ë»ç.
+		// È®ï¿½ï¿½ï¿½Ú°ï¿½ ï¿½Ö´ï¿½ï¿½ï¿½ ï¿½Ë»ï¿½.
 		if (true == FileEntry.path().has_extension())
 		{
-			// È®ÀåÀÚ¸¦ ºñ±³.
+			// È®ï¿½ï¿½ï¿½Ú¸ï¿½ ï¿½ï¿½.
 			if (FileEntry.path().extension() == pTargetExtension)
 			{
-				// ÅÂ±× ¸¸µå´Â ·ÎÁ÷
+				// ï¿½Â±ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 				wstring wstrPrototypeTag = pPrototypeName; // Prototype_Component_Texture
 				if (wstrPrototypeTag.back() != TEXT('_'))
 					wstrPrototypeTag += TEXT('_'); // Prototype_Component_Texture_
 				wstrPrototypeTag += FileEntry.path().stem().wstring(); // Prototype_Component_Texture_FileName
 				
-				// °æ·Î ¸¸µå´Â ·ÎÁ÷.
+				// ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
 				wstring wstrFilePathName = pDirectoryPath; // "../../Resources/Default/Textures
 				if (wstrFilePathName.back() != TEXT('/'))
 					wstrFilePathName += TEXT('/'); // "../../Resources/Default/Textures/
 				wstrFilePathName += FileEntry.path().filename().wstring(); // "../../Resources/Default/Textures/FileName.ext
 
-				// ¾î¶² ÅØ½ºÃ³°¡ ¹®Á¦ÀÖ´ÂÁö ÀÏÀÏÀÌ Ã£±â Èûµå¹Ç·Î
-				// FAILED_CHECK_RETURN·Î ¹®Á¦ ÀÖ´Â ÅØ½ºÃ³¿¡¼­ ¹Ù·Î ¸ØÃß°Ô²û Ã³¸®.
+				// ï¿½î¶² ï¿½Ø½ï¿½Ã³ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ç·ï¿½
+				// FAILED_CHECK_RETURNï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½Ø½ï¿½Ã³ï¿½ï¿½ï¿½ï¿½ ï¿½Ù·ï¿½ ï¿½ï¿½ï¿½ß°Ô²ï¿½ Ã³ï¿½ï¿½.
 				
 				FAILED_CHECK_RETURN(Add_Prototype(iLevel, wstrPrototypeTag.c_str(),
 					CTexture::Create(pDevice, pContext, wstrFilePathName.c_str()), isFailedSkip), E_FAIL);
-				// ¸¸¾à¿¡ °æ·Î¸¦ ¸øÃ£¾Ò´Ù´Â ¿À·ù°¡ ¶ß¸é ¿øº» ÆÄÀÏÀÌ ¼Õ»óµÇ¾îÀÖÀ» °¡´É¼ºÀÌ ÀÖÀ½. Á÷Á¢ ¿­¾îºÁ¾ßÇÔ.
+				// ï¿½ï¿½ï¿½à¿¡ ï¿½ï¿½Î¸ï¿½ ï¿½ï¿½Ã£ï¿½Ò´Ù´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Õ»ï¿½Ç¾ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½É¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
 			}
 		}
 		
@@ -849,7 +869,7 @@ HRESULT CGameInstance::Add_Prototype_Models(_uint iLevel, ID3D11Device* pDevice,
 	{
 		const fs::directory_entry& FileEntry = *iter;
 
-		// ´ë»óÀÌ Æú´õÀÏ °æ¿ì Àç±Í·Î µé¾î°¨.
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½Í·ï¿½ ï¿½ï¿½î°¨.
 		if (true == FileEntry.is_directory())
 		{
 			if (FAILED(Add_Prototype_Models(iLevel, pDevice, pContext, eType, pPrototypeName, pTargetExtension, FileEntry.path().wstring().c_str(), isFailedSkip, PivotMatrix)))
@@ -858,26 +878,26 @@ HRESULT CGameInstance::Add_Prototype_Models(_uint iLevel, ID3D11Device* pDevice,
 			}
 		}
 
-		// È®ÀåÀÚ°¡ ÀÖ´ÂÁö °Ë»ç.
+		// È®ï¿½ï¿½ï¿½Ú°ï¿½ ï¿½Ö´ï¿½ï¿½ï¿½ ï¿½Ë»ï¿½.
 		if (true == FileEntry.path().has_extension())
 		{
-			// È®ÀåÀÚ¸¦ ºñ±³.
+			// È®ï¿½ï¿½ï¿½Ú¸ï¿½ ï¿½ï¿½.
 			if (FileEntry.path().extension() == pTargetExtension)
 			{
-				// ÅÂ±× ¸¸µå´Â ·ÎÁ÷
+				// ï¿½Â±ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 				wstring wstrPrototypeTag = pPrototypeName; // Prototype_Component_Model
 				if (wstrPrototypeTag.back() != TEXT('_'))
 					wstrPrototypeTag += TEXT('_'); // Prototype_Component_Model_
 				wstrPrototypeTag += FileEntry.path().stem().wstring(); // Prototype_Component_Model_FileName
 
-				// °æ·Î ¸¸µå´Â ·ÎÁ÷.
+				// ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
 				wstring wstrFilePathName = pDirectoryPath; // "../../Resources/Default/Models
 				if (wstrFilePathName.back() != TEXT('/'))
 					wstrFilePathName += TEXT('/'); // "../../Resources/Default/Models/
 				wstrFilePathName += FileEntry.path().filename().wstring(); // "../../Resources/Default/Models/FileName.ext
 
-				// ¾î¶² ÆÄÀÏ¿¡ ¹®Á¦ÀÖ´ÂÁö ÀÏÀÏÀÌ Ã£±â Èûµå¹Ç·Î
-				// FAILED_CHECK_RETURN·Î ¹®Á¦ ÀÖ´Â ÆÄÀÏ¿¡¼­ ¹Ù·Î ¸ØÃß°Ô²û Ã³¸®.
+				// ï¿½î¶² ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ç·ï¿½
+				// FAILED_CHECK_RETURNï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½Ï¿ï¿½ï¿½ï¿½ ï¿½Ù·ï¿½ ï¿½ï¿½ï¿½ß°Ô²ï¿½ Ã³ï¿½ï¿½.
 				FAILED_CHECK_RETURN(Add_Prototype(iLevel, wstrPrototypeTag.c_str(),
 					CModel::Create(pDevice, pContext, eType, wstrFilePathName.c_str(), PivotMatrix), isFailedSkip), E_FAIL);
 			}
@@ -957,6 +977,20 @@ void CGameInstance::Play_Particle(const _tchar* szParticleTag, _float3 vWorldPos
 	return m_pParticleSystem_Pool->Play_Particle(szParticleTag, vWorldPosition);
 }
 
+void CGameInstance::Play_Particle(const _tchar* szParticleTag, _float4x4 PositionMatrix, _float4x4 ObjectMatrix)
+{
+	NULL_CHECK_RETURN_MSG(m_pParticleSystem_Pool, , TEXT("ParticleSystem Pool NULL"));
+
+	return m_pParticleSystem_Pool->Play_Particle(szParticleTag, PositionMatrix, ObjectMatrix);
+}
+
+void CGameInstance::Play_Particle(const _tchar* szParticleTag, _float4x4 OffsetMatrix, const _float4x4* pBindBoneMatrix, _float4x4 PivotMatrix, const _float4x4* pWorldMatrix)
+{
+	NULL_CHECK_RETURN_MSG(m_pParticleSystem_Pool, , TEXT("ParticleSystem Pool NULL"));
+
+	return m_pParticleSystem_Pool->Play_Particle(szParticleTag, OffsetMatrix, pBindBoneMatrix, PivotMatrix, pWorldMatrix);
+}
+
 template<class T, class ...Args>
 inline auto CGameInstance::Thread_Enqueue(T&& t, Args && ...args) -> std::future<typename std::invoke_result<T, Args ...>::type>
 {
@@ -978,8 +1012,6 @@ void CGameInstance::Release_Engine()
 	CComponent_Manager::GetInstance()->DestroyInstance();
 
 	CLevel_Manager::GetInstance()->DestroyInstance();
-
-	CPhysX_Manager::GetInstance()->DestroyInstance();
 
 	CTimer_Manager::GetInstance()->DestroyInstance();
 
@@ -1006,6 +1038,8 @@ void CGameInstance::Release_Engine()
 	CTexturePool::GetInstance()->DestroyInstance();
 
 	CString_Manager::GetInstance()->DestroyInstance();
+
+	CPhysX_Manager::GetInstance()->DestroyInstance();
 
 	CGraphic_Device::GetInstance()->DestroyInstance();
 }

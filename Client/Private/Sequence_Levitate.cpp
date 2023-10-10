@@ -150,8 +150,7 @@ HRESULT CSequence_Levitate::Assemble_Childs()
 		pAction_Levitate_Enter->Set_Options(TEXT("Levitate_Enter"), pModel);
 		pAction_Levitate_Fall->Set_Options(TEXT("Levitate_Fall_Loop"), pModel, true);
 		pAction_Levitate_Land->Set_Options(TEXT("Levitate_Land"), pModel);
-		_float3 vForce = { 0.f, m_fUpForce, 0.f };
-		pTsk_Up->Set_Option(pRigidBody, vForce, m_fUpTime);
+		pTsk_Up->Set_Option(pRigidBody, pTransform, CRigidMove::DIR_UP, m_fUpForce, m_fUpTime);
 		pTsk_Wait->Set_Timer(0.5f);
 
 		/* Assemble Behaviors */

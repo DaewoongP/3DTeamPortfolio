@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Plant.h"
 #include "Tool.h"
 #include "Engine_Defines.h"
 #include "Client_Defines.h"
@@ -17,14 +16,8 @@ END
 
 BEGIN(Client)
 
-class CChineseChompingCabbageItem final : public CPlant, public CTool
+class CChineseChompingCabbageItem final : public CTool
 {
-public:
-	typedef struct tagCChineseChompingCabbageItemDesc
-	{
-		CHealth* pHealthCom;
-	}INIT_DESC;
-
 private:
 	CChineseChompingCabbageItem(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CChineseChompingCabbageItem(const CChineseChompingCabbageItem& rhs);
@@ -36,7 +29,7 @@ public:
 
 public:
 	virtual void Use(_float3 vPlayPos) override;
-
+	virtual void CreateTool() override;
 private:
 	HRESULT Add_Components();
 

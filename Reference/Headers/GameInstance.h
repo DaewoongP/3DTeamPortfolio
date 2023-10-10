@@ -105,7 +105,6 @@ public: /* For.PipeLine*/
 	// 카메라에서 Far 값 세팅.
 	void Set_CameraFar(_float fCamFar);
 	const _float4x4* Get_TransformMatrix(CPipeLine::D3DTRANSFORMSTATE eTransformState);
-	const _float4x4* Get_LightTransformMatrix(CPipeLine::D3DTRANSFORMSTATE eTransformState);
 	const _float4x4* Get_TransformMatrix_Inverse(CPipeLine::D3DTRANSFORMSTATE eTransformState);
 	const _float4* Get_CamPosition();
 	const _float3* Get_CamUp();
@@ -125,8 +124,13 @@ public: /* For. Frustum */
 	_bool isIn_WorldFrustum(_float4 vWorldPos, _float fRange = 0.f);
 
 public: /* For.Light_Manager */
-	class CLight* Add_Lights(const CLight::LIGHTDESC & LightDesc);
+	HRESULT Add_Light(const CLight::LIGHTDESC & LightDesc, _Inout_ class CLight** ppLight = nullptr, _bool isShadow = false, _uint iLightViewIndex = 0, _float fAspect = 1280.f / 720.f);
+	void Set_IsShadowRender(_uint iShadowIndex, _bool isRender);
+	const CLight::LIGHTDESC* Get_ShadowLightDesc(_uint iIndex);
+	// Free 함수에서 사용 금지
+	HRESULT Return_Light(class CLight* pLight);
 	HRESULT Clear_Lights();
+	HRESULT Update_ShadowMatrix(_uint iShadowIndex, CLight::LIGHTDESC LightDesc);
 
 public: /* For.Sound_Manager */
 	HRESULT Add_Sounds(const _tchar * szSoundFilePath);
@@ -204,7 +208,7 @@ public:	/* For.Camera_Manager */
 	//카메라 추가
 	HRESULT Add_Camera(const _tchar* _CameraTag, class CCamera* _pCamera);
 	//카메라 변경
-	HRESULT Set_Camera(const _tchar* _CameraTag);
+	HRESULT Set_Camera(const _tchar* _CameraTag, _float _fLerpTime = 0.0f);
 	//카메라 찾기
 	class CCamera* Find_Camera(const _tchar* _CameraTag);
 	//컷씬 중지
@@ -246,6 +250,8 @@ public: /* For.Thread_Pool*/
 public:
 	HRESULT Reserve_Particle(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* szParticleTag, const _tchar* szParticleDirectoryPath, _uint iNumReserveParticles = 10);
 	void Play_Particle(const _tchar* szParticleTag, _float3 vWorldPosition);
+	void Play_Particle(const _tchar* szParticleTag, _float4x4 PositionMatrix, _float4x4 ObjectMatrix);
+	void Play_Particle(const _tchar* szParticleTag, _float4x4 OffsetMatrix, const _float4x4* pBindBoneMatrix, _float4x4 PivotMatrix,const _float4x4* pWorldMatrix);
 
 private:
 	class CGraphic_Device*			m_pGraphic_Device = { nullptr };

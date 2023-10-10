@@ -4,7 +4,7 @@
 #include "UI_Back.h"
 #include "UI_Font.h"
 #include "Item.h"
-
+#include "Tool.h"
 CUI_Potion_Tap::CUI_Potion_Tap(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
@@ -46,10 +46,10 @@ HRESULT CUI_Potion_Tap::Initialize(void* pArg)
 	wstring EighthTag = TEXT("Eighth");
 
 	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Potion_Tap_1_Edit.uidata"), FirstTag, POTIONTAP::ENDURUS_POTION);
-	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Potion_Tap_2_Edit.uidata"), SecondTag, POTIONTAP::ATTACK_POWER_UP);
+	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Potion_Tap_2_Edit.uidata"), SecondTag, POTIONTAP::MAXIMA_POTION);
 	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Potion_Tap_3_Edit.uidata"), ThirdTag, POTIONTAP::FOCUS_POTION);
-	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Potion_Tap_4_Edit.uidata"), FourthTag, POTIONTAP::THUNDER_CLOUD);
-	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Potion_Tap_5_Edit.uidata"), FifthTag, POTIONTAP::INVISIBILITY_PILL);
+	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Potion_Tap_4_Edit.uidata"), FourthTag, POTIONTAP::THUNDERBREW_POTION);
+	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Potion_Tap_5_Edit.uidata"), FifthTag, POTIONTAP::INVISIBILITY_POTION);
 	
 	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Potion_Tap_6_Edit.uidata"), SixthTag, POTIONTAP::MANDRAKE);
 	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Potion_Tap_7_Edit.uidata"), SeventhTag, POTIONTAP::CHINESES_CHOPPING_CABBAGE);
@@ -283,7 +283,7 @@ HRESULT CUI_Potion_Tap::Add_Components(wstring wszTag, POTIONTAP eType)
 		lstrcpy(Desc.m_pText, wstrNCount.c_str());
 	}
 		break;
-	case Client::ATTACK_POWER_UP:
+	case Client::MAXIMA_POTION:
 	{
 		Desc.m_vPos = { 794.f, 194.f };
 		wstring wstrNCount = to_wstring(0);
@@ -297,14 +297,14 @@ HRESULT CUI_Potion_Tap::Add_Components(wstring wszTag, POTIONTAP eType)
 		lstrcpy(Desc.m_pText, wstrNCount.c_str());
 	}
 		break;
-	case Client::THUNDER_CLOUD:
+	case Client::THUNDERBREW_POTION:
 	{
 		Desc.m_vPos = { 803.f, 463.f };
 		wstring wstrNCount = to_wstring(0);
 		lstrcpy(Desc.m_pText, wstrNCount.c_str());
 	}
 		break;
-	case Client::INVISIBILITY_PILL:
+	case Client::INVISIBILITY_POTION:
 	{
 		Desc.m_vPos = { 663.f, 525.f };
 		wstring wstrNCount = to_wstring(0);
@@ -424,6 +424,20 @@ _uint CUI_Potion_Tap::Set_CurTapItem()
 	}
 
 	return -1;
+}
+
+void CUI_Potion_Tap::Update_TextCount(const vector<vector<CTool*>>& pPotions, POTIONTAP ePotionTap)
+{
+	wstring wstrNCount = to_wstring(pPotions[ePotionTap].size());
+	m_pFonts[ePotionTap]->Set_Text(wstrNCount);
+}
+
+void CUI_Potion_Tap::Update_PotionCount(const vector<vector<CTool*>>& pPotions)
+{
+	for (_uint i = 0; i < POTIONTAP_END; ++i)
+	{
+		Update_TextCount(pPotions, static_cast<POTIONTAP>(i));
+	}
 }
 
 CUI_Potion_Tap* CUI_Potion_Tap::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

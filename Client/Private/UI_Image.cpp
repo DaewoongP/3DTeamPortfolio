@@ -26,7 +26,7 @@ HRESULT CUI_Image::Initialize(void* pArg)
 		m_vCombinedXY = pDesc->vCombinedXY;
 		m_fX = pDesc->fX;
 		m_fY = pDesc->fY;
-		m_fZ = 0.f;
+		m_fZ = pDesc->fZ;
 		m_fSizeX = pDesc->fSizeX;
 		m_fSizeY = pDesc->fSizeY;
 	}
@@ -35,7 +35,7 @@ HRESULT CUI_Image::Initialize(void* pArg)
 		return E_FAIL;
 
 	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
-	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(g_iWinSizeX, g_iWinSizeY, 0.f, 1.f));
+	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(g_iWinSizeX, g_iWinSizeY, 0.f, 100.f));
 
 	return S_OK;
 }
@@ -79,6 +79,9 @@ HRESULT CUI_Image::Render()
 	{
 	case Client::CUI_Image::MINIMAP:
 		m_pShaderCom->Begin("MiniMap");
+		break;
+	case Client::CUI_Image::SKILL:
+		m_pShaderCom->Begin("GrayCool");
 		break;
 	case Client::CUI_Image::SHADERTYPE_END:
 		m_pShaderCom->Begin("UI");
@@ -148,6 +151,14 @@ HRESULT CUI_Image::SetUp_ShaderResources()
 			return E_FAIL;		
 		if (FAILED(m_pShaderCom->Bind_RawValue("g_vMiniMapSize", &vMiniMapSize, sizeof(_float2))))
 			return E_FAIL;
+	}
+
+	if (m_eShadertype == SKILL && m_isCool)
+	{
+		_float fCool = *m_pCoolTime;
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_vPlayerPos", &m_pCoolTime, sizeof(_float))))
+			return E_FAIL;
+
 	}
 
 

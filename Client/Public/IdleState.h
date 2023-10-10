@@ -6,7 +6,7 @@ BEGIN(Client)
 class CIdleState :
     public CStateMachine
 {
-
+    
 private:
     explicit CIdleState(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext);
     explicit CIdleState(const CIdleState& rhs);

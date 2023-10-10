@@ -3,34 +3,75 @@
 
 IMPLEMENT_SINGLETON(CLight_Manager)
 
-HRESULT CLight_Manager::Reserve_Lights(_uint iNumLights)
+_uint CLight_Manager::Get_CurrentLightShadowNum()
 {
-	for (_uint i = 0; i < iNumLights; ++i)
+	_uint iNum = { 0 };
+	for (auto isRender : m_isShadowRender)
+	{
+		if (true == isRender)
+			++iNum;
+	}
+
+	return iNum;
+}
+
+const CLight::LIGHTDESC* CLight_Manager::Get_ShadowLightDesc(_uint iIndex)
+{
+	return m_pShadowLights[iIndex]->Get_LightDesc();
+}
+
+HRESULT CLight_Manager::Reserve_Lights(_uint iNumReserve)
+{
+	for (_uint i = 0; i < iNumReserve; ++i)
 	{
 		m_LightPool.push(CLight::Create(CLight::LIGHTDESC()));
+	}
+	
+	return S_OK;
+}
+
+HRESULT CLight_Manager::Add_Light(const CLight::LIGHTDESC& LightDesc, _Inout_ class CLight** ppLight, _bool isShadow, _uint iLightViewIndex, _float fAspect)
+{
+	CLight* pLight = Create_Light(LightDesc);
+
+	if (nullptr == pLight)
+		return E_FAIL;
+
+	if (true == isShadow)
+	{
+		m_LightViewMatrix[iLightViewIndex] = XMMatrixLookAtLH(LightDesc.vPos, LightDesc.vLookAt, _float4(0.f, 1.f, 0.f, 0.f));
+		m_LightProjMatrix[iLightViewIndex] = XMMatrixPerspectiveFovLH(XMConvertToRadians(90.f), fAspect, 0.1f, 1000.f);
+		m_fAspect = fAspect;
+		m_isShadowRender[iLightViewIndex] = true;
+		m_pShadowLights[iLightViewIndex] = pLight;
+		Safe_AddRef(pLight);
+	}
+	
+	m_Lights.push_back(pLight);
+
+	if (nullptr != ppLight)
+	{
+		*ppLight = pLight;
+		Safe_AddRef(pLight);
 	}
 
 	return S_OK;
 }
 
-CLight* CLight_Manager::Add_Lights(const CLight::LIGHTDESC& LightDesc)
+HRESULT CLight_Manager::Clear_Lights()
 {
-	CLight* pLight = m_LightPool.front();
-	pLight->Set_LightDesc(LightDesc);
-
-	if (CLight::TYPE_DIRECTIONAL == LightDesc.eType)
+	for (_uint i = 0; i < MAX_SHADOW; ++i)
 	{
-		CPipeLine* pPipeLine = CPipeLine::GetInstance();
-		Safe_AddRef(pPipeLine);
-		pPipeLine->Set_LightTransform(CPipeLine::D3DTS_VIEW, XMMatrixLookAtLH(LightDesc.vPos, LightDesc.vPos + LightDesc.vDir, _float3(0.f, 1.f, 0.f)));
-		pPipeLine->Set_LightTransform(CPipeLine::D3DTS_PROJ, XMMatrixPerspectiveFovLH(XMConvertToRadians(90.f), 1280.f / 720.f, 0.1f, 1000.f));
-		Safe_Release(pPipeLine);
+		m_isShadowRender[i] = false;
+		Safe_Release(m_pShadowLights[i]);
 	}
 
-	m_Lights.push_back(pLight);
-	m_LightPool.pop();
+	for (auto& pLight : m_Lights)
+		Safe_Release(pLight);
 
-	return pLight;
+	m_Lights.clear();
+
+	return S_OK;
 }
 
 HRESULT CLight_Manager::Render_Lights(CShader* pShader, CVIBuffer_Rect* pVIBuffer)
@@ -44,14 +85,47 @@ HRESULT CLight_Manager::Render_Lights(CShader* pShader, CVIBuffer_Rect* pVIBuffe
 	return S_OK;
 }
 
-HRESULT CLight_Manager::Clear_Lights()
+HRESULT CLight_Manager::Return_Light(CLight* pLight)
 {
-	for (auto& pLight : m_Lights)
-		Safe_Release(pLight);
+	Safe_Release(pLight);
 
-	m_Lights.clear();
+	auto iter = find_if(m_Lights.begin(), m_Lights.end(), [&](auto value) {
+		if (value == pLight)
+			return true;
+		return false;
+		});
+
+	m_Lights.erase(iter);
+
+	m_LightPool.push(pLight);
 
 	return S_OK;
+}
+
+HRESULT CLight_Manager::Update_ShadowMatrix(_uint iShadowIndex, CLight::LIGHTDESC LightDesc)
+{
+	m_LightViewMatrix[iShadowIndex] = XMMatrixLookAtLH(LightDesc.vPos, LightDesc.vLookAt, _float4(0.f, 1.f, 0.f, 0.f));
+	m_LightProjMatrix[iShadowIndex] = XMMatrixPerspectiveFovLH(XMConvertToRadians(90.f), m_fAspect, 0.1f, 1000.f);
+	
+	return S_OK;
+}
+
+CLight* CLight_Manager::Create_Light(const CLight::LIGHTDESC& LightDesc)
+{
+	CLight* pLight = { nullptr };
+
+	if (m_LightPool.empty())
+	{
+		pLight = CLight::Create(LightDesc);
+	}
+	else
+	{
+		pLight = m_LightPool.front();
+		pLight->Set_LightDesc(LightDesc);
+		m_LightPool.pop();
+	}
+	
+	return pLight;
 }
 
 void CLight_Manager::Free()

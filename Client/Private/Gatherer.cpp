@@ -126,20 +126,16 @@ void CGatherer::Tick(_float fTimeDelta)
 			switch (m_GatheringType)
 			{
 			case CGatherer::ASHWINDEREGG:
-				//m_pPlayerInformation->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_AshwinderEggs_Item"));
-				cout << "¾Ö½¬¿ÍÀÎ´õ ¾Ë È¹µæ"<< '\n';
+				m_pPlayerInformation->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_ASHWINDER_EGGS);
 				break;
 			case CGatherer::HORKLUMP:
-				//m_pPlayerInformation->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_"));
-				cout << "ÈÄÅ¬·³ÇÁ Áó È¹µæ" << '\n';
+				m_pPlayerInformation->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_HORKLUMP_JUICE);
 				break;
 			case CGatherer::LEAPINGTOADSTOOLS:
-				//m_pPlayerInformation->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_"));
-				cout << "µ¶¹ö¼¸ °« È¹µæ" << '\n';
+				m_pPlayerInformation->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_LEAPING_TOADSTOOL_CAPS);
 				break;
 			case CGatherer::LEECH:
-				//m_pPlayerInformation->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_"));
-				cout << "°Å¸Ó¸® Áó È¹µæ" << '\n';
+				m_pPlayerInformation->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_LEECH_JUICE);
 				break;
 			}
 		}
@@ -214,9 +210,9 @@ HRESULT CGatherer::Render()
 	return S_OK;
 }
 
-HRESULT CGatherer::Render_Depth()
+HRESULT CGatherer::Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix)
 {
-	if (FAILED(SetUp_ShadowShaderResources()))
+	if (FAILED(SetUp_ShadowShaderResources(LightViewMatrix, LightProjMatrix)))
 		return E_FAIL;
 
 	_uint		iNumMeshes = m_pModel->Get_NumMeshes();
@@ -285,15 +281,15 @@ HRESULT CGatherer::SetUp_ShaderResources()
 	return S_OK;
 }
 
-HRESULT CGatherer::SetUp_ShadowShaderResources()
+HRESULT CGatherer::SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix)
 {
 	BEGININSTANCE;
 
 	if (FAILED(m_pShadowShader->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
 		return E_FAIL;
-	if (FAILED(m_pShadowShader->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_LightTransformMatrix(CPipeLine::D3DTS_VIEW))))
+	if (FAILED(m_pShadowShader->Bind_Matrix("g_ViewMatrix", &LightViewMatrix)))
 		return E_FAIL;
-	if (FAILED(m_pShadowShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_LightTransformMatrix(CPipeLine::D3DTS_PROJ))))
+	if (FAILED(m_pShadowShader->Bind_Matrix("g_ProjMatrix", &LightProjMatrix)))
 		return E_FAIL;
 	if (FAILED(m_pShadowShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
 		return E_FAIL;

@@ -146,6 +146,32 @@ HRESULT CLevel_Smith::Ready_Layer_BackGround(const _tchar* pLayerTag)
 	return S_OK;
 }
 
+HRESULT CLevel_Smith::Ready_Layer_Monsters(const _tchar* pLayerTag)
+{
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	/* Add Scene : Main */
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
+	{
+		MSG_BOX("Failed Add Scene : (Scene_Main) in Level_Smith");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	_float4x4 Matrix = XMMatrixTranslation(86.f, 10.f, 129.f);
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_Armored_Troll"), pLayerTag, TEXT("GameObject_Armored_Troll"), &Matrix)))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Armored_Troll)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	Safe_Release(pGameInstance);
+
+	return S_OK;
+}
+
 HRESULT CLevel_Smith::Ready_Lights()
 {
 	BEGININSTANCE;
@@ -160,7 +186,7 @@ HRESULT CLevel_Smith::Ready_Lights()
 	LightDesc.vAmbient = WHITEDEFAULT;
 	LightDesc.vSpecular = WHITEDEFAULT;
 
-	if (nullptr == pGameInstance->Add_Lights(LightDesc))
+	if (FAILED(pGameInstance->Add_Light(LightDesc, nullptr, true)))
 		return E_FAIL;
 
 	ENDINSTANCE;

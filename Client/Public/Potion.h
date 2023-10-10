@@ -1,13 +1,21 @@
 #pragma once
-
-#include "Item.h"
-#include "Tool.h"
+#include "GameObject.h"
 #include "Engine_Defines.h"
 #include "Client_Defines.h"
 
-BEGIN(Client)
+BEGIN(Engine)
+class CShader;
+class CTexture;
+class CRenderer;
+class CTransform;
+class CModel;
+class CCoolTime;
+class CHealth;
+class CRigidBody;
+END
 
-class CPotion abstract : public CItem, public CTool
+BEGIN(Client)
+class CPotion abstract : public CGameObject
 {
 protected:
 	typedef struct tagPotionCreateDesc
@@ -21,7 +29,7 @@ protected:
 	}POTION_CREATE_DESC;
 
 protected:
-	typedef struct tagPotionCloneDesc : public tagItemCloneDesc
+	typedef struct tagPotionCloneDesc
 	{
 		_float4x4        OffsetMatrix;
 		_float4x4        PivotMatrix;
@@ -40,33 +48,43 @@ public:
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
-
-	virtual void Use(_float3 vPlayPos) override;
+	virtual HRESULT Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix) override;
 
 private:
+	HRESULT SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix);
 	HRESULT Set_ShaderResources();
+	HRESULT Add_Components();
+	HRESULT Add_RigidBody();
+
 
 protected:
-	CRenderer* m_pRenderer = { nullptr };
-	CModel* m_pModel = { nullptr };
-	CShader* m_pShader = { nullptr };
-	CCoolTime* m_pLifeTime = { nullptr };
-	CCoolTime* m_pAttachedTime = { nullptr };
+	_uint		m_iLevel = { 0 };
+
+protected: // About Player
+	CPlayer* m_pPlayer = { nullptr };
+	class CCustomModel* m_pPlayerModel = { nullptr };
+	class CTransform* m_pPlayerTransform = { nullptr };
+	class CPlayer_Information* m_pPlayerInformation = { nullptr };
+
+protected: // For. Components
+	CRenderer*	m_pRenderer = { nullptr };
+	CModel*		m_pModel = { nullptr };
+	CShader*	m_pShader = { nullptr };
+	CShader* m_pShadowShader = { nullptr };
+	CRigidBody* m_pRigidBody = { nullptr };
+	CCoolTime*	m_pLifeTime = { nullptr };
+	CCoolTime*	m_pAttachedTime = { nullptr };
 
 protected:
 	POTION_CREATE_DESC			m_PotionCreateDesc = { POTION_CREATE_DESC() };
-	_float						m_fDuration = { 0.f };
-
-private:
+	_float	m_fDuration = { 0.f };
+	
+protected:
 	_bool			 m_isAttached = { false };
 	_float4x4        m_OffsetMatrix;
 	_float4x4        m_PivotMatrix;
 	const _float4x4* m_pCombindTransformationMatrix;
 	const _float4x4* m_pParentWorldMatrix;
-
-	
-private:
-	HRESULT Add_Components();
 
 public:
 	virtual void Free(void) override;

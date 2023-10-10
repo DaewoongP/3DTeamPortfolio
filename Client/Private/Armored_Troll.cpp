@@ -131,6 +131,9 @@ HRESULT CArmored_Troll::Make_AI()
 		if (FAILED(__super::Make_AI()))
 			throw TEXT("Failed Enemy Make_AI");
 
+		if (FAILED(m_pRootBehavior->Add_Type("isOverheadAction", &m_isOverheadAction)))
+			throw TEXT("Failed Add_Type isOverheadAction");
+
 		/* Make Childs */
 		CSelector* pSelector = nullptr;
 		if (FAILED(Create_Behavior(pSelector)))
@@ -200,6 +203,14 @@ HRESULT CArmored_Troll::Make_Notifies()
 	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Exit_Attack"), Func)))
 		return E_FAIL;
 
+	Func = [&] {(*this).On_Overhead_Event(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("On_Overhead_Event"), Func)))
+		return E_FAIL;
+
+	Func = [&] {(*this).Off_Overhead_Event(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Off_Overhead_Event"), Func)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -212,7 +223,7 @@ HRESULT CArmored_Troll::Add_Components()
 
 		/* For.Com_Health */
 		CHealth::HEALTHDESC HealthDesc;
-		HealthDesc.iMaxHP = 500;
+		HealthDesc.iMaxHP = 1000;
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Health"),
 			TEXT("Com_Health"), reinterpret_cast<CComponent**>(&m_pHealth), &HealthDesc)))
 			throw TEXT("Com_Health");
@@ -233,7 +244,7 @@ HRESULT CArmored_Troll::Add_Components()
 		RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 0.f, 1.f);
 		RigidBodyDesc.pOwnerObject = this;
 		RigidBodyDesc.eThisCollsion = COL_ENEMY;
-		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC | COL_NPC_RANGE | COL_MAGIC;
+		RigidBodyDesc.eCollisionFlag = COL_NPC_RANGE | COL_MAGIC | COL_STATIC;
 		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Body");
 
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
@@ -406,6 +417,13 @@ HRESULT CArmored_Troll::Make_Alive(_Inout_ CSelector* pSelector)
 	try
 	{
 		/* Create Child Behavior */
+		CSequence* pSequence_Flipendo = { nullptr };
+		if (FAILED(Create_Behavior(pSequence_Flipendo)))
+			throw TEXT("Failed Create_Behavior pSequence_Flipendo");
+		CSelector* pSelector_Attacks = { nullptr };
+		if (FAILED(Create_Behavior(pSelector_Attacks)))
+			throw TEXT("Failed Create_Behavior pSelector_Attacks");
+
 		CSequence* pSequence_Attacks_Degree = nullptr;
 		if (FAILED(Create_Behavior(pSequence_Attacks_Degree)))
 			throw TEXT("Failed Create_Behavior pSequence_Attacks_Degree");
@@ -425,17 +443,38 @@ HRESULT CArmored_Troll::Make_Alive(_Inout_ CSelector* pSelector)
 
 				return !(pHealth->isDead());
 			});
+		pSelector_Attacks->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_bool* pIsOverheadAction = { nullptr };
+				_uint* pCurrentSpell = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("isOverheadAction", pIsOverheadAction)))
+					return false;
+				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pCurrentSpell)))
+					return false;
+
+				if (true == *pIsOverheadAction && (BUFF_FLIPENDO & *pCurrentSpell))
+					return false;
+
+				return true;
+			});
 
 		/* Set Options */
 
 		/* Assemble Behaviors */
-		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Attacks_Degree"), pSequence_Attacks_Degree)))
+		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Flipendo"), pSequence_Flipendo)))
+			throw TEXT("Failed Assemble_Behavior Sequence_Flipendo");
+		if (FAILED(pSelector->Assemble_Behavior(TEXT("Selector_Attacks"), pSelector_Attacks)))
+			throw TEXT("Failed Assemble_Behavior Selector_Attacks");
+
+		if (FAILED(pSelector_Attacks->Assemble_Behavior(TEXT("Sequence_Attacks_Degree"), pSequence_Attacks_Degree)))
 			throw TEXT("Failed Selector Assemble_Behavior Sequence_Attacks_Degree");
-		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Attacks_Far"), pSequence_Attacks_Far)))
+		if (FAILED(pSelector_Attacks->Assemble_Behavior(TEXT("Sequence_Attacks_Far"), pSequence_Attacks_Far)))
 			throw TEXT("Failed Selector Assemble Sequence_Attacks_Far");
-		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Taunts"), pSequence_Taunts)))
+		if (FAILED(pSelector_Attacks->Assemble_Behavior(TEXT("Sequence_Taunts"), pSequence_Taunts)))
 			throw TEXT("Failed Selector Assemble_Behavior Sequence_Taunts");
 
+		if (FAILED(Make_Flipendo(pSequence_Flipendo)))
+			throw TEXT("Failed Make_Flipendo");
 		if (FAILED(Make_Attack_Degree(pSequence_Attacks_Degree)))
 			throw TEXT("Failed Make_Attack_Degree");
 		if (FAILED(Make_Pattern_Attack_Far(pSequence_Attacks_Far)))
@@ -446,6 +485,88 @@ HRESULT CArmored_Troll::Make_Alive(_Inout_ CSelector* pSelector)
 	catch (const _tchar* pErrorTag)
 	{
 		wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed Make_Alive : \n");
+		wstrErrorMSG += pErrorTag;
+		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
+
+		ENDINSTANCE;
+
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CArmored_Troll::Make_Flipendo(_Inout_ CSequence* pSequence)
+{
+	BEGININSTANCE;
+
+	try
+	{
+		if (nullptr == pSequence)
+			throw TEXT("Parameter pSequence is nullptr");
+
+		/* Create Child Behaviors */
+		CAction* pAction_Club_Face_Enter = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Club_Face_Enter)))
+			throw TEXT("Failed Create_Behavior pAction_Club_Face_Enter");
+		CAction* pAction_Stun_Loop = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Stun_Loop)))
+			throw TEXT("Failed Create_Behavior pAction_Stun_Loop");
+		CAction* pAction_Club_Face_End = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Club_Face_End)))
+			throw TEXT("Failed Create_Behavior pAction_Club_Face_End");
+
+		CWait* pTsk_Wait = { nullptr };
+		if (FAILED(Create_Behavior(pTsk_Wait)))
+			throw TEXT("Failed Create_Behavior pTsk_Wait");
+
+		/* Set Decorators */
+		pSequence->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_bool* pIsOverheadAction = { nullptr };
+				_uint* pCurrentSpell = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("isOverheadAction", pIsOverheadAction)))
+					return false;
+				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pCurrentSpell)))
+					return false;
+
+				return true == *pIsOverheadAction && (BUFF_FLIPENDO & *pCurrentSpell);
+			});
+		pSequence->Add_End_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_uint* pCurrentSpell = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pCurrentSpell)))
+					return false;
+
+				if (BUFF_FLIPENDO & *pCurrentSpell)
+					*pCurrentSpell ^= BUFF_FLIPENDO;
+
+				return true;
+			});
+
+		/* Set Options */
+		pAction_Club_Face_Enter->Set_Options(TEXT("Club_Face_Enter"), m_pModelCom);
+		pAction_Stun_Loop->Set_Options(TEXT("Stun_Knee_Loop"), m_pModelCom, true);
+		pAction_Club_Face_End->Set_Options(TEXT("Club_Face_End"), m_pModelCom);
+		pTsk_Wait->Set_Timer(3.f);
+
+		/* Assemble Behaviors */
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Club_Face_Enter"), pAction_Club_Face_Enter)))
+			throw TEXT("Failed Assemble_Behavior Action_Club_Face_Enter");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Stun_Loop"), pAction_Stun_Loop)))
+			throw TEXT("Failed Assemble_Behavior Action_Stun_Loop");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Club_Face_End"), pAction_Club_Face_End)))
+			throw TEXT("Failed Assemble_Behavior Action_Club_Face_End");
+
+		if (FAILED(pAction_Stun_Loop->Assemble_Behavior(TEXT("Tsk_Wait"), pTsk_Wait)))
+			throw TEXT("Failed Assemble_Behavior Tsk_Wait");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed Make_Flipendo : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
 		__debugbreak();
@@ -532,8 +653,8 @@ HRESULT CArmored_Troll::Make_Attack_Degree(_Inout_ CSequence* pSequence)
 
 		/* Set Options */
 		pSelector_Degree->Set_Option(1.5f);
-		pTsk_Check_Distance->Set_Transform(m_pTransform);
-		pTsk_Check_Degree->Set_Transform(m_pTransform);
+		pTsk_Check_Distance->Set_Option(m_pTransform);
+		pTsk_Check_Degree->Set_Option(m_pTransform);
 
 		/* Assemble Behaviors */
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Tsk_Check_Distance"), pTsk_Check_Distance)))
@@ -635,7 +756,7 @@ HRESULT CArmored_Troll::Make_Pattern_Attack_Far(_Inout_ CSequence* pSequence)
 			});
 
 		/* Set Options */
-		pCheck_Distance->Set_Transform(m_pTransform);
+		pCheck_Distance->Set_Option(m_pTransform);
 
 		/* Assemble Behaviors */
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Check_Distance"), pCheck_Distance)))
@@ -791,7 +912,7 @@ HRESULT CArmored_Troll::Make_Taunt_Degree(_Inout_ CSequence* pSequence)
 		pAction_Left_180->Set_Options(TEXT("Taunt_Left_180"), m_pModelCom);
 		pAction_Right_180->Set_Options(TEXT("Taunt_Right_180"), m_pModelCom);
 
-		pTsk_Check_Degree->Set_Transform(m_pTransform);
+		pTsk_Check_Degree->Set_Option(m_pTransform);
 
 		/* Assemble Behaviors */
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Tsk_Check_Degree"), pTsk_Check_Degree)))
@@ -1407,14 +1528,14 @@ HRESULT CArmored_Troll::Make_Pattern_Attack_BackHnd(_Inout_ CSequence* pSequence
 			});
 
 		/* Set Options */
-		pCheck_Distance->Set_Transform(m_pTransform);
+		pCheck_Distance->Set_Option(m_pTransform);
 		pAttack_Swing->Set_Options(TEXT("Attack_Swing_Front_BackHnd"), m_pModelCom);
 		pAttack_1Step_Swing->Set_Options(TEXT("Attack_1Step_Swing_Front_BackHnd"), m_pModelCom);
 		pAttack_2Step_Swing->Set_Options(TEXT("Attack_2Step_Swing_Front_BackHnd"), m_pModelCom);
 
-		pTsk_LookAt_1->Set_Transform(m_pTransform);
-		pTsk_LookAt_2->Set_Transform(m_pTransform);
-		pTsk_LookAt_3->Set_Transform(m_pTransform);
+		pTsk_LookAt_1->Set_Option(m_pTransform);
+		pTsk_LookAt_2->Set_Option(m_pTransform);
+		pTsk_LookAt_3->Set_Option(m_pTransform);
 
 		/* Assemble Behaviors */
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Check_Distance"), pCheck_Distance)))
@@ -1508,12 +1629,12 @@ HRESULT CArmored_Troll::Make_Pattern_Attack_ForHnd(_Inout_ CSequence* pSequence)
 			});
 
 		/* Set Options */
-		pCheck_Distance->Set_Transform(m_pTransform);
+		pCheck_Distance->Set_Option(m_pTransform);
 		pAttack_Swing->Set_Options(TEXT("Attack_Swing_Front_ForHnd"), m_pModelCom);
 		pAttack_Step_Swing->Set_Options(TEXT("Attack_Step_Swing_Front_ForHnd"), m_pModelCom);
 
-		pTsk_LookAt_1->Set_Transform(m_pTransform);
-		pTsk_LookAt_2->Set_Transform(m_pTransform);
+		pTsk_LookAt_1->Set_Option(m_pTransform);
+		pTsk_LookAt_2->Set_Option(m_pTransform);
 
 		/* Assemble Behaviors */
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Check_Distance"), pCheck_Distance)))
@@ -1613,9 +1734,8 @@ HRESULT CArmored_Troll::Make_Pattern_Attack_Run(_Inout_ CSequence* pSequence)
 
 		/* Set Options */
 		pAction_Run_Loop->Set_Options(TEXT("Run_Loop"), m_pModelCom, true, 0.f, false, false);
-		pTsk_LookAt->Set_Transform(m_pTransform);
-		pTsk_Check_Distance->Set_Option(7.f, true);
-		pTsk_Check_Distance->Set_Transform(m_pTransform);
+		pTsk_LookAt->Set_Option(m_pTransform);
+		pTsk_Check_Distance->Set_Option(m_pTransform, true, 7.f, true);
 		pSequence_Attack_Swing_BackHnd->Set_Attack_Action_Options(TEXT("Attack_Run_Swing_Front_BackHnd"), m_pModelCom);
 		pSequence_Attack_Swing_BackHnd->Set_Attack_Option(7.f);
 		pSequence_Attack_Swing_ForHnd->Set_Attack_Action_Options(TEXT("Attack_Run_Swing_Front_ForHnd"), m_pModelCom);
@@ -1707,8 +1827,8 @@ HRESULT CArmored_Troll::Make_Pattern_Attack_Charge(_Inout_ CSelector* pSelector)
 		/* Set Decorations */
 
 		/* Set Options */
-		pTsk_LookAt_1->Set_Transform(m_pTransform);
-		pTsk_LookAt_2->Set_Transform(m_pTransform);
+		pTsk_LookAt_1->Set_Option(m_pTransform);
+		pTsk_LookAt_2->Set_Option(m_pTransform);
 		pAction_Charge_Enter->Set_Options(TEXT("Attack_Charge_Enter"), m_pModelCom);
 		pAction_Charge_Loop->Set_Options(TEXT("Attack_Charge_Loop"), m_pModelCom, true, 0.f, false, false);
 		pAction_Charge_End->Set_Options(TEXT("Attack_Charge_End_Turn_Left_180"), m_pModelCom);
@@ -1804,7 +1924,7 @@ HRESULT CArmored_Troll::Make_Turns(_Inout_ CSequence* pSequence)
 		pAction_Left_180->Set_Options(TEXT("Idle_Turn_Left_180"), m_pModelCom);
 		pAction_Right_180->Set_Options(TEXT("Idle_Turn_Right_180"), m_pModelCom);
 
-		pTsk_Check_Degree->Set_Transform(m_pTransform);
+		pTsk_Check_Degree->Set_Option(m_pTransform);
 
 		/* Assemble Behaviors */
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Tsk_Check_Degree"), pTsk_Check_Degree)))
@@ -1908,7 +2028,7 @@ HRESULT CArmored_Troll::Make_Turn_Run(_Inout_ CSequence* pSequence)
 		pAction_Left_180->Set_Options(TEXT("Turn_Start_Run_Left_180"), m_pModelCom);
 		pAction_Right_180->Set_Options(TEXT("Turn_Start_Run_Right_180"), m_pModelCom);
 
-		pTsk_Check_Degree->Set_Transform(m_pTransform);
+		pTsk_Check_Degree->Set_Option(m_pTransform);
 
 		/* Assemble Behaviors */
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Tsk_Check_Degree"), pTsk_Check_Degree)))
