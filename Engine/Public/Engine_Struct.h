@@ -27,7 +27,7 @@ namespace Engine
 
 	typedef struct tagFrame
 	{
-		enum KEYFRAMETYPE {KF_SPEED,KF_NOTIFY,KF_SOUND,KF_END};
+		enum KEYFRAMETYPE {KF_SPEED,KF_NOTIFY,KF_SOUND,KF_PARTICLE,KF_END};
 
 		tagFrame() {}
 		tagFrame(const tagFrame& rhs)
@@ -70,6 +70,27 @@ namespace Engine
 		}
 		wchar_t wszSoundTag[MAX_PATH] = {};
 	}SOUNDFRAME;
+
+	typedef struct tagParticleFrame : KEYFRAME
+	{
+		tagParticleFrame() {}
+		tagParticleFrame(const tagParticleFrame& rhs)
+			: tagFrame(rhs)
+		{
+			lstrcpy(wszParticleTag, rhs.wszParticleTag);
+			iBoneIndex = rhs.iBoneIndex;
+			OffsetMatrix = rhs.OffsetMatrix;
+			//BindBoneMatrix = rhs.BindBoneMatrix;
+		}
+		wchar_t wszParticleTag[MAX_PATH] = {};
+		// 파티클이 재생될 위치를 지정하기 위함임.
+		// 붙을 뼈의 인덱스를 저장함.
+		_uint	   iBoneIndex = {0};
+		// 얘는 툴에서 불러올때 나올거임.
+		const _float4x4* BindBoneMatrix = { nullptr };
+		// 얘는 툴에서 지정해주자.
+		_float4x4  OffsetMatrix = {};
+	}PARTICLEFRAME;
 
 	typedef struct tagAnimationDesc 
 	{

@@ -81,7 +81,7 @@ HRESULT CLevel_Tool::Ready_For_Layer_Light(const _tchar* pLayerTag)
 	LightDesc.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
 	LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
 	LightDesc.eType = CLight::TYPE_DIRECTIONAL;
-	pGameInstance->Add_Lights(_float(g_iWinSizeX), _float(g_iWinSizeY), LightDesc);
+	pGameInstance->Add_Light(LightDesc);
 	ENDINSTANCE
 	return S_OK;
 }

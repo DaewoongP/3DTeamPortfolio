@@ -13,6 +13,7 @@ CDugbog_Tongue_Item::CDugbog_Tongue_Item(const CDugbog_Tongue_Item& rhs)
 HRESULT CDugbog_Tongue_Item::Initialize_Prototype(_uint iLevel)
 {
 	// 아이템 정보
+	m_ItemCreateDesc.eItemId = ITEM_ID_DUGBOG_TONGUE;
 	m_ItemCreateDesc.wstrKoreanName = TEXT("더그보그 혀");
 	m_ItemCreateDesc.wstrUIPath = TEXT("../../Resources/UI/Game/UI/Icons/Ingredients/UI_T_DugbogTongue.png");
 	m_ItemCreateDesc.iCost = 70;

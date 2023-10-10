@@ -14,6 +14,8 @@
 #include "Treasure_Chest.h"
 #include "Potion_Station.h"
 #include "Gatherer.h"
+#include "Gull.h"
+#include "Door.h"
 
 CMain1_Loader::CMain1_Loader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice(pDevice)
@@ -87,6 +89,9 @@ HRESULT CMain1_Loader::Loading()
 		break;
 	case LEVEL_SMITH:
 		hr = Loading_For_Hogsmeade(LEVEL_SMITH);
+		break;
+	case LEVEL_SKY:
+		hr = Loading_For_Sky(LEVEL_SKY);
 		break;
 	case LEVEL_SANCTUM:
 		hr = Loading_For_Sanctum(LEVEL_SANCTUM);
@@ -203,6 +208,27 @@ HRESULT CMain1_Loader::Loading_For_Hogsmeade(LEVELID eLevelID)
 	return S_OK;
 }
 
+HRESULT CMain1_Loader::Loading_For_Sky(LEVELID eLevelID)
+{
+	try
+	{
+		if (FAILED(Loading_Map_Object(TEXT("../../Resources/GameData/MapData/MapData5.ddd"), eLevelID)))
+			throw TEXT("Map Object");
+
+		if (FAILED(Loading_Map_Object_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins5.ddd"), eLevelID)))
+			throw TEXT("Map Object_Ins");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("Failed Add_Prototype : ");
+		wstrErrorMSG += pErrorTag;
+		MessageBox(nullptr, wstrErrorMSG.c_str(), TEXT("System Message"), MB_OK);
+		__debugbreak();
+		return E_FAIL;
+	}
+	
+	return S_OK;
+}
 HRESULT CMain1_Loader::Loading_For_Sanctum(LEVELID eLevelID)
 {
 	try
@@ -372,13 +398,23 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath, LEVELID 
 
 	/* For.Prototype_GameObject_Potion_Station */
 	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_Potion_Station"),
-		CPotion_Station::Create(m_pDevice, m_pContext))))
+		CPotion_Station::Create(m_pDevice, m_pContext, eID))))
 		throw TEXT("Prototype_GameObject_Potion_Station");
 
 	/* For.Prototype_GameObject_Gatherer */
 	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_Gatherer"),
 		CGatherer::Create(m_pDevice, m_pContext))))
 		throw TEXT("Prototype_GameObject_Gatherer");
+
+	/* For.Prototype_GameObject_Gull */
+	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_Gull"),
+		CGull::Create(m_pDevice, m_pContext))))
+		throw TEXT("Prototype_GameObject_Gull");
+
+	/* For.Prototype_GameObject_Door */
+	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_Door"),
+		CDoor::Create(m_pDevice, m_pContext))))
+		throw TEXT("Prototype_GameObject_Door");
 
 	HANDLE hFile = CreateFile(pMapObjectPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
@@ -432,7 +468,11 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath, LEVELID 
 
 		wstring szDirectoryPath = modelPath;
 		modelPath += modelName;
-		modelPath += TEXT(".dat");
+
+		if(0 == lstrcmp(modelName.c_str(), TEXT("Anim_Gull")))
+			modelPath += TEXT(".gcm");
+		else
+			modelPath += TEXT(".dat");
 
 		// 비교해야되는 문자열
 		wstring wsTreasureChestName(TEXT("Anim_TreasureChest"));
@@ -440,27 +480,20 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath, LEVELID 
 		wstring wsHorklump(TEXT("Anim_Horklump"));
 		wstring wsLeapingToadStools(TEXT("Anim_LeapingToadStools"));
 		wstring wsLeech(TEXT("Anim_Leech"));
+		wstring wsGull(TEXT("Anim_Gull"));
 
-		// 보물상자
-		if (0 == lstrcmp(modelName.c_str(), wsTreasureChestName.c_str()))
-		{
-			if (FAILED(pGameInstance->Add_Prototype(eID, LoadDesc.wszTag,
-				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, modelPath.c_str()), true)))
-			{
-				MSG_BOX("Failed to Create New Model Prototype(TreasureChest)");
-			}
-		}
-
-		// 채집물
-		else if (0 == lstrcmp(modelName.c_str(), wsAshwinderEggs.c_str()) ||
+		// Anim이 있는 맵 오브젝트
+		if (0 == lstrcmp(modelName.c_str(), wsTreasureChestName.c_str()) ||
+			0 == lstrcmp(modelName.c_str(), wsAshwinderEggs.c_str()) ||
 			0 == lstrcmp(modelName.c_str(), wsHorklump.c_str()) ||
 			0 == lstrcmp(modelName.c_str(), wsLeapingToadStools.c_str()) ||
-			0 == lstrcmp(modelName.c_str(), wsLeech.c_str()))
+			0 == lstrcmp(modelName.c_str(), wsLeech.c_str()) ||
+			0 == lstrcmp(modelName.c_str(), wsGull.c_str()))
 		{
 			if (FAILED(pGameInstance->Add_Prototype(eID, LoadDesc.wszTag,
 				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, modelPath.c_str()), true)))
 			{
-				MSG_BOX("Failed to Create New Model Prototype(Gatherer)");
+				MSG_BOX("Failed to Create New Model Prototype(Anim)");
 			}
 		}
 
@@ -470,7 +503,7 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath, LEVELID 
 			if (FAILED(pGameInstance->Add_Prototype(eID, LoadDesc.wszTag,
 				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, modelPath.c_str()), true)))
 			{
-				MSG_BOX("Failed to Create New Model Prototype");
+				MSG_BOX("Failed to Create New Model Prototype(MapObject)");
 			}
 		}		
 

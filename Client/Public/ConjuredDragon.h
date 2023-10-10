@@ -18,6 +18,7 @@ END
 
 BEGIN(Client)
 class CAction;
+class CEnergyBall;
 END
 
 BEGIN(Client)
@@ -46,6 +47,12 @@ private:
 	_bool m_isBreakInvincible = { false };
 	void Update_Invincible(const _float& fTimeDelta);
 
+private: /* 구체 패턴 관련 함수 */
+	CEnergyBall* m_pEnergyBall;
+	_float m_fSpawnBallTimeAcc = { 0.f };
+	void Spawn_EnergyBall(const _float& fTimeDelta);
+	_bool Break_Invincible(const _float& fTimeDelta);
+
 private: /* 사망처리 전용 함수 */
 	_float m_fDeadTimeAcc = { 0.f };
 	void DeathBehavior(const _float& fTimeDelta);
@@ -59,7 +66,6 @@ private:
 private: /* 페이즈 관련 함수 */
 	_bool m_isPhaseOne = { true };
 	_bool m_isPhaseTwo = { false };
-	_bool m_isSpawnPhaseTwo = { false };
 	void Check_Phase();
 
 private:
@@ -79,7 +85,14 @@ private: /* 행동 묶음들 */
 	HRESULT Make_Air_Pattern(_Inout_ CSelector* pSelector);
 
 	/* Ground Patterns */
+	HRESULT Make_Ground_Turns(_Inout_ CSequence* pSequence);
+	HRESULT Make_Ground_Attacks(_Inout_ CSequence* pSequence);
 
+	HRESULT Make_Ground_Attacks_Melee(_Inout_ CSequence* pSequence);
+	HRESULT Make_Ground_Attacks_Range(_Inout_ CSequence* pSequence);
+	HRESULT Make_Ground_Attack_Pulse(_Inout_ CSequence* pSequence);
+
+	HRESULT Make_Ground_Charge(_Inout_ CSequence* pSequence);
 
 	/* Air Patterns */
 	HRESULT Make_Air_Break_Invincible(_Inout_ CSequence* pSequence);

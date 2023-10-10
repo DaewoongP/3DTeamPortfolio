@@ -37,7 +37,10 @@ private:
 public:
 	HRESULT	Set_ItemCount(vector<vector<CItem*>>& pItems);
 	_uint	Set_CurTapItem();
+	void	Update_PotionCount(const vector<vector<CTool*>>& pPotions);
 
+private:
+	void Update_TextCount(const vector<vector<CTool*>>& pPotions, POTIONTAP ePotionTap);
 
 private:
 	vector<CUI_Back*>				m_pIcons;

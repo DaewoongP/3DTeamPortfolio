@@ -68,7 +68,7 @@ void CField_Guide::Tick(_float fTimeDelta)
 		CGameInstance* pGameInstance = CGameInstance::GetInstance();
 		Safe_AddRef(pGameInstance);
 
-		m_pMenu = dynamic_cast<CMain_Menu*>(pGameInstance->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Menu_UI"), TEXT("GameObject_UI_Main_Menu")));
+		m_pMenu = dynamic_cast<CMain_Menu*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Menu_UI"), TEXT("GameObject_UI_Main_Menu")));
 		Safe_AddRef(m_pMenu);
 
 		Safe_Release(pGameInstance);
@@ -94,14 +94,14 @@ HRESULT CField_Guide::Add_Prototype()
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Effect_Back"),
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Effect_Back"),
 		CUI_Effect_Back::Create(m_pDevice, m_pContext), true)))
 	{
 		Safe_Release(pGameInstance);
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Back"),
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Back"),
 		CUI_Back::Create(m_pDevice, m_pContext), true)))
 	{
 		Safe_Release(pGameInstance);
@@ -125,7 +125,7 @@ HRESULT CField_Guide::Add_Components(wstring wszTag)
 
 	wstring frame = TEXT("Com_UI_Effect_Back_Frame_");
 	frame += wszTag;
-	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Effect_Back"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Effect_Back"),
 		frame.c_str(), reinterpret_cast<CComponent**>(&pFrame))))
 	{
 		MSG_BOX("Com_FieldGuide : Failed Clone Component (Com_UI_Effect_Back_Frame)");
@@ -137,7 +137,7 @@ HRESULT CField_Guide::Add_Components(wstring wszTag)
 
 	wstring main = TEXT("Com_UI_Back_Main_");
 	main += wszTag;
-	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Effect_Back"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Effect_Back"),
 		main.c_str(), reinterpret_cast<CComponent**>(&pMain))))
 	{
 		MSG_BOX("Com_FieldGuide : Failed Clone Component (Com_UI_Back_Frame)");
@@ -149,7 +149,7 @@ HRESULT CField_Guide::Add_Components(wstring wszTag)
 
 	wstring back = TEXT("Com_UI_Back_Back_");
 	back += wszTag;
-	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Back"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Back"),
 		back.c_str(), reinterpret_cast<CComponent**>(&pBack))))
 	{
 		MSG_BOX("Com_FieldGuide : Failed Clone Component (Com_UI_Back_Number)");
@@ -160,7 +160,7 @@ HRESULT CField_Guide::Add_Components(wstring wszTag)
 
 	wstring line = TEXT("Com_UI_Back_Line_");
 	line += wszTag;
-	if (FAILED(CComposite::Add_Component(LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Back"),
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Back"),
 		line.c_str(), reinterpret_cast<CComponent**>(&pLine))))
 	{
 		MSG_BOX("Com_FieldGuide : Failed Clone Component (Com_UI_Back_Number)");

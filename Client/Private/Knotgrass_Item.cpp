@@ -13,6 +13,7 @@ CKnotgrass_Item::CKnotgrass_Item(const CKnotgrass_Item& rhs)
 HRESULT CKnotgrass_Item::Initialize_Prototype(_uint iLevel)
 {
 	// 아이템 정보
+	m_ItemCreateDesc.eItemId = ITEM_ID_KNOTGRASS;
 	m_ItemCreateDesc.wstrKoreanName = TEXT("마디풀");
 	m_ItemCreateDesc.wstrUIPath = TEXT("../../Resources/UI/Game/UI/Icons/Plants/UI_T_Knotgrass_Byproduct.png");
 	m_ItemCreateDesc.iCost = 50;

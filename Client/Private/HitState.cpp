@@ -53,6 +53,8 @@ void CHitState::OnStateEnter(void* _pArg)
 	*m_StateMachineDesc.pisFinishAnimation = false;
 
 	Set_Dir();
+
+	*m_StateMachineDesc.pLumosOn = false;
 }
 
 void CHitState::OnStateTick()
@@ -177,21 +179,25 @@ void CHitState::Set_Dir()
 		case Client::CHitState::HITDIR_FRONT:
 		{
 			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Rct_Hit_Bwd_anm"));
+			Change_Animation(TEXT("Hu_Rct_Hit_Bwd_anm"), false);
 		}
 		break;
 		case Client::CHitState::HITDIR_BACK:
 		{
 			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Rct_Hit_Fwd_anm"));
+			Change_Animation(TEXT("Hu_Rct_Hit_Fwd_anm"), false);
 		}
 		break;
 		case Client::CHitState::HITDIR_RIGHT:
 		{
 			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Rct_Hit_Lft_anm"));
+			Change_Animation(TEXT("Hu_Rct_Hit_Lft_anm"), false);
 		}
 		break;
 		case Client::CHitState::HITDIR_LEFT:
 		{
 			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Rct_Hit_Rht_anm"));
+			Change_Animation(TEXT("Hu_Rct_Hit_Rht_anm"), false);
 		}
 		break;
 		case Client::CHitState::HITDIR_END:
@@ -223,11 +229,13 @@ void CHitState::Set_Dir()
 		case Client::CHitState::POWERFULHITDIR_FRONT:
 		{
 			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Rct_KnckDn_Hvy_01_anm"));
+			Change_Animation(TEXT("Hu_Rct_KnckDn_Hvy_01_anm"), false);
 		}
 		break;
 		case Client::CHitState::POWERFULHITDIR_BACK:
 		{
 			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Rct_KnckDn_Hvy_Fwd_01_anm"));
+			Change_Animation(TEXT("Hu_Rct_KnckDn_Hvy_Fwd_01_anm"), false);
 		}
 		break;
 		case Client::CHitState::POWERFULHITDIR_END:
@@ -272,11 +280,13 @@ void CHitState::PowerfulHit_Tick()
 			case Client::CHitState::POWERFULHITDIR_FRONT:
 			{
 				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Rct_KnckDn_Hvy_Splat_01_anm"));
+				Change_Animation(TEXT("Hu_Rct_KnckDn_Hvy_Splat_01_anm"), false);
 			}
 				break;
 			case Client::CHitState::POWERFULHITDIR_BACK:
 			{
 				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Rct_KnckDn_Hvy_Fwd_Splat_anm"));
+				Change_Animation(TEXT("Hu_Rct_KnckDn_Hvy_Fwd_Splat_anm"), false);
 			}
 				break;
 			case Client::CHitState::POWERFULHITDIR_END:
@@ -300,11 +310,13 @@ void CHitState::PowerfulHit_Tick()
 			case Client::CHitState::POWERFULHITDIR_FRONT:
 			{
 				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Rct_Knockdown_Bwd_Getup_anm"));
+				Change_Animation(TEXT("Hu_Rct_Knockdown_Bwd_Getup_anm"), false);
 			}
 			break;
 			case Client::CHitState::POWERFULHITDIR_BACK:
 			{
 				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Rct_Knockdown_Fwd_Getup_anm"));
+				Change_Animation(TEXT("Hu_Rct_Knockdown_Fwd_Getup_anm"), false);
 			}
 			break;
 			case Client::CHitState::POWERFULHITDIR_END:

@@ -193,6 +193,13 @@ namespace Engine
 		wchar_t wszSoundTag[MAX_PATH] = {};
 	}SOUNDFRAME_GCM;
 
+	typedef struct tagParticleFrame_GCM : KEYFRAME_GCM
+	{
+		wchar_t wszParticleTag[MAX_PATH] = {};
+		_uint	   iBoneIndex = { 0 };
+		_float4x4  OffsetMatrix = {};
+	}PARTICLEFRAME_GCM;
+
 	//노티파이엔 이름이 없어요.
 	typedef struct tagNotify_GCM
 	{

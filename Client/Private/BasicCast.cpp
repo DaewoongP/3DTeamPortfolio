@@ -154,6 +154,20 @@ void CBasicCast::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
 HRESULT CBasicCast::Reset(MAGICBALLINITDESC& InitDesc)
 {
 	__super::Reset(InitDesc);
+
+	// Light
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	CLight::LIGHTDESC LightDesc;
+	LightDesc.eType = CLight::TYPE_POINT;
+	LightDesc.fRange = 5.f;
+	LightDesc.vDiffuse = _float4(1.f, 0.f, 0.f, 1.f);
+	LightDesc.vAmbient = LightDesc.vDiffuse;
+	LightDesc.vSpecular = LightDesc.vDiffuse;
+	LightDesc.vPos = m_pTransform->Get_Position().TransCoord();
+	pGameInstance->Add_Light(LightDesc, &m_pLight);
+	Safe_Release(pGameInstance);
+
 	return S_OK;
 }
 

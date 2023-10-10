@@ -146,6 +146,32 @@ HRESULT CLevel_Smith::Ready_Layer_BackGround(const _tchar* pLayerTag)
 	return S_OK;
 }
 
+HRESULT CLevel_Smith::Ready_Layer_Monsters(const _tchar* pLayerTag)
+{
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	/* Add Scene : Main */
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
+	{
+		MSG_BOX("Failed Add Scene : (Scene_Main) in Level_Smith");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	_float4x4 Matrix = XMMatrixTranslation(86.f, 10.f, 129.f);
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH, TEXT("Prototype_GameObject_Armored_Troll"), pLayerTag, TEXT("GameObject_Armored_Troll"), &Matrix)))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_Armored_Troll)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	Safe_Release(pGameInstance);
+
+	return S_OK;
+}
+
 HRESULT CLevel_Smith::Ready_Lights()
 {
 	BEGININSTANCE;
@@ -160,7 +186,7 @@ HRESULT CLevel_Smith::Ready_Lights()
 	LightDesc.vAmbient = WHITEDEFAULT;
 	LightDesc.vSpecular = WHITEDEFAULT;
 
-	if (nullptr == pGameInstance->Add_Lights(_float(g_iWinSizeX), _float(g_iWinSizeY), LightDesc))
+	if (FAILED(pGameInstance->Add_Light(LightDesc, nullptr, true)))
 		return E_FAIL;
 
 	ENDINSTANCE;
@@ -218,6 +244,7 @@ HRESULT CLevel_Smith::Load_MapObject(const _tchar* pObjectFilePath)
 		// 비교해야되는 문자열
 		wstring wsTreasureChestName(TEXT("Anim_TreasureChest"));
 		wstring wsPotionStation(TEXT("SM_HM_Potion_Table"));
+		wstring wsShopDoor(TEXT("SM_HM_Shop_Door"));
 
 		// 보물상자
 		if (0 == lstrcmp(modelName.c_str(), wsTreasureChestName.c_str()))
@@ -251,6 +278,23 @@ HRESULT CLevel_Smith::Load_MapObject(const _tchar* pObjectFilePath)
 			}
 		}
 
+		// 문
+		else if (0 == lstrcmp(modelName.c_str(), wsShopDoor.c_str()))
+		{
+			_tchar wszobjName[MAX_PATH] = { 0 };
+			_stprintf_s(wszobjName, TEXT("GameObject_Door_%d"), (iObjectNum));
+
+			if (FAILED(pGameInstance->Add_Component(LEVEL_SMITH, LEVEL_SMITH,
+				TEXT("Prototype_GameObject_Door"), TEXT("Layer_BackGround"),
+				wszobjName, &MapObjectDesc)))
+			{
+				MSG_BOX("Failed to Clone Door in Level_Smith");
+				ENDINSTANCE;
+				return E_FAIL;
+			}
+		}
+
+		// 일반 맵오브젝트
 		else
 		{
 			_tchar wszobjName[MAX_PATH] = { 0 };

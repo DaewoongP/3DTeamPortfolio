@@ -251,6 +251,16 @@ HRESULT CCamera_Manager::Set_Camera(const _tchar* _CameraTag, _float _fLerpTime)
 	return S_OK;
 }
 
+_bool CCamera_Manager::Is_Current_Camera(const _tchar* _CameraTag)
+{
+	if (m_Cameras.end() == m_iterCamera || nullptr == m_pCurrentCamera)
+	{
+		return false;
+	}
+	
+	return !lstrcmp((*m_iterCamera).first, _CameraTag);
+}
+
 CCamera* CCamera_Manager::Find_Camera(const _tchar* _CameraTag)
 {
 	unordered_map<const _tchar*, class CCamera*>::iterator iter = find_if(m_Cameras.begin(), m_Cameras.end(), CTag_Finder(_CameraTag));
@@ -261,6 +271,8 @@ CCamera* CCamera_Manager::Find_Camera(const _tchar* _CameraTag)
 
 		return nullptr;
 	}
+
+	m_iterCamera = iter;
 
 	return iter->second;
 }

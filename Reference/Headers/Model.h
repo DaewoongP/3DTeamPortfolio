@@ -16,7 +16,7 @@ class ENGINE_DLL CModel : public CComponent
 {
 public:
 	enum TYPE { TYPE_NONANIM, TYPE_ANIM, TYPE_END };
-	enum ANIMTYPE { UPPERBODY, UNDERBODY, ANIM_END };
+	enum ANIMTYPE { UPPERBODY, UNDERBODY, OTHERBODY, ANIM_END };
 
 protected:
 	explicit CModel(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

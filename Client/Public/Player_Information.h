@@ -12,6 +12,8 @@ class CPotionTap;
 class CUI_Group_HP;
 class CUI_Group_Finisher;
 class CInventory;
+class CUI_Group_Finisher_Icon;
+class CUI_Group_Potion;
 
 class CPlayer_Information :
     public CComposite
@@ -87,6 +89,8 @@ private:
     CInventory* m_pInventory = { nullptr };
     CPotionTap* m_pPotionTap = { nullptr };
 
+    CUI_Group_Finisher_Icon* m_pFinisherIcon = { nullptr };
+    CUI_Group_Potion* m_pPotion = { nullptr };
 private:
     HRESULT Add_Components();
 

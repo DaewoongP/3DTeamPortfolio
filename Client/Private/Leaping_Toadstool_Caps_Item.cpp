@@ -13,6 +13,7 @@ CLeaping_Toadstool_Caps_Item::CLeaping_Toadstool_Caps_Item(const CLeaping_Toadst
 HRESULT CLeaping_Toadstool_Caps_Item::Initialize_Prototype(_uint iLevel)
 {
 	// ¾ÆÀÌÅÛ Á¤º¸
+	m_ItemCreateDesc.eItemId = ITEM_ID_LEAPING_TOADSTOOL_CAPS;
 	m_ItemCreateDesc.wstrKoreanName = TEXT("µ¶¹ö¼¸ °«");
 	m_ItemCreateDesc.wstrUIPath = TEXT("../../Resources/UI/Game/UI/Icons/Plants/UI_T_LeapingToadstool_Byproduct.png");
 	m_ItemCreateDesc.iCost = 50;

@@ -4,7 +4,7 @@
 #include "UI_Back.h"
 #include "UI_Font.h"
 #include "Item.h"
-
+#include "Tool.h"
 CUI_Potion_Tap::CUI_Potion_Tap(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
@@ -424,6 +424,20 @@ _uint CUI_Potion_Tap::Set_CurTapItem()
 	}
 
 	return -1;
+}
+
+void CUI_Potion_Tap::Update_TextCount(const vector<vector<CTool*>>& pPotions, POTIONTAP ePotionTap)
+{
+	wstring wstrNCount = to_wstring(pPotions[ePotionTap].size());
+	m_pFonts[ePotionTap]->Set_Text(wstrNCount);
+}
+
+void CUI_Potion_Tap::Update_PotionCount(const vector<vector<CTool*>>& pPotions)
+{
+	for (_uint i = 0; i < POTIONTAP_END; ++i)
+	{
+		Update_TextCount(pPotions, static_cast<POTIONTAP>(i));
+	}
 }
 
 CUI_Potion_Tap* CUI_Potion_Tap::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

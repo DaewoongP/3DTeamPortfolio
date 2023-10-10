@@ -67,7 +67,7 @@ public:
 	virtual void OnCollisionEnter(COLLEVENTDESC CollisionEventDesc) override;
 	virtual void OnCollisionExit(COLLEVENTDESC CollisionEventDesc) override;
 	virtual HRESULT Render() override;
-	virtual HRESULT Render_Depth() override;
+	virtual HRESULT Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix) override;
 
 public:
 	void Set_Protego_Collision(CTransform* pTransform, ATTACKTYPE eType) const {}
@@ -111,7 +111,7 @@ protected:
 	HRESULT Make_AI();
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
-	HRESULT SetUp_ShadowShaderResources();
+	HRESULT SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix);
 
 	HRESULT Make_Notifies() {}
 	HRESULT Add_Components_Level(_uint iCurrentLevelIndex) {}

@@ -239,18 +239,18 @@ PS_OUT PS_MAIN_BLURX(PS_IN In)
     float dy = 1.0f / (720.f / 2.f);
     
     float2 UV = 0;
-   if(g_fFocusDis<fViewZ)
-    {
-        for (int i = -6; i < 6; ++i)
-        {
-            UV = In.vTexUV + float2(0, dy * i);
-            vector SSAO = g_Texture.Sample(LinearSampler_Clamp, UV);
-            Out.vColor += BlurWeights[6 + i] * SSAO;
-        }
-        Out.vColor /= total6;
-    }
-    else
-        Out.vColor;
+   //if(g_fFocusDis<fViewZ)
+   // {
+   //     for (int i = -6; i < 6; ++i)
+   //     {
+   //         UV = In.vTexUV + float2(0, dy * i);
+   //         vector SSAO = g_Texture.Sample(LinearSampler_Clamp, UV);
+   //         Out.vColor += BlurWeights[6 + i] * SSAO;
+   //     }
+   //     Out.vColor /= total6;
+   // }
+   // else
+   //     Out.vColor;
     
     return Out;
 }

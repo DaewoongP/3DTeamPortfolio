@@ -63,6 +63,7 @@
 #include "Spider_Fang_Item.h"
 #include "Troll_Bogeys_Item.h"
 #include "Shrivelfig_Item.h"
+#include "Mongrel_Fur_Item.h"
 #pragma endregion
 
 
@@ -140,6 +141,9 @@ HRESULT CMain3_Loader::Loading()
 	case LEVEL_SMITH:
 		hr = Loading_For_Hogsmeade(LEVEL_SMITH);
 		break;
+	case LEVEL_SKY:
+		hr = Loading_For_Sky(LEVEL_SKY);
+		break;
 	case LEVEL_SANCTUM:
 		hr = Loading_For_Sanctum(LEVEL_SANCTUM);
 		break;
@@ -197,6 +201,11 @@ HRESULT CMain3_Loader::Loading_For_GreatHall(LEVELID eLevelID)
 }
 
 HRESULT CMain3_Loader::Loading_For_Hogsmeade(LEVELID eLevelID)
+{
+	return S_OK;
+}
+
+HRESULT CMain3_Loader::Loading_For_Sky(LEVELID eLevelID)
 {
 	return S_OK;
 }
@@ -521,6 +530,10 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 			CShrivelfig_Item::Create(m_pDevice, m_pContext, eLevelID))))
 			throw TEXT("Prototype_GameObject_Shrivelfig_Item");
 
+		/* For.Prototype_GameObject_Mongrel_Fur*/
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Mongrel_Fur"),
+			CMongrel_Fur_Item::Create(m_pDevice, m_pContext, eLevelID))))
+			throw TEXT("Prototype_GameObject_Mongrel_Fur");
 #pragma endregion
 	}
 	catch (const _tchar* pErrorTag)

@@ -107,7 +107,7 @@ void CMoveTurnState::Go_Start()
 		&& pGameInstance->Check_Timer(TEXT("Turn to Start Delay")))
 	{
 		m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Start_Fwd_anm"));
-
+		Change_Animation(TEXT("Hu_BM_RF_Jog_Start_Fwd_anm"));
 		Set_StateMachine(TEXT("Move Start"));
 	}
 

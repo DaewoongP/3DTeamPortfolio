@@ -47,24 +47,23 @@ void CPlayer_Information::Tick(_float fTimeDelta)
 
 	if (nullptr == m_pInventory)
 	{
-		CGameInstance* pGameInstacne = CGameInstance::GetInstance();
-		Safe_AddRef(pGameInstacne);
-
-		m_pInventory = static_cast<CInventory*>(pGameInstacne->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Inventory"), TEXT("GameObject_Inventory")));
+		CGameInstance* pGameInstance = CGameInstance::GetInstance();
+		Safe_AddRef(pGameInstance);
+		
+		m_pInventory = static_cast<CInventory*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Inventory"), TEXT("GameObject_Inventory")));
 		Safe_AddRef(m_pInventory);
 
-		Safe_Release(pGameInstacne);
+		Safe_Release(pGameInstance);
 	}
 
 	if (nullptr == m_pPotionTap)
 	{
-		CGameInstance* pGameInstacne = CGameInstance::GetInstance();
-		Safe_AddRef(pGameInstacne);
-
-		m_pPotionTap = static_cast<CPotionTap*>(pGameInstacne->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_UI"), TEXT("GameObject_Potion_Tap")));
+		CGameInstance* pGameInstance = CGameInstance::GetInstance();
+		Safe_AddRef(pGameInstance);
+		m_pPotionTap = static_cast<CPotionTap*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_UI"), TEXT("GameObject_Potion_Tap")));
 		Safe_AddRef(m_pPotionTap);
 
-		Safe_Release(pGameInstacne);
+		Safe_Release(pGameInstance);
 	}
 }
 
@@ -83,7 +82,7 @@ HRESULT CPlayer_Information::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Health"),
 		TEXT("Com_Health"), reinterpret_cast<CComponent**>(&m_pHealth), &HealthDesc)))
 	{
-		MSG_BOX("Failed CPlayer Add_Component : (Com_Health)");
+		MSG_BOX("Failed CPlayer_Information Add_Component : (Com_Health)");
 		__debugbreak();
 		return E_FAIL;
 	}
@@ -94,7 +93,7 @@ HRESULT CPlayer_Information::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Health"),
 		TEXT("Com_Finisher"), reinterpret_cast<CComponent**>(&m_pFinisher), &HealthDesc)))
 	{
-		MSG_BOX("Failed CPlayer Add_Component : (Com_Finisher)");
+		MSG_BOX("Failed CPlayer_Information Add_Component : (Com_Finisher)");
 		__debugbreak();
 		return E_FAIL;
 	}
@@ -111,7 +110,7 @@ HRESULT CPlayer_Information::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_HP"),
 		TEXT("Com_UI_Group_HP"), reinterpret_cast<CComponent**>(&m_pUI_Health), &HpDesc)))
 	{
-		MSG_BOX("Failed CPlayer Add_Component : (Com_UI_Group_HP)");
+		MSG_BOX("Failed CPlayer_Information Add_Component : (Com_UI_Group_HP)");
 		__debugbreak();
 		return E_FAIL;
 	}
@@ -126,11 +125,41 @@ HRESULT CPlayer_Information::Add_Components()
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Finisher"),
 		TEXT("Com_UI_Group_Finisher"), reinterpret_cast<CComponent**>(&m_pUI_Finisher), &FinisherDesc)))
 	{
-		MSG_BOX("Failed CPlayer Add_Component : (Com_UI_Group_Finisher)");
+		MSG_BOX("Failed CPlayer_Information Add_Component : (Com_UI_Group_Finisher)");
 		__debugbreak();
 		return E_FAIL;
 	}
-	
+
+	/* Com_Potion_Tap */
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Potion_Tap"),
+		TEXT("Com_Potion_Tap"), reinterpret_cast<CComponent**>(&m_pPotionTap))))
+	{
+		MSG_BOX("Failed CPlayer_Information Add_Component : (Com_UI_Group_Finisher)");
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	_tchar szFilePath[MAX_PATH] = TEXT("");
+	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Potion.uidata"));
+	/* Com_UI_Group_Potion */
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Potion"),
+		TEXT("Com_UI_Group_Potion"), reinterpret_cast<CComponent**>(&m_pPotion), szFilePath)))
+	{
+		MSG_BOX("Failed CPlayer_Information Add_Component : (Com_UI_Group_Potion)");
+		__debugbreak();
+		return E_FAIL;
+	}
+
+	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Finisher_Icon.uidata"));
+	/* Com_UI_Group_Finisher_Icon */
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Finisher_Icon"),
+		TEXT("Com_UI_Group_Finisher_Icon"), reinterpret_cast<CComponent**>(&m_pFinisherIcon), szFilePath)))
+	{
+		MSG_BOX("Failed CPlayer_Information Add_Component : (Com_UI_Group_Finisher_Icon)");
+		__debugbreak();
+		return E_FAIL;
+	}
+
 	return S_OK;
 }
 
@@ -196,5 +225,7 @@ void CPlayer_Information::Free()
 		Safe_Release(m_pUI_Health);
 		Safe_Release(m_pInventory);
 		Safe_Release(m_pPotionTap);
+		Safe_Release(m_pFinisherIcon);
+		Safe_Release(m_pPotion);
 	}
 }

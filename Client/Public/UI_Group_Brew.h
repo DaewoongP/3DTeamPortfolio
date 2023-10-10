@@ -12,7 +12,10 @@ class CUI_Back;
 class CUI_Effect_Back;
 class CItem;
 class CUI_Group_Cursor;
-class CInvnetory;
+class CInventory;
+class CUI_Font;
+class CPotionTap;
+
 
 class CUI_Group_Brew final : public CGameObject
 {
@@ -79,6 +82,8 @@ private:
 
 private:
 	CInventory*					m_pInventory = { nullptr };
+	CPotionTap*					m_pPotionTap = { nullptr };
+
 	_bool						m_isOpen = { false };
 
 	BREWPOTION					m_eCurExplain = { BREW_END };

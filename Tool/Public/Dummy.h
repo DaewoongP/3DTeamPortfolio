@@ -30,7 +30,6 @@ public:
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
-	virtual HRESULT Render_Depth() override;
 
 public:
 	HRESULT Add_Model_Component(const wchar_t* wszShaderTag);

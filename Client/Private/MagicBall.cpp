@@ -48,12 +48,27 @@ HRESULT CMagicBall::Initialize(void* pArg)
 void CMagicBall::Tick(_float fTimeDelta)
 {
 	//실시간으로 갱신해줍니다.
+	__super::Tick(fTimeDelta);
+
 	if(m_pTargetWorldMatrix != nullptr)
 		m_CurrentTargetMatrix = (*m_pTargetOffsetMatrix) * (*m_pTargetWorldMatrix);
 	
 	if(m_pWeaponWorldMatrix != nullptr)
 		m_CurrentWeaponMatrix = (*m_pWeaponOffsetMatrix) * (*m_pWeaponWorldMatrix);
+		
+	//방향 알려줍니다.
+	if (!XMVector3Equal(m_vPostPosition, m_pTransform->Get_Position()))
+	{
+		m_vDir = m_pTransform->Get_Position() - m_vPostPosition;
+		m_vPostPosition = m_pTransform->Get_Position();
+	}
+	
+	//여기서 위치를 갱신해줍니다.
 	Tick_MagicBall_State(fTimeDelta);
+
+	if (nullptr != m_pLight)
+		m_pLight->Set_Position(m_pTransform->Get_Position().TransCoord());
+
 	__super::Tick(fTimeDelta);
 }
 
@@ -88,6 +103,8 @@ HRESULT CMagicBall::Reset(MAGICBALLINITDESC& InitDesc)
 	m_fLerpAcc = 0.0f;
 	m_pTarget = InitDesc.pTarget;
 	m_isChase = InitDesc.isChase;
+	m_isMouseTarget = InitDesc.isMouseTarget;
+	m_vTarget_Dir = InitDesc.vTarget_Dir;
 	if (InitDesc.pTarget != nullptr)
 	{
 		m_pTargetWorldMatrix = InitDesc.pTarget->Get_Transform()->Get_WorldMatrixPtr();
@@ -136,7 +153,6 @@ HRESULT CMagicBall::Reset(MAGICBALLINITDESC& InitDesc)
 	Set_ObjEvent(OBJ_NONE);
 	Set_MagicBallState(MAGICBALL_STATE_BEGIN);
 	
-	m_pRigidBody->Enable_Collision("Magic_Ball", this, &m_CollisionDesc);
 	m_pTransform->Set_WorldMatrix(XMMatrixIdentity());
 
 	for (int i = 0; i < EFFECT_STATE_END; i++)
@@ -150,7 +166,9 @@ HRESULT CMagicBall::Reset(MAGICBALLINITDESC& InitDesc)
 			m_ParticleVec[i].data()[j]->Disable();
 		}
 	}
+
 	m_fWandParticleDelayTimer = 0.1f;
+
 	return S_OK;
 }
 
@@ -223,24 +241,31 @@ void CMagicBall::Ready_StraightMove(CTrail* pTrail)
 	_float distance = 30.0f;
 	if (m_pTarget == nullptr)
 	{
-		BEGININSTANCE;
-		_float4 vMouseOrigin, vMouseDirection;
-		_float3 vMouseWorldPickPosition, vDirStartToPicked;
-		//마우스 피킹지점 찾기
-		if (FAILED(pGameInstance->Get_WorldMouseRay(m_pContext, g_hWnd, &vMouseOrigin, &vMouseDirection)))
+		if (m_isMouseTarget)
 		{
+			BEGININSTANCE;
+			_float4 vMouseOrigin, vMouseDirection;
+			_float3 vMouseWorldPickPosition, vDirStartToPicked;
+			//마우스 피킹지점 찾기
+			if (FAILED(pGameInstance->Get_WorldMouseRay(m_pContext, g_hWnd, &vMouseOrigin, &vMouseDirection)))
+			{
+				ENDINSTANCE;
+				return;
+			}
 			ENDINSTANCE;
-			return;
-		}
-		ENDINSTANCE;
 
-		//가상의 지점으로 레이를 쏨.
-		vMouseWorldPickPosition = vMouseOrigin.xyz() + vMouseDirection.xyz() * 100;
-		//방향을 구함
-		vDirStartToPicked = (vMouseWorldPickPosition - m_vStartPosition);
-		vDirStartToPicked.Normalize();
-		//목표지점
-		m_vEndPosition = m_vStartPosition + vDirStartToPicked * distance;
+			//가상의 지점으로 레이를 쏨.
+			vMouseWorldPickPosition = vMouseOrigin.xyz() + vMouseDirection.xyz() * 100;
+			//방향을 구함
+			vDirStartToPicked = (vMouseWorldPickPosition - m_vStartPosition);
+			vDirStartToPicked.Normalize();
+			//목표지점
+			m_vEndPosition = m_vStartPosition + vDirStartToPicked * distance;
+		}
+		else 
+		{
+			m_vEndPosition = m_vStartPosition + m_vTarget_Dir * distance;
+		}
 	}
 
 	m_fTimeScalePerDitance = distance / _float3(m_vEndPosition - m_vStartPosition).Length();
@@ -275,10 +300,15 @@ void CMagicBall::Ready_DrawMagic()
 
 void CMagicBall::Ready_CastMagic()
 {
-	//완드 이펙트 재생
+	//메인 이펙트 재생
 	for (int i = 0; i < m_TrailVec[EFFECT_STATE_MAIN].size(); i++)
 	{
 		m_TrailVec[EFFECT_STATE_MAIN].data()[i]->Enable(m_CurrentWeaponMatrix.Translation());
+	}
+	for (int i = 0; i < m_ParticleVec[EFFECT_STATE_WAND].size(); i++)
+	{
+		m_ParticleVec[EFFECT_STATE_MAIN].data()[i]->Enable(m_CurrentWeaponMatrix.Translation());
+		m_ParticleVec[EFFECT_STATE_MAIN].data()[i]->Play(m_CurrentWeaponMatrix.Translation());
 	}
 }
 
@@ -413,11 +443,12 @@ void CMagicBall::Tick_MagicBall_State(_float fTimeDelta)
 
 	case Client::CMagicBall::MAGICBALL_STATE_CASTMAGIC:
 	{
-		Set_StartPosition();
 		if (m_isFirstFrameInState)
 		{
+			Set_StartPosition();
 			Ready_CastMagic();
 			m_isFirstFrameInState = false;
+			m_pRigidBody->Enable_Collision("Magic_Ball", this, &m_CollisionDesc);
 		}
 
 		Tick_CastMagic(fTimeDelta);
@@ -431,6 +462,14 @@ void CMagicBall::Tick_MagicBall_State(_float fTimeDelta)
 			Ready_Dying();
 			m_pRigidBody->Disable_Collision("Magic_Ball");
 			m_isFirstFrameInState = false;
+
+			if (nullptr != m_pLight)
+			{
+				CGameInstance* pGameInstance = CGameInstance::GetInstance();
+				Safe_AddRef(pGameInstance);
+				pGameInstance->Return_Light(m_pLight);
+				Safe_Release(pGameInstance);
+			}
 		}
 
 		Tick_Dying(fTimeDelta);
@@ -442,8 +481,8 @@ void CMagicBall::Tick_MagicBall_State(_float fTimeDelta)
 		CMagicBallPool* pMagicBallPool = CMagicBallPool::GetInstance();
 		Safe_AddRef(pMagicBallPool);
 		pMagicBallPool->Return_Magic(this, m_CollisionDesc.eMagicTag);
-
 		Safe_Release(pMagicBallPool);
+
 		Set_ObjEvent(OBJ_DEAD);
 		break;
 	}
@@ -455,10 +494,16 @@ void CMagicBall::Set_StartPosition()
 	m_vStartPosition = m_CurrentWeaponMatrix.Translation();
 }
 
-void CMagicBall::Re_Set_StartEndLerpAcc(_float3 vStart, _float3 vEnd)
+void CMagicBall::Re_Set_StartEndLerpAcc(_float3 vStart, _float3 vDir)
 {
 	m_vStartPosition = vStart;
-	m_vEndPosition = vEnd;
+	m_vTarget_Dir = vDir;
+	m_isMouseTarget = false;
+	//dir 을 넣어줍니다.
+	m_pTarget = nullptr;
+	m_pTargetWorldMatrix = nullptr;
+	m_pTargetOffsetMatrix = nullptr;
+	m_isChase = false;
 	if(m_TrailVec[EFFECT_STATE_MAIN].size()>0)
 		Ready_SplineSpinMove(m_TrailVec[EFFECT_STATE_MAIN][0],_float2(0.2f, 0.2f),0.5f);
 	Set_MagicBallState_quiet(MAGICBALL_STATE_CASTMAGIC);
@@ -538,5 +583,6 @@ void CMagicBall::Free()
 
 		Safe_Release(m_pRenderer);
 		Safe_Release(m_pRigidBody);
+		Safe_Release(m_pLight);
 	}
 }

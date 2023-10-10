@@ -68,9 +68,6 @@ HRESULT CDarkWizard_M::Initialize_Level(_uint iCurrentLevelIndex)
 	m_pTransform->Set_Speed(10.f);
 	m_pTransform->Set_RigidBody(m_pRigidBody);
 	m_pTransform->Set_RotationSpeed(XMConvertToRadians(90.f));
-	m_HitMatrices[0] = m_pTransform->Get_WorldMatrixPtr();
-	m_HitMatrices[1] = m_pTransform->Get_WorldMatrixPtr();
-	m_HitMatrices[2] = m_pTransform->Get_WorldMatrixPtr();
 	return S_OK;
 }
 

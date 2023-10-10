@@ -86,6 +86,7 @@ HRESULT CGatherer::Initialize_Level(_uint iCurrentLevelIndex)
 	// 채집물 애니메이션이 공통적으로 0번이 뽑히는 모션임
 	// 1번이 IDLE이라고 생각할 수 있음
 	m_pModel->Set_CurrentAnimIndex(1);
+	m_pModel->Get_Animation(1)->Set_Loop(true);
 
 	// 플레이어 찾기
 	BEGININSTANCE;
@@ -125,20 +126,16 @@ void CGatherer::Tick(_float fTimeDelta)
 			switch (m_GatheringType)
 			{
 			case CGatherer::ASHWINDEREGG:
-				//m_pPlayerInformation->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_AshwinderEggs_Item"));
-				cout << "애쉬와인더 알 획득"<< '\n';
+				m_pPlayerInformation->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_ASHWINDER_EGGS);
 				break;
 			case CGatherer::HORKLUMP:
-				//m_pPlayerInformation->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_"));
-				cout << "후클럼프 즙 획득" << '\n';
+				m_pPlayerInformation->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_HORKLUMP_JUICE);
 				break;
 			case CGatherer::LEAPINGTOADSTOOLS:
-				//m_pPlayerInformation->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_"));
-				cout << "독버섯 갓 획득" << '\n';
+				m_pPlayerInformation->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_LEAPING_TOADSTOOL_CAPS);
 				break;
 			case CGatherer::LEECH:
-				//m_pPlayerInformation->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_"));
-				cout << "거머리 즙 획득" << '\n';
+				m_pPlayerInformation->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_LEECH_JUICE);
 				break;
 			}
 		}
@@ -168,7 +165,11 @@ void CGatherer::Late_Tick(_float fTimeDelta)
 
 	if (nullptr != m_pRenderer)
 	{
-		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+		// 후클럼프 모델일 경우 다른 Renderer에 넣어준다.
+		if (m_GatheringType == CGatherer::HORKLUMP)
+			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_GLOW, this);
+		else
+			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
 	}
 
@@ -192,7 +193,15 @@ HRESULT CGatherer::Render()
 		m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", iMeshCount, DIFFUSE);
 		m_pModel->Bind_Material(m_pShader, "g_NormalTexture", iMeshCount, NORMALS);
 
-		m_pShader->Begin("AnimMesh");
+		// 후클럼프 모델일 경우 Emissive 텍스처를 추가로 넣어준다.
+		if(m_GatheringType == CGatherer::HORKLUMP)
+			m_pModel->Bind_Material(m_pShader, "g_EmissiveTexture", iMeshCount, EMISSIVE);
+
+		// 후클럼프 모델일 경우 다른 패스로 그려준다.
+		if (m_GatheringType == CGatherer::HORKLUMP)
+			m_pShader->Begin("AnimMesh_E");
+		else
+			m_pShader->Begin("AnimMesh");
 
 		if (FAILED(m_pModel->Render(iMeshCount)))
 			return E_FAIL;
@@ -201,9 +210,9 @@ HRESULT CGatherer::Render()
 	return S_OK;
 }
 
-HRESULT CGatherer::Render_Depth()
+HRESULT CGatherer::Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix)
 {
-	if (FAILED(SetUp_ShadowShaderResources()))
+	if (FAILED(SetUp_ShadowShaderResources(LightViewMatrix, LightProjMatrix)))
 		return E_FAIL;
 
 	_uint		iNumMeshes = m_pModel->Get_NumMeshes();
@@ -272,15 +281,15 @@ HRESULT CGatherer::SetUp_ShaderResources()
 	return S_OK;
 }
 
-HRESULT CGatherer::SetUp_ShadowShaderResources()
+HRESULT CGatherer::SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix)
 {
 	BEGININSTANCE;
 
 	if (FAILED(m_pShadowShader->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
 		return E_FAIL;
-	if (FAILED(m_pShadowShader->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_LightTransformMatrix(CPipeLine::D3DTS_VIEW))))
+	if (FAILED(m_pShadowShader->Bind_Matrix("g_ViewMatrix", &LightViewMatrix)))
 		return E_FAIL;
-	if (FAILED(m_pShadowShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_LightTransformMatrix(CPipeLine::D3DTS_PROJ))))
+	if (FAILED(m_pShadowShader->Bind_Matrix("g_ProjMatrix", &LightProjMatrix)))
 		return E_FAIL;
 	if (FAILED(m_pShadowShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
 		return E_FAIL;

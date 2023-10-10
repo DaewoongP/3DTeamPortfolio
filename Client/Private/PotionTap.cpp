@@ -233,6 +233,7 @@ void CPotionTap::Add_Potion(POTIONTAP eType)
 		return;
 
 	m_pPotions[eType].push_back(pTool);
+	m_pUI_Potion_Tap->Update_PotionCount(m_pPotions);
 }
 
 void CPotionTap::Delete_Potion(POTIONTAP eType, _uint iIndex)
@@ -290,6 +291,7 @@ void CPotionTap::Use_Item(_float3 vPlayPos)
 	pTool->Use(vPlayPos);
 
 	Delete_Potion(m_eCurPotion, pTool);
+	m_pUI_Potion_Tap->Update_PotionCount(m_pPotions);
 
 	if (m_pPotions[m_eCurPotion].empty())
 	{

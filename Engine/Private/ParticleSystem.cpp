@@ -123,6 +123,19 @@ void CParticleSystem::Tick(_float _fTimeDelta)
 	if (false == IsEnable())
 		return;
 
+	if (m_isTrace)
+	{
+		_float4x4 PositionMatrix = m_TraceOffsetMatrix * (*m_pTraceBindBoneMatrix) * m_TracePivotMatrix * (*m_pTraceWorldMatrix);
+		m_pTransform->Set_Position(PositionMatrix.Translation());
+		
+		_float4x4 WorldMatrix = *m_pTraceWorldMatrix;
+		WorldMatrix.m[3][0] = 0;
+		WorldMatrix.m[3][1] = 0;
+		WorldMatrix.m[3][2] = 0;
+
+		Get_ShapeModuleRef().ShapeMatrix *= WorldMatrix;
+	}
+
 	// Stop버튼을 누른 후 모든 파티클들이 소멸하면 자동으로 Disable이 된다.
 	if (true == m_isStop && true == Is_AllDead())
 		Action_By_StopOption();

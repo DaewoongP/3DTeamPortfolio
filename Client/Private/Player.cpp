@@ -10,6 +10,7 @@
 
 #include "ProtegoState.h"
 #include "MagicCastingState.h"
+#include "RollState.h"
 
 #include "Armored_Troll.h"
 #include "MagicBall.h"
@@ -177,15 +178,34 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_iActionType = (_uint)ACTION_NONE;
 
 	m_pCustomModel->Change_Animation(TEXT("Hu_BM_RF_Idle_anm"));
+	m_pCustomModel->Change_Animation(TEXT("Hu_BM_RF_Idle_anm"), CModel::OTHERBODY);
 
 	m_vLevelInitPosition[LEVEL_CLIFFSIDE] = _float3(25.f, 3.f, 22.5f);
 	m_vLevelInitPosition[LEVEL_VAULT] = _float3(7.0f, 0.02f, 7.5f);
 	//m_vLevelInitPosition[LEVEL_SMITH] = _float3(30.f, 3.f, 15.f); // 기본 위치
 	m_vLevelInitPosition[LEVEL_SMITH] = _float3(94.5f, 7.2f, 78.f); // 포션 스테이션 바로 앞
+	m_vLevelInitPosition[LEVEL_SKY] = _float3(88.8f, 12.5f, 69.8f); // 포션 스테이션 바로 앞
 
 
 
 	m_fTargetViewRange = 1.0f;
+
+
+	//m_vecEaseList.resize(CEase::EASE_END);
+
+	//m_vecEaseList[CEase::IN_QUAD] = New ("IN_QUAD");
+
+	//IN_QUAD, OUT_QUAD, INOUT_QUAD_,
+	//	IN_SINE, OUT_SINE, INOUT_SINE,
+	//	IN_QUINT, OUT_QUINT, INOUT_QUINT,
+	//	IN_QUART, OUT_QUART, INOUT_QUART,
+	//	NONE_LINEAR, IN_LINEAR, OUT_LINEAR, INOUT_LINEAR,
+	//	IN_EXPO, OUT_EXPO, INOUT_EXPO,
+	//	IN_ELASTIC, OUT_ELASTIC, INOUT_ELASTIC,
+	//	IN_CUBIC, OUT_CUBIC, INOUT_CUBIC,
+	//	IN_CIRC, OUT_CIRC, INOUT_CIRC,
+	//	IN_BOUNCE, OUT_BOUNCE, INOUT_BOUNCE,
+	//	IN_BACK, OUT_BACK, INOUT_BACK,
 
 	return S_OK;
 }
@@ -210,13 +230,16 @@ void CPlayer::Tick(_float fTimeDelta)
 {
 	BEGININSTANCE;
 
-	if (pGameInstance->Get_DIKeyState(DIK_G, CInput_Device::KEY_DOWN))
+	//플레이어 카메라가 아니라면 
+	if (false == pGameInstance->Is_Current_Camera(TEXT("Player_Camera")))
 	{
-		m_pPlayer_Information->fix_HP(-10);
-		m_pPlayer_Information->Using_Fnisher();
+		ENDINSTANCE;
+
+		return;
 	}
 	
 	ENDINSTANCE;
+	
 
 	Update_Skill_CoolTime();
 
@@ -243,6 +266,7 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UNDERBODY);
+	m_pCustomModel->Play_Animation(fTimeDelta, CModel::OTHERBODY);
 
 
 	//루모스 업데이트
@@ -263,6 +287,18 @@ void CPlayer::Tick(_float fTimeDelta)
 
 void CPlayer::Late_Tick(_float fTimeDelta)
 {
+	BEGININSTANCE;
+
+	//플레이어 카메라가 아니라면 
+	if (false == pGameInstance->Is_Current_Camera(TEXT("Player_Camera")))
+	{
+		ENDINSTANCE;
+
+		return;
+	}
+
+	ENDINSTANCE;
+
 	__super::Late_Tick(fTimeDelta);
 
 	//m_pStateContext->Late_Tick(fTimeDelta);
@@ -288,7 +324,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 			return;
 		}
 
-		CEnemy* pEnemy = static_cast<CEnemy*>(m_pTarget);
+		CEnemy* pEnemy = dynamic_cast<CEnemy*>(m_pTarget);
 		if (nullptr != pEnemy)
 			pEnemy->Get_UI_Enemy_HP()->Late_Tick(fTimeDelta);
 	}
@@ -457,9 +493,9 @@ HRESULT CPlayer::Render()
 	return S_OK;
 }
 
-HRESULT CPlayer::Render_Depth()
+HRESULT CPlayer::Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix)
 {
-	if (FAILED(SetUp_ShadowShaderResources()))
+	if (FAILED(SetUp_ShadowShaderResources(LightViewMatrix, LightProjMatrix)))
 		return E_FAIL;
 
 	for (_uint iPartsIndex = 0; iPartsIndex < CCustomModel::MESH_END; ++iPartsIndex)
@@ -481,26 +517,26 @@ HRESULT CPlayer::Render_Depth()
 
 void CPlayer::Potion_Duration(_float fTimeDelta)
 {
-	if (m_isPowerUp)
-	{
-		m_pMaximaPotion->Duration(fTimeDelta);
-		if(!m_isPowerUp)
-		Safe_Release(m_pMaximaPotion);
+	//if (m_isPowerUp)
+	//{
+	//	m_pMaximaPotion->Duration(fTimeDelta);
+	//	if(!m_isPowerUp)
+	//	Safe_Release(m_pMaximaPotion);
 
-	}
+	//}
 
-	if (m_isDefUp)
-	{
-		m_pEdurusPotion->Duration(fTimeDelta);
-		if (!m_isDefUp)
-			Safe_Release(m_pEdurusPotion);
-	}
-	if (m_isInvisible)
-	{
-		m_pInvisibilityPotion->Duration(fTimeDelta);
-		if (!m_isInvisible)
-			Safe_Release(m_pInvisibilityPotion);
-	}
+	//if (m_isDefUp)
+	//{
+	//	m_pEdurusPotion->Duration(fTimeDelta);
+	//	if (!m_isDefUp)
+	//		Safe_Release(m_pEdurusPotion);
+	//}
+	//if (m_isInvisible)
+	//{
+	//	m_pInvisibilityPotion->Duration(fTimeDelta);
+	//	if (!m_isInvisible)
+	//		Safe_Release(m_pInvisibilityPotion);
+	//}
 	/*if (m_isFocusOn)
 	{
 		m_pFocusPotion->Duration(fTimeDelta);
@@ -517,6 +553,11 @@ void CPlayer::On_Maigc_Throw_Data(void* data) const
 	{
 		m_pFrncSpellToggle = static_cast<CMagicBall::COLLSIONREQUESTDESC*>(data)->Action;
 	}
+}
+
+_bool CPlayer::Is_Action_Camera_Playing()
+{
+	return !m_pPlayer_Camera->Is_Finish_Animation();
 }
 
 HRESULT CPlayer::Add_Components()
@@ -585,7 +626,7 @@ HRESULT CPlayer::Add_Components()
 	RigidBodyDesc.isStatic = false;
 	RigidBodyDesc.isTrigger = false;
 	RigidBodyDesc.isGravity = true;
-	RigidBodyDesc.vInitPosition = _float3(2.f, 2.f, 2.f);
+	RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
 	RigidBodyDesc.vInitRotation = m_pTransform->Get_Quaternion();
 	RigidBodyDesc.fStaticFriction = 0.f;
 	RigidBodyDesc.fDynamicFriction = 1.f;
@@ -690,15 +731,15 @@ HRESULT CPlayer::SetUp_ShaderResources()
 	return S_OK;
 }
 
-HRESULT CPlayer::SetUp_ShadowShaderResources()
+HRESULT CPlayer::SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix)
 {
 	BEGININSTANCE;
 
 	if (FAILED(m_pShadowShader->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
 		return E_FAIL;
-	if (FAILED(m_pShadowShader->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_LightTransformMatrix(CPipeLine::D3DTS_VIEW))))
+	if (FAILED(m_pShadowShader->Bind_Matrix("g_ViewMatrix", &LightViewMatrix)))
 		return E_FAIL;
-	if (FAILED(m_pShadowShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_LightTransformMatrix(CPipeLine::D3DTS_PROJ))))
+	if (FAILED(m_pShadowShader->Bind_Matrix("g_ProjMatrix", &LightProjMatrix)))
 		return E_FAIL;
 	if (FAILED(m_pShadowShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
 		return E_FAIL;
@@ -778,10 +819,12 @@ HRESULT CPlayer::Add_Magic()
 	}
 
 	// 아리스토모멘텀
+	// 속도 제어 마법입니다.
+	// 딜은 없습니다.
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
-		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
-		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicGroup = CMagic::MG_CONTROL;
+		magicInitDesc.eMagicType = CMagic::MT_YELLOW;
 		magicInitDesc.eMagicTag = ARRESTOMOMENTUM;
 		magicInitDesc.fInitCoolTime = 5.f;
 		magicInitDesc.iDamage = 0;
@@ -791,78 +834,89 @@ HRESULT CPlayer::Add_Magic()
 	}
 
 	// 아씨오
+	// 공중에 띄운채 끌어당기는 마법입니다.
+	// 딜은 없습니다.
 	{
 		magicInitDesc.eBuffType = BUFF_ACCIO;
-		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
-		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
+		magicInitDesc.eMagicType = CMagic::MT_PURPLE;
 		magicInitDesc.eMagicTag = ACCIO;
 		magicInitDesc.fInitCoolTime = 5.f;
-		magicInitDesc.iDamage = 10;
+		magicInitDesc.iDamage = 0;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 1.f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
 	// 디센도
+	// 땅에 박히게 하는 마법입니다.
+	// 딜은 약합니다.
 	{
 		magicInitDesc.eBuffType = BUFF_DESCENDO;
-		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
-		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
+		magicInitDesc.eMagicType = CMagic::MT_PURPLE;
 		magicInitDesc.eMagicTag = DESCENDO;
 		magicInitDesc.fInitCoolTime = 5.f;
-		magicInitDesc.iDamage = 10;
+		magicInitDesc.iDamage = 30;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 1.f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
 	// 플리펜도
+	// 공중에 띄워 한바퀴 x축으로 회전시키는 마법입니다.
+	// 딜은 없습니다.
 	{
 		magicInitDesc.eBuffType = BUFF_FLIPENDO;
-		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
-		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
+		magicInitDesc.eMagicType = CMagic::MT_PURPLE;
 		magicInitDesc.eMagicTag = FLIPENDO;
 		magicInitDesc.fInitCoolTime = 5.f;
-		magicInitDesc.iDamage = 10;
+		magicInitDesc.iDamage = 0;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 0.3f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
 	// 엑스펠리아르무스
+	// 무기를 날려버리는 마법입니다.
+	// 딜은 중간입니다.
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
-		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
-		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
+		magicInitDesc.eMagicType = CMagic::MT_RED;
 		magicInitDesc.eMagicTag = EXPELLIARMUS;
 		magicInitDesc.fInitCoolTime = 5.f;
-		magicInitDesc.iDamage = 10;
+		magicInitDesc.iDamage = 50;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 1.2f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
 	// 임페리오
+	// 적에게 저주를 걸어 다른 적과 싸우게 만드는 마법입니다.
+	// 딜은 중간입니다.
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
-		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
-		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicGroup = CMagic::MG_CURSE;
+		magicInitDesc.eMagicType = CMagic::MT_ALL;
 		magicInitDesc.eMagicTag = IMPERIO;
 		magicInitDesc.fInitCoolTime = 5.f;
-		magicInitDesc.iDamage = 10;
+		magicInitDesc.iDamage = 100;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 0.8f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	//크루시오
+	// 크루시오
+	// 공격을 맞은 적은 다른 적을 향해 도탄되는 투사체를 발사합니다.
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
-		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
-		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicGroup = CMagic::MG_CURSE;
+		magicInitDesc.eMagicType = CMagic::MT_ALL;
 		magicInitDesc.eMagicTag = CRUCIO;
 		magicInitDesc.fInitCoolTime = 5.f;
-		magicInitDesc.iDamage = 10;
+		magicInitDesc.iDamage = 200;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 0.8f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
@@ -872,10 +926,10 @@ HRESULT CPlayer::Add_Magic()
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
-		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicType = CMagic::MT_ALL;
 		magicInitDesc.eMagicTag = STUPEFY;
 		magicInitDesc.fInitCoolTime = 5.f;
-		magicInitDesc.iDamage = 10;
+		magicInitDesc.iDamage = 40;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 0.8f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
@@ -884,11 +938,11 @@ HRESULT CPlayer::Add_Magic()
 	//디핀도
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
-		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
-		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
+		magicInitDesc.eMagicType = CMagic::MT_RED;
 		magicInitDesc.eMagicTag = DIFFINDO;
 		magicInitDesc.fInitCoolTime = 5.f;
-		magicInitDesc.iDamage = 10;
+		magicInitDesc.iDamage = 200;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 0.8f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
@@ -897,23 +951,24 @@ HRESULT CPlayer::Add_Magic()
 	//봄바르다
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
-		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
-		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
+		magicInitDesc.eMagicType = CMagic::MT_RED;
 		magicInitDesc.eMagicTag = BOMBARDA;
 		magicInitDesc.fInitCoolTime = 1.f;
-		magicInitDesc.iDamage = 10;
+		magicInitDesc.iDamage = 500;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 0.8f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
+
 	m_pMagicSlot->Add_Magic_To_Basic_Slot(2, LUMOS);
 	m_pMagicSlot->Add_Magic_To_Basic_Slot(3, FINISHER);
 
 	Set_Spell_Botton(0, DIFFINDO);
-	Set_Spell_Botton(1, BOMBARDA);
+	Set_Spell_Botton(1, LEVIOSO);
 	Set_Spell_Botton(2, CRUCIO);
-	Set_Spell_Botton(3, IMPERIO);
+	Set_Spell_Botton(3, FLIPENDO);
 
 	return S_OK;
 }
@@ -922,22 +977,19 @@ void CPlayer::Key_Input(_float fTimeDelta)
 {
 	BEGININSTANCE;
 
-	if (pGameInstance->Get_DIKeyState(DIK_J, CInput_Device::KEY_DOWN))
-	{
-		pGameInstance->Set_Camera(TEXT("Player_Camera"),2.0f);
-	}
+#pragma region 카메라 변경 테스트
+//	if (pGameInstance->Get_DIKeyState(DIK_J, CInput_Device::KEY_DOWN))
+//{
+//	pGameInstance->Set_Camera(TEXT("Player_Camera"),2.0f);
+//}
+//
+//
+//if (pGameInstance->Get_DIKeyState(DIK_L, CInput_Device::KEY_DOWN))
+//{
+//	pGameInstance->Set_Camera(TEXT("Other_Camera"), 2.0f);
+//}  
+#pragma endregion
 
-
-	if (pGameInstance->Get_DIKeyState(DIK_L, CInput_Device::KEY_DOWN))
-	{
-		pGameInstance->Set_Camera(TEXT("Other_Camera"), 2.0f);
-	}
-
-
-	if (pGameInstance->Get_DIKeyState(DIK_P, CInput_Device::KEY_DOWN))
-	{
-		m_pPlayer_Camera->Change_Animation(TEXT("Cam_Finisher_Lightning_01_anm"));
-	}
 
 #ifdef _DEBUG
 	//카메라 쉐이크 테스트
@@ -972,7 +1024,11 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 	if (pGameInstance->Get_DIKeyState(DIK_LCONTROL, CInput_Device::KEY_DOWN))
 	{
-		Go_Roll();
+		CRollState::tagRollStateDesc RollStateDesc;
+
+		RollStateDesc.IsBlink = false;
+
+		Go_Roll(&RollStateDesc);
 	}
 
 
@@ -1059,26 +1115,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 					break;
 				}
 
-				switch (MagicCastingStateDesc.iSpecialAction)
-				{
-				case CMagicCastingState::SPECIAL_ACTION_AVADA_KEDAVRA:
-				{
-					m_pPlayer_Camera->Change_Animation(TEXT("Avada_Kedavra_Face"));
-				}
-				break;
-				case CMagicCastingState::SPECIAL_ACTION_IMPERIO:
-				{
-					m_pPlayer_Camera->Change_Animation(TEXT("Imperio_Down"));
-				}
-				break;
-				case CMagicCastingState::SPECIAL_ACTION_CRUCIO:
-				{
-					m_pPlayer_Camera->Change_Animation(TEXT("Crucio"));
-				}
-				break;
-				default:
-					break;
-				}
+				
 
 
 				
@@ -1092,12 +1129,12 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 
 
-		if (pGameInstance->Get_DIKeyState(DIK_F, CInput_Device::KEY_DOWN))
+		/*if (pGameInstance->Get_DIKeyState(DIK_F, CInput_Device::KEY_DOWN))
 		{
 			MagicCastingStateDesc.pFuncSpell = [&] {(*this).Lumos(); };
 
 			Go_MagicCast(&MagicCastingStateDesc);
-		}
+		}*/
 
 		MagicCastingStateDesc.iSpellType = CMagicCastingState::SPELL_FINISHER;
 
@@ -1121,6 +1158,19 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		}
 	}
 #pragma endregion
+
+	//루모스
+	if (false == m_isLumosOn &&
+		pGameInstance->Get_DIKeyState(DIK_Z, CInput_Device::KEY_DOWN) && 
+		(m_pStateContext->Is_Current_State(TEXT("Idle")) ||
+			m_pStateContext->Is_Current_State(TEXT("Move Turn")) ||
+			m_pStateContext->Is_Current_State(TEXT("Move Start")) ||
+			m_pStateContext->Is_Current_State(TEXT("Jump")) ||
+			m_pStateContext->Is_Current_State(TEXT("Move Loop"))))
+	{
+		m_pCustomModel->Change_Animation(TEXT("Lumos_Start"),CModel::OTHERBODY);
+		m_isLumosOn = true;
+	}
 
 
 	if (pGameInstance->Get_DIKeyState(DIK_GRAVE, CInput_Device::KEY_DOWN))
@@ -1175,20 +1225,20 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		//CGameInstance::GetInstance()->Play_Particle(TEXT("Particle_RockChunksRough"), m_pTransform->Get_Position());
 
 		//m_pPlayer_Information->Get_Inventory()->Add_Item(pItem, pItem->Get_Type());
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_AshwinderEggs_Item"));
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_Dittany_Leaves_Item"));
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_Dugbog_Tongue_Item"));
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_Leaping_Toadstool_Caps_Item"));
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_Lacewing_Flies_Item"));
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_Knotgrass_Item"));
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_Horklump_Juice_Item"));
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_Leech_Juice_Item"));
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_MallowSweet_Item"));
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_MoonStone_Item"));
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_Fluxweed_Stem_Item"));
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_Spider_Fang_Item"));
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_Troll_Bogeys_Item"));
-		//m_pPlayer_Information->Get_Inventory()->Add_Item(TEXT("Prototype_GameObject_Shrivelfig_Item"));
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_ASHWINDER_EGGS);
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_DITTANY_LEAVES);
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_DUGBOG_TONGUE);
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_LEAPING_TOADSTOOL_CAPS);
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_LACEWING_FLIES);
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_KNOTGRASS);
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_HORKLUMP_JUICE);
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_LEECH_JUICE);
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_MALLOWSWEET);
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_MOONSTONE);
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_FLUXWEED_STEM);
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_SPIDER_FANG);
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_TROLL_BOGEYS);
+		//m_pPlayer_Information->Get_Inventory()->Add_Item(ITEM_ID::ITEM_ID_SHRIVELFIG);
 
 		//wstring temp = TEXT("Drink_Potion_Throw");
 		//m_pCustomModel->Change_Animation(temp);
@@ -1500,6 +1550,7 @@ HRESULT CPlayer::Ready_StateMachine()
 	m_StateMachineDesc.piMoveType = &m_iMoveType;
 	m_StateMachineDesc.pOwnerLookAngle = &m_fLookAngle;
 	m_StateMachineDesc.pfuncFinishAnimation = [&] { (*this).Finish_Animation(); };
+	m_StateMachineDesc.pLumosOn = &m_isLumosOn;
 
 	Safe_AddRef(m_StateMachineDesc.pOwnerModel);
 	Safe_AddRef(m_StateMachineDesc.pPlayerTransform);
@@ -2055,7 +2106,7 @@ void CPlayer::Find_Target_For_Distance()
 		return;
 	}
 
-	_float fMinDistance = { 10.0f };
+	_float fMinDistance = { 50.0f };
 
 
 	//거리가 낮은 놈을 저장
@@ -2150,7 +2201,7 @@ void CPlayer::Find_Target_For_ViewSpace()
 		return;
 	}
 
-	_float fMinDistance = { 10.0f };
+	_float fMinDistance = { 50.0f };
 
 	//거리가 낮은 놈을 저장
 	CGameObject* pTarget = { nullptr };
@@ -2267,25 +2318,27 @@ void CPlayer::Finish_Animation()
 	m_isFinishAnimation = true;
 }
 
-void CPlayer::Go_Roll()
+void CPlayer::Go_Roll(void* _pArg)
 {
-	if (m_pStateContext->Is_Current_State(TEXT("Idle")) ||
+	if (true == m_pPlayer_Camera->Is_Finish_Animation() &&
+		(m_pStateContext->Is_Current_State(TEXT("Idle")) ||
 		m_pStateContext->Is_Current_State(TEXT("Move Turn")) ||
 		m_pStateContext->Is_Current_State(TEXT("Move Start")) ||
 		m_pStateContext->Is_Current_State(TEXT("Move Loop")) ||
-		m_pStateContext->Is_Current_State(TEXT("Magic_Cast")))
+		m_pStateContext->Is_Current_State(TEXT("Magic_Cast"))))
 	{
-		m_pStateContext->Set_StateMachine(TEXT("Roll"));
+		m_pStateContext->Set_StateMachine(TEXT("Roll"), _pArg);
 	}
 }
 
 void CPlayer::Go_Jump()
 {
-	if (m_pStateContext->Is_Current_State(TEXT("Idle")) ||
+	if (true == m_pPlayer_Camera->Is_Finish_Animation() &&
+		(m_pStateContext->Is_Current_State(TEXT("Idle")) ||
 		m_pStateContext->Is_Current_State(TEXT("Move Turn")) ||
 		m_pStateContext->Is_Current_State(TEXT("Move Start")) ||
 		m_pStateContext->Is_Current_State(TEXT("Move Loop")) ||
-		m_pStateContext->Is_Current_State(TEXT("Magic_Cast")))
+		m_pStateContext->Is_Current_State(TEXT("Magic_Cast"))))
 	{
 		m_pStateContext->Set_StateMachine(TEXT("Jump"));
 	}
@@ -2341,6 +2394,30 @@ void CPlayer::Go_MagicCast(void* _pArg)
 		m_pStateContext->Is_Current_State(TEXT("Move Loop")) ||
 		m_pStateContext->Is_Current_State(TEXT("Magic_Cast")))
 	{
+		if (nullptr != m_pTarget)
+		{
+			switch (static_cast<CMagicCastingState::MAGICCASTINGSTATEDESC*>(_pArg)->iSpecialAction)
+			{
+			case CMagicCastingState::SPECIAL_ACTION_AVADA_KEDAVRA:
+			{
+				m_pPlayer_Camera->Change_Animation(TEXT("Avada_Kedavra_Face"));
+			}
+			break;
+			case CMagicCastingState::SPECIAL_ACTION_IMPERIO:
+			{
+				m_pPlayer_Camera->Change_Animation(TEXT("Imperio_Down"));
+			}
+			break;
+			case CMagicCastingState::SPECIAL_ACTION_CRUCIO:
+			{
+				m_pPlayer_Camera->Change_Animation(TEXT("Crucio"));
+			}
+			break;
+			default:
+				break;
+			}
+		}
+
 		m_pStateContext->Set_StateMachine(TEXT("Magic_Cast"), _pArg);
 	}
 }
@@ -2421,12 +2498,13 @@ void CPlayer::Drink_Potion()
 
 void CPlayer::Go_Protego(void* _pArg)
 {
-	if (m_pStateContext->Is_Current_State(TEXT("Idle")) ||
+	if (true == m_pPlayer_Camera->Is_Finish_Animation() &&
+		(m_pStateContext->Is_Current_State(TEXT("Idle")) ||
 		m_pStateContext->Is_Current_State(TEXT("Move Turn")) ||
 		m_pStateContext->Is_Current_State(TEXT("Move Start")) ||
 		m_pStateContext->Is_Current_State(TEXT("Move Loop")) ||
 		m_pStateContext->Is_Current_State(TEXT("Magic_Cast")) ||
-		m_pStateContext->Is_Current_State(TEXT("Protego")))
+		m_pStateContext->Is_Current_State(TEXT("Protego"))))
 	{
 		m_pStateContext->Set_StateMachine(TEXT("Protego"), _pArg);
 	}
@@ -2434,13 +2512,14 @@ void CPlayer::Go_Protego(void* _pArg)
 
 void CPlayer::Go_Hit(void* _pArg)
 {
-	if (m_pStateContext->Is_Current_State(TEXT("Idle")) ||
+	if (true == m_pPlayer_Camera->Is_Finish_Animation() &&
+		(m_pStateContext->Is_Current_State(TEXT("Idle")) ||
 		m_pStateContext->Is_Current_State(TEXT("Move Turn")) ||
 		m_pStateContext->Is_Current_State(TEXT("Move Start")) ||
 		m_pStateContext->Is_Current_State(TEXT("Move Loop")) ||
 		m_pStateContext->Is_Current_State(TEXT("Magic_Cast")) ||
 		m_pStateContext->Is_Current_State(TEXT("Standing")) ||
-		m_pStateContext->Is_Current_State(TEXT("Jump")))
+		m_pStateContext->Is_Current_State(TEXT("Jump"))))
 	{
 		m_pStateContext->Set_StateMachine(TEXT("Hit"), _pArg);
 	}
@@ -2557,11 +2636,6 @@ void CPlayer::Free()
 		Safe_Release(m_UI_Group_Skill_01);
 		Safe_Release(m_UI_Group_SkillTap);
 		Safe_Release(m_pCooltime);
-		Safe_Release(m_pMaximaPotion);
-		Safe_Release(m_pEdurusPotion);
-		Safe_Release(m_pFocusPotion);
-		Safe_Release(m_pInvisibilityPotion);
-		Safe_Release(m_pWiggenweldPotion);
 		Safe_Release(m_pDefence);
 
 		if (nullptr != m_pTargetTransform)

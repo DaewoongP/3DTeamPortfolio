@@ -93,12 +93,13 @@ public:
 	virtual void OnCollisionStay(COLLEVENTDESC CollisionEventDesc) override;
 	virtual void OnCollisionExit(COLLEVENTDESC CollisionEventDesc) override;
 	virtual HRESULT Render() override;
-	virtual HRESULT Render_Depth() override;
+	virtual HRESULT Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix) override;
 
 
 
 	void Potion_Duration(_float fTimeDelta);
 	virtual void On_Maigc_Throw_Data(void* data) const override;
+	_bool Is_Action_Camera_Playing();
 
 private:
 	CShader*		m_pShader = { nullptr };
@@ -117,11 +118,6 @@ private:
 	CUI_Group_SkillTap* m_UI_Group_SkillTap = { nullptr };
 
 	CTool* m_pCurTool = { nullptr };
-	CMaximaPotion* m_pMaximaPotion = { nullptr };
-	CEdurusPotion* m_pEdurusPotion = { nullptr };
-	CFocusPotion*	m_pFocusPotion = { nullptr };
-	CInvisibilityPotion* m_pInvisibilityPotion = { nullptr };
-	CWiggenweldPotion* m_pWiggenweldPotion = { nullptr };
 
 private:
 	_bool		m_isFixMouse = { false };
@@ -187,6 +183,8 @@ private:
 
 #pragma region 카메라 쉐이크
 
+	vector<char*> m_vecEaseList;
+
 	_int m_iShake_Type = { 0 };
 	_int m_iShake_Axis = { 0 };
 	_int m_iEase = { 0 };
@@ -209,10 +207,12 @@ private:
 	
 
 
+	_bool m_isLumosOn = { false };
+
 private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
-	HRESULT SetUp_ShadowShaderResources();
+	HRESULT SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix);
 	HRESULT Add_Magic();
 
 private:
@@ -288,7 +288,7 @@ private:
 
 #pragma region 스테이트 변경 함수
 
-	void Go_Roll();
+	void Go_Roll(void* _pArg = nullptr);
 
 	void Go_Jump();
 

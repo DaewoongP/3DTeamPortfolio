@@ -110,11 +110,13 @@ void CMoveStartState::Go_Idle()
 			case CPlayer::MOVETYPE_JOGING:
 			{
 				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_anm"));
+				Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_anm"));
 			}
 			break;
 			case CPlayer::MOVETYPE_SPRINT:
 			{
 				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Sprint_Stop_Fwd_anm"));
+				Change_Animation(TEXT("Hu_BM_RF_Sprint_Stop_Fwd_anm"));
 			}
 			break;
 			}
@@ -127,11 +129,13 @@ void CMoveStartState::Go_Idle()
 			case CPlayer::MOVETYPE_JOGING:
 			{
 				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_anm"));
+				Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_anm"));
 			}
 			break;
 			case CPlayer::MOVETYPE_SPRINT:
 			{
 				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Sprint_Stop_Fwd_anm"));
+				Change_Animation(TEXT("Hu_BM_RF_Sprint_Stop_Fwd_anm"));
 			}
 			break;
 			}
@@ -144,11 +148,13 @@ void CMoveStartState::Go_Idle()
 			case CPlayer::MOVETYPE_JOGING:
 			{
 				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_2Cmbt_anm"));
+				Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_2Cmbt_anm"));
 			}
 			break;
 			case CPlayer::MOVETYPE_SPRINT:
 			{
 				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Sprint_Stop_Fwd_Cmbt_anm"));
+				Change_Animation(TEXT("Hu_BM_RF_Sprint_Stop_Fwd_Cmbt_anm"));
 			}
 			break;
 			}
@@ -173,12 +179,14 @@ void CMoveStartState::Go_Loop()
 		case CPlayer::MOVETYPE_JOGING:
 		{
 			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_Jog_Loop_Fwd_anm"));
+			Change_Animation(TEXT("Hu_BM_Jog_Loop_Fwd_anm"));
 		}
 		break;
 
 		case CPlayer::MOVETYPE_SPRINT:
 		{
 			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_Sprint_Loop_Fwd_anm"));
+			Change_Animation(TEXT("Hu_BM_Sprint_Loop_Fwd_anm"));
 		}
 		break;
 		}
@@ -199,6 +207,7 @@ void CMoveStartState::Switch_Sprint()
 		{
 			*m_StateMachineDesc.piMoveType = (_uint)CPlayer::MOVETYPE_SPRINT;
 			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_Jog2Sprint_RU_anm"));
+			Change_Animation(TEXT("Hu_BM_Jog2Sprint_RU_anm"));
 		}
 	}
 

@@ -44,12 +44,24 @@ void CRollState::Late_Tick(_float fTimeDelta)
 
 void CRollState::OnStateEnter(void* _pArg)
 {
+	if (nullptr == _pArg)
+	{
+		return;
+	}
+
+	CRollState::tagRollStateDesc* pRollStateDesc = static_cast<CRollState::tagRollStateDesc*>(_pArg);
+
 	//전투 상태가 되어야 한다.
 	*m_StateMachineDesc.piActionType = CPlayer::ACTION_CMBT;
 
-	m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_DdgeRll_Fwd_anm"));
-
-	//m_isEnterTick = true;
+	if (false == pRollStateDesc->IsBlink)
+	{
+		Change_Animation(TEXT("Hu_Cmbt_DdgeRll_Fwd_anm"));
+	}
+	else if (true == pRollStateDesc->IsBlink)
+	{
+		Change_Animation(TEXT("Blink_Start"));
+	}
 
 	*m_StateMachineDesc.pisFinishAnimation = false;
 
@@ -63,16 +75,10 @@ void CRollState::OnStateEnter(void* _pArg)
 
 void CRollState::OnStateTick()
 {
-	////방향키가 눌려있다면 방향키 방향으로 회전 시켜준다.
-	//if (true == m_isEnterTick && true == *m_StateMachineDesc.pisDirectionPressed)
-	//{
-	//	m_StateMachineDesc.pPlayerTransform->Turn(_float3(0.0f, 1.0f, 0.0f), *m_StateMachineDesc.pOwnerLookAngle);
-	//	m_isEnterTick = false;
-	//}
-	
 	if (true == *m_StateMachineDesc.pisFinishAnimation)
 	{
 		m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Idle_anm"));
+		Change_Animation(TEXT("Hu_BM_RF_Idle_anm"));
 		Set_StateMachine(TEXT("Idle"));
 		*m_StateMachineDesc.pisFinishAnimation = false;
 	}
@@ -92,6 +98,7 @@ void CRollState::Go_Idle()
 	if (true == *m_StateMachineDesc.pisFinishAnimation)
 	{
 		m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Idle_anm"));
+		Change_Animation(TEXT("Hu_BM_RF_Idle_anm"));
 		Set_StateMachine(TEXT("Idle"));
 	}
 }

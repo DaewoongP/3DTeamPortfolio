@@ -13,6 +13,7 @@ CLeech_Juice_Item::CLeech_Juice_Item(const CLeech_Juice_Item& rhs)
 HRESULT CLeech_Juice_Item::Initialize_Prototype(_uint iLevel)
 {
 	// 아이템 정보
+	m_ItemCreateDesc.eItemId = ITEM_ID_LEECH_JUICE;
 	m_ItemCreateDesc.wstrKoreanName = TEXT("거머리 즙");
 	m_ItemCreateDesc.wstrUIPath = TEXT("../../Resources/UI/Game/UI/Icons/Ingredients/UI_T_LeechJuice.png");
 	m_ItemCreateDesc.iCost = 70;

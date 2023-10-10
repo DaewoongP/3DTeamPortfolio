@@ -192,6 +192,8 @@ HRESULT CMainApp::Ready_Prototype_Component_For_Static()
 			CDefence::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Defence");
 
+
+
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -266,6 +268,8 @@ void CMainApp::Debug_ImGui()
 	if (ImGui::RadioButton("LEVEL_VAULT", (_int*)(&m_eLevelID), LEVEL_VAULT))
 		isChangedLevel = true;
 	if (ImGui::RadioButton("LEVEL_SMITH", (_int*)(&m_eLevelID), LEVEL_SMITH))
+		isChangedLevel = true;
+	if (ImGui::RadioButton("LEVEL_SKY", (_int*)(&m_eLevelID), LEVEL_SKY))
 		isChangedLevel = true;
 	if (ImGui::RadioButton("LEVEL_SANCTUM", (_int*)(&m_eLevelID), LEVEL_SANCTUM))
 		isChangedLevel = true;

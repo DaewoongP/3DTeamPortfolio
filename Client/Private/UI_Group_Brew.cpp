@@ -4,8 +4,11 @@
 #include "UI_Effect_Back.h"
 #include "UI_Font.h"
 
-#include "Inventory.h"
 #include "Texture.h"
+#include "PotionTap.h"
+#include "Inventory.h"
+#include "Player.h"
+#include "Player_Information.h"
 
 CUI_Group_Brew::CUI_Group_Brew(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -53,25 +56,34 @@ HRESULT CUI_Group_Brew::Initialize(void* pArg)
 	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Brew_5.uidata"), FifthTag, FOCUS);
 	Create_Component(TEXT("../../Resources/GameData/UIData/UI_Group_Brew_6.uidata"), SixthTag, THUNDERBREW);
 
+
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+
+	Safe_Release(pGameInstance);
+
 	return S_OK;
 }
 
 void CUI_Group_Brew::Tick(_float fTimeDelta)
 {
-	//if (!m_isOpen)
-	//	return;
+	if (!m_isOpen)
+		return;
 
 	__super::Tick(fTimeDelta);
 
 	if (nullptr == m_pInventory)
 	{
-		CGameInstance* pGameInstacne = CGameInstance::GetInstance();
-		Safe_AddRef(pGameInstacne);
+		CGameInstance* pGameInstance = CGameInstance::GetInstance();
+		Safe_AddRef(pGameInstance);
 
-		m_pInventory = static_cast<CInventory*>(pGameInstacne->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Inventory"), TEXT("GameObject_Inventory")));
+		m_pInventory = static_cast<CInventory*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Inventory"), TEXT("GameObject_Inventory")));
 		Safe_AddRef(m_pInventory);
+		m_pPotionTap = static_cast<CPotionTap*>(pGameInstance->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_UI"), TEXT("GameObject_Potion_Tap")));
+		Safe_AddRef(m_pPotionTap);
 
-		Safe_Release(pGameInstacne);
+		Safe_Release(pGameInstance);
 	}
 
 	_uint iIndex = 0;
@@ -88,19 +100,102 @@ void CUI_Group_Brew::Tick(_float fTimeDelta)
 			if (pIcon->Get_Clicked())
 			{
 				// 제조하게끔 하는 로직.
+				_bool isSuccess = { false };
+				
+				switch (iIndex)
+				{
+				case WIGEN:
+					if (1 > m_pInventory->Get_Resource(INGREDIENT::HORKLUMP_JUICE))
+					{
+						break;
+					}
+					if (1 > m_pInventory->Get_Resource(INGREDIENT::DITTANY_LEAVES))
+					{
+						break;
+					}
+					
+					break;
+				case EDURUS:
+					if (1 > m_pInventory->Get_Resource(INGREDIENT::ASHWINDER_EGGS))
+					{
+						break;
+					}
+					if (1 > m_pInventory->Get_Resource(INGREDIENT::MONGREL_FUR))
+					{
+						break;
+					}
+
+					m_pPotionTap->Add_Potion(POTIONTAP::ENDURUS_POTION);
+					m_pInventory->Delete_Item(ITEM_ID::ITEM_ID_ASHWINDER_EGGS);
+					m_pInventory->Delete_Item(ITEM_ID::ITEM_ID_MONGREL_FUR);
+					break;
+				case MAXIMA:
+					if (1 > m_pInventory->Get_Resource(INGREDIENT::LEECH_JUICE))
+					{
+						break;
+					}
+					if (1 > m_pInventory->Get_Resource(INGREDIENT::SPIDER_FANG))
+					{
+						break;
+					}
+					m_pPotionTap->Add_Potion(POTIONTAP::MAXIMA_POTION);
+					m_pInventory->Delete_Item(ITEM_ID::ITEM_ID_LEECH_JUICE);
+					m_pInventory->Delete_Item(ITEM_ID::ITEM_ID_SPIDER_FANG);
+					break;
+				case INVISIBLE:
+					if (1 > m_pInventory->Get_Resource(INGREDIENT::LEAPING_TOADSTOOL_CAPS))
+					{
+						break;
+					}
+					if (1 > m_pInventory->Get_Resource(INGREDIENT::KNOTGRASS))
+					{
+						break;
+					}
+					m_pPotionTap->Add_Potion(POTIONTAP::INVISIBILITY_POTION);
+					m_pInventory->Delete_Item(ITEM_ID::ITEM_ID_LEAPING_TOADSTOOL_CAPS);
+					m_pInventory->Delete_Item(ITEM_ID::ITEM_ID_KNOTGRASS);
+					break;
+				case FOCUS:
+					if (1 > m_pInventory->Get_Resource(INGREDIENT::LACEWING_FLIES))
+					{
+						break;
+					}
+					if (1 > m_pInventory->Get_Resource(INGREDIENT::FLUXWEED_STEM))
+					{
+						break;
+					}
+					m_pPotionTap->Add_Potion(POTIONTAP::FOCUS_POTION);
+					m_pInventory->Delete_Item(ITEM_ID::ITEM_ID_LACEWING_FLIES);
+					m_pInventory->Delete_Item(ITEM_ID::ITEM_ID_FLUXWEED_STEM);
+					break;
+				case THUNDERBREW:
+					if (1 > m_pInventory->Get_Resource(INGREDIENT::LEECH_JUICE))
+					{
+						break;
+					}
+					if (1 > m_pInventory->Get_Resource(INGREDIENT::SHRIVELFIG))
+					{
+						break;
+					}
+					m_pPotionTap->Add_Potion(POTIONTAP::THUNDERBREW_POTION);
+					m_pInventory->Delete_Item(ITEM_ID::ITEM_ID_LEECH_JUICE);
+					m_pInventory->Delete_Item(ITEM_ID::ITEM_ID_SHRIVELFIG);
+					break;
+				default:
+					break;
+				}
 			}
 		}
 		++iIndex;
 	}
 
 	Set_Font();
-
 }
 
 void CUI_Group_Brew::Late_Tick(_float fTimeDelta)
 {
-	//if (!m_isOpen)
-	//	return;
+	if (!m_isOpen)
+		return;
 
 	__super::Late_Tick(fTimeDelta);
 }
@@ -421,7 +516,7 @@ void CUI_Group_Brew::Set_Font()
 	case Client::CUI_Group_Brew::THUNDERBREW:
 	{
 		Set_Font_Text(LEECH_JUICE, FIRST);
-		Set_Font_Text(SHRIVELFIG_FRUIT, SECOND);
+		Set_Font_Text(SHRIVELFIG, SECOND);
 	}
 		break;
 	case Client::CUI_Group_Brew::BREW_END:
@@ -504,6 +599,7 @@ void CUI_Group_Brew::Free()
 	Safe_Release(m_pBack);
 	Safe_Release(m_pCursor);
 	Safe_Release(m_pInventory);
+	Safe_Release(m_pPotionTap);
 	Safe_Release(m_pFirstFont);
 	Safe_Release(m_pSecondFont);
 

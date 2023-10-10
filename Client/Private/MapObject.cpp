@@ -33,14 +33,6 @@ HRESULT CMapObject::Initialize(void* pArg)
 	m_ObjectDesc = *static_cast<MAPOBJECTDESC*>(pArg);
 	m_pTransform->Set_WorldMatrix(m_ObjectDesc.WorldMatrix);
 
-	// 음수 값이 있을 경우 Cull 모드를 None로 바꾼다.
-	if (0.f >= m_pTransform->Get_Scale_With_Negative().x ||
-		0.f >= m_pTransform->Get_Scale_With_Negative().y ||
-		0.f >= m_pTransform->Get_Scale_With_Negative().z)
-	{
-		m_isCull = false;
-	}
-
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
@@ -204,9 +196,9 @@ HRESULT CMapObject::Render()
 	return S_OK;
 }
 
-HRESULT CMapObject::Render_Depth()
+HRESULT CMapObject::Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix)
 {
-	if (FAILED(SetUp_ShadowShaderResources()))
+	if (FAILED(SetUp_ShadowShaderResources(LightViewMatrix, LightProjMatrix)))
 		return E_FAIL;
 
 	_uint		iNumMeshes = m_pModel->Get_NumMeshes();
@@ -273,15 +265,15 @@ HRESULT CMapObject::SetUp_ShaderResources()
 	return S_OK;
 }
 
-HRESULT CMapObject::SetUp_ShadowShaderResources()
+HRESULT CMapObject::SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix)
 {
 	BEGININSTANCE;
 
 	if (FAILED(m_pShadowShader->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
 		return E_FAIL;
-	if (FAILED(m_pShadowShader->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_LightTransformMatrix(CPipeLine::D3DTS_VIEW))))
+	if (FAILED(m_pShadowShader->Bind_Matrix("g_ViewMatrix", &LightViewMatrix)))
 		return E_FAIL;
-	if (FAILED(m_pShadowShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_LightTransformMatrix(CPipeLine::D3DTS_PROJ))))
+	if (FAILED(m_pShadowShader->Bind_Matrix("g_ProjMatrix", &LightProjMatrix)))
 		return E_FAIL;
 	if (FAILED(m_pShadowShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
 		return E_FAIL;
