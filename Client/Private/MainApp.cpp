@@ -267,6 +267,8 @@ void CMainApp::Debug_ImGui()
 		isChangedLevel = true;
 	if (ImGui::RadioButton("LEVEL_SMITH", (_int*)(&m_eLevelID), LEVEL_SMITH))
 		isChangedLevel = true;
+	if (ImGui::RadioButton("LEVEL_SKY", (_int*)(&m_eLevelID), LEVEL_SKY))
+		isChangedLevel = true;
 
 	if (true == isChangedLevel)
 	{

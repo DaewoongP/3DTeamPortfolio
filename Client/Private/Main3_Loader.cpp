@@ -119,6 +119,9 @@ HRESULT CMain3_Loader::Loading()
 	case LEVEL_SMITH:
 		hr = Loading_For_Hogsmeade(LEVEL_SMITH);
 		break;
+	case LEVEL_SKY:
+		hr = Loading_For_Sky(LEVEL_SKY);
+		break;
 	default:
 		MSG_BOX("Failed Load Next Level");
 		break;
@@ -173,6 +176,11 @@ HRESULT CMain3_Loader::Loading_For_GreatHall(LEVELID eLevelID)
 }
 
 HRESULT CMain3_Loader::Loading_For_Hogsmeade(LEVELID eLevelID)
+{
+	return S_OK;
+}
+
+HRESULT CMain3_Loader::Loading_For_Sky(LEVELID eLevelID)
 {
 	return S_OK;
 }

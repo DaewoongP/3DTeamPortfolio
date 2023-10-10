@@ -1082,6 +1082,9 @@
     <ClInclude Include="..\Public\Door.h">
       <Filter>02. GameObject\03. MapObject\Interactable_Obj\Door</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Level_Sky.h">
+      <Filter>01. Levels\07. Sky</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1568,6 +1571,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Door.cpp">
       <Filter>02. GameObject\03. MapObject\Interactable_Obj\Door</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Level_Sky.cpp">
+      <Filter>01. Levels\07. Sky</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -174,6 +174,7 @@
     <ClInclude Include="..\Public\DarkWizard_M.h" />
     <ClInclude Include="..\Public\Door.h" />
     <ClInclude Include="..\Public\Gull.h" />
+    <ClInclude Include="..\Public\Level_Sky.h" />
     <ClInclude Include="..\Public\Weapon_DarkWizard_Wand.h" />
     <ClInclude Include="..\Public\Diffindo.h" />
     <ClInclude Include="..\public\FlowMap.h" />
@@ -373,6 +374,7 @@
     <ClCompile Include="..\Private\DarkWizard_M.cpp" />
     <ClCompile Include="..\Private\Door.cpp" />
     <ClCompile Include="..\Private\Gull.cpp" />
+    <ClCompile Include="..\Private\Level_Sky.cpp" />
     <ClCompile Include="..\Private\Weapon_DarkWizard_Wand.cpp" />
     <ClCompile Include="..\Private\Diffindo.cpp" />
     <ClCompile Include="..\private\FlowMap.cpp" />
