@@ -4,11 +4,11 @@
 
 BEGIN(Client)
 
-class CLevel_Smith final : public CLevel
+class CLevel_Sanctum final : public CLevel
 {
 private:
-	explicit CLevel_Smith(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual ~CLevel_Smith() = default;
+	explicit CLevel_Sanctum(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	virtual ~CLevel_Sanctum() = default;
 
 public:
 	virtual HRESULT Initialize();
@@ -31,7 +31,7 @@ private:
 #endif // _DEBUG
 
 public:
-	static CLevel_Smith* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CLevel_Sanctum* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual void Free() override;
 };
 

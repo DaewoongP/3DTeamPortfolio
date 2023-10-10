@@ -98,11 +98,6 @@ HRESULT CPensive::Render()
 	return S_OK;
 }
 
-HRESULT CPensive::Render_Depth()
-{
-	return S_OK;
-}
-
 HRESULT CPensive::Make_AI()
 {
 	return S_OK;

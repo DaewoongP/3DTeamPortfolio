@@ -8,6 +8,7 @@ class CRigidBody;
 class CRenderer;
 class CParticleSystem;
 class CTrail;
+class CLight;
 class CMeshEffect;
 END
 
@@ -33,6 +34,8 @@ public:
 		_bool					isChase = { false };
 		_int					iDamage = { 0 };
 		_float					fLifeTime = { 1.0f };
+		_bool					isMouseTarget = { true };
+		_float3					vTarget_Dir = {};
 	}MAGICBALLINITDESC;
 	typedef struct CollsionRequestDesc
 	{
@@ -53,7 +56,9 @@ protected:
 public:
 	// 매직볼의 상태를 강제로 세팅합니다.
 	void Set_MagicBallState(MAGICBALL_STATE eState) { m_eMagicBallState = eState; m_isFirstFrameInState = true;}
-	void Set_MagicBallState_quiet(MAGICBALL_STATE eState) { m_eMagicBallState = eState;}
+	void Set_MagicBallState_quiet(MAGICBALL_STATE eState) { m_eMagicBallState = eState; m_isFirstFrameInState = false;}
+	_float3 Get_MoveDir() { return m_vDir; }
+	
 	// 매직볼의 상태를 자연스레 다음으로 세팅합니다.
 	void Do_MagicBallState_To_Next() { 
 		if (m_eMagicBallState != MAGICBALL_STATE_END)
@@ -62,7 +67,8 @@ public:
 			m_isFirstFrameInState = true;
 		}
 	}
-	void Re_Set_StartEndLerpAcc(_float3 vStart, _float3 vEnd);
+	void Re_Set_StartEndLerpAcc(_float3 vStart, _float3 vDir);
+
 
 public:
 	virtual HRESULT Initialize_Prototype(_uint iLevel);
@@ -85,6 +91,7 @@ protected:
 protected:
 	CRigidBody*				m_pRigidBody = { nullptr };
 	CRenderer*				m_pRenderer = { nullptr };
+	CLight*					m_pLight = { nullptr };
 	
 //생산성을 높이기위해 도입한 파티클 벡터 특수한 친구들은 여기에 안쓸겁니다.
 protected:
@@ -121,6 +128,12 @@ protected:
 	_float3					m_vSplineLerp[2] = {};
 	_float					m_fTimeScalePerDitance = { 0.f };
 	_uint					m_iLevel = { 0 };
+
+	_bool					m_isMouseTarget = { false };
+	_float3					m_vTarget_Dir = {};
+
+	_float3					m_vPostPosition = {};
+	_float3					m_vDir = {};
 
 //전달 및 흐름
 protected:

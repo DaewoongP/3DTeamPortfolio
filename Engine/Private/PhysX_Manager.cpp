@@ -150,6 +150,8 @@ void CPhysX_Manager::Free()
 	// 순서 주의
 	// 삭제 순서는 거의 이걸로 고정합니다.
 	
+	// 여기서 터졌다면 플레이어가 삭제가 최종적으로 되지않았을 확률이 높습니다
+	// 플레이어의 메쉬파츠가 삭제안됨 -> cloth 관련 포인터 삭제안됨 -> 팩토리 삭제 불가로 터짐
 	NvClothDestroyFactory(m_pClothFactory);
 	m_pClothFactory = nullptr;
 

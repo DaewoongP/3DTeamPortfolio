@@ -43,6 +43,7 @@
 #include "FlowMap.h"
 #include "MeshEffect.h"
 #include "Wingardium_Effect.h"
+#include "EnergyBall.h"
 #pragma endregion Effects
 
 #pragma region Magic
@@ -154,6 +155,9 @@ HRESULT CMain0_Loader::Loading()
 	case LEVEL_SMITH:
 		hr = Loading_For_Hogsmeade(LEVEL_SMITH);
 		break;
+	case LEVEL_SANCTUM:
+		hr = Loading_For_Sanctum(LEVEL_SANCTUM);
+		break;
 	default:
 		MSG_BOX("Failed Load Next Level");
 		break;
@@ -228,7 +232,6 @@ HRESULT CMain0_Loader::Loading_For_Vault(LEVELID eLevelID)
 		CTrigger_Vault::Create(m_pDevice, m_pContext))))
 		throw TEXT("Prototype_GameObject_Trigger_Vault");
 
-
 	return S_OK;
 }
 
@@ -239,6 +242,30 @@ HRESULT CMain0_Loader::Loading_For_GreatHall(LEVELID eLevelID)
 
 HRESULT CMain0_Loader::Loading_For_Hogsmeade(LEVELID eLevelID)
 {
+	return S_OK;
+}
+
+HRESULT CMain0_Loader::Loading_For_Sanctum(LEVELID eLevelID)
+{
+	if (nullptr == m_pGameInstance)
+		return E_FAIL;
+
+	try /* Failed Check Loading_For_Sanctum Add_Prototype*/
+	{
+		/* Prototype_GameObject_EnergyBall */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_EnergyBall"),
+			CEnergyBall::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_EnergyBall");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("Failed Add_Prototype : ");
+		wstrErrorMSG += pErrorTag;
+		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
+		return E_FAIL;
+	}
+	
 	return S_OK;
 }
 
@@ -604,6 +631,23 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_RockChunksRough"),
 				TEXT("../../Resources/GameData/ParticleData/Misc/RockChunksRough/"), 3)))
 				throw TEXT("Reserve Particle : Particle_RockChunksRough");
+		
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Golem_Dash_Gas_Splash"),
+				TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Golem_Dash/Gas_Splash/"), 3)))
+				throw TEXT("Reserve Particle : Particle_Golem_Dash_Gas_Splash");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Golem_Dash_Gas_Twinkle"),
+				TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Golem_Dash/Gas_Twinkle/"), 3)))
+				throw TEXT("Reserve Particle : Particle_Golem_Dash_Gas_Twinkle");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Golem_Hit"),
+				TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Golem_Hit/"), 3)))
+				throw TEXT("Reserve Particle : Particle_Golem_Hit");
+
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Golem_Slash_Trace_Twinkle"),
+				TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Golem_Slash/Trace_Twinkle/"), 3)))
+				throw TEXT("Reserve Particle : Particle_Golem_Slash_Trace_Twinkle");
+		
 		}
 #pragma endregion
 

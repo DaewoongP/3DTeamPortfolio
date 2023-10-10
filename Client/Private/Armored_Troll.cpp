@@ -131,6 +131,9 @@ HRESULT CArmored_Troll::Make_AI()
 		if (FAILED(__super::Make_AI()))
 			throw TEXT("Failed Enemy Make_AI");
 
+		if (FAILED(m_pRootBehavior->Add_Type("isOverheadAction", &m_isOverheadAction)))
+			throw TEXT("Failed Add_Type isOverheadAction");
+
 		/* Make Childs */
 		CSelector* pSelector = nullptr;
 		if (FAILED(Create_Behavior(pSelector)))
@@ -200,6 +203,14 @@ HRESULT CArmored_Troll::Make_Notifies()
 	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Exit_Attack"), Func)))
 		return E_FAIL;
 
+	Func = [&] {(*this).On_Overhead_Event(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("On_Overhead_Event"), Func)))
+		return E_FAIL;
+
+	Func = [&] {(*this).Off_Overhead_Event(); };
+	if (FAILED(m_pModelCom->Bind_Notifies(TEXT("Off_Overhead_Event"), Func)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -212,7 +223,7 @@ HRESULT CArmored_Troll::Add_Components()
 
 		/* For.Com_Health */
 		CHealth::HEALTHDESC HealthDesc;
-		HealthDesc.iMaxHP = 500;
+		HealthDesc.iMaxHP = 1000;
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Health"),
 			TEXT("Com_Health"), reinterpret_cast<CComponent**>(&m_pHealth), &HealthDesc)))
 			throw TEXT("Com_Health");
@@ -406,6 +417,13 @@ HRESULT CArmored_Troll::Make_Alive(_Inout_ CSelector* pSelector)
 	try
 	{
 		/* Create Child Behavior */
+		CSequence* pSequence_Flipendo = { nullptr };
+		if (FAILED(Create_Behavior(pSequence_Flipendo)))
+			throw TEXT("Failed Create_Behavior pSequence_Flipendo");
+		CSelector* pSelector_Attacks = { nullptr };
+		if (FAILED(Create_Behavior(pSelector_Attacks)))
+			throw TEXT("Failed Create_Behavior pSelector_Attacks");
+
 		CSequence* pSequence_Attacks_Degree = nullptr;
 		if (FAILED(Create_Behavior(pSequence_Attacks_Degree)))
 			throw TEXT("Failed Create_Behavior pSequence_Attacks_Degree");
@@ -425,17 +443,38 @@ HRESULT CArmored_Troll::Make_Alive(_Inout_ CSelector* pSelector)
 
 				return !(pHealth->isDead());
 			});
+		pSelector_Attacks->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_bool* pIsOverheadAction = { nullptr };
+				_uint* pCurrentSpell = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("isOverheadAction", pIsOverheadAction)))
+					return false;
+				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pCurrentSpell)))
+					return false;
+
+				if (true == *pIsOverheadAction && (BUFF_FLIPENDO & *pCurrentSpell))
+					return false;
+
+				return true;
+			});
 
 		/* Set Options */
 
 		/* Assemble Behaviors */
-		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Attacks_Degree"), pSequence_Attacks_Degree)))
+		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Flipendo"), pSequence_Flipendo)))
+			throw TEXT("Failed Assemble_Behavior Sequence_Flipendo");
+		if (FAILED(pSelector->Assemble_Behavior(TEXT("Selector_Attacks"), pSelector_Attacks)))
+			throw TEXT("Failed Assemble_Behavior Selector_Attacks");
+
+		if (FAILED(pSelector_Attacks->Assemble_Behavior(TEXT("Sequence_Attacks_Degree"), pSequence_Attacks_Degree)))
 			throw TEXT("Failed Selector Assemble_Behavior Sequence_Attacks_Degree");
-		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Attacks_Far"), pSequence_Attacks_Far)))
+		if (FAILED(pSelector_Attacks->Assemble_Behavior(TEXT("Sequence_Attacks_Far"), pSequence_Attacks_Far)))
 			throw TEXT("Failed Selector Assemble Sequence_Attacks_Far");
-		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Taunts"), pSequence_Taunts)))
+		if (FAILED(pSelector_Attacks->Assemble_Behavior(TEXT("Sequence_Taunts"), pSequence_Taunts)))
 			throw TEXT("Failed Selector Assemble_Behavior Sequence_Taunts");
 
+		if (FAILED(Make_Flipendo(pSequence_Flipendo)))
+			throw TEXT("Failed Make_Flipendo");
 		if (FAILED(Make_Attack_Degree(pSequence_Attacks_Degree)))
 			throw TEXT("Failed Make_Attack_Degree");
 		if (FAILED(Make_Pattern_Attack_Far(pSequence_Attacks_Far)))
@@ -446,6 +485,88 @@ HRESULT CArmored_Troll::Make_Alive(_Inout_ CSelector* pSelector)
 	catch (const _tchar* pErrorTag)
 	{
 		wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed Make_Alive : \n");
+		wstrErrorMSG += pErrorTag;
+		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
+
+		ENDINSTANCE;
+
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CArmored_Troll::Make_Flipendo(_Inout_ CSequence* pSequence)
+{
+	BEGININSTANCE;
+
+	try
+	{
+		if (nullptr == pSequence)
+			throw TEXT("Parameter pSequence is nullptr");
+
+		/* Create Child Behaviors */
+		CAction* pAction_Club_Face_Enter = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Club_Face_Enter)))
+			throw TEXT("Failed Create_Behavior pAction_Club_Face_Enter");
+		CAction* pAction_Stun_Loop = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Stun_Loop)))
+			throw TEXT("Failed Create_Behavior pAction_Stun_Loop");
+		CAction* pAction_Club_Face_End = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Club_Face_End)))
+			throw TEXT("Failed Create_Behavior pAction_Club_Face_End");
+
+		CWait* pTsk_Wait = { nullptr };
+		if (FAILED(Create_Behavior(pTsk_Wait)))
+			throw TEXT("Failed Create_Behavior pTsk_Wait");
+
+		/* Set Decorators */
+		pSequence->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_bool* pIsOverheadAction = { nullptr };
+				_uint* pCurrentSpell = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("isOverheadAction", pIsOverheadAction)))
+					return false;
+				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pCurrentSpell)))
+					return false;
+
+				return true == *pIsOverheadAction && (BUFF_FLIPENDO & *pCurrentSpell);
+			});
+		pSequence->Add_End_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_uint* pCurrentSpell = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("iCurrentSpell", pCurrentSpell)))
+					return false;
+
+				if (BUFF_FLIPENDO & *pCurrentSpell)
+					*pCurrentSpell ^= BUFF_FLIPENDO;
+
+				return true;
+			});
+
+		/* Set Options */
+		pAction_Club_Face_Enter->Set_Options(TEXT("Club_Face_Enter"), m_pModelCom);
+		pAction_Stun_Loop->Set_Options(TEXT("Stun_Knee_Loop"), m_pModelCom, true);
+		pAction_Club_Face_End->Set_Options(TEXT("Club_Face_End"), m_pModelCom);
+		pTsk_Wait->Set_Timer(3.f);
+
+		/* Assemble Behaviors */
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Club_Face_Enter"), pAction_Club_Face_Enter)))
+			throw TEXT("Failed Assemble_Behavior Action_Club_Face_Enter");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Stun_Loop"), pAction_Stun_Loop)))
+			throw TEXT("Failed Assemble_Behavior Action_Stun_Loop");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Club_Face_End"), pAction_Club_Face_End)))
+			throw TEXT("Failed Assemble_Behavior Action_Club_Face_End");
+
+		if (FAILED(pAction_Stun_Loop->Assemble_Behavior(TEXT("Tsk_Wait"), pTsk_Wait)))
+			throw TEXT("Failed Assemble_Behavior Tsk_Wait");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CArmored_Troll] Failed Make_Flipendo : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
 		__debugbreak();

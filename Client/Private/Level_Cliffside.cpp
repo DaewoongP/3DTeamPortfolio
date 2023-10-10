@@ -164,16 +164,16 @@ HRESULT CLevel_Cliffside::Ready_Lights()
 	ZeroMemory(&LightDesc, sizeof LightDesc);
 
 	LightDesc.eType = CLight::TYPE_DIRECTIONAL;
-	LightDesc.vPos = _float4(10.f, 100.f, 25.f, 1.f);
-	LightDesc.vLookAt = _float4(20.f, 0.f, 20.f, 1.f);
-	LightDesc.vDir = _float4(0.33f, -0.99f, 0.33f, 0.f);
-
+	LightDesc.vPos = _float4(12.5f, 40.5f, 44.f, 1.f);
+	LightDesc.vLookAt = _float4(51.7f, 0.f, 52.4f, 1.f);
+	LightDesc.vDir = LightDesc.vLookAt - LightDesc.vPos;
+	
 	LightDesc.vDiffuse = WHITEDEFAULT;
 	LightDesc.vAmbient = WHITEDEFAULT;
 	LightDesc.vSpecular = WHITEDEFAULT;
 
-	if (nullptr == pGameInstance->Add_Lights(_float(g_iWinSizeX), _float(g_iWinSizeY), LightDesc))
-		return E_FAIL;
+	if (FAILED(pGameInstance->Add_Light(LightDesc, nullptr, true, 0, _float(g_iWinSizeX) / g_iWinSizeY)))
+		return E_FAIL;	
 
 	ENDINSTANCE;
 
@@ -312,17 +312,10 @@ HRESULT CLevel_Cliffside::Ready_Layer_Monster(const _tchar* pLayerTag)
 		ENDINSTANCE;
 		return E_FAIL;
 	}*/
-	Matrix = XMMatrixTranslation(35.f, 10.f, 65.f);
-	/*if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_DarkWizard_M"), pLayerTag, TEXT("GameObject_DarkWizard_M"), &Matrix)))
+	/*Matrix = XMMatrixTranslation(35.f, 10.f, 65.f);
+	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_DarkWizard_M"), pLayerTag, TEXT("GameObject_DarkWizard_M"), &Matrix)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_DarkWizard_M)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}*/
-	/*Matrix = XMMatrixTranslation(10.f, 10.f, 50.f);
-	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_ConjuredDragon"), pLayerTag, TEXT("GameObject_ConjuredDragon"), &Matrix)))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_ConjuredDragon)");
 		ENDINSTANCE;
 		return E_FAIL;
 	}*/
