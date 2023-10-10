@@ -265,9 +265,9 @@ HRESULT CLevel_Cliffside::Ready_Layer_Inventory(const _tchar* pLayerTag)
 	Safe_AddRef(pGameInstance);
 
 	/* Add Scene : Main */
-	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Menu"), pLayerTag)))
 	{
-		MSG_BOX("Failed Add Scene : (Scene_Main)");
+		MSG_BOX("Failed Add Scene : (Scene_Menu)");
 		ENDINSTANCE;
 		return E_FAIL;
 	}

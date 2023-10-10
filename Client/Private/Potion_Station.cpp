@@ -139,7 +139,7 @@ void CPotion_Station::Tick(_float fTimeDelta)
 		if (pGameInstance->Get_DIKeyState(DIK_E, CInput_Device::KEY_DOWN))
 		{
 			m_pCUI_Group_Brew->Set_isOpen(true);
-			m_pParticleSystem->Play(m_pTransform->Get_Position());
+			m_pParticleSystem->Play(_float3(99.574f, 7.540f, 77.789f));
 
 			pGameInstance->Set_Camera(TEXT("Potion_Station_Camera"), 0.5f);
 			m_eState = SHOW;
@@ -160,15 +160,25 @@ void CPotion_Station::Tick(_float fTimeDelta)
 		break;
 	}
 
-
-
 	Safe_Release(pGameInstance);
+
+#ifdef _DEBUG
+	ADD_IMGUI([&] { this->Tick_Imgui(fTimeDelta); });
+#endif // _DEBUG
 }
 
 void CPotion_Station::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 }
+
+#ifdef _DEBUG
+void CPotion_Station::Tick_Imgui(_float fTimeDelta)
+{
+	CImGui_Manager::NextWindow_LeftBottom();
+	CImGui_Manager::MatrixImgui(m_pParticleSystem->Get_Transform()->Get_WorldMatrixRef(), "Particle");
+}
+#endif // _DEBUG
 
 HRESULT CPotion_Station::Add_Components()
 {
