@@ -68,8 +68,6 @@ void CMagicBall::Tick(_float fTimeDelta)
 
 	if (nullptr != m_pLight)
 		m_pLight->Set_Position(m_pTransform->Get_Position().TransCoord());
-
-	__super::Tick(fTimeDelta);
 }
 
 void CMagicBall::Late_Tick(_float fTimeDelta)
