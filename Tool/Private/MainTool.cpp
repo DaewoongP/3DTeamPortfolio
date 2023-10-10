@@ -443,6 +443,40 @@ HRESULT CMainTool::Ready_Prototype_Object()
 		CTriangleColMesh::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	
+#pragma region Load Particle
+	{
+		std::lock_guard<std::mutex> lock(mtx);
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Dust01"),
+			TEXT("../../Resources/GameData/ParticleData/Misc/Dust01/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Dust01");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Dust02"),
+			TEXT("../../Resources/GameData/ParticleData/Misc/Dust02/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Dust02");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_RockChunksRough"),
+			TEXT("../../Resources/GameData/ParticleData/Misc/RockChunksRough/"), 3)))
+			throw TEXT("Reserve Particle : Particle_RockChunksRough");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Golem_Dash_Gas_Splash"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Golem_Dash/Gas_Splash/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Golem_Dash_Gas_Splash");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Golem_Dash_Gas_Twinkle"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Golem_Dash/Gas_Twinkle/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Golem_Dash_Gas_Twinkle");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Golem_Hit"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Golem_Hit/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Golem_Hit");
+
+		if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Golem_Slash_Trace_Twinkle"),
+			TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Golem_Slash/Trace_Twinkle/"), 3)))
+			throw TEXT("Reserve Particle : Particle_Golem_Slash_Trace_Twinkle");
+	}
+#pragma endregion
+
 
 #ifdef _DEBUG
 

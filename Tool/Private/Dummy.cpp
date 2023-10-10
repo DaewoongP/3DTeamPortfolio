@@ -82,43 +82,6 @@ HRESULT CDummy::Render()
 	return S_OK;
 }
 
-HRESULT CDummy::Render_Depth()
-{
-	if (nullptr == m_pShader ||
-		nullptr == m_pModel)
-		return S_OK;
-
-	/*if (FAILED(SetUp_ShaderResources()))
-		return E_FAIL;*/
-
-	BEGININSTANCE
-	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
-		return E_FAIL;
-	_float4x4	ViewMatrix, ProjMatrix;
-	ViewMatrix = XMMatrixLookAtLH(_float4(0.f, 10.f, 0.f, 1.f), _float4(3.f, 0.f, 3.f, 1.f), _float4(0.f, 1.f, 0.f, 0.f));
-	ProjMatrix = XMMatrixPerspectiveFovLH(XMConvertToRadians(90.f), _float(g_iWinSizeX) / g_iWinSizeY, 1.f, 100.f);
-	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", &ViewMatrix)))
-		return E_FAIL;
-	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", &ProjMatrix)))
-		return E_FAIL;
-	if (FAILED(m_pShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
-		return E_FAIL;
-	ENDINSTANCE
-
-	_uint		iNumMeshes = m_pModel->Get_NumMeshes();
-
-	for (_uint i = 0; i < iNumMeshes; ++i)
-	{
-		m_pModel->Bind_BoneMatrices(m_pShader, "g_BoneMatrices", i);
-
-		m_pShader->Begin("Shadow");
-
-		m_pModel->Render(i);
-	}
-
-	return S_OK;
-}
-
 HRESULT CDummy::Add_Model_Component(const wchar_t* wszModelTag)
 {
 	if (m_pModel != nullptr)

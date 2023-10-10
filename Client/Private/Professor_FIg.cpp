@@ -166,9 +166,9 @@ HRESULT CProfessor_Fig::Render()
 	return S_OK;
 }
 
-HRESULT CProfessor_Fig::Render_Depth()
+HRESULT CProfessor_Fig::Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix)
 {
-	if (FAILED(SetUp_ShadowShaderResources()))
+	if (FAILED(SetUp_ShadowShaderResources(LightViewMatrix, LightProjMatrix)))
 		return E_FAIL;
 
 	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
@@ -554,7 +554,7 @@ _bool CProfessor_Fig::IsEnemy(const wstring& wstrObjectTag)
 	return false;
 }
 
-HRESULT CProfessor_Fig::SetUp_ShadowShaderResources()
+HRESULT CProfessor_Fig::SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix)
 {
 	BEGININSTANCE;
 
@@ -566,10 +566,10 @@ HRESULT CProfessor_Fig::SetUp_ShadowShaderResources()
 		if (FAILED(m_pShadowShaderCom->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
 			throw TEXT("Failed Bind_Matrix : g_WorldMatrix");
 
-		if (FAILED(m_pShadowShaderCom->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_LightTransformMatrix(CPipeLine::D3DTS_VIEW))))
+		if (FAILED(m_pShadowShaderCom->Bind_Matrix("g_ViewMatrix", &LightViewMatrix)))
 			throw TEXT("Failed Bind_Matrix : g_ViewMatrix");
 
-		if (FAILED(m_pShadowShaderCom->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_LightTransformMatrix(CPipeLine::D3DTS_PROJ))))
+		if (FAILED(m_pShadowShaderCom->Bind_Matrix("g_ProjMatrix", &LightProjMatrix)))
 			throw TEXT("Failed Bind_Matrix : g_ProjMatrix");
 
 		if (FAILED(m_pShadowShaderCom->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
