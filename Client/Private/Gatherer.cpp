@@ -36,6 +36,7 @@ HRESULT CGatherer::Initialize(void* pArg)
 
 	m_ObjectDesc = *reinterpret_cast<MAPOBJECTDESC*>(pArg);
 	m_pTransform->Set_WorldMatrix(m_ObjectDesc.WorldMatrix);
+	m_pTransform->Set_RigidBody(m_pRigidBody);
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
@@ -88,10 +89,38 @@ HRESULT CGatherer::Initialize_Level(_uint iCurrentLevelIndex)
 	m_pModel->Set_CurrentAnimIndex(1);
 	m_pModel->Get_Animation(1)->Set_Loop(true);
 
+	// 리지드 바디 초기화
+	CRigidBody::RIGIDBODYDESC RigidBodyDesc;
+	RigidBodyDesc.isStatic = true;
+	RigidBodyDesc.isTrigger = true;
+	RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
+	RigidBodyDesc.eConstraintFlag = CRigidBody::All;
+	RigidBodyDesc.fStaticFriction = 1.f;
+	RigidBodyDesc.fDynamicFriction = 1.f;
+	RigidBodyDesc.fRestitution = 0.f;
+	PxSphereGeometry MyGeometry = PxSphereGeometry(2.f);
+	RigidBodyDesc.pGeometry = &MyGeometry;
+	RigidBodyDesc.pOwnerObject = this;
+	RigidBodyDesc.vDebugColor = _float4(0.f, 1.f, 1.f, 1.f);
+	RigidBodyDesc.eThisCollsion = COL_STATIC;
+	RigidBodyDesc.eCollisionFlag = COL_PLAYER;
+	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Gatherer");
+	
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
+		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
+	{
+		MSG_BOX("Failed CDoor Add_Component : (Com_RigidBody)");
+		__debugbreak();
+		return E_FAIL;
+	}
+
 	// 플레이어 찾기
 	BEGININSTANCE;
 	m_pPlayer = static_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(iCurrentLevelIndex, TEXT("Layer_Player"), TEXT("GameObject_Player")));
 	m_pPlayerInformation = m_pPlayer->Get_Player_Information();
+
+	Safe_AddRef(m_pPlayer);
+	Safe_AddRef(m_pPlayerInformation);
 	ENDINSTANCE;
 
 	return S_OK;
@@ -101,21 +130,21 @@ void CGatherer::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	// 플레이어와 거리 비교
-	_float3 vPlayerPos = m_pPlayer->Get_PlayerPos();
-	_float3 vGathererPos = m_pTransform->Get_Position();
+	//// 플레이어와 거리 비교
+	//_float3 vPlayerPos = m_pPlayer->Get_PlayerPos();
+	//_float3 vGathererPos = m_pTransform->Get_Position();
 
-	m_fDist_From_Player = sqrtf((vPlayerPos.x - vGathererPos.x) * (vPlayerPos.x - vGathererPos.x) +
-		(vPlayerPos.y - vGathererPos.y) * (vPlayerPos.y - vGathererPos.y) +
-		(vPlayerPos.z - vGathererPos.z) * (vPlayerPos.z - vGathererPos.z));
+	//m_fDist_From_Player = sqrtf((vPlayerPos.x - vGathererPos.x) * (vPlayerPos.x - vGathererPos.x) +
+	//	(vPlayerPos.y - vGathererPos.y) * (vPlayerPos.y - vGathererPos.y) +
+	//	(vPlayerPos.z - vGathererPos.z) * (vPlayerPos.z - vGathererPos.z));
 
 	// 일정 거리안으로 들어왔을 때
-	if (2.f >= m_fDist_From_Player && nullptr != m_pModel)
+	if (true == m_isCol_with_Player && nullptr != m_pModel)
 	{
 		// 여기서 버튼 UI가 나타나면 될듯
 
 		BEGININSTANCE;  // 버튼을 누르면 동작(한번만)
-		if (pGameInstance->Get_DIKeyState(DIK_E, CInput_Device::KEY_DOWN) && true == m_isGetItem)
+		if (pGameInstance->Get_DIKeyState(DIK_F, CInput_Device::KEY_DOWN) && true == m_isGetItem)
 		{
 			m_isGetItem = false;
 
@@ -152,7 +181,9 @@ void CGatherer::Tick(_float fTimeDelta)
 		if (0 == m_pModel->Get_CurrentAnimIndex() && true == m_pModel->Is_Finish_Animation())
 		{
 			Set_ObjEvent(OBJ_DEAD);
+#ifdef _DEBUG
 			cout << "채집물 죽음" << '\n';
+#endif // _DEBUG
 		}
 	}	
 }
@@ -165,15 +196,39 @@ void CGatherer::Late_Tick(_float fTimeDelta)
 
 	if (nullptr != m_pRenderer)
 	{
-		// 후클럼프 모델일 경우 다른 Renderer에 넣어준다.
+		// 후클럼프(발광 버섯) 모델일 경우 다른 Renderer에 넣어준다.
 		if (m_GatheringType == CGatherer::HORKLUMP)
 			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_GLOW, this);
 		else
 			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
+
+#ifdef _DEBUG
+		m_pRenderer->Add_DebugGroup(m_pRigidBody);
+#endif // _DEBUG
 	}
 
 	ENDINSTANCE;
+}
+
+void CGatherer::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
+{
+	wstring wsCollisionTag = CollisionEventDesc.pOtherCollisionTag;
+	wstring wsPlayer(TEXT("Player_Default"));
+
+	// 플레이어와 충돌했다면 채집 활성화
+	if(0 == lstrcmp(wsCollisionTag.c_str(), wsPlayer.c_str()))
+		m_isCol_with_Player = true;	
+}
+
+void CGatherer::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
+{
+	wstring wsCollisionTag = CollisionEventDesc.pOtherCollisionTag;
+	wstring wsPlayer(TEXT("Player_Default"));
+
+	// 플레이어와 충돌이 끝났다면 채집 비활성화
+	if (0 == lstrcmp(wsCollisionTag.c_str(), wsPlayer.c_str()))
+		m_isCol_with_Player = false;
 }
 
 HRESULT CGatherer::Render()
@@ -345,6 +400,10 @@ void CGatherer::Free()
 {
 	__super::Free();
 
+	Safe_Release(m_pPlayer);
+	Safe_Release(m_pPlayerInformation);
+
+	Safe_Release(m_pRigidBody);
 	Safe_Release(m_pShadowShader);
 	Safe_Release(m_pShader);
 	Safe_Release(m_pModel);
