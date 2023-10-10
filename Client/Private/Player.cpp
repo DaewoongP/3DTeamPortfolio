@@ -967,10 +967,10 @@ HRESULT CPlayer::Add_Magic()
 	m_pMagicSlot->Add_Magic_To_Basic_Slot(2, LUMOS);
 	m_pMagicSlot->Add_Magic_To_Basic_Slot(3, FINISHER);
 
-	Set_Spell_Botton(0, DIFFINDO);
+	Set_Spell_Botton(0, BOMBARDA);
 	Set_Spell_Botton(1, LEVIOSO);
-	Set_Spell_Botton(2, CRUCIO);
-	Set_Spell_Botton(3, FLIPENDO);
+	Set_Spell_Botton(2, DESCENDO);
+	Set_Spell_Botton(3, CRUCIO);
 
 	return S_OK;
 }
@@ -2093,12 +2093,13 @@ void CPlayer::Update_Cloth(_float fTimeDelta)
 
 void CPlayer::Find_Target_For_Distance()
 {
-	if (nullptr != m_pTarget)
+	BEGININSTANCE;
+
+	if (nullptr != m_pTarget || pGameInstance->Get_DIMouseState(CInput_Device::DIMK_RBUTTON, CInput_Device::KEY_PRESSING))
 	{
+		ENDINSTANCE;
 		return;
 	}
-
-	BEGININSTANCE;
 
 	unordered_map<const _tchar*, CComponent*>* pLayer = pGameInstance->Find_Components_In_Layer(m_eLevelID, TEXT("Layer_Monster"));
 
