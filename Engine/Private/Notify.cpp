@@ -25,6 +25,7 @@ CNotify::CNotify(const CNotify& rhs)
 			pKeyframe = New NOTIFYFRAME(*static_cast<NOTIFYFRAME*>(Pair.second));
 			break;
 		case KEYFRAME::KF_PARTICLE:
+			//복사생성 당시 bones에 접근해서 matrix를 새로 바인딩해줘야함.
 			pKeyframe = New PARTICLEFRAME(*static_cast<PARTICLEFRAME*>(Pair.second));
 			break;
 		}
@@ -37,7 +38,7 @@ HRESULT CNotify::Initialize()
 	return S_OK;
 }
 
-void CNotify::Invalidate_Frame(_float fTimeAcc, _Inout_ _uint* pCurrentKeyFrameIndex, _Inout_ _float* fSpeed, CTransform* pTransform, _float4x4 PivotMatrix)
+void CNotify::Invalidate_Frame(_float fTimeAcc, _Inout_ _uint* pCurrentKeyFrameIndex, _Inout_ _float* fSpeed, const _float4x4* pWorldMatrix, _float4x4 PivotMatrix)
 {
 	if (0.f == fTimeAcc)
 	{
@@ -126,8 +127,9 @@ void CNotify::Invalidate_Frame(_float fTimeAcc, _Inout_ _uint* pCurrentKeyFrameI
 					else 
 					{
 						//여기에 pivot matrix 곱해주기 모델 가져와야하네?
-						PositionMatrix = pParticleFrame->OffsetMatrix * (*pParticleFrame->BindBoneMatrix)  * PivotMatrix * pTransform->Get_WorldMatrix();
-						pGameInstance->Play_Particle((pParticleFrame->wszParticleTag), PositionMatrix.Translation());
+						PositionMatrix = pParticleFrame->OffsetMatrix * (*pParticleFrame->BindBoneMatrix)  * PivotMatrix * (*pWorldMatrix);
+
+						pGameInstance->Play_Particle((pParticleFrame->wszParticleTag), pParticleFrame->OffsetMatrix, pParticleFrame->BindBoneMatrix, PivotMatrix, pWorldMatrix);
 					}
 					
 					Safe_Release(pGameInstance);
@@ -303,6 +305,18 @@ HRESULT CNotify::AddFrame(KEYFRAME_GCM* data,const CModel::BONES& Bones)
 		});
 	return S_OK;
 }
+
+void CNotify::BindBoneMatrixForParticle(const CModel::BONES& Bones)
+{
+	for (auto& Pair : m_KeyFrames)
+	{
+		if (Pair.second->eKeyFrameType == KEYFRAME::KF_PARTICLE)
+		{
+			static_cast<PARTICLEFRAME*>(Pair.second)->BindBoneMatrix = Bones[static_cast<PARTICLEFRAME*>(Pair.second)->iBoneIndex]->Get_CombinedTransformationMatrixPtr();
+		}
+	}
+}
+
 void CNotify::Notify_NULL_WarningAlam()
 {
 	_char szName[MAX_PATH]="";

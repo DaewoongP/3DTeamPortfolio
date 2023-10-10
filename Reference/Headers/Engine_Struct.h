@@ -78,6 +78,9 @@ namespace Engine
 			: tagFrame(rhs)
 		{
 			lstrcpy(wszParticleTag, rhs.wszParticleTag);
+			iBoneIndex = rhs.iBoneIndex;
+			OffsetMatrix = rhs.OffsetMatrix;
+			//BindBoneMatrix = rhs.BindBoneMatrix;
 		}
 		wchar_t wszParticleTag[MAX_PATH] = {};
 		// 파티클이 재생될 위치를 지정하기 위함임.

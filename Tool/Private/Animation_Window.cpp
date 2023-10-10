@@ -164,7 +164,7 @@ void CAnimation_Window::Tick(_float fTimeDelta)
 	if (ImGui::Button("Delete_Dummy##Animation"))
 	{
 		BEGININSTANCE;
-
+		//pGameInstance->Play_Particle(TEXT("Particle_RockChunksRough"), _float3(0, 0, 0));
 		if (FAILED(pGameInstance->Delete_Component(LEVEL_TOOL,
 			TEXT("Layer_Tool"), TEXT("Dummy_Animation"))))
 		{
@@ -697,7 +697,7 @@ void CAnimation_Window::ParticlePositionVisualize()
 		_float3 vPosition = {};
 		if (pParticleFrame->BindBoneMatrix != nullptr)
 		{
-			vPosition = _float4x4(pParticleFrame->OffsetMatrix * (*pParticleFrame->BindBoneMatrix)* m_pDummyModel->Get_PivotFloat4x4() * m_pDummyObject->Get_Transform()->Get_WorldMatrix()).Translation();
+			vPosition = _float4x4(pParticleFrame->OffsetMatrix * (*pParticleFrame->BindBoneMatrix) * m_pDummyModel->Get_PivotFloat4x4() *m_pDummyObject->Get_Transform()->Get_WorldMatrix()).Translation();
 		}
 		if (m_pParticleNotify[i] == nullptr)
 			return;

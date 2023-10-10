@@ -88,7 +88,7 @@ public:
 	_bool Invalidate_AccTime(_float fTimeDelta); 
 	void Invalidate_TransformationMatrix(CModel::BONES& Bones, _float fTimeDelta, vector<_uint>* boneVec = nullptr);
 	void Invalidate_TransformationMatrix_Lerp(CModel::BONES& Bones, _float fTimeDelta, _float LerpTimeAcc, _uint iRootIndex, vector<_uint>* boneVec = nullptr);
-	void Invalidate_Frame(_float fTimeDelta, _float4x4 PivotMatrix, CTransform* pTransform);
+	void Invalidate_Frame(_float fTimeDelta, _float4x4 PivotMatrix, const _float4x4* pWorldMatrix);
 
 private:
 	_tchar						m_szName[MAX_STR] = TEXT("");

@@ -33,18 +33,20 @@ CModel::CModel(const CModel& rhs)
 	, m_isCreatedByGCM(rhs.m_isCreatedByGCM)
 	, m_isExportedTool(rhs.m_isExportedTool)
 {
+	for (auto& pOriginalBone : rhs.m_Bones)
+	{
+		m_Bones.push_back(pOriginalBone->Clone());
+	}
+
+	//애니메이션 복사 생성
 	for (_uint AnimTypeIndex = 0; AnimTypeIndex < ANIM_END; ++AnimTypeIndex)
 	{
 		m_tAnimationDesc[AnimTypeIndex] = ANIMATIONDESC(rhs.m_tAnimationDesc[AnimTypeIndex]);
 		for (auto& pOriginalAnimation : rhs.m_tAnimationDesc[AnimTypeIndex].Animations)
 		{
 			m_tAnimationDesc[AnimTypeIndex].Animations.push_back(pOriginalAnimation->Clone());
+			m_tAnimationDesc[AnimTypeIndex].Animations.back()->Get_Notify_Point()->BindBoneMatrixForParticle(m_Bones);
 		}
-	}
-
-	for (auto& pOriginalBone : rhs.m_Bones)
-	{
-		m_Bones.push_back(pOriginalBone->Clone());
 	}
 
 	for (auto& pMesh : m_Meshes)
@@ -252,7 +254,7 @@ void CModel::Play_Animation(_float fTimeDelta, ANIMTYPE eType, CTransform* pTran
 		currentAnimation->Get_Accmulation() &&
 		!currentAnimation->Get_LoopAnim();
 
-	currentAnimation->Invalidate_Frame(fTimeDelta, m_PivotMatrix,pTransform);
+	currentAnimation->Invalidate_Frame(fTimeDelta, m_PivotMatrix,pTransform->Get_WorldMatrixPtr());
 
 	if (!m_tAnimationDesc[eType].isAnimChangeLerp)
 	{
@@ -1031,7 +1033,8 @@ HRESULT CModel::Convert_Animations_GCM()
 					Notify_Frame->eKeyFrameType = *reinterpret_cast<KEYFRAME_GCM::KEYFRAMETYPE*>(&keyframe.second->eKeyFrameType);
 					Notify_Frame->fTime = keyframe.second->fTime;
 					lstrcpy(Notify_Frame->wszParticleTag, static_cast<PARTICLEFRAME*>(keyframe.second)->wszParticleTag);
-
+					Notify_Frame->iBoneIndex = static_cast<PARTICLEFRAME*>(keyframe.second)->iBoneIndex;
+					Notify_Frame->OffsetMatrix = static_cast<PARTICLEFRAME*>(keyframe.second)->OffsetMatrix;
 					//�������� ä���� ���ο� �����͸� ��Ƽ���̿� �־���.
 					Animation.Notify->tKeyFrame.push_back(Notify_Frame);
 					break;
@@ -1390,6 +1393,9 @@ HRESULT CModel::Ready_File_GCM(TYPE eType, const _tchar* pModelFilePath)
 						ReadFile(hFile, &NotifyFrame->fTime, sizeof(_float), &dwByte, nullptr);
 						ReadFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
 						ReadFile(hFile, NotifyFrame->wszParticleTag, dwStrByte, &dwByte, nullptr);
+
+						ReadFile(hFile, &NotifyFrame->iBoneIndex, sizeof(_uint), &dwByte, nullptr);
+						ReadFile(hFile, &NotifyFrame->OffsetMatrix, sizeof(_float4x4), &dwByte, nullptr);
 						if (0 == dwByte)
 						{
 							MSG_BOX("Failed Read String Data");
@@ -1877,9 +1883,12 @@ HRESULT CModel::Write_File_GCM(TYPE eType, const _tchar* pModelFilePath)
 					case KEYFRAME::KF_NOTIFY:
 						break;
 					case KEYFRAME::KF_PARTICLE:
-						dwStrByte = (_ulong)sizeof(_tchar) * (lstrlen(reinterpret_cast<PARTICLEFRAME_GCM*>(Keyframe)->wszParticleTag) + 1);
+						PARTICLEFRAME_GCM* particle_gcm = reinterpret_cast<PARTICLEFRAME_GCM*>(Keyframe);
+						dwStrByte = (_ulong)sizeof(_tchar) * (lstrlen(particle_gcm->wszParticleTag) + 1);
 						WriteFile(hFile, &dwStrByte, sizeof(_ulong), &dwByte, nullptr);
-						WriteFile(hFile, reinterpret_cast<PARTICLEFRAME_GCM*>(Keyframe)->wszParticleTag, dwStrByte, &dwByte, nullptr);
+						WriteFile(hFile, particle_gcm->wszParticleTag, dwStrByte, &dwByte, nullptr);
+						WriteFile(hFile, &particle_gcm->iBoneIndex, sizeof(_uint), &dwByte, nullptr);
+						WriteFile(hFile, &particle_gcm->OffsetMatrix, sizeof(_float4x4), &dwByte, nullptr);
 
 						break;
 					}
