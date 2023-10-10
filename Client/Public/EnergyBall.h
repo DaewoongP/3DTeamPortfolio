@@ -43,8 +43,7 @@ public:
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
-	virtual HRESULT Render_Depth() override;
-
+	
 public:
 	void Reset(const ENERGYBALLINITDESC& tagResetDesc);
 	void Set_Protego_Collision(CTransform* pTransform, CEnemy::ATTACKTYPE eType) const;
@@ -60,7 +59,6 @@ private:
 	CMagicSlot* m_pMagicSlot = { nullptr };
 	CRenderer* m_pRenderer = { nullptr };
 	CShader* m_pShader = { nullptr };
-	CShader* m_pShadowShader = { nullptr };
 	CModel* m_pModel = { nullptr };
 
 private:
@@ -68,7 +66,6 @@ private:
 	HRESULT Add_Components();
 	HRESULT Add_Components_Level(const _uint& iLevel);
 	HRESULT SetUp_ShaderResources();
-	HRESULT SetUp_ShadowShaderResources();
 
 public:
 	static CEnergyBall* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

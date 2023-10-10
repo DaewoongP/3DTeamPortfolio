@@ -313,10 +313,14 @@ void CProtego::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 			vDir.Normalize();
 			vAxis.Normalize();
 			vDir *= -1;
+			//내적한담에
+			_float fDot = XMVectorGetX(XMVector3Dot(vAxis, vDir));
+			//각도를 구하고
+			_float fRadian = acosf(fDot);
 			//원래 dir을 이용해 충돌지점을 구한다.
 			_float3 vCollisionPosition = m_pTransform->Get_Position() + vDir * m_fScale * 0.5f;
 			//random으로 (-45,45)만큼 돌리고
-			_float fRadian += XMConvertToRadians(_float(rand() % 90) - 45);
+			fRadian = XMConvertToRadians(_float(rand() % 90) - 45);
 			//그 방향으로 30만큼 이동한 지점의 점을 구하고
 			_float4x4 RotationMatrix = XMMatrixRotationY(fRadian);
 			

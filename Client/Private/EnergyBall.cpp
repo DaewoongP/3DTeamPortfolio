@@ -136,25 +136,6 @@ HRESULT CEnergyBall::Render()
 	return S_OK;
 }
 
-HRESULT CEnergyBall::Render_Depth()
-{
-	if (FAILED(SetUp_ShadowShaderResources()))
-		return E_FAIL;
-
-	_uint iNumMeshes = m_pModel->Get_NumMeshes();
-
-	for (_uint iMeshCount = 0; iMeshCount < iNumMeshes; ++iMeshCount)
-	{
-		if (FAILED(m_pShadowShader->Begin("Shadow")))
-			return E_FAIL;
-
-		if (FAILED(m_pModel->Render(iMeshCount)))
-			return E_FAIL;
-	}
-
-	return S_OK;
-}
-
 void CEnergyBall::Reset(const ENERGYBALLINITDESC& tagResetDesc)
 {
 	m_isFirst = true;
@@ -216,15 +197,6 @@ HRESULT CEnergyBall::Add_Components()
 		return E_FAIL;
 	}
 
-	/* Com_ShadowShader */
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_ShadowMesh"),
-		TEXT("Com_ShadowShader"), reinterpret_cast<CComponent**>(&m_pShadowShader))))
-	{
-		MSG_BOX("Failed CEnergyBall Add_Component : (Com_ShadowShader)");
-		__debugbreak();
-		return E_FAIL;
-	}
-
 	/* For.MagicSlot */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_MagicSlot"),
 		TEXT("Com_MagicSlot"), reinterpret_cast<CComponent**>(&m_pMagicSlot))))
@@ -272,24 +244,6 @@ HRESULT CEnergyBall::SetUp_ShaderResources()
 	return S_OK;
 }
 
-HRESULT CEnergyBall::SetUp_ShadowShaderResources()
-{
-	BEGININSTANCE;
-
-	if (FAILED(m_pShadowShader->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
-		return E_FAIL;
-	if (FAILED(m_pShadowShader->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_LightTransformMatrix(CPipeLine::D3DTS_VIEW))))
-		return E_FAIL;
-	if (FAILED(m_pShadowShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_LightTransformMatrix(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
-	if (FAILED(m_pShadowShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
-		return E_FAIL;
-
-	ENDINSTANCE;
-
-	return S_OK;
-}
-
 CEnergyBall* CEnergyBall::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CEnergyBall* pInstance = New CEnergyBall(pDevice, pContext);
@@ -323,7 +277,6 @@ void CEnergyBall::Free()
 	{
 		Safe_Release(m_pMagicSlot);
 		Safe_Release(m_pShader);
-		Safe_Release(m_pShadowShader);
 		Safe_Release(m_pModel);
 		Safe_Release(m_pRenderer);
 	}
