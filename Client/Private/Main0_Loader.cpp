@@ -43,6 +43,7 @@
 #include "FlowMap.h"
 #include "MeshEffect.h"
 #include "Wingardium_Effect.h"
+#include "EnergyBall.h"
 #pragma endregion Effects
 
 #pragma region Magic
@@ -231,7 +232,6 @@ HRESULT CMain0_Loader::Loading_For_Vault(LEVELID eLevelID)
 		CTrigger_Vault::Create(m_pDevice, m_pContext))))
 		throw TEXT("Prototype_GameObject_Trigger_Vault");
 
-
 	return S_OK;
 }
 
@@ -247,6 +247,25 @@ HRESULT CMain0_Loader::Loading_For_Hogsmeade(LEVELID eLevelID)
 
 HRESULT CMain0_Loader::Loading_For_Sanctum(LEVELID eLevelID)
 {
+	if (nullptr == m_pGameInstance)
+		return E_FAIL;
+
+	try /* Failed Check Loading_For_Sanctum Add_Prototype*/
+	{
+		/* Prototype_GameObject_EnergyBall */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_EnergyBall"),
+			CEnergyBall::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_EnergyBall");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("Failed Add_Prototype : ");
+		wstrErrorMSG += pErrorTag;
+		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
+		return E_FAIL;
+	}
+	
 	return S_OK;
 }
 

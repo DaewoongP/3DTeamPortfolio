@@ -10,8 +10,10 @@
 #include "Sequence.h"
 #include "MagicBall.h"
 #include "RigidMove.h"
+#include "Check_Degree.h"
 #include "Check_Distance.h"
 #include "Sequence_Attack.h"
+#include "Selector_Degree.h"
 #include "UI_Group_Enemy_HP.h"
 
 CConjuredDragon::CConjuredDragon(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -74,6 +76,8 @@ void CConjuredDragon::Tick(_float fTimeDelta)
 			m_isBreakInvincible = true;
 		if (pGameInstance->Get_DIKeyState(DIK_2, CInput_Device::KEY_DOWN))
 			m_isSpawnPhaseTwo = true;
+		if (pGameInstance->Get_DIKeyState(DIK_5, CInput_Device::KEY_DOWN))
+			m_isSpawn = true;
 	}
 	ENDINSTANCE;
 	/* ========================= */
@@ -81,7 +85,7 @@ void CConjuredDragon::Tick(_float fTimeDelta)
 	if (true == m_isPhaseTwo &&
 		false == m_isSpawnPhaseTwo)
 	{
-		_float3 vPosition = _float3(40.f, 25.f, 60.f);
+		_float3 vPosition = _float3(-17.f, -40.f, 220.f);
 		m_pTransform->Set_Position(vPosition);
 		m_pModelCom->Change_Animation(TEXT("Hover_Loop"));
 		return;
@@ -314,6 +318,14 @@ HRESULT CConjuredDragon::Make_AI()
 			throw TEXT("Failed Create_Behavior pSelector_Alive");
 
 		/* Set Decorations */
+		pSelector->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_bool* pIsSpawn = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("isSpawn", pIsSpawn)))
+					return false;
+
+				return true == *pIsSpawn;
+			});
 
 		/* Set Options */
 
@@ -631,7 +643,7 @@ HRESULT CConjuredDragon::Make_Next_Phase(_Inout_ CSequence* pSequence)
 
 		/* Set Options */
 		pAction_Enter_Next_Phase->Set_Options(TEXT("Fly_Next_Phase"), m_pModelCom, false, 0.f, true);
-		pAction_Fly->Set_Options(TEXT("Fly_Loop"), m_pModelCom, true, 0.f, true);
+		pAction_Fly->Set_Options(TEXT("Fly_Loop"), m_pModelCom, true, 0.f, true, false);
 		pRigidMove->Set_Option(m_pRigidBody, m_pTransform, CRigidMove::DIR_LOOK, 10.f, 10.f);
 
 		/* Assemble Behaviors */
@@ -702,6 +714,16 @@ HRESULT CConjuredDragon::Make_Start_Phase_Two(_Inout_ CSequence* pSequence)
 
 				return false;
 			});
+		pSequence->Add_End_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_bool* pIsInvincible = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("isInvincible", pIsInvincible)))
+					return false;
+
+				*pIsInvincible = false;
+
+				return true;
+			});
 
 		/* Set Options */
 		pAction_Fly_Down->Set_Options(TEXT("Fly_Loop"), m_pModelCom, true, 0.f, true);
@@ -744,9 +766,15 @@ HRESULT CConjuredDragon::Make_Ground_Pattern(_Inout_ CSelector* pSelector)
 			throw TEXT("Parameter pSelector is nullptr");
 
 		/* Create Child Behaviors */
-		CAction* pAction_Idle = { nullptr };
-		if (FAILED(Create_Behavior(pAction_Idle)))
-			throw TEXT("Failed Create_Behavior pAction_Idle");
+		CSequence* pSequence_Turns = { nullptr };
+		if (FAILED(Create_Behavior(pSequence_Turns)))
+			throw TEXT("Failed Create_Behavior pSequence_Turns");
+		CSequence* pSequence_Attacks = { nullptr };
+		if (FAILED(Create_Behavior(pSequence_Attacks)))
+			throw TEXT("Failed Create_Behavior pSequence_Attacks");
+		CSequence* pSequence_Charge = { nullptr };
+		if (FAILED(Create_Behavior(pSequence_Charge)))
+			throw TEXT("Failed Create_Behavior pSequence_Charge");
 
 		/* Set Decorators */
 		pSelector->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
@@ -759,11 +787,21 @@ HRESULT CConjuredDragon::Make_Ground_Pattern(_Inout_ CSelector* pSelector)
 			});
 
 		/* Set Options */
-		pAction_Idle->Set_Options(TEXT("Ground_Idle_Combat_1"), m_pModelCom);
 
 		/* Assemble Behaviors */
-		if (FAILED(pSelector->Assemble_Behavior(TEXT("Action_Idle"), pAction_Idle)))
-			throw TEXT("Failed Assemble_Behavior Action_Idle");
+		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Turns"), pSequence_Turns)))
+			throw TEXT("Failed Assemble_Behavior Sequence_Turns");
+		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Attacks"), pSequence_Attacks)))
+			throw TEXT("Failed Assemble_Behavior Sequence_Attacks");
+		if (FAILED(pSelector->Assemble_Behavior(TEXT("Sequence_Charge"), pSequence_Charge)))
+			throw TEXT("Failed Assemble_Behavior Sequence_Charge");
+
+		if (FAILED(Make_Ground_Turns(pSequence_Turns)))
+			throw TEXT("Failed Make_Ground_Turns");
+		if (FAILED(Make_Ground_Attacks(pSequence_Attacks)))
+			throw TEXT("Failed Make_Ground_Attacks");
+		if (FAILED(Make_Ground_Charge(pSequence_Charge)))
+			throw TEXT("Failed Make_Ground_Charge");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -861,6 +899,451 @@ HRESULT CConjuredDragon::Make_Air_Pattern(_Inout_ CSelector* pSelector)
 	catch (const _tchar* pErrorTag)
 	{
 		wstring wstrErrorMSG = TEXT("[CConjuredDragon] Failed Make_Air_Pattern : \n");
+		wstrErrorMSG += pErrorTag;
+		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
+
+		ENDINSTANCE;
+
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CConjuredDragon::Make_Ground_Turns(_Inout_ CSequence* pSequence)
+{
+	BEGININSTANCE;
+
+	try
+	{
+		if (nullptr == pSequence)
+			throw TEXT("Parameter pSequence is nullptr");
+
+		/* Make Child Behaviors */
+		CCheck_Degree* pTsk_Check_Degree = nullptr;
+		if (FAILED(Create_Behavior(pTsk_Check_Degree)))
+			throw TEXT("Failed Create_Behavior pTsk_Check_Degree");
+		CSelector_Degree* pSelector_Degree = nullptr;
+		if (FAILED(Create_Behavior(pSelector_Degree)))
+			throw TEXT("Failed Create_Behavior pSelector_Degree");
+
+		CAction* pAction_Left_45 = nullptr;
+		if (FAILED(Create_Behavior(pAction_Left_45)))
+			throw TEXT("Failed Create_Behavior pAction_Left_45");
+		CAction* pAction_Right_45 = nullptr;
+		if (FAILED(Create_Behavior(pAction_Right_45)))
+			throw TEXT("Failed Create_Behavior pAction_Right_45");
+		CAction* pAction_Left_90 = nullptr;
+		if (FAILED(Create_Behavior(pAction_Left_90)))
+			throw TEXT("Failed Create_Behavior pAction_Left_90");
+		CAction* pAction_Right_90 = nullptr;
+		if (FAILED(Create_Behavior(pAction_Right_90)))
+			throw TEXT("Failed Create_Behavior pAction_Right_90");
+		CAction* pAction_Left_135 = nullptr;
+		if (FAILED(Create_Behavior(pAction_Left_135)))
+			throw TEXT("Failed Create_Behavior pAction_Left_135");
+		CAction* pAction_Right_135 = nullptr;
+		if (FAILED(Create_Behavior(pAction_Right_135)))
+			throw TEXT("Failed Create_Behavior pAction_Right_135");
+		CAction* pAction_Right_180 = nullptr;
+		if (FAILED(Create_Behavior(pAction_Right_180)))
+			throw TEXT("Failed Create_Behavior pAction_Right_180");
+		CAction* pAction_Left_180 = nullptr;
+		if (FAILED(Create_Behavior(pAction_Left_180)))
+			throw TEXT("Failed Create_Behavior pAction_Left_180");
+		/* Set Decorations */
+
+		/* Set Options */
+		pAction_Left_45->Set_Options(TEXT("Ground_Turn_Left_45"), m_pModelCom);
+		pAction_Right_45->Set_Options(TEXT("Ground_Turn_Right_45"), m_pModelCom);
+		pAction_Left_90->Set_Options(TEXT("Ground_Turn_Left_90"), m_pModelCom);
+		pAction_Right_90->Set_Options(TEXT("Ground_Turn_Right_90"), m_pModelCom);
+		pAction_Left_135->Set_Options(TEXT("Ground_Turn_Left_180"), m_pModelCom);
+		pAction_Right_135->Set_Options(TEXT("Ground_Turn_Right_180"), m_pModelCom);
+		pAction_Left_180->Set_Options(TEXT("Ground_Turn_Left_180"), m_pModelCom);
+		pAction_Right_180->Set_Options(TEXT("Ground_Turn_Right_180"), m_pModelCom);
+
+		pTsk_Check_Degree->Set_Option(m_pTransform);
+
+		/* Assemble Behaviors */
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Tsk_Check_Degree"), pTsk_Check_Degree)))
+			throw TEXT("Failed Assemble_Behavior Tsk_Check_Degree");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Selector_Degree"), pSelector_Degree)))
+			throw TEXT("Failed Assemble_Behavior Selector_Degree");
+
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::LEFT_45, pAction_Left_45)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree LEFT_45");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::RIGHT_45, pAction_Right_45)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree RIGHT_45");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::LEFT_90, pAction_Left_90)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree LEFT_90");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::RIGHT_90, pAction_Right_90)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree RIGHT_90");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::LEFT_135, pAction_Left_135)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree LEFT_135");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::RIGHT_135, pAction_Right_135)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree RIGHT_135");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::LEFT_BACK, pAction_Left_180)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree LEFT_BACK");
+		if (FAILED(pSelector_Degree->Assemble_Behavior(CSelector_Degree::RIGHT_BACK, pAction_Right_180)))
+			throw TEXT("Failed Assemble_Behavior pSelector_Degree RIGHT_BACK");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CConjuredDragon] Failed Make_Ground_Turns : \n");
+		wstrErrorMSG += pErrorTag;
+		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
+
+		ENDINSTANCE;
+
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CConjuredDragon::Make_Ground_Attacks(_Inout_ CSequence* pSequence)
+{
+	BEGININSTANCE;
+
+	try
+	{
+		if (nullptr == pSequence)
+			throw TEXT("Parameter pSequence is nullptr");
+
+		/* Create Child Behaviors */
+		CCheck_Distance* pCheck_Distance = { nullptr };
+		if (FAILED(Create_Behavior(pCheck_Distance)))
+			throw TEXT("Failed Create_Behavior pCheck_Distance");
+		CRandomChoose* pRandom_Attacks = { nullptr };
+		if (FAILED(Create_Behavior(pRandom_Attacks)))
+			throw TEXT("Failed Create_Behavior pRandom_Attacks");
+
+		CSequence* pSequence_Attack_Pulse = { nullptr };
+		if (FAILED(Create_Behavior(pSequence_Attack_Pulse)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_Pulse");
+		CSequence* pSequence_Attack_Range = { nullptr };
+		if (FAILED(Create_Behavior(pSequence_Attack_Range)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_Range");
+		CSequence* pSequence_Attack_Melee = { nullptr };
+		if (FAILED(Create_Behavior(pSequence_Attack_Melee)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_Melee");
+
+		/* Set Decorators */
+		pRandom_Attacks->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_float fDistance = { 0.f };
+				if (FAILED(pBlackBoard->Get_Type("fTargetDistance", fDistance)))
+					return false;
+
+				return 30.f > fDistance;
+			});
+		pRandom_Attacks->Add_Change_Condition(CBehavior::BEHAVIOR_SUCCESS, [&](CBlackBoard* pBlackBoard)->_bool
+			{
+				return true;
+			});
+
+		/* Set Options */
+		pCheck_Distance->Set_Option(m_pTransform);
+
+		/* Assemble Behaviors */
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Check_Distance"), pCheck_Distance)))
+			throw TEXT("Failed Assemble_Behavior Check_Distance");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Random_Attacks"), pRandom_Attacks)))
+			throw TEXT("Failed Assemble_Behavior Random_Attacks");
+
+		if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Sequence_Attack_Pulse"), pSequence_Attack_Pulse, 0.1f)))
+			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Pulse");
+		if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Sequence_Attack_Range"), pSequence_Attack_Range, 0.8f)))
+			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Range");
+		if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Sequence_Attack_Melee"), pSequence_Attack_Melee, 0.1f)))
+			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Melee");
+
+		if (FAILED(Make_Ground_Attack_Pulse(pSequence_Attack_Pulse)))
+			throw TEXT("Failed Make_Ground_Attack_Pulse");
+		if (FAILED(Make_Ground_Attacks_Range(pSequence_Attack_Range)))
+			throw TEXT("Failed Make_Ground_Attacks_Range");
+		if (FAILED(Make_Ground_Attacks_Melee(pSequence_Attack_Melee)))
+			throw TEXT("Failed Make_Ground_Attacks_Melee");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CConjuredDragon] Failed Make_Ground_Attacks : \n");
+		wstrErrorMSG += pErrorTag;
+		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
+
+		ENDINSTANCE;
+
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CConjuredDragon::Make_Ground_Attacks_Melee(_Inout_ CSequence* pSequence)
+{
+	BEGININSTANCE;
+
+	try
+	{
+		if (nullptr == pSequence)
+			throw TEXT("Parameter pSequence is nullptr");
+
+		/* Create Child Behaviors */
+		CCheck_Distance* pCheck_Distance = { nullptr };
+		if (FAILED(Create_Behavior(pCheck_Distance)))
+			throw TEXT("Failed Create_Behavior pCheck_Distance");
+		CRandomChoose* pRandom_Attacks = { nullptr };
+		if (FAILED(Create_Behavior(pRandom_Attacks)))
+			throw TEXT("Failed Create_Behavior pRandom_Attacks");
+
+		CSequence_Attack* pSequence_Attack_Swipe_Left = { nullptr };
+		if (FAILED(Create_Behavior(pSequence_Attack_Swipe_Left)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_Swipe_Left");
+		CSequence_Attack* pSequence_Attack_Swipe_Right = { nullptr };
+		if (FAILED(Create_Behavior(pSequence_Attack_Swipe_Right)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_Swipe_Right");
+		CSequence_Attack* pSequence_Attack_Tail_360 = { nullptr };
+		if (FAILED(Create_Behavior(pSequence_Attack_Tail_360)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_Tail_360");
+
+		/* Set Decorators */
+		pRandom_Attacks->Add_Change_Condition(CBehavior::BEHAVIOR_SUCCESS, [&](CBlackBoard* pBlackBoard)->_bool
+			{
+				return true;
+			});
+
+		/* Set Options */
+		pCheck_Distance->Set_Option(m_pTransform);
+		pSequence_Attack_Swipe_Left->Set_Attack_Action_Options(TEXT("Ground_Attack_Swipe_Left"), m_pModelCom);
+		pSequence_Attack_Swipe_Left->Set_Attack_Option(15.f);
+		pSequence_Attack_Swipe_Right->Set_Attack_Action_Options(TEXT("Ground_Attack_Swipe_Right"), m_pModelCom);
+		pSequence_Attack_Swipe_Right->Set_Attack_Option(15.f);
+		pSequence_Attack_Tail_360->Set_Attack_Action_Options(TEXT("Ground_Attack_Tail_360"), m_pModelCom);
+		pSequence_Attack_Tail_360->Set_Attack_Option(15.f);
+
+		/* Assemble Behaviors */
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Check_Distance"), pCheck_Distance)))
+			throw TEXT("Failed Assemble_Behavior Check_Distance");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Random_Attacks"), pRandom_Attacks)))
+			throw TEXT("Failed Assemble_Behavior Random_Attacks");
+
+		if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Sequence_Attack_Swipe_Left"), pSequence_Attack_Swipe_Left, 0.33f)))
+			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Swipe_Left");
+		if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Sequence_Attack_Swipe_Right"), pSequence_Attack_Swipe_Right, 0.33f)))
+			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Swipe_Right");
+		if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Sequence_Attack_Tail_360"), pSequence_Attack_Tail_360, 0.34f)))
+			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Tail_360");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CConjuredDragon] Failed Make_Ground_Attacks_Melee : \n");
+		wstrErrorMSG += pErrorTag;
+		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
+
+		ENDINSTANCE;
+
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CConjuredDragon::Make_Ground_Attacks_Range(_Inout_ CSequence* pSequence)
+{
+	BEGININSTANCE;
+
+	try
+	{
+		if (nullptr == pSequence)
+			throw TEXT("Parameter pSequence is nullptr");
+
+		/* Create Child Behaviors */
+		CRandomChoose* pRandom_Attacks = { nullptr };
+		if (FAILED(Create_Behavior(pRandom_Attacks)))
+			throw TEXT("Failed Create_Behavior pRandom_Attacks");
+
+		CSequence_Attack* pSequence_Attack_Fireball_1 = { nullptr };
+		if (FAILED(Create_Behavior(pSequence_Attack_Fireball_1)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_Fireball_1");
+		CSequence_Attack* pSequence_Attack_Fireball_2 = { nullptr };
+		if (FAILED(Create_Behavior(pSequence_Attack_Fireball_2)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_Fireball_2");
+		CSequence_Attack* pSequence_Attack_Fire_Sweep_Left = { nullptr };
+		if (FAILED(Create_Behavior(pSequence_Attack_Fire_Sweep_Left)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_Fire_Sweep_Left");
+		CSequence_Attack* pSequence_Attack_Fire_Sweep_Right = { nullptr };
+		if (FAILED(Create_Behavior(pSequence_Attack_Fire_Sweep_Right)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_Fire_Sweep_Right");
+		CSequence* pSequence_Attack_Charge = { nullptr };
+		if (FAILED(Create_Behavior(pSequence_Attack_Charge)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_Charge");
+		CSequence_Attack* pSequence_Attack_Breath = { nullptr };
+		if (FAILED(Create_Behavior(pSequence_Attack_Breath)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_Breath");
+
+		/* Set Decorators */
+		pRandom_Attacks->Add_Change_Condition(CBehavior::BEHAVIOR_SUCCESS, [&](CBlackBoard* pBlackBoard)->_bool
+			{
+				return true;
+			});
+
+		/* Set Options */
+		pSequence_Attack_Fireball_1->Set_Attack_Action_Options(TEXT("Ground_Attack_Fireball_1"), m_pModelCom);
+		pSequence_Attack_Fireball_1->Set_Attack_Option(100.f);
+		pSequence_Attack_Fireball_2->Set_Attack_Action_Options(TEXT("Ground_Attack_Fireball_2"), m_pModelCom);
+		pSequence_Attack_Fireball_2->Set_Attack_Option(100.f);
+		pSequence_Attack_Fire_Sweep_Left->Set_Attack_Action_Options(TEXT("Ground_Attack_Fire_Sweep_Left"), m_pModelCom);
+		pSequence_Attack_Fire_Sweep_Left->Set_Attack_Option(100.f);
+		pSequence_Attack_Fire_Sweep_Right->Set_Attack_Action_Options(TEXT("Ground_Attack_Fire_Sweep_Right"), m_pModelCom);
+		pSequence_Attack_Fire_Sweep_Right->Set_Attack_Option(100.f);
+		pSequence_Attack_Breath->Set_Attack_Action_Options(TEXT("Ground_Attack_Breath"), m_pModelCom);
+		pSequence_Attack_Breath->Set_Attack_Option(100.f);
+
+		/* Assemble Behaviors */
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Random_Attacks"), pRandom_Attacks)))
+			throw TEXT("Failed Assemble_Behavior Random_Attacks");
+
+		if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Sequence_Attack_Fireball_1"), pSequence_Attack_Fireball_1, 0.2f)))
+			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Fireball_1");
+		if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Sequence_Attack_Fireball_2"), pSequence_Attack_Fireball_2, 0.2f)))
+			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Fireball_2");
+		if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Sequence_Attack_Fire_Sweep_Left"), pSequence_Attack_Fire_Sweep_Left, 0.15f)))
+			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Fire_Sweep_Left");
+		if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Sequence_Attack_Fire_Sweep_Right"), pSequence_Attack_Fire_Sweep_Right, 0.2f)))
+			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Fire_Sweep_Right");
+		if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("Sequence_Attack_Charge"), pSequence_Attack_Charge, 0.05f)))
+			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Charge");
+		if (FAILED(pRandom_Attacks->Assemble_Behavior(TEXT("pSequence_Attack_Breath"), pSequence_Attack_Breath, 0.2f)))
+			throw TEXT("Failed Assemble_Behavior pSequence_Attack_Breath");
+
+		if (FAILED(Make_Ground_Charge(pSequence_Attack_Charge)))
+			throw TEXT("Failed Make_Ground_Charge");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CConjuredDragon] Failed Make_Ground_Attacks_Range : \n");
+		wstrErrorMSG += pErrorTag;
+		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
+
+		ENDINSTANCE;
+
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CConjuredDragon::Make_Ground_Attack_Pulse(_Inout_ CSequence* pSequence)
+{
+	BEGININSTANCE;
+
+	try
+	{
+		if (nullptr == pSequence)
+			throw TEXT("Parameter pSequence is nullptr");
+
+		/* Create Child Behaviors */
+		CAction* pAction_Ground_To_Fly = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Ground_To_Fly)))
+			throw TEXT("Failed Create_Behavior pAction_Ground_To_Fly");
+		CSequence_Attack* pSequence_Attack_Purse = { nullptr };
+		if (FAILED(Create_Behavior(pSequence_Attack_Purse)))
+			throw TEXT("Failed Create_Behavior pSequence_Attack_Purse");
+		CAction* pAction_Land = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Land)))
+			throw TEXT("Failed Create_Behavior pAction_Land");
+
+		/* Set Options */
+		pAction_Ground_To_Fly->Set_Options(TEXT("Ground_To_Fly"), m_pModelCom);
+		pSequence_Attack_Purse->Set_Attack_Action_Options(TEXT("Attack_Pulse"), m_pModelCom);
+		pSequence_Attack_Purse->Set_Attack_Option(100.f);
+		pAction_Land->Set_Options(TEXT("Landing_To_Cmbt"), m_pModelCom);
+
+		/* Assemble Behaviors */
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Ground_To_Fly"), pAction_Ground_To_Fly)))
+			throw TEXT("Failed Assemble_Behavior Action_Ground_To_Fly");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Sequence_Attack_Purse"), pSequence_Attack_Purse)))
+			throw TEXT("Failed Assemble_Behavior Sequence_Attack_Purse");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Land"), pAction_Land)))
+			throw TEXT("Failed Assemble_Behavior Action_Land");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CConjuredDragon] Failed Make_Ground_Attack_Pulse : \n");
+		wstrErrorMSG += pErrorTag;
+		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
+
+		ENDINSTANCE;
+
+		return E_FAIL;
+	}
+
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CConjuredDragon::Make_Ground_Charge(_Inout_ CSequence* pSequence)
+{
+	BEGININSTANCE;
+
+	try
+	{
+		if (nullptr == pSequence)
+			throw TEXT("Parameter pSequence is nullptr");
+
+		/* Create Child Behaviors */
+		CAction* pAction_Charge_Enter = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Charge_Enter)))
+			throw TEXT("Failed Create_Behavior pAction_Charge_Enter");
+		CAction* pAction_Charge_Loop = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Charge_Loop)))
+			throw TEXT("Failed Create_Behavior pAction_Charge_Loop");
+		CAction* pAction_Charge_Exit = { nullptr };
+		if (FAILED(Create_Behavior(pAction_Charge_Exit)))
+			throw TEXT("Failed Create_Behavior pAction_Charge_Exit");
+
+		CWait* pTsk_Wait = { nullptr };
+		if (FAILED(Create_Behavior(pTsk_Wait)))
+			throw TEXT("Failed Create_Behavior pTsk_Wait");
+
+		/* Set Options */
+		pAction_Charge_Enter->Set_Options(TEXT("Ground_Charge_Enter"), m_pModelCom);
+		pAction_Charge_Loop->Set_Options(TEXT("Ground_Charge_Loop"), m_pModelCom, true, 0.f, false, false);
+		pAction_Charge_Exit->Set_Options(TEXT("Ground_Charge_End"), m_pModelCom);
+		pTsk_Wait->Set_Timer(0.2f);  
+
+		/* Assemble Behaviors */
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Charge_Enter"), pAction_Charge_Enter)))
+			throw TEXT("Failed Assemble_Behavior Action_Charge_Enter");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Charge_Loop"), pAction_Charge_Loop)))
+			throw TEXT("Failed Assemble_Behavior Action_Charge_Loop");
+		if (FAILED(pSequence->Assemble_Behavior(TEXT("Action_Charge_Exit"), pAction_Charge_Exit)))
+			throw TEXT("Failed Assemble_Behavior Action_Charge_Exit");
+
+		if (FAILED(pAction_Charge_Loop->Assemble_Behavior(TEXT("Tsk_Wait"), pTsk_Wait)))
+			throw TEXT("Failed Assemble_Behavior Tsk_Wait");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("[CConjuredDragon] Failed Make_Ground_Charge : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
 		__debugbreak();
@@ -1111,9 +1594,9 @@ HRESULT CConjuredDragon::Make_Attack_Fireball(_Inout_ CSequence* pSequence)
 			throw TEXT("Failed Create_Behavior pSequence_Attack_Fireball_2");
 
 		/* Set Options */
-		pSequence_Attack_Fireball_1->Set_Attack_Action_Options(TEXT("Attack_Fireball_2"), m_pModelCom);
+		pSequence_Attack_Fireball_1->Set_Attack_Action_Options(TEXT("Air_Attack_Fireball_2"), m_pModelCom);
 		pSequence_Attack_Fireball_1->Set_Attack_Option(100.f);
-		pSequence_Attack_Fireball_2->Set_Attack_Action_Options(TEXT("Attack_Fireball_2"), m_pModelCom);
+		pSequence_Attack_Fireball_2->Set_Attack_Action_Options(TEXT("Air_Attack_Fireball_2"), m_pModelCom);
 		pSequence_Attack_Fireball_2->Set_Attack_Option(100.f);
 
 		/* Assemble Behaviors */

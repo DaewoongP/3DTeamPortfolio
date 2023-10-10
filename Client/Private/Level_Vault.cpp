@@ -520,6 +520,14 @@ HRESULT CLevel_Vault::Ready_Layer_Monster(const _tchar* pLayerTag)
 {
 	BEGININSTANCE;
 
+	/* Add Scene : Main */
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
+	{
+		MSG_BOX("Failed Add Scene : (Scene_Main)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
 	_float4x4 Matrix = XMMatrixTranslation(40.f, 10.f, 60.f);
 	if (FAILED(pGameInstance->Add_Component(LEVEL_VAULT, LEVEL_VAULT, TEXT("Prototype_GameObject_Armored_Troll"), pLayerTag, TEXT("GameObject_Armored_Troll"), &Matrix)))
 	{

@@ -288,7 +288,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 			return;
 		}
 
-		CEnemy* pEnemy = static_cast<CEnemy*>(m_pTarget);
+		CEnemy* pEnemy = dynamic_cast<CEnemy*>(m_pTarget);
 		if (nullptr != pEnemy)
 			pEnemy->Get_UI_Enemy_HP()->Late_Tick(fTimeDelta);
 	}
@@ -902,9 +902,9 @@ HRESULT CPlayer::Add_Magic()
 	m_pMagicSlot->Add_Magic_To_Basic_Slot(3, FINISHER);
 
 	Set_Spell_Botton(0, DIFFINDO);
-	Set_Spell_Botton(1, BOMBARDA);
+	Set_Spell_Botton(1, LEVIOSO);
 	Set_Spell_Botton(2, CRUCIO);
-	Set_Spell_Botton(3, IMPERIO);
+	Set_Spell_Botton(3, FLIPENDO);
 
 	return S_OK;
 }
@@ -2046,7 +2046,7 @@ void CPlayer::Find_Target_For_Distance()
 		return;
 	}
 
-	_float fMinDistance = { 10.0f };
+	_float fMinDistance = { 50.0f };
 
 
 	//거리가 낮은 놈을 저장
@@ -2141,7 +2141,7 @@ void CPlayer::Find_Target_For_ViewSpace()
 		return;
 	}
 
-	_float fMinDistance = { 10.0f };
+	_float fMinDistance = { 50.0f };
 
 	//거리가 낮은 놈을 저장
 	CGameObject* pTarget = { nullptr };

@@ -312,17 +312,10 @@ HRESULT CLevel_Cliffside::Ready_Layer_Monster(const _tchar* pLayerTag)
 		ENDINSTANCE;
 		return E_FAIL;
 	}*/
-	Matrix = XMMatrixTranslation(35.f, 10.f, 65.f);
-	/*if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_DarkWizard_M"), pLayerTag, TEXT("GameObject_DarkWizard_M"), &Matrix)))
+	/*Matrix = XMMatrixTranslation(35.f, 10.f, 65.f);
+	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_DarkWizard_M"), pLayerTag, TEXT("GameObject_DarkWizard_M"), &Matrix)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_DarkWizard_M)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}*/
-	/*Matrix = XMMatrixTranslation(10.f, 10.f, 50.f);
-	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_ConjuredDragon"), pLayerTag, TEXT("GameObject_ConjuredDragon"), &Matrix)))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_ConjuredDragon)");
 		ENDINSTANCE;
 		return E_FAIL;
 	}*/

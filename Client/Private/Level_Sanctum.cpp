@@ -51,6 +51,13 @@ HRESULT CLevel_Sanctum::Initialize()
 	//	return E_FAIL;
 	//}
 
+	if (FAILED(Ready_Layer_Monsters(TEXT("Layer_Monster"))))
+	{
+		MSG_BOX("Failed to Ready_Layer_Monsters in Level_Sanctum");
+
+		return E_FAIL;
+	}
+
 
 #ifdef _DEBUG
 	if (FAILED(Ready_Debug(TEXT("Layer_Debug"))))
@@ -165,6 +172,36 @@ HRESULT CLevel_Sanctum::Ready_Layer_BackGround(const _tchar* pLayerTag)
 	return S_OK;
 }
 
+HRESULT CLevel_Sanctum::Ready_Layer_Monsters(const _tchar* pLayerTag)
+{
+	BEGININSTANCE;
+
+	/* Add Scene : Main */
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
+	{
+		MSG_BOX("Failed Add Scene : (Scene_Main)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	_float4x4 Matrix = XMMatrixTranslation(-2.f, -22.f, 130.f);
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, TEXT("Prototype_GameObject_ConjuredDragon"), pLayerTag, TEXT("GameObject_ConjuredDragon"), &Matrix)))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_ConjuredDragon)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+	if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, TEXT("Prototype_GameObject_EnergyBall"), pLayerTag, TEXT("GameObject_EnergyBall"), &Matrix)))
+	{
+		MSG_BOX("Failed Add_GameObject : (GameObject_EnergyBall)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
 HRESULT CLevel_Sanctum::Ready_Lights()
 {
 	BEGININSTANCE;
@@ -254,6 +291,8 @@ HRESULT CLevel_Sanctum::Load_MapObject_Ins(const _tchar* pObjectFilePath)
 	return E_NOTIMPL;
 }
 
+#ifdef _DEBUG
+
 HRESULT CLevel_Sanctum::Ready_Debug(const _tchar* pLayerTag)
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
@@ -277,6 +316,8 @@ HRESULT CLevel_Sanctum::Ready_Debug(const _tchar* pLayerTag)
 
 	return S_OK;
 }
+
+#endif // _DEBUG
 
 CLevel_Sanctum* CLevel_Sanctum::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {

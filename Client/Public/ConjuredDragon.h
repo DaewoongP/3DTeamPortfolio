@@ -79,7 +79,14 @@ private: /* Çàµ¿ ¹­À½µé */
 	HRESULT Make_Air_Pattern(_Inout_ CSelector* pSelector);
 
 	/* Ground Patterns */
+	HRESULT Make_Ground_Turns(_Inout_ CSequence* pSequence);
+	HRESULT Make_Ground_Attacks(_Inout_ CSequence* pSequence);
 
+	HRESULT Make_Ground_Attacks_Melee(_Inout_ CSequence* pSequence);
+	HRESULT Make_Ground_Attacks_Range(_Inout_ CSequence* pSequence);
+	HRESULT Make_Ground_Attack_Pulse(_Inout_ CSequence* pSequence);
+
+	HRESULT Make_Ground_Charge(_Inout_ CSequence* pSequence);
 
 	/* Air Patterns */
 	HRESULT Make_Air_Break_Invincible(_Inout_ CSequence* pSequence);

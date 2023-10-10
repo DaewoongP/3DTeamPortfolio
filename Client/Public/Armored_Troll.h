@@ -49,6 +49,9 @@ private:
 	HRESULT Bind_HitMatrices();
 
 private:
+	_bool m_isOverheadAction = { false };
+
+private:
 	_float m_fDeadTimeAcc = { 0.f };
 	void DeathBehavior(const _float& fTimeDelta);
 
@@ -56,6 +59,7 @@ private: /* Çàµ¿ ¹­À½µé */
 	HRESULT Make_Death(_Inout_ CSequence* pSequence);
 	HRESULT Make_Alive(_Inout_ CSelector* pSelector);
 
+	HRESULT Make_Flipendo(_Inout_ CSequence* pSequence);
 	HRESULT Make_Attack_Degree(_Inout_ CSequence* pSequence);
 	HRESULT Make_Pattern_Attack_Far(_Inout_ CSequence* pSequence);
 	HRESULT Make_Taunt_Degree(_Inout_ CSequence* pSequence);
@@ -82,6 +86,12 @@ private: /* Notify Functions */
 	void Enter_Heavy_Attack();
 	void Enter_Body_Attack();
 	void Exit_Attack();
+	void On_Overhead_Event() {
+		m_isOverheadAction = true;
+	}
+	void Off_Overhead_Event() {
+		m_isOverheadAction = false;
+	}
 
 public:
 	static CArmored_Troll* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

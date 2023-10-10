@@ -180,16 +180,6 @@ HRESULT CMain2_Loader::Loading_For_Cliffside(LEVELID eLevelID)
 			CGolem_Combat::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_GameObject_Golem_CombatGrunt");
 
-		/* For.Prototype_Component_Model_ConjuredDragon */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_ConjuredDragon"),
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/SK_HebrideanBlack_Skeleton/SK_HebrideanBlack_Skeleton.gcm"), PivotMatrix))))
-			throw TEXT("Prototype_Component_Model_ConjuredDragon");
-
-		/* For.Prototype_GameObject_ConjuredDragon */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_ConjuredDragon"),
-			CConjuredDragon::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_ConjuredDragon");
-
 		/* For.Prototype_Component_Model_DarkWizard_M */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_DarkWizard_M"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/DarkWizard_M/DarkWizard_M.gcm"), PivotMatrix))))
@@ -305,6 +295,31 @@ HRESULT CMain2_Loader::Loading_For_Hogsmeade(LEVELID eLevelID)
 
 HRESULT CMain2_Loader::Loading_For_Sanctum(LEVELID eLevelID)
 {
+	if (nullptr == m_pGameInstance)
+		return E_FAIL;
+
+	try /* Failed Check Loading_For_Sanctum Add_Prototype*/
+	{
+		_float4x4 PivotMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
+		/* For.Prototype_Component_Model_ConjuredDragon */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Model_ConjuredDragon"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../../Resources/Models/Anims/SK_HebrideanBlack_Skeleton/SK_HebrideanBlack_Skeleton.gcm"), PivotMatrix))))
+			throw TEXT("Prototype_Component_Model_ConjuredDragon");
+
+		/* For.Prototype_GameObject_ConjuredDragon */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_ConjuredDragon"),
+			CConjuredDragon::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_ConjuredDragon");
+	}
+	catch (const _tchar* pErrorTag)
+	{
+		wstring wstrErrorMSG = TEXT("Failed Add_Prototype : ");
+		wstrErrorMSG += pErrorTag;
+		MSG_BOX(wstrErrorMSG.c_str());
+		__debugbreak();
+		return E_FAIL;
+	}
+
 	return S_OK;
 }
 
