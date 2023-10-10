@@ -46,7 +46,8 @@ private:
 	_uint m_iLevel = {};
 
 private: // For.Components
-	CParticleSystem* m_pParticleSystem = { nullptr };
+	CParticleSystem* m_pWaterSmoke = { nullptr };
+	CParticleSystem* m_pPotFire = { nullptr };
 
 private:
 	HRESULT Add_Components();

@@ -53,6 +53,7 @@ HRESULT CDummyParticle::Initialize(void* _pArg)
 	m_pAngularVelocityCombo = CComboBox::Create(Generate_Hashtag(true).data(), "Option", { "Constant", "Range" }, "Constant");
 	m_pNoiseStrengthOptionComboBox = CComboBox::Create(Generate_Hashtag(true).data(), "Strength Option", { "Constant", "Range", "Curve"}, "Constant");
 	m_pNoiseStrengthCurveEaseCombo = CComboBox::Create(Generate_Hashtag(true).data(), "Easing", CEase::pEases, CEase::EASE_END, CEase::pEases[0]);
+	m_pVelocitySpaceCombo = CComboBox::Create(Generate_Hashtag(true).data(), "Space", { "Local", "World" });
 	//CComboBox::Create(Generate_Hashtag(true).data(), "xvclk", CEase::asdfED, "vsd");
 
 	m_pAlphaTextureIFD = CImageFileDialog::Create(m_pDevice, "SelectTexture2D");
@@ -97,6 +98,8 @@ void CDummyParticle::Tick_Imgui(_float _fTimeDelta)
 	EmissionModule_TreeNode(pEffectWindow);
 	ImGui::Separator();
 	ShapeModule_TreeNode(pEffectWindow);
+	ImGui::Separator();
+	VelocityOverLifeTime_TreeNode(pEffectWindow);
 	ImGui::Separator();
 	RotationOverLifetimeModule_TreeNode(pEffectWindow);
 	ImGui::Separator();
@@ -190,7 +193,13 @@ void CDummyParticle::MainMoudle_TreeNode(CEffect_Window* pEffectWindow)
 
 			pEffectWindow->Table_DragFloat("Flip Rotation", "xcv ioiw", &m_MainModuleDesc.fFlipAngle, 0.01f, 0.f, 1.f);
 
+			pEffectWindow->Table_CheckBox("Random Color", "989vjjejmksdk", &m_MainModuleDesc.isStartColorRange);
 			pEffectWindow->Table_ColorEdit4("Start Color", "ergop805", &m_MainModuleDesc.vStartColor);
+			if (true == m_MainModuleDesc.isStartColorRange)
+			{
+				pEffectWindow->Table_ColorEdit4("Start Color2", "kxcv883jdsd", &m_MainModuleDesc.vStartColor2);
+			}
+			
 			pEffectWindow->Table_DragFloat("GravityModifier", "g50j8dfbji0", &m_MainModuleDesc.fGravityModifier, 0.01f, -FLT_MAX, FLT_MAX);
 			pEffectWindow->Table_DragFloat("SimulationSpeed", "a1ip40c854dfg", &m_MainModuleDesc.fSimulationSpeed);
 			pEffectWindow->Table_CheckBox("Play On Awake*", "zxci0pj380uj", &m_MainModuleDesc.isPlayOnAwake);
@@ -464,6 +473,35 @@ void CDummyParticle::ShapeModule_TreeNode(CEffect_Window* pEffectWindow)
 		}
 
 		ImGui::TreePop(); // SubNodeÀÇ ³¡
+	}
+}
+void CDummyParticle::VelocityOverLifeTime_TreeNode(CEffect_Window* pEffectWindow)
+{
+	VELOCITY_OVER_LIFETIME& VelocityModule = m_VelocityOverLifeTimeModuleDesc;
+
+	ImGui::Checkbox("##VelocityOverLifetimeModule_CheckBox", &VelocityModule.isActivate);
+
+	if (false == VelocityModule.isActivate)
+	{
+		ImGui::SameLine();
+		ImGui::Text("     VelocityOverLifetimeModule");
+		return;
+	}
+
+	ImGui::SameLine();
+
+	if (ImGui::TreeNode("VelocityOverLifetimeModule"))
+	{
+		if (ImGui::BeginTable("VelocityOverLifetimeTable", 2))
+		{
+			ImGui::TableNextRow();
+
+			pEffectWindow->Table_DragXYZ("Linear", "ivj939kdlk", &VelocityModule.vLinear);
+			VelocityModule.strSpace = m_pVelocitySpaceCombo->Tick(CComboBox::TABLE);
+
+			ImGui::EndTable();
+		}
+		ImGui::TreePop();
 	}
 }
 void CDummyParticle::RendererModule_TreeNode(CEffect_Window* pEffectWindow)
@@ -989,6 +1027,7 @@ void CDummyParticle::Free(void)
 	Safe_Release(m_pAngularVelocityCombo);
 	Safe_Release(m_pNoiseStrengthOptionComboBox);
 	Safe_Release(m_pNoiseStrengthCurveEaseCombo);
+	Safe_Release(m_pVelocitySpaceCombo);
 	Safe_Release(m_pPassComboBox);
 	for (auto& pEaseCombo : m_pEaseCombo)
 		Safe_Release(pEaseCombo);

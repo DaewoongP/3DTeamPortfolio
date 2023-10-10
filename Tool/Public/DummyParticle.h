@@ -44,6 +44,7 @@ public:
 	void MainMoudle_TreeNode(CEffect_Window* pEffectWindow);
 	void EmissionModule_TreeNode(CEffect_Window* pEffectWindow);
 	void ShapeModule_TreeNode(CEffect_Window* pEffectWindow);
+	void VelocityOverLifeTime_TreeNode(CEffect_Window* pEffectWindow);
 	void ColorOverLifeTime_TreeNode(CEffect_Window* pEffectWindow);
 	void SizeOverLifeTime_TreeNode(CEffect_Window* pEffectWindow);
 	void RotationOverLifetimeModule_TreeNode(CEffect_Window* pEffectWindow);
@@ -107,6 +108,7 @@ private:
 	class CComboBox* m_pAngularVelocityCombo = { nullptr };
 	class CComboBox* m_pNoiseStrengthOptionComboBox = { nullptr };
 	class CComboBox* m_pNoiseStrengthCurveEaseCombo = { nullptr };
+	class CComboBox* m_pVelocitySpaceCombo = { nullptr };
 
 	class CImageFileDialog* m_pMaterialTextureIFD = { nullptr };
 	class CImageFileDialog* m_pAlphaTextureIFD = { nullptr };

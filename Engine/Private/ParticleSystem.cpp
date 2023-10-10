@@ -181,6 +181,9 @@ void CParticleSystem::Tick(_float _fTimeDelta)
 		vPos = Particle_iter->WorldMatrix.Translation();
 		_float3 vPrevPos = vPos;
 
+		// 속도 모듈 계산.
+		m_VelocityOverLifeTimeModuleDesc.Action(Particle_iter, m_pTransform->Get_WorldMatrixPtr(), _fTimeDelta);
+
 		// 위치에 속도를 더해서 최종 위치를 정함.
 		vPos = vPos + Particle_iter->vVelocity * _fTimeDelta;
 
@@ -201,7 +204,7 @@ void CParticleSystem::Tick(_float _fTimeDelta)
 		}
 
 		m_RotationOverLifetimeModuleDesc.Action(Particle_iter, _fTimeDelta);
-		m_ColorOverLifeTimeModuleDesc.Action(Particle_iter, m_MainModuleDesc.vStartColor, _fTimeDelta);
+		m_ColorOverLifeTimeModuleDesc.Action(Particle_iter, _fTimeDelta);
 
 		// 텍스처 시트 모듈
 		m_TextureSheetAnimationModuleDesc.Action(Particle_iter, _fTimeDelta);
@@ -864,7 +867,23 @@ void CParticleSystem::Reset_Particle(PARTICLE_IT& _particle_iter)
 	ResetStartPosition(_particle_iter);
 
 	// 시작 색상
-	_particle_iter->vColor = m_MainModuleDesc.vStartColor;
+	if (false == m_MainModuleDesc.isStartColorRange)
+	{
+		_particle_iter->vColor = m_MainModuleDesc.vStartColor;
+	}
+	else
+	{
+		if (RandomBool(0.5f))
+		{
+			_particle_iter->vColor = m_MainModuleDesc.vStartColor;
+			_particle_iter->vStartColor = m_MainModuleDesc.vStartColor;
+		}
+		else
+		{
+			_particle_iter->vColor = m_MainModuleDesc.vStartColor2;
+			_particle_iter->vStartColor = m_MainModuleDesc.vStartColor2;
+		}
+	}
 	//_particle_iter->fAngle = m_MainModuleDesc.f
 
 	_particle_iter->fGravityAccel = { 0.f };

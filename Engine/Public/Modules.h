@@ -37,8 +37,9 @@ public:
 	_float4x4   WorldMatrix = _float4x4();
 	_float		fGenTime = { 0.f };
 	_float      fLifeTime = { 0.f };
-	_float		fAngularVelocity = { 0.f };
+	_float		fAngularVelocity = { 0.f }; // 자전
 	_float		fAngle = { 0.f };
+	_float4		vStartColor = { 1.f, 1.f, 1.f, 1.f };
 	_float4		vColor = { 1.f, 1.f, 1.f, 1.f };
 	_float3		vStartScale = { 1.f, 1.f, 1.f };
 	_float3		vScale = { 1.f, 1.f, 1.f };
@@ -114,9 +115,12 @@ struct ENGINE_DLL MAIN_MODULE : public MODULE
 	_int iMaxParticles = { MAX_PARTICLE_NUM }; // 한 번에 존재할 수 있는 파티클의 수를 제한함.(인스턴싱 수가 100이여도 10으로 제한하면 10개만 나옴)
 	_bool isAutoRandomSeed = { true }; // 파티클 수명 주기마다 랜덤 값을 매번 바뀌게하는 용도.
 	string strStopAction = {"None"}; // None, Disable, Destroy, Callback, Pool // 객체 수명이 다하거나 파티클의 모든 재생이 완료됐을 때 옵션에 따라 행동이 달라진다.
+	_bool isStartColorRange = { false };
+	_float4 vStartColor2 = { 1.f, 1.f, 1.f, 1.f };
 
 	_float fParticleSystemAge = { 0.f };
 };
+
 struct ENGINE_DLL EMISSION_MODULE : public MODULE
 {
 	EMISSION_MODULE() : MODULE() { __super::isActivate = true; };
@@ -242,7 +246,7 @@ struct ENGINE_DLL COLOR_OVER_LIFETIME : public MODULE
 
 	HRESULT Save(const _tchar* _pDirectoyPath);
 	HRESULT Load(const _tchar* _pDirectoyPath);
-	void Action(PARTICLE_IT& _particle_iter, _float4 vMainColor, _float fTimeDelta);
+	void Action(PARTICLE_IT& _particle_iter, _float fTimeDelta);
 	void Restart();
 
 	_float4 vStartColor = { 0.f, 0.f, 0.f, 1.f };
@@ -352,11 +356,11 @@ struct ENGINE_DLL VELOCITY_OVER_LIFETIME : public MODULE
 
 	HRESULT Save(const _tchar* _pDirectoyPath);
 	HRESULT Load(const _tchar* _pDirectoyPath);
-	void Action(PARTICLE_IT& _particle_iter, _float fTimeDelta);
+	void Action(PARTICLE_IT& _particle_iter, const _float4x4* pLocalMatrix, _float fTimeDelta);
 	void Reset(PARTICLE_IT& _particle_iter);
 	void Restart();
 
-	string strSpace = { "World" }; // World, Local
+	string strSpace = { "Local" }; // Local, World
 	// Linear
 	_float3 vLinear = { _float3() };
 	_float3 vLinearMin = { _float3() };

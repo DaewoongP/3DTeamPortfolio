@@ -75,7 +75,7 @@ public:
 	EMISSION_MODULE&				Get_EmissionModuleRef() { return m_EmissionModuleDesc; }
 	SHAPE_MODULE&					Get_ShapeModuleRef() { return m_ShapeModuleDesc; }
 	RENDERER_MODULE&				Get_RendererModuleRef() { return m_RendererModuleDesc; }
-	VELOCITY_OVER_LIFETIME& Get_VelocityOverLifetimeModuleRer() { return m_VelocityOverLifeTimeModuleDesc; }
+	VELOCITY_OVER_LIFETIME& Get_VelocityOverLifetimeModuleRef() { return m_VelocityOverLifeTimeModuleDesc; }
 	COLOR_OVER_LIFETIME&			Get_ColorOverLifetimeModuleRef() { return m_ColorOverLifeTimeModuleDesc; }
 	SIZE_OVER_LIFETIME&				Get_SizeOverLifetimeModuleRef() { return m_SizeOverLifeTimeModuleDesc; }
 	ROTATION_OVER_LIFETIME_MODULE&	Get_RotationOverLifetimeModuleRef() { return m_RotationOverLifetimeModuleDesc; }
