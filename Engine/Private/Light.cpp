@@ -12,6 +12,11 @@ void CLight::Set_Position(_float4 vPosition)
 	m_LightDesc.vPos = vPosition;
 }
 
+void CLight::Set_Range(_float fRange)
+{
+	m_LightDesc.fRange = fRange;
+}
+
 HRESULT CLight::Initialize(const LIGHTDESC& LightDesc)
 {
 	m_LightDesc = LightDesc;
@@ -25,7 +30,6 @@ HRESULT CLight::Render(CShader* pShader, CVIBuffer_Rect* pVIBuffer)
 
 	if (TYPE_DIRECTIONAL == m_LightDesc.eType)
 	{
-
 		if (FAILED(pShader->Bind_RawValue("g_vCamPosition", &m_LightDesc.vDir, sizeof(_float4))))
 			return E_FAIL;
 

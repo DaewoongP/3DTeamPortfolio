@@ -20,6 +20,8 @@ public:
 		_float4	vDiffuse;
 		_float4	vAmbient;
 		_float4	vSpecular;
+
+		_bool	isLerp;
 	}LIGHTDESC;
 
 private:
@@ -30,6 +32,7 @@ public:
 	const LIGHTDESC* Get_LightDesc() const { return &m_LightDesc; }
 	void Set_LightDesc(LIGHTDESC LightDesc);
 	void Set_Position(_float4 vPosition);
+	void Set_Range(_float fRange);
 
 public:
 	HRESULT Initialize(const LIGHTDESC& LightDesc);

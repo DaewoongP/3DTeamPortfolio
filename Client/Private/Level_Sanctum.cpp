@@ -179,7 +179,7 @@ HRESULT CLevel_Sanctum::Ready_Lights()
 	LightDesc.vAmbient = WHITEDEFAULT;
 	LightDesc.vSpecular = WHITEDEFAULT;
 
-	if (FAILED(pGameInstance->Add_Lights(LightDesc, nullptr, true)))
+	if (FAILED(pGameInstance->Add_Light(LightDesc, nullptr, true)))
 		return E_FAIL;
 
 	ENDINSTANCE;

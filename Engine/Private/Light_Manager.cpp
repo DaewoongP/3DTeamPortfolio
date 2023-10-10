@@ -30,7 +30,7 @@ HRESULT CLight_Manager::Reserve_Lights(_uint iNumReserve)
 	return S_OK;
 }
 
-HRESULT CLight_Manager::Add_Lights(const CLight::LIGHTDESC& LightDesc, _Inout_ class CLight** ppLight, _bool isShadow, _uint iLightViewIndex, _float fAspect)
+HRESULT CLight_Manager::Add_Light(const CLight::LIGHTDESC& LightDesc, _Inout_ class CLight** ppLight, _bool isShadow, _uint iLightViewIndex, _float fAspect)
 {
 	CLight* pLight = Create_Light(LightDesc);
 

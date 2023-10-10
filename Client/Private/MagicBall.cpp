@@ -53,7 +53,12 @@ void CMagicBall::Tick(_float fTimeDelta)
 	
 	if(m_pWeaponWorldMatrix != nullptr)
 		m_CurrentWeaponMatrix = (*m_pWeaponOffsetMatrix) * (*m_pWeaponWorldMatrix);
+
 	Tick_MagicBall_State(fTimeDelta);
+
+	if (nullptr != m_pLight)
+		m_pLight->Set_Position(m_pTransform->Get_Position().TransCoord());
+
 	__super::Tick(fTimeDelta);
 }
 
@@ -150,7 +155,9 @@ HRESULT CMagicBall::Reset(MAGICBALLINITDESC& InitDesc)
 			m_ParticleVec[i].data()[j]->Disable();
 		}
 	}
+
 	m_fWandParticleDelayTimer = 0.1f;
+
 	return S_OK;
 }
 
@@ -431,6 +438,14 @@ void CMagicBall::Tick_MagicBall_State(_float fTimeDelta)
 			Ready_Dying();
 			m_pRigidBody->Disable_Collision("Magic_Ball");
 			m_isFirstFrameInState = false;
+
+			if (nullptr != m_pLight)
+			{
+				CGameInstance* pGameInstance = CGameInstance::GetInstance();
+				Safe_AddRef(pGameInstance);
+				pGameInstance->Return_Light(m_pLight);
+				Safe_Release(pGameInstance);
+			}
 		}
 
 		Tick_Dying(fTimeDelta);
@@ -442,8 +457,8 @@ void CMagicBall::Tick_MagicBall_State(_float fTimeDelta)
 		CMagicBallPool* pMagicBallPool = CMagicBallPool::GetInstance();
 		Safe_AddRef(pMagicBallPool);
 		pMagicBallPool->Return_Magic(this, m_CollisionDesc.eMagicTag);
-
 		Safe_Release(pMagicBallPool);
+
 		Set_ObjEvent(OBJ_DEAD);
 		break;
 	}

@@ -494,11 +494,11 @@ _bool CGameInstance::isIn_WorldFrustum(_float4 vWorldPos, _float fRange)
 	return m_pFrustum->isIn_WorldFrustum(vWorldPos, fRange);
 }
 
-HRESULT CGameInstance::Add_Lights(const CLight::LIGHTDESC& LightDesc, _Inout_ class CLight** ppLight, _bool isShadow, _uint iLightViewIndex, _float fAspect)
+HRESULT CGameInstance::Add_Light(const CLight::LIGHTDESC& LightDesc, _Inout_ class CLight** ppLight, _bool isShadow, _uint iLightViewIndex, _float fAspect)
 {
 	NULL_CHECK_RETURN_MSG(m_pLight_Manager, E_FAIL, TEXT("Light NULL"));
 
-	return m_pLight_Manager->Add_Lights(LightDesc, ppLight, isShadow, iLightViewIndex, fAspect);
+	return m_pLight_Manager->Add_Light(LightDesc, ppLight, isShadow, iLightViewIndex, fAspect);
 }
 
 void CGameInstance::Set_IsShadowRender(_uint iShadowIndex, _bool isRender)

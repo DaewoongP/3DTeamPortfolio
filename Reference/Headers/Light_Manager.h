@@ -22,7 +22,7 @@ public:
 	///////////////////////////////
 
 public:
-	HRESULT Add_Lights(const CLight::LIGHTDESC& LightDesc, _Inout_ class CLight** ppLight = nullptr, _bool isShadow = false, _uint iLightViewIndex = 0, _float fAspect = 1280.f / 720.f);
+	HRESULT Add_Light(const CLight::LIGHTDESC& LightDesc, _Inout_ class CLight** ppLight = nullptr, _bool isShadow = false, _uint iLightViewIndex = 0, _float fAspect = 1280.f / 720.f);
 	HRESULT Clear_Lights();
 
 public:

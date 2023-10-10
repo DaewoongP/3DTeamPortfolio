@@ -62,7 +62,7 @@ HRESULT CWeapon_Player_Wand::Initialize(void* pArg)
 	LightInfo.vSpecular = BLACKDEFAULT;
 	LightInfo.vDiffuse = BLACKDEFAULT;
 
-	if (FAILED(pGameInstance->Add_Lights(LightInfo, &m_pLight, true, 1)))
+	if (FAILED(pGameInstance->Add_Light(LightInfo, &m_pLight, true, 1)))
 	{
 		ENDINSTANCE;
 		return E_FAIL;
@@ -183,7 +183,7 @@ void CWeapon_Player_Wand::Do_Lumos(_float fTimeDelta)
 			pGameInstance->Update_ShadowMatrix(0, LightInfo);
 			if (nullptr == m_pVaultLight)
 			{
-				pGameInstance->Add_Lights(LightInfo, &m_pVaultLight, true, 0);
+				pGameInstance->Add_Light(LightInfo, &m_pVaultLight, true, 0);
 			}
 			else
 				m_pVaultLight->Set_LightDesc(LightInfo);
@@ -230,7 +230,7 @@ void CWeapon_Player_Wand::Do_Lumos(_float fTimeDelta)
 			pGameInstance->Update_ShadowMatrix(0, LightInfo);
 			if (nullptr == m_pVaultLight)
 			{
-				pGameInstance->Add_Lights(LightInfo, &m_pVaultLight, false, 0);
+				pGameInstance->Add_Light(LightInfo, &m_pVaultLight, false, 0);
 			}
 			else
 				m_pVaultLight->Set_LightDesc(LightInfo);
