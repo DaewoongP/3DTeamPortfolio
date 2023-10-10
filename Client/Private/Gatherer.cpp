@@ -130,15 +130,7 @@ void CGatherer::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	//// 플레이어와 거리 비교
-	//_float3 vPlayerPos = m_pPlayer->Get_PlayerPos();
-	//_float3 vGathererPos = m_pTransform->Get_Position();
-
-	//m_fDist_From_Player = sqrtf((vPlayerPos.x - vGathererPos.x) * (vPlayerPos.x - vGathererPos.x) +
-	//	(vPlayerPos.y - vGathererPos.y) * (vPlayerPos.y - vGathererPos.y) +
-	//	(vPlayerPos.z - vGathererPos.z) * (vPlayerPos.z - vGathererPos.z));
-
-	// 일정 거리안으로 들어왔을 때
+	// 플레이어와 충돌했을 때
 	if (true == m_isCol_with_Player && nullptr != m_pModel)
 	{
 		// 여기서 버튼 UI가 나타나면 될듯
