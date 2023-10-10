@@ -44,6 +44,7 @@
 #include "MeshEffect.h"
 #include "Wingardium_Effect.h"
 #include "EnergyBall.h"
+#include "RadialBlur.h"
 #pragma endregion Effects
 
 #pragma region Magic
@@ -492,16 +493,26 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 #pragma endregion
 
 #pragma region Load ETC
-		/* --------------ETC-------------- */
-		/* For.Prototype_Component_Health*/
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Health"),
-			CHealth::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_Health");
 
-		/* For.Prototype_Component_RigidBody */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_RigidBody"),
-			CRigidBody::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_Component_RigidBody");
+		{
+			std::lock_guard<std::mutex> lock(mtx);
+
+			/* --------------ETC-------------- */
+		/* For.Prototype_Component_Health*/
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Health"),
+				CHealth::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_Component_Health");
+
+			/* For.Prototype_Component_RigidBody */
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_RigidBody"),
+				CRigidBody::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_Component_RigidBody");
+
+			/* For.Prototype_Component_RadialBlur */
+			if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_RadialBlur"),
+				CRadialBlur::Create(m_pDevice, m_pContext))))
+				throw TEXT("Prototype_Component_RadialBlur");
+		}
 
 #pragma endregion
 
