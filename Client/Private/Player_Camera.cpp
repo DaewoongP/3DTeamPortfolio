@@ -52,6 +52,11 @@ void CPlayer_Camera::Change_Animation(const wstring& _AnimattionIndex)
 	}
 }
 
+_bool CPlayer_Camera::Is_Finish_Animation()
+{
+	return m_pAnimation_Camera_Model->Is_Finish_Animation();
+}
+
 
 HRESULT CPlayer_Camera::Initialize(void* pArg)
 {
@@ -143,6 +148,7 @@ void CPlayer_Camera::Tick(const _float& _TimeDelta)
 			m_CameraDesc.m_fAspect, 
 			m_CameraDesc.m_fNear, 
 			m_CameraDesc.m_fFar));
+
 	pGameInstance->Set_CameraFar(m_CameraDesc.m_fFar);
 
 	ENDINSTANCE;

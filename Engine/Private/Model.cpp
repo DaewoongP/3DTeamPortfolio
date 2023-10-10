@@ -204,7 +204,7 @@ HRESULT CModel::Render(_uint iMeshIndex)
 
 void CModel::Change_Animation(const wstring& wstrAnimationTag, ANIMTYPE eType)
 {
-	m_tAnimationDesc[eType].iCurrentAnimIndex = Find_Animation_Index(wstrAnimationTag);
+	m_tAnimationDesc[eType].iCurrentAnimIndex = Find_Animation_Index(wstrAnimationTag, eType);
 	m_tAnimationDesc[eType].iPreviousAnimIndex = m_tAnimationDesc[eType].iCurrentAnimIndex;
 	m_tAnimationDesc[eType].isResetAnimTrigger = true;
 	m_tAnimationDesc[eType].isFinishAnimation = false;
@@ -1994,6 +1994,12 @@ _uint CModel::Find_Animation_Index(const wstring& wstrTag, ANIMTYPE eType) const
 			break;
 
 		++iAnimationIndex;
+	}
+
+	if (!lstrcmp(TEXT("Hu_BM_Jog_Loop_Fwd_anm"), wstrTag.c_str()))
+	{
+		//_uint a = m_tAnimationDesc[eType].Animations.size();
+		int d = 0;
 	}
 
 	return iAnimationIndex;

@@ -82,6 +82,24 @@ void CStateMachine::OnStateEnter(void* _pArg)
 	
 }
 
+void CStateMachine::Change_Animation(const wstring& _AnimationTag, _bool _isLumos)
+{
+	m_StateMachineDesc.pOwnerModel->Change_Animation(_AnimationTag);
+
+	if (true == _isLumos)
+	{
+		//루모스가 꺼져 있을 경우만 애니메이션을 바꾼다.
+		if (false == *m_StateMachineDesc.pLumosOn)
+		{
+			m_StateMachineDesc.pOwnerModel->Change_Animation(_AnimationTag, CModel::OTHERBODY);
+		}
+	}
+	else
+	{
+		m_StateMachineDesc.pOwnerModel->Change_Animation(_AnimationTag, CModel::OTHERBODY);
+	}
+}
+
 CStateMachine* CStateMachine::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CStateMachine* pInstance = New CStateMachine(pDevice, pContext);

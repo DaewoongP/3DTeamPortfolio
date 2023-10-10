@@ -6,7 +6,11 @@ BEGIN(Client)
 class CRollState :
     public CStateMachine
 {
-
+public:
+    typedef struct tagRollStateDesc
+    {
+        _bool IsBlink;
+    };
 private:
     explicit CRollState(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext);
     explicit CRollState(const CRollState& rhs);
@@ -30,7 +34,7 @@ public:
 
 
 private:
-    //_bool m_isEnterTick = { true };
+    _bool m_isBlink = { true };
 
 private:
     void Go_Idle();

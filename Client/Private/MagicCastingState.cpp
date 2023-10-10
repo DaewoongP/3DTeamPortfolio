@@ -60,6 +60,8 @@ void CMagicCastingState::Late_Tick(_float fTimeDelta)
 
 void CMagicCastingState::OnStateEnter(void* _pArg)
 {
+	*m_StateMachineDesc.pLumosOn = false;
+
 	BEGININSTANCE;
 
 	//임시용
@@ -89,6 +91,7 @@ void CMagicCastingState::OnStateEnter(void* _pArg)
 			case CPlayer::ACTION_CASUAL:
 			{
 				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Cast_Casual_Fwd_01_anm"));
+				Change_Animation(TEXT("Hu_BM_RF_Cast_Casual_Fwd_01_anm"), false);
 			}
 			break;
 			case CPlayer::ACTION_CMBT:
@@ -98,11 +101,13 @@ void CMagicCastingState::OnStateEnter(void* _pArg)
 				case BASICSPELL_RANDOM_FRONT:
 				{
 					m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_01_anm"));
+					Change_Animation(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_01_anm"), false);
 				}
 				break;
 				case BASICSPELL_RANDOM_BACK:
 				{
 					m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_StepBwd_01_anm"));
+					Change_Animation(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_StepBwd_01_anm"), false);
 				}
 				break;
 				case BASICSPELL_RANDOM_END:
@@ -128,6 +133,7 @@ void CMagicCastingState::OnStateEnter(void* _pArg)
 			case CPlayer::ACTION_CASUAL:
 			{
 				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Cast_Casual_Fwd_02_anm"));
+				Change_Animation(TEXT("Hu_BM_RF_Cast_Casual_Fwd_02_anm"), false);
 			}
 			break;
 			case CPlayer::ACTION_CMBT:
@@ -137,11 +143,13 @@ void CMagicCastingState::OnStateEnter(void* _pArg)
 				case BASICSPELL_RANDOM_FRONT:
 				{
 					m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_02_anm"));
+					Change_Animation(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_02_anm"), false);
 				}
 				break;
 				case BASICSPELL_RANDOM_BACK:
 				{
 					m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_StepBwd_02_anm"));
+					Change_Animation(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_StepBwd_02_anm"), false);
 				}
 				break;
 				case BASICSPELL_RANDOM_END:
@@ -167,6 +175,7 @@ void CMagicCastingState::OnStateEnter(void* _pArg)
 			case CPlayer::ACTION_CASUAL:
 			{
 				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Cast_Casual_Fwd_03_anm"));
+				Change_Animation(TEXT("Hu_BM_RF_Cast_Casual_Fwd_03_anm"), false);
 			}
 			break;
 			case CPlayer::ACTION_CMBT:
@@ -176,11 +185,13 @@ void CMagicCastingState::OnStateEnter(void* _pArg)
 				case BASICSPELL_RANDOM_FRONT:
 				{
 					m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_StepBwd_03_anm"));
+					Change_Animation(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_StepBwd_03_anm"), false);
 				}
 				break;
 				case BASICSPELL_RANDOM_BACK:
 				{
 					m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_03_anm"));
+					Change_Animation(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_03_anm"), false);
 				}
 				break;
 				case BASICSPELL_RANDOM_END:
@@ -206,6 +217,7 @@ void CMagicCastingState::OnStateEnter(void* _pArg)
 			case CPlayer::ACTION_CASUAL:
 			{
 				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Cast_Casual_Fwd_04_anm"));
+				Change_Animation(TEXT("Hu_BM_RF_Cast_Casual_Fwd_04_anm"), false);
 			}
 			break;
 			case CPlayer::ACTION_CMBT:
@@ -215,11 +227,13 @@ void CMagicCastingState::OnStateEnter(void* _pArg)
 				case BASICSPELL_RANDOM_FRONT:
 				{
 					m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Hvy_frmLft_anm"));
+					Change_Animation(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Hvy_frmLft_anm"), false);
 				}
 				break;
 				case BASICSPELL_RANDOM_BACK:
 				{
 					m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_StepBwd_04_anm"));
+					Change_Animation(TEXT("Hu_Cmbt_Atk_Cast_Fwd_Lht_StepBwd_04_anm"), false);
 				}
 				break;
 				case BASICSPELL_RANDOM_END:
@@ -260,18 +274,15 @@ void CMagicCastingState::OnStateEnter(void* _pArg)
 
 			//애니메이션 재생
 			m_StateMachineDesc.pOwnerModel->Change_Animation(m_vecSpellActionTextList[m_iSpellActionIndex]);
+			Change_Animation(m_vecSpellActionTextList[m_iSpellActionIndex], false);
 		}
-			break;
-		//case Client::CMagicCastingState::SPECIAL_ACTION_DESCENDO:
-		//{
-		//	m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("DESCENDO_2"));
-		//}
 			break;
 		case Client::CMagicCastingState::SPECIAL_ACTION_DIFFINDO:
 		{
 			m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("DIFFINDO"), TEXT("Ready_Spell"), pMagicCastingStateDesc->pFuncSpell);
 
 			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("DIFFINDO"));
+			Change_Animation(TEXT("DIFFINDO"), false);
 		}
 			break;
 		case Client::CMagicCastingState::SPECIAL_ACTION_AVADA_KEDAVRA:
@@ -279,6 +290,7 @@ void CMagicCastingState::OnStateEnter(void* _pArg)
 			m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Avada_Kedvra"), TEXT("Ready_Spell"), pMagicCastingStateDesc->pFuncSpell);
 
 			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Avada_Kedvra"));
+			Change_Animation(TEXT("Avada_Kedvra"), false);
 		}
 			break;
 		case Client::CMagicCastingState::SPECIAL_ACTION_IMPERIO:
@@ -286,6 +298,7 @@ void CMagicCastingState::OnStateEnter(void* _pArg)
 			m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Imperio"), TEXT("Ready_Spell"), pMagicCastingStateDesc->pFuncSpell);
 
 			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Imperio"));
+			Change_Animation(TEXT("Imperio"), false);
 		}
 			break;
 		case Client::CMagicCastingState::SPECIAL_ACTION_CRUCIO:
@@ -293,6 +306,7 @@ void CMagicCastingState::OnStateEnter(void* _pArg)
 			m_StateMachineDesc.pOwnerModel->Bind_Notify(TEXT("Crucio"), TEXT("Ready_Spell"), pMagicCastingStateDesc->pFuncSpell);
 
 			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Crucio"));
+			Change_Animation(TEXT("Crucio"), false);
 		}
 			break;
 		case Client::CMagicCastingState::SPECIAL_ACTION_END:
@@ -313,6 +327,7 @@ void CMagicCastingState::OnStateEnter(void* _pArg)
 	{
 		//피니셔 애니메이션 재생
 		m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Finisher_Lightning"));
+		Change_Animation(TEXT("Finisher_Lightning"), false);
 
 		*m_pisReadySpell = false;
 	}

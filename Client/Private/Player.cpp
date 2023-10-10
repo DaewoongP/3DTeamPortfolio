@@ -10,6 +10,7 @@
 
 #include "ProtegoState.h"
 #include "MagicCastingState.h"
+#include "RollState.h"
 
 #include "Armored_Troll.h"
 #include "MagicBall.h"
@@ -177,6 +178,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_iActionType = (_uint)ACTION_NONE;
 
 	m_pCustomModel->Change_Animation(TEXT("Hu_BM_RF_Idle_anm"));
+	m_pCustomModel->Change_Animation(TEXT("Hu_BM_RF_Idle_anm"), CModel::OTHERBODY);
 
 	m_vLevelInitPosition[LEVEL_CLIFFSIDE] = _float3(25.f, 3.f, 22.5f);
 	m_vLevelInitPosition[LEVEL_VAULT] = _float3(7.0f, 0.02f, 7.5f);
@@ -187,6 +189,23 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 
 	m_fTargetViewRange = 1.0f;
+
+
+	//m_vecEaseList.resize(CEase::EASE_END);
+
+	//m_vecEaseList[CEase::IN_QUAD] = New ("IN_QUAD");
+
+	//IN_QUAD, OUT_QUAD, INOUT_QUAD_,
+	//	IN_SINE, OUT_SINE, INOUT_SINE,
+	//	IN_QUINT, OUT_QUINT, INOUT_QUINT,
+	//	IN_QUART, OUT_QUART, INOUT_QUART,
+	//	NONE_LINEAR, IN_LINEAR, OUT_LINEAR, INOUT_LINEAR,
+	//	IN_EXPO, OUT_EXPO, INOUT_EXPO,
+	//	IN_ELASTIC, OUT_ELASTIC, INOUT_ELASTIC,
+	//	IN_CUBIC, OUT_CUBIC, INOUT_CUBIC,
+	//	IN_CIRC, OUT_CIRC, INOUT_CIRC,
+	//	IN_BOUNCE, OUT_BOUNCE, INOUT_BOUNCE,
+	//	IN_BACK, OUT_BACK, INOUT_BACK,
 
 	return S_OK;
 }
@@ -211,13 +230,16 @@ void CPlayer::Tick(_float fTimeDelta)
 {
 	BEGININSTANCE;
 
-	if (pGameInstance->Get_DIKeyState(DIK_G, CInput_Device::KEY_DOWN))
+	//플레이어 카메라가 아니라면 
+	if (false == pGameInstance->Is_Current_Camera(TEXT("Player_Camera")))
 	{
-		m_pPlayer_Information->fix_HP(-10);
-		m_pPlayer_Information->Using_Fnisher();
+		ENDINSTANCE;
+
+		return;
 	}
 	
 	ENDINSTANCE;
+	
 
 	Update_Skill_CoolTime();
 
@@ -244,6 +266,7 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UNDERBODY);
+	m_pCustomModel->Play_Animation(fTimeDelta, CModel::OTHERBODY);
 
 
 	//루모스 업데이트
@@ -264,6 +287,18 @@ void CPlayer::Tick(_float fTimeDelta)
 
 void CPlayer::Late_Tick(_float fTimeDelta)
 {
+	BEGININSTANCE;
+
+	//플레이어 카메라가 아니라면 
+	if (false == pGameInstance->Is_Current_Camera(TEXT("Player_Camera")))
+	{
+		ENDINSTANCE;
+
+		return;
+	}
+
+	ENDINSTANCE;
+
 	__super::Late_Tick(fTimeDelta);
 
 	//m_pStateContext->Late_Tick(fTimeDelta);
@@ -518,6 +553,11 @@ void CPlayer::On_Maigc_Throw_Data(void* data) const
 	{
 		m_pFrncSpellToggle = static_cast<CMagicBall::COLLSIONREQUESTDESC*>(data)->Action;
 	}
+}
+
+_bool CPlayer::Is_Action_Camera_Playing()
+{
+	return !m_pPlayer_Camera->Is_Finish_Animation();
 }
 
 HRESULT CPlayer::Add_Components()
@@ -912,6 +952,7 @@ HRESULT CPlayer::Add_Magic()
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
+
 	m_pMagicSlot->Add_Magic_To_Basic_Slot(2, LUMOS);
 	m_pMagicSlot->Add_Magic_To_Basic_Slot(3, FINISHER);
 
@@ -927,22 +968,19 @@ void CPlayer::Key_Input(_float fTimeDelta)
 {
 	BEGININSTANCE;
 
-	if (pGameInstance->Get_DIKeyState(DIK_J, CInput_Device::KEY_DOWN))
-	{
-		pGameInstance->Set_Camera(TEXT("Player_Camera"),2.0f);
-	}
+#pragma region 카메라 변경 테스트
+//	if (pGameInstance->Get_DIKeyState(DIK_J, CInput_Device::KEY_DOWN))
+//{
+//	pGameInstance->Set_Camera(TEXT("Player_Camera"),2.0f);
+//}
+//
+//
+//if (pGameInstance->Get_DIKeyState(DIK_L, CInput_Device::KEY_DOWN))
+//{
+//	pGameInstance->Set_Camera(TEXT("Other_Camera"), 2.0f);
+//}  
+#pragma endregion
 
-
-	if (pGameInstance->Get_DIKeyState(DIK_L, CInput_Device::KEY_DOWN))
-	{
-		pGameInstance->Set_Camera(TEXT("Other_Camera"), 2.0f);
-	}
-
-
-	if (pGameInstance->Get_DIKeyState(DIK_P, CInput_Device::KEY_DOWN))
-	{
-		m_pPlayer_Camera->Change_Animation(TEXT("Cam_Finisher_Lightning_01_anm"));
-	}
 
 #ifdef _DEBUG
 	//카메라 쉐이크 테스트
@@ -977,7 +1015,11 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 	if (pGameInstance->Get_DIKeyState(DIK_LCONTROL, CInput_Device::KEY_DOWN))
 	{
-		Go_Roll();
+		CRollState::tagRollStateDesc RollStateDesc;
+
+		RollStateDesc.IsBlink = false;
+
+		Go_Roll(&RollStateDesc);
 	}
 
 
@@ -1064,26 +1106,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 					break;
 				}
 
-				switch (MagicCastingStateDesc.iSpecialAction)
-				{
-				case CMagicCastingState::SPECIAL_ACTION_AVADA_KEDAVRA:
-				{
-					m_pPlayer_Camera->Change_Animation(TEXT("Avada_Kedavra_Face"));
-				}
-				break;
-				case CMagicCastingState::SPECIAL_ACTION_IMPERIO:
-				{
-					m_pPlayer_Camera->Change_Animation(TEXT("Imperio_Down"));
-				}
-				break;
-				case CMagicCastingState::SPECIAL_ACTION_CRUCIO:
-				{
-					m_pPlayer_Camera->Change_Animation(TEXT("Crucio"));
-				}
-				break;
-				default:
-					break;
-				}
+				
 
 
 				
@@ -1097,12 +1120,12 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 
 
-		if (pGameInstance->Get_DIKeyState(DIK_F, CInput_Device::KEY_DOWN))
+		/*if (pGameInstance->Get_DIKeyState(DIK_F, CInput_Device::KEY_DOWN))
 		{
 			MagicCastingStateDesc.pFuncSpell = [&] {(*this).Lumos(); };
 
 			Go_MagicCast(&MagicCastingStateDesc);
-		}
+		}*/
 
 		MagicCastingStateDesc.iSpellType = CMagicCastingState::SPELL_FINISHER;
 
@@ -1126,6 +1149,19 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		}
 	}
 #pragma endregion
+
+	//루모스
+	if (false == m_isLumosOn &&
+		pGameInstance->Get_DIKeyState(DIK_Z, CInput_Device::KEY_DOWN) && 
+		(m_pStateContext->Is_Current_State(TEXT("Idle")) ||
+			m_pStateContext->Is_Current_State(TEXT("Move Turn")) ||
+			m_pStateContext->Is_Current_State(TEXT("Move Start")) ||
+			m_pStateContext->Is_Current_State(TEXT("Jump")) ||
+			m_pStateContext->Is_Current_State(TEXT("Move Loop"))))
+	{
+		m_pCustomModel->Change_Animation(TEXT("Lumos_Start"),CModel::OTHERBODY);
+		m_isLumosOn = true;
+	}
 
 
 	if (pGameInstance->Get_DIKeyState(DIK_GRAVE, CInput_Device::KEY_DOWN))
@@ -1505,6 +1541,7 @@ HRESULT CPlayer::Ready_StateMachine()
 	m_StateMachineDesc.piMoveType = &m_iMoveType;
 	m_StateMachineDesc.pOwnerLookAngle = &m_fLookAngle;
 	m_StateMachineDesc.pfuncFinishAnimation = [&] { (*this).Finish_Animation(); };
+	m_StateMachineDesc.pLumosOn = &m_isLumosOn;
 
 	Safe_AddRef(m_StateMachineDesc.pOwnerModel);
 	Safe_AddRef(m_StateMachineDesc.pPlayerTransform);
@@ -2272,25 +2309,27 @@ void CPlayer::Finish_Animation()
 	m_isFinishAnimation = true;
 }
 
-void CPlayer::Go_Roll()
+void CPlayer::Go_Roll(void* _pArg)
 {
-	if (m_pStateContext->Is_Current_State(TEXT("Idle")) ||
+	if (true == m_pPlayer_Camera->Is_Finish_Animation() &&
+		(m_pStateContext->Is_Current_State(TEXT("Idle")) ||
 		m_pStateContext->Is_Current_State(TEXT("Move Turn")) ||
 		m_pStateContext->Is_Current_State(TEXT("Move Start")) ||
 		m_pStateContext->Is_Current_State(TEXT("Move Loop")) ||
-		m_pStateContext->Is_Current_State(TEXT("Magic_Cast")))
+		m_pStateContext->Is_Current_State(TEXT("Magic_Cast"))))
 	{
-		m_pStateContext->Set_StateMachine(TEXT("Roll"));
+		m_pStateContext->Set_StateMachine(TEXT("Roll"), _pArg);
 	}
 }
 
 void CPlayer::Go_Jump()
 {
-	if (m_pStateContext->Is_Current_State(TEXT("Idle")) ||
+	if (true == m_pPlayer_Camera->Is_Finish_Animation() &&
+		(m_pStateContext->Is_Current_State(TEXT("Idle")) ||
 		m_pStateContext->Is_Current_State(TEXT("Move Turn")) ||
 		m_pStateContext->Is_Current_State(TEXT("Move Start")) ||
 		m_pStateContext->Is_Current_State(TEXT("Move Loop")) ||
-		m_pStateContext->Is_Current_State(TEXT("Magic_Cast")))
+		m_pStateContext->Is_Current_State(TEXT("Magic_Cast"))))
 	{
 		m_pStateContext->Set_StateMachine(TEXT("Jump"));
 	}
@@ -2346,6 +2385,30 @@ void CPlayer::Go_MagicCast(void* _pArg)
 		m_pStateContext->Is_Current_State(TEXT("Move Loop")) ||
 		m_pStateContext->Is_Current_State(TEXT("Magic_Cast")))
 	{
+		if (nullptr != m_pTarget)
+		{
+			switch (static_cast<CMagicCastingState::MAGICCASTINGSTATEDESC*>(_pArg)->iSpecialAction)
+			{
+			case CMagicCastingState::SPECIAL_ACTION_AVADA_KEDAVRA:
+			{
+				m_pPlayer_Camera->Change_Animation(TEXT("Avada_Kedavra_Face"));
+			}
+			break;
+			case CMagicCastingState::SPECIAL_ACTION_IMPERIO:
+			{
+				m_pPlayer_Camera->Change_Animation(TEXT("Imperio_Down"));
+			}
+			break;
+			case CMagicCastingState::SPECIAL_ACTION_CRUCIO:
+			{
+				m_pPlayer_Camera->Change_Animation(TEXT("Crucio"));
+			}
+			break;
+			default:
+				break;
+			}
+		}
+
 		m_pStateContext->Set_StateMachine(TEXT("Magic_Cast"), _pArg);
 	}
 }
@@ -2426,12 +2489,13 @@ void CPlayer::Drink_Potion()
 
 void CPlayer::Go_Protego(void* _pArg)
 {
-	if (m_pStateContext->Is_Current_State(TEXT("Idle")) ||
+	if (true == m_pPlayer_Camera->Is_Finish_Animation() &&
+		(m_pStateContext->Is_Current_State(TEXT("Idle")) ||
 		m_pStateContext->Is_Current_State(TEXT("Move Turn")) ||
 		m_pStateContext->Is_Current_State(TEXT("Move Start")) ||
 		m_pStateContext->Is_Current_State(TEXT("Move Loop")) ||
 		m_pStateContext->Is_Current_State(TEXT("Magic_Cast")) ||
-		m_pStateContext->Is_Current_State(TEXT("Protego")))
+		m_pStateContext->Is_Current_State(TEXT("Protego"))))
 	{
 		m_pStateContext->Set_StateMachine(TEXT("Protego"), _pArg);
 	}
@@ -2439,13 +2503,14 @@ void CPlayer::Go_Protego(void* _pArg)
 
 void CPlayer::Go_Hit(void* _pArg)
 {
-	if (m_pStateContext->Is_Current_State(TEXT("Idle")) ||
+	if (true == m_pPlayer_Camera->Is_Finish_Animation() &&
+		(m_pStateContext->Is_Current_State(TEXT("Idle")) ||
 		m_pStateContext->Is_Current_State(TEXT("Move Turn")) ||
 		m_pStateContext->Is_Current_State(TEXT("Move Start")) ||
 		m_pStateContext->Is_Current_State(TEXT("Move Loop")) ||
 		m_pStateContext->Is_Current_State(TEXT("Magic_Cast")) ||
 		m_pStateContext->Is_Current_State(TEXT("Standing")) ||
-		m_pStateContext->Is_Current_State(TEXT("Jump")))
+		m_pStateContext->Is_Current_State(TEXT("Jump"))))
 	{
 		m_pStateContext->Set_StateMachine(TEXT("Hit"), _pArg);
 	}

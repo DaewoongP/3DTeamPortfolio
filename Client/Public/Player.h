@@ -96,6 +96,7 @@ public:
 
 	void Potion_Duration(_float fTimeDelta);
 	virtual void On_Maigc_Throw_Data(void* data) const override;
+	_bool Is_Action_Camera_Playing();
 
 private:
 	CShader*		m_pShader = { nullptr };
@@ -178,6 +179,8 @@ private:
 
 #pragma region 카메라 쉐이크
 
+	vector<char*> m_vecEaseList;
+
 	_int m_iShake_Type = { 0 };
 	_int m_iShake_Axis = { 0 };
 	_int m_iEase = { 0 };
@@ -197,6 +200,8 @@ private:
 	_float m_fTargetViewRange = { 0.0f };
 
 	vector<SPELL> m_vecSpellCheck;
+
+	_bool m_isLumosOn = { false };
 
 private:
 	HRESULT Add_Components();
@@ -277,7 +282,7 @@ private:
 
 #pragma region 스테이트 변경 함수
 
-	void Go_Roll();
+	void Go_Roll(void* _pArg = nullptr);
 
 	void Go_Jump();
 
