@@ -87,11 +87,13 @@ PS_OUT PS_MAIN_SHADOW(PS_IN In)
     
     float fShadowPower = 1.f;
     
-    fShadowPower = Create_ShadowPower(vObjectWorldPos, g_LightViewMatrix, g_LightProjMatrix, g_LightDepthTexture, 0.5f);
-    if (2 == iNumLights)
-        fShadowPower *= Create_ShadowPower(vObjectWorldPos, g_LightViewMatrix1, g_LightProjMatrix1, g_LightDepthTexture1, 0.5f);
+    if (0 < iNumLights)
+        fShadowPower *= Create_ShadowPower(vObjectWorldPos, g_LightViewMatrix, g_LightProjMatrix, g_LightDepthTexture, 0.5f);
+    if (1 < iNumLights)
+        fShadowPower *= Create_ShadowPower(vObjectWorldPos, g_LightViewMatrix1, g_LightProjMatrix1, g_LightDepthTexture1, 0.3f);
 
     Out.vColor = float4(fShadowPower, fShadowPower, fShadowPower, 1.f);
+    saturate(Out.vColor);
     
     return Out;
 }
@@ -143,6 +145,7 @@ technique11 DefaultTechnique
 float Create_ShadowPower(float4 vWorldPos, matrix LightViewMatrix, matrix LightProjMatrix, texture2D LightDepthTexture, float fShadowPower)
 {
     float fRetValue = 1.f;
+    
     // 지금 픽셀의 월드포지션에서 현재 빛으로 설정되어있는 값의 뷰행렬을 곱하여
     // 빛의 뷰스페이스로 변경
     float4 vLightViewPos = mul(vWorldPos, LightViewMatrix);
@@ -181,7 +184,7 @@ float Create_ShadowPower(float4 vWorldPos, matrix LightViewMatrix, matrix LightP
         0.f >= vLightProjPos.z ||
 	    1.f <= vLightProjPos.z)
     {
-        fRetValue = 1.f;
+        fRetValue = 1.f + fShadowPower;
     }
     // 빛의 뷰스페이스 포지션 z와 픽셀의 라이트 뎁스 (실제 월드공간상의 viewz값)
     // 빛의 뷰스페이스 z값이 UV좌표의 뷰스페이스 z값보다 "클경우 (깊을경우)" 그림자.
@@ -191,7 +194,7 @@ float Create_ShadowPower(float4 vWorldPos, matrix LightViewMatrix, matrix LightP
     }
     else
     {
-        fRetValue = 1.f;
+        fRetValue = 1.f + fShadowPower;
     }
     
     return fRetValue;

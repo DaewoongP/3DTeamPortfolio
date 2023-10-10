@@ -3,34 +3,22 @@
 
 IMPLEMENT_SINGLETON(CLight_Manager)
 
-//void CLight_Manager::Set_Light(_uint iIndex, _float fWinSizeX, _float fWinSizeY, CLight::LIGHTDESC LightDesc)
-//{
-//	/*auto	iter = m_Lights.begin();
-//
-//	for (size_t i = 0; i < iIndex; ++i)
-//		++iter;
-//
-//	if (LightDesc.eType == CLight::TYPE_LUMOS)
-//	{
-//		m_ViewLight = XMMatrixLookAtLH(Get_Light(CLight::TYPE_LUMOS)->vPos, Get_Light(CLight::TYPE_LUMOS)->vLookAt, _float4(0.f, 1.f, 0.f, 0.f));
-//		m_ProjLight = XMMatrixPerspectiveFovLH(XMConvertToRadians(90.f), fWinSizeX / fWinSizeY, 0.1f, 1000.f);
-//	}
-//	else
-//	{
-//		m_ViewLight = XMMatrixLookAtLH(Get_Light(CLight::TYPE_DIRECTIONAL)->vPos, Get_Light(CLight::TYPE_DIRECTIONAL)->vLookAt, _float4(0.f, 1.f, 0.f, 0.f));
-//		m_ProjLight = XMMatrixPerspectiveFovLH(XMConvertToRadians(90.f), fWinSizeX / fWinSizeY, 0.1f, 1000.f);
-//	}
-//
-//	CPipeLine* pPipeLine = CPipeLine::GetInstance();
-//	Safe_AddRef(pPipeLine);
-//
-//	pPipeLine->Set_LightTransform(CPipeLine::D3DTS_VIEW, m_ViewLight);
-//	pPipeLine->Set_LightTransform(CPipeLine::D3DTS_PROJ, m_ProjLight);
-//
-//	Safe_Release(pPipeLine);
-//
-//	(*iter)->Set_LightDesc(LightDesc);*/
-//}
+_uint CLight_Manager::Get_CurrentLightShadowNum()
+{
+	_uint iNum = { 0 };
+	for (auto isRender : m_isShadowRender)
+	{
+		if (true == isRender)
+			++iNum;
+	}
+
+	return iNum;
+}
+
+const CLight::LIGHTDESC* CLight_Manager::Get_ShadowLightDesc(_uint iIndex)
+{
+	return m_pShadowLights[iIndex]->Get_LightDesc();
+}
 
 HRESULT CLight_Manager::Reserve_Lights(_uint iNumReserve)
 {
@@ -42,35 +30,41 @@ HRESULT CLight_Manager::Reserve_Lights(_uint iNumReserve)
 	return S_OK;
 }
 
-CLight* CLight_Manager::Add_Lights(const CLight::LIGHTDESC& LightDesc, _bool isShadow, _uint iLightViewIndex, _float fAspect)
+HRESULT CLight_Manager::Add_Lights(const CLight::LIGHTDESC& LightDesc, _Inout_ class CLight** ppLight, _bool isShadow, _uint iLightViewIndex, _float fAspect)
 {
 	CLight* pLight = Create_Light(LightDesc);
+
+	if (nullptr == pLight)
+		return E_FAIL;
 
 	if (true == isShadow)
 	{
 		m_LightViewMatrix[iLightViewIndex] = XMMatrixLookAtLH(LightDesc.vPos, LightDesc.vLookAt, _float4(0.f, 1.f, 0.f, 0.f));
 		m_LightProjMatrix[iLightViewIndex] = XMMatrixPerspectiveFovLH(XMConvertToRadians(90.f), fAspect, 0.1f, 1000.f);
-		++m_iBindedLightMatrices;
-	}
-
-	if (MAX_SHADOW < m_iBindedLightMatrices)
-	{
-		// 그림자를 위한 빛이 두개이상 바인딩 되어 행렬이 꼬인상태
-		MSG_BOX("Shadow Option is Already Binded");
-		__debugbreak();
+		m_fAspect = fAspect;
+		m_isShadowRender[iLightViewIndex] = true;
+		m_pShadowLights[iLightViewIndex] = pLight;
+		Safe_AddRef(pLight);
 	}
 	
-	if (nullptr == pLight)
-		return nullptr;
-
 	m_Lights.push_back(pLight);
 
-	return pLight;
+	if (nullptr != ppLight)
+	{
+		*ppLight = pLight;
+		Safe_AddRef(pLight);
+	}
+
+	return S_OK;
 }
 
 HRESULT CLight_Manager::Clear_Lights()
 {
-	m_iBindedLightMatrices = 0;
+	for (_uint i = 0; i < MAX_SHADOW; ++i)
+	{
+		m_isShadowRender[i] = false;
+		Safe_Release(m_pShadowLights[i]);
+	}
 
 	for (auto& pLight : m_Lights)
 		Safe_Release(pLight);
@@ -91,17 +85,46 @@ HRESULT CLight_Manager::Render_Lights(CShader* pShader, CVIBuffer_Rect* pVIBuffe
 	return S_OK;
 }
 
+HRESULT CLight_Manager::Return_Light(CLight* pLight)
+{
+	Safe_Release(pLight);
+
+	auto iter = find_if(m_Lights.begin(), m_Lights.end(), [&](auto value) {
+		if (value == pLight)
+			return true;
+		return false;
+		});
+
+	m_Lights.erase(iter);
+
+	m_LightPool.push(pLight);
+
+	return S_OK;
+}
+
+HRESULT CLight_Manager::Update_ShadowMatrix(_uint iShadowIndex, CLight::LIGHTDESC LightDesc)
+{
+	m_LightViewMatrix[iShadowIndex] = XMMatrixLookAtLH(LightDesc.vPos, LightDesc.vLookAt, _float4(0.f, 1.f, 0.f, 0.f));
+	m_LightProjMatrix[iShadowIndex] = XMMatrixPerspectiveFovLH(XMConvertToRadians(90.f), m_fAspect, 0.1f, 1000.f);
+	
+	return S_OK;
+}
+
 CLight* CLight_Manager::Create_Light(const CLight::LIGHTDESC& LightDesc)
 {
+	CLight* pLight = { nullptr };
+
 	if (m_LightPool.empty())
 	{
-		return CLight::Create(LightDesc);
+		pLight = CLight::Create(LightDesc);
+	}
+	else
+	{
+		pLight = m_LightPool.front();
+		pLight->Set_LightDesc(LightDesc);
+		m_LightPool.pop();
 	}
 	
-	CLight* pLight = m_LightPool.front();
-	pLight->Set_LightDesc(LightDesc);
-	m_LightPool.pop();
-
 	return pLight;
 }
 

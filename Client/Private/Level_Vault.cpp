@@ -13,7 +13,6 @@ CLevel_Vault::CLevel_Vault(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 HRESULT CLevel_Vault::Initialize()
 {
-	CGameInstance::GetInstance()->Clear_Lights();
     if (FAILED(__super::Initialize()))
         return E_FAIL;
 
@@ -33,12 +32,12 @@ HRESULT CLevel_Vault::Initialize()
 
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 	{
-		MSG_BOX("Failed Ready_Lights");
+		MSG_BOX("Failed Layer_BackGround");
 
 		return E_FAIL;
 	}
 
-	if(FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
+	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
 	{
 		MSG_BOX("Failed Ready_Layer_Monster");
 
@@ -55,13 +54,6 @@ HRESULT CLevel_Vault::Initialize()
 	if (FAILED(Load_MapObject_Ins(TEXT("../../Resources/GameData/MapData/MapData_Ins1.ddd"))))
 	{
 		MSG_BOX("Failed Load Map Object_Ins");
-
-		return E_FAIL;
-	}
-
-	if (FAILED(Ready_Layer_Trigger(TEXT("Layer_Trigger"))))
-	{
-		MSG_BOX("Failed Load Layer_Trigger");
 
 		return E_FAIL;
 	}
@@ -192,7 +184,7 @@ HRESULT CLevel_Vault::Ready_Lights()
 	LightDesc.vAmbient = _float4(0.1f, 0.1f, 0.1f, 1.f);
 	LightDesc.vSpecular = BLACKDEFAULT;
 
-	pGameInstance->Add_Lights(LightDesc, true);
+	pGameInstance->Add_Lights(LightDesc);
 
 	ENDINSTANCE;
 	
@@ -487,34 +479,6 @@ HRESULT CLevel_Vault::Ready_Debug(const _tchar* pLayerTag)
 	return S_OK;
 }
 #endif // _DEBUG
-
-HRESULT CLevel_Vault::Ready_Layer_Trigger(const _tchar* pLayerTag)
-{
-	BEGININSTANCE;
-
-	/* Add Scene : Main */
-	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
-	{
-		MSG_BOX("Failed Add Scene : (Scene_Main)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
-
-	CTrigger_Vault::TRIGGERPOS TriggerDesc;
-	TriggerDesc.vEffectPos = _float3();
-	TriggerDesc.vTriggerPos;
-
-	if (FAILED(pGameInstance->Add_Component(LEVEL_VAULT, LEVEL_VAULT, TEXT("Prototype_GameObject_Trigger_Vault"), 
-		pLayerTag, TEXT("GameObject_Trigger_Vault"), &TriggerDesc)))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Trigger_Vault)");
-		return E_FAIL;
-	}
-
-	ENDINSTANCE;
-
-	return S_OK;
-}
 
 HRESULT CLevel_Vault::Ready_Layer_Monster(const _tchar* pLayerTag)
 {

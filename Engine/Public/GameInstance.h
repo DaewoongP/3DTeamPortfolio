@@ -124,8 +124,13 @@ public: /* For. Frustum */
 	_bool isIn_WorldFrustum(_float4 vWorldPos, _float fRange = 0.f);
 
 public: /* For.Light_Manager */
-	class CLight* Add_Lights(const CLight::LIGHTDESC & LightDesc, _bool isShadow = false, _uint iLightViewIndex = 0, _float fAspect = 1280.f / 720.f);
+	HRESULT Add_Lights(const CLight::LIGHTDESC & LightDesc, _Inout_ class CLight** ppLight = nullptr, _bool isShadow = false, _uint iLightViewIndex = 0, _float fAspect = 1280.f / 720.f);
+	void Set_IsShadowRender(_uint iShadowIndex, _bool isRender);
+	const CLight::LIGHTDESC* Get_ShadowLightDesc(_uint iIndex);
+	// Free 함수에서 사용 금지
+	HRESULT Return_Light(class CLight* pLight);
 	HRESULT Clear_Lights();
+	HRESULT Update_ShadowMatrix(_uint iShadowIndex, CLight::LIGHTDESC LightDesc);
 
 public: /* For.Sound_Manager */
 	HRESULT Add_Sounds(const _tchar * szSoundFilePath);

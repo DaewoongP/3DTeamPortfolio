@@ -57,12 +57,19 @@ HRESULT CShadow::Render()
 {
 	CRenderTarget_Manager* pRenderTarget_Manager = CRenderTarget_Manager::GetInstance();
 	Safe_AddRef(pRenderTarget_Manager);
+	CPipeLine* pPipeLine = CPipeLine::GetInstance();
+	Safe_AddRef(pPipeLine);
+	CLight_Manager* pLight_Manager = CLight_Manager::GetInstance();
+	Safe_AddRef(pLight_Manager);
 
-	if (nullptr == pRenderTarget_Manager)
+	if (nullptr == pRenderTarget_Manager ||
+		nullptr == pPipeLine ||
+		nullptr == pLight_Manager)
 		return E_FAIL;
 
 	if (FAILED(pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Shadow"))))
 		return E_FAIL;
+
 	// ½ÇÁ¦ °´Ã¼ µª½º
 	if (FAILED(pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_Depth"), m_pShader, "g_DepthTexture")))
 		return E_FAIL;
@@ -79,11 +86,6 @@ HRESULT CShadow::Render()
 	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
 
-	CPipeLine* pPipeLine = CPipeLine::GetInstance();
-	Safe_AddRef(pPipeLine);
-	CLight_Manager* pLight_Manager = CLight_Manager::GetInstance();
-	Safe_AddRef(pLight_Manager);
-
 	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrixInv", pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
 	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrixInv", pPipeLine->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_PROJ))))
@@ -99,7 +101,7 @@ HRESULT CShadow::Render()
 	if (FAILED(m_pShader->Bind_RawValue("g_fCamFar", pPipeLine->Get_CamFar(), sizeof(_float))))
 		return E_FAIL;
 
-	_uint iLightNum = pLight_Manager->Get_LightShadowNum();
+	_uint iLightNum = pLight_Manager->Get_CurrentLightShadowNum();
 	if (FAILED(m_pShader->Bind_RawValue("g_iNumLights", &iLightNum, sizeof(_uint))))
 		return E_FAIL;
 

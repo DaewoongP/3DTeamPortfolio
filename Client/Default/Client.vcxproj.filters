@@ -151,9 +151,6 @@
     <Filter Include="01. Levels\06. PVP">
       <UniqueIdentifier>{886e8ea5-bbc0-4458-a2a8-792fe81d6d45}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Levels\07. Sky">
-      <UniqueIdentifier>{3416e37f-418a-468c-a94c-b7fb178d4e82}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Levels\99. Loading">
       <UniqueIdentifier>{884f056e-8693-460c-8907-198be0f4c197}</UniqueIdentifier>
     </Filter>

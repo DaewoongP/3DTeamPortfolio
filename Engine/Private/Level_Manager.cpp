@@ -75,6 +75,9 @@ HRESULT CLevel_Manager::Add_Scene(const _tchar* pSceneTag, const _tchar* pLayerT
 		{
 			if (!lstrcmp(ListLayerTag, pLayerTag))
 			{
+
+				// 여기걸리면 addScene 두번한거니까 삭제하셈
+				__debugbreak();
 				return S_FALSE;
 			}
 		}

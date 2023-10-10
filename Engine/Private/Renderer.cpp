@@ -338,35 +338,50 @@ HRESULT CRenderer::Render_Depth()
 	if (nullptr == m_pRenderTarget_Manager)
 		return E_FAIL;
 
-	// 1번 그림자 뎁스
-
-	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Shadow_Depth"), true)))
-		return E_FAIL;
-
-	_float4x4 LightViewMatrix = *m_pLight_Manager->Get_LightViewMatrix(0);
-	_float4x4 LightProjMatrix = *m_pLight_Manager->Get_LightProjMatrix(0);
-	for (auto& pGameObject : m_RenderObjects[RENDER_DEPTH])
+	if (0 == m_pLight_Manager->Get_CurrentLightShadowNum())
 	{
-		if (nullptr != pGameObject)
-			pGameObject->Render_Depth(LightViewMatrix, LightProjMatrix);
-
-		if (1 == m_pLight_Manager->Get_LightShadowNum())
+		for (auto& pGameObject : m_RenderObjects[RENDER_DEPTH])
 		{
 			Safe_Release(pGameObject);
 		}
+
+		m_RenderObjects[RENDER_DEPTH].clear();
+
+		return S_OK;
 	}
 
-	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_Shadow_Depth"), true)))
-		return E_FAIL;
+	// 1번 그림자 뎁스
 
+	const _bool* pShadowRender = m_pLight_Manager->Get_IsShadowRender();
 
-	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Shadow_Depth1"), true)))
-		return E_FAIL;
+	if (true == pShadowRender[0])
+	{
+		if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Shadow_Depth"), true)))
+			return E_FAIL;
+
+		_float4x4 LightViewMatrix = *m_pLight_Manager->Get_LightViewMatrix(0);
+		_float4x4 LightProjMatrix = *m_pLight_Manager->Get_LightProjMatrix(0);
+
+		for (auto& pGameObject : m_RenderObjects[RENDER_DEPTH])
+		{
+			if (nullptr != pGameObject)
+				pGameObject->Render_Depth(LightViewMatrix, LightProjMatrix);
+			// 다음렌더를 안하면 지운다
+			if (false == pShadowRender[1])
+				Safe_Release(pGameObject);
+		}
+
+		if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_Shadow_Depth"), true)))
+			return E_FAIL;
+	}
 
 	// 2번 그림자 뎁스
 	// 2개일때만 활성화 해서 그림.
-	if (2 == m_pLight_Manager->Get_LightShadowNum())
+	if (true == pShadowRender[1])
 	{
+		if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Shadow_Depth1"), true)))
+			return E_FAIL;
+
 		_float4x4 LightViewMatrix = *m_pLight_Manager->Get_LightViewMatrix(1);
 		_float4x4 LightProjMatrix = *m_pLight_Manager->Get_LightProjMatrix(1);
 		for (auto& pGameObject : m_RenderObjects[RENDER_DEPTH])
@@ -374,12 +389,13 @@ HRESULT CRenderer::Render_Depth()
 			if (nullptr != pGameObject)
 				pGameObject->Render_Depth(LightViewMatrix, LightProjMatrix);
 
+			// if (false == pShadowRender[2])
 			Safe_Release(pGameObject);
 		}
-	}
 
-	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_Shadow_Depth1"), true)))
-		return E_FAIL;
+		if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_Shadow_Depth1"), true)))
+			return E_FAIL;
+	}
 
 	m_RenderObjects[RENDER_DEPTH].clear();
 

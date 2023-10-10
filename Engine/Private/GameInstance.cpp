@@ -140,6 +140,7 @@ void CGameInstance::Clear_Resources()
 
 	m_pCamera_Manager->Clear();
 	m_pTimer_Manager->Clear();
+	m_pLight_Manager->Clear_Lights();
 }
 
 _float2 CGameInstance::Get_ViewPortSize(ID3D11DeviceContext* pContext)
@@ -493,11 +494,32 @@ _bool CGameInstance::isIn_WorldFrustum(_float4 vWorldPos, _float fRange)
 	return m_pFrustum->isIn_WorldFrustum(vWorldPos, fRange);
 }
 
-CLight* CGameInstance::Add_Lights(const CLight::LIGHTDESC& LightDesc, _bool isShadow, _uint iLightViewIndex, _float fAspect)
+HRESULT CGameInstance::Add_Lights(const CLight::LIGHTDESC& LightDesc, _Inout_ class CLight** ppLight, _bool isShadow, _uint iLightViewIndex, _float fAspect)
+{
+	NULL_CHECK_RETURN_MSG(m_pLight_Manager, E_FAIL, TEXT("Light NULL"));
+
+	return m_pLight_Manager->Add_Lights(LightDesc, ppLight, isShadow, iLightViewIndex, fAspect);
+}
+
+void CGameInstance::Set_IsShadowRender(_uint iShadowIndex, _bool isRender)
+{
+	NULL_CHECK_RETURN_MSG(m_pLight_Manager, , TEXT("Light NULL"));
+
+	return m_pLight_Manager->Set_IsShadowRender(iShadowIndex, isRender);
+}
+
+const CLight::LIGHTDESC* CGameInstance::Get_ShadowLightDesc(_uint iIndex)
 {
 	NULL_CHECK_RETURN_MSG(m_pLight_Manager, nullptr, TEXT("Light NULL"));
 
-	return m_pLight_Manager->Add_Lights(LightDesc, isShadow, iLightViewIndex, fAspect);
+	return m_pLight_Manager->Get_ShadowLightDesc(iIndex);
+}
+
+HRESULT CGameInstance::Return_Light(CLight* pLight)
+{
+	NULL_CHECK_RETURN_MSG(m_pLight_Manager, E_FAIL, TEXT("Light NULL"));
+
+	return m_pLight_Manager->Return_Light(pLight);
 }
 
 HRESULT CGameInstance::Clear_Lights()
@@ -505,6 +527,13 @@ HRESULT CGameInstance::Clear_Lights()
 	NULL_CHECK_RETURN_MSG(m_pLight_Manager, E_FAIL, TEXT("Light NULL"));
 
 	return m_pLight_Manager->Clear_Lights();
+}
+
+HRESULT CGameInstance::Update_ShadowMatrix(_uint iShadowIndex, CLight::LIGHTDESC LightDesc)
+{
+	NULL_CHECK_RETURN_MSG(m_pLight_Manager, E_FAIL, TEXT("Light NULL"));
+
+	return m_pLight_Manager->Update_ShadowMatrix(iShadowIndex, LightDesc);
 }
 
 HRESULT CGameInstance::Add_Sounds(const _tchar* szSoundFilePath)
@@ -970,8 +999,6 @@ void CGameInstance::Release_Engine()
 
 	CLevel_Manager::GetInstance()->DestroyInstance();
 
-	CPhysX_Manager::GetInstance()->DestroyInstance();
-
 	CTimer_Manager::GetInstance()->DestroyInstance();
 
 	CFont_Manager::GetInstance()->DestroyInstance();
@@ -997,6 +1024,8 @@ void CGameInstance::Release_Engine()
 	CTexturePool::GetInstance()->DestroyInstance();
 
 	CString_Manager::GetInstance()->DestroyInstance();
+
+	CPhysX_Manager::GetInstance()->DestroyInstance();
 
 	CGraphic_Device::GetInstance()->DestroyInstance();
 }

@@ -9,6 +9,7 @@
 /* =============================================== */
 
 #include "Parts.h"
+#include "Light.h"
 #include "Client_Defines.h"
 
 BEGIN(Engine)
@@ -35,9 +36,9 @@ public:
 	void Do_Lumos(_float fTimeDelta);
 
 private:
-	CModel* m_pModelCom = { nullptr };
-	CShader* m_pShaderCom = { nullptr };
-	CRenderer* m_pRendererCom = { nullptr };
+	CModel*				m_pModelCom = { nullptr };
+	CShader*			m_pShaderCom = { nullptr };
+	CRenderer*			m_pRendererCom = { nullptr };
 
 private:
 	_bool				m_isLightOn = false;
@@ -46,7 +47,9 @@ private:
 	_float				DelayTime = 0.0f;
 
 private:
-	class CLight*				m_pLight = { nullptr };
+	class CLight*		m_pLight = { nullptr };
+	class CLight*		m_pVaultLight = { nullptr };
+	CLight::LIGHTDESC	m_PrevDesc;
 
 private:
 	HRESULT Add_Components(void* pArg);
