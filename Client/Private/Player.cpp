@@ -585,7 +585,7 @@ HRESULT CPlayer::Add_Components()
 	RigidBodyDesc.isStatic = false;
 	RigidBodyDesc.isTrigger = false;
 	RigidBodyDesc.isGravity = true;
-	RigidBodyDesc.vInitPosition = _float3(2.f, 2.f, 2.f);
+	RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
 	RigidBodyDesc.vInitRotation = m_pTransform->Get_Quaternion();
 	RigidBodyDesc.fStaticFriction = 0.f;
 	RigidBodyDesc.fDynamicFriction = 1.f;
