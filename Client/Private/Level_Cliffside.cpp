@@ -264,10 +264,11 @@ HRESULT CLevel_Cliffside::Ready_Layer_Inventory(const _tchar* pLayerTag)
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Menu"), pLayerTag)))
+	/* Add Scene : Main */
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
 	{
-		MSG_BOX("Failed Add Scene : (Scene_Menu)");
-		Safe_Release(pGameInstance);
+		MSG_BOX("Failed Add Scene : (Scene_Main)");
+		ENDINSTANCE;
 		return E_FAIL;
 	}
 
@@ -705,7 +706,7 @@ HRESULT CLevel_Cliffside::Ready_Layer_UI(const _tchar* pLayerTag)
 	UIDesc.fSizeY = 64.f;
 	lstrcpy(UIDesc.szTexturePath, TEXT("../../Resources/UI/Game/UI/HUD/Reticles/UI_T_Aim.png"));
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Back"),
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Back"),
 		pLayerTag, TEXT("GameObject_UI_Aim"), &UIDesc)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_UI_Aim)");
