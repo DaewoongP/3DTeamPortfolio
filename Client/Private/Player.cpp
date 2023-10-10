@@ -769,10 +769,12 @@ HRESULT CPlayer::Add_Magic()
 	}
 
 	// 아리스토모멘텀
+	// 속도 제어 마법입니다.
+	// 딜은 없습니다.
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
-		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
-		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicGroup = CMagic::MG_CONTROL;
+		magicInitDesc.eMagicType = CMagic::MT_YELLOW;
 		magicInitDesc.eMagicTag = ARRESTOMOMENTUM;
 		magicInitDesc.fInitCoolTime = 5.f;
 		magicInitDesc.iDamage = 0;
@@ -782,78 +784,89 @@ HRESULT CPlayer::Add_Magic()
 	}
 
 	// 아씨오
+	// 공중에 띄운채 끌어당기는 마법입니다.
+	// 딜은 없습니다.
 	{
 		magicInitDesc.eBuffType = BUFF_ACCIO;
-		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
-		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
+		magicInitDesc.eMagicType = CMagic::MT_PURPLE;
 		magicInitDesc.eMagicTag = ACCIO;
 		magicInitDesc.fInitCoolTime = 5.f;
-		magicInitDesc.iDamage = 10;
+		magicInitDesc.iDamage = 0;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 1.f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
 	// 디센도
+	// 땅에 박히게 하는 마법입니다.
+	// 딜은 약합니다.
 	{
 		magicInitDesc.eBuffType = BUFF_DESCENDO;
-		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
-		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
+		magicInitDesc.eMagicType = CMagic::MT_PURPLE;
 		magicInitDesc.eMagicTag = DESCENDO;
 		magicInitDesc.fInitCoolTime = 5.f;
-		magicInitDesc.iDamage = 10;
+		magicInitDesc.iDamage = 30;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 1.f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
 	// 플리펜도
+	// 공중에 띄워 한바퀴 x축으로 회전시키는 마법입니다.
+	// 딜은 없습니다.
 	{
 		magicInitDesc.eBuffType = BUFF_FLIPENDO;
-		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
-		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
+		magicInitDesc.eMagicType = CMagic::MT_PURPLE;
 		magicInitDesc.eMagicTag = FLIPENDO;
 		magicInitDesc.fInitCoolTime = 5.f;
-		magicInitDesc.iDamage = 10;
+		magicInitDesc.iDamage = 0;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 0.3f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
 	// 엑스펠리아르무스
+	// 무기를 날려버리는 마법입니다.
+	// 딜은 중간입니다.
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
-		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
-		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
+		magicInitDesc.eMagicType = CMagic::MT_RED;
 		magicInitDesc.eMagicTag = EXPELLIARMUS;
 		magicInitDesc.fInitCoolTime = 5.f;
-		magicInitDesc.iDamage = 10;
+		magicInitDesc.iDamage = 50;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 1.2f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
 	// 임페리오
+	// 적에게 저주를 걸어 다른 적과 싸우게 만드는 마법입니다.
+	// 딜은 중간입니다.
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
-		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
-		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicGroup = CMagic::MG_CURSE;
+		magicInitDesc.eMagicType = CMagic::MT_ALL;
 		magicInitDesc.eMagicTag = IMPERIO;
 		magicInitDesc.fInitCoolTime = 5.f;
-		magicInitDesc.iDamage = 10;
+		magicInitDesc.iDamage = 100;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 0.8f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 
-	//크루시오
+	// 크루시오
+	// 공격을 맞은 적은 다른 적을 향해 도탄되는 투사체를 발사합니다.
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
-		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
-		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicGroup = CMagic::MG_CURSE;
+		magicInitDesc.eMagicType = CMagic::MT_ALL;
 		magicInitDesc.eMagicTag = CRUCIO;
 		magicInitDesc.fInitCoolTime = 5.f;
-		magicInitDesc.iDamage = 10;
+		magicInitDesc.iDamage = 200;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 0.8f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
@@ -863,10 +876,10 @@ HRESULT CPlayer::Add_Magic()
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
-		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicType = CMagic::MT_ALL;
 		magicInitDesc.eMagicTag = STUPEFY;
 		magicInitDesc.fInitCoolTime = 5.f;
-		magicInitDesc.iDamage = 10;
+		magicInitDesc.iDamage = 40;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 0.8f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
@@ -875,11 +888,11 @@ HRESULT CPlayer::Add_Magic()
 	//디핀도
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
-		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
-		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
+		magicInitDesc.eMagicType = CMagic::MT_RED;
 		magicInitDesc.eMagicTag = DIFFINDO;
 		magicInitDesc.fInitCoolTime = 5.f;
-		magicInitDesc.iDamage = 10;
+		magicInitDesc.iDamage = 200;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 0.8f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
@@ -888,11 +901,11 @@ HRESULT CPlayer::Add_Magic()
 	//봄바르다
 	{
 		magicInitDesc.eBuffType = BUFF_NONE;
-		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
-		magicInitDesc.eMagicType = CMagic::MT_NOTHING;
+		magicInitDesc.eMagicGroup = CMagic::MG_POWER;
+		magicInitDesc.eMagicType = CMagic::MT_RED;
 		magicInitDesc.eMagicTag = BOMBARDA;
 		magicInitDesc.fInitCoolTime = 1.f;
-		magicInitDesc.iDamage = 10;
+		magicInitDesc.iDamage = 500;
 		magicInitDesc.isChase = true;
 		magicInitDesc.fLifeTime = 0.8f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);

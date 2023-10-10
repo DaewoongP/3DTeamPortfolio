@@ -977,6 +977,20 @@ void CGameInstance::Play_Particle(const _tchar* szParticleTag, _float3 vWorldPos
 	return m_pParticleSystem_Pool->Play_Particle(szParticleTag, vWorldPosition);
 }
 
+void CGameInstance::Play_Particle(const _tchar* szParticleTag, _float4x4 PositionMatrix, _float4x4 ObjectMatrix)
+{
+	NULL_CHECK_RETURN_MSG(m_pParticleSystem_Pool, , TEXT("ParticleSystem Pool NULL"));
+
+	return m_pParticleSystem_Pool->Play_Particle(szParticleTag, PositionMatrix, ObjectMatrix);
+}
+
+void CGameInstance::Play_Particle(const _tchar* szParticleTag, _float4x4 OffsetMatrix, const _float4x4* pBindBoneMatrix, _float4x4 PivotMatrix, const _float4x4* pWorldMatrix)
+{
+	NULL_CHECK_RETURN_MSG(m_pParticleSystem_Pool, , TEXT("ParticleSystem Pool NULL"));
+
+	return m_pParticleSystem_Pool->Play_Particle(szParticleTag, OffsetMatrix, pBindBoneMatrix, PivotMatrix, pWorldMatrix);
+}
+
 template<class T, class ...Args>
 inline auto CGameInstance::Thread_Enqueue(T&& t, Args && ...args) -> std::future<typename std::invoke_result<T, Args ...>::type>
 {

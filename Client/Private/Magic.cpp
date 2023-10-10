@@ -83,6 +83,8 @@ CMagicBall* CMagic::Magic_Cast(const CGameObject* pTarget, const CGameObject* pW
 	ballInit.eCollisionFlag = eCollisionFlag;
 	ballInit.iDamage = m_MagicDesc.iDamage;
 	ballInit.fLifeTime = m_MagicDesc.fLifeTime;
+	ballInit.isMouseTarget = m_MagicDesc.isMouseTarget;
+	ballInit.vTarget_Dir = m_MagicDesc.vTarget_Dir;
 	ballInit.pTarget = pTarget;
 	ballInit.pWeapon = pWeapon;
 	

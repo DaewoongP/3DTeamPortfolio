@@ -32,51 +32,58 @@ HRESULT CWindow_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* 
 	}
 	ENDINSTANCE;
 
-	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Tool"), TEXT("Layer_Tool"))))
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), TEXT("Layer_Tool"))))
 	{
-		MSG_BOX("Failed Add Scene : (Scene_Tool)");
+		MSG_BOX("Failed Add Scene : (Scene_Main)");
 		Safe_Release(pGameInstance);
 		return E_FAIL;
 	}
 	
-	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Tool"), TEXT("Layer_Tool_UI"))))
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), TEXT("Layer_Tool_UI"))))
 	{
-		MSG_BOX("Failed Add Scene : (Scene_Tool)");
+		MSG_BOX("Failed Add Scene : (Scene_Main)");
 		Safe_Release(pGameInstance);
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Tool"), TEXT("Layer_Tool_UI_Group"))))
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), TEXT("Layer_Tool_UI_Group"))))
 	{
-		MSG_BOX("Failed Add Scene : (Scene_Tool)");
+		MSG_BOX("Failed Add Scene : (Scene_Main)");
 		Safe_Release(pGameInstance);
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Tool"), TEXT("Layer_Tool_Font"))))
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), TEXT("Layer_Tool_Font"))))
 	{
-		MSG_BOX("Failed Add Scene : (Scene_Tool)");
+		MSG_BOX("Failed Add Scene : (Scene_Main)");
 		Safe_Release(pGameInstance);
 		return E_FAIL;
 	}
 	
-	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Tool"), TEXT("Layer_MapObject"))))
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), TEXT("Layer_MapObject"))))
 	{
-		MSG_BOX("Failed Add Scene : (Scene_Tool)");
+		MSG_BOX("Failed Add Scene : (Scene_Main)");
 		Safe_Release(pGameInstance);
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Tool"), TEXT("Layer_Dummy_Cloth"))))
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), TEXT("Layer_Dummy_Cloth"))))
 	{
-		MSG_BOX("Failed Add Scene : (Scene_Tool)");
+		MSG_BOX("Failed Add Scene : (Scene_Main)");
 		Safe_Release(pGameInstance);
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Tool"), TEXT("Layer_Monster"))))
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), TEXT("Layer_Monster"))))
 	{
-		MSG_BOX("Failed Add Scene : (Scene_Tool)");
+		MSG_BOX("Failed Add Scene : (Scene_Main)");
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	}
+
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), TEXT("Layer_Particle"))))
+	{
+		MSG_BOX("Failed Add Scene : (Scene_Main)");
 		Safe_Release(pGameInstance);
 		return E_FAIL;
 	}
@@ -92,7 +99,7 @@ void CWindow_Manager::Tick(_float fTimeDelta)
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
-	pGameInstance->Set_CurrentScene(TEXT("Scene_Tool"), true);
+	pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
 	Safe_Release(pGameInstance);
 
 	ImGui::SetNextWindowPos(ImVec2(0.f, 0.f));
@@ -193,7 +200,7 @@ void CWindow_Manager::Tick(_float fTimeDelta)
 		{
 			if (FAILED(Add_Window(TEXT("Animation_Window"),
 				CAnimation_Window::Create(m_pDevice, m_pContext,
-					ImVec2(_float(g_iWinSizeX), _float(-0.f)), ImVec2(446.f, 768.f)))))
+					ImVec2(_float(g_iWinSizeX), _float(-0.f)), ImVec2(600.f, 768.f)))))
 			{
 				MSG_BOX("Failed Create Animation_Window");
 				return;

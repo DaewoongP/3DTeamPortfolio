@@ -207,6 +207,7 @@ void CLevioso::Tick_CastMagic(_float fTimeDelta)
 	{
 		Do_MagicBallState_To_Next();
 	}
+	cout << m_vEndPosition.x << " " << m_vEndPosition.y << " " << m_vEndPosition.z << endl;
 }
 
 void CLevioso::Tick_Dying(_float fTimeDelta)

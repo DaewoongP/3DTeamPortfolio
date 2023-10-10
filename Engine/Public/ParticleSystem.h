@@ -53,6 +53,15 @@ public:
 	list<PARTICLE>::iterator End(STATE eState) { return m_Particles[eState].end(); }		
 	void PlayEvent(const PARTICLE_IT& Particle_iter);
 
+	void Set_TraceOption(_float4x4 OffsetMatrix, const _float4x4* pBindBoneMatrix, _float4x4 PivotMatrix, const _float4x4* pWorldMatrix)
+	{
+		m_TraceOffsetMatrix = OffsetMatrix;
+		m_pTraceBindBoneMatrix = pBindBoneMatrix;
+		m_TracePivotMatrix = PivotMatrix;
+		m_pTraceWorldMatrix = pWorldMatrix;
+		m_isTrace = true;
+	};
+
 public:
 	virtual HRESULT Initialize_Prototype(const _tchar* _pDirectoryPath, _uint iLevel);
 	virtual HRESULT Initialize(void* _pArg) override;
@@ -143,6 +152,14 @@ protected:
 	CShader* m_pShader = { nullptr };
 	CModel* m_pModel = { nullptr };
 	//CMotionBlurInstance* m_pMotionBlurInstance = { nullptr };
+
+protected:
+	//개철민이 추가함. 월드 친구들의 경우 따라가게 설정해줄건지
+	_bool				m_isTrace = { false };
+	_float4x4			m_TraceOffsetMatrix = {};
+	const _float4x4*	m_pTraceBindBoneMatrix = { nullptr };
+	_float4x4			m_TracePivotMatrix;
+	const _float4x4*	m_pTraceWorldMatrix = { nullptr };
 
 protected:
 	list<PARTICLE> m_Particles[STATE_END];

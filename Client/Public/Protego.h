@@ -31,7 +31,7 @@ public:
 	virtual void OnCollisionExit(COLLEVENTDESC CollisionEventDesc) override;
 	virtual HRESULT Reset(MAGICBALLINITDESC& InitDesc) override;
 
-	void Hit_Effect(_float3 vPosition);
+	_float3 Hit_Effect(_float3 vPosition);
 	void Break_Effect(_float3 vPosition);
 
 protected:
