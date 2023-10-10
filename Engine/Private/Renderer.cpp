@@ -167,8 +167,6 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Shadow"), 240.f, 400.f, 160.f, 160.f)))
 		return E_FAIL;
-	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_PreRadial"), 240.f, 560.f, 160.f, 160.f)))
-		return E_FAIL;
 	
 #endif // _DEBUG
 
@@ -722,22 +720,6 @@ HRESULT CRenderer::Render_Distortion()
 
 HRESULT CRenderer::Render_RadialBlur()
 {
-	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_PreRadial"))))
-		return E_FAIL;
-
-	for (auto& pGameObject : m_RenderObjects[RENDER_RADIALBLUR])
-	{
-		if (nullptr != pGameObject)
-			pGameObject->Render();
-
-		Safe_Release(pGameObject);
-	}
-
-	m_RenderObjects[RENDER_RADIALBLUR].clear();
-
-	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_PreRadial"))))
-		return E_FAIL;
-
 	return S_OK;
 }
 

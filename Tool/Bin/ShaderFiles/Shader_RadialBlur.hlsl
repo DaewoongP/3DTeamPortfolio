@@ -102,41 +102,28 @@ struct PS_OUT
 PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
-
-    // Calculate the UV coordinates relative to the center of the blur
+    
     float2 vBlurCenterUV = float2(0.5f, 0.5f);
-    float2 uv = In.vTexUV - vBlurCenterUV;
-
-    // Check if the UV coordinates are within your desired rectangular region
-    float2 minUV = float2(-0.5f, -0.5f);
-    float2 maxUV = float2(0.5f, 0.5f);
-    bool isInRectangle = (uv.x >= minUV.x && uv.x <= maxUV.x && uv.y >= minUV.y && uv.y <= maxUV.y);
-
+    float2 uv = In.vTexUV;
+    uv -= vBlurCenterUV;
+    
+    float fPrecompute = g_fBlurWidth * (1.0 / float(g_iNumSample - 1));
+    
     float4 color = float4(0.f, 0.f, 0.f, 0.f);
-
-    // Apply radial blur only if the UV coordinates are within the rectangle
-    if (isInRectangle)
+    
+    // 카운트값을 코드로 제한해야 컴파일이 원활함.
+    int iterationCount = min(g_iNumSample, 10);
+    for (int i = 0; i < iterationCount; ++i)
     {
-        float fPrecompute = g_fBlurWidth * (1.0 / float(g_iNumSample - 1));
-        int iterationCount = min(g_iNumSample, 10);
-
-        for (int i = 0; i < iterationCount; ++i)
-        {
-            float fScale = g_fBlurStart + (float(i) * fPrecompute);
-            color += g_TargetTexture.Sample(LinearSampler, In.vTexUV);
-        }
-
-        color /= float(g_iNumSample);
-        color.a = 1.f;
-    }
-    else
-    {
-        // If not in the rectangle, just sample the original texture
-        color = g_TargetTexture.Sample(LinearSampler, In.vTexUV);
+        float fScale = g_fBlurStart + (float(i) * fPrecompute);
+        color += g_TargetTexture.Sample(LinearSampler, uv * fScale + vBlurCenterUV);
     }
 
+    color /= float(g_iNumSample);
+    color.a = 1.f;
+    
     Out.vColor = color;
-
+   
     return Out;
 }
 
