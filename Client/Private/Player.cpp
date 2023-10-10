@@ -20,6 +20,7 @@
 #include "Magic.h"
 
 #include "UI_Group_Skill.h"
+#include "UI_Group_SkillTap.h"
 
 #include "MaximaPotion.h"
 #include "FocusPotion.h"
@@ -263,6 +264,7 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	Update_Cloth(fTimeDelta);
 
+	m_UI_Group_SkillTap->Set_isOpen(false);
 
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UNDERBODY);

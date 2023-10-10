@@ -59,7 +59,7 @@ HRESULT CVIBuffer_Rect_Trail::Reset_Trail(_float3 vHighPos, _float3 vLowPos)
 			m_pVertices[i].vPosition = vLowPos;
 	}
 
-	//std::lock_guard<std::mutex> lock(mtx);
+	std::lock_guard<std::mutex> lock(mtx);
 
 	D3D11_MAPPED_SUBRESOURCE	MappedSubResource;
 

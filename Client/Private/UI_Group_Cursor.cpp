@@ -43,12 +43,11 @@ HRESULT CUI_Group_Cursor::Initialize(void* pArg)
 void CUI_Group_Cursor::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-	Set_CursorPos();
 }
 
 void CUI_Group_Cursor::Late_Tick(_float fTimeDelta)
 {
-
+	Set_CursorPos();
 	__super::Late_Tick(fTimeDelta);
 }
 

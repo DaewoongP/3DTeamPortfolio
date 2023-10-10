@@ -7,7 +7,7 @@ class CRollState :
     public CStateMachine
 {
 public:
-    typedef struct tagRollStateDesc
+    struct tagRollStateDesc
     {
         _bool IsBlink;
     };

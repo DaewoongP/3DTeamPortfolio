@@ -585,7 +585,12 @@ SPELL CUI_Group_SkillTap::Translation_Spell(SKILLTAP eSkill)
 		return SPELL::IMPERIO;
 	case Client::CUI_Group_SkillTap::SKILLTAP_END:
 		return SPELL::BASICCAST;
+	default:
+		MSG_BOX("Failed");
+		break;
 	}
+
+	return SPELL_END;
 }
 
 CUI_Group_SkillTap::SKILLTAP CUI_Group_SkillTap::Translation_SkillTap(SPELL eSPell)
@@ -634,7 +639,12 @@ CUI_Group_SkillTap::SKILLTAP CUI_Group_SkillTap::Translation_SkillTap(SPELL eSPe
 		return CUI_Group_SkillTap::SKILLTAP::WINGARDIUM;
 	case Client::BASICCAST:
 		return CUI_Group_SkillTap::SKILLTAP::SKILLTAP_END;
+	default:
+		MSG_BOX("Failed");
+		break;
 	}
+
+	return SKILLTAP_END;
 }
 
 

@@ -145,9 +145,6 @@
     <Filter Include="01. Levels\04. Smith">
       <UniqueIdentifier>{93532b46-fcf5-4814-9232-b40f168761fd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Levels\05. MiniGame">
-      <UniqueIdentifier>{8daaa0f5-8eda-4c23-b5f9-f4ec1e89c6c1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Levels\06. PVP">
       <UniqueIdentifier>{886e8ea5-bbc0-4458-a2a8-792fe81d6d45}</UniqueIdentifier>
     </Filter>
@@ -615,6 +612,9 @@
     </Filter>
     <Filter Include="02. GameObject\02. Enemy\04. Boss\EnergyBall">
       <UniqueIdentifier>{79dcddca-11cc-4450-a7ad-d7866f733612}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Levels\05. Sky">
+      <UniqueIdentifier>{8daaa0f5-8eda-4c23-b5f9-f4ec1e89c6c1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1208,9 +1208,6 @@
     <ClInclude Include="..\Public\Door.h">
       <Filter>02. GameObject\03. MapObject\Interactable_Obj\Door</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Level_Sky.h">
-      <Filter>01. Levels\07. Sky</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Level_Sanctum.h">
       <Filter>01. Levels\08. Sanctum%28Dragon%29</Filter>
     </ClInclude>
@@ -1225,6 +1222,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\EnergyBall.h">
       <Filter>02. GameObject\02. Enemy\04. Boss\EnergyBall</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Level_Sky.h">
+      <Filter>01. Levels\05. Sky</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1785,9 +1785,6 @@
     <ClCompile Include="..\Private\Door.cpp">
       <Filter>02. GameObject\03. MapObject\Interactable_Obj\Door</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Level_Sky.cpp">
-      <Filter>01. Levels\07. Sky</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Level_Sanctum.cpp">
       <Filter>01. Levels\08. Sanctum%28Dragon%29</Filter>
     </ClCompile>
@@ -1802,6 +1799,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\EnergyBall.cpp">
       <Filter>02. GameObject\02. Enemy\04. Boss\EnergyBall</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Level_Sky.cpp">
+      <Filter>01. Levels\05. Sky</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
