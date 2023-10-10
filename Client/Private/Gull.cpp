@@ -133,9 +133,9 @@ HRESULT CGull::Render()
 	return S_OK;
 }
 
-HRESULT CGull::Render_Depth()
+HRESULT CGull::Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix)
 {
-	if (FAILED(SetUp_ShadowShaderResources()))
+	if (FAILED(SetUp_ShadowShaderResources(LightViewMatrix, LightProjMatrix)))
 		return E_FAIL;
 
 	_uint		iNumMeshes = m_pModel->Get_NumMeshes();
@@ -204,15 +204,15 @@ HRESULT CGull::SetUp_ShaderResources()
 	return S_OK;
 }
 
-HRESULT CGull::SetUp_ShadowShaderResources()
+HRESULT CGull::SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix)
 {
 	BEGININSTANCE;
 
 	if (FAILED(m_pShadowShader->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
 		return E_FAIL;
-	if (FAILED(m_pShadowShader->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_LightTransformMatrix(CPipeLine::D3DTS_VIEW))))
+	if (FAILED(m_pShadowShader->Bind_Matrix("g_ViewMatrix", &LightViewMatrix)))
 		return E_FAIL;
-	if (FAILED(m_pShadowShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_LightTransformMatrix(CPipeLine::D3DTS_PROJ))))
+	if (FAILED(m_pShadowShader->Bind_Matrix("g_ProjMatrix", &LightProjMatrix)))
 		return E_FAIL;
 	if (FAILED(m_pShadowShader->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
 		return E_FAIL;
@@ -220,23 +220,6 @@ HRESULT CGull::SetUp_ShadowShaderResources()
 	ENDINSTANCE;
 
 	return S_OK;
-}
-
-void CGull::Check_MinMaxPoint(_float3 vPoint)
-{
-	if (m_vMinPoint.x > vPoint.x)
-		m_vMinPoint.x = vPoint.x;
-	if (m_vMinPoint.y > vPoint.y)
-		m_vMinPoint.y = vPoint.y;
-	if (m_vMinPoint.z > vPoint.z)
-		m_vMinPoint.z = vPoint.z;
-
-	if (m_vMaxPoint.x < vPoint.x)
-		m_vMaxPoint.x = vPoint.x;
-	if (m_vMaxPoint.y < vPoint.y)
-		m_vMaxPoint.y = vPoint.y;
-	if (m_vMaxPoint.z < vPoint.z)
-		m_vMaxPoint.z = vPoint.z;
 }
 
 void CGull::Check_Dist_From_Player(_float fTimeDelta)
