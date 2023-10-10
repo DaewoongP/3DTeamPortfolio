@@ -10,6 +10,7 @@
 
 #include "ProtegoState.h"
 #include "MagicCastingState.h"
+#include "RollState.h"
 
 #include "Armored_Troll.h"
 #include "MagicBall.h"
@@ -988,7 +989,11 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 	if (pGameInstance->Get_DIKeyState(DIK_LCONTROL, CInput_Device::KEY_DOWN))
 	{
-		Go_Roll();
+		CRollState::tagRollStateDesc RollStateDesc;
+
+		RollStateDesc.IsBlink = false;
+
+		Go_Roll(&RollStateDesc);
 	}
 
 
@@ -2278,7 +2283,7 @@ void CPlayer::Finish_Animation()
 	m_isFinishAnimation = true;
 }
 
-void CPlayer::Go_Roll()
+void CPlayer::Go_Roll(void* _pArg)
 {
 	if (true == m_pPlayer_Camera->Is_Finish_Animation() &&
 		(m_pStateContext->Is_Current_State(TEXT("Idle")) ||
@@ -2287,7 +2292,7 @@ void CPlayer::Go_Roll()
 		m_pStateContext->Is_Current_State(TEXT("Move Loop")) ||
 		m_pStateContext->Is_Current_State(TEXT("Magic_Cast"))))
 	{
-		m_pStateContext->Set_StateMachine(TEXT("Roll"));
+		m_pStateContext->Set_StateMachine(TEXT("Roll"), _pArg);
 	}
 }
 

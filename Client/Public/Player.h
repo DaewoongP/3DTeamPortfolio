@@ -287,7 +287,7 @@ private:
 
 #pragma region 스테이트 변경 함수
 
-	void Go_Roll();
+	void Go_Roll(void* _pArg = nullptr);
 
 	void Go_Jump();
 
