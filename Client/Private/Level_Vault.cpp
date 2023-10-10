@@ -186,6 +186,20 @@ HRESULT CLevel_Vault::Ready_Lights()
 
 	pGameInstance->Add_Light(LightDesc);
 
+	// 라이트 매니저 문제로 이 부분을 지금 설정할 수 없다.
+	/*CLight::LIGHTDESC		LightDescHork;
+	ZeroMemory(&LightDescHork, sizeof LightDescHork);
+
+	LightDescHork.eType = CLight::TYPE_POINT;
+	LightDescHork.vPos = _float4(15.7, 0.25f, 21.7f, 1.f);
+	LightDescHork.fRange = 3.f;
+
+	LightDescHork.vDiffuse = _float4(90.f / 255.f, 109.f / 255.f, 231.f / 255.f, 1.f);
+	LightDescHork.vAmbient = WHITEDEFAULT;
+	LightDescHork.vSpecular =  LightDescHork.vDiffuse;
+
+	pGameInstance->Add_Lights(LightDescHork);*/
+
 	ENDINSTANCE;
 	
 	return S_OK;
@@ -234,16 +248,64 @@ HRESULT CLevel_Vault::Load_MapObject(const _tchar* pObjectFilePath)
 		}
 		BEGININSTANCE;
 
-		_tchar wszobjName[MAX_PATH] = { 0 };
-		_stprintf_s(wszobjName, TEXT("GameObject_MapObject_%d"), (iObjectNum));
+		// 읽어온 태그에서 모델이름 추출
+		wstring ws(MapObjectDesc.wszTag);
+		size_t findIndex = ws.find(TEXT("Model_")) + 6;
 
-		if (FAILED(pGameInstance->Add_Component(LEVEL_VAULT, LEVEL_VAULT,
-			TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_BackGround"),
-			wszobjName, &MapObjectDesc)))
+		wstring modelName = ws.substr(findIndex);
+
+		// 비교해야되는 문자열
+		wstring wsTreasureChestName(TEXT("Anim_TreasureChest"));
+		wstring wsHorklump(TEXT("Anim_Horklump"));
+		wstring wsLeech(TEXT("Anim_Leech"));
+
+		// 보물상자
+		if (0 == lstrcmp(modelName.c_str(), wsTreasureChestName.c_str()))
 		{
-			MSG_BOX("Failed to Clone MapObject");
-			ENDINSTANCE;
-			return E_FAIL;
+			_tchar wszobjName[MAX_PATH] = { 0 };
+			_stprintf_s(wszobjName, TEXT("GameObject_Treasure_Chest_%d"), (iObjectNum));
+
+			if (FAILED(pGameInstance->Add_Component(LEVEL_VAULT, LEVEL_VAULT,
+				TEXT("Prototype_GameObject_Treasure_Chest"), TEXT("Layer_BackGround"),
+				wszobjName, &MapObjectDesc)))
+			{
+				MSG_BOX("Failed to Clone Treasure_Chest");
+				ENDINSTANCE;
+				return E_FAIL;
+			}
+		}
+
+		// 채집물
+		else if (0 == lstrcmp(modelName.c_str(), wsHorklump.c_str()) ||
+			0 == lstrcmp(modelName.c_str(), wsLeech.c_str()))
+		{
+			_tchar wszobjName[MAX_PATH] = { 0 };
+			_stprintf_s(wszobjName, TEXT("GameObject_Gatherer_%d"), (iObjectNum));
+
+			if (FAILED(pGameInstance->Add_Component(LEVEL_VAULT, LEVEL_VAULT,
+				TEXT("Prototype_GameObject_Gatherer"), TEXT("Layer_BackGround"),
+				wszobjName, &MapObjectDesc)))
+			{
+				MSG_BOX("Failed to Clone Gatherer");
+				ENDINSTANCE;
+				return E_FAIL;
+			}
+		}
+
+		// 일반 맵 오브젝트
+		else
+		{
+			_tchar wszobjName[MAX_PATH] = { 0 };
+			_stprintf_s(wszobjName, TEXT("GameObject_MapObject_%d"), (iObjectNum));
+
+			if (FAILED(pGameInstance->Add_Component(LEVEL_VAULT, LEVEL_VAULT,
+				TEXT("Prototype_GameObject_MapObject"), TEXT("Layer_BackGround"),
+				wszobjName, &MapObjectDesc)))
+			{
+				MSG_BOX("Failed to Clone MapObject");
+				ENDINSTANCE;
+				return E_FAIL;
+			}
 		}
 
 		++iObjectNum; ENDINSTANCE;

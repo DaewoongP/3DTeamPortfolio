@@ -86,6 +86,7 @@ HRESULT CGatherer::Initialize_Level(_uint iCurrentLevelIndex)
 	// 채집물 애니메이션이 공통적으로 0번이 뽑히는 모션임
 	// 1번이 IDLE이라고 생각할 수 있음
 	m_pModel->Set_CurrentAnimIndex(1);
+	m_pModel->Get_Animation(1)->Set_Loop(true);
 
 	// 플레이어 찾기
 	BEGININSTANCE;
@@ -164,7 +165,11 @@ void CGatherer::Late_Tick(_float fTimeDelta)
 
 	if (nullptr != m_pRenderer)
 	{
-		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+		// 후클럼프 모델일 경우 다른 Renderer에 넣어준다.
+		if (m_GatheringType == CGatherer::HORKLUMP)
+			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_GLOW, this);
+		else
+			m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
 	}
 
@@ -188,7 +193,15 @@ HRESULT CGatherer::Render()
 		m_pModel->Bind_Material(m_pShader, "g_DiffuseTexture", iMeshCount, DIFFUSE);
 		m_pModel->Bind_Material(m_pShader, "g_NormalTexture", iMeshCount, NORMALS);
 
-		m_pShader->Begin("AnimMesh");
+		// 후클럼프 모델일 경우 Emissive 텍스처를 추가로 넣어준다.
+		if(m_GatheringType == CGatherer::HORKLUMP)
+			m_pModel->Bind_Material(m_pShader, "g_EmissiveTexture", iMeshCount, EMISSIVE);
+
+		// 후클럼프 모델일 경우 다른 패스로 그려준다.
+		if (m_GatheringType == CGatherer::HORKLUMP)
+			m_pShader->Begin("AnimMesh_E");
+		else
+			m_pShader->Begin("AnimMesh");
 
 		if (FAILED(m_pModel->Render(iMeshCount)))
 			return E_FAIL;

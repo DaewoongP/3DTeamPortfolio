@@ -97,6 +97,9 @@ HRESULT CMain2_Loader::Loading()
 	case LEVEL_SMITH:
 		hr = Loading_For_Hogsmeade(LEVEL_SMITH);
 		break;
+	case LEVEL_SKY:
+		hr = Loading_For_Sky(LEVEL_SKY);
+		break;
 	case LEVEL_SANCTUM:
 		hr = Loading_For_Sanctum(LEVEL_SANCTUM);
 		break;
@@ -339,6 +342,11 @@ HRESULT CMain2_Loader::Loading_For_Sanctum(LEVELID eLevelID)
 		return E_FAIL;
 	}
 
+	return S_OK;
+}
+
+HRESULT CMain2_Loader::Loading_For_Sky(LEVELID eLevelID)
+{
 	return S_OK;
 }
 

@@ -50,7 +50,7 @@ protected:
 	_float			m_fRadius = { 0.f };
 	MAPOBJECTDESC	m_ObjectDesc;
 
-private:
+protected:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
 	HRESULT SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix);

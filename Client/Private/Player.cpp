@@ -182,6 +182,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_vLevelInitPosition[LEVEL_VAULT] = _float3(7.0f, 0.02f, 7.5f);
 	//m_vLevelInitPosition[LEVEL_SMITH] = _float3(30.f, 3.f, 15.f); // 기본 위치
 	m_vLevelInitPosition[LEVEL_SMITH] = _float3(94.5f, 7.2f, 78.f); // 포션 스테이션 바로 앞
+	m_vLevelInitPosition[LEVEL_SKY] = _float3(88.8f, 12.5f, 69.8f); // 포션 스테이션 바로 앞
 
 
 

@@ -39,6 +39,7 @@ private:
 	HRESULT Loading_Vault(const _tchar* pLayerTag);
 	HRESULT Loading_GreatHall(const _tchar* pLayerTag);
 	HRESULT Loading_Hogsmeade(const _tchar* pLayerTag);
+	HRESULT Loading_Sky(const _tchar* pLayerTag);
 	HRESULT Loading_Sanctum(const _tchar* pLayerTag);
 
 private:
