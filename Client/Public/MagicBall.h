@@ -8,6 +8,7 @@ class CRigidBody;
 class CRenderer;
 class CParticleSystem;
 class CTrail;
+class CLight;
 class CMeshEffect;
 END
 
@@ -90,6 +91,7 @@ protected:
 protected:
 	CRigidBody*				m_pRigidBody = { nullptr };
 	CRenderer*				m_pRenderer = { nullptr };
+	CLight*					m_pLight = { nullptr };
 	
 //생산성을 높이기위해 도입한 파티클 벡터 특수한 친구들은 여기에 안쓸겁니다.
 protected:

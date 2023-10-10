@@ -64,8 +64,10 @@ public:
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
+	virtual void OnCollisionEnter(COLLEVENTDESC CollisionEventDesc) override;
+	virtual void OnCollisionExit(COLLEVENTDESC CollisionEventDesc) override;
 	virtual HRESULT Render() override;
-	virtual HRESULT Render_Depth() override;
+	virtual HRESULT Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix) override;
 
 public:
 	void Set_Protego_Collision(CTransform* pTransform, ATTACKTYPE eType) const {}
@@ -91,6 +93,7 @@ protected:
 
 	_bool m_isSpawn = { false };
 	_bool m_isParring = { false };
+	_bool m_isOnGround = { false };
 	_bool m_isHitCombo = { false };
 	_bool m_isHitAttack = { false };
 	_bool m_isRangeInEnemy = { false };
@@ -108,7 +111,7 @@ protected:
 	HRESULT Make_AI();
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
-	HRESULT SetUp_ShadowShaderResources();
+	HRESULT SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix);
 
 	HRESULT Make_Notifies() {}
 	HRESULT Add_Components_Level(_uint iCurrentLevelIndex) {}

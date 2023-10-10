@@ -159,21 +159,24 @@ HRESULT CLevel_Cliffside::Render()
 HRESULT CLevel_Cliffside::Ready_Lights()
 {
 	BEGININSTANCE;
+
 	CLight::LIGHTDESC		LightDesc;
 	ZeroMemory(&LightDesc, sizeof LightDesc);
 
 	LightDesc.eType = CLight::TYPE_DIRECTIONAL;
-	LightDesc.vPos = _float4(10.f, 100.f, 25.f, 1.f);
-	LightDesc.vDir = _float4(0.33f, -0.99f, 0.33f, 0.f);
-
+	LightDesc.vPos = _float4(12.5f, 40.5f, 44.f, 1.f);
+	LightDesc.vLookAt = _float4(51.7f, 0.f, 52.4f, 1.f);
+	LightDesc.vDir = LightDesc.vLookAt - LightDesc.vPos;
+	
 	LightDesc.vDiffuse = WHITEDEFAULT;
 	LightDesc.vAmbient = WHITEDEFAULT;
 	LightDesc.vSpecular = WHITEDEFAULT;
 
-	if (nullptr == pGameInstance->Add_Lights(LightDesc, true))
-		return E_FAIL;
+	if (FAILED(pGameInstance->Add_Light(LightDesc, nullptr, true, 0, _float(g_iWinSizeX) / g_iWinSizeY)))
+		return E_FAIL;	
 
 	ENDINSTANCE;
+
 	return S_OK;
 }
 
@@ -296,13 +299,12 @@ HRESULT CLevel_Cliffside::Ready_Layer_Monster(const _tchar* pLayerTag)
 	///////////////	실전 배치시 해당 코드는 지워주세요.////////////////////
 	///////////////////////////////////////////////////////////////////////
 	_float4x4 Matrix = XMMatrixTranslation(40.f, 10.f, 60.f);
-	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Golem_CombatGrunt"), pLayerTag, TEXT("GameObject_Golem_Combat"), &Matrix)))
+	/*if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Golem_CombatGrunt"), pLayerTag, TEXT("GameObject_Golem_Combat"), &Matrix)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Golem_Combat)");
 		ENDINSTANCE;
 		return E_FAIL;
-	}
-
+	}*/
 	/*Matrix = XMMatrixTranslation(40.f, 10.f, 65.f);
 	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Dugbog"), pLayerTag, TEXT("GameObject_Dugbog"), &Matrix)))
 	{
@@ -311,12 +313,12 @@ HRESULT CLevel_Cliffside::Ready_Layer_Monster(const _tchar* pLayerTag)
 		return E_FAIL;
 	}*/
 	Matrix = XMMatrixTranslation(35.f, 10.f, 65.f);
-	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_DarkWizard_M"), pLayerTag, TEXT("GameObject_DarkWizard_M"), &Matrix)))
+	/*if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_DarkWizard_M"), pLayerTag, TEXT("GameObject_DarkWizard_M"), &Matrix)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_DarkWizard_M)");
 		ENDINSTANCE;
 		return E_FAIL;
-	}
+	}*/
 	/*Matrix = XMMatrixTranslation(10.f, 10.f, 50.f);
 	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_ConjuredDragon"), pLayerTag, TEXT("GameObject_ConjuredDragon"), &Matrix)))
 	{
@@ -694,14 +696,13 @@ HRESULT CLevel_Cliffside::Ready_Layer_UI(const _tchar* pLayerTag)
 		Safe_Release(pGameInstance);
 		return E_FAIL;
 	}
-	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Skill_1.uidata"));
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_Skill"),
-		pLayerTag, TEXT("Prototype_GameObject_UI_Group_Skill"), szFilePath)))
-	{
-		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_UI_Group_Skill)");
-		Safe_Release(pGameInstance);
-		return E_FAIL;
-	}
+	//if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_Skill"),
+	//	pLayerTag, TEXT("Prototype_GameObject_UI_Group_Skill"))))
+	//{
+	//	MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_UI_Group_Skill)");
+	//	Safe_Release(pGameInstance);
+	//	return E_FAIL;
+	//}
 	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Finisher_Icon.uidata"));
 	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_Finisher_Icon"),
 		pLayerTag, TEXT("GameObject_UI_Group_Finisher_Icon"), szFilePath)))
@@ -736,6 +737,20 @@ HRESULT CLevel_Cliffside::Ready_Layer_UI(const _tchar* pLayerTag)
 		Safe_Release(pGameInstance);
 		return E_FAIL;
 	}
+
+	//if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_Brew"), pLayerTag, TEXT("GameObject_UI_Group_Brew"))))
+	//{
+	//	MSG_BOX("Failed Add_GameObject : (GameObject_UI_Group_Brew)");
+	//	Safe_Release(pGameInstance);
+	//	return E_FAIL;
+	//}
+
+	//if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Group_SkillTap"), pLayerTag, TEXT("GameObject_UI_Group_SkillTap"))))
+	//{
+	//	MSG_BOX("Failed Add_GameObject : (GameObject_GameObject_UI_Group_SkillTap)");
+	//	Safe_Release(pGameInstance);
+	//	return E_FAIL;
+	//}
 
 	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Farming"), pLayerTag, TEXT("GameObject_UI_Farming"))))
 	{

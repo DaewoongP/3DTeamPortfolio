@@ -29,6 +29,7 @@ class CFocusPotion;
 class CEdurusPotion;
 class CInvisibilityPotion;
 class CWiggenweldPotion;
+class CTool;
 END
 
 BEGIN(Client)
@@ -90,7 +91,7 @@ public:
 	virtual void OnCollisionStay(COLLEVENTDESC CollisionEventDesc) override;
 	virtual void OnCollisionExit(COLLEVENTDESC CollisionEventDesc) override;
 	virtual HRESULT Render() override;
-	virtual HRESULT Render_Depth() override;
+	virtual HRESULT Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix) override;
 
 
 	void Potion_Duration(_float fTimeDelta);
@@ -205,7 +206,7 @@ private:
 private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
-	HRESULT SetUp_ShadowShaderResources();
+	HRESULT SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix);
 	HRESULT Add_Magic();
 
 private:

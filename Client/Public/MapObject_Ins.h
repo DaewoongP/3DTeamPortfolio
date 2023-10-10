@@ -38,7 +38,7 @@ public:
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
-	virtual HRESULT Render_Depth() override;
+	virtual HRESULT Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix) override;
 
 private:
 	CShader*			m_pShader = { nullptr };
@@ -52,7 +52,7 @@ private:
 private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();
-	HRESULT SetUp_ShadowShaderResources();
+	HRESULT SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix);
 
 public:
 	static CMapObject_Ins* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

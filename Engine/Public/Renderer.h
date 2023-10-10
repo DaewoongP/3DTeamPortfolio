@@ -1,12 +1,4 @@
 #pragma once
-
-/* =============================================== */
-// 
-//	정 : 박정환
-//	부 : 박대웅
-//
-/* =============================================== */
-
 #include "Component.h"
 
 BEGIN(Engine)
@@ -14,8 +6,8 @@ BEGIN(Engine)
 class ENGINE_DLL CRenderer final : public CGameObject
 {
 public:
-	enum RENDERGROUP {RENDER_PRIORITY, RENDER_DEPTH, RENDER_NONBLEND, RENDER_NONLIGHT, RENDER_BLEND,
-					  RENDER_GLOW, RENDER_DISTORTION, RENDER_UI, RENDER_SCREEN,
+	enum RENDERGROUP { RENDER_PRIORITY, RENDER_DEPTH, RENDER_NONBLEND, RENDER_NONLIGHT, RENDER_BLEND,
+					  RENDER_GLOW, RENDER_DISTORTION, RENDER_SCREEN, RENDER_UI,
 		// ETC
 		RENDER_PICKING, RENDER_BRUSHING, RENDER_UITEXTURE, RENDER_END };
 
@@ -56,8 +48,9 @@ private:
 	HRESULT Render_NonLight();
 	HRESULT Render_Blend();
 	HRESULT Render_HDR();
-	HRESULT Render_Distortion();
 	HRESULT Render_PostProcessing();
+	HRESULT Render_Distortion();
+	HRESULT Render_RadialBlur();
 	HRESULT Render_Screen();
 	HRESULT Render_UI();
 

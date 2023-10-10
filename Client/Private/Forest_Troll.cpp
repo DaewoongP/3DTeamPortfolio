@@ -93,11 +93,6 @@ HRESULT CForest_Troll::Render()
 	return S_OK;
 }
 
-HRESULT CForest_Troll::Render_Depth()
-{
-	return S_OK;
-}
-
 HRESULT CForest_Troll::Add_Components()
 {
 	try /* Check Add_Components */

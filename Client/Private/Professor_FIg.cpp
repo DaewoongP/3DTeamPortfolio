@@ -166,9 +166,9 @@ HRESULT CProfessor_Fig::Render()
 	return S_OK;
 }
 
-HRESULT CProfessor_Fig::Render_Depth()
+HRESULT CProfessor_Fig::Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix)
 {
-	if (FAILED(SetUp_ShadowShaderResources()))
+	if (FAILED(SetUp_ShadowShaderResources(LightViewMatrix, LightProjMatrix)))
 		return E_FAIL;
 
 	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
@@ -554,7 +554,7 @@ _bool CProfessor_Fig::IsEnemy(const wstring& wstrObjectTag)
 	return false;
 }
 
-HRESULT CProfessor_Fig::SetUp_ShadowShaderResources()
+HRESULT CProfessor_Fig::SetUp_ShadowShaderResources(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix)
 {
 	BEGININSTANCE;
 
@@ -566,10 +566,10 @@ HRESULT CProfessor_Fig::SetUp_ShadowShaderResources()
 		if (FAILED(m_pShadowShaderCom->Bind_Matrix("g_WorldMatrix", m_pTransform->Get_WorldMatrixPtr())))
 			throw TEXT("Failed Bind_Matrix : g_WorldMatrix");
 
-		if (FAILED(m_pShadowShaderCom->Bind_Matrix("g_ViewMatrix", pGameInstance->Get_LightTransformMatrix(CPipeLine::D3DTS_VIEW))))
+		if (FAILED(m_pShadowShaderCom->Bind_Matrix("g_ViewMatrix", &LightViewMatrix)))
 			throw TEXT("Failed Bind_Matrix : g_ViewMatrix");
 
-		if (FAILED(m_pShadowShaderCom->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_LightTransformMatrix(CPipeLine::D3DTS_PROJ))))
+		if (FAILED(m_pShadowShaderCom->Bind_Matrix("g_ProjMatrix", &LightProjMatrix)))
 			throw TEXT("Failed Bind_Matrix : g_ProjMatrix");
 
 		if (FAILED(m_pShadowShaderCom->Bind_RawValue("g_fCamFar", pGameInstance->Get_CamFar(), sizeof(_float))))
@@ -641,7 +641,7 @@ HRESULT CProfessor_Fig::Make_Turns(_Inout_ CSequence* pSequence)
 		pAction_Left_180->Set_Options(TEXT("Turn_Left_180"), m_pModelCom);
 		pAction_Right_180->Set_Options(TEXT("Turn_Right_180"), m_pModelCom);
 
-		pTsk_Check_Degree->Set_Transform(m_pTransform);
+		pTsk_Check_Degree->Set_Option(m_pTransform);
 
 		/* Assemble Behaviors */
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Tsk_Check_Degree"), pTsk_Check_Degree)))
@@ -916,7 +916,7 @@ HRESULT CProfessor_Fig::Make_Attack_Degree(_Inout_ CSequence* pSequence)
 		pAction_Left_180->Set_Options(TEXT("Attack_Cast_Light_Right_180"), m_pModelCom);
 		pAction_Right_180->Set_Options(TEXT("Attack_Cast_Light_Right_180"), m_pModelCom);
 
-		pTsk_Check_Degree->Set_Transform(m_pTransform);
+		pTsk_Check_Degree->Set_Option(m_pTransform);
 
 		/* Assemble Behaviors */
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Tsk_Check_Degree"), pTsk_Check_Degree)))

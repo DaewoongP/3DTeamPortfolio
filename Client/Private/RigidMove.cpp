@@ -27,8 +27,29 @@ HRESULT CRigidMove::Tick(const _float& fTimeDelta)
 	}
 
 	m_fTimeAcc += fTimeDelta;
-	_float3 vForce = m_vForce - (m_fTimeAcc / (m_fTime / 2.f)) * m_vForce;
-	
+	_float3 vForce = _float3();
+
+	switch (m_eDirection)
+	{
+	case Client::CRigidMove::DIR_RIGHT:
+		vForce = m_pOwnerTransform->Get_Right() * m_fForce;
+		break;
+
+	case Client::CRigidMove::DIR_UP:
+		vForce = m_pOwnerTransform->Get_Up() * m_fForce;
+		break;
+
+	case Client::CRigidMove::DIR_LOOK:
+		vForce = m_pOwnerTransform->Get_Look() * m_fForce;
+		break;
+
+	case Client::CRigidMove::DIR_END:
+	default:
+		return BEHAVIOR_END;
+	}
+
+	vForce = vForce - (m_fTimeAcc / (m_fTime / 2.f)) * vForce;
+
 	if (m_fTimeAcc < m_fTime)
 	{
 		m_pOwnerRigidBody->Add_Force(vForce);
@@ -41,7 +62,6 @@ HRESULT CRigidMove::Tick(const _float& fTimeDelta)
 
 void CRigidMove::Reset_Behavior(HRESULT result)
 {
-	m_isFirst = true;
 	m_fTimeAcc = 0.f;
 }
 
@@ -78,5 +98,6 @@ void CRigidMove::Free()
 	if (true == m_isCloned)
 	{
 		Safe_Release(m_pOwnerRigidBody);
+		Safe_Release(m_pOwnerTransform);
 	}
 }

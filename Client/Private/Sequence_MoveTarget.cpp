@@ -70,9 +70,9 @@ HRESULT CSequence_MoveTarget::Assemble_Childs()
 			throw TEXT("Failed Create_Behavior pTsk_Turn");
 
 		/* Set Options */
-		pTsk_Check_Degree->Set_Transform(pTransform);
-		pTsk_Check_Distance->Set_Transform(pTransform);
-		pTsk_Turn->Set_Transform(pTransform);
+		pTsk_Check_Degree->Set_Option(pTransform);
+		pTsk_Check_Distance->Set_Option(pTransform);
+		pTsk_Turn->Set_Option(pTransform);
 
 		/* Assemble Behaviors */
 		if (FAILED(Assemble_Behavior(TEXT("Action_Move"), m_pAction)))

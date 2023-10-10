@@ -100,9 +100,8 @@ HRESULT CSequence_Attack::Assemble_Childs()
 			});
 
 		/* Set Options */
-		pTsk_LookAt->Set_Option(m_fTurnSpeed);
-		pTsk_LookAt->Set_Transform(pTransform);
-		pTsk_Check_Distance->Set_Transform(pTransform);
+		pTsk_LookAt->Set_Option(pTransform, m_fTurnSpeed);
+		pTsk_Check_Distance->Set_Option(pTransform);
 
 		if (FAILED(Assemble_Behavior(TEXT("Tsk_Check_Distance"), pTsk_Check_Distance)))
 			throw TEXT("Failed Assemble_Behavior Tsk_Check_Distance_Enter");

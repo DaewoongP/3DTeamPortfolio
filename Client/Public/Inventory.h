@@ -24,6 +24,9 @@ private:
 
 public:
 	_bool Get_Open() { return m_isOpen; }
+	_uint Get_Resource(INGREDIENT eType) {
+		return m_ResourcesCount[eType];
+	}
 
 public:
 	virtual HRESULT Initialize_Prototype();
@@ -42,6 +45,11 @@ private:
 	vector<vector<CItem*>>			m_pItems;
 	// 현재 플레이어의 장비 포인터
 	vector<CItem*>				m_pPlayerCurItems;
+
+
+	
+private: // For Resources
+	vector<_uint> m_ResourcesCount;
 
 private:
 	_uint iGearMax = { 20 };

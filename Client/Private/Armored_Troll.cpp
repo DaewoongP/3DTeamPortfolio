@@ -212,7 +212,7 @@ HRESULT CArmored_Troll::Add_Components()
 
 		/* For.Com_Health */
 		CHealth::HEALTHDESC HealthDesc;
-		HealthDesc.iMaxHP = 500;
+		HealthDesc.iMaxHP = 1000;
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Health"),
 			TEXT("Com_Health"), reinterpret_cast<CComponent**>(&m_pHealth), &HealthDesc)))
 			throw TEXT("Com_Health");
@@ -233,7 +233,7 @@ HRESULT CArmored_Troll::Add_Components()
 		RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 0.f, 1.f);
 		RigidBodyDesc.pOwnerObject = this;
 		RigidBodyDesc.eThisCollsion = COL_ENEMY;
-		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC | COL_NPC_RANGE | COL_MAGIC;
+		RigidBodyDesc.eCollisionFlag = COL_NPC_RANGE | COL_MAGIC | COL_STATIC;
 		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Body");
 
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
@@ -532,8 +532,8 @@ HRESULT CArmored_Troll::Make_Attack_Degree(_Inout_ CSequence* pSequence)
 
 		/* Set Options */
 		pSelector_Degree->Set_Option(1.5f);
-		pTsk_Check_Distance->Set_Transform(m_pTransform);
-		pTsk_Check_Degree->Set_Transform(m_pTransform);
+		pTsk_Check_Distance->Set_Option(m_pTransform);
+		pTsk_Check_Degree->Set_Option(m_pTransform);
 
 		/* Assemble Behaviors */
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Tsk_Check_Distance"), pTsk_Check_Distance)))
@@ -635,7 +635,7 @@ HRESULT CArmored_Troll::Make_Pattern_Attack_Far(_Inout_ CSequence* pSequence)
 			});
 
 		/* Set Options */
-		pCheck_Distance->Set_Transform(m_pTransform);
+		pCheck_Distance->Set_Option(m_pTransform);
 
 		/* Assemble Behaviors */
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Check_Distance"), pCheck_Distance)))
@@ -791,7 +791,7 @@ HRESULT CArmored_Troll::Make_Taunt_Degree(_Inout_ CSequence* pSequence)
 		pAction_Left_180->Set_Options(TEXT("Taunt_Left_180"), m_pModelCom);
 		pAction_Right_180->Set_Options(TEXT("Taunt_Right_180"), m_pModelCom);
 
-		pTsk_Check_Degree->Set_Transform(m_pTransform);
+		pTsk_Check_Degree->Set_Option(m_pTransform);
 
 		/* Assemble Behaviors */
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Tsk_Check_Degree"), pTsk_Check_Degree)))
@@ -1407,14 +1407,14 @@ HRESULT CArmored_Troll::Make_Pattern_Attack_BackHnd(_Inout_ CSequence* pSequence
 			});
 
 		/* Set Options */
-		pCheck_Distance->Set_Transform(m_pTransform);
+		pCheck_Distance->Set_Option(m_pTransform);
 		pAttack_Swing->Set_Options(TEXT("Attack_Swing_Front_BackHnd"), m_pModelCom);
 		pAttack_1Step_Swing->Set_Options(TEXT("Attack_1Step_Swing_Front_BackHnd"), m_pModelCom);
 		pAttack_2Step_Swing->Set_Options(TEXT("Attack_2Step_Swing_Front_BackHnd"), m_pModelCom);
 
-		pTsk_LookAt_1->Set_Transform(m_pTransform);
-		pTsk_LookAt_2->Set_Transform(m_pTransform);
-		pTsk_LookAt_3->Set_Transform(m_pTransform);
+		pTsk_LookAt_1->Set_Option(m_pTransform);
+		pTsk_LookAt_2->Set_Option(m_pTransform);
+		pTsk_LookAt_3->Set_Option(m_pTransform);
 
 		/* Assemble Behaviors */
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Check_Distance"), pCheck_Distance)))
@@ -1508,12 +1508,12 @@ HRESULT CArmored_Troll::Make_Pattern_Attack_ForHnd(_Inout_ CSequence* pSequence)
 			});
 
 		/* Set Options */
-		pCheck_Distance->Set_Transform(m_pTransform);
+		pCheck_Distance->Set_Option(m_pTransform);
 		pAttack_Swing->Set_Options(TEXT("Attack_Swing_Front_ForHnd"), m_pModelCom);
 		pAttack_Step_Swing->Set_Options(TEXT("Attack_Step_Swing_Front_ForHnd"), m_pModelCom);
 
-		pTsk_LookAt_1->Set_Transform(m_pTransform);
-		pTsk_LookAt_2->Set_Transform(m_pTransform);
+		pTsk_LookAt_1->Set_Option(m_pTransform);
+		pTsk_LookAt_2->Set_Option(m_pTransform);
 
 		/* Assemble Behaviors */
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Check_Distance"), pCheck_Distance)))
@@ -1613,9 +1613,8 @@ HRESULT CArmored_Troll::Make_Pattern_Attack_Run(_Inout_ CSequence* pSequence)
 
 		/* Set Options */
 		pAction_Run_Loop->Set_Options(TEXT("Run_Loop"), m_pModelCom, true, 0.f, false, false);
-		pTsk_LookAt->Set_Transform(m_pTransform);
-		pTsk_Check_Distance->Set_Option(7.f, true);
-		pTsk_Check_Distance->Set_Transform(m_pTransform);
+		pTsk_LookAt->Set_Option(m_pTransform);
+		pTsk_Check_Distance->Set_Option(m_pTransform, true, 7.f, true);
 		pSequence_Attack_Swing_BackHnd->Set_Attack_Action_Options(TEXT("Attack_Run_Swing_Front_BackHnd"), m_pModelCom);
 		pSequence_Attack_Swing_BackHnd->Set_Attack_Option(7.f);
 		pSequence_Attack_Swing_ForHnd->Set_Attack_Action_Options(TEXT("Attack_Run_Swing_Front_ForHnd"), m_pModelCom);
@@ -1707,8 +1706,8 @@ HRESULT CArmored_Troll::Make_Pattern_Attack_Charge(_Inout_ CSelector* pSelector)
 		/* Set Decorations */
 
 		/* Set Options */
-		pTsk_LookAt_1->Set_Transform(m_pTransform);
-		pTsk_LookAt_2->Set_Transform(m_pTransform);
+		pTsk_LookAt_1->Set_Option(m_pTransform);
+		pTsk_LookAt_2->Set_Option(m_pTransform);
 		pAction_Charge_Enter->Set_Options(TEXT("Attack_Charge_Enter"), m_pModelCom);
 		pAction_Charge_Loop->Set_Options(TEXT("Attack_Charge_Loop"), m_pModelCom, true, 0.f, false, false);
 		pAction_Charge_End->Set_Options(TEXT("Attack_Charge_End_Turn_Left_180"), m_pModelCom);
@@ -1804,7 +1803,7 @@ HRESULT CArmored_Troll::Make_Turns(_Inout_ CSequence* pSequence)
 		pAction_Left_180->Set_Options(TEXT("Idle_Turn_Left_180"), m_pModelCom);
 		pAction_Right_180->Set_Options(TEXT("Idle_Turn_Right_180"), m_pModelCom);
 
-		pTsk_Check_Degree->Set_Transform(m_pTransform);
+		pTsk_Check_Degree->Set_Option(m_pTransform);
 
 		/* Assemble Behaviors */
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Tsk_Check_Degree"), pTsk_Check_Degree)))
@@ -1908,7 +1907,7 @@ HRESULT CArmored_Troll::Make_Turn_Run(_Inout_ CSequence* pSequence)
 		pAction_Left_180->Set_Options(TEXT("Turn_Start_Run_Left_180"), m_pModelCom);
 		pAction_Right_180->Set_Options(TEXT("Turn_Start_Run_Right_180"), m_pModelCom);
 
-		pTsk_Check_Degree->Set_Transform(m_pTransform);
+		pTsk_Check_Degree->Set_Option(m_pTransform);
 
 		/* Assemble Behaviors */
 		if (FAILED(pSequence->Assemble_Behavior(TEXT("Tsk_Check_Degree"), pTsk_Check_Degree)))

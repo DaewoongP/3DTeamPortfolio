@@ -151,12 +151,6 @@
     <Filter Include="01. Levels\06. PVP">
       <UniqueIdentifier>{886e8ea5-bbc0-4458-a2a8-792fe81d6d45}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Levels\07. Sky">
-      <UniqueIdentifier>{3416e37f-418a-468c-a94c-b7fb178d4e82}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Levels\08. Dragon">
-      <UniqueIdentifier>{a3441117-6109-46b1-8071-26b05cc98d52}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Levels\99. Loading">
       <UniqueIdentifier>{884f056e-8693-460c-8907-198be0f4c197}</UniqueIdentifier>
     </Filter>
@@ -472,6 +466,12 @@
     <Filter Include="04. Effect\Normal">
       <UniqueIdentifier>{a74d6959-7585-400e-a1ae-d972cc6abd86}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\04. UI\UI_Group\UI_Group_Brew">
+      <UniqueIdentifier>{046bcdc3-685b-4522-afa8-40b52b32465c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\04. UI\UI_Group\UI_Group_Skill_Tap">
+      <UniqueIdentifier>{e695472f-e3ce-4164-aeab-698da0e95413}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\02. Enemy\05. DarkWizard">
       <UniqueIdentifier>{344e3ca3-42ef-4166-b228-a633658f314b}</UniqueIdentifier>
     </Filter>
@@ -594,6 +594,18 @@
     </Filter>
     <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\Gatherer">
       <UniqueIdentifier>{e88e5f73-5766-4d38-b329-5d4e9342c0b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Levels\08. Sanctum%28Dragon%29">
+      <UniqueIdentifier>{a3441117-6109-46b1-8071-26b05cc98d52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\04. UI\UI\UI_Interact">
+      <UniqueIdentifier>{06c934f6-bf3f-4fee-8a89-9fb722ad475e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\PotionStation\Camera">
+      <UniqueIdentifier>{47ad6082-1c46-48ca-91b9-645d66ca436a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\08. CraftState">
+      <UniqueIdentifier>{d5efb67c-1189-46bb-bd77-8c0dcdb658ba}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -933,9 +945,6 @@
     <ClInclude Include="..\public\Level_Smith.h">
       <Filter>01. Levels\04. Smith</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Client_Enum.h">
-      <Filter>99. Headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\LookAt.h">
       <Filter>03. Behaviors\03. Movement</Filter>
     </ClInclude>
@@ -1076,6 +1085,12 @@
     <ClInclude Include="..\public\Norm_Test.h">
       <Filter>04. Effect\Normal</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_Group_Brew.h">
+      <Filter>02. GameObject\04. UI\UI_Group\UI_Group_Brew</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Group_SKillTap.h">
+      <Filter>02. GameObject\04. UI\UI_Group\UI_Group_Skill_Tap</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\Weapon_Goblin_Assasin.h">
       <Filter>02. GameObject\02. Enemy\01. Goblin\Assassin\Weapon</Filter>
     </ClInclude>
@@ -1177,6 +1192,15 @@
     </ClInclude>
     <ClInclude Include="..\Public\Gatherer.h">
       <Filter>02. GameObject\03. MapObject\Interactable_Obj\Gatherer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Level_Sanctum.h">
+      <Filter>01. Levels\08. Sanctum%28Dragon%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PotionStationCamera.h">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\PotionStation\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CraftState.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\08. CraftState</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1623,6 +1647,12 @@
     <ClCompile Include="..\private\Norm_Test.cpp">
       <Filter>04. Effect\Normal</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\UI_Group_Brew.cpp">
+      <Filter>02. GameObject\04. UI\UI_Group\UI_Group_Brew</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Group_SKillTap.cpp">
+      <Filter>02. GameObject\04. UI\UI_Group\UI_Group_Skill_Tap</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\Weapon_Goblin_Assasin.cpp">
       <Filter>02. GameObject\02. Enemy\01. Goblin\Assassin\Weapon</Filter>
     </ClCompile>
@@ -1724,6 +1754,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\Gatherer.cpp">
       <Filter>02. GameObject\03. MapObject\Interactable_Obj\Gatherer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Level_Sanctum.cpp">
+      <Filter>01. Levels\08. Sanctum%28Dragon%29</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PotionStationCamera.cpp">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\PotionStation\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CraftState.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\08. CraftState</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

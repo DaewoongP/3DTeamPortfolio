@@ -5,6 +5,8 @@
 
 BEGIN(Client)
 class CUI_Back;
+class CUI_Font;
+class CUI_Effect_Back;
 class CItem;
 class CUI_Group_Cursor;
 

@@ -70,14 +70,14 @@ PS_OUT PS_MAIN_DEFERRED(PS_IN In)
     vector vShade = g_ShadeTexture.Sample(LinearSampler, In.vTexUV);
     
     vector vSpecular = g_SpecularTexture.Sample(LinearSampler, In.vTexUV);
-    
+    vSpecular *= 0.5f;
     vector vSSAO = g_SSAOTexture.Sample(LinearSampler, In.vTexUV);
     
     vector vShadow = g_ShadowTexture.Sample(LinearSampler, In.vTexUV);
 
-    if (vShadow.r < 0.6f)
+    if (vShadow.r < 0.8f)
     {
-        vShade *= 0.5f;
+        vShade *= vShadow.r;
         vSpecular = float4(0.f, 0.f, 0.f, 0.f);
     }
     
@@ -91,7 +91,7 @@ technique11 DefaultTechnique
     pass Debug
     {
         SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_Default, 0);
+        SetDepthStencilState(DSS_Depth_Disable, 0);
         SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL /*compile gs_5_0 GS_MAIN()*/;

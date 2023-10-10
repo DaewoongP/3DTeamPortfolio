@@ -97,6 +97,9 @@ HRESULT CMain2_Loader::Loading()
 	case LEVEL_SMITH:
 		hr = Loading_For_Hogsmeade(LEVEL_SMITH);
 		break;
+	case LEVEL_SANCTUM:
+		hr = Loading_For_Sanctum(LEVEL_SANCTUM);
+		break;
 	default:
 		MSG_BOX("Failed Load Next Level");
 		break;
@@ -296,6 +299,11 @@ HRESULT CMain2_Loader::Loading_For_GreatHall(LEVELID eLevelID)
 }
 
 HRESULT CMain2_Loader::Loading_For_Hogsmeade(LEVELID eLevelID)
+{
+	return S_OK;
+}
+
+HRESULT CMain2_Loader::Loading_For_Sanctum(LEVELID eLevelID)
 {
 	return S_OK;
 }

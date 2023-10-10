@@ -18,6 +18,7 @@ public:
 	enum SHADERTYPE
 	{
 		MINIMAP,
+		SKILL,
 		SHADERTYPE_END
 	};
 
@@ -42,6 +43,17 @@ private:
 	explicit CUI_Image(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CUI_Image(const CUI_Image& rhs);
 	virtual ~CUI_Image() = default;
+
+public:
+	void		Set_CoolTime(_float* pCool) {
+		m_pCoolTime = pCool;
+	}
+	void		Set_isCool(_bool isCool) {
+		m_isCool = isCool;
+	}
+	void		Set_ShaderType(SHADERTYPE eType) {
+		m_eShadertype = eType;
+	}
 
 public:
 	virtual HRESULT Initialize_Prototype();
@@ -87,6 +99,11 @@ private:
 	
 	_float3 vPlayerPos = _float3(1024.f, 0.f, 1024.f);
 	_float2 vMiniMapSize = _float2(1024.f, 1024.f);
+
+private: // for skill
+	_float* m_pCoolTime = { nullptr };
+	_bool	m_isCool = { false };
+
 
 public:
 	static CUI_Image* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

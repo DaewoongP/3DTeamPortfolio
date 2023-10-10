@@ -10,6 +10,7 @@
 #include "Level_Vault.h"
 #include "Level_GreatHall.h"
 #include "Level_Smith.h"
+#include"Level_Sanctum.h"
 
 CLevel_Loading::CLevel_Loading(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CLevel(pDevice, pContext)
@@ -63,6 +64,13 @@ HRESULT CLevel_Loading::Initialize(LEVELID eNextLevelID, _bool isStaticLoaded)
 		break;
 	case LEVEL_SMITH:
 		if (FAILED(Loading_Hogsmeade(TEXT("Layer_Hogsmeade"))))
+		{
+			MSG_BOX("Failed Loading MainGame Object");
+			return E_FAIL;
+		}
+		break;
+	case LEVEL_SANCTUM:
+		if (FAILED(Loading_Hogsmeade(TEXT("Layer_Sanctum"))))
 		{
 			MSG_BOX("Failed Loading MainGame Object");
 			return E_FAIL;
@@ -145,6 +153,9 @@ void CLevel_Loading::Tick(_float fTimeDelta)
 		break;
 	case LEVEL_SMITH:
 		pLevel = CLevel_Smith::Create(m_pDevice, m_pContext);
+		break;
+	case LEVEL_SANCTUM:
+		pLevel = CLevel_Sanctum::Create(m_pDevice, m_pContext);
 		break;
 	default:
 		MSG_BOX("Failed Create Next Level");
@@ -261,6 +272,33 @@ HRESULT CLevel_Loading::Loading_Hogsmeade(const _tchar* pLayerTag)
 	}
 
 	ENDINSTANCE;
+
+	return S_OK;
+}
+
+HRESULT CLevel_Loading::Loading_Sanctum(const _tchar* pLayerTag)
+{
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	// 로고 이동전 로딩씬에 대한 객체 생성
+
+	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Loading"), pLayerTag)))
+	{
+		MSG_BOX("Failed Add Scene : (Scene_Loading)");
+		ENDINSTANCE;
+		return E_FAIL;
+	}
+
+	//_tchar wszFilePath[MAX_PATH] = TEXT("");
+	//lstrcpy(wszFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Loading4.uidata"));
+	//if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_LOADING, TEXT("Prototype_GameObject_UI_Group_Loading"),
+	//	pLayerTag, TEXT("Prototype_GameObject_UI_Group_Loading1"), wszFilePath)))
+	//{
+	//	MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_UI_Group_Loading)");
+	//	return E_FAIL;
+	//}
+
+	Safe_Release(pGameInstance);
 
 	return S_OK;
 }
