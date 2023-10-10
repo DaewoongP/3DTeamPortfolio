@@ -1,5 +1,6 @@
 #include "..\Public\RadialBlur.h"
 #include "GameInstance.h"
+#include "RenderTarget_Manager.h"
 
 CRadialBlur::CRadialBlur(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -9,12 +10,16 @@ CRadialBlur::CRadialBlur(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 CRadialBlur::CRadialBlur(const CRadialBlur& rhs)
 	: CGameObject(rhs)
 {
+	_uint iNumInstance = 1;
+	m_pBuffer = static_cast<CVIBuffer_Point_Instance*>(rhs.m_pBuffer->Clone(&iNumInstance));
 }
 
 HRESULT CRadialBlur::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
+
+	m_pBuffer = CVIBuffer_Point_Instance::Create(m_pDevice, m_pContext);
 
 	return S_OK;
 }
@@ -43,12 +48,15 @@ void CRadialBlur::Late_Tick(_float fTimeDelta)
 
 	if (nullptr != m_pRenderer)
 	{
-		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DISTORTION, this);
+		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_RADIALBLUR, this);
 	}
 }
 
 HRESULT CRadialBlur::Render()
-{
+{	
+	if (FAILED(CRenderTarget_Manager::GetInstance()->Bind_ShaderResourceView(TEXT("Target_PostProcessing"), m_pShader, "g_TargetTexture")))
+		return E_FAIL;
+
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
@@ -68,9 +76,7 @@ HRESULT CRadialBlur::Add_Components()
 	m_pRenderer = static_cast<CRenderer*>(pGameInstance->Clone_Component(0, TEXT("Prototype_Component_Renderer")));
 	Safe_Release(pGameInstance);
 
-	m_pShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_RadialBlur.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements);
-
-	m_pBuffer = CVIBuffer_Rect::Create(m_pDevice, m_pContext);
+	m_pShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_RadialBlur.hlsl"), VTXPOINTINSTANCE_DECL::Elements, VTXPOINTINSTANCE_DECL::iNumElements);
 
 	if (nullptr == m_pShader ||
 		nullptr == m_pRenderer ||
@@ -92,6 +98,9 @@ HRESULT CRadialBlur::SetUp_ShaderResources()
 		return E_FAIL;
 
 	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+
+	if (FAILED(m_pShader->Bind_RawValue("g_vCamPosition", pGameInstance->Get_CamPosition(), sizeof(_float4))))
 		return E_FAIL;
 
 	Safe_Release(pGameInstance);

@@ -553,5 +553,6 @@ void CMagicBall::Free()
 
 		Safe_Release(m_pRenderer);
 		Safe_Release(m_pRigidBody);
+		Safe_Release(m_pLight);
 	}
 }

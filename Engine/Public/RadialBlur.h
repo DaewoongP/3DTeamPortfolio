@@ -3,7 +3,7 @@
 
 BEGIN(Engine)
 
-class CRadialBlur final : public CGameObject
+class ENGINE_DLL CRadialBlur final : public CGameObject
 {
 private:
 	explicit CRadialBlur(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -18,9 +18,9 @@ public:
 	virtual HRESULT Render() override;
 
 private:
-	class CShader*			m_pShader = { nullptr };
-	class CRenderer*		m_pRenderer = { nullptr };
-	class CVIBuffer_Rect*	m_pBuffer = { nullptr };
+	class CShader*					m_pShader = { nullptr };
+	class CRenderer*				m_pRenderer = { nullptr };
+	class CVIBuffer_Point_Instance*	m_pBuffer = { nullptr };
 
 private:
 	HRESULT Add_Components();

@@ -1,14 +1,17 @@
 #include "..\Public\Norm_Test.h"
 #include "GameInstance.h"
+#include "RadialBlur.h"
 
 CNorm_Test::CNorm_Test(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 {
+	m_pRadial = CRadialBlur::Create(pDevice, pContext);
 }
 
 CNorm_Test::CNorm_Test(const CNorm_Test& rhs)
 	: CGameObject(rhs)
 {
+	m_pRadial = static_cast<CRadialBlur*>(rhs.m_pRadial->Clone(nullptr));
 }
 
 HRESULT CNorm_Test::Initialize(void* pArg)
@@ -19,7 +22,7 @@ HRESULT CNorm_Test::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-	m_pTransform->Set_Position(_float3(25.f, 3.f, 22.5f));
+	m_pTransform->Set_Position(_float3(25.f, 3.f, 20.5f));
 
 	return S_OK;
 }
@@ -31,6 +34,8 @@ void CNorm_Test::Tick(_float fTimeDelta)
 
 void CNorm_Test::Late_Tick(_float fTimeDelta)
 {
+	m_pRadial->Late_Tick(fTimeDelta);
+
 	__super::Late_Tick(fTimeDelta);
 
 	if (nullptr != m_pRenderer)
@@ -81,6 +86,8 @@ HRESULT CNorm_Test::Add_Components()
 	}
 
 	m_pTexture = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Textures/T_FX_Distortion_N.png"));
+
+	
 
 	return S_OK;
 }
@@ -144,4 +151,5 @@ void CNorm_Test::Free()
 	Safe_Release(m_pTexture);
 	Safe_Release(m_pRenderer);
 	Safe_Release(m_pBuffer);
+	Safe_Release(m_pRadial);
 }

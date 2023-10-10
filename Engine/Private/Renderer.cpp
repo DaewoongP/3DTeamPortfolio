@@ -167,6 +167,8 @@ HRESULT CRenderer::Initialize_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_Shadow"), 240.f, 400.f, 160.f, 160.f)))
 		return E_FAIL;
+	if (FAILED(m_pRenderTarget_Manager->Ready_Debug(TEXT("Target_PreRadial"), 240.f, 560.f, 160.f, 160.f)))
+		return E_FAIL;
 	
 #endif // _DEBUG
 
@@ -259,6 +261,9 @@ HRESULT CRenderer::Draw_RenderGroup()
 
 	// After Effect
 	if (FAILED(Render_Distortion()))
+		return E_FAIL;
+	
+	if (FAILED(Render_RadialBlur()))
 		return E_FAIL;
 
 	// Screen Shading
@@ -717,30 +722,20 @@ HRESULT CRenderer::Render_Distortion()
 
 HRESULT CRenderer::Render_RadialBlur()
 {
-	if (FAILED(m_pRenderTarget_Manager->Bind_ShaderResourceView(TEXT("Target_PreRadial"), m_pRadialBlurShader, "g_TargetTexture")))
-		return E_FAIL;
-	if (FAILED(m_pRadialBlurShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
-		return E_FAIL;
-	if (FAILED(m_pRadialBlurShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
-		return E_FAIL;
-	if (FAILED(m_pRadialBlurShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
-		return E_FAIL;
-	/*if (FAILED(m_pRadialBlurShader->Bind_RawValue("g_vBlurWorldPos", , sizeof(_float4))))
-		return E_FAIL;
-	if (FAILED(m_pRadialBlurShader->Bind_RawValue("g_vBlurSize", , sizeof(_float2))))
-		return E_FAIL;
-	CPipeLine* pPipeLine = CPipeLine::GetInstance();
-	Safe_AddRef(pPipeLine);
-	if (FAILED(m_pRadialBlurShader->Bind_RawValue("g_fCamFar", pPipeLine->Get_CamFar(), sizeof(_float))))
-		return E_FAIL;
-	if (FAILED(m_pRadialBlurShader->Bind_RawValue("g_vCamPos", pPipeLine->Get_CamPosition(), sizeof(_float4))))
-		return E_FAIL;
-	Safe_Release(pPipeLine);*/
-
-	if (FAILED(m_pRadialBlurShader->Begin("Radial")))
+	if (FAILED(m_pRenderTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_PreRadial"))))
 		return E_FAIL;
 
-	if (FAILED(m_pRectBuffer->Render()))
+	for (auto& pGameObject : m_RenderObjects[RENDER_RADIALBLUR])
+	{
+		if (nullptr != pGameObject)
+			pGameObject->Render();
+
+		Safe_Release(pGameObject);
+	}
+
+	m_RenderObjects[RENDER_RADIALBLUR].clear();
+
+	if (FAILED(m_pRenderTarget_Manager->End_MRT(m_pContext, TEXT("MRT_PreRadial"))))
 		return E_FAIL;
 
 	return S_OK;
@@ -868,10 +863,6 @@ HRESULT CRenderer::Add_Components()
 
 	m_pSSAOShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_SSAO.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements);
 	if (nullptr == m_pSSAOShader)
-		return E_FAIL;
-	
-	m_pRadialBlurShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_RadialBlur.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements);
-	if (nullptr == m_pRadialBlurShader)
 		return E_FAIL;
 
 	m_pShadow = CShadow::Create(m_pDevice, m_pContext, m_pRectBuffer);
@@ -1009,7 +1000,6 @@ void CRenderer::Free()
 	Safe_Release(m_pShadeTypeShader);
 	Safe_Release(m_pSSAOShader);
 	Safe_Release(m_pDistortionShader);
-	Safe_Release(m_pRadialBlurShader);
 
 	Safe_Release(m_pBlur);
 	Safe_Release(m_pBloom);
