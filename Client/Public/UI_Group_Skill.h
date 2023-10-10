@@ -35,6 +35,7 @@ public:
 
 public:
 	void	Set_SpellTexture(KEYLIST eSkill, SPELL eSpell);
+	void	Set_SkillCoolTime();
 
 private:
 	HRESULT Add_Prototype();
@@ -57,15 +58,16 @@ private:
 
 private:
 	vector<class CUI_Effect_Back*>		m_pMains;
-	vector<class CUI_Back*>			m_pFrames; 
-	vector<class CUI_Back*>			m_pNumbers;
-	vector<class CTexture*>			m_SkillTextures;
+	vector<class CUI_Back*>				m_pFrames; 
+	vector<class CUI_Back*>				m_pNumbers;
+	vector<class CTexture*>				m_SkillTextures;
 
 private:
-	vector<_float>* m_pCoolTime = { nullptr };
+	vector<_float>*			m_pCoolTime = { nullptr };
+	_bool					m_isCoolSetReady = { true };
 
 private:
-	SPELL			m_KeyList[KEYLIST_END];
+	SPELL					m_KeyList[KEYLIST_END];
 
 public:
 	static CUI_Group_Skill* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

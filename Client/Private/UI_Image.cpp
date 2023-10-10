@@ -19,6 +19,9 @@ HRESULT CUI_Image::Initialize_Prototype()
 
 HRESULT CUI_Image::Initialize(void* pArg)
 {
+	if (FAILED(__super::Initialize(pArg)))
+		return E_FAIL;
+
 	if (nullptr != pArg)
 	{
 		IMAGEDESC* pDesc = (IMAGEDESC*)pArg;
@@ -60,6 +63,11 @@ void CUI_Image::Tick(_float fTimeDelta)
 
 void CUI_Image::Late_Tick(_float fTimeDelta)
 {
+	if (m_pParent != nullptr)
+	{
+		int a = 0;
+	}
+
 	__super::Late_Tick(fTimeDelta);
 	Change_Scale(m_fSizeX , m_fSizeY);
 	Change_Position(m_vCombinedXY.x, m_vCombinedXY.y);
@@ -72,6 +80,11 @@ void CUI_Image::Late_Tick(_float fTimeDelta)
 
 HRESULT CUI_Image::Render()
 {
+	if (m_pParent != nullptr)
+	{
+		int a = 0;
+	}
+
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
@@ -156,7 +169,7 @@ HRESULT CUI_Image::SetUp_ShaderResources()
 	if (m_eShadertype == SKILL && m_isCool)
 	{
 		_float fCool = *m_pCoolTime;
-		if (FAILED(m_pShaderCom->Bind_RawValue("g_vPlayerPos", &m_pCoolTime, sizeof(_float))))
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_fCoolTime", &fCool, sizeof(_float))))
 			return E_FAIL;
 
 	}
@@ -175,7 +188,7 @@ HRESULT CUI_Image::Set_Texture(CTexture* pTexture)
 	return S_OK;
 }
 
-HRESULT CUI_Image::Set_Desc(IMAGEDESC desc)
+HRESULT CUI_Image::Set_Desc(IMAGEDESC desc, _bool isChild)
 {
 	m_vCombinedXY = desc.vCombinedXY;
 	m_fX = desc.fX;
@@ -184,6 +197,11 @@ HRESULT CUI_Image::Set_Desc(IMAGEDESC desc)
 	m_fSizeX = desc.fSizeX;
 	m_fSizeY = desc.fSizeY;
 	m_eShadertype = desc.eShadertype;
+	
+	if (isChild == true)
+	{
+		m_pParent = static_cast<CUI*>(m_pOwner);
+	}
 
 	return S_OK;
 }

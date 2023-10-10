@@ -19,6 +19,7 @@ public:
 public:
 	virtual _bool	Collision_Rect(HWND hWnd, _float2 vPos, _float2 vSize);
 	_bool	Click(HWND hWnd, _float2 vPos, _float2 vSize);
+	_bool	Pressing(HWND hWnd, _float2 vPos, _float2 vSize);
 
 public:
 	static CUI_Button* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

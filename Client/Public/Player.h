@@ -23,6 +23,7 @@ class CWeapon_Player_Wand;
 class CStateContext;
 class CPlayer_Information;
 class CUI_Group_Skill;
+class CUI_Group_SkillTap;
 class CMagicBall;
 class CMaximaPotion;
 class CFocusPotion;
@@ -70,6 +71,7 @@ private:
 public:
 	CPlayer_Information* Get_Player_Information() { return m_pPlayer_Information; }
 	_float3 Get_PlayerPos() { return m_pTransform->Get_Position(); }
+	SPELL Get_SpellList(SKILLINPUT eType) { return m_vecSpellCheck[eType]; }
 	void Set_TargetTransform(CTransform* _pTargetTransform = nullptr) { m_pTargetTransform = _pTargetTransform; }
 	void Set_Protego_Collision(CEnemy::ATTACKTYPE _eAttackType, CTransform* _pTransform);
 
@@ -94,6 +96,7 @@ public:
 	virtual HRESULT Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix) override;
 
 
+
 	void Potion_Duration(_float fTimeDelta);
 	virtual void On_Maigc_Throw_Data(void* data) const override;
 	_bool Is_Action_Camera_Playing();
@@ -112,6 +115,7 @@ private:
 	CPlayer_Information* m_pPlayer_Information = { nullptr };
 
 	CUI_Group_Skill* m_UI_Group_Skill_01 = { nullptr };
+	CUI_Group_SkillTap* m_UI_Group_SkillTap = { nullptr };
 
 	CTool* m_pCurTool = { nullptr };
 
@@ -200,6 +204,8 @@ private:
 	_float m_fTargetViewRange = { 0.0f };
 
 	vector<SPELL> m_vecSpellCheck;
+	
+
 
 	_bool m_isLumosOn = { false };
 

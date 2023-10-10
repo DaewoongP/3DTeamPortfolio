@@ -668,6 +668,15 @@ HRESULT CPlayer::Add_Components()
 		__debugbreak();
 		return E_FAIL;
 	}
+
+	/* Com_UI_Group_SkillTap */
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_SkillTap"),
+		TEXT("Com_UI_Group_SkillTap"), reinterpret_cast<CComponent**>(&m_UI_Group_SkillTap))))
+	{
+		__debugbreak();
+		return E_FAIL;
+	}
+
 	
 	//_int DefValue = 15;
 	//if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_EndurusPotion"),
@@ -2625,6 +2634,7 @@ void CPlayer::Free()
 		Safe_Release(m_pRigidBody);
 		Safe_Release(m_pPlayer_Information);
 		Safe_Release(m_UI_Group_Skill_01);
+		Safe_Release(m_UI_Group_SkillTap);
 		Safe_Release(m_pCooltime);
 		Safe_Release(m_pDefence);
 

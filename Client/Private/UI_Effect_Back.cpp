@@ -117,8 +117,18 @@ HRESULT CUI_Effect_Back::Add_Components()
 	pDesc.fX = m_fX;
 	pDesc.fY = m_fY;
 	pDesc.fZ = m_fZ;
-	pDesc.fSizeX = m_fSizeX;
-	pDesc.fSizeY = m_fSizeY;
+	if (m_fSizeX == 0.f)
+		pDesc.fSizeX = 1.f;
+	else
+		pDesc.fSizeX = m_fSizeX;
+
+	if (m_fSizeY == 0.f)
+		pDesc.fSizeY = 1.f;
+	else
+		pDesc.fSizeY = m_fSizeY;
+
+
+
 	/* Com_Image */
 	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_UI_Image"),
 		TEXT("Com_Image"), reinterpret_cast<CComponent**>(&m_pImageCom), &pDesc)))
@@ -216,6 +226,11 @@ _bool CUI_Effect_Back::Get_Clicked()
 	return 	m_pButtonCom->Click(g_hWnd, m_vCombinedXY, _float2(m_fSizeX, m_fSizeY));
 }
 
+_bool CUI_Effect_Back::Get_Pressing()
+{
+	return 	m_pButtonCom->Pressing(g_hWnd, m_vCombinedXY, _float2(m_fSizeX, m_fSizeY));
+}
+
 _bool CUI_Effect_Back::Get_Collision()
 {
 	return 	m_pButtonCom->Collision_Rect(g_hWnd, m_vCombinedXY, _float2(m_fSizeX, m_fSizeY));
@@ -226,9 +241,9 @@ void CUI_Effect_Back::Set_Texture(CTexture* pTexture)
 	m_pImageCom->Set_Texture(pTexture);
 }
 
-void CUI_Effect_Back::Set_ImageCom(CUI_Image::IMAGEDESC desc)
+void CUI_Effect_Back::Set_ImageCom(CUI_Image::IMAGEDESC desc, _bool isChild)
 {
-	m_pImageCom->Set_Desc(desc);
+	m_pImageCom->Set_Desc(desc,isChild);
 }
 
 void CUI_Effect_Back::Set_Rotation(_float3 vAxis, _float fRadian)

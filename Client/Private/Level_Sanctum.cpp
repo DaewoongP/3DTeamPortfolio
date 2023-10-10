@@ -312,6 +312,9 @@ HRESULT CLevel_Sanctum::Ready_Debug(const _tchar* pLayerTag)
 }
 #endif // _DEBUG
 
+#endif // DEBUG
+
+
 CLevel_Sanctum* CLevel_Sanctum::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CLevel_Sanctum* pInstance = New CLevel_Sanctum(pDevice, pContext);

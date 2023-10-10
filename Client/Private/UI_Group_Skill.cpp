@@ -63,24 +63,15 @@ HRESULT CUI_Group_Skill::Initialize(void* pArg)
 	m_KeyList[THIRD] = BASICCAST;
 	m_KeyList[FOURTH] = BASICCAST;
 
-	/*if (nullptr != m_pCoolTime)
-	{
-		_uint iIndex = 0;
-		for (auto& pMain : m_pMains)
-		{
-			pMain->Set_CoolTime(&(*m_pCoolTime)[iIndex]);
-			pMain->Set_isCool(true);
-			++iIndex;
-		}
-	}*/
-
-
 	return S_OK;
 }
 
 void CUI_Group_Skill::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	Set_SkillCoolTime();
+
 }
 
 void CUI_Group_Skill::Late_Tick(_float fTimeDelta)
@@ -98,6 +89,22 @@ void CUI_Group_Skill::Set_SpellTexture(KEYLIST eKey, SPELL eSpell)
 	
 	m_KeyList[eKey] = eSpell;
 	m_pMains[eKey]->Set_Texture(m_SkillTextures[eSpell]);
+}
+
+void CUI_Group_Skill::Set_SkillCoolTime()
+{
+	if (m_pCoolTime->size() >= 4 && m_isCoolSetReady)
+	{
+		_uint iIndex = 0;
+		for (auto& pMain : m_pMains)
+		{
+			pMain->Set_CoolTime(&(*m_pCoolTime)[iIndex]);
+			pMain->Set_isCool(true);
+			++iIndex;
+		}
+
+		m_isCoolSetReady = false;
+	}
 }
 
 

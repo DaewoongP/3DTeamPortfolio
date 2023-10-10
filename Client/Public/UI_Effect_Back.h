@@ -35,7 +35,7 @@ public:
 	}
 	void Set_Clicked(_bool isClicked = false);
 	void Set_Texture(CTexture* pTexture);
-	void Set_ImageCom(CUI_Image::IMAGEDESC desc);
+	void Set_ImageCom(CUI_Image::IMAGEDESC desc, _bool isChild = false);
 	void Set_Rotation(_float3 vAxis, _float fRadian);
 	void	 Set_CoolTime(_float* pCool);
 	void	 Set_isCool(_bool isCool) {
@@ -52,6 +52,7 @@ private:
 
 public:
 	_bool	Get_Clicked();
+	_bool	Get_Pressing();
 	_bool	Get_Collision();
 
 public:
