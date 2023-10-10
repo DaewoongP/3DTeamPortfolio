@@ -347,7 +347,7 @@ HRESULT CMain1_Loader::Loading_Map_Object(const _tchar* pMapObjectPath, LEVELID 
 
 	/* For.Prototype_GameObject_Potion_Station */
 	if (FAILED(m_pGameInstance->Add_Prototype(eID, TEXT("Prototype_GameObject_Potion_Station"),
-		CPotion_Station::Create(m_pDevice, m_pContext))))
+		CPotion_Station::Create(m_pDevice, m_pContext, eID))))
 		throw TEXT("Prototype_GameObject_Potion_Station");
 
 	/* For.Prototype_GameObject_Gatherer */

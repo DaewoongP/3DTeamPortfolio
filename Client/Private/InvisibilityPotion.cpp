@@ -18,7 +18,7 @@ HRESULT CInvisibilityPotion::Initialize_Prototype(_uint iLevel)
 	// 포션 정보
 	m_PotionCreateDesc.wstrModelPath = TEXT("../../Resources/Models/NonAnims/SM_Invisibility_Bottle/SM_Invisibility_Bottle.dat"); // 모델경로
 	m_PotionCreateDesc.Ingredients.push_back(INGREDIENT::LEAPING_TOADSTOOL_CAPS);	// 재료1
-	m_PotionCreateDesc.Ingredients.push_back(INGREDIENT::KNOTGRASS_SPRIG);			// 재료2
+	m_PotionCreateDesc.Ingredients.push_back(INGREDIENT::KNOTGRASS);			// 재료2
 	m_PotionCreateDesc.Ingredients.push_back(INGREDIENT::TROLL_BOGEYS);				// 재료3
 	m_PotionCreateDesc.fManufacturingTime = 60.f;									// 제조 시간
 	if (FAILED(__super::Initialize_Prototype(iLevel)))

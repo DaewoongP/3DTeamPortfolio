@@ -264,7 +264,6 @@ HRESULT CLevel_Cliffside::Ready_Layer_Inventory(const _tchar* pLayerTag)
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	/* Add Scene : Main */
 	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Menu"), pLayerTag)))
 	{
 		MSG_BOX("Failed Add Scene : (Scene_Menu)");
@@ -272,7 +271,8 @@ HRESULT CLevel_Cliffside::Ready_Layer_Inventory(const _tchar* pLayerTag)
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Inventory"), pLayerTag, TEXT("GameObject_Inventory"))))
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_STATIC
+		, TEXT("Prototype_GameObject_Inventory"), pLayerTag, TEXT("GameObject_Inventory"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Inventory)");
 		Safe_Release(pGameInstance);
@@ -731,7 +731,7 @@ HRESULT CLevel_Cliffside::Ready_Layer_UI(const _tchar* pLayerTag)
 	}
 
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Potion_Tap"), pLayerTag, TEXT("GameObject_Potion_Tap"))))
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_STATIC, TEXT("Prototype_GameObject_Potion_Tap"), pLayerTag, TEXT("GameObject_Potion_Tap"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Potion_Tap)");
 		Safe_Release(pGameInstance);
@@ -752,7 +752,7 @@ HRESULT CLevel_Cliffside::Ready_Layer_UI(const _tchar* pLayerTag)
 	//	return E_FAIL;
 	//}
 
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_UI_Farming"), pLayerTag, TEXT("GameObject_UI_Farming"))))
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Farming"), pLayerTag, TEXT("GameObject_UI_Farming"))))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_UI_Farming)");
 		Safe_Release(pGameInstance);
@@ -796,7 +796,7 @@ HRESULT CLevel_Cliffside::Ready_Layer_FieldGuide_UI(const _tchar* pLayerTag)
 	//}	
 	
 	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Gear_Alpha3.uidata"));
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Field_Guide"),
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_STATIC, TEXT("Prototype_GameObject_Field_Guide"),
 		pLayerTag, TEXT("GameObject_UI_Field_Guide"), szFilePath)))
 	{
 		MSG_BOX("Failed Add_GameObject : (Prototype_GameObject_Field_Guide)");
@@ -834,7 +834,7 @@ HRESULT CLevel_Cliffside::Ready_Layer_Menu_UI(const _tchar* pLayerTag)
 
 
 	lstrcpy(szFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Menu_Frame.uidata"));
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Main_Menu"),
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_STATIC, TEXT("Prototype_GameObject_Main_Menu"),
 		pLayerTag, TEXT("GameObject_UI_Main_Menu"), szFilePath)))
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Main_Menu)");

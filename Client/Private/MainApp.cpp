@@ -192,6 +192,8 @@ HRESULT CMainApp::Ready_Prototype_Component_For_Static()
 			CDefence::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Defence");
 
+
+
 	}
 	catch (const _tchar* pErrorTag)
 	{

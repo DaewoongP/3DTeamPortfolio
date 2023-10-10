@@ -16,6 +16,7 @@ CFocusPotion_Item::CFocusPotion_Item(const CFocusPotion_Item& rhs)
 HRESULT CFocusPotion_Item::Initialize_Prototype(_uint iLevel)
 {
 	// 아이템 정보
+	m_ItemCreateDesc.eItemId = ITEM_ID_FOCUS_POTION;
 	m_ItemCreateDesc.eItemType = ITEMTYPE::POTION;
 	m_ItemCreateDesc.iCost = 500;									// 가격
 	m_ItemCreateDesc.fDuration = 15.f;								//지속시간

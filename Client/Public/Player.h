@@ -113,11 +113,6 @@ private:
 	CUI_Group_Skill* m_UI_Group_Skill_01 = { nullptr };
 
 	CTool* m_pCurTool = { nullptr };
-	CMaximaPotion* m_pMaximaPotion = { nullptr };
-	CEdurusPotion* m_pEdurusPotion = { nullptr };
-	CFocusPotion*	m_pFocusPotion = { nullptr };
-	CInvisibilityPotion* m_pInvisibilityPotion = { nullptr };
-	CWiggenweldPotion* m_pWiggenweldPotion = { nullptr };
 
 private:
 	_bool		m_isFixMouse = { false };

@@ -13,6 +13,7 @@ CSpider_Fang_Item::CSpider_Fang_Item(const CSpider_Fang_Item& rhs)
 HRESULT CSpider_Fang_Item::Initialize_Prototype(_uint iLevel)
 {
 	// 아이템 정보
+	m_ItemCreateDesc.eItemId = ITEM_ID_SPIDER_FANG;
 	m_ItemCreateDesc.wstrKoreanName = TEXT("거머리 송곳니");
 	m_ItemCreateDesc.wstrUIPath = TEXT("../../Resources/UI/Game/UI/Icons/Ingredients/UI_T_Spider_fang.png");
 	m_ItemCreateDesc.iCost = 90;

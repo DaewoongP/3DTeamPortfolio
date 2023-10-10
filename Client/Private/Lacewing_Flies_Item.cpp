@@ -13,6 +13,7 @@ CLacewing_Flies_Item::CLacewing_Flies_Item(const CLacewing_Flies_Item& rhs)
 HRESULT CLacewing_Flies_Item::Initialize_Prototype(_uint iLevel)
 {
 	// 아이템 정보
+	m_ItemCreateDesc.eItemId = ITEM_ID_LACEWING_FLIES;
 	m_ItemCreateDesc.wstrKoreanName = TEXT("풀 잠자리");
 	m_ItemCreateDesc.wstrUIPath = TEXT("../../Resources/UI/Game/UI/Icons/Ingredients/UI_T_LacewingFlies.png");
 	m_ItemCreateDesc.iCost = 90;

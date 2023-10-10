@@ -42,6 +42,8 @@ public:
 
 	void Left_Align();
 
+
+
 protected:
 	_tchar			m_pText[MAX_PATH] = TEXT("");
 	_float2			m_vPos = { 650.f, 360.f };

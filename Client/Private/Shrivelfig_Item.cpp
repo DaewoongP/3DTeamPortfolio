@@ -13,6 +13,7 @@ CShrivelfig_Item::CShrivelfig_Item(const CShrivelfig_Item& rhs)
 HRESULT CShrivelfig_Item::Initialize_Prototype(_uint iLevel)
 {
 	// 아이템 정보
+	m_ItemCreateDesc.eItemId = ITEM_ID_SHRIVELFIG;
 	m_ItemCreateDesc.wstrKoreanName = TEXT("오그라든 무화과 나무 열매");
 	m_ItemCreateDesc.wstrUIPath = TEXT("../../Resources/UI/Game/UI/Icons/Ingredients/UI_T_Shrivelfig_Byproduct.png");
 	m_ItemCreateDesc.iCost = 80;

@@ -173,6 +173,7 @@
     <ClInclude Include="..\Public\ConjuredDragon.h" />
     <ClInclude Include="..\public\CraftState.h" />
     <ClInclude Include="..\Public\DarkWizard_M.h" />
+    <ClInclude Include="..\public\Mongrel_Fur_Item.h" />
     <ClInclude Include="..\public\PotionStationCamera.h" />
     <ClInclude Include="..\Public\Weapon_DarkWizard_Wand.h" />
     <ClInclude Include="..\Public\Diffindo.h" />
@@ -394,6 +395,7 @@
     <ClCompile Include="..\Private\ConjuredDragon.cpp" />
     <ClCompile Include="..\private\CraftState.cpp" />
     <ClCompile Include="..\Private\DarkWizard_M.cpp" />
+    <ClCompile Include="..\private\Mongrel_Fur_Item.cpp" />
     <ClCompile Include="..\private\PotionStationCamera.cpp" />
     <ClCompile Include="..\Private\Weapon_DarkWizard_Wand.cpp" />
     <ClCompile Include="..\Private\Diffindo.cpp" />

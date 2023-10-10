@@ -71,7 +71,7 @@ void CMenu_Gear::Tick(_float fTimeDelta)
 		CGameInstance* pGameInstacne = CGameInstance::GetInstance();
 		Safe_AddRef(pGameInstacne);
 
-		m_pInventory = static_cast<CInventory*>(pGameInstacne->Find_Component_In_Layer(LEVEL_CLIFFSIDE, TEXT("Layer_Inventory"), TEXT("GameObject_Inventory")));
+		m_pInventory = static_cast<CInventory*>(pGameInstacne->Find_Component_In_Layer(LEVEL_STATIC, TEXT("Layer_Inventory"), TEXT("GameObject_Inventory")));
 		Safe_AddRef(m_pInventory);
 
 		Safe_Release(pGameInstacne);

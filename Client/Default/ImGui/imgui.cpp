@@ -86,7 +86,7 @@ CODE
 // [SECTION] PLATFORM DEPENDENT HELPERS
 // [SECTION] METRICS/DEBUGGER WINDOW
 // [SECTION] DEBUG LOG WINDOW
-// [SECTION] OTHER DEBUG TOOLS (ITEM PICKER, STACK TOOL)
+// [SECTION] OTHER DEBUG TOOLS (TOOL PICKER, STACK TOOL)
 
 */
 
@@ -20237,7 +20237,7 @@ void ImGui::ShowDebugLogWindow(bool* p_open)
 }
 
 //-----------------------------------------------------------------------------
-// [SECTION] OTHER DEBUG TOOLS (ITEM PICKER, STACK TOOL)
+// [SECTION] OTHER DEBUG TOOLS (TOOL PICKER, STACK TOOL)
 //-----------------------------------------------------------------------------
 
 static const ImU32 DEBUG_LOCATE_ITEM_COLOR = IM_COL32(0, 255, 0, 255);  // Green
