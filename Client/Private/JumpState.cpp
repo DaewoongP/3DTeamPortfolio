@@ -45,7 +45,7 @@ void CJumpState::Late_Tick(_float fTimeDelta)
 void CJumpState::OnStateEnter(void* _pArg)
 {
 	m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_Jump_RF_anm"));
-
+	Change_Animation(TEXT("Hu_BM_Jump_RF_anm"));
 }
 
 void CJumpState::OnStateTick()
@@ -83,6 +83,7 @@ void CJumpState::Go_Idle()
 	if (false == *m_StateMachineDesc.pisDirectionPressed)
 	{
 		m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_Land_Soft_v2_anm"));
+		Change_Animation(TEXT("Hu_BM_Land_Soft_v2_anm"));
 		Set_StateMachine(TEXT("Idle"));
 	}
 	
@@ -97,9 +98,11 @@ void CJumpState::Go_Loop()
 		{
 		case CPlayer::MOVETYPE_JOGING:
 			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_Land_2Jog_RU_anm"));
+			Change_Animation(TEXT("Hu_BM_Land_2Jog_RU_anm"));
 			break;
 		case CPlayer::MOVETYPE_SPRINT:
 			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_Land_2Sprint_v2_anm"));
+			Change_Animation(TEXT("Hu_BM_Land_2Sprint_v2_anm"));
 			break;
 		}
 		Set_StateMachine(TEXT("Move Loop"));
@@ -114,10 +117,12 @@ void CJumpState::Go_HardLand()
 		if (false == *m_StateMachineDesc.pisDirectionPressed)
 		{
 			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_Land_Hard_v2_anm"));
+			Change_Animation(TEXT("Hu_BM_Land_Hard_v2_anm"));
 		}
 		else if (true == *m_StateMachineDesc.pisDirectionPressed)
 		{
 			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_Land_Hard_2Jog_v2_anm"));
+			Change_Animation(TEXT("Hu_BM_Land_Hard_2Jog_v2_anm"));
 		}
 		Set_StateMachine(TEXT("Hard Land"));
 	}

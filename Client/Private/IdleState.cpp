@@ -104,7 +104,7 @@ void CIdleState::Action_None_Tick()
 {
 	if (true == *m_StateMachineDesc.pisFinishAnimation)
 	{
-		m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Idle_anm"));
+		Change_Animation(TEXT("Hu_BM_RF_Idle_anm"));
 
 		*m_StateMachineDesc.pisFinishAnimation = false;
 	}
@@ -114,8 +114,7 @@ void CIdleState::Action_Casual_Tick()
 {
 	if (true == *m_StateMachineDesc.pisFinishAnimation)
 	{
-		m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Idle_Casual_anm"));
-
+		Change_Animation(TEXT("Hu_Cmbt_Idle_Casual_anm"));
 		*m_StateMachineDesc.pisFinishAnimation = false;
 	}
 }
@@ -124,8 +123,7 @@ void CIdleState::Action_Cmbt_Tick()
 {
 	if (true == *m_StateMachineDesc.pisFinishAnimation)
 	{
-		m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_RF_Idle_anm"));
-
+		Change_Animation(TEXT("Hu_Cmbt_RF_Idle_anm"));
 		*m_StateMachineDesc.pisFinishAnimation = false;
 	}
 }
@@ -153,11 +151,13 @@ void CIdleState::Go_Turn()
 		{
 			//180도를 실행
 			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Idle_Turn_Rht_135_anm"));
+			Change_Animation(TEXT("Hu_BM_RF_Idle_Turn_Rht_135_anm"));
 		}
 		else if (m_f45Angle < (*m_StateMachineDesc.pOwnerLookAngle))
 		{
 			//90도를 실행
 			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Idle_Turn_Rht_45_anm"));
+			Change_Animation(TEXT("Hu_BM_RF_Idle_Turn_Rht_45_anm"));
 		}
 
 		//음수 왼쪽
@@ -165,11 +165,13 @@ void CIdleState::Go_Turn()
 		{
 			//180도를 실행
 			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Idle_Turn_Lft_135_anm"));
+			Change_Animation(TEXT("Hu_BM_RF_Idle_Turn_Lft_135_anm"));
 		}
 		else if (-m_f45Angle > (*m_StateMachineDesc.pOwnerLookAngle))
 		{
 			//90도를 실행
 			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Idle_Turn_Lft_45_anm"));
+			Change_Animation(TEXT("Hu_BM_RF_Idle_Turn_Lft_45_anm"));
 		}
 
 		Set_StateMachine(TEXT("Move Turn"));
@@ -186,7 +188,7 @@ void CIdleState::Go_Start()
 		-m_f45Angle < fAngle)
 	{
 		m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Start_Fwd_anm"));
-
+		Change_Animation(TEXT("Hu_BM_RF_Jog_Start_Fwd_anm"));
 		Set_StateMachine(TEXT("Move Start"));
 	}
 }
@@ -203,11 +205,13 @@ void CIdleState::ActionType_Change()
 		case CPlayer::ACTION_CMBT:
 		{
 			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Idle_RF_2Cmbt_Idle_Casual_anm"));
+			Change_Animation(TEXT("Hu_Cmbt_Idle_RF_2Cmbt_Idle_Casual_anm"));
 		}
 		break;
 		case CPlayer::ACTION_CASUAL:
 		{
 			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Idle_Casual_2BM_Idle_RF_anm"));
+			Change_Animation(TEXT("Hu_Cmbt_Idle_Casual_2BM_Idle_RF_anm"));
 		}
 		break;
 		}

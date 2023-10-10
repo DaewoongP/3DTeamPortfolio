@@ -48,6 +48,7 @@ void CProtegoState::OnStateEnter(void* _pArg)
 	{
 		//시작 애니메이션
 		m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Protego_Start_anm"));
+		Change_Animation(TEXT("Hu_Cmbt_Protego_Start_anm"), false);
 	}
 	//시전중에 맞았다!! 
 	else
@@ -105,12 +106,14 @@ void CProtegoState::OnStateEnter(void* _pArg)
 			{
 				//애니메이션 실행
 				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Protego_Parry_Fwd_AOE_anm"));
+				Change_Animation(TEXT("Hu_Cmbt_Protego_Parry_Fwd_AOE_anm"), false);
 			}
 			break;
 			case HIT_HEABY:
 			{
 				//애니메이션 실행
 				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Protego_Parry_Fwd_AOE_Slide_anm"));
+				Change_Animation(TEXT("Hu_Cmbt_Protego_Parry_Fwd_AOE_Slide_anm"), false);
 			}
 			break;
 
@@ -119,6 +122,7 @@ void CProtegoState::OnStateEnter(void* _pArg)
 			}
 		}
 	}
+	*m_StateMachineDesc.pLumosOn = false;
 }
 
 void CProtegoState::OnStateTick()
@@ -130,6 +134,7 @@ void CProtegoState::OnStateTick()
 		*m_StateMachineDesc.pisFinishAnimation = false;
 
 		m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_Cmbt_Protego_Loop_anm"));
+		Change_Animation(TEXT("Hu_Cmbt_Protego_Loop_anm"), false);
 	}
 	else if (true == *m_StateMachineDesc.pisFinishAnimation)
 	{

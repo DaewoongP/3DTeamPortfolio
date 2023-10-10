@@ -206,6 +206,8 @@ private:
 
 	vector<SPELL> m_vecSpellCheck;
 
+	_bool m_isLumosOn = { false };
+
 private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources();

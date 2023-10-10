@@ -172,6 +172,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_iActionType = (_uint)ACTION_NONE;
 
 	m_pCustomModel->Change_Animation(TEXT("Hu_BM_RF_Idle_anm"));
+	m_pCustomModel->Change_Animation(TEXT("Hu_BM_RF_Idle_anm"), CModel::OTHERBODY);
 
 	m_vLevelInitPosition[LEVEL_CLIFFSIDE] = _float3(25.f, 3.f, 22.5f);
 	m_vLevelInitPosition[LEVEL_VAULT] = _float3(7.0f, 0.02f, 7.5f);
@@ -258,6 +259,7 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UNDERBODY);
+	m_pCustomModel->Play_Animation(fTimeDelta, CModel::OTHERBODY);
 
 
 	//루모스 업데이트
@@ -939,22 +941,19 @@ void CPlayer::Key_Input(_float fTimeDelta)
 {
 	BEGININSTANCE;
 
-	if (pGameInstance->Get_DIKeyState(DIK_J, CInput_Device::KEY_DOWN))
-	{
-		pGameInstance->Set_Camera(TEXT("Player_Camera"),2.0f);
-	}
+#pragma region 카메라 변경 테스트
+//	if (pGameInstance->Get_DIKeyState(DIK_J, CInput_Device::KEY_DOWN))
+//{
+//	pGameInstance->Set_Camera(TEXT("Player_Camera"),2.0f);
+//}
+//
+//
+//if (pGameInstance->Get_DIKeyState(DIK_L, CInput_Device::KEY_DOWN))
+//{
+//	pGameInstance->Set_Camera(TEXT("Other_Camera"), 2.0f);
+//}  
+#pragma endregion
 
-
-	if (pGameInstance->Get_DIKeyState(DIK_L, CInput_Device::KEY_DOWN))
-	{
-		pGameInstance->Set_Camera(TEXT("Other_Camera"), 2.0f);
-	}
-
-
-	if (pGameInstance->Get_DIKeyState(DIK_P, CInput_Device::KEY_DOWN))
-	{
-		m_pPlayer_Camera->Change_Animation(TEXT("Cam_Finisher_Lightning_01_anm"));
-	}
 
 #ifdef _DEBUG
 	//카메라 쉐이크 테스트
@@ -1076,26 +1075,7 @@ void CPlayer::Key_Input(_float fTimeDelta)
 					break;
 				}
 
-				switch (MagicCastingStateDesc.iSpecialAction)
-				{
-				case CMagicCastingState::SPECIAL_ACTION_AVADA_KEDAVRA:
-				{
-					m_pPlayer_Camera->Change_Animation(TEXT("Avada_Kedavra_Face"));
-				}
-				break;
-				case CMagicCastingState::SPECIAL_ACTION_IMPERIO:
-				{
-					m_pPlayer_Camera->Change_Animation(TEXT("Imperio_Down"));
-				}
-				break;
-				case CMagicCastingState::SPECIAL_ACTION_CRUCIO:
-				{
-					m_pPlayer_Camera->Change_Animation(TEXT("Crucio"));
-				}
-				break;
-				default:
-					break;
-				}
+				
 
 
 				
@@ -1109,12 +1089,12 @@ void CPlayer::Key_Input(_float fTimeDelta)
 
 
 
-		if (pGameInstance->Get_DIKeyState(DIK_F, CInput_Device::KEY_DOWN))
+		/*if (pGameInstance->Get_DIKeyState(DIK_F, CInput_Device::KEY_DOWN))
 		{
 			MagicCastingStateDesc.pFuncSpell = [&] {(*this).Lumos(); };
 
 			Go_MagicCast(&MagicCastingStateDesc);
-		}
+		}*/
 
 		MagicCastingStateDesc.iSpellType = CMagicCastingState::SPELL_FINISHER;
 
@@ -1138,6 +1118,19 @@ void CPlayer::Key_Input(_float fTimeDelta)
 		}
 	}
 #pragma endregion
+
+	//루모스
+	if (false == m_isLumosOn &&
+		pGameInstance->Get_DIKeyState(DIK_Z, CInput_Device::KEY_DOWN) && 
+		(m_pStateContext->Is_Current_State(TEXT("Idle")) ||
+			m_pStateContext->Is_Current_State(TEXT("Move Turn")) ||
+			m_pStateContext->Is_Current_State(TEXT("Move Start")) ||
+			m_pStateContext->Is_Current_State(TEXT("Jump")) ||
+			m_pStateContext->Is_Current_State(TEXT("Move Loop"))))
+	{
+		m_pCustomModel->Change_Animation(TEXT("Lumos_Start"),CModel::OTHERBODY);
+		m_isLumosOn = true;
+	}
 
 
 	if (pGameInstance->Get_DIKeyState(DIK_GRAVE, CInput_Device::KEY_DOWN))
@@ -1517,6 +1510,7 @@ HRESULT CPlayer::Ready_StateMachine()
 	m_StateMachineDesc.piMoveType = &m_iMoveType;
 	m_StateMachineDesc.pOwnerLookAngle = &m_fLookAngle;
 	m_StateMachineDesc.pfuncFinishAnimation = [&] { (*this).Finish_Animation(); };
+	m_StateMachineDesc.pLumosOn = &m_isLumosOn;
 
 	Safe_AddRef(m_StateMachineDesc.pOwnerModel);
 	Safe_AddRef(m_StateMachineDesc.pPlayerTransform);
@@ -2360,6 +2354,30 @@ void CPlayer::Go_MagicCast(void* _pArg)
 		m_pStateContext->Is_Current_State(TEXT("Move Loop")) ||
 		m_pStateContext->Is_Current_State(TEXT("Magic_Cast")))
 	{
+		if (nullptr != m_pTarget)
+		{
+			switch (static_cast<CMagicCastingState::MAGICCASTINGSTATEDESC*>(_pArg)->iSpecialAction)
+			{
+			case CMagicCastingState::SPECIAL_ACTION_AVADA_KEDAVRA:
+			{
+				m_pPlayer_Camera->Change_Animation(TEXT("Avada_Kedavra_Face"));
+			}
+			break;
+			case CMagicCastingState::SPECIAL_ACTION_IMPERIO:
+			{
+				m_pPlayer_Camera->Change_Animation(TEXT("Imperio_Down"));
+			}
+			break;
+			case CMagicCastingState::SPECIAL_ACTION_CRUCIO:
+			{
+				m_pPlayer_Camera->Change_Animation(TEXT("Crucio"));
+			}
+			break;
+			default:
+				break;
+			}
+		}
+
 		m_pStateContext->Set_StateMachine(TEXT("Magic_Cast"), _pArg);
 	}
 }

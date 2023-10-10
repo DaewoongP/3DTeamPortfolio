@@ -79,17 +79,27 @@ void CMoveLoopState::OnStateTick()
 		case CPlayer::MOVETYPE_JOGING:
 		{
 			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_Jog_Loop_Fwd_anm"));
+			Change_Animation(TEXT("Hu_BM_Jog_Loop_Fwd_anm"));
 		}
 		break;
 
 		case CPlayer::MOVETYPE_SPRINT:
 		{
 			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_Sprint_Loop_Fwd_anm"));
+			Change_Animation(TEXT("Hu_BM_Sprint_Loop_Fwd_anm"));
 		}
 		break;
 		}
 		*m_StateMachineDesc.pisFinishAnimation = false;
 	}
+
+	if (*m_StateMachineDesc.piMoveType == CPlayer::MOVETYPE_SPRINT)
+	{
+	wcout << m_StateMachineDesc.pOwnerModel->Get_Animation(CModel::OTHERBODY)->Get_AnimationName() << endl;
+
+	}
+
+
 
 	BEGININSTANCE;
 
@@ -140,11 +150,13 @@ void CMoveLoopState::Go_Idle()
 			case CPlayer::MOVETYPE_JOGING:
 			{
 				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_anm"));
+				Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_anm"));
 			}
 			break;
 			case CPlayer::MOVETYPE_SPRINT:
 			{
 				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Sprint_Stop_Fwd_anm"));
+				Change_Animation(TEXT("Hu_BM_RF_Sprint_Stop_Fwd_anm"));
 			}
 			break;
 			}
@@ -157,11 +169,13 @@ void CMoveLoopState::Go_Idle()
 			case CPlayer::MOVETYPE_JOGING:
 			{
 				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_anm"));
+				Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_anm"));
 			}
 			break;
 			case CPlayer::MOVETYPE_SPRINT:
 			{
 				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Sprint_Stop_Fwd_anm"));
+				Change_Animation(TEXT("Hu_BM_RF_Sprint_Stop_Fwd_anm"));
 			}
 			break;
 			}
@@ -174,11 +188,13 @@ void CMoveLoopState::Go_Idle()
 			case CPlayer::MOVETYPE_JOGING:
 			{
 				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_2Cmbt_anm"));
+				Change_Animation(TEXT("Hu_BM_RF_Jog_Stop_Fwd_2Cmbt_anm"));
 			}
 			break;
 			case CPlayer::MOVETYPE_SPRINT:
 			{
 				m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_RF_Sprint_Stop_Fwd_Cmbt_anm"));
+				Change_Animation(TEXT("Hu_BM_RF_Sprint_Stop_Fwd_Cmbt_anm"));
 			}
 			break;
 			}
@@ -206,6 +222,7 @@ void CMoveLoopState::Switch_MoveType()
 		case CPlayer::MOVETYPE_JOGING:
 		{
 			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_Jog2Sprint_RU_anm"));
+			Change_Animation(TEXT("Hu_BM_Jog2Sprint_RU_anm"));
 			
 			*m_StateMachineDesc.piMoveType = CPlayer::MOVETYPE_SPRINT;
 		}
@@ -214,6 +231,7 @@ void CMoveLoopState::Switch_MoveType()
 		case CPlayer::MOVETYPE_SPRINT:
 		{
 			m_StateMachineDesc.pOwnerModel->Change_Animation(TEXT("Hu_BM_Sprint2Jog_RU_anm"));
+			Change_Animation(TEXT("Hu_BM_Sprint2Jog_RU_anm"));
 			
 			*m_StateMachineDesc.piMoveType = CPlayer::MOVETYPE_JOGING;
 		}
