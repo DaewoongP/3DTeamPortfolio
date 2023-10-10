@@ -31,7 +31,7 @@ void CLevel_Logo::Tick(_float fTimeDelta)
 	// 스테이지 이동
 	if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))
 	{
-		if (FAILED(pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVELID::LEVEL_VAULT, false))))
+		if (FAILED(pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVELID::LEVEL_SANCTUM, false))))
 		{
 			MSG_BOX("Failed Open LEVEL_LOGO to LEVEL_MAIN");
 			Safe_Release(pGameInstance);

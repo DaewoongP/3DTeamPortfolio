@@ -40,6 +40,17 @@ HRESULT CEnergyBall::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
+	if (FAILED(Make_Magics()))
+		return E_FAIL;
+
+	/* Set Class Parameters */
+	ENERGYBALLINITDESC* pInitDesc = static_cast<ENERGYBALLINITDESC*>(pArg);
+	m_fActionProtegoTime = pInitDesc->fActionProtegoTime;
+	m_DeathFunction = pInitDesc->DeathFunction;
+
+	m_pTransform->Set_Position(pInitDesc->vPosition);
+	m_pTransform->Set_Scale(_float3(0.5f, 0.5f, 0.5f));
+
 	return S_OK;
 }
 
@@ -53,13 +64,40 @@ HRESULT CEnergyBall::Initialize_Level(_uint iCurrentLevelIndex)
 
 void CEnergyBall::Tick(_float fTimeDelta)
 {
+	if (false == m_isEnable)
+		return;
+
+	/* 테스트 코드 */
+	BEGININSTANCE;
+	if (pGameInstance->Get_DIKeyState(DIK_9))
+		m_isDead = true;
+	ENDINSTANCE;
+	/* =========== */
 	__super::Tick(fTimeDelta);
 
+	if (true == m_isFirst)
+	{
+		m_fTimeAcc += fTimeDelta;
+		if (m_fActionProtegoTime < m_fTimeAcc)
+		{
+			m_pMagicSlot->Action_Magic_Basic(1, this, nullptr, COL_MAGIC);
+			m_isFirst = false;
+		}
+	}
 
+	if (true == m_isDead)
+	{
+		_bool isFinishDeathFunction = m_DeathFunction(fTimeDelta);
+		if (true == isFinishDeathFunction)
+			m_isEnable = false;
+	}
 }
 
 void CEnergyBall::Late_Tick(_float fTimeDelta)
 {
+	if (false == m_isEnable)
+		return;
+
 	__super::Late_Tick(fTimeDelta);
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
@@ -117,9 +155,25 @@ HRESULT CEnergyBall::Render_Depth()
 	return S_OK;
 }
 
+void CEnergyBall::Reset(const ENERGYBALLINITDESC& tagResetDesc)
+{
+	m_isFirst = true;
+	m_isEnable = true;
+	m_isDead = false;
+	m_fTimeAcc = 0.f;
+	m_fActionProtegoTime = tagResetDesc.fActionProtegoTime;
+	m_pTransform->Set_Position(tagResetDesc.vPosition);
+	m_DeathFunction = tagResetDesc.DeathFunction;
+
+	Make_Magics();
+}
+
 void CEnergyBall::Set_Protego_Collision(CTransform* pTransform, CEnemy::ATTACKTYPE eType) const
 {
-
+	if (eType & CEnemy::ATTACK_BREAK || eType & CEnemy::ATTACK_SUPERBREAK)
+	{
+		m_isDead = true;
+	}
 }
 
 HRESULT CEnergyBall::Make_Magics()
@@ -135,7 +189,7 @@ HRESULT CEnergyBall::Make_Magics()
 		magicInitDesc.eMagicTag = PROTEGO;
 		magicInitDesc.fInitCoolTime = 0.f;
 		magicInitDesc.iDamage = 0;
-		magicInitDesc.fLifeTime = 60.f;
+		magicInitDesc.fLifeTime = 10.f;
 		m_pMagicSlot->Add_Magics(magicInitDesc);
 	}
 

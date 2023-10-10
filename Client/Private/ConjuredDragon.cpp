@@ -10,6 +10,7 @@
 #include "Sequence.h"
 #include "MagicBall.h"
 #include "RigidMove.h"
+#include "EnergyBall.h"
 #include "Check_Degree.h"
 #include "Check_Distance.h"
 #include "Sequence_Attack.h"
@@ -73,17 +74,15 @@ void CConjuredDragon::Tick(_float fTimeDelta)
 	if (pGameInstance->Get_DIKeyState(DIK_LCONTROL, CInput_Device::KEY_PRESSING))
 	{
 		if (pGameInstance->Get_DIKeyState(DIK_1, CInput_Device::KEY_DOWN))
-			m_isBreakInvincible = true;
-		if (pGameInstance->Get_DIKeyState(DIK_2, CInput_Device::KEY_DOWN))
-			m_isSpawnPhaseTwo = true;
-		if (pGameInstance->Get_DIKeyState(DIK_5, CInput_Device::KEY_DOWN))
 			m_isSpawn = true;
+		if (pGameInstance->Get_DIKeyState(DIK_5, CInput_Device::KEY_DOWN))
+			m_isBreakInvincible = true;
 	}
 	ENDINSTANCE;
 	/* ========================= */
 
 	if (true == m_isPhaseTwo &&
-		false == m_isSpawnPhaseTwo)
+		false == m_isSpawn)
 	{
 		_float3 vPosition = _float3(-17.f, -40.f, 220.f);
 		m_pTransform->Set_Position(vPosition);
@@ -96,6 +95,10 @@ void CConjuredDragon::Tick(_float fTimeDelta)
 	Update_Invincible(fTimeDelta);
 	Check_Air_Balance(fTimeDelta);
 	Check_Phase();
+	Spawn_EnergyBall(fTimeDelta);
+
+	if (nullptr != m_pEnergyBall)
+		m_pEnergyBall->Tick(fTimeDelta);
 
 	if (nullptr != m_pRootBehavior)
 		m_pRootBehavior->Tick(fTimeDelta);
@@ -106,11 +109,13 @@ void CConjuredDragon::Tick(_float fTimeDelta)
 
 void CConjuredDragon::Late_Tick(_float fTimeDelta)
 {
-	if (true == m_isPhaseTwo &&
-		false == m_isSpawnPhaseTwo)
+	if (false == m_isSpawn)
 		return;
 
 	CGameObject::Late_Tick(fTimeDelta);
+
+	if (nullptr != m_pEnergyBall)
+		m_pEnergyBall->Late_Tick(fTimeDelta);
 
 	if (nullptr != m_pRenderer)
 	{
@@ -231,6 +236,41 @@ void CConjuredDragon::Update_Invincible(const _float& fTimeDelta)
 	m_fInvincibleGauge = (m_fInvincibleGauge > 100.f) ? 100.f : m_fInvincibleGauge;
 }
 
+void CConjuredDragon::Spawn_EnergyBall(const _float& fTimeDelta)
+{
+	if (false == m_isPhaseOne || 
+		false == m_isInvincible || 
+		true == m_pEnergyBall->isEnable())
+		return;
+
+	m_fSpawnBallTimeAcc += fTimeDelta;
+	if (3.f > m_fSpawnBallTimeAcc)
+		return;
+
+	_float3 vPosition = m_pTransform->Get_Position();
+	_float3 vLook = m_pTransform->Get_Look();
+	_float3 vRight = m_pTransform->Get_Right();
+
+	vPosition += vLook * 20.f;
+	vPosition += vRight * GetRandomFloat(-20.f, 20.f);
+	vPosition.y += GetRandomFloat(-5.f, 5.f);
+
+	CEnergyBall::ENERGYBALLINITDESC InitDesc;
+	InitDesc.vPosition = vPosition;
+	InitDesc.fActionProtegoTime = 2.f;
+	InitDesc.DeathFunction = [&](const _float& fTimeDelta)->_bool { return this->Break_Invincible(fTimeDelta); };
+
+	m_pEnergyBall->Reset(InitDesc);
+	m_fSpawnBallTimeAcc = 0.f;
+}
+
+_bool CConjuredDragon::Break_Invincible(const _float& fTimeDelta)
+{
+	m_isBreakInvincible = true;
+
+	return true;
+}
+
 void CConjuredDragon::DeathBehavior(const _float& fTimeDelta)
 {
 	m_isDead = true;
@@ -302,8 +342,6 @@ HRESULT CConjuredDragon::Make_AI()
 			throw TEXT("Failed Add_Type isPhaseOne");
 		if (FAILED(m_pRootBehavior->Add_Type("isPhaseTwo", &m_isPhaseTwo)))
 			throw TEXT("Failed Add_Type isPhaseTwo");
-		if (FAILED(m_pRootBehavior->Add_Type("isSpawnPhaseTwo", &m_isSpawnPhaseTwo)))
-			throw TEXT("Failed Add_Type isSpawnPhaseTwo");
 
 		/* Make Child Behaviors */
 		CSelector* pSelector = nullptr;
@@ -438,23 +476,34 @@ HRESULT CConjuredDragon::Add_Components()
 
 HRESULT CConjuredDragon::Add_Components_Level(_uint iCurrentLevelIndex)
 {
+	BEGININSTANCE;
+
 	try
 	{
 		/* For.Com_Model */
 		if (FAILED(CComposite::Add_Component(iCurrentLevelIndex, TEXT("Prototype_Component_Model_ConjuredDragon"),
 			TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 			throw TEXT("Com_Model");
+
+		CEnergyBall::ENERGYBALLINITDESC EnergyBallInitDesc;
+		EnergyBallInitDesc.DeathFunction = [&](const _float& fTimeDelta)->_bool { return this->Break_Invincible(fTimeDelta); };
+		EnergyBallInitDesc.fActionProtegoTime = 2.f;
+		m_pEnergyBall = dynamic_cast<CEnergyBall*>(pGameInstance->Clone_Component(iCurrentLevelIndex, TEXT("Prototype_GameObject_EnergyBall"), &EnergyBallInitDesc));
+		if (nullptr == m_pEnergyBall)
+			throw TEXT("m_pEnergyBall is nullptr");
 	}
 	catch (const _tchar* pErrorTag)
 	{
 		wstring wstrErrorMSG = TEXT("[CConjuredDragon] Failed Add_Components_Level : \n");
 		wstrErrorMSG += pErrorTag;
 		MSG_BOX(wstrErrorMSG.c_str());
+		ENDINSTANCE;
 		__debugbreak();
 
 		return E_FAIL;
 	}
 
+	ENDINSTANCE;
 
 	return S_OK;
 }
@@ -609,16 +658,21 @@ HRESULT CConjuredDragon::Make_Next_Phase(_Inout_ CSequence* pSequence)
 			throw TEXT("Failed Create_Behavior pRigidMove");
 
 		/* Set Decorators */
+		pSequence->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_bool* pIsPhaseTwo = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("isPhaseTwo", pIsPhaseTwo)))
+					return false;
+
+				return false == *pIsPhaseTwo;
+			});
 		pAction_Enter_Next_Phase->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 			{
 				_bool* pIsPhaseOne = { nullptr };
-				_bool* pIsSpawnPhaseTwo = { nullptr };
 				if (FAILED(pBlackBoard->Get_Type("isPhaseOne", pIsPhaseOne)))
 					return false;
-				if (FAILED(pBlackBoard->Get_Type("isSpawnPhaseTwo", pIsSpawnPhaseTwo)))
-					return false;
 
-				return false == *pIsPhaseOne && false == *pIsSpawnPhaseTwo;
+				return false == *pIsPhaseOne;
 			});
 		pAction_Fly->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 			{
@@ -633,10 +687,14 @@ HRESULT CConjuredDragon::Make_Next_Phase(_Inout_ CSequence* pSequence)
 		pAction_Fly->Add_End_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 			{
 				_bool* pIsPhaseTwo = { nullptr };
+				_bool* pIsSpawn = { nullptr };
 				if (FAILED(pBlackBoard->Get_Type("isPhaseTwo", pIsPhaseTwo)))
+					return false;
+				if (FAILED(pBlackBoard->Get_Type("isSpawn", pIsSpawn)))
 					return false;
 
 				*pIsPhaseTwo = true;
+				*pIsSpawn = false;
 
 				return true;
 			});
@@ -696,16 +754,13 @@ HRESULT CConjuredDragon::Make_Start_Phase_Two(_Inout_ CSequence* pSequence)
 		pSequence->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 			{
 				_bool* pIsPhaseTwo = { nullptr };
-				_bool* pIsSpawnPhaseTwo = { nullptr };
 				CRigidBody* pRigidBody = { nullptr };
 				if (FAILED(pBlackBoard->Get_Type("isPhaseTwo", pIsPhaseTwo)))
-					return false;
-				if (FAILED(pBlackBoard->Get_Type("isSpawnPhaseTwo", pIsSpawnPhaseTwo)))
 					return false;
 				if (FAILED(pBlackBoard->Get_Type("pRigidBody", pRigidBody)))
 					return false;
 
-				if (true == *pIsPhaseTwo && true == *pIsSpawnPhaseTwo)
+				if (true == *pIsPhaseTwo)
 				{
 					pRigidBody->Set_Gravity(true);
 					pRigidBody->Set_CollisionFlag("Enemy_Body", COL_MAGIC | COL_STATIC);
@@ -1391,18 +1446,24 @@ HRESULT CConjuredDragon::Make_Air_Break_Invincible(_Inout_ CSequence* pSequence)
 		pSequence->Add_Success_Decorator([&](CBlackBoard* pBlackBoard)->_bool
 			{
 				_float* pInvincibleGauge = { nullptr };
-				_bool* pIsInvincible = { nullptr };
 				_bool* pIsBreakInvincible = { nullptr };
 				if (FAILED(pBlackBoard->Get_Type("fInvincibleGauge", pInvincibleGauge)))
-					return false;
-				if (FAILED(pBlackBoard->Get_Type("isInvincible", pIsInvincible)))
 					return false;
 				if (FAILED(pBlackBoard->Get_Type("isBreakInvincible", pIsBreakInvincible)))
 					return false;
 
 				*pInvincibleGauge = 0.f;
-				*pIsInvincible = false;
 				*pIsBreakInvincible = false;
+
+				return true;
+			});
+		pAction_Break_Invinclble->Add_Decorator([&](CBlackBoard* pBlackBoard)->_bool
+			{
+				_bool* pIsInvincible = { nullptr };
+				if (FAILED(pBlackBoard->Get_Type("isInvincible", pIsInvincible)))
+					return false;
+
+				*pIsInvincible = false;
 
 				return true;
 			});
@@ -1860,4 +1921,9 @@ CConjuredDragon* CConjuredDragon::Clone(void* pArg)
 void CConjuredDragon::Free()
 {
 	__super::Free();
+
+	if (true == m_isCloned)
+	{
+		Safe_Release(m_pEnergyBall);
+	}
 }

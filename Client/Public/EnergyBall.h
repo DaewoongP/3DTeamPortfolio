@@ -18,10 +18,23 @@ BEGIN(Client)
 
 class CEnergyBall final : public CGameObject
 {
+public:
+	typedef struct tagEnergyBallInitDesc
+	{
+		_float3 vPosition = _float3();
+		_float fActionProtegoTime = { 0.f }; // 프로테고 시전 시간(몇 초 뒤에 시전할 건지)
+		function<_bool(const _float&)> DeathFunction = { nullptr };
+	}ENERGYBALLINITDESC;
+
 private:
 	explicit CEnergyBall(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	explicit CEnergyBall(const CEnergyBall& rhs);
 	virtual ~CEnergyBall() = default;
+
+public:
+	_bool isEnable() const {
+		return m_isEnable;
+	}
 
 public:
 	virtual HRESULT Initialize_Prototype();
@@ -33,7 +46,15 @@ public:
 	virtual HRESULT Render_Depth() override;
 
 public:
+	void Reset(const ENERGYBALLINITDESC& tagResetDesc);
 	void Set_Protego_Collision(CTransform* pTransform, CEnemy::ATTACKTYPE eType) const;
+
+private:
+	_float m_fActionProtegoTime = { 0.f };
+	_float m_fTimeAcc = { 0.f };
+	_bool m_isFirst = { true };
+	_bool m_isEnable = { false };
+	function<_bool(const _float&)> m_DeathFunction;
 
 private:
 	CMagicSlot* m_pMagicSlot = { nullptr };

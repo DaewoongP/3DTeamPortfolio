@@ -49,7 +49,7 @@ protected:
 protected:
 	_float4x4			m_OffsetMatrix = {};
 	const _float4x4*	m_pHitMatrix = { nullptr };
-	_bool				m_isDead = { false };
+	mutable _bool		m_isDead = { false };
 
 public:
 	virtual CGameObject* Clone(void* pArg) PURE;

@@ -191,12 +191,7 @@ HRESULT CLevel_Sanctum::Ready_Layer_Monsters(const _tchar* pLayerTag)
 		ENDINSTANCE;
 		return E_FAIL;
 	}
-	if (FAILED(pGameInstance->Add_Component(LEVEL_SANCTUM, LEVEL_SANCTUM, TEXT("Prototype_GameObject_EnergyBall"), pLayerTag, TEXT("GameObject_EnergyBall"), &Matrix)))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_EnergyBall)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
+	
 	ENDINSTANCE;
 
 	return S_OK;
