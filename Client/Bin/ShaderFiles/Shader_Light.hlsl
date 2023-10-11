@@ -65,7 +65,6 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
     PS_OUT Out = (PS_OUT) 0;
 
     vector vNormalDesc = g_NormalTexture.Sample(PointSampler, In.vTexUV);
-
     vector vNormal = vector(vNormalDesc.xyz * 2.f - 1.f, 0.f);
 
     Out.vShade = g_vLightDiffuse * saturate(max(dot(normalize(g_vLightDir) * -1.f, vNormal), 0.f) + (g_vLightAmbient * g_vMtrlAmbient));
@@ -75,25 +74,21 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
     float fViewZ = vDepthDesc.y * g_fCamFar;
     vector vPosition;
 
-	/* 투영스페이스 상의 위치 */
     vPosition.x = In.vTexUV.x * 2.f - 1.f;
     vPosition.y = In.vTexUV.y * -2.f + 1.f;
     vPosition.z = vDepthDesc.x;
     vPosition.w = 1.f;
 
-	/* 뷰스페이스 상의 위치. */
     vPosition = vPosition * fViewZ;
     vector vLightDir = vPosition - g_vLightPos;
 
     vPosition = mul(vPosition, g_ProjMatrixInv);
-
-	/* 월드스페이스 상의 위치. */
     vPosition = mul(vPosition, g_ViewMatrixInv);
 
     vector vReflect = reflect(normalize(vLightDir), vNormal);
     vector vLook = vPosition - g_vCamPosition;
 
-    Out.vSpecular = (g_vLightSpecular) * (g_vMtrlSpecular) * pow(max(dot(normalize(vReflect) * -1.f, normalize(vLook)), 0.f), 10.f);
+    //Out.vSpecular = (g_vLightSpecular) * (g_vMtrlSpecular) * pow(max(dot(normalize(vReflect) * -1.f, normalize(vLook)), 0.f), 10.f);
     Out.vSpecular.a = 0.f;
     
     return Out;
