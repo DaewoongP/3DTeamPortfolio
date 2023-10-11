@@ -616,6 +616,9 @@
     <Filter Include="01. Levels\05. Sky">
       <UniqueIdentifier>{8daaa0f5-8eda-4c23-b5f9-f4ec1e89c6c1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\Cliff_Gate">
+      <UniqueIdentifier>{8c4fbf71-2b03-4298-81fe-afb775f60a81}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -1226,6 +1229,9 @@
     <ClInclude Include="..\Public\Level_Sky.h">
       <Filter>01. Levels\05. Sky</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Cliff_Gate.h">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Cliff_Gate</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1802,6 +1808,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Level_Sky.cpp">
       <Filter>01. Levels\05. Sky</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Cliff_Gate.cpp">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Cliff_Gate</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

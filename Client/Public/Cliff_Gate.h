@@ -1,4 +1,5 @@
 #pragma once
+
 #include "GameObject.h"
 #include "Client_Defines.h"
 
@@ -13,9 +14,8 @@ END
 BEGIN(Client)
 
 class CPlayer;
-class CPlayer_Information;
 
-class CTreasure_Chest final : public CGameObject
+class CCliff_Gate final : public CGameObject
 {
 public:
 	typedef struct tagMapObjectDesc
@@ -26,9 +26,9 @@ public:
 	}MAPOBJECTDESC;
 
 private:
-	explicit CTreasure_Chest(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	explicit CTreasure_Chest(const CTreasure_Chest& rhs);
-	virtual ~CTreasure_Chest() = default;
+	explicit CCliff_Gate(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	explicit CCliff_Gate(const CCliff_Gate& rhs);
+	virtual ~CCliff_Gate() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype();
@@ -36,6 +36,8 @@ public:
 	virtual HRESULT Initialize_Level(_uint iCurrentLevelIndex) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
+	virtual void OnCollisionEnter(COLLEVENTDESC CollisionEventDesc) override;
+	virtual void OnCollisionExit(COLLEVENTDESC CollisionEventDesc) override;
 	virtual HRESULT Render() override;
 	virtual HRESULT Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix) override;
 
@@ -46,16 +48,13 @@ private:
 	CRenderer* m_pRenderer = { nullptr };
 	CModel* m_pModel = { nullptr };
 
-	CPlayer* m_pPlayer = { nullptr }; // 플레이어 주소
-	CPlayer_Information* m_pPlayerInformation = { nullptr }; // 플레이어 인벤토리와 상호작용하기 위한 주소
-
 private:
 	// 절두체 컬링을 위해 Bounding Box를 생성 하기위한 최소, 최대 정점
 	_float3			m_vMinPoint, m_vMaxPoint, m_vCenterPoint;
 	_float			m_fRadius = { 0.f };
-	_float			m_fDist_From_Player = { 0.f }; // 상자와 플레이어와의 거리
 
-	_bool			m_isGetItem = { true }; // 아이템 획득 가능 여부
+	_bool			m_isCheckOnce = { true }; // 한번만 상호작용 가능
+	_bool			m_isCol_with_Player = { false }; // 플레이어와 충돌 여부
 
 private:
 	MAPOBJECTDESC	m_ObjectDesc;
@@ -67,7 +66,7 @@ private:
 	void	Check_MinMaxPoint(_float3 vPoint);
 
 public:
-	static CTreasure_Chest* Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);
+	static CCliff_Gate* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;
 };

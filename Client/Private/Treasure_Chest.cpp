@@ -60,6 +60,9 @@ HRESULT CTreasure_Chest::Initialize_Level(_uint iCurrentLevelIndex)
 	BEGININSTANCE;
 	m_pPlayer = static_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(iCurrentLevelIndex, TEXT("Layer_Player"), TEXT("GameObject_Player")));
 	m_pPlayerInformation = m_pPlayer->Get_Player_Information();
+
+	Safe_AddRef(m_pPlayer);
+	Safe_AddRef(m_pPlayerInformation);
 	ENDINSTANCE;
 
 	return S_OK;
@@ -288,6 +291,9 @@ CGameObject* CTreasure_Chest::Clone(void* pArg)
 void CTreasure_Chest::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_pPlayer);
+	Safe_Release(m_pPlayerInformation);
 
 	//Safe_Release(m_pRigidBody);
 	Safe_Release(m_pShadowShader);

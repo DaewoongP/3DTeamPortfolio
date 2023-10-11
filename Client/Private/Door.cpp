@@ -78,6 +78,7 @@ HRESULT CDoor::Initialize_Level(_uint iCurrentLevelIndex)
 	// 플레이어 찾기
 	BEGININSTANCE;
 	m_pPlayer = static_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(iCurrentLevelIndex, TEXT("Layer_Player"), TEXT("GameObject_Player")));
+	Safe_AddRef(m_pPlayer);
 	ENDINSTANCE;
 
 	return S_OK;
@@ -211,4 +212,6 @@ void CDoor::Free()
 	__super::Free();
 
 	//Safe_Release(m_pRigidBody);
+
+	Safe_Release(m_pPlayer);
 }

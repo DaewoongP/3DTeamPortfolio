@@ -173,7 +173,7 @@ HRESULT CLevel_Vault::Ready_Lights()
 {
 	BEGININSTANCE;
 
-	CLight::LIGHTDESC		LightDesc;
+	/*CLight::LIGHTDESC		LightDesc;
 	ZeroMemory(&LightDesc, sizeof LightDesc);
 
 	LightDesc.eType = CLight::TYPE_DIRECTIONAL;
@@ -184,7 +184,7 @@ HRESULT CLevel_Vault::Ready_Lights()
 	LightDesc.vAmbient = _float4(0.1f, 0.1f, 0.1f, 1.f);
 	LightDesc.vSpecular = BLACKDEFAULT;
 
-	pGameInstance->Add_Light(LightDesc);
+	pGameInstance->Add_Light(LightDesc);*/
 
 	// 라이트 매니저 문제로 이 부분을 지금 설정할 수 없다.
 	/*CLight::LIGHTDESC		LightDescHork;
