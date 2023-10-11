@@ -88,6 +88,7 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
     vector vReflect = reflect(normalize(vLightDir), vNormal);
     vector vLook = vPosition - g_vCamPosition;
 
+    // 방향성 광원 스펙큘러는 좀 과해서 처리안함.
     //Out.vSpecular = (g_vLightSpecular) * (g_vMtrlSpecular) * pow(max(dot(normalize(vReflect) * -1.f, normalize(vLook)), 0.f), 10.f);
     Out.vSpecular.a = 0.f;
     
