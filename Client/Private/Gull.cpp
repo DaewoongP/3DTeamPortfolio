@@ -35,7 +35,7 @@ HRESULT CGull::Initialize(void* pArg)
 
 	m_ObjectDesc = *reinterpret_cast<MAPOBJECTDESC*>(pArg);
 	m_pTransform->Set_WorldMatrix(m_ObjectDesc.WorldMatrix);
-
+	m_pTransform->Set_RigidBody(m_pRigidBody);
 	m_pTransform->Set_Speed(-7.5f);
 
 	if (FAILED(Add_Components()))
@@ -56,12 +56,37 @@ HRESULT CGull::Initialize_Level(_uint iCurrentLevelIndex)
 	}
 
 	m_GullAnimIndex = GULL_IDLE2;
-
 	m_pModel->Change_Animation((_uint)m_GullAnimIndex);
+
+	// 리지드 바디 초기화
+	CRigidBody::RIGIDBODYDESC RigidBodyDesc;
+	RigidBodyDesc.isStatic = false;
+	RigidBodyDesc.isTrigger = true;
+	RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
+	RigidBodyDesc.eConstraintFlag = CRigidBody::All;
+	RigidBodyDesc.fStaticFriction = 1.f;
+	RigidBodyDesc.fDynamicFriction = 1.f;
+	RigidBodyDesc.fRestitution = 0.f;
+	PxSphereGeometry MyGeometry = PxSphereGeometry(3.f);
+	RigidBodyDesc.pGeometry = &MyGeometry;
+	RigidBodyDesc.pOwnerObject = this;
+	RigidBodyDesc.vDebugColor = _float4(0.f, 1.f, 0.f, 1.f);
+	RigidBodyDesc.eThisCollsion = COL_STATIC;
+	RigidBodyDesc.eCollisionFlag = COL_PLAYER;
+	strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Gull");
+
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
+		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
+	{
+		MSG_BOX("Failed CDoor Add_Component : (Com_RigidBody)");
+		__debugbreak();
+		return E_FAIL;
+	}
 
 	// 플레이어 찾기
 	BEGININSTANCE;
 	m_pPlayer = static_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(iCurrentLevelIndex, TEXT("Layer_Player"), TEXT("GameObject_Player")));
+	Safe_AddRef(m_pPlayer);
 	ENDINSTANCE;
 
 	return S_OK;
@@ -102,9 +127,33 @@ void CGull::Late_Tick(_float fTimeDelta)
 	{
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DEPTH, this);
+
+#ifdef _DEBUG
+		m_pRenderer->Add_DebugGroup(m_pRigidBody);
+#endif // _DEBUG
 	}
 
 	ENDINSTANCE;
+}
+
+void CGull::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
+{
+	wstring wsCollisionTag = CollisionEventDesc.pOtherCollisionTag;
+	wstring wsPlayer(TEXT("Player_Default"));
+
+	// 플레이어와 충돌했다면 채집 활성화
+	if (0 == lstrcmp(wsCollisionTag.c_str(), wsPlayer.c_str()))
+		m_isCol_with_Player = true;
+}
+
+void CGull::OnCollisionExit(COLLEVENTDESC CollisionEventDesc)
+{
+	wstring wsCollisionTag = CollisionEventDesc.pOtherCollisionTag;
+	wstring wsPlayer(TEXT("Player_Default"));
+
+	// 플레이어와 충돌이 끝났다면 채집 비활성화
+	if (0 == lstrcmp(wsCollisionTag.c_str(), wsPlayer.c_str()))
+		m_isCol_with_Player = false;
 }
 
 HRESULT CGull::Render()
@@ -254,13 +303,13 @@ void CGull::Check_Dist_From_Player(_float fTimeDelta)
 
 	// 거리에 따른 애니메이션 처리
 	// 일정 거리로 다가오면 경계
-	if (5.f >= m_fDist_From_Player && 4.f < m_fDist_From_Player)
+	if (5.f >= m_fDist_From_Player && false == m_isCol_with_Player)
 	{
 		m_GullAnimIndex = GULL_ALERT;
 	}
 
 	// 경계에서 더 다가오면 날아감
-	else if (4.f >= m_fDist_From_Player)
+	else if (5.f >= m_fDist_From_Player && true == m_isCol_with_Player)
 	{
 		m_GullAnimIndex = GULL_START_FLY;
 	}
@@ -301,6 +350,9 @@ void CGull::Free()
 {
 	__super::Free();
 
+	Safe_Release(m_pPlayer);
+
+	Safe_Release(m_pRigidBody);
 	Safe_Release(m_pShadowShader);
 	Safe_Release(m_pShader);
 	Safe_Release(m_pModel);
