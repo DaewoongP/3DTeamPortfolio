@@ -435,10 +435,19 @@ HRESULT CModel::Separate_Animation(_int iFromIndex, _int iToIndex, ANIMTYPE eTyp
 	}
 
 	//�ִϸ��̼��� �������ݴϴ�.
-	m_tAnimationDesc[m_iAnimationPartCount].iNumAnimations = m_Model.iNumAnimations;
-	for (_uint i = 0; i < m_Model.iNumAnimations; ++i)
+	
+	m_tAnimationDesc[m_iAnimationPartCount].iNumAnimations = (!m_isCreatedByGCM)? (m_Model.iNumAnimations):(*m_ModelGCM.iNumAnimations);
+	for (_uint i = 0; i < m_tAnimationDesc[m_iAnimationPartCount].iNumAnimations; ++i)
 	{
-		CAnimation* pAnimation = CAnimation::Create(m_AnimationDatas[i], m_Bones);
+		CAnimation* pAnimation = nullptr;
+		if (m_isCreatedByGCM)
+		{
+			pAnimation = CAnimation::Create(m_AnimationDatasGCM[0][i], m_Bones);
+		}
+		else 
+		{
+			pAnimation = CAnimation::Create(m_AnimationDatas[i], m_Bones);
+		}
 		if (nullptr == pAnimation)
 			return E_FAIL;
 

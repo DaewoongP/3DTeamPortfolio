@@ -303,7 +303,7 @@ void CMagicBall::Ready_CastMagic()
 	{
 		m_TrailVec[EFFECT_STATE_MAIN].data()[i]->Enable(m_CurrentWeaponMatrix.Translation());
 	}
-	for (int i = 0; i < m_ParticleVec[EFFECT_STATE_WAND].size(); i++)
+	for (int i = 0; i < m_ParticleVec[EFFECT_STATE_MAIN].size(); i++)
 	{
 		m_ParticleVec[EFFECT_STATE_MAIN].data()[i]->Enable(m_CurrentWeaponMatrix.Translation());
 		m_ParticleVec[EFFECT_STATE_MAIN].data()[i]->Play(m_CurrentWeaponMatrix.Translation());

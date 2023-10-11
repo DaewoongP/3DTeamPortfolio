@@ -206,7 +206,7 @@ private:
 	vector<SPELL> m_vecSpellCheck;
 	
 
-
+	_bool m_isFlying = { false };
 	_bool m_isLumosOn = { false };
 
 private:
