@@ -421,6 +421,9 @@
     <Filter Include="01. Utility\03. Components\22. Phase">
       <UniqueIdentifier>{dd250ae5-d2dd-4f3c-8a80-17dda9e0eb77}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\03. Components\02. Renderer\RadialBlur">
+      <UniqueIdentifier>{3af40292-80ae-4d8f-bd9d-5e9f97569558}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -846,6 +849,9 @@
     <ClInclude Include="..\public\Phase.h">
       <Filter>01. Utility\03. Components\22. Phase</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\RadialBlur.h">
+      <Filter>01. Utility\03. Components\02. Renderer\RadialBlur</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -1238,6 +1244,9 @@
     <ClCompile Include="..\private\Phase.cpp">
       <Filter>01. Utility\03. Components\22. Phase</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\RadialBlur.cpp">
+      <Filter>01. Utility\03. Components\02. Renderer\RadialBlur</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Navigation.hlsl">
@@ -1316,7 +1325,7 @@
       <Filter>01. Utility\03. Components\02. Renderer\Shader</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_RadialBlur.hlsl">
-      <Filter>01. Utility\03. Components\02. Renderer\Shader</Filter>
+      <Filter>01. Utility\03. Components\02. Renderer\RadialBlur</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

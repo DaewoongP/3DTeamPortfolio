@@ -358,6 +358,7 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 
 #pragma region Player_Information
 
+
 		/* For.Prototype_Component_Player_Health */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Player_Health"),
 			CHealth::Create(m_pDevice, m_pContext))))
@@ -367,8 +368,6 @@ HRESULT CMain3_Loader::Loading_For_Static(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Player_Information"),
 			CPlayer_Information::Create(m_pDevice, m_pContext))))
 			throw TEXT("Prototype_Component_Player_Information");
-
-
 
 #pragma endregion
 

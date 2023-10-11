@@ -179,8 +179,9 @@ HRESULT CLevel_Smith::Ready_Lights()
 	ZeroMemory(&LightDesc, sizeof LightDesc);
 
 	LightDesc.eType = CLight::TYPE_DIRECTIONAL;
-	LightDesc.vPos = _float4(10.f, 100.f, 25.f, 1.f);
-	LightDesc.vDir = _float4(0.33f, -0.99f, 0.33f, 0.f);
+	LightDesc.vPos = _float4(45.f, 54.7f, 112.5f, 1.f);
+	LightDesc.vLookAt = _float4(82.8f, 0.f, 80.9f, 1.f);
+	LightDesc.vDir = LightDesc.vLookAt - LightDesc.vPos;
 
 	LightDesc.vDiffuse = WHITEDEFAULT;
 	LightDesc.vAmbient = WHITEDEFAULT;

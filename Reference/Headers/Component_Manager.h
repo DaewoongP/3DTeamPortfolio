@@ -36,6 +36,7 @@
 #include "MeshEffect.h"
 #include "Navigation.h"
 #include "MeshEffect.h"
+#include "RadialBlur.h"
 #include "BlackBoard.h"
 #include "CustomModel.h"
 #include "RandomChoose.h"

@@ -3,14 +3,15 @@ matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix g_ViewMatrixInv, g_ProjMatrixInv;
 
 texture2D g_NormalTexture;
-texture2D g_DiffuseTexture;
 texture2D g_DepthTexture;
 
-vector g_vLightDir;
-vector g_vLightPos;
 vector g_vCamPosition;
 float g_fCamFar;
+
+vector g_vLightPos;
 float g_fLightRange;
+
+vector g_vLightDir;
 float g_fSpotPower;
 
 vector g_vLightDiffuse;
@@ -94,14 +95,14 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 
     Out.vSpecular = (g_vLightSpecular) * (g_vMtrlSpecular) * pow(max(dot(normalize(vReflect) * -1.f, normalize(vLook)), 0.f), 10.f);
     Out.vSpecular.a = 0.f;
+    
     return Out;
 }
 
 PS_OUT PS_MAIN_POINT(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
-    vector vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
-    
+
     vector vNormalDesc = g_NormalTexture.Sample(PointSampler, In.vTexUV);
     vector vNormal = vector(vNormalDesc.xyz * 2.f - 1.f, 0.f);
 
@@ -136,15 +137,15 @@ PS_OUT PS_MAIN_POINT(PS_IN In)
     vector vLook = vPosition - g_vCamPosition;
 
     Out.vSpecular = (g_vLightSpecular) * (g_vMtrlSpecular) * pow(max(dot(normalize(vReflect) * -1.f, normalize(vLook)), 0.f), 20.f) * fAtt;
-
+    Out.vSpecular.a = 0.f;
+    
     return Out;
 }
 
 PS_OUT PS_MAIN_SPOTLIGHT(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
-    vector vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
-    
+
     vector vNormalDesc = g_NormalTexture.Sample(PointSampler, In.vTexUV);
     vector vNormal = vector(vNormalDesc.xyz * 2.f - 1.f, 0.f);
 
