@@ -30,14 +30,16 @@ HRESULT CLevel_Manager::Open_Level(_uint iLevelIndex, CLevel* pNewLevel)
 		pGameInstance->Clear_LevelResources(m_iLevelIndex);
 	}
 
-	Safe_Release(pGameInstance);
-
 	// 현재레벨과 다음레벨 교체
 	Safe_Release(m_pCurrentLevel);
 
 	m_pCurrentLevel = pNewLevel;
 
 	m_iLevelIndex = iLevelIndex;
+
+	pGameInstance->Initialize_Level(m_iLevelIndex);
+
+	Safe_Release(pGameInstance);
 
 	return S_OK;
 }

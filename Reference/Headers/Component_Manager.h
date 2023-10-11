@@ -101,6 +101,7 @@ public:
 	void	Late_Tick(_float fTimeDelta);
 
 public:
+	HRESULT				Initialize_Level(_uint iCurrentLevelIndex);
 	HRESULT				Reserve_Containers(_uint iNumLevels);
 	// 프로토타입 생성
 	HRESULT				Add_Prototype(_uint iLevelIndex, const _tchar* pPrototypeTag, class CComponent* pPrototype, _bool isFailedSkip = false);

@@ -89,15 +89,21 @@ HRESULT CLight_Manager::Return_Light(CLight* pLight)
 {
 	Safe_Release(pLight);
 
+	if (nullptr == pLight)
+		return S_OK;
+
 	auto iter = find_if(m_Lights.begin(), m_Lights.end(), [&](auto value) {
 		if (value == pLight)
 			return true;
 		return false;
 		});
 
-	m_Lights.erase(iter);
+	if (m_Lights.end() != iter)
+	{
+		m_Lights.erase(iter);
 
-	m_LightPool.push(pLight);
+		m_LightPool.push(pLight);
+	}
 
 	return S_OK;
 }

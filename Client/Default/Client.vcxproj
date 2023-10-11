@@ -176,6 +176,7 @@
     <ClInclude Include="..\Public\Door.h" />
     <ClInclude Include="..\Public\Gull.h" />
     <ClInclude Include="..\Public\Level_Sky.h" />
+    <ClInclude Include="..\public\Level_Static.h" />
     <ClInclude Include="..\public\Mongrel_Fur_Item.h" />
     <ClInclude Include="..\Public\EnergyBall.h" />
     <ClInclude Include="..\Public\Level_Sanctum.h" />
@@ -185,7 +186,6 @@
     <ClInclude Include="..\public\Dittany_Leaves_Item.h" />
     <ClInclude Include="..\public\Dugbog_Tongue_Item.h" />
     <ClInclude Include="..\public\EdurusPotion_Item.h" />
-    <ClInclude Include="..\public\FlowMap.h" />
     <ClInclude Include="..\public\Fluxweed_Stem_Item.h" />
     <ClInclude Include="..\public\FocusPotion_Item.h" />
     <ClInclude Include="..\public\Horklump_Juice_Item.h" />
@@ -403,6 +403,7 @@
     <ClCompile Include="..\Private\Door.cpp" />
     <ClCompile Include="..\Private\Gull.cpp" />
     <ClCompile Include="..\Private\Level_Sky.cpp" />
+    <ClCompile Include="..\private\Level_Static.cpp" />
     <ClCompile Include="..\private\Mongrel_Fur_Item.cpp" />
     <ClCompile Include="..\Private\EnergyBall.cpp" />
     <ClCompile Include="..\Private\Level_Sanctum.cpp" />
@@ -412,7 +413,6 @@
     <ClCompile Include="..\private\Dittany_Leaves_Item.cpp" />
     <ClCompile Include="..\private\Dugbog_Tongue_Item.cpp" />
     <ClCompile Include="..\private\EdurusPotion_Item.cpp" />
-    <ClCompile Include="..\private\FlowMap.cpp" />
     <ClCompile Include="..\private\Fluxweed_Stem_Item.cpp" />
     <ClCompile Include="..\private\FocusPotion_Item.cpp" />
     <ClCompile Include="..\private\Horklump_Juice_Item.cpp" />
@@ -625,7 +625,6 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Debug.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_FlowMap.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Protego.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_ShadowAnimMesh.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_ShadowMesh.hlsl" />

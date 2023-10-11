@@ -21,13 +21,6 @@ HRESULT CLevel_Smith::Initialize()
 		return E_FAIL;
 	}
 
-	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
-	{
-		MSG_BOX("Failed to Ready_Layer_Player in Level_Smith");
-
-		return E_FAIL;
-	}
-
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 	{
 		MSG_BOX("Failed to Ready_Layer_BackGround in Level_Smith");

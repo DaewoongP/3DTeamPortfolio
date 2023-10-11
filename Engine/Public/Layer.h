@@ -18,8 +18,9 @@ private:
 	virtual ~CLayer() = default;
 
 public:
-	HRESULT		Add_Component(const _tchar* pComponentTag, class CComponent* pComponent);
-	unordered_map<const _tchar*, class CComponent*>* Get_Components() { return &m_Components; }
+	HRESULT			Initialize_Level(_uint iCurrentLevelIndex);
+	HRESULT			Add_Component(const _tchar* pComponentTag, class CComponent* pComponent);
+	_umap<const _tchar*, class CComponent*>* Get_Components() { return &m_Components; }
 	// 레이어 클리어
 	HRESULT			Clear_Layer();
 	HRESULT			Delete_Component(const _tchar* pComponentTag);

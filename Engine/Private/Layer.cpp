@@ -5,6 +5,14 @@ CLayer::CLayer()
 {
 }
 
+HRESULT CLayer::Initialize_Level(_uint iCurrentLevelIndex)
+{
+	for (auto& pComponent : m_Components)
+		pComponent.second->Initialize_Level(iCurrentLevelIndex);
+
+	return S_OK;
+}
+
 HRESULT CLayer::Add_Component(const _tchar* pComponentTag, CComponent* pComponent)
 {
 	NULL_CHECK_RETURN(pComponent, E_FAIL);

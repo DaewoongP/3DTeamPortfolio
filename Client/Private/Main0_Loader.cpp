@@ -40,7 +40,6 @@
 #include "ParticleSystem.h"
 #include "ParticleSystemPool.h"
 #include "Trail.h"
-#include "FlowMap.h"
 #include "MeshEffect.h"
 #include "Wingardium_Effect.h"
 #include "EnergyBall.h"
@@ -208,10 +207,6 @@ HRESULT CMain0_Loader::Loading_For_Cliffside(LEVELID eLevelID)
 		return E_FAIL;
 	try /* Failed Check Add_Prototype*/
 	{
-		/* For.Prototype_GameObject_FlowMap */
-		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_FlowMap"),
-			CFlowMap::Create(m_pDevice, m_pContext))))
-			throw TEXT("Prototype_GameObject_FlowMap");
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -437,11 +432,6 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_VtxAnimMesh"),
 			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxAnimMesh.hlsl"), VTXANIMMESH_DECL::Elements, VTXANIMMESH_DECL::iNumElements))))
 			throw TEXT("Prototype_Component_Shader_VtxAnimMesh");
-
-		/* Prototype_Component_Shader_FlowMap */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_FlowMap"),
-			CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_FlowMap.hlsl"), VTXPOSTEX_DECL::Elements, VTXPOSTEX_DECL::iNumElements))))
-			throw TEXT("Prototype_Component_Shader_FlowMap");
 
 		/* For.Prototype_Component_Shader_VtxMesh */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_Component_Shader_VtxMesh"),

@@ -23,13 +23,6 @@ HRESULT CLevel_Vault::Initialize()
 		return E_FAIL;
 	}
 
-	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
-	{
-		MSG_BOX("Failed Ready_Layer_Player");
-
-		return E_FAIL;
-	}
-
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 	{
 		MSG_BOX("Failed Layer_BackGround");

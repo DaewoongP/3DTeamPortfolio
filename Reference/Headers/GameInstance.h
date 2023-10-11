@@ -80,6 +80,7 @@ public: /* For.Level_Manager */
 	HRESULT Add_Scene(const _tchar * pSceneTag, const _tchar * pLayerTag);
 
 public: /* For.Component_Manager*/
+	HRESULT	Initialize_Level(_uint iCurrentLevelIndex);
 	class CComponent* Find_Prototype(_uint iLevelIndex, const _tchar * pPrototypeTag);
 	HRESULT Add_Prototype(_uint iLevelIndex, const _tchar * pPrototypeTag, class CComponent* pPrototype, _bool isFailedSkip = false);
 	HRESULT Add_Component(_uint iPrototypeLevelIndex, _uint iLevelIndex, const _tchar * pPrototypeTag, const _tchar * pLayerTag, const _tchar * pComponentTag, void* pArg = nullptr);

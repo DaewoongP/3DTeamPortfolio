@@ -15,6 +15,14 @@ CComposite::CComposite(const CComposite& rhs)
 		Safe_AddRef(Pair.second);
 }
 
+HRESULT CComposite::Initialize_Level(_uint iCurrentLevelIndex)
+{
+	for (auto& Pair : m_Components)
+		Pair.second->Initialize_Level(iCurrentLevelIndex);
+
+	return S_OK;
+}
+
 void CComposite::Tick(_float fTimeDelta)
 {
 	for (auto& Pair : m_Components)

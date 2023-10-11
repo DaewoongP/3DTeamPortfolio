@@ -10,6 +10,19 @@ CComponent_Manager::CComponent_Manager()
 {
 }
 
+HRESULT CComponent_Manager::Initialize_Level(_uint iCurrentLevelIndex)
+{
+	for (_uint i = 0; i < m_iNumLevels; ++i)
+	{
+		for (auto& Pair : m_pLayers[i])
+		{
+			Pair.second->Initialize_Level(iCurrentLevelIndex);
+		}
+	}
+
+	return S_OK;
+}
+
 HRESULT CComponent_Manager::Reserve_Containers(_uint iNumLevels)
 {
 	if (nullptr != m_pPrototypes)
@@ -74,8 +87,6 @@ HRESULT CComponent_Manager::Add_Component(_uint iPrototypeLevelIndex, _uint iLev
 	CLayer* pLayer = Find_Layer(iLevelIndex, pLayerTag);
 
 	pComponent->Set_Tag(pComponentTag);
-
-	FAILED_CHECK_RETURN(pComponent->Initialize_Level(iLevelIndex), E_FAIL);
 
 	if (nullptr == pLayer)
 	{
@@ -155,12 +166,6 @@ CComponent* CComponent_Manager::Clone_Component(_uint iLevelIndex, const _tchar*
 		return nullptr;
 	}
 
-	if (FAILED(pComponent->Initialize_Level(iLevelIndex)))
-	{
-		Safe_Release(pComponent);
-		return nullptr;
-	}
-		
 	return pComponent;
 }
 
