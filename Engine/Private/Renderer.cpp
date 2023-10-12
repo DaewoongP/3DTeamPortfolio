@@ -179,6 +179,8 @@ HRESULT CRenderer::Initialize_Prototype()
 
 	m_fGlowPower = 3.f;
 	m_fHDR = 0.7f;
+	m_isDebugRender = false;
+	m_isMRTRender = false;
 
 	return S_OK;
 }

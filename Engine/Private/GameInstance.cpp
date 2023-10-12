@@ -292,6 +292,13 @@ HRESULT CGameInstance::Add_Scene(const _tchar* pSceneTag, const _tchar* pLayerTa
 	return m_pLevel_Manager->Add_Scene(pSceneTag, pLayerTag);
 }
 
+list<const _tchar*> CGameInstance::Get_CurrentSceneLayers(const _tchar* pSceneTag)
+{
+	NULL_CHECK_RETURN_MSG(m_pLevel_Manager, list<const _tchar*>(), TEXT("Level_Manager NULL"));
+
+	return m_pLevel_Manager->Get_CurrentSceneLayers(pSceneTag);
+}
+
 HRESULT CGameInstance::Initialize_Level(_uint iCurrentLevelIndex)
 {
 	NULL_CHECK_RETURN_MSG(m_pComponent_Manager, E_FAIL, TEXT("Component_Manager NULL"));

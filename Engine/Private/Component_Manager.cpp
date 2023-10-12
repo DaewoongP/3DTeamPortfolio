@@ -313,7 +313,7 @@ void CComponent_Manager::Update_CurrentScene()
 	CLevel_Manager* pLevel_Manager = CLevel_Manager::GetInstance();
 	Safe_AddRef(pLevel_Manager);
 
-	list<const _tchar*> SceneLayers = pLevel_Manager->Get_Layers(m_szCurrentSceneTag);
+	list<const _tchar*> SceneLayers = pLevel_Manager->Get_CurrentSceneLayers(m_szCurrentSceneTag);
 
 	Safe_Release(pLevel_Manager);
 
@@ -333,7 +333,7 @@ void CComponent_Manager::Update_CurrentScene()
 		}
 	}
 
-	lstrcpy(m_szCurrentSceneTag, TEXT(""));
+	//lstrcpy(m_szCurrentSceneTag, TEXT(""));
 	m_isSimulation = false;
 	m_isChanged = false;
 }

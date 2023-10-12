@@ -78,6 +78,7 @@ public: /* For.Level_Manager */
 	_uint Get_CurrentLevelIndex() const;
 	HRESULT Render_Level();
 	HRESULT Add_Scene(const _tchar * pSceneTag, const _tchar * pLayerTag);
+	list<const _tchar*> Get_CurrentSceneLayers(const _tchar * pSceneTag);
 
 public: /* For.Component_Manager*/
 	HRESULT	Initialize_Level(_uint iCurrentLevelIndex);

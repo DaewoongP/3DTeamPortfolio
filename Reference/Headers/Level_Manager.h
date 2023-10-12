@@ -22,7 +22,7 @@ private:
 public:
 	class CLevel* Get_CurrentLevel() { return m_pCurrentLevel; }
 	_uint Get_CurrentLevelIndex() const { return m_iLevelIndex; }
-	list<const _tchar*> Get_Layers(const _tchar* pSceneTag);
+	list<const _tchar*> Get_CurrentSceneLayers(const _tchar* pSceneTag);
 	
 public:
 	HRESULT Open_Level(_uint iLevelIndex, class CLevel* pNewLevel);

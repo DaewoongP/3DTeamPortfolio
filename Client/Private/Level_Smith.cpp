@@ -24,17 +24,18 @@ HRESULT CLevel_Smith::Initialize()
 
 void CLevel_Smith::Tick(_float fTimeDelta)
 {
-	__super::Tick(fTimeDelta);
-
 	BEGININSTANCE;
 
-	if (pGameInstance->Get_DIKeyState(DIK_T, CInput_Device::KEY_DOWN))
+	if (pGameInstance->Get_DIKeyState(DIK_ESCAPE, CInput_Device::KEY_DOWN))
 	{
-		pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
-	}
-	if (pGameInstance->Get_DIKeyState(DIK_Y, CInput_Device::KEY_DOWN))
-	{
-		pGameInstance->Set_CurrentScene(TEXT("Scene_FieldGuide"), false);
+		if (!lstrcmp(TEXT("Scene_Main"), pGameInstance->Get_CurrentSceneTag()))
+		{
+			pGameInstance->Set_CurrentScene(TEXT("Scene_FieldGuide"), false);
+		}
+		else
+		{
+			pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
+		}
 	}
 
 	ENDINSTANCE;

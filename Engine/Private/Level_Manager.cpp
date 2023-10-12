@@ -9,7 +9,7 @@ CLevel_Manager::CLevel_Manager()
 {
 }
 
-list<const _tchar*> CLevel_Manager::Get_Layers(const _tchar* pSceneTag)
+list<const _tchar*> CLevel_Manager::Get_CurrentSceneLayers(const _tchar* pSceneTag)
 {
 	auto iter = find_if(m_Scenes.begin(), m_Scenes.end(), CTag_Finder(pSceneTag));
 	if (iter == m_Scenes.end())
