@@ -276,8 +276,6 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	Update_Cloth(fTimeDelta);
 
-	m_UI_Group_SkillTap->Set_isOpen(false);
-
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::UNDERBODY);
 	m_pCustomModel->Play_Animation(fTimeDelta, CModel::OTHERBODY);
@@ -1193,6 +1191,13 @@ void CPlayer::Key_Input(_float fTimeDelta)
 			m_isFixMouse = false;
 		else
 			m_isFixMouse = true;
+	}
+
+	//½ºÅ³ÅÇ
+	if (pGameInstance->Get_DIKeyState(DIK_T, CInput_Device::KEY_DOWN))
+	{
+		m_isOpenSkillTap = !m_isOpenSkillTap;
+		m_UI_Group_SkillTap->Set_isOpen(m_isOpenSkillTap);
 	}
 
 	/*if (pGameInstance->Get_DIKeyState(DIK_SPACE, CInput_Device::KEY_DOWN))

@@ -100,7 +100,7 @@ HRESULT CLevel_Cliffside::Ready_Layer_Monster(const _tchar* pLayerTag)
 	{
 		MSG_BOX("Failed Add_GameObject : (GameObject_Golem_Combat)");
 		ENDINSTANCE;
-		return E_FAIL; 
+		return E_FAIL;
 	}
 	/*Matrix = XMMatrixTranslation(40.f, 10.f, 65.f);
 	if (FAILED(pGameInstance->Add_Component(LEVEL_CLIFFSIDE, LEVEL_CLIFFSIDE, TEXT("Prototype_GameObject_Dugbog"), pLayerTag, TEXT("GameObject_Dugbog"), &Matrix)))

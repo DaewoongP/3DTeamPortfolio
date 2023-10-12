@@ -19,6 +19,8 @@
 #include "Sequence_Levitate.h"
 #include "Sequence_MoveTarget.h"
 
+#include "UI_Damage.h"
+
 CGolem_Combat::CGolem_Combat(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CEnemy(pDevice, pContext)
 {
@@ -129,6 +131,10 @@ void CGolem_Combat::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		_int iDamage = pCollisionMagicBallDesc->iDamage;
 
 		m_pHealth->Damaged(iDamage);
+
+		if (nullptr != m_pHitMatrix)
+			m_pUI_Damage->Add_Font(iDamage, XMVector3TransformCoord(m_pHitMatrix->Translation(), m_pTransform->Get_WorldMatrix()));
+
 
 		auto iter = m_CurrentTickSpells.find(eBuff);
 		if (iter == m_CurrentTickSpells.end() &&
@@ -365,9 +371,30 @@ HRESULT CGolem_Combat::Add_Components()
 
 		BEGININSTANCE;
 		m_pUI_HP = static_cast<CUI_Group_Enemy_HP*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Group_Enemy_HP"), &Desc));
-		ENDINSTANCE;
 		if (nullptr == m_pUI_HP)
+		{
+			ENDINSTANCE;
 			throw TEXT("m_pUI_HP is nullptr");
+		}
+
+		CUI_DamageFont::DAMAGEFONTDESC DamageDesc;
+
+		DamageDesc.m_vColor = _float4(1.f, 1.f, 1.f, 0.f);
+		DamageDesc.m_fRotation = 0.f;
+		DamageDesc.m_vOrigin = { 0.f, 0.f };
+		DamageDesc.m_vMinScale = { 0.5f, 0.5f };
+		DamageDesc.m_vMaxScale = { 1.f, 1.f };
+
+		DamageDesc.m_fLifeTime = { 0.7f };
+		DamageDesc.m_fMoveSpeed = { 2.f };
+		DamageDesc.m_fAlphaSpeed = { 0.1f };
+		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_UI_Damage"),
+			TEXT("Com_UI_Damage"), reinterpret_cast<CComponent**>(&m_pUI_Damage), &DamageDesc)))
+		{
+			ENDINSTANCE;
+			throw TEXT("Failed m_pUI_Damage");
+		}
+		ENDINSTANCE;
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -1524,5 +1551,8 @@ void CGolem_Combat::Free()
 	__super::Free();
 
 	if (true == m_isCloned)
+	{
 		Safe_Release(m_pWeapon);
+		Safe_Release(m_pUI_Damage);
+	}
 }

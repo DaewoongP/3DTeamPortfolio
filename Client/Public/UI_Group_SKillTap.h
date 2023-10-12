@@ -27,7 +27,7 @@ public:
 		WINGARDIUM, AVADAKEDAVRA, CRUCIO, IMPERIUS,
 		SKILLTAP_END
 	};
-	
+
 	enum SKILLSLOT
 	{
 		FIRST,
@@ -90,9 +90,9 @@ public:
 	static	SKILLTAP	Translation_SkillTap(SPELL eSPell);
 
 private:
-	CShader*			m_pShaderCom = { nullptr };
-	CRenderer*			m_pRendererCom = { nullptr };
-	CVIBuffer_Rect*		m_pVIBufferCom = { nullptr };
+	CShader* m_pShaderCom = { nullptr };
+	CRenderer* m_pRendererCom = { nullptr };
+	CVIBuffer_Rect* m_pVIBufferCom = { nullptr };
 
 private:
 	// 선택가능한 UI
@@ -107,13 +107,13 @@ private:
 
 	vector<CTexture*>					m_SkillTextures;
 
-	CUI_Back*							m_pBack;
-	CUI_Group_Cursor*					m_pCursor;
-	
+	CUI_Back* m_pBack;
+	CUI_Group_Cursor* m_pCursor;
+
 private:
 	_bool		m_isOpen = { true };
 	_bool		m_isSetSkill = { true };
-	
+
 	SKILLTAP	m_eSlectedSkill = { SKILLTAP_END };
 	_bool		m_isClickedSkill = { false };
 
