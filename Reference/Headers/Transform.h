@@ -44,6 +44,7 @@ public:
 	_float2 Get_Trnaslation_To_UI_fXY() const;
 	_float4x4 Get_WorldMatrix() { return m_WorldMatrix; }
 	const _float4x4* Get_WorldMatrixPtr() const { return &m_WorldMatrix; }
+	_float4x4& Get_WorldMatrixRef() { return m_WorldMatrix; }
 	_float4x4 Get_WorldMatrix_Inverse() const { return m_WorldMatrix.Inverse(); }
 	_float Get_Speed() const { return m_fSpeed; }
 	// 원하는 축을 기준으로 회전시킨 쿼터니언 벡터를 반환합니다.

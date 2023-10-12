@@ -1,5 +1,6 @@
 #pragma once
 #include "Component.h"
+#include "DOF.h"
 
 BEGIN(Engine)
 
@@ -7,7 +8,7 @@ class ENGINE_DLL CRenderer final : public CGameObject
 {
 public:
 	enum RENDERGROUP { RENDER_PRIORITY, RENDER_DEPTH, RENDER_NONBLEND, RENDER_NONLIGHT, RENDER_BLEND,
-					  RENDER_GLOW, RENDER_DISTORTION, RENDER_SCREEN, RENDER_UI,
+					  RENDER_GLOW, RENDER_DISTORTION, RENDER_RADIALBLUR, RENDER_SCREEN, RENDER_UI,
 		// ETC
 		RENDER_PICKING, RENDER_BRUSHING, RENDER_UITEXTURE, RENDER_END };
 
@@ -52,6 +53,7 @@ private:
 	HRESULT Render_Distortion();
 	HRESULT Render_RadialBlur();
 	HRESULT Render_Screen();
+	HRESULT Render_Rain();
 	HRESULT Render_UI();
 
 #ifdef _DEBUG
@@ -97,6 +99,7 @@ private:
 	class CShader*					m_pShadeTypeShader = { nullptr };
 	class CShader*					m_pSSAOShader = { nullptr };
 	class CShader*					m_pDistortionShader = { nullptr };
+	class CShader*					m_pRadialBlurShader = { nullptr };
 
 private:
 	class CBlur*					m_pBlur = { nullptr };

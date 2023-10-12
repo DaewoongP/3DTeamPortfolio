@@ -7,6 +7,7 @@
 //////////////////////////////
 
 #include "Sky.h"
+#include "Trigger.h"
 #include "Terrain.h"
 #include "MapObject.h"
 #include "MapObject_Ins.h"
@@ -256,6 +257,11 @@ HRESULT CMain1_Loader::Loading_For_Static(LEVELID eLevelID)
 	try
 	{
 #pragma region Load BackGround
+		/* For.Prototype_GameObject_Trigger */
+		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Trigger"),
+			CTrigger::Create(m_pDevice, m_pContext))))
+			throw TEXT("Prototype_GameObject_Trigger");
+
 		/* For.Prototype_GameObject_Sky */
 		if (FAILED(m_pGameInstance->Add_Prototype(eLevelID, TEXT("Prototype_GameObject_Sky"),
 			CSky::Create(m_pDevice, m_pContext))))

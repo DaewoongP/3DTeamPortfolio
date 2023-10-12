@@ -170,6 +170,12 @@ CMagicBall* CMagicBallPool::Create_Magic(SPELL eSpell)
     case Client::FINISHER:
         pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Finisher")));
         break;
+    case Client::PROJECTILE_WHITE:
+        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Bombarda")));
+        break;
+    case Client::PROJECTILE_BLACK:
+        pMagicBall = static_cast<CMagicBall*>(pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_GameObject_Bombarda")));
+        break;
     case Client::SPELL_END:
         MSG_BOX("Invalid Tag Value");
         break;

@@ -19,8 +19,8 @@ HRESULT CNorm_Test::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-	m_pTransform->Set_Position(_float3(25.f, 3.f, 22.5f));
-
+	//m_pTransform->Set_Position();
+	m_pRadial->Get_Transform()->Set_Position(_float3(25.f, 3.f, 22.5f));
 	return S_OK;
 }
 
@@ -32,55 +32,22 @@ void CNorm_Test::Tick(_float fTimeDelta)
 void CNorm_Test::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
-
-	if (nullptr != m_pRenderer)
-	{
-		m_pRenderer->Add_RenderGroup(CRenderer::RENDER_DISTORTION, this);
-	}
 }
 
 HRESULT CNorm_Test::Render()
 {
-	if (FAILED(SetUp_ShaderResources()))
-		return E_FAIL;
-
-	if (FAILED(m_pShader->Begin("Point")))
-		return E_FAIL;
-
-	if (FAILED(m_pBuffer->Render()))
-		return E_FAIL;
-
 	return S_OK;
 }
 
 HRESULT CNorm_Test::Add_Components()
 {
 	/* For. Com_Renderer */
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"),
-		TEXT("Com_Renderer"), reinterpret_cast<CComponent**>(&m_pRenderer))))
+	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RadialBlur"),
+		TEXT("Com_Radial"), reinterpret_cast<CComponent**>(&m_pRadial))))
 	{
-		MSG_BOX("CNorm_Test Failed Clone Component : Com_Renderer");
+		MSG_BOX("CNorm_Test Failed Clone Component : Com_Radial");
 		return E_FAIL;
 	}
-
-	/* For. Com_Shader */
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxPointInstance"),
-		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShader))))
-	{
-		MSG_BOX("CNorm_Test Failed Clone Component : Com_Shader");
-		return E_FAIL;
-	}
-
-	_uint iNum = 1;
-	/* For. Com_Buffer */
-	if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Point_Instance"),
-		TEXT("Com_Buffer"), reinterpret_cast<CComponent**>(&m_pBuffer), &iNum)))
-	{
-		MSG_BOX("CNorm_Test Failed Clone Component : Com_Buffer");
-		return E_FAIL;
-	}
-
-	m_pTexture = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Resources/Effects/Textures/T_FX_Distortion_N.png"));
 
 	return S_OK;
 }
@@ -144,4 +111,5 @@ void CNorm_Test::Free()
 	Safe_Release(m_pTexture);
 	Safe_Release(m_pRenderer);
 	Safe_Release(m_pBuffer);
+	Safe_Release(m_pRadial);
 }

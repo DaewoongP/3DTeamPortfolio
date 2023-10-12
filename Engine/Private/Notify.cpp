@@ -9,6 +9,8 @@ CNotify::CNotify()
 CNotify::CNotify(const CNotify& rhs)
 	: m_iNumKeyFrames(rhs.m_iNumKeyFrames)
 	, m_iCurrentKeyFramesIndex(rhs.m_iCurrentKeyFramesIndex)
+	, m_iPrevSpeedFramesIndex(rhs.m_iPrevSpeedFramesIndex)
+	, m_iCurrentSpeedFramesIndex(rhs.m_iCurrentSpeedFramesIndex)
 {
 	KEYFRAME* pKeyframe = nullptr;
 	for (auto Pair : rhs.m_KeyFrames)
@@ -43,6 +45,14 @@ void CNotify::Invalidate_Frame(_float fTimeAcc, _Inout_ _uint* pCurrentKeyFrameI
 	if (0.f == fTimeAcc)
 	{
 		*pCurrentKeyFrameIndex = 0;
+		//첫 속도 프레임을 설정해줍니다.
+		m_pCurrentSpeedFrame = nullptr;
+		m_pPrevSpeedFrame = nullptr;
+		m_iCurrentSpeedFramesIndex = 999;
+		m_iPrevSpeedFramesIndex = 999;
+		m_isFinalSpeedFrame = false;
+		Find_SpeedFrame();
+
 		//모든 키프레임의 활성화를 true로 바까줌
 		for (auto frame : m_KeyFrames)
 		{
@@ -54,93 +64,96 @@ void CNotify::Invalidate_Frame(_float fTimeAcc, _Inout_ _uint* pCurrentKeyFrameI
 	//내 키프레임이 0이 아니라면?
 	if (m_iNumKeyFrames == 0|| (*pCurrentKeyFrameIndex)+1> m_iNumKeyFrames)
 		return;
-	KEYFRAME* pKeyFrame = Find_Frame((*pCurrentKeyFrameIndex));
 
-	if (pKeyFrame->eKeyFrameType == KEYFRAME::KF_SPEED)
+	//스피드갱신용도
+	_float		fRatio = 0;
+
+	if (m_pCurrentSpeedFrame != nullptr)
 	{
-		while (fTimeAcc >= Find_Frame((*pCurrentKeyFrameIndex))->fTime)
+		//만약 다음 속도 프레임이 없다면?
+		if (m_pCurrentSpeedFrame->fTime < fTimeAcc&& !m_isFinalSpeedFrame)
 		{
-			if (m_iNumKeyFrames <= (*pCurrentKeyFrameIndex) + 1)
-				return;
-			++(*pCurrentKeyFrameIndex);
+			//새로운 속도 프레임을 설정해줍니다.
+			Find_SpeedFrame();
 		}
-
-		_float		fRatio = 0;
-		if ((*pCurrentKeyFrameIndex) == 0)
+		
+		//만약 내 속도 프레임보다 앞질러갔으면?
+		if ((m_iPrevSpeedFramesIndex) == 999)
 		{
 			fRatio = (fTimeAcc - 0) /
-				(Find_Frame((*pCurrentKeyFrameIndex))->fTime - 0);
+				(m_pCurrentSpeedFrame->fTime - 0);
 		}
 		else
 		{
-			fRatio = (fTimeAcc - Find_Frame((*pCurrentKeyFrameIndex-1))->fTime) /
-				(Find_Frame((*pCurrentKeyFrameIndex))->fTime - Find_Frame((*pCurrentKeyFrameIndex-1))->fTime);
+			fRatio = (fTimeAcc - m_pPrevSpeedFrame->fTime) /
+				(m_pCurrentSpeedFrame->fTime - m_pPrevSpeedFrame->fTime);
 		}
 
-		*fSpeed = Lerp(*fSpeed, static_cast<SPEEDFRAME*>(pKeyFrame)->fSpeed, fRatio);
-	}
-	else
-	{
-		while (fTimeAcc >= Find_Frame((*pCurrentKeyFrameIndex))->fTime)
+		if (fRatio <= 1&& fRatio >= 0)
 		{
-			if (m_iNumKeyFrames < (*pCurrentKeyFrameIndex) + 1)
-				break;
-
-			KEYFRAME* pKeyFrame = Find_Frame((*pCurrentKeyFrameIndex));
-			if ((*pCurrentKeyFrameIndex) < m_iNumKeyFrames &&
-				pKeyFrame != nullptr && pKeyFrame->isEnable)
-			{
-				pKeyFrame->isEnable = false;
-				switch (pKeyFrame->eKeyFrameType)
-				{
-				case KEYFRAME::KF_NOTIFY:
-				{
-					m_iCurrentKeyFramesIndex = (*pCurrentKeyFrameIndex);
-					static_cast<NOTIFYFRAME*>(pKeyFrame)->Action();
-					break;
-				}
-				case KEYFRAME::KF_SOUND:
-				{
-					CGameInstance* pGameInstance = CGameInstance::GetInstance();
-					Safe_AddRef(pGameInstance);
-					Safe_Release(pGameInstance);
-					//m_iCurrentKeyFramesIndex = (*pCurrentKeyFrameIndex);
-					//static_cast<SOUNDFRAME*>(pKeyFrame)->Action();
-					break;
-				}
-				case KEYFRAME::KF_PARTICLE:
-				{
-					m_iCurrentKeyFramesIndex = (*pCurrentKeyFrameIndex);
-					CGameInstance* pGameInstance = CGameInstance::GetInstance();
-					Safe_AddRef(pGameInstance);
-					//생성 지점 만들어주자.
-					_float4x4 PositionMatrix = {};
-
-					PARTICLEFRAME* pParticleFrame = static_cast<PARTICLEFRAME*>(pKeyFrame);
-					//데이터 로드할때 오프셋 메트릭스에 피벗 곱해주고
-					//index를 이용해 bindbonematrix 만들어줘야함.
-					if (pParticleFrame->BindBoneMatrix == nullptr)
-					{
-						pGameInstance->Play_Particle((pParticleFrame->wszParticleTag), _float3(0,0,0));
-						cout << "Please Bind Bone to ParticleNotify :" << Find_Frame_Key((*pCurrentKeyFrameIndex)) <<"\n";
-					}
-					else 
-					{
-						//여기에 pivot matrix 곱해주기 모델 가져와야하네?
-						PositionMatrix = pParticleFrame->OffsetMatrix * (*pParticleFrame->BindBoneMatrix)  * PivotMatrix * (*pWorldMatrix);
-
-						pGameInstance->Play_Particle((pParticleFrame->wszParticleTag), pParticleFrame->OffsetMatrix, pParticleFrame->BindBoneMatrix, PivotMatrix, pWorldMatrix);
-					}
-					
-					Safe_Release(pGameInstance);
-					break;
-				}
-				}
-			}
-			if (m_iNumKeyFrames == (*pCurrentKeyFrameIndex) + 1)
-				break;
-			(*pCurrentKeyFrameIndex)++;
+			*fSpeed = Lerp(*fSpeed, m_pCurrentSpeedFrame->fSpeed, fRatio);
 		}
+	}
+
+	while (fTimeAcc >= Find_Frame((*pCurrentKeyFrameIndex))->fTime)
+	{
+		if (m_iNumKeyFrames < (*pCurrentKeyFrameIndex) + 1)
+			break;
+
+		KEYFRAME* pKeyFrame = Find_Frame((*pCurrentKeyFrameIndex));
+		if ((*pCurrentKeyFrameIndex) < m_iNumKeyFrames &&
+			pKeyFrame != nullptr && pKeyFrame->isEnable)
+		{
+			pKeyFrame->isEnable = false;
+			switch (pKeyFrame->eKeyFrameType)
+			{
+			case KEYFRAME::KF_NOTIFY:
+			{
+				m_iCurrentKeyFramesIndex = (*pCurrentKeyFrameIndex);
+				static_cast<NOTIFYFRAME*>(pKeyFrame)->Action();
+				break;
+			}
+			case KEYFRAME::KF_SOUND:
+			{
+				CGameInstance* pGameInstance = CGameInstance::GetInstance();
+				Safe_AddRef(pGameInstance);
+				Safe_Release(pGameInstance);
+				//m_iCurrentKeyFramesIndex = (*pCurrentKeyFrameIndex);
+				//static_cast<SOUNDFRAME*>(pKeyFrame)->Action();
+				break;
+			}
+			case KEYFRAME::KF_PARTICLE:
+			{
+				m_iCurrentKeyFramesIndex = (*pCurrentKeyFrameIndex);
+				CGameInstance* pGameInstance = CGameInstance::GetInstance();
+				Safe_AddRef(pGameInstance);
+				//생성 지점 만들어주자.
+				_float4x4 PositionMatrix = {};
+
+				PARTICLEFRAME* pParticleFrame = static_cast<PARTICLEFRAME*>(pKeyFrame);
+				//데이터 로드할때 오프셋 메트릭스에 피벗 곱해주고
+				//index를 이용해 bindbonematrix 만들어줘야함.
+				if (pParticleFrame->BindBoneMatrix == nullptr)
+				{
+					pGameInstance->Play_Particle((pParticleFrame->wszParticleTag), _float3(0,0,0));
+					cout << "Please Bind Bone to ParticleNotify :" << Find_Frame_Key((*pCurrentKeyFrameIndex)) <<"\n";
+				}
+				else 
+				{
+					//여기에 pivot matrix 곱해주기 모델 가져와야하네?
+					PositionMatrix = pParticleFrame->OffsetMatrix * (*pParticleFrame->BindBoneMatrix)  * PivotMatrix * (*pWorldMatrix);
+
+					pGameInstance->Play_Particle((pParticleFrame->wszParticleTag), pParticleFrame->OffsetMatrix, pParticleFrame->BindBoneMatrix, PivotMatrix, pWorldMatrix);
+				}
+					
+				Safe_Release(pGameInstance);
+				break;
+			}
+			}
+		}
+		if (m_iNumKeyFrames == (*pCurrentKeyFrameIndex) + 1)
+			break;
+		(*pCurrentKeyFrameIndex)++;
 	}
 }
 
@@ -324,6 +337,32 @@ void CNotify::Notify_NULL_WarningAlam()
 	WCharToChar(m_KeyFrames[m_iCurrentKeyFramesIndex].first.c_str(), szName);
 
 	cout << szName << " : Please Input Notify Action" << endl;
+}
+void CNotify::Find_SpeedFrame()
+{
+	//만약 처음 찾는 속도 프레임이면 0부터, 아니라면 기존값부터 검색한다.
+	_uint iCurrentIndex = 0;
+	if (m_pCurrentSpeedFrame == nullptr)
+		iCurrentIndex = 0;
+	else
+		iCurrentIndex = m_iCurrentSpeedFramesIndex;
+
+	auto iter = find_if(m_KeyFrames.begin() + iCurrentIndex, m_KeyFrames.end(), [&](auto pValue) {
+		iCurrentIndex++;
+		return (pValue.second->eKeyFrameType == KEYFRAME::KF_SPEED);
+		});
+
+	if (iter != m_KeyFrames.end())
+	{
+		m_iPrevSpeedFramesIndex = m_iCurrentSpeedFramesIndex;
+		m_iCurrentSpeedFramesIndex = iCurrentIndex;
+		m_pPrevSpeedFrame = m_pCurrentSpeedFrame;
+		m_pCurrentSpeedFrame = static_cast<SPEEDFRAME*>(iter->second);
+	}
+	else 
+	{
+		m_isFinalSpeedFrame = true;
+	}
 }
 CNotify* CNotify::Create()
 {

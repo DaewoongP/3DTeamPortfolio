@@ -53,6 +53,7 @@ public:
 public:
     typedef struct tagMagicCastingStateDesc
     {
+        _bool isFlying = { false };
         _bool* pisReadySpell = { nullptr };
         _uint iSpellType = (_uint)SPELL_END;
         _uint iSpecialAction = (_uint)SPECIAL_ACTION_END;

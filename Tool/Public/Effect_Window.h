@@ -39,7 +39,6 @@ public: // À§Á¬ °ü·Ã
 	_bool Table_Void();
 	_bool Table_DragFloatWithOption(string _strName, string _strTag, _float* _pValue, _float2* _pRangeValue, _bool* _pCheckBox, _float _fDragSpeed = 0.01f, _float _fMin = 0.f, _float _fMax = FLT_MAX);
 
-	
 private:
 	_float	   m_fWidgetSize = { 200.f };
 

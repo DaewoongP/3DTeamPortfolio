@@ -106,14 +106,12 @@ void CParticleSystemPool::Play_Particle(const _tchar* szParticleTag, _float4x4 P
 		pParticle = dynamic_cast<CParticleSystem*>(pComponent_Manager->Clone_Component(0, szPrototypeTag, nullptr));
 		pParticle->Set_ParticleTag(szParticleTag);
 	}
-
-	pParticle->Play(PositionMatrix.Translation());
-
 	ObjectMatrix.m[3][0] = 0;
 	ObjectMatrix.m[3][1] = 0;
 	ObjectMatrix.m[3][2] = 0;
 
-	pParticle->Get_ShapeModuleRef().ShapeMatrix *= ObjectMatrix;
+	pParticle->Get_ShapeModuleRef().ShapeMatrix = pParticle->Get_ShapeModuleRef().ShapeMatrixInit * ObjectMatrix;
+	pParticle->Play(PositionMatrix.Translation());
 	pParticle->Set_ObjEvent(CGameObject::OBJ_NONE);
 	pComponent_Manager->Add_Component(pParticle, 0, TEXT("Layer_Particle"), pString_Manager->Make_WChar(szComponentTag));
 	pComponent_Manager->Set_CurrentScene(TEXT("Scene_Main"), true);
@@ -153,17 +151,14 @@ void CParticleSystemPool::Play_Particle(const _tchar* szParticleTag, _float4x4 O
 	}
 
 	_float4x4 PositionMatrix = OffsetMatrix * (*pBindBoneMatrix) * PivotMatrix * (*pWorldMatrix);
-
-
-	pParticle->Play(PositionMatrix.Translation());
-
 	_float4x4 WorldMatrix = *pWorldMatrix;
 
 	WorldMatrix.m[3][0] = 0;
 	WorldMatrix.m[3][1] = 0;
 	WorldMatrix.m[3][2] = 0;
 
-	pParticle->Get_ShapeModuleRef().ShapeMatrix *= WorldMatrix;
+	pParticle->Get_ShapeModuleRef().ShapeMatrix = pParticle->Get_ShapeModuleRef().ShapeMatrixInit * WorldMatrix;
+	pParticle->Play(PositionMatrix.Translation());
 	pParticle->Set_ObjEvent(CGameObject::OBJ_NONE);
 	pParticle->Set_TraceOption(OffsetMatrix, pBindBoneMatrix, PivotMatrix, pWorldMatrix);
 	pComponent_Manager->Add_Component(pParticle, 0, TEXT("Layer_Particle"), pString_Manager->Make_WChar(szComponentTag));

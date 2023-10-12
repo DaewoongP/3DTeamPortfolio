@@ -19,9 +19,6 @@
     <Filter Include="02. GameObject\01. Player">
       <UniqueIdentifier>{5eb96d63-79e7-4753-bd1d-cc3a3d3f177d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\02. Enemy">
-      <UniqueIdentifier>{e612562d-8c4c-44b1-a050-fefc2e43feb3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\99. Debug">
       <UniqueIdentifier>{286ee9a6-b9ef-449f-9303-ba3e8913d1f9}</UniqueIdentifier>
     </Filter>
@@ -36,39 +33,6 @@
     </Filter>
     <Filter Include="98. Default\ImGui_Defaults">
       <UniqueIdentifier>{628cd336-ebfe-4860-bfac-014e7bec45d3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\02. Enemy\00. Troll">
-      <UniqueIdentifier>{fe57efd1-c79a-4107-82a4-00502f3125f8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\02. Enemy\01. Goblin">
-      <UniqueIdentifier>{ebc6f3c1-09ed-45aa-a352-5ddbe82a7e16}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\02. Enemy\01. Goblin\Assassin">
-      <UniqueIdentifier>{358d6be2-a828-4004-90ac-318723c004be}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\02. Enemy\01. Goblin\Assassin\Weapon">
-      <UniqueIdentifier>{feebe3d3-b2c6-4159-9f49-bd9a0e8a405d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\02. Enemy\00. Troll\00. Armored_Troll">
-      <UniqueIdentifier>{f4df7d1d-7374-4385-81c0-dbc54a235570}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\02. Enemy\00. Troll\01. Forest_Troll">
-      <UniqueIdentifier>{cb12878e-e2df-412e-9377-2c7c29c4cbe2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\02. Enemy\00. Troll\01. Forest_Troll\Weapon">
-      <UniqueIdentifier>{716e173e-d10b-4137-8676-391c2c340ccd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\02. Enemy\00. Troll\00. Armored_Troll\Weapon">
-      <UniqueIdentifier>{cc4def40-eb2b-4c6e-b1d0-03d0027e89bc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\02. Enemy\02. Dugbog">
-      <UniqueIdentifier>{ea8cf730-c75f-4ad8-a593-3de6f11919a8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\02. Enemy\03. Golem">
-      <UniqueIdentifier>{75e17a41-3815-4778-b3dd-847b9cc46d8b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\02. Enemy\03. Golem\00. Combat">
-      <UniqueIdentifier>{9b9a0dfc-c373-4b0b-9c88-3e4ef1df5fc6}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\99. Debug\PhysxRender">
       <UniqueIdentifier>{ffbc88f7-a780-4e66-87b7-7baf68d24ed3}</UniqueIdentifier>
@@ -144,9 +108,6 @@
     </Filter>
     <Filter Include="01. Levels\04. Smith">
       <UniqueIdentifier>{93532b46-fcf5-4814-9232-b40f168761fd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Levels\06. PVP">
-      <UniqueIdentifier>{886e8ea5-bbc0-4458-a2a8-792fe81d6d45}</UniqueIdentifier>
     </Filter>
     <Filter Include="01. Levels\99. Loading">
       <UniqueIdentifier>{884f056e-8693-460c-8907-198be0f4c197}</UniqueIdentifier>
@@ -253,17 +214,8 @@
     <Filter Include="07. GameManager">
       <UniqueIdentifier>{41feed39-b5e2-4b15-99fe-18a8117aafdf}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\02. Enemy\03. Golem\00. Combat\Weapon">
-      <UniqueIdentifier>{f57875dd-9b97-4974-a4c8-dbc1374da1c3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="05. Magic\MagicBall\05. Lumos">
       <UniqueIdentifier>{852374ec-175b-4b73-9ad4-fe97a917260d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\02. Enemy\03. Golem\01. Pensive">
-      <UniqueIdentifier>{86967c1b-301e-4843-a160-8603ef017876}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\02. Enemy\03. Golem\01. Pensive\Weapon">
-      <UniqueIdentifier>{fde3512d-c9d7-4f98-baac-ed8650da6e1a}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\03. MapObject">
       <UniqueIdentifier>{0671651e-f669-4b5e-82f4-dfb1f4480ca3}</UniqueIdentifier>
@@ -412,9 +364,6 @@
     <Filter Include="05. Magic\MagicBall\16. Imperio">
       <UniqueIdentifier>{3e5daa2a-0540-4c2b-b10a-c7031295ac39}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\02. Enemy\04. Boss">
-      <UniqueIdentifier>{0af7f112-5794-49f9-b566-5e0282856103}</UniqueIdentifier>
-    </Filter>
     <Filter Include="05. Magic\MagicBall\17. Stupefy">
       <UniqueIdentifier>{3889487f-722c-4c11-99ae-a49e505aff2c}</UniqueIdentifier>
     </Filter>
@@ -463,14 +412,8 @@
     <Filter Include="02. GameObject\04. UI\UI_Group\UI_Group_Skill_Tap">
       <UniqueIdentifier>{e695472f-e3ce-4164-aeab-698da0e95413}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\02. Enemy\05. DarkWizard">
-      <UniqueIdentifier>{344e3ca3-42ef-4166-b228-a633658f314b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="05. Magic\MagicBall\18. Bombarda">
       <UniqueIdentifier>{71aa1272-8b21-4963-b502-4d0bebac9131}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\10. Flowmap">
-      <UniqueIdentifier>{8d96a00c-986f-458a-b01c-19b091c17877}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\09. Item\02. Ingredient\AshwinderEggs_Item">
       <UniqueIdentifier>{7e32aa57-41a8-477e-81c1-095fb42e7e6a}</UniqueIdentifier>
@@ -571,15 +514,6 @@
     <Filter Include="02. GameObject\08. Inventory\PotionTap">
       <UniqueIdentifier>{bb5f7ed2-3b1a-4f84-9841-e49923a81270}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\02. Enemy\05. DarkWizard\00. Male">
-      <UniqueIdentifier>{fa4cacae-90c5-46ff-a8c7-e033b6d518a9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\02. Enemy\05. DarkWizard\01. Female">
-      <UniqueIdentifier>{7a43bd67-b607-45bf-877c-8fe218a71743}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\02. Enemy\05. DarkWizard\Weapon">
-      <UniqueIdentifier>{231c744f-ab40-44fe-8fe7-d4cd81fb4189}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\PotionStation">
       <UniqueIdentifier>{e8e87625-76be-4cce-8219-8d85981baf70}</UniqueIdentifier>
     </Filter>
@@ -610,11 +544,140 @@
     <Filter Include="02. GameObject\09. Item\02. Ingredient\Mongrel_Fur_Item">
       <UniqueIdentifier>{1d482665-58b1-4b52-8f5a-7ca07153b2d1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Levels\05. Sky">
+      <UniqueIdentifier>{8daaa0f5-8eda-4c23-b5f9-f4ec1e89c6c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Levels\98. Static">
+      <UniqueIdentifier>{3494d13e-3cfe-40db-a8ee-e89e7a07f613}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy">
+      <UniqueIdentifier>{e612562d-8c4c-44b1-a050-fefc2e43feb3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\00. Troll">
+      <UniqueIdentifier>{fe57efd1-c79a-4107-82a4-00502f3125f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\00. Troll\00. Armored_Troll">
+      <UniqueIdentifier>{f4df7d1d-7374-4385-81c0-dbc54a235570}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\00. Troll\00. Armored_Troll\Weapon">
+      <UniqueIdentifier>{cc4def40-eb2b-4c6e-b1d0-03d0027e89bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\00. Troll\01. Forest_Troll">
+      <UniqueIdentifier>{cb12878e-e2df-412e-9377-2c7c29c4cbe2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\00. Troll\01. Forest_Troll\Weapon">
+      <UniqueIdentifier>{716e173e-d10b-4137-8676-391c2c340ccd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\01. Goblin">
+      <UniqueIdentifier>{ebc6f3c1-09ed-45aa-a352-5ddbe82a7e16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\01. Goblin\Assassin">
+      <UniqueIdentifier>{358d6be2-a828-4004-90ac-318723c004be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\01. Goblin\Assassin\Weapon">
+      <UniqueIdentifier>{feebe3d3-b2c6-4159-9f49-bd9a0e8a405d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\02. Dugbog">
+      <UniqueIdentifier>{ea8cf730-c75f-4ad8-a593-3de6f11919a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\03. Golem">
+      <UniqueIdentifier>{75e17a41-3815-4778-b3dd-847b9cc46d8b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\03. Golem\00. Combat">
+      <UniqueIdentifier>{9b9a0dfc-c373-4b0b-9c88-3e4ef1df5fc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\03. Golem\00. Combat\Weapon">
+      <UniqueIdentifier>{f57875dd-9b97-4974-a4c8-dbc1374da1c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\03. Golem\01. Pensive">
+      <UniqueIdentifier>{86967c1b-301e-4843-a160-8603ef017876}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\03. Golem\01. Pensive\Weapon">
+      <UniqueIdentifier>{fde3512d-c9d7-4f98-baac-ed8650da6e1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\04. Boss">
+      <UniqueIdentifier>{0af7f112-5794-49f9-b566-5e0282856103}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\02. Enemy\04. Boss\EnergyBall">
       <UniqueIdentifier>{79dcddca-11cc-4450-a7ad-d7866f733612}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Levels\05. Sky">
-      <UniqueIdentifier>{8daaa0f5-8eda-4c23-b5f9-f4ec1e89c6c1}</UniqueIdentifier>
+    <Filter Include="02. GameObject\02. Enemy\05. DarkWizard">
+      <UniqueIdentifier>{344e3ca3-42ef-4166-b228-a633658f314b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\05. DarkWizard\00. Male">
+      <UniqueIdentifier>{fa4cacae-90c5-46ff-a8c7-e033b6d518a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\05. DarkWizard\01. Female">
+      <UniqueIdentifier>{7a43bd67-b607-45bf-877c-8fe218a71743}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\05. DarkWizard\Weapon">
+      <UniqueIdentifier>{231c744f-ab40-44fe-8fe7-d4cd81fb4189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\04. Dragon">
+      <UniqueIdentifier>{0af7f112-5794-49f9-b566-5e0282856103}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\04. Dragon\00. Breath">
+      <UniqueIdentifier>{d27190fb-93b1-4fc8-a3ec-cd4237d610f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\04. Dragon\00. Breath\Cylinder">
+      <UniqueIdentifier>{a2c2803d-c44f-4cce-979e-3f110506685d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\04. Dragon\01. EnergyBall">
+      <UniqueIdentifier>{79dcddca-11cc-4450-a7ad-d7866f733612}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\04. Dragon\02. Pulse">
+      <UniqueIdentifier>{577c4cca-621b-45e1-95a4-5f05df3bff21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\04. Dragon\03. Projectile_Black">
+      <UniqueIdentifier>{6d239c05-d6d4-4004-932d-61a54fb474d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\04. Dragon\04. Projectile_White">
+      <UniqueIdentifier>{90270eef-d6f0-4ecb-9e8f-1de3ab28c703}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Enemy\04. Dragon\Weapon">
+      <UniqueIdentifier>{4825389d-2310-47a8-8256-7d05c14ba302}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\Door\AncientDoor_L">
+      <UniqueIdentifier>{56443a02-375f-4a90-9d44-bfd48cf55f16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\Door\AncientDoor_R">
+      <UniqueIdentifier>{81c40fce-6b8e-4ad2-b3a9-4cf39725c754}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. MapObject\Interactable_Obj\RP_Core">
+      <UniqueIdentifier>{f8e2e068-d9cf-4946-a565-8d0e2044214d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\09. Flying">
+      <UniqueIdentifier>{fb04081b-632f-4b46-8340-fa8eea9b3f9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\09. Flying\Hover">
+      <UniqueIdentifier>{c34becda-e8f5-45d0-954f-ab88adb9236a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\09. Flying\Fly">
+      <UniqueIdentifier>{e06f1f0b-1100-4600-a574-4d7ac87ad207}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\09. Flying\Fly\Move">
+      <UniqueIdentifier>{2404f150-e1be-45a4-a6f2-c8df7eae227e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\09. Flying\Fly\Turn">
+      <UniqueIdentifier>{6e019151-4c6e-4a1c-849d-fb7625130e1e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\09. Flying\Begin">
+      <UniqueIdentifier>{0c403044-32c4-418b-b61e-769717983493}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\09. Flying\End">
+      <UniqueIdentifier>{cb45375f-726f-4341-a96b-8f5708737058}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\09. Flying\Hover\Idle">
+      <UniqueIdentifier>{93967255-71fb-465d-af15-960c334b8a05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\09. Flying\Hover\Move">
+      <UniqueIdentifier>{0e2579a0-1d86-4ec8-beac-e26459a4385b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\09. Flying\Hover\Turn">
+      <UniqueIdentifier>{bd3cc937-a6b8-46d4-a90c-9cc87c222813}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Player\01. StateMachine\09. Flying\Break">
+      <UniqueIdentifier>{efc4ee26-398a-4d26-a05a-41a298491857}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\04. UI\Font\Damage">
       <UniqueIdentifier>{33a1a9e3-3ae3-47e4-9a5d-84571b868dfd}</UniqueIdentifier>
@@ -960,9 +1023,6 @@
     <ClInclude Include="..\Public\Finisher.h">
       <Filter>05. Magic\MagicBall\07. Finisher</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Level_Vault.h">
-      <Filter>01. Levels\02. Vault</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Level_GreatHall.h">
       <Filter>01. Levels\03. GreatHall</Filter>
     </ClInclude>
@@ -1095,7 +1155,7 @@
       <Filter>02. GameObject\11. Potion\InvisibilityPotion</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ConjuredDragon.h">
-      <Filter>02. GameObject\02. Enemy\04. Boss</Filter>
+      <Filter>02. GameObject\02. Enemy\04. Dragon</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\RigidMove.h">
       <Filter>03. Behaviors\03. Movement</Filter>
@@ -1123,9 +1183,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\Diffindo.h">
       <Filter>05. Magic\MagicBall\13. Diffindo</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\FlowMap.h">
-      <Filter>02. GameObject\10. Flowmap</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ThunderBrewPotion.h">
       <Filter>02. GameObject\11. Potion\ThunderBrewPotion</Filter>
@@ -1236,7 +1293,7 @@
       <Filter>02. GameObject\09. Item\02. Ingredient\Mongrel_Fur_Item</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\EnergyBall.h">
-      <Filter>02. GameObject\02. Enemy\04. Boss\EnergyBall</Filter>
+      <Filter>02. GameObject\02. Enemy\04. Dragon\01. EnergyBall</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Level_Sky.h">
       <Filter>01. Levels\05. Sky</Filter>
@@ -1252,12 +1309,75 @@
     </ClInclude>
     <ClInclude Include="..\Public\UI_Store.h">
       <Filter>02. GameObject\04. UI\UI_Group\UI_Store</Filter>
-	</ClInclude>
+	  </ClInclude>
     <ClInclude Include="..\Public\UI_Font.h">
       <Filter>02. GameObject\04. UI\Font\Normal</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_DamageFont.h">
       <Filter>02. GameObject\04. UI\Font\DamageFont</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Fly_Move.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\Fly\Move</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Fly_Turn.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\Fly\Turn</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Hover_Idle.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\Hover\Idle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Hover_Move.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\Hover\Move</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Hover_Turn.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\Hover\Turn</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Broom_End.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\End</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Broom_Begin.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\Begin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Broom_Break.h">
+      <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\Break</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\AncientDoor_L.h">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Door\AncientDoor_L</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\AncientDoor_R.h">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Door\AncientDoor_R</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Breath.h">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\00. Breath</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Cylinder.h">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\00. Breath\Cylinder</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Projectile_White.h">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\04. Projectile_White</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Pulse.h">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\02. Pulse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Projectile_Black.h">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\03. Projectile_Black</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Weapon_Dragon_Head.h">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Level_Static.h">
+      <Filter>01. Levels\98. Static</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Client_Enum.h">
+      <Filter>99. Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Level_Vault.h">
+      <Filter>01. Levels\02. Vault</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Camera_Includes.h">
+      <Filter>99. Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Trigger.h">
+      <Filter>02. GameObject\07. Trigger</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1687,7 +1807,7 @@
       <Filter>02. GameObject\11. Potion\InvisibilityPotion</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\ConjuredDragon.cpp">
-      <Filter>02. GameObject\02. Enemy\04. Boss</Filter>
+      <Filter>02. GameObject\02. Enemy\04. Dragon</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\RigidMove.cpp">
       <Filter>03. Behaviors\03. Movement</Filter>
@@ -1715,9 +1835,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\Diffindo.cpp">
       <Filter>05. Magic\MagicBall\13. Diffindo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\FlowMap.cpp">
-      <Filter>02. GameObject\10. Flowmap</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ThunderBrewPotion.cpp">
       <Filter>02. GameObject\11. Potion\ThunderBrewPotion</Filter>
@@ -1828,7 +1945,7 @@
       <Filter>02. GameObject\09. Item\02. Ingredient\Mongrel_Fur_Item</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\EnergyBall.cpp">
-      <Filter>02. GameObject\02. Enemy\04. Boss\EnergyBall</Filter>
+      <Filter>02. GameObject\02. Enemy\04. Dragon\01. EnergyBall</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Level_Sky.cpp">
       <Filter>01. Levels\05. Sky</Filter>
@@ -1844,9 +1961,63 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_Store.cpp">
       <Filter>02. GameObject\04. UI\UI_Group\UI_Store</Filter>
-	</ClCompile>
+	  </ClCompile>
     <ClCompile Include="..\Private\UI_DamageFont.cpp">
       <Filter>02. GameObject\04. UI\Font\DamageFont</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Fly_Turn.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\Fly\Turn</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Fly_Move.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\Fly\Move</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Hover_Idle.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\Hover\Idle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Hover_Move.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\Hover\Move</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Hover_Turn.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\Hover\Turn</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Broom_Begin.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\Begin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Broom_End.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\End</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Broom_Break.cpp">
+      <Filter>02. GameObject\01. Player\01. StateMachine\09. Flying\Break</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\AncientDoor_L.cpp">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Door\AncientDoor_L</Filter>
+    </ClCompile>
+    <ClCompile Include="AncientDoor_R.cpp">
+      <Filter>02. GameObject\03. MapObject\Interactable_Obj\Door\AncientDoor_R</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Breath.cpp">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\00. Breath</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Cylinder.cpp">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\00. Breath\Cylinder</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Projectile_White.cpp">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\04. Projectile_White</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Pulse.cpp">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\02. Pulse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Projectile_Black.cpp">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\03. Projectile_Black</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Weapon_Dragon_Head.cpp">
+      <Filter>02. GameObject\02. Enemy\04. Dragon\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Level_Static.cpp">
+      <Filter>01. Levels\98. Static</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Trigger.cpp">
+      <Filter>02. GameObject\07. Trigger</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1906,9 +2077,6 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_ShadowMeshInstance.hlsl">
       <Filter>97. ShaderFiles\Meshes</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_FlowMap.hlsl">
-      <Filter>97. ShaderFiles\Textures</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
