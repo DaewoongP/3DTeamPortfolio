@@ -1378,10 +1378,6 @@ void CDarkWizard_M::Attack_Light()
 	m_MagicDesc.eBuffType = BUFF_ATTACK_LIGHT;
 	m_pMagicSlot->Add_Magics(m_MagicDesc);
 
-	_float4x4 OffsetMatrix = _float4x4();
-	if (nullptr != m_pTarget)
-		OffsetMatrix = m_pTarget->Get_Offset_Matrix();
-
 	m_CastingMagic = m_pMagicSlot->Action_Magic_Basic(0, m_pTarget, m_pWeapon, COLLISIONFLAG(COL_PLAYER | COL_NPC | COL_SHIELD));
 }
 
@@ -1392,10 +1388,6 @@ void CDarkWizard_M::Attack_Heavy()
 
 	m_MagicDesc.eBuffType = BUFF_ATTACK_HEAVY;
 	m_pMagicSlot->Add_Magics(m_MagicDesc);
-
-	_float4x4 OffsetMatrix = _float4x4();
-	if (nullptr != m_pTarget)
-		OffsetMatrix = m_pTarget->Get_Offset_Matrix();
 
 	m_CastingMagic = m_pMagicSlot->Action_Magic_Basic(0, m_pTarget, m_pWeapon, COLLISIONFLAG(COL_PLAYER | COL_NPC | COL_SHIELD));
 }

@@ -10,27 +10,47 @@ CLevel_Sky::CLevel_Sky(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 }
 HRESULT CLevel_Sky::Initialize()
 {
-	if (FAILED(__super::Initialize()))
-		return E_FAIL;
+	FAILED_CHECK_RETURN(Ready_Lights(), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_Layer_BackGround(TEXT("Layer_BackGround")), E_FAIL);
 
-	if (FAILED(Ready_Lights()))
+	BEGININSTANCE;
+	pGameInstance->Reset_World_TimeAcc();
+	pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
+	ENDINSTANCE;
+
+	return S_OK;
+}
+
+void CLevel_Sky::Tick(_float fTimeDelta)
+{
+	BEGININSTANCE;
+
+	if (pGameInstance->Get_DIKeyState(DIK_ESCAPE, CInput_Device::KEY_DOWN))
 	{
-		MSG_BOX("Failed to Ready_Lights in Level_Sky");
-
-		return E_FAIL;
+		if (!lstrcmp(TEXT("Scene_Main"), pGameInstance->Get_CurrentSceneTag()))
+		{
+			pGameInstance->Set_CurrentScene(TEXT("Scene_FieldGuide"), false);
+		}
+		else
+		{
+			pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
+		}
 	}
 
-	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
+	ENDINSTANCE;
+
+#ifdef _DEBUG
+	SetWindowText(g_hWnd, TEXT("Sky"));
+#endif //_DEBUG
+}
+
+HRESULT CLevel_Sky::Ready_Layer_BackGround(const _tchar* pLayerTag)
+{
+	BEGININSTANCE;
+
+	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_SKY, TEXT("Prototype_GameObject_Sky"), pLayerTag, TEXT("GameObject_Sky"))))
 	{
-		MSG_BOX("Failed to Ready_Layer_Player in Level_Sky");
-
-		return E_FAIL;
-	}
-
-	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
-	{
-		MSG_BOX("Failed to Ready_Layer_BackGround in Level_Sky");
-
+		MSG_BOX("Failed Add_GameObject : (GameObject_Sky) in Level_Sky");
 		return E_FAIL;
 	}
 
@@ -45,97 +65,6 @@ HRESULT CLevel_Sky::Initialize()
 	{
 		MSG_BOX("Failed to Load Map Object_Ins in Level_Sky");
 
-		return E_FAIL;
-	}
-
-#ifdef _DEBUG
-	if (FAILED(Ready_Debug(TEXT("Layer_Debug"))))
-	{
-		MSG_BOX("Failed to Load Layer_Debug in Level_Sky");
-
-		return E_FAIL;
-	}
-#endif // _DEBUG
-
-	BEGININSTANCE;
-
-	pGameInstance->Reset_World_TimeAcc();
-	pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
-
-	ENDINSTANCE;
-
-	return S_OK;
-}
-
-void CLevel_Sky::Tick(_float fTimeDelta)
-{
-	__super::Tick(fTimeDelta);
-
-	BEGININSTANCE;
-
-	if (pGameInstance->Get_DIKeyState(DIK_T, CInput_Device::KEY_DOWN))
-	{
-		pGameInstance->Set_CurrentScene(TEXT("Scene_Main"), true);
-	}
-	if (pGameInstance->Get_DIKeyState(DIK_Y, CInput_Device::KEY_DOWN))
-	{
-		pGameInstance->Set_CurrentScene(TEXT("Scene_FieldGuide"), false);
-	}
-
-	ENDINSTANCE;
-
-#ifdef _DEBUG
-	SetWindowText(g_hWnd, TEXT("Sky"));
-#endif //_DEBUG
-}
-
-HRESULT CLevel_Sky::Render()
-{
-	if (FAILED(__super::Render()))
-		return E_FAIL;
-
-	return S_OK;
-}
-
-HRESULT CLevel_Sky::Ready_Layer_Player(const _tchar* pLayerTag)
-{
-	BEGININSTANCE;
-
-	/* Add Scene : Main */
-	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
-	{
-		MSG_BOX("Failed Add Scene : (Scene_Main) in Level_Sky");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
-
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_SKY, TEXT("Prototype_GameObject_Player"), pLayerTag, TEXT("GameObject_Player"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Player) in Level_Sky");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
-
-	ENDINSTANCE;
-
-	return S_OK;
-}
-
-HRESULT CLevel_Sky::Ready_Layer_BackGround(const _tchar* pLayerTag)
-{
-	BEGININSTANCE;
-
-	/* Add Scene : Main */
-	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
-	{
-		MSG_BOX("Failed Add Scene : (Scene_Main) in Level_Sky");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
-
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_SKY, TEXT("Prototype_GameObject_Sky"), pLayerTag, TEXT("GameObject_Sky"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Sky) in Level_Sky");
 		return E_FAIL;
 	}
 
@@ -330,31 +259,6 @@ HRESULT CLevel_Sky::Load_MapObject_Ins(const _tchar* pObjectFilePath)
 
 	return S_OK;
 }
-
-#ifdef _DEBUG
-HRESULT CLevel_Sky::Ready_Debug(const _tchar* pLayerTag)
-{
-	BEGININSTANCE;
-
-	/* Add Scene : Main */
-	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Main"), pLayerTag)))
-	{
-		MSG_BOX("Failed Add Scene : (Scene_Main) in Level_Smith");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
-
-	if (FAILED(pGameInstance->Add_Component(LEVEL_STATIC, LEVEL_SKY, TEXT("Prototype_GameObject_Camera_Debug"), pLayerTag, TEXT("GameObject_Camera_Debug"))))
-	{
-		MSG_BOX("Failed Add_GameObject : (GameObject_Camera_Debug) in Level_Smith");
-		return E_FAIL;
-	}
-
-	ENDINSTANCE;
-
-	return S_OK;
-}
-#endif // _DEBUG
 
 CLevel_Sky* CLevel_Sky::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {

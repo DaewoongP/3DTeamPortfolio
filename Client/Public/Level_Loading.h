@@ -27,6 +27,7 @@ private: /* Loaders */
 	class CMain3_Loader*	m_pMain3_Loader = { nullptr };
 
 	LEVELID					m_eNextLevelID = { LEVEL_END };
+	_bool					m_isStaticLoaded = { false };
 
 #ifdef _DEBUG
 private:

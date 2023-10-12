@@ -1,7 +1,6 @@
 #include "..\Public\Potion_Station.h"
 #include "GameInstance.h"
 #include "Player.h"
-#include "PotionStationCamera.h"
 #include "UI_Group_Brew.h"
 #include "ParticleSystem.h"
 
@@ -82,17 +81,10 @@ HRESULT CPotion_Station::Initialize(void* pArg)
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	// 모든 레벨을 조사해서 플레이어 주소를 가져옴.
-	for (_uint i = 0; i < LEVEL_END; ++i)
-	{
-		m_pPlayer = dynamic_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(
-			i
-			, TEXT("Layer_Player")
-			, TEXT("GameObject_Player")));
-
-		if (m_pPlayer != nullptr)
-			break;
-	}
+	m_pPlayer = dynamic_cast<CPlayer*>(pGameInstance->Find_Component_In_Layer(
+		LEVEL_STATIC
+		, TEXT("Layer_Player")
+		, TEXT("GameObject_Player")));
 
 	// 플레이어 주소에 대한 유효성 검사.
 	if (nullptr == m_pPlayer)
@@ -106,21 +98,6 @@ HRESULT CPotion_Station::Initialize(void* pArg)
 
 	m_pPlayerTransform = m_pPlayer->Get_Transform();
 	Safe_AddRef(m_pPlayerTransform);
-
-	//카메라 추가
-	CCamera::CAMERADESC CameraDesc;
-
-	CameraDesc.m_fAspect = _float(g_iWinSizeX) / _float(g_iWinSizeY);
-	CameraDesc.m_fFovY = XMConvertToRadians(90.f);
-	CameraDesc.m_fNear = 0.1f;
-	CameraDesc.m_fFar = 1000.f;
-
-	CPotionStationCamera::POTIONSTATION_CAMERA_DESC Potionstation_Camera_Desc;
-
-	Potionstation_Camera_Desc.vAt = { 98.124f, 8.180f, 77.079f };
-	Potionstation_Camera_Desc.pSuperDesc = CameraDesc;
-
-	pGameInstance->Add_Camera(TEXT("Potion_Station_Camera"), CPotionStationCamera::Create(m_pDevice, m_pContext, &Potionstation_Camera_Desc));
 
 	Safe_Release(pGameInstance);
 
@@ -238,6 +215,7 @@ void CPotion_Station::Free()
 
 	if (true == m_isCloned)
 	{
+		// DEELTE CAM 만들기ㅣ;ㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣ
 		Safe_Release(m_pPlayer);
 		Safe_Release(m_pPlayerTransform);
 		Safe_Release(m_pCUI_Group_Brew);

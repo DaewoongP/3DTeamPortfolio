@@ -6,6 +6,7 @@
 #include "Main3_Loader.h"
 
 #include "Level_Logo.h"
+#include "Level_Static.h"
 #include "Level_CliffSide.h"
 #include "Level_Vault.h"
 #include "Level_GreatHall.h"
@@ -23,9 +24,18 @@ HRESULT CLevel_Loading::Initialize(LEVELID eNextLevelID, _bool isStaticLoaded)
 	if (FAILED(__super::Initialize()))
 		return E_FAIL;
 
+	if (false == isStaticLoaded)
+	{
+		BEGININSTANCE;
+
+		FAILED_CHECK(pGameInstance->Add_Scene(TEXT("Scene_Loading"), TEXT("Layer_Loading")));
+
+		ENDINSTANCE;
+	}
+
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
-	// 현재 씬 설정.
+	
 	pGameInstance->Set_CurrentScene(TEXT("Scene_Loading"), true);
 	Safe_Release(pGameInstance);
 
@@ -89,10 +99,12 @@ HRESULT CLevel_Loading::Initialize(LEVELID eNextLevelID, _bool isStaticLoaded)
 		break;
 	}
 
-	m_pMain0_Loader = CMain0_Loader::Create(m_pDevice, m_pContext, eNextLevelID, isStaticLoaded);
-	m_pMain1_Loader = CMain1_Loader::Create(m_pDevice, m_pContext, eNextLevelID, isStaticLoaded);
-	m_pMain2_Loader = CMain2_Loader::Create(m_pDevice, m_pContext, eNextLevelID, isStaticLoaded);
-	m_pMain3_Loader = CMain3_Loader::Create(m_pDevice, m_pContext, eNextLevelID, isStaticLoaded);
+	m_isStaticLoaded = isStaticLoaded;
+
+	m_pMain0_Loader = CMain0_Loader::Create(m_pDevice, m_pContext, eNextLevelID, m_isStaticLoaded);
+	m_pMain1_Loader = CMain1_Loader::Create(m_pDevice, m_pContext, eNextLevelID, m_isStaticLoaded);
+	m_pMain2_Loader = CMain2_Loader::Create(m_pDevice, m_pContext, eNextLevelID, m_isStaticLoaded);
+	m_pMain3_Loader = CMain3_Loader::Create(m_pDevice, m_pContext, eNextLevelID, m_isStaticLoaded);
 
 	if(nullptr == m_pMain0_Loader || 
 		nullptr == m_pMain1_Loader || 
@@ -144,6 +156,9 @@ void CLevel_Loading::Tick(_float fTimeDelta)
 	pGameInstance->Clear_Resources();
 
 	CLevel* pLevel = { nullptr };
+
+	if (false == m_isStaticLoaded)
+		LOAD_STATIC_LEVEL(m_pDevice, m_pContext);
 
 	switch (m_eNextLevelID)
 	{
@@ -215,14 +230,6 @@ HRESULT CLevel_Loading::Loading_Cliffside(const _tchar* pLayerTag)
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
-	// 로고 이동전 로딩씬에 대한 객체 생성
-
-	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Loading"), pLayerTag)))
-	{
-		MSG_BOX("Failed Add Scene : (Scene_Loading)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
 
 	_tchar wszFilePath[MAX_PATH] = TEXT("");
 	lstrcpy(wszFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Loading1.uidata"));
@@ -242,14 +249,6 @@ HRESULT CLevel_Loading::Loading_Vault(const _tchar* pLayerTag)
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
-	// 로고 이동전 로딩씬에 대한 객체 생성
-
-	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Loading"), pLayerTag)))
-	{
-		MSG_BOX("Failed Add Scene : (Scene_Loading)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
 
 	_tchar wszFilePath[MAX_PATH] = TEXT("");
 	lstrcpy(wszFilePath, TEXT("../../Resources/GameData/UIData/UI_Group_Loading2.uidata"));
@@ -273,14 +272,6 @@ HRESULT CLevel_Loading::Loading_GreatHall(const _tchar* pLayerTag)
 HRESULT CLevel_Loading::Loading_Hogsmeade(const _tchar* pLayerTag)
 {
 	BEGININSTANCE;
-	// 로고 이동전 로딩씬에 대한 객체 생성
-
-	if (FAILED(pGameInstance->Add_Scene(TEXT("Scene_Loading"), pLayerTag)))
-	{
-		MSG_BOX("Failed Add Scene : (Scene_Loading)");
-		ENDINSTANCE;
-		return E_FAIL;
-	}
 
 	ENDINSTANCE;
 
