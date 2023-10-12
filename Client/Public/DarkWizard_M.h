@@ -37,7 +37,7 @@ public:
 	virtual HRESULT Render() override;
 
 public:
-	void Set_Protego_Collision(CTransform* pTransform, CEnemy::ATTACKTYPE eType) const;
+	virtual void Set_Protego_Collision(CTransform* pTransform, CEnemy::ATTACKTYPE eType) const override;
 
 private:
 	CMagicSlot* m_pMagicSlot = { nullptr };

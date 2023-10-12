@@ -17,7 +17,7 @@ HRESULT CWait::Initialize(void* pArg)
 	return S_OK;
 }
 
-HRESULT CWait::Tick(const _float& fTimeDelta)
+HRESULT CWait::Tick_Behavior(const _float& fTimeDelta)
 {
 	if (false == Check_Decorators())
 	{

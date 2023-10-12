@@ -115,18 +115,6 @@ void CConjuredDragon::Tick(_float fTimeDelta)
 	Spawn_EnergyBall(fTimeDelta);
 	Update_Breath(fTimeDelta);
 
-	if (nullptr != m_pBreath)
-		m_pBreath->Tick(fTimeDelta);
-
-	if (nullptr != m_pEnergyBall)
-		m_pEnergyBall->Tick(fTimeDelta);
-
-	if (nullptr != m_pPulse)
-		m_pPulse->Tick(fTimeDelta);
-
-	if (nullptr != m_pRootBehavior)
-		m_pRootBehavior->Tick(fTimeDelta);
-
 	if (nullptr != m_pModelCom)
 		m_pModelCom->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
 }
@@ -137,16 +125,6 @@ void CConjuredDragon::Late_Tick(_float fTimeDelta)
 		return;
 
 	CGameObject::Late_Tick(fTimeDelta);
-
-	if (nullptr != m_pBreath &&
-		true == m_isActionBreath)
-		m_pBreath->Late_Tick(fTimeDelta);
-
-	if (nullptr != m_pEnergyBall)
-		m_pEnergyBall->Late_Tick(fTimeDelta);
-
-	if (nullptr != m_pPulse)
-		m_pPulse->Late_Tick(fTimeDelta);
 
 	if (nullptr != m_pRenderer)
 	{
@@ -377,6 +355,8 @@ void CConjuredDragon::Check_Phase()
 			m_pHealth->Set_HP(m_pHealth->Get_MaxHP() / 2);
 			m_isPhaseOne = false;
 			m_isInvincible = true;
+
+			Off_Breath();
 		}
 	}
 }
@@ -545,12 +525,12 @@ HRESULT CConjuredDragon::Add_Components()
 		RigidBodyDesc.isTrigger = false;
 		RigidBodyDesc.isGravity = false;
 		RigidBodyDesc.vInitPosition = m_pTransform->Get_Position();
-		RigidBodyDesc.vOffsetPosition = _float3(0.f, 1.5f, 0.f);
+		RigidBodyDesc.vOffsetPosition = _float3(0.f, 6.f, 0.f);
 		RigidBodyDesc.vOffsetRotation = XMQuaternionRotationRollPitchYaw(0.f, 0.f, 0.f);
 		RigidBodyDesc.fStaticFriction = 0.f;
 		RigidBodyDesc.fDynamicFriction = 1.f;
 		RigidBodyDesc.fRestitution = 0.f;
-		PxSphereGeometry pSphereGeometry = PxSphereGeometry(1.5f);
+		PxSphereGeometry pSphereGeometry = PxSphereGeometry(6.f);
 		RigidBodyDesc.pGeometry = &pSphereGeometry;
 		RigidBodyDesc.eConstraintFlag = CRigidBody::RotX | CRigidBody::RotY | CRigidBody::RotZ;
 		RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 0.f, 1.f);
@@ -2082,6 +2062,18 @@ void CConjuredDragon::Shot_Fireball_White()
 
 	CMagicBall* pMagicBall = m_pMagicSlot->Action_Magic_Skill(1, m_pTarget, m_pWeapon, COLLISIONFLAG(COL_PLAYER | COL_SHIELD));
 	pMagicBall->Set_MagicBallState(CMagicBall::MAGICBALL_STATE_CASTMAGIC);
+}
+
+void CConjuredDragon::On_Breath()
+{
+	if (nullptr != m_pBreath)
+		m_pBreath->On_Breath();
+}
+
+void CConjuredDragon::Off_Breath()
+{
+	if (nullptr != m_pBreath)
+		m_pBreath->Off_Breath();
 }
 
 void CConjuredDragon::Action_Pulse()

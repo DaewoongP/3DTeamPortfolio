@@ -32,9 +32,9 @@ HRESULT CSelector_Degree::Initialize(void* pArg)
 	return S_OK;
 }
 
-HRESULT CSelector_Degree::Tick(const _float& fTimeDelta)
+HRESULT CSelector_Degree::Tick_Behavior(const _float& fTimeDelta)
 {
-	HRESULT hr = __super::Tick(fTimeDelta);
+	HRESULT hr = __super::Tick_Behavior(fTimeDelta);
 
 	BEGININSTANCE;
 	_float fdata = pGameInstance->Get_World_TimeAcc() - m_fPreWorldTimeAcc;

@@ -18,7 +18,7 @@ HRESULT CRigidMove::Initialize(void* pArg)
 	return S_OK;
 }
 
-HRESULT CRigidMove::Tick(const _float& fTimeDelta)
+HRESULT CRigidMove::Tick_Behavior(const _float& fTimeDelta)
 {
 	if (false == Check_Decorators())
 	{

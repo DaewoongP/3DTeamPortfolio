@@ -29,7 +29,7 @@ private:
 public:
 	virtual HRESULT Initialize_Prototype() override { return S_OK; }
 	virtual HRESULT Initialize(void* pArg) override;
-	virtual HRESULT Tick(const _float& fTimeDelta);
+	virtual HRESULT Tick_Behavior(const _float& fTimeDelta);
 
 public:
 	/* 기본 약공 시 랜덤으로 돌려줄 공중 피격 CAction 추가 */

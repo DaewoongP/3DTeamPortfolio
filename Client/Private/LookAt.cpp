@@ -19,7 +19,7 @@ HRESULT CLookAt::Initialize(void* pArg)
 	return S_OK;
 }
 
-HRESULT CLookAt::Tick(const _float& fTimeDelta)
+HRESULT CLookAt::Tick_Behavior(const _float& fTimeDelta)
 {
 	if (false == Check_Decorators())
 		return BEHAVIOR_FAIL;

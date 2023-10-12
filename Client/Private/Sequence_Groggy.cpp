@@ -45,9 +45,9 @@ HRESULT CSequence_Groggy::Initialize(void* pArg)
 	return S_OK;
 }
 
-HRESULT CSequence_Groggy::Tick(const _float& fTimeDelta)
+HRESULT CSequence_Groggy::Tick_Behavior(const _float& fTimeDelta)
 {
-	HRESULT hr = __super::Tick(fTimeDelta);
+	HRESULT hr = __super::Tick_Behavior(fTimeDelta);
 
 	if (BEHAVIOR_SUCCESS == hr)
 	{

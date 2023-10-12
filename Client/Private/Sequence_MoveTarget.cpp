@@ -43,9 +43,9 @@ HRESULT CSequence_MoveTarget::Initialize(void* pArg)
 	return S_OK;
 }
 
-HRESULT CSequence_MoveTarget::Tick(const _float& fTimeDelta)
+HRESULT CSequence_MoveTarget::Tick_Behavior(const _float& fTimeDelta)
 {
-	return __super::Tick(fTimeDelta);
+	return __super::Tick_Behavior(fTimeDelta);
 }
 
 HRESULT CSequence_MoveTarget::Assemble_Childs()

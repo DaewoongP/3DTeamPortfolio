@@ -23,7 +23,7 @@ private:
 public:
 	virtual HRESULT Initialize_Prototype() override { return S_OK; }
 	virtual HRESULT Initialize(void* pArg) override;
-	virtual HRESULT Tick(const _float& fTimeDelta) override;
+	virtual HRESULT Tick_Behavior(const _float& fTimeDelta) override;
 
 public:
 	/* Death 가 진행되는 동안 돌려줄 함수포인터를 넣으면 됩니다. */

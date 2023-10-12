@@ -109,7 +109,12 @@ void CDarkWizard_M::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		auto Action = pCollisionMagicBallDesc->Action;
 		_int iDamage = pCollisionMagicBallDesc->iDamage;
 
-		m_pHealth->Damaged(iDamage);
+		/* 현재 프로테고를 사용한 경우 */
+		if (BUFF_PROTEGO & m_iCurrentSpell)
+		{
+			if (false == isPowerSpell(eBuff))
+				return;
+		}
 
 		auto iter = m_CurrentTickSpells.find(eBuff);
 		if (iter == m_CurrentTickSpells.end() &&
@@ -117,6 +122,8 @@ void CDarkWizard_M::OnCollisionEnter(COLLEVENTDESC CollisionEventDesc)
 		{
 			m_CurrentTickSpells.emplace(eBuff, Action);
 		}
+
+		m_pHealth->Damaged(iDamage);
 
 		if (true == isCombo(eBuff))
 			m_isHitCombo = true;
@@ -180,6 +187,7 @@ void CDarkWizard_M::Set_Protego_Collision(CTransform* pTransform, CEnemy::ATTACK
 	if (eType & ATTACK_BREAK || eType & ATTACK_SUPERBREAK)
 	{
 		m_iCurrentSpell ^= BUFF_PROTEGO;
+		cout << "Call Break Protego" << endl;
 	}
 }
 
@@ -268,7 +276,7 @@ HRESULT CDarkWizard_M::Make_Magics()
 		CMagic::MAGICDESC magicInitDesc;
 		magicInitDesc.eBuffType = BUFF_PROTEGO;
 		magicInitDesc.eMagicGroup = CMagic::MG_ESSENTIAL;
-		magicInitDesc.eMagicType = CMagic::MT_YELLOW;
+		magicInitDesc.eMagicType = CMagic::MT_PURPLE;
 		magicInitDesc.eMagicTag = PROTEGO;
 		magicInitDesc.fInitCoolTime = 0.f;
 		magicInitDesc.iDamage = 0;
@@ -376,7 +384,7 @@ HRESULT CDarkWizard_M::Add_Components()
 		RigidBodyDesc.pGeometry = &pCapsuleGeomatry;
 		strcpy_s(RigidBodyDesc.szCollisionTag, MAX_PATH, "Enemy_Body");
 		RigidBodyDesc.eThisCollsion = COL_ENEMY;
-		RigidBodyDesc.eCollisionFlag = COL_PLAYER | COL_NPC | COL_NPC_RANGE | COL_MAGIC | COL_STATIC;
+		RigidBodyDesc.eCollisionFlag = COL_NPC_RANGE | COL_MAGIC | COL_STATIC;
 
 		if (FAILED(CComposite::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_RigidBody"),
 			TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
@@ -453,6 +461,9 @@ HRESULT CDarkWizard_M::Add_Components_Level(_uint iCurrentLevelIndex)
 		if (FAILED(Add_Component(iCurrentLevelIndex, TEXT("Prototype_Component_Weapon_DarkWizard_Wand"),
 			TEXT("Com_Weapon"), reinterpret_cast<CComponent**>(&m_pWeapon), &ParentMatrixDesc)))
 			throw TEXT("Com_Weapon");
+
+		if (FAILED(__super::Initialize_Level(iCurrentLevelIndex)))
+			return E_FAIL;
 	}
 	catch (const _tchar* pErrorTag)
 	{
@@ -825,7 +836,7 @@ HRESULT CDarkWizard_M::Make_Protego(_Inout_ CSequence* pSequence)
 
 				if (BUFF_PROTEGO & *pICurrentSpell)
 					return false;
-
+				
 				return true;
 			});
 

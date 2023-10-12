@@ -422,6 +422,9 @@ HRESULT CEnemy::Make_Fly_Descendo(_Inout_ CSequence* pSequence)
 
 void CEnemy::Set_Current_Target()
 {
+	if (false == m_isSpawn)
+		return;
+
 	_float3 vPosition = m_pTransform->Get_Position();
 
 	for (auto& Pair : m_RangeInEnemies)
@@ -444,7 +447,7 @@ void CEnemy::Set_Current_Target()
 
 	if (false == m_isRangeInEnemy)
 	{
-		m_pTarget = nullptr;
+		m_pTarget = m_pPlayer;
 	}
 }
 
@@ -563,6 +566,39 @@ _bool CEnemy::isCombo(const _uint& iType)
 		ReturnData = m_isHitCombo = true;
 
 	return ReturnData;
+}
+
+_bool CEnemy::isControlSpell(const _uint& iType)
+{
+	if (BUFF_LEVIOSO & iType)
+		return true;
+
+	return false;
+}
+
+_bool CEnemy::isPowerSpell(const _uint& iType)
+{
+	if (BUFF_ACCIO & iType)
+		return true;
+
+	if (BUFF_DESCENDO & iType)
+		return true;
+
+	if (BUFF_FLIPENDO & iType)
+		return true;
+
+	return false;
+}
+
+_bool CEnemy::isDamageSpell(const _uint& iType)
+{
+	if (BUFF_CONFRINGO & iType)
+		return true;
+
+	if (BUFF_NCENDIO & iType)
+		return true;
+
+	return false;
 }
 
 void CEnemy::Remove_Fly_Spells()

@@ -41,7 +41,7 @@ HRESULT CAction::Initialize(void* pArg)
 	return S_OK;
 }
 
-HRESULT CAction::Tick(const _float& fTimeDelta)
+HRESULT CAction::Tick_Behavior(const _float& fTimeDelta)
 {
 	if (false == Check_Decorators())
 	{
@@ -66,7 +66,7 @@ HRESULT CAction::Tick(const _float& fTimeDelta)
 	/* 행동 체크 */
 	for (auto& pBehavior : m_Behaviors)
 	{
-		HRESULT hr = pBehavior->Tick(fTimeDelta);
+		HRESULT hr = pBehavior->Tick_Behavior(fTimeDelta);
 		/* 하나라도 동작중이면 계속 진행 */
 		if (BEHAVIOR_RUNNING == hr)
 			m_isFinishBehaviors = false;

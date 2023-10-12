@@ -74,16 +74,13 @@ HRESULT CArmored_Troll::Initialize_Level(_uint iCurrentLevelIndex)
 
 void CArmored_Troll::Tick(_float fTimeDelta)
 {
-	__super::Tick(fTimeDelta);
-
-	m_pHitMatrix = m_HitMatrices[rand() % 3];
-
 	Set_Current_Target();
 	if (nullptr == m_pTarget)
 		m_pTarget = m_pPlayer;
 
-	if (nullptr != m_pRootBehavior)
-		m_pRootBehavior->Tick(fTimeDelta);
+	__super::Tick(fTimeDelta);
+
+	m_pHitMatrix = m_HitMatrices[rand() % 3];
 
 	if (nullptr != m_pModelCom)
 		m_pModelCom->Play_Animation(fTimeDelta, CModel::UPPERBODY, m_pTransform);
@@ -315,6 +312,9 @@ HRESULT CArmored_Troll::Add_Components_Level(_uint iCurrentLevelIndex)
 		if (FAILED(Add_Component(iCurrentLevelIndex, TEXT("Prototype_Component_Weapon_Armored_Troll"),
 			TEXT("Com_Weapon"), reinterpret_cast<CComponent**>(&m_pWeapon), &ParentMatrixDesc)))
 			throw TEXT("Com_Weapon");
+
+		if (FAILED(__super::Initialize_Level(iCurrentLevelIndex)))
+			return E_FAIL;
 	}
 	catch (const _tchar* pErrorTag)
 	{

@@ -75,14 +75,11 @@ HRESULT CDugbog::Initialize_Level(_uint iCurrentLevelIndex)
 
 void CDugbog::Tick(_float fTimeDelta)
 {
+	Set_Current_Target();
+
 	__super::Tick(fTimeDelta);
 
 	m_pHitMatrix = m_HitMatrices[rand() % 3];
-
-	Set_Current_Target();
-
-	if (nullptr != m_pRootBehavior)
-		m_pRootBehavior->Tick(fTimeDelta);
 
 	Tick_Spells();
 
@@ -322,7 +319,7 @@ HRESULT CDugbog::Add_Components()
 		RigidBodyDesc.fStaticFriction = 0.f;
 		RigidBodyDesc.fDynamicFriction = 1.f;
 		RigidBodyDesc.fRestitution = 0.f;
-		PxSphereGeometry pSphereGeomatry2 = PxSphereGeometry(15.f);
+		PxSphereGeometry pSphereGeomatry2 = PxSphereGeometry(7.f);
 		RigidBodyDesc.pGeometry = &pSphereGeomatry2;
 		RigidBodyDesc.eConstraintFlag = CRigidBody::RotX | CRigidBody::RotY | CRigidBody::RotZ;
 		RigidBodyDesc.vDebugColor = _float4(1.f, 1.f, 0.f, 1.f);

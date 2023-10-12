@@ -32,6 +32,14 @@ private:
 	virtual ~CBreath() = default;
 
 public:
+	void On_Breath() {
+		m_isActionBreath = true;
+	}
+	void Off_Breath(){
+		m_isActionBreath = false;
+	}
+
+public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;
@@ -42,6 +50,9 @@ public:
 
 public:
 	void Reset(const BREATHINITDESC& tagResetDesc);
+
+private:
+	_bool m_isActionBreath = { false };
 
 private:
 	CCylinder* m_pCylinder = { nullptr };

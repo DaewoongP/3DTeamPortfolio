@@ -19,7 +19,7 @@ HRESULT CCheck_Distance::Initialize(void* pArg)
 	return S_OK;
 }
 
-HRESULT CCheck_Distance::Tick(const _float& fTimeDelta)
+HRESULT CCheck_Distance::Tick_Behavior(const _float& fTimeDelta)
 {
 	if (false == Check_Decorators())
 	{

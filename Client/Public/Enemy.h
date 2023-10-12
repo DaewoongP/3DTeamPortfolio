@@ -70,7 +70,7 @@ public:
 	virtual HRESULT Render_Depth(_float4x4 LightViewMatrix, _float4x4 LightProjMatrix) override;
 
 public:
-	void Set_Protego_Collision(CTransform* pTransform, ATTACKTYPE eType) const {}
+	virtual void Set_Protego_Collision(CTransform* pTransform, ATTACKTYPE eType) const {}
 	void Ready_Hit_Finisher() {};
 
 protected:
@@ -131,6 +131,9 @@ protected:
 	_bool IsDebuff(const _uint& iType);
 	_bool isFlying(const _uint& iType);
 	_bool isCombo(const _uint& iType);
+	_bool isControlSpell(const _uint& iType);
+	_bool isPowerSpell(const _uint& iType);
+	_bool isDamageSpell(const _uint& iType);
 	void Remove_Fly_Spells();
 
 protected: /* Notify Func */

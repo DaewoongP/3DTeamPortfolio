@@ -61,7 +61,6 @@ private: /* 브레스 관련 데이터 */
 	CBreath* m_pBreath = { nullptr };
 	const _float4x4* m_pHeadMatrix = { nullptr };
 	_float3 m_vTargetPosition;
-	_bool m_isActionBreath = { false };
 	void Update_Breath(const _float& fTimeDelta);
 
 private: /* 펄스 패턴 관련 데이터 */
@@ -124,12 +123,8 @@ private: /* 행동 묶음들 */
 private: /* Notify Func */
 	void Shot_Fireball_Black();
 	void Shot_Fireball_White();
-	void On_Breath() {
-		m_isActionBreath = true;
-	}
-	void Off_Breath() {
-		m_isActionBreath = false;
-	}
+	void On_Breath();
+	void Off_Breath();
 	void Action_Pulse();
 
 public:
