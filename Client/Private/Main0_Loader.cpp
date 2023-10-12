@@ -688,7 +688,7 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 		{
 			std::lock_guard<std::mutex> lock(mtx);
 						
-			/*if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Dust01"),
+			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Dust01"),
 				TEXT("../../Resources/GameData/ParticleData/Misc/Dust01/"), 3)))
 				throw TEXT("Reserve Particle : Particle_Dust01");
 
@@ -750,7 +750,7 @@ HRESULT CMain0_Loader::Loading_For_Static(LEVELID eLevelID)
 
 			if (FAILED(m_pGameInstance->Reserve_Particle(m_pDevice, m_pContext, TEXT("Particle_Troll_Landing_Dust"),
 				TEXT("../../Resources/GameData/ParticleData/Monster_Particle/Troll_Landing_Dust/"), 3)))
-				throw TEXT("Reserve Particle : Particle_Troll_Landing_Dust");*/
+				throw TEXT("Reserve Particle : Particle_Troll_Landing_Dust");
 		}
 #pragma endregion
 
